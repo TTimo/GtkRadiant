@@ -1,0 +1,8 @@
+# Linux build config
+# wolf.cf
+#
+# includes core + wolfpack
+
+$DO_CORE=1;
+$DO_GAME_Q3=0;
+$DO_GAME_WOLF=1;

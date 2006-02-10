@@ -1,0 +1,552 @@
+$aseconvert models/mapobjects/spotlamp/spotlamp_x.ase
+$exit
+
+
+$aseconvert models/weapons2/machinegun/machinegun.ase -weapon
+$aseconvert models/weapons2/bfg/bfg.ase -weapon
+$aseconvert models/weapons2/railgun/railgun.ase -weapon
+$aseconvert models/weapons2/shotgun/shotgun.ase -weapon
+
+$aseconvert models/weapons2/meshes/chaingun.ase -weapon
+$aseconvert models/weapons2/meshes/flamethrower.ase -weapon
+$aseconvert models/weapons2/meshes/grapple.ase -weapon
+$aseconvert models/weapons2/meshes/grenadel.ase -weapon
+$aseconvert models/weapons2/meshes/lightning.ase -weapon
+$aseconvert models/weapons2/meshes/plasma.ase -weapon
+$aseconvert models/weapons2/meshes/railgun.ase -weapon
+$aseconvert models/weapons2/meshes/ricochet.ase -weapon
+$aseconvert models/weapons2/meshes/rocketl.ase -weapon
+$aseconvert models/weapons2/meshes/shotgun.ase -weapon
+
+
+$aseconvert models/mapobjects/chain1.ase
+$aseconvert models/mapobjects/chain2.ase
+$aseconvert models/mapobjects/chain3.ase
+$aseconvert models/mapobjects/chain4.ase
+
+$exit
+
+$aseanimconvert models/players/light/bandolier/bandolier.ase -origin 0 0 24 -playerparms 75 138 140 1
+$aseanimconvert models/players/light/brandon/4brandon.ase -origin 0 0 24 -playerparms 75 138 140 1
+$aseanimconvert models/players/light/cash/4cash.ase -origin 0 0 24 -playerparms 75 138 140 1
+$aseanimconvert models/players/light/doom/doom.ase -origin 0 0 24 -playerparms 75 138 140 1
+$aseanimconvert models/players/light/shauna/shauna.ase -origin 0 0 24 -playerparms 75 138 140 1
+$aseanimconvert models/players/medium/tim/4tim.ase -origin 0 0 24 -playerparms 75 138 140 1
+$aseanimconvert models/players/medium/visor/4visor.ase -origin 0 0 24 -playerparms 75 138 140 1
+$aseanimconvert models/players/medium/xian/4xian.ase -origin 0 0 24 -playerparms 75 138 140 1
+$aseanimconvert models/players/medium/carmack/carmack.ase -origin 0 0 24 -playerparms 75 138 140 1
+$aseanimconvert models/players/heavy/paulj/4paulj.ase -origin 0 0 24 -playerparms 75 138 140 1
+$aseanimconvert models/players/heavy/brock/brock.ase -origin 0 0 24 -playerparms 75 138 140 1
+
+$exit
+
+// note: playerparms are "skipStart skipEnd maxUpperFrames maxHeadFrames"
+$aseanimconvert models/players/medium/visor/4visor.ase -origin 0 0 24 -playerparms 75 138 140 1
+$aseanimconvert models/players/medium/visor/4visor.ase -lod 1 0 -origin 0 0 24 -playerparms 75 138 140 1
+$aseanimconvert models/players/medium/visor/4visor.ase -lod 2 0 -origin 0 0 24 -playerparms 75 138 140 1
+
+
+
+$aseconvert models/powerups/ammo/backpack.ase
+
+$aseconvert models/weapons2/meshes/assault.ase -weapon
+$aseconvert models/weapons2/meshes/chaingun.ase -weapon
+$aseconvert models/weapons2/meshes/flamethrower.ase -weapon
+$aseconvert models/weapons2/meshes/grapple.ase -weapon
+$aseconvert models/weapons2/meshes/grenadel.ase -weapon
+$aseconvert models/weapons2/meshes/lightning.ase -weapon
+$aseconvert models/weapons2/meshes/plasma.ase -weapon
+$aseconvert models/weapons2/meshes/railgun.ase -weapon
+$aseconvert models/weapons2/meshes/ricochet.ase -weapon
+$aseconvert models/weapons2/meshes/rocketl.ase -weapon
+$aseconvert models/weapons2/meshes/shotgun.ase -weapon
+
+$aseconvert models/mapobjects/arenalogo.ase
+
+//
+// talk sprite
+//
+$modelname sprites/balloon
+$cd sprites
+$spritebase -8 -8 16 16
+$spriteshader sprites/balloon3.tga
+
+// plasma ball sprite
+$modelname sprites/plasma
+$cd sprites
+$spritebase -16 -16 32 32
+$spriteshader sprites/plasma1.tga
+$spriteshader sprites/plasma2.tga
+
+//
+// player models
+// note: playerparms are "skipStart skipEnd maxUpperFrames maxHeadFrames"
+//
+$aseanimconvert models/players/light/bandolier/bandolier.ase -origin 0 0 24 -playerparms 75 138 140 1
+$aseanimconvert models/players/light/brandon/4brandon.ase -origin 0 0 24 -playerparms 75 138 140 1
+$aseanimconvert models/players/light/cash/4cash.ase -origin 0 0 24 -playerparms 75 138 140 1
+$aseanimconvert models/players/light/doom/doom.ase -origin 0 0 24 -playerparms 75 138 140 1
+$aseanimconvert models/players/light/shauna/shauna.ase -origin 0 0 24 -playerparms 75 138 140 1
+$aseanimconvert models/players/medium/tim/4tim.ase -origin 0 0 24 -playerparms 75 138 140 1
+$aseanimconvert models/players/medium/visor/4visor.ase -origin 0 0 24 -playerparms 75 138 140 1
+$aseanimconvert models/players/medium/xian/4xian.ase -origin 0 0 24 -playerparms 75 138 140 1
+$aseanimconvert models/players/medium/carmack/carmack.ase -origin 0 0 24 -playerparms 75 138 140 1
+$aseanimconvert models/players/heavy/paulj/4paulj.ase -origin 0 0 24 -playerparms 75 138 140 1
+$aseanimconvert models/players/heavy/brock/brock.ase -origin 0 0 24 -playerparms 75 138 140 1
+
+//
+// weaphits
+//
+$modelname models/weaphits/bullet
+$cd models/weaphits
+$base bullet01.3ds
+$frame bullet01.3ds
+$frame bullet02.3ds
+$frame bullet03.3ds
+$frame bullet04.3ds
+$frame bullet05.3ds
+$frame bullet06.3ds
+$skin bullet01.3ds
+$skin bullet03.3ds
+$skin bullet05.3ds
+
+$modelname models/weaphits/ring01
+$cd models/weaphits
+$base ring01_1.3ds
+$frame ring01_1.3ds
+$frame ring01_2.3ds
+$frame ring01_3.3ds
+$frame ring01_4.3ds
+$frame ring01_5.3ds
+$frame ring01_6.3ds
+$skin ring01_1.3ds
+$skin ring01_3.3ds
+$skin ring01_5.3ds
+
+$modelname models/weaphits/ring02
+$cd models/weaphits
+$base ring02_1.3ds
+$frame ring02_1.3ds
+$frame ring02_2.3ds
+$frame ring02_3.3ds
+$frame ring02_4.3ds
+$frame ring02_5.3ds
+$frame ring02_6.3ds
+$skin ring02_1.3ds
+$skin ring02_3.3ds
+$skin ring02_5.3ds
+
+$modelname models/weaphits/boomgra
+$cd models/weaphits
+$base boomgra1.3ds
+$frame boomgra1.3ds
+$frame boomgra2.3ds
+$frame boomgra3.3ds
+$frame boomgra4.3ds
+$frame boomgra5.3ds
+$frame boomgra6.3ds
+$skin boomgra1.3ds
+$skin boomgra3.3ds
+$skin boomgra5.3ds
+
+$modelname models/weaphits/boom01
+$cd models/weaphits
+$base boom01_1.3ds
+$frame boom01_1.3ds
+$frame boom01_2.3ds
+$frame boom01_3.3ds
+$frame boom01_4.3ds
+$frame boom01_5.3ds
+$frame boom01_6.3ds
+$skin boom01_1.3ds
+$skin boom01_3.3ds
+$skin boom01_5.3ds
+
+$modelname models/weaphits/boom02
+$cd models/weaphits
+$base boom02_1.3ds
+$frame boom02_1.3ds
+$frame boom02_2.3ds
+$frame boom02_3.3ds
+$frame boom02_4.3ds
+$frame boom02_5.3ds
+$frame boom02_6.3ds
+$skin boom02_1.3ds
+$skin boom02_3.3ds
+$skin boom02_5.3ds
+
+$modelname models/weaphits/boom03
+$cd models/weaphits
+$base boom03_1.3ds
+$frame boom03_1.3ds
+$frame boom03_2.3ds
+$frame boom03_3.3ds
+$frame boom03_4.3ds
+$frame boom03_5.3ds
+$frame boom03_6.3ds
+$skin boom03_1.3ds
+$skin boom03_3.3ds
+$skin boom03_5.3ds
+
+$modelname models/weaphits/boom04
+$cd models/weaphits
+$base boom04_1.3ds
+$frame boom04_1.3ds
+$frame boom04_2.3ds
+$frame boom04_3.3ds
+$frame boom04_4.3ds
+$frame boom04_5.3ds
+$frame boom04_6.3ds
+$skin boom04_1.3ds
+$skin boom04_3.3ds
+$skin boom04_5.3ds
+
+$modelname models/weaphits/boom05
+$cd models/weaphits
+$base boom05_1.3ds
+$frame boom05_1.3ds
+$frame boom05_2.3ds
+$frame boom05_3.3ds
+$frame boom05_4.3ds
+$frame boom05_5.3ds
+$frame boom05_6.3ds
+$skin boom05_1.3ds
+$skin boom05_3.3ds
+$skin boom05_5.3ds
+
+//
+// point powerups
+//
+$aseconvert models/powerups/points/small.ase
+$aseconvert models/powerups/points/medium.ase
+$aseconvert models/powerups/points/large.ase
+
+//
+// ammo
+//
+$aseconvert models\powerups\ammo\bfgam.ASE
+$aseconvert models\powerups\ammo\bfgam_1.ASE
+$aseconvert models\powerups\ammo\bouncyam.ASE
+$aseconvert models\powerups\ammo\bouncyam_1.ASE
+$aseconvert models\powerups\ammo\carbineam.ASE
+$aseconvert models\powerups\ammo\carbineam_1.ASE
+$aseconvert models\powerups\ammo\flameam.ASE
+$aseconvert models\powerups\ammo\flameam_1.ASE
+$aseconvert models\powerups\ammo\grenadeam.ASE
+$aseconvert models\powerups\ammo\grenadeam_1.ASE
+$aseconvert models\powerups\ammo\lightningam.ASE
+$aseconvert models\powerups\ammo\lightningam_1.ASE
+$aseconvert models\powerups\ammo\machinegunam.ASE
+$aseconvert models\powerups\ammo\machinegunam_1.ASE
+$aseconvert models\powerups\ammo\plasmaam.ASE
+$aseconvert models\powerups\ammo\plasmaam_1.ASE
+$aseconvert models\powerups\ammo\railgunam.ASE
+$aseconvert models\powerups\ammo\railgunam_1.ASE
+$aseconvert models\powerups\ammo\rocketam.ASE
+$aseconvert models\powerups\ammo\rocketam_1.ASE
+$aseconvert models\powerups\ammo\shotgunam.ASE
+$aseconvert models\powerups\ammo\shotgunam_1.ASE
+
+$aseconvert models/powerups/ammo/backpack.ase
+
+//
+// missiles
+//
+$modelname models/ammo/plasma/plasma
+$cd models/ammo/plasma
+$base plasma1.3ds
+$frame plasma1.3ds
+$skin plasma1.3ds
+
+$modelname models/ammo/laser/laser
+$cd models/ammo/laser
+$base laser1.3ds
+$frame laser1.3ds
+$skin laser1.3ds
+
+$modelname models/ammo/rocket/rocket
+$cd models/ammo/rocket
+$base rocket1.3ds
+$frame rocket1.3ds
+$skin rocket1.3ds
+$skin rocket2.3ds
+
+$aseconvert models/ammo/grenade1.ase
+$aseconvert models/explosions/smoke2.ase
+
+//
+// map objects
+//
+$aseconvert models/mapobjects/ceilinglamp1.ase
+$aseconvert models/mapobjects/ceilinglamp2.ase
+$aseconvert models/mapobjects/chain1.ase
+$aseconvert models/mapobjects/chain2.ase
+$aseconvert models/mapobjects/chain3.ase
+$aseconvert models/mapobjects/chain4.ase
+$aseconvert models/mapobjects/crux.ase
+$aseconvert models/mapobjects/floorlamp1.ase
+$aseconvert models/mapobjects/floorlamp2.ase
+$aseconvert models/mapobjects/hook.ase
+$aseconvert models/mapobjects/impale.ase
+$aseconvert models/mapobjects/standinglamp1.ase
+$aseconvert models/mapobjects/standinglamp2.ase
+$aseconvert models/mapobjects/standinglamp3.ase
+$aseconvert models/mapobjects/walllamp1.ase
+$aseconvert models/mapobjects/walllamp2.ase
+$aseconvert models/mapobjects/walllamp3.ase
+
+
+//
+// objects
+//
+$aseconvert models/objects/dmspot.ase -origin 0 0 24
+$aseconvert	models/objects/box01.ase
+
+//
+// weapons
+//
+$aseconvert models/weapons2/meshes/assault.ase -weapon
+$aseconvert models/weapons2/meshes/bfg.ase -weapon
+$aseconvert models/weapons2/meshes/chaingun.ase -weapon
+$aseconvert models/weapons2/meshes/flamethrower.ase -weapon
+$aseconvert models/weapons2/meshes/grapple.ase -weapon
+$aseconvert models/weapons2/meshes/grenadel.ase -weapon
+$aseconvert models/weapons2/meshes/lightning.ase -weapon
+$aseconvert models/weapons2/meshes/plasma.ase -weapon
+$aseconvert models/weapons2/meshes/railgun.ase -weapon
+$aseconvert models/weapons2/meshes/ricochet.ase -weapon
+$aseconvert models/weapons2/meshes/rocketl.ase -weapon
+$aseconvert models/weapons2/meshes/shotgun.ase -weapon
+
+//
+// blood
+//
+$modelname models/weaphits/blood
+$cd models/weaphits
+$spritebase -16 -16 32 32
+$spriteshader models/weaphits/blood201.tga
+$spriteshader models/weaphits/blood202.tga
+$spriteshader models/weaphits/blood203.tga
+$spriteshader models/weaphits/blood204.tga
+$spriteshader models/weaphits/blood205.tga
+
+
+//
+// missiles
+//
+$modelname models/ammo/plasma/plasma
+$cd models/ammo/plasma
+$base plasma1.3ds
+$frame plasma1.3ds
+$skin plasma1.3ds
+
+$modelname models/ammo/laser/laser
+$cd models/ammo/laser
+$base laser1.3ds
+$frame laser1.3ds
+$skin laser1.3ds
+
+
+$modelname models/ammo/rocket/rocket
+$cd models/ammo/rocket
+$base rocket1.3ds
+$frame rocket1.3ds
+$skin rocket1.3ds
+$skin rocket2.3ds
+
+
+// weaphits
+
+$modelname models/weaphits/bullet
+$cd models/weaphits
+$base bullet01.3ds
+$frame bullet01.3ds
+$frame bullet02.3ds
+$frame bullet03.3ds
+$frame bullet04.3ds
+$frame bullet05.3ds
+$frame bullet06.3ds
+$skin bullet01.3ds
+$skin bullet03.3ds
+$skin bullet05.3ds
+
+$modelname models/weaphits/ring01
+$cd models/weaphits
+$base ring01_1.3ds
+$frame ring01_1.3ds
+$frame ring01_2.3ds
+$frame ring01_3.3ds
+$frame ring01_4.3ds
+$frame ring01_5.3ds
+$frame ring01_6.3ds
+$skin ring01_1.3ds
+$skin ring01_3.3ds
+$skin ring01_5.3ds
+
+$modelname models/weaphits/ring02
+$cd models/weaphits
+$base ring02_1.3ds
+$frame ring02_1.3ds
+$frame ring02_2.3ds
+$frame ring02_3.3ds
+$frame ring02_4.3ds
+$frame ring02_5.3ds
+$frame ring02_6.3ds
+$skin ring02_1.3ds
+$skin ring02_3.3ds
+$skin ring02_5.3ds
+
+$modelname models/weaphits/boomgra
+$cd models/weaphits
+$base boomgra1.3ds
+$frame boomgra1.3ds
+$frame boomgra2.3ds
+$frame boomgra3.3ds
+$frame boomgra4.3ds
+$frame boomgra5.3ds
+$frame boomgra6.3ds
+$skin boomgra1.3ds
+$skin boomgra3.3ds
+$skin boomgra5.3ds
+
+$modelname models/weaphits/boom01
+$cd models/weaphits
+$base boom01_1.3ds
+$frame boom01_1.3ds
+$frame boom01_2.3ds
+$frame boom01_3.3ds
+$frame boom01_4.3ds
+$frame boom01_5.3ds
+$frame boom01_6.3ds
+$skin boom01_1.3ds
+$skin boom01_3.3ds
+$skin boom01_5.3ds
+
+$modelname models/weaphits/boom02
+$cd models/weaphits
+$base boom02_1.3ds
+$frame boom02_1.3ds
+$frame boom02_2.3ds
+$frame boom02_3.3ds
+$frame boom02_4.3ds
+$frame boom02_5.3ds
+$frame boom02_6.3ds
+$skin boom02_1.3ds
+$skin boom02_3.3ds
+$skin boom02_5.3ds
+
+$modelname models/weaphits/boom03
+$cd models/weaphits
+$base boom03_1.3ds
+$frame boom03_1.3ds
+$frame boom03_2.3ds
+$frame boom03_3.3ds
+$frame boom03_4.3ds
+$frame boom03_5.3ds
+$frame boom03_6.3ds
+$skin boom03_1.3ds
+$skin boom03_3.3ds
+$skin boom03_5.3ds
+
+$modelname models/weaphits/boom04
+$cd models/weaphits
+$base boom04_1.3ds
+$frame boom04_1.3ds
+$frame boom04_2.3ds
+$frame boom04_3.3ds
+$frame boom04_4.3ds
+$frame boom04_5.3ds
+$frame boom04_6.3ds
+$skin boom04_1.3ds
+$skin boom04_3.3ds
+$skin boom04_5.3ds
+
+$modelname models/weaphits/boom05
+$cd models/weaphits
+$base boom05_1.3ds
+$frame boom05_1.3ds
+$frame boom05_2.3ds
+$frame boom05_3.3ds
+$frame boom05_4.3ds
+$frame boom05_5.3ds
+$frame boom05_6.3ds
+$skin boom05_1.3ds
+$skin boom05_3.3ds
+$skin boom05_5.3ds
+
+
+//
+// armor
+//
+$aseconvert	models/powerups/armor/armor_red.ase
+$aseconvert	models/powerups/armor/armor_yel.ase
+$aseconvert	models/powerups/armor/armor_grn.ase
+$aseconvert models/powerups/armor/shard.ase
+$aseconvert models/powerups/armor/shard_sphere.ase
+$aseconvert models/powerups/armor/shard_sphere_1.ase
+
+//
+// health
+//
+$aseconvert	models/powerups/health/small.ase
+$aseconvert	models/powerups/health/small_1.ase
+$aseconvert	models/powerups/health/medium.ase
+$aseconvert	models/powerups/health/medium_1.ase
+$aseconvert	models/powerups/health/large.ase
+$aseconvert	models/powerups/health/large_1.ase
+$aseconvert	models/powerups/health/mega.ase
+$aseconvert	models/powerups/health/mega_1.ase
+
+//
+// holdable powerups
+//
+$aseconvert models/powerups/holdable/ringodeth.ase
+$aseconvert models/powerups/holdable/medkit.ase
+$aseconvert models/powerups/holdable/teleporter.ase
+
+//
+// instant powerups
+//
+$aseconvert	models/powerups/instant/enviro.ase
+$aseconvert	models/powerups/instant/enviro_1.ase
+$aseconvert	models/powerups/instant/enviro_ring.ase
+$aseconvert	models/powerups/instant/enviro_ring_1.ase
+$aseconvert	models/powerups/instant/flight.ase
+$aseconvert	models/powerups/instant/flight_1.ase
+$aseconvert	models/powerups/instant/flight_ring.ase
+$aseconvert	models/powerups/instant/flight_ring_1.ase
+$aseconvert	models/powerups/instant/haste.ase
+$aseconvert	models/powerups/instant/haste_1.ase
+$aseconvert	models/powerups/instant/haste_ring.ase
+$aseconvert	models/powerups/instant/haste_ring_1.ase
+$aseconvert	models/powerups/instant/invis.ase
+$aseconvert	models/powerups/instant/invis_1.ase
+$aseconvert	models/powerups/instant/invis_ring.ase
+$aseconvert	models/powerups/instant/invis_ring_1.ase
+$aseconvert	models/powerups/instant/scan.ase
+$aseconvert	models/powerups/instant/scan_1.ase
+$aseconvert	models/powerups/instant/scan_ring.ase
+$aseconvert	models/powerups/instant/scan_ring_1.ase
+$aseconvert	models/powerups/instant/quad.ase
+$aseconvert	models/powerups/instant/quad_1.ase
+$aseconvert	models/powerups/instant/quad_ring.ase
+$aseconvert	models/powerups/instant/quad_ring_1.ase
+$aseconvert	models/powerups/instant/regen.ase
+$aseconvert	models/powerups/instant/regen_1.ase
+$aseconvert	models/powerups/instant/regen_ring.ase
+$aseconvert	models/powerups/instant/regen_ring_1.ase
+
+$exit
+
+//
+// maps
+//
+$maps test_box test_items mirror mirror2
+
+
+//
+// misc
+//
+$file q3default.cfg
+
+

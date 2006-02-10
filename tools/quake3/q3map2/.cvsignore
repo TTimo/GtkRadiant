@@ -1,0 +1,12 @@
+q3map
+*.d
+*.o
+*.bak
+*.BAK
+*~
+*.ncb
+*.plg
+*.opt
+*.log
+Debug
+Release

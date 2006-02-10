@@ -1,0 +1,47 @@
+# Included Doxygen Config file
+#---------------------------------------------------------------------------
+# Project name & version number
+#---------------------------------------------------------------------------
+PROJECT_NAME           = 
+PROJECT_NUMBER         = 
+
+#---------------------------------------------------------------------------
+# Where to put the output
+# Note: The images dir should be next to the created html dir within the
+#	output dir.
+#       eg;
+#       [Current Dir]
+#               L__[OUTPUT_DIRECTORY]
+#                      L__[html]
+#                      L__[images]
+#---------------------------------------------------------------------------
+OUTPUT_DIRECTORY       = ../GtkRadiant-doxygen
+
+#---------------------------------------------------------------------------
+# Where to read the sources
+# you can add more than one source...
+# INPUT                   = radiant/ \
+#                           tools/quake3/q3map \
+#                           tools/quake3/q3data
+#
+# Recursive is set on, so setting it to ./ (current dir) would read source
+# files recursively from the current dir down. (which would take a while)
+#
+# eg: To document just include, if the current directory is ../GtkRadiant/ 
+# then...
+#---------------------------------------------------------------------------
+INPUT                  = radiant/
+
+#---------------------------------------------------------------------------
+# Misc settings
+# TAB_SIZE     - sets the indenting for the inline source and the source 
+#                browser
+# INCLUDE_PATH - will include documentation for included files from other
+#                packages. You can specify more than one path the same as
+#                shown in the INPUT example Leave it blank if you don't want 
+#                this.
+# PERL_PATH    - path to the perl executable
+#
+#---------------------------------------------------------------------------
+PERL_PATH              = /usr/bin/perl
+

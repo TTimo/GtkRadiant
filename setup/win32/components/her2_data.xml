@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<component subdirectory="base">
+  <dir name="models">
+    <dir name="radiant">
+      <dir name="items">
+        <dir name="mana">
+          <dir name="defensive">
+            <dir name="full">
+              <file name="tris.fm"/>
+              <file name="!skin_def2.m8"/>
+              <file name="!skin_off2.m8"/>
+            </dir>
+            <dir name="half">
+              <file name="tris.fm"/>
+              <file name="!skin_def1.m8"/>
+              <file name="!skin_off1.m8"/>
+            </dir>
+          </dir>
+        </dir>
+        <dir name="weapons">
+          <dir name="pbow">
+            <file name="tris.fm"/>
+            <file name="!skin2.pcx.m8"/>
+            <file name="!skin.pcx.m8"/>
+          </dir>
+        </dir>
+      </dir>
+    </dir>
+  </dir>
+</component>

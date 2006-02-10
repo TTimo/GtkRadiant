@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<package name="Quake III Arena Example Maps" version="1.0.0" target="[ProgramFilesFolder]\Quake III Arena" code="dc5cba98-c701-4e73-8d12-c842c3fe44ce" license="..\license.rtf">
+  <feature name="Quake III Arena Example Maps" desc="This feature must be installed in your Quake III Arena folder.">
+    <feature name="Quake III Arena Maps" desc="Example maps, models and textures for vanilla Quake III Arena">
+      <component name=".\components\q3a_data.xml" root="..\..\games\Q3Pack"/>
+    </feature>
+    <feature name="Quake III Team Arena Maps" desc="Example maps, models and textures for Quake III Team Arena">
+      <component name=".\components\q3ta_data.xml" root="..\..\games\Q3Pack"/>
+    </feature>
+  </feature>
+</package>

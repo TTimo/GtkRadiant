@@ -1,0 +1,117 @@
+[General]
+Type=FILELIST
+Version=1.10.000
+
+[TopDir]
+file0=<<GTKRAD_DIR>>\ETPack\game.xlink
+file1=<<GTKRAD_DIR>>\ETPack\synapse.config
+SubDir0=docs
+SubDir1=bitmaps
+
+[docs]
+fulldirectory=
+SubDir0=docs\Level Designers Reference
+
+[docs\Level Designers Reference]
+fulldirectory=
+file0=<<GTKRAD_DIR>>\ETPack\docs\Level Designers Reference\tracemaps.html
+file1=<<GTKRAD_DIR>>\ETPack\docs\Level Designers Reference\appendix_a.html
+file2=<<GTKRAD_DIR>>\ETPack\docs\Level Designers Reference\appendix_b.html
+file3=<<GTKRAD_DIR>>\ETPack\docs\Level Designers Reference\appendix_c.html
+file4=<<GTKRAD_DIR>>\ETPack\docs\Level Designers Reference\arenafile.html
+file5=<<GTKRAD_DIR>>\ETPack\docs\Level Designers Reference\cabinets.html
+file6=<<GTKRAD_DIR>>\ETPack\docs\Level Designers Reference\campaignfile.html
+file7=<<GTKRAD_DIR>>\ETPack\docs\Level Designers Reference\commandmaps.html
+file8=<<GTKRAD_DIR>>\ETPack\docs\Level Designers Reference\commandposts.html
+file9=<<GTKRAD_DIR>>\ETPack\docs\Level Designers Reference\compiling.html
+file10=<<GTKRAD_DIR>>\ETPack\docs\Level Designers Reference\consolecommands.html
+file11=<<GTKRAD_DIR>>\ETPack\docs\Level Designers Reference\construction.html
+file12=<<GTKRAD_DIR>>\ETPack\docs\Level Designers Reference\contents.html
+file13=<<GTKRAD_DIR>>\ETPack\docs\Level Designers Reference\dualobj.html
+file14=<<GTKRAD_DIR>>\ETPack\docs\Level Designers Reference\enveffects.html
+file15=<<GTKRAD_DIR>>\ETPack\docs\Level Designers Reference\foliage.html
+file16=<<GTKRAD_DIR>>\ETPack\docs\Level Designers Reference\glossary.html
+file17=<<GTKRAD_DIR>>\ETPack\docs\Level Designers Reference\implicitshaders.html
+file18=<<GTKRAD_DIR>>\ETPack\docs\Level Designers Reference\index.html
+file19=<<GTKRAD_DIR>>\ETPack\docs\Level Designers Reference\introduction.html
+file20=<<GTKRAD_DIR>>\ETPack\docs\Level Designers Reference\movingbobj.html
+file21=<<GTKRAD_DIR>>\ETPack\docs\Level Designers Reference\objcameras.html
+file22=<<GTKRAD_DIR>>\ETPack\docs\Level Designers Reference\spawnpoints.html
+file23=<<GTKRAD_DIR>>\ETPack\docs\Level Designers Reference\speakereditor.html
+file24=<<GTKRAD_DIR>>\ETPack\docs\Level Designers Reference\splash.html
+file25=<<GTKRAD_DIR>>\ETPack\docs\Level Designers Reference\splinepaths.html
+file26=<<GTKRAD_DIR>>\ETPack\docs\Level Designers Reference\surfaceparms.html
+SubDir0=docs\Level Designers Reference\images
+SubDir1=docs\Level Designers Reference\styles
+
+[docs\Level Designers Reference\images]
+fulldirectory=
+file0=<<GTKRAD_DIR>>\ETPack\docs\Level Designers Reference\images\tracemap_red.jpg
+file1=<<GTKRAD_DIR>>\ETPack\docs\Level Designers Reference\images\3logos.jpg
+file2=<<GTKRAD_DIR>>\ETPack\docs\Level Designers Reference\images\arena.jpg
+file3=<<GTKRAD_DIR>>\ETPack\docs\Level Designers Reference\images\bspmenu.jpg
+file4=<<GTKRAD_DIR>>\ETPack\docs\Level Designers Reference\images\cabinet_1.jpg
+file5=<<GTKRAD_DIR>>\ETPack\docs\Level Designers Reference\images\cabinet_2.jpg
+file6=<<GTKRAD_DIR>>\ETPack\docs\Level Designers Reference\images\campaign.jpg
+file7=<<GTKRAD_DIR>>\ETPack\docs\Level Designers Reference\images\cmicon_cab.jpg
+file8=<<GTKRAD_DIR>>\ETPack\docs\Level Designers Reference\images\cmicon_con.jpg
+file9=<<GTKRAD_DIR>>\ETPack\docs\Level Designers Reference\images\cmicon_cp.jpg
+file10=<<GTKRAD_DIR>>\ETPack\docs\Level Designers Reference\images\cmicon_custom_1.jpg
+file11=<<GTKRAD_DIR>>\ETPack\docs\Level Designers Reference\images\cmicon_custom_2.jpg
+file12=<<GTKRAD_DIR>>\ETPack\docs\Level Designers Reference\images\cmicon_des.jpg
+file13=<<GTKRAD_DIR>>\ETPack\docs\Level Designers Reference\images\cmicon_spawns.jpg
+file14=<<GTKRAD_DIR>>\ETPack\docs\Level Designers Reference\images\commandmap_1.jpg
+file15=<<GTKRAD_DIR>>\ETPack\docs\Level Designers Reference\images\commandmap_2.jpg
+file16=<<GTKRAD_DIR>>\ETPack\docs\Level Designers Reference\images\commandmap_3.jpg
+file17=<<GTKRAD_DIR>>\ETPack\docs\Level Designers Reference\images\commandmap_4.jpg
+file18=<<GTKRAD_DIR>>\ETPack\docs\Level Designers Reference\images\commandpost_1.jpg
+file19=<<GTKRAD_DIR>>\ETPack\docs\Level Designers Reference\images\commandpost_2.jpg
+file20=<<GTKRAD_DIR>>\ETPack\docs\Level Designers Reference\images\commandpost_3.jpg
+file21=<<GTKRAD_DIR>>\ETPack\docs\Level Designers Reference\images\construct.jpg
+file22=<<GTKRAD_DIR>>\ETPack\docs\Level Designers Reference\images\dualobj_1.jpg
+file23=<<GTKRAD_DIR>>\ETPack\docs\Level Designers Reference\images\dualobj_2.jpg
+file24=<<GTKRAD_DIR>>\ETPack\docs\Level Designers Reference\images\objcameras_1.jpg
+file25=<<GTKRAD_DIR>>\ETPack\docs\Level Designers Reference\images\objcameras_2.jpg
+file26=<<GTKRAD_DIR>>\ETPack\docs\Level Designers Reference\images\singleteam_1.jpg
+file27=<<GTKRAD_DIR>>\ETPack\docs\Level Designers Reference\images\singleteam_2.jpg
+file28=<<GTKRAD_DIR>>\ETPack\docs\Level Designers Reference\images\speaker_1.jpg
+file29=<<GTKRAD_DIR>>\ETPack\docs\Level Designers Reference\images\speaker_2.jpg
+file30=<<GTKRAD_DIR>>\ETPack\docs\Level Designers Reference\images\speaker_3.jpg
+file31=<<GTKRAD_DIR>>\ETPack\docs\Level Designers Reference\images\speaker_4.jpg
+file32=<<GTKRAD_DIR>>\ETPack\docs\Level Designers Reference\images\speaker_5.jpg
+file33=<<GTKRAD_DIR>>\ETPack\docs\Level Designers Reference\images\splash.jpg
+file34=<<GTKRAD_DIR>>\ETPack\docs\Level Designers Reference\images\splinepaths_1.jpg
+file35=<<GTKRAD_DIR>>\ETPack\docs\Level Designers Reference\images\splinepaths_2.jpg
+file36=<<GTKRAD_DIR>>\ETPack\docs\Level Designers Reference\images\splinepaths_3.jpg
+file37=<<GTKRAD_DIR>>\ETPack\docs\Level Designers Reference\images\tankstuff.jpg
+file38=<<GTKRAD_DIR>>\ETPack\docs\Level Designers Reference\images\tracemap_alpha.jpg
+file39=<<GTKRAD_DIR>>\ETPack\docs\Level Designers Reference\images\tracemap_blue.jpg
+file40=<<GTKRAD_DIR>>\ETPack\docs\Level Designers Reference\images\tracemap_green.jpg
+SubDir0=docs\Level Designers Reference\images\common
+
+[docs\Level Designers Reference\images\common]
+fulldirectory=
+file0=<<GTKRAD_DIR>>\ETPack\docs\Level Designers Reference\images\common\trigger.jpg
+file1=<<GTKRAD_DIR>>\ETPack\docs\Level Designers Reference\images\common\caulk.jpg
+file2=<<GTKRAD_DIR>>\ETPack\docs\Level Designers Reference\images\common\clip.jpg
+file3=<<GTKRAD_DIR>>\ETPack\docs\Level Designers Reference\images\common\clipmissile.jpg
+file4=<<GTKRAD_DIR>>\ETPack\docs\Level Designers Reference\images\common\clipweapmetal.jpg
+file5=<<GTKRAD_DIR>>\ETPack\docs\Level Designers Reference\images\common\clipweapwood.jpg
+file6=<<GTKRAD_DIR>>\ETPack\docs\Level Designers Reference\images\common\hint.jpg
+file7=<<GTKRAD_DIR>>\ETPack\docs\Level Designers Reference\images\common\ladder.jpg
+file8=<<GTKRAD_DIR>>\ETPack\docs\Level Designers Reference\images\common\lightgrid.jpg
+file9=<<GTKRAD_DIR>>\ETPack\docs\Level Designers Reference\images\common\nodraw.jpg
+file10=<<GTKRAD_DIR>>\ETPack\docs\Level Designers Reference\images\common\origin.jpg
+file11=<<GTKRAD_DIR>>\ETPack\docs\Level Designers Reference\images\common\skip.jpg
+file12=<<GTKRAD_DIR>>\ETPack\docs\Level Designers Reference\images\common\terrain.jpg
+file13=<<GTKRAD_DIR>>\ETPack\docs\Level Designers Reference\images\common\terrain_sand.jpg
+file14=<<GTKRAD_DIR>>\ETPack\docs\Level Designers Reference\images\common\terrain_snow.jpg
+
+[docs\Level Designers Reference\styles]
+fulldirectory=
+file0=<<GTKRAD_DIR>>\ETPack\docs\Level Designers Reference\styles\style.css
+
+[bitmaps]
+fulldirectory=
+file0=<<GTKRAD_DIR>>\ETPack\bitmaps\splash.bmp
+

@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<component subdirectory="ZHLT">
+	<file name="ZonersHalflifeTools.html"/>
+	<file name="CCXX32.dll"/>
+	<file name="clipnode.map"/>
+	<file name="default.hull"/>
+	<file name="dumpbrush.pl"/>
+	<file name="dumpent.pl"/>
+	<file name="dumpline.pl"/>
+	<file name="hlbsp.exe"/>
+	<file name="hlcsg.exe"/>
+	<file name="hlrad.exe"/>
+	<file name="hlvis.exe"/>
+	<file name="netvis.exe"/>
+	<file name="netvis.html"/>
+	<file name="numberbrush.pl"/>
+	<file name="ripent.exe"/>
+	<file name="stripnulents.pl"/>
+	<file name="tfcabbrev.pl"/>
+	<file name="zeditor.wad"/>
+	<file name="zhlt.css"/>
+	<file name="zhlt.wad"/>
+	<file name="ZHLTIntro.html"/>
+	<file name="ZHLTProblems.html"/>
+	<file name="ZHLTReference.html"/>
+	<dir name="pics">
+		<file name="coplanar-1.gif"/>
+		<file name="coplanar-2.gif"/>
+		<file name="max_portals_on_leaf.gif"/>
+	</dir>
+</component>

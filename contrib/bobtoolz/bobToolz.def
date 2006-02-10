@@ -1,0 +1,8 @@
+; plugin.def : Declares the module parameters for the DLL.
+
+LIBRARY      "bobToolz"
+; DESCRIPTION  'bobToolz Windows Dynamic Link Library'
+
+EXPORTS
+    ; Explicit exports can go here
+	Synapse_EnumerateInterfaces @1

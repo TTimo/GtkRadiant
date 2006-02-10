@@ -1,0 +1,1795 @@
+GtkRadiant
+(c) 2000-2006 Id Software, Inc.
+additions by qeradiant.com and Loki Software, see Credits
+
+GtkRadiant and all associated map/level design tools are unsupported products. Use at your own risk. 
+
+Bug reports and feedback:
+http://www.qeradiant.com/bug.shtml
+
+When submitting bugs, please send a full system/video configuration list 
+and a detailed duplication sequence. 
+
+NOTE TO NIGHTLY BUILDS USERS:
+When nightly builds are released, we don't update this ChangeLog file
+systematically. You should be watching the developer ChangeLog instead, which
+is available online:
+https://zerowing.idsoftware.com/svn/radiant/GtkRadiant/trunk/docs/developer/CHANGES
+
+GtkRadiant-1.5.0 Changes
+------------------------
+
+  - File formats:
+      q1/q2 .pak
+      q1/hl .wad
+      doom3/quake4/hl .map
+      doom3 .md5/.def/.mtr
+      quake4 .guide
+  - Undo:
+      Very fast, even with large changes.
+      Uses minimum memory, allowing very long undo queues.
+      All scene modifications now undoable, including:
+        Texture name/shift/scale/rotate on brushes and patches.
+        Vertex/edge/face manipulation.
+        Cloning, deleting, pasting, importing.
+        Entity key/value setting.
+  - Selection:
+      Per-polygon selection for all selectables, including:
+        Vertices, edges, faces, brushes, patches, models, entities.
+      Per-polygon area-selection for all selectables.
+      Edge/Vertex/Face mode automatically resets to Object mode when selection is cleared.
+  - Editing:
+      Maya-style tools for translate (w) and rotate (r):
+        Axis-constrained translate/rotate in 2d and 3d views.
+      Editing uses lazy evaluation to make movements smoother in complex scenes.
+      QE-style editing tool (q) provides old style editing.
+  - Renderer:
+      Fast view-frustum culling, replacing cubic-clipping.
+      Batched state-sorted rendering:
+        Fast rendering of large scenes with many textures
+        Fast rendering of detailed mesh models.
+      Realtime lighting preview. 
+  - Scene Graph:
+      Directed Acyclic Graph backend:
+        Allows Maya-style "instancing" of sub-scenes (aka prefabs).
+          Edit one instance, other instances show updates in real time.
+        Maps can be loaded as misc_model.
+  - Outliner (aka entity lister):
+      Shows a tree-view of the current scene:
+      Non-modal window, updates automatically when scene graph changes.
+      Allows inspection/manipulation of scene graph.
+        Brushes can be moved between entities, and entities moved between maps.
+      Sorted by name.
+  - Entity Inspector:
+      Non-modal window, updates automatically when selection changes.
+      Displays GUI to edit certain keys, based on entity-definition.
+  - Surface Inspector:
+      Non-modal window, updates automatically when selection changes.
+      Editing shortcuts: escape reverts current values to previous state, enter commits current values immediatly.
+      Applies shader seperately from shift/scale/rotate.
+      Shortcuts are active when surface inspector is visible/focussed.
+  - Brush:
+      Supports selecting and editing multiple vertices per brush.
+      CSG subtract algorithm does not suffer from false-positive intersection bug.
+      Face mode:
+        Selection/manipulation of multiple faces in 2d and 3d views.
+      Robust and fast B-Rep generation:
+        Safe manipulation of large brush selections.
+        Fast updates for brush operations on large maps.
+  - Patch:
+      Fast rendering.
+  - Filters:
+      Objects are filtered when their filterable attributes change.
+  - Map Load/Save:
+      Fast loading of large maps.
+      Loading of maps without worldspawns.
+      Quantised plane coordinates.
+  - Preferences:
+      Preferences saving is atomic so that it cannot be corrupted by a crash during save.
+      All user-editable config files and per-user preferences are created in %appdata%/RadiantSettings/
+      Engine path stored in per-game preferences file and editable in preferences dialog.
+      Changing game name and engine path does not require a restart.
+  - GUI:
+      Instant window updates (used to be 40fps limited).
+      Fast startup/shutdown.
+      Automatic repositioning of separators in 4-way-split mode.
+      Console prints all undoable commands (and parameters) when executed and undone.
+      Status bar shows mode information.
+      New preferences layout, unused settings removed.
+      Rearranged menus:
+        File = new/open/import/export
+        Edit = manipulate scene hierarchy and selection
+        View = toggle entityinspector/entitylist/surfaceinspector/camera/xy
+          edit camera/xy parameters
+          filters/hideshow/region
+        Modify = transform scene elements
+        Build = bsp menu
+      Upgraded win32 gtk2 version from 1.3 to 2.4, providing stability/cosmetic improvements.
+  - 2d view:
+      Limited scroll speed when mouse moves outside window.
+  - Textures module:
+      Fast texture cache lookups.
+      Gamma change without restarting.
+  - Installer:
+      New xml-scripted windows installer using Windows-Installer tech (.msi).
+      Linux version released as RPM package.
+      To avoid deletion on uninstall, shaderlist.txt is generated from default data in the application directory and copied to the game directory.
+  - Saving
+      The map is only saved if the scene has been modified since the last full save.
+      Autosave/Snapshots are only saved if map has been modified since last full save.
+      Autosave saves as <mapname>.autosave.map.
+  - Debug
+      New assert/error messages as popup windows.
+      Full stack-trace for assert/error on win32.
+
+
+
+GtkRadiant-1.3.14 Changes
+-------------------------
+
+  ydnar:
+  - clipper tool: select a patch mesh, and the clipper tool plane will be set to the patch's mesh (default shortcut X)
+  EvilTypeGuy:
+  - texture find and replace menu can be used to select faces by matching texture (not only replacing textures anymore)
+    so you can apply fit and translate commands to the whole set
+    if you have brushes selected, it will select only within the selected brushes set
+  SCDS_ReyalP:
+  - new plugin: background image in the 2D view. scan your layout, use it as a background to build the structure..
+  - some fixes to the Z floating window
+  - added to ET and RTCW: hullcaulk, hintskip, and subtlehint (see below)
+  - fixed to CenterXYView shortcut, correctly bound to Shift+Control+Tab now  
+  - added shortcuts to change the texture window scale
+    TextureWindowScaleup (Alt + Delete)
+    TextureWindowScaledown (Alt + Insert)
+    also fixed various oddities with the texture window behaviour
+  Nurail:
+  - more updates to quake2 and heretic2 support. BSP monitoring supported now.
+  ydnar:
+  - q3map2 2.5.11
+    - New: added support for _skybox entities to generate "portal sky"
+      surfaces in games w/o native support (Quake 3). _skybox entities have
+      3 keys: _scale (default 64), and angle/angles (for rotation of the
+      skybox relative to the map)
+    - New: added -skyfix switch to BSP phase as a workaround hack for
+      the black GL_CLAMP border on skybox edges on ATI (and newer nvidia)
+      video cards. Note: unnecessary in ET or JA
+    - New: Added _anglescale to light entities for scaling angle attenuation.
+      Use a small value (< 1.0) to lessen the angle attenuation, and a high
+      value (> 1.0) for sharper, more faceted lighting
+    - New: Added _lightmapscale support to misc_model entities
+    - Custom shaders (external lightmaps, styles) will not be generated
+      if the find/replace text cannot be found
+    - Tightened up light culling epsilon from 1.0 to 0.125 to stop certain
+      surface lights from being incorrectly culled (thanks RasputiN!)
+    - Fixed bug where small 3 and 4 sided brush faces were getting fanned,
+      adding triangle/vertex counts
+    - Moved to Visual Studio .NET, with aggressive optimizations enabled
+    - Cleaned up missing image warnings
+    - Parsing images out of shader stages if not found explicit/implicitly
+    - Loads Enemy Territory implicitMap images if editor/light image not found  
+  Raven:
+  - new sample maps for JA media
+  - MP SDK had a bunch of editing tools. Packaged those up with our JA media as well
+    look under Tools/ in the GtkRadiant game pack install
+    (default location C:\Program Files\LucasArts\Star Wars Jedi Knight Jedi Academy\GameData\Radiant-1.3)
+
+common/hullcaulk
+This is exactly the same as caulk, just has a different editor image so people
+using the 'caulk hull' method of mapping can see at a glance what is part of the
+hull and what is part of the detail brushes. It is up to the mapper follow the
+convention.
+
+common/hintskip
+This is exactly the same as skip, with 'hint' in the name so brushes with mixed
+hint and skiphint faces will filter with the 'hints' filter. I didn't add a new
+image for this, since it is functionally identical to skip.
+
+common/subtlehint
+hint without the surfaceparam hint. A lower priority hint which is sometimes
+useful if you don't want the splits from your hint spreading out all the way to
+block bounderies. You can mix it freely on a brush with normal hint and skip.
+
+GtkRadiant-1.3.13 Changes
+-------------------------
+
+  AstroCreep
+  - cleaned up shaders scripts for JA
+  BirdDawg
+  - ASE submaterial/subobject code
+  Anders & TTimo
+  - OSX setups
+  Nurail
+  - Heretic 2 support
+  - Q2 and Her2 tools now have BSP monitoring, and ability to run engine after
+  compile
+  SCDS_reyalP
+  - fix to jpegs having garbaged alpha channel ( + ydnar fixes )
+  - update to ET .def
+  - fix floating window mode startup crash
+  Spog
+  - patch for 16 bit GL, win32 16 bit desktops were either crashing or rendering incorrectly
+  Arnout
+  - LWO support in picomodel
+  - support for 'vertical flipped' TGAs
+  - fixed multiple monitor support, use the 'start on primary monitor' option in prefs
+  - fixed mouse on win32 going crazy when radiant non-fullscreen or with hidden taskbar
+
+q3map2 2.5.10 (2003-10-22)
+
+- New: Lightwave model support (beta) courtesy of RR2DO2
+- New: Heretic 2 FM model support courtesy of Nurail
+- Re-enabled vertex cache friendly triangle reordering with fix
+- Disabled triangle reordering on certain surfaces, including autosprite
+  shaders due to visual errors
+- Fixed bug in radiosity where sorting of lights by style took forever.
+  Thanks ReBoOT!
+- Fixed bug in sun lighting code where maps too far off the origin would
+  not be properly it by sun or sky light. Thanks MindLink!
+- Entity causing a leak will be printed and selected in Radiant if BSP
+  monitoring is enabled. Requested by heeen
+- Fixed odd bug causing 10x slowdown in lighting in some maps. Should
+  be back to 2.5.7 performance. Also fixed a couple old bugs related to
+  autosprite shader (point) lights and backsplash lights not being styled
+  or setup correctly
+
+
+GtkRadiant-1.3.12 Changes
+-------------------------
+
+	SPoG
+	- Changed gl widget to request maximum available Z buffer precision (fixes artifacts on some cards)
+	- fix texture subsets
+	ydnar
+	- q3map2 2.5.9 http://shaderlab.com/q3map2/
+	- fixed long BSP commands causing a crash
+	- remove Ctrl+X, you have to exit through the File menu now
+	Anders Gudmundson
+	- general work on OSX port
+	TTimo
+	- make 'move into worldspawn' work again
+	- fixed bobtoolz plugin causing HL startup failure
+	- fixed inspector in camera plugin (RTCW/ET)
+  - support PNG images with an alpha channel for JA
+	James Monroe,  Mike Majernik & TTimo
+	- Jedi Academy game pack content and win32 installer
+	Nurail
+	- Q2 code / Q2 game pack
+	Hydra
+	- fixes to HL/CS support
+	- support for sprites on entities is enabled for all games, not only HL. See the wiki for details:
+	  http://www.qeradiant.com/wikifaq/index.php?Adding%20Sprites%20on%20Entities
+
+GtkRadiant-1.3.10 Changes
+-------------------------
+
+  SplashDamage
+  - ET game pack merged into trunk
+  Spog & TTimo
+  - Gtk2 as seen in 1.3.9-test becomes the official version
+  TTimo
+  - ET Linux setup
+
+GtkRadiant-ET Changes
+---------------------
+
+  SplashDamage
+  - plugins porting (prtview, bobtoolz)
+  - ET media and config elements
+  - custom splash screen per gamepack
+  TTimo
+  - ET setup code
+
+GtkRadiant 1.3.9 Gtk2 Test
+--------------------------
+
+  Spog
+  - update the source to compile against Gtk2 API, corresponding setup updates to install the Gtk2 stuff.
+
+GtkRadiant 1.3.8 Changes
+------------------------
+
+  David Olofson & TTimo
+  - fix for buggy ATI drivers. Likely this doesn't fix all ATI issues, but fixes a rendering bug related to polygon backfaces
+    the workaround has to be enabled in Edit > Preferences, in 2D display/rendering tree node
+  Riant
+  - fix to png textures not showing in SoF2 mode. was a bad config file
+
+GtkRadiant 1.3.7 Changes
+------------------------
+
+  ydnar
+  - q3map2 2.5.4 - see changelog.q3map2.txt
+  Riant
+  - several fixes to the SoF2/JK2 support, added missing files
+  - working project template - BSP menus working for q3map2 on all games
+  LordHavoc
+  - work on q1 support. no gamepack release yet
+  TTimo
+  - fix to texture compression support
+  - fixed models not drawing on win32. was a setup bug
+  
+GtkRadiant 1.2.11 Changes
+-------------------------
+
+  ydnar
+  - added Misc > Colors > Themes > Maya/Max/Lightwave Emulation theme
+  TTimo
+  - run GtkRadiant from a network share with multiple users (win32 only):
+    Preferences > Game Settings allow to configure the editor to save preferences in user directory (on win 2k/XP)    
+  ydnar & TTimo
+  - q3map2 integration and distribution with GtkRadiant
+    FIXME: the q3map2 ChangeLog is not included here
+    q3map2 is installed by default with GtkRadiant 1.2.11
+    the BSP menus have new q3map2 options
+    all current games are supported by q3map2: Q3 RTCW JKII SoF2 STV:EF
+    BSP monitoring is supported
+  - fixed rare texturing bug, texture showing fine in editor and broken after compile on angled faces
+    fix is in q3map2, needs matching code in GtkRadiant - this is toggled by a preference item in BSP Monitoring menu:
+    http://www.qeradiant.com/wikifaq/index.php?Texturing%20Compatible%20with%20q3map2
+  seaw0lf & ydnar & Arnout
+  - new picomodel library - used in q3map2 and GtkR, provide load and rendering functionality for model formats
+  EvilTypeGuy & TTimo
+  - many changes to the Linux build binaries. ABI is different, stdc++ statically linked
+    we expect the new Linux binaries to be much more compatible on different platforms
+  - linux build loads libGL.so.1 by default  
+  James Monroe & RR2DO2 & TTimo
+  - added in-editor light envelope drawing.
+    Outer circle is max envelope, inner fullbright radius, center is effective light radius
+    Optional classic mode (see prefs dialog) emulates the similar drawing from Rituals and Ravens tools 
+    (not q3map correct, easier for the level designer to understand/legacy)    
+  Arnout
+  - area selection in 2d view:
+      Alt+LMB (LMB=left mouse button): area select
+      Alt+Ctrl+Shift+LMB             : additive area select
+      NOTE: with Alt+multidrag enabled in preferences, you only have additive
+  - vertex mode edit, vertex select (reminder: use V for vertex edit):
+      regular drag for select, Ctrl+drag for additive select. Works both in 2d view and 3d
+  - added 'angles' support for models misc_model/misc_gamemodel. (yaw-pitch-roll vector angle rotation)
+    note: this is supported in q3map2 only
+  - upped MAX_TEXTUREDIRS to 256 (from 128)
+  - added 'Paste to Camera' which pastes the contents of the clipboard to the current camera origin (shortcut: Alt+V)
+  - added centerview functionality to 4 window mode. Ctrl+tab will focus on the selection, or if non existant, on the camera.
+  - added botclip filter (filters *botclip* and *monsterclip*)
+  - added outline style cycling, cycle between z buffered outlines and selected colour rendering (shortcut: j)
+  - added menu Misc > Colors > Selected Brush (camera) - configure the color
+    of selected surfaces in the camera view
+  - third coordinate for clip points now gets set to the center of the  selection
+  - changed arbitrary rotation dialog to accept negative angles as well
+  - changed texture alignment dialog to accept values up to 2 decimal points
+  - changed entity inspector so that tab doesn't clear the epair value field anymore,
+    so it retains the value while jumping to it.
+  - paint select in camera view:
+    press shift and move the mouse over the camera view to paint over brushes you want to select
+    use the preferences menu to configure: shift key is default, 'classic mode' is Ctrl+Alt
+  - misc_gamemodel drawing
+  - new plugin toolbar
+  TTimo & Arnout
+  - with clip or caulk filtered out, you could select invisible faces on partly drawn brushes
+    this is bug #556, there are still some issues with it
+  TTimo
+  - added cascading to the entity menus. JKII NPC_* are all showing
+  - mark map modified on editing entity keys
+  - guard junk.txt path between " " (non monitored BSP)
+  - preferences: mouse AngleSpeed setting was getting clobbered. fixed and upped the max values
+  - RTCW setup: detect GOTY install	from registry and use it as default path
+  Riant
+  - more work on texture compression, more compression options (S3TC support)
+  - IS scripts maintenance, media updates for JKII/SoF2/STVEF
+  Michael Schlueter
+  - fixes to Linux setup scripts
+  SCDS_reyalP
+  - RTCW town_*.shader
+  EvilTypeGuy
+  - fixed his very own memory leak in the texture code, great improvement to the memory usage
+
+GtkRadiant 1.2.10 Changes
+-------------------------
+
+  SCDS_reyalP
+  - misc RTCW .def updates
+    see http://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=526 for details
+
+  Michael Schlueter
+  - misc GL code warnings fixes, improvements to the GL font code
+  
+  TTimo
+  - removed the "light 1" parameter from the shader files (RTCW & Q3)
+    this is an old/unsupported map compiler flag that was meant for shader flares
+    recent q3map versions produce .bsp that will crash RTCW/Q3 when used
+  - pk3 loading is case insensitive (loads .pk3 and .PK3)  
+  - fixed a MAX_POINTS_ON_WINDING overflow situation in q3map (when reporting the error through debug stream)
+  - don't straffe when using Ctrl+Shift(+Alt)
+
+  Riant && TTimo
+  - Soldier Of Fortune II support:
+    - complete game pack for Sof2 editing, latest tools, sample maps from Raven
+    - png support in GtkRadiant
+  - texture compression support. This requires OpenGL 1.3 drivers. Can be disabled with a preferences setting  
+    the textures are manipulated in a compressed format on the card, memory bonus is about 1/3 improvement
+    Sof2 textures are eating up a LOT of memory, texture compression brings an improvement, but it's still very heavy on mem
+    there are still some potential improvements regarding memory footprint, this will be for later versions
+    
+  Riant
+  - Star Trek Voyager: Elite Forces media/scripts updates  
+  - Jedi Knight II: Jedi Outcast media/scripts updates, contains the new elements from the second official SDK
+
+  RR2DO2
+  - camera plugin for RTCW, support for .camera files editing
+    the plugin allows to manipulate camera paths and splines
+  - RTCW VFS is filtering the files depending on game mode
+    Single Player mapping will ignore mp_*.pk3
+    Multiplayer mapping will ignore sp_*.pk3  
+
+  djbob
+  - fix to spawnflags getting corrupted when multiple entities are selected
+  
+
+GtkRadiant 1.2.9 (general update + Star Trek Voyager : Elite Forces) Changes
+----------------------------------------------------------------------------
+
+  Riant
+  - Star Trek Voyager : Elite Forces game pack, STVEF-specific code tweaks
+  
+  SCDS_reyalP
+  - fixed bobtoolz vis viewer to work with RTCW
+  - RTCW entities update (various fixes, some ents colors, sizes and documentation)
+  
+  TTimo
+  - several fixes to region compiling, should be fully working again
+  - if a model load fails, the default box is bigger and easier to select
+  - JKII update: the default texture scale is configured per-game, JKII has correct default now
+  - Q3 entities update: correct trigger_hurt spawnflags
+  - RTCW media update: misc .shader updates, and updated some .md3
+    there are still things to be looked at, cf. http://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=539
+  - removed broken print XY view menu item. Use a screen capture tool for now  
+  - fixed broken game spawning after compilation in RTCW mode
+  - changing texture window scale no longer changes selected brushes texture    
+  - workaround for empty gtk error box on non-english Windows installs (was i18n problem)
+
+GtkRadiant 1.2.8 (Jedi Knight II release) Changes
+-------------------------------------------------
+
+  Riant & TTimo
+  - improved the editor console logs when compiling in non-monitored mode
+  - JKII game pack, JKII specific tweaks
+
+GtkRadiant 1.2.7 Changes
+------------------------
+
+  Spog
+  - fixed a regioning bug, radiant loosing track of some entities outside the region (#479)
+  - fixed flush and reload affecting texturing of selected brushes
+  - added undo for pasted/cloned brushes
+  
+  Gef
+  - fixed bug in velocity sliders (Edit > Preferences > 3D View) (#217)
+  - fix File/New Project for mods so it doesn't fail if the dir exists (bugzilla: #459)
+  - add Linux-isms for New Projects & read/write permissions...
+    note: for a total conversion, basepath needs to be manually set
+  - prevent opening multiple internal shader editor dialogs
+  - added preference for using a custom shader editor
+  - set horizontal scrollbar to be automatic instead of never for entity keyval list (bugzilla: #4)
+  - added a call to Select_Reselect() in XYWnd->OnViewEntity() to make sure its modifying the 
+    current selection (bugzilla: #436)
+  - fixed entity dialog passing events through to main window (bugzilla: #454) return values
+    were backwards
+  - patching in the .pfb extension adding stuff (bugzilla: #259)
+  - fixed thickened patches not being grouped (bugzilla: #226). this was supposed to be happening
+    anyway, the entity create code was called before the patches were selected
+  - setting the sel_mode accordingly when (i)nverting selection, verts were being drawn when 
+    they shouldn't have been
+  - fixes to Curry and PrtView (proper prefs load/save, curry logo on Linux)
+  - fixed patches losing their shader if outside region when calling flush/reload 
+  - added filtering on unselect for newly created brushes/entities
+  
+  Gef & TTimo
+  - made sure textures with spaces in name are never loaded from tex dirs (warning if bad textures detected),
+    never save them to .map, avoid map corruption situations.
+  
+  EvilTypeGuy
+  - added back brush numbers and entity numbers in the .map (#457)
+  - RTCW skies.shader update
+  
+  TTimo
+  - correct default prompt location for file operations (map load/save, etc.) .. works for mods again
+  - some mod setup documentation: http://www.qeradiant.com/faq/fom-serve/cache/220.html (Q3UT2 as example)
+  - File > Check for update command, sends you to the qeradiant.com website with the version information
+    the easiest way to check if a new version is available
+  - cleanup of the project settings dialog. Removed a lot of unused / outdated / confusing settings we had
+    there
+  - fixed the Shift+Click shortcut to edit shaders. Fixed crashes and behaviour in the internal shader editor.
+    on Win32, either use internal editor, or use win32 .shader association to open
+    on Linux, Gef added prefs to select custom shader command
+    NOTE: we don't have a free text editor for win32 that allows to jump to a given line after you open
+    the file. If anyone has this around, please send the info along.
+
+GtkRadiant 1.2.6 Changes
+------------------------
+
+  TTimo
+  - fixed the shader scripts so that the sky in escape1 is ok again (new skies.shader)
+  - safer find and replace (denies malformed shader names)
+  - shift + middle mouse button works again
+  - Linux: now distributing a new/experimental bspc for RTCW
+    please report problems you may have with this version
+
+  ydnar
+  - fix to q3map vis stage code, should be all good now
+    see http://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=417 for details
+    
+  Hydra
+  - improved snap to grid in gensurf plugin  
+
+GtkRadiant 1.2.5 Changes
+------------------------
+  
+  TTimo
+  - drawing dlight and lightjuniors like regular lights with a small shape change
+  - from RR2DO2 and ydnar:
+    fixing a q3map vis bug
+    vis is correct now, but we know that it introduces some instability and potential crashes
+    see http://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=417
+  
+  EvilTypeGuy & RR2DO2
+  - added the ability to strafe up/down/left/right while freelook is active
+  
+  Gef
+  - fixed target/targetnames collisions
+    entities being cross-linked when copied have their target/targetname
+    updated to maintain the links
+  - find brush dialog window has correct title
+  - linux setup tweaking
+
+GtkRadiant 1.2.4 Changes
+------------------------
+
+  ydnar
+  q3map 1.2.4-y2
+
+    New features:
+    - -nopatchfix argument. This disables lightmap patch fixes and makes a map suitable for lighting with -vlight.
+    - Degenerate patches are treated like broken brushes. They are ignored, warned about, and selected in Radiant if you ran with the -connect option (or from the BSP menu). This was what was causing the "0 valued axis" error some people were experiencing.
+
+    New entity keys:
+    - "_lightmapscale" key for brush entities (worldspawn, func_*). This lets a mapper scale the lightmap samplesize per-entity. For large constructions, 2.0 or 3.0 is a fine value, and keeps BSP size down and compile times low. For those areas you want to have high-detail shadows, make a func_group and use a value of 0.25 or so. It will scale the samplesize value for the surface's shader (default 16) or the -samplesize argument.
+    - "modelscale" and "modelscale_vec" keys for misc_models (1.0 = default). This was for proper RTCW support and is available for Quake 3 maps as well. Lets you scale up map models in the world, getting around the MD3 size limitation. The next build of GtkRadiant has SPoG's code to support this in-editor so you can see what effect a scale has.
+    - Flare surfaces are now supressed from the BSP. They serve no purpose other than add to the vert & surfacecount in a BSP. These surfaces were created silently when a shader has "light 1" or "q3map_flareshader X." Use the new -flares switch when BSPing your map to have them emitted.
+
+    Changes:
+    - GtkRadiant 1.2.4-nightly version increment.
+    - Full WolfSDK style lighting enabled with -game wolf, including lightJuniors. This includes linear lights by default (no angle attenuation) and support for the additional RTCW "fade" and "angle" keys, and spawnflag changes, including q3map_nondynamic on light entities. This may require maps being constructed for RTCW with the current toolset to change their light entities. Sorry. :) Note, Wolf-style lighting only works with -light, and not -vlight.
+    - Vertex light stitching now uses a near-ambient light check for dark vertexes as opposed to lower-than-average fixups. This preserves some shadow detail better while getting the buried verts lit properly. Comments encouraged.
+    - Surfaces' samplesize are now stored in the BSP. This change makes BSPs generated from this version incompatible with all other q3maps. The upside is that -samplesize N is no longer necessary on the -light or -vlight stage. This feature is necessary to support the "_lightmapscale" key.
+    - Additional PVS optimizations in lighting.
+
+    Fixes:
+    - Will compile for RTCW properly (1.2.1-y12 didn't).
+    - No more sparklies where fog meets brush faces. They're split properly now.
+    - Crash bug in vlight fixed.
+    - Vertex light fixups/stitching is considerably faster.
+    - Vertex light fixups ONLY stitch faces with lightmaps. For pointlight surfaces you're on your own.
+    - Better snapping logic when merging nearly-coincident vertexes on complex brush windings.
+    - Bug where the .prt file had some bogus or nearly-borked portals. They're cleaned up like everything else now.
+    - A few stupid bugs in path initialization. Should work better. Also includes TTimo's fixes to my code so it would work properly on Linux.
+    - RR2DO2's PCX loading patch for alphamaps. This bug was manifesting itself in the form of offset or incorrect samples being used on terrain entities.
+    - A ton of other minor little fixes here and there.
+
+  EvilTypeGuy
+  - fixed broken 'load shaders at startup' preference
+
+  djbob
+  - EClass_ForName fix if malformed name
+
+  SPoG
+  - fixed misc_model "modelscale" and "modelscale_vec" support
+
+  TTimo
+  - ability to do nightly setups again on win32
+
+GtkRadiant 1.2.3 Changes
+---------------------------
+
+  djbob
+- bobtoolz update  
+
+  ydnar - TTimo
+- fixes to q3map and radiant's bsp command expansion
+  support mod directories correctly  
+
+  TTimo
+- removed the 'refresh' command from plugins menu. it is broken right now  
+- various fixes to the plugins`
+
+  Hydra
+- fixed the loading of texture menu 
+  works correctly if 'shaderlist.txt only' is disabled
+
+  Gef - Michael Schlueter - TTimo
+- putting together everything for a linux release (setup scripts)
+- fixes to GenSurf texture requests code
+
+  SPoG
+- added modelscale key check to misc_model entity
+- added angle key check to eclassmodel class
+- fixed bugs in BP (brush primitives) writing and reading
+- fixed gensurf to create faces/patches with correct textures
+- fixed md3 models missing in 2D views
+
+GtkRadiant 1.2.2 Changes
+---------------------------
+
+1.2.2 was born dead
+
+GtkRadiant 1.2.1 Changes
+---------------------------
+
+General changes:
+
+Modular architecture. During startup the editor gets configured to load specific modules, 
+which direct it's functionalities. The immediate consequence is the ability to support
+several games in a more easy and clean way. The editor core installs in a central location
+(on win32, C:\Program Files\GtkRadiant), and installs it's game specific modules and
+programs in 'game packs' folders (C:\Program Files\Return To Castle Wolfenstein\Radiant
+and C:\Program Files\Quake III Arena\Radiant typically).
+
+List of the main modules and their functionalities:
+- map module, read/write from/to file and memory
+- shaders management module
+- filesystem module
+- models loading, editing and display (.md3 currently)
+- image formats loader
+
+Return To Castle Wolfenstein is the first additional game supported by the 1.2 architecture,
+along with Quake III Arena / Quake III: Team Arena
+
+Specific changes and fixes:
+
+  AstroCreep
+- common shaders, cleaned up wolf shader scripts, and general Wolf pack testing
+
+  djbob
+- updated 1.2 plugin API, making bobtoolz compatible with 1.2
+- View > Filter > Structural (hide all except detail brushes)
+
+  Wolfen
+- updates to the Q3Radiant manual, links page and setup instructions  
+
+  EvilTypeGuy
+- general Wolf support (.qe4 template) and bug fixes (on linux also)
+- fixed patch toolbar prefs settings
+- menus can be configured detachable or not from prefs
+
+  ydnar
+- changes to q3map, rough list:
+    Quake 3 and RTCW support through a -game switch with the same binary
+    light code speedups and improvements
+    radiosity!
+    new common shader 'lightgrid'
+  NOTE: see the q3map document for more specific info
+  
+  MrElusive
+- q3map vis code speedup
+- radiosity in vlight
+
+  RR2DO2
+- general bug fixes
+- q3map terrain blending fix for >5 layers
+- View > Filter > LightGrid (hide lightgrid brushes)
+- improved multimonitor support 
+  (some preferences options to ensure you get accelerated OpenGL on both monitors)
+
+  SCDS_reyalP
+- q3map realloc bug in terrain code
+
+  Gef
+- brand new notebook layout for preferences dialog  
+- general maintenance of the builds on linux
+- setup code for 1.2 on linux, corresponding enhancements to Loki Software's setup tool
+
+  Michael Schlueter
+- help on the linux setup  
+  
+  Spog
+- improvements to the camera rendering code
+- md3 module (load / display / edit of the models)
+- q3map uses a protected malloc that will exit cleanly with an error if we run out of mem
+  (95% of the q3map 'bugs' are just that, running out of mem)
+- map module (.map read/write)
+
+  TTimo
+- complete rewrite of the win32 setup code to match the 1.2 specifics
+  building setups on demand, selecting the game packs that should be included
+- change of the linux prefs path storage to ~/.radiant/<version>/
+- BSP monitoring network stream is versioned so that we don't risk 
+  non-matching q3map and radiant connecting to each other.  
+- RTCW specific project settings dialog  
+- Wolf spawning, use correct binary depending on SP and MP mapping mode
+- game packs can customize the editor's Help menu through game.xlink files
+  
+GtkRadiant 1.1.1 Changes
+---------------------------
+
+  TTimo
+- distributing q3data.exe and q3data.qdt in the win32 setup
+  (q3data is the .ase -> .md3 converter)
+- fixed installer problem on win9x
+- entity inspector fix, will focus on the current entity in the list
+- fixed GDI leak affecting text widgets, specially the console and the entity inspector
+- removed some unneeded stuff from Gtk libraries
+- nightly build system
+- fixed known sleep/wake issues
+- .def files are now scanned from the scripts/ directory
+- changed the way we handle paths to use long filenames everywhere
+  (in project settings, misc_model paths ..)
+- Fixed -onlyents bug in q3map / origin brushes
+- added general mouse wheel code and texture window
+- added "notta" and "notq3a" documentation to the TA Mapping manual
+- fixed entities.def on shootable doors and buttons
+- added targetShaderName documentation to shader manual
+- NEW TA Teams manual in the documentation
+- fixed select all of type bug (made behaviour more consistent)
+- fixed win32 Gtk keyboard bug Ctrl + [ and ]
+- texture sub-menu cascading (when they get too big)
+
+  TTimo & MarsMattel
+- added general mod support (configured from the project settings)
+
+  SPoG
+- rendering improvements:
+  Added variable LOD for PatchMeshes based on curvature
+  Added LOD-matching to eliminate gaps between patches with mismatched LOD
+  Added opengl lighting (three infinite light sources)
+  Added dynamically calculating vertex normals for PatchMeshes, for gl lighting
+  Added decoding/transforming md3 vertex normals for gl lighting
+  Various rendering speedups
+- Fixed texture shift/scale on LOD'd PatchMeshes
+- Removed Patch_InsertDelete() - not functional
+- Added CV lattice to selected patches
+- Added Per-polygon patch selection
+- Added Per-polygon misc_model selection
+- Changed default "patch subdivisions" to 4
+- Fixed .wal texture support, searches for .wal extension if .tga and .jpg fail
+  NOTE: requires a "pics/colormap.pcx" file to obtain a palette from
+- Added variable default texture scale in preferences (ini key: TextureDefaultScale)
+
+  djbob
+- fixed Radiant highjacking win32 copy/paste
+- proper md3 filtering in misc_model dialog
+- better MAX_POINT_ON_WINDING error handling in q3map debug stream
+- if you use face selection on a globally selected brush, it will switch
+  to face selection, and deselect the single face.
+- fixed surface inspector "fit" bug
+- added patch splitting to bobtoolz
+- handling of Node With Unbounded Volume (NWUV) errors in q3map debug stream
+- remember last key/pair in entity dialog for easy "apply again"  
+
+  Gef
+- added a button to use func_group or not in curves cap dialog
+- GL extensions getting too long: using a text box in About dialog
+- added a prefs switch for Kyro II GL driver bug workaround (point handles)
+
+  RR2DO2
+- noclip-type camera movement:
+  documented in the section "New functionalities in GtkRadiant" 
+  of the Radiant manual (see local installation or on the website)
+
+
+GtkRadiant 1.1-TA Changes
+-------------------------
+
+djbob:
+- bobtoolz plugin is now included in the standard setup
+
+Spog:
+- Fixed "Fix entity-target/targetname collisions" to use next available tN if tN, else use next available name_N
+- Fixed ctrl+G SnapToGrid, now never creates degenerate face-planes
+- Fixed setting an origin for multiple brushes to use origin point of fixedsize entities
+- Fixed mirroring and rotation of fixedsize entities including misc_model
+- Fixed undo/redo on multiple entities to link brushes to entities correctly
+- Fixed "view > entities as.." menu to display correct default setting
+- Fixed "view > entities as.." toolbar button to show menu
+- Changed selection-area of edge/vertex control handles to stay constant when zoomed
+- Fixed undo on ctrl+G SnapToGrid
+- Fixed origin drift on saving misc_model with null md3Class
+- Fixed creation of cap for 'Bevel' type patches
+- Fixed inverted cap being created for 'Endcap' type patches
+- Fixed inverting patches on mirror operations
+- Added snap-selected-to-grid affects only the patch points selected
+- Fixed texture quality slider adjustment
+- Changed Patch Inspector Horizontal/Vertical increment to use pixel values (default 8)
+- Changed Patch Inspector Horizontal increment to subtract from S values but not T values
+- Changed Patch Inspector Stretch spinner to do something useful
+- Changed Patch Inspector Stretch default amount to 0.5
+- Changed Arbitrary Rotation dialog to reset rotation spinner values to 0 on Apply
+- non-monitored BSP compiling: sending q3map output to temp/junk.txt !! stops output in console window !!
+- Fixed Patch_Naturalize to calculate T values backwards, correcting texture vertical flip
+- Changed patch row/column Insert/Remove to interpolate/extrapolate from existing curves
+- Fixed point selection on patches when new points are added
+- Fixed redundant edge/vertex handles being created for patch brushes and fixedsize brushes
+- Fixed refusal to activate brush vertex-drag mode if any patches are selected
+- Partly fixed Undo picking up patch point drags when no points are selected
+- Fixed behaviour of vertex selection on patches
+- Fixed patch point colours in textured mode in cam window
+- Changed patch point selection to update selection pool on each selection click
+- changed: Curve > matrix > redisperse > rows/columns
+    treat a patch as independent 3x3 sections when doing redispersal
+- rewrote patch cap texturing functions to be more reliable
+- fixed clipper-caulker bug
+- fix 2pt-clip orientation problems
+- overall changes and improvements to the brush filtering and view/hide code
+- fixed some grid drawing code, camera widget drawing (2D views), and min/max world coordinates bugs
+
+Maj:
+- new splash screen
+
+Hydra:
+- *.pfb filter in prefab load dialog
+
+^Fishman/Hydra:
+- gtk-gensurf 1.05
+  snap to grid
+  checkbox for adding terrain key to func_group
+- gtk-gensurf 1.0
+  Now the user is allowed to make terrains bigger than +/-8192
+  New Green/Black theme for the preview window.
+  Line antialiasing for the preview window.
+
+MrElusive:
+- bspc 2.1h
+  modelskins.txt and headskins.txt files
+
+Astrocreep:
+- clean shaders for Quake III and Quake III: Team Arena
+
+TTimo:
+- brush primitives only: texture adjustments commands (shift+arrows) are interpreted relative to the camera view
+- improved the conversion prompt when there's a reguar/BP texturing conflict
+- trying to print out more information if parse error occurs while loading a map
+- texture locking in BP mode for axis flip and axis rotation
+- better undo in BP mode
+- fenris #2866, added a pref to turn on/off name conflicts resolution, rewrote the whole algorithm
+- fenris #2823, fixed patch and brush dragging in 0.25 0.5 grids
+- fenris #2867, limiting the amount of "spawnflags" "0" appearing in entities
+- Added back texture increments follow grid
+- Raised the brush max size to world size
+- Fixed vertex edit prefs broken (Vertex editing splits faces / doesn't)
+- New Gtk file selector on win32 (the same as earlier added to linux version)
+- Fixed shader blending on terrain maps bug
+- Added undo for patch redisperse rows and patch redisperse cols commands
+
+leo:
+- Fixed the minus key on numeric keypad being ignored
+- Fixed sleep mode not restoring windows correctly
+- Fixed some minimize/restore issues on floating views mode
+- Added an option to keep the Z and XY views on the same window in floating views mode
+- Fixed elapsed time displayed by q3map
+- Fixed q3map is crash if a .shader file is referenced in shaderlist and not found
+- Minimize all windows when the main window is minimized in floating views mode
+- Added new filter system based on FAKK2 Radiant
+- Fixed View/Show/Entities menu not being checked correctly
+- Fixed "Invert Selection" command selecting hidden brushes
+- Fixed q3map crash when trying to load missing pcx files
+- Fixed q3map not finding .bmp files for the terrain alpha map
+- Fixed Surface Inspector spin buttons rate (#2776)
+- Fixed some shortcuts not appearing on menu items (#2786)
+
+Jonas:
+- Using RC file to tweak the font size on win32 (gtkradiantrc), looks much nicer now!
+
+GtkRadiant 1.1-TA-beta Changes
+------------------------------
+
+- moved the game selection to the project settings dialog. You need to set the 
+game mode to "Quake III: Team Arena" to enable Team Arena support in the editor
+
+leo:
+- Fixed pk3man plugin not finding the toolbar bitmaps
+- Fixed double clicks being considered 2 mouse clicks
+- added virtual file system to Radiant and q3map (Team Arena support)
+- Changed max number of shader files parsed by q3map to 128
+- Updated manual images 
+- Fixed bug with the texture window scrollbar range
+- Fixed crash on Shift-A (Select all of type)
+- Fixed texture window not scrolling to the top when a new directory is loaded
+- Fixed crash after map compilation if the map leaked
+
+TTimo:
+- fix multiple edge dragging crash
+- terrain entity parsing speedup
+- fixed some sleep/wake code (crashes and wakeup problems on models)
+- fixed the clamping problems when flipping or mirroring patches
+- added 0.5 and 0.25 grids
+- added undo to Select_CompleteTall Select_PartialTall and Select_Inside
+- two new commands in the drop down menu:
+  "move into worldspawn" will move selected brushes to worldspawn and eventually delete entities which end up with no brushes
+  "merge brushes" will merge brushes into an entity (from worldspawn or from another entity)
+- merged Radiant 200f changes in
+    bigger map size
+    added ctrl-alt-LBUTTON: multiple brush select without selecting whole entities
+- fixed MAX_NETMESSAGE error in monitoring
+
+RR2DO2:
+- Clusterportal filtering ('View > Show > Show clusterportal' toggle)
+- fix to CSG Merge in the menu drop down (menu was there, command not hooked)
+- Added bug report link to help menu
+- patch to q3map, added option -custinfoparams for custom surface flags (mod makers usage)
+this is documented in the Terrain Manual ("New or Revised Q3map Shader Commands")
+
+leo and MrHyde:
+- gtk-based gensurf
+
+GtkRadiant 1.1 Changes
+----------------------
+
+leo:
+- Fixed copy text from the console (win32)
+- inspectors and Z window always floating on top
+- Added ungroup command to right click menu
+- Fixed GL error on win32 startup
+- Added splitters to Entity dialog (customizable layout)
+- Fixed shortcuts.ini parsing bug
+- Fixed editpad crash if editpad not present (win32)
+
+TTimo:
+- HTML versions of Q3Radiant manual, Shader manual and Model manual
+- added Escape key to hide the entity inspector
+- S and Shift+S now act as toggles on the inspectors
+- fixed DestroyCursor error
+- new option in prefs: clipper caulks faces
+- more plugin interface for BSP frontends, plugin SDK additions
+- fix to the pointfile not drawing in 2D views
+- MAX_BUILD_SIDES error reported in q3map debug stream
+
+GtkRadiant 1.1 beta Changes
+---------------------------
+
+MrElusive:
+- bspc 2.1c, MAX_MAPFILE_PLANES bumped up (needed on big maps)
+
+G_Dewan:
+- fix to BSP menu order getting mixed up
+- fix to bogus noshader error message in q3map
+- suppressed winsock2 dependency, only requires winsock1 now
+- improved q3map, reducing minimal memory footprint by about 45Mb
+
+leo:
+- Fixed q3map crashing if visbytes is greater than the maximum allowed
+- fixed texture window not scrolling when last texture is large
+- Fixed q3map Makefile
+- Fixed +/- numpad keys not working in win32
+- Fixed Alt shortcuts not working in win32
+- fixed prefab path and user ini in preferences dialog
+- fixed add/remove bsp items in project settings dialog
+- fixed some console not working in view #3
+- fixed warning when exiting in views #2 #3
+- Fixed patch inspector not showing after it has been closed
+- Fixed load window position bug (saved pos greater than screen resolution)
+- Fixed selection nudge bug
+- fixed Z window not shrinking small enough in floating windows mode (win32)
+- Improved entity windows layout
+- Added 'Reset' button to entity dialog
+- added LOD for patches, see in prefs for the LOD you want to display on patches
+- no more DOS dialog box under windows, Gtk errors and warnings are
+redirected to the console
+- remember size/position of the entities dialog
+- new 128 and 256 grid
+
+- added shift+rclick+mouse move to zoom in/out of the view
+(way cool feature! check it out!)
+
+TTimo:
+- fixed the Region commands, "Region > Set brush" is working
+  Region uses the camera as spawn point.
+- updated quakev2.qe4 with -vlight options
+- added checks in q3map to prevent crashing on allocating a winding too big.
+- improved snapshots behaviour, doesn't snapshot non-modified maps
+- improved the CycleCapTexturePatch command, now cycle across the 3 planes only 
+and works on multiple patches in one shot
+- fixed the help menu, Help > Help or F1 will try to open the Q3Radiant manual 
+(if you have office installed) (Help > Links also fixed)
+- surface inspector allows to change increments steps and stores them in 
+registry. General behaviour of the surface inspector has been reworked. Undo 
+works better on the surface inspector.
+- shift+arrows shortcuts now match the increments from the surface inspector
+- button 'Match Grid' in the SI to set the increment to current grid
+
+- debug stream between GtkRadiant 1.1 and q3map:
+As with the Alpha version, q3map connects to Q3Radiant to report on it's 
+progress. The progress reporting code has been enhanced with an XML stream. If 
+your map has errors that need geometry information to be fixed, Radiant can help 
+you out. To get a grip on this feature, load baseq3/maps/museum.map and compile 
+it (with BSP monitoring turned on of course).
+
+- cleaned the entity inspector window, better layout management
+
+- two new items in the View > Show menu:
+the X, Y and Z axis have been assigned colors (Z: Red, X: Green, Y: Blue)
+Show outline draws a colored outline around your view, helping you know what 
+view is currently active.
+Show Axes will draw a small axis base in the upper left corner
+
+GtkRadiant alpha version Changes
+--------------------------------
+
+MrElusive:
+-q3map 1.0q: fixed a bug in q3map that sometimes cause mapobjects not to be lit
+
+G_Dewan:
+-more arrows drawn on entities with relevant angle information
+
+Fishman:
+-antialiased lines
+
+leo & TTimo:
+- based on Q3Radiant 202
+- patched q3map with network code
+- shortcut keys are now in shortcuts.ini
+    the syntax has changed a bit, no spaces between the '='
+    see shortcuts.sample
+- no longer using the registry, settings are stored in radiant.ini and savedinfo.bin
+    in Radiant directory
+- project settings templates:
+    the project settings file format has changed a bit.
+    it has version information now, and the setups come with a new quakev2.qe4 file
+    the project files are true templates, Radiant will read them and then store actual
+    project settings it uses in baseq3/scripts/user0.qe4 user1.qe4 etc.
+- new compilation monitoring
+    GtkRadiant comes with a modified version of q3map that reports to GtkRadiant through
+      the network. You get the output of q3map in the console window. And the compiling
+      errors can be processed (currently it detects leaks)
+- sleep mode:
+    before running Quake 3 Arena to playtest your maps, you can put Radiant to sleep:
+    manually with File > Sleep command
+    automatic if you compile and set "Activate sleep mode when running the engine"
+
+Q3Radiant 202 Changes
+---------------------
+
+MrElusive:
+-q3map 1.0p
+-Tool options.txt (q3map command-line doc)
+
+G_Dewan:
+-added functions to the GL interface for PrtView
+   GL plugins now get the camera position information
+
+TTimo:
+-fixed sound and model assignment. project files are supposed to be written with
+   short path names. If it's not it might break. Added fixes in sound and model
+   assignement to go around the problem. Too late before next release to try
+   adding automatic clamping to short path name of the project file.
+-high color is always on, it's a remnant from Q2
+-some fixes to find the default project file and interpret it when it's a template
+-proper error handling in the JPEG library, no longer crashes on progressive jpegs
+-added a "shaderlist.txt only" option to the texture menu, will display only the
+   .shader files listed in shaderlist. Workaround for the 127 texture count limit.
+   (saved with prefs)
+-when building texture menu, Radiant will dump in the console the list of .shader files
+   that are not referenced in shaderlist.txt
+-texture menu shows .shader files that don't have an associated texture directory
+-storing "don't select curves" and "don't select models" from the toolbar in the registry
+-alpha channel: some buggy textures have a nearly empty alpha channel and they might be
+   invisible if used in a shader script with qer_trans. Will now show up blank-transparent.
+   Best is to fix the alpha channel of the texture by saving it as 24bits instead.
+   Or disable alpha channel support in the prefs (added a new checkbox)
+   WARNING: disabling alpha channel might break curry on some shaders
+   about the WARNING: .. has empty alpha message:
+     this means Radiant detected on these buggy textures, alpha channel will be completely ignored
+-speed improvements: added hash tables, improves map load (Map_BuildBrushData) and
+   texture find/replace. More or less evolves in log n with size of the map instead of previous n^2
+-fixed some notepad spawning crashes + will be better at finding shader definitions
+-added "HOME" keyword when parsing user prefs keyboard shortcuts for HOME key (heh)
+-fixed duplicate HideSelected command in the Help > Command list, added proper ShowHidden to the command list
+-fixed a crash when max texture directories reached (currently 127)
+-added a log file, turned on/off from prefs (default is off)
+   automatically turned on after a startup crash (Radiant.pid)
+
+Q3Radiant 201 Changes
+---------------------
+
+MrElusive:
+-updated q3map, fixes a -vlight bug
+TTimo:
+-fixed a bug in texture submenus
+-installer defaults to putting an empty registry.ini in the tools directory
+   (will solve some setup problems)
+
+Q3Radiant 200 Changes
+---------------------
+
+Id:
+-bspc 2.0
+-cfgq3.c config file with bspc
+-q3map 1.0m
+Spog:
+-updated default project file to handle new -vlight param in q3map
+TTimo:
+-added surfaceparm hint to common/hint shader in the editing media
+-added back the Texture > Directory list... command
+-collapsing texture directory items into submenus when a common root is found
+-fixed a Region > Set selected brushes bug (the kind that only happens to MrElusive)
+-added back Selection > Invert (shortcut I) .. (it disappeared at some point)
+-fixed U shortcut for Textures > Show in use
+-fixed the texture subset filtering in the texture window
+-added Select / Don't select models toggle in the toolbar
+-FIT command for BP mode
+-Region > SetSelectedBrushes to shift+ctrl+R
+  NOTE: ICQ will intercept the shortcut key .. if someone has a solution for this let me know
+-disabled the qer_nocarve check for CSG-MERGE operations, you can merge hint brushes now
+-added a temporary Radiant.pid file to intercept crashes during the startup sequence and prompt for a registry cleanup
+  (some bogus registry settings might cause a crash before entering the interactive mode)
+-clip filtering works same way as caulk, if hide clip will still display non-clip faces on clip brushes
+-console keeps scrolling
+-Ctrl+H shortcut toggles show/hide Hint brushes
+-199->200 stability fixes:
+  fixed Shift+A SelectAllOfType on patches
+  fixed a crash in Flush & Reload shaders
+  fixed a crash File > New Map with selected faces
+  fixed Vertex manipulation crash
+  sanity checks: don't allow textures with spaces into map files, nor color brushes
+    (reducing the parseEntity: { not found errors)
+  blocking classname editing from the edit field of the entity inspector
+-Undo:
+  fixed Undo crashes
+  better Undo on fixed size entities (like misc_models and weapons)
+  some bugs in undo create bogus worldspawn entities that corrupt the map.
+    Loading several worldspawn will merge them in the primary one.
+    Radiant will drop supiscious worldspawn entities at save time
+-find/replace bug fixes (still needs some work in BP mode)
+-fixed broken View > Show In Use
+-fixed installer problems
+G_Dewan:
+-hash code in PAK library, speed improvement for Map_BuildAllDisplayLists
+-fixed a crash on exit (weird MFC bug, see #107030
+-fixed crash in vertex editing
+
+Q3Radiant 199 Changes
+---------------------
+
+Mickey:
+-PakMan plugin
+G_Dewan:
+-GL_MODELVIEW in camera rendering for PrtView depth queuing
+-fixed the texture window raising after a resolution change
+-PrtView plugin
+TTimo:
+-light intensity prompt when you create a light (Tim Willits feature request)
+-fixed some crashes in Undo code
+-engine path lookup, Radiant uses same code as q3map to guess the engine path and the basepath
+-fixed crash in "vertex editing splits faces"
+-loading .md3 and skins from .pk3 files, fixed various .md3 loading issues
+-case sensitivity fixes for shader names
+-IGL interface allows drawing in the camera view
+-textures sorted in the texture view
+-clear patch overlays hooked to Ctrl+L
+-fixed a Curve > Matrix > Transpose bug on non-square patches
+-removed some old unused shortcuts
+-new FitTexture shortcut Shift+B, will raise the surface inspector and perform face and patch fitting
+-fixed alpha channel bugs, re-enabled qer_trans
+-CSG Merge shortcut as Shift+M
+-patch creation uses workzone
+-fixed sfx/comprscreen/letters loading
+-textures / shader code rewrite, based on a new CShader class
+  -texture robbing bug fixed: two shaders relying on the same texture are treated properly
+  -will provide basis for other games support, and better shader editing functionality
+  -loading a texture directory will: load all the shaders in that directory, and load all
+    the remaining textures that have no shader.
+  -shaders parsing: when several definitions for a shader exist, first is used
+-better GetLastError message processing on error
+-fixed Fit command in surface inspector for BP mode
+-prefs choice "vertex editing splits faces"
+-3 points clipping and brush creating, third coordinate in 2D view is based on the "work zone"
+
+q3radiant 182-197 Changes
+-------------------------
+Editor (TTimo):
++ textures are now loaded with their alpha channel. was a required feature for
+  the Curry plugin. Some issues have surfaced with 32bit TGA files having an 
+  empty alpha channel. (the textures were totally transparent in the camera view)
+  these files are buggy and need replacing by either a 24bit TGA, or a proper
+  alpha channel
++ shortcut keys:
+  fixed L shortcut for entity list
+  fixed M shortcut for map info
+  fixed Ctrl + \   for cubic clipping
+  fixed Ctrl + Shift + K for next leak spot
+  fixed R shortcut for mouse rotation
++ brush grouping: not functional yet. Needs Brush Primitives (BP) to be turned on.
+  basic infrastructure for grouping is done
++ fixed View > Show > Show angles checkbox
++ fixed BP file load / save and loading old format from BP mode.
++ fixed q3map to read BP map format
+
+Plugins API (TTimo):
++ Patches in/out
++ Entities in/out
++ Added GL bindings to IGL interface
++ New IBSPFrontend interface to override the BSP menus
++ New IMessaging interface for message broadcasting to plugins
++ New IPluginEntities interface to allow plugins to render 
+  and interact in the Radiant windows
++ New IShaders interface for more textures / shaders support
++ Fixed GL context issues, texture binding would fail if binded to a plugin's GL context
+
+q3radiant 180-181 Changes
+-------------------------
+-q3map will read jpegs from disk
+-remove junk.txt before very bsp, fixes a crash
+-fixed gamma changing crash
+-fixed thickening multiple patch crash
+-fixed hollowing patch crash
+-reworked how keys are mapped
+-key binding should work again 
+-ctf spawn points show angles
+
+q3map v1.0a changes
+-------------------
+-q3map will read jpegs from disk
+-fixed crash on texure loads of less than 4K ( jpeg only )
+-added version info
+
+bspc v1.7 changes
+-----------------
+see the bspc.txt file
+
+
+
+Known Problems
+--------------
+-Prefs are NOT retained when moving to 179 (or later)  from earlier versions ( than 179 )
+-Windows are all stacked when switching to floating window mode. You must manually align them as you like.
+-You must manually run the bot bsp'r if you want bots to be able to run around
+-I have not tested plugins extensively with this version but will do so over the next day or so.
+-Need to clean up several small memory leaks
+
+
+
+Info
+----
+The editor/tool install MUST be installed in the same directory as Quake 3 Arena. This means if you installed Quake 3 Arena in c:\quake3\ you MUST point the tool installer at that path.
+
+If you want bot support in your maps, you must manually run the bot bsp tool. It is in the \YourQ3InstallPath\Tools\ directory and is called 'bspc.exe'. After you have produced a bsp, you can execute it like:
+
+bspc -bsp2aas c:\quake3\baseq3\maps\mymap.bsp
+
+The editor and included q3map support a new feature called brush primitives. This provides per vertex coordinates for texturing as opposed to per face shift/rotate/scale values. This is a good thing. This is not enabled by default ( you can do so in the project dialog ) but it is still considered experimental AND it changes the map format. A plugin that also supports it will be available soon on www.qeradiant.com. We will be moving to this new format soon but currently use the old format. Consider brush primitives "subject to change" but we are going this direction.
+
+Once installed properly, you should be able to open q3dm1sample.map, choose "BSP - Fast Vis" and within a few minutes you should be able to run around in that map. Remember you must have sv_pure set to 0 to load up maps that do not exist in the pk3 file.
+
+If you shift click on a shader ( white framed texture in the texture window ) AND you have EditPad installed and available on the path ( or the Tool directory ) it will open up EditPad and position the cursor on the shader definition within the shader. EditPad can be had at http://www.jgsoft.com/ , it is a nice replacement for Notepad.
+
+
+
+
+174-179 Changes
+---------------
+-The color coding for failed texture loading has changed, blue and black for failed textures, red and black for failed shaders.
+-clip/hint brushes default to NOT shown
+-default to bilinear display mode
+-default to 50% texture window scale
+-bsp text is piped to console and text file
+-Project dialog tab order is correct
+-Project dialog no longer truncates entries ( it still needs work )
+-Drastically reduced memory consumption 
+-Skins are now cached and only loaded once
+-Mirroring on X or Y axis properly flips misc_models and angles
+-PK3 Support
+-JPG Support
+-Plugins can now load files from pk3 files ( transparent to the plugin )
+-Shaders can now load from pk3 files
+-Failed shaders no longer load a "notexture" image
+-Shaders are loaded from shaderlist.txt instead of *.shader
+-Shader texture loading is deferred based on All, Common or None rules. New Pref based on this.
+-Models can now load from pk3 files
+-Fixed Win98 Copy/Paste bug
+-Fixed Win98 BSP execution bug
+-Project info dialog sucks less
+-Properly handle long path names ( embedded spaces mainly ) when calling q3map.
+-Better bsp execution, output is piped to dos window and console
+-Q2/Q3 Pref handling works
+-Finished Installation 
+-Better defaults all around
+-Better window resizing, defer'd decision to default to floating window resizing.
+-Fixed crash on loading new projects
+-Seperated block allocator and actual size allocator to reduce memory overhead
+-Failed textures only try to load once
+-Failed MD3's only try to load once
+-Cleaned up shader loading
+-Editor loads without requiring information from the user the first time ( assuming it was installed in the right place )
+-Fixed case comparision problems with some PK3 file contents
+-Fixed allocation bug when cleaning out PK3 files on project reload
+
+Build 173
+
+Changed
+- Copy/Paste now uses the Win32 mechanism. This greatly speeds up editor to editor copy/paste.
+
+
+Build 172
+
+Added
+- Hide and Unhide brush(s). Hide ( View Menu and 'H' ), hides the selected brushes. Shift-H shows anything previously hidden.
+- Fit functionality in the Surface dialog no longer fubars the FIT exiting the dialog via OK or APPLY.
+- Copy/Paste now functions between two open copies of the editor
+- Textures | Show In Use now pays attention to Patches.
+- The editor will now properly find a default project based on the assumption it lives in the \quake3\q3radiant\ path
+
+
+In Progress
+- Pref Dialog now has functioning Q3 and Q2 options.
+- ASE Model load. Should be bug free in another evening.
+- ZIP support
+- Model Plugins for supporting various model types ( MD4, TIKI, MEN, ASE ) This is essentially moving all of the model preview, interaction, and animation to a plugin to clean the code up.
+
+Deferred
+- The new file format changes and new texturing is finished but based on the probable ship date(s), I dont feel comfortable mucking with the map format at this time. This code will be used in the new editor or can be rolled out once Q3 is gone.
+
+
+
+
+Build 169-171
+Added
+- Control + Shift + X toggles crosshairs
+- Added Fit functions to surface dialog. These are more test stuff than anything as the new texturing capabilities coming with the new file format will allow much more versatile texturing.
+
+In Progress 
+-New file format changes, true ST texturing for brushes, automatic conversion. This will happen soon.
+
+
+Build 168
+Added
+-Control + Texture Click to apply texture applies with proper scale on angled faces.
+
+Build 167
+---------
+Fixed
+-Crash when edge dragging brushes with more than 1K points (total)
+
+
+Build 166 changes
+-----------------
+Added
+-Shift-C cap current patch
+-Shift-A will now highlight all patches and caps based on 1. the currently selected face or 2. the current texture if there is no brush or face selected. If a brush is selected it still searches and highlights based on entity class.
+
+Build 165 changes
+-----------------
+Added
+-Texture lock status information, on the right edge status pane, L:move,rotate status. so L:MR means both move and rotate are selected, L: R means just rotate, etc.. Shift-R and Shift-T are hotkeys (always have been) for the locking. Help|Command List has a list of all bound keys.
+
+Changed
+-Curve primitives moved from a submenu back to the root.
+
+Fixed
+-Crash when pressing 'v' with large number of brushes selected.
+
+
+Build 164 changes
+-----------------
+Added
+-Brush | Primitive | Sphere - With grip snapping on, this produces some pretty odd faces, not sure what they will look like in game as I have not run one through the tools. If you turn off grid snapping they are constructed very well but as soon as you turn it on and then save/load everything gets snapped. This shows that the current implementation of grid snapping is pretty useless if used as a toggle. I am looking into some painless ways to deal with this (from a users point of view)
+
+Changed
+-The current selection is no longer de-selected when a texture directory is loaded.
+-The default increment for texture manipulation on patches was change to 0.05 from 0.10. You can also type in much smaller or larger increments into the dialog which will then be used.
+
+Fixed
+-Crash when using the clipper on a curve.
+
+
+
+Build 161 changes
+-----------------
+Added
+-Edit | Load Prefab... This was there but it now uses .pfb as the default extension for prefabs. MAKE SURE and set the full prefab path you want to use in prefs.
+-Edit | Save selection as Prefab... This saves the current selection as a prefab. Defaults to the pref'd prefab location and .pfb extension.
+
+I am working on a preview window that will be used for these and misc_models. Look for that in a few days.
+
+I also discussed grouping (i.e. func_groups) with John a visit or so ago and the current plan is to add key/val pairs to brushes and patches and do away with func_groups. This will allow a lot of flexibility for grouping (hiearchial, named things) as well as other areas too. I will be presenting the overall plan to John soon and if we go with that then this will allow the prefabs to be grouped problem etc.
+
+
+
+Build 157 changes
+-----------------
+Fixed
+-misc_model bounding box size on intitial creation
+-copying/pasting a misc_model did not update the active edit entity
+-misc_models will not continually try to load if the MD3 is not found
+
+Added
+-Origin drawing on misc_models, this is what is snapped to grid 
+-Pref to turn off 'Show Shader' checkbox
+-Show Shader checkbox to prefs
+-Shift-A with a selected face selects all brushes that 'contain' that faces texture 
+
+Known
+-Assigning a new model to a rotated misc_model screws the bounding box up
+
+Build 156 changes
+-----------------
+Fixed
+-Texture replacement bug when regioning.
+
+Build 155 changes
+-----------------
+MAJOR changes internally with this version. Make sure everything is backed up. There should not be anything destructive in it but this is a good precaution. There may still be some memory leaks from the new patch storage stuff, those will be addressed in 156.
+
+Changed
+-Patch storage, no longer fixed size, unlimited patches.
+
+Fixed
+-Undo, should now work in many more cases, and with patches. (this has been tested the least)
+-Cap texturing. Worked in my test cases. If you get a cap that does not texture properly I added
+|a key combo for cycling the axis face it textures against. Ctrl+Shift+N does this. 
+
+Added
+-OpenGL Lighting, turn it on via the view menu. Provides consistent shading/preview between brushes/patches
+-New vertex handling, not enabled at present. Still tweaking.
+-SHIFT-A selects all entities based on the current selected entity.
+
+Build 154 changes
+-----------------
+Fixed
+-Another instance of entity copy/crash across maps.
+
+Build 153 changes
+-----------------
+Changed
+-"sound" to "noise"
+-Show Entities toggle does not fool with func_group'd stuff
+
+Build 152 changes
+-----------------
+Fixed
+-Copy/Paste crash
+-Copying brushes across a new map load no longer continually copies them on each subsequent new map
+
+
+Build 151 changes
+-----------------
+Added
+-Shift clicking a shader in the texture window now spawns "EditPad" and places the cursor at the apporpriated place.
+
+-Patch Inspector (Shift-S) allows access to all patch data and dups surface patch handling. Only works with one patch at a time. If mutliples are selected it uses the latest. This is not quite finished but works.
+
+-Sound player in the Sound Open Dialog (entity window)
+
+Fixed
+-Crash when 'Capping' a brush.
+
+Fun Stuff in progress
+- MD3 -> Patches. Drop an entire MD3 as a grouped set of patches.
+
+Build 150 changes
+-----------------
+Added
+-Texture show all command.
+|Behaviour is as follows:
+| 1. Show in use, shows in use.
+| 2. Show all, shows everything.
+| 3. Showing a particular path, only shows textures in that path. Show All or In Use 
+| can be used to un-narrow the view.
+
+Ctrl-A is the show all hotkey.
+
+
+Build 147-149 changes
+---------------------
+Fixed
+-misc_model entity preview bug
+-Texture show in use now works properly
+-a few shader issues
+
+
+Build 146 changes
+-----------------
+Fixed
+- Copy/Paste entities across maps crash
+- A ton of memory leaks
+
+Added
+- Shift-TAB works in bend mode
+- Pointfile is removed on file saves
+
+Build 145 changes
+-----------------
+Fixed
+- misc_models no longer shift during save/load
+- misc_models copy/paste correctly
+- misc_models paint when first assigned
+- assigning a new model name to misc_models works
+
+Added
+- Shaders have white border in texture palette
+- New shader test code based on the fact that shaders are not directory oriented. On by default, to return
+| to the old method, turn "Shader Test" off in prefs and restart. This behaviour loads all of the shaders
+| at load time and provides the ability to turn off shader display in the palette. The editor MUST FIND
+| qer_editorimage in order to work properly with these (this is true for the old stuff too). This should 
+| fix the shader xref problems.
+
+
+Build 139 changes
+-----------------
+Fixed
+- MD3's are now origin'd properly with their bounding boxes
+- Plugin texture load bug
+
+Added
+- Texture quality slider (prefs). This can drastically reduce memory and increase speed at the expense of visual quality.
+- Shader support for MD3's, proper shader is pulled per surface (assuming it is tga)
+- Multple MD3's can be assigned on a per entity basis. Seperate them with a ';'
+| i.e. model=models/players/medium/visor/head.md3;models/players/medium/visor/lower.md3; etc.
+- Added 'frame=' specifier (0 based) to entity preview to use a particular frame for preview
+| This is still a bit fubar'd
+- Subdirectory map support ala Raven
+- 'color' entity setting ala Raven
+- Shader 'qer_editorimage' textures are now load deferred until their parent texture directory is loaded
+- Full Plugin support
+- You can now override surface dialog names with a plugin (not much use for q3)
+
+Changed
+- After assigning a model or sound, focus is given back to XY
+- If you right click and add a misc_model, the entity window is automatically
+| switched to and the add model dialog is activated
+- Models no longer try to load if they fail once
+- Prefs layout. Still ugly.
+
+
+Build 138 changes
+-----------------
+Fixed
+- qer_editorimage behaviour
+
+Build 136-137 Changes
+---------------------
+Added
+- qer_editorimage flag to shader parsing
+- md3 support for entities 
+- md3 support for misc_model <- this works but it is a cluster fuck of code
+| the code tries to pick up the same name for a skin (in the same path)
+| grid snapping is not happening, i need to fix this
+| some models (like pentagram1.md3) appear to be OFF as far as their constructed origin
+| others (all others that i tried) are correct
+| Free rotation does not work for these but the entity rotation stuff works fine
+- Model... button in entity window for assigning model=value to current entity
+- Sound... button in entity window for assigning sound=value to current entity
+
+
+Build 134 Changes
+-----------------
+Added
+- qer_nocarve flag
+- qer_trans flag use 'qer_trans sometransvalue' marks a shader as transparent
+- patches draw transparent based on shader information
+- default fog setting changed from 0.15 to 0.35
+- Plugin menu added (non functional yet)
+- Fonts default to standard windows gui font for improved readibility
+- Textures associated with a shader have [] around the name
+- Shift-clicking a texture associated with a shader brings up the shader in notepad
+
+Changed
+-Max brush size bumped to 8192 (Brian Hook for testing), did not test with build tools
+
+Fixed
+-Entity dialog lets you type in more than visible space for key/val pairs
+-Transparent bug when transparent brushes painted in front (visually) of a curve
+
+
+Build 127 Changes
+-----------------
+Added
+-Ctrl+Shift+P, this cycles the cap texturing axis on the selected cap. Basically, until
+I figure out what the heck is wrong with the auto stuff, use this to correctly texture
+a cap that is fubar'd.
+-CAP texture button in surface dialog. This does the same as above but uses the default
+axis finder (which has the bug).
+-Matrox transposition
+
+Build 126 Changes
+-----------------
+Removed
+-Test code for thickening. It was hooked into overlay clear... oops.
+
+Changed
+-csg ignores patch symbiot brushes
+
+
+Build 125 Changes
+-----------------
+Fixed
+-Shift vertex (row/col) selection for patches.
+
+Build 124 Changes
+-----------------
+Changed
+- Temporarily reverted back to patchDef2 .map file format.
+
+Build 123 Changes
+-----------------
+
+Changed
+-.map patch format, added 'type' field. not used anywhere except the editor (at least for now)
+- Patch vertex manipulation. The editor tries to pick all existing points from other patches as well
+|You will want to do area selection (in an XY-type view tp select thick patch points if you want to drag
+|everything related to the thick patch
+
+Added
+- ESC will deselect any patch vertex points selected instead of going completely out of vertex mode
+|This only happens with patch vertex selection
+- Thick patches, Curve | Thicken... or press Ctrl + T. The thickening happens away from the texture
+|side of the patch. So if you want something to thicken inwards, make sure the texture is facing out.
+
+
+Build 122 Changes
+-----------------
+
+Added
+-Texture Flush (forces a new map, then a total texture flush)
+|One small nit on this is that if you create a brush before loading a new set of textures it
+|will use one of the recently loaded textures instead of the default no texture (blue and black checkerboard)
+-Patch inverting. 
+|Ctrl + I invertest the patch, 
+|Shift + I inverts texture in X, 
+|Ctrl + Shift + I inverts texture in Y
+-Overlay function for patches. Turn on|off using menus or press 'Y' to make a patch an overlay and 
+|ctrl+shift+Y to clear all overlays
+
+Fixed
+-Inverted beveles cap and texture properly
+
+
+Build 121 Changes
+-----------------
+Added
+-Patch texture inverting. Ctrl + Shift + I. I think this does what you wanted.
+-'S'urface dialog grabs texture name from a single selected patch
+
+Better (a little)
+-Capping bevels makes the cap the right shape but the 3rd point is not on the right plane. 
+In most cases you can move it and snap it to the right place. Texturing is not all fucked 
+up anymore either. Once I hear back from John on my math stupidity, I will finish fixing it.
+These statements are probably only true for non-bent bevels.. bending will probably screw
+stuff up again.
+
+Build 120 Changes
+-----------------
+Added
+-Fine tune texturing for Patches. Using the surface dialog, you can type in very small 
+(3 decimal places) numbers for fine tuning on both scale and shift. Currently you can
+only fine tune with the Surface dialog, I am in the process of adding a fine tune settings
+dialog for use with the keypad keys.
+
+Build 119 Changes
+-----------------
+Added
+-TAB cycles through any entity grouped brush
+-Texture window can now be scaled by 10, 25, 50, 100, 200%
+-Texture window now has a optional scroll bar, turn it on in prefs
+
+-Texture path linkage
+Put a "textureinfo.ini" file in a texture directory and add the following
+
+[include]
+Path0 = e:\games\quake2\plop\textures\24 bit\
+
+You can have Path0 - Path9 as inclusive directories. The linked pathes will not
+load and process link information to keep someone from linking two paths together
+and causing an endless loop
+
+
+Build 116 Changes
+-----------------
+Added
+-Ctrl-P Toggle show patches
+
+Fixed
+-Gamma correction
+
+Removed
+-Model preview load code which was probably causing brandon's crash
+
+
+Build 115 Changes
+Tweaked
+-Cap texturing
+-Ctrl S was already bound to File | Save
+-Ctrl C is bound to standard windows Copy
+
+Added
+-Ctrl-S Save file
+
+Build 114 Changes
+-----------------
+Tweaked
+-Cap texturing
+
+Added
+-ALT + Shift click will cycle through "selectable" brushes along the 
+line of site from the mouse click. Works in all views. This is cool.
+-Square cylinders
+
+Fixed
+-Show curves works properly
+
+Pending
+-Shifting textures on patches should honor scale (cannot dup)
+-Disperse columns crashes (cannot dup)
+-Capping bevels is messed up
+-cap texturing may still be fubar'd
+-Thick pipe primitive
+-Scale origin + point scale similar to rotate. Will allow fluted stuff etc.. 
+
+Build 113 Changes
+-----------------
+Added
+-Capping (with dialog for Bevels and Endcaps)
+
+Build 112 Changes
+-----------------
+Fixed
+-Yet another surface dialog glitch
+-Area selection tool paints in all xy oriented views
+
+Build 111 Changes
+-----------------
+Fixed
+-Surface dialog face selection bug
+
+Build 110 Changes
+-----------------
+Added
+-'B' - toggles Bend mode
+
+Fixed
+-Naturalized texturing on patches
+-Bend whackiness on intial drag during start of a bend
+-Setting bend rotation axis in XY Top view
+
+
+Build 109 Changes
+-----------------
+Added
+-Ctrl 'I' - inverts a curve
+-Ctrl 'Numpad +' adds a row
+-Ctrl 'Numpad -' removes a row
+-Ctrl+Shift 'Numpad +' adds a column
+-Ctrl+Shift 'Numpad -' removes a column
+-Ctrl 'E' - redisperses rows
+-Ctrl+Shift 'E' - redisperses columns
+-Ctrl 'G' snaps patches to the nearest grid
+-Surface control dialog now allows values to be typed in and applied to patches. 
+ This is working except for shifts which still go in .9 and 1.1 amounts. 
+
+Changed
+-Regioning no longer puts a top and bottom on the region
+
+Build 108 Changes
+-----------------
+Added
+-Area selection. Works in 3 xy views but only draws in the xy view. I will look into this asap.
+
+Changed
+-Selection point size for vertex mode with patches. i.e. The handles for dragging patch points around are bigger.
+
+Build 107 Changes
+-----------------
+Changed
+-Inverted curve options removed from menu
+-Bevels and endcaps are contsructed properly 
+-Endcaps will not work for bevels and endcaps
+
+Build 106 Changes
+-----------------
+Fixed
+-shift middle clicking a light now adds the correct average color based on .TGA files
+-display updates properly when using TAB to go between func_group'd brushes
+-Patch texture rotation is much better. Still not completely perfect but should be usable.
+
+Build 105 Changes
+-----------------
+
+Added
+-TAB cycles through func_grouped brushes
+-textures with a shader have a [] wrapped around the name in the texture window
+-shift + left clicking on a shader texture in the texture window will bring up notepad with the shader file

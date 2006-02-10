@@ -1,0 +1,14 @@
+# Core + all game packs
+
+# output dir name
+$SETUP_DIR = 'Setup-update';
+
+$DO_CORE = 1;
+$DO_GAME_Q3 = 1;
+$DO_GAME_WOLF = 1;
+$DO_GAME_JKII = 1;
+$DO_GAME_STVEF = 1;
+$DO_GAME_HALFLIFE = 1;
+$DO_GAME_SOF2 = 1;
+
+$DO_NIGHTLY = 1;

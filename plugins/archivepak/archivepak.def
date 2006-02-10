@@ -1,0 +1,7 @@
+; archivepak.def : Declares the module parameters for the DLL.
+
+LIBRARY      "ARCHIVEPAK"
+
+EXPORTS
+    ; Explicit exports can go here
+	Radiant_RegisterModules @1

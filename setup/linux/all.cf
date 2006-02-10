@@ -1,0 +1,10 @@
+# Linux build config
+# all.cf
+#
+# includes core + wolfpack + q3pack + q2pack + her2pack
+
+$DO_CORE=1;
+$DO_GAME_Q3=1;
+$DO_GAME_WOLF=1;
+$DO_GAME_Q2=1;
+$DO_GAME_HER2=1;

@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<component>
+  <dir name="modules">
+    <file name="imagehl.dll"/>
+    <file name="imagehl.pdb"/>
+  </dir>
+</component>

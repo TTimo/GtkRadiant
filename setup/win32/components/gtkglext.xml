@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<component name="gtkglext-1.0-0">
+  <file name="libgtkglext-win32-1.0-0.dll"/>
+  <file name="libgdkglext-win32-1.0-0.dll"/>
+</component>

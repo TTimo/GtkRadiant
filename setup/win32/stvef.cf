@@ -1,0 +1,4 @@
+$SETUP_DIR = 'Setup-STVEF';
+
+$DO_CORE = 1;
+$DO_GAME_STVEF = 1;

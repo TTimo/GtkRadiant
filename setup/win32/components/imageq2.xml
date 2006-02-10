@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<component>
+  <dir name="modules">
+    <file name="imageq2.dll"/>
+    <file name="imageq2.pdb"/>
+  </dir>
+</component>

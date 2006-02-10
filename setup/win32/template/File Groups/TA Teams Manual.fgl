@@ -1,0 +1,11 @@
+[General]
+Type=FILELIST
+Version=1.10.000
+
+[TopDir]
+SubDir0=New_Teams_For_Q3TA
+
+[New_Teams_For_Q3TA]
+fulldirectory=<<GTKRAD_DIR>>\GtkRadiant\docs\manual\quake3\New_Teams_For_Q3TA
+file0=<<GTKRAD_DIR>>\GtkRadiant\docs\manual\quake3\New_Teams_For_Q3TA\index.html
+

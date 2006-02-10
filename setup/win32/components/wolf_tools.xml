@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<component>
+  <dir name="wolf.game">
+	  <file name="aascfg_lg.c"/>
+	  <file name="aascfg_sm.c"/>
+	  <file name="bspc.ai"/>
+	  <file name="bspc.exe"/>
+	  <file name="roq.exe"/>
+  </dir>
+</component>

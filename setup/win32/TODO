@@ -1,0 +1,74 @@
+TODO list for 1.2 setup:
+
+- do we need some DO_* variables for the plugins too..  
+- does the nightly do some safe checks while installing?
+  (i.e. query the GUID of the existing full installation we expect to find)
+
+short explanation / design doc:
+
+------------
+
+Any setup is made from a core and some game packs
+In the template -> buildable setup process, we give a few parameters to
+customize things:
+
+- Put only the binaries or put everything
+- put / don't put the editor core
+- put / don't put any game pack
+
+To do this, we mostly rely on a search replace in the template code:
+
+DO_* are variables telling wether are not a given component is INCLUDED into
+the setup. We have currently:
+
+DO_CORE: editor core content
+  (ex: the central editor binary)
+DO_CORE_FULL: include the full setup content related to the code
+  (ex: the GtkRadiant manual)
+DO_GAME_Q3: include binaries for Q3
+DO_GAME_FULL_Q3: media for the Q3 game pack
+
+we search and replace for '<<DO_CORE_BOOL>>' '<<DO_GAME_Q3_BOOL>>' etc.
+more such variables will be .. DO_GAME_WOLF_BOOL, DO_GAME_Q1_BOOL etc.
+the *_BOOL are meant to be replaced by '1' or '0'
+we use equivalents *_BOOL_YESNO that are replaced by 'Yes' and 'No'
+(those are used for 'include in build setting')
+
+-------------
+
+Installation paths:
+the variables DIR_* are holding the install paths for core or game packs
+DIR_CORE is the install path for the core
+DIR_GAME_Q3 is the Q3 directory
+DIR_GAMETOOLS_Q3 is the subdirectory path choosen below Q3 dir to install
+  game specific stuff
+  
+When the setup executes, it must rely on the stuff included in the setup to
+prompt the user with the right questions (where do I install the editor,
+where do I install the Q3 game pack?). This should be tempered by prior
+selection of what and whatnot to install if necessary. There should always
+be a 'Default' path that allows installing quickly without answering any
+difficult questions.
+
+-------------
+
+Nightly builds:
+
+this was added afterwards. nightlies are intended to be an upgrade 
+over an existing installation it only holds binaries
+
+also adds some specific component and file groups for the media stuff 
+that may have changed since the full setup
+
+how does it work?
+a matter of 'include in build' configuration again
+if nightly is on, the *_FULL_* variables will be disabled
+and the *_NIGHTLY_* ones will be enabled
+Component Definitions/Default.cdf is the critical file in this operation
+added the following:
+DO_CORE_BOOL_FULL_YESNO
+DO_GAME_Q3_BOOL_FULL_YESNO
+DO_GAME_WOLF_BOOL_FULL_YESNO
+those three are to disable the media we only put in full setup
+DO_NIGHLY_BOOL_YESNO
+this is for the specific additions of the nightly setup

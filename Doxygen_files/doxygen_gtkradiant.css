@@ -1,0 +1,34 @@
+body              { background-color: black; }
+IMG               { border-color: #222222; border: 0; }
+em                { font-size: 11px; font-style: italic; font-weight: normal; color: #888888; }
+H1                {	text-align: center; font-size: 15px; color: #2222AA; font-family: Geneva, Verdana, Helvetica, Arial, sans-serif; }
+H3                {	text-align: center; font-size: 18px; color: #2222AA; font-family: Geneva, Verdana, Helvetica, Arial, sans-serif; }
+A                 {	text-decoration: none; color: #6666DD; }
+A:HOVER           { text-decoration: underline; color: #4444FF; }
+A:VISITED         { text-decoration: none; color: #8888AA; }
+A.qindex          { text-decoration: none; color: #6666DD; font-size: 11px; }
+A.qindex:HOVER    { text-decoration: underline; color: #4444FF; font-size: 11px; }
+A.qindex:VISITED  { text-decoration: none; color: #8888AA; font-size: 11px; }
+A.qindexRef       { font-size: 11px; }
+A.el              {	text-decoration: none; font-weight: bold; }
+A.elRef           {	font-weight: bold; }
+A.code            {	text-decoration: none; font-weight: normal; color: #6666DD; }
+A.code:HOVER      { text-decoration: underline; font-weight: normal; color: #4444FF; }
+A.code:VISITED    { text-decoration: none; font-weight: normal; color: #8888AA; }
+A.codeRef         { text-decoration: none; font-weight: normal; color: #6666DD; }
+A.codeRef:HOVER   { text-decoration: underline; font-weight: normal; color: #4444FF; }
+A.codeRef:VISITED { text-decoration: none; font-weight: normal; color: #8888AA; }
+DL.el             {	margin-left: 2cm; width: 99%; }
+DIV.fragment      { background-color: #FFFFFF; width: 99%; }
+DIV.ah            {	background-color: #AAAAAA; width: 99%; margin-bottom: 3; margin-top: 3; }
+TD.md             {	cellpadding: 0; background-color: #DDDDDD; border: 0; width: 99%; color: #222222; }
+DIV.groupHeader   { margin-left: 16; margin-top: 12; margin-bottom: 6; font-weight: bold; color: #222222; }
+DIV.groupText     { margin-left: 16; font-style: italic; font-size: smaller; }
+FONT.keyword      { color: #0080A0; }
+FONT.keywordtype  { color: #604020; }
+FONT.keywordflow  {	color: #E08000; }
+FONT.comment      { color: #800000; }
+FONT.comment      { color: #009900; text-decoration: italic; }
+FONT.preprocessor { color: #806020; }
+FONT.stringliteral{ color: #002080; }
+FONT.charliteral  { color: #008080; }

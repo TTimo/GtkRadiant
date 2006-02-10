@@ -1,0 +1,7 @@
+; mapxml.def : Declares the module parameters for the DLL.
+
+LIBRARY      "MAPXML"
+
+EXPORTS
+    ; Explicit exports can go here
+	Radiant_RegisterModules @1

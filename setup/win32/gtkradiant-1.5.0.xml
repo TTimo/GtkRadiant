@@ -1,0 +1,96 @@
+<?xml version="1.0"?>
+<package name="GtkRadiant 1.5.0" version="1.5.0" target="[ProgramFilesFolder]\[ProductName]" code="ec2f741d-308c-42b4-bd04-9a4853f2e402" license="..\license.rtf">
+  <feature name="GtkRadiant 1.5.0" desc="[ProductName] level editor.">
+    <component name=".\components\gtkradiant.xml" root="..\..\install"/>
+    <component name=".\components\gtkradiant_docs.xml" root=".."/>
+    <component name=".\components\gtkradiant_data.xml" root="..\data\tools"/>
+    <component name=".\components\q3map2.xml" root="..\..\install"/>
+    <component name=".\components\q3map2_docs.xml" root="..\..\tools\quake3\q3map2"/>
+    <component name=".\components\q2map.xml" root="..\..\install"/>
+    <component name=".\components\bspc.xml" root="bin"/>
+    <component name=".\components\iconv.xml" root="..\..\..\gtk2-2.4\install"/>
+    <component name=".\components\intl.xml" root="..\..\..\gtk2-2.4\install"/>
+    <component name=".\components\glib2.xml" root="..\..\..\gtk2-2.4\install"/>
+    <component name=".\components\atk.xml" root="..\..\..\gtk2-2.4\install"/>
+    <component name=".\components\pango.xml" root="..\..\..\gtk2-2.4\install"/>
+    <component name=".\components\gtk2.xml" root="..\..\..\gtk2-2.4\install"/>
+    <component name=".\components\gtkglext.xml" root="..\..\..\gtk2-2.4\install"/>
+    <component name=".\components\libxml2.xml" root="..\..\..\libxml2-2.6\win32\install"/>
+    <component name=".\components\libpng13.xml" root="..\..\..\libpng-1.2\lib"/>
+    <component name=".\components\libmhash.xml" root="..\..\..\mhash-0.9\win32\libmhash\Release"/>
+    <component name=".\components\zlib.xml" root="..\..\..\zlib1-1.2"/>
+    <component name=".\components\msvcr71.xml" root="..\..\install"/>
+    <component name=".\components\dbghelp.xml" root="..\..\install"/>
+    <component name=".\components\archivezip.xml" root="..\..\install"/>
+    <component name=".\components\archivepak.xml" root="..\..\install"/>
+    <component name=".\components\archivewad.xml" root="..\..\install"/>
+    <component name=".\components\modelmd3.xml" root="..\..\install"/>
+    <component name=".\components\modelpico.xml" root="..\..\install"/>
+    <component name=".\components\imagepng.xml" root="..\..\install"/>
+    <component name=".\components\imageq3.xml" root="..\..\install"/>
+    <component name=".\components\imagehl.xml" root="..\..\install"/>
+    <component name=".\components\imageq2.xml" root="..\..\install"/>
+    <component name=".\components\entityq3.xml" root="..\..\install"/>
+    <component name=".\components\vfsq3.xml" root="..\..\install"/>
+    <component name=".\components\shadersq3.xml" root="..\..\install"/>
+    <component name=".\components\mapq3.xml" root="..\..\install"/>
+    <component name=".\components\mapxml.xml" root="..\..\install"/>
+
+    <feature name="GtkRadiant Editor Manual" desc="Documentation for GtkRadiant users.">
+      <component name=".\components\radiant_manual.xml" root="..\..\docs\manual"/>
+    </feature>
+    <feature name="Quake III Arena Support" desc="Support for Quake III Arena.">
+      <component name=".\components\q3.xml" root="..\..\games\Q3Pack\tools"/>
+      <component name=".\components\q3a_shader_manual.xml" root="..\..\games\Q3Pack\docs\"/>
+      <component name=".\components\q3a_terrain_manual.xml" root="..\..\games\Q3Pack\docs\"/>
+      <component name=".\components\q3a_compile_manual.xml" root="..\..\games\Q3Pack\docs\"/>
+      <component name=".\components\q3a_model_manual.xml" root="..\..\games\Q3Pack\docs\"/>
+      <component name=".\components\q3ta_teams_manual.xml" root="..\..\games\Q3Pack\docs\"/>
+      <component name=".\components\q3ta_editing_manual.xml" root="..\..\games\Q3Pack\docs\"/>
+    </feature>
+    <feature name="Quake Support" desc="Support for Quake.">
+      <component name=".\components\q1.xml" root="..\..\games\Q1Pack"/>
+    </feature>
+    <feature name="Quake II Support" desc="Support for Quake II.">
+      <component name=".\components\q2.xml" root="..\..\games\Q2Pack"/>
+    </feature>
+    <feature name="Doom 3 Support" desc="Support for Doom 3.">
+      <component name=".\components\doom3.xml" root="..\..\games\Doom3Pack\tools"/>
+    </feature>
+    <feature name="Quake 4 Support" desc="Support for Quake 4.">
+      <component name=".\components\q4.xml" root="..\..\games\Q4Pack\tools"/>
+    </feature>
+    <feature name="RTCW Support" desc="Support for Return To Castle Wolfenstein">
+      <component name=".\components\wolf.xml" root="..\..\games\WolfPack\bin"/>
+      <component name=".\components\wolf_docs.xml" root="..\..\games\WolfPack\docs"/>
+    </feature>
+    <feature name="Enemy Territory Support" desc="Support for Wolfenstein: Enemy Territory.">
+      <component name=".\components\et.xml" root="..\..\games\ETPack"/>
+      <!--<component name=".\components\et_docs.xml" root="..\..\games\ETPack\docs"/>-->
+    </feature>
+    <feature name="Jedi Academy Support" desc="Support for Jedi Knight: Jedi Academy.">
+      <component name=".\components\ja.xml" root="..\..\games\JAPack\Tools"/>
+    </feature>
+    <feature name="Jedi Knight II Support" desc="Support for Jedi Knight II.">
+      <component name=".\components\jk2.xml" root="..\..\games\JK2Pack"/>
+      <component name=".\components\jk2_docs.xml" root="..\..\games\JK2Pack\docs"/>
+      <component name=".\components\jk2_raven_docs.xml" root="..\..\games\RavenPack\docs"/>
+   </feature>
+    <feature name="Soldier of Fortune II Support" desc="Support for Soldier of Fortune II.">
+      <component name=".\components\sof2.xml" root="..\..\games\Sof2Pack"/>
+      <component name=".\components\sof2_docs.xml" root="..\..\games\Sof2Pack\docs"/>
+      <component name=".\components\sof2_raven_docs.xml" root="..\..\games\RavenPack\docs"/>
+    </feature>
+    <feature name="Star Trek Voyager: Elite Force Support" desc="Support for Star Trek Voyager: Elite Force.">
+      <component name=".\components\ef.xml" root="..\..\games\STVEFPack"/>
+      <component name=".\components\ef_docs.xml" root="..\..\games\STVEFPack\docs"/>
+      <!--<component name=".\components\icarus_manual.xml" root="..\..\games\RavenPack\docs"/>-->
+    </feature>
+    <feature name="Heretic II Support" desc="Support for Heretic II.">
+      <component name=".\components\her2.xml" root="..\..\games\Her2Pack"/>
+    </feature>
+    <feature name="Half-Life Support" desc="Support for Half-Life.">
+      <component name=".\components\hl.xml" root="..\..\games\HalfLifePack"/>
+    </feature>
+  </feature>
+</package>

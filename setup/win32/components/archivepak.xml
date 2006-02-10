@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<component name="archivepak">
+  <dir name="modules">
+    <file name="archivepak.dll"/>
+    <file name="archivepak.pdb"/>
+  </dir>
+</component>

@@ -1,0 +1,7 @@
+# Core + Wolf game pack
+
+# output dir name
+$SETUP_DIR = 'Setup-Wolf';
+
+$DO_CORE = 1;
+$DO_GAME_WOLF = 1;

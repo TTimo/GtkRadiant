@@ -1,0 +1,421 @@
+#!/bin/bash
+# Functions for the gendox script
+# 
+# Gef, Aug 2001
+
+#------------------------------------------------------------------------
+# Set the doxygen output language from the system locale
+#------------------------------------------------------------------------
+get_language() {
+	if [ -n "$LANG" ] ; then
+		local LANG=`locale | grep LANG | cut -d= -f2`;
+	fi
+	case "$LANG" in
+		czech)
+			OUPUTLANGUAGE="Czech";
+			;;
+		german)
+			OUPUTLANGUAGE="German";
+			;;
+		spanish)
+			OUPUTLANGUAGE="Spanish";
+			;;
+		finnish)
+			OUPUTLANGUAGE="Finnish";
+			;;
+		french)
+			OUPUTLANGUAGE="French";
+			;;
+		italian)
+			OUPUTLANGUAGE="Italian";
+			;;
+		japanese*)
+			OUPUTLANGUAGE="Japanese";
+			;;
+		dutch)
+			OUPUTLANGUAGE="Dutch";
+			;;
+		swedish)
+			OUPUTLANGUAGE="Swedish";
+			;;
+		*)
+			OUPUTLANGUAGE="English";
+			;;
+	esac
+}
+
+#------------------------------------------------------------------------
+# Output usage info & output help
+#------------------------------------------------------------------------
+output_usage() {
+	echo -e "Usage: $0 [<target(s)>] [-o <output_directory>]";
+	return;
+}
+
+output_help() {
+	output_usage;
+	echo -e "\nOptions:";
+	echo -e "  [<target(s)>]";
+	echo -e "    This is an optional parameter that specifies the directory, or multiple";
+	echo -e "    directories from which to generate the documentation.";
+	echo -e "";
+	echo -e "  [-o <output_directory>]";
+	echo -e "    An optional parameter that specifies the output directory in which";
+	echo -e "    to save the generated documentation.";
+	echo -e "";
+  echo -e "  -q or --quiet";
+  echo -e "    Prevents the output of status information"
+	echo -e ""
+	echo -e "  --help, or -h";
+	echo -e "    Displays this information";
+  echo -e ""
+  echo -e "  -q or --quiet";
+  echo -e "    Prevents the output of status information"
+  echo -e ""
+  echo -e "  -k or --kill";
+  echo -e "    kills running doxygen pids."
+	echo -e ""
+	echo -e "* Further information on using this script, can be found in README.doxygen";
+	echo -e "* in the current directory.";
+	
+}
+
+#------------------------------------------------------------------------
+# Set the target to what was passed on the command line
+#------------------------------------------------------------------------
+parse_commandline() {
+	# todo:
+	# need to add the ability to check for an auto gen'd version
+	# used for automatically generating new documentation for each commit
+	# to the cvs server
+
+	# funky bash shell array
+	declare -a OPTLIST[$#];
+
+	if [ $OPTCOUNT == 0 ] ; then
+    # No options on the command line so set the target list to the core
+    TARGETCOUNT=0;
+    OUTPUTDIR="../$(basename `pwd`)-doxygen";
+	else
+    # put all the command line options into an array
+    for f in $COMLINE ; do
+      OPTLIST[$COUNTER]="$f";
+      let COUNTER++;
+    done
+  
+    for (( COUNTER=0 ; $COUNTER < $OPTCOUNT; $[COUNTER++] )) ; do
+      if [ "${OPTLIST[$COUNTER]}" == "--help" ] ; then
+        # output usage information
+        output_help;
+        RETVAL=1;
+        return;
+      elif [ "${OPTLIST[$COUNTER]}" == "-h" ] ; then
+        # output usage information
+        output_help;
+        RETVAL=1;
+        return;
+      fi
+  
+      case ${OPTLIST[$COUNTER]} in
+        -q)
+          QUIETMODE=1;
+          ;;
+        --quiet)
+          QUIETMODE=1;
+          ;;
+        -k)
+          KILLON=1;
+          ;;
+        --kill)
+          KILLON=1;
+          ;;
+        -o)
+          # look for the -o switch, and get the next command line option as the output dir
+          if [ -z ${OPTLIST[$COUNTER + 1]} ] ; then
+            [ $QUIETMODE -gt 0 ] || echo -e " ** Output switch used, but no output dir passed...";
+            [ $QUIETMODE -gt 0 ] || echo -e " ** Setting default output dir.";
+          else
+            let COUNTER++;
+            OUTPUTDIR=${OPTLIST[$COUNTER]};
+          fi
+          break;
+          ;;
+        **)
+          # If the command line option is anything other that -o then assume it's a target 
+          # Check to make sure the target exists first...
+          if [ -d ${OPTLIST[$COUNTER]} ] ; then
+            TARGETLIST[$COUNTER]=${OPTLIST[$COUNTER]};
+          else
+            output_usage;
+            echo -e " ** Error: Non-existent directory specified as a target.\nExiting.";
+            RETVAL=1;
+            return;
+          fi
+          let TARGETCOUNT++;
+          ;;
+      esac
+    done
+
+  fi # if [ $OPTCOUNT == 0 ] ;
+
+  if [ $TARGETCOUNT == 0 ] ; then
+    TARGETCOUNT=4;
+    TARGETLIST[0]="include";
+    TARGETLIST[1]="libs";
+    TARGETLIST[2]="radiant";
+    TARGETLIST[3]="plugins";
+    # Gef: outputdir for default core when no targets are passed on the command line
+    # TTimo problem still there, if -o used on command line, don't override
+    if [ -z $OUTPUTDIR ] ; then
+      OUTPUTDIR="../$(basename `pwd`)-doxygen";
+    fi
+  fi
+
+  # Add trailing slash's to the lines that need them
+	TARGETSTRING=`echo ${TARGETLIST[*]} | sed -e 's/" "/", "/'`
+  [ $QUIETMODE -gt 0 ] || echo -ne " -> Set Input to: ";
+  for (( COUNTER=0; COUNTER < $TARGETCOUNT ; $[COUNTER++] )) ; do
+    if [ $COUNTER == $[TARGETCOUNT - 1] ] ; then
+      [ $QUIETMODE -gt 0 ] || echo -ne "${TARGETLIST[$COUNTER]}\n";
+      TARGETLIST[$COUNTER]="${TARGETLIST[$COUNTER]}";
+    else
+      [ $QUIETMODE -gt 0 ] || echo -ne "${TARGETLIST[$COUNTER]}, ";
+      TARGETLIST[$COUNTER]="${TARGETLIST[$COUNTER]} \\";
+    fi
+  done
+  [ $QUIETMODE -gt 0 ] || echo -e " -> Set Output Dir to: $OUTPUTDIR";
+	return;
+}
+
+#------------------------------------------------------------------------
+# Try to extract the version number
+# todo: find a better way to determine the version
+#------------------------------------------------------------------------
+get_version() {
+	VERSION=`grep PROJECT_NUMBER $DOXYCONFIG | grep -v \# | cut -d= -f2`;
+	if [ -z $VERSION ] ; then
+		if [ -f "./include/version.default" ] ; then	# checks that we are in the right dir
+			VERSION=`cat ./include/version.default`;
+		else
+			VERSION="(Unknown)";
+		fi
+	fi
+	return;
+}
+
+#------------------------------------------------------------------------
+# Create a projectname from the tree name
+#------------------------------------------------------------------------
+get_projectname() {
+	PROJECTNAME=`grep PROJECT_NAME $DOXYCONFIG | grep -v \# | cut -d= -f2`;
+	if [ -z $PROJECTNAME ] ; then
+		# PROJECTNAME=`echo $TARGET | sed -e s/[^A-Za-z0-9]/!/ | cut -d! -f1`;
+		PROJECTNAME="$(basename `pwd`)";
+	fi
+	return;
+}
+
+#------------------------------------------------------------------------
+# function to determine the path to the perl executable
+#------------------------------------------------------------------------
+get_perlpath() {
+	if [ -f "$DOXYCONFIG" ] ; then
+		PERLPATH=`grep PERL_PATH $DOXYCONFIG | grep = | cut -d= -f2`
+	fi
+
+	if [ 'basename $PERLPATH &2>/dev/null' != "perl" ] ; then
+		PERLPATH=`which perl 2>/dev/null | sed -e 's/perl//'`;
+	elif [ 'basename $PERLPATH &2>/dev/null' != "perl" ] ; then
+		PERLPATH="";
+	fi
+	return;
+}
+
+#------------------------------------------------------------------------
+# Function to determine the path to the dot executable
+#------------------------------------------------------------------------
+get_dotpath() {
+	if [ -f "$DOXYCONFIG" ] ; then
+		DOTPATH=`grep DOT_PATH $DOXYCONFIG | grep = | cut -d= -f2`
+	fi
+
+  if [ -z $DOTPATH ] || [ `basename $DOTPATH 2>/dev/null` != "dot" ] ; then
+	  DOTPATH=`which dot 2>/dev/null`;
+  fi
+
+	if [ -z $DOTPATH ] || [ `basename $DOTPATH 2>/dev/null` != "dot" ] ; then
+		DOTPATH="";
+		HAVEDOT="No";
+		echo -e "** Warning: dot not found.";
+		[ $QUIETMODE -gt 0 ] || echo -e "**          dot is part of the GraphVis package and is used to generate";
+		[ $QUIETMODE -gt 0 ] || echo -e "**          dependancy/inheritance/include (etc) diagrams.";
+		[ $QUIETMODE -gt 0 ] || echo -e "**          It's suggested that you install the GraphVis package for those";
+		[ $QUIETMODE -gt 0 ] || echo -e "**          features.";
+		[ $QUIETMODE -gt 0 ] || echo -e "**          GraphVis can be downloaded from www.graphvis.org";
+	else
+		HAVEDOT="Yes";
+		DOTPATH=`echo $DOTPATH | sed -e 's/dot//'`;
+	fi
+	
+	return;
+}
+
+#------------------------------------------------------------------------
+# Function to move stuff around
+#------------------------------------------------------------------------
+# eg: move the images into the output directory & the reference doc into the
+# html directory.
+# called after doxygen has finished generating documentation
+move_stuff() {
+	[ $QUIETMODE -gt 0 ] || echo -ne " -> Move stuff.\n";
+	if [ ! -d $OUTPUTDIR ] ; then
+		mkdir $OUTPUTDIR;
+	fi
+	
+	if [ ! -d "$EXTRAS_PATH/images/" ] ; then
+		[ $QUIETMODE -gt 0 ] || echo -e " - Looking for images.";
+		[ $QUIETMODE -gt 0 ] || sleep 2;
+		[ $QUIETMODE -gt 0 ] || echo -e " - I can't find the images...";
+		[ $QUIETMODE -gt 0 ] || sleep 1;
+		[ $QUIETMODE -gt 0 ] || echo -e " - Where did you put the images!?";
+		[ $QUIETMODE -gt 0 ] || sleep 2;
+		[ $QUIETMODE -gt 0 ] || echo -e " - They have to be here somewhere...";
+		[ $QUIETMODE -gt 0 ] || sleep 1;
+		[ $QUIETMODE -gt 0 ] || echo -e " - Looking in /dev/null";
+		[ $QUIETMODE -gt 0 ] || sleep 3;
+		[ $QUIETMODE -gt 0 ] || echo -e " - YOU FOOL, YOU DELETED THE IMAGES!!!";
+		[ $QUIETMODE -gt 0 ] || sleep 1;
+		[ $QUIETMODE -gt 0 ] || echo -e " - I quit!";
+		RETVAL=666;
+	else
+		if [ ! -d $OUTPUTDIR/images ] ; then
+			mkdir $OUTPUTDIR/images ;
+		fi
+		cp $EXTRAS_PATH/images/* $OUTPUTDIR/images/ ;
+		RETVAL=0;
+	fi
+	return;
+}
+
+#------------------------------------------------------------------------
+# clean_up() removes old versions of the documentation
+#------------------------------------------------------------------------
+clean_up() {
+	if [ -f $OUTPUTDIR/html/index.html ] ; then
+		[ $QUIETMODE -gt 0 ] || echo -e " -> Trashing old dox.";
+		rm -f $OUTPUTDIR/html/*
+	fi
+	return;
+}
+
+#------------------------------------------------------------------------
+# Create a new genConf & Doxyfile
+#------------------------------------------------------------------------
+gen_doxyconfig() {
+	[ $QUIETMODE -gt 0 ] || echo -e " -> Generating DoxyConfig.";
+	RETVAL=0;
+	# first need to make sure there is a Doxyfile here
+	if [ ! -f $DOXYFILE ] ; then
+		# what now? (could generate one with 'doxygen -e Doxyfile') but it would be screwed.
+		echo -e "No Doxyfile here...";
+		RETVAL=3;
+		return;
+	else
+		# Create a new doxyfile with the @INCLUDE statement including the generated stuff
+		echo "`cat $DOXYFILE | grep -v @INCLUDE`" > $NEWDOXYFILE
+		echo "@INCLUDE = $CONFIG_OUTPUT" >> $NEWDOXYFILE
+	fi
+	
+	# remove the old config file
+	rm -f $CONFIG_OUTPUT
+	
+	# create a new one
+	touch $CONFIG_OUTPUT
+	echo "# Generated configuration - Do Not Edit." >> $CONFIG_OUTPUT;
+	echo "# If you want to modify options, edit DoxyConfig and re-run genconf." >> $CONFIG_OUTPUT;
+	echo -e "\n" >> $CONFIG_OUTPUT;
+	echo -e "PROJECT_NAME=$PROJECTNAME" >> $CONFIG_OUTPUT;
+	echo -e "PROJECT_NUMBER=$VERSION" >> $CONFIG_OUTPUT;
+	echo -e "PERL_PATH=$PERLPATH" >> $CONFIG_OUTPUT;
+	echo -e "HAVE_DOT=$HAVEDOT" >> $CONFIG_OUTPUT;
+	echo -e "DOT_PATH=$DOTPATH" >> $CONFIG_OUTPUT;
+	echo -e "OUTPUT_LANGUAGE=$OUTPUTLANGUAGE" >> $CONFIG_OUTPUT;
+
+	echo -n "INPUT=" >> $CONFIG_OUTPUT;
+	for (( COUNTER=0 ; COUNTER < $TARGETCOUNT; $[COUNTER++] )) ; do
+		# echo -e "${TARGETLIST[$COUNTER]}";
+		echo -e "${TARGETLIST[$COUNTER]}" >> $CONFIG_OUTPUT
+	done
+	# echo -e "INPUT=$TARGET" >> $CONFIG_OUTPUT;
+
+	echo -e "OUTPUT_DIRECTORY=$OUTPUTDIR" >> $CONFIG_OUTPUT;
+	echo -e "\n" >> $CONFIG_OUTPUT;
+	return;	
+}
+
+#------------------------------------------------------------------------
+# Build the reference page & index
+#------------------------------------------------------------------------
+build_extra_html() {
+	# file locations
+	REF_OUT="$OUTPUTDIR/reference/index.html"
+	INDEX_OUT="$OUTPUTDIR/index.html"
+	
+	# Make the output directory if it doesn't exist
+	if [ ! -d $OUTPUTDIR/reference/ ] ; then
+		[ $QUIETMODE -gt 0 ] || echo -e " -> Making reference directory";
+		mkdir $OUTPUTDIR/reference
+	fi
+	
+	# cat the files together and output the result to each file
+	[ $QUIETMODE -gt 0 ] || echo -e " -> Building reference document";
+	cat $EXTRAS_PATH/doxygen_reference_head.html $EXTRAS_PATH/reference1.html $EXTRAS_PATH/doxygen_reference_foot.html > $REF_OUT;
+
+	if [ ! -d $OUTPUTDIR/example/ ] ; then
+		[ $QUIETMODE -gt 0 ] || echo -e " -> Making example dir";
+		mkdir $OUTPUTDIR/example
+	fi
+	[ $QUIETMODE -gt 0 ] || echo -e " -> Moving example docs";
+	cp $EXTRAS_PATH/example/* $OUTPUTDIR/example/
+  cp $EXTRAS_PATH/doxygen_gtkradiant.css $OUTPUTDIR/example/
+
+	# Make a redirecting index.html
+	cat $EXTRAS_PATH/doxygen_index.html > $INDEX_OUT;
+	return;
+}
+
+#------------------------------------------------------------------------
+# Execute doxygen
+#------------------------------------------------------------------------
+run_doxygen() {
+	# copy doxy_mainpage.h to the target directory
+	# pipe it through sed to add generation time/date and username - $machine
+	TEMPLOCATION=`echo $TARGETSTRING | cut -d' ' -f1`;
+  if [ X"$USERNAME" == "X" ] ; then
+	  USERNAME=`whoami`;
+  fi
+	MACHINE=`uname -n`; # `uname -n` or `hostname` ??
+	cp $EXTRAS_PATH/doxy_mainpage.h temp.h
+	cat temp.h |
+    sed "s/+project+/$PROJECTNAME/" |
+		sed "s|+target+|$TARGETSTRING|" |
+		sed "s/+user+/$USERNAME/" |
+		sed "s/+machine+/$MACHINE/" |
+    sed "s/+date+/$(date '+%b %d %Y')/" > $TEMPLOCATION/doxy_mainpage.h ;
+
+  rm -f temp.h
+
+	# Start doxygen with the command "doxygen $DOXYFILE"
+	[ $QUIETMODE -gt 0 ] || echo -e " -> Executing doxygen.";
+	[ $QUIETMODE -gt 0 ] || echo -e "> doxygen $NEWDOXYFILE";
+	doxygen $NEWDOXYFILE
+	RETVAL=$?
+
+	# remove doxy_mainpage.h from the target directory
+	rm -f $TEMPLOCATION/doxy_mainpage.h
+	return;
+}
+
+#------------------------------------------------------------------------
+# End.
+

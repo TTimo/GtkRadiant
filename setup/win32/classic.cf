@@ -1,0 +1,9 @@
+# classic gaming special
+
+# output dir name
+$SETUP_DIR = 'Setup-Classic';
+
+$DO_CORE = 1;
+$DO_GAME_HALFLIFE = 1;
+$DO_GAME_Q2 = 1;
+$DO_GAME_HER2 = 1;

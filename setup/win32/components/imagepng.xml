@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<component>
+  <dir name="modules">
+    <file name="imagepng.dll"/>
+    <file name="imagepng.pdb"/>
+  </dir>
+</component>

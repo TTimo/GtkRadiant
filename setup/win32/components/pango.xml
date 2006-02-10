@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<component>
+  <file name="libpango-1.0-0.dll"/>
+  <file name="libpangowin32-1.0-0.dll"/>
+  <dir name="etc">
+    <dir name="pango">
+      <file name="pango.aliases"/>
+      <file name="pango.modules"/>
+    </dir>
+  </dir>
+  <dir name="lib">
+    <dir name="pango">
+      <dir name="1.4.0">
+        <dir name="modules">
+          <file name="pango-basic-win32.dll"/>
+        </dir>
+      </dir>
+    </dir>
+  </dir>
+</component>

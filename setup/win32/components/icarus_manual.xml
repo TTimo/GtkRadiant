@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<component>
+	<file name="ICARUS Manual.htm"/>
+	<dir name="ICARUS Manual_files">
+		<file name="header.htm"/>
+		<file name="filelist.xml"/>
+	</dir>
+</component>
+

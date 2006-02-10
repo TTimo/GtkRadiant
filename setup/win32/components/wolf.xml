@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<component>
+  <dir name="games">
+    <file name="wolf.game"/>
+  </dir>
+  <dir name="wolf.game">
+    <file name="game.xlink"/>
+    <file name="default_build_menu.xml"/>
+    <dir name="main">
+      <file name="default_shaderlist.txt"/>
+		  <file name="wolf_entities.def"/>
+    </dir>
+  </dir>
+</component>

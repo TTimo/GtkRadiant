@@ -1,0 +1,17 @@
+common/areaportal
+common/clip
+common/clusterportal
+common/cushion
+common/donotenter
+common/full_clip
+common/hint
+common/missileclip
+common/nodraw
+common/nodrawnonsolid
+common/nodrop
+common/noimpact
+common/origin
+common/trigger
+common/weapclip
+liquid
+fog

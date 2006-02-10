@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<component name="archivewad">
+  <dir name="modules">
+    <file name="archivewad.dll"/>
+    <file name="archivewad.pdb"/>
+  </dir>
+</component>

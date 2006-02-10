@@ -1,0 +1,8 @@
+Debug
+Release
+*.ncb
+*.opt
+*.plg
+*.001
+*.BAK
+.consign

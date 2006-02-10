@@ -1,0 +1,15 @@
+#
+# Use this script to customize the installer bootstrap script
+#
+
+# override some defaults
+
+# try to get root prior to running setup?
+# 0: no
+# 1: prompt, but run anyway if fails
+# 2: require, abort if root fails
+ifdef(`M4_OSX', `GET_ROOT=2')
+
+FATAL_ERROR="Please report to http://zerowing.idsoftware.com/bugzilla/"
+
+#XSU_ICON="-i icon.xpm"

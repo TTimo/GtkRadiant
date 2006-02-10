@@ -1,0 +1,47 @@
+[GENERAL]
+TYPE=STRINGTABLE
+VERSION=1.00.000
+
+[LANGUAGE]
+CURRENTLANG=0
+LANG0=0009
+LANG1=0000
+
+[TITLE_MAIN]
+Comment=Do not delete. Setup requires this Identifier even if your script doesn't use it.
+
+[DATA]
+ENTRY0=TITLE_MAIN
+ENTRY1=TITLE_CAPTIONBAR
+ENTRY2=COMPANY_NAME
+ENTRY3=PRODUCT_NAME
+ENTRY4=PRODUCT_KEY
+ENTRY5=PRODUCT_VERSION
+ENTRY6=FOLDER_NAME
+ENTRY7=DEFAULTQUAKE3DIR
+ENTRY8=DEFAULTRTCWDIR
+
+[TITLE_CAPTIONBAR]
+Comment=Do not delete. Setup requires this Identifier even if your script doesn't use it.
+
+[COMPANY_NAME]
+Comment=Do not delete. Setup requires this Identifier even if your script doesn't use it.
+
+[PRODUCT_NAME]
+Comment=Do not delete. Setup requires this Identifier even if your script doesn't use it.
+
+[PRODUCT_KEY]
+Comment=Do not delete. Setup requires this Identifier even if your script doesn't use it.
+
+[PRODUCT_VERSION]
+Comment=Do not delete. Setup requires this Identifier even if your script doesn't use it.
+
+[FOLDER_NAME]
+Comment=Do not delete. Setup requires this Identifier even if your script doesn't use it.
+
+[DEFAULTQUAKE3DIR]
+Comment=
+
+[DEFAULTRTCWDIR]
+Comment=
+

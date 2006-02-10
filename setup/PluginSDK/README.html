@@ -1,0 +1,171 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="GENERATOR" content="Mozilla/4.73 [en] (Win98; U) [Netscape]">
+   <title>Q3Radiant plugin SDK
+</title>
+</head>
+<body>
+
+<center><b><font size=+2>GtkRadiant plugin SDK</font></b></center>
+<center><b><font size=+2>http://www.gtkradiant.com</font></b></center>
+
+<p><br>
+<div align=right><b><font size=+2>Version: <font color="#FF0000">GtkRadiant
+1.1-TA-beta</font></font></b>
+<br><b><font size=+2><font color="#000000">Last updated: </font><font color="#FF0000">01/14/2001</font></font></b></div>
+
+<p><br>
+<hr WIDTH="100%"><font size=+2>What do I have?</font>
+
+<br><font size=+1><tt>GtkRadiant/include/</tt>: Radiant plugin API 
+headers</font>
+
+<br><font size=+1><tt>GtkRadiant/plugins/sample/</tt>: an empty plugin nutshell, 
+handy to start a new one (NOTE: a cygwin makefile for Sample is also 
+provided)</font>
+
+<br><font size=+1><tt>GtkRadiant/plugins/textool/</tt>: TexTool plugin 
+source code</font>
+
+<br><font size=+1><tt>src/</tt>: Gtk headers and libraries for win32</font>
+
+<p> <font size=+2>A Word about Gtk:</font> 
+
+<br><font size=+1>GtkRadiant is using the <a href="http://www.gtk.org" 
+target="_new">Gtk toolkit</a> for all the user interface. There's a specific 
+page for the <a href="http://user.sgic.fi/~tml/gimp/win32/" target="_new">Gtk on 
+win32</a>. If you are going to write a plugin for GtkRadiant, we recommend you 
+use Gtk, but it's not a required feature. You can write plugins using the native 
+windows API or even VB. Don't hesitate to ask for help on the <a 
+href="http://www.egroups.com/register?referer=/subscribe/radiant-plugins" 
+target="_new">plugin mailing list</a> or to drop by on irc.telefragged.com 
+#qeradiant</font></p>
+
+<p><font size=+2>Plugin basics:</font>
+<br><font size=+2>main features available to plugins:</font>
+<ul>
+<li>
+<font size=+1>Manipulate MAP data: read and write brushes, patches, epairs and entities</font></li>
+
+<li>
+<font size=+1>Override the BSP menu to process your own building commands</font></li>
+
+<li>
+<font size=+1>Read / Write project settings epairs</font></li>
+
+<li>
+<font size=+1>Use OpenGL to draw in the 2D/3D view, or in your own plugin
+windows</font></li>
+
+<li>
+<font size=+1>Use listeners to catch events in Radiant (like a change of
+texture or brush select / deselect)</font></li>
+
+<li>
+<font size=+1>Use listeners to listen for window events (for mouse interaction
+in the 2D view)</font></li>
+
+<li>
+<font size=+1>Create new plugin entities that show up in the Radiant window,
+which you can draw yourself and handle the user interaction</font></li>
+
+<li>
+<font size=+1>Use the Radiant internal parser to hook your own MAP format
+changes for plugin entities</font></li>
+
+<li>
+<font size=+1>Access polygon and texture information on the current selected
+face</font></li>
+
+<li>
+<font size=+1>Override the texture / shader code to provide your own texture
+formats and shader system</font></li>
+
+<li>
+<font size=+1>Add new surface properties, and change the MAP format accordingly</font></li>
+</ul>
+<font size=+2>overall structure of a plugin:</font>
+<br><font size=+1>A plugin is a DLL (dynamic loading library) that exposes
+some API to Radiant. Plugins must be put in the plugins/ directory, they
+get loaded at startup by Radiant. Any plugin has a few required entry points
+in order to get loaded correctly:</font>
+<ul>
+<li>
+<font size=+1><tt>QERPlug_Init</tt> is the first entry point called, used
+for initialization and sending back the plugin name that appears in the
+console</font></li>
+
+<li>
+<font size=+1><tt>QERPlug_GetName</tt> returns the name of the plugin as
+it appears in the plugin menu</font></li>
+
+<li>
+<font size=+1><tt>QERPlug_GetCommandList</tt> returns a list describing
+the items in the plugin submenu</font></li>
+
+<li>
+<font size=+1><tt>QERPlug_GetFuncTable</tt> returns the address of the
+_QERFuncTable_1 of the plugin. After Radiant got the pointer to the function
+table it will fill it and the plugin is able to call into the editor.</font></li>
+
+<li>
+<font size=+1><tt>QERPlug_Dispatch</tt> is called when the user hits a
+command in the plugin menu. The plugin is then free to process.</font></li>
+</ul>
+<font size=+2>the function table and interfaces:</font>
+<br><font size=+1>Instead of exporting entry points, Radiant fills in function
+pointer tables. The main and required function table is <tt>_QERFuncTable_1</tt>.
+Each plugin must have it and let Radiant fill it. Some additional or specialized
+functionalities can be accessed with other tables like <tt>_QERQglTable</tt>
+for GL stuff. These have to be requested to Radiant using <tt>_QERFuncTable_1::m_pfnRequestInterface</tt>
+(see <tt>TexTool</tt> for an example). Each additional function table has
+a "globally unique identifier" (<tt>QERQglTable_GUID</tt> for GL stuff)
+that's used to identify the interface across plugins.</font>
+<p><font size=+1>NOTE: some function tables are used by Radiant and must
+be filled by the plugin (ie. they work in reverse compared to usual ones).
+In this case the plugin must export an additional entry point <tt>int WINAPI
+QERPlug_RequestInterface( REFGUID, LPVOID );</tt></font>
+<p><font size=+2>virtual classes:</font>
+<br><font size=+1>some stuff is better represented by an abstract C++ class.
+For those with COM knowledge, it's just a very lightweight COM way of doing
+things. These classes have very basic reference counting through <tt>IncRef()</tt>
+and <tt>DecRef()</tt> .. you are supposed to increment or decrement the
+reference count each time you store or release a pointer to these classes,
+otherwise they could get unexpectedly erased and you would be very very
+sorry. The <tt>IListener</tt> class in <tt>IMessaging.h</tt> can be implemented
+by the plugin and handed over to Radiant to listen for events. See <tt>TexTool</tt>
+for examples.</font>
+<br>&nbsp;
+
+<p><font size=+2>More stuff:</font>
+
+<br><font size=+1>If you need more information or if you want new features for 
+plugins, see the source code for <tt>TexTool</tt> and <tt>Curry</tt>. 
+<tt>TexTool</tt> source comes with the plugin SDK, and <tt>Curry</tt> source is 
+available <a href="http://curry.sourceforge.net">from their web site</a>. You 
+can <a 
+href="http://cvs.sourceforge.net/cgi-bin/cvsweb.cgi/?cvsroot=curry">browse it 
+online</a> from <a href="http://sourceforge.net/project/?group_id=1263">the 
+project page</a>. <a 
+href="http://sourceforge.net/project/?group_id=5326">PrtView</a> has neat code 
+samples on how to draw in the 2D views or camera window. These two plugins are 
+under GPL licensing. The dedicated place to talk about plugin coding is the <a 
+href="http://www.egroups.com/group/radiant-plugins">plugins-coding mailing 
+list</a> ... see you there. You may also get an updated list of the plugins for 
+Radiant <a href="http://plugins.qeradiant.com">on our dedicated web 
+site</a>.<br>
+
+Update: you can also have a look to the <a 
+href="http://cvs.sourceforge.net/cgi-bin/cvsweb.cgi/?cvsroot=pk3man " 
+target="_new">pk3man source</a>.</font>
+
+<p><font size=+2>Conclusion:</font>
+<br><font size=+1>this document is intended as a quickstart for potential
+plugin writers. I hope it meets it's objective. It's not a complete and
+systematic documentation, I doubt there will be one ever unless someone
+decides to do it. Feel free to send me contributions to this document.
+<a href="mailto:timo@qeradiant.com">Send feedback to me</a>.</font>
+</body>
+</html>

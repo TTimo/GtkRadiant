@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<component>
+  <dir name="games">
+    <file name="ja.game"/>
+  </dir>
+  <dir name="ja.game">
+    <file name="game.xlink"/>
+    <file name="default_build_menu.xml"/>
+    <dir name="base">
+      <file name="default_shaderlist.txt"/>
+      <file name="mp_entities.def"/>
+      <file name="sp_entities.def"/>
+    </dir>
+  </dir>
+</component>
+
+

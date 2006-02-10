@@ -1,0 +1,49 @@
+/// ============================================================================
+/*
+Copyright (C) 2003 Robert Beckebans <trebor_7@users.sourceforge.net>
+Copyright (C) 2003, 2004  contributors of the XreaL project
+Please see the file "AUTHORS" for a list of contributors
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+
+See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+*/
+/// ============================================================================
+
+
+struct cg_app2vertex
+{
+	float4 position		: ATTR0;
+	float4 texcoord0	: ATTR8;
+};
+
+struct cg_vertex2fragment
+{
+	float4 position		: POSITION;
+	float4 tex0		: TEXCOORD0;
+};
+
+
+cg_vertex2fragment main(cg_app2vertex IN)
+{
+	cg_vertex2fragment OUT;
+	
+	// transform vertex position into homogenous clip-space
+	OUT.position = mul(glstate.matrix.mvp, IN.position);
+	
+	// transform texcoords into 1st texture space
+	OUT.tex0 = mul(glstate.matrix.texture[0], IN.texcoord0);
+    
+	return OUT;
+}

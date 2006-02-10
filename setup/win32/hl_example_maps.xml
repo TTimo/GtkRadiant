@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<package name="HalfLife Example Maps" version="1.0.0" target="c:\quake2\" code="411ffcf0-78e8-4bdf-8a28-daf0b32286d9" license="..\license.rtf">
+  <feature name="HalfLife Maps" desc="This feature must be installed in your HalfLife Folder.">
+    <feature name="HalfLife Maps" desc="Example maps, models and textures for HalfLife">
+      <component name=".\components\hl_data.xml" root="..\..\games\HalfLifePack\valve"/>
+    </feature>
+  </feature>
+</package>

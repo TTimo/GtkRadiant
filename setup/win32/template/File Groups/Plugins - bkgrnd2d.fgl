@@ -1,0 +1,15 @@
+[General]
+Type=FILELIST
+Version=1.10.000
+
+[TopDir]
+file0=<<GTKRAD_DIR>>\GtkRadiant\contrib\bkgrnd2d\Release\bkgrnd2d.dll
+SubDir0=bitmaps
+
+[bitmaps]
+fulldirectory=
+file0=<<GTKRAD_DIR>>\GtkRadiant\contrib\bkgrnd2d\bitmaps\bkgrnd2d_yz_toggle.bmp
+file1=<<GTKRAD_DIR>>\GtkRadiant\contrib\bkgrnd2d\bitmaps\bkgrnd2d_conf.bmp
+file2=<<GTKRAD_DIR>>\GtkRadiant\contrib\bkgrnd2d\bitmaps\bkgrnd2d_xy_toggle.bmp
+file3=<<GTKRAD_DIR>>\GtkRadiant\contrib\bkgrnd2d\bitmaps\bkgrnd2d_xz_toggle.bmp
+

@@ -1,0 +1,35 @@
+                GtkRadiant Linux
+                =-=-=-=-=-=-=-=-
+
+
+Installation Instructions
+=-=-=-=-=-=-=-=-=-=-=-=-=
+
+If you are installing a full setup, it is recommended that you install in an empty directory (clear up any previous GtkRadiant installation in the target directory first). If you are installing an update, you need to have a working installation of GtkRadiant already, and point the installer to the right location for the update.
+
+Requirements
+=-=-=-=-=-=-
+
+There are several required libraries that GtkRadiant and it's tools will try to link against. We try to comply with the Linux Standard Base ABI-wise regarding the binary builds we distribute (http://www.linuxbase.org/). Please let us know if this is not the case.
+
+- You need to have the full native Linux versions of the games we support.
+- Linux 2.4 kernel recommanded (old 2.2 and unstable kernels untested)
+- glibc 2.1 or above (2.2 recommended)
+- XFree86 4 with hardware accelerated OpenGL support (others untested)
+
+You need the following dynamic libraries:
+
+  * GTK+ 1.2 http://www.gtk.org
+  * zlib     http://www.cdrom.com/pub/infozip/zlib/
+  * libxml2  http://xmlsoft.org/
+  * libpng   http://www.libpng.org/pub/png/libpng.html
+
+Any decent distribution should provide packages for those, and in most cases have them installed by default.
+
+Misc
+=-=-
+
+Once installed, use GtkRadiant's Help menu for ChangeLog, Credits and Links
+
+--
+The GtkRadiant team

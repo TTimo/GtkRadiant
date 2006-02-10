@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<component>
+  <dir name="modules">
+    <file name="mapq3.dll"/>
+    <file name="mapq3.pdb"/>
+  </dir>
+</component>
+

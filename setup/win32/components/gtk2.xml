@@ -1,0 +1,47 @@
+<component name="gtk-win32-2.0-0">
+  <file name="libgtk-win32-2.0-0.dll"/>
+  <file name="libgdk-win32-2.0-0.dll"/>
+  <file name="libgdk_pixbuf-2.0-0.dll"/>
+  <dir name="etc">
+    <dir name="gtk-2.0">
+      <file name="gdk-pixbuf.loaders"/>
+    </dir>
+  </dir>
+  <dir name="lib">
+    <dir name="gtk-2.0">
+      <dir name="2.4.0">
+        <dir name="engines">
+          <file name="libwimp.dll"/>
+        </dir>
+        <dir name="immodules">
+          <file name="im-ipa.dll"/>
+        </dir>
+        <dir name="loaders">
+          <file name="libpixbufloader-bmp.dll"/>
+          <file name="libpixbufloader-xpm.dll"/>
+        </dir>
+      </dir>
+    </dir>
+    <dir name="locale">
+      <dir name="en@IPA">
+        <dir name="LC_MESSAGES">
+          <file name="gtk20.mo"/>
+        </dir>
+      </dir>
+      <dir name="en_GB">
+        <dir name="LC_MESSAGES">
+          <file name="gtk20.mo"/>
+        </dir>
+      </dir>
+    </dir>
+  </dir>
+  <dir name="share">
+    <dir name="themes">
+      <dir name="Default">
+        <dir name="gtk-2.0">
+          <file name="gtkrc"/>
+        </dir>
+      </dir>
+    </dir>
+  </dir>
+</component>

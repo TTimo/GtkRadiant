@@ -1,0 +1,92 @@
+/// ============================================================================
+/*
+Copyright (C) 2004 Robert Beckebans <trebor_7@users.sourceforge.net>
+Please see the file "AUTHORS" for a list of contributors
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+
+See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+*/
+/// ============================================================================
+
+#include "utils.cg"
+
+struct cg_vertex2fragment
+{	
+	float4 position		: TEXCOORD0;
+	float4 tex_diffuse_bump	: TEXCOORD1;
+	float4 tex_specular	: TEXCOORD2;
+	float4 tex_atten_xy_z	: TEXCOORD3;
+	
+	float3 tangent		: TEXCOORD4;
+	float3 binormal		: TEXCOORD5;
+	float3 normal		: TEXCOORD6;
+};
+
+struct cg_fragment2final
+{
+	float4 color		: COLOR;
+};
+
+
+cg_fragment2final main(cg_vertex2fragment IN,
+			uniform sampler2D diffusemap,
+			uniform sampler2D bumpmap,
+			uniform sampler2D specularmap,
+			uniform sampler2D attenuationmap_xy,
+			uniform sampler2D attenuationmap_z,
+			uniform float3 view_origin,
+			uniform float3 light_origin,
+			uniform float3 light_color,
+			uniform float bump_scale,
+			uniform float specular_exponent)
+{
+	cg_fragment2final OUT;
+	
+	// construct object-space-to-tangent-space 3x3 matrix
+	float3x3 rotation = float3x3(IN.tangent, IN.binormal, IN.normal);
+	
+	// compute view direction in tangent space
+	float3 V = normalize(mul(rotation, view_origin - IN.position.xyz));
+		
+	// compute light direction in tangent space
+	float3 L = normalize(mul(rotation, (light_origin - IN.position.xyz)));
+	
+	// compute half angle in tangent space
+	float3 H = normalize(L + V);
+	
+	// compute normal in tangent space from bumpmap
+	float3 T = CG_Expand(tex2D(bumpmap, IN.tex_diffuse_bump.zw).xyz);
+	T.z *= bump_scale;
+	float3 N = normalize(T);
+	
+	// compute the diffuse term
+	float4 diffuse = tex2D(diffusemap, IN.tex_diffuse_bump.xy);
+	diffuse.rgb *= light_color * saturate(dot(N, L));
+	
+	// compute the specular term
+	float3 specular = tex2D(specularmap, IN.tex_specular.xy).rgb * light_color * pow(saturate(dot(N, H)), specular_exponent);
+	
+	// compute attenuation
+	float3 attenuation_xy	= tex2Dproj(attenuationmap_xy, float3(IN.tex_atten_xy_z.x, IN.tex_atten_xy_z.y, IN.tex_atten_xy_z.w)).rgb;
+	float3 attenuation_z	= tex2D(attenuationmap_z, float2(IN.tex_atten_xy_z.z, 0)).rgb;
+					
+	// compute final color
+	OUT.color.rgba = diffuse;
+	OUT.color.rgb += specular;
+	OUT.color.rgb *= attenuation_xy;
+	OUT.color.rgb *= attenuation_z;
+
+	return OUT;
+}

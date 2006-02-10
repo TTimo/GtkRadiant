@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<package name="Wolfenstein Example Maps" version="1.0.0" target="[ProgramFilesFolder]\Return To Castle Wolfenstein" code="3a4da67e-38a7-495d-a688-45f202ee6c96" license="..\license.rtf">
+  <feature name="Wolfenstein Example Maps" desc="This feature must be installed in your Return To Castle Wolfenstein folder.">
+    <feature name="Wolfenstein Maps" desc="Example maps, models and textures for Return To Castle Wolfenstein">
+      <component name=".\components\wolf_data.xml" root="..\..\games\WolfPack"/>
+    </feature>
+  </feature>
+</package>

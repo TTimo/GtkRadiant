@@ -1,0 +1,13 @@
+#!/bin/sh
+# temporary..
+
+# grab the gtk devel package
+# FIXME: for win32 SDK only
+echo "Updating src/"
+echo "NOTE: check we are using the latest gtk dev packages"
+echo "NOTE: we are not putting our patched versions in"
+rm -rf src
+unzip /cygdrive/c/Download/Gtk-20001023/glib-dev-20001023.zip
+unzip /cygdrive/c/Download/Gtk-20001023/gtk+-dev-20000722.zip
+unzip /cygdrive/c/Download/Gtk-20001023/libiconv-dev-20001007.zip
+unzip /cygdrive/c/Download/Gtk-20001023/extralibs-dev-20001007.zip

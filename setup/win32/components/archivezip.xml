@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<component name="archivezip">
+  <dir name="modules">
+    <file name="archivezip.dll"/>
+    <file name="archivezip.pdb"/>
+  </dir>
+</component>

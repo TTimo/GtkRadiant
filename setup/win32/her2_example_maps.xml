@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<package name="Heretic II Example Maps" version="1.0.0" target="c:\heretic2\" code="cd87bd94-a8a3-418e-a4d2-75c3411d145b" license="..\license.rtf">
+  <feature name="Heretic II Maps" desc="This feature must be installed in your Heretic II Folder.">
+    <feature name="Heretic II Maps" desc="Example maps, models and textures for Heretic II">
+      <component name=".\components\her2_data.xml" root="..\..\games\Her2Pack\base"/>
+    </feature>
+  </feature>
+</package>

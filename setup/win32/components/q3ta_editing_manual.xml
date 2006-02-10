@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<component subdirectory="q3.game/docs">
+	<dir name="Team_Arena_Mapping_Help">
+		<file name="start.html"/>
+		<dir name="pages">
+			<file name="design_tips.html"/>
+			<file name="map_converters_checklist.html"/>
+			<file name="preface.html"/>
+			<file name="related_links.html"/>
+			<file name="table_of_contents.htm"/>
+			<file name="ta_game_types.html"/>
+			<file name="team_arena_entity_definitions.html"/>
+			<file name="team_arena_prefabs.html"/>
+			<file name="team_powerup_bases.html"/>
+			<file name="using_new_game_entities.html"/>
+		</dir>
+		<dir name="pics">
+			<file name="CRUSADER.gif"/>
+			<file name="INTRUDER.gif"/>
+			<file name="logo.gif"/>
+			<file name="MAINPOP.gif"/>
+			<file name="MENUBACKgif.gif"/>
+			<file name="PAGANs.gif"/>
+			<file name="STROGGS.gif"/>
+			<file name="THEFALLEN.gif"/>
+		</dir>
+	</dir>
+</component>
+

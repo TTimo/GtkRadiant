@@ -1,0 +1,690 @@
+# Anjuta Version 1.0.2 
+Compatibility Level: 1 
+
+<PROJECT_DESCRIPTION_START>
+level editor for Id technology games
+<PROJECT_DESCRIPTION_END>
+<CONFIG_PROGS_START>
+<CONFIG_PROGS_END>
+<CONFIG_LIBS_START>
+<CONFIG_LIBS_END>
+<CONFIG_HEADERS_START>
+<CONFIG_HEADERS_END>
+<CONFIG_CHARACTERISTICS_START>
+<CONFIG_CHARACTERISTICS_END>
+<CONFIG_LIB_FUNCS_START>
+<CONFIG_LIB_FUNCS_END>
+<CONFIG_ADDITIONAL_START>
+<CONFIG_ADDITIONAL_END>
+<CONFIG_FILES_START>
+<CONFIG_FILES_END>
+<MAKEFILE_AM_START>
+<MAKEFILE_AM_END>
+
+props.file.type=project
+
+anjuta.version=1.0.2
+anjuta.compatibility.level=1
+
+project.name=GtkRadiant
+project.type=GENERIC
+project.target.type=EXECUTABLE
+project.version=changesallthetime
+project.author=qeradiant.com dev team
+project.source.target=install/radiant.x86
+project.has.gettext=0
+project.programming.language=C_C++
+project.excluded.modules=	intl
+
+project.config.extra.modules.before=
+project.config.extra.modules.after=
+project.config.blocked=1
+project.config.disable.overwriting=1 1 1 1 1 1 1 1 1 
+
+project.menu.entry=GtkRadiant Version changesallthetime
+project.menu.group=Application
+project.menu.comment=GtkRadiant Version changesallthetime
+project.menu.icon=
+project.menu.need.terminal=0
+
+project.configure.options=
+anjuta.program.arguments=
+preferences.indent.automatic=1
+preferences.use.tabs=0
+preferences.indent.opening=0
+preferences.indent.closing=0
+preferences.tabsize=2
+preferences.indent.size=2
+preferences.autoformat.style=Style of Kangleipak
+preferences.autoformat.custom.style= -i8 -sc -bli0 -bl0 -cbi0 -ss
+preferences.autoformat.disable=0
+
+module.include.name=.
+module.include.type=
+module.include.expanded=1
+module.include.files=\
+	Doxygen_files/doxy_mainpage.h\
+	contrib/bobtoolz/CPortals.h\
+	contrib/bobtoolz/DBobView.h\
+	contrib/bobtoolz/DBrush.h\
+	contrib/bobtoolz/DEPair.h\
+	contrib/bobtoolz/DEntity.h\
+	contrib/bobtoolz/DListener.h\
+	contrib/bobtoolz/DMap.h\
+	contrib/bobtoolz/DPatch.h\
+	contrib/bobtoolz/DPlane.h\
+	contrib/bobtoolz/DPoint.h\
+	contrib/bobtoolz/DShape.h\
+	contrib/bobtoolz/DVisDrawer.h\
+	contrib/bobtoolz/DWinding.h\
+	contrib/bobtoolz/StdAfx.h\
+	contrib/bobtoolz/bobToolz.h\
+	contrib/bobtoolz/bsploader.h\
+	contrib/bobtoolz/ctfresource_gtk.h\
+	contrib/bobtoolz/funchandlers.h\
+	contrib/bobtoolz/lists.h\
+	contrib/bobtoolz/misc.h\
+	contrib/bobtoolz/resource-gtk.h\
+	contrib/bobtoolz/resource.h\
+	contrib/bobtoolz/shapes.h\
+	contrib/bobtoolz/visfind.h\
+	contrib/bobtoolz/dialogs/AboutDialog.h\
+	contrib/bobtoolz/dialogs/AutoCaulkDialog.h\
+	contrib/bobtoolz/dialogs/AutoCaulkStartDialog.h\
+	contrib/bobtoolz/dialogs/BrushCheckDialog.h\
+	contrib/bobtoolz/dialogs/DoorDialog.h\
+	contrib/bobtoolz/dialogs/IntersectDialog.h\
+	contrib/bobtoolz/dialogs/IntersectInfoDialog.h\
+	contrib/bobtoolz/dialogs/PolygonDialog.h\
+	contrib/bobtoolz/dialogs/StairDialog.h\
+	contrib/bobtoolz/dialogs/TextureResetDialog.h\
+	contrib/bobtoolz/dialogs/dialogs-gtk.h\
+	contrib/bobtoolz/dialogs/pathplotterdialog.h\
+	contrib/gtkgensurf/gendlgs.h\
+	contrib/gtkgensurf/gensurf.h\
+	contrib/gtkgensurf/triangle.h\
+	contrib/patches/Gtk/fileselect/linux/gtkfilesel-01222001.h\
+	contrib/prtview/AboutDialog.h\
+	contrib/prtview/ConfigDialog.h\
+	contrib/prtview/LoadPortalFileDialog.h\
+	contrib/prtview/gtkdlgs.h\
+	contrib/prtview/portals.h\
+	contrib/prtview/prtview.h\
+	contrib/prtview/resource.h\
+	contrib/prtview/stdafx.h\
+	docs/developer/XMLPush/StdAfx.h\
+	include/gtkr_list.h\
+	include/gtkr_vector.h\
+	include/ibrush.h\
+	include/ibspfrontend.h\
+	include/idata.h\
+	include/idatastream.h\
+	include/ientity.h\
+	include/iepairs.h\
+	include/ifilesystem.h\
+	include/igl.h\
+	include/iimage.h\
+	include/imap.h\
+	include/imodel.h\
+	include/ipatch.h\
+	include/ipluginentities.h\
+	include/irefcount.h\
+	include/iscriplib.h\
+	include/iselectedface.h\
+	include/ishaders.h\
+	include/ishadersmanager.h\
+	include/isurfaceplugin.h\
+	include/iui.h\
+	include/iui_gtk.h\
+	include/qerplugin.h\
+	include/qertypes.h\
+	include/qsysprintf.h\
+	include/stl_check.h\
+	include/stream_version.h\
+	libs/bytebool.h\
+	libs/cmdlib.h\
+	libs/jpeglib.h\
+	libs/mathlib.h\
+	libs/missing.h\
+	libs/multimon.h\
+	libs/pakstuff.h\
+	libs/str.h\
+	libs/synapse.h\
+	libs/jpeg6/jchuff.h\
+	libs/jpeg6/jconfig.h\
+	libs/jpeg6/jdct.h\
+	libs/jpeg6/jdhuff.h\
+	libs/jpeg6/jerror.h\
+	libs/jpeg6/jinclude.h\
+	libs/jpeg6/jmemsys.h\
+	libs/jpeg6/jmorecfg.h\
+	libs/jpeg6/jpegint.h\
+	libs/jpeg6/jversion.h\
+	libs/l_net/l_net.h\
+	libs/l_net/l_net_wins.h\
+	libs/pak/unzip.h\
+	plugins/image/bmp.h\
+	plugins/image/image.h\
+	plugins/image/lbmlib.h\
+	plugins/mapq3/plugin.h\
+	plugins/mapxml/plugin.h\
+	plugins/md3model/entitymodel.h\
+	plugins/md3model/md3.h\
+	plugins/md3model/md3model.h\
+	plugins/md3model/md3surface.h\
+	plugins/md3model/plugin.h\
+	plugins/md3model/surface.h\
+	plugins/sample/stdafx.h\
+	plugins/sample/str.h\
+	plugins/shaders/plugin.h\
+	plugins/shaders/shaders.h\
+	plugins/surface/plugtexdef.h\
+	plugins/surface/surfdlg.h\
+	plugins/surface/surfplug.h\
+	plugins/textool/2DView.h\
+	plugins/textool/ControlPointsManager.h\
+	plugins/textool/StdAfx.h\
+	plugins/textool/resource.h\
+	plugins/vfspak/vfs.h\
+	plugins/vfspak/vfspak.h\
+	plugins/vfspk3/unzip-vfspk3.h\
+	plugins/vfspk3/vfs.h\
+	plugins/vfspk3/vfspk3.h\
+	radiant/brush.h\
+	radiant/camera.h\
+	radiant/camwindow.h\
+	radiant/dialog.h\
+	radiant/entity.h\
+	radiant/epairswrapper.h\
+	radiant/feedback.h\
+	radiant/file.h\
+	radiant/filters.h\
+	radiant/findtexturedialog.h\
+	radiant/glwidget.h\
+	radiant/glwindow.h\
+	radiant/groupdialog.h\
+	radiant/gtkfilesel-darwin.h\
+	radiant/gtkfilesel-linux.h\
+	radiant/gtkfilesel.h\
+	radiant/gtkmisc.h\
+	radiant/mainframe.h\
+	radiant/map.h\
+	radiant/parse.h\
+	radiant/patchdialog.h\
+	radiant/plugin.h\
+	radiant/pluginmanager.h\
+	radiant/points.h\
+	radiant/preferences.h\
+	radiant/qe3.h\
+	radiant/qedefs.h\
+	radiant/qfiles.h\
+	radiant/qgl.h\
+	radiant/resource.h\
+	radiant/select.h\
+	radiant/stdafx.h\
+	radiant/surfacedialog.h\
+	radiant/texmanip.h\
+	radiant/textures.h\
+	radiant/texwindow.h\
+	radiant/ui.h\
+	radiant/undo.h\
+	radiant/watchbsp.h\
+	radiant/winding.h\
+	radiant/xmlstuff.h\
+	radiant/xywindow.h\
+	radiant/z.h\
+	radiant/zwindow.h\
+	tools/quake3/common/aselib.h\
+	tools/quake3/common/bspfile.h\
+	tools/quake3/common/cmdlib.h\
+	tools/quake3/common/imagelib.h\
+	tools/quake3/common/inout.h\
+	tools/quake3/common/l3dslib.h\
+	tools/quake3/common/mutex.h\
+	tools/quake3/common/polylib.h\
+	tools/quake3/common/polyset.h\
+	tools/quake3/common/qfiles.h\
+	tools/quake3/common/qthreads.h\
+	tools/quake3/common/scriplib.h\
+	tools/quake3/common/surfaceflags.h\
+	tools/quake3/common/trilib.h\
+	tools/quake3/common/unzip.h\
+	tools/quake3/common/vfs.h\
+	tools/quake3/q3data/3dslib.h\
+	tools/quake3/q3data/md3lib.h\
+	tools/quake3/q3data/p3dlib.h\
+	tools/quake3/q3data/q3data.h\
+	tools/quake3/q3map/Heapagnt.h\
+	tools/quake3/q3map/game_t.h\
+	tools/quake3/q3map/light.h\
+	tools/quake3/q3map/mesh.h\
+	tools/quake3/q3map/qbsp.h\
+	tools/quake3/q3map/shaders.h\
+	tools/quake3/q3map/vis.h\
+	libs/function.h\
+	include/iarchive.h\
+	libs/filestream.h
+
+module.source.name=.
+module.source.type=
+module.source.expanded=1
+module.source.files=\
+	contrib/bobtoolz/DBobView.cpp\
+	contrib/bobtoolz/DBrush.cpp\
+	contrib/bobtoolz/DEPair.cpp\
+	contrib/bobtoolz/DEntity.cpp\
+	contrib/bobtoolz/DListener.cpp\
+	contrib/bobtoolz/DMap.cpp\
+	contrib/bobtoolz/DPatch.cpp\
+	contrib/bobtoolz/DPlane.cpp\
+	contrib/bobtoolz/DPoint.cpp\
+	contrib/bobtoolz/DShape.cpp\
+	contrib/bobtoolz/DVisDrawer.cpp\
+	contrib/bobtoolz/DWinding.cpp\
+	contrib/bobtoolz/StdAfx.cpp\
+	contrib/bobtoolz/bobToolz-GTK.cpp\
+	contrib/bobtoolz/bobToolz.cpp\
+	contrib/bobtoolz/bsploader.cpp\
+	contrib/bobtoolz/cportals.cpp\
+	contrib/bobtoolz/ctfToolz-GTK.cpp\
+	contrib/bobtoolz/funchandlers-GTK.cpp\
+	contrib/bobtoolz/funchandlers-ctf-GTK.cpp\
+	contrib/bobtoolz/funchandlers.cpp\
+	contrib/bobtoolz/lists.cpp\
+	contrib/bobtoolz/misc.cpp\
+	contrib/bobtoolz/shapes.cpp\
+	contrib/bobtoolz/visfind.cpp\
+	contrib/bobtoolz/dialogs/AboutDialog.cpp\
+	contrib/bobtoolz/dialogs/AutoCaulkDialog.cpp\
+	contrib/bobtoolz/dialogs/AutoCaulkStartDialog.cpp\
+	contrib/bobtoolz/dialogs/DoorDialog.cpp\
+	contrib/bobtoolz/dialogs/IntersectDialog.cpp\
+	contrib/bobtoolz/dialogs/IntersectInfoDialog.cpp\
+	contrib/bobtoolz/dialogs/PolygonDialog.cpp\
+	contrib/bobtoolz/dialogs/StairDialog.cpp\
+	contrib/bobtoolz/dialogs/TextureResetDialog.cpp\
+	contrib/bobtoolz/dialogs/brushcheckdialog.cpp\
+	contrib/bobtoolz/dialogs/dialogs-gtk.cpp\
+	contrib/bobtoolz/dialogs/pathplotterdialog.cpp\
+	contrib/gtkgensurf/bitmap.cpp\
+	contrib/gtkgensurf/dec.cpp\
+	contrib/gtkgensurf/face.cpp\
+	contrib/gtkgensurf/font.cpp\
+	contrib/gtkgensurf/gendlgs.cpp\
+	contrib/gtkgensurf/genmap.cpp\
+	contrib/gtkgensurf/gensurf.cpp\
+	contrib/gtkgensurf/heretic.cpp\
+	contrib/gtkgensurf/plugin.cpp\
+	contrib/gtkgensurf/triangle.c\
+	contrib/gtkgensurf/view.cpp\
+	contrib/patches/Gtk/fileselect/linux/gtkfilesel-01222001.c\
+	contrib/prtview/AboutDialog.cpp\
+	contrib/prtview/ConfigDialog.cpp\
+	contrib/prtview/LoadPortalFileDialog.cpp\
+	contrib/prtview/gtkdlgs.cpp\
+	contrib/prtview/portals.cpp\
+	contrib/prtview/prtview.cpp\
+	contrib/prtview/stdafx.cpp\
+	docs/developer/XMLPush/StdAfx.cpp\
+	docs/developer/XMLPush/XMLPush.cpp\
+	docs/manual/quake3/Compile_Manual/cfgq3.c\
+	libs/cmdlib/cmdlib.cpp\
+	libs/jpeg6/jcomapi.cpp\
+	libs/jpeg6/jdapimin.cpp\
+	libs/jpeg6/jdapistd.cpp\
+	libs/jpeg6/jdatasrc.cpp\
+	libs/jpeg6/jdcoefct.cpp\
+	libs/jpeg6/jdcolor.cpp\
+	libs/jpeg6/jddctmgr.cpp\
+	libs/jpeg6/jdhuff.cpp\
+	libs/jpeg6/jdinput.cpp\
+	libs/jpeg6/jdmainct.cpp\
+	libs/jpeg6/jdmarker.cpp\
+	libs/jpeg6/jdmaster.cpp\
+	libs/jpeg6/jdpostct.cpp\
+	libs/jpeg6/jdsample.cpp\
+	libs/jpeg6/jdtrans.cpp\
+	libs/jpeg6/jerror.cpp\
+	libs/jpeg6/jfdctflt.cpp\
+	libs/jpeg6/jidctflt.cpp\
+	libs/jpeg6/jmemmgr.cpp\
+	libs/jpeg6/jmemnobs.cpp\
+	libs/jpeg6/jpgload.cpp\
+	libs/jpeg6/jutils.cpp\
+	libs/l_net/l_net.c\
+	libs/l_net/l_net_berkley.c\
+	libs/l_net/l_net_wins.c\
+	libs/mathlib/bbox.c\
+	libs/mathlib/linear.c\
+	libs/mathlib/m4x4.c\
+	libs/mathlib/mathlib.c\
+	libs/mathlib/ray.c\
+	libs/pak/pakstuff.cpp\
+	libs/pak/unzip.cpp\
+	libs/synapse/synapse.cpp\
+	plugins/image/bmp.cpp\
+	plugins/image/image.cpp\
+	plugins/image/jpeg.cpp\
+	plugins/image/lbmlib.cpp\
+	plugins/mapq3/parse.cpp\
+	plugins/mapq3/plugin.cpp\
+	plugins/mapq3/write.cpp\
+	plugins/mapxml/plugin.cpp\
+	plugins/mapxml/xmlparse.cpp\
+	plugins/mapxml/xmlwrite.cpp\
+	plugins/md3model/eclassmodel.cpp\
+	plugins/md3model/entitymodel.cpp\
+	plugins/md3model/md3model.cpp\
+	plugins/md3model/md3surface.cpp\
+	plugins/md3model/miscmodel.cpp\
+	plugins/md3model/plugin.cpp\
+	plugins/sample/sample.cpp\
+	plugins/sample/stdafx.cpp\
+	plugins/shaders/plugin.cpp\
+	plugins/shaders/shaders.cpp\
+	plugins/surface/plugtexdef.cpp\
+	plugins/surface/surfdlg.cpp\
+	plugins/surface/surfplug.cpp\
+	plugins/textool/2DView.cpp\
+	plugins/textool/ControlPointsManager.cpp\
+	plugins/textool/StdAfx.cpp\
+	plugins/textool/TexTool.cpp\
+	plugins/vfspak/vfs.cpp\
+	plugins/vfspak/vfspak.cpp\
+	plugins/vfspk3/unzip.cpp\
+	plugins/vfspk3/vfs.cpp\
+	plugins/vfspk3/vfspk3.cpp\
+	radiant/bp_dlg.cpp\
+	radiant/brush.cpp\
+	radiant/brush_primit.cpp\
+	radiant/brushscript.cpp\
+	radiant/camwindow.cpp\
+	radiant/csg.cpp\
+	radiant/dialog.cpp\
+	radiant/dialoginfo.cpp\
+	radiant/drag.cpp\
+	radiant/eclass.cpp\
+	radiant/entity.cpp\
+	radiant/feedback.cpp\
+	radiant/file.cpp\
+	radiant/filters.cpp\
+	radiant/findtexturedialog.cpp\
+	radiant/glinterface.cpp\
+	radiant/glwidget.cpp\
+	radiant/glwindow.cpp\
+	radiant/groupdialog.cpp\
+	radiant/gtkdlgs.cpp\
+	radiant/gtkfilesel-darwin.c\
+	radiant/gtkfilesel-linux.c\
+	radiant/gtkfilesel.c\
+	radiant/gtkmisc.cpp\
+	radiant/iepairs.cpp\
+	radiant/main.cpp\
+	radiant/mainframe.cpp\
+	radiant/map.cpp\
+	radiant/missing.cpp\
+	radiant/parse.cpp\
+	radiant/patchdialog.cpp\
+	radiant/plugin.cpp\
+	radiant/pluginentities.cpp\
+	radiant/pluginmanager.cpp\
+	radiant/pmesh.cpp\
+	radiant/points.cpp\
+	radiant/preferences.cpp\
+	radiant/profile.cpp\
+	radiant/qe3.cpp\
+	radiant/qgl-mac.c\
+	radiant/qgl.c\
+	radiant/queuedraw.cpp\
+	radiant/select.cpp\
+	radiant/selectedface.cpp\
+	radiant/stdafx.cpp\
+	radiant/surfacedialog.cpp\
+	radiant/surfaceplugin.cpp\
+	radiant/texmanip.cpp\
+	radiant/texwindow.cpp\
+	radiant/ui.cpp\
+	radiant/undo.cpp\
+	radiant/vertsel.cpp\
+	radiant/watchbsp.cpp\
+	radiant/winding.cpp\
+	radiant/xywindow.cpp\
+	radiant/z.cpp\
+	radiant/zwindow.cpp\
+	tools/quake3/common/aselib.c\
+	tools/quake3/common/bspfile.c\
+	tools/quake3/common/cmdlib.c\
+	tools/quake3/common/imagelib.c\
+	tools/quake3/common/inout.c\
+	tools/quake3/common/l3dslib.c\
+	tools/quake3/common/md4.c\
+	tools/quake3/common/mutex.c\
+	tools/quake3/common/polylib.c\
+	tools/quake3/common/scriplib.c\
+	tools/quake3/common/threads.c\
+	tools/quake3/common/trilib.c\
+	tools/quake3/common/unzip.c\
+	tools/quake3/common/vfs.c\
+	tools/quake3/q3data/3dslib.c\
+	tools/quake3/q3data/compress.c\
+	tools/quake3/q3data/images.c\
+	tools/quake3/q3data/md3lib.c\
+	tools/quake3/q3data/models.c\
+	tools/quake3/q3data/oldstuff.c\
+	tools/quake3/q3data/p3dlib.c\
+	tools/quake3/q3data/polyset.c\
+	tools/quake3/q3data/q3data.c\
+	tools/quake3/q3data/stripper.c\
+	tools/quake3/q3data/video.c\
+	tools/quake3/q3map/NetConnect/main.c\
+	tools/quake3/q3map/brush.c\
+	tools/quake3/q3map/brush_primit.c\
+	tools/quake3/q3map/bsp.c\
+	tools/quake3/q3map/facebsp.c\
+	tools/quake3/q3map/fog.c\
+	tools/quake3/q3map/gldraw.c\
+	tools/quake3/q3map/glfile.c\
+	tools/quake3/q3map/leakfile.c\
+	tools/quake3/q3map/light.c\
+	tools/quake3/q3map/light_bounce.c\
+	tools/quake3/q3map/light_trace.c\
+	tools/quake3/q3map/lightmaps.c\
+	tools/quake3/q3map/lightv.c\
+	tools/quake3/q3map/map.c\
+	tools/quake3/q3map/mesh.c\
+	tools/quake3/q3map/misc_model.c\
+	tools/quake3/q3map/nodraw.c\
+	tools/quake3/q3map/patch.c\
+	tools/quake3/q3map/path_init.c\
+	tools/quake3/q3map/portals.c\
+	tools/quake3/q3map/prtfile.c\
+	tools/quake3/q3map/shaders.c\
+	tools/quake3/q3map/surface.c\
+	tools/quake3/q3map/terrain.c\
+	tools/quake3/q3map/tjunction.c\
+	tools/quake3/q3map/tree.c\
+	tools/quake3/q3map/vis.c\
+	tools/quake3/q3map/visflow.c\
+	tools/quake3/q3map/writebsp.c\
+	tools/quake3/q3map/NetTest/main.c\
+	plugins/archivepak/archive.cpp\
+	plugins/archivepak/plugin.cpp
+
+module.pixmap.name=.
+module.pixmap.type=
+module.pixmap.expanded=0
+module.pixmap.files=\
+	Doxygen_files/example/doxygen.gif\
+	Doxygen_files/example/graph_legend.gif\
+	Doxygen_files/images/body-left-tile.gif\
+	Doxygen_files/images/body-lower-left.gif\
+	Doxygen_files/images/body-lower-right.gif\
+	Doxygen_files/images/body-lower-tile.gif\
+	Doxygen_files/images/body-right-tile.gif\
+	Doxygen_files/images/body-upper-left.gif\
+	Doxygen_files/images/body-upper-right.gif\
+	Doxygen_files/images/body-upper-tile.gif\
+	Doxygen_files/images/gtkr_splash.jpg\
+	Doxygen_files/images/gtkr_splash_sm.jpg\
+	Doxygen_files/images/history_id_logo.gif\
+	Doxygen_files/images/top-right.gif\
+	Doxygen_files/images/top-tile.gif\
+	Doxygen_files/images/top-title.gif\
+	contrib/patches/Gtk/fileselect/back.xpm\
+	contrib/patches/Gtk/fileselect/forward.xpm\
+	contrib/patches/Gtk/fileselect/refresh.xpm\
+	contrib/patches/Gtk/fileselect/up.xpm\
+	docs/developer/Inspector/classdiagram1.gif\
+	docs/manual/Q3Rad_Manual/Q3Rad_Manual_files/image002.png\
+	docs/manual/Q3Rad_Manual/Q3Rad_Manual_files/image003.png\
+	docs/manual/Q3Rad_Manual/Q3Rad_Manual_files/image004.png\
+	docs/manual/Q3Rad_Manual/Q3Rad_Manual_files/image006.png\
+	docs/manual/Q3Rad_Manual/Q3Rad_Manual_files/image008.png\
+	docs/manual/Q3Rad_Manual/Q3Rad_Manual_files/image010.png\
+	docs/manual/Q3Rad_Manual/Q3Rad_Manual_files/image012.png\
+	docs/manual/Q3Rad_Manual/Q3Rad_Manual_files/image014.png\
+	docs/manual/Q3Rad_Manual/Q3Rad_Manual_files/image016.png\
+	docs/manual/Q3Rad_Manual/Q3Rad_Manual_files/image018.png\
+	docs/manual/Q3Rad_Manual/Q3Rad_Manual_files/image020.png\
+	docs/manual/Q3Rad_Manual/Q3Rad_Manual_files/image022.png\
+	docs/manual/Q3Rad_Manual/Q3Rad_Manual_files/image024.png\
+	docs/manual/Q3Rad_Manual/Q3Rad_Manual_files/image026.png\
+	docs/manual/Q3Rad_Manual/Q3Rad_Manual_files/image028.png\
+	docs/manual/Q3Rad_Manual/Q3Rad_Manual_files/image030.png\
+	docs/manual/Q3Rad_Manual/Q3Rad_Manual_files/image032.png\
+	docs/manual/Q3Rad_Manual/Q3Rad_Manual_files/image034.png\
+	docs/manual/Q3Rad_Manual/Q3Rad_Manual_files/image035.png\
+	docs/manual/Q3Rad_Manual/Q3Rad_Manual_files/image038.png\
+	docs/manual/Q3Rad_Manual/Q3Rad_Manual_files/image040.png\
+	docs/manual/quake3/Q3AShader_Manual/q3ashader_manual_files/image002.jpg\
+	docs/manual/quake3/Team_Arena_Mapping_Help/pics/CRUSADER.gif\
+	docs/manual/quake3/Team_Arena_Mapping_Help/pics/INTRUDER.gif\
+	docs/manual/quake3/Team_Arena_Mapping_Help/pics/MAINPOP.gif\
+	docs/manual/quake3/Team_Arena_Mapping_Help/pics/MENUBACKgif.gif\
+	docs/manual/quake3/Team_Arena_Mapping_Help/pics/PAGANs.gif\
+	docs/manual/quake3/Team_Arena_Mapping_Help/pics/STROGGS.gif\
+	docs/manual/quake3/Team_Arena_Mapping_Help/pics/THEFALLEN.gif\
+	docs/manual/quake3/Team_Arena_Mapping_Help/pics/logo.gif\
+	docs/manual/quake3/Terrain_Manual/pages/Image3.gif\
+	docs/manual/quake3/Terrain_Manual/pages/Image4.gif\
+	docs/manual/quake3/Terrain_Manual/pages/Image5.gif\
+	docs/manual/quake3/Terrain_Manual/pages/Image6.gif\
+	docs/manual/quake3/Terrain_Manual/pics/background.jpg\
+	docs/manual/quake3/Terrain_Manual/pics/start.gif\
+	docs/manual/quake3/Terrain_Manual/pics/terrain.jpg\
+	plugins/textool/Doc/Image2.jpg\
+	setup/linux/Help/DocsArt/toolback.jpg\
+	setup/linux/radiant.xpm\
+	setup/linux/setup.data/splash.xpm
+
+module.data.name=.
+module.data.type=
+module.data.expanded=0
+module.data.files=
+
+module.help.name=.
+module.help.type=
+module.help.expanded=0
+module.help.files=
+
+module.doc.name=.
+module.doc.type=
+module.doc.expanded=0
+module.doc.files=\
+	INSTALL\
+	README\
+	Doxygen_files/example/annotated.html\
+	Doxygen_files/example/classIEpair-members.html\
+	Doxygen_files/example/classIEpair.html\
+	Doxygen_files/example/classes.html\
+	Doxygen_files/example/files.html\
+	Doxygen_files/example/functions.html\
+	Doxygen_files/example/graph_legend.html\
+	Doxygen_files/example/index.html\
+	Doxygen_files/example/pages.html\
+	Doxygen_files/example/test_8c-source.html\
+	Doxygen_files/example/test_8c.html\
+	Doxygen_files/example/todo.html\
+	Doxygen_files/doxygen_gtkradiant_foot.html\
+	Doxygen_files/doxygen_gtkradiant_head.html\
+	Doxygen_files/doxygen_index.html\
+	Doxygen_files/doxygen_reference_foot.html\
+	Doxygen_files/doxygen_reference_head.html\
+	Doxygen_files/reference1.html\
+	contrib/patches/Gtk/fileselect/README\
+	docs/developer/TODO\
+	docs/manual/quake3/Compile_Manual/index.html\
+	docs/manual/quake3/Compile_Manual/q3map.html\
+	docs/manual/quake3/New_Teams_For_Q3TA/index.html\
+	docs/manual/quake3/Q3AShader_Manual/appendix/appA.html\
+	docs/manual/quake3/Team_Arena_Mapping_Help/pages/design_tips.html\
+	docs/manual/quake3/Team_Arena_Mapping_Help/pages/map_converters_checklist.html\
+	docs/manual/quake3/Team_Arena_Mapping_Help/pages/preface.html\
+	docs/manual/quake3/Team_Arena_Mapping_Help/pages/related_links.html\
+	docs/manual/quake3/Team_Arena_Mapping_Help/pages/ta_game_types.html\
+	docs/manual/quake3/Team_Arena_Mapping_Help/pages/team_arena_entity_definitions.html\
+	docs/manual/quake3/Team_Arena_Mapping_Help/pages/team_arena_prefabs.html\
+	docs/manual/quake3/Team_Arena_Mapping_Help/pages/team_powerup_bases.html\
+	docs/manual/quake3/Team_Arena_Mapping_Help/pages/using_new_game_entities.html\
+	docs/manual/quake3/Team_Arena_Mapping_Help/start.html\
+	docs/manual/quake3/Terrain_Manual/pages/adding_bots.html\
+	docs/manual/quake3/Terrain_Manual/pages/adding_buildings_to_terrain.html\
+	docs/manual/quake3/Terrain_Manual/pages/art_tools.html\
+	docs/manual/quake3/Terrain_Manual/pages/blocking_vis.html\
+	docs/manual/quake3/Terrain_Manual/pages/boxing_in_the_world.html\
+	docs/manual/quake3/Terrain_Manual/pages/clipping_the_terrain.html\
+	docs/manual/quake3/Terrain_Manual/pages/creating_the_alphamap.html\
+	docs/manual/quake3/Terrain_Manual/pages/creating_the_terrain.html\
+	docs/manual/quake3/Terrain_Manual/pages/entity_keys_and_values.html\
+	docs/manual/quake3/Terrain_Manual/pages/glossary.html\
+	docs/manual/quake3/Terrain_Manual/pages/height_map_into_terrain_mesh.html\
+	docs/manual/quake3/Terrain_Manual/pages/height_maps.html\
+	docs/manual/quake3/Terrain_Manual/pages/introduction.html\
+	docs/manual/quake3/Terrain_Manual/pages/key_changes.html\
+	docs/manual/quake3/Terrain_Manual/pages/lighting_the_terrain.html\
+	docs/manual/quake3/Terrain_Manual/pages/manipulating_the_terrain_mesh.html\
+	docs/manual/quake3/Terrain_Manual/pages/mapping_the_textures.html\
+	docs/manual/quake3/Terrain_Manual/pages/new_or_revised_q3map_shader_comm.html\
+	docs/manual/quake3/Terrain_Manual/pages/other_possible_height_map_tools.html\
+	docs/manual/quake3/Terrain_Manual/pages/related_links.html\
+	docs/manual/quake3/Terrain_Manual/pages/suggested_gensurf_settings.html\
+	docs/manual/quake3/Terrain_Manual/pages/table_of_contents.html\
+	docs/manual/quake3/Terrain_Manual/pages/terrain_entity.html\
+	docs/manual/quake3/Terrain_Manual/pages/terrain_mesh_into_terrain_entity.html\
+	docs/manual/quake3/Terrain_Manual/pages/terrain_related_worldspawn_features.html\
+	docs/manual/quake3/Terrain_Manual/pages/terrain_texture.html\
+	docs/manual/quake3/Terrain_Manual/pages/the_meta_shader.html\
+	docs/manual/quake3/Terrain_Manual/start.html\
+	plugins/textool/Doc/TexTool.html\
+	setup/PluginSDK/README.html\
+	setup/PluginSDK/TODO\
+	setup/data/tools/credits.html\
+	setup/linux/Help/Index.html\
+	setup/win32/TODO\
+	www/coding.html\
+	www/files.html\
+	www/gtkradiant.html\
+	www/hosted.html\
+	www/index.html\
+	www/reviews.html
+
+module.po.expanded=0
+module.po.files=
+
+compiler.options.supports=
+compiler.options.include.paths=\
+	.\
+	..
+compiler.options.library.paths=
+compiler.options.libraries=
+compiler.options.libraries.selected=
+compiler.options.defines=\
+	HAVE_CONFIG_H
+compiler.options.warning.buttons=0 0 1 1 0 1 0 0 0 0 0 0 0 1 0 0 
+compiler.options.optimize.buttons=0 0 1 0 
+compiler.options.other.buttons=1 0 
+compiler.options.other.c.flags=
+compiler.options.other.l.flags=
+compiler.options.other.l.libs=
+project.source.paths=
+

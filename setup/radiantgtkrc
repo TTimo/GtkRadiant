@@ -1,0 +1,63 @@
+# ----------------------------------------------------------------------------------------
+# Basic style settings for GtkRadiant
+# ----------------------------------------------------------------------------------------
+
+
+
+style "gtk_radiant_menus"
+{
+  font_name = "Tahoma, Helvetica, Arial 8"
+}
+
+
+
+
+style "gtk_radiant_text"
+{
+  font_name = "Courier New, Courier, Monospaced, Fixed 9"
+}
+
+
+
+
+style "gtk_radiant_statusbar"
+{
+  font_name = "Tahoma, Helvetica, Arial 8"
+}
+
+
+
+
+style "gtk_radiant_tooltips" {
+  bg[NORMAL] = "#ffffe0"
+  font_name = "Tahoma, Helvetica, Arial 8"
+}
+
+
+
+# -- TOOLTIPS
+widget "gtk-tooltips" style "gtk_radiant_tooltips"
+
+
+
+# -- ALL MENUS
+widget_class "*GtkMenu*" style "gtk_radiant_menus"
+
+
+
+# -- ALL TEXT (console)
+widget_class "*GtkText*" style "gtk_radiant_text"
+
+
+
+# -- ALL LABELS (Statusbar)
+widget_class "*GtkLabel*" style "gtk_radiant_statusbar"
+
+
+# -- lists, trees, dropdowns, entries, spinners, sliders
+widget_class "*GtkCList*" style "gtk_radiant_menus"
+widget_class "*GtkCTree*" style "gtk_radiant_menus"
+widget_class "*GtkCombo*" style "gtk_radiant_menus"
+widget_class "*GtkEntry*" style "gtk_radiant_menus"
+widget_class "*GtkSpinButton*" style "gtk_radiant_menus"
+widget_class "*GtkAdjustment*" style "gtk_radiant_menus"

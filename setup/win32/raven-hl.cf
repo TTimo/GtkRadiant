@@ -1,0 +1,11 @@
+# Core + all game packs
+
+# output dir name
+$SETUP_DIR = 'Setup-RavenAndMisc';
+
+$DO_CORE = 1;
+$DO_GAME_JKII = 1;
+$DO_GAME_STVEF = 1;
+$DO_GAME_HALFLIFE = 1;
+$DO_GAME_SOF2 = 1;
+$DO_GAME_JA = 1;

@@ -1,0 +1,8 @@
+[General]
+Type=FILELIST
+Version=1.10.000
+
+[TopDir]
+file0=<<GTKRAD_DIR>>\GtkRadiant\setup\data\tools\q3data.qdt
+file1=<<GTKRAD_DIR>>\GtkRadiant\setup\data\tools\game.xlink
+

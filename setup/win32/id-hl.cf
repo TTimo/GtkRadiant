@@ -1,0 +1,11 @@
+# Core + all game packs
+
+# output dir name
+$SETUP_DIR = 'Setup-IdHL';
+
+$DO_CORE = 1;
+$DO_GAME_Q3 = 1;
+$DO_GAME_WOLF = 1;
+$DO_GAME_HALFLIFE = 1;
+$DO_GAME_ET = 1;
+$DO_GAME_Q2 = 1;

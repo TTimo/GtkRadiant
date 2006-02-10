@@ -1,0 +1,276 @@
+[General]
+Type=FILELIST
+Version=1.10.000
+
+[TopDir]
+file0=<<GTKRAD_DIR>>\SOF2Pack\game.xlink
+file1=<<GTKRAD_DIR>>\SOF2Pack\ChangeLog.txt
+file2=<<GTKRAD_DIR>>\Sof2Pack\bin\BehavEd.bhc
+file3=<<GTKRAD_DIR>>\RavenPack\bin\BehavEd.exe
+file4=<<GTKRAD_DIR>>\RavenPack\bin\ConfusEditor.exe
+file5=<<GTKRAD_DIR>>\RavenPack\bin\EffectsEd.exe
+file6=<<GTKRAD_DIR>>\RavenPack\bin\IBIze.exe
+file7=<<GTKRAD_DIR>>\RavenPack\bin\roq.exe
+file8=<<GTKRAD_DIR>>\Sof2Pack\synapse.config
+SubDir0=docs
+SubDir1=modules
+
+[docs]
+fulldirectory=
+file0=<<GTKRAD_DIR>>\SOF2Pack\docs\SoF2_Terrain.html
+file1=<<GTKRAD_DIR>>\SOF2Pack\docs\SoF2_MP_Maps.html
+file2=<<GTKRAD_DIR>>\SOF2Pack\docs\SoF2_Shaders.html
+file3=<<GTKRAD_DIR>>\RavenPack\docs\Guide to SOF2JK2 Vertigons.htm
+file4=<<GTKRAD_DIR>>\RavenPack\docs\Guide to SOF2JK2 Weather.htm
+file5=<<GTKRAD_DIR>>\RavenPack\docs\Using_EffectsEd.htm
+file6=<<GTKRAD_DIR>>\RavenPack\docs\Q3_Enhancements.htm
+file7=<<GTKRAD_DIR>>\RavenPack\docs\ROQ_Files.htm
+file8=<<GTKRAD_DIR>>\Sof2Pack\docs\SoF2_Weapons_WpnFile.htm
+file9=<<GTKRAD_DIR>>\Sof2Pack\docs\Nav Point System.htm
+file10=<<GTKRAD_DIR>>\Sof2Pack\docs\RMG tutorial.htm
+file11=<<GTKRAD_DIR>>\Sof2Pack\docs\SoF2_Animating Objects.htm
+file12=<<GTKRAD_DIR>>\Sof2Pack\docs\SoF2_Character_NPCFile.htm
+file13=<<GTKRAD_DIR>>\Sof2Pack\docs\SoF2_Character_Skins.htm
+file14=<<GTKRAD_DIR>>\Sof2Pack\docs\SoF2_ConfusEd.htm
+file15=<<GTKRAD_DIR>>\Sof2Pack\docs\SoF2_Model_Formats.htm
+file16=<<GTKRAD_DIR>>\Sof2Pack\docs\SoF2_Raven Menu Format.htm
+file17=<<GTKRAD_DIR>>\Sof2Pack\docs\SoF2_Scripting.htm
+file18=<<GTKRAD_DIR>>\Sof2Pack\docs\SoF2_StripEd.htm
+file19=<<GTKRAD_DIR>>\Sof2Pack\docs\SoF2_Weapons_AnimatorPOV.htm
+file20=<<GTKRAD_DIR>>\Sof2Pack\docs\SoF2_Weapons_FramesFile.htm
+file21=<<GTKRAD_DIR>>\Sof2Pack\docs\SoF2_Weapons_InviewFile.htm
+file22=<<GTKRAD_DIR>>\Sof2Pack\docs\SoF2_Weapons_Overview.htm
+SubDir0=docs\GtkRadiant_SoF2_HOWTO
+SubDir1=docs\SoF2_MP_Maps_files
+SubDir2=docs\SoF2_Shaders_files
+SubDir3=docs\SoF2_Terrain_files
+SubDir4=docs\Using_EffectsEd_files
+SubDir5=docs\SoF2_Weapons_WpnFile_files
+SubDir6=docs\SoF2_Weapons_Overview_files
+SubDir7=docs\SoF2_Weapons_InviewFile_files
+SubDir8=docs\SoF2_Weapons_FramesFile_files
+SubDir9=docs\SoF2_Weapons_AnimatorPOV_files
+SubDir10=docs\SoF2_StripEd_files
+SubDir11=docs\SoF2_Scripting_files
+SubDir12=docs\SoF2_Raven Menu Format_files
+SubDir13=docs\SoF2_Model_Formats_files
+SubDir14=docs\SoF2_ConfusEd_files
+SubDir15=docs\SoF2_Character_Skins_files
+SubDir16=docs\SoF2_Character_NPCFile_files
+SubDir17=docs\SoF2_Animating Objects_files
+SubDir18=docs\Nav Point System_files
+
+[docs\GtkRadiant_SoF2_HOWTO]
+fulldirectory=
+file0=<<GTKRAD_DIR>>\SOF2Pack\docs\GtkRadiant_SoF2_HOWTO\project.png
+file1=<<GTKRAD_DIR>>\SOF2Pack\docs\GtkRadiant_SoF2_HOWTO\bsp_console.png
+file2=<<GTKRAD_DIR>>\SOF2Pack\docs\GtkRadiant_SoF2_HOWTO\bsp_menu.png
+file3=<<GTKRAD_DIR>>\SOF2Pack\docs\GtkRadiant_SoF2_HOWTO\game1.png
+file4=<<GTKRAD_DIR>>\SOF2Pack\docs\GtkRadiant_SoF2_HOWTO\game2.png
+file5=<<GTKRAD_DIR>>\SOF2Pack\docs\GtkRadiant_SoF2_HOWTO\index.html
+
+[docs\SoF2_MP_Maps_files]
+fulldirectory=
+file0=<<GTKRAD_DIR>>\SOF2Pack\docs\SoF2_MP_Maps_files\image002.jpg
+file1=<<GTKRAD_DIR>>\SOF2Pack\docs\SoF2_MP_Maps_files\filelist.xml
+file2=<<GTKRAD_DIR>>\SOF2Pack\docs\SoF2_MP_Maps_files\header.html
+file3=<<GTKRAD_DIR>>\SOF2Pack\docs\SoF2_MP_Maps_files\image001.jpg
+
+[docs\SoF2_Shaders_files]
+fulldirectory=
+file0=<<GTKRAD_DIR>>\SOF2Pack\docs\SoF2_Shaders_files\image002.jpg
+file1=<<GTKRAD_DIR>>\SOF2Pack\docs\SoF2_Shaders_files\filelist.xml
+file2=<<GTKRAD_DIR>>\SOF2Pack\docs\SoF2_Shaders_files\header.html
+file3=<<GTKRAD_DIR>>\SOF2Pack\docs\SoF2_Shaders_files\image001.jpg
+
+[docs\SoF2_Terrain_files]
+fulldirectory=
+file0=<<GTKRAD_DIR>>\SOF2Pack\docs\SoF2_Terrain_files\image002.jpg
+file1=<<GTKRAD_DIR>>\SOF2Pack\docs\SoF2_Terrain_files\filelist.xml
+file2=<<GTKRAD_DIR>>\SOF2Pack\docs\SoF2_Terrain_files\header.html
+file3=<<GTKRAD_DIR>>\SOF2Pack\docs\SoF2_Terrain_files\image001.jpg
+
+[docs\Using_EffectsEd_files]
+fulldirectory=
+file0=<<GTKRAD_DIR>>\RavenPack\docs\Using_EffectsEd_files\filelist.xml
+file1=<<GTKRAD_DIR>>\RavenPack\docs\Using_EffectsEd_files\image001.jpg
+file2=<<GTKRAD_DIR>>\RavenPack\docs\Using_EffectsEd_files\image002.jpg
+file3=<<GTKRAD_DIR>>\RavenPack\docs\Using_EffectsEd_files\image003.jpg
+file4=<<GTKRAD_DIR>>\RavenPack\docs\Using_EffectsEd_files\image004.jpg
+file5=<<GTKRAD_DIR>>\RavenPack\docs\Using_EffectsEd_files\image005.jpg
+file6=<<GTKRAD_DIR>>\RavenPack\docs\Using_EffectsEd_files\image006.jpg
+file7=<<GTKRAD_DIR>>\RavenPack\docs\Using_EffectsEd_files\image007.jpg
+file8=<<GTKRAD_DIR>>\RavenPack\docs\Using_EffectsEd_files\image008.jpg
+file9=<<GTKRAD_DIR>>\RavenPack\docs\Using_EffectsEd_files\image009.jpg
+file10=<<GTKRAD_DIR>>\RavenPack\docs\Using_EffectsEd_files\image010.jpg
+file11=<<GTKRAD_DIR>>\RavenPack\docs\Using_EffectsEd_files\image011.jpg
+file12=<<GTKRAD_DIR>>\RavenPack\docs\Using_EffectsEd_files\image012.jpg
+file13=<<GTKRAD_DIR>>\RavenPack\docs\Using_EffectsEd_files\image013.jpg
+file14=<<GTKRAD_DIR>>\RavenPack\docs\Using_EffectsEd_files\image014.jpg
+file15=<<GTKRAD_DIR>>\RavenPack\docs\Using_EffectsEd_files\image015.jpg
+file16=<<GTKRAD_DIR>>\RavenPack\docs\Using_EffectsEd_files\image016.jpg
+
+[docs\SoF2_Weapons_WpnFile_files]
+fulldirectory=
+file0=<<GTKRAD_DIR>>\Sof2Pack\docs\SoF2_Weapons_WpnFile_files\filelist.xml
+file1=<<GTKRAD_DIR>>\Sof2Pack\docs\SoF2_Weapons_WpnFile_files\header.htm
+file2=<<GTKRAD_DIR>>\Sof2Pack\docs\SoF2_Weapons_WpnFile_files\image001.jpg
+file3=<<GTKRAD_DIR>>\Sof2Pack\docs\SoF2_Weapons_WpnFile_files\image002.jpg
+
+[docs\SoF2_Weapons_Overview_files]
+fulldirectory=
+file0=<<GTKRAD_DIR>>\Sof2Pack\docs\SoF2_Weapons_Overview_files\filelist.xml
+file1=<<GTKRAD_DIR>>\Sof2Pack\docs\SoF2_Weapons_Overview_files\header.htm
+file2=<<GTKRAD_DIR>>\Sof2Pack\docs\SoF2_Weapons_Overview_files\image001.jpg
+file3=<<GTKRAD_DIR>>\Sof2Pack\docs\SoF2_Weapons_Overview_files\image002.jpg
+
+[docs\SoF2_Weapons_InviewFile_files]
+fulldirectory=
+file0=<<GTKRAD_DIR>>\Sof2Pack\docs\SoF2_Weapons_InviewFile_files\filelist.xml
+file1=<<GTKRAD_DIR>>\Sof2Pack\docs\SoF2_Weapons_InviewFile_files\header.htm
+file2=<<GTKRAD_DIR>>\Sof2Pack\docs\SoF2_Weapons_InviewFile_files\image001.jpg
+file3=<<GTKRAD_DIR>>\Sof2Pack\docs\SoF2_Weapons_InviewFile_files\image002.jpg
+
+[docs\SoF2_Weapons_FramesFile_files]
+fulldirectory=
+file0=<<GTKRAD_DIR>>\Sof2Pack\docs\SoF2_Weapons_FramesFile_files\filelist.xml
+file1=<<GTKRAD_DIR>>\Sof2Pack\docs\SoF2_Weapons_FramesFile_files\header.htm
+file2=<<GTKRAD_DIR>>\Sof2Pack\docs\SoF2_Weapons_FramesFile_files\image001.jpg
+file3=<<GTKRAD_DIR>>\Sof2Pack\docs\SoF2_Weapons_FramesFile_files\image002.jpg
+
+[docs\SoF2_Weapons_AnimatorPOV_files]
+fulldirectory=
+file0=<<GTKRAD_DIR>>\Sof2Pack\docs\SoF2_Weapons_AnimatorPOV_files\filelist.xml
+file1=<<GTKRAD_DIR>>\Sof2Pack\docs\SoF2_Weapons_AnimatorPOV_files\header.htm
+file2=<<GTKRAD_DIR>>\Sof2Pack\docs\SoF2_Weapons_AnimatorPOV_files\image001.jpg
+file3=<<GTKRAD_DIR>>\Sof2Pack\docs\SoF2_Weapons_AnimatorPOV_files\image002.jpg
+
+[docs\SoF2_StripEd_files]
+fulldirectory=
+file0=<<GTKRAD_DIR>>\Sof2Pack\docs\SoF2_StripEd_files\filelist.xml
+file1=<<GTKRAD_DIR>>\Sof2Pack\docs\SoF2_StripEd_files\header.htm
+file2=<<GTKRAD_DIR>>\Sof2Pack\docs\SoF2_StripEd_files\image001.jpg
+file3=<<GTKRAD_DIR>>\Sof2Pack\docs\SoF2_StripEd_files\image002.jpg
+
+[docs\SoF2_Scripting_files]
+fulldirectory=
+file0=<<GTKRAD_DIR>>\Sof2Pack\docs\SoF2_Scripting_files\filelist.xml
+file1=<<GTKRAD_DIR>>\Sof2Pack\docs\SoF2_Scripting_files\header.htm
+
+[docs\SoF2_Raven Menu Format_files]
+fulldirectory=
+file0=<<GTKRAD_DIR>>\Sof2Pack\docs\SoF2_Raven Menu Format_files\filelist.xml
+file1=<<GTKRAD_DIR>>\Sof2Pack\docs\SoF2_Raven Menu Format_files\header.htm
+file2=<<GTKRAD_DIR>>\Sof2Pack\docs\SoF2_Raven Menu Format_files\image001.jpg
+file3=<<GTKRAD_DIR>>\Sof2Pack\docs\SoF2_Raven Menu Format_files\image002.jpg
+
+[docs\SoF2_Model_Formats_files]
+fulldirectory=
+file0=<<GTKRAD_DIR>>\Sof2Pack\docs\SoF2_Model_Formats_files\filelist.xml
+file1=<<GTKRAD_DIR>>\Sof2Pack\docs\SoF2_Model_Formats_files\header.htm
+file2=<<GTKRAD_DIR>>\Sof2Pack\docs\SoF2_Model_Formats_files\image001.jpg
+file3=<<GTKRAD_DIR>>\Sof2Pack\docs\SoF2_Model_Formats_files\image002.jpg
+file4=<<GTKRAD_DIR>>\Sof2Pack\docs\SoF2_Model_Formats_files\image003.jpg
+file5=<<GTKRAD_DIR>>\Sof2Pack\docs\SoF2_Model_Formats_files\image004.jpg
+file6=<<GTKRAD_DIR>>\Sof2Pack\docs\SoF2_Model_Formats_files\image005.jpg
+file7=<<GTKRAD_DIR>>\Sof2Pack\docs\SoF2_Model_Formats_files\image006.jpg
+file8=<<GTKRAD_DIR>>\Sof2Pack\docs\SoF2_Model_Formats_files\image007.jpg
+file9=<<GTKRAD_DIR>>\Sof2Pack\docs\SoF2_Model_Formats_files\image008.jpg
+file10=<<GTKRAD_DIR>>\Sof2Pack\docs\SoF2_Model_Formats_files\image009.jpg
+file11=<<GTKRAD_DIR>>\Sof2Pack\docs\SoF2_Model_Formats_files\image010.jpg
+file12=<<GTKRAD_DIR>>\Sof2Pack\docs\SoF2_Model_Formats_files\image011.jpg
+
+[docs\SoF2_ConfusEd_files]
+fulldirectory=
+file0=<<GTKRAD_DIR>>\Sof2Pack\docs\SoF2_ConfusEd_files\filelist.xml
+file1=<<GTKRAD_DIR>>\Sof2Pack\docs\SoF2_ConfusEd_files\header.htm
+file2=<<GTKRAD_DIR>>\Sof2Pack\docs\SoF2_ConfusEd_files\image001.jpg
+file3=<<GTKRAD_DIR>>\Sof2Pack\docs\SoF2_ConfusEd_files\image002.jpg
+
+[docs\SoF2_Character_Skins_files]
+fulldirectory=
+file0=<<GTKRAD_DIR>>\Sof2Pack\docs\SoF2_Character_Skins_files\filelist.xml
+file1=<<GTKRAD_DIR>>\Sof2Pack\docs\SoF2_Character_Skins_files\header.htm
+file2=<<GTKRAD_DIR>>\Sof2Pack\docs\SoF2_Character_Skins_files\image001.jpg
+file3=<<GTKRAD_DIR>>\Sof2Pack\docs\SoF2_Character_Skins_files\image002.jpg
+file4=<<GTKRAD_DIR>>\Sof2Pack\docs\SoF2_Character_Skins_files\image003.jpg
+file5=<<GTKRAD_DIR>>\Sof2Pack\docs\SoF2_Character_Skins_files\image004.jpg
+file6=<<GTKRAD_DIR>>\Sof2Pack\docs\SoF2_Character_Skins_files\image005.jpg
+file7=<<GTKRAD_DIR>>\Sof2Pack\docs\SoF2_Character_Skins_files\image006.jpg
+
+[docs\SoF2_Character_NPCFile_files]
+fulldirectory=
+file0=<<GTKRAD_DIR>>\Sof2Pack\docs\SoF2_Character_NPCFile_files\filelist.xml
+file1=<<GTKRAD_DIR>>\Sof2Pack\docs\SoF2_Character_NPCFile_files\header.htm
+file2=<<GTKRAD_DIR>>\Sof2Pack\docs\SoF2_Character_NPCFile_files\image001.jpg
+file3=<<GTKRAD_DIR>>\Sof2Pack\docs\SoF2_Character_NPCFile_files\image002.gif
+file4=<<GTKRAD_DIR>>\Sof2Pack\docs\SoF2_Character_NPCFile_files\image002.jpg
+file5=<<GTKRAD_DIR>>\Sof2Pack\docs\SoF2_Character_NPCFile_files\image003.gif
+file6=<<GTKRAD_DIR>>\Sof2Pack\docs\SoF2_Character_NPCFile_files\image004.gif
+file7=<<GTKRAD_DIR>>\Sof2Pack\docs\SoF2_Character_NPCFile_files\image005.gif
+file8=<<GTKRAD_DIR>>\Sof2Pack\docs\SoF2_Character_NPCFile_files\image006.gif
+file9=<<GTKRAD_DIR>>\Sof2Pack\docs\SoF2_Character_NPCFile_files\image007.gif
+file10=<<GTKRAD_DIR>>\Sof2Pack\docs\SoF2_Character_NPCFile_files\image008.gif
+file11=<<GTKRAD_DIR>>\Sof2Pack\docs\SoF2_Character_NPCFile_files\image009.gif
+file12=<<GTKRAD_DIR>>\Sof2Pack\docs\SoF2_Character_NPCFile_files\image010.gif
+file13=<<GTKRAD_DIR>>\Sof2Pack\docs\SoF2_Character_NPCFile_files\image011.gif
+file14=<<GTKRAD_DIR>>\Sof2Pack\docs\SoF2_Character_NPCFile_files\image012.gif
+file15=<<GTKRAD_DIR>>\Sof2Pack\docs\SoF2_Character_NPCFile_files\image013.gif
+file16=<<GTKRAD_DIR>>\Sof2Pack\docs\SoF2_Character_NPCFile_files\image014.gif
+file17=<<GTKRAD_DIR>>\Sof2Pack\docs\SoF2_Character_NPCFile_files\image015.gif
+file18=<<GTKRAD_DIR>>\Sof2Pack\docs\SoF2_Character_NPCFile_files\image016.gif
+file19=<<GTKRAD_DIR>>\Sof2Pack\docs\SoF2_Character_NPCFile_files\image017.gif
+file20=<<GTKRAD_DIR>>\Sof2Pack\docs\SoF2_Character_NPCFile_files\image018.gif
+file21=<<GTKRAD_DIR>>\Sof2Pack\docs\SoF2_Character_NPCFile_files\image019.gif
+
+[docs\SoF2_Animating Objects_files]
+fulldirectory=
+file0=<<GTKRAD_DIR>>\Sof2Pack\docs\SoF2_Animating Objects_files\filelist.xml
+file1=<<GTKRAD_DIR>>\Sof2Pack\docs\SoF2_Animating Objects_files\header.htm
+file2=<<GTKRAD_DIR>>\Sof2Pack\docs\SoF2_Animating Objects_files\image001.jpg
+file3=<<GTKRAD_DIR>>\Sof2Pack\docs\SoF2_Animating Objects_files\image002.jpg
+
+[docs\Nav Point System_files]
+fulldirectory=
+file0=<<GTKRAD_DIR>>\Sof2Pack\docs\Nav Point System_files\filelist.xml
+file1=<<GTKRAD_DIR>>\Sof2Pack\docs\Nav Point System_files\header.htm
+file2=<<GTKRAD_DIR>>\Sof2Pack\docs\Nav Point System_files\image001.png
+file3=<<GTKRAD_DIR>>\Sof2Pack\docs\Nav Point System_files\image002.jpg
+file4=<<GTKRAD_DIR>>\Sof2Pack\docs\Nav Point System_files\image003.png
+file5=<<GTKRAD_DIR>>\Sof2Pack\docs\Nav Point System_files\image004.jpg
+file6=<<GTKRAD_DIR>>\Sof2Pack\docs\Nav Point System_files\image005.png
+file7=<<GTKRAD_DIR>>\Sof2Pack\docs\Nav Point System_files\image006.jpg
+file8=<<GTKRAD_DIR>>\Sof2Pack\docs\Nav Point System_files\image007.png
+file9=<<GTKRAD_DIR>>\Sof2Pack\docs\Nav Point System_files\image008.jpg
+file10=<<GTKRAD_DIR>>\Sof2Pack\docs\Nav Point System_files\image009.png
+file11=<<GTKRAD_DIR>>\Sof2Pack\docs\Nav Point System_files\image010.jpg
+file12=<<GTKRAD_DIR>>\Sof2Pack\docs\Nav Point System_files\image011.png
+file13=<<GTKRAD_DIR>>\Sof2Pack\docs\Nav Point System_files\image012.jpg
+file14=<<GTKRAD_DIR>>\Sof2Pack\docs\Nav Point System_files\image013.png
+file15=<<GTKRAD_DIR>>\Sof2Pack\docs\Nav Point System_files\image014.jpg
+file16=<<GTKRAD_DIR>>\Sof2Pack\docs\Nav Point System_files\image015.png
+file17=<<GTKRAD_DIR>>\Sof2Pack\docs\Nav Point System_files\image016.jpg
+file18=<<GTKRAD_DIR>>\Sof2Pack\docs\Nav Point System_files\image017.png
+file19=<<GTKRAD_DIR>>\Sof2Pack\docs\Nav Point System_files\image018.jpg
+file20=<<GTKRAD_DIR>>\Sof2Pack\docs\Nav Point System_files\image019.png
+file21=<<GTKRAD_DIR>>\Sof2Pack\docs\Nav Point System_files\image020.jpg
+file22=<<GTKRAD_DIR>>\Sof2Pack\docs\Nav Point System_files\image021.png
+file23=<<GTKRAD_DIR>>\Sof2Pack\docs\Nav Point System_files\image022.jpg
+file24=<<GTKRAD_DIR>>\Sof2Pack\docs\Nav Point System_files\image023.png
+file25=<<GTKRAD_DIR>>\Sof2Pack\docs\Nav Point System_files\image024.jpg
+file26=<<GTKRAD_DIR>>\Sof2Pack\docs\Nav Point System_files\image025.png
+file27=<<GTKRAD_DIR>>\Sof2Pack\docs\Nav Point System_files\image026.jpg
+file28=<<GTKRAD_DIR>>\Sof2Pack\docs\Nav Point System_files\image027.png
+file29=<<GTKRAD_DIR>>\Sof2Pack\docs\Nav Point System_files\image028.jpg
+file30=<<GTKRAD_DIR>>\Sof2Pack\docs\Nav Point System_files\image029.png
+file31=<<GTKRAD_DIR>>\Sof2Pack\docs\Nav Point System_files\image030.jpg
+file32=<<GTKRAD_DIR>>\Sof2Pack\docs\Nav Point System_files\image031.png
+file33=<<GTKRAD_DIR>>\Sof2Pack\docs\Nav Point System_files\image032.jpg
+file34=<<GTKRAD_DIR>>\Sof2Pack\docs\Nav Point System_files\image033.png
+file35=<<GTKRAD_DIR>>\Sof2Pack\docs\Nav Point System_files\image034.jpg
+file36=<<GTKRAD_DIR>>\Sof2Pack\docs\Nav Point System_files\image035.png
+file37=<<GTKRAD_DIR>>\Sof2Pack\docs\Nav Point System_files\image036.jpg
+
+[modules]
+fulldirectory=
+

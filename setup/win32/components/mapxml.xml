@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<component>
+  <dir name="modules">
+    <file name="mapxml.dll"/>
+    <file name="mapxml.pdb"/>
+  </dir>
+</component>

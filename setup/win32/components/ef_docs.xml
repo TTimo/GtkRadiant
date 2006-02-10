@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<component subdirectory="stvef.game/docs">
+	<!--<file name="EF-GDK-FAQ.htm"/>
+	<dir name="EF-GDK-FAQ_files">
+		<file name="image001.gif"/>
+		<file name="filelist.xml"/>
+	</dir>-->
+	<dir name="GtkRadiant_STVEF_HOWTO">
+		<file name="project.png"/>
+		<file name="game1.png"/>
+		<file name="game2.png"/>
+		<file name="index.html"/>
+		<file name="monitor.png"/>
+	</dir>
+</component>
+

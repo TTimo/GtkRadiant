@@ -1,0 +1,8 @@
+; md3model.def : Declares the module parameters for the DLL.
+
+LIBRARY      "SPRITEMODEL"
+DESCRIPTION  'SPRITEMODEL Windows Dynamic Link Library'
+
+EXPORTS
+    ; Explicit exports can go here
+	Synapse_EnumerateInterfaces @1

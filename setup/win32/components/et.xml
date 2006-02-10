@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<component>
+  <dir name="games">
+    <file name="et.game"/>
+  </dir>
+  <dir name="et.game">
+    <file name="game.xlink"/>
+    <file name="default_build_menu.xml"/>
+    <dir name="bitmaps">
+      <file name="splash.bmp"/>
+    </dir>
+    <dir name="etmain">
+      <file name="default_shaderlist.txt"/>
+      <file name="et_entities.ent"/>
+    </dir>
+  </dir>
+</component>
+

@@ -1,0 +1,17 @@
+[General]
+Type=FILELIST
+Version=1.10.000
+
+[TopDir]
+file0=<<GTKRAD_DIR>>\GtkRadiant\setup\win32\bin\bspc.exe
+file1=<<GTKRAD_DIR>>\GtkRadiant\tools\quake3\q3data\Release\q3data.exe
+file2=<<GTKRAD_DIR>>\GtkRadiant\setup\data\tools\synapse.config
+file3=<<GTKRAD_DIR>>\gtk2-2.2\install\libglib-2.0-0.dll
+file4=<<GTKRAD_DIR>>\gtk2-2.2\install\iconv.dll
+file5=<<GTKRAD_DIR>>\gtk2-2.2\install\intl.dll
+file6=<<GTKRAD_DIR>>\libxml2-2.6\win32\install\libxml2.dll
+SubDir0=modules
+
+[modules]
+fulldirectory=
+

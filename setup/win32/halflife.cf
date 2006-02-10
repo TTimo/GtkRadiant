@@ -1,0 +1,7 @@
+# Core + Halflife game pack
+
+# output dir name
+$SETUP_DIR = 'Setup-Halflife';
+
+$DO_CORE = 1;
+$DO_GAME_HALFLIFE = 1;

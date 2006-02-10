@@ -1,0 +1,14 @@
+# Linux build config
+# all.cf
+#
+# includes core + wolfpack + q3pack
+
+$DO_CORE=1;
+$DO_GAME_Q3=1;
+$DO_GAME_WOLF=1;
+
+$DO_NIGHTLY=1;
+
+# the nightly is meant to overwrite an existing full installation
+# see postinstall.sh, it would be better to have a clear indication of nightly
+$GTKRAD_BASE_VERSION="1.2";

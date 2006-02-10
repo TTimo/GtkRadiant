@@ -1,0 +1,11 @@
+[General]
+Type=FILELIST
+Version=1.10.000
+
+[TopDir]
+SubDir0=scripts
+
+[scripts]
+fulldirectory=
+file0=<<GTKRAD_DIR>>\GtkRadiant\setup\data\missionpack\scripts\shaderlist.txt
+

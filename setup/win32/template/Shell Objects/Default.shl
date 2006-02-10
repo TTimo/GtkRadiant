@@ -1,0 +1,126 @@
+[Info]
+Type=ShellObject
+Version=2.10.000
+
+[Data]
+Folder0=<FOLDER_DESKTOP>
+Folder1=<FOLDER_STARTMENU>
+Folder2=<FOLDER_PROGRAMS>
+Folder3=<FOLDER_STARTUP>
+Group0=Main
+Group1=Startup
+Folder4=Folder2\GtkRadiant
+Shortcut0=Folder4\GtkRadiant
+Shortcut1=Folder4\Radiant Manual
+Shortcut2=Folder4\Links
+Shortcut3=Folder4\RTCW + GtkRadiant, Getting Started guide
+Shortcut4=Folder4\JK2 + GtkRadiant, Getting Started guide
+Shortcut5=Folder4\STVEF + GtkRadiant, Getting Started guide
+
+[Folder4]
+Comments=
+DisplayText=<SHELL_OBJECT_FOLDER>
+Shared=Yes
+
+[Shortcut0]
+DisplayText=PRODUCT_NAME
+Target=<TARGETDIR>\<<GTKRAD_BIN>>
+Parameters=
+StartIn=
+ShortcutKey=
+Run=Normal Window
+IconFile=
+IconIndex=
+Replace=Yes
+SeparateMemorySpace=No
+InternetShortcut=No
+Uninstall=Yes
+Type=Automatic
+Comments=
+FileGroup0=Program Executable Files
+
+[Shortcut1]
+DisplayText=
+Target=<DIR_CORE>\q3rad_manual\index.htm
+Parameters=
+StartIn=
+ShortcutKey=
+Run=Normal Window
+IconFile=
+IconIndex=
+Replace=Yes
+SeparateMemorySpace=No
+InternetShortcut=No
+Uninstall=Yes
+Type=Automatic
+Comments=
+FileGroup0=Radiant Manual Files
+
+[Shortcut2]
+DisplayText=
+Target=<DIR_CORE>\links.htm
+Parameters=
+StartIn=
+ShortcutKey=
+Run=Normal Window
+IconFile=
+IconIndex=
+Replace=Yes
+SeparateMemorySpace=No
+InternetShortcut=No
+Uninstall=Yes
+Type=Automatic
+Comments=
+FileGroup0=Program Misc Files
+
+[Shortcut3]
+DisplayText=
+Target=<DIR_GAMETOOLS_WOLF>\docs\GtkRadiant_WOLF_HOWTO\index.html
+Parameters=
+StartIn=
+ShortcutKey=
+Run=Normal Window
+IconFile=
+IconIndex=
+Replace=Yes
+SeparateMemorySpace=No
+InternetShortcut=No
+Uninstall=Yes
+Type=Automatic
+Comments=
+FileGroup0=Wolf Exectuable Files
+
+[Shortcut4]
+DisplayText=
+Target=<DIR_GAMETOOLS_JKII>\docs\GtkRadiant_JK2_HOWTO\index.html
+Parameters=
+StartIn=
+ShortcutKey=
+Run=Normal Window
+IconFile=
+IconIndex=
+Replace=Yes
+SeparateMemorySpace=No
+InternetShortcut=No
+Uninstall=Yes
+Type=Automatic
+Comments=
+FileGroup0=JKII Executable Files
+
+[Shortcut5]
+DisplayText=
+Target=<DIR_GAMETOOLS_STVEF>\docs\GtkRadiant_STVEF_HOWTO\index.html
+Parameters=
+StartIn=
+ShortcutKey=
+Run=Normal Window
+IconFile=
+IconIndex=
+Replace=Yes
+SeparateMemorySpace=No
+InternetShortcut=No
+Uninstall=Yes
+Type=Automatic
+Comments=
+FileGroup0=STVEF Executable Files
+

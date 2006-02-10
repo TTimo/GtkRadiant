@@ -1,0 +1,6 @@
+$SETUP_DIR = 'Setup-Q3WolfET';
+
+$DO_CORE = 1;
+$DO_GAME_Q3 = 1;
+$DO_GAME_WOLF = 1;
+$DO_GAME_ET = 1;
