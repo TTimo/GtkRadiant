@@ -976,7 +976,7 @@ public:
     m_template(*definition.shaderTemplate),
     m_args(definition.args),
     m_filename(definition.filename),
-    m_blendFunc(BLEND_ONE, BLEND_ZERO),
+    m_blendFunc(BLEND_SRC_ALPHA, BLEND_ONE_MINUS_SRC_ALPHA),
     m_bInUse(false)
   {
     m_pTexture = 0;

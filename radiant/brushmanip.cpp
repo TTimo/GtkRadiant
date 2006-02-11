@@ -1111,6 +1111,9 @@ filter_brush_all_faces g_filter_brush_botclip(&g_filter_face_botclip);
 filter_face_shader g_filter_face_caulk("textures/common/caulk");
 filter_brush_all_faces g_filter_brush_caulk(&g_filter_face_caulk);
 
+filter_face_shader g_filter_face_caulk_ja("textures/system/caulk");
+filter_brush_all_faces g_filter_brush_caulk_ja(&g_filter_face_caulk_ja);
+
 filter_face_shader_substring g_filter_face_liquids("textures/liquids/");
 filter_brush_any_face g_filter_brush_liquids(&g_filter_face_liquids);
 
@@ -1119,6 +1122,9 @@ filter_brush_any_face g_filter_brush_hint(&g_filter_face_hint);
 
 filter_face_shader g_filter_face_hint_q2("textures/hint");
 filter_brush_any_face g_filter_brush_hint_q2(&g_filter_face_hint_q2);
+
+filter_face_shader g_filter_face_hint_ja("textures/system/hint");
+filter_brush_any_face g_filter_brush_hint_ja(&g_filter_face_hint_ja);
 
 filter_face_shader g_filter_face_areaportal("textures/common/areaportal");
 filter_brush_all_faces g_filter_brush_areaportal(&g_filter_face_areaportal);
@@ -1146,9 +1152,11 @@ void BrushFilters_construct()
   add_brush_filter(g_filter_brush_weapclip, EXCLUDE_CLIP);
   add_brush_filter(g_filter_brush_botclip, EXCLUDE_BOTCLIP);
   add_brush_filter(g_filter_brush_caulk, EXCLUDE_CAULK);
+  add_brush_filter(g_filter_brush_caulk_ja, EXCLUDE_CAULK);
   add_brush_filter(g_filter_brush_liquids, EXCLUDE_LIQUIDS);
   add_brush_filter(g_filter_brush_hint, EXCLUDE_HINTSSKIPS);
   add_brush_filter(g_filter_brush_hint_q2, EXCLUDE_HINTSSKIPS);
+  add_brush_filter(g_filter_brush_hint_ja, EXCLUDE_HINTSSKIPS);
   add_brush_filter(g_filter_brush_clusterportal, EXCLUDE_CLUSTERPORTALS);
   add_brush_filter(g_filter_brush_visportal, EXCLUDE_VISPORTALS);
   add_brush_filter(g_filter_brush_areaportal, EXCLUDE_AREAPORTALS);

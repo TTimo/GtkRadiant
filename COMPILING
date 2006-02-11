@@ -1,1 +1,75 @@
-see docs/developer/README
+developer documentation for GtkRadiant 1.5.0
+============================================
+
+getting the source
+==================
+
+The latest source is available from the Subversion repository.
+  https://zerowing.idsoftware.com/svn/radiant/GtkRadiant/trunk/
+
+The subversion client can be obtained from the Subversion site.
+  http://subversion.tigris.org
+
+To get a copy of the source using the commandline Subversion client:
+  Change the current directory to the desired location for the source.
+  svn checkout https://zerowing.idsoftware.com/svn/radiant/GtkRadiant/trunk/ ./GtkRadiant
+  svn checkout https://zerowing.idsoftware.com/svn/radiant.assets/Q3Pack/trunk/ ./GtkRadiant/games/Q3Pack
+
+
+
+Linux/OSX(using X-windows)
+==========================
+
+environment:
+- gcc3 (preferably)
+- scons = 0.96 (radiant is built with scons rather than make)
+- python >= 2.3.0 (scons requires python, some build steps use python)
+
+dependencies:
+- gtk+ >= 2.4.0 (requires glib, atk, pango, iconv, etc)
+- gtkglext >= 1.0.0 (requires opengl)
+- libxml2 >= 2.0.0
+- zlib >= 1.2.0 (for archivezip module)
+- libpng >= 1.2.0 (for imagepng module)
+- libmhash = 0.9.0 (for q3map2)
+
+build:
+Execute 'scons SETUP=0' in the directory containing SConscript
+
+install:
+run './GtkRadiant/install.py'
+note - the installed data is not modified by the build, but it may be modified when you update from svn
+
+run:
+Execute './GtkRadiant/install/radiant.x86' (or './GtkRadiant/install/radiant.ppc' on osx)
+
+
+
+Win32 (2000 or XP)
+==================
+
+environment:
+- visual studio .net 2003
+- microsoft c++ compiler 7.1 (comes with vs.net 2003)
+- python 2.3.0 or later
+
+dependencies are prepackaged archives, extract them to the directory above GtkRadiant.sln:
+- http://zerowing.idsoftware.com/files/radiant/developer/1.5/gtk2-2.4.14.zip (gtk-wimp, gtkglext, gtk, glib, atk, pango, iconv etc)
+- http://zerowing.idsoftware.com/files/radiant/developer/1.5/libxml2-2.6.2.zip
+- http://zerowing.idsoftware.com/files/radiant/developer/1.5/STLport-4.6.2.zip
+- http://zerowing.idsoftware.com/files/radiant/developer/1.5/zlib1-1.2.1.zip (for archivezip module)
+- http://zerowing.idsoftware.com/files/radiant/developer/1.5/libpng-1.2.5.zip (for imagepng module)
+- http://zerowing.idsoftware.com/files/radiant/developer/1.5/mhash-0.9.1.zip (for q3map2)
+
+build:
+Open GtkRadiant.sln.
+In tools > options > projects > VC++ Directories > executables, add the path to python.exe (e.g. c:\python23\)
+Hit 'Build > Build Solution' (F7)
+
+install:
+run './GtkRadiant/install.py'
+note - the installed data is not modified by the build, but it may be modified when you update from svn
+
+run:
+set Project > Properties > Debugging > Command to "$(SolutionDir)install/$(TargetFileName)"
+hit 'Debug > Start' (F5)

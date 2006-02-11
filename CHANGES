@@ -1,6 +1,13 @@
 This is the changelog for developers, != changelog for the end user 
 that we distribute with the binaries. (see changelog)
 
+11/02/2006
+SPoG
+- Added install.py script.
+- Updated COMPILING instructions.
+- Fixed transparency rendering on quake3 shaders.
+- Fixed hint/caulk filtering for Jedi Academy shaders.
+
 04/02/2006
 SPoG
 - Added Radiant Manual shortcut to win32 installation.
