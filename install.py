@@ -1,10 +1,40 @@
+# Copyright (C) 2001-2006 William Joseph.
+# 
+# This file is part of GtkRadiant.
+# 
+# GtkRadiant is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+# 
+# GtkRadiant is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with GtkRadiant; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+
+"""
+Builds the ./install directory.
+
+Copies files from various locations:
+./setup/data/tools/
+./games/<gamepack>/
+../<library>/<library>.dll
+./include/version.default is used to generate RADIANT_MAJOR and RADIANT_MINOR
+"""
 
 import os
 import shutil
 
-
+def assertMessage(condition, message):
+  if not condition:
+    raise Exception(message)
+    
 def copyFile(source, target):
-  assert os.path.isfile(source)
+  assertMessage(os.path.isfile(source), "failed to find file: " + source)
   targetFile = target
   if os.path.isdir(targetFile):
     targetFile = os.path.join(target, os.path.basename(source))
@@ -16,7 +46,7 @@ def copyFileIfExists(source, target):
     copyFile(source, target)
     
 def copySvn(source, target):
-  assert os.path.isdir(source)
+  assertMessage(os.path.isdir(source), "failed to find directory: " + source)
   if not os.path.exists(target):
     os.mkdir(target)
   for name in os.listdir(source):
@@ -29,8 +59,8 @@ def copySvn(source, target):
       copyFile(absolute, absTarget)
       
 def copyGame(source, game, target):
-  assert os.path.isdir(source)
-  assert os.path.isdir(target)
+  assertMessage(os.path.isdir(source), "failed to find directory: " + source)
+  assertMessage(os.path.isdir(target), "failed to find directory: " + target)
   root = os.path.join(source, os.path.normpath(game[0]))
   if os.path.exists(root):
     gamename = game[1] + ".game"
@@ -87,3 +117,15 @@ copyFileIfExists(libmhash, installRoot)
   
 zlib = os.path.normpath(os.path.join(thisDir, "../zlib1-1.2/zlib1.dll"))
 copyFileIfExists(zlib, installRoot)
+
+msvcr71 = os.path.normpath(os.path.join(thisDir, "../msvc_redist/msvcr71.dll"))
+copyFileIfExists(msvcr71, installRoot)
+
+dbghelp = os.path.normpath(os.path.join(thisDir, "../msvc_redist/dbghelp.dll"))
+copyFileIfExists(dbghelp, installRoot)
+
+# create version files
+version = open(os.path.join(thisDir, "include/version.default"), "rt").readline().split(".")
+assertMessage(len(version) == 3, "failed to parse include/version.default")
+open(os.path.join(thisDir, "install/RADIANT_MAJOR"), "wt").write(str(version[1]))
+open(os.path.join(thisDir, "install/RADIANT_MINOR"), "wt").write(str(version[2]))

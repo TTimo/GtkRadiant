@@ -24,6 +24,7 @@ environment:
 - gcc3 (preferably)
 - scons = 0.96 (radiant is built with scons rather than make)
 - python >= 2.3.0 (scons requires python, some build steps use python)
+- svn >= 1.1 (some build steps use svn)
 
 dependencies:
 - gtk+ >= 2.4.0 (requires glib, atk, pango, iconv, etc)
@@ -51,7 +52,8 @@ Win32 (2000 or XP)
 environment:
 - visual studio .net 2003
 - microsoft c++ compiler 7.1 (comes with vs.net 2003)
-- python 2.3.0 or later
+- python 2.3.0 or later (some build steps use python)
+- subversion 1.1 or later (some build steps use svn)
 
 dependencies are prepackaged archives, extract them to the directory above GtkRadiant.sln:
 - http://zerowing.idsoftware.com/files/radiant/developer/1.5/gtk2-2.4.14.zip (gtk-wimp, gtkglext, gtk, glib, atk, pango, iconv etc)
@@ -60,10 +62,11 @@ dependencies are prepackaged archives, extract them to the directory above GtkRa
 - http://zerowing.idsoftware.com/files/radiant/developer/1.5/zlib1-1.2.1.zip (for archivezip module)
 - http://zerowing.idsoftware.com/files/radiant/developer/1.5/libpng-1.2.5.zip (for imagepng module)
 - http://zerowing.idsoftware.com/files/radiant/developer/1.5/mhash-0.9.1.zip (for q3map2)
+- http://zerowing.idsoftware.com/files/radiant/developer/1.5/msvc_redist.zip (msvc runtime libraries)
 
 build:
 Open GtkRadiant.sln.
-In tools > options > projects > VC++ Directories > executables, add the path to python.exe (e.g. c:\python23\)
+In tools > options > projects > VC++ Directories > executables, add the paths to python.exe (e.g. c:\python23\) and svn.exe (e.g. c:\svn\) 
 Hit 'Build > Build Solution' (F7)
 
 install:

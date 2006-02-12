@@ -32,12 +32,14 @@
 #   for non-official builds, we have a default message
 #   otherwise, use environment variable $RADIANT_ABOUTMSG
 # input:
-#   include/aboutmsg.default
-#   or file pointed to by $RADIANT_ABOUTMSG if exists
+#   file pointed to by $RADIANT_ABOUTMSG if exists
+#   else include/aboutmsg.default
 # ouput:
 #   include/aboutmsg.h
 
 import sys, re, string, os
+
+import svn
 
 def get_version():
   # version
@@ -73,11 +75,14 @@ def radiant_makeversion(append_about):
   aboutfile = 'include/aboutmsg.default'
   if ( os.environ.has_key('RADIANT_ABOUTMSG') ):
     aboutfile = os.environ['RADIANT_ABOUTMSG']
-  sys.stdout.write("about message is in %s\n" % aboutfile)
-  f = open(aboutfile, 'r')
-  buffer = f.read()
-  line = string.split(buffer, '\n')[0]
-  f.close()
+  line = None
+  if os.path.isfile(aboutfile):
+    sys.stdout.write("about message is in %s\n" % aboutfile)
+    f = open(aboutfile, 'r')
+    line = f.readline()
+    f.close()
+  else:
+    line = "Custom build based on revision " + str(svn.getRevision(os.getcwd()))
   # optional additional message
   if ( not append_about is None ):
     line += append_about

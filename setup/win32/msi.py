@@ -1,5 +1,4 @@
 # Copyright (C) 2001-2006 William Joseph.
-# For a list of contributors, see the accompanying CONTRIBUTORS file.
 # 
 # This file is part of GtkRadiant.
 # 

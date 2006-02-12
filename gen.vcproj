@@ -124,7 +124,7 @@
 						Name="VCCustomBuildTool"
 						CommandLine="run_python.bat makeversion.py
 "
-						AdditionalDependencies="$(InputDir)include\version.default;$(InputDir)include\aboutmsg.default"
+						AdditionalDependencies="$(InputDir)include\version.default;$(InputDir)include\aboutmsg.default;$(InputDir)svn.py;$(InputDir).svn\entriest"
 						Outputs="$(InputDir)include\version.h;$(InputDir)include\aboutmsg.h"/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -133,7 +133,7 @@
 						Name="VCCustomBuildTool"
 						CommandLine="run_python.bat makeversion.py
 "
-						AdditionalDependencies="$(InputDir)include\version.default;$(InputDir)include\aboutmsg.default"
+						AdditionalDependencies="$(InputDir).svn\entries;$(InputDir)include\version.default;$(InputDir)include\aboutmsg.default;$(InputDir)svn.py"
 						Outputs="$(InputDir)include\version.h;$(InputDir)include\aboutmsg.h"/>
 				</FileConfiguration>
 			</File>
