@@ -3,7 +3,6 @@
 
 import commands, re, sys, os, pickle, string, popen2
 from makeversion import radiant_makeversion, get_version
-from osx_setup import do_osx_setup
 
 # to access some internal stuff
 import SCons
@@ -38,10 +37,6 @@ JOBS
 BUILD
 	Use debug/release to select build settings
 	ex: BUILD="release" - default is debug
-	OSX: use BUILD="info" to generate the set of release files
-
-SETUP
-  Build a setup - default 0
 """
 )
 
@@ -181,11 +176,6 @@ if (BUILD == 'debug'):
 elif (BUILD == 'release'):
 	CXXFLAGS += '-O2 '
 	CCFLAGS += '-O2 '
-elif ( BUILD == 'info' ):
-	print 'Preparing OSX release'
-	( line, major, minor ) = get_version()
-	do_osx_setup( major, minor, 'osx-radiant-%s.run' % line )
-	sys.exit( 0 )
 else:
 	print 'Unknown build configuration ' + BUILD
 	sys.exit( 0 )
