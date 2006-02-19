@@ -295,7 +295,10 @@ picoModel_t	*PicoModuleLoadModelStream( const picoModule_t* module, void* inputS
 		model = PicoModuleLoadModel(module, fileName, buffer, bufSize, frameNum);
 	}
 	
-	_pico_free(buffer);
+  if(model != 0)
+  {
+	  _pico_free(buffer);
+  }
 
 	/* return */
 	return model;

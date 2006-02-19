@@ -137,6 +137,22 @@ GtkWidget* Console_constructWindow(GtkWindow* toplevel)
   return scr;
 }
 
+class GtkTextBufferOutputStream : public TextOutputStream
+{
+  GtkTextBuffer* textBuffer;
+  GtkTextIter* iter;
+  GtkTextTag* tag;
+public:
+  GtkTextBufferOutputStream(GtkTextBuffer* textBuffer, GtkTextIter* iter, GtkTextTag* tag) : textBuffer(textBuffer), iter(iter), tag(tag)
+  {
+  }
+  std::size_t write(const char* buffer, std::size_t length)
+  {
+    gtk_text_buffer_insert_with_tags(textBuffer, iter, buffer, gint(length), tag, 0);
+    return length;
+  }
+};
+
 std::size_t Sys_Print(int level, const char* buf, std::size_t length)
 {
   bool contains_newline = strchr(buf, '\n') != 0;
@@ -190,17 +206,15 @@ std::size_t Sys_Print(int level, const char* buf, std::size_t length)
       }
 
 
-      StringOutputStream converted;
+      GtkTextBufferOutputStream textBuffer(buffer, &iter, tag);
       if(!globalCharacterSet().isUTF8())
       {
-        converted << ConvertLocaleToUTF8(StringRange(buf, buf + length));
+        textBuffer << ConvertLocaleToUTF8(StringRange(buf, buf + length));
       }
       else
       {
-        converted << StringRange(buf, buf + length);
+        textBuffer << StringRange(buf, buf + length);
       }
-
-      gtk_text_buffer_insert_with_tags(buffer, &iter, converted.c_str(), gint(string_length(converted.c_str())), tag, 0);
 
       // update console widget immediatly if we're doing something time-consuming
       if(contains_newline)

@@ -644,7 +644,7 @@ copy &quot;$(TargetDir)$(TargetName).pdb&quot;  &quot;$(SolutionDir)install&quot
 			</File>
 		</Filter>
 		<File
-			RelativePath="..\docs\developer\Changes">
+			RelativePath="..\Changes">
 		</File>
 		<File
 			RelativePath="..\debug.py">
@@ -683,7 +683,7 @@ copy &quot;$(TargetDir)$(TargetName).pdb&quot;  &quot;$(SolutionDir)install&quot
 			RelativePath="..\SConstruct">
 		</File>
 		<File
-			RelativePath="..\docs\developer\Todo">
+			RelativePath="..\Todo">
 		</File>
 		<File
 			RelativePath="..\touch.py">

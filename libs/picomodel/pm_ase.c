@@ -755,19 +755,19 @@ static picoModel_t *_ase_load( PM_PARAMS_LOAD )
 			int			index;
 
 			if( numVertices == 0 )
-				_ase_error_return("Vertex parse error");
+				_ase_error_return("Texture Vertex parse error");
 
 			/* get uv vertex index */
-			if (!_pico_parse_int( p,&index ))
-				_ase_error_return("UV vertex parse error");
+			if (!_pico_parse_int( p,&index ) || index >= numTextureVertices)
+				_ase_error_return("Texture vertex parse error");
 
 			/* get uv vertex s */
 			if (!_pico_parse_float( p,&texcoords[index].texcoord[0] ))
-				_ase_error_return("UV vertex parse error");
+				_ase_error_return("Texture vertex parse error");
 
 			/* get uv vertex t */
 			if (!_pico_parse_float( p,&texcoords[index].texcoord[1] ))
-				_ase_error_return("UV vertex parse error");
+				_ase_error_return("Texture vertex parse error");
 			
 			/* ydnar: invert t */
 			texcoords[index].texcoord[ 1 ] = 1.0f - texcoords[index].texcoord[ 1 ];
