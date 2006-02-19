@@ -351,7 +351,7 @@ void InitDirectory(const char* directory, ArchiveModules& archiveModules)
         if(name == 0)
           break;
 
-        char *ext = strrchr (name, '.');
+        const char *ext = strrchr (name, '.');
         if ((ext == 0) || *(++ext) == '\0' || GetArchiveTable(archiveModules, ext) == 0)
           continue;
 
