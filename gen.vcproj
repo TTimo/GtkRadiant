@@ -138,6 +138,9 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath=".\svn.py">
+			</File>
+			<File
 				RelativePath=".\include\version.default">
 			</File>
 		</Filter>

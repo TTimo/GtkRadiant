@@ -1678,7 +1678,7 @@ public:
   {
     ASSERT_MESSAGE(!m_traverseRenderablesMutex, "for-each during traversal");
     m_traverseRenderablesMutex = true;
-    for(Renderables::iterator i = m_renderables.begin(); i != m_renderables.end(); ++i)
+    for(Renderables::const_iterator i = m_renderables.begin(); i != m_renderables.end(); ++i)
     {
       callback(*(*i));
     }

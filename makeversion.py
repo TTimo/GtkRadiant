@@ -54,25 +54,25 @@ def get_version():
   return (line, major, minor)  
 
 # you can pass an optional message to append to aboutmsg
-def radiant_makeversion(append_about):
+def radiant_makeversion(append_about, root = os.getcwd()):
   (line, major, minor) = get_version()
-  f = open('include/version.h', 'w')
+  f = open(os.path.join(root, 'include/version.h'), 'w')
   f.write('// generated header, see makeversion.py\n')
   f.write('#define RADIANT_VERSION "%s"\n' % line)
   f.write('#define RADIANT_MINOR_VERSION "%s"\n' % minor)
   f.write('#define RADIANT_MAJOR_VERSION "%s"\n' % major)
   f.close()
-  f = open('include/RADIANT_MINOR', 'w')
+  f = open(os.path.join(root, 'include/RADIANT_MINOR'), 'w')
   f.write(minor)
   f.close()
-  f = open('include/RADIANT_MAJOR', 'w')
+  f = open(os.path.join(root, 'include/RADIANT_MAJOR'), 'w')
   f.write(major)
   f.close()
-  f = open('include/version', 'w')
+  f = open(os.path.join(root, 'include/version'), 'w')
   f.write(line)
   f.close()
   # aboutmsg
-  aboutfile = 'include/aboutmsg.default'
+  aboutfile = os.path.join(root, 'include/aboutmsg.default')
   if ( os.environ.has_key('RADIANT_ABOUTMSG') ):
     aboutfile = os.environ['RADIANT_ABOUTMSG']
   line = None
@@ -87,11 +87,14 @@ def radiant_makeversion(append_about):
   if ( not append_about is None ):
     line += append_about
   sys.stdout.write("about: %s\n" % line)
-  f = open('include/aboutmsg.h', 'w')
+  f = open(os.path.join(root, 'include/aboutmsg.h'), 'w')
   f.write('// generated header, see makeversion.py\n')
   f.write('#define RADIANT_ABOUTMSG "%s"\n' % line)
   f.close()
 
 # can be used as module (scons build), or by direct call
 if __name__ == '__main__':
-  radiant_makeversion(None)
+  root = os.path.dirname(__file__)
+  if not os.path.isabs(root):
+    root = os.getcwd()
+  radiant_makeversion(None, root)
