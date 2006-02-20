@@ -38,7 +38,7 @@ build:
 Execute 'scons SETUP=0' in the directory containing SConscript
 
 install:
-run './GtkRadiant/install.py'
+run 'python ./GtkRadiant/install.py'
 note - this script should be run after each time you update from svn
 
 run:
@@ -70,7 +70,7 @@ In tools > options > projects > VC++ Directories > executables, add the paths to
 Hit 'Build > Build Solution' (F7)
 
 install:
-run './GtkRadiant/install.py'
+run 'python ./GtkRadiant/install.py'
 note - this script should be run after each time you update from svn
 
 run:
