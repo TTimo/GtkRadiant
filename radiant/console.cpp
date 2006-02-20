@@ -206,14 +206,17 @@ std::size_t Sys_Print(int level, const char* buf, std::size_t length)
       }
 
 
-      GtkTextBufferOutputStream textBuffer(buffer, &iter, tag);
-      if(!globalCharacterSet().isUTF8())
       {
-        textBuffer << ConvertLocaleToUTF8(StringRange(buf, buf + length));
-      }
-      else
-      {
-        textBuffer << StringRange(buf, buf + length);
+        GtkTextBufferOutputStream textBuffer(buffer, &iter, tag);
+        if(!globalCharacterSet().isUTF8())
+        {
+          BufferedTextOutputStream<GtkTextBufferOutputStream> buffered(textBuffer);
+          buffered << ConvertLocaleToUTF8(StringRange(buf, buf + length));
+        }
+        else
+        {
+          textBuffer << StringRange(buf, buf + length);
+        }
       }
 
       // update console widget immediatly if we're doing something time-consuming

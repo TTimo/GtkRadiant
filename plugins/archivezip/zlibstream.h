@@ -33,7 +33,7 @@ class DeflatedInputStream : public InputStream
 {
   InputStream& m_istream;
   z_stream m_zipstream;
-  static const int m_bufsize = 1024;
+  enum unnamed0 { m_bufsize = 1024 };
   unsigned char m_buffer[m_bufsize];
 
 public:

@@ -122,7 +122,7 @@ template<typename Type>
 class StaticNodeType
 {
 public:
-  static const int SIZE = NODETYPEID_MAX;
+  enum unnamed0 { SIZE = NODETYPEID_MAX };
   static TypeId getTypeId()
   {
     return Static< NodeType<Type> >::instance().getTypeId();
@@ -161,10 +161,10 @@ namespace scene
   class Node
   {
   public:
-    static const int eVisible = 0;
-    static const int eHidden = 1 << 0;
-    static const int eFiltered = 1 << 1;
-    static const int eExcluded = 1 << 2;
+    enum unnamed0 { eVisible = 0 };
+    enum unnamed1 { eHidden = 1 << 0 };
+    enum unnamed2 { eFiltered = 1 << 1 };
+    enum unnamed3 { eExcluded = 1 << 2 };
 
     class Symbiot
     {
@@ -483,7 +483,7 @@ template<typename Type>
 class StaticInstanceType
 {
 public:
-  static const int SIZE = INSTANCETYPEID_MAX;
+  enum unnamed0 { SIZE = INSTANCETYPEID_MAX };
   static TypeId getTypeId()
   {
     return Static< InstanceType<Type> >::instance().getTypeId();

@@ -36,28 +36,27 @@ template<typename InputStreamType, int SIZE = 1024>
 class SingleByteInputStream
 {
   typedef typename InputStreamType::byte_type byte_type;
-  static const int BUFFERSIZE = SIZE;
 
   InputStreamType& m_inputStream;
-  byte_type m_buffer[BUFFERSIZE];
+  byte_type m_buffer[SIZE];
   byte_type* m_cur;
   byte_type* m_end;
 
 public:
 
-  SingleByteInputStream(InputStreamType& inputStream) : m_inputStream(inputStream), m_cur(m_buffer + BUFFERSIZE), m_end(m_cur)
+  SingleByteInputStream(InputStreamType& inputStream) : m_inputStream(inputStream), m_cur(m_buffer + SIZE), m_end(m_cur)
   {
   }
   bool readByte(byte_type& b)
   {
     if(m_cur == m_end)
     {
-      if(m_end != m_buffer + BUFFERSIZE)
+      if(m_end != m_buffer + SIZE)
       {
         return false;
       }
 
-      m_end = m_buffer + m_inputStream.read(m_buffer, BUFFERSIZE);
+      m_end = m_buffer + m_inputStream.read(m_buffer, SIZE);
       m_cur = m_buffer;
 
       if(m_end == m_buffer)

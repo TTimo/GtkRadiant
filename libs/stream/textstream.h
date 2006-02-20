@@ -389,4 +389,87 @@ public:
   }
 };
 
+/// \brief A wrapper for a TextOutputStream, optimised for writing a single character at a time.
+class SingleCharacterOutputStream : public TextOutputStream
+{
+  enum unnamed0 { m_bufsize = 1024 };
+  TextOutputStream& m_ostream;
+  char m_buffer[m_bufsize];
+  char* m_pos;
+  const char* m_end;
+
+  const char* end() const
+  {
+    return m_end;
+  }
+  void reset()
+  {
+    m_pos = m_buffer;
+  }
+  void flush()
+  {
+    m_ostream.write(m_buffer, m_pos - m_buffer);
+    reset();
+  }
+public:
+  SingleCharacterOutputStream(TextOutputStream& ostream) : m_ostream(ostream), m_pos(m_buffer), m_end(m_buffer+m_bufsize)
+  {
+  }
+  ~SingleCharacterOutputStream()
+  {
+    flush();
+  }
+  void write(const char c)
+  {
+    if(m_pos == end())
+    {
+      flush();
+    }
+    *m_pos++ = c;
+  }
+  std::size_t write(const char* buffer, std::size_t length)
+  {
+    const char*const end = buffer + length;
+    for(const char* p = buffer; p != end; ++p)
+    {
+      write(*p);
+    }
+    return length;
+  }
+};
+
+/// \brief A wrapper for a TextOutputStream, optimised for writing a few characters at a time.
+template<typename TextOutputStreamType, int SIZE = 1024>
+class BufferedTextOutputStream : public TextOutputStream
+{
+  TextOutputStreamType outputStream;
+  char m_buffer[SIZE];
+  char* m_cur;
+
+public:
+  BufferedTextOutputStream(TextOutputStreamType& outputStream) : outputStream(outputStream), m_cur(m_buffer)
+  {
+  }
+  ~BufferedTextOutputStream()
+  {
+    outputStream.write(m_buffer, m_cur - m_buffer);
+  }
+  std::size_t write(const char* buffer, std::size_t length)
+  {
+    std::size_t remaining = length;
+    for(;;)
+    {
+      std::size_t n = std::min(remaining, std::size_t((m_buffer + SIZE) - m_cur));
+      m_cur = std::copy(buffer, buffer + n, m_cur);
+      remaining -= n;
+      if(remaining == 0)
+      {
+        return 0;
+      }
+      outputStream.write(m_buffer, SIZE);
+      m_cur = m_buffer;
+    }
+  }
+};
+
 #endif

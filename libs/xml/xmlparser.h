@@ -201,7 +201,7 @@ public:
 
 class XMLStreamParser : public XMLExporter
 {
-  static const int BUFSIZE = 1024;
+  enum unnamed0 { BUFSIZE = 1024 };
 public:
   XMLStreamParser(TextInputStream& istream)
     : m_istream(istream)

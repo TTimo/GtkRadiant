@@ -128,6 +128,7 @@ if(!globalDebugMessageHandler().handleMessage()) { DEBUGGER_BREAKPOINT(); } else
 #else
 
 #define ASSERT_MESSAGE(condition, message)
+#define ERROR_MESSAGE(message)
 #define ASSERT_NOTNULL(ptr)
 
 #endif

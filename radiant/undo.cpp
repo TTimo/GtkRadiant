@@ -60,7 +60,7 @@ public:
 
 class RadiantUndoSystem : public UndoSystem
 {
-  static const int MAX_UNDO_LEVELS = 1024;
+  INTEGER_CONSTANT(MAX_UNDO_LEVELS, 1024);
 
   class Snapshot
   {
@@ -295,9 +295,9 @@ public:
   }
   void setLevels(std::size_t levels)
   {
-    if(levels > MAX_UNDO_LEVELS)
+    if(levels > MAX_UNDO_LEVELS())
     {
-      levels = MAX_UNDO_LEVELS;
+      levels = MAX_UNDO_LEVELS();
     }
 
     while(m_undo_stack.size() > levels)

@@ -26,57 +26,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <vector>
 #include "xml/ixml.h"
 
-class BufferedTextOutputStream : public TextOutputStream
-{
-  static const int m_bufsize = 1024;
-  TextOutputStream& m_ostream;
-  char m_buffer[m_bufsize];
-  char* m_pos;
-  const char* m_end;
-
-  const char* end() const
-  {
-    return m_end;
-  }
-  void reset()
-  {
-    m_pos = m_buffer;
-  }
-  void flush()
-  {
-    m_ostream.write(m_buffer, m_pos - m_buffer);
-    reset();
-  }
-public:
-  BufferedTextOutputStream(TextOutputStream& ostream) : m_ostream(ostream), m_pos(m_buffer), m_end(m_buffer+m_bufsize)
-  {
-  }
-  ~BufferedTextOutputStream()
-  {
-    flush();
-  }
-  void write(const char c)
-  {
-    if(m_pos == end())
-    {
-      flush();
-    }
-    *m_pos++ = c;
-  }
-  std::size_t write(const char* buffer, std::size_t length)
-  {
-    const char*const end = buffer + length;
-    for(const char* p = buffer; p != end; ++p)
-    {
-      write(*p);
-    }
-    return length;
-  }
-};
-
 class XMLEntityOutputStream
 {
-  BufferedTextOutputStream m_ostream;
+  SingleCharacterOutputStream m_ostream;
 public:
   XMLEntityOutputStream(TextOutputStream& ostream)
     : m_ostream(ostream)
