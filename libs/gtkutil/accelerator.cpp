@@ -528,7 +528,7 @@ GClosure* global_accel_group_find(Accelerator accelerator)
   return 0;
 }
 
-void command_connect_accelerator(const Accelerator& accelerator, const Callback& callback)
+void global_accel_group_connect(const Accelerator& accelerator, const Callback& callback)
 {
   if(accelerator.key != 0)
   {
@@ -536,7 +536,7 @@ void command_connect_accelerator(const Accelerator& accelerator, const Callback&
   }
 }
 
-void command_disconnect_accelerator(const Accelerator& accelerator, const Callback& callback)
+void global_accel_group_disconnect(const Accelerator& accelerator, const Callback& callback)
 {
   if(accelerator.key != 0)
   {

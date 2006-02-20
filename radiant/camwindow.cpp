@@ -1930,6 +1930,7 @@ void Camera_registerPreferencesPage()
 
 typedef FreeCaller1<bool, CamWnd_Move_Discrete_Import> CamWndMoveDiscreteImportCaller;
 
+/// \brief Initialisation for things that have the same lifespan as this module.
 void CamWnd_Construct()
 {
   GlobalCommands_insert("CenterView", FreeCaller<GlobalCamera_ResetAngles>(), Accelerator(GDK_End));

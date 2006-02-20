@@ -1177,6 +1177,7 @@ public:
       {
         GlobalTexturesCache().release((*i).texture());
       }
+      m_layers.clear();
     }
   }
 

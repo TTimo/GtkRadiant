@@ -54,27 +54,27 @@ void command_connect_accelerator(const char* name)
 {
   const Command& command = GlobalCommands_find(name);
   GlobalShortcuts_register(name);
-  command_connect_accelerator(command.m_accelerator, command.m_callback);
+  global_accel_group_connect(command.m_accelerator, command.m_callback);
 }
 
 void command_disconnect_accelerator(const char* name)
 {
   const Command& command = GlobalCommands_find(name);
-  command_disconnect_accelerator(command.m_accelerator, command.m_callback);
+  global_accel_group_disconnect(command.m_accelerator, command.m_callback);
 }
 
 void toggle_add_accelerator(const char* name)
 {
   const Toggle& toggle = GlobalToggles_find(name);
   GlobalShortcuts_register(name);
-  command_connect_accelerator(toggle.m_command.m_accelerator, toggle.m_command.m_callback);
+  global_accel_group_connect(toggle.m_command.m_accelerator, toggle.m_command.m_callback);
 }
 
 GtkCheckMenuItem* create_check_menu_item_with_mnemonic(GtkMenu* menu, const char* mnemonic, const char* commandName)
 {
   GlobalShortcuts_register(commandName);
   const Toggle& toggle = GlobalToggles_find(commandName);
-  command_connect_accelerator(toggle.m_command.m_accelerator, toggle.m_command.m_callback);
+  global_accel_group_connect(toggle.m_command.m_accelerator, toggle.m_command.m_callback);
   return create_check_menu_item_with_mnemonic(menu, mnemonic, toggle);
 }
 
@@ -82,7 +82,7 @@ GtkMenuItem* create_menu_item_with_mnemonic(GtkMenu* menu, const char *mnemonic,
 {
   GlobalShortcuts_register(commandName);
   const Command& command = GlobalCommands_find(commandName);
-  command_connect_accelerator(command.m_accelerator, command.m_callback);
+  global_accel_group_connect(command.m_accelerator, command.m_callback);
   return create_menu_item_with_mnemonic(menu, mnemonic, command);
 }
 
