@@ -1,6 +1,10 @@
 This is the changelog for developers, != changelog for the end user 
 that we distribute with the binaries. (see changelog)
 
+21/02/2006
+namespace
+- Added command to toggle lighting/textured modes, shortcut F3.
+
 20/02/2006
 SPoG
 - Fixed crash when disabling lighting for a second time.

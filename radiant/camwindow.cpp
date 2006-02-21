@@ -1752,6 +1752,11 @@ void CamWnd_constructToolbar(GtkToolbar* toolbar)
 void CamWnd_registerShortcuts()
 {
   toggle_add_accelerator("ToggleCubicClip");
+  
+  if(g_pGameDescription->mGameType == "doom3")
+  {
+    command_connect_accelerator("TogglePreview");
+  }
 }
 
 
@@ -1779,6 +1784,17 @@ void CamWnd_SetMode(camera_draw_mode mode)
   {
     CamWnd_Update(*g_camwnd);
   }
+}
+
+void CamWnd_TogglePreview(void)
+{
+  // gametype must be doom3 for this function to work
+  // if the gametype is not doom3 something is wrong with the
+  // global command list or somebody else calls this function.
+  ASSERT_MESSAGE(g_pGameDescription->mGameType == "doom3", "CamWnd_TogglePreview called although mGameType is not doom3 compatible");
+
+  // switch between textured and lighting mode
+  CamWnd_SetMode((CamWnd_GetMode() == cd_lighting) ? cd_texture : cd_lighting);
 }
 
 
@@ -1945,6 +1961,11 @@ void CamWnd_Construct()
   GlobalToggles_insert("ToggleCamera", ToggleShown::ToggleCaller(g_camera_shown), ToggleItem::AddCallbackCaller(g_camera_shown.m_item), Accelerator('C', (GdkModifierType)(GDK_SHIFT_MASK|GDK_CONTROL_MASK)));
   GlobalCommands_insert("LookThroughSelected", FreeCaller<GlobalCamera_LookThroughSelected>());
   GlobalCommands_insert("LookThroughCamera", FreeCaller<GlobalCamera_LookThroughCamera>());
+
+  if(g_pGameDescription->mGameType == "doom3")
+  {
+    GlobalCommands_insert("TogglePreview", FreeCaller<CamWnd_TogglePreview>(), Accelerator(GDK_F3));
+  }
 
   GlobalShortcuts_insert("CameraForward", Accelerator(GDK_Up));
   GlobalShortcuts_insert("CameraBack", Accelerator(GDK_Down));
