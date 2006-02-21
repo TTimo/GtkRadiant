@@ -477,6 +477,7 @@ const char* file_dialog(GtkWidget* parent, bool open, const char* title, const c
         file_dialog_show(parent, open, title, path, pattern);
 
     if(open
+      || file == 0
       || !file_exists(file)
       || gtk_MessageBox(parent, "The file specified already exists.\nDo you want to replace it?", title, eMB_NOYES, eMB_ICONQUESTION) == eIDYES)
     {
