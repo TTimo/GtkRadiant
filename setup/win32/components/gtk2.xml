@@ -5,6 +5,7 @@
   <dir name="etc">
     <dir name="gtk-2.0">
       <file name="gdk-pixbuf.loaders"/>
+      <file name="gtkrc"/>
     </dir>
   </dir>
   <dir name="lib">
@@ -37,7 +38,7 @@
   </dir>
   <dir name="share">
     <dir name="themes">
-      <dir name="Default">
+      <dir name="MS-Windows">
         <dir name="gtk-2.0">
           <file name="gtkrc"/>
         </dir>

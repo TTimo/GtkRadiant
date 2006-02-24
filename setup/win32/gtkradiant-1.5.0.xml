@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<package name="GtkRadiant 1.5.0" version="1.5.0" target="[ProgramFilesFolder]\[ProductName]" code="ec2f741d-308c-42b4-bd04-9a4853f2e402" license="..\license.rtf">
+<package name="GtkRadiant 1.5.0" version="1.5.0" target="[ProgramFilesFolder]\[ProductName]" code="ec2f741d-308c-42b4-bd04-9a4853f2e402" license="..\gpl.rtf">
   <feature name="GtkRadiant 1.5.0" desc="[ProductName] level editor.">
     <component name=".\components\gtkradiant.xml" root="..\..\install"/>
     <component name=".\components\gtkradiant_docs.xml" root=".."/>

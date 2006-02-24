@@ -35,11 +35,8 @@ def assertMessage(condition, message):
     
 def copyFile(source, target):
   assertMessage(os.path.isfile(source), "failed to find file: " + source)
-  targetFile = target
-  if os.path.isdir(targetFile):
-    targetFile = os.path.join(target, os.path.basename(source))
-  print source, "->", targetFile
-  shutil.copyfile(source, targetFile)
+  print source, "->", target
+  shutil.copy2(source, target)
   
 def copyFileIfExists(source, target):
   if os.path.exists(source):
