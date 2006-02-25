@@ -1,6 +1,10 @@
 This is the changelog for developers, != changelog for the end user 
 that we distribute with the binaries. (see changelog)
 
+25/02/2006
+SPoG
+- Fixed objects sometimes dissappearing when at high zoom level in Ortho views.
+
 24/02/2006
 SPoG
 - Added GPL text to win32 installer.

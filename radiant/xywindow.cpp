@@ -2133,7 +2133,7 @@ void XYWnd::updateModelview()
 
     m_modelview[8]  =  0;
     m_modelview[9]  =  0;
-    m_modelview[10] = -m_fScale;
+    m_modelview[10] = -1.0;
     break;
   case XZ:
     m_modelview[0]  =  m_fScale;
@@ -2142,7 +2142,7 @@ void XYWnd::updateModelview()
 
     m_modelview[4]  =  0;
     m_modelview[5]  =  0;
-    m_modelview[6]  =  m_fScale;
+    m_modelview[6]  =  1.0;
 
     m_modelview[8]  =  0;
     m_modelview[9]  =  m_fScale;
@@ -2151,7 +2151,7 @@ void XYWnd::updateModelview()
   case YZ:
     m_modelview[0]  =  0;
     m_modelview[1]  =  0;
-    m_modelview[2]  = -m_fScale;
+    m_modelview[2]  = -1.0;
 
     m_modelview[4]  =  m_fScale;
     m_modelview[5]  =  0;
