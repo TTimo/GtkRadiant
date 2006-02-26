@@ -486,7 +486,7 @@ inline void matrix4_transform_point(const Matrix4& self, BasicVector3<Element>& 
   point = matrix4_transformed_point(self, point);
 }
 
-/// \brief Returns \p vector4 transformed by \p self.
+/// \brief Returns \p direction transformed by \p self.
 template<typename Element>
 inline BasicVector3<Element> matrix4_transformed_direction(const Matrix4& self, const BasicVector3<Element>& direction)
 {
