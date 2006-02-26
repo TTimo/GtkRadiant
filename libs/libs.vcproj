@@ -194,6 +194,12 @@
 			Name="string"
 			Filter="">
 			<File
+				RelativePath=".\string\pooledstring.cpp">
+			</File>
+			<File
+				RelativePath=".\string\pooledstring.h">
+			</File>
+			<File
 				RelativePath=".\string\string.cpp">
 			</File>
 			<File

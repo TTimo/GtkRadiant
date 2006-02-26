@@ -248,7 +248,7 @@ inline TextOutputStreamType& ostream_write(TextOutputStreamType& ostream, const 
     return ostream << convert.m_range;
   }
 
-  for(const char* p = convert.m_range.begin; p != convert.m_range.end;)
+  for(const char* p = convert.m_range.first; p != convert.m_range.last;)
   {
     if(!char_is_ascii(*p))
     {
@@ -286,7 +286,7 @@ inline TextOutputStreamType& ostream_write(TextOutputStreamType& ostream, const 
     return ostream << convert.m_range;
   }
 
-  for(const char* p = convert.m_range.begin; p != convert.m_range.end; ++p)
+  for(const char* p = convert.m_range.first; p != convert.m_range.last; ++p)
   {
     if(!char_is_ascii(*p))
     {

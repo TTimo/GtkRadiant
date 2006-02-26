@@ -159,9 +159,9 @@ void texturegroup_activated(GtkWidget* widget, gpointer data)
   reinterpret_cast<TextureGroupLoader*>(data)->loadGroup();
 }
 
-bool string_equal_start(const char* string, const char* start)
+bool string_equal_start(const char* string, StringRange start)
 {
-  return string_equal_n(string, start, string_length(start));
+  return string_equal_n(string, start.first, start.last - start.first);
 }
 
 GtkMenuItem* MenuItem_create(const char* name)
@@ -210,7 +210,7 @@ void TextureGroupsMenu_Construct(GtkMenu* menu, const TextureGroups& groups)
   {
     const char* dirName = (*i).c_str();
     const char* firstUnderscore = strchr(dirName, '_');
-    CopiedString dirRoot(dirName, (firstUnderscore == 0) ? dirName : firstUnderscore + 1);
+    StringRange dirRoot(dirName, (firstUnderscore == 0) ? dirName : firstUnderscore + 1);
 
     // do we shrink the menus?
     // we shrink only if we have at least two things to shrink :-)
@@ -218,16 +218,15 @@ void TextureGroupsMenu_Construct(GtkMenu* menu, const TextureGroups& groups)
     ++next;
     if(firstUnderscore != 0
       && next != groups.end()
-      && string_equal_start((*next).c_str(), dirRoot.c_str()))
+      && string_equal_start((*next).c_str(), dirRoot))
     {
-      CopiedString itemName(dirName, firstUnderscore);
-	    GtkMenuItem* item = Menu_addItem(menu, itemName.c_str());
+	    GtkMenuItem* item = Menu_addItem(menu, CopiedString(StringRange(dirName, firstUnderscore)).c_str());
 
 	    GtkMenu *pSubMenu = GTK_MENU(gtk_menu_new());
       gtk_menu_item_set_submenu(item, GTK_WIDGET(pSubMenu));
 
 	    // keep going...
-	    while(i != groups.end() && string_equal_start((*i).c_str(), dirRoot.c_str()))
+	    while(i != groups.end() && string_equal_start((*i).c_str(), dirRoot))
 	    {
 	      TextureGroupsMenu_addItem(pSubMenu, (*i).c_str());
 
@@ -266,7 +265,7 @@ void TextureGroups_addShader(TextureGroups& groups, const char* shaderName)
     const char* last = path_remove_directory(texture);
     if(!string_empty(last))
     {
-      groups.insert(CopiedString(texture, --last));
+      groups.insert(CopiedString(StringRange(texture, --last)));
     }
   }
 }
@@ -811,8 +810,7 @@ class LoadShaderVisitor : public Archive::Visitor
 public:
   void visit(const char* name)
   {
-    CopiedString shaderName(name, path_get_filename_base_end(name));
-    IShader* shader = QERApp_Shader_ForName(shaderName.c_str());
+    IShader* shader = QERApp_Shader_ForName(CopiedString(StringRange(name, path_get_filename_base_end(name))).c_str());
     shader->DecRef();
   }
 };

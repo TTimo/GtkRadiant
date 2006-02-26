@@ -302,13 +302,11 @@ inline TextOutputStreamType& ostream_write(TextOutputStreamType& ostream, const 
 }
 
 
-typedef ArrayRange<const char> StringRange;
-
 /// \brief Writes a \p range of characters to \p ostream.
 template<typename TextOutputStreamType>
 inline TextOutputStreamType& ostream_write(TextOutputStreamType& ostream, const StringRange& range)
 {
-  ostream.write(range.begin, range.end - range.begin);
+  ostream.write(range.first, range.last - range.first);
   return ostream;
 }
 

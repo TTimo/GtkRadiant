@@ -166,11 +166,11 @@ namespace HashTableDetail
       increment();
       return tmp;
     }
-    value_type& operator*()
+    value_type& operator*() const
     {
       return m_node->m_value;
     }
-    value_type* operator->()
+    value_type* operator->() const
     {
       return &(operator*());
     }

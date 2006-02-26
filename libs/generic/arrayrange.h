@@ -29,36 +29,36 @@ template<typename Element>
 struct ArrayRange
 {
   typedef Element* Iterator;
-  ArrayRange(Iterator _begin, Iterator _end)
-    : begin(_begin), end(_end)
+  ArrayRange(Iterator first, Iterator last)
+    : first(first), last(last)
   {
   }
-  Iterator begin;
-  Iterator end;
+  Iterator first;
+  Iterator last;
 };
 
 template<typename Element>
-inline ArrayRange<Element> makeArrayRange(Element* begin, Element* end)
+inline ArrayRange<Element> makeArrayRange(Element* first, Element* last)
 {
-  return ArrayRange<Element>(begin, end);
+  return ArrayRange<Element>(first, last);
 }
 
 template<typename Element>
 struct ArrayConstRange
 {
   typedef const Element* Iterator;
-  ArrayConstRange(Iterator _begin, Iterator _end)
-    : begin(_begin), end(_end)
+  ArrayConstRange(Iterator first, Iterator last)
+    : first(first), last(last)
   {
   }
-  Iterator begin;
-  Iterator end;
+  Iterator first;
+  Iterator last;
 };
 
 template<typename Element>
-inline ArrayConstRange<Element> makeArrayRange(const Element* begin, const Element* end)
+inline ArrayConstRange<Element> makeArrayRange(const Element* first, const Element* last)
 {
-  return ArrayConstRange<Element>(begin, end);
+  return ArrayConstRange<Element>(first, last);
 }
 
 #define ARRAY_SIZE(array) (sizeof(array) / sizeof(*array))
@@ -68,5 +68,7 @@ inline ArrayConstRange<Element> makeArrayRange(const Element* begin, const Eleme
 
 typedef ArrayConstRange<const char*> StringArrayRange;
 #define STRING_ARRAY_RANGE(array) (StringArrayRange(array, ARRAY_END(array)))
+
+typedef ArrayRange<const char> StringRange;
 
 #endif

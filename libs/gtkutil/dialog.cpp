@@ -209,7 +209,7 @@ RadioHBox RadioHBox_new(StringArrayRange names)
 
   GSList* group = 0;
   GtkRadioButton* radio = 0;
-  for(StringArrayRange::Iterator i = names.begin; i != names.end; ++i)
+  for(StringArrayRange::Iterator i = names.first; i != names.last; ++i)
   {
     radio = GTK_RADIO_BUTTON(gtk_radio_button_new_with_label(group, *i));
     gtk_widget_show(GTK_WIDGET(radio));

@@ -258,6 +258,11 @@ public:
   {
     return g_showAngles;
   }
+
+  void printStatistics() const
+  {
+    StringPool_analyse(EntityKeyValues::getPool());
+  }
 };
 
 Quake3EntityCreator g_Quake3EntityCreator;

@@ -51,7 +51,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <glib/gslist.h>
 
 #include "debugging/debugging.h"
-#include "string/string.h"
+#include "string/pooledstring.h"
 #include "math/vector.h"
 #include "generic/callback.h"
 #include "generic/referencecounted.h"
@@ -225,21 +225,29 @@ Image* loadSpecial(void* environment, const char* name)
   return GlobalTexturesCache().loadImage(name);
 }
 
-
+class ShaderPoolContext
+{
+};
+typedef Static<StringPool, ShaderPoolContext> ShaderPool;
+typedef PooledString<ShaderPool> ShaderString;
+typedef ShaderString ShaderVariable;
+typedef ShaderString ShaderValue;
+typedef CopiedString TextureExpression;
 
 // clean a texture name to the qtexture_t name format we use internally
 // NOTE: case sensitivity: the engine is case sensitive. we store the shader name with case information and save with case
 // information as well. but we assume there won't be any case conflict and so when doing lookups based on shader name,
 // we compare as case insensitive. That is Radiant is case insensitive, but knows that the engine is case sensitive.
 //++timo FIXME: we need to put code somewhere to detect when two shaders that are case insensitive equal are present
-void parseTextureName(CopiedString& name, const char* token)
+template<typename StringType>
+void parseTextureName(StringType& name, const char* token)
 {
   StringOutputStream cleaned(256);
   cleaned << PathCleaned(token);
-  name = CopiedString(cleaned.c_str(), path_get_filename_base_end(cleaned.c_str())); // remove extension
+  name = CopiedString(StringRange(cleaned.c_str(), path_get_filename_base_end(cleaned.c_str()))).c_str(); // remove extension
 }
 
-bool Tokeniser_parseTextureName(Tokeniser& tokeniser, CopiedString& name)
+bool Tokeniser_parseTextureName(Tokeniser& tokeniser, TextureExpression& name)
 {
   const char* token = tokeniser.getToken();
   if(token == 0)
@@ -251,13 +259,6 @@ bool Tokeniser_parseTextureName(Tokeniser& tokeniser, CopiedString& name)
   return true;
 }
 
-void parseShaderName(CopiedString& name, const char* token)
-{
-  StringOutputStream cleaned(256);
-  cleaned << PathCleaned(token);
-  name = cleaned.c_str();
-}
-
 bool Tokeniser_parseShaderName(Tokeniser& tokeniser, CopiedString& name)
 {
   const char* token = tokeniser.getToken();
@@ -266,11 +267,11 @@ bool Tokeniser_parseShaderName(Tokeniser& tokeniser, CopiedString& name)
     Tokeniser_unexpectedError(tokeniser, token, "#shader-name");
     return false;
   }
-  parseShaderName(name, token);
+  parseTextureName(name, token);
   return true;
 }
 
-bool Tokeniser_parseString(Tokeniser& tokeniser, CopiedString& string)
+bool Tokeniser_parseString(Tokeniser& tokeniser, ShaderString& string)
 {
   const char* token = tokeniser.getToken();
   if(token == 0)
@@ -284,12 +285,10 @@ bool Tokeniser_parseString(Tokeniser& tokeniser, CopiedString& string)
 
 
 
-typedef std::list<CopiedString> ShaderParameters;
-typedef std::list<CopiedString> ShaderArguments;
+typedef std::list<ShaderVariable> ShaderParameters;
+typedef std::list<ShaderVariable> ShaderArguments;
 
-typedef CopiedString TextureExpression;
-typedef CopiedString ShaderValue;
-typedef std::pair<CopiedString, CopiedString> BlendFuncExpression;
+typedef std::pair<ShaderVariable, ShaderVariable> BlendFuncExpression;
 
 class ShaderTemplate
 {
@@ -406,7 +405,7 @@ public:
 };
 
 
-bool Doom3Shader_parseHeightmap(Tokeniser& tokeniser, CopiedString& bump, CopiedString& heightmapScale)
+bool Doom3Shader_parseHeightmap(Tokeniser& tokeniser, TextureExpression& bump, ShaderValue& heightmapScale)
 {
   RETURN_FALSE_IF_FAIL(Tokeniser_parseToken(tokeniser, "("));
   RETURN_FALSE_IF_FAIL(Tokeniser_parseTextureName(tokeniser, bump));
@@ -416,20 +415,20 @@ bool Doom3Shader_parseHeightmap(Tokeniser& tokeniser, CopiedString& bump, Copied
   return true;
 }
 
-bool Doom3Shader_parseAddnormals(Tokeniser& tokeniser, CopiedString& bump)
+bool Doom3Shader_parseAddnormals(Tokeniser& tokeniser, TextureExpression& bump)
 {
   RETURN_FALSE_IF_FAIL(Tokeniser_parseToken(tokeniser, "("));
   RETURN_FALSE_IF_FAIL(Tokeniser_parseTextureName(tokeniser, bump));
   RETURN_FALSE_IF_FAIL(Tokeniser_parseToken(tokeniser, ","));
   RETURN_FALSE_IF_FAIL(Tokeniser_parseToken(tokeniser, "heightmap"));
-  CopiedString heightmapName;
-  CopiedString heightmapScale;
+  TextureExpression heightmapName;
+  ShaderValue heightmapScale;
   RETURN_FALSE_IF_FAIL(Doom3Shader_parseHeightmap(tokeniser, heightmapName, heightmapScale));
   RETURN_FALSE_IF_FAIL(Tokeniser_parseToken(tokeniser, ")"));
   return true;
 }
 
-bool Doom3Shader_parseBumpmap(Tokeniser& tokeniser, CopiedString& bump, CopiedString& heightmapScale)
+bool Doom3Shader_parseBumpmap(Tokeniser& tokeniser, TextureExpression& bump, ShaderValue& heightmapScale)
 {
   const char* token = tokeniser.getToken();
   if(token == 0)
@@ -465,7 +464,7 @@ class LayerTemplate
 {
 public:
   LayerTypeId m_type;
-  CopiedString m_texture;
+  TextureExpression m_texture;
   BlendFuncExpression m_blendFunc;
   bool m_clampToBorder;
   ShaderValue m_alphaTest;
@@ -741,9 +740,9 @@ bool ShaderTemplate::parseDoom3(Tokeniser& tokeniser)
         if(string_equal_nocase(lightFalloffImage, "makeintensity"))
         {
           RETURN_FALSE_IF_FAIL(Tokeniser_parseToken(tokeniser, "("));
-          CopiedString name;
+          TextureExpression name;
           RETURN_FALSE_IF_FAIL(Tokeniser_parseTextureName(tokeniser, name));
-          m_lightFalloffImage = name.c_str();
+          m_lightFalloffImage = name;
           RETURN_FALSE_IF_FAIL(Tokeniser_parseToken(tokeniser, ")"));
         }
         else
@@ -797,7 +796,7 @@ ShaderDefinitionMap g_shaderDefinitions;
 bool parseTemplateInstance(Tokeniser& tokeniser, const char* filename)
 {
   CopiedString name;
-  RETURN_FALSE_IF_FAIL(Tokeniser_parseTextureName(tokeniser, name));
+  RETURN_FALSE_IF_FAIL(Tokeniser_parseShaderName(tokeniser, name));
   const char* templateName = tokeniser.getToken();
   ShaderTemplate* shaderTemplate = findTemplate(templateName);
   if(shaderTemplate == 0)
@@ -1312,7 +1311,7 @@ void FreeShaders()
 bool ShaderTemplate::parseQuake3(Tokeniser& tokeniser)
 {
   // name of the qtexture_t we'll use to represent this shader (this one has the "textures\" before)
-  m_textureName = m_Name;
+  m_textureName = m_Name.c_str();
 
   tokeniser.nextLine();
 
@@ -1486,7 +1485,7 @@ class Layer
 {
 public:
   LayerTypeId m_type;
-  CopiedString m_texture;
+  TextureExpression m_texture;
   BlendFunc m_blendFunc;
   bool m_clampToBorder;
   float m_alphaTest;
@@ -1924,6 +1923,8 @@ void Shaders_Load()
       lst = lst->next;
     }
   }
+
+  //StringPool_analyse(ShaderPool::instance());
 }
 
 void Shaders_Free()

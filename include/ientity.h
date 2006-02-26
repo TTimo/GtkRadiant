@@ -111,6 +111,8 @@ public:
   virtual bool getShowNames() = 0;
   virtual void setShowAngles(bool showAngles) = 0;
   virtual bool getShowAngles() = 0;
+
+  virtual void printStatistics() const = 0;
 };
 
 #include "modulesystem.h"

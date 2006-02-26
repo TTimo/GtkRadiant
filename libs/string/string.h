@@ -30,6 +30,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <algorithm>
 
 #include "memory/allocator.h"
+#include "generic/arrayrange.h"
 
 /// \brief Returns true if \p string length is zero.
 /// O(1)
@@ -191,10 +192,10 @@ inline char* string_clone(const char* other, Allocator& allocator)
 /// \brief Returns a newly-allocated string which is a clone of [\p first, \p last), using \p allocator.
 /// The returned buffer must be released with \c string_release using a matching \p allocator.
 template<typename Allocator>
-inline char* string_clone_range(const char* first, const char* last, Allocator& allocator)
+inline char* string_clone_range(StringRange range, Allocator& allocator)
 {
-  std::size_t length = last - first;
-  char* copied = strncpy(string_new(length, allocator), first, length);
+  std::size_t length = range.last - range.first;
+  char* copied = strncpy(string_new(length, allocator), range.first, length);
   copied[length] = '\0';
   return copied;
 }
@@ -224,10 +225,10 @@ inline char* string_clone(const char* other)
 
 /// \brief Returns a newly-allocated string which is a clone of [\p first, \p last).
 /// The returned buffer must be released with \c string_release.
-inline char* string_clone_range(const char* first, const char* last)
+inline char* string_clone_range(StringRange range)
 {
   DefaultAllocator<char> allocator;
-  return string_clone_range(first, last, allocator);
+  return string_clone_range(range, allocator);
 }
 
 typedef char* char_pointer;
@@ -343,8 +344,8 @@ public:
     : Buffer(string)
   {
   }
-  String(const char* first, const char* last)
-    : Buffer(first, last)
+  String(StringRange range)
+    : Buffer(range)
   {
   }
 
@@ -357,6 +358,12 @@ public:
   String& operator=(const char* string)
   {
     String temp(string);
+    temp.swap(*this);
+    return *this;
+  }
+  String& operator=(StringRange range)
+  {
+    String temp(range);
     temp.swap(*this);
     return *this;
   }
@@ -426,9 +433,9 @@ class CopiedBuffer : private Allocator
 {
   char* m_string;
 
-  char* copy_range(const char* first, const char* last)
+  char* copy_range(StringRange range)
   {
-    return string_clone_range(first, last, static_cast<Allocator&>(*this));
+    return string_clone_range(range, static_cast<Allocator&>(*this));
   }
   char* copy(const char* other)
   {
@@ -461,8 +468,8 @@ public:
     : Allocator(allocator), m_string(copy(string))
   {
   }
-  CopiedBuffer(const char* first, const char* last, const Allocator& allocator = Allocator())
-    : Allocator(allocator), m_string(copy_range(first, last))
+  CopiedBuffer(StringRange range, const Allocator& allocator = Allocator())
+    : Allocator(allocator), m_string(copy_range(range))
   {
   }
   const char* c_str() const
@@ -485,11 +492,11 @@ class SmartBuffer : private Allocator
 {
   char* m_buffer;
 
-  char* copy_range(const char* first, const char* last)
+  char* copy_range(StringRange range)
   {
-    char* buffer = Allocator::allocate(sizeof(std::size_t) + (last - first) + 1);
-    strncpy(buffer + sizeof(std::size_t), first, last - first);
-    buffer[sizeof(std::size_t) + (last - first)] = '\0';
+    char* buffer = Allocator::allocate(sizeof(std::size_t) + (range.last - range.first) + 1);
+    strncpy(buffer + sizeof(std::size_t), range.first, range.last - range.first);
+    buffer[sizeof(std::size_t) + (range.last - range.first)] = '\0';
     *reinterpret_cast<std::size_t*>(buffer) = 0;
     return buffer;
   }
@@ -541,8 +548,8 @@ public:
   {
     incref(m_buffer);
   }
-  SmartBuffer(const char* first, const char* last, const Allocator& allocator = Allocator())
-    : Allocator(allocator), m_buffer(copy_range(first, last))
+  SmartBuffer(StringRange range, const Allocator& allocator = Allocator())
+    : Allocator(allocator), m_buffer(copy_range(range))
   {
     incref(m_buffer);
   }

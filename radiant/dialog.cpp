@@ -558,7 +558,7 @@ void Dialog::addCombo(GtkWidget* vbox, const char* name, StringArrayRange values
   {
     GtkWidget* combo = gtk_combo_box_new_text();
 
-    for(StringArrayRange::Iterator i = values.begin; i != values.end; ++i)
+    for(StringArrayRange::Iterator i = values.first; i != values.last; ++i)
     {
       gtk_combo_box_append_text(GTK_COMBO_BOX(combo), *i);
     }
@@ -640,7 +640,7 @@ void Dialog::addRadio(GtkWidget* vbox, const char* name, int& data, StringArrayR
 
 void Dialog::addRadioIcons(GtkWidget* vbox, const char* name, StringArrayRange icons, const IntImportCallback& importViewer, const IntExportCallback& exportViewer)
 {
-  GtkWidget* table = gtk_table_new (2, static_cast<guint>(icons.end - icons.begin), FALSE);
+  GtkWidget* table = gtk_table_new (2, static_cast<guint>(icons.last - icons.first), FALSE);
   gtk_widget_show (table);
 
   gtk_table_set_row_spacings (GTK_TABLE (table), 5);
@@ -648,9 +648,9 @@ void Dialog::addRadioIcons(GtkWidget* vbox, const char* name, StringArrayRange i
 
   GSList* group = 0;
   GtkWidget* radio = 0;
-  for(StringArrayRange::Iterator icon = icons.begin; icon != icons.end; ++icon)
+  for(StringArrayRange::Iterator icon = icons.first; icon != icons.last; ++icon)
   {
-    guint pos = static_cast<guint>(icon - icons.begin);
+    guint pos = static_cast<guint>(icon - icons.first);
     GtkImage* image = new_local_image(*icon);
     gtk_widget_show(GTK_WIDGET(image));
     gtk_table_attach(GTK_TABLE(table), GTK_WIDGET(image), pos, pos+1, 0, 1,

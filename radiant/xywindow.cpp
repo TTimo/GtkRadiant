@@ -1152,7 +1152,7 @@ public:
         {
           popMenu();
         }
-        pushMenu(CopiedString(name, underscore));
+        pushMenu(CopiedString(StringRange(name, underscore)));
       }
       else if(m_stack.size() == 2)
       {

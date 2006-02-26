@@ -313,7 +313,7 @@ void EntityClassDoom3_parseEntityDef(Tokeniser& tokeniser)
     const char* key = tokeniser.getToken();
     
     const char* last = string_findFirstSpaceOrTab(key);
-    CopiedString first(key, last);
+    CopiedString first(StringRange(key, last));
 
     if(!string_empty(last))
     {

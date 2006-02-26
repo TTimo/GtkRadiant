@@ -500,11 +500,11 @@ public:
   typedef Value* const_iterator;
   const_iterator begin() const
   {
-    return m_children.begin;
+    return m_children.first;
   }
   const_iterator end() const
   {
-    return m_children.end;
+    return m_children.last;
   }
 };
 

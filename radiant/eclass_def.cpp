@@ -182,7 +182,7 @@ void setSpecialLoad(EntityClass *e, const char* pWhat, CopiedString& p)
   where = strchr(pText,'\"');
   if (where)
   {
-    p = CopiedString(pText, where);
+    p = StringRange(pText, where);
   }
   else
   {

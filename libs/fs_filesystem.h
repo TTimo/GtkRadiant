@@ -57,8 +57,8 @@ class GenericFileSystem
       : m_path(path), m_depth(path_get_depth(c_str()))
     {
     }
-    Path(const char* start, const char* finish)
-      : m_path(start, finish), m_depth(path_get_depth(c_str()))
+    Path(StringRange range)
+      : m_path(range), m_depth(path_get_depth(c_str()))
     {
     }
     bool operator<(const Path& other) const
@@ -121,7 +121,7 @@ public:
       const char* end = path_remove_directory(path.c_str());
       while(end[0] != '\0')
       {
-        Path dir(path.c_str(), end);
+        Path dir(StringRange(path.c_str(), end));
         m_entries.insert(value_type(dir, Entry(0)));
         end = path_remove_directory(end);
       }

@@ -486,7 +486,7 @@ public:
       }
       else // special key
       {
-        CopiedString keyName(value, keyEnd);
+        CopiedString keyName(StringRange(value, keyEnd));
         accelerator.key = global_keys_find(keyName.c_str());
         if(accelerator.key != 0)
         {

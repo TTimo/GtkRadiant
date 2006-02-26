@@ -34,7 +34,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "math/vector.h"
 #include "math/aabb.h"
 #include "undolib.h"
-#include "string/string.h"
+#include "string/pooledstring.h"
 #include "generic/referencecounted.h"
 #include "scenelib.h"
 #include "container/container.h"
@@ -421,14 +421,21 @@ public:
     virtual void erase(const char* key, Value& value) = 0;
   };
 
+  static StringPool& getPool()
+  {
+    return Static<StringPool, KeyContext>::instance();
+  }
 private:
   static EntityCreator::KeyValueChangedFunc m_entityKeyValueChanged;
   static Counter* m_counter;
 
   EntityClass* m_eclass;
 
+  class KeyContext{};
+  typedef Static<StringPool, KeyContext> KeyPool;
+  typedef PooledString<KeyPool> Key;
   typedef SmartPointer<KeyValue> KeyValuePtr;
-  typedef UnsortedMap<CopiedString, KeyValuePtr > KeyValues;
+  typedef UnsortedMap<Key, KeyValuePtr> KeyValues;
   KeyValues m_keyValues;
 
   typedef UnsortedSet<Observer*> Observers;
@@ -504,7 +511,7 @@ private:
       (*i).second->instanceDetach(m_undo.map());
     }
 
-    CopiedString key((*i).first);
+    Key key((*i).first);
     KeyValuePtr value((*i).second);
     m_keyValues.erase(i);
     notifyErase(key.c_str(), *value);

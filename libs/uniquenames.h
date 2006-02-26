@@ -130,7 +130,7 @@ inline name_t name_read(const char* name)
     end = p;
   }
 
-  return name_t(CopiedString(name, end), Postfix(end));
+  return name_t(CopiedString(StringRange(name, end)), Postfix(end));
 }
 
 

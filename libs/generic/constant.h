@@ -45,4 +45,6 @@ inline TextOutputStreamType& ostream_write(TextOutputStreamType& ostream, const 
 #define STRING_CONSTANT(name, value) TYPE_CONSTANT(name, value, const char*)
 #define INTEGER_CONSTANT(name, value) TYPE_CONSTANT(name, value, int)
 
+STRING_CONSTANT(EmptyString, "");
+
 #endif

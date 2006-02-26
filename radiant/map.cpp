@@ -1046,6 +1046,8 @@ void Map_LoadFile (const char *filename)
   
   globalOutputStream() << makeLeftJustified(Unsigned(g_brushCount.get()), 5) << " primitive\n";
   globalOutputStream() << makeLeftJustified(Unsigned(g_entityCount.get()), 5) << " entities\n";
+
+  //GlobalEntityCreator().printStatistics();
   
   //
   // move the view to a start position
