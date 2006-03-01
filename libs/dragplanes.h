@@ -234,6 +234,12 @@ public:
 
     return AABB(vector3_mid(min, max), vector3_scaled(vector3_subtracted(max, min), 0.5));
   }
+  AABB evaluateResize(const Vector3& translation, const Matrix4& rotation) const
+  {
+    AABB aabb(evaluateResize(translation_to_local(translation, rotation)));
+    aabb.origin = m_bounds.origin + translation_from_local(aabb.origin - m_bounds.origin, rotation);
+    return aabb;
+  }
   Matrix4 evaluateTransform(const Vector3& translation) const
   {
     AABB aabb(evaluateResize(translation));

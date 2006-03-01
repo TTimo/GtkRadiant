@@ -1686,10 +1686,7 @@ public:
       //globalOutputStream() << getTranslation() << "\n";
 
       m_dragPlanes.m_bounds = m_contained.aabb();
-      AABB aabb(m_dragPlanes.evaluateResize(translation_to_local(getTranslation(), rotation())));
-      aabb.origin = m_contained.aabb().origin + translation_from_local(aabb.origin - m_contained.aabb().origin, rotation());
-
-      m_contained.setLightRadius(aabb);
+      m_contained.setLightRadius(m_dragPlanes.evaluateResize(getTranslation(), rotation()));
     }
   }
   void applyTransform()
