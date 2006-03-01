@@ -52,6 +52,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "render.h"
 #include "stringio.h"
 #include "traverselib.h"
+#include "dragplanes.h"
 
 #include "targetable.h"
 #include "origin.h"
@@ -541,6 +542,7 @@ class Doom3LightRadius
 {
 public:
   Vector3 m_radius;
+  Vector3 m_radiusTransformed;
   Vector3 m_center;
   Callback m_changed;
   bool m_useCenterKey;
@@ -555,6 +557,7 @@ public:
     {
       m_radius = c_defaultDoom3LightRadius;
     }
+    m_radiusTransformed = m_radius;
     m_changed();
     SceneChangeNotify();
   }
@@ -992,7 +995,7 @@ class Light :
   void updateLightRadiiBox() const
   {
     const Matrix4& rotation = rotation_toMatrix(m_rotation);
-    aabb_corners(AABB(Vector3(0, 0, 0), m_doom3Radius.m_radius), m_radii_box.m_points);
+    aabb_corners(AABB(Vector3(0, 0, 0), m_doom3Radius.m_radiusTransformed), m_radii_box.m_points);
     matrix4_transform_point(rotation, m_radii_box.m_points[0]);
     vector3_add(m_radii_box.m_points[0], m_aabb_light.origin);
     matrix4_transform_point(rotation, m_radii_box.m_points[1]);
@@ -1277,10 +1280,20 @@ public:
       m_originKey.write(&m_entity);
     }
   }
+  void setLightRadius(const AABB& aabb)
+  {
+    m_aabb_light.origin = aabb.origin;
+    m_doom3Radius.m_radiusTransformed = aabb.extents;
+  }
+  void transformLightRadius(const Matrix4& transform)
+  {
+    matrix4_transform_point(transform, m_aabb_light.origin);
+  }
   void revertTransform()
   {
     m_aabb_light.origin = m_useLightOrigin ? m_lightOrigin : m_originKey.m_origin;
     rotation_assign(m_rotation, m_useLightRotation ? m_lightRotation : m_rotationKey.m_rotation);
+    m_doom3Radius.m_radiusTransformed = m_doom3Radius.m_radius;
   }
   void freezeTransform()
   {
@@ -1315,6 +1328,16 @@ public:
 
       rotation_assign(m_rotationKey.m_rotation, m_rotation);
       write_rotation(m_rotationKey.m_rotation, &m_entity);
+
+      m_doom3Radius.m_radius = m_doom3Radius.m_radiusTransformed;
+      if(m_doom3Radius.m_radius == c_defaultDoom3LightRadius)
+      {
+        m_entity.setKeyValue("light_radius", "");
+      }
+      else
+      {
+        write_origin(m_doom3Radius.m_radius, &m_entity, "light_radius");
+      }
     }
   }
   void transformChanged()
@@ -1340,7 +1363,7 @@ public:
 
   const AABB& aabb() const
   {
-    m_doom3AABB = AABB(m_aabb_light.origin, m_doom3Radius.m_radius);
+    m_doom3AABB = AABB(m_aabb_light.origin, m_doom3Radius.m_radiusTransformed);
     return m_doom3AABB;
   }
   bool testAABB(const AABB& other) const
@@ -1540,7 +1563,9 @@ class LightInstance :
   public TransformModifier,
   public Renderable,
   public SelectionTestable,
-  public RendererLight
+  public RendererLight,
+  public PlaneSelectable,
+  public ComponentSelectionTestable
 {
   class TypeCasts
   {
@@ -1554,6 +1579,8 @@ class LightInstance :
       InstanceStaticCast<LightInstance, Renderable>::install(m_casts);
       InstanceStaticCast<LightInstance, SelectionTestable>::install(m_casts);
       InstanceStaticCast<LightInstance, Transformable>::install(m_casts);
+      InstanceStaticCast<LightInstance, PlaneSelectable>::install(m_casts);
+      InstanceStaticCast<LightInstance, ComponentSelectionTestable>::install(m_casts);
       InstanceIdentityCast<LightInstance>::install(m_casts);
     }
     InstanceTypeCastTable& get()
@@ -1563,6 +1590,7 @@ class LightInstance :
   };
 
   Light& m_contained;
+  DragPlanes m_dragPlanes;// dragplanes for lightresizing using mousedrag
 public:
   typedef LazyStatic<TypeCasts> StaticTypeCasts;
 
@@ -1576,7 +1604,8 @@ public:
   LightInstance(const scene::Path& path, scene::Instance* parent, Light& contained) :
     TargetableInstance(path, parent, this, StaticTypeCasts::instance().get(), contained.getEntity(), *this),
     TransformModifier(Light::TransformChangedCaller(contained), ApplyTransformCaller(*this)),
-    m_contained(contained)
+    m_contained(contained),
+    m_dragPlanes(SelectedChangedComponentCaller(*this))
   {
     m_contained.instanceAttach(Instance::path());
 
@@ -1613,12 +1642,54 @@ public:
     m_contained.testSelect(selector, test, Instance::localToWorld());
   }
 
+  void selectPlanes(Selector& selector, SelectionTest& test, const PlaneCallback& selectedPlaneCallback)
+  {
+    test.BeginMesh(localToWorld());
+    m_dragPlanes.selectPlanes(m_contained.aabb(), selector, test, selectedPlaneCallback, rotation());
+  }
+  void selectReversedPlanes(Selector& selector, const SelectedPlanes& selectedPlanes)
+  {
+    m_dragPlanes.selectReversedPlanes(m_contained.aabb(), selector, selectedPlanes, rotation());
+  }
+  
+  bool isSelectedComponents() const
+  {
+    return m_dragPlanes.isSelected();
+  }
+  void setSelectedComponents(bool select, SelectionSystem::EComponentMode mode)
+  {
+    if(mode == SelectionSystem::eFace)
+    {
+      m_dragPlanes.setSelected(false);
+    }
+  }
+  void testSelectComponents(Selector& selector, SelectionTest& test, SelectionSystem::EComponentMode mode)
+  {
+  }
+
+  void selectedChangedComponent(const Selectable& selectable)
+  {
+    GlobalSelectionSystem().getObserver(SelectionSystem::eComponent)(selectable);
+    GlobalSelectionSystem().onComponentSelection(*this, selectable);
+  }
+  typedef MemberCaller1<LightInstance, const Selectable&, &LightInstance::selectedChangedComponent> SelectedChangedComponentCaller;
+
   void evaluateTransform()
   {
     if(getType() == TRANSFORM_PRIMITIVE)
     {
       m_contained.translate(getTranslation());
       m_contained.rotate(getRotation());
+    }
+    else
+    {
+      //globalOutputStream() << getTranslation() << "\n";
+
+      m_dragPlanes.m_bounds = m_contained.aabb();
+      AABB aabb(m_dragPlanes.evaluateResize(translation_to_local(getTranslation(), rotation())));
+      aabb.origin = m_contained.aabb().origin + translation_from_local(aabb.origin - m_contained.aabb().origin, rotation());
+
+      m_contained.setLightRadius(aabb);
     }
   }
   void applyTransform()

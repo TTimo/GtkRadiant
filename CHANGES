@@ -1,6 +1,10 @@
 This is the changelog for developers, != changelog for the end user 
 that we distribute with the binaries. (see changelog)
 
+28/02/2006
+namespace, SPoG
+- Added drag-resizing for doom3/quake4 light_radius boxes.
+
 25/02/2006
 SPoG
 - Fixed objects sometimes dissappearing when at high zoom level in Ortho views.

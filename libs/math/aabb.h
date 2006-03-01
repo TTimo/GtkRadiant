@@ -241,6 +241,22 @@ inline void aabb_corners(const AABB& aabb, Vector3 corners[8])
   corners[7] = Vector3(min[0], min[1], min[2]);
 }
 
+inline void aabb_corners_oriented(const AABB& aabb, const Matrix4& rotation, Vector3 corners[8])
+{
+  Vector3 x = Vector3(rotation.x()) * aabb.extents.x();
+  Vector3 y = Vector3(rotation.y()) * aabb.extents.y();
+  Vector3 z = Vector3(rotation.z()) * aabb.extents.z();
+
+  corners[0] = aabb.origin + -x +  y +  z;
+  corners[1] = aabb.origin +  x +  y +  z;
+  corners[2] = aabb.origin +  x + -y +  z;
+  corners[3] = aabb.origin + -x + -y +  z;
+  corners[4] = aabb.origin + -x +  y + -z;
+  corners[5] = aabb.origin +  x +  y + -z;
+  corners[6] = aabb.origin +  x + -y + -z;
+  corners[7] = aabb.origin + -x + -y + -z;
+}
+
 inline void aabb_planes(const AABB& aabb, Plane3 planes[6])
 {
   planes[0] = Plane3(g_vector3_axes[0], aabb.origin[0] + aabb.extents[0]);
@@ -249,6 +265,20 @@ inline void aabb_planes(const AABB& aabb, Plane3 planes[6])
   planes[3] = Plane3(vector3_negated(g_vector3_axes[1]), -(aabb.origin[1] - aabb.extents[1]));
   planes[4] = Plane3(g_vector3_axes[2], aabb.origin[2] + aabb.extents[2]);
   planes[5] = Plane3(vector3_negated(g_vector3_axes[2]), -(aabb.origin[2] - aabb.extents[2]));
+}
+
+inline void aabb_planes_oriented(const AABB& aabb, const Matrix4& rotation, Plane3 planes[6])
+{
+  double x = vector3_dot(Vector3(rotation.x()), aabb.origin);
+  double y = vector3_dot(Vector3(rotation.y()), aabb.origin);
+  double z = vector3_dot(Vector3(rotation.z()), aabb.origin);
+
+  planes[0] = Plane3(Vector3(rotation.x()), x + aabb.extents[0]);
+  planes[1] = Plane3(-Vector3(rotation.x()), -(x - aabb.extents[0]));
+  planes[2] = Plane3(Vector3(rotation.y()), y + aabb.extents[1]);
+  planes[3] = Plane3(-Vector3(rotation.y()), -(y - aabb.extents[1]));
+  planes[4] = Plane3(Vector3(rotation.z()), z + aabb.extents[2]);
+  planes[5] = Plane3(-Vector3(rotation.z()), -(z - aabb.extents[2]));
 }
 
 const Vector3 aabb_normals[6] = {

@@ -651,6 +651,11 @@ inline BasicVector3<Element> vector3_negated(const BasicVector3<Element>& self)
 {
   return BasicVector3<Element>(-self.x(), -self.y(), -self.z()); 
 }
+template<typename Element>
+inline BasicVector3<Element> operator-(const BasicVector3<Element>& self)
+{
+  return vector3_negated(self); 
+}
 
 template<typename Element>
 inline void vector3_negate(BasicVector3<Element>& self)

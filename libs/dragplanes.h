@@ -27,6 +27,28 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "math/aabb.h"
 #include "math/line.h"
 
+// local must be a pure rotation
+inline Vector3 translation_to_local(const Vector3& translation, const Matrix4& local)
+{
+  return matrix4_get_translation_vec3(
+    matrix4_multiplied_by_matrix4(
+      matrix4_translated_by_vec3(matrix4_transposed(local), translation),
+      local
+    )
+  );
+}
+
+// local must be a pure rotation
+inline Vector3 translation_from_local(const Vector3& translation, const Matrix4& local)
+{
+  return matrix4_get_translation_vec3(
+    matrix4_multiplied_by_matrix4(
+      matrix4_translated_by_vec3(local, translation),
+      matrix4_transposed(local)
+    )
+  );
+}
+
 class DragPlanes
 {
 public:
@@ -65,13 +87,14 @@ public:
     m_selectable_top.setSelected(selected);
     m_selectable_bottom.setSelected(selected);
   }
-  void selectPlanes(const AABB& aabb, Selector& selector, SelectionTest& test, const PlaneCallback& selectedPlaneCallback)
+  void selectPlanes(const AABB& aabb, Selector& selector, SelectionTest& test, const PlaneCallback& selectedPlaneCallback, const Matrix4& rotation = g_matrix4_identity)
   {
     Line line(test.getNear(), test.getFar());
     Vector3 corners[8];
-    aabb_corners(aabb, corners);
+    aabb_corners_oriented(aabb, rotation, corners);
+
     Plane3 planes[6];
-    aabb_planes(aabb, planes);
+    aabb_planes_oriented(aabb, rotation, planes);
 
     for(Vector3* i = corners; i != corners + 8; ++i)
     {
@@ -129,16 +152,16 @@ public:
       && vector3_dot(planes[5].normal(), corners[7]) > 0)
     {
       Selector_add(selector, m_selectable_bottom);
-      //globalOutputStream() << "bottom\n";
       selectedPlaneCallback(planes[5]);
+      //globalOutputStream() << "bottom\n";
     }
 
     m_bounds = aabb;
   }
-  void selectReversedPlanes(const AABB& aabb, Selector& selector, const SelectedPlanes& selectedPlanes)
+  void selectReversedPlanes(const AABB& aabb, Selector& selector, const SelectedPlanes& selectedPlanes, const Matrix4& rotation = g_matrix4_identity)
   {
     Plane3 planes[6];
-    aabb_planes(aabb, planes);
+    aabb_planes_oriented(aabb, rotation, planes);
 
     if(selectedPlanes.contains(plane3_flipped(planes[0])))
     {
@@ -165,13 +188,11 @@ public:
       Selector_add(selector, m_selectable_bottom);
     }
   }
-  Matrix4 evaluateTransform(const Vector3& translation) const
+  AABB evaluateResize(const Vector3& translation) const
   {
     Vector3 min = m_bounds.origin - m_bounds.extents;
     Vector3 max = m_bounds.origin + m_bounds.extents;
-    Vector3 origin = m_bounds.origin;
-    Vector3 extents = m_bounds.extents;
-    if(extents[0] != 0)
+    if(m_bounds.extents[0] != 0)
     {
       if(m_selectable_right.isSelected())
       {
@@ -184,7 +205,7 @@ public:
         //globalOutputStream() << "moving left\n";
       }
     }
-    if(extents[1] != 0)
+    if(m_bounds.extents[1] != 0)
     {
       if(m_selectable_front.isSelected())
       {
@@ -197,7 +218,7 @@ public:
         //globalOutputStream() << "moving back\n";
       }
     }
-    if(extents[2] != 0)
+    if(m_bounds.extents[2] != 0)
     {
       if(m_selectable_top.isSelected())
       {
@@ -211,39 +232,22 @@ public:
       }
     }
 
-    Vector3 originTransformed(vector3_mid(min, max));
-    Vector3 scale(vector3_scaled(vector3_subtracted(max, min), 0.5));
+    return AABB(vector3_mid(min, max), vector3_scaled(vector3_subtracted(max, min), 0.5));
+  }
+  Matrix4 evaluateTransform(const Vector3& translation) const
+  {
+    AABB aabb(evaluateResize(translation));
+    Vector3 scale(
+      m_bounds.extents[0] != 0 ? aabb.extents[0] / m_bounds.extents[0] : 1,
+      m_bounds.extents[1] != 0 ? aabb.extents[1] / m_bounds.extents[1] : 1,
+      m_bounds.extents[2] != 0 ? aabb.extents[2] / m_bounds.extents[2] : 1
+    );
 
-    if(extents[0] != 0)
-    {
-      scale[0] /= extents[0];
-    }
-    else
-    {
-      scale[0] = 1;
-    }
-    if(extents[1] != 0)
-    {
-      scale[1] /= extents[1];
-    }
-    else
-    {
-      scale[1] = 1;
-    }
-    if(extents[2] != 0)
-    {
-      scale[2] /= extents[2];
-    }
-    else
-    {
-      scale[2] = 1;
-    }
-
-    Matrix4 matrix(matrix4_translation_for_vec3(originTransformed - origin));
-    matrix4_pivoted_scale_by_vec3(matrix, scale, origin);
+    Matrix4 matrix(matrix4_translation_for_vec3(aabb.origin - m_bounds.origin));
+    matrix4_pivoted_scale_by_vec3(matrix, scale, m_bounds.origin);
 
     return matrix;
-  }
+  }  
 };
 
 #endif
