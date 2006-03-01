@@ -405,6 +405,7 @@ public:
   }
 };
 
+#if 0
 template<class Visitor>
 class FaceVisitSelected : public BrushInstanceVisitor
 {
@@ -422,6 +423,7 @@ public:
     }
   }
 };
+#endif
 
 template<typename Functor>
 inline void Scene_forEachBrush(scene::Graph& graph, const Functor& functor)
