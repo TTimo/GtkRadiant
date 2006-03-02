@@ -11,30 +11,16 @@ HalfLife: half-life maps saved in q1 map format are not supported - currently ha
 Entity: creating a new entity with all the brushes of another entity selected results in the latter entity having no brushes.
 SConscript: build fails if SETUP=1
 Brush: non-BP auto-texture-fit fails when rotation is 90
-
-Doom3 startup asserts:
-> .\eclass_doom3.cpp:342
-> assertion failure: editor_color: parse error.
-> .\eclass_doom3.cpp:357
-> assertion failure: editor_mins: parse error.
-> .\eclass_doom3.cpp:368
-> assertion failure: editor_maxs: parse error.
-
-can't use arrow keys to navigate in camera view when capslock is enabled
-- connecting an entity to a path-corner renames the targetname of the path-corner, so if another entity E was linked to the path-corner, the link will be broken and you'll have to edit E and modify the target value
-
-<gibbie> was looking around in 3dview and then autosave thingy came up and now i cant do anything anymore :(
-
-upgrade to new API for SymGetModuleInfo
+GUII: can't use arrow keys to navigate in camera view when capslock is enabled
 
 
-HIGH priority features
+FEATURES
 
 - paint-select or equivalent (e.g. area-selection with occlusion)
 - select-complete-tall or equivalent (e.g. subtract-from-selection modifier key)
+- need some equivalent to select-inside.
 - texture pane names are often illegible, becuase 1. they are long and overlap each other and 2. they overlap the outline rectangles around the images themselves.
 - texture sizes sometimes vary wildly.  It would be nice to find a way to normalize their display size so that very big textures are shrunk a little, and very small textures are blown-up a little.
-- need some equivalent to select-inside.
 
 
 Build: document build-menu xml format.
@@ -53,7 +39,6 @@ At the moment you can only create custom variables by editing the XML file. A cu
 This variable could then be used in a command like this:
 <pre>[arghrad] "[MapFile]"</pre>
 
-Doom3: add light-radius resizing using mouse drag.
 Doom3: filter func_splinemovers
 Entity: draw arrowheads to show direction of connection-lines.
 ? MMB to select a texture should also apply that texture to all selected faces.
@@ -83,7 +68,7 @@ Doom3: add model browser.
 Doom3: s_diversity light key.
 HalfLife: enable HL-mode on linux/osx.
 Renderer: doom3 'parallel' and 'spot' light support.
-Entity: add mouse-resizing for doom3 light_radius and light_center keys
+Entity: add mouse-editing for doom3 light_center key
 Shaders: add support for texture transforms.
 Shaders: add support for 'addnormals' keyword - e.g. models/mapobjects/healthgui/healthguidirty
 TGA Loader: check that true-colour images with palettes are properly handled.
@@ -138,6 +123,7 @@ Shortcuts: make shortcut list editable within radiant.
 Shortcuts: convert shortcuts.ini to xml.
 Shortcuts: warn when duplicate shortcuts are registered
 Shortcuts: rename commands in order to group shortcuts list better.
+upgrade to new API for SymGetModuleInfo - required for compiling with Visual Studio 8.0
 
 
 LOW priority features
