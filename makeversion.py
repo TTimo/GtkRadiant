@@ -81,6 +81,8 @@ def radiant_makeversion(append_about, root = os.getcwd()):
     f = open(aboutfile, 'r')
     line = f.readline()
     f.close()
+    if line.endswith("\n"):
+      line = line[:-1]
   else:
     line = "Custom build based on revision " + str(svn.getRevision(os.getcwd()))
   # optional additional message
