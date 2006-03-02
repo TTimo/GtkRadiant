@@ -14,11 +14,14 @@ NOTE TO NIGHTLY BUILDS USERS:
 When nightly builds are released, we don't update this ChangeLog file
 systematically. You should be watching the developer ChangeLog instead, which
 is available online:
-https://zerowing.idsoftware.com/svn/radiant/GtkRadiant/trunk/docs/developer/CHANGES
+https://zerowing.idsoftware.com/svn/radiant/GtkRadiant/trunk/CHANGES
 
 GtkRadiant-1.5.0 Changes
 ------------------------
 
+  - Games:
+      Doom3 and Quake4 support with realtime lighting preview.
+      Added support for the original Quake. 
   - File formats:
       q1/q2 .pak
       q1/hl .wad
@@ -63,11 +66,13 @@ GtkRadiant-1.5.0 Changes
   - Entity Inspector:
       Non-modal window, updates automatically when selection changes.
       Displays GUI to edit certain keys, based on entity-definition.
+      Light texture key-entry GUI is auto-completed.
   - Surface Inspector:
       Non-modal window, updates automatically when selection changes.
       Editing shortcuts: escape reverts current values to previous state, enter commits current values immediatly.
       Applies shader seperately from shift/scale/rotate.
       Shortcuts are active when surface inspector is visible/focussed.
+      Material name-entry is auto-completed based on currently-in-use materials.
   - Brush:
       Supports selecting and editing multiple vertices per brush.
       CSG subtract algorithm does not suffer from false-positive intersection bug.
@@ -88,7 +93,7 @@ GtkRadiant-1.5.0 Changes
       Preferences saving is atomic so that it cannot be corrupted by a crash during save.
       All user-editable config files and per-user preferences are created in %appdata%/RadiantSettings/
       Engine path stored in per-game preferences file and editable in preferences dialog.
-      Changing game name and engine path does not require a restart.
+      Changing mod-name and engine path does not require a restart.
   - GUI:
       Instant window updates (used to be 40fps limited).
       Fast startup/shutdown.
