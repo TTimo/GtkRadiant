@@ -503,7 +503,7 @@ void DoAbout()
           __DATE__ "\n\n"
           RADIANT_ABOUTMSG "\n\n"
           "By qeradiant.com\n\n"
-          "This program is free software\n\n"
+          "This program is free software\n"
           "licensed under the GNU GPL.\n\n"
           "GtkRadiant is unsupported, however\n"
           "you may report your problems at\n"
