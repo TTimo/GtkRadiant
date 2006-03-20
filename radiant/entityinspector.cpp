@@ -1010,7 +1010,10 @@ void EntityClassList_selectEntityClass(EntityClass* eclass)
       GtkTreeView* view = g_entityClassList;
       GtkTreePath* path = gtk_tree_model_get_path(model, &iter);
       gtk_tree_selection_select_path(gtk_tree_view_get_selection(view), path);
-      gtk_tree_view_scroll_to_cell(view, path, 0, FALSE, 0, 0);
+      if(GTK_WIDGET_REALIZED(view))
+      {
+        gtk_tree_view_scroll_to_cell(view, path, 0, FALSE, 0, 0);
+      }
       gtk_tree_path_free(path);
       good = FALSE;
     }
@@ -1361,7 +1364,10 @@ static gint EntityClassList_keypress(GtkWidget* widget, GdkEventKey* event, gpoi
       {
         GtkTreePath* path = gtk_tree_model_get_path(model, &iter);
         gtk_tree_selection_select_path(gtk_tree_view_get_selection(view), path);
-        gtk_tree_view_scroll_to_cell(view, path, 0, FALSE, 0, 0);
+        if(GTK_WIDGET_REALIZED(view))
+        {
+          gtk_tree_view_scroll_to_cell(view, path, 0, FALSE, 0, 0);
+        }
         gtk_tree_path_free(path);
         count = 1;
       }

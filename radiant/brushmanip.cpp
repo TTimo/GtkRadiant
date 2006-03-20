@@ -1686,6 +1686,11 @@ void FaceInstance_pasteTexture(FaceInstance& faceInstance)
   SceneChangeNotify();
 }
 
+bool SelectedFaces_empty()
+{
+  return g_SelectedFaceInstances.empty();
+}
+
 void SelectedFaces_pasteTexture()
 {
   UndoableCommand command("facePasteTexture");
