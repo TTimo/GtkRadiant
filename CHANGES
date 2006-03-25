@@ -5,6 +5,7 @@ that we distribute with the binaries. (see changelog)
 SPoG
 - Fixed crash when resetting preferences after startup failure.
 - Fixed crash on next-leak-spot with build-monitoring enabled.
+- Fixed doom3/quake4 blended-decal rendering when toggling lighting mode.
 
 20/03/2006
 SPoG

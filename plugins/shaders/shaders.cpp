@@ -1093,39 +1093,6 @@ public:
     }
 
     realiseLighting();
-
-    if(m_layers.size() == 1)
-    {
-      const BlendFuncExpression& blendFunc = m_template.m_layers.front().blendFunc();
-      if(!string_empty(blendFunc.second.c_str()))
-      {
-        m_blendFunc = BlendFunc(
-          evaluateBlendFactor(blendFunc.first.c_str(), m_template.m_params, m_args),
-          evaluateBlendFactor(blendFunc.second.c_str(), m_template.m_params, m_args)
-        );
-      }
-      else
-      {
-        const char* blend = evaluateShaderValue(blendFunc.first.c_str(), m_template.m_params, m_args);
-
-        if(string_equal_nocase(blend, "add"))
-        {
-          m_blendFunc = BlendFunc(BLEND_ONE, BLEND_ONE);
-        }
-        else if(string_equal_nocase(blend, "filter"))
-        {
-          m_blendFunc = BlendFunc(BLEND_DST_COLOUR, BLEND_ZERO);
-        }
-        else if(string_equal_nocase(blend, "blend"))
-        {
-          m_blendFunc = BlendFunc(BLEND_SRC_ALPHA, BLEND_ONE_MINUS_SRC_ALPHA);
-        }
-        else
-        {
-          globalErrorStream() << "parsing blend value failed: " << makeQuoted(blend) << "\n";
-        }
-      }
-    }
   }
 
   void unrealise()
@@ -1159,6 +1126,39 @@ public:
       {
         m_layers.push_back(evaluateLayer(*i, m_template.m_params, m_args));
       }
+
+      if(m_layers.size() == 1)
+      {
+        const BlendFuncExpression& blendFunc = m_template.m_layers.front().blendFunc();
+        if(!string_empty(blendFunc.second.c_str()))
+        {
+          m_blendFunc = BlendFunc(
+            evaluateBlendFactor(blendFunc.first.c_str(), m_template.m_params, m_args),
+            evaluateBlendFactor(blendFunc.second.c_str(), m_template.m_params, m_args)
+          );
+        }
+        else
+        {
+          const char* blend = evaluateShaderValue(blendFunc.first.c_str(), m_template.m_params, m_args);
+
+          if(string_equal_nocase(blend, "add"))
+          {
+            m_blendFunc = BlendFunc(BLEND_ONE, BLEND_ONE);
+          }
+          else if(string_equal_nocase(blend, "filter"))
+          {
+            m_blendFunc = BlendFunc(BLEND_DST_COLOUR, BLEND_ZERO);
+          }
+          else if(string_equal_nocase(blend, "blend"))
+          {
+            m_blendFunc = BlendFunc(BLEND_SRC_ALPHA, BLEND_ONE_MINUS_SRC_ALPHA);
+          }
+          else
+          {
+            globalErrorStream() << "parsing blend value failed: " << makeQuoted(blend) << "\n";
+          }
+        }
+      }
     }
   }
 
@@ -1177,6 +1177,8 @@ public:
         GlobalTexturesCache().release((*i).texture());
       }
       m_layers.clear();
+
+      m_blendFunc = BlendFunc(BLEND_SRC_ALPHA, BLEND_ONE_MINUS_SRC_ALPHA);
     }
   }
 
