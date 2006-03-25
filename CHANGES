@@ -3,6 +3,11 @@ that we distribute with the binaries. (see changelog)
 
 20/03/2006
 SPoG
+- Fixed crash when resetting preferences after startup failure.
+- Fixed crash on next-leak-spot with build-monitoring enabled.
+
+20/03/2006
+SPoG
 - Changed Copy/Paste to work on face textures if any faces are selected.
 - Fixed GTK_WIDGET_REALIZED assert when selecting entities (linux).
 

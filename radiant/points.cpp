@@ -391,6 +391,7 @@ void CPointfile::saxEndElement (message_info_t *ctx, const xmlChar *name)
     // we are done
     GenerateDisplayList();
     SceneChangeNotify();
+    s_check_point = begin();
   }
   else if(string_equal(reinterpret_cast<const char*>(name), "point"))
   {

@@ -550,9 +550,9 @@ int main (int argc, char* argv[])
   
   remove_global_pid();
 
-  create_local_pid();
+  g_Preferences.Init(); // must occur before create_local_pid() to allow preferences to be reset
 
-  g_Preferences.Init();
+  create_local_pid();
 
   // in a very particular post-.pid startup
   // we may have the console turned on and want to keep it that way
