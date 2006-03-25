@@ -32,6 +32,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "texturelib.h"
 #include "math/matrix.h"
 #include "math/plane.h"
+#include "math/aabb.h"
 
 #include "winding.h"
 #include "preferences.h"
@@ -407,106 +408,15 @@ void AddPointToBounds(const Vector3& v, Vector3& mins, Vector3& maxs)
 	}
 }
 
-void Texdef_FitTexture(texdef_t& td, std::size_t width, std::size_t height, const Vector3& normal, const Winding& w, float s_repeat, float t_repeat)
+template<typename Element>
+inline BasicVector3<Element> vector3_inverse(const BasicVector3<Element>& self)
 {
-  float temp;
-  float rot_width, rot_height;
-  float cosv,sinv;
-  float min_t, min_s, max_t, max_s;
-  float s,t;
-  Vector3	vecs[2];
-  Vector3 coords[4];
-
-  Vector3 mins, maxs;
-  
-  if(s_repeat == 0)
-    s_repeat = 1;
-   if(t_repeat == 0)
-    t_repeat = 1;
- 
-  {
-    ClearBounds(mins, maxs);
-    for(Winding::const_iterator i = w.begin(); i != w.end(); ++i)
-    {
-      AddPointToBounds((*i).vertex, mins, maxs);
-    }
-  }
-  
-  //
-  // get the current angle
-  //
-  {
-    double ang = degrees_to_radians(td.rotate);
-    sinv = static_cast<float>(sin(ang));
-    cosv = static_cast<float>(cos(ang));
-  }
-    
-  // get natural texture axis
-  TextureAxisFromNormal(normal, vecs[0], vecs[1]);
-  
-  min_s = static_cast<float>(vector3_dot(mins, vecs[0]));
-  min_t = static_cast<float>(vector3_dot(mins, vecs[1]));
-  max_s = static_cast<float>(vector3_dot(maxs, vecs[0]));
-  max_t = static_cast<float>(vector3_dot(maxs, vecs[1]));
-  coords[0][0] = min_s;
-  coords[0][1] = min_t;
-  coords[1][0] = max_s;
-  coords[1][1] = min_t;
-  coords[2][0] = min_s;
-  coords[2][1] = max_t;
-  coords[3][0] = max_s;
-  coords[3][1] = max_t;
-  min_s = min_t = 99999;
-  max_s = max_t = -99999;
-  for (int i=0; i<4; i++)
-  {
-    s = cosv * coords[i][0] - sinv * coords[i][1];
-    t = sinv * coords[i][0] + cosv * coords[i][1];
-    if (i&1)
-    {
-      if (s > max_s)
-      {
-        max_s = s;
-      }
-    }
-    else
-    {
-      if (s < min_s)
-      {
-        min_s = s;
-      }
-      if (i<2)
-      {
-        if (t < min_t)
-        {
-          min_t = t;
-        }
-      }
-      else
-      {
-        if (t > max_t)
-        {
-          max_t = t;
-        }
-      }
-    }
-  }
-  rot_width =  (max_s - min_s);
-  rot_height = (max_t - min_t);
-  td.scale[0] = -(rot_width/(static_cast<float>(width) * s_repeat));
-  td.scale[1] = -(rot_height/(static_cast<float>(height) * t_repeat));
-  
-  td.shift[0] = min_s/td.scale[0];
-  temp = static_cast<float>(float_to_integer(td.shift[0] / (static_cast<float>(width) * s_repeat)));
-  temp = (temp+1)*static_cast<float>(width) * s_repeat;
-  td.shift[0] = static_cast<float>(float_to_integer(temp - td.shift[0]) % static_cast<int>(static_cast<float>(width) * s_repeat));
-  
-  td.shift[1] = min_t/td.scale[1];
-  temp = static_cast<float>(float_to_integer(td.shift[1] / (static_cast<float>(height) * t_repeat)));
-  temp = (temp+1)*(static_cast<float>(height) * t_repeat);
-  td.shift[1] = static_cast<float>(float_to_integer(temp - td.shift[1]) % static_cast<int>(static_cast<float>(height) * t_repeat));
+  return BasicVector3<Element>(
+    Element(1.0 / self.x()),
+    Element(1.0 / self.y()),
+    Element(1.0 / self.z())
+  );
 }
-
 
 // low level functions .. put in mathlib?
 #define BPMatCopy(a,b) {b[0][0] = a[0][0]; b[0][1] = a[0][1]; b[0][2] = a[0][2]; b[1][0] = a[1][0]; b[1][1] = a[1][1]; b[1][2] = a[1][2];}
@@ -1192,81 +1102,6 @@ void BPTexdef_Construct(brushprimit_texdef_t& bp_td, std::size_t width, std::siz
 	ConvertTexMatWithDimensions(bp_td.coords, 2, 2, bp_td.coords, width, height);
 }
 
-//++timo FIXME quick'n dirty hack, doesn't care about current texture settings (angle)
-// can be improved .. bug #107311
-void BPTexdef_FitTexture(brushprimit_texdef_t& bp_td, std::size_t width, std::size_t height, const Vector3& normal, const Winding& w, float s_repeat, float t_repeat)
-{
-	Vector3 BBoxSTMin, BBoxSTMax;
-	Vector3 M[3],D[2];
-//	Vector3 N[2],Mf[2];
-	brushprimit_texdef_t N;
-  Vector3 Mf[2];
-
-  //qtexture_t texture;
-  //texture.width = width;
-  //texture.height = height;
-
-
-	// we'll be working on a standardized texture size
-//	ConvertTexMatWithQTexture( &bp_td, &texture, &bp_td, 0 );
-	// compute the BBox in ST coords
-  {
-    Winding tmp(w);
-	  Texdef_EmitTextureCoordinates(TextureProjection(texdef_t(), bp_td, Vector3(0, 0, 0), Vector3(0, 0, 0)), width, height, tmp, normal, g_matrix4_identity);
-
-	  ClearBounds( BBoxSTMin, BBoxSTMax );
-    for(Winding::const_iterator i = tmp.begin(); i != tmp.end(); ++i)
-		{
-		  // AddPointToBounds in 2D on (S,T) coordinates
-		  for(int j=0 ; j<2 ; j++)
-		  {
-			  float val = (*i).texcoord[j];
-			  if (val < BBoxSTMin[j])
-				  BBoxSTMin[j] = val;
-			  if (val > BBoxSTMax[j])
-				  BBoxSTMax[j] = val;
-      }
-		}
-	}
-	// we have the three points of the BBox (BBoxSTMin[0].BBoxSTMin[1]) (BBoxSTMax[0],BBoxSTMin[1]) (BBoxSTMin[0],BBoxSTMax[1]) in ST space
-  // the BP matrix we are looking for gives (0,0) (nwidth,0) (0,t_repeat) coordinates in (Sfit,Tfit) space to these three points
-	// we have A(Sfit,Tfit) = (0,0) = Mf * A(TexS,TexT) = N * M * A(TexS,TexT) = N * A(S,T)
-	// so we solve the system for N and then Mf = N * M
-	M[0][0] = BBoxSTMin[0]; M[0][1] = BBoxSTMax[0]; M[0][2] = BBoxSTMin[0];
-	M[1][0] = BBoxSTMin[1]; M[1][1] = BBoxSTMin[1]; M[1][2] = BBoxSTMax[1];
-	D[0][0] = 0.0f; D[0][1] = s_repeat; D[0][2] = 0.0f;
-	D[1][0] = 0.0f; D[1][1] = 0.0f; D[1][2] = t_repeat;
-  MatrixForPoints( M, D, &N );
-
-#if 0
-  // FIT operation gives coordinates of three points of the bounding box in (S',T'), our target axis base
-	// A(S',T')=(0,0) B(S',T')=(s_repeat,0) C(S',T')=(0,t_repeat)
-	// and we have them in (S,T) axis base: A(S,T)=(BBoxSTMin[0],BBoxSTMin[1]) B(S,T)=(BBoxSTMax[0],BBoxSTMin[1]) C(S,T)=(BBoxSTMin[0],BBoxSTMax[1])
-	// we compute the N transformation so that: A(S',T') = N * A(S,T)
-  VectorSet( N[0], (BBoxSTMax[0]-BBoxSTMin[0])/s_repeat, 0.0f, BBoxSTMin[0] );
-	VectorSet( N[1], 0.0f, (BBoxSTMax[1]-BBoxSTMin[1])/t_repeat, BBoxSTMin[1] );
-#endif
-
-	// the final matrix is the product (Mf stands for Mfit)
-  Mf[0][0] = N.coords[0][0] * bp_td.coords[0][0] + N.coords[0][1] * bp_td.coords[1][0];
-	Mf[0][1] = N.coords[0][0] * bp_td.coords[0][1] + N.coords[0][1] * bp_td.coords[1][1];
-	Mf[0][2] = N.coords[0][0] * bp_td.coords[0][2] + N.coords[0][1] * bp_td.coords[1][2] + N.coords[0][2];
-  Mf[1][0] = N.coords[1][0] * bp_td.coords[0][0] + N.coords[1][1] * bp_td.coords[1][0];
-	Mf[1][1] = N.coords[1][0] * bp_td.coords[0][1] + N.coords[1][1] * bp_td.coords[1][1];
-	Mf[1][2] = N.coords[1][0] * bp_td.coords[0][2] + N.coords[1][1] * bp_td.coords[1][2] + N.coords[1][2];
-	// copy back
-	bp_td.coords[0][0] = Mf[0][0];
-	bp_td.coords[0][1] = Mf[0][1];
-	bp_td.coords[0][2] = Mf[0][2];
-	bp_td.coords[1][0] = Mf[1][0];
-	bp_td.coords[1][1] = Mf[1][1];
-	bp_td.coords[1][2] = Mf[1][2];
-	// handle the texture size
-//	ConvertTexMatWithQTexture( &bp_td, 0, &bp_td, &texture );
-}
-
-
-
 void Texdef_Assign(TextureProjection& projection, const TextureProjection& other)
 {
   if (g_bp_globals.m_texdefTypeId == TEXDEFTYPEID_BRUSHPRIMITIVES)
@@ -1322,14 +1157,45 @@ void Texdef_Rotate(TextureProjection& projection, float angle)
 
 void Texdef_FitTexture(TextureProjection& projection, std::size_t width, std::size_t height, const Vector3& normal, const Winding& w, float s_repeat, float t_repeat)
 {
-  if (g_bp_globals.m_texdefTypeId == TEXDEFTYPEID_BRUSHPRIMITIVES)
+  if(w.numpoints < 3)
   {
-    BPTexdef_FitTexture(projection.m_brushprimit_texdef, width, height, normal, w, s_repeat, t_repeat);
+    return;
   }
-  else
+
+  Matrix4 st2tex;
+  Texdef_toTransform(projection, (float)width, (float)height, st2tex);
+
+  // the current texture transform
+  Matrix4 local2tex = st2tex;
   {
-    Texdef_FitTexture(projection.m_texdef, width, height, normal, w, s_repeat, t_repeat);
+    Matrix4 xyz2st; 
+    Texdef_basisForNormal(projection, normal, xyz2st);
+    matrix4_multiply_by_matrix4(local2tex, xyz2st);
   }
+
+  // the bounds of the current texture transform
+  AABB bounds;
+  for(Winding::const_iterator i = w.begin(); i != w.end(); ++i)
+  {
+    Vector3 texcoord = matrix4_transformed_point(local2tex, (*i).vertex);
+    aabb_extend_by_point_safe(bounds, texcoord);
+  }
+  bounds.origin.z() = 0;
+  bounds.extents.z() = 1;
+
+  // the bounds of a perfectly fitted texture transform
+  AABB perfect(Vector3(s_repeat * 0.5, t_repeat * 0.5, 0), Vector3(s_repeat * 0.5, t_repeat * 0.5, 1));
+
+  // the difference between the current texture transform and the perfectly fitted transform
+  Matrix4 matrix(matrix4_translation_for_vec3(bounds.origin - perfect.origin));
+  matrix4_pivoted_scale_by_vec3(matrix, bounds.extents / perfect.extents, perfect.origin);
+  matrix4_affine_invert(matrix);
+
+  // apply the difference to the current texture transform
+  matrix4_premultiply_by_matrix4(st2tex, matrix);
+
+  Texdef_fromTransform(projection, (float)width, (float)height, st2tex);
+  Texdef_normalise(projection, (float)width, (float)height);
 }
 
 float Texdef_getDefaultTextureScale()
