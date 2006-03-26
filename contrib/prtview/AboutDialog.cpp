@@ -17,21 +17,12 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-// AboutDialog.cpp : implementation file
-//
+#include "AboutDialog.h"
+#include <gtk/gtk.h>
+#include "version.h"
 
-#include "stdafx.h"
-
-#ifdef _DEBUG
-#define new DEBUG_NEW
-#undef THIS_FILE
-//static char THIS_FILE[] = __FILE__;
-#endif
-
-/////////////////////////////////////////////////////////////////////////////
-// CAboutDialog dialog
-
-#ifdef GTK_PLUGIN
+#include "PrtView.h"
+#include "ConfigDialog.h"
 
 static void dialog_button_callback (GtkWidget *widget, gpointer data)
 {
@@ -107,33 +98,6 @@ void DoAboutDlg ()
   gtk_widget_destroy (dlg);
 }
 
-#else // GTK_PLUGIN
-
-CAboutDialog::CAboutDialog(CWnd* pParent /*=NULL*/)
-	: CDialog(CAboutDialog::IDD, pParent)
-{
-	//{{AFX_DATA_INIT(CAboutDialog)
-		// NOTE: the ClassWizard will add member initialization here
-	//}}AFX_DATA_INIT
-}
-
-
-void CAboutDialog::DoDataExchange(CDataExchange* pDX)
-{
-	CDialog::DoDataExchange(pDX);
-	//{{AFX_DATA_MAP(CAboutDialog)
-		// NOTE: the ClassWizard will add DDX and DDV calls here
-	//}}AFX_DATA_MAP
-}
-
-
-BEGIN_MESSAGE_MAP(CAboutDialog, CDialog)
-	//{{AFX_MSG_MAP(CAboutDialog)
-		// NOTE: the ClassWizard will add message map macros here
-	//}}AFX_MSG_MAP
-END_MESSAGE_MAP()
-
-#endif // GTK_PLUGIN
 
 /////////////////////////////////////////////////////////////////////////////
 // CAboutDialog message handlers

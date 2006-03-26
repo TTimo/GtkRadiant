@@ -205,7 +205,7 @@ void Build1dArray(vec3_t* array, drawVert_t points[MAX_PATCH_WIDTH][MAX_PATCH_HE
 void Print1dArray(vec3_t* array, int size)
 {
 	for(int i = 0; i < size; i++)
-		Sys_Printf("(%.0f %.0f %.0f)\t", array[i][0], array[i][1], array[i][2]);
+		Sys_Printf("(" << array[i][0] << " " << array[i][1] << " " << array[i][2] << ")\t");
 	Sys_Printf("\n");
 }
 

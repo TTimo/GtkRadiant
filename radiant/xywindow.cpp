@@ -2222,7 +2222,7 @@ void XYWnd::XY_Draw()
 
   glLoadMatrixf(reinterpret_cast<const float*>(&m_modelview));
 
-  unsigned int globalstate = RENDER_COLOUR | RENDER_COLOURWRITE;
+  unsigned int globalstate = RENDER_COLOURARRAY | RENDER_COLOURWRITE | RENDER_POLYGONSMOOTH | RENDER_LINESMOOTH;
   if(!g_xywindow_globals.m_bNoStipple)
   {
     globalstate |= RENDER_LINESTIPPLE;

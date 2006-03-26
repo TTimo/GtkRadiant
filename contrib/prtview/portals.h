@@ -20,6 +20,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _PORTALS_H_
 #define _PORTALS_H_
 
+#include <glib.h>
+#include "irender.h"
+#include "renderable.h"
+#include "math/vector.h"
+
+
 class CBspPoint {
 public:
 	float p[3];
@@ -46,6 +52,14 @@ public:
 	bool Build(char *def);
 };
 
+#define PATH_MAX 260
+typedef guint32 PackedColour;
+#define RGB(r, g, b) ((guint32)(((guint8) (r) | ((guint16) (g) << 8))|(((guint32) (guint8) (b)) << 16)))
+#define GetRValue(rgb)      ((guint8)(rgb))
+#define GetGValue(rgb)      ((guint8)(((guint16)(rgb)) >> 8))
+#define GetBValue(rgb)      ((guint8)((rgb)>>16))
+
+
 class CPortals {
 public:
 
@@ -70,10 +84,10 @@ public:
 	bool show_3d;
 	bool aa_3d;
 	bool fog;
-	COLORREF color_3d;
+	PackedColour color_3d;
 	float width_3d;  // in 8'ths
 	float fp_color_3d[4];
-	COLORREF color_fog;
+	PackedColour color_fog;
 	float fp_color_fog[4];
 	float trans_3d;
 	float clip_range;
@@ -81,7 +95,7 @@ public:
 
 	bool show_2d;
 	bool aa_2d;
-	COLORREF color_2d;
+	PackedColour color_2d;
 	float width_2d;  // in 8'ths
 	float fp_color_2d[4];
 
@@ -94,29 +108,50 @@ public:
 	unsigned int portal_count;
 };
 
-class CPortalsRender : public IGL2DWindow, public IGL3DWindow {
+class CubicClipVolume
+{
 public:
-
-  CPortalsRender();
-  virtual ~CPortalsRender();
-
-protected:
-
-	int refCount;
-
-public:
-
-  // IGL2DWindow IGL3DWindow interface
-	void IncRef() { refCount++; }
-	void DecRef() { refCount--; if (refCount <= 0) delete this; }
-	void Draw2D( VIEWTYPE vt );
-	void Draw3D();
-	void Register();
+  Vector3 cam, min, max;
 };
 
-// void Sys_Printf (char *text, ...);
+class CPortalsDrawSolid : public OpenGLRenderable
+{
+public:
+  mutable CubicClipVolume clip;
+  void render(RenderStateFlags state) const;
+};
+
+class CPortalsDrawSolidOutline : public OpenGLRenderable
+{
+public:
+  mutable CubicClipVolume clip;
+  void render(RenderStateFlags state) const;
+};
+
+class CPortalsDrawWireframe : public OpenGLRenderable
+{
+public:
+  void render(RenderStateFlags state) const;
+};
+
+class CPortalsRender : public Renderable
+{
+public:
+  CPortalsDrawSolid m_drawSolid;
+  CPortalsDrawSolidOutline m_drawSolidOutline;
+  CPortalsDrawWireframe m_drawWireframe;
+
+  void renderSolid(Renderer& renderer, const VolumeTest& volume) const;
+  void renderWireframe(Renderer& renderer, const VolumeTest& volume) const;
+};
 
 extern CPortals portals;
 extern CPortalsRender render;
+
+void Portals_constructShaders();
+void Portals_destroyShaders();
+
+void Portals_shadersChanged();
+
 
 #endif // _PORTALS_H_

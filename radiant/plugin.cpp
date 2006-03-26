@@ -93,6 +93,11 @@ const char* GameDescription_getRequiredKeyValue(const char* key)
   return g_pGameDescription->getRequiredKeyValue(key);
 }
 
+const char* mapname_get()
+{
+  return Map_Name(g_map);
+}
+
 class RadiantCoreAPI
 {
   _QERFuncTable_1 m_radiantcore;
@@ -109,6 +114,8 @@ public:
 
     m_radiantcore.getGameName = &gamename_get;
     m_radiantcore.getGameMode = &gamemode_get;
+
+    m_radiantcore.getMapName = &mapname_get;
 
     m_radiantcore.getGameDescriptionKeyValue = &GameDescription_getKeyValue;
     m_radiantcore.getRequiredGameDescriptionKeyValue = &GameDescription_getRequiredKeyValue;

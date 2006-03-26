@@ -44,5 +44,6 @@ float profile_load_float (const char *filename, const char *section, const char 
 char* profile_load_string (const char *filename, const char *section, const char *key, const char *default_value);
 // used in the command map code
 bool read_var (const char *filename, const char *section, const char *key, char *value);
+bool save_var (const char *filename, const char *section, const char *key, const char *value);
 
 #endif

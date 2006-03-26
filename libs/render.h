@@ -1045,7 +1045,7 @@ public:
     glDrawElements(m_mode, GLsizei(m_indices.size()), RenderIndexTypeID, m_indices.data());
 #else
     glBegin(m_mode);
-    if(state & RENDER_COLOUR != 0)
+    if(state & RENDER_COLOURARRAY != 0)
     {
       for(std::size_t i = 0; i < m_indices.size(); ++i)
       {

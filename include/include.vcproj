@@ -183,6 +183,12 @@
 			RelativePath=".\igl.h">
 		</File>
 		<File
+			RelativePath=".\iglrender.cpp">
+		</File>
+		<File
+			RelativePath=".\iglrender.h">
+		</File>
+		<File
 			RelativePath=".\igtkgl.cpp">
 		</File>
 		<File

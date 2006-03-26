@@ -28,6 +28,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "irender.h"
 #include "itextures.h"
 #include "igl.h"
+#include "iglrender.h"
 #include "renderable.h"
 #include "qerplugin.h"
 
@@ -218,14 +219,6 @@ void GLSLProgram_validate(GLhandleARB program)
 
 bool g_bumpGLSLPass_enabled = false;
 bool g_depthfillPass_enabled = false;
-
-class GLProgram
-{
-public:
-  virtual void enable() = 0;
-  virtual void disable() = 0;
-  virtual void setParameters(const Vector3& viewer, const Matrix4& localToWorld, const Vector3& origin, const Vector3& colour, const Matrix4& world2light) = 0;
-};
 
 class GLSLBumpProgram : public GLProgram
 {
@@ -826,55 +819,6 @@ bool g_normalArray_enabled = false;
 bool g_texcoordArray_enabled = false;
 bool g_colorArray_enabled = false;
 
-//! A collection of opengl state information.
-class OpenGLState
-{
-public:
-  enum ESort
-  {
-    eSortFirst = 0,
-    eSortOpaque = 1,
-    eSortMultiFirst = 2,
-    eSortMultiLast = 1023,
-    eSortOverbrighten = 1024,
-    eSortFullbright = 1025,
-    eSortHighlight = 1026,
-    eSortTranslucent = 1027,
-    eSortOverlayFirst = 1028,
-    eSortOverlayLast = 2047,
-    eSortControlFirst = 2048,
-    eSortControlLast = 3071,
-    eSortGUI0 = 3072,
-    eSortGUI1 = 3073,
-    eSortLast = 4096,
-  };
-
-  unsigned int m_state;
-  std::size_t m_sort;
-  GLint m_texture;
-  GLint m_texture1;
-  GLint m_texture2;
-  GLint m_texture3;
-  GLint m_texture4;
-  GLint m_texture5;
-  GLint m_texture6;
-  GLint m_texture7;
-  Vector4 m_colour;
-  GLenum m_blend_src, m_blend_dst;
-  GLenum m_depthfunc;
-  GLenum m_alphafunc;
-  GLfloat m_alpharef;
-  GLfloat m_linewidth;
-  GLfloat m_pointsize;
-  GLint m_linestipple_factor;
-  GLushort m_linestipple_pattern;
-  GLProgram* m_program;
-
-  OpenGLState() : m_program(0)
-  {
-  }
-};
-
 inline bool OpenGLState_less(const OpenGLState& self, const OpenGLState& other)
 {
   //! Sort by sort-order override.
@@ -955,6 +899,8 @@ void OpenGLState_constructDefault(OpenGLState& state)
 
   state.m_linestipple_factor = 1;
   state.m_linestipple_pattern = 0xaaaa;
+
+  state.m_fog = OpenGLFogState();
 }
 
 
@@ -1284,6 +1230,16 @@ public:
   }
 };
 
+inline void setFogState(const OpenGLFogState& state)
+{
+	glFogi(GL_FOG_MODE, state.mode);
+	glFogf(GL_FOG_DENSITY, state.density);
+	glFogf(GL_FOG_START, state.start);
+	glFogf(GL_FOG_END, state.end);
+	glFogi(GL_FOG_INDEX, state.index);
+	glFogfv(GL_FOG_COLOR, vector4_to_array(state.colour));
+}
+
 #define DEBUG_SHADERS 0
 
 class OpenGLShaderCache : public ShaderCache, public TexturesCacheObserver, public ModuleObserver
@@ -1458,6 +1414,10 @@ public:
     glAlphaFunc(GL_ALWAYS, 0);
     glLineWidth(1);
     glPointSize(1);
+
+	  glHint(GL_FOG_HINT, GL_NICEST);
+    glDisable(GL_FOG);
+    setFogState(OpenGLFogState());
 
     GlobalOpenGL_debugAssertNoErrors();
 
@@ -1796,6 +1756,20 @@ inline void setTextureState(GLint& current, const GLint& texture)
   }
 }
 
+inline void setState(unsigned int state, unsigned int delta, unsigned int flag, GLenum glflag)
+{
+  if(delta & state & flag)
+  {
+    glEnable(glflag);
+    GlobalOpenGL_debugAssertNoErrors();
+  }
+  else if(delta & ~state & flag)
+  {
+    glDisable(glflag);
+    GlobalOpenGL_debugAssertNoErrors();
+  }
+}
+
 void OpenGLState_apply(const OpenGLState& self, OpenGLState& current, unsigned int globalstate)
 {
   debug_int("sort", int(self.m_sort));
@@ -1847,14 +1821,7 @@ void OpenGLState_apply(const OpenGLState& self, OpenGLState& current, unsigned i
     GlobalOpenGL_debugAssertNoErrors();
   }
 
-  if(delta & state & RENDER_OFFSETLINE)
-  {
-    glEnable(GL_POLYGON_OFFSET_LINE);
-  }
-  else if(delta & ~state & RENDER_OFFSETLINE)
-  {
-    glDisable(GL_POLYGON_OFFSET_LINE);
-  }
+  setState(state, delta, RENDER_OFFSETLINE, GL_POLYGON_OFFSET_LINE);
 
   if(delta & state & RENDER_LIGHTING)
   {
@@ -1937,16 +1904,7 @@ void OpenGLState_apply(const OpenGLState& self, OpenGLState& current, unsigned i
     GlobalOpenGL_debugAssertNoErrors();
   }
 
-  if(delta & state & RENDER_CULLFACE)
-  {
-    glEnable(GL_CULL_FACE);
-    GlobalOpenGL_debugAssertNoErrors();
-  }
-  else if(delta & ~state & RENDER_CULLFACE)
-  {
-    glDisable(GL_CULL_FACE);
-    GlobalOpenGL_debugAssertNoErrors();
-  }
+  setState(state, delta, RENDER_CULLFACE, GL_CULL_FACE);
 
   if(delta & state & RENDER_SMOOTH)
   {
@@ -1959,29 +1917,9 @@ void OpenGLState_apply(const OpenGLState& self, OpenGLState& current, unsigned i
     GlobalOpenGL_debugAssertNoErrors();
   }
 
-  if(delta & state & RENDER_SCALED)
-  {
-    //qglEnable(GL_RESCALE_NORMAL);
-    glEnable(GL_NORMALIZE);
-    GlobalOpenGL_debugAssertNoErrors();
-  }
-  else if(delta & ~state & RENDER_SCALED)
-  {
-    //qglDisable(GL_RESCALE_NORMAL);
-    glDisable(GL_NORMALIZE);
-    GlobalOpenGL_debugAssertNoErrors();
-  }
+  setState(state, delta, RENDER_SCALED, GL_NORMALIZE); // not GL_RESCALE_NORMAL
 
-  if(delta & state & RENDER_DEPTHTEST)
-  {
-    glEnable(GL_DEPTH_TEST);
-    GlobalOpenGL_debugAssertNoErrors();
-  }
-  else if(delta & ~state & RENDER_DEPTHTEST)
-  {
-    glDisable(GL_DEPTH_TEST);
-    GlobalOpenGL_debugAssertNoErrors();
-  }
+  setState(state, delta, RENDER_DEPTHTEST, GL_DEPTH_TEST);
 
   if(delta & state & RENDER_DEPTHWRITE)
   {
@@ -2021,25 +1959,16 @@ void OpenGLState_apply(const OpenGLState& self, OpenGLState& current, unsigned i
     GlobalOpenGL_debugAssertNoErrors();
   }
 
-  if(delta & state & RENDER_ALPHATEST)
-  {
-    glEnable(GL_ALPHA_TEST);
-    GlobalOpenGL_debugAssertNoErrors();
-  }
-  else if(delta & ~state & RENDER_ALPHATEST)
-  {
-    glDisable(GL_ALPHA_TEST);
-    GlobalOpenGL_debugAssertNoErrors();
-  }
+  setState(state, delta, RENDER_ALPHATEST, GL_ALPHA_TEST);
   
-  if(delta & state & RENDER_COLOUR)
+  if(delta & state & RENDER_COLOURARRAY)
   {
     glEnableClientState(GL_COLOR_ARRAY);
     GlobalOpenGL_debugAssertNoErrors();
     debug_colour("enabling color_array");
     g_colorArray_enabled = true;
   }
-  else if(delta & ~state & RENDER_COLOUR)
+  else if(delta & ~state & RENDER_COLOURARRAY)
   {
     glDisableClientState(GL_COLOR_ARRAY);
     glColor4fv(vector4_to_array(self.m_colour));
@@ -2048,26 +1977,25 @@ void OpenGLState_apply(const OpenGLState& self, OpenGLState& current, unsigned i
     g_colorArray_enabled = false;
   }
 
-  if(delta & state & RENDER_LINESTIPPLE)
+  if(delta & ~state & RENDER_COLOURCHANGE)
   {
-    glEnable(GL_LINE_STIPPLE);
-    GlobalOpenGL_debugAssertNoErrors();
-  }
-  else if(delta & ~state & RENDER_LINESTIPPLE)
-  {
-    glDisable(GL_LINE_STIPPLE);
+    glColor4fv(vector4_to_array(self.m_colour));
     GlobalOpenGL_debugAssertNoErrors();
   }
 
-  if(delta & state & RENDER_POLYGONSTIPPLE)
+  setState(state, delta, RENDER_LINESTIPPLE, GL_LINE_STIPPLE);
+  setState(state, delta, RENDER_LINESMOOTH, GL_LINE_SMOOTH);
+
+  setState(state, delta, RENDER_POLYGONSTIPPLE, GL_POLYGON_STIPPLE);
+  setState(state, delta, RENDER_POLYGONSMOOTH, GL_POLYGON_SMOOTH);
+
+  setState(state, delta, RENDER_FOG, GL_FOG);
+
+  if((state & RENDER_FOG) != 0)
   {
-    glEnable(GL_POLYGON_STIPPLE);
+    setFogState(self.m_fog);
     GlobalOpenGL_debugAssertNoErrors();
-  }
-  else if(delta & ~state & RENDER_POLYGONSTIPPLE)
-  {
-    glDisable(GL_POLYGON_STIPPLE);
-    GlobalOpenGL_debugAssertNoErrors();
+    current.m_fog = self.m_fog;
   }
 
   if(state & RENDER_DEPTHTEST && self.m_depthfunc != current.m_depthfunc)
@@ -2293,6 +2221,51 @@ void OpenGLStateBucket::render(OpenGLState& current, unsigned int globalstate, c
   }
 }
 
+
+class OpenGLStateMap : public OpenGLStateLibrary
+{
+  typedef std::map<CopiedString, OpenGLState> States;
+  States m_states;
+public:
+  ~OpenGLStateMap()
+  {
+    ASSERT_MESSAGE(m_states.empty(), "OpenGLStateMap::~OpenGLStateMap: not empty");
+  }
+
+  typedef States::iterator iterator;
+  iterator begin()
+  {
+    return m_states.begin();
+  }
+  iterator end()
+  {
+    return m_states.end();
+  }
+
+  void getDefaultState(OpenGLState& state) const
+  {
+    OpenGLState_constructDefault(state);
+  }
+
+  void insert(const char* name, const OpenGLState& state)
+  {
+    bool inserted = m_states.insert(States::value_type(name, state)).second;
+    ASSERT_MESSAGE(inserted, "OpenGLStateMap::insert: " << name << " already exists");
+  }
+  void erase(const char* name)
+  {
+    std::size_t count = m_states.erase(name);
+    ASSERT_MESSAGE(count == 1, "OpenGLStateMap::erase: " << name << " does not exist");
+  }
+
+  iterator find(const char* name)
+  {
+    return m_states.find(name);
+  }
+};
+
+OpenGLStateMap* g_openglStates = 0;
+
 inline GLenum convertBlendFactor(BlendFactor factor)
 {
   switch(factor)
@@ -2354,33 +2327,41 @@ void OpenGLShader::construct(const char* name)
     break;
 
   case '$':
+    {
+      OpenGLStateMap::iterator i = g_openglStates->find(name);
+      if(i != g_openglStates->end())
+      {
+        state = (*i).second;
+        break;
+      }
+    }
     if(string_equal(name+1, "POINT"))
     {
-      state.m_state = RENDER_COLOUR|RENDER_COLOURWRITE|RENDER_DEPTHWRITE;
+      state.m_state = RENDER_COLOURARRAY|RENDER_COLOURWRITE|RENDER_DEPTHWRITE;
       state.m_sort = OpenGLState::eSortControlFirst;
       state.m_pointsize = 4;
     }
     else if(string_equal(name+1, "SELPOINT"))
     {
-      state.m_state = RENDER_COLOUR|RENDER_COLOURWRITE|RENDER_DEPTHWRITE;
+      state.m_state = RENDER_COLOURARRAY|RENDER_COLOURWRITE|RENDER_DEPTHWRITE;
       state.m_sort = OpenGLState::eSortControlFirst + 1;
       state.m_pointsize = 4;
     }
     else if(string_equal(name+1, "BIGPOINT"))
     {
-      state.m_state = RENDER_COLOUR|RENDER_COLOURWRITE|RENDER_DEPTHWRITE;
+      state.m_state = RENDER_COLOURARRAY|RENDER_COLOURWRITE|RENDER_DEPTHWRITE;
       state.m_sort = OpenGLState::eSortControlFirst;
       state.m_pointsize = 6;
     }
     else if(string_equal(name+1, "PIVOT"))
     {
-      state.m_state = RENDER_COLOUR|RENDER_COLOURWRITE|RENDER_DEPTHTEST|RENDER_DEPTHWRITE;
+      state.m_state = RENDER_COLOURARRAY|RENDER_COLOURWRITE|RENDER_DEPTHTEST|RENDER_DEPTHWRITE;
       state.m_sort = OpenGLState::eSortGUI1;
       state.m_linewidth = 2;
       state.m_depthfunc = GL_LEQUAL;
 
       OpenGLState& hiddenLine = appendDefaultPass();
-      hiddenLine.m_state = RENDER_COLOUR|RENDER_COLOURWRITE|RENDER_DEPTHTEST|RENDER_LINESTIPPLE;
+      hiddenLine.m_state = RENDER_COLOURARRAY|RENDER_COLOURWRITE|RENDER_DEPTHTEST|RENDER_LINESTIPPLE;
       hiddenLine.m_sort = OpenGLState::eSortGUI0;
       hiddenLine.m_linewidth = 2;
       hiddenLine.m_depthfunc = GL_GREATER;
@@ -2443,7 +2424,7 @@ void OpenGLShader::construct(const char* name)
     }
     else if(string_equal(name+1, "DEBUG_CLIPPED"))
     {
-      state.m_state = RENDER_COLOUR | RENDER_COLOURWRITE | RENDER_DEPTHWRITE;
+      state.m_state = RENDER_COLOURARRAY | RENDER_COLOURWRITE | RENDER_DEPTHWRITE;
       state.m_sort = OpenGLState::eSortLast;
     }
     else if(string_equal(name+1, "POINTFILE"))
@@ -2481,27 +2462,27 @@ void OpenGLShader::construct(const char* name)
     else if(string_equal(name+1, "WIRE_OVERLAY"))
     {
 #if 0
-      state.m_state = RENDER_COLOUR | RENDER_COLOURWRITE | RENDER_DEPTHWRITE | RENDER_DEPTHTEST | RENDER_OVERRIDE;
+      state.m_state = RENDER_COLOURARRAY | RENDER_COLOURWRITE | RENDER_DEPTHWRITE | RENDER_DEPTHTEST | RENDER_OVERRIDE;
       state.m_sort = OpenGLState::eSortOverlayFirst;
 #else
-      state.m_state = RENDER_COLOUR | RENDER_COLOURWRITE | RENDER_DEPTHWRITE | RENDER_DEPTHTEST | RENDER_OVERRIDE;
+      state.m_state = RENDER_COLOURARRAY | RENDER_COLOURWRITE | RENDER_DEPTHWRITE | RENDER_DEPTHTEST | RENDER_OVERRIDE;
       state.m_sort = OpenGLState::eSortGUI1;
       state.m_depthfunc = GL_LEQUAL;
 
       OpenGLState& hiddenLine = appendDefaultPass();
-      hiddenLine.m_state = RENDER_COLOUR | RENDER_COLOURWRITE | RENDER_DEPTHWRITE | RENDER_DEPTHTEST | RENDER_OVERRIDE | RENDER_LINESTIPPLE;
+      hiddenLine.m_state = RENDER_COLOURARRAY | RENDER_COLOURWRITE | RENDER_DEPTHWRITE | RENDER_DEPTHTEST | RENDER_OVERRIDE | RENDER_LINESTIPPLE;
       hiddenLine.m_sort = OpenGLState::eSortGUI0;
       hiddenLine.m_depthfunc = GL_GREATER;
 #endif
     }
     else if(string_equal(name+1, "FLATSHADE_OVERLAY"))
     {
-      state.m_state = RENDER_CULLFACE | RENDER_LIGHTING | RENDER_SMOOTH | RENDER_SCALED | RENDER_COLOUR | RENDER_FILL | RENDER_COLOURWRITE | RENDER_DEPTHWRITE | RENDER_DEPTHTEST | RENDER_OVERRIDE;
+      state.m_state = RENDER_CULLFACE | RENDER_LIGHTING | RENDER_SMOOTH | RENDER_SCALED | RENDER_COLOURARRAY | RENDER_FILL | RENDER_COLOURWRITE | RENDER_DEPTHWRITE | RENDER_DEPTHTEST | RENDER_OVERRIDE;
       state.m_sort = OpenGLState::eSortGUI1;
       state.m_depthfunc = GL_LEQUAL;
 
       OpenGLState& hiddenLine = appendDefaultPass();
-      hiddenLine.m_state = RENDER_CULLFACE | RENDER_LIGHTING | RENDER_SMOOTH | RENDER_SCALED | RENDER_COLOUR | RENDER_FILL | RENDER_COLOURWRITE | RENDER_DEPTHWRITE | RENDER_DEPTHTEST | RENDER_OVERRIDE | RENDER_POLYGONSTIPPLE;
+      hiddenLine.m_state = RENDER_CULLFACE | RENDER_LIGHTING | RENDER_SMOOTH | RENDER_SCALED | RENDER_COLOURARRAY | RENDER_FILL | RENDER_COLOURWRITE | RENDER_DEPTHWRITE | RENDER_DEPTHTEST | RENDER_OVERRIDE | RENDER_POLYGONSTIPPLE;
       hiddenLine.m_sort = OpenGLState::eSortGUI0;
       hiddenLine.m_depthfunc = GL_GREATER;
     }
@@ -2683,3 +2664,29 @@ public:
 typedef SingletonModule<ShaderCacheAPI, ShaderCacheDependencies> ShaderCacheModule;
 typedef Static<ShaderCacheModule> StaticShaderCacheModule;
 StaticRegisterModule staticRegisterShaderCache(StaticShaderCacheModule::instance());
+
+
+class OpenGLStateLibraryAPI
+{
+  OpenGLStateMap m_stateMap;
+public:
+  typedef OpenGLStateLibrary Type;
+  STRING_CONSTANT(Name, "*");
+
+  OpenGLStateLibraryAPI()
+  {
+    g_openglStates = &m_stateMap;
+  }
+  ~OpenGLStateLibraryAPI()
+  {
+    g_openglStates = 0;
+  }
+  OpenGLStateLibrary* getTable()
+  {
+    return &m_stateMap;
+  }
+};
+
+typedef SingletonModule<OpenGLStateLibraryAPI> OpenGLStateLibraryModule;
+typedef Static<OpenGLStateLibraryModule> StaticOpenGLStateLibraryModule;
+StaticRegisterModule staticRegisterOpenGLStateLibrary(StaticOpenGLStateLibraryModule::instance());

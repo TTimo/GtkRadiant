@@ -105,7 +105,7 @@ bool read_var (const char *filename, const char *section, const char *key, char 
   return false;
 }
 
-static bool save_var (const char *filename, const char *section, const char *key, const char *value)
+bool save_var (const char *filename, const char *section, const char *key, const char *value)
 {
   char line[1024], *ptr;
   MemStream old_rc;

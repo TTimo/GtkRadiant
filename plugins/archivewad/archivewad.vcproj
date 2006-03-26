@@ -40,10 +40,11 @@
 				Name="VCLinkerTool"
 				OutputFile="$(OutDir)/archivewad.dll"
 				LinkIncremental="1"
+				SuppressStartupBanner="TRUE"
 				IgnoreDefaultLibraryNames="msvcprtd.lib"
 				ModuleDefinitionFile="$(ProjectName).def"
 				GenerateDebugInformation="TRUE"
-				ProgramDatabaseFile="$(OutDir)/archivewad.pdb"
+				ProgramDatabaseFile="$(OutDir)/$(ProjectName).pdb"
 				SubSystem="2"
 				ImportLibrary="$(OutDir)/archivewad.lib"
 				TargetMachine="1"/>
@@ -52,7 +53,8 @@
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="copy &quot;$(TargetPath)&quot; &quot;$(SolutionDir)install\modules&quot;
-copy &quot;$(TargetDir)$(TargetName).pdb&quot; &quot;$(SolutionDir)install\modules&quot;"/>
+copy &quot;$(TargetDir)$(TargetName).pdb&quot; &quot;$(SolutionDir)install\modules&quot;
+"/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
 			<Tool
@@ -102,9 +104,11 @@ copy &quot;$(TargetDir)$(TargetName).pdb&quot; &quot;$(SolutionDir)install\modul
 				Name="VCLinkerTool"
 				OutputFile="$(OutDir)/archivewad.dll"
 				LinkIncremental="1"
+				SuppressStartupBanner="TRUE"
 				IgnoreDefaultLibraryNames="msvcprt.lib"
 				ModuleDefinitionFile="$(ProjectName).def"
 				GenerateDebugInformation="TRUE"
+				ProgramDatabaseFile="$(OutDir)/$(ProjectName).pdb"
 				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
@@ -116,7 +120,8 @@ copy &quot;$(TargetDir)$(TargetName).pdb&quot; &quot;$(SolutionDir)install\modul
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="copy &quot;$(TargetPath)&quot; &quot;$(SolutionDir)install\modules&quot;
-copy &quot;$(TargetDir)$(TargetName).pdb&quot; &quot;$(SolutionDir)install\modules&quot;"/>
+copy &quot;$(TargetDir)$(TargetName).pdb&quot; &quot;$(SolutionDir)install\modules&quot;
+"/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
 			<Tool
@@ -162,25 +167,6 @@ copy &quot;$(TargetDir)$(TargetName).pdb&quot; &quot;$(SolutionDir)install\modul
 			</File>
 		</Filter>
 		<File
-			RelativePath="..\..\debug.py">
-			<FileConfiguration
-				Name="Debug|Win32">
-				<Tool
-					Name="VCCustomBuildTool"
-					CommandLine="python &quot;$(SolutionDir)debug.py&quot;"
-					AdditionalDependencies="&quot;$(SolutionDir)install\modules\$(TargetName).pdb&quot;"
-					Outputs="&quot;$(TargetDir)$(TargetName).pdb&quot;"/>
-			</FileConfiguration>
-			<FileConfiguration
-				Name="Release|Win32">
-				<Tool
-					Name="VCCustomBuildTool"
-					CommandLine="python &quot;$(SolutionDir)debug.py&quot;"
-					AdditionalDependencies="&quot;$(SolutionDir)install\modules\$(TargetName).pdb&quot;"
-					Outputs="&quot;$(TargetDir)$(TargetName).pdb&quot;"/>
-			</FileConfiguration>
-		</File>
-		<File
 			RelativePath=".\archivewad.def">
 			<FileConfiguration
 				Name="Debug|Win32">
@@ -199,6 +185,27 @@ copy &quot;$(TargetDir)$(TargetName).pdb&quot; &quot;$(SolutionDir)install\modul
 "
 					AdditionalDependencies="&quot;$(SolutionDir)install\modules\$(TargetFileName)&quot;"
 					Outputs="&quot;$(TargetPath)&quot;"/>
+			</FileConfiguration>
+		</File>
+		<File
+			RelativePath="..\..\debug.py">
+			<FileConfiguration
+				Name="Debug|Win32">
+				<Tool
+					Name="VCCustomBuildTool"
+					CommandLine="python &quot;$(SolutionDir)debug.py&quot;
+"
+					AdditionalDependencies="&quot;$(SolutionDir)install\modules\$(TargetName).pdb&quot;"
+					Outputs="&quot;$(TargetDir)$(TargetName).pdb&quot;"/>
+			</FileConfiguration>
+			<FileConfiguration
+				Name="Release|Win32">
+				<Tool
+					Name="VCCustomBuildTool"
+					CommandLine="python &quot;$(SolutionDir)debug.py&quot;
+"
+					AdditionalDependencies="&quot;$(SolutionDir)install\modules\$(TargetName).pdb&quot;"
+					Outputs="&quot;$(TargetDir)$(TargetName).pdb&quot;"/>
 			</FileConfiguration>
 		</File>
 	</Files>

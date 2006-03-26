@@ -40,10 +40,11 @@
 				Name="VCLinkerTool"
 				OutputFile="$(OutDir)/sample.dll"
 				LinkIncremental="1"
+				SuppressStartupBanner="TRUE"
 				IgnoreDefaultLibraryNames="msvcprtd.lib"
 				ModuleDefinitionFile="$(ProjectName).def"
 				GenerateDebugInformation="TRUE"
-				ProgramDatabaseFile="$(OutDir)/sample.pdb"
+				ProgramDatabaseFile="$(OutDir)/$(ProjectName).pdb"
 				SubSystem="2"
 				ImportLibrary="$(OutDir)/sample.lib"
 				TargetMachine="1"/>
@@ -101,9 +102,11 @@
 				Name="VCLinkerTool"
 				OutputFile="$(OutDir)/sample.dll"
 				LinkIncremental="1"
+				SuppressStartupBanner="TRUE"
 				IgnoreDefaultLibraryNames="msvcprt.lib"
 				ModuleDefinitionFile="$(ProjectName).def"
 				GenerateDebugInformation="TRUE"
+				ProgramDatabaseFile="$(OutDir)/$(ProjectName).pdb"
 				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
@@ -153,7 +156,8 @@
 				Name="Debug|Win32">
 				<Tool
 					Name="VCCustomBuildTool"
-					CommandLine="python &quot;$(SolutionDir)debug.py&quot;"
+					CommandLine="python &quot;$(SolutionDir)debug.py&quot;
+"
 					AdditionalDependencies="&quot;$(SolutionDir)install\modules\$(TargetName).pdb&quot;"
 					Outputs="&quot;$(TargetDir)$(TargetName).pdb&quot;"/>
 			</FileConfiguration>
@@ -161,7 +165,8 @@
 				Name="Release|Win32">
 				<Tool
 					Name="VCCustomBuildTool"
-					CommandLine="python &quot;$(SolutionDir)debug.py&quot;"
+					CommandLine="python &quot;$(SolutionDir)debug.py&quot;
+"
 					AdditionalDependencies="&quot;$(SolutionDir)install\modules\$(TargetName).pdb&quot;"
 					Outputs="&quot;$(TargetDir)$(TargetName).pdb&quot;"/>
 			</FileConfiguration>

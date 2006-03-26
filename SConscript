@@ -464,12 +464,13 @@ module_env.Install(INSTALL + '/modules', entity_lib)
 #bob_env.SharedLibrarySafe(target='camera', source=camera_lst)
 #bob_env.Install(INSTALL + '/plugins', 'camera.so')
 
-#prtview_lst = build_list('contrib/prtview', 
-#'AboutDialog.cpp ConfigDialog.cpp LoadPortalFileDialog.cpp portals.cpp prtview.cpp')
-#prtview_env = bob_env.Copy()
-#prtview_env['CXXFLAGS'] += '-DGTK_PLUGIN '
-#prtview_env.SharedLibrarySafe(target='prtview', source=prtview_lst)
-#prtview_env.Install(INSTALL + '/plugins', 'prtview.so')
+prtview_env = module_env.Copy()
+prtview_lst = build_list('contrib/prtview', 'AboutDialog.cpp ConfigDialog.cpp LoadPortalFileDialog.cpp portals.cpp prtview.cpp')
+prtview_env.useGlib2()
+prtview_env.useGtk2()
+prtview_lib = prtview_env.SharedLibrarySafe(target='prtview', source=prtview_lst, LIBS='profile', LIBPATH='libs')
+prtview_env.Depends(prtview_lib, profile_lib)
+prtview_env.Install(INSTALL + '/plugins', prtview_lib)
 
 #gensurf_lst = build_list('contrib/gtkgensurf',
 #'bitmap.cpp dec.cpp face.cpp font.cpp gendlgs.cpp genmap.cpp gensurf.cpp heretic.cpp plugin.cpp view.cpp triangle.c')

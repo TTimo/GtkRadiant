@@ -17,22 +17,14 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-// ConfigDialog.cpp : implementation file
-//
-
-#include "stdafx.h"
+#include "ConfigDialog.h"
 #include <stdio.h>
+#include <gtk/gtk.h>
 
-#ifdef _DEBUG
-#define new DEBUG_NEW
-#undef THIS_FILE
-//static char THIS_FILE[] = __FILE__;
-#endif
+#include "iscenegraph.h"
 
-/////////////////////////////////////////////////////////////////////////////
-// CConfigDialog dialog
-
-#ifdef GTK_PLUGIN
+#include "PrtView.h"
+#include "Portals.h"
 
 static void dialog_button_callback (GtkWidget *widget, gpointer data)
 {
@@ -61,10 +53,10 @@ static gint dialog_delete_callback (GtkWidget *widget, GdkEvent* event, gpointer
 // =============================================================================
 // Color selection dialog
 
-static int DoColor (COLORREF *c)
+static int DoColor (PackedColour *c)
 {
   GtkWidget* dlg;
-  double clr[3];
+  double clr[4];
   int loop = 1, ret = IDCANCEL;
 
   clr[0] = ((double)GetRValue (*c)) / 255.0;
@@ -144,8 +136,8 @@ static void OnScroll2d (GtkAdjustment *adj, gpointer data)
   portals.width_2d = static_cast<float>(adj->value);
   Set2DText (GTK_WIDGET (data));
 
-  if(interfaces_started)
-    g_FuncTable.m_pfnSysUpdateWindows(UPDATE_2D);
+  Portals_shadersChanged();
+  SceneChangeNotify();
 }
 
 static void OnScroll3d (GtkAdjustment *adj, gpointer data)
@@ -153,8 +145,7 @@ static void OnScroll3d (GtkAdjustment *adj, gpointer data)
   portals.width_3d = static_cast<float>(adj->value);
   Set3DText (GTK_WIDGET (data));
 
-  if(interfaces_started)
-    g_FuncTable.m_pfnSysUpdateWindows(UPDATE_3D);
+  SceneChangeNotify();
 }
 
 static void OnScrollTrans (GtkAdjustment *adj, gpointer data)
@@ -162,8 +153,7 @@ static void OnScrollTrans (GtkAdjustment *adj, gpointer data)
   portals.trans_3d = static_cast<float>(adj->value);
   Set3DTransText (GTK_WIDGET (data));
 
-  if(interfaces_started)
-    g_FuncTable.m_pfnSysUpdateWindows(UPDATE_3D);
+  SceneChangeNotify();
 }
 
 static void OnScrollClip (GtkAdjustment *adj, gpointer data)
@@ -171,62 +161,58 @@ static void OnScrollClip (GtkAdjustment *adj, gpointer data)
   portals.clip_range = static_cast<float>(adj->value);
   SetClipText (GTK_WIDGET (data));
 
-  if(interfaces_started)
-    g_FuncTable.m_pfnSysUpdateWindows(UPDATE_3D);
+  SceneChangeNotify();
 }
 
 static void OnAntiAlias2d (GtkWidget *widget, gpointer data)
 {
-  portals.aa_2d = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (widget)) ? qtrue : qfalse;
+  portals.aa_2d = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (widget)) ? true : false;
 
-  if(interfaces_started)
-    g_FuncTable.m_pfnSysUpdateWindows(UPDATE_2D);
+  Portals_shadersChanged();
+
+  SceneChangeNotify();
 }
 
 static void OnConfig2d (GtkWidget *widget, gpointer data)
 {
-  portals.show_2d = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (widget)) ? qtrue : qfalse;
+  portals.show_2d = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (widget)) ? true : false;
 
-  if(interfaces_started)
-    g_FuncTable.m_pfnSysUpdateWindows(UPDATE_2D);
+  SceneChangeNotify();
 }
 
 static void OnColor2d (GtkWidget *widget, gpointer data)
 {
   if (DoColor (&portals.color_2d) == IDOK)
   {
-    portals.FixColors();
+    Portals_shadersChanged();
 
-    if(interfaces_started)
-      g_FuncTable.m_pfnSysUpdateWindows(UPDATE_2D);
+    SceneChangeNotify();
   }
 }
 
 static void OnConfig3d (GtkWidget *widget, gpointer data)
 {
-  portals.show_3d = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (widget)) ? qtrue : qfalse;
+  portals.show_3d = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (widget)) ? true : false;
 
-  if(interfaces_started)
-    g_FuncTable.m_pfnSysUpdateWindows(UPDATE_3D);
+  SceneChangeNotify();
 }
 
 
 static void OnAntiAlias3d (GtkWidget *widget, gpointer data)
 {
-  portals.aa_3d = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (widget)) ? qtrue : qfalse;
+  portals.aa_3d = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (widget)) ? true : false;
 
-  if(interfaces_started)
-    g_FuncTable.m_pfnSysUpdateWindows(UPDATE_3D);
+  Portals_shadersChanged();
+  SceneChangeNotify();
 }
 
 static void OnColor3d (GtkWidget *widget, gpointer data)
 {
   if (DoColor (&portals.color_3d) == IDOK)
   {
-    portals.FixColors();
+    Portals_shadersChanged();
 
-    if(interfaces_started)
-      g_FuncTable.m_pfnSysUpdateWindows(UPDATE_3D);
+    SceneChangeNotify();
   }
 }
 
@@ -234,51 +220,47 @@ static void OnColorFog (GtkWidget *widget, gpointer data)
 {
   if (DoColor (&portals.color_fog) == IDOK)
   {
-    portals.FixColors();
+    Portals_shadersChanged();
 
-    if(interfaces_started)
-      g_FuncTable.m_pfnSysUpdateWindows(UPDATE_3D);
+    SceneChangeNotify();
   }
 }
 
 static void OnFog (GtkWidget *widget, gpointer data)
 {
-  portals.fog = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (widget)) ? qtrue : qfalse;
+  portals.fog = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (widget)) ? true : false;
 
-  if(interfaces_started)
-    g_FuncTable.m_pfnSysUpdateWindows(UPDATE_3D);
+  Portals_shadersChanged();
+  SceneChangeNotify();
 }
 
 static void OnSelchangeZbuffer (GtkWidget *widget, gpointer data)
 {
   portals.zbuffer = GPOINTER_TO_INT (data);
 
-  if(interfaces_started)
-    g_FuncTable.m_pfnSysUpdateWindows(UPDATE_3D);
+  Portals_shadersChanged();
+  SceneChangeNotify();
 }
 
 static void OnPoly (GtkWidget *widget, gpointer data)
 {
   portals.polygons = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (widget));
 
-  if(interfaces_started)
-    g_FuncTable.m_pfnSysUpdateWindows(UPDATE_3D);
+  SceneChangeNotify();
 }
 
 static void OnLines (GtkWidget *widget, gpointer data)
 {
   portals.lines = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (widget));
 
-  if(interfaces_started)
-    g_FuncTable.m_pfnSysUpdateWindows(UPDATE_3D);
+  SceneChangeNotify();
 }
 
 static void OnClip (GtkWidget *widget, gpointer data)
 {
-  portals.clip = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (widget)) ? qtrue : qfalse;
+  portals.clip = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (widget)) ? true : false;
 
-  if(interfaces_started)
-    g_FuncTable.m_pfnSysUpdateWindows(UPDATE_3D);
+  SceneChangeNotify();
 }
 
 void DoConfigDialog ()
@@ -541,385 +523,3 @@ void DoConfigDialog ()
   gtk_widget_destroy (dlg);
 }
 
-#else // GTK_PLUGIN
-
-CConfigDialog::CConfigDialog(CWnd* pParent /*=NULL*/)
-	: CDialog(CConfigDialog::IDD, pParent)
-{
-	//{{AFX_DATA_INIT(CConfigDialog)
-	//}}AFX_DATA_INIT
-}
-
-
-void CConfigDialog::DoDataExchange(CDataExchange* pDX)
-{
-	CDialog::DoDataExchange(pDX);
-	//{{AFX_DATA_MAP(CConfigDialog)
-	DDX_Control(pDX, IDC_CLIP, m_clip_ctrl);
-	DDX_Control(pDX, IDC_CUBIC, m_cubic_ctrl);
-	DDX_Control(pDX, IDC_SCROLL_CUBIC, m_scroll_cubic_ctrl);
-	DDX_Control(pDX, IDC_LINES, m_line_ctrl);
-	DDX_Control(pDX, IDC_SCROLL_3D_TRANS, m_scroll_3d_trans_ctrl);
-	DDX_Control(pDX, IDC_3D_TRANS, m_3d_trans_ctrl);
-	DDX_Control(pDX, IDC_POLY, m_poly_ctrl);
-	DDX_Control(pDX, IDC_FOG, m_fog_ctrl);
-	DDX_Control(pDX, IDC_ZBUFFER, m_z_ctrl);
-	DDX_Control(pDX, IDC_SCROLL_3D_WIDTH, m_scroll_3d_width_ctrl);
-	DDX_Control(pDX, IDC_ANTI_ALIAS_3D, m_aa_3d_ctrl);
-	DDX_Control(pDX, IDC_3D_WIDTH, m_3d_width_ctrl);
-	DDX_Control(pDX, IDC_ANTI_ALIAS_2D, m_aa_2d_ctrl);
-	DDX_Control(pDX, IDC_SCROLL_2D_WIDTH, m_scroll_2d_width_ctrl);
-	DDX_Control(pDX, IDC_2D_WIDTH, m_2d_width_ctrl);
-	DDX_Control(pDX, IDC_CONFIG_3D, m_3d_ctrl);
-	DDX_Control(pDX, IDC_CONFIG_2D, m_2d_ctrl);
-	//}}AFX_DATA_MAP
-}
-
-
-BEGIN_MESSAGE_MAP(CConfigDialog, CDialog)
-	//{{AFX_MSG_MAP(CConfigDialog)
-	ON_WM_HSCROLL()
-	ON_BN_CLICKED(IDC_ANTI_ALIAS_2D, OnAntiAlias2d)
-	ON_BN_CLICKED(IDC_CONFIG_2D, OnConfig2d)
-	ON_BN_CLICKED(IDC_CONFIG_3D, OnConfig3d)
-	ON_BN_CLICKED(IDC_COLOR_2D, OnColor2d)
-	ON_BN_CLICKED(IDC_ANTI_ALIAS_3D, OnAntiAlias3d)
-	ON_BN_CLICKED(IDC_COLOR_3D, OnColor3d)
-	ON_BN_CLICKED(IDC_COLOR_FOG, OnColorFog)
-	ON_BN_CLICKED(IDC_FOG, OnFog)
-	ON_CBN_SELCHANGE(IDC_ZBUFFER, OnSelchangeZbuffer)
-	ON_BN_CLICKED(IDC_POLY, OnPoly)
-	ON_BN_CLICKED(IDC_LINES, OnLines)
-	ON_BN_CLICKED(IDC_CLIP, OnClip)
-	//}}AFX_MSG_MAP
-END_MESSAGE_MAP()
-
-/////////////////////////////////////////////////////////////////////////////
-// CConfigDialog message handlers
-
-void CConfigDialog::Set2DText()
-{
-	char s[40];
-
-	sprintf(s, "Line Width = %6.3f", portals.width_2d * 0.5f);
-
-	m_2d_width_ctrl.SetWindowText(s);
-}
-
-void CConfigDialog::Set3DText()
-{
-	char s[40];
-
-	sprintf(s, "Line Width = %6.3f", portals.width_3d * 0.5f);
-
-	m_3d_width_ctrl.SetWindowText(s);
-}
-
-void CConfigDialog::Set3DTransText()
-{
-	char s[40];
-
-	sprintf(s, "Polygon transparency = %d%%", (int)portals.trans_3d);
-
-	m_3d_trans_ctrl.SetWindowText(s);
-}
-
-void CConfigDialog::SetClipText()
-{
-	char s[40];
-
-	sprintf(s, "Cubic clip range = %d", (int)portals.clip_range * 64);
-
-	m_cubic_ctrl.SetWindowText(s);
-}
-
-bool CConfigDialog::OnInitDialog() 
-{
-	CDialog::OnInitDialog();
-
-	m_2d_ctrl.SetCheck(portals.show_2d);
-	m_aa_2d_ctrl.SetCheck(portals.aa_2d);
-	Set2DText();
-
-	m_scroll_2d_width_ctrl.SetScrollRange(2, 40, FALSE);
-	m_scroll_2d_width_ctrl.SetScrollPos((int)portals.width_2d, TRUE);
-
-	m_3d_ctrl.SetCheck(portals.show_3d);
-	m_fog_ctrl.SetCheck(portals.fog);
-	m_poly_ctrl.SetCheck(portals.polygons);
-	m_line_ctrl.SetCheck(portals.lines);
-	m_aa_3d_ctrl.SetCheck(portals.aa_3d);
-	m_z_ctrl.SetCurSel(portals.zbuffer);
-	m_clip_ctrl.SetCheck(portals.clip);
-
-	Set3DText();
-	Set3DTransText();
-	SetClipText();
-
-	m_scroll_3d_width_ctrl.SetScrollRange(2, 40, FALSE);
-	m_scroll_3d_width_ctrl.SetScrollPos((int)portals.width_3d, TRUE);
-	m_scroll_3d_trans_ctrl.SetScrollRange(0, 100, FALSE);
-	m_scroll_3d_trans_ctrl.SetScrollPos((int)portals.trans_3d, TRUE);
-	m_scroll_cubic_ctrl.SetScrollRange(1, 128, FALSE);
-	m_scroll_cubic_ctrl.SetScrollPos((int)portals.clip_range, TRUE);
-	
-	return true;  // return TRUE unless you set the focus to a control
-	              // EXCEPTION: OCX Property Pages should return FALSE
-}
-
-void CConfigDialog::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar) 
-{
-	float *adj;
-	float scr_min, scr_max, scr_big;
-
-	if(nSBCode == SB_THUMBPOSITION)
-	{
-		CDialog::OnHScroll(nSBCode, nPos, pScrollBar);
-		return;
-	}
-
-	if(pScrollBar == &m_scroll_2d_width_ctrl)
-	{
-		scr_min = 2.0f;
-		scr_max = 40.0f;
-		scr_big = 4.0f;
-
-		adj = &portals.width_2d;
-	}
-	else if(pScrollBar == &m_scroll_3d_width_ctrl)
-	{
-		scr_min = 2.0f;
-		scr_max = 40.0f;
-		scr_big = 4.0f;
-
-		adj = &portals.width_3d;
-	}
-	else if(pScrollBar == &m_scroll_3d_trans_ctrl)
-	{
-		scr_min = 0.0f;
-		scr_max = 100.0f;
-		scr_big = 10.0f;
-
-		adj = &portals.trans_3d;
-	}
-	else if(pScrollBar == &m_scroll_cubic_ctrl)
-	{
-		scr_min = 1.0f;
-		scr_max = 128.0f;
-		scr_big = 8.0f;
-
-		adj = &portals.clip_range;
-	}
-	else
-	{
-		CDialog::OnHScroll(nSBCode, nPos, pScrollBar);
-		return;
-	}
-
-	switch(nSBCode)
-	{
-	case SB_LEFT:
-		*adj = scr_min;
-		pScrollBar->SetScrollPos((int)scr_min, TRUE);
-		break;
-	case SB_RIGHT:
-		*adj = scr_max;
-		pScrollBar->SetScrollPos((int)scr_max, TRUE);
-		break;
-	case SB_LINELEFT:
-		*adj -= 1.0f;
-		
-		if(*adj < scr_min)
-			*adj = scr_min;
-
-		pScrollBar->SetScrollPos((int)(*adj), TRUE);
-
-		break;
-	case SB_LINERIGHT:
-		*adj += 1.0f;
-		
-		if(*adj > scr_max)
-			*adj = scr_max;
-
-		pScrollBar->SetScrollPos((int)(*adj), TRUE);
-
-		break;
-	case SB_PAGELEFT:
-		*adj -= scr_big;
-		
-		if(*adj < scr_min)
-			*adj = scr_min;
-
-		pScrollBar->SetScrollPos((int)(*adj), TRUE);
-
-		break;
-	case SB_PAGERIGHT:
-		*adj += scr_big;
-		
-		if(*adj > scr_max)
-			*adj = scr_max;
-
-		pScrollBar->SetScrollPos((int)(*adj), TRUE);
-
-		break;
-	case SB_THUMBTRACK:
-		*adj = (float)nPos;
-
-		break;
-	case SB_ENDSCROLL:
-		pScrollBar->SetScrollPos((int)(*adj), TRUE);
-
-		break;
-	default:
-		CDialog::OnHScroll(nSBCode, nPos, pScrollBar);
-	}
-
-	if(pScrollBar == &m_scroll_2d_width_ctrl)
-	{
-		Set2DText();
-
-		if(interfaces_started)
-			g_FuncTable.m_pfnSysUpdateWindows(UPDATE_2D);
-	}
-	else if(pScrollBar == &m_scroll_3d_width_ctrl)
-	{
-		Set3DText();
-
-		if(interfaces_started)
-			g_FuncTable.m_pfnSysUpdateWindows(UPDATE_3D);
-	}
-	else if(pScrollBar == &m_scroll_3d_trans_ctrl)
-	{
-		Set3DTransText();
-
-		if(interfaces_started)
-			g_FuncTable.m_pfnSysUpdateWindows(UPDATE_3D);
-	}
-	else if(pScrollBar == &m_scroll_cubic_ctrl)
-	{
-		SetClipText();
-
-		if(interfaces_started)
-			g_FuncTable.m_pfnSysUpdateWindows(UPDATE_3D);
-	}
-}
-
-void CConfigDialog::OnAntiAlias2d() 
-{
-	portals.aa_2d = m_aa_2d_ctrl.GetCheck();
-
-	if(interfaces_started)
-		g_FuncTable.m_pfnSysUpdateWindows(UPDATE_2D);
-}
-
-void CConfigDialog::OnConfig2d() 
-{
-	portals.show_2d = m_2d_ctrl.GetCheck();
-
-	if(interfaces_started)
-		g_FuncTable.m_pfnSysUpdateWindows(UPDATE_2D);
-}
-
-void CConfigDialog::OnColor2d() 
-{
-	CColorDialog dlg(portals.color_2d, CC_ANYCOLOR, this);
-
-	if(dlg.DoModal() == IDOK)
-	{
-		portals.color_2d = dlg.GetColor();
-
-		portals.FixColors();
-
-		if(interfaces_started)
-			g_FuncTable.m_pfnSysUpdateWindows(UPDATE_2D);
-	}
-}
-
-void CConfigDialog::OnConfig3d() 
-{
-	portals.show_3d = m_3d_ctrl.GetCheck();
-
-	if(interfaces_started)
-		g_FuncTable.m_pfnSysUpdateWindows(UPDATE_3D);
-}
-
-
-void CConfigDialog::OnAntiAlias3d() 
-{
-	portals.aa_3d = m_aa_3d_ctrl.GetCheck();
-
-	if(interfaces_started)
-		g_FuncTable.m_pfnSysUpdateWindows(UPDATE_3D);
-}
-
-void CConfigDialog::OnColor3d() 
-{
-	CColorDialog dlg(portals.color_3d, CC_ANYCOLOR, this);
-
-	if(dlg.DoModal() == IDOK)
-	{
-		portals.color_3d = dlg.GetColor();
-
-		portals.FixColors();
-
-		if(interfaces_started)
-			g_FuncTable.m_pfnSysUpdateWindows(UPDATE_3D);
-	}
-}
-
-void CConfigDialog::OnColorFog() 
-{
-	CColorDialog dlg(portals.color_fog, CC_ANYCOLOR, this);
-
-	if(dlg.DoModal() == IDOK)
-	{
-		portals.color_fog = dlg.GetColor();
-
-		portals.FixColors();
-
-		if(interfaces_started)
-			g_FuncTable.m_pfnSysUpdateWindows(UPDATE_3D);
-	}
-}
-
-void CConfigDialog::OnFog() 
-{
-	portals.fog = m_fog_ctrl.GetCheck();
-
-	if(interfaces_started)
-		g_FuncTable.m_pfnSysUpdateWindows(UPDATE_3D);
-}
-
-void CConfigDialog::OnSelchangeZbuffer() 
-{
-	portals.zbuffer = m_z_ctrl.GetCurSel();
-
-	if(interfaces_started)
-		g_FuncTable.m_pfnSysUpdateWindows(UPDATE_3D);
-}
-
-void CConfigDialog::OnPoly() 
-{
-	portals.polygons = m_poly_ctrl.GetCheck();
-
-	if(interfaces_started)
-		g_FuncTable.m_pfnSysUpdateWindows(UPDATE_3D);
-}
-
-void CConfigDialog::OnLines() 
-{
-	portals.lines = m_line_ctrl.GetCheck();
-
-	if(interfaces_started)
-		g_FuncTable.m_pfnSysUpdateWindows(UPDATE_3D);
-}
-
-void CConfigDialog::OnClip() 
-{
-	portals.clip = m_clip_ctrl.GetCheck();
-
-	if(interfaces_started)
-		g_FuncTable.m_pfnSysUpdateWindows(UPDATE_3D);
-}
-
-#endif // GTK_PLUGIN

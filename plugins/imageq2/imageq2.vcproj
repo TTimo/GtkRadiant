@@ -40,11 +40,12 @@
 				Name="VCLinkerTool"
 				OutputFile="$(OutDir)/imageq2.dll"
 				LinkIncremental="1"
+				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories=""
 				IgnoreDefaultLibraryNames="msvcprtd.lib"
 				ModuleDefinitionFile="$(ProjectName).def"
 				GenerateDebugInformation="TRUE"
-				ProgramDatabaseFile="$(OutDir)/imageq2.pdb"
+				ProgramDatabaseFile="$(OutDir)/$(ProjectName).pdb"
 				SubSystem="2"
 				ImportLibrary="$(OutDir)/imageq2.lib"
 				TargetMachine="1"/>
@@ -53,7 +54,8 @@
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="copy &quot;$(TargetPath)&quot; &quot;$(SolutionDir)install\modules&quot;
-copy &quot;$(TargetDir)$(TargetName).pdb&quot; &quot;$(SolutionDir)install\modules&quot;"/>
+copy &quot;$(TargetDir)$(TargetName).pdb&quot; &quot;$(SolutionDir)install\modules&quot;
+"/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
 			<Tool
@@ -103,10 +105,12 @@ copy &quot;$(TargetDir)$(TargetName).pdb&quot; &quot;$(SolutionDir)install\modul
 				Name="VCLinkerTool"
 				OutputFile="$(OutDir)/imageq2.dll"
 				LinkIncremental="1"
+				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories=""
 				IgnoreDefaultLibraryNames="msvcprt.lib"
 				ModuleDefinitionFile="$(ProjectName).def"
 				GenerateDebugInformation="TRUE"
+				ProgramDatabaseFile="$(OutDir)/$(ProjectName).pdb"
 				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
@@ -118,7 +122,8 @@ copy &quot;$(TargetDir)$(TargetName).pdb&quot; &quot;$(SolutionDir)install\modul
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="copy &quot;$(TargetPath)&quot; &quot;$(SolutionDir)install\modules&quot;
-copy &quot;$(TargetDir)$(TargetName).pdb&quot; &quot;$(SolutionDir)install\modules&quot;"/>
+copy &quot;$(TargetDir)$(TargetName).pdb&quot; &quot;$(SolutionDir)install\modules&quot;
+"/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
 			<Tool
@@ -173,7 +178,8 @@ copy &quot;$(TargetDir)$(TargetName).pdb&quot; &quot;$(SolutionDir)install\modul
 				Name="Debug|Win32">
 				<Tool
 					Name="VCCustomBuildTool"
-					CommandLine="python &quot;$(SolutionDir)debug.py&quot;"
+					CommandLine="python &quot;$(SolutionDir)debug.py&quot;
+"
 					AdditionalDependencies="&quot;$(SolutionDir)install\modules\$(TargetName).pdb&quot;"
 					Outputs="&quot;$(TargetDir)$(TargetName).pdb&quot;"/>
 			</FileConfiguration>
@@ -181,7 +187,8 @@ copy &quot;$(TargetDir)$(TargetName).pdb&quot; &quot;$(SolutionDir)install\modul
 				Name="Release|Win32">
 				<Tool
 					Name="VCCustomBuildTool"
-					CommandLine="python &quot;$(SolutionDir)debug.py&quot;"
+					CommandLine="python &quot;$(SolutionDir)debug.py&quot;
+"
 					AdditionalDependencies="&quot;$(SolutionDir)install\modules\$(TargetName).pdb&quot;"
 					Outputs="&quot;$(TargetDir)$(TargetName).pdb&quot;"/>
 			</FileConfiguration>

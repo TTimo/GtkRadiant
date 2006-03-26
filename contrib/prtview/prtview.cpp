@@ -17,13 +17,22 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-// PrtView.cpp : Defines the initialization routines for the DLL.
-//
 
-#include "stdafx.h"
+#include "PrtView.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include "missing.h"
+
+#include "profile/profile.h"
+
+#include "qerplugin.h"
+#include "iscenegraph.h"
+#include "iglrender.h"
+#include "iplugin.h"
+
+#include "Portals.h"
+#include "AboutDialog.h"
+#include "ConfigDialog.h"
+#include "LoadPortalFileDialog.h"
 
 #define Q3R_CMD_SPLITTER "-"
 #define Q3R_CMD_ABOUT "About Portal Viewer"
@@ -56,52 +65,34 @@ static char INIfn[PATH_MAX];
 #define CLIP_RANGE "ClipRange"
 #define CLIP "Clip"
 
-void InitInstance () 
+
+void PrtView_construct()
 {
-#ifdef WIN32
-  char fn[_MAX_PATH];
-  char fn_drive[_MAX_DRIVE];
-  char fn_dir[_MAX_DIR];
-  char fn_name[_MAX_FNAME];
-  char fn_ext[_MAX_EXT];
+  strcpy(INIfn, GlobalRadiant().getSettingsPath());
+  strcat(INIfn, "prtview.ini");
 
-  GetModuleFileName(GetModuleHandle("PrtView.dll"), fn, _MAX_PATH);
-
-  _splitpath(fn, fn_drive, fn_dir, fn_name, fn_ext);
-
-  strcpy(INIfn, fn_drive);
-  strcat(INIfn, fn_dir);
-  strcat(INIfn, fn_name);
-  strcat(INIfn, ".ini");
-#else // if def __linux__
-  strcpy (INIfn, g_get_home_dir ());
-  strcat (INIfn, "/.radiant/");
-  strcat (INIfn, RADIANT_VERSION);
-  strcat (INIfn, "/prtview.ini");
-#endif
-
-  portals.show_2d = INIGetInt(RENDER_2D, FALSE) ? qtrue : qfalse;
-  portals.aa_2d = INIGetInt(AA_2D, FALSE) ? qtrue : qfalse;
+  portals.show_2d = INIGetInt(RENDER_2D, FALSE) ? true : false;
+  portals.aa_2d = INIGetInt(AA_2D, FALSE) ? true : false;
   portals.width_2d = (float)INIGetInt(WIDTH_2D, 10);
-  portals.color_2d = (COLORREF)INIGetInt(COLOR_2D, RGB(0, 0, 255)) & 0xFFFFFF;
+  portals.color_2d = (PackedColour)INIGetInt(COLOR_2D, RGB(0, 0, 255)) & 0xFFFFFF;
 
   if (portals.width_2d > 40.0f)
     portals.width_2d = 40.0f;
   else if (portals.width_2d < 2.0f)
     portals.width_2d = 2.0f;
 
-  portals.show_3d = INIGetInt(RENDER_3D, TRUE) ? qtrue : qfalse;
+  portals.show_3d = INIGetInt(RENDER_3D, TRUE) ? true : false;
 
   portals.zbuffer = INIGetInt(ZBUFFER, 1);
-  portals.fog = INIGetInt(FOG, FALSE) ? qtrue : qfalse;
+  portals.fog = INIGetInt(FOG, FALSE) ? true : false;
   portals.polygons = INIGetInt(POLYGON, TRUE);
   portals.lines = INIGetInt(LINE, TRUE);
-  portals.aa_3d = INIGetInt(AA_3D, FALSE) ? qtrue : qfalse;
+  portals.aa_3d = INIGetInt(AA_3D, FALSE) ? true : false;
   portals.width_3d = (float)INIGetInt(WIDTH_3D, 4);
-  portals.color_3d = (COLORREF)INIGetInt(COLOR_3D, RGB(255, 255, 0)) & 0xFFFFFF;
-  portals.color_fog = (COLORREF)INIGetInt(COLOR_FOG, RGB(127, 127, 127)) & 0xFFFFFF;
+  portals.color_3d = (PackedColour)INIGetInt(COLOR_3D, RGB(255, 255, 0)) & 0xFFFFFF;
+  portals.color_fog = (PackedColour)INIGetInt(COLOR_FOG, RGB(127, 127, 127)) & 0xFFFFFF;
   portals.trans_3d = (float)INIGetInt(TRANS_3D, 50);
-  portals.clip = INIGetInt(CLIP, FALSE) ? qtrue : qfalse;
+  portals.clip = INIGetInt(CLIP, FALSE) ? true : false;
   portals.clip_range = (float)INIGetInt(CLIP_RANGE, 16);
 
   if (portals.clip_range < 1)
@@ -127,6 +118,15 @@ void InitInstance ()
   SaveConfig();
 
   portals.FixColors();
+  
+  Portals_constructShaders();
+  GlobalShaderCache().attachRenderable(render);
+}
+
+void PrtView_destroy()
+{
+  GlobalShaderCache().detachRenderable(render);
+  Portals_destroyShaders();
 }
 
 void SaveConfig () 
@@ -150,180 +150,17 @@ void SaveConfig ()
   INISetInt(CLIP_RANGE, (int)portals.clip_range, "Portal viewer cubic clip distance (in units of 64)");
 }
 
-// Radiant function table
-// use to access what Radiant provides
-_QERFuncTable_1 g_FuncTable;
-_QERQglTable g_QglTable;
 
 #define CONFIG_SECTION "Configuration"
 
-#if defined(__linux__) || defined(__APPLE__)
-
-static bool read_var (const char *filename, const char *section, const char *key, char *value)
-{
-  char line[1024], *ptr;
-  FILE *rc;
-  
-  rc = fopen (filename, "rt");
-  
-  if (rc == NULL)
-    return false;
-  
-  while (fgets (line, 1024, rc) != 0)
-  {
-    // First we find the section
-    if (line[0] != '[')
-      continue;
-    
-    ptr = strchr (line, ']');
-    *ptr = '\0';
-    
-    if (strcmp (&line[1], section) == 0)
-    {
-      while (fgets (line, 1024, rc) != 0)
-      {
-        ptr = strchr (line, '=');
-        
-        if (ptr == NULL)
-        {
-          // reached the end of the section
-          fclose (rc);
-          return false;
-        }
-        *ptr = '\0';
-        
-        if (strcmp (line, key) == 0)
-        {
-          strcpy (value, ptr+1);
-          fclose (rc);
-          
-          while (value[strlen (value)-1] == 10 || 
-            value[strlen (value)-1] == 13 ||
-            value[strlen (value)-1] == 32)
-            value[strlen (value)-1] = 0; 
-          return true;
-        }
-      }
-    }
-  }
-
-  fclose (rc);
-  return false;
-}
-
-static bool save_var (const char *filename, const char *section, const char *key, const char *value)
-{
-  char line[1024], *ptr;
-  FILE *old_rc = NULL, *rc;
-  bool found;
-
-  rc = fopen (filename, "rb");
-
-  if (rc != NULL)
-  {
-    guint32 len;
-    void *buf;
-
-    char *tmpname = g_strdup_printf ("%s.tmp", filename);
-    old_rc = fopen (tmpname, "w+b");
-    g_free (tmpname);
-
-    fseek (rc, 0, SEEK_END);
-    len = ftell (rc);
-    rewind (rc);
-    buf = g_malloc (len);
-    fread (buf, len, 1, rc);
-    fwrite (buf, len, 1, old_rc);
-    g_free (buf);
-    fclose (rc);
-    rewind (old_rc);
-  }
-
-  rc = fopen (filename, "wb");
-
-  if (rc == NULL)
-    return false;
-
-  // First we need to find the section
-  found = false;
-  if (old_rc != NULL)
-  while (fgets (line, 1024, old_rc) != NULL)
-  {
-    fputs (line, rc);
-
-    if (line[0] == '[')
-    {
-      ptr = strchr (line, ']');
-      *ptr = '\0';
-
-      if (strcmp (&line[1], section) == 0)
-      {
-        found = true;
-        break;
-      }
-    }
-  } 
-
-  if (!found)
-  {
-    fputs ("\n", rc);
-    fprintf (rc, "[%s]\n", section);
-  }
-
-  fprintf (rc, "%s=%s\n", key, value);
-
-  if (old_rc != NULL)
-  {
-    while (fgets (line, 1024, old_rc) != NULL)
-    {
-      ptr = strchr (line, '=');
-
-      if (ptr != NULL)
-      {
-        *ptr = '\0';
-
-        if (strcmp (line, key) == 0)
-          break;
- 
-        *ptr = '=';
-        fputs (line, rc);
-      }
-      else
-      {
-        fputs (line, rc);
-        break;
-      }
-    }
-
-    while (fgets (line, 1024, old_rc) != NULL)
-      fputs (line, rc);
-    
-    fclose (old_rc);
-
-    char *tmpname = g_strdup_printf ("%s.tmp", filename);
-    remove (tmpname);
-    g_free (tmpname);
-  }
-
-  fclose (rc);
-
-  return true;
-}
-
-#endif
-
 int INIGetInt(char *key, int def)
 {
-#if defined(__linux__) || defined(__APPLE__)
   char value[1024];
 
   if (read_var (INIfn, CONFIG_SECTION, key, value))
     return atoi (value);
   else
     return def;
-#else
-  return GetPrivateProfileInt(CONFIG_SECTION, key, def, INIfn);
-#endif
 }
 
 void INISetInt(char *key, int val, char *comment /* = NULL */)
@@ -334,11 +171,7 @@ void INISetInt(char *key, int val, char *comment /* = NULL */)
     sprintf(s, "%d        ; %s", val, comment);
   else
     sprintf(s, "%d", val);
-#if defined(__linux__) || defined(__APPLE__)
   save_var (INIfn, CONFIG_SECTION, key, s);
-#else
-  WritePrivateProfileString(CONFIG_SECTION, key, s, INIfn);
-#endif
 }
 
 
@@ -356,60 +189,33 @@ static const char *PLUGIN_COMMANDS =
 	Q3R_CMD_RELEASE ";"
 	Q3R_CMD_LOAD;
 
-extern "C" LPVOID WINAPI QERPlug_GetFuncTable()
-{
-  return &g_FuncTable;
-}
 
 
-//extern "C" LPCSTR WINAPI QERPlug_Init (HMODULE hApp, GtkWidget* hwndMain)
-extern "C" const char* QERPlug_Init (void *hApp, void* pMainWidget)
+const char* QERPlug_Init (void *hApp, void* pMainWidget)
 {  
-  // Setup defaults & load config
-  InitInstance();
-  
   return "Portal Viewer for Q3Radiant";
 }
 
-extern "C" const char* QERPlug_GetName()
+const char* QERPlug_GetName()
 {
-  return (char*)PLUGIN_NAME;
+  return PLUGIN_NAME;
 }
 
-extern "C" const char* QERPlug_GetCommandList()
+const char* QERPlug_GetCommandList()
 {
-  return (char*)PLUGIN_COMMANDS;
+  return PLUGIN_COMMANDS;
 }
 
-/*
-void Sys_Printf (char *text, ...)
+
+const char* QERPlug_GetCommandTitleList()
 {
-  va_list argptr;
-  char buf[32768];
-
-  va_start (argptr,text);
-  vsprintf (buf, text, argptr);
-  va_end (argptr);
-
-  g_FuncTable.m_pfnSysMsg (buf);
-}
-*/
-
-bool interfaces_started = false;
-
-static void CheckInterfaces()
-{
-  if (interfaces_started)
-    return;
-
-  render.Register();
-
-  interfaces_started = true;
+  return "";
 }
 
-extern "C" void QERPlug_Dispatch(const char* p, vec3_t vMin, vec3_t vMax, bool bSingleBrush)
+
+void QERPlug_Dispatch(const char* p, float* vMin, float* vMax, bool bSingleBrush)
 {
-  Sys_Printf (MSG_PREFIX "Command \"%s\"\n",p);
+  globalOutputStream() << MSG_PREFIX "Command \"" << p << "\"\n";
 
   if (!strcmp(p,Q3R_CMD_ABOUT))
   {
@@ -417,130 +223,107 @@ extern "C" void QERPlug_Dispatch(const char* p, vec3_t vMin, vec3_t vMax, bool b
   }
   else if (!strcmp(p,Q3R_CMD_LOAD))
   {
-    CheckInterfaces();
-
-    if (interfaces_started)
+    if (DoLoadPortalFileDialog () == IDOK)
     {
-      if (DoLoadPortalFileDialog () == IDOK)
-      {
-        portals.Load();
-        g_FuncTable.m_pfnSysUpdateWindows(UPDATE_ALL);
-      }
-      else
-      {
-        Sys_Printf(MSG_PREFIX "Portal file load aborted.\n", portals.fn);
-      }
+      portals.Load();
+      SceneChangeNotify();
+    }
+    else
+    {
+      globalOutputStream() << MSG_PREFIX "Portal file load aborted.\n", portals.fn;
     }
   }
   else if (!strcmp(p,Q3R_CMD_RELEASE))
   {
     portals.Purge();
 
-    if (interfaces_started)
-      g_FuncTable.m_pfnSysUpdateWindows(UPDATE_ALL);
+    SceneChangeNotify();
 
-    Sys_Printf(MSG_PREFIX "Portals unloaded.\n");
+    globalOutputStream() << MSG_PREFIX "Portals unloaded.\n";
   }
   else if (!strcmp(p,Q3R_CMD_SHOW_2D))
   {
     portals.show_2d = !portals.show_2d;
 
-    if(interfaces_started)
-      g_FuncTable.m_pfnSysUpdateWindows(UPDATE_ALL);
+    SceneChangeNotify();
     SaveConfig();
 
     if(portals.show_2d)
-      Sys_Printf(MSG_PREFIX "Portals will be rendered in 2D view.\n");
+      globalOutputStream() << MSG_PREFIX "Portals will be rendered in 2D view.\n";
     else
-      Sys_Printf(MSG_PREFIX "Portals will NOT be rendered in 2D view.\n");
+      globalOutputStream() << MSG_PREFIX "Portals will NOT be rendered in 2D view.\n";
   }
   else if (!strcmp(p,Q3R_CMD_SHOW_3D))
   {
     portals.show_3d = !portals.show_3d;
     SaveConfig();
 
-    if (interfaces_started)
-      g_FuncTable.m_pfnSysUpdateWindows(UPDATE_ALL);
+    SceneChangeNotify();
 
     if (portals.show_3d)
-      Sys_Printf(MSG_PREFIX "Portals will be rendered in 3D view.\n");
+      globalOutputStream() << MSG_PREFIX "Portals will be rendered in 3D view.\n";
     else
-      Sys_Printf(MSG_PREFIX "Portals will NOT be rendered in 3D view.\n");
+      globalOutputStream() << MSG_PREFIX "Portals will NOT be rendered in 3D view.\n";
   }
   else if (!strcmp(p,Q3R_CMD_OPTIONS))
   {
     DoConfigDialog ();
     SaveConfig();
 
-    if (interfaces_started)
-      g_FuncTable.m_pfnSysUpdateWindows(UPDATE_ALL);
+    SceneChangeNotify();
   }
 }
 
 
+#include "modulesystem/singletonmodule.h"
 
-// =============================================================================
-// SYNAPSE
-
-#include "synapse.h"
-
-class CSynapseClientPrtView : public CSynapseClient
+class PrtViewPluginDependencies :
+  public GlobalSceneGraphModuleRef,
+  public GlobalRadiantModuleRef,
+  public GlobalShaderCacheModuleRef,
+  public GlobalOpenGLModuleRef, 
+  public GlobalOpenGLStateLibraryModuleRef
 {
-public:
-  // CSynapseClient API
-  bool RequestAPI(APIDescriptor_t *pAPI);
-  const char* GetInfo();
-  
-  CSynapseClientPrtView() { }
-  virtual ~CSynapseClientPrtView() { }
 };
 
-
-CSynapseServer* g_pSynapseServer = NULL;
-CSynapseClientPrtView g_SynapseClient;
-
-extern "C" CSynapseClient* SYNAPSE_DLL_EXPORT Synapse_EnumerateInterfaces (const char *version, CSynapseServer *pServer)
+class PrtViewPluginModule
 {
-  if (strcmp(version, SYNAPSE_VERSION))
+  _QERPluginTable m_plugin;
+public:
+  typedef _QERPluginTable Type;
+  STRING_CONSTANT(Name, "prtview");
+
+  PrtViewPluginModule()
   {
-    Syn_Printf("ERROR: synapse API version mismatch: should be '" SYNAPSE_VERSION "', got '%s'\n", version);
-    return NULL;
+    m_plugin.m_pfnQERPlug_Init = QERPlug_Init;
+    m_plugin.m_pfnQERPlug_GetName = QERPlug_GetName;
+    m_plugin.m_pfnQERPlug_GetCommandList = QERPlug_GetCommandList;
+    m_plugin.m_pfnQERPlug_GetCommandTitleList = QERPlug_GetCommandTitleList;
+    m_plugin.m_pfnQERPlug_Dispatch = QERPlug_Dispatch;
+
+    PrtView_construct();
   }
-  g_pSynapseServer = pServer;
-  g_pSynapseServer->IncRef();
-  Set_Syn_Printf(g_pSynapseServer->Get_Syn_Printf());
-    
-  g_SynapseClient.AddAPI(PLUGIN_MAJOR, PRTVIEW_MINOR, sizeof(_QERPluginTable));
-
-  g_SynapseClient.AddAPI(RADIANT_MAJOR, NULL, sizeof(g_FuncTable), SYN_REQUIRE, &g_FuncTable);
-  g_SynapseClient.AddAPI(QGL_MAJOR, NULL, sizeof(g_QglTable), SYN_REQUIRE, &g_QglTable);
-
-  return &g_SynapseClient;
-}
-
-bool CSynapseClientPrtView::RequestAPI(APIDescriptor_t *pAPI)
-{
-  if( !strcmp(pAPI->major_name, PLUGIN_MAJOR) )
+  ~PrtViewPluginModule()
   {
-    if( !strcmp(pAPI->minor_name, PRTVIEW_MINOR) )
-    {
-      _QERPluginTable* pTable= static_cast<_QERPluginTable*>(pAPI->mpTable);
-
-      pTable->m_pfnQERPlug_Init = QERPlug_Init;
-      pTable->m_pfnQERPlug_GetName = QERPlug_GetName;
-      pTable->m_pfnQERPlug_GetCommandList = QERPlug_GetCommandList;
-      pTable->m_pfnQERPlug_Dispatch = QERPlug_Dispatch;
-      return true;
-    }
+    PrtView_destroy();
   }
+  _QERPluginTable* getTable()
+  {
+    return &m_plugin;
+  }
+};
 
-  Syn_Printf("ERROR: RequestAPI( '%s' ) not found in '%s'\n", pAPI->major_name, GetInfo());
-  return false;
-}
+typedef SingletonModule<PrtViewPluginModule, PrtViewPluginDependencies> SingletonPrtViewPluginModule;
 
-#include "version.h"
+SingletonPrtViewPluginModule g_PrtViewPluginModule;
 
-const char* CSynapseClientPrtView::GetInfo()
+
+extern "C" void RADIANT_DLLEXPORT Radiant_RegisterModules(ModuleServer& server)
 {
-  return "PrtView module built " __DATE__ " " RADIANT_VERSION;
+  GlobalErrorStream::instance().setOutputStream(server.getErrorStream());
+  GlobalOutputStream::instance().setOutputStream(server.getOutputStream());
+  GlobalDebugMessageHandler::instance().setHandler(server.getDebugMessageHandler());
+  GlobalModuleServer::instance().set(server);
+
+  g_PrtViewPluginModule.selfRegister();
 }

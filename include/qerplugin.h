@@ -106,6 +106,8 @@ struct _QERFuncTable_1
   const char* (*getGameName)();
   const char* (*getGameMode)();
 
+  const char* (*getMapName)();
+
   const char* (*getGameDescriptionKeyValue)(const char* key);
   const char* (*getRequiredGameDescriptionKeyValue)(const char* key);
 
