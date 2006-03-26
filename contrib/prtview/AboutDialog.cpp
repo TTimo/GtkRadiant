@@ -21,7 +21,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <gtk/gtk.h>
 #include "version.h"
 
-#include "PrtView.h"
+#include "prtview.h"
 #include "ConfigDialog.h"
 
 static void dialog_button_callback (GtkWidget *widget, gpointer data)

@@ -23,8 +23,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "iscenegraph.h"
 
-#include "PrtView.h"
-#include "Portals.h"
+#include "prtview.h"
+#include "portals.h"
 
 static void dialog_button_callback (GtkWidget *widget, gpointer data)
 {

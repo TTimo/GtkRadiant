@@ -18,7 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
 
-#include "PrtView.h"
+#include "prtview.h"
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -29,7 +29,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "iglrender.h"
 #include "iplugin.h"
 
-#include "Portals.h"
+#include "portals.h"
 #include "AboutDialog.h"
 #include "ConfigDialog.h"
 #include "LoadPortalFileDialog.h"
