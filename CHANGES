@@ -1,6 +1,10 @@
 This is the changelog for developers, != changelog for the end user 
 that we distribute with the binaries. (see changelog)
 
+31/03/2006
+SPoG
+- Changed doom3 light creation to use size of selected brushes.
+
 20/03/2006
 SPoG
 - Fixed crash when resetting preferences after startup failure.
