@@ -19,6 +19,92 @@ along with GtkRadiant; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
+///\file
+///\brief EntityClass plugin that supports the .ent xml entity-definition format.
+/// 
+/// the .ent xml format expresses entity-definitions.
+/// 
+/// <!-- defines an entity which cannot have brushes grouped with it -->
+/// <point name="[name of entity type]" colour="[RGB floating-point colour shown in editor]"
+///   box="[minXYZ maxXYZ floating point bounding-box]" model="[model path]">
+///   <!-- attribute definitions go here -->
+/// </point>
+/// 
+/// <!-- defines an entity which can have brushes grouped with it -->
+/// <group name="[name of entity type]" colour="[RGB floating-point colour shown in editor]">
+///   <!-- attribute definitions go here -->
+/// </group>
+/// 
+/// 
+/// the attributes of an entity type are defined like this:
+/// 
+///   <[name of attribute type]
+///     key="[entity key name]"
+///     name="[name shown in gui]"
+///     value="[default entity key value]"
+///   >[comment text shown in gui]</[name of attribute type]>
+/// 
+/// each attribute type has a specialised attribute-editor GUI
+/// 
+/// currently-supported attribute types:
+/// 
+/// string          a string
+/// array           an array of strings - value is a semi-colon-delimited string
+/// integer         an integer value
+/// boolean         an integer - shows as a checkbox - true = non-zero
+/// integer2        two integer values
+/// integer3        three integer values
+/// real3           three floating-point values
+/// angle           specialisation of real - Yaw angle
+/// direction       specialisation of real - Yaw angle, -1 = down, -2 = up
+/// angles          specialisation of real3 - Pitch Yaw Roll
+/// color           specialisation of real3 - RGB floating-point colour
+/// target          a string that uniquely identifies an entity or group of entities
+/// targetname      a string that uniquely identifies an entity or group of entities
+/// sound           the VFS path to a sound file
+/// texture         the VFS path to a texture file or a shader name
+/// model           the VFS path to a model file
+/// skin            the VFS path to a skin file
+/// 
+/// 
+/// flag attributes define a flag in the spawnflags key:          
+///
+///   <flag
+///     key="[flag name]"
+///     name="[name shown in gui]"
+///     bit="[bit-index in spawnflags]"
+///   >[comment text shown in gui]<flag>
+///
+/// the default value for a flag bit is always 0.
+///
+///
+/// List attributes have a set of valid values.
+/// Create new list attribute types like this:
+/// 
+/// <list name="[name of list attribute type]">
+///   <item name="[first name shown in menu]" value="[entity key value]"/>
+///   <item name="[second name shown in menu]" value="[entity key value]"/>
+/// </list>
+/// 
+/// these can then be used as attribute types.
+/// 
+/// 
+/// An attribute definition should specify a default value that corresponds
+/// with the default value given by the game. If the default value is not 
+/// specified in the attribute definition, it is assumed to be an empty string.
+///
+/// If the currently-selected entity in Radiant does not specify a value for
+/// the key of an attribute, the default value from the attribute-definition
+/// will be displayed in the attribute-editor and used when visualising the
+/// entity in the preview windows. E.g. the Doom3 "light" entity has a
+/// "light_radius" key. Light entities without a "light_radius" key are
+/// displayed in Doom3 with a radius of 300. The default value for the
+/// "light_radius" attribute definition should be specified as "300 300 300".
+///
+
+
+
+
 #include "eclass_xml.h"
 
 #include "ieclass.h"
