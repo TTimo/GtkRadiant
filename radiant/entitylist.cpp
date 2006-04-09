@@ -31,7 +31,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "string/string.h"
 #include "scenelib.h"
 #include "nameable.h"
-#include "generic/callback.h"
+#include "signal/isignal.h"
 #include "generic/object.h"
 
 #include "gtkutil/widget.h"
