@@ -23,6 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define INCLUDED_MODULESYSTEM_H
 
 #include "generic/static.h"
+#include "debugging/debugging.h"
 
 #if defined(WIN32)
 #define RADIANT_DLLEXPORT __stdcall
@@ -92,6 +93,16 @@ inline ModuleServer& globalModuleServer()
 {
   return GlobalModuleServer::instance().get();
 }
+
+
+inline void initialiseModule(ModuleServer& server)
+{
+  GlobalErrorStream::instance().setOutputStream(server.getErrorStream());
+  GlobalOutputStream::instance().setOutputStream(server.getOutputStream());
+  GlobalDebugMessageHandler::instance().setHandler(server.getDebugMessageHandler());
+  GlobalModuleServer::instance().set(server);
+}
+
 
 
 template<typename Type>

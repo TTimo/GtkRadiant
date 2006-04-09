@@ -169,10 +169,7 @@ PicoModelModules g_PicoModelModules;
 
 extern "C" void RADIANT_DLLEXPORT Radiant_RegisterModules(ModuleServer& server)
 {
-  GlobalErrorStream::instance().setOutputStream(server.getErrorStream());
-  GlobalOutputStream::instance().setOutputStream(server.getOutputStream());
-  GlobalDebugMessageHandler::instance().setHandler(server.getDebugMessageHandler());
-  GlobalModuleServer::instance().set(server);
+  initialiseModule(server);
 
   pico_initialise();
 

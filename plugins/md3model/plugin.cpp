@@ -236,10 +236,7 @@ ModelMD5Module g_ModelMD5Module;
 
 extern "C" void RADIANT_DLLEXPORT Radiant_RegisterModules(ModuleServer& server)
 {
-  GlobalErrorStream::instance().setOutputStream(server.getErrorStream());
-  GlobalOutputStream::instance().setOutputStream(server.getOutputStream());
-  GlobalDebugMessageHandler::instance().setHandler(server.getDebugMessageHandler());
-  GlobalModuleServer::instance().set(server);
+  initialiseModule(server);
 
   g_ModelMD3Module.selfRegister();
   g_ModelMD2Module.selfRegister();

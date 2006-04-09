@@ -232,6 +232,41 @@ public:
   }
 };
 
+class LineLimitedTextOutputStream : public TextOutputStream
+{
+  TextOutputStream& outputStream;
+  std::size_t count;
+public:
+  LineLimitedTextOutputStream(TextOutputStream& outputStream, std::size_t count)
+    : outputStream(outputStream), count(count)
+  {
+  }
+  std::size_t write(const char* buffer, std::size_t length)
+  {
+    if(count != 0)
+    {
+      const char* p = buffer;
+      const char* end = buffer+length;
+      for(;;)
+      {
+        p = std::find(p, end, '\n');
+        if(p == end)
+        {
+          break;
+        }
+        ++p;
+        if(--count == 0)
+        {
+          length = p - buffer;
+          break;
+        }
+      }
+      outputStream.write(buffer, length);
+    }
+    return length;
+  }
+};
+
 class PopupDebugMessageHandler : public DebugMessageHandler
 {
   StringOutputStream m_buffer;
@@ -248,7 +283,8 @@ public:
   bool handleMessage()
   {
     getOutputStream() << "----------------\n";
-    write_stack_trace(getOutputStream());
+    LineLimitedTextOutputStream outputStream(getOutputStream(), 24);
+    write_stack_trace(outputStream);
     getOutputStream() << "----------------\n";
     if(!m_lock.locked())
     {

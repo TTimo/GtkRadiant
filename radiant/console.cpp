@@ -155,7 +155,7 @@ public:
 
 std::size_t Sys_Print(int level, const char* buf, std::size_t length)
 {
-  bool contains_newline = strchr(buf, '\n') != 0;
+  bool contains_newline = std::find(buf, buf+length, '\n') != buf+length;
 
   if(level == SYS_ERR)
   {

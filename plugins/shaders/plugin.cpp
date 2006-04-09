@@ -149,10 +149,7 @@ ShadersQuake4Module g_ShadersQuake4Module;
 
 extern "C" void RADIANT_DLLEXPORT Radiant_RegisterModules(ModuleServer& server)
 {
-  GlobalErrorStream::instance().setOutputStream(server.getErrorStream());
-  GlobalOutputStream::instance().setOutputStream(server.getOutputStream());
-  GlobalDebugMessageHandler::instance().setHandler(server.getDebugMessageHandler());
-  GlobalModuleServer::instance().set(server);
+  initialiseModule(server);
 
   g_ShadersQ3Module.selfRegister();
   g_ShadersDoom3Module.selfRegister();

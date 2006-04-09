@@ -106,10 +106,7 @@ ImageM32Module g_ImageM32Module;
 
 extern "C" void RADIANT_DLLEXPORT Radiant_RegisterModules(ModuleServer& server)
 {
-  GlobalErrorStream::instance().setOutputStream(server.getErrorStream());
-  GlobalOutputStream::instance().setOutputStream(server.getOutputStream());
-  GlobalDebugMessageHandler::instance().setHandler(server.getDebugMessageHandler());
-  GlobalModuleServer::instance().set(server);
+  initialiseModule(server);
 
   g_ImageWalModule.selfRegister();
   g_ImageM8Module.selfRegister();
