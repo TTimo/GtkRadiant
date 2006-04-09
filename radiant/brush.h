@@ -60,6 +60,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "texturelib.h"
 #include "container/container.h"
 #include "generic/bitfield.h"
+#include "signal/signalfwd.h"
 
 #include "winding.h"
 #include "brush_primit.h"
@@ -560,13 +561,6 @@ public:
 };
 
 
-inline void FaceShader_getFlags(const FaceShader& faceShader, ContentsFlagsValue& flags)
-{
-  flags = faceShader.getFlags();
-}
-
-
-
 
 
 class FaceTexdef : public FaceShaderObserver
@@ -702,11 +696,6 @@ public:
     m_projection.m_basis_t = Vector3(-basis.xy(), -basis.yy(), -basis.zy());
   }
 };
-
-inline void FaceTexdef_getTexdef(const FaceTexdef& faceTexdef, TextureProjection& projection)
-{
-  projection = faceTexdef.normalised();
-}
 
 inline void planepts_print(const PlanePoints& planePoints, TextOutputStream& ostream)
 {
@@ -938,6 +927,10 @@ public:
   }
 };
 
+inline void Winding_testSelect(Winding& winding, SelectionTest& test, SelectionIntersection& best)
+{
+  test.TestPolygon(VertexPointer(reinterpret_cast<VertexPointer::pointer>(&winding.points.data()->vertex), sizeof(WindingVertex)), winding.numpoints, best);
+}
 
 const double GRID_MIN = 0.125;
 
@@ -963,7 +956,7 @@ public:
 
 bool face_filtered(Face& face);
 
-void Brush_addTextureChangedCallback(const Callback& callback);
+void Brush_addTextureChangedCallback(const SignalHandler& callback);
 void Brush_textureChanged();
 
 
@@ -1269,10 +1262,9 @@ public:
     }
   }
 
-
   void testSelect(SelectionTest& test, SelectionIntersection& best)
   {
-    test.TestPolygon(VertexPointer(reinterpret_cast<VertexPointer::pointer>(&m_winding.points.data()->vertex), sizeof(WindingVertex)), m_winding.numpoints, best);
+    Winding_testSelect(m_winding, test, best);
   }
 
   void testSelect_centroid(SelectionTest& test, SelectionIntersection& best)
@@ -1311,6 +1303,10 @@ public:
     Brush_textureChanged();
   }
 
+  void GetTexdef(TextureProjection& projection) const
+  {
+    projection = m_texdef.normalised();
+  }
   void SetTexdef(const TextureProjection& projection)
   {
     undoSave();
@@ -1318,6 +1314,10 @@ public:
     texdefChanged();
   }
 
+  void GetFlags(ContentsFlagsValue& flags) const
+  {
+    flags = m_shader.getFlags();
+  }
   void SetFlags(const ContentsFlagsValue& flags)
   {
     undoSave();
@@ -2145,12 +2145,12 @@ public:
   {
     return m_faces.back();
   }
-  void reserve(std::size_t size)
+  void reserve(std::size_t count)
   {
-    m_faces.reserve(size);
+    m_faces.reserve(count);
     for(Observers::iterator i = m_observers.begin(); i != m_observers.end(); ++i)
     {
-      (*i)->reserve(size);
+      (*i)->reserve(count);
     }
   }
   void push_back(Faces::value_type face)
@@ -2203,6 +2203,7 @@ public:
 
   void clear()
   {
+    undoSave();
     if(m_instanceCounter.m_count != 0)
     {
       forEachFace_instanceDetach(m_map);
@@ -3557,12 +3558,13 @@ public:
   }
   typedef MemberCaller1<BrushInstance, const Selectable&, &BrushInstance::selectedChangedComponent> SelectedChangedComponentCaller;
 
-  void forEachFaceInstance(const BrushInstanceVisitor& visitor)
+  const BrushInstanceVisitor& forEachFaceInstance(const BrushInstanceVisitor& visitor)
   {
     for(FaceInstances::iterator i = m_faceInstances.begin(); i != m_faceInstances.end(); ++i)
     {
       visitor.visit(*i);
     }
+    return visitor;
   }
 
   static void constructStatic()
@@ -3985,9 +3987,10 @@ public:
 };
 
 template<typename Functor>
-inline void Scene_forEachSelectedBrush(const Functor& functor)
+inline const Functor& Scene_forEachSelectedBrush(const Functor& functor)
 {
   GlobalSelectionSystem().foreachSelected(BrushSelectedVisitor<Functor>(functor));
+  return functor;
 }
 
 template<typename Functor>
@@ -4010,9 +4013,192 @@ public:
 };
 
 template<typename Functor>
-inline void Scene_forEachVisibleSelectedBrush(const Functor& functor)
+inline const Functor& Scene_forEachVisibleSelectedBrush(const Functor& functor)
 {
   GlobalSelectionSystem().foreachSelected(BrushVisibleSelectedVisitor<Functor>(functor));
+  return functor;
 }
+
+class BrushForEachFace
+{
+  const BrushInstanceVisitor& m_visitor;
+public:
+  BrushForEachFace(const BrushInstanceVisitor& visitor) : m_visitor(visitor)
+  {
+  }
+  void operator()(BrushInstance& brush) const
+  {
+    brush.forEachFaceInstance(m_visitor);
+  }
+};
+
+template<class Functor>
+class FaceInstanceVisitFace : public BrushInstanceVisitor
+{
+  const Functor& functor;
+public:
+  FaceInstanceVisitFace(const Functor& functor)
+    : functor(functor)
+  {
+  }
+  void visit(FaceInstance& face) const
+  {
+    functor(face.getFace());
+  }
+};
+
+template<typename Functor>
+inline const Functor& Brush_forEachFace(BrushInstance& brush, const Functor& functor)
+{
+  brush.forEachFaceInstance(FaceInstanceVisitFace<Functor>(functor));
+  return functor;
+}
+
+template<class Functor>
+class FaceVisitAll : public BrushVisitor
+{
+  const Functor& functor;
+public:
+  FaceVisitAll(const Functor& functor)
+    : functor(functor)
+  {
+  }
+  void visit(Face& face) const
+  {
+    functor(face);
+  }
+};
+
+template<typename Functor>
+inline const Functor& Brush_forEachFace(const Brush& brush, const Functor& functor)
+{
+  brush.forEachFace(FaceVisitAll<Functor>(functor));
+  return functor;
+}
+
+template<typename Functor>
+inline const Functor& Brush_forEachFace(Brush& brush, const Functor& functor)
+{
+  brush.forEachFace(FaceVisitAll<Functor>(functor));
+  return functor;
+}
+
+template<class Functor>
+class FaceInstanceVisitAll : public BrushInstanceVisitor
+{
+  const Functor& functor;
+public:
+  FaceInstanceVisitAll(const Functor& functor)
+    : functor(functor)
+  {
+  }
+  void visit(FaceInstance& face) const
+  {
+    functor(face);
+  }
+};
+
+template<typename Functor>
+inline const Functor& Brush_ForEachFaceInstance(BrushInstance& brush, const Functor& functor)
+{
+  brush.forEachFaceInstance(FaceInstanceVisitAll<Functor>(functor)));
+  return functor;
+}
+
+template<typename Functor>
+inline const Functor& Scene_forEachBrush(scene::Graph& graph, const Functor& functor)
+{
+  graph.traverse(InstanceWalker< InstanceApply<BrushInstance, Functor> >(functor));
+  return functor;
+}
+
+template<typename Type, typename Functor>
+class InstanceIfVisible : public Functor
+{
+public:
+  InstanceIfVisible(const Functor& functor) : Functor(functor)
+  {
+  }
+  void operator()(scene::Instance& instance)
+  {
+    if(instance.path().top().get().visible())
+    {
+      Functor::operator()(instance);
+    }
+  }
+};
+
+template<typename Functor>
+class BrushVisibleWalker : public scene::Graph::Walker
+{
+  const Functor& m_functor;
+public:
+  BrushVisibleWalker(const Functor& functor) : m_functor(functor)
+  {
+  }
+  bool pre(const scene::Path& path, scene::Instance& instance) const
+  {
+    if(path.top().get().visible())
+    {
+      BrushInstance* brush = Instance_getIBrush(instance);
+      if(brush != 0)
+      {
+        m_functor(*brush);
+      }
+    }
+    return true;
+  }
+};
+
+template<typename Functor>
+inline const Functor& Scene_forEachVisibleBrush(scene::Graph& graph, const Functor& functor)
+{
+  graph.traverse(BrushVisibleWalker<Functor>(functor));
+  return functor;
+}
+
+template<typename Functor>
+inline const Functor& Scene_ForEachBrush_ForEachFace(scene::Graph& graph, const Functor& functor)
+{
+  Scene_forEachBrush(graph, BrushForEachFace(FaceInstanceVisitFace<Functor>(functor)));
+  return functor;
+}
+
+template<typename Functor>
+inline const Functor& Scene_ForEachSelectedBrush_ForEachFace(scene::Graph& graph, const Functor& functor)
+{
+  Scene_forEachSelectedBrush(BrushForEachFace(FaceInstanceVisitFace<Functor>(functor)));
+  return functor;
+}
+
+template<typename Functor>
+inline const Functor& Scene_ForEachSelectedBrush_ForEachFaceInstance(scene::Graph& graph, const Functor& functor)
+{
+  Scene_forEachSelectedBrush(BrushForEachFace(FaceInstanceVisitAll<Functor>(functor)));
+  return functor;
+}
+
+template<typename Functor>
+class FaceVisitorWrapper
+{
+  const Functor& functor;
+public:
+  FaceVisitorWrapper(const Functor& functor) : functor(functor)
+  {
+  }
+
+  void operator()(FaceInstance& faceInstance) const
+  {
+    functor(faceInstance.getFace());
+  }
+};
+
+template<typename Functor>
+inline const Functor& Scene_ForEachSelectedBrushFace(scene::Graph& graph, const Functor& functor)
+{
+  g_SelectedFaceInstances.foreach(FaceVisitorWrapper<Functor>(functor));
+  return functor;
+}
+
 
 #endif

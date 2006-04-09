@@ -28,7 +28,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <vector>
 
 #include "string/string.h"
-#include "generic/callback.h"
+#include "signal/signal.h"
 #include "scenelib.h"
 #include "instancelib.h"
 #include "treemodel.h"
@@ -76,10 +76,9 @@ class CompiledGraph : public scene::Graph, public scene::Instantiable::Observer
 
   InstanceMap m_instances;
   scene::Instantiable::Observer* m_observer;
-  typedef std::set<Callback> BoundsChangedCallbacks;
-  BoundsChangedCallbacks m_boundsChanged;
+  Signal0 m_boundsChanged;
   scene::Path m_rootpath;
-  std::vector<Callback> m_sceneChangedCallbacks;
+  Signal0 m_sceneChangedCallbacks;
 
   TypeIdMap<NODETYPEID_MAX> m_nodeTypeIds;
   TypeIdMap<INSTANCETYPEID_MAX> m_instanceTypeIds;
@@ -91,13 +90,13 @@ public:
   {
   }
 
-  void addSceneChangedCallback(const Callback& callback)
+  void addSceneChangedCallback(const SignalHandler& handler)
   {
-    m_sceneChangedCallbacks.push_back(callback);
+    m_sceneChangedCallbacks.connectLast(handler);
   }
   void sceneChanged()
   {
-    std::for_each(m_sceneChangedCallbacks.begin(), m_sceneChangedCallbacks.end(), CallbackInvoke());
+    m_sceneChangedCallbacks();
   }
 
   scene::Node& root()
@@ -133,7 +132,7 @@ public:
   }
   void boundsChanged()
   {
-    std::for_each(m_boundsChanged.begin(), m_boundsChanged.end(), CallbackInvoke());
+    m_boundsChanged();
   }
 
   void traverse(const Walker& walker)
@@ -172,15 +171,13 @@ public:
     m_instances.erase(PathConstReference(instance->path()));
   }
 
-  void addBoundsChangedCallback(const Callback& boundsChanged)
+  SignalHandlerId addBoundsChangedCallback(const SignalHandler& boundsChanged)
   {
-    ASSERT_MESSAGE(m_boundsChanged.find(boundsChanged) == m_boundsChanged.end(), "bounds-changed callback already registered");
-    m_boundsChanged.insert(boundsChanged);
+    return m_boundsChanged.connectLast(boundsChanged);
   }
-  void removeBoundsChangedCallback(const Callback& boundsChanged)
+  void removeBoundsChangedCallback(SignalHandlerId id)
   {
-    ASSERT_MESSAGE(m_boundsChanged.find(boundsChanged) != m_boundsChanged.end(), "bounds-changed callback not registered");
-    m_boundsChanged.erase(boundsChanged);
+    m_boundsChanged.disconnect(id);
   }
 
   TypeId getNodeTypeId(const char* name)

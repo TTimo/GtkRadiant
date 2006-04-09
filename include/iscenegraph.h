@@ -24,13 +24,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include <cstddef>
 #include "generic/constant.h"
+#include "signal/signalfwd.h"
 
 template<typename value_type>
 class Stack;
 template<typename Contained>
 class Reference;
-
-class Callback;
 
 namespace scene
 {
@@ -105,15 +104,15 @@ namespace scene
     virtual void sceneChanged() = 0;
     /// \brief Add a \p callback to be invoked when the scene changes.
     /// \todo Move to a separate class.
-    virtual void addSceneChangedCallback(const Callback& callback) = 0;
+    virtual void addSceneChangedCallback(const SignalHandler& handler) = 0;
 
     /// \brief Invokes all bounds-changed callbacks. Called when the bounds of any instance in the scene change.
     /// \todo Move to a separate class.
     virtual void boundsChanged() = 0;
     /// \brief Add a \p callback to be invoked when the bounds of any instance in the scene change.
-    virtual void addBoundsChangedCallback(const Callback& callback) = 0;
+    virtual SignalHandlerId addBoundsChangedCallback(const SignalHandler& boundsChanged) = 0;
     /// \brief Remove a \p callback to be invoked when the bounds of any instance in the scene change.
-    virtual void removeBoundsChangedCallback(const Callback& callback) = 0;
+    virtual void removeBoundsChangedCallback(SignalHandlerId id) = 0;
 
     virtual TypeId getNodeTypeId(const char* name) = 0;
     virtual TypeId getInstanceTypeId(const char* name) = 0;
@@ -208,9 +207,9 @@ inline scene::Graph& GlobalSceneGraph()
   return GlobalSceneGraphModule::getTable();
 }
 
-inline void AddSceneChangeCallback(const Callback& callback)
+inline void AddSceneChangeCallback(const SignalHandler& handler)
 {
-  GlobalSceneGraph().addSceneChangedCallback(callback);
+  GlobalSceneGraph().addSceneChangedCallback(handler);
 }
 inline void SceneChangeNotify()
 {

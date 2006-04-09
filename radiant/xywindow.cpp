@@ -40,6 +40,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "generic/callback.h"
 #include "string/string.h"
 #include "stream/stringstream.h"
+
 #include "scenelib.h"
 #include "eclasslib.h"
 #include "renderer.h"
@@ -422,6 +423,29 @@ inline ModifierFlags modifiers_for_flags(unsigned int flags)
   return modifiers;
 }
 
+inline unsigned int buttons_for_button_and_modifiers(ButtonIdentifier button, ModifierFlags flags)
+{
+  unsigned int buttons = 0;
+
+  switch (button.get())
+  {
+  case ButtonEnumeration::LEFT: buttons |= RAD_LBUTTON; break;
+  case ButtonEnumeration::MIDDLE: buttons |= RAD_MBUTTON; break;
+  case ButtonEnumeration::RIGHT: buttons |= RAD_RBUTTON; break;
+  }
+
+  if(bitfield_enabled(flags, c_modifierControl))
+    buttons |= RAD_CONTROL;
+
+  if(bitfield_enabled(flags, c_modifierShift))
+    buttons |= RAD_SHIFT;
+
+  if(bitfield_enabled(flags, c_modifierAlt))
+    buttons |= RAD_ALT;
+
+  return buttons;
+}
+
 inline unsigned int buttons_for_event_button(GdkEventButton* event)
 {
   unsigned int flags = 0;
@@ -723,7 +747,11 @@ gboolean xywnd_button_press(GtkWidget* widget, GdkEventButton* event, XYWnd* xyw
 {
   if(event->type == GDK_BUTTON_PRESS)
   {
-    xywnd->XY_MouseDown(static_cast<int>(event->x), static_cast<int>(event->y), buttons_for_event_button(event));
+    g_pParentWnd->SetActiveXY(xywnd);
+
+    xywnd->ButtonState_onMouseDown(buttons_for_event_button(event));
+
+    xywnd->onMouseDown(WindowVector(event->x, event->y), button_for_button(event->button), modifiers_for_state(event->state));
   }
   return FALSE;
 }
@@ -733,6 +761,8 @@ gboolean xywnd_button_release(GtkWidget* widget, GdkEventButton* event, XYWnd* x
   if(event->type == GDK_BUTTON_RELEASE)
   {
     xywnd->XY_MouseUp(static_cast<int>(event->x), static_cast<int>(event->y), buttons_for_event_button(event));
+
+    xywnd->ButtonState_onMouseUp(buttons_for_event_button(event));
   }
   return FALSE;
 }
@@ -852,6 +882,8 @@ XYWnd::XYWnd() :
   AddCameraMovedCallback(ReferenceCaller<XYWnd, &XYWnd_CameraMoved>(*this));
 
   PressedButtons_connect(g_pressedButtons, m_gl_widget);
+
+  onMouseDown.connectLast(makeSignalHandler3(MouseDownCaller(), *this));
 }
 
 XYWnd::~XYWnd()
@@ -1308,12 +1340,12 @@ inline WindowVector WindowVector_forInteger(int x, int y)
   return WindowVector(static_cast<float>(x), static_cast<float>(y));
 }
 
+void XYWnd::mouseDown(const WindowVector& position, ButtonIdentifier button, ModifierFlags modifiers)
+{
+  XY_MouseDown(static_cast<int>(position.x()), static_cast<int>(position.y()), buttons_for_button_and_modifiers(button, modifiers));
+}
 void XYWnd::XY_MouseDown (int x, int y, unsigned int buttons)
 {
-  g_pParentWnd->SetActiveXY(this);
-
-  ButtonState_onMouseDown(buttons);
-
   if(buttons == Move_buttons())
   {
     Move_Begin();
@@ -1371,8 +1403,6 @@ void XYWnd::XY_MouseUp(int x, int y, unsigned int buttons)
   {
     m_window_observer->onMouseUp(WindowVector_forInteger(x, y), button_for_flags(buttons), modifiers_for_flags(buttons));
   }
-
-  ButtonState_onMouseUp(buttons);
 }
 
 void XYWnd::XY_MouseMoved (int x, int y, unsigned int buttons)

@@ -18,11 +18,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
 
-#include "StdAfx.h"
-
 #include "shapes.h"
 
-#include "gtkr_list.h"
+#include <list>
 
 #include "DPoint.h"
 #include "DPlane.h"
@@ -80,18 +78,16 @@ float Deg2Rad(float angle)
 	return (float)(angle*Q_PI/180);
 }
 
-void AddFaceWithTexture(scene::Node* brush, vec3_t va, vec3_t vb, vec3_t vc, const char* texture, bool detail)
+void AddFaceWithTexture(scene::Node& brush, vec3_t va, vec3_t vb, vec3_t vc, const char* texture, bool detail)
 {
 	_QERFaceData faceData;
 	FillDefaultTexture(&faceData, va, vb, vc, texture);
 	if(detail)
 		faceData.m_texdef.contents |= FACE_DETAIL;
-#if 0
-	brush->m_brush->addPlane(faceData.m_p0, faceData.m_p1, faceData.m_p2, faceData.m_texdef);
-#endif
+  GlobalBrushCreator().addBrushFace(brush, faceData);
 }
 
-void AddFaceWithTextureScaled(scene::Node* brush, vec3_t va, vec3_t vb, vec3_t vc, 
+void AddFaceWithTextureScaled(scene::Node& brush, vec3_t va, vec3_t vb, vec3_t vc, 
 							  const char* texture, bool bVertScale, bool bHorScale, 
 							  float minX, float minY, float maxX, float maxY)
 {
@@ -135,9 +131,7 @@ void AddFaceWithTextureScaled(scene::Node* brush, vec3_t va, vec3_t vb, vec3_t v
 		addFace.m_texdef.shift[0] = shift[0];
 		addFace.m_texdef.shift[1] = shift[1];
 
-#if 0
-	  brush->m_brush->addPlane(addFace.m_p0, addFace.m_p1, addFace.m_p2, addFace.m_texdef);
-#endif
+    GlobalBrushCreator().addBrushFace(brush, addFace);
 	}
 	else
 	{
@@ -156,7 +150,7 @@ void AddFaceWithTextureScaled(scene::Node* brush, vec3_t va, vec3_t vb, vec3_t v
 
 void Build_Wedge(int dir, vec3_t min, vec3_t max, bool bUp)
 {
-  scene::Node* newBrush = Brush_AllocNode();
+  NodeSmartReference newBrush(GlobalBrushCreator().createBrush());
 
 	vec3_t v1, v2, v3, v5, v6, v7, v8;
 	VectorCopy(min, v1);
@@ -233,7 +227,7 @@ void Build_Wedge(int dir, vec3_t min, vec3_t max, bool bUp)
 			AddFaceWithTexture(newBrush, v7, v8, v3, "textures/common/caulk", FALSE);
 	}
 
-	GetWorldspawn()->m_traverse->insert(newBrush);
+	Node_getTraversable(GetWorldspawn())->insert(newBrush);
 }
 
 //-----------------------------------------------------------------------------------
@@ -241,7 +235,7 @@ void Build_Wedge(int dir, vec3_t min, vec3_t max, bool bUp)
 
 void Build_StairStep_Wedge(int dir, vec3_t min, vec3_t max, const char* mainTexture, const char* riserTexture, bool detail)
 {
-  scene::Node* newBrush = Brush_AllocNode();
+  NodeSmartReference newBrush(GlobalBrushCreator().createBrush());
 
 	//----- Build Outer Bounds ---------
 
@@ -312,16 +306,16 @@ void Build_StairStep_Wedge(int dir, vec3_t min, vec3_t max, const char* mainText
 	if(dir == MOVE_SOUTH)
 		AddFaceWithTexture(newBrush, v7, v8, v3, "textures/common/caulk", detail);
 
-  GetWorldspawn()->m_traverse->insert(newBrush);
+  Node_getTraversable(GetWorldspawn())->insert(newBrush);
 }
 
 //-----------------------------------------------------------------------------------
 //-----------------------------------------------------------------------------------
 
 // internal use only, to get a box without finishing construction
-scene::Node* Build_Get_BoundingCube_Selective(vec3_t min, vec3_t max, char* texture, bool* useFaces)
+scene::Node& Build_Get_BoundingCube_Selective(vec3_t min, vec3_t max, char* texture, bool* useFaces)
 {
-  scene::Node* newBrush = Brush_AllocNode();
+  scene::Node& newBrush(GlobalBrushCreator().createBrush());
 
 	//----- Build Outer Bounds ---------
 
@@ -362,7 +356,7 @@ scene::Node* Build_Get_BoundingCube_Selective(vec3_t min, vec3_t max, char* text
 	return newBrush;
 }
 
-scene::Node* Build_Get_BoundingCube(vec3_t min, vec3_t max, char* texture)
+scene::Node& Build_Get_BoundingCube(vec3_t min, vec3_t max, char* texture)
 {
 	return Build_Get_BoundingCube_Selective(min, max, texture, bFacesAll);
 }
@@ -372,7 +366,7 @@ scene::Node* Build_Get_BoundingCube(vec3_t min, vec3_t max, char* texture)
 
 void Build_StairStep(vec3_t min, vec3_t max, const char* mainTexture, const char* riserTexture, int direction)
 {
-  scene::Node* newBrush = Brush_AllocNode();
+  scene::Node& newBrush(GlobalBrushCreator().createBrush());
 
 	//----- Build Outer Bounds ---------
 
@@ -422,7 +416,7 @@ void Build_StairStep(vec3_t min, vec3_t max, const char* mainTexture, const char
 	AddFaceWithTexture(newBrush, v1, v2, v3, "textures/common/caulk", FALSE);
 	// base is caulked
 
-	GetWorldspawn()->m_traverse->insert(newBrush);
+	Node_getTraversable(GetWorldspawn())->insert(newBrush);
 	// finish brush
 }
 
@@ -478,8 +472,8 @@ void BuildDoorsX2(vec3_t min, vec3_t max,
 
 	//----------------------------------
 
-  scene::Node* newBrush1 = Brush_AllocNode();
-	scene::Node* newBrush2 = Brush_AllocNode();
+  NodeSmartReference newBrush1(GlobalBrushCreator().createBrush());
+	NodeSmartReference newBrush2(GlobalBrushCreator().createBrush());
 
 	AddFaceWithTexture(newBrush1, v1, v2, v3, "textures/common/caulk", FALSE);
 	AddFaceWithTexture(newBrush1, v5, v7, v6, "textures/common/caulk", FALSE);
@@ -543,8 +537,8 @@ void BuildDoorsX2(vec3_t min, vec3_t max,
 	//----------------------------------
 	
 
-  scene::Node* pEDoor1 = GlobalEntityCreator().createEntity("func_door");
-	scene::Node* pEDoor2 = GlobalEntityCreator().createEntity("func_door");
+  NodeSmartReference pEDoor1 = GlobalEntityCreator().createEntity("func_door");
+	NodeSmartReference pEDoor2 = GlobalEntityCreator().createEntity("func_door");
 
 	if(direction == 0)
 	{
@@ -564,11 +558,11 @@ void BuildDoorsX2(vec3_t min, vec3_t max,
   pEDoor1->m_entity->setkeyvalue("team", teamname);
   pEDoor2->m_entity->setkeyvalue("team", teamname);
 
-	pEDoor1->m_traverse->insert(newBrush1);
-	pEDoor2->m_traverse->insert(newBrush2);
+	Node_getTraversable(pEDoor1)->insert(newBrush1);
+	Node_getTraversable(pEDoor2)->insert(newBrush2);
 
-  GlobalSceneGraph().root()->m_traverse->insert(pEDoor1);
-  GlobalSceneGraph().root()->m_traverse->insert(pEDoor2);
+  Node_getTraversable(GlobalSceneGraph().root())->insert(pEDoor1);
+  Node_getTraversable(GlobalSceneGraph().root())->insert(pEDoor2);
 
 //	ResetCurrentTexture();
 }
@@ -578,14 +572,14 @@ void BuildDoorsX2(vec3_t min, vec3_t max,
 
 void MakeBevel(vec3_t vMin, vec3_t vMax)
 {
-  scene::Node* patch = Patch_AllocNode();
+  NodeSmartReference patch(GlobalPatchCreator().createPatch());
   aabb_t aabb;
   aabb_construct_for_vec3(&aabb, vMin, vMax);
 #if 0
   patch->m_patch->ConstructPrefab(&aabb, eBevel, 2); // 2 == XY view
 #endif
 
-  GetWorldspawn()->m_traverse->insert(patch);
+  Node_getTraversable(GetWorldspawn())->insert(patch);
 }
 
 void BuildCornerStairs(vec3_t vMin, vec3_t vMax, int nSteps, const char* mainTexture, const char* riserTex)
@@ -628,7 +622,7 @@ void BuildCornerStairs(vec3_t vMin, vec3_t vMax, int nSteps, const char* mainTex
 
 	for(i = 0; i < nSteps; i++)
 	{
-    scene::Node* brush = Build_Get_BoundingCube_Selective(vBot, vTop, "textures/common/caulk", bFacesUse);
+    scene::Node& brush = Build_Get_BoundingCube_Selective(vBot, vTop, "textures/common/caulk", bFacesUse);
 
 		for(int j = 0; j < 3; j++)
 			tp[j][2] = vTop[2];
@@ -638,7 +632,7 @@ void BuildCornerStairs(vec3_t vMin, vec3_t vMax, int nSteps, const char* mainTex
 		AddFaceWithTexture(brush, centre, botPoints[i+1], topPoints[i+1], "textures/common/caulk", FALSE);
 		AddFaceWithTexture(brush, centre, topPoints[i], botPoints[i], riserTex, FALSE);
 
-		GetWorldspawn()->m_traverse->insert(brush);
+		Node_getTraversable(GetWorldspawn())->insert(brush);
 
 		vTop[2] += height;
 		vBot[2] += height;

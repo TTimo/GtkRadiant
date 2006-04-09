@@ -17,9 +17,12 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include "StdAfx.h"
 #include "CPortals.h"
-//#include "misc.h"
+
+#include <string.h>
+#include <math.h>
+
+#include "misc.h"
 
 #define LINE_BUF 1000
 #define MSG_PREFIX "bobToolz plugin: "
@@ -60,7 +63,7 @@ bool CBspPortal::Build(char *def, unsigned int pointCnt, bool bInverse)
 	point_count = pointCnt;
 
 	if(point_count < 3)
-		return FALSE;
+		return false;
 
 	point = new CBspPoint[point_count];
 
@@ -69,7 +72,7 @@ bool CBspPortal::Build(char *def, unsigned int pointCnt, bool bInverse)
 		for(; *c != 0 && *c != '('; c++);
 
 		if(*c == 0)
-			return FALSE;
+			return false;
 
 		c++;
 
@@ -86,7 +89,7 @@ bool CBspPortal::Build(char *def, unsigned int pointCnt, bool bInverse)
 		ClampFloat(&point[x].p[2]);
 	}
 
-	return TRUE;
+	return true;
 }
 
 CPortals::CPortals()
@@ -115,7 +118,7 @@ void CPortals::Load()
 	
 	Purge();
 
-	Sys_Printf(MSG_PREFIX "Loading portal file %s.\n", fn);
+	globalOutputStream() << MSG_PREFIX "Loading portal file " << fn << ".\n";
 
 	FILE *in;
 
@@ -123,7 +126,7 @@ void CPortals::Load()
 
 	if(in == NULL)
 	{
-		Sys_Printf("  ERROR - could not open file.\n");
+		globalOutputStream() << "  ERROR - could not open file.\n";
 
 		return;
 	}
@@ -132,7 +135,7 @@ void CPortals::Load()
 	{
 		fclose(in);
 
-		Sys_Printf("  ERROR - File ended prematurely.\n");
+		globalOutputStream() << "  ERROR - File ended prematurely.\n";
 
 		return;
 	}
@@ -141,7 +144,7 @@ void CPortals::Load()
 	{
 		fclose(in);
 
-		Sys_Printf("  ERROR - File header indicates wrong file type (should be \"PRT1\").\n");
+		globalOutputStream() << "  ERROR - File header indicates wrong file type (should be \"PRT1\").\n";
 
 		return;
 	}
@@ -150,7 +153,7 @@ void CPortals::Load()
 	{
 		fclose(in);
 
-		Sys_Printf("  ERROR - File ended prematurely.\n");
+		globalOutputStream() << "  ERROR - File ended prematurely.\n";
 
 		return;
 	}
@@ -163,7 +166,7 @@ void CPortals::Load()
 
 		node_count = 0;
 
-		Sys_Printf("  ERROR - Extreme number of nodes, aborting.\n");
+		globalOutputStream() << "  ERROR - Extreme number of nodes, aborting.\n";
 
 		return;
 	}
@@ -174,7 +177,7 @@ void CPortals::Load()
 
 		node_count = 0;
 
-		Sys_Printf("  ERROR - File ended prematurely.\n");
+		globalOutputStream() << "  ERROR - File ended prematurely.\n";
 
 		return;
 	}
@@ -188,7 +191,7 @@ void CPortals::Load()
 
 		node_count = 0;
 
-		Sys_Printf("  ERROR - File ended prematurely.\n");
+		globalOutputStream() << "  ERROR - File ended prematurely.\n";
 
 		return;
 	}
@@ -207,7 +210,7 @@ void CPortals::Load()
 
 			node_count = 0;
 
-			Sys_Printf("  ERROR - File ended prematurely.\n");
+			globalOutputStream() << "  ERROR - File ended prematurely.\n";
 
 			return;
 		}
@@ -227,7 +230,7 @@ void CPortals::Load()
 
 			node_count = 0;
 
-			Sys_Printf("  ERROR - File ended prematurely.\n");
+			globalOutputStream() << "  ERROR - File ended prematurely.\n";
 
 			return;
 		}
@@ -259,7 +262,7 @@ void CPortals::Load()
 
 			Purge();
 
-			Sys_Printf("  ERROR - Could not find information for portal number %d of %d.\n", n + 1, p_count);
+			globalOutputStream() << "  ERROR - Could not find information for portal number " << n + 1 << " of " << p_count << ".\n";
 
 			return;
 		}
@@ -267,24 +270,24 @@ void CPortals::Load()
 		unsigned int pCount, node1, node2;
 		sscanf(buf, "%u %u %u", &pCount, &node1, &node2);
 
-		if(!node[node1].AddPortal(buf, pCount, FALSE))
+		if(!node[node1].AddPortal(buf, pCount, false))
 		{
 			fclose(in);
 
 			Purge();
 
-			Sys_Printf("  ERROR - Information for portal number %d of %d is not formatted correctly.\n", n + 1, p_count);
+			globalOutputStream() << "  ERROR - Information for portal number " << n + 1 << " of " << p_count << " is not formatted correctly.\n";
 
 			return;
 		}
 
-		if(!node[node2].AddPortal(buf, pCount, TRUE))
+		if(!node[node2].AddPortal(buf, pCount, true))
 		{
 			fclose(in);
 
 			Purge();
 
-			Sys_Printf("  ERROR - Information for portal number %d of %d is not formatted correctly.\n", n + 1, p_count);
+			globalOutputStream() << "  ERROR - Information for portal number " << n + 1 << " of " << p_count << " is not formatted correctly.\n";
 
 			return;
 		}
@@ -298,7 +301,7 @@ void CPortals::Load()
 
 			Purge();
 
-			Sys_Printf("  ERROR - Could not find information for portal number %d of %d.\n", n + 1, p_count);
+			globalOutputStream() << "  ERROR - Could not find information for portal number " << n + 1 << " of " << p_count << ".\n";
 
 			return;
 		}
@@ -306,13 +309,13 @@ void CPortals::Load()
 		unsigned int pCount, node1;
 		sscanf(buf, "%u %u", &pCount, &node1);
 
-		if(!node[node1].AddPortal(buf, pCount, FALSE))
+		if(!node[node1].AddPortal(buf, pCount, false))
 		{
 			fclose(in);
 
 			Purge();
 
-			Sys_Printf("  ERROR - Information for portal number %d of %d is not formatted correctly.\n", n + 1, p_count);
+			globalOutputStream() << "  ERROR - Information for portal number " << n + 1 << " of " << p_count << " is not formatted correctly.\n";
 
 			return;
 		}

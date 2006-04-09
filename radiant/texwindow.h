@@ -23,6 +23,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define INCLUDED_TEXWINDOW_H
 
 #include "math/vector.h"
+#include "generic/callbackfwd.h"
+#include "signal/signalfwd.h"
 
 // textures menu
 
@@ -57,8 +59,6 @@ const char* TextureBrowser_GetSelectedShader(TextureBrowser& textureBrower);
 void TextureBrowser_Construct();
 void TextureBrowser_Destroy();
 
-template<typename FirstArgument>
-class Callback1;
 typedef Callback1<const char*> StringImportCallback;
 template<typename FirstArgument, void (*func)(FirstArgument)> 
 class FreeCaller1;
@@ -70,8 +70,7 @@ typedef FreeCaller1<const StringImportCallback&, TextureBrowser_exportTitle> Tex
 const Vector3& TextureBrowser_getBackgroundColour(TextureBrowser& textureBrowser);
 void TextureBrowser_setBackgroundColour(TextureBrowser& textureBrowser, const Vector3& colour);
 
-class Callback;
-void TextureBrowser_addActiveShadersChangedCallback(const Callback& callback);
-void TextureBrowser_addShadersRealiseCallback(const Callback& callback);
+void TextureBrowser_addActiveShadersChangedCallback(const SignalHandler& handler);
+void TextureBrowser_addShadersRealiseCallback(const SignalHandler& handler);
 
 #endif

@@ -21,8 +21,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "StdAfx.h"
 #include "DPoint.h"
+#include "misc.h"
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -47,6 +47,6 @@ bool DPoint::operator ==(vec3_t other)
 	vec3_t test;
 	VectorSubtract(other, _pnt, test);
 	if(fabs(VectorLength(test)) > MAX_ROUND_ERROR)
-		return FALSE;
-	return TRUE;
+		return false;
+	return true;
 }

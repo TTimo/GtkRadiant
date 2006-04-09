@@ -22,11 +22,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #if !defined (INCLUDED_TEXTURES_H)
 #define INCLUDED_TEXTURES_H
 
+#include "generic/callbackfwd.h"
+
 void Textures_Realise();
 void Textures_Unrealise();
 void Textures_sharedContextDestroyed();
 
-class Callback;
 void Textures_setModeChangedNotify(const Callback& notify);
 
 #endif

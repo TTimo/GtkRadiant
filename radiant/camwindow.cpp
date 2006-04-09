@@ -37,7 +37,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "renderable.h"
 #include "preferencesystem.h"
 
-#include "generic/callback.h"
+#include "signal/signal.h"
 #include "container/array.h"
 #include "scenelib.h"
 #include "render.h"
@@ -60,16 +60,16 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "timer.h"
 
-std::vector<Callback> g_cameraMoved_callbacks;
+Signal0 g_cameraMoved_callbacks;
 
-void AddCameraMovedCallback(const Callback& callback)
+void AddCameraMovedCallback(const SignalHandler& handler)
 {
-  g_cameraMoved_callbacks.push_back(callback);
+  g_cameraMoved_callbacks.connectLast(handler);
 }
 
 void CameraMovedNotify()
 {
-  std::for_each(g_cameraMoved_callbacks.begin(), g_cameraMoved_callbacks.end(), CallbackInvoke());
+  g_cameraMoved_callbacks();
 }
 
 
@@ -1118,6 +1118,7 @@ void CamWnd_Move_Discrete_Import(bool value)
     g_camwindow_globals_private.m_bCamDiscrete = value;
   }
 }
+
 
 
 void CamWnd_Add_Handlers_Move(CamWnd& camwnd)

@@ -159,20 +159,20 @@ public:
   void addRadio(GtkWidget* vbox, const char* name, int& data, StringArrayRange names);
   void addRadioIcons(GtkWidget* vbox, const char* name, StringArrayRange icons, const IntImportCallback& importCallback, const IntExportCallback& exportCallback);
   void addRadioIcons(GtkWidget* vbox, const char* name, int& data, StringArrayRange icons);
-  GtkWidget* addEntry(GtkWidget* vbox, const char* name, const IntImportCallback& importCallback, const IntExportCallback& exportCallback);
+  GtkWidget* addIntEntry(GtkWidget* vbox, const char* name, const IntImportCallback& importCallback, const IntExportCallback& exportCallback);
   GtkWidget* addEntry(GtkWidget* vbox, const char* name, int& data)
   {
-    return addEntry(vbox, name, IntImportCaller(data), IntExportCaller(data));
+    return addIntEntry(vbox, name, IntImportCaller(data), IntExportCaller(data));
   }
-  GtkWidget* addEntry(GtkWidget* vbox, const char* name, const SizeImportCallback& importCallback, const SizeExportCallback& exportCallback);
+  GtkWidget* addSizeEntry(GtkWidget* vbox, const char* name, const SizeImportCallback& importCallback, const SizeExportCallback& exportCallback);
   GtkWidget* addEntry(GtkWidget* vbox, const char* name, std::size_t& data)
   {
-    return addEntry(vbox, name, SizeImportCaller(data), SizeExportCaller(data));
+    return addSizeEntry(vbox, name, SizeImportCaller(data), SizeExportCaller(data));
   }
-  GtkWidget* addEntry(GtkWidget* vbox, const char* name, const FloatImportCallback& importCallback, const FloatExportCallback& exportCallback);
+  GtkWidget* addFloatEntry(GtkWidget* vbox, const char* name, const FloatImportCallback& importCallback, const FloatExportCallback& exportCallback);
   GtkWidget* addEntry(GtkWidget* vbox, const char* name, float& data)
   {
-    return addEntry(vbox, name, FloatImportCaller(data), FloatExportCaller(data));
+    return addFloatEntry(vbox, name, FloatImportCaller(data), FloatExportCaller(data));
   }
   GtkWidget* addPathEntry(GtkWidget* vbox, const char* name, bool browse_directory, const StringImportCallback& importCallback, const StringExportCallback& exportCallback);
   GtkWidget* addPathEntry(GtkWidget* vbox, const char* name, CopiedString& data, bool directory);

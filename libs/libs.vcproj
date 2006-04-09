@@ -380,6 +380,12 @@
 				RelativePath=".\generic\callback.h">
 			</File>
 			<File
+				RelativePath=".\generic\callbackfwd.cpp">
+			</File>
+			<File
+				RelativePath=".\generic\callbackfwd.h">
+			</File>
+			<File
 				RelativePath=".\generic\constant.cpp">
 			</File>
 			<File
@@ -390,6 +396,12 @@
 			</File>
 			<File
 				RelativePath=".\generic\enumeration.h">
+			</File>
+			<File
+				RelativePath=".\generic\functional.cpp">
+			</File>
+			<File
+				RelativePath=".\generic\functional.h">
 			</File>
 			<File
 				RelativePath=".\generic\object.cpp">
@@ -434,6 +446,28 @@
 			</File>
 			<File
 				RelativePath=".\debugging\debugging.h">
+			</File>
+		</Filter>
+		<Filter
+			Name="signal"
+			Filter="">
+			<File
+				RelativePath=".\signal\isignal.cpp">
+			</File>
+			<File
+				RelativePath=".\signal\isignal.h">
+			</File>
+			<File
+				RelativePath=".\signal\signal.cpp">
+			</File>
+			<File
+				RelativePath=".\signal\signal.h">
+			</File>
+			<File
+				RelativePath=".\signal\signalfwd.cpp">
+			</File>
+			<File
+				RelativePath=".\signal\signalfwd.h">
 			</File>
 		</Filter>
 		<File

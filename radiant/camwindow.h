@@ -23,6 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define INCLUDED_CAMWINDOW_H
 
 #include "math/vector.h"
+#include "signal/signalfwd.h"
 
 typedef struct _GtkWidget GtkWidget;
 typedef struct _GtkWindow GtkWindow;
@@ -31,8 +32,7 @@ class CamWnd;
 CamWnd* NewCamWnd();
 void DeleteCamWnd(CamWnd* camwnd);
 
-class Callback;
-void AddCameraMovedCallback(const Callback& callback);
+void AddCameraMovedCallback(const SignalHandler& handler);
 
 void CamWnd_Update(CamWnd& camwnd);
 

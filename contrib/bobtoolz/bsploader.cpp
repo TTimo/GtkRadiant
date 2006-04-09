@@ -1,7 +1,6 @@
-#include "StdAfx.h"
-#include "./dialogs/dialogs-gtk.h"
 #include "bsploader.h"
-#include "../../libs/cmdlib.h"
+#include "dialogs/dialogs-gtk.h"
+#include "cmdlib.h"
 
 int			numnodes;
 int			numplanes;
@@ -72,15 +71,21 @@ bool    LoadFile( const char *filename, byte **bufferptr)
 	return true;
 }
 
-/*int    LittleLong (int l)
+int    LittleLong (int l)
 {
+#if defined(__BIG_ENDIAN__)
+  std::reverse(reinterpret_cast<unsigned char*>(&l), reinterpret_cast<unsigned char*>(&l) + sizeof(int));
+#endif
 	return l;
 }
 
 float	LittleFloat (float l)
 {
+#if defined(__BIG_ENDIAN__)
+  std::reverse(reinterpret_cast<unsigned char*>(&l), reinterpret_cast<unsigned char*>(&l) + sizeof(float));
+#endif
 	return l;
-}*/
+}
 
 /*
 =============

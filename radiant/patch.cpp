@@ -24,18 +24,19 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <glib/gslist.h>
 #include "preferences.h"
 #include "brush_primit.h"
+#include "signal/signal.h"
 
 
-std::set<Callback> g_patchTextureChangedCallbacks;
+Signal0 g_patchTextureChangedCallbacks;
 
-void Patch_addTextureChangedCallback(const Callback& callback)
+void Patch_addTextureChangedCallback(const SignalHandler& handler)
 {
-  g_patchTextureChangedCallbacks.insert(callback);
+  g_patchTextureChangedCallbacks.connectLast(handler);
 }
 
 void Patch_textureChanged()
 {
-  std::for_each(g_patchTextureChangedCallbacks.begin(), g_patchTextureChangedCallbacks.end(), CallbackInvoke());
+  g_patchTextureChangedCallbacks();
 }
 
 

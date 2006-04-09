@@ -23,6 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define INCLUDED_SELECTION_H
 
 #include "windowobserver.h"
+#include "generic/callbackfwd.h"
 
 struct rect_t
 {
@@ -30,12 +31,9 @@ struct rect_t
   float max[2];
 };
 
-template<typename FirstArgument>
-class Callback1;
 typedef Callback1<rect_t> RectangleCallback;
 
 class View;
-class Callback;
 
 class SelectionSystemWindowObserver : public WindowObserver
 {

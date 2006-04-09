@@ -26,6 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "math/vector.h"
 #include "scenelib.h"
+#include "generic/callbackfwd.h"
 
 class SelectionIntersection
 {
@@ -281,8 +282,6 @@ inline SelectionTestable* Instance_getSelectionTestable(scene::Instance& instanc
 }
 
 
-template<typename FirstArgument>
-class Callback1;
 class Plane3;
 typedef Callback1<const Plane3&> PlaneCallback;
 

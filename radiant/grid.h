@@ -22,11 +22,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #if !defined(INCLUDED_GRID_H)
 #define INCLUDED_GRID_H
 
+#include "signal/signalfwd.h"
+
 float GetGridSize();
 int Grid_getPower();
 
-class Callback;
-void AddGridChangeCallback(const Callback& callback);
+void AddGridChangeCallback(const SignalHandler& handler);
 
 void Grid_registerCommands();
 typedef struct _GtkMenu GtkMenu;

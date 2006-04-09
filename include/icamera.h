@@ -29,6 +29,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define INCLUDED_ICAMERA_H
 
 #include "generic/constant.h"
+#include "generic/callbackfwd.h"
 
 class Matrix4;
 
@@ -38,8 +39,6 @@ public:
   virtual void setModelview(const Matrix4& modelview) = 0;
   virtual void setFieldOfView(float fieldOfView) = 0;
 };
-
-class Callback;
 
 class CameraModel
 {

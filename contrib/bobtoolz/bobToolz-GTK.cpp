@@ -19,16 +19,21 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "libxml/parser.h"
 
-#include "StdAfx.h"
 
 #include "str.h"
-//#include "gtkr_list.h"
 
 #include "funchandlers.h"
-//#include "misc.h"
 
 #include "dialogs/dialogs-gtk.h"
 #include "../../libs/cmdlib.h"
+
+void BobToolz_construct()
+{
+}
+
+void BobToolz_destroy()
+{
+}
 
 // Radiant function table
 _QERFuncTable_1			  __QERTABLENAME;
@@ -71,31 +76,31 @@ extern "C" const char* QERPlug_GetCommandList() {
 extern "C" void QERPlug_Dispatch (const char *p, vec3_t vMin, vec3_t vMax, bool bSingleBrush) {
 	LoadLists();
 
-	if( !stricmp( p, "brush cleanup" ) ) {
+	if( string_equal_nocase( p, "brush cleanup" ) ) {
     DoFixBrushes();
-  } else if( !stricmp( p, "polygon builder" ) ) {
+  } else if( string_equal_nocase( p, "polygon builder" ) ) {
     DoPolygonsTB();
-  } else if( !stricmp( p, "caulk selection" ) ) {
+  } else if( string_equal_nocase( p, "caulk selection" ) ) {
     DoCaulkSelection();
-  } else if( !stricmp( p, "tree planter" ) ) {
+  } else if( string_equal_nocase( p, "tree planter" ) ) {
     DoTreePlanter();
-  } else if( !stricmp( p, "plot splines" ) ) {
+  } else if( string_equal_nocase( p, "plot splines" ) ) {
     DoTrainPathPlot();
-  } else if( !stricmp( p, "drop entity" ) ) {
+  } else if( string_equal_nocase( p, "drop entity" ) ) {
     DoDropEnts();
-  } else if( !stricmp( p, "merge patches" ) ) {
+  } else if( string_equal_nocase( p, "merge patches" ) ) {
     DoMergePatches();
-  } else if( !stricmp( p, "split patches" ) ) {
+  } else if( string_equal_nocase( p, "split patches" ) ) {
     DoSplitPatch();
-  } else if( !stricmp( p, "turn edge" ) ) {
+  } else if( string_equal_nocase( p, "turn edge" ) ) {
     DoFlipTerrain();
-  } else if( !stricmp(p, "reset textures...") ) {
+  } else if( string_equal_nocase(p, "reset textures...") ) {
 		DoResetTextures();
-	} else if( !stricmp(p, "pitomatic") ) {
+	} else if( string_equal_nocase(p, "pitomatic") ) {
 		DoPitBuilder();
-	} else if( !stricmp(p, "vis viewer") ) {
+	} else if( string_equal_nocase(p, "vis viewer") ) {
 		DoVisAnalyse();
-	} else if( !stricmp(p, "about...") ) {
+	} else if( string_equal_nocase(p, "about...") ) {
 		DoMessageBox(PLUGIN_ABOUT, "About", eMB_OK);
 	}
 }
@@ -221,6 +226,7 @@ public:
   virtual ~CSynapseClientBobtoolz() { }
 };
 
+#define BOBTOOLZ_MINOR "bobtoolz"
 
 CSynapseServer* g_pSynapseServer = NULL;
 CSynapseClientBobtoolz g_SynapseClient;
@@ -288,11 +294,3 @@ const char* CSynapseClientBobtoolz::GetInfo()
   return "bobToolz module built " __DATE__ " " RADIANT_VERSION;
 }
 
-char* GetFilename(char* buffer, const char* filename) {
-	strcpy(buffer, g_pSynapseServer->GetModuleFilename(&g_SynapseClient));
-	StripFilename( buffer );
-	strcat(buffer, "/");
-	strcat(buffer, filename);
-	//buffer = UnixToDosPath(buffer);
-	return buffer;
-}

@@ -30,6 +30,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <vector>
 
 #include "stream/stringstream.h"
+#include "signal/isignal.h"
 #include "shaderlib.h"
 #include "scenelib.h"
 
@@ -730,16 +731,18 @@ void SceneSelectionChange(const Selectable& selectable)
   SceneChangeNotify();
 }
 
+SignalHandlerId Selection_boundsChanged;
+
 void Selection_construct()
 {
   GlobalSelectionSystem().addSelectionChangeCallback(FreeCaller1<const Selectable&, SceneSelectionChange>());
   GlobalSelectionSystem().addSelectionChangeCallback(FreeCaller1<const Selectable&, UpdateWorkzone_ForSelection>());
-  GlobalSceneGraph().addBoundsChangedCallback(FreeCaller<UpdateWorkzone_ForSelection>());
+  Selection_boundsChanged = GlobalSceneGraph().addBoundsChangedCallback(FreeCaller<UpdateWorkzone_ForSelection>());
 }
 
 void Selection_destroy()
 {
-  GlobalSceneGraph().removeBoundsChangedCallback(FreeCaller<UpdateWorkzone_ForSelection>());
+  GlobalSceneGraph().removeBoundsChangedCallback(Selection_boundsChanged);
 }
 
 

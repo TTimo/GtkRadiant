@@ -337,7 +337,7 @@ void Portals_constructShaders()
   GlobalOpenGLStateLibrary().insert(g_state_wireframe, state);
 
   GlobalOpenGLStateLibrary().getDefaultState(state);
-  state.m_state = RENDER_FILL|RENDER_BLEND|RENDER_COLOURWRITE|RENDER_COLOURCHANGE|RENDER_SMOOTH|RENDER_POLYGONSMOOTH;
+  state.m_state = RENDER_FILL|RENDER_BLEND|RENDER_COLOURWRITE|RENDER_COLOURCHANGE|RENDER_SMOOTH;
 
 	if(portals.aa_3d)
   {

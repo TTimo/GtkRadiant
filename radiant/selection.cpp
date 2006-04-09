@@ -36,7 +36,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "editable.h"
 
 #include "math/frustum.h"
-#include "generic/callback.h"
+#include "signal/signal.h"
 #include "generic/object.h"
 #include "selectionlib.h"
 #include "render.h"
@@ -2797,7 +2797,7 @@ private:
   selection_t m_selection;
   selection_t m_component_selection;
 
-  std::vector<SelectionChangeCallback> m_selectionChanged_callbacks;
+  Signal1<const Selectable&> m_selectionChanged_callbacks;
 
   void ConstructPivot() const;
   mutable bool m_pivotChanged;
@@ -2975,14 +2975,13 @@ public:
     }
   }
 
-  void addSelectionChangeCallback(const SelectionChangeCallback& callback)
+  void addSelectionChangeCallback(const SelectionChangeHandler& handler)
   {
-    m_selectionChanged_callbacks.push_back(callback);
+    m_selectionChanged_callbacks.connectLast(handler);
   }
   void selectionChanged(const Selectable& selectable)
   {
-    typedef Functor1Invoke<SelectionChangeCallback, const Selectable&> SelectionChangeCallbackInvoke;
-    std::for_each(m_selectionChanged_callbacks.begin(), m_selectionChanged_callbacks.end(), SelectionChangeCallbackInvoke(selectable));
+    m_selectionChanged_callbacks(selectable);
   }
   typedef MemberCaller1<RadiantSelectionSystem, const Selectable&, &RadiantSelectionSystem::selectionChanged> SelectionChangedCaller;
 
@@ -3341,7 +3340,6 @@ namespace
 
   inline RadiantSelectionSystem& getSelectionSystem()
   {
-    ASSERT_NOTNULL(g_RadiantSelectionSystem);
     return *g_RadiantSelectionSystem;
   }
 }
@@ -3757,13 +3755,15 @@ void SelectionSystem_OnBoundsChanged()
 }
 
 
+SignalHandlerId SelectionSystem_boundsChanged;
+
 void SelectionSystem_Construct()
 {
   RadiantSelectionSystem::constructStatic();
 
   g_RadiantSelectionSystem = new RadiantSelectionSystem;
 
-  GlobalSceneGraph().addBoundsChangedCallback(FreeCaller<SelectionSystem_OnBoundsChanged>());
+  SelectionSystem_boundsChanged = GlobalSceneGraph().addBoundsChangedCallback(FreeCaller<SelectionSystem_OnBoundsChanged>());
 
   GlobalShaderCache().attachRenderable(getSelectionSystem());
 }
@@ -3772,7 +3772,7 @@ void SelectionSystem_Destroy()
 {
   GlobalShaderCache().detachRenderable(getSelectionSystem());
 
-  GlobalSceneGraph().removeBoundsChangedCallback(FreeCaller<SelectionSystem_OnBoundsChanged>());
+  GlobalSceneGraph().removeBoundsChangedCallback(SelectionSystem_boundsChanged);
 
   delete g_RadiantSelectionSystem;
 

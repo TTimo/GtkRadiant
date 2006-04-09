@@ -17,7 +17,7 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include "StdAfx.h"
+#include "funchandlers.h"
 
 #ifdef WIN32
 #pragma warning(disable : 4786)
@@ -25,7 +25,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "dialogs/dialogs-gtk.h"
 
-#include "gtkr_list.h"
+#include <list>
 #include "str.h"
 
 #include "DPoint.h"
@@ -45,12 +45,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "shapes.h"
 #include "lists.h"
-#include "funchandlers.h"
 #include "visfind.h"
 
 #include "iundo.h"
-
-#include "refcounted_ptr.h"
 
 #include <vector>
 #include <list>
@@ -60,8 +57,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "scenelib.h"
 
 // for autocaulk
-list<Str> exclusionList;		// whole brush exclusion
-list<Str> exclusionList_Face;	// single face exclusion
+std::list<Str> exclusionList;		// whole brush exclusion
+std::list<Str> exclusionList_Face;	// single face exclusion
 
 bool el1Loaded =		FALSE;
 bool el2Loaded =		FALSE;
@@ -166,7 +163,7 @@ void DoPolygons()
       VectorSubtract(instance.aabb_world().origin, instance.aabb_world().extents, vMin);
       VectorAdd(instance.aabb_world().origin, instance.aabb_world().extents, vMax);
 
-      instance.path().parent()->m_traverse->erase(instance.path().top());
+      Node_getTraversable(instance.path().parent())->erase(instance.path().top());
     }
 
 		if(rs.bInverse)
@@ -269,7 +266,7 @@ void DoBuildStairs()
 		{
       {
         scene::Instance& instance = GlobalSelectionSystem().ultimateSelected();
-        instance.path().parent()->m_traverse->erase(instance.path().top());
+        Node_getTraversable(instance.path().parent())->erase(instance.path().top());
       }
 						
 			// Get Step Count
@@ -340,7 +337,7 @@ void DoBuildDoors()
       scene::Instance& instance = GlobalSelectionSystem().ultimateSelected();
       VectorSubtract(instance.aabb_world().origin, instance.aabb_world().extents, vMin);
       VectorAdd(instance.aabb_world().origin, instance.aabb_world().extents, vMax);
-      instance.path().parent()->m_traverse->erase(instance.path().top());
+      Node_getTraversable(instance.path().parent())->erase(instance.path().top());
     }
 
 		BuildDoorsX2(vMin, vMax, 
@@ -371,40 +368,11 @@ void DoPathPlotter()
 		return; 
 	}
 
-  scene::Instance& instance = GlobalSelectionSystem().ultimateSelected();
-
-	DEntity world;
-	world.LoadEPairList(instance.path().top()->m_entity);
-
-	DEPair* trigger_ep = world.FindEPairByKey("targetname");
-
-	if(trigger_ep)
-	{
-		if(!strcmp(world.m_Classname, "trigger_push"))
-		{
-			DEPair* target_ep = world.FindEPairByKey("target");
-			if(target_ep)
-			{
-        scene::Path* entTarget = FindEntityFromTargetname(target_ep->value, NULL);
-				if(entTarget)
-				{
-					if(g_PathView)
-						delete g_PathView;
-					g_PathView = new DBobView;
-
-					g_PathView->Begin(trigger_ep->value, target_ep->value, rs.fMultiplier, rs.nPoints, rs.fGravity, rs.bNoUpdate, rs.bShowExtra);
-				}
-				else
-					DoMessageBox("trigger_push target could not be found.", "Error", eMB_OK);
-			}
-			else
-				DoMessageBox("trigger_push has no target.", "Error", eMB_OK);
-		}
-		else
-			DoMessageBox("You must select a 'trigger_push' entity.", "Error", eMB_OK);
-	}	
-	else
-		DoMessageBox("Entity must have a targetname", "Error", eMB_OK);
+  Entity* entity = Node_getEntity(GlobalSelectionSystem().ultimateSelected().path().top());
+  if(entity != 0)
+  {
+    DBobView_setEntity(*entity, rs.fMultiplier, rs.nPoints, rs.fGravity, rs.bNoUpdate, rs.bShowExtra);
+  }
 }
 
 void DoPitBuilder()
@@ -428,7 +396,7 @@ void DoPitBuilder()
 	{
 		pit.Commit();
 
-    instance.path().parent()->m_traverse->erase(instance.path().top());
+    Node_getTraversable(instance.path().parent())->erase(instance.path().top());
 	}
 	else
 		DoMessageBox("Failed To Make Pit\nTry Making The Brush Bigger", "Error", eMB_OK);
@@ -450,6 +418,9 @@ void DoMergePatches()
   scene::Node* patches[2];
   patches[0] = GlobalSelectionSystem().ultimateSelected().path().top();
   patches[1] = GlobalSelectionSystem().penultimateSelected().path().top();
+  scene::Node* ents[2];
+  ents[0] = GlobalSelectionSystem().ultimateSelected().path().parent();
+  ents[1] = GlobalSelectionSystem().penultimateSelected().path().parent();
 
   for (i = 0; i < 2; i++)
   {
@@ -488,8 +459,8 @@ void DoMergePatches()
     {
     } else
     {
-      mrgPatches[0].RemoveFromRadiant();
-      mrgPatches[1].RemoveFromRadiant();
+      Node_getTraversable(*ents[0])->erase(*patches[0]);
+      Node_getTraversable(*ents[1])->erase(*patches[1]);
 
       newPatch->BuildInRadiant();
       delete newPatch;
@@ -516,8 +487,8 @@ void DoSplitPatch() {
 
 	patch.LoadFromBrush(node);
 
-	list<DPatch> patchList = patch.Split( true, true );
-	for(list<DPatch>::iterator patches = patchList.begin(); patches != patchList.end(); patches++) {
+	std::list<DPatch> patchList = patch.Split( true, true );
+	for(std::list<DPatch>::iterator patches = patchList.begin(); patches != patchList.end(); patches++) {
 		(*patches).BuildInRadiant();
 	}
 
@@ -568,7 +539,7 @@ void DoVisAnalyse()
 	char* ext = strrchr(filename, '.')+1;
 	strcpy(ext, "bsp");// rename the extension
 
-	list<DWinding*> *pointList = BuildTrace(filename, origin);
+	std::list<DWinding*> *pointList = BuildTrace(filename, origin);
 
 	if(!g_VisView)
 	{
@@ -662,7 +633,7 @@ void DoFlipTerrain() {
 	ents[1] = GlobalSelectionSystem().penultimateSelected().path().parent();
 
 	for( i = 0; i < 2; i++ ) {
-		Brushes[i].RemoveFromRadiant();
+		Node_getTraversable(*ents[i])->erase(*brushes[i]);
 	}
 
 

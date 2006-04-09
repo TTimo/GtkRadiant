@@ -24,12 +24,14 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #if !defined(AFX_DSHAPE_H__0B30B302_9D21_4C2D_836A_61F3C8D4244D__INCLUDED_)
 #define AFX_DSHAPE_H__0B30B302_9D21_4C2D_836A_61F3C8D4244D__INCLUDED_
 
-#include "DMap.h"	// Added by ClassView
-#include "StdAfx.h"	// Added by ClassView
-
 #if _MSC_VER > 1000
 #pragma once
 #endif // _MSC_VER > 1000
+
+#include "mathlib.h"
+#include "DMap.h"
+class DBrush;
+class DEntity;
 
 // defines for polygon stuff
 #define MAX_POLYGON_FACES	128

@@ -82,7 +82,7 @@ public:
   }
   GtkWidget* appendEntry(const char* name, const IntImportCallback& importCallback, const IntExportCallback& exportCallback)
   {
-    return m_dialog.addEntry(m_vbox, name, importCallback, exportCallback);
+    return m_dialog.addIntEntry(m_vbox, name, importCallback, exportCallback);
   }
   GtkWidget* appendEntry(const char* name, int& data)
   {
@@ -90,7 +90,7 @@ public:
   }
   GtkWidget* appendEntry(const char* name, const SizeImportCallback& importCallback, const SizeExportCallback& exportCallback)
   {
-    return m_dialog.addEntry(m_vbox, name, importCallback, exportCallback);
+    return m_dialog.addSizeEntry(m_vbox, name, importCallback, exportCallback);
   }
   GtkWidget* appendEntry(const char* name, std::size_t& data)
   {
@@ -98,7 +98,7 @@ public:
   }
   GtkWidget* appendEntry(const char* name, const FloatImportCallback& importCallback, const FloatExportCallback& exportCallback)
   {
-    return m_dialog.addEntry(m_vbox, name, importCallback, exportCallback);
+    return m_dialog.addFloatEntry(m_vbox, name, importCallback, exportCallback);
   }
   GtkWidget* appendEntry(const char* name, float& data)
   {

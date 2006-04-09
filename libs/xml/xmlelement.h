@@ -27,17 +27,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include <map>
 
+///\brief All string pointers passed to an instance of this class are not
+/// copied and must stay valid for the lifetime of the instance.
 class StaticElement : public XMLElement
 {
-  struct strless
-  {
-    bool operator()(const char* s1, const char* s2) const
-    {
-      return strcmp(s1, s2) < 0;
-    }
-  };
-
-  typedef std::map<const char*, const char*, strless> attrs_t;
+  typedef std::map<const char*, const char*, RawStringLess> attrs_t;
 public:
   StaticElement(const char* name)
     : m_name(name)
@@ -71,13 +65,15 @@ private:
   attrs_t m_attrs;
 };
 
+///\brief All string pointers passed to an instance of this class are copied.
 class DynamicElement : public XMLElement
 {
   typedef std::map<CopiedString, CopiedString> attrs_t;
 public:
   DynamicElement(const char* name)
     : m_name(name)
-  {}
+  {
+  }
   void insertAttribute(const char* name, const char* value)
   {
     m_attrs.insert(attrs_t::value_type(name, value));

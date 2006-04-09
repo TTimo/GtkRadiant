@@ -58,6 +58,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "cmdlib.h"
 #include "scenelib.h"
 #include "stream/stringstream.h"
+#include "signal/isignal.h"
 #include "os/path.h"
 #include "os/file.h"
 #include "eclasslib.h"
@@ -180,7 +181,6 @@ void VFS_Destroy()
 {
     Radiant_detachHomePathsObserver(g_VFSModuleObserver);
 }
-
 
 // Home Paths
 
@@ -2630,6 +2630,16 @@ public:
 };
 
 MainWindowActive g_MainWindowActive;
+
+MouseEventHandlerId XYWindowMouseDown_connect(const MouseEventHandler& handler)
+{
+  return g_pParentWnd->GetXYWnd()->onMouseDown.connectFirst(handler);
+}
+
+void XYWindowMouseDown_disconnect(MouseEventHandlerId id)
+{
+  g_pParentWnd->GetXYWnd()->onMouseDown.disconnect(id);
+}
 
 // =============================================================================
 // MainFrame class

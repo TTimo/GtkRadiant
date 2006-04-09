@@ -21,17 +21,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "StdAfx.h"
-
-#include "gtkr_list.h"
-#include "str.h"
-
-//#include "DPoint.h"
-//#include "DPlane.h"
-//#include "DBrush.h"
-//#include "DEPair.h"
 #include "DPatch.h"
-//#include "DEntity.h"
+
+#include <list>
+#include "str.h"
+#include "scenelib.h"
+
+#include "ipatch.h"
 
 #include "misc.h"
 #include "./dialogs/dialogs-gtk.h"
@@ -73,8 +69,15 @@ void CopyDrawVert(const drawVert_t* in, drawVert_t* out)
 	VectorCopy(in->xyz, out->xyz);
 }
 
-void DPatch::BuildInRadiant(void* entity)
+void DPatch::BuildInRadiant(scene::Node* entity)
 {
+	NodeSmartReference node(GlobalPatchCreator().createPatch());
+
+	if(entity) {
+		Node_getTraversable(*entity)->insert(node);
+	} else {
+		Node_getTraversable(GlobalRadiant().getMapWorldEntity())->insert(node);
+	}
 #if 0
 	int nIndex = g_FuncTable.m_pfnCreatePatchHandle();
     //$ FIXME: m_pfnGetPatchHandle
@@ -113,7 +116,7 @@ void DPatch::BuildInRadiant(void* entity)
 //		strcpy(pm->d_texture->name, texture);
 
 		brush_t* brush = (brush_t*)g_FuncTable.m_pfnCreateBrushHandle();
-		brush->patchBrush = TRUE;
+		brush->patchBrush = true;
 		brush->pPatch = pm;		
 
 		pm->pSymbiot = brush;
@@ -135,9 +138,9 @@ void DPatch::BuildInRadiant(void* entity)
 #endif
 }
 
-void DPatch::LoadFromBrush(scene::Node* brush)
+void DPatch::LoadFromBrush(scene::Node& brush)
 {
-	QER_brush = brush;
+	QER_brush = &brush;
 
 #if 0
 	SetTexture(brush->pPatch->GetShader());
@@ -160,25 +163,15 @@ void DPatch::LoadFromBrush(scene::Node* brush)
 #endif
 }
 
-void DPatch::RemoveFromRadiant()
-{
-	if(QER_brush)
-  {
-#if 0
-		g_FuncTable.m_pfnDeleteBrushHandle(QER_brush);
-#endif
-  }
-}
-
 bool DPatch::ResetTextures(const char *oldTextureName, const char *newTextureName)
 {
 	if( !oldTextureName || !strcmp(texture, oldTextureName))
 	{
 		strcpy(texture, newTextureName);
-		return TRUE;
+		return true;
 	}
 
-	return FALSE;
+	return false;
 }
 
 void Build1dArray(vec3_t* array, drawVert_t points[MAX_PATCH_WIDTH][MAX_PATCH_HEIGHT], 
@@ -205,8 +198,8 @@ void Build1dArray(vec3_t* array, drawVert_t points[MAX_PATCH_WIDTH][MAX_PATCH_HE
 void Print1dArray(vec3_t* array, int size)
 {
 	for(int i = 0; i < size; i++)
-		Sys_Printf("(" << array[i][0] << " " << array[i][1] << " " << array[i][2] << ")\t");
-	Sys_Printf("\n");
+		globalOutputStream() << "(" << array[i][0] << " " << array[i][1] << " " << array[i][2] << ")\t";
+	globalOutputStream() << "\n";
 }
 
 bool Compare1dArrays(vec3_t* a1, vec3_t* a2, int size)
@@ -391,9 +384,9 @@ void DPatch::Transpose()
 	Invert();
 }
 
-list<DPatch> DPatch::Split(bool rows, bool cols)
+std::list<DPatch> DPatch::Split(bool rows, bool cols)
 {
-	list<DPatch> patchList;
+	std::list<DPatch> patchList;
 	int i;
 	int x, y;
 
@@ -419,13 +412,13 @@ list<DPatch> DPatch::Split(bool rows, bool cols)
 
 		if(cols && width >= 5)
 		{
-			list<DPatch> patchList2;
+			std::list<DPatch> patchList2;
 
-			for(list<DPatch>::iterator patches = patchList.begin(); patches != patchList.end(); patches++)
+			for(std::list<DPatch>::iterator patches = patchList.begin(); patches != patchList.end(); patches++)
 			{
-				list<DPatch> patchList3 = (*patches).Split(false, true);
+				std::list<DPatch> patchList3 = (*patches).Split(false, true);
 				
-				for(list<DPatch>::iterator patches2 = patchList3.begin(); patches2 != patchList3.end(); patches2++)
+				for(std::list<DPatch>::iterator patches2 = patchList3.begin(); patches2 != patchList3.end(); patches2++)
 					patchList2.push_front(*patches2);
 			}
 

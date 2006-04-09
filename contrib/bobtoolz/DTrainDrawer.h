@@ -29,6 +29,15 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #pragma once
 #endif // _MSC_VER > 1000
 
+#include <list>
+#include "mathlib.h"
+
+#include "irender.h"
+#include "renderable.h"
+
+class DPoint;
+class Shader;
+
 typedef struct {
 	char strName[64];
 
@@ -41,34 +50,33 @@ typedef struct {
 	char strControl[64];
 	char strTarget[64];
 
-	list<controlPoint_t> m_pointList;
-	list<DPoint> m_vertexList;
+	std::list<controlPoint_t> m_pointList;
+	std::list<DPoint> m_vertexList;
 
 	controlPoint_t* pTarget;
 } splinePoint_t;
 
-class DTrainDrawer :
-	public IGL2DWindow,
-	public IGL3DWindow
+class DTrainDrawer : public Renderable, public OpenGLRenderable
 {
 private:
-	list<splinePoint_t*> m_splineList;
-	list<controlPoint_t*> m_pointList;
-	int refCount;
+	std::list<splinePoint_t*> m_splineList;
+	std::list<controlPoint_t*> m_pointList;
 
-	bool m_bHooked;
 	bool m_bDisplay;
+  Shader* m_shader_wireframe;
+  Shader* m_shader_solid;
 public:
-	void UnRegister();
-	void Register();
 	
 	DTrainDrawer();
 	virtual ~DTrainDrawer(void);
 
-	void Draw3D();
-	void Draw2D(VIEWTYPE vt);
-	void IncRef() { refCount++; }
-	void DecRef() { refCount--; if (refCount <= 0) delete this; }
+  void render(RenderStateFlags state) const;
+  void renderSolid(Renderer& renderer, const VolumeTest& volume) const;
+  void renderWireframe(Renderer& renderer, const VolumeTest& volume) const;
+
+  void constructShaders();
+	void destroyShaders();
+
 	void ClearSplines();
 	void ClearPoints();
 	void BuildPaths();

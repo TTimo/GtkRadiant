@@ -30,6 +30,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "math/curve.h"
 #include "stream/stringstream.h"
+#include "signal/signal.h"
 #include "selectionlib.h"
 #include "render.h"
 #include "stringio.h"
@@ -339,8 +340,7 @@ const int NURBS_degree = 3;
 
 class NURBSCurve
 {
-  typedef std::set<Callback> Callbacks;
-  Callbacks m_curveChanged;
+  Signal0 m_curveChanged;
   Callback m_boundsChanged;
 public:
   ControlPoints m_controlPoints;
@@ -354,18 +354,18 @@ public:
   {
   }
 
-  void attach(const Callback& curveChanged)
+  SignalHandlerId connect(const SignalHandler& curveChanged)
   {
-    m_curveChanged.insert(curveChanged);
     curveChanged();
+    return m_curveChanged.connectLast(curveChanged);
   }
-  void detach(const Callback& curveChanged)
+  void disconnect(SignalHandlerId id)
   {
-    m_curveChanged.erase(curveChanged);
+    m_curveChanged.disconnect(id);
   }
   void notify()
   {
-    std::for_each(m_curveChanged.begin(), m_curveChanged.end(), CallbackInvoke());
+    m_curveChanged();
   }
 
   void tesselate()
@@ -437,8 +437,7 @@ public:
 
 class CatmullRomSpline
 {
-  typedef std::set<Callback> Callbacks;
-  Callbacks m_curveChanged;
+  Signal0 m_curveChanged;
   Callback m_boundsChanged;
 public:
   ControlPoints m_controlPoints;
@@ -450,18 +449,18 @@ public:
   {
   }
 
-  void attach(const Callback& curveChanged)
+  SignalHandlerId connect(const SignalHandler& curveChanged)
   {
-    m_curveChanged.insert(curveChanged);
     curveChanged();
+    return m_curveChanged.connectLast(curveChanged);
   }
-  void detach(const Callback& curveChanged)
+  void disconnect(SignalHandlerId id)
   {
-    m_curveChanged.erase(curveChanged);
+    m_curveChanged.disconnect(id);
   }
   void notify()
   {
-    std::for_each(m_curveChanged.begin(), m_curveChanged.end(), CallbackInvoke());
+    m_curveChanged();
   }
 
   void tesselate()

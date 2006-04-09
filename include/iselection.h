@@ -24,14 +24,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include <cstddef>
 #include "generic/constant.h"
+#include "generic/callbackfwd.h"
+#include "signal/signalfwd.h"
 
 class Renderer;
 class View;
-
-class Callback;
-
-template<typename FirstArgument>
-class Callback1;
 
 class Selectable
 {
@@ -61,6 +58,7 @@ class Matrix4;
 typedef Vector4 Quaternion;
 
 typedef Callback1<const Selectable&> SelectionChangeCallback;
+typedef SignalHandler1<const Selectable&> SelectionChangeHandler;
 
 class SelectionSystem
 {
@@ -117,7 +115,7 @@ public:
   virtual void foreachSelected(const Visitor& visitor) const = 0;
   virtual void foreachSelectedComponent(const Visitor& visitor) const = 0;
 
-  virtual void addSelectionChangeCallback(const SelectionChangeCallback& callback) = 0;
+  virtual void addSelectionChangeCallback(const SelectionChangeHandler& handler) = 0;
 
   virtual void NudgeManipulator(const Vector3& nudge, const Vector3& view) = 0;
 

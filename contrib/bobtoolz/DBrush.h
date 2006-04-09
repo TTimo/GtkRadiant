@@ -28,6 +28,21 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #pragma once
 #endif // _MSC_VER > 1000
 
+#include <stdio.h>
+#include <list>
+#include "mathlib.h"
+#include "str.h"
+
+class DPlane;
+class DWinding;
+class DPoint;
+class _QERFaceData;
+
+namespace scene
+{
+  class Node;
+}
+
 #define POINT_IN_BRUSH	0
 #define POINT_ON_BRUSH	1
 #define POINT_OUT_BRUSH	2
@@ -35,7 +50,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 class DBrush  
 {
 public:
-	DPlane* AddFace(vec3_t va, vec3_t vb, vec3_t vc, const char* textureName, bool bDetail);
+	DPlane* AddFace(const vec3_t va, const vec3_t vb, const vec3_t vc, const char* textureName, bool bDetail);
 	void SaveToFile(FILE* pFile);
 
 	void Rotate(vec3_t vOrigin, vec3_t vRotation);
@@ -43,7 +58,7 @@ public:
 
 	DPlane* HasPlaneInverted(DPlane* chkPlane);
 	DPlane* HasPlane(DPlane* chkPlane);
-	DPlane* AddFace(vec3_t va, vec3_t vb, vec3_t vc, _QERFaceData* texData);
+	DPlane* AddFace(const vec3_t va, const vec3_t vb, const vec3_t vc, const _QERFaceData* texData);
 
 	bool ResetTextures(const char* textureName, float fScale[2], float fShift[2], int rotation, const char* newTextureName, int bResetTextureName, int bResetScale[2], int bResetShift[2], int bResetRotation);
 	bool IsDetail();
@@ -61,7 +76,7 @@ public:
 	void BuildFromWinding(DWinding* w);
   scene::Node* BuildInRadiant(bool allowDestruction, int* changeCnt, scene::Node* entity = NULL);
 
-	void ResetChecks(list<Str>* exclusionList);
+	void ResetChecks(std::list<Str>* exclusionList);
 
 	void ClearFaces();
 	void ClearPoints();
@@ -69,12 +84,11 @@ public:
 	int RemoveRedundantPlanes( void );
 	void RemovePlane( DPlane* plane );
 	int PointPosition(vec3_t pnt);
-	void RemoveFromRadiant( void );
 
 	
 	void CutByPlane(DPlane* cutPlane, DBrush** newBrush1, DBrush** newBrush2);
 
-	void LoadFromBrush(scene::Node* brush, bool textured);
+	void LoadFromBrush(scene::Node& brush, bool textured);
 	void AddPoint(vec3_t pnt);
 
 	DPlane* FindPlaneWithClosestNormal( vec_t* normal );
@@ -87,8 +101,8 @@ public:
 
 //	members
   scene::Node* QER_brush;
-	list<DPlane*> faceList;
-	list<DPoint*> pointList;
+	std::list<DPlane*> faceList;
+	std::list<DPoint*> pointList;
 	int m_nBrushID;
 	vec3_t bbox_min, bbox_max;
 	bool bBoundsBuilt;

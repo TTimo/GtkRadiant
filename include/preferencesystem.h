@@ -23,9 +23,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define INCLUDED_PREFERENCESYSTEM_H
 
 #include "generic/constant.h"
+#include "generic/callbackfwd.h"
 
-template<typename FirstArgument>
-class Callback1;
 typedef Callback1<const char*> StringImportCallback;
 typedef Callback1<const StringImportCallback&> StringExportCallback;
 

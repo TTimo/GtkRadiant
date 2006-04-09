@@ -17,6 +17,11 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
+#if !defined(INCLUDED_DIALOGS_GTK_H)
+#define INCLUDED_DIALOGS_GTK_H
+
+#include "qerplugin.h"
+
 struct BuildStairsRS{
 	char mainTexture[256];
 	char riserTexture[256];
@@ -80,6 +85,8 @@ struct PathPlotterRS{
 	bool bShowExtra;
 };
 
+typedef struct _GtkWidget GtkWidget;
+
 struct TwinWidget{
 	GtkWidget* one;
 	GtkWidget* two;
@@ -96,3 +103,5 @@ EMessageBoxReturn DoCTFColourChangeBox();
 EMessageBoxReturn DoTrainThingBox (TrainThingRS* rs);
 
 //GtkWidget* GetProgressWindow(char* title, GtkProgressBar* feedback);
+
+#endif

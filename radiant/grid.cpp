@@ -28,6 +28,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "preferencesystem.h"
 
 #include "gtkutil/widget.h"
+#include "signal/signal.h"
 #include "stringio.h"
 
 #include "gtkmisc.h"
@@ -36,17 +37,17 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 
 
-std::vector<Callback> g_gridChange_callbacks;
+Signal0 g_gridChange_callbacks;
 
-void AddGridChangeCallback(const Callback& callback)
+void AddGridChangeCallback(const SignalHandler& handler)
 {
-  g_gridChange_callbacks.push_back(callback);
-  callback();
+  g_gridChange_callbacks.connectLast(handler);
+  handler();
 }
 
 void GridChangeNotify()
 {
-  std::for_each(g_gridChange_callbacks.begin(), g_gridChange_callbacks.end(), CallbackInvoke());
+  g_gridChange_callbacks();
 }
 
 enum GridPower

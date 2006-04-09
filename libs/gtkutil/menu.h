@@ -22,7 +22,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #if !defined(INCLUDED_GTKUTIL_MENU_H)
 #define INCLUDED_GTKUTIL_MENU_H
 
-class Callback;
+#include "generic/callbackfwd.h"
+
 typedef int gint;
 typedef gint gboolean;
 typedef struct _GSList GSList;

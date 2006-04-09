@@ -17,12 +17,10 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include "StdAfx.h"
-
-#include "gtkr_list.h"
-#include "str.h"
-
 #include "misc.h"
+
+#include <list>
+#include "str.h"
 
 #include "DPoint.h"
 #include "DPlane.h"
@@ -39,8 +37,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #endif
 
 #include "iundo.h"
-
-#include "refcounted_ptr.h"
+#include "qerplugin.h"
 
 #include <vector>
 #include <list>
@@ -61,7 +58,7 @@ char	g_CurrentTexture[256] = "";
 
 void ReadCurrentTexture()
 {
-	const char* textureName = g_FuncTable.m_pfnGetCurrentTexture();
+	const char* textureName = GlobalRadiant().TextureBrowser_getSelectedShader();
 	strcpy(g_CurrentTexture, textureName);
 }
 
@@ -152,29 +149,6 @@ char* TranslateString (char *buf)
 	return buf2;
 }
 
-void Sys_ERROR (char* text, ...)
-{
-	va_list argptr;
-	char	buf[32768];
-
-	va_start (argptr,text);
-	vsprintf (buf, text,argptr);
-	va_end (argptr);
-
-	Sys_Printf("BobToolz::ERROR->%s", buf);
-}
-
-/*void Sys_Printf (char *text, ...)
-{
-	va_list argptr;
-	char	buf[32768];
-
-	va_start (argptr,text);
-	vsprintf (buf, text,argptr);
-	va_end (argptr);
-
-	g_FuncTable.m_pfnSysMsg ( buf );
-}*/
 
 char* UnixToDosPath(char* path)
 {
@@ -289,7 +263,7 @@ void StartBSP()
 	Q_Exec( command, TRUE );
 }
 
-void BuildMiniPrt(list<Str>* exclusionList)
+void BuildMiniPrt(std::list<Str>* exclusionList)
 {
 	// yes, we could just use -fulldetail option, but, as SPOG said
 	// it'd be faster without all the hint, donotenter etc textures and
@@ -347,6 +321,31 @@ void BuildMiniPrt(list<Str>* exclusionList)
 	StartBSP();
 }
 
+template<typename Functor>
+class EntityWalker
+{
+  const Functor& functor;
+public:
+  EntityWalker(const Functor& functor) : functor(functor)
+  {
+  }
+  bool pre(const Path& path, Instance& instance) const
+  {
+    if(Node_isEntity(path.top()))
+    {
+      functor(path.top());
+    }
+  }
+};
+
+template<typename Functor>
+const Functor& Scene_forEachEntity(const Functor& functor)
+{
+  GlobalSceneGraph().traverse(EntityWalker<Functor>(functor));
+}
+
+void 
+
 scene::Path* FindEntityFromTargetname(const char* targetname, int* entNum)
 {
 #if 0
@@ -364,7 +363,7 @@ scene::Path* FindEntityFromTargetname(const char* targetname, int* entNum)
 		DEPair* tn = world.FindEPairByKey("targetname");
 		if(tn)
 		{
-			if(!stricmp(tn->value, targetname)) {
+			if(string_equal_nocase(tn->value, targetname)) {
 				if(entNum) {
 					*entNum = i;
 				}
@@ -388,9 +387,9 @@ void FillDefaultTexture(_QERFaceData* faceData, vec3_t va, vec3_t vb, vec3_t vc,
 	faceData->m_texdef.flags = 0;
 	faceData->m_texdef.value = 0;
 	if(*texture)
-		faceData->m_texdef.SetName(texture);
+		faceData->m_shader = texture;
 	else
-		faceData->m_texdef.SetName("textures/common/caulk");
+		faceData->m_shader = "textures/common/caulk";
 	VectorCopy(va, faceData->m_p0);
 	VectorCopy(vb, faceData->m_p1);
 	VectorCopy(vc, faceData->m_p2);
@@ -422,9 +421,19 @@ vec_t Min(vec_t a, vec_t b)
 	return b;
 }
 
-void MakeNormal( vec_t* va, vec_t* vb, vec_t* vc, vec_t* out ) {
+void MakeNormal( const vec_t* va, const vec_t* vb, const vec_t* vc, vec_t* out ) {
 	vec3_t v1, v2;
 	VectorSubtract(va, vb, v1);
 	VectorSubtract(vc, vb, v2);
 	CrossProduct(v1, v2, out);
 }
+
+char* GetFilename(char* buffer, const char* filename) {
+	strcpy(buffer, g_pSynapseServer->GetModuleFilename(&g_SynapseClient));
+	StripFilename( buffer );
+	strcat(buffer, "/");
+	strcat(buffer, filename);
+	//buffer = UnixToDosPath(buffer);
+	return buffer;
+}
+

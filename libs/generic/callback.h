@@ -23,28 +23,206 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define INCLUDED_GENERIC_CLOSURE_H
 
 /// \file
-/// \brief Type-safe techniques for binding the first argument of an anonymous callback. 
+/// \brief Type-safe techniques for binding the first argument of an opaque callback. 
 
 #include <cstddef>
+#include "functional.h"
+#include "callbackfwd.h"
 
-/// \brief Combines a void pointer with a pointer to a function which operates on a void pointer.
-///
-/// Use with the callback constructors MemberCaller, ConstMemberCaller, ReferenceCaller, ConstReferenceCaller, PointerCaller, ConstPointerCaller and FreeCaller.
-class Callback
+template<typename Type>
+inline void* convertToOpaque(Type* t)
 {
-  typedef void (*Thunk)(void*);
-  void* m_environment;
-  Thunk m_thunk;
+  return t;
+}
+template<typename Type>
+inline void* convertToOpaque(const Type* t)
+{
+  return const_cast<Type*>(t);
+}
+template<typename Type>
+inline void* convertToOpaque(Type& t)
+{
+  return &t;
+}
+template<typename Type>
+inline void* convertToOpaque(const Type& t)
+{
+  return const_cast<Type*>(&t);
+}
 
-  static void nullThunk(void*)
-  {
-  }
 
+template<typename Type>
+class ConvertFromOpaque
+{
+};
+
+template<typename Type>
+class ConvertFromOpaque<Type&>
+{
 public:
-  Callback() : m_environment(0), m_thunk(nullThunk)
+  static Type& apply(void* p)
+  {
+    return *static_cast<Type*>(p);
+  }
+};
+
+template<typename Type>
+class ConvertFromOpaque<const Type&>
+{
+public:
+  static const Type& apply(void* p)
+  {
+    return *static_cast<Type*>(p);
+  }
+};
+
+
+template<typename Type>
+class ConvertFromOpaque<Type*>
+{
+public:
+  static Type* apply(void* p)
+  {
+    return static_cast<Type*>(p);
+  }
+};
+
+template<typename Type>
+class ConvertFromOpaque<const Type*>
+{
+public:
+  static const Type* apply(void* p)
+  {
+    return static_cast<Type*>(p);
+  }
+};
+
+template<typename Caller>
+class BindFirstOpaque
+{
+  typedef typename Caller::first_argument_type FirstBound;
+  FirstBound firstBound;
+public:
+  typedef typename Caller::result_type result_type;
+  explicit BindFirstOpaque(FirstBound firstBound) : firstBound(firstBound)
   {
   }
-  Callback(void* environment, Thunk function) : m_environment(environment), m_thunk(function)
+  result_type operator()() const
+  {
+    return Caller::call(firstBound);
+  }
+  FirstBound getBound() const
+  {
+    return firstBound;
+  }
+  static result_type thunk(void* environment)
+  {
+    return Caller::call(ConvertFromOpaque<FirstBound>::apply(environment));
+  }
+  void* getEnvironment() const
+  {
+    return convertToOpaque(firstBound);
+  }
+};
+
+template<typename Caller>
+class BindFirstOpaque1
+{
+  typedef typename Caller::first_argument_type FirstBound;
+  FirstBound firstBound;
+public:
+  typedef typename Caller::second_argument_type first_argument_type;
+  typedef typename Caller::result_type result_type;
+  explicit BindFirstOpaque1(FirstBound firstBound) : firstBound(firstBound)
+  {
+  }
+  result_type operator()(first_argument_type a1) const
+  {
+    return Caller::call(firstBound, a1);
+  }
+  FirstBound getBound() const
+  {
+    return firstBound;
+  }
+  static result_type thunk(void* environment, first_argument_type a1)
+  {
+    return Caller::call(ConvertFromOpaque<FirstBound>::apply(environment), a1);
+  }
+  void* getEnvironment() const
+  {
+    return convertToOpaque(firstBound);
+  }
+};
+
+template<typename Caller>
+class BindFirstOpaque2
+{
+  typedef typename Caller::first_argument_type FirstBound;
+  FirstBound firstBound;
+public:
+  typedef typename Caller::second_argument_type first_argument_type;
+  typedef typename Caller::third_argument_type second_argument_type;
+  typedef typename Caller::result_type result_type;
+  explicit BindFirstOpaque2(FirstBound firstBound) : firstBound(firstBound)
+  {
+  }
+  result_type operator()(first_argument_type a1, second_argument_type a2) const
+  {
+    return Caller::call(firstBound, a1, a2);
+  }
+  FirstBound getBound() const
+  {
+    return firstBound;
+  }
+  static result_type thunk(void* environment, first_argument_type a1, second_argument_type a2)
+  {
+    return Caller::call(ConvertFromOpaque<FirstBound>::apply(environment), a1, a2);
+  }
+  void* getEnvironment() const
+  {
+    return convertToOpaque(firstBound);
+  }
+};
+
+template<typename Caller>
+class BindFirstOpaque3
+{
+  typedef typename Caller::first_argument_type FirstBound;
+  FirstBound firstBound;
+public:
+  typedef typename Caller::second_argument_type first_argument_type;
+  typedef typename Caller::third_argument_type second_argument_type;
+  typedef typename Caller::fourth_argument_type third_argument_type;
+  typedef typename Caller::result_type result_type;
+  explicit BindFirstOpaque3(FirstBound firstBound) : firstBound(firstBound)
+  {
+  }
+  result_type operator()(first_argument_type a1, second_argument_type a2, third_argument_type a3) const
+  {
+    return Caller::call(firstBound, a1, a2, a3);
+  }
+  FirstBound getBound() const
+  {
+    return firstBound;
+  }
+  static result_type thunk(void* environment, first_argument_type a1, second_argument_type a2, third_argument_type a3)
+  {
+    return Caller::call(ConvertFromOpaque<FirstBound>::apply(environment), a1, a2, a3);
+  }
+  void* getEnvironment() const
+  {
+    return convertToOpaque(firstBound);
+  }
+};
+
+template<typename typename Thunk_>
+class CallbackBase
+{
+  void* m_environment;
+  Thunk_ m_thunk;
+public:
+  typedef Thunk_ Thunk;
+  CallbackBase(void* environment, Thunk function) : m_environment(environment), m_thunk(function)
   {
   }
   void* getEnvironment() const
@@ -55,113 +233,226 @@ public:
   {
     return m_thunk;
   }
-  void operator()() const
-  {
-    m_thunk(m_environment);
-  }
 };
 
-inline bool operator==(const Callback& self, const Callback& other)
+template<typename typename Thunk>
+inline bool operator==(const CallbackBase<Thunk>& self, const CallbackBase<Thunk>& other)
 {
   return self.getEnvironment() == other.getEnvironment() && self.getThunk() == other.getThunk();
 }
-inline bool operator<(const Callback& self, const Callback& other)
+template<typename typename Thunk>
+inline bool operator!=(const CallbackBase<Thunk>& self, const CallbackBase<Thunk>& other)
+{
+  return !(self == other);
+}
+template<typename typename Thunk>
+inline bool operator<(const CallbackBase<Thunk>& self, const CallbackBase<Thunk>& other)
 {
   return self.getEnvironment() < other.getEnvironment() || 
         (!(other.getEnvironment() < self.getEnvironment()) && self.getThunk() < other.getThunk()); 
 }
 
+
+/// \brief Combines a void pointer with a pointer to a function which operates on a void pointer.
+///
+/// Use with the callback constructors MemberCaller, ConstMemberCaller, ReferenceCaller, ConstReferenceCaller, PointerCaller, ConstPointerCaller and FreeCaller.
+template<typename Result>
+class Callback0 : public CallbackBase<Result (*)(void*)>
+{
+  typedef CallbackBase<Result (*)(void*)> Base;
+  static Result nullThunk(void*)
+  {
+  }
+
+public:
+  typedef Result result_type;
+
+  Callback0() : Base(0, nullThunk)
+  {
+  }
+  template<typename Caller>
+  Callback0(const BindFirstOpaque<Caller>& caller) : Base(caller.getEnvironment(), BindFirstOpaque<Caller>::thunk)
+  {
+  }
+  Callback0(void* environment, Thunk function) : Base(environment, function)
+  {
+  }
+  result_type operator()() const
+  {
+    return getThunk()(getEnvironment());
+  }
+};
+
+template<typename Caller>
+inline Callback0<typename Caller::result_type> makeCallback0(const Caller& caller, typename Caller::first_argument_type callee)
+{
+  return Callback0<typename Caller::result_type>(BindFirstOpaque<Caller>(callee));
+}
+template<typename Caller>
+inline Callback0<typename Caller::result_type> makeStatelessCallback0(const Caller& caller)
+{
+  return makeCallback0(Caller0To1<Caller>(), 0);
+}
+
+typedef Callback0<void> Callback;
+
+
+
 /// \brief Combines a void pointer with a pointer to a function which operates on a void pointer and one other argument. 
 ///
 /// Use with the callback constructors MemberCaller1, ConstMemberCaller1, ReferenceCaller1, ConstReferenceCaller1, PointerCaller1, ConstPointerCaller1 and FreeCaller1.
-template<typename FirstArgument>
-class Callback1
+template<typename FirstArgument, typename Result>
+class Callback1 : public CallbackBase<Result (*)(void*, FirstArgument)>
 {
-  typedef void (*Thunk)(void*, FirstArgument);
-  void* m_environment;
-  Thunk m_thunk;
-
-  static void nullThunk(void*, FirstArgument)
+  typedef CallbackBase<Result (*)(void*, FirstArgument)> Base;
+  static Result nullThunk(void*, FirstArgument)
   {
   }
 
 public:
   typedef FirstArgument first_argument_type;
+  typedef Result result_type;
 
-  Callback1() : m_environment(0), m_thunk(nullThunk)
+  Callback1() : Base(0, nullThunk)
   {
   }
-  Callback1(void* environment, Thunk function) : m_environment(environment), m_thunk(function)
+  template<typename Caller>
+  Callback1(const BindFirstOpaque1<Caller>& caller) : Base(caller.getEnvironment(), BindFirstOpaque1<Caller>::thunk)
   {
   }
-  void* getEnvironment() const
+  Callback1(void* environment, Thunk function) : Base(environment, function)
   {
-    return m_environment;
   }
-  Thunk getThunk() const
+  result_type operator()(FirstArgument firstArgument) const
   {
-    return m_thunk;
-  }
-  void operator()(FirstArgument firstArgument) const
-  {
-    m_thunk(m_environment, firstArgument);
+    return getThunk()(getEnvironment(), firstArgument);
   }
 };
 
-template<typename FirstArgument>
-inline bool operator==(const Callback1<FirstArgument>& self, const Callback1<FirstArgument>& other)
+template<typename Caller>
+inline Callback1<typename Caller::second_argument_type, typename Caller::result_type> makeCallback1(const Caller& caller, typename Caller::first_argument_type callee)
 {
-  return self.getEnvironment() == other.getEnvironment() && self.getThunk() == other.getThunk();
+  return Callback1<typename Caller::second_argument_type, typename Caller::result_type>(BindFirstOpaque1<Caller>(callee));
 }
-template<typename FirstArgument>
-inline bool operator<(const Callback1<FirstArgument>& self, const Callback1<FirstArgument>& other)
+template<typename Caller>
+inline Callback1<typename Caller::second_argument_type, typename Caller::result_type> makeStatelessCallback1(const Caller& caller)
 {
-  return self.getEnvironment() < other.getEnvironment() || 
-        (!(other.getEnvironment() < self.getEnvironment()) && self.getThunk() < other.getThunk()); 
+  return makeCallback1(Caller1To2<Caller>(), 0);
 }
 
-template<typename Functor>
-class FunctorInvoke
+
+/// \brief Combines a void pointer with a pointer to a function which operates on a void pointer and two other arguments. 
+///
+template<typename FirstArgument, typename SecondArgument, typename Result>
+class Callback2 : public CallbackBase<Result (*)(void*, FirstArgument, SecondArgument)>
 {
-public:
-  inline void operator()(Functor functor)
+  typedef CallbackBase<Result (*)(void*, FirstArgument, SecondArgument)> Base;
+  static Result nullThunk(void*, FirstArgument, SecondArgument)
   {
-    functor();
+  }
+
+public:
+  typedef FirstArgument first_argument_type;
+  typedef SecondArgument second_argument_type;
+  typedef Result result_type;
+
+  Callback2() : Base(0, nullThunk)
+  {
+  }
+  template<typename Caller>
+  Callback2(const BindFirstOpaque2<Caller>& caller) : Base(caller.getEnvironment(), BindFirstOpaque2<Caller>::thunk)
+  {
+  }
+  Callback2(void* environment, Thunk function) : Base(environment, function)
+  {
+  }
+  result_type operator()(FirstArgument firstArgument, SecondArgument secondArgument) const
+  {
+    return getThunk()(getEnvironment(), firstArgument, secondArgument);
   }
 };
 
-typedef FunctorInvoke<Callback> CallbackInvoke;
-
-
-template<typename Functor, typename FirstArgument>
-class Functor1Invoke
+template<typename Caller>
+inline Callback2<
+  typename Caller::second_argument_type,
+  typename Caller::third_argument_type,
+  typename Caller::result_type
+> makeCallback2(const Caller& caller, typename Caller::first_argument_type callee)
 {
-  FirstArgument m_firstArgument;
-public:
-  Functor1Invoke(FirstArgument firstArgument) : m_firstArgument(firstArgument)
+  return Callback2<
+    typename Caller::second_argument_type,
+    typename Caller::third_argument_type,
+    typename Caller::result_type
+  >(BindFirstOpaque2<Caller>(callee));
+}
+template<typename Caller>
+inline Callback2<
+  typename Caller::first_argument_type,
+  typename Caller::second_argument_type,
+  typename Caller::result_type
+> makeStatelessCallback2(const Caller& caller)
+{
+  return makeCallback2(Caller2To3<Caller>(), 0);
+}
+
+
+/// \brief Combines a void pointer with a pointer to a function which operates on a void pointer and three other arguments. 
+///
+template<typename FirstArgument, typename SecondArgument, typename ThirdArgument, typename Result>
+class Callback3 : public CallbackBase<Result (*)(void*, FirstArgument, SecondArgument, ThirdArgument)>
+{
+  typedef CallbackBase<Result (*)(void*, FirstArgument, SecondArgument, ThirdArgument)> Base;
+  static Result nullThunk(void*, FirstArgument, SecondArgument, ThirdArgument)
   {
   }
-  inline void operator()(Functor functor)
+
+public:
+  typedef FirstArgument first_argument_type;
+  typedef SecondArgument second_argument_type;
+  typedef ThirdArgument third_argument_type;
+  typedef Result result_type;
+
+  Callback3() : Base(0, nullThunk)
   {
-    functor(m_firstArgument);
+  }
+  template<typename Caller>
+  Callback3(const BindFirstOpaque3<Caller>& caller) : Base(caller.getEnvironment(), BindFirstOpaque3<Caller>::thunk)
+  {
+  }
+  Callback3(void* environment, Thunk function) : Base(environment, function)
+  {
+  }
+  result_type operator()(FirstArgument firstArgument, SecondArgument secondArgument, ThirdArgument thirdArgument) const
+  {
+    return getThunk()(getEnvironment(), firstArgument, secondArgument, thirdArgument);
   }
 };
 
-
-typedef Callback1<bool> BoolImportCallback;
-typedef Callback1<const BoolImportCallback&> BoolExportCallback;
-
-typedef Callback1<int> IntImportCallback;
-typedef Callback1<const IntImportCallback&> IntExportCallback;
-
-typedef Callback1<float> FloatImportCallback;
-typedef Callback1<const FloatImportCallback&> FloatExportCallback;
-
-typedef Callback1<const char*> StringImportCallback;
-typedef Callback1<const StringImportCallback&> StringExportCallback;
-
-typedef Callback1<std::size_t> SizeImportCallback;
-typedef Callback1<const SizeImportCallback&> SizeExportCallback;
+template<typename Caller>
+inline Callback3<
+  typename Caller::second_argument_type,
+  typename Caller::third_argument_type,
+  typename Caller::fourth_argument_type,
+  typename Caller::result_type
+> makeCallback3(const Caller& caller, typename Caller::first_argument_type callee)
+{
+  return Callback3<
+    typename Caller::second_argument_type,
+    typename Caller::third_argument_type,
+    typename Caller::fourth_argument_type,
+    typename Caller::result_type
+  >(BindFirstOpaque3<Caller>(callee));
+}
+template<typename Caller>
+inline Callback3<
+  typename Caller::first_argument_type,
+  typename Caller::second_argument_type,
+  typename Caller::third_argument_type,
+  typename Caller::result_type
+> makeStatelessCallback3(const Caller& caller)
+{
+  return makeCallback3(Caller3To4<Caller>(), 0);
+}
 
 
 /// \brief Forms a Callback from a non-const Environment reference and a non-const Environment member-function.
@@ -170,24 +461,11 @@ typedef Callback1<const SizeImportCallback&> SizeExportCallback;
 /// \skipline MemberCaller example
 /// \until end example
 template<typename Environment, void (Environment::*member)()>
-class MemberCaller
+class MemberCaller : public BindFirstOpaque< Member<Environment, void, member> >
 {
-  Environment& m_environment;
 public:
-  MemberCaller(Environment& environment) : m_environment(environment)
+  MemberCaller(Environment& environment) : BindFirstOpaque< Member<Environment, void, member> >(environment)
   {
-  }
-  void* getEnvironment() const
-  {
-    return &m_environment;
-  }
-  static void thunk(void* environment)
-  {
-    ((*reinterpret_cast<Environment*>(environment)).*member)();
-  }
-  operator Callback() const
-  {
-    return Callback(getEnvironment(), thunk);
   }
 };
 
@@ -197,70 +475,31 @@ public:
 /// \skipline MemberCaller example
 /// \until end example
 template<typename Environment, void (Environment::*member)() const>
-class ConstMemberCaller
+class ConstMemberCaller : public BindFirstOpaque< ConstMember<Environment, void, member> >
 {
-  const Environment& m_environment;
 public:
-  ConstMemberCaller(const Environment& environment) : m_environment(environment)
+  ConstMemberCaller(const Environment& environment) : BindFirstOpaque< ConstMember<Environment, void, member> >(environment)
   {
-  }
-  void* getEnvironment() const
-  {
-    return const_cast<Environment*>(&m_environment);
-  }
-  static void thunk(void* environment)
-  {
-    ((*reinterpret_cast<const Environment*>(environment)).*member)();
-  }
-  operator Callback() const
-  {
-    return Callback(getEnvironment(), thunk);
   }
 };
 
 /// \brief Forms a Callback from a non-const Environment reference and a const Environment member-function which takes one argument.
 template<typename Environment, typename FirstArgument, void (Environment::*member)(FirstArgument)>
-class MemberCaller1
+class MemberCaller1 : public BindFirstOpaque1< Member1<Environment, FirstArgument, void, member> >
 {
-  Environment& m_environment;
 public:
-  MemberCaller1(Environment& environment) : m_environment(environment)
+  MemberCaller1(Environment& environment) : BindFirstOpaque1< Member1<Environment, FirstArgument, void, member> >(environment)
   {
-  }
-  void* getEnvironment() const
-  {
-    return &m_environment;
-  }
-  static void thunk(void* environment, FirstArgument firstArgument)
-  {
-    ((*reinterpret_cast<Environment*>(environment)).*member)(firstArgument);
-  }
-  operator Callback1<FirstArgument>() const
-  {
-    return Callback1<FirstArgument>(getEnvironment(), thunk);
   }
 };
 
 /// \brief Forms a Callback from a const Environment reference and a const Environment member-function which takes one argument.
 template<typename Environment, typename FirstArgument, void (Environment::*member)(FirstArgument) const>
-class ConstMemberCaller1
+class ConstMemberCaller1 : public BindFirstOpaque1< ConstMember1<Environment, FirstArgument, void, member> >
 {
-  const Environment& m_environment;
 public:
-  ConstMemberCaller1(const Environment& environment) : m_environment(environment)
+  ConstMemberCaller1(const Environment& environment) : BindFirstOpaque1< ConstMember1<Environment, FirstArgument, void, member> >(environment)
   {
-  }
-  void* getEnvironment() const
-  {
-    return const_cast<Environment*>(&m_environment);
-  }
-  static void thunk(void* environment, FirstArgument firstArgument)
-  {
-    ((*reinterpret_cast<Environment*>(environment)).*member)(firstArgument);
-  }
-  operator Callback1<FirstArgument>() const
-  {
-    return Callback1<FirstArgument>(getEnvironment(), thunk);
   }
 };
 
@@ -270,24 +509,11 @@ public:
 /// \skipline ReferenceCaller example
 /// \until end example
 template<typename Environment, void (*func)(Environment&)> 
-class ReferenceCaller
+class ReferenceCaller : public BindFirstOpaque< Function1<Environment&, void, func> >
 {
-  Environment& m_environment;
 public:
-  ReferenceCaller(Environment& environment) : m_environment(environment)
+  ReferenceCaller(Environment& environment) : BindFirstOpaque< Function1<Environment&, void, func> >(environment)
   {
-  }
-  void* getEnvironment() const
-  {
-    return &m_environment;
-  }
-  static void thunk(void* environment)
-  {
-    (func)(*reinterpret_cast<Environment*>(environment));
-  }
-  operator Callback() const
-  {
-    return Callback(getEnvironment(), thunk);
   }
 };
 
@@ -297,201 +523,91 @@ public:
 /// \skipline ReferenceCaller example
 /// \until end example
 template<typename Environment, void (*func)(const Environment&)> 
-class ConstReferenceCaller
+class ConstReferenceCaller : public BindFirstOpaque< Function1<const Environment&, void, func> >
 {
-  const Environment& m_environment;
 public:
-  ConstReferenceCaller(const Environment& environment) : m_environment(environment)
+  ConstReferenceCaller(const Environment& environment) : BindFirstOpaque< Function1<const Environment&, void, func> >(environment)
   {
-  }
-  void* getEnvironment() const
-  {
-    return const_cast<Environment*>(&m_environment);
-  }
-  static void thunk(void* environment)
-  {
-    (func)(*reinterpret_cast<const Environment*>(environment));
-  }
-  operator Callback() const
-  {
-    return Callback(getEnvironment(), thunk);
   }
 };
 
 /// \brief Forms a Callback from a non-const Environment reference and a free function which operates on a non-const Environment reference and one other argument.
 template<typename Environment, typename FirstArgument, void (*func)(Environment&, FirstArgument)> 
-class ReferenceCaller1
+class ReferenceCaller1 : public BindFirstOpaque1< Function2<Environment&, FirstArgument, void, func> >
 {
-  Environment& m_environment;
 public:
-  ReferenceCaller1(Environment& environment) : m_environment(environment)
+  ReferenceCaller1(Environment& environment) : BindFirstOpaque1< Function2<Environment&, FirstArgument, void, func> >(environment)
   {
-  }
-  void* getEnvironment() const
-  {
-    return &m_environment;
-  }
-  static void thunk(void* environment, FirstArgument firstArgument)
-  {
-    (func)(*reinterpret_cast<Environment*>(environment), firstArgument);
-  }
-  operator Callback1<FirstArgument>() const
-  {
-    return Callback1<FirstArgument>(getEnvironment(), thunk);
   }
 };
 
 /// \brief Forms a Callback from a const Environment reference and a free function which operates on a const Environment reference and one other argument.
 template<typename Environment, typename FirstArgument, void (*func)(const Environment&, FirstArgument)> 
-class ConstReferenceCaller1
+class ConstReferenceCaller1 : public BindFirstOpaque1< Function2<const Environment&, FirstArgument, void, func> >
 {
-  const Environment& m_environment;
 public:
-  ConstReferenceCaller1(const Environment& environment) : m_environment(environment)
+  ConstReferenceCaller1(const Environment& environment) : BindFirstOpaque1< Function2<const Environment&, FirstArgument, void, func> >(environment)
   {
-  }
-  void* getEnvironment() const
-  {
-    return const_cast<Environment*>(&m_environment);
-  }
-  static void thunk(void* environment, FirstArgument firstArgument)
-  {
-    (func)(*reinterpret_cast<const Environment*>(environment), firstArgument);
-  }
-  operator Callback1<FirstArgument>() const
-  {
-    return Callback1<FirstArgument>(getEnvironment(), thunk);
   }
 };
 
 /// \brief Forms a Callback from a non-const Environment pointer and a free function which operates on a non-const Environment pointer.
 template<typename Environment, void (*func)(Environment*)> 
-class PointerCaller
+class PointerCaller : public BindFirstOpaque< Function1<Environment*, void, func> >
 {
-  Environment* m_environment;
 public:
-  PointerCaller(Environment* environment) : m_environment(environment)
+  PointerCaller(Environment* environment) : BindFirstOpaque< Function1<Environment*, void, func> >(environment)
   {
-  }
-  void* getEnvironment() const
-  {
-    return m_environment;
-  }
-  static void thunk(void* environment)
-  {
-    (func)(reinterpret_cast<Environment*>(environment));
-  }
-  operator Callback() const
-  {
-    return Callback(getEnvironment(), thunk);
   }
 };
 
 /// \brief Forms a Callback from a const Environment pointer and a free function which operates on a const Environment pointer.
 template<typename Environment, void (*func)(const Environment*)> 
-class ConstPointerCaller
+class ConstPointerCaller : public BindFirstOpaque< Function1<const Environment*, void, func> >
 {
-  const Environment* m_environment;
 public:
-  ConstPointerCaller(const Environment* environment) : m_environment(environment)
+  ConstPointerCaller(const Environment* environment) : BindFirstOpaque< Function1<const Environment*, void, func> >(environment)
   {
-  }
-  void* getEnvironment() const
-  {
-    return const_cast<Environment*>(m_environment);
-  }
-  static void thunk(void* environment)
-  {
-    (func)(reinterpret_cast<const Environment*>(environment));
-  }
-  operator Callback() const
-  {
-    return Callback(getEnvironment(), thunk);
   }
 };
 
 /// \brief Forms a Callback from a non-const Environment pointer and a free function which operates on a non-const Environment pointer and one other argument.
 template<typename Environment, typename FirstArgument, void (*func)(Environment*, FirstArgument)> 
-class PointerCaller1
+class PointerCaller1 : public BindFirstOpaque1< Function2<Environment*, FirstArgument, void, func> >
 {
-  Environment* m_environment;
 public:
-  PointerCaller1(Environment* environment) : m_environment(environment)
+  PointerCaller1(Environment* environment) : BindFirstOpaque1< Function2<Environment*, FirstArgument, void, func> >(environment)
   {
-  }
-  void* getEnvironment() const
-  {
-    return m_environment;
-  }
-  static void thunk(void* environment, FirstArgument firstArgument)
-  {
-    (func)(reinterpret_cast<Environment*>(environment), firstArgument);
-  }
-  operator Callback1<FirstArgument>() const
-  {
-    return Callback1<FirstArgument>(getEnvironment(), thunk);
   }
 };
 
 /// \brief Forms a Callback from a const Environment pointer and a free function which operates on a const Environment pointer and one other argument.
 template<typename Environment, typename FirstArgument, void (*func)(const Environment*, FirstArgument)> 
-class ConstPointerCaller1
+class ConstPointerCaller1 : public BindFirstOpaque1< Function2<const Environment*, FirstArgument, void, func> >
 {
-  const Environment* m_environment;
 public:
-  ConstPointerCaller1(const Environment* environment) : m_environment(environment)
+  ConstPointerCaller1(const Environment* environment) : BindFirstOpaque1< Function2<const Environment*, FirstArgument, void, func> >(environment)
   {
-  }
-  void* getEnvironment() const
-  {
-    return const_cast<Environment*>(m_environment);
-  }
-  static void thunk(void* environment, FirstArgument firstArgument)
-  {
-    (func)(reinterpret_cast<const Environment*>(environment), firstArgument);
-  }
-  operator Callback1<FirstArgument>() const
-  {
-    return Callback1<FirstArgument>(getEnvironment(), thunk);
   }
 };
 
-
 /// \brief Forms a Callback from a free function which takes no arguments.
 template<void (*func)()> 
-class FreeCaller
+class FreeCaller : public BindFirstOpaque< Caller0To1< Function0<void, func> > >
 {
 public:
-  void* getEnvironment() const
+  FreeCaller() : BindFirstOpaque< Caller0To1< Function0<void, func> > >(0)
   {
-    return 0;
-  }
-  static void thunk(void*)
-  {
-    (func)();
-  }
-  operator Callback() const
-  {
-    return Callback(getEnvironment(), thunk);
   }
 };
 
 /// \brief Forms a Callback from a free function which takes a single argument.
 template<typename FirstArgument, void (*func)(FirstArgument)> 
-class FreeCaller1
+class FreeCaller1 : public BindFirstOpaque1< Caller1To2< Function1<FirstArgument, void, func> > >
 {
 public:
-  void* getEnvironment() const
+  FreeCaller1() : BindFirstOpaque1< Caller1To2< Function1<FirstArgument, void, func> > >(0)
   {
-    return 0;
-  }
-  static void thunk(void*, FirstArgument firstArgument)
-  {
-    (func)(firstArgument);
-  }
-  operator Callback1<FirstArgument>() const
-  {
-    return Callback1<FirstArgument>(getEnvironment(), thunk);
   }
 };
 
@@ -533,5 +649,22 @@ inline Callback1<typename Functor::first_argument_type> makeCallback1(const Func
   typedef typename Functor::first_argument_type FirstArgument;
   return Callback1<FirstArgument>(ConstMemberCaller1<Functor, FirstArgument, &Functor::operator()>(functor));
 }
+
+
+typedef Callback1<bool> BoolImportCallback;
+typedef Callback1<const BoolImportCallback&> BoolExportCallback;
+
+typedef Callback1<int> IntImportCallback;
+typedef Callback1<const IntImportCallback&> IntExportCallback;
+
+typedef Callback1<float> FloatImportCallback;
+typedef Callback1<const FloatImportCallback&> FloatExportCallback;
+
+typedef Callback1<const char*> StringImportCallback;
+typedef Callback1<const StringImportCallback&> StringExportCallback;
+
+typedef Callback1<std::size_t> SizeImportCallback;
+typedef Callback1<const SizeImportCallback&> SizeExportCallback;
+
 
 #endif

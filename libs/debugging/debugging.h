@@ -39,8 +39,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define DEBUGGER_BREAKPOINT() raise(SIGTRAP);
 #endif
 
-
-#define FILE_LINE __FILE__ ":" << __LINE__
+#define STR(x)	#x
+#define STR2(x)	STR(x)
+#define FILE_LINE __FILE__ ":" STR2(__LINE__)
 
 #if defined(_DEBUG) || 1
 #define DEBUG_ASSERTS
@@ -114,13 +115,13 @@ inline DebugMessageHandler& globalDebugMessageHandler()
 #define ASSERT_MESSAGE(condition, message)\
 if(!(condition))\
 {\
-  globalDebugMessageHandler().getOutputStream() << FILE_LINE << "\nassertion failure: " << message << "\n";\
+  globalDebugMessageHandler().getOutputStream() << FILE_LINE "\nassertion failure: " << message << "\n";\
   if(!globalDebugMessageHandler().handleMessage()) { DEBUGGER_BREAKPOINT(); }\
 } else\
 
 /// \brief Sends a \p message to the current debug-message-handler text-output-stream.
 #define ERROR_MESSAGE(message)\
-globalDebugMessageHandler().getOutputStream() << FILE_LINE << "\nruntime error: " << message << "\n";\
+globalDebugMessageHandler().getOutputStream() << FILE_LINE "\nruntime error: " << message << "\n";\
 if(!globalDebugMessageHandler().handleMessage()) { DEBUGGER_BREAKPOINT(); } else\
 
 #define ASSERT_NOTNULL(ptr) ASSERT_MESSAGE(ptr != 0, "pointer \"" #ptr "\" is null")

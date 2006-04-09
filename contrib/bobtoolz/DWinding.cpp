@@ -21,12 +21,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "StdAfx.h"
+#include "DWinding.h"
 
-#include "gtkr_list.h"
+#include <list>
 
 #include "DPoint.h"
-#include "DWinding.h"
 #include "DPlane.h"
 
 //////////////////////////////////////////////////////////////////////
@@ -157,8 +156,8 @@ DWinding* DWinding::CopyWinding()
 
 int DWinding::WindingOnPlaneSide(vec3_t normal, vec_t dist)
 {
-	bool front = FALSE;
-	bool back = FALSE;
+	bool front = false;
+	bool back = false;
 
 	for (int i = 0; i < numpoints; i++)
 	{
@@ -167,14 +166,14 @@ int DWinding::WindingOnPlaneSide(vec3_t normal, vec_t dist)
 		{
 			if (front)
 				return SIDE_CROSS;
-			back = TRUE;
+			back = true;
 			continue;
 		}
 		if (d > ON_EPSILON)
 		{
 			if (back)
 				return SIDE_CROSS;
-			front = TRUE;
+			front = true;
 			continue;
 		}
 	}
@@ -193,11 +192,11 @@ void DWinding::CheckWinding()
 	vec3_t	dir, edgenormal;
 
 	if (numpoints < 3)
-		Sys_Printf ("CheckWinding: %i points", numpoints);
+		globalOutputStream() << "CheckWinding: " << numpoints << " points\n";
 	
 	vec_t area = WindingArea();
 	if (area < 1)
-		Sys_Printf ("CheckWinding: %f area", area);
+		globalOutputStream() << "CheckWinding: " << area << " area\n";
 
 	DPlane* wPlane = WindingPlane ();
 	int i;
@@ -208,21 +207,21 @@ void DWinding::CheckWinding()
 		int j;
 		for (j = 0; j < 3; j++)
 			if (p1[j] > BOGUS_RANGE || p1[j] < -BOGUS_RANGE)
-				Sys_Printf ("CheckFace: BUGUS_RANGE: %f", p1[j]);
+				globalOutputStream() << "CheckFace: BOGUS_RANGE: " << p1[j] << "\n";
 
 		j = i + 1 == numpoints ? 0 : i + 1;
 		
 		// check the point is on the face plane
 		vec_t d = DotProduct (p1, wPlane->normal) - wPlane->_d;
 		if (d < -ON_EPSILON || d > ON_EPSILON)
-			Sys_Printf ("CheckWinding: point off plane");
+			globalOutputStream() << "CheckWinding: point off plane\n";
 	
 		// check the edge isnt degenerate
 		p2 = p[j];
 		VectorSubtract (p2, p1, dir);
 		
 		if (VectorLength (dir) < ON_EPSILON)
-			Sys_Printf ("CheckWinding: degenerate edge");
+			globalOutputStream() << "CheckWinding: degenerate edge\n";
 			
 		CrossProduct (wPlane->normal, dir, edgenormal);
 		VectorNormalize (edgenormal, edgenormal);
@@ -236,7 +235,7 @@ void DWinding::CheckWinding()
 
 			d = DotProduct (p[j], edgenormal);
 			if (d > (edgedist + ON_EPSILON))
-				Sys_Printf ("CheckWinding: non-convex");
+				globalOutputStream() << "CheckWinding: non-convex\n";
 		}
 	}
 
@@ -287,11 +286,11 @@ bool DWinding::ChopWindingInPlace(DPlane* chopPlane, vec_t epsilon)
 	if (!counts[0])
 	{
 		delete this;
-		return FALSE;
+		return false;
 	}
 
 	if (!counts[1])
-		return TRUE;
+		return true;
 
 	int maxpts = numpoints+4;	// cant use counts[0]+2 because
 								// of fp grouping errors
@@ -339,15 +338,15 @@ bool DWinding::ChopWindingInPlace(DPlane* chopPlane, vec_t epsilon)
 	}
 	
 	if (f->numpoints > maxpts)
-		Sys_Printf ("ClipWinding: points exceeded estimate");
+		globalOutputStream() << "ClipWinding: points exceeded estimate\n";
 	if (f->numpoints > MAX_POINTS_ON_WINDING)
-		Sys_Printf ("ClipWinding: MAX_POINTS_ON_WINDING");
+		globalOutputStream() << "ClipWinding: MAX_POINTS_ON_WINDING\n";
 
 	delete[] p;
 	p = f->p;
 	f->p = NULL;
 	delete f;
-	return TRUE;
+	return true;
 }
 
 void DWinding::ClipWindingEpsilon(DPlane* chopPlane, vec_t epsilon, DWinding **front, DWinding **back)
@@ -455,9 +454,9 @@ void DWinding::ClipWindingEpsilon(DPlane* chopPlane, vec_t epsilon, DWinding **f
 	}
 	
 	if (f->numpoints > maxpts || b->numpoints > maxpts)
-		Sys_Printf ("ClipWinding: points exceeded estimate");
+		globalOutputStream() << "ClipWinding: points exceeded estimate\n";
 	if (f->numpoints > MAX_POINTS_ON_WINDING || b->numpoints > MAX_POINTS_ON_WINDING)
-		Sys_Printf ("ClipWinding: MAX_POINTS_ON_WINDING");
+		globalOutputStream() << "ClipWinding: MAX_POINTS_ON_WINDING\n";
 }
 
 bool DWinding::ChopWinding(DPlane* chopPlane)
@@ -473,7 +472,7 @@ bool DWinding::ChopWinding(DPlane* chopPlane)
 	if(!f)
 	{
 		delete this;
-		return FALSE;
+		return false;
 	}
 
 	delete[] p;
@@ -482,5 +481,5 @@ bool DWinding::ChopWinding(DPlane* chopPlane)
 	numpoints = f->numpoints;
 	delete f;
 
-	return TRUE;
+	return true;
 }

@@ -22,13 +22,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #if !defined(INCLUDED_GTKUTIL_BUTTON_H)
 #define INCLUDED_GTKUTIL_BUTTON_H
 
+#include "generic/callbackfwd.h"
+
 typedef struct _GtkButton GtkButton;
 typedef struct _GtkToggleButton GtkToggleButton;
 typedef struct _GtkRadioButton GtkRadioButton;
 typedef int gint;
 typedef gint gboolean;
 typedef unsigned int guint;
-class Callback;
 
 void button_connect_callback(GtkButton* button, const Callback& callback);
 guint toggle_button_connect_callback(GtkToggleButton* button, const Callback& callback);

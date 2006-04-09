@@ -23,6 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define INCLUDED_IRENDER_H
 
 #include "generic/constant.h"
+#include "generic/callbackfwd.h"
 
 
 // Rendering states to sort by.
@@ -87,9 +88,6 @@ public:
   {
   }
 };
-
-template<typename FirstArgument>
-class Callback1;
 
 class Renderable;
 typedef Callback1<const Renderable&> RenderableCallback;

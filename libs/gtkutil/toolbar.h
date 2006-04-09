@@ -22,7 +22,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #if !defined(INCLUDED_GTKUTIL_TOOLBAR_H)
 #define INCLUDED_GTKUTIL_TOOLBAR_H
 
-class Callback;
+#include "generic/callbackfwd.h"
+
 typedef struct _GtkButton GtkButton;
 typedef struct _GtkToggleButton GtkToggleButton;
 typedef struct _GtkToolbar GtkToolbar;

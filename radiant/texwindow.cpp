@@ -53,7 +53,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <gtk/gtkvscrollbar.h>
 #include <gtk/gtkmenu.h>
 
-#include "generic/callback.h"
+#include "signal/signal.h"
 #include "math/vector.h"
 #include "texturelib.h"
 #include "string/string.h"
@@ -715,27 +715,27 @@ void TextureBrowser_setOriginY(TextureBrowser& textureBrowser, int originy)
 }
 
 
-std::set<Callback> g_activeShadersChangedCallbacks;
+Signal0 g_activeShadersChangedCallbacks;
 
-void TextureBrowser_addActiveShadersChangedCallback(const Callback& callback)
+void TextureBrowser_addActiveShadersChangedCallback(const SignalHandler& handler)
 {
-  g_activeShadersChangedCallbacks.insert(callback);
+  g_activeShadersChangedCallbacks.connectLast(handler);
 }
 
 class ShadersObserver : public ModuleObserver
 {
-  std::set<Callback> m_realiseCallbacks;
+  Signal0 m_realiseCallbacks;
 public:
   void realise()
   {
-    std::for_each(m_realiseCallbacks.begin(), m_realiseCallbacks.end(), CallbackInvoke());
+    m_realiseCallbacks();
   }
   void unrealise()
   {
   }
-  void insert(const Callback& callback)
+  void insert(const SignalHandler& handler)
   {
-    m_realiseCallbacks.insert(callback);
+    m_realiseCallbacks.connectLast(handler);
   }
 };
 
@@ -744,9 +744,9 @@ namespace
   ShadersObserver g_ShadersObserver;
 }
 
-void TextureBrowser_addShadersRealiseCallback(const Callback& callback)
+void TextureBrowser_addShadersRealiseCallback(const SignalHandler& handler)
 {
-  g_ShadersObserver.insert(callback);
+  g_ShadersObserver.insert(handler);
 }
 
 void TextureBrowser_activeShadersChanged(TextureBrowser& textureBrowser)
@@ -754,7 +754,7 @@ void TextureBrowser_activeShadersChanged(TextureBrowser& textureBrowser)
   TextureBrowser_heightChanged(textureBrowser);
   textureBrowser.m_originInvalid = true;
 
-  std::for_each(g_activeShadersChangedCallbacks.begin(), g_activeShadersChangedCallbacks.end(), CallbackInvoke());
+  g_activeShadersChangedCallbacks();
 }
 
 void TextureBrowser_importShowScrollbar(TextureBrowser& textureBrowser, bool value)

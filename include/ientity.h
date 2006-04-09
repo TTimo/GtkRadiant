@@ -29,10 +29,29 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 class EntityClass;
 
+typedef Callback1<const char*> KeyObserver;
+
+class EntityKeyValue
+{
+public:
+  virtual const char* c_str() const = 0;
+  virtual void assign(const char* other) = 0;
+  virtual void attach(const KeyObserver& observer) = 0;
+  virtual void detach(const KeyObserver& observer) = 0;
+};
+
 class Entity
 {
 public:
   STRING_CONSTANT(Name, "Entity");
+
+  class Observer
+  {
+  public:
+    virtual void insert(const char* key, EntityKeyValue& value) = 0;
+    virtual void erase(const char* key, EntityKeyValue& value) = 0;
+    virtual void clear() { };
+  };
 
   class Visitor
   {
@@ -45,6 +64,8 @@ public:
   virtual void setKeyValue(const char* key, const char* value) = 0;
   virtual const char* getKeyValue(const char* key) const = 0;
   virtual bool isContainer() const = 0;
+  void attach(Observer& observer);
+  void detach(Observer& observer);
 };
 
 class EntityCopyingVisitor : public Entity::Visitor

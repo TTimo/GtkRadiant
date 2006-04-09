@@ -39,8 +39,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "DShape.h"
 
 // for autocaulk
-list<Str> exclusionList;		// whole brush exclusion
-list<Str> exclusionList_Face;	// single face exclusion
+std::list<Str> exclusionList;		// whole brush exclusion
+std::list<Str> exclusionList_Face;	// single face exclusion
 
 BOOL el1Loaded;
 BOOL el2Loaded;

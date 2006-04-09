@@ -30,24 +30,40 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "brushnode.h"
 #include "grid.h"
 
+void Face_makeBrush(Face& face, const Brush& brush, brush_vector_t& out, float offset)
+{
+  if(face.contributes())
+  {
+    out.push_back(new Brush(brush));
+    Face* newFace = out.back()->addFace(face);
+    if(newFace != 0)
+    {
+      newFace->flipWinding();
+      newFace->getPlane().offset(offset);
+      newFace->planeChanged();
+    }
+  }
+}
 
+class FaceMakeBrush
+{
+  const Brush& brush;
+  brush_vector_t& out;
+  float offset;
+public:
+  FaceMakeBrush(const Brush& brush, brush_vector_t& out, float offset)
+    : brush(brush), out(out), offset(offset)
+  {
+  }
+  void operator()(Face& face) const
+  {
+    Face_makeBrush(face, brush, out, offset);
+  }
+};
 
 void Brush_makeHollow(const Brush& brush, brush_vector_t& out, float offset)
 {
-  for(Brush::const_iterator i(brush.begin()); i != brush.end(); ++i)
-  {
-    if((*i)->contributes())
-    {
-      out.push_back(new Brush(brush));
-      Face* newFace = out.back()->addFace(*(*i));
-      if(newFace != 0)
-      {
-        newFace->flipWinding();
-        newFace->getPlane().offset(offset);
-        newFace->planeChanged();
-      }
-    }
-  }
+  Brush_forEachFace(brush, FaceMakeBrush(brush, out, offset));
 }
 
 class BrushHollowSelectedWalker : public scene::Graph::Walker
@@ -71,8 +87,8 @@ public:
         Brush_makeHollow(*brush, out, m_offset);
         for(brush_vector_t::const_iterator i = out.begin(); i != out.end(); ++i)
         {
-          NodeSmartReference node((new BrushNode())->node());
           (*i)->removeEmptyFaces();
+          NodeSmartReference node((new BrushNode())->node());
           Node_getBrush(node)->copy(*(*i));
           delete (*i);
           Node_getTraversable(path.parent())->insert(node);
@@ -151,6 +167,86 @@ void CSG_MakeHollow (void)
   SceneChangeNotify();
 }
 
+template<typename Functor>
+class Dereference
+{
+  const Functor& functor;
+public:
+  typedef typename Functor::first_argument_type first_argument_type;
+  typedef typename Functor::result_type result_type;
+  Dereference(const Functor& functor) : functor(functor)
+  {
+  }
+  result_type operator()(first_argument_type firstArgument) const
+  {
+    return functor(*firstArgument);
+  }
+};
+
+template<typename Functor>
+inline Dereference<Functor> makeDereference(const Functor& functor)
+{
+  return Dereference<Functor>(functor);
+}
+
+template<typename Predicate>
+Face* Brush_findIf(const Brush& brush, const Predicate& predicate)
+{
+  Brush::const_iterator i = std::find_if(brush.begin(), brush.end(), makeDereference(predicate));
+  return i == brush.end() ? 0 : *i;
+}
+
+template<typename Caller>
+class BindArguments1
+{
+  typedef typename Caller::SecondArgument FirstBound;
+  FirstBound firstBound;
+public:
+  typedef typename Caller::Return Return;
+  typedef typename Caller::FirstArgument FirstArgument;
+  BindArguments1(FirstBound firstBound)
+    : firstBound(firstBound)
+  {
+  }
+  Return operator()(FirstArgument firstArgument) const
+  {
+    return Caller::call(firstArgument, firstBound);
+  }
+};
+
+template<typename Caller>
+class BindArguments2
+{
+  typedef typename Caller::SecondArgument FirstBound;
+  typedef typename Caller::ThirdArgument SecondBound;
+  FirstBound firstBound;
+  SecondBound secondBound;
+public:
+  typedef typename Caller::Return Return;
+  typedef typename Caller::FirstArgument FirstArgument;
+  BindArguments2(FirstBound firstBound, SecondBound secondBound)
+    : firstBound(firstBound), secondBound(secondBound)
+  {
+  }
+  Return operator()(FirstArgument firstArgument) const
+  {
+    return Caller::call(firstArgument, firstBound, secondBound);
+  }
+};
+
+template<typename Caller, typename FirstBound, typename SecondBound>
+BindArguments2<Caller> bindArguments(const Caller& caller, FirstBound firstBound, SecondBound secondBound)
+{
+  return BindArguments2<Caller>(firstBound, secondBound);
+}
+
+inline bool Face_testPlane(const Face& face, const Plane3& plane, bool flipped)
+{
+  return face.contributes() && !Winding_TestPlane(face.getWinding(), plane, flipped);
+}
+typedef Function3<const Face&, const Plane3&, bool, bool, Face_testPlane> FaceTestPlane;
+
+
 
 /// \brief Returns true if
 /// \li !flipped && brush is BACK or ON
@@ -158,14 +254,18 @@ void CSG_MakeHollow (void)
 bool Brush_testPlane(const Brush& brush, const Plane3& plane, bool flipped)
 {
   brush.evaluateBRep();
+#if 1
   for(Brush::const_iterator i(brush.begin()); i != brush.end(); ++i)
   {
-    if((*i)->contributes() && !Winding_TestPlane((*i)->getWinding(), plane, flipped))
+    if(Face_testPlane(*(*i), plane, flipped))
     {
       return false;
     }
   }
   return true;
+#else
+  return Brush_findIf(brush, bindArguments(FaceTestPlane(), makeReference(plane), flipped)) == 0;
+#endif
 }
 
 brushsplit_t Brush_classifyPlane(const Brush& brush, const Plane3& plane)

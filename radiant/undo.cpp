@@ -467,7 +467,7 @@ typedef ConstReferenceCaller1<RadiantUndoSystem, const IntImportCallback&, UndoL
 
 void Undo_constructPreferences(RadiantUndoSystem& undo, PreferencesPage& page)
 {
-  page.appendSpinner("Undo Queue Size", 64, 0, 1024, UndoLevelsImportCaller(undo), UndoLevelsExportCaller(undo));
+  page.appendSpinner("Undo Queue Size", 64, 0, 1024, IntImportCallback(UndoLevelsImportCaller(undo)), IntExportCallback(UndoLevelsExportCaller(undo)));
 }
 void Undo_constructPage(RadiantUndoSystem& undo, PreferenceGroup& group)
 {

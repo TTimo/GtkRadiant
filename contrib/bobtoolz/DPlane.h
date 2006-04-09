@@ -24,7 +24,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #if !defined(AFX_DPLANE_H__FC37C021_F0A1_11D4_ACF7_004095A18133__INCLUDED_)
 #define AFX_DPLANE_H__FC37C021_F0A1_11D4_ACF7_004095A18133__INCLUDED_
 
+#include <list>
+#include "ibrush.h"
+#include "string/string.h"
+#include "mathlib.h"
+
 class Brush;
+class DPoint;
 
 #define FACE_DETAIL 0x8000000
 
@@ -37,27 +43,28 @@ class DWinding;
 class DPlane  
 {
 public:
-	DPlane(vec3_t va, vec3_t vb, vec3_t vc, const char* textureName, bool bDetail);
+	DPlane(const vec3_t va, const vec3_t vb, const vec3_t vc, const char* textureName, bool bDetail);
 	void ScaleTexture();
 	DWinding* BaseWindingForPlane();
 
 	void Rebuild();
 
-	bool AddToBrush(Brush *brush);
+  bool AddToBrush(scene::Node& brush);
 	bool operator != (DPlane& other);
 	bool operator == (DPlane& other);
 
-	bool IsRedundant(list<DPoint*>& pointList);
+	bool IsRedundant(std::list<DPoint*>& pointList);
 	bool PlaneIntersection(DPlane* pl1, DPlane* pl2, vec3_t out);;
 
 	vec_t DistanceToPoint(vec3_t pnt);
 
-	DPlane(vec3_t va, vec3_t vb, vec3_t vc, _QERFaceData* texData);
+	DPlane(const vec3_t va, const vec3_t vb, const vec3_t vc, const _QERFaceData* texData);
 	DPlane() { }
 	virtual ~DPlane();
 
 	bool m_bChkOk;
 	_QERFaceData texInfo;
+  CopiedString m_shader;
 	vec3_t points[3];		// djbob:do we really need these any more?
 	vec3_t normal;
 	float _d;

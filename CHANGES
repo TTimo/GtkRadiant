@@ -1,6 +1,14 @@
 This is the changelog for developers, != changelog for the end user 
 that we distribute with the binaries. (see changelog)
 
+01/04/2006
+SPoG
+- Added key-observer interface to entity module API.
+- Rewrote callback library to add support for return-values.
+- Added minimal API to support bobtoolz plugin.
+- Refactored brush for-each functions to take Functor instead of Visitor.
+- Added signals library.
+
 31/03/2006
 SPoG
 - Changed doom3 light creation to use size of selected brushes.

@@ -67,7 +67,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 /// skin            the VFS path to a skin file
 /// 
 /// 
-/// flag attributes define a flag in the spawnflags key:          
+/// flag attributes define a flag in the "spawnflags" key:          
 ///
 ///   <flag
 ///     key="[flag name]"

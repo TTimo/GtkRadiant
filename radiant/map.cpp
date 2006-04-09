@@ -64,6 +64,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "modulesystem/singletonmodule.h"
 #include "modulesystem/moduleregistry.h"
 #include "stream/stringstream.h"
+#include "signal/signal.h"
 
 #include "gtkutil/filechooser.h"
 #include "timer.h"
@@ -311,8 +312,7 @@ public:
   bool m_modified;
   void (*m_modified_changed)(const Map&);
 
-  typedef std::vector<Callback> MapValidCallbacks;
-  MapValidCallbacks m_mapValidCallbacks;
+  Signal0 m_mapValidCallbacks;
 
   WorldNode m_world_node; // "classname" "worldspawn" !
 
@@ -363,9 +363,9 @@ public:
 Map g_map;
 Map* g_currentMap = 0;
 
-void Map_addValidCallback(Map& map, const Callback& callback)
+void Map_addValidCallback(Map& map, const SignalHandler& handler)
 {
-  map.m_mapValidCallbacks.push_back(callback);
+  map.m_mapValidCallbacks.connectLast(handler);
 }
 
 bool Map_Valid(const Map& map)
@@ -376,7 +376,7 @@ bool Map_Valid(const Map& map)
 void Map_SetValid(Map& map, bool valid)
 {
   map.m_valid = valid;
-  std::for_each(map.m_mapValidCallbacks.begin(), map.m_mapValidCallbacks.end(), CallbackInvoke());
+  map.m_mapValidCallbacks();
 }
 
 
@@ -1870,25 +1870,21 @@ void NewMap()
   }
 }
 
-void maps_directory(StringOutputStream& buffer)
+CopiedString g_mapsPath;
+
+const char* getMapsPath()
 {
-  ASSERT_MESSAGE(!string_empty(g_qeglobals.m_userGamePath.c_str()), "maps_directory: user-game-path is empty");
-  buffer << g_qeglobals.m_userGamePath.c_str() << "maps/";
-  Q_mkdir(buffer.c_str());
+  return g_mapsPath.c_str();
 }
 
 const char* map_open(const char* title)
 {
-	StringOutputStream buf(256);
-  maps_directory(buf);
-  return file_dialog(GTK_WIDGET(MainFrame_getWindow()), TRUE, title, buf.c_str(), MapFormat::Name());
+  return file_dialog(GTK_WIDGET(MainFrame_getWindow()), TRUE, title, getMapsPath(), MapFormat::Name());
 }
 
 const char* map_save(const char* title)
 {
-	StringOutputStream buf(256);
-  maps_directory(buf);
-  return file_dialog(GTK_WIDGET(MainFrame_getWindow()), FALSE, title, buf.c_str(), MapFormat::Name());
+  return file_dialog(GTK_WIDGET(MainFrame_getWindow()), FALSE, title, getMapsPath(), MapFormat::Name());
 }
 
 void OpenMap()
@@ -2232,6 +2228,11 @@ void DoFind()
   gtk_widget_destroy(GTK_WIDGET(window));
 }
 
+void Map_constructPreferences(PreferencesPage& page)
+{
+  page.appendCheckBox("", "Load last map on open", g_bLoadLastMap);
+}
+
 
 class MapEntityClasses : public ModuleObserver
 {
@@ -2267,10 +2268,34 @@ public:
 MapEntityClasses g_MapEntityClasses;
 
 
-void Map_constructPreferences(PreferencesPage& page)
+class MapModuleObserver : public ModuleObserver
 {
-  page.appendCheckBox("", "Load last map on open", g_bLoadLastMap);
-}
+  std::size_t m_unrealised;
+public:
+  MapModuleObserver() : m_unrealised(1)
+  {
+  }
+  void realise()
+  {
+    if(--m_unrealised == 0)
+    {
+      ASSERT_MESSAGE(!string_empty(g_qeglobals.m_userGamePath.c_str()), "maps_directory: user-game-path is empty");
+      StringOutputStream buffer(256);
+      buffer << g_qeglobals.m_userGamePath.c_str() << "maps/";
+      Q_mkdir(buffer.c_str());
+      g_mapsPath = buffer.c_str();
+    }
+  }
+  void unrealise()
+  {
+    if(++m_unrealised == 1)
+    {
+      g_mapsPath = "";
+    }
+  }
+};
+
+MapModuleObserver g_MapModuleObserver;
 
 #include "preferencesystem.h"
 
@@ -2291,9 +2316,11 @@ void Map_Construct()
   PreferencesDialog_addSettingsPreferences(FreeCaller1<PreferencesPage&, Map_constructPreferences>());
 
   GlobalEntityClassManager().attach(g_MapEntityClasses);
+  Radiant_attachHomePathsObserver(g_MapModuleObserver);
 }
 
 void Map_Destroy()
 {
+  Radiant_detachHomePathsObserver(g_MapModuleObserver);
   GlobalEntityClassManager().detach(g_MapEntityClasses);
 }

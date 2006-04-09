@@ -21,32 +21,29 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "StdAfx.h"
+#include "DBrush.h"
 
 #ifdef WIN32
 #pragma warning(disable : 4786)
 #endif
 
-#include "StdAfx.h"
-
-#include "gtkr_list.h"
+#include <list>
 #include "str.h"
 
 #include "DPoint.h"
 #include "DPlane.h"
-#include "DBrush.h"
 #include "DEPair.h"
 #include "DPatch.h"
 #include "DEntity.h"
 #include "DWinding.h"
 
-#include "dialogs-gtk.h"
+#include "dialogs/dialogs-gtk.h"
 
 #include "misc.h"
 
 #include "iundo.h"
 
-#include "refcounted_ptr.h"
+#include "generic/referencecounted.h"
 
 #include "scenelib.h"
 
@@ -57,7 +54,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 DBrush::DBrush(int ID)
 {
 	m_nBrushID = ID;
-	bBoundsBuilt = FALSE;
+	bBoundsBuilt = false;
 	QER_brush = NULL;
 }
 
@@ -71,12 +68,12 @@ DBrush::~DBrush()
 // Implementation
 //////////////////////////////////////////////////////////////////////
 
-DPlane* DBrush::AddFace(vec3_t va, vec3_t vb, vec3_t vc, _QERFaceData* texData)
+DPlane* DBrush::AddFace(const vec3_t va, const vec3_t vb, const vec3_t vc, const _QERFaceData* texData)
 {
 #ifdef _DEBUG
 //	Sys_Printf("(%f %f %f) (%f %f %f) (%f %f %f)\n", va[0], va[1], va[2], vb[0], vb[1], vb[2], vc[0], vc[1], vc[2]);
 #endif
-	bBoundsBuilt = FALSE;
+	bBoundsBuilt = false;
 	DPlane*	newFace = new DPlane(va, vb, vc, texData);
 	faceList.push_back(newFace);
 	
@@ -90,12 +87,12 @@ int DBrush::BuildPoints()
 	if(faceList.size() <= 3)	// if less than 3 faces, there can be no points
 		return 0;					// with only 3 faces u can't have a bounded soild
 
-	for(list<DPlane *>::const_iterator p1=faceList.begin(); p1!=faceList.end(); p1++)
+	for(std::list<DPlane *>::const_iterator p1=faceList.begin(); p1!=faceList.end(); p1++)
 	{
-		list<DPlane *>::const_iterator p2=p1;
+		std::list<DPlane *>::const_iterator p2=p1;
 		for(p2++; p2!=faceList.end(); p2++)
 		{
-			list<DPlane *>::const_iterator p3=p2;
+			std::list<DPlane *>::const_iterator p3=p2;
 			for(p3++; p3!=faceList.end(); p3++)
 			{
 				vec3_t pnt;
@@ -105,7 +102,7 @@ int DBrush::BuildPoints()
 
 					if(pos == POINT_IN_BRUSH)
 					{	// ???? shouldn't happen here
-						Sys_Printf("ERROR:: Build Brush Points: Point IN brush!!!\n");
+						globalErrorStream() << "ERROR:: Build Brush Points: Point IN brush!!!\n";
 					}
 					else if(pos == POINT_ON_BRUSH)
 					{	// normal point
@@ -131,34 +128,33 @@ int DBrush::BuildPoints()
 	return pointList.size();
 }
 
-void DBrush::LoadFromBrush(scene::Node* brush, bool textured)
+void DBrush_addFace(DBrush& brush, const _QERFaceData& faceData)
+{
+  brush.AddFace(vector3_to_array(faceData.m_p0), vector3_to_array(faceData.m_p1), vector3_to_array(faceData.m_p2), 0);
+}
+typedef ReferenceCaller1<DBrush, const _QERFaceData&, DBrush_addFace> DBrushAddFaceCaller;
+
+void DBrush_addFaceTextured(DBrush& brush, const _QERFaceData& faceData)
+{
+  brush.AddFace(vector3_to_array(faceData.m_p0), vector3_to_array(faceData.m_p1), vector3_to_array(faceData.m_p2), &faceData);
+}
+typedef ReferenceCaller1<DBrush, const _QERFaceData&, DBrush_addFaceTextured> DBrushAddFaceTexturedCaller;
+
+void DBrush::LoadFromBrush(scene::Node& brush, bool textured)
 {
 	ClearFaces();
 	ClearPoints();
 
-#if 0
-	for(int i = g_FuncTable.m_pfnGetFaceCount(brush)-1; i >= 0 ; i--)
-	{	// running backwards so i dont have to use the count function each time (OPT)
-		_QERFaceData* faceData = g_FuncTable.m_pfnGetFaceData(brush, i);
+  GlobalBrushCreator().forEachBrushFace(brush, textured ? BrushFaceDataCallback(DBrushAddFaceTexturedCaller(*this)) : BrushFaceDataCallback(DBrushAddFaceCaller(*this)));
 
-		if(faceData == NULL)
-			DoMessageBox("Null pointer returned", "WARNING!", MB_OK);
-
-		if(textured)
-			AddFace(faceData->m_v1, faceData->m_v2, faceData->m_v3, faceData);
-		else
-			AddFace(faceData->m_v1, faceData->m_v2, faceData->m_v3, NULL);
-	}
-#endif
-
-	QER_brush = brush;
+	QER_brush = &brush;
 }
 
 int DBrush::PointPosition(vec3_t pnt)
 {
 	int state = POINT_IN_BRUSH;	// if nothing happens point is inside brush
 
-	for(list<DPlane *>::const_iterator chkPlane=faceList.begin(); chkPlane!=faceList.end(); chkPlane++)
+	for(std::list<DPlane *>::const_iterator chkPlane=faceList.begin(); chkPlane!=faceList.end(); chkPlane++)
 	{
 		float dist = (*chkPlane)->DistanceToPoint(pnt);
 
@@ -174,7 +170,7 @@ int DBrush::PointPosition(vec3_t pnt)
 
 void DBrush::ClearPoints()
 {
-	for(list<DPoint *>::const_iterator deadPoint=pointList.begin(); deadPoint!=pointList.end(); deadPoint++) {
+	for(std::list<DPoint *>::const_iterator deadPoint=pointList.begin(); deadPoint!=pointList.end(); deadPoint++) {
 		delete *deadPoint;
 	}
 	pointList.clear();
@@ -182,8 +178,8 @@ void DBrush::ClearPoints()
 
 void DBrush::ClearFaces()
 {
-	bBoundsBuilt = FALSE;
-	for(list<DPlane *>::const_iterator deadPlane=faceList.begin(); deadPlane!=faceList.end(); deadPlane++)
+	bBoundsBuilt = false;
+	for(std::list<DPlane *>::const_iterator deadPlane=faceList.begin(); deadPlane!=faceList.end(); deadPlane++)
 	{
 		delete *deadPlane;
 	}
@@ -199,32 +195,32 @@ void DBrush::AddPoint(vec3_t pnt)
 
 bool DBrush::HasPoint(vec3_t pnt)
 {
-	for(list<DPoint *>::const_iterator chkPoint=pointList.begin(); chkPoint!=pointList.end(); chkPoint++)
+	for(std::list<DPoint *>::const_iterator chkPoint=pointList.begin(); chkPoint!=pointList.end(); chkPoint++)
 	{
 		if(**chkPoint == pnt)
-			return TRUE;
+			return true;
 	}
 
-	return FALSE;
+	return false;
 }
 
 int DBrush::RemoveRedundantPlanes()
 {
 	int cnt = 0;
-	list<DPlane *>::iterator chkPlane;
+	std::list<DPlane *>::iterator chkPlane;
 
 	// find duplicate planes
-	list<DPlane *>::iterator p1=faceList.begin();
+	std::list<DPlane *>::iterator p1=faceList.begin();
 
 	while( p1!=faceList.end() )
 	{
-		list<DPlane *>::iterator p2 = p1;
+		std::list<DPlane *>::iterator p2 = p1;
 
 		for(p2++; p2!=faceList.end(); p2++)
 		{
 			if(**p1 == **p2)
 			{
-				if(!strcmp((*p1)->texInfo.m_texdef.GetName(), "textures/common/caulk"))
+				if(!strcmp((*p1)->m_shader.c_str(), "textures/common/caulk"))
 				{
 					delete *p1;
 					p1 = faceList.erase(p1);	// duplicate plane
@@ -285,12 +281,12 @@ bool DBrush::GetBounds(vec3_t min, vec3_t max)
 	BuildBounds();
 
 	if(!bBoundsBuilt)
-		return FALSE;
+		return false;
 
 	VectorCopy(bbox_min, min);
 	VectorCopy(bbox_max, max);
 
-	return TRUE;
+	return true;
 }
 
 bool DBrush::BBoxCollision(DBrush* chkBrush)
@@ -302,25 +298,25 @@ bool DBrush::BBoxCollision(DBrush* chkBrush)
 	chkBrush->GetBounds(min2, max2);
 
 	if(min1[0] >= max2[0])
-		return FALSE;
+		return false;
 	if(min1[1] >= max2[1])
-		return FALSE;
+		return false;
 	if(min1[2] >= max2[2])
-		return FALSE;
+		return false;
 
 	if(max1[0] <= min2[0])
-		return FALSE;
+		return false;
 	if(max1[1] <= min2[1])
-		return FALSE;
+		return false;
 	if(max1[2] <= min2[2])
-		return FALSE;
+		return false;
 
-	return TRUE;
+	return true;
 }
 
 DPlane* DBrush::HasPlane(DPlane* chkPlane)
 {
-	for(list<DPlane *>::const_iterator brushPlane=faceList.begin(); brushPlane!=faceList.end(); brushPlane++)
+	for(std::list<DPlane *>::const_iterator brushPlane=faceList.begin(); brushPlane!=faceList.end(); brushPlane++)
 	{
 		if(**brushPlane == *chkPlane)
 			return *brushPlane;
@@ -334,21 +330,21 @@ bool DBrush::IsCutByPlane(DPlane *cuttingPlane)
 
 	if(pointList.size() == 0)
 		if(BuildPoints() == 0)
-			return FALSE;
+			return false;
 
-	list<DPoint *>::const_iterator chkPnt = pointList.begin();
+	std::list<DPoint *>::const_iterator chkPnt = pointList.begin();
 
 	if(chkPnt == pointList.end())
-		return FALSE;
+		return false;
 
 	float dist = cuttingPlane->DistanceToPoint((*chkPnt)->_pnt);
 
 	if(dist > MAX_ROUND_ERROR)
-		isInFront = FALSE;
+		isInFront = false;
 	else if(dist < MAX_ROUND_ERROR)
-		isInFront = TRUE;
+		isInFront = true;
 	else
-		return TRUE;
+		return true;
 
 	for(chkPnt++=pointList.begin(); chkPnt!=pointList.end(); chkPnt++)
 	{
@@ -357,31 +353,32 @@ bool DBrush::IsCutByPlane(DPlane *cuttingPlane)
 		if(dist > MAX_ROUND_ERROR)
 		{
 			if(isInFront)
-				return TRUE;
+				return true;
 		}
 		else if(dist < MAX_ROUND_ERROR)
 		{
 			if(!isInFront)
-				return TRUE;
+				return true;
 		}
 		else
-			return TRUE;
+			return true;
 	}
 
-	return FALSE;
+	return false;
 }
+
 
 scene::Node* DBrush::BuildInRadiant(bool allowDestruction, int* changeCnt, scene::Node* entity)
 {
 	if(allowDestruction)
 	{
-		bool kill = TRUE;
+		bool kill = true;
 		
-		for(list<DPlane *>::const_iterator chkPlane=faceList.begin(); chkPlane!=faceList.end(); chkPlane++)
+		for(std::list<DPlane *>::const_iterator chkPlane=faceList.begin(); chkPlane!=faceList.end(); chkPlane++)
 		{
 			if((*chkPlane)->m_bChkOk)
 			{
-				kill = FALSE;
+				kill = false;
 				break;
 			}
 		}
@@ -392,26 +389,26 @@ scene::Node* DBrush::BuildInRadiant(bool allowDestruction, int* changeCnt, scene
 	//+djbob: fixed bug when brush had no faces "phantom brush" in radiant.
 	if(faceList.size() < 4)
 	{
-		Sys_Printf("Possible Phantom Brush Found, will not rebuild\n");
+		globalErrorStream() << "Possible Phantom Brush Found, will not rebuild\n";
 		return NULL;
 	}
 	//-djbob
 
-	NodePtr node(Brush_AllocNode());
+  scene::Node& node = GlobalBrushCreator().createBrush();
 
-	for(list<DPlane *>::const_iterator buildPlane=faceList.begin(); buildPlane!=faceList.end(); buildPlane++) {
-		if((*buildPlane)->AddToBrush(node->m_brush) && changeCnt) {
+	for(std::list<DPlane *>::const_iterator buildPlane=faceList.begin(); buildPlane!=faceList.end(); buildPlane++) {
+		if((*buildPlane)->AddToBrush(node) && changeCnt) {
 			(*changeCnt)++;
 		}
 	}
 
 	if(entity) {
-		entity->m_traverse->insert(node);
+		Node_getTraversable(*entity)->insert(node);
 	} else {
-		GetWorldspawn()->m_traverse->insert(node);
+		Node_getTraversable(GlobalRadiant().getMapWorldEntity())->insert(node);
 	}
 
-	return node;
+	return &node;
 }
 
 void DBrush::CutByPlane(DPlane *cutPlane, DBrush **newBrush1, DBrush **newBrush2)
@@ -426,7 +423,7 @@ void DBrush::CutByPlane(DPlane *cutPlane, DBrush **newBrush1, DBrush **newBrush2
 	DBrush* b1 = new DBrush;
 	DBrush* b2 = new DBrush;
 	
-	for(list<DPlane *>::const_iterator parsePlane=faceList.begin(); parsePlane!=faceList.end(); parsePlane++)
+	for(std::list<DPlane *>::const_iterator parsePlane=faceList.begin(); parsePlane!=faceList.end(); parsePlane++)
 	{
 		b1->AddFace((*parsePlane)->points[0], (*parsePlane)->points[1], (*parsePlane)->points[2], NULL);
 		b2->AddFace((*parsePlane)->points[0], (*parsePlane)->points[1], (*parsePlane)->points[2], NULL);
@@ -446,55 +443,55 @@ bool DBrush::IntersectsWith(DBrush *chkBrush)
 {
 	if(pointList.size() == 0)
 		if(BuildPoints() == 0)
-			return FALSE;	// invalid brush!!!!
+			return false;	// invalid brush!!!!
 
 	if(chkBrush->pointList.size() == 0)
 		if(chkBrush->BuildPoints() == 0)
-			return FALSE;	// invalid brush!!!!
+			return false;	// invalid brush!!!!
 	
 	if(!BBoxCollision(chkBrush))
-		return FALSE;
+		return false;
 
-	list<DPlane *>::const_iterator iplPlane;
+	std::list<DPlane *>::const_iterator iplPlane;
 
 	for( iplPlane=faceList.begin(); iplPlane!=faceList.end(); iplPlane++)
 	{
 
-		bool allInFront = TRUE;
-		for(list<DPoint *>::const_iterator iPoint=chkBrush->pointList.begin(); iPoint!=chkBrush->pointList.end(); iPoint++)
+		bool allInFront = true;
+		for(std::list<DPoint *>::const_iterator iPoint=chkBrush->pointList.begin(); iPoint!=chkBrush->pointList.end(); iPoint++)
 		{
 			if((*iplPlane)->DistanceToPoint((*iPoint)->_pnt) < -MAX_ROUND_ERROR)
 			{
-				allInFront = FALSE;
+				allInFront = false;
 				break;
 			}
 		}
 		if(allInFront)
-			return FALSE;
+			return false;
 	}
 
 	for( iplPlane=chkBrush->faceList.begin(); iplPlane!=chkBrush->faceList.end(); iplPlane++)
 	{
-		bool allInFront = TRUE;
-		for(list<DPoint *>::const_iterator iPoint=pointList.begin(); iPoint!=pointList.end(); iPoint++)
+		bool allInFront = true;
+		for(std::list<DPoint *>::const_iterator iPoint=pointList.begin(); iPoint!=pointList.end(); iPoint++)
 		{
 			if((*iplPlane)->DistanceToPoint((*iPoint)->_pnt) < -MAX_ROUND_ERROR)
 			{
-				allInFront = FALSE;
+				allInFront = false;
 				break;
 			}
 		}
 		if(allInFront)
-			return FALSE;
+			return false;
 	}
 
-	return TRUE;
+	return true;
 }
 
 bool DBrush::IntersectsWith(DPlane* p1, DPlane* p2, vec3_t v) {
 	vec3_t vDown = { 0, 0, -1 };
 
-	list<DPlane *>::const_iterator iplPlane;
+	std::list<DPlane *>::const_iterator iplPlane;
 	for( iplPlane = faceList.begin(); iplPlane != faceList.end(); iplPlane++) {
 		DPlane* p = (*iplPlane);
 		
@@ -504,12 +501,12 @@ bool DBrush::IntersectsWith(DPlane* p1, DPlane* p2, vec3_t v) {
 		}
 		if(p->PlaneIntersection(p1, p2, v)) {
 			if(PointPosition( v ) != POINT_OUT_BRUSH) {
-				return TRUE;
+				return true;
 			}
 		}
 	}
 
-	return FALSE;
+	return false;
 }
 
 void DBrush::BuildBounds()
@@ -520,11 +517,11 @@ void DBrush::BuildBounds()
 			if(BuildPoints() == 0)
 				return;
 	
-		list<DPoint *>::const_iterator first = pointList.begin();
+		std::list<DPoint *>::const_iterator first = pointList.begin();
 		VectorCopy((*first)->_pnt, bbox_min);
 		VectorCopy((*first)->_pnt, bbox_max);
 
-		list<DPoint *>::const_iterator point=pointList.begin();
+		std::list<DPoint *>::const_iterator point=pointList.begin();
 		for( point++; point!=pointList.end(); point++)
 		{
 			if((*point)->_pnt[0] > bbox_max[0])
@@ -542,7 +539,7 @@ void DBrush::BuildBounds()
 				bbox_min[2] = (*point)->_pnt[2];
 		}
 
-		bBoundsBuilt = TRUE;
+		bBoundsBuilt = true;
 	}
 }
 
@@ -555,18 +552,18 @@ bool DBrush::BBoxTouch(DBrush *chkBrush)
 	chkBrush->GetBounds(min2, max2);
 
 	if((min1[0] - max2[0]) > MAX_ROUND_ERROR)
-		return FALSE;
+		return false;
 	if((min1[1] - max2[1]) > MAX_ROUND_ERROR)
-		return FALSE;
+		return false;
 	if((min1[2] - max2[2]) > MAX_ROUND_ERROR)
-		return FALSE;
+		return false;
 
 	if((min2[0] - max1[0]) > MAX_ROUND_ERROR)
-		return FALSE;
+		return false;
 	if((min2[1] - max1[1]) > MAX_ROUND_ERROR)
-		return FALSE;
+		return false;
 	if((min2[2] - max1[2]) > MAX_ROUND_ERROR)
-		return FALSE;
+		return false;
 
 	int cnt = 0;
 
@@ -589,24 +586,24 @@ bool DBrush::BBoxTouch(DBrush *chkBrush)
 		cnt++;
 
 	if(cnt > 1)
-		return FALSE;
+		return false;
 
-	return TRUE;
+	return true;
 }
 
-void DBrush::ResetChecks(list<Str>* exclusionList)
+void DBrush::ResetChecks(std::list<Str>* exclusionList)
 {
-	for(list<DPlane *>::const_iterator resetPlane=faceList.begin(); resetPlane!=faceList.end(); resetPlane++)
+	for(std::list<DPlane *>::const_iterator resetPlane=faceList.begin(); resetPlane!=faceList.end(); resetPlane++)
 	{
-		bool set = FALSE;
+		bool set = false;
 
 		if(exclusionList)
 		{
-			for(list<Str>::iterator eTexture = exclusionList->begin(); eTexture != exclusionList->end(); eTexture++)
+			for(std::list<Str>::iterator eTexture = exclusionList->begin(); eTexture != exclusionList->end(); eTexture++)
 			{
-				if(strstr((*resetPlane)->texInfo.m_texdef.GetName(), eTexture->GetBuffer()))
+				if(strstr((*resetPlane)->m_shader.c_str(), eTexture->GetBuffer()))
 				{
-					set = TRUE;
+					set = true;
 					break;
 				}
 			}
@@ -618,7 +615,7 @@ void DBrush::ResetChecks(list<Str>* exclusionList)
 
 DPlane* DBrush::HasPlaneInverted(DPlane *chkPlane)
 {
-	for(list<DPlane *>::const_iterator brushPlane=faceList.begin(); brushPlane!=faceList.end(); brushPlane++)
+	for(std::list<DPlane *>::const_iterator brushPlane=faceList.begin(); brushPlane!=faceList.end(); brushPlane++)
 	{
 		if(**brushPlane != *chkPlane)
 		{
@@ -631,31 +628,31 @@ DPlane* DBrush::HasPlaneInverted(DPlane *chkPlane)
 
 bool DBrush::HasTexture(const char *textureName)
 {
-	for(list<DPlane *>::const_iterator chkPlane=faceList.begin(); chkPlane!=faceList.end(); chkPlane++)
+	for(std::list<DPlane *>::const_iterator chkPlane=faceList.begin(); chkPlane!=faceList.end(); chkPlane++)
 	{
-		if(strstr((*chkPlane)->texInfo.m_texdef.GetName(), textureName))
-			return TRUE;
+		if(strstr((*chkPlane)->m_shader.c_str(), textureName))
+			return true;
 
 	}
-	return FALSE;
+	return false;
 }
 
 bool DBrush::IsDetail()
 {
-	for(list<DPlane *>::const_iterator chkPlane=faceList.begin(); chkPlane!=faceList.end(); chkPlane++)
+	for(std::list<DPlane *>::const_iterator chkPlane=faceList.begin(); chkPlane!=faceList.end(); chkPlane++)
 	{
-		if((*chkPlane)->texInfo.m_texdef.contents & FACE_DETAIL)
-			return TRUE;
+		if((*chkPlane)->texInfo.contents & FACE_DETAIL)
+			return true;
 
 	}
-	return FALSE;
+	return false;
 }
 
 void DBrush::BuildFromWinding(DWinding *w)
 {
 	if(w->numpoints < 3)
 	{
-		Sys_ERROR("Winding has invalid number of points");
+		globalErrorStream() << "Winding has invalid number of points";
 		return;
 	}
 
@@ -682,7 +679,7 @@ void DBrush::SaveToFile(FILE *pFile)
 {
 	fprintf(pFile, "{\n");
 
-	for(list<DPlane *>::const_iterator pp=faceList.begin(); pp!=faceList.end(); pp++)
+	for(std::list<DPlane *>::const_iterator pp=faceList.begin(); pp!=faceList.end(); pp++)
 	{
 		char buffer[512];
 
@@ -690,7 +687,7 @@ void DBrush::SaveToFile(FILE *pFile)
 			(*pp)->points[0][0], (*pp)->points[0][1], (*pp)->points[0][2], 
 			(*pp)->points[1][0], (*pp)->points[1][1], (*pp)->points[1][2], 
 			(*pp)->points[2][0], (*pp)->points[2][1], (*pp)->points[2][2], 
-			(*pp)->texInfo.m_texdef.GetName(),
+			(*pp)->m_shader.c_str(),
 			(*pp)->texInfo.m_texdef.shift[0], (*pp)->texInfo.m_texdef.shift[1], 
 			(*pp)->texInfo.m_texdef.scale[0], (*pp)->texInfo.m_texdef.scale[0], 
 			(*pp)->texInfo.m_texdef.rotate);
@@ -703,7 +700,7 @@ void DBrush::SaveToFile(FILE *pFile)
 
 void DBrush::Rotate(vec3_t vOrigin, vec3_t vRotation)
 {
-	for(list<DPlane *>::const_iterator rotPlane=faceList.begin(); rotPlane!=faceList.end(); rotPlane++)
+	for(std::list<DPlane *>::const_iterator rotPlane=faceList.begin(); rotPlane!=faceList.end(); rotPlane++)
 	{
 		for(int i = 0; i < 3; i++)
 			VectorRotate((*rotPlane)->points[i], vRotation, vOrigin);
@@ -727,13 +724,13 @@ bool DBrush::ResetTextures(const char* textureName, float fScale[2],    float fS
 {
 	if(textureName)
 	{
-		bool changed = FALSE;
-		for(list<DPlane *>::const_iterator resetPlane=faceList.begin(); resetPlane!=faceList.end(); resetPlane++)
+		bool changed = false;
+		for(std::list<DPlane *>::const_iterator resetPlane=faceList.begin(); resetPlane!=faceList.end(); resetPlane++)
 		{
-			if(!strcmp((*resetPlane)->texInfo.m_texdef.GetName(), textureName))
+			if(!strcmp((*resetPlane)->m_shader.c_str(), textureName))
 			{
         if(bResetTextureName)
-				  (*resetPlane)->texInfo.m_texdef.SetName(newTextureName);
+				  (*resetPlane)->m_shader = newTextureName;
 
 				if(bResetScale[0])
 					(*resetPlane)->texInfo.m_texdef.scale[0] = fScale[0];
@@ -748,17 +745,17 @@ bool DBrush::ResetTextures(const char* textureName, float fScale[2],    float fS
 				if(bResetRotation)
 					(*resetPlane)->texInfo.m_texdef.rotate = (float)rotation;
 
-				changed = TRUE;
+				changed = true;
 			}
 		}
 		return changed; // no point rebuilding unless we need to, only slows things down
 	}
 	else
 	{
-		for(list<DPlane *>::const_iterator resetPlane=faceList.begin(); resetPlane!=faceList.end(); resetPlane++)
+		for(std::list<DPlane *>::const_iterator resetPlane=faceList.begin(); resetPlane!=faceList.end(); resetPlane++)
 		{
         if(bResetTextureName)
-				  (*resetPlane)->texInfo.m_texdef.SetName(newTextureName);
+				  (*resetPlane)->m_shader = newTextureName;
 
 				if(bResetScale[0])
 					(*resetPlane)->texInfo.m_texdef.scale[0] = fScale[0];
@@ -773,32 +770,32 @@ bool DBrush::ResetTextures(const char* textureName, float fScale[2],    float fS
 				if(bResetRotation)
 					(*resetPlane)->texInfo.m_texdef.rotate = (float)rotation;
 		}
-		return TRUE;
+		return true;
 	}
 }
 
 bool DBrush::operator ==(DBrush* other)
 {
-	list<DPlane *>::const_iterator chkPlane;
+	std::list<DPlane *>::const_iterator chkPlane;
 	
 	for(chkPlane=faceList.begin(); chkPlane!=faceList.end(); chkPlane++)
 	{
 		if(!other->HasPlane((*chkPlane)))
-			return FALSE;
+			return false;
 	}
 
 	for(chkPlane=faceList.begin(); chkPlane!=faceList.end(); chkPlane++)
 	{
 		if(!HasPlane((*chkPlane)))
-			return FALSE;
+			return false;
 	}
 
-	return TRUE;
+	return true;
 }
 
-DPlane* DBrush::AddFace(vec3_t va, vec3_t vb, vec3_t vc, const char *textureName, bool bDetail)
+DPlane* DBrush::AddFace(const vec3_t va, const vec3_t vb, const vec3_t vc, const char *textureName, bool bDetail)
 {
-	bBoundsBuilt = FALSE;
+	bBoundsBuilt = false;
 	DPlane*	newFace = new DPlane(va, vb, vc, textureName, bDetail);
 	faceList.push_back(newFace);
 	
@@ -808,7 +805,7 @@ DPlane* DBrush::AddFace(vec3_t va, vec3_t vb, vec3_t vc, const char *textureName
 DPlane* DBrush::FindPlaneWithClosestNormal( vec_t* normal ) {
 	vec_t bestDot = -2;
 	DPlane* bestDotPlane = NULL;
-	list<DPlane *>::const_iterator chkPlane;
+	std::list<DPlane *>::const_iterator chkPlane;
 	for( chkPlane = faceList.begin(); chkPlane != faceList.end(); chkPlane++ ) {
 		DPlane* pPlane = (*chkPlane);
 
@@ -831,7 +828,7 @@ int DBrush::FindPointsForPlane( DPlane* plane, DPoint** pnts, int maxpnts ) {
 
 	BuildPoints();
 
-	for( list<DPoint *>::const_iterator points = pointList.begin(); points != pointList.end(); points++ ) {
+	for( std::list<DPoint *>::const_iterator points = pointList.begin(); points != pointList.end(); points++ ) {
 		DPoint* point = (*points);
 
 		if( fabs(plane->DistanceToPoint( point->_pnt )) < MAX_ROUND_ERROR ) {
@@ -849,19 +846,11 @@ int DBrush::FindPointsForPlane( DPlane* plane, DPoint** pnts, int maxpnts ) {
 }
 
 void DBrush::RemovePlane( DPlane* plane ) {
-	bBoundsBuilt = FALSE;
-	for( list<DPlane *>::const_iterator deadPlane = faceList.begin(); deadPlane != faceList.end(); deadPlane++ ) {		
+	bBoundsBuilt = false;
+	for( std::list<DPlane *>::const_iterator deadPlane = faceList.begin(); deadPlane != faceList.end(); deadPlane++ ) {		
 		if(*deadPlane == plane) {
 			delete *deadPlane;
 			faceList.remove( plane );
 		}
-	}
-}
-
-void DBrush::RemoveFromRadiant( void ) {
-	if(QER_brush) {
-#if 0
-		g_FuncTable.m_pfnDeleteBrushHandle(QER_brush);
-#endif
 	}
 }

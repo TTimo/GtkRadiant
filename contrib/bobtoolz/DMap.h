@@ -28,13 +28,17 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #pragma once
 #endif // _MSC_VER > 1000
 
+#include <list>
+
+class DEntity;
+
 class DMap  
 {
 public:
 	static void RebuildEntity(DEntity* ent);
 
 	void ResetTextures( const char* textureName, float fScale[2],      float fShift[2],      int rotation, const char* newTextureName, int bResetTextureName,  int bResetScale[2],  int bResetShift[2],  int bResetRotation);
-	void LoadAll(bool bLoadPatches = FALSE);
+	void LoadAll(bool bLoadPatches = false);
 	void BuildInRadiant(bool bAllowDestruction);
 	int m_nNextEntity;
 	DEntity* GetWorldSpawn();
@@ -43,7 +47,7 @@ public:
 	DEntity* DMap::GetEntityForID(int ID);
 	DEntity* AddEntity(char* classname = "worldspawn", int ID = -1);
 
-	list<DEntity*> entityList;
+	std::list<DEntity*> entityList;
 
 	DMap();
 	virtual ~DMap();

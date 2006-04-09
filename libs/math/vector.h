@@ -416,6 +416,15 @@ const Vector3 g_vector3_axis_z(0, 0, 1);
 
 const Vector3 g_vector3_axes[3] = { g_vector3_axis_x, g_vector3_axis_y, g_vector3_axis_z };
 
+inline Vector3& vector3_from_array(float* array)
+{
+  return *reinterpret_cast<Vector3*>(array);
+}
+inline const Vector3& vector3_from_array(const float* array)
+{
+  return *reinterpret_cast<const Vector3*>(array);
+}
+
 template<typename Element>
 inline Element* vector3_to_array(BasicVector3<Element>& self)
 {

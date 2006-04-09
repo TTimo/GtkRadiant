@@ -5,4 +5,4 @@ LIBRARY      "bobToolz"
 
 EXPORTS
     ; Explicit exports can go here
-	Synapse_EnumerateInterfaces @1
+	Radiant_RegisterModules @1

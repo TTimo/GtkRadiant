@@ -209,7 +209,7 @@ public:
   }
 };
 
-class TargetKeys : public EntityKeyValues::Observer
+class TargetKeys : public Entity::Observer
 {
   TargetingEntities m_targetingEntities;
   Callback m_targetsChanged;
@@ -236,7 +236,7 @@ public:
     m_targetsChanged();
   }
 
-  void insert(const char* key, EntityKeyValues::Value& value)
+  void insert(const char* key, EntityKeyValue& value)
   {
     std::size_t index;
     if(readTargetKey(key, index))
@@ -246,7 +246,7 @@ public:
       targetsChanged();
     }
   }
-  void erase(const char* key, EntityKeyValues::Value& value)
+  void erase(const char* key, EntityKeyValue& value)
   {
     std::size_t index;
     if(readTargetKey(key, index))
@@ -328,7 +328,7 @@ public:
 class TargetableInstance :
 public SelectableInstance,
 public Targetable,
-public EntityKeyValues::Observer
+public Entity::Observer
 {
   mutable Vertex3f m_position;
   EntityKeyValues& m_entity;
@@ -368,14 +368,14 @@ public:
     m_targeting.targetsChanged();
   }
 
-  void insert(const char* key, EntityKeyValues::Value& value)
+  void insert(const char* key, EntityKeyValue& value)
   {
     if(string_equal(key, g_targetable_nameKey))
     {
       value.attach(TargetedEntity::TargetnameChangedCaller(m_targeted));
     }
   }
-  void erase(const char* key, EntityKeyValues::Value& value)
+  void erase(const char* key, EntityKeyValue& value)
   {
     if(string_equal(key, g_targetable_nameKey))
     {

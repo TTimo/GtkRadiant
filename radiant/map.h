@@ -24,6 +24,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "iscenegraph.h"
 #include "generic/callback.h"
+#include "signal/signalfwd.h"
 #include "string/stringfwd.h"
 
 class Map;
@@ -31,7 +32,7 @@ extern Map g_map;
 
 class MapFormat;
 
-void Map_addValidCallback(Map& map, const Callback& callback);
+void Map_addValidCallback(Map& map, const SignalHandler& handler);
 bool Map_Valid(const Map& map);
 
 class DeferredDraw

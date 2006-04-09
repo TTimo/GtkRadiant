@@ -17,9 +17,9 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include "StdAfx.h"
+#include "DTreePlanter.h"
 
-#include "gtkr_list.h"
+#include <list>
 #include "str.h"
 
 #include "DPoint.h"
@@ -32,17 +32,17 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "ScriptParser.h"
 #include "misc.h"
 
-#include "DTreePlanter.h"
 
 
 #include "funchandlers.h"
 
-bool DTreePlanter::OnMouseMove(guint32 nFlags, gdouble x, gdouble y) {
-	return false;
-}
-
-bool DTreePlanter::OnLButtonDown(guint32 nFlags, gdouble x, gdouble y) {
-	VIEWTYPE vt = m_XYWrapper->GetViewType();
+SignalHandlerResult DTreePlanter::mouseDown(const WindowVector& position, ButtonIdentifier button, ModifierFlags modifiers)
+{
+  if(button != c_buttonLeft)
+  {
+    return SIGNAL_CONTINUE_EMISSION;
+  }
+	VIEWTYPE vt = GlobalRadiant().XYWindow_getViewType();
 
 	switch(vt) {
 		case XY:
@@ -50,14 +50,14 @@ bool DTreePlanter::OnLButtonDown(guint32 nFlags, gdouble x, gdouble y) {
 		case YZ:
 		case XZ:
 		default:
-			return false;
+			return SIGNAL_CONTINUE_EMISSION;
 	}
 
-	vec3_t pt, vhit;
+	Vector3 pt, vhit;
 
-	m_XYWrapper->SnapToGrid( static_cast<int>(x), static_cast<int>(y), pt );
+  pt = vector3_snapped(GlobalRadiant().XYWindow_windowToWorld(position));
 
-	if(FindDropPoint(pt, vhit)) {
+	if(FindDropPoint(vector3_to_array(pt), vector3_to_array(vhit))) {
 		vhit[2] += m_offset;
 
 		char buffer[128];
@@ -96,7 +96,7 @@ bool DTreePlanter::OnLButtonDown(guint32 nFlags, gdouble x, gdouble y) {
 				e2.LoadFromEntity(lastEntNum, TRUE);
 				e2.AddEPair("target", buffer);
 				e2.RemoveFromRadiant();
-				e2.BuildInRadiant(FALSE);
+				e2.BuildInRadiant(false);
 			}
 #endif
 		}
@@ -121,34 +121,14 @@ bool DTreePlanter::OnLButtonDown(guint32 nFlags, gdouble x, gdouble y) {
 			e.AddEPair("modelscale", buffer);
 		}
 
-		e.BuildInRadiant( FALSE );
+		e.BuildInRadiant( false );
 	}
 
 	if(m_autoLink) {
 		DoTrainPathPlot();
 	}
 
-	return true;
-}
-
-bool DTreePlanter::OnLButtonUp(guint32 nFlags, gdouble x, gdouble y) {
-	return false;
-}
-
-bool DTreePlanter::OnRButtonDown(guint32 nFlags, gdouble x, gdouble y) {
-	return false;
-}
-
-bool DTreePlanter::OnRButtonUp(guint32 nFlags, gdouble x, gdouble y) {
-	return false;
-}
-
-bool DTreePlanter::OnMButtonDown(guint32 nFlags, gdouble x, gdouble y) {
-	return false;
-}
-
-bool DTreePlanter::OnMButtonUp(guint32 nFlags, gdouble x, gdouble y) {
-	return false;
+	return SIGNAL_STOP_EMISSION;
 }
 
 bool DTreePlanter::FindDropPoint(vec3_t in, vec3_t out) {
@@ -226,7 +206,7 @@ void DTreePlanter::DropEntsToGround( void ) {
 		sprintf( buffer, "%f %f %f", out[0], out[1], out[2] );
 		ent.AddEPair( "origin", buffer );
 		ent.RemoveFromRadiant();
-		ent.BuildInRadiant(FALSE);
+		ent.BuildInRadiant(false);
 	}
 
 	g_FuncTable.m_pfnReleaseSelectedBrushHandles();
@@ -254,7 +234,7 @@ void DTreePlanter::MakeChain( void ) {
 			e.AddEPair( "control", buffer );
 		}
 
-		e.BuildInRadiant( FALSE );
+		e.BuildInRadiant( false );
 	}
 
 	for(i = 0; i < m_linkNum-1; i++) {
@@ -266,7 +246,7 @@ void DTreePlanter::MakeChain( void ) {
 		sprintf( buffer, "0 %i 0", (i * 64) + 32);
 		e.AddEPair( "origin", buffer );
 
-		e.BuildInRadiant( FALSE );
+		e.BuildInRadiant( false );
 	}
 }
 
@@ -290,7 +270,7 @@ void DTreePlanter::SelectChain( void ) {
 			e.AddEPair( "control", buffer );
 		}
 
-		e.BuildInRadiant( FALSE );
+		e.BuildInRadiant( false );
 	}
 
 	for(int i = 0; i < m_linkNum-1; i++) {
@@ -302,6 +282,6 @@ void DTreePlanter::SelectChain( void ) {
 		sprintf( buffer, "0 %i 0", (i * 64) + 32);
 		e.AddEPair( "origin", buffer );
 
-		e.BuildInRadiant( FALSE );
+		e.BuildInRadiant( false );
 	}*/
 }

@@ -1979,7 +1979,7 @@ scene::Node* MakePatch(void)
 #if 0
   patch->m_patch->SetShader(Texture[Game][0]);
 #endif
-  h_worldspawn->m_traverse->insert(patch);
+  Node_getTraversable(h_worldspawn)->insert(patch);
   return patch;
 }
 
@@ -2021,7 +2021,7 @@ void MakeBrush(BRUSH *brush)
   }
 #endif
 
-  h_func_group->m_traverse->insert(node);
+  Node_getTraversable(h_func_group)->insert(node);
 }
 //=============================================================
 void OpenFuncGroup()

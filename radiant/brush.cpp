@@ -20,17 +20,18 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
 #include "brush.h"
+#include "signal/signal.h"
 
-std::set<Callback> g_brushTextureChangedCallbacks;
+Signal0 g_brushTextureChangedCallbacks;
 
-void Brush_addTextureChangedCallback(const Callback& callback)
+void Brush_addTextureChangedCallback(const SignalHandler& handler)
 {
-  g_brushTextureChangedCallbacks.insert(callback);
+  g_brushTextureChangedCallbacks.connectLast(handler);
 }
 
 void Brush_textureChanged()
 {
-  std::for_each(g_brushTextureChangedCallbacks.begin(), g_brushTextureChangedCallbacks.end(), CallbackInvoke());
+  g_brushTextureChangedCallbacks();
 }
 
 QuantiseFunc Face::m_quantise;

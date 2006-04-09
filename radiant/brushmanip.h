@@ -22,7 +22,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #if !defined (INCLUDED_BRUSHWRAPPER_H)
 #define INCLUDED_BRUSHWRAPPER_H
 
-#include "string/string.h"
+#include <cstddef>
+#include "string/stringfwd.h"
+#include "generic/callbackfwd.h"
 
 enum EBrushPrefab
 {
@@ -66,8 +68,6 @@ void Scene_BrushSelectByShader(scene::Graph& graph, const char* name);
 void Scene_BrushSelectByShader_Component(scene::Graph& graph, const char* name);
 void Scene_BrushFitTexture_Selected(scene::Graph& graph, float s_repeat, float t_repeat);
 void Scene_BrushFitTexture_Component_Selected(scene::Graph& graph, float s_repeat, float t_repeat);
-
-class Callback;
 
 typedef struct _GtkMenu GtkMenu;
 void Brush_constructMenu(GtkMenu* menu);

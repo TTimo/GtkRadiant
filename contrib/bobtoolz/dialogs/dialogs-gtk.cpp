@@ -17,14 +17,11 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include "../StdAfx.h"
-
-
 #include "dialogs-gtk.h"
 #include "../funchandlers.h"
 
 #include "str.h"
-#include "gtkr_list.h"
+#include <list>
 
 #include "../lists.h"
 #include "../misc.h"

@@ -48,11 +48,11 @@ public:
 };
 
 
-typedef MemberCaller1<KeyValue, const char*, &KeyValue::assign> KeyValueAssignCaller;
-typedef MemberCaller1<KeyValue, const KeyObserver&, &KeyValue::attach> KeyValueAttachCaller;
-typedef MemberCaller1<KeyValue, const KeyObserver&, &KeyValue::detach> KeyValueDetachCaller;
+typedef MemberCaller1<EntityKeyValue, const char*, &EntityKeyValue::assign> KeyValueAssignCaller;
+typedef MemberCaller1<EntityKeyValue, const KeyObserver&, &EntityKeyValue::attach> KeyValueAttachCaller;
+typedef MemberCaller1<EntityKeyValue, const KeyObserver&, &EntityKeyValue::detach> KeyValueDetachCaller;
 
-class NameKeys : public EntityKeyValues::Observer, public Namespaced
+class NameKeys : public Entity::Observer, public Namespaced
 {
   Namespace* m_namespace;
   EntityKeyValues& m_entity;
@@ -60,10 +60,10 @@ class NameKeys : public EntityKeyValues::Observer, public Namespaced
   NameKeys(const NameKeys& other);
   NameKeys& operator=(const NameKeys& other);
 
-  typedef std::map<CopiedString, EntityKeyValues::Value*> KeyValues;
+  typedef std::map<CopiedString, EntityKeyValue*> KeyValues;
   KeyValues m_keyValues;
 
-  void insertName(const char* key, EntityKeyValues::Value& value)
+  void insertName(const char* key, EntityKeyValue& value)
   {
     if(m_namespace != 0 && m_keyIsName(key))
     {
@@ -71,7 +71,7 @@ class NameKeys : public EntityKeyValues::Observer, public Namespaced
       m_namespace->attach(KeyValueAssignCaller(value), KeyValueAttachCaller(value));
     }
   }
-  void eraseName(const char* key, EntityKeyValues::Value& value)
+  void eraseName(const char* key, EntityKeyValue& value)
   {
     if(m_namespace != 0 && m_keyIsName(key))
     {
@@ -114,12 +114,12 @@ public:
     m_keyIsName = keyIsName;
     insertAll();
   }
-  void insert(const char* key, EntityKeyValues::Value& value)
+  void insert(const char* key, EntityKeyValue& value)
   {
     m_keyValues.insert(KeyValues::value_type(key, &value));
     insertName(key, value);
   }
-  void erase(const char* key, EntityKeyValues::Value& value)
+  void erase(const char* key, EntityKeyValue& value)
   {
     eraseName(key, value);
     m_keyValues.erase(key);

@@ -28,6 +28,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "gtkutil/idledraw.h"
 
 #include "generic/static.h"
+#include "signal/isignal.h"
 #include "shaderlib.h"
 
 #include "texwindow.h"
@@ -100,7 +101,7 @@ public:
       }
     }
   }
-  void connect(const Callback& update) const
+  void connect(const SignalHandler& update) const
   {
     TextureBrowser_addActiveShadersChangedCallback(update);
   }
@@ -116,7 +117,7 @@ public:
   {
     GlobalShaderSystem().foreachShaderName(callback);
   }
-  void connect(const Callback& update) const
+  void connect(const SignalHandler& update) const
   {
     TextureBrowser_addShadersRealiseCallback(update);
   }

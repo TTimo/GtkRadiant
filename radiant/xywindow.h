@@ -23,12 +23,15 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define INCLUDED_XYWINDOW_H
 
 #include "math/matrix.h"
+#include "signal/signal.h"
 
 #include "gtkutil/cursor.h"
 #include "gtkutil/window.h"
 #include "gtkutil/xorrectangle.h"
 #include "view.h"
 #include "map.h"
+
+#include "qerplugin.h"
 
 class Shader;
 class SelectionSystemWindowObserver;
@@ -45,13 +48,6 @@ void SplitClip();
 void Clip();
 void OnClipMode(bool enabled);
 bool ClipMode();
-
-enum VIEWTYPE
-{
-  YZ = 0,
-  XZ = 1,
-  XY = 2
-};
 
 inline const char* ViewType_getTitle(VIEWTYPE viewtype)
 {
@@ -177,18 +173,6 @@ private:
   int m_ptCursorX, m_ptCursorY;
 
   unsigned int m_buttonstate;
-  void ButtonState_onMouseDown(unsigned int buttons)
-  {
-    m_buttonstate |= buttons;
-  }
-  void ButtonState_onMouseUp(unsigned int buttons)
-  {
-    m_buttonstate &= ~buttons;
-  }
-  unsigned int getButtonState() const
-  {
-    return m_buttonstate;
-  }
 
   int m_nNewBrushPressx;
   int m_nNewBrushPressy;
@@ -209,6 +193,18 @@ private:
   bool m_entityCreate;
 
 public:
+  void ButtonState_onMouseDown(unsigned int buttons)
+  {
+    m_buttonstate |= buttons;
+  }
+  void ButtonState_onMouseUp(unsigned int buttons)
+  {
+    m_buttonstate &= ~buttons;
+  }
+  unsigned int getButtonState() const
+  {
+    return m_buttonstate;
+  }
   void EntityCreate_MouseDown(int x, int y);
   void EntityCreate_MouseMove(int x, int y);
   void EntityCreate_MouseUp(int x, int y);
@@ -231,6 +227,10 @@ public:
   {
     return m_nHeight;
   }
+
+  Signal3<const WindowVector&, ButtonIdentifier, ModifierFlags> onMouseDown;
+  void mouseDown(const WindowVector& position, ButtonIdentifier button, ModifierFlags modifiers);
+  typedef Member3<XYWnd, const WindowVector&, ButtonIdentifier, ModifierFlags, void, &XYWnd::mouseDown> MouseDownCaller;
 };
 
 inline void XYWnd_Update(XYWnd& xywnd)

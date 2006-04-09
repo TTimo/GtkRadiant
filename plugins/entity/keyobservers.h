@@ -25,7 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "entitylib.h"
 #include <map>
 
-class KeyObserverMap : public EntityKeyValues::Observer
+class KeyObserverMap : public Entity::Observer
 {
   typedef std::multimap<const char*, KeyObserver, RawStringLess> KeyObservers;
   KeyObservers m_keyObservers;
@@ -34,14 +34,14 @@ public:
   {
     m_keyObservers.insert(KeyObservers::value_type(key, observer));
   }
-  void insert(const char* key, EntityKeyValues::Value& value)
+  void insert(const char* key, EntityKeyValue& value)
   {
     for(KeyObservers::const_iterator i = m_keyObservers.find(key); i != m_keyObservers.end() && string_equal((*i).first, key); ++i)
     {
       value.attach((*i).second);
     }
   }
-  void erase(const char* key, EntityKeyValues::Value& value)
+  void erase(const char* key, EntityKeyValue& value)
   {
     for(KeyObservers::const_iterator i = m_keyObservers.find(key); i != m_keyObservers.end() && string_equal((*i).first, key); ++i)
     {

@@ -23,6 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define INCLUDED_MODELSKIN_H
 
 #include "generic/constant.h"
+#include "generic/callbackfwd.h"
 
 class SkinRemap
 {
@@ -34,8 +35,6 @@ public:
   }
 };
 
-template<typename FirstArgument>
-class Callback1;
 typedef Callback1<SkinRemap> SkinRemapCallback;
 class ModuleObserver;
 

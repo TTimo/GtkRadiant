@@ -21,14 +21,16 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "StdAfx.h"
+#include "DVisDrawer.h"
 
-#include "gtkr_list.h"
+#include "iglrender.h"
+#include "math/matrix.h"
+
+#include <list>
 #include "str.h"
 
 #include "DPoint.h"
 #include "DWinding.h"
-#include "DVisDrawer.h"
 
 #include "misc.h"
 #include "funchandlers.h"
@@ -39,15 +41,16 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 DVisDrawer::DVisDrawer()
 {
-	refCount = 1;
-	m_bHooked = FALSE;
 	m_list = NULL;
+
+  constructShaders();
+  GlobalShaderCache().attachRenderable(*this);
 }
 
 DVisDrawer::~DVisDrawer()
 {
-	if(m_bHooked)
-		UnRegister();
+  GlobalShaderCache().detachRenderable(*this);
+  destroyShaders();
 
 	g_VisView = NULL;
 }
@@ -55,117 +58,73 @@ DVisDrawer::~DVisDrawer()
 //////////////////////////////////////////////////////////////////////
 // Implementation
 //////////////////////////////////////////////////////////////////////
+const char* g_state_solid = "$bobtoolz/visdrawer/solid";
+const char* g_state_wireframe = "$bobtoolz/visdrawer/wireframe";
 
-void DVisDrawer::Draw2D(VIEWTYPE vt)
+void DVisDrawer::constructShaders()
 {
-	if(!m_list)
-		return;
+  OpenGLState state;
+  GlobalOpenGLStateLibrary().getDefaultState(state);
+  state.m_state = RENDER_COLOURWRITE|RENDER_DEPTHWRITE|RENDER_COLOURCHANGE;
+  state.m_linewidth = 1;
 
-	__QGLTABLENAME.m_pfn_qglPushAttrib(GL_ALL_ATTRIB_BITS);
+  GlobalOpenGLStateLibrary().insert(g_state_wireframe, state);
 
-	__QGLTABLENAME.m_pfn_qglDisable(GL_BLEND);
-	__QGLTABLENAME.m_pfn_qglDisable(GL_LINE_SMOOTH);
+  GlobalOpenGLStateLibrary().getDefaultState(state);
+  state.m_state = RENDER_FILL|RENDER_BLEND|RENDER_COLOURWRITE|RENDER_COLOURCHANGE|RENDER_SMOOTH|RENDER_DEPTHWRITE;
 
-	__QGLTABLENAME.m_pfn_qglPushMatrix();
-	
-	switch(vt)
-	{
-	case XY:
-		break;
-	case XZ:
-		__QGLTABLENAME.m_pfn_qglRotatef(270.0f, 1.0f, 0.0f, 0.0f);
-		break;
-	case YZ:
-		__QGLTABLENAME.m_pfn_qglRotatef(270.0f, 1.0f, 0.0f, 0.0f);
-		__QGLTABLENAME.m_pfn_qglRotatef(270.0f, 0.0f, 0.0f, 1.0f);
-		break;
-	}
+  GlobalOpenGLStateLibrary().insert(g_state_solid, state);
 
-	__QGLTABLENAME.m_pfn_qglLineWidth(1.0f);
-	__QGLTABLENAME.m_pfn_qglColor4f(1.0f, 0.0f, 0.0f, 0.5f);
+  m_shader_solid = GlobalShaderCache().capture(g_state_solid);
+  m_shader_wireframe = GlobalShaderCache().capture(g_state_wireframe);
+}
 
-	__QGLTABLENAME.m_pfn_qglEnable(GL_BLEND);
-	__QGLTABLENAME.m_pfn_qglBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	__QGLTABLENAME.m_pfn_qglDisable(GL_POLYGON_SMOOTH);
+void DVisDrawer::destroyShaders()
+{
+  GlobalShaderCache().release(g_state_solid);
+  GlobalShaderCache().release(g_state_wireframe);
+  GlobalOpenGLStateLibrary().erase(g_state_solid);
+  GlobalOpenGLStateLibrary().erase(g_state_wireframe);
+}
 
-	__QGLTABLENAME.m_pfn_qglDepthFunc(GL_ALWAYS);
-
+void DVisDrawer::render(RenderStateFlags state) const
+{
 	//bleh
-	list<DWinding *>::const_iterator l=m_list->begin();
+	std::list<DWinding *>::const_iterator l=m_list->begin();
 
 	for(; l != m_list->end(); l++)
 	{
 		DWinding* w = *l;
 
-		__QGLTABLENAME.m_pfn_qglColor4f(w->clr[0], w->clr[1], w->clr[2], 0.5f);
+		glColor4f(w->clr[0], w->clr[1], w->clr[2], 0.5f);
 
-		__QGLTABLENAME.m_pfn_qglBegin(GL_POLYGON);
+		glBegin(GL_POLYGON);
 		for(int i = 0; i < w->numpoints; i++) {
-			__QGLTABLENAME.m_pfn_qglVertex3f((w->p[i])[0], (w->p[i])[1], (w->p[i])[2]);
+			glVertex3f((w->p[i])[0], (w->p[i])[1], (w->p[i])[2]);
 		}
-		__QGLTABLENAME.m_pfn_qglEnd();
+		glEnd();
 	}
-
-	
-	__QGLTABLENAME.m_pfn_qglPopMatrix();
-
-	__QGLTABLENAME.m_pfn_qglPopAttrib();
 }
 
-void DVisDrawer::Draw3D()
+void DVisDrawer::renderWireframe(Renderer& renderer, const VolumeTest& volume) const
 {
 	if(!m_list)
 		return;
 
-	__QGLTABLENAME.m_pfn_qglPushAttrib(GL_ALL_ATTRIB_BITS);
+  renderer.SetState(m_shader_wireframe, Renderer::eWireframeOnly);
 
-	__QGLTABLENAME.m_pfn_qglColor4f(1.0, 0.0, 0.0, 0.5f);
-
-//	__QGLTABLENAME.m_pfn_qglHint(GL_FOG_HINT, GL_NICEST);
-	
-//	__QGLTABLENAME.m_pfn_qglDisable(GL_CULL_FACE);
-	__QGLTABLENAME.m_pfn_qglDisable(GL_LINE_SMOOTH);
-
-//	__QGLTABLENAME.m_pfn_qglPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-//	__QGLTABLENAME.m_pfn_qglShadeModel(GL_SMOOTH);
-
-	__QGLTABLENAME.m_pfn_qglEnable(GL_BLEND);
-	__QGLTABLENAME.m_pfn_qglBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	__QGLTABLENAME.m_pfn_qglDisable(GL_POLYGON_SMOOTH);
-
-	__QGLTABLENAME.m_pfn_qglDepthFunc(GL_ALWAYS);
-
-	//bleh
-	list<DWinding *>::const_iterator l=m_list->begin();
-
-	for(; l != m_list->end(); l++)
-	{
-		DWinding* w = *l;
-
-		__QGLTABLENAME.m_pfn_qglColor4f(w->clr[0], w->clr[1], w->clr[2], 0.5f);
-
-		__QGLTABLENAME.m_pfn_qglBegin(GL_POLYGON);
-		for(int i = 0; i < w->numpoints; i++) {
-			__QGLTABLENAME.m_pfn_qglVertex3f((w->p[i])[0], (w->p[i])[1], (w->p[i])[2]);
-		}
-		__QGLTABLENAME.m_pfn_qglEnd();
-	}
-
-	__QGLTABLENAME.m_pfn_qglPopAttrib();
+  renderer.addRenderable(*this, g_matrix4_identity);
 }
 
-void DVisDrawer::Register()
+void DVisDrawer::renderSolid(Renderer& renderer, const VolumeTest& volume) const
 {
-	__QGLTABLENAME.m_pfnHookGL2DWindow( this );
-	__QGLTABLENAME.m_pfnHookGL3DWindow( this );
-	m_bHooked = TRUE;
-}
+	if(!m_list)
+		return;
 
-void DVisDrawer::UnRegister()
-{
-	__QGLTABLENAME.m_pfnUnHookGL2DWindow( this );
-	__QGLTABLENAME.m_pfnUnHookGL3DWindow( this );
-	m_bHooked = FALSE;
+  renderer.SetState(m_shader_solid, Renderer::eWireframeOnly);
+  renderer.SetState(m_shader_solid, Renderer::eFullMaterials);
+
+  renderer.addRenderable(*this, g_matrix4_identity);
 }
 
 void DVisDrawer::SetList(std::list<DWinding*> *pointList)
@@ -178,7 +137,7 @@ void DVisDrawer::SetList(std::list<DWinding*> *pointList)
 
 void DVisDrawer::ClearPoints()
 {
-  list<DWinding *>::const_iterator deadPoint=m_list->begin();
+  std::list<DWinding *>::const_iterator deadPoint=m_list->begin();
 	for(; deadPoint!=m_list->end(); deadPoint++)
 		delete *deadPoint;
 	m_list->clear();

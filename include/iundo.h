@@ -27,6 +27,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include <cstddef>
 #include "generic/constant.h"
+#include "generic/callbackfwd.h"
 
 class UndoMemento
 {
@@ -46,8 +47,6 @@ class UndoObserver
 public:
   virtual void save(Undoable* undoable) = 0;
 };
-
-class Callback;
 
 class UndoTracker
 {

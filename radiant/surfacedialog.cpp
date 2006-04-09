@@ -45,7 +45,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <gdk/gdkkeysyms.h>
 #include <gtk/gtkcheckbutton.h>	//Shamus: For Textool
 
-#include "generic/callback.h"
+#include "signal/isignal.h"
 #include "generic/object.h"
 #include "math/vector.h"
 #include "texturelib.h"

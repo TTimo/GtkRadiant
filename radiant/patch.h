@@ -57,6 +57,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "stringio.h"
 #include "shaderlib.h"
 #include "generic/callback.h"
+#include "signal/signalfwd.h"
 #include "texturelib.h"
 #include "xml/ixml.h"
 #include "dragplanes.h"
@@ -164,7 +165,7 @@ public:
 bool patch_filtered(Patch& patch);
 void add_patch_filter(PatchFilter& filter, int mask, bool invert = false);
 
-void Patch_addTextureChangedCallback(const Callback& callback);
+void Patch_addTextureChangedCallback(const SignalHandler& handler);
 void Patch_textureChanged();
 
 inline void BezierCurveTreeArray_deleteAll(Array<BezierCurveTree*>& curveTrees)

@@ -23,6 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define INCLUDED_ISHADERS_H
 
 #include "generic/constant.h"
+#include "generic/callbackfwd.h"
 
 enum
 {
@@ -78,8 +79,6 @@ public:
   virtual float alphaTest() const = 0;
 };
 
-template<typename FirstArgument>
-class Callback1;
 typedef Callback1<const ShaderLayer&> ShaderLayerCallback;
 
 
@@ -133,7 +132,6 @@ public:
   virtual qtexture_t* lightFalloffImage() const = 0;
 };
 
-class Callback;
 typedef struct _GSList GSList;
 typedef Callback1<const char*> ShaderNameCallback;
 

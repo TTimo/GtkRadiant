@@ -28,6 +28,22 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #pragma once
 #endif // _MSC_VER > 1000
 
+#include <list>
+#include "str.h"
+#include "mathlib.h"
+
+class DEPair;
+class DBrush;
+class DPlane;
+class DPatch;
+class Entity;
+
+namespace scene
+{
+  class Node;
+}
+class _QERFaceData;
+
 class DEntity  
 {
 public:
@@ -54,12 +70,12 @@ public:
 	int GetIDMax();
 
 	void BuildInRadiant(bool allowDestruction);
-	void ResetChecks(list<Str>* exclusionList);
-	void RemoveNonCheckBrushes(list<Str>* exclusionList, bool useDetail);
+	void ResetChecks(std::list<Str>* exclusionList);
+	void RemoveNonCheckBrushes(std::list<Str>* exclusionList, bool useDetail);
 
 	DPlane* AddFaceToBrush(vec3_t va, vec3_t vb, vec3_t vc, _QERFaceData* faceData, int ID);	// slow, try not to use much
 	int GetBrushCount( void );
-  DBrush* FindBrushByPointer( scene::Node* brush );
+  DBrush* FindBrushByPointer( scene::Node& brush );
 //	---------------------------------------------
 
 
@@ -84,17 +100,17 @@ public:
 //	---------------------------------------------
 
 //	vars
-	list<DEPair*> epairList;
-	list<DBrush*> brushList;
+	std::list<DEPair*> epairList;
+	std::list<DBrush*> brushList;
 	// new patches, wahey!!!
-	list<DPatch*> patchList;
+	std::list<DPatch*> patchList;
 	Str m_Classname;
 //	---------------------------------------------
 
 
 	int FixBrushes();
 
-	bool LoadFromEntity(scene::Node* ent, bool bLoadPatches = FALSE);
+	bool LoadFromEntity(scene::Node& ent, bool bLoadPatches = false);
 	void LoadSelectedBrushes();
 	void LoadSelectedPatches();
 

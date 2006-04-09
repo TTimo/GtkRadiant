@@ -96,7 +96,9 @@ class Doom3Group :
 
 public:
   NURBSCurve m_curveNURBS;
+  SignalHandlerId m_curveNURBSChanged;
   CatmullRomSpline m_curveCatmullRom;
+  SignalHandlerId m_curveCatmullRomChanged;
 private:
   mutable AABB m_curveBounds;
 
@@ -522,8 +524,8 @@ public:
     m_curveCatmullRom(m_contained.m_curveCatmullRom.m_controlPointsTransformed, SelectionChangedComponentCaller(*this))
   {
     m_contained.instanceAttach(Instance::path());
-    m_contained.m_curveNURBS.attach(CurveEdit::CurveChangedCaller(m_curveNURBS));
-    m_contained.m_curveCatmullRom.attach(CurveEdit::CurveChangedCaller(m_curveCatmullRom));
+    m_contained.m_curveNURBSChanged = m_contained.m_curveNURBS.connect(CurveEdit::CurveChangedCaller(m_curveNURBS));
+    m_contained.m_curveCatmullRomChanged = m_contained.m_curveCatmullRom.connect(CurveEdit::CurveChangedCaller(m_curveCatmullRom));
 
     StaticRenderableConnectionLines::instance().attach(*this);
   }
@@ -531,8 +533,8 @@ public:
   {
     StaticRenderableConnectionLines::instance().detach(*this);
 
-    m_contained.m_curveCatmullRom.detach(CurveEdit::CurveChangedCaller(m_curveCatmullRom));
-    m_contained.m_curveNURBS.detach(CurveEdit::CurveChangedCaller(m_curveNURBS));
+    m_contained.m_curveCatmullRom.disconnect(m_contained.m_curveCatmullRomChanged);
+    m_contained.m_curveNURBS.disconnect(m_contained.m_curveNURBSChanged);
     m_contained.instanceDetach(Instance::path());
   }
   void renderSolid(Renderer& renderer, const VolumeTest& volume) const

@@ -109,11 +109,11 @@ namespace HashTableDetail
      : m_hash(hash), m_value(key, value)
     {
     }
-    BucketNode* getNext()
+    BucketNode* getNext() const
     {
       return static_cast<BucketNode*>(next);
     }
-    BucketNode* getPrev()
+    BucketNode* getPrev() const
     {
       return static_cast<BucketNode*>(prev);
     }

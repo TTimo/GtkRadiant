@@ -676,7 +676,7 @@ void Dialog::addRadioIcons(GtkWidget* vbox, const char* name, int& data, StringA
   addRadioIcons(vbox, name, icons, IntImportCaller(data), IntExportCaller(data));
 }
 
-GtkWidget* Dialog::addEntry(GtkWidget* vbox, const char* name, const IntImportCallback& importViewer, const IntExportCallback& exportViewer)
+GtkWidget* Dialog::addIntEntry(GtkWidget* vbox, const char* name, const IntImportCallback& importViewer, const IntExportCallback& exportViewer)
 {
   DialogEntryRow row(DialogEntryRow_new(name));
   AddIntEntryData(*row.m_entry, importViewer, exportViewer);
@@ -684,7 +684,7 @@ GtkWidget* Dialog::addEntry(GtkWidget* vbox, const char* name, const IntImportCa
   return row.m_row;
 }
 
-GtkWidget* Dialog::addEntry(GtkWidget* vbox, const char* name, const SizeImportCallback& importViewer, const SizeExportCallback& exportViewer)
+GtkWidget* Dialog::addSizeEntry(GtkWidget* vbox, const char* name, const SizeImportCallback& importViewer, const SizeExportCallback& exportViewer)
 {
   DialogEntryRow row(DialogEntryRow_new(name));
   AddSizeEntryData(*row.m_entry, importViewer, exportViewer);
@@ -692,7 +692,7 @@ GtkWidget* Dialog::addEntry(GtkWidget* vbox, const char* name, const SizeImportC
   return row.m_row;
 }
 
-GtkWidget* Dialog::addEntry(GtkWidget* vbox, const char* name, const FloatImportCallback& importViewer, const FloatExportCallback& exportViewer)
+GtkWidget* Dialog::addFloatEntry(GtkWidget* vbox, const char* name, const FloatImportCallback& importViewer, const FloatExportCallback& exportViewer)
 {
   DialogEntryRow row(DialogEntryRow_new(name));
   AddFloatEntryData(*row.m_entry, importViewer, exportViewer);

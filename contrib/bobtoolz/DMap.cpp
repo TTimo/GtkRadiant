@@ -21,10 +21,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "StdAfx.h"
+#include "DMap.h"
 
 #include "str.h"
-#include "gtkr_list.h"
+#include <list>
 
 #include "DPoint.h"
 #include "DPlane.h"
@@ -32,11 +32,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "DEPair.h"
 #include "DPatch.h"
 #include "DEntity.h"
-#include "DMap.h"
 
 #include "iundo.h"
 
-#include "refcounted_ptr.h"
+#include "generic/referencecounted.h"
 
 #include <vector>
 #include <list>
@@ -78,7 +77,7 @@ void DMap::ClearEntities()
 {
 	m_nNextEntity = 1;
 
-	for(list<DEntity *>::const_iterator deadEntity=entityList.begin(); deadEntity!=entityList.end(); deadEntity++)
+	for(std::list<DEntity *>::const_iterator deadEntity=entityList.begin(); deadEntity!=entityList.end(); deadEntity++)
 		delete *deadEntity;
 
 	entityList.clear();
@@ -88,7 +87,7 @@ DEntity* DMap::GetEntityForID(int ID)
 {
 	DEntity* findEntity = NULL;
 
-	for(list<DEntity *>::const_iterator chkEntity=entityList.begin(); chkEntity!=entityList.end(); chkEntity++)
+	for(std::list<DEntity *>::const_iterator chkEntity=entityList.begin(); chkEntity!=entityList.end(); chkEntity++)
 	{
 		if((*chkEntity)->m_nID == ID)
 		{
@@ -111,7 +110,7 @@ DEntity* DMap::GetWorldSpawn()
 
 void DMap::BuildInRadiant(bool bAllowDestruction)
 {
-	for(list<DEntity *>::const_iterator buildEntity=entityList.begin(); buildEntity!=entityList.end(); buildEntity++)
+	for(std::list<DEntity *>::const_iterator buildEntity=entityList.begin(); buildEntity!=entityList.end(); buildEntity++)
 		(*buildEntity)->BuildInRadiant(bAllowDestruction);
 }
 
@@ -119,7 +118,7 @@ void DMap::LoadAll(bool bLoadPatches)
 {
 	ClearEntities();
 
-	GlobalSelectionSystem().Select(false);
+	GlobalSelectionSystem().setSelectedAll(false);
 
   class load_entities_t : public scene::Traversable::Walker
   {
@@ -130,27 +129,24 @@ void DMap::LoadAll(bool bLoadPatches)
       : m_map(map), m_bLoadPatches(bLoadPatches)
     {
     }
-    bool pre(scene::Node* node)
+    bool pre(scene::Node& node) const
     {
-      if(node->m_entity)
+      if(Node_isEntity(node))
       {
         DEntity* loadEntity = m_map->AddEntity("", 0);
 				loadEntity->LoadFromEntity(node, m_bLoadPatches);
       }
       return false;
     }
-    void post(scene::Node* node)
-    {
-    }
   } load_entities(this, bLoadPatches);
 
-  GlobalSceneGraph().root()->m_traverse->traverse(load_entities);
+  Node_getTraversable(GlobalSceneGraph().root())->traverse(load_entities);
 }
 
 int DMap::FixBrushes()
 {
 	int count = 0;
-	for(list<DEntity *>::const_iterator fixEntity=entityList.begin(); fixEntity!=entityList.end(); fixEntity++)
+	for(std::list<DEntity *>::const_iterator fixEntity=entityList.begin(); fixEntity!=entityList.end(); fixEntity++)
 	{
 		count += (*fixEntity)->FixBrushes();
 	}
@@ -161,15 +157,15 @@ int DMap::FixBrushes()
 void DMap::ResetTextures( const char* textureName, float fScale[2],      float fShift[2],      int rotation, const char* newTextureName, 
                           int bResetTextureName,  int bResetScale[2],  int bResetShift[2],  int bResetRotation)
 {
-	for(list<DEntity *>::const_iterator texEntity=entityList.begin(); texEntity!=entityList.end(); texEntity++)
+	for(std::list<DEntity *>::const_iterator texEntity=entityList.begin(); texEntity!=entityList.end(); texEntity++)
 	{
-		if(!stricmp("worldspawn", (*texEntity)->m_Classname))
+		if(string_equal_nocase("worldspawn", (*texEntity)->m_Classname))
 			(*texEntity)->ResetTextures(textureName,        fScale,       fShift,       rotation, newTextureName, 
-                                  bResetTextureName,  bResetScale,  bResetShift,  bResetRotation, TRUE);
+                                  bResetTextureName,  bResetScale,  bResetShift,  bResetRotation, true);
 		else
 		{
 			if((*texEntity)->ResetTextures( textureName,        fScale,       fShift,       rotation, newTextureName, 
-                                      bResetTextureName,  bResetScale,  bResetShift,  bResetRotation, FALSE))
+                                      bResetTextureName,  bResetScale,  bResetShift,  bResetRotation, false))
 				RebuildEntity(*texEntity);
 		}
 	}	
@@ -178,5 +174,5 @@ void DMap::ResetTextures( const char* textureName, float fScale[2],      float f
 void DMap::RebuildEntity(DEntity *ent)
 {
 	ent->RemoveFromRadiant();
-	ent->BuildInRadiant(FALSE);
+	ent->BuildInRadiant(false);
 }

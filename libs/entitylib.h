@@ -304,13 +304,11 @@ public:
 };
 
 
-typedef Callback1<const char*> KeyObserver;
-
 /// \brief A key/value pair of strings.
 ///
 /// - Notifies observers when value changes - value changes to "" on destruction.
 /// - Provides undo support through the global undo system.
-class KeyValue
+class KeyValue : public EntityKeyValue
 {
   typedef UnsortedSet<KeyObserver> KeyObservers;
 
@@ -413,13 +411,6 @@ class EntityKeyValues : public Entity
 {
 public:
   typedef KeyValue Value;
-
-  class Observer
-  {
-  public:
-    virtual void insert(const char* key, Value& value) = 0;
-    virtual void erase(const char* key, Value& value) = 0;
-  };
 
   static StringPool& getPool()
   {
@@ -553,6 +544,11 @@ public:
   }
   ~EntityKeyValues()
   {
+    for(Observers::iterator i = m_observers.begin(); i != m_observers.end();)
+    {
+      // post-increment to allow current element to be removed safely
+      (*i++)->clear();
+    }
     ASSERT_MESSAGE(m_observers.empty(), "EntityKeyValues::~EntityKeyValues: observers still attached");
   }
 
