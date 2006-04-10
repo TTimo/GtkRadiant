@@ -191,8 +191,6 @@ namespace ListDetail
   };
 }
 
-class Opaque;
-
 template<typename Value, typename Allocator = DefaultAllocator<Value> >
 class List : private Allocator
 {
@@ -340,37 +338,40 @@ class Signal0 : public SignalBase<SignalHandler>
 public:
   void operator()() const
   {
-    invokeSignalHandlers(begin(), end(), FunctorInvoke<typename handler_type>());
+    invokeSignalHandlers(begin(), end(), FunctorInvoke<handler_type>());
   }
 };
 
 template<typename FirstArgument>
 class Signal1 : public SignalBase< SignalHandler1<FirstArgument> >
 {
+  typedef SignalBase< SignalHandler1<FirstArgument> > Base;
 public:
   void operator()(FirstArgument a1) const
   {
-    invokeSignalHandlers(begin(), end(), Functor1Invoke<typename handler_type>(a1));
+    invokeSignalHandlers(begin(), end(), Functor1Invoke<typename Base::handler_type>(a1));
   }
 };
 
 template<typename FirstArgument, typename SecondArgument>
 class Signal2 : public SignalBase< SignalHandler2<FirstArgument, SecondArgument> >
 {
+  typedef SignalBase< SignalHandler2<FirstArgument, SecondArgument> > Base;
 public:
   void operator()(FirstArgument a1, SecondArgument a2) const
   {
-    invokeSignalHandlers(begin(), end(), Functor2Invoke<typename handler_type>(a1, a2));
+    invokeSignalHandlers(begin(), end(), Functor2Invoke<typename Base::handler_type>(a1, a2));
   }
 };
 
 template<typename FirstArgument, typename SecondArgument, typename ThirdArgument>
 class Signal3 : public SignalBase< SignalHandler3<FirstArgument, SecondArgument, ThirdArgument> >
 {
+  typedef SignalBase< SignalHandler3<FirstArgument, SecondArgument, ThirdArgument> > Base;
 public:
   void operator()(FirstArgument a1, SecondArgument a2, ThirdArgument a3) const
   {
-    invokeSignalHandlers(begin(), end(), Functor3Invoke<typename handler_type>(a1, a2, a3));
+    invokeSignalHandlers(begin(), end(), Functor3Invoke<typename Base::handler_type>(a1, a2, a3));
   }
 };
 
