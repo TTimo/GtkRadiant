@@ -232,7 +232,7 @@ void QERPlug_Dispatch(const char* p, float* vMin, float* vMax, bool bSingleBrush
     }
     else
     {
-      globalOutputStream() << MSG_PREFIX "Portal file load aborted.\n", portals.fn;
+      globalOutputStream() << MSG_PREFIX "Portal file load aborted.\n";
     }
   }
   else if (!strcmp(p,Q3R_CMD_RELEASE))
