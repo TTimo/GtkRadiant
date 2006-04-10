@@ -215,7 +215,7 @@ public:
   }
 };
 
-template<typename typename Thunk_>
+template<typename Thunk_>
 class CallbackBase
 {
   void* m_environment;
@@ -235,17 +235,17 @@ public:
   }
 };
 
-template<typename typename Thunk>
+template<typename Thunk>
 inline bool operator==(const CallbackBase<Thunk>& self, const CallbackBase<Thunk>& other)
 {
   return self.getEnvironment() == other.getEnvironment() && self.getThunk() == other.getThunk();
 }
-template<typename typename Thunk>
+template<typename Thunk>
 inline bool operator!=(const CallbackBase<Thunk>& self, const CallbackBase<Thunk>& other)
 {
   return !(self == other);
 }
-template<typename typename Thunk>
+template<typename Thunk>
 inline bool operator<(const CallbackBase<Thunk>& self, const CallbackBase<Thunk>& other)
 {
   return self.getEnvironment() < other.getEnvironment() || 

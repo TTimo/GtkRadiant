@@ -28,6 +28,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "iscenegraph.h"
 #include "iglrender.h"
 #include "iplugin.h"
+#include "stream/stringstream.h"
 
 #include "portals.h"
 #include "AboutDialog.h"
@@ -42,7 +43,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define Q3R_CMD_SHOW_2D "Toggle portals (2D)"
 #define Q3R_CMD_OPTIONS "Configure Portal Viewer"
 
-static char INIfn[PATH_MAX];
+CopiedString INIfn;
 
 /////////////////////////////////////////////////////////////////////////////
 // CPrtViewApp construction
@@ -68,8 +69,9 @@ static char INIfn[PATH_MAX];
 
 void PrtView_construct()
 {
-  strcpy(INIfn, GlobalRadiant().getSettingsPath());
-  strcat(INIfn, "prtview.ini");
+  StringOutputStream tmp(64);
+  tmp << GlobalRadiant().getSettingsPath() << "prtview.ini";
+  INIfn = tmp.c_str();
 
   portals.show_2d = INIGetInt(RENDER_2D, FALSE) ? true : false;
   portals.aa_2d = INIGetInt(AA_2D, FALSE) ? true : false;
@@ -157,7 +159,7 @@ int INIGetInt(char *key, int def)
 {
   char value[1024];
 
-  if (read_var (INIfn, CONFIG_SECTION, key, value))
+  if (read_var (INIfn.c_str(), CONFIG_SECTION, key, value))
     return atoi (value);
   else
     return def;
@@ -171,7 +173,7 @@ void INISetInt(char *key, int val, char *comment /* = NULL */)
     sprintf(s, "%d        ; %s", val, comment);
   else
     sprintf(s, "%d", val);
-  save_var (INIfn, CONFIG_SECTION, key, s);
+  save_var (INIfn.c_str(), CONFIG_SECTION, key, s);
 }
 
 
