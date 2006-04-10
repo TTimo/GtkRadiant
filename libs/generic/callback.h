@@ -274,7 +274,7 @@ public:
   Callback0(const BindFirstOpaque<Caller>& caller) : Base(caller.getEnvironment(), BindFirstOpaque<Caller>::thunk)
   {
   }
-  Callback0(void* environment, typename Thunk function) : Base(environment, function)
+  Callback0(void* environment, typename Base::Thunk function) : Base(environment, function)
   {
   }
   result_type operator()() const
@@ -320,7 +320,7 @@ public:
   Callback1(const BindFirstOpaque1<Caller>& caller) : Base(caller.getEnvironment(), BindFirstOpaque1<Caller>::thunk)
   {
   }
-  Callback1(void* environment, typename Thunk function) : Base(environment, function)
+  Callback1(void* environment, typename Base::Thunk function) : Base(environment, function)
   {
   }
   result_type operator()(FirstArgument firstArgument) const
@@ -363,7 +363,7 @@ public:
   Callback2(const BindFirstOpaque2<Caller>& caller) : Base(caller.getEnvironment(), BindFirstOpaque2<Caller>::thunk)
   {
   }
-  Callback2(void* environment, typename Thunk function) : Base(environment, function)
+  Callback2(void* environment, typename Base::Thunk function) : Base(environment, function)
   {
   }
   result_type operator()(FirstArgument firstArgument, SecondArgument secondArgument) const
@@ -419,7 +419,7 @@ public:
   Callback3(const BindFirstOpaque3<Caller>& caller) : Base(caller.getEnvironment(), BindFirstOpaque3<Caller>::thunk)
   {
   }
-  Callback3(void* environment, typename Thunk function) : Base(environment, function)
+  Callback3(void* environment, typename Base::Thunk function) : Base(environment, function)
   {
   }
   result_type operator()(FirstArgument firstArgument, SecondArgument secondArgument, ThirdArgument thirdArgument) const
