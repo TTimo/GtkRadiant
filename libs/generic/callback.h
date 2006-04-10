@@ -279,7 +279,7 @@ public:
   }
   result_type operator()() const
   {
-    return getThunk()(getEnvironment());
+    return Base::getThunk()(Base::getEnvironment());
   }
 };
 
@@ -325,7 +325,7 @@ public:
   }
   result_type operator()(FirstArgument firstArgument) const
   {
-    return getThunk()(getEnvironment(), firstArgument);
+    return Base::getThunk()(Base::getEnvironment(), firstArgument);
   }
 };
 
@@ -368,7 +368,7 @@ public:
   }
   result_type operator()(FirstArgument firstArgument, SecondArgument secondArgument) const
   {
-    return getThunk()(getEnvironment(), firstArgument, secondArgument);
+    return Base::getThunk()(Base::getEnvironment(), firstArgument, secondArgument);
   }
 };
 
@@ -424,7 +424,7 @@ public:
   }
   result_type operator()(FirstArgument firstArgument, SecondArgument secondArgument, ThirdArgument thirdArgument) const
   {
-    return getThunk()(getEnvironment(), firstArgument, secondArgument, thirdArgument);
+    return Base::getThunk()(Base::getEnvironment(), firstArgument, secondArgument, thirdArgument);
   }
 };
 
