@@ -89,10 +89,10 @@ public:
   template<typename Caller>
   SignalHandler(const BindFirstOpaque<Caller>& caller)
     : Callback0<SignalHandlerResult>(BindFirstOpaque<typename TypeEqual<
-      typename Caller::result_type,
       SignalHandlerResult,
       Caller,
-      SignalHandlerCaller1<Caller>
+      SignalHandlerCaller1<Caller>,
+      typename Caller::result_type
     >::type>(caller.getBound()))
   {
   }
@@ -117,10 +117,10 @@ public:
   template<typename Caller>
   SignalHandler1(const BindFirstOpaque1<Caller>& caller)
     : Callback1<FirstArgument, SignalHandlerResult>(BindFirstOpaque1<typename TypeEqual<
-      typename Caller::result_type,
       SignalHandlerResult,
       Caller,
-      SignalHandlerCaller2<Caller>
+      SignalHandlerCaller2<Caller>,
+      typename Caller::result_type
     >::type>(caller.getBound()))
   {
   }
@@ -145,10 +145,10 @@ public:
   template<typename Caller>
   SignalHandler2(const BindFirstOpaque2<Caller>& caller)
     : Callback2<FirstArgument, SecondArgument, SignalHandlerResult>(BindFirstOpaque2<typename TypeEqual<
-      typename Caller::result_type,
       SignalHandlerResult,
       Caller,
-      SignalHandlerCaller3<Caller>
+      SignalHandlerCaller3<Caller>,
+      typename Caller::result_type
     >::type>(caller.getBound()))
   {
   }
@@ -185,10 +185,10 @@ public:
   template<typename Caller>
   SignalHandler3(const BindFirstOpaque3<Caller>& caller)
     : Callback3<FirstArgument, SecondArgument, ThirdArgument, SignalHandlerResult>(BindFirstOpaque3<typename TypeEqual<
-      typename Caller::result_type,
       SignalHandlerResult,
       Caller,
-      SignalHandlerCaller4<Caller>
+      SignalHandlerCaller4<Caller>,
+      typename Caller::result_type
     >::type>(caller.getBound()))
   {
   }

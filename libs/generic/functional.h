@@ -296,23 +296,17 @@ public:
   }
 };
 
-template<typename Type, typename Other, typename True, typename False>
+template<typename Other, typename True, typename False, typename Type>
 class TypeEqual
 {
-  template<typename Matched>
-  class Match
-  {
-  public:
-    typedef False type;
-  };
-  template<>
-  class Match<Other>
-  {
-  public:
-    typedef True type;
-  };
 public:
-  typedef typename Match<Type>::type type;
+  typedef False type;
+};
+template<typename Other, typename True, typename False>
+class TypeEqual<Other, True, False, Other>
+{
+public:
+  typedef True type;
 };
 
 
