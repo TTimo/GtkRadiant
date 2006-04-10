@@ -4101,7 +4101,7 @@ public:
 template<typename Functor>
 inline const Functor& Brush_ForEachFaceInstance(BrushInstance& brush, const Functor& functor)
 {
-  brush.forEachFaceInstance(FaceInstanceVisitAll<Functor>(functor)));
+  brush.forEachFaceInstance(FaceInstanceVisitAll<Functor>(functor));
   return functor;
 }
 
@@ -4140,7 +4140,7 @@ public:
   {
     if(path.top().get().visible())
     {
-      BrushInstance* brush = Instance_getIBrush(instance);
+      BrushInstance* brush = Instance_getBrush(instance);
       if(brush != 0)
       {
         m_functor(*brush);

@@ -247,7 +247,7 @@ void CPortals::Load()
 		return;
 	}
 
-	if(portal_count < 0)
+	if(portal_count == 0)
 	{
 		fclose(in);
 
