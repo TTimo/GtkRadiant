@@ -167,12 +167,26 @@ void CSG_MakeHollow (void)
   SceneChangeNotify();
 }
 
+template<typename Type>
+class RemoveReference
+{
+public:
+  typedef Type type;
+};
+
+template<typename Type>
+class RemoveReference<Type&>
+{
+public:
+  typedef Type type;
+};
+
 template<typename Functor>
 class Dereference
 {
   const Functor& functor;
 public:
-  typedef typename Functor::first_argument_type first_argument_type;
+  typedef typename RemoveReference<typename Functor::first_argument_type>::type* first_argument_type;
   typedef typename Functor::result_type result_type;
   Dereference(const Functor& functor) : functor(functor)
   {
@@ -189,26 +203,29 @@ inline Dereference<Functor> makeDereference(const Functor& functor)
   return Dereference<Functor>(functor);
 }
 
+typedef Face* FacePointer;
+const FacePointer c_nullFacePointer = 0;
+
 template<typename Predicate>
 Face* Brush_findIf(const Brush& brush, const Predicate& predicate)
 {
   Brush::const_iterator i = std::find_if(brush.begin(), brush.end(), makeDereference(predicate));
-  return i == brush.end() ? 0 : *i;
+  return i == brush.end() ? c_nullFacePointer : *i; // uses c_nullFacePointer instead of 0 because otherwise gcc 4.1 attempts conversion to int
 }
 
 template<typename Caller>
 class BindArguments1
 {
-  typedef typename Caller::SecondArgument FirstBound;
+  typedef typename Caller::second_argument_type FirstBound;
   FirstBound firstBound;
 public:
-  typedef typename Caller::Return Return;
-  typedef typename Caller::FirstArgument FirstArgument;
+  typedef typename Caller::result_type result_type;
+  typedef typename Caller::first_argument_type first_argument_type;
   BindArguments1(FirstBound firstBound)
     : firstBound(firstBound)
   {
   }
-  Return operator()(FirstArgument firstArgument) const
+  result_type operator()(first_argument_type firstArgument) const
   {
     return Caller::call(firstArgument, firstBound);
   }
@@ -217,18 +234,18 @@ public:
 template<typename Caller>
 class BindArguments2
 {
-  typedef typename Caller::SecondArgument FirstBound;
-  typedef typename Caller::ThirdArgument SecondBound;
+  typedef typename Caller::second_argument_type FirstBound;
+  typedef typename Caller::third_argument_type SecondBound;
   FirstBound firstBound;
   SecondBound secondBound;
 public:
-  typedef typename Caller::Return Return;
-  typedef typename Caller::FirstArgument FirstArgument;
+  typedef typename Caller::result_type result_type;
+  typedef typename Caller::first_argument_type first_argument_type;
   BindArguments2(FirstBound firstBound, SecondBound secondBound)
     : firstBound(firstBound), secondBound(secondBound)
   {
   }
-  Return operator()(FirstArgument firstArgument) const
+  result_type operator()(first_argument_type firstArgument) const
   {
     return Caller::call(firstArgument, firstBound, secondBound);
   }
