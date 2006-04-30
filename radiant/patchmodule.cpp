@@ -69,7 +69,37 @@ void Patch_Destroy()
   PatchInstance::destroyStatic();
 }
 
-class Quake3PatchCreator : public PatchCreator
+class CommonPatchCreator : public PatchCreator
+{
+public:
+  void Patch_undoSave(scene::Node& patch) const
+  {
+    Node_getPatch(patch)->undoSave();
+  }
+  void Patch_resize(scene::Node& patch, std::size_t width, std::size_t height) const
+  {
+    Node_getPatch(patch)->setDims(width, height);
+  }
+  PatchControlMatrix Patch_getControlPoints(scene::Node& node) const
+  {
+    Patch& patch = *Node_getPatch(node);
+    return PatchControlMatrix(patch.getHeight(), patch.getWidth(), patch.getControlPoints().data());
+  }
+  void Patch_controlPointsChanged(scene::Node& patch) const
+  {
+    return Node_getPatch(patch)->controlPointsChanged();
+  }
+  const char* Patch_getShader(scene::Node& patch) const
+  {
+    return Node_getPatch(patch)->GetShader();
+  }
+  void Patch_setShader(scene::Node& patch, const char* shader) const
+  {
+    Node_getPatch(patch)->SetShader(shader);
+  }
+};
+
+class Quake3PatchCreator : public CommonPatchCreator
 {
 public:
   scene::Node& createPatch()
@@ -85,7 +115,7 @@ PatchCreator& GetQuake3PatchCreator()
   return g_Quake3PatchCreator;
 }
 
-class Doom3PatchCreator : public PatchCreator
+class Doom3PatchCreator : public CommonPatchCreator
 {
 public:
   scene::Node& createPatch()
@@ -101,7 +131,7 @@ PatchCreator& GetDoom3PatchCreator()
   return g_Doom3PatchCreator;
 }
 
-class Doom3PatchDef2Creator : public PatchCreator
+class Doom3PatchDef2Creator : public CommonPatchCreator
 {
 public:
   scene::Node& createPatch()

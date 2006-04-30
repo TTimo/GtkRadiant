@@ -17,12 +17,19 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include "libxml/parser.h"
 
 
 #include "str.h"
+#include "qerplugin.h"
+#include "mathlib.h"
+#include "string/string.h"
+#include "itoolbar.h"
 
 #include "funchandlers.h"
+#include "DBobView.h"
+#include "DVisDrawer.h"
+#include "DTrainDrawer.h"
+#include "DTreePlanter.h"
 
 #include "dialogs/dialogs-gtk.h"
 #include "../../libs/cmdlib.h"
@@ -33,16 +40,23 @@ void BobToolz_construct()
 
 void BobToolz_destroy()
 {
+	if(g_PathView) {
+		delete g_PathView;
+		g_PathView = NULL;
+	}
+	if(g_VisView) {
+		delete g_VisView;
+		g_VisView = NULL;
+	}
+	if(g_TrainView) {
+		delete g_TrainView;
+		g_TrainView = NULL;
+	}
+	if(g_TreePlanter) {
+		delete g_TreePlanter;
+		g_TreePlanter = NULL;
+	}
 }
-
-// Radiant function table
-_QERFuncTable_1			  __QERTABLENAME;
-_QERShadersTable		  __SHADERSTABLENAME;			// vvvvvvvvvvvvvvvvvvvv
-_QERQglTable				  __QGLTABLENAME;				// for path plotting (hooking to DBobView)
-_QERUITable					  g_MessageTable;			// for path plotting (listening for update)
-_QEREntityTable			  __ENTITYTABLENAME;
-_QERBrushTable			  __BRUSHTABLENAME;
-_QERPatchTable			  __PATCHTABLENAME;
 
 // plugin name
 char* PLUGIN_NAME = "bobToolz";
@@ -105,26 +119,17 @@ extern "C" void QERPlug_Dispatch (const char *p, vec3_t vMin, vec3_t vMax, bool 
 	}
 }
 
+const char* QERPlug_GetCommandTitleList()
+{
+  return "";
+}
+
+
 #define NUM_TOOLBARBUTTONS 9
 
 unsigned int ToolbarButtonCount( void ) {
 	return NUM_TOOLBARBUTTONS;
 }
-
-// Load a xpm file and return a pixmap widget.
-GtkWidget* new_pixmap (char* filename) {
-	GdkPixmap *gdkpixmap;
-	GdkBitmap *mask;
-	GtkWidget *pixmap;
-
-	g_FuncTable.m_pfnLoadBitmap(filename, (void **)&gdkpixmap, (void **)&mask);	
-	pixmap = gtk_pixmap_new (gdkpixmap, mask);
-
-	gdk_pixmap_unref (gdkpixmap);
-	gdk_pixmap_unref (mask);
-
-	return pixmap;
-} 
 
 class CBobtoolzToolbarButton : public IToolbarButton
 {
@@ -210,87 +215,114 @@ const IToolbarButton* GetToolbarButton(unsigned int index)
   return &g_bobtoolzToolbarButtons[index];
 }
 
-// =============================================================================
-// SYNAPSE
 
-#include "synapse.h"
+#include "modulesystem/singletonmodule.h"
 
-class CSynapseClientBobtoolz : public CSynapseClient
+#include "iscenegraph.h"
+#include "irender.h"
+#include "iundo.h"
+#include "ishaders.h"
+#include "ipatch.h"
+#include "ibrush.h"
+#include "ientity.h"
+#include "ieclass.h"
+#include "iglrender.h"
+#include "iplugin.h"
+
+class BobToolzPluginDependencies :
+  public GlobalRadiantModuleRef,
+  public GlobalUndoModuleRef,
+  public GlobalSceneGraphModuleRef,
+  public GlobalSelectionModuleRef,
+  public GlobalEntityModuleRef,
+  public GlobalEntityClassManagerModuleRef,
+  public GlobalShadersModuleRef,
+  public GlobalShaderCacheModuleRef,
+  public GlobalBrushModuleRef,
+  public GlobalPatchModuleRef,
+  public GlobalOpenGLModuleRef, 
+  public GlobalOpenGLStateLibraryModuleRef
 {
 public:
-  // CSynapseClient API
-  bool RequestAPI(APIDescriptor_t *pAPI);
-  const char* GetInfo();
-  
-  CSynapseClientBobtoolz() { }
-  virtual ~CSynapseClientBobtoolz() { }
+  BobToolzPluginDependencies() :
+    GlobalEntityModuleRef(GlobalRadiant().getRequiredGameDescriptionKeyValue("entities")),
+    GlobalShadersModuleRef(GlobalRadiant().getRequiredGameDescriptionKeyValue("shaders")),
+    GlobalBrushModuleRef(GlobalRadiant().getRequiredGameDescriptionKeyValue("brushtypes")),
+    GlobalPatchModuleRef(GlobalRadiant().getRequiredGameDescriptionKeyValue("patchtypes")),
+    GlobalEntityClassManagerModuleRef(GlobalRadiant().getRequiredGameDescriptionKeyValue("entityclass"))
+  {
+  }
 };
 
-#define BOBTOOLZ_MINOR "bobtoolz"
-
-CSynapseServer* g_pSynapseServer = NULL;
-CSynapseClientBobtoolz g_SynapseClient;
-
-extern "C" CSynapseClient* SYNAPSE_DLL_EXPORT Synapse_EnumerateInterfaces (const char *version, CSynapseServer *pServer)
+class BobToolzPluginModule : public TypeSystemRef
 {
-  if (strcmp(version, SYNAPSE_VERSION))
+  _QERPluginTable m_plugin;
+public:
+  typedef _QERPluginTable Type;
+  STRING_CONSTANT(Name, "bobtoolz");
+
+  BobToolzPluginModule()
   {
-    Syn_Printf("ERROR: synapse API version mismatch: should be '" SYNAPSE_VERSION "', got '%s'\n", version);
-    return NULL;
+    m_plugin.m_pfnQERPlug_Init = QERPlug_Init;
+    m_plugin.m_pfnQERPlug_GetName = QERPlug_GetName;
+    m_plugin.m_pfnQERPlug_GetCommandList = QERPlug_GetCommandList;
+    m_plugin.m_pfnQERPlug_GetCommandTitleList = QERPlug_GetCommandTitleList;
+    m_plugin.m_pfnQERPlug_Dispatch = QERPlug_Dispatch;
+
+    BobToolz_construct();
   }
-  g_pSynapseServer = pServer;
-  g_pSynapseServer->IncRef();
-  Set_Syn_Printf(g_pSynapseServer->Get_Syn_Printf());
-    
-  g_SynapseClient.AddAPI(TOOLBAR_MAJOR, BOBTOOLZ_MINOR, sizeof(_QERPlugToolbarTable));
-  g_SynapseClient.AddAPI(PLUGIN_MAJOR, BOBTOOLZ_MINOR, sizeof(_QERPluginTable));
-
-  g_SynapseClient.AddAPI(BRUSH_MAJOR, NULL, sizeof(__BRUSHTABLENAME), SYN_REQUIRE, &g_BrushTable);
-  g_SynapseClient.AddAPI(PATCH_MAJOR, NULL, sizeof(__PATCHTABLENAME), SYN_REQUIRE, &g_BrushTable);
-  g_SynapseClient.AddAPI(SHADERS_MAJOR, "*", sizeof(g_ShadersTable), SYN_REQUIRE, &g_ShadersTable);
-  g_SynapseClient.AddAPI(ENTITY_MAJOR, NULL, sizeof(g_EntityTable), SYN_REQUIRE, &g_EntityTable);
-  g_SynapseClient.AddAPI(SELECTEDFACE_MAJOR, NULL, sizeof(g_SelectedFaceTable), SYN_REQUIRE, &g_SelectedFaceTable);
-  g_SynapseClient.AddAPI(UI_MAJOR, NULL, sizeof(g_MessageTable), SYN_REQUIRE, &g_MessageTable);
-  g_SynapseClient.AddAPI(RADIANT_MAJOR, NULL, sizeof(__QERTABLENAME), SYN_REQUIRE, &g_FuncTable);
-  g_SynapseClient.AddAPI(QGL_MAJOR, NULL, sizeof(g_QglTable), SYN_REQUIRE, &g_QglTable);
-
-  return &g_SynapseClient;
-}
-
-bool CSynapseClientBobtoolz::RequestAPI(APIDescriptor_t *pAPI)
-{
-  if( !strcmp(pAPI->minor_name, BOBTOOLZ_MINOR) )
+  ~BobToolzPluginModule()
   {
-    if( !strcmp(pAPI->major_name, PLUGIN_MAJOR) )
-    {
-      _QERPluginTable* pTable= static_cast<_QERPluginTable*>(pAPI->mpTable);
-
-      pTable->m_pfnQERPlug_Init = QERPlug_Init;
-      pTable->m_pfnQERPlug_GetName = QERPlug_GetName;
-      pTable->m_pfnQERPlug_GetCommandList = QERPlug_GetCommandList;
-      pTable->m_pfnQERPlug_Dispatch = QERPlug_Dispatch;
-
-      return true;
-    }
-    else if( !strcmp(pAPI->major_name, TOOLBAR_MAJOR) )
-    {
-      _QERPlugToolbarTable* pTable= static_cast<_QERPlugToolbarTable*>(pAPI->mpTable);
-
-      pTable->m_pfnToolbarButtonCount = &ToolbarButtonCount;
-      pTable->m_pfnGetToolbarButton = &GetToolbarButton;
-
-      return true;
-    }
+    BobToolz_destroy();
   }
+  _QERPluginTable* getTable()
+  {
+    return &m_plugin;
+  }
+};
 
-  Syn_Printf("ERROR: RequestAPI( '%s' ) not found in '%s'\n", pAPI->major_name, GetInfo());
-  return false;
-}
+typedef SingletonModule<BobToolzPluginModule, BobToolzPluginDependencies> SingletonBobToolzPluginModule;
 
-#include "version.h"
+SingletonBobToolzPluginModule g_BobToolzPluginModule;
 
-const char* CSynapseClientBobtoolz::GetInfo()
+
+class BobToolzToolbarDependencies :
+  public ModuleRef<_QERPluginTable>
 {
-  return "bobToolz module built " __DATE__ " " RADIANT_VERSION;
-}
+public:
+  BobToolzToolbarDependencies() :
+    ModuleRef<_QERPluginTable>("bobtoolz")
+  {
+  }
+};
 
+class BobToolzToolbarModule : public TypeSystemRef
+{
+  _QERPlugToolbarTable m_table;
+public:
+  typedef _QERPlugToolbarTable Type;
+  STRING_CONSTANT(Name, "bobtoolz");
+
+  BobToolzToolbarModule()
+  {
+    m_table.m_pfnToolbarButtonCount = ToolbarButtonCount;
+    m_table.m_pfnGetToolbarButton = GetToolbarButton;
+  }
+  _QERPlugToolbarTable* getTable()
+  {
+    return &m_table;
+  }
+};
+
+typedef SingletonModule<BobToolzToolbarModule, BobToolzToolbarDependencies> SingletonBobToolzToolbarModule;
+
+SingletonBobToolzToolbarModule g_BobToolzToolbarModule;
+
+
+extern "C" void RADIANT_DLLEXPORT Radiant_RegisterModules(ModuleServer& server)
+{
+  initialiseModule(server);
+
+  g_BobToolzPluginModule.selfRegister();
+  g_BobToolzToolbarModule.selfRegister();
+}

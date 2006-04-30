@@ -60,10 +60,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 std::list<Str> exclusionList;		// whole brush exclusion
 std::list<Str> exclusionList_Face;	// single face exclusion
 
-bool el1Loaded =		FALSE;
-bool el2Loaded =		FALSE;
-bool clrLst1Loaded =	FALSE;
-bool clrLst2Loaded =	FALSE;
+bool el1Loaded =		false;
+bool el2Loaded =		false;
+bool clrLst1Loaded =	false;
+bool clrLst2Loaded =	false;
 
 DBobView*		g_PathView =		NULL;
 DVisDrawer*		g_VisView =			NULL;
@@ -92,6 +92,7 @@ void LoadLists()
 
 void DoIntersect()
 {
+  UndoableCommand undo("bobToolz.intersect");
 	IntersectRS rs;
 
 	if(DoIntersectBox(&rs) == eIDCANCEL)
@@ -117,7 +118,7 @@ void DoIntersect()
 		}
 	case BRUSH_OPT_WHOLE_MAP:
 		{
-			world.LoadFromEntity(0, FALSE);
+			world.LoadFromEntity(GlobalRadiant().getMapWorldEntity(), false);
 			break;
 		}
 	}
@@ -142,6 +143,7 @@ void DoPolygonsTB()
 
 void DoPolygons()
 {
+  UndoableCommand undo("bobToolz.polygons");
 	// ensure we have something selected
 	if( GlobalSelectionSystem().countSelected() != 1 )
 	{
@@ -160,10 +162,10 @@ void DoPolygons()
 
     {
       scene::Instance& instance = GlobalSelectionSystem().ultimateSelected();
-      VectorSubtract(instance.aabb_world().origin, instance.aabb_world().extents, vMin);
-      VectorAdd(instance.aabb_world().origin, instance.aabb_world().extents, vMax);
+      VectorSubtract(instance.worldAABB().origin, instance.worldAABB().extents, vMin);
+      VectorAdd(instance.worldAABB().origin, instance.worldAABB().extents, vMax);
 
-      Node_getTraversable(instance.path().parent())->erase(instance.path().top());
+      Path_deleteTop(instance.path());
     }
 
 		if(rs.bInverse)
@@ -183,16 +185,18 @@ void DoPolygons()
 
 void DoFixBrushes()
 {
+  UndoableCommand undo("bobToolz.fixBrushes");
 	DMap world;
 	world.LoadAll();
 
 	int count = world.FixBrushes();
 	
-	Sys_Printf("%i invalid/duplicate planes removed\n", count);
+	globalOutputStream() << count << " invalid/duplicate planes removed\n";
 }
 
 void DoResetTextures()
 {
+  UndoableCommand undo("bobToolz.resetTextures");
 	static ResetTextureRS rs;
 
   const char* texName;
@@ -218,12 +222,12 @@ void DoResetTextures()
 	  DEntity world;
 	  world.LoadSelectedBrushes();
 	  world.ResetTextures(texName,              rs.fScale,      rs.fShift,      rs.rotation, rs.newTextureName, 
-                        rs.bResetTextureName, rs.bResetScale, rs.bResetShift, rs.bResetRotation, TRUE);
+                        rs.bResetTextureName, rs.bResetScale, rs.bResetShift, rs.bResetRotation, true);
   }
   else
   {
 	  DMap world;
-    world.LoadAll(TRUE);
+    world.LoadAll(true);
     world.ResetTextures(texName,              rs.fScale,      rs.fShift,      rs.rotation, rs.newTextureName, 
                         rs.bResetTextureName, rs.bResetScale, rs.bResetShift, rs.bResetRotation);
   }
@@ -231,6 +235,7 @@ void DoResetTextures()
 
 void DoBuildStairs()
 {
+  UndoableCommand undo("bobToolz.buildStairs");
 	BuildStairsRS rs;
 
 	strcpy(rs.mainTexture, GetCurrentTexture());
@@ -249,8 +254,8 @@ void DoBuildStairs()
 
     {
       scene::Instance& instance = GlobalSelectionSystem().ultimateSelected();
-      VectorSubtract(instance.aabb_world().origin, instance.aabb_world().extents, vMin);
-      VectorAdd(instance.aabb_world().origin, instance.aabb_world().extents, vMax);
+      VectorSubtract(instance.worldAABB().origin, instance.worldAABB().extents, vMin);
+      VectorAdd(instance.worldAABB().origin, instance.worldAABB().extents, vMax);
     }
 
 		// calc brush size
@@ -266,7 +271,7 @@ void DoBuildStairs()
 		{
       {
         scene::Instance& instance = GlobalSelectionSystem().ultimateSelected();
-        Node_getTraversable(instance.path().parent())->erase(instance.path().top());
+        Path_deleteTop(instance.path());
       }
 						
 			// Get Step Count
@@ -290,7 +295,7 @@ void DoBuildStairs()
 
 				// Build Base For Stair (bob's style)
 				if(rs.style == STYLE_BOB)
-					Build_Wedge(rs.direction, vMin, vMax, TRUE);
+					Build_Wedge(rs.direction, vMin, vMax, true);
 
 
 				// Set First Step Starting Position
@@ -319,6 +324,7 @@ void DoBuildStairs()
 
 void DoBuildDoors()
 {
+  UndoableCommand undo("bobToolz.buildDoors");
 	// ensure we have something selected
 	if( GlobalSelectionSystem().countSelected() != 1 )
 	{
@@ -335,9 +341,9 @@ void DoBuildDoors()
 
     {
       scene::Instance& instance = GlobalSelectionSystem().ultimateSelected();
-      VectorSubtract(instance.aabb_world().origin, instance.aabb_world().extents, vMin);
-      VectorAdd(instance.aabb_world().origin, instance.aabb_world().extents, vMax);
-      Node_getTraversable(instance.path().parent())->erase(instance.path().top());
+      VectorSubtract(instance.worldAABB().origin, instance.worldAABB().extents, vMin);
+      VectorAdd(instance.worldAABB().origin, instance.worldAABB().extents, vMax);
+      Path_deleteTop(instance.path());
     }
 
 		BuildDoorsX2(vMin, vMax, 
@@ -350,6 +356,7 @@ void DoBuildDoors()
 
 void DoPathPlotter()
 {
+  UndoableCommand undo("bobToolz.pathPlotter");
 	PathPlotterRS rs;
 	EMessageBoxReturn ret = DoPathPlotterBox(&rs);
 	if(ret == eIDCANCEL)
@@ -377,6 +384,7 @@ void DoPathPlotter()
 
 void DoPitBuilder()
 {
+  UndoableCommand undo("bobToolz.pitBuilder");
 	// ensure we have something selected
 	if( GlobalSelectionSystem().countSelected() != 1 )
 	{
@@ -387,8 +395,8 @@ void DoPitBuilder()
   vec3_t vMin, vMax;
 
   scene::Instance& instance = GlobalSelectionSystem().ultimateSelected();
-  VectorSubtract(instance.aabb_world().origin, instance.aabb_world().extents, vMin);
-  VectorAdd(instance.aabb_world().origin, instance.aabb_world().extents, vMax);
+  VectorSubtract(instance.worldAABB().origin, instance.worldAABB().extents, vMin);
+  VectorAdd(instance.worldAABB().origin, instance.worldAABB().extents, vMax);
 
 	DShape pit;
 
@@ -396,7 +404,7 @@ void DoPitBuilder()
 	{
 		pit.Commit();
 
-    Node_getTraversable(instance.path().parent())->erase(instance.path().top());
+    Path_deleteTop(instance.path());
 	}
 	else
 		DoMessageBox("Failed To Make Pit\nTry Making The Brush Bigger", "Error", eMB_OK);
@@ -404,6 +412,7 @@ void DoPitBuilder()
 
 void DoMergePatches()
 {
+  UndoableCommand undo("bobToolz.mergePatch");
   patch_merge_t merge_info;
   DPatch mrgPatches[2];
   int i;
@@ -415,22 +424,19 @@ void DoMergePatches()
 		return; 
 	}
 
-  scene::Node* patches[2];
-  patches[0] = GlobalSelectionSystem().ultimateSelected().path().top();
-  patches[1] = GlobalSelectionSystem().penultimateSelected().path().top();
-  scene::Node* ents[2];
-  ents[0] = GlobalSelectionSystem().ultimateSelected().path().parent();
-  ents[1] = GlobalSelectionSystem().penultimateSelected().path().parent();
+  scene::Instance* patches[2];
+  patches[0] = &GlobalSelectionSystem().ultimateSelected();
+  patches[1] = &GlobalSelectionSystem().penultimateSelected();
 
   for (i = 0; i < 2; i++)
   {
-    if (!patches[i]->m_patch)
+    if (!Node_isPatch(patches[i]->path().top()))
     {
       DoMessageBox("You must select ONLY patches", "Error", eMB_OK);
       return; 
     }
 
-    mrgPatches[0].LoadFromBrush(patches[i]);
+    mrgPatches[i].LoadFromPatch(*patches[i]);
   }
 
   /*  mrgPatches[0].Transpose();
@@ -441,9 +447,9 @@ void DoMergePatches()
 
   if (merge_info.mergable)
   {
-    Sys_Printf("%i %i", merge_info.pos1, merge_info.pos2);
+    globalOutputStream() << merge_info.pos1 << " " <<  merge_info.pos2;
 
-    Sys_Printf("Patches Mergable\n");
+    globalOutputStream() << "Patches Mergable\n";
     DPatch* newPatch = mrgPatches[0].MergePatches(merge_info, &mrgPatches[0], &mrgPatches[1]);
 
     /*                mrgPatches[0].RemoveFromRadiant();
@@ -459,16 +465,22 @@ void DoMergePatches()
     {
     } else
     {
-      Node_getTraversable(*ents[0])->erase(*patches[0]);
-      Node_getTraversable(*ents[1])->erase(*patches[1]);
+      Path_deleteTop(patches[0]->path());
+      Path_deleteTop(patches[1]->path());
 
       newPatch->BuildInRadiant();
       delete newPatch;
     }
   }
+  else
+  {
+    globalOutputStream() << "bobToolz.mergePatch: the selected patches are not mergable\n";
+  }
 }
 
 void DoSplitPatch() {
+  UndoableCommand undo("bobToolz.splitPatch");
+
 	DPatch patch;
 
 	// ensure we have something selected
@@ -478,21 +490,21 @@ void DoSplitPatch() {
 		return; 
 	}
 
-  scene::Node* node = GlobalSelectionSystem().ultimateSelected().path().top();
+  scene::Instance& instance = GlobalSelectionSystem().ultimateSelected();
 
-	if( !node->m_patch ) {
+	if( !Node_isPatch(instance.path().top()) ) {
 		DoMessageBox("You must select ONLY patches", "Error", eMB_OK);
 		return; 
 	}
 
-	patch.LoadFromBrush(node);
+	patch.LoadFromPatch(instance);
 
 	std::list<DPatch> patchList = patch.Split( true, true );
 	for(std::list<DPatch>::iterator patches = patchList.begin(); patches != patchList.end(); patches++) {
 		(*patches).BuildInRadiant();
 	}
 
-	patch.RemoveFromRadiant();
+	Path_deleteTop(instance.path());
 }
 
 void DoVisAnalyse()
@@ -515,7 +527,7 @@ void DoVisAnalyse()
 		return; 
 	}
 
-  scene::Node* brush = GlobalSelectionSystem().ultimateSelected().path().top();
+  scene::Instance& brush = GlobalSelectionSystem().ultimateSelected();
 
 	DBrush orgBrush;
 	orgBrush.LoadFromBrush(brush, false);
@@ -527,7 +539,7 @@ void DoVisAnalyse()
 	origin[2] = (orgBrush.bbox_max[2] + orgBrush.bbox_min[2])/2.f;
 
 
-  const char* rad_filename = g_FuncTable.m_pfnGetMapName();
+  const char* rad_filename = GlobalRadiant().getMapName();
 	if(!rad_filename)
 	{
 		DoMessageBox("An Error Occurred While Trying\n To Get The Map Filename", "Error", eMB_OK);
@@ -544,7 +556,6 @@ void DoVisAnalyse()
 	if(!g_VisView)
 	{
 		g_VisView = new DVisDrawer;
-		g_VisView->Register();
 	}
 	
 	g_VisView->SetList(pointList);
@@ -560,6 +571,7 @@ void DoTrainPathPlot() {
 }
 
 void DoCaulkSelection() {
+  UndoableCommand undo("bobToolz.caulkSelection");
 	DEntity world;
 	
 	float fScale[2] = { 0.5f, 0.5f };
@@ -574,6 +586,7 @@ void DoCaulkSelection() {
 }
 
 void DoTreePlanter() {
+  UndoableCommand undo("bobToolz.treePlanter");
 	if(g_TreePlanter) {
 		delete g_TreePlanter;
 		g_TreePlanter = NULL;
@@ -584,12 +597,14 @@ void DoTreePlanter() {
 }
 
 void DoDropEnts() {
+  UndoableCommand undo("bobToolz.dropEntities");
 	if(g_TreePlanter) {
 		g_TreePlanter->DropEntsToGround();
 	}
 }
 
 void DoMakeChain() {
+  UndoableCommand undo("bobToolz.makeChain");
 	DTreePlanter pl;
 	pl.MakeChain();
 }
@@ -599,6 +614,7 @@ typedef DPoint* pntTripple[3];
 bool bFacesNoTop[6] = {true, true, true, true, true, false};
 
 void DoFlipTerrain() {
+  UndoableCommand undo("bobToolz.flipTerrain");
 	vec3_t vUp = { 0.f, 0.f, 1.f };
   int i;
 
@@ -609,15 +625,15 @@ void DoFlipTerrain() {
 		return; 
 	}
 
-  scene::Node* brushes[2];
-	brushes[0] = GlobalSelectionSystem().ultimateSelected().path().top();
-	brushes[1] = GlobalSelectionSystem().penultimateSelected().path().top();
+  scene::Instance* brushes[2];
+	brushes[0] = &GlobalSelectionSystem().ultimateSelected();
+	brushes[1] = &GlobalSelectionSystem().penultimateSelected();
 
 	DBrush Brushes[2];
 	DPlane* Planes[2];
 	pntTripple Points[2];
 	for( i = 0; i < 2; i++ ) {
-		Brushes[i].LoadFromBrush( brushes[i], false );
+		Brushes[i].LoadFromBrush( *brushes[i], false );
 		if(!(Planes[i] = Brushes[i].FindPlaneWithClosestNormal( vUp )) || Brushes[i].FindPointsForPlane( Planes[i], Points[i], 3 ) != 3) {
 			DoMessageBox("Error", "Error", eMB_OK);
 			return;
@@ -627,14 +643,6 @@ void DoFlipTerrain() {
 	vec3_t mins1, mins2, maxs1, maxs2;
 	Brushes[0].GetBounds( mins1, maxs1 );
 	Brushes[1].GetBounds( mins2, maxs2 );
-
-  scene::Node* ents[2];
-	ents[0] = GlobalSelectionSystem().ultimateSelected().path().parent();
-	ents[1] = GlobalSelectionSystem().penultimateSelected().path().parent();
-
-	for( i = 0; i < 2; i++ ) {
-		Node_getTraversable(*ents[i])->erase(*brushes[i]);
-	}
 
 
 
@@ -754,7 +762,8 @@ void DoFlipTerrain() {
 
 	for( i = 0; i < 2; i++ ) {
 		newBrushes[i]->RemoveRedundantPlanes();
-		newBrushes[i]->BuildInRadiant( false, NULL, ents[i] );
+		newBrushes[i]->BuildInRadiant( false, NULL, brushes[i]->path().parent().get_pointer() );
+		Path_deleteTop(brushes[i]->path());
 		delete newBrushes[i];
 	}
 

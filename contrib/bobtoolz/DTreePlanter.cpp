@@ -31,6 +31,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "ScriptParser.h"
 #include "misc.h"
+#include "scenelib.h"
 
 
 
@@ -55,7 +56,7 @@ SignalHandlerResult DTreePlanter::mouseDown(const WindowVector& position, Button
 
 	Vector3 pt, vhit;
 
-  pt = vector3_snapped(GlobalRadiant().XYWindow_windowToWorld(position));
+  pt = vector3_snapped(GlobalRadiant().XYWindow_windowToWorld(position), GlobalRadiant().getGridSize());
 
 	if(FindDropPoint(vector3_to_array(pt), vector3_to_array(vhit))) {
 		vhit[2] += m_offset;
@@ -67,18 +68,17 @@ SignalHandlerResult DTreePlanter::mouseDown(const WindowVector& position, Button
 		e.AddEPair("origin", buffer);
 
 		if(m_autoLink) {
-#if 0
-			entity_t* pLastEntity = NULL;
-			entity_t* pThisEntity = NULL;
 
-			int entNum = -1, lastEntNum = -1, entpos;
+      const scene::Path* pLastEntity = NULL;
+			const scene::Path* pThisEntity = NULL;
+
+			int entpos;
 			for(int i = 0; i < 256; i++) {
 				sprintf(buffer, m_linkName, i);
-				pThisEntity = FindEntityFromTargetname( buffer, &entNum );
+        pThisEntity = FindEntityFromTargetname( buffer );
 
 				if(pThisEntity) {
 					entpos = i;
-					lastEntNum = entNum;
 					pLastEntity = pThisEntity;
 				}
 			}
@@ -93,12 +93,12 @@ SignalHandlerResult DTreePlanter::mouseDown(const WindowVector& position, Button
 
 			if(pLastEntity) {
 				DEntity e2;
-				e2.LoadFromEntity(lastEntNum, TRUE);
+				e2.LoadFromEntity(pLastEntity->top(), true);
 				e2.AddEPair("target", buffer);
 				e2.RemoveFromRadiant();
 				e2.BuildInRadiant(false);
 			}
-#endif
+
 		}
 
 		if(m_setAngles) {
@@ -179,38 +179,42 @@ bool DTreePlanter::FindDropPoint(vec3_t in, vec3_t out) {
 	return found;
 }
 
-void DTreePlanter::DropEntsToGround( void ) {
-#if 0
-	// tell Radiant we want to access the selected brushes
-	g_FuncTable.m_pfnAllocateSelectedBrushHandles();
-			
-	DEntity ent;
-
-	int cnt = g_FuncTable.m_pfnSelectedBrushCount();
-	for(int i = 0; i < cnt; i++) {
-		brush_t *brush = (brush_t*)g_FuncTable.m_pfnGetSelectedBrushHandle(i);
-
-		ent.LoadFromEntity(brush->owner, TRUE);
+class TreePlanterDropEntityIfSelected
+{
+  mutable DEntity ent;
+  DTreePlanter& planter;
+public:
+  TreePlanterDropEntityIfSelected(DTreePlanter& planter) : planter(planter)
+  {
+  }
+  void operator()(scene::Instance& instance) const
+  {
+    if(!instance.isSelected())
+    {
+      return;
+    }
+		ent.LoadFromEntity(instance.path().top());
 
 		DEPair* pEpair = ent.FindEPairByKey("origin");
 		if(!pEpair) {
-			continue;
+			return;
 		}
 
 		vec3_t vec, out;
 		sscanf( pEpair->value.GetBuffer(), "%f %f %f", &vec[0], &vec[1], &vec[2]);
 
-		FindDropPoint( vec, out );
+		planter.FindDropPoint( vec, out );
 
 		char buffer[256];
 		sprintf( buffer, "%f %f %f", out[0], out[1], out[2] );
 		ent.AddEPair( "origin", buffer );
 		ent.RemoveFromRadiant();
 		ent.BuildInRadiant(false);
-	}
+  }
+};
 
-	g_FuncTable.m_pfnReleaseSelectedBrushHandles();
-#endif
+void DTreePlanter::DropEntsToGround( void ) {
+  Scene_forEachEntity(TreePlanterDropEntityIfSelected(*this));
 }
 
 void DTreePlanter::MakeChain( void ) {

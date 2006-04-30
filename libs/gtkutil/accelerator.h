@@ -27,7 +27,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "generic/callback.h"
 
-
 struct Accelerator
 {
   Accelerator(guint _key)
@@ -51,6 +50,18 @@ inline Accelerator accelerator_null()
   return Accelerator(0, (GdkModifierType)0);
 }
 
+const char* global_keys_find(unsigned int key);
+unsigned int global_keys_find(const char* name);
+
+class TextOutputStream;
+void accelerator_write(const Accelerator& accelerator, TextOutputStream& ostream);
+
+template<typename TextOutputStreamType>
+TextOutputStreamType& ostream_write(TextOutputStreamType& ostream, const Accelerator& accelerator)
+{
+  accelerator_write(accelerator, ostream);
+  return ostream;
+}
 
 void keydown_accelerators_add(Accelerator accelerator, const Callback& callback);
 void keydown_accelerators_remove(Accelerator accelerator);

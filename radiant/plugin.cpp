@@ -133,6 +133,7 @@ public:
     m_radiantcore.getAppPath = &AppPath_get;
     m_radiantcore.getGameToolsPath = &GameToolsPath_get;
     m_radiantcore.getSettingsPath = &SettingsPath_get;
+    m_radiantcore.getMapsPath = &getMapsPath;
 
     m_radiantcore.getGameName = &gamename_get;
     m_radiantcore.getGameMode = &gamemode_get;
@@ -153,6 +154,8 @@ public:
     m_radiantcore.attachGameModeObserver = Radiant_attachGameModeObserver;
     m_radiantcore.detachGameModeObserver = Radiant_detachGameModeObserver;
 
+    m_radiantcore.XYWindowDestroyed_connect = XYWindowDestroyed_connect;
+    m_radiantcore.XYWindowDestroyed_disconnect = XYWindowDestroyed_disconnect;
     m_radiantcore.XYWindowMouseDown_connect = XYWindowMouseDown_connect;
     m_radiantcore.XYWindowMouseDown_disconnect = XYWindowMouseDown_disconnect;
     m_radiantcore.XYWindow_getViewType = XYWindow_getViewType;

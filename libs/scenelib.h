@@ -365,6 +365,32 @@ inline bool Node_isEntity(scene::Node& node)
   return NodeTypeCast<EntityUndefined>::cast(node) != 0;
 }
 
+template<typename Functor>
+class EntityWalker : public scene::Graph::Walker
+{
+  const Functor& functor;
+public:
+  EntityWalker(const Functor& functor) : functor(functor)
+  {
+  }
+  bool pre(const scene::Path& path, scene::Instance& instance) const
+  {
+    if(Node_isEntity(path.top()))
+    {
+      functor(instance);
+      return false;
+    }
+    return true;
+  }
+};
+
+template<typename Functor>
+inline const Functor& Scene_forEachEntity(const Functor& functor)
+{
+  GlobalSceneGraph().traverse(EntityWalker<Functor>(functor));
+  return functor;
+}
+
 class BrushUndefined
 {
 public:

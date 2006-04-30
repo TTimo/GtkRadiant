@@ -32,14 +32,15 @@ vec_t Min(vec_t a, vec_t b);
 // reads current texture into global, returns pointer to it
 const char* GetCurrentTexture();
 
-void FillDefaultTexture(void* faceData, vec3_t va, vec3_t vb, vec3_t vc, const char* texture);
+class _QERFaceData;
+void FillDefaultTexture(_QERFaceData* faceData, vec3_t va, vec3_t vb, vec3_t vc, const char* texture);
 
 void BuildMiniPrt(std::list<Str>* exclusionList);
 
 void MoveBlock(int dir, vec3_t min, vec3_t max, float dist);
 void SetInitialStairPos(int dir, vec3_t min, vec3_t max, float width);
 
-scene::Path* FindEntityFromTargetname(const char* targetname, int* entNum);
+const scene::Path* FindEntityFromTargetname(const char* targetname);
 
 char* UnixToDosPath(char* path);
 

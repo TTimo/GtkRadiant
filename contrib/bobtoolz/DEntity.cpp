@@ -238,7 +238,7 @@ public:
   {
     if(Node_isBrush(instance.path().top()))
     {
-      m_functor(*instance.path().top());
+      m_functor(instance);
     }
   }
 };
@@ -250,12 +250,12 @@ inline const Functor& Scene_forEachSelectedBrush(const Functor& functor)
   return functor;
 }
 
-void DEntity_loadBrush(DEntity& entity, scene::Node& brush)
+void DEntity_loadBrush(DEntity& entity, scene::Instance& brush)
 {
   DBrush* loadBrush = entity.NewBrush(entity.brushList.size());
 	loadBrush->LoadFromBrush(brush, true);
 }
-typedef ReferenceCaller1<DEntity, scene::Node&, DEntity_loadBrush> DEntityLoadBrushCaller;
+typedef ReferenceCaller1<DEntity, scene::Instance&, DEntity_loadBrush> DEntityLoadBrushCaller;
 
 void DEntity::LoadSelectedBrushes()
 {
@@ -277,7 +277,7 @@ public:
   {
     if(Node_isPatch(instance.path().top()))
     {
-      m_functor(*instance.path().top());
+      m_functor(instance);
     }
   }
 };
@@ -289,12 +289,12 @@ inline const Functor& Scene_forEachSelectedPatch(const Functor& functor)
   return functor;
 }
 
-void DEntity_loadPatch(DEntity& entity, scene::Node& patch)
+void DEntity_loadPatch(DEntity& entity, scene::Instance& patch)
 {
   DPatch* loadPatch = entity.NewPatch();
-	loadPatch->LoadFromBrush(patch);
+	loadPatch->LoadFromPatch(patch);
 }
-typedef ReferenceCaller1<DEntity, scene::Node&, DEntity_loadPatch> DEntityLoadPatchCaller;
+typedef ReferenceCaller1<DEntity, scene::Instance&, DEntity_loadPatch> DEntityLoadPatchCaller;
 
 void DEntity::LoadSelectedPatches()
 {
@@ -411,15 +411,21 @@ bool DEntity::LoadFromEntity(scene::Node& ent, bool bLoadPatches) {
       }
       bool pre(scene::Node& node) const
       {
+        scene::Path path(NodeReference(GlobalSceneGraph().root()));
+        path.push(NodeReference(*m_entity->QER_Entity));
+        path.push(NodeReference(node));
+        scene::Instance* instance = GlobalSceneGraph().find(path);
+        ASSERT_MESSAGE(instance != 0, "");
+
         if(Node_isPatch(node))
         {
           DPatch* loadPatch = m_entity->NewPatch();
-				  loadPatch->LoadFromBrush(node);
+				  loadPatch->LoadFromPatch(*instance);
         }
         else if(Node_isBrush(node))
         {
 			    DBrush* loadBrush = m_entity->NewBrush(m_count++);
-			    loadBrush->LoadFromBrush(node, true);
+			    loadBrush->LoadFromBrush(*instance, true);
         }
         return false;
       }
@@ -490,7 +496,7 @@ void DEntity::BuildInRadiant(bool allowDestruction)
 
 	if(makeEntity)
 	{
-    NodeReference node(GlobalEntityCreator().createEntity(GlobalEntityClassManager().findOrInsert(m_Classname.GetBuffer(), !brushList.empty() || !patchList.empty())));
+    NodeSmartReference node(GlobalEntityCreator().createEntity(GlobalEntityClassManager().findOrInsert(m_Classname.GetBuffer(), !brushList.empty() || !patchList.empty())));
 
 		for(std::list<DEPair* >::const_iterator buildEPair=epairList.begin(); buildEPair!=epairList.end(); buildEPair++)
 		{
@@ -608,6 +614,11 @@ bool DEntity::ResetTextures(const char* textureName, float fScale[2],     float 
 		if(tmp)
 		{
 			reset = true;
+			if(rebuild)
+			{
+        Node_getTraversable(*(*resetBrush)->QER_entity)->erase(*(*resetBrush)->QER_brush);      
+        (*resetBrush)->BuildInRadiant(false, NULL, (*resetBrush)->QER_entity);
+			}
 		}
 	}
 
@@ -620,6 +631,11 @@ bool DEntity::ResetTextures(const char* textureName, float fScale[2],     float 
 		  if(tmp)
 		  {
 			  reset = true;
+			  if(rebuild)
+			  {
+          Node_getTraversable(*(*resetPatch)->QER_entity)->erase(*(*resetPatch)->QER_brush);      
+          (*resetPatch)->BuildInRadiant((*resetPatch)->QER_entity);
+			  }
 		  }
 	  }
   }

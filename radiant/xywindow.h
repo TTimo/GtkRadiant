@@ -228,6 +228,7 @@ public:
     return m_nHeight;
   }
 
+  Signal0 onDestroyed;
   Signal3<const WindowVector&, ButtonIdentifier, ModifierFlags> onMouseDown;
   void mouseDown(const WindowVector& position, ButtonIdentifier button, ModifierFlags modifiers);
   typedef Member3<XYWnd, const WindowVector&, ButtonIdentifier, ModifierFlags, void, &XYWnd::mouseDown> MouseDownCaller;

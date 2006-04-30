@@ -64,8 +64,8 @@ public:
   virtual void setKeyValue(const char* key, const char* value) = 0;
   virtual const char* getKeyValue(const char* key) const = 0;
   virtual bool isContainer() const = 0;
-  void attach(Observer& observer);
-  void detach(Observer& observer);
+  virtual void attach(Observer& observer) = 0;
+  virtual void detach(Observer& observer) = 0;
 };
 
 class EntityCopyingVisitor : public Entity::Visitor

@@ -33,6 +33,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "funchandlers.h"
 
 #include "iglrender.h"
+#include "ientity.h"
 #include "math/matrix.h"
 
 #include "dialogs/dialogs-gtk.h"
@@ -169,16 +170,18 @@ void AddSplineControl(const char* control, splinePoint_t* pSP) {
 	pSP->m_pointList.push_front(cp);
 }
 
-void DTrainDrawer::BuildPaths() {
-#if 0
-	int count = g_FuncTable.m_pfnGetEntityCount();
-
-	DEntity e;
-
-	for(int i = 0; i < count; i++) {
-		entity_s* ent = (entity_s*)g_FuncTable.m_pfnGetEntityHandle(i);
+class EntityBuildPaths
+{
+	mutable DEntity e;
+  DTrainDrawer& drawer;
+public:
+  EntityBuildPaths(DTrainDrawer& drawer) : drawer(drawer)
+  {
+  }
+  void operator()(scene::Instance& instance) const
+  {
 		e.ClearEPairs();
-		e.LoadEPairList(*g_EntityTable.m_pfnGetEntityKeyValList(ent));
+		e.LoadEPairList(Node_getEntity(instance.path().top()));
 
 		const char* classname = e.m_Classname.GetBuffer();
 		const char* target;
@@ -191,16 +194,16 @@ void DTrainDrawer::BuildPaths() {
 
 		if(!strcmp(classname, "info_train_spline_main")) {
 			if(!targetname) {
-				Sys_Printf( "info_train_spline_main with no targetname" );
+				globalOutputStream() << "info_train_spline_main with no targetname";
 				return;
 			}
 
 			e.SpawnString("target", NULL, &target);
 
 			if(!target) {
-				AddControlPoint( targetname, vOrigin );
+				drawer.AddControlPoint( targetname, vOrigin );
 			} else {
-				splinePoint_t* pSP = AddSplinePoint( targetname, target, vOrigin );
+				splinePoint_t* pSP = drawer.AddSplinePoint( targetname, target, vOrigin );
 
 				e.SpawnString("control", NULL, &control);
 
@@ -215,20 +218,24 @@ void DTrainDrawer::BuildPaths() {
 						if(!control) {
 							break;
 						}
-					
+  				
 						AddSplineControl( control, pSP );
 					}
 				}
 			}
 		} else if(!strcmp(classname, "info_train_spline_control")) {
 			if(!targetname) {
-				Sys_Printf( "info_train_spline_control with no targetname" );
+				globalOutputStream() << "info_train_spline_control with no targetname";
 				return;
 			}
 
-			AddControlPoint( targetname, vOrigin );
+			drawer.AddControlPoint( targetname, vOrigin );
 		}
-	}
+  }
+};
+
+void DTrainDrawer::BuildPaths() {
+  Scene_forEachEntity(EntityBuildPaths(*this));
 
   std::list<splinePoint_t* >::const_iterator sp;
 	for(sp = m_splineList.begin(); sp != m_splineList.end(); sp++) {
@@ -237,7 +244,7 @@ void DTrainDrawer::BuildPaths() {
 		controlPoint_t* pTarget = FindControlPoint( pSP->strTarget );
 
 		if(!pTarget) {
-			Sys_Printf( "couldn't find target %s", pSP->strTarget );
+			globalOutputStream() << "couldn't find target " << pSP->strTarget;
 			return;
 //			continue;
 		}
@@ -248,7 +255,7 @@ void DTrainDrawer::BuildPaths() {
 		for(std::list<controlPoint_t >::iterator cp = pSP->m_pointList.begin(); cp != pSP->m_pointList.end(); cp++) {			
 			controlPoint_t* pControl = FindControlPoint( (*cp).strName );
 			if(!pControl) {
-				Sys_Printf( "couldn't find control %s", (*cp).strName );
+				globalOutputStream() << "couldn't find control " << (*cp).strName;
 				return;
 			}
 
@@ -256,8 +263,7 @@ void DTrainDrawer::BuildPaths() {
 		}
 	}
 
-	m_bDisplay = TRUE;
-	Register();
+	m_bDisplay = true;
 
 	for(sp = m_splineList.begin(); sp != m_splineList.end(); sp++) {
 		splinePoint_t* pSP = (*sp);
@@ -290,7 +296,7 @@ void DTrainDrawer::BuildPaths() {
 		pSP->m_vertexList.push_front(out);
 	}
 
-#endif
+  SceneChangeNotify();
 }
 
 void DTrainDrawer::AddControlPoint(const char* name, vec_t* origin)

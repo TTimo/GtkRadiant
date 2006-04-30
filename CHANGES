@@ -4,6 +4,7 @@ that we distribute with the binaries. (see changelog)
 30/04/2006
 SPoG
 - Fixed memory leak in signals library.
+- Ported bobtoolz to use new module APIs.
 
 01/04/2006
 SPoG

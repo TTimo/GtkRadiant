@@ -81,6 +81,6 @@ bool LoadGList(char* filename, GList** loadlist)
 		return TRUE;
 	}
 
-	Sys_ERROR("Failed To Load GList: %s\n", filename);
+	globalErrorStream() << "Failed To Load GList: " << filename << "\n";
 	return FALSE;
 }

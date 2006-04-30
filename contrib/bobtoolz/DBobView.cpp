@@ -122,14 +122,14 @@ void DBobView::renderSolid(Renderer& renderer, const VolumeTest& volume) const
 	if(!path)
 		return;
 
-  renderer.SetState(m_shader_line, eWireframeOnly);
-  renderer.SetState(m_shader_line, eFullMaterials);
+  renderer.SetState(m_shader_line, Renderer::eWireframeOnly);
+  renderer.SetState(m_shader_line, Renderer::eFullMaterials);
   renderer.addRenderable(*this, g_matrix4_identity);
 
 	if(m_bShowExtra)
 	{
-    renderer.SetState(m_shader_box, eWireframeOnly);
-    renderer.SetState(m_shader_box, eFullMaterials);
+    renderer.SetState(m_shader_box, Renderer::eWireframeOnly);
+    renderer.SetState(m_shader_box, Renderer::eFullMaterials);
     renderer.addRenderable(*this, g_transform_box1);
     renderer.addRenderable(*this, g_transform_box2);
     renderer.addRenderable(*this, g_transform_box3);
@@ -243,7 +243,7 @@ void DBobView_setEntity(Entity& entity, float multiplier, int points, float varG
 			DEPair* target_ep = trigger.FindEPairByKey("target");
 			if(target_ep)
 			{
-        scene::Path* entTarget = FindEntityFromTargetname(target_ep->value, NULL);
+        const scene::Path* entTarget = FindEntityFromTargetname(target_ep->value);
 				if(entTarget)
 				{
 					if(g_PathView)

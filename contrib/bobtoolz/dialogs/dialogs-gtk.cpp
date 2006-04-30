@@ -22,6 +22,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "str.h"
 #include <list>
+#include <gtk/gtk.h>
 
 #include "../lists.h"
 #include "../misc.h"
@@ -1349,12 +1350,8 @@ EMessageBoxReturn DoResetTextureBox (ResetTextureRS* rs)
  	
 	// ---- hbox ----
 
-	texSelected = "Currently Selected Face:   ";
-#if 0
-	if(g_SelectedFaceTable.m_pfnGetSelectedFaceCount() == 1) {
-		texSelected += GetCurrentTexture();
-	}
-#endif
+	texSelected = "Currently Selected Texture:   ";
+  texSelected += GetCurrentTexture();
 
 	w = gtk_label_new (texSelected);
 	gtk_box_pack_start (GTK_BOX (hbox), w, FALSE, FALSE, 2);

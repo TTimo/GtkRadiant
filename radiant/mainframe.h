@@ -276,6 +276,8 @@ extern int (*GridStatus_getFarClipDistance)();
 extern bool (*GridStatus_getTextureLockEnabled)();
 void GridStatus_onTextureLockEnabledChanged();
 
+SignalHandlerId XYWindowDestroyed_connect(const SignalHandler& handler);
+void XYWindowDestroyed_disconnect(SignalHandlerId id);
 MouseEventHandlerId XYWindowMouseDown_connect(const MouseEventHandler& handler);
 void XYWindowMouseDown_disconnect(MouseEventHandlerId id);
 

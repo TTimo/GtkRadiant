@@ -2631,6 +2631,16 @@ public:
 
 MainWindowActive g_MainWindowActive;
 
+SignalHandlerId XYWindowDestroyed_connect(const SignalHandler& handler)
+{
+  return g_pParentWnd->GetXYWnd()->onDestroyed.connectFirst(handler);
+}
+
+void XYWindowDestroyed_disconnect(SignalHandlerId id)
+{
+  g_pParentWnd->GetXYWnd()->onDestroyed.disconnect(id);
+}
+
 MouseEventHandlerId XYWindowMouseDown_connect(const MouseEventHandler& handler)
 {
   return g_pParentWnd->GetXYWnd()->onMouseDown.connectFirst(handler);

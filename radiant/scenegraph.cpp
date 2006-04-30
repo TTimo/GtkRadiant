@@ -102,7 +102,7 @@ public:
   scene::Node& root()
   {
     ASSERT_MESSAGE(!m_rootpath.empty(), "scenegraph root does not exist");
-    return *m_rootpath.top();
+    return m_rootpath.top();
   }
   void insert_root(scene::Node& root)
   {
@@ -122,7 +122,7 @@ public:
 
     ASSERT_MESSAGE(!m_rootpath.empty(), "scenegraph root does not exist");
 
-    scene::Node& root = *m_rootpath.top();
+    scene::Node& root = m_rootpath.top();
 
     m_rootpath.pop();
 

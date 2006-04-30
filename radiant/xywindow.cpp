@@ -888,6 +888,8 @@ XYWnd::XYWnd() :
 
 XYWnd::~XYWnd()
 {
+  onDestroyed();
+
   if(m_mnuDrop != 0)
   {
     gtk_widget_destroy(GTK_WIDGET(m_mnuDrop));

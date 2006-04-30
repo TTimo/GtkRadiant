@@ -39,9 +39,16 @@ typedef struct treeModel_s {
 
 class DTreePlanter {
   MouseEventHandlerId m_mouseDown;
+  SignalHandlerId m_destroyed;
 public:
 	SignalHandlerResult mouseDown(const WindowVector& position, ButtonIdentifier button, ModifierFlags modifiers);
   typedef Member3<DTreePlanter, const WindowVector&, ButtonIdentifier, ModifierFlags, SignalHandlerResult, &DTreePlanter::mouseDown> MouseDownCaller;
+	void destroyed()
+  {
+    m_mouseDown = MouseEventHandlerId();
+    m_destroyed = SignalHandlerId();
+  }
+  typedef Member<DTreePlanter, void, &DTreePlanter::destroyed> DestroyedCaller;
 
   DTreePlanter() {
 		m_numModels =	0;
@@ -83,11 +90,19 @@ public:
 		}
 
     m_mouseDown = GlobalRadiant().XYWindowMouseDown_connect(makeSignalHandler3(MouseDownCaller(), *this));
+    m_destroyed = GlobalRadiant().XYWindowDestroyed_connect(makeSignalHandler(DestroyedCaller(), *this));
 	}
 
   virtual ~DTreePlanter()
   {
-    GlobalRadiant().XYWindowMouseDown_disconnect(m_mouseDown);
+    if(!m_mouseDown.isNull())
+    {
+      GlobalRadiant().XYWindowMouseDown_disconnect(m_mouseDown);
+    }
+    if(!m_destroyed.isNull())
+    {
+      GlobalRadiant().XYWindowDestroyed_disconnect(m_destroyed);
+    }
   }
 
 #define MT(t)	string_equal_nocase( pToken, t )

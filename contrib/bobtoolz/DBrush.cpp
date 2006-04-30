@@ -55,6 +55,7 @@ DBrush::DBrush(int ID)
 {
 	m_nBrushID = ID;
 	bBoundsBuilt = false;
+	QER_entity = NULL;
 	QER_brush = NULL;
 }
 
@@ -140,14 +141,15 @@ void DBrush_addFaceTextured(DBrush& brush, const _QERFaceData& faceData)
 }
 typedef ReferenceCaller1<DBrush, const _QERFaceData&, DBrush_addFaceTextured> DBrushAddFaceTexturedCaller;
 
-void DBrush::LoadFromBrush(scene::Node& brush, bool textured)
+void DBrush::LoadFromBrush(scene::Instance& brush, bool textured)
 {
 	ClearFaces();
 	ClearPoints();
 
-  GlobalBrushCreator().forEachBrushFace(brush, textured ? BrushFaceDataCallback(DBrushAddFaceTexturedCaller(*this)) : BrushFaceDataCallback(DBrushAddFaceCaller(*this)));
+  GlobalBrushCreator().Brush_forEachFace(brush.path().top(), textured ? BrushFaceDataCallback(DBrushAddFaceTexturedCaller(*this)) : BrushFaceDataCallback(DBrushAddFaceCaller(*this)));
 
-	QER_brush = &brush;
+  QER_entity = brush.path().parent().get_pointer();
+	QER_brush = brush.path().top().get_pointer();
 }
 
 int DBrush::PointPosition(vec3_t pnt)
@@ -394,7 +396,7 @@ scene::Node* DBrush::BuildInRadiant(bool allowDestruction, int* changeCnt, scene
 	}
 	//-djbob
 
-  scene::Node& node = GlobalBrushCreator().createBrush();
+  NodeSmartReference node(GlobalBrushCreator().createBrush());
 
 	for(std::list<DPlane *>::const_iterator buildPlane=faceList.begin(); buildPlane!=faceList.end(); buildPlane++) {
 		if((*buildPlane)->AddToBrush(node) && changeCnt) {
@@ -408,7 +410,10 @@ scene::Node* DBrush::BuildInRadiant(bool allowDestruction, int* changeCnt, scene
 		Node_getTraversable(GlobalRadiant().getMapWorldEntity())->insert(node);
 	}
 
-	return &node;
+  QER_entity = entity;
+  QER_brush = node.get_pointer();
+
+	return node.get_pointer();
 }
 
 void DBrush::CutByPlane(DPlane *cutPlane, DBrush **newBrush1, DBrush **newBrush2)

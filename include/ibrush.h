@@ -105,8 +105,8 @@ public:
   STRING_CONSTANT(Name, "brush");
   virtual scene::Node& createBrush() = 0;
   virtual bool useAlternativeTextureProjection() const = 0;
-  virtual void forEachBrushFace(scene::Node& brush, const BrushFaceDataCallback& callback) = 0;
-  virtual bool addBrushFace(scene::Node& brush, const _QERFaceData& faceData) = 0;
+  virtual void Brush_forEachFace(scene::Node& brush, const BrushFaceDataCallback& callback) = 0;
+  virtual bool Brush_addFace(scene::Node& brush, const _QERFaceData& faceData) = 0;
 };
 
 #include "modulesystem.h"

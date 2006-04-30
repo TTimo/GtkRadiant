@@ -309,6 +309,8 @@ void FixBrushes()
 
 void AutoCaulk()
 {
+  UndoableCommand undo("bobToolz.autoCaulk");
+
 	if(!el1Loaded)
 		autocaulkDlg.m_Warning1 = "WARNING: Brush exclusion list not found\n, ALL BRUSHES WILL BE USED";
 

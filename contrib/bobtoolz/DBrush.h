@@ -41,6 +41,7 @@ class _QERFaceData;
 namespace scene
 {
   class Node;
+  class Instance;
 }
 
 #define POINT_IN_BRUSH	0
@@ -88,7 +89,7 @@ public:
 	
 	void CutByPlane(DPlane* cutPlane, DBrush** newBrush1, DBrush** newBrush2);
 
-	void LoadFromBrush(scene::Node& brush, bool textured);
+	void LoadFromBrush(scene::Instance& brush, bool textured);
 	void AddPoint(vec3_t pnt);
 
 	DPlane* FindPlaneWithClosestNormal( vec_t* normal );
@@ -100,6 +101,7 @@ public:
 	bool operator== (DBrush* other);
 
 //	members
+  scene::Node* QER_entity;
   scene::Node* QER_brush;
 	std::list<DPlane*> faceList;
 	std::list<DPoint*> pointList;

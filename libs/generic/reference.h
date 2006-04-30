@@ -36,14 +36,6 @@ public:
   explicit Reference(Type& contained) : m_contained(&contained)
   {
   }
-  Type& operator*() const
-  {
-    return *m_contained;
-  }
-  Type* operator->() const
-  {
-    return m_contained;
-  }
   operator Type&() const
   {
     return *m_contained;
@@ -86,14 +78,6 @@ class ConstReference
 public:
   explicit ConstReference(const Type& contained) : m_contained(&contained)
   {
-  }
-  const Type& operator*() const
-  {
-    return *m_contained;
-  }
-  const Type* operator->() const
-  {
-    return m_contained;
   }
   operator const Type&() const
   {

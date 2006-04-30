@@ -121,6 +121,7 @@ struct _QERFuncTable_1
   const char* (*getGameToolsPath)();
   const char* (*getAppPath)();
   const char* (*getSettingsPath)();
+  const char* (*getMapsPath)();
 
   const char* (*getGameName)();
   const char* (*getGameMode)();
@@ -141,6 +142,8 @@ struct _QERFuncTable_1
   void (*attachGameModeObserver)(ModuleObserver& observer);
   void (*detachGameModeObserver)(ModuleObserver& observer);
 
+  SignalHandlerId (*XYWindowDestroyed_connect)(const SignalHandler& handler);
+  void (*XYWindowDestroyed_disconnect)(SignalHandlerId id);
   MouseEventHandlerId (*XYWindowMouseDown_connect)(const MouseEventHandler& handler);
   void (*XYWindowMouseDown_disconnect)(MouseEventHandlerId id);
   VIEWTYPE (*XYWindow_getViewType)();

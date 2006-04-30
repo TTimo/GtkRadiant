@@ -236,7 +236,7 @@ bool DPlane::AddToBrush(scene::Node& brush)
   faceData.m_p2 = vector3_from_array(points[2]);
   faceData.m_texdef = texInfo.m_texdef;
   faceData.m_shader = m_shader.c_str();
-  GlobalBrushCreator().addBrushFace(brush, faceData);
+  GlobalBrushCreator().Brush_addFace(brush, faceData);
 
 	return changed;
 }

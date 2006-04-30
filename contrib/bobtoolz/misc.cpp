@@ -37,6 +37,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #endif
 
 #include "iundo.h"
+#include "ientity.h"
+#include "iscenegraph.h"
 #include "qerplugin.h"
 
 #include <vector>
@@ -251,7 +253,7 @@ void StartBSP()
 	UnixToDosPath(exename);	// do we want this done in linux version?
 
 	char mapname[256];  
-  const char *pn = g_FuncTable.m_pfnReadProjectKey("mapspath");
+  const char *pn = GlobalRadiant().getMapsPath();
   
 	strcpy( mapname, pn );
 	strcat( mapname, "/ac_prt.map" );
@@ -263,16 +265,46 @@ void StartBSP()
 	Q_Exec( command, TRUE );
 }
 
+class EntityWriteMiniPrt
+{
+	mutable DEntity world;
+  FILE* pFile;
+  std::list<Str>* exclusionList;
+public:
+  EntityWriteMiniPrt(FILE* pFile, std::list<Str>* exclusionList)
+    : pFile(pFile), exclusionList(exclusionList)
+  {
+  }
+  void operator()(scene::Instance& instance) const
+  {
+		const char* classname = Node_getEntity(instance.path().top())->getKeyValue("classname");
+
+		if(!strcmp(classname, "worldspawn"))
+		{
+			world.LoadFromEntity(instance.path().top(), FALSE);
+			world.RemoveNonCheckBrushes(exclusionList, TRUE);
+			world.SaveToFile(pFile);
+		}
+		else if(strstr(classname, "info_"))
+		{
+			world.ClearBrushes();
+			world.ClearEPairs();
+			world.LoadEPairList(Node_getEntity(instance.path().top()));
+			world.SaveToFile(pFile);
+		}
+  }
+};
+ 
 void BuildMiniPrt(std::list<Str>* exclusionList)
 {
 	// yes, we could just use -fulldetail option, but, as SPOG said
 	// it'd be faster without all the hint, donotenter etc textures and
 	// doors, etc
 
-	DEntity world;
+	
 	
 	char buffer[128];
-  const char *pn = g_FuncTable.m_pfnReadProjectKey("mapspath");
+  const char *pn = GlobalRadiant().getMapsPath();
 
 	strcpy( buffer, pn );
 	strcat( buffer, "/ac_prt.map" );
@@ -282,98 +314,39 @@ void BuildMiniPrt(std::list<Str>* exclusionList)
 	if(!pFile)
 		return;
 
-#if 0
-  int count = g_FuncTable.m_pfnGetEntityCount();
-	for(int i = 0; i < count; i++)
-	{
-		entity_t* ent = (entity_t*)g_FuncTable.m_pfnGetEntityHandle(i);
-
-		epair_t* epl = *g_EntityTable.m_pfnGetEntityKeyValList(ent);
-
-		epair_t* ep = epl;
-		while(ep)
-		{
-			if(!strcmp(ep->key, "classname"))
-			{
-				if(!strcmp(ep->value, "worldspawn"))
-				{
-					world.LoadFromEntity(i, FALSE);
-					world.RemoveNonCheckBrushes(exclusionList, TRUE);
-					world.SaveToFile(pFile);
-				}
-				else if(strstr(ep->value, "info_"))
-				{
-					world.ClearBrushes();
-					world.ClearEPairs();
-					world.LoadEPairList(epl);
-					world.SaveToFile(pFile);
-				}
-				break;
-			}
-
-			ep = ep->next;
-		}
-	}
-#endif
+  Scene_forEachEntity(EntityWriteMiniPrt(pFile, exclusionList));
 
 	fclose(pFile);
 
 	StartBSP();
 }
 
-template<typename Functor>
-class EntityWalker
+class EntityFindByTargetName
 {
-  const Functor& functor;
+  const char* targetname;
 public:
-  EntityWalker(const Functor& functor) : functor(functor)
+	mutable const scene::Path* result;
+  EntityFindByTargetName(const char* targetname)
+    : targetname(targetname), result(0)
   {
   }
-  bool pre(const Path& path, Instance& instance) const
+  void operator()(scene::Instance& instance) const
   {
-    if(Node_isEntity(path.top()))
+    if(result == 0)
     {
-      functor(path.top());
+		  const char* value = Node_getEntity(instance.path().top())->getKeyValue("targetname");
+
+		  if(!strcmp(value, targetname))
+		  {
+			  result = &instance.path();
+		  }
     }
   }
 };
-
-template<typename Functor>
-const Functor& Scene_forEachEntity(const Functor& functor)
+ 
+const scene::Path* FindEntityFromTargetname(const char* targetname)
 {
-  GlobalSceneGraph().traverse(EntityWalker<Functor>(functor));
-}
-
-void 
-
-scene::Path* FindEntityFromTargetname(const char* targetname, int* entNum)
-{
-#if 0
-	DEntity world;
-
-	int count = g_FuncTable.m_pfnGetEntityCount();
-	for(int i = 0; i < count; i++)
-	{
-		world.ClearEPairs();
-
-		entity_s* ent = (entity_s*)g_FuncTable.m_pfnGetEntityHandle(i);
-
-		world.LoadEPairList(*g_EntityTable.m_pfnGetEntityKeyValList(ent));
-
-		DEPair* tn = world.FindEPairByKey("targetname");
-		if(tn)
-		{
-			if(string_equal_nocase(tn->value, targetname)) {
-				if(entNum) {
-					*entNum = i;
-				}
-				return ent;
-			}
-		}
-	}
-
-#endif
-	return NULL;
+  return Scene_forEachEntity(EntityFindByTargetName(targetname)).result;
 }
 
 void FillDefaultTexture(_QERFaceData* faceData, vec3_t va, vec3_t vb, vec3_t vc, const char* texture)
@@ -383,9 +356,9 @@ void FillDefaultTexture(_QERFaceData* faceData, vec3_t va, vec3_t vb, vec3_t vc,
 	faceData->m_texdef.scale[1] = 0.5;
 	faceData->m_texdef.shift[0] = 0;
 	faceData->m_texdef.shift[1] = 0;
-	faceData->m_texdef.contents = 0;
-	faceData->m_texdef.flags = 0;
-	faceData->m_texdef.value = 0;
+	faceData->contents = 0;
+	faceData->flags = 0;
+	faceData->value = 0;
 	if(*texture)
 		faceData->m_shader = texture;
 	else
@@ -404,12 +377,12 @@ float Determinant3x3(float a1, float a2, float a3,
 
 bool GetEntityCentre(const char* entity, vec3_t centre)
 {
-  const scene::Path* ent = FindEntityFromTargetname(entity, NULL);
+  const scene::Path* ent = FindEntityFromTargetname(entity);
 	if(!ent)
 		return FALSE;
 
   scene::Instance& instance = *GlobalSceneGraph().find(*ent);
-  VectorCopy(instance.aabb_world().origin, centre);
+  VectorCopy(instance.worldAABB().origin, centre);
 
 	return TRUE;
 }
@@ -429,11 +402,9 @@ void MakeNormal( const vec_t* va, const vec_t* vb, const vec_t* vc, vec_t* out )
 }
 
 char* GetFilename(char* buffer, const char* filename) {
-	strcpy(buffer, g_pSynapseServer->GetModuleFilename(&g_SynapseClient));
-	StripFilename( buffer );
-	strcat(buffer, "/");
+	strcpy(buffer, GlobalRadiant().getAppPath());
+	strcat(buffer, "plugins/");
 	strcat(buffer, filename);
-	//buffer = UnixToDosPath(buffer);
 	return buffer;
 }
 

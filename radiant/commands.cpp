@@ -27,6 +27,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <map>
 #include "string/string.h"
 #include "versionlib.h"
+#include "gtkutil/accelerator.h"
 
 typedef std::pair<Accelerator, bool> ShortcutValue; // accelerator, isRegistered
 typedef std::map<CopiedString, ShortcutValue> Shortcuts;
@@ -125,7 +126,6 @@ const KeyEvent& GlobalKeyEvents_find(const char* name)
 
 
 
-#include <gdk/gdkkeysyms.h>
 #include <ctype.h>
 
 #ifdef __APPLE__
@@ -137,88 +137,6 @@ inline char ascii_for_keyval(int keyval)
   return __toascii(keyval);
 }
 
-
-
-struct SKeyInfo
-{
-  const char* m_strName;
-  unsigned int m_nVKKey;
-};
-
-SKeyInfo g_Keys[] =
-{
-  {"Space", GDK_space},
-  {"Backspace", GDK_BackSpace},
-  {"Escape", GDK_Escape},
-  {"End", GDK_End},
-  {"Insert", GDK_Insert},
-  {"Delete", GDK_Delete},
-  {"PageUp", GDK_Prior},
-  {"PageDown", GDK_Next},
-  {"Up", GDK_Up},
-  {"Down", GDK_Down},
-  {"Left", GDK_Left},
-  {"Right", GDK_Right},
-  {"F1", GDK_F1},
-  {"F2", GDK_F2},
-  {"F3", GDK_F3},
-  {"F4", GDK_F4},
-  {"F5", GDK_F5},
-  {"F6", GDK_F6},
-  {"F7", GDK_F7},
-  {"F8", GDK_F8},
-  {"F9", GDK_F9},
-  {"F10", GDK_F10},
-  {"F11", GDK_F11},
-  {"F12", GDK_F12},
-  {"Tab", GDK_Tab},
-  {"Return", GDK_Return},                           
-  {"Comma", GDK_comma},
-  {"Period", GDK_period},
-  {"Plus", GDK_KP_Add},
-  {"Multiply", GDK_multiply},
-  {"Minus", GDK_KP_Subtract},
-  {"NumPad0", GDK_KP_0},
-  {"NumPad1", GDK_KP_1},
-  {"NumPad2", GDK_KP_2},
-  {"NumPad3", GDK_KP_3},
-  {"NumPad4", GDK_KP_4},
-  {"NumPad5", GDK_KP_5},
-  {"NumPad6", GDK_KP_6},
-  {"NumPad7", GDK_KP_7},
-  {"NumPad8", GDK_KP_8},
-  {"NumPad9", GDK_KP_9},
-  {"[", 219},
-  {"]", 221},
-  {"\\", 220},
-  {"Home", GDK_Home}
-};
-
-int g_nKeyCount = sizeof(g_Keys) / sizeof(SKeyInfo);
-
-const char* global_keys_find(unsigned int key)
-{
-  for(int i = 0; i < g_nKeyCount; ++i)
-  {
-    if(g_Keys[i].m_nVKKey == key)
-    {
-      return g_Keys[i].m_strName;
-    }
-  }
-  return "";
-}
-
-unsigned int global_keys_find(const char* name)
-{
-  for(int i = 0; i < g_nKeyCount; ++i)
-  {
-    if(string_equal_nocase(g_Keys[i].m_strName, name))
-    {
-      return g_Keys[i].m_nVKKey;
-    }
-  }
-  return 0;
-}
 
 
 #include <gtk/gtkbox.h>
@@ -242,35 +160,6 @@ struct command_list_dialog_t : public ModalDialog
   }
   ModalDialogButton m_close_button;
 };
-
-template<typename TextOutputStreamType>
-TextOutputStreamType& ostream_write(TextOutputStreamType& ostream, const Accelerator& accelerator)
-{
-  if(accelerator.modifiers & GDK_SHIFT_MASK)
-  {
-    ostream << "Shift + ";
-  }
-  if(accelerator.modifiers & GDK_MOD1_MASK)
-  {
-    ostream << "Alt + ";
-  }
-  if(accelerator.modifiers & GDK_CONTROL_MASK)
-  {
-    ostream << "Control + ";
-  }
-
-  const char* keyName = global_keys_find(accelerator.key);
-  if(!string_empty(keyName))
-  {
-    ostream << keyName;
-  }
-  else
-  {
-    ostream << static_cast<char>(accelerator.key);
-  }
-
-  return ostream;
-}
 
 void DoCommandListDlg()
 {

@@ -445,18 +445,19 @@ entity_lst = build_list('plugins/entity', 'plugin.cpp entity.cpp eclassmodel.cpp
 entity_lib = module_env.SharedLibrarySafe(target='entity', source=entity_lst)
 module_env.Install(INSTALL + '/modules', entity_lib)
 
-#bob_env = module_env.Copy()
-#bob_env.useGtk2()
-#bob_lst = build_list('contrib/bobtoolz/',
-#'dialogs/dialogs-gtk.cpp bobToolz-GTK.cpp bsploader.cpp cportals.cpp DBobView.cpp \
-#DBrush.cpp DEntity.cpp DEPair.cpp DListener.cpp DMap.cpp DPatch.cpp DPlane.cpp DPoint.cpp \
-#DShape.cpp DTrainDrawer.cpp DTreePlanter.cpp DVisDrawer.cpp DWinding.cpp funchandlers-GTK.cpp \
-#lists.cpp misc.cpp ScriptParser.cpp shapes.cpp visfind.cpp')
-#bob_lst.append('libs/libmathlib.a')
-#bob_lst.append('libs/libcmdlib.a')
-#bob_env['CPPPATH'].append('contrib/bobtoolz/dialogs')
-#bob_env.SharedLibrarySafe(target='bobtoolz', source=bob_lst)
-#bob_env.Install(INSTALL + '/plugins', 'bobtoolz.so')
+bob_env = module_env.Copy()
+bob_lst = build_list('contrib/bobtoolz/',
+'dialogs/dialogs-gtk.cpp bobToolz-GTK.cpp bsploader.cpp cportals.cpp DBobView.cpp \
+DBrush.cpp DEntity.cpp DEPair.cpp DMap.cpp DPatch.cpp DPlane.cpp DPoint.cpp \
+DShape.cpp DTrainDrawer.cpp DTreePlanter.cpp DVisDrawer.cpp DWinding.cpp funchandlers-GTK.cpp \
+lists.cpp misc.cpp ScriptParser.cpp shapes.cpp visfind.cpp')
+bob_lib = bob_env.SharedLibrarySafe(target='bobtoolz', source=bob_lst, LIBS=['mathlib', 'cmdlib', 'profile'], LIBPATH='libs')
+bob_env.Depends(bob_lib, mathlib_lib)
+bob_env.Depends(bob_lib, cmdlib_lib)
+bob_env.Depends(bob_lib, profile_lib)
+bob_env.useGlib2()
+bob_env.useGtk2()
+bob_env.Install(INSTALL + '/plugins', bob_lib)
 
 #camera_lst = build_list('contrib/camera', 
 #'camera.cpp dialogs.cpp dialogs_common.cpp funchandlers.cpp listener.cpp misc.cpp renderer.cpp')
