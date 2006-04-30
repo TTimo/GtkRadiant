@@ -108,7 +108,7 @@ namespace ListDetail
   class ListIterator
   {
   public:
-    typedef std::forward_iterator_tag iterator_category;
+    typedef std::bidirectional_iterator_tag iterator_category;
     typedef std::ptrdiff_t difference_type;
     typedef difference_type distance_type;
     typedef typename Traits::value_type value_type;
@@ -197,6 +197,16 @@ class List : private Allocator
   typedef ListDetail::ListNode<Value> Node;
   ListDetail::ListNodeBase list;
   typedef typename Allocator::template rebind<Node>::other NodeAllocator;
+
+  Node* newNode(const Value& value)
+  {
+    return new (NodeAllocator(*this).allocate(1)) Node(value);
+  }
+  void deleteNode(Node* node)
+  {
+    node->~Node();
+    NodeAllocator(*this).deallocate(node, 1);
+  }
 public:
   typedef Value value_type;
   typedef ListDetail::ListIterator< ListDetail::NonConstTraits<Value> > iterator;
@@ -209,6 +219,15 @@ public:
   explicit List(const Allocator& allocator) : Allocator(allocator)
   {
     list_initialise(list);
+  }
+  ~List()
+  {
+    for(; list.next != &list;)
+    {
+      Node* node = static_cast<Node*>(list.next);
+      list.next = list.next->next;
+      deleteNode(node);
+    }
   }
   iterator begin()
   {
@@ -242,9 +261,9 @@ public:
   {
     erase(begin(), value);
   }
-  iterator insert(iterator pos, const Value& x)
+  iterator insert(iterator pos, const Value& value)
   {
-    Node* node = new (NodeAllocator(*this).allocate(1)) Node(x);
+    Node* node = newNode(value);
     node_link(node, pos.node());
     return iterator(node);
   }
@@ -253,8 +272,7 @@ public:
     Node* node = pos.node();
     Node* next = node->getNext();
     node_unlink(node);
-    node->~Node();
-    NodeAllocator(*this).deallocate(node, 1);
+    deleteNode(node);
     return iterator(next);
   }
 };

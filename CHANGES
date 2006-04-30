@@ -1,6 +1,10 @@
 This is the changelog for developers, != changelog for the end user 
 that we distribute with the binaries. (see changelog)
 
+30/04/2006
+SPoG
+- Fixed memory leak in signals library.
+
 01/04/2006
 SPoG
 - Added key-observer interface to entity module API.
