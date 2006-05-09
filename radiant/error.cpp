@@ -32,9 +32,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #ifdef WIN32
 #define UNICODE
 #include <windows.h>
-#endif
-
-#if defined (__linux__) || defined (__APPLE__)
+#else
 #include <errno.h>
 #include <unistd.h>
 #endif
@@ -65,15 +63,6 @@ void Error (const char *error, ...)
   va_end (argptr);
 
   strcat( text, "\n" );
-
-#if defined (__linux__) || defined (__APPLE__)
-  if (errno != 0)
-  {
-    strcat( text, "errno: " );
-    strcat( text, strerror (errno));
-    strcat( text, "\n");
-  }
-#endif
 
 #ifdef WIN32
   if (GetLastError() != 0)
@@ -110,7 +99,15 @@ void Error (const char *error, ...)
     strcat( text, "\n");
     LocalFree( lpMsgBuf );
   }
+#else
+  if (errno != 0)
+  {
+    strcat( text, "errno: " );
+    strcat( text, strerror (errno));
+    strcat( text, "\n");
+  }
 #endif
+
 
 #if 0
   // we need to have a current context to call glError()

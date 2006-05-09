@@ -83,10 +83,9 @@ void Net_SetAddressPort(address_t *address, int port)
 int Net_AddressCompare(address_t *addr1, address_t *addr2)
 {
 #ifdef WIN32
-	return stricmp(addr1->ip, addr2->ip);
-#endif
-#ifdef __linux__
-	return strcasecmp(addr1->ip, addr2->ip);
+  return _stricmp(addr1->ip, addr2->ip);
+#else
+  return strcasecmp(addr1->ip, addr2->ip);
 #endif
 } //end of the function Net_AddressCompare
 //===========================================================================

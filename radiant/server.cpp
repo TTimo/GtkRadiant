@@ -160,7 +160,7 @@ public:
   }
 };
 
-#elif defined(__linux__) || defined (__APPLE__)
+#elif defined(POSIX)
 
 #include <dlfcn.h>
 
@@ -198,6 +198,8 @@ public:
   }
 };
 
+#else
+#error "unsupported platform"
 #endif
 
 class DynamicLibraryModule

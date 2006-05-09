@@ -33,7 +33,7 @@ bool open_url(const char* url)
 }
 #endif
 
-#ifdef __linux__
+#if defined(__linux__) || defined(__FreeBSD__)
 #include <stdlib.h>
 bool open_url(const char* url)
 {

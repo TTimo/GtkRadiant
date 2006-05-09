@@ -72,7 +72,7 @@ const char* environment_get_app_path()
 }
 
 
-#if defined (__linux__) || defined (__APPLE__)
+#if defined(POSIX)
 
 #include <stdlib.h>
 #include <pwd.h>
@@ -83,7 +83,7 @@ const char* environment_get_app_path()
 const char* LINK_NAME =
 #if defined (__linux__)
   "/proc/self/exe"
-#else
+#else // FreeBSD and OSX
   "/proc/curproc/file"
 #endif
 ;
@@ -147,9 +147,7 @@ void environment_init(int argc, char* argv[])
   }
 }
 
-#endif
-
-#ifdef WIN32
+#elif defined(WIN32)
 
 #include <windows.h>
 #include <shfolder.h>
@@ -197,4 +195,6 @@ void environment_init(int argc, char* argv[])
   }
 }
 
+#else
+#error "unsupported platform"
 #endif

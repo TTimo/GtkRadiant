@@ -78,7 +78,7 @@ void QE_InitVFS()
 
   const char* gamename = gamename_get();
   const char* basegame = basegame_get();
-#if defined (__linux__) || defined (__APPLE__)
+#if defined(POSIX)
   const char* userRoot = g_qeglobals.m_userEnginePath.c_str();
 #endif
   const char* globalRoot = EnginePath_get();
@@ -86,7 +86,7 @@ void QE_InitVFS()
   // if we have a mod dir
   if(!string_equal(gamename, basegame))
   {
-#if defined (__linux__) || defined (__APPLE__)
+#if defined(POSIX)
     // ~/.<gameprefix>/<fs_game>
     {
       StringOutputStream userGamePath(256);
@@ -103,7 +103,7 @@ void QE_InitVFS()
     }
   }
 
-#if defined (__linux__) || defined (__APPLE__)
+#if defined(POSIX)
   // ~/.<gameprefix>/<fs_main>
   {
     StringOutputStream userBasePath(256);
@@ -172,7 +172,7 @@ bool ConfirmModified(const char* title)
 
 
 const char* const EXECUTABLE_TYPE = 
-#if defined(__linux__)
+#if defined(__linux__) || defined (__FreeBSD__)
 "x86"
 #elif defined(__APPLE__)
 "ppc"
@@ -317,20 +317,21 @@ void RunBSP(const char* name)
     strcat(junkpath, "junk.txt");
 
     char batpath[PATH_MAX];
-#if defined (__linux__) || defined (__APPLE__)
+#if defined(POSIX)
     strcpy(batpath, SettingsPath_get());
     strcat(batpath, "qe3bsp.sh");
-#endif
-#ifdef WIN32
+#elif defined(WIN32)
     strcpy(batpath, SettingsPath_get());
     strcat(batpath, "qe3bsp.bat");
+#else
+#error "unsupported platform"
 #endif
     bool written = false;
     {
       TextFileOutputStream batchFile(batpath);
       if(!batchFile.failed())
       {
-#if defined (__linux__) || defined (__APPLE__)
+#if defined (POSIX)
         batchFile << "#!/bin/sh \n\n";
 #endif
         BatchCommandListener listener(batchFile, junkpath);
@@ -340,7 +341,7 @@ void RunBSP(const char* name)
     }
     if(written)
     {
-#if defined (__linux__) || defined (__APPLE__)
+#if defined (POSIX)
       chmod (batpath, 0744);
 #endif
       globalOutputStream() << "Writing the compile script to '" << batpath << "'\n";

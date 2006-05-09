@@ -186,7 +186,7 @@ void VFS_Destroy()
 
 void HomePaths_Realise()
 {
-#if defined (__linux__) || defined (__APPLE__)
+#if defined(POSIX)
   const char* prefix = g_pGameDescription->getKeyValue("prefix");
   if(!string_empty(prefix)) 
   {
@@ -510,10 +510,10 @@ public:
 const char* const c_library_extension =
 #if defined(WIN32)
 "dll"
-#elif defined(__linux__)
-"so"
 #elif defined (__APPLE__)
 "dylib"
+#elif defined(__linux__) || defined (__FreeBSD__)
+"so"
 #endif
 ;
 
@@ -3499,7 +3499,7 @@ void MainFrame_Construct()
     const char* ENGINEPATH_ATTRIBUTE =
 #if defined(WIN32)
       "enginepath_win32"
-#elif defined(__linux__)
+#elif defined(__linux__) || defined (__FreeBSD__)
       "enginepath_linux"
 #elif defined(__APPLE__)
       "enginepath_macos"

@@ -549,6 +549,12 @@ copy &quot;$(TargetDir)$(TargetName).pdb&quot;  &quot;$(SolutionDir)install&quot
 				RelativePath=".\shaders.h">
 			</File>
 			<File
+				RelativePath=".\sockets.cpp">
+			</File>
+			<File
+				RelativePath=".\sockets.h">
+			</File>
+			<File
 				RelativePath=".\stacktrace.cpp">
 			</File>
 			<File

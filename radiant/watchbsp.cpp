@@ -50,21 +50,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "points.h"
 #include "feedback.h"
 #include "mainframe.h"
-
-
-#ifdef WIN32
-//#include <winsock2.h>
-#endif
-
-#if defined (__linux__) || defined (__APPLE__)
-#include <sys/time.h>
-#define SOCKET_ERROR -1
-#endif
-
-#ifdef __APPLE__
-#include <unistd.h>
-#endif
-
+#include "sockets.h"
 
 void message_flush(message_info_t* self)
 {
@@ -93,7 +79,6 @@ void message_print(message_info_t* self, const char* characters, std::size_t len
 }
 
 
-#include "l_net/l_net.h"
 #include <glib/gtimer.h>
 #include <glib/garray.h>
 #include "xmlstuff.h"
@@ -614,14 +599,14 @@ void CWatchBSP::DoEBeginStep()
 #if defined(WIN32)
 #define ENGINE_ATTRIBUTE "engine_win32"
 #define MP_ENGINE_ATTRIBUTE "mp_engine_win32"
-#elif defined(__linux__)
+#elif defined(__linux__) || defined (__FreeBSD__)
 #define ENGINE_ATTRIBUTE "engine_linux"
 #define MP_ENGINE_ATTRIBUTE "mp_engine_linux"
 #elif defined(__APPLE__)
 #define ENGINE_ATTRIBUTE "engine_macos"
 #define MP_ENGINE_ATTRIBUTE "mp_engine_macos"
 #else
-#error "unknown platform"
+#error "unsupported platform"
 #endif
 
 class RunEngineConfiguration
@@ -678,22 +663,8 @@ inline void GlobalGameDescription_string_write_mapparameter(StringOutputStream& 
 }
 
 
-#ifdef WIN32
-#include <windows.h>
-#endif
-
 void CWatchBSP::RoutineProcessing()
 {
-  // used for select()
-#ifdef WIN32
-    TIMEVAL tout = { 0, 0 };
-#endif
-#if defined (__linux__) || defined (__APPLE__)
-		timeval tout;
-		tout.tv_sec = 0;
-		tout.tv_usec = 0;
-#endif
-
   switch (m_eState)
   {
   case EBeginStep:
@@ -732,6 +703,7 @@ void CWatchBSP::RoutineProcessing()
     }
     break;
   case EWatching:
+    {
 #ifdef _DEBUG
     // some debug checks
     if (!m_pInSocket)
@@ -740,33 +712,16 @@ void CWatchBSP::RoutineProcessing()
       return;
     }
 #endif
-    // select() will identify if the socket needs an update
-    // if the socket is identified that means there's either a message or the connection has been closed/reset/terminated
-    fd_set readfds;
-    int ret;
-    FD_ZERO(&readfds);
-    FD_SET(((unsigned int)m_pInSocket->socket), &readfds);
-		// from select man page:
-		// n is the highest-numbered descriptor in any of the three sets, plus 1
-		// (no use on windows)
-    ret = select( m_pInSocket->socket + 1, &readfds, NULL, NULL, &tout );
-    if (ret == SOCKET_ERROR)
+
+    int ret = Net_Wait(m_pInSocket, 0, 0);
+    if (ret == -1)
     {
       globalOutputStream() << "WARNING: SOCKET_ERROR in CWatchBSP::RoutineProcessing\n";
       globalOutputStream() << "Terminating the connection.\n";
       EndMonitoringLoop();
       return;
     }
-#ifdef _DEBUG
-    if (ret == -1)
-    {
-      // we are non-blocking?? we should never get timeout errors
-      globalOutputStream() << "WARNING: unexpected timeout expired in CWatchBSP::Processing\n";
-      globalOutputStream() << "Terminating the connection.\n";
-      EndMonitoringLoop();
-      return;
-    }
-#endif
+
     if (ret == 1)
     {
       // the socket has been identified, there's something (message or disconnection)
@@ -871,6 +826,7 @@ void CWatchBSP::RoutineProcessing()
           EndMonitoringLoop();
         }
       }
+    }
     }
     break;
   default:

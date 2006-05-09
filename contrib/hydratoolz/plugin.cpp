@@ -298,7 +298,7 @@ GSList *AddToWadList(GSList *wadlist, const char *shadername, const char *wad)
 
   for (GSList *l = wadlist; l != NULL ; l = l->next)
   {
-    if (!stricmp((char *)l->data,wadname))
+    if (string_equal_nocase((char *)l->data,wadname))
     {
       free( wadname );
       return wadlist;
@@ -334,7 +334,7 @@ void UpdateWadKeyPair( void )
   Sys_Printf("Searching for in-use wad files...\n");
   for(pEpair = pEntity->epairs; pEpair != NULL; pEpair = pEpair->next)
   {
-    if (stricmp(pEpair->key,"wad") == 0)
+    if (string_equal_nocase(pEpair->key,"wad"))
     {
       strcpy(wads,pEpair->value);
       ConvertDOSToUnixName(wads,wads);
@@ -415,7 +415,7 @@ void UpdateWadKeyPair( void )
   wads[0] = 0;
   while (wadlist)
   {
-    if (stricmp((char *)wadlist->data,"common-hydra.wad") == 0)
+    if (string_equal_nocase((char *)wadlist->data,"common-hydra.wad"))
     {
       Sys_Printf("Skipping radiant-supplied wad file %s\n",(char *)wadlist->data);
     }

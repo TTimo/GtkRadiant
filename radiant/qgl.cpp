@@ -75,7 +75,7 @@ int  ( WINAPI * qwglGetLayerPaletteEntries)(HDC, int, int, int, COLORREF *);
 BOOL ( WINAPI * qwglRealizeLayerPalette)(HDC, int, BOOL);
 BOOL ( WINAPI * qwglSwapLayerBuffers)(HDC, UINT);
 
-#elif defined (__linux__) || defined (__APPLE__)
+#elif defined (XWINDOWS)
 
 #include <GL/glx.h>
 #include <dlfcn.h>
@@ -101,6 +101,8 @@ void         (*qglXUseXFont)( Font font, int first, int count, int list );
 void*        (*qglXGetProcAddressARB) (const GLubyte *procName);
 typedef void* (*glXGetProcAddressARBProc) (const GLubyte *procName);
 
+#else
+#error "unsupported platform"
 #endif
 
 
@@ -108,7 +110,7 @@ void QGL_Shutdown(OpenGLBinding& table)
 {
   globalOutputStream() << "Shutting down OpenGL module...";
 
-#ifdef WIN32
+#if defined(WIN32)
   qwglCopyContext              = 0;
   qwglCreateContext            = 0;
   qwglCreateLayerContext       = 0;
@@ -131,9 +133,7 @@ void QGL_Shutdown(OpenGLBinding& table)
   qwglGetPixelFormat           = 0;
   qwglSetPixelFormat           = 0;
   qwglSwapBuffers              = 0;
-#endif
-
-#if defined (__linux__) || defined (__APPLE__)
+#elif defined(XWINDOWS)
   qglXChooseVisual             = 0;
   qglXCreateContext            = 0;
   qglXDestroyContext           = 0;
@@ -152,6 +152,8 @@ void QGL_Shutdown(OpenGLBinding& table)
   qglXWaitX                    = 0;
   qglXUseXFont                 = 0;
   qglXGetProcAddressARB        = 0;
+#else
+#error "unsupported platform"
 #endif
 
   globalOutputStream() << "Done.\n";
@@ -236,7 +238,7 @@ typedef int (QGL_DLLEXPORT *QGLFunctionPointer)();
 
 QGLFunctionPointer QGL_getExtensionFunc(const char* symbol)
 {
-#if defined (__linux__) || defined (__APPLE__)
+#if defined(XWINDOWS)
   //ASSERT_NOTNULL(qglXGetProcAddressARB);
   if (qglXGetProcAddressARB == 0)
   {
@@ -246,9 +248,11 @@ QGLFunctionPointer QGL_getExtensionFunc(const char* symbol)
   {
     return (QGLFunctionPointer)qglXGetProcAddressARB(reinterpret_cast<const GLubyte*>(symbol));
   }
-#else
+#elif defined(WIN32)
   ASSERT_NOTNULL(qwglGetProcAddress);
   return qwglGetProcAddress(symbol);
+#else
+#error "unsupported platform"
 #endif
 }
 
@@ -610,7 +614,7 @@ int QGL_Init(OpenGLBinding& table)
 {
   QGL_clear(table);
 
-#ifdef WIN32
+#if defined(WIN32)
   qwglCopyContext              = wglCopyContext;
   qwglCreateContext            = wglCreateContext;
   qwglCreateLayerContext       = wglCreateLayerContext;
@@ -633,9 +637,7 @@ int QGL_Init(OpenGLBinding& table)
   qwglGetPixelFormat           = GetPixelFormat;
   qwglSetPixelFormat           = SetPixelFormat;
   qwglSwapBuffers              = SwapBuffers;
-#endif
-
-#if defined (__linux__) || defined (__APPLE__)
+#elif defined(XWINDOWS)
   qglXChooseVisual             = glXChooseVisual;
   qglXCreateContext            = glXCreateContext;
   qglXDestroyContext           = glXDestroyContext;
@@ -654,12 +656,12 @@ int QGL_Init(OpenGLBinding& table)
   qglXWaitX                    = glXWaitX;
   qglXUseXFont                 = glXUseXFont;
 //  qglXGetProcAddressARB        = glXGetProcAddressARB; // Utah-GLX fix
-  qglXGetProcAddressARB = (glXGetProcAddressARBProc)dlsym(NULL, "glXGetProcAddressARB"); 
-#endif
 
-#if defined (__linux__) || defined (__APPLE__)
+  qglXGetProcAddressARB = (glXGetProcAddressARBProc)dlsym(NULL, "glXGetProcAddressARB"); 
   if ((qglXQueryExtension == 0) || (qglXQueryExtension(GDK_DISPLAY(),0,0) != True))
     return 0;
+#else
+#error "unsupported platform"
 #endif
 
   return 1;

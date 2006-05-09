@@ -32,15 +32,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "os/path.h"
 #include "container/array.h"
 
-#ifdef WIN32
-  #include <windows.h>
-#endif
-#if defined (__linux__) || defined (__APPLE__)
-  #include <unistd.h>
-#endif
 
+#if defined (POSIX)
 
-#if defined (__linux__) || defined (__APPLE__)
+#include <unistd.h>
+
 bool Q_Exec(const char *cmd, char *cmdline, const char *, bool)
 {
   char fullcmd[2048];
@@ -82,9 +78,11 @@ bool Q_Exec(const char *cmd, char *cmdline, const char *, bool)
   }
   return true;
 }
-#endif
 
-#ifdef WIN32
+#elif defined(WIN32)
+
+#include <windows.h>
+
 // NOTE TTimo windows is VERY nitpicky about the syntax in CreateProcess
 bool Q_Exec(const char *cmd, char *cmdline, const char *execdir, bool bCreateConsole)
 {
@@ -126,5 +124,6 @@ bool Q_Exec(const char *cmd, char *cmdline, const char *execdir, bool bCreateCon
     return true;
   return false;
 }
+
 #endif
 

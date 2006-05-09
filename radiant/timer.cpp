@@ -67,7 +67,7 @@ MillisecondTime MillisecondTime::current()
 
 
 
-#elif defined(__linux__) || defined (__APPLE__)
+#elif defined(POSIX)
 
 #include <time.h>
 #include "sys/time.h"

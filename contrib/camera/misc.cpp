@@ -82,7 +82,7 @@ const char* ExtractFilename( const char* path )
 }
 
 int Q_stricmp (const char *s1, const char *s2) {
-	return stricmp( s1, s2 );
+	return string_equal_nocase( s1, s2 );
 }
 
 /*

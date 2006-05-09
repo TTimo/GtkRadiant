@@ -93,7 +93,7 @@ inline bool path_is_absolute(const char* path)
 #if defined(WIN32)
   return path[0] == '/'
     || (path[0] != '\0' && path[1] == ':'); // local drive
-#elif defined(__linux__) || defined(__APPLE__)
+#elif defined(POSIX)
   return path[0] == '/';
 #endif
 }
