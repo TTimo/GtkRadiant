@@ -99,7 +99,7 @@ class ModuleObserver;
 
 #include "signal/signalfwd.h"
 #include "windowobserver.h"
-#include "math/vector.h"
+#include "generic/vector.h"
 
 typedef SignalHandler3<const WindowVector&, ButtonIdentifier, ModifierFlags> MouseEventHandler;
 typedef SignalFwd<MouseEventHandler>::handler_id_type MouseEventHandlerId;

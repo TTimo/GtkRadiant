@@ -116,7 +116,7 @@ class Matrix4;
 struct qtexture_t;
 class ModuleObserver;
 
-#include "math/vector.h"
+#include "generic/vector.h"
 
 class Shader
 {

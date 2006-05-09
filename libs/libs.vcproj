@@ -427,6 +427,24 @@
 			<File
 				RelativePath=".\generic\static.h">
 			</File>
+			<File
+				RelativePath=".\generic\vector.cpp">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)/$(InputName)1.obj"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)/$(InputName)1.obj"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\generic\vector.h">
+			</File>
 		</Filter>
 		<Filter
 			Name="memory"

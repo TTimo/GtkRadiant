@@ -360,40 +360,38 @@ inline bool operator!=(const Colour4b& self, const Colour4b& other)
 }
 
 /// \brief A 3-float vertex.
-struct Vertex3f
+struct Vertex3f : public Vector3
 {
-  float x, y, z;
-
   Vertex3f()
   {
   }
 
   Vertex3f(float _x, float _y, float _z)
-    : x(_x), y(_y), z(_z)
+    : Vector3(_x, _y, _z)
   {
   }
 };
 
 inline bool operator<(const Vertex3f& self, const Vertex3f& other)
 {
-  if(self.x != other.x)
+  if(self.x() != other.x())
   {
-    return self.x < other.x;
+    return self.x() < other.x();
   }
-  if(self.y != other.y)
+  if(self.y() != other.y())
   {
-    return self.y < other.y;
+    return self.y() < other.y();
   }
-  if(self.z != other.z)
+  if(self.z() != other.z())
   {
-    return self.z < other.z;
+    return self.z() < other.z();
   }
   return false;
 }
 
 inline bool operator==(const Vertex3f& self, const Vertex3f& other)
 {
-  return self.x == other.x && self.y == other.y && self.z == other.z;
+  return self.x() == other.x() && self.y() == other.y() && self.z() == other.z();
 }
 
 inline bool operator!=(const Vertex3f& self, const Vertex3f& other)
@@ -402,9 +400,9 @@ inline bool operator!=(const Vertex3f& self, const Vertex3f& other)
 }
 
 
-inline const Vertex3f& vertex3f_from_array(const float* array)
+inline Vertex3f vertex3f_from_array(const float* array)
 {
-  return *reinterpret_cast<const Vertex3f*>(array);
+  return Vertex3f(array[0], array[1], array[2]);
 }
 
 inline float* vertex3f_to_array(Vertex3f& vertex)
@@ -426,50 +424,48 @@ inline Vertex3f vertex3f_for_vector3(const Vector3& vector3)
 
 inline const Vector3& vertex3f_to_vector3(const Vertex3f& vertex)
 {
-  return reinterpret_cast<const Vector3&>(vertex);
+  return vertex;
 }
 
 inline Vector3& vertex3f_to_vector3(Vertex3f& vertex)
 {
-  return reinterpret_cast<Vector3&>(vertex);
+  return vertex;
 }
 
 
 /// \brief A 3-float normal.
-struct Normal3f
+struct Normal3f : public Vector3
 {
-  float x, y, z;
-
   Normal3f()
   {
   }
 
   Normal3f(float _x, float _y, float _z)
-    : x(_x), y(_y), z(_z)
+    : Vector3(_x, _y, _z)
   {
   }
 };
 
 inline bool operator<(const Normal3f& self, const Normal3f& other)
 {
-  if(self.x != other.x)
+  if(self.x() != other.x())
   {
-    return self.x < other.x;
+    return self.x() < other.x();
   }
-  if(self.y != other.y)
+  if(self.y() != other.y())
   {
-    return self.y < other.y;
+    return self.y() < other.y();
   }
-  if(self.z != other.z)
+  if(self.z() != other.z())
   {
-    return self.z < other.z;
+    return self.z() < other.z();
   }
   return false;
 }
 
 inline bool operator==(const Normal3f& self, const Normal3f& other)
 {
-  return self.x == other.x && self.y == other.y && self.z == other.z;
+  return self.x() == other.x() && self.y() == other.y() && self.z() == other.z();
 }
 
 inline bool operator!=(const Normal3f& self, const Normal3f& other)
@@ -500,46 +496,61 @@ inline Normal3f normal3f_for_vector3(const Vector3& vector3)
 
 inline const Vector3& normal3f_to_vector3(const Normal3f& normal)
 {
-  return reinterpret_cast<const Vector3&>(normal);
+  return normal;
 }
 
 inline Vector3& normal3f_to_vector3(Normal3f& normal)
 {
-  return reinterpret_cast<Vector3&>(normal);
+  return normal;
 }
 
 
 /// \brief A 2-float texture-coordinate set.
-struct TexCoord2f
+struct TexCoord2f : public Vector2
 {
-  float s, t;
-
   TexCoord2f()
   {
   }
 
   TexCoord2f(float _s, float _t)
-    : s(_s), t(_t)
+    : Vector2(_s, _t)
   {
+  }
+
+  float& s()
+  {
+    return x();
+  }
+  const float& s() const
+  {
+    return x();
+  }
+  float& t()
+  {
+    return y();
+  }
+  const float& t() const
+  {
+    return y();
   }
 };
 
 inline bool operator<(const TexCoord2f& self, const TexCoord2f& other)
 {
-  if(self.s != other.s)
+  if(self.s() != other.s())
   {
-    return self.s < other.s;
+    return self.s() < other.s();
   }
-  if(self.t != other.t)
+  if(self.t() != other.t())
   {
-    return self.t < other.t;
+    return self.t() < other.t();
   }
   return false;
 }
 
 inline bool operator==(const TexCoord2f& self, const TexCoord2f& other)
 {
-  return self.s == other.s && self.t == other.t;
+  return self.s() == other.s() && self.t() == other.t();
 }
 
 inline bool operator!=(const TexCoord2f& self, const TexCoord2f& other)
@@ -570,12 +581,12 @@ inline TexCoord2f texcoord2f_for_vector2(const Vector2& vector2)
 
 inline const Vector2& texcoord2f_to_vector2(const TexCoord2f& vertex)
 {
-  return reinterpret_cast<const Vector2&>(vertex);
+  return vertex;
 }
 
 inline Vector2& texcoord2f_to_vector2(TexCoord2f& vertex)
 {
-  return reinterpret_cast<Vector2&>(vertex);
+  return vertex;
 }
 
 /// \brief Returns \p normal rescaled to be unit-length. 
@@ -600,7 +611,7 @@ enum UnitSphereOctant
 inline UnitSphereOctant normal3f_classify_octant(const Normal3f& normal)
 {
   return static_cast<UnitSphereOctant>(
-    ((normal.x > 0) << 0) | ((normal.y > 0) << 1) | ((normal.z > 0) << 2)
+    ((normal.x() > 0) << 0) | ((normal.y() > 0) << 1) | ((normal.z() > 0) << 2)
   );
 }
 
@@ -610,21 +621,21 @@ inline Normal3f normal3f_fold_octant(const Normal3f& normal, UnitSphereOctant oc
   switch(octant)
   {
   case UNITSPHEREOCTANT_000:
-    return Normal3f(-normal.x, -normal.y, -normal.z);
+    return Normal3f(-normal.x(), -normal.y(), -normal.z());
   case UNITSPHEREOCTANT_001:
-    return Normal3f(normal.x, -normal.y, -normal.z);
+    return Normal3f(normal.x(), -normal.y(), -normal.z());
   case UNITSPHEREOCTANT_010:
-    return Normal3f(-normal.x, normal.y, -normal.z);
+    return Normal3f(-normal.x(), normal.y(), -normal.z());
   case UNITSPHEREOCTANT_011:
-    return Normal3f(normal.x, normal.y, -normal.z);
+    return Normal3f(normal.x(), normal.y(), -normal.z());
   case UNITSPHEREOCTANT_100:
-    return Normal3f(-normal.x, -normal.y, normal.z);
+    return Normal3f(-normal.x(), -normal.y(), normal.z());
   case UNITSPHEREOCTANT_101:
-    return Normal3f(normal.x, -normal.y, normal.z);
+    return Normal3f(normal.x(), -normal.y(), normal.z());
   case UNITSPHEREOCTANT_110:
-    return Normal3f(-normal.x, normal.y, normal.z);
+    return Normal3f(-normal.x(), normal.y(), normal.z());
   case UNITSPHEREOCTANT_111:
-    return Normal3f(normal.x, normal.y, normal.z);
+    return Normal3f(normal.x(), normal.y(), normal.z());
   }
   return Normal3f();
 }
@@ -653,14 +664,14 @@ enum UnitSphereSextant
 inline UnitSphereSextant normal3f_classify_sextant(const Normal3f& normal)
 {
   return
-    normal.x >= normal.y
-    ? normal.x >= normal.z
-      ? normal.y >= normal.z
+    normal.x() >= normal.y()
+    ? normal.x() >= normal.z()
+      ? normal.y() >= normal.z()
         ? UNITSPHERESEXTANT_XYZ
         : UNITSPHERESEXTANT_XZY
         : UNITSPHERESEXTANT_ZXY
-        : normal.y >= normal.z
-        ? normal.x >= normal.z
+        : normal.y() >= normal.z()
+        ? normal.x() >= normal.z()
         ? UNITSPHERESEXTANT_YXZ
         : UNITSPHERESEXTANT_YZX
         : UNITSPHERESEXTANT_ZYX;
@@ -674,17 +685,17 @@ inline Normal3f normal3f_fold_sextant(const Normal3f& normal, UnitSphereSextant 
   switch(sextant)
   {
   case UNITSPHERESEXTANT_XYZ:
-    return Normal3f(normal.x, normal.y, normal.z);
+    return Normal3f(normal.x(), normal.y(), normal.z());
   case UNITSPHERESEXTANT_XZY:
-    return Normal3f(normal.x, normal.z, normal.y);
+    return Normal3f(normal.x(), normal.z(), normal.y());
   case UNITSPHERESEXTANT_YXZ:
-    return Normal3f(normal.y, normal.x, normal.z);
+    return Normal3f(normal.y(), normal.x(), normal.z());
   case UNITSPHERESEXTANT_YZX:
-    return Normal3f(normal.y, normal.z, normal.x);
+    return Normal3f(normal.y(), normal.z(), normal.x());
   case UNITSPHERESEXTANT_ZXY:
-    return Normal3f(normal.z, normal.x, normal.y);
+    return Normal3f(normal.z(), normal.x(), normal.y());
   case UNITSPHERESEXTANT_ZYX:
-    return Normal3f(normal.z, normal.y, normal.x);
+    return Normal3f(normal.z(), normal.y(), normal.x());
   }
   return Normal3f();
 }
@@ -703,9 +714,9 @@ const std::size_t c_quantise_normal = 1 << 6;
 inline Normal3f normal3f_folded_quantised(const Normal3f& folded)
 {
   // compress
-  double scale = static_cast<float>(c_quantise_normal) / (folded.x + folded.y + folded.z);
-  unsigned int zbits = static_cast<unsigned int>(folded.z * scale);
-  unsigned int ybits = static_cast<unsigned int>(folded.y * scale);
+  double scale = static_cast<float>(c_quantise_normal) / (folded.x() + folded.y() + folded.z());
+  unsigned int zbits = static_cast<unsigned int>(folded.z() * scale);
+  unsigned int ybits = static_cast<unsigned int>(folded.y() * scale);
 
   // decompress
   return normal3f_normalised(Normal3f(
@@ -762,7 +773,7 @@ struct uniformspherical_t
 
 inline spherical_t spherical_from_normal3f(const Normal3f& normal)
 {
-  return spherical_t(normal.x == 0 ? c_pi / 2 : normal.x > 0 ? atan(normal.y / normal.x) : atan(normal.y / normal.x) + c_pi, acos(normal.z));
+  return spherical_t(normal.x() == 0 ? c_pi / 2 : normal.x() > 0 ? atan(normal.y() / normal.x()) : atan(normal.y() / normal.x()) + c_pi, acos(normal.z()));
 }
 
 inline Normal3f normal3f_from_spherical(const spherical_t& spherical)
@@ -820,7 +831,7 @@ inline uniformspherical_t uniformspherical_quantised(const uniformspherical_t& u
 /// \brief Returns a \p vertex quantised to \p precision.
 inline Vertex3f vertex3f_quantised(const Vertex3f& vertex, float precision)
 {
-  return Vertex3f(float_quantise(vertex.x, precision), float_quantise(vertex.y, precision), float_quantise(vertex.z, precision));
+  return Vertex3f(float_quantise(vertex.x(), precision), float_quantise(vertex.y(), precision), float_quantise(vertex.z(), precision));
 }
 
 /// \brief Returns a \p normal quantised to a fixed precision.
@@ -835,7 +846,7 @@ inline Normal3f normal3f_quantised(const Normal3f& normal)
 /// \brief Returns a \p texcoord quantised to \p precision.
 inline TexCoord2f texcoord2f_quantised(const TexCoord2f& texcoord, float precision)
 {
-  return TexCoord2f(float_quantise(texcoord.s, precision), float_quantise(texcoord.t, precision));
+  return TexCoord2f(float_quantise(texcoord.s(), precision), float_quantise(texcoord.t(), precision));
 }
 
 /// \brief Standard vertex type for lines and points.
@@ -1071,9 +1082,9 @@ class RemapXYZ
 public:
   static void set(Vertex3f& vertex, float x, float y, float z)
   {
-    vertex.x = x;
-    vertex.y = y;
-    vertex.z = z;
+    vertex.x() = x;
+    vertex.y() = y;
+    vertex.z() = z;
   }
 };
 
@@ -1082,9 +1093,9 @@ class RemapYZX
 public:
   static void set(Vertex3f& vertex, float x, float y, float z)
   {
-    vertex.x = z;
-    vertex.y = x;
-    vertex.z = y;
+    vertex.x() = z;
+    vertex.y() = x;
+    vertex.z() = y;
   }
 };
 
@@ -1093,9 +1104,9 @@ class RemapZXY
 public:
   static void set(Vertex3f& vertex, float x, float y, float z)
   {
-    vertex.x = y;
-    vertex.y = z;
-    vertex.z = x;
+    vertex.x() = y;
+    vertex.y() = z;
+    vertex.z() = x;
   }
 };
 
@@ -1267,12 +1278,12 @@ inline void ArbitraryMeshTriangle_calcTangents(const ArbitraryMeshVertex& a, con
     Vector3 cross(
       vector3_cross(
         vector3_subtracted(
-          Vector3(b.vertex.x, b.texcoord.s, b.texcoord.t),
-          Vector3(a.vertex.x, a.texcoord.s, a.texcoord.t)
+          Vector3(b.vertex.x(), b.texcoord.s(), b.texcoord.t()),
+          Vector3(a.vertex.x(), a.texcoord.s(), a.texcoord.t())
         ),
         vector3_subtracted(
-          Vector3(c.vertex.x, c.texcoord.s, c.texcoord.t),
-          Vector3(a.vertex.x, a.texcoord.s, a.texcoord.t)
+          Vector3(c.vertex.x(), c.texcoord.s(), c.texcoord.t()),
+          Vector3(a.vertex.x(), a.texcoord.s(), a.texcoord.t())
         )
       )
     );
@@ -1292,12 +1303,12 @@ inline void ArbitraryMeshTriangle_calcTangents(const ArbitraryMeshVertex& a, con
     Vector3 cross(
       vector3_cross(
         vector3_subtracted(
-          Vector3(b.vertex.y, b.texcoord.s, b.texcoord.t),
-          Vector3(a.vertex.y, a.texcoord.s, a.texcoord.t)
+          Vector3(b.vertex.y(), b.texcoord.s(), b.texcoord.t()),
+          Vector3(a.vertex.y(), a.texcoord.s(), a.texcoord.t())
         ),
         vector3_subtracted(
-          Vector3(c.vertex.y, c.texcoord.s, c.texcoord.t),
-          Vector3(a.vertex.y, a.texcoord.s, a.texcoord.t)
+          Vector3(c.vertex.y(), c.texcoord.s(), c.texcoord.t()),
+          Vector3(a.vertex.y(), a.texcoord.s(), a.texcoord.t())
         )
       )
     );
@@ -1317,12 +1328,12 @@ inline void ArbitraryMeshTriangle_calcTangents(const ArbitraryMeshVertex& a, con
     Vector3 cross(
       vector3_cross(
         vector3_subtracted(
-          Vector3(b.vertex.z, b.texcoord.s, b.texcoord.t),
-          Vector3(a.vertex.z, a.texcoord.s, a.texcoord.t)
+          Vector3(b.vertex.z(), b.texcoord.s(), b.texcoord.t()),
+          Vector3(a.vertex.z(), a.texcoord.s(), a.texcoord.t())
         ),
         vector3_subtracted(
-          Vector3(c.vertex.z, c.texcoord.s, c.texcoord.t),
-          Vector3(a.vertex.z, a.texcoord.s, a.texcoord.t)
+          Vector3(c.vertex.z(), c.texcoord.s(), c.texcoord.t()),
+          Vector3(a.vertex.z(), a.texcoord.s(), a.texcoord.t())
         )
       )
     );

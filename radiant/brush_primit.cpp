@@ -255,17 +255,17 @@ void Texdef_basisForNormal(const TextureProjection& projection, const Vector3& n
   if(g_bp_globals.m_texdefTypeId == TEXDEFTYPEID_BRUSHPRIMITIVES)
   {
     basis = g_matrix4_identity;
-    ComputeAxisBase(normal, basis.x(), basis.y());
-    static_cast<Vector3&>(basis.z()) = normal;
+    ComputeAxisBase(normal, vector4_to_vector3(basis.x()), vector4_to_vector3(basis.y()));
+    vector4_to_vector3(basis.z()) = normal;
     matrix4_transpose(basis);
     //DebugAxisBase(normal);
   }
   else if(g_bp_globals.m_texdefTypeId == TEXDEFTYPEID_HALFLIFE)
   {
     basis = g_matrix4_identity;
-    static_cast<Vector3&>(basis.x()) = projection.m_basis_s;
-    static_cast<Vector3&>(basis.y()) = vector3_negated(projection.m_basis_t);
-    static_cast<Vector3&>(basis.z()) = vector3_normalised(vector3_cross(static_cast<Vector3&>(basis.x()), static_cast<Vector3&>(basis.y())));
+    vector4_to_vector3(basis.x()) = projection.m_basis_s;
+    vector4_to_vector3(basis.y()) = vector3_negated(projection.m_basis_t);
+    vector4_to_vector3(basis.z()) = vector3_normalised(vector3_cross(vector4_to_vector3(basis.x()), vector4_to_vector3(basis.y())));
     matrix4_multiply_by_matrix4(basis, matrix4_rotation_for_z_degrees(-projection.m_texdef.rotate));
     //globalOutputStream() << "debug: " << projection.m_basis_s << projection.m_basis_t << normal << "\n";
     matrix4_transpose(basis);
@@ -1447,8 +1447,8 @@ void BP_from_matrix(brushprimit_texdef_t& bp_texdef, const Vector3& normal, cons
 {
   Matrix4 basis;
   basis = g_matrix4_identity;
-  ComputeAxisBase(normal, basis.x(), basis.y());
-  static_cast<Vector3&>(basis.z()) = normal;
+  ComputeAxisBase(normal, vector4_to_vector3(basis.x()), vector4_to_vector3(basis.y()));
+  vector4_to_vector3(basis.z()) = normal;
   matrix4_transpose(basis);
   matrix4_affine_invert(basis);
 

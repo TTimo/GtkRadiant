@@ -204,7 +204,7 @@ public:
   }
   const Vector3& getViewer() const
   {
-    return m_viewer;
+    return vector4_to_vector3(m_viewer);
   }
 };
 

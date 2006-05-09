@@ -2212,24 +2212,15 @@ void Patch::BuildTesselationCurves(EMatrixMajor major)
 
 inline void vertex_assign_ctrl(ArbitraryMeshVertex& vertex, const PatchControl& ctrl)
 {
-  vertex.vertex.x = ctrl.m_vertex[0];
-  vertex.vertex.y = ctrl.m_vertex[1];
-  vertex.vertex.z = ctrl.m_vertex[2];
-  vertex.texcoord.s = ctrl.m_texcoord[0];
-  vertex.texcoord.t = ctrl.m_texcoord[1];
+  vertex.vertex = vertex3f_for_vector3(ctrl.m_vertex);
+  vertex.texcoord = texcoord2f_for_vector2(ctrl.m_texcoord);
 }
 
 inline void vertex_clear_normal(ArbitraryMeshVertex& vertex)
 {
-  vertex.normal.x = 0;
-  vertex.normal.y = 0;
-  vertex.normal.z = 0;
-  vertex.tangent.x = 0;
-  vertex.tangent.y = 0;
-  vertex.tangent.z = 0;
-  vertex.bitangent.x = 0;
-  vertex.bitangent.y = 0;
-  vertex.bitangent.z = 0;
+  vertex.normal = Normal3f(0, 0, 0);
+  vertex.tangent = Normal3f(0, 0, 0);
+  vertex.bitangent = Normal3f(0, 0, 0);
 }
       
 inline void tangents_remove_degenerate(Vector3 tangents[6], Vector2 textureTangents[6], unsigned int flags)

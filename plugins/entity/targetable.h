@@ -398,7 +398,7 @@ public:
       return childBounds.origin;
     }
 #endif
-    return localToWorld().t();
+    return vector4_to_vector3(localToWorld().t());
   }
 
   void render(Renderer& renderer, const VolumeTest& volume) const

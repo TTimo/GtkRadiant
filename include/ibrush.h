@@ -24,7 +24,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "generic/constant.h"
 #include "generic/callback.h"
-#include "math/vector.h"
+#include "generic/vector.h"
 #include "itexdef.h"
 
 namespace scene

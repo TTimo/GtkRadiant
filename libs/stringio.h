@@ -25,7 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <stdlib.h>
 #include <cctype>
 
-#include "math/vector.h"
+#include "generic/vector.h"
 #include "iscriplib.h"
 #include "string/string.h"
 #include "generic/callback.h"

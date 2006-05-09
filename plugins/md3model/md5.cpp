@@ -298,7 +298,7 @@ bool MD5Model_parse(Model& model, Tokeniser& tokeniser)
     MD5_RETURN_FALSE_IF_FAIL(MD5_parseString(tokeniser, jointName));
     MD5_RETURN_FALSE_IF_FAIL(MD5_parseInteger(tokeniser, (*i).parent));
     MD5_RETURN_FALSE_IF_FAIL(MD5_parseVector3(tokeniser, (*i).position));
-    MD5_RETURN_FALSE_IF_FAIL(MD5_parseVector3(tokeniser, (*i).rotation));
+    MD5_RETURN_FALSE_IF_FAIL(MD5_parseVector3(tokeniser, vector4_to_vector3((*i).rotation)));
     (*i).rotation.w() = -static_cast<float>(sqrt(1.0f - (float_squared((*i).rotation.x()) + float_squared((*i).rotation.y()) + float_squared((*i).rotation.z()))));
     tokeniser.nextLine();
   }
