@@ -255,10 +255,11 @@ class idEnvironment(Environment):
   def useGtkGLExt(self):
     self['CXXFLAGS'] += '`pkg-config gtkglext-1.0 --cflags` '
     self['CCFLAGS'] += '`pkg-config gtkglext-1.0 --cflags` '
-    if BUILD == 'final':
-      self['LINKFLAGS'] += '-lgtkglext-x11-1.0 -lgdkglext-x11-1.0 '      
-    else:
-      self['LINKFLAGS'] += 'pkg-config gtkglext-1.0 --libs-only-L` `pkg-config gtkglext-1.0 --libs-only-l` '      
+    #if BUILD == 'final':
+    self['LINKFLAGS'] += '-lgtkglext-x11-1.0 -lgdkglext-x11-1.0 '
+    # apparently pkg-config for gtkglext includes --export-dynamic, which b0rks everything.     
+    #else:
+    #  self['LINKFLAGS'] += 'pkg-config gtkglext-1.0 --libs-only-L` `pkg-config gtkglext-1.0 --libs-only-l` '      
     
   def usePNG(self):
     self['CXXFLAGS'] += '`libpng-config --cflags` '
