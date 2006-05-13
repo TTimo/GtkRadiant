@@ -286,18 +286,17 @@ public:
     LineLimitedTextOutputStream outputStream(getOutputStream(), 24);
     write_stack_trace(outputStream);
     getOutputStream() << "----------------\n";
+    globalErrorStream() << m_buffer.c_str();
     if(!m_lock.locked())
     {
       ScopedLock lock(m_lock);
 #if defined _DEBUG
       m_buffer << "Break into the debugger?\n";
-      globalErrorStream() << m_buffer.c_str();
       bool handled = gtk_MessageBox(0, m_buffer.c_str(), "Radiant - Runtime Error", eMB_YESNO, eMB_ICONERROR) == eIDNO;
       m_buffer.clear();
       return handled;
 #else
       m_buffer << "Please report this error to the developers\n";
-      globalErrorStream() << m_buffer.c_str();
       gtk_MessageBox(0, m_buffer.c_str(), "Radiant - Runtime Error", eMB_OK, eMB_ICONERROR);
       m_buffer.clear();
       return true;
