@@ -60,6 +60,7 @@ class FindTextureDialog : public Dialog
   static void setFindStr(const char* name);
   static bool isOpen();
   static void show();
+  typedef FreeCaller<&FindTextureDialog::show> ShowCaller;
   static void updateTextures(const char* name);
 
   FindTextureDialog();
@@ -290,7 +291,7 @@ void FindTextureDialog_selectTexture(const char* name)
 
 void FindTextureDialog_Construct()
 {
-  GlobalCommands_insert("FindReplaceTextures", FreeCaller<FindTextureDialog::show>());
+  GlobalCommands_insert("FindReplaceTextures", FindTextureDialog::ShowCaller());
 }
 
 void FindTextureDialog_Destroy()

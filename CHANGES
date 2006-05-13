@@ -1,6 +1,13 @@
 This is the changelog for developers, != changelog for the end user 
 that we distribute with the binaries. (see changelog)
 
+13/05/2006
+LordHavoc
+- Added -fPIC for Linux builds to support x86_64.
+- Removed static-linked libstdc++ hack for non-final builds.
+- Removed gcc explicit linking hack for non-final builds.
+- Added workaround for gcc static-member-pointer-as-template-argument bug.
+
 30/04/2006
 SPoG
 - Fixed memory leak in signals library.

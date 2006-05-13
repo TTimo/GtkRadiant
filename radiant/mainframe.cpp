@@ -1047,15 +1047,18 @@ public:
   }
 };
 
-FreeCaller1<const BoolImportCallback&, BoolFunctionExport<EdgeMode>::apply> g_edgeMode_button_caller;
+typedef FreeCaller1<const BoolImportCallback&, &BoolFunctionExport<EdgeMode>::apply> EdgeModeApplyCaller;
+EdgeModeApplyCaller g_edgeMode_button_caller;
 BoolExportCallback g_edgeMode_button_callback(g_edgeMode_button_caller);
 ToggleItem g_edgeMode_button(g_edgeMode_button_callback);
 
-FreeCaller1<const BoolImportCallback&, BoolFunctionExport<VertexMode>::apply> g_vertexMode_button_caller;
+typedef FreeCaller1<const BoolImportCallback&, &BoolFunctionExport<VertexMode>::apply> VertexModeApplyCaller;
+VertexModeApplyCaller g_vertexMode_button_caller;
 BoolExportCallback g_vertexMode_button_callback(g_vertexMode_button_caller);
 ToggleItem g_vertexMode_button(g_vertexMode_button_callback);
 
-FreeCaller1<const BoolImportCallback&, BoolFunctionExport<FaceMode>::apply> g_faceMode_button_caller;
+typedef FreeCaller1<const BoolImportCallback&, &BoolFunctionExport<FaceMode>::apply> FaceModeApplyCaller;
+FaceModeApplyCaller g_faceMode_button_caller;
 BoolExportCallback g_faceMode_button_callback(g_faceMode_button_caller);
 ToggleItem g_faceMode_button(g_faceMode_button_callback);
 

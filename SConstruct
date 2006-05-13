@@ -10,7 +10,7 @@ import SCons
 conf_filename='site.conf'
 # there is a default hardcoded value, you can override on command line, those are saved between runs
 # we only handle strings
-serialized=['CC', 'CXX', 'JOBS', 'BUILD', 'SETUP']
+serialized=['CC', 'CXX', 'JOBS', 'BUILD']
 
 # help -------------------------------------------
 
@@ -85,7 +85,6 @@ CXX='g++'
 JOBS='1'
 BUILD='debug'
 INSTALL='#install'
-SETUP='0'
 g_build_root = 'build'
 
 # end default settings ---------------------------
@@ -117,9 +116,6 @@ for k in serialized:
 
 # sanity check -----------------------------------
 
-if (SETUP == '1' and BUILD != 'release' and BUILD != 'info'):
-  print 'Forcing release build for setup'
-  BUILD = 'release'
 
 def GetGCCVersion(name):
   ret = commands.getstatusoutput('%s -dumpversion' % name)
@@ -175,7 +171,7 @@ CPPPATH = []
 if (BUILD == 'debug'):
 	CXXFLAGS += '-g -D_DEBUG '
 	CCFLAGS += '-g -D_DEBUG '
-elif (BUILD == 'release'):
+elif (BUILD == 'release' or BUILD == 'final'):
 	CXXFLAGS += '-O2 '
 	CCFLAGS += '-O2 '
 else:
@@ -185,25 +181,29 @@ else:
 LINKFLAGS = ''
 if ( OS == 'Linux' ):
 
-  # static
-  # 2112833 /opt/gtkradiant/radiant.x86
-  # 35282 /opt/gtkradiant/modules/archivezip.so
-  # 600099 /opt/gtkradiant/modules/entity.so
+  if ( BUILD == 'final' ):
+    # static
+    # 2112833 /opt/gtkradiant/radiant.x86
+    # 35282 /opt/gtkradiant/modules/archivezip.so
+    # 600099 /opt/gtkradiant/modules/entity.so
   
-  # dynamic
-  # 2237060 /opt/gtkradiant/radiant.x86
-  # 110605 /opt/gtkradiant/modules/archivezip.so
-  # 730222 /opt/gtkradiant/modules/entity.so
+    # dynamic
+    # 2237060 /opt/gtkradiant/radiant.x86
+    # 110605 /opt/gtkradiant/modules/archivezip.so
+    # 730222 /opt/gtkradiant/modules/entity.so
   
-  # EVIL HACK - force static-linking for libstdc++ - create a symbolic link to the static libstdc++ in the root
-  os.system("ln -s `g++ -print-file-name=libstdc++.a`")
+    # EVIL HACK - force static-linking for libstdc++ - create a symbolic link to the static libstdc++ in the root
+    os.system("ln -s `g++ -print-file-name=libstdc++.a`")
   
-  #if not os.path.exists("./install"):
-  #  os.mkdir("./install")
-  #os.system("cp `g++ -print-file-name=libstdc++.so` ./install")
+    #if not os.path.exists("./install"):
+    #  os.mkdir("./install")
+    #os.system("cp `g++ -print-file-name=libstdc++.so` ./install")
   
-  CXXFLAGS += '-fno-exceptions -fno-rtti '
-  LINKFLAGS += '-Wl,-fini,fini_stub -L. -static-libgcc '
+  # -fPIC might be worth removing when building for 32-bit x86
+  CCFLAGS += '-fPIC '
+  CXXFLAGS += '-fPIC -fno-exceptions -fno-rtti '
+  LINKFLAGS += '-fPIC -Wl,-fini,fini_stub -L. -static-libgcc '
+
 if ( OS == 'Darwin' ):
   CCFLAGS += '-force_cpusubtype_ALL -fPIC '
   CXXFLAGS += '-force_cpusubtype_ALL -fPIC -fno-exceptions -fno-rtti '
@@ -230,22 +230,35 @@ class idEnvironment(Environment):
   def useGlib2(self):
     self['CXXFLAGS'] += '`pkg-config glib-2.0 --cflags` '
     self['CCFLAGS'] += '`pkg-config glib-2.0 --cflags` '
-    self['LINKFLAGS'] += '-lglib-2.0 '
+    if BUILD == 'final':
+      self['LINKFLAGS'] += '-lglib-2.0 '
+    else:
+      self['LINKFLAGS'] += '`pkg-config glib-2.0 --libs` '
+      
     
   def useXML2(self):
     self['CXXFLAGS'] += '`xml2-config --cflags` '      
     self['CCFLAGS'] += '`xml2-config --cflags` '      
-    self['LINKFLAGS'] += '-lxml2 '
+    if BUILD == 'final':
+      self['LINKFLAGS'] += '-lxml2 '
+    else:
+      self['LINKFLAGS'] += '`xml2-config --libs` '
 
   def useGtk2(self):
     self['CXXFLAGS'] += '`pkg-config gtk+-2.0 --cflags` '
     self['CCFLAGS'] += '`pkg-config gtk+-2.0 --cflags` '
-    self['LINKFLAGS'] += '-lgtk-x11-2.0 -lgdk-x11-2.0 -latk-1.0 -lpango-1.0 -lgdk_pixbuf-2.0 '
+    if BUILD == 'final':
+      self['LINKFLAGS'] += '-lgtk-x11-2.0 -lgdk-x11-2.0 -latk-1.0 -lpango-1.0 -lgdk_pixbuf-2.0 '
+    else:
+      self['LINKFLAGS'] += '`pkg-config gtk+-2.0 --libs-only-L` `pkg-config gtk+-2.0 --libs-only-l` '
    
   def useGtkGLExt(self):
     self['CXXFLAGS'] += '`pkg-config gtkglext-1.0 --cflags` '
     self['CCFLAGS'] += '`pkg-config gtkglext-1.0 --cflags` '
-    self['LINKFLAGS'] += '-lgtkglext-x11-1.0 -lgdkglext-x11-1.0 '      
+    if BUILD == 'final':
+      self['LINKFLAGS'] += '-lgtkglext-x11-1.0 -lgdkglext-x11-1.0 '      
+    else:
+      self['LINKFLAGS'] += 'pkg-config gtkglext-1.0 --libs-only-L` `pkg-config gtkglext-1.0 --libs-only-l` '      
     
   def usePNG(self):
     self['CXXFLAGS'] += '`libpng-config --cflags` '
@@ -307,7 +320,7 @@ class idEnvironment(Environment):
 g_env = idEnvironment()
 
 # export the globals
-GLOBALS = 'g_env INSTALL SETUP g_cpu'
+GLOBALS = 'g_env INSTALL g_cpu'
 
 radiant_makeversion('\\ngcc version: %s.%s.%s' % ( ver_cc[0], ver_cc[1], ver_cc[2] ) )
 
