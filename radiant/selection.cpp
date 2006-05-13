@@ -3285,7 +3285,7 @@ public:
   /// \todo Support view-dependent nudge.
   void NudgeManipulator(const Vector3& nudge, const Vector3& view)
   {
-    if(ManipulatorMode() == eTranslate)
+    if(ManipulatorMode() == eTranslate || ManipulatorMode() == eDrag)
     {
       translateSelected(nudge);
     }

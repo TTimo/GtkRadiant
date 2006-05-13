@@ -211,7 +211,7 @@ void BuildMonitor_Construct()
 {
   g_pWatchBSP = new CWatchBSP();
 
-  g_WatchBSP_Enabled = !string_empty(g_pGameDescription->getKeyValue("no_bsp_monitor"));
+  g_WatchBSP_Enabled = !string_equal(g_pGameDescription->getKeyValue("no_bsp_monitor"), "1");
 
   GlobalPreferenceSystem().registerPreference("WatchBSP", BoolImportStringCaller(g_WatchBSP_Enabled), BoolExportStringCaller(g_WatchBSP_Enabled));
   GlobalPreferenceSystem().registerPreference("RunQuake2Run", BoolImportStringCaller(g_WatchBSP_RunQuake), BoolExportStringCaller(g_WatchBSP_RunQuake));
