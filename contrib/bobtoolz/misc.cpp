@@ -217,8 +217,6 @@ bool Q_Exec( const char *pCmd, bool bCreateConsole )
 }
 #endif
 
-#include <windows.h>
-
 #ifdef WIN32
 
 #include <windows.h>
@@ -239,7 +237,7 @@ bool Q_Exec( const char *pCmd, bool bCreateConsole )
 
 	for(; *pCmd == ' '; pCmd++);
 
-	if(!CreateProcess(NULL, (char *)pCmd, NULL, NULL, FALSE, dwCreationFlags, NULL, NULL, &si, &pi))
+	if(!CreateProcess(NULL, (char *)pCmd, NULL, NULL, false, dwCreationFlags, NULL, NULL, &si, &pi))
 		return false;
 
   return true;
@@ -262,7 +260,7 @@ void StartBSP()
 	char command[1024];
 	sprintf(command, "%s -nowater -fulldetail %s", exename, mapname);
 
-	Q_Exec( command, TRUE );
+	Q_Exec( command, true );
 }
 
 class EntityWriteMiniPrt
@@ -281,8 +279,8 @@ public:
 
 		if(!strcmp(classname, "worldspawn"))
 		{
-			world.LoadFromEntity(instance.path().top(), FALSE);
-			world.RemoveNonCheckBrushes(exclusionList, TRUE);
+			world.LoadFromEntity(instance.path().top(), false);
+			world.RemoveNonCheckBrushes(exclusionList, true);
 			world.SaveToFile(pFile);
 		}
 		else if(strstr(classname, "info_"))
@@ -379,12 +377,12 @@ bool GetEntityCentre(const char* entity, vec3_t centre)
 {
   const scene::Path* ent = FindEntityFromTargetname(entity);
 	if(!ent)
-		return FALSE;
+		return false;
 
   scene::Instance& instance = *GlobalSceneGraph().find(*ent);
   VectorCopy(instance.worldAABB().origin, centre);
 
-	return TRUE;
+	return true;
 }
 
 vec_t Min(vec_t a, vec_t b)

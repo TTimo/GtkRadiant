@@ -40,7 +40,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "DTrainDrawer.h"
 
 #include "misc.h"
-#include "scriptparser.h"
+#include "ScriptParser.h"
 #include "DTreePlanter.h"
 
 #include "shapes.h"

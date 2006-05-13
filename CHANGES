@@ -7,6 +7,7 @@ LordHavoc
 - Removed static-linked libstdc++ hack for non-final builds.
 - Removed gcc explicit linking hack for non-final builds.
 - Added workaround for gcc static-member-pointer-as-template-argument bug.
+- Fixed bobtoolz linux compile errors.
 
 30/04/2006
 SPoG

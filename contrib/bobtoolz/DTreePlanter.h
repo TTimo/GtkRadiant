@@ -25,7 +25,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "string/string.h"
 
 #include "DEntity.h"
-#include "scriptparser.h"
+#include "ScriptParser.h"
 #include "mathlib.h"
 #include "misc.h"
 

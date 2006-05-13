@@ -127,7 +127,7 @@ const char* QERPlug_GetCommandTitleList()
 
 #define NUM_TOOLBARBUTTONS 9
 
-unsigned int ToolbarButtonCount( void ) {
+std::size_t ToolbarButtonCount( void ) {
 	return NUM_TOOLBARBUTTONS;
 }
 
@@ -209,7 +209,7 @@ public:
 
 CBobtoolzToolbarButton g_bobtoolzToolbarButtons[NUM_TOOLBARBUTTONS];
 
-const IToolbarButton* GetToolbarButton(unsigned int index)
+const IToolbarButton* GetToolbarButton(std::size_t index)
 {
   g_bobtoolzToolbarButtons[index].mIndex = index;
   return &g_bobtoolzToolbarButtons[index];
