@@ -70,6 +70,8 @@ cp games/Q3Pack/tools/games/q3.game $RPM_BUILD_ROOT%{installdir}/games
 cp games/Doom3Pack/tools/games/doom3.game $RPM_BUILD_ROOT%{installdir}/games
 cp games/Q4Pack/tools/games/q4.game $RPM_BUILD_ROOT%{installdir}/games
 cp games/JAPack/Tools/games/ja.game $RPM_BUILD_ROOT%{installdir}/games
+cp games/NexuizPack/games/nexuiz.game $RPM_BUILD_ROOT%{installdir}/games
+cp games/DarkPlacesPack/games/darkplaces.game $RPM_BUILD_ROOT%{installdir}/games
 mkdir $RPM_BUILD_ROOT%{installdir}/modules
 cp install/modules/entity.so $RPM_BUILD_ROOT%{installdir}/modules
 cp install/modules/model.so $RPM_BUILD_ROOT%{installdir}/modules
@@ -85,6 +87,10 @@ cp install/modules/imagepng.so $RPM_BUILD_ROOT%{installdir}/modules
 cp install/modules/imageq2.so $RPM_BUILD_ROOT%{installdir}/modules
 cp install/modules/mapq3.so $RPM_BUILD_ROOT%{installdir}/modules
 cp install/modules/archivewad.so $RPM_BUILD_ROOT%{installdir}/modules
+cp install/plugins/prtview.so $RPM_BUILD_ROOT%{installdir}/prtview
+cp install/plugins/bobtoolz.so $RPM_BUILD_ROOT%{installdir}/plugins
+cp install/plugins/bt/*.txt $RPM_BUILD_ROOT%{installdir}/plugins/bt
+cp install/plugins/bitmaps/bobtoolz_*.bmp $RPM_BUILD_ROOT%{installdir}/plugins/bitmaps
 mkdir $RPM_BUILD_ROOT%{installdir}/q1.game
 cp games/Q1Pack/q1.game/default_build_menu.xml $RPM_BUILD_ROOT%{installdir}/q1.game
 mkdir $RPM_BUILD_ROOT%{installdir}/q1.game/id1
@@ -105,6 +111,18 @@ mkdir $RPM_BUILD_ROOT%{installdir}/q3.game/baseq3
 cp games/Q3Pack/tools/q3.game/baseq3/entities.ent $RPM_BUILD_ROOT%{installdir}/q3.game/baseq3
 cp games/Q3Pack/tools/q3.game/baseq3/default_shaderlist.txt $RPM_BUILD_ROOT%{installdir}/q3.game/baseq3
 cp games/Q3Pack/tools/q3.game/baseq3/entities.def $RPM_BUILD_ROOT%{installdir}/q3.game/baseq3
+mkdir $RPM_BUILD_ROOT%{installdir}/nexuiz.game
+cp games/NexuizPack/nexuiz.game/game.xlink $RPM_BUILD_ROOT%{installdir}/nexuiz.game
+cp games/NexuizPack/nexuiz.game/default_build_menu.xml $RPM_BUILD_ROOT%{installdir}/nexuiz.game
+mkdir $RPM_BUILD_ROOT%{installdir}/nexuiz.game/data
+cp games/NexuizPack/nexuiz.game/data/default_shaderlist.txt $RPM_BUILD_ROOT%{installdir}/nexuiz.game/data
+cp games/NexuizPack/nexuiz.game/data/entities.def $RPM_BUILD_ROOT%{installdir}/nexuiz.game/data
+mkdir $RPM_BUILD_ROOT%{installdir}/darkplaces.game
+cp games/DarkPlacesPack/darkplaces.game/game.xlink $RPM_BUILD_ROOT%{installdir}/darkplaces.game
+cp games/DarkPlacesPack/darkplaces.game/default_build_menu.xml $RPM_BUILD_ROOT%{installdir}/darkplaces.game
+mkdir $RPM_BUILD_ROOT%{installdir}/darkplaces.game/id1
+cp games/DarkPlacesPack/darkplaces.game/id1/default_shaderlist.txt $RPM_BUILD_ROOT%{installdir}/darkplaces.game/id1
+cp games/DarkPlacesPack/darkplaces.game/id1/entities.ent $RPM_BUILD_ROOT%{installdir}/darkplaces.game/id1
 mkdir $RPM_BUILD_ROOT%{installdir}/bitmaps
 cp setup/data/tools/bitmaps/view_cubicclipping.bmp $RPM_BUILD_ROOT%{installdir}/bitmaps
 cp setup/data/tools/bitmaps/cap_endcap.bmp $RPM_BUILD_ROOT%{installdir}/bitmaps

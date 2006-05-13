@@ -2629,7 +2629,32 @@ void OpenGLShader::construct(const char* name)
 #include "modulesystem/singletonmodule.h"
 #include "modulesystem/moduleregistry.h"
 
-class ShaderCacheDependencies : public GlobalShadersModuleRef, public GlobalTexturesModuleRef
+class OpenGLStateLibraryAPI
+{
+  OpenGLStateMap m_stateMap;
+public:
+  typedef OpenGLStateLibrary Type;
+  STRING_CONSTANT(Name, "*");
+
+  OpenGLStateLibraryAPI()
+  {
+    g_openglStates = &m_stateMap;
+  }
+  ~OpenGLStateLibraryAPI()
+  {
+    g_openglStates = 0;
+  }
+  OpenGLStateLibrary* getTable()
+  {
+    return &m_stateMap;
+  }
+};
+
+typedef SingletonModule<OpenGLStateLibraryAPI> OpenGLStateLibraryModule;
+typedef Static<OpenGLStateLibraryModule> StaticOpenGLStateLibraryModule;
+StaticRegisterModule staticRegisterOpenGLStateLibrary(StaticOpenGLStateLibraryModule::instance());
+
+class ShaderCacheDependencies : public GlobalShadersModuleRef, public GlobalTexturesModuleRef, public GlobalOpenGLStateLibraryModuleRef
 {
 public:
   ShaderCacheDependencies() :
@@ -2666,27 +2691,3 @@ typedef Static<ShaderCacheModule> StaticShaderCacheModule;
 StaticRegisterModule staticRegisterShaderCache(StaticShaderCacheModule::instance());
 
 
-class OpenGLStateLibraryAPI
-{
-  OpenGLStateMap m_stateMap;
-public:
-  typedef OpenGLStateLibrary Type;
-  STRING_CONSTANT(Name, "*");
-
-  OpenGLStateLibraryAPI()
-  {
-    g_openglStates = &m_stateMap;
-  }
-  ~OpenGLStateLibraryAPI()
-  {
-    g_openglStates = 0;
-  }
-  OpenGLStateLibrary* getTable()
-  {
-    return &m_stateMap;
-  }
-};
-
-typedef SingletonModule<OpenGLStateLibraryAPI> OpenGLStateLibraryModule;
-typedef Static<OpenGLStateLibraryModule> StaticOpenGLStateLibraryModule;
-StaticRegisterModule staticRegisterOpenGLStateLibrary(StaticOpenGLStateLibraryModule::instance());

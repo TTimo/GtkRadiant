@@ -270,14 +270,17 @@ void Brush::buildBRep()
         }
       }
 
-      ASSERT_MESSAGE((uniqueVertices.size() + faces_size) - uniqueEdges.size() == 2, "Final B-Rep: inconsistent vertex count");
+      if((uniqueVertices.size() + faces_size) - uniqueEdges.size() != 2)
+      {
+        globalErrorStream() << "Final B-Rep: inconsistent vertex count\n";
+      }
 
 #if BRUSH_CONNECTIVITY_DEBUG
       if((uniqueVertices.size() + faces_size) - uniqueEdges.size() != 2)
       {
         for(Faces::iterator i = m_faces.begin(); i != m_faces.end(); ++i)
         {
-		  std::size_t faceIndex = std::distance(m_faces.begin(), i);
+          std::size_t faceIndex = std::distance(m_faces.begin(), i);
 
           if(!(*i)->contributes())
           {

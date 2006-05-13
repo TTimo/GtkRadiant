@@ -498,14 +498,14 @@ void special_accelerators_add(Accelerator accelerator, const Callback& callback)
 {
   if(!accelerator_map_insert(g_special_accelerators, accelerator, callback))
   {
-    globalErrorStream() << "special_accelerators_add: already exists: " << makeQuoted(accelerator);
+    globalErrorStream() << "special_accelerators_add: already exists: " << makeQuoted(accelerator) << "\n";
   }
 }
 void special_accelerators_remove(Accelerator accelerator)
 {
   if(!accelerator_map_erase(g_special_accelerators, accelerator))
   {
-    globalErrorStream() << "special_accelerators_remove: not found: " << makeQuoted(accelerator);
+    globalErrorStream() << "special_accelerators_remove: not found: " << makeQuoted(accelerator) << "\n";
   }
 }
 
@@ -513,14 +513,14 @@ void keydown_accelerators_add(Accelerator accelerator, const Callback& callback)
 {
   if(!accelerator_map_insert(g_keydown_accelerators, accelerator, callback))
   {
-    globalErrorStream() << "keydown_accelerators_add: already exists: " << makeQuoted(accelerator);
+    globalErrorStream() << "keydown_accelerators_add: already exists: " << makeQuoted(accelerator) << "\n";
   }
 }
 void keydown_accelerators_remove(Accelerator accelerator)
 {
   if(!accelerator_map_erase(g_keydown_accelerators, accelerator))
   {
-    globalErrorStream() << "keydown_accelerators_remove: not found: " << makeQuoted(accelerator);
+    globalErrorStream() << "keydown_accelerators_remove: not found: " << makeQuoted(accelerator) << "\n";
   }
 }
 
@@ -528,14 +528,14 @@ void keyup_accelerators_add(Accelerator accelerator, const Callback& callback)
 {
   if(!accelerator_map_insert(g_keyup_accelerators, accelerator, callback))
   {
-    globalErrorStream() << "keyup_accelerators_add: already exists: " << makeQuoted(accelerator);
+    globalErrorStream() << "keyup_accelerators_add: already exists: " << makeQuoted(accelerator) << "\n";
   }
 }
 void keyup_accelerators_remove(Accelerator accelerator)
 {
   if(!accelerator_map_erase(g_keyup_accelerators, accelerator))
   {
-    globalErrorStream() << "keyup_accelerators_remove: not found: " << makeQuoted(accelerator);
+    globalErrorStream() << "keyup_accelerators_remove: not found: " << makeQuoted(accelerator) << "\n";
   }
 }
 

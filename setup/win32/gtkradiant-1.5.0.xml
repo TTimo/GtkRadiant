@@ -36,6 +36,12 @@
     <component name=".\components\mapq3.xml" root="..\..\install"/>
     <component name=".\components\mapxml.xml" root="..\..\install"/>
 
+    <feature name="BobToolz Plugin" desc="Bob's tools for Enemy Territory">
+      <component name=".\components\bobtoolz.xml" root="..\..\install"/>
+    </feature>
+    <feature name="PrtView Plugin" desc="Geoffrey Dewan's Portal Viewer">
+      <component name=".\components\prtview.xml" root="..\..\install"/>
+    </feature>
     <feature name="GtkRadiant Editor Manual" desc="Documentation for GtkRadiant users.">
       <component name=".\components\radiant_manual.xml" root="..\..\docs\manual"/>
     </feature>
@@ -91,6 +97,12 @@
     </feature>
     <feature name="Half-Life Support" desc="Support for Half-Life.">
       <component name=".\components\hl.xml" root="..\..\games\HalfLifePack"/>
+    </feature>
+    <feature name="Nexuiz Support" desc="Support for Nexuiz.">
+      <component name=".\components\nexuiz.xml" root="..\..\games\NexuizPack"/>
+    </feature>
+    <feature name="DarkPlaces Support" desc="Support for DarkPlaces Quake.">
+      <component name=".\components\darkplaces.xml" root="..\..\games\DarkPlacesPack"/>
     </feature>
   </feature>
 </package>

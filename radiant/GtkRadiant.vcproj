@@ -676,6 +676,9 @@ copy &quot;$(TargetDir)$(TargetName).pdb&quot;  &quot;$(SolutionDir)install&quot
 			</FileConfiguration>
 		</File>
 		<File
+			RelativePath="..\install.py">
+		</File>
+		<File
 			RelativePath=".\radiant.ico">
 		</File>
 		<File

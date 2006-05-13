@@ -8,6 +8,11 @@ LordHavoc
 - Removed gcc explicit linking hack for non-final builds.
 - Added workaround for gcc static-member-pointer-as-template-argument bug.
 - Fixed bobtoolz linux compile errors.
+- Added Nexuiz and Darkplaces support.
+SPoG
+- Changed 'inconsistent vertex count' assert to be non-fatal.
+- Changed 'failed to remove accelerator' assert to be non-fatal.
+- Fixed crash due to broken module dependencies.
 
 30/04/2006
 SPoG
