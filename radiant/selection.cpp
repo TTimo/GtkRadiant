@@ -3987,8 +3987,8 @@ public:
   typedef MemberCaller1<Manipulator_, DeviceVector, &Manipulator_::mouseUp> MouseUpCaller;
 };
 
-void Scene_copyClosestFaceTexture(SelectionTest& test);
-void Scene_applyClosestFaceTexture(SelectionTest& test);
+void Scene_copyClosestTexture(SelectionTest& test);
+void Scene_applyClosestTexture(SelectionTest& test);
 
 class RadiantWindowObserver : public SelectionSystemWindowObserver
 {
@@ -4058,11 +4058,11 @@ public:
 
       if(modifiers == c_modifier_apply_texture)
       {
-        Scene_applyClosestFaceTexture(volume);
+        Scene_applyClosestTexture(volume);
       }
       else if(modifiers == c_modifier_copy_texture)
       {
-        Scene_copyClosestFaceTexture(volume);
+        Scene_copyClosestTexture(volume);
       }
     }
   }

@@ -74,11 +74,6 @@ void Brush_constructMenu(GtkMenu* menu);
 
 extern Callback g_texture_lock_status_changed;
 
-bool SelectedFaces_empty();
-void SelectedFaces_copyTexture();
-void SelectedFaces_pasteTexture();
-void FaceTextureClipboard_setDefault();
-
 void BrushFilters_construct();
 void Brush_registerCommands();
 

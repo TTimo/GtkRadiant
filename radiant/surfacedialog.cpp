@@ -1310,6 +1310,247 @@ void SurfaceInspector::ApplyFlags()
   Select_SetFlags(ContentsFlagsValue(surfaceflags, contentflags, value, true));
 }
 
+
+void Face_getTexture(Face& face, CopiedString& shader, TextureProjection& projection, ContentsFlagsValue& flags)
+{
+  shader = face.GetShader();
+  face.GetTexdef(projection);
+  flags = face.getShader().m_flags;
+}
+typedef Function4<Face&, CopiedString&, TextureProjection&, ContentsFlagsValue&, void, Face_getTexture> FaceGetTexture;
+
+void Face_setTexture(Face& face, const char* shader, const TextureProjection& projection, const ContentsFlagsValue& flags)
+{
+  face.SetShader(shader);
+  face.SetTexdef(projection);
+  face.SetFlags(flags);
+}
+typedef Function4<Face&, const char*, const TextureProjection&, const ContentsFlagsValue&, void, Face_setTexture> FaceSetTexture;
+
+
+void Patch_getTexture(Patch& patch, CopiedString& shader, TextureProjection& projection, ContentsFlagsValue& flags)
+{
+  shader = patch.GetShader();
+  projection = TextureProjection(texdef_t(), brushprimit_texdef_t(), Vector3(0, 0, 0), Vector3(0, 0, 0));
+  flags = ContentsFlagsValue(0, 0, 0, false);
+}
+typedef Function4<Patch&, CopiedString&, TextureProjection&, ContentsFlagsValue&, void, Patch_getTexture> PatchGetTexture;
+
+void Patch_setTexture(Patch& patch, const char* shader, const TextureProjection& projection, const ContentsFlagsValue& flags)
+{
+  patch.SetShader(shader);
+}
+typedef Function4<Patch&, const char*, const TextureProjection&, const ContentsFlagsValue&, void, Patch_setTexture> PatchSetTexture;
+
+
+typedef Callback3<CopiedString&, TextureProjection&, ContentsFlagsValue&> GetTextureCallback;
+typedef Callback3<const char*, const TextureProjection&, const ContentsFlagsValue&> SetTextureCallback;
+
+struct Texturable
+{
+  GetTextureCallback getTexture;
+  SetTextureCallback setTexture;
+};
+
+
+void Face_getClosest(Face& face, SelectionTest& test, SelectionIntersection& bestIntersection, Texturable& texturable)
+{
+  SelectionIntersection intersection;
+  face.testSelect(test, intersection);
+  if(intersection.valid()
+    && SelectionIntersection_closer(intersection, bestIntersection))
+  {
+    bestIntersection = intersection;
+    texturable.setTexture = makeCallback3(FaceSetTexture(), face);
+    texturable.getTexture = makeCallback3(FaceGetTexture(), face);
+  }
+}
+
+
+class OccludeSelector : public Selector
+{
+  SelectionIntersection& m_bestIntersection;
+  bool& m_occluded;
+public:
+  OccludeSelector(SelectionIntersection& bestIntersection, bool& occluded) : m_bestIntersection(bestIntersection), m_occluded(occluded)
+  {
+    m_occluded = false;
+  }
+  void pushSelectable(Selectable& selectable)
+  {
+  }
+  void popSelectable()
+  {
+  }
+  void addIntersection(const SelectionIntersection& intersection)
+  {
+    if(SelectionIntersection_closer(intersection, m_bestIntersection))
+    {
+      m_bestIntersection = intersection;
+      m_occluded = true;
+    }
+  }
+};
+
+class BrushGetClosestFaceVisibleWalker : public scene::Graph::Walker
+{
+  SelectionTest& m_test;
+  Texturable& m_texturable;
+  mutable SelectionIntersection m_bestIntersection;
+public:
+  BrushGetClosestFaceVisibleWalker(SelectionTest& test, Texturable& texturable) : m_test(test), m_texturable(texturable)
+  {
+  }
+  bool pre(const scene::Path& path, scene::Instance& instance) const
+  {
+    if(path.top().get().visible())
+    {
+      BrushInstance* brush = Instance_getBrush(instance);
+      if(brush != 0)
+      {
+        m_test.BeginMesh(brush->localToWorld());
+
+        for(Brush::const_iterator i = brush->getBrush().begin(); i != brush->getBrush().end(); ++i)
+        {
+          Face_getClosest(*(*i), m_test, m_bestIntersection, m_texturable);
+        }
+      }
+      else
+      {
+        SelectionTestable* selectionTestable = Instance_getSelectionTestable(instance);
+        if(selectionTestable)
+        {
+          bool occluded;
+          OccludeSelector selector(m_bestIntersection, occluded);
+          selectionTestable->testSelect(selector, m_test);
+          if(occluded)
+          {
+            Patch* patch = Node_getPatch(path.top());
+            if(patch != 0)
+            {
+              m_texturable.setTexture = makeCallback3(PatchSetTexture(), *patch);
+              m_texturable.getTexture = makeCallback3(PatchGetTexture(), *patch);
+            }
+            else
+            {
+              m_texturable = Texturable();
+            }
+          }
+        }
+      }
+    }
+    return true;
+  }
+};
+
+Texturable Scene_getClosestTexturable(scene::Graph& graph, SelectionTest& test)
+{
+  Texturable texturable;
+  graph.traverse(BrushGetClosestFaceVisibleWalker(test, texturable));
+  return texturable;
+}
+
+bool Scene_getClosestTexture(scene::Graph& graph, SelectionTest& test, CopiedString& shader, TextureProjection& projection, ContentsFlagsValue& flags)
+{
+  Texturable texturable = Scene_getClosestTexturable(graph, test);
+  if(texturable.getTexture != GetTextureCallback())
+  {
+    texturable.getTexture(shader, projection, flags);
+    return true;
+  }
+  return false;
+}
+
+void Scene_setClosestTexture(scene::Graph& graph, SelectionTest& test, const char* shader, const TextureProjection& projection, const ContentsFlagsValue& flags)
+{
+  Texturable texturable = Scene_getClosestTexturable(graph, test);
+  if(texturable.setTexture != SetTextureCallback())
+  {
+    texturable.setTexture(shader, projection, flags);
+  }
+}
+
+
+class FaceTexture
+{
+public:
+  TextureProjection m_projection;
+  ContentsFlagsValue m_flags;
+};
+
+FaceTexture g_faceTextureClipboard;
+
+void FaceTextureClipboard_setDefault()
+{
+  g_faceTextureClipboard.m_flags = ContentsFlagsValue(0, 0, 0, false);
+  TexDef_Construct_Default(g_faceTextureClipboard.m_projection);
+}
+
+void TextureClipboard_textureSelected(const char* shader)
+{
+  FaceTextureClipboard_setDefault();
+}
+
+class TextureBrowser;
+extern TextureBrowser g_TextureBrowser;
+void TextureBrowser_SetSelectedShader(TextureBrowser& textureBrowser, const char* shader);
+const char* TextureBrowser_GetSelectedShader(TextureBrowser& textureBrowser);
+
+void Scene_copyClosestTexture(SelectionTest& test)
+{
+  CopiedString shader;
+  if(Scene_getClosestTexture(GlobalSceneGraph(), test, shader, g_faceTextureClipboard.m_projection, g_faceTextureClipboard.m_flags))
+  {
+    TextureBrowser_SetSelectedShader(g_TextureBrowser, shader.c_str());
+  }
+}
+
+void Scene_applyClosestTexture(SelectionTest& test)
+{
+  UndoableCommand command("facePaintTexture");
+
+  Scene_setClosestTexture(GlobalSceneGraph(), test, TextureBrowser_GetSelectedShader(g_TextureBrowser), g_faceTextureClipboard.m_projection, g_faceTextureClipboard.m_flags);
+
+  SceneChangeNotify();
+}
+
+
+
+
+
+void SelectedFaces_copyTexture()
+{
+  if(!g_SelectedFaceInstances.empty())
+  {
+    Face& face = g_SelectedFaceInstances.last().getFace();
+    face.GetTexdef(g_faceTextureClipboard.m_projection);
+    g_faceTextureClipboard.m_flags = face.getShader().m_flags;
+
+    TextureBrowser_SetSelectedShader(g_TextureBrowser, face.getShader().getShader());
+  }
+}
+
+void FaceInstance_pasteTexture(FaceInstance& faceInstance)
+{
+  faceInstance.getFace().SetTexdef(g_faceTextureClipboard.m_projection);
+  faceInstance.getFace().SetShader(TextureBrowser_GetSelectedShader(g_TextureBrowser));
+  faceInstance.getFace().SetFlags(g_faceTextureClipboard.m_flags);
+  SceneChangeNotify();
+}
+
+bool SelectedFaces_empty()
+{
+  return g_SelectedFaceInstances.empty();
+}
+
+void SelectedFaces_pasteTexture()
+{
+  UndoableCommand command("facePasteTexture");
+  g_SelectedFaceInstances.foreach(FaceInstance_pasteTexture);
+}
+
+
+
 void SurfaceInspector_constructPreferences(PreferencesPage& page)
 {
   page.appendCheckBox("", "Surface Inspector Increments Match Grid", g_si_globals.m_bSnapTToGrid);
@@ -1328,6 +1569,9 @@ void SurfaceInspector_registerCommands()
 {
   GlobalCommands_insert("FitTexture", FreeCaller<SurfaceInspector_FitTexture>(), Accelerator('B', (GdkModifierType)GDK_SHIFT_MASK));
   GlobalCommands_insert("SurfaceInspector", FreeCaller<SurfaceInspector_toggleShown>(), Accelerator('S'));
+
+  GlobalCommands_insert("FaceCopyTexture", FreeCaller<SelectedFaces_copyTexture>());
+  GlobalCommands_insert("FacePasteTexture", FreeCaller<SelectedFaces_pasteTexture>());
 }
 
 
@@ -1339,6 +1583,8 @@ void SurfaceInspector_Construct()
   g_SurfaceInspector = new SurfaceInspector;
 
   SurfaceInspector_registerCommands();
+
+  FaceTextureClipboard_setDefault();
 
   GlobalPreferenceSystem().registerPreference("SurfaceWnd", getSurfaceInspector().m_importPosition, getSurfaceInspector().m_exportPosition);
   GlobalPreferenceSystem().registerPreference("SI_SurfaceTexdef_Scale1", FloatImportStringCaller(g_si_globals.scale[0]), FloatExportStringCaller(g_si_globals.scale[0]));      
@@ -1358,6 +1604,8 @@ void SurfaceInspector_Destroy()
 {
   delete g_SurfaceInspector;
 }
+
+
 
 #if TEXTOOL_ENABLED
 

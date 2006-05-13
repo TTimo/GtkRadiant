@@ -31,6 +31,11 @@ typedef struct _GtkWindow GtkWindow;
 void SurfaceInspector_constructWindow(GtkWindow* widget);
 void SurfaceInspector_destroyWindow();
 
+bool SelectedFaces_empty();
+void SelectedFaces_copyTexture();
+void SelectedFaces_pasteTexture();
+void FaceTextureClipboard_setDefault();
+
 
 // the increment we are using for the surface inspector (this is saved in the prefs)
 struct si_globals_t

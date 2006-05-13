@@ -15,6 +15,7 @@ SPoG
 - Fixed crash due to broken module dependencies.
 - Fixed default settings for Build Monitoring.
 - Fixed nudge-selection when using the drag tool mode.
+- Added support for patches in texture-painting tool.
 
 30/04/2006
 SPoG
