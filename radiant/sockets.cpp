@@ -34,7 +34,7 @@ int Net_Wait(socket_t *sock, long sec, long usec)
 	// from select man page:
 	// n is the highest-numbered descriptor in any of the three sets, plus 1
 	// (no use on windows)
-  switch( select( sock->socket + 1, &readfds, NULL, NULL, &tout ) )
+  switch( select( sock->socket + 1, &readfds, 0, 0, &tout ) )
   {
   case SOCKET_ERROR:
     return -1;
