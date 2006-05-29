@@ -1,6 +1,10 @@
 This is the changelog for developers, != changelog for the end user 
 that we distribute with the binaries. (see changelog)
 
+29/05/2006
+SPoG
+- Changed default doom3 light_radius to be taken from the entity-definition.
+
 13/05/2006
 LordHavoc
 - Added -fPIC for Linux builds to support x86_64.

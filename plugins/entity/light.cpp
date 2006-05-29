@@ -537,25 +537,30 @@ public:
   typedef MemberCaller1<LightRadii, const char*, &LightRadii::flagsChanged> FlagsChangedCaller;
 };
 
-const Vector3 c_defaultDoom3LightRadius = Vector3(300, 300, 300);
 class Doom3LightRadius
 {
 public:
+  Vector3 m_defaultRadius;
   Vector3 m_radius;
   Vector3 m_radiusTransformed;
   Vector3 m_center;
   Callback m_changed;
   bool m_useCenterKey;
 
-  Doom3LightRadius() : m_radius(c_defaultDoom3LightRadius), m_center(0, 0, 0), m_useCenterKey(false)
+  Doom3LightRadius(const char* defaultRadius) : m_defaultRadius(300, 300, 300), m_center(0, 0, 0), m_useCenterKey(false)
   {
+    if(!string_parse_vector3(defaultRadius, m_defaultRadius))
+    {
+      globalErrorStream() << "Doom3LightRadius: failed to parse default light radius\n";
+    }
+    m_radius = m_defaultRadius;
   }
 
   void lightRadiusChanged(const char* value)
   {
     if(!string_parse_vector3(value, m_radius))
     {
-      m_radius = c_defaultDoom3LightRadius;
+      m_radius = m_defaultRadius;
     }
     m_radiusTransformed = m_radius;
     m_changed();
@@ -1043,6 +1048,7 @@ public:
     m_named(m_entity),
     m_nameKeys(m_entity),
     m_funcStaticOrigin(m_traverse, m_originKey.m_origin),
+    m_doom3Radius(EntityClass_valueForKey(m_entity.getEntityClass(), "light_radius")),
     m_radii_wire(m_radii, m_aabb_light.origin),
     m_radii_fill(m_radii, m_aabb_light.origin),
     m_radii_box(m_aabb_light.origin),
@@ -1066,6 +1072,7 @@ public:
     m_named(m_entity),
     m_nameKeys(m_entity),
     m_funcStaticOrigin(m_traverse, m_originKey.m_origin),
+    m_doom3Radius(EntityClass_valueForKey(m_entity.getEntityClass(), "light_radius")),
     m_radii_wire(m_radii, m_aabb_light.origin),
     m_radii_fill(m_radii, m_aabb_light.origin),
     m_radii_box(m_aabb_light.origin),
@@ -1330,7 +1337,7 @@ public:
       write_rotation(m_rotationKey.m_rotation, &m_entity);
 
       m_doom3Radius.m_radius = m_doom3Radius.m_radiusTransformed;
-      if(m_doom3Radius.m_radius == c_defaultDoom3LightRadius)
+      if(m_doom3Radius.m_radius == m_doom3Radius.m_defaultRadius)
       {
         m_entity.setKeyValue("light_radius", "");
       }
