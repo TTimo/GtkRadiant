@@ -657,7 +657,7 @@ int QGL_Init(OpenGLBinding& table)
   qglXUseXFont                 = glXUseXFont;
 //  qglXGetProcAddressARB        = glXGetProcAddressARB; // Utah-GLX fix
 
-  qglXGetProcAddressARB = (glXGetProcAddressARBProc)dlsym(NULL, "glXGetProcAddressARB"); 
+  qglXGetProcAddressARB = (glXGetProcAddressARBProc)dlsym(RTLD_DEFAULT, "glXGetProcAddressARB"); 
   if ((qglXQueryExtension == 0) || (qglXQueryExtension(GDK_DISPLAY(),0,0) != True))
     return 0;
 #else

@@ -126,18 +126,7 @@ const KeyEvent& GlobalKeyEvents_find(const char* name)
 
 
 
-#include <ctype.h>
-
-#ifdef __APPLE__
-#define __toascii(c)    ((c) & 0x7f)
-#endif
-
-inline char ascii_for_keyval(int keyval)
-{
-  return __toascii(keyval);
-}
-
-
+#include <cctype>
 
 #include <gtk/gtkbox.h>
 #include <gtk/gtkliststore.h>
@@ -284,7 +273,7 @@ void SaveCommandMap(const char* path)
         }
         else if(accelerator.key != 0)
         {
-          m_file << ascii_for_keyval(accelerator.key);
+          m_file << gdk_keyval_name(accelerator.key);
         }
 
         if(accelerator.modifiers & GDK_MOD1_MASK)

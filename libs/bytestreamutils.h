@@ -22,16 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #if !defined(INCLUDED_BYTESTREAMUTILS_H)
 #define INCLUDED_BYTESTREAMUTILS_H
 
-#include <algorithm>
-
-#if defined(_MSC_VER)
-
-typedef signed short int16_t;
-typedef unsigned short uint16_t;
-typedef signed int int32_t;
-typedef unsigned int uint32_t;
-
-#else
+#if defined(__GCC__)
 
 #define	_ISOC9X_SOURCE	1
 #define _ISOC99_SOURCE	1
@@ -42,6 +33,24 @@ typedef unsigned int uint32_t;
 #include <stdint.h>
 
 #endif
+
+#include <algorithm>
+
+// if C99 is unavailable, fall back to the types most likely to be the right sizes
+#if !defined(int16_t)
+typedef signed short int16_t;
+#endif
+#if !defined(uint16_t)
+typedef unsigned short uint16_t;
+#endif
+#if !defined(int32_t)
+typedef signed int int32_t;
+#endif
+#if !defined(uint32_t)
+typedef unsigned int uint32_t;
+#endif
+
+
 
 
 template<typename InputStreamType, typename Type>

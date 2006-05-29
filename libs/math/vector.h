@@ -27,13 +27,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "generic/vector.h"
 
-#if 0
-
-#define	lrint(dbl)		((int)((dbl) + 0.5))
-#define	lrintf(flt)		((int)((flt) + 0.5))
-
-#endif
-
 #if defined (_MSC_VER)
 
 inline int lrint (double flt)
@@ -49,19 +42,30 @@ inline int lrint (double flt)
 	return i;
 } 
 
-#else // lrint is part of ISO C99
+#elif defined(__FreeBSD__)
 
+inline int lrint(double f)
+{
+  return static_cast<int>(f + 0.5);
+}
+
+#elif defined(__GCC__)
+
+ // lrint is part of ISO C99
 #define	_ISOC9X_SOURCE	1
 #define _ISOC99_SOURCE	1
 
 #define	__USE_ISOC9X	1
 #define	__USE_ISOC99	1
 
+#else
+#error "unsupported platform"
 #endif
 
 #include <cmath>
 #include <float.h>
 #include <algorithm>
+
 
 //#include "debugging/debugging.h"
 
