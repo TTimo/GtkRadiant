@@ -12,7 +12,12 @@ Entity: creating a new entity with all the brushes of another entity selected re
 SConscript: build fails if SETUP=1
 GUI: can't use arrow keys to navigate in camera view when capslock is enabled
 GUI: screensaver causes: gdkgc-win32.c: line 905 (gdk_win32_hdc_get): assertion failed: (win32_gc->hdc == NULL)
-
+GUI: error! In camera window:
+  - press and release RightMouse
+  - press and hold LeftMouse
+  - press and release RightMouse
+  - press and release RightMouse
+  - release LeftMouse
 
 FEATURES
 
@@ -39,6 +44,9 @@ At the moment you can only create custom variables by editing the XML file. A cu
 This variable could then be used in a command like this:
 <pre>[arghrad] "[MapFile]"</pre>
 
+Texture Browser: add a way to make large texture sets more manageable - shaderlist.txt was previously used this way
+Brush: MMB+ctrl to paint texture on whole brush/patch.
+Camera: add alternative highlighting styles (used to be J).
 Doom3: filter func_splinemovers
 Entity: draw arrowheads to show direction of connection-lines.
 ? MMB to select a texture should also apply that texture to all selected faces.

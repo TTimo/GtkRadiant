@@ -2544,30 +2544,6 @@ GtkWidget* create_main_statusbar(GtkWidget *pStatusLabel[c_count_status])
 
 #if 0
 
-class WidgetFocusPrinter
-{
-  const char* m_name;
-
-  static gboolean focus_in(GtkWidget *widget, GdkEventFocus *event, WidgetFocusPrinter* self)
-  {
-    globalOutputStream() << self->m_name << " takes focus\n";
-    return FALSE;
-  }
-  static gboolean focus_out(GtkWidget *widget, GdkEventFocus *event, WidgetFocusPrinter* self)
-  {
-    globalOutputStream() << self->m_name << " loses focus\n";
-    return FALSE;
-  }
-public:
-  WidgetFocusPrinter(const char* name) : m_name(name)
-  {
-  }
-  void connect(GtkWindow* window)
-  {
-    g_signal_connect(G_OBJECT(window), "focus_in_event", G_CALLBACK(focus_in), this);
-    g_signal_connect(G_OBJECT(window), "focus_out_event", G_CALLBACK(focus_out), this);
-  }
-};
 
 WidgetFocusPrinter g_mainframeWidgetFocusPrinter("mainframe");
 

@@ -26,6 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <gtk/gtkwidget.h>
 #include "generic/callback.h"
 #include "warnings.h"
+#include "debugging/debugging.h"
 
 inline void widget_set_visible(GtkWidget* widget, bool shown)
 {
@@ -161,5 +162,29 @@ inline void widget_make_default(GtkWidget* widget)
   gtk_widget_grab_default(widget);
 }
 
+class WidgetFocusPrinter
+{
+  const char* m_name;
+
+  static gboolean focus_in(GtkWidget *widget, GdkEventFocus *event, WidgetFocusPrinter* self)
+  {
+    globalOutputStream() << self->m_name << " takes focus\n";
+    return FALSE;
+  }
+  static gboolean focus_out(GtkWidget *widget, GdkEventFocus *event, WidgetFocusPrinter* self)
+  {
+    globalOutputStream() << self->m_name << " loses focus\n";
+    return FALSE;
+  }
+public:
+  WidgetFocusPrinter(const char* name) : m_name(name)
+  {
+  }
+  void connect(GtkWidget* widget)
+  {
+    g_signal_connect(G_OBJECT(widget), "focus_in_event", G_CALLBACK(focus_in), this);
+    g_signal_connect(G_OBJECT(widget), "focus_out_event", G_CALLBACK(focus_out), this);
+  }
+};
 
 #endif

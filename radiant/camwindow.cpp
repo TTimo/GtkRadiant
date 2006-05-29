@@ -1351,9 +1351,8 @@ static gboolean camwindow_freemove_focusout(GtkWidget* widget, GdkEventFocus* ev
 
 void CamWnd::EnableFreeMove()
 {
-#if 0
-  globalOutputStream() << "EnableFreeMove\n";
-#endif
+  //globalOutputStream() << "EnableFreeMove\n";
+
   ASSERT_MESSAGE(!m_bFreeMove, "EnableFreeMove: free-move was already enabled");
   m_bFreeMove = true;
   Camera_clearMovementFlags(getCamera(), MOVE_ALL);
@@ -1370,9 +1369,8 @@ void CamWnd::EnableFreeMove()
 
 void CamWnd::DisableFreeMove()
 {
-#if 0
-  globalOutputStream() << "DisableFreeMove\n";
-#endif
+  //globalOutputStream() << "DisableFreeMove\n";
+
   ASSERT_MESSAGE(m_bFreeMove, "DisableFreeMove: free-move was not enabled");
   m_bFreeMove = false;
   Camera_clearMovementFlags(getCamera(), MOVE_ALL);

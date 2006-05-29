@@ -4,6 +4,8 @@ that we distribute with the binaries. (see changelog)
 29/05/2006
 SPoG
 - Changed default doom3 light_radius to be taken from the entity-definition.
+- Fixed error when entering and exiting camera freemove with LMB pressed.
+  http://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=1090
 
 13/05/2006
 LordHavoc
