@@ -49,7 +49,7 @@ inline int lrint(double f)
   return static_cast<int>(f + 0.5);
 }
 
-#elif defined(__GCC__)
+#elif defined(__GNUC__)
 
  // lrint is part of ISO C99
 #define	_ISOC9X_SOURCE	1
