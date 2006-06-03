@@ -1,6 +1,11 @@
 This is the changelog for developers, != changelog for the end user 
 that we distribute with the binaries. (see changelog)
 
+03/06/2006
+SPoG
+- Changed doom3 entity creation to add model key for brush-entities.
+- Fixed crash in Save Region.
+
 29/05/2006
 SPoG
 - Changed default doom3 light_radius to be taken from the entity-definition.

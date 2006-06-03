@@ -1408,7 +1408,7 @@ void AddRegionBrushes (void)
   for(i=0; i<6; i++)
   {
     region_sides[i] = &GlobalBrushCreator().createBrush();
-    Node_getTraversable(Map_FindOrInsertWorldspawn(g_map))->insert(*region_sides[i]);
+    Node_getTraversable(Map_FindOrInsertWorldspawn(g_map))->insert(NodeSmartReference(*region_sides[i]));
   }
 
   region_startpoint = &GlobalEntityCreator().createEntity(GlobalEntityClassManager().findOrInsert("info_player_start", false));
@@ -1416,7 +1416,7 @@ void AddRegionBrushes (void)
   ConstructRegionBrushes(region_sides, region_mins, region_maxs);
   ConstructRegionStartpoint(region_startpoint, region_mins, region_maxs);
 
-  Node_getTraversable(GlobalSceneGraph().root())->insert(*region_startpoint);
+  Node_getTraversable(GlobalSceneGraph().root())->insert(NodeSmartReference(*region_startpoint));
 }
 
 void RemoveRegionBrushes (void)
