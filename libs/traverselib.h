@@ -355,5 +355,42 @@ public:
   }
 };
 
+template<typename Type>
+class ReferenceSet
+{
+  typedef UniqueSet<Type*> Values;
+  Values m_values;
+public:
+  void attach(Type& t)
+  {
+    m_values.insert(&t);
+  }
+  void detach(Type& t)
+  {
+    m_values.erase(&t);
+  }
+  template<typename Functor>
+  void forEach(const Functor& functor)
+  {
+    for(Values::iterator i = m_values.begin(); i != m_values.end(); ++i)
+    {
+      functor(*(*i));
+    }
+  }
+};
+
+class TraversableObserverRelay : public ReferenceSet<scene::Traversable::Observer>, public scene::Traversable::Observer
+{
+public:
+  void insert(scene::Node& node)
+  {
+    forEach(TraversableObserverInsert(node));
+  }
+  void erase(scene::Node& node)
+  {
+    forEach(TraversableObserverErase(node));
+  }
+};
+
 
 #endif

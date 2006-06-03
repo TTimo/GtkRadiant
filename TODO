@@ -12,12 +12,7 @@ Entity: creating a new entity with all the brushes of another entity selected re
 SConscript: build fails if SETUP=1
 GUI: can't use arrow keys to navigate in camera view when capslock is enabled
 GUI: screensaver causes: gdkgc-win32.c: line 905 (gdk_win32_hdc_get): assertion failed: (win32_gc->hdc == NULL)
-GUI: error! In camera window:
-  - press and release RightMouse
-  - press and hold LeftMouse
-  - press and release RightMouse
-  - press and release RightMouse
-  - release LeftMouse
+
 
 FEATURES
 
