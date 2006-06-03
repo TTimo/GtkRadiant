@@ -642,7 +642,8 @@ void global_accel_group_remove_accelerator(Accelerator accelerator)
 /// \brief Propagates key events to the focus-widget, overriding global accelerators.
 static gboolean override_global_accelerators(GtkWindow* window, GdkEventKey* event, gpointer data)
 {
-  return gtk_window_propagate_key_event(window, event);
+  gboolean b = gtk_window_propagate_key_event(window, event);
+  return b;
 }
 
 void global_accel_connect_window(GtkWindow* window)

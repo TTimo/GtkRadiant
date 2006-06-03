@@ -378,14 +378,18 @@ public:
   bool m_specified;
 };
 
-inline unsigned int ContentFlags_assignable(unsigned int contentFlags)
+inline void ContentsFlagsValue_assignMasked(ContentsFlagsValue& flags, const ContentsFlagsValue& other)
 {
-  return contentFlags & ~CONTENTS_DETAIL;
-}
-
-inline ContentsFlagsValue ContentsFlagsValue_maskDetail(const ContentsFlagsValue& other)
-{
-  return ContentsFlagsValue(other.m_surfaceFlags, ContentFlags_assignable(other.m_contentFlags), other.m_value, other.m_specified);
+  bool detail = bitfield_enabled(flags.m_contentFlags, CONTENTS_DETAIL);
+  flags = other;
+  if(detail)
+  {
+    flags.m_contentFlags = bitfield_enable(flags.m_contentFlags, CONTENTS_DETAIL);
+  }
+  else
+  {
+    flags.m_contentFlags = bitfield_disable(flags.m_contentFlags, CONTENTS_DETAIL);
+  }
 }
 
 
@@ -526,7 +530,7 @@ public:
   void setFlags(const ContentsFlagsValue& flags)
   {
     ASSERT_MESSAGE(m_realised, "FaceShader::setFlags: flags not valid when unrealised");
-    m_flags = ContentsFlagsValue_maskDetail(flags);
+    ContentsFlagsValue_assignMasked(m_flags, flags);
   }
 
   Shader* state() const

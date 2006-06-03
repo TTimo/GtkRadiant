@@ -5,6 +5,7 @@ that we distribute with the binaries. (see changelog)
 SPoG
 - Changed doom3 entity creation to add model key for brush-entities.
 - Fixed crash in Save Region.
+- Fixed detail brushes being turned structural when texture is set.
 
 29/05/2006
 SPoG
