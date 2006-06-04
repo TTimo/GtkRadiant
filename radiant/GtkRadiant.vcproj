@@ -52,7 +52,8 @@
 				GenerateMapFile="FALSE"
 				SubSystem="2"
 				EntryPointSymbol="mainCRTStartup"
-				TargetMachine="1"/>
+				TargetMachine="1"
+				FixedBaseAddress="1"/>
 			<Tool
 				Name="VCMIDLTool"/>
 			<Tool

@@ -784,7 +784,7 @@ gboolean project_cell_edited(GtkCellRendererText* cell, gchar* path_string, gcha
   return FALSE;
 }
 
-gboolean project_key_press(GtkWidget* widget, GdkEventKey* event, GtkListStore* store, ProjectList* projectList)
+gboolean project_key_press(GtkWidget* widget, GdkEventKey* event, ProjectList* projectList)
 {
   Project& project = projectList->m_project;
 
