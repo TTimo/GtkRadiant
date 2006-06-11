@@ -252,7 +252,7 @@ inline const Functor& Scene_forEachSelectedBrush(const Functor& functor)
 
 void DEntity_loadBrush(DEntity& entity, scene::Instance& brush)
 {
-  DBrush* loadBrush = entity.NewBrush(entity.brushList.size());
+  DBrush* loadBrush = entity.NewBrush(static_cast<int>(entity.brushList.size()));
 	loadBrush->LoadFromBrush(brush, true);
 }
 typedef ReferenceCaller1<DEntity, scene::Instance&, DEntity_loadBrush> DEntityLoadBrushCaller;
@@ -702,7 +702,7 @@ void DEntity::SpawnVector(const char* key, const char* defaultstring, vec_t* out
 }
 
 int DEntity::GetBrushCount( void ) {
-	return brushList.size();
+	return static_cast<int>(brushList.size());
 }
 
 DBrush* DEntity::FindBrushByPointer( scene::Node& brush ) {

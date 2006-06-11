@@ -126,7 +126,7 @@ int DBrush::BuildPoints()
 //	Sys_Printf("%i points on brush\n", pointList.size());
 #endif
 
-	return pointList.size();
+	return static_cast<int>(pointList.size());
 }
 
 void DBrush_addFace(DBrush& brush, const _QERFaceData& faceData)

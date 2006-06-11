@@ -273,7 +273,7 @@ void DTrainDrawer::BuildPaths() {
 			continue;
 		}
 
-		int count = pSP->m_pointList.size() + 2;
+    std::size_t count = pSP->m_pointList.size() + 2;
 		vec3_t* v = new vec3_t[count];
 
 		VectorCopy(pSP->point.vOrigin, v[0]);
@@ -286,7 +286,7 @@ void DTrainDrawer::BuildPaths() {
 		VectorCopy(pSP->pTarget->vOrigin, v[i]);
 
 		for (float tension = 0.0f; tension <= 1.f; tension += 0.01f) {
-			CalculateSpline_r(v, count, out._pnt, tension);
+			CalculateSpline_r(v, static_cast<int>(count), out._pnt, tension);
 			pSP->m_vertexList.push_front(out);
 		}
 

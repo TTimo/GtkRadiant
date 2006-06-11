@@ -20,6 +20,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "AboutDialog.h"
 #include <gtk/gtk.h>
 #include "version.h"
+#include "gtkutil/pointer.h"
 
 #include "prtview.h"
 #include "ConfigDialog.h"
@@ -34,7 +35,7 @@ static void dialog_button_callback (GtkWidget *widget, gpointer data)
   ret = (int*)g_object_get_data (G_OBJECT (parent), "ret");
 
   *loop = 0;
-  *ret = (int)data;
+  *ret = gpointer_to_int(data);
 }
 
 static gint dialog_delete_callback (GtkWidget *widget, GdkEvent* event, gpointer data)

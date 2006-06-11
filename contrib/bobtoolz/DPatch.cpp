@@ -145,8 +145,8 @@ void DPatch::LoadFromPatch(scene::Instance& patch)
 
   PatchControlMatrix matrix = GlobalPatchCreator().Patch_getControlPoints(patch.path().top());
 
-  width = matrix.x();
-	height = matrix.y();
+  width = static_cast<int>(matrix.x());
+	height = static_cast<int>(matrix.y());
 
   for(int x = 0; x < height; x++)
   {

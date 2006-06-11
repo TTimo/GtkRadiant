@@ -23,6 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "str.h"
 #include <list>
 #include <gtk/gtk.h>
+#include "gtkutil/pointer.h"
 
 #include "../lists.h"
 #include "../misc.h"
@@ -90,7 +91,7 @@ static void dialog_button_callback (GtkWidget *widget, gpointer data)
 	ret = (EMessageBoxReturn*)g_object_get_data (G_OBJECT (parent), "ret");
  
 	*loop = 0;
-	*ret = (EMessageBoxReturn)GPOINTER_TO_INT(data);
+	*ret = (EMessageBoxReturn)gpointer_to_int(data);
 }
  
 static gint dialog_delete_callback (GtkWidget *widget, GdkEvent* event, gpointer data)

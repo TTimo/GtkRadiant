@@ -131,12 +131,10 @@ void SetInitialStairPos(int dir, vec3_t min, vec3_t max, float width)
 char* TranslateString (char *buf)
 {
 	static	char	buf2[32768];
-	int		i, l;
-	char	*out;
 
-	l = strlen(buf);
-	out = buf2;
-	for (i=0 ; i<l ; i++)
+  std::size_t l = strlen(buf);
+	char* out = buf2;
+	for (int i=0 ; i<l ; i++)
 	{
 		if (buf[i] == '\n')
 		{

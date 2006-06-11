@@ -204,7 +204,7 @@ public:
     }
   }
 
-  int mIndex;
+  std::size_t mIndex;
 };
 
 CBobtoolzToolbarButton g_bobtoolzToolbarButtons[NUM_TOOLBARBUTTONS];

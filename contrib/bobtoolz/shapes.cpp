@@ -113,19 +113,17 @@ void AddFaceWithTextureScaled(scene::Node& brush, vec3_t va, vec3_t vb, vec3_t v
 
 		if(bHorScale)
 		{
-			int texWidth = pqtTexInfo->width;
 			float width = maxX - minX;
 
-			scale[0] = width/texWidth;
+			scale[0] = width/pqtTexInfo->width;
 			shift[0] = -(float)((int)maxX%(int)width)/scale[0];
 		}
 
 		if(bVertScale)
 		{
-			int texHeight = pqtTexInfo->height;
 			float height = maxY - minY;
 
-			scale[1] = height/texHeight;
+			scale[1] = height/pqtTexInfo->height;
 			shift[1] = (float)((int)minY%(int)height)/scale[1];
 		}
 

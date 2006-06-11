@@ -36,7 +36,7 @@ static void dialog_button_callback (GtkWidget *widget, gpointer data)
   ret = (int*)g_object_get_data (G_OBJECT (parent), "ret");
 
   *loop = 0;
-  *ret = (int)data;
+  *ret = gpointer_to_int(data);
 }
 
 static gint dialog_delete_callback (GtkWidget *widget, GdkEvent* event, gpointer data)
@@ -236,7 +236,7 @@ static void OnFog (GtkWidget *widget, gpointer data)
 
 static void OnSelchangeZbuffer (GtkWidget *widget, gpointer data)
 {
-  portals.zbuffer = GPOINTER_TO_INT (data);
+  portals.zbuffer = gpointer_to_int(data);
 
   Portals_shadersChanged();
   SceneChangeNotify();
