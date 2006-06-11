@@ -419,7 +419,8 @@ void EntityList_Construct()
 
   GlobalPreferenceSystem().registerPreference("EntityInfoDlg", WindowPositionTrackerImportStringCaller(getEntityList().m_positionTracker), WindowPositionTrackerExportStringCaller(getEntityList().m_positionTracker));
 
-  GlobalSelectionSystem().addSelectionChangeCallback(FreeCaller1<const Selectable&, EntityList_SelectionChanged>());
+  typedef FreeCaller1<const Selectable&, EntityList_SelectionChanged> EntityListSelectionChangedCaller;
+  GlobalSelectionSystem().addSelectionChangeCallback(EntityListSelectionChangedCaller());
 }
 void EntityList_Destroy()
 {

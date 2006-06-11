@@ -3452,7 +3452,8 @@ void MainFrame_Construct()
   Patch_registerCommands();
   XYShow_registerCommands();
 
-  GlobalSelectionSystem().addSelectionChangeCallback(FreeCaller1<const Selectable&, ComponentMode_SelectionChanged>());
+  typedef FreeCaller1<const Selectable&, ComponentMode_SelectionChanged> ComponentModeSelectionChangedCaller;
+  GlobalSelectionSystem().addSelectionChangeCallback(ComponentModeSelectionChangedCaller());
 
   GlobalPreferenceSystem().registerPreference("DetachableMenus", BoolImportStringCaller(g_Layout_enableDetachableMenus.m_latched), BoolExportStringCaller(g_Layout_enableDetachableMenus.m_latched));
   GlobalPreferenceSystem().registerPreference("PatchToolBar", BoolImportStringCaller(g_Layout_enablePatchToolbar.m_latched), BoolExportStringCaller(g_Layout_enablePatchToolbar.m_latched));

@@ -2833,7 +2833,7 @@ public:
   {
     SetManipulatorMode(eTranslate);
     pivotChanged();
-    addSelectionChangeCallback(pivotChangedSelectionCaller(*this));
+    addSelectionChangeCallback(PivotChangedSelectionCaller(*this));
     AddGridChangeCallback(PivotChangedCaller(*this));
   }
   void pivotChanged() const
@@ -2846,7 +2846,7 @@ public:
   {
     pivotChanged();
   }
-  typedef MemberCaller1<RadiantSelectionSystem, const Selectable&, &RadiantSelectionSystem::pivotChangedSelection> pivotChangedSelectionCaller;
+  typedef MemberCaller1<RadiantSelectionSystem, const Selectable&, &RadiantSelectionSystem::pivotChangedSelection> PivotChangedSelectionCaller;
 
   void SetMode(EMode mode)
   {

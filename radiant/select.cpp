@@ -228,7 +228,7 @@ void UpdateWorkzone_ForSelection()
 }
 
 // update the workzone to the current selection
-void UpdateWorkzone_ForSelection(const Selectable& selectable)
+void UpdateWorkzone_ForSelectionChanged(const Selectable& selectable)
 {
   if(selectable.isSelected())
   {
@@ -735,9 +735,12 @@ SignalHandlerId Selection_boundsChanged;
 
 void Selection_construct()
 {
-  GlobalSelectionSystem().addSelectionChangeCallback(FreeCaller1<const Selectable&, SceneSelectionChange>());
-  GlobalSelectionSystem().addSelectionChangeCallback(FreeCaller1<const Selectable&, UpdateWorkzone_ForSelection>());
-  Selection_boundsChanged = GlobalSceneGraph().addBoundsChangedCallback(FreeCaller<UpdateWorkzone_ForSelection>());
+  typedef FreeCaller1<const Selectable&, SceneSelectionChange> SceneSelectionChangeCaller;
+  GlobalSelectionSystem().addSelectionChangeCallback(SceneSelectionChangeCaller());
+  typedef FreeCaller1<const Selectable&, UpdateWorkzone_ForSelectionChanged> UpdateWorkzoneForSelectionChangedCaller;
+  GlobalSelectionSystem().addSelectionChangeCallback(UpdateWorkzoneForSelectionChangedCaller());
+  typedef FreeCaller<UpdateWorkzone_ForSelection> UpdateWorkzoneForSelectionCaller;
+  Selection_boundsChanged = GlobalSceneGraph().addBoundsChangedCallback(UpdateWorkzoneForSelectionCaller());
 }
 
 void Selection_destroy()

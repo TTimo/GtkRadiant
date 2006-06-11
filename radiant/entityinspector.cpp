@@ -1693,7 +1693,8 @@ GtkWidget* EntityInspector_constructWindow(GtkWindow* toplevel)
   g_entityInspector_windowConstructed = true;
   EntityClassList_fill();
 
-  GlobalSelectionSystem().addSelectionChangeCallback(FreeCaller1<const Selectable&, EntityInspector_selectionChanged>());
+  typedef FreeCaller1<const Selectable&, EntityInspector_selectionChanged> EntityInspectorSelectionChangedCaller;
+  GlobalSelectionSystem().addSelectionChangeCallback(EntityInspectorSelectionChangedCaller());
   GlobalEntityCreator().setKeyValueChangedFunc(EntityInspector_keyValueChanged);
 
   // hack

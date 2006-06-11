@@ -843,16 +843,16 @@ public:
   }
 };
 
-class filter_face_shader_substring : public FaceFilter
+class filter_face_shader_prefix : public FaceFilter
 {
-  const char* m_shader;
+  const char* m_prefix;
 public:
-  filter_face_shader_substring(const char* shader) : m_shader(shader)
+  filter_face_shader_prefix(const char* prefix) : m_prefix(prefix)
   {
   }
   bool filter(const Face& face) const
   {
-    return shader_equal_n(face.GetShader(), m_shader, strlen(m_shader));
+    return shader_equal_n(face.GetShader(), m_prefix, strlen(m_prefix));
   }
 };
 
@@ -969,7 +969,7 @@ filter_brush_all_faces g_filter_brush_caulk(&g_filter_face_caulk);
 filter_face_shader g_filter_face_caulk_ja("textures/system/caulk");
 filter_brush_all_faces g_filter_brush_caulk_ja(&g_filter_face_caulk_ja);
 
-filter_face_shader_substring g_filter_face_liquids("textures/liquids/");
+filter_face_shader_prefix g_filter_face_liquids("textures/liquids/");
 filter_brush_any_face g_filter_brush_liquids(&g_filter_face_liquids);
 
 filter_face_shader g_filter_face_hint("textures/common/hint");

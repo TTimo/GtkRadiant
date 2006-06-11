@@ -1208,8 +1208,10 @@ void PatchInspector_Construct()
   GlobalPreferenceSystem().registerPreference("SI_PatchTexdef_Shift2", FloatImportStringCaller(g_pi_globals.shift[1]), FloatExportStringCaller(g_pi_globals.shift[1]));
   GlobalPreferenceSystem().registerPreference("SI_PatchTexdef_Rotate", FloatImportStringCaller(g_pi_globals.rotate), FloatExportStringCaller(g_pi_globals.rotate));
 
-  GlobalSelectionSystem().addSelectionChangeCallback(FreeCaller1<const Selectable&, PatchInspector_SelectionChanged>());
-  Patch_addTextureChangedCallback(FreeCaller<PatchInspector_queueDraw>());
+  typedef FreeCaller1<const Selectable&, PatchInspector_SelectionChanged> PatchInspectorSelectionChangedCaller;
+  GlobalSelectionSystem().addSelectionChangeCallback(PatchInspectorSelectionChangedCaller());
+  typedef FreeCaller<PatchInspector_queueDraw> PatchInspectorQueueDrawCaller;
+  Patch_addTextureChangedCallback(PatchInspectorQueueDrawCaller());
 }
 void PatchInspector_Destroy()
 {

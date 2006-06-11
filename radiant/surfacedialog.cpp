@@ -1594,9 +1594,11 @@ void SurfaceInspector_Construct()
   GlobalPreferenceSystem().registerPreference("SI_SurfaceTexdef_Rotate", FloatImportStringCaller(g_si_globals.rotate), FloatExportStringCaller(g_si_globals.rotate));
   GlobalPreferenceSystem().registerPreference("SnapTToGrid", BoolImportStringCaller(g_si_globals.m_bSnapTToGrid), BoolExportStringCaller(g_si_globals.m_bSnapTToGrid));
 
-  GlobalSelectionSystem().addSelectionChangeCallback(FreeCaller1<const Selectable&, SurfaceInspector_SelectionChanged>());
-  Brush_addTextureChangedCallback(FreeCaller<SurfaceInspector_updateSelection>());
-  Patch_addTextureChangedCallback(FreeCaller<SurfaceInspector_updateSelection>());
+  typedef FreeCaller1<const Selectable&, SurfaceInspector_SelectionChanged> SurfaceInspectorSelectionChangedCaller;
+  GlobalSelectionSystem().addSelectionChangeCallback(SurfaceInspectorSelectionChangedCaller());
+  typedef FreeCaller<SurfaceInspector_updateSelection> SurfaceInspectorUpdateSelectionCaller;
+  Brush_addTextureChangedCallback(SurfaceInspectorUpdateSelectionCaller());
+  Patch_addTextureChangedCallback(SurfaceInspectorUpdateSelectionCaller());
 
   SurfaceInspector_registerPreferencesPage();
 }
