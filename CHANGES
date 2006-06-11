@@ -1,6 +1,10 @@
 This is the changelog for developers, != changelog for the end user 
 that we distribute with the binaries. (see changelog)
 
+11/06/2006
+SPoG
+- Fixed arbitrary rotation X and Y axes appearing to be transposed.
+
 04/06/2006
 SPoG
 - Fixed crash when deleting items from Build menu.

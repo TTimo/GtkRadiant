@@ -60,6 +60,24 @@ inline Quaternion quaternion_for_axisangle(const Vector3& axis, double angle)
   return Quaternion(axis[0] * sa, axis[1] * sa, axis[2] * sa, static_cast<float>(cos(angle)));
 }
 
+inline Quaternion quaternion_for_x(double angle)
+{
+  angle *= 0.5;
+  return Quaternion(static_cast<float>(sin(angle)), 0, 0, static_cast<float>(cos(angle)));
+}
+
+inline Quaternion quaternion_for_y(double angle)
+{
+  angle *= 0.5;
+  return Quaternion(0, static_cast<float>(sin(angle)), 0, static_cast<float>(cos(angle)));
+}
+
+inline Quaternion quaternion_for_z(double angle)
+{
+  angle *= 0.5;
+  return Quaternion(0, 0, static_cast<float>(sin(angle)), static_cast<float>(cos(angle)));
+}
+
 inline Quaternion quaternion_inverse(const Quaternion& quaternion)
 {
   return Quaternion(vector3_negated(vector4_to_vector3(quaternion)), quaternion[3]);
