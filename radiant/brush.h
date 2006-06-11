@@ -959,6 +959,7 @@ public:
 };
 
 bool face_filtered(Face& face);
+void add_face_filter(FaceFilter& filter, int mask, bool invert = false);
 
 void Brush_addTextureChangedCallback(const SignalHandler& callback);
 void Brush_textureChanged();

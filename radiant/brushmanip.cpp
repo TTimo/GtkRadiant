@@ -963,10 +963,10 @@ filter_brush_all_faces g_filter_brush_weapclip(&g_filter_face_weapclip);
 filter_face_shader g_filter_face_botclip("textures/common/botclip");
 filter_brush_all_faces g_filter_brush_botclip(&g_filter_face_botclip);
 
-filter_face_shader g_filter_face_caulk("textures/common/caulk");
+filter_face_shader_prefix g_filter_face_caulk("textures/common/caulk");
 filter_brush_all_faces g_filter_brush_caulk(&g_filter_face_caulk);
 
-filter_face_shader g_filter_face_caulk_ja("textures/system/caulk");
+filter_face_shader_prefix g_filter_face_caulk_ja("textures/system/caulk");
 filter_brush_all_faces g_filter_brush_caulk_ja(&g_filter_face_caulk_ja);
 
 filter_face_shader_prefix g_filter_face_liquids("textures/liquids/");
@@ -1008,6 +1008,8 @@ void BrushFilters_construct()
   add_brush_filter(g_filter_brush_botclip, EXCLUDE_BOTCLIP);
   add_brush_filter(g_filter_brush_caulk, EXCLUDE_CAULK);
   add_brush_filter(g_filter_brush_caulk_ja, EXCLUDE_CAULK);
+  add_face_filter(g_filter_face_caulk, EXCLUDE_CAULK);
+  add_face_filter(g_filter_face_caulk_ja, EXCLUDE_CAULK);
   add_brush_filter(g_filter_brush_liquids, EXCLUDE_LIQUIDS);
   add_brush_filter(g_filter_brush_hint, EXCLUDE_HINTSSKIPS);
   add_brush_filter(g_filter_brush_hint_q2, EXCLUDE_HINTSSKIPS);
