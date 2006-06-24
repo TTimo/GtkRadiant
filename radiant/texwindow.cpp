@@ -868,7 +868,7 @@ void TextureDirectory_loadTexture(const char* directory, const char* texture)
     return;
   }
 
-  if (!texdef_name_valid(name.c_str()))
+  if (!shader_valid(name.c_str()))
   {
     globalOutputStream() << "Skipping invalid texture name: [" << name.c_str() << "]\n";
     return;

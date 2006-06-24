@@ -63,7 +63,6 @@ UserDocs: how to use parent-selection:
   Parent-selection works like Maya: it allows you to 'reparent' brushes
   onto other entities than the one they're currently part of. To use it,
   select some brushes, select an entity, Edit -> Parent.
-Brush: enable per-face filtering
 Textures: add anisotropic filtering.
 Preferences: allow preference settings to be shared across games.
 Preferences: add colour 'theme' files using prefs format.
@@ -119,7 +118,7 @@ Entity: add specialised attribute-entry in entity-inspector for integer/real/col
 Patch: add cap-texture, fit-texture and natural-texture toolbar buttons
 Patch: draw patches in wireframe from the back, make patches selectable from the back
 Patch: add option for convert-selection-to-new-brush/patch
-Patch: add merge-patches feature or resurrect bobtoolz
+Patch: fix bobtoolz merge-patches feature
 Patch: fix insert/remove rows/cols indicated by current selected patch vertices.
 Autosave/Snapshots: Add support for multi-file maps.
 Quake2: Q2 hint transparency support
