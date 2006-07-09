@@ -1699,11 +1699,15 @@ CShader* Try_Shader_ForName(const char* name)
       return (*i).second;
     }
   }
-
-  // not found, create it
+  // active shader was not found
+  
+  // find matching shader definition
   ShaderDefinitionMap::iterator i = g_shaderDefinitions.find(name);
   if(i == g_shaderDefinitions.end())
   {
+    // shader definition was not found
+
+    // create new shader definition from default shader template
     ShaderTemplatePointer shaderTemplate(new ShaderTemplate());
     shaderTemplate->CreateDefault(name);
     g_shaderTemplates.insert(ShaderTemplateMap::value_type(shaderTemplate->getName(), shaderTemplate));
@@ -1711,6 +1715,7 @@ CShader* Try_Shader_ForName(const char* name)
     i = g_shaderDefinitions.insert(ShaderDefinitionMap::value_type(name, ShaderDefinition(shaderTemplate.get(), ShaderArguments(), ""))).first;
   }
 
+  // create shader from existing definition
   ShaderPointer pShader(new CShader((*i).second));
   pShader->setName(name);
   g_ActiveShaders.insert(shaders_t::value_type(name, pShader));
