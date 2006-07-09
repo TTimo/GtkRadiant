@@ -170,18 +170,31 @@ void IntRadioExport(GtkRadioButton& widget, const IntImportCallback& importCallb
 }
 typedef ImportExport<GtkRadioButton, int, IntRadioImport, IntRadioExport> IntRadioImportExport;
 
+template<typename Type, typename Formatter>
+class StringFromType
+{
+  StringOutputStream value;
+public:
+  StringFromType(const Type& type)
+  {
+    value << Formatter(type);
+  }
+  operator const char*() const
+  {
+    return value.c_str();
+  }
+};
+
+typedef StringFromType<const char*, ConvertLocaleToUTF8> LocaleToUTF8;
+typedef StringFromType<const char*, ConvertUTF8ToLocale> UTF8ToLocale;
 
 void TextEntryImport(GtkEntry& widget, const char* text)
 {
-  StringOutputStream value(64);
-  value << ConvertLocaleToUTF8(text);
-  gtk_entry_set_text(&widget, value.c_str());
+  gtk_entry_set_text(&widget, LocaleToUTF8(text));
 }
 void TextEntryExport(GtkEntry& widget, const StringImportCallback& importCallback)
 {
-  StringOutputStream value(64);
-  value << ConvertUTF8ToLocale(gtk_entry_get_text(&widget));
-  importCallback(value.c_str());
+  importCallback(UTF8ToLocale(gtk_entry_get_text(&widget)));
 }
 typedef ImportExport<GtkEntry, const char*, TextEntryImport, TextEntryExport> TextEntryImportExport;
 
