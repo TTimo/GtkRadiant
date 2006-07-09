@@ -1,6 +1,10 @@
 This is the changelog for developers, != changelog for the end user 
 that we distribute with the binaries. (see changelog)
 
+09/07/2006
+Shaderman
+- Updated win32 libxml2 package to 2.6.24.
+
 11/06/2006
 SPoG
 - Fixed arbitrary rotation X and Y axes appearing to be transposed.

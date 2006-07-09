@@ -105,7 +105,10 @@ gtk2Root = os.path.normpath(os.path.join(thisDir, "../gtk2-2.4"))
 if os.path.exists(gtk2Root):
   copySvn(os.path.join(gtk2Root, "install"), installRoot)
 
-libxml2 = os.path.normpath(os.path.join(thisDir, "../libxml2-2.6/win32/install/libxml2.dll"))
+iconv = os.path.normpath(os.path.join(thisDir, "../iconv-1.9/bin/iconv.dll"))
+copyFileIfExists(iconv, installRoot)
+
+libxml2 = os.path.normpath(os.path.join(thisDir, "../libxml2-2.6/bin/libxml2.dll"))
 copyFileIfExists(libxml2, installRoot)
 
 libpng = os.path.normpath(os.path.join(thisDir, "../libpng-1.2/lib/libpng13.dll"))

@@ -19,7 +19,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;.&quot;;&quot;../include&quot;;&quot;../../STLport-4.6/stlport&quot;;&quot;../../libxml2-2.6/include&quot;;&quot;../../gtk2-2.4/lib/glib-2.0/include&quot;;&quot;../../gtk2-2.4/include/glib-2.0&quot;"
+				AdditionalIncludeDirectories="&quot;.&quot;;&quot;../include&quot;;&quot;../../STLport-4.6/stlport&quot;;&quot;../../libxml2-2.6/include&quot;;&quot;../../iconv-1.9/include&quot;;&quot;../../gtk2-2.4/lib/glib-2.0/include&quot;;&quot;../../gtk2-2.4/include/glib-2.0&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB"
 				StringPooling="TRUE"
 				MinimalRebuild="TRUE"
@@ -70,7 +70,7 @@
 				InlineFunctionExpansion="2"
 				EnableIntrinsicFunctions="TRUE"
 				OptimizeForWindowsApplication="TRUE"
-				AdditionalIncludeDirectories="&quot;.&quot;;&quot;../include&quot;;&quot;../../STLport-4.6/stlport&quot;;&quot;../../libxml2-2.6/include&quot;;&quot;../../gtk2-2.4/lib/glib-2.0/include&quot;;&quot;../../gtk2-2.4/include/glib-2.0&quot;"
+				AdditionalIncludeDirectories="&quot;.&quot;;&quot;../include&quot;;&quot;../../STLport-4.6/stlport&quot;;&quot;../../libxml2-2.6/include&quot;;&quot;../../iconv-1.9/include&quot;;&quot;../../gtk2-2.4/lib/glib-2.0/include&quot;;&quot;../../gtk2-2.4/include/glib-2.0&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB"
 				StringPooling="TRUE"
 				ExceptionHandling="FALSE"

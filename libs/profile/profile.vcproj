@@ -19,7 +19,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;../../include&quot;;&quot;../../libs&quot;;&quot;../../../STLport-4.6/stlport&quot;;&quot;../../../libxml2-2.6/include&quot;"
+				AdditionalIncludeDirectories="&quot;../../include&quot;;&quot;../../libs&quot;;&quot;../../../STLport-4.6/stlport&quot;;&quot;../../../libxml2-2.6/include&quot;;&quot;../../../iconv-1.9/include&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB"
 				StringPooling="TRUE"
 				MinimalRebuild="TRUE"
@@ -68,7 +68,7 @@
 				InlineFunctionExpansion="2"
 				EnableIntrinsicFunctions="TRUE"
 				OptimizeForWindowsApplication="TRUE"
-				AdditionalIncludeDirectories="&quot;../../include&quot;;&quot;../../libs&quot;;&quot;../../../STLport-4.6/stlport&quot;;&quot;../../../libxml2-2.6/include&quot;"
+				AdditionalIncludeDirectories="&quot;../../include&quot;;&quot;../../libs&quot;;&quot;../../../STLport-4.6/stlport&quot;;&quot;../../../libxml2-2.6/include&quot;;&quot;../../../iconv-1.9/include&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB"
 				StringPooling="TRUE"
 				ExceptionHandling="FALSE"

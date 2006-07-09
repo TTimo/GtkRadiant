@@ -44,7 +44,7 @@
 				OutputFile="Release/qdata3.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories="..\..\..\libs\l_net\release,..\..\..\..\libxml2\win32\libxml2\release_so,..\..\..\libs\mathlib\release"
+				AdditionalLibraryDirectories="..\..\..\libs\l_net\release,..\..\..\..\libxml2-2.6\lib,..\..\..\libs\mathlib\release"
 				ProgramDatabaseFile=".\Release/qdata3.pdb"
 				GenerateMapFile="TRUE"
 				MapFileName=".\Release/qdata3.map"
@@ -100,7 +100,7 @@
 				OutputFile="Debug/qdata3.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories="..\..\..\libs\l_net\debug,..\..\..\..\libxml2\win32\libxml2\debug_so,..\..\..\libs\mathlib\debug"
+				AdditionalLibraryDirectories="..\..\..\libs\l_net\debug,..\..\..\..\libxml2-2.6\lib,..\..\..\libs\mathlib\debug"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile=".\Debug/qdata3.pdb"
 				GenerateMapFile="TRUE"
@@ -301,7 +301,7 @@
 			Name="debug"
 			Filter="">
 			<File
-				RelativePath="..\..\..\..\libxml2\win32\binaries-debug\libxml2.lib">
+				RelativePath="..\..\..\..\libxml2-2.6\lib\libxml2.lib">
 				<FileConfiguration
 					Name="Release|Win32"
 					ExcludedFromBuild="TRUE">
@@ -314,7 +314,7 @@
 			Name="release"
 			Filter="">
 			<File
-				RelativePath="..\..\..\..\libxml2\win32\binaries-release\libxml2.lib">
+				RelativePath="..\..\..\..\libxml2-2.6\lib\libxml2.lib">
 				<FileConfiguration
 					Name="Debug|Win32"
 					ExcludedFromBuild="TRUE">

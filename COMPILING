@@ -56,8 +56,9 @@ environment:
 - subversion 1.1 or later (some build steps use svn)
 
 dependencies are prepackaged archives, extract them to the directory above GtkRadiant.sln:
-- http://zerowing.idsoftware.com/files/radiant/developer/1.5/gtk2-2.4.14.zip (gtk-wimp, gtkglext, gtk, glib, atk, pango, iconv etc)
-- http://zerowing.idsoftware.com/files/radiant/developer/1.5/libxml2-2.6.2.zip
+- http://zerowing.idsoftware.com/files/radiant/developer/1.5/iconv-1.9.zip
+- http://zerowing.idsoftware.com/files/radiant/developer/1.5/gtk2-2.4.14.zip (gtk-wimp, gtkglext, gtk, glib, atk, pango etc)
+- http://zerowing.idsoftware.com/files/radiant/developer/1.5/libxml2-2.6.24.zip
 - http://zerowing.idsoftware.com/files/radiant/developer/1.5/STLport-4.6.2.zip
 - http://zerowing.idsoftware.com/files/radiant/developer/1.5/zlib1-1.2.1.zip (for archivezip module)
 - http://zerowing.idsoftware.com/files/radiant/developer/1.5/libpng-1.2.5.zip (for imagepng module)
