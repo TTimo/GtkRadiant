@@ -24,6 +24,33 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "environment.h"
 
+#ifdef __linux__
+#include <execinfo.h>
+
+void write_stack_trace(TextOutputStream& outputStream)
+{
+  const unsigned int MAX_SYMBOLS = 256;
+  void* symbols[MAX_SYMBOLS];
+    
+  // get return addresses
+  int symbol_count = backtrace(symbols, MAX_SYMBOLS);
+  
+  if(!symbol_count)
+	return;
+  
+  // resolve and print names
+  char** symbol_names = backtrace_symbols(symbols, symbol_count);	
+  if(symbol_names)
+  {
+     for(int i = 0; (i < symbol_count); ++i)
+        outputStream << symbol_names[i] << "\n";
+        
+     // not a memleak, see www.gnu.org/software/libc/manual (Debugging Support, Backtraces)
+     free(symbol_names);
+  }
+}	
+#endif
+
 #if defined (WIN32) && defined (_MSC_VER)
 
 #include "windows.h"
@@ -80,19 +107,20 @@ inline TextOutputStreamType& ostream_write(TextOutputStreamType& ostream, const 
 
 struct EnumerateSymbolsContext
 {
-  STACKFRAME& sf;
+  STACKFRAME64& sf;
   TextOutputStream& outputStream;
   std::size_t count;
-  EnumerateSymbolsContext(STACKFRAME& sf, TextOutputStream& outputStream) : sf(sf), outputStream(outputStream), count(0)
+  EnumerateSymbolsContext(STACKFRAME64& sf, TextOutputStream& outputStream) : sf(sf), outputStream(outputStream), count(0)
   {
   }
 };
 
-void write_symbol(PSYMBOL_INFO pSym, STACKFRAME& sf, TextOutputStream& outputStream, std::size_t& count)
+void write_symbol(PSYMBOL_INFO pSym, STACKFRAME64& sf, TextOutputStream& outputStream, std::size_t& count)
 {
-  if ( pSym->Flags & SYMFLAG_PARAMETER )
-  {
 #if 0
+ if ( pSym->Flags & SYMFLAG_PARAMETER )
+ {
+
     DWORD basicType;
     if ( SymGetTypeInfo( GetCurrentProcess(), pSym->ModBase, pSym->TypeIndex,
                         TI_GET_BASETYPE, &basicType ) )
@@ -139,7 +167,6 @@ void write_symbol(PSYMBOL_INFO pSym, STACKFRAME& sf, TextOutputStream& outputStr
         int bleh = 0;
       }
     }
-#endif
     if(count != 0)
     {
       outputStream << ", ";
@@ -147,6 +174,7 @@ void write_symbol(PSYMBOL_INFO pSym, STACKFRAME& sf, TextOutputStream& outputStr
     outputStream << pSym->Name;
     ++count;
   }
+#endif
 }
 
 BOOL CALLBACK
@@ -174,33 +202,44 @@ void write_stack_trace(PCONTEXT pContext, TextOutputStream& outputStream)
     return;
   }
 
-  STACKFRAME sf;
+  STACKFRAME64 sf;
   memset( &sf, 0, sizeof(sf) );
-
+  sf.AddrPC.Mode         = AddrModeFlat;
+  sf.AddrStack.Mode      = AddrModeFlat;
+  sf.AddrFrame.Mode      = AddrModeFlat;
+  
 #ifdef _M_IX86
   // Initialize the STACKFRAME structure for the first call.  This is only
   // necessary for Intel CPUs, and isn't mentioned in the documentation.
   sf.AddrPC.Offset       = context.Eip;
-  sf.AddrPC.Mode         = AddrModeFlat;
   sf.AddrStack.Offset    = context.Esp;
-  sf.AddrStack.Mode      = AddrModeFlat;
   sf.AddrFrame.Offset    = context.Ebp;
-  sf.AddrFrame.Mode      = AddrModeFlat;
-
+  
   dwMachineType = IMAGE_FILE_MACHINE_I386;
+#elif _M_X64
+  sf.AddrPC.Offset       = context.Rip;
+  sf.AddrStack.Offset    = context.Rsp;
+  
+  // MSDN: x64:  The frame pointer is RBP or RDI. This value is not always used.
+  // very funny, we'll try Rdi for now
+  sf.AddrFrame.Offset    = context.Rdi;
+  
+  dwMachineType = IMAGE_FILE_MACHINE_AMD64;
 #endif
+
+  const unsigned int max_sym_name = 1024;// should be enough
 
   while ( 1 )
   {
     // Get the next stack frame
-    if ( ! StackWalk(  dwMachineType,
+    if ( ! StackWalk64( dwMachineType,
                         m_hProcess,
                         GetCurrentThread(),
                         &sf,
                         &context,
                         0,
-                        SymFunctionTableAccess,
-                        SymGetModuleBase,
+                        SymFunctionTableAccess64,
+                        SymGetModuleBase64,
                         0 ) )
         break;
 
@@ -208,23 +247,23 @@ void write_stack_trace(PCONTEXT pContext, TextOutputStream& outputStream)
       break;                      // the frame is OK.  Bail if not.
 
     // Get the name of the function for this stack frame entry
-    BYTE symbolBuffer[ sizeof(SYMBOL_INFO) + MAX_SYM_NAME ];
+    BYTE symbolBuffer[ sizeof(SYMBOL_INFO) + max_sym_name ];
     PSYMBOL_INFO pSymbol = (PSYMBOL_INFO)symbolBuffer;
     pSymbol->SizeOfStruct = sizeof(SYMBOL_INFO);
-    pSymbol->MaxNameLen = MAX_SYM_NAME;
+    pSymbol->MaxNameLen = max_sym_name;
                     
     DWORD64 symDisplacement = 0;    // Displacement of the input address,
                                     // relative to the start of the symbol
 
-    IMAGEHLP_MODULE module = { sizeof(IMAGEHLP_MODULE) };
-    if(SymGetModuleInfo(m_hProcess, sf.AddrPC.Offset, &module))
+    IMAGEHLP_MODULE64 module = { sizeof(IMAGEHLP_MODULE64) };
+    if(SymGetModuleInfo64(m_hProcess, sf.AddrPC.Offset, &module))
     {
       outputStream << module.ModuleName << "!";
 
       if ( SymFromAddr(m_hProcess, sf.AddrPC.Offset, &symDisplacement, pSymbol))
       {
-        char undecoratedName[MAX_SYM_NAME];
-        UnDecorateSymbolName(pSymbol->Name, undecoratedName, MAX_SYM_NAME, UNDNAME_COMPLETE);
+        char undecoratedName[max_sym_name];
+        UnDecorateSymbolName(pSymbol->Name, undecoratedName, max_sym_name, UNDNAME_COMPLETE);
 
         outputStream << undecoratedName;
 
@@ -242,9 +281,9 @@ void write_stack_trace(PCONTEXT pContext, TextOutputStream& outputStream)
         outputStream << " + " << Offset(reinterpret_cast<void*>(symDisplacement));
 
         // Get the source line for this stack frame entry
-        IMAGEHLP_LINE lineInfo = { sizeof(IMAGEHLP_LINE) };
+        IMAGEHLP_LINE64 lineInfo = { sizeof(IMAGEHLP_LINE64) };
         DWORD dwLineDisplacement;
-        if ( SymGetLineFromAddr( m_hProcess, sf.AddrPC.Offset,
+        if ( SymGetLineFromAddr64( m_hProcess, sf.AddrPC.Offset,
                                 &dwLineDisplacement, &lineInfo ) )
         {
           outputStream << " " << lineInfo.FileName << " line " << Unsigned(lineInfo.LineNumber); 

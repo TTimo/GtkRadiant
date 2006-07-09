@@ -559,6 +559,7 @@ radiant_src = [
 'renderer.cpp',
 'renderstate.cpp',
 'scenegraph.cpp',
+'stacktrace.cpp',
 'select.cpp',
 'selection.cpp',
 'server.cpp',

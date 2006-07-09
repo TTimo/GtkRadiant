@@ -23,12 +23,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define INCLUDED_STACKTRACE_H
 
 class TextOutputStream;
-void write_stack_trace(TextOutputStream& outputStream)
-#if defined(WIN32)
-;
-#else
-{
-}
-#endif
+void write_stack_trace(TextOutputStream& outputStream);
 
 #endif
