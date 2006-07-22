@@ -1130,24 +1130,28 @@ static picoModel_t *_ase_load( PM_PARAMS_LOAD )
           {
             if(_pico_strnicmp(p, "quake", 5) == 0 || _pico_strnicmp(p, "doom", 4) == 0)
             {
-              break;
+              /* root-relative */
+              for(; *p != '\0'; ++p)
+              {
+                if(*p == '/')
+                {
+                  ++p;
+                  /* game-relative */
+                  for(; *p != '\0'; ++p)
+                  {
+                    if(*p == '/')
+                    {
+                      ++p;
+                      break;
+                    }
+                  }
+                }
+              }
             }
-          }
-          /* root-relative */
-          for(; *p != '\0'; ++p)
-          {
-            if(*p == '/')
+            /* DoomEdit's ASE loader searches for /base/ */
+            else if(_pico_strnicmp(p, "/base/", 6) == 0)
             {
-              ++p;
-              break;
-            }
-          }
-          /* game-relative */
-          for(; *p != '\0'; ++p)
-          {
-            if(*p == '/')
-            {
-              ++p;
+              p += 6;
               break;
             }
           }

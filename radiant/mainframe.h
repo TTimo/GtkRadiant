@@ -184,7 +184,7 @@ void deleteSelection();
 void Sys_Status(const char* status);
 
 
-void ScreenUpdates_Disable(const char* message, const char* title = "");
+void ScreenUpdates_Disable(const char* message, const char* title);
 void ScreenUpdates_Enable();
 bool ScreenUpdates_Enabled();
 void ScreenUpdates_process();
@@ -192,7 +192,7 @@ void ScreenUpdates_process();
 class ScopeDisableScreenUpdates
 {
 public:
-  ScopeDisableScreenUpdates(const char* message, const char* title = "")
+  ScopeDisableScreenUpdates(const char* message, const char* title)
   {
     ScreenUpdates_Disable(message, title);
   }

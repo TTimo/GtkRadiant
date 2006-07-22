@@ -72,7 +72,7 @@ bool MapResource_loadFile(const MapFormat& format, scene::Node& root, const char
   if(!file.failed())
   {
     globalOutputStream() << "success\n";
-    ScopeDisableScreenUpdates disableScreenUpdates(path_get_filename_start(filename));
+    ScopeDisableScreenUpdates disableScreenUpdates(path_get_filename_start(filename), "Loading Map");
     ASSERT_NOTNULL(g_entityCreator);
     format.readGraph(root, file, *g_entityCreator);
     return true;
@@ -111,7 +111,7 @@ bool MapResource_saveFile(const MapFormat& format, scene::Node& root, GraphTrave
   if(!file.failed())
   {
     globalOutputStream() << "success\n";
-    ScopeDisableScreenUpdates disableScreenUpdates(path_get_filename_start(filename));
+    ScopeDisableScreenUpdates disableScreenUpdates(path_get_filename_start(filename), "Saving Map");
     format.writeGraph(root, traverse, file);
     return true;
   }
@@ -198,7 +198,7 @@ ModelLoader* ModelLoader_forType(const char* type)
 
 NodeSmartReference ModelResource_load(ModelLoader* loader, const char* name)
 {
-  ScopeDisableScreenUpdates disableScreenUpdates(path_get_filename_start(name));
+  ScopeDisableScreenUpdates disableScreenUpdates(path_get_filename_start(name), "Loading Model");
 
   NodeSmartReference model(g_nullModel);
 
@@ -760,7 +760,7 @@ bool References_Saved()
 
 void RefreshReferences()
 {
-  ScopeDisableScreenUpdates disableScreenUpdates("Refreshing models");
+  ScopeDisableScreenUpdates disableScreenUpdates("Processing...", "Refreshing Models");
   g_referenceCache.refresh();
 }
 
