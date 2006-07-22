@@ -8,6 +8,7 @@ SPoG
 - Fixed title of wait-dialog when loading a model.
 - Fixed doom3 func_static with blank 'model' key being invisible.
 - Changed doom3 func_static model creation to replace selected models.
+- Added support for loading both .ent and .def files at the same time.
 
 09/07/2006
 Shaderman

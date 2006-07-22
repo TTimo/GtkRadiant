@@ -63,17 +63,17 @@ struct EntityClassScanner
 #include "modulesystem.h"
 
 template<typename Type>
-class GlobalModule;
-typedef GlobalModule<EntityClassScanner> GlobalEClassModule;
+class ModuleRef;
+typedef ModuleRef<EntityClassScanner> EClassModuleRef;
 
 template<typename Type>
-class GlobalModuleRef;
-typedef GlobalModuleRef<EntityClassScanner> GlobalEClassModuleRef;
+class Modules;
+typedef Modules<EntityClassScanner> EClassModules;
 
-inline EntityClassScanner& GlobalEClassLoader()
-{
-  return GlobalEClassModule::getTable();
-}
+template<typename Type>
+class ModulesRef;
+typedef ModulesRef<EntityClassScanner> EClassModulesRef;
+
 
 
 

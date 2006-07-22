@@ -80,7 +80,7 @@ public:
   {
     return find(name);
   }
-  void foreachModule(typename Modules<Type>::Visitor& visitor)
+  void foreachModule(const typename Modules<Type>::Visitor& visitor)
   {
     for(modules_t::iterator i = m_modules.begin(); i != m_modules.end(); ++i)
     {
@@ -98,7 +98,7 @@ public:
     : m_modules(modules)
   {
   }
-  void visit(const char* name, Module& module)
+  void visit(const char* name, Module& module) const
   {
     m_modules.insert(name, module);
   }

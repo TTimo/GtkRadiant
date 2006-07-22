@@ -88,7 +88,7 @@ public:
     return 0;
   }
 
-  void foreachModule(const char* type, int version, Visitor& visitor)
+  void foreachModule(const char* type, int version, const Visitor& visitor)
   {
     for(Modules_::const_iterator i = m_modules.begin(); i != m_modules.end(); ++i)
     {

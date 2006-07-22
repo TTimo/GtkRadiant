@@ -47,7 +47,7 @@ Image* QERApp_LoadImage(void* environment, const char* name)
       : m_name(name), m_image(image)
     {
     }
-    void visit(const char* name, const _QERPlugImageTable& table)
+    void visit(const char* name, const _QERPlugImageTable& table) const
     {
       if(m_image == 0)
       {
@@ -61,9 +61,9 @@ Image* QERApp_LoadImage(void* environment, const char* name)
         }
       }
     }
-  } visitor(name, image);
+  };
 
-  Textures_getImageModules().foreachModule(visitor);
+  Textures_getImageModules().foreachModule(LoadImageVisitor(name, image));
 
   return image;
 }

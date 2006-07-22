@@ -54,7 +54,7 @@ public:
   class Visitor
   {
   public:
-    virtual void visit(const char* name, Module& module) = 0;
+    virtual void visit(const char* name, Module& module) const = 0;
   };
 
   virtual void setError(bool error) = 0;
@@ -66,7 +66,7 @@ public:
 
   virtual void registerModule(const char* type, int version, const char* name, Module& module) = 0;
   virtual Module* findModule(const char* type, int version, const char* name) const = 0;
-  virtual void foreachModule(const char* type, int version, Visitor& visitor) = 0;
+  virtual void foreachModule(const char* type, int version, const Visitor& visitor) = 0;
 };
 
 class ModuleServerHolder
@@ -112,11 +112,11 @@ public:
   class Visitor
   {
   public:
-    virtual void visit(const char* name, const Type& table) = 0;
+    virtual void visit(const char* name, const Type& table) const = 0;
   };
 
   virtual Type* findModule(const char* name) = 0;
-  virtual void foreachModule(Visitor& visitor) = 0;
+  virtual void foreachModule(const Visitor& visitor) = 0;
 };
 
 #include "debugging/debugging.h"

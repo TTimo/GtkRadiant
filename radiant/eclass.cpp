@@ -50,6 +50,8 @@ namespace
   ListAttributeTypes g_listTypes;
 }
 
+EClassModules& EntityClassManager_getEClassModules();
+
 /*!
 implementation of the EClass manager API
 */
@@ -144,9 +146,10 @@ public:
 
 class EntityClassesLoadFile
 {
+  const EntityClassScanner& scanner;
   const char* m_directory;
 public:
-  EntityClassesLoadFile(const char* directory) : m_directory(directory)
+  EntityClassesLoadFile(const EntityClassScanner& scanner, const char* directory) : scanner(scanner), m_directory(directory)
   {
   }
   void operator()(const char* name) const
@@ -178,7 +181,7 @@ public:
     StringOutputStream relPath(256);
     relPath << m_directory << name;
 
-    GlobalEClassLoader().scanFile(g_collector, relPath.c_str());
+    scanner.scanFile(g_collector, relPath.c_str());
   }
 };
 
@@ -206,23 +209,16 @@ public:
   }
 };
 
-#if 0
-void EntityClassQuake3_constructDirectory(const char* directory, const char* extension)
-{
-  globalOutputStream() << "EntityClass: searching " << makeQuoted(directory) << " for *." << extension << '\n'; 
-  Directory_forEach(directory, matchFileExtension(extension, EntityClassesLoadFile(directory)));
-}
-#else
+
 void EntityClassQuake3_constructDirectory(const char* directory, const char* extension, Paths& paths)
 {
   globalOutputStream() << "EntityClass: searching " << makeQuoted(directory) << " for *." << extension << '\n'; 
   Directory_forEach(directory, matchFileExtension(extension, PathsInsert(paths, directory)));
 }
-#endif
+
 
 void EntityClassQuake3_Construct()
 {
-#if 1
   StringOutputStream baseDirectory(256);
   StringOutputStream gameDirectory(256);
   const char* basegame = GlobalRadiant().getRequiredGameDescriptionKeyValue("basegame");
@@ -230,22 +226,32 @@ void EntityClassQuake3_Construct()
   baseDirectory << GlobalRadiant().getGameToolsPath() << basegame << '/';
   gameDirectory << GlobalRadiant().getGameToolsPath() << gamename << '/';
 
-  Paths paths;
-  EntityClassQuake3_constructDirectory(baseDirectory.c_str(), GlobalEClassLoader().getExtension(), paths);
-  if(!string_equal(basegame, gamename))
+  class LoadEntityDefinitionsVisitor : public EClassModules::Visitor
   {
-    EntityClassQuake3_constructDirectory(gameDirectory.c_str(), GlobalEClassLoader().getExtension(), paths);
-  }
+    const char* baseDirectory;
+    const char* gameDirectory;
+  public:
+    LoadEntityDefinitionsVisitor(const char* baseDirectory, const char* gameDirectory)
+      : baseDirectory(baseDirectory), gameDirectory(gameDirectory)
+    {
+    }
+    void visit(const char* name, const EntityClassScanner& table) const
+    {
+      Paths paths;
+      EntityClassQuake3_constructDirectory(baseDirectory, table.getExtension(), paths);
+      if(!string_equal(baseDirectory, gameDirectory))
+      {
+        EntityClassQuake3_constructDirectory(gameDirectory, table.getExtension(), paths);
+      }
 
-  for(Paths::iterator i = paths.begin(); i != paths.end(); ++i)
-  {
-    EntityClassesLoadFile((*i).second)((*i).first.c_str());
-  }
-#else
-  StringOutputStream directory(256);
-  directory << GlobalRadiant().getGameToolsPath() << GlobalRadiant().getGameName() << '/';
-  EntityClassQuake3_constructDirectory(directory.c_str(), GlobalEClassLoader().getExtension());
-#endif
+      for(Paths::iterator i = paths.begin(); i != paths.end(); ++i)
+      {
+        EntityClassesLoadFile(table, (*i).second)((*i).first.c_str());
+      }
+    }
+  };
+
+  EntityClassManager_getEClassModules().foreachModule(LoadEntityDefinitionsVisitor(baseDirectory.c_str(), gameDirectory.c_str()));
 }
 
 EntityClass *Eclass_ForName(const char *name, bool has_brushes)
@@ -338,16 +344,22 @@ void EntityClassQuake3_destroy()
   eclass_bad->free(eclass_bad);
 }
 
+#include "modulesystem/modulesmap.h"
+
 class EntityClassQuake3Dependencies :
   public GlobalRadiantModuleRef,
   public GlobalFileSystemModuleRef,
-  public GlobalShaderCacheModuleRef,
-  public GlobalEClassModuleRef
+  public GlobalShaderCacheModuleRef
 {
+  EClassModulesRef m_eclass_modules;
 public:
   EntityClassQuake3Dependencies() :
-    GlobalEClassModuleRef(GlobalRadiant().getRequiredGameDescriptionKeyValue("entityclasstype"))
+    m_eclass_modules(GlobalRadiant().getRequiredGameDescriptionKeyValue("entityclasstype"))
   {
+  }
+  EClassModules& getEClassModules()
+  {
+    return m_eclass_modules.get();
   }
 };
 
@@ -395,4 +407,8 @@ typedef SingletonModule<EclassManagerAPI, EntityClassQuake3Dependencies> EclassM
 typedef Static<EclassManagerModule> StaticEclassManagerModule;
 StaticRegisterModule staticRegisterEclassManager(StaticEclassManagerModule::instance());
 
+EClassModules& EntityClassManager_getEClassModules()
+{
+  return StaticEclassManagerModule::instance().getDependencies().getEClassModules();
+}
 

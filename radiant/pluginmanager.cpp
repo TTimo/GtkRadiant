@@ -214,7 +214,7 @@ void FillPluginSlots(CPluginSlots& slots, GtkWidget* main_window)
       : m_slots(slots), m_main_window(main_window)
     {
     }
-    void visit(const char* name, const _QERPluginTable& table)
+    void visit(const char* name, const _QERPluginTable& table) const
     {
       m_slots.AddPluginSlot(m_main_window, name, table);
     }
