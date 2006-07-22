@@ -198,7 +198,7 @@ private:
 
   void updateIsModel()
   {
-    setIsModel(!string_empty(m_modelKey.c_str()) && !string_equal(m_modelKey.c_str(), m_name.c_str()));
+    setIsModel(!string_equal(m_modelKey.c_str(), m_name.c_str()));
   }
 
   void nameChanged(const char* value)

@@ -246,7 +246,7 @@ void Entity_createFromSelection(const char* name, const Vector3& origin)
   entitypath.push(makeReference(node.get()));
   scene::Instance& instance = findInstance(entitypath);
 
-  if(entityClass->fixedsize)
+  if(entityClass->fixedsize || (isModel && !brushesSelected))
   {
     Select_Delete();
     
@@ -264,13 +264,13 @@ void Entity_createFromSelection(const char* name, const Vector3& origin)
   }
   else
   {
-    Scene_parentSelectedBrushesToEntity(GlobalSceneGraph(), node);
-    Scene_forEachChildSelectable(SelectableSetSelected(true), instance.path());
-
     if (g_pGameDescription->mGameType == "doom3")
     {
       Node_getEntity(node)->setKeyValue("model", Node_getEntity(node)->getKeyValue("name"));
     }
+
+    Scene_parentSelectedBrushesToEntity(GlobalSceneGraph(), node);
+    Scene_forEachChildSelectable(SelectableSetSelected(true), instance.path());
   }
 
   // tweaking: when right clic dropping a light entity, ask for light value in a custom dialog box
