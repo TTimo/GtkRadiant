@@ -1,6 +1,10 @@
 This is the changelog for developers, != changelog for the end user 
 that we distribute with the binaries. (see changelog)
 
+22/07/2006
+SPoG
+- Fixed doom3 func_static with model not appearing to move when dragged. 
+
 09/07/2006
 Shaderman
 - Updated win32 libxml2 package to 2.6.24.
