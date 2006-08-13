@@ -1063,6 +1063,9 @@ GtkWindow* SurfaceInspector::BuildDialog()
                 g_object_set_data(G_OBJECT(check), "handler", gint_to_pointer(handler_id));
               }
             }
+
+            // not allowed to modify detail flag using Surface Inspector
+            gtk_widget_set_sensitive(GTK_WIDGET(m_contentFlags[27]), FALSE);
           }
         }
       }
