@@ -996,7 +996,7 @@ filter_brush_all_faces g_filter_brush_lightgrid(&g_filter_face_lightgrid);
 filter_face_flags g_filter_face_translucent(QER_TRANS);
 filter_brush_all_faces g_filter_brush_translucent(&g_filter_face_translucent);
 
-filter_face_contents g_filter_face_detail(CONTENTS_DETAIL);
+filter_face_contents g_filter_face_detail(BRUSH_DETAIL_MASK);
 filter_brush_all_faces g_filter_brush_detail(&g_filter_face_detail);
 
 

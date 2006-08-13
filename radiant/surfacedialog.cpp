@@ -1065,7 +1065,7 @@ GtkWindow* SurfaceInspector::BuildDialog()
             }
 
             // not allowed to modify detail flag using Surface Inspector
-            gtk_widget_set_sensitive(GTK_WIDGET(m_contentFlags[27]), FALSE);
+            gtk_widget_set_sensitive(GTK_WIDGET(m_contentFlags[BRUSH_DETAIL_FLAG]), FALSE);
           }
         }
       }

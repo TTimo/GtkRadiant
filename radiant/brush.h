@@ -65,8 +65,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "winding.h"
 #include "brush_primit.h"
 
-#define CONTENTS_DETAIL 0x8000000
-
+const unsigned int BRUSH_DETAIL_FLAG = 27;
+const unsigned int BRUSH_DETAIL_MASK = (1 << BRUSH_DETAIL_FLAG);
 
 enum EBrushType
 {
@@ -380,15 +380,15 @@ public:
 
 inline void ContentsFlagsValue_assignMasked(ContentsFlagsValue& flags, const ContentsFlagsValue& other)
 {
-  bool detail = bitfield_enabled(flags.m_contentFlags, CONTENTS_DETAIL);
+  bool detail = bitfield_enabled(flags.m_contentFlags, BRUSH_DETAIL_MASK);
   flags = other;
   if(detail)
   {
-    flags.m_contentFlags = bitfield_enable(flags.m_contentFlags, CONTENTS_DETAIL);
+    flags.m_contentFlags = bitfield_enable(flags.m_contentFlags, BRUSH_DETAIL_MASK);
   }
   else
   {
-    flags.m_contentFlags = bitfield_disable(flags.m_contentFlags, CONTENTS_DETAIL);
+    flags.m_contentFlags = bitfield_disable(flags.m_contentFlags, BRUSH_DETAIL_MASK);
   }
 }
 
@@ -1416,18 +1416,18 @@ public:
 
   bool isDetail() const
   {
-    return (m_shader.m_flags.m_contentFlags & CONTENTS_DETAIL) != 0;
+    return (m_shader.m_flags.m_contentFlags & BRUSH_DETAIL_MASK) != 0;
   }
   void setDetail(bool detail)
   {
     undoSave();
     if(detail && !isDetail())
     {
-      m_shader.m_flags.m_contentFlags |= CONTENTS_DETAIL;
+      m_shader.m_flags.m_contentFlags |= BRUSH_DETAIL_MASK;
     }
     else if(!detail && isDetail())
     {
-      m_shader.m_flags.m_contentFlags &= ~CONTENTS_DETAIL;
+      m_shader.m_flags.m_contentFlags &= ~BRUSH_DETAIL_MASK;
     }
     m_observer->shaderChanged();
   }
