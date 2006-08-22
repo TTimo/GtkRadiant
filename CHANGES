@@ -1,6 +1,16 @@
 This is the changelog for developers, != changelog for the end user 
 that we distribute with the binaries. (see changelog)
 
+22/08/2006
+SPoG
+- Added VFS support for locating the archive a file was loaded from.
+- Changed Doom3 entity definition parser to gracefully handle parse errors.
+- Fixed crash when loading entity definitions in quake4 1.3 point release.
+
+13/08/2006
+SPoG
+- Disabled 'detail' content flag checkbox in quake2 Surface Inspector.
+
 22/07/2006
 SPoG
 - Fixed doom3 func_static with model not appearing to move when dragged. 

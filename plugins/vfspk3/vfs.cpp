@@ -57,6 +57,7 @@ ArchiveModules& FileSystemQ3API_getArchiveModules();
 
 #include "generic/callback.h"
 #include "string/string.h"
+#include "container/array.h"
 #include "stream/stringstream.h"
 #include "os/path.h"
 #include "moduleobservers.h"
@@ -141,7 +142,14 @@ static void InitPakFile (ArchiveModules& archiveModules, const char *filename)
   if(table != 0)
   {
     archive_entry_t entry;
-    entry.name = filename;
+
+    std::size_t length = string_length(filename);
+    Array<char> tmp(length + 2);
+    std::copy(filename, filename + length, tmp.begin());
+    tmp[length] = ':';
+    tmp[length + 1] = '\0';
+    entry.name = tmp.begin();
+
     entry.archive = table->m_pfnOpenArchive(filename);
     entry.is_pakfile = true;
     g_archives.push_back(entry);
@@ -520,7 +528,7 @@ const char* FindFile(const char* relative)
 {
   for(archives_t::iterator i = g_archives.begin(); i != g_archives.end(); ++i)
   {
-    if(!(*i).is_pakfile && (*i).archive->containsFile(relative))
+    if((*i).archive->containsFile(relative))
     {
       return (*i).name.c_str();
     }
@@ -533,7 +541,7 @@ const char* FindPath(const char* absolute)
 {
   for(archives_t::iterator i = g_archives.begin(); i != g_archives.end(); ++i)
   {
-    if(!(*i).is_pakfile && path_equal_n(absolute, (*i).name.c_str(), string_length((*i).name.c_str())))
+    if(path_equal_n(absolute, (*i).name.c_str(), string_length((*i).name.c_str())))
     {
       return (*i).name.c_str();
     }

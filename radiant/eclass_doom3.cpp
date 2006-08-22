@@ -86,21 +86,66 @@ void EntityClassDoom3_forEach(EntityClassVisitor& visitor)
   }
 }
 
-void EntityClassDoom3_parseUnknown(Tokeniser& tokeniser)
+inline void printParseError(const char* message)
+{
+  globalErrorStream() << message;
+}
+
+#define PARSE_RETURN_FALSE_IF_FAIL(expression) if(!(expression)) { printParseError(FILE_LINE "\nparse failed: " #expression "\n"); return false; } else
+
+bool EntityClassDoom3_parseToken(Tokeniser& tokeniser)
+{
+  const char* token = tokeniser.getToken();
+  PARSE_RETURN_FALSE_IF_FAIL(token != 0);
+  return true;
+}
+
+bool EntityClassDoom3_parseToken(Tokeniser& tokeniser, const char* string)
+{
+  const char* token = tokeniser.getToken();
+  PARSE_RETURN_FALSE_IF_FAIL(token != 0);
+  return string_equal(token, string);
+}
+
+bool EntityClassDoom3_parseString(Tokeniser& tokeniser, const char*& s)
+{
+  const char* token = tokeniser.getToken();
+  PARSE_RETURN_FALSE_IF_FAIL(token != 0);
+  s = token;
+  return true;
+}
+
+bool EntityClassDoom3_parseString(Tokeniser& tokeniser, CopiedString& s)
+{
+  const char* token = tokeniser.getToken();
+  PARSE_RETURN_FALSE_IF_FAIL(token != 0);
+  s = token;
+  return true;
+}
+
+bool EntityClassDoom3_parseString(Tokeniser& tokeniser, StringOutputStream& s)
+{
+  const char* token = tokeniser.getToken();
+  PARSE_RETURN_FALSE_IF_FAIL(token != 0);
+  s << token;
+  return true;
+}
+
+bool EntityClassDoom3_parseUnknown(Tokeniser& tokeniser)
 {
   //const char* name = 
-  tokeniser.getToken();
+  PARSE_RETURN_FALSE_IF_FAIL(EntityClassDoom3_parseToken(tokeniser));
 
   //globalOutputStream() << "parsing unknown block " << makeQuoted(name) << "\n";
 
-  const char* token = tokeniser.getToken();
-  ASSERT_MESSAGE(string_equal(token, "{"), "error parsing entity definition");
+  PARSE_RETURN_FALSE_IF_FAIL(EntityClassDoom3_parseToken(tokeniser, "{"));
   tokeniser.nextLine();
 
   std::size_t depth = 1;
   for(;;)
   {
-    const char* token = tokeniser.getToken();
+    const char* token;
+    PARSE_RETURN_FALSE_IF_FAIL(EntityClassDoom3_parseString(tokeniser, token));
     if(string_equal(token, "}"))
     {
       if(--depth == 0)
@@ -115,6 +160,7 @@ void EntityClassDoom3_parseUnknown(Tokeniser& tokeniser)
     }
     tokeniser.nextLine();
   }
+  return true;
 }
 
 
@@ -159,19 +205,20 @@ void Model_resolveInheritance(const char* name, Model& model)
   }
 }
 
-void EntityClassDoom3_parseModel(Tokeniser& tokeniser)
+bool EntityClassDoom3_parseModel(Tokeniser& tokeniser)
 {
-  const char* name = tokeniser.getToken();
+  const char* name;
+  PARSE_RETURN_FALSE_IF_FAIL(EntityClassDoom3_parseString(tokeniser, name));
 
   Model& model = g_models[name];
 
-  const char* token = tokeniser.getToken();
-  ASSERT_MESSAGE(string_equal(token, "{"), "error parsing model definition");
+  PARSE_RETURN_FALSE_IF_FAIL(EntityClassDoom3_parseToken(tokeniser, "{"));
   tokeniser.nextLine();
 
   for(;;)
   {
-    const char* parameter = tokeniser.getToken();
+    const char* parameter;
+    PARSE_RETURN_FALSE_IF_FAIL(EntityClassDoom3_parseString(tokeniser, parameter));
     if(string_equal(parameter, "}"))
     {
       tokeniser.nextLine();
@@ -179,38 +226,43 @@ void EntityClassDoom3_parseModel(Tokeniser& tokeniser)
     }
     else if(string_equal(parameter, "inherit"))
     {
-      model.m_parent = tokeniser.getToken();
+      PARSE_RETURN_FALSE_IF_FAIL(EntityClassDoom3_parseString(tokeniser, model.m_parent));
+      tokeniser.nextLine();
     }
     else if(string_equal(parameter, "remove"))
     {
       //const char* remove =
-      tokeniser.getToken();
+      PARSE_RETURN_FALSE_IF_FAIL(EntityClassDoom3_parseToken(tokeniser));
+      tokeniser.nextLine();
     }
     else if(string_equal(parameter, "mesh"))
     {
-      model.m_mesh = tokeniser.getToken();
+      PARSE_RETURN_FALSE_IF_FAIL(EntityClassDoom3_parseString(tokeniser, model.m_mesh));
+      tokeniser.nextLine();
     }
     else if(string_equal(parameter, "skin"))
     {
-      model.m_skin = tokeniser.getToken();
+      PARSE_RETURN_FALSE_IF_FAIL(EntityClassDoom3_parseString(tokeniser, model.m_skin));
+      tokeniser.nextLine();
     }
     else if(string_equal(parameter, "offset"))
     {
-      tokeniser.getToken(); // (
-      tokeniser.getToken();
-      tokeniser.getToken();
-      tokeniser.getToken();
-      tokeniser.getToken(); // )
+      PARSE_RETURN_FALSE_IF_FAIL(EntityClassDoom3_parseToken(tokeniser, "("));
+      PARSE_RETURN_FALSE_IF_FAIL(EntityClassDoom3_parseToken(tokeniser));
+      PARSE_RETURN_FALSE_IF_FAIL(EntityClassDoom3_parseToken(tokeniser));
+      PARSE_RETURN_FALSE_IF_FAIL(EntityClassDoom3_parseToken(tokeniser));
+      PARSE_RETURN_FALSE_IF_FAIL(EntityClassDoom3_parseToken(tokeniser, ")"));
       tokeniser.nextLine();
     }
     else if(string_equal(parameter, "channel"))
     {
       //const char* channelName =
-      tokeniser.getToken();
-      tokeniser.getToken(); // (
+      PARSE_RETURN_FALSE_IF_FAIL(EntityClassDoom3_parseToken(tokeniser));
+      PARSE_RETURN_FALSE_IF_FAIL(EntityClassDoom3_parseToken(tokeniser, "("));
       for(;;)
       {
-        const char* end = tokeniser.getToken();
+        const char* end;
+        PARSE_RETURN_FALSE_IF_FAIL(EntityClassDoom3_parseString(tokeniser, end));
         if(string_equal(end, ")"))
         {
           tokeniser.nextLine();
@@ -220,23 +272,27 @@ void EntityClassDoom3_parseModel(Tokeniser& tokeniser)
     }
     else if(string_equal(parameter, "anim"))
     {
-      CopiedString animName(tokeniser.getToken());
-      const char* animFile = tokeniser.getToken();
+      CopiedString animName;
+      PARSE_RETURN_FALSE_IF_FAIL(EntityClassDoom3_parseString(tokeniser, animName));
+      const char* animFile;
+      PARSE_RETURN_FALSE_IF_FAIL(EntityClassDoom3_parseString(tokeniser, animFile));
       model.m_anims.insert(Model::Anims::value_type(animName, animFile));
 
-      const char* token = tokeniser.getToken();
+      const char* token;
+      PARSE_RETURN_FALSE_IF_FAIL(EntityClassDoom3_parseString(tokeniser, token));
 
       while(string_equal(token, ","))
       {
-        animFile = tokeniser.getToken();
-        token = tokeniser.getToken();
+        PARSE_RETURN_FALSE_IF_FAIL(EntityClassDoom3_parseString(tokeniser, animFile));
+        PARSE_RETURN_FALSE_IF_FAIL(EntityClassDoom3_parseString(tokeniser, token));
       }
 
       if(string_equal(token, "{"))
       {
         for(;;)
         {
-          const char* end = tokeniser.getToken();
+          const char* end;
+          PARSE_RETURN_FALSE_IF_FAIL(EntityClassDoom3_parseString(tokeniser, end));
           if(string_equal(end, "}"))
           {
             tokeniser.nextLine();
@@ -252,10 +308,12 @@ void EntityClassDoom3_parseModel(Tokeniser& tokeniser)
     }
     else
     {
-      ERROR_MESSAGE("unknown model parameter: " << makeQuoted(parameter));
+      globalErrorStream() << "unknown model parameter: " << makeQuoted(parameter) << "\n";
+      return false;
     }
     tokeniser.nextLine();
   }
+  return true;
 }
 
 inline bool char_isSpaceOrTab(char c)
@@ -292,15 +350,11 @@ inline const char* string_findFirstNonSpaceOrTab(const char* string)
 }
 
 
-void EntityClassDoom3_parseEntityDef(Tokeniser& tokeniser)
+static bool EntityClass_parse(EntityClass& entityClass, Tokeniser& tokeniser)
 {
-  EntityClass* entityClass = Eclass_Alloc();
-  entityClass->free = &Eclass_Free;
+  PARSE_RETURN_FALSE_IF_FAIL(EntityClassDoom3_parseString(tokeniser, entityClass.m_name));
 
-  entityClass->m_name = tokeniser.getToken();
-
-  const char* token = tokeniser.getToken();
-  ASSERT_MESSAGE(string_equal(token, "{"), "error parsing entity definition");
+  PARSE_RETURN_FALSE_IF_FAIL(EntityClassDoom3_parseToken(tokeniser, "{"));
   tokeniser.nextLine();
 
   StringOutputStream usage(256);
@@ -310,7 +364,8 @@ void EntityClassDoom3_parseEntityDef(Tokeniser& tokeniser)
 
   for(;;)
   {
-    const char* key = tokeniser.getToken();
+    const char* key;
+    PARSE_RETURN_FALSE_IF_FAIL(EntityClassDoom3_parseString(tokeniser, key));
     
     const char* last = string_findFirstSpaceOrTab(key);
     CopiedString first(StringRange(key, last));
@@ -323,7 +378,8 @@ void EntityClassDoom3_parseEntityDef(Tokeniser& tokeniser)
     if(currentString != 0 && string_equal(key, "\\"))
     {
       tokeniser.nextLine();
-      *currentString << " " << tokeniser.getToken();
+      *currentString << " ";
+      PARSE_RETURN_FALSE_IF_FAIL(EntityClassDoom3_parseString(tokeniser, *currentString));
       continue;
     }
 
@@ -342,58 +398,62 @@ void EntityClassDoom3_parseEntityDef(Tokeniser& tokeniser)
     }
     else if(string_equal(key, "model"))
     {
-      entityClass->fixedsize = true;
+      const char* token;
+      PARSE_RETURN_FALSE_IF_FAIL(EntityClassDoom3_parseString(tokeniser, token));
+      entityClass.fixedsize = true;
       StringOutputStream buffer(256);
-      buffer << PathCleaned(tokeniser.getToken());
-      entityClass->m_modelpath = buffer.c_str();
+      buffer << PathCleaned(token);
+      entityClass.m_modelpath = buffer.c_str();
     }
     else if(string_equal(key, "editor_color"))
     {
-      const char* value = tokeniser.getToken();
+      const char* value;
+      PARSE_RETURN_FALSE_IF_FAIL(EntityClassDoom3_parseString(tokeniser, value));
       if(!string_empty(value))
       {
-        entityClass->colorSpecified = true;
-        bool success = string_parse_vector3(value, entityClass->color);
+        entityClass.colorSpecified = true;
+        bool success = string_parse_vector3(value, entityClass.color);
         ASSERT_MESSAGE(success, "editor_color: parse error");
       }
     }
     else if(string_equal(key, "editor_ragdoll"))
     {
       //bool ragdoll = atoi(tokeniser.getToken()) != 0;
-      tokeniser.getToken();
+      PARSE_RETURN_FALSE_IF_FAIL(EntityClassDoom3_parseToken(tokeniser));
     }
     else if(string_equal(key, "editor_mins"))
     {
-      entityClass->sizeSpecified = true;
-      const char* value = tokeniser.getToken();
+      entityClass.sizeSpecified = true;
+      const char* value;
+      PARSE_RETURN_FALSE_IF_FAIL(EntityClassDoom3_parseString(tokeniser, value));
       if(!string_empty(value) && !string_equal(value, "?"))
       {
-        entityClass->fixedsize = true;
-        bool success = string_parse_vector3(value, entityClass->mins);
+        entityClass.fixedsize = true;
+        bool success = string_parse_vector3(value, entityClass.mins);
         ASSERT_MESSAGE(success, "editor_mins: parse error");
       }
     }
     else if(string_equal(key, "editor_maxs"))
     {
-      entityClass->sizeSpecified = true;
-      const char* value = tokeniser.getToken();
+      entityClass.sizeSpecified = true;
+      const char* value;
+      PARSE_RETURN_FALSE_IF_FAIL(EntityClassDoom3_parseString(tokeniser, value));
       if(!string_empty(value) && !string_equal(value, "?"))
       {
-        entityClass->fixedsize = true;
-        bool success = string_parse_vector3(value, entityClass->maxs);
+        entityClass.fixedsize = true;
+        bool success = string_parse_vector3(value, entityClass.maxs);
         ASSERT_MESSAGE(success, "editor_maxs: parse error");
       }
     }
     else if(string_equal(key, "editor_usage"))
     {
-      const char* value = tokeniser.getToken();
-      usage << value;
+      PARSE_RETURN_FALSE_IF_FAIL(EntityClassDoom3_parseString(tokeniser, usage));
       currentString = &usage;
     }
     else if(string_equal_n(key, "editor_usage", 12))
     {
-      const char* value = tokeniser.getToken();
-      usage << "\n" << value;
+      usage << "\n";
+      PARSE_RETURN_FALSE_IF_FAIL(EntityClassDoom3_parseString(tokeniser, usage));
       currentString = &usage;
     }
     else if(string_equal(key, "editor_rotatable")
@@ -405,137 +465,165 @@ void EntityClassDoom3_parseEntityDef(Tokeniser& tokeniser)
       || (!string_empty(last) && string_equal(first.c_str(), "editor_gui"))
       || string_equal_n(key, "editor_copy", 11))
     {
-      tokeniser.getToken();
+      PARSE_RETURN_FALSE_IF_FAIL(EntityClassDoom3_parseToken(tokeniser));
     }
     else if(!string_empty(last) && (string_equal(first.c_str(), "editor_var") || string_equal(first.c_str(), "editor_string")))
     {
-      EntityClassAttribute& attribute = EntityClass_insertAttribute(*entityClass, last).second;
+      EntityClassAttribute& attribute = EntityClass_insertAttribute(entityClass, last).second;
       attribute.m_type = "string";
       currentDescription = &attribute.m_description;
       currentString = &description;
-      description << tokeniser.getToken();
+      PARSE_RETURN_FALSE_IF_FAIL(EntityClassDoom3_parseString(tokeniser, description));
     }
     else if(!string_empty(last) && string_equal(first.c_str(), "editor_float"))
     {
-      EntityClassAttribute& attribute = EntityClass_insertAttribute(*entityClass, last).second;
+      EntityClassAttribute& attribute = EntityClass_insertAttribute(entityClass, last).second;
       attribute.m_type = "string";
       currentDescription = &attribute.m_description;
       currentString = &description;
-      description << tokeniser.getToken();
+      PARSE_RETURN_FALSE_IF_FAIL(EntityClassDoom3_parseString(tokeniser, description));
     }
     else if(!string_empty(last) && string_equal(first.c_str(), "editor_snd"))
     {
-      EntityClassAttribute& attribute = EntityClass_insertAttribute(*entityClass, last).second;
+      EntityClassAttribute& attribute = EntityClass_insertAttribute(entityClass, last).second;
       attribute.m_type = "sound";
       currentDescription = &attribute.m_description;
       currentString = &description;
-      description << tokeniser.getToken();
+      PARSE_RETURN_FALSE_IF_FAIL(EntityClassDoom3_parseString(tokeniser, description));
     }
     else if(!string_empty(last) && string_equal(first.c_str(), "editor_bool"))
     {
-      EntityClassAttribute& attribute = EntityClass_insertAttribute(*entityClass, last).second;
+      EntityClassAttribute& attribute = EntityClass_insertAttribute(entityClass, last).second;
       attribute.m_type = "boolean";
       currentDescription = &attribute.m_description;
       currentString = &description;
-      description << tokeniser.getToken();
+      PARSE_RETURN_FALSE_IF_FAIL(EntityClassDoom3_parseString(tokeniser, description));
     }
     else if(!string_empty(last) && string_equal(first.c_str(), "editor_int"))
     {
-      EntityClassAttribute& attribute = EntityClass_insertAttribute(*entityClass, last).second;
+      EntityClassAttribute& attribute = EntityClass_insertAttribute(entityClass, last).second;
       attribute.m_type = "integer";
       currentDescription = &attribute.m_description;
       currentString = &description;
-      description << tokeniser.getToken();
+      PARSE_RETURN_FALSE_IF_FAIL(EntityClassDoom3_parseString(tokeniser, description));
     }
     else if(!string_empty(last) && string_equal(first.c_str(), "editor_model"))
     {
-      EntityClassAttribute& attribute = EntityClass_insertAttribute(*entityClass, last).second;
+      EntityClassAttribute& attribute = EntityClass_insertAttribute(entityClass, last).second;
       attribute.m_type = "model";
       currentDescription = &attribute.m_description;
       currentString = &description;
-      description << tokeniser.getToken();
+      PARSE_RETURN_FALSE_IF_FAIL(EntityClassDoom3_parseString(tokeniser, description));
     }
     else if(!string_empty(last) && string_equal(first.c_str(), "editor_color"))
     {
-      EntityClassAttribute& attribute = EntityClass_insertAttribute(*entityClass, last).second;
+      EntityClassAttribute& attribute = EntityClass_insertAttribute(entityClass, last).second;
       attribute.m_type = "color";
       currentDescription = &attribute.m_description;
       currentString = &description;
-      description << tokeniser.getToken();
+      PARSE_RETURN_FALSE_IF_FAIL(EntityClassDoom3_parseString(tokeniser, description));
     }
     else if(!string_empty(last) && (string_equal(first.c_str(), "editor_material") || string_equal(first.c_str(), "editor_mat")))
     {
-      EntityClassAttribute& attribute = EntityClass_insertAttribute(*entityClass, last).second;
+      EntityClassAttribute& attribute = EntityClass_insertAttribute(entityClass, last).second;
       attribute.m_type = "shader";
       currentDescription = &attribute.m_description;
       currentString = &description;
-      description << tokeniser.getToken();
+      PARSE_RETURN_FALSE_IF_FAIL(EntityClassDoom3_parseString(tokeniser, description));
     }
     else if(string_equal(key, "inherit"))
     {
-      entityClass->inheritanceResolved = false;
-      ASSERT_MESSAGE(entityClass->m_parent.empty(), "only one 'inherit' supported per entityDef");
-      entityClass->m_parent.push_back(tokeniser.getToken());
+      entityClass.inheritanceResolved = false;
+      ASSERT_MESSAGE(entityClass.m_parent.empty(), "only one 'inherit' supported per entityDef");
+      const char* token;
+      PARSE_RETURN_FALSE_IF_FAIL(EntityClassDoom3_parseString(tokeniser, token));
+      entityClass.m_parent.push_back(token);
     }
     // begin quake4-specific keys
     else if(string_equal(key, "editor_targetonsel"))
     {
       //const char* value =
-      tokeniser.getToken();
+      PARSE_RETURN_FALSE_IF_FAIL(EntityClassDoom3_parseToken(tokeniser));
     }
     else if(string_equal(key, "editor_menu"))
     {
       //const char* value =
-      tokeniser.getToken();
+      PARSE_RETURN_FALSE_IF_FAIL(EntityClassDoom3_parseToken(tokeniser));
     }
     else if(string_equal(key, "editor_ignore"))
     {
       //const char* value =
-      tokeniser.getToken();
+      PARSE_RETURN_FALSE_IF_FAIL(EntityClassDoom3_parseToken(tokeniser));
     }
     // end quake4-specific keys
     else
     {
+      CopiedString tmp(key);
       ASSERT_MESSAGE(!string_equal_n(key, "editor_", 7), "unsupported editor key: " << makeQuoted(key));
-      EntityClassAttribute& attribute = EntityClass_insertAttribute(*entityClass, key).second;
+      EntityClassAttribute& attribute = EntityClass_insertAttribute(entityClass, key).second;
       attribute.m_type = "string";
-      attribute.m_value = tokeniser.getToken();
+      const char* value;
+      PARSE_RETURN_FALSE_IF_FAIL(EntityClassDoom3_parseString(tokeniser, value));
+      if(string_equal(value, "}")) // hack for quake4 powerups.def bug
+      {
+        globalErrorStream() << "entityDef " << makeQuoted(entityClass.m_name.c_str()) << " key " << makeQuoted(tmp.c_str()) << " has no value\n";
+        break;
+      }
+      else
+      {
+        attribute.m_value = value;
+      }
     }
     tokeniser.nextLine();
   }
 
-  entityClass->m_comments = usage.c_str();
+  entityClass.m_comments = usage.c_str();
 
-  if(string_equal(entityClass->m_name.c_str(), "light"))
+  if(string_equal(entityClass.m_name.c_str(), "light"))
   {
     {
-      EntityClassAttribute& attribute = EntityClass_insertAttribute(*entityClass, "light_radius").second;
+      EntityClassAttribute& attribute = EntityClass_insertAttribute(entityClass, "light_radius").second;
       attribute.m_type = "vector3";
       attribute.m_value = "300 300 300";
     }
     {
-      EntityClassAttribute& attribute = EntityClass_insertAttribute(*entityClass, "light_center").second;
+      EntityClassAttribute& attribute = EntityClass_insertAttribute(entityClass, "light_center").second;
       attribute.m_type = "vector3";
     }
     {
-      EntityClassAttribute& attribute = EntityClass_insertAttribute(*entityClass, "noshadows").second;
+      EntityClassAttribute& attribute = EntityClass_insertAttribute(entityClass, "noshadows").second;
       attribute.m_type = "boolean";
       attribute.m_value = "0";
     }
     {
-      EntityClassAttribute& attribute = EntityClass_insertAttribute(*entityClass, "nospecular").second;
+      EntityClassAttribute& attribute = EntityClass_insertAttribute(entityClass, "nospecular").second;
       attribute.m_type = "boolean";
       attribute.m_value = "0";
     }
     {
-      EntityClassAttribute& attribute = EntityClass_insertAttribute(*entityClass, "nodiffuse").second;
+      EntityClassAttribute& attribute = EntityClass_insertAttribute(entityClass, "nodiffuse").second;
       attribute.m_type = "boolean";
       attribute.m_value = "0";
     }
     {
-      EntityClassAttribute& attribute = EntityClass_insertAttribute(*entityClass, "falloff").second;
+      EntityClassAttribute& attribute = EntityClass_insertAttribute(entityClass, "falloff").second;
       attribute.m_type = "real";
     }
+  }
+
+  return true;
+}
+
+bool EntityClassDoom3_parseEntityDef(Tokeniser& tokeniser)
+{
+  EntityClass* entityClass = Eclass_Alloc();
+  entityClass->free = &Eclass_Free;
+
+  if(!EntityClass_parse(*entityClass, tokeniser))
+  {
+    eclass_capture_state(entityClass); // finish constructing the entity so that it can be destroyed cleanly.
+    entityClass->free(entityClass);
+    return false;
   }
 
   EntityClass* inserted = EntityClassDoom3_insertUnique(entityClass);
@@ -545,9 +633,26 @@ void EntityClassDoom3_parseEntityDef(Tokeniser& tokeniser)
     eclass_capture_state(entityClass); // finish constructing the entity so that it can be destroyed cleanly.
     entityClass->free(entityClass);
   }
+  return true;
 }
 
-void EntityClassDoom3_parse(TextInputStream& inputStream)
+bool EntityClassDoom3_parseBlock(Tokeniser& tokeniser, const char* blockType)
+{
+  if(string_equal(blockType, "entityDef"))
+  {
+    return EntityClassDoom3_parseEntityDef(tokeniser);
+  }
+  else if(string_equal(blockType, "model"))
+  {
+    return EntityClassDoom3_parseModel(tokeniser);
+  }
+  else
+  {
+    return EntityClassDoom3_parseUnknown(tokeniser);
+  }
+}
+
+bool EntityClassDoom3_parse(TextInputStream& inputStream, const char* filename)
 {
   Tokeniser& tokeniser = GlobalScriptLibrary().m_pfnNewScriptTokeniser(inputStream);
 
@@ -558,19 +663,13 @@ void EntityClassDoom3_parse(TextInputStream& inputStream)
     const char* blockType = tokeniser.getToken();
     if(blockType == 0)
     {
-      break;
+      return true;
     }
-    if(string_equal(blockType, "entityDef"))
+    CopiedString tmp(blockType);
+    if(!EntityClassDoom3_parseBlock(tokeniser, tmp.c_str()))
     {
-      EntityClassDoom3_parseEntityDef(tokeniser);
-    }
-    else if(string_equal(blockType, "model"))
-    {
-      EntityClassDoom3_parseModel(tokeniser);
-    }
-    else
-    {
-      EntityClassDoom3_parseUnknown(tokeniser);
+      globalErrorStream() << GlobalFileSystem().findFile(filename) << filename << ":" << tokeniser.getLine() << ": " << tmp.c_str() << " parse failed, skipping rest of file\n";
+      return false;
     }
   }
 
@@ -588,7 +687,7 @@ void EntityClassDoom3_loadFile(const char* filename)
 	ArchiveTextFile* file = GlobalFileSystem().openTextFile(fullname.c_str());
   if(file != 0)
   {
-    EntityClassDoom3_parse(file->getInputStream());
+    EntityClassDoom3_parse(file->getInputStream(), fullname.c_str());
     file->release();
   }
 }
