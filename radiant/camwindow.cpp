@@ -137,6 +137,9 @@ struct camera_t
   Matrix4 projection;
   Matrix4 modelview;
 
+  bool m_strafe; // true when in strafemode toggled by the ctrl-key
+  bool m_strafe_forward; // true when in strafemode by ctrl-key and shift is pressed for forward strafing
+
   unsigned int movementflags;  // movement flags
   Timer m_keycontrol_timer;
   guint m_keymove_handler;
@@ -278,23 +281,38 @@ void Camera_setAngles(camera_t& camera, const Vector3& angles)
 
 void Camera_FreeMove(camera_t& camera, int dx, int dy)
 {
-  float dtime = 0.1f;
-  if (g_camwindow_globals_private.m_bCamInverseMouse)
-    camera.angles[CAMERA_PITCH] -= dy * dtime * g_camwindow_globals_private.m_nAngleSpeed;
-  else
-    camera.angles[CAMERA_PITCH] += dy * dtime * g_camwindow_globals_private.m_nAngleSpeed;
+  // free strafe mode, toggled by the ctrl key with optional shift for forward movement
+  if(camera.m_strafe)
+  {
+	  const float strafespeed = 0.65f;
 
-  camera.angles[CAMERA_YAW] += dx * dtime * g_camwindow_globals_private.m_nAngleSpeed;
+	  camera.origin -= camera.vright * strafespeed * dx;
+	  if(camera.m_strafe_forward)
+	    camera.origin += camera.vpn * strafespeed * dy;
+	  else
+	    camera.origin += camera.vup * strafespeed * dy;
+  }
+  else// free rotation
+  {
+    const float dtime = 0.1f;
 
-  if (camera.angles[CAMERA_PITCH] > 90)
-    camera.angles[CAMERA_PITCH] = 90;
-  else if (camera.angles[CAMERA_PITCH] < -90)
-    camera.angles[CAMERA_PITCH] = -90;
+    if (g_camwindow_globals_private.m_bCamInverseMouse)
+        camera.angles[CAMERA_PITCH] -= dy * dtime * g_camwindow_globals_private.m_nAngleSpeed;
+    else
+        camera.angles[CAMERA_PITCH] += dy * dtime * g_camwindow_globals_private.m_nAngleSpeed;
 
-  if (camera.angles[CAMERA_YAW] >= 360)
-    camera.angles[CAMERA_YAW] -=360;
-  else if (camera.angles[CAMERA_YAW] <= 0)
-    camera.angles[CAMERA_YAW] +=360;
+    camera.angles[CAMERA_YAW] += dx * dtime * g_camwindow_globals_private.m_nAngleSpeed;
+
+    if (camera.angles[CAMERA_PITCH] > 90)
+        camera.angles[CAMERA_PITCH] = 90;
+    else if (camera.angles[CAMERA_PITCH] < -90)
+        camera.angles[CAMERA_PITCH] = -90;
+
+    if (camera.angles[CAMERA_YAW] >= 360)
+        camera.angles[CAMERA_YAW] -=360;
+    else if (camera.angles[CAMERA_YAW] <= 0)
+        camera.angles[CAMERA_YAW] +=360;
+  }
 
   Camera_updateModelview(camera);
   Camera_Freemove_updateAxes(camera);
@@ -638,7 +656,15 @@ public:
 
 void Camera_motionDelta(int x, int y, unsigned int state, void* data)
 {
-  reinterpret_cast<camera_t*>(data)->m_mouseMove.motion_delta(x, y, state);
+  camera_t* cam = reinterpret_cast<camera_t*>(data);
+
+  cam->m_mouseMove.motion_delta(x, y, state);
+  cam->m_strafe = (state & GDK_CONTROL_MASK) != 0;
+
+  if(cam->m_strafe)
+    cam->m_strafe_forward = (state & GDK_SHIFT_MASK) != 0;
+  else
+    cam->m_strafe_forward = false;
 }
 
 class CamWnd
