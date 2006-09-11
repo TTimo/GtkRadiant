@@ -150,6 +150,14 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "bobtoolz", "contrib\bobtool
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sunplug", "contrib\sunplug\sunplug.vcproj", "{46B36F0C-5E17-458E-AE6F-AECE52F66EDF}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "brushexport", "contrib\brushexport\brushexport.vcproj", "{46B36F0C-5E17-458E-AE6F-AECE52F66EDE}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfiguration) = preSolution
 		Debug = Debug
@@ -280,6 +288,14 @@ Global
 		{B20364D1-4329-4D4E-B9CE-C9767618FDD6}.Debug.Build.0 = Debug|Win32
 		{B20364D1-4329-4D4E-B9CE-C9767618FDD6}.Release.ActiveCfg = Release|Win32
 		{B20364D1-4329-4D4E-B9CE-C9767618FDD6}.Release.Build.0 = Release|Win32
+		{46B36F0C-5E17-458E-AE6F-AECE52F66EDF}.Debug.ActiveCfg = Debug|Win32
+		{46B36F0C-5E17-458E-AE6F-AECE52F66EDF}.Debug.Build.0 = Debug|Win32
+		{46B36F0C-5E17-458E-AE6F-AECE52F66EDF}.Release.ActiveCfg = Release|Win32
+		{46B36F0C-5E17-458E-AE6F-AECE52F66EDF}.Release.Build.0 = Release|Win32
+		{46B36F0C-5E17-458E-AE6F-AECE52F66EDE}.Debug.ActiveCfg = Debug|Win32
+		{46B36F0C-5E17-458E-AE6F-AECE52F66EDE}.Debug.Build.0 = Debug|Win32
+		{46B36F0C-5E17-458E-AE6F-AECE52F66EDE}.Release.ActiveCfg = Release|Win32
+		{46B36F0C-5E17-458E-AE6F-AECE52F66EDE}.Release.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 	EndGlobalSection

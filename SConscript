@@ -473,6 +473,21 @@ prtview_lib = prtview_env.SharedLibrarySafe(target='prtview', source=prtview_lst
 prtview_env.Depends(prtview_lib, profile_lib)
 prtview_env.Install(INSTALL + '/plugins', prtview_lib)
 
+
+brushexport_env = module_env.Copy()
+brushexport_lst = build_list('contrib/brushexport', 'plugin.cpp')
+brushexport_env.useGlib2()
+brushexport_env.useGtk2()
+brushexport_lib = brushexport_env.SharedLibrarySafe(target='brushexport', source=brushexport_lst, LIBPATH='libs')
+brushexport_env.Install(INSTALL + '/plugins', brushexport_lib)
+
+sunplug_env = module_env.Copy()
+sunplug_lst = build_list('contrib/sunplug', 'sunplug.cpp')
+sunplug_env.useGlib2()
+sunplug_env.useGtk2()
+sunplug_lib = sunplug_env.SharedLibrarySafe(target='sunplug', source=sunplug_lst, LIBPATH='libs')
+sunplug_env.Install(INSTALL + '/plugins', sunplug_lib)
+
 #gensurf_lst = build_list('contrib/gtkgensurf',
 #'bitmap.cpp dec.cpp face.cpp font.cpp gendlgs.cpp genmap.cpp gensurf.cpp heretic.cpp plugin.cpp view.cpp triangle.c')
 #bob_env.SharedLibrarySafe(target='gensurf', source=gensurf_lst)

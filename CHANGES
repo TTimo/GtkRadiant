@@ -3,6 +3,15 @@ that we distribute with the binaries. (see changelog)
 
 11/09/2006
 namespace
+- Added sunplug (Mapcoordinator-plugin for ET) by Topsun
+  ET only: setting mapcoordsmins and mapcoordsmaxs in the worldspawn
+  Tester: Shaderman
+- Added brushexport Plugin by namespace
+  Exports selected brushes as wavefront object.
+  Tester: Shaderman
+
+11/09/2006
+namespace
 - Fixed compile error on x86_64, see http://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=1105
   for details.
 
