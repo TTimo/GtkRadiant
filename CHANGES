@@ -1,6 +1,16 @@
 This is the changelog for developers, != changelog for the end user 
 that we distribute with the binaries. (see changelog)
 
+11/09/2006
+namespace
+- Fixed compile error on x86_64, see http://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=1105
+  for details.
+
+09/09/2996
+namespace
+- Added strafing for the camerawindow while holding ctrl
+- Additional forward movement can be enabled by pressing shift during strafe
+
 22/08/2006
 SPoG
 - Added VFS support for locating the archive a file was loaded from.

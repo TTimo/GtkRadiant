@@ -46,6 +46,17 @@ namespace TextOutputDetail
     }
     return ptr;
   }
+  
+  #if defined (_WIN64) || defined (__LP64__)
+  inline char* write_size_t_nonzero_decimal_backward(char* ptr, size_t decimal)
+  {
+    for (; decimal != 0; decimal /= 10)
+    {
+      *--ptr = char('0' + (size_t)(decimal % 10));
+    }
+    return ptr;
+  }
+  #endif
 
   inline char* write_signed_nonzero_decimal_backward(char* ptr, int decimal, bool show_positive)
   {
@@ -71,6 +82,18 @@ namespace TextOutputDetail
     }
     return ptr;
   }
+  
+  #if defined (_WIN64) || defined (__LP64__)
+  inline char* write_size_t_nonzero_decimal_backward(char* ptr, size_t decimal, bool show_positive)
+  {
+    ptr = write_size_t_nonzero_decimal_backward(ptr, decimal);
+    if(show_positive)
+    {
+      *--ptr = '+';
+    }
+    return ptr;
+  }
+  #endif
 
   inline char* write_signed_decimal_backward(char* ptr, int decimal, bool show_positive)
   {
@@ -97,6 +120,21 @@ namespace TextOutputDetail
     }
     return ptr;
   }
+  
+  #if defined (_WIN64) || defined (__LP64__)
+  inline char* write_size_t_decimal_backward(char* ptr, size_t decimal, bool show_positive)
+  {
+    if(decimal == 0)
+    {
+      *--ptr = '0';
+    }
+    else
+    {
+      ptr = write_size_t_nonzero_decimal_backward(ptr, decimal, show_positive);
+    }
+    return ptr;
+  }
+  #endif
 }
 
 
@@ -165,6 +203,27 @@ inline TextOutputStreamType& ostream_write(TextOutputStreamType& ostream, const 
 #endif
   return ostream;
 }
+
+#if defined (_WIN64) || defined (__LP64__)
+
+/// \brief Writes a size_t \p i to \p ostream in decimal form.
+template<typename TextOutputStreamType>
+inline TextOutputStreamType& ostream_write(TextOutputStreamType& ostream, const size_t i)
+{
+  // max is 18446744073709551615, buffer of 32 chars should always be enough
+  const std::size_t bufferSize = 32;
+#if 1
+  char buf[bufferSize];
+  char* begin = TextOutputDetail::write_size_t_decimal_backward(buf + bufferSize, i, false);
+  ostream.write(begin, (buf + bufferSize) - begin);
+#else
+  char buf[bufferSize];
+  ostream.write(buf, snprintf(buf, bufferSize, "%u", i));
+#endif
+  return ostream;
+}
+
+#endif
 
 /// \brief Writes a null-terminated \p string to \p ostream.
 template<typename TextOutputStreamType>
