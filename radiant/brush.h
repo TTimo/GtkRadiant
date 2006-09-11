@@ -1734,10 +1734,10 @@ public:
     m_render_faces(m_faceCentroidPoints, GL_POINTS),
     m_render_vertices(m_uniqueVertexPoints, GL_POINTS),
     m_render_edges(m_uniqueEdgePoints, GL_POINTS),
-    m_planeChanged(false),
-    m_transformChanged(false),
     m_evaluateTransform(evaluateTransform),
-    m_boundsChanged(boundsChanged)
+    m_boundsChanged(boundsChanged),
+    m_planeChanged(false),
+    m_transformChanged(false)
   {
     planeChanged();
   }
@@ -1748,10 +1748,10 @@ public:
     m_render_faces(m_faceCentroidPoints, GL_POINTS),
     m_render_vertices(m_uniqueVertexPoints, GL_POINTS),
     m_render_edges(m_uniqueEdgePoints, GL_POINTS),
-    m_planeChanged(false),
-    m_transformChanged(false),
     m_evaluateTransform(evaluateTransform),
-    m_boundsChanged(boundsChanged)
+    m_boundsChanged(boundsChanged),
+    m_planeChanged(false),
+    m_transformChanged(false)
   {
     copy(other);
   }
@@ -1759,6 +1759,7 @@ public:
     TransformNode(other),
     Bounded(other),
     Cullable(other),
+    Snappable(),
     Undoable(other),
     FaceObserver(other),
     Filterable(other),

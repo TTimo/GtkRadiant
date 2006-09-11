@@ -534,6 +534,7 @@ public:
     TransformNode(other),
     Bounded(other),
     Cullable(other),
+    Snappable(),
     Undoable(other),
     Filterable(other),
     Nameable(other),

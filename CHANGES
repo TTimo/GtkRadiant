@@ -3,6 +3,11 @@ that we distribute with the binaries. (see changelog)
 
 11/09/2006
 namespace
+- Fixed unnecessary warnings, see http://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=1108
+  for details
+
+11/09/2006
+namespace
 - Added sunplug (Mapcoordinator-plugin for ET) by Topsun
   ET only: setting mapcoordsmins and mapcoordsmaxs in the worldspawn
   Tester: Shaderman

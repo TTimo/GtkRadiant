@@ -574,17 +574,17 @@ inline Matrix4 matrix4_affine_inverse(const Matrix4& self)
   // invert rotation submatrix
   det = 1.0 / det;
 
-  result[0] = (  (self[5]*self[10]- self[6]*self[9] )*det);
-  result[1] = (- (self[1]*self[10]- self[2]*self[9] )*det);
-  result[2] = (  (self[1]*self[6] - self[2]*self[5] )*det);
+  result[0] = static_cast<float>(  (self[5]*self[10]- self[6]*self[9] )*det);
+  result[1] = static_cast<float>(- (self[1]*self[10]- self[2]*self[9] )*det);
+  result[2] = static_cast<float>(  (self[1]*self[6] - self[2]*self[5] )*det);
   result[3] = 0;
-  result[4] = (- (self[4]*self[10]- self[6]*self[8] )*det);
-  result[5] = (  (self[0]*self[10]- self[2]*self[8] )*det);
-  result[6] = (- (self[0]*self[6] - self[2]*self[4] )*det);
+  result[4] = static_cast<float>(- (self[4]*self[10]- self[6]*self[8] )*det);
+  result[5] = static_cast<float>(  (self[0]*self[10]- self[2]*self[8] )*det);
+  result[6] = static_cast<float>(- (self[0]*self[6] - self[2]*self[4] )*det);
   result[7] = 0;
-  result[8] = (  (self[4]*self[9] - self[5]*self[8] )*det);
-  result[9] = (- (self[0]*self[9] - self[1]*self[8] )*det);
-  result[10]= (  (self[0]*self[5] - self[1]*self[4] )*det);
+  result[8] = static_cast<float>(  (self[4]*self[9] - self[5]*self[8] )*det);
+  result[9] = static_cast<float>(- (self[0]*self[9] - self[1]*self[8] )*det);
+  result[10]= static_cast<float>(  (self[0]*self[5] - self[1]*self[4] )*det);
   result[11] = 0;
 
   // multiply translation part by rotation

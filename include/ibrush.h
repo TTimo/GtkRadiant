@@ -83,7 +83,7 @@ public:
 class _QERFaceData
 {
 public:
-  _QERFaceData() : contents(0), flags(0), value(0), m_shader("")
+  _QERFaceData() : m_shader(""), contents(0), flags(0), value(0)
   {
   }
   Vector3 m_p0;
