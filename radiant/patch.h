@@ -43,6 +43,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "debugging/debugging.h"
 
 #include <set>
+#include <limits>
 
 #include "math/frustum.h"
 #include "string/string.h"
@@ -115,7 +116,7 @@ struct BezierCurve
   Vector3 right;
 };
 
-const std::size_t BEZIERCURVETREE_MAX_INDEX = 1 << ((sizeof(std::size_t) * 8) - 1);
+const std::size_t BEZIERCURVETREE_MAX_INDEX = std::numeric_limits<unsigned int>::max() / 2 + 1;
 
 struct BezierCurveTree
 {

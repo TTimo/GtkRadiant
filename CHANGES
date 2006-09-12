@@ -1,6 +1,11 @@
 This is the changelog for developers, != changelog for the end user 
 that we distribute with the binaries. (see changelog)
 
+12/09/2006
+namespace
+- Fixed 64 Bit issue in patch.h, see http://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=1109
+  for details
+
 11/09/2006
 namespace
 - Fixed unnecessary warnings, see http://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=1108
