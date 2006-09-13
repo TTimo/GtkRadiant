@@ -68,7 +68,7 @@ static void dialog_button_callback (GtkWidget *widget, gpointer data)
   ret = (int*)gtk_object_get_data (GTK_OBJECT (parent), "ret");
 
   *loop = 0;
-  *ret = (int)data;
+  *ret = gpointer_to_int (data);
 }
 
 static gint dialog_delete_callback (GtkWidget *widget, GdkEvent* event, gpointer data)

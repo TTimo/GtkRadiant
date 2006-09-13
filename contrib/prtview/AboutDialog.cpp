@@ -19,6 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "AboutDialog.h"
 #include <gtk/gtk.h>
+#include <gtkutil/pointer.h>
 #include "version.h"
 #include "gtkutil/pointer.h"
 

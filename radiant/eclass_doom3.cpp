@@ -668,7 +668,7 @@ bool EntityClassDoom3_parse(TextInputStream& inputStream, const char* filename)
     CopiedString tmp(blockType);
     if(!EntityClassDoom3_parseBlock(tokeniser, tmp.c_str()))
     {
-      globalErrorStream() << GlobalFileSystem().findFile(filename) << filename << ":" << tokeniser.getLine() << ": " << tmp.c_str() << " parse failed, skipping rest of file\n";
+      globalErrorStream() << GlobalFileSystem().findFile(filename) << filename << ":" << (unsigned int)tokeniser.getLine() << ": " << tmp.c_str() << " parse failed, skipping rest of file\n";
       return false;
     }
   }

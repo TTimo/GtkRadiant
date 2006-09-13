@@ -23,6 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "LoadPortalFileDialog.h"
 
 #include <gtk/gtk.h>
+#include <gtkutil/pointer.h>
 #include "stream/stringstream.h"
 #include "convert.h"
 #include "gtkutil/pointer.h"
