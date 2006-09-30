@@ -25,23 +25,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "math/vector.h"
 #include "generic/callbackfwd.h"
 #include "signal/signalfwd.h"
+#include "xml/xmltextags.h"
 
-// textures menu
-
-typedef struct _GSList GSList;
 typedef struct _GtkWidget GtkWidget;
-typedef struct _GtkMenu GtkMenu;
-typedef struct _GtkMenuItem GtkMenuItem;
-
-extern GtkMenu* g_textures_menu;
-extern GtkMenuItem* g_textures_menu_separator;
-void TextureGroupsMenu_Construct();
-void TextureGroupsMenu_Destroy();
-void TextureGroupsMenu_ListItems(GSList*& items);
-const char* TextureGroupsMenu_GetName(std::size_t menunum);
-
-
-// texture browser
 
 class TextureBrowser;
 TextureBrowser& GlobalTextureBrowser();

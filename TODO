@@ -42,7 +42,6 @@ This variable could then be used in a command like this:
 
 Entity: option to filter non-world entities (e.g. not func_group or func_static)
 Rotate Tool: if more than one object is selected, with different local orientations, use parent-space rotation pivot instead of local-space
-Texture Browser: add a way to make large texture sets more manageable - shaderlist.txt was previously used this way
 Brush: MMB+ctrl to paint texture on whole brush/patch.
 Camera: add alternative highlighting styles (used to be J).
 Doom3: filter func_splinemovers

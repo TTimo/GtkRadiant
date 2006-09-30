@@ -52,7 +52,7 @@ public:
 	bool Build(char *def);
 };
 
-#define PATH_MAX 260
+#define PRTVIEW_PATH_MAX 260
 typedef guint32 PackedColour;
 #define RGB(r, g, b) ((guint32)(((guint8) (r) | ((guint16) (g) << 8))|(((guint32) (guint8) (b)) << 16)))
 #define GetRValue(rgb)      ((guint8)(rgb))
@@ -76,7 +76,7 @@ public:
 
 	void FixColors();
 
-	char fn[PATH_MAX];
+	char fn[PRTVIEW_PATH_MAX];
 
 	int zbuffer;
 	int polygons;

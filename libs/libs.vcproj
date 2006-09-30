@@ -32,7 +32,7 @@
 				BrowseInformation="0"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="TRUE"
-				DebugInformationFormat="4"
+				DebugInformationFormat="3"
 				DisableSpecificWarnings="4610;4510;4512;4505;4100;4127"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
@@ -232,6 +232,12 @@
 			</File>
 			<File
 				RelativePath=".\xml\xmlparser.h">
+			</File>
+			<File
+				RelativePath=".\xml\xmltextags.cpp">
+			</File>
+			<File
+				RelativePath=".\xml\xmltextags.h">
 			</File>
 			<File
 				RelativePath=".\xml\xmlwriter.cpp">

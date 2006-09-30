@@ -614,93 +614,6 @@ void DoAbout()
 }
 
 // =============================================================================
-// Texture List dialog 
-
-void DoTextureListDlg()
-{
-  ModalDialog dialog;
-  ModalDialogButton ok_button(dialog, eIDOK);
-  ModalDialogButton cancel_button(dialog, eIDCANCEL);
-  GtkWidget* texture_list;
-
-  GtkWindow* window = create_modal_dialog_window(MainFrame_getWindow(), "Textures", dialog, 400, 400);
-
-  GtkHBox* hbox = create_dialog_hbox(4, 4);
-  gtk_container_add(GTK_CONTAINER(window), GTK_WIDGET(hbox));
-
-  {
-    GtkScrolledWindow* scr = create_scrolled_window(GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
-    gtk_box_pack_start(GTK_BOX (hbox), GTK_WIDGET(scr), TRUE, TRUE, 0);
-
-
-    {
-      GtkListStore* store = gtk_list_store_new(1, G_TYPE_STRING);
-
-      GtkWidget* view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(store));
-      gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(view), FALSE); 
-
-      {
-        GtkCellRenderer* renderer = gtk_cell_renderer_text_new();
-        GtkTreeViewColumn* column = gtk_tree_view_column_new_with_attributes("", renderer, "text", 0, 0);
-        gtk_tree_view_append_column(GTK_TREE_VIEW(view), column);
-      }
-
-      gtk_widget_show(view);
-      gtk_container_add(GTK_CONTAINER (scr), view);
-
-      {
-        // Initialize dialog
-        GSList *textures = 0;
-        TextureGroupsMenu_ListItems(textures);
-        while (textures != 0)
-        {
-          {
-            GtkTreeIter iter;
-            gtk_list_store_append(store, &iter);
-            StringOutputStream name(64);
-            name << ConvertLocaleToUTF8(reinterpret_cast<const char*>(textures->data));
-            gtk_list_store_set(store, &iter, 0, name.c_str(), -1);
-          }
-          textures = g_slist_remove (textures, textures->data);
-        }
-      }
-    
-      g_object_unref(G_OBJECT(store));
-
-      texture_list = view;
-    }
-  }
-
-  GtkVBox* vbox = create_dialog_vbox(4);
-  gtk_box_pack_start(GTK_BOX(hbox), GTK_WIDGET(vbox), FALSE, TRUE, 0);
-  {
-    GtkButton* button = create_modal_dialog_button("Load", ok_button);
-    gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(button), FALSE, FALSE, 0);
-  }
-  {
-    GtkButton* button = create_modal_dialog_button("Close", cancel_button);
-    gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(button), FALSE, FALSE, 0);
-  }
-
-  if(modal_dialog_show(window, dialog) == eIDOK)
-  {
-    GtkTreeSelection* selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(texture_list));
-
-    GtkTreeModel* model;
-    GtkTreeIter iter;
-    if(gtk_tree_selection_get_selected(selection, &model, &iter))
-    {
-      GtkTreePath* path = gtk_tree_model_get_path(model, &iter);
-      if(gtk_tree_path_get_depth(path) == 1)
-        TextureBrowser_ShowDirectory(GlobalTextureBrowser(), TextureGroupsMenu_GetName(gtk_tree_path_get_indices(path)[0]));
-      gtk_tree_path_free(path);
-    }
-  }
-
-  gtk_widget_destroy(GTK_WIDGET(window));
-}
-
-// =============================================================================
 // TextureLayout dialog 
 
 EMessageBoxReturn DoTextureLayout (float *fx, float *fy)
@@ -1024,6 +937,125 @@ EMessageBoxReturn DoLightIntensityDlg (int *intensity)
 
   return ret;
 }
+
+// =============================================================================
+// Add new shader tag dialog 
+
+EMessageBoxReturn DoShaderTagDlg (CopiedString* tag, char* title)
+{
+  ModalDialog dialog;
+  GtkEntry* textentry;
+  ModalDialogButton ok_button(dialog, eIDOK);
+  ModalDialogButton cancel_button(dialog, eIDCANCEL);
+
+  GtkWindow* window = create_modal_dialog_window(MainFrame_getWindow(), title, dialog, -1, -1);
+
+  GtkAccelGroup *accel_group = gtk_accel_group_new();
+  gtk_window_add_accel_group(window, accel_group);
+
+  {
+    GtkHBox* hbox = create_dialog_hbox(4, 4);
+    gtk_container_add(GTK_CONTAINER(window), GTK_WIDGET(hbox));
+    {
+      GtkVBox* vbox = create_dialog_vbox(4);
+      gtk_box_pack_start(GTK_BOX(hbox), GTK_WIDGET(vbox), TRUE, TRUE, 0);
+      {
+        //GtkLabel* label = GTK_LABEL(gtk_label_new("Enter one ore more tags separated by spaces"));
+		GtkLabel* label = GTK_LABEL(gtk_label_new("ESC to cancel, ENTER to validate"));
+        gtk_widget_show(GTK_WIDGET(label));
+        gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(label), FALSE, FALSE, 0);
+      }
+      {
+        GtkEntry* entry = GTK_ENTRY(gtk_entry_new());
+        gtk_widget_show(GTK_WIDGET(entry));
+        gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(entry), TRUE, TRUE, 0);
+
+        gtk_widget_grab_focus(GTK_WIDGET(entry));
+
+        textentry = entry;
+      }
+    }
+    {
+      GtkVBox* vbox = create_dialog_vbox(4);
+      gtk_box_pack_start(GTK_BOX(hbox), GTK_WIDGET(vbox), FALSE, FALSE, 0);
+
+      {
+        GtkButton* button = create_modal_dialog_button("OK", ok_button);
+        gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(button), FALSE, FALSE, 0);
+        widget_make_default(GTK_WIDGET(button));
+        gtk_widget_add_accelerator(GTK_WIDGET(button), "clicked", accel_group, GDK_Return, (GdkModifierType)0, GTK_ACCEL_VISIBLE);
+      }
+      {
+        GtkButton* button = create_modal_dialog_button("Cancel", cancel_button);
+        gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(button), FALSE, FALSE, 0);
+        gtk_widget_add_accelerator(GTK_WIDGET(button), "clicked", accel_group, GDK_Escape, (GdkModifierType)0, GTK_ACCEL_VISIBLE);
+      }
+    }
+  }
+
+  EMessageBoxReturn ret = modal_dialog_show(window, dialog);
+  if(ret == eIDOK)
+  {
+    *tag = gtk_entry_get_text(textentry);
+  }
+
+  gtk_widget_destroy(GTK_WIDGET(window));
+
+  return ret;
+}
+
+EMessageBoxReturn DoShaderInfoDlg (const char* name, const char* filename, char* title)
+{
+  ModalDialog dialog;
+  ModalDialogButton ok_button(dialog, eIDOK);
+
+  GtkWindow* window = create_modal_dialog_window(MainFrame_getWindow(), title, dialog, -1, -1);
+
+  GtkAccelGroup *accel_group = gtk_accel_group_new();
+  gtk_window_add_accel_group(window, accel_group);
+
+  {
+    GtkHBox* hbox = create_dialog_hbox(4, 4);
+    gtk_container_add(GTK_CONTAINER(window), GTK_WIDGET(hbox));
+    {
+      GtkVBox* vbox = create_dialog_vbox(4);
+      gtk_box_pack_start(GTK_BOX(hbox), GTK_WIDGET(vbox), FALSE, FALSE, 0);
+      {
+        GtkLabel* label = GTK_LABEL(gtk_label_new("The selected shader"));
+        gtk_widget_show(GTK_WIDGET(label));
+        gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(label), FALSE, FALSE, 0);
+      }
+      {
+        GtkLabel* label = GTK_LABEL(gtk_label_new(name));
+        gtk_widget_show(GTK_WIDGET(label));
+        gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(label), FALSE, FALSE, 0);
+      }
+      {
+        GtkLabel* label = GTK_LABEL(gtk_label_new("is located in file"));
+        gtk_widget_show(GTK_WIDGET(label));
+        gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(label), FALSE, FALSE, 0);
+      }
+      {
+        GtkLabel* label = GTK_LABEL(gtk_label_new(filename));
+        gtk_widget_show(GTK_WIDGET(label));
+        gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(label), FALSE, FALSE, 0);
+      }
+      {
+        GtkButton* button = create_modal_dialog_button("OK", ok_button);
+        gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(button), FALSE, FALSE, 0);
+        widget_make_default(GTK_WIDGET(button));
+        gtk_widget_add_accelerator(GTK_WIDGET(button), "clicked", accel_group, GDK_Return, (GdkModifierType)0, GTK_ACCEL_VISIBLE);
+      }
+    }
+  }
+
+  EMessageBoxReturn ret = modal_dialog_show(window, dialog);
+
+  gtk_widget_destroy(GTK_WIDGET(window));
+
+  return ret;
+}
+
 
 
 #ifdef WIN32

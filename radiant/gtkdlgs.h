@@ -32,14 +32,16 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define INCLUDED_GTKDLGS_H
 
 #include "qerplugin.h"
+#include "string/string.h"
 
 EMessageBoxReturn DoLightIntensityDlg (int *intensity);
+EMessageBoxReturn DoShaderTagDlg (CopiedString *tag, char* title);
+EMessageBoxReturn DoShaderInfoDlg (const char* name, const char* filename, char* title);
 EMessageBoxReturn DoTextureLayout (float *fx, float *fy);
 void DoTextEditor (const char* filename, int cursorpos);
 
 void DoProjectSettings();
 
-void DoTextureListDlg();
 void DoFind();
 void DoSides(int type, int axis);
 void DoAbout();

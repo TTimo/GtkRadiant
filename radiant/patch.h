@@ -116,7 +116,7 @@ struct BezierCurve
   Vector3 right;
 };
 
-const std::size_t BEZIERCURVETREE_MAX_INDEX = std::numeric_limits<unsigned int>::max() / 2 + 1;
+const std::size_t BEZIERCURVETREE_MAX_INDEX = std::size_t(1) << (std::numeric_limits<std::size_t>::digits - 1);
 
 struct BezierCurveTree
 {

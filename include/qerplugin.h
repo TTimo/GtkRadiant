@@ -118,6 +118,7 @@ struct _QERFuncTable_1
   STRING_CONSTANT(Name, "radiant");
 
   const char* (*getEnginePath)();
+  const char* (*getLocalRcPath)();
   const char* (*getGameToolsPath)();
   const char* (*getAppPath)();
   const char* (*getSettingsPath)();

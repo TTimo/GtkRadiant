@@ -5,6 +5,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "entityq3", "plugins\entity\
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GtkRadiant", "radiant\GtkRadiant.vcproj", "{8E70385C-223A-4DD1-9B99-28FF2331A2B5}"
 	ProjectSection(ProjectDependencies) = postProject
+		{1C785349-866D-447D-8C55-8A51E5CA0E87} = {1C785349-866D-447D-8C55-8A51E5CA0E87}
 		{68E2C6B6-96CA-4BBD-A485-FEE6F2E65407} = {68E2C6B6-96CA-4BBD-A485-FEE6F2E65407}
 		{8845C5C1-4154-425F-8643-447FADC03449} = {8845C5C1-4154-425F-8643-447FADC03449}
 		{8845C5C1-4154-425F-8643-447FADC03449} = {8845C5C1-4154-425F-8643-447FADC03449}
@@ -158,6 +159,11 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "brushexport", "contrib\brus
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "shaderplug", "contrib\shaderplug\shaderplug.vcproj", "{46B36F0C-5E17-458E-AE6F-AECE52F66EDE}"
+	ProjectSection(ProjectDependencies) = postProject
+		{1C785349-866D-447D-8C55-8A51E5CA0E87} = {1C785349-866D-447D-8C55-8A51E5CA0E87}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfiguration) = preSolution
 		Debug = Debug
@@ -292,6 +298,10 @@ Global
 		{46B36F0C-5E17-458E-AE6F-AECE52F66EDF}.Debug.Build.0 = Debug|Win32
 		{46B36F0C-5E17-458E-AE6F-AECE52F66EDF}.Release.ActiveCfg = Release|Win32
 		{46B36F0C-5E17-458E-AE6F-AECE52F66EDF}.Release.Build.0 = Release|Win32
+		{46B36F0C-5E17-458E-AE6F-AECE52F66EDE}.Debug.ActiveCfg = Debug|Win32
+		{46B36F0C-5E17-458E-AE6F-AECE52F66EDE}.Debug.Build.0 = Debug|Win32
+		{46B36F0C-5E17-458E-AE6F-AECE52F66EDE}.Release.ActiveCfg = Release|Win32
+		{46B36F0C-5E17-458E-AE6F-AECE52F66EDE}.Release.Build.0 = Release|Win32
 		{46B36F0C-5E17-458E-AE6F-AECE52F66EDE}.Debug.ActiveCfg = Debug|Win32
 		{46B36F0C-5E17-458E-AE6F-AECE52F66EDE}.Debug.Build.0 = Debug|Win32
 		{46B36F0C-5E17-458E-AE6F-AECE52F66EDE}.Release.ActiveCfg = Release|Win32

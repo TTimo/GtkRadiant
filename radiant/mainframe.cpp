@@ -339,6 +339,19 @@ const char* AppPath_get()
   return g_strAppPath.c_str();
 }
 
+/// the path to the local rc-dir
+const char* LocalRcPath_get(void)
+{
+  static CopiedString rc_path;
+  if(rc_path.empty())
+  {
+    StringOutputStream stream(256);
+	stream << GlobalRadiant().getSettingsPath() << g_pGameDescription->mGameFile.c_str() << "/";
+	rc_path = stream.c_str();
+  }
+  return rc_path.c_str();
+}
+
 /// directory for temp files
 /// NOTE: on *nix this is were we check for .pid
 CopiedString g_strSettingsPath;
@@ -2018,7 +2031,7 @@ GtkMenuItem* create_view_menu(MainFrame::EViewStyle style)
   if(style == MainFrame::eFloating || style == MainFrame::eSplit)
   {
     create_menu_item_with_mnemonic(menu, "Console View", "ToggleConsole");
-    create_menu_item_with_mnemonic(menu, "Texture Browser", "ViewTextures");
+    create_menu_item_with_mnemonic(menu, "Texture Browser", "ToggleTextures");
     create_menu_item_with_mnemonic(menu, "Entity Inspector", "ToggleEntityInspector");
   }
   else
@@ -2183,44 +2196,6 @@ GtkMenuItem* create_grid_menu()
   return grid_menu_item;
 }
 
-void RefreshShaders()
-{
-  ScopeDisableScreenUpdates disableScreenUpdates("Processing...", "Loading Shaders");
-  GlobalShaderSystem().refresh();
-  UpdateAllWindows();
-}
-
-
-GtkMenuItem* create_textures_menu()
-{
-  // Textures menu
-  GtkMenuItem* textures_menu_item = new_sub_menu_item_with_mnemonic("_Textures");
-  GtkMenu* menu = GTK_MENU(gtk_menu_item_get_submenu(textures_menu_item));
-  g_textures_menu = menu;
-  if (g_Layout_enableDetachableMenus.m_value)
-    menu_tearoff (menu);
-
-  create_check_menu_item_with_mnemonic(menu, "Hide _Unused", "ShowInUse");
-  create_menu_item_with_mnemonic(menu, "Show All", "ShowAllTextures");
-
-  menu_separator(menu);
-  create_check_menu_item_with_mnemonic(menu, "Show shaders", "ToggleShowShaders");
-  create_menu_item_with_mnemonic(menu, "Flush & Reload Shaders", "RefreshShaders");
-  create_menu_item_with_mnemonic(menu, "Directory list...", "TextureDirectoryList");
-  menu_separator(menu);
-
-  create_menu_item_with_mnemonic(menu, "Find / Replace...", "FindReplaceTextures");
-
-
-  menu_separator(menu);
-  create_check_menu_item_with_mnemonic (menu, "Shaders Only", "ToggleShowShaderlistOnly");
-  g_textures_menu_separator = menu_separator(menu);
-
-  TextureGroupsMenu_Construct();
-
-  return textures_menu_item;
-}
-
 GtkMenuItem* create_misc_menu()
 {
   // Misc menu
@@ -2315,7 +2290,6 @@ GtkMenuBar* create_main_menu(MainFrame::EViewStyle style)
   gtk_container_add(GTK_CONTAINER(menu_bar), GTK_WIDGET(create_selection_menu()));
   gtk_container_add(GTK_CONTAINER(menu_bar), GTK_WIDGET(create_bsp_menu()));
   gtk_container_add(GTK_CONTAINER(menu_bar), GTK_WIDGET(create_grid_menu()));
-  gtk_container_add(GTK_CONTAINER(menu_bar), GTK_WIDGET(create_textures_menu()));
   gtk_container_add(GTK_CONTAINER(menu_bar), GTK_WIDGET(create_misc_menu()));
   gtk_container_add(GTK_CONTAINER(menu_bar), GTK_WIDGET(create_entity_menu()));
   gtk_container_add(GTK_CONTAINER(menu_bar), GTK_WIDGET(create_brush_menu()));
@@ -2506,6 +2480,21 @@ GtkToolbar* create_main_toolbar(MainFrame::EViewStyle style)
   gtk_toolbar_append_space (GTK_TOOLBAR (toolbar));
 
   toolbar_append_toggle_button(toolbar, "Texture Lock", "texture_lock.bmp", "TogTexLock");
+
+  gtk_toolbar_append_space (GTK_TOOLBAR (toolbar));
+
+  GtkButton* g_view_entities_button = toolbar_append_button(toolbar, "Entities", "entities.bmp", "ToggleEntityInspector");
+  GtkButton* g_view_console_button = toolbar_append_button(toolbar, "Console", "console.bmp", "ToggleConsole");
+  GtkButton* g_view_textures_button = toolbar_append_button(toolbar, "Texture Browser", "texture_browser.bmp", "ToggleTextures");
+  // TODO: call light inspector
+  //GtkButton* g_view_lightinspector_button = toolbar_append_button(toolbar, "Light Inspector", "lightinspector.bmp", "ToggleLightInspector");
+
+  // disable the console and texture button in the regular layouts
+  if(style == MainFrame::eRegular || style == MainFrame::eRegularLeft)
+  {
+    gtk_widget_set_sensitive(GTK_WIDGET(g_view_console_button), FALSE);
+	gtk_widget_set_sensitive(GTK_WIDGET(g_view_textures_button), FALSE);
+  }
 
   return toolbar;
 }
@@ -2980,7 +2969,6 @@ void MainFrame::Create()
           GtkFrame* texture_window = create_framed_widget(TextureBrowser_constructWindow(window));
 
           gtk_paned_add2(GTK_PANED(vsplit2), GTK_WIDGET(texture_window));
-         
         }
       }
     }
@@ -3163,8 +3151,6 @@ void MainFrame::Shutdown()
   EverySecondTimer_disable();
 
   EntityList_destroyWindow();
-
-  g_textures_menu = 0;
 
   delete m_pXYWnd;
   m_pXYWnd = 0;
@@ -3419,10 +3405,6 @@ void MainFrame_Construct()
   GlobalCommands_insert("CSGSubtract", FreeCaller<CSG_Subtract>(), Accelerator('U', (GdkModifierType)GDK_SHIFT_MASK));
   GlobalCommands_insert("CSGMerge", FreeCaller<CSG_Merge>(), Accelerator('U', (GdkModifierType)GDK_CONTROL_MASK));
   GlobalCommands_insert("CSGHollow", FreeCaller<CSG_MakeHollow>());
-
-  GlobalCommands_insert("TextureDirectoryList", FreeCaller<DoTextureListDlg>());
-
-  GlobalCommands_insert("RefreshShaders", FreeCaller<RefreshShaders>());
 
   Grid_registerCommands();
 

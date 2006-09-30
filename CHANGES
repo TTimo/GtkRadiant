@@ -1,6 +1,19 @@
 This is the changelog for developers, != changelog for the end user 
 that we distribute with the binaries. (see changelog)
 
+30/09/2006
+namespace
+- Added LocalLcPath to plugin interface
+- Added enhanced Texturebrowser (ETB) by Shaderman
+- Added shaderplug by Shaderman, accompanies the ETB
+- Added xmltagging lib by Shaderman, accompanies the ETB
+- Added new icons for ETB, Console, Entityinspector and Lighteditor
+- Fixed minor warning in Sunplug Project
+- Fixed PATH_MAX namecollision in ptrview plugin on Linux
+- Final fix for 64 bit patch.h issue
+
+
+
 12/09/2006
 namespace
 - Fixed 64 Bit issue in patch.h, see http://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=1109

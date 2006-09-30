@@ -16,6 +16,12 @@ def build_list(s_prefix, s_string):
 
 cmdlib_lib = g_env.StaticLibrary(target='libs/cmdlib', source='libs/cmdlib/cmdlib.cpp')
 
+xml_env = g_env.Copy()
+xml_env.Prepend(CPPPATH = 'include')
+xml_env.Append(CXXFLAGS='`pkg-config glib-2.0 --cflags` `xml2-config --cflags`')
+xml_src = 'ixml.cpp xmlparser.cpp xmlwriter.cpp xmlelement.cpp xmltextags.cpp'
+xml_lib = xml_env.StaticLibrary(target='libs/xmllib', source=build_list('libs/xml', xml_src))
+
 mathlib_src = 'mathlib.c bbox.c line.c m4x4.c ray.c'
 mathlib_lib = g_env.StaticLibrary(target='libs/mathlib', source=build_list('libs/mathlib', mathlib_src))
 
@@ -488,6 +494,14 @@ sunplug_env.useGtk2()
 sunplug_lib = sunplug_env.SharedLibrarySafe(target='sunplug', source=sunplug_lst, LIBPATH='libs')
 sunplug_env.Install(INSTALL + '/plugins', sunplug_lib)
 
+shaderplug_env = module_env.Copy()
+shaderplug_lst = build_list('contrib/shaderplug', 'shaderplug.cpp')
+shaderplug_env.useGlib2()
+shaderplug_env.useGtk2()
+shaderplug_env.useXML2()
+shaderplug_lib = shaderplug_env.SharedLibrarySafe(target='shaderplug', source=shaderplug_lst,  LIBS='xmllib', LIBPATH='libs')
+shaderplug_env.Install(INSTALL + '/plugins', shaderplug_lib)
+
 #gensurf_lst = build_list('contrib/gtkgensurf',
 #'bitmap.cpp dec.cpp face.cpp font.cpp gendlgs.cpp genmap.cpp gensurf.cpp heretic.cpp plugin.cpp view.cpp triangle.c')
 #bob_env.SharedLibrarySafe(target='gensurf', source=gensurf_lst)
@@ -599,13 +613,14 @@ radiant_src = [
 for i in range(len(radiant_src)):
   radiant_src[i] = 'radiant/' + radiant_src[i]
 
-radiant_libs = ['mathlib', 'cmdlib', 'l_net', 'profile', 'gtkutil']
+radiant_libs = ['mathlib', 'cmdlib', 'l_net', 'profile', 'gtkutil', 'xmllib']
 radiant_prog = radiant_env.Program(target='radiant.' + g_cpu, source=radiant_src, LIBS=radiant_libs, LIBPATH='libs')
 radiant_env.Depends(radiant_prog, mathlib_lib)
 radiant_env.Depends(radiant_prog, cmdlib_lib)
 radiant_env.Depends(radiant_prog, l_net_lib)
 radiant_env.Depends(radiant_prog, profile_lib)
 radiant_env.Depends(radiant_prog, gtkutil_lib)
+radiant_env.Depends(radiant_prog, xml_lib)
 radiant_env.Install(INSTALL, radiant_prog)
 
 
