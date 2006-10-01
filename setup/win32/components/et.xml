@@ -6,6 +6,7 @@
   <dir name="et.game">
     <file name="game.xlink"/>
     <file name="default_build_menu.xml"/>
+    <file name="shadertags.xml"/>
     <dir name="bitmaps">
       <file name="splash.bmp"/>
     </dir>

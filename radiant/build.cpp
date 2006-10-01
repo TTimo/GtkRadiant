@@ -606,7 +606,7 @@ bool build_commands_parse(const char* filename)
 
       return true;
     }
-    globalErrorStream() << "failed to parse build menu: " << makeQuoted(filename);
+    globalErrorStream() << "failed to parse build menu: " << makeQuoted(filename) << "\n";
   }
   return false;
 }

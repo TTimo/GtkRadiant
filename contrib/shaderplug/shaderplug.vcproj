@@ -54,7 +54,8 @@
 				Name="VCMIDLTool"/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="copy &quot;$(TargetPath)&quot; &quot;$(SolutionDir)install\plugins&quot;"/>
+				CommandLine="copy &quot;$(TargetPath)&quot; &quot;$(SolutionDir)install\plugins&quot;
+				copy &quot;$(TargetDir)$(TargetName).pdb&quot; &quot;$(SolutionDir)install\plugins&quot;"/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
 			<Tool
@@ -121,7 +122,8 @@
 				Name="VCMIDLTool"/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="copy &quot;$(TargetPath)&quot; &quot;$(SolutionDir)install\plugins&quot;"/>
+				CommandLine="copy &quot;$(TargetPath)&quot; &quot;$(SolutionDir)install\plugins&quot;
+				copy &quot;$(TargetDir)$(TargetName).pdb&quot; &quot;$(SolutionDir)install\plugins&quot;"/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
 			<Tool

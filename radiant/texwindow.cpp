@@ -1847,44 +1847,42 @@ GtkWidget* TextureBrowser_constructTagToolbar()
 void TextureBrowser_checkTagFile()
 {
   const char SHADERTAG_FILE[] = "shadertags.xml";
-  CopiedString filename;
+  CopiedString default_filename, rc_filename;
   StringOutputStream stream(256);
 
   stream << LocalRcPath_get();
   stream << SHADERTAG_FILE;
-  filename = stream.c_str();
+  rc_filename = stream.c_str();
 
-  if(file_exists(filename.c_str()))
+  if(file_exists(rc_filename.c_str()))
   {
-    g_TextureBrowser.m_tags = TagBuilder.OpenXmlDoc(filename.c_str());
+    g_TextureBrowser.m_tags = TagBuilder.OpenXmlDoc(rc_filename.c_str());
 
     if(g_TextureBrowser.m_tags)
     {
-      globalOutputStream() << "Loading tag file " << filename.c_str() << ".\n";
+      globalOutputStream() << "Loading tag file " << rc_filename.c_str() << ".\n";
     }
   }
   else
   {
-    // default tagfile laden
+    // load default tagfile
 	stream.clear();
     stream << g_pGameDescription->mGameToolsPath.c_str();
     stream << SHADERTAG_FILE;
-    filename = stream.c_str();
+    default_filename = stream.c_str();
 
-    globalErrorStream() << filename.c_str() << "\n";
-
-    if(file_exists(filename.c_str()))
+    if(file_exists(default_filename.c_str()))
     {
-      g_TextureBrowser.m_tags = TagBuilder.OpenXmlDoc(filename.c_str());
+      g_TextureBrowser.m_tags = TagBuilder.OpenXmlDoc(default_filename.c_str(), rc_filename.c_str());
       
       if(g_TextureBrowser.m_tags)
       {
-        globalOutputStream() << "Loading default tag file " << filename.c_str() << ".\n";
+        globalOutputStream() << "Loading default tag file " << default_filename.c_str() << ".\n";
       }
     }
     else
     {
-      globalErrorStream() << "Unable to find default tag file " << filename.c_str() << ". No tag support.\n";
+      globalErrorStream() << "Unable to find default tag file " << default_filename.c_str() << ". No tag support.\n";
     }
   }
 }

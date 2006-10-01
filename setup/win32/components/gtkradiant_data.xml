@@ -13,13 +13,16 @@
     <file name="cap_ibevel.bmp"/>
     <file name="cap_iendcap.bmp"/>
     <file name="cap_cylinder.bmp"/>
+    <file name="console.bmp"/>
     <file name="curve_cap.bmp"/>
     <file name="dontselectcurve.bmp"/>
     <file name="dontselectmodel.bmp"/>
     <file name="ellipsis.bmp"/>
+    <file name="entities.bmp"/>
     <file name="file_open.bmp"/>
     <file name="file_save.bmp"/>
     <file name="icon.bmp"/>
+    <file name="lightinspector.bmp"/>
     <file name="logo.bmp"/>
     <file name="modify_edges.bmp"/>
     <file name="modify_faces.bmp"/>
@@ -47,6 +50,7 @@
     <file name="select_mouseresize.bmp"/>
     <file name="show_entities.bmp"/>
     <file name="splash.bmp"/>
+    <file name="texture_browser.bmp"/>
     <file name="texture_lock.bmp"/>
     <file name="textures_popup.bmp"/>
     <file name="view_cameratoggle.bmp"/>

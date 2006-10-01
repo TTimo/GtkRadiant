@@ -77,14 +77,18 @@ bool XmlTagBuilder::CreateXmlDocument()
   }
 }
 
-bool XmlTagBuilder::OpenXmlDoc(const char* file)
+bool XmlTagBuilder::OpenXmlDoc(const char* file, const char* savefile)
 {
   /* Reads a XML document from a file
 
      returns TRUE if the document was read successfully or FALSE when failed
   */
 
-  filename = file;
+  if(savefile)
+    m_savefilename = savefile;
+  else
+    m_savefilename = file;
+    
   doc = xmlParseFile(file);	// TODO error checking!
 
   if(!doc)
@@ -98,7 +102,7 @@ bool XmlTagBuilder::OpenXmlDoc(const char* file)
 
 bool XmlTagBuilder::SaveXmlDoc(void)
 {
-	return SaveXmlDoc(filename.c_str());
+	return SaveXmlDoc(m_savefilename.c_str());
 }
 
 bool XmlTagBuilder::SaveXmlDoc(const char* file)

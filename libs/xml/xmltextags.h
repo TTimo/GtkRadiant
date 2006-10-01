@@ -52,7 +52,7 @@ enum TextureType
 class XmlTagBuilder
 {
 private:
-  CopiedString filename;
+  CopiedString m_savefilename;
   xmlDocPtr doc;
   xmlXPathContextPtr context;
   xmlNodeSetPtr nodePtr;
@@ -86,7 +86,7 @@ public:
   ~XmlTagBuilder();
 
   bool CreateXmlDocument();
-  bool OpenXmlDoc(const char* file);
+  bool OpenXmlDoc(const char* file, const char* savefile = 0);
   bool SaveXmlDoc(const char* file);
   bool SaveXmlDoc(void);
   bool AddShaderNode(const char* shader, TextureType textureType, NodeShaderType nodeShaderType);

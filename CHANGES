@@ -3,6 +3,12 @@ that we distribute with the binaries. (see changelog)
 
 30/09/2006
 namespace
+- Fixed Etb saving custom tags to global tagfile (Shaderman/namespace)
+- Fixed postbuild step for brushexport, shaderplug and sunplug (Shaderman)
+- Added installersupport for new files and plugins (Shaderman)
+
+30/09/2006
+namespace
 - Added LocalLcPath to plugin interface
 - Added enhanced Texturebrowser (ETB) by Shaderman
 - Added shaderplug by Shaderman, accompanies the ETB
