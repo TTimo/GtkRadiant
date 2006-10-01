@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<component>
+  <dir name="games">
+    <file name="nexuiz.game"/>
+  </dir>
+  <dir name="nexuiz.game">
+    <file name="default_build_menu.xml"/>
+    <file name="game.xlink"/>
+    <dir name="data">
+      <file name="entities.def"/>
+      <file name="default_shaderlist.txt"/>
+    </dir>
+  </dir>
+</component>

@@ -1,0 +1,6 @@
+<component name="sunplug">
+  <dir name="plugins">
+    <file name="sunplug.dll"/>
+    <file name="sunplug.pdb"/>
+  </dir>
+</component>

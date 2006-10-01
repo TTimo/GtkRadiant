@@ -1,6 +1,10 @@
 This is the changelog for developers, != changelog for the end user 
 that we distribute with the binaries. (see changelog)
 
+01/10/2006
+namespace
+- Added missing xml files for win32 installer
+
 30/09/2006
 namespace
 - Fixed Etb saving custom tags to global tagfile (Shaderman/namespace)

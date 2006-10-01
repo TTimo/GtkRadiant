@@ -1,0 +1,6 @@
+<component name="brushexport">
+  <dir name="plugins">
+    <file name="brushexport.dll"/>
+    <file name="brushexport.pdb"/>
+  </dir>
+</component>
