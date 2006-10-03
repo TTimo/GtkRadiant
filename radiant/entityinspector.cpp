@@ -277,7 +277,7 @@ public:
   typedef MemberCaller<ModelAttribute, &ModelAttribute::update> UpdateCaller;
   void browse(const BrowsedPathEntry::SetPathCallback& setPath)
   {
-    const char *filename = misc_model_dialog(GTK_WIDGET(m_entry.m_entry.m_frame));
+    const char *filename = misc_model_dialog(gtk_widget_get_toplevel(GTK_WIDGET(m_entry.m_entry.m_frame)));
     
     if(filename != 0)
     {
