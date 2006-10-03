@@ -231,6 +231,8 @@ public:
   GtkWidget* m_available_tree;
   GtkWidget* m_scr_win_tree;
   GtkWidget* m_scr_win_tags;
+  GtkWidget* m_tag_notebook;
+  GtkWidget* m_search_button;
   GtkWidget* m_shader_info_item;
 
   std::set<CopiedString> m_all_tags;
@@ -265,7 +267,6 @@ public:
   bool m_rmbSelected;
   bool m_searchedTags;
   bool m_tags;
-  bool m_showTags;
 
   TextureBrowser() :
     m_texture_scroll(0),
@@ -284,8 +285,7 @@ public:
 	m_hideUnused(false),
 	m_rmbSelected(false),
 	m_searchedTags(false),
-	m_tags(false),
-	m_showTags(false)
+	m_tags(false)
   {
   }
 };
@@ -1530,10 +1530,59 @@ void TextureBrowser_createTreeViewTree()
   TextureBrowser_constructTreeStore();
 }
 
+void TextureBrowser_addTag();
+void TextureBrowser_renameTag();
+void TextureBrowser_deleteTag();
+
+void TextureBrowser_createContextMenu(GtkWidget *treeview, GdkEventButton *event)
+{
+  GtkWidget* menu = gtk_menu_new();
+
+  GtkWidget* menuitem = gtk_menu_item_new_with_label("Add tag");
+  g_signal_connect(menuitem, "activate", (GCallback)TextureBrowser_addTag, treeview);
+  gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
+
+  menuitem = gtk_menu_item_new_with_label("Rename tag");
+  g_signal_connect(menuitem, "activate", (GCallback)TextureBrowser_renameTag, treeview);
+  gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
+
+  menuitem = gtk_menu_item_new_with_label("Delete tag");
+  g_signal_connect(menuitem, "activate", (GCallback)TextureBrowser_deleteTag, treeview);
+  gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
+
+  gtk_widget_show_all(menu);
+
+  gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL,
+      (event != NULL) ? event->button : 0,
+      gdk_event_get_time((GdkEvent*)event));
+}
+
+gboolean TreeViewTags_onButtonPressed(GtkWidget *treeview, GdkEventButton *event)
+{
+  if (event->type == GDK_BUTTON_PRESS && event->button == 3)
+  {
+    GtkTreePath *path;
+    GtkTreeSelection* selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(treeview));
+
+    if(gtk_tree_view_get_path_at_pos(GTK_TREE_VIEW(treeview), event->x, event->y, &path, NULL, NULL, NULL))
+    {
+      gtk_tree_selection_unselect_all(selection);
+      gtk_tree_selection_select_path(selection, path);
+      gtk_tree_path_free(path);
+    }
+
+    TextureBrowser_createContextMenu(treeview, event);
+    return TRUE;
+  }
+  return FALSE;
+}
+
 void TextureBrowser_createTreeViewTags()
 {
   GtkCellRenderer* renderer;
   g_TextureBrowser.m_treeViewTags = GTK_WIDGET(gtk_tree_view_new());
+
+  g_signal_connect(GTK_TREE_VIEW(g_TextureBrowser.m_treeViewTags), "button-press-event", (GCallback)TreeViewTags_onButtonPressed, NULL);
 
   gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(g_TextureBrowser.m_treeViewTags), FALSE);
 
@@ -1730,19 +1779,6 @@ void TextureBrowser_buildTagList()
   }
 }
 
-void toggle_tags_textures()
-{
-  if(g_TextureBrowser.m_showTags)
-  {
-    gtk_widget_hide(GTK_WIDGET(g_TextureBrowser.m_scr_win_tags));
-    gtk_widget_show(GTK_WIDGET(g_TextureBrowser.m_scr_win_tree));
-  } else {
-    gtk_widget_hide(GTK_WIDGET(g_TextureBrowser.m_scr_win_tree));
-    gtk_widget_show(GTK_WIDGET(g_TextureBrowser.m_scr_win_tags));
-  }
-  g_TextureBrowser.m_showTags ^= 1;
-}
-
 void TextureBrowser_searchTags()
 {
   GSList* selected = NULL;
@@ -1820,29 +1856,42 @@ void TextureBrowser_searchTags()
   g_slist_free(selected);
 }
 
-GtkWidget* TextureBrowser_constructTagToolbar()
+void TextureBrowser_toggleSearchButton()
 {
-  GtkWidget* toolbar = gtk_toolbar_new();
-  GtkTooltips* toolbar_tips = gtk_tooltips_new();
+  gint page = gtk_notebook_get_current_page(GTK_NOTEBOOK(g_TextureBrowser.m_tag_notebook));
 
-  GtkWidget* image = gtk_image_new_from_stock(GTK_STOCK_FIND, GTK_ICON_SIZE_SMALL_TOOLBAR);
-  GtkWidget* button = gtk_button_new();
-  g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(TextureBrowser_searchTags), NULL);
-  gtk_tooltips_set_tip(GTK_TOOLTIPS(toolbar_tips), button, "Search with selected tags", "Search with selected tags");
-  gtk_container_add(GTK_CONTAINER(button), image);
-  gtk_container_add(GTK_CONTAINER(toolbar), button);
-  gtk_widget_show_all(button);
-
-  image = gtk_image_new_from_stock(GTK_STOCK_INDEX, GTK_ICON_SIZE_SMALL_TOOLBAR);
-  button = gtk_toggle_button_new();
-  g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(toggle_tags_textures), NULL);
-  gtk_tooltips_set_tip(GTK_TOOLTIPS(toolbar_tips), button, "Toggle tag/texture view", "Toggle tag/texture view");
-  gtk_container_add(GTK_CONTAINER(button), image);
-  gtk_container_add(GTK_CONTAINER(toolbar), button);
-  gtk_widget_show_all(button);
-  return toolbar;
+  if(page == 0) // tag page
+  {
+    gtk_widget_show_all(g_TextureBrowser.m_search_button);
+  } else {
+    gtk_widget_hide_all(g_TextureBrowser.m_search_button);
+  }
 }
 
+void TextureBrowser_constructTagNotebook()
+{
+  g_TextureBrowser.m_tag_notebook = gtk_notebook_new();
+  GtkWidget* labelTags = gtk_label_new("Tags");
+  GtkWidget* labelTextures = gtk_label_new("Textures");
+
+  gtk_notebook_append_page(GTK_NOTEBOOK(g_TextureBrowser.m_tag_notebook), g_TextureBrowser.m_scr_win_tree, labelTextures);
+  gtk_notebook_append_page(GTK_NOTEBOOK(g_TextureBrowser.m_tag_notebook), g_TextureBrowser.m_scr_win_tags, labelTags);
+
+  g_signal_connect(G_OBJECT(g_TextureBrowser.m_tag_notebook), "switch-page", G_CALLBACK(TextureBrowser_toggleSearchButton), NULL);
+
+  gtk_widget_show_all(g_TextureBrowser.m_tag_notebook);
+}
+
+void TextureBrowser_constructSearchButton()
+{
+  GtkTooltips* tooltips = gtk_tooltips_new();
+
+  GtkWidget* image = gtk_image_new_from_stock(GTK_STOCK_FIND, GTK_ICON_SIZE_SMALL_TOOLBAR);
+  g_TextureBrowser.m_search_button = gtk_button_new();
+  g_signal_connect(G_OBJECT(g_TextureBrowser.m_search_button), "clicked", G_CALLBACK(TextureBrowser_searchTags), NULL);
+  gtk_tooltips_set_tip(GTK_TOOLTIPS(tooltips), g_TextureBrowser.m_search_button, "Search with selected tags", "Search with selected tags");
+  gtk_container_add(GTK_CONTAINER(g_TextureBrowser.m_search_button), image);
+}
 
 void TextureBrowser_checkTagFile()
 {
@@ -1896,16 +1945,6 @@ GtkWidget* TextureBrowser_constructWindow(GtkWindow* toplevel)
 
   TextureBrowser_checkTagFile();
 
-  if(g_TextureBrowser.m_tags)
-  {
-    g_TextureBrowser.m_all_tags_list = gtk_list_store_new(N_COLUMNS, G_TYPE_STRING);
-    GtkTreeSortable* sortable = GTK_TREE_SORTABLE(g_TextureBrowser.m_all_tags_list);
-    gtk_tree_sortable_set_sort_column_id(sortable, TAG_COLUMN, GTK_SORT_ASCENDING);
-
-    TagBuilder.GetAllTags(g_TextureBrowser.m_all_tags);
-    TextureBrowser_buildTagList();
-  }
-
   GlobalShaderSystem().setActiveShadersChangedNotify(ReferenceCaller<TextureBrowser, TextureBrowser_activeShadersChanged>(g_TextureBrowser));
 
   g_TextureBrowser.m_parent = toplevel;
@@ -1916,8 +1955,10 @@ GtkWidget* TextureBrowser_constructWindow(GtkWindow* toplevel)
   gtk_table_attach(GTK_TABLE(table), vbox, 0, 1, 1, 3, GTK_FILL, GTK_FILL, 0, 0);
   gtk_widget_show(vbox);
 
+  GtkWidget* menu_bar;
+
   { // menu bar
-    GtkWidget* menu_bar = gtk_menu_bar_new();
+    menu_bar = gtk_menu_bar_new();
     GtkWidget* menu_view = gtk_menu_new();
     GtkWidget* view_item = (GtkWidget*)TextureBrowser_constructViewMenu(GTK_MENU(menu_view));
     gtk_menu_item_set_submenu(GTK_MENU_ITEM(view_item), menu_view);
@@ -1928,25 +1969,22 @@ GtkWidget* TextureBrowser_constructWindow(GtkWindow* toplevel)
     gtk_menu_item_set_submenu(GTK_MENU_ITEM(tools_item), menu_tools);
     gtk_menu_bar_append(GTK_MENU_BAR(menu_bar), tools_item);
 
-	if(g_TextureBrowser.m_tags)
-	{
-      GtkWidget* menu_tags = gtk_menu_new();
-      GtkWidget* tags_item = (GtkWidget*)TextureBrowser_constructTagsMenu(GTK_MENU(menu_tags));
-      gtk_menu_item_set_submenu(GTK_MENU_ITEM(tags_item), menu_tags);
-      gtk_menu_bar_append(GTK_MENU_BAR(menu_bar), tags_item);
-	}
-
 	gtk_table_attach(GTK_TABLE (table), menu_bar, 0, 3, 0, 1, GTK_FILL, GTK_SHRINK, 0, 0);
 	gtk_widget_show(menu_bar);
   }
-  { // tag tool bar
-    if(g_TextureBrowser.m_tags)
-	{
-	  GtkWidget* toolbar = TextureBrowser_constructTagToolbar();
+  { // Texture TreeView
+	g_TextureBrowser.m_scr_win_tree = gtk_scrolled_window_new(NULL, NULL);
+	gtk_container_set_border_width(GTK_CONTAINER(g_TextureBrowser.m_scr_win_tree), 0);
 
-      gtk_box_pack_start(GTK_BOX(vbox), toolbar, FALSE, FALSE, 0);
-	  gtk_widget_show(toolbar);
-	}
+	// vertical only scrolling for treeview
+	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(g_TextureBrowser.m_scr_win_tree), GTK_POLICY_NEVER, GTK_POLICY_ALWAYS);
+
+	gtk_widget_show(g_TextureBrowser.m_scr_win_tree);
+
+	TextureBrowser_createTreeViewTree();
+
+	gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(g_TextureBrowser.m_scr_win_tree), GTK_WIDGET(g_TextureBrowser.m_treeViewTree));
+	gtk_widget_show(GTK_WIDGET(g_TextureBrowser.m_treeViewTree));
   }
   { // gl_widget scrollbar
 	GtkWidget* w = gtk_vscrollbar_new(GTK_ADJUSTMENT(gtk_adjustment_new (0,0,0,1,1,1)));
@@ -1958,41 +1996,6 @@ GtkWidget* TextureBrowser_constructWindow(GtkWindow* toplevel)
     g_signal_connect(G_OBJECT(vadjustment), "value_changed", G_CALLBACK(TextureBrowser_verticalScroll), &g_TextureBrowser);
 
     widget_set_visible(g_TextureBrowser.m_texture_scroll, g_TextureBrowser.m_showTextureScrollbar);
-  }
-  { // TreeView
-	g_TextureBrowser.m_scr_win_tree = gtk_scrolled_window_new(NULL, NULL);
-	gtk_container_set_border_width(GTK_CONTAINER(g_TextureBrowser.m_scr_win_tree), 0);
-
-	// vertical only scrolling for treeview
-	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(g_TextureBrowser.m_scr_win_tree), GTK_POLICY_NEVER, GTK_POLICY_ALWAYS);
-
-	gtk_box_pack_end(GTK_BOX(vbox), g_TextureBrowser.m_scr_win_tree, TRUE, TRUE, 0);
-	gtk_widget_show(g_TextureBrowser.m_scr_win_tree);
-
-	TextureBrowser_createTreeViewTree();
-
-	gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(g_TextureBrowser.m_scr_win_tree), GTK_WIDGET(g_TextureBrowser.m_treeViewTree));
-	gtk_widget_show(GTK_WIDGET(g_TextureBrowser.m_treeViewTree));
-  }
-  { // TreeView for tags
-    if(g_TextureBrowser.m_tags)
-	{
-	  g_TextureBrowser.m_scr_win_tags = gtk_scrolled_window_new(NULL, NULL);
-	  gtk_container_set_border_width(GTK_CONTAINER(g_TextureBrowser.m_scr_win_tags), 0);
-
-	  // vertical only scrolling for treeview
-	  gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(g_TextureBrowser.m_scr_win_tags), GTK_POLICY_NEVER, GTK_POLICY_ALWAYS);
-
-	  gtk_box_pack_end(GTK_BOX(vbox), g_TextureBrowser.m_scr_win_tags, TRUE, TRUE, 0);
-
-	  TextureBrowser_createTreeViewTags();
-
-      GtkTreeSelection* selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(g_TextureBrowser.m_treeViewTags));
-	  gtk_tree_selection_set_mode(selection, GTK_SELECTION_MULTIPLE);
-
-	  gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW (g_TextureBrowser.m_scr_win_tags), GTK_WIDGET (g_TextureBrowser.m_treeViewTags));
-	  gtk_widget_show(GTK_WIDGET(g_TextureBrowser.m_treeViewTags));
-	}
   }
   { // gl_widget
     g_TextureBrowser.m_gl_widget = glwidget_new(FALSE);
@@ -2012,9 +2015,48 @@ GtkWidget* TextureBrowser_constructWindow(GtkWindow* toplevel)
     g_signal_connect(G_OBJECT(g_TextureBrowser.m_gl_widget), "motion_notify_event", G_CALLBACK(TextureBrowser_motion), &g_TextureBrowser);
     g_signal_connect(G_OBJECT(g_TextureBrowser.m_gl_widget), "scroll_event", G_CALLBACK(TextureBrowser_scroll), &g_TextureBrowser);
   }
-  { // tag frame
-    if(g_TextureBrowser.m_tags)
-	{
+
+  // tag stuff
+  if(g_TextureBrowser.m_tags)
+  {
+    { // fill tag GtkListStore
+      g_TextureBrowser.m_all_tags_list = gtk_list_store_new(N_COLUMNS, G_TYPE_STRING);
+      GtkTreeSortable* sortable = GTK_TREE_SORTABLE(g_TextureBrowser.m_all_tags_list);
+      gtk_tree_sortable_set_sort_column_id(sortable, TAG_COLUMN, GTK_SORT_ASCENDING);
+
+      TagBuilder.GetAllTags(g_TextureBrowser.m_all_tags);
+      TextureBrowser_buildTagList();
+    }
+    { // tag menu bar
+      GtkWidget* menu_tags = gtk_menu_new();
+      GtkWidget* tags_item = (GtkWidget*)TextureBrowser_constructTagsMenu(GTK_MENU(menu_tags));
+      gtk_menu_item_set_submenu(GTK_MENU_ITEM(tags_item), menu_tags);
+      gtk_menu_bar_append(GTK_MENU_BAR(menu_bar), tags_item);
+    }
+    { // Tag TreeView
+	  g_TextureBrowser.m_scr_win_tags = gtk_scrolled_window_new(NULL, NULL);
+	  gtk_container_set_border_width(GTK_CONTAINER(g_TextureBrowser.m_scr_win_tags), 0);
+
+	  // vertical only scrolling for treeview
+	  gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(g_TextureBrowser.m_scr_win_tags), GTK_POLICY_NEVER, GTK_POLICY_ALWAYS);
+
+	  TextureBrowser_createTreeViewTags();
+
+      GtkTreeSelection* selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(g_TextureBrowser.m_treeViewTags));
+	  gtk_tree_selection_set_mode(selection, GTK_SELECTION_MULTIPLE);
+
+	  gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW (g_TextureBrowser.m_scr_win_tags), GTK_WIDGET (g_TextureBrowser.m_treeViewTags));
+	  gtk_widget_show(GTK_WIDGET(g_TextureBrowser.m_treeViewTags));
+	}
+    {  // Texture/Tag notebook
+      TextureBrowser_constructTagNotebook();
+      gtk_box_pack_start(GTK_BOX(vbox), g_TextureBrowser.m_tag_notebook, TRUE, TRUE, 0);
+    }
+    { // Tag search button
+      TextureBrowser_constructSearchButton();
+      gtk_box_pack_end(GTK_BOX(vbox), g_TextureBrowser.m_search_button, FALSE, FALSE, 0);
+    }
+    { // Tag frame
       frame_table = gtk_table_new(3, 3, FALSE);
 
 	  g_TextureBrowser.m_tag_frame = gtk_frame_new("Tag assignment");
@@ -2023,15 +2065,11 @@ GtkWidget* TextureBrowser_constructWindow(GtkWindow* toplevel)
 
 	  gtk_table_attach(GTK_TABLE(table), g_TextureBrowser.m_tag_frame, 1, 3, 2, 3, GTK_FILL, GTK_SHRINK, 0, 0);
 
-	  // set the size of the tag frame
 	  gtk_widget_show(frame_table);
 
 	  gtk_container_add (GTK_CONTAINER(g_TextureBrowser.m_tag_frame), frame_table);
-	}
-  }
-  {  // assigned tag list
-    if(g_TextureBrowser.m_tags)
-	{
+    }
+	{ // assigned tag list
 	  GtkWidget* scrolled_win = gtk_scrolled_window_new(NULL, NULL);
 	  gtk_container_set_border_width(GTK_CONTAINER (scrolled_win), 0);
 	  gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW (scrolled_win), GTK_POLICY_NEVER, GTK_POLICY_ALWAYS);
@@ -2060,10 +2098,7 @@ GtkWidget* TextureBrowser_constructWindow(GtkWindow* toplevel)
 
 	  gtk_table_attach(GTK_TABLE(frame_table), scrolled_win, 0, 1, 1, 3, GTK_FILL, GTK_FILL, 0, 0);
 	}
-  }
-  {  // available tag list
-    if(g_TextureBrowser.m_tags)
-	{
+	{ // available tag list
 	  GtkWidget* scrolled_win = gtk_scrolled_window_new (NULL, NULL);
 	  gtk_container_set_border_width (GTK_CONTAINER (scrolled_win), 0);
 	  gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolled_win), GTK_POLICY_NEVER, GTK_POLICY_ALWAYS);
@@ -2091,10 +2126,7 @@ GtkWidget* TextureBrowser_constructWindow(GtkWindow* toplevel)
 
 	  gtk_table_attach (GTK_TABLE (frame_table), scrolled_win, 2, 3, 1, 3, GTK_FILL, GTK_FILL, 0, 0);
 	}
-  }
-  { // arrow buttons
-    if(g_TextureBrowser.m_tags)
-	{
+	{ // tag arrow buttons
 	  GtkWidget* m_btn_left = gtk_button_new();
 	  GtkWidget* m_btn_right = gtk_button_new();
 	  GtkWidget* m_arrow_left = gtk_arrow_new(GTK_ARROW_LEFT, GTK_SHADOW_OUT);
@@ -2117,10 +2149,7 @@ GtkWidget* TextureBrowser_constructWindow(GtkWindow* toplevel)
 	  gtk_widget_show(m_arrow_left);
 	  gtk_widget_show(m_arrow_right);
 	}
-  }
-  { // tag frame labels
-    if(g_TextureBrowser.m_tags)
-	{
+	{ // tag fram labels
 	  GtkWidget* m_lbl_assigned = gtk_label_new ("Assigned");
 	  GtkWidget* m_lbl_unassigned = gtk_label_new ("Available");
 
@@ -2130,6 +2159,8 @@ GtkWidget* TextureBrowser_constructWindow(GtkWindow* toplevel)
 	  gtk_widget_show (m_lbl_assigned);
 	  gtk_widget_show (m_lbl_unassigned);
 	}
+  } else { // no tag support, show the texture tree only
+    gtk_box_pack_start(GTK_BOX(vbox), g_TextureBrowser.m_scr_win_tree, TRUE, TRUE, 0);
   }
 
   // TODO do we need this?

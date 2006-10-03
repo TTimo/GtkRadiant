@@ -1,6 +1,12 @@
 This is the changelog for developers, != changelog for the end user 
 that we distribute with the binaries. (see changelog)
 
+03/10/2006
+namespace
+- Changed ETB tag toolbar to a notebook with tag/texture pages (Shaderman)
+- Added a context menu (add/delete/rename tag) to the ETB tag tree view (Shaderman)
+- Added new win32 installer HOWTO (Shaderman/Topsun)
+
 01/10/2006
 namespace
 - Added missing xml files for win32 installer
