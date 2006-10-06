@@ -87,7 +87,6 @@ Editing: add option to choose the default startup tool mode.
 Renderer: lighting for doom3 materials without bumpmaps (e.g. mcity/mchangar2)
 Renderer: realtime doom3 materials preview
 Renderer: realtime doom3 shadows preview
-Renderer: add shortcut to toggle between lighting/textured modes.
 Linux: Provide .tar.gz of example-map data for et/wolf.
 Textures Window: add inner dark outline to distinguish 'is-shader' outline from white textures.
 HalfLife2: add HL2 map load/save.
@@ -109,7 +108,6 @@ Model: support doom3 ragdolls
 VFS: add ability to browse VFS from file-open dialogs.
 Installer: enable q3 brush-primitives map support.
 Installer: add editor manual to linux installer
-Textures: remove "shaders only" option for doom3
 Map: add conversion between map formats
 Map: add conversion between entity definition formats
 Build: add build-menu dmap support (doom3)

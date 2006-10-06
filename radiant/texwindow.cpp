@@ -1595,7 +1595,6 @@ void TextureBrowser_createTreeViewTags()
 GtkMenuItem* TextureBrowser_constructViewMenu(GtkMenu* menu)
 {
   GtkMenuItem* textures_menu_item = new_sub_menu_item_with_mnemonic("_View");
-  GtkWidget* separator = gtk_separator_menu_item_new();
 
   if(g_Layout_enableDetachableMenus.m_value)
     menu_tearoff (menu);
@@ -1603,8 +1602,8 @@ GtkMenuItem* TextureBrowser_constructViewMenu(GtkMenu* menu)
   create_check_menu_item_with_mnemonic(menu, "Hide _Unused", "ShowInUse");
   create_menu_item_with_mnemonic(menu, "Show All", "ShowAllTextures");
 
-  // we always want to show shaders but don't want a "Show Shaders" menu for doom3 games 
-  if(string_equal(g_pGameDescription->getRequiredKeyValue("shaders"), "doom3"))
+  // we always want to show shaders but don't want a "Show Shaders" menu for doom3 and .wad file games
+  if(g_pGameDescription->mGameType == "doom3" || !string_empty(g_pGameDescription->getKeyValue("show_wads")))
   {
     g_TextureBrowser.m_showShaders = true;
   }
@@ -1613,16 +1612,21 @@ GtkMenuItem* TextureBrowser_constructViewMenu(GtkMenu* menu)
     create_check_menu_item_with_mnemonic(menu, "Show shaders", "ToggleShowShaders");
   }
 
-  create_check_menu_item_with_mnemonic (menu, "Shaders Only", "ToggleShowShaderlistOnly");
+  if(g_pGameDescription->mGameType != "doom3" && string_empty(g_pGameDescription->getKeyValue("show_wads")))
+  {
+    create_check_menu_item_with_mnemonic (menu, "Shaders Only", "ToggleShowShaderlistOnly");
+  }
   if(g_TextureBrowser.m_tags)
   {
     create_menu_item_with_mnemonic(menu, "Show Untagged", "ShowUntagged");
   }
-  gtk_menu_shell_append(GTK_MENU_SHELL(menu), separator);
-  gtk_widget_show(separator);
 
-  g_TextureBrowser.m_shader_info_item = GTK_WIDGET(create_menu_item_with_mnemonic(menu, "Shader Info", "ShaderInfo"));
-  gtk_widget_set_sensitive(g_TextureBrowser.m_shader_info_item, FALSE);
+  if(string_empty(g_pGameDescription->getKeyValue("show_wads")))
+  {
+    menu_separator(menu);
+    g_TextureBrowser.m_shader_info_item = GTK_WIDGET(create_menu_item_with_mnemonic(menu, "Shader Info", "ShaderInfo"));
+    gtk_widget_set_sensitive(g_TextureBrowser.m_shader_info_item, FALSE);
+  }
 
   return textures_menu_item;
 }
@@ -1643,7 +1647,6 @@ GtkMenuItem* TextureBrowser_constructToolsMenu(GtkMenu* menu)
 GtkMenuItem* TextureBrowser_constructTagsMenu(GtkMenu* menu)
 {
   GtkMenuItem* textures_menu_item = new_sub_menu_item_with_mnemonic("T_ags");
-  GtkWidget* separator = gtk_separator_menu_item_new();
 
   if (g_Layout_enableDetachableMenus.m_value)
     menu_tearoff (menu);
@@ -1651,8 +1654,7 @@ GtkMenuItem* TextureBrowser_constructTagsMenu(GtkMenu* menu)
   create_menu_item_with_mnemonic(menu, "Add tag", "AddTag");
   create_menu_item_with_mnemonic(menu, "Rename tag", "RenameTag");
   create_menu_item_with_mnemonic(menu, "Delete tag", "DeleteTag");
-  gtk_menu_shell_append(GTK_MENU_SHELL(menu), separator);
-  gtk_widget_show(separator);
+  menu_separator(menu);
   create_menu_item_with_mnemonic(menu, "Copy tags from selected", "CopyTag");
   create_menu_item_with_mnemonic(menu, "Paste tags to selected", "PasteTag");
 
@@ -1843,15 +1845,14 @@ void TextureBrowser_searchTags()
 	    path = path.substr(0, pos + 1);
 	    TextureDirectory_loadTexture(path.c_str(), name.c_str());
       }
-
-	  g_TextureBrowser.m_searchedTags = true;
-	  g_TextureBrowser_currentDirectory = tags_searched;
-
-	  g_TextureBrowser.m_nTotalHeight = 0;
-	  TextureBrowser_setOriginY(g_TextureBrowser, 0);
-	  TextureBrowser_heightChanged(g_TextureBrowser);
-	  TextureBrowser_updateTitle();
     }
+	g_TextureBrowser.m_searchedTags = true;
+	g_TextureBrowser_currentDirectory = tags_searched;
+
+	g_TextureBrowser.m_nTotalHeight = 0;
+	TextureBrowser_setOriginY(g_TextureBrowser, 0);
+	TextureBrowser_heightChanged(g_TextureBrowser);
+	TextureBrowser_updateTitle();
   }
   g_slist_free(selected);
 }

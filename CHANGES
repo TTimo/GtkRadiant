@@ -1,6 +1,12 @@
 This is the changelog for developers, != changelog for the end user 
 that we distribute with the binaries. (see changelog)
 
+06/10/2006
+namespace
+- Changed ETB not to show any texture if a tag search doesn't match anything (Shaderman)
+- Added View -> Filter -> "Invert filters/Reset filters" function (Shaderman)
+- Fixed (TODO) Textures: remove "shaders only" option for doom3 (Shaderman)
+- Fixed show shaders / shader only / shader info for doom3 and .wad file games (Shaderman)
 
 03/10/2006
 namespace

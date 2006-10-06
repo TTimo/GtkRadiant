@@ -150,6 +150,12 @@ public:
     m_item.update();
     PerformFiltering();
   }
+  void reset()
+  {
+    g_filters_globals.exclude = 0;
+    m_item.update();
+    PerformFiltering();
+  }
   typedef MemberCaller<ToggleFilterFlag, &ToggleFilterFlag::toggle> ToggleCaller;
 };
 
@@ -161,6 +167,26 @@ void add_filter_command(unsigned int flag, const char* command, const Accelerato
 {
   g_filter_items.push_back(ToggleFilterFlag(flag));
   GlobalToggles_insert(command, ToggleFilterFlag::ToggleCaller(g_filter_items.back()), ToggleItem::AddCallbackCaller(g_filter_items.back().m_item), accelerator);
+}
+
+void InvertFilters()
+{
+  std::list<ToggleFilterFlag>::iterator iter;
+
+  for(iter = g_filter_items.begin(); iter != g_filter_items.end(); ++iter)
+  {
+      iter->toggle();
+  }
+}
+
+void ResetFilters()
+{
+  std::list<ToggleFilterFlag>::iterator iter;
+
+  for(iter = g_filter_items.begin(); iter != g_filter_items.end(); ++iter)
+  {
+      iter->reset();
+  }
 }
 
 void Filters_constructMenu(GtkMenu* menu_in_menu)
@@ -202,6 +228,10 @@ void Filters_constructMenu(GtkMenu* menu_in_menu)
   {
     create_check_menu_item_with_mnemonic(menu_in_menu, "Botclips", "FilterBotClips");
   }
+  // filter manipulation
+  menu_separator(menu_in_menu);
+  create_menu_item_with_mnemonic(menu_in_menu, "Invert filters", "InvertFilters");
+  create_menu_item_with_mnemonic(menu_in_menu, "Reset filters", "ResetFilters");
 }
 
 
@@ -211,6 +241,9 @@ void Filters_constructMenu(GtkMenu* menu_in_menu)
 void ConstructFilters()
 {
   GlobalPreferenceSystem().registerPreference("SI_Exclude", SizeImportStringCaller(g_filters_globals.exclude), SizeExportStringCaller(g_filters_globals.exclude));
+
+  GlobalCommands_insert("InvertFilters", FreeCaller<InvertFilters>());
+  GlobalCommands_insert("ResetFilters", FreeCaller<ResetFilters>());  
 
   add_filter_command(EXCLUDE_WORLD, "FilterWorldBrushes", Accelerator('1', (GdkModifierType)GDK_MOD1_MASK));
   add_filter_command(EXCLUDE_ENT, "FilterEntities", Accelerator('2', (GdkModifierType)GDK_MOD1_MASK));
