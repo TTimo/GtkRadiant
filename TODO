@@ -19,7 +19,6 @@ FEATURES
 
 - paint-select or equivalent (e.g. area-selection with occlusion)
 - select-complete-tall or equivalent (e.g. subtract-from-selection modifier key)
-- need some equivalent to select-inside.
 - texture pane names are often illegible, becuase 1. they are long and overlap each other and 2. they overlap the outline rectangles around the images themselves.
 - texture sizes sometimes vary wildly.  It would be nice to find a way to normalize their display size so that very big textures are shrunk a little, and very small textures are blown-up a little.
 
@@ -134,7 +133,6 @@ Selection: Add shear manipulator?
 Textures Window: Improve texture-manipulation and texture-browsing tools.
 Undo: make selections undoable?
 Win32 Installer: Automatically upgrade existing installation.
-Selection: grow-brush-selection feature - select all neighbouring brushes
 General: refactor game-specific hacks to be parameterised by .game file
 Patch: Overlays, Bend Mode, Thicken.
 Brush: Add brush-specific plugin API.

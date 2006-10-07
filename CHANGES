@@ -1,6 +1,12 @@
 This is the changelog for developers, != changelog for the end user 
 that we distribute with the binaries. (see changelog)
 
+07/10/2006
+- Added "select inside" and "select touching"
+  Both functions now work with multiple selectionbrushes, allowing complex
+  selection operations.
+- Added entries for the selectionfunctions in "Edit" and the main toolbar.
+
 06/10/2006
 namespace
 - Changed ETB not to show any texture if a tag search doesn't match anything (Shaderman)

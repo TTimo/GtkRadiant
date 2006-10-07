@@ -29,6 +29,8 @@ void Select_GetMid(Vector3& mid);
 
 void Select_Delete();
 void Select_Invert();
+void Select_Inside();
+void Select_Touching();
 void Scene_ExpandSelectionToEntities();
 
 void Selection_Flipx();

@@ -1980,6 +1980,8 @@ GtkMenuItem* create_edit_menu()
   menu_separator(menu);
   create_menu_item_with_mnemonic(menu, "C_lear Selection", "UnSelectSelection");
   create_menu_item_with_mnemonic(menu, "_Invert Selection", "InvertSelection");
+  create_menu_item_with_mnemonic(menu, "Select i_nside", "SelectInside");
+  create_menu_item_with_mnemonic(menu, "Select _touching", "SelectTouching");
 
   GtkMenu* convert_menu = create_sub_menu_with_mnemonic(menu, "E_xpand Selection");
   create_menu_item_with_mnemonic(convert_menu, "To Whole _Entities", "ExpandSelectionToEntities");
@@ -2398,6 +2400,12 @@ void RotateFlip_constructToolbar(GtkToolbar* toolbar)
   toolbar_append_button(toolbar, "z-axis Rotate", "brush_rotatez.bmp", "RotateSelectionZ");
 }
 
+void Select_constructToolbar(GtkToolbar* toolbar)
+{
+  toolbar_append_button(toolbar, "Select touching", "selection_selecttouching.bmp", "SelectTouching");
+  toolbar_append_button(toolbar, "Select inside", "selection_selectinside.bmp", "SelectInside");
+}
+
 void CSG_constructToolbar(GtkToolbar* toolbar)
 {
   toolbar_append_button(toolbar, "CSG Subtract", "selection_csgsubtract.bmp", "CSGSubtract");
@@ -2446,6 +2454,10 @@ GtkToolbar* create_main_toolbar(MainFrame::EViewStyle style)
   gtk_toolbar_append_space (GTK_TOOLBAR (toolbar));
 
   RotateFlip_constructToolbar(toolbar);
+
+  gtk_toolbar_append_space (GTK_TOOLBAR (toolbar));
+
+  Select_constructToolbar(toolbar);
 
   gtk_toolbar_append_space (GTK_TOOLBAR (toolbar));
 
@@ -3344,6 +3356,8 @@ void MainFrame_Construct()
   GlobalCommands_insert("ParentSelection", FreeCaller<Scene_parentSelected>());
   GlobalCommands_insert("UnSelectSelection", FreeCaller<Selection_Deselect>(), Accelerator(GDK_Escape));
   GlobalCommands_insert("InvertSelection", FreeCaller<Select_Invert>(), Accelerator('I'));
+  GlobalCommands_insert("SelectInside", FreeCaller<Select_Inside>());
+  GlobalCommands_insert("SelectTouching", FreeCaller<Select_Touching>());
   GlobalCommands_insert("ExpandSelectionToEntities", FreeCaller<Scene_ExpandSelectionToEntities>(), Accelerator('E', (GdkModifierType)(GDK_MOD1_MASK|GDK_CONTROL_MASK)));
   GlobalCommands_insert("Preferences", FreeCaller<PreferencesDialog_showDialog>(), Accelerator('P'));
 
