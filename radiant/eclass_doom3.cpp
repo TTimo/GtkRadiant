@@ -452,12 +452,12 @@ static bool EntityClass_parse(EntityClass& entityClass, Tokeniser& tokeniser)
     }
     else if(string_equal_n(key, "editor_usage", 12))
     {
-      usage << "\n";
       PARSE_RETURN_FALSE_IF_FAIL(EntityClassDoom3_parseString(tokeniser, usage));
       currentString = &usage;
     }
     else if(string_equal(key, "editor_rotatable")
       || string_equal(key, "editor_showangle")
+	  || string_equal(key, "editor_showangles") // typo? in prey movables.def
       || string_equal(key, "editor_mover")
       || string_equal(key, "editor_model")
       || string_equal(key, "editor_material")
@@ -556,6 +556,17 @@ static bool EntityClass_parse(EntityClass& entityClass, Tokeniser& tokeniser)
       PARSE_RETURN_FALSE_IF_FAIL(EntityClassDoom3_parseToken(tokeniser));
     }
     // end quake4-specific keys
+	// begin ignore prey (unknown/unused?) entity keys
+    else if(string_equal(key, "editor_light")
+	  || string_equal(key, "editor_def def_debrisspawner")
+	  || string_equal(key, "editor_def def_drop")
+	  || string_equal(key, "editor_def def_guihand")
+	  || string_equal(key, "editor_def def_mine"))
+    {
+      //const char* value =
+      PARSE_RETURN_FALSE_IF_FAIL(EntityClassDoom3_parseToken(tokeniser));
+    }
+	// end ignore prey entity keys
     else
     {
       CopiedString tmp(key);
@@ -794,7 +805,14 @@ public:
 
           StringOutputStream usage(256);
 
-          usage << "-------- KEYS --------\n";
+          usage << "-------- NOTES --------\n";
+
+          if(!string_empty((*i).second->m_comments.c_str()))
+          {
+            usage << (*i).second->m_comments.c_str() << "\n";
+          }
+
+          usage << "\n-------- KEYS --------\n";
 
           for(EntityClassAttributes::iterator j = (*i).second->m_attributes.begin(); j != (*i).second->m_attributes.end(); ++j)
           {

@@ -145,6 +145,7 @@ Selection: Customisable manipulator size - +/- to change the size of the transla
 Selection: Add optional screen-relative control for constrained rotations.
 Clipper: Change selection/manipulation to be consistent with other component editing.
 Filtering: Either deselect filtered nodes, or render filtered nodes that are selected.
+Filtering: Add customisable filter presets to set/unset multiple filters at once.
 Texdef: Make texdef formats abstract, add conversion between texdef formats (use generic affine-texture-matrix format for conversions).
 Textures Window: Precise display of texture size when selecting.  (tooltip, possibly)
 Status: 'Size of brush' display on status bar.

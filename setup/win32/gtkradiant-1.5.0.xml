@@ -75,6 +75,9 @@
     <feature name="Quake 4 Support" desc="Support for Quake 4.">
       <component name=".\components\q4.xml" root="..\..\games\Q4Pack\tools"/>
     </feature>
+    <feature name="Prey Support" desc="Support for Prey.">
+      <component name=".\components\prey.xml" root="..\..\games\PreyPack\tools"/>
+    </feature>
     <feature name="RTCW Support" desc="Support for Return To Castle Wolfenstein">
       <component name=".\components\wolf.xml" root="..\..\games\WolfPack\bin"/>
       <component name=".\components\wolf_docs.xml" root="..\..\games\WolfPack\docs"/>

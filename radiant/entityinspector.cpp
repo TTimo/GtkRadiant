@@ -1678,15 +1678,19 @@ GtkWidget* EntityInspector_constructWindow(GtkWindow* toplevel)
 
 
   {
-    int x = g_entitysplit1_position;
-    if (x != -1)
+    // show the sliders in any case
+    if(g_entitysplit2_position > 22)
     {
-      gtk_paned_set_position(GTK_PANED(g_entity_split1), x);
-
-      x = g_entitysplit2_position;
-
-      if (x != -1)
-        gtk_paned_set_position (GTK_PANED(g_entity_split2), x);
+      gtk_paned_set_position (GTK_PANED(g_entity_split2), g_entitysplit2_position);
+    } else {
+      g_entitysplit2_position = 22;
+      gtk_paned_set_position (GTK_PANED(g_entity_split2), 22);
+    }
+    if((g_entitysplit1_position - g_entitysplit2_position) > 27)
+    {
+      gtk_paned_set_position (GTK_PANED(g_entity_split1), g_entitysplit1_position);
+    } else {
+      gtk_paned_set_position (GTK_PANED(g_entity_split1), g_entitysplit2_position + 27);
     }
   }
 

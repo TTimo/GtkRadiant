@@ -57,7 +57,6 @@ ArchiveModules& FileSystemQ3API_getArchiveModules();
 
 #include "generic/callback.h"
 #include "string/string.h"
-#include "container/array.h"
 #include "stream/stringstream.h"
 #include "os/path.h"
 #include "moduleobservers.h"
@@ -142,13 +141,7 @@ static void InitPakFile (ArchiveModules& archiveModules, const char *filename)
   if(table != 0)
   {
     archive_entry_t entry;
-
-    std::size_t length = string_length(filename);
-    Array<char> tmp(length + 2);
-    std::copy(filename, filename + length, tmp.begin());
-    tmp[length] = ':';
-    tmp[length + 1] = '\0';
-    entry.name = tmp.begin();
+    entry.name = filename;
 
     entry.archive = table->m_pfnOpenArchive(filename);
     entry.is_pakfile = true;

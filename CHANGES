@@ -1,7 +1,16 @@
 This is the changelog for developers, != changelog for the end user 
 that we distribute with the binaries. (see changelog)
 
+08/10/2006
+namespace
+- Fix for bug 1106 - .wad files don't get listed in the textures menu (Shaderman)
+  (http://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=1106)
+- Added initial support for Prey (Shaderman)
+- Fixed entity inspector sliders to always show (Shaderman)
+- Added NOTES subsection to the entity inspector listing .def "editor_usage*" values (Shaderman)
+
 07/10/2006
+namespace
 - Added "select inside" and "select touching"
   Both functions now work with multiple selectionbrushes, allowing complex
   selection operations.
