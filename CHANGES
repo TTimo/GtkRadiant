@@ -1,6 +1,12 @@
 This is the changelog for developers, != changelog for the end user 
 that we distribute with the binaries. (see changelog)
 
+09/10/2006
+namespace
+- Added option to toggle the camera window stats on/off (Shaderman)
+  (view --> show --> show stats)
+
+
 08/10/2006
 namespace
 - Fix for bug 1106 - .wad files don't get listed in the textures menu (Shaderman)

@@ -80,13 +80,15 @@ struct camwindow_globals_private_t
   bool m_bCamInverseMouse;
   bool m_bCamDiscrete;
   bool m_bCubicClipping;
+  bool m_showStats;
 
   camwindow_globals_private_t() :
     m_nMoveSpeed(100),
     m_nAngleSpeed(3),
     m_bCamInverseMouse(false),
     m_bCamDiscrete(true),
-    m_bCubicClipping(true)
+    m_bCubicClipping(true),
+    m_showStats(true)
   {
   }
 
@@ -1500,6 +1502,22 @@ Cam_Draw
 ==============
 */
 
+void ShowStatsToggle()
+{
+  g_camwindow_globals_private.m_showStats ^= 1;
+}
+typedef FreeCaller<ShowStatsToggle> ShowStatsToggleCaller;
+
+void ShowStatsExport(const BoolImportCallback& importer)
+{
+  importer(g_camwindow_globals_private.m_showStats);
+}
+typedef FreeCaller1<const BoolImportCallback&, ShowStatsExport> ShowStatsExportCaller;
+
+ShowStatsExportCaller g_show_stats_caller;
+BoolExportCallback g_show_stats_callback(g_show_stats_caller);
+ToggleItem g_show_stats(g_show_stats_callback);
+
 void CamWnd::Cam_Draw()
 {
   glViewport(0, 0, m_Camera.width, m_Camera.height);
@@ -1646,13 +1664,16 @@ void CamWnd::Cam_Draw()
     glEnd();
   }
 
-  glRasterPos3f(1.0f, static_cast<float>(m_Camera.height) - 1.0f, 0.0f);
-  extern const char* Renderer_GetStats();
-  GlobalOpenGL().drawString(Renderer_GetStats());
+  if(g_camwindow_globals_private.m_showStats)
+  {
+    glRasterPos3f(1.0f, static_cast<float>(m_Camera.height) - 1.0f, 0.0f);
+    extern const char* Renderer_GetStats();
+    GlobalOpenGL().drawString(Renderer_GetStats());
 
-  glRasterPos3f(1.0f, static_cast<float>(m_Camera.height) - 11.0f, 0.0f);
-  extern const char* Cull_GetStats();
-  GlobalOpenGL().drawString(Cull_GetStats());
+    glRasterPos3f(1.0f, static_cast<float>(m_Camera.height) - 11.0f, 0.0f);
+    extern const char* Cull_GetStats();
+    GlobalOpenGL().drawString(Cull_GetStats());
+  }
 
   // bind back to the default texture so that we don't have problems
   // elsewhere using/modifying texture maps between contexts
@@ -2009,6 +2030,9 @@ void CamWnd_Construct()
   GlobalShortcuts_insert("CameraFreeMoveLeft", Accelerator(GDK_Left));
   GlobalShortcuts_insert("CameraFreeMoveRight", Accelerator(GDK_Right));
 
+  GlobalToggles_insert("ShowStats", ShowStatsToggleCaller(), ToggleItem::AddCallbackCaller(g_show_stats));
+
+  GlobalPreferenceSystem().registerPreference("ShowStats", BoolImportStringCaller(g_camwindow_globals_private.m_showStats), BoolExportStringCaller(g_camwindow_globals_private.m_showStats));
   GlobalPreferenceSystem().registerPreference("MoveSpeed", IntImportStringCaller(g_camwindow_globals_private.m_nMoveSpeed), IntExportStringCaller(g_camwindow_globals_private.m_nMoveSpeed));
   GlobalPreferenceSystem().registerPreference("AngleSpeed", IntImportStringCaller(g_camwindow_globals_private.m_nAngleSpeed), IntExportStringCaller(g_camwindow_globals_private.m_nAngleSpeed));
   GlobalPreferenceSystem().registerPreference("CamInverseMouse", BoolImportStringCaller(g_camwindow_globals_private.m_bCamInverseMouse), BoolExportStringCaller(g_camwindow_globals_private.m_bCamInverseMouse));
