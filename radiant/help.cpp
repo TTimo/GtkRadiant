@@ -62,6 +62,8 @@ void process_xlink(const char* filename, const char *menu_name, const char *base
       globalOutputStream() << "Processing .xlink file '" << filename << "'\n";
       // create sub menu
       GtkMenu* menu_in_menu = create_sub_menu_with_mnemonic(menu, menu_name);
+      if (g_Layout_enableDetachableMenus.m_value)
+        menu_tearoff (menu_in_menu);
       // start walking the nodes, find the 'links' one
       xmlNodePtr pNode = pDoc->children;
       while (pNode && strcmp((const char*)pNode->name, "links"))

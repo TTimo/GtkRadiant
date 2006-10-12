@@ -130,35 +130,29 @@ void Scene_EntitySetClassname_Selected(const char* classname)
 }
 
 
-class EntityUngroupVisitor : public SelectionSystem::Visitor
-{
-  const scene::Path& m_parent;
-public:
-  EntityUngroupVisitor(const scene::Path& parent) : m_parent(parent)
-  {
-  }
-  void visit(scene::Instance& instance) const
-  {
-    if(Node_getEntity(instance.path().top()) != 0
-      && node_is_group(instance.path().top()))
-    {
-      if(m_parent.top().get_pointer() != instance.path().top().get_pointer())
-      {
-        parentBrushes(instance.path().top(), m_parent.top());
-        Path_deleteTop(instance.path());
-      }
-    }
-  }
-};
-
 void Entity_ungroupSelected()
 {
+  if (GlobalSelectionSystem().countSelected() < 1) return;
+
   UndoableCommand undo("ungroupSelectedEntities");
 
   scene::Path world_path(makeReference(GlobalSceneGraph().root()));
   world_path.push(makeReference(Map_FindOrInsertWorldspawn(g_map)));
 
-  GlobalSelectionSystem().foreachSelected(EntityUngroupVisitor(world_path));
+  scene::Instance &instance = GlobalSelectionSystem().ultimateSelected();
+  scene::Path path = instance.path();
+
+  if (!Node_isEntity(path.top())) path.pop();
+
+  if(Node_getEntity(path.top()) != 0
+    && node_is_group(path.top()))
+  {
+    if(world_path.top().get_pointer() != path.top().get_pointer())
+    {
+      parentBrushes(path.top(), world_path.top());
+      Path_deleteTop(path);
+    }
+  }
 }
 
 

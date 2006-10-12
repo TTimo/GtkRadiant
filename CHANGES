@@ -1,6 +1,17 @@
 This is the changelog for developers, != changelog for the end user 
 that we distribute with the binaries. (see changelog)
 
+12/10/2006
+namespace
+- Updated help menu web links (removed map-center.com, added ETB documentation) (Shaderman)
+- Added check for existing worldspawn if a new one should be added with the entity menu (Shaderman)
+- Fixed Entity -> Ungroup (Topsun)
+- Fixed hotkey collision ALT+M (filter botclip/Modify menu). New Modify shortcut = ALT+O (Shaderman)
+- Updated Window Layout images (Shaderman)
+- Fixed (TODO) XYWindow: save show-workzone option (Shaderman)
+- Fixed (TODO) Toolbar: add shortcut to tooltips for toolbar buttons (Shaderman)
+- Fixed (TODO) GUI: detachable submenus (Shaderman)
+
 09/10/2006
 namespace
 - Added option to toggle the camera window stats on/off (Shaderman)

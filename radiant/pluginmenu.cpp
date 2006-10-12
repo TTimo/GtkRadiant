@@ -59,6 +59,8 @@ void PlugInMenu_Add(GtkMenu* plugin_menu, IPlugIn* pPlugIn)
   if (nCount > 0)
   {
     menu = gtk_menu_new();
+    if (g_Layout_enableDetachableMenus.m_value)
+      menu_tearoff (GTK_MENU(menu));
     while (nCount > 0)
     {
       menuText = pPlugIn->getCommandTitle(--nCount);

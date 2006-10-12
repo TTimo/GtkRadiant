@@ -1397,6 +1397,8 @@ void Brush_constructMenu(GtkMenu* menu)
   menu_separator (menu);
   {
     GtkMenu* menu_in_menu = create_sub_menu_with_mnemonic (menu, "CSG");
+    if (g_Layout_enableDetachableMenus.m_value)
+      menu_tearoff (menu_in_menu);
     create_menu_item_with_mnemonic(menu_in_menu, "Make _Hollow", "CSGHollow");
     create_menu_item_with_mnemonic(menu_in_menu, "CSG _Subtract", "CSGSubtract");
     create_menu_item_with_mnemonic(menu_in_menu, "CSG _Merge", "CSGMerge");
@@ -1404,6 +1406,8 @@ void Brush_constructMenu(GtkMenu* menu)
   menu_separator(menu);
   {
     GtkMenu* menu_in_menu = create_sub_menu_with_mnemonic (menu, "Clipper");
+    if (g_Layout_enableDetachableMenus.m_value)
+      menu_tearoff (menu_in_menu);
 
     create_menu_item_with_mnemonic(menu_in_menu, "Clip selection", "ClipSelected");
     create_menu_item_with_mnemonic(menu_in_menu, "Split selection", "SplitSelected");

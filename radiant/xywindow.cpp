@@ -1114,7 +1114,19 @@ void XYWnd::NewBrushDrag(int x, int y)
 
 void entitycreate_activated(GtkWidget* item)
 {
-  g_pParentWnd->ActiveXY()->OnEntityCreate(gtk_label_get_text(GTK_LABEL(GTK_BIN(item)->child)));
+  scene::Node* world_node = Map_FindWorldspawn(g_map);
+  const char* entity_name = gtk_label_get_text(GTK_LABEL(GTK_BIN(item)->child));
+
+  if(!(world_node && string_equal(entity_name, "worldspawn")))
+  {
+    g_pParentWnd->ActiveXY()->OnEntityCreate(entity_name);
+  } else {
+    GlobalRadiant().m_pfnMessageBox(GTK_WIDGET(MainFrame_getWindow()), "There's already a worldspawn in your map!"
+                                        "",
+                                        "Info",
+                                        eMB_OK,
+                                        eMB_ICONDEFAULT);
+  }
 }
 
 void EntityClassMenu_addItem(GtkMenu* menu, const char* name)
@@ -2791,6 +2803,7 @@ void XYWindow_Construct()
   GlobalPreferenceSystem().registerPreference("SI_ShowOutlines", BoolImportStringCaller(g_xywindow_globals_private.show_outline), BoolExportStringCaller(g_xywindow_globals_private.show_outline));
   GlobalPreferenceSystem().registerPreference("SI_ShowAxis", BoolImportStringCaller(g_xywindow_globals_private.show_axis), BoolExportStringCaller(g_xywindow_globals_private.show_axis));
   GlobalPreferenceSystem().registerPreference("CamXYUpdate", BoolImportStringCaller(g_xywindow_globals_private.m_bCamXYUpdate), BoolExportStringCaller(g_xywindow_globals_private.m_bCamXYUpdate));
+  GlobalPreferenceSystem().registerPreference("ShowWorkzone", BoolImportStringCaller(g_xywindow_globals_private.d_show_work), BoolExportStringCaller(g_xywindow_globals_private.d_show_work));
 
   GlobalPreferenceSystem().registerPreference("SI_AxisColors0", Vector3ImportStringCaller(g_xywindow_globals.AxisColorX), Vector3ExportStringCaller(g_xywindow_globals.AxisColorX));
   GlobalPreferenceSystem().registerPreference("SI_AxisColors1", Vector3ImportStringCaller(g_xywindow_globals.AxisColorY), Vector3ExportStringCaller(g_xywindow_globals.AxisColorY));

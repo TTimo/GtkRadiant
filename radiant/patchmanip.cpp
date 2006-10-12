@@ -732,7 +732,7 @@ void Patch_registerCommands()
 
 void Patch_constructToolbar(GtkToolbar* toolbar)
 {
-  toolbar_append_button(toolbar, "Put caps on the current patch", "curve_cap.bmp", "CapCurrentCurve");
+  toolbar_append_button(toolbar, "Put caps on the current patch (SHIFT + C)", "curve_cap.bmp", "CapCurrentCurve");
 }
 
 void Patch_constructMenu(GtkMenu* menu)
@@ -740,6 +740,8 @@ void Patch_constructMenu(GtkMenu* menu)
   create_menu_item_with_mnemonic(menu, "Cylinder", "PatchCylinder");
   {
     GtkMenu* menu_in_menu = create_sub_menu_with_mnemonic (menu, "More Cylinders");
+    if (g_Layout_enableDetachableMenus.m_value)
+      menu_tearoff (menu_in_menu);
     create_menu_item_with_mnemonic(menu_in_menu, "Dense Cylinder", "PatchDenseCylinder");
     create_menu_item_with_mnemonic(menu_in_menu, "Very Dense Cylinder", "PatchVeryDenseCylinder");
     create_menu_item_with_mnemonic(menu_in_menu, "Square Cylinder", "PatchSquareCylinder");
@@ -749,6 +751,8 @@ void Patch_constructMenu(GtkMenu* menu)
   create_menu_item_with_mnemonic(menu, "Bevel", "PatchBevel");
   {
     GtkMenu* menu_in_menu = create_sub_menu_with_mnemonic (menu, "More End caps, Bevels");
+    if (g_Layout_enableDetachableMenus.m_value)
+      menu_tearoff (menu_in_menu);
     create_menu_item_with_mnemonic(menu_in_menu, "Square Endcap", "PatchSquareBevel");
     create_menu_item_with_mnemonic(menu_in_menu, "Square Bevel", "PatchSquareEndcap");
   }
@@ -759,6 +763,8 @@ void Patch_constructMenu(GtkMenu* menu)
   menu_separator (menu);
   {
     GtkMenu* menu_in_menu = create_sub_menu_with_mnemonic (menu, "Insert");
+    if (g_Layout_enableDetachableMenus.m_value)
+      menu_tearoff (menu_in_menu);
     create_menu_item_with_mnemonic(menu_in_menu, "Insert (2) Columns", "PatchInsertInsertColumn");
     create_menu_item_with_mnemonic(menu_in_menu, "Add (2) Columns", "PatchInsertAddColumn");
     menu_separator (menu_in_menu);
@@ -767,6 +773,8 @@ void Patch_constructMenu(GtkMenu* menu)
   }
   {
     GtkMenu* menu_in_menu = create_sub_menu_with_mnemonic (menu, "Delete");
+    if (g_Layout_enableDetachableMenus.m_value)
+      menu_tearoff (menu_in_menu);
     create_menu_item_with_mnemonic(menu_in_menu, "First (2) Columns", "PatchDeleteFirstColumn");
     create_menu_item_with_mnemonic(menu_in_menu, "Last (2) Columns", "PatchDeleteLastColumn");
     menu_separator (menu_in_menu);
@@ -776,8 +784,12 @@ void Patch_constructMenu(GtkMenu* menu)
   menu_separator (menu);
   {
     GtkMenu* menu_in_menu = create_sub_menu_with_mnemonic (menu, "Matrix");
+    if (g_Layout_enableDetachableMenus.m_value)
+      menu_tearoff (menu_in_menu);
     create_menu_item_with_mnemonic(menu_in_menu, "Invert", "InvertCurve");
     GtkMenu* menu_3 = create_sub_menu_with_mnemonic (menu_in_menu, "Re-disperse");
+    if (g_Layout_enableDetachableMenus.m_value)
+      menu_tearoff (menu_3);
     create_menu_item_with_mnemonic(menu_3, "Rows", "RedisperseRows");
     create_menu_item_with_mnemonic(menu_3, "Columns", "RedisperseCols");
     create_menu_item_with_mnemonic(menu_in_menu, "Transpose", "MatrixTranspose");
@@ -788,6 +800,8 @@ void Patch_constructMenu(GtkMenu* menu)
   menu_separator (menu);
   {
     GtkMenu* menu_in_menu = create_sub_menu_with_mnemonic (menu, "Overlay");
+    if (g_Layout_enableDetachableMenus.m_value)
+      menu_tearoff (menu_in_menu);
     create_menu_item_with_mnemonic(menu_in_menu, "Set", "MakeOverlayPatch");
     create_menu_item_with_mnemonic(menu_in_menu, "Clear", "ClearPatchOverlays");
   }

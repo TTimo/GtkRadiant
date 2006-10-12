@@ -56,7 +56,6 @@ Shaders: handle doom3 materials with multiple bumpmaps stage - use first stage, 
 Brush: warn when a brush is dragged into a configuration with <0 volume
 Textures: add option to give new brushes a specific texture instead of the last selected.
 ? QE-tool: click anywhere on xy view to drag entity instead of requiring clicking directly on entity.
-Camera: option to toggle stats on/off.
 UserDocs: how to use multi-vertex selection - replaces vertex-edit-splits-faces option:
 UserDocs: how to use parent-selection:
   Parent-selection works like Maya: it allows you to 'reparent' brushes
@@ -66,7 +65,6 @@ Textures: add anisotropic filtering.
 Preferences: allow preference settings to be shared across games.
 Preferences: add colour 'theme' files using prefs format.
 Preferences: sensible default size for prefs window.
-GUI: detachable submenus.
 Doom3: add model browser.
 Doom3: s_diversity light key.
 HalfLife: enable HL-mode on linux/osx.
@@ -94,7 +92,6 @@ Selection: add rotate increment for rotate manipulator.
 Selection: visibly distinguish between entity and brush selections
 Selection: need 'add to selection' and 'subtract from selection' modifiers
 Selection: Finish scale manipulator.
-Toolbar: add shortcut to tooltips for toolbar buttons
 FaceCopy/PasteTexture: Make face-copy/paste-texture shortcuts customisable.
 Manual: add documentation about search paths for .ent/.def/.fgd, shaders etc for each game.
 Halflife: add support for cstrike fgd.
@@ -119,7 +116,6 @@ Patch: fix bobtoolz merge-patches feature
 Patch: fix insert/remove rows/cols indicated by current selected patch vertices.
 Autosave/Snapshots: Add support for multi-file maps.
 Quake2: Q2 hint transparency support
-XYWindow: save show-workzone option
 Shortcuts: make shortcut list editable within radiant.
 Shortcuts: convert shortcuts.ini to xml.
 Shortcuts: warn when duplicate shortcuts are registered
