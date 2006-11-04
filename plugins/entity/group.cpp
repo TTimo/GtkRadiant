@@ -154,12 +154,11 @@ public:
   void renderWireframe(Renderer& renderer, const VolumeTest& volume, const Matrix4& localToWorld) const
   {
     renderSolid(renderer, volume, localToWorld);
-#if 0
+
     if(g_showNames)
     {
-      renderer.addRenderable(m_renderName, g_matrix4_identity);
+      renderer.addRenderable(m_renderName, m_transform.localToParent());
     }
-#endif
   }
 };
 

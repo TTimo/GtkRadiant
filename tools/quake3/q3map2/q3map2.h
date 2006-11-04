@@ -1841,6 +1841,8 @@ Q_EXTERN game_t				games[]
 								,
 								#include "game_ja.h"	/* most be after game_jk2.h as they share defines! */
 								,
+								#include "game_qfusion.h"	/* qfusion game */
+								,
 								{ NULL }	/* null game */
 							};
 #endif

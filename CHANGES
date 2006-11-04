@@ -1,6 +1,10 @@
 This is the changelog for developers, != changelog for the end user 
 that we distribute with the binaries. (see changelog)
 
+04/11/2006
+namespace
+- Added warzow-support to q3map2
+
 12/10/2006
 namespace
 - Updated help menu web links (removed map-center.com, added ETB documentation) (Shaderman)
