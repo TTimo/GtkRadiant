@@ -2024,7 +2024,7 @@ GtkWidget* g_toggle_entitylist_item = 0;
 GtkMenuItem* create_view_menu(MainFrame::EViewStyle style)
 {
   // View menu
-  GtkMenuItem* view_menu_item = new_sub_menu_item_with_mnemonic("_View");
+  GtkMenuItem* view_menu_item = new_sub_menu_item_with_mnemonic("Vie_w");
   GtkMenu* menu = GTK_MENU(gtk_menu_item_get_submenu(view_menu_item));
   if (g_Layout_enableDetachableMenus.m_value)
     menu_tearoff (menu);

@@ -1,6 +1,15 @@
 This is the changelog for developers, != changelog for the end user 
 that we distribute with the binaries. (see changelog)
 
+06/11/2006
+namespace
+- (TODO) Texture sizes sometimes vary wildly. New texture browser option: View -> Fixed Size.
+  Code parts taken from DarkRadiant. (Shaderman)
+- Added new texture browser option: View -> Hide Image Missing. (Shaderman)
+- Fixed new D3 lights don't have a light_radius key. (Shaderman)
+- Fixed hotkey collision (paste to camera/view menu). New View shortcut = ALT+W. (Shaderman)
+- Fixed .wad MMB 3d view texture selection bug. (Shaderman)
+
 04/11/2006
 namespace
 - Added warzow-support to q3map2

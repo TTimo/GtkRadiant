@@ -1337,14 +1337,7 @@ public:
       write_rotation(m_rotationKey.m_rotation, &m_entity);
 
       m_doom3Radius.m_radius = m_doom3Radius.m_radiusTransformed;
-      if(m_doom3Radius.m_radius == m_doom3Radius.m_defaultRadius)
-      {
-        m_entity.setKeyValue("light_radius", "");
-      }
-      else
-      {
-        write_origin(m_doom3Radius.m_radius, &m_entity, "light_radius");
-      }
+      write_origin(m_doom3Radius.m_radius, &m_entity, "light_radius");
     }
   }
   void transformChanged()
