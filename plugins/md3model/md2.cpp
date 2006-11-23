@@ -194,8 +194,9 @@ ArbitraryMeshVertex MD2Vertex_construct(const md2Header_t* pHeader, const md2Fra
   );
 }
 
-void MD2Surface_read(Surface& surface, const byte* buffer)
+void MD2Surface_read(Model& model, const byte* buffer, ArchiveFile& file)
 {
+  Surface& surface = model.newSurface();
   md2Header_t header;
   {
     PointerInputStream inputStream(buffer);
@@ -239,22 +240,46 @@ void MD2Surface_read(Surface& surface, const byte* buffer)
   }
 
   char skinname[MD2_MAX_SKINNAME];
+  char skinnameRelative[MD2_MAX_SKINNAME];
+  char path[MD2_MAX_SKINNAME];
+  int i = MD2_MAX_SKINNAME;
   PointerInputStream inputStream(buffer + header.ofs_skins);
-  inputStream.read(reinterpret_cast<byte*>(skinname), MD2_MAX_SKINNAME);
+  inputStream.read(reinterpret_cast<byte*>(skinnameRelative), MD2_MAX_SKINNAME);
+  // relative texture path - allows moving of models in game dir structure without changing the skinpath
+  // e.g. used in ufo:ai
+  if (skinnameRelative[0] == '.') 
+  {
+	strncpy(path, file.getName(), MD2_MAX_SKINNAME);
+	for (; i--;) 
+	{
+	    // skip filename
+	    if (path[i] == '/' || path[i] == '\\')
+		break;
+	    path[i] = '\0';
+	}
+//	globalErrorStream() << "modified skinname: " << path << " (path) and " << skinnameRelative << " (texture)" << "\n";
+	// TODO: search for tga, png, jpg (this order)
+	snprintf(skinname, MD2_MAX_SKINNAME, "%s%s.jpg", path, &skinnameRelative[1]);
+//	globalErrorStream() << skinname << "\n";
+  } 
+  else
+  {
+	strcpy(skinname, skinnameRelative);
+  }
   surface.setShader(skinname);
   surface.updateAABB();
 }
 
-void MD2Model_read(Model& model, const byte* buffer)
+void MD2Model_read(Model& model, const byte* buffer, ArchiveFile& file)
 {
-  MD2Surface_read(model.newSurface(), buffer);
+  MD2Surface_read(model, buffer, file);
   model.updateAABB();
 }
 
-scene::Node& MD2Model_new(const byte* buffer)
+scene::Node& MD2Model_new(const byte* buffer, ArchiveFile& file)
 {
   ModelNode* modelNode = new ModelNode();
-  MD2Model_read(modelNode->model(), buffer);
+  MD2Model_read(modelNode->model(), buffer, file);
   return modelNode->node();
 }
 
@@ -265,7 +290,7 @@ scene::Node& MD2Model_default()
   return modelNode->node();
 }
 
-scene::Node& MD2Model_fromBuffer(unsigned char* buffer)
+scene::Node& MD2Model_fromBuffer(unsigned char* buffer, ArchiveFile& file)
 {
   if (!ident_equal(buffer, MD2_IDENT))
   {
@@ -274,12 +299,12 @@ scene::Node& MD2Model_fromBuffer(unsigned char* buffer)
   }
   else
   {
-    return MD2Model_new(buffer);
+    return MD2Model_new(buffer, file);
   }
 }
 
 scene::Node& loadMD2Model(ArchiveFile& file)
 {
   ScopedArchiveBuffer buffer(file);
-  return MD2Model_fromBuffer(buffer.buffer);
+  return MD2Model_fromBuffer(buffer.buffer, file);
 }
