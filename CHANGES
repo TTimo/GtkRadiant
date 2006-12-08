@@ -1,6 +1,11 @@
 This is the changelog for developers, != changelog for the end user 
 that we distribute with the binaries. (see changelog)
 
+08/12/2006
+namespace
+- Entity names are now drawn for group entities in Doom3 and Quake 3 mode (namespace)
+- Fixed translucent brushes becoming invisible when selected (Shaderman)
+
 06/11/2006
 namespace
 - (TODO) Texture sizes sometimes vary wildly. New texture browser option: View -> Fixed Size.

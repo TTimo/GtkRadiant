@@ -201,8 +201,6 @@ inline void Winding_Draw(const Winding& winding, const Vector3& normal, RenderSt
 #endif
 }
 
-const Colour4b colour_vertex(0, 255, 0, 255);
-
 
 #include "shaderlib.h"
 

@@ -59,6 +59,7 @@ class Group
   NameKeys m_nameKeys;
 
   RenderableNamedEntity m_renderName;
+  mutable Vector3 m_name_origin;
 
   Callback m_transformChanged;
 
@@ -74,7 +75,8 @@ public:
     m_filter(m_entity, node),
     m_named(m_entity),
     m_nameKeys(m_entity),
-    m_renderName(m_named, g_vector3_identity),
+    m_renderName(m_named, m_name_origin),
+	m_name_origin(g_vector3_identity),
     m_transformChanged(transformChanged)
   {
     construct();
@@ -151,15 +153,22 @@ public:
   {
     renderer.SetState(m_entity.getEntityClass().m_state_wire, Renderer::eWireframeOnly);
   }
-  void renderWireframe(Renderer& renderer, const VolumeTest& volume, const Matrix4& localToWorld) const
+
+  void renderWireframe(Renderer& renderer, const VolumeTest& volume, const Matrix4& localToWorld, const AABB& childBounds) const
   {
     renderSolid(renderer, volume, localToWorld);
-#if 0
-    if(g_showNames)
+
+	if(g_showNames)
     {
-      renderer.addRenderable(m_renderName, m_transform.localToParent());
+      // don't draw the name for worldspawn
+      if(!strcmp(m_entity.getEntityClass().name(), "worldspawn"))
+          return;
+
+	  // place name in the middle of the "children cloud"
+	  m_name_origin = childBounds.origin;
+
+      renderer.addRenderable(m_renderName, localToWorld);
     }
-#endif
   }
 };
 
@@ -280,7 +289,7 @@ public:
   }
   void renderWireframe(Renderer& renderer, const VolumeTest& volume) const
   {
-    m_contained.renderWireframe(renderer, volume, Instance::localToWorld());
+	  m_contained.renderWireframe(renderer, volume, Instance::localToWorld(), Instance::childBounds());
   }
 
 #if 0

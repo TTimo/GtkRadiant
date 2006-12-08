@@ -148,9 +148,6 @@ public:
   }
 };
 
-const Colour4b colour_vertex(0, 255, 0, 255);
-const Colour4b colour_selected(0, 0, 255, 255);
-
 class ControlPointAdd
 {
   RenderablePointVector& m_points;
