@@ -1,6 +1,9 @@
 This is the changelog for developers, != changelog for the end user 
 that we distribute with the binaries. (see changelog)
 
+13/12/2006
+- Added tremoulus-support to q3map2
+
 08/12/2006
 namespace
 - Entity names are now drawn for group entities in Doom3 and Quake 3 mode (namespace)
