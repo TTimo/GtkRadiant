@@ -1,7 +1,16 @@
 This is the changelog for developers, != changelog for the end user 
 that we distribute with the binaries. (see changelog)
 
+15/12/2006
+namespace
+ - Inverted bevel can be used with end caps (Topsun)
+ - Removed needless .pdb files from win32 installer (Topsun)
+ - Fixed .ase picomodel loader to load shaders again (Shaderman)
+ - Removed translucent brushes fix because of wrong rendering behaviour on Linux
+ - New cool(!) radiant icon by eb
+
 13/12/2006
+namespace
 - Added tremoulus-support to q3map2
 
 08/12/2006

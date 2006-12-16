@@ -1,6 +1,5 @@
 <component name="prtview">
   <dir name="plugins">
     <file name="prtview.dll"/>
-    <file name="prtview.pdb"/>
   </dir>
 </component>

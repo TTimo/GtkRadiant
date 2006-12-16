@@ -77,7 +77,7 @@ void Patch_makeCaps(Patch& patch, scene::Instance& instance, EPatchCap type, con
     return;
   }
   if((type == eCapBevel || type == eCapIBevel)
-    && patch.getWidth() != 3)
+    && patch.getWidth() != 3 && patch.getWidth() != 5)
   {
     globalErrorStream() << "cannot create bevel-cap - patch width != 3\n";
     return;

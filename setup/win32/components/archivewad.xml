@@ -2,6 +2,5 @@
 <component name="archivewad">
   <dir name="modules">
     <file name="archivewad.dll"/>
-    <file name="archivewad.pdb"/>
   </dir>
 </component>

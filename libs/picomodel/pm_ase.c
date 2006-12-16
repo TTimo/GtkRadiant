@@ -1125,33 +1125,11 @@ static picoModel_t *_ase_load( PM_PARAMS_LOAD )
             }
           }
 
-          /* find game root */
+          /* find shader path */
           for(; *p != '\0'; ++p)
           {
-            if(_pico_strnicmp(p, "quake", 5) == 0 || _pico_strnicmp(p, "doom", 4) == 0)
+            if(_pico_strnicmp(p, "models/", 7) == 0 || _pico_strnicmp(p, "textures/", 9) == 0)
             {
-              /* root-relative */
-              for(; *p != '\0'; ++p)
-              {
-                if(*p == '/')
-                {
-                  ++p;
-                  /* game-relative */
-                  for(; *p != '\0'; ++p)
-                  {
-                    if(*p == '/')
-                    {
-                      ++p;
-                      break;
-                    }
-                  }
-                }
-              }
-            }
-            /* DoomEdit's ASE loader searches for /base/ */
-            else if(_pico_strnicmp(p, "/base/", 6) == 0)
-            {
-              p += 6;
               break;
             }
           }

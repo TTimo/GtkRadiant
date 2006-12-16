@@ -45,7 +45,7 @@
     <feature name="Brush Export Plugin" desc="namespace's Wavefront Brush Export">
       <component name=".\components\brushexport.xml" root="..\..\install"/>
     </feature>
-    <feature name="Sunplug Plugin" desc="Topsun's Sunplug for Enemy Territory">
+    <feature name="Sunplug Plugin" desc="Toolkit for Enemy Territory by Topsun">
       <component name=".\components\sunplug.xml" root="..\..\install"/>
     </feature>
     <feature name="Shaderplug Plugin" desc="Shaderman's plugin for creating shader tag files">

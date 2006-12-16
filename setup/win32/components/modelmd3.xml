@@ -2,6 +2,5 @@
 <component>
   <dir name="modules">
     <file name="modelmd3.dll"/>
-    <file name="modelmd3.pdb"/>
   </dir>
 </component>

@@ -2,6 +2,5 @@
 <component name="entityq3">
   <dir name="modules">
     <file name="entityq3.dll"/>
-    <file name="entityq3.pdb"/>
   </dir>
 </component>

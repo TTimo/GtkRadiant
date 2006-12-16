@@ -1,7 +1,6 @@
 <?xml version="1.0"?>
 <component shortcut="GtkRadiant" icon="radiant.ico">
   <file name="GtkRadiant.exe"/>
-  <file name="GtkRadiant.pdb"/>
   <file name="RADIANT_MAJOR"/>
   <file name="RADIANT_MINOR"/>
 </component>

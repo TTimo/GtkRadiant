@@ -2,7 +2,6 @@
 <component>
   <dir name="modules">
     <file name="shadersq3.dll"/>
-    <file name="shadersq3.pdb"/>
   </dir>
   <dir name="bitmaps">
     <file name="notex.bmp"/>

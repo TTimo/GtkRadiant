@@ -1,7 +1,6 @@
 <component name="bobtoolz">
   <dir name="plugins">
     <file name="bobtoolz.dll"/>
-    <file name="bobtoolz.pdb"/>
       <dir name="bitmaps">
         <file name="bobtoolz_caulk.bmp"/>
         <file name="bobtoolz_cleanup.bmp"/>

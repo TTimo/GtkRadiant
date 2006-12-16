@@ -2,6 +2,5 @@
 <component name="archivepak">
   <dir name="modules">
     <file name="archivepak.dll"/>
-    <file name="archivepak.pdb"/>
   </dir>
 </component>

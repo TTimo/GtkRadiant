@@ -1,6 +1,5 @@
 <component name="shaderplug">
   <dir name="plugins">
     <file name="shaderplug.dll"/>
-    <file name="shaderplug.pdb"/>
   </dir>
 </component>

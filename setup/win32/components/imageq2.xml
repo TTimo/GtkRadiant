@@ -2,6 +2,5 @@
 <component>
   <dir name="modules">
     <file name="imageq2.dll"/>
-    <file name="imageq2.pdb"/>
   </dir>
 </component>
