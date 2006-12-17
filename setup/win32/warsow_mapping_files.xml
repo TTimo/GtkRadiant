@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<package name="GtkRadiant 1.5: Warsow mapping files" version="1.0.0" target="[ProgramFilesFolder]\Warsow\" code="b2c27501-e4a9-4410-83a9-1b56f4bd7a1d" license="..\license.rtf">
+  <feature name="Warsow mapping files" desc="This feature must be installed in your Warsow folder.">
+    <feature name="Textures" desc="Textures for the common shaders and the GtkRadiant.">
+      <component name=".\components\warsow_data.xml" root="..\..\games\WarsowPack"/>
+    </feature>
+  </feature>
+</package>
