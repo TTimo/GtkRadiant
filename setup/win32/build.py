@@ -54,3 +54,6 @@ package.writeMSI("template.msi", "GtkRadiant-1.5.0-" + format_date_today() + ".m
 
 #package = MSIPackage("ef_example_maps.xml")
 #package.writeMSI("template.msi", "STVEF-Example-Maps-" + format_date_today() + ".msi")
+
+#package = MSIPackage("warsow_mapping_files.xml")
+#package.writeMSI("template.msi", "Warsow-mapping-files-" + format_date_today() + ".msi")

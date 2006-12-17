@@ -93,7 +93,8 @@ games = [
   ("STVEFPack", "stvef"),
   ("WolfPack/bin", "wolf"),
   ("NexuizPack", "nexuiz"),
-  ("DarkPlacesPack", "darkplaces")
+  ("DarkPlacesPack", "darkplaces"),
+  ("WarsowPack/tools", "warsow")
 ]
 
 # copy games

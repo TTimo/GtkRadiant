@@ -1,6 +1,10 @@
 This is the changelog for developers, != changelog for the end user 
 that we distribute with the binaries. (see changelog)
 
+17/12/2006
+namespace
+ - Radiant warzow-support (Topsun + Warzow-Mappers)
+
 15/12/2006
 namespace
  - Inverted bevel can be used with end caps (Topsun)
