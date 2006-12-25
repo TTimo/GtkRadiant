@@ -55,7 +55,8 @@
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="copy &quot;$(TargetPath)&quot; &quot;$(SolutionDir)install\plugins&quot;
-				copy &quot;$(TargetDir)$(TargetName).pdb&quot; &quot;$(SolutionDir)install\plugins&quot;"/>
+copy &quot;$(TargetDir)$(TargetName).pdb&quot; &quot;$(SolutionDir)install\plugins&quot;
+"/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
 			<Tool
@@ -123,7 +124,8 @@
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="copy &quot;$(TargetPath)&quot; &quot;$(SolutionDir)install\plugins&quot;
-				copy &quot;$(TargetDir)$(TargetName).pdb&quot; &quot;$(SolutionDir)install\plugins&quot;"/>
+copy &quot;$(TargetDir)$(TargetName).pdb&quot; &quot;$(SolutionDir)install\plugins&quot;
+"/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
 			<Tool
@@ -150,10 +152,31 @@
 			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx"
 			UniqueIdentifier="{22F2852C-8177-45D5-94D0-C5255C199F7F}">
 			<File
+				RelativePath=".\callbacks.cpp">
+			</File>
+			<File
+				RelativePath=".\callbacks.h">
+			</File>
+			<File
+				RelativePath=".\export.cpp">
+			</File>
+			<File
+				RelativePath=".\export.h">
+			</File>
+			<File
+				RelativePath=".\interface.cpp">
+			</File>
+			<File
 				RelativePath=".\plugin.cpp">
 			</File>
 			<File
 				RelativePath=".\plugin.h">
+			</File>
+			<File
+				RelativePath=".\support.cpp">
+			</File>
+			<File
+				RelativePath=".\support.h">
 			</File>
 		</Filter>
 		<File

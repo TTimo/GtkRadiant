@@ -1,6 +1,14 @@
 This is the changelog for developers, != changelog for the end user 
 that we distribute with the binaries. (see changelog)
 
+25/12/2006
+namespace
+ - Brushplugin Version 2.0, supports multiple collapse modes and a materialignore list (namespace)
+ - Camera movement speed changes. Increase speed = SHIFT+KP_PLUS, decrease speed = SHIFT+KP_MINUS.
+   New option to link the strafe speed to camera movement speed (default: linked). (Shaderman)
+ - Fixed bug in sample plugin (Shaderman)
+ - Merry Christmas
+
 17/12/2006
 namespace
  - Radiant warzow-support (Topsun + Warzow-Mappers)

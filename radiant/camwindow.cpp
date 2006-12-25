@@ -76,6 +76,7 @@ void CameraMovedNotify()
 struct camwindow_globals_private_t
 {
   int m_nMoveSpeed;
+  bool m_bCamLinkSpeed;
   int m_nAngleSpeed;
   bool m_bCamInverseMouse;
   bool m_bCamDiscrete;
@@ -84,6 +85,7 @@ struct camwindow_globals_private_t
 
   camwindow_globals_private_t() :
     m_nMoveSpeed(100),
+    m_bCamLinkSpeed(true),
     m_nAngleSpeed(3),
     m_bCamInverseMouse(false),
     m_bCamDiscrete(true),
@@ -286,7 +288,12 @@ void Camera_FreeMove(camera_t& camera, int dx, int dy)
   // free strafe mode, toggled by the ctrl key with optional shift for forward movement
   if(camera.m_strafe)
   {
-	  const float strafespeed = 0.65f;
+    float strafespeed = 0.65f;
+
+    if(g_camwindow_globals_private.m_bCamLinkSpeed)
+    {
+      strafespeed = (float)g_camwindow_globals_private.m_nMoveSpeed / 100;
+    }
 
 	  camera.origin -= camera.vright * strafespeed * dx;
 	  if(camera.m_strafe_forward)
@@ -558,6 +565,9 @@ typedef ReferenceCaller<camera_t, &Camera_MoveDown_KeyUp> FreeMoveCameraMoveDown
 
 #define SPEED_MOVE 32
 #define SPEED_TURN 22.5
+#define MIN_CAM_SPEED 10
+#define MAX_CAM_SPEED 610
+#define CAM_SPEED_STEP 50
 
 void Camera_MoveForward_Discrete(camera_t& camera)
 {
@@ -1803,6 +1813,9 @@ void CamWnd_registerShortcuts()
   {
     command_connect_accelerator("TogglePreview");
   }
+
+  command_connect_accelerator("CameraSpeedInc");
+  command_connect_accelerator("CameraSpeedDec");
 }
 
 
@@ -1939,7 +1952,8 @@ typedef FreeCaller1<const IntImportCallback&, RenderModeExport> RenderModeExport
 
 void Camera_constructPreferences(PreferencesPage& page)
 {
-  page.appendSlider("Movement Speed", g_camwindow_globals_private.m_nMoveSpeed, TRUE, 0, 0, 100, 50, 300, 1, 10, 10);
+  page.appendSlider("Movement Speed", g_camwindow_globals_private.m_nMoveSpeed, TRUE, 0, 0, 100, MIN_CAM_SPEED, MAX_CAM_SPEED, 1, 10, 10);
+  page.appendCheckBox("", "Link strafe speed to movement speed", g_camwindow_globals_private.m_bCamLinkSpeed);
   page.appendSlider("Rotation Speed", g_camwindow_globals_private.m_nAngleSpeed, TRUE, 0, 0, 3, 1, 180, 1, 10, 10);
   page.appendCheckBox("", "Invert mouse vertical axis", g_camwindow_globals_private.m_bCamInverseMouse);
   page.appendCheckBox(
@@ -1992,6 +2006,26 @@ void Camera_registerPreferencesPage()
 
 typedef FreeCaller1<bool, CamWnd_Move_Discrete_Import> CamWndMoveDiscreteImportCaller;
 
+void CameraSpeed_increase()
+{
+  if(g_camwindow_globals_private.m_nMoveSpeed <= (MAX_CAM_SPEED - CAM_SPEED_STEP - 10))
+  {
+    g_camwindow_globals_private.m_nMoveSpeed += CAM_SPEED_STEP;
+  } else {
+    g_camwindow_globals_private.m_nMoveSpeed = MAX_CAM_SPEED - 10;
+  }
+}
+
+void CameraSpeed_decrease()
+{
+  if(g_camwindow_globals_private.m_nMoveSpeed >= (MIN_CAM_SPEED + CAM_SPEED_STEP))
+  {
+    g_camwindow_globals_private.m_nMoveSpeed -= CAM_SPEED_STEP;
+  } else {
+    g_camwindow_globals_private.m_nMoveSpeed = MIN_CAM_SPEED;
+  }
+}
+
 /// \brief Initialisation for things that have the same lifespan as this module.
 void CamWnd_Construct()
 {
@@ -2012,6 +2046,9 @@ void CamWnd_Construct()
   {
     GlobalCommands_insert("TogglePreview", FreeCaller<CamWnd_TogglePreview>(), Accelerator(GDK_F3));
   }
+
+  GlobalCommands_insert("CameraSpeedInc", FreeCaller<CameraSpeed_increase>(), Accelerator(GDK_KP_Add, (GdkModifierType)GDK_SHIFT_MASK));
+  GlobalCommands_insert("CameraSpeedDec", FreeCaller<CameraSpeed_decrease>(), Accelerator(GDK_KP_Subtract, (GdkModifierType)GDK_SHIFT_MASK));
 
   GlobalShortcuts_insert("CameraForward", Accelerator(GDK_Up));
   GlobalShortcuts_insert("CameraBack", Accelerator(GDK_Down));
@@ -2034,6 +2071,7 @@ void CamWnd_Construct()
 
   GlobalPreferenceSystem().registerPreference("ShowStats", BoolImportStringCaller(g_camwindow_globals_private.m_showStats), BoolExportStringCaller(g_camwindow_globals_private.m_showStats));
   GlobalPreferenceSystem().registerPreference("MoveSpeed", IntImportStringCaller(g_camwindow_globals_private.m_nMoveSpeed), IntExportStringCaller(g_camwindow_globals_private.m_nMoveSpeed));
+  GlobalPreferenceSystem().registerPreference("CamLinkSpeed", BoolImportStringCaller(g_camwindow_globals_private.m_bCamLinkSpeed), BoolExportStringCaller(g_camwindow_globals_private.m_bCamLinkSpeed));
   GlobalPreferenceSystem().registerPreference("AngleSpeed", IntImportStringCaller(g_camwindow_globals_private.m_nAngleSpeed), IntExportStringCaller(g_camwindow_globals_private.m_nAngleSpeed));
   GlobalPreferenceSystem().registerPreference("CamInverseMouse", BoolImportStringCaller(g_camwindow_globals_private.m_bCamInverseMouse), BoolExportStringCaller(g_camwindow_globals_private.m_bCamInverseMouse));
   GlobalPreferenceSystem().registerPreference("CamDiscrete", makeBoolStringImportCallback(CamWndMoveDiscreteImportCaller()), BoolExportStringCaller(g_camwindow_globals_private.m_bCamDiscrete));

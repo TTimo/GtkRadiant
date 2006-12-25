@@ -479,13 +479,12 @@ prtview_lib = prtview_env.SharedLibrarySafe(target='prtview', source=prtview_lst
 prtview_env.Depends(prtview_lib, profile_lib)
 prtview_env.Install(INSTALL + '/plugins', prtview_lib)
 
-
-brushexport_env = module_env.Copy()
-brushexport_lst = build_list('contrib/brushexport', 'plugin.cpp')
-brushexport_env.useGlib2()
-brushexport_env.useGtk2()
-brushexport_lib = brushexport_env.SharedLibrarySafe(target='brushexport', source=brushexport_lst, LIBPATH='libs')
-brushexport_env.Install(INSTALL + '/plugins', brushexport_lib)
+brushexport2_env = module_env.Copy()
+brushexport2_lst = build_list('contrib/brushexport', ['plugin.cpp','interface.cpp','callbacks.cpp', 'support.cpp', 'export.cpp'])
+brushexport2_env.useGlib2()
+brushexport2_env.useGtk2()
+brushexport2_lib = brushexport2_env.SharedLibrarySafe(target='brushexport', source=brushexport2_lst, LIBPATH='libs')
+brushexport2_env.Install(INSTALL + '/plugins', brushexport2_lib)
 
 sunplug_env = module_env.Copy()
 sunplug_lst = build_list('contrib/sunplug', 'sunplug.cpp')

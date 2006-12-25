@@ -27,7 +27,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "string/string.h"
 #include "modulesystem/singletonmodule.h"
-
+#include "typesystem.h"
 
 namespace Sample
 {
@@ -61,7 +61,7 @@ namespace Sample
 
 } // namespace
 
-class SamplePluginModule
+class SamplePluginModule : public TypeSystemRef
 {
   _QERPluginTable m_plugin;
 public:
