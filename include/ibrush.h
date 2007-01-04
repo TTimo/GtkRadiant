@@ -124,9 +124,4 @@ inline BrushCreator& GlobalBrushCreator()
   return GlobalBrushModule::getTable();
 }
 
-inline Brush* Node_getBrush(scene::Node& node)
-{
-  return NodeTypeCast<Brush>::cast(node);
-}
-
 #endif
