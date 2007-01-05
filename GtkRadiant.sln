@@ -164,10 +164,16 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "shaderplug", "contrib\shade
 		{1C785349-866D-447D-8C55-8A51E5CA0E87} = {1C785349-866D-447D-8C55-8A51E5CA0E87}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ufoai", "contrib\ufoaiplug\ufoai.vcproj", "{46B36F0C-5E17-458E-AE6F-AECE52F66EDE}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfiguration) = preSolution
 		Debug = Debug
 		Release = Release
+	EndGlobalSection
+	GlobalSection(ProjectDependencies) = postSolution
 	EndGlobalSection
 	GlobalSection(ProjectConfiguration) = postSolution
 		{49C5823A-5E50-4029-ACEE-1627EBB79E47}.Debug.ActiveCfg = Debug|Win32
@@ -298,6 +304,10 @@ Global
 		{46B36F0C-5E17-458E-AE6F-AECE52F66EDF}.Debug.Build.0 = Debug|Win32
 		{46B36F0C-5E17-458E-AE6F-AECE52F66EDF}.Release.ActiveCfg = Release|Win32
 		{46B36F0C-5E17-458E-AE6F-AECE52F66EDF}.Release.Build.0 = Release|Win32
+		{46B36F0C-5E17-458E-AE6F-AECE52F66EDE}.Debug.ActiveCfg = Debug|Win32
+		{46B36F0C-5E17-458E-AE6F-AECE52F66EDE}.Debug.Build.0 = Debug|Win32
+		{46B36F0C-5E17-458E-AE6F-AECE52F66EDE}.Release.ActiveCfg = Release|Win32
+		{46B36F0C-5E17-458E-AE6F-AECE52F66EDE}.Release.Build.0 = Release|Win32
 		{46B36F0C-5E17-458E-AE6F-AECE52F66EDE}.Debug.ActiveCfg = Debug|Win32
 		{46B36F0C-5E17-458E-AE6F-AECE52F66EDE}.Debug.Build.0 = Debug|Win32
 		{46B36F0C-5E17-458E-AE6F-AECE52F66EDE}.Release.ActiveCfg = Release|Win32

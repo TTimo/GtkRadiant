@@ -52,6 +52,9 @@
       <feature name="Shaderplug Plugin" desc="Shaderman's plugin for creating shader tag files">
         <component name=".\components\shaderplug.xml" root="..\..\install" />
       </feature>
+      <feature name="UFO:Alien Invasion Plugin" desc="UFO:AI plugin to cycle through the different levels without compiling">
+        <component name=".\components\ufoaiplug.xml" root="..\..\install" />
+      </feature>
     </feature>
     <feature name="GtkRadiant Editor Manual" desc="Documentation for GtkRadiant users.">
       <component name=".\components\radiant_manual.xml" root="..\..\docs\manual" />
@@ -123,6 +126,9 @@
       <feature name="Warsow Support" desc="Support for Warsow.">
         <component name=".\components\warsow.xml" root="..\..\games\WarsowPack\tools" />
         <component name=".\components\warsow_docs.xml" root="..\..\games\WarsowPack\docs" />
+      </feature>
+      <feature name="UFO:AI Support" desc="Support for UFO:Alien Invasion.">
+        <component name=".\components\ufoai.xml" root="..\..\games\UFOAIPack" />
       </feature>
     </feature>
 

@@ -1,6 +1,11 @@
 This is the changelog for developers, != changelog for the end user 
 that we distribute with the binaries. (see changelog)
 
+05/01/2007
+namespace
+- UFO:Alien Invasion Plugin (mattn2)
+- Fix: Filtering models in ET doesn't filter misc_gamemodels (Shaderman)
+
 25/12/2006
 namespace
  - Brushplugin Version 2.0, supports multiple collapse modes and a materialignore list (namespace)

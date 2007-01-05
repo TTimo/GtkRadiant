@@ -493,6 +493,13 @@ sunplug_env.useGtk2()
 sunplug_lib = sunplug_env.SharedLibrarySafe(target='sunplug', source=sunplug_lst, LIBPATH='libs')
 sunplug_env.Install(INSTALL + '/plugins', sunplug_lib)
 
+ufoai_env = module_env.Copy()
+ufoai_lst = build_list('contrib/ufoai', 'ufoai.cpp ufoai_filters.cpp ufoai_gtk.cpp ufoai_level.cpp')
+ufoai_env.useGlib2()
+ufoai_env.useGtk2()
+ufoai_lib = ufoai_env.SharedLibrarySafe(target='ufoai', source=ufoai_lst, LIBPATH='libs')
+ufoai_env.Install(INSTALL + '/plugins', ufoai_lib)
+
 shaderplug_env = module_env.Copy()
 shaderplug_lst = build_list('contrib/shaderplug', 'shaderplug.cpp')
 shaderplug_env.useGlib2()

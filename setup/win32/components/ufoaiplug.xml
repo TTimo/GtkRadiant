@@ -1,0 +1,17 @@
+<component name="ufoaiplug">
+  <dir name="plugins">
+    <file name="ufoai.dll"/>
+      <dir name="bitmaps">
+        <file name="ufoai_actorclip.bmp"/>
+        <file name="ufoai_level1.bmp"/>
+        <file name="ufoai_level2.bmp"/>
+        <file name="ufoai_level3.bmp"/>
+        <file name="ufoai_level4.bmp"/>
+        <file name="ufoai_level5.bmp"/>
+        <file name="ufoai_level6.bmp"/>
+        <file name="ufoai_level7.bmp"/>
+        <file name="ufoai_level8.bmp"/>
+        <file name="ufoai_stepon.bmp"/>
+      </dir>
+  </dir>
+</component>
