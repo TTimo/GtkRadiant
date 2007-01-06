@@ -78,6 +78,14 @@ std::size_t ToolbarButtonCount(void)
 }
 
 /**
+ * @brief Used if the ufo plugin should not be visible (at least the toolbar stuff)
+ */
+std::size_t ToolbarNoButtons (void)
+{
+	return 0;
+}
+
+/**
  * @brief
  */
 class CUFOAIToolbarButton : public IToolbarButton
@@ -178,4 +186,12 @@ const IToolbarButton* GetToolbarButton(std::size_t index)
 {
 	g_ufoaiToolbarButtons[index].mIndex = index;
 	return &g_ufoaiToolbarButtons[index];
+}
+
+/**
+ * @brief
+ */
+const IToolbarButton* GetToolbarNoButton(std::size_t index)
+{
+	return NULL;
 }

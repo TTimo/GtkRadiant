@@ -204,8 +204,15 @@ public:
 
 	UFOAIToolbarModule()
 	{
-		m_table.m_pfnToolbarButtonCount = ToolbarButtonCount;
-		m_table.m_pfnGetToolbarButton = GetToolbarButton;
+		if (!strcmp(GlobalRadiant().getGameDescriptionKeyValue("name"), "UFO:Alien Invasion")) {
+			m_table.m_pfnToolbarButtonCount = ToolbarButtonCount;
+			m_table.m_pfnGetToolbarButton = GetToolbarButton;
+		}
+		else
+		{
+			m_table.m_pfnToolbarButtonCount = ToolbarNoButtons;
+			m_table.m_pfnGetToolbarButton = GetToolbarNoButton;
+		}
 	}
 	_QERPlugToolbarTable* getTable()
 	{

@@ -465,7 +465,7 @@ bob_env.useGlib2()
 bob_env.useGtk2()
 bob_env.Install(INSTALL + '/plugins', bob_lib)
 
-#camera_lst = build_list('contrib/camera', 
+#camera_lst = build_list('contrib/camera',
 #'camera.cpp dialogs.cpp dialogs_common.cpp funchandlers.cpp listener.cpp misc.cpp renderer.cpp')
 #camera_lst.append('libs/libsplines.a')
 #bob_env.SharedLibrarySafe(target='camera', source=camera_lst)
@@ -494,10 +494,10 @@ sunplug_lib = sunplug_env.SharedLibrarySafe(target='sunplug', source=sunplug_lst
 sunplug_env.Install(INSTALL + '/plugins', sunplug_lib)
 
 ufoai_env = module_env.Copy()
-ufoai_lst = build_list('contrib/ufoai', 'ufoai.cpp ufoai_filters.cpp ufoai_gtk.cpp ufoai_level.cpp')
+ufoai_lst = build_list('contrib/ufoaiplug', 'ufoai.cpp ufoai_filters.cpp ufoai_gtk.cpp ufoai_level.cpp')
 ufoai_env.useGlib2()
 ufoai_env.useGtk2()
-ufoai_lib = ufoai_env.SharedLibrarySafe(target='ufoai', source=ufoai_lst, LIBPATH='libs')
+ufoai_lib = ufoai_env.SharedLibrarySafe(target='ufoaiplug', source=ufoai_lst, LIBPATH='libs')
 ufoai_env.Install(INSTALL + '/plugins', ufoai_lib)
 
 shaderplug_env = module_env.Copy()
