@@ -2528,6 +2528,10 @@ GtkToolbar* create_main_toolbar(MainFrame::EViewStyle style)
   // TODO: call light inspector
   //GtkButton* g_view_lightinspector_button = toolbar_append_button(toolbar, "Light Inspector", "lightinspector.bmp", "ToggleLightInspector");
 
+  gtk_toolbar_append_space (GTK_TOOLBAR (toolbar));
+  GtkButton* g_refresh_models_button = toolbar_append_button(toolbar, "Refresh Models", "refresh_models.bmp", "RefreshReferences");
+
+
   // disable the console and texture button in the regular layouts
   if(style == MainFrame::eRegular || style == MainFrame::eRegularLeft)
   {

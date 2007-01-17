@@ -1281,6 +1281,7 @@ public:
     Brush_textureChanged();
     m_observer->shaderChanged();
     updateFiltered();
+	planeChanged();
     SceneChangeNotify();
   }
 
@@ -1906,6 +1907,7 @@ public:
   void shaderChanged()
   {
     updateFiltered();
+	planeChanged();
   }
 
   void evaluateBRep() const

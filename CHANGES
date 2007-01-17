@@ -1,6 +1,13 @@
 This is the changelog for developers, != changelog for the end user 
 that we distribute with the binaries. (see changelog)
 
+17/01/2007
+namespace
+- Fixed "jumping" texcoords when switching to a shader with different size
+- (Todo) Toolbar: add button for refresh-models. (Shaderman)
+- Aniso fix (Shaderman)
+- Translucency fix (Shaderman)
+
 05/01/2007
 namespace
 - UFO:Alien Invasion Plugin (mattn2)

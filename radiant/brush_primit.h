@@ -24,6 +24,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "math/vector.h"
 #include "itexdef.h"
+#include "debugging/debugging.h"
 // Timo
 // new brush primitive texdef
 struct brushprimit_texdef_t
@@ -51,6 +52,8 @@ struct brushprimit_texdef_t
   void addScale(std::size_t width, std::size_t height)
   {
 #if 1
+	ASSERT_MESSAGE(width > 0, "shader-width is 0");
+	ASSERT_MESSAGE(height > 0, "shader-height is 0");
     coords[0][0] /= width;
     coords[0][1] /= width;
     coords[0][2] /= width;

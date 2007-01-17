@@ -49,6 +49,7 @@ enum ETexturesMode
   eTextures_LINEAR = 3,
   eTextures_LINEAR_MIPMAP_NEAREST = 4,
   eTextures_LINEAR_MIPMAP_LINEAR = 5,
+  eTextures_MAX_ANISOTROPY = 6,
 };
 
 enum TextureCompressionFormat
@@ -90,6 +91,8 @@ texture_globals_t g_texture_globals(GL_RGBA);
 
 void SetTexParameters(ETexturesMode mode)
 {
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, 1.0f);
+
   switch (mode)
   {
   case eTextures_NEAREST:
@@ -115,6 +118,9 @@ void SetTexParameters(ETexturesMode mode)
   case eTextures_LINEAR_MIPMAP_LINEAR:
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR );
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
+    break;
+  case eTextures_MAX_ANISOTROPY:
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, QGL_maxTextureAnisotropy());
     break;
   default:
     globalOutputStream() << "invalid texture mode\n";
@@ -703,6 +709,8 @@ void TextureModeImport(ETexturesMode& self, int value)
   case 5:
     Textures_SetMode(eTextures_LINEAR_MIPMAP_LINEAR);
     break;
+  case 6:
+    Textures_SetMode(eTextures_MAX_ANISOTROPY);
   }
 }
 typedef ReferenceCaller1<ETexturesMode, int, TextureModeImport> TextureModeImportCaller;
@@ -728,6 +736,9 @@ void TextureModeExport(ETexturesMode& self, const IntImportCallback& importer)
     break;
   case eTextures_LINEAR_MIPMAP_LINEAR:
     importer(5);
+    break;
+  case eTextures_MAX_ANISOTROPY:
+    importer(6);
     break;
   default:
     importer(4);
@@ -755,7 +766,7 @@ void Textures_constructPreferences(PreferencesPage& page)
     FloatExportCallback(FloatExportCaller(g_texture_globals.fGamma))
   );
   {
-    const char* texture_mode[] = { "Nearest", "Nearest Mipmap", "Linear", "Bilinear", "Bilinear Mipmap", "Trilinear" };
+    const char* texture_mode[] = { "Nearest", "Nearest Mipmap", "Linear", "Bilinear", "Bilinear Mipmap", "Trilinear", "Anisotropy" };
     page.appendCombo(
       "Texture Render Mode",
       STRING_ARRAY_RANGE(texture_mode),

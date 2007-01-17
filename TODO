@@ -49,7 +49,6 @@ Mouse: support 2-button mouse.
 Grid: background colour should be different when the smallest grid is invisible due to being zoomed out.
 Brush: option to disable dots on selected faces when not in face mode.
 Entity: draw direction arrow for func_door and func_button angle.
-Toolbar: add button for refresh-models.
 Build Menu: support for editing variables.
 Shaders: handle doom3 materials with multiple bumpmaps stage - use first stage, ignore later stages.
 Brush: warn when a brush is dragged into a configuration with <0 volume
