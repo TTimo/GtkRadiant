@@ -186,10 +186,15 @@ snaps a plane to normal/distance epsilons
 
 void SnapPlane( vec3_t normal, vec_t *dist )
 {
+// SnapPlane disabled by LordHavoc because it often messes up collision
+// brushes made from triangles of embedded models, and it has little effect
+// on anything else (axial planes are usually derived from snapped points)
+#if 0
 	SnapNormal( normal );
 
 	if( fabs( *dist - Q_rint( *dist ) ) < distanceEpsilon )
 		*dist = Q_rint( *dist );
+#endif
 }
 
 
