@@ -1,6 +1,19 @@
 This is the changelog for developers, != changelog for the end user 
 that we distribute with the binaries. (see changelog)
 
+18/01/2007
+namespace
+- Weird shiftvalues are now hidden to the user, shiftvalues will
+  stay in ]-shader_size;shader_size[ range for display.
+  For the sake of floatingpoint precision, it would be nice
+  to keep the internal values in that range too, but thats "nice to have".
+- Fixed missing librarypaths in ufoai-plugin
+  
+18/01/2007
+LordHavoc
+- disabled SnapPlane because it slightly corrupts collision brushes from
+  embedded model triangles
+
 17/01/2007
 namespace
 - Fixed "jumping" texcoords when switching to a shader with different size

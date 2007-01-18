@@ -47,6 +47,7 @@ void Scene_BrushSetTexdef_Selected(scene::Graph& graph, const TextureProjection&
 void Scene_BrushSetTexdef_Component_Selected(scene::Graph& graph, const TextureProjection& projection);
 void Scene_BrushGetTexdef_Selected(scene::Graph& graph, TextureProjection& projection);
 void Scene_BrushGetTexdef_Component_Selected(scene::Graph& graph, TextureProjection& projection);
+void Scene_BrushGetShaderSize_Component_Selected(scene::Graph& graph, size_t& width, size_t& height);
 void Scene_BrushSetFlags_Selected(scene::Graph& graph, const ContentsFlagsValue& flags);
 void Scene_BrushSetFlags_Component_Selected(scene::Graph& graph, const ContentsFlagsValue& flags);
 void Scene_BrushGetFlags_Selected(scene::Graph& graph, ContentsFlagsValue& flags);

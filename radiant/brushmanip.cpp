@@ -729,6 +729,16 @@ void Scene_BrushGetTexdef_Component_Selected(scene::Graph& graph, TextureProject
 #endif
 }
 
+void Scene_BrushGetShaderSize_Component_Selected(scene::Graph& graph, size_t& width, size_t& height)
+{
+  if(!g_SelectedFaceInstances.empty())
+  {
+    FaceInstance& faceInstance = g_SelectedFaceInstances.last();
+	width = faceInstance.getFace().getShader().width();
+	height = faceInstance.getFace().getShader().height();
+  }
+}
+
 
 class FaceGetFlags
 {
