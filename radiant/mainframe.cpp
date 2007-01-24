@@ -2417,6 +2417,12 @@ void File_constructToolbar(GtkToolbar* toolbar)
   toolbar_append_button(toolbar, "Save the active map (CTRL + S)", "file_save.bmp", "SaveMap");
 }
 
+void UndoRedo_constructToolbar(GtkToolbar* toolbar)
+{
+  toolbar_append_button(toolbar, "Undo (CTRL + Z)", "undo.bmp", "Undo");
+  toolbar_append_button(toolbar, "Redo (CTRL + Y)", "redo.bmp", "Redo");
+}
+
 void RotateFlip_constructToolbar(GtkToolbar* toolbar)
 {
   toolbar_append_button(toolbar, "x-axis Flip", "brush_flipx.bmp", "MirrorSelectionX");
@@ -2477,6 +2483,10 @@ GtkToolbar* create_main_toolbar(MainFrame::EViewStyle style)
   gtk_widget_show(GTK_WIDGET(toolbar));
 
   File_constructToolbar(toolbar);
+
+  gtk_toolbar_append_space (GTK_TOOLBAR (toolbar));
+
+  UndoRedo_constructToolbar(toolbar);
 
   gtk_toolbar_append_space (GTK_TOOLBAR (toolbar));
 

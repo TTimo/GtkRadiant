@@ -8,7 +8,9 @@ def getRevision(path):
     line = cmd.readline()
     if line == "":
       raise Exception("failed to obtain revision number")
-    if line.startswith("Revision: "):
-      revision = int(line[10:])
-      return revision
-      
+    for word in line.split():
+      try:
+        return int(word)
+      except:
+        pass
+

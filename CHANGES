@@ -1,6 +1,11 @@
 This is the changelog for developers, != changelog for the end user 
 that we distribute with the binaries. (see changelog)
 
+24/01/2007
+namespace
+- Added Undo/Redo-Toolbarbuttons (Shaderman)
+- Fixed Bug #1078 (sogined)
+
 18/01/2007
 namespace
 - Weird shiftvalues are now hidden to the user, shiftvalues will

@@ -119,6 +119,7 @@ Shortcuts: convert shortcuts.ini to xml.
 Shortcuts: warn when duplicate shortcuts are registered
 Shortcuts: rename commands in order to group shortcuts list better.
 upgrade to new API for SymGetModuleInfo - required for compiling with Visual Studio 8.0
+Doom3: lights should stay in place while resizing
 
 
 LOW priority features
