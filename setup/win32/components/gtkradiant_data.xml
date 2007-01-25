@@ -34,6 +34,7 @@
     <file name="patch_weld.bmp"/>
     <file name="patch_wireframe.bmp"/>
     <file name="popup_selection.bmp"/>
+    <file name="redo.bmp"/>
     <file name="refresh_models.bmp"/>
     <file name="scalelockx.bmp"/>
     <file name="scalelocky.bmp"/>
@@ -54,6 +55,7 @@
     <file name="texture_browser.bmp"/>
     <file name="texture_lock.bmp"/>
     <file name="textures_popup.bmp"/>
+    <file name="undo.bmp"/>
     <file name="view_cameratoggle.bmp"/>
     <file name="view_cameraupdate.bmp"/>
     <file name="view_change.bmp"/>
