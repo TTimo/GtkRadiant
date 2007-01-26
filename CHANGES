@@ -1,6 +1,11 @@
 This is the changelog for developers, != changelog for the end user 
 that we distribute with the binaries. (see changelog)
 
+26/01/2007
+namespace
+- SnapPlane reenabled by namespace because of multiple reports of
+  q3map2-crashes which were triggered by this patch.
+
 24/01/2007
 namespace
 - Added Undo/Redo-Toolbarbuttons (Shaderman)
