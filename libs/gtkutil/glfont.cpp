@@ -46,6 +46,10 @@ GLFont glfont_create(const char* font_string)
 
   pango_font_description_free (font_desc);
 
+  // fix for pango/gtkglext metrix bug
+  if(font_height > 16)
+	  font_height = 16;
+
   return GLFont(font_list_base, font_height);
 }
 

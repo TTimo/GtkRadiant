@@ -1,366 +1,498 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="7.10"
+	Version="8,00"
 	Name="include"
 	ProjectGUID="{04A5D9EE-EC49-4CBC-BD05-D80BC287897C}"
-	Keyword="Win32Proj">
+	Keyword="Win32Proj"
+	>
 	<Platforms>
 		<Platform
-			Name="Win32"/>
+			Name="Win32"
+		/>
 	</Platforms>
+	<ToolFiles>
+	</ToolFiles>
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
 			OutputDirectory="Debug"
 			IntermediateDirectory="Debug"
 			ConfigurationType="4"
-			CharacterSet="2">
+			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
+			CharacterSet="2"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="&quot;../include&quot;;&quot;../libs&quot;;&quot;../../STLport-4.6/stlport&quot;;&quot;../../libxml2-2.6/include&quot;;&quot;../../iconv-1.9/include&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB"
-				StringPooling="TRUE"
-				MinimalRebuild="TRUE"
-				ExceptionHandling="FALSE"
+				StringPooling="true"
+				MinimalRebuild="true"
+				ExceptionHandling="0"
 				BasicRuntimeChecks="0"
 				RuntimeLibrary="3"
-				BufferSecurityCheck="FALSE"
-				ForceConformanceInForLoopScope="TRUE"
+				BufferSecurityCheck="false"
+				ForceConformanceInForLoopScope="true"
 				UsePrecompiledHeader="0"
 				BrowseInformation="0"
 				WarningLevel="3"
-				Detect64BitPortabilityProblems="TRUE"
+				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="4"
-				DisableSpecificWarnings="4610;4510;4512;4505;4100;4127"/>
+				DisableSpecificWarnings="4610;4510;4512;4505;4100;4127"
+			/>
 			<Tool
-				Name="VCCustomBuildTool"/>
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="$(OutDir)/include.lib"/>
+				OutputFile="$(OutDir)/include.lib"
+			/>
 			<Tool
-				Name="VCMIDLTool"/>
+				Name="VCALinkTool"
+			/>
 			<Tool
-				Name="VCPostBuildEventTool"/>
+				Name="VCXDCMakeTool"
+			/>
 			<Tool
-				Name="VCPreBuildEventTool"/>
+				Name="VCBscMakeTool"
+			/>
 			<Tool
-				Name="VCPreLinkEventTool"/>
+				Name="VCFxCopTool"
+			/>
 			<Tool
-				Name="VCResourceCompilerTool"/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"/>
-			<Tool
-				Name="VCManagedWrapperGeneratorTool"/>
-			<Tool
-				Name="VCAuxiliaryManagedWrapperGeneratorTool"/>
+				Name="VCPostBuildEventTool"
+			/>
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
 			OutputDirectory="Release"
 			IntermediateDirectory="Release"
 			ConfigurationType="4"
-			CharacterSet="2">
+			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
+			CharacterSet="2"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				GlobalOptimizations="TRUE"
 				InlineFunctionExpansion="2"
-				EnableIntrinsicFunctions="TRUE"
-				OptimizeForWindowsApplication="TRUE"
+				EnableIntrinsicFunctions="true"
 				AdditionalIncludeDirectories="&quot;../include&quot;;&quot;../libs&quot;;&quot;../../STLport-4.6/stlport&quot;;&quot;../../libxml2-2.6/include&quot;;&quot;../../iconv-1.9/include&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB"
-				StringPooling="TRUE"
-				ExceptionHandling="FALSE"
+				StringPooling="true"
+				ExceptionHandling="0"
 				RuntimeLibrary="2"
-				BufferSecurityCheck="FALSE"
-				ForceConformanceInForLoopScope="TRUE"
+				BufferSecurityCheck="false"
+				ForceConformanceInForLoopScope="true"
 				UsePrecompiledHeader="0"
 				WarningLevel="4"
-				Detect64BitPortabilityProblems="TRUE"
+				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="3"
-				DisableSpecificWarnings="4610;4510;4512;4505;4100;4127"/>
+				DisableSpecificWarnings="4610;4510;4512;4505;4100;4127"
+			/>
 			<Tool
-				Name="VCCustomBuildTool"/>
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="$(OutDir)/include.lib"/>
+				OutputFile="$(OutDir)/include.lib"
+			/>
 			<Tool
-				Name="VCMIDLTool"/>
+				Name="VCALinkTool"
+			/>
 			<Tool
-				Name="VCPostBuildEventTool"/>
+				Name="VCXDCMakeTool"
+			/>
 			<Tool
-				Name="VCPreBuildEventTool"/>
+				Name="VCBscMakeTool"
+			/>
 			<Tool
-				Name="VCPreLinkEventTool"/>
+				Name="VCFxCopTool"
+			/>
 			<Tool
-				Name="VCResourceCompilerTool"/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"/>
-			<Tool
-				Name="VCManagedWrapperGeneratorTool"/>
-			<Tool
-				Name="VCAuxiliaryManagedWrapperGeneratorTool"/>
+				Name="VCPostBuildEventTool"
+			/>
 		</Configuration>
 	</Configurations>
 	<References>
 	</References>
 	<Files>
 		<File
-			RelativePath=".\cullable.cpp">
+			RelativePath=".\cullable.cpp"
+			>
 		</File>
 		<File
-			RelativePath=".\cullable.h">
+			RelativePath=".\cullable.h"
+			>
 		</File>
 		<File
-			RelativePath=".\editable.cpp">
+			RelativePath=".\editable.cpp"
+			>
 		</File>
 		<File
-			RelativePath=".\editable.h">
+			RelativePath=".\editable.h"
+			>
 		</File>
 		<File
-			RelativePath=".\iarchive.cpp">
+			RelativePath=".\iarchive.cpp"
+			>
 		</File>
 		<File
-			RelativePath=".\iarchive.h">
+			RelativePath=".\iarchive.h"
+			>
 		</File>
 		<File
-			RelativePath=".\ibrush.cpp">
+			RelativePath=".\ibrush.cpp"
+			>
 		</File>
 		<File
-			RelativePath=".\ibrush.h">
+			RelativePath=".\ibrush.h"
+			>
 		</File>
 		<File
-			RelativePath=".\icamera.cpp">
+			RelativePath=".\icamera.cpp"
+			>
 		</File>
 		<File
-			RelativePath=".\icamera.h">
+			RelativePath=".\icamera.h"
+			>
 		</File>
 		<File
-			RelativePath=".\idatastream.cpp">
+			RelativePath=".\idatastream.cpp"
+			>
 		</File>
 		<File
-			RelativePath=".\idatastream.h">
+			RelativePath=".\idatastream.h"
+			>
 		</File>
 		<File
-			RelativePath=".\ieclass.cpp">
+			RelativePath=".\ieclass.cpp"
+			>
 		</File>
 		<File
-			RelativePath=".\ieclass.h">
+			RelativePath=".\ieclass.h"
+			>
 		</File>
 		<File
-			RelativePath=".\ientity.cpp">
+			RelativePath=".\ientity.cpp"
+			>
 		</File>
 		<File
-			RelativePath=".\ientity.h">
+			RelativePath=".\ientity.h"
+			>
 		</File>
 		<File
-			RelativePath=".\ifilesystem.cpp">
+			RelativePath=".\ifilesystem.cpp"
+			>
 		</File>
 		<File
-			RelativePath=".\ifilesystem.h">
+			RelativePath=".\ifilesystem.h"
+			>
 		</File>
 		<File
-			RelativePath=".\ifiletypes.cpp">
+			RelativePath=".\ifiletypes.cpp"
+			>
 		</File>
 		<File
-			RelativePath=".\ifiletypes.h">
+			RelativePath=".\ifiletypes.h"
+			>
 		</File>
 		<File
-			RelativePath=".\ifilter.cpp">
+			RelativePath=".\ifilter.cpp"
+			>
 		</File>
 		<File
-			RelativePath=".\ifilter.h">
+			RelativePath=".\ifilter.h"
+			>
 		</File>
 		<File
-			RelativePath=".\igl.cpp">
+			RelativePath=".\igl.cpp"
+			>
 		</File>
 		<File
-			RelativePath=".\igl.h">
+			RelativePath=".\igl.h"
+			>
 		</File>
 		<File
-			RelativePath=".\iglrender.cpp">
+			RelativePath=".\iglrender.cpp"
+			>
 		</File>
 		<File
-			RelativePath=".\iglrender.h">
+			RelativePath=".\iglrender.h"
+			>
 		</File>
 		<File
-			RelativePath=".\igtkgl.cpp">
+			RelativePath=".\igtkgl.cpp"
+			>
 		</File>
 		<File
-			RelativePath=".\igtkgl.h">
+			RelativePath=".\igtkgl.h"
+			>
 		</File>
 		<File
-			RelativePath=".\iimage.cpp">
+			RelativePath=".\iimage.cpp"
+			>
 		</File>
 		<File
-			RelativePath=".\iimage.h">
+			RelativePath=".\iimage.h"
+			>
 		</File>
 		<File
-			RelativePath=".\imap.cpp">
+			RelativePath=".\imap.cpp"
+			>
 		</File>
 		<File
-			RelativePath=".\imap.h">
+			RelativePath=".\imap.h"
+			>
 		</File>
 		<File
-			RelativePath=".\imodel.cpp">
+			RelativePath=".\imodel.cpp"
+			>
 		</File>
 		<File
-			RelativePath=".\imodel.h">
+			RelativePath=".\imodel.h"
+			>
 		</File>
 		<File
-			RelativePath=".\ipatch.cpp">
+			RelativePath=".\ipatch.cpp"
+			>
 		</File>
 		<File
-			RelativePath=".\ipatch.h">
+			RelativePath=".\ipatch.h"
+			>
 		</File>
 		<File
-			RelativePath=".\iplugin.cpp">
+			RelativePath=".\iplugin.cpp"
+			>
 		</File>
 		<File
-			RelativePath=".\iplugin.h">
+			RelativePath=".\iplugin.h"
+			>
 		</File>
 		<File
-			RelativePath=".\ireference.cpp">
+			RelativePath=".\ireference.cpp"
+			>
 		</File>
 		<File
-			RelativePath=".\ireference.h">
+			RelativePath=".\ireference.h"
+			>
 		</File>
 		<File
-			RelativePath=".\irender.cpp">
+			RelativePath=".\irender.cpp"
+			>
 		</File>
 		<File
-			RelativePath=".\irender.h">
+			RelativePath=".\irender.h"
+			>
 		</File>
 		<File
-			RelativePath=".\iscenegraph.cpp">
+			RelativePath=".\iscenegraph.cpp"
+			>
 		</File>
 		<File
-			RelativePath=".\iscenegraph.h">
+			RelativePath=".\iscenegraph.h"
+			>
 		</File>
 		<File
-			RelativePath=".\iscriplib.cpp">
+			RelativePath=".\iscriplib.cpp"
+			>
 		</File>
 		<File
-			RelativePath=".\iscriplib.h">
+			RelativePath=".\iscriplib.h"
+			>
 		</File>
 		<File
-			RelativePath=".\iselection.cpp">
+			RelativePath=".\iselection.cpp"
+			>
 		</File>
 		<File
-			RelativePath=".\iselection.h">
+			RelativePath=".\iselection.h"
+			>
 		</File>
 		<File
-			RelativePath=".\ishaders.cpp">
+			RelativePath=".\ishaders.cpp"
+			>
 		</File>
 		<File
-			RelativePath=".\ishaders.h">
+			RelativePath=".\ishaders.h"
+			>
 		</File>
 		<File
-			RelativePath=".\itexdef.cpp">
+			RelativePath=".\itexdef.cpp"
+			>
 		</File>
 		<File
-			RelativePath=".\itexdef.h">
+			RelativePath=".\itexdef.h"
+			>
 		</File>
 		<File
-			RelativePath=".\itextstream.cpp">
+			RelativePath=".\itextstream.cpp"
+			>
 		</File>
 		<File
-			RelativePath=".\itextstream.h">
+			RelativePath=".\itextstream.h"
+			>
 		</File>
 		<File
-			RelativePath=".\itextures.cpp">
+			RelativePath=".\itextures.cpp"
+			>
 		</File>
 		<File
-			RelativePath=".\itextures.h">
+			RelativePath=".\itextures.h"
+			>
 		</File>
 		<File
-			RelativePath=".\itoolbar.cpp">
+			RelativePath=".\itoolbar.cpp"
+			>
 		</File>
 		<File
-			RelativePath=".\itoolbar.h">
+			RelativePath=".\itoolbar.h"
+			>
 		</File>
 		<File
-			RelativePath=".\iundo.cpp">
+			RelativePath=".\iundo.cpp"
+			>
 		</File>
 		<File
-			RelativePath=".\iundo.h">
+			RelativePath=".\iundo.h"
+			>
 		</File>
 		<File
-			RelativePath=".\mapfile.cpp">
+			RelativePath=".\mapfile.cpp"
+			>
 		</File>
 		<File
-			RelativePath=".\mapfile.h">
+			RelativePath=".\mapfile.h"
+			>
 		</File>
 		<File
-			RelativePath=".\modelskin.cpp">
+			RelativePath=".\modelskin.cpp"
+			>
 		</File>
 		<File
-			RelativePath=".\modelskin.h">
+			RelativePath=".\modelskin.h"
+			>
 		</File>
 		<File
-			RelativePath=".\moduleobserver.cpp">
+			RelativePath=".\moduleobserver.cpp"
+			>
 		</File>
 		<File
-			RelativePath=".\moduleobserver.h">
+			RelativePath=".\moduleobserver.h"
+			>
 		</File>
 		<File
-			RelativePath=".\modulesystem.cpp">
+			RelativePath=".\modulesystem.cpp"
+			>
 		</File>
 		<File
-			RelativePath=".\modulesystem.h">
+			RelativePath=".\modulesystem.h"
+			>
 		</File>
 		<File
-			RelativePath=".\nameable.cpp">
+			RelativePath=".\nameable.cpp"
+			>
 		</File>
 		<File
-			RelativePath=".\nameable.h">
+			RelativePath=".\nameable.h"
+			>
 		</File>
 		<File
-			RelativePath=".\namespace.cpp">
+			RelativePath=".\namespace.cpp"
+			>
 		</File>
 		<File
-			RelativePath=".\namespace.h">
+			RelativePath=".\namespace.h"
+			>
 		</File>
 		<File
-			RelativePath=".\preferencesystem.cpp">
+			RelativePath=".\preferencesystem.cpp"
+			>
 		</File>
 		<File
-			RelativePath=".\preferencesystem.h">
+			RelativePath=".\preferencesystem.h"
+			>
 		</File>
 		<File
-			RelativePath=".\qerplugin.cpp">
+			RelativePath=".\qerplugin.cpp"
+			>
 		</File>
 		<File
-			RelativePath=".\qerplugin.h">
+			RelativePath=".\qerplugin.h"
+			>
 		</File>
 		<File
-			RelativePath=".\renderable.cpp">
+			RelativePath=".\renderable.cpp"
+			>
 		</File>
 		<File
-			RelativePath=".\renderable.h">
+			RelativePath=".\renderable.h"
+			>
 		</File>
 		<File
-			RelativePath=".\selectable.cpp">
+			RelativePath=".\selectable.cpp"
+			>
 		</File>
 		<File
-			RelativePath=".\selectable.h">
+			RelativePath=".\selectable.h"
+			>
 		</File>
 		<File
-			RelativePath=".\stream_version.h">
+			RelativePath=".\stream_version.h"
+			>
 		</File>
 		<File
-			RelativePath=".\warnings.h">
+			RelativePath=".\warnings.h"
+			>
 		</File>
 		<File
-			RelativePath=".\windowobserver.cpp">
+			RelativePath=".\windowobserver.cpp"
+			>
 		</File>
 		<File
-			RelativePath=".\windowobserver.h">
+			RelativePath=".\windowobserver.h"
+			>
 		</File>
 	</Files>
 	<Globals>

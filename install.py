@@ -22,7 +22,6 @@ Builds the ./install directory.
 Copies files from various locations:
 ./setup/data/tools/
 ./games/<gamepack>/
-../<library>/<library>.dll
 ./include/version.default is used to generate RADIANT_MAJOR and RADIANT_MINOR
 """
 
@@ -102,27 +101,18 @@ for game in games:
   copyGame(gamesRoot, game, installRoot)
 
 # copy win32 dlls
-gtk2Root = os.path.normpath(os.path.join(thisDir, "../gtk2-2.4"))
+gtk2Root = os.path.normpath(os.path.join(thisDir, "../gtk2-2.10/install"))
 if os.path.exists(gtk2Root):
-  copySvn(os.path.join(gtk2Root, "install"), installRoot)
-
-iconv = os.path.normpath(os.path.join(thisDir, "../iconv-1.9/bin/iconv.dll"))
-copyFileIfExists(iconv, installRoot)
+  copySvn(gtk2Root, installRoot)
 
 libxml2 = os.path.normpath(os.path.join(thisDir, "../libxml2-2.6/bin/libxml2.dll"))
 copyFileIfExists(libxml2, installRoot)
 
-libpng = os.path.normpath(os.path.join(thisDir, "../libpng-1.2/lib/libpng13.dll"))
-copyFileIfExists(libpng, installRoot)
-
 libmhash = os.path.normpath(os.path.join(thisDir, "../mhash-0.9/win32/libmhash/Release/libmhash.dll"))
 copyFileIfExists(libmhash, installRoot)
 
-zlib = os.path.normpath(os.path.join(thisDir, "../zlib1-1.2/zlib1.dll"))
-copyFileIfExists(zlib, installRoot)
-
-msvcr71 = os.path.normpath(os.path.join(thisDir, "../msvc_redist/msvcr71.dll"))
-copyFileIfExists(msvcr71, installRoot)
+msvcr80 = os.path.normpath(os.path.join(thisDir, "../msvc_redist/msvcr80.dll"))
+copyFileIfExists(msvcr80, installRoot)
 
 dbghelp = os.path.normpath(os.path.join(thisDir, "../msvc_redist/dbghelp.dll"))
 copyFileIfExists(dbghelp, installRoot)

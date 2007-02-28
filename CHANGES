@@ -1,6 +1,24 @@
 This is the changelog for developers, != changelog for the end user 
 that we distribute with the binaries. (see changelog)
 
+28/02/2007
+namespace
+- Radiant is now Vista compatible (Aero must be disabled)
+- Updated all radiant dependencies (gtk is now 2-2.10)
+  New dependency packages can be found here
+http://zerowing.idsoftware.com/files/radiant/developer/1.5/gtkradiant-1.5-dependencies-1.0.zip
+  or here
+http://www.codecreator.net/radiant/gtkradiant-1.5-dependencies-1.0.zip
+- Removed Win32 filechooser
+   - Fixes crashes caused by utf-8 encoded filenames
+   - Fixes Vista "SaveAs"-Bug
+- Converted all projects to Visual Studio 2005
+- Codefixes for vc2k5 compiler
+- Removed old unused projectfiles for Visual Studio 6
+- Simplified dependency filestructure
+- Simplified install.py
+- Updated CONTRIBUTORS list
+
 26/01/2007
 namespace
 - SnapPlane reenabled by namespace because of multiple reports of

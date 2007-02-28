@@ -1,123 +1,179 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="7.10"
+	Version="8,00"
 	Name="GtkRadiant"
 	ProjectGUID="{8E70385C-223A-4DD1-9B99-28FF2331A2B5}"
 	RootNamespace="GtkRadiant"
-	Keyword="Win32Proj">
+	Keyword="Win32Proj"
+	>
 	<Platforms>
 		<Platform
-			Name="Win32"/>
+			Name="Win32"
+		/>
 	</Platforms>
+	<ToolFiles>
+	</ToolFiles>
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
 			OutputDirectory="Debug"
 			IntermediateDirectory="Debug"
 			ConfigurationType="1"
-			CharacterSet="0">
+			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
+			CharacterSet="0"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="../include;../libs;&quot;../../STLPort-4.6/stlport&quot;;&quot;../../libxml2-2.6/include&quot;;&quot;../../iconv-1.9/include&quot;;&quot;../../gtk2-2.4/lib/glib-2.0/include&quot;;&quot;../../gtk2-2.4/include/glib-2.0&quot;;&quot;../../gtk2-2.4/lib/gtk-2.0/include&quot;;&quot;../../gtk2-2.4/include/gtk-2.0&quot;;&quot;../../gtk2-2.4/include/gtk-2.0/gdk&quot;;&quot;../../gtk2-2.4/include/pango-1.0&quot;;&quot;../../gtk2-2.4/include/atk-1.0&quot;;&quot;../../gtk2-2.4/lib/gtkglext-1.0/include&quot;;&quot;../../gtk2-2.4/include/gtkglext-1.0&quot;"
+				AdditionalIncludeDirectories="../include;../libs;&quot;../../STLPort-4.6/stlport&quot;;&quot;../../libxml2-2.6/include&quot;;&quot;../../gtk2-2.10/lib/glib-2.0/include&quot;;&quot;../../gtk2-2.10/include/glib-2.0&quot;;&quot;../../gtk2-2.10/lib/gtk-2.0/include&quot;;&quot;../../gtk2-2.10/include/gtk-2.0/gtk&quot;;&quot;../../gtk2-2.10/include/gtk-2.0&quot;;&quot;../../gtk2-2.10/include/gtk-2.0/gdk&quot;;&quot;../../gtk2-2.10/include/pango-1.0&quot;;&quot;../../gtk2-2.10/include/atk-1.0&quot;;&quot;../../gtk2-2.10/lib/gtkglext-1.0/include&quot;;&quot;../../gtk2-2.10/include/gtkglext-1.0&quot;;&quot;../../gtk2-2.10/include/cairo&quot;;&quot;../../gtk2-2.10/include&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
-				StringPooling="TRUE"
-				MinimalRebuild="TRUE"
-				ExceptionHandling="FALSE"
+				StringPooling="true"
+				MinimalRebuild="true"
+				ExceptionHandling="0"
 				BasicRuntimeChecks="0"
 				RuntimeLibrary="3"
-				BufferSecurityCheck="FALSE"
-				ForceConformanceInForLoopScope="TRUE"
+				BufferSecurityCheck="false"
+				ForceConformanceInForLoopScope="true"
 				UsePrecompiledHeader="0"
 				BrowseInformation="0"
 				WarningLevel="3"
-				Detect64BitPortabilityProblems="TRUE"
+				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="3"
-				DisableSpecificWarnings="4610;4510;4512;4505;4100;4127"/>
+				DisableSpecificWarnings="4610;4510;4512;4505;4100;4127;4996"
+			/>
 			<Tool
-				Name="VCCustomBuildTool"/>
-			<Tool
-				Name="VCLinkerTool"
-				AdditionalDependencies="msvcrtd.lib oldnames.lib winmm.lib kernel32.lib user32.lib gdi32.lib shfolder.lib wsock32.lib dbghelp.lib glib-2.0.lib gobject-2.0.lib gdk-win32-2.0.lib gdk_pixbuf-2.0.lib gtk-win32-2.0.lib pango-1.0.lib gtkglext-win32-1.0.lib gdkglext-win32-1.0.lib opengl32.lib libxml2.lib profile.lib"
-				OutputFile="$(OutDir)/$(ProjectName).exe"
-				LinkIncremental="1"
-				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories="&quot;../../gtk2-2.4/lib&quot;;&quot;../../libxml2-2.6/lib&quot;;&quot;../libs/profile/debug/&quot;"
-				IgnoreAllDefaultLibraries="TRUE"
-				IgnoreDefaultLibraryNames="msvcprtd.lib"
-				GenerateDebugInformation="TRUE"
-				ProgramDatabaseFile="$(OutDir)/$(ProjectName).pdb"
-				StripPrivateSymbols="$(OutDir)/$(ProjectName)_stripped.pdb"
-				GenerateMapFile="FALSE"
-				SubSystem="2"
-				EntryPointSymbol="mainCRTStartup"
-				TargetMachine="1"
-				FixedBaseAddress="1"/>
-			<Tool
-				Name="VCMIDLTool"/>
-			<Tool
-				Name="VCPostBuildEventTool"
-				CommandLine="copy &quot;$(TargetPath)&quot; &quot;$(SolutionDir)install&quot;
-copy &quot;$(TargetDir)$(TargetName).pdb&quot;  &quot;$(SolutionDir)install&quot;
-"/>
-			<Tool
-				Name="VCPreBuildEventTool"/>
-			<Tool
-				Name="VCPreLinkEventTool"/>
+				Name="VCManagedResourceCompilerTool"
+			/>
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG"
-				Culture="1033"/>
+				Culture="1033"
+			/>
 			<Tool
-				Name="VCWebServiceProxyGeneratorTool"/>
+				Name="VCPreLinkEventTool"
+			/>
 			<Tool
-				Name="VCXMLDataGeneratorTool"/>
+				Name="VCLinkerTool"
+				AdditionalDependencies="msvcrtd.lib oldnames.lib winmm.lib shell32.lib kernel32.lib user32.lib gdi32.lib shfolder.lib wsock32.lib dbghelp.lib glib-2.0.lib gobject-2.0.lib gdk-win32-2.0.lib gdk_pixbuf-2.0.lib gtk-win32-2.0.lib pango-1.0.lib gtkglext-win32-1.0.lib gdkglext-win32-1.0.lib opengl32.lib libxml2.lib profile.lib $(NOINHERIT)"
+				OutputFile="$(OutDir)/$(ProjectName).exe"
+				LinkIncremental="1"
+				SuppressStartupBanner="true"
+				AdditionalLibraryDirectories="&quot;../../gtk2-2.10/lib&quot;;&quot;../../libxml2-2.6/lib&quot;;&quot;../libs/profile/debug/&quot;"
+				IgnoreAllDefaultLibraries="true"
+				IgnoreDefaultLibraryNames="msvcprtd.lib"
+				GenerateDebugInformation="true"
+				ProgramDatabaseFile="$(OutDir)/$(ProjectName).pdb"
+				StripPrivateSymbols="$(OutDir)/$(ProjectName)_stripped.pdb"
+				GenerateMapFile="false"
+				SubSystem="2"
+				EntryPointSymbol="mainCRTStartup"
+				TargetMachine="1"
+				FixedBaseAddress="1"
+			/>
 			<Tool
-				Name="VCWebDeploymentTool"/>
+				Name="VCALinkTool"
+			/>
 			<Tool
-				Name="VCManagedWrapperGeneratorTool"/>
+				Name="VCManifestTool"
+			/>
 			<Tool
-				Name="VCAuxiliaryManagedWrapperGeneratorTool"/>
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCWebDeploymentTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+				CommandLine="copy &quot;$(TargetPath)&quot; &quot;$(SolutionDir)install&quot;&#x0D;&#x0A;copy &quot;$(TargetDir)$(TargetName).pdb&quot;  &quot;$(SolutionDir)install&quot;&#x0D;&#x0A;"
+			/>
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
 			OutputDirectory="Release"
 			IntermediateDirectory="Release"
 			ConfigurationType="1"
+			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			CharacterSet="0"
-			WholeProgramOptimization="TRUE">
+			WholeProgramOptimization="1"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				GlobalOptimizations="TRUE"
 				InlineFunctionExpansion="2"
-				EnableIntrinsicFunctions="TRUE"
+				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
-				OptimizeForWindowsApplication="TRUE"
-				AdditionalIncludeDirectories="../include;../libs;&quot;../../STLPort-4.6/stlport&quot;;&quot;../../libxml2-2.6/include&quot;;&quot;../../iconv-1.9/include&quot;;&quot;../../gtk2-2.4/lib/glib-2.0/include&quot;;&quot;../../gtk2-2.4/include/glib-2.0&quot;;&quot;../../gtk2-2.4/lib/gtk-2.0/include&quot;;&quot;../../gtk2-2.4/include/gtk-2.0&quot;;&quot;../../gtk2-2.4/include/gtk-2.0/gdk&quot;;&quot;../../gtk2-2.4/include/pango-1.0&quot;;&quot;../../gtk2-2.4/include/atk-1.0&quot;;&quot;../../gtk2-2.4/lib/gtkglext-1.0/include&quot;;&quot;../../gtk2-2.4/include/gtkglext-1.0&quot;"
+				AdditionalIncludeDirectories="../include;../libs;&quot;../../STLPort-4.6/stlport&quot;;&quot;../../libxml2-2.6/include&quot;;&quot;../../gtk2-2.10/lib/glib-2.0/include&quot;;&quot;../../gtk2-2.10/include/glib-2.0&quot;;&quot;../../gtk2-2.10/lib/gtk-2.0/include&quot;;&quot;../../gtk2-2.10/include/gtk-2.0/gtk&quot;;&quot;../../gtk2-2.10/include/gtk-2.0&quot;;&quot;../../gtk2-2.10/include/gtk-2.0/gdk&quot;;&quot;../../gtk2-2.10/include/pango-1.0&quot;;&quot;../../gtk2-2.10/include/atk-1.0&quot;;&quot;../../gtk2-2.10/lib/gtkglext-1.0/include&quot;;&quot;../../gtk2-2.10/include/gtkglext-1.0&quot;;&quot;../../gtk2-2.10/include/cairo&quot;;&quot;../../gtk2-2.10/include&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
-				StringPooling="TRUE"
-				ExceptionHandling="FALSE"
+				StringPooling="true"
+				ExceptionHandling="0"
 				RuntimeLibrary="2"
-				BufferSecurityCheck="FALSE"
-				ForceConformanceInForLoopScope="TRUE"
+				BufferSecurityCheck="false"
+				ForceConformanceInForLoopScope="true"
 				UsePrecompiledHeader="0"
 				WarningLevel="4"
-				Detect64BitPortabilityProblems="TRUE"
+				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="3"
-				DisableSpecificWarnings="4610;4510;4512;4505;4100;4127"/>
+				DisableSpecificWarnings="4610;4510;4512;4505;4100;4127;4996"
+			/>
 			<Tool
-				Name="VCCustomBuildTool"/>
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+				Culture="1033"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="msvcrt.lib oldnames.lib winmm.lib kernel32.lib user32.lib gdi32.lib shfolder.lib wsock32.lib dbghelp.lib glib-2.0.lib gobject-2.0.lib gdk-win32-2.0.lib gdk_pixbuf-2.0.lib gtk-win32-2.0.lib pango-1.0.lib gtkglext-win32-1.0.lib gdkglext-win32-1.0.lib opengl32.lib libxml2.lib profile.lib"
 				OutputFile="$(OutDir)/$(ProjectName).exe"
 				LinkIncremental="1"
-				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories="&quot;../../gtk2-2.4/lib&quot;;&quot;../../libxml2-2.6/lib&quot;;&quot;../libs/profile/release/&quot;"
-				IgnoreAllDefaultLibraries="TRUE"
+				SuppressStartupBanner="true"
+				AdditionalLibraryDirectories="&quot;../../gtk2-2.10/lib&quot;;&quot;../../libxml2-2.6/lib&quot;;&quot;../libs/profile/release/&quot;"
+				IgnoreAllDefaultLibraries="true"
 				IgnoreDefaultLibraryNames="msvcprt.lib"
-				GenerateDebugInformation="TRUE"
+				GenerateDebugInformation="true"
 				ProgramDatabaseFile="$(OutDir)/$(ProjectName).pdb"
 				StripPrivateSymbols="$(OutDir)/$(ProjectName)_stripped.pdb"
 				SubSystem="2"
@@ -125,31 +181,33 @@ copy &quot;$(TargetDir)$(TargetName).pdb&quot;  &quot;$(SolutionDir)install&quot
 				EnableCOMDATFolding="2"
 				EntryPointSymbol="mainCRTStartup"
 				TargetMachine="1"
-				FixedBaseAddress="0"/>
+				FixedBaseAddress="0"
+			/>
 			<Tool
-				Name="VCMIDLTool"/>
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCWebDeploymentTool"
+			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="copy &quot;$(TargetPath)&quot; &quot;$(SolutionDir)install&quot;
-copy &quot;$(TargetDir)$(TargetName).pdb&quot;  &quot;$(SolutionDir)install&quot;
-"/>
-			<Tool
-				Name="VCPreBuildEventTool"/>
-			<Tool
-				Name="VCPreLinkEventTool"/>
-			<Tool
-				Name="VCResourceCompilerTool"
-				Culture="1033"/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"/>
-			<Tool
-				Name="VCWebDeploymentTool"/>
-			<Tool
-				Name="VCManagedWrapperGeneratorTool"/>
-			<Tool
-				Name="VCAuxiliaryManagedWrapperGeneratorTool"/>
+				CommandLine="copy &quot;$(TargetPath)&quot; &quot;$(SolutionDir)install&quot;&#x0D;&#x0A;copy &quot;$(TargetDir)$(TargetName).pdb&quot;  &quot;$(SolutionDir)install&quot;&#x0D;&#x0A;"
+			/>
 		</Configuration>
 	</Configurations>
 	<References>
@@ -158,564 +216,743 @@ copy &quot;$(TargetDir)$(TargetName).pdb&quot;  &quot;$(SolutionDir)install&quot
 		<Filter
 			Name="src"
 			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx"
-			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}">
+			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
+			>
 			<File
-				RelativePath=".\autosave.cpp">
+				RelativePath=".\autosave.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\autosave.h">
+				RelativePath=".\autosave.h"
+				>
 			</File>
 			<File
-				RelativePath="..\radiant\brush.cpp">
+				RelativePath="..\radiant\brush.cpp"
+				>
 			</File>
 			<File
-				RelativePath="..\radiant\brush.h">
+				RelativePath="..\radiant\brush.h"
+				>
 			</File>
 			<File
-				RelativePath="..\radiant\brush_primit.cpp">
+				RelativePath="..\radiant\brush_primit.cpp"
+				>
 			</File>
 			<File
-				RelativePath="..\radiant\brush_primit.h">
+				RelativePath="..\radiant\brush_primit.h"
+				>
 			</File>
 			<File
-				RelativePath=".\brushmanip.cpp">
+				RelativePath=".\brushmanip.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\brushmanip.h">
+				RelativePath=".\brushmanip.h"
+				>
 			</File>
 			<File
-				RelativePath=".\brushmodule.cpp">
+				RelativePath=".\brushmodule.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\brushmodule.h">
+				RelativePath=".\brushmodule.h"
+				>
 			</File>
 			<File
-				RelativePath=".\brushnode.cpp">
+				RelativePath=".\brushnode.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\brushnode.h">
+				RelativePath=".\brushnode.h"
+				>
 			</File>
 			<File
-				RelativePath=".\brushtokens.cpp">
+				RelativePath=".\brushtokens.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\brushtokens.h">
+				RelativePath=".\brushtokens.h"
+				>
 			</File>
 			<File
-				RelativePath=".\brushxml.cpp">
+				RelativePath=".\brushxml.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\brushxml.h">
+				RelativePath=".\brushxml.h"
+				>
 			</File>
 			<File
-				RelativePath=".\build.cpp">
+				RelativePath=".\build.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\build.h">
+				RelativePath=".\build.h"
+				>
 			</File>
 			<File
-				RelativePath="..\radiant\camwindow.cpp">
+				RelativePath="..\radiant\camwindow.cpp"
+				>
 			</File>
 			<File
-				RelativePath="..\radiant\camwindow.h">
+				RelativePath="..\radiant\camwindow.h"
+				>
 			</File>
 			<File
-				RelativePath=".\clippertool.cpp">
+				RelativePath=".\clippertool.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\clippertool.h">
+				RelativePath=".\clippertool.h"
+				>
 			</File>
 			<File
-				RelativePath=".\commands.cpp">
+				RelativePath=".\commands.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\commands.h">
+				RelativePath=".\commands.h"
+				>
 			</File>
 			<File
-				RelativePath=".\console.cpp">
+				RelativePath=".\console.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\console.h">
+				RelativePath=".\console.h"
+				>
 			</File>
 			<File
-				RelativePath="..\radiant\csg.cpp">
+				RelativePath="..\radiant\csg.cpp"
+				>
 			</File>
 			<File
-				RelativePath="..\radiant\csg.h">
+				RelativePath="..\radiant\csg.h"
+				>
 			</File>
 			<File
-				RelativePath="..\radiant\dialog.cpp">
+				RelativePath="..\radiant\dialog.cpp"
+				>
 			</File>
 			<File
-				RelativePath="..\radiant\dialog.h">
+				RelativePath="..\radiant\dialog.h"
+				>
 			</File>
 			<File
-				RelativePath="..\radiant\eclass.cpp">
+				RelativePath="..\radiant\eclass.cpp"
+				>
 			</File>
 			<File
-				RelativePath="..\radiant\eclass.h">
+				RelativePath="..\radiant\eclass.h"
+				>
 			</File>
 			<File
-				RelativePath="..\radiant\eclass_def.cpp">
+				RelativePath="..\radiant\eclass_def.cpp"
+				>
 			</File>
 			<File
-				RelativePath="..\radiant\eclass_def.h">
+				RelativePath="..\radiant\eclass_def.h"
+				>
 			</File>
 			<File
-				RelativePath=".\eclass_doom3.cpp">
+				RelativePath=".\eclass_doom3.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\eclass_doom3.h">
+				RelativePath=".\eclass_doom3.h"
+				>
 			</File>
 			<File
-				RelativePath=".\eclass_fgd.cpp">
+				RelativePath=".\eclass_fgd.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\eclass_fgd.h">
+				RelativePath=".\eclass_fgd.h"
+				>
 			</File>
 			<File
-				RelativePath=".\eclass_xml.cpp">
+				RelativePath=".\eclass_xml.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\eclass_xml.h">
+				RelativePath=".\eclass_xml.h"
+				>
 			</File>
 			<File
-				RelativePath=".\entity.cpp">
+				RelativePath=".\entity.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\entity.h">
+				RelativePath=".\entity.h"
+				>
 			</File>
 			<File
-				RelativePath="..\radiant\entityinspector.cpp">
+				RelativePath="..\radiant\entityinspector.cpp"
+				>
 			</File>
 			<File
-				RelativePath="..\radiant\entityinspector.h">
+				RelativePath="..\radiant\entityinspector.h"
+				>
 			</File>
 			<File
-				RelativePath=".\entitylist.cpp">
+				RelativePath=".\entitylist.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\entitylist.h">
+				RelativePath=".\entitylist.h"
+				>
 			</File>
 			<File
-				RelativePath=".\environment.cpp">
+				RelativePath=".\environment.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\environment.h">
+				RelativePath=".\environment.h"
+				>
 			</File>
 			<File
-				RelativePath="..\radiant\error.cpp">
+				RelativePath="..\radiant\error.cpp"
+				>
 			</File>
 			<File
-				RelativePath="..\radiant\error.h">
+				RelativePath="..\radiant\error.h"
+				>
 			</File>
 			<File
-				RelativePath="..\radiant\feedback.cpp">
+				RelativePath="..\radiant\feedback.cpp"
+				>
 			</File>
 			<File
-				RelativePath="..\radiant\feedback.h">
+				RelativePath="..\radiant\feedback.h"
+				>
 			</File>
 			<File
-				RelativePath="..\radiant\filetypes.cpp">
+				RelativePath="..\radiant\filetypes.cpp"
+				>
 			</File>
 			<File
-				RelativePath="..\radiant\filetypes.h">
+				RelativePath="..\radiant\filetypes.h"
+				>
 			</File>
 			<File
-				RelativePath="..\radiant\filters.cpp">
+				RelativePath="..\radiant\filters.cpp"
+				>
 			</File>
 			<File
-				RelativePath="..\radiant\filters.h">
+				RelativePath="..\radiant\filters.h"
+				>
 			</File>
 			<File
-				RelativePath="..\radiant\findtexturedialog.cpp">
+				RelativePath="..\radiant\findtexturedialog.cpp"
+				>
 			</File>
 			<File
-				RelativePath="..\radiant\findtexturedialog.h">
+				RelativePath="..\radiant\findtexturedialog.h"
+				>
 			</File>
 			<File
-				RelativePath="..\radiant\glwidget.cpp">
+				RelativePath="..\radiant\glwidget.cpp"
+				>
 			</File>
 			<File
-				RelativePath="..\radiant\glwidget.h">
+				RelativePath="..\radiant\glwidget.h"
+				>
 			</File>
 			<File
-				RelativePath=".\grid.cpp">
+				RelativePath=".\grid.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\grid.h">
+				RelativePath=".\grid.h"
+				>
 			</File>
 			<File
-				RelativePath="..\radiant\groupdialog.cpp">
+				RelativePath="..\radiant\groupdialog.cpp"
+				>
 			</File>
 			<File
-				RelativePath="..\radiant\groupdialog.h">
+				RelativePath="..\radiant\groupdialog.h"
+				>
 			</File>
 			<File
-				RelativePath="..\radiant\gtkdlgs.cpp">
+				RelativePath="..\radiant\gtkdlgs.cpp"
+				>
 			</File>
 			<File
-				RelativePath="..\radiant\gtkdlgs.h">
+				RelativePath="..\radiant\gtkdlgs.h"
+				>
 			</File>
 			<File
-				RelativePath="..\radiant\gtkmisc.cpp">
+				RelativePath="..\radiant\gtkmisc.cpp"
+				>
 			</File>
 			<File
-				RelativePath="..\radiant\gtkmisc.h">
+				RelativePath="..\radiant\gtkmisc.h"
+				>
 			</File>
 			<File
-				RelativePath=".\help.cpp">
+				RelativePath=".\help.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\help.h">
+				RelativePath=".\help.h"
+				>
 			</File>
 			<File
-				RelativePath="..\radiant\image.cpp">
+				RelativePath="..\radiant\image.cpp"
+				>
 			</File>
 			<File
-				RelativePath="..\radiant\image.h">
+				RelativePath="..\radiant\image.h"
+				>
 			</File>
 			<File
-				RelativePath="..\radiant\main.cpp">
+				RelativePath="..\radiant\main.cpp"
+				>
 			</File>
 			<File
-				RelativePath="..\radiant\main.h">
+				RelativePath="..\radiant\main.h"
+				>
 			</File>
 			<File
-				RelativePath="..\radiant\mainframe.cpp">
+				RelativePath="..\radiant\mainframe.cpp"
+				>
 			</File>
 			<File
-				RelativePath="..\radiant\mainframe.h">
+				RelativePath="..\radiant\mainframe.h"
+				>
 			</File>
 			<File
-				RelativePath="..\radiant\map.cpp">
+				RelativePath="..\radiant\map.cpp"
+				>
 			</File>
 			<File
-				RelativePath="..\radiant\map.h">
+				RelativePath="..\radiant\map.h"
+				>
 			</File>
 			<File
-				RelativePath=".\mru.cpp">
+				RelativePath=".\mru.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\mru.h">
+				RelativePath=".\mru.h"
+				>
 			</File>
 			<File
-				RelativePath="..\radiant\multimon.cpp">
+				RelativePath="..\radiant\multimon.cpp"
+				>
 			</File>
 			<File
-				RelativePath="..\radiant\multimon.h">
+				RelativePath="..\radiant\multimon.h"
+				>
 			</File>
 			<File
-				RelativePath="..\radiant\nullmodel.cpp">
+				RelativePath="..\radiant\nullmodel.cpp"
+				>
 			</File>
 			<File
-				RelativePath="..\radiant\nullmodel.h">
+				RelativePath="..\radiant\nullmodel.h"
+				>
 			</File>
 			<File
-				RelativePath="..\radiant\parse.cpp">
+				RelativePath="..\radiant\parse.cpp"
+				>
 			</File>
 			<File
-				RelativePath="..\radiant\parse.h">
+				RelativePath="..\radiant\parse.h"
+				>
 			</File>
 			<File
-				RelativePath="..\radiant\patch.cpp">
+				RelativePath="..\radiant\patch.cpp"
+				>
 			</File>
 			<File
-				RelativePath="..\radiant\patch.h">
+				RelativePath="..\radiant\patch.h"
+				>
 			</File>
 			<File
-				RelativePath="..\radiant\patchdialog.cpp">
+				RelativePath="..\radiant\patchdialog.cpp"
+				>
 			</File>
 			<File
-				RelativePath="..\radiant\patchdialog.h">
+				RelativePath="..\radiant\patchdialog.h"
+				>
 			</File>
 			<File
-				RelativePath="..\radiant\patchmanip.cpp">
+				RelativePath="..\radiant\patchmanip.cpp"
+				>
 			</File>
 			<File
-				RelativePath="..\radiant\patchmanip.h">
+				RelativePath="..\radiant\patchmanip.h"
+				>
 			</File>
 			<File
-				RelativePath=".\patchmodule.cpp">
+				RelativePath=".\patchmodule.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\patchmodule.h">
+				RelativePath=".\patchmodule.h"
+				>
 			</File>
 			<File
-				RelativePath="..\radiant\plugin.cpp">
+				RelativePath="..\radiant\plugin.cpp"
+				>
 			</File>
 			<File
-				RelativePath="..\radiant\plugin.h">
+				RelativePath="..\radiant\plugin.h"
+				>
 			</File>
 			<File
-				RelativePath="..\radiant\pluginapi.cpp">
+				RelativePath="..\radiant\pluginapi.cpp"
+				>
 			</File>
 			<File
-				RelativePath="..\radiant\pluginapi.h">
+				RelativePath="..\radiant\pluginapi.h"
+				>
 			</File>
 			<File
-				RelativePath="..\radiant\pluginmanager.cpp">
+				RelativePath="..\radiant\pluginmanager.cpp"
+				>
 			</File>
 			<File
-				RelativePath="..\radiant\pluginmanager.h">
+				RelativePath="..\radiant\pluginmanager.h"
+				>
 			</File>
 			<File
-				RelativePath=".\pluginmenu.cpp">
+				RelativePath=".\pluginmenu.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\pluginmenu.h">
+				RelativePath=".\pluginmenu.h"
+				>
 			</File>
 			<File
-				RelativePath=".\plugintoolbar.cpp">
+				RelativePath=".\plugintoolbar.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\plugintoolbar.h">
+				RelativePath=".\plugintoolbar.h"
+				>
 			</File>
 			<File
-				RelativePath="..\radiant\points.cpp">
+				RelativePath="..\radiant\points.cpp"
+				>
 			</File>
 			<File
-				RelativePath="..\radiant\points.h">
+				RelativePath="..\radiant\points.h"
+				>
 			</File>
 			<File
-				RelativePath=".\preferencedictionary.cpp">
+				RelativePath=".\preferencedictionary.cpp"
+				>
 			</File>
 			<File
-				RelativePath="..\radiant\preferencedictionary.h">
+				RelativePath="..\radiant\preferencedictionary.h"
+				>
 			</File>
 			<File
-				RelativePath="..\radiant\preferences.cpp">
+				RelativePath="..\radiant\preferences.cpp"
+				>
 			</File>
 			<File
-				RelativePath="..\radiant\preferences.h">
+				RelativePath="..\radiant\preferences.h"
+				>
 			</File>
 			<File
-				RelativePath="..\radiant\qe3.cpp">
+				RelativePath="..\radiant\qe3.cpp"
+				>
 			</File>
 			<File
-				RelativePath="..\radiant\qe3.h">
+				RelativePath="..\radiant\qe3.h"
+				>
 			</File>
 			<File
-				RelativePath="..\radiant\qgl.cpp">
+				RelativePath="..\radiant\qgl.cpp"
+				>
 			</File>
 			<File
-				RelativePath="..\radiant\qgl.h">
+				RelativePath="..\radiant\qgl.h"
+				>
 			</File>
 			<File
-				RelativePath="..\radiant\referencecache.cpp">
+				RelativePath="..\radiant\referencecache.cpp"
+				>
 			</File>
 			<File
-				RelativePath="..\radiant\referencecache.h">
+				RelativePath="..\radiant\referencecache.h"
+				>
 			</File>
 			<File
-				RelativePath=".\renderer.cpp">
+				RelativePath=".\renderer.cpp"
+				>
 			</File>
 			<File
-				RelativePath="..\radiant\renderer.h">
+				RelativePath="..\radiant\renderer.h"
+				>
 			</File>
 			<File
-				RelativePath="..\radiant\renderstate.cpp">
+				RelativePath="..\radiant\renderstate.cpp"
+				>
 			</File>
 			<File
-				RelativePath="..\radiant\renderstate.h">
+				RelativePath="..\radiant\renderstate.h"
+				>
 			</File>
 			<File
-				RelativePath="..\radiant\scenegraph.cpp">
+				RelativePath="..\radiant\scenegraph.cpp"
+				>
 			</File>
 			<File
-				RelativePath="..\radiant\scenegraph.h">
+				RelativePath="..\radiant\scenegraph.h"
+				>
 			</File>
 			<File
-				RelativePath="..\radiant\select.cpp">
+				RelativePath="..\radiant\select.cpp"
+				>
 			</File>
 			<File
-				RelativePath="..\radiant\select.h">
+				RelativePath="..\radiant\select.h"
+				>
 			</File>
 			<File
-				RelativePath="..\radiant\selection.cpp">
+				RelativePath="..\radiant\selection.cpp"
+				>
 			</File>
 			<File
-				RelativePath="..\radiant\selection.h">
+				RelativePath="..\radiant\selection.h"
+				>
 			</File>
 			<File
-				RelativePath="..\radiant\server.cpp">
+				RelativePath="..\radiant\server.cpp"
+				>
 			</File>
 			<File
-				RelativePath="..\radiant\server.h">
+				RelativePath="..\radiant\server.h"
+				>
 			</File>
 			<File
-				RelativePath=".\shaders.cpp">
+				RelativePath=".\shaders.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\shaders.h">
+				RelativePath=".\shaders.h"
+				>
 			</File>
 			<File
-				RelativePath=".\sockets.cpp">
+				RelativePath=".\sockets.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\sockets.h">
+				RelativePath=".\sockets.h"
+				>
 			</File>
 			<File
-				RelativePath=".\stacktrace.cpp">
+				RelativePath=".\stacktrace.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\stacktrace.h">
+				RelativePath=".\stacktrace.h"
+				>
 			</File>
 			<File
-				RelativePath="..\radiant\surfacedialog.cpp">
+				RelativePath="..\radiant\surfacedialog.cpp"
+				>
 			</File>
 			<File
-				RelativePath="..\radiant\surfacedialog.h">
+				RelativePath="..\radiant\surfacedialog.h"
+				>
 			</File>
 			<File
-				RelativePath="..\radiant\texmanip.cpp">
+				RelativePath="..\radiant\texmanip.cpp"
+				>
 			</File>
 			<File
-				RelativePath="..\radiant\texmanip.h">
+				RelativePath="..\radiant\texmanip.h"
+				>
 			</File>
 			<File
-				RelativePath=".\textureentry.cpp">
+				RelativePath=".\textureentry.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\textureentry.h">
+				RelativePath=".\textureentry.h"
+				>
 			</File>
 			<File
-				RelativePath="..\radiant\textures.cpp">
+				RelativePath="..\radiant\textures.cpp"
+				>
 			</File>
 			<File
-				RelativePath="..\radiant\textures.h">
+				RelativePath="..\radiant\textures.h"
+				>
 			</File>
 			<File
-				RelativePath="..\radiant\texwindow.cpp">
+				RelativePath="..\radiant\texwindow.cpp"
+				>
 			</File>
 			<File
-				RelativePath="..\radiant\texwindow.h">
+				RelativePath="..\radiant\texwindow.h"
+				>
 			</File>
 			<File
-				RelativePath="..\radiant\timer.cpp">
+				RelativePath="..\radiant\timer.cpp"
+				>
 			</File>
 			<File
-				RelativePath="..\radiant\timer.h">
+				RelativePath="..\radiant\timer.h"
+				>
 			</File>
 			<File
-				RelativePath="..\radiant\treemodel.cpp">
+				RelativePath="..\radiant\treemodel.cpp"
+				>
 			</File>
 			<File
-				RelativePath="..\radiant\treemodel.h">
+				RelativePath="..\radiant\treemodel.h"
+				>
 			</File>
 			<File
-				RelativePath="..\radiant\undo.cpp">
+				RelativePath="..\radiant\undo.cpp"
+				>
 			</File>
 			<File
-				RelativePath="..\radiant\undo.h">
+				RelativePath="..\radiant\undo.h"
+				>
 			</File>
 			<File
-				RelativePath=".\url.cpp">
+				RelativePath=".\url.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\url.h">
+				RelativePath=".\url.h"
+				>
 			</File>
 			<File
-				RelativePath="..\radiant\view.cpp">
+				RelativePath="..\radiant\view.cpp"
+				>
 			</File>
 			<File
-				RelativePath="..\radiant\view.h">
+				RelativePath="..\radiant\view.h"
+				>
 			</File>
 			<File
-				RelativePath="..\radiant\watchbsp.cpp">
+				RelativePath="..\radiant\watchbsp.cpp"
+				>
 			</File>
 			<File
-				RelativePath="..\radiant\watchbsp.h">
+				RelativePath="..\radiant\watchbsp.h"
+				>
 			</File>
 			<File
-				RelativePath="..\radiant\winding.cpp">
+				RelativePath="..\radiant\winding.cpp"
+				>
 			</File>
 			<File
-				RelativePath="..\radiant\winding.h">
+				RelativePath="..\radiant\winding.h"
+				>
 			</File>
 			<File
-				RelativePath=".\windowobservers.cpp">
+				RelativePath=".\windowobservers.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\windowobservers.h">
+				RelativePath=".\windowobservers.h"
+				>
 			</File>
 			<File
-				RelativePath=".\xmlstuff.cpp">
+				RelativePath=".\xmlstuff.cpp"
+				>
 			</File>
 			<File
-				RelativePath="..\radiant\xmlstuff.h">
+				RelativePath="..\radiant\xmlstuff.h"
+				>
 			</File>
 			<File
-				RelativePath="..\radiant\xywindow.cpp">
+				RelativePath="..\radiant\xywindow.cpp"
+				>
 			</File>
 			<File
-				RelativePath="..\radiant\xywindow.h">
+				RelativePath="..\radiant\xywindow.h"
+				>
 			</File>
 		</Filter>
 		<File
-			RelativePath="..\Changes">
+			RelativePath="..\Changes"
+			>
 		</File>
 		<File
-			RelativePath="..\debug.py">
+			RelativePath="..\debug.py"
+			>
 			<FileConfiguration
-				Name="Debug|Win32">
+				Name="Debug|Win32"
+				>
 				<Tool
 					Name="VCCustomBuildTool"
-					CommandLine="python &quot;$(SolutionDir)debug.py&quot;
-"
+					CommandLine="python &quot;$(SolutionDir)debug.py&quot;&#x0D;&#x0A;"
 					AdditionalDependencies="&quot;$(SolutionDir)install\$(TargetName).pdb&quot;"
-					Outputs="&quot;$(TargetDir)$(TargetName).pdb&quot;"/>
+					Outputs="&quot;$(TargetDir)$(TargetName).pdb&quot;"
+				/>
 			</FileConfiguration>
 			<FileConfiguration
-				Name="Release|Win32">
+				Name="Release|Win32"
+				>
 				<Tool
 					Name="VCCustomBuildTool"
-					CommandLine="python &quot;$(SolutionDir)debug.py&quot;
-"
+					CommandLine="python &quot;$(SolutionDir)debug.py&quot;&#x0D;&#x0A;"
 					AdditionalDependencies="&quot;$(SolutionDir)install\$(TargetName).pdb&quot;"
-					Outputs="&quot;$(TargetDir)$(TargetName).pdb&quot;"/>
+					Outputs="&quot;$(TargetDir)$(TargetName).pdb&quot;"
+				/>
 			</FileConfiguration>
 		</File>
 		<File
-			RelativePath="..\install.py">
+			RelativePath="..\install.py"
+			>
 		</File>
 		<File
-			RelativePath=".\radiant.ico">
+			RelativePath=".\radiant.ico"
+			>
 		</File>
 		<File
-			RelativePath=".\radiant.rc">
+			RelativePath=".\radiant.rc"
+			>
 		</File>
 		<File
-			RelativePath="..\radiant\resource.h">
+			RelativePath="..\radiant\resource.h"
+			>
 		</File>
 		<File
-			RelativePath="..\SConscript">
+			RelativePath="..\SConscript"
+			>
 		</File>
 		<File
-			RelativePath="..\SConstruct">
+			RelativePath="..\SConstruct"
+			>
 		</File>
 		<File
-			RelativePath="..\Todo">
+			RelativePath="..\Todo"
+			>
 		</File>
 		<File
-			RelativePath="..\touch.py">
+			RelativePath="..\touch.py"
+			>
 			<FileConfiguration
-				Name="Debug|Win32">
+				Name="Debug|Win32"
+				>
 				<Tool
 					Name="VCCustomBuildTool"
-					CommandLine="python &quot;$(SolutionDir)touch.py&quot;
-"
+					CommandLine="python &quot;$(SolutionDir)touch.py&quot;&#x0D;&#x0A;"
 					AdditionalDependencies="&quot;$(SolutionDir)install\$(TargetFileName)&quot;"
-					Outputs="&quot;$(TargetPath)&quot;"/>
+					Outputs="&quot;$(TargetPath)&quot;"
+				/>
 			</FileConfiguration>
 			<FileConfiguration
-				Name="Release|Win32">
+				Name="Release|Win32"
+				>
 				<Tool
 					Name="VCCustomBuildTool"
-					CommandLine="python &quot;$(SolutionDir)touch.py&quot;
-"
+					CommandLine="python &quot;$(SolutionDir)touch.py&quot;&#x0D;&#x0A;"
 					AdditionalDependencies="&quot;$(SolutionDir)install\$(TargetFileName)&quot;"
-					Outputs="&quot;$(TargetPath)&quot;"/>
+					Outputs="&quot;$(TargetPath)&quot;"
+				/>
 			</FileConfiguration>
 		</File>
 	</Files>

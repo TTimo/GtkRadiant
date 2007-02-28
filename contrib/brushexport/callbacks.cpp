@@ -33,7 +33,7 @@ void OnExportClicked(GtkButton* button, gpointer user_data)
   GtkListStore* list = GTK_LIST_STORE(gtk_tree_view_get_model(view));
 
   GtkTreeIter iter;
-  bool valid = gtk_tree_model_get_iter_first(GTK_TREE_MODEL(list), &iter);
+  gboolean valid = gtk_tree_model_get_iter_first(GTK_TREE_MODEL(list), &iter);
   while(valid)
   {
     gchar* data;

@@ -1,158 +1,219 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="7.10"
+	Version="8,00"
 	Name="q3map2"
 	ProjectGUID="{8ED67991-58A6-44AA-9B3A-3217085EF187}"
-	RootNamespace="q3map2">
+	RootNamespace="q3map2"
+	>
 	<Platforms>
 		<Platform
-			Name="Win32"/>
+			Name="Win32"
+		/>
 	</Platforms>
+	<ToolFiles>
+	</ToolFiles>
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
 			OutputDirectory="Debug"
 			IntermediateDirectory="Debug"
 			ConfigurationType="1"
+			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="0"
-			ATLMinimizesCRunTimeLibraryUsage="FALSE"
-			CharacterSet="2">
+			ATLMinimizesCRunTimeLibraryUsage="false"
+			CharacterSet="2"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+				TypeLibraryName=".\Debug/q3map2.tlb"
+			/>
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;..\..\..\..\mhash-0.9\lib&quot;;..\..\..\include;..\common;..\..\..\libs;&quot;..\..\..\..\libxml2-2.6\include&quot;;&quot;..\..\..\..\iconv-1.9\include&quot;;&quot;..\..\..\..\libpng-1.2&quot;;&quot;..\..\..\..\zlib1-1.2\include&quot;;&quot;..\..\..\..\gtk2-2.4\include\glib-2.0&quot;;&quot;..\..\..\..\gtk2-2.4\lib\glib-2.0\include&quot;"
+				AdditionalIncludeDirectories="&quot;..\..\..\..\mhash-0.9\lib&quot;;..\..\..\include;..\common;..\..\..\libs;&quot;..\..\..\..\libxml2-2.6\include&quot;;&quot;..\..\..\..\gtk2-2.10\include\glib-2.0&quot;;&quot;..\..\..\..\gtk2-2.10\lib\glib-2.0\include&quot;;&quot;..\..\..\..\gtk2-2.10\include\&quot;;$(NOINHERIT)"
 				PreprocessorDefinitions="_DEBUG,WIN32,_CONSOLE"
-				ExceptionHandling="FALSE"
+				ExceptionHandling="0"
 				BasicRuntimeChecks="0"
 				RuntimeLibrary="3"
-				BufferSecurityCheck="FALSE"
+				BufferSecurityCheck="false"
 				PrecompiledHeaderFile=".\Debug/q3map2.pch"
 				AssemblerListingLocation=".\Debug/"
 				ObjectFile=".\Debug/"
 				ProgramDataBaseFileName=".\Debug/"
 				BrowseInformation="0"
 				WarningLevel="3"
-				SuppressStartupBanner="TRUE"
+				SuppressStartupBanner="true"
 				DebugInformationFormat="4"
-				CompileAs="0"/>
+				CompileAs="0"
+			/>
 			<Tool
-				Name="VCCustomBuildTool"/>
-			<Tool
-				Name="VCLinkerTool"
-				AdditionalOptions="/MACHINE:I386"
-				AdditionalDependencies="glib-2.0.lib wsock32.lib libxml2.lib libpng13.lib libmhash.lib"
-				OutputFile=".\Debug/q3map2.exe"
-				LinkIncremental="2"
-				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories="&quot;..\..\..\..\mhash-0.9\win32\libmhash\Debug&quot;;&quot;..\..\..\..\libxml2-2.6\lib&quot;;&quot;..\..\..\..\zlib1-1.2\lib&quot;;&quot;..\..\..\..\libpng-1.2\lib&quot;;&quot;..\..\..\..\gtk2-2.4\lib&quot;"
-				IgnoreDefaultLibraryNames="libcd"
-				GenerateDebugInformation="TRUE"
-				ProgramDatabaseFile=".\Debug/q3map2.pdb"
-				GenerateMapFile="TRUE"
-				MapFileName=".\Debug/q3map2.map"
-				SubSystem="1"
-				StackReserveSize="4194304"/>
-			<Tool
-				Name="VCMIDLTool"
-				TypeLibraryName=".\Debug/q3map2.tlb"/>
-			<Tool
-				Name="VCPostBuildEventTool"
-				Description="Copy to dir..."
-				CommandLine="copy &quot;$(TargetPath)&quot; &quot;$(SolutionDir)install&quot;"/>
-			<Tool
-				Name="VCPreBuildEventTool"/>
-			<Tool
-				Name="VCPreLinkEventTool"/>
+				Name="VCManagedResourceCompilerTool"
+			/>
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG"
-				Culture="1033"/>
+				Culture="1033"
+			/>
 			<Tool
-				Name="VCWebServiceProxyGeneratorTool"/>
+				Name="VCPreLinkEventTool"
+			/>
 			<Tool
-				Name="VCXMLDataGeneratorTool"/>
+				Name="VCLinkerTool"
+				AdditionalOptions="/MACHINE:I386"
+				AdditionalDependencies="glib-2.0.lib wsock32.lib libxml2.lib libpng.lib libmhash.lib"
+				OutputFile=".\Debug/q3map2.exe"
+				LinkIncremental="2"
+				SuppressStartupBanner="true"
+				AdditionalLibraryDirectories="&quot;..\..\..\..\mhash-0.9\win32\libmhash\Debug&quot;;&quot;..\..\..\..\libxml2-2.6\lib&quot;;&quot;..\..\..\..\gtk2-2.10\lib&quot;"
+				IgnoreDefaultLibraryNames="libcd"
+				GenerateDebugInformation="true"
+				ProgramDatabaseFile=".\Debug/q3map2.pdb"
+				GenerateMapFile="true"
+				MapFileName=".\Debug/q3map2.map"
+				SubSystem="1"
+				StackReserveSize="4194304"
+			/>
 			<Tool
-				Name="VCWebDeploymentTool"/>
+				Name="VCALinkTool"
+			/>
 			<Tool
-				Name="VCManagedWrapperGeneratorTool"/>
+				Name="VCManifestTool"
+			/>
 			<Tool
-				Name="VCAuxiliaryManagedWrapperGeneratorTool"/>
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCWebDeploymentTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+				Description="Copy to dir..."
+				CommandLine="copy &quot;$(TargetPath)&quot; &quot;$(SolutionDir)install&quot;"
+			/>
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
 			OutputDirectory="Release"
 			IntermediateDirectory="Release"
 			ConfigurationType="1"
+			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="0"
-			ATLMinimizesCRunTimeLibraryUsage="FALSE"
-			CharacterSet="2">
+			ATLMinimizesCRunTimeLibraryUsage="false"
+			CharacterSet="2"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+				TypeLibraryName=".\Release/q3map2.tlb"
+			/>
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="3"
-				GlobalOptimizations="TRUE"
 				InlineFunctionExpansion="2"
-				EnableIntrinsicFunctions="TRUE"
+				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
-				OptimizeForProcessor="2"
-				OptimizeForWindowsApplication="TRUE"
-				AdditionalIncludeDirectories="&quot;..\..\..\..\mhash-0.9\lib&quot;;..\..\..\include;..\common;..\..\..\libs;&quot;..\..\..\..\libxml2-2.6\include&quot;;&quot;..\..\..\..\iconv-1.9\include&quot;;&quot;..\..\..\..\libpng-1.2&quot;;&quot;..\..\..\..\zlib1-1.2\include&quot;;&quot;..\..\..\..\gtk2-2.4\include\glib-2.0&quot;;&quot;..\..\..\..\gtk2-2.4\lib\glib-2.0\include&quot;"
+				AdditionalIncludeDirectories="&quot;..\..\..\..\mhash-0.9\lib&quot;;..\..\..\include;..\common;..\..\..\libs;&quot;..\..\..\..\libxml2-2.6\include&quot;;&quot;..\..\..\..\gtk2-2.10\include\glib-2.0&quot;;&quot;..\..\..\..\gtk2-2.10\lib\glib-2.0\include&quot;;&quot;..\..\..\..\gtk2-2.10\include\&quot;;$(NOINHERIT)"
 				PreprocessorDefinitions="NDEBUG,WIN32,_CONSOLE"
-				StringPooling="TRUE"
-				ExceptionHandling="FALSE"
+				StringPooling="true"
+				ExceptionHandling="0"
 				BasicRuntimeChecks="0"
 				RuntimeLibrary="2"
-				BufferSecurityCheck="FALSE"
-				EnableFunctionLevelLinking="TRUE"
+				BufferSecurityCheck="false"
+				EnableFunctionLevelLinking="true"
 				PrecompiledHeaderFile=".\Release/q3map2.pch"
 				AssemblerListingLocation=".\Release/"
 				ObjectFile=".\Release/"
 				ProgramDataBaseFileName=".\Release/"
 				BrowseInformation="0"
 				WarningLevel="3"
-				SuppressStartupBanner="TRUE"
+				SuppressStartupBanner="true"
 				DebugInformationFormat="3"
-				CompileAs="0"/>
+				CompileAs="0"
+			/>
 			<Tool
-				Name="VCCustomBuildTool"/>
-			<Tool
-				Name="VCLinkerTool"
-				AdditionalOptions="/MACHINE:I386"
-				AdditionalDependencies="glib-2.0.lib wsock32.lib libxml2.lib libpng13.lib libmhash.lib"
-				OutputFile=".\Release/q3map2.exe"
-				LinkIncremental="1"
-				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories="&quot;..\..\..\..\mhash-0.9\win32\libmhash\Release&quot;;&quot;..\..\..\..\libxml2-2.6\lib&quot;;&quot;..\..\..\..\zlib1-1.2\lib&quot;;&quot;..\..\..\..\libpng-1.2\lib&quot;;&quot;..\..\..\..\gtk2-2.4\lib&quot;"
-				ProgramDatabaseFile=".\Release/q3map2.pdb"
-				GenerateMapFile="TRUE"
-				MapFileName=".\Release/q3map2.map"
-				SubSystem="1"
-				StackReserveSize="4194304"/>
-			<Tool
-				Name="VCMIDLTool"
-				TypeLibraryName=".\Release/q3map2.tlb"/>
-			<Tool
-				Name="VCPostBuildEventTool"
-				Description="Copy to dir..."
-				CommandLine="copy &quot;$(TargetPath)&quot; &quot;$(SolutionDir)install&quot;"/>
-			<Tool
-				Name="VCPreBuildEventTool"/>
-			<Tool
-				Name="VCPreLinkEventTool"/>
+				Name="VCManagedResourceCompilerTool"
+			/>
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="NDEBUG"
-				Culture="1033"/>
+				Culture="1033"
+			/>
 			<Tool
-				Name="VCWebServiceProxyGeneratorTool"/>
+				Name="VCPreLinkEventTool"
+			/>
 			<Tool
-				Name="VCXMLDataGeneratorTool"/>
+				Name="VCLinkerTool"
+				AdditionalOptions="/MACHINE:I386"
+				AdditionalDependencies="glib-2.0.lib wsock32.lib libxml2.lib libpng.lib libmhash.lib"
+				OutputFile=".\Release/q3map2.exe"
+				LinkIncremental="1"
+				SuppressStartupBanner="true"
+				AdditionalLibraryDirectories="&quot;..\..\..\..\mhash-0.9\win32\libmhash\Release&quot;;&quot;..\..\..\..\libxml2-2.6\lib&quot;;&quot;..\..\..\..\gtk2-2.10\lib&quot;"
+				ProgramDatabaseFile=".\Release/q3map2.pdb"
+				GenerateMapFile="true"
+				MapFileName=".\Release/q3map2.map"
+				SubSystem="1"
+				StackReserveSize="4194304"
+			/>
 			<Tool
-				Name="VCWebDeploymentTool"/>
+				Name="VCALinkTool"
+			/>
 			<Tool
-				Name="VCManagedWrapperGeneratorTool"/>
+				Name="VCManifestTool"
+			/>
 			<Tool
-				Name="VCAuxiliaryManagedWrapperGeneratorTool"/>
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCWebDeploymentTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+				Description="Copy to dir..."
+				CommandLine="copy &quot;$(TargetPath)&quot; &quot;$(SolutionDir)install&quot;"
+			/>
 		</Configuration>
 	</Configurations>
 	<References>
@@ -160,236 +221,307 @@
 	<Files>
 		<Filter
 			Name="src"
-			Filter="c;cpp;cxx;cc;C">
+			Filter="c;cpp;cxx;cc;C"
+			>
 			<File
-				RelativePath=".\bspfile_abstract.c">
+				RelativePath=".\bspfile_abstract.c"
+				>
 			</File>
 			<File
-				RelativePath=".\bspfile_ibsp.c">
+				RelativePath=".\bspfile_ibsp.c"
+				>
 			</File>
 			<File
-				RelativePath=".\bspfile_rbsp.c">
+				RelativePath=".\bspfile_rbsp.c"
+				>
 			</File>
 			<File
-				RelativePath=".\image.c">
+				RelativePath=".\image.c"
+				>
 			</File>
 			<File
-				RelativePath=".\main.c">
+				RelativePath=".\main.c"
+				>
 			</File>
 			<File
-				RelativePath=".\mesh.c">
+				RelativePath=".\mesh.c"
+				>
 			</File>
 			<File
-				RelativePath=".\model.c">
+				RelativePath=".\model.c"
+				>
 			</File>
 			<File
-				RelativePath=".\path_init.c">
+				RelativePath=".\path_init.c"
+				>
 			</File>
 			<File
-				RelativePath=".\shaders.c">
+				RelativePath=".\shaders.c"
+				>
 			</File>
 			<File
-				RelativePath=".\surface_extra.c">
+				RelativePath=".\surface_extra.c"
+				>
 			</File>
 			<Filter
 				Name="common"
-				Filter=".c">
+				Filter=".c"
+				>
 				<File
-					RelativePath="..\common\cmdlib.c">
+					RelativePath="..\common\cmdlib.c"
+					>
 				</File>
 				<File
-					RelativePath="..\common\imagelib.c">
+					RelativePath="..\common\imagelib.c"
+					>
 				</File>
 				<File
-					RelativePath="..\common\inout.c">
+					RelativePath="..\common\inout.c"
+					>
 				</File>
 				<File
-					RelativePath="..\common\mutex.c">
+					RelativePath="..\common\mutex.c"
+					>
 				</File>
 				<File
-					RelativePath="..\common\polylib.c">
+					RelativePath="..\common\polylib.c"
+					>
 				</File>
 				<File
-					RelativePath="..\common\scriplib.c">
+					RelativePath="..\common\scriplib.c"
+					>
 				</File>
 				<File
-					RelativePath="..\common\threads.c">
+					RelativePath="..\common\threads.c"
+					>
 				</File>
 				<File
-					RelativePath="..\common\unzip.c">
+					RelativePath="..\common\unzip.c"
+					>
 				</File>
 				<File
-					RelativePath="..\common\vfs.c">
+					RelativePath="..\common\vfs.c"
+					>
 				</File>
 			</Filter>
 			<Filter
 				Name="bsp"
-				Filter=".c">
+				Filter=".c"
+				>
 				<File
-					RelativePath=".\brush.c">
+					RelativePath=".\brush.c"
+					>
 				</File>
 				<File
-					RelativePath=".\brush_primit.c">
+					RelativePath=".\brush_primit.c"
+					>
 				</File>
 				<File
-					RelativePath=".\bsp.c">
+					RelativePath=".\bsp.c"
+					>
 				</File>
 				<File
-					RelativePath=".\decals.c">
+					RelativePath=".\decals.c"
+					>
 				</File>
 				<File
-					RelativePath=".\facebsp.c">
+					RelativePath=".\facebsp.c"
+					>
 				</File>
 				<File
-					RelativePath=".\fog.c">
+					RelativePath=".\fog.c"
+					>
 				</File>
 				<File
-					RelativePath=".\leakfile.c">
+					RelativePath=".\leakfile.c"
+					>
 				</File>
 				<File
-					RelativePath=".\map.c">
+					RelativePath=".\map.c"
+					>
 				</File>
 				<File
-					RelativePath=".\patch.c">
+					RelativePath=".\patch.c"
+					>
 				</File>
 				<File
-					RelativePath=".\portals.c">
+					RelativePath=".\portals.c"
+					>
 				</File>
 				<File
-					RelativePath=".\prtfile.c">
+					RelativePath=".\prtfile.c"
+					>
 				</File>
 				<File
-					RelativePath=".\surface.c">
+					RelativePath=".\surface.c"
+					>
 				</File>
 				<File
-					RelativePath=".\surface_foliage.c">
+					RelativePath=".\surface_foliage.c"
+					>
 				</File>
 				<File
-					RelativePath=".\surface_fur.c">
+					RelativePath=".\surface_fur.c"
+					>
 				</File>
 				<File
-					RelativePath=".\surface_meta.c">
+					RelativePath=".\surface_meta.c"
+					>
 				</File>
 				<File
-					RelativePath=".\tjunction.c">
+					RelativePath=".\tjunction.c"
+					>
 				</File>
 				<File
-					RelativePath=".\tree.c">
+					RelativePath=".\tree.c"
+					>
 				</File>
 				<File
-					RelativePath=".\writebsp.c">
+					RelativePath=".\writebsp.c"
+					>
 				</File>
 			</Filter>
 			<Filter
 				Name="light"
-				Filter=".c">
+				Filter=".c"
+				>
 				<File
-					RelativePath=".\light.c">
+					RelativePath=".\light.c"
+					>
 				</File>
 				<File
-					RelativePath=".\light_bounce.c">
+					RelativePath=".\light_bounce.c"
+					>
 				</File>
 				<File
-					RelativePath=".\light_trace.c">
+					RelativePath=".\light_trace.c"
+					>
 				</File>
 				<File
-					RelativePath=".\light_ydnar.c">
+					RelativePath=".\light_ydnar.c"
+					>
 				</File>
 				<File
-					RelativePath=".\lightmaps_ydnar.c">
+					RelativePath=".\lightmaps_ydnar.c"
+					>
 				</File>
 			</Filter>
 			<Filter
 				Name="vis"
-				Filter=".c">
+				Filter=".c"
+				>
 				<File
-					RelativePath=".\vis.c">
+					RelativePath=".\vis.c"
+					>
 				</File>
 				<File
-					RelativePath=".\visflow.c">
+					RelativePath=".\visflow.c"
+					>
 				</File>
 			</Filter>
 			<Filter
 				Name="convert"
-				Filter=".c">
+				Filter=".c"
+				>
 				<File
-					RelativePath=".\convert_ase.c">
+					RelativePath=".\convert_ase.c"
+					>
 				</File>
 				<File
-					RelativePath=".\convert_map.c">
+					RelativePath=".\convert_map.c"
+					>
 				</File>
 			</Filter>
 		</Filter>
 		<Filter
 			Name="include"
-			Filter="h">
+			Filter="h"
+			>
 			<File
-				RelativePath=".\game_ef.h">
+				RelativePath=".\game_ef.h"
+				>
 			</File>
 			<File
-				RelativePath=".\game_etut.h">
+				RelativePath=".\game_etut.h"
+				>
 			</File>
 			<File
-				RelativePath=".\game_ja.h">
+				RelativePath=".\game_ja.h"
+				>
 			</File>
 			<File
-				RelativePath=".\game_jk2.h">
+				RelativePath=".\game_jk2.h"
+				>
 			</File>
 			<File
-				RelativePath=".\game_quake3.h">
+				RelativePath=".\game_quake3.h"
+				>
 			</File>
 			<File
-				RelativePath=".\game_sof2.h">
+				RelativePath=".\game_sof2.h"
+				>
 			</File>
 			<File
-				RelativePath=".\game_tenebrae.h">
+				RelativePath=".\game_tenebrae.h"
+				>
 			</File>
 			<File
-				RelativePath=".\game_wolf.h">
+				RelativePath=".\game_wolf.h"
+				>
 			</File>
 			<File
-				RelativePath=".\game_wolfet.h">
+				RelativePath=".\game_wolfet.h"
+				>
 			</File>
 			<File
-				RelativePath=".\q3map2.h">
+				RelativePath=".\q3map2.h"
+				>
 			</File>
 		</Filter>
 		<Filter
 			Name="doc"
-			Filter="*.txt">
+			Filter="*.txt"
+			>
 			<File
-				RelativePath=".\changelog.q3map2.txt">
+				RelativePath=".\changelog.q3map2.txt"
+				>
 			</File>
 		</Filter>
 		<Filter
 			Name="rc"
-			Filter=".rc;.ico">
+			Filter=".rc;.ico"
+			>
 			<File
-				RelativePath=".\q3map2.ico">
+				RelativePath=".\q3map2.ico"
+				>
 			</File>
 			<File
-				RelativePath=".\q3map2.rc">
+				RelativePath=".\q3map2.rc"
+				>
 			</File>
 		</Filter>
 		<File
-			RelativePath="..\..\..\touch.py">
+			RelativePath="..\..\..\touch.py"
+			>
 			<FileConfiguration
-				Name="Debug|Win32">
+				Name="Debug|Win32"
+				>
 				<Tool
 					Name="VCCustomBuildTool"
-					CommandLine="python &quot;$(SolutionDir)touch.py&quot; &quot;$(TargetPath)&quot;
-"
+					CommandLine="python &quot;$(SolutionDir)touch.py&quot; &quot;$(TargetPath)&quot;&#x0D;&#x0A;"
 					AdditionalDependencies="&quot;$(SolutionDir)install\$(TargetFileName)&quot;"
-					Outputs="&quot;$(TargetPath)&quot;"/>
+					Outputs="&quot;$(TargetPath)&quot;"
+				/>
 			</FileConfiguration>
 			<FileConfiguration
-				Name="Release|Win32">
+				Name="Release|Win32"
+				>
 				<Tool
 					Name="VCCustomBuildTool"
-					CommandLine="python &quot;$(SolutionDir)touch.py&quot; &quot;$(TargetPath)&quot;
-"
+					CommandLine="python &quot;$(SolutionDir)touch.py&quot; &quot;$(TargetPath)&quot;&#x0D;&#x0A;"
 					AdditionalDependencies="&quot;$(SolutionDir)install\$(TargetFileName)&quot;"
-					Outputs="&quot;$(TargetPath)&quot;"/>
+					Outputs="&quot;$(TargetPath)&quot;"
+				/>
 			</FileConfiguration>
 		</File>
 	</Files>

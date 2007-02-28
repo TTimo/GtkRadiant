@@ -93,6 +93,12 @@ class MiscModel :
     matrix4_transform_by_euler_xyz_degrees(m_transform.localToParent(), m_origin, m_angles, m_scale);
     m_transformChanged();
   }
+
+// vc 2k5 compiler fix 
+#if _MSC_VER >= 1400
+	public:
+#endif 
+ 
   void originChanged()
   {
     m_origin = m_originKey.m_origin;

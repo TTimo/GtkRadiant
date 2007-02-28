@@ -203,6 +203,11 @@ private:
     setIsModel(!string_equal(m_modelKey.c_str(), m_name.c_str()));
   }
 
+// vc 2k5 compiler fix
+#if _MSC_VER >= 1400
+	public:
+#endif
+
   void nameChanged(const char* value)
   {
     m_name = value;

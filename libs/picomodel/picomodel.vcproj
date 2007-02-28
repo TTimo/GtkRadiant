@@ -1,105 +1,153 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="7.10"
+	Version="8,00"
 	Name="picomodel"
 	ProjectGUID="{015EA9D3-85F2-4C4E-BFC3-430AC59093B9}"
-	Keyword="Win32Proj">
+	Keyword="Win32Proj"
+	>
 	<Platforms>
 		<Platform
-			Name="Win32"/>
+			Name="Win32"
+		/>
 	</Platforms>
+	<ToolFiles>
+	</ToolFiles>
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
 			OutputDirectory="Debug"
 			IntermediateDirectory="Debug"
 			ConfigurationType="4"
-			CharacterSet="2">
+			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
+			CharacterSet="2"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="../"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB"
-				StringPooling="TRUE"
-				MinimalRebuild="TRUE"
-				ExceptionHandling="FALSE"
+				StringPooling="true"
+				MinimalRebuild="true"
+				ExceptionHandling="0"
 				BasicRuntimeChecks="0"
 				RuntimeLibrary="3"
 				UsePrecompiledHeader="0"
 				BrowseInformation="0"
 				WarningLevel="3"
-				Detect64BitPortabilityProblems="TRUE"
-				DebugInformationFormat="4"/>
+				Detect64BitPortabilityProblems="true"
+				DebugInformationFormat="4"
+			/>
 			<Tool
-				Name="VCCustomBuildTool"/>
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="$(OutDir)/picomodel.lib"/>
+				OutputFile="$(OutDir)/picomodel.lib"
+			/>
 			<Tool
-				Name="VCMIDLTool"/>
+				Name="VCALinkTool"
+			/>
 			<Tool
-				Name="VCPostBuildEventTool"/>
+				Name="VCXDCMakeTool"
+			/>
 			<Tool
-				Name="VCPreBuildEventTool"/>
+				Name="VCBscMakeTool"
+			/>
 			<Tool
-				Name="VCPreLinkEventTool"/>
+				Name="VCFxCopTool"
+			/>
 			<Tool
-				Name="VCResourceCompilerTool"/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"/>
-			<Tool
-				Name="VCManagedWrapperGeneratorTool"/>
-			<Tool
-				Name="VCAuxiliaryManagedWrapperGeneratorTool"/>
+				Name="VCPostBuildEventTool"
+			/>
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
 			OutputDirectory="Release"
 			IntermediateDirectory="Release"
 			ConfigurationType="4"
-			CharacterSet="2">
+			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
+			CharacterSet="2"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				GlobalOptimizations="TRUE"
 				InlineFunctionExpansion="2"
-				EnableIntrinsicFunctions="TRUE"
-				OptimizeForWindowsApplication="TRUE"
+				EnableIntrinsicFunctions="true"
 				AdditionalIncludeDirectories="../"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB"
-				StringPooling="TRUE"
-				ExceptionHandling="FALSE"
+				StringPooling="true"
+				ExceptionHandling="0"
 				RuntimeLibrary="2"
-				BufferSecurityCheck="FALSE"
+				BufferSecurityCheck="false"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
-				Detect64BitPortabilityProblems="TRUE"
-				DebugInformationFormat="3"/>
+				Detect64BitPortabilityProblems="true"
+				DebugInformationFormat="3"
+			/>
 			<Tool
-				Name="VCCustomBuildTool"/>
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="$(OutDir)/picomodel.lib"/>
+				OutputFile="$(OutDir)/picomodel.lib"
+			/>
 			<Tool
-				Name="VCMIDLTool"/>
+				Name="VCALinkTool"
+			/>
 			<Tool
-				Name="VCPostBuildEventTool"/>
+				Name="VCXDCMakeTool"
+			/>
 			<Tool
-				Name="VCPreBuildEventTool"/>
+				Name="VCBscMakeTool"
+			/>
 			<Tool
-				Name="VCPreLinkEventTool"/>
+				Name="VCFxCopTool"
+			/>
 			<Tool
-				Name="VCResourceCompilerTool"/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"/>
-			<Tool
-				Name="VCManagedWrapperGeneratorTool"/>
-			<Tool
-				Name="VCAuxiliaryManagedWrapperGeneratorTool"/>
+				Name="VCPostBuildEventTool"
+			/>
 		</Configuration>
 	</Configurations>
 	<References>
@@ -108,96 +156,125 @@
 		<Filter
 			Name="Source Files"
 			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx"
-			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}">
+			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
+			>
 			<File
-				RelativePath=".\picointernal.c">
+				RelativePath=".\picointernal.c"
+				>
 			</File>
 			<File
-				RelativePath=".\picomodel.c">
+				RelativePath=".\picomodel.c"
+				>
 			</File>
 			<File
-				RelativePath=".\picomodules.c">
+				RelativePath=".\picomodules.c"
+				>
 			</File>
 			<File
-				RelativePath=".\pm_3ds.c">
+				RelativePath=".\pm_3ds.c"
+				>
 			</File>
 			<File
-				RelativePath=".\pm_ase.c">
+				RelativePath=".\pm_ase.c"
+				>
 			</File>
 			<File
-				RelativePath=".\pm_fm.c">
+				RelativePath=".\pm_fm.c"
+				>
 			</File>
 			<File
-				RelativePath=".\pm_lwo.c">
+				RelativePath=".\pm_lwo.c"
+				>
 			</File>
 			<File
-				RelativePath=".\pm_md2.c">
+				RelativePath=".\pm_md2.c"
+				>
 			</File>
 			<File
-				RelativePath=".\pm_md3.c">
+				RelativePath=".\pm_md3.c"
+				>
 			</File>
 			<File
-				RelativePath=".\pm_mdc.c">
+				RelativePath=".\pm_mdc.c"
+				>
 			</File>
 			<File
-				RelativePath=".\pm_ms3d.c">
+				RelativePath=".\pm_ms3d.c"
+				>
 			</File>
 			<File
-				RelativePath=".\pm_obj.c">
+				RelativePath=".\pm_obj.c"
+				>
 			</File>
 			<File
-				RelativePath=".\pm_terrain.c">
+				RelativePath=".\pm_terrain.c"
+				>
 			</File>
 			<Filter
 				Name="lwo"
-				Filter="">
+				>
 				<File
-					RelativePath=".\lwo\clip.c">
+					RelativePath=".\lwo\clip.c"
+					>
 				</File>
 				<File
-					RelativePath=".\lwo\envelope.c">
+					RelativePath=".\lwo\envelope.c"
+					>
 				</File>
 				<File
-					RelativePath=".\lwo\list.c">
+					RelativePath=".\lwo\list.c"
+					>
 				</File>
 				<File
-					RelativePath=".\lwo\lwio.c">
+					RelativePath=".\lwo\lwio.c"
+					>
 				</File>
 				<File
-					RelativePath=".\lwo\lwo2.c">
+					RelativePath=".\lwo\lwo2.c"
+					>
 				</File>
 				<File
-					RelativePath=".\lwo\lwo2.h">
+					RelativePath=".\lwo\lwo2.h"
+					>
 				</File>
 				<File
-					RelativePath=".\lwo\lwob.c">
+					RelativePath=".\lwo\lwob.c"
+					>
 				</File>
 				<File
-					RelativePath=".\lwo\pntspols.c">
+					RelativePath=".\lwo\pntspols.c"
+					>
 				</File>
 				<File
-					RelativePath=".\lwo\surface.c">
+					RelativePath=".\lwo\surface.c"
+					>
 				</File>
 				<File
-					RelativePath=".\lwo\vecmath.c">
+					RelativePath=".\lwo\vecmath.c"
+					>
 				</File>
 				<File
-					RelativePath=".\lwo\vmap.c">
+					RelativePath=".\lwo\vmap.c"
+					>
 				</File>
 			</Filter>
 		</Filter>
 		<Filter
 			Name="Header Files"
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
-			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}">
+			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
+			>
 			<File
-				RelativePath=".\picointernal.h">
+				RelativePath=".\picointernal.h"
+				>
 			</File>
 			<File
-				RelativePath="..\picomodel.h">
+				RelativePath="..\picomodel.h"
+				>
 			</File>
 			<File
-				RelativePath=".\pm_fm.h">
+				RelativePath=".\pm_fm.h"
+				>
 			</File>
 		</Filter>
 	</Files>

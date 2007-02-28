@@ -1,145 +1,203 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="7.10"
+	Version="8,00"
 	Name="imagehl"
 	ProjectGUID="{15DEA3EA-9386-49C7-80C6-5B090DE1D536}"
-	Keyword="Win32Proj">
+	Keyword="Win32Proj"
+	>
 	<Platforms>
 		<Platform
-			Name="Win32"/>
+			Name="Win32"
+		/>
 	</Platforms>
+	<ToolFiles>
+	</ToolFiles>
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
 			OutputDirectory="Debug"
 			IntermediateDirectory="Debug"
 			ConfigurationType="2"
-			CharacterSet="2">
+			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
+			CharacterSet="2"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="../../include;../../libs;&quot;../../../STLPort-4.6/stlport&quot;;&quot;../../../gtk2-2.4/include/glib-2.0&quot;;&quot;../../../gtk2-2.4/lib/glib-2.0/include&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;IMAGEHL_EXPORTS"
-				StringPooling="TRUE"
-				MinimalRebuild="TRUE"
-				ExceptionHandling="FALSE"
+				StringPooling="true"
+				MinimalRebuild="true"
+				ExceptionHandling="0"
 				BasicRuntimeChecks="0"
 				RuntimeLibrary="3"
-				BufferSecurityCheck="FALSE"
-				ForceConformanceInForLoopScope="TRUE"
+				BufferSecurityCheck="false"
+				ForceConformanceInForLoopScope="true"
 				UsePrecompiledHeader="0"
 				BrowseInformation="0"
 				WarningLevel="3"
-				Detect64BitPortabilityProblems="TRUE"
+				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="3"
-				DisableSpecificWarnings="4610;4510;4512;4505;4100;4127"/>
+				DisableSpecificWarnings="4610;4510;4512;4505;4100;4127"
+			/>
 			<Tool
-				Name="VCCustomBuildTool"/>
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
 			<Tool
 				Name="VCLinkerTool"
 				OutputFile="$(OutDir)/imagehl.dll"
 				LinkIncremental="1"
-				SuppressStartupBanner="TRUE"
+				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories=""
 				IgnoreDefaultLibraryNames="msvcprtd.lib"
 				ModuleDefinitionFile="$(ProjectName).def"
-				GenerateDebugInformation="TRUE"
+				GenerateDebugInformation="true"
 				ProgramDatabaseFile="$(OutDir)/$(ProjectName).pdb"
 				SubSystem="2"
 				ImportLibrary="$(OutDir)/imagehl.lib"
-				TargetMachine="1"/>
+				TargetMachine="1"
+			/>
 			<Tool
-				Name="VCMIDLTool"/>
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCWebDeploymentTool"
+			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="copy &quot;$(TargetPath)&quot; &quot;$(SolutionDir)install\modules\&quot;
-copy &quot;$(TargetDir)$(TargetName).pdb&quot; &quot;$(SolutionDir)install\modules\&quot;
-"/>
-			<Tool
-				Name="VCPreBuildEventTool"/>
-			<Tool
-				Name="VCPreLinkEventTool"/>
-			<Tool
-				Name="VCResourceCompilerTool"/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"/>
-			<Tool
-				Name="VCWebDeploymentTool"/>
-			<Tool
-				Name="VCManagedWrapperGeneratorTool"/>
-			<Tool
-				Name="VCAuxiliaryManagedWrapperGeneratorTool"/>
+				CommandLine="copy &quot;$(TargetPath)&quot; &quot;$(SolutionDir)install\modules\&quot;&#x0D;&#x0A;copy &quot;$(TargetDir)$(TargetName).pdb&quot; &quot;$(SolutionDir)install\modules\&quot;&#x0D;&#x0A;"
+			/>
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
 			OutputDirectory="Release"
 			IntermediateDirectory="Release"
 			ConfigurationType="2"
+			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			CharacterSet="2"
-			WholeProgramOptimization="TRUE">
+			WholeProgramOptimization="1"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				GlobalOptimizations="TRUE"
 				InlineFunctionExpansion="2"
-				EnableIntrinsicFunctions="TRUE"
+				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
-				OptimizeForWindowsApplication="FALSE"
 				AdditionalIncludeDirectories="../../include;../../libs;&quot;../../../STLPort-4.6/stlport&quot;;&quot;../../../gtk2-2.4/include/glib-2.0&quot;;&quot;../../../gtk2-2.4/lib/glib-2.0/include&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;IMAGEHL_EXPORTS"
-				StringPooling="TRUE"
-				ExceptionHandling="FALSE"
+				StringPooling="true"
+				ExceptionHandling="0"
 				RuntimeLibrary="2"
-				BufferSecurityCheck="FALSE"
-				ForceConformanceInForLoopScope="TRUE"
+				BufferSecurityCheck="false"
+				ForceConformanceInForLoopScope="true"
 				UsePrecompiledHeader="0"
 				WarningLevel="4"
-				Detect64BitPortabilityProblems="TRUE"
+				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="3"
-				DisableSpecificWarnings="4610;4510;4512;4505;4100;4127"/>
+				DisableSpecificWarnings="4610;4510;4512;4505;4100;4127"
+			/>
 			<Tool
-				Name="VCCustomBuildTool"/>
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
 			<Tool
 				Name="VCLinkerTool"
 				OutputFile="$(OutDir)/imagehl.dll"
 				LinkIncremental="1"
-				SuppressStartupBanner="TRUE"
+				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories=""
 				IgnoreDefaultLibraryNames="msvcprt.lib"
 				ModuleDefinitionFile="$(ProjectName).def"
-				GenerateDebugInformation="TRUE"
+				GenerateDebugInformation="true"
 				ProgramDatabaseFile="$(OutDir)/$(ProjectName).pdb"
 				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
 				ImportLibrary="$(OutDir)/imagehl.lib"
 				TargetMachine="1"
-				FixedBaseAddress="0"/>
+				FixedBaseAddress="0"
+			/>
 			<Tool
-				Name="VCMIDLTool"/>
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCWebDeploymentTool"
+			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="copy &quot;$(TargetPath)&quot; &quot;$(SolutionDir)install\modules\&quot;
-copy &quot;$(TargetDir)$(TargetName).pdb&quot; &quot;$(SolutionDir)install\modules\&quot;
-"/>
-			<Tool
-				Name="VCPreBuildEventTool"/>
-			<Tool
-				Name="VCPreLinkEventTool"/>
-			<Tool
-				Name="VCResourceCompilerTool"/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"/>
-			<Tool
-				Name="VCWebDeploymentTool"/>
-			<Tool
-				Name="VCManagedWrapperGeneratorTool"/>
-			<Tool
-				Name="VCAuxiliaryManagedWrapperGeneratorTool"/>
+				CommandLine="copy &quot;$(TargetPath)&quot; &quot;$(SolutionDir)install\modules\&quot;&#x0D;&#x0A;copy &quot;$(TargetDir)$(TargetName).pdb&quot; &quot;$(SolutionDir)install\modules\&quot;&#x0D;&#x0A;"
+			/>
 		</Configuration>
 	</Configurations>
 	<References>
@@ -147,77 +205,92 @@ copy &quot;$(TargetDir)$(TargetName).pdb&quot; &quot;$(SolutionDir)install\modul
 	<Files>
 		<Filter
 			Name="src"
-			Filter="">
+			>
 			<File
-				RelativePath=".\imagehl.cpp">
+				RelativePath=".\imagehl.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\imagehl.h">
+				RelativePath=".\imagehl.h"
+				>
 			</File>
 			<Filter
 				Name="modules"
 				Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx"
-				UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}">
+				UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
+				>
 				<File
-					RelativePath=".\hlw.cpp">
+					RelativePath=".\hlw.cpp"
+					>
 				</File>
 				<File
-					RelativePath=".\hlw.h">
+					RelativePath=".\hlw.h"
+					>
 				</File>
 				<File
-					RelativePath=".\mip.cpp">
+					RelativePath=".\mip.cpp"
+					>
 				</File>
 				<File
-					RelativePath=".\mip.h">
+					RelativePath=".\mip.h"
+					>
 				</File>
 				<File
-					RelativePath=".\sprite.cpp">
+					RelativePath=".\sprite.cpp"
+					>
 				</File>
 				<File
-					RelativePath=".\sprite.h">
+					RelativePath=".\sprite.h"
+					>
 				</File>
 			</Filter>
 		</Filter>
 		<File
-			RelativePath="..\..\debug.py">
+			RelativePath="..\..\debug.py"
+			>
 			<FileConfiguration
-				Name="Debug|Win32">
+				Name="Debug|Win32"
+				>
 				<Tool
 					Name="VCCustomBuildTool"
-					CommandLine="python &quot;$(SolutionDir)debug.py&quot;
-"
+					CommandLine="python &quot;$(SolutionDir)debug.py&quot;&#x0D;&#x0A;"
 					AdditionalDependencies="&quot;$(SolutionDir)install\modules\$(TargetName).pdb&quot;"
-					Outputs="&quot;$(TargetDir)$(TargetName).pdb&quot;"/>
+					Outputs="&quot;$(TargetDir)$(TargetName).pdb&quot;"
+				/>
 			</FileConfiguration>
 			<FileConfiguration
-				Name="Release|Win32">
+				Name="Release|Win32"
+				>
 				<Tool
 					Name="VCCustomBuildTool"
-					CommandLine="python &quot;$(SolutionDir)debug.py&quot;
-"
+					CommandLine="python &quot;$(SolutionDir)debug.py&quot;&#x0D;&#x0A;"
 					AdditionalDependencies="&quot;$(SolutionDir)install\modules\$(TargetName).pdb&quot;"
-					Outputs="&quot;$(TargetDir)$(TargetName).pdb&quot;"/>
+					Outputs="&quot;$(TargetDir)$(TargetName).pdb&quot;"
+				/>
 			</FileConfiguration>
 		</File>
 		<File
-			RelativePath=".\imagehl.def">
+			RelativePath=".\imagehl.def"
+			>
 			<FileConfiguration
-				Name="Debug|Win32">
+				Name="Debug|Win32"
+				>
 				<Tool
 					Name="VCCustomBuildTool"
-					CommandLine="python &quot;$(SolutionDir)touch.py&quot; &quot;$(TargetPath)&quot;
-"
+					CommandLine="python &quot;$(SolutionDir)touch.py&quot; &quot;$(TargetPath)&quot;&#x0D;&#x0A;"
 					AdditionalDependencies="&quot;$(SolutionDir)install\modules\$(TargetFileName)&quot;"
-					Outputs="&quot;$(TargetPath)&quot;"/>
+					Outputs="&quot;$(TargetPath)&quot;"
+				/>
 			</FileConfiguration>
 			<FileConfiguration
-				Name="Release|Win32">
+				Name="Release|Win32"
+				>
 				<Tool
 					Name="VCCustomBuildTool"
-					CommandLine="python &quot;$(SolutionDir)touch.py&quot; &quot;$(TargetPath)&quot;
-"
+					CommandLine="python &quot;$(SolutionDir)touch.py&quot; &quot;$(TargetPath)&quot;&#x0D;&#x0A;"
 					AdditionalDependencies="&quot;$(SolutionDir)install\modules\$(TargetFileName)&quot;"
-					Outputs="&quot;$(TargetPath)&quot;"/>
+					Outputs="&quot;$(TargetPath)&quot;"
+				/>
 			</FileConfiguration>
 		</File>
 	</Files>

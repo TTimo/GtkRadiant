@@ -72,7 +72,6 @@ void Global_constructPreferences(PreferencesPage& page)
 void Interface_constructPreferences(PreferencesPage& page)
 {
 #ifdef WIN32
-  page.appendCheckBox("", "Native File-Chooser", g_FileChooser_nativeGUI);
   page.appendCheckBox("", "Default Text Editor", g_TextEditor_useWin32Editor);
 #else
   {
@@ -1039,12 +1038,6 @@ typedef FreeCaller1<const StringImportCallback&, GameMode_exportString> GameMode
 
 void RegisterPreferences(PreferenceSystem& preferences)
 {
-
-#ifdef WIN32
-  preferences.registerPreference("NativeGUI", BoolImportStringCaller(g_FileChooser_nativeGUI), BoolExportStringCaller(g_FileChooser_nativeGUI));
-#endif
-
-
 #ifdef WIN32
   preferences.registerPreference("UseCustomShaderEditor", BoolImportStringCaller(g_TextEditor_useWin32Editor), BoolExportStringCaller(g_TextEditor_useWin32Editor));
 #else

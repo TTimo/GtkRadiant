@@ -908,6 +908,11 @@ class Light :
       m_traverse.detach(&m_traverseObservers);
     }
   }
+  
+// vc 2k5 compiler fix
+#if _MSC_VER >= 1400
+	public:
+#endif
 
   void updateOrigin()
   {

@@ -25,10 +25,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 /// \file
 /// GTK+ file-chooser dialogs.
 
-#ifdef WIN32
-extern bool g_FileChooser_nativeGUI;
-#endif
-
 typedef struct _GtkWidget GtkWidget;
 const char* file_dialog(GtkWidget *parent, bool open, const char* title, const char* path = 0, const char* pattern = 0);
 
