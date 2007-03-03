@@ -70,13 +70,13 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="msvcrtd.lib oldnames.lib winmm.lib shell32.lib kernel32.lib user32.lib gdi32.lib shfolder.lib wsock32.lib dbghelp.lib glib-2.0.lib gobject-2.0.lib gdk-win32-2.0.lib gdk_pixbuf-2.0.lib gtk-win32-2.0.lib pango-1.0.lib gtkglext-win32-1.0.lib gdkglext-win32-1.0.lib opengl32.lib libxml2.lib profile.lib $(NOINHERIT)"
+				AdditionalDependencies="winmm.lib shell32.lib kernel32.lib gdi32.lib user32.lib wsock32.lib dbghelp.lib glib-2.0.lib gobject-2.0.lib gdk-win32-2.0.lib gdk_pixbuf-2.0.lib gtk-win32-2.0.lib pango-1.0.lib gtkglext-win32-1.0.lib gdkglext-win32-1.0.lib opengl32.lib libxml2.lib profile.lib $(NOINHERIT)"
 				OutputFile="$(OutDir)/$(ProjectName).exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="&quot;../../gtk2-2.10/lib&quot;;&quot;../../libxml2-2.6/lib&quot;;&quot;../libs/profile/debug/&quot;"
-				IgnoreAllDefaultLibraries="true"
-				IgnoreDefaultLibraryNames="msvcprtd.lib"
+				IgnoreAllDefaultLibraries="false"
+				IgnoreDefaultLibraryNames=""
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile="$(OutDir)/$(ProjectName).pdb"
 				StripPrivateSymbols="$(OutDir)/$(ProjectName)_stripped.pdb"
@@ -151,7 +151,7 @@
 				UsePrecompiledHeader="0"
 				WarningLevel="4"
 				Detect64BitPortabilityProblems="true"
-				DebugInformationFormat="3"
+				DebugInformationFormat="0"
 				DisableSpecificWarnings="4610;4510;4512;4505;4100;4127;4996"
 			/>
 			<Tool
@@ -166,13 +166,13 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="msvcrt.lib oldnames.lib winmm.lib kernel32.lib user32.lib gdi32.lib shfolder.lib wsock32.lib dbghelp.lib glib-2.0.lib gobject-2.0.lib gdk-win32-2.0.lib gdk_pixbuf-2.0.lib gtk-win32-2.0.lib pango-1.0.lib gtkglext-win32-1.0.lib gdkglext-win32-1.0.lib opengl32.lib libxml2.lib profile.lib"
+				AdditionalDependencies="winmm.lib kernel32.lib user32.lib gdi32.lib wsock32.lib glib-2.0.lib gobject-2.0.lib gdk-win32-2.0.lib gdk_pixbuf-2.0.lib gtk-win32-2.0.lib pango-1.0.lib gtkglext-win32-1.0.lib gdkglext-win32-1.0.lib opengl32.lib libxml2.lib profile.lib"
 				OutputFile="$(OutDir)/$(ProjectName).exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="&quot;../../gtk2-2.10/lib&quot;;&quot;../../libxml2-2.6/lib&quot;;&quot;../libs/profile/release/&quot;"
-				IgnoreAllDefaultLibraries="true"
-				IgnoreDefaultLibraryNames="msvcprt.lib"
+				IgnoreAllDefaultLibraries="false"
+				IgnoreDefaultLibraryNames=""
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile="$(OutDir)/$(ProjectName).pdb"
 				StripPrivateSymbols="$(OutDir)/$(ProjectName)_stripped.pdb"

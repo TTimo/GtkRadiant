@@ -1,6 +1,15 @@
 This is the changelog for developers, != changelog for the end user 
 that we distribute with the binaries. (see changelog)
 
+03/03/2007
+namespace
+(THIS IS A TRANSITIONAL REVISION, DO NOT USE, WAIT FOR UPDATED DEPS)
+- Fixed weird msvcrt bugs caused by dbghelp.dll
+- Activated new radiant icon on Linux (Topsun)
+- First update for installerfiles (Shaderman)
+- New MODT for q3map2 :)
+- tiny changes
+
 28/02/2007
 namespace
 - Radiant is now Vista compatible (Aero must be disabled)

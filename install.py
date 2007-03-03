@@ -111,8 +111,7 @@ copyFileIfExists(libxml2, installRoot)
 libmhash = os.path.normpath(os.path.join(thisDir, "../mhash-0.9/win32/libmhash/Release/libmhash.dll"))
 copyFileIfExists(libmhash, installRoot)
 
-msvcr80 = os.path.normpath(os.path.join(thisDir, "../msvc_redist/msvcr80.dll"))
-copyFileIfExists(msvcr80, installRoot)
+copySvn("../msvc_redist", installRoot)
 
 dbghelp = os.path.normpath(os.path.join(thisDir, "../msvc_redist/dbghelp.dll"))
 copyFileIfExists(dbghelp, installRoot)

@@ -9,17 +9,17 @@
     <component name=".\components\q2map.xml" root="..\..\install" />
     <component name=".\components\bspc.xml" root="bin" />
     <component name=".\components\iconv.xml" root="..\..\..\iconv-1.9\bin" />
-    <component name=".\components\intl.xml" root="..\..\..\gtk2-2.4\install" />
-    <component name=".\components\glib2.xml" root="..\..\..\gtk2-2.4\install" />
-    <component name=".\components\atk.xml" root="..\..\..\gtk2-2.4\install" />
-    <component name=".\components\pango.xml" root="..\..\..\gtk2-2.4\install" />
-    <component name=".\components\gtk2.xml" root="..\..\..\gtk2-2.4\install" />
-    <component name=".\components\gtkglext.xml" root="..\..\..\gtk2-2.4\install" />
+    <component name=".\components\intl.xml" root="..\..\..\gtk2-2.10\install" />
+	<component name=".\components\glib2.xml" root="..\..\install" />
+    <component name=".\components\atk.xml" root="..\..\install" />
+    <component name=".\components\pango.xml" root="..\..\install" />
+    <component name=".\components\gtk2.xml" root="..\..\install" />
+    <component name=".\components\gtkglext.xml" root="..\..\..\gtk2-2.10\install" />
     <component name=".\components\libxml2.xml" root="..\..\..\libxml2-2.6\bin" />
-    <component name=".\components\libpng13.xml" root="..\..\..\libpng-1.2\lib" />
+    <component name=".\components\libpng13.xml" root="..\..\install" />
     <component name=".\components\libmhash.xml" root="..\..\..\mhash-0.9\win32\libmhash\Release" />
-    <component name=".\components\zlib.xml" root="..\..\..\zlib1-1.2" />
-    <component name=".\components\msvcr71.xml" root="..\..\install" />
+    <component name=".\components\zlib.xml" root="..\..\install" />
+    <component name=".\components\msvcr80.xml" root="..\..\install" />
     <component name=".\components\dbghelp.xml" root="..\..\install" />
     <component name=".\components\archivezip.xml" root="..\..\install" />
     <component name=".\components\archivepak.xml" root="..\..\install" />

@@ -35,8 +35,8 @@ several games based on the Quake III Arena engine, in the form of "Q3Map2."
 
 
 /* version */
-#define Q3MAP_VERSION	"2.5.16"
-#define Q3MAP_MOTD		"Voter turnout"
+#define Q3MAP_VERSION	"2.5.17"
+#define Q3MAP_MOTD		"Last one turns the lights off"
 
 
 

@@ -10,7 +10,7 @@
   </dir>
   <dir name="lib">
     <dir name="gtk-2.0">
-      <dir name="2.4.0">
+      <dir name="2.10.0">
         <dir name="engines">
           <file name="libwimp.dll"/>
         </dir>
