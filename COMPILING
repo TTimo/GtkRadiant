@@ -21,9 +21,9 @@ Linux/OSX(using X-windows)
 ==========================
 
 environment:
-- gcc3 (preferably)
-- scons = 0.96 (radiant is built with scons rather than make)
-- python >= 2.3.0 (scons requires python, some build steps use python)
+- gcc >= version 3.1 (preferably)
+- scons >= 0.96 (radiant is built with scons rather than make)
+- python >= 2.3.0, (scons requires python, some build steps use python)
 - svn >= 1.1 (some build steps use svn)
 
 dependencies:
@@ -46,24 +46,16 @@ Execute './GtkRadiant/install/radiant.x86' (or './GtkRadiant/install/radiant.ppc
 
 
 
-Win32 (2000 or XP)
+Win32 (2000, XP or Vista)
 ==================
 
 environment:
-- visual studio .net 2003
-- microsoft c++ compiler 7.1 (comes with vs.net 2003)
+- visual studio 2005
 - python 2.3.0 or later (some build steps use python)
 - subversion 1.1 or later (some build steps use svn)
 
 dependencies are prepackaged archives, extract them to the directory above GtkRadiant.sln:
-- http://zerowing.idsoftware.com/files/radiant/developer/1.5/iconv-1.9.2.zip
-- http://zerowing.idsoftware.com/files/radiant/developer/1.5/gtk2-2.4.14.zip (gtk-wimp, gtkglext, gtk, glib, atk, pango etc)
-- http://zerowing.idsoftware.com/files/radiant/developer/1.5/libxml2-2.6.24.zip
-- http://zerowing.idsoftware.com/files/radiant/developer/1.5/STLport-4.6.2.zip
-- http://zerowing.idsoftware.com/files/radiant/developer/1.5/zlib1-1.2.1.zip (for archivezip module)
-- http://zerowing.idsoftware.com/files/radiant/developer/1.5/libpng-1.2.5.zip (for imagepng module)
-- http://zerowing.idsoftware.com/files/radiant/developer/1.5/mhash-0.9.1.zip (for q3map2)
-- http://zerowing.idsoftware.com/files/radiant/developer/1.5/msvc_redist.zip (msvc runtime libraries)
+- http://zerowing.idsoftware.com/files/radiant/developer/1.5/gtkradiant-1.5-dependencies-1.0.zip
 
 build:
 Open GtkRadiant.sln.

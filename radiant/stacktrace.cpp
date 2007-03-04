@@ -309,8 +309,10 @@ void write_stack_trace(TextOutputStream& outputStream)
 }
 
 #else
+#if defined (WIN32)
 void write_stack_trace(TextOutputStream& outputStream)
 {
 	outputStream << "\nStacktrace is disabled in release-builds\n";
 }
+#endif
 #endif
