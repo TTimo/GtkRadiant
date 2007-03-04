@@ -44,7 +44,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="&quot;..\..\..\..\mhash-0.9\lib&quot;;..\..\..\include;..\common;..\..\..\libs;&quot;..\..\..\..\libxml2-2.6\include&quot;;&quot;..\..\..\..\gtk2-2.10\include\glib-2.0&quot;;&quot;..\..\..\..\gtk2-2.10\lib\glib-2.0\include&quot;;&quot;..\..\..\..\gtk2-2.10\include\&quot;;$(NOINHERIT)"
-				PreprocessorDefinitions="_DEBUG,WIN32,_CONSOLE"
+				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;_DEBUG,WIN32,_CONSOLE"
 				ExceptionHandling="0"
 				BasicRuntimeChecks="0"
 				RuntimeLibrary="3"
@@ -58,6 +58,7 @@
 				SuppressStartupBanner="true"
 				DebugInformationFormat="4"
 				CompileAs="0"
+				DisableSpecificWarnings="4996"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -146,7 +147,7 @@
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
 				AdditionalIncludeDirectories="&quot;..\..\..\..\mhash-0.9\lib&quot;;..\..\..\include;..\common;..\..\..\libs;&quot;..\..\..\..\libxml2-2.6\include&quot;;&quot;..\..\..\..\gtk2-2.10\include\glib-2.0&quot;;&quot;..\..\..\..\gtk2-2.10\lib\glib-2.0\include&quot;;&quot;..\..\..\..\gtk2-2.10\include\&quot;;$(NOINHERIT)"
-				PreprocessorDefinitions="NDEBUG,WIN32,_CONSOLE"
+				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;NDEBUG,WIN32,_CONSOLE"
 				StringPooling="true"
 				ExceptionHandling="0"
 				BasicRuntimeChecks="0"
@@ -162,6 +163,7 @@
 				SuppressStartupBanner="true"
 				DebugInformationFormat="3"
 				CompileAs="0"
+				DisableSpecificWarnings="4996"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"

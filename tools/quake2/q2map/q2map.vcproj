@@ -44,7 +44,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="..\..\..\include;..\common;..\..\..\libs;&quot;..\..\..\..\libxml2-2.6\include&quot;;&quot;..\..\..\..\gtk2-2.10\include&quot;"
-				PreprocessorDefinitions="_DEBUG,WIN32,_CONSOLE"
+				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;_DEBUG,WIN32,_CONSOLE"
 				ExceptionHandling="0"
 				BasicRuntimeChecks="0"
 				RuntimeLibrary="3"
@@ -58,6 +58,7 @@
 				SuppressStartupBanner="true"
 				DebugInformationFormat="4"
 				CompileAs="0"
+				DisableSpecificWarnings="4996"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -146,7 +147,7 @@
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
 				AdditionalIncludeDirectories="..\..\..\include;..\common;..\..\..\libs;&quot;..\..\..\..\libxml2-2.6\include&quot;;&quot;..\..\..\..\gtk2-2.10\include&quot;"
-				PreprocessorDefinitions="NDEBUG,WIN32,_CONSOLE"
+				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;NDEBUG,WIN32,_CONSOLE"
 				StringPooling="true"
 				ExceptionHandling="0"
 				BasicRuntimeChecks="0"
@@ -162,6 +163,7 @@
 				SuppressStartupBanner="true"
 				DebugInformationFormat="3"
 				CompileAs="0"
+				DisableSpecificWarnings="4996"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"

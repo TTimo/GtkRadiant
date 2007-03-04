@@ -42,7 +42,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="../include;../libs;&quot;../../STLPort-4.6/stlport&quot;;&quot;../../libxml2-2.6/include&quot;;&quot;../../gtk2-2.10/lib/glib-2.0/include&quot;;&quot;../../gtk2-2.10/include/glib-2.0&quot;;&quot;../../gtk2-2.10/lib/gtk-2.0/include&quot;;&quot;../../gtk2-2.10/include/gtk-2.0/gtk&quot;;&quot;../../gtk2-2.10/include/gtk-2.0&quot;;&quot;../../gtk2-2.10/include/gtk-2.0/gdk&quot;;&quot;../../gtk2-2.10/include/pango-1.0&quot;;&quot;../../gtk2-2.10/include/atk-1.0&quot;;&quot;../../gtk2-2.10/lib/gtkglext-1.0/include&quot;;&quot;../../gtk2-2.10/include/gtkglext-1.0&quot;;&quot;../../gtk2-2.10/include/cairo&quot;;&quot;../../gtk2-2.10/include&quot;"
-				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
+				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;WIN32;_DEBUG;_CONSOLE"
 				StringPooling="true"
 				MinimalRebuild="true"
 				ExceptionHandling="0"
@@ -142,7 +142,7 @@
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
 				AdditionalIncludeDirectories="../include;../libs;&quot;../../STLPort-4.6/stlport&quot;;&quot;../../libxml2-2.6/include&quot;;&quot;../../gtk2-2.10/lib/glib-2.0/include&quot;;&quot;../../gtk2-2.10/include/glib-2.0&quot;;&quot;../../gtk2-2.10/lib/gtk-2.0/include&quot;;&quot;../../gtk2-2.10/include/gtk-2.0/gtk&quot;;&quot;../../gtk2-2.10/include/gtk-2.0&quot;;&quot;../../gtk2-2.10/include/gtk-2.0/gdk&quot;;&quot;../../gtk2-2.10/include/pango-1.0&quot;;&quot;../../gtk2-2.10/include/atk-1.0&quot;;&quot;../../gtk2-2.10/lib/gtkglext-1.0/include&quot;;&quot;../../gtk2-2.10/include/gtkglext-1.0&quot;;&quot;../../gtk2-2.10/include/cairo&quot;;&quot;../../gtk2-2.10/include&quot;"
-				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
+				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;WIN32;NDEBUG;_CONSOLE"
 				StringPooling="true"
 				ExceptionHandling="0"
 				RuntimeLibrary="2"
@@ -151,7 +151,7 @@
 				UsePrecompiledHeader="0"
 				WarningLevel="4"
 				Detect64BitPortabilityProblems="true"
-				DebugInformationFormat="0"
+				DebugInformationFormat="3"
 				DisableSpecificWarnings="4610;4510;4512;4505;4100;4127;4996"
 			/>
 			<Tool

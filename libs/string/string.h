@@ -251,7 +251,7 @@ inline char* string_to_lowercase(char* string)
 {
   for(char* p = string; *p != '\0'; ++p)
   {
-    *p = std::tolower(*p);
+    *p = (char)std::tolower(*p);
   }
   return string;
 }
@@ -262,7 +262,7 @@ inline char* string_to_uppercase(char* string)
 {
   for(char* p = string; *p != '\0'; ++p)
   {
-    *p = std::toupper(*p);
+    *p = (char)std::toupper(*p);
   }
   return string;
 }

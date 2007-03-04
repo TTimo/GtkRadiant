@@ -131,6 +131,13 @@
       <feature name="UFO:AI Support" desc="Support for UFO:Alien Invasion.">
         <component name=".\components\ufoai.xml" root="..\..\games\UFOAIPack" />
       </feature>
+	  <feature name="Tremulous Support" desc="Support for Tremulous.">
+		<component name=".\components\trem.xml" root="..\..\games\TremulousPack\tools" />
+		<component name=".\components\trem_shader_manual.xml" root="..\..\games\TremulousPack\tools\trem.game\docs\" />
+		<component name=".\components\trem_terrain_manual.xml" root="..\..\games\TremulousPack\tools\trem.game\docs\" />
+		<component name=".\components\trem_compile_manual.xml" root="..\..\games\TremulousPack\tools\trem.game\docs\" />
+		<component name=".\components\trem_model_manual.xml" root="..\..\games\TremulousPack\tools\trem.game\docs\" />
+	  </feature>
     </feature>
 
   </feature>

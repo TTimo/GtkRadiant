@@ -1573,18 +1573,17 @@ void TreeView_onRowActivated(GtkTreeView* treeview, GtkTreePath* path, GtkTreeVi
 
   if (gtk_tree_model_get_iter (model, &iter, path))
   {
-    gchar* dirName;
-    gtk_tree_model_get(model, &iter, 0, &dirName, -1);
+    gchar dirName[1024];
+	
+	gchar* buffer;
+    gtk_tree_model_get(model, &iter, 0, &buffer, -1);
+	strcpy(dirName, buffer);
+	g_free(buffer);
 
 	g_TextureBrowser.m_searchedTags = false;
 
     if(!TextureBrowser_showWads())
-    {
-      char buffer[1024];
-      strcpy(buffer, dirName);
-      strcat(buffer, "/");
-      dirName = buffer;
-    }
+      strcat(dirName, "/");
 
     ScopeDisableScreenUpdates disableScreenUpdates(dirName, "Loading Textures");
     TextureBrowser_ShowDirectory(GlobalTextureBrowser (), dirName);
