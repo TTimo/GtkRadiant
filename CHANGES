@@ -3,6 +3,11 @@ that we distribute with the binaries. (see changelog)
 
 04/03/2007
 namespace
+- Reverted Q3 translucency fix since it randomly made brushes
+  fully transparent in Doom3 mode.
+
+04/03/2007
+namespace
 - Final update for installerfiles (Shaderman / namespace)
 - Removed installer.py validation checks since they are incompatible with Vista
 - Updated msiquery module to python 2.5

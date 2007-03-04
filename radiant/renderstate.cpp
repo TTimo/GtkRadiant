@@ -2387,11 +2387,7 @@ void OpenGLShader::construct(const char* name)
       state.m_colour[2] = 0;
       state.m_colour[3] = 0.3f;
       state.m_state = RENDER_FILL|RENDER_DEPTHTEST|RENDER_CULLFACE|RENDER_BLEND|RENDER_COLOURWRITE|RENDER_DEPTHWRITE;
-
-      // The bug "Selecting translucent brushes, such as clip, cause them to disappear leaving
-      // only the red selection box." seems to be fixed by removing the next line.
-
-      // state.m_sort = OpenGLState::eSortHighlight;
+      state.m_sort = OpenGLState::eSortHighlight;
       state.m_depthfunc = GL_LEQUAL;
     }
     else if(string_equal(name+1, "CAM_OVERLAY"))
