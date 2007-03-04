@@ -1,6 +1,13 @@
 This is the changelog for developers, != changelog for the end user 
 that we distribute with the binaries. (see changelog)
 
+04/03/2007
+namespace
+- Final update for installerfiles (Shaderman / namespace)
+- Removed installer.py validation checks since they are incompatible with Vista
+- Updated msiquery module to python 2.5
+- Added msiquery module for python 2.5
+
 03/03/2007
 namespace
 (THIS IS A TRANSITIONAL REVISION, DO NOT USE, WAIT FOR UPDATED DEPS)

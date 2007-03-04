@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<component>
+  <file name="msvcr80.dll"/>
+  <file name="msvcm80.dll"/>
+  <file name="msvcp80.dll"/>
+  <file name="msvcrt.dll"/>
+  <file name="GtkRadiant.exe.manifest"/>
+  <file name="Microsoft.VC80.CRT.Manifest"/>
+</component>

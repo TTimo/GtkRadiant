@@ -412,15 +412,17 @@ class MSIPackage:
     os.system("msidb -d " + msiWorkName + " -a archive.cab")
     os.system("del archive.cab")
     
-    print("running standard MSI validators ...")
-    if(os.system("msival2 " + msiWorkName + " darice.cub > darice.txt") != 0):
-      raise Exception("MSI VALIDATION ERROR: see darice.txt")
-    print("running Logo Program validators ...")
-    if(os.system("msival2 " + msiWorkName + " logo.cub > logo.txt") != 0):
-      raise Exception("MSI VALIDATION ERROR: see logo.txt")
-    print("running XP Logo Program validators ...")
-    if(os.system("msival2 " + msiWorkName + " XPlogo.cub > XPlogo.txt") != 0):
-      raise Exception("MSI VALIDATION ERROR: see XPlogo.txt")
+
+    #print("running standard MSI validators ...")
+    #if(os.system("msival2 " + msiWorkName + " darice.cub > darice.txt") != 0):
+    #  raise Exception("MSI VALIDATION ERROR: see darice.txt")
+
+    #print("running Logo Program validators ...")
+    #if(os.system("msival2 " + msiWorkName + " logo.cub > logo.txt") != 0):
+    #  raise Exception("MSI VALIDATION ERROR: see logo.txt")
+    #print("running XP Logo Program validators ...")
+    #if(os.system("msival2 " + msiWorkName + " XPlogo.cub > XPlogo.txt") != 0):
+    #  raise Exception("MSI VALIDATION ERROR: see XPlogo.txt")
     
     msiNameQuoted = "\"" + msiName + "\""
     if(os.path.exists(os.path.join(".\\", msiName)) and os.system("del " + msiNameQuoted) != 0):

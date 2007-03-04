@@ -1,4 +1,4 @@
 <?xml version="1.0"?>
 <component>
-  <file name="msvcr71.dll"/>
+  <file name="libcairo-2.dll"/>
 </component>

@@ -23,6 +23,7 @@
         </dir>
       </dir>
     </dir>
+<!--
     <dir name="locale">
       <dir name="en@IPA">
         <dir name="LC_MESSAGES">
@@ -35,6 +36,7 @@
         </dir>
       </dir>
     </dir>
+-->
   </dir>
   <dir name="share">
     <dir name="themes">
