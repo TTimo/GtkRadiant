@@ -20,8 +20,85 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
 #include "glfont.h"
+#include <GL/gl.h>
+#include "debugging/debugging.h"
 
-#include "igl.h"
+// LordHavoc: this is code for direct Xlib bitmap character fetching, as an
+// alternative to requiring gtkglarea, it was created due to a lack of this
+// package on SuSE 9.x but this package is now commonly shipping in Linux
+// distributions so this code may be unnecessary, feel free however to enable
+// it when building packages for distros that do not ship with that package,
+// or if you just prefer less dependencies...
+#if 0
+
+#include <X11/Xlib.h>
+#include <gdk/gdkx.h>
+#include <GL/glx.h>
+
+GLFont glfont_create(const char* font_string)
+{
+  GLuint font_list_base;
+  XFontStruct *fontInfo;
+  Display *dpy = GDK_DISPLAY ();
+  unsigned int i, first, last, firstrow, lastrow;
+  int maxchars;
+  int firstbitmap;
+
+  fontInfo = XLoadQueryFont (dpy, "-*-fixed-*-*-*-*-8-*-*-*-*-*-*-*");
+  if (fontInfo == NULL)
+  {
+    // try to load other fonts
+    fontInfo = XLoadQueryFont (dpy, "-*-fixed-*-*-*-*-*-*-*-*-*-*-*-*");
+
+    // any font will do !
+    if (fontInfo == NULL)
+      fontInfo = XLoadQueryFont(dpy, "-*-*-*-*-*-*-*-*-*-*-*-*-*-*");
+
+    if (fontInfo == NULL)
+      ERROR_MESSAGE("couldn't create font");
+  }
+
+  first = (int)fontInfo->min_char_or_byte2;
+  last = (int)fontInfo->max_char_or_byte2;
+  firstrow = (int)fontInfo->min_byte1;
+  lastrow = (int)fontInfo->max_byte1;
+  /*
+   * How many chars in the charset
+   */
+  maxchars = 256 * lastrow + last;
+  font_list_base = glGenLists(maxchars+1);
+  if (font_list_base == 0)
+  {
+    ERROR_MESSAGE( "couldn't create font" );
+  }
+
+  /*
+   * Get offset to first char in the charset
+   */
+  firstbitmap = 256 * firstrow + first;
+  /*
+   * for each row of chars, call glXUseXFont to build the bitmaps.
+   */
+
+  for(i=firstrow; i<=lastrow; i++)
+  {
+    glXUseXFont(fontInfo->fid, firstbitmap, last-first+1, font_list_base+firstbitmap);
+    firstbitmap += 256;
+  }
+
+/*    *height = fontInfo->ascent + fontInfo->descent;
+    *width = fontInfo->max_bounds.width;  */
+  return GLFont(font_list_base, fontInfo->ascent + fontInfo->descent);
+}
+
+void glfont_release(GLFont& font)
+{
+  glDeleteLists(font.getDisplayList(), 256);
+  font = GLFont(0, 0);
+}
+
+#else
+
 #include <gtk/gtkglwidget.h>
 
 GLFont glfont_create(const char* font_string)
@@ -58,3 +135,4 @@ void glfont_release(GLFont& font)
   glDeleteLists(font.getDisplayList(), 256);
   font = GLFont(0, 0);
 }
+#endif
