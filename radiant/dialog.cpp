@@ -378,14 +378,14 @@ Dialog::~Dialog()
 
 void Dialog::ShowDlg()
 {
-  ASSERT_MESSAGE(m_window != 0, "dialog was not constructed")
+  ASSERT_MESSAGE(m_window != 0, "dialog was not constructed");
   importData();
   gtk_widget_show(GTK_WIDGET(m_window));
 }
 
 void Dialog::HideDlg()
 {
-  ASSERT_MESSAGE(m_window != 0, "dialog was not constructed")
+  ASSERT_MESSAGE(m_window != 0, "dialog was not constructed");
   exportData();
   gtk_widget_hide(GTK_WIDGET(m_window));
 }
@@ -399,7 +399,7 @@ static gint delete_event_callback(GtkWidget *widget, GdkEvent* event, gpointer d
 
 void Dialog::Create()
 {
-  ASSERT_MESSAGE(m_window == 0, "dialog cannot be constructed")
+  ASSERT_MESSAGE(m_window == 0, "dialog cannot be constructed");
 
   m_window = BuildDialog();
   g_signal_connect(G_OBJECT(m_window), "delete_event", G_CALLBACK(delete_event_callback), this);

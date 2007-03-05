@@ -3310,7 +3310,11 @@ void GlobalGL_sharedContextCreated()
   GlobalShaderCache().realise();
   Textures_Realise();
 
+#ifdef __linux__
+  g_font = glfont_create("fixed 8");
+#else
   g_font = glfont_create("courier 8");
+#endif
   GlobalOpenGL().m_font = g_font.getDisplayList();
   GlobalOpenGL().m_fontHeight = g_font.getPixelHeight();
 }

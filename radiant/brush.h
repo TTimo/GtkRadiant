@@ -3099,7 +3099,7 @@ public:
         m_face->getWinding()[2].vertex
       ),
       "update_move_planepts_vertex2: error"
-    )
+    );
 
     m_face->m_move_planepts[0] = m_face->getWinding()[opposite].vertex;
     m_face->m_move_planepts[1] = m_face->getWinding()[index].vertex;

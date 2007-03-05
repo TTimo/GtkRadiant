@@ -112,17 +112,17 @@ inline DebugMessageHandler& globalDebugMessageHandler()
 #if defined(DEBUG_ASSERTS)
 
 /// \brief Sends a \p message to the current debug-message-handler text-output-stream if \p condition evaluates to false.
-#define ASSERT_MESSAGE(condition, message)\
+#define ASSERT_MESSAGE(condition, message) do{\
 if(!(condition))\
 {\
   globalDebugMessageHandler().getOutputStream() << FILE_LINE "\nassertion failure: " << message << "\n";\
   if(!globalDebugMessageHandler().handleMessage()) { DEBUGGER_BREAKPOINT(); }\
-} else\
+}} while(0)
 
 /// \brief Sends a \p message to the current debug-message-handler text-output-stream.
-#define ERROR_MESSAGE(message)\
+#define ERROR_MESSAGE(message) do{\
 globalDebugMessageHandler().getOutputStream() << FILE_LINE "\nruntime error: " << message << "\n";\
-if(!globalDebugMessageHandler().handleMessage()) { DEBUGGER_BREAKPOINT(); } else\
+if(!globalDebugMessageHandler().handleMessage()) { DEBUGGER_BREAKPOINT(); }} while(0)
 
 #define ASSERT_NOTNULL(ptr) ASSERT_MESSAGE(ptr != 0, "pointer \"" #ptr "\" is null")
 
