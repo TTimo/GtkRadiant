@@ -1,6 +1,10 @@
 This is the changelog for developers, != changelog for the end user 
 that we distribute with the binaries. (see changelog)
 
+07/03/2007
+namespace
+- Updated UFA:Plugin (mattn2)
+
 04/03/2007
 namespace
 - Reverted Q3 translucency fix since it randomly made brushes

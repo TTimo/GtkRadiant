@@ -206,8 +206,10 @@ void filter_level(int flag)
 	if (level_active)
 	{
 		GlobalSceneGraph().traverse(BrushGetLevel(brushes, (level_active << 8), true, true, false));
+		GlobalSceneGraph().traverse(EntityFindByName("func_door", entities, level_active, false));
 		GlobalSceneGraph().traverse(EntityFindByName("func_breakable", entities, level_active, false));
 		GlobalSceneGraph().traverse(EntityFindByName("misc_model", entities, level_active, false));
+		GlobalSceneGraph().traverse(EntityFindByName("misc_particle", entities, level_active, false));
 		entities.erase(entities.begin(), entities.end());
 		brushes.erase(brushes.begin(), brushes.end());
 		if (level_active == level)
@@ -224,8 +226,10 @@ void filter_level(int flag)
 	GlobalSceneGraph().traverse(BrushGetLevel(brushes, flag, true, true, true));
 
 	// now all entities
+	GlobalSceneGraph().traverse(EntityFindByName("func_door", entities, level, true));
 	GlobalSceneGraph().traverse(EntityFindByName("func_breakable", entities, level, true));
 	GlobalSceneGraph().traverse(EntityFindByName("misc_model", entities, level, true));
+	GlobalSceneGraph().traverse(EntityFindByName("misc_particle", entities, level, true));
 
 #ifdef _DEBUG
 	if (brushes.empty())
@@ -237,7 +241,7 @@ void filter_level(int flag)
 		globalOutputStream() << "UFO:AI: Found " << Unsigned(brushes.size()) << " brushes.\n";
 	}
 
-	// now let's filter all entities like misc_model and func_breakable that have the spawnflags set
+	// now let's filter all entities like misc_model, func_breakable and func_door that have the spawnflags set
 	if (entities.empty())
 	{
 		globalOutputStream() << "UFO:AI: No entities.\n";

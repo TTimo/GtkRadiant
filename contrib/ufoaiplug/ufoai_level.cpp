@@ -68,6 +68,36 @@ Entity* Scene_FindEntityByClass(const char* name)
 /**
  * @brief finds start positions
  */
+class EntityFindFlags : public scene::Graph::Walker
+{
+	const char *m_classname;
+	const char *m_flag;
+	int *m_count;
+
+	public:
+		EntityFindFlags(const char *classname, const char *flag, int *count) : m_classname(classname), m_flag(flag), m_count(count)
+		{
+		}
+		bool pre(const scene::Path& path, scene::Instance& instance) const
+		{
+			const char *str;
+			Entity* entity = Node_getEntity(path.top());
+			if(entity != 0 && string_equal(m_classname, entity->getKeyValue("classname")))
+			{
+				str = entity->getKeyValue(m_flag);
+				if (string_empty(str))
+				{
+					(*m_count)++;
+				}
+			}
+			return true;
+		}
+};
+
+
+/**
+ * @brief finds start positions
+ */
 class EntityFindTeams : public scene::Graph::Walker
 {
 	const char *m_classname;
@@ -236,8 +266,21 @@ void assign_default_values_to_worldspawn (bool override, bool day, char **return
 }
 
 /**
+ * @brief
+ */
+int check_entity_flags (const char *classname, const char *flag)
+{
+	int count;
+
+	/* init this with 0 every time we browse the tree */
+	count = 0;
+
+	GlobalSceneGraph().traverse(EntityFindFlags(classname, flag, &count));
+	return count;
+}
+
+/**
  * @brief Will check e.g. the map entities for valid values
- * @todo: Check whether all misc_model and func_breakable have spawnflags
  * @todo: check for maxlevel
  */
 void check_map_values (char **returnMsg)
@@ -245,6 +288,7 @@ void check_map_values (char **returnMsg)
 	static char message[1024];
 	int count = 0;
 	int teams = 0;
+	int ent_flags;
 	Entity* worldspawn;
 	char str[64];
 
@@ -292,9 +336,31 @@ void check_map_values (char **returnMsg)
 		strncat(message, "Worldspawn: Highest maxlevel is 8\n", sizeof(message) - 1);
 		worldspawn->setKeyValue("maxlevel", "8");
 	}
-	// no errors - no warnings
-	if (!strlen(message))
-		return;
+
+	ent_flags = check_entity_flags("func_door", "spawnflags");
+	if (ent_flags)
+		snprintf(&message[strlen(message)], sizeof(message) - 1 - strlen(message), "Found %i func_door with no spawnflags\n", ent_flags);
+	ent_flags = check_entity_flags("func_breakable", "spawnflags");
+	if (ent_flags)
+		snprintf(&message[strlen(message)], sizeof(message) - 1 - strlen(message), "Found %i func_breakable with no spawnflags\n", ent_flags);
+	ent_flags = check_entity_flags("misc_model", "spawnflags");
+	if (ent_flags)
+		snprintf(&message[strlen(message)], sizeof(message) - 1 - strlen(message), "Found %i misc_model with no spawnflags\n", ent_flags);
+	ent_flags = check_entity_flags("misc_particle", "spawnflags");
+	if (ent_flags)
+		snprintf(&message[strlen(message)], sizeof(message) - 1 - strlen(message), "Found %i misc_particle with no spawnflags\n", ent_flags);
+	ent_flags = check_entity_flags("info_player_start", "team");
+	if (ent_flags)
+		snprintf(&message[strlen(message)], sizeof(message) - 1 - strlen(message), "Found %i info_player_start with no team assigned\n!!Teamcount may change after you've fixed this\n", ent_flags);
+	ent_flags = check_entity_flags("light", "color");
+	ent_flags = check_entity_flags("light", "_color");
+	if (ent_flags)
+		snprintf(&message[strlen(message)], sizeof(message) - 1 - strlen(message), "Found %i lights with no color value\n", ent_flags);
+
+	// no errors found
+	if (!strlen(message)) {
+		snprintf(message, sizeof(message) - 1, "No errors found - you are ready to compile the map now\n");
+	}
 
 	*returnMsg = message;
 }

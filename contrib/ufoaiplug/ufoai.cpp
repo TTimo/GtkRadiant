@@ -32,7 +32,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include <gtk/gtk.h>
 
-#define PLUGIN_VERSION "0.1"
+#define PLUGIN_VERSION "0.2"
 
 #include "ifilter.h"
 #include "ibrush.h"
@@ -86,7 +86,7 @@ namespace UFOAI
 		if(string_equal(command, "About"))
 		{
 			GlobalRadiant().m_pfnMessageBox(GTK_WIDGET(g_mainwnd),
-				"UFO:AI Plugin (http://www.ufoai.net)\nBuild: " __DATE__ "\nRadiant version: " RADIANT_VERSION "\nPlugin version: " PLUGIN_VERSION "\n", "About",
+				"UFO:AI Plugin (http://www.ufoai.net)\nBuild: " __DATE__ "\nRadiant version: " RADIANT_VERSION "\nPlugin version: " PLUGIN_VERSION "\nAuthor: Martin Gerhardy (tlh2000/mattn)\n", "About",
 				eMB_OK, eMB_ICONDEFAULT);
 		}
 		else if(string_equal(command, "Level 1"))
