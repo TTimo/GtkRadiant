@@ -1,6 +1,10 @@
 This is the changelog for developers, != changelog for the end user 
 that we distribute with the binaries. (see changelog)
 
+08/03/2007
+namespace
+- Win32 compile fix (woekele)
+
 07/03/2007
 namespace
 - Updated UFA:Plugin (mattn2)
