@@ -5,5 +5,7 @@
   <file name="msvcp80.dll"/>
   <file name="msvcrt.dll"/>
   <file name="GtkRadiant.exe.manifest"/>
+  <file name="q3map2.exe.manifest"/>
+  <file name="q2map.exe.manifest"/>
   <file name="Microsoft.VC80.CRT.Manifest"/>
 </component>
