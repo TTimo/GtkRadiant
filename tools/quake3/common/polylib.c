@@ -249,8 +249,11 @@ winding_t *BaseWindingForPlane (vec3_t normal, vec_t dist)
 	
 	CrossProduct (vup, normal, vright);
 	
-	VectorScale (vup, MAX_WORLD_COORD, vup);
-	VectorScale (vright, MAX_WORLD_COORD, vright);
+	// LordHavoc: this has to use *2 because otherwise some created points may
+	// be inside the world (think of a diagonal case), and any brush with such
+	// points should be removed, failure to detect such cases is disasterous
+	VectorScale (vup, MAX_WORLD_COORD*2, vup);
+	VectorScale (vright, MAX_WORLD_COORD*2, vright);
 
   // project a really big	axis aligned box onto the plane
 	w = AllocWinding (4);
