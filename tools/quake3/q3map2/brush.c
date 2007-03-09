@@ -906,18 +906,10 @@ void SplitBrush( brush_t *brush, int planenum, brush_t **front, brush_t **back )
 	// see if we have valid polygons on both sides
 	for (i=0 ; i<2 ; i++)
 	{
-		BoundBrush (b[i]);
-		for (j=0 ; j<3 ; j++)
+		if (b[i]->numsides < 3 || !BoundBrush (b[i]))
 		{
-			if (b[i]->mins[j] < MIN_WORLD_COORD || b[i]->maxs[j] > MAX_WORLD_COORD)
-			{
+			if (b[i]->numsides >= 3)
 				Sys_FPrintf (SYS_VRB,"bogus brush after clip\n");
-				break;
-			}
-		}
-
-		if (b[i]->numsides < 3 || j < 3)
-		{
 			FreeBrush (b[i]);
 			b[i] = NULL;
 		}
