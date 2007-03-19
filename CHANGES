@@ -1,6 +1,10 @@
 This is the changelog for developers, != changelog for the end user 
 that we distribute with the binaries. (see changelog)
 
+19/03/2007
+namespace
+- Fix: Selection is now deleted when creating a patch out of it (aumüller / namespace)
+
 08/03/2007
 namespace
 - Win32 compile fix (woekele)

@@ -46,8 +46,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 PatchCreator* g_patchCreator = 0;
 
-void Scene_PatchConstructPrefab(scene::Graph& graph, const AABB& aabb, const char* shader, EPatchPrefab eType, int axis, std::size_t width = 3, std::size_t height = 3)
+void Scene_PatchConstructPrefab(scene::Graph& graph, const AABB aabb, const char* shader, EPatchPrefab eType, int axis, std::size_t width = 3, std::size_t height = 3)
 {
+  Select_Delete();
   GlobalSelectionSystem().setSelectedAll(false);
 
   NodeSmartReference node(g_patchCreator->createPatch());
