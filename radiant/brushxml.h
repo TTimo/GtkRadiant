@@ -250,6 +250,49 @@ inline void FacePlane_exportXML(const FacePlane& facePlane, XMLImporter& importe
   importer.popElement(element.name());
 }
 
+inline void FacePolygon_exportXML(const Winding& w, const BasicVector3<double>& normal, XMLImporter& importer)
+{
+  DynamicElement element("polygon");
+  
+  char tmp[32];
+  
+  sprintf(tmp, "%f", normal.x());
+  element.insertAttribute("nx", tmp);
+  
+  sprintf(tmp, "%f", normal.y());
+  element.insertAttribute("ny", tmp);
+  
+  sprintf(tmp, "%f", normal.z());
+  element.insertAttribute("nz", tmp);
+  
+  importer.pushElement(element);
+  
+  for(unsigned int i = 0; i < w.numpoints; ++i)
+  {
+	StaticElement c("vertex");
+	
+	sprintf(tmp, "%f", w.points[i].vertex.x());
+	c.insertAttribute("x", tmp);
+		
+	sprintf(tmp, "%f", w.points[i].vertex.y());
+	c.insertAttribute("y", tmp);
+	
+	sprintf(tmp, "%f", w.points[i].vertex.z());
+	c.insertAttribute("z", tmp);
+	
+	sprintf(tmp, "%f", w.points[i].texcoord.x());
+	c.insertAttribute("s", tmp);
+	
+	sprintf(tmp, "%f", w.points[i].texcoord.y());
+	c.insertAttribute("t", tmp);
+	
+	importer.pushElement(c);
+	importer.popElement(c.name());
+  }
+
+  importer.popElement(element.name());
+}
+
 class FaceXMLExporter
 {
   const Face& m_face;
@@ -269,6 +312,7 @@ public:
       importer.popElement(element.name());
     }
 
+    FacePolygon_exportXML(m_face.getWinding(), m_face.getPlane().plane3().normal(), importer);
     FacePlane_exportXML(m_face.getPlane(), importer);
 
     if(!bAlternateTexdef)

@@ -37,17 +37,31 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 class MapXMLDependencies :
   public GlobalRadiantModuleRef,
   public GlobalBrushModuleRef,
-  public GlobalPatchModuleRef,
   public GlobalFiletypesModuleRef,
   public GlobalEntityClassManagerModuleRef,
   public GlobalSceneGraphModuleRef
 {
+  PatchModuleRef m_patchDef2Doom3Module;
+  PatchModuleRef m_patchDoom3Module;
 public:
   MapXMLDependencies() :
     GlobalBrushModuleRef(GlobalRadiant().getRequiredGameDescriptionKeyValue("brushtypes")),
-    GlobalPatchModuleRef(GlobalRadiant().getRequiredGameDescriptionKeyValue("patchtypes")),
-    GlobalEntityClassManagerModuleRef(GlobalRadiant().getRequiredGameDescriptionKeyValue("entityclass"))
+    GlobalEntityClassManagerModuleRef(GlobalRadiant().getRequiredGameDescriptionKeyValue("entityclass")),
+    m_patchDef2Doom3Module("def2doom3"),
+    m_patchDoom3Module("doom3")
   {
+  }
+  BrushCreator& getBrushDoom3()
+  {
+    return GlobalBrushModule::getTable();
+  }
+  PatchCreator& getPatchDoom3()
+  {
+    return *m_patchDoom3Module.getTable();
+  }
+  PatchCreator& getPatchDef2Doom3()
+  {
+    return *m_patchDef2Doom3Module.getTable();
   }
 };
 
@@ -55,11 +69,11 @@ class MapXMLAPI : public TypeSystemRef, public MapFormat
 {
 public:
   typedef MapFormat Type;
-  STRING_CONSTANT(Name, "xmlq3");
+  STRING_CONSTANT(Name, "xmldoom3");
 
   MapXMLAPI()
   {
-    GlobalFiletypesModule::getTable().addType(Type::Name(), Name(), filetype_t("xml quake3 maps", "*.xmap"));
+    GlobalFiletypesModule::getTable().addType(Type::Name(), Name(), filetype_t("xml doom3 maps", "*.xmap"));
   }
   MapFormat* getTable()
   {
@@ -84,7 +98,10 @@ MapXMLModule g_MapXMLModule;
 
 extern "C" void RADIANT_DLLEXPORT Radiant_RegisterModules(ModuleServer& server)
 {
-  initialiseModule(server);
+  GlobalErrorStream::instance().setOutputStream(server.getErrorStream());
+  GlobalOutputStream::instance().setOutputStream(server.getOutputStream());
+  GlobalDebugMessageHandler::instance().setHandler(server.getDebugMessageHandler());
+  GlobalModuleServer::instance().set(server);
 
   g_MapXMLModule.selfRegister();
 }

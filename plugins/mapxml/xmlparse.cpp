@@ -208,7 +208,7 @@ public:
   }
 };
 
-class MapQ3Importer : public TreeXMLImporter
+class MapDoom3Importer : public TreeXMLImporter
 {
   scene::Node& m_root;
   char m_child[sizeof(EntityImporter)];
@@ -219,17 +219,17 @@ class MapQ3Importer : public TreeXMLImporter
     return *reinterpret_cast<EntityImporter*>(m_child);
   }
 public:
-  MapQ3Importer(scene::Node& root, EntityCreator& entityTable) : m_root(root), m_entityTable(entityTable)
+  MapDoom3Importer(scene::Node& root, EntityCreator& entityTable) : m_root(root), m_entityTable(entityTable)
   {
   }
   void pushElement(const XMLElement& element)
   {
-    ASSERT_MESSAGE(string_equal(element.name(), "mapq3"), PARSE_ERROR);
+    ASSERT_MESSAGE(string_equal(element.name(), "mapdoom3"), PARSE_ERROR);
     constructor(getEntity(), makeReference(m_root), makeReference(m_entityTable));
   }
   void popElement(const char* name)
   {
-    ASSERT_MESSAGE(string_equal(name, "mapq3"), PARSE_ERROR);
+    ASSERT_MESSAGE(string_equal(name, "mapdoom3"), PARSE_ERROR);
     destructor(getEntity());
   }
   std::size_t write(const char* data, std::size_t length)
@@ -271,7 +271,7 @@ void Map_Read(scene::Node& root, TextInputStream& in, EntityCreator& entityTable
 {
   XMLStreamParser parser(in);
 
-  MapQ3Importer importer(root, entityTable);
+  MapDoom3Importer importer(root, entityTable);
   TreeXMLImporterStack stack(importer);
   parser.exportXML(stack);
 }

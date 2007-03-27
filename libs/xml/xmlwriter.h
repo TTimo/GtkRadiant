@@ -159,6 +159,7 @@ public:
     {
       m_ostream.write('/');
       m_ostream.write('>');
+      m_elements.pop_back();
     }
     else
     {
@@ -166,6 +167,7 @@ public:
       m_ostream.write('/');
       write_string(name);
       m_ostream.write('>');
+      m_elements.pop_back();
     }
   }
   std::size_t write(const char* data, std::size_t length)

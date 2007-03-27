@@ -80,7 +80,7 @@ void Map_Write(scene::Node& root, GraphTraversalFunc traverse, TextOutputStream&
   XMLStreamWriter writer(out);
   writer.write("\n", 1);
   {
-    StaticElement element("mapq3");
+    StaticElement element("mapdoom3");
     writer.pushElement(element);
 
     traverse(root, write_all(writer));

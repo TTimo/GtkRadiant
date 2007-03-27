@@ -1,6 +1,12 @@
 This is the changelog for developers, != changelog for the end user 
 that we distribute with the binaries. (see changelog)
 
+27/03/2007
+namespace
+- Fix: Added missing xml-writer pop-calls
+- Ported mapxml plugin to Doom3
+- mapxml now exports brushes with its vertices
+
 19/03/2007
 namespace
 - Fix: Selection is now deleted when creating a patch out of it (aumüller / namespace)
