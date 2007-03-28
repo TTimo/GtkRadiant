@@ -269,7 +269,7 @@ inline void FacePolygon_exportXML(const Winding& w, const BasicVector3<double>& 
   
   for(unsigned int i = 0; i < w.numpoints; ++i)
   {
-	StaticElement c("vertex");
+	DynamicElement c("vertex");
 	
 	sprintf(tmp, "%f", w.points[i].vertex.x());
 	c.insertAttribute("x", tmp);
