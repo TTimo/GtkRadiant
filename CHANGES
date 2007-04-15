@@ -1,6 +1,10 @@
 This is the changelog for developers, != changelog for the end user 
 that we distribute with the binaries. (see changelog)
 
+15/03/2007
+namespace
+- Fixed brushexport2 output float-format (Shaderman)
+
 27/03/2007
 namespace
 - Fix: Added missing xml-writer pop-calls

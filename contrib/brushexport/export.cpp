@@ -191,7 +191,7 @@ bool ExportDataAsWavefront::WriteToFile(const std::string& path) const
 			
 			// vertices
 			for(size_t i = 0; i < w.numpoints; ++i)
-      			out << "v " << w[i].vertex.x() << " " << w[i].vertex.y() << " " << w[i].vertex.z() << "\n";
+      				out << "v " << FloatFormat(w[i].vertex.x(), 1, 6) << " " << FloatFormat(w[i].vertex.y(), 1, 6) << " " << FloatFormat(w[i].vertex.z(), 1, 6) << "\n";
 		}
 		out << "\n";	
 		
@@ -201,7 +201,7 @@ bool ExportDataAsWavefront::WriteToFile(const std::string& path) const
 			
 			// texcoords
 			for(size_t i = 0; i < w.numpoints; ++i)
-      			out << "vt " << w[i].texcoord.x() << " " << w[i].texcoord.y() << "\n";
+      				out << "vt " << FloatFormat(w[i].texcoord.x(), 1, 6) << " " << FloatFormat(w[i].texcoord.y(), 1, 6) << "\n";
 		}
 		
 		for(std::list<const Face*>::const_iterator it(git->faces.begin()); it != end; ++it)
