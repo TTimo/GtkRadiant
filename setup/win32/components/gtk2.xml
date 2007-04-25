@@ -13,6 +13,8 @@
       <dir name="2.10.0">
         <dir name="engines">
           <file name="libwimp.dll"/>
+          <file name="libclearlooks.dll"/>
+          <file name="libpixmap.dll"/>
         </dir>
         <dir name="immodules">
           <file name="im-ipa.dll"/>
@@ -20,6 +22,7 @@
         <dir name="loaders">
           <file name="libpixbufloader-bmp.dll"/>
           <file name="libpixbufloader-xpm.dll"/>
+          <file name="libpixbufloader-png.dll"/>
         </dir>
       </dir>
     </dir>
@@ -41,6 +44,11 @@
   <dir name="share">
     <dir name="themes">
       <dir name="MS-Windows">
+        <dir name="gtk-2.0">
+          <file name="gtkrc"/>
+        </dir>
+      </dir>
+	<dir name="Clearlooks">
         <dir name="gtk-2.0">
           <file name="gtkrc"/>
         </dir>

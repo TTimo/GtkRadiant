@@ -534,7 +534,6 @@ TexturesCache& GetTexturesCache()
 
 void Textures_Realise()
 {
-  SetTexParameters(g_texture_mode);
   g_texturesmap->realise();
 }
 
@@ -564,7 +563,6 @@ void Textures_ModeChanged()
     }
 
     glBindTexture( GL_TEXTURE_2D, 0 );
-    //qglFinish();
   }
   g_texturesModeChangedNotify();
 }
@@ -593,55 +591,62 @@ void Textures_UpdateTextureCompressionFormat()
 {
   GLint texture_components = GL_RGBA;
 
-  if (g_texture_globals.bTextureCompressionSupported)
-  {
-    if(g_texture_globals.m_nTextureCompressionFormat != TEXTURECOMPRESSION_NONE
-      && g_texture_globals.m_nTextureCompressionFormat != TEXTURECOMPRESSION_RGBA
-      && !g_texture_globals.m_bS3CompressionSupported)
-    {
-      globalOutputStream() << "OpenGL extension GL_EXT_texture_compression_s3tc not supported by current graphics drivers\n";
-      g_texture_globals.m_nTextureCompressionFormat = TEXTURECOMPRESSION_RGBA; // if this is not supported either, see below
-    }
-    if (g_texture_globals.m_nTextureCompressionFormat == TEXTURECOMPRESSION_RGBA && !g_texture_globals.m_bOpenGLCompressionSupported)
-    {
-      globalOutputStream() << "OpenGL extension GL_ARB_texture_compression not supported by current graphics drivers\n";
-      g_texture_globals.m_nTextureCompressionFormat = TEXTURECOMPRESSION_NONE;
-    }
+	if(!g_texturesmap->realised())
+	{
+		texture_components = g_texture_globals.m_nTextureCompressionFormat;
+	}
+	else
+	{
+		if (g_texture_globals.bTextureCompressionSupported)
+		{
+			if(g_texture_globals.m_nTextureCompressionFormat != TEXTURECOMPRESSION_NONE
+				&& g_texture_globals.m_nTextureCompressionFormat != TEXTURECOMPRESSION_RGBA
+				&& !g_texture_globals.m_bS3CompressionSupported)
+			{
+				globalOutputStream() << "OpenGL extension GL_EXT_texture_compression_s3tc not supported by current graphics drivers\n";
+				g_texture_globals.m_nTextureCompressionFormat = TEXTURECOMPRESSION_RGBA; // if this is not supported either, see below
+			}
+			if (g_texture_globals.m_nTextureCompressionFormat == TEXTURECOMPRESSION_RGBA && !g_texture_globals.m_bOpenGLCompressionSupported)
+			{
+				globalOutputStream() << "OpenGL extension GL_ARB_texture_compression not supported by current graphics drivers\n";
+				g_texture_globals.m_nTextureCompressionFormat = TEXTURECOMPRESSION_NONE;
+			}
 
-    switch (g_texture_globals.m_nTextureCompressionFormat)
-    {
-    case (TEXTURECOMPRESSION_NONE):
-      {
-        texture_components = GL_RGBA;
-        break;
-      }
-    case (TEXTURECOMPRESSION_RGBA):
-      {
-        texture_components = GL_COMPRESSED_RGBA_ARB;
-        break;
-      }
-    case (TEXTURECOMPRESSION_RGBA_S3TC_DXT1):
-      {
-        texture_components = GL_COMPRESSED_RGBA_S3TC_DXT1_EXT;
-        break;
-      }
-    case (TEXTURECOMPRESSION_RGBA_S3TC_DXT3):
-      {
-        texture_components = GL_COMPRESSED_RGBA_S3TC_DXT3_EXT;
-        break;
-      }
-    case (TEXTURECOMPRESSION_RGBA_S3TC_DXT5):
-      {
-        texture_components = GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
-        break;
-      }
-    }
-  }
-  else
-  {
-    texture_components = GL_RGBA;
-    g_texture_globals.m_nTextureCompressionFormat = TEXTURECOMPRESSION_NONE;
-  }
+			switch (g_texture_globals.m_nTextureCompressionFormat)
+			{
+			case (TEXTURECOMPRESSION_NONE):
+				{
+					texture_components = GL_RGBA;
+					break;
+				}
+			case (TEXTURECOMPRESSION_RGBA):
+				{
+					texture_components = GL_COMPRESSED_RGBA_ARB;
+					break;
+				}
+			case (TEXTURECOMPRESSION_RGBA_S3TC_DXT1):
+				{
+					texture_components = GL_COMPRESSED_RGBA_S3TC_DXT1_EXT;
+					break;
+				}
+			case (TEXTURECOMPRESSION_RGBA_S3TC_DXT3):
+				{
+					texture_components = GL_COMPRESSED_RGBA_S3TC_DXT3_EXT;
+					break;
+				}
+			case (TEXTURECOMPRESSION_RGBA_S3TC_DXT5):
+				{
+					texture_components = GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
+					break;
+				}
+			}
+		}
+		else
+		{
+			texture_components = GL_RGBA;
+			g_texture_globals.m_nTextureCompressionFormat = TEXTURECOMPRESSION_NONE;
+		}
+	}
 
   Textures_setTextureComponents(texture_components);
 }

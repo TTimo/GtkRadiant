@@ -54,7 +54,7 @@
 				BrowseInformation="0"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="true"
-				DebugInformationFormat="3"
+				DebugInformationFormat="4"
 				DisableSpecificWarnings="4610;4510;4512;4505;4100;4127;4996"
 			/>
 			<Tool
