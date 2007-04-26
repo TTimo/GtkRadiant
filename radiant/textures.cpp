@@ -594,6 +594,8 @@ void Textures_UpdateTextureCompressionFormat()
 	if(!g_texturesmap->realised())
 	{
 		texture_components = g_texture_globals.m_nTextureCompressionFormat;
+		if(texture_components == TEXTURECOMPRESSION_NONE)
+			texture_components = GL_RGBA;
 	}
 	else
 	{

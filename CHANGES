@@ -1,11 +1,14 @@
 This is the changelog for developers, != changelog for the end user 
 that we distribute with the binaries. (see changelog)
 
+26/04/2007
+- Fixed another texcompression bug
+
 25/04/2007
 - Fixed texcompression beeing disabled after each restart
 - Fixed gtk-searchpopup in treeviews
 
-15/03/2007
+15/04/2007
 namespace
 - Fixed brushexport2 output float-format (Shaderman)
 
