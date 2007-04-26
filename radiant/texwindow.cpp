@@ -1595,6 +1595,7 @@ void TextureBrowser_createTreeViewTree()
 {
   GtkCellRenderer* renderer;
   g_TextureBrowser.m_treeViewTree = GTK_WIDGET(gtk_tree_view_new());
+	gtk_tree_view_set_enable_search(GTK_TREE_VIEW(g_TextureBrowser.m_treeViewTree), FALSE);
 
   gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(g_TextureBrowser.m_treeViewTree), FALSE);
   g_signal_connect(g_TextureBrowser.m_treeViewTree, "row-activated", (GCallback) TreeView_onRowActivated, NULL);
@@ -1656,6 +1657,7 @@ void TextureBrowser_createTreeViewTags()
 {
   GtkCellRenderer* renderer;
   g_TextureBrowser.m_treeViewTags = GTK_WIDGET(gtk_tree_view_new());
+	gtk_tree_view_set_enable_search(GTK_TREE_VIEW(g_TextureBrowser.m_treeViewTags), FALSE);
 
   g_signal_connect(GTK_TREE_VIEW(g_TextureBrowser.m_treeViewTags), "button-press-event", (GCallback)TreeViewTags_onButtonPressed, NULL);
 

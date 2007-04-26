@@ -48,7 +48,7 @@
           <file name="gtkrc"/>
         </dir>
       </dir>
-	<dir name="Clearlooks">
+		<dir name="Clearlooks">
         <dir name="gtk-2.0">
           <file name="gtkrc"/>
         </dir>

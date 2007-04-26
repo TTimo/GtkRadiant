@@ -2,6 +2,10 @@ This is the changelog for developers, != changelog for the end user
 that we distribute with the binaries. (see changelog)
 
 26/04/2007
+- Disabled auto-search for texbrowser and entityinspector even when the option
+  is turned on in the gtkrc
+
+26/04/2007
 - Fixed q3map2 lightbounce bug (by Unknown)
 
 26/04/2007
