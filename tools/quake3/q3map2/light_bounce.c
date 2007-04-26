@@ -510,7 +510,7 @@ static void RadSubdivideDiffuseLight( int lightmapNum, bspDrawSurface_t *ds, raw
 			break;
 		
 		case MST_TRIANGLE_SOUP:
-			numTriangleDiffuseLights;
+			numTriangleDiffuseLights++;
 			break;
 		
 		case MST_PATCH:
@@ -948,6 +948,7 @@ void RadCreateDiffuseLights( void )
 	Sys_FPrintf( SYS_VRB, "%8d patch diffuse lights\n", numPatchDiffuseLights );
 	Sys_FPrintf( SYS_VRB, "%8d triangle diffuse lights\n", numTriangleDiffuseLights );
 }
+
 
 
 
