@@ -26,6 +26,7 @@ Copies files from various locations:
 """
 
 import os
+import sys
 import shutil
 
 def assertMessage(condition, message):
@@ -114,8 +115,9 @@ copyFileIfExists(libmhash, installRoot)
 
 copySvn("../msvc_redist", installRoot)
 
-dbghelp = os.path.normpath(os.path.join(thisDir, "../msvc_redist/dbghelp.dll"))
-copyFileIfExists(dbghelp, installRoot)
+if sys.platform[:3] == "win" :
+	dbghelp = os.path.normpath(os.path.join(thisDir, "../msvc_redist/dbghelp.dll"))
+	copyFileIfExists(dbghelp, installRoot)
 
 # create version files
 version = open(os.path.join(thisDir, "include/version.default"), "rt").readline().split(".")
