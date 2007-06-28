@@ -10,6 +10,6 @@ enum collapsemode
 	COLLAPSE_NONE
 };
 
-bool ExportSelection(const std::set<std::string>& ignorelist, collapsemode m, const std::string& path);
+bool ExportSelection(const std::set<std::string>& ignorelist, collapsemode m, bool exmat, const std::string& path, bool limitMatNames, bool objects);
 
 #endif 

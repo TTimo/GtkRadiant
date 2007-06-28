@@ -35,10 +35,16 @@ create_w_plugplug2 (void)
   GtkWidget *hbox1;
   GtkWidget *b_addmaterial;
   GtkWidget *b_removematerial;
+  GtkWidget *t_exportmaterials;
+  GtkWidget *t_limitmatnames;
+  GtkWidget *t_objects;
+  GtkTooltips *tooltips;
+
+  tooltips = gtk_tooltips_new();
 
   w_plugplug2 = gtk_window_new (GTK_WINDOW_TOPLEVEL);
   gtk_widget_set_name (w_plugplug2, "w_plugplug2");
-  gtk_window_set_title (GTK_WINDOW (w_plugplug2), "BrushExport-Plugin 2.0 by namespace");
+  gtk_window_set_title (GTK_WINDOW (w_plugplug2), "BrushExport-Plugin 3.0 by namespace");
   gtk_window_set_position (GTK_WINDOW (w_plugplug2), GTK_WIN_POS_CENTER);
   gtk_window_set_destroy_with_parent (GTK_WINDOW (w_plugplug2), TRUE);
 
@@ -61,6 +67,7 @@ create_w_plugplug2 (void)
 
   r_collapse = gtk_radio_button_new_with_mnemonic (NULL, "Collapse mesh");
   gtk_widget_set_name (r_collapse, "r_collapse");
+  gtk_tooltips_set_tip (GTK_TOOLTIPS(tooltips), r_collapse, "Collapse all brushes into a single group", "Collapse all brushes into a single group");
   gtk_widget_show (r_collapse);
   gtk_box_pack_start (GTK_BOX (vbox4), r_collapse, FALSE, FALSE, 0);
   gtk_radio_button_set_group (GTK_RADIO_BUTTON (r_collapse), r_collapse_group);
@@ -68,6 +75,7 @@ create_w_plugplug2 (void)
 
   r_collapsebymaterial = gtk_radio_button_new_with_mnemonic (NULL, "Collapse by material");
   gtk_widget_set_name (r_collapsebymaterial, "r_collapsebymaterial");
+  gtk_tooltips_set_tip (GTK_TOOLTIPS(tooltips), r_collapsebymaterial, "Collapse into groups by material", "Collapse into groups by material");
   gtk_widget_show (r_collapsebymaterial);
   gtk_box_pack_start (GTK_BOX (vbox4), r_collapsebymaterial, FALSE, FALSE, 0);
   gtk_radio_button_set_group (GTK_RADIO_BUTTON (r_collapsebymaterial), r_collapse_group);
@@ -75,6 +83,7 @@ create_w_plugplug2 (void)
 
   r_nocollapse = gtk_radio_button_new_with_mnemonic (NULL, "Don't collapse");
   gtk_widget_set_name (r_nocollapse, "r_nocollapse");
+  gtk_tooltips_set_tip (GTK_TOOLTIPS(tooltips), r_nocollapse, "Every brush is stored in its own group", "Every brush is stored in its own group");
   gtk_widget_show (r_nocollapse);
   gtk_box_pack_start (GTK_BOX (vbox4), r_nocollapse, FALSE, FALSE, 0);
   gtk_radio_button_set_group (GTK_RADIO_BUTTON (r_nocollapse), r_collapse_group);
@@ -142,6 +151,22 @@ create_w_plugplug2 (void)
   gtk_widget_show (b_removematerial);
   gtk_box_pack_start (GTK_BOX (hbox1), b_removematerial, FALSE, FALSE, 0);
 
+  t_limitmatnames = gtk_check_button_new_with_mnemonic ("Use short material names (max. 20 chars)");
+  gtk_widget_set_name (t_limitmatnames, "t_limitmatnames");
+  gtk_widget_show (t_limitmatnames);
+  gtk_box_pack_end (GTK_BOX (vbox2), t_limitmatnames, FALSE, FALSE, 0);
+
+  t_objects = gtk_check_button_new_with_mnemonic ("Create (o)bjects instead of (g)roups");
+  gtk_widget_set_name (t_objects, "t_objects");
+  gtk_widget_show (t_objects);
+  gtk_box_pack_end (GTK_BOX (vbox2), t_objects, FALSE, FALSE, 0);
+
+  t_exportmaterials = gtk_check_button_new_with_mnemonic ("Create material information (.mtl file)");
+  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(t_exportmaterials), true);
+  gtk_widget_set_name (t_exportmaterials, "t_exportmaterials");
+  gtk_widget_show (t_exportmaterials);
+  gtk_box_pack_end (GTK_BOX (vbox2), t_exportmaterials, FALSE, FALSE, 10);
+
   using namespace callbacks;
   g_signal_connect(G_OBJECT(w_plugplug2), "destroy", G_CALLBACK(OnDestroy), NULL);
   g_signal_connect_swapped(G_OBJECT(b_close), "clicked", G_CALLBACK (OnDestroy), NULL);
@@ -149,6 +174,7 @@ create_w_plugplug2 (void)
   g_signal_connect ((gpointer) b_export, "clicked", G_CALLBACK (OnExportClicked), NULL);
   g_signal_connect ((gpointer) b_addmaterial, "clicked", G_CALLBACK (OnAddMaterial), NULL);
   g_signal_connect ((gpointer) b_removematerial, "clicked", G_CALLBACK (OnRemoveMaterial), NULL);
+  g_signal_connect ((gpointer) t_exportmaterials, "clicked", G_CALLBACK (OnExportMatClicked), NULL);
 
   /* Store pointers to all widgets, for use by lookup_widget(). */
   GLADE_HOOKUP_OBJECT_NO_REF (w_plugplug2, w_plugplug2, "w_plugplug2");
@@ -169,6 +195,9 @@ create_w_plugplug2 (void)
   GLADE_HOOKUP_OBJECT (w_plugplug2, hbox1, "hbox1");
   GLADE_HOOKUP_OBJECT (w_plugplug2, b_addmaterial, "b_addmaterial");
   GLADE_HOOKUP_OBJECT (w_plugplug2, b_removematerial, "b_removematerial");
+  GLADE_HOOKUP_OBJECT (w_plugplug2, t_exportmaterials, "t_exportmaterials");
+  GLADE_HOOKUP_OBJECT (w_plugplug2, t_limitmatnames, "t_limitmatnames");
+  GLADE_HOOKUP_OBJECT (w_plugplug2, t_objects, "t_objects");
 
   return w_plugplug2;
 }

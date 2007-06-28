@@ -22,10 +22,12 @@ void OnExportClicked(GtkButton* button, gpointer user_data)
 {
 	GtkWidget* window = lookup_widget(GTK_WIDGET(button), "w_plugplug2");
 	ASSERT_NOTNULL(window);
-	const char* path = GlobalRadiant().m_pfnFileDialog(window, false, "Save as Obj", 0, 0);
-	if(!path)
+	const char* cpath = GlobalRadiant().m_pfnFileDialog(window, false, "Save as Obj", 0, 0);
+	if(!cpath)
 		return;
-  
+
+	std::string path(cpath);
+
   // get ignore list from ui
   std::set<std::string> ignore;
   
@@ -69,9 +71,36 @@ void OnExportClicked(GtkButton* button, gpointer user_data)
 	  mode = COLLAPSE_NONE;
 	}
   }
+
+  // export materials?
+  GtkWidget* toggle = lookup_widget(GTK_WIDGET(button), "t_exportmaterials");
+  ASSERT_NOTNULL(toggle);
+
+  bool exportmat = FALSE;
+
+  if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(toggle)))
+	  exportmat = TRUE;
+
+  // limit material names?
+  toggle = lookup_widget(GTK_WIDGET(button), "t_limitmatnames");
+  ASSERT_NOTNULL(toggle);
+
+  bool limitMatNames = FALSE;
+
+  if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(toggle)) && exportmat)
+	  limitMatNames = TRUE;
+
+  // create objects instead of groups?
+  toggle = lookup_widget(GTK_WIDGET(button), "t_objects");
+  ASSERT_NOTNULL(toggle);
+
+  bool objects = FALSE;
+
+  if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(toggle))  && exportmat)
+	  objects = TRUE;
   
   // export
-  ExportSelection(ignore, mode, path);
+  ExportSelection(ignore, mode, exportmat, path, limitMatNames, objects);
 }
 
 void OnAddMaterial(GtkButton* button, gpointer user_data)
@@ -99,6 +128,21 @@ void OnRemoveMaterial(GtkButton* button, gpointer user_data)
 	GtkTreeIter iter;
 	if(gtk_tree_selection_get_selected(sel, 0, &iter))
 	  gtk_list_store_remove(list, &iter);
+}
+
+void OnExportMatClicked(GtkButton* button, gpointer user_data)
+{
+	GtkWidget* toggleLimit = lookup_widget(GTK_WIDGET(button), "t_limitmatnames");
+	GtkWidget* toggleObject = lookup_widget(GTK_WIDGET(button), "t_objects");
+
+	if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(button)))
+	{
+		gtk_widget_set_sensitive(GTK_WIDGET(toggleLimit), TRUE);
+		gtk_widget_set_sensitive(GTK_WIDGET(toggleObject), TRUE);
+	} else {
+		gtk_widget_set_sensitive(GTK_WIDGET(toggleLimit), FALSE);
+		gtk_widget_set_sensitive(GTK_WIDGET(toggleObject), FALSE);
+	}
 }
 
 }// callbacks

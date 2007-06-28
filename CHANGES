@@ -1,6 +1,9 @@
 This is the changelog for developers, != changelog for the end user 
 that we distribute with the binaries. (see changelog)
 
+28/06/2007
+- Added material-support to brushexport-plugin (Shaderman)
+
 26/04/2007
 - Disabled auto-search for texbrowser and entityinspector even when the option
   is turned on in the gtkrc
