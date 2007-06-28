@@ -4170,6 +4170,14 @@ inline const Functor& Scene_ForEachBrush_ForEachFace(scene::Graph& graph, const 
   return functor;
 }
 
+// d1223m
+template<typename Functor>
+inline const Functor& Scene_ForEachBrush_ForEachFaceInstance(scene::Graph& graph, const Functor& functor)
+{
+  Scene_forEachBrush(graph, BrushForEachFace(FaceInstanceVisitAll<Functor>(functor)));
+  return functor;
+}
+
 template<typename Functor>
 inline const Functor& Scene_ForEachSelectedBrush_ForEachFace(scene::Graph& graph, const Functor& functor)
 {

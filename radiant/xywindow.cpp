@@ -66,7 +66,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "windowobservers.h"
 
 
-
+// d1223m
+extern bool g_brush_always_caulk;
 
 //!\todo Rewrite.
 class ClipPoint
@@ -1109,7 +1110,11 @@ void XYWnd::NewBrushDrag(int x, int y)
     m_NewBrushDrag = node.get_pointer();
   }
 
-  Scene_BrushResize_Selected(GlobalSceneGraph(), aabb_for_minmax(mins, maxs), TextureBrowser_GetSelectedShader(GlobalTextureBrowser()));
+  // d1223m
+  //Scene_BrushResize_Selected(GlobalSceneGraph(), aabb_for_minmax(mins, maxs), TextureBrowser_GetSelectedShader(GlobalTextureBrowser()));
+  Scene_BrushResize_Selected(GlobalSceneGraph(), aabb_for_minmax(mins, maxs), 
+        g_brush_always_caulk ? 
+            "textures/common/caulk" : TextureBrowser_GetSelectedShader(GlobalTextureBrowser()));
 }
 
 void entitycreate_activated(GtkWidget* item)

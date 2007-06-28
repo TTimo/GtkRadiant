@@ -91,8 +91,9 @@ namespace
   void FindTextureDialog_apply()
   {
     StringOutputStream find(256);
-    find << "textures/" << g_FindTextureDialog.m_strFind.c_str();
     StringOutputStream replace(256);
+
+    find << "textures/" << g_FindTextureDialog.m_strFind.c_str();
     replace << "textures/" << g_FindTextureDialog.m_strReplace.c_str();
     FindReplaceTextures(find.c_str(), replace.c_str(), g_FindTextureDialog.m_bSelectedOnly);
   }

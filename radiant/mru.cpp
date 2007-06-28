@@ -90,7 +90,6 @@ inline EscapedMnemonic& operator<<(EscapedMnemonic& ostream, const T& t)
 void MRU_updateWidget(std::size_t index, const char *filename)
 {
   EscapedMnemonic mnemonic(64);
-  mnemonic.push_back('_');
   mnemonic << Unsigned(index + 1) << "- " << ConvertLocaleToUTF8(filename);
   gtk_label_set_text_with_mnemonic(GTK_LABEL(gtk_bin_get_child(GTK_BIN(MRU_items[index]))), mnemonic.c_str());
 }
@@ -214,22 +213,22 @@ LoadMRU g_load_mru4(4);
 void MRU_constructMenu(GtkMenu* menu)
 {
   {
-    GtkMenuItem* item = create_menu_item_with_mnemonic(menu, "Recent Files", LoadMRUCaller(g_load_mru1));
+    GtkMenuItem* item = create_menu_item_with_mnemonic(menu, "_1", LoadMRUCaller(g_load_mru1));
     gtk_widget_set_sensitive(GTK_WIDGET(item), FALSE);
     MRU_AddWidget(item, 0);
   }
   {
-    GtkMenuItem* item = create_menu_item_with_mnemonic(menu, "2", LoadMRUCaller(g_load_mru2));
+    GtkMenuItem* item = create_menu_item_with_mnemonic(menu, "_2", LoadMRUCaller(g_load_mru2));
     gtk_widget_hide(GTK_WIDGET(item));
     MRU_AddWidget(item, 1);
   }
   {
-    GtkMenuItem* item = create_menu_item_with_mnemonic(menu, "3", LoadMRUCaller(g_load_mru3));
+    GtkMenuItem* item = create_menu_item_with_mnemonic(menu, "_3", LoadMRUCaller(g_load_mru3));
     gtk_widget_hide(GTK_WIDGET(item));
     MRU_AddWidget(item, 2);
   }
   {
-    GtkMenuItem* item = create_menu_item_with_mnemonic(menu, "4", LoadMRUCaller(g_load_mru4));
+    GtkMenuItem* item = create_menu_item_with_mnemonic(menu, "_4", LoadMRUCaller(g_load_mru4));
     gtk_widget_hide(GTK_WIDGET(item));
     MRU_AddWidget(item, 3);
   }

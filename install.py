@@ -113,11 +113,10 @@ copyFileIfExists(libxml2, installRoot)
 libmhash = os.path.normpath(os.path.join(thisDir, "../mhash-0.9/win32/libmhash/Release/libmhash.dll"))
 copyFileIfExists(libmhash, installRoot)
 
-copySvn("../msvc_redist", installRoot)
-
 if sys.platform[:3] == "win" :
-	dbghelp = os.path.normpath(os.path.join(thisDir, "../msvc_redist/dbghelp.dll"))
-	copyFileIfExists(dbghelp, installRoot)
+  copySvn("../msvc_redist", installRoot)
+  dbghelp = os.path.normpath(os.path.join(thisDir, "../msvc_redist/dbghelp.dll"))
+  copyFileIfExists(dbghelp, installRoot)
 
 # create version files
 version = open(os.path.join(thisDir, "include/version.default"), "rt").readline().split(".")

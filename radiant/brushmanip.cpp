@@ -550,19 +550,66 @@ public:
   }
 };
 
+class FaceFindShader
+{
+  const char* m_find;
+  const char* m_replace;
+public:
+  FaceFindShader(const char* find) : m_find(find)
+  {
+  }
+  void operator()(FaceInstance& faceinst) const
+  {
+    if(shader_equal(faceinst.getFace().GetShader(), m_find))
+    {
+      faceinst.setSelected(SelectionSystem::eFace, true);
+    }
+  }
+};
+
+bool DoingSearch(const char *repl)
+{
+    return (repl == NULL || (strcmp("textures/", repl)==0));
+}
+
 void Scene_BrushFindReplaceShader(scene::Graph& graph, const char* find, const char* replace)
 {
-  Scene_ForEachBrush_ForEachFace(graph, FaceFindReplaceShader(find, replace));
+  if (DoingSearch(replace))
+  {
+      Scene_ForEachBrush_ForEachFaceInstance(graph, FaceFindShader(find));
+  } 
+  else 
+  {
+      Scene_ForEachBrush_ForEachFace(graph, FaceFindReplaceShader(find, replace));
+  }
 }
 
 void Scene_BrushFindReplaceShader_Selected(scene::Graph& graph, const char* find, const char* replace)
 {
-  Scene_ForEachSelectedBrush_ForEachFace(graph, FaceFindReplaceShader(find, replace));
+  if (DoingSearch(replace)) 
+  {
+    Scene_ForEachSelectedBrush_ForEachFaceInstance(graph, 
+                    FaceFindShader(find));
+  }
+  else
+  {
+    Scene_ForEachSelectedBrush_ForEachFace(graph, 
+                  FaceFindReplaceShader(find, replace));
+  }
 }
 
+// TODO: find for components 
+// d1223m: dont even know what they are...
 void Scene_BrushFindReplaceShader_Component_Selected(scene::Graph& graph, const char* find, const char* replace)
 {
-  Scene_ForEachSelectedBrushFace(graph, FaceFindReplaceShader(find, replace));
+  if (DoingSearch(replace))
+  {
+      
+  }
+  else
+  {
+    Scene_ForEachSelectedBrushFace(graph, FaceFindReplaceShader(find, replace));
+  }
 }
 
 
@@ -678,6 +725,7 @@ public:
   }
   void operator()(FaceInstance& face) const
   {
+    printf("checking %s = %s\n", face.getFace().GetShader(), m_name);
     if(shader_equal(face.getFace().GetShader(), m_name))
     {
       face.setSelected(SelectionSystem::eFace, true);

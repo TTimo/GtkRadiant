@@ -1,6 +1,12 @@
 This is the changelog for developers, != changelog for the end user 
 that we distribute with the binaries. (see changelog)
 
+28/06/2007 (dunkfordyce@gmail.com)
+- fixed mnemonics for MRU list
+- fixed find functionality
+- added option to always use caulk texture for new brushes
+- fixed(?) a small bug in install.py that was trying to copy msvc files on linux
+
 28/06/2007
 - Added material-support to brushexport-plugin (Shaderman)
 

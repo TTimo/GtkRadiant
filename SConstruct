@@ -36,7 +36,7 @@ JOBS
 
 BUILD
 	Use debug/release to select build settings
-	ex: BUILD="release" - default is debug
+	ex: BUILD="release" - default is release
 """
 )
 
