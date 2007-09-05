@@ -180,7 +180,7 @@ int	CountFaceList( face_t *list )
 	
 
 	c = 0;
-	for( list; list != NULL; list = list->next )
+	for( ; list != NULL; list = list->next )
 		c++;
 	return c;
 }

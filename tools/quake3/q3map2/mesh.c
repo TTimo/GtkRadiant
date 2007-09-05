@@ -563,7 +563,7 @@ mesh_t *SubdivideMesh2( mesh_t in, int iterations )
 	}
 	
 	/* keep chopping */
-	for( iterations; iterations > 0; iterations-- )
+	for( ; iterations > 0; iterations-- )
 	{
 		/* horizontal subdivisions */
 		for( j = 0; j + 2 < out.width; j += 4 )

@@ -136,7 +136,6 @@ void EmitLeaf( node_t *node )
 	bspLeaf_t		*leaf_p;
 	brush_t			*b;
 	drawSurfRef_t	*dsr;
-	int				i = 0;
 
 	
 	/* check limits */

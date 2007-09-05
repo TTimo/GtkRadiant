@@ -304,7 +304,7 @@ void TidyEntitySurfaces( entity_t *e )
 		out = &mapDrawSurfs[ i ];
 		
 		/* walk the surface list again until a proper surface is found */
-		for( j; j < numMapDrawSurfs; j++ )
+		for( ; j < numMapDrawSurfs; j++ )
 		{
 			/* get in surface */
 			in = &mapDrawSurfs[ j ];
@@ -484,7 +484,7 @@ void ClassifySurfaces( int numSurfs, mapDrawSurface_t *ds )
 	
 	
 	/* walk the list of surfaces */
-	for( numSurfs; numSurfs > 0; numSurfs--, ds++ )
+	for( ; numSurfs > 0; numSurfs--, ds++ )
 	{
 		/* ignore bogus (or flare) surfaces */
 		if( ds->type == SURFACE_BAD || ds->numVerts <= 0 )

@@ -78,7 +78,7 @@ int	CountBrushList( brush_t *brushes )
 	
 	
 	/* count brushes */
-	for( brushes; brushes != NULL; brushes = brushes->next )
+	for( ; brushes != NULL; brushes = brushes->next )
 		c++;
 	return c;
 }
@@ -122,7 +122,7 @@ void FreeBrush( brush_t *b )
 	
 	
 	/* error check */
-	if( *((int*) b) == 0xFEFEFEFE )
+	if( *((unsigned int*) b) == 0xFEFEFEFE )
 	{
 		Sys_FPrintf( SYS_VRB, "WARNING: Attempt to free an already freed brush!\n" );
 		return;
@@ -135,7 +135,7 @@ void FreeBrush( brush_t *b )
 	
 	/* ydnar: overwrite it */
 	memset( b, 0xFE, (int) &(((brush_t*) 0)->sides[ b->numsides ]) );
-	*((int*) b) = 0xFEFEFEFE;
+	*((unsigned int*) b) = 0xFEFEFEFE;
 	
 	/* free it */
 	free( b );
@@ -156,7 +156,7 @@ void FreeBrushList( brush_t *brushes )
 	
 	
 	/* walk brush list */
-	for( brushes; brushes != NULL; brushes = next )
+	for( ; brushes != NULL; brushes = next )
 	{
 		next = brushes->next;
 		FreeBrush( brushes );
