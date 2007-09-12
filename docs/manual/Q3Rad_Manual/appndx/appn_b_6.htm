@@ -1,0 +1,332 @@
+<html>
+<head>
+<title>Q3Radiant Editor Manual: Appendix B6</title>
+<link rel = "stylesheet" type = "text/css" href = "../styles/q3rad.css">
+</head>
+<body>
+<h1 class = "MsoTitle">Q3Radiant Editor Manual</h1>
+<hr>
+<h1>Appendix B: Entity Descriptions</h1>
+<h2><a name = "misc">Misc_* Entities</a></h2>
+<div class = "subheading">misc_model</div>
+
+<b>Map Entity Color:</b> red
+
+<br><b>Dimensions:</b> (-16 -16 -16) (16 16 16)
+
+<br><b>Game Function:</b> Generic, one-size-fits-all placeholder for
+inserting .md3 models in game. Requires compilation of map geometry
+to be added to level.
+
+<p><strong>Keys</strong>
+
+<br><b>angle:</b> direction in which model will be oriented.
+
+<br><b>model :</b> path/name of model to use (eg:
+models/mapobjects/teleporter/teleporter.md3).*/
+
+
+
+<p><strong>Notes</strong>
+
+<br>This is a premade mesh model, created in a program like
+Kinetix's 3d Studio Max. It is a static (non-animating)
+model.&nbsp; Shaders can give it the appearance of motion, but no
+animation.&nbsp; The models should be stored in a directory with
+the pathname: models/mapobjects. The process by which models are
+made is not a part of this document. Currently, models only have
+rotation on the Z axis.
+
+<p>Models do not "clip" against players or weapon
+hits. They are entirely non-solid. If clipping is important, The
+user will need to build clip brushes that are roughly the size and
+shape of the models.
+
+<p>Do not use the flip or rotate tools on models. Only use the
+entity facing buttons or manually change the angle value. The
+purple "3d crosshair" is the origin point of the model.
+
+<p><b>Make it:</b> Right mouse press on a map window to bring up
+the floating entity selector.&nbsp; Select misc_model. A selection
+dialogue box will open giving access to available .md3 files.&nbsp;
+Select the one you want and it will load into the map.&nbsp; Now,
+hit "n" to open the entity window. Click on the "model" key in the
+key list box. Now edit the value field to remove part of the
+line.
+
+<p><b>Example:</b> <span class = "type">"c://program files/quake III
+arena/baseq3/models/mapobjects/storch.md3"</span>
+
+<p>&hellip; should be edited to read:
+
+<p><span class = "type">"models/mapobjects/storch.md3"</span>
+
+
+
+<p><div class = "subheading">misc_portal_camera</div>
+
+<b>Map Entity Color:</b> light orange
+
+<br><b>Dimensions:</b> (-8 -8 -8) (8 8 8)
+
+<br><b>Game Function:</b> Portal camera. This camera is used to
+project its view onto a portal surface in the level through the
+intermediary of a misc_portal_surface entity. Use the "angles" key
+or target a target_position or info_notnull entity to set the
+camera's pointing direction.
+
+
+
+<p><strong>Keys</strong>
+
+<br><b>angles:</b> this sets the pitch and yaw aiming angles of the
+portal camera (default 0 0). Use "roll" key to set roll angle.
+
+<br><b>target:</b> point this to a target_position entity to set the
+camera's pointing direction.
+
+<br><b>targetname:</b> a misc_portal_surface portal surface
+indicator must point to this.
+
+<br><b>roll:</b> roll angle of camera. A value of 0 is upside down
+and 180 is the same as the player's view.
+
+<br><b>notfree:</b> when set to 1, entity will not spawn in "Free
+for all" and "Tournament" modes.
+
+<br><b>notteam:</b> when set to 1, entity will not spawn in
+"Teamplay" and "CTF" modes.
+
+<br><b>notsingle:</b> when set to 1, entity will not spawn in Single
+Player mode (bot play mode).
+
+
+
+<p><strong>Check Boxes/Spawnflags</strong>
+
+<br>SLOWROTATE : makes the portal camera rotate slowly along the
+axis of camera to target or (selected direction).
+
+<br>FASTROTATE : makes the portal camera rotate faster along the
+axis of camera to target or (selected direction)..
+
+
+
+<p><strong>Notes</strong>
+<ul><li>Both the setting "angles" key or "targeting a target_position"
+methods can be used to aim the camera. However, the target_position
+method is simpler. In both cases, the "roll" key must be used to
+set the roll angle. Generally, this is adjusted after compiling the
+map at least once.
+
+<li>If either the SLOWROTATE or FASTROTATE spawnflag is set, then
+the "roll" value is irrelevant.</ul>
+
+
+
+<p><div class = "subheading">misc_portal_surface</div>
+
+<b>Map Entity Color:</b> light orange
+
+<br><b>Dimensions:</b> (-8 -8 -8) (8 8 8)
+
+<br><b>Game Function:</b> Portal surface indicator. This will "lock
+on" the brush face closest to it and identify as a portal. The view
+displayed on the portal surface is the view of the
+misc_portal_camera that this entity targets. Also used for mirrors
+(see Notes).
+
+
+
+<p><strong>Keys</strong>
+
+<br><b>target:</b> point this to a misc_portal_camera that "sees"
+the view you want to display on the portal.
+
+<br><b>notfree:</b> when set to 1, entity will not spawn in "Free
+for all" and "Tournament" modes.
+
+<br><b>notteam:</b> when set to 1, entity will not spawn in
+"Teamplay" and "CTF" modes.
+
+<br><b>notsingle:</b> when set to 1, entity will not spawn in Single
+Player mode (bot play mode).
+
+
+
+<p><strong>Notes</strong>
+
+<ul><li>The entity must be no farther than 64 units away from the portal
+surface to lock onto it.
+
+<li>To make a mirror, apply the common/mirror shader to the surface,
+place this entity near it but don't target a
+misc_portal_camera.
+
+<li>When used as a mirror, the mirror surface will display what the
+entity can "see."</ul>
+
+
+
+<p><div class = "subheading">misc_teleporter_dest</div>
+
+<b>Map Entity Color:</b> red
+
+<br><b>Dimensions:</b> (-32 -32 -24) (32 32 -16)
+
+<br><b>Game Function:</b> Teleport destination location point for
+trigger_teleporter entities. A "target_position" can also be used
+for this.
+
+
+
+<p><strong>Keys</strong>
+
+<br><b>angle:</b> direction in which player will look when
+teleported.
+
+<br><b>targetname:</b> make the trigger_teleporter point to
+this.
+
+<br><b>notfree:</b> when set to 1, entity will not spawn in "Free
+for all" and "Tournament" modes.
+
+<br><b>notteam:</b> when set to 1, entity will not spawn in
+"Teamplay" and "CTF" modes.
+
+<br><b>notsingle:</b> when set to 1, entity will not spawn in Single
+Player mode (bot play mode).
+
+
+
+<p><strong>Notes</strong>
+
+<br>In most cases, this is replaced by the "target_position"
+entity.
+
+<h2><a name = "path">Path_* Entities</a></h2>
+
+<p><div class = "subheading">path_corner</div>
+
+<b>Map Entity Color:</b> brown
+
+<br><b>Dimensions:</b> (-8 -8 -8) (8 8 8)
+
+<br><b>Game Function:</b> Path corner entity that define the routes
+that func_trains can be made to follow.
+
+
+
+<p><strong>Keys</strong>
+
+<br><b>target:</b> point to next path_corner in the path.
+
+<br><b>targetname:</b> the train following the path or the previous
+path_corner in the path points to this.
+
+<br><b>speed:</b> speed of func_train (in game units per second)
+while moving to the next path corner. This will override the speed
+value of the train.
+
+<br><b>wait:</b> number of seconds func_train will pause on path
+corner before moving to next path corner (default 0 - see
+Notes).
+
+<br><b>notfree:</b> when set to 1, entity will not spawn in "Free
+for all" and "Tournament" modes.
+
+<br><b>notteam:</b> when set to 1, entity will not spawn in
+"Teamplay" and "CTF" modes.
+
+<br><b>notsingle:</b> when set to 1, entity will not spawn in Single
+Player mode (bot play mode).
+
+
+
+<p><strong>Notes</strong>
+
+<ul><li>Setting the wait key to -1 will not make the train stop on the
+path corner, it will simply default to 0.
+
+<li>The center of the origin brush in the func_train follows the
+path.</ul>
+
+
+
+<h2><a name = "shooter">Shooter_* Entities</a></h2>
+
+<div class = "subheading">shooter_grenade</div>
+
+<b>Map Entity Color:</b> red-violet
+
+<br><b>Dimensions:</b> (-8 -8 -8) (8 8 8)
+
+<br><b>Game Function:</b> This will shoot a grenade each time it's
+triggered. Aiming is done by setting the "angles" key or by
+targeting an info_notnull or target_position entity.
+
+
+
+<p><div class = "subheading">shooter_plasma</div>
+
+<b>Map Entity Color:</b> red-violet
+
+<br><b>Dimensions:</b> (-8 -8 -8) (8 8 8)
+
+<br><b>Game Function:</b> This will shoot a plasma ball each time
+it's triggered. Aiming is done by setting the "angles" key or by
+targeting an info_notnull or target_position entity.
+
+
+
+<p><div class = "subheading">shooter_rocket</div>
+
+<b>Map Entity Color:</b> red-violet
+
+<br><b>Dimensions:</b> (-8 -8 -8) (8 8 8)
+
+<br><b>Game Function:</b> This will shoot a rocket each time it's
+triggered. Aiming is done by setting the "angles" key or by
+targeting an info_notnull or target_position entity.
+
+
+
+<p><strong>Keys</strong>
+
+<br><b>angles:</b> this sets the pitch and yaw aiming angles of
+shooter (default 0 0). The roll angle does not apply.
+
+<br><b>targetname:</b> activating trigger points to this.
+
+<br><b>target:</b> this points to a target_position entity for
+aiming the grenades.
+
+<br><b>random:</b> random aiming variance in degrees from the
+straight line to the targeted entity (default 0 - see Notes).
+
+<br><b>notfree:</b> when set to 1, entity will not spawn in "Free
+for all" and "Tournament" modes.
+
+<br>notteam: when set to 1, entity will not spawn in "Teamplay" and
+"CTF" modes.
+
+<br>notsingle: when set to 1, entity will not spawn in Single Player
+mode (bot play mode).
+
+
+
+<p><strong>Notes</strong>
+
+<ul><li>When the random key is set, its value is used to calculate a
+maximum angle deviation from the normal trajectory formed by a
+straight line between the shooter and the aiming entity it targets.
+The final trajectory will be a random value anywhere between no
+deviation at all (0) to maximum deviation (value of the random
+key).
+
+<li>Both the setting "angles" key or "targeting a target_position"
+methods can be used to aim the shooter. However, the
+target_position method is simpler.*/</ul>
+<p align = "center"><a href = "appn_b_5.htm">Back</a> | <a href = "../index.htm">Home</a> | <a href = "appn_b_7.htm">Next</a>
+</body>
+</html>

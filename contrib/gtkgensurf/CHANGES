@@ -1,0 +1,73 @@
+05/14/2001
+  ^Fishman
+===============
+bitmap.cpp
+Added Hydra's snap to grid code.
+===============
+dec.cpp
+Modified to support the new max size for the maps(Q3 1.27).
+===============
+face.cpp
+Modified to support the new max size for the maps(Q3 1.27).
+===============
+font.cpp
+Changed the fonts color to green, part of the new theme.
+===============
+gendlgs.cpp
+Added a label and textbox for the snap to grid feature.
+Added a checkbox for adding terrain key to func_group.
+Added a checkbox for antialiased lines in the preview window.
+Modified a textbox to support the new max size for the maps(Q3 1.27).
+Modified the About dialog.
+===============
+genmap.cpp
+Modified to support the new max size for the maps(Q3 1.27).
+Added code for adding terrain key to func_group.
+===============
+gensurf.cpp
+Added code to save the settings of the antialiasing checkbox status and the terrain key checkbox status.
+Modified version number.
+===============
+view.cpp
+Modified code for the new Green/Black theme.
+Added code to antialiase lines in the preview window
+
+12/18/2000
+  MrHyde
+===============
+bitmap.cpp
+Corrected a substitution error that would prevent code from reading a selected bitmap on the first pass, and possibly leave the bitmap file open.
+Checks to ensure that main window has been created before updating the preview (which might be done if a bitmap filename was saved to ini file). Previous failure to do this resulted in Radiant console error messages.
+===============
+gendlgs.cpp
+One tooltip was goofed up ("preview" instead of "main_preview"), resulting in "invalid cast from (NULL) pointer to GtkObject" in Radiant console.
+Tooltips - oops. Use wave_radios[] rather than string constants.
+Moved check for game type from SetDlgValues to GenSurfInit in gensurf.cpp. Since the game type presumably won't change while GenSurf is active this only needs to be checked once (and if it IS possible to change the game while GenSurf is active then quite a bit more needs to be changed).
+Worked around strange bug in SetDlgValues. In release dll (not debug), the 2nd pass through the set_sensitive loop for game_radios crashed. Since the state of those radio buttons won't ever change during a single session, the state is only set once now. Sure would like to know what's going on there, though.
+===============
+view.cpp
+Elevation and azimuth labels are right-justified.
+
+TODO:
+Check out Fix Points on Voodoo2 again. Previous attempt caused entire preview to be redrawn when moving mouse (GL_SCISSOR_TEST failed?)
+
+12/17/2000
+  MrHyde
+- tooltips
+- reformatted the source to use spaces instead of tabs
+- fixes to update mechanism in bitmap tab
+
+12/13/2000
+  MrHyde
+===============
+gendlgs.cpp
+In ReadDlgValues, reads wavelength, amplitude, and roughness text boxes (previously ignored).
+In create_main_dialog, set a "focus_out_event" for the above and added a "value_changed" for RandomSeed.
+In main_go, added call to WriteIni
+===============
+gensurf.cpp
+Set gszIni to "plugins/gensurf.ini" to get past assert error
+ported WriteIni
+===============
+view.cpp
+In DrawPreview, changed 2 occurrences of GL_LINE_LOOP to GL_LINE_STRIP for patches

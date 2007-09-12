@@ -1,0 +1,11 @@
+Import qw( BASE_CFLAGS CC );
+
+$env = new cons
+(
+  ENV => { PATH => $ENV{PATH}, HOME => $ENV{HOME} },
+  CC => $CC,
+  CPPPATH => "#libs",
+  CFLAGS => $BASE_CFLAGS
+);
+Library $env 'md5lib', 'md5lib.c';
+Install $env '..', 'md5lib.a';

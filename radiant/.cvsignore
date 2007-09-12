@@ -1,0 +1,16 @@
+Debug
+Release
+radiant
+*.d
+*.o
+*.opt
+*.ncb
+*.BAK
+*.00*
+*.plg
+radiant
+q3map
+unnamed.map
+.snprj
+tools
+*.gcse

@@ -1,0 +1,33 @@
+find and xargs:
+<TTimo> I need to remember that grep trick
+<Mercury> 'find -type f | xargs grep -n whatever' is handy..
+<Mercury> find -type f -name '*.[ch]' is even better at times.
+
+stdout / stderr redirections:
+make -f makefile.cygwin 2> err.log
+make -f makefile.cygwin >& full.log
+
+escape shell expansion:
+find gtk-20001023 -name "*.zip" -exec unzip {} \;
+find and -exec:
+find //c/Donwload/Gtk-20001226 -name '*src*zip' -exec unzip {} \;
+find //c/Donwload/Gtk-20001226 -name '*dev*zip' -exec unzip {} \;
+
+simple encryption for /etc/passwd entries:
+perl -e 'print crypt("password","hk");'
+
+debian and /etc/init.d
+update-rc.d
+
+silly hint on sed and regexp:
+cat bspfile.c | sed -e 's/\([^_]\)malloc/\1safe_malloc/' | grep malloc
+
+*poke 10*
+bleh
+bleh
+bleh
+bleh
+bleh
+bleh
+bleh
+bleh

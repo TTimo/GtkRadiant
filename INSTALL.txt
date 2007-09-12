@@ -1,0 +1,7 @@
+Compilation instructions
+------------------------
+
+See latest information for compiling and installation
+on the developer pages:
+
+http://www.qeradiant.com/wikifaq/index.php?GtkRadiant%20Hacker

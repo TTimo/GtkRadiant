@@ -1,0 +1,217 @@
+<html>
+<head>
+<meta name="generator" content="HTML Tidy, see www.w3.org" />
+<title>Q3A Player Characters: Putting them in the Game</title>
+<link rel = "stylesheet" type = "text/css" href = "styles/q3rad.css">
+</head>
+<body>
+<div align = "center">
+<h1 class="MsoTitle">Putting New Models in Quake III Arena</h1>
+
+Based on original notes by Paul Steed
+
+<p>Edited by Paul Jaquays<br>
+<p>Edited 12/22/99 by ps<br>
+<p>QERadiant.com thanks John Hutton for re-formating this manual into a more web friendly version<br>
+</div>
+<hr>
+The purpose of this document is to explain how to set up a model for Quake 3 Arena, create the necessary animation and conversion files, and then export it into the MD3 format required by the game. It is intended to be informative only and not a tutorial on building or animating models.
+
+<p>The player models for Quake III Arena were built using the commercial modeling software, 3D Studio Max R2.5 (3ds Max) by
+Kinetix. These models were then animated using Physique and Biped, components of a plugin for 3dsMax called Character Studio
+(also by Kinetix). The following instructions assume that you will model and animate with 3dsMax and Character Studio.
+
+<h1>1. Setting up the Files</h1>
+Begin in your <i>Quake3</i> directory. If you don't have one already, create a <i>baseq3</i> directory. Inside the <i>baseq3</i> directory, create a <i>models</i> directory. Inside the models directory, create a players directory. Inside the players directory, create a directory with the name of your model (we will use [character] in this document to represent information requiring the name of the model). It is generally a good idea to create a 'work' directory under [character] so that the [character] directory itself remains uncluttered. Place all versions of your model and temp textures here, saving the [character] directory purely for the finished model files.
+
+<h1>2. Building and Naming the Mesh</h1>
+The mesh should be built keeping in mind the game engine needs three distinct body part grouping: the head, the upper body, and the lower body. These groupings can consist of different parts or sub-objects, but keep in mind too many sub-objects does impact performance and game play speed. A good rule of thumb is to consolidate your objects (i.e. attach them to each other) as long as they remain a part of a major group. For example, you decide to create a character that has its arms as separate objects for easier animation. Unless the arms or torso has different textures assigned to them go ahead and attach the arms to the torso. It may be more difficult to assign the vertices to the biped skeleton later on, but the efficiency of the model is much better. However, if you must keep the limbs detached for unique shader assignment then keep the following naming conventions in mind:
+
+<h2>2.1 Head Geometry </h2>
+All head geometry needs to begin with lower case 'H_' (h_head, h_glasses, h_hat, etc...). Keep in mind that the head has no
+animations itself other than to respond to player mouse-look input.
+
+<h2>2.2 Upper Body Geometry</h2>
+All upper body geometry needs to begin with lower case 'U_' (u_torso, u_arms, u_abdomen, etc.) This is your model's torso and arms. The individual animations for the upper body are listed below.
+
+<h2>2.3 Lower Body Geometry</h2>
+All lower body geometry begins with lower case 'L_' (l_hips, l_legs, l_lfoot, l_rfoot, etc...). This is your model's buttocks, legs and feet. The individual animations for the upper body are listed below.
+
+<h2>2.4 Tags</h2>
+Tags are connection points for other model parts and represent the limited hierarchical system of the game. They include links between the three character body parts and the weapons. Keep in mind that these tags are representations of geometry so they can be animated to represent that geometry. For example, tag_head represents the head, tag_torso represents the torso and tag_weapon represents the weapon. This is important to understand since for example, any time the character is performing a locomotive animation, the upper body can and will animate independently of the lower body, using the relative position of the tag as a base or 'home' position. The tags for the body parts and weapons are named tag_weapon, tag_torso and tag_head.
+
+<h1>3. Texturing</h1>
+Once you finish building your character go ahead and attach it to your biped and do some basic test animations to make certain the mesh doesn't deform in weird ways. Turn edges, ad faces, whatever you need to do to make sure that while animating, the character retains its mesh integrity. Handing the mesh over to another artist to assign UVW's or assigning and texturing yourself without testing the animation integrity of the mesh is very risky. Major modifications after UV assignment can cost you valuable time resulting in re-assigning not just the UV's, but re-attaching the mesh to your biped as well. Once your model is ready, go ahead and apply the texture to it. Typically the textures used in Q3A consist of one 256 x 256 texture for the body and one 128 x 128 texture for the head. Keep in mind that it's best to consolidate your texture on a single page rather than break it up into smaller pages. Also some video cards cannot process a texture size larger than 256, so making a high-rez 1024 x 512 texture just won't be seen since the card will knock it down to
+256 x 128 to digest it.
+
+<h1>4. Set Up for Animation</h1>
+Once the character is textured or skinned, bring the mesh back into 3dsMax (2.5) and attach it to an adjusted Biped using the Character Studio plug-in. As a rule of thumb, it's always better to just assign the mesh to the biped using the default
+settings and then manually assign vertices to appropriate skeletal 'limbs'.
+
+<h1>5. Animation</h1>
+When animating the character, keep all animations in one file. It's crucial that the animations adhere to a specific order that pertains to the separate body parts as this supports our current tag system.
+
+<p>Basically the order of animations goes: full body (animations that combine both upper and lower), upper body, and lower body. Each character file has the following animations in them and for now that's all the modeler is allowed. The division is basically death (all body parts), extraneous upper body, and dedicated locomotive animations. That way all the upper body animations can be performed at any time, separate from whatever it is that that lower body animations may be doing. There is a set number of animation types which are (in order):
+
+<ul><li>death1 (approx. 30 frames)
+<li>death2 (approx. 30 frames)
+<li>death3 (approx. 30 frames)
+
+<p><li>taunt (approx. 45 frames)
+<li>weapon attack (exactly 6 frames)
+<li>melee attack (exactly 6 frames)
+<li>change weapon (exactly 9 frames)
+<li>weapon idle (exactly 1 frame)
+<li>melee idle (exactly 1 frame)
+
+<p><li>crouched walk (approx. 10 frames)
+<li>walk (approx. 15 frames)
+<li>run (approx. 12 frames)
+<li>backpedal (approx. 10 frames)
+<li>swim (approx. 10 frames)
+<li>jump forward (approx. 10 frames)
+<li>jump forward-land (approx. 6 frames)
+<li>jump backward (approx. 10 frames)
+<li>jump backward-land (approx. 6 frames)
+<li>standing idle (approx. 10 frames)
+<li>crouched idle (approx. 10 frames)
+<li>turn in place (approx. 8 frames)</ul>
+
+<p>A good rule of thumb is to create an idle pose at the frame right after the final death frame. Keep this pose for the
+entire lower body and center of mass of the biped up through melee idle frame since any animation by the lower body during these frames will not register during the grab process. Similarly, once the animations for the lower body start, copy the pose for the upper body at the weapon idle frame to the first frame of the crouched walk animation and don't animate the upper body at all after that frame. This allows you to more closely approximate what happens during the game where the upper body is basically just along for the ride as the lower body carries it along via the tag_torso.
+
+<p>Keep in mind that an animation.cfg has to be generated for each character that is a direct reflection of your animation file above.
+
+<h1>6. Setting up Tags</h1>
+After the modeler is satisfied with the animations for the character, it's time to bring in the tags that up until now, have
+kept in a separate file. This is milestone mark that lets the modeler know that the character is nearly complete. 'Merge'
+the tags into your scene. Turn off <i>'inherit scale'</i> for the tags under the hierarchy/link command panel in Max. Then,
+assign a Physique modifier (Character Studio), linking them to specific areas in the biped:
+
+<p>tag_torso is linked to the Biped 'pelvis'
+<br>tag_head is linked to the Biped 'head'.
+<br>tag_weapon is linked to the right 'hand'.
+
+<h2>6.1 Animate Body Tags</h2>
+Now, go in and actually animate the tag_torso so that it matches the default position (established previously at
+approximately the standing idle frame- from the top view it looks like a perfect 90 degree triangle with the base half as wide as the length, pointing forward) when appropriate. "Appropriate" means that as the character goes through the lower body animations, if the triangle is pointing anywhere else but forward, the upper body will point that way as well since to the code the upper body IS the tag. This works out to the modeler's advantage, though because even if the upper body LOOKS crazy in the animation you simply rely on the tag representation to compensate for it.
+
+<h2>6.2 Handling Weapon Tags</h2>
+Tag_weapon is a bit different. Basically there is no difference between view model weapons (the weapon as seen by the player when it is in use by his or another player) and the world model weapons (weapons as they are found rotating in the maps) in Quake III Arena. However, for visually clarity and identification, they are doubled in scale when they become seen as world models. They are the same object. This reduces the number of models needed the game and creates an overall more efficient system. Unfortunately a drawback to the system is that there can be only one firing animation for the character. Thusly all weapons need to fit within the grip of the character regardless of size or geometry. This also makes it impossible to see hands on your weapons or otherwise perform vertex animation on the weapons other than barrel rotations vis the tag system (tag_barrel). 
+<p>Since the placement is always the same for the character's hands on the weapons , create the animations to the point where it begins the weapon attack sequence. Then merge one of the weapon models into the character file as a guide. The weapons have a nested triangle of same dimensions as the tag_head and tag_torso triangles (each weapon in the game has this triangle saved with it. Move the weapon into a horizontal firing position (using the side view) to about where the character would be holding the weapon correctly. Then move the character's hands into the appropriate position and link the weapon to the character's right hand.
+
+<p>When you get to the point where you bring in the tags, make a snapshot of the weapon, hide the original and simply delete all the vertices and faces of the copy of the weapon object except for the nested triangle. Rename it tag_weapon, turn off the 'inherit scale' attributes (very important), and assign Physique to it (linking it to the 'right hand' of the biped) and voila. Ready to export.
+
+<h1>Level of Detail</h1>
+Each of the Quake III Arena player characters have a base model and two lower polygon versions of the model (to help with speed issues). For use in the game, the three levels of detail are file formatted as follows:
+
+<p><table>
+<tr>
+	<td>[character].[file extension]</td>
+	<td width = 60%>This is the highest detail model for close up viewing</td>
+</tr>
+<tr>
+	<td>[character]_1.[file extension]</td>
+	<td width = 60%>This is a slightly lower polygon model for mid distance viewing</td>
+</tr>
+<tr>
+	<td>[character]_2.[file extension]</td>
+	<td width = 60%>This is the lowest polygon model for long distance viewing.</td>
+</tr>
+</table>
+
+<p>Level of detail means you need to make three versions of your model to get the best performance during gameplay. Each
+version needs to have the same textures assigned and same animations assigned to them in order to work in the game. The
+numbers you need to shoot for are 800 faces for the highest level, 500 faces for next level and 300 for the lowest level. This works out roughly to be a 60% drop in each LOD, but your numbers will vary in order to maintain mesh integrity. Most LOD's created in Q3A were done with the plugin called MRM (multiple resolution mesh) by Intel. The stock Optimize modifier or manual optimization techniques can be applied.
+
+<h1>8. Exporting</h1>
+Once the tags are in place (also with the Physique modifier attached to them) the model is ready to export to an ase(ascii)
+file.<b></b> To make the models available for use in Quake III Arena, the model was exported to a native 3dsMax ASCII format
+file called an '.ase' file. This export option in Max has several check boxes to tweak and then just exports the character
+with its animation data (via Character Studio) to a huge ase/ascii file. Under 'Output Options' make sure the 'Mesh Definition', 'Materials', 'Transform Animation Keys', and 'Animated Mesh' boxes are checked. Under 'Mesh Options' and 'Object Types' make sure 'Mapping Coordinates' and 'Geometric' are the only boxes checked, respectively and let it run. Your 'Time Configuration' must reflect a '0' starting point up through the last frame of your animation. The native Max exporter will rely on the time configuration as a guide on which frames to actually grab during the conversion process. Of course there will be better exporters available in the future&hellip;this is just how it was done for the characters in Q3A.
+
+<h1>9. Animation Config File</h1>
+The character's animations are controlled by an 'animation.cfg' file where the model maker specifies reference frames and frame rates. The animation.cfg file is a text file (originally created with MS Excel) which contains the frame and animation sequence data. Place this in the model's directory. Note, when the modeler is testing the model in Quake III Arena, changes to the animation.cfg can be made without having to re-grab the model&hellip;just do a 'vid_restart' at the cvar command line
+prompt.
+
+<p>Edit an animation.cfg file which matches the frame/animation sequences and place it in the character's directory. Each animation can have different frame rates that the modeler can tweak, save out in the animation.cfg, hit 'vid_restart' to see the change right away in the game (no need to re-grab the model). The file for visor is shown here below in it's entirety. You may clip this portion of the file out and use it as the basis for your own animation files.
+
+<p><pre class = "type">
+////////////////////////////////////////////////////////////////////////////////
+
+// animation config file
+
+sex		m
+
+headoffset	0 0 0
+footsteps	normal
+
+// first frame, num frames, looping frames, frames per second
+
+0	30	0	25	// BOTH_DEATH1
+29	1	0	25	// BOTH_DEAD1
+30	30	0	25	// BOTH_DEATH2
+59	1	0	25	// BOTH_DEAD2
+60	30	0	25	// BOTH_DEATH3
+89	1	0	25	// BOTH_DEAD3
+90	40	0	20	// TORSO_GESTURE
+130	6	0	15	// TORSO_ATTACK (MUST NOT CHANGE -- hand animation is synced to this)
+136	6	0	15	// TORSO_ATTACK2 (MUST NOT CHANGE -- hand animation is synced to this)
+142	5	0	20	// TORSO_DROP (MUST NOT CHANGE -- hand animation is synced to this)
+147	4	0	20	// TORSO_RAISE (MUST NOT CHANGE -- hand animation is synced to this)
+151	1	0	15	// TORSO_STAND
+152	1	0	15	// TORSO_STAND2
+153	8	8	20	// LEGS_WALKCR
+161	12	12	20	// LEGS_WALK
+173	9	9	18	// LEGS_RUN
+182	10	10	20	// LEGS_BACK
+192	10	10	15	// LEGS_SWIM
+202	8	0	15	// LEGS_JUMP
+210	1	0	15	// LEGS_LAND
+211	8	0	15	// LEGS_JUMPB
+219	1	0	15	// LEGS_LANDB
+220	10	10	15	// LEGS_IDLE
+230	10	10	15	// LEGS_IDLECR
+240	7	7	15	// LEGS_TURN
+
+//////////////////////////////////////////////////////////////////</pre>
+
+<h1>10. The Conversion Process</h1>
+
+The models need to be run through id's custom md3 conversion/'grabber' program. The program uses the information in the Quake Data text file ([filename].qdt) to grab and convert the 3dsMax files.
+
+<h2>10.1 The Conversion File</h2>
+
+Create a "Quake Data" text file for the model with the extension ".qdt". The contents for our [character].qdt file would read something like:
+
+<p>$asecanimconvert models/players/[character]/[character].ase -playerparms 92 155
+<br>$asecanimconvert models/players/[character]/[character]_1.ase -lod 1 -playerparms 92 155
+<br>$asecanimconvert models/players/[character]/[character]_2.ase -lod 2 -playerparms 92 155
+
+<p><div class = "menu">10.1.1 "$asecanimconvert"</div>
+This is the grabber program executable.
+
+<p><div class = "menu">10.1.2 "models/players/[character]/[character].ase"</div>
+
+This is the path to the model's .ase file. The program looks for files starting in your Quake3\baseq3 directory.
+
+<p><div class = "menu">10.1.3 "-lod 1" or "-lod 2"</div>
+This tells the converter that this is the first level of reduced detail for the model. The value "-lod 2" is for the second,
+or lowest level of detail for the model.
+
+<p><div class = "menu">10.1.4 "-playerparms 92 155"</div>
+This tells the converter which frame the upper body anims only start (first value) and which frame the lower body only anims start (second value). The numbers here are only used as examples
+
+<h2>10.2 Run the Conversion</i></h2>
+When the qdt file is set up correctly, run the grabber by opening MSDOS command prompt, going to the quake3 directory
+containing the model files and typing in 'q3data [character].qdt'
+
+<h2>11. Review the Model</h2>
+Load up Quake 3 Arena. Go to map Q3DM0 (or any map containing a mirror). Bring down the console and type "\model
+[character name]". Hit your Show Score key (default is TAB). You should see your new model here. Tweak the frame rates in
+your animation.cfg file and save them. Type in "\vid_restart" on the console and hit enter to see the changes.
+
+</div>
+</body>
+</html>
+

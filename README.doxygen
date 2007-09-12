@@ -1,0 +1,51 @@
+ Documentation for generating doxygen documentation
+---------------------------------------------------------
+
+1. Options for gendox
+More up-to-date command line options are available via
+the command ./gendox --help
+
+usage: "sh gendox [ <target(s)> ] [ -o <output_dir> ]"
+    or "./gendox [ <target(s)> ] [ -o <output_dir> ]"
+
+<target(s)> 
+  The directory, or directories to generate the 
+  documentation from.
+
+-o
+  Specifies the output directory <output_dir> which
+  should follow the -o switch
+  
+-q --quiet
+  Stops the script from outputing status information,
+  other than errors.
+  
+-k --kill
+  Kills other running doxygen pids.
+
+eg: ./gendox include/ -o ../Documentation
+
+* This will produce documentation for the include files,
+and output to the directory specified one level above the
+current directory.
+
+The target can be the current directory "./" in which case
+doxygen will generate documentation for all subdirectories
+of the current directory recursively.
+
+The default output directory is currently ...
+> ../GtkRadiant-doxygen
+
+* If the script is called without any target directories
+it will generate documentation for the core of radiant...
+include/ libs/ radiant/ and plugins/
+
+If there are specific options that you'd like to customise,
+the DoxyConfig file is used to generate the file from which
+doxygen gets its settings from. So any changes that need
+to be made should be made to this file.
+
+
+Gef :]
+(gefdavis@dingoblue.net.au)
+---------------------------------------------------------

@@ -1,0 +1,179 @@
+<html>
+<head>
+<title>Q3Radiant Editor Manual: Page 1.1</title>
+<link rel="stylesheet" type="text/css" href="../styles/q3rad.css">
+</head>
+<body>
+<h1 class = "MsoTitle">Q3Radiant Editor Manual</h1>
+<hr>
+<h1><a name="pref">Preface</a></h1>
+
+The authors would like to thank the many supporters of Quake Engine
+editing who made this work possible. Several sections in the manual
+are based on material written by dedicated fans. Others were
+"corrected" by fans who found undiscovered bugs in both the editor
+and game code. Where possible, we have noted the contributors in
+the sections they helped produce. 
+
+<p>Paul Jaquays<br>
+Robert A. Duffy
+
+<p>GtkRadiant note: This version of the manual is meant to be distributed with 
+GtkRadiant. Being for Q3Radiant 192, some parts are very outdated, specially all 
+the ones dealing with configuration. But the core features (curves and brush 
+manipulation, texturing) are still very relevant. If you are willing to help 
+maintaining this version more up to date get in touch with us (<a 
+href="http://www.qeradiant.com" target="_new">http://www.qeradiant.com</a>)
+<p><b>Note:</b><i> Chapter 1 has been updated to follow the GTKRadiant 1.2.1. Mainly the preferences menu and some information on this page and appendix E (links and resources).</i>
+
+<h1><a name="intro">Introduction</a></h1>
+
+Part of the fun of games like Quake III Arena is the ability to add
+to your own ideas to a favorite game and then have others play and
+enjoy them. While the technical skills needed to create a 3D
+graphic engine is beyond many game fans, the skills and equipment
+necessary to make modifications to the game are not. It has become
+the custom of many game developers to share their development tools
+with the public. This allows fans make their own game content. The
+Q3Radiant editor is the software used by the designers at id to
+create the arenas in Quake III Arena. In fact, it's an
+improvement on that editor, since it contains features that have
+been added since the game was completed. If you are familiar with
+Q3Radiant's immediate ancestor, the QeRadiant editor for
+Quake 2, then a good share of what's in this manual will be
+old hat to you. Whether you are a veteran mapmaker or new to the
+art of making game arenas, we think you will find some
+indispensible information in this manual. 
+
+<p>Now comes the caveat.
+
+<p>This manual will tell you how to use the tools, but not
+necessarily, how to make what you have in mind. Many fine on-line
+tutorial and resource sites will be listed at the end of the
+document.
+
+<h1><a name="minsysreq">Minimum System Requirements</a></h1>
+
+The designers at id used Q3Radiant on some heavy-duty computing
+equipment to make their game maps. Despite the fact that Quake III
+Arena runs under several different operating systems, not every
+computer that can run Quake III Arena will be able to run the
+Q3Radiant editor. Q3Radiant only runs under MS Windows 95, MS
+Windows 98, MS Windows NT, or MS Windows 2000 operating systems.
+There are currently no plans for Mac or Linux versions. The editor
+requires an Open GL compliant 3D graphics acceleration card (it is
+expected that all cards capable of running Quake III Arena will be
+able to handle editor functions &hellip; although some may handle
+it better). A 3-button mouse gives the best performance. 
+
+<h2><a name="minsys">Minimum System</a></h2>
+
+The minimum system requirements generally require that preferences
+such as texture quality and screen resolution be set to absolute
+minimums. The editor will run on the systems described, but speed
+of operation and visual quality will probably be less than
+satisfactory. It should also be noted that you would be limited to
+working on relatively small maps with limited texture and model
+usage. 
+
+<p><table>
+<tr>
+<td>Processor:</td>
+<td>P233mmx</td>
+</tr>
+
+<tr>
+<td>RAM:</td>
+<td>64 meg</td>
+</tr>
+
+<tr>
+<td>Video Card:</td>
+<td>4 Meg, software Open GL-compliant</td>
+</tr>
+
+<tr>
+<td>Screen Resolution:</td>
+<td>1024 x 768</td>
+</tr>
+
+<tr>
+<td>Pointing Device:</td>
+<td>Two-button mouse*</td>
+</tr>
+</table>
+
+<h2><a name="recsys">Recommended System</a></h2>
+
+The more powerful the machine, the better and usually faster the
+development experience. This will become especially true when you
+get to the point of compiling your maps (turning them from editor
+code into game code). It should come as no surprise that, more
+powerful machines will crunch the numbers faster when compiling a
+map. 
+
+<p><table>
+<tr>
+<td>Processor:</td>
+<td>P2450 (or better)</td>
+</tr>
+
+<tr>
+<td>RAM:</td>
+<td>128 meg**</td>
+</tr>
+
+<tr>
+<td>Video Card:</td>
+<td>Open GL accelerated video card</td>
+</tr>
+
+<tr>
+<td>Screen Resolution:</td>
+<td>1280 x 1024</td>
+</tr>
+
+<tr>
+<td>Pointing Device:</td>
+<td>Two-button mouse*</td>
+</tr>
+</table>
+
+<p>* This will work, but not well. A three-button mouse, even on a
+minimal system is highly preferred.<br>
+** id designers often found it convenient to work with several maps
+open at once. The recommended 128 Meg of RAM may not be enough to
+accommodate this.
+
+<h2><a name="nowork">What Doesn't Work (well) - and How to
+fix it</a></h2>
+
+The key to a satisfactory editing experience is whether your video
+card supports the demands of the editor. The original id editor was
+designed for a workstation card called the Realizm, which ran on
+Intergraph workstations in a WinNT environment. Robert Duffy
+expanded this to include the Win9x operating systems and a number
+of other video cards. But not all video cards support the editor
+equally well. 
+
+<ul>
+<li>The G200 and G400 require updated drivers from Matrox</li>
+
+<li>The 3fx Voodoo 3000 chipset requires a driver upgrade in order
+for the map grids to show.</li>
+
+<li>If the map grids don't appear when using some ATI chip
+sets, try turning the settings on you desktop up to 32 bit (true
+color).</li>
+
+<li>Nvidia TNT and GeFORCE have slowdown issues when the user
+selects curve patches. While this is a driver issue, it can be
+addressed by checking the "Solid selection boxes"
+feature under preferences.</li>
+</ul>
+
+<p align="center">Back | <a href="../index.htm">Home</a> | <a
+href="pg1_2.htm">Next</a>
+</body>
+</html>
+

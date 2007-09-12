@@ -1,0 +1,1 @@
+*.jpg	-m 'COPY' -k 'b'

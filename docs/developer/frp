@@ -1,0 +1,6 @@
+#!/bin/sh
+for i in *.h; do
+	sed -e "s/BasePath/EnginePath/" $i > $i.tmp
+	mv -f $i.tmp $i
+	done
+

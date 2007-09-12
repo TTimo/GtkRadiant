@@ -1,0 +1,338 @@
+<font color="#ffcc00">
+<center><b>GTKRadiant 1.1 beta</b></center>
+<center> </center>
+</font>
+<font color="#ffffff">
+
+<!-- -->
+<!-- INSTALLATION -->
+<!-- -->
+<b>Installation</b>
+<blockquote>
+
+GtkRadiant 1.1 beta is available for Windows and Linux. Quake III Arena editing 
+is the only game supported so far. You can get the setup files from several 
+mirrors:<br>
+
+</blockquote>
+<blockquote>
+
+<a href="http://www.3ddownloads.com/index.php3?directory=/qeradiant/GtkRadiant/" 
+target="_new">3DDownloads</a><br>
+
+<a href="ftp://ftp.lokigames.com/pub/beta/q3sdk/" target="_new">Loki's 
+ftp</a><br> 
+
+Fileplanet: <a href="http://www.fileplanet.com/index.asp?file=51668" 
+target="_new">Linux</a> <a href="http://www.fileplanet.com/index.asp?file=51669" 
+target="_new">Win32 (full)</a> <a 
+href="http://www.fileplanet.com/index.asp?file=51670" target="_new">Win32 
+(patch)</a><br>
+
+<a 
+href="http://www.quakexpert.com/cgi-bin/ftp-ge/utilities.cgi?browse&qeradiant/Gt
+kRadiant" target="_new">French mirror at Quakexpert.com</a><br>
+
+</blockquote>
+
+<blockquote>
+Win32 Installation instructions:<br>
+
+Grab one of the two setups: a full installation or an upgrade. If you don't know 
+what to choose, get the full setup (<a 
+href="http://www.3ddownloads.com/index.php3?directory=/qeradiant/GtkRadiant/" 
+target="_new">GtkRadiantSetup-1.1-beta.zip</a> 8Mb), if you have a working 
+installation of Q3Radiant above 199, or GtkRadiant Alpha, get the patch (<a 
+href="http://www.3ddownloads.com/index.php3?directory=/qeradiant/GtkRadiant/" 
+target="_new">GtkRadiantSetup-1.1-beta-patch.zip</a> 4Mb). GtkRadiant 
+installation doesn't interfere with your current Q3Radiant installation: 
+everything will be installed under GtkRadiant/ (whereas usual path for Q3Radiant 
+is Tools/) and a new file quakev2.qe4 will be installed in baseq3/scripts/
+
+</blockquote>
+
+<blockquote>
+Linux Installation:<br>
+
+Get <a 
+href="http://www.3ddownloads.com/index.php3?directory=/qeradiant/GtkRadiant/" 
+target="_new">linuxq3sdk-1.1b.x86.run</a>. Once downloaded, execute it from your 
+favorite shell (as root).<br>NOTE: this is the full Quake III Arena SDK, it 
+will install the game source and mod tools as well.
+
+</blockquote>
+
+<!-- -->
+<!-- GETTING STARTED -->
+<!-- -->
+<b>Getting started</b>
+<blockquote>
+
+Some features in GtkRadiant have undergone major changes compared to Q3Radiant. 
+The main difference is the use of Gtk for all the widgets (buttons, lists, 
+dialog boxes). It looks and feels different but you'll get used to it quickly. 
+We believe the Gtk toolkit brings a great deal of clarity to the interface.<br>
+
+</blockquote>
+
+<blockquote>
+
+Scroll down to see the full changelog for GtkRadiant. Since it is pretty huge 
+I'll only go over the new functionalities.
+
+</blockquote>
+
+<blockquote>
+
+<li>
+
+Compilation monitoring: GtkRadiant comes with a modified version of q3map that 
+reports to GtkRadiant through the network. You get the output of q3map in the 
+console window. And the compiling errors can be processed. So far it detects
+leaks, bad brush planes and winding errors.  This requires using the version 2
+project files (the newest ones). You can still use the classic compilation 
+process and set a few options in the preferences: see the 'BSP monitoring' 
+in the preferenes dialog (Edit > Preferences).<br>
+
+<li>
+
+Sleep mode: you can put Radiant to sleep and have it release all the GL stuff.
+Very handy to run Quake 3 Arena engine without eating too much GL resources.
+You can trigger sleep mode by hand from File > Sleep, or turn it on
+automatically in the BSP monitoring prefs. Expect waking up from sleep mode to
+be about the same speed as loading the map
+(you need to reload all the textures).<br>
+
+<li>
+
+Improved q3map: the version of q3map that comes in GtkRadiant has been optimized
+to require less memory for normal use. The 1.0q version of q3map allocates around
+75Mb of RAM on startup. This new version shrinks the startup memory allocation
+by around 45Mb, bringing the minimum requirements around 30Mb. Then it will
+dynamically allocate as needed. These changes need a lot of testing, don't
+hesitate to send some feedback.
+
+<li>
+
+The project file format has changed a bit. The new format (version 2) is in 
+baseq3/scripts/quakev2.qe4 (it will be loaded by default at startup). Some of 
+the new features of GtkRadiant rely on this new format, old one is still 
+supported but you should move to the new one. We are using a template scheme: 
+when you load quakev2.qe4 a custom project file will be generated and saved for 
+you in baseq3/scripts/user0.qe4. If you have custom BSP commands, you can edit 
+that resulting userxx.qe4 to add your stuff. (see below for the new BSP process 
+monitoring)<br>
+
+<li>
+
+Inspectors: the increments steps are now available in the surface inspector
+(S) and in the patch inspector (Shift+S). The keyboard shortcuts Shift+Arrows
+are following these increment steps as well. 
+
+<li>
+
+Radiant is no longer using the windows registry. All settings are stored in 
+radiant.ini and savedinfo.bin under the radiant directory (i.e. same directory 
+as the binary)<br>
+
+<li>
+
+The shortcut keys file has changed name from radiant.ini to shortcuts.ini and a 
+bit changed syntax. See shortcuts.ini.sample in the distribution for a 
+sample.<br>
+
+</blockquote>
+
+<!-- -->
+<!-- Feedback and discussion -->
+<!-- -->
+<b>Feedback and discussion</b>
+<blockquote>
+
+This is a beta release. We consider it to be ready for production use. It has
+been in internal testing for a while, the main problems remaining would be
+driver or OS related, so we are tagging it as beta. Overall we will bring 
+minor improvements until the final release (bringing more plugins in and 
+fixing issues that will appear). Brand new functionalities will go in 1.2<br>
+
+</blockquote>
+<blockquote>
+
+<li>
+
+The documentation is outdated. We'll have a new version of the manual ready. 
+Until then this page, the <a 
+href="http://www.qeradiant.com/faq/fom-serve/cache/115.html">faq</a>, the <a 
+href="news://news.lokigames.com/loki.games.q3sdk">newsgroup</a> and the <a 
+href="http://www.quake3world.com/cgi-bin/forumdisplay.cgi?action=topics&forum=Le
+vel+Editing&number=6&DaysPrune=10&LastLogin=">forum</a> are the best 
+references.<br>
+
+</blockquote>
+
+<blockquote>
+QERadiant.com is preparing a site reorganization to handle the newcomer GtkRadiant. The developpement team has grown bigger since Loki Software is involved in the project. They are providing most of the resources (cvs server, mailing list, bug tracking and newsgroup). As time goes we'll open the developpement more and more. For now we are providing the following for feedback and discussion:<br>
+
+<li>
+
+The <a href="http://www.quake3world.com/cgi-bin/forumdisplay.cgi?action=topics&forum=Level+Editing&number=6&DaysPrune=10&LastLogin=">Quake 3 World editing forum</a> is a good place for end user discussion.<br>
+
+<li>
+
+Technical topics (specific crashes, driver issues etc.) should be discussed on <a href="news://news.lokigames.com/loki.games.q3sdk">the newsgroup loki.games.q3sdk</a>. Be sure to specify the version of GtkRadiant you are using, the details of your hardware and the platform you are running GtkRadiant on (windows or linux).<br>
+
+<li>
+
+You can view our current list of bugs on <a href="http://fenris.lokigames.com">fenris</a>, the bug tracking server. You can report problems there. Run a <a href="http://fenris.lokigames.com/buglist.cgi?bug_status=New&bug_status=Assigned&bug_status=Reopened&email2=&emailtype2=substring&emailreporter2=1&changedin=&chfieldfrom=&chfieldto=Now&chfieldvalue=&product=Q3SDK&component=MapEditor&short_desc=&short_desc_type=substring&long_desc=&long_desc_type=substring&cmdtype=doit&newqueryname=&order=%22Importance%22&form_name=query">query with the Q3SDK program and MapEditor component</a>.<br>
+
+<li>
+
+IRC! .. most of us are IRC whores .. idling a lot on irc.telefragged.com #qeradiant<br>
+
+</blockquote>
+
+<!-- -->
+<!-- Credits -->
+<!-- -->
+<b>Credits</b>
+<blockquote>
+Waaa... so many people involved in that project, trying to list a few (this is the GtkRadiant contributors, for qeradiant.com see the staff page):<br>
+Loki:<br>
+Leonardo Zide leo@lokigames.com<br>
+Mike Phillips (early testing)<br>
+Bernd Kreimeier (overall coordination)<br>
+QER.com:<br>
+TTimo timo@qeradiant.com<br>
+^Fishman (Pablo Zurita) fish@gamedesign.net<br>
+Curry plugin Team:<br>
+Mike "mickey" Jackman<br>
+Tim "Maj" Rennie<br>
+William "SmallPileOfGibs" Joseph<br>
+PrtView plugin, various bug fixes and q3map guru:<br>
+Geoffrey DeWan<br>
+Updated shader files, textures, entities.def, keyboard shortcut list and<
+overall testing / feedback:<br>
+Jean-Francois "Eutectic" Groleau<br>
+Improvements and bug fixing to the editor:<br> 
+Jan Paul "MrElusive" van Waveren, Robert Duffy<br>
+Web:<br>
+Dave "Bargle" Koenig and Jason "Wolfen" Spencer<br>
+FAQ:<br>
+Equim and Wex<br>
+Thanks to everyone on the beta mailing list and irc.telefragged.com 
+#qeradiant 
+for testing and feedback.<br>
+</blockquote>
+
+<!-- -->
+<!-- Changelog -->
+<!-- -->
+
+<b>Changelog</b>
+<blockquote>
+<pre>
+GtkRadiant 1.1 beta Changes
+---------------------------
+
+MrElusive:
+- bspc 2.1c, MAX_MAPFILE_PLANES bumped up (needed on big maps)
+
+G_Dewan:
+- fix to BSP menu order getting mixed up
+- fix to bogus noshader error message in q3map
+- suppressed winsock2 dependency, only requires winsock1 now
+- improved q3map, reducing minimal memory footprint by about 45Mb
+
+leo:
+- Fixed q3map crashing if visbytes is greater than the maximum allowed
+- fixed texture window not scrolling when last texture is large
+- Fixed q3map Makefile
+- Fixed +/- numpad keys not working in win32
+- Fixed Alt shortcuts not working in win32
+- fixed prefab path and user ini in preferences dialog
+- fixed add/remove bsp items in project settings dialog
+- fixed some console not working in view #3
+- fixed warning when exiting in views #2 #3
+- Fixed patch inspector not showing after it has been closed
+- Fixed load window position bug (saved pos greater than screen resolution)
+- Fixed selection nudge bug
+- fixed Z window not shrinking small enough in floating windows mode (win32)
+- Improved entity windows layout
+- Added 'Reset' button to entity dialog
+- added LOD for patches, see in prefs for the LOD you want to display on patches
+- no more DOS dialog box under windows, Gtk errors and warnings are
+redirected to the console
+- remember size/position of the entities dialog
+- new 128 and 256 grid
+
+- added shift+rclick+mouse move to zoom in/out of the view
+(way cool feature! check it out!)
+
+TTimo:
+- fixed the Region commands, "Region > Set brush" is working
+Region uses the camera as spawn point.
+- updated quakev2.qe4 with -vlight options
+- added checks in q3map to prevent crashing on allocating a winding too big.
+- improved snapshots behaviour, doesn't snapshot non-modified maps
+- improved the CycleCapTexturePatch command, now cycle across the 3 planes only 
+and works on multiple patches in one shot
+- fixed the help menu, Help > Help or F1 will try to open the Q3Radiant manual 
+(if you have office installed) (Help > Links also fixed)
+- surface inspector allows to change increments steps and stores them in 
+registry. General behaviour of the surface inspector has been reworked. Undo 
+works better on the surface inspector.
+- shift+arrows shortcuts now match the increments from the surface inspector
+- button 'Match Grid' in the SI to set the increment to current grid
+
+- debug stream between GtkRadiant 1.1 and q3map:
+As with the Alpha version, q3map connects to Q3Radiant to report on it's 
+progress. The progress reporting code has been enhanced with an XML stream. If 
+your map has errors that need geometry information to be fixed, Radiant can help 
+you out. To get a grip on this feature, load baseq3/maps/museum.map and compile 
+it (with BSP monitoring turned on of course).
+
+- cleaned the entity inspector window, better layout management
+
+- two new items in the View > Show menu:
+the X, Y and Z axis have been assigned colors (Z: Red, X: Green, Y: Blue)
+Show outline draws a colored outline around your view, helping you know what 
+view is currently active.
+Show Axes will draw a small axis base in the upper left corner
+
+GtkRadiant alpha version Changes
+--------------------------------
+
+MrElusive:
+-q3map 1.0q: fixed a bug in q3map that sometimes cause mapobjects not to be lit
+
+G_Dewan:
+-more arrows drawn on entities with relevant angle information
+
+Fishman:
+-antialiased lines
+
+leo & TTimo:
+- based on Q3Radiant 202
+- patched q3map with network code
+- shortcut keys are now in shortcuts.ini
+the syntax has changed a bit, no spaces between the '='
+see shortcuts.sample
+- no longer using the registry, settings are stored in radiant.ini and savedinfo.bin
+in Radiant directory
+- project settings templates:
+the project settings file format has changed a bit.
+it has version information now, and the setups come with a new quakev2.qe4 file
+the project files are true templates, Radiant will read them and then store actual
+project settings it uses in baseq3/scripts/user0.qe4 user1.qe4 etc.
+- new compilation monitoring
+GtkRadiant comes with a modified version of q3map that reports to GtkRadiant through
+the network. You get the output of q3map in the console window. And the compiling
+errors can be processed (currently it detects leaks)
+- sleep mode:
+before running Quake 3 Arena to playtest your maps, you can put Radiant to sleep:
+manually with File > Sleep command
+automatic if you compile and set "Activate sleep mode when running the engine"
+</pre>
+</blockquote>
+
+</font>

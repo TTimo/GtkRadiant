@@ -1,0 +1,30 @@
+ImageHL
+=======
+
+Coding by Dominic Clifton - Hydra - hydra@hydras-world.com
+
+What is it ?
+------------
+
+This GTKRadiant 1.2+ plugin handles the loading of textures from .WAD files.
+I'll refer to these textures as .HLW files, even though they don't have any
+extension when they're stored in the .WAD file itself.
+
+You need a VFS plugin to go with this plugin that can open and read .WAD files
+My VFSWAD plugin does just this.
+
+Developer Notes
+---------------
+
+The project file will copy the compiled DLL file and this .TXT file to
+"$(HLRADIANTDIR)modules" so make sure you have that environment variable
+defined.
+
+For my GTKRadiant 1.2 HalfLife game pack files I use the directory:
+"E:\games\HalfLife\Tools\GTKR12N".  Under which there are the directories
+"modules" and "plugins"
+
+Credits
+-------
+Thanks to the guys that made Wally for releasing an example WAD loader.
+without it this would not have been possible.

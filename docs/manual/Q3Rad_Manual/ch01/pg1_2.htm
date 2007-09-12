@@ -1,0 +1,391 @@
+<html>
+<head>
+<title>Q3Radiant Editor Manual: Page 1.2</title>
+<link rel = "stylesheet" type = "text/css" href = "../styles/q3rad.css">
+</head>
+<body>
+<h1 class = "MsoTitle">Q3Radiant Editor Manual</h1>
+<hr>
+<h1><a name = "install">Installation & Set Up</a></h1>
+Instalation of the editor has changed in the latest build. It is much more simple then before.
+
+<h2><a name = "insted">Installing the editor</a></h2>
+Run the setup file you downloaded of the latest GTKradiant program. You know longer have to install GTKRadiant to the Quake3 directory. It can reside in any directory you would like to have it.
+
+<h2><a name = "instpath">Setting up Paths</a></h2>
+During installation you will be asked where your Quake3 game is located. Browse to the folder and select Ok. Then you will be prompted for a directory name for the Quake3 game pak. Setup will create this directory in the Quake3 game directory.
+<br><br>
+You will then be prompted for your Return To Castle Wolfenstein folder. Repeat the same process as you did for Quake3, only this time pointing to your RTCW directory.
+
+<h2><a name = "imprperf">Improving Performance</a></h2>
+If you find that the editor is sluggish on your system, try some or all of the following tweaks:
+
+<ul>
+	<li>On the View menu, check Cubic Clipping to be ON. This reduces the number of game components in view, by shortening the distance that the editor can "see." Use CTRL + to set the distance to 13 (a good number in this case).
+	<li>On the Textures menu, open the Render Quality option and select an option higher on the list than your current setting. We recommend not going below Nearest MipMap first. This reduces the amount of blending and filtering in the textures as they are seen in the Camera window, but still lets you see what the textures look like in a relatively undistorted manner. The Nearest setting will further improve performance, but textures may be distorted when seen in perspective.
+	<li>On View Menu, open the Entities as… option and select an option higher on the list than your current setting.
+	<li>Select Preferences … from the Edit Menu. Under “Display / 3D View”, deselect (uncheck) “Update XY views during mouse drags.” This will stop the 2D-map window(s) from being repeatedly redrawn during Camera window mouse drags.
+	<li>Select Preferences … from the Edit Menu. Under “Display / Texturing Settings”, move the slider bar under "Texture Quality" one or more settings to the left, reducing overall texture quality.
+	<li>Select Preferences - from the Edit Menu. Under “Interface / Editing”, lower the number of “Patch Subdivisions” to a lower number.
+	<li>Further performance can be gained by turning off curves (CTRL + p) or reducing curve displays to wireframe only.
+</ul>
+
+<h2><a name = "setpref">Setting up Preferences</a></h2>
+To set up your editing preferences, open the Edit menu and select Preferences. Use preferences to set a variety of options and editor behavior based on your personal preferences.
+
+<img src="../Q3Rad_Manual_files/image002.png" width=543 height=337 border=0 align="right" alt="">
+<p><b>Globals</b>
+<br>
+<span class = "subheading"><i></i>Game Settings / Select The Game</i></span>
+<br>
+<br>
+GTKRadiant now stores preferences on a per game basis. For instance: Any settings you set up for Quake3 are stored for that game mode only. Switching to Return To Castle Wolfenstein mode, will use the preferences you setup when that Game mode was set up.
+
+<p><b>Display</b>
+<br>
+<span class = "subheading"><i>2D Display</i></span> 
+<ul>
+	<li>OpenGl Display Lists - Uncheck this option if you encounter any graphic errors. This can some times cuase problems with bad opengl drivers. 
+	<li>OpenGL Antialliased Points and Lines - This will render all points and lines in the 2D view using antialiasing. This can slow down the 2d view if your video card can not handle antialiasing very well.
+	<li>Solid Selection Boxes - This will make anything selected draw with solid lines rather then the old style of dashed boxes. This can slow down the 2D view as well.
+	<li>Display Size Info - If this is checked on, it will display the size information of any object selected.
+	<li>Alternate Vertex Edge Handles - This changes the shape (a little bit) of the vertex and edge points when in either vertex or edge manipulation mode.
+</ul>
+
+<p><span class = "subheading"><i>3D View</i></span>
+<br>Thanks to some new code. Radiants 3D View is Ultra fast.
+<ul>
+	<li>Movement Velocity - This will increase or decrease the movement of forward, back, and strafing speed in the 3d view.
+	<li>Rotational Velocity - This will increase or decrease the turning speed in the 3D View.
+	<li>Freelook in Camera View - With this checked, you will be able to use free look in the 3D View. Just Right Click in the 3d view to turn on free look, and Shift + Right Click again to turn it off.
+	<li>Invert Mouse In Freelook - This will reverse the mouse controls in freelook mode.
+	<li>Discrete Movement - If checked, this cuases the view in the 3d view to move one step at a time. If unchecked the movement is smoother.
+	<li>Update XY Views On Camera Move - When interacting with the camera (which you will do a lot), turning this off will NOT update the camera icon location in the Map windows automatically. This can help with speed but prevents you from seeing exactly where the camera icon is positioned. 
+</ul>
+
+<p><span class = "subheading"><i>Texture Settings</i></span>
+<ul>
+	<li>Texture Quality - This will increase or decrease the texture quality displayed in the texture window and 3D View.
+	<li>Texture Subsets - This provides a texture edit window within the texture window. It is still buggy as of build 188. It puts a text field at the top of the Texture window. Type in the first few letters of a texture name and the window will only display the textures beginning with that letter or letters.
+	<li>Texture Scrollbar - If checked, this will add a scroll bar to the texture window.
+	<li>Tex Increment Matches Grid - If checked, this will cuase Radiant to use the grid spacing when moving and aligning textures with the shift + arrow keys.
+	<li>Default Scale - The default scaling of textures on load up of the editor.
+	<li>Startup Shaders - You can choose to have certain shaders load upong startup of the editor or to not have any load on startup.
+</ul>
+
+<p><b>Interface</b>
+<br>
+<span class = "subheading"><i>Layout</i></span>
+<ul>
+	<li>Layout - Choose 1 of 4 layouts.
+		<ul>
+		<li><img src = "../Q3Rad_Manual_files/image004.png" width = 31 height = 31 vspace = 3 hspace = 3 align = "left">Split Window View - This is the QeRadiant default view. The Camera, XY Map, Z-axis Scale, Texture, and Console windows are constantly displayed. While the arrangement of the windows cannot be changed, their size is adjustable by pulling the window border splitters. The Entity and Group windows share a common pop-up window. This arrangement is one that may work particularly well for mappers using smaller monitors and slower computers.<br><br>
+		<li><img src = "../Q3Rad_Manual_files/image006.png" width = 31 height = 31 vspace = 3 hspace = 3 align = "left">Floating Window View - This is the view used by id designers. The position, arrangement, and size of the windows are all adjustable. The windows initially come up on top of one another (a known bug), but once positioned, this view offers the greatest flexibility. The Camera, XY Map, Z-axis Scale, and a shared Entity/Texture/Console/Group window are all displayed simultaneously. Changing the size of one window does not automatically affect the others (it can lay atop the others). Additional map layout views can be cycled from menu commands or bound keys.  This view only works well if you have a 20+-inch monitor.
+		<p><strong>Make it Big!</strong> In floating windows mode (ONLY), you can double-click on any window’s Title Bar to enlarge the contents of the window to fill the screen. Double clicking on it again reduces it back to normal size.<br><br>
+		<li><img src = "../Q3Rad_Manual_files/image008.png" width = 31 height = 31 vspace = 3 hspace = 3 align = "left">Quad View - The display window is split into four equal-sized windows: Camera, XY Map, YZ Map, and XZ Map. This is similar to other editors and offers four-way viewing. You see the map components in three views simultaneously. The size of the windows (relative to each other) can be adjusted, by pulling the splitters. The combined Entity/Texture/Console/Group window is brought into view as a single, floating window that lays over the others. The Z-axis window is not used in this view. This is a popular editing configuration, but it has significant performance issues. The editor is drawing all the 2D map components three times (plus maintaining a camera view). Some mappers have notice significant performance slow-downs when working with curves. Using the Quad view is only recommended for mappers with more powerful computers.<br><br>  
+		<li><img src = "../Q3Rad_Manual_files/image010.png" width = 31 height = 31 vspace = 3 hspace = 3 align = "left">Reverse Split Window View - Essentially the same as the Split Window view, except that the windows are all flopped left to right.<br><br> 
+		</ul>
+	<li>Floating Z Window - This will make the Z-Window float in the Floating Window View mode.
+	<li>Patch Toolbar - Seems to have been disabled.
+	<li>Use Win32 File Load Dialog - If checked, this will use the common windows style file browser. Unchecked it will have the unique GTK / Linux X-Windows file browser.
+</ul>
+
+<span class = "subheading"><i>Mouse</i></span>
+<ul>
+	<li>2 Button / 3 Button - Use 2 button mode or 3 button mode. Each mode is different in some ways. The hot keys and key combinations are generally different for each mode.
+	<li>Right Click To Drop Entities - If checked, this will create a menu where ever you click in the 2D View with a list of the entities you can select and place.
+	<li>Mouse Chaser - Turning this on causes the view to chase the mouse if you drag something off the edge.
+	<li>Alt + Multi-Drag - If this option is checked, you must hold down the ALT key to drag multiple brush edges. This lets you resize more than one brush at a time.
+	<li>Wheel Mouse Inc - This number will adjust the amount the texture window scrolls in the texture window when using the mouse wheel. The higher the number, the faster it scroll basically.
+</ul>
+
+<span class = "subheading"><i>Editing</i></span>
+<ul>
+	<li>Vertex Editing Splits Face - This will cuase face splits in brushes when in moving vertex points around and the brush becomes a concave shape.
+	<li>Fix Target/Targetname Collisions - This prevents duplicate target/targetnames from happening if you load a map into your current map. For instance: if you load q3dm7 into q3dm7, it adds _1 to duplicate target/targetname pairs.
+	<li>Cliiper Tool Uses Caulk - When using the clipper tool, the faces that are created from the clip will add a cualk texture to the brush.
+	<li>Dont Clamp Plane Points - This turns off clamping of plane points. This allows for very precise brush/vertex manipulation but can make it difficult to get things properly aligned and can also cause the bsp process to take a LOT longer. In general, this should be unchecked.
+	<li>Select Patches by Bounding Boxes - If checked, you will be able to select patches by there bounding boxes. Note: Bounding boxes for patches must be turned on.
+	<li>Rotation Increment - This allows you to choose the increments in pixels a texture is rotated when rotating a texture with the shift + pgup or pgdn keys.
+	<li>Undo Levels - Set how many undos you can do. This does require memmory so do not set it to high if you do not have alot of memmory.
+	<li>Patch Subdivisions - Select how many subdivisions are drawn on the patches in all views. If set to high it can slow down the editor. If set very low it will look blocky. Essentially it works like the games r_subdivisions option.
+</ul>
+
+<p><b>Other</b>
+<br>
+<span class = "subheading"><i>Startup/Autosave</i></span>
+<ul>
+	<li>Snapshots - If checked, this will create snapshots every 5 minutes of your level. They are saved into your maps directory and have a numbered order (eg. .001 .002) for the file extension.
+	<li>Load Last Project On Open - If checked, GTKRadiant will automatically load the project settings you last used.
+	<li>Load Last Map On Open - If checked, GTKRadiant will load the last map you had open during your last session.
+	<li>Auto-Save Every - Here you can choose to use auto saving, and how many minutes between each auto-save. 
+</ul>
+
+<span class = "subheading"><i>Paths</i></span>
+<ul>
+	<li>Prefab Path - Here you can choose the directory of where you will have your prefabs ( .pfb ) stored.
+	<li>Game Path - This is now controlled by GTKRadiant. It displays the path of your game executable for which game mode you are in.
+	<li>User Ini Path - This will allow you to choose a user .ini file and its path.
+</ul>
+
+<span class = "subheading"><i>Misc</i></span>
+<ul>
+	<li>Light Drawing - This draws lights as shaded triangle things (octahedrons) instead of standard square entities. When enabled, the light entities also show their emitted light color.
+	<li>Log The Console To radiant.log - This will cuase GTKRadiant to create a log file of all output from the GTKRadiant console. This can cuase the editor to slow down, and is normally used for debugging purposes.
+	<li>Use Pak/PK3 Files - This will force GTKRadiant to read from .pak or .pk3 files before searching in the game directories like baseq3.
+</ul>
+
+<span class = "subheading"><i>BSP Monitoring</i></span>
+<UL>
+	<li>Enable BSP Process Monitoring - This will have a ms-dos window open when you compile a map from the BSP menu.
+	<li>Stop Compilation On Leak - This will cuase the bsp compile process to halt when a leak is found in a map during the BSP process.
+	<li>Run Engine After Compile - This will cuase the game to launch after the compile process is complete.
+	<li>Activate Sleep Mode When Running The Engine - This is automatic now. GTKRadiant will go into sleep mode when you load the engine after a compile. <p><strong>Warning.</strong> With some video drivers, it is a bad idea to run Quake 2 or Quake III Arena and the Q3Radiant editor. The drivers just will not sustain two demanding OpenGL applications simultaneously. This feature is best left turned off.
+
+</ul>
+<!-----============ Below is old ==========---->
+
+
+<h2><a name = "projfile">The Project File</a></h2>
+The project file contains the paths for the various GTKRadiant file-processing functions. Using the installer to set up the editor should write these for you.
+
+<p><span class = "subheading">New Project</span>
+<div class = "menu">(Menu: File &gt; New Project)</div>
+<br>This creates a new folder (which you must name) in your Quake III Arena or RTCW directory. 
+<br>This is a good function for mods. You can use a different directory other then baseq3 if you plan to have alot of new resources and dont want to clutter it into the baseq3 folder. 
+
+<p><span class = "subheading">Load Project</span>
+<div class = "menu">(Menu: File &gt; New Project)</div>
+<br>This opens up a browse directory pointed at the scripts directory. It is looking for a text file with a .qe4 file extension.
+
+<p><span class = "subheading">Changing the Project File</span>
+<div class = "menu">(Menu: File &gt; Project Settings)</div>
+<br>You can edit the project file by changing the pathnames to various functions in field of the dialogue window that pops up.  HOWEVER, before doing this, you should make a backup copy of your Quake project file and give it a new name. Make your changes to this new file. If you mess things up, you can always reload the original. This is a good thing to do if you are making maps for a mod that uses a separate set of definitions for entities or directories for textures and want to easily change between types of projects.
+
+<p><strong>Project Settings</strong>
+<ul><strong>Basepath:</strong> This traces a path, beginning in your root directory to the baseq3 where the editor expects to find resources.
+<p><strong>Mapspath:</strong> This traces a path, beginning in your root directory, to the location where maps are saved and from which they are loaded. The default is the maps directory.
+
+ 
+
+<p><strong>Rshcmd:</strong> This means "remote shell command." Use it only if you are directing a remote processing device (not your editing computer) to compile maps. The syntax for the field is: "rsh [processor name]"
+
+ 
+
+<p><strong>Remotebasepath:</strong> If you are running your compile from your editing computer, this should be the same as your basepath.  If you are working off a remote compling device, this should trace the full path to the to the baseq3 folder where the compiler will find the resources it requires. 
+
+ 
+
+<p><strong>Entitypath:</strong> This traces a path to the definition file for your game entities. This can either be a .c file which contains the game code, or a .def file which contains more instructive information about the entities.
+<br><br>Note: As of GTKRadiant 1.2.1 the default path for this is "Radiant", also known as the new game packs style it uses which allows for the remote installation of GTKRadiant anywhere on your computer.
+ 
+
+<p><strong>Texturepath:</strong> This traces a path, beginning in your root directory, to the location from which textures are loaded. The default is the textures directory.
+</ul>
+ 
+
+<p><strong>Menu commands</strong>
+<br>These commands are your map compile commands. You can CHANGE these commands or ADD your own. Each new command must start with “bsp_” The following is the compile command string for “bsp_Fullvis” taken off one of our project files.
+
+<ul class = "type">! q3map $ && ! q3map -vis -threads 8 $ && ! q3map -light -threads 8 $</ul>
+
+<p><strong>Command parameters:</strong>
+
+<p><table>
+<tr valign = "top">
+	<td><strong>!</strong></td>
+	<td>The exclamation mark is replaced by the contents of the rshcmd field. It is the path to the processor.</td>
+</tr>
+<tr valign = "top">
+	<td><strong>$</strong></td>
+	<td>The dollar sign is replaced by the Mapspath.</td>
+</tr>
+<tr valign = "top">
+	<td><strong>&&</strong></td>
+	<td>The double ampersand is the command terminator (end of command)</td>
+</tr>
+<tr valign = "top">
+	<td><strong>q3map</strong></td>
+	<td>This is the process command. Without a switch after it, it performs the .bsp compile phase.</td>
+</tr>
+<tr valign = "top">
+	<td><strong>-vis</strong></td>
+	<td>This is a switch to select the vis compile phase.</td>
+</tr>
+<tr valign = "top">
+	<td><strong>-light</strong></td>
+	<td>This is a switch to select the lighting compile phase.</td>
+</tr>
+<tr valign = "top">
+	<td><strong>-threads</strong></td>
+	<td>This is a switch to break the compile up into a number of different processor threads. The number of processors follows the switch parameter.</td>
+</tr>
+</table>
+ 
+
+<p><strong>Other parameters</strong>
+<p><table>
+<tr valign = "top">
+	<td><strong>-onlyents</strong></td>
+	<td>Process only the entities in the map.</td>
+</tr>
+<tr valign = "top">
+	<td><strong>-fast</td>
+	<td>A quicker process. However, it treats the map as if it were all one vis area.</td>
+</tr>
+<tr valign = "top">
+	<td><strong>-extra</strong></td>
+	<td>As in -light -extra. This is a second lighting pass that more finely subdivides the map into areas of light and shadow.</td>
+</tr>
+<tr valign = "top">
+	<td><strong>-nowater</strong></td>
+	<td>Compiled without liquids in the map. Used in the first compile phase only.</td>
+</tr>
+<tr valign = "top">
+	<td><strong>-nocurves</strong></td>
+	<td>Compiles without curves in the map. Used in the first compile phase only.</td>
+</tr>
+</table>
+ 
+
+<p><strong>Misc settings</strong>
+<br><strong>Use brush primitives in MAP files.</strong>
+<br>Once this is set for a map, the program converts the texture mapping to this format. Once chosen, there is no going back to the old format. Brush primitives are described in detail under the Working with Textures section.
+
+<h2><a name = "setwin">Setting up the Windows</a></h2>
+There are six configurable windows in Q3Radiant. 
+
+<p><span class = "subheading">The Camera Window (CAM)</span>
+<br>The Camera window initially shows a gray field.  This is where the 3D in-progress view of your map appears.  You can SHIFT + click mouse button 1 to select objects in this window.  If the images in this window appear overly dark, you can adjust the gamma value. Open the Misc menu and select Gamma. Enter a value between 0 and 1 for the light value. Close the program. Reopen the program. Check the darkness. Repeat this until you have a value you like.
+
+<p><span class = "subheading">Entity/Texture/Console/Group Window</span>
+<br>Depending on the Windows layout view that you’ve chosen, one or more of the following sub-windows share this window. They are selectable by the tab at the bottom of the window, or by shortcut keys.
+
+<p><strong>Entity Window</strong>
+<div class = "menu">(Shortcut: N)</div>
+The Entity window is one of four windows that share the same window space: Console, Entity and Texture and Group. The entity window is used to create and modify the properties of game entities. The uppermost box in this window contains the entity names. Use the scroll bar to find the one you want or for speed, type in the first letter of the class of entity you desire (“w” for weapon, “I” for item and so on). Refer to the Working with Entities section for more details on this.
+
+<p><strong>Texture Window</strong>
+<div class = "menu">(Shortcut: T)</div>
+The Texture window displays textures that have been loaded from the texture directories for easy use. The texture subset tool (set in preferences) allows you to quickly jump to a texture if you know the first few letters of its name. The scrollbar tool adds normal Windows functionality to the window. The most common method of navigating the window is to right-mouse click and drag through the window contents. SHIFT + right-mouse click and drag speeds up the rate of movement through the window’s contents. A thin green outline around a texture indicates a non-shadered texture in use in the map. A thin white outline indicates a shadered texture. A bold red outline indicates a selected texture.
+
+<p><strong>Console Window</strong>
+<div class = "menu">(Shortcut: O)</div>
+The console tracks the editor’s processes, like loading, saving, and compiling.  When you compile (selecting an option from the bsp menu), the contents of the console are dumped into the junk.txt file in your Temp file folder on your root drive. In the Split Window view layout, the Console window is always in view.
+
+<p><strong>Groups Window</strong>
+<div class = "menu">(Shortcut: none)</div>
+This window will deal with the future grouping functions that will soon be a part of the editor. At this time, it is only a non-functioning window.
+
+<p><span class = "subheading">Z-axis Scale Window</span>
+<br>This window is used by three of the four views to show the Z-axis position (height) of the Point of View and any selected map components.
+
+<p><span class = "subheading">Map Window(s)</span>
+<p><span class = "subheading">The Grid</span>
+<br>Think of the Map window as a piece of graph paper, neatly divided into squares. However, unlike graph paper, you can change the size of the grid to fit your needs of the moment. You can change grid size from the Grid menu, but it’s faster to learn the key shortcuts listed below.
+
+<p><strong>Setting Grid Size</strong>
+ 
+<p><table cellpadding = 3>
+<tr>
+	<th>Grid size</th>
+	<th>Key</th>
+</tr>
+<tr>
+	<td>1 unit grid</td>
+	<td align = "center">(1)</td>
+</tr>
+<tr>
+	<td>2 unit grid</td>
+	<td align = "center">(2)</td>
+</tr>
+<tr>
+	<td>4 unit grid</td>
+	<td align = "center">(3)</td>
+</tr>
+<tr>
+	<td>8 unit grid</td>
+	<td align = "center">(4)</td>
+</tr>
+<tr>
+	<td>16 unit grid</td>
+	<td align = "center">(5)</td>
+</tr>
+<tr>
+	<td>32 unit grid</td>
+	<td align = "center">(6)</td>
+</tr>
+<tr>
+	<td>64 unit grid</td>
+	<td align = "center">(7)</td>
+</tr>
+<tr>
+	<td>Grid Down</td>
+	<td>Decreases the size of the grid. [ key</td>
+</tr>
+<tr>
+	<td>Grid Up</td>
+	<td>Increases the size of the grid. ] key</td>
+</tr>
+</table>
+ 
+
+<p><strong>Grid and Window Layouts</strong>
+<br>There are four distinct ways of laying out the work windows for Q3Radiant.
+
+<p><div class = "tip"><strong>Design Notes:</strong>
+<br>Try not to build architecture with a grid smaller than 8 units.
+<br>Use a smaller grid if you need to build small details.
+<br>Use a large grid (32 or 64) for roughing in a level.
+<br>Use a large grid for moving large chunks of architecture around.</div>
+
+<p><strong>Snap to Grid</strong>
+<br>When this is checked, the edges and vertices of brushes and patches will “snap” to grid coordinates. Unless you are attempting some very fussy maneuvering of a map component, Snap to Grid makes life much easier. In fact, if you are building objects out of curve patches, it is crucial that you be able to line up patch control points with the vertices of surrounding solid geometry brushes.
+
+<p><span class = "subheading">Colors</span>
+<br>Q3Radiant allows you to select the colors of your grids and tools. Because the manual refers to the colors of some features, you may wish to wait until you are more comfortable using the editor before changing too many things.  You can always revert to the Q3Radiant defaults, should you choose change too much.
+
+<p>To change Map window and Texture window colors, select the “Misc” menu and choose colors. The pop-up lists a number of options.
+
+<p><strong>Themes</strong>
+<br>Brings up three options: 
+
+<ul><strong>QE4 Original:</strong> The settings for id’s original Quake 2 editor
+<br><strong>Q3Radiant Original:</strong> The default setting.
+<br><strong>Black & Green:</strong> a black background with a green grid major.
+</ul>
+
+<p>Each of the following options opens the Windows color selector.
+
+<p><strong>Grid Background…</strong>
+<br>The background color for the map window.
+
+<p><strong>Texture Background…</strong>
+<br>The background color behind the textures in the texture window. This is probably best left a neutral color.
+
+<p><strong>Grid Major…</strong>
+<br>These bolder grid lines mark 64 unit increments in the map window. These never change.
+
+<p><strong>Grid Minor…</strong>
+<br>The finer grid lines in the map window.
+
+<p><strong>Grid Text…</strong>
+<br>The color of the scale numbers along the left and top of the map window.
+
+<p><strong>Grid Blocks…</strong>
+<br>These lines mark the 1024 x 1024 unit grids on the map.
+
+<p><strong>Default Brush…</strong>
+<br>This is the color of unselected brushes in the map.
+
+<p><strong>Selected Brush…</strong>
+<br>The color of selected brushes in the map.
+
+<p><strong>Active View Name…</strong>
+<br>This is the text that says “XY Top” or “YZ Side” or “XZ Front” in the map view window(s).
+
+
+
+<p align = "center"><a href = "pg1_1.htm">Back</a> | <a href = "../index.htm">Home</a> | <a href = "../ch02/pg2_1.htm">Next</a>
+</body>
+</html>

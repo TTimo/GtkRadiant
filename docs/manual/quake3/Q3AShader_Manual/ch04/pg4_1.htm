@@ -1,0 +1,64 @@
+<html>
+<head>
+<title>Quake III Arena Shader Manual: Editor Specific Shader Instructions</title>
+<link rel = "stylesheet" type = "text/css" href = "../styles/q3rad.css">
+</head>
+<body>
+<h1 class = "MsoTitle">Q3Radiant Shader Manual</h1>
+<hr>
+<h1>5 Editor specific shader instructions</h1>
+These instructions only affect the texture when it is seen in the Q3Radiant editor. They should be grouped with the surface
+parameters but ahead of them in sequence.
+
+<h2><a name = "edimg">5.1 qer_editorimage &lt;texture path/texturename&gt;</a></h2>
+This keyword creates a shader name in memory, but in the editor, it displays the TGA art image specified in qer_editorimage (in the example below this is textures/eerie/lavahell.tga).
+
+<p>The editor maps a texture using the size attributes of the TGA file used for the editor image. When that editor image represents a shader, any texture used in any of the shader stages will be scaled up or down to the dimensions of the editor image. If a 128x128 pixel image is used to represent the shader in the editor, then a 256x256 image used in a later stage will be shrunk to fit. A 64x64 image would be stretched to fit. Be sure to check this on bouncy, acceleration, and power-uppads placed on surfaces other than 256 x 256. Use <b>tcMod scale</b> to change the size of the stretched
+texture. Rememberthat <b>tcMod scale</b> 0.5 0.5 will double your image, while <b>tcMod scale</b> 2 2will halve it.
+
+<p><div class = "tip"><b>Design Notes:</b> The base_light and gothic_light shaders contain numerous uses of this. It can be very useful for making different light styles (mostly to change the light brightnesses) without having to create a new piece of TGA art for each new shader.</div>
+
+
+<p><pre class = "type">textures/liquids/lavahell2//path and name of new texture
+{
+qer_editorimagetextures/eerie/lavahell.tga
+//based on this
+qer_nocarve
+//cannot be cut by CSG subtract
+surfaceparm noimpact
+//projectiles do not hitit
+surfaceparm lava
+//has the game properties of lava
+surfaceparm nolightmap
+//environment lighting does not affect
+q3map_surfacelight 3000
+//light is emitted
+tessSize 256
+//relatively large triangles
+cull disable
+//no sides are removed
+deformVertexes wave 100sin 5 5 .5 0.02
+fogparms 0.85191420.309723 0.0 128 128
+{
+maptextures/eerie/lavahell.tga
+//base texture artwork
+tcMod turb .25 0.2 1 0.02
+//texture is subjected to turbulence
+tcMod scroll 0.1 0.1
+//the turbulence is scrolled
+}
+}
+</pre>
+
+<h2><a name = "nocarve">5.2 qer_nocarve</a></h2>
+A brush marked with this instruction will not be affected by CSG subtract functions. It is especially useful for water and fog textures.
+
+<h2><a name = "trans">5.3 qer_trans &lt;value&gt;</a></h2>
+This parameter defines the percentage of transparency that a brush will have when seen in the editor (no effect on game
+rendering a tall). It can have a positive value between 0 and 1. The higher the value, the less transparent the texture.
+Example: qer_trans 0.2 means the brush is 20% opaque and nearly invisible.
+
+<p align = "center"><a href = "../ch03/pg3_1.htm">Back</a> | <a href = "../index.htm">Home</a> | <a href = "../ch05/pg5_1.htm">Next</a>
+
+</body>
+</html>

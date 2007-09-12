@@ -1,0 +1,265 @@
+<html>
+<head>
+<title>Q3Radiant Editor Manual: Page 3.1</title>
+<link rel = "stylesheet" type = "text/css" href = "../styles/q3rad.css">
+</head>
+<body>
+<h1 class = "MsoTitle">Q3Radiant Editor Manual</h1>
+<hr>
+<h1><a name = "mapbuild">Map Building Basics</a></h1>
+Once you have the editor installed and the preferences set, open the map and let’s get started.
+
+<h2><a name = "move">Moving Around</a></h2>
+There are a number of ways to move your point of view around in the map and camera windows. Some are easy to master. Others are a bit trickier. Find one that works for you and master it.
+
+ 
+<p><span class = "subheading">Moving in All Directions</span>
+<br>All movement directions are given relative to directions in the XY map. When other map views are shown, movement is still calculated in terms of the XY view. Key press movement occurs in discrete increments.
+
+ 
+<p><table>
+<tr>
+	<td><strong>Forward (in facing direction)</strong></td>
+	<td><span class = "menu">(Up Arrow Key) or (Keypad 8)</span></td>
+</tr>
+<tr>
+	<td><strong>Turn left</strong></td>
+	<td><span class = "menu">(Left Arrow Key) or (Keypad 4)</span></td>
+</tr>
+<tr>
+	<td><strong>Turn right</strong></td>
+	<td><span class = "menu">(Right Arrow Key) or (Keypad 6)</span></td>
+</tr>
+<tr>
+	<td><strong>Backward</strong></td>
+	<td><span class = "menu">(Down Arrow Key) or (Keypad 2)</span></td>
+</tr>
+<tr>
+	<td><strong>Move up</strong></td>
+	<td><span class = "menu">(D)</span></td>
+</tr>
+<tr>
+	<td><strong>Move down</strong></td>
+	<td><span class = "menu">(C)</span></td>
+</tr>
+<tr>
+	<td><strong>Look up</strong></td>
+	<td><span class = "menu">(A)</span></td>
+</tr>
+<tr>
+	<td><strong>Look down</strong></td>
+	<td><span class = "menu">(Z)</span></td>
+</tr>
+<tr>
+	<td><strong>Level View</strong></td>
+	<td><span class = "menu">(END)</span></td>
+</tr>
+</table>
+
+<p><span class = "subheading">Flying … through the Map (and other 3D commands)</span>
+<br>Some mappers prefer using mouse-fly to move around their map. Mousefly works by clicking and pressing with the Mouse button 2 (Right mouse button) on the Camera window. This takes a lot of practice to master. Clicking farther away from the window center increases the speed of movement.
+
+<p><table>
+<tr>
+	<td><strong>Forward (in facing direction)</strong></td>
+	<td><span class = "menu">(Right Mouse click above of window center)</span></td>
+</tr>
+<tr>
+	<td><strong>Turn left</strong></td>
+	<td><span class = "menu">(Right Mouse click left of window center)</span></td>
+</tr>
+<tr>
+	<td><strong>Turn right</strong></td>
+	<td><span class = "menu">(Right Mouse click right window center)</span></td>
+</tr>
+<tr>
+	<td><strong>Backward</strong></td>
+	<td><span class = "menu">(Right Mouse click below window center)</span></td>
+</tr>
+<tr>
+	<td><strong>Move up</strong></td>
+	<td><span class = "menu">(D)</span></td>
+</tr>
+<tr>
+	<td><strong>Move down</strong></td>
+	<td><span class = "menu">(C)</span></td>
+</tr>
+<tr>
+	<td><strong>Look up</strong></td>
+	<td><span class = "menu">(A)</span></td>
+</tr>
+<tr>
+	<td><strong>Look down</strong></td>
+	<td><span class = "menu">(Z)</span></td>
+</tr>
+<tr>
+	<td><strong>Level View</strong></td>
+	<td><span class = "menu">(END)</span></td>
+</tr>
+</table> 
+
+<p><span class = "subheading">Zoom with a View</span>
+<br>The zoom keys increase or decrease the visual scale of the map, letting you move in close to work with small details or move away to see the entire map at once. Currently, there are 24 steps of zoom, from most distant to closest. If Quad view is used (XY, YZ, and XZ views simultaneously), all three windows may zoomed at different scales. The Z-axis scale window is also zoomed separately
+
+ 
+
+<p><strong>Zoom in</strong>
+<br><span class = "menu">(DELETE)</span>
+
+ 
+
+<p><strong>Zoom out</strong>
+<br><span class = "menu">(INSERT)</span>
+
+ 
+
+<p><strong>Z-axis Zoom in</strong>
+<br><span class = "menu">(CTRL + DELETE)</span>
+
+ 
+
+<p><strong>Z-axis Zoom out</strong>
+<br><span class = "menu">(CTRL + INSERT)</span>
+
+ 
+
+<p><span class = "subheading">Jump to Location</span>
+<br><span class = "menu">(CTRL + Middle Mouse Button)</span>
+
+<br>Click on a 2D map or the Z-axis window and your point of view immediately moves to that location. In the 2D map windows, neither the facing, nor the “height” of the point of view changes.
+
+ 
+
+<p><span class = "subheading">Moving the Maps Around</span>
+<br>A right-mouse-button click and drag on a 2D Map window will cause the map to be dragged, allowing you to easily reposition what is being viewed.
+
+ 
+
+<h2><a name = "basictut">Basic Construction Tutorial</a></h2>
+ 
+
+This is a simple, step-by-step guide to making your first room. Before attempting it, you may want to familiarize yourself with some of the Brush selecting and handling tools. A Quake III Arena aficionado who goes by the handle “The Dog!” posted this simple tutorial on a Quake III Arena on-line message board. It appears here with his permission.  It will walk you through creating a new map file, making your first “brush,” adding a start spot and a light and then compiling the map.
+
+<p><span class = "subheading">The Dog!’s Ten Quick-n-Dirty steps to a SIMPLE room:</span>
+ 
+
+<ol><li> <strong>Create new map:</strong>
+ 
+
+<ol type = "a"><li>Click file, new map</ol>
+
+ 
+
+<p><li><strong>Create a small hollow room (make a box and hollow it out):</strong>
+ 
+
+<ol type = "a"><li><strong>Make a box.</strong> In the XY Top window, click/hold your left mouse button at coordinates 256,-256 (upper left) - then drag your mouse to the -256,256 (lower right) [you should see a red square appear in grid].
+
+ 
+
+<p><li><strong>Make the box taller.</strong>  In the Z Window  (this is also called the height bar): This brush appears as a red box. Click/hold your left mouse button above the upper edge of the box and drag that bar up to about 256. [you have just raised the height of the box]
+
+ 
+
+<p><li><strong>Make it hollow.</strong> On your Toolbar below the Menu bar, locate the 'Make Hollow' Button (should be a red box with a dotted box inside of it )located under the M in Misc).  Press that button. This breaks the box up into six pieces: four walls, a ceiling and a floor.  [you should now see a hollow room in the texture view window]
+</ol>
+ 
+
+<p><li><strong>Press Escape to deselect the box</strong> (you are finished with room/box for now).
+
+ 
+
+<p><li><strong>Add a player starting point:</strong>
+
+ 
+
+<ol type = "a"><li><strong>Bring up the Easy Entity Menu.</strong> With your pointer over the room in the XY Top window, right mouse click INSIDE the newly created room box to open up the easy entity menu.
+
+ 
+
+<p><li><strong>Place a Start Spot.</strong> Select info, then select info_player_deathmatch. [you should see a small pink box appear - this is where you will start in this map anytime its loaded]
+
+ 
+
+<p><li><strong>Is it in there?</strong> Make sure that your new starting point is 'really inside' the room that you have created.
+
+ 
+
+<ol type  "i"><li>Click the <strong><em>xyz button</em></strong> on your toolbar so that you can toggle through each 'view' of that coordinate (XY top, XZ front, or YZ side).
+
+ 
+
+<p><li>Watch the red box (<strong>info_player_deathmatch</strong>) as you toggle through each view to make sure the red box is inside room
+
+ 
+
+<p><li>If there is a view it is not located inside - simply stop and drag it inside the box. (You can learn how to put it in optimal places later), until it is totally inside the room.
+</ol>
+</ol>
+
+<p><li><strong>Press Escape to deselect the info_player_deathmatch item.</strong>
+
+<br>The box now turns into a solid pink, box outline.
+
+ 
+
+<p><li><strong>Now add some textures:</strong>
+
+ 
+
+<ol type = "a"><li><strong>Load up Textures.</strong>  Click on the texture menu and drag down to select the gothic_wall texture directory.
+
+<li><strong>Open Texture window.</strong>  Press “T” to open the texture window. It should be full of wall textures.
+
+<li><strong>That wall will do just fine.</strong> Then decide what wall surface you want to apply the texture to. Hold the left-CTRL and the left-SHIFT key down and then left click on a wall. The wall will turn red.
+
+<li><strong>Pick a Texture, any Texture.</strong> in the 'texture view' window, left mouse click on any wall texture.  A red border will now surround this texture. And presto, the wall becomes that texture too.
+
+<li>Repeat this step for all the walls that you want to apply textures to.
+</ol>
+
+ 
+
+<p><li><strong>Save your map.</strong>
+<br>The editor doesn’t like to work with “unnamed” map files. From the menu, select File &gt; Save. Name the map “test1”. Always use lower case for your map names.
+
+ 
+
+<p><li><strong>Add a light.</strong>
+
+<ol type = "a"><li><strong>Bring up the Easy Entity Menu Again.</strong> With your pointer over the room in the XY Top window, right-mouse-click INSIDE the newly created room box to open up the easy entity menu.
+
+ 
+
+<li><strong>Place a Light.</strong> Select info, and then select light. [You should see a small red box appear (smaller than the player start).]
+
+<li><strong>Move it into place.</strong> Do the same procedure you did for the player start spot, making sure that this light is inside the room.
+
+<li><strong>Deselect the light.</strong> It will become a green box.
+</ol>
+
+ 
+
+<p><li><strong>Compile it.</strong>
+<br>In the BSP menu, select “bsp_fastvis”. Wait patiently for the program to finish three phases of compile: bsp, vis, light.
+
+ 
+
+<p><li><strong>Start ‘er up.</strong>
+<br>Start your Quake III Arena game.  When the menu appears, hit the tilda key (~). On most American keyboards, this is in the upper left corner of the keyboard, below ESC.
+
+<ol type = "a">
+<li>Set your game to run the map. In the console, type "/sv_pure 0"
+<li>Enter the <strong>Devmap</strong>. In the console, type “\devmap test1” and then ENTER.
+<li><strong>Play it for all it’s worth.</strong> The map should start and you will be standing in the center of your first room.
+</ol>
+</ol>
+
+ 
+
+<p>Now go make something more complicated on your own!
+
+<p align = "center"><a href = "../ch01/pg1_2.htm">Back</a> | <a href = "../index.htm">Home</a> | <a href = "../ch04/pg4_1.htm">Next</a>
+
+</body>
+</html>

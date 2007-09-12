@@ -1,0 +1,209 @@
+<html>
+<head>
+<title>Q3Radiant Editor Manual: Appendix B4</title>
+<link rel = "stylesheet" type = "text/css" href = "../styles/q3rad.css">
+</head>
+<body>
+<h1 class = "MsoTitle">Q3Radiant Editor Manual</h1>
+<hr>
+<h1>Appendix B: Entity Descriptions</h1>
+<h2><a name = "info">Info_* Entities</a></h2>
+
+<p><div class = "subheading">info_camp</div>
+
+<b>Map Entity Color:</b> Dark green (0 0.5 0)
+
+<br><b>Dimensions:</b> (-8 -8 -8) (8 8 8)
+
+<br><b>Game Function:</b> This atttracts bots which have a camping
+preference in their A.I. characteristics. It should be placed at
+least 32 units away from any brush surface.
+
+
+
+<p><strong>Keys</strong>
+<br><b>range:</b> number of units that the bot can move away from
+camp entity while camping on it.
+
+<br><b>weight:</b> number that is compared against the weight
+assigned to all the other camp spots in the map to determine if a
+bot chooses to camp there. The value is normalized against all
+other weight values.
+
+
+
+<p><strong>Notes</strong>
+
+<br>Examples of Q3A bots which have a high camping preference are:
+Razor, Tank Jr., Grunt, Patriot and Doom. Examples of Q3A bots
+which have a low camping preference are: Klesk, Mynx, Sarge, Keel
+and Xaero. Info_Camp entities should be reachable by "normal"
+means, including relatively non-complex rocket jumps.
+
+<p><div class = "subheading">info_notnull</div>
+
+<b>Map Entity Color:</b> Dark green (0 0.5 0)
+
+<br><b>Dimensions:</b> (-8 -8 -8) (8 8 8)
+
+<br><b>Game Function:</b> Used as a positional target for entities
+that can use directional pointing. A target_position can be used
+instead of this but was kept in Q3A for legacy purposes.
+
+
+
+<p><strong>Keys</strong>
+
+<br><b>targetname:</b> must match the target key of entity that uses
+this for pointing.
+
+<br><b>notfree:</b> when set to 1, entity will not spawn in "Free
+for all" and "Tournament" modes.
+
+<br><b>notteam:</b> when set to 1, entity will not spawn in
+"Teamplay" and "CTF" modes.
+
+<br><b>notsingle:</b> when set to 1, entity will not spawn in Single
+Player mode (bot play mode).
+
+
+
+<p><div class = "subheading">info_null</div>
+
+<b>Map Entity Color:</b> Dark green (0 0.5 0)
+
+<br><b>Dimensions:</b> (-8 -8 -8) (8 8 8)
+
+<br><b>Game Function:</b> Used as a positional target for light
+entities to create a spotlight effect. A target_position can be
+used instead of this but was kept in Q3A for legacy purposes.
+
+
+
+<p><strong>Keys</strong>
+
+<br><b>targetname:</b> must match the target key of entity that uses
+this for pointing.
+
+<br><b>notfree:</b> when set to 1, entity will not spawn in "Free
+for all" and "Tournament" modes.
+
+<br><b>notteam:</b> when set to 1, entity will not spawn in
+"Teamplay" and "CTF" modes.
+
+<br><b>notsingle:</b> when set to 1, entity will not spawn in Single
+Player mode (bot play mode).*/
+
+
+
+<p><div class = "subheading">info_player_deathmatch</div>
+
+<b>Map Entity Color:</b> Pink (1 0 0)
+
+<br><b>Dimensions:</b> (-16 -16 -24) (16 16 32)
+
+<br><b>Game Function:</b> Normal player spawning location for Q3A
+levels.
+
+
+
+<p><strong>Keys</strong>
+
+<br><b>angle:</b> direction in which player will look when spawning
+in the game. Does not apply to bots.
+
+<br><b>target:</b> this can point at a target_give entity for
+respawn freebies.
+
+<br><b>nobots:</b> when set to 1, bots will never use this spawn
+point to respawn in the game.
+
+<br><b>nohumans:</b> when set to 1, human players will never use
+this spawn point to respawn in the game.
+
+<br><b>notfree:</b> when set to 1, entity will not spawn in "Free
+for all" and "Tournament" modes.
+
+<br><b>notteam:</b> when set to 1, entity will not spawn in
+"Teamplay" and "CTF" modes.
+
+<br><b>notsingle:</b> when set to 1, entity will not spawn in Single
+Player mode (bot play mode).
+
+
+
+<p><strong>Check Boxes/Spawnflags</strong>
+
+<br>INITIAL: makes the spawnpoint the initial place for the player
+to spawn at the beginning of the game. This is also where the
+player spawns as a spectator.
+
+
+
+<p><div class = "tip"><b>Design Tip:</b> If you include an
+info_player_deathmatch entity in a CTF map, players from both teams
+can respawn at that location. Great for placing respawn spots in
+contested central battleground areas.</div>
+
+<p><div class = "subheading">info_player_intermission</div>
+
+<b>Map Entity Color:</b> Pink (1 0 1)
+
+<br><b>Dimensions:</b> (-16 -16 -16) (16 16 16)
+
+<br><b>Game Function:</b> Camera for intermission screen between
+matches. This also automatically generates the podium for bot arena
+matches (see Notes). Can be aimed by setting the "angles" key or
+targeting an pointing to an aiming entity. Use only one per
+level.
+
+
+
+<p><strong>Keys</strong>
+
+<br><b>angles:</b> alternate "pitch, yaw, roll" angles method of
+aiming intermission camera (default 0 0 0).
+
+<br><b>target:</b> point this to an info_notnull or target_position
+entity to set the camera's pointing angles.
+
+
+
+<p><strong>Notes</strong>
+
+<br>In Single Player bot arena matches, the podium for the 1st, 2nd
+and 3rd place players at the end of the match is generated by this
+entity. The podium's origin will automatically be located 128 units
+in the direction of the camera's view and 84 units down from the y
+height of the view line at that point. It will also always be
+generated on a level plane regardless of the pointing angle of the
+camera so if that angle is too steep, part of the podium model
+might not be visible. If the origin point of the podium model is
+inside brush geometry, the podium will not draw. Make sure you
+leave at least 106 units of free space in front of where the camera
+points to otherwise the podium model won't be visible at all.
+
+
+
+<p><div class = "subheading">info_player_start</div>
+
+<b>Map Entity Color:</b> Red (1 0 0)
+
+<br><b>Dimensions:</b> (-16 -16 -24) (16 16 32)
+
+<br><b>Game Function:</b> Player spawn location. It works in Quake
+III Arena, but is not used in the id maps. Use
+info_player_deathmatch instead.
+
+
+
+<p><strong>Keys</strong>
+
+<br><b>angle:</b> direction in which player will look when spawning
+in the game.
+
+<br><b>target:</b> this can point at a target_give entity for
+respawn freebies.
+<p align = "center"><a href = "appn_b_3.htm">Back</a> | <a href = "../index.htm">Home</a> | <a href = "appn_b_5.htm">Next</a>
+</body>
+</html>

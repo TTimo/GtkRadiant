@@ -1,0 +1,8 @@
+11/19/99
+first usable version
+here is the TODO-list for next release, ( most certainly a wish list )
+
+- TODO: add hooks with the selected face and selected patch data. tell the plugin when selected face
+or selected patch has changed.
+the hooks should use a generic interface inside Radiant for "observers"
+- TODO: add other usefull texturing tools, if designers come up with good ideas

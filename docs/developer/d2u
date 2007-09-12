@@ -1,0 +1,17 @@
+#!/bin/sh
+
+for filename in $*; do
+  if [ -f $filename ]; then
+    echo -n $filename
+    tr -d '\r' < $filename > ___$filename_d2u___
+    mv ___$filename_d2u___ $filename
+    echo " converted."
+  else
+    echo "$filename is not a file."
+  fi
+done
+
+echo
+echo done.
+
+# end of d2u ...

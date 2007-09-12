@@ -1,0 +1,12 @@
+Put PrtView.dll in the Q3Radiant plugins directory.
+
+This program is pretty self explanitary, but point needs to
+be mentioned.  In the configuration menu for 3D view options,
+the lines and polygons flags are tri-state.  In the third state,
+the lines or polygons will only be drawn if the have the
+hint flag set.  Older version of q3map will not set this flag
+and the hint shader may have to be modified to set it.  As of
+this writing, I do not know all the details.
+
+Geoffrey DeWan
+gdewan@prairienet.org

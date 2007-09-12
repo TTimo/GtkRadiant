@@ -1,0 +1,102 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+<meta name="ProgId" content="FrontPage.Editor.Document">
+<title>Entity Keys and Values</title>
+</head>
+
+<body background="../pics/background.jpg" text="#FFFFFF" link="#FFFFFF" vlink="#FFFFFF" alink="#FFFFFF">
+
+<b>
+<p align="center"><font size="5">Entity Keys and Values</font></p>
+<div align="right">
+  <table border="1" cellspacing="1" width="100%" bordercolor="#808080" bgcolor="#000000" cellpadding="10">
+    <tr>
+      <td width="100%"><font FACE="Times New Roman">
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Once you’ve created the func_group that will become the terrain entity, you
+need to add the various keys and key values that make it a terrain entity.</p>
+<b>
+<p><font color="#000000">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="background-color: #FF0000">
+A word to the wise:</span></font></b> <font color="#000000"><span style="background-color: #FFFF00"> WRITE YOUR KEYS AND VALUES ON SOMETHING YOU CAN
+EASILY REFER TO DURING DEVELOPMENT!!</span></font> During the creation, testing and tweaking
+of the heightmap, you will have to reenter these key/value pairs for the terrain
+entity every time you recreate it. One thing that can make things easier is
+before replacing the terrain entity with a new mesh, open the entity window and
+click on the most complicated of the key/value pairs (usually the alphamap).
+When the new terrain func_group is in place, click on the value line and hit
+return. That’s one less thing to retype.</p>
+</font><b><font SIZE="4">
+<p>Key: Alphamap</p>
+</font><font FACE="Times New Roman">
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Value:</font></b><font FACE="Times New Roman"> The value should be the
+pathname to the art file use to assign textures to the terrain. Example:
+maps/alpha/pj_terra1.bmp. The pathname begins in the game (baseq3 or missionpack)
+directory, which includes the name of the art file.</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; The q3map compiler applies and blends the textures
+(shaders) on the terrain
+entity using a “metashader” (see Texturing the Terrain below) that
+references the art file named by the alphamap value. See the Creating the
+Alphamap section below for details.</p>
+</font><b><font SIZE="4">
+<p>Key: Layers</p>
+</font><font FACE="Times New Roman">
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Value:</font></b><font FACE="Times New Roman"> A positive integer, equal to
+the number of unique or root textures to be blended on the map. Each color on
+the alphamap’s palette corresponds to a “layer.” If you plan to blend 4
+textures, you need a layer value of 4.</p>
+</font><b><font SIZE="4">
+<p>Key: Shader</p>
+</font><font FACE="Times New Roman">
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Value:</font></b><font FACE="Times New Roman"> A pathname, beginning in the
+        missionpack/scripts directory, which includes the name of the filename and the
+name of the metashader. Example: The shader value for mpterra2 is “terrain/mpterra2”.
+“terrain” is the name of the script and mpterra2 is the name of the
+metashader used to apply texture to this terrain.</p>
+</font><b><font SIZE="4">
+<p>Key: Terrain</p>
+</font><font FACE="Times New Roman">
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Value:</font></b><font FACE="Times New Roman"> Set this to 1 to indicate that
+the func_group is a terrain entity. It’s essentially a yes/no flag.</p>
+</font><b><font SIZE="4">
+<p>Key: Min</p>
+</font><font FACE="Times New Roman">
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Value:</font></b><font FACE="Times New Roman"> Map coordinates of the minimum
+XY extents (lowest left extent) of a component piece of a multi-part terrain
+entity. This is optional, only used if you are texturing a subset of the total
+terrain area.</p>
+<p>The Min and Max extents (both must be in the entity) establish where a
+subsection of terrain fits into the overall terrain map. It lets q3map assign a
+subset of the alphamap to the entity, instead of referencing the entire alphamap.
+It could also be used on a separate terrain entity to use the same alphamap, but
+reference a different shader.</p>
+</font><b><font SIZE="4">
+<p>Key: Max</p>
+</font><font FACE="Times New Roman">
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Value:</font></b><font FACE="Times New Roman"> Map coordinates of the maximum
+XY extents (uppermost right extent) of a component piece of a multi-part terrain
+entity. This is optional, only used if you are texturing a subset of the total
+terrain area.</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; The Min and Max extents (both must be in the entity) establish where a
+subsection of terrain fits into the overall terrain map. It lets q3map assign a
+subset of the alphamap to the entity, instead of referencing the entire alphamap.
+It could also be used on a separate terrain entity to use the same alphamap, but
+reference a different shader.</p>
+</font>
+
+<p align="center"><a href="boxing_in_the_world.html">Back</a> - <a href="table_of_contents.html">Table
+of Contents</a> - <a href="creating_the_alphamap.html">Creating the Alphamap</a></p>
+
+        <p>&nbsp;</td>
+      </tr>
+    </table>
+  </div>
+</b>
+<p align="center">&nbsp;</p>
+<p align="center">&nbsp;</p>
+<p align="center">-15-</p>
+
+</body>
+
+</html>

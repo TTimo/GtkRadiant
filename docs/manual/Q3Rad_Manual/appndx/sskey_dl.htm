@@ -1,0 +1,977 @@
+<HTML>
+<HEAD>
+	<TITLE>Shortcut keys and Mouse functions in QeRadiant & Q3Radiant</TITLE>
+<link rel = "stylesheet" type = "text/css" href = "../styles/q3rad.css">
+</HEAD>
+
+<BODY BGCOLOR="white" link="CCCCCC" vlink="CCCCCC">
+<h1 class = "MsoTitle">Q3Radiant Editor Manual</h1>
+<hr>
+<h1>Appendix G: Shortcut keys and Mouse functions<br>in QeRadiant/Q3Radiant</h1>
+
+<p align=center><font face="Arial, Helvetica" color=#ff8800><b><i>By Eutectic</i></b></FONT><p>
+
+<!-- Main width control table starts here --> 
+
+<center>
+<table width=80% cellpadding=0 cellspacing=0 border=0>
+
+<!-- ============================= -->
+<!-- PAGE CONTENT - ONLY EDIT HERE -->
+<!-- ============================= -->
+
+<TR>
+<TD valign=top>
+<font face="Arial, Helvetica">
+<P><font size=5>1. <u><a name = "intro">Introduction</a></u></FONT></P>
+<P>This is a list of all the command shortcut keys and key-mouse functions in QeRadiant and Q3Radiant. Please note that there are <b>some</b> commands that work in QeRadiant and not in Q3Radiant and vice versa. This is mainly because those are actually 2 different map editors for 2 very different game engines (Quake II and Quake III Arena) even though they share a common interface. But unless otherwise specified, the commands in this list work for both editors. Also note that in <b>QeRadiant</b>, there are <b>some</b> functions that work when selected from the menus but for which the shortcut key doesn't work. Whenever this is the case, this is clearly indicated with a color coded table cell.<br><br>
+This revised version of this list reflects all the changes and additions in <b>Q3Radiant Build 189</b>.</P>
+
+<P><font size=5>2. <u><a name = "keylist">Shortcut key list</a></u></FONT></P>
+<P>The commands are sorted by category and color coding was implemented in the table boxes:
+
+<ul>
+<li><font color=#cc0000><b>Red</b></font> background:<br><br>
+This denotes shortcut keys which are listed in the Help command list but don't work.</li><br><br>
+<li><font color=#008000><b>Green</b></font> background:<br><br>
+This denotes shortcut keys or mouse functions which apply only to QeRadiant.</li><br><br>
+<li><font color=#ff8000><b>Orange</b></font> background:<br><br>
+This denotes shortcut keys or mouse functions which apply only to Q3Radiant.</li><br><br>
+<li><font color=#880088><b>Purple</b></font> background:<br><br>
+This denotes shortcut keys which are assigned to different features in QeRadiant and Q3Radiant.</li>
+</ul>
+
+</TD>
+</TR>
+
+<TR align=center>
+<TD>
+
+<TABLE border=1 borderColorDark=#666666 borderColorLight=#cccccc cellpadding=2 cellspacing=0>
+
+<TR>
+<TD align=center><font size=5 face="Arial, Helvetica"><b>Action</b></FONT></TD>
+<TD align=center><font size=5 face="Arial, Helvetica"><b>Description</b></FONT></TD>
+<TD align=center><font size=5 face="Arial, Helvetica"><b>Shortcut Key</b></FONT></TD>
+</TR>
+
+<!-- 2D view and Z view navigation & control keys -->
+
+<TR>
+<TD bgColor=#0000ff colspan=3><font face="Arial, Helvetica" color=#ffff00><b>2D view and Z view navigation & control keys</b></FONT></TD></TR>
+
+<TR>
+<TD><font face="Arial, Helvetica">Toggle View</FONT></TD>
+<TD><FONT face="Arial, Helvetica">Only used in free window mode. Toggles the 2D view on/off.</FONT></TD>
+<TD align=center><FONT face="Arial, Helvetica">CTRL+SHIFT+V</FONT></TD></TR>
+
+<TR>
+<TD><font face="Arial, Helvetica">Next View</FONT></TD>
+<TD><font face="Arial, Helvetica">Cycles the 2D view through all 3 views (top, front, side). Not used in 4 view mode.</FONT></TD>
+<TD align=center><font face="Arial, Helvetica">CTRL+TAB</FONT></TD></TR>
+
+<TR>
+<TD><font face="Arial, Helvetica">Zoom In</FONT></TD>
+<TD><font face="Arial, Helvetica">Zooms 2D view in.</FONT></TD>
+<TD align=center><font face="Arial, Helvetica">DELETE</FONT></TD></TR>
+
+<TR>
+<TD><font face="Arial, Helvetica">Zoom Out</FONT></TD>
+<TD><font face="Arial, Helvetica">Zooms 2D view out.</FONT></TD>
+<TD align=center><font face="Arial, Helvetica">INSERT</FONT></TD></TR>
+
+<TR>
+<TD><font face="Arial, Helvetica">Center On Camera</FONT></TD>
+<TD><font face="Arial, Helvetica">Centers the 2D view on the camera's current location.</FONT></TD>
+<TD align=center><font face="Arial, Helvetica">G</FONT></TD></TR>
+
+<TR>
+<TD><font face="Arial, Helvetica">Toggle Z</FONT></TD>
+<TD><FONT face="Arial, Helvetica">Only used in free window mode. Toggles the Z view on/off.</FONT></TD>
+<TD align=center><FONT face="Arial, Helvetica">CTRL+SHIFT+Z</FONT></TD></TR>
+
+<TR>
+<TD><font face="Arial, Helvetica">Z Zoom In</FONT></TD>
+<TD><font face="Arial, Helvetica">Zooms Z checker window in.</FONT></TD>
+<TD align=center><FONT face="Arial, Helvetica">CTRL+DELETE</FONT></TD></TR>
+
+<TR>
+<TD><font face="Arial, Helvetica">Z Zoom Out</FONT></TD>
+<TD><font face="Arial, Helvetica">Zooms Z checker window out.</FONT></TD>
+<TD align=center><FONT face="Arial, Helvetica">CTRL+INSERT</FONT></TD></TR>
+
+<!-- 3D view navigation & control keys -->
+
+<TR>
+<TD bgColor=#0000ff colspan=3><font face="Arial, Helvetica" color=#ffff00><b>3D view navigation & control keys</b></FONT></TD></TR>
+
+<TR>
+<TD><font face="Arial, Helvetica">Camera Back</FONT></TD>
+<TD><font face="Arial, Helvetica">Makes the POV in the 3D view move backwards.</FONT></TD>
+<TD align=center><font face="Arial, Helvetica">DOWN ARROW</FONT></TD></TR>
+
+<TR>
+<TD><font face="Arial, Helvetica">Camera Forward</FONT></TD>
+<TD><font face="Arial, Helvetica">Makes the POV in the 3D view move forward.</FONT></TD>
+<TD align=center><font face="Arial, Helvetica">UP ARROW</FONT></TD></TR>
+
+<TR>
+<TD><font face="Arial, Helvetica">Camera Left</FONT></TD>
+<TD><font face="Arial, Helvetica">Makes the POV in the 3D view look left.</FONT></TD>
+<TD align=center><font face="Arial, Helvetica">LEFT ARROW</FONT></TD></TR>
+
+<TR>
+<TD><font face="Arial, Helvetica">Camera Right</FONT></TD>
+<TD><font face="Arial, Helvetica">Makes the POV in the 3D view look right.</FONT></TD>
+<TD align=center><font face="Arial, Helvetica">RIGHT ARROW</FONT></TD></TR>
+
+<TR>
+<TD><font face="Arial, Helvetica">Camera Strafe Left</FONT></TD>
+<TD><font face="Arial, Helvetica">Makes the POV in the 3D view move left.</FONT></TD>
+<TD align=center><font face="Arial, Helvetica">COMMA ( , )</FONT></TD></TR>
+
+<TR>
+<TD><font face="Arial, Helvetica">Camera Strafe Right</FONT></TD>
+<TD><font face="Arial, Helvetica">Makes the POV in the 3D view move right.</FONT></TD>
+<TD align=center><font face="Arial, Helvetica">PERIOD ( . )</FONT></TD></TR>
+
+<TR>
+<TD><font face="Arial, Helvetica">Camera Down</FONT></TD>
+<TD><font face="Arial, Helvetica">Makes the POV in the 3D view move down.</FONT></TD>
+<TD align=center><font face="Arial, Helvetica">C</FONT></TD></TR>
+
+<TR>
+<TD><font face="Arial, Helvetica">Camera Up</FONT></TD>
+<TD><font face="Arial, Helvetica">Makes the POV in the 3D view move up.</FONT></TD>
+<TD align=center><font face="Arial, Helvetica">D</FONT></TD></TR>
+
+<TR>
+<TD><font face="Arial, Helvetica">Camera Angle Down</FONT></TD>
+<TD><font face="Arial, Helvetica">Makes the POV in the 3D view look down.</FONT></TD>
+<TD align=center><font face="Arial, Helvetica">Z</FONT></TD></TR>
+
+<TR>
+<TD><font face="Arial, Helvetica">Camera Angle Up</FONT></TD>
+<TD><font face="Arial, Helvetica">Makes the POV in the 3D view look up.</FONT></TD>
+<TD align=center><font face="Arial, Helvetica">A</FONT></TD></TR>
+
+<TR>
+<TD><font face="Arial, Helvetica">Center View</FONT></TD>
+<TD><font face="Arial, Helvetica">Centers the POV in the 3D view.</FONT></TD>
+<TD align=center><font face="Arial, Helvetica">END</FONT></TD></TR>
+
+<TR>
+<TD><font face="Arial, Helvetica">Down Floor</FONT></TD>
+<TD><font face="Arial, Helvetica">Moves the POV in the 3D view down by one floor.</FONT></TD>
+<TD align=center><font face="Arial, Helvetica">PAGE DOWN</FONT></TD></TR>
+
+<TR>
+<TD><font face="Arial, Helvetica">Up Floor</FONT></TD>
+<TD><font face="Arial, Helvetica">Moves the POV in the 3D view up by one floor.</FONT></TD>
+<TD align=center><font face="Arial, Helvetica">PAGE UP</FONT></TD></TR>
+
+<TR>
+<TD><font face="Arial, Helvetica">Toggle Camera</FONT></TD>
+<TD><FONT face="Arial, Helvetica">Only used in free window mode. Toggles the 3D view on/off.</FONT></TD>
+<TD align=center><FONT face="Arial, Helvetica">CTRL+SHIFT+C</FONT></TD></TR>
+
+<TR>
+<TD bgColor=#ff8000><font face="Arial, Helvetica">Toggle Cubic Clip</FONT></TD>
+<TD bgColor=#ff8000><font face="Arial, Helvetica">Toggles 3D view clipping on/off. This feature works in both editors but shortcut key only works in <b>Q3Radiant</b>.</FONT></TD>
+<TD bgColor=#ff8000 align=center><font face="Arial, Helvetica">CTRL+\</FONT></TD></TR>
+
+<TR>
+<TD><font face="Arial, Helvetica">Cubic Clip Zoom In</FONT></TD>
+<TD><font face="Arial, Helvetica">Makes the cubic clipping plane come in closer. Best used for speed optimizations.</FONT></TD>
+<TD align=center><font face="Arial, Helvetica">CTRL+ ]</FONT></TD></TR>
+
+<TR>
+<TD><font face="Arial, Helvetica">Cubic Clip Zoom Out</FONT></TD>
+<TD><font face="Arial, Helvetica">Makes the cubic clipping plane move further out. </FONT></TD>
+<TD align=center><font face="Arial, Helvetica">CTRL+ [</FONT></TD></TR>
+
+<TR>
+<TD bgColor=#ff0000><font face="Arial, Helvetica">Toggle Realtime</FONT></TD>
+<TD bgColor=#ff0000><FONT face="Arial, Helvetica">Toggles on/off real time 3D view camera updates.<br>
+Feature doesn't work.</FONT></TD>
+<TD bgColor=#ff0000 align=center><font face="Arial, Helvetica">CTRL+R</FONT></TD></TR>
+
+<!-- Grid control keys -->
+
+<TR>
+<TD bgColor=#0000ff colspan=3><font face="Arial, Helvetica" color=#ffff00><b>Grid 
+  control keys</b></FONT></TD></TR>
+<TR>
+<TD><font face="Arial, Helvetica">Toggle Grid</FONT></TD>
+<TD><font face="Arial, Helvetica">Turns grid view on/off.</FONT></TD>
+<TD align=center><font face="Arial, Helvetica">0</FONT></TD></TR>
+
+<TR>
+<TD><font face="Arial, Helvetica">Set Grid 1</FONT></TD>
+<TD><font face="Arial, Helvetica">Sets the grid to 1 unit.</FONT></TD>
+<TD align=center><font face="Arial, Helvetica">1</FONT></TD></TR>
+
+<TR>
+<TD><font face="Arial, Helvetica">Set Grid 2</FONT></TD>
+<TD><font face="Arial, Helvetica">Sets the grid to 2 units.</FONT></TD>
+<TD align=center><font face="Arial, Helvetica">2</FONT></TD></TR>
+
+<TR>
+<TD><font face="Arial, Helvetica">Set Grid 4</FONT></TD>
+<TD><font face="Arial, Helvetica">Sets the grid to 4 units.</FONT></TD>
+<TD align=center><font face="Arial, Helvetica">3</FONT></TD></TR>
+
+<TR>
+<TD><font face="Arial, Helvetica">Set Grid 8</FONT></TD>
+<TD><font face="Arial, Helvetica">Sets the grid to 8 units.</FONT></TD>
+<TD align=center><font face="Arial, Helvetica">4</FONT></TD></TR>
+
+<TR>
+<TD><font face="Arial, Helvetica">Set Grid 16</FONT></TD>
+<TD><font face="Arial, Helvetica">Sets the grid to 16 units.</FONT></TD>
+<TD align=center><font face="Arial, Helvetica">5</FONT></TD></TR>
+
+<TR>
+<TD><font face="Arial, Helvetica">Set Grid 32</FONT></TD>
+<TD><font face="Arial, Helvetica">Sets the grid to 32 units.</FONT></TD>
+<TD align=center><font face="Arial, Helvetica">6</FONT></TD></TR>
+
+<TR>
+<TD><font face="Arial, Helvetica">Set Grid 64</FONT></TD>
+<TD><font face="Arial, Helvetica">Sets the grid to 64 units.</FONT></TD>
+<TD align=center><font face="Arial, Helvetica">7</FONT></TD></TR>
+
+<TR>
+<TD><font face="Arial, Helvetica">Grid Down</FONT></TD>
+<TD><font face="Arial, Helvetica">Decreases the size of the grid.</FONT></TD>
+<TD align=center><FONT face="Arial, Helvetica">[</FONT></TD></TR>
+
+<TR>
+<TD><font face="Arial, Helvetica">Grid Up</FONT></TD>
+<TD><font face="Arial, Helvetica">Increases the size of the grid.</FONT></TD>
+<TD align=center><FONT face="Arial, Helvetica">]</FONT></TD></TR>
+
+<!-- Brush & entity creation and manipulation keys -->
+
+<TR>
+<TD bgColor=#0000ff colspan=3><font face="Arial, Helvetica" color=#ffff00><b>Brush & entity creation and manipulation keys</b></FONT></TD></TR>
+
+<TR>
+<TD><font face="Arial, Helvetica">Brush (3 sided)</FONT></TD>
+<TD><font face="Arial, Helvetica">Creates a 3 sided brush.</FONT></TD>
+<TD align=center><font face="Arial, Helvetica">CTRL+3</FONT></TD></TR>
+
+<TR>
+<TD><font face="Arial, Helvetica">Brush (4 sided)</FONT></TD>
+<TD><font face="Arial, Helvetica">Creates a 4 sided brush.</FONT></TD>
+<TD align=center><font face="Arial, Helvetica">CTRL+4</FONT></TD></TR>
+
+<TR>
+<TD><font face="Arial, Helvetica">Brush (5 sided)</FONT></TD>
+<TD><font face="Arial, Helvetica">Creates a 5 sided brush.</FONT></TD>
+<TD align=center><font face="Arial, Helvetica">CTRL+5</FONT></TD></TR>
+
+<TR>
+<TD><font face="Arial, Helvetica">Brush (6 sided)</FONT></TD>
+<TD><font face="Arial, Helvetica">Creates a 6 sided brush.</FONT></TD>
+<TD align=center><font face="Arial, Helvetica">CTRL+6</FONT></TD></TR>
+
+<TR>
+<TD><font face="Arial, Helvetica">Brush (7 sided)</FONT></TD>
+<TD><font face="Arial, Helvetica">Creates a 7 sided brush</FONT></TD>
+<TD align=center><font face="Arial, Helvetica">CTRL+7</FONT></TD></TR>
+
+<TR>
+<TD><font face="Arial, Helvetica">Brush (8 sided)</FONT></TD>
+<TD><font face="Arial, Helvetica">Creates a 8 sided brush.</FONT></TD>
+<TD align=center><font face="Arial, Helvetica">CTRL+8</FONT></TD></TR>
+
+<TR>
+<TD><font face="Arial, Helvetica">Brush (9 sided)</FONT></TD>
+<TD><font face="Arial, Helvetica">Creates a 9 sided brush.</FONT></TD>
+<TD align=center><font face="Arial, Helvetica">CTRL+9</FONT></TD></TR>
+
+<TR>
+<TD><font face="Arial, Helvetica">Unselect Selection</FONT></TD>
+<TD><font face="Arial, Helvetica">Deselects all currently selected objects.</FONT></TD>
+<TD align=center><font face="Arial, Helvetica">ESC</FONT></TD></TR>
+
+<TR>
+<TD><font face="Arial, Helvetica">Delete Selection</FONT></TD>
+<TD><font face="Arial, Helvetica">Deletes all currently selected objects.</FONT></TD>
+<TD align=center><font face="Arial, Helvetica">BACKSPACE</FONT></TD></TR>
+
+<TR>
+<TD><font face="Arial, Helvetica">Clone Selection</FONT></TD>
+<TD><font face="Arial, Helvetica">Creates a duplicate of the currently selected objects.</FONT></TD>
+<TD align=center><font face="Arial, Helvetica">SPACEBAR</FONT></TD></TR>
+
+<TR>
+<TD><font face="Arial, Helvetica">Drag Edges Mode</FONT></TD>
+<TD><font face="Arial, Helvetica">Toggles edge manipulation mode on/off. Edges are represented by blue dots on the brush.</FONT></TD>
+<TD align=center><font face="Arial, Helvetica">E</FONT></TD></TR>
+
+<TR>
+<TD><font face="Arial, Helvetica">Drag Vertex Mode</FONT></TD>
+<TD><font face="Arial, Helvetica">Toggles vertex manipulation mode on/off. Vertices are represented by green dots on the brush.</FONT></TD>
+<TD align=center><font face="Arial, Helvetica">V</FONT></TD></TR>
+
+<TR>
+<TD><font face="Arial, Helvetica">Brush Clip mode</FONT></TD>
+<TD><font face="Arial, Helvetica">Toggles brush clipping mode on/off.</FONT></TD>
+<TD align=center><font face="Arial, Helvetica">X</FONT></TD></TR>
+
+<TR>
+<TD><font face="Arial, Helvetica">Flip Clip</FONT></TD>
+<TD><font face="Arial, Helvetica">Switches which part of the brush is going to be clipped away on the set clip plane points while in clipping mode.</FONT></TD>
+<TD align=center><font face="Arial, Helvetica">CTRL+ENTER</FONT></TD></TR>
+
+<TR>
+<TD><font face="Arial, Helvetica">Clip Selected</FONT></TD>
+<TD><font face="Arial, Helvetica">Clips the selected brush/brushs on the set clip plane points while in clipping mode.</FONT></TD>
+<TD align=center><font face="Arial, Helvetica">ENTER</FONT></TD></TR>
+
+<TR>
+<TD><font face="Arial, Helvetica">Split Selected</FONT></TD>
+<TD><font face="Arial, Helvetica">Splits the selected brush/brushs on the set clip plane points while in clipping mode.</FONT></TD>
+<TD align=center><font face="Arial, Helvetica">SHIFT+ENTER</FONT></TD></TR>
+
+<TR>
+<TD><font face="Arial, Helvetica">Move Selection Down</FONT></TD>
+<TD><font face="Arial, Helvetica">Moves the selected object down in Z axis by units equal to the grid size (independent of current 2D view).</FONT></TD>
+<TD align=center><font face="Arial, Helvetica">KEYPAD MINUS</FONT></TD></TR>
+
+<TR>
+<TD><font face="Arial, Helvetica">Move Selection Up</FONT></TD>
+<TD><font face="Arial, Helvetica">Moves the selected object up in Z axis by units equal to the grid size (independent of current 2D view).</FONT></TD>
+<TD align=center><font face="Arial, Helvetica">KEYPAD PLUS</FONT></TD></TR>
+
+<TR>
+<TD><font face="Arial, Helvetica">Select Nudge Down</FONT></TD>
+<TD><FONT face="Arial, Helvetica">Moves the selected object down in current 2D view by units equal to the grid size.</FONT></TD>
+<TD align=center><font face="Arial, Helvetica">ALT+DOWN ARROW</FONT></TD></TR>
+
+<TR>
+<TD><font face="Arial, Helvetica">Select Nudge Up</FONT></TD>
+<TD><FONT face="Arial, Helvetica">Moves the selected object up in current 2D view by units equal to the grid size.</FONT></TD>
+<TD align=center><font face="Arial, Helvetica">ALT+UP ARROW</FONT></TD></TR>
+
+<TR>
+<TD><font face="Arial, Helvetica">Select Nudge Left</FONT></TD>
+<TD><FONT face="Arial, Helvetica">Moves the selected object left in current 2D view by units equal to the grid size.</FONT></TD>
+<TD align=center><font face="Arial, Helvetica">ALT+LEFT ARROW</FONT></TD></TR>
+
+<TR>
+<TD><font face="Arial, Helvetica">Select Nudge Right</FONT></TD>
+<TD><FONT face="Arial, Helvetica">Moves the selected object right in current 2D view by units equal to the grid size.</FONT></TD>
+<TD align=center><font face="Arial, Helvetica">ALT+RIGHT ARROW</FONT></TD></TR>
+
+<TR>
+<TD><font face="Arial, Helvetica">Snap Selection To Grid</FONT></TD>
+<TD><font face="Arial, Helvetica">Snaps the vertices of the currently selected brush or patch mesh to the grid.</FONT></TD>
+<TD align=center><font face="Arial, Helvetica">CTRL+G</FONT></TD></TR>
+
+<TR>
+<TD><font face="Arial, Helvetica">Make Detail</FONT></TD>
+<TD><font face="Arial, Helvetica">Turns selected structural brush into a detail brush.</FONT></TD>
+<TD align=center><font face="Arial, Helvetica">CTRL+M</FONT></TD></TR>
+
+<TR>
+<TD><font face="Arial, Helvetica">Make Structural</FONT></TD>
+<TD><font face="Arial, Helvetica">Turns selected detail brush into a structural brush.</FONT></TD>
+<TD align=center><font face="Arial, Helvetica">CTRL+SHIFT+S</FONT></TD></TR>
+
+<TR>
+<TD><font face="Arial, Helvetica">Dump Selected Brush</FONT></TD>
+<TD><FONT face="Arial, Helvetica">Dumps a list of the plane point coordinates of all the faces of the currently selected brush to the console view.</FONT></TD>
+<TD align=center><font face="Arial, Helvetica">SHIFT+D</FONT></TD></TR>
+
+<TR>
+<TD><font face="Arial, Helvetica">View Entity Info</FONT></TD>
+<TD><font face="Arial, Helvetica">Brings up the entity dialog window.</FONT></TD>
+<TD align=center><font face="Arial, Helvetica">N</FONT></TD></TR>
+
+<TR>
+<TD bgColor=#cc00cc><font face="Arial, Helvetica">Select Whole Entities</FONT></TD>
+<TD bgColor=#cc00cc><FONT face="Arial, Helvetica"><b>QeRadiant only</b>: Toggles feature on/off. When feature is on, selecting any single brush of a multiple brush entity automatically selects all the brushes that belong to that entity (This shortcut key does a <b>Redisperse Rows</b> in Q3Radiant).</FONT></TD>
+<TD bgColor=#cc00cc align=center><font face="Arial, Helvetica">CTRL+E</FONT></TD></TR>
+
+<TR>
+<TD bgColor=#00aa00><font face="Arial, Helvetica">Cycle Group Selection</FONT></TD>
+<TD bgColor=#00aa00><FONT face="Arial, Helvetica">Cycle selects each individual brush of currently selected bsp-model entity (<b>Select Whole Entities</b> must <b>not</b> be on in <b>QeRadiant</b>). This command was renamed <b>Patch Tab</b> in <b>Q3Radiant</b> but it's function is unchanged.</FONT></TD>
+<TD bgColor=#00aa00 align=center><font face="Arial, Helvetica">TAB</FONT></TD></TR>
+
+<TR>
+<TD><font face="Arial, Helvetica">Connect Selection</FONT></TD>
+<TD><FONT face="Arial, Helvetica">Connect entities target to targetname.</FONT></TD>
+<TD align=center><font face="Arial, Helvetica">CTRL+K</FONT></TD></TR>
+
+<TR>
+<TD><font face="Arial, Helvetica">Entity Color</FONT></TD>
+<TD><font face="Arial, Helvetica">Use this to set the "_color" key of a entity by bringing up the standard Windows RGB color selector. Used for choosing the color of lights for example.</FONT></TD>
+<TD align=center><font face="Arial, Helvetica">K</FONT></TD></TR>
+
+<!-- Texture manipulation keys -->
+
+<TR>
+<TD bgColor=#0000ff colspan=3><font face="Arial, Helvetica" color=#ffff00><b>Texture manipulation keys</b></FONT></TD></TR>
+
+<TR>
+<TD><font face="Arial, Helvetica">View Textures</FONT></TD>
+<TD><font face="Arial, Helvetica">Only used in 4 view and free window modes. Brings up the texture selection window (toggle in 4 view mode).</FONT></TD>
+<TD align=center><font face="Arial, Helvetica">T</FONT></TD></TR>
+
+<TR>
+<TD><font face="Arial, Helvetica">Surface Inspector</FONT></TD>
+<TD><font face="Arial, Helvetica">Brings up the surface properties dialog (only used to align textures in Q3Radiant).</FONT></TD>
+<TD align=center><font face="Arial, Helvetica">S</FONT></TD></TR>
+
+<TR>
+<TD><font face="Arial, Helvetica">Texture Shift Down</FONT></TD>
+<TD><font face="Arial, Helvetica">Moves texture on currently selected brush face(s) downwards. Also works for patches but might sometimes give unexpected results.</FONT></TD>
+<TD align=center><font face="Arial, Helvetica">SHIFT+DOWN ARROW</FONT></TD></TR>
+
+<TR>
+<TD><font face="Arial, Helvetica">Texture Shift Up</FONT></TD>
+<TD><font face="Arial, Helvetica">Moves texture on currently selected brush face(s) upwards. Also works for patches but might sometimes give unexpected results.</FONT></TD>
+<TD align=center><font face="Arial, Helvetica">SHIFT+UP ARROW</FONT></TD></TR>
+
+<TR>
+<TD><font face="Arial, Helvetica">Texture Shift Left</FONT></TD>
+<TD><font face="Arial, Helvetica">Moves texture on currently selected brush face(s) to the left. Also works for patches but might sometimes give unexpected results.</FONT></TD>
+<TD align=center><font face="Arial, Helvetica">SHIFT+LEFT ARROW</FONT></TD></TR>
+
+<TR>
+<TD><font face="Arial, Helvetica">Texture Shift Right</FONT></TD>
+<TD><font face="Arial, Helvetica">Moves texture on currently selected brush face(s) to the right. Also works for patches but might sometimes give unexpected results.</FONT></TD>
+<TD align=center><FONT face="Arial, Helvetica">SHIFT+RIGHT ARROW</FONT></TD></TR>
+
+<TR>
+<TD><font face="Arial, Helvetica">Texture Rotate Clockwise</FONT></TD>
+<TD><font face="Arial, Helvetica">Rotates texture clockwise on currently selected brush face(s). Also works for patches but might sometimes give unexpected results.</FONT></TD>
+<TD align=center><FONT face="Arial, Helvetica">SHIFT+PAGE DOWN</FONT></TD></TR>
+
+<TR>
+<TD><font face="Arial, Helvetica">Texture Rotate Counter-Clockwise</FONT></TD>
+<TD><font face="Arial, Helvetica">Rotates texture counter-clockwise on currently selected brush face(s). Also works for patches but might sometimes give unexpected results.</FONT></TD>
+<TD align=center><FONT face="Arial, Helvetica">SHIFT+PAGE UP</FONT></TD></TR>
+
+<TR>
+<TD><font face="Arial, Helvetica">Texture Scale Down</FONT></TD>
+<TD><font face="Arial, Helvetica">Decreases vertical scale of texture on currently selected brush<br>face(s). Also works for patches but might sometimes give unexpected results.</FONT></TD>
+<TD align=center><font face="Arial, Helvetica">CTRL+DOWN ARROW</FONT></TD></TR>
+
+<TR>
+<TD><font face="Arial, Helvetica">Texture Scale Up</FONT></TD>
+<TD><font face="Arial, Helvetica">Increases vertical scale of texture on currently selected brush face(s). Also works for patches but might sometimes give unexpected results.</FONT></TD>
+<TD align=center><font face="Arial, Helvetica">CTRL+UP ARROW</FONT></TD></TR>
+
+<TR>
+<TD><font face="Arial, Helvetica">Texture Scale Left</FONT></TD>
+<TD><font face="Arial, Helvetica">Decreases horizontal scale of texture on currently selected brush face(s). Also works for patches but might sometimes give unexpected results.</FONT></TD>
+<TD align=center><font face="Arial, Helvetica">CTRL+LEFT ARROW</FONT></TD></TR>
+
+<TR>
+<TD><font face="Arial, Helvetica">Texture Scale Right</FONT></TD>
+<TD><font face="Arial, Helvetica">Increases horizontal scale of texture on currently selected brush<br>face(s). Also works for patches but might sometimes give unexpected results.</FONT></TD>
+<TD align=center><font face="Arial, Helvetica">CTRL+RIGHT ARROW</FONT></TD></TR>
+
+<TR>
+<TD bgColor=#00aa00><font face="Arial, Helvetica">Texture Fit</FONT></TD>
+<TD bgColor=#00aa00><font face="Arial, Helvetica">Automatically fits the texture to the size of the currently selected brush face by scaling it vertically and horizontally. This shortcut only works in <b>QeRadiant</b>.</FONT></TD>
+<TD bgColor=#00aa00 align=center><font face="Arial, Helvetica">SHIFT+5</FONT></TD></TR>
+
+<TR>
+<TD bgColor=#00aa00><font face="Arial, Helvetica">Texture Fit To Face</FONT></TD>
+<TD bgColor=#00aa00><font face="Arial, Helvetica">Same as Texture Fit. This shortcut only works in <b>QeRadiant</b>.</FONT></TD>
+<TD bgColor=#00aa00 align=center><font face="Arial, Helvetica">CTRL+F</FONT></TD></TR>
+
+<TR>
+<TD bgColor=#ff8000><font face="Arial, Helvetica">Toggle Texture Lock</FONT></TD>
+<TD bgColor=#ff8000><font face="Arial, Helvetica">Toggles brush move texture alignment locking on/off. This feature works in both editors but shortcut key only works in <b>Q3Radiant</b>.</FONT></TD>
+<TD bgColor=#ff8000 align=center><font face="Arial, Helvetica">SHIFT+T</FONT></TD></TR>
+
+<TR>
+<TD bgColor=#ff8000><font face="Arial, Helvetica">Toggle Texture Rotate Lock</FONT></TD>
+<TD bgColor=#ff8000><font face="Arial, Helvetica">Toggles brush rotation texture alignment locking on/off. This feature works in both editors but shortcut key only works in <b>Q3Radiant</b>.</FONT></TD>
+<TD bgColor=#ff8000 align=center><font face="Arial, Helvetica">SHIFT+R</FONT></TD></TR>
+
+<!-- Dialogs and special features keys -->
+
+<TR>
+<TD bgColor=#0000ff colspan=3><font face="Arial, Helvetica" color=#ffff00><b>Dialogs and special features keys</b></FONT></TD></TR>
+
+<TR>
+<TD><font face="Arial, Helvetica">View Console</FONT></TD>
+<TD><font face="Arial, Helvetica">Only used in 4 view and free window modes. Brings up the console (this is a toggle function in 4 view mode).</FONT></TD>
+<TD align=center><font face="Arial, Helvetica">O</FONT></TD></TR>
+
+<TR>
+<TD><FONT face="Arial, Helvetica">Preferences</FONT></TD>
+<TD><font face="Arial, Helvetica">Brings up the user preferences dialog.</FONT></TD>
+<TD align=center><font face="Arial, Helvetica">P</FONT></TD></TR>
+
+<TR>
+<TD bgColor=#ff8000><font face="Arial, Helvetica">Entity List</FONT></TD>
+<TD bgColor=#ff8000><font face="Arial, Helvetica">Brings up the entity list "tree view" window. This feature works in both editors but shortcut key only works in <b>Q3Radiant</b>.</FONT></TD>
+<TD bgColor=#ff8000 align=center><font face="Arial, Helvetica">L</FONT></TD></TR>
+
+<TR>
+<TD bgColor=#ff8000><font face="Arial, Helvetica">Map Info</FONT></TD>
+<TD bgColor=#ff8000><FONT face="Arial, Helvetica">Brings up the map info status window. This feature works in both editors but shortcut key only works in <b>Q3Radiant</b>.</FONT></TD>
+<TD bgColor=#ff8000 align=center><font face="Arial, Helvetica">M</FONT></TD></TR>
+
+<TR>
+<TD bgColor=#00aa00><font face="Arial, Helvetica">Filter Settings</FONT></TD>
+<TD bgColor=#00aa00><font face="Arial, Helvetica">Brings up the filters dialog window. This feature only works in <b>QeRadiant</b>.</FONT></TD>
+<TD bgColor=#00aa00 align=center><font face="Arial, Helvetica">F</FONT></TD></TR>
+
+<TR>
+<TD><font face="Arial, Helvetica">Show Detail</FONT></TD>
+<TD><font face="Arial, Helvetica">Toggles display of detail brushes on/off.</FONT></TD>
+<TD align=center><font face="Arial, Helvetica">CTRL+D</FONT></TD></TR>
+
+<TR>
+<TD bgColor=#00aa00><font face="Arial, Helvetica">Animate Selected Entities</FONT></TD>
+<TD bgColor=#00aa00><font face="Arial, Helvetica">Toggles animation of selected mover entities (doors, buttons, etc.) on/off. This feature only works in <b>QeRadiant</b>.</FONT></TD>
+<TD bgColor=#00aa00 align=center><font face="Arial, Helvetica">CTRL+A</FONT></TD></TR>
+
+<TR>
+<TD><font face="Arial, Helvetica">Previous Leak Spot</FONT></TD>
+<TD><font face="Arial, Helvetica">Takes POV in the 3D view to the previous leak spot (pointfile must be loaded).</FONT></TD>
+<TD align=center><FONT face="Arial, Helvetica">CTRL+SHIFT+L</FONT></TD></TR>
+
+<TR>
+<TD bgColor=#ff8000><font face="Arial, Helvetica">Next Leak Spot</FONT></TD>
+<TD bgColor=#ff8000><font face="Arial, Helvetica">Takes POV in the 3D view to the next leak spot (pointfile must be loaded). This feature works in both editors but shortcut key only works in <b>Q3Radiant</b>.</FONT></TD>
+<TD bgColor=#ff8000 align=center><FONT face="Arial, Helvetica">CTRL+SHIFT+K</FONT></TD></TR>
+
+<!-- Misc utility keys -->
+
+<TR>
+<TD bgColor=#0000ff colspan=3><font face="Arial, Helvetica" color=#ffff00><b>Misc utility keys</b></FONT></TD></TR>
+
+<TR>
+<TD><font face="Arial, Helvetica">File Open</FONT></TD>
+<TD><font face="Arial, Helvetica">Opens a file.</FONT></TD>
+<TD align=center><font face="Arial, Helvetica">CTRL+O</FONT></TD></TR>
+
+<TR>
+<TD><font face="Arial, Helvetica">File Save</FONT></TD>
+<TD><font face="Arial, Helvetica">Saves a file.</FONT></TD>
+<TD align=center><font face="Arial, Helvetica">CTRL+S</FONT></TD></TR>
+
+<TR>
+<TD><font face="Arial, Helvetica">Exit</FONT></TD>
+<TD><font face="Arial, Helvetica">Closes the editor.</FONT></TD>
+<TD align=center><font face="Arial, Helvetica">CTRL+X</FONT></TD></TR>
+
+<TR>
+<TD><font face="Arial, Helvetica">Copy</FONT></TD>
+<TD><font face="Arial, Helvetica">Copies whatever is currently selected.</FONT></TD>
+<TD align=center><font face="Arial, Helvetica">CTRL+C</FONT></TD></TR>
+
+<TR>
+<TD><font face="Arial, Helvetica">Paste</FONT></TD>
+<TD><font face="Arial, Helvetica">Pastes what ever is in the clip board. Only works with text and Radiant's stuff.</FONT></TD>
+<TD align=center><font face="Arial, Helvetica">CTRL+V</FONT></TD></TR>
+
+<TR>
+<TD><font face="Arial, Helvetica">Undo</FONT></TD>
+<TD><font face="Arial, Helvetica">Undo. Doesn't work in all cases.</FONT></TD>
+<TD align=center><font face="Arial, Helvetica">CTRL+Z</FONT></TD></TR>
+
+<TR>
+<TD><font face="Arial, Helvetica">Redo</FONT></TD>
+<TD><font face="Arial, Helvetica">Redo. Doesn't work in all cases.</FONT></TD>
+<TD align=center><font face="Arial, Helvetica">CTRL+Y</FONT></TD></TR>
+
+<!-- Q3Radiant misc features keys -->
+
+<TR>
+<TD bgColor=#0000ff colspan=3><font face="Arial, Helvetica" color=#ffff00><b>Q3Radiant miscellaneous features keys</b></FONT></TD></TR>
+
+<TR>
+<TD bgColor=#ff8000><font face="Arial, Helvetica">View Groups</FONT></TD>
+<TD bgColor=#ff8000><font face="Arial, Helvetica">Brings up the groups dialog window.</FONT></TD>
+<TD bgColor=#ff8000 align=center><font face="Arial, Helvetica">G</FONT></TD></TR>
+
+<TR>
+<TD bgColor=#ff8000><font face="Arial, Helvetica">Toggle Size Paint</FONT></TD>
+<TD bgColor=#ff8000><FONT face="Arial, Helvetica">Momentarily displays the position + dimensions of currently selected brush(es) in the 2D view.</FONT></TD>
+<TD bgColor=#ff8000 align=center><font face="Arial, Helvetica">Q</FONT></TD></TR>
+
+<TR>
+<TD bgColor=#ff8000><font face="Arial, Helvetica">Mouse Rotate</FONT></TD>
+<TD bgColor=#ff8000><font face="Arial, Helvetica">Toggles mouse free rotation mode on/off for currently selected objects.</FONT></TD>
+<TD bgColor=#ff8000 align=center><font face="Arial, Helvetica">R</FONT></TD></TR>
+
+<TR>
+<TD bgColor=#ff8000><font face="Arial, Helvetica">Select Type All</FONT></TD>
+<TD bgColor=#ff8000><font face="Arial, Helvetica">Selects all "identical" based on type of "currently selected". If type is a surface, all solids with the same texture are selected. If type is an entity, all the other entities of its classname are selected.</FONT></TD>
+<TD bgColor=#ff8000 align=center><font face="Arial, Helvetica">SHIFT+A</FONT></TD></TR>
+
+<TR>
+<TD bgColor=#ff8000><font face="Arial, Helvetica">CSG Merge</FONT></TD>
+<TD bgColor=#ff8000><font face="Arial, Helvetica">Will merge all currently selected brushes into a single brush. If the shape and size of any one of the selected brushes would cause the merge to produce a concave solid, the merge operation is not performed.</FONT></TD>
+<TD bgColor=#ff8000 align=center><font face="Arial, Helvetica">SHIFT+M</FONT></TD></TR>
+
+<TR>
+<TD bgColor=#ff8000 height=21><font face="Arial, Helvetica">Toggle Crosshairs</FONT></TD>
+<TD bgColor=#ff8000 height=21><FONT face="Arial, Helvetica">Toggles between the regular mouse pointer and a large crosshair style pointer in the 2D view.</FONT></TD>
+<TD bgColor=#ff8000 align=center height=21><FONT face="Arial, Helvetica">CTRL+SHIFT+X</FONT></TD></TR>
+
+<TR>
+<TD bgColor=#ff8000><font face="Arial, Helvetica">Fit Texture</FONT></TD>
+<TD bgColor=#ff8000><FONT face="Arial, Helvetica">This will automatically scale the texture on the currently selected faces so one texture tile will fit exactly on the faces by default. It also brings up Surface Inspector so the texture can be fit to the faces by a different number of texture tiles than 1.</FONT></TD>
+<TD bgColor=#ff8000 align=center><font face="Arial, Helvetica">SHIFT+B</FONT></TD></TR>
+
+<TR>
+<TD bgColor=#ff8000 height=21><font face="Arial, Helvetica">Hide Selected</FONT></TD>
+<TD bgColor=#ff8000 height=21><FONT face="Arial, Helvetica">Hides all currently selected objects from the 2D/3D views.</FONT></TD>
+<TD bgColor=#ff8000 align=center height=21><FONT face="Arial, Helvetica">H</FONT></TD></TR>
+
+<TR>
+<TD bgColor=#ff8000 height=21><font face="Arial, Helvetica">Show Hidden</FONT></TD>
+<TD bgColor=#ff8000 height=21><FONT face="Arial, Helvetica">Un-hides all objects currently hidden from the 2D/3D views.</FONT></TD>
+<TD bgColor=#ff8000 align=center height=21><FONT face="Arial, Helvetica">SHIFT+H</FONT></TD></TR>
+
+<TR>
+<TD bgColor=#ff8000 height=21><font face="Arial, Helvetica">Show All Textures</FONT></TD>
+<TD bgColor=#ff8000 height=21><FONT face="Arial, Helvetica">Shows all the textures currently loaded in Q3radiant's texture window. Use this to un-set <b>Show In Use</b> in the textures menu.</FONT></TD>
+<TD bgColor=#ff8000 align=center height=21><FONT face="Arial, Helvetica">CTRL+A</FONT></TD></TR>
+
+<TR>
+<TD bgColor=#ff8000><font face="Arial, Helvetica">Patch Tab</FONT></TD>
+<TD bgColor=#ff8000><FONT face="Arial, Helvetica">Cycle selects each individual brush or patch of currently selected bsp-model entity. This command was called <b>Cycle Group Selection</b> in <b>QeRadiant</b> but it's function is unchanged.</FONT></TD>
+<TD bgColor=#ff8000 align=center><font face="Arial, Helvetica">TAB or SHIFT+TAB</FONT></TD></TR>
+
+<!-- Q3Radiant patch manipulation keys -->
+
+<TR>
+<TD bgColor=#0000ff colspan=3><font face="Arial, Helvetica" color=#ffff00><b>Q3Radiant patch manipulation keys</b></FONT></TD></TR>
+
+<TR>
+<TD bgColor=#ff8000><font face="Arial, Helvetica">Bend Mode</FONT></TD>
+<TD bgColor=#ff8000><font face="Arial, Helvetica">Toggles bend mode on/off. This is used to bend patch meshes. Follow the instructions that come up in the dialog box when you use this. Best used for making arches and such.</FONT></TD>
+<TD bgColor=#ff8000 align=center><font face="Arial, Helvetica">B</FONT></TD></TR>
+
+<TR>
+<TD bgColor=#ff8000><font face="Arial, Helvetica">Cap Current Curve</FONT></TD>
+<TD bgColor=#ff8000><font face="Arial, Helvetica">Automatically creates cap patches for the currently selected patch if it's a cylinder. For bevels and endcaps, it will bring up the cap dialog instead. The patch and its caps will then automatically be grouped in a func_group.</FONT></TD>
+<TD bgColor=#ff8000 align=center><font face="Arial, Helvetica">SHIFT+C</FONT></TD></TR>
+
+<TR>
+<TD bgColor=#ff8000><font face="Arial, Helvetica">Cycle Cap Texture Patch</FONT></TD>
+<TD bgColor=#ff8000><FONT face="Arial, Helvetica">This cycles the cap texturing type on the currently selected patch.</FONT></TD>
+<TD bgColor=#ff8000 align=center height=21><FONT face="Arial, Helvetica">CTRL+SHIFT+N</FONT></TD></TR>
+
+<TR>
+<TD bgColor=#ff8000><font face="Arial, Helvetica">Cycle Cap Texture Axis</FONT></TD>
+<TD bgColor=#ff8000><font face="Arial, Helvetica">This cycles the cap texturing axis on the currently selected patch.</FONT></TD>
+<TD bgColor=#ff8000 align=center><FONT face="Arial, Helvetica">CTRL+SHIFT+P</FONT></TD></TR>
+
+<TR>
+<TD bgColor=#ff8000><font face="Arial, Helvetica">Naturalize Patch</FONT></TD>
+<TD bgColor=#ff8000><font face="Arial, Helvetica">Makes the texture natural on the patch mesh (sometimes the textures are stretched to fit the patch, this will make the texture fit normal instead of streching it).</FONT></TD>
+<TD bgColor=#ff8000 align=center><font face="Arial, Helvetica">CTRL+N</FONT></TD></TR>
+
+<TR>
+<TD bgColor=#ff8000><font face="Arial, Helvetica">Increase Patch Row</FONT></TD>
+<TD bgColor=#ff8000><font face="Arial, Helvetica">Adds 3 rows to currently selected patch.</FONT></TD>
+<TD bgColor=#ff8000 align=center><font face="Arial, Helvetica">CTRL+KEYPAD PLUS</FONT></TD></TR>
+
+<TR>
+<TD bgColor=#ff8000><font face="Arial, Helvetica">Decrease Patch Row </FONT></TD>
+<TD bgColor=#ff8000><FONT face="Arial, Helvetica">Removes 3 rows from currently selected patch (assuming patch currently has more than 3 rows).</FONT></TD>
+<TD bgColor=#ff8000 align=center><FONT face="Arial, Helvetica">CTRL+KEYPAD MINUS</FONT></TD></TR>
+
+<TR>
+<TD bgColor=#ff8000><font face="Arial, Helvetica">Increase Patch Column</FONT></TD>
+<TD bgColor=#ff8000><font face="Arial, Helvetica">Adds 3 columns to currently selected patch.</FONT></TD>
+<TD bgColor=#ff8000 align=center><FONT face="Arial, Helvetica">CTRL+SHIFT+KEYPAD PLUS</FONT></TD></TR>
+
+<TR>
+<TD bgColor=#ff8000><font face="Arial, Helvetica">Decrease Patch Column</FONT></TD>
+<TD bgColor=#ff8000><FONT face="Arial, Helvetica">Removes 3 columns from currently selected patch (assuming patch currently has more than 3 columns).</FONT></TD>
+<TD bgColor=#ff8000 align=center><FONT face="Arial, Helvetica">CTRL+SHIFT+KEYPAD MINUS</FONT></TD></TR>
+
+<TR>
+<TD bgColor=#ff8000><font face="Arial, Helvetica">Redisperse Columns</FONT></TD>
+<TD bgColor=#ff8000><FONT face="Arial, Helvetica">Evenly re-disperses all the columns of the currently selected patch. Useful after adding new columns.</FONT></TD>
+<TD bgColor=#ff8000 align=center><FONT face="Arial, Helvetica">CTRL+SHIFT+E</FONT></TD></TR>
+
+<TR>
+<TD bgColor=#cc00cc><font face="Arial, Helvetica">Redisperse Rows</FONT></TD>
+<TD bgColor=#cc00cc><FONT face="Arial, Helvetica">Evenly re-disperses all the rows of the currently selected patch. Useful after adding new rows (this shortcut key does a <b>Select Whole Entities</b> in QeRadiant).</FONT></TD>
+<TD bgColor=#cc00cc align=center><font face="Arial, Helvetica">CTRL+E</FONT></TD></TR>
+
+<TR>
+<TD bgColor=#ff8000><font face="Arial, Helvetica">Invert Curve</FONT></TD>
+<TD bgColor=#ff8000><font face="Arial, Helvetica">This inverts the patch mesh's matrix. IOW, it changes which side of the patch the texture is applied to.</FONT></TD>
+<TD bgColor=#ff8000 align=center><font face="Arial, Helvetica">CTRL+I</FONT></TD></TR>
+
+<TR>
+<TD bgColor=#ff8000><font face="Arial, Helvetica">Invert Curve Texture X</FONT></TD>
+<TD bgColor=#ff8000><font face="Arial, Helvetica">Inverts the X value of the texture on the matrix. Use this to mirror the texture vertically on a patch.</FONT></TD>
+<TD bgColor=#ff8000 align=center><font face="Arial, Helvetica">SHIFT+I</FONT></TD></TR>
+
+<TR>
+<TD bgColor=#ff8000><font face="Arial, Helvetica">Invert Curve Texture Y</FONT></TD>
+<TD bgColor=#ff8000><font face="Arial, Helvetica">Inverts the Y value of the texture on the matrix. Use this to mirror the texture horizontally on a patch.</FONT></TD>
+<TD bgColor=#ff8000 align=center><FONT face="Arial, Helvetica">CTRL+SHIFT+I</FONT></TD></TR>
+
+<TR>
+<TD bgColor=#ff8000><font face="Arial, Helvetica">Matrix Transpose</FONT></TD>
+<TD bgColor=#ff8000><font face="Arial, Helvetica">Swaps the rows and columns on a patch. There is no physical change on the patch as such: rows become columns and vice versa. Use this to change the natural texture orientation axis on patches.</FONT></TD>
+<TD bgColor=#ff8000 align=center><FONT face="Arial, Helvetica">CTRL+SHIFT+M</FONT></TD></TR>
+
+<TR>
+<TD bgColor=#ff8000><font face="Arial, Helvetica">Make Overlay Patch</FONT></TD>
+<TD bgColor=#ff8000><FONT face="Arial, Helvetica">Turns on display of the currently selected patches control points. The display of the patches control points will remain on until turned off by <b>Clear Patch Overlays</b>.</FONT></TD>
+<TD bgColor=#ff8000 align=center><font face="Arial, Helvetica">Y</FONT></TD></TR>
+
+<TR>
+<TD bgColor=#ff8000><font face="Arial, Helvetica">Clear Patch Overlays</FONT></TD>
+<TD bgColor=#ff8000><FONT face="Arial, Helvetica">Turns off display of the currently displayed patches control points previously turned on by <b>Make Overlay Patch</b>.</FONT></TD>
+<TD bgColor=#ff8000 align=center><font face="Arial, Helvetica">CTRL+L</FONT></TD></TR>
+
+<TR>
+<TD bgColor=#ff8000><font face="Arial, Helvetica">Patch Inspector</FONT></TD>
+<TD bgColor=#ff8000><FONT face="Arial, Helvetica">Brings up the patch inspector dialog.</FONT></TD>
+<TD bgColor=#ff8000 align=center><font face="Arial, Helvetica">SHIFT+S</FONT></TD></TR>
+
+<TR>
+<TD bgColor=#ff8000><font face="Arial, Helvetica">Thicken Patch</FONT></TD>
+<TD bgColor=#ff8000><font face="Arial, Helvetica">Creates a copy of current patch and spaces it by X amount of units (as per value entered in dialog box) then caps off the mesh.</FONT></TD>
+<TD bgColor=#ff8000 align=center><font face="Arial, Helvetica">CTRL+T</FONT></TD></TR>
+
+<TR>
+<TD bgColor=#ff8000><font face="Arial, Helvetica">Toggle Show Patches</FONT></TD>
+<TD bgColor=#ff8000><FONT face="Arial, Helvetica">Toggles display of patch meshes from 2D/3D views on/off.</FONT></TD>
+<TD bgColor=#ff8000 align=center><font face="Arial, Helvetica">CTRL+P</FONT></TD></TR>
+
+</TABLE>
+</TD>
+</TR>
+
+<!-- =============== -->
+<!-- MOUSE FUNCTIONS -->
+<!-- =============== -->
+
+<TR>
+<TD valign=top><br><br><font face="Arial, Helvetica">
+<P><font size=5>3. <u><a name = "mousefunc">Mouse Function list</a></u></FONT></P>
+<P>This is the list of all the <b>Mouse Functions</b> in QeRadiant and Q3Radiant. Note that these are not shortcuts. The tasks accomplished by the mouse cannot be found in the menus. They provide much of the essential functionality in QeRadiant/Q3Radiant when designing maps.</P>
+
+<P>Radiant's user interface includes many productivity features and is a very powerful tool. It's no wonder that it's the editor of choice for professional and amateur map designers alike. But it's true power is unleashed when you use a <b>3-Button mouse</b>. Several extremely useful power features, especially when it comes to texturing, are only accessible if you use a 3-Button mouse. Many people own one nowadays and if you use QeRadiant regularly, I strongly recommend you get one.</P>
+
+<P>The commands were sorted by category and abbreviations were used to make it easier for me to fit the shortcut names in the table boxes:
+
+<ul>
+<li><b>LEFT-SIDE BUTTON</b> or <b>LEFT-CLICK</b> = <font color=#ff0000><b>LEFTBUT</b></font></li><br><br>
+<li><b>MIDDLE BUTTON</b> or <b>MIDDLE-CLICK</b> = <font color=#ff0000><b>MIDBUT</b></font></li><br><br>
+<li><b>RIGHT-SIDE BUTTON</b> or <b>RIGHT-CLICK</b> = <font color=#ff0000><b>RIGHTBUT</b></font><br><br>The action of these 3 abbreviations mean: <font color=#ff0000><b>click once</b></font></li><br><br><br>
+<li><b>LEFT-CLICK & DRAG</b> = <font color=#ff0000><b>LEFTBUT+DRAG</b></font></li><br><br>
+<li><b>MIDDLE-CLICK & DRAG</b> = <font color=#ff0000><b>MIDBUT+DRAG</b></font></li><br><br>
+<li><b>RIGHT-CLICK & DRAG</b> = <font color=#ff0000><b>RIGHTBUT+DRAG</b></font><br><br>
+The action of these last 3 abbreviations mean: <font color=#ff0000><b>click once, hold down button and drag mouse</b></font>.</li><br><br>
+</ul>
+
+<P>Also, as with most applications, the action of the mouse is <b>context-sensitive</b> meaning that the same Mouse shortcut might do a different thing depending in what view you click. This is why the categories below are sorted more by context than type.</P>
+</FONT><br><br></TD>
+</TR>
+
+<tr align=center>
+<td>
+
+<TABLE border=1 borderColorDark=#666666 borderColorLight=#cccccc cellPadding=2 cellSpacing=0 height=1210>
+
+<TR>
+<TD align=center><font size=5 face="Arial, Helvetica"><b>Action</b></FONT></TD>
+<TD align=center><font size=5 face="Arial, Helvetica"><b>Description</b></FONT></TD>
+<TD align=center><font size=5 face="Arial, Helvetica"><b>Mouse Function</b></FONT></TD>
+</TR>
+
+<!-- 2D view mouse functions -->
+
+<TR>
+<TD bgColor=#0000ff colspan=3><font face="Arial, Helvetica" color=#ffff00><b>2D view mouse functions</b></FONT></TD></TR>
+
+<TR>
+<TD><font face="Arial, Helvetica">Scroll View</FONT></TD>
+<TD><FONT face="Arial, Helvetica">Scroll or pan the 2D view. Also works in the Z view.</FONT></TD>
+<TD align=center><FONT face="Arial, Helvetica">RIGHTBUT+DRAG</FONT></TD></TR>
+
+<TR>
+<TD><font face="Arial, Helvetica">Move Z Checker</FONT></TD>
+<TD><font face="Arial, Helvetica">Moves the location of the Z Checker box icon in the 2D view to where you click. Dragging the mouse makes it follow around.</FONT></TD>
+<TD align=center><font face="Arial, Helvetica">SHIFT+MIDBUT<br>SHIFT+MIDBUT+DRAG</FONT></TD></TR>
+
+<TR>
+<TD><font face="Arial, Helvetica">Move Camera</FONT></TD>
+<TD><font face="Arial, Helvetica">Moves the location of the Camera eye icon in the 2D view to where you click. Dragging the mouse makes it follow around. Also works in the Z view.</FONT></TD>
+<TD align=center><font face="Arial, Helvetica">CTRL+MIDBUT<br>CTRL+MIDBUT+DRAG</FONT></TD></TR>
+
+<TR>
+<TD><font face="Arial, Helvetica">Point Camera</FONT></TD>
+<TD><font face="Arial, Helvetica">Points the Camera eye icon in the 2D view to where you click. Dragging the mouse makes it follow around.</FONT></TD>
+<TD align=center><font face="Arial, Helvetica">MIDBUT<br>MIDBUT+DRAG</FONT></TD></TR>
+
+<TR>
+<TD><font face="Arial, Helvetica">Create/Modify Brush</FONT></TD>
+<TD><font face="Arial, Helvetica">This will create a new brush if no object is currently selected. If one or more brushes are selected, this will:<br><br>
+1. Resize the brush when click-dragging outside.<br><br>
+2. Move the brush when click-dragging inside.<br><br>
+If one or more point entities are currently selected, this will just move them. Also works in the Z view but for brushes, only move and vertical resize are possible. In the 3D view, only move and resize work.</FONT></TD>
+<TD align=center><font face="Arial, Helvetica">LEFTBUT+DRAG</FONT></TD></TR>
+
+<TR>
+<TD><font face="Arial, Helvetica">Select Object</FONT></TD>
+<TD><FONT face="Arial, Helvetica">Selects/Deselects brush or entity under cursor. Entities have priority over brushes. This also works in the Z and 3D views.</FONT></TD>
+<TD align=center><FONT face="Arial, Helvetica">SHIFT+LEFTBUT</FONT></TD></TR>
+
+<TR>
+<TD><font face="Arial, Helvetica">Cycle Select Object</FONT></TD>
+<TD><FONT face="Arial, Helvetica">Cycle selects all brushes or entities under cursor in order of depth. This only works in the 2D view in QeRadiant but works in all views in Q3Radiant.</FONT></TD>
+<TD align=center><FONT face="Arial, Helvetica">SHIFT+ALT+LEFTBUT</FONT></TD></TR>
+
+<TR>
+<TD><font face="Arial, Helvetica">Drag Brush Face</FONT></TD>
+<TD><font face="Arial, Helvetica">Drags the face of the currently selected brush. The face nearest to the cursor is dragged. Brushes can also be sheared by using this. This also works in the 3D view.</FONT></TD>
+<TD align=center><FONT face="Arial, Helvetica">CTRL+LEFTBUT+DRAG</FONT></TD></TR>
+
+<TR>
+<TD><font face="Arial, Helvetica">Entity Menu</FONT></TD>
+<TD><font face="Arial, Helvetica">Brings up the entity pop-up menu. You can then select the entity to create. For solid entities (doors, buttons, triggers, etc.), at least one brush must be selected beforehand.</FONT></TD>
+<TD align=center><font face="Arial, Helvetica">RIGHTBUT</FONT></TD></TR>
+
+<!-- 3D view mouse navigation functions -->
+
+<TR>
+<TD bgColor=#0000ff colspan=3><font face="Arial, Helvetica" color=#ffff00><b>3D view mouse navigation functions</b></FONT></TD></TR>
+
+<TR>
+<TD><font face="Arial, Helvetica">Drive Camera</FONT></TD>
+<TD><font face="Arial, Helvetica">Makes the POV in the 3D view move forward/backwards and turn left/right when mouse is dragged.</FONT></TD>
+<TD align=center><font face="Arial, Helvetica">RIGHTBUT+DRAG</FONT></TD></TR>
+
+<TR>
+<TD><font face="Arial, Helvetica">Strafe Camera</FONT></TD>
+<TD><font face="Arial, Helvetica">Makes the POV in the 3D view strafe up/down and sideways when mouse is dragged.</FONT></TD>
+<TD align=center><font face="Arial, Helvetica">CTRL+RIGHTBUT+DRAG</FONT></TD></TR>
+
+<!-- 3D view mouse texturing functions -->
+
+<TR>
+<TD bgColor=#0000ff colspan=3><font face="Arial, Helvetica" color=#ffff00><b>3D view mouse texturing functions</b></FONT></TD></TR>
+
+<TR>
+<TD><font face="Arial, Helvetica">Select Brush Face</FONT></TD>
+<TD><font face="Arial, Helvetica">Selects brush face under cursor. Only one face at a time can be selected. Will automatically deselect any currently selected objects. Also grabs the face's current texture + alignment + flags into Surf Inspector.</FONT></TD>
+<TD align=center><FONT face="Arial, Helvetica">CTRL+SHIFT+LEFTBUT</FONT></TD></TR>
+
+<TR>
+<TD bgColor=#ff8000><font face="Arial, Helvetica">Select Multiple Brush Faces</FONT></TD>
+<TD bgColor=#ff8000><font face="Arial, Helvetica">Selects brush faces under cursor. Any number of faces at a time can be selected. Will automatically deselect any currently selected objects. Also grabs the face's current texture + alignment + flags into Surf Inspector. This feature only works in <b>Q3Radiant</b>.</FONT></TD>
+<TD bgColor=#ff8000 align=center><FONT face="Arial, Helvetica">CTRL+SHIFT+ALT<br>+LEFTBUT</FONT></TD></TR>
+
+<TR>
+<TD><font face="Arial, Helvetica">Grab Texture</FONT></TD>
+<TD><font face="Arial, Helvetica">Grabs the texture + alignment + flags of the brush face under the cursor into Surf Inspector. Any currently selected face or brushes will automatically be assigned the grabbed values.</FONT></TD>
+<TD align=center><font face="Arial, Helvetica">MIDBUT</FONT></TD></TR>
+
+<TR>
+<TD><font face="Arial, Helvetica">Apply Texture To Brush</FONT></TD>
+<TD><font face="Arial, Helvetica">Applies the current texture + alignment + flags in Surf Inspector to the whole brush under the cursor.</FONT></TD>
+<TD align=center><font face="Arial, Helvetica">CTRL+MIDBUT</FONT></TD></TR>
+
+<TR>
+<TD><font face="Arial, Helvetica">Apply Texture To Face</FONT></TD>
+<TD><font face="Arial, Helvetica">Applies the current texture + alignment + flags in Surf Inspector to the single brush face under the cursor.</FONT></ShiftTD>
+<TD align=center><font face="Arial, Helvetica">CTRL+SHIFT+MIDBUT</FONT></TD></TR>
+
+<TR>
+<TD><font face="Arial, Helvetica">Apply Texture Only To Face</FONT></TD>
+<TD><font face="Arial, Helvetica">Applies the current texture in Surf Inspector to the single brush face under the cursor but face retains its current alignment + flags.</FONT></TD>
+<TD align=center><font face="Arial, Helvetica">SHIFT+MIDBUT</FONT></TD></TR>
+
+<TR>
+<TD bgColor=#00aa00><font face="Arial, Helvetica">Shift Texture</FONT></TD>
+<TD bgColor=#00aa00><font face="Arial, Helvetica">Shifts the texture's vertical and horizontal alignment on the currently selected face or brushes. This feature only works in <b>QeRadiant</b>.</FONT></TD>
+<TD bgColor=#00aa00 align=center><font face="Arial, Helvetica">ALT+RIGHTBUT+DRAG</FONT></TD></TR>
+
+<TR>
+<TD bgColor=#00aa00><font face="Arial, Helvetica">Scale Texture</FONT></TD>
+<TD bgColor=#00aa00><font face="Arial, Helvetica">Stretches up/down the texture's vertical and horizontal scale on the currently selected face or brushes. This feature only works in <b>QeRadiant</b>.</FONT></TD>
+<TD bgColor=#00aa00 align=center><font face="Arial, Helvetica">SHIFT+ALT+RIGHTBUT<br>+DRAG</FONT></TD></TR>
+
+<TR>
+<TD bgColor=#00aa00><font face="Arial, Helvetica">Rotate Texture</FONT></TD>
+<TD bgColor=#00aa00><font face="Arial, Helvetica">Rotates the texture on the currently selected face or brushes. This feature only works in <b>QeRadiant</b>.</FONT></TD>
+<TD bgColor=#00aa00 align=center><font face="Arial, Helvetica">CTRL+ALT+RIGHTBUT<br>+DRAG</FONT></TD></TR>
+
+<TR>
+<TD bgColor=#ff8000><font face="Arial, Helvetica">Set Light To Average Texture Color</FONT></TD>
+<TD bgColor=#ff8000><font face="Arial, Helvetica">Grabs the average color of the current texture in Surf Inspector and sets the "_color" key of the light entity under the cursor to that RGB color value. This feature only works in <b>Q3Radiant</b>.</FONT></TD>
+<TD bgColor=#ff8000 align=center><font face="Arial, Helvetica">SHIFT+MIDBUT</FONT></TD></TR>
+
+<!-- Texture window mouse functions -->
+
+<TR>
+<TD bgColor=#0000ff colspan=3><font face="Arial, Helvetica" color=#ffff00><b>Texture window mouse functions</b></FONT></TD></TR>
+
+<TR>
+<TD><font face="Arial, Helvetica">Select Texture</FONT></TD>
+<TD><font face="Arial, Helvetica">Selects the texture under the cursor and pastes the texture + default flags into Surf Inspector. All currently selected brushes or face will automatically be assigned the selected texture.</FONT></TD>
+<TD align=center><font face="Arial, Helvetica">LEFTBUT</FONT></TD></TR>
+
+<TR>
+<TD bgColor=#cc00cc><font face="Arial, Helvetica">Select Texture + Surf Inspector</FONT></TD>
+<TD bgColor=#cc00cc><font face="Arial, Helvetica">Same as above but also automatically brings up the Surf Inspector window. This feature only works in <b>QeRadiant</b> but shortcut key does a <b>Apply Texture Angled</b> in Q3Radiant.</FONT></TD>
+<TD bgColor=#cc00cc align=center><font face="Arial, Helvetica">CTRL+LEFTBUT</FONT></TD></TR>
+
+<TR>
+<TD><font face="Arial, Helvetica">Scroll Texture Window</FONT></TD>
+<TD><font face="Arial, Helvetica">Scrolls up/down through the texture window (same as scrollbar or mouse wheel).</FONT></TD>
+<TD align=center><font face="Arial, Helvetica">RIGHTBUT+DRAG</FONT></TD></TR>
+
+<TR>
+<TD><font face="Arial, Helvetica">Scroll Texture Window Fast</FONT></TD>
+<TD><font face="Arial, Helvetica">Same as above but will scroll much faster. Useful for browsing through very large texture folders.</FONT></TD>
+<TD align=center><font face="Arial, Helvetica">SHIFT+RIGHTBUT+DRAG</FONT></TD></TR>
+
+<TR>
+<TD bgColor=#ff8000><font face="Arial, Helvetica">Edit Shader</FONT></TD>
+<TD bgColor=#ff8000><FONT face="Arial, Helvetica">Shader window function. Shift-click on a shader opens the proper shader file in EditPad and automatically places the cursor at the beginning of the shader. This feature only works in <b>Q3Radiant</b>.</FONT></TD>
+<TD bgColor=#ff8000 align=center><font face="Arial, Helvetica">SHIFT+LEFTBUT</FONT></TD></TR>
+
+<TR>
+<TD bgColor=#cc00cc><font face="Arial, Helvetica">Apply Texture Angled</FONT></TD>
+<TD bgColor=#cc00cc><FONT face="Arial, Helvetica">Automatically applies and scales the texture under the cursor on currently selected angled faces so it will fit on those faces by exactly one texture tile. This feature only works in <b>Q3Radiant</b> but shortcut key does a <b>Select Texture + Surf Inspector</b> in QeRadiant.</FONT></TD>
+<TD bgColor=#cc00cc align=center><font face="Arial, Helvetica">CTRL+LEFTBUT</FONT></TD></TR>
+
+<TR>
+<TD bgColor=#0000ff colspan=3><font face="Arial, Helvetica" color=#ffff00><b>Entity dialog mouse functions</b></FONT></TD></TR>
+
+<TR>
+<TD><font face="Arial, Helvetica">Create Entity</FONT></TD>
+<TD><font face="Arial, Helvetica">Double-clicking on an entity name in the dialog's list will create an entity at the location of the currently selected brush (mandatory).<br><br>
+1. If a point entity is chosen from the list, it will automatically replace the selected brush(es).<br><br>
+2. If a solid entity is chosen from the list, the selected brush(es) will belong to the entity.<br><br>
+3. If an entity or nothing is selected beforehand, you will get an error dialog: "Failed to create entity".</FONT></TD>
+<TD align=center><font face="Arial, Helvetica">DOUBLE-LEFTBUT</FONT></TD></TR>
+
+</TABLE>
+</TD>
+</TR>
+
+<!-- ================ -->
+<!-- END PAGE CONTENT -->
+<!-- ================ -->
+				  
+</table>
+</center>
+<p align = "center"><a href = "appn_f.htm">Back</a> | <a href = "../index.htm">Home</a> | Next
+</BODY>
+</HTML>

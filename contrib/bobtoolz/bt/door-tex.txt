@@ -1,0 +1,10 @@
+base_door/shinymetaldoor
+base_door/shinymetaldoor_outside
+gothic_door/door02_bred
+gothic_door/door02_bred2_shiny
+gothic_door/door02_eblue2_shiny
+gothic_door/door02_i_ornate5_fin
+gothic_door/door02_j
+gothic_door/door02_j3
+gothic_door/door02_j4
+gothic_door/door02_k2b

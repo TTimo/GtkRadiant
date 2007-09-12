@@ -1,0 +1,565 @@
+
+
+Title:         BSP Converter
+Version:       2.1h
+Date:          2001-03-28
+Author:        Mr. Elusive
+
+
+Description
+-----------
+
+The BSPC tool is used to create AAS files from BSP files.
+An AAS file is a file with areas used by the Quake III Arena bot in order
+to navigate and understand a map. The Quake III Arena maps are stored in
+BSP files.
+
+
+Usage
+-----
+
+bspc [-<switch> [-<switch> ...]]
+
+Example 1: bspc -bsp2aas d:\quake3\baseq3\maps\mymap?.bsp
+Example 2: bspc -bsp2aas d:\quake3\baseq3\pak0.pk3\maps/q3dm*.bsp
+
+Switches:
+   bsp2aas  <[pakfilter/]filter.bsp>    = convert BSP to AAS
+   reach    <filter.bsp>                = compute reachability & clusters
+   cluster  <filter.aas>                = compute clusters
+   aasopt   <filter.aas>                = optimize aas file
+   output   <output path>               = set output path
+   threads  <X>                         = set number of threads to X
+   cfg      <filename>                  = use this cfg file
+   optimize                             = enable optimization
+   noverbose                            = disable verbose output
+   breadthfirst                         = breadth first bsp building
+   nobrushmerge                         = don't merge brushes
+   freetree                             = free the bsp tree
+   nocsg                                = disables brush chopping
+   forcesidesvisible                    = force all sides to be visible
+   grapplereach                         = calculate grapple reachabilities
+
+
+Several metacharacter may be used in the filter and pakfilter.
+
+*          match any string of zero or more characters
+?          match any single character
+[abc...]   match any of the enclosed characters; a hyphen can
+           be used to specify a range (e.g. a-z, A-Z, 0-9)
+
+.pk3 files are accessed as if they are normal folders. For instance
+use "d:\quake3\baseq3\pak0.pk3\maps/q3dm1.bsp" to access the
+map q3dm1.bsp from the pak0.pk3 file. 
+
+Multiple files may be listed after the switches bsp2map, bsp2aas, reach,
+cluster and aasopt.
+
+If a BSP file is being converted to an AAS file and no output path
+is entered on the command-line then the AAS file will automatically
+be stored in the same folder as the BSP file. However if the BSP file
+was stored in a .pk3 file then the AAS file will be stored in a folder
+with the name 'maps' outside the .pk3 file.
+
+
+Updating entity lump
+--------------------
+
+If an AAS file is already available for a BSP file and you ONLY change
+the entities inside this BSP file then you only have to recalculate the
+reachabilities. This way you can move items, platforms etc. around
+without the need to recalculate the whole AAS file which can save quite
+some compile time. You can recalculate the reachabilities as follows:
+
+bspc -reach mymap.bsp
+
+Where mymap.bsp is the BSP file. The mymap.aas file has to be in the
+same folder as mymap.bsp or should be in the output folder specified
+with the -output option.
+
+Keep in mind that as soon as ANY geometry in the map changes the whole
+AAS file HAS to be recalculated in order to play with bots.
+
+NOTE: -reach does not work on optimized .AAS files!
+NOTE: don't use -reach when moving the position of doors.
+
+
+Leaks
+-----
+
+Just like there can be vis leaks in a map there can also be clipping
+leaks. Two things can be wrong when the BSPC tool outputs that a map
+leaks.
+
+1. There are no entities in the map at all, or all entities that are
+actually in the map are placed in solid. In this case the BSPC tool
+outputs "WARNING: no entities inside". (At least a player start entity
+is needed to load a map.)
+
+2. There is a spot in the map where players can go outside the map
+into the void. This is bad, players should never be able to fall out
+of a level. In this case the BSPC tool outputs "WARNING: entity
+reached from outside". The BSPC tool also writes a mymap.lin file
+that can be loaded in the Q3Radiant editor to show lines that go
+through the actual leak.
+
+Make sure the .lin file is stored in the same folder as where q3radiant
+stores the .bsp file. Load the map in q3radiant and use the
+menu -> File -> Pointfile... to load the .lin file. A thick red line
+will be shown in the map. Follow this line to find the leak.
+
+
+Map bounds
+----------
+
+Currently a map should be within the bounds (-65536, -65536, -65536) -
+(65536, 65536, 65536) for the bspc tool to compile. These are the same
+limits the q3map tool has.
+
+
+Physics
+-------
+
+The player bounding box is a 30 units by 30 units square with a height
+of 56 units. If we assume 1.75 meters being the average height of a human
+and a player in Quake III Arena being 56 units high we get 32 units = 1 meter.
+
+Maximum step height of a player is 18 units (just keep steps 16 units or
+lower).
+
+The maximum water jump height for bots has been set to 18 units. (height
+difference between water surface and the floor jumping onto). If the
+waterjump height is made higher human players will have a hard time getting
+out of the water.
+
+With normal gravity and without the quad the maximum rocket jump height is
+around 280 units (you can sometimes jump a few units higher but this is a
+safe value for reference).
+
+The maximum height for barriers the bots will jump on is 32 units.
+
+Some math to calculate some other values of interest:
+
+gravity = 800;
+jump velocity = 270;
+max vertical rocketjump velocity = 670;
+max run velocity = 320;
+max step height = 18;
+
+max jump height = 0.5 * gravity * (jumpvelocity/gravity)*(jumpvelocity/gravity);
+max jump height = 45 units;
+NOTE: even though this is the mathematical maximum jump height always keep
+the the 32 units maximum barrier height for bots in mind when building maps.
+
+maximum horizontal jump distance over a gap from one spot to another both
+at the same height:
+
+t = sqrt((maxjumpheight + maxstep) / (0.5 * gravity));
+t = 0.3986 seconds;
+dist = maxrunvelocity * (t + jumpvelocity / gravity);
+dist = 235 units;
+Because players use a bounding box we can jump a full bounding box width
+furter in the ideal case. (15 units at the jump start and 15 at the
+landing place).
+235 + 15 + 15 = 265 units.
+Again this is the mathematical maximum which players can only reach under
+ideal circumstances.
+
+
+Optimizing a map for bspc
+-------------------------
+
+Hint brushes have no effect on the bspc tool. Only solid, clip, liquid,
+cluster portal and do not enter brushes are used by the bspc tool.
+
+The bspc tool outputs how many areas are created for a map. Less areas
+is better. Often the number of areas can be reduced by adding additional
+clip brushes. By adding these additional clip brushes the complexity
+of the geometry used for collision can be reduced. Do not add clip
+brushes in front of the complex geometry but get the complex shaped
+geometry contained within these clip brushes. Things that should be
+contained within clip brushes are small or complex shaped (often detail)
+brushes and complex and twisted curves, but also more regular curves
+can be placed within a clip brush. When containing a curve within a
+clip brush it's preferred to place the whole curve within the clip
+brush (not just part of the curve).
+Note: you can make brushes or curves non-solid when they are contained
+within *full* clip or *weap* clip brushes to speed up bspc calculations.
+
+Always try to align your geometry to the grids. Always use the largest
+grid possible for alignment of your geometry. Also try to align the
+back sides of brushes which may not be visible. The more brush sides
+are aligned the better. This will also speed up bspc calculations.
+
+Align adjacent brushes as much as possible. Make sure no tiny faces are
+created due to badly aligned brushes.
+
+Quite often there are places in a map that are visible to players
+but that players can never get to. Players would be able to walk around there
+but since players can never reach such places they will never actually
+move around there. If players are never able to get to such places
+it's better to put a large clip brush which encloses that whole space.
+This will also speed up bspc calculations and reduce the number of areas
+created by the bspc tool.
+
+Note: the number of areas relative to the map size tells something about
+the navigation complexity for players in general (also human players).
+Reducing the collision complexity for bots also makes the map easier to
+navigate for human players
+
+
+func_plat and func_bobbing
+--------------------------
+
+When func_plat or func_bobbing entities are placed in a map the bots will
+use them if possible. The bots assume they can stand on top of the bounding
+box of the model used for the func_plat or func_bobbing entity. As a result
+creating complex shaped func_plat or func_bobbing models is mostly a bad
+idea. You have to make sure the bots (and players) can actually stand
+everywhere ontop of the bounding box of the model.
+
+
+Cluster Portals
+---------------
+
+A map is divided into areas. Several of these areas can be grouped together
+to create a cluster. The clusters are seperated by cluster portals which are
+areas themselves. One of the things the bot uses these clusters for is a
+multi-level routing algorithm. When a map is efficiently divided up into
+clusters bot calculations will be faster.
+
+several things to take into account:
+
+- The BSPC tool tries to create cluster portals automatically but additional
+  cluster portals can be created by placing "clusterportal" brushes.
+- Cluster portals are manually created by placing "clusterportal" brushes
+  inside the map.
+- Cluster portal brushes are a tool to optimize a map for CPU usage by the
+  bots. They are not needed for the bots to operate correctly.
+- The "clusterportal" brushes should not be used outside the world hull.
+- The cluster portals do not have any effect on vis.
+- If a door is already sealed with an areaportal brush, a clusterportal is
+  not necessary there. (area portals are also used as cluster portals).
+- Just like the area portals, the cluster portals must seal a space off
+  entirely from other areas.
+- The cluster portal areas should seal off a cluster in a way that the only
+  path towards another cluster is through a cluster portal area.
+- Only create cluster portals where people can walk or swim through.
+- Don't create cluster portals in gaps in the floor. (people would fall through)
+- If you have two sealed off clusters and you add a teleporter between them
+  then the two clusters will be merged again because of the teleporter.
+- Cluster portals must seperate no more and no less than two (2) clusters.
+- Try to create clusters with all the same number of 'reachability' areas.
+  for instance if the map has 5400 areas try to create 10 clusters with 540
+  areas each, or 12 clusters with 450 areas each, etc. The BSPC tool lists
+  the number of reachability areas in each cluster.
+  With Q3A version 1.25 and up you can use /set bot_testclusters 1 on the
+  console and the area number and cluster number you're in will be printed
+  on the screen. These cluster number correspond to the cluster numbers
+  the BSPC tool prints.
+- Minimize the number of clusters with only a few (less than 10) areas.
+- When adding "cluster portal" brushes try to place them in places with
+  minimal geometric complexity. For instance place them inside convex door
+  openings or small hallways (not infront of door openings). Ideally the shape
+  of the face through which a player walks or swims into the cluster portal
+  is the same as the shape of the face through which a player leaves the
+  cluster portal. Also ideally the open space inside the cluster portal
+  brush is convex.
+- Make cluster portals about 16 or 32 units thick or align them with
+  adjacent geometry. Don't make them too thick though.
+- Minimize the total number of cluster portal areas at all times. The more
+  cluster portal areas you have the more CPU the bots need.
+- Items have no effect at all on the creation of areas or clusters.
+  The same goes for item_botroam.
+
+
+Do Not Enter areas
+------------------
+
+When bot navigation problems show up or you want to make sure a bot never tries
+to go to a certain place "do not enter" brushes can be used.
+
+several things to take into account:
+
+- The "do not enter" brushes should not be used outside the world hull.
+- The "do not enter" brush is Not a clip brush for the bot.
+- The "do not enter" brush is a tool of last resort. Do not use it unless
+  there are serious navigation problems.
+- The number of "do not enter" brushes should be minimized because these
+  brushes create additional areas for the bots.
+- The "do not enter" brush will create a New area that the bot will try to
+  avoid. However if the bot somehow ends up in a "do not enter" area or there
+  is a valid goal inside the "do not enter" area then the bot is allowed to
+  go into and out of that area. So if the bot somehow gets in a "do not enter"
+  area the bot will be able to get out.
+
+
+Bot roaming
+-----------
+
+The item_botroam entity can be used when a bot does not roam the whole level
+or prefers to go to only specific areas. This (invisible) item can be placed
+in a map just like regular items. Nobody can actually pick up the item it's
+only used to attract bots to certain places of the map. The item_botroam has
+a key "origin". The value is set by Q3Radiant automatically. The item_botroam
+also has a key "weight". The value is the weight of the roam item and is
+relative to the weight of other items in the map. The bot character specific
+item weights are stored with the bot characters in the botfiles/bots/ sub-folder
+in the .pk3 file. The value of the weight is a non-zero floating point value,
+most often in the range 0 to 400. (Higher values are allowed but keep in mind
+that the bot should also still go for normal items, so don't make the
+item_botroam weight to high.)
+
+When a bot should never go for a specific item the key "notbot" with value "1"
+can be used for that item. This key with value can be used for every available
+item in Quake III Arena.
+
+The suspended flag can be used on all items (item_botroam included).
+However keep in mind that when a suspended item is not anywhere near the
+ground the bot will ONLY try to go for this suspended item using jump pads.
+
+
+Team based entities
+-------------------
+
+You can use the "bot_notteam" entity key with value "1" or "2" on teleporters
+(trigger_teleport or trigger_multiple pointing at a target_teleporter),
+elevators (func_plat), cyclic movers (func_bobbing), jumppads (trigger_push)
+and areas that hurt the player (trigger_hurt).
+When "notteam" is set to "1" only bots using the travel flag TFL_NOTTEAM1 will
+use the entity or move through the area. When "bot_notteam" is set to "2" only
+bots using the travel flag TFL_NOTTEAM2 will use the entity or move through the
+area. These travel flags can be used in the game source code. Using this entity
+key also only has effect if the mod the map is being made for supports team based
+navigation for bots.
+
+
+Testing AAS files
+-----------------
+
+One of the easiest ways to test the AAS file is to load the map in
+Quake3 in teamplay mode (type /set g_gametype 3 on the console before
+loading the map). Enter a team and add a bot to your team. Use the
+team order menu (by default bound to the key F3) to command the bot
+to follow you. Walk around the map and see if the bot is able to
+follow you everywhere.
+
+Map bugs can sometimes cause certain places in the map to show up
+'solid' in the AAS file. The bots cannot travel through these 'solid'
+areas. To test for these 'solid' places set the cvar bot_testsolid
+to 1 on the console. (type /set bot_testsolid 1) The map has to be
+started with devmap instead of map before the cvar bot_testsolid can
+be set. When the cvar is set to 1 then either "empty area" or
+"SOLID area" will be printed on the screen while traveling through a map.
+Several map bugs can cause these 'solid' places in the AAS file.
+- Sometimes microscopic brushes are left over after a brush CSG. Search
+  for such brushes in the problem area and delete them.
+- Tiny brush faces (not curves) can also cause problems. Due to vertex
+  snapping in the q3map tool those tiny brush faces can be snapped out
+  of existence. Such faces will not show up in Quake3 and you'll see
+  tiny peek holes or slits where you can view through the geometry.
+  Allign vertexes of and edges of adjacent brushes to remove and avoid
+  such tiny faces. Placing a clip brush in front of the face that is
+  snapped out of existence will also remove the 'solid' area but ofcourse
+  it's much better to remove the peek holes and slits.
+- Another cause could be a brush with a collapsed side. Check how many
+  sides a brush has and how many sides actually have a surface. Rebuild
+  brushes with collapsed sides.
+- All faces contained within liquid brushes using a shader without
+  "surfaceparm trans" set will be removed. Those contained surfaces will
+  not be visible and can cause the liquid to appear "solid" in the AAS file.
+
+If you insist creating an AAS file for a map with bugs then the option
+-forcesidesvisible can be used. This should fix all the problems with areas
+showing up solid in the AAS file. However creating an AAS file with this
+option takes a lot longer (often more than twice the normal compile time).
+
+Clusters can be tested with the cvar bot_testclusters.
+(type "/set bot_testclusters 1" on the console)
+
+Jumppads can also be tested. Type the following on the Quake3 console
+before loading your map:
+
+/set bot_maxdebugpolys 1024
+/set bot_visualizejumppads 1
+/set bot_forcereachability 1
+
+Now load the map. A counter will be shown and goes from 0% to 100%.
+When the counter has reached 100% type /set bot_debug 1 and
+/set r_debugSurface 2 on the console. For every jumppad the
+default arch of travel (without using air control) will be visualized.
+This only works if your .aas file is not optimized.
+
+
+Error messages
+--------------
+
+Level designers should not worry too much about the following messages and/or warnings. The things reported are non fatal and won't cause any major problems. Some of the messages are just debug left overs.
+
+"AAS_CheckArea: area %d face %d is flipped\n"
+"AAS_CheckArea: area %d center is %f %f %f\n"
+"AAS_CheckFaceWindingPlane: face %d winding plane unequal to face plane\r\n"
+"AAS_CheckFaceWindingPlane: face %d winding reversed\r\n"
+"area %d face %d flipped: front area %d, back area %d\n"
+"area %d face %d is tiny\r\n"
+"face %d and %d, same front and back area but flipped planes\r\n"
+"AAS_SplitFace: tiny back face\r\n"
+"AAS_SplitFace: tiny back face\r\n"
+"AAS_SplitArea: front area without faces\n"
+"AAS_SplitArea: back area without faces\n"
+"gsubdiv: area %d has a tiny winding\r\n"
+"AAS_TestSplitPlane: tried face plane as splitter\n"
+"found %d epsilon faces trying to split area %d\r\n"
+"AAS_SplitArea: front area without faces\n"
+"AAS_GetFace: face %d had degenerate edge %d-%d\r\n"
+"AAS_GetFace: face %d was tiny\r\n"
+"WARNING: huge winding\n"
+"bogus brush after clip"
+"split removed brush"
+"split not on both sides"
+"two tiny brushes\r\n"
+"possible portal: %d\r\n"
+"portal %d: area %d\r\n"
+"WARNING: CM_GridPlane unresolvable\n"
+"WARNING: CM_AddFacetBevels... invalid bevel\n"
+"WARNING: CM_SetBorderInward: mixed plane sides\n"
+"WARNING: bevel plane already used\n"
+"trigger_multiple model = \"%s\"\n"
+"trigger_teleport model = \"%s\"\n"
+"found a trigger_push with velocity %f %f %f\n"
+"AAS_TraceBoundingBox: stack overflow\n"
+"AAS_TraceAreas: stack overflow\n"
+"AAS_LinkEntity: stack overflow\n"
+"MergeWindings: degenerate edge on winding %f %f %f\n"
+"Warning: MergeWindings: front to back found twice\n"
+"FindPlaneSeperatingWindings: winding1 non-convex\r\n"
+"FindPlaneSeperatingWindings: winding2 non-convex\r\n"
+
+
+When one of the following messages, errors or warnings is found then there is often something to be fixed.
+
+"WARNING! HashVec: point %f %f %f outside valid range\n"
+"This should never happen!\n"
+	While storing the AAS file some vertex was found outside the valid map bounds. When this happens some part of the map is likely to have badly aligned brushes or weird shaped curves. Clipping off or rebuilding complex shapes often helps.
+"trigger_push start solid\n"
+	The trigger_push start point is in solid. Try making the trigger_push brush a bit larger or move it around a bit.
+"trigger_push without target entity %s\n"
+	Could not find the target entity of the trigger_push with the target field %s.
+"trigger_push without time\n"
+	trigger_push entity found without "time" field.
+"trigger_multiple not in any jump pad area\n"
+"trigger_push not in any jump pad area\n"
+	A trigger_push entity was found not to be in any valid jumppad area. (the message states trigger_multiple but it should have been trigger_push) Try making the trigger_push brush a bit larger or move it around a bit.
+"trigger_multiple at %1.0f %1.0f %1.0f without target\n"
+	A trigger multiple was found at the given coordinates without a "target" field.
+"target_teleporter without target\n"
+	A target_teleporter entity was found without target field.
+"trigger_teleport at %1.0f %1.0f %1.0f without target\n"
+	A trigger_teleport entity was found at the given coordinates without "target" field.
+"teleporter without misc_teleporter_dest (%s)\n"
+	The destination of a teleporter with target field %s could not be found.
+"teleporter destination (%s) without origin\n"
+	A teleporter destination with the target name %s was found without origin field.
+"teleporter destination (%s) in solid\n"
+	A teleporter destination with the targetname %s was found to be in solid.
+"teleported into slime or lava at dest %s\n"
+	A player would be pushed into slime or lave at the teleporter destination with the targetname %s.
+"trigger_multiple not in any area\n"
+	A teleporter trigger was found not to be in any valid area. Try moving the trigger around a bit.
+"func_plat without model\n"
+	A func_plat entity was found without model field.
+"func_plat with invalid model number\n"
+	A func_plat entity was found with the model field set to some invalid number.
+"func_bobbing without model\n"
+	A func_bobbing entity was found without model field.
+"func_bobbing with invalid model number\n"
+	A func_bobbing entity was found with the model field set to some invalid number.
+"%s in solid at (%1.1f %1.1f %1.1f)\n"
+	An item with classname %s was found to be in solid at the given coordinates.
+"empty aas link heap\n"
+	Some part of the map has some rather complex clipping. Reduce the geometric complexity or use clip brushes to reduce the clipping complexity.
+"too many entities in BSP file\n"
+	There are too many entities in the bsp file.
+"error opening %s\n"
+	Could not create a new AAS file. Hard disk might be full.
+"error writing lump %s\n"
+	Could not write an AAS lump to file. Hard disk might be full.
+
+
+
+Version Changes
+---------------
+
+2.1h (2001-03-28)
+
+- fixed crash bug
+
+2.1g (2001-02-18)
+
+- added bot_notteam support on trigger_hurt entities
+
+
+2.1f (2001-02-06)
+
+- added some AAS statistics
+- don't flood through faces when creating clusters
+
+
+2.1e (2001-01-10)
+
+- fix map size limitation
+
+
+2.1d (2000-12-17)
+
+- renamed "notteam" to "bot_notteam"
+
+
+2.1c (2000-11-02)
+
+- added fs_maxfallheight
+- compiled with larger map size bounds
+
+
+2.1b (2000-09-15)
+
+- fixed cfg file loading
+
+
+2.1 (2000-06-28)
+
+- added model numbers for AREACONTENTS_MOVER
+- added team based func_plat, func_bobbing, trigger_teleport and trigger_push reachabilities
+
+
+2.0 (2000-06-21)
+
+- fixed swim reachabilities
+- fixed some reachabilities through cluster portals
+- fixed jump reachabilities
+- changed some start travel times
+- added travel time settings to cfg
+
+
+1.9 (2000-03-27)
+
+- fixed func_bobbing entities with origin brush
+
+
+1.8 (2000-01-14)
+
+- fixed trigger_teleport bug.
+- increased max map bounds to (-8192, -8192, -8192)-(8192, 8192, 8192)
+- increased max points on winding
+- made "HashVec: point x y z outside valid range" non-fatal
+- fixed rocket jump reachabilities
+- added force sides visible option
+- increased simulated stack size for area traces
+
+
+1.7 (1999-12-22)
+
+- fixed ducked bounding box size
+- fixed sv_maxsteepness being zero in aas configuration
+- AAS files are now automatically stored in BSP file folder
+- fixed crash bug caused by overflow of a simulated stack

@@ -1,0 +1,2 @@
+*.dsp	-m 'COPY' -k 'b'
+*.rc	-m 'COPY' -k 'b'

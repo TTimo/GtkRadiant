@@ -1,0 +1,92 @@
+./replace.pl bsp.c 255
+./replace.pl facebsp.c 240
+./replace.pl facebsp.c 251
+./replace.pl facebsp.c 260
+./replace.pl fog.c 83
+./replace.pl fog.c 439
+./replace.pl fog.c 529
+./replace.pl fog.c 530
+./replace.pl fog.c 531
+./replace.pl fog.c 532
+./replace.pl leakfile.c 34
+./replace.pl leakfile.c 75
+light.c:212:	qprintf ("--- CountLightmaps ---\n");
+light.c:228:	qprintf( "%5i drawSurfaces\n", numDrawSurfaces );
+light.c:229:	qprintf( "%5i lightmaps\n", count );
+light.c:252:	qprintf ("--- CreateSurfaceLights ---\n");
+light.c:1730:	qprintf( "%5i gridPoints\n", numGridPoints );
+light.c:1786:	qprintf ("--- CreateLights ---\n");
+light.c:1788:	qprintf ("%i point lights\n", numPointLights);
+light.c:1789:	qprintf ("%i area lights\n", numAreaLights);
+light.c:1792:		qprintf ("--- TraceGrid ---\n");
+light.c:1794:		qprintf( "%i x %i x %i = %i grid\n", gridBounds[0], gridBounds[1],
+light.c:1798:	qprintf ("--- TraceLtm ---\n");
+light.c:1800:	qprintf( "%5i visible samples\n", c_visible );
+light.c:1801:	qprintf( "%5i occluded samples\n", c_occluded );
+lightmaps.c:312:	qprintf ("--- AllocateLightmaps ---\n");
+lightmaps.c:347:	qprintf( "%5i unique shaders\n", numSortShaders );
+lightmaps.c:369:	qprintf( "%7i exact lightmap texels\n", c_exactLightmap );
+lightmaps.c:370:	qprintf( "%7i block lightmap texels\n", numLightmaps * LIGHTMAP_WIDTH*LIGHTMAP_HEIGHT );
+lightv.c:4769:				qprintf("light in solid at %1.1f %1.1f %1.1f\n", light->origin[0], light->origin[1], light->origin[2]);
+lightv.c:4771:				qprintf("spot light in solid at %1.1f %1.1f %1.1f\n", light->origin[0], light->origin[1], light->origin[2]);
+map.c:294:		qprintf ("Entity %i, Brush %i: mixed face contents\n"
+map.c:1138:	qprintf ("--- LoadMapFile ---\n");
+map.c:1163:	qprintf ("%5i total world brushes\n", CountBrushList( entities[0].brushes ) );
+map.c:1164:	qprintf ("%5i detail brushes\n", c_detail );
+map.c:1165:	qprintf ("%5i patches\n", numMapPatches);
+map.c:1166:	qprintf ("%5i boxbevels\n", c_boxbevels);
+map.c:1167:	qprintf ("%5i edgebevels\n", c_edgebevels);
+map.c:1168:	qprintf ("%5i entities\n", num_entities);
+map.c:1169:	qprintf ("%5i planes\n", nummapplanes);
+map.c:1170:	qprintf ("%5i areaportals\n", c_areaportals);
+map.c:1171:	qprintf ("size: %5.0f,%5.0f,%5.0f to %5.0f,%5.0f,%5.0f\n", map_mins[0],map_mins[1],map_mins[2],
+misc_model.c:411:	qprintf("----- AddTriangleModels -----\n");
+misc_model.c:446:	qprintf( "%5i triangle models\n", c_triangleModels );
+misc_model.c:447:	qprintf( "%5i triangle surfaces\n", c_triangleSurfaces );
+misc_model.c:448:	qprintf( "%5i triangle vertexes\n", c_triangleVertexes );
+misc_model.c:449:	qprintf( "%5i triangle indexes\n", c_triangleIndexes );
+patch.c:176:	qprintf( "----- PatchMapDrawSurfs -----\n" );
+patch.c:262:	qprintf( "%5i patches\n", patchCount );
+patch.c:263:	qprintf( "%5i patch LOD groups\n", groupCount );
+portals.c:500:	qprintf( "----- MakeTreePortals -----\n");
+portals.c:503:	qprintf("%6d tiny portals\n", c_tinyportals);
+portals.c:589:	qprintf ("--- FloodEntities ---\n");
+portals.c:608:	qprintf("%5i flooded leafs\n", c_floodedleafs );
+portals.c:612:		qprintf ("no entities in open -- no filling\n");
+portals.c:616:		qprintf ("entity reached from outside -- no filling\n");
+portals.c:762:	qprintf ("--- FloodAreas ---\n");
+portals.c:768:	qprintf ("%5i areas\n", c_areas);
+portals.c:813:	qprintf ("--- FillOutside ---\n");
+portals.c:815:	qprintf ("%5i solid leafs\n", c_solid);
+portals.c:816:	qprintf ("%5i leafs filled\n", c_outside);
+portals.c:817:	qprintf ("%5i inside leafs\n", c_inside);
+prtfile.c:213:	qprintf ("--- NumberClusters ---\n");
+prtfile.c:218:	qprintf ("%5i visclusters\n", num_visclusters);
+prtfile.c:219:	qprintf ("%5i visportals\n", num_visportals);
+prtfile.c:220:	qprintf ("%5i solidfaces\n", num_solidfaces);
+prtfile.c:232:	qprintf ("--- WritePortalFile ---\n");
+shaders.c:301://	qprintf( "shaderFile: %s\n", filename );
+shaders.c:600:  qprintf( "%5i shaderInfo\n", numShaderInfo);
+surface.c:176:	qprintf( "----- MergeSides -----\n");
+surface.c:182:	qprintf( "%5i siderefs\n", numSideRefs );
+surface.c:266:	qprintf( "----- SubdivideDrawSurfs -----\n");
+surface.c:365:	qprintf( "----- ClipSidesIntoTree -----\n");
+surface.c:1013:	qprintf( "----- FilterDrawsurfsIntoTree -----\n");
+surface.c:1045:	qprintf( "%5i emited drawsurfs\n", c_surfs );
+surface.c:1046:	qprintf( "%5i references\n", c_refs );
+surface.c:1047:	qprintf( "%5i stripfaces\n", c_stripSurfaces );
+surface.c:1048:	qprintf( "%5i fanfaces\n", c_fanSurfaces );
+tjunction.c:476:	qprintf("----- FixTJunctions -----\n");
+tjunction.c:508:	qprintf( "%6i axial edge lines\n", axialEdgeLines );
+tjunction.c:509:	qprintf( "%6i non-axial edge lines\n", numEdgeLines - axialEdgeLines );
+tjunction.c:510:	qprintf( "%6i degenerate edges\n", c_degenerateEdges );
+tjunction.c:525:	qprintf( "%6i verts added for tjunctions\n", c_addedVerts );
+tjunction.c:526:	qprintf( "%6i total verts\n", c_totalVerts );
+tjunction.c:527:	qprintf( "%6i naturally ordered\n", c_natural );
+tjunction.c:528:	qprintf( "%6i rotated orders\n", c_rotate );
+tjunction.c:529:	qprintf( "%6i can't order\n", c_cant );
+vis.c:223:	qprintf ("cluster %4i : %4i visible\n", leafnum, numvis);
+visflow.c:642:	qprintf ("portal:%4i  mightsee:%4i  cansee:%4i (%i chains)\n", 
+visflow.c:774:	qprintf ("portal:%4i  mightsee:%4i  cansee:%4i (%i chains)\n", 
+visflow.c:1037:	qprintf ("portal:%4i  mightsee:%4i  cansee:%4i (%i chains)\n", 
+writebsp.c:388:	qprintf ("--- EndModel ---\n");

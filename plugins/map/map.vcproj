@@ -1,0 +1,85 @@
+<?xml version="1.0" ?><VisualStudioProject Name="map" ProjectGUID="{1B0E70B0-ED20-4021-9BBE-5168CB8DAE90}" ProjectType="Visual C++" RootNamespace="map" Version="8.00">
+	<Platforms>
+		<Platform Name="Win32"/>
+	</Platforms>
+	<ToolFiles>
+	</ToolFiles>
+	<Configurations>
+		<Configuration CharacterSet="2" ConfigurationType="2" IntermediateDirectory="$(SolutionDir)\build\intermediate\$(ConfigurationName)\$(ProjectName)" Name="Debug|Win32" OutputDirectory="$(SolutionDir)\build\$(ConfigurationName)\modules">
+			<Tool Name="VCPreBuildEventTool"/>
+			<Tool Name="VCCustomBuildTool"/>
+			<Tool Name="VCXMLDataGeneratorTool"/>
+			<Tool Name="VCWebServiceProxyGeneratorTool"/>
+			<Tool Name="VCMIDLTool"/>
+			<Tool AdditionalIncludeDirectories="&quot;$(SolutionDir)\include&quot;;&quot;$(SolutionDir)\libs&quot;;&quot;$(SolutionDir)\..\STLPort\stlport&quot;;&quot;$(SolutionDir)\..\gtk2\include&quot;;&quot;$(SolutionDir)\..\gtk2\include\glib-2.0&quot;;&quot;$(SolutionDir)\..\gtk2\lib\glib-2.0\include&quot;;&quot;$(SolutionDir)\..\libxml2\include&quot;" BasicRuntimeChecks="3" DebugInformationFormat="4" Detect64BitPortabilityProblems="true" DisableSpecificWarnings="4996;4244;4267" MinimalRebuild="true" Name="VCCLCompilerTool" Optimization="0" PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS" RuntimeLibrary="3" WarningLevel="3"/>
+			<Tool Name="VCManagedResourceCompilerTool"/>
+			<Tool Name="VCResourceCompilerTool"/>
+			<Tool Name="VCPreLinkEventTool"/>
+			<Tool AdditionalDependencies="cmdlib.lib synapse.lib libxml2.lib glib-2.0.lib gobject-2.0.lib" AdditionalLibraryDirectories="&quot;$(SolutionDir)\..\libxml2\lib&quot;;&quot;$(SolutionDir)\..\gtk2\lib&quot;;&quot;$(SolutionDir)\build\$(ConfigurationName)\libs&quot;" GenerateDebugInformation="true" ModuleDefinitionFile="map.def" Name="VCLinkerTool" TargetMachine="1"/>
+			<Tool Name="VCALinkTool"/>
+			<Tool Name="VCManifestTool"/>
+			<Tool Name="VCXDCMakeTool"/>
+			<Tool Name="VCBscMakeTool"/>
+			<Tool Name="VCFxCopTool"/>
+			<Tool Name="VCAppVerifierTool"/>
+			<Tool Name="VCWebDeploymentTool"/>
+			<Tool Name="VCPostBuildEventTool"/>
+		</Configuration>
+		<Configuration CharacterSet="2" ConfigurationType="2" IntermediateDirectory="$(SolutionDir)\build\intermediate\$(ConfigurationName)\$(ProjectName)" Name="Release|Win32" OutputDirectory="$(SolutionDir)\build\$(ConfigurationName)\modules" WholeProgramOptimization="1">
+			<Tool Name="VCPreBuildEventTool"/>
+			<Tool Name="VCCustomBuildTool"/>
+			<Tool Name="VCXMLDataGeneratorTool"/>
+			<Tool Name="VCWebServiceProxyGeneratorTool"/>
+			<Tool Name="VCMIDLTool"/>
+			<Tool AdditionalIncludeDirectories="&quot;$(SolutionDir)\include&quot;;&quot;$(SolutionDir)\libs&quot;;&quot;$(SolutionDir)\..\STLPort\stlport&quot;;&quot;$(SolutionDir)\..\gtk2\include&quot;;&quot;$(SolutionDir)\..\gtk2\include\glib-2.0&quot;;&quot;$(SolutionDir)\..\gtk2\lib\glib-2.0\include&quot;;&quot;$(SolutionDir)\..\libxml2\include&quot;" DebugInformationFormat="3" Detect64BitPortabilityProblems="true" DisableSpecificWarnings="4996;4244;4267" Name="VCCLCompilerTool" PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS" RuntimeLibrary="2" WarningLevel="3"/>
+			<Tool Name="VCManagedResourceCompilerTool"/>
+			<Tool Name="VCResourceCompilerTool"/>
+			<Tool Name="VCPreLinkEventTool"/>
+			<Tool AdditionalDependencies="cmdlib.lib synapse.lib libxml2.lib glib-2.0.lib gobject-2.0.lib" AdditionalLibraryDirectories="&quot;$(SolutionDir)\..\libxml2\lib&quot;;&quot;$(SolutionDir)\..\gtk2\lib&quot;;&quot;$(SolutionDir)\build\$(ConfigurationName)\libs&quot;" EnableCOMDATFolding="2" GenerateDebugInformation="true" ModuleDefinitionFile="map.def" Name="VCLinkerTool" OptimizeReferences="2" TargetMachine="1"/>
+			<Tool Name="VCALinkTool"/>
+			<Tool Name="VCManifestTool"/>
+			<Tool Name="VCXDCMakeTool"/>
+			<Tool Name="VCBscMakeTool"/>
+			<Tool Name="VCFxCopTool"/>
+			<Tool Name="VCAppVerifierTool"/>
+			<Tool Name="VCWebDeploymentTool"/>
+			<Tool Name="VCPostBuildEventTool"/>
+		</Configuration>
+	</Configurations>
+	<References>
+	</References>
+	<Files>
+		<Filter Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat" Name="Source Files">
+			<File RelativePath=".\map.def">
+			</File>
+			<File RelativePath=".\parse.cpp">
+			</File>
+			<File RelativePath=".\plugin.cpp">
+			</File>
+			<File RelativePath=".\write.cpp">
+			</File>
+		</Filter>
+		<Filter Filter="h;hpp;hxx;hm;inl" Name="Header Files">
+			<File RelativePath=".\plugin.h">
+			</File>
+			<Filter Filter="*.h" Name="API">
+				<File RelativePath="..\..\include\ifilesystem.h">
+				</File>
+				<File RelativePath="..\..\include\ipatch.h">
+				</File>
+				<File RelativePath="..\..\include\iscriplib.h">
+				</File>
+				<File RelativePath="..\..\include\qerplugin.h">
+				</File>
+				<File RelativePath="..\..\include\qertypes.h">
+				</File>
+			</Filter>
+		</Filter>
+		<Filter Filter="ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe" Name="Resource Files">
+		</Filter>
+		<File RelativePath=".\Conscript">
+		</File>
+	</Files>
+	<Globals>
+	</Globals>
+</VisualStudioProject>

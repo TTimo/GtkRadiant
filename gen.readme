@@ -1,0 +1,4 @@
+Dummy file for gen.dsp
+
+gen.dsp is used with MSVC to generate include/version.h and include/aboutmsg.h
+you need python installed and configured to make this work

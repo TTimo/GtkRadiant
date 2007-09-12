@@ -1,0 +1,59 @@
+XML config files for customized synapse initialization at runtime
+-----------------------------------------------------------------
+
+Objective:
+----------
+
+We have to assign the minors of the APIs to function tables 
+(and possibly to the API managers) at runtime from some config files.
+
+For instance in Q3 or RTCW mode, we will want to fill in 
+g_FileSystemTable and g_ShadersTable with the "quake3" minor. Whereas
+those tables will be filled in with a different minor for HL mode.
+
+This affects SYN_REQUIRE for all the clients of the system, so that
+config will need to be global and passed around to the clients.
+
+Implementation:
+---------------
+
+an XML hierarchy to describe the APIs:
+<client name="CORE">
+  <api name="vfs">
+    quake3
+  </api>
+  <api name="shaders">
+    quake3
+  </api>
+  ..
+</client>
+<client name="SHADERS">
+  
+</client>
+
+Each client will have to be identified by a specific name, if a name in the
+config is not found in the client list, the init should fail. A client can
+still be hardcoded and not appear in this list though.
+(a GetName() function to synapse client)
+
+SYN_REQUIRE_ANY support will work for strict API lists. Just the same way 
+we do the simple SYN_REQUIRE
+
+Discussion:
+-----------
+
+We only deal with SYN_REQUIRE. It is possible that at some point we will want
+to customize the SYN_PROVIDE too. For instance depending on the game mode, a
+same module could provide two different minors. Couldn't provide the two minors
+at the same time though, only one.
+
+Implementation:
+---------------
+
+Default config file will be synapse.config in the gametools path. We can override
+this later with a custom line in the .game file. Should Synapse be able to operate
+without this config file though, as it is looked up by the main program and handed
+over to synapse before init? Possibly .. we'll just pass a NULL config node ptr
+
+Add the config file path to CSynpaseServer::Initialize, pass the loaded XML file to
+the clients. Do we need to wrap in an object with some convenience functions?

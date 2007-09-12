@@ -1,0 +1,27 @@
+printf mess in q3map
+(and in the libs)
+
+q3map: several breeds .. qprintf _printf printf
+should all resolve to use a single Sys_Printf thing
+and put #define printf ..
+
+for the static libs? need to use function pointers..
+
+q3map uses common/cmdlib.c
+Radiant links against cmdlib.lib based on libs/cmdlib/cmdlib.cpp
+
+but eventually we'll want to use the same Sys_Printf scheme in q3map AND Radiant?
+qprintf and _printf are defined in common/cmdlib.c
+BUT: modifying cmdlib would probably break bspc and other stuff that relies on it?
+
+moving q3map to use a custom version of cmdlib.c in q3map/cmdlib.c
+removing the qprintf and _printf stuff, moving to a seperate printout.c file
+
+compiling libxml on win32: need to turn off a bunch of stuff.
+problem: we got two xmlversion.h files??
+we can't get rid of using libxml/xmlversion.h, so the solution is to get rid of xmlversion.h
+(add ../libxml to the paths)
+
+fuck!
+we also compile some .c files from common/ !
+-> create a common2/ dir .. 

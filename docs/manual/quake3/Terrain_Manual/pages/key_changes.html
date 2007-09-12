@@ -1,0 +1,64 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+<meta name="ProgId" content="FrontPage.Editor.Document">
+<title>Key changes that have been made include</title>
+</head>
+
+<body background="../pics/background.jpg" text="#FFFFFF" link="#FFFFFF" vlink="#FFFFFF" alink="#FFFFFF">
+
+<b>
+<p align="center"><font size="5">Key changes that have been made include:</font></p>
+<font SIZE="4">
+<div align="right">
+  <table border="1" cellspacing="1" width="100%" bgcolor="#000000" bordercolor="#808080">
+    <tr>
+      <td width="100%"><font FACE="Times New Roman">
+<blockquote>
+  <p>&nbsp;</p>
+  <blockquote>
+  </font><font FACE="Symbol">
+  <p>· </font><font FACE="Times New Roman">A variant of the func_group entity
+  has been added to the game. When a func_group of brushes (only) is given a
+  terrain key and a numerical value (an ID number for that terrain) and several
+  other key attributes, it becomes a terrain entity and is treated differently
+  than other brushes during the compile.</p>
+  </font><font FACE="Symbol">
+  <p>· </font><font FACE="Times New Roman">The map area has been expanded to
+  128,000 units in all extents (256,000 units on any edge of the map volume).
+  While this does not mean that a map that large could actually run on current
+  game hardware, it does give the designer room to explore what the actual
+  limits may be. As a point of reference, mpterra2.bsp is roughly 12K x 16K x 3K
+  units in size … the largest map in the game by far.</p>
+  </font><font FACE="Symbol">
+  <p>· </font><font FACE="Times New Roman">A terrain texture mapping system
+  plots textures across the terrain entity using a specially created .pcx or .tga
+  art file as a map for planar projecting and blending shaders on terrain
+  surfaces.</p>
+  </font><font FACE="Symbol">
+  <p>· </font><font FACE="Times New Roman">A “meta-shader” is used to
+  organize and calculate blends between the shaders that are mapped onto the
+  terrain.</p>
+  </font><font FACE="Symbol">
+  <p>· </font><font FACE="Times New Roman">Textures designed for use under
+  vertex lighting can be substituted at map load time for more complex shader-manipulated
+  textures that may not look correct in a vertex light only situation.</p>
+  </blockquote>
+</blockquote>
+</font>
+<p align="center"><a href="introduction.html">Back</a> - <a href="table_of_contents.html">Table
+of Contents</a> - <a href="art_tools.html"> Art Tools</a></p>
+
+  <p>&nbsp;</td>
+        </tr>
+      </table>
+    </div>
+</font></b>
+<p align="center">&nbsp;</p>
+<p align="center">-4-</p>
+
+</body>
+
+</html>

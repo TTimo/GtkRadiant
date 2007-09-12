@@ -1,0 +1,177 @@
+<?xml version="1.0" ?><VisualStudioProject Name="bobToolz_gtk" ProjectGUID="{65D02375-63EE-4A8A-9F8E-504B1D5A1D02}" ProjectType="Visual C++" RootNamespace="bobToolz_gtk" Version="8.00">
+	<Platforms>
+		<Platform Name="Win32"/>
+	</Platforms>
+	<ToolFiles>
+	</ToolFiles>
+	<Configurations>
+		<Configuration CharacterSet="2" ConfigurationType="1" IntermediateDirectory="$(ConfigurationName)" Name="Debug|Win32" OutputDirectory="$(SolutionDir)$(ConfigurationName)">
+			<Tool Name="VCPreBuildEventTool"/>
+			<Tool Name="VCCustomBuildTool"/>
+			<Tool Name="VCXMLDataGeneratorTool"/>
+			<Tool Name="VCWebServiceProxyGeneratorTool"/>
+			<Tool Name="VCMIDLTool"/>
+			<Tool AdditionalIncludeDirectories="&quot;$(SolutionDir)\include&quot;;&quot;$(SolutionDir)\libs&quot;;&quot;$(SolutionDir)\..\STLPort\stlport&quot;;&quot;$(SolutionDir)\..\gtk2\include&quot;;&quot;$(SolutionDir)\..\gtk2\include\glib-2.0&quot;;&quot;$(SolutionDir)\..\gtk2\lib\glib-2.0\include&quot;;&quot;$(SolutionDir)\..\libxml2\include&quot;" BasicRuntimeChecks="3" DebugInformationFormat="4" Detect64BitPortabilityProblems="true" DisableSpecificWarnings="4996;4244;4267" MinimalRebuild="true" Name="VCCLCompilerTool" Optimization="0" PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS" RuntimeLibrary="3" WarningLevel="3"/>
+			<Tool Name="VCManagedResourceCompilerTool"/>
+			<Tool Name="VCResourceCompilerTool"/>
+			<Tool Name="VCPreLinkEventTool"/>
+			<Tool GenerateDebugInformation="true" Name="VCLinkerTool" TargetMachine="1"/>
+			<Tool Name="VCALinkTool"/>
+			<Tool Name="VCManifestTool"/>
+			<Tool Name="VCXDCMakeTool"/>
+			<Tool Name="VCBscMakeTool"/>
+			<Tool Name="VCFxCopTool"/>
+			<Tool Name="VCAppVerifierTool"/>
+			<Tool Name="VCWebDeploymentTool"/>
+			<Tool Name="VCPostBuildEventTool"/>
+		</Configuration>
+		<Configuration CharacterSet="2" ConfigurationType="1" IntermediateDirectory="$(ConfigurationName)" Name="Release|Win32" OutputDirectory="$(SolutionDir)$(ConfigurationName)" WholeProgramOptimization="1">
+			<Tool Name="VCPreBuildEventTool"/>
+			<Tool Name="VCCustomBuildTool"/>
+			<Tool Name="VCXMLDataGeneratorTool"/>
+			<Tool Name="VCWebServiceProxyGeneratorTool"/>
+			<Tool Name="VCMIDLTool"/>
+			<Tool AdditionalIncludeDirectories="&quot;$(SolutionDir)\include&quot;;&quot;$(SolutionDir)\libs&quot;;&quot;$(SolutionDir)\..\STLPort\stlport&quot;;&quot;$(SolutionDir)\..\gtk2\include&quot;;&quot;$(SolutionDir)\..\gtk2\include\glib-2.0&quot;;&quot;$(SolutionDir)\..\gtk2\lib\glib-2.0\include&quot;;&quot;$(SolutionDir)\..\libxml2\include&quot;" DebugInformationFormat="3" Detect64BitPortabilityProblems="true" DisableSpecificWarnings="4996;4244;4267" Name="VCCLCompilerTool" PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS" RuntimeLibrary="2" WarningLevel="3"/>
+			<Tool Name="VCManagedResourceCompilerTool"/>
+			<Tool Name="VCResourceCompilerTool"/>
+			<Tool Name="VCPreLinkEventTool"/>
+			<Tool EnableCOMDATFolding="2" GenerateDebugInformation="true" Name="VCLinkerTool" OptimizeReferences="2" TargetMachine="1"/>
+			<Tool Name="VCALinkTool"/>
+			<Tool Name="VCManifestTool"/>
+			<Tool Name="VCXDCMakeTool"/>
+			<Tool Name="VCBscMakeTool"/>
+			<Tool Name="VCFxCopTool"/>
+			<Tool Name="VCAppVerifierTool"/>
+			<Tool Name="VCWebDeploymentTool"/>
+			<Tool Name="VCPostBuildEventTool"/>
+		</Configuration>
+	</Configurations>
+	<References>
+	</References>
+	<Files>
+		<Filter Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat" Name="Source Files">
+			<File RelativePath=".\bobToolz-GTK.cpp">
+			</File>
+			<File RelativePath=".\bobtoolz-gtk.rc">
+			</File>
+			<File RelativePath=".\bobToolz.def">
+			</File>
+			<File RelativePath=".\bsploader.cpp">
+			</File>
+			<File RelativePath=".\cportals.cpp">
+			</File>
+			<File RelativePath=".\DBobView.cpp">
+			</File>
+			<File RelativePath=".\DBrush.cpp">
+			</File>
+			<File RelativePath=".\DEntity.cpp">
+			</File>
+			<File RelativePath=".\DEPair.cpp">
+			</File>
+			<File RelativePath=".\DListener.cpp">
+			</File>
+			<File RelativePath=".\DMap.cpp">
+			</File>
+			<File RelativePath=".\DPatch.cpp">
+			</File>
+			<File RelativePath=".\DPlane.cpp">
+			</File>
+			<File RelativePath=".\DPoint.cpp">
+			</File>
+			<File RelativePath=".\DShape.cpp">
+			</File>
+			<File RelativePath=".\DTrainDrawer.cpp">
+			</File>
+			<File RelativePath=".\DTreePlanter.cpp">
+			</File>
+			<File RelativePath=".\DVisDrawer.cpp">
+			</File>
+			<File RelativePath=".\DWinding.cpp">
+			</File>
+			<File RelativePath=".\funchandlers-GTK.cpp">
+			</File>
+			<File RelativePath=".\lists.cpp">
+			</File>
+			<File RelativePath=".\misc.cpp">
+			</File>
+			<File RelativePath=".\ScriptParser.cpp">
+			</File>
+			<File RelativePath=".\shapes.cpp">
+			</File>
+			<File RelativePath=".\StdAfx.cpp">
+			</File>
+			<File RelativePath=".\visfind.cpp">
+			</File>
+			<Filter Name="dialogs">
+				<File RelativePath=".\dialogs\dialogs-gtk.cpp">
+				</File>
+			</Filter>
+		</Filter>
+		<Filter Filter="h;hpp;hxx;hm;inl" Name="Header Files">
+			<File RelativePath=".\bsploader.h">
+			</File>
+			<File RelativePath=".\CPortals.h">
+			</File>
+			<File RelativePath=".\DBobView.h">
+			</File>
+			<File RelativePath=".\DBrush.h">
+			</File>
+			<File RelativePath=".\DEntity.h">
+			</File>
+			<File RelativePath=".\DEPair.h">
+			</File>
+			<File RelativePath=".\DListener.h">
+			</File>
+			<File RelativePath=".\DMap.h">
+			</File>
+			<File RelativePath=".\DPatch.h">
+			</File>
+			<File RelativePath=".\DPlane.h">
+			</File>
+			<File RelativePath=".\DPoint.h">
+			</File>
+			<File RelativePath=".\DShape.h">
+			</File>
+			<File RelativePath=".\DTrainDrawer.h">
+			</File>
+			<File RelativePath=".\DTreePlanter.h">
+			</File>
+			<File RelativePath=".\DVisDrawer.h">
+			</File>
+			<File RelativePath=".\DWinding.h">
+			</File>
+			<File RelativePath=".\funchandlers.h">
+			</File>
+			<File RelativePath=".\lists.h">
+			</File>
+			<File RelativePath=".\misc.h">
+			</File>
+			<File RelativePath=".\res\plugin.rc2">
+			</File>
+			<File RelativePath=".\resource-GTK.h">
+			</File>
+			<File RelativePath=".\shapes.h">
+			</File>
+			<File RelativePath=".\StdAfx.h">
+			</File>
+			<File RelativePath=".\visfind.h">
+			</File>
+			<Filter Name="dialog - headers">
+				<File RelativePath=".\dialogs\dialogs-gtk.h">
+				</File>
+			</Filter>
+			<Filter Name="interface">
+				<File RelativePath="..\..\include\iUI.h">
+				</File>
+				<File RelativePath="..\..\include\qerplugin.h">
+				</File>
+				<File RelativePath="..\..\include\qertypes.h">
+				</File>
+			</Filter>
+		</Filter>
+		<Filter Filter="ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe" Name="Resource Files">
+		</Filter>
+	</Files>
+	<Globals>
+	</Globals>
+</VisualStudioProject>

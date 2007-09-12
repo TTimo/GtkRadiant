@@ -1,0 +1,12 @@
+; plugin.def : Declares the module parameters for the DLL.
+
+LIBRARY      "ctfToolz"
+DESCRIPTION  'ctfToolz Windows Dynamic Link Library'
+
+EXPORTS
+    ; Explicit exports can go here
+	QERPlug_Init @1
+	QERPlug_GetName @2
+	QERPlug_GetCommandList @3
+	QERPlug_Dispatch @4
+	QERPlug_GetFuncTable @5

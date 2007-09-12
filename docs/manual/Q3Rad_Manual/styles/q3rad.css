@@ -1,0 +1,23 @@
+body { font: 12pt "Times New Roman";
+	margin-left: 5mm;
+	margin-right: 5mm;
+	text-align: justify;
+	background: #ffffff;
+	color: #000000 }
+h1 { font: bold 24pt Arial, Helvetica }
+h2 { font: bold italic 18pt Arial, Helvetica }
+.subheading { font: bold 16pt Arial, Helvetica }
+:link {color: blue;
+	text-decoration: none; }
+:visited {color: purple;
+	text-decoration: none; }
+h6 { font: 10pt "Times New Roman" }
+.MsoToc2 { font: bold small-caps 12pt "Times New Roman" }
+.MsoTitle { text-align:center;
+	font: bold 24pt "BankGothic Md BT";
+	letter-spacing:2.5pt }
+.heading { font: italic 10pt "Times New Roman" }
+.subcontents { font: 10pt "Times New Roman" }
+.tip { font: 10pt "Comic Sans MS" }
+.type { font: 10pt "Courier New" }
+.menu { font: 10pt Arial, Helvetica }

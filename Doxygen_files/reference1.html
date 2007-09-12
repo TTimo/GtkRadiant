@@ -1,0 +1,333 @@
+<div align="center">
+<table width="95%" cellpadding="0" cellspacing="0" border="0">
+<tr><td>
+<a href="../html/index.html">GtkRadiant Doxygen Documentation</a>
+
+<a name="top"></a>
+<h1>Doxygen Quick Reference</h1>
+<hr>
+<p align="left">
+
+<h2>Index</h2>
+	<ol>
+		<li><a href="#cs">Commenting styles</a></li>
+		<li><a href="#qts">Qt Style C++ Class Example</a></li>
+		<li><a href="#jds">JavaDoc Style C++ Class Example</a></li>
+		<li><a href="#spt">Special Tags</a></li>
+		<li><a href="#stt">Structural Tags</a></li>
+	</ol>
+</p>
+
+<hr>
+<a name="cs"></a>
+<h2>1. Commenting Styles</h2>
+There are two different <i>styles</i> of commenting that doxygen recognises.
+<p align="left">
+Qt Style:<br>
+<code>
+/*!<br>
+  .... text ....<br>
+*/<br>
+<br>
+</code>
+Qt Style Single line<br>
+<code>
+//! .... one line of text ....<br>
+</code>
+</p>
+
+<p align="left">
+JavaDoc Style:<br>
+<code>
+/**<br>
+  * .... text ....<br>
+  */<br>
+</code>
+<br>
+JavaDoc Style Single line<br>
+<code>
+/// .... one line of text ....<br>
+</code>
+</p>
+
+<p>
+	Doxygen only allows one brief and one detailed description for each declaration/definition.
+	If there is a brief description before a declaration, and one before the a definition, only
+	the one before the <i>declaration</i> will be used. If the same situation occurs for a detailed
+	description the one before the <i>definition</i> is preferred and the one before the declaration will
+	be ignored.<br>
+	A useful method is to have the brief documentation with the declaration in the header file,
+	and the detailed documentation with the definition in the source file.
+	<p>
+		<i>Note: Standard C/C++ comments are ignored by doxygen, but will be included in the code listing
+		for that file.	</i>
+	</p>
+</p>
+<p align="right"><a href="#top">top</a> </p>
+<hr>
+
+<a name="qts"></a>
+<h2>2. Qt Style C++ Class Example</h2>
+<p>
+	Here is an example of a C++ class using Qt Style documentation.<br>
+	The IEpair class from include/iepairs.h is used here. The html result of using these comments 
+	can be found <a href="../example/index.html">here</a>.<br>
+	<p>
+		<i>Note: The resulting html was generated from a single file. If it were generated as part of
+		the whole documentation, many of the function names and variables would be hyperlinks to
+		their definitions.</i><br>
+	</p>
+	<pre>
+//! Virtual class to allow plugin operations on entity pairs
+/*!
+  \todo Write more complete documentation for this class so that it's use
+  is clear
+			
+  An interface to entity keys and key pairs that allows plugins to;
+  read and write entity keys and key values, get a key value as a
+  vec3_t
+*/
+class IEpair
+{
+  public:
+    //! Increment the number of references to this object
+    virtual void IncRef () = 0;
+				
+    //! Decrement the reference count
+    virtual void DecRef () = 0;
+				
+    //! Get a vector from a key
+    virtual void GetVectorForKey( char* key, vec3_t vec ) = 0;
+				
+    //! Get a float from a key
+    virtual float FloatForKey( char *key ) = 0;
+				
+    //! Get a string (char *) from a key
+    virtual char* ValueForKey( char *key ) = 0;
+				
+    //! Set a key value to char *value
+    /*!
+      \param key The (char *) containing the keyname
+      \param value The (char *) to set the key value to
+    */
+    virtual void SetKeyValue( char *key, char *value ) = 0;
+				
+    //! Get a vec3_t for the entities origin
+    virtual void GetEntityOrigin( vec3_t vec ) = 0;
+				
+    //! Compute the rotated bounds of the BBox based on "angle" and "angles" keys
+    virtual void CalculateRotatedBounds( vec3_t mins, vec3_t maxs ) = 0;
+};
+</pre>
+</p>
+<p>
+	<p align="right"><a href="#top">top</a> </p>
+	<a name="jds"></a>
+	<h2>3. JavaDoc Style C++ Class Example</h2>
+
+	The same class documented using JavaDoc Style comments
+<pre>
+/// Virtual class to allow plugin operations on entity pairs
+/**
+  * @todo Write more complete documentation for this class so that it's use
+  * is clear
+  *	
+  * An interface to entity keys and key pairs that allows plugins to;
+  * read and write entity keys and key values, get a key value as a
+  * vec3_t
+  */
+class IEpair
+{
+  public:
+    /// Increment the number of references to this object
+    virtual void IncRef () = 0;
+				
+    /// Decrement the reference count
+    virtual void DecRef () = 0;
+				
+    /// Get a vector from a key
+    virtual void GetVectorForKey( char* key, vec3_t vec ) = 0;
+				
+    /// Get a float from a key
+    virtual float FloatForKey( char *key ) = 0;
+				
+    /// Get a string (char *) from a key
+    virtual char* ValueForKey( char *key ) = 0;
+				
+    /** Set a key value to char *value
+      * @param key The (char *) containing the keyname
+      * @param value The (char *) to set the key value to
+      */
+    virtual void SetKeyValue( char *key, char *value ) = 0;
+				
+    //! Get a vec3_t for the entities origin
+    virtual void GetEntityOrigin( vec3_t vec ) = 0;
+				
+    //! Compute the rotated bounds of the BBox based on "angle" and "angles" keys
+    virtual void CalculateRotatedBounds( vec3_t mins, vec3_t maxs ) = 0;
+};
+</pre>
+</p>
+<p align="right"><a href="#top">top</a> </p>
+<hr>
+
+<a name="spt"></a>
+<h2>4. Special Tags</h2>
+<p>
+	Special tags using the Qt style begin with a " \ ", or using JavaDoc style a " @ " (the two should not be mixed).<br>
+	<br>
+	<b>Common special tags</b><br>
+	<center>
+	<table width="90%" cellpadding="4" cellspacing="2" border="0" valign="top">
+	<tr><td width="10%" bgcolor="#DDDDDD" align="right">
+		<b>author</b>
+	</td><td bgcolor="#DDDDDD">
+		<i>The author or a list of comma separated authors/contributers</i>
+	</td></tr><tr><td bgcolor="#CCCCCC" align="right">
+		<b>see</b> 
+	</td><td bgcolor="#CCCCCC">
+		<i>A reference to another class, class member, function, etc...</i>
+	</td></tr><tr><td bgcolor="#DDDDDD" align="right">
+		<b>param</b> 
+	</td><td bgcolor="#DDDDDD">
+		<i>A description of a specific function argument or parameter</i>
+	</td></tr><tr><td bgcolor="#CCCCCC" align="right">
+		<b>return</b>
+	</td><td bgcolor="#CCCCCC">
+		<i>A description of the value returned from a function/method</i>
+	</td></tr><tr><td bgcolor="#DDDDDD" align="right">
+		<b>bug</b>
+	</td><td bgcolor="#DDDDDD">
+		<i>Starts a paragraph where one or more bugs may be listed.</i>
+	</td></tr><tr><td bgcolor="#CCCCCC" align="right">
+		<b>note</b>
+	</td><td bgcolor="#CCCCCC">
+		<i>Starts a paragraph where a note may be entered.</i>
+	</td></tr><tr><td bgcolor="#DDDDDD" align="right">
+		<b>todo</b>
+	</td><td bgcolor="#DDDDDD">
+		<i>Starts a paragraph where a TODO item is described.</i><br>
+		Note: All TODO items are collated into a separate todo list, each linking to each other
+	</td></tr><tr><td bgcolor="#CCCCCC" align="right">
+		<b>version</b>
+	</td><td bgcolor="#CCCCCC">
+		<i>Starts a paragraph where one or more version strings may be entered.</i>
+	</td></tr><tr><td bgcolor="#DDDDDD" align="right">
+		<b>warning</b>
+	</td><td bgcolor="#DDDDDD">
+		<i>Starts a paragraph where one or more warning messages may be entered.</i>
+	</td></tr><tr><td bgcolor="#DDDDDD" align="right">
+		<b>brief</b>
+	</td><td bgcolor="#DDDDDD">
+		<i>A single line comment in place of the //! or /// comment.</i>
+	</td>
+	</tr>	
+</table>
+</center>
+<br>
+<p align="right"><a href="#top">top</a></p>
+<hr>
+<a name="stt"></a>
+<h2>5. Structural Tags</h2>
+<p>
+These are used to document a named object, and are not required to be located near that
+object definition or declaration. This allows the documentation for an object to be located
+anywhere in the doxygen input files. The exception to this rule however, is that these
+documentation blocks cannot be within the body of a function or within C style comment blocks.
+All structural commands are preceded by either a " \ " or a " @ ", depending on the 
+documentation style, and require one or more parameters to specify the name of the object
+the description is referring to.<br>
+</p>
+<p>
+An example of the \file structural tag:
+<pre>
+/*! \file iepairs.h
+    \brief One line documentation for this file
+    \author Author(s)
+    Long description of this file
+*/
+</pre>
+</p>
+
+<b>Common Structural Tags</b><br><br>
+<center>
+<table width="90%" cellpadding="4" cellspacing="2" border="0" valign="top">
+	<tr><td width="10%" bgcolor="#DDDDDD" align="right">
+		<b>class</b>
+	</td><td bgcolor="#DDDDDD">
+		<i>Documents a class<br>
+		eg:<code><br>
+		/*! \class IEpair<br>
+    		\brief Short description of the IEpair class<br>
+				<br>		
+    		Detailed description of the IEpair class<br>
+		*/<br>
+		</code>
+		</i>	
+	</td></tr><tr><td bgcolor="#CCCCCC" align="right">
+		<b>def</b>
+	</td><td bgcolor="#CCCCCC">
+		<i>Describes a #define<br>
+		eg:<code><br>
+		/*! \def MAX_VALUE The name of the define<br>
+    		\brief Description of MAX_VALUE<br>
+		*/<br>
+		</code>
+		</i>
+	</td></tr><tr><td bgcolor="#DDDDDD" align="right">
+		<b>file</b>
+	</td><td bgcolor="#DDDDDD">
+		<i>Describes a file<br>
+		eg:<code><br>
+		/*! \file iepairs.h The name of the file<br>
+		    \brief Description of the file iepairs.h<br>
+				<br>
+				Details<br>
+		*/<br>
+		</code>
+		</i>
+	</td></tr><tr><td bgcolor="#CCCCCC" align="right">
+		<b>struct</b>
+	</td><td bgcolor="#CCCCCC">
+		<i>Documents a struct<br>
+		eg:<code><br>
+		/*! \struct BTListList_t the name of the struct<br>
+  		  \brief Description of BTListList_t<br>
+		  	<br>
+    		Details<br>
+		*/<br>
+		</code>
+		</i>
+	</td></tr><tr><td bgcolor="#DDDDDD" align="right">
+		<b>var</b>
+	</td><td bgcolor="#DDDDDD">
+		<i>Documents a typedef, variable or enum value<br>
+		eg:<code><br>
+		/*! \var typedef unsigned int UINT32<br>
+  		  \brief Short description<br>
+		*/<br>
+		</code>
+		</i>
+	</td></tr><tr><td bgcolor="#CCCCCC" align="right">
+		<b>fn</b>
+	</td><td bgcolor="#CCCCCC">
+		<i>Documents a function</i>
+		eg:<code><br>
+		/*! \fn virtual void IEpair::DecRef() = 0;<br>
+  		  \brief Short description of this function<br>
+				<br>
+		    Detailed description of this function<br>
+		*/<br>
+		</code>
+		</i>
+	</td>
+	</tr>
+</table>
+</center>
+
+<br>	
+<p align="right"><a href="#top">top</a> </p>
+<hr>
+</td></tr>
+</table>
+</div>

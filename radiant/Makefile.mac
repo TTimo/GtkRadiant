@@ -1,0 +1,91 @@
+## Makefile for GtkRadiant
+
+ifeq ($(DEBUG),1) 
+DEBUG=true
+else
+DEBUG=false
+endif
+
+CC=gcc
+CPPFLAGS=-I../libs -I../include `gtk-config --cflags` `xml-config --cflags` -I/usr/X11R6/include -Wall -DQUAKE3
+LDFLAGS=`xml-config --libs` 
+DATE=`date +%m%d`
+ZIP=radiant-src.$(DATE).tgz
+LIBS=../libs/cmdlib.a ../libs/pak.a ../libs/jpeg6.a ../libs/l_net.a
+OUTDIR=$(RADIANT_DATA)
+
+LDFLAGS += $(subst -rdynamic,,$(shell gtk-config --libs))  -lGL /usr/local/lib/libdl.a
+
+ifeq ($(DEBUG), false)
+CPPFLAGS += -O3 -DNDEBUG
+else
+CPPFLAGS += -g -D_DEBUG
+endif
+
+CFLAGS=$(CPPFLAGS)
+
+SRC= glwidget.cpp qgl.c bmp.cpp brush.cpp brush_primit.cpp brushscript.cpp camwindow.cpp \
+     csg.cpp dialog.cpp dialoginfo.cpp drag.cpp eclass.cpp entity.cpp file.cpp \
+     findtexturedialog.cpp glinterface.cpp glwindow.cpp groupdialog.cpp gtkdlgs.cpp \
+     gtkmisc.cpp iepairs.cpp ishaders.cpp lbmlib.cpp \
+     main.cpp mainframe.cpp map.cpp mathlib.cpp messaging.cpp missing.cpp parse.cpp \
+     patchdialog.cpp plugin.cpp pluginentities.cpp pluginmanager.cpp pmesh.cpp \
+     points.cpp preferences.cpp profile.cpp qe3.cpp select.cpp \
+     selectedface.cpp shaderinfo.cpp surfacedialog.cpp surfaceplugin.cpp \
+     texwindow.cpp undo.cpp vertsel.cpp watchbsp.cpp winding.cpp xywindow.cpp \
+     z.cpp zwindow.cpp feedback.cpp gtkfilesel-darwin.c
+
+# TA_HACK
+SRC += vfs.cpp
+
+OBJS := \
+  $(patsubst %.c,%.o,$(filter %.c,$(SRC))) \
+  $(patsubst %.cpp,%.o,$(filter %.cpp,$(SRC)))
+
+all: radiant
+
+help:
+	@echo 'Use "make DEBUG=0" or "export DEBUG=1; make" for release builds'
+
+radiant: $(OBJS) $(LIBS)
+	$(CC) -o radiant $(OBJS) $(LDFLAGS) $(LIBS)
+	@if [ -d $(OUTDIR) ]; then cp radiant $(OUTDIR); fi
+
+# Other targets
+.PHONY: clean veryclean
+
+clean:
+	rm -f *.o *.d radiant core
+
+veryclean: clean
+	find libs -name \*.o | xargs rm -f
+	rm -f libs/*.a 
+
+zip: veryclean
+	cd .. && tar -zcf $(ZIP) radiant
+
+## Dependencies
+
+-include $(OBJS:.o=.d)
+
+## Libraries
+
+../libs/cmdlib.a:
+	cd ../libs/cmdlib && make
+
+../libs/pak.a:
+	cd ../libs/pak && make
+
+../libs/jpeg6.a:
+	cd ../libs/jpeg6 && make
+
+../libs/l_net.a:
+	cd ../libs/l_net && make
+
+libs:
+	cd ../libs/cmdlib && $(MAKE) clean && $(MAKE) DEBUG=$(DEBUG)
+	cd ../libs/pak && $(MAKE) clean && $(MAKE) DEBUG=$(DEBUG)
+	cd ../libs/l_net && $(MAKE) clean && $(MAKE) DEBUG=$(DEBUG)
+
+tools:
+	cd ../q3tools/q3map && $(MAKE) clean && $(MAKE) DEBUG=$(DEBUG)

@@ -1,0 +1,533 @@
+//Microsoft Developer Studio generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "resource.h"
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+#ifndef _MAC
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 1,1,1,0
+ PRODUCTVERSION 2,0,0,0
+ FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x4L
+ FILETYPE 0x2L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "080904b0"
+        BEGIN
+            VALUE "Comments", "by djbob :P and MarsMattel ~:]\0"
+            VALUE "CompanyName", "bobCo\0"
+            VALUE "FileDescription", "All your plugins are belong to us\0"
+            VALUE "FileVersion", "1, 1, 1, 0\0"
+            VALUE "InternalName", "bobToolz\0"
+            VALUE "LegalCopyright", "Copyright (C) y2k\0"
+            VALUE "LegalTrademarks", "\0"
+            VALUE "OriginalFilename", "bobToolz.DLL\0"
+            VALUE "PrivateBuild", "\0"
+            VALUE "ProductName", "\0"
+            VALUE "ProductVersion", "2, 0, 0, 0\0"
+            VALUE "SpecialBuild", "\0"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x809, 1200
+    END
+END
+
+#endif    // !_MAC
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////
+// Neutral (Sys. Default) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_NEUSD)
+#ifdef _WIN32
+LANGUAGE LANG_NEUTRAL, SUBLANG_SYS_DEFAULT
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_ABOUT DIALOG DISCARDABLE  0, 0, 361, 118
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "About"
+FONT 8, "Arial"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,305,100,50,14
+    CTEXT           "BobToolz - Q3radiant version by djbob &&&& Mars Mattel",
+                    IDC_STATIC,5,5,350,14,SS_CENTERIMAGE
+    CTEXT           "Latest Version Can Be Found At http://djbob.fortefide.com",
+                    IDC_STATIC,5,20,350,15,SS_CENTERIMAGE
+    LTEXT           "Random bobToolz comments:",IDC_STATIC,5,35,355,10
+    CTEXT           "Texture Alignments Are Irrelevant, You Will Be Caulked\n-QPSiren\nCaulk Me Baby One More Time\n-TTimo\nWe're Up The Creek Without A Penguin\n-Mars Mattel",
+                    IDC_STATIC,5,45,355,50
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO DISCARDABLE 
+BEGIN
+    IDD_ABOUT, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 354
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 111
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+#endif    // Neutral (Sys. Default) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.K.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENG)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_UK
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_STAIR_DIALOG DIALOG DISCARDABLE  0, 0, 246, 118
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Stair Designer"
+FONT 8, "Arial"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,189,83,50,12
+    PUSHBUTTON      "Cancel",IDCANCEL,189,99,50,12
+    EDITTEXT        IDC_EDIT1,5,5,86,12,ES_AUTOHSCROLL
+    LTEXT           "Stair Height",IDC_STATIC,95,5,42,15,SS_CENTERIMAGE
+    GROUPBOX        "Direction",IDC_STATIC,7,26,85,64
+    CONTROL         "North",IDC_DIR_N_RADIO,"Button",BS_AUTORADIOBUTTON | 
+                    WS_GROUP,14,38,33,10
+    CONTROL         "South",IDC_DIR_S_RADIO,"Button",BS_AUTORADIOBUTTON,14,
+                    50,35,10
+    CONTROL         "East",IDC_DIR_E_RADIO,"Button",BS_AUTORADIOBUTTON,14,62,
+                    30,10
+    CONTROL         "West",IDC_DIR_W_RADIO,"Button",BS_AUTORADIOBUTTON,14,74,
+                    33,10
+    GROUPBOX        "Style",IDC_STATIC,97,26,82,49
+    CONTROL         "Original",IDC_STYLE_ORIG_RADIO,"Button",
+                    BS_AUTORADIOBUTTON | WS_GROUP,105,35,39,10
+    CONTROL         "Bob's Style",IDC_STYLE_BOB_RADIO,"Button",
+                    BS_AUTORADIOBUTTON,105,47,51,10
+    CONTROL         "Corner",IDC_STYLE_CORNER_RADIO,"Button",
+                    BS_AUTORADIOBUTTON | WS_DISABLED,105,59,51,10
+    EDITTEXT        IDC_RISER_EDIT,7,99,85,12,ES_AUTOHSCROLL
+    LTEXT           "Riser Texture",IDC_STATIC,95,100,60,11,SS_CENTERIMAGE
+    CONTROL         "Use Detail Brushes",IDC_DETAIL_CHK,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,100,80,75,10
+END
+
+IDD_POLYGON_DIALOG DIALOG DISCARDABLE  0, 0, 271, 68
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Polygon Builder"
+FONT 8, "Arial"
+BEGIN
+    PUSHBUTTON      "OK",IDOK,150,50,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,215,50,50,14
+    EDITTEXT        IDC_EDIT1,7,7,76,13,ES_AUTOHSCROLL
+    LTEXT           "Number Of Sides",IDC_STATIC,85,7,60,13,SS_CENTERIMAGE
+    CONTROL         "Inverse Polygon",IDC_INVERSE_CHK,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,149,21,75,10
+    CONTROL         "Use Border",IDC_BORDER_CHK,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,149,7,66,10
+    EDITTEXT        IDC_BORDER_EDIT,7,28,76,13,ES_AUTOHSCROLL
+    LTEXT           "Border Size",IDC_STATIC,86,28,60,13,SS_CENTERIMAGE
+    CONTROL         "Align Top Edge",IDC_ALIGN_CHK,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,149,35,75,10
+END
+
+IDD_DOOR_DIALOG DIALOG DISCARDABLE  0, 0, 327, 119
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Door Builder"
+FONT 8, "Arial"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,270,7,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,270,24,50,14
+    EDITTEXT        IDC_FBTEXTURE_EDIT,7,7,125,14,ES_AUTOHSCROLL
+    LTEXT           "Door Front/Back Texture",IDC_STATIC,137,7,86,14,
+                    SS_CENTERIMAGE
+    EDITTEXT        IDC_TRIMTEXTURE_EDIT,7,26,125,14,ES_AUTOHSCROLL
+    LTEXT           "Door Trim Texture",IDC_STATIC,137,26,86,14,
+                    SS_CENTERIMAGE
+    CONTROL         "Scale Main Texture Horizontally",IDC_TEXSCALE1_CHECK,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,46,115,10
+    CONTROL         "Scale Main Texture Vertically",IDC_TEXSCALE2_CHECK,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,60,107,10
+    CONTROL         "Scale Trim Texture Horizontally",IDC_TEXSCALE3_CHECK,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,136,46,113,10
+    CONTROL         "Scale Trim Texture Vertically",IDC_TEXSCALE4_CHECK,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,136,60,105,10
+    COMBOBOX        IDC_MAINTEX_COMBO,7,76,126,30,CBS_DROPDOWN | CBS_SORT | 
+                    WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_TRIMTEX_COMBO,7,99,126,30,CBS_DROPDOWN | CBS_SORT | 
+                    WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      "Set As Main Texture",IDC_SET_MAINTEX_BTN,139,76,82,14
+    PUSHBUTTON      "Set As Trim Texture",IDC_SET_TRIMTEX_BTN,139,98,82,14
+    GROUPBOX        "Orientation",IDC_DIR_GROUP,225,72,95,40
+    CONTROL         "North - South",IDC_DIR_NS_RADIO,"Button",
+                    BS_AUTORADIOBUTTON | WS_GROUP,230,82,85,10
+    CONTROL         "East - West",IDC_DIR_EW_RADIO,"Button",
+                    BS_AUTORADIOBUTTON,230,97,85,10
+END
+
+IDD_INTERSECT_DIALOG DIALOG DISCARDABLE  0, 0, 245, 58
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Intersecting Brush Finder"
+FONT 8, "Arial"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,130,40,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,185,40,50,14
+    CONTROL         "Include Detail Brushes",IDC_DETAIL_INCLUDE_CHECK,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,130,10,111,10
+    GROUPBOX        "Brush Options",IDC_STATIC,10,5,111,45
+    CONTROL         "Use Whole Map",IDC_WHOLEMAP_RADIO,"Button",
+                    BS_AUTORADIOBUTTON | WS_GROUP,15,15,95,10
+    CONTROL         "Use Selected Brushes",IDC_SELECTED_RADIO,"Button",
+                    BS_AUTORADIOBUTTON,15,30,95,10
+    CONTROL         "Only Select Duplicate Brushes",IDC_DUPLICATEONLY_CHECK,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,130,25,113,10
+END
+
+IDD_INTERSECT_INFO_DIALOG DIALOG DISCARDABLE  0, 0, 187, 33
+STYLE DS_MODALFRAME | WS_POPUP | WS_VISIBLE
+FONT 8, "MS Sans Serif"
+BEGIN
+    CONTROL         "Progress1",IDC_PROGRESS1,"msctls_progress32",PBS_SMOOTH,
+                    5,15,175,10
+    CTEXT           "Brush Loading",IDC_STATIC,5,5,175,10,SS_CENTERIMAGE
+END
+
+IDD_BRUSHCHECKER_DIALOG DIALOG DISCARDABLE  0, 0, 182, 38
+STYLE DS_MODALFRAME | WS_POPUP | WS_VISIBLE
+FONT 8, "MS Sans Serif"
+BEGIN
+    CONTROL         "Progress1",IDC_PROGRESS1,"msctls_progress32",PBS_SMOOTH,
+                    5,21,172,10
+    CTEXT           "Checking Brushes",IDC_STATIC,5,5,170,15,SS_CENTERIMAGE
+END
+
+IDD_AUTOCAULK_DIALOG DIALOG DISCARDABLE  0, 0, 187, 52
+STYLE DS_MODALFRAME | WS_POPUP | WS_VISIBLE
+FONT 8, "MS Sans Serif"
+BEGIN
+    CONTROL         "Progress1",IDC_PROGRESS1,"msctls_progress32",PBS_SMOOTH,
+                    5,15,175,10
+    CTEXT           "Loading Portal Data",IDC_STATIC,5,5,175,10,
+                    SS_CENTERIMAGE
+    CONTROL         "Progress1",IDC_PROGRESS2,"msctls_progress32",PBS_SMOOTH,
+                    5,35,175,10
+    CTEXT           "Auto Caulking",IDC_STATIC,5,25,175,10,SS_CENTERIMAGE
+END
+
+IDD_AUTOCAULKSTART_DIALOG DIALOG DISCARDABLE  0, 0, 237, 83
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Auto Caulk"
+FONT 8, "Arial"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,125,10,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,180,10,50,14
+    CONTROL         "Destroy Invisible Brushes",IDC_KILLBRUSHES_CHECK,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,125,50,95,10
+    LTEXT           "",IDC_WARNING1_STATIC,5,65,223,11,NOT WS_GROUP
+    GROUPBOX        "Static",IDC_STATIC,5,5,115,57
+    CONTROL         "Autocaulk",IDC_AC_NORMAL_RADIO,"Button",
+                    BS_AUTORADIOBUTTON | WS_GROUP,10,15,48,10
+    CONTROL         "Build Mini Prt",IDC_AC_BUILD_MINI_PRT_RADIO,"Button",
+                    BS_AUTORADIOBUTTON,10,30,56,10
+    CONTROL         "Autocaulk+ (Detail Brushes)",IDC_AC_SUPER_RADIO,"Button",
+                    BS_AUTORADIOBUTTON,10,45,106,10
+END
+
+IDD_TEXTURE_RESET_DIALOG DIALOG DISCARDABLE  0, 0, 272, 107
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Texture Reset"
+FONT 8, "Arial"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,160,85,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,215,85,50,14
+    EDITTEXT        IDC_RESET_TEXTURE_EDIT,5,5,118,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_SCL_VERT_EDIT,85,45,40,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_SCL_HOR_EDIT,85,65,40,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_ROTATION_EDIT,85,85,40,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_SHFT_VER_EDIT,225,45,40,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_SHFT_HOR_EDIT,225,65,40,14,ES_AUTOHSCROLL
+    RTEXT           "Scale::Vertical",IDC_STATIC,5,45,75,15,SS_CENTERIMAGE
+    RTEXT           "Scale::Horizontal",IDC_STATIC,5,65,75,15,SS_CENTERIMAGE
+    RTEXT           "Rotation",IDC_STATIC,5,85,75,15,SS_CENTERIMAGE
+    RTEXT           "Shift::Horizontal",IDC_STATIC,160,65,60,15,
+                    SS_CENTERIMAGE
+    RTEXT           "Shift::Vertical",IDC_STATIC,160,45,60,15,SS_CENTERIMAGE
+    LTEXT           "Texture To Reset",IDC_STATIC,128,5,62,15,SS_CENTERIMAGE
+    CONTROL         "Reset All Textures",IDC_ALLTEXTURES_CHECK,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,195,5,75,15
+    EDITTEXT        IDC_RESET_NEW_TEXTURE_EDIT,5,25,118,14,ES_AUTOHSCROLL
+    LTEXT           "New Texture Name",IDC_STATIC,128,25,62,15,
+                    SS_CENTERIMAGE
+    CONTROL         "Reset Texture Only",IDC_ONLYTEXTURE_CHECK,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,195,25,75,15
+END
+
+IDD_PATHPLOTTER_DIALOG DIALOG DISCARDABLE  0, 0, 172, 113
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Path Plotter"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "Enable",IDYES,5,92,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,115,92,50,14
+    PUSHBUTTON      "Disable",IDNO,60,92,50,14
+    EDITTEXT        IDC_POINTCOUNT_EDIT,5,5,80,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_MULTIPLIER_EDIT,5,25,80,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_GRAVITY_EDIT,5,45,80,14,ES_AUTOHSCROLL
+    LTEXT           "Number Of Points",IDC_STATIC,90,5,60,15,SS_CENTERIMAGE
+    CONTROL         "No Dynamic Update",IDC_NOUPDATE_CHECK,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,7,65,80,10
+    LTEXT           "Multiplier",IDC_STATIC,90,25,60,15,SS_CENTERIMAGE
+    LTEXT           "Gravity",IDC_STATIC,90,45,60,15,SS_CENTERIMAGE
+    CONTROL         "Show Bounding Lines",IDC_SHOWEXTRA_CHECK,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,7,79,85,10
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO DISCARDABLE 
+BEGIN
+    IDD_STAIR_DIALOG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 239
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 111
+    END
+
+    IDD_POLYGON_DIALOG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 264
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 61
+    END
+
+    IDD_DOOR_DIALOG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 320
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 112
+    END
+
+    IDD_INTERSECT_DIALOG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 238
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 51
+    END
+
+    IDD_INTERSECT_INFO_DIALOG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 180
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 25
+    END
+
+    IDD_BRUSHCHECKER_DIALOG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 175
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 31
+    END
+
+    IDD_AUTOCAULK_DIALOG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 180
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 45
+    END
+
+    IDD_AUTOCAULKSTART_DIALOG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 230
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 76
+    END
+
+    IDD_TEXTURE_RESET_DIALOG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 265
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 100
+    END
+
+    IDD_PATHPLOTTER_DIALOG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 165
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 106
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog Info
+//
+
+IDD_DOOR_DIALOG DLGINIT
+BEGIN
+    IDC_MAINTEX_COMBO, 0x403, 25, 0
+0x6162, 0x6573, 0x645f, 0x6f6f, 0x2f72, 0x6873, 0x6e69, 0x6d79, 0x7465, 
+0x6c61, 0x6f64, 0x726f, "\000" 
+    IDC_MAINTEX_COMBO, 0x403, 33, 0
+0x6162, 0x6573, 0x645f, 0x6f6f, 0x2f72, 0x6873, 0x6e69, 0x6d79, 0x7465, 
+0x6c61, 0x6f64, 0x726f, 0x6f5f, 0x7475, 0x6973, 0x6564, "\000" 
+    IDC_MAINTEX_COMBO, 0x403, 36, 0
+0x6162, 0x6573, 0x645f, 0x6f6f, 0x2f72, 0x6873, 0x6e69, 0x6d79, 0x7465, 
+0x6c61, 0x6f64, 0x726f, 0x6f5f, 0x7475, 0x6973, 0x6564, 0x6133, 0x0032, 
+
+    IDC_MAINTEX_COMBO, 0x403, 24, 0
+0x6f67, 0x6874, 0x6369, 0x645f, 0x6f6f, 0x2f72, 0x6f64, 0x726f, 0x3230, 
+0x625f, 0x6572, 0x0064, 
+    IDC_MAINTEX_COMBO, 0x403, 31, 0
+0x6f67, 0x6874, 0x6369, 0x645f, 0x6f6f, 0x2f72, 0x6f64, 0x726f, 0x3230, 
+0x625f, 0x6572, 0x3264, 0x735f, 0x6968, 0x796e, "\000" 
+    IDC_MAINTEX_COMBO, 0x403, 32, 0
+0x6f67, 0x6874, 0x6369, 0x645f, 0x6f6f, 0x2f72, 0x6f64, 0x726f, 0x3230, 
+0x655f, 0x6c62, 0x6575, 0x5f32, 0x6873, 0x6e69, 0x0079, 
+    IDC_MAINTEX_COMBO, 0x403, 33, 0
+0x6f67, 0x6874, 0x6369, 0x645f, 0x6f6f, 0x2f72, 0x6f64, 0x726f, 0x3230, 
+0x695f, 0x6f5f, 0x6e72, 0x7461, 0x3565, 0x665f, 0x6e69, "\000" 
+    IDC_MAINTEX_COMBO, 0x403, 21, 0
+0x6f67, 0x6874, 0x6369, 0x645f, 0x6f6f, 0x2f72, 0x6f64, 0x726f, 0x3230, 
+0x6a5f, "\000" 
+    IDC_MAINTEX_COMBO, 0x403, 22, 0
+0x6f67, 0x6874, 0x6369, 0x645f, 0x6f6f, 0x2f72, 0x6f64, 0x726f, 0x3230, 
+0x6a5f, 0x0033, 
+    IDC_MAINTEX_COMBO, 0x403, 22, 0
+0x6f67, 0x6874, 0x6369, 0x645f, 0x6f6f, 0x2f72, 0x6f64, 0x726f, 0x3230, 
+0x6a5f, 0x0034, 
+    IDC_MAINTEX_COMBO, 0x403, 23, 0
+0x6f67, 0x6874, 0x6369, 0x645f, 0x6f6f, 0x2f72, 0x6f64, 0x726f, 0x3230, 
+0x6b5f, 0x6232, "\000" 
+    IDC_TRIMTEX_COMBO, 0x403, 26, 0
+0x6162, 0x6573, 0x735f, 0x7075, 0x6f70, 0x7472, 0x732f, 0x7075, 0x6f70, 
+0x7472, 0x7231, 0x7375, 0x0074, 
+    IDC_TRIMTEX_COMBO, 0x403, 27, 0
+0x6162, 0x6573, 0x735f, 0x7075, 0x6f70, 0x7472, 0x732f, 0x7075, 0x6f70, 
+0x7472, 0x7331, 0x6968, 0x796e, "\000" 
+    IDC_TRIMTEX_COMBO, 0x403, 26, 0
+0x6162, 0x6573, 0x735f, 0x7075, 0x6f70, 0x7472, 0x732f, 0x7075, 0x6f70, 
+0x7472, 0x7232, 0x7375, 0x0074, 
+    IDC_TRIMTEX_COMBO, 0x403, 22, 0
+0x6162, 0x6573, 0x735f, 0x7075, 0x6f70, 0x7472, 0x772f, 0x6c70, 0x7461, 
+0x5f31, 0x0031, 
+    IDC_TRIMTEX_COMBO, 0x403, 22, 0
+0x6162, 0x6573, 0x735f, 0x7075, 0x6f70, 0x7472, 0x702f, 0x616c, 0x6574, 
+0x5f32, 0x0035, 
+    0
+END
+
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#include ""resource.h""\r\n"
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+#endif    // English (U.K.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

@@ -1,0 +1,150 @@
+<html>
+<head>
+<title>Q3Radiant Editor Manual: Appendix B3</title>
+<link rel = "stylesheet" type = "text/css" href = "../styles/q3rad.css">
+</head>
+<body>
+<h1 class = "MsoTitle">Q3Radiant Editor Manual</h1>
+<hr>
+<h1>Appendix B: Entity Descriptions</h1>
+<h2><a name = "hold">Holdable_* Entities</a></h2>
+
+<p><div class = "subheading">holdable_medkit</div>
+
+<b>Map Entity Color:</b> blue (.7 0 1)
+
+<br><b>Dimensions:</b>&nbsp; (-16 -16 -16) (16 16 16)
+
+<br><b>Game Function:</b>&nbsp; This is a Medkit that can be picked
+up and used (once) later. Brings the player's health back to 100
+when used. Player can only carry one holdable item at a time.
+
+
+
+<p><strong>Keys</strong>
+
+<br><b>wait:</b> time in seconds before item respawns after being
+picked up (default 60, -1 = never respawn).
+
+<br><b>random:</b> random time variance in seconds added or
+subtracted from "wait" delay (default 0 - see Notes).
+
+<br><b>team:</b> set this to team items. Teamed items will respawn
+randomly after team master is picked up (see Notes).
+
+<br><b>target:</b> picking up the item will trigger the entity this
+points to.
+
+<br><b>targetname:</b> a target_give entity can point to this for
+respawn freebies.
+
+<br><b>notbot:</b> when set to 1, a bot will never seek out this
+item
+
+<br><b>notfree:</b> when set to 1, entity will not spawn in "Free
+for all" and "Tournament" modes.
+
+<br><b>notteam:</b> when set to 1, entity will not spawn in
+"Teamplay" and "CTF" modes.
+
+<br><b>notsingle:</b> when set to 1, entity will not spawn in Single
+Player mode (bot play mode).
+
+
+
+<p><strong>Check Boxes/Spawnflags</strong>
+
+<br>SUSPENDED: <b></b>item will spawn where it was placed in map and
+won't drop to the floor.&nbsp; Bots will only be attracted to
+suspended entities if they are reachable by way of a jump pad or
+launch pad (trigger_push).
+
+
+
+<p><strong>Notes</strong>
+
+<br>The amount of time it takes for an item in the team to respawn
+is determined by the "wait" value of the item that was picked up
+previously. So if one of the items in the team has it's "wait" key
+set to -1 (never respawn), the random respawning cycle of the
+teamed items will stop after that item is picked up.
+
+
+
+<p>When the random key is set, its value is used to calculate a
+minimum and a maximum delay. The final time delay will be a random
+value anywhere between the minimum and maximum values: (min delay =
+wait - random) (max delay = wait + random).*/
+
+
+
+<p><div class = "subheading">holdable_teleporter</div>
+
+<b>Map Entity Color:</b> blue (.7 0 1)
+
+<br>&nbsp; <b>Dimensions:</b> (-16 -16 -16) (16 16 16)
+
+<br><b>Game Function:</b> Teleporter item that can be picked up and
+used (once) later. Teleports the player to a random player spawn
+point when used. Player can only carry one holdable item at a
+time.
+
+
+
+<p><strong>Keys</strong>
+
+<br><b>wait:</b> time in seconds before item respawns after being
+picked up (default 60, -1 = never respawn).
+
+<br><b>random:</b> random time variance in seconds added or
+subtracted from "wait" delay (default 0 - see Notes).
+
+<br><b>team:</b> set this to team items. Teamed items will respawn
+randomly after team master is picked up (see Notes).
+
+<br><b>target:</b> picking up the item will trigger the entity this
+points to.
+
+<br><b>targetname:</b> a target_give entity can point to this for
+respawn freebies.
+
+<br><b>notbot:</b> when set to 1, a bot will never seek out this
+item
+
+<br><b>notfree:</b> when set to 1, entity will not spawn in "Free
+for all" and "Tournament" modes.
+
+<br><b>notteam:</b> when set to 1, entity will not spawn in
+"Teamplay" and "CTF" modes.
+
+<br><b>notsingle:</b> when set to 1, entity will not spawn in Single
+Player mode (bot play mode).
+
+
+
+<p><strong>Check Boxes/Spawnflags</strong>
+
+<br>SUSPENDED: item will spawn where it was placed in map and won't
+drop to the floor. Bots will only be attracted to suspended
+entities if they are reachable by way of a jump pad or launch pad
+(trigger_push).
+
+
+
+<p><strong>Notes</strong>
+
+<br>The amount of time it takes for an item in the team to respawn
+is determined by the "wait" value of the item that was picked up
+previously. So if one of the items in the team has its "wait" key
+set to -1 (never respawn), the random respawning cycle of the
+teamed items will stop after that item is picked up.
+
+
+
+<p>When the random key is set, its value is used to calculate a
+minimum and a maximum delay. The final time delay will be a random
+value anywhere between the minimum and maximum values: (min delay =
+wait - random) (max delay = wait + random).
+<p align = "center"><a href = "appn_b_2.htm">Back</a> | <a href = "../index.htm">Home</a> | <a href = "appn_b_4.htm">Next</a>
+</body>
+</html>

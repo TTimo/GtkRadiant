@@ -1,0 +1,27 @@
+XMLmap branch:
+
+need to move the map loading / saving code out in a module
+what are the main dependencies?
+
+main functions to move out:
+Map_LoadFile
+Map_SaveFile
+(and all their direct dependencies/call graph)
+ex Entity_Parse Brush_Parse Entity_Write Brush_Write
+
+but? even changing to XML format we would need those functions too?
+is it worth having the .map and .xmlmap through a same interface?
+
+what dependencies?
+-> active_brushes
+-> GetToken etc.
+-> LoadFile (load into a buffer) .. that's VFS right?
+
+first step: move some code out in map module and try to compile it..
+Map_LoadFile for example
+or the whole map.cpp?
+
+first problem: entity_t is declared in entity.h, currently not available to
+the plugin API. Clean way would be to create a wrapper, but speed says we
+should move entity_t to qertypes.h..
+

@@ -1,0 +1,33 @@
+** currently supported debug messages:
+
+* map leaked / pointfile information
++ tested
+
+* duplicate plane
++ tested
+
+* degenerate plane, mirrored plane
++ testing may not be necessary, exact same code as duplicate plane
+
+* mixed CONTENTS_DETAIL and CONTENTS_STRUCTURAL
+- not tested!
+
+* fog brush has multiple visible sides
++ tested
+
+* WindingFromDrawSurf failed: MAX_POINTS_ON_WINDING exceeded
++ tested, only outputs a single point, would need much improvement
+  (TstMaps/western.map)
+
+* MAX_BUILD_SIDES
+uses xml_Select as other warnings, switched xml_Select to error or warn
++ tested
+
+** to-be-added list (and associated test map file if any)
+
+* Node without a volume
+* leaf with too many portals
+-> both in Desktop_p_leaf.map, contributed by y_lavanant@vistech.ie
+
+Mesh lightmap miscount
+(no test map)

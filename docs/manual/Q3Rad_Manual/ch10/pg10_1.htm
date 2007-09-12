@@ -1,0 +1,858 @@
+<html>
+<head>
+<title>Q3Radiant Editor Manual: Page 10.1</title>
+<link rel = "stylesheet" type = "text/css" href = "../styles/q3rad.css">
+</head>
+<body>
+<h1 class = "MsoTitle">Q3Radiant Editor Manual</h1>
+<hr>
+<h1><a name = "tools7">Tools 7: Miscellaneous Commands</a></h1>
+
+<h2><a name = "feedback">Feedback &amp; Read-outs</a></h2>
+
+The bottom border of the map window holds four clusters of
+feedback information.
+
+<p><div class = "subheading">Z-Axis Layers</div>
+
+<div class = "menu">(Shortcut: SHIFT + Middle mouse click on 2D map window)</div>
+
+If you are using any window layout that includes the Z-axis
+scale, you can see the vertical relationships between components
+with this function.
+
+<p><div class = "subheading">Cursor Coordinates</div>
+
+These three coordinates, found to the left of center, report the
+xyz position of the cursor in the 2D map window.
+
+<ul><div class = "menu">x:: 0.0 y:: 0.0 z:: 0.0</div></ul>
+
+<p><div class = "subheading">Brush &amp; Entity Counter</div>
+
+This readout is located at roughly center position. It reports
+the number of brushes (including brushes forming brush entities)
+and the number of non-brush entities (items, spawn spots, lights,
+etc.)
+
+<ul><div class = "menu">Brushes: 0 Entities: 0</div></ul>
+
+<p><strong>Pushing the Limits</strong>
+
+This is a good place (as any) to talk about limits. <i>
+Quake III Arena</i> has an upper limit of 2048 entities (including
+entity lights!!) and while it's not an upper limit, staying under
+8000 brushes is a pretty good idea.
+
+<p><div class = "subheading">Selection</div>
+
+This readout temporarily replaces the Brush &amp; Entity counter
+when a map component is selected. The numbers represent the
+dimensions of the selection.
+
+<ul><div class = "menu">Selection X:: 0.0 Y:: 0.0 Z:: 0.0</div></ul>
+
+<p><div class = "subheading">Origin</div>
+
+This readout temporarily replaces the Brush &amp; Entity counter
+when a select map component is moved. The numbers represent the
+origin point of the selection (and track it as it moves).
+
+<ul><div class = "menu">Origin X:: 0.0 Y:: 0.0 Z:: 0.0</div></ul>
+
+<p><div class = "subheading">Cursor Travel Distance</div>
+
+These three coordinates, found to the right of the brush and
+entity counter, report the distance that cursor has traveled from
+the point where the user has clicked on the 2D map window.
+
+<ul><div class = "menu">Distance X:: 0.0 Y:: 0.0 Z:: 0.0</div></ul>
+
+<p><div class = "subheading">Control Settings</div>
+
+In the lower right corner of the editor window, you will see a
+string of letters and numbers that might look something like
+this:
+
+<ul><div class = "menu">G:8 T:16 R:45 C:10 L:MR</div></ul>
+
+Each of these letter/number combinations represents the setting
+for one of the commonly used tools.
+
+<p><table>
+<tr>
+	<td><b>G</b></td>
+	<td width = 90%>Grid. Here, it's set to 8 units.</td>
+</tr>
+<tr>
+	<td><b>T</b></td>
+	<td width = 90%>Texture Tweak. This the increment in pixels that a texture will
+shift. Here, it's set to 16 pixels.</td>
+</tr>
+<tr>
+	<td><b>R</b></td>
+	<td width = 90%>Rotation. This is the amount of increment, in degrees that a
+texture or brush will rotate.</td>
+</tr>
+<tr valign = "top">
+	<td><b>C</b></td>
+	<td>Cubic Clip depth of field. When cubic clip is set, this is how far,
+in terms of 64 unit blocks that you can see into the map. Here, the
+setting of 10 would allow you to see 640 units into the map.</td>
+</tr>
+<tr>
+	<td><b>L</b></td>
+	<td>Texture Lock. If M is showing, then it is locked for moves.
+If R is showing, then it is locked for rotations.</td>
+</tr>
+</table>
+
+<h2><a name="viewsee">Viewing, Seeing, Not seeing, and Hiding</a></h2>
+
+This group of commands all relates to what you see in the map and how you see it. Some are designed to reduce map clutter. Others are designed to improve editor performance.
+
+<p><div class = "subheading">Toggle&hellip;</div>
+
+<ul><strong>Camera View</strong>
+<div class = "menu">(Menu: View &gt; Toggle &gt; Camera View)
+
+<br>(Shortcut: SHIFT + CTRL + C)</div>
+Toggles (hides or shows) the Camera View (CAM) window.
+
+<p><strong>Console View </strong>
+
+<div class = "menu">(Menu: View &gt;  Toggle &gt; Console View)
+<br>(Shortcut: O)
+<br>(Window: Click mouse button 1 on Console tab)</div>
+Toggles (hides or shows) the Console window.
+
+<p><strong>
+
+Entity View</strong>
+
+<div class = "menu">(Menu: View &gt;  Toggle &gt; Entity View)
+
+<br>(Shortcut: N)
+
+<br>(Window: Click mouse button 1 on Entity tab)</div>
+
+Toggles (hides or shows) the Entity window.
+
+<p><strong>
+
+XY (Top)</strong>
+
+<div class = "menu">(Menu: View &gt;  Toggle &gt; XY (Top))
+
+<br>(Shortcut: SHIFT + CTRL + V)
+
+<br>(Toolbar: XYZ button)</div>
+
+Toggles (hides or shows) the XY map window.
+
+<p><strong>
+
+YZ (Side)</strong>
+
+<div class = "menu">(Menu: View &gt;  Toggle &gt; YZ (Side))
+
+<br>(Shortcut: SHIFT + CTRL + C)
+
+<br>(Toolbar: XYZ button)</div>
+
+Toggles (hides or shows) the YZ map window.
+
+<p><strong>
+
+XZ (Front)</strong>
+
+<div class = "menu">(Menu: View &gt;  Toggle &gt; XZ (Front))
+
+<br>(Shortcut: SHIFT + CTRL + C)
+
+<br>(Toolbar: XYZ button)</div>
+
+Toggles (hides or shows) the XZ map window.
+
+<p><strong>
+
+Z View</strong>
+
+<div class = "menu">(Menu: View &gt;  Toggle &gt; Z View)
+
+<br>(Shortcut: SHIFT + CTRL + Z)</div>
+
+Toggles (hides or shows) the Z (height) window.</ul>
+
+<p><div class = "subheading"><u>C</u>enter</div>
+
+<div class = "menu">(Menu: View &gt; <u>C</u>enter)
+
+<br>(Shortcut: END)</div>
+
+Centers the pitch (up and down) angle of the user view.
+
+<p><div class = "subheading"><u>U</u>p Floor</div>
+
+<div class = "menu">(Menu: View &gt; <u>U</u>p Floor)
+
+<br>(Shortcut: PAGE UP)</div>
+
+This is a shortcut for moving up between "floors" in map. It
+changes the user's Z height in the camera and map views. The view
+moves to a point where it appears that the user is "standing" on a
+"floor" (a brush with "air" space directly above it) directly above
+the user's current position in the map.
+
+<p><div class = "subheading"><u>D</u>own Floor</div>
+
+<div class = "menu">(Menu: View &gt; <u>D</u>own Floor)
+
+<br>(Shortcut: PAGE DOWN)</div>
+
+This is a shortcut for moving down between "floors" in map. It
+changes the user's Z height in the camera and map views. The view
+changes to a point where it appears the user is "standing" on a
+"floor" (a brush with "air" space directly above it) directly below
+the user's current position in the map.
+
+<p><div class = "subheading">Next (XY, YZ, XZ)</div>
+
+<div class = "menu">(Menu: View &gt; Next (XY, YZ, XZ))
+
+<br>(Shortcut: CTRL+TAB)
+
+<br>(Toolbar: XYZ button)</div>
+
+Cycles the content of the XY map window with the other views
+(side and front).
+
+<p><div class = "subheading">Layout</div>
+
+<div class = "menu">(Menu: View &gt; Layout)</div>
+
+<ul><strong>
+
+XY (Top)</strong>
+
+<div class = "menu">(Menu: View &gt; Layout &gt; XY (Top))
+
+<br> (ALT + X when pop-up is held open, cycles with XZ, ENTER
+to select)</div>
+
+This returns the main map view to XY Top view.
+
+<p><strong>
+
+YZ</strong>
+
+<div class = "menu">(Menu: View &gt; Layout &gt; YZ)
+
+<br>(ALT + Y when pop-up is held open)</div>
+
+Changes main (XY) map view to YZ Side view
+
+<p><strong>
+
+XZ</strong>
+
+<div class = "menu">(Menu: View &gt; Layout &gt; XZ)
+
+<br>(ALT+ X when pop-up is held open, cycles with XY, ENTER to
+select)</div>
+
+Changes main (XY) map view to XZ Side view</ul>
+
+<p><div class = "subheading">Zoom</div>
+
+<div class = "menu">(Menu: View &gt; Zoom)</div>
+
+If the <b><i>XY Top</i></b> window is changed to display either
+<b><i>XZ front</i></b> or <b><i>YZ side</i></b> the XY commands
+below function the same way relative to the window, zooming in and
+out as commanded.
+
+<ul><strong>
+
+<u>X</u>Y 100%</strong>
+
+<div class = "menu">(Menu: View &gt; Zoom &gt; <u>X</u>Y 100%)
+
+</div>
+
+Changes zoom on main map view to full size.
+
+<p><strong>
+
+XY Zoom <u>I</u>n</strong>
+
+<div class = "menu">(Menu: View &gt; Zoom &gt; XY Zoom <u>I</u>n)
+
+<br>(Shortcut: DELETE)</div>
+
+Zooms closer to main map. Working in smaller grid scale becomes
+easier.
+
+<p><strong>
+
+XY Zoom <u>O</u>ut</strong>
+
+<div class = "menu">(Menu: View &gt; Zoom &gt; Zoom <u>O</u>ut)
+
+<br>(Shortcut: INSERT)</div>
+
+Zooms out away from the main map. Working in larger grid scale
+becomes easier.
+
+<p><strong><u>Z</u> 100%</strong>
+
+<div class = "menu">(Menu: View &gt; Zoom &gt; <u>Z</u> 100%)</div>
+
+Changes zoom on the z (height) scale to full size.
+
+<p><strong>Z Zoo<u>m</u> In</strong>
+
+<div class = "menu">(Menu: View &gt; Zoom &gt; Z Zoo<u>m</u> In)
+
+<br>(Shortcut: CTRL + DELETE)</div>
+
+Zooms in closer on the z (height) scale.
+
+<p><strong>
+
+Z Zoom O<u>u</u>t</strong>
+
+<div class = "menu">(Menu: View &gt; Zoom &gt; Z Zoom O<u>u</u>t)
+
+<br>(Shortcut: CTRL + INSERT)</div>
+
+Zooms out and away from the z (height) scale.
+
+<p><strong><a name = "cubiczoom">Cubic Clip Zoom In</a></strong>
+
+<div class = "menu">(Menu: View &gt; Zoom &gt; Cubic Clip Zoom In)
+
+<br>(Shortcut: CTRL + ] )</div>
+
+This requires that the Cubic Clipping function be toggled on. It
+decreases the Depth of Field (distance in which map components are
+seen) in the Camera window. Less map components are seen at one
+time. Decreasing the distance seen in the Camera window can
+significantly improve editor performance when viewing large numbers
+of map components. See <a href = "#cubic">Cubic Clipping</a>.
+
+<p><strong>Cubic Clip Zoom Out</strong>
+
+<div class = "menu">(Menu: View &gt; Zoom &gt; Cubic Clip Zoom Out)
+
+<br>(Shortcut: CTRL + [ )</div>
+
+This requires that the Cubic Clipping function be toggled on. It
+Increases the Depth of Field (distance in which map components are
+seen) in the Camera Window. Increasing the distance seen in the
+Camera window can significantly slow down speed at which your point
+of view moves in the camera window. Increase the zoom to maximum
+distance only if you have a relatively powerful editing system. See
+<a href = "#cubic">Cubic Clipping</a>.</ul>
+
+<p><div class = "subheading">Show</div>
+
+<div class = "menu">(Menu: View &gt; Show)</div>
+
+This is a pop-up menu with checked toggle functions for each of
+the features on the list. If a feature is checked, all map
+components of that type will show in both the Camera window and the
+Map windows. If the feature is not checked, all map components of
+that type will be hidden.
+
+<ul><strong><u>N</u>ames</strong>
+
+<div class = "menu">(Menu: View &gt; Show &gt; <u>N</u>ames)
+
+<br>(Shortcut: none)</div>
+
+Shows names of entities.
+
+<p><strong>Blocks</strong>
+
+<div class = "menu">(Menu: View &gt; Show &gt; Blocks)
+
+<br>(Shortcut: none)</div>
+
+Shows an additional grid over the Map window with subdivisions
+every 1024 units.
+
+<p><strong>Co<u>o</u>rdinates</strong>
+
+<div class = "menu">(Menu: View &gt; Show &gt; Co<u>o</u>rdinates)
+
+<br>(Shortcut: none)</div>
+
+Shows the Map window coordinates along the left and top edges of
+the Map window.
+
+<p><strong><u>E</u>ntities</strong>
+
+<div class = "menu">(Menu: View &gt; Show &gt; <u>E</u>ntities)
+
+<br>(Shortcut: none)</div>
+
+Shows entities, including brush entities, lights, and
+models.
+
+<p><strong><u>P</u>aths</strong>
+
+<div class = "menu">(Menu: View &gt; Show &gt; <u>P</u>aths)
+
+<br>(Shortcut: none)</div>
+
+Shows the linkage connections between entities. This includes
+triggers targeted at entities and path lines.
+
+<p><strong><u>L</u>ights</strong>
+
+<div class = "menu">(Menu: View &gt; Show &gt; <u>L</u>ights)
+
+<br>(Shortcut: none)</div>
+
+Shows Light entities.
+
+<p><strong><u>W</u>ater</strong>
+
+<div class = "menu">(Menu: View &gt; Show &gt; Water)
+
+<br>(Shortcut: none)</div>
+
+Currently non-functional. Look for future fix. Shows brushes
+with water, lava, or slime content.
+
+
+
+<p><strong>Clip <u>B</u>rush</strong>
+
+<div class = "menu">(Menu: View &gt; Show &gt; <u>C</u>lip Brush)
+
+<br>(Shortcut: none)</div>
+
+This shows brushes with the common/clip content, including
+common/clip and common/weapon_clip. The entire brush is
+affected, not just clip brush texture sides.
+
+<p><strong><u>H</u>int Brush</strong>
+
+<div class = "menu">(Menu: View &gt; Show &gt; <u>H</u>int Brush)
+
+<br>(Shortcut: none)</div>
+
+Shows brushes made with the hint texture.
+
+<p><strong>Wor<u>l</u>d</strong>
+
+<div class = "menu">(Menu: View &gt; Show &gt; Wor<u>l</u>d)
+
+<br>(Shortcut: none)</div>
+
+Shows all non-entity brushes.
+
+<p><strong>Detail</strong>
+
+<div class = "menu">(Menu: View &gt; Show &gt; Detail)
+
+<br>(Shortcut: CTRL + D)</div>
+
+Shows all brushes marked with a Detail setting.
+
+<p><strong>Curves</strong>
+
+<div class = "menu">(Menu: View &gt; Show &gt; Curves)
+
+<br>(Shortcut: CTRL + P)</div>
+
+Shows all curve patches.
+
+<p><strong>Caulk</strong>
+
+<div class = "menu">(Menu: View &gt; Show &gt; Caulk)
+
+<br>(Shortcut: none)</div>
+
+Shows brush sides containing the common/caulk texture (does not
+affect entire brush).
+
+<p><div class = "tip"><b>Design Tip:</b> When you optimize detail brushes by caulking
+unseen brush faces, isolate the detail brushes in a region then
+turn off Caulk. Brush faces that need caulking will show up clearly
+as you move around the brushes.</div>
+
+<p><strong>Angles</strong>
+
+<div class = "menu">(Menu: View &gt; Show &gt; Angles)
+
+<br>(Shortcut: none)</div>
+
+Shows facing angle of player start spots by way of a white
+arrow.</ul>
+
+<p><div class = "subheading">Hide/Show</div>
+
+<div class = "menu">(Menu: View &gt; Hide/Show)</div>
+
+This is an immensely powerful and useful tool. It lets the user
+temporarily hide map components that may be in the way of working
+on other brushes. Hidden components are not affected by CSG
+actions.
+
+<ul><strong>
+
+Hide Selected</strong>
+
+<div class = "menu">(Shortcut: H)</div>
+Selected map components are hidden from view (and CSG cutting
+operations) until the Show Hidden command is executed.
+
+<p><strong>Show Hidden</strong>
+
+<div class = "menu">(Menu: View &gt; Hide/Show &gt; Hide Selected)
+
+<br>(Shortcut: SHIFT + H)</div>
+
+Previously hidden map components are returned to view.</ul>
+
+<p><div class = "subheading"><u>E</u>ntities as&hellip;</div>
+
+<div class = "menu">(Menu: View &gt; <u>E</u>ntities as&hellip;)
+
+<br>(Toolbar: Show Entities as, rightmost button on toolbar)</div>
+
+The editor can show model entities (referring at this point only
+to Misc_Model entities) in several formats. <b>Note:</b> More
+detail in a model shown in the Camera and map views will affect the
+ability of the editor to display the map. If the editor responds
+sluggishly, try reducing the level and/or type of detail shown for
+models.
+
+<ul><strong>Bounding Box</strong>
+
+<div class = "menu">(Menu: View &gt; <u>E</u>ntities as&hellip; &gt; Bounding
+Box)
+
+<br>(Shortcut: none)</div>
+This is the simplest form of display. A box defines the outer
+dimensions of the model. This is the least costly manner of
+display.
+
+<p><strong>Wireframe</strong>
+
+<div class = "menu">(Menu: View &gt; <u>E</u>ntities as&hellip; &gt; Bounding
+Box)
+
+<br>(Shortcut: none)</div>
+
+Non-functioning.
+
+<p><strong>Selected Wireframe</strong>
+
+<div class = "menu">(Menu: View &gt; <u>E</u>ntities as&hellip; &gt; Selected
+Wireframe)
+
+<br>(Shortcut: none)</div>
+
+The Model is displayed as a bounding box until selected, at
+which point the wireframe mesh for the model appears.
+
+
+
+<p><strong>Selected Skinned</strong>
+
+<div class = "menu">(Menu: View &gt; <u>E</u>ntities as&hellip; &gt; Selected
+Skinned)
+
+<br>(Shortcut: none)</div>
+The Model is displayed as a bounding box until selected, at
+which point the skinned mesh for the model appears.
+
+<p><strong>Skinned </strong>
+
+<div class = "menu">(Menu: View &gt; <u>E</u>ntities
+as&hellip; &gt; Skinned)
+
+<br>(Shortcut: none)</div>
+Only the skinned mesh for the model appears in the map and
+Camera views.
+
+<p><strong>Skinned and boxed</strong>
+
+<div class = "menu">(Menu: View &gt; <u>E</u>ntities as&hellip; &gt; Skinned and
+boxed)
+
+<br>(Shortcut: none)</div>
+The skinned mesh for the model appears inside a wire frame of
+the bounding box in both the map and Camera views.</ul>
+
+<p><div class = "subheading"><a name = "cubic">Cubic Clipping</a></div>
+
+<div class = "menu">(Menu: View &gt; Cubic Clipping)
+
+<br>(Shortcut: CTRL + \ )
+
+<br>(Toolbar: Cubic Clipping button, to right of XYZ &amp; Texture
+view mode buttons)</div>
+
+<img src = "../Q3Rad_Manual_files/image040.png" width = 32 height = 30 hspace = 10 vspace = 2 align = "left">This command toggles on (checked) or off when selected. Cubic
+Clipping may be the most effective way to improve editor
+performance. When turned on, only those map components near
+the player are displayed in the Camera window. Any map components
+beyond a certain depth of field will not be displayed in the camera
+window (it has no effect on map windows). As the user moves
+through the map in camera view, map components will pop into being
+as the point-of-view (POV) draws closer and disappear as the POV
+moves farther away. The shorter the distance "seen" in the
+camera view, the better will be the editor performance when moving
+through the map. Use the <a href = "#cubiczoom">Cubic Clip Zoom</a> commands
+(see above) to modify the depth of field seen in the camera
+view.
+
+<p><div class = "subheading">Open GL Lighting</div>
+
+<div class = "menu">(Menu: View)
+
+<br>(Shortcut: none)</div>
+
+This feature is not fully implemented yet. It toggles on
+(checked) or off when selected. When it is finished, all planes
+facing a particular direction will shade the same way (curves will
+shade like brushes) and the overall quality of the camera view will
+be better. It will be slower however.
+
+<ul><b>
+
+Tip:</b> As it currently is implemented, this lighting can be
+useful when working with irregular surfaces all covered with the
+same texture.</ul>
+
+<p><div class = "subheading">Show Brush/Patch Dimensions</div>
+
+<div class = "menu">(Shortcut to turn on: Q)
+
+<br>(Shortcut to turn off: SHIFT + Q or CTRL + Q)</div>
+
+When you select a brush, the hi-lighted image in the map window
+shows its dimensions, in game units. If multiple patches or brushes
+are selected, the size will be the dimensions of the grouping. If
+any kind of non-brush model entity is included in the grouping, the
+dimensions are not shown.
+
+<h2><a name = "fileman">File Management Commands</a></h2>
+
+<div class = "subheading"><u>N</u>ew Map</div>
+
+<div class = "menu">(Menu: File &gt; <u>N</u>ew Map)
+
+<br>(Shortcut: none)</div>
+
+This creates a new map file. If the current map file contains
+any unsaved changes, the editor will offer the option to
+cancel.
+
+<p><div class = "subheading"><u>O</u>pen&hellip;</div>
+
+<div class = "menu">(Menu: File &gt; <u>O</u>pen&hellip;)
+
+<br>(Shortcut: CTRL + O)
+
+<br>(Toolbar: opening folder icon)</div>
+
+This opens up the Maps folder as defined in the preferences. It
+will show all valid map files in that directory. User may browse to
+other directories from here. Double clicking on a map file
+icon or hi-lighting that map and selecting <u>O</u>pen will open
+the map. The user may also type in a map file name. Be sure to add
+the ".map" or ".reg" extensions or the editor will not find the
+file.
+
+<p><div class = "subheading"><u>S</u>ave&hellip;</div>
+
+<div class = "menu">(Menu: File &gt; <u>S</u>ave&hellip;)
+
+<br>(Shortcut: CTRL + S)
+
+<br>(Toolbar: disk icon)</div>
+
+Saves a new map file to the default Maps directory. A reopened
+map file will be saved to its source directory. Note, that it is
+usually a good idea to save the map into the directory used by the
+compiler as the source of its map data. Remember to give the file a
+name. The compiler doesn't like to work with files called Unnamed
+Map.
+
+<p><div class = "subheading">S<u>a</u>ve As&hellip;</div>
+
+<div class = "menu">(Menu: File &gt; S<u>a</u>ve As&hellip;)
+
+<br>(Shortcut: none)</div>
+
+Opens the default directory for maps and prompts the user to
+give the map a filename.
+
+<p><div class = "subheading">Save S<u>e</u>lected&hellip;</div>
+
+<div class = "menu">(Menu: File &gt; Save S<u>e</u>lected&hellip;)
+
+<br>(Shortcut: none)</div>
+
+The selected brushes are saved as a map file. This is not the
+way to make prefabs, though.
+
+<p><div class = "subheading">Save Re<u>g</u>ion</div>
+
+<div class = "menu">(Menu: File &gt; Save Re<u>g</u>ion)
+
+<br>(Shortcut: none)</div>
+
+If the user has "regioned off" a subset of the map, this command
+will save it as a separate file. It is grayed out unless the user
+has created a regioned area. The editor prompts the user to enter a
+file name before saving.
+
+
+
+<p><div class = "subheading">Reopening Maps</div>
+
+<div class = "menu">(Menu: File)
+
+<br>(Shortcut: none)</div>
+
+(ALT+1 to 6 when File menu is held open)
+
+<br>OK, There isn't actually a command called this. When you open
+the File Menu, you will see (after you've done some work on maps),
+the path/file names for the last six maps that you worked on. They
+are listed here for easy opening access).
+
+<h2><a name = "projpref">Projects and Preferences</a></h2>
+
+<p><div class = "subheading">New p<u>r</u>oject&hellip;</div>
+
+<div class = "menu">(Menu: File &gt; New p<u>r</u>oject&hellip;)
+
+<br>(Shortcut: none)</div>
+
+Make a new project file. This allows you to set up different
+preferences.
+
+<p><div class = "subheading">Load <u>p</u>roject&hellip;</div>
+
+<div class = "menu">(Menu: File &gt; Load <u>p</u>roject&hellip;)
+
+<br>(Shortcut: none)</div>
+
+Make a new project file. This allows you to set up different
+preferences.
+
+<p><div class = "subheading">Project Settings&hellip;</div>
+
+<div class = "menu">(Menu: File &gt; Project Settings&hellip;)
+
+<br>(Shortcut: none)</div>
+
+Change pathnames and add, remove or modify commands.
+
+<h2><a name = "misc">Miscellaneous Commands</a></h2>
+
+<div class = "subheading">Map info&hellip;</div>
+
+<div class = "menu">(Menu: Edit &gt; Map info&hellip;)
+
+<br>(Shortcut: none)</div>
+
+This gives a readout of brushes (including curve patches) and
+entities in the map, including the total number of brushes that are
+not part of entities. There is also a breakdown, by type, showing
+the number of entities in the map.
+
+
+
+<p><div class = "subheading">Entity info&hellip;</div>
+
+<div class = "menu">(Menu: Edit &gt; Entity info&hellip;)
+
+<br>(Shortcut: none)</div>
+
+This gives a read-out of the entities in a map by their
+type. It allows you to select an entity, which
+hi-lights it in the XY Map. Good for locating lost entities.
+
+<p><div class = "subheading">Preferences</div>
+
+<div class = "menu">(Menu: Edit &gt; Preferences)
+
+<br>(Shortcut: P)</div>
+
+This opens the window for setting or modifying the parameters,
+paths and features of the editor. Preferences are discussed in the
+Installation &amp; Set Up section earlier in this document.
+
+<h2><a name = "openmen">Opening Menus from the Keyboard</a></h2>
+
+These are the keyboard shortcuts that open up the menus. If you
+continue to hold down the ALT key, many of the commands in that
+menu may be activated with an ALT+ keystroke command.
+
+<p><table>
+<tr>
+	<td><b>File</b></td>
+	<td colspan = 2>(ALT + F)</td>
+</tr>
+<tr>
+	<td><b>Edit</b></td>
+	<td colspan = 2>(ALT + E)</td>
+</tr>
+<tr>
+	<td><b>View</b></td>
+	<td colspan = 2>(ALT + V)</td>
+</tr>
+<tr>
+	<td><b>Selection</b></td>
+	<td colspan = 2>(ALT + S)</td>
+</tr>
+<tr>
+	<td><b>Bsp</b></td>
+	<td>(ALT + B)</td>
+	<td width = 60%>Note: Toggles between BSP &amp; Brush. Hit enter to open selected.</td>
+</tr>
+<tr>
+	<td><b>Grid</b></td>
+	<td colspan = 2>(ALT + G)</td>
+</tr>
+<tr>
+	<td><b>Textures</b></td>
+	<td colspan = 2>(ALT + T)</td>
+</tr>
+<tr>
+	<td><b>Misc</b></td>
+	<td colspan = 2>(ALT + M)</td>
+</tr>
+<tr>
+	<td><b>Region</b></td>
+	<td colspan = 2>(ALT + R)</td>
+</tr>
+<tr>
+	<td><b>Brush</b></td>
+	<td colspan = 2>(ALT + B)</td>
+</tr>
+<tr>
+	<td><b>Curve</b></td>
+	<td colspan = 2>(ALT + C)</td>
+</tr>
+<tr>
+	<td><b>Plugins</b></td>
+	<td colspan = 2>(ALT + P)</td>
+</tr>
+<tr>
+	<td><b>Help</b></td>
+	<td colspan = 2>(ALT + H)</td>
+</tr>
+</table>
+<p align = "center"><a href = "../ch09/pg9_1.htm">Back</a> | <a href = "../index.htm">Home</a> | <a href = "../ch11/pg11_1.htm">Next</a>
+</body>
+</html>

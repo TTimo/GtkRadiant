@@ -1,0 +1,243 @@
+<html>
+<head>
+<title>Q3Radiant Editor Manual: Appendix D</title>
+<link rel = "stylesheet" type = "text/css" href = "../styles/q3rad.css">
+</head>
+<body>
+<h1 class = "MsoTitle">Q3Radiant Editor Manual</h1>
+<hr>
+<h1>Appendix D: Tricks, Tips, and Tutorials</h1>
+
+<h2><a name = "deathsnd">Making the death fall sound&hellip;</a></h2>
+
+The death yell that occurs when a player or bot falls into the
+void or fog of death is triggered by the falling character passing
+through a trigger multiple (should be no less than 32 units thick)
+that is targeted on a target_speaker. If you look at q3DM17
+and find a target speaker, you will see that it plays the falling
+to death sound of the player who activates the trigger. Put
+that sound in your own target_speaker.
+
+<h2><a name = "mirror">Making a Mirror &hellip;</a></h2>
+
+Apply a mirror texture to brush (it will only work on brushes,
+not curve patches). Next, place a misc_portal_surface entity within
+64 units of the mirror and at roughly eye level for the character.
+Because a mirror shows all that it can "see" the mapmaker needs to
+take special care that his mirror doesn't see so much of the map
+that it affects game performance.
+
+<ul><b>Rules</b>: A mirror should not be able to see another
+mirror or portal surface. This means no mirror mazes or
+mirror facing each other to produce infinite reflections.</ul>
+
+<h2><a name = "jumppad">Making a Jump Pad</a></h2>
+
+<ol><li>Make the brush that contains your pulsing pad texture. It can be
+set in the floor or raised up on separate brush.
+
+<li>Make a trigger_push brush entity that is smaller than the pad
+(the id triggers are usually octagonal).
+
+<li>Create a target_position entity and move it to the height and
+location you want. The target position is both the aiming point for
+the trigger_push and the highest point (apex) of the assisted
+jump.
+
+<li>Hi-light the trigger first, then the target_position (order is
+important).
+
+<li>Press CTRL + k to connect the two entities (pointing the first
+at the second).
+
+<li>Compile and test it. The first compile needs to be a full or
+fast vis. If you need to make adjustments to the target_position,
+you only need to use an entities compile.</ol>
+
+<p><div class = "subheading">Lining Up the Pad Texture</div>
+
+The combination of shader keys that make the jump pad pulsing
+texture work can be tricky to line up. Try the following methods if
+your own attempts bring no joy.
+
+<ol><li>Make the brush that will be your pad (128x128 units).
+
+<li>Apply the pad texture. If it doesn't line up, turn off the lock
+texture feature and move the pad until it lines up perfectly.
+
+<li>Lock the texture and move the brush into position.</ol>
+
+<p>If that doesn't work:
+
+<ol><li>Build your brush in place.
+
+<li>Apply the pad texture so that several corners of the pad circle
+are visible.
+
+<li>Compile a regioned area with the jump pad in it.
+
+<li>At least one of the pad circles should have a pulsing circle in
+it.
+
+<li>Back in the editor, slide the pad circle with the active pulse
+so it fills the pad.
+
+<li>Recompile. It <i>should</i> work now.</ol>
+
+<h2><a name = "launchpad">Making a Launch Pad</a></h2>
+
+Target the trigger_push that you put above the pad at a
+target_position. The player will accelerate until he reaches the
+target. Physics does the rest.
+
+<p><b>Note:</b> The center point of the target must be <i>
+higher</i> than the center point of the trigger_push.
+
+<h2><a name="RA3">Making a "Rocket Arena" style map</a></h2>
+
+<ol><li>Create all the entities you want the player to spawn with when
+he enters the arena, and make sure they are somewhere within the
+enclosed space of the map.
+
+<li>Add a "target_give" entity somewhere in the world.
+
+<li>Create all the spawn spots you want to be in your map.
+
+<li>Select the "target_give" entity.
+
+<li>Select one of the "give on spawn in" entities.
+
+<li>Hit Ctrl-K in the editor to link the two items together.
+
+<li>Repeat steps 4 through 6 until the target_give is linked to
+all
+the entities you wish the player to spawn into the world with.
+
+<li>Select a spawn spot
+
+<li>Select the target_give entity
+
+<li>Hit Ctrl-K in the editor to link the two entities together.
+
+<li>Repeat steps 8 through 10 until all the spawn spots are linked
+to
+the target_give entity.
+
+<li>Compile the map
+
+<li>Set g_gametype to tournament mode and set fraglimit of 1.
+
+<li>Get a bunch of your friends to connect into your server and
+have
+fun playing a "Rocket Arena" style game =)</ol>
+
+<p>An alternate use of target_give is how I used it in q3dm10 to
+create the
+"power tube" that gives you health and armour. The tube has a
+trigger_multiple with a wait of 0.5, linked to a target_give which
+is linked
+to a small health and an armour shard.
+
+<h2><a name = "envbox">Making an Environment Box &hellip;</a></h2>
+
+This is the shader script taken from the sky.shader that I used
+to make a test sky box months and months ago.
+
+
+
+<p>In baseq3, make an 'env' folder.
+
+<p>Put your skybox art in here and use this naming
+convention:
+
+<p>[skyname]_lf.tga
+
+<br>[skyname]_rt.tga
+
+<br>[skyname]_ft.tga
+
+<br>[skyname]_bk.tga
+
+<br>[skyname]_up.tga
+
+<br>[skyname]_dn.tga
+
+<ul><li>Make a directory in your quake3 folder with the following path:
+
+<ul><span class = "type">quake3/baseq3/textures/[mymapname]</span></ul>
+
+<li>Make a directory in your quake3 folder with the following path:
+
+<ul><span class = "type">quake3/baseq3/scripts</span></ul>
+
+<li>Make a script document called [mymapname].shader
+
+<li>Make a script document called shaderlist.txt</ul>
+
+<p>In shaderlist.txt put [mymapname] on the first line and close
+the document.
+
+
+
+<p><pre style = "font-size: 10pt">
+//*******************************************************
+//*	    Sample environment box shader
+//*******************************************************
+
+textures/[mymapname]/[skyname]01
+
+{
+	qer_editorimage textures/[mymapname]/[skyname]
+
+	surfaceparm noimpact
+	surfaceparm nolightmap
+	surfaceparm sky
+	q3map_sun 0.933333 0.541176 03.13725 60 160 11
+	q3map_surfacelight 100 //lots of diffuse light
+	skyparms - 512 -
+	sky env/[skyname]
+
+// the following stuff lays clouds over the skybox map which you may not want with a city skyline
+	//{
+	// map textures/skies/dimclouds.tga
+	//
+	// tcMod turb 0 0.001 0.5 0.001
+	// tcMod scale 3 3
+	// tcMod scroll 0.01 0.01
+	// blendFunc GL_ONE GL_ONE_MINUS_SRC_COLOR
+	// depthWrite
+	//}
+	//{
+	// map textures/skies/pjbasesky.tga
+	// blendfunc GL_ONE GL_ONE
+	// tcMod scroll -0.01 -0.01
+	// tcMod scale 5 5
+	//}
+//}</pre>
+
+<h2><a name = "shooter">Making a Shooter</a></h2>
+The shooters; shooter_rocket, shooter_grenade, and
+shooter_plasma all fire a single projectile when they are triggered
+by an event.
+
+<ul><li>Make a shooter entity (rocket, grenade or plasma)
+
+<li>Give it a facing (1 to 360 degrees), or,
+
+<li>Target it at a target_position.
+
+<li>Give it a random value (potential degrees off target)
+
+<li>Create an Activator. Make a trigger multiple or target an entity
+at the shooter. When the trigger is entered or the entity is taken,
+the, shooter is activated.
+
+<li>If you want a shooter to fire multiple times, target the
+activator on two or more target_delays. Set the delay time to a
+different value for each (if using a trigger multiple, the WAIT
+value on the trigger should be greater than the longest delay on
+the target_delay). Target each target_delay on the shooter.</ul>
+
+<p align = "center"><a href = "appn_c.htm">Back</a> | <a href = "../index.htm">Home</a> | <a href = "appn_e.htm">Next</a>
+</body>
+</html>

@@ -1,0 +1,228 @@
+<html>
+<head>
+<title>Q3Radiant Editor Manual: Appendix B1</title>
+<link rel = "stylesheet" type = "text/css" href = "../styles/q3rad.css">
+</head>
+<body>
+<h1 class = "MsoTitle">Q3Radiant Editor Manual</h1>
+<hr>
+<h1>Appendix B: Entity Descriptions</h1>
+This Section owes much of the background and testing research to three dedicated Quake Engine editing supporters, <i>Suicide20</i>, <i>inolen</i>, and <i>EuteTic</i>. It is based on version 1.1 (12/22/99) of a document that they created and gave us permission to include with the official id editor documents.
+
+<p>"Keys" are keywords that represent the in-game properties of an
+entity. Some are flags that determine whether an entity will
+appear in a particular game play mode. Others define extents or
+rates for entity movement. Others establish how much of some game
+effect will occur (example: damage) or how long to wait until an
+event occurs or can reoccur.
+
+
+
+<p>With the exception of properties that can be set by checkboxes,
+the map maker will need to type in keys (names for game function
+properties) and their values (numbers or strings) into fields
+within the entities window.
+
+
+
+<p>Keys that are set by checkboxes in the editor are called
+"Spawnflags" and will be shown in All Caps. The rest are shown in
+lowercase, as they should be typed into the editor field.
+
+
+
+<h2><a name = "basinfo">Basic Key information</a></h2>
+<b>Angle:</b> This is the direction of facing or direction of
+movement for an entity. Set this value with the Angle buttons on
+the entity window. The angle value can be typed in as any positive
+value between 1 and 360.
+
+
+
+<p><b>Color:</b> This key only affects md3 models that are built
+into func_entities. The color is the color of light used to
+illuminate the model. It is expressed as a normalized three
+digit RGB formula.
+
+
+
+<p><b>Entity Dimensions:</b> The minimum and maximum coordinate
+dimensions of the entity box.
+
+
+
+<p><b>Light:</b> This key only affects md3 models that are built
+into func_entities.
+
+
+
+<p><b>Map Entity Color:</b> This is the color of the generic entity
+box used to represent the entity in the map editor.
+
+
+
+<h2><a name = "ammo">Ammo_* Entities</a></h2>
+The properties for ammo entities are all very similar.
+
+<p><b>Map Entity Color:</b> Blue
+<br><b>Entity Dimensions:</b> (-16 -16 -16) (16 16 16)
+
+<p>These are ammunition boxes for weapons in the game. They can be
+represented by either a blue entity box, or the ammo box model
+itself. With the exception of the type and amount of ammo given to
+the player upon pick up, all ammo entities have the same
+properties.
+
+<p><div class = "subheading">ammo_bfg</div>
+<b>Game Function</b>: BFG ammo. Gives the player 15 shots by
+default.
+
+
+
+<p><strong>Custom Keys</strong>
+
+<br><b>count:</b> sets the amount of ammo given to the player when
+picked up (default 15).
+
+<p><div class = "subheading">ammo_bullets</div>
+
+<b>Game Function:</b> Machine Gun ammo. Gives the player 50
+shots by default.
+
+<p><strong>Custom Keys</strong>
+
+<br><b>count:</b> sets the amount of ammo given to the player when
+picked up (default 50).
+
+<p><div class = "subheading">ammo_cells</div>
+
+<b>Game Functions:</b> Plasma Gun ammo. Gives the player 30
+shots by default.
+
+
+
+<p><strong>Custom Keys</strong>
+
+<br><b>count:</b> sets the amount of ammo given to the player when
+picked up (default 30).
+
+<p><div class = "subheading">ammo_grenades</div>
+
+<b>Game Function:</b> Grenade Launcher ammo. Gives the player 5
+shots by default.
+
+
+
+<p><strong>Custom Keys</strong>
+
+<br><b>count:</b> sets the amount of ammo given to the player when
+picked up (default 5).
+
+<p><div class = "subheading">ammo_lightning</div>
+
+<b>Game Function:</b> Lightning Gun ammo. Gives the player 60
+shots by default.
+
+<p><strong>Custom Keys</strong>
+
+<br><b>count:</b> sets the amount of ammo given to the player when
+picked up (default 60).
+
+<p><div class = "subheading">ammo_rockets</div>
+<b>Game Function:</b> Rocket Launcher ammo. Gives the player 5
+shots by default.
+
+
+
+<p><strong>Custom Keys</strong>
+<br><b>count:</b> sets the amount of ammo given to the player when
+picked up (default 5).
+
+<p><div class = "subheading">ammo_shells</div>
+
+<b>Game Function:</b> Shotgun ammo. Gives the player 10 shots by
+default.
+
+
+
+<p><strong>Custom Keys</strong>
+<br><b>count:</b> sets the amount of ammo given to the player when
+picked up (default 10).
+
+<p><div class = "subheading">ammo_slugs </div>
+<b>Game Function:</b> Railgun ammo. Gives the player 10 shots by
+default.
+
+
+
+<p><strong>Custom Keys</strong>
+<br><b>count:</b> sets the amount of ammo given to the player when
+picked up (default 10).
+
+
+
+<p><strong>Common Keys</strong>
+<br><b>wait:</b> time in seconds before the item respawns after
+being picked up (default 40, -1 = never respawn).
+
+<br><b>random:</b> random time variance in seconds added or
+subtracted from "wait" delay (default 0 - see Notes).
+
+<br><b>team:</b> set this to team items. Teamed items will respawn
+randomly after team master is picked up (see Notes).
+
+<br><b>target:</b> picking up the item will trigger the entity this
+points to.
+
+<br><b>targetname:</b> a target_give entity can point to this for
+respawn freebies.
+
+<br><b>notbot:</b> when set to 1, a bot will never seek out this
+item
+
+<br><b>notfree:</b> when set to 1, entity will not spawn in "Free
+for all" and "Tournament" modes.
+
+<br><b>notteam:</b> when set to 1, entity will not spawn in
+"Teamplay" and "CTF" modes.
+
+<br><b>notsingle:</b> when set to 1, entity will not spawn in Single
+Player mode (bot play mode).
+
+
+
+<p><strong>Check Boxes/Spawnflags</strong>
+<br>SUSPENDED: item will spawn where it was placed in map and won't
+drop to the floor. Set by Checkbox. Bots will only be attracted to
+suspended entities if they are reachable by way of a jump pad or
+launch pad (trigger_push).
+
+
+
+<p><strong>Notes</strong>
+
+<br>The amount of time it takes for an item in the team to respawn
+is determined by the "wait" value of the item that was picked up
+previously. So if one of the items in the team has it's "wait" key
+set to -1 (never respawn), the random respawning cycle of the
+teamed items will stop after that item is picked up.
+
+
+
+<p>When the random key is set, its value is used to calculate a
+minimum and a maximum delay. The final time delay will be a random
+value anywhere between the minimum and maximum values: (min delay =
+wait - random) (max delay = wait + random).
+
+
+
+<p><div class = "tip"><strong>Design Notes</strong>
+
+<br>An ammo item can be given a negative "count" value. Taking away
+ammo in combat would be a bad idea but in combination with a
+target_give entity, it can be used to set up games mods like Rocket
+Arena by removing the machinegun ammunition from a player when he
+spawns into the map.</div>
+<p align = "center"><a href = "appn_a.htm">Back</a> | <a href = "../index.htm">Home</a> | <a href = "appn_b_2.htm">Next</a>
+</body>
+</html>

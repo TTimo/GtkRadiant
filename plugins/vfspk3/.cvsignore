@@ -1,0 +1,11 @@
+*.d
+*.o
+*.so
+Debug
+Release
+*.aps
+*.plg
+*.bak
+*.BAK
+*.opt
+*.ncb

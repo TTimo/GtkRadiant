@@ -1,0 +1,75 @@
+search orders with different settings
+
+
+=====================
+NON-TEAMPLAY
+=====================
+
+-------------------------------------------------
+headmodel = *callisto/lily
+
+models/players/heads/callisto/lily/head_default.skin
+models/players/heads/callisto/head_lily.skin
+
+
+-------------------------------------------------
+headmodel = callisto/lily
+
+models/players/callisto/lily/head_default.skin
+models/players/callisto/head_lily.skin
+models/players/heads/callisto/lily/head_default.skin
+models/players/heads/callisto/head_lily.skin
+
+
+
+=====================
+Q3 TEAMPLAY
+=====================
+
+-------------------------------------------------
+team_headmodel = *callisto/lily
+team = red
+
+models/players/heads/callisto/lily/head_red.skin
+models/players/heads/callisto/head_red.skin
+
+
+-------------------------------------------------
+team_headmodel = callisto/lily
+team = red
+
+models/players/callisto/lily/head_red.skin
+models/players/callisto/head_red.skin
+models/players/heads/callisto/lily/head_red.skin
+models/players/heads/callisto/head_red.skin
+
+
+
+=====================
+TA TEAMPLAY
+=====================
+
+-------------------------------------------------
+team_headmodel = *callisto/lily
+team = red
+teamName = Stroggs
+
+models/players/heads/callisto/lily/Stroggs/head_red.skin
+models/players/heads/callisto/Stroggs/head_red.skin
+models/players/heads/callisto/lily/head_red.skin
+models/players/heads/callisto/head_red.skin
+
+
+-------------------------------------------------
+team_headmodel = callisto/lily
+team = red
+teamName = Stroggs
+
+models/players/callisto/lily/Stroggs/head_red.skin
+models/players/callisto/Stroggs/head_red.skin
+models/players/callisto/lily/head_red.skin
+models/players/callisto/head_red.skin
+models/players/heads/callisto/lily/Stroggs/head_red.skin
+models/players/heads/callisto/Stroggs/head_red.skin
+models/players/heads/callisto/lily/head_red.skin
+models/players/heads/callisto/head_red.skin

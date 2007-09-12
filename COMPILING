@@ -1,0 +1,7 @@
+ * understand relative paths in the .game file
+ * ignore warnings: 4996 4244 4267
+ ( some CRT API warning stuff, and size conversion warnings)
+ * using the same updated Gtk win32 as GtkR 1.5 (may be packaged a bit differently for sanity)
+ * converted the project files to VC8
+ * disabled all the modules that are not necessary for Q3 editing
+ * default parameters can't be used in function typedefs anymore, removed those and fixed the code accordingly

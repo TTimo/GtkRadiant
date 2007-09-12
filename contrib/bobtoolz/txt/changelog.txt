@@ -1,0 +1,96 @@
+BobToolz Changelog:
+[=================]
+
+Changes in v1110 (GTK):
+[=====================]
+
+djbob
+
+Added:
+(16.05.01)
+	Impemented a little feature that highligths the q3map bug that is causing problems for autocaulk, (see readme)
+(01.04.01)
+	Added DPatch class to implement patches, however radiant does not (currently) support adding patches to an entity via a plugin, so, its actually redundant atm, i was adding this to fix the patches being removed from entities probelm with dealing with entities outside of the worldspawn.
+	
+Changes:
+(02.04.01)
+	EPair keys and values can now be 128 characters long, not 64, happy now hydra?
+	Texture reseter works on patches now too.
+
+Removed:
+(29.03.01)
+	Removed CTF colour changer, it is now in the ctftoolz.
+
+Fixed:
+(02.04.01)
+	Worldspawn brushes are rebuilt per brush, rather than per entity in texture reseter.
+(03.04.01)
+	Worldspawn brushes are rebuilt per brush, rather than per entity in brush cleanup.
+
+Changes in v1100 (GTK):
+[=====================]
+
+djbob
+
+Added:
+(24.03.01)
+	Added CTF colour changer for worldspawn+func_group.
+
+Changes:
+(25.03.01)
+	Brought some functions over to using DMap class, allowing them to run on multiple entities, patches are still a no-no atm.
+	This includes:
+	
+	a) brush cleanup, will now fix problems on brushes that are not in the worldspawn, and rebuild the entitiy afterwards.
+	b) texture reseter will change textures on all brushes now, not just those in the worldspawn.
+	c) CTF colour changer will also work on brushes outside of the worldspawn entity.
+
+This introduces one prolem, patches in entities will no longer be part of the new entity, sorry for any trouble this causes, i will fix it soon hopefully.
+
+Fixes:
+(25.03.01)
+	Fixed bug in DMap class that prevented it destroying brushes... thus enabling the class to work!!!!
+
+Changes in v1090 (GTK):
+[=====================]
+
+djbob
+
+Added:
+(22.03.01)
+	Added PitOMatic Function.
+
+Changes in v1080b (GTK):
+[======================]
+
+djbob
+
+Fixes:
+	Removed some previously unnoticed porting introduced bugs.
+
+Added:
+	Polygon stuff now passes through my internal validation routines, no more phantom brushes will be made, or squiffy planes.
+
+Changes in v1080 (GTK):
+[=====================]
+
+djbob
+
+Fixes:
+(05.03.01)
+	Fixed line removed by rr2 in autocaulk.
+	Fixed Autocaulk not working with maps larger than the old grid.
+
+Added:
+(04.03.01)
+	Added Changelog.
+	Added ability to align polygons so that top edge will be flat. (Request By Casey)
+(05.03.01)
+	Added ability to change main texture for stairs.
+
+rr2do2
+
+Changes:
+(??.??.01)
+	Removed all traces of MFC from GTK version, the evil that it is ;]
+
