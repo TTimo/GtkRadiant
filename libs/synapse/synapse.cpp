@@ -23,6 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 // seems to be required for str.h
 #include <glib.h>
+#include <glib/gstdio.h>
 
 #include "synapse.h"
 #if defined (__linux__) || defined (__APPLE__)

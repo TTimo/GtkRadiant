@@ -1,0 +1,28 @@
+# -*- mode: python -*-
+# ZeroRadiant build scripts
+# TTimo <ttimo@idsoftware.com>
+# http://scons.sourceforge.net
+
+import os
+
+Import( [ 'utils', 'config', 'settings', 'project' ] )
+
+( libpath, libname ) = os.path.split( project )
+libname = os.path.splitext( libname )[0]
+
+env = Environment()
+settings.SetupEnvironment( env, config )
+proj = utils.vcproj( os.path.join( GetLaunchDir(), project ) )
+
+# some filtering. may need to improve that
+add_sources = []
+( drop, files ) = proj.filterSource( r'.*l_net_wins\.c' )
+if ( len( drop ) != 0 ):
+	add_sources.append( 'l_net_berkeley.c' )
+
+#env.StaticLibrary( libname, [ os.path.join( libpath, i ) for i in files ] )
+objects = []
+for i in files + add_sources:
+	objects.append( env.StaticObject( os.path.join( libpath, i ) ) )
+
+Return( 'objects' )

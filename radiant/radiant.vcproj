@@ -606,7 +606,7 @@
 		<Filter Name="Code">
 			<File RelativePath=".\bp_dlg.cpp">
 			</File>
-			<File RelativePath=".\BRUSH.cpp">
+			<File RelativePath=".\brush.cpp">
 				<FileConfiguration Name="Debug|Win32">
 					<Tool AdditionalIncludeDirectories="&quot;$(SolutionDir)\include&quot;;&quot;$(SolutionDir)\libs&quot;;&quot;$(SolutionDir)\..\STLPort\stlport&quot;;&quot;$(SolutionDir)\..\gtk2\include&quot;;&quot;$(SolutionDir)\..\gtk2\include\glib-2.0&quot;;&quot;$(SolutionDir)\..\gtk2\lib\glib-2.0\include&quot;;&quot;$(SolutionDir)\..\libxml2\include&quot;" DisableSpecificWarnings="4996;4244;4267" Name="VCCLCompilerTool" PrecompiledHeaderThrough="stdafx.h" PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS"/>
 				</FileConfiguration>
@@ -638,7 +638,7 @@
 					<Tool AdditionalIncludeDirectories="&quot;$(SolutionDir)\include&quot;;&quot;$(SolutionDir)\libs&quot;;&quot;$(SolutionDir)\..\STLPort\stlport&quot;;&quot;$(SolutionDir)\..\gtk2\include&quot;;&quot;$(SolutionDir)\..\gtk2\include\glib-2.0&quot;;&quot;$(SolutionDir)\..\gtk2\lib\glib-2.0\include&quot;;&quot;$(SolutionDir)\..\libxml2\include&quot;" DisableSpecificWarnings="4996;4244;4267" Name="VCCLCompilerTool" PrecompiledHeaderThrough="stdafx.h" PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS"/>
 				</FileConfiguration>
 			</File>
-			<File RelativePath=".\CSG.cpp">
+			<File RelativePath=".\csg.cpp">
 				<FileConfiguration Name="Debug|Win32">
 					<Tool AdditionalIncludeDirectories="&quot;$(SolutionDir)\include&quot;;&quot;$(SolutionDir)\libs&quot;;&quot;$(SolutionDir)\..\STLPort\stlport&quot;;&quot;$(SolutionDir)\..\gtk2\include&quot;;&quot;$(SolutionDir)\..\gtk2\include\glib-2.0&quot;;&quot;$(SolutionDir)\..\gtk2\lib\glib-2.0\include&quot;;&quot;$(SolutionDir)\..\libxml2\include&quot;" DisableSpecificWarnings="4996;4244;4267" Name="VCCLCompilerTool" PrecompiledHeaderThrough="stdafx.h" PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS"/>
 				</FileConfiguration>
@@ -646,7 +646,7 @@
 					<Tool AdditionalIncludeDirectories="&quot;$(SolutionDir)\include&quot;;&quot;$(SolutionDir)\libs&quot;;&quot;$(SolutionDir)\..\STLPort\stlport&quot;;&quot;$(SolutionDir)\..\gtk2\include&quot;;&quot;$(SolutionDir)\..\gtk2\include\glib-2.0&quot;;&quot;$(SolutionDir)\..\gtk2\lib\glib-2.0\include&quot;;&quot;$(SolutionDir)\..\libxml2\include&quot;" DisableSpecificWarnings="4996;4244;4267" Name="VCCLCompilerTool" PrecompiledHeaderThrough="stdafx.h" PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS"/>
 				</FileConfiguration>
 			</File>
-			<File RelativePath=".\DIALOG.cpp">
+			<File RelativePath=".\dialog.cpp">
 				<FileConfiguration Name="Debug|Win32">
 					<Tool AdditionalIncludeDirectories="&quot;$(SolutionDir)\include&quot;;&quot;$(SolutionDir)\libs&quot;;&quot;$(SolutionDir)\..\STLPort\stlport&quot;;&quot;$(SolutionDir)\..\gtk2\include&quot;;&quot;$(SolutionDir)\..\gtk2\include\glib-2.0&quot;;&quot;$(SolutionDir)\..\gtk2\lib\glib-2.0\include&quot;;&quot;$(SolutionDir)\..\libxml2\include&quot;" DisableSpecificWarnings="4996;4244;4267" Name="VCCLCompilerTool" PrecompiledHeaderThrough="stdafx.h" PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS"/>
 				</FileConfiguration>
@@ -662,7 +662,7 @@
 					<Tool AdditionalIncludeDirectories="&quot;$(SolutionDir)\include&quot;;&quot;$(SolutionDir)\libs&quot;;&quot;$(SolutionDir)\..\STLPort\stlport&quot;;&quot;$(SolutionDir)\..\gtk2\include&quot;;&quot;$(SolutionDir)\..\gtk2\include\glib-2.0&quot;;&quot;$(SolutionDir)\..\gtk2\lib\glib-2.0\include&quot;;&quot;$(SolutionDir)\..\libxml2\include&quot;" DisableSpecificWarnings="4996;4244;4267" Name="VCCLCompilerTool" PrecompiledHeaderThrough="stdafx.h" PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS"/>
 				</FileConfiguration>
 			</File>
-			<File RelativePath=".\DRAG.cpp">
+			<File RelativePath=".\drag.cpp">
 				<FileConfiguration Name="Debug|Win32">
 					<Tool AdditionalIncludeDirectories="&quot;$(SolutionDir)\include&quot;;&quot;$(SolutionDir)\libs&quot;;&quot;$(SolutionDir)\..\STLPort\stlport&quot;;&quot;$(SolutionDir)\..\gtk2\include&quot;;&quot;$(SolutionDir)\..\gtk2\include\glib-2.0&quot;;&quot;$(SolutionDir)\..\gtk2\lib\glib-2.0\include&quot;;&quot;$(SolutionDir)\..\libxml2\include&quot;" DisableSpecificWarnings="4996;4244;4267" Name="VCCLCompilerTool" PrecompiledHeaderThrough="stdafx.h" PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS"/>
 				</FileConfiguration>
@@ -670,7 +670,7 @@
 					<Tool AdditionalIncludeDirectories="&quot;$(SolutionDir)\include&quot;;&quot;$(SolutionDir)\libs&quot;;&quot;$(SolutionDir)\..\STLPort\stlport&quot;;&quot;$(SolutionDir)\..\gtk2\include&quot;;&quot;$(SolutionDir)\..\gtk2\include\glib-2.0&quot;;&quot;$(SolutionDir)\..\gtk2\lib\glib-2.0\include&quot;;&quot;$(SolutionDir)\..\libxml2\include&quot;" DisableSpecificWarnings="4996;4244;4267" Name="VCCLCompilerTool" PrecompiledHeaderThrough="stdafx.h" PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS"/>
 				</FileConfiguration>
 			</File>
-			<File RelativePath=".\ECLASS.cpp">
+			<File RelativePath=".\eclass.cpp">
 				<FileConfiguration Name="Debug|Win32">
 					<Tool AdditionalIncludeDirectories="&quot;$(SolutionDir)\include&quot;;&quot;$(SolutionDir)\libs&quot;;&quot;$(SolutionDir)\..\STLPort\stlport&quot;;&quot;$(SolutionDir)\..\gtk2\include&quot;;&quot;$(SolutionDir)\..\gtk2\include\glib-2.0&quot;;&quot;$(SolutionDir)\..\gtk2\lib\glib-2.0\include&quot;;&quot;$(SolutionDir)\..\libxml2\include&quot;" DisableSpecificWarnings="4996;4244;4267" Name="VCCLCompilerTool" PrecompiledHeaderThrough="stdafx.h" PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS"/>
 				</FileConfiguration>
@@ -682,7 +682,7 @@
 			</File>
 			<File RelativePath=".\error.cpp">
 			</File>
-			<File RelativePath=".\FILE.cpp">
+			<File RelativePath=".\file.cpp">
 				<FileConfiguration Name="Debug|Win32">
 					<Tool AdditionalIncludeDirectories="&quot;$(SolutionDir)\include&quot;;&quot;$(SolutionDir)\libs&quot;;&quot;$(SolutionDir)\..\STLPort\stlport&quot;;&quot;$(SolutionDir)\..\gtk2\include&quot;;&quot;$(SolutionDir)\..\gtk2\include\glib-2.0&quot;;&quot;$(SolutionDir)\..\gtk2\lib\glib-2.0\include&quot;;&quot;$(SolutionDir)\..\libxml2\include&quot;" DisableSpecificWarnings="4996;4244;4267" Name="VCCLCompilerTool" PrecompiledHeaderThrough="stdafx.h" PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS"/>
 				</FileConfiguration>
@@ -710,7 +710,7 @@
 			</File>
 			<File RelativePath=".\glwidget.cpp">
 			</File>
-			<File RelativePath=".\GLWINDOW.cpp">
+			<File RelativePath=".\glwindow.cpp">
 				<FileConfiguration Name="Debug|Win32">
 					<Tool AdditionalIncludeDirectories="&quot;$(SolutionDir)\include&quot;;&quot;$(SolutionDir)\libs&quot;;&quot;$(SolutionDir)\..\STLPort\stlport&quot;;&quot;$(SolutionDir)\..\gtk2\include&quot;;&quot;$(SolutionDir)\..\gtk2\include\glib-2.0&quot;;&quot;$(SolutionDir)\..\gtk2\lib\glib-2.0\include&quot;;&quot;$(SolutionDir)\..\libxml2\include&quot;" DisableSpecificWarnings="4996;4244;4267" Name="VCCLCompilerTool" PrecompiledHeaderThrough="stdafx.h" PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS"/>
 				</FileConfiguration>
@@ -731,7 +731,7 @@
 					<Tool AdditionalIncludeDirectories="&quot;$(SolutionDir)\include&quot;;&quot;$(SolutionDir)\libs&quot;;&quot;$(SolutionDir)\..\STLPort\stlport&quot;;&quot;$(SolutionDir)\..\gtk2\include&quot;;&quot;$(SolutionDir)\..\gtk2\include\glib-2.0&quot;;&quot;$(SolutionDir)\..\gtk2\lib\glib-2.0\include&quot;;&quot;$(SolutionDir)\..\libxml2\include&quot;" DisableSpecificWarnings="4996;4244;4267" Name="VCCLCompilerTool" PrecompiledHeaderThrough="stdafx.h" PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS"/>
 				</FileConfiguration>
 			</File>
-			<File RelativePath=".\GTKMISC.cpp">
+			<File RelativePath=".\gtkmisc.cpp">
 				<FileConfiguration Name="Debug|Win32">
 					<Tool AdditionalIncludeDirectories="&quot;$(SolutionDir)\include&quot;;&quot;$(SolutionDir)\libs&quot;;&quot;$(SolutionDir)\..\STLPort\stlport&quot;;&quot;$(SolutionDir)\..\gtk2\include&quot;;&quot;$(SolutionDir)\..\gtk2\include\glib-2.0&quot;;&quot;$(SolutionDir)\..\gtk2\lib\glib-2.0\include&quot;;&quot;$(SolutionDir)\..\libxml2\include&quot;" DisableSpecificWarnings="4996;4244;4267" Name="VCCLCompilerTool" PrecompiledHeaderThrough="stdafx.h" PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS"/>
 				</FileConfiguration>
@@ -739,7 +739,7 @@
 					<Tool AdditionalIncludeDirectories="&quot;$(SolutionDir)\include&quot;;&quot;$(SolutionDir)\libs&quot;;&quot;$(SolutionDir)\..\STLPort\stlport&quot;;&quot;$(SolutionDir)\..\gtk2\include&quot;;&quot;$(SolutionDir)\..\gtk2\include\glib-2.0&quot;;&quot;$(SolutionDir)\..\gtk2\lib\glib-2.0\include&quot;;&quot;$(SolutionDir)\..\libxml2\include&quot;" DisableSpecificWarnings="4996;4244;4267" Name="VCCLCompilerTool" PrecompiledHeaderThrough="stdafx.h" PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS"/>
 				</FileConfiguration>
 			</File>
-			<File RelativePath=".\MAIN.cpp">
+			<File RelativePath=".\main.cpp">
 				<FileConfiguration Name="Debug|Win32">
 					<Tool AdditionalIncludeDirectories="&quot;$(SolutionDir)\include&quot;;&quot;$(SolutionDir)\libs&quot;;&quot;$(SolutionDir)\..\STLPort\stlport&quot;;&quot;$(SolutionDir)\..\gtk2\include&quot;;&quot;$(SolutionDir)\..\gtk2\include\glib-2.0&quot;;&quot;$(SolutionDir)\..\gtk2\lib\glib-2.0\include&quot;;&quot;$(SolutionDir)\..\libxml2\include&quot;" DisableSpecificWarnings="4996;4244;4267" Name="VCCLCompilerTool" PrecompiledHeaderThrough="stdafx.h" PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS"/>
 				</FileConfiguration>
@@ -755,7 +755,7 @@
 					<Tool AdditionalIncludeDirectories="&quot;$(SolutionDir)\include&quot;;&quot;$(SolutionDir)\libs&quot;;&quot;$(SolutionDir)\..\STLPort\stlport&quot;;&quot;$(SolutionDir)\..\gtk2\include&quot;;&quot;$(SolutionDir)\..\gtk2\include\glib-2.0&quot;;&quot;$(SolutionDir)\..\gtk2\lib\glib-2.0\include&quot;;&quot;$(SolutionDir)\..\libxml2\include&quot;" DisableSpecificWarnings="4996;4244;4267" Name="VCCLCompilerTool" PrecompiledHeaderThrough="stdafx.h" PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS"/>
 				</FileConfiguration>
 			</File>
-			<File RelativePath=".\MAP.cpp">
+			<File RelativePath=".\map.cpp">
 				<FileConfiguration Name="Debug|Win32">
 					<Tool AdditionalIncludeDirectories="&quot;$(SolutionDir)\include&quot;;&quot;$(SolutionDir)\libs&quot;;&quot;$(SolutionDir)\..\STLPort\stlport&quot;;&quot;$(SolutionDir)\..\gtk2\include&quot;;&quot;$(SolutionDir)\..\gtk2\include\glib-2.0&quot;;&quot;$(SolutionDir)\..\gtk2\lib\glib-2.0\include&quot;;&quot;$(SolutionDir)\..\libxml2\include&quot;" DisableSpecificWarnings="4996;4244;4267" Name="VCCLCompilerTool" PrecompiledHeaderThrough="stdafx.h" PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS"/>
 				</FileConfiguration>
@@ -763,7 +763,7 @@
 					<Tool AdditionalIncludeDirectories="&quot;$(SolutionDir)\include&quot;;&quot;$(SolutionDir)\libs&quot;;&quot;$(SolutionDir)\..\STLPort\stlport&quot;;&quot;$(SolutionDir)\..\gtk2\include&quot;;&quot;$(SolutionDir)\..\gtk2\include\glib-2.0&quot;;&quot;$(SolutionDir)\..\gtk2\lib\glib-2.0\include&quot;;&quot;$(SolutionDir)\..\libxml2\include&quot;" DisableSpecificWarnings="4996;4244;4267" Name="VCCLCompilerTool" PrecompiledHeaderThrough="stdafx.h" PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS"/>
 				</FileConfiguration>
 			</File>
-			<File RelativePath=".\MISSING.cpp">
+			<File RelativePath=".\missing.cpp">
 				<FileConfiguration Name="Debug|Win32">
 					<Tool AdditionalIncludeDirectories="&quot;$(SolutionDir)\include&quot;;&quot;$(SolutionDir)\libs&quot;;&quot;$(SolutionDir)\..\STLPort\stlport&quot;;&quot;$(SolutionDir)\..\gtk2\include&quot;;&quot;$(SolutionDir)\..\gtk2\include\glib-2.0&quot;;&quot;$(SolutionDir)\..\gtk2\lib\glib-2.0\include&quot;;&quot;$(SolutionDir)\..\libxml2\include&quot;" DisableSpecificWarnings="4996;4244;4267" Name="VCCLCompilerTool" PrecompiledHeaderThrough="stdafx.h" PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS"/>
 				</FileConfiguration>
@@ -771,7 +771,7 @@
 					<Tool AdditionalIncludeDirectories="&quot;$(SolutionDir)\include&quot;;&quot;$(SolutionDir)\libs&quot;;&quot;$(SolutionDir)\..\STLPort\stlport&quot;;&quot;$(SolutionDir)\..\gtk2\include&quot;;&quot;$(SolutionDir)\..\gtk2\include\glib-2.0&quot;;&quot;$(SolutionDir)\..\gtk2\lib\glib-2.0\include&quot;;&quot;$(SolutionDir)\..\libxml2\include&quot;" DisableSpecificWarnings="4996;4244;4267" Name="VCCLCompilerTool" PrecompiledHeaderThrough="stdafx.h" PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS"/>
 				</FileConfiguration>
 			</File>
-			<File RelativePath=".\PARSE.cpp">
+			<File RelativePath=".\parse.cpp">
 				<FileConfiguration Name="Debug|Win32">
 					<Tool AdditionalIncludeDirectories="&quot;$(SolutionDir)\include&quot;;&quot;$(SolutionDir)\libs&quot;;&quot;$(SolutionDir)\..\STLPort\stlport&quot;;&quot;$(SolutionDir)\..\gtk2\include&quot;;&quot;$(SolutionDir)\..\gtk2\include\glib-2.0&quot;;&quot;$(SolutionDir)\..\gtk2\lib\glib-2.0\include&quot;;&quot;$(SolutionDir)\..\libxml2\include&quot;" DisableSpecificWarnings="4996;4244;4267" Name="VCCLCompilerTool" PrecompiledHeaderThrough="stdafx.h" PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS"/>
 				</FileConfiguration>
@@ -803,7 +803,7 @@
 					<Tool AdditionalIncludeDirectories="&quot;$(SolutionDir)\include&quot;;&quot;$(SolutionDir)\libs&quot;;&quot;$(SolutionDir)\..\STLPort\stlport&quot;;&quot;$(SolutionDir)\..\gtk2\include&quot;;&quot;$(SolutionDir)\..\gtk2\include\glib-2.0&quot;;&quot;$(SolutionDir)\..\gtk2\lib\glib-2.0\include&quot;;&quot;$(SolutionDir)\..\libxml2\include&quot;" DisableSpecificWarnings="4996;4244;4267" Name="VCCLCompilerTool" PrecompiledHeaderThrough="stdafx.h" PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS"/>
 				</FileConfiguration>
 			</File>
-			<File RelativePath=".\PMESH.cpp">
+			<File RelativePath=".\pmesh.cpp">
 				<FileConfiguration Name="Debug|Win32">
 					<Tool AdditionalIncludeDirectories="&quot;$(SolutionDir)\include&quot;;&quot;$(SolutionDir)\libs&quot;;&quot;$(SolutionDir)\..\STLPort\stlport&quot;;&quot;$(SolutionDir)\..\gtk2\include&quot;;&quot;$(SolutionDir)\..\gtk2\include\glib-2.0&quot;;&quot;$(SolutionDir)\..\gtk2\lib\glib-2.0\include&quot;;&quot;$(SolutionDir)\..\libxml2\include&quot;" DisableSpecificWarnings="4996;4244;4267" Name="VCCLCompilerTool" PrecompiledHeaderThrough="stdafx.h" PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS"/>
 				</FileConfiguration>
@@ -811,7 +811,7 @@
 					<Tool AdditionalIncludeDirectories="&quot;$(SolutionDir)\include&quot;;&quot;$(SolutionDir)\libs&quot;;&quot;$(SolutionDir)\..\STLPort\stlport&quot;;&quot;$(SolutionDir)\..\gtk2\include&quot;;&quot;$(SolutionDir)\..\gtk2\include\glib-2.0&quot;;&quot;$(SolutionDir)\..\gtk2\lib\glib-2.0\include&quot;;&quot;$(SolutionDir)\..\libxml2\include&quot;" DisableSpecificWarnings="4996;4244;4267" Name="VCCLCompilerTool" PrecompiledHeaderThrough="stdafx.h" PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS"/>
 				</FileConfiguration>
 			</File>
-			<File RelativePath=".\POINTS.cpp">
+			<File RelativePath=".\points.cpp">
 				<FileConfiguration Name="Debug|Win32">
 					<Tool AdditionalIncludeDirectories="&quot;$(SolutionDir)\include&quot;;&quot;$(SolutionDir)\libs&quot;;&quot;$(SolutionDir)\..\STLPort\stlport&quot;;&quot;$(SolutionDir)\..\gtk2\include&quot;;&quot;$(SolutionDir)\..\gtk2\include\glib-2.0&quot;;&quot;$(SolutionDir)\..\gtk2\lib\glib-2.0\include&quot;;&quot;$(SolutionDir)\..\libxml2\include&quot;" DisableSpecificWarnings="4996;4244;4267" Name="VCCLCompilerTool" PrecompiledHeaderThrough="stdafx.h" PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS"/>
 				</FileConfiguration>
@@ -827,7 +827,7 @@
 					<Tool AdditionalIncludeDirectories="&quot;$(SolutionDir)\include&quot;;&quot;$(SolutionDir)\libs&quot;;&quot;$(SolutionDir)\..\STLPort\stlport&quot;;&quot;$(SolutionDir)\..\gtk2\include&quot;;&quot;$(SolutionDir)\..\gtk2\include\glib-2.0&quot;;&quot;$(SolutionDir)\..\gtk2\lib\glib-2.0\include&quot;;&quot;$(SolutionDir)\..\libxml2\include&quot;" DisableSpecificWarnings="4996;4244;4267" Name="VCCLCompilerTool" PrecompiledHeaderThrough="stdafx.h" PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS"/>
 				</FileConfiguration>
 			</File>
-			<File RelativePath=".\PROFILE.cpp">
+			<File RelativePath=".\profile.cpp">
 				<FileConfiguration Name="Debug|Win32">
 					<Tool AdditionalIncludeDirectories="&quot;$(SolutionDir)\include&quot;;&quot;$(SolutionDir)\libs&quot;;&quot;$(SolutionDir)\..\STLPort\stlport&quot;;&quot;$(SolutionDir)\..\gtk2\include&quot;;&quot;$(SolutionDir)\..\gtk2\include\glib-2.0&quot;;&quot;$(SolutionDir)\..\gtk2\lib\glib-2.0\include&quot;;&quot;$(SolutionDir)\..\libxml2\include&quot;" DisableSpecificWarnings="4996;4244;4267" Name="VCCLCompilerTool" PrecompiledHeaderThrough="stdafx.h" PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS"/>
 				</FileConfiguration>
@@ -835,7 +835,7 @@
 					<Tool AdditionalIncludeDirectories="&quot;$(SolutionDir)\include&quot;;&quot;$(SolutionDir)\libs&quot;;&quot;$(SolutionDir)\..\STLPort\stlport&quot;;&quot;$(SolutionDir)\..\gtk2\include&quot;;&quot;$(SolutionDir)\..\gtk2\include\glib-2.0&quot;;&quot;$(SolutionDir)\..\gtk2\lib\glib-2.0\include&quot;;&quot;$(SolutionDir)\..\libxml2\include&quot;" DisableSpecificWarnings="4996;4244;4267" Name="VCCLCompilerTool" PrecompiledHeaderThrough="stdafx.h" PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS"/>
 				</FileConfiguration>
 			</File>
-			<File RelativePath=".\QE3.cpp">
+			<File RelativePath=".\qe3.cpp">
 				<FileConfiguration Name="Debug|Win32">
 					<Tool AdditionalIncludeDirectories="&quot;$(SolutionDir)\include&quot;;&quot;$(SolutionDir)\libs&quot;;&quot;$(SolutionDir)\..\STLPort\stlport&quot;;&quot;$(SolutionDir)\..\gtk2\include&quot;;&quot;$(SolutionDir)\..\gtk2\include\glib-2.0&quot;;&quot;$(SolutionDir)\..\gtk2\lib\glib-2.0\include&quot;;&quot;$(SolutionDir)\..\libxml2\include&quot;" DisableSpecificWarnings="4996;4244;4267" Name="VCCLCompilerTool" PrecompiledHeaderThrough="stdafx.h" PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS"/>
 				</FileConfiguration>
@@ -847,7 +847,7 @@
 			</File>
 			<File RelativePath=".\qgl_ext.cpp">
 			</File>
-			<File RelativePath=".\SELECT.cpp">
+			<File RelativePath=".\select.cpp">
 				<FileConfiguration Name="Debug|Win32">
 					<Tool AdditionalIncludeDirectories="&quot;$(SolutionDir)\include&quot;;&quot;$(SolutionDir)\libs&quot;;&quot;$(SolutionDir)\..\STLPort\stlport&quot;;&quot;$(SolutionDir)\..\gtk2\include&quot;;&quot;$(SolutionDir)\..\gtk2\include\glib-2.0&quot;;&quot;$(SolutionDir)\..\gtk2\lib\glib-2.0\include&quot;;&quot;$(SolutionDir)\..\libxml2\include&quot;" DisableSpecificWarnings="4996;4244;4267" Name="VCCLCompilerTool" PrecompiledHeaderThrough="stdafx.h" PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS"/>
 				</FileConfiguration>
@@ -893,7 +893,7 @@
 			</File>
 			<File RelativePath=".\ui.cpp">
 			</File>
-			<File RelativePath=".\UNDO.cpp">
+			<File RelativePath=".\undo.cpp">
 				<FileConfiguration Name="Debug|Win32">
 					<Tool AdditionalIncludeDirectories="&quot;$(SolutionDir)\include&quot;;&quot;$(SolutionDir)\libs&quot;;&quot;$(SolutionDir)\..\STLPort\stlport&quot;;&quot;$(SolutionDir)\..\gtk2\include&quot;;&quot;$(SolutionDir)\..\gtk2\include\glib-2.0&quot;;&quot;$(SolutionDir)\..\gtk2\lib\glib-2.0\include&quot;;&quot;$(SolutionDir)\..\libxml2\include&quot;" DisableSpecificWarnings="4996;4244;4267" Name="VCCLCompilerTool" PrecompiledHeaderThrough="stdafx.h" PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS"/>
 				</FileConfiguration>
@@ -901,7 +901,7 @@
 					<Tool AdditionalIncludeDirectories="&quot;$(SolutionDir)\include&quot;;&quot;$(SolutionDir)\libs&quot;;&quot;$(SolutionDir)\..\STLPort\stlport&quot;;&quot;$(SolutionDir)\..\gtk2\include&quot;;&quot;$(SolutionDir)\..\gtk2\include\glib-2.0&quot;;&quot;$(SolutionDir)\..\gtk2\lib\glib-2.0\include&quot;;&quot;$(SolutionDir)\..\libxml2\include&quot;" DisableSpecificWarnings="4996;4244;4267" Name="VCCLCompilerTool" PrecompiledHeaderThrough="stdafx.h" PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS"/>
 				</FileConfiguration>
 			</File>
-			<File RelativePath=".\VERTSEL.cpp">
+			<File RelativePath=".\vertsel.cpp">
 				<FileConfiguration Name="Debug|Win32">
 					<Tool AdditionalIncludeDirectories="&quot;$(SolutionDir)\include&quot;;&quot;$(SolutionDir)\libs&quot;;&quot;$(SolutionDir)\..\STLPort\stlport&quot;;&quot;$(SolutionDir)\..\gtk2\include&quot;;&quot;$(SolutionDir)\..\gtk2\include\glib-2.0&quot;;&quot;$(SolutionDir)\..\gtk2\lib\glib-2.0\include&quot;;&quot;$(SolutionDir)\..\libxml2\include&quot;" DisableSpecificWarnings="4996;4244;4267" Name="VCCLCompilerTool" PrecompiledHeaderThrough="stdafx.h" PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS"/>
 				</FileConfiguration>
@@ -909,7 +909,7 @@
 					<Tool AdditionalIncludeDirectories="&quot;$(SolutionDir)\include&quot;;&quot;$(SolutionDir)\libs&quot;;&quot;$(SolutionDir)\..\STLPort\stlport&quot;;&quot;$(SolutionDir)\..\gtk2\include&quot;;&quot;$(SolutionDir)\..\gtk2\include\glib-2.0&quot;;&quot;$(SolutionDir)\..\gtk2\lib\glib-2.0\include&quot;;&quot;$(SolutionDir)\..\libxml2\include&quot;" DisableSpecificWarnings="4996;4244;4267" Name="VCCLCompilerTool" PrecompiledHeaderThrough="stdafx.h" PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS"/>
 				</FileConfiguration>
 			</File>
-			<File RelativePath=".\WINDING.cpp">
+			<File RelativePath=".\winding.cpp">
 				<FileConfiguration Name="Debug|Win32">
 					<Tool AdditionalIncludeDirectories="&quot;$(SolutionDir)\include&quot;;&quot;$(SolutionDir)\libs&quot;;&quot;$(SolutionDir)\..\STLPort\stlport&quot;;&quot;$(SolutionDir)\..\gtk2\include&quot;;&quot;$(SolutionDir)\..\gtk2\include\glib-2.0&quot;;&quot;$(SolutionDir)\..\gtk2\lib\glib-2.0\include&quot;;&quot;$(SolutionDir)\..\libxml2\include&quot;" DisableSpecificWarnings="4996;4244;4267" Name="VCCLCompilerTool" PrecompiledHeaderThrough="stdafx.h" PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS"/>
 				</FileConfiguration>
@@ -917,7 +917,7 @@
 					<Tool AdditionalIncludeDirectories="&quot;$(SolutionDir)\include&quot;;&quot;$(SolutionDir)\libs&quot;;&quot;$(SolutionDir)\..\STLPort\stlport&quot;;&quot;$(SolutionDir)\..\gtk2\include&quot;;&quot;$(SolutionDir)\..\gtk2\include\glib-2.0&quot;;&quot;$(SolutionDir)\..\gtk2\lib\glib-2.0\include&quot;;&quot;$(SolutionDir)\..\libxml2\include&quot;" DisableSpecificWarnings="4996;4244;4267" Name="VCCLCompilerTool" PrecompiledHeaderThrough="stdafx.h" PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS"/>
 				</FileConfiguration>
 			</File>
-			<File RelativePath=".\XYWINDOW.cpp">
+			<File RelativePath=".\xywindow.cpp">
 				<FileConfiguration Name="Debug|Win32">
 					<Tool AdditionalIncludeDirectories="&quot;$(SolutionDir)\include&quot;;&quot;$(SolutionDir)\libs&quot;;&quot;$(SolutionDir)\..\STLPort\stlport&quot;;&quot;$(SolutionDir)\..\gtk2\include&quot;;&quot;$(SolutionDir)\..\gtk2\include\glib-2.0&quot;;&quot;$(SolutionDir)\..\gtk2\lib\glib-2.0\include&quot;;&quot;$(SolutionDir)\..\libxml2\include&quot;" DisableSpecificWarnings="4996;4244;4267" Name="VCCLCompilerTool" PrecompiledHeaderThrough="stdafx.h" PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS"/>
 				</FileConfiguration>
@@ -925,7 +925,7 @@
 					<Tool AdditionalIncludeDirectories="&quot;$(SolutionDir)\include&quot;;&quot;$(SolutionDir)\libs&quot;;&quot;$(SolutionDir)\..\STLPort\stlport&quot;;&quot;$(SolutionDir)\..\gtk2\include&quot;;&quot;$(SolutionDir)\..\gtk2\include\glib-2.0&quot;;&quot;$(SolutionDir)\..\gtk2\lib\glib-2.0\include&quot;;&quot;$(SolutionDir)\..\libxml2\include&quot;" DisableSpecificWarnings="4996;4244;4267" Name="VCCLCompilerTool" PrecompiledHeaderThrough="stdafx.h" PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS"/>
 				</FileConfiguration>
 			</File>
-			<File RelativePath=".\Z.cpp">
+			<File RelativePath=".\z.cpp">
 				<FileConfiguration Name="Debug|Win32">
 					<Tool AdditionalIncludeDirectories="&quot;$(SolutionDir)\include&quot;;&quot;$(SolutionDir)\libs&quot;;&quot;$(SolutionDir)\..\STLPort\stlport&quot;;&quot;$(SolutionDir)\..\gtk2\include&quot;;&quot;$(SolutionDir)\..\gtk2\include\glib-2.0&quot;;&quot;$(SolutionDir)\..\gtk2\lib\glib-2.0\include&quot;;&quot;$(SolutionDir)\..\libxml2\include&quot;" DisableSpecificWarnings="4996;4244;4267" Name="VCCLCompilerTool" PrecompiledHeaderThrough="stdafx.h" PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS"/>
 				</FileConfiguration>
@@ -933,7 +933,7 @@
 					<Tool AdditionalIncludeDirectories="&quot;$(SolutionDir)\include&quot;;&quot;$(SolutionDir)\libs&quot;;&quot;$(SolutionDir)\..\STLPort\stlport&quot;;&quot;$(SolutionDir)\..\gtk2\include&quot;;&quot;$(SolutionDir)\..\gtk2\include\glib-2.0&quot;;&quot;$(SolutionDir)\..\gtk2\lib\glib-2.0\include&quot;;&quot;$(SolutionDir)\..\libxml2\include&quot;" DisableSpecificWarnings="4996;4244;4267" Name="VCCLCompilerTool" PrecompiledHeaderThrough="stdafx.h" PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS"/>
 				</FileConfiguration>
 			</File>
-			<File RelativePath=".\ZWINDOW.cpp">
+			<File RelativePath=".\zwindow.cpp">
 				<FileConfiguration Name="Debug|Win32">
 					<Tool AdditionalIncludeDirectories="&quot;$(SolutionDir)\include&quot;;&quot;$(SolutionDir)\libs&quot;;&quot;$(SolutionDir)\..\STLPort\stlport&quot;;&quot;$(SolutionDir)\..\gtk2\include&quot;;&quot;$(SolutionDir)\..\gtk2\include\glib-2.0&quot;;&quot;$(SolutionDir)\..\gtk2\lib\glib-2.0\include&quot;;&quot;$(SolutionDir)\..\libxml2\include&quot;" DisableSpecificWarnings="4996;4244;4267" Name="VCCLCompilerTool" PrecompiledHeaderThrough="stdafx.h" PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS"/>
 				</FileConfiguration>

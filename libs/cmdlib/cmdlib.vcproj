@@ -43,7 +43,7 @@
 	<References>
 	</References>
 	<Files>
-		<File RelativePath=".\CMDLIB.cpp">
+		<File RelativePath=".\cmdlib.cpp">
 		</File>
 		<File RelativePath="..\cmdlib.h">
 		</File>

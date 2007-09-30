@@ -43,69 +43,69 @@
 	<References>
 	</References>
 	<Files>
-		<File RelativePath=".\Jchuff.h">
+		<File RelativePath=".\jchuff.h">
 		</File>
-		<File RelativePath=".\JCOMAPI.cpp">
+		<File RelativePath=".\jcomapi.cpp">
 		</File>
-		<File RelativePath=".\Jconfig.h">
+		<File RelativePath=".\jconfig.h">
 		</File>
-		<File RelativePath=".\JDAPIMIN.cpp">
+		<File RelativePath=".\jdapimin.cpp">
 		</File>
-		<File RelativePath=".\JDAPISTD.cpp">
+		<File RelativePath=".\jdapistd.cpp">
 		</File>
-		<File RelativePath=".\JDATASRC.cpp">
+		<File RelativePath=".\jdatasrc.cpp">
 		</File>
-		<File RelativePath=".\JDCOEFCT.cpp">
+		<File RelativePath=".\jdcoefct.cpp">
 		</File>
-		<File RelativePath=".\JDCOLOR.cpp">
+		<File RelativePath=".\jdcolor.cpp">
 		</File>
-		<File RelativePath=".\Jdct.h">
+		<File RelativePath=".\jdct.h">
 		</File>
-		<File RelativePath=".\JDDCTMGR.cpp">
+		<File RelativePath=".\jddctmgr.cpp">
 		</File>
-		<File RelativePath=".\JDHUFF.cpp">
+		<File RelativePath=".\jdhuff.cpp">
 		</File>
-		<File RelativePath=".\Jdhuff.h">
+		<File RelativePath=".\jdhuff.h">
 		</File>
-		<File RelativePath=".\JDINPUT.cpp">
+		<File RelativePath=".\jdinput.cpp">
 		</File>
-		<File RelativePath=".\JDMAINCT.cpp">
+		<File RelativePath=".\jdmainct.cpp">
 		</File>
-		<File RelativePath=".\JDMARKER.cpp">
+		<File RelativePath=".\jdmarker.cpp">
 		</File>
-		<File RelativePath=".\JDMASTER.cpp">
+		<File RelativePath=".\jdmaster.cpp">
 		</File>
-		<File RelativePath=".\JDPOSTCT.cpp">
+		<File RelativePath=".\jdpostct.cpp">
 		</File>
-		<File RelativePath=".\JDSAMPLE.cpp">
+		<File RelativePath=".\jdsample.cpp">
 		</File>
-		<File RelativePath=".\JDTRANS.cpp">
+		<File RelativePath=".\jdtrans.cpp">
 		</File>
-		<File RelativePath=".\JERROR.cpp">
+		<File RelativePath=".\jerror.cpp">
 		</File>
-		<File RelativePath=".\Jerror.h">
+		<File RelativePath=".\jerror.h">
 		</File>
-		<File RelativePath=".\JFDCTFLT.cpp">
+		<File RelativePath=".\jfdctflt.cpp">
 		</File>
-		<File RelativePath=".\JIDCTFLT.cpp">
+		<File RelativePath=".\jidctflt.cpp">
 		</File>
-		<File RelativePath=".\Jinclude.h">
+		<File RelativePath=".\jinclude.h">
 		</File>
-		<File RelativePath=".\JMEMMGR.cpp">
+		<File RelativePath=".\jmemmgr.cpp">
 		</File>
-		<File RelativePath=".\JMEMNOBS.cpp">
+		<File RelativePath=".\jmemnobs.cpp">
 		</File>
-		<File RelativePath=".\Jmemsys.h">
+		<File RelativePath=".\jmemsys.h">
 		</File>
-		<File RelativePath=".\Jmorecfg.h">
+		<File RelativePath=".\jmorecfg.h">
 		</File>
-		<File RelativePath=".\Jpegint.h">
+		<File RelativePath=".\jpegint.h">
 		</File>
-		<File RelativePath=".\JPGLOAD.cpp">
+		<File RelativePath=".\jpgload.cpp">
 		</File>
-		<File RelativePath=".\JUTILS.cpp">
+		<File RelativePath=".\jutils.cpp">
 		</File>
-		<File RelativePath=".\Jversion.h">
+		<File RelativePath=".\jversion.h">
 		</File>
 	</Files>
 	<Globals>
