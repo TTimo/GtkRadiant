@@ -40,10 +40,14 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <string.h>
 #include <glib.h>
 
+#include <jpeglib.h>
+#include <jerror.h>
+ /*
 extern "C" {
 #include "radiant_jpeglib.h"
 #include "jpeg6/jerror.h"
 }
+ */
 
 #include "image.h"
 

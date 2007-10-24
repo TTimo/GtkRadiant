@@ -8,8 +8,11 @@ import os
 Import( [ 'utils', 'config', 'settings', 'lib_objects' ] )
 
 env = Environment()
-settings.SetupEnvironment( env, config, useGtk = True, useGtkGL = True )
+settings.SetupEnvironment( env, config['name'], useGtk = True, useGtkGL = True )
 proj = utils.vcproj( os.path.join( GetLaunchDir(), 'radiant/radiant.vcproj' ) )
 
-env.Program( 'radiant.bin', lib_objects + [ os.path.join( 'radiant', i ) for i in proj.getSourceFiles() ] )
+radiant = env.Program( 'radiant.bin', lib_objects + [ os.path.join( 'radiant', i ) for i in proj.getSourceFiles() ] )
+
+Return( 'radiant' )
+
 

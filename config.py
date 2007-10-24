@@ -51,19 +51,53 @@ class Config:
 
 	def emit( self ):
 		settings = self
-		for config in self.config_selected:
+		for config_name in self.config_selected:
+			config = {}
+			config['name'] = config_name
+			config['shared'] = False
 			Export( 'utils', 'settings', 'config' )
-			build_dir = os.path.join( 'build', config )
+			build_dir = os.path.join( 'build', config_name )
 			BuildDir( build_dir, '.', duplicate = 0 )
-			# left out jpeg6, splines
+			# left out jpeg6, splines (FIXME: I think jpeg6 is not used at all, can trash?)
 			lib_objects = []
 			for project in [ 'libs/synapse/synapse.vcproj', 'libs/cmdlib/cmdlib.vcproj', 'libs/mathlib/mathlib.vcproj', 'libs/l_net/l_net.vcproj', 'libs/ddslib/ddslib.vcproj', 'libs/picomodel/picomodel.vcproj', 'libs/md5lib/md5lib.vcproj' ]:
 				Export( 'project' )
 				lib_objects += SConscript( os.path.join( build_dir, 'SConscript.lib' ) )
 			Export( 'lib_objects' )
-			SConscript( os.path.join( build_dir, 'SConscript.radiant' ) )
+			radiant = SConscript( os.path.join( build_dir, 'SConscript.radiant' ) )
+			InstallAs( 'install/radiant.bin', radiant )
 
-	def SetupEnvironment( self, env, config, useGtk = False, useGtkGL = False ):
+			# PIC versions of the libs for the modules
+			shlib_objects_extra = {}
+			for project in [ 'libs/synapse/synapse.vcproj', 'libs/mathlib/mathlib.vcproj', 'libs/cmdlib/cmdlib.vcproj' ]:
+				( libpath, libname ) = os.path.split( project )
+				libname = os.path.splitext( libname )[0]
+				config['shared'] = True
+				Export( 'project', 'config' )
+				build_dir = os.path.join( 'build', config_name, 'shobjs' )
+				BuildDir( build_dir, '.', duplicate = 0 )
+				shlib_objects_extra[libname] = SConscript( os.path.join( build_dir, 'SConscript.lib' ) )
+
+			for project in [ 'plugins/vfspk3/vfspk3.vcproj',
+					 'plugins/image/image.vcproj',
+					 'plugins/entity/entity.vcproj',
+					 'plugins/map/map.vcproj',
+					 'plugins/mapxml/mapxml.vcproj',
+					 'plugins/shaders/shaders.vcproj',
+					 'plugins/surface/surface.vcproj'
+					 ]:
+				( libpath, libname ) = os.path.split( project )
+				libname = os.path.splitext( libname )[0]
+				shlib_objects = shlib_objects_extra['synapse']
+				if ( libname == 'entity' ):
+					shlib_objects += shlib_objects_extra['mathlib']
+				if ( libname == 'map' ):
+					shlib_objects += shlib_objects_extra['cmdlib']
+				Export( 'project', 'shlib_objects' )
+				module = SConscript( os.path.join( build_dir, 'SConscript.module' ) )
+				InstallAs( 'install/modules/%s.so' % libname, module )
+
+	def SetupEnvironment( self, env, config, useGtk = False, useGtkGL = False, useJPEG = False ):
 		env['CC'] = self.cc
 		env['CXX'] = self.cxx
 		( ret, xml2 ) = commands.getstatusoutput( 'xml2-config --cflags' )
@@ -72,7 +106,8 @@ class Config:
 			assert( False )
 		xml2libs = commands.getoutput( 'xml2-config --libs' )
 		env.Append( LINKFLAGS = xml2libs.split( ' ' ) )
-		baseflags = [ '-m32', '-pipe', '-Wall', '-fmessage-length=0', '-fvisibility=hidden', xml2.split( ' ' ) ]
+		baseflags = [ '-pipe', '-Wall', '-fmessage-length=0', '-fvisibility=hidden', xml2.split( ' ' ) ]
+#		baseflags += [ '-m32' ]
 		if ( useGtk ):
 			( ret, gtk2 ) = commands.getstatusoutput( 'pkg-config gtk+-2.0 --cflags' )
 			if ( ret != 0 ):
@@ -82,11 +117,14 @@ class Config:
 			gtk2libs = commands.getoutput( 'pkg-config gtk+-2.0 --libs' )
 			env.Append( LINKFLAGS = gtk2libs.split( ' ' ) )
 		else:
+			# always setup at least glib
 			( ret, glib ) = commands.getstatusoutput( 'pkg-config glib-2.0 --cflags' )
 			if ( ret != 0 ):
 				print 'pkg-config glib-2.0 failed'
 				assert( False )
 			baseflags += glib.split( ' ' )
+			gliblibs = commands.getoutput( 'pkg-config glib-2.0 --libs' )
+			env.Append( LINKFLAGS = gliblibs.split( ' ' ) )
 		if ( useGtkGL ):
 			( ret, gtkgl ) = commands.getstatusoutput( 'pkg-config gtkglext-1.0 --cflags' )
 			if ( ret != 0 ):
@@ -95,6 +133,8 @@ class Config:
 			baseflags += gtkgl.split( ' ' )
 			gtkgllibs = commands.getoutput( 'pkg-config gtkglext-1.0 --libs' )
 			env.Append( LINKFLAGS = gtkgllibs.split( ' ' ) )
+		if ( useJPEG ):
+			env.Append( LIBS = 'jpeg' )
 			
 		env.Append( CFLAGS = baseflags )
 		env.Append( CXXFLAGS = baseflags + [ '-fpermissive', '-fvisibility-inlines-hidden' ] )
@@ -104,7 +144,10 @@ class Config:
 			env.Append( CFLAGS = [ '-g' ] )
 			env.Append( CPPDEFINES = [ '_DEBUG' ] )				
 		else:
-			env.Append( CFLAGS = [ '-O3', '-march=pentium3', '-Winline', '-ffast-math', '-fno-unsafe-math-optimizations' ] )
+			env.Append( CFLAGS = [ '-O3', '-Winline', '-ffast-math', '-fno-unsafe-math-optimizations' ] )
+			#env.Append( CFLAGS = [ '-march=pentium3' ] )
+
+#		env.Append( LINKFLAGS = [ '-m32' ] )
 
 # parse the config statement line to produce/update an existing config list
 # the configs expose a list of keywords and accepted values, which the engine parses out 

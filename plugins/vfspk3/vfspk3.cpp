@@ -50,19 +50,24 @@ _QERFuncTable_1 g_FuncTable;
 CSynapseServer* g_pSynapseServer = NULL;
 CSynapseClientVFS g_SynapseClient;
 
-extern "C" CSynapseClient* SYNAPSE_DLL_EXPORT Synapse_EnumerateInterfaces (const char *version, CSynapseServer *pServer)
-{
-  if (strcmp(version, SYNAPSE_VERSION))
-  {
+#if __GNUC__ >= 4
+#pragma GCC visibility push(default)
+#endif
+extern "C" CSynapseClient* SYNAPSE_DLL_EXPORT Synapse_EnumerateInterfaces( const char *version, CSynapseServer *pServer ) {
+#if __GNUC__ >= 4
+#pragma GCC visibility pop
+#endif
+
+  if ( strcmp( version, SYNAPSE_VERSION ) ) {
     Syn_Printf("ERROR: synapse API version mismatch: should be '" SYNAPSE_VERSION "', got '%s'\n", version);
     return NULL;
   }
   g_pSynapseServer = pServer;
   g_pSynapseServer->IncRef();
-  Set_Syn_Printf(g_pSynapseServer->Get_Syn_Printf());
+  Set_Syn_Printf( g_pSynapseServer->Get_Syn_Printf() );
   
-  g_SynapseClient.AddAPI(VFS_MAJOR, "pk3", sizeof(_QERFileSystemTable));  
-  g_SynapseClient.AddAPI(RADIANT_MAJOR, NULL, sizeof(_QERFuncTable_1), SYN_REQUIRE, &g_FuncTable);
+  g_SynapseClient.AddAPI( VFS_MAJOR, "pk3", sizeof( _QERFileSystemTable ) );
+  g_SynapseClient.AddAPI( RADIANT_MAJOR, NULL, sizeof( _QERFuncTable_1 ), SYN_REQUIRE, &g_FuncTable );
 
   return &g_SynapseClient;
 }
