@@ -1,4 +1,4 @@
-import sys, traceback, platform, re, commands
+import sys, traceback, platform, re, commands, platform
 
 if __name__ != '__main__':
 	from SCons.Script import *
@@ -25,8 +25,13 @@ class Config:
 		self.target_selected = [ 'radiant' ]
 		self.config_selected = [ 'release' ]
 		# those are global to each config
-		self.cc = 'gcc-4.1'
-		self.cxx = 'g++-4.1'
+		self.platform = platform.system()
+		if ( self.platform == 'Darwin' ):
+			self.cc = 'gcc'
+			self.cxx = 'g++'
+		else:
+			self.cc = 'gcc-4.1'
+			self.cxx = 'g++-4.1'
 
 	def __repr__( self ):
 		return 'config: target=%s config=%s' % ( self.target_selected, self.config_selected )
@@ -108,6 +113,10 @@ class Config:
 		env.Append( LINKFLAGS = xml2libs.split( ' ' ) )
 		baseflags = [ '-pipe', '-Wall', '-fmessage-length=0', '-fvisibility=hidden', xml2.split( ' ' ) ]
 #		baseflags += [ '-m32' ]
+
+		if ( self.platform == 'Darwin' ):
+			env.Append( CPPPATH = [ '/Developer/SDKs/MacOSX10.4u.sdk/usr/X11R6/include' ] )
+
 		if ( useGtk ):
 			( ret, gtk2 ) = commands.getstatusoutput( 'pkg-config gtk+-2.0 --cflags' )
 			if ( ret != 0 ):
@@ -125,6 +134,7 @@ class Config:
 			baseflags += glib.split( ' ' )
 			gliblibs = commands.getoutput( 'pkg-config glib-2.0 --libs' )
 			env.Append( LINKFLAGS = gliblibs.split( ' ' ) )
+
 		if ( useGtkGL ):
 			( ret, gtkgl ) = commands.getstatusoutput( 'pkg-config gtkglext-1.0 --cflags' )
 			if ( ret != 0 ):

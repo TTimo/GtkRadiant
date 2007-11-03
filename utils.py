@@ -3,7 +3,7 @@
 # TTimo <ttimo@idsoftware.com>
 # http://scons.sourceforge.net
 
-import os, commands, platform, xml.sax, re, string
+import os, commands, platform, xml.sax, re, string, platform
 
 class vcproj( xml.sax.handler.ContentHandler ):
 	def __init__( self, filepath ):
@@ -46,6 +46,9 @@ class vcproj( xml.sax.handler.ContentHandler ):
 # action uses LDD to verify that the source doesn't hold unresolved symbols
 # setup as an AddPostAction of a regular SharedLibrary call
 def CheckUnresolved( source, target, env ):
+	# TODO: implement this for OSX
+	if ( platform.system() == 'Darwin' ):
+		return None
 	print 'CheckUnresolved %s' % target[0].abspath
 	if ( not os.path.isfile( target[0].abspath ) ):
 		print 'CheckUnresolved: %s does not exist' % target[0]
