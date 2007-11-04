@@ -290,43 +290,49 @@ void CDbgDlg::SetHighlight(gint row)
   }
 }
 
-ISAXHandler *CDbgDlg::GetElement (gint row)
-{
-  return static_cast<ISAXHandler *>(g_ptr_array_index(m_pFeedbackElements, row));
+ISAXHandler *CDbgDlg::GetElement( gint row ) {
+	return static_cast<ISAXHandler *>( g_ptr_array_index( m_pFeedbackElements, row ) );
 }
 
-void CDbgDlg::Init ()
-{
-  DropHighlight();
-
-  // free all the ISAXHandler*, clean it
-  while (m_pFeedbackElements->len)
-  {
-    delete static_cast<ISAXHandler *>(g_ptr_array_index (m_pFeedbackElements, 0));
-    g_ptr_array_remove_index (m_pFeedbackElements, 0);
-  }
-
-  if (m_clist != NULL)
-    gtk_list_store_clear (m_clist);
+void CDbgDlg::ClearFeedbackArray() {
+	// free all the ISAXHandler*, clean it
+	while ( m_pFeedbackElements->len ) {
+		// some ISAXHandler are static and passed around but should never be deleted
+		ISAXHandler *handler = static_cast< ISAXHandler * >( g_ptr_array_index( m_pFeedbackElements, 0 ) );
+		if ( handler->ShouldDelete() ) {
+			delete handler;
+		}
+		g_ptr_array_remove_index( m_pFeedbackElements, 0 );
+	}
 }
 
-void CDbgDlg::Push (ISAXHandler *pHandler)
-{
-  // push in the list
-  g_ptr_array_add (m_pFeedbackElements, (void *)pHandler);
+void CDbgDlg::Init() {
+	DropHighlight();
 
-  if (m_pWidget == NULL)
-    Create();
-  // put stuff in the list
-  gtk_list_store_clear (m_clist);
-  for(unsigned int i = 0; i < m_pFeedbackElements->len; ++i)
-  {
-    GtkTreeIter iter;
-    gtk_list_store_append(m_clist, &iter);
-    gtk_list_store_set(m_clist, &iter, 0, GetElement(i)->getName(), -1);
-  }
+	ClearFeedbackArray();
 
-  ShowDlg();
+	if ( m_clist != NULL ) {
+		gtk_list_store_clear( m_clist );
+	}
+}
+
+void CDbgDlg::Push( ISAXHandler *pHandler ) {
+	// push in the list
+	g_ptr_array_add( m_pFeedbackElements, (void *)pHandler );
+
+	if ( m_pWidget == NULL ) {
+		Create();
+	}
+	// put stuff in the list
+	gtk_list_store_clear( m_clist );
+	unsigned int i;
+	for ( i = 0; i < m_pFeedbackElements->len; i++ ) {
+		GtkTreeIter iter;
+		gtk_list_store_append( m_clist, &iter );
+		gtk_list_store_set( m_clist, &iter, 0, GetElement(i)->getName(), -1 );
+	}
+
+	ShowDlg();
 }
 
 void CDbgDlg::BuildDialog ()

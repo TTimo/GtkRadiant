@@ -110,28 +110,28 @@ static void saxStartElement(message_info_t *data, const xmlChar *name, const xml
       {
         data->bGeometry = true;
         data->pGeometry = &g_pointfile;
-        data->pGeometry->saxStartElement (data, name, attrs);  
+        data->pGeometry->saxStartElement( data, name, attrs );
       }
       else if (strcmp ((char *)name, "select") == 0)
       {
         CSelectMsg *pSelect = new CSelectMsg();
         data->bGeometry = true;
         data->pGeometry = pSelect;
-        data->pGeometry->saxStartElement (data, name, attrs);
+        data->pGeometry->saxStartElement( data, name, attrs );
       }
       else if (strcmp ((char *)name, "pointmsg") == 0)
       {
         CPointMsg *pPoint = new CPointMsg();
         data->bGeometry = true;
         data->pGeometry = pPoint;
-        data->pGeometry->saxStartElement (data, name, attrs);
+        data->pGeometry->saxStartElement( data, name, attrs );
       }
       else if (strcmp ((char *)name, "windingmsg") == 0)
       {
         CWindingMsg *pWinding = new CWindingMsg();
         data->bGeometry = true;
         data->pGeometry = pWinding;
-        data->pGeometry->saxStartElement (data, name, attrs);
+        data->pGeometry->saxStartElement( data, name, attrs );
       }
       else
       {
@@ -145,35 +145,31 @@ static void saxStartElement(message_info_t *data, const xmlChar *name, const xml
   data->recurse++;
 }
 
-static void saxEndElement(message_info_t *data, const xmlChar *name) 
-{
-  data->recurse--;
-  // we are out of an ignored chunk
-  if (data->recurse == data->ignore_depth)
-  {
-    data->ignore_depth = 0;
-    return;
-  }
-  if (data->bGeometry)
-  {
-    data->pGeometry->saxEndElement (data, name);
-    // we add the object to the debug window
-    if (!data->bGeometry)
-    {
-      g_DbgDlg.Push (data->pGeometry);
-    }
-  }
-  if (data->recurse == data->stop_depth)
-  {
+static void saxEndElement(message_info_t *data, const xmlChar *name)  {
+	data->recurse--;
+	// we are out of an ignored chunk
+	if ( data->recurse == data->ignore_depth ) {
+		data->ignore_depth = 0;
+		return;
+	}
+	if ( data->bGeometry ) {
+		data->pGeometry->saxEndElement( data, name );
+		// we add the object to the debug window
+		if ( !data->bGeometry ) {
+			g_DbgDlg.Push( data->pGeometry );
+		}
+	}
+	if ( data->recurse == data->stop_depth ) {
 #ifdef _DEBUG
-    Sys_Printf ("Received error msg .. shutting down..\n");
+		Sys_Printf ("Received error msg .. shutting down..\n");
 #endif
-    g_pParentWnd->GetWatchBSP()->Reset();
-    // tell there has been an error
-    if (g_pParentWnd->GetWatchBSP()->HasBSPPlugin ())
-      g_BSPFrontendTable.m_pfnEndListen(2);
-    return;
-  }
+		g_pParentWnd->GetWatchBSP()->Reset();
+		// tell there has been an error
+		if ( g_pParentWnd->GetWatchBSP()->HasBSPPlugin() ) {
+			g_BSPFrontendTable.m_pfnEndListen( 2 );
+		}
+		return;
+	}
 }
 
 static void saxCharacters(message_info_t *data, const xmlChar *ch, int len)
@@ -317,40 +313,37 @@ bool CWatchBSP::SetupListening()
   return true;
 }
 
-void CWatchBSP::DoEBeginStep()
-{
-  Reset();
-  if (SetupListening() == false)
-  {
-    CString msg;
-    msg = "Failed to get a listening socket on port 39000.\nTry running with BSP monitoring disabled if you can't fix this.\n";
-    Sys_Printf (msg);
-    gtk_MessageBox (g_pParentWnd->m_pWidget, msg, "BSP monitoring", MB_OK | MB_ICONERROR);
-    return;
-  }
-  // set the timer for timeouts and step cancellation
-  g_timer_reset( m_pTimer );
-  g_timer_start( m_pTimer );
+void CWatchBSP::DoEBeginStep() {
+	Reset();
+	if ( !SetupListening() ) {
+		CString msg;
+		msg = "Failed to get a listening socket on port 39000.\nTry running with BSP monitoring disabled if you can't fix this.\n";
+		Sys_Printf( msg );
+		gtk_MessageBox( g_pParentWnd->m_pWidget, msg, "BSP monitoring", MB_OK | MB_ICONERROR );
+		return;
+	}
+	// set the timer for timeouts and step cancellation
+	g_timer_reset( m_pTimer );
+	g_timer_start( m_pTimer );
 
-  if (!m_bBSPPlugin)
-  {
-    Sys_Printf("=== running BSP command ===\n%s\n", g_ptr_array_index( m_pCmd, m_iCurrentStep ) );
-    
-    if (!Q_Exec(NULL, (char *)g_ptr_array_index( m_pCmd, m_iCurrentStep ), NULL, true ))
-    {
-      CString msg;
-      msg = "Failed to execute the following command: ";
-      msg += (char *)g_ptr_array_index( m_pCmd, m_iCurrentStep );
-      msg += "\nCheck that the file exists and that you don't run out of system resources.\n";
-      Sys_Printf(msg);
-      gtk_MessageBox(g_pParentWnd->m_pWidget,  msg, "BSP monitoring", MB_OK | MB_ICONERROR );
-      return;
-    }
-    // re-initialise the debug window
-    if (m_iCurrentStep == 0)
-      g_DbgDlg.Init();
-  }
-  m_eState = EBeginStep;
+	if ( !m_bBSPPlugin ) {
+		Sys_Printf( "=== running BSP command ===\n%s\n", g_ptr_array_index( m_pCmd, m_iCurrentStep ) );
+
+		if ( !Q_Exec( NULL, (char *)g_ptr_array_index( m_pCmd, m_iCurrentStep ), NULL, true ) ) {
+			CString msg;
+			msg = "Failed to execute the following command: ";
+			msg += (char *)g_ptr_array_index( m_pCmd, m_iCurrentStep );
+			msg += "\nCheck that the file exists and that you don't run out of system resources.\n";
+			Sys_Printf( msg );
+			gtk_MessageBox( g_pParentWnd->m_pWidget,  msg, "BSP monitoring", MB_OK | MB_ICONERROR );
+			return;
+		}
+		// re-initialise the debug window
+		if ( m_iCurrentStep == 0 ) {
+			g_DbgDlg.Init();
+		}
+	}
+	m_eState = EBeginStep;
 }
 
 void CWatchBSP::RoutineProcessing()

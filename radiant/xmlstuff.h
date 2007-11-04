@@ -44,12 +44,13 @@ struct message_info_s;
 class ISAXHandler
 {
 public:
-  virtual void saxStartElement (struct message_info_s *ctx, const xmlChar *name, const xmlChar **attrs) = 0;
-  virtual void saxEndElement (struct message_info_s *ctx, const xmlChar *name) = 0;
-  virtual void saxCharacters (struct message_info_s *ctx, const xmlChar *ch, int len) = 0;
+  virtual void saxStartElement( struct message_info_s *ctx, const xmlChar *name, const xmlChar **attrs ) = 0;
+  virtual void saxEndElement( struct message_info_s *ctx, const xmlChar *name ) = 0;
+  virtual void saxCharacters( struct message_info_s *ctx, const xmlChar *ch, int len ) = 0;
   virtual char *getName() { return NULL; }
   virtual void Highlight() { }
   virtual void DropHighlight() { }
+  virtual bool ShouldDelete() { return true; } // should the handler be deleted when the feedback dialog is cleared?
 };
 
 // a 'user data' structure we pass along in the SAX callbacks to represent the current state
@@ -59,12 +60,12 @@ public:
 //   the level for stopping the feed is stored in stop_depth
 // unkown nodes are ignored, we use ignore_depth to track the level we start ignoring from
 typedef struct message_info_s {
-  int msg_level; // current message level (SYS_MSG, SYS_WRN, SYS_ERR)
-  int recurse; // current recursion depth (used to track various things)
-  int ignore_depth; // the ignore depth limit when we are jumping over unknown nodes (0 means we are not ignoring)
-  int stop_depth; // the depth we need to stop at the end
-  bool bGeometry; // are we parsing some geometry information (i.e. do we forward the SAX calls?)
-  ISAXHandler *pGeometry; // the handler
+  int				msg_level;		// current message level (SYS_MSG, SYS_WRN, SYS_ERR)
+  int				recurse;		// current recursion depth (used to track various things)
+  int				ignore_depth;	// the ignore depth limit when we are jumping over unknown nodes (0 means we are not ignoring)
+  int				stop_depth;		// the depth we need to stop at the end
+  bool				bGeometry;		// are we parsing some geometry information (i.e. do we forward the SAX calls?)
+  ISAXHandler		*pGeometry;		// the handler
 } message_info_t;
 
 #endif

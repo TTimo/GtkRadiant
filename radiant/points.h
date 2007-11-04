@@ -39,15 +39,18 @@ void Pointfile_Load( void );
 class CPointfile : public ISAXHandler
 {
 public:
-  CPointfile() { }
-  void Init();
-  void PushPoint (vec3_t v);
-  void GenerateDisplayList();
-  // SAX interface
-  void saxStartElement (message_info_t *ctx, const xmlChar *name, const xmlChar **attrs);
-  void saxEndElement (message_info_t *ctx, const xmlChar *name);
-  void saxCharacters (message_info_t *ctx, const xmlChar *ch, int len);
-  char *getName();
+	CPointfile() { }
+	void Init();
+	void PushPoint( vec3_t v );
+	void GenerateDisplayList();
+	// SAX interface
+	void saxStartElement( message_info_t *ctx, const xmlChar *name, const xmlChar **attrs );
+	void saxEndElement( message_info_t *ctx, const xmlChar *name );
+	void saxCharacters( message_info_t *ctx, const xmlChar *ch, int len );
+	char *getName();
+
+	// class is only used for g_pointfile and we should not attempt to free it
+	bool ShouldDelete() { return false; }
 };
 
 // instead of using Pointfile_Load you can do it by hand through g_pointfile
