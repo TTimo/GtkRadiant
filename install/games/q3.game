@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="iso-8859-1" standalone="yes"?>
 <game
-  name="QuakeZero"
-  enginepath =".."
+  name="Quake III Arena"
+  enginepath="/usr/local/games/quake3"
   gametools="/home/timo/SVN/ZeroRadiant/install/games"
-  gamename="quakezero"
+  gamename="quake3"
 />
