@@ -60,7 +60,6 @@ could be split into two independant libraries actually, the server part and the 
 #if defined(_WIN32)
   #define SYNAPSE_DLL_EXPORT WINAPI
 #elif defined(__linux__) || defined(__APPLE__)	/* ydnar */
-//  #define SYNAPSE_DLL_EXPORT __attribute__ ((visibility ("protected")))
   #define SYNAPSE_DLL_EXPORT
 #else
   #error unknown architecture

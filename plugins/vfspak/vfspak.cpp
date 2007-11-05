@@ -102,5 +102,3 @@ const char* CSynapseClientVFS::GetName()
 {
   return "VFS";
 }
-
-

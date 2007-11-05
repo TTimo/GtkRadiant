@@ -243,5 +243,3 @@ void LoadImage (const char *filename, unsigned char **pic, int *width, int *heig
   free(row_pointers);
   g_FileSystemTable.m_pfnFreeFile (fbuffer);
 }
-
-

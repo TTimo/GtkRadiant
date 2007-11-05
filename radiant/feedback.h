@@ -106,18 +106,18 @@ class CDbgDlg : public Dialog
   GtkListStore* m_clist;
   ISAXHandler *m_pHighlight;
 public:
-  CDbgDlg() { m_pFeedbackElements = g_ptr_array_new (); m_pHighlight = NULL; }
-  virtual ~CDbgDlg() { }
+  CDbgDlg() { m_pFeedbackElements = g_ptr_array_new(); m_pHighlight = NULL; }
+  virtual		~CDbgDlg() { ClearFeedbackArray(); }
   // refresh items
-  void Push (ISAXHandler *);
+  void			Push( ISAXHandler * );
   // clean the debug window, release all ISAXHanlders we have
-  void Init();
-  ISAXHandler *GetElement(gint row);
-  void SetHighlight(gint row);
-  void DropHighlight();
-//  void HideDlg();
+  void			Init();
+  ISAXHandler	*GetElement(gint row);
+  void			SetHighlight(gint row);
+  void			DropHighlight();
 protected:
-  void BuildDialog ();
+  void			BuildDialog();
+  void			ClearFeedbackArray();
 };
 
 extern CDbgDlg g_DbgDlg;

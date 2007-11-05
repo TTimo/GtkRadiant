@@ -56,8 +56,14 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "model", "plugins\model\mode
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "shaders", "plugins\shaders\shaders.vcproj", "{AEBCB950-AB67-48BB-9AF5-FCFB042824E8}"
+	ProjectSection(ProjectDependencies) = postProject
+		{E13CCFB0-A366-4EF3-A66F-C374B563E4DF} = {E13CCFB0-A366-4EF3-A66F-C374B563E4DF}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "surface", "plugins\surface\surface.vcproj", "{6FDF6CFE-52FF-4E8C-A6F6-C0392DAE4DB7}"
+	ProjectSection(ProjectDependencies) = postProject
+		{E13CCFB0-A366-4EF3-A66F-C374B563E4DF} = {E13CCFB0-A366-4EF3-A66F-C374B563E4DF}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "vfspk3", "plugins\vfspk3\vfspk3.vcproj", "{DEFCF433-3A47-40EB-BBF7-861211C3A941}"
 	ProjectSection(ProjectDependencies) = postProject
