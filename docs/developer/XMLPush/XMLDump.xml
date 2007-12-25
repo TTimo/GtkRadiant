@@ -1,8 +1,0 @@
-<?xml version="1.0"?>
-<q3map_feedback>
-<message level="1">Q3Map - built for GtkRadiant v1.1b - based on v1.0q (c) 1999 Id Software Inc.
-</message>
-<message level="3">************ ERROR ************
-usage: q3map [general options] [options] mapfile
-</message>
-</q3map_feedback>

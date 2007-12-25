@@ -75,7 +75,7 @@ class Dialog
   /*!
   used in overloaded BuildDialog implementations to configure modal behaviour easily
   */
-  void AddModalButton (GtkWidget *widget, int ret);
+  void AddModalButton( GtkWidget *widget, int ret );
 
  private:
   GSList* m_pDataList;

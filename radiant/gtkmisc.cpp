@@ -851,14 +851,13 @@ GtkWidget* create_menu_in_menu_with_mnemonic (GtkWidget *menu, const gchar *mnem
 // =============================================================================
 // Message Boxes
 
-void dialog_button_callback (GtkWidget *widget, gpointer data)
-{
+void dialog_button_callback( GtkWidget *widget, gpointer data ) {
   GtkWidget *parent;
   int *loop, *ret;
 
-  parent = gtk_widget_get_toplevel (widget);
-  loop = (int*)g_object_get_data (G_OBJECT (parent), "loop");
-  ret = (int*)g_object_get_data (G_OBJECT (parent), "ret");
+  parent = gtk_widget_get_toplevel( widget );
+  loop = (int*)g_object_get_data( G_OBJECT( parent ), "loop" );
+  ret = (int*)g_object_get_data( G_OBJECT( parent ), "ret" );
 
   *loop = 0;
   *ret = (int)data;

@@ -1699,31 +1699,27 @@ void Sys_ClearPrintf (void)
 // used to be around 32000, that should be way enough already
 #define BUFFER_SIZE 4096
 
-extern "C" void Sys_FPrintf_VA (int level, const char *text, va_list args)
-{
+extern "C" void Sys_FPrintf_VA( int level, const char *text, va_list args ) {
   char buf[BUFFER_SIZE];
   
   buf[0] = 0;
-  vsnprintf(buf, BUFFER_SIZE, text, args);
+  vsnprintf( buf, BUFFER_SIZE, text, args );
   buf[BUFFER_SIZE-1] = 0;
   const unsigned int length = strlen(buf);
 
-  if (g_qeglobals.hLogFile)
-  {
+  if ( g_qeglobals.hLogFile ) {
 #ifdef _WIN32
-    _write(g_qeglobals.hLogFile, buf,length);
-    _commit(g_qeglobals.hLogFile);
+    _write( g_qeglobals.hLogFile, buf, length );
+    _commit( g_qeglobals.hLogFile );
 #endif
 #if defined (__linux__) || defined (__APPLE__)
-    write(g_qeglobals.hLogFile, buf, length);
+    write( g_qeglobals.hLogFile, buf, length );
 #endif
   }
 
-  if (level != SYS_NOCON)
-  {
+  if ( level != SYS_NOCON ) {
     // TTimo: FIXME: killed the console to avoid GDI leak fuckup
-    if (g_qeglobals_gui.d_edit != NULL)
-    {
+    if ( g_qeglobals_gui.d_edit != NULL ) {
       GtkTextBuffer* buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(g_qeglobals_gui.d_edit));
       
       GtkTextIter iter;
@@ -1778,13 +1774,12 @@ extern "C" void Sys_Printf_VA (const char *text, va_list args)
   Sys_FPrintf_VA (SYS_STD, text, args);
 }
 
-extern "C" void Sys_Printf (const char *text, ...)
-{
+extern "C" void Sys_Printf( const char *text, ... ) {
   va_list args;
 
-  va_start (args, text);
-  Sys_FPrintf_VA (SYS_STD, text, args);
-  va_end (args);
+  va_start( args, text );
+  Sys_FPrintf_VA( SYS_STD, text, args );
+  va_end( args );
 }
 
 extern "C" void Sys_FPrintf (int level, const char *text, ...)

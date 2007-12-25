@@ -419,10 +419,9 @@ void error_redirect (const gchar *domain, GLogLevelFlags log_level, const gchar 
 //  Sys_FPrintf (SYS_NOCON, buf);
 }
 
-int main (int argc, char* argv[])
-{
-  char *libgl, *ptr;
-  int i, j, k;
+int main( int argc, char* argv[] ) {
+	char *libgl, *ptr;
+	int i, j, k;
 
 #ifdef _WIN32
   libgl = "opengl32.dll";
@@ -442,9 +441,9 @@ int main (int argc, char* argv[])
   char *loginname;
   struct passwd *pw;
   seteuid(getuid());
-  if (geteuid() == 0 && (loginname = getlogin()) != NULL &&
-      (pw = getpwnam(loginname)) != NULL)
-    setuid(pw->pw_uid);
+  if ( geteuid() == 0 && ( loginname = getlogin() ) != NULL && ( pw = getpwnam(loginname) ) != NULL ) {
+	  setuid(pw->pw_uid);
+  }
 #endif
 
   gtk_disable_setlocale();
@@ -507,24 +506,9 @@ int main (int argc, char* argv[])
   g_strBitmapsPath = g_strAppPath;
   g_strBitmapsPath += "bitmaps/";
 
-#if 0
-  // http://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=639
-  // now check if we are running from a network installation
-  // use a dummy file as the flag
-  FILE *f_netrun;
-  CString strNetrun;
-  strNetrun = g_strAppPath; strNetrun += NETRUN_FILENAME;
-  f_netrun = fopen(strNetrun.GetBuffer(), "r");
-  if (f_netrun)
-  {
-    fclose(f_netrun);
-    g_PrefsDlg.m_bUseHomePath = true;
-  }
-#endif
   CGameDialog::UpdateNetrun(false); // read the netrun configuration
 
-  if (CGameDialog::GetNetrun())
-  {
+  if ( CGameDialog::GetNetrun() ) {
     // we have to find a per-user g_strTempPath
     // this behaves the same as on Linux
     g_strTempPath = getenv("USERPROFILE");
@@ -573,19 +557,12 @@ int main (int argc, char* argv[])
 
   g_strAppPath = real;
 
-#if 0
-  printf("g_strAppPath: %s\n", g_strAppPath.GetBuffer());
-#endif
-
   // radiant is installed in the parent dir of "tools/"
   // NOTE: this is not very easy for debugging
   // maybe add options to lookup in several places?
   // (for now I had to create symlinks)
   g_strBitmapsPath = g_strAppPath;
   g_strBitmapsPath += "bitmaps/";
-#if 0
-  printf("g_strBitmapsPath: %s\n", g_strBitmapsPath.GetBuffer());
-#endif
   
   // we will set this right after the game selection is done
   g_strGameToolsPath = g_strAppPath;
@@ -607,9 +584,8 @@ int main (int argc, char* argv[])
   g_pidFile += "radiant.pid";
 
   FILE *pid;
-  pid = fopen (g_pidFile.GetBuffer(), "r");
-  if (pid != NULL)
-  {
+  pid = fopen( g_pidFile.GetBuffer(), "r" );
+  if ( pid != NULL ) {
     fclose (pid);
     CString msg;
 
@@ -651,9 +627,10 @@ int main (int argc, char* argv[])
   }
 
   // create a primary .pid for global init run
-  pid = fopen (g_pidFile.GetBuffer(), "w");
-  if (pid)
-    fclose (pid);
+  pid = fopen( g_pidFile.GetBuffer(), "w" );
+  if ( pid ) {
+	  fclose( pid );
+  }
   
   // a safe check to avoid people running broken installations
   // (otherwise, they run it, crash it, and blame us for not forcing them hard enough to pay attention while installing)
@@ -661,7 +638,7 @@ int main (int argc, char* argv[])
   // let's leave it disabled in debug mode in any case
   // http://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=431
 #ifndef _DEBUG
-#define CHECK_VERSION
+  //#define CHECK_VERSION
 #endif
 #ifdef CHECK_VERSION  
   // locate and open RADIANT_MAJOR and RADIANT_MINOR
@@ -728,11 +705,10 @@ int main (int argc, char* argv[])
 #endif
   
   g_qeglobals.disable_ini = false;
-  g_PrefsDlg.Init ();
+  g_PrefsDlg.Init();
 
   // close the primary
-  if (remove (g_pidFile.GetBuffer ()) == -1)
-  {
+  if ( remove( g_pidFile.GetBuffer () ) == -1 ) {
     CString msg;
     msg = "WARNING: Could not delete "; msg += g_pidGameFile;
     gtk_MessageBox (NULL, msg, "Radiant", MB_OK | MB_ICONERROR );
@@ -845,7 +821,7 @@ int main (int argc, char* argv[])
 #endif
 
 #ifndef SKIP_SPLASH
-  create_splash ();
+  create_splash();
 #endif
 
   if (!QGL_Init(libgl, ""))
@@ -865,30 +841,31 @@ int main (int argc, char* argv[])
 #endif
 
   // redirect Gtk warnings to the console
-  g_log_set_handler ("Gdk", (GLogLevelFlags)(G_LOG_LEVEL_ERROR|G_LOG_LEVEL_CRITICAL|G_LOG_LEVEL_WARNING|
+  g_log_set_handler( "Gdk", (GLogLevelFlags)(G_LOG_LEVEL_ERROR|G_LOG_LEVEL_CRITICAL|G_LOG_LEVEL_WARNING|
                                              G_LOG_LEVEL_MESSAGE|G_LOG_LEVEL_INFO|G_LOG_LEVEL_DEBUG), error_redirect, NULL);
-  g_log_set_handler ("Gtk", (GLogLevelFlags)(G_LOG_LEVEL_ERROR|G_LOG_LEVEL_CRITICAL|G_LOG_LEVEL_WARNING|
+  g_log_set_handler( "Gtk", (GLogLevelFlags)(G_LOG_LEVEL_ERROR|G_LOG_LEVEL_CRITICAL|G_LOG_LEVEL_WARNING|
                                              G_LOG_LEVEL_MESSAGE|G_LOG_LEVEL_INFO|G_LOG_LEVEL_DEBUG), error_redirect, NULL);
 
   // spog - creates new filters list for the first time
-  g_qeglobals.d_savedinfo.filters = NULL; //initialise to NULL
+  g_qeglobals.d_savedinfo.filters = NULL;
   g_qeglobals.d_savedinfo.filters = FilterUpdate(g_qeglobals.d_savedinfo.filters);
 
-  g_pParentWnd = new MainFrame ();
+  g_pParentWnd = new MainFrame();
 
-  if (g_PrefsDlg.m_bLoadLastMap && g_PrefsDlg.m_strLastMap.GetLength() > 0)
-    Map_LoadFile(g_PrefsDlg.m_strLastMap.GetBuffer());
-  else
-    Map_New();
+  if ( g_PrefsDlg.m_bLoadLastMap && g_PrefsDlg.m_strLastMap.GetLength() > 0 ) {
+	  Map_LoadFile(g_PrefsDlg.m_strLastMap.GetBuffer());
+  } else {
+	  Map_New();
+  }
 
   // load up shaders now that we have the map loaded
   // eviltypeguy
-  Texture_ShowStartupShaders ();
+  Texture_ShowStartupShaders();
 
 #ifndef SKIP_SPLASH
-  gdk_window_raise (splash_screen->window);
-  gtk_window_set_transient_for (GTK_WINDOW (splash_screen), GTK_WINDOW (g_pParentWnd->m_pWidget));
-  gtk_timeout_add (1000, try_destroy_splash, NULL);
+  gdk_window_raise(splash_screen->window);
+  gtk_window_set_transient_for( GTK_WINDOW( splash_screen ), GTK_WINDOW( g_pParentWnd->m_pWidget ) );
+  gtk_timeout_add( 1000, try_destroy_splash, NULL );
 #endif
   
   g_pParentWnd->GetSynapseServer().DumpActiveClients();
@@ -896,7 +873,7 @@ int main (int argc, char* argv[])
   //++timo: temporary debug
   g_pParentWnd->DoWatchBSP();
 
-  gtk_main ();
+  gtk_main();
 
   // close the log file if any
   // NOTE: don't save prefs past this point!
@@ -908,7 +885,7 @@ int main (int argc, char* argv[])
   // NOTE TTimo not sure what this _exit(0) call is worth
   //   restricting it to linux build
 #ifdef __linux__
-  _exit (0);
+  _exit( 0 );
 #endif
   return 0;
 }

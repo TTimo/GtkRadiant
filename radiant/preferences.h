@@ -194,6 +194,27 @@ public:
 };
 
 /*!
+select games, copy editing assets and write out configuration files
+ */
+class CGameInstall : public Dialog {
+public:
+	void Run();
+	void BuildDialog();
+
+	enum gameType_e {
+		GAME_Q3,
+		GAME_URT,
+		GAME_WARSOW
+	};
+
+protected:
+	Str m_strName;
+	Str	m_strMod;
+	Str m_strEngine;
+	int m_nComboSelect;
+};
+
+/*!
 standalone dialog for games selection, and more generally global settings
 */
 class CGameDialog : public Dialog
@@ -216,6 +237,10 @@ class CGameDialog : public Dialog
   */
   static bool m_bNetRun;
 #endif
+
+  bool m_bDoGameInstall;
+
+  CGameInstall mGameInstall;
 
 protected:
   
@@ -258,10 +283,16 @@ public:
   */
   list<CGameDescription *> mGames;
 
-  CGameDialog() { mFrame = NULL; m_pCurrentGameDescription = NULL; m_bLogConsole = false; m_bForceLogConsole = false; }
+  CGameDialog() {
+	  mFrame = NULL;
+	  m_pCurrentGameDescription = NULL;
+	  m_bLogConsole = false;
+	  m_bForceLogConsole = false;
+	  m_bDoGameInstall = true;	// go through DoModal at least once
+  }
   virtual ~CGameDialog(); 
 
-  void AddPacksURL(Str &s);  
+  void AddPacksURL( Str &s );
     
   /*!
   intialize the game dialog, called at CPrefsDlg::Init
@@ -280,11 +311,16 @@ public:
   void DoGameDialog();
 
   /*!
+	call out to the game installation dialog
+  */
+  void DoGameInstall();
+
+  /*!
   Dialog API
   this is only called when the dialog is built at startup for main engine select
   */
-  void BuildDialog ();
-  void UpdateData (bool retrieve);
+  void BuildDialog();
+  void UpdateData( bool retrieve );
 
   /*!
   construction of the dialog frame
@@ -335,6 +371,11 @@ private:
   uses m_nComboItem to find the right mGames
   */
   CGameDescription *GameDescriptionForComboItem();
+
+  /*!
+	callback for the game install button
+  */
+  static void SInstallCallback( GtkWidget *widget, gpointer data );
 };
 
 typedef struct {

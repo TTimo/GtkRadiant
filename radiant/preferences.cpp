@@ -27,6 +27,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "stdafx.h"
 #include <glib.h>
+#include <assert.h>
 #if defined (__linux__) || defined (__APPLE__)
 #include <sys/stat.h>
 #include <sys/types.h>
@@ -957,56 +958,70 @@ void CGameDialog::SavePrefs()
     Sys_FPrintf(SYS_ERR, "Error occured while saving global prefs file '%s'\n", strGlobalPref.GetBuffer());
 }
 
-void CGameDialog::DoGameDialog()
-{
-  // show the UI
-  DoModal();
+void CGameDialog::DoGameInstall() {
+	mGameInstall.Run();
+}
 
-  // unhook so we can use in other places
-  // we manually incref'ed it when creating, it won't be freed (destructor)
-  gtk_container_remove (GTK_CONTAINER (mTopBox), GetGlobalFrame());
+void CGameDialog::DoGameDialog() {
+	// allow looping the game selection dialog with calls to the game configure dialog in between
+	while ( m_bDoGameInstall ) {
+		
+		m_bDoGameInstall = false;
 
-  // we save the prefs file
-  SavePrefs();
+		DoModal();
+		
+		if ( m_bDoGameInstall ) {
+			DoGameInstall();
+			ScanForGames();
+			// and we will loop to do another DoModal dialog
+		}
+	}
+
+	// unhook so we can use in other places
+	// we manually incref'ed it when creating, it won't be freed (destructor)
+	gtk_container_remove( GTK_CONTAINER( mTopBox ), GetGlobalFrame() );
+
+	// we save the prefs file
+	SavePrefs();
 }
 
 GtkWidget* CGameDialog::GetGlobalFrame()
 {
   GtkWidget *vbox, *text, *combo, *check;
 
-  if (mFrame)
-    return mFrame;
+  if ( mFrame != NULL ) {
+	  return mFrame;
+  }
 
-  mFrame = gtk_frame_new(NULL);
-  gtk_container_set_border_width(GTK_CONTAINER(mFrame), 5);
-  gtk_widget_show(mFrame);
+  mFrame = gtk_frame_new( NULL );
+  gtk_container_set_border_width( GTK_CONTAINER( mFrame ), 5 );
+  gtk_widget_show( mFrame );
 
-  vbox = gtk_vbox_new (FALSE, 6);
-  gtk_widget_show (vbox);
-  gtk_container_add (GTK_CONTAINER (mFrame), vbox);
-  gtk_container_set_border_width (GTK_CONTAINER (vbox), 5);
+  vbox = gtk_vbox_new( FALSE, 6 );
+  gtk_widget_show( vbox );
+  gtk_container_add( GTK_CONTAINER( mFrame ), vbox );
+  gtk_container_set_border_width( GTK_CONTAINER( vbox ), 5 );
 
-  text = gtk_label_new("Select the game:");
-  gtk_widget_show(text);
-  gtk_box_pack_start (GTK_BOX(vbox), text, FALSE, FALSE, 0);
+  text = gtk_label_new( "Select the game:" );
+  gtk_widget_show( text );
+  gtk_box_pack_start( GTK_BOX( vbox ), text, FALSE, FALSE, 0 );
 
   combo = gtk_combo_new();
-  gtk_widget_show(combo);
-  gtk_box_pack_start (GTK_BOX (vbox), combo, FALSE, FALSE, 0);
+  gtk_widget_show( combo );
+  gtk_box_pack_start( GTK_BOX( vbox ), combo, FALSE, FALSE, 0 );
 
   // fill in with the game descriptions
   GList *combo_list = (GList*)NULL;
   list<CGameDescription *>::iterator iGame;
-  for(iGame=mGames.begin(); iGame!=mGames.end(); iGame++)
-  {
-    combo_list = g_list_append (combo_list, (void *)(*iGame)->mGameName.GetBuffer());
+  for( iGame = mGames.begin(); iGame != mGames.end(); iGame++ ) {
+	  combo_list = g_list_append( combo_list, (void *)(*iGame)->mGameName.GetBuffer() );
   }
-  gtk_combo_set_popdown_strings (GTK_COMBO (combo), combo_list);
-  g_list_free (combo_list);
+  gtk_combo_set_popdown_strings( GTK_COMBO( combo ), combo_list );
+  g_list_free( combo_list );
 
-  AddDialogData (combo, &m_nComboSelect, DLG_COMBO_INT);
+  AddDialogData( combo, &m_nComboSelect, DLG_COMBO_INT );
 
-  check = gtk_check_button_new_with_label("Auto load selected game on startup");
+  check = gtk_check_button_new_with_label( "Auto load selected game on startup" );
   gtk_widget_show(check);
   gtk_box_pack_start (GTK_BOX(vbox), check, FALSE, FALSE, 0);
   AddDialogData (check, &m_bAutoLoadGame, DLG_CHECK_BOOL);
@@ -1016,25 +1031,24 @@ GtkWidget* CGameDialog::GetGlobalFrame()
   gtk_box_pack_start (GTK_BOX(vbox), text, FALSE, FALSE, 0);
 
 #ifdef _WIN32
-  check = gtk_check_button_new_with_label("Networked install - per-user settings");
-  gtk_widget_show(check);
-  gtk_box_pack_start (GTK_BOX(vbox), check, FALSE, FALSE, 0);
-  AddDialogData (check, &m_bNetRun, DLG_CHECK_BOOL);
+  check = gtk_check_button_new_with_label( "Networked install - per-user settings" );
+  gtk_widget_show( check );
+  gtk_box_pack_start( GTK_BOX( vbox ), check, FALSE, FALSE, 0 );
+  AddDialogData( check, &m_bNetRun, DLG_CHECK_BOOL );
 #endif
 
-  check = gtk_check_button_new_with_label("Log the console to radiant.log");
-  gtk_widget_show(check);
-  gtk_box_pack_start (GTK_BOX(vbox), check, FALSE, FALSE, 0);
-  AddDialogData (check, &m_bLogConsole, DLG_CHECK_BOOL);
+  check = gtk_check_button_new_with_label( "Log the console to radiant.log" );
+  gtk_widget_show( check );
+  gtk_box_pack_start( GTK_BOX( vbox ), check, FALSE, FALSE, 0 );
+  AddDialogData( check, &m_bLogConsole, DLG_CHECK_BOOL );
 
   // incref it so we can pass it around
-  gtk_widget_ref (GTK_WIDGET(mFrame));
+  gtk_widget_ref( GTK_WIDGET( mFrame ) );
 
   return mFrame;
 }
 
-void CGameDialog::UpdateData (bool retrieve)
-{
+void CGameDialog::UpdateData( bool retrieve ) {
   if (!retrieve)
   {
     // use m_sGameFile to set m_nComboSelect
@@ -1070,25 +1084,37 @@ void CGameDialog::UpdateData (bool retrieve)
   }
 }
 
-void CGameDialog::BuildDialog()
-{
-  GtkWidget *dlg, *vbox1, *button;
+void CGameDialog::SInstallCallback( GtkWidget *widget, gpointer data ) {
+	CGameDialog *d = static_cast< CGameDialog* >( data );
+	d->m_bDoGameInstall = true;
+	d->EndModal( 0 );
+}
 
-  dlg = m_pWidget;
-  gtk_window_set_title (GTK_WINDOW (dlg), "Select Game");
+void CGameDialog::BuildDialog() {
+	GtkWidget *dlg, *vbox1, *button, *setup_button;
+	
+	dlg = m_pWidget;
+	gtk_window_set_title( GTK_WINDOW( dlg ), "Select Game" );
 
-  vbox1 = gtk_vbox_new (FALSE, 0);
-  gtk_widget_show(vbox1);
-  gtk_container_add (GTK_CONTAINER (dlg), vbox1);
+	vbox1 = gtk_vbox_new( FALSE, 0 );
+	gtk_widget_show( vbox1 );
+	gtk_container_add( GTK_CONTAINER( dlg ), vbox1 );
 
-  gtk_container_add (GTK_CONTAINER (vbox1), GetGlobalFrame());
-  mTopBox = vbox1;
+	gtk_container_add( GTK_CONTAINER( vbox1 ), GetGlobalFrame() );
+	mTopBox = vbox1;
 
-  button = gtk_button_new_with_label ("OK");
-  gtk_widget_show (button);
-  gtk_box_pack_start (GTK_BOX (vbox1), button, FALSE, FALSE, 0);
-  AddModalButton(button, IDOK);
-  gtk_widget_set_usize (button, 60, -2);
+	setup_button = gtk_button_new_with_label( "Configure more games" );
+	gtk_widget_show( setup_button );
+	gtk_box_pack_start( GTK_BOX( vbox1 ), setup_button, FALSE, FALSE, 0 );
+	gtk_signal_connect( GTK_OBJECT( setup_button ), "clicked",
+						GTK_SIGNAL_FUNC( SInstallCallback ), this );
+
+	button = gtk_button_new_with_label( "OK" );
+	gtk_widget_show( button );
+	gtk_box_pack_start( GTK_BOX( vbox1 ), button, FALSE, FALSE, 0 );
+	AddModalButton( button, IDOK );
+	
+	gtk_widget_set_usize( button, 60, -2 );
 }
 
 void CGameDialog::ScanForGames()
@@ -1100,7 +1126,16 @@ void CGameDialog::ScanForGames()
   strGamesPath += "games";
   const char *path = strGamesPath.GetBuffer();
 
-  Sys_Printf("Scanning for game description files: %s\n", path);
+  if ( !mGames.empty() ) {
+	  Sys_Printf( "Clearing game list\n" );
+	  list<CGameDescription*>::iterator iGame;
+	  for ( iGame = mGames.begin(); iGame != mGames.end(); iGame++ ) {
+		  delete (*iGame);
+	  }
+	  mGames.clear();
+  }
+
+  Sys_Printf( "Scanning for game description files: %s\n", path );
 
   /*!
   \todo FIXME LINUX:
@@ -1136,7 +1171,7 @@ void CGameDialog::ScanForGames()
       xmlDocPtr pDoc = xmlParseFile(strPath.GetBuffer());
       if (pDoc)
       {
-        mGames.push_front(new CGameDescription(pDoc, dirlist));
+        mGames.push_front( new CGameDescription( pDoc, dirlist ) );
       }
       else
       {
@@ -1163,29 +1198,6 @@ CGameDescription* CGameDialog::GameDescriptionForComboItem()
   return NULL; // not found
 }
 
-/*GString* CGameDialog::InitGlobalPrefPath()
-{
-  GString* global_rc_path;
-  // configure m_global_rc_path
-#if defined (__linux__) || defined (__APPLE__)
-  global_rc_path = g_string_new (g_get_home_dir ());
-
-  if (global_rc_path->str[global_rc_path->len-1] != '/')
-    g_string_append (global_rc_path, "/");
-
-  g_string_append (global_rc_path, ".radiant/");
-  mkdir (global_rc_path->str, 0775);
-  g_string_append (global_rc_path, RADIANT_VERSION);
-  g_string_append (global_rc_path, "/");
-  mkdir (global_rc_path->str, 0775);
-#elif WIN32
-  global_rc_path = g_string_new (g_strAppPath.GetBuffer() );
-#else
-#error "WTF are you compiling under"
-#endif
-  return global_rc_path;
-}*/
-
 void CGameDialog::InitGlobalPrefPath()
 {
   GString *global_rc_path;
@@ -1208,13 +1220,15 @@ void CGameDialog::Init()
 {
   InitGlobalPrefPath();
   ScanForGames();
-  if (mGames.empty())
-  {
-    Error("Didn't find any valid game file descriptions, aborting\n");
+  if ( mGames.empty() ) {
+	  DoGameInstall();
+	  ScanForGames();
+	  if ( mGames.empty() ) {
+		  Error( "No games setup, aborting\n" );
+	  }
   }
   LoadPrefs();
-  if (m_bAutoLoadGame)
-  {
+  if ( m_bAutoLoadGame ) {
     // search by .game name
     list<CGameDescription *>::iterator iGame;
     for(iGame=mGames.begin(); iGame!=mGames.end(); iGame++)
@@ -1226,13 +1240,13 @@ void CGameDialog::Init()
       }
     }
   }
-  if (!m_bAutoLoadGame || !m_pCurrentGameDescription)
-  {
+  if ( !m_bAutoLoadGame || !m_pCurrentGameDescription ) {
     DoGameDialog();
     // use m_nComboSelect to identify the game to run as and set the globals
     m_pCurrentGameDescription = GameDescriptionForComboItem();
-    if (!m_pCurrentGameDescription)
-      Error("Lookup of game description object failed, can't continue\n");
+    if ( !m_pCurrentGameDescription ) {
+		Error("Lookup of game description object failed, can't continue\n");
+	}
   }
   g_pGameDescription = m_pCurrentGameDescription;
 
@@ -1494,7 +1508,7 @@ void PrefsDlg::BuildDialog ()
   gtk_widget_show(button);
   gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
   gtk_widget_set_usize(button, 60, -2);
-  AddModalButton (button, IDCANCEL);
+  AddModalButton(button, IDCANCEL);
 
   button = gtk_button_new_with_label ("Clean");
   gtk_widget_show(button);
@@ -3015,10 +3029,11 @@ void PrefsDlg::SavePrefs ()
   if (!mLocalPrefs.WriteXMLFile(m_inipath->str))
     Sys_FPrintf(SYS_ERR, "Error occured while saving local prefs file '%s'\n", m_inipath->str);
 
-  if (m_nMouse == 0)
-    m_nMouseButtons = 2;
-  else
-    m_nMouseButtons = 3;
+  if ( m_nMouse == 0 ) {
+	  m_nMouseButtons = 2;
+  } else {
+	  m_nMouseButtons = 3;
+  }
 
 }
 
@@ -3099,4 +3114,108 @@ void PrefsDlg::DoSensitivity()
     {
       gtk_widget_set_sensitive( GTK_WIDGET(g_object_get_data( G_OBJECT(m_pWidget), "check_sleep" )), FALSE );
     }
+}
+
+/*
+============================================================
+CGameInstall
+============================================================
+*/
+
+void CGameInstall::BuildDialog() {
+	GtkWidget *dlg, *vbox1, *button, *text, *combo, *entry;
+	
+	dlg = m_pWidget;
+	gtk_window_set_title( GTK_WINDOW( dlg ), "Configure games" );
+
+	vbox1 = gtk_vbox_new( FALSE, 0 );
+	gtk_widget_show( vbox1 );
+	gtk_container_add( GTK_CONTAINER( dlg ), vbox1 );
+
+	text = gtk_label_new( "Select the game to configure" );
+	gtk_widget_show( text );
+	gtk_box_pack_start( GTK_BOX( vbox1 ), text, FALSE, FALSE, 0 );
+
+	combo = gtk_combo_new();
+	gtk_widget_show( combo );
+	gtk_box_pack_start( GTK_BOX( vbox1 ), combo, FALSE, FALSE, 0 );
+
+	GList *combo_list = NULL;
+	combo_list = g_list_append( combo_list, "Quake III Arena and mods" );
+	combo_list = g_list_append( combo_list, "Urban Terror standalone" );
+	combo_list = g_list_append( combo_list, "Warsaw" );
+	gtk_combo_set_popdown_strings( GTK_COMBO( combo ), combo_list );
+	g_list_free( combo_list );
+	AddDialogData( combo, &m_nComboSelect, DLG_COMBO_INT );
+
+	text = gtk_label_new( "Name:" );
+	gtk_widget_show( text );
+	gtk_box_pack_start( GTK_BOX( vbox1 ), text, FALSE, FALSE, 0 );
+	
+	entry = gtk_entry_new();
+	gtk_widget_show( entry );
+	gtk_box_pack_start( GTK_BOX( vbox1 ), entry, FALSE, FALSE, 0 );
+	AddDialogData( entry, &m_strName, DLG_ENTRY_TEXT );
+
+	text = gtk_label_new( "Engine directory:" );
+	gtk_widget_show( text );
+	gtk_box_pack_start( GTK_BOX( vbox1 ), text, FALSE, FALSE, 0 );
+	
+	entry = gtk_entry_new();
+	gtk_widget_show( entry );
+	gtk_box_pack_start( GTK_BOX( vbox1 ), entry, FALSE, FALSE, 0 );
+	AddDialogData( entry, &m_strEngine, DLG_ENTRY_TEXT );
+
+	// this gets done in the project stuff atm
+#if 0
+	text = gtk_label_new( "Mod subdirectory:" );
+	gtk_widget_show( text );
+	gtk_box_pack_start( GTK_BOX( vbox1 ), text, FALSE, FALSE, 0 );
+
+	entry = gtk_entry_new();
+	gtk_widget_show( entry );
+	gtk_box_pack_start( GTK_BOX( vbox1 ), entry, FALSE, FALSE, 0 );
+	AddDialogData( entry, &m_strMod, DLG_ENTRY_TEXT );
+#endif
+
+	button = gtk_button_new_with_label( "OK" );
+	gtk_widget_show( button );
+	gtk_box_pack_start( GTK_BOX( vbox1 ), button, FALSE, FALSE, 0 );
+	AddModalButton( button, IDOK );
+
+	gtk_widget_set_usize( button, 60, -2 );
+}
+
+void CGameInstall::Run() {
+	DoModal();
+	Sys_Printf( "combo: %d name: %s engine: %s mod: %s\n", m_nComboSelect, m_strName.GetBuffer(), m_strEngine.GetBuffer(), m_strMod.GetBuffer() );
+
+	// write out the game file
+	Str gameFilePath = g_strAppPath.GetBuffer();
+	gameFilePath += "games/";
+	gameFilePath += m_strName.GetBuffer();
+	gameFilePath += ".game";
+	Sys_Printf( "game file: %s\n", gameFilePath.GetBuffer() );
+
+	FILE *fg = fopen( gameFilePath.GetBuffer(), "w" );
+	if ( fg == NULL ) {
+		Error( "Failed to open %s for writing\n", gameFilePath.GetBuffer() );
+	}
+	fprintf( fg, "<?xml version=\"1.0\" encoding=\"iso-8859-1\" standalone=\"yes\"?>\n<game\n" );
+	fprintf( fg, "  name=\"%s\"\n", m_strName.GetBuffer() );
+	fprintf( fg, "  gametools=\"%sgames\"\n", g_strAppPath.GetBuffer() );
+	fprintf( fg, "  enginepath=\"%s\"\n", m_strEngine.GetBuffer() );
+	switch ( m_nComboSelect ) {
+	case GAME_Q3:
+		fprintf( fg, "  basegame=\"baseq3\"\n" );
+		break;
+	case GAME_URT:
+		fprintf( fg, "  basegame=\"q3ut4\"\n" );
+		break;
+	case GAME_WARSOW:
+		fprintf( fg, "  basegame=\"basewsw\"\n" );
+		break;
+	}
+	fprintf( fg, "/>\n" );
+	fclose( fg );
 }

@@ -108,7 +108,7 @@ void Dialog::Destroy ()
   }
 }
 
-void Dialog::AddDialogData (GtkObject *object, void *buf, DLG_DATA_TYPE type)
+void Dialog::AddDialogData( GtkObject *object, void *buf, DLG_DATA_TYPE type )
 {
   DLG_DATA *data;
 
@@ -120,10 +120,9 @@ void Dialog::AddDialogData (GtkObject *object, void *buf, DLG_DATA_TYPE type)
   m_pDataList = g_slist_append (m_pDataList, data);
 }
 
-void Dialog::AddModalButton (GtkWidget *widget, int ret)
-{
-  gtk_signal_connect (GTK_OBJECT (widget), "clicked",
-		      GTK_SIGNAL_FUNC (dialog_button_callback), GINT_TO_POINTER (ret));
+void Dialog::AddModalButton( GtkWidget *widget, int ret ) {
+  gtk_signal_connect( GTK_OBJECT( widget ), "clicked",
+		      GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( ret ) );
 }
 
 void Dialog::UpdateData (bool retrieve)
@@ -261,35 +260,33 @@ void Dialog::UpdateData (bool retrieve)
     }
 }
 
-void Dialog::EndModal (int code)
-{
+void Dialog::EndModal( int code ) {
   m_nLoop = 0;
   m_nReturn = code;
 }
 
-int Dialog::DoModal ()
+int Dialog::DoModal()
 {
-  Create ();
-  UpdateData (FALSE);
+  Create();
+  UpdateData( FALSE );
 
   PreModal();
 
-  gtk_grab_add (m_pWidget);
-  gtk_widget_show (m_pWidget);
+  gtk_grab_add( m_pWidget );
+  gtk_widget_show( m_pWidget );
 
   m_nLoop = 1;
-  while (m_nLoop)
-    gtk_main_iteration ();
-
-  if (m_pWidget != NULL)
-  {
-    UpdateData (TRUE);
-
-    gtk_grab_remove (m_pWidget);
-    gtk_widget_hide (m_pWidget);
+  while ( m_nLoop ) {
+    gtk_main_iteration();
   }
-  PostModal (m_nReturn);
+
+  if ( m_pWidget != NULL ) {
+    UpdateData( TRUE );
+
+    gtk_grab_remove( m_pWidget );
+    gtk_widget_hide( m_pWidget );
+  }
+  PostModal( m_nReturn );
 
   return m_nReturn;
 }
-
