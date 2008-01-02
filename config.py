@@ -13,7 +13,7 @@ import utils
 class Config:
 	# not used atm, but useful to keep a list in mind
 	# may use them eventually for the 'all' and other aliases expansions?
-	target_choices = utils.Enum( 'radiant' )
+	target_choices = utils.Enum( 'radiant', 'q3map2' )
 	config_choices = utils.Enum( 'debug', 'release' )
 
 	# aliases
@@ -22,7 +22,7 @@ class Config:
 	
 	def __init__( self ):
 		# initialize defaults
-		self.target_selected = [ 'radiant' ]
+		self.target_selected = [ 'radiant', 'q3map2' ]
 		self.config_selected = [ 'release' ]
 		# those are global to each config
 		self.platform = platform.system()
@@ -32,6 +32,7 @@ class Config:
 		else:
 			self.cc = 'gcc-4.1'
 			self.cxx = 'g++-4.1'
+		self.install = True
 
 	def __repr__( self ):
 		return 'config: target=%s config=%s' % ( self.target_selected, self.config_selected )
@@ -48,20 +49,35 @@ class Config:
 	def _processCXX( self, ops ):
 		self.cxx = ops
 
+	def _processInstall( self, ops ):
+		ops = ops[0]
+		if ( ops == 'yes' or ops == 'true' or ops == 'True' or ops == '1' or ops == True ):
+			self.install = True
+			return
+		self.install = False
+
 	def setupParser( self, operators ):
 		operators['target'] = self._processTarget
 		operators['config'] = self._processConfig
 		operators['cc'] = self._processCC
 		operators['cxx'] = self._processCXX
+		operators['install'] = self._processInstall
 
-	def emit( self ):
+	def InstallAs( self, target, source ):
+		if ( self.install ):
+			iret = InstallAs( target, source )
+			Default( iret )
+		else:
+			Default( source )
+
+	def emit_radiant( self ):
 		settings = self
 		for config_name in self.config_selected:
 			config = {}
 			config['name'] = config_name
 			config['shared'] = False
 			Export( 'utils', 'settings', 'config' )
-			build_dir = os.path.join( 'build', config_name )
+			build_dir = os.path.join( 'build', config_name, 'radiant' )
 			BuildDir( build_dir, '.', duplicate = 0 )
 			# left out jpeg6, splines (FIXME: I think jpeg6 is not used at all, can trash?)
 			lib_objects = []
@@ -70,7 +86,7 @@ class Config:
 				lib_objects += SConscript( os.path.join( build_dir, 'SConscript.lib' ) )
 			Export( 'lib_objects' )
 			radiant = SConscript( os.path.join( build_dir, 'SConscript.radiant' ) )
-			InstallAs( 'install/radiant.bin', radiant )
+			self.InstallAs( 'install/radiant.bin', radiant )
 
 			# PIC versions of the libs for the modules
 			shlib_objects_extra = {}
@@ -100,7 +116,39 @@ class Config:
 					shlib_objects += shlib_objects_extra['cmdlib']
 				Export( 'project', 'shlib_objects' )
 				module = SConscript( os.path.join( build_dir, 'SConscript.module' ) )
-				InstallAs( 'install/modules/%s.so' % libname, module )
+				self.InstallAs( 'install/modules/%s.so' % libname, module )
+
+	def emit_q3map2( self ):
+		settings = self
+		for config_name in self.config_selected:
+			config = {}
+			config['name'] = config_name
+			config['shared'] = False
+			Export( 'utils', 'settings', 'config' )
+			build_dir = os.path.join( 'build', config_name, 'radiant' )
+			BuildDir( build_dir, '.', duplicate = 0 )
+			lib_objects = []
+			for project in [ 'libs/cmdlib/cmdlib.vcproj', 'libs/mathlib/mathlib.vcproj', 'libs/l_net/l_net.vcproj', 'libs/ddslib/ddslib.vcproj', 'libs/picomodel/picomodel.vcproj', 'libs/md5lib/md5lib.vcproj' ]:
+				Export( 'project' )
+				lib_objects += SConscript( os.path.join( build_dir, 'SConscript.lib' ) )
+			Export( 'lib_objects' )
+			q3map2 = SConscript( os.path.join( build_dir, 'SConscript.q3map2' ) )
+			self.InstallAs( 'install/q3map2.bin', q3map2 )
+					
+
+	def emit( self ):
+		try:
+			self.target_selected.index( 'radiant' )
+		except:
+			pass
+		else:
+			self.emit_radiant()
+		try:
+			self.target_selected.index( 'q3map2' )
+		except:
+			pass
+		else:
+			self.emit_q3map2()
 
 	def SetupEnvironment( self, env, config, useGtk = False, useGtkGL = False, useJPEG = False ):
 		env['CC'] = self.cc

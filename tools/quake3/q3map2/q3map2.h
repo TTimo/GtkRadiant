@@ -78,7 +78,8 @@ dependencies
 #include "inout.h"
 #include "vfs.h"
 #include "png.h"
-#include "radiant_jpeglib.h"
+#include <jpeglib.h>
+#include <jerror.h>
 
 #include <stdlib.h>
 

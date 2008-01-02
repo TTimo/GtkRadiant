@@ -38,12 +38,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include <glib.h>
 
 #include <jpeglib.h>
 #include <jerror.h>
-
-#include "image.h"
 
 /* Expanded data source object for stdio input */
 
@@ -253,7 +250,7 @@ typedef struct my_jpeg_error_mgr
 
 static void my_jpeg_error_exit (j_common_ptr cinfo)
 {
-  my_jpeg_error_mgr* myerr = (bt_jpeg_error_mgr*) cinfo->err;
+  bt_jpeg_error_mgr* myerr = (bt_jpeg_error_mgr*) cinfo->err;
 
   (*cinfo->err->format_message) (cinfo, errormsg);
 
@@ -342,7 +339,7 @@ static void j_putGrayScanlineToRGB (unsigned char* jpegline, int widthPix, unsig
   }
 }
 
-static int LoadJPGBuff( void *src_buffer, int src_size, unsigned char **pic, int *width, int *height ) {
+int LoadJPGBuff( void *src_buffer, int src_size, unsigned char **pic, int *width, int *height ) {
   struct jpeg_decompress_struct cinfo;
   struct my_jpeg_error_mgr jerr;
   JSAMPARRAY buffer;
@@ -368,7 +365,7 @@ static int LoadJPGBuff( void *src_buffer, int src_size, unsigned char **pic, int
   size = cinfo.output_width * cinfo.output_height * 4;
   *width = cinfo.output_width;
   *height = cinfo.output_height;
-  *pic = (unsigned char*) (g_malloc (size+1));
+  *pic = (unsigned char*)( malloc( size+1 ) );
   memset (*pic, 0, size+1);
 
   buffer = (*cinfo.mem->alloc_sarray) ((j_common_ptr) &cinfo, JPOOL_IMAGE, row_stride, 1);
@@ -389,18 +386,4 @@ static int LoadJPGBuff( void *src_buffer, int src_size, unsigned char **pic, int
   jpeg_destroy_decompress (&cinfo);
 
   return 0;
-}
-
-void LoadJPG( const char *filename, unsigned char **pic, int *width, int *height ) {
-  unsigned char *fbuffer = NULL;
-  int nLen = vfsLoadFile ((char *)filename, (void **)&fbuffer, 0 );
-  if (nLen == -1)
-    return;
-
-  if ( LoadJPGBuff( fbuffer, nLen, pic, width, height ) != 0 ) {
-    g_FuncTable.m_pfnSysPrintf( "WARNING: JPEG library failed to load %s because %s\n", filename, *pic );
-    *pic = NULL;
-  }
-
-  vfsFreeFile( fbuffer );
 }
