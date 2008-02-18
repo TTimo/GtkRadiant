@@ -38,6 +38,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 class IGL2DWindow
 {
 public:
+	virtual ~IGL2DWindow() { }
 	// Increment the number of references to this object
 	virtual void IncRef () = 0;
 	// Decrement the reference count
@@ -49,6 +50,7 @@ public:
 class IGL3DWindow
 {
 public:
+	virtual ~IGL3DWindow() { }
   // Increment the number of references to this object
   virtual void IncRef () = 0;
   // Decrement the reference count

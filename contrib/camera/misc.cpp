@@ -52,7 +52,7 @@ char* UnixToDosPath( char* path )
 #endif
 }
 
-void ExtractFilePath( const char *path, char *dest )
+void CAMERA_ExtractFilePath( const char *path, char *dest )
 {
   const char *src;
 

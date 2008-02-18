@@ -31,6 +31,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 class CXYWndWrapper : public IXYWndWrapper
 {
 public:
+	virtual ~CXYWndWrapper() {}
   void SnapToGrid( int x1, int y1, vec3_t pt );
   VIEWTYPE GetViewType( void );
 };

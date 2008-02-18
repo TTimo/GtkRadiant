@@ -644,7 +644,7 @@ void GetTexMods(bool b_SetUndoPoint)
   {
     g_bListenUpdate=FALSE;
     SetChangeInFlags_Face_Heretic2 ( get_texdef_face_list() );
-    SetTexdef_FaceList( get_texdef_face_list(), b_SetUndoPoint );
+    SetTexdef_FaceList( get_texdef_face_list(), b_SetUndoPoint, false );
     g_bListenUpdate=TRUE;
 
     if (b_SetUndoPoint)

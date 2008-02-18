@@ -22,7 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 // stdafx.cpp : source file that includes just the standard includes
 //	stdafx.obj will contain the pre-compiled type information
 
-#include "stdafx.h"
+#include "StdAfx.h"
 
 // TODO: reference any additional headers you need in STDAFX.H
 // and not in this file

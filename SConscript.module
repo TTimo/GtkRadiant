@@ -17,6 +17,25 @@ if ( libname == 'image' ):
 	useJPEG = True
 if ( libname == 'surface' ):
 	useGtk = True
+if ( libname == 'surface_quake2' ):
+	useGtk = True
+if ( libname == 'surface_heretic2' ):
+	useGtk = True
+if ( libname == 'bkgrnd2d' ):
+	useGtk = True
+if ( libname == 'gtkgensurf' ):
+	useGtk = True
+if ( libname == 'bobToolz_gtk' ):
+	useGtk = True
+if ( libname == 'camera' ):
+	useGtk = True
+if ( libname == 'PrtView' ):
+	useGtk = True
+if ( libname == 'spritemodel' ):
+	useGtk = True
+if ( libname == 'TexTool' ):
+	useGtk = True
+
 settings.SetupEnvironment( env, config['name'], useGtk = useGtk, useJPEG = useJPEG )
 proj = utils.vcproj( os.path.join( GetLaunchDir(), project ) )
 

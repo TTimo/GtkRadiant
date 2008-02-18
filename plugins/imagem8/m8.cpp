@@ -44,7 +44,7 @@ void LoadM8(const char *name, unsigned char **pic, int *width, int *height)
     strcat(text_buf, ".pcx.m8");
 
     // open file
-    if ( length = vfsLoadFile ((char *) text_buf, (void **) &m8_file_buffer) == (unsigned int) -1)
+	if ( length = vfsLoadFile ((char *) text_buf, (void **) &m8_file_buffer, 0) == (unsigned int) -1)
     {
     	strcpy(text_buf, name);
 	for(i=(strlen(text_buf)-1); i>0; i--)
@@ -56,7 +56,7 @@ void LoadM8(const char *name, unsigned char **pic, int *width, int *height)
 		}
 	}
 	strcat(text_buf, ".m8");
-    	if ( length = vfsLoadFile ((char *) text_buf, (void **) &m8_file_buffer) == (unsigned int) -1)
+    	if ( length = vfsLoadFile ((char *) text_buf, (void **) &m8_file_buffer, 0) == (unsigned int) -1)
 	{
     		Sys_Printf("Unable to open file %s\n",name);
 		return;

@@ -161,7 +161,7 @@ static unsigned char* OpenBitmapFile ()
   if (bmBitsPixel != 8)
   {
     g_FuncTable.m_pfnMessageBox (g_pWnd, "This is not an 8-bit image. GenSurf can't use it.",
-                                 "Bitmap", MB_ICONEXCLAMATION);
+                                 "Bitmap", MB_ICONEXCLAMATION, NULL);
     fclose(fp);
     return NULL; 
   }
@@ -417,7 +417,7 @@ bool OpenBitmap ()
     char Text[256];
 
     sprintf (Text, "Error opening %s", gbmp.name);
-    g_FuncTable.m_pfnMessageBox (g_pWnd, Text, "Bitmap", MB_ICONEXCLAMATION);
+    g_FuncTable.m_pfnMessageBox (g_pWnd, Text, "Bitmap", MB_ICONEXCLAMATION, NULL);
     strcpy (gbmp.name, "");
   }
 

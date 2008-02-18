@@ -28,7 +28,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define	SIDE_BACK		1
 #define	SIDE_CROSS		-2
 
-vec3 vec3_origin = {0,0,0};
+vec3 gensurf_vec3_origin;
 
 void PlaneFromPoints (float *p0, float *p1, float *p2, PLANE *plane)
 {
@@ -133,7 +133,7 @@ MY_WINDING *BaseWindingForPlane (vec3 normal, vec dist)
 	}
 	if (x==-1) x = 2;
 		
-	VectorCopy(vec3_origin,vup);
+	VectorCopy(gensurf_vec3_origin,vup);
 	switch (x)
 	{
 	case 0:
@@ -356,7 +356,7 @@ void UseFaceBounds()
 		planepts[2][2] = QERFaceData->m_v3[2];
 
 		PlaneFromPoints (planepts[0], planepts[1], planepts[2], &plane[2*i]);
-		VectorSubtract (vec3_origin, plane[2*i].normal, plane[2*i+1].normal);
+		VectorSubtract (gensurf_vec3_origin, plane[2*i].normal, plane[2*i+1].normal);
 		plane[2*i+1].dist = -plane[2*i].dist;
 
 		Dot = DotProduct(plane[2*i].normal,SurfNormal);

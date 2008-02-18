@@ -91,8 +91,8 @@ private:
 
   rectangle_t m_rectangle;
 
-  GdkGC* m_gc;
   GtkWidget* m_widget;
+  GdkGC* m_gc;
 };
 
 class CamWnd : public GLWindow

@@ -60,6 +60,7 @@ typedef int 	BOOL;
 #include "gtkdlgs.h"
 #include "prtview.h"
 #include "portals.h"
+#include "resource.h"		// main symbols
 
 #define MSG_PREFIX "Portal Viewer plugin: "
 #define PRTVIEW_MINOR "prtview"

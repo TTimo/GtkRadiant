@@ -69,7 +69,7 @@ _QEREntityTable g_EntityTable;
 Extract file parts
 ====================
 */
-void ExtractFilePath (const char *path, char *dest)
+void HYDRA_ExtractFilePath (const char *path, char *dest)
 {
   const char *src;
 
@@ -85,7 +85,7 @@ void ExtractFilePath (const char *path, char *dest)
   dest[src-path] = 0;
 }
 
-void ExtractFileName (const char *path, char *dest)
+void HYDRA_ExtractFileName (const char *path, char *dest)
 {
   const char *src;
 
@@ -105,7 +105,7 @@ void ExtractFileName (const char *path, char *dest)
   *dest = 0;
 }
 
-void ConvertDOSToUnixName( char *dst, const char *src )
+void HYDRA_ConvertDOSToUnixName( char *dst, const char *src )
 {
   while ( *src )
   {
@@ -136,7 +136,7 @@ GSList *AddToWadList(GSList *wadlist, const char *shadername, const char *wad)
   {
     if (strcmp(shadername,"color") == 0)
       return wadlist;
-    ExtractFilePath(shadername,tmpstr);
+    HYDRA_ExtractFilePath(shadername,tmpstr);
     // Sys_Printf("checking: %s\n",shadername);
 
     int l = strlen(tmpstr) - 1;
@@ -149,7 +149,7 @@ GSList *AddToWadList(GSList *wadlist, const char *shadername, const char *wad)
       return wadlist;
     }
 
-    ExtractFileName(tmpstr,tmpstr);
+    HYDRA_ExtractFileName(tmpstr,tmpstr);
 
     wadname = (char *)malloc(strlen(tmpstr) + 5);
     sprintf(wadname,"%s.wad",tmpstr);
@@ -200,7 +200,7 @@ void UpdateWadKeyPair( void )
     if (stricmp(pEpair->key,"wad") == 0)
     {
       strcpy(wads,pEpair->value);
-      ConvertDOSToUnixName(wads,wads);
+      HYDRA_ConvertDOSToUnixName(wads,wads);
 
       Sys_Printf("HydraToolz: Current wad key is \"%s\"!\n",wads);
 
@@ -217,7 +217,7 @@ void UpdateWadKeyPair( void )
 
         if (strchr(p1,'/') || strchr(p1,'\\'))
         {
-          ExtractFileName(p1,cleanwadname);
+          HYDRA_ExtractFileName(p1,cleanwadname);
           wadlist = AddToWadList (wadlist, NULL, cleanwadname);
         }
         else
@@ -295,7 +295,7 @@ void UpdateWadKeyPair( void )
       if (wads[0])
         strcat(wads,";");
 
-      actualwad = vfsGetFullPath((char *)wadlist->data);
+      actualwad = vfsGetFullPath((char *)wadlist->data, 0, 0);
 
       if (actualwad)
       {

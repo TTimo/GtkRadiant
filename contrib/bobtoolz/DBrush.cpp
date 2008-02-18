@@ -29,7 +29,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "DBrush.h"
 #include "DWinding.h"
-#include "dialogs-gtk.h"
+#include "dialogs/dialogs-gtk.h"
 
 #include "misc.h"
 
@@ -388,7 +388,7 @@ brush_t* DBrush::BuildInRadiant(bool allowDestruction, int* changeCnt, entity_t*
 
 	if(entity) {
 		g_FuncTable.m_pfnCommitBrushHandleToEntity(QER_brush, entity);
-		g_BrushTable.m_pfnBrush_Build(QER_brush);
+		g_BrushTable.m_pfnBrush_Build(QER_brush, false, false, false, false);
 		g_BrushTable.m_pfnBrush_AddToList(QER_brush, g_AppDataTable.m_pfnSelectedBrushes());
 	} else {
 		g_FuncTable.m_pfnCommitBrushHandle(QER_brush);

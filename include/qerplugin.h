@@ -580,6 +580,7 @@ typedef unsigned long (* PFN_QERAPP_GETTICKCOUNT) ();
 class IModelCache
 {
 public:
+	virtual ~IModelCache() { }
   virtual entity_interfaces_t *GetByID(const char *id, const char* version) = 0;
   virtual void DeleteByID(const char *id, const char* version) = 0;
   virtual void RefreshAll() = 0;
@@ -590,12 +591,14 @@ typedef IModelCache* (* PFN_GETMODELCACHE)();
 class IFileTypeList
 {
 public:
+	virtual ~IFileTypeList() { }
   virtual void addType(filetype_t type) = 0;
 };
 
 class IFileTypeRegistry
 {
 public:
+	virtual ~IFileTypeRegistry() { }
   virtual void addType(const char* key, filetype_t type) = 0;
   virtual void getTypeList(const char* key, IFileTypeList* typelist) = 0;
 private:

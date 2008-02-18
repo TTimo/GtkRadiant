@@ -26,7 +26,7 @@ Copyright (C) 2002 Splash Damage Ltd.
 
 void Sys_ERROR( char* text, ... );
 char* UnixToDosPath( char* path );
-void ExtractFilePath( const char *path, char *dest );
+void CAMERA_ExtractFilePath( const char *path, char *dest );
 const char* ExtractFilename( const char* path );
 bool FileExists (const char *filename);
 int Q_stricmp (const char *s1, const char *s2);

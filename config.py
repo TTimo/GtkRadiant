@@ -100,19 +100,47 @@ class Config:
 				shlib_objects_extra[libname] = SConscript( os.path.join( build_dir, 'SConscript.lib' ) )
 
 			for project in [ 'plugins/vfspk3/vfspk3.vcproj',
-					 'plugins/image/image.vcproj',
+					 'plugins/vfspak/vfspak.vcproj',
+					 'plugins/vfswad/vfswad.vcproj',
+					 'plugins/eclassfgd/fgd.vcproj',
 					 'plugins/entity/entity.vcproj',
+					 'plugins/image/image.vcproj',
+					# FIXME: Fix linker flags - xml2, z 
+					# 'plugins/imagepng/imagepng.vcproj',
+					 'plugins/imagewal/imagewal.vcproj',
+					 'plugins/imagem8/imagem8.vcproj',
+					 'plugins/spritemodel/spritemodel.vcproj',
+					 'plugins/textool/TexTool.vcproj',
 					 'plugins/map/map.vcproj',
 					 'plugins/mapxml/mapxml.vcproj',
 					 'plugins/shaders/shaders.vcproj',
-					 'plugins/surface/surface.vcproj'
-					 ]:
+					 'plugins/surface/surface.vcproj',
+					 'plugins/surface_quake2/surface_quake2.vcproj',
+					 'plugins/surface_heretic2/surface_heretic2.vcproj',
+					# FIXME Needs splines
+					# 'contrib/camera/camera.vcproj',
+
+					# FIXME What is this? Empty dir for me - remove me?
+					# 'contrib/patches/patches.vcproj',
+					# 'contrib/archivewad/archivewad.vcproj',
+
+					# FIXME Doesn't compile cleanly
+					# 'contrib/prtview/PrtView.vcproj',
+					 'contrib/hydratoolz/hydratoolz.vcproj',
+					 'contrib/bobtoolz/bobToolz_gtk.vcproj',
+					 'contrib/gtkgensurf/gtkgensurf.vcproj',
+					 'contrib/bkgrnd2d/bkgrnd2d.vcproj'
+				 ]:
 				( libpath, libname ) = os.path.split( project )
 				libname = os.path.splitext( libname )[0]
 				shlib_objects = shlib_objects_extra['synapse']
 				if ( libname == 'entity' ):
 					shlib_objects += shlib_objects_extra['mathlib']
-				if ( libname == 'map' ):
+#				elif ( libname == 'spritemodel' ):
+#					shlib_objects += shlib_objects_extra['mathlib']
+#				elif ( libname == 'TexTool' ):
+#					shlib_objects += shlib_objects_extra['mathlib']
+				elif ( libname == 'map' ):
 					shlib_objects += shlib_objects_extra['cmdlib']
 				Export( 'project', 'shlib_objects' )
 				module = SConscript( os.path.join( build_dir, 'SConscript.module' ) )
@@ -125,7 +153,7 @@ class Config:
 			config['name'] = config_name
 			config['shared'] = False
 			Export( 'utils', 'settings', 'config' )
-			build_dir = os.path.join( 'build', config_name, 'radiant' )
+			build_dir = os.path.join( 'build', config_name, 'q3map2' )
 			BuildDir( build_dir, '.', duplicate = 0 )
 			lib_objects = []
 			for project in [ 'libs/cmdlib/cmdlib.vcproj', 'libs/mathlib/mathlib.vcproj', 'libs/l_net/l_net.vcproj', 'libs/ddslib/ddslib.vcproj', 'libs/picomodel/picomodel.vcproj', 'libs/md5lib/md5lib.vcproj' ]:

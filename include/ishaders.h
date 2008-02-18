@@ -55,6 +55,7 @@ to make sure they have been decref'ed ? (sounds easy, may not be that much).
 class IShader
 {
 public:
+	virtual ~IShader() { }
   // Increment the number of references to this object
   virtual void IncRef () = 0;
   // Decrement the reference count

@@ -29,7 +29,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "DEntity.h"
 
-#include "dialogs-gtk.h"
+#include "dialogs/dialogs-gtk.h"
 #include "misc.h"
 #include "CPortals.h"
 

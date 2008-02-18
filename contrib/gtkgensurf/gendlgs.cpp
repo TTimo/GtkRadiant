@@ -98,7 +98,7 @@ void About (GtkWidget *parent)
 															 "Enhancements\n"
 															 "Pablo Zurita (pablo@qeradiant.com)\n"
 															 "Hydra (hydra@hydras-world.com)",
-                               "About GtkGenSurf", MB_OK);
+                               "About GtkGenSurf", MB_OK, NULL);
 }
 
 // =============================================================================
@@ -717,7 +717,7 @@ static void main_go (GtkWidget *widget, gpointer data)
   if (NH < 1 || NH > MAX_ROWS)
   {
     sprintf (Text, "The number of divisions must be > 0 and no greater than %d.", MAX_ROWS);
-    g_FuncTable.m_pfnMessageBox (g_pWnd, Text, "GenSurf", MB_ICONEXCLAMATION);
+    g_FuncTable.m_pfnMessageBox (g_pWnd, Text, "GenSurf", MB_ICONEXCLAMATION, NULL);
     gtk_notebook_set_page (GTK_NOTEBOOK (notebook), EXTENTS_TAB);
     return;
   }
@@ -725,7 +725,7 @@ static void main_go (GtkWidget *widget, gpointer data)
   if (NV < 1 || NV > MAX_ROWS)
   {
     sprintf (Text, "The number of divisions must be > 0 and no greater than %d.", MAX_ROWS);
-    g_FuncTable.m_pfnMessageBox (g_pWnd, Text, "GenSurf", MB_ICONEXCLAMATION);
+    g_FuncTable.m_pfnMessageBox (g_pWnd, Text, "GenSurf", MB_ICONEXCLAMATION, NULL);
     gtk_notebook_set_page (GTK_NOTEBOOK (notebook), EXTENTS_TAB);
     return;
   }
@@ -734,7 +734,7 @@ static void main_go (GtkWidget *widget, gpointer data)
   {
     g_FuncTable.m_pfnMessageBox (g_pWnd, "The \"lower-left\" values must be less than "
                                  "the corresponding \"upper-right\" values in "
-                                 "the \"Extent\" box.","GenSurf", MB_OK | MB_ICONEXCLAMATION);
+                                 "the \"Extent\" box.","GenSurf", MB_OK | MB_ICONEXCLAMATION, NULL);
     gtk_notebook_set_page (GTK_NOTEBOOK (notebook), EXTENTS_TAB);
     return;
   }
@@ -743,14 +743,14 @@ static void main_go (GtkWidget *widget, gpointer data)
   {
     g_FuncTable.m_pfnMessageBox (g_pWnd,"The \"lower-left\" values must be less than "
                                  "the corresponding \"upper-right\" values in "
-                                 "the \"Extent\" box.","GenSurf", MB_OK | MB_ICONEXCLAMATION);
+                                 "the \"Extent\" box.","GenSurf", MB_OK | MB_ICONEXCLAMATION, NULL);
     gtk_notebook_set_page (GTK_NOTEBOOK (notebook), EXTENTS_TAB);
     return;
   }
 
   if (!strlen (Texture[Game][0]))
   {
-    g_FuncTable.m_pfnMessageBox (g_pWnd, "You must supply a texture name.", "GenSurf", MB_ICONEXCLAMATION);
+    g_FuncTable.m_pfnMessageBox (g_pWnd, "You must supply a texture name.", "GenSurf", MB_ICONEXCLAMATION, NULL);
     gtk_notebook_set_page (GTK_NOTEBOOK (notebook), EXTENTS_TAB);
     return;
   }
@@ -908,7 +908,7 @@ static void bitmap_browse (GtkWidget *widget, gpointer data)
   const char *filename;
   char *ptr;
 
-  filename = g_FuncTable.m_pfnFileDialog (g_pWnd, TRUE, "Bitmap File", gbmp.defpath);
+  filename = g_FuncTable.m_pfnFileDialog (g_pWnd, TRUE, "Bitmap File", gbmp.defpath, "gtkgensurf");
 
   if (filename != NULL)
   {
@@ -950,7 +950,7 @@ static gint fix_value_entryfocusout (GtkWidget* widget, GdkEventFocus *event, gp
   {
     gdk_beep ();
     g_FuncTable.m_pfnMessageBox (g_pWnd, "The value must be between -65536 and 65536, inclusive.",
-                                 "GenSurf", MB_OK | MB_ICONEXCLAMATION);
+                                 "GenSurf", MB_OK | MB_ICONEXCLAMATION, NULL);
     sprintf (Text, "%d", (int)xyz[Vertex[0].i][Vertex[0].j].fixed_value);
     gtk_entry_set_text (GTK_ENTRY(widget), Text);
     gtk_window_set_focus (GTK_WINDOW (gtk_widget_get_toplevel (widget)), widget);

@@ -44,6 +44,7 @@ typedef void (* PFN_QERAPP_MAPPRINTF) ( char *text, ... );
 class IPluginTexdef
 {
 public:
+	virtual ~IPluginTexdef() { }
 	// Increment the number of references to this object
 	virtual void IncRef () = 0;
 	// Decrement the reference count

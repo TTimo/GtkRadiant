@@ -34,6 +34,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 class IWindowListener
 {
 public:
+	virtual ~IWindowListener() { }
   // Increment the number of references to this object
   virtual void IncRef () = 0;
   // Decrement the reference count
@@ -65,6 +66,7 @@ public:
 class IWindow
 {
 public:
+	virtual ~IWindow() {}
   // Increment the number of references to this object
   virtual void IncRef () = 0;
   // Decrement the reference count
@@ -107,6 +109,7 @@ public:
 class IListener
 {
 public:
+	virtual ~IListener() {}
   // Increment the number of references to this object
   virtual void IncRef () = 0;
   // Decrement the reference count
@@ -119,6 +122,7 @@ public:
 class IXYWndWrapper
 {
 public:
+	virtual ~IXYWndWrapper() {}
   virtual void SnapToGrid( int x1, int y1, vec3_t pt ) = 0;
   virtual VIEWTYPE GetViewType( void ) = 0;
 };

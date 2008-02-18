@@ -44,6 +44,7 @@ struct message_info_s;
 class ISAXHandler
 {
 public:
+	virtual ~ISAXHandler() { }
   virtual void saxStartElement( struct message_info_s *ctx, const xmlChar *name, const xmlChar **attrs ) = 0;
   virtual void saxEndElement( struct message_info_s *ctx, const xmlChar *name ) = 0;
   virtual void saxCharacters( struct message_info_s *ctx, const xmlChar *ch, int len ) = 0;

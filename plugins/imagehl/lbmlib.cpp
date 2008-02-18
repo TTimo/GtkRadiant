@@ -143,7 +143,7 @@ static void LoadIDSP (const char *name, byte ** pic, int *width, int *height)
   //
   // load the file
   //
-  length = vfsLoadFile ((char *) name, (void **) &buffer);
+  length = vfsLoadFile ((char *) name, (void **) &buffer, 0);
   if (length == (unsigned int) -1)
     return;
 
@@ -329,7 +329,7 @@ static void LoadHLW (const char *name, byte ** pic, int *width, int *height)
   //
   // load the file
   //
-  length = vfsLoadFile ((char *) name, (void **) &buffer);
+  length = vfsLoadFile ((char *) name, (void **) &buffer, 0);
   if (length == (unsigned int) -1)
     return;
 
@@ -514,7 +514,7 @@ static void LoadMIP (const char *name, byte ** pic, int *width, int *height)
   //
   // load the file
   //
-  length = vfsLoadFile ((char *) name, (void **) &buffer);
+  length = vfsLoadFile ((char *) name, (void **) &buffer, 0);
   if (length == (unsigned int) -1)
     return;
 
@@ -522,7 +522,7 @@ static void LoadMIP (const char *name, byte ** pic, int *width, int *height)
 
   mipdatasize = GET_MIP_DATA_SIZE(lpMip->width,lpMip->height);
 
-  palettelength = vfsLoadFile ("textures/palette.lmp", (void **) &loadedpalette);
+  palettelength = vfsLoadFile ("textures/palette.lmp", (void **) &loadedpalette, 0);
   if (palettelength == 768)
     palette = loadedpalette;
   else

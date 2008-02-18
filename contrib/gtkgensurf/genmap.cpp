@@ -172,7 +172,7 @@ int MapPatches()
     if(NH_remain < 0)
     {
       sprintf(szOops,"Oops... screwed up with NH=%d",NH);
-      g_FuncTable.m_pfnMessageBox(NULL,szOops,"Uh oh");
+      g_FuncTable.m_pfnMessageBox(NULL,szOops,"Uh oh", 0, NULL);
     }
     NV_remain = NV+1;
     j0 = 0;
@@ -204,7 +204,7 @@ int MapPatches()
       if(NV_remain < 0)
       {
         sprintf(szOops,"Oops... screwed up with NV=%d",NV);
-        g_FuncTable.m_pfnMessageBox(NULL,szOops,"Uh oh");
+        g_FuncTable.m_pfnMessageBox(NULL,szOops,"Uh oh", 0, NULL);
       }
 
       p.width  = NH_patch;
@@ -1981,7 +1981,7 @@ void MakeBrush(BRUSH *brush)
 
   if(g_FuncTable.m_pfnCreateBrushHandle==NULL)
   {
-    g_FuncTable.m_pfnMessageBox(g_pRadiantWnd,"m_pfnCreateBrushHandle==NULL","Aw damn",0);
+    g_FuncTable.m_pfnMessageBox(g_pRadiantWnd,"m_pfnCreateBrushHandle==NULL","Aw damn",0, NULL);
     return;
   }
   vp=(g_FuncTable.m_pfnCreateBrushHandle)();

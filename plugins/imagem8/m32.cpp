@@ -36,7 +36,7 @@ void LoadM32(const char *name, unsigned char **pic, int *width, int *height)
     unsigned char       *buffer, *m32_file_buffer;
 
     // open file
-    if ( length = vfsLoadFile ((char *) name, (void **) &m32_file_buffer) == (unsigned int) -1)
+    if ( length = vfsLoadFile ((char *) name, (void **) &m32_file_buffer, 0) == (unsigned int) -1)
     {
     	Sys_Printf("Unable to open file %s\n",name);
 	return;

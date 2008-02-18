@@ -102,7 +102,7 @@ void DoLoadCamera()
   char basepath[PATH_MAX];
 
 	if( firstCam && firstCam->HasBeenSaved() )
-    ExtractFilePath( firstCam->GetFileName(), basepath );
+    CAMERA_ExtractFilePath( firstCam->GetFileName(), basepath );
   else
     strcpy( basepath, g_FuncTable.m_pfnGetGamePath() );
 
@@ -157,7 +157,7 @@ void DoSaveCamera() {
     return;
 
   if( GetCurrentCam()->GetFileName()[0] )
-    ExtractFilePath( GetCurrentCam()->GetFileName(), basepath );
+    CAMERA_ExtractFilePath( GetCurrentCam()->GetFileName(), basepath );
   else
     strcpy( basepath, g_FuncTable.m_pfnGetGamePath() );
 
