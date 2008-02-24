@@ -22,6 +22,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 void filter_level(int flag);
 void filter_stepon(void);
 void filter_actorclip(void);
+void filter_weaponclip(void);
+void filter_nodraw(void);
+
+#define SURF_NODRAW 0x80
 
 #define CONTENTS_LEVEL8 0x8000
 #define CONTENTS_LEVEL7 0x4000
@@ -32,7 +36,7 @@ void filter_actorclip(void);
 #define CONTENTS_LEVEL2 0x0200
 #define CONTENTS_LEVEL1 0x0100
 #define CONTENTS_ACTORCLIP 0x10000
-
+#define CONTENTS_WEAPONCLIP 0x2000000
 #define CONTENTS_STEPON 0x40000000
 
 #endif

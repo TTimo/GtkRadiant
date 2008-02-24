@@ -141,9 +141,9 @@ void get_team_count (const char *classname, int *count, int *team)
 }
 
 /**
- * @brief Some default values to worldspawn like maxlevel, maxteams and so on
+ * @brief Some default values to worldspawn like maxlevel and so on
  */
-void assign_default_values_to_worldspawn (bool override, bool day, char **returnMsg)
+void assign_default_values_to_worldspawn (bool override, char **returnMsg)
 {
 	static char message[1024];
 	Entity* worldspawn;
@@ -162,100 +162,26 @@ void assign_default_values_to_worldspawn (bool override, bool day, char **return
 	*message = '\0';
 	*str = '\0';
 
-	get_team_count("info_player_start", &count, &teams);
-
-	// TODO: Get highest brush - a level has 64 units
-	worldspawn->setKeyValue("maxlevel", "5");
-
-	if (string_empty(worldspawn->getKeyValue("maxteams"))
-	 || atoi(worldspawn->getKeyValue("maxteams")) != teams)
+	if (override || string_empty(worldspawn->getKeyValue("maxlevel")))
 	{
-		snprintf(str, sizeof(str) - 1, "%i", teams);
-		worldspawn->setKeyValue("maxteams", str);
-		strncat(message, "Worldspawn: Set maxteams to ", sizeof(message) - 1);
-		strncat(message, str, sizeof(message) - 1);
-		strncat(message, "\n", sizeof(message) - 1);
+		// TODO: Get highest brush - a level has 64 units
+		worldspawn->setKeyValue("maxlevel", "5");
+		snprintf(&message[strlen(message)], sizeof(message) - 1 - strlen(message), "Set maxlevel to: %s", worldspawn->getKeyValue("maxlevel"));
 	}
 
-	if (day)
+	if (override || string_empty(worldspawn->getKeyValue("maxteams")))
 	{
-		if (override)
+		get_team_count("info_player_start", &count, &teams);
+		if (teams)
 		{
-			worldspawn->setKeyValue("light", "160");
-			worldspawn->setKeyValue("_color", "1 0.8 0.8");
-			worldspawn->setKeyValue("angles", "30 210");
-			worldspawn->setKeyValue("ambient", "0.4 0.4 0.4");
+			snprintf(str, sizeof(str) - 1, "%i", teams);
+			worldspawn->setKeyValue("maxteams", str);
+			snprintf(&message[strlen(message)], sizeof(message) - 1 - strlen(message), "Set maxteams to: %s", worldspawn->getKeyValue("maxteams"));
 		}
-		else
+		if (count < 16)
 		{
-			if (string_empty(worldspawn->getKeyValue("light")))
-			{
-				worldspawn->setKeyValue("light", "160");
-				snprintf(&message[strlen(message)], sizeof(message) - 1 - strlen(message), "Set ambient to: %s", worldspawn->getKeyValue("ambient"));
-			}
-			if (string_empty(worldspawn->getKeyValue("_color")))
-			{
-				worldspawn->setKeyValue("_color", "1 0.8 0.8");
-				snprintf(&message[strlen(message)], sizeof(message) - 1 - strlen(message), "Set ambient to: %s", worldspawn->getKeyValue("ambient"));
-			}
-			if (string_empty(worldspawn->getKeyValue("angles")))
-			{
-				worldspawn->setKeyValue("angles", "30 210");
-				snprintf(&message[strlen(message)], sizeof(message) - 1 - strlen(message), "Set ambient to: %s", worldspawn->getKeyValue("ambient"));
-			}
-			if (string_empty(worldspawn->getKeyValue("ambient")))
-			{
-				worldspawn->setKeyValue("ambient", "0.4 0.4 0.4");
-				snprintf(&message[strlen(message)], sizeof(message) - 1 - strlen(message), "Set ambient to: %s", worldspawn->getKeyValue("ambient"));
-			}
+			snprintf(&message[strlen(message)], sizeof(message) - 1 - strlen(message), "You should at least place 16 info_player_start");
 		}
-	}
-	else
-	{
-		if (override)
-		{
-			worldspawn->setKeyValue("light", "60");
-			worldspawn->setKeyValue("_color", "0.8 0.8 1");
-			worldspawn->setKeyValue("angles", "15 60");
-			worldspawn->setKeyValue("ambient", "0.25 0.25 0.275");
-		}
-		else
-		{
-			if (string_empty(worldspawn->getKeyValue("light")))
-			{
-				worldspawn->setKeyValue("light", "60");
-				snprintf(&message[strlen(message)], sizeof(message) - 1 - strlen(message), "Set ambient to: %s", worldspawn->getKeyValue("ambient"));
-			}
-			if (string_empty(worldspawn->getKeyValue("_color")))
-			{
-				worldspawn->setKeyValue("_color", "0.8 0.8 1");
-				snprintf(&message[strlen(message)], sizeof(message) - 1 - strlen(message), "Set ambient to: %s", worldspawn->getKeyValue("ambient"));
-			}
-			if (string_empty(worldspawn->getKeyValue("angles")))
-			{
-				worldspawn->setKeyValue("angles", "15 60");
-				snprintf(&message[strlen(message)], sizeof(message) - 1 - strlen(message), "Set ambient to: %s", worldspawn->getKeyValue("ambient"));
-			}
-			if (string_empty(worldspawn->getKeyValue("ambient")))
-			{
-				worldspawn->setKeyValue("ambient", "0.25 0.25 0.275");
-				snprintf(&message[strlen(message)], sizeof(message) - 1 - strlen(message), "Set ambient to: %s", worldspawn->getKeyValue("ambient"));
-			}
-		}
-	}
-
-	if (override)
-	{
-		snprintf(&message[strlen(message)], sizeof(message) - 1 - strlen(message),
-			"Set light to: %s\n"
-			"Set _color to: %s\n"
-			"Set angles to: %s\n"
-			"Set ambient to: %s\n",
-			worldspawn->getKeyValue("light"),
-			worldspawn->getKeyValue("_color"),
-			worldspawn->getKeyValue("angles"),
-			worldspawn->getKeyValue("ambient")
-		);
 	}
 
 	// no errors - no warnings
@@ -307,20 +233,18 @@ void check_map_values (char **returnMsg)
 	get_team_count("info_player_start", &count, &teams);
 	if (!count)
 		strncat(message, "No multiplayer start positions (info_player_start)\n", sizeof(message) - 1);
-	else if (string_empty(worldspawn->getKeyValue("maxteams")))
-	{
-		snprintf(message, sizeof(message) - 1, "Worldspawn: No maxteams defined (#info_player_start) (set to: %i)\n", teams);
-		snprintf(str, sizeof(str) - 1, "%i", teams);
-		worldspawn->setKeyValue("maxteams", str);
-	}
-	else if (teams != atoi(worldspawn->getKeyValue("maxteams")))
-		snprintf(message, sizeof(message) - 1, "Worldspawn: Settings for maxteams (%s) doesn't match team count (%i)\n", worldspawn->getKeyValue("maxteams"), teams);
 
 	// singleplayer map?
 	count = 0;
 	get_team_count("info_human_start", &count, NULL);
 	if (!count)
 		strncat(message, "No singleplayer start positions (info_human_start)\n", sizeof(message) - 1);
+
+	// singleplayer map?
+	count = 0;
+	get_team_count("info_2x2_start", &count, NULL);
+	if (!count)
+		strncat(message, "No singleplayer start positions for 2x2 units (info_2x2_start)\n", sizeof(message) - 1);
 
 	// search for civilians
 	count = 0;
@@ -343,6 +267,9 @@ void check_map_values (char **returnMsg)
 	ent_flags = check_entity_flags("func_breakable", "spawnflags");
 	if (ent_flags)
 		snprintf(&message[strlen(message)], sizeof(message) - 1 - strlen(message), "Found %i func_breakable with no spawnflags\n", ent_flags);
+	ent_flags = check_entity_flags("misc_sound", "spawnflags");
+	if (ent_flags)
+		snprintf(&message[strlen(message)], sizeof(message) - 1 - strlen(message), "Found %i misc_sound with no spawnflags\n", ent_flags);
 	ent_flags = check_entity_flags("misc_model", "spawnflags");
 	if (ent_flags)
 		snprintf(&message[strlen(message)], sizeof(message) - 1 - strlen(message), "Found %i misc_model with no spawnflags\n", ent_flags);

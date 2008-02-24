@@ -31,6 +31,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 bool actorclip_active = false;
 bool stepon_active = false;
+bool nodraw_active = false;
+bool weaponclip_active = false;
 int level_active = 0;
 
 // TODO: This should be added to ibrush.h
@@ -273,6 +275,28 @@ void filter_stepon (void)
 	}
 }
 
+void filter_nodraw (void)
+{
+	if (nodraw_active) {
+		nodraw_active = false;
+	} else {
+		nodraw_active = true;
+	}
+	brushlist_t brushes;
+	GlobalSceneGraph().traverse(BrushGetLevel(brushes, SURF_NODRAW, false, false, nodraw_active));
+
+#ifdef _DEBUG
+	if (brushes.empty())
+	{
+		globalOutputStream() << "UFO:AI: No brushes.\n";
+	}
+	else
+	{
+		globalOutputStream() << "UFO:AI: Hiding " << Unsigned(brushes.size()) << " nodraw brushes.\n";
+	}
+#endif
+}
+
 void filter_actorclip (void)
 {
 	if (actorclip_active) {
@@ -291,6 +315,28 @@ void filter_actorclip (void)
 	else
 	{
 		globalOutputStream() << "UFO:AI: Hiding " << Unsigned(brushes.size()) << " actorclip brushes.\n";
+	}
+#endif
+}
+
+void filter_weaponclip (void)
+{
+	if (weaponclip_active) {
+		weaponclip_active = false;
+	} else {
+		weaponclip_active = true;
+	}
+	brushlist_t brushes;
+	GlobalSceneGraph().traverse(BrushGetLevel(brushes, CONTENTS_WEAPONCLIP, true, false, weaponclip_active));
+
+#ifdef _DEBUG
+	if (brushes.empty())
+	{
+		globalOutputStream() << "UFO:AI: No brushes.\n";
+	}
+	else
+	{
+		globalOutputStream() << "UFO:AI: Hiding " << Unsigned(brushes.size()) << " weaponclip brushes.\n";
 	}
 #endif
 }
