@@ -3122,6 +3122,10 @@ CGameInstall
 ============================================================
 */
 
+CGameInstall::CGameInstall() {
+	memset( m_availGames, 0, sizeof( m_availGames ) );
+}
+
 void CGameInstall::BuildDialog() {
 	GtkWidget *dlg, *vbox1, *button, *text, *combo, *entry;
 	
@@ -3141,9 +3145,21 @@ void CGameInstall::BuildDialog() {
 	gtk_box_pack_start( GTK_BOX( vbox1 ), combo, FALSE, FALSE, 0 );
 
 	GList *combo_list = NULL;
-	combo_list = g_list_append( combo_list, "Quake III Arena and mods" );
-	combo_list = g_list_append( combo_list, "Urban Terror standalone" );
-	combo_list = g_list_append( combo_list, "Warsaw" );
+	int iGame = 0;
+	while ( m_availGames[ iGame ] != GAME_NONE ) {
+		switch ( m_availGames[ iGame ] ) {
+		case GAME_Q3:
+			combo_list = g_list_append( combo_list, "Quake III Arena (including mods)" );
+			break;
+		case GAME_URT:
+			combo_list = g_list_append( combo_list, "Urban Terror (standalone)" );
+			break;
+		case GAME_WARSOW:
+			combo_list = g_list_append( combo_list, "Warsow" );
+			break;
+		}
+		iGame++;
+	}
 	gtk_combo_set_popdown_strings( GTK_COMBO( combo ), combo_list );
 	g_list_free( combo_list );
 	AddDialogData( combo, &m_nComboSelect, DLG_COMBO_INT );
@@ -3187,6 +3203,7 @@ void CGameInstall::BuildDialog() {
 }
 
 void CGameInstall::Run() {
+	ScanGames();
 	DoModal();
 	Sys_Printf( "combo: %d name: %s engine: %s mod: %s\n", m_nComboSelect, m_strName.GetBuffer(), m_strEngine.GetBuffer(), m_strMod.GetBuffer() );
 
@@ -3205,17 +3222,56 @@ void CGameInstall::Run() {
 	fprintf( fg, "  name=\"%s\"\n", m_strName.GetBuffer() );
 	fprintf( fg, "  gametools=\"%sgames\"\n", g_strAppPath.GetBuffer() );
 	fprintf( fg, "  enginepath=\"%s\"\n", m_strEngine.GetBuffer() );
-	switch ( m_nComboSelect ) {
-	case GAME_Q3:
+	switch ( m_availGames[ m_nComboSelect ] ) {
+	case GAME_Q3: {
+		Str source = g_strAppPath.GetBuffer();
+		source += "installs/";
+		source += Q3_PACK;
+		Str dest = m_strEngine.GetBuffer();
+		CopyTree( source.GetBuffer(), dest.GetBuffer() );
 		fprintf( fg, "  basegame=\"baseq3\"\n" );
 		break;
-	case GAME_URT:
+	}
+	case GAME_URT: {
+		Str source = g_strAppPath.GetBuffer();
+		source += "installs/";
+		source += URT_PACK;
+		Str dest = m_strEngine.GetBuffer();
+		CopyTree( source.GetBuffer(), dest.GetBuffer() );
 		fprintf( fg, "  basegame=\"q3ut4\"\n" );
 		break;
+	}
 	case GAME_WARSOW:
 		fprintf( fg, "  basegame=\"basewsw\"\n" );
 		break;
 	}
 	fprintf( fg, "/>\n" );
 	fclose( fg );
+}
+
+/*
+===============
+CGameInstall::ScanGames
+scan for active games that can be installed, based on the presence 
+===============
+*/
+void CGameInstall::ScanGames() {
+	Str				pakPaths = g_strAppPath.GetBuffer();
+	DIR				*dir;
+	struct dirent	*dirlist;
+	int				iGame = 0;
+
+	pakPaths +=	"installs/";
+	dir = opendir( pakPaths.GetBuffer() );
+	if ( dir != NULL ) {
+		while ( ( dirlist = readdir( dir ) ) != NULL ) {
+			if ( stricmp( dirlist->d_name, Q3_PACK ) == 0 ) {
+				m_availGames[ iGame++ ] = GAME_Q3;
+			}
+			if ( stricmp( dirlist->d_name, URT_PACK ) == 0 ) {
+				m_availGames[ iGame++ ] = GAME_URT;
+			}
+		}
+		closedir( dir );
+	}
 }

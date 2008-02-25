@@ -137,7 +137,7 @@ bool FilterBrush(brush_t *pb)
 		|| !strncmp( pb->owner->eclass->name, "func", 4)
 		|| !strncmp( pb->owner->eclass->name, "trigger", 7) ) && !pb->patchBrush )
 	{
-		bool filterbrush;
+		bool filterbrush = false;
 		for (face_t *f=pb->brush_faces;f!=NULL;f = f->next)
 		{
 			filterbrush=false;

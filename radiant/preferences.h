@@ -196,22 +196,33 @@ public:
 /*!
 select games, copy editing assets and write out configuration files
  */
+
+#define Q3_PACK "Q3Pack"
+#define URT_PACK "UrTPack"
+
 class CGameInstall : public Dialog {
 public:
+	CGameInstall();
+	void ScanGames();
 	void Run();
 	void BuildDialog();
 
 	enum gameType_e {
-		GAME_Q3,
+		GAME_NONE = 0,
+		GAME_Q3 = 1,
 		GAME_URT,
-		GAME_WARSOW
+		GAME_WARSOW,
+		GAME_COUNT
 	};
 
 protected:
-	Str m_strName;
-	Str	m_strMod;
-	Str m_strEngine;
-	int m_nComboSelect;
+	Str		m_strName;
+	Str		m_strMod;
+	Str		m_strEngine;
+	int		m_nComboSelect;
+
+	// maps from m_nComboSelect to the games
+	int 	m_availGames[GAME_COUNT];
 };
 
 /*!

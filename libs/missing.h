@@ -67,6 +67,7 @@ inline int GetPrivateProfileInt(char* a, char* b, int i, char* c) { return i; };
 #define VERIFY(a) a;
 int GetFullPathName(const char *lpFileName, int nBufferLength, char *lpBuffer, char **lpFilePart);
 bool CopyFile(const char *lpExistingFileName, const char *lpNewFileName);
+bool CopyTree( const char* source, const char* dest );
 
 #ifndef APIENTRY
 #define APIENTRY

@@ -94,7 +94,7 @@ void Dialog::Create ()
     g_object_set_data (G_OBJECT (m_pWidget), "loop", &m_nLoop);
     g_object_set_data (G_OBJECT (m_pWidget), "ret", &m_nReturn);
 
-    BuildDialog ();
+    BuildDialog();
     m_bNeedBuild = false;
   }
 }

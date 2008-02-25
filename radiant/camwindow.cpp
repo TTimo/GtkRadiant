@@ -1271,7 +1271,7 @@ void CamWnd::Cam_Draw()
   face_t	*face;
   float	screenaspect;
   float	yfov;
-  double	start, end;
+  double	start = 0.0, end;
   int		i;
 
   if (!active_brushes.next)

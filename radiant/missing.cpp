@@ -39,27 +39,32 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <stdio.h>
 #include <unistd.h>
 #include <sys/time.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 #include <stdlib.h>
+#include <dirent.h>
 #include "missing.h"
+#include "qsysprintf.h"
 
 bool CopyFile(const char *lpExistingFileName, const char *lpNewFileName)
 {
   FILE *src, *dst;
   void* buf;
-  int l, ret = 0;
+  int l;
+  bool ret = false;
   char realsrc[PATH_MAX], realdest[PATH_MAX];
 
   realpath (lpExistingFileName, realsrc);
   realpath (lpNewFileName, realdest);
 
   src = fopen (realsrc, "rb");
-  if (!src)
-    return 0;
+  if ( !src ) {
+    return false;
+  }
   dst = fopen (realdest, "wb");
-  if (!dst)
-  {
+  if (!dst) {
     fclose (src);
-    return 0;
+    return false;
   }
  
   fseek (src, 0, SEEK_END);
@@ -70,13 +75,68 @@ bool CopyFile(const char *lpExistingFileName, const char *lpNewFileName)
   if (buf != NULL)
     if (fread (buf, l, 1, src) == 1)
       if (fwrite (buf, l, 1, dst) == 1)
-	ret = 1;
+	ret = true;
 
   g_free (buf);
   fclose (src);
   fclose (dst);
 
   return ret;
+}
+
+bool CreateDirectory( const char *directory ) {
+	if ( mkdir( directory, 0777 ) == -1 ) {
+		Sys_Printf( "mkdir %s failed\n", directory );
+		return false;
+	}
+	return true;
+}
+
+bool CopyTree( const char *source, const char *dest ) {
+	DIR				*dir;
+	struct dirent	*dirlist;
+	struct stat		sbuf;
+	Str				srcEntry;
+	Str				dstEntry;
+
+	dir = opendir( source );
+	if ( dir != NULL ) {
+		while ( ( dirlist = readdir( dir ) ) != NULL ) {
+			if ( strcmp( dirlist->d_name, "." ) == 0 || strcmp( dirlist->d_name, ".." ) == 0 ) {
+				continue;
+			}
+			if ( strcmp( dirlist->d_name, ".svn" ) == 0 ) {
+				continue;
+			}
+			srcEntry = source;
+			srcEntry += "/";
+			srcEntry += dirlist->d_name;
+			dstEntry = dest;
+			dstEntry += "/";
+			dstEntry += dirlist->d_name;
+			if ( stat( srcEntry.GetBuffer(), &sbuf ) == -1 ) {
+				Sys_Printf( "stat %s failed\n", srcEntry.GetBuffer() );
+			}
+			if ( S_ISDIR( sbuf.st_mode ) ) {
+				bool ret;
+				if ( stat( dstEntry.GetBuffer(), &sbuf ) == -1 ) {
+					ret = CreateDirectory( dstEntry.GetBuffer() );
+				}
+				ret = CopyTree( srcEntry.GetBuffer(), dstEntry.GetBuffer() );
+				if ( !ret ) {
+					return false;
+				}
+			} else {
+				Sys_Printf( "copy %s -> %s\n", srcEntry.GetBuffer(), dstEntry.GetBuffer() );
+				bool ret = CopyFile( srcEntry.GetBuffer(), dstEntry.GetBuffer() );
+				if ( !ret ) {
+					return false;
+				}
+			}
+		}
+		closedir( dir );
+	}
+	return true;
 }
 
 int GetFullPathName(const char *lpFileName, int nBufferLength, char *lpBuffer, char **lpFilePart)
@@ -116,88 +176,5 @@ int GetFullPathName(const char *lpFileName, int nBufferLength, char *lpBuffer, c
 
   return strlen (lpBuffer);
 }
-/*
-static void g_string_sprintfa_int (GString *string, const gchar *fmt, va_list args)
-{
-  gchar *buffer;
-
-  buffer = g_strdup_vprintf (fmt, args);
-  g_string_append (string, buffer);
-  g_free (buffer);
-}
-
-const CString& CString::operator=(const char* lpsz)
-{
-  g_string_assign (m_str, lpsz);
-  return *this;
-}
-
-const CString& CString::operator+=(const char* lpsz)
-{
-  g_string_append (m_str, lpsz);
-  return *this;
-}
-
-CString::operator char*() const
-{ 
-  return m_str->str;
-}
-
-void CString::Format(const char* fmt, ...)
-{
-  va_list args;
- 
-  g_string_truncate (m_str, 0);
- 
-  va_start (args, fmt);
-  g_string_sprintfa_int (m_str, fmt, args);
-  va_end (args);
-}
-
-CString CString::Right(int nCount) const
-{
-  if (nCount < 0)
-    nCount = 0;
-  else if (nCount > m_str->len)
-    nCount = m_str->len;
-
-  CString dest (&m_str->str[m_str->len-nCount]);
-  return dest;
-}
-
-CString CString::Left(int nCount) const
-{
-  if (nCount < 0)
-    nCount = 0;
-  else if (nCount > m_str->len)
-    nCount = m_str->len;
-
-  CString dest;
-  dest.m_str = g_string_sized_new (nCount);
-  memcpy (dest.m_str->str, m_str->str, nCount);
-  dest.m_str->str[nCount] = 0;
-  return dest;
-}
-
-void CString::SetAt(int nIndex, char ch)
-{
-  if (nIndex >= 0 && nIndex < m_str->len)
-    m_str->str[nIndex] = ch;
-}
-
-char CString::GetAt(int nIndex) const
-{
-  if (nIndex >= 0 && nIndex < m_str->len)
-    return m_str->str[nIndex];
-  return 0;
-}
-
-char CString::operator[](int nIndex) const
-{
-  if (nIndex >= 0 && nIndex < m_str->len)
-    return m_str->str[nIndex];
-  return 0;
-}
-*/
 
 #endif

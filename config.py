@@ -231,8 +231,8 @@ class Config:
 			env.Append( CXXFLAGS = [ '-g' ] )
 			env.Append( CPPDEFINES = [ '_DEBUG' ] )				
 		else:
-			env.Append( CFLAGS = [ '-O3', '-Winline', '-ffast-math', '-fno-unsafe-math-optimizations' ] )
-			env.Append( CXXFLAGS = [ '-O3', '-Winline', '-ffast-math', '-fno-unsafe-math-optimizations' ] )
+			env.Append( CFLAGS = [ '-O3', '-Winline', '-ffast-math', '-fno-unsafe-math-optimizations', '-fno-strict-aliasing' ] )
+			env.Append( CXXFLAGS = [ '-O3', '-Winline', '-ffast-math', '-fno-unsafe-math-optimizations','-fno-strict-aliasing' ] )
 			#env.Append( CFLAGS = [ '-march=pentium3' ] )
 
 #		env.Append( LINKFLAGS = [ '-m32' ] )

@@ -1534,7 +1534,7 @@ Makes the current brush have the given number of 2d sides
 */
 void Brush_MakeSided (int sides)
 {
-	int		i, axis;
+	int		i, axis = 0;
 	vec3_t	mins, maxs;
 	brush_t	*b;
 	texdef_t	*texdef;
