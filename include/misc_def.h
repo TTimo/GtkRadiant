@@ -1,7 +1,9 @@
 #ifndef _WIN32
 
 #define WINAPI
-#define APIENTRY
+#ifndef APIENTRY
+	#define APIENTRY
+#endif
 
 typedef void* HMODULE;
 typedef void* LPVOID;

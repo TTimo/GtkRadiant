@@ -81,7 +81,9 @@ typedef char* LPCSTR;
 #define IDNO                7
 
 #define WINAPI
-#define APIENTRY
+#ifndef APIENTRY
+	#define APIENTRY
+#endif
 
 #ifndef GUID_DEFINED
 #define GUID_DEFINED
