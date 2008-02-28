@@ -34,6 +34,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 // Leonardo Zide (leo@lokigames.com)
 //
 
+// FIXME: compile on Windows as well
 #if defined (__linux__) || defined (__APPLE__)
 
 #include <stdio.h>

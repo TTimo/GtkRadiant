@@ -60,8 +60,8 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="md5lib.lib ddslib.lib l_net.lib mathlib.lib picomodel.lib jpeg6.lib libxml2.lib libpng.lib glib-2.0.lib gobject-2.0.lib Wsock32.lib"
-				AdditionalLibraryDirectories="&quot;$(SolutionDir)\..\libxml2\lib&quot;;&quot;$(SolutionDir)\..\gtk2\lib&quot;;&quot;$(SolutionDir)\build\$(ConfigurationName)\libs&quot;"
+				AdditionalDependencies="md5lib.lib ddslib.lib l_net.lib mathlib.lib picomodel.lib libxml2.lib libpng.lib glib-2.0.lib gobject-2.0.lib Wsock32.lib libjpeg.lib"
+				AdditionalLibraryDirectories="&quot;$(SolutionDir)\..\libxml2\lib&quot;;&quot;$(SolutionDir)\..\gtk2\lib&quot;;&quot;$(SolutionDir)\build\$(ConfigurationName)\libs&quot;;&quot;$(SolutionDir)\..\jpeg-6b&quot;"
 				GenerateDebugInformation="true"
 				TargetMachine="1"
 			/>
@@ -134,8 +134,8 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="md5lib.lib ddslib.lib l_net.lib mathlib.lib picomodel.lib jpeg6.lib libxml2.lib libpng.lib glib-2.0.lib gobject-2.0.lib Wsock32.lib"
-				AdditionalLibraryDirectories="&quot;$(SolutionDir)\..\libxml2\lib&quot;;&quot;$(SolutionDir)\..\gtk2\lib&quot;;&quot;$(SolutionDir)\build\$(ConfigurationName)\libs&quot;"
+				AdditionalDependencies="md5lib.lib ddslib.lib l_net.lib mathlib.lib picomodel.lib libxml2.lib libpng.lib glib-2.0.lib gobject-2.0.lib Wsock32.lib libjpeg.lib"
+				AdditionalLibraryDirectories="&quot;$(SolutionDir)\..\libxml2\lib&quot;;&quot;$(SolutionDir)\..\gtk2\lib&quot;;&quot;$(SolutionDir)\build\$(ConfigurationName)\libs&quot;;&quot;$(SolutionDir)\..\jpeg-6b&quot;"
 				GenerateDebugInformation="true"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
@@ -229,6 +229,26 @@
 				<File
 					RelativePath="..\common\inout.c"
 					>
+				</File>
+				<File
+					RelativePath="..\common\jpeg.c"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							AdditionalIncludeDirectories="&quot;$(SolutionDir)\..\jpeg-6b&quot;"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							AdditionalIncludeDirectories="&quot;$(SolutionDir)\..\jpeg-6b&quot;"
+						/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\common\mutex.c"
