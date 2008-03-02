@@ -161,7 +161,7 @@ class Config:
 				lib_objects += SConscript( os.path.join( build_dir, 'SConscript.lib' ) )
 			Export( 'lib_objects' )
 			q3map2 = SConscript( os.path.join( build_dir, 'SConscript.q3map2' ) )
-			self.InstallAs( 'install/q3map2.bin', q3map2 )
+			self.InstallAs( 'install/q3map2', q3map2 )
 					
 
 	def emit( self ):

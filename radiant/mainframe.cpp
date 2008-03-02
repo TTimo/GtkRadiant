@@ -995,8 +995,10 @@ void MainFrame::create_main_menu (GtkWidget *window, GtkWidget *vbox)
   gtk_widget_hide (item);
   MRU_AddWidget (item, 3);
   menu_separator (menu);
-  create_menu_item_with_mnemonic (menu, "Check for GtkRadiant update (web)",
+  item = create_menu_item_with_mnemonic (menu, "Check for GtkRadiant update (web)",
     GTK_SIGNAL_FUNC (HandleCommand), ID_FILE_CHECKUPDATE);
+  // disable, the functionality is no longer available
+  gtk_widget_set_sensitive( item, FALSE );
   
   create_menu_item_with_mnemonic (menu, "E_xit",
                     GTK_SIGNAL_FUNC (HandleCommand), ID_FILE_EXIT);

@@ -1666,9 +1666,9 @@ void Sys_LogFile (void)
       Sys_Printf("Started logging to %s\n", name.GetBuffer());
       time_t localtime;
       time(&localtime);
-      Sys_Printf("Today is: %s", ctime(&localtime));
-      Sys_Printf("This is GtkRadiant '" RADIANT_VERSION "' compiled " __DATE__ "\n");
-      Sys_Printf(RADIANT_ABOUTMSG "\n");
+      Sys_Printf( "Today is: %s", ctime(&localtime));
+      Sys_Printf( "This is radiant '" RADIANT_VERSION "' compiled " __DATE__ "\n");
+      Sys_Printf( RADIANT_ABOUTMSG "\n");
     }
     else
       gtk_MessageBox (NULL, "Failed to create log file, check write permissions in Radiant directory.\n",

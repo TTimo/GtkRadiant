@@ -3222,6 +3222,7 @@ void CGameInstall::Run() {
 	fprintf( fg, "  name=\"%s\"\n", m_strName.GetBuffer() );
 	fprintf( fg, "  gametools=\"%sgames\"\n", g_strAppPath.GetBuffer() );
 	fprintf( fg, "  enginepath=\"%s\"\n", m_strEngine.GetBuffer() );
+	fprintf( fg, "  prefix=\".q3a\"\n" ); 
 	switch ( m_availGames[ m_nComboSelect ] ) {
 	case GAME_Q3: {
 		Str source = g_strAppPath.GetBuffer();

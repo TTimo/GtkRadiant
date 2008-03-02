@@ -1291,8 +1291,6 @@ void DoProjectSettings ()
 
     SetKeyValue(g_qeglobals.d_project_entity, "brush_primit", (g_qeglobals.m_bBrushPrimitMode ? "1" : "0" ));
 
-//    QE_CheckProjectEntity();
-
     QE_SaveProject( g_PrefsDlg.m_strLastProject.GetBuffer() );
   }
 

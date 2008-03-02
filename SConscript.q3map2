@@ -14,6 +14,6 @@ env.Append( LIBS = [ 'pthread', 'png', 'jpeg' ] )
 proj = utils.vcproj( os.path.join( GetLaunchDir(), 'tools/quake3/q3map2/q3map2.vcproj' ) )
 objects = lib_objects
 objects += [ os.path.join( 'tools/quake3/q3map2', i ) for i in proj.getSourceFiles() ]
-q3map2 = env.Program( 'q3map2.bin', objects )
+q3map2 = env.Program( 'q3map2', objects )
 
 Return( 'q3map2' )
