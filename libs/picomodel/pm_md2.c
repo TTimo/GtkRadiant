@@ -337,9 +337,10 @@ static picoModel_t *_md2_load( PM_PARAMS_LOAD )
 	index_DUP_LUT_t	*p_index_LUT_DUPS;
 	md2Triangle_t	*p_md2Triangle;
 
+	char			path[ MD2_MAX_SKINNAME ];
 	char			skinname[ MD2_MAX_SKINNAME ];
- 	md2_t			*md2;
- 	md2St_t			*texCoord;
+	md2_t			*md2;
+	md2St_t			*texCoord;
 	md2Frame_t		*frame;
 	md2Triangle_t	*triangle;
 	md2XyzNormal_t	*vertex;
@@ -435,8 +436,25 @@ static picoModel_t *_md2_load( PM_PARAMS_LOAD )
 	strncpy(skinname, (bb + md2->ofsSkins), MD2_MAX_SKINNAME );
 
 	// Print out md2 values
-	_pico_printf(PICO_VERBOSE,"Skins: %d  Verts: %d  STs: %d  Triangles: %d  Frames: %d\nSkin Name \"%s\"\n", md2->numSkins, md2->numXYZ, md2->numST, md2->numTris, md2->numFrames, &skinname );
+	_pico_printf(PICO_VERBOSE,"Skins: %d  Verts: %d  STs: %d  Triangles: %d  Frames: %d\nSkin Name \"%s\"\n", md2->numSkins, md2->numXYZ, md2->numST, md2->numTris, md2->numFrames, skinname );
 
+	// relative texture path - allows moving of models in game dir structure without changing the skinpath
+	// e.g. used in ufo:ai
+	if (skinname[0] == '.') {
+		strncpy(path, fileName, MD2_MAX_SKINNAME);
+		for (i = MD2_MAX_SKINNAME; i--;) {
+			// skip filename
+			if (path[i] == '/' || path[i] == '\\')
+				break;
+			path[i] = '\0';
+		}
+		strncat(path, &skinname[1], MD2_MAX_SKINNAME);
+		strncpy(skinname, path, MD2_MAX_SKINNAME);
+
+		// Print out md2 values
+		_pico_printf(PICO_VERBOSE,"Relative skin path converted to: \"%s\" (%s)\n", skinname, fileName );
+	}
+	
 	// detox Skin name
 	_pico_setfext( skinname, "" );
 	_pico_unixify( skinname );

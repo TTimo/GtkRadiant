@@ -168,7 +168,7 @@ void SI_SetTexdef_FaceList(texdef_to_face_t* texdef_face_list, bool b_SetUndoPoi
   texdef_to_face_t* texdef_to_face;
   bool b_isQuake2;
 
-  if ( ( g_pGameDescription->mGameFile == "q2.game" ) || ( g_pGameDescription->mGameFile == "heretic2.game" ) )
+  if ( ( g_pGameDescription->quake2 ) || ( g_pGameDescription->mGameFile == "q2.game" ) || ( g_pGameDescription->mGameFile == "heretic2.game" ) )
     b_isQuake2 = true;
   else
     b_isQuake2 = false;

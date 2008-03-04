@@ -746,6 +746,18 @@ CGameDescription::CGameDescription(xmlDocPtr pDoc, const Str &GameFile)
 
   mGameFile = GameFile;
 
+  prop = (char*)xmlGetProp(pNode, (xmlChar*)"quake2");
+  if (prop == NULL)
+  {
+    // default
+    quake2 = false;
+  }
+  else
+  {
+    quake2 = true;
+    xmlFree(prop);
+  }
+
   prop = (char*)xmlGetProp(pNode, (xmlChar*)"basegame");
   if (prop == NULL)
   {
