@@ -8,7 +8,7 @@ import utils
 # config = debug release
 # aliases are going to be very needed here
 # we have dependency situations too
-# target = 
+# target =
 
 class Config:
 	# not used atm, but useful to keep a list in mind
@@ -19,7 +19,7 @@ class Config:
 	# aliases
 	# 'all' -> for each choices
 	# 'gamecode' for the targets, 'game' 'cgame' 'ui'
-	
+
 	def __init__( self ):
 		# initialize defaults
 		self.target_selected = [ 'radiant', 'q3map2' ]
@@ -90,7 +90,7 @@ class Config:
 
 			# PIC versions of the libs for the modules
 			shlib_objects_extra = {}
-			for project in [ 'libs/synapse/synapse.vcproj', 'libs/mathlib/mathlib.vcproj', 'libs/cmdlib/cmdlib.vcproj' ]:
+			for project in [ 'libs/synapse/synapse.vcproj', 'libs/mathlib/mathlib.vcproj', 'libs/picomodel/picomodel.vcproj', 'libs/cmdlib/cmdlib.vcproj' ]:
 				( libpath, libname ) = os.path.split( project )
 				libname = os.path.splitext( libname )[0]
 				config['shared'] = True
@@ -105,7 +105,8 @@ class Config:
 					 'plugins/eclassfgd/fgd.vcproj',
 					 'plugins/entity/entity.vcproj',
 					 'plugins/image/image.vcproj',
-					# FIXME: Fix linker flags - xml2, z 
+					 'plugins/model/model.vcproj',
+					# FIXME: Fix linker flags - xml2, z
 					# 'plugins/imagepng/imagepng.vcproj',
 					 'plugins/imagewal/imagewal.vcproj',
 					 'plugins/imagem8/imagem8.vcproj',
@@ -115,6 +116,7 @@ class Config:
 					 'plugins/mapxml/mapxml.vcproj',
 					 'plugins/shaders/shaders.vcproj',
 					 'plugins/surface/surface.vcproj',
+					 'plugins/surface_ufoai/surface_ufoai.vcproj',
 					 'plugins/surface_quake2/surface_quake2.vcproj',
 					 'plugins/surface_heretic2/surface_heretic2.vcproj',
 					# FIXME Needs splines
@@ -122,7 +124,7 @@ class Config:
 
 					# FIXME What is this? Empty dir for me - remove me?
 					# 'contrib/patches/patches.vcproj',
-					# 'contrib/archivewad/archivewad.vcproj',
+					# 'plugins/archivewad/archivewad.vcproj',
 
 					# FIXME Doesn't compile cleanly
 					# 'contrib/prtview/PrtView.vcproj',
@@ -136,6 +138,8 @@ class Config:
 				shlib_objects = shlib_objects_extra['synapse']
 				if ( libname == 'entity' ):
 					shlib_objects += shlib_objects_extra['mathlib']
+				elif ( libname == 'model' ):
+					shlib_objects += shlib_objects_extra['picomodel']
 #				elif ( libname == 'spritemodel' ):
 #					shlib_objects += shlib_objects_extra['mathlib']
 #				elif ( libname == 'TexTool' ):
@@ -162,7 +166,7 @@ class Config:
 			Export( 'lib_objects' )
 			q3map2 = SConscript( os.path.join( build_dir, 'SConscript.q3map2' ) )
 			self.InstallAs( 'install/q3map2', q3map2 )
-					
+
 
 	def emit( self ):
 		try:
@@ -221,7 +225,7 @@ class Config:
 			env.Append( LINKFLAGS = gtkgllibs.split( ' ' ) )
 		if ( useJPEG ):
 			env.Append( LIBS = 'jpeg' )
-			
+
 		env.Append( CFLAGS = baseflags )
 		env.Append( CXXFLAGS = baseflags + [ '-fpermissive', '-fvisibility-inlines-hidden' ] )
 		env.Append( CPPPATH = [ 'include', 'libs' ] )
@@ -229,7 +233,7 @@ class Config:
 		if ( config == 'debug' ):
 			env.Append( CFLAGS = [ '-g' ] )
 			env.Append( CXXFLAGS = [ '-g' ] )
-			env.Append( CPPDEFINES = [ '_DEBUG' ] )				
+			env.Append( CPPDEFINES = [ '_DEBUG' ] )
 		else:
 			env.Append( CFLAGS = [ '-O3', '-Winline', '-ffast-math', '-fno-unsafe-math-optimizations', '-fno-strict-aliasing' ] )
 			env.Append( CXXFLAGS = [ '-O3', '-Winline', '-ffast-math', '-fno-unsafe-math-optimizations','-fno-strict-aliasing' ] )
@@ -238,7 +242,7 @@ class Config:
 #		env.Append( LINKFLAGS = [ '-m32' ] )
 
 # parse the config statement line to produce/update an existing config list
-# the configs expose a list of keywords and accepted values, which the engine parses out 
+# the configs expose a list of keywords and accepted values, which the engine parses out
 class ConfigParser:
 	def __init__( self ):
 		self.operators = {}
@@ -282,14 +286,14 @@ class ConfigParser:
 			value_split.pop()
 			while ( len( value_split ) != 0 ):
 				value_array.append( value_split.pop() )
-				value_split.pop()					
+				value_split.pop()
 		except:
 			print traceback.print_exception( sys.exc_type, sys.exc_value, sys.exc_traceback )
 			print 'syntax error (value to array): %s' % ( repr( value_split ) )
 			return
 
-		return ( name, value_array )		
-	
+		return ( name, value_array )
+
 	def parseStatements( self, _configs, statements ):
 		self.current_config = None
 		self.configs = _configs
@@ -306,7 +310,7 @@ class ConfigParser:
 				# setup the operator table for this config
 				# NOTE: have that in self._processOp too
 				self._setupParser( self.current_config )
-			
+
 			ret = self._parseStatement( s )
 			if ( ret is None ):
 				print 'stop statement parse at %s' % repr( s )
