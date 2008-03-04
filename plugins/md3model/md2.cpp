@@ -258,8 +258,7 @@ void MD2Surface_read(Model& model, const byte* buffer, ArchiveFile& file)
 	    path[i] = '\0';
 	}
 //	globalErrorStream() << "modified skinname: " << path << " (path) and " << skinnameRelative << " (texture)" << "\n";
-	// TODO: search for tga, png, jpg (this order)
-	snprintf(skinname, MD2_MAX_SKINNAME, "%s%s.jpg", path, &skinnameRelative[1]);
+	snprintf(skinname, MD2_MAX_SKINNAME, "%s%s", path, &skinnameRelative[1]);
 //	globalErrorStream() << skinname << "\n";
   } 
   else
