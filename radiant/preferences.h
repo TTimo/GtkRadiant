@@ -200,6 +200,7 @@ select games, copy editing assets and write out configuration files
 
 #define Q3_PACK "Q3Pack"
 #define URT_PACK "UrTPack"
+#define UFOAI_PACK "UFOAIPack"
 
 class CGameInstall : public Dialog {
 public:
@@ -212,6 +213,7 @@ public:
 		GAME_NONE = 0,
 		GAME_Q3 = 1,
 		GAME_URT,
+		GAME_UFOAI,
 		GAME_WARSOW,
 		GAME_COUNT
 	};

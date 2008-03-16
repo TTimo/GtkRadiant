@@ -3166,6 +3166,9 @@ void CGameInstall::BuildDialog() {
 		case GAME_URT:
 			combo_list = g_list_append( combo_list, "Urban Terror (standalone)" );
 			break;
+		case GAME_UFOAI:
+			combo_list = g_list_append( combo_list, "UFO: Alien Invasion" );
+			break;
 		case GAME_WARSOW:
 			combo_list = g_list_append( combo_list, "Warsow" );
 			break;
@@ -3254,6 +3257,15 @@ void CGameInstall::Run() {
 		fprintf( fg, "  basegame=\"q3ut4\"\n" );
 		break;
 	}
+	case GAME_UFOAI: {
+		Str source = g_strAppPath.GetBuffer();
+		source += "installs/";
+		source += UFOAI_PACK;
+		Str dest = m_strEngine.GetBuffer();
+		CopyTree( source.GetBuffer(), dest.GetBuffer() );
+		fprintf( fg, "  basegame=\"base\"\n" );
+		break;
+	}
 	case GAME_WARSOW:
 		fprintf( fg, "  basegame=\"basewsw\"\n" );
 		break;
@@ -3283,6 +3295,9 @@ void CGameInstall::ScanGames() {
 			}
 			if ( stricmp( dirlist->d_name, URT_PACK ) == 0 ) {
 				m_availGames[ iGame++ ] = GAME_URT;
+			}
+			if ( stricmp( dirlist->d_name, UFOAI_PACK ) == 0 ) {
+				m_availGames[ iGame++ ] = GAME_UFOAI;
 			}
 		}
 		closedir( dir );
