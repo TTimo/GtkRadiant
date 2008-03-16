@@ -7476,7 +7476,7 @@ void PerformFiltering ()
 
   // mattn - this should be removed - otherwise the filters from the 
   // plugins are wiped away with each update
-#if 1
+#if 0
   // spog - deletes old filters list and creates new one when
   // g_qeglobals.d_savedinfo.exclude is updated
   g_qeglobals.d_savedinfo.filters = FilterListDelete(g_qeglobals.d_savedinfo.filters);
