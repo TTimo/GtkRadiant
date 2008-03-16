@@ -47,7 +47,7 @@ void *g_pMainWidget;
 static const char *PLUGIN_COMMANDS = CMD_ABOUT ";" CMD_SEP;
 static const char *PLUGIN_ABOUT = "UFO: Alien Invasion plugin " PLUGIN_VERSION "\nby Martin Gerhardy";
 
-#define NUM_TOOLBAR_BUTTONS 12
+#define NUM_TOOLBAR_BUTTONS FILTER_MAX
 typedef struct toolbar_button_info_s
 {
 	char *image;
@@ -59,6 +59,34 @@ typedef struct toolbar_button_info_s
 
 static const toolbar_button_info_t toolbar_buttons[NUM_TOOLBAR_BUTTONS] =
 {
+	{
+		"ufoai_actorclip.bmp",
+		"Filter actorclip",
+		"Actorclip",
+		DoActorClipFiltering,
+		IToolbarButton::eToggleButton
+	},
+	{
+		"ufoai_weaponclip.bmp",
+		"Filter weaponclip",
+		"Weaponclip",
+		DoWeaponClipFiltering,
+		IToolbarButton::eToggleButton
+	},
+	{
+		"ufoai_nodraw.bmp",
+		"Filter nodraw",
+		"NoDraw",
+		DoNoDrawFiltering,
+		IToolbarButton::eToggleButton
+	},
+	{
+		"ufoai_stepon.bmp",
+		"Filter stepon",
+		"Stepon",
+		DoSteponFiltering,
+		IToolbarButton::eToggleButton
+	},
 	{
 		"ufoai_level1.bmp",
 		"Filter level1",
@@ -113,34 +141,6 @@ static const toolbar_button_info_t toolbar_buttons[NUM_TOOLBAR_BUTTONS] =
 		"Filter level8",
 		"Level 8",
 		DoLevel8Filtering,
-		IToolbarButton::eToggleButton
-	},
-	{
-		"ufoai_actorclip.bmp",
-		"Filter actorclip",
-		"Actorclip",
-		DoActorClipFiltering,
-		IToolbarButton::eToggleButton
-	},
-	{
-		"ufoai_stepon.bmp",
-		"Filter stepon",
-		"Stepon",
-		DoSteponFiltering,
-		IToolbarButton::eToggleButton
-	},
-	{
-		"ufoai_weaponclip.bmp",
-		"Filter weaponclip",
-		"Weaponclip",
-		DoWeaponClipFiltering,
-		IToolbarButton::eToggleButton
-	},
-	{
-		"ufoai_nodraw.bmp",
-		"Filter nodraw",
-		"NoDraw",
-		DoNoDrawFiltering,
 		IToolbarButton::eToggleButton
 	},
 };
