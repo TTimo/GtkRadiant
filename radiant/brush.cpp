@@ -2889,6 +2889,9 @@ void Brush_FaceDraw(face_t *face, int nGLState)
 	qglEnd();
 }
 
+#define Q2_SURF_TRANS33   0x00000010
+#define Q2_SURF_TRANS66   0x00000020
+
 void Brush_Draw(brush_t *b)
 {
 	face_t			*face;
@@ -2907,6 +2910,7 @@ void Brush_Draw(brush_t *b)
 
   // guarantee the texture will be set first
   bool bTrans;
+	float transVal;
 	prev = NULL;
 	for (face = b->brush_faces,order = 0 ; face ; face=face->next, order++)
 	{
@@ -2916,7 +2920,18 @@ void Brush_Draw(brush_t *b)
 			continue;		// freed face
 		}
 
-     bTrans = (face->pShader->getFlags() & QER_TRANS);
+		bTrans = (face->pShader->getFlags() & QER_TRANS);
+		transVal = face->pShader->getTrans();
+		// try to read the texture def surface flags to get trans
+		if (!bTrans) {
+			if (face->texdef.flags & Q2_SURF_TRANS33) {
+				bTrans = true;
+				transVal = 0.33;
+			} else if (face->texdef.flags & Q2_SURF_TRANS66) {
+				bTrans = true;
+				transVal = 0.66;
+			}
+		}
 
  	  if (bTrans && !(nGLState & DRAW_GL_BLEND))
       continue;
@@ -2960,7 +2975,7 @@ void Brush_Draw(brush_t *b)
     if (nGLState & DRAW_GL_LIGHTING && !g_PrefsDlg.m_bGLLighting)
     {
       if (!b->owner->eclass->fixedsize)
-        material[3] = face->pShader->getTrans();
+        material[3] = transVal;
       else
         material[3] = 1;
       VectorCopy(face->d_color, material);
@@ -2974,7 +2989,7 @@ void Brush_Draw(brush_t *b)
 		{
 			pShader = face->pShader;
 			VectorCopy(pShader->getTexture()->color, material);
-			material[3] = identity[3] = pShader->getTrans();
+			material[3] = identity[3] = transVal;
 
 			if (nGLState & DRAW_GL_TEXTURE_2D)
         qglColor4fv(identity);
