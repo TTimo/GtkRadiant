@@ -43,6 +43,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "pluginmanager.h"
 #include "plugin.h"
 #include "missing.h"
+#include "filters.h"
 
 #include "version.h"
 
@@ -2228,6 +2229,8 @@ bool CSynapseClientRadiant::RequestAPI(APIDescriptor_t *pAPI)
     pTable->m_pfnGetFileTypeRegistry = &GetFileTypeRegistry;
     pTable->m_pfnReadProjectKey = &QERApp_ReadProjectKey;
     pTable->m_pfnGetMapName = &QERApp_GetMapName;
+    pTable->m_pfnFilterAdd = &FilterCreate;
+    pTable->m_pfnFiltersActivate = &FiltersActivate;
 
     return true;
   }

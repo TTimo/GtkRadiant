@@ -22,6 +22,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #ifndef _FILTERS_H_
 #define _FILTERS_H_
 
+void FiltersActivate(void);
+bfilter_t *FilterCreate(int type, int bmask, char *str, int exclude);
 bfilter_t *FilterAdd(bfilter_t *pFilter, int type, int bmask, char *str, int exclude);
 bfilter_t *FilterListDelete(bfilter_t *pFilter);
 bfilter_t *FilterUpdate(bfilter_t *pFilter);

@@ -30,6 +30,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "stdafx.h"
 
+// type 1 = texture filter (name)
+// type 3 = entity filter (name)
+// type 2 = QER_* shader flags
+// type 4 = entity classes
 bfilter_t *FilterAdd(bfilter_t *pFilter, int type, int bmask, char *str, int exclude)
 {
 	bfilter_t *pNew = new bfilter_t;
@@ -42,6 +46,21 @@ bfilter_t *FilterAdd(bfilter_t *pFilter, int type, int bmask, char *str, int exc
 	else
 		pNew->active = false;
 	return pNew;
+}
+
+bfilter_t *FilterCreate (int type, int bmask, char *str, int exclude)
+{
+	g_qeglobals.d_savedinfo.filters = FilterAdd(g_qeglobals.d_savedinfo.filters, type, bmask, str, exclude);
+	Syn_Printf("Added filter %s (type: %i, bmask: %i, exclude: %i)\n", str, type, bmask, exclude);
+	return g_qeglobals.d_savedinfo.filters;
+}
+
+extern void PerformFiltering();
+
+void FiltersActivate (void)
+{
+	PerformFiltering();
+	Sys_UpdateWindows(W_XY|W_CAMERA);
 }
 
   // removes the filter list at *pFilter, returns NULL pointer
