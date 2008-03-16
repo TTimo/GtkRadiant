@@ -112,6 +112,7 @@ class Config:
 					 'plugins/imagem8/imagem8.vcproj',
 					 'plugins/spritemodel/spritemodel.vcproj',
 					 'plugins/textool/TexTool.vcproj',
+					# 'plugins/sample/sample.vcproj',
 					 'plugins/map/map.vcproj',
 					 'plugins/mapxml/mapxml.vcproj',
 					 'plugins/shaders/shaders.vcproj',
