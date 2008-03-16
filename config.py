@@ -132,6 +132,7 @@ class Config:
 					 'contrib/hydratoolz/hydratoolz.vcproj',
 					 'contrib/bobtoolz/bobToolz_gtk.vcproj',
 					 'contrib/gtkgensurf/gtkgensurf.vcproj',
+					 'contrib/ufoai/ufoai.vcproj',
 					 'contrib/bkgrnd2d/bkgrnd2d.vcproj'
 				 ]:
 				( libpath, libname ) = os.path.split( project )
