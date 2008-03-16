@@ -270,6 +270,8 @@ static void SetDlgValues (int tab)
   switch (tab)
   {
   case GENERAL_TAB:
+	// mattn: Deactivated because one wasn't able to switch the gametype or orientation
+#if 0
     // Hell if I know why, but in the release build the 2nd pass thru the
     // set_sensitive loop for game_radios crashes. No need to do this more
     // than once anyhow.
@@ -280,6 +282,7 @@ static void SetDlgValues (int tab)
       for (i = 0; i < 6; i++)
         gtk_widget_set_sensitive (plane_radios[i], (i == Plane ? TRUE : FALSE));
     }
+#endif
     gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (game_radios[Game]), TRUE);
     gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (plane_radios[Plane]), TRUE);
     gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (wave_radios[WaveType]), TRUE);
