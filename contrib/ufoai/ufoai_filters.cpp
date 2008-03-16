@@ -10,19 +10,19 @@ static bfilter_t* filters[FILTER_MAX];
 
 void UFOAIFilterInit (void)
 {
-	filters[FILTER_ACTORCLIP] = FilterAdd(2, 0, "actorclip", UFOAI_CONTENTS_ACTORCLIP);
-	filters[FILTER_WEAPONCLIP] = FilterAdd(2, 0, "weaponclip", UFOAI_CONTENTS_WEAPONCLIP);
-	filters[FILTER_NODRAW] = FilterAdd(2, 0, "nodraw", UFOAI_SURF_NODRAW);
-	filters[FILTER_STEPON] = FilterAdd(2, 0, "stepon", UFOAI_CONTENTS_STEPON);
+	filters[FILTER_ACTORCLIP] = FilterAdd(1, 0, "actorclip", 0);
+	filters[FILTER_WEAPONCLIP] = FilterAdd(1, 0, "weaponclip", 0);
+	filters[FILTER_NODRAW] = FilterAdd(1, 0, "nodraw", 0);
+	filters[FILTER_STEPON] = FilterAdd(1, 0, "stepon", 0);
 
-	filters[FILTER_LEVEL1] = FilterAdd(2, 0, "level1", UFOAI_CONTENTS_LEVEL_1);
-	filters[FILTER_LEVEL2] = FilterAdd(2, 0, "level2", UFOAI_CONTENTS_LEVEL_2);
-	filters[FILTER_LEVEL3] = FilterAdd(2, 0, "level3", UFOAI_CONTENTS_LEVEL_3);
-	filters[FILTER_LEVEL4] = FilterAdd(2, 0, "level4", UFOAI_CONTENTS_LEVEL_4);
-	filters[FILTER_LEVEL5] = FilterAdd(2, 0, "level5", UFOAI_CONTENTS_LEVEL_5);
-	filters[FILTER_LEVEL6] = FilterAdd(2, 0, "level6", UFOAI_CONTENTS_LEVEL_6);
-	filters[FILTER_LEVEL7] = FilterAdd(2, 0, "level7", UFOAI_CONTENTS_LEVEL_7);
-	filters[FILTER_LEVEL8] = FilterAdd(2, 0, "level8", UFOAI_CONTENTS_LEVEL_8);
+	filters[FILTER_LEVEL1] = FilterAdd(2, UFOAI_CONTENTS_LEVEL_1, "level1", 0);
+	filters[FILTER_LEVEL2] = FilterAdd(2, UFOAI_CONTENTS_LEVEL_2, "level2", 0);
+	filters[FILTER_LEVEL3] = FilterAdd(2, UFOAI_CONTENTS_LEVEL_3, "level3", 0);
+	filters[FILTER_LEVEL4] = FilterAdd(2, UFOAI_CONTENTS_LEVEL_4, "level4", 0);
+	filters[FILTER_LEVEL5] = FilterAdd(2, UFOAI_CONTENTS_LEVEL_5, "level5", 0);
+	filters[FILTER_LEVEL6] = FilterAdd(2, UFOAI_CONTENTS_LEVEL_6, "level6", 0);
+	filters[FILTER_LEVEL7] = FilterAdd(2, UFOAI_CONTENTS_LEVEL_7, "level7", 0);
+	filters[FILTER_LEVEL8] = FilterAdd(2, UFOAI_CONTENTS_LEVEL_8, "level8", 0);
 
 	Sys_Printf("UFO:AI Filters initialized\n");
 }
