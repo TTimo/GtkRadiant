@@ -34,13 +34,16 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 // type 3 = entity filter (name)
 // type 2 = QER_* shader flags
 // type 4 = entity classes
+// type 5 = surface flags (q2)
+// type 6 = content flags (q2)
+// type 7 = content flags - no match (q2)
 bfilter_t *FilterAdd(bfilter_t *pFilter, int type, int bmask, char *str, int exclude)
 {
 	bfilter_t *pNew = new bfilter_t;
 	pNew->next = pFilter;
 	pNew->attribute = type;
 	if (type == 1 || type == 3) pNew->string = str;
-	if (type == 2 || type == 4) pNew->mask = bmask;
+	if (type == 2 || type == 4 || type == 5 || type == 6 || type == 7) pNew->mask = bmask;
 	if (g_qeglobals.d_savedinfo.exclude & exclude)
 		pNew->active = true;
 	else
@@ -164,8 +167,10 @@ bool FilterBrush(brush_t *pb)
 			filters != NULL;
 			filters = filters->next)
 			{
+				if (!filters->active)
+					continue;
 				// exclude by attribute 1 brush->face->pShader->getName()
-				if (filters->active && filters->attribute == 1)
+				if (filters->attribute == 1)
 				{
 					if (strstr(f->pShader->getName(),filters->string))
 					{
@@ -174,10 +179,34 @@ bool FilterBrush(brush_t *pb)
 					}
 				}
 				// exclude by attribute 2 brush->face->pShader->getFlags()
-				else if (filters->active
-					&& filters->attribute == 2)
+				else if (filters->attribute == 2)
 				{
 					if (f->pShader->getFlags() & filters->mask)
+					{
+						filterbrush=true;
+						break;
+					}
+				// quake2 - 5 == surface flags, 6 == content flags 
+				}
+				else if (filters->attribute == 5)
+				{
+					if (f->texdef.flags && f->texdef.flags & filters->mask)
+					{
+						filterbrush=true;
+						break;
+					}
+				}
+				else if (filters->attribute == 6)
+				{
+					if (f->texdef.contents && f->texdef.contents & filters->mask)
+					{
+						filterbrush=true;
+						break;
+					}
+				}
+				else if (filters->attribute == 7)
+				{
+					if (f->texdef.contents && !(f->texdef.contents & filters->mask))
 					{
 						filterbrush=true;
 						break;

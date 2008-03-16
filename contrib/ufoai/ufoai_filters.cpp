@@ -10,19 +10,21 @@ static bfilter_t* filters[FILTER_MAX];
 
 void UFOAIFilterInit (void)
 {
+	// texture name filters
 	filters[FILTER_ACTORCLIP] = FilterAdd(1, 0, "actorclip", 0);
 	filters[FILTER_WEAPONCLIP] = FilterAdd(1, 0, "weaponclip", 0);
 	filters[FILTER_NODRAW] = FilterAdd(1, 0, "nodraw", 0);
 	filters[FILTER_STEPON] = FilterAdd(1, 0, "stepon", 0);
 
-	filters[FILTER_LEVEL1] = FilterAdd(2, UFOAI_CONTENTS_LEVEL_1, "level1", 0);
-	filters[FILTER_LEVEL2] = FilterAdd(2, UFOAI_CONTENTS_LEVEL_2, "level2", 0);
-	filters[FILTER_LEVEL3] = FilterAdd(2, UFOAI_CONTENTS_LEVEL_3, "level3", 0);
-	filters[FILTER_LEVEL4] = FilterAdd(2, UFOAI_CONTENTS_LEVEL_4, "level4", 0);
-	filters[FILTER_LEVEL5] = FilterAdd(2, UFOAI_CONTENTS_LEVEL_5, "level5", 0);
-	filters[FILTER_LEVEL6] = FilterAdd(2, UFOAI_CONTENTS_LEVEL_6, "level6", 0);
-	filters[FILTER_LEVEL7] = FilterAdd(2, UFOAI_CONTENTS_LEVEL_7, "level7", 0);
-	filters[FILTER_LEVEL8] = FilterAdd(2, UFOAI_CONTENTS_LEVEL_8, "level8", 0);
+	// content flag filters
+	filters[FILTER_LEVEL1] = FilterAdd(7, UFOAI_CONTENTS_LEVEL_1, "level1", 0);
+	filters[FILTER_LEVEL2] = FilterAdd(7, UFOAI_CONTENTS_LEVEL_2, "level2", 0);
+	filters[FILTER_LEVEL3] = FilterAdd(7, UFOAI_CONTENTS_LEVEL_3, "level3", 0);
+	filters[FILTER_LEVEL4] = FilterAdd(7, UFOAI_CONTENTS_LEVEL_4, "level4", 0);
+	filters[FILTER_LEVEL5] = FilterAdd(7, UFOAI_CONTENTS_LEVEL_5, "level5", 0);
+	filters[FILTER_LEVEL6] = FilterAdd(7, UFOAI_CONTENTS_LEVEL_6, "level6", 0);
+	filters[FILTER_LEVEL7] = FilterAdd(7, UFOAI_CONTENTS_LEVEL_7, "level7", 0);
+	filters[FILTER_LEVEL8] = FilterAdd(7, UFOAI_CONTENTS_LEVEL_8, "level8", 0);
 
 	Sys_Printf("UFO:AI Filters initialized\n");
 }
@@ -36,10 +38,10 @@ void PerformFiltering (int type)
 
 	if (filters[type]->active) {
 		filters[type]->active = false;
-		Sys_Printf("filter %i deactivated\n", type);
+		//Sys_Printf("filter %i deactivated (mask %i 0x%x)\n", type, filters[type]->mask, filters[type]->mask);
 	} else {
 		filters[type]->active = true;
-		Sys_Printf("filter %i activated\n", type);
+		//Sys_Printf("filter %i activated (mask %i 0x%x)\n", type, filters[type]->mask, filters[type]->mask);
 	}
 
 	FiltersActivate();

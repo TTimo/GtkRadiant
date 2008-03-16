@@ -753,6 +753,8 @@ struct bfilter_t //c++ style
 							// 2=brush->pPatch->pShader->getFlags()
 							// 3=brush->owner->eclass->name
 							// 4=brush->owner->eclass->nShowFlags
+							// 5=brush->face->texdef.flags (q2)
+							// 6=brush->face->texdef.contents (q2)
 	int		mask;
 	char	*string;
 	bool	active;
