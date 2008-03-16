@@ -610,6 +610,10 @@ typedef const char* (* PFN_QERAPP_READPROJECTKEY)(const char* key);
 
 typedef char* (* PFN_GETMAPFILENAME)();
 
+typedef bfilter_t* (* PFN_QERPLUG_FILTERADD)(int type, int bmask, char *str, int exclude);
+
+typedef void (* PFN_QERPLUG_FILTERACTIVATE) (void);
+
   // FIXME:
 // add map format extensions
 // add texture format handlers
@@ -749,8 +753,11 @@ struct _QERFuncTable_1
 
   PFN_QERAPP_READPROJECTKEY m_pfnReadProjectKey;
 
+  PFN_QERPLUG_FILTERACTIVATE m_pfnFiltersActivate;
+  PFN_QERPLUG_FILTERADD m_pfnFilterAdd;
+
   // digibob from the old _QERAppBSPFrontendTable table
-	PFN_GETMAPFILENAME  m_pfnGetMapName;
+  PFN_GETMAPFILENAME  m_pfnGetMapName;
 };
 
 // macros to access those faster in plugins
