@@ -21,7 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "plugin.h"
 
-#define CMD_SEP "-" 
+#define CMD_SEP "-"
 #define CMD_ABOUT "About..."
 // =============================================================================
 // Globals
@@ -42,7 +42,7 @@ void *g_pMainWidget;
 #define PLUGIN_NAME "Sample plugin"
 
 //backwards for some reason
-static const char *PLUGIN_COMMANDS = CMD_ABOUT ";-";
+static const char *PLUGIN_COMMANDS = CMD_ABOUT ";" CMD_SEP;
 static const char *PLUGIN_ABOUT = "Sample plugin\n";
 
 void DoSample (void)
@@ -60,7 +60,7 @@ typedef struct toolbar_button_info_s
 	IToolbarButton::EType type;
 } toolbar_button_info_t;
 
-static const toolbar_button_info_t toolbar_buttons[NUM_TOOLBAR_BUTTONS] = 
+static const toolbar_button_info_t toolbar_buttons[NUM_TOOLBAR_BUTTONS] =
 {
 	{
 		"sample.bmp",
@@ -142,11 +142,11 @@ extern "C" void QERPlug_Dispatch (const char *p, vec3_t vMin, vec3_t vMax, bool 
 
 CSynapseServer* g_pSynapseServer = NULL;
 CSynapseClientSample g_SynapseClient;
-    
+
 #if __GNUC__ >= 4
 #pragma GCC visibility push(default)
 #endif
-extern "C" CSynapseClient* SYNAPSE_DLL_EXPORT Synapse_EnumerateInterfaces (const char *version, CSynapseServer *pServer) 
+extern "C" CSynapseClient* SYNAPSE_DLL_EXPORT Synapse_EnumerateInterfaces (const char *version, CSynapseServer *pServer)
 {
 #if __GNUC__ >= 4
 #pragma GCC visibility pop
@@ -161,7 +161,7 @@ extern "C" CSynapseClient* SYNAPSE_DLL_EXPORT Synapse_EnumerateInterfaces (const
 
 	g_SynapseClient.AddAPI(TOOLBAR_MAJOR, SAMPLE_MINOR, sizeof(_QERPlugToolbarTable));
 	g_SynapseClient.AddAPI(PLUGIN_MAJOR, SAMPLE_MINOR, sizeof(_QERPluginTable));
-	
+
 	g_SynapseClient.AddAPI(RADIANT_MAJOR, NULL, sizeof(g_FuncTable), SYN_REQUIRE, &g_FuncTable);
 	g_SynapseClient.AddAPI(QGL_MAJOR, NULL, sizeof(g_QglTable), SYN_REQUIRE, &g_QglTable);
 	g_SynapseClient.AddAPI(VFS_MAJOR, "*", sizeof(g_FileSystemTable), SYN_REQUIRE, &g_FileSystemTable);
@@ -177,7 +177,7 @@ bool CSynapseClientSample::RequestAPI (APIDescriptor_t *pAPI)
 {
 	if (!strcmp(pAPI->major_name, PLUGIN_MAJOR)) {
 		_QERPluginTable* pTable= static_cast<_QERPluginTable*>(pAPI->mpTable);
-	
+
 		pTable->m_pfnQERPlug_Init = QERPlug_Init;
 		pTable->m_pfnQERPlug_GetName = QERPlug_GetName;
 		pTable->m_pfnQERPlug_GetCommandList = QERPlug_GetCommandList;
@@ -185,12 +185,12 @@ bool CSynapseClientSample::RequestAPI (APIDescriptor_t *pAPI)
 		return true;
 	} else if (!strcmp(pAPI->major_name, TOOLBAR_MAJOR)) {
 		_QERPlugToolbarTable* pTable= static_cast<_QERPlugToolbarTable*>(pAPI->mpTable);
-	
+
 		pTable->m_pfnToolbarButtonCount = &ToolbarButtonCount;
 		pTable->m_pfnGetToolbarButton = &GetToolbarButton;
 		return true;
 	}
-	
+
 	Syn_Printf("ERROR: RequestAPI( '%s' ) not found in '%s'\n", pAPI->major_name, GetInfo());
 	return false;
 }
