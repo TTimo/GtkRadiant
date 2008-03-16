@@ -22,143 +22,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "plugin.h"
 
-#if 0 // stop using windowing systems in plugins - put the text in SynapseClient::GetInfo
-// =============================================================================
-// Utility functions
-static void dialog_button_callback (GtkWidget *widget, gpointer data)
-{
-	GtkWidget *parent;
-	int *loop, *ret;
- 
-	parent = gtk_widget_get_toplevel (widget);
-	loop = (int*)g_object_get_data (G_OBJECT (parent), "loop");
-	ret = (int*)g_object_get_data (G_OBJECT (parent), "ret");
- 
-	*loop = 0;
-	*ret = (int)data;
-}
-
-static gint dialog_delete_callback (GtkWidget *widget, GdkEvent* event, gpointer data)
-{
-	int *loop;
- 
-	gtk_widget_hide (widget);
-	loop = (int*)g_object_get_data (G_OBJECT (widget), "loop");
-	*loop = 0;
-
-	return TRUE;
-}
-
-int DoAboutBox( GtkWidget *parent )
-{
-	GtkWidget *window, *w, *text, *vbox, *hbox, *hbox2, *frame;
-	GdkPixmap *pixmap;
-	GdkBitmap *mask;
-	GtkStyle *style;
-	int ret, loop = 1;
-	char buf[2048];
-  const picoModule_t **modules, *pm;
- 
-	window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
-	gtk_signal_connect (GTK_OBJECT (window), "delete_event",
-                      GTK_SIGNAL_FUNC (dialog_delete_callback), NULL);
-	gtk_signal_connect (GTK_OBJECT (window), "destroy",
-                      GTK_SIGNAL_FUNC (gtk_widget_destroy), NULL);
-	gtk_window_set_title (GTK_WINDOW (window), "About...");
-	gtk_container_border_width (GTK_CONTAINER (window), 10);
-	g_object_set_data (G_OBJECT (window), "loop", &loop);
-	g_object_set_data (G_OBJECT (window), "ret", &ret);
-	gtk_widget_realize (window);
-
-	if (parent != NULL)
-		gtk_window_set_transient_for (GTK_WINDOW (window), GTK_WINDOW (parent));
-
-  vbox = gtk_vbox_new (FALSE, 10);
-  gtk_container_add (GTK_CONTAINER (window), vbox);
-	gtk_widget_show (vbox);
-
-	style = gtk_widget_get_style(window);
-
-  hbox2 = gtk_hbox_new (FALSE, 10);
-  gtk_box_pack_start (GTK_BOX (vbox), hbox2, FALSE, FALSE, 2);
-	gtk_widget_show (hbox2);
-
-  frame = gtk_frame_new (NULL);
-  gtk_box_pack_start (GTK_BOX (hbox2), frame, FALSE, FALSE, 2);
-  gtk_frame_set_shadow_type (GTK_FRAME (frame), GTK_SHADOW_IN);
-  gtk_widget_show (frame);
-
-	if( g_FuncTable.m_pfnLoadBitmap( "picomodel.bmp", (void **)&pixmap, (void **)&mask ) ) {
-		w = gtk_pixmap_new (pixmap, mask);
-    gtk_container_add (GTK_CONTAINER (frame), w);
-		gtk_widget_show (w);
-	}
-
-	w = gtk_label_new ("Model Module v1.0 for GtkRadiant\nby Arnout van Meer (rr2do2@splashdamage.com)\n\nBased on the MD3Model Module by SPoG\nPicoModel Library Copyright (c) 2002, Randy Reddig & seaw0lf" );
-	gtk_box_pack_start (GTK_BOX (vbox), w, FALSE, FALSE, 2);
-	gtk_label_set_justify (GTK_LABEL (w), GTK_JUSTIFY_LEFT);
-	gtk_widget_show (w);
-
-  w = gtk_scrolled_window_new(NULL, NULL);
-  gtk_box_pack_start(GTK_BOX(vbox), w, TRUE, TRUE, 2);
-  gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(w), GTK_POLICY_AUTOMATIC, GTK_POLICY_ALWAYS);
-  gtk_widget_show(w);
-
-  text = gtk_text_new(NULL, NULL);
-  gtk_text_set_editable(GTK_TEXT(text), FALSE);
-  gtk_container_add(GTK_CONTAINER(w), text);
-
-  strcpy( buf, "#Supported Model Formats:\n" );
-  gtk_text_insert(GTK_TEXT(text), NULL, NULL, NULL, buf, -1);
-
-  for( modules = PicoModuleList( NULL ); *modules != NULL; modules++ )
-  {
-    pm = *modules;
-
-    if( pm == NULL)
-			break;
-
-    sprintf( buf, "\n%s, version %s, (c) %s", pm->displayName, pm->version, pm->copyright );
-    gtk_text_insert(GTK_TEXT(text), NULL, NULL, NULL, buf, -1);
-  }
-
-  gtk_text_set_word_wrap(GTK_TEXT(text), FALSE);
-  gtk_widget_show(text);
-
-  gtk_text_set_point(GTK_TEXT(text), 0);
-  gtk_text_forward_delete(GTK_TEXT(text), 1);
-
-	w = gtk_hseparator_new ();
-	gtk_box_pack_start (GTK_BOX (vbox), w, FALSE, FALSE, 2);
-	gtk_widget_show (w);
- 
-	hbox = gtk_hbox_new (FALSE, 10);
-	gtk_box_pack_start (GTK_BOX (vbox), hbox, FALSE, FALSE, 2);
-	gtk_widget_show (hbox);
- 
-	w = gtk_button_new_with_label ("Ok");
-	gtk_box_pack_start (GTK_BOX (hbox), w, TRUE, TRUE, 0);
-	gtk_signal_connect (GTK_OBJECT (w), "clicked",
-                        GTK_SIGNAL_FUNC (dialog_button_callback), GINT_TO_POINTER (IDOK));
-	GTK_WIDGET_SET_FLAGS (w, GTK_CAN_DEFAULT);
-	gtk_widget_grab_default (w);
-	gtk_widget_show (w);
-	ret = IDOK;
- 
-	gtk_window_set_position(GTK_WINDOW(window),GTK_WIN_POS_CENTER);
-	gtk_widget_show (window);
-	gtk_grab_add (window);
- 
-	while (loop)
-		gtk_main_iteration ();
- 
-	gtk_grab_remove (window);
-	gtk_widget_destroy (window);
- 
-	return ret;
-}
-#endif
-
 // toolbar implementation
 
 class CFlushReloadSelectedToolbarButton : public IToolbarButton
@@ -300,8 +163,8 @@ void init_filetypes()
 // plugin implementation
 
 static const char *PLUGIN_NAME = "Model loading module";
-static const char *PLUGIN_COMMANDS = "Flush & Reload Models,Flush & Reload Selected";
-static const char *PLUGIN_ABOUT = "Model loading module";
+static const char *PLUGIN_COMMANDS = "About;-;Flush & Reload Models;Flush & Reload Selected";
+static const char *PLUGIN_ABOUT = "Model Module v1.0 for GtkRadiant\nby Arnout van Meer (rr2do2@splashdamage.com)\n\nBased on the MD3Model Module by SPoG\nPicoModel Library Copyright (c) 2002, Randy Reddig & seaw0lf";
 
 extern "C" const char* QERPlug_Init (void *hApp, void* pMainWidget)
 {
@@ -325,6 +188,8 @@ extern "C" void QERPlug_Dispatch (const char *p, vec3_t vMin, vec3_t vMax, bool 
     DoFlushReloadSelected();
   else if( !strcmp( p, "Flush & Reload Models" ) )
     DoFlushReloadAll();
+  else if( !strcmp( p, "About" ) )
+    g_FuncTable.m_pfnMessageBox(NULL, PLUGIN_ABOUT, "About", MB_OK, NULL);
 }
 
 
