@@ -340,6 +340,41 @@ static const char *contentFlags[] = {
 	""
 };
 
+static const int flagBitMasks[] = {
+	1<<0,
+	1<<1,
+	1<<2,
+	1<<3,
+	1<<4,
+	1<<5,
+	1<<6,
+	1<<7,
+	1<<8,
+	1<<9,
+	1<<10,
+	1<<11,
+	1<<12,
+	1<<13,
+	1<<14,
+	1<<15,
+	1<<16,
+	1<<17,
+	1<<18,
+	1<<19,
+	1<<20,
+	1<<21,
+	1<<22,
+	1<<23,
+	1<<24,
+	1<<25,
+	1<<26,
+	1<<27,
+	1<<28,
+	1<<29,
+	1<<30,
+	1<<31,
+};
+
 #define UFOAI_FLAG_BUTTON_BORDER 3
 
 GtkWidget* Create_UFOAIFlagsDialog (GtkWidget* surfacedialog_widget)
@@ -357,7 +392,6 @@ GtkWidget* Create_UFOAIFlagsDialog (GtkWidget* surfacedialog_widget)
 	GtkWidget *label5;
 	GtkWidget *table3;
 	GtkWidget *label6;
-	int flag = 0;
 	int i, x, y;
 
 	frame1 = gtk_frame_new ("Flags");
@@ -387,9 +421,8 @@ GtkWidget* Create_UFOAIFlagsDialog (GtkWidget* surfacedialog_widget)
 		if (!(i % 4))
 			y++;
 		x = i % 4;
-		flag = (1 << i);
 		surface_buttons[i] = gtk_toggle_button_new_with_label (surfaceFlags[i]);
-		gtk_signal_connect(GTK_OBJECT (surface_buttons[i]), "toggled", GTK_SIGNAL_FUNC(on_surface_button_toggled), &flag);
+		gtk_signal_connect(GTK_OBJECT (surface_buttons[i]), "toggled", GTK_SIGNAL_FUNC(on_surface_button_toggled), &flagBitMasks[i]);
 		gtk_widget_show(surface_buttons[i]);
 		gtk_table_attach(GTK_TABLE (table4), surface_buttons[i], 0 + x, 1 + x, (0 + y), (1 + y),
 							(GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
@@ -446,9 +479,8 @@ GtkWidget* Create_UFOAIFlagsDialog (GtkWidget* surfacedialog_widget)
 		if (!(i % 4))
 			y++;
 		x = i % 4;
-		flag = (1 << i);
 		content_buttons[i] = gtk_toggle_button_new_with_label(contentFlags[i]);
-		gtk_signal_connect(GTK_OBJECT (content_buttons[i]), "toggled", GTK_SIGNAL_FUNC (on_content_button_toggled), &flag);
+		gtk_signal_connect(GTK_OBJECT (content_buttons[i]), "toggled", GTK_SIGNAL_FUNC (on_content_button_toggled), &flagBitMasks[i]);
 		gtk_widget_show(content_buttons[i]);
 		gtk_table_attach(GTK_TABLE (table3), content_buttons[i], 0 + x, 1 + x, (0 + y), (1 + y),
 						(GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
