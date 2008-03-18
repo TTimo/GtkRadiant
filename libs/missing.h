@@ -34,40 +34,31 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 // NOTE TTimo
 //   this goes along with str.h and provides various utility classes
 //   and portability defines
-//   the filename is a legecy issue, it would be better to clean that up
+//   the file name (missing.h) is a legacy issue, it would be better to clean that up
 //   in a central 'portability' lib
 
 #include <glib.h>
 #include <string.h>
 
 #ifdef _WIN32
+
+#include <windows.h>
 #include <direct.h>
 #include <io.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 
-#define MyCopyFile(a,b) CopyFile(a,b,FALSE)
-
-#define S_ISDIR(mode) (mode & _S_IFDIR)
 #define R_OK 04
-#define mymkdir(a,b) _mkdir(a)
 
-#else
-
-#define MyCopyFile CopyFile
-#define mymkdir(a,b) mkdir(a,b)
-
-#endif
-
-#ifndef _WIN32
+#else // !_WIN32
 
 // LZ: very ugly hacks
-inline int GetLastError () { return 0; };
+inline int GetLastError() { return 0; };
 
 // temp stuff
 inline int GetPrivateProfileInt(char* a, char* b, int i, char* c) { return i; };
 #define VERIFY(a) a;
 int GetFullPathName(const char *lpFileName, int nBufferLength, char *lpBuffer, char **lpFilePart);
-bool CopyFile(const char *lpExistingFileName, const char *lpNewFileName);
-bool CopyTree( const char* source, const char* dest );
 
 #ifndef APIENTRY
 #define APIENTRY
@@ -209,5 +200,34 @@ protected:
     g_free (elem);
   };
 };
+
+class FindFiles {
+public:
+	FindFiles( const char *directory );
+	~FindFiles();
+
+	const char* NextFile();
+private:
+#ifdef _WIN32
+	Str				directory;
+	HANDLE			findHandle;
+	WIN32_FIND_DATA	findFileData;
+#else
+#endif
+};
+
+bool CopyTree( const char* source, const char* dest );
+
+typedef enum {
+	PATH_FAIL,		// stat call failed (does not exist is likely)
+	PATH_DIRECTORY,
+	PATH_FILE
+} EPathCheck;
+
+// check a path for existence, return directory / file
+EPathCheck CheckFile( const char *path );
+
+bool radCreateDirectory( const char *directory );
+bool radCopyFile( const char *lpExistingFileName, const char *lpNewFileName );
 
 #endif // _MISSING_H_

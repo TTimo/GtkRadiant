@@ -34,7 +34,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 // Leonardo Zide (leo@lokigames.com)
 //
 
-// FIXME: compile on Windows as well
+#include "missing.h"
+#include "qsysprintf.h"
+
 #if defined (__linux__) || defined (__APPLE__)
 
 #include <stdio.h>
@@ -44,10 +46,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <sys/stat.h>
 #include <stdlib.h>
 #include <dirent.h>
-#include "missing.h"
-#include "qsysprintf.h"
 
-bool CopyFile(const char *lpExistingFileName, const char *lpNewFileName)
+bool radCopyFile(const char *lpExistingFileName, const char *lpNewFileName)
 {
   FILE *src, *dst;
   void* buf;
@@ -85,57 +85,10 @@ bool CopyFile(const char *lpExistingFileName, const char *lpNewFileName)
   return ret;
 }
 
-bool CreateDirectory( const char *directory ) {
+bool radCreateDirectory( const char *directory ) {
 	if ( mkdir( directory, 0777 ) == -1 ) {
 		Sys_Printf( "mkdir %s failed\n", directory );
 		return false;
-	}
-	return true;
-}
-
-bool CopyTree( const char *source, const char *dest ) {
-	DIR				*dir;
-	struct dirent	*dirlist;
-	struct stat		sbuf;
-	Str				srcEntry;
-	Str				dstEntry;
-
-	dir = opendir( source );
-	if ( dir != NULL ) {
-		while ( ( dirlist = readdir( dir ) ) != NULL ) {
-			if ( strcmp( dirlist->d_name, "." ) == 0 || strcmp( dirlist->d_name, ".." ) == 0 ) {
-				continue;
-			}
-			if ( strcmp( dirlist->d_name, ".svn" ) == 0 ) {
-				continue;
-			}
-			srcEntry = source;
-			srcEntry += "/";
-			srcEntry += dirlist->d_name;
-			dstEntry = dest;
-			dstEntry += "/";
-			dstEntry += dirlist->d_name;
-			if ( stat( srcEntry.GetBuffer(), &sbuf ) == -1 ) {
-				Sys_Printf( "stat %s failed\n", srcEntry.GetBuffer() );
-			}
-			if ( S_ISDIR( sbuf.st_mode ) ) {
-				bool ret;
-				if ( stat( dstEntry.GetBuffer(), &sbuf ) == -1 ) {
-					ret = CreateDirectory( dstEntry.GetBuffer() );
-				}
-				ret = CopyTree( srcEntry.GetBuffer(), dstEntry.GetBuffer() );
-				if ( !ret ) {
-					return false;
-				}
-			} else {
-				Sys_Printf( "copy %s -> %s\n", srcEntry.GetBuffer(), dstEntry.GetBuffer() );
-				bool ret = CopyFile( srcEntry.GetBuffer(), dstEntry.GetBuffer() );
-				if ( !ret ) {
-					return false;
-				}
-			}
-		}
-		closedir( dir );
 	}
 	return true;
 }
@@ -178,4 +131,106 @@ int GetFullPathName(const char *lpFileName, int nBufferLength, char *lpBuffer, c
   return strlen (lpBuffer);
 }
 
+EPathCheck CheckFile( const char *path ) {
+	struct stat		sbuf;
+	if ( stat( path, &sbuf ) == -1 ) {
+		return PATH_FAIL;
+	}
+	if ( S_ISDIR( sbuf.st_mode ) ) {
+		return PATH_DIRECTORY;
+	}
+	return PATH_FILE;
+}
+
+#else
+
+FindFiles::FindFiles( const char *_directory ) {
+	directory = _directory;
+	findHandle = INVALID_HANDLE_VALUE;
+}
+
+FindFiles::~FindFiles() {
+	if ( findHandle != NULL ) {
+		FindClose( findHandle );
+	}
+}
+
+const char* FindFiles::NextFile() {
+	if ( findHandle == INVALID_HANDLE_VALUE ) {
+		findHandle = FindFirstFile( directory.GetBuffer(), &findFileData );
+		if ( findHandle == INVALID_HANDLE_VALUE ) {
+			return NULL;
+		}
+		return findFileData.cFileName;
+	}
+	if ( FindNextFile( findHandle, &findFileData ) == 0 ) {
+		FindClose( findHandle );
+		return NULL;
+	}
+	return findFileData.cFileName;
+}
+
+EPathCheck CheckFile( const char *path ) {
+	struct _stat sbuf;
+	if ( _stat( path, &sbuf ) == -1 ) {
+		return PATH_FAIL;
+	}
+	if ( ( sbuf.st_mode & _S_IFDIR ) != 0 ) {
+		return PATH_DIRECTORY;
+	}
+	return PATH_FILE;
+}
+
+bool radCreateDirectory( const char *directory ) {
+	return CreateDirectory( directory, NULL );
+}
+
+bool radCopyFile( const char *lpExistingFileName, const char *lpNewFileName ) {
+	return CopyFile( lpExistingFileName, lpNewFileName, FALSE );
+}
+
 #endif
+
+bool CopyTree( const char *source, const char *dest ) {
+	Str				srcEntry;
+	Str				dstEntry;
+	const char		*dirname;
+	FindFiles		fileScan( source );
+
+	while ( ( dirname = fileScan.NextFile() ) != NULL ) {
+		if ( strcmp( dirname, "." ) == 0 || strcmp( dirname, ".." ) == 0 ) {
+			continue;
+		}
+		if ( strcmp( dirname, ".svn" ) == 0 ) {
+			continue;
+		}
+		srcEntry = source;
+		srcEntry += "/";
+		srcEntry += dirname;
+		dstEntry = dest;
+		dstEntry += "/";
+		dstEntry += dirname;
+		switch ( CheckFile( srcEntry.GetBuffer() ) ) {
+			case PATH_DIRECTORY: {
+				if ( CheckFile( dstEntry.GetBuffer() ) == PATH_FAIL ) {
+					radCreateDirectory( dstEntry.GetBuffer() );
+				}
+				bool ret;
+				ret = CopyTree( srcEntry.GetBuffer(), dstEntry.GetBuffer() );
+				if ( !ret ) {
+					return false;
+				}
+				break;
+			}
+			case PATH_FILE: {
+				Sys_Printf( "copy %s -> %s\n", srcEntry.GetBuffer(), dstEntry.GetBuffer() );
+				bool ret = radCopyFile( srcEntry.GetBuffer(), dstEntry.GetBuffer() );
+				if ( !ret ) {
+					return false;
+				}
+				break;
+			}
+		}
+	}
+	return true;
+}

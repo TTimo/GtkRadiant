@@ -3282,24 +3282,18 @@ scan for active games that can be installed, based on the presence
 */
 void CGameInstall::ScanGames() {
 	Str				pakPaths = g_strAppPath.GetBuffer();
-	DIR				*dir;
-	struct dirent	*dirlist;
 	int				iGame = 0;
+	const char		*dirname;
 
 	pakPaths +=	"installs/";
-	dir = opendir( pakPaths.GetBuffer() );
-	if ( dir != NULL ) {
-		while ( ( dirlist = readdir( dir ) ) != NULL ) {
-			if ( stricmp( dirlist->d_name, Q3_PACK ) == 0 ) {
-				m_availGames[ iGame++ ] = GAME_Q3;
-			}
-			if ( stricmp( dirlist->d_name, URT_PACK ) == 0 ) {
-				m_availGames[ iGame++ ] = GAME_URT;
-			}
-			if ( stricmp( dirlist->d_name, UFOAI_PACK ) == 0 ) {
-				m_availGames[ iGame++ ] = GAME_UFOAI;
-			}
+	FindFiles fileScan( pakPaths.GetBuffer() );
+	while ( ( dirname = fileScan.NextFile() ) != NULL ) {
+		if ( stricmp( dirname, Q3_PACK ) == 0 ) {
+			m_availGames[ iGame++ ] = GAME_Q3;
 		}
-		closedir( dir );
+		if ( stricmp( dirname, URT_PACK ) == 0 ) {
+			m_availGames[ iGame++ ] = GAME_URT;
+		}		
 	}
 }
+

@@ -29,9 +29,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #define BMP_SIGNATURE_WORD  0x4d42
 
+#pragma pack(push)
 #pragma pack(1)
-
-
 
 typedef struct {
     unsigned short    bfType;       // signature - 'BM'
@@ -96,6 +95,6 @@ void FreeBMP(bitmap_t *bitmap);
 void WriteBMP(char *filename, bitmap_t *bit);
 void NewBMP(int width, int height, int bpp, bitmap_t *bit);
 
-
+#pragma pack(pop)
 
 #endif
