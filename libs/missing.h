@@ -73,6 +73,9 @@ int MemorySize(void *ptr);
 #define MK_CONTROL          0x0008
 #define MK_MBUTTON          0x0010
 
+#include <dirent.h>
+#include <iostream>
+
 #endif
 
 #define CString Str
@@ -213,6 +216,7 @@ private:
 	HANDLE			findHandle;
 	WIN32_FIND_DATA	findFileData;
 #else
+	DIR				*findHandle;
 #endif
 };
 
