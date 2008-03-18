@@ -1,0 +1,32 @@
+// pk3man exclusion file
+// (c) Mike Jackman 2000
+// 
+// All files listed below will
+// be excluded by the wizzard
+
+
+pak?.pk3
+
+scripts/base_door.shader
+scripts/base_floor.shader
+scripts/base_light.shader
+scripts/base_object.shader
+scripts/base_support.shader
+scripts/base_trim.shader
+scripts/base_wall.shader
+scripts/common.shader
+scripts/ctf.shader
+scripts/gothic_block.shader
+scripts/gothic_button.shader
+scripts/gothic_door.shader
+scripts/gothic_floor.shader
+scripts/gothic_light.shader
+scripts/gothic_trim.shader
+scripts/gothic_wall.shader
+scripts/liquid.shader
+scripts/organics.shader
+scripts/sfx.shader
+scripts/skin.shader
+scripts/sky.shader
+
+
