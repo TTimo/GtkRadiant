@@ -183,7 +183,7 @@ class Config:
 		else:
 			self.emit_q3map2()
 
-	def SetupEnvironment( self, env, config, useGtk = False, useGtkGL = False, useJPEG = False ):
+	def SetupEnvironment( self, env, config, useGtk = False, useGtkGL = False, useJPEG = False, useZ = False ):
 		env['CC'] = self.cc
 		env['CXX'] = self.cxx
 		( ret, xml2 ) = commands.getstatusoutput( 'xml2-config --cflags' )
@@ -226,6 +226,8 @@ class Config:
 			env.Append( LINKFLAGS = gtkgllibs.split( ' ' ) )
 		if ( useJPEG ):
 			env.Append( LIBS = 'jpeg' )
+		if ( useZ ):
+			env.Append( LIBS = 'z' )
 
 		env.Append( CFLAGS = baseflags )
 		env.Append( CXXFLAGS = baseflags + [ '-fpermissive', '-fvisibility-inlines-hidden' ] )
