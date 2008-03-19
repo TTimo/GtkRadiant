@@ -127,8 +127,7 @@ class Config:
 					# 'contrib/patches/patches.vcproj',
 					# 'plugins/archivewad/archivewad.vcproj',
 
-					# FIXME Doesn't compile cleanly
-					# 'contrib/prtview/PrtView.vcproj',
+					 'contrib/prtview/PrtView.vcproj',
 					 'contrib/hydratoolz/hydratoolz.vcproj',
 					 'contrib/bobtoolz/bobToolz_gtk.vcproj',
 					 'contrib/gtkgensurf/gtkgensurf.vcproj',

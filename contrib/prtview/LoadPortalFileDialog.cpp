@@ -28,8 +28,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //static char THIS_FILE[] = __FILE__;
 #endif
 
-#ifdef GTK_PLUGIN
-
 static void dialog_button_callback (GtkWidget *widget, gpointer data)
 {
   GtkWidget *parent;
@@ -197,92 +195,3 @@ int DoLoadPortalFileDialog ()
 
   return ret;
 }
-
-#else // GTK_PLUGIN
-
-/////////////////////////////////////////////////////////////////////////////
-// CLoadPortalFileDialog dialog
-
-CLoadPortalFileDialog::CLoadPortalFileDialog(CWnd* pParent /*=NULL*/)
-	: CDialog(CLoadPortalFileDialog::IDD, pParent)
-{
-	//{{AFX_DATA_INIT(CLoadPortalFileDialog)
-		// NOTE: the ClassWizard will add member initialization here
-	//}}AFX_DATA_INIT
-}
-
-
-void CLoadPortalFileDialog::DoDataExchange(CDataExchange* pDX)
-{
-	CDialog::DoDataExchange(pDX);
-	//{{AFX_DATA_MAP(CLoadPortalFileDialog)
-	DDX_Control(pDX, IDC_LOAD_3D, m_3d_ctrl);
-	DDX_Control(pDX, IDC_LOAD_2D, m_2d_ctrl);
-	DDX_Control(pDX, IDC_LOAD_FILE_NAME, m_fn_ctrl);
-	//}}AFX_DATA_MAP
-}
-
-
-BEGIN_MESSAGE_MAP(CLoadPortalFileDialog, CDialog)
-	//{{AFX_MSG_MAP(CLoadPortalFileDialog)
-	ON_BN_CLICKED(IDC_LOAD_OTHER, OnLoadOther)
-	//}}AFX_MSG_MAP
-END_MESSAGE_MAP()
-
-
-/////////////////////////////////////////////////////////////////////////////
-// CLoadPortalFileDialog message handlers
-
-qboolean CLoadPortalFileDialog::OnInitDialog() 
-{
-	CDialog::OnInitDialog();
-
-	char fn_drive[_MAX_DRIVE];
-	char fn_dir[_MAX_DIR];
-	char fn_name[_MAX_FNAME];
-	char fn_ext[_MAX_EXT];
-
-	char *fn = g_IBSPTable.m_pfnGetMapName();
-
-	_fullpath(portals.fn, fn, _MAX_PATH);
-	_splitpath(fn, fn_drive, fn_dir, fn_name, fn_ext);
-
-	strcpy(portals.fn, fn_drive);
-	strcat(portals.fn, fn_dir);
-	strcat(portals.fn, fn_name);
-	strcat(portals.fn, ".prt");
-
-	m_fn_ctrl.SetWindowText(portals.fn);
-
-	m_2d_ctrl.SetCheck(portals.show_2d);
-	m_3d_ctrl.SetCheck(portals.show_3d);
-
-	return TRUE;  // return TRUE unless you set the focus to a control
-	              // EXCEPTION: OCX Property Pages should return FALSE
-}
-
-void CLoadPortalFileDialog::OnOK() 
-{
-	portals.Purge();
-
-	portals.show_3d = m_3d_ctrl.GetCheck();
-	portals.show_2d = m_2d_ctrl.GetCheck();
-	
-	CDialog::OnOK();
-}
-
-void CLoadPortalFileDialog::OnLoadOther() 
-{
-	CFileDialog dlg(TRUE, "prt", portals.fn, OFN_NOCHANGEDIR | OFN_HIDEREADONLY | OFN_LONGNAMES | OFN_FILEMUSTEXIST,
-		"Portal files (*.prt)|*.prt|All Files (*.*)|*.*||", NULL);
-
-	dlg.m_ofn.lpstrTitle = "Locate portal file";
-
-	if(IDOK == dlg.DoModal())
-	{
-		_fullpath(portals.fn, dlg.GetPathName().GetBuffer(1), _MAX_PATH);
-		m_fn_ctrl.SetWindowText(portals.fn);
-	}
-}
-
-#endif // GTK_PLUGIN

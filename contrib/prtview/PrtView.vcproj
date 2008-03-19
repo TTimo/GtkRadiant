@@ -56,15 +56,15 @@
 			</File>
 			<File RelativePath=".\LoadPortalFileDialog.cpp">
 			</File>
-			<File RelativePath=".\Portals.cpp">
+			<File RelativePath=".\portals.cpp">
 			</File>
-			<File RelativePath=".\PrtView.cpp">
+			<File RelativePath=".\prtview.cpp">
 			</File>
 			<File RelativePath=".\PrtView.def">
 			</File>
 			<File RelativePath=".\PrtView.rc">
 			</File>
-			<File RelativePath=".\StdAfx.cpp">
+			<File RelativePath=".\stdafx.cpp">
 				<FileConfiguration Name="Debug|Win32">
 					<Tool AdditionalIncludeDirectories="&quot;$(SolutionDir)\include&quot;;&quot;$(SolutionDir)\libs&quot;;&quot;$(SolutionDir)\..\STLPort\stlport&quot;;&quot;$(SolutionDir)\..\gtk2\include&quot;;&quot;$(SolutionDir)\..\gtk2\include\glib-2.0&quot;;&quot;$(SolutionDir)\..\gtk2\lib\glib-2.0\include&quot;;&quot;$(SolutionDir)\..\libxml2\include&quot;" DisableSpecificWarnings="4996;4244;4267" Name="VCCLCompilerTool" PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS" UsePrecompiledHeader="1"/>
 				</FileConfiguration>

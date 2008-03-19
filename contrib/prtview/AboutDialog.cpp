@@ -32,8 +32,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /////////////////////////////////////////////////////////////////////////////
 // CAboutDialog dialog
 
-#ifdef GTK_PLUGIN
-
 static void dialog_button_callback (GtkWidget *widget, gpointer data)
 {
   GtkWidget *parent;
@@ -107,34 +105,6 @@ void DoAboutDlg ()
   gtk_grab_remove (dlg);
   gtk_widget_destroy (dlg);
 }
-
-#else // GTK_PLUGIN
-
-CAboutDialog::CAboutDialog(CWnd* pParent /*=NULL*/)
-	: CDialog(CAboutDialog::IDD, pParent)
-{
-	//{{AFX_DATA_INIT(CAboutDialog)
-		// NOTE: the ClassWizard will add member initialization here
-	//}}AFX_DATA_INIT
-}
-
-
-void CAboutDialog::DoDataExchange(CDataExchange* pDX)
-{
-	CDialog::DoDataExchange(pDX);
-	//{{AFX_DATA_MAP(CAboutDialog)
-		// NOTE: the ClassWizard will add DDX and DDV calls here
-	//}}AFX_DATA_MAP
-}
-
-
-BEGIN_MESSAGE_MAP(CAboutDialog, CDialog)
-	//{{AFX_MSG_MAP(CAboutDialog)
-		// NOTE: the ClassWizard will add message map macros here
-	//}}AFX_MSG_MAP
-END_MESSAGE_MAP()
-
-#endif // GTK_PLUGIN
 
 /////////////////////////////////////////////////////////////////////////////
 // CAboutDialog message handlers
