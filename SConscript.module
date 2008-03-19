@@ -14,6 +14,7 @@ env = Environment()
 useJPEG = False
 useGtk = False
 useZ = False
+usePNG = False
 if ( libname == 'image' ):
 	useJPEG = True
 if ( libname == 'surface' ):
@@ -40,10 +41,11 @@ if ( libname == 'model' ):
 	useGtk = True
 if ( libname == 'TexTool' ):
 	useGtk = True
-#if ( libname == 'imagepng' ):
-#	useZ = True
+if ( libname == 'imagepng' ):
+	usePNG = True
 
-settings.SetupEnvironment( env, config['name'], useGtk = useGtk, useJPEG = useJPEG, useZ = useZ )
+
+settings.SetupEnvironment( env, config['name'], useGtk = useGtk, useJPEG = useJPEG, useZ = useZ, usePNG = usePNG )
 proj = utils.vcproj( os.path.join( GetLaunchDir(), project ) )
 
 # some filtering. may need to improve that

@@ -106,8 +106,7 @@ class Config:
 					 'plugins/entity/entity.vcproj',
 					 'plugins/image/image.vcproj',
 					 'plugins/model/model.vcproj',
-					# FIXME: Fix linker flags - xml2, z
-					# 'plugins/imagepng/imagepng.vcproj',
+					 'plugins/imagepng/imagepng.vcproj',
 					 'plugins/imagewal/imagewal.vcproj',
 					 'plugins/imagem8/imagem8.vcproj',
 					 'plugins/spritemodel/spritemodel.vcproj',
@@ -183,7 +182,7 @@ class Config:
 		else:
 			self.emit_q3map2()
 
-	def SetupEnvironment( self, env, config, useGtk = False, useGtkGL = False, useJPEG = False, useZ = False ):
+	def SetupEnvironment( self, env, config, useGtk = False, useGtkGL = False, useJPEG = False, useZ = False, usePNG = False ):
 		env['CC'] = self.cc
 		env['CXX'] = self.cxx
 		( ret, xml2 ) = commands.getstatusoutput( 'xml2-config --cflags' )
@@ -226,6 +225,9 @@ class Config:
 			env.Append( LINKFLAGS = gtkgllibs.split( ' ' ) )
 		if ( useJPEG ):
 			env.Append( LIBS = 'jpeg' )
+		if ( usePNG ):
+			pnglibs = 'png z'
+			env.Append( LIBS = pnglibs.split( ' ' ) )
 		if ( useZ ):
 			env.Append( LIBS = 'z' )
 
