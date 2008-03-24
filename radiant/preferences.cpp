@@ -3237,9 +3237,9 @@ void CGameInstall::Run() {
 	fprintf( fg, "  name=\"%s\"\n", m_strName.GetBuffer() );
 	fprintf( fg, "  gametools=\"%sgames\"\n", g_strAppPath.GetBuffer() );
 	fprintf( fg, "  enginepath=\"%s\"\n", m_strEngine.GetBuffer() );
-	fprintf( fg, "  prefix=\".q3a\"\n" ); 
 	switch ( m_availGames[ m_nComboSelect ] ) {
 	case GAME_Q3: {
+		fprintf( fg, "  prefix=\".q3a\"\n" );
 		Str source = g_strAppPath.GetBuffer();
 		source += "installs/";
 		source += Q3_PACK;
@@ -3249,6 +3249,7 @@ void CGameInstall::Run() {
 		break;
 	}
 	case GAME_URT: {
+		fprintf( fg, "  prefix=\".q3a\"\n" );
 		Str source = g_strAppPath.GetBuffer();
 		source += "installs/";
 		source += URT_PACK;
@@ -3258,6 +3259,7 @@ void CGameInstall::Run() {
 		break;
 	}
 	case GAME_UFOAI: {
+		fprintf( fg, "  prefix=\".ufoai\"\n" );
 		Str source = g_strAppPath.GetBuffer();
 		source += "installs/";
 		source += UFOAI_PACK;
@@ -3267,6 +3269,7 @@ void CGameInstall::Run() {
 		break;
 	}
 	case GAME_WARSOW:
+		fprintf( fg, "  prefix=\".warsow\"\n" );
 		fprintf( fg, "  basegame=\"basewsw\"\n" );
 		break;
 	}
@@ -3293,7 +3296,10 @@ void CGameInstall::ScanGames() {
 		}
 		if ( stricmp( dirname, URT_PACK ) == 0 ) {
 			m_availGames[ iGame++ ] = GAME_URT;
-		}		
+		}
+		if ( stricmp( dirname, UFOAI_PACK ) == 0 ) {
+			m_availGames[ iGame++ ] = GAME_UFOAI;
+		}
 	}
 }
 
