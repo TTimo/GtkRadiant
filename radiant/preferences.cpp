@@ -3169,6 +3169,9 @@ void CGameInstall::BuildDialog() {
 		case GAME_UFOAI:
 			combo_list = g_list_append( combo_list, "UFO: Alien Invasion" );
 			break;
+		case GAME_Q2W:
+			combo_list = g_list_append( combo_list, "Quake2World" );
+			break;
 		case GAME_WARSOW:
 			combo_list = g_list_append( combo_list, "Warsow" );
 			break;
@@ -3268,10 +3271,26 @@ void CGameInstall::Run() {
 		fprintf( fg, "  basegame=\"base\"\n" );
 		break;
 	}
-	case GAME_WARSOW:
+	case GAME_Q2W: {
+		fprintf( fg, "  prefix=\".quake2world\"\n" );
+		Str source = g_strAppPath.GetBuffer();
+		source += "installs/";
+		source += Q2W_PACK;
+		Str dest = m_strEngine.GetBuffer();
+		CopyTree( source.GetBuffer(), dest.GetBuffer() );
+		fprintf( fg, "  basegame=\"default\"\n" );
+		break;
+	}
+	case GAME_WARSOW: {
 		fprintf( fg, "  prefix=\".warsow\"\n" );
+		Str source = g_strAppPath.GetBuffer();
+		source += "installs/";
+		source += WARSOW_PACK;
+		Str dest = m_strEngine.GetBuffer();
+		CopyTree( source.GetBuffer(), dest.GetBuffer() );
 		fprintf( fg, "  basegame=\"basewsw\"\n" );
 		break;
+	}
 	}
 	fprintf( fg, "/>\n" );
 	fclose( fg );
@@ -3299,6 +3318,12 @@ void CGameInstall::ScanGames() {
 		}
 		if ( stricmp( dirname, UFOAI_PACK ) == 0 ) {
 			m_availGames[ iGame++ ] = GAME_UFOAI;
+		}
+		if ( stricmp( dirname, Q2W_PACK ) == 0 ) {
+			m_availGames[ iGame++ ] = GAME_Q2W;
+		}
+		if ( stricmp( dirname, WARSOW_PACK ) == 0 ) {
+			m_availGames[ iGame++ ] = GAME_WARSOW;
 		}
 	}
 }
