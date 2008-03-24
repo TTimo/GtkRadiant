@@ -203,6 +203,8 @@ select games, copy editing assets and write out configuration files
 #define UFOAI_PACK "UFOAIPack"
 #define Q2W_PACK "Q2WPack"
 #define WARSOW_PACK "WarsowPack"
+#define NEXUIZ_PACK "NexuizPack"
+#define Q2_PACK "Q2Pack"
 
 class CGameInstall : public Dialog {
 public:
@@ -218,6 +220,8 @@ public:
 		GAME_UFOAI,
 		GAME_Q2W,
 		GAME_WARSOW,
+		GAME_NEXUIZ,
+		GAME_Q2,
 		GAME_COUNT
 	};
 

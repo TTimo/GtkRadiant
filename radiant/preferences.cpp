@@ -3160,6 +3160,9 @@ void CGameInstall::BuildDialog() {
 	int iGame = 0;
 	while ( m_availGames[ iGame ] != GAME_NONE ) {
 		switch ( m_availGames[ iGame ] ) {
+		case GAME_Q2:
+			combo_list = g_list_append( combo_list, "Quake II" );
+			break;
 		case GAME_Q3:
 			combo_list = g_list_append( combo_list, "Quake III Arena (including mods)" );
 			break;
@@ -3174,6 +3177,9 @@ void CGameInstall::BuildDialog() {
 			break;
 		case GAME_WARSOW:
 			combo_list = g_list_append( combo_list, "Warsow" );
+			break;
+		case GAME_NEXUIZ:
+			combo_list = g_list_append( combo_list, "Nexuiz" );
 			break;
 		}
 		iGame++;
@@ -3241,6 +3247,16 @@ void CGameInstall::Run() {
 	fprintf( fg, "  gametools=\"%sgames/%s\"\n", g_strAppPath.GetBuffer(), m_strName.GetBuffer() );
 	fprintf( fg, "  enginepath=\"%s\"\n", m_strEngine.GetBuffer() );
 	switch ( m_availGames[ m_nComboSelect ] ) {
+	case GAME_Q2: {
+		fprintf( fg, "  prefix=\".quake2\"\n" );
+		Str source = g_strAppPath.GetBuffer();
+		source += "installs/";
+		source += Q2_PACK;
+		Str dest = m_strEngine.GetBuffer();
+		CopyTree( source.GetBuffer(), dest.GetBuffer() );
+		fprintf( fg, "  basegame=\"baseq2\"\n" );
+		break;
+	}
 	case GAME_Q3: {
 		fprintf( fg, "  prefix=\".q3a\"\n" );
 		Str source = g_strAppPath.GetBuffer();
@@ -3291,6 +3307,16 @@ void CGameInstall::Run() {
 		fprintf( fg, "  basegame=\"basewsw\"\n" );
 		break;
 	}
+	case GAME_NEXUIZ: {
+		fprintf( fg, "  prefix=\".nexuiz\"\n" );
+		Str source = g_strAppPath.GetBuffer();
+		source += "installs/";
+		source += NEXUIZ_PACK;
+		Str dest = m_strEngine.GetBuffer();
+		CopyTree( source.GetBuffer(), dest.GetBuffer() );
+		fprintf( fg, "  basegame=\"data\"\n" );
+		break;
+	}
 	}
 	fprintf( fg, "/>\n" );
 	fclose( fg );
@@ -3324,6 +3350,12 @@ void CGameInstall::ScanGames() {
 		}
 		if ( stricmp( dirname, WARSOW_PACK ) == 0 ) {
 			m_availGames[ iGame++ ] = GAME_WARSOW;
+		}
+		if ( stricmp( dirname, NEXUIZ_PACK ) == 0 ) {
+			m_availGames[ iGame++ ] = GAME_NEXUIZ;
+		}
+		if ( stricmp( dirname, Q2_PACK ) == 0 ) {
+			m_availGames[ iGame++ ] = GAME_Q2;
 		}
 	}
 }
