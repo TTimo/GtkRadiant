@@ -3235,7 +3235,7 @@ void CGameInstall::Run() {
 	}
 	fprintf( fg, "<?xml version=\"1.0\" encoding=\"iso-8859-1\" standalone=\"yes\"?>\n<game\n" );
 	fprintf( fg, "  name=\"%s\"\n", m_strName.GetBuffer() );
-	fprintf( fg, "  gametools=\"%sgames\"\n", g_strAppPath.GetBuffer() );
+	fprintf( fg, "  gametools=\"%sgames/%s\"\n", g_strAppPath.GetBuffer(), m_strName.GetBuffer() );
 	fprintf( fg, "  enginepath=\"%s\"\n", m_strEngine.GetBuffer() );
 	switch ( m_availGames[ m_nComboSelect ] ) {
 	case GAME_Q3: {
