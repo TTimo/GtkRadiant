@@ -1,0 +1,92 @@
+<?xml version="1.0"?>
+<!DOCTYPE project SYSTEM "dtds/project.dtd">
+<!--
+project template
+the $* strings will be expanded following these rules:
+$TEMPLATEapppath: path to the Radiant .. C:\Program Files\Gtkradiant
+$TEMPLATEenginepath: path to the engine .. C:\Program Files\UFO Alien Invasion\GameData
+$TEMPLATEtoolspath: path to the tools directory (enginepath)radiant
+  (NOTE: on win32 tools directory is usually where the editor is .. but it's not true on linux)
+$TEMPLATEuserhomepath: on linux, the directory with write permissions for saving maps etc.
+  on win32, == $TEMPLATEenginepath
+$TEMPLATEbasedir: base game dir
+
+Note : Default project settings are for single player... this can be changed throught the projects select in the File Menu
+
+-->
+<project>
+  <key name="version" value="2"/>
+  <key name="basepath" value="$TEMPLATEenginepath$TEMPLATEbasedir/"/>
+  <key name="rshcmd" value=""/>
+  <key name="remotebasepath" value="$TEMPLATEenginepath$TEMPLATEbasedir/"/>
+  <key name="entitypath" value="$TEMPLATEtoolspath$TEMPLATEbasedir/scripts/entities.def"/>
+  <key name="texturepath" value="$TEMPLATEenginepath$TEMPLATEbasedir/textures/"/>
+  <key name="autosave" value="$TEMPLATEuserhomepath$TEMPLATEbasedir/maps/autosave.map"/>
+  <key name="mapspath" value="$TEMPLATEenginepath$TEMPLATEbasedir/maps/"/>
+  <key name="surf1" value="light" />
+  <key name="surf2" value="slick" />
+  <key name="surf3" value="" />
+  <key name="surf4" value="warp" />
+  <key name="surf5" value="trans33" />
+  <key name="surf6" value="trans66" />
+  <key name="surf7" value="flow" />
+  <key name="surf8" value="nodraw" />
+  <key name="surf9" value="hint" />
+  <key name="surf10" value="skip" />
+  <key name="surf11" value="phong" />
+  <key name="surf12" value="" />
+  <key name="surf13" value="" />
+  <key name="surf14" value="" />
+  <key name="surf15" value="" />
+  <key name="surf16" value="" />
+  <key name="surf17" value="" />
+  <key name="surf18" value="" />
+  <key name="surf19" value="" />
+  <key name="surf20" value="" />
+  <key name="surf21" value="" />
+  <key name="surf22" value="" />
+  <key name="surf23" value="" />
+  <key name="surf24" value="" />
+  <key name="surf25" value="" />
+  <key name="surf26" value="alphatest" />
+  <key name="surf27" value="" />
+  <key name="surf28" value="" />
+  <key name="surf29" value="" />
+  <key name="surf30" value="" />
+  <key name="surf31" value="" />
+  <key name="surf32" value="" />
+  <key name="cont1" value="solid" />
+  <key name="cont2" value="window" />
+  <key name="cont3" value="" />
+  <key name="cont4" value="fireaffected" />
+  <key name="cont5" value="" />
+  <key name="cont6" value="water" />
+  <key name="cont7" value="" />
+  <key name="cont8" value="" />
+  <key name="cont9" value="level1" />
+  <key name="cont10" value="level2" />
+  <key name="cont11" value="level3" />
+  <key name="cont12" value="level4" />
+  <key name="cont13" value="level5" />
+  <key name="cont14" value="level6" />
+  <key name="cont15" value="level7" />
+  <key name="cont16" value="level8" />
+  <key name="cont17" value="actorclip" />
+  <key name="cont18" value="passable" />
+  <key name="cont19" value="footstep" />
+  <key name="cont20" value="" />
+  <key name="cont21" value="" />
+  <key name="cont22" value="" />
+  <key name="cont23" value="" />
+  <key name="cont24" value="" />
+  <key name="cont25" value="origin" />
+  <key name="cont26" value="weaponclip" />
+  <key name="cont27" value="" />
+  <key name="cont28" value="detail" />
+  <key name="cont29" value="" />
+  <key name="cont30" value="" />
+  <key name="cont31" value="stepon" />
+  <key name="cont32" value="" />
+  <key name="bsp_q2map: (final)" value="! &quot;$TEMPLATEapppathq2wmap&quot; -extra $"/>
+</project>
+
