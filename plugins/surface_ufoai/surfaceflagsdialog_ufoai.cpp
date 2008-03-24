@@ -269,77 +269,6 @@ void on_contentbutton_clicked (GtkButton *button, gpointer user_data)
 	gtk_notebook_set_page (GTK_NOTEBOOK(notebook1), 1);
 }
 
-// FIXME: This should be in the ufoai.game
-static const char *surfaceFlags[] = {
-	"light",
-	"slick",
-	"",
-	"warp",
-	"trans33",
-	"trans66",
-	"flow",
-	"nodraw",
-	"hint",
-	"skip",
-	"phong",
-	"",
-	"",
-	"",
-	"",
-	"",
-	"",
-	"",
-	"",
-	"",
-	"",
-	"",
-	"",
-	"",
-	"",
-	"alphatest",
-	"",
-	"",
-	"",
-	"",
-	"",
-	""
-};
-
-static const char *contentFlags[] = {
-	"solid",
-	"window",
-	"",
-	"fireaffected",
-	"",
-	"water",
-	"",
-	"",
-	"level1",
-	"level2",
-	"level3",
-	"level4",
-	"level5",
-	"level6",
-	"level7",
-	"level8",
-	"actorclip",
-	"passable",
-	"footstep",
-	"",
-	"",
-	"",
-	"",
-	"",
-	"origin",
-	"weaponclip",
-	"",
-	"detail",
-	"",
-	"",
-	"stepon",
-	""
-};
-
 #define UFOAI_FLAG_BUTTON_BORDER 3
 
 GtkWidget* Create_UFOAIFlagsDialog (GtkWidget* surfacedialog_widget)
@@ -358,6 +287,8 @@ GtkWidget* Create_UFOAIFlagsDialog (GtkWidget* surfacedialog_widget)
 	GtkWidget *table3;
 	GtkWidget *label6;
 	int i, x, y;
+	const char *buttonLabel;
+	char buffer[8];
 
 	frame1 = gtk_frame_new ("Flags");
 	gtk_widget_show (frame1);
@@ -386,7 +317,10 @@ GtkWidget* Create_UFOAIFlagsDialog (GtkWidget* surfacedialog_widget)
 		if (!(i % 4))
 			y++;
 		x = i % 4;
-		surface_buttons[i] = gtk_toggle_button_new_with_label (surfaceFlags[i]);
+		snprintf(buffer, sizeof(buffer) - 1, "surf%i", i + 1);
+		buttonLabel = g_FuncTable.m_pfnReadProjectKey(buffer);
+		Sys_Printf("%s: %s\n", buffer, buttonLabel);
+		surface_buttons[i] = gtk_toggle_button_new_with_label (buttonLabel);
 		gtk_signal_connect(GTK_OBJECT (surface_buttons[i]), "toggled", GTK_SIGNAL_FUNC(on_surface_button_toggled), GINT_TO_POINTER(1 << i));
 		gtk_widget_show(surface_buttons[i]);
 		gtk_table_attach(GTK_TABLE (table4), surface_buttons[i], 0 + x, 1 + x, (0 + y), (1 + y),
@@ -444,7 +378,9 @@ GtkWidget* Create_UFOAIFlagsDialog (GtkWidget* surfacedialog_widget)
 		if (!(i % 4))
 			y++;
 		x = i % 4;
-		content_buttons[i] = gtk_toggle_button_new_with_label(contentFlags[i]);
+		snprintf(buffer, sizeof(buffer) - 1, "cont%i", i + 1);
+		buttonLabel = g_FuncTable.m_pfnReadProjectKey(buffer);
+		content_buttons[i] = gtk_toggle_button_new_with_label(buttonLabel);
 		gtk_signal_connect(GTK_OBJECT (content_buttons[i]), "toggled", GTK_SIGNAL_FUNC (on_content_button_toggled), GINT_TO_POINTER(1 << i));
 		gtk_widget_show(content_buttons[i]);
 		gtk_table_attach(GTK_TABLE (table3), content_buttons[i], 0 + x, 1 + x, (0 + y), (1 + y),
