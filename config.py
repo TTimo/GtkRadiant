@@ -26,13 +26,9 @@ class Config:
 		self.config_selected = [ 'release' ]
 		# those are global to each config
 		self.platform = platform.system()
-		if ( self.platform == 'Darwin' ):
-			self.cc = 'gcc'
-			self.cxx = 'g++'
-		else:
-			self.cc = 'gcc-4.1'
-			self.cxx = 'g++-4.1'
-		self.install = True
+		self.cc = 'gcc'
+		self.cxx = 'g++'
+		self.install_directory = 'install'
 
 	def __repr__( self ):
 		return 'config: target=%s config=%s' % ( self.target_selected, self.config_selected )
@@ -49,26 +45,15 @@ class Config:
 	def _processCXX( self, ops ):
 		self.cxx = ops
 
-	def _processInstall( self, ops ):
-		ops = ops[0]
-		if ( ops == 'yes' or ops == 'true' or ops == 'True' or ops == '1' or ops == True ):
-			self.install = True
-			return
-		self.install = False
+	def _processInstallDir( self, ops ):
+		self.install_directory = os.path.normpath( os.path.expanduser( ops[0] ) )
 
 	def setupParser( self, operators ):
 		operators['target'] = self._processTarget
 		operators['config'] = self._processConfig
 		operators['cc'] = self._processCC
 		operators['cxx'] = self._processCXX
-		operators['install'] = self._processInstall
-
-	def InstallAs( self, target, source ):
-		if ( self.install ):
-			iret = InstallAs( target, source )
-			Default( iret )
-		else:
-			Default( source )
+		operators['install_directory'] = self._processInstallDir
 
 	def emit_radiant( self ):
 		settings = self
@@ -86,7 +71,7 @@ class Config:
 				lib_objects += SConscript( os.path.join( build_dir, 'SConscript.lib' ) )
 			Export( 'lib_objects' )
 			radiant = SConscript( os.path.join( build_dir, 'SConscript.radiant' ) )
-			self.InstallAs( 'install/radiant.bin', radiant )
+			Default( InstallAs( os.path.join( self.install_directory, 'radiant.bin' ), radiant ) )
 
 			# PIC versions of the libs for the modules
 			shlib_objects_extra = {}
@@ -148,7 +133,7 @@ class Config:
 					shlib_objects += shlib_objects_extra['cmdlib']
 				Export( 'project', 'shlib_objects' )
 				module = SConscript( os.path.join( build_dir, 'SConscript.module' ) )
-				self.InstallAs( 'install/modules/%s.so' % libname, module )
+				Default( InstallAs( os.path.join( self.install_directory, 'modules/%s.so' % libname ), module ) )
 
 	def emit_q3map2( self ):
 		settings = self
@@ -165,7 +150,7 @@ class Config:
 				lib_objects += SConscript( os.path.join( build_dir, 'SConscript.lib' ) )
 			Export( 'lib_objects' )
 			q3map2 = SConscript( os.path.join( build_dir, 'SConscript.q3map2' ) )
-			self.InstallAs( 'install/q3map2', q3map2 )
+			Default( InstallAs( os.path.join( self.install_directory, 'q3map2' ), q3map2 ) )
 
 
 	def emit( self ):
