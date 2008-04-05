@@ -3244,10 +3244,10 @@ void CGameInstall::Run() {
 	}
 	fprintf( fg, "<?xml version=\"1.0\" encoding=\"iso-8859-1\" standalone=\"yes\"?>\n<game\n" );
 	fprintf( fg, "  name=\"%s\"\n", m_strName.GetBuffer() );
-	fprintf( fg, "  gametools=\"%sgames/%s\"\n", g_strAppPath.GetBuffer(), m_strName.GetBuffer() );
 	fprintf( fg, "  enginepath=\"%s\"\n", m_strEngine.GetBuffer() );
 	switch ( m_availGames[ m_nComboSelect ] ) {
 	case GAME_Q2: {
+		fprintf( fg, "  gametools=\"%sgames/quake2\"\n", g_strAppPath.GetBuffer() );
 		fprintf( fg, "  prefix=\".quake2\"\n" );
 		Str source = g_strAppPath.GetBuffer();
 		source += "installs/";
@@ -3258,6 +3258,7 @@ void CGameInstall::Run() {
 		break;
 	}
 	case GAME_Q3: {
+		fprintf( fg, "  gametools=\"%sgames/quake3\"\n", g_strAppPath.GetBuffer() );
 		fprintf( fg, "  prefix=\".q3a\"\n" );
 		Str source = g_strAppPath.GetBuffer();
 		source += "installs/";
@@ -3268,6 +3269,7 @@ void CGameInstall::Run() {
 		break;
 	}
 	case GAME_URT: {
+		fprintf( fg, "  gametools=\"%sgames/q3ut4\"\n", g_strAppPath.GetBuffer() );
 		fprintf( fg, "  prefix=\".q3a\"\n" );
 		Str source = g_strAppPath.GetBuffer();
 		source += "installs/";
@@ -3278,6 +3280,7 @@ void CGameInstall::Run() {
 		break;
 	}
 	case GAME_UFOAI: {
+		fprintf( fg, "  gametools=\"%sgames/ufoai\"\n", g_strAppPath.GetBuffer() );
 		fprintf( fg, "  prefix=\".ufoai\"\n" );
 		Str source = g_strAppPath.GetBuffer();
 		source += "installs/";
@@ -3288,6 +3291,7 @@ void CGameInstall::Run() {
 		break;
 	}
 	case GAME_Q2W: {
+		fprintf( fg, "  gametools=\"%sgames/q2w\"\n", g_strAppPath.GetBuffer() );
 		fprintf( fg, "  prefix=\".quake2world\"\n" );
 		Str source = g_strAppPath.GetBuffer();
 		source += "installs/";
@@ -3298,6 +3302,7 @@ void CGameInstall::Run() {
 		break;
 	}
 	case GAME_WARSOW: {
+		fprintf( fg, "  gametools=\"%sgames/warsow\"\n", g_strAppPath.GetBuffer() );
 		fprintf( fg, "  prefix=\".warsow\"\n" );
 		Str source = g_strAppPath.GetBuffer();
 		source += "installs/";
@@ -3308,6 +3313,7 @@ void CGameInstall::Run() {
 		break;
 	}
 	case GAME_NEXUIZ: {
+		fprintf( fg, "  gametools=\"%sgames/nexuiz\"\n", g_strAppPath.GetBuffer() );
 		fprintf( fg, "  prefix=\".nexuiz\"\n" );
 		Str source = g_strAppPath.GetBuffer();
 		source += "installs/";

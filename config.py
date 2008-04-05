@@ -13,7 +13,7 @@ import utils
 class Config:
 	# not used atm, but useful to keep a list in mind
 	# may use them eventually for the 'all' and other aliases expansions?
-	target_choices = utils.Enum( 'radiant', 'q3map2' )
+	target_choices = utils.Enum( 'radiant', 'q3map2', 'setup' )
 	config_choices = utils.Enum( 'debug', 'release' )
 
 	# aliases
@@ -29,6 +29,11 @@ class Config:
 		self.cc = 'gcc'
 		self.cxx = 'g++'
 		self.install_directory = 'install'
+		
+		# platforms for which to assemble a setup
+		self.setup_platforms = [ 'local', 'x86', 'x64', 'win32' ]
+		# paks to assemble in the setup
+		self.setup_packs = [ 'Q3Pack', 'UrTPack' ]
 
 	def __repr__( self ):
 		return 'config: target=%s config=%s' % ( self.target_selected, self.config_selected )
@@ -48,12 +53,20 @@ class Config:
 	def _processInstallDir( self, ops ):
 		self.install_directory = os.path.normpath( os.path.expanduser( ops[0] ) )
 
+	def _processSetupPlatforms( self, ops ):
+		self.setup_platforms = ops
+
+	def _processSetupPacks( self, ops ):
+		self.setup_packs = ops
+
 	def setupParser( self, operators ):
 		operators['target'] = self._processTarget
 		operators['config'] = self._processConfig
 		operators['cc'] = self._processCC
 		operators['cxx'] = self._processCXX
 		operators['install_directory'] = self._processInstallDir
+		operators['setup_platforms'] = self._processSetupPlatforms
+		operators['setup_packs'] = self._processSetupPacks
 
 	def emit_radiant( self ):
 		settings = self
@@ -167,6 +180,13 @@ class Config:
 		else:
 			self.emit_q3map2()
 
+		try:
+			self.target_selected.index( 'setup' )
+		except:
+			pass
+		else:
+			self.Setup()
+
 	def SetupEnvironment( self, env, config, useGtk = False, useGtkGL = False, useJPEG = False, useZ = False, usePNG = False ):
 		env['CC'] = self.cc
 		env['CXX'] = self.cxx
@@ -227,9 +247,30 @@ class Config:
 		else:
 			env.Append( CFLAGS = [ '-O3', '-Winline', '-ffast-math', '-fno-unsafe-math-optimizations', '-fno-strict-aliasing' ] )
 			env.Append( CXXFLAGS = [ '-O3', '-Winline', '-ffast-math', '-fno-unsafe-math-optimizations','-fno-strict-aliasing' ] )
-			#env.Append( CFLAGS = [ '-march=pentium3' ] )
 
-#		env.Append( LINKFLAGS = [ '-m32' ] )
+	def CheckoutOrUpdate( self, svnurl, path ):
+		if ( os.path.exists( path ) ):
+			# NOTE: check the svnurl matches?
+			cmd = 'svn update "%s"' % path
+			print cmd
+		else:
+			cmd = 'svn checkout %s "%s"' % ( svnurl, path )
+		ret = os.system( cmd )
+		if ( ret != 0 ):
+			raise 'checkout or update failed'
+			
+
+	def FetchGamePaks( self, path ):
+		for pak in self.setup_packs:
+			if ( pak == 'Q3Pack' or pak == 'UrTPack' ):
+				svnurl = 'https://zerowing.idsoftware.com/svn/radiant.gamepacks/%s/trunk' % pak
+				self.CheckoutOrUpdate( svnurl, os.path.join( path, 'installs', pak ) )
+
+	def Setup( self ):
+		for platform in self.setup_platforms:
+			if ( platform == 'local' ):
+				# special case, fetch external paks under the local install directory
+				self.FetchGamePaks( self.install_directory )
 
 # parse the config statement line to produce/update an existing config list
 # the configs expose a list of keywords and accepted values, which the engine parses out
