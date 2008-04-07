@@ -16,7 +16,7 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="$(SolutionDir)\build\$(ConfigurationName)"
+			OutputDirectory="..\..\..\..\ZeroRadiant-win32-20080406"
 			IntermediateDirectory="$(SolutionDir)\build\intermediate\$(ConfigurationName)\$(ProjectName)"
 			ConfigurationType="1"
 			CharacterSet="2"
@@ -997,11 +997,11 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\gtk+\gtk\gtkmisc.h"
+					RelativePath=".\gtkmisc.h"
 					>
 				</File>
 				<File
-					RelativePath=".\gtkmisc.h"
+					RelativePath="..\..\src\gtk+\gtk\gtkmisc.h"
 					>
 				</File>
 				<File
@@ -2414,10 +2414,6 @@
 			Name="Misc"
 			>
 			<File
-				RelativePath="..\..\src\gtk+\gtk\makefile.msc"
-				>
-			</File>
-			<File
 				RelativePath="..\..\src\glib\makefile.msc"
 				>
 			</File>
@@ -2427,6 +2423,10 @@
 			</File>
 			<File
 				RelativePath="..\..\src\gtk+\gdk\win32\makefile.msc"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\gtk+\gtk\makefile.msc"
 				>
 			</File>
 		</Filter>

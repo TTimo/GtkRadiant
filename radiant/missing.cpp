@@ -168,6 +168,7 @@ const char* FindFiles::NextFile() {
 
 FindFiles::FindFiles( const char *_directory ) {
 	directory = _directory;
+	directory += '*';
 	findHandle = INVALID_HANDLE_VALUE;
 }
 
