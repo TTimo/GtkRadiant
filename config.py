@@ -29,11 +29,11 @@ class Config:
 		self.cc = 'gcc'
 		self.cxx = 'g++'
 		self.install_directory = 'install'
-		
+
 		# platforms for which to assemble a setup
 		self.setup_platforms = [ 'local', 'x86', 'x64', 'win32' ]
 		# paks to assemble in the setup
-		self.setup_packs = [ 'Q3Pack', 'UrTPack' ]
+		self.setup_packs = [ 'Q3Pack', 'UrTPack', 'UFOAIPack', 'Q2WPack' ]
 
 	def __repr__( self ):
 		return 'config: target=%s config=%s' % ( self.target_selected, self.config_selected )
@@ -258,11 +258,11 @@ class Config:
 		ret = os.system( cmd )
 		if ( ret != 0 ):
 			raise 'checkout or update failed'
-			
+
 
 	def FetchGamePaks( self, path ):
 		for pak in self.setup_packs:
-			if ( pak == 'Q3Pack' or pak == 'UrTPack' ):
+			if ( pak == 'Q3Pack' or pak == 'UrTPack' or pak == 'UFOAIPack' or pak == 'Q2WPack' ):
 				svnurl = 'https://zerowing.idsoftware.com/svn/radiant.gamepacks/%s/trunk' % pak
 				self.CheckoutOrUpdate( svnurl, os.path.join( path, 'installs', pak ) )
 
