@@ -196,7 +196,13 @@ void Dialog::UpdateData (bool retrieve)
               }
             i++;
             }
-          }	break;
+          }
+		  break;
+		case DLG_COMBO_BOX_INT: {
+			*(int*)data->buffer = gtk_combo_box_get_active( GTK_COMBO_BOX( data->object ) );
+		}
+			break;
+
         }
       }
     }
@@ -241,8 +247,7 @@ void Dialog::UpdateData (bool retrieve)
         case DLG_ADJ_INT:
           gtk_adjustment_set_value (GTK_ADJUSTMENT (data->object), (*(int*)data->buffer));
           break;
-        case DLG_COMBO_INT:
-          {
+        case DLG_COMBO_INT: {
           GList *lst = GTK_LIST (GTK_COMBO (data->object)->list)->children;
           char *entry = "";
           
@@ -254,7 +259,12 @@ void Dialog::UpdateData (bool retrieve)
             }
           
           gtk_entry_set_text (GTK_ENTRY (GTK_COMBO (data->object)->entry), entry);
-          }	break;
+          }
+		  break;
+		case DLG_COMBO_BOX_INT: {
+			gtk_combo_box_set_active( GTK_COMBO_BOX( data->object ), *(int*)data->buffer );
+		}
+			break;
         }
       }
     }

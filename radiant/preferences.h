@@ -213,6 +213,9 @@ public:
 	void Run();
 	void BuildDialog();
 
+	static void OnBtnBrowseEngine( GtkWidget *widget, gpointer data );
+	static void OnGameSelectChanged( GtkWidget *widget, gpointer data );
+
 	enum gameType_e {
 		GAME_NONE = 0,
 		GAME_Q3 = 1,
@@ -243,6 +246,7 @@ class CGameDialog : public Dialog
   GtkWidget *mFrame; ///< this is built on-demand first time it's used
   GtkWidget *mTopBox; ///< top level box used to store the dialog frame, must unhook after modal use
 
+  GtkComboBox	*mGameCombo;	// combo box holds the selection of available game
 
   /*!
   global prefs storage
@@ -310,6 +314,7 @@ public:
 	  m_bLogConsole = false;
 	  m_bForceLogConsole = false;
 	  m_bDoGameInstall = true;	// go through DoModal at least once
+	  mGameCombo = NULL;
   }
   virtual ~CGameDialog(); 
 
@@ -397,6 +402,8 @@ private:
 	callback for the game install button
   */
   static void SInstallCallback( GtkWidget *widget, gpointer data );
+
+  void UpdateGameCombo();
 };
 
 typedef struct {

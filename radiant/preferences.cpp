@@ -966,11 +966,15 @@ void CGameDialog::SavePrefs()
   CString strGlobalPref = g_PrefsDlg.m_global_rc_path->str;
   strGlobalPref += "global.pref";
   
-  if (!mGlobalPrefs.WriteXMLFile(strGlobalPref.GetBuffer()))
+  if ( !mGlobalPrefs.WriteXMLFile( strGlobalPref.GetBuffer() ) ) {
     Sys_FPrintf(SYS_ERR, "Error occured while saving global prefs file '%s'\n", strGlobalPref.GetBuffer());
+  }
 }
 
 void CGameDialog::DoGameInstall() {
+	// make sure console logging is on whenever we enter the installation loop
+    g_PrefsDlg.mGamesDialog.m_bLogConsole = true;
+	Sys_LogFile();
 	mGameInstall.Run();
 }
 
@@ -980,7 +984,10 @@ void CGameDialog::DoGameDialog() {
 		
 		m_bDoGameInstall = false;
 
-		DoModal();
+		if ( DoModal() == IDCANCEL ) {
+			Error( "game selection dialog canceled, cannot continue" );
+			return;
+		}
 		
 		if ( m_bDoGameInstall ) {
 			DoGameInstall();
@@ -1018,20 +1025,13 @@ GtkWidget* CGameDialog::GetGlobalFrame()
   gtk_widget_show( text );
   gtk_box_pack_start( GTK_BOX( vbox ), text, FALSE, FALSE, 0 );
 
-  combo = gtk_combo_new();
+  combo = gtk_combo_box_new_text();
   gtk_widget_show( combo );
   gtk_box_pack_start( GTK_BOX( vbox ), combo, FALSE, FALSE, 0 );
+  AddDialogData( combo, &m_nComboSelect, DLG_COMBO_BOX_INT );
+  mGameCombo = GTK_COMBO_BOX( combo );
 
-  // fill in with the game descriptions
-  GList *combo_list = (GList*)NULL;
-  list<CGameDescription *>::iterator iGame;
-  for( iGame = mGames.begin(); iGame != mGames.end(); iGame++ ) {
-	  combo_list = g_list_append( combo_list, (void *)(*iGame)->mGameName.GetBuffer() );
-  }
-  gtk_combo_set_popdown_strings( GTK_COMBO( combo ), combo_list );
-  g_list_free( combo_list );
-
-  AddDialogData( combo, &m_nComboSelect, DLG_COMBO_INT );
+  UpdateGameCombo();
 
   check = gtk_check_button_new_with_label( "Auto load selected game on startup" );
   gtk_widget_show(check);
@@ -1125,8 +1125,36 @@ void CGameDialog::BuildDialog() {
 	gtk_widget_show( button );
 	gtk_box_pack_start( GTK_BOX( vbox1 ), button, FALSE, FALSE, 0 );
 	AddModalButton( button, IDOK );
+
+	button = gtk_button_new_with_label( "Cancel" );
+	gtk_widget_show( button );
+	gtk_box_pack_start( GTK_BOX( vbox1 ), button, FALSE, FALSE, 0 );
+	AddModalButton( button, IDCANCEL );
 	
 	gtk_widget_set_usize( button, 60, -2 );
+}
+
+void CGameDialog::UpdateGameCombo() {
+  // fill in with the game descriptions
+  list<CGameDescription *>::iterator iGame;
+
+  if ( mGameCombo == NULL ) {
+	  Sys_Printf( "mGameCombo == NULL\n" );
+	  return;
+  }
+
+  // clear whatever is in - wtf no way to know how many text entries?
+  // use set/get active to track 
+  gtk_combo_box_set_active( mGameCombo, 0 );
+  while ( gtk_combo_box_get_active( mGameCombo ) == 0 ) {
+	  gtk_combo_box_remove_text( mGameCombo, 0 );
+	  gtk_combo_box_set_active( mGameCombo, 0 );
+  }
+  
+  for ( iGame = mGames.begin(); iGame != mGames.end(); iGame++ ) {
+	  gtk_combo_box_append_text( mGameCombo, (*iGame)->mGameName.GetBuffer() );
+  }
+  gtk_combo_box_set_active( mGameCombo, 0 );
 }
 
 void CGameDialog::ScanForGames()
@@ -1190,20 +1218,21 @@ void CGameDialog::ScanForGames()
         Sys_FPrintf(SYS_ERR, "XML parser failed on '%s'\n", strPath.GetBuffer());
       }
 
-      g_free(dirlist);
+      g_free( dirlist );
     }
-    g_dir_close (dir);
+    g_dir_close( dir );
   }
+
+  // entries in the combo need to be updated
+  UpdateGameCombo();
 }
 
 CGameDescription* CGameDialog::GameDescriptionForComboItem()
 {
   list<CGameDescription *>::iterator iGame;
   int i=0;
-  for(iGame=mGames.begin(); iGame!=mGames.end(); iGame++,i++)
-  {
-    if (i == m_nComboSelect)
-    {
+  for( iGame = mGames.begin(); iGame != mGames.end(); iGame++,i++ ) {
+    if ( i == m_nComboSelect ) {
       return (*iGame);
     }
   }
@@ -3138,8 +3167,32 @@ CGameInstall::CGameInstall() {
 	memset( m_availGames, 0, sizeof( m_availGames ) );
 }
 
+static void CGameInstall::OnBtnBrowseEngine( GtkWidget *widget, gpointer data ) {
+	Sys_Printf( "OnBtnBrowseEngine\n" );
+
+	CGameInstall* i = static_cast<CGameInstall*>( data );
+	char *dir = dir_dialog( widget, "Select game directory", NULL );
+
+	i->UpdateData( TRUE );
+
+	if ( dir != NULL ) {
+		i->m_strEngine = dir;
+		i->UpdateData( FALSE );
+		free( dir );
+	}
+}
+
+static void CGameInstall::OnGameSelectChanged( GtkWidget *widget, gpointer data ) {
+	Sys_Printf( "OnGameSelectChanged\n" );
+
+	CGameInstall* i = static_cast<CGameInstall*>( data );
+	i->UpdateData( TRUE );	
+	i->m_strName = gtk_combo_box_get_active_text( GTK_COMBO_BOX( widget ) );
+	i->UpdateData( FALSE );
+}
+
 void CGameInstall::BuildDialog() {
-	GtkWidget *dlg, *vbox1, *button, *text, *combo, *entry;
+	GtkWidget *dlg, *vbox1, *button, *text, *combo, *entry, *hbox;
 	
 	dlg = m_pWidget;
 	gtk_window_set_title( GTK_WINDOW( dlg ), "Configure games" );
@@ -3152,41 +3205,41 @@ void CGameInstall::BuildDialog() {
 	gtk_widget_show( text );
 	gtk_box_pack_start( GTK_BOX( vbox1 ), text, FALSE, FALSE, 0 );
 
-	combo = gtk_combo_new();
+	combo = gtk_combo_box_new_text();
 	gtk_widget_show( combo );
 	gtk_box_pack_start( GTK_BOX( vbox1 ), combo, FALSE, FALSE, 0 );
 
-	GList *combo_list = NULL;
+	//	GList *combo_list = NULL;
 	int iGame = 0;
 	while ( m_availGames[ iGame ] != GAME_NONE ) {
 		switch ( m_availGames[ iGame ] ) {
 		case GAME_Q2:
-			combo_list = g_list_append( combo_list, "Quake II" );
+			gtk_combo_box_append_text( GTK_COMBO_BOX( combo ), "Quake II" );
 			break;
 		case GAME_Q3:
-			combo_list = g_list_append( combo_list, "Quake III Arena (including mods)" );
+			gtk_combo_box_append_text( GTK_COMBO_BOX( combo ), "Quake III Arena and mods" );
 			break;
 		case GAME_URT:
-			combo_list = g_list_append( combo_list, "Urban Terror (standalone)" );
+			gtk_combo_box_append_text( GTK_COMBO_BOX( combo ), "Urban Terror (standalone)" );
 			break;
 		case GAME_UFOAI:
-			combo_list = g_list_append( combo_list, "UFO: Alien Invasion" );
+			gtk_combo_box_append_text( GTK_COMBO_BOX( combo ), "UFO: Alien Invasion" );
 			break;
 		case GAME_Q2W:
-			combo_list = g_list_append( combo_list, "Quake2World" );
+			gtk_combo_box_append_text( GTK_COMBO_BOX( combo ), "Quake2World" );
 			break;
 		case GAME_WARSOW:
-			combo_list = g_list_append( combo_list, "Warsow" );
+			gtk_combo_box_append_text( GTK_COMBO_BOX( combo ), "Warsow" );
 			break;
 		case GAME_NEXUIZ:
-			combo_list = g_list_append( combo_list, "Nexuiz" );
+			gtk_combo_box_append_text( GTK_COMBO_BOX( combo ), "Nexuiz" );
 			break;
 		}
 		iGame++;
 	}
-	gtk_combo_set_popdown_strings( GTK_COMBO( combo ), combo_list );
-	g_list_free( combo_list );
-	AddDialogData( combo, &m_nComboSelect, DLG_COMBO_INT );
+	AddDialogData( combo, &m_nComboSelect, DLG_COMBO_BOX_INT );
+	gtk_signal_connect( GTK_OBJECT( combo ), "changed", G_CALLBACK( OnGameSelectChanged ), this );
+	gtk_combo_box_set_active( GTK_COMBO_BOX( combo ), 0 );	// NOTE: will trigger signal
 
 	text = gtk_label_new( "Name:" );
 	gtk_widget_show( text );
@@ -3200,11 +3253,20 @@ void CGameInstall::BuildDialog() {
 	text = gtk_label_new( "Engine directory:" );
 	gtk_widget_show( text );
 	gtk_box_pack_start( GTK_BOX( vbox1 ), text, FALSE, FALSE, 0 );
+
+	hbox = gtk_hbox_new( FALSE, 0 );
+	gtk_widget_show( hbox );
+	gtk_box_pack_start( GTK_BOX( vbox1 ), hbox, FALSE, FALSE, 0 );
 	
 	entry = gtk_entry_new();
 	gtk_widget_show( entry );
-	gtk_box_pack_start( GTK_BOX( vbox1 ), entry, FALSE, FALSE, 0 );
+	gtk_box_pack_start( GTK_BOX( hbox ), entry, FALSE, FALSE, 0 );
 	AddDialogData( entry, &m_strEngine, DLG_ENTRY_TEXT );
+
+	button = gtk_button_new_with_label ("...");
+	gtk_widget_show( button );
+	gtk_signal_connect( GTK_OBJECT( button ), "clicked", GTK_SIGNAL_FUNC( OnBtnBrowseEngine ), this );
+	gtk_box_pack_start( GTK_BOX( hbox ), button, FALSE, FALSE, 0 );
 
 	// this gets done in the project stuff atm
 #if 0
@@ -3223,12 +3285,20 @@ void CGameInstall::BuildDialog() {
 	gtk_box_pack_start( GTK_BOX( vbox1 ), button, FALSE, FALSE, 0 );
 	AddModalButton( button, IDOK );
 
+	button = gtk_button_new_with_label( "Cancel" );
+	gtk_widget_show( button );
+	gtk_box_pack_start( GTK_BOX( vbox1 ), button, FALSE, FALSE, 0 );
+	AddModalButton( button, IDCANCEL );
+
 	gtk_widget_set_usize( button, 60, -2 );
 }
 
 void CGameInstall::Run() {
 	ScanGames();
-	DoModal();
+	if ( DoModal() == IDCANCEL ) {
+		Sys_Printf( "game dialog cancelled\n" );
+		return;
+	}
 	Sys_Printf( "combo: %d name: %s engine: %s mod: %s\n", m_nComboSelect, m_strName.GetBuffer(), m_strEngine.GetBuffer(), m_strMod.GetBuffer() );
 
 	// write out the game file
@@ -3247,77 +3317,84 @@ void CGameInstall::Run() {
 	fprintf( fg, "  enginepath=\"%s\"\n", m_strEngine.GetBuffer() );
 	switch ( m_availGames[ m_nComboSelect ] ) {
 	case GAME_Q2: {
-		fprintf( fg, "  gametools=\"%sgames/quake2\"\n", g_strAppPath.GetBuffer() );
+		fprintf( fg, "  gametools=\"%sinstalls/Quake2Pack/game\"\n", g_strAppPath.GetBuffer() );
 		fprintf( fg, "  prefix=\".quake2\"\n" );
 		Str source = g_strAppPath.GetBuffer();
 		source += "installs/";
 		source += Q2_PACK;
+		source += "/install/";
 		Str dest = m_strEngine.GetBuffer();
 		CopyTree( source.GetBuffer(), dest.GetBuffer() );
 		fprintf( fg, "  basegame=\"baseq2\"\n" );
 		break;
 	}
 	case GAME_Q3: {
-		fprintf( fg, "  gametools=\"%sgames/quake3\"\n", g_strAppPath.GetBuffer() );
+		fprintf( fg, "  gametools=\"%sinstalls/Q3Pack/game\"\n", g_strAppPath.GetBuffer() );
 		fprintf( fg, "  prefix=\".q3a\"\n" );
 		Str source = g_strAppPath.GetBuffer();
 		source += "installs/";
 		source += Q3_PACK;
+		source += "/install/";
 		Str dest = m_strEngine.GetBuffer();
 		CopyTree( source.GetBuffer(), dest.GetBuffer() );
 		fprintf( fg, "  basegame=\"baseq3\"\n" );
 		break;
 	}
 	case GAME_URT: {
-		fprintf( fg, "  gametools=\"%sgames/q3ut4\"\n", g_strAppPath.GetBuffer() );
+		fprintf( fg, "  gametools=\"%sinstalls/UrTPack/game\"\n", g_strAppPath.GetBuffer() );
 		fprintf( fg, "  prefix=\".q3a\"\n" );
 		Str source = g_strAppPath.GetBuffer();
 		source += "installs/";
 		source += URT_PACK;
+		source += "/install/";
 		Str dest = m_strEngine.GetBuffer();
 		CopyTree( source.GetBuffer(), dest.GetBuffer() );
 		fprintf( fg, "  basegame=\"q3ut4\"\n" );
 		break;
 	}
 	case GAME_UFOAI: {
-		fprintf( fg, "  gametools=\"%sgames/ufoai\"\n", g_strAppPath.GetBuffer() );
+		fprintf( fg, "  gametools=\"%sinstalls/UFOAIPack/game\"\n", g_strAppPath.GetBuffer() );
 		fprintf( fg, "  prefix=\".ufoai\"\n" );
 		Str source = g_strAppPath.GetBuffer();
 		source += "installs/";
 		source += UFOAI_PACK;
+		source += "/install/";
 		Str dest = m_strEngine.GetBuffer();
 		CopyTree( source.GetBuffer(), dest.GetBuffer() );
 		fprintf( fg, "  basegame=\"base\"\n" );
 		break;
 	}
 	case GAME_Q2W: {
-		fprintf( fg, "  gametools=\"%sgames/q2w\"\n", g_strAppPath.GetBuffer() );
+		fprintf( fg, "  gametools=\"%sinstalls/Q2WPack/game\"\n", g_strAppPath.GetBuffer() );
 		fprintf( fg, "  prefix=\".quake2world\"\n" );
 		Str source = g_strAppPath.GetBuffer();
 		source += "installs/";
 		source += Q2W_PACK;
+		source += "/install/";
 		Str dest = m_strEngine.GetBuffer();
 		CopyTree( source.GetBuffer(), dest.GetBuffer() );
 		fprintf( fg, "  basegame=\"default\"\n" );
 		break;
 	}
 	case GAME_WARSOW: {
-		fprintf( fg, "  gametools=\"%sgames/warsow\"\n", g_strAppPath.GetBuffer() );
+		fprintf( fg, "  gametools=\"%installs/WarsowPack/game\"\n", g_strAppPath.GetBuffer() );
 		fprintf( fg, "  prefix=\".warsow\"\n" );
 		Str source = g_strAppPath.GetBuffer();
 		source += "installs/";
 		source += WARSOW_PACK;
+		source += "/install/";
 		Str dest = m_strEngine.GetBuffer();
 		CopyTree( source.GetBuffer(), dest.GetBuffer() );
 		fprintf( fg, "  basegame=\"basewsw\"\n" );
 		break;
 	}
 	case GAME_NEXUIZ: {
-		fprintf( fg, "  gametools=\"%sgames/nexuiz\"\n", g_strAppPath.GetBuffer() );
+		fprintf( fg, "  gametools=\"%sinstalls/NexuizPack/game\"\n", g_strAppPath.GetBuffer() );
 		fprintf( fg, "  prefix=\".nexuiz\"\n" );
 		Str source = g_strAppPath.GetBuffer();
 		source += "installs/";
 		source += NEXUIZ_PACK;
+		source += "/install/";
 		Str dest = m_strEngine.GetBuffer();
 		CopyTree( source.GetBuffer(), dest.GetBuffer() );
 		fprintf( fg, "  basegame=\"data\"\n" );

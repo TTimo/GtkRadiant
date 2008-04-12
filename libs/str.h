@@ -58,20 +58,21 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #define __StrDup Q_StrDup
 
-inline char* Q_StrDup(char* pStr)
-{
-  if (pStr == NULL)
-    pStr = "";
+inline char* Q_StrDup( char* _pStr ) {
+	const char* pStr = _pStr;
+	if ( pStr == NULL ) {		
+		pStr = "";
+	}
 
-  return strcpy(new char[strlen(pStr)+1], pStr); 
+	return strcpy( new char[ strlen( pStr ) + 1 ], pStr );
 }
 
-inline char* Q_StrDup(const char* pStr)
-{ 
-  if (pStr == NULL)
-    pStr = "";
+inline char* Q_StrDup( const char* pStr ) {
+	if ( pStr == NULL ) {
+		pStr = "";
+	}
 
-  return strcpy(new char[strlen(pStr)+1], pStr); 
+	return strcpy( new char[strlen(pStr)+1], pStr );
 }
 
 #if defined (__linux__) || defined (__APPLE__)
@@ -286,7 +287,6 @@ public:
     }
     else
     {
-      g_pStrWork = "";
       g_pStrWork = new char[1];
       g_pStrWork[0] = '\0';
     }
@@ -327,7 +327,6 @@ public:
     }
     else
     {
-      g_pStrWork = "";
       g_pStrWork = new char[1];
       g_pStrWork[0] = '\0';
     }
