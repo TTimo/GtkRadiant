@@ -3167,7 +3167,7 @@ CGameInstall::CGameInstall() {
 	memset( m_availGames, 0, sizeof( m_availGames ) );
 }
 
-static void CGameInstall::OnBtnBrowseEngine( GtkWidget *widget, gpointer data ) {
+void CGameInstall::OnBtnBrowseEngine( GtkWidget *widget, gpointer data ) {
 	Sys_Printf( "OnBtnBrowseEngine\n" );
 
 	CGameInstall* i = static_cast<CGameInstall*>( data );
@@ -3182,7 +3182,7 @@ static void CGameInstall::OnBtnBrowseEngine( GtkWidget *widget, gpointer data ) 
 	}
 }
 
-static void CGameInstall::OnGameSelectChanged( GtkWidget *widget, gpointer data ) {
+void CGameInstall::OnGameSelectChanged( GtkWidget *widget, gpointer data ) {
 	Sys_Printf( "OnGameSelectChanged\n" );
 
 	CGameInstall* i = static_cast<CGameInstall*>( data );
@@ -3377,7 +3377,7 @@ void CGameInstall::Run() {
 		break;
 	}
 	case GAME_WARSOW: {
-		fprintf( fg, "  gametools=\"%installs/WarsowPack/game\"\n", g_strAppPath.GetBuffer() );
+		fprintf( fg, "  gametools=\"%sinstalls/WarsowPack/game\"\n", g_strAppPath.GetBuffer() );
 		fprintf( fg, "  prefix=\".warsow\"\n" );
 		Str source = g_strAppPath.GetBuffer();
 		source += "installs/";
