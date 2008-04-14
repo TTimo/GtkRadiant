@@ -346,7 +346,9 @@ void Net_MyAddress(address_t *address)
 //===========================================================================
 int Net_Setup(void)
 {
-	WINS_Init();
+	if( !WINS_Init() )
+		return qfalse;
+
 	//
 	WinPrint("my address is %s\n", WINS_MyAddress());
 	//

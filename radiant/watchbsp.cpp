@@ -305,10 +305,13 @@ bool CWatchBSP::SetupListening()
   }
 #endif
   Sys_Printf("Setting up\n");
-	Net_Setup();
-	m_pListenSocket = Net_ListenSocket(39000);
+  if( !Net_Setup() )
+    return false;
+
+  m_pListenSocket = Net_ListenSocket(39000);
   if (m_pListenSocket == NULL)
     return false;
+
   Sys_Printf("Listening...\n");
   return true;
 }

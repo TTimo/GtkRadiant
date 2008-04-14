@@ -175,6 +175,14 @@ int WINS_Init(void)
 	// determine my name & address
 	gethostname(buff, MAXHOSTNAMELEN);
 	local = gethostbyname(buff);
+
+	// When hostname can not be resolved, return gracefully
+	if( local == 0 )
+ 	{
+		WinError("WINS_Init: Unable to resolve hostname\n");
+		return 0;
+	}
+
 	myAddr = *(int *)local->h_addr_list[0];
 
 	// if the quake hostname isn't set, set it to the machine name
