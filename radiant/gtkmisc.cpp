@@ -1480,7 +1480,6 @@ char* WINAPI dir_dialog (void *parent, const char* title, const char* path)
   gtk_widget_hide (GTK_FILE_SELECTION (file_sel)->file_list->parent);
 
   g_object_set_data (G_OBJECT (file_sel), "loop", &loop);
-  g_object_set_data (G_OBJECT (file_sel), "filename", &filename);
   g_object_set_data (G_OBJECT (file_sel), "success", &success);
 
   if (path != NULL)
