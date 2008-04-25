@@ -16,7 +16,7 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="$(SolutionDir)\build\$(ConfigurationName)"
+			OutputDirectory="$(SolutionDir)\install"
 			IntermediateDirectory="$(SolutionDir)\build\intermediate\$(ConfigurationName)\$(ProjectName)"
 			ConfigurationType="1"
 			CharacterSet="2"
@@ -92,7 +92,7 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="$(SolutionDir)\build\$(ConfigurationName)"
+			OutputDirectory="$(SolutionDir)\install"
 			IntermediateDirectory="$(SolutionDir)\build\intermediate\$(ConfigurationName)\$(ProjectName)"
 			ConfigurationType="1"
 			CharacterSet="2"

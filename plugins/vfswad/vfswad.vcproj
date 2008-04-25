@@ -5,7 +5,7 @@
 	<ToolFiles>
 	</ToolFiles>
 	<Configurations>
-		<Configuration CharacterSet="2" ConfigurationType="1" IntermediateDirectory="$(ConfigurationName)" Name="Debug|Win32" OutputDirectory="$(SolutionDir)$(ConfigurationName)">
+		<Configuration CharacterSet="2" ConfigurationType="1" IntermediateDirectory="$(ConfigurationName)" Name="Debug|Win32" OutputDirectory="$(SolutionDir)\install\modules">
 			<Tool Name="VCPreBuildEventTool"/>
 			<Tool Name="VCCustomBuildTool"/>
 			<Tool Name="VCXMLDataGeneratorTool"/>
@@ -25,7 +25,7 @@
 			<Tool Name="VCWebDeploymentTool"/>
 			<Tool Name="VCPostBuildEventTool"/>
 		</Configuration>
-		<Configuration CharacterSet="2" ConfigurationType="1" IntermediateDirectory="$(ConfigurationName)" Name="Release|Win32" OutputDirectory="$(SolutionDir)$(ConfigurationName)" WholeProgramOptimization="1">
+		<Configuration CharacterSet="2" ConfigurationType="1" IntermediateDirectory="$(ConfigurationName)" Name="Release|Win32" OutputDirectory="$(SolutionDir)\install\modules">
 			<Tool Name="VCPreBuildEventTool"/>
 			<Tool Name="VCCustomBuildTool"/>
 			<Tool Name="VCXMLDataGeneratorTool"/>
