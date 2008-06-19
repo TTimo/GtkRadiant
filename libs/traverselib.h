@@ -52,6 +52,11 @@ public:
     m_observer->insert(node);
     return *this;
   }
+  TraversableObserverInsertOutputIterator& operator=(const NodeSmartReference& node)
+  { 
+    m_observer->insert(node);
+    return *this;
+  }
   TraversableObserverInsertOutputIterator& operator*() { return *this; }
   TraversableObserverInsertOutputIterator& operator++() { return *this; }
   TraversableObserverInsertOutputIterator& operator++(int) { return *this; }
@@ -77,18 +82,22 @@ public:
     m_observer->erase(node);
     return *this;
   }
+  TraversableObserverEraseOutputIterator& operator=(const NodeSmartReference& node)
+  { 
+    m_observer->erase(node);
+    return *this;
+  }
   TraversableObserverEraseOutputIterator& operator*() { return *this; }
   TraversableObserverEraseOutputIterator& operator++() { return *this; }
   TraversableObserverEraseOutputIterator& operator++(int) { return *this; }
 };
-
 typedef UnsortedSet<NodeSmartReference> UnsortedNodeSet;
 
 /// \brief Calls \p observer->\c insert for each node that exists only in \p other and \p observer->\c erase for each node that exists only in \p self
 inline void nodeset_diff(const UnsortedNodeSet& self, const UnsortedNodeSet& other, scene::Traversable::Observer* observer)
 {
-  std::vector<NodeReference> sorted(self.begin(), self.end());
-  std::vector<NodeReference> other_sorted(other.begin(), other.end());
+  std::vector<NodeSmartReference> sorted(self.begin(), self.end());
+  std::vector<NodeSmartReference> other_sorted(other.begin(), other.end());
 
   std::sort(sorted.begin(), sorted.end());
   std::sort(other_sorted.begin(), other_sorted.end());
