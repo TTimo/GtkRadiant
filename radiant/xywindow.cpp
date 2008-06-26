@@ -27,7 +27,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "stdafx.h"
 #include <gtk/gtk.h>
-#include <glib/gi18n.h>
 #include <assert.h>
 #include <GL/gl.h>
 

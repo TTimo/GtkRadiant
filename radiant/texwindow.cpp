@@ -41,7 +41,6 @@ Clean up texture menu.
 #include <dirent.h>
 #endif
 #include <gtk/gtk.h>
-#include <glib/gi18n.h>
 #include <assert.h>
 #include <sys/stat.h>
 #include "stdafx.h"

@@ -36,7 +36,6 @@ Copyright (C) 2002 Splash Damage Ltd.
 class CCamera;
 
 #include <gtk/gtk.h>
-#include <glib/gi18n.h>
 
 #include "str.h"
 

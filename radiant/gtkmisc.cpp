@@ -39,7 +39,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #endif
 
 #include <gtk/gtk.h>
-#include <glib/gi18n.h>
 
 #ifdef _WIN32
 #include <gdk/gdkwin32.h>

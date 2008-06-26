@@ -21,7 +21,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define __PRTVIEW_AFX_H__
 
 #include <gtk/gtk.h>
-#include <glib/gi18n.h>
 
 #if defined(__linux__) || defined(__APPLE__)
 #include <GL/glx.h>
