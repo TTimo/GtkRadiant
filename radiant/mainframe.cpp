@@ -1293,80 +1293,80 @@ void MainFrame::create_main_menu (GtkWidget *window, GtkWidget *vbox)
   item = create_check_menu_item_with_mnemonic (menu, _("Show In _Use"),
 				 GTK_SIGNAL_FUNC (HandleCommand), ID_TEXTURES_SHOWINUSE, FALSE);
   g_object_set_data (G_OBJECT (window), "menu_textures_showinuse", item);
-  item = create_check_menu_item_with_mnemonic (menu, "Show _All",
+  item = create_check_menu_item_with_mnemonic (menu, _("Show _All"),
                                  GTK_SIGNAL_FUNC (HandleCommand), ID_TEXTURES_SHOWALL, FALSE);
   g_object_set_data (G_OBJECT (window), "menu_textures_showall", item);
   menu_separator (menu);
-  item = create_check_menu_item_with_mnemonic (menu, "Show shaders",
+  item = create_check_menu_item_with_mnemonic (menu, _("Show shaders"),
                                  GTK_SIGNAL_FUNC (HandleCommand), ID_TEXTURES_SHADERS_SHOW, FALSE);
   g_object_set_data (G_OBJECT (window), "menu_textures_shaders_show", item);
-  item = create_menu_item_with_mnemonic (menu, "Flush & Reload Shaders",
+  item = create_menu_item_with_mnemonic (menu, _("Flush & Reload Shaders"),
 			   GTK_SIGNAL_FUNC (HandleCommand), ID_TEXTURES_RELOADSHADERS);
   g_object_set_data (G_OBJECT (window), "menu_textures_reloadshaders", item);
-  item = create_menu_item_with_mnemonic (menu, "Load directory...",
+  item = create_menu_item_with_mnemonic (menu, _("Load directory..."),
 			   GTK_SIGNAL_FUNC (HandleCommand), ID_TEXTURES_LOAD);
   g_object_set_data (G_OBJECT (window), "menu_textures_load", item);
-  item = create_menu_item_with_mnemonic (menu, "Directory list...",
+  item = create_menu_item_with_mnemonic (menu, _("Directory list..."),
 			   GTK_SIGNAL_FUNC (HandleCommand), ID_TEXTURES_LOADLIST);
   menu_separator (menu);
 
-  item = create_menu_item_with_mnemonic (menu, "_Surface Inspector",
+  item = create_menu_item_with_mnemonic (menu, _("_Surface Inspector"),
 			   GTK_SIGNAL_FUNC (HandleCommand), ID_TEXTURES_INSPECTOR);
   menu_separator (menu);
-  menu_in_menu = create_menu_in_menu_with_mnemonic (menu, "Render Quality");
+  menu_in_menu = create_menu_in_menu_with_mnemonic (menu, _("Render Quality"));
   g_object_set_data (G_OBJECT (window), "render_quality_menu", menu_in_menu);
-  item = create_radio_menu_item_with_mnemonic (menu_in_menu, NULL, "_Wireframe",
+  item = create_radio_menu_item_with_mnemonic (menu_in_menu, NULL, _("_Wireframe"),
 				 GTK_SIGNAL_FUNC (HandleCommand), ID_TEXTURES_WIREFRAME, FALSE);
   g_object_set_data (G_OBJECT (window), "menu_textures_wireframe", item);
-  item = create_radio_menu_item_with_mnemonic (menu_in_menu, item, "_Flat shade",
+  item = create_radio_menu_item_with_mnemonic (menu_in_menu, item, _("_Flat shade"),
 				 GTK_SIGNAL_FUNC (HandleCommand), ID_TEXTURES_FLATSHADE, FALSE);
   g_object_set_data (G_OBJECT (window), "menu_textures_flatshade", item);
-  item = create_radio_menu_item_with_mnemonic (menu_in_menu, item, "_Nearest",
+  item = create_radio_menu_item_with_mnemonic (menu_in_menu, item, _("_Nearest"),
 				 GTK_SIGNAL_FUNC (HandleCommand), ID_VIEW_NEAREST, FALSE);
   g_object_set_data (G_OBJECT (window), "menu_view_nearest", item);
-  item = create_radio_menu_item_with_mnemonic (menu_in_menu, item, "Nearest _Mipmap",
+  item = create_radio_menu_item_with_mnemonic (menu_in_menu, item, _("Nearest _Mipmap"),
 				 GTK_SIGNAL_FUNC (HandleCommand), ID_VIEW_NEARESTMIPMAP, FALSE);
   g_object_set_data (G_OBJECT (window), "menu_view_nearestmipmap", item);
-  item = create_radio_menu_item_with_mnemonic (menu_in_menu, item, "_Linear",
+  item = create_radio_menu_item_with_mnemonic (menu_in_menu, item, _("_Linear"),
 				 GTK_SIGNAL_FUNC (HandleCommand), ID_VIEW_LINEAR, FALSE);
   g_object_set_data (G_OBJECT (window), "menu_view_linear", item);
-  item = create_radio_menu_item_with_mnemonic (menu_in_menu, item, "_Bilinear",
+  item = create_radio_menu_item_with_mnemonic (menu_in_menu, item, _("_Bilinear"),
 				 GTK_SIGNAL_FUNC (HandleCommand), ID_VIEW_BILINEAR, FALSE);
   g_object_set_data (G_OBJECT (window), "menu_view_bilinear", item);
-  item = create_radio_menu_item_with_mnemonic (menu_in_menu, item, "B_ilinear Mipmap",
+  item = create_radio_menu_item_with_mnemonic (menu_in_menu, item, _("B_ilinear Mipmap"),
 				 GTK_SIGNAL_FUNC (HandleCommand), ID_VIEW_BILINEARMIPMAP, FALSE);
   g_object_set_data (G_OBJECT (window), "menu_view_bilinearmipmap", item);
-  item = create_radio_menu_item_with_mnemonic (menu_in_menu, item, "T_rilinear",
+  item = create_radio_menu_item_with_mnemonic (menu_in_menu, item, _("T_rilinear"),
 				 GTK_SIGNAL_FUNC (HandleCommand), ID_VIEW_TRILINEAR, FALSE);
   g_object_set_data (G_OBJECT (window), "menu_view_trilinear", item);
-  create_menu_item_with_mnemonic (menu, "Find / Replace...",
+  create_menu_item_with_mnemonic (menu, _("Find / Replace..."),
 		    GTK_SIGNAL_FUNC (HandleCommand), ID_TEXTURE_REPLACEALL);
 
-  menu_in_menu = create_menu_in_menu_with_mnemonic (menu, "Texture Lock");
-  item = create_check_menu_item_with_mnemonic (menu_in_menu, "Moves",
+  menu_in_menu = create_menu_in_menu_with_mnemonic (menu, _("Texture Lock"));
+  item = create_check_menu_item_with_mnemonic (menu_in_menu, _("Moves"),
 				 GTK_SIGNAL_FUNC (HandleCommand), ID_TOGGLE_LOCK, TRUE);
   g_object_set_data (G_OBJECT (window), "menu_toggle_lock", item);
-  item = create_check_menu_item_with_mnemonic (menu_in_menu, "Rotations",
+  item = create_check_menu_item_with_mnemonic (menu_in_menu, _("Rotations"),
 				 GTK_SIGNAL_FUNC (HandleCommand), ID_TOGGLE_ROTATELOCK, TRUE);
   g_object_set_data (G_OBJECT (window), "menu_toggle_rotatelock", item);
-  menu_in_menu = create_menu_in_menu_with_mnemonic (menu, "Texture Window Scale");
-  item = create_radio_menu_item_with_mnemonic (menu_in_menu, NULL, "200%",
+  menu_in_menu = create_menu_in_menu_with_mnemonic (menu, _("Texture Window Scale"));
+  item = create_radio_menu_item_with_mnemonic (menu_in_menu, NULL, _("200%"),
 				 GTK_SIGNAL_FUNC (HandleCommand), ID_TEXTURES_TEXTUREWINDOWSCALE_200, FALSE);
   g_object_set_data (G_OBJECT (window), "menu_textures_texturewindowscale_200", item);
-  item = create_radio_menu_item_with_mnemonic (menu_in_menu, item, "100%",
+  item = create_radio_menu_item_with_mnemonic (menu_in_menu, item, _("100%"),
 				 GTK_SIGNAL_FUNC (HandleCommand), ID_TEXTURES_TEXTUREWINDOWSCALE_100, FALSE);
   g_object_set_data (G_OBJECT (window), "menu_textures_texturewindowscale_100", item);
-  item = create_radio_menu_item_with_mnemonic (menu_in_menu, item, "50%",
+  item = create_radio_menu_item_with_mnemonic (menu_in_menu, item, _("50%"),
 				 GTK_SIGNAL_FUNC (HandleCommand), ID_TEXTURES_TEXTUREWINDOWSCALE_50, FALSE);
   g_object_set_data (G_OBJECT (window), "menu_textures_texturewindowscale_50", item);
-  item = create_radio_menu_item_with_mnemonic (menu_in_menu, item, "25%",
+  item = create_radio_menu_item_with_mnemonic (menu_in_menu, item, _("25%"),
 				 GTK_SIGNAL_FUNC (HandleCommand), ID_TEXTURES_TEXTUREWINDOWSCALE_25, FALSE);
   g_object_set_data (G_OBJECT (window), "menu_textures_texturewindowscale_25", item);
-  item = create_radio_menu_item_with_mnemonic (menu_in_menu, item, "10%",
+  item = create_radio_menu_item_with_mnemonic (menu_in_menu, item, _("10%"),
 				 GTK_SIGNAL_FUNC (HandleCommand), ID_TEXTURES_TEXTUREWINDOWSCALE_10, FALSE);
   g_object_set_data (G_OBJECT (window), "menu_textures_texturewindowscale_10", item);
   item = menu_separator (menu);
-  item = create_check_menu_item_with_mnemonic (menu, "shaderlist.txt only",
+  item = create_check_menu_item_with_mnemonic (menu, _("shaderlist.txt only"),
 				 GTK_SIGNAL_FUNC (HandleCommand), ID_TEXTURES_SHADERLISTONLY, FALSE);
   g_object_set_data (G_OBJECT (window), "menu_textures_shaderlistonly", item);
   item = menu_separator (menu);
@@ -1374,179 +1374,179 @@ void MainFrame::create_main_menu (GtkWidget *window, GtkWidget *vbox)
   g_object_set_data (G_OBJECT (window), "menu_textures", menu);
 
   // Misc menu
-  menu = create_sub_menu_with_mnemonic (menu_bar, "_Misc");
+  menu = create_sub_menu_with_mnemonic (menu_bar, _("_Misc"));
   if (g_PrefsDlg.m_bDetachableMenus)
     menu_tearoff (menu);
 
-  create_menu_item_with_mnemonic (menu, "_Benchmark", GTK_SIGNAL_FUNC (HandleCommand), ID_MISC_BENCHMARK);
-  menu_in_menu = create_menu_in_menu_with_mnemonic (menu, "Colors");
-  menu_3 = create_menu_in_menu_with_mnemonic (menu_in_menu, "Themes");
-  create_menu_item_with_mnemonic (menu_3, "QE4 Original", GTK_SIGNAL_FUNC (HandleCommand), ID_COLOR_SETORIGINAL);
-  create_menu_item_with_mnemonic (menu_3, "Q3Radiant Original", GTK_SIGNAL_FUNC (HandleCommand), ID_COLOR_SETQER);
-  create_menu_item_with_mnemonic (menu_3, "Black and Green", GTK_SIGNAL_FUNC (HandleCommand), ID_COLOR_SETBLACK);
-  create_menu_item_with_mnemonic (menu_3, "Maya/Max/Lightwave Emulation", GTK_SIGNAL_FUNC (HandleCommand), ID_COLOR_SETYDNAR);
+  create_menu_item_with_mnemonic (menu, _("_Benchmark"), GTK_SIGNAL_FUNC (HandleCommand), ID_MISC_BENCHMARK);
+  menu_in_menu = create_menu_in_menu_with_mnemonic (menu, _("Colors"));
+  menu_3 = create_menu_in_menu_with_mnemonic (menu_in_menu, _("Themes"));
+  create_menu_item_with_mnemonic (menu_3, _("QE4 Original"), GTK_SIGNAL_FUNC (HandleCommand), ID_COLOR_SETORIGINAL);
+  create_menu_item_with_mnemonic (menu_3, _("Q3Radiant Original"), GTK_SIGNAL_FUNC (HandleCommand), ID_COLOR_SETQER);
+  create_menu_item_with_mnemonic (menu_3, _("Black and Green"), GTK_SIGNAL_FUNC (HandleCommand), ID_COLOR_SETBLACK);
+  create_menu_item_with_mnemonic (menu_3, _("Maya/Max/Lightwave Emulation"), GTK_SIGNAL_FUNC (HandleCommand), ID_COLOR_SETYDNAR);
 
   menu_separator (menu_in_menu);
-  create_menu_item_with_mnemonic (menu_in_menu, "_Texture Background...",
+  create_menu_item_with_mnemonic (menu_in_menu, _("_Texture Background..."),
                     GTK_SIGNAL_FUNC (HandleCommand), ID_TEXTUREBK);
-  create_menu_item_with_mnemonic (menu_in_menu, "Grid Background...",
+  create_menu_item_with_mnemonic (menu_in_menu, _("Grid Background..."),
                     GTK_SIGNAL_FUNC (HandleCommand), ID_COLORS_XYBK);
-  create_menu_item_with_mnemonic (menu_in_menu, "Grid Major...",
+  create_menu_item_with_mnemonic (menu_in_menu, _("Grid Major..."),
                     GTK_SIGNAL_FUNC (HandleCommand), ID_COLORS_MAJOR);
-  create_menu_item_with_mnemonic (menu_in_menu, "Grid Minor...",
+  create_menu_item_with_mnemonic (menu_in_menu, _("Grid Minor..."),
                     GTK_SIGNAL_FUNC (HandleCommand), ID_COLORS_MINOR);
-  create_menu_item_with_mnemonic (menu_in_menu, "Grid Major Small...",
+  create_menu_item_with_mnemonic (menu_in_menu, _("Grid Major Small..."),
                     GTK_SIGNAL_FUNC (HandleCommand), ID_COLORS_MAJOR_ALT);
-  create_menu_item_with_mnemonic (menu_in_menu, "Grid Minor Small...",
+  create_menu_item_with_mnemonic (menu_in_menu, _("Grid Minor Small..."),
                     GTK_SIGNAL_FUNC (HandleCommand), ID_COLORS_MINOR_ALT);
-  create_menu_item_with_mnemonic (menu_in_menu, "Grid Text...",
+  create_menu_item_with_mnemonic (menu_in_menu, _("Grid Text..."),
                     GTK_SIGNAL_FUNC (HandleCommand), ID_COLORS_GRIDTEXT);
-  create_menu_item_with_mnemonic (menu_in_menu, "Grid Block...",
+  create_menu_item_with_mnemonic (menu_in_menu, _("Grid Block..."),
                     GTK_SIGNAL_FUNC (HandleCommand), ID_COLORS_GRIDBLOCK);
-  create_menu_item_with_mnemonic (menu_in_menu, "Default Brush...",
+  create_menu_item_with_mnemonic (menu_in_menu, _("Default Brush..."),
                     GTK_SIGNAL_FUNC (HandleCommand), ID_COLORS_BRUSH);
-  create_menu_item_with_mnemonic (menu_in_menu, "Camera Background...",
+  create_menu_item_with_mnemonic (menu_in_menu, _("Camera Background..."),
                     GTK_SIGNAL_FUNC (HandleCommand), ID_COLORS_CAMERABACK);
-  create_menu_item_with_mnemonic (menu_in_menu, "Selected Brush...",
+  create_menu_item_with_mnemonic (menu_in_menu, _("Selected Brush..."),
                     GTK_SIGNAL_FUNC (HandleCommand), ID_COLORS_SELECTEDBRUSH);
-  create_menu_item_with_mnemonic (menu_in_menu, "Selected Brush (Camera)...",
+  create_menu_item_with_mnemonic (menu_in_menu, _("Selected Brush (Camera)..."),
                     GTK_SIGNAL_FUNC (HandleCommand), ID_COLORS_SELECTEDBRUSH3D);
-  create_menu_item_with_mnemonic (menu_in_menu, "Clipper...",
+  create_menu_item_with_mnemonic (menu_in_menu, _("Clipper..."),
                     GTK_SIGNAL_FUNC (HandleCommand), ID_COLORS_CLIPPER);
-  create_menu_item_with_mnemonic (menu_in_menu, "Active View name...",
+  create_menu_item_with_mnemonic (menu_in_menu, _("Active View name..."),
                     GTK_SIGNAL_FUNC (HandleCommand), ID_COLORS_VIEWNAME);
 
-  create_menu_item_with_mnemonic (menu, "_Gamma...",
+  create_menu_item_with_mnemonic (menu, _("_Gamma..."),
                     GTK_SIGNAL_FUNC (HandleCommand), ID_MISC_GAMMA);
-  create_menu_item_with_mnemonic (menu, "Find brush...",
+  create_menu_item_with_mnemonic (menu, _("Find brush..."),
                     GTK_SIGNAL_FUNC (HandleCommand), ID_MISC_FINDBRUSH);
-  item = create_menu_item_with_mnemonic (menu, "Next leak spot",
+  item = create_menu_item_with_mnemonic (menu, _("Next leak spot"),
                            GTK_SIGNAL_FUNC (HandleCommand), ID_MISC_NEXTLEAKSPOT);
-  item = create_menu_item_with_mnemonic (menu, "Previous leak spot",
+  item = create_menu_item_with_mnemonic (menu, _("Previous leak spot"),
                            GTK_SIGNAL_FUNC (HandleCommand), ID_MISC_PREVIOUSLEAKSPOT);
   // http://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=394
 //  create_menu_item_with_mnemonic (menu, "_Print XY View", GTK_SIGNAL_FUNC (HandleCommand), ID_MISC_PRINTXY);
-  item = create_menu_item_with_mnemonic (menu, "_Select Entity Color...",
+  item = create_menu_item_with_mnemonic (menu, _("_Select Entity Color..."),
                            GTK_SIGNAL_FUNC (HandleCommand), ID_MISC_SELECTENTITYCOLOR);
   g_object_set_data (G_OBJECT (window), "menu_misc_selectentitycolor", item);
 
   // Region menu
-  menu = create_sub_menu_with_mnemonic (menu_bar, "_Region");
+  menu = create_sub_menu_with_mnemonic (menu_bar, _("_Region"));
   if (g_PrefsDlg.m_bDetachableMenus)
     menu_tearoff (menu);
 
-  create_menu_item_with_mnemonic (menu, "_Off",
+  create_menu_item_with_mnemonic (menu, _("_Off"),
                     GTK_SIGNAL_FUNC (HandleCommand), ID_REGION_OFF);
-  create_menu_item_with_mnemonic (menu, "_Set XY",
+  create_menu_item_with_mnemonic (menu, _("_Set XY"),
                     GTK_SIGNAL_FUNC (HandleCommand), ID_REGION_SETXY);
-  create_menu_item_with_mnemonic (menu, "Set _Tall Brush",
+  create_menu_item_with_mnemonic (menu, _("Set _Tall Brush"),
                     GTK_SIGNAL_FUNC (HandleCommand), ID_REGION_SETTALLBRUSH);
-  create_menu_item_with_mnemonic (menu, "Set _Brush",
+  create_menu_item_with_mnemonic (menu, _("Set _Brush"),
                     GTK_SIGNAL_FUNC (HandleCommand), ID_REGION_SETBRUSH);
-  create_menu_item_with_mnemonic (menu, "Set Se_lected Brushes",
+  create_menu_item_with_mnemonic (menu, _("Set Se_lected Brushes"),
                     GTK_SIGNAL_FUNC (HandleCommand), ID_REGION_SETSELECTION);
 
   // Brush menu
-  menu = create_sub_menu_with_mnemonic (menu_bar, "_Brush");
+  menu = create_sub_menu_with_mnemonic (menu_bar, _("_Brush"));
   if (g_PrefsDlg.m_bDetachableMenus)
     menu_tearoff (menu);
 
-  item = create_menu_item_with_mnemonic (menu, "3 sided", GTK_SIGNAL_FUNC (HandleCommand), ID_BRUSH_3SIDED);
-  item = create_menu_item_with_mnemonic (menu, "4 sided", GTK_SIGNAL_FUNC (HandleCommand), ID_BRUSH_4SIDED);
-  item = create_menu_item_with_mnemonic (menu, "5 sided", GTK_SIGNAL_FUNC (HandleCommand), ID_BRUSH_5SIDED);
-  item = create_menu_item_with_mnemonic (menu, "6 sided", GTK_SIGNAL_FUNC (HandleCommand), ID_BRUSH_6SIDED);
-  item = create_menu_item_with_mnemonic (menu, "7 sided", GTK_SIGNAL_FUNC (HandleCommand), ID_BRUSH_7SIDED);
-  item = create_menu_item_with_mnemonic (menu, "8 sided", GTK_SIGNAL_FUNC (HandleCommand), ID_BRUSH_8SIDED);
-  item = create_menu_item_with_mnemonic (menu, "9 sided", GTK_SIGNAL_FUNC (HandleCommand), ID_BRUSH_9SIDED);
+  item = create_menu_item_with_mnemonic (menu, _("3 sided"), GTK_SIGNAL_FUNC (HandleCommand), ID_BRUSH_3SIDED);
+  item = create_menu_item_with_mnemonic (menu, _("4 sided"), GTK_SIGNAL_FUNC (HandleCommand), ID_BRUSH_4SIDED);
+  item = create_menu_item_with_mnemonic (menu, _("5 sided"), GTK_SIGNAL_FUNC (HandleCommand), ID_BRUSH_5SIDED);
+  item = create_menu_item_with_mnemonic (menu, _("6 sided"), GTK_SIGNAL_FUNC (HandleCommand), ID_BRUSH_6SIDED);
+  item = create_menu_item_with_mnemonic (menu, _("7 sided"), GTK_SIGNAL_FUNC (HandleCommand), ID_BRUSH_7SIDED);
+  item = create_menu_item_with_mnemonic (menu, _("8 sided"), GTK_SIGNAL_FUNC (HandleCommand), ID_BRUSH_8SIDED);
+  item = create_menu_item_with_mnemonic (menu, _("9 sided"), GTK_SIGNAL_FUNC (HandleCommand), ID_BRUSH_9SIDED);
   menu_separator (menu);
-  create_menu_item_with_mnemonic (menu, "Arbitrary sided...",
+  create_menu_item_with_mnemonic (menu, _("Arbitrary sided..."),
                     GTK_SIGNAL_FUNC (HandleCommand), ID_BRUSH_ARBITRARYSIDED);
   menu_separator (menu);
-  menu_in_menu = create_menu_in_menu_with_mnemonic (menu, "Primitives");
-  create_menu_item_with_mnemonic (menu_in_menu, "Cone...",
+  menu_in_menu = create_menu_in_menu_with_mnemonic (menu, _("Primitives"));
+  create_menu_item_with_mnemonic (menu_in_menu, _("Cone..."),
                     GTK_SIGNAL_FUNC (HandleCommand), ID_BRUSH_MAKECONE);
-  create_menu_item_with_mnemonic (menu_in_menu, "Sphere...",
+  create_menu_item_with_mnemonic (menu_in_menu, _("Sphere..."),
                     GTK_SIGNAL_FUNC (HandleCommand), ID_BRUSH_PRIMITIVES_SPHERE);
 
   // Curve menu
   if (!g_pGameDescription->mNoPatch)
   {
-  menu = create_sub_menu_with_mnemonic (menu_bar, "_Curve");
+  menu = create_sub_menu_with_mnemonic (menu_bar, _("_Curve"));
   if (g_PrefsDlg.m_bDetachableMenus)
     menu_tearoff (menu);
 
-  create_menu_item_with_mnemonic (menu, "Cylinder", GTK_SIGNAL_FUNC (HandleCommand), ID_CURVE_PATCHTUBE);
-  menu_in_menu = create_menu_in_menu_with_mnemonic (menu, "More Cylinders");
-  create_menu_item_with_mnemonic (menu_in_menu, "Dense Cylinder",
+  create_menu_item_with_mnemonic (menu, _("Cylinder"), GTK_SIGNAL_FUNC (HandleCommand), ID_CURVE_PATCHTUBE);
+  menu_in_menu = create_menu_in_menu_with_mnemonic (menu, _("More Cylinders"));
+  create_menu_item_with_mnemonic (menu_in_menu, _("Dense Cylinder"),
 		    GTK_SIGNAL_FUNC (HandleCommand), ID_CURVE_PATCHDENSETUBE);
-  create_menu_item_with_mnemonic (menu_in_menu, "Very Dense Cylinder",
+  create_menu_item_with_mnemonic (menu_in_menu, _("Very Dense Cylinder"),
 		    GTK_SIGNAL_FUNC (HandleCommand), ID_CURVE_PATCHVERYDENSETUBE);
-  create_menu_item_with_mnemonic (menu_in_menu, "Square Cylinder",
+  create_menu_item_with_mnemonic (menu_in_menu, _("Square Cylinder"),
 		    GTK_SIGNAL_FUNC (HandleCommand), ID_CURVE_PATCHSQUARE);
   menu_separator (menu);
-  create_menu_item_with_mnemonic (menu, "End cap", GTK_SIGNAL_FUNC (HandleCommand), ID_CURVE_PATCHENDCAP);
-  create_menu_item_with_mnemonic (menu, "Bevel", GTK_SIGNAL_FUNC (HandleCommand), ID_CURVE_PATCHBEVEL);
-  menu_in_menu = create_menu_in_menu_with_mnemonic (menu, "More End caps, Bevels");
-  create_menu_item_with_mnemonic (menu_in_menu, "Square Endcap",
+  create_menu_item_with_mnemonic (menu, _("End cap"), GTK_SIGNAL_FUNC (HandleCommand), ID_CURVE_PATCHENDCAP);
+  create_menu_item_with_mnemonic (menu, _("Bevel"), GTK_SIGNAL_FUNC (HandleCommand), ID_CURVE_PATCHBEVEL);
+  menu_in_menu = create_menu_in_menu_with_mnemonic (menu, _("More End caps, Bevels"));
+  create_menu_item_with_mnemonic (menu_in_menu, _("Square Endcap"),
 		    GTK_SIGNAL_FUNC (HandleCommand), ID_CURVE_MOREENDCAPSBEVELS_SQUAREBEVEL);
-  create_menu_item_with_mnemonic (menu_in_menu, "Square Bevel",
+  create_menu_item_with_mnemonic (menu_in_menu, _("Square Bevel"),
 		    GTK_SIGNAL_FUNC (HandleCommand), ID_CURVE_MOREENDCAPSBEVELS_SQUAREENDCAP);
   menu_separator (menu);
-  create_menu_item_with_mnemonic (menu, "Cone", GTK_SIGNAL_FUNC (HandleCommand), ID_CURVE_PATCHCONE);
-  item = create_menu_item_with_mnemonic (menu, "Sphere",
+  create_menu_item_with_mnemonic (menu, _("Cone"), GTK_SIGNAL_FUNC (HandleCommand), ID_CURVE_PATCHCONE);
+  item = create_menu_item_with_mnemonic (menu, _("Sphere"),
 			   GTK_SIGNAL_FUNC (HandleCommand), ID_CURVE_PRIMITIVES_SPHERE);
   gtk_widget_set_sensitive (item, FALSE);
   menu_separator (menu);
-  item = create_menu_item_with_mnemonic (menu, "Simple Patch Mesh...",
+  item = create_menu_item_with_mnemonic (menu, _("Simple Patch Mesh..."),
                            GTK_SIGNAL_FUNC (HandleCommand), ID_CURVE_SIMPLEPATCHMESH);
   g_object_set_data (G_OBJECT (window), "menu_simplepatchmesh", item);
   menu_separator (menu);
-  menu_in_menu = create_menu_in_menu_with_mnemonic (menu, "Insert");
-  create_menu_item_with_mnemonic (menu_in_menu, "Insert (2) Columns",
+  menu_in_menu = create_menu_in_menu_with_mnemonic (menu, _("Insert"));
+  create_menu_item_with_mnemonic (menu_in_menu, _("Insert (2) Columns"),
 		    GTK_SIGNAL_FUNC (HandleCommand), ID_CURVE_INSERT_INSERTCOLUMN);
-  create_menu_item_with_mnemonic (menu_in_menu, "Add (2) Columns",
+  create_menu_item_with_mnemonic (menu_in_menu, _("Add (2) Columns"),
 		    GTK_SIGNAL_FUNC (HandleCommand), ID_CURVE_INSERT_ADDCOLUMN);
   menu_separator (menu_in_menu);
-  create_menu_item_with_mnemonic (menu_in_menu, "Insert (2) Rows",
+  create_menu_item_with_mnemonic (menu_in_menu, _("Insert (2) Rows"),
 		    GTK_SIGNAL_FUNC (HandleCommand), ID_CURVE_INSERT_INSERTROW);
-  create_menu_item_with_mnemonic (menu_in_menu, "Add (2) Rows",
+  create_menu_item_with_mnemonic (menu_in_menu, _("Add (2) Rows"),
 		    GTK_SIGNAL_FUNC (HandleCommand), ID_CURVE_INSERT_ADDROW);
-  menu_in_menu = create_menu_in_menu_with_mnemonic (menu, "Delete");
-  create_menu_item_with_mnemonic (menu_in_menu, "First (2) Columns",
+  menu_in_menu = create_menu_in_menu_with_mnemonic (menu, _("Delete"));
+  create_menu_item_with_mnemonic (menu_in_menu, _("First (2) Columns"),
 		    GTK_SIGNAL_FUNC (HandleCommand), ID_CURVE_DELETE_FIRSTCOLUMN);
-  create_menu_item_with_mnemonic (menu_in_menu, "Last (2) Columns",
+  create_menu_item_with_mnemonic (menu_in_menu, _("Last (2) Columns"),
 		    GTK_SIGNAL_FUNC (HandleCommand), ID_CURVE_DELETE_LASTCOLUMN);
   menu_separator (menu_in_menu);
-  create_menu_item_with_mnemonic (menu_in_menu, "First (2) Rows",
+  create_menu_item_with_mnemonic (menu_in_menu, _("First (2) Rows"),
 		    GTK_SIGNAL_FUNC (HandleCommand), ID_CURVE_DELETE_FIRSTROW);
-  create_menu_item_with_mnemonic (menu_in_menu, "Last (2) Rows",
+  create_menu_item_with_mnemonic (menu_in_menu, _("Last (2) Rows"),
 		    GTK_SIGNAL_FUNC (HandleCommand), ID_CURVE_DELETE_LASTROW);
   menu_separator (menu);
-  menu_in_menu = create_menu_in_menu_with_mnemonic (menu, "Matrix");
-  create_menu_item_with_mnemonic (menu_in_menu, "Invert",
+  menu_in_menu = create_menu_in_menu_with_mnemonic (menu, _("Matrix"));
+  create_menu_item_with_mnemonic (menu_in_menu, _("Invert"),
 		    GTK_SIGNAL_FUNC (HandleCommand), ID_CURVE_NEGATIVE);
-  menu_3 = create_menu_in_menu_with_mnemonic (menu_in_menu, "Re-disperse");
-  create_menu_item_with_mnemonic (menu_3, "Rows", GTK_SIGNAL_FUNC (HandleCommand), ID_CURVE_REDISPERSE_ROWS);
-  create_menu_item_with_mnemonic (menu_3, "Cols (Intermediate)", GTK_SIGNAL_FUNC (HandleCommand), ID_CURVE_REDISPERSE_INTERMEDIATE_COLS);
-  create_menu_item_with_mnemonic (menu_3, "Rows (Intermediate)", GTK_SIGNAL_FUNC (HandleCommand), ID_CURVE_REDISPERSE_INTERMEDIATE_ROWS);
-  create_menu_item_with_mnemonic (menu_in_menu, "Transpose",
+  menu_3 = create_menu_in_menu_with_mnemonic (menu_in_menu, _("Re-disperse"));
+  create_menu_item_with_mnemonic (menu_3, _("Rows"), GTK_SIGNAL_FUNC (HandleCommand), ID_CURVE_REDISPERSE_ROWS);
+  create_menu_item_with_mnemonic (menu_3, _("Cols (Intermediate)"), GTK_SIGNAL_FUNC (HandleCommand), ID_CURVE_REDISPERSE_INTERMEDIATE_COLS);
+  create_menu_item_with_mnemonic (menu_3, _("Rows (Intermediate)"), GTK_SIGNAL_FUNC (HandleCommand), ID_CURVE_REDISPERSE_INTERMEDIATE_ROWS);
+  create_menu_item_with_mnemonic (menu_in_menu, _("Transpose"),
 		    GTK_SIGNAL_FUNC (HandleCommand), ID_CURVE_MATRIX_TRANSPOSE);
   menu_separator (menu);
-  create_menu_item_with_mnemonic (menu, "Cap Selection",
+  create_menu_item_with_mnemonic (menu, _("Cap Selection"),
 		    GTK_SIGNAL_FUNC (HandleCommand), ID_CURVE_CAP);
-  create_menu_item_with_mnemonic (menu, "Cycle Cap Texture",
+  create_menu_item_with_mnemonic (menu, _("Cycle Cap Texture"),
 			GTK_SIGNAL_FUNC (HandleCommand), ID_CURVE_CYCLECAP);
   menu_separator (menu);
-  menu_in_menu = create_menu_in_menu_with_mnemonic (menu, "Overlay");
-  create_menu_item_with_mnemonic (menu_in_menu, "Set",
+  menu_in_menu = create_menu_in_menu_with_mnemonic (menu, _("Overlay"));
+  create_menu_item_with_mnemonic (menu_in_menu, _("Set"),
 		    GTK_SIGNAL_FUNC (HandleCommand), ID_CURVE_OVERLAY_SET);
-  create_menu_item_with_mnemonic (menu_in_menu, "Clear",
+  create_menu_item_with_mnemonic (menu_in_menu, _("Clear"),
 		    GTK_SIGNAL_FUNC (HandleCommand), ID_CURVE_OVERLAY_CLEAR);
   menu_separator (menu);
-  create_menu_item_with_mnemonic (menu, "Thicken...", GTK_SIGNAL_FUNC (HandleCommand), ID_CURVE_THICKEN);
+  create_menu_item_with_mnemonic (menu, _("Thicken..."), GTK_SIGNAL_FUNC (HandleCommand), ID_CURVE_THICKEN);
   }
   // Plugins menu
-  menu = create_sub_menu_with_mnemonic (menu_bar, "_Plugins");
+  menu = create_sub_menu_with_mnemonic (menu_bar, _("_Plugins"));
   if (g_PrefsDlg.m_bDetachableMenus)
     menu_tearoff (menu);
 
@@ -1559,11 +1559,11 @@ void MainFrame::create_main_menu (GtkWidget *window, GtkWidget *vbox)
   g_object_set_data (G_OBJECT (window), "menu_plugin", menu);
 
   // Help menu
-  menu = create_sub_menu_with_mnemonic (menu_bar, "_Help");
+  menu = create_sub_menu_with_mnemonic (menu_bar, _("_Help"));
   if (g_PrefsDlg.m_bDetachableMenus)
     menu_tearoff (menu);
 
-  item = create_menu_item_with_mnemonic (menu, "Manual",
+  item = create_menu_item_with_mnemonic (menu, _("Manual"),
                            GTK_SIGNAL_FUNC (HandleCommand), ID_HELP);
   gtk_widget_add_accelerator (item, "activate", accel, GDK_F1, (GdkModifierType)0, GTK_ACCEL_VISIBLE);
 
@@ -1574,11 +1574,11 @@ void MainFrame::create_main_menu (GtkWidget *window, GtkWidget *vbox)
   // TTimo: this is in global.xlink now
   //create_menu_item_with_mnemonic (menu, "Links",
   //                  GTK_SIGNAL_FUNC (HandleCommand), ID_HELP_LINKS);
-  create_menu_item_with_mnemonic (menu, "Bug report",
+  create_menu_item_with_mnemonic (menu, _("Bug report"),
                     GTK_SIGNAL_FUNC (HandleCommand), ID_HELP_BUGREPORT);
-  create_menu_item_with_mnemonic (menu, "Shortcuts list",
+  create_menu_item_with_mnemonic (menu, _("Shortcuts list"),
                     GTK_SIGNAL_FUNC (HandleCommand), ID_HELP_COMMANDLIST);
-  create_menu_item_with_mnemonic (menu, "_About",
+  create_menu_item_with_mnemonic (menu, _("_About"),
                     GTK_SIGNAL_FUNC (HandleCommand), ID_HELP_ABOUT);
 
 
@@ -1665,36 +1665,36 @@ void MainFrame::create_main_toolbar (GtkWidget *window, GtkWidget *vbox)
 
   gtk_widget_show (toolbar);
 
-  w = gtk_toolbar_append_item (GTK_TOOLBAR (toolbar), "Open", "Open an existing map", "",
+  w = gtk_toolbar_append_item (GTK_TOOLBAR (toolbar), _("Open"), _("Open an existing map"), "",
                                new_pixmap (window, "file_open.bmp"), GTK_SIGNAL_FUNC (HandleCommand),
                                GINT_TO_POINTER (ID_FILE_OPEN));
   g_object_set_data (G_OBJECT (window), "tb_file_open", w);
-  w = gtk_toolbar_append_item (GTK_TOOLBAR (toolbar), "Save", "Save the active map", "",
+  w = gtk_toolbar_append_item (GTK_TOOLBAR (toolbar), _("Save"), _("Save the active map"), "",
                                new_pixmap (window, "file_save.bmp"), GTK_SIGNAL_FUNC (HandleCommand),
                                GINT_TO_POINTER (ID_FILE_SAVE));
   g_object_set_data (G_OBJECT (window), "tb_file_save", w);
   gtk_toolbar_append_space (GTK_TOOLBAR (toolbar));
-  w = gtk_toolbar_append_item (GTK_TOOLBAR (toolbar), "", "x-axis Flip", "",
+  w = gtk_toolbar_append_item (GTK_TOOLBAR (toolbar), "", _("x-axis Flip"), "",
                                new_pixmap (window, "brush_flipx.bmp"), GTK_SIGNAL_FUNC (HandleCommand),
                                GINT_TO_POINTER (ID_BRUSH_FLIPX));
   g_object_set_data (G_OBJECT (window), "tb_brush_flipx", w);
-  w = gtk_toolbar_append_item (GTK_TOOLBAR (toolbar), "", "x-axis Rotate", "",
+  w = gtk_toolbar_append_item (GTK_TOOLBAR (toolbar), "", _("x-axis Rotate"), "",
                                new_pixmap (window, "brush_rotatex.bmp"), GTK_SIGNAL_FUNC (HandleCommand),
                                GINT_TO_POINTER (ID_BRUSH_ROTATEX));
   g_object_set_data (G_OBJECT (window), "tb_brush_rotatex", w);
-  w = gtk_toolbar_append_item (GTK_TOOLBAR (toolbar), "", "y-axis Flip", "",
+  w = gtk_toolbar_append_item (GTK_TOOLBAR (toolbar), "", _("y-axis Flip"), "",
                                new_pixmap (window, "brush_flipy.bmp"), GTK_SIGNAL_FUNC (HandleCommand),
                                GINT_TO_POINTER (ID_BRUSH_FLIPY));
   g_object_set_data (G_OBJECT (window), "tb_brush_flipy", w);
-  w = gtk_toolbar_append_item (GTK_TOOLBAR (toolbar), "", "y-axis Rotate", "",
+  w = gtk_toolbar_append_item (GTK_TOOLBAR (toolbar), "", _("y-axis Rotate"), "",
                                new_pixmap (window, "brush_rotatey.bmp"), GTK_SIGNAL_FUNC (HandleCommand),
                                GINT_TO_POINTER (ID_BRUSH_ROTATEY));
   g_object_set_data (G_OBJECT (window), "tb_brush_rotatey", w);
-  w = gtk_toolbar_append_item (GTK_TOOLBAR (toolbar), "", "z-axis Flip", "",
+  w = gtk_toolbar_append_item (GTK_TOOLBAR (toolbar), "", _("z-axis Flip"), "",
                                new_pixmap (window, "brush_flipz.bmp"), GTK_SIGNAL_FUNC (HandleCommand),
                                GINT_TO_POINTER (ID_BRUSH_FLIPZ));
   g_object_set_data (G_OBJECT (window), "tb_brush_flipz", w);
-  w = gtk_toolbar_append_item (GTK_TOOLBAR (toolbar), "", "z-axis Rotate", "",
+  w = gtk_toolbar_append_item (GTK_TOOLBAR (toolbar), "", _("z-axis Rotate"), "",
                                new_pixmap (window, "brush_rotatez.bmp"), GTK_SIGNAL_FUNC (HandleCommand),
                                GINT_TO_POINTER (ID_BRUSH_ROTATEZ));
   g_object_set_data (G_OBJECT (window), "tb_brush_rotatez", w);
@@ -1702,45 +1702,45 @@ void MainFrame::create_main_toolbar (GtkWidget *window, GtkWidget *vbox)
 
   if (g_PrefsDlg.m_bWideToolbar)
   {
-    w = gtk_toolbar_append_item (GTK_TOOLBAR (toolbar), "", "Complete Tall", "",
+    w = gtk_toolbar_append_item (GTK_TOOLBAR (toolbar), "", _("Complete Tall"), "",
                                  new_pixmap (window, "selection_selectcompletetall.bmp"), GTK_SIGNAL_FUNC (HandleCommand),
                                  GINT_TO_POINTER (ID_SELECTION_SELECTCOMPLETETALL));
     g_object_set_data (G_OBJECT (window), "tb_selection_selectcompletetall", w);
-    w = gtk_toolbar_append_item (GTK_TOOLBAR (toolbar), "", "Select Touching", "",
+    w = gtk_toolbar_append_item (GTK_TOOLBAR (toolbar), "", _("Select Touching"), "",
                                  new_pixmap (window, "selection_selecttouching.bmp"), GTK_SIGNAL_FUNC (HandleCommand),
                                  GINT_TO_POINTER (ID_SELECTION_SELECTTOUCHING));
     g_object_set_data (G_OBJECT (window), "tb_selection_selecttouching", w);
-    w = gtk_toolbar_append_item (GTK_TOOLBAR (toolbar), "", "Select Partial Tall", "",
+    w = gtk_toolbar_append_item (GTK_TOOLBAR (toolbar), "", _("Select Partial Tall"), "",
                                  new_pixmap (window, "selection_selectpartialtall.bmp"), GTK_SIGNAL_FUNC (HandleCommand),
                                  GINT_TO_POINTER (ID_SELECTION_SELECTPARTIALTALL));
     g_object_set_data (G_OBJECT (window), "tb_selection_selectpartialtall", w);
-    w = gtk_toolbar_append_item (GTK_TOOLBAR (toolbar), "", "Select Inside", "",
+    w = gtk_toolbar_append_item (GTK_TOOLBAR (toolbar), "", _("Select Inside"), "",
                                  new_pixmap (window, "selection_selectinside.bmp"), GTK_SIGNAL_FUNC (HandleCommand),
                                  GINT_TO_POINTER (ID_SELECTION_SELECTINSIDE));
     g_object_set_data (G_OBJECT (window), "tb_selection_selectinside", w);
   } else
   {
-    w = gtk_toolbar_append_item (GTK_TOOLBAR (toolbar), "", "Selection", "",
+    w = gtk_toolbar_append_item (GTK_TOOLBAR (toolbar), "", _("Selection"), "",
                                  new_pixmap (window, "popup_selection.bmp"), GTK_SIGNAL_FUNC (HandleCommand),
                                  GINT_TO_POINTER (ID_POPUP_SELECTION));
     g_object_set_data (G_OBJECT (window), "tb_popup_selection", w);
   }
   gtk_toolbar_append_space (GTK_TOOLBAR (toolbar));
 
-  w = gtk_toolbar_append_item (GTK_TOOLBAR (toolbar), "", "CSG Subtract", "",
+  w = gtk_toolbar_append_item (GTK_TOOLBAR (toolbar), "", _("CSG Subtract"), "",
                                new_pixmap (window, "selection_csgsubtract.bmp"),
                                GTK_SIGNAL_FUNC (HandleCommand), GINT_TO_POINTER (ID_SELECTION_CSGSUBTRACT));
   g_object_set_data (G_OBJECT (window), "tb_selection_csgsubtract", w);
 
   if (g_PrefsDlg.m_bWideToolbar)
   {
-    w = gtk_toolbar_append_item (GTK_TOOLBAR (toolbar), "", "CSG Merge", "",
+    w = gtk_toolbar_append_item (GTK_TOOLBAR (toolbar), "", _("CSG Merge"), "",
                                  new_pixmap (window, "selection_csgmerge.bmp"),
                                  GTK_SIGNAL_FUNC (HandleCommand), GINT_TO_POINTER (ID_SELECTION_CSGMERGE));
     g_object_set_data (G_OBJECT (window), "tb_selection_csgmerge", w);
   }
 
-  w = gtk_toolbar_append_item (GTK_TOOLBAR (toolbar), "", "Hollow", "",
+  w = gtk_toolbar_append_item (GTK_TOOLBAR (toolbar), "", _("Hollow"), "",
                                new_pixmap (window, "selection_makehollow.bmp"),
                                GTK_SIGNAL_FUNC (HandleCommand), GINT_TO_POINTER (ID_SELECTION_MAKEHOLLOW));
   g_object_set_data (G_OBJECT (window), "tb_selection_makehollow", w);
@@ -1748,14 +1748,14 @@ void MainFrame::create_main_toolbar (GtkWidget *window, GtkWidget *vbox)
   if (g_PrefsDlg.m_bWideToolbar)
   {
     w = gtk_toolbar_append_element (GTK_TOOLBAR (toolbar), GTK_TOOLBAR_CHILD_TOGGLEBUTTON, NULL,
-                                    "", "Clipper", "", new_pixmap (window, "view_clipper.bmp"),
+                                    "", _("Clipper"), "", new_pixmap (window, "view_clipper.bmp"),
                                     GTK_SIGNAL_FUNC (HandleCommand), GINT_TO_POINTER (ID_VIEW_CLIPPER));
     g_object_set_data (G_OBJECT (window), "tb_view_clipper", w);
   }
 
   gtk_toolbar_append_space (GTK_TOOLBAR (toolbar));
 
-  w = gtk_toolbar_append_item (GTK_TOOLBAR (toolbar), "", "Change views", "",
+  w = gtk_toolbar_append_item (GTK_TOOLBAR (toolbar), "", _("Change views"), "",
                                new_pixmap (window, "view_change.bmp"), GTK_SIGNAL_FUNC (HandleCommand),
                                GINT_TO_POINTER (ID_VIEW_CHANGE));
   g_object_set_data (G_OBJECT (window), "tb_view_change", w);
@@ -1765,7 +1765,7 @@ void MainFrame::create_main_toolbar (GtkWidget *window, GtkWidget *vbox)
     gtk_toolbar_append_space (GTK_TOOLBAR (toolbar));
   }
 
-  w = gtk_toolbar_append_item (GTK_TOOLBAR (toolbar), "", "Texture view mode", "",
+  w = gtk_toolbar_append_item (GTK_TOOLBAR (toolbar), "", _("Texture view mode"), "",
                                new_pixmap (window, "textures_popup.bmp"), GTK_SIGNAL_FUNC (HandleCommand),
                                GINT_TO_POINTER (ID_TEXTURES_POPUP));
   g_object_set_data (G_OBJECT (window), "tb_textures_popup", w);
@@ -1773,7 +1773,7 @@ void MainFrame::create_main_toolbar (GtkWidget *window, GtkWidget *vbox)
   if (g_PrefsDlg.m_bWideToolbar)
   {
     w = gtk_toolbar_append_element (GTK_TOOLBAR (toolbar), GTK_TOOLBAR_CHILD_TOGGLEBUTTON, NULL,
-                                    "", "Cubic clip the camera view", "",
+                                    "", _("Cubic clip the camera view"), "",
                                     new_pixmap (window, "view_cubicclipping.bmp"),
                                     GTK_SIGNAL_FUNC (HandleCommand), GINT_TO_POINTER (ID_VIEW_CUBICCLIPPING));
     g_object_set_data (G_OBJECT (window), "tb_view_cubicclipping", w);
@@ -1784,7 +1784,7 @@ void MainFrame::create_main_toolbar (GtkWidget *window, GtkWidget *vbox)
   if (!g_PrefsDlg.m_bWideToolbar)
   {
     w = gtk_toolbar_append_element (GTK_TOOLBAR (toolbar), GTK_TOOLBAR_CHILD_TOGGLEBUTTON, NULL,
-				"", "Camera preview", "", new_pixmap (window, "view_cameratoggle.bmp"),
+				"", _("Camera preview"), "", new_pixmap (window, "view_cameratoggle.bmp"),
 				GTK_SIGNAL_FUNC (HandleCommand), GINT_TO_POINTER (ID_VIEW_CAMERATOGGLE));
     g_object_set_data (G_OBJECT (window), "tb_view_cameratoggle", w);
     w = gtk_toolbar_append_item (GTK_TOOLBAR (toolbar), "", "Update Camera", "",
@@ -1792,42 +1792,42 @@ void MainFrame::create_main_toolbar (GtkWidget *window, GtkWidget *vbox)
 			     GINT_TO_POINTER (ID_VIEW_CAMERAUPDATE));
     g_object_set_data (G_OBJECT (window), "tb_view_cameraupdate", w);
     w = gtk_toolbar_append_element (GTK_TOOLBAR (toolbar), GTK_TOOLBAR_CHILD_TOGGLEBUTTON, NULL,
-				"", "Cubic clip the camera view", "",
+				"", _("Cubic clip the camera view"), "",
 				new_pixmap (window, "view_cubicclipping.bmp"),
 				GTK_SIGNAL_FUNC (HandleCommand), GINT_TO_POINTER (ID_VIEW_CUBICCLIPPING));
     g_object_set_data (G_OBJECT (window), "tb_view_cubicclipping", w);
     gtk_toolbar_append_space (GTK_TOOLBAR (toolbar));
     w = gtk_toolbar_append_element (GTK_TOOLBAR (toolbar), GTK_TOOLBAR_CHILD_TOGGLEBUTTON, NULL,
-				    "", "Entity inspector", "", new_pixmap (window, "view_entity.bmp"),
+				    "", _("Entity inspector"), "", new_pixmap (window, "view_entity.bmp"),
 				    GTK_SIGNAL_FUNC (HandleCommand), GINT_TO_POINTER (ID_VIEW_ENTITY));
     g_object_set_data (G_OBJECT (window), "tb_view_entity", w);
     gtk_toolbar_append_space (GTK_TOOLBAR (toolbar));
     w = gtk_toolbar_append_element (GTK_TOOLBAR (toolbar), GTK_TOOLBAR_CHILD_TOGGLEBUTTON, NULL,
-				    "", "Clipper", "", new_pixmap (window, "view_clipper.bmp"),
+				    "", _("Clipper"), "", new_pixmap (window, "view_clipper.bmp"),
 				    GTK_SIGNAL_FUNC (HandleCommand), GINT_TO_POINTER (ID_VIEW_CLIPPER));
     g_object_set_data (G_OBJECT (window), "tb_view_clipper", w);
     gtk_toolbar_append_space (GTK_TOOLBAR (toolbar));
   }
 
   w = gtk_toolbar_append_element (GTK_TOOLBAR (toolbar), GTK_TOOLBAR_CHILD_TOGGLEBUTTON, NULL,
-			      "", "Free Rotation", "", new_pixmap (window, "select_mouserotate.bmp"),
+			      "", _("Free Rotation"), "", new_pixmap (window, "select_mouserotate.bmp"),
 			      GTK_SIGNAL_FUNC (HandleCommand), GINT_TO_POINTER (ID_SELECT_MOUSEROTATE));
   g_object_set_data (G_OBJECT (window), "tb_select_mouserotate", w);
   gtk_toolbar_append_space (GTK_TOOLBAR (toolbar));
   w = gtk_toolbar_append_element (GTK_TOOLBAR (toolbar), GTK_TOOLBAR_CHILD_TOGGLEBUTTON, NULL,
-			      "", "Free Scaling", "", new_pixmap (window, "select_mousescale.bmp"),
+			      "", _("Free Scaling"), "", new_pixmap (window, "select_mousescale.bmp"),
 			      GTK_SIGNAL_FUNC (HandleCommand), GINT_TO_POINTER (ID_SELECT_MOUSESCALE));
   g_object_set_data (G_OBJECT (window), "tb_select_mousescale", w);
   w = gtk_toolbar_append_element (GTK_TOOLBAR (toolbar), GTK_TOOLBAR_CHILD_TOGGLEBUTTON, NULL,
-				  "", "Scale X", "", new_pixmap (window, "scalelockx.bmp"),
+				  "", _("Scale X"), "", new_pixmap (window, "scalelockx.bmp"),
 				  GTK_SIGNAL_FUNC (HandleCommand), GINT_TO_POINTER (ID_SCALELOCKX));
   g_object_set_data (G_OBJECT (window), "tb_scalelockx", w);
   w = gtk_toolbar_append_element (GTK_TOOLBAR (toolbar), GTK_TOOLBAR_CHILD_TOGGLEBUTTON, NULL,
-				  "", "Scale Y", "", new_pixmap (window, "scalelocky.bmp"),
+				  "", _("Scale Y"), "", new_pixmap (window, "scalelocky.bmp"),
 				  GTK_SIGNAL_FUNC (HandleCommand), GINT_TO_POINTER (ID_SCALELOCKY));
   g_object_set_data (G_OBJECT (window), "tb_scalelocky", w);
   w = gtk_toolbar_append_element (GTK_TOOLBAR (toolbar), GTK_TOOLBAR_CHILD_TOGGLEBUTTON, NULL,
-				  "", "Scale Z", "", new_pixmap (window, "scalelockz.bmp"),
+				  "", _("Scale Z"), "", new_pixmap (window, "scalelockz.bmp"),
 				  GTK_SIGNAL_FUNC (HandleCommand), GINT_TO_POINTER (ID_SCALELOCKZ));
   g_object_set_data (G_OBJECT (window), "tb_scalelockz", w);
 
@@ -1835,7 +1835,7 @@ void MainFrame::create_main_toolbar (GtkWidget *window, GtkWidget *vbox)
   {
     gtk_toolbar_append_space (GTK_TOOLBAR (toolbar));
     w = gtk_toolbar_append_element (GTK_TOOLBAR (toolbar), GTK_TOOLBAR_CHILD_TOGGLEBUTTON, NULL,
-			     "", "Don't select model brushes", "",
+			     "", _("Don't select model brushes"), "",
                              new_pixmap (window, "dontselectmodel.bmp"), GTK_SIGNAL_FUNC (HandleCommand),
 			     GINT_TO_POINTER (ID_DONTSELECTMODEL));
     gtk_toolbar_append_space (GTK_TOOLBAR (toolbar));
@@ -1844,7 +1844,7 @@ void MainFrame::create_main_toolbar (GtkWidget *window, GtkWidget *vbox)
     if (!g_pGameDescription->mNoPatch)
     {
       w = gtk_toolbar_append_element (GTK_TOOLBAR (toolbar), GTK_TOOLBAR_CHILD_TOGGLEBUTTON, NULL,
-			     "", "Don't select curved brushes", "",
+			     "", _("Don't select curved brushes"), "",
                              new_pixmap (window, "dontselectcurve.bmp"), GTK_SIGNAL_FUNC (HandleCommand),
 			     GINT_TO_POINTER (ID_DONTSELECTCURVE));
       g_object_set_data (G_OBJECT (window), "tb_dontselectcurve", w);
@@ -1855,31 +1855,31 @@ void MainFrame::create_main_toolbar (GtkWidget *window, GtkWidget *vbox)
   if (g_PrefsDlg.m_bPatchToolbar)
   {
     w = gtk_toolbar_append_element (GTK_TOOLBAR (toolbar), GTK_TOOLBAR_CHILD_TOGGLEBUTTON, NULL,
-			     "", "Show patch bounding box", "",
+			     "", _("Show patch bounding box"), "",
 			     new_pixmap (window, "patch_showboundingbox.bmp"),
 			     GTK_SIGNAL_FUNC (HandleCommand), GINT_TO_POINTER (ID_PATCH_SHOWBOUNDINGBOX));
     g_object_set_data (G_OBJECT (window), "tb_patch_showboundingbox", w);
     w = gtk_toolbar_append_element (GTK_TOOLBAR (toolbar), GTK_TOOLBAR_CHILD_TOGGLEBUTTON, NULL,
-				    "", "Show patches as wireframes", "",
+				    "", _("Show patches as wireframes"), "",
 				    new_pixmap (window, "patch_wireframe.bmp"),
 				    GTK_SIGNAL_FUNC (HandleCommand), GINT_TO_POINTER (ID_PATCH_WIREFRAME));
     g_object_set_data (G_OBJECT (window), "tb_patch_wireframe", w);
     w = gtk_toolbar_append_element (GTK_TOOLBAR (toolbar), GTK_TOOLBAR_CHILD_TOGGLEBUTTON, NULL,
-                             "", "Patch Bend mode", "",
+                             "", _("Patch Bend mode"), "",
 			     new_pixmap (window, "patch_bend.bmp"), GTK_SIGNAL_FUNC (HandleCommand),
 			     GINT_TO_POINTER (ID_PATCH_BEND));
     g_object_set_data (G_OBJECT (window), "tb_patch_bend", w);
-    w = gtk_toolbar_append_item (GTK_TOOLBAR (toolbar), "", "Put caps on the current patch", "",
+    w = gtk_toolbar_append_item (GTK_TOOLBAR (toolbar), "", _("Put caps on the current patch"), "",
 			     new_pixmap (window, "curve_cap.bmp"), GTK_SIGNAL_FUNC (HandleCommand),
 			     GINT_TO_POINTER (ID_CURVE_CAP));
     g_object_set_data (G_OBJECT (window), "tb_curve_cap", w);
     w = gtk_toolbar_append_element (GTK_TOOLBAR (toolbar), GTK_TOOLBAR_CHILD_TOGGLEBUTTON, NULL,
-				 "", "Welds equal patch points during moves", "",
+				 "", _("Welds equal patch points during moves"), "",
 				 new_pixmap (window, "patch_weld.bmp"), GTK_SIGNAL_FUNC (HandleCommand),
 				 GINT_TO_POINTER (ID_PATCH_WELD));
     g_object_set_data (G_OBJECT (window), "tb_patch_weld", w);
     w = gtk_toolbar_append_element (GTK_TOOLBAR (toolbar), GTK_TOOLBAR_CHILD_TOGGLEBUTTON, NULL,
-                             "", "Selects drill down rows and columns", "",
+                             "", _("Selects drill down rows and columns"), "",
 			     new_pixmap (window, "patch_drilldown.bmp"), GTK_SIGNAL_FUNC (HandleCommand),
 			     GINT_TO_POINTER (ID_PATCH_DRILLDOWN));
     g_object_set_data (G_OBJECT (window), "tb_patch_drilldown", w);
@@ -1888,7 +1888,7 @@ void MainFrame::create_main_toolbar (GtkWidget *window, GtkWidget *vbox)
   if (g_PrefsDlg.m_bWideToolbar)
   {
     gtk_toolbar_append_space (GTK_TOOLBAR (toolbar));
-    w = gtk_toolbar_append_item (GTK_TOOLBAR (toolbar), "", "Show Entities as", "",
+    w = gtk_toolbar_append_item (GTK_TOOLBAR (toolbar), "", _("Show Entities as"), "",
 			     new_pixmap (window, "show_entities.bmp"), GTK_SIGNAL_FUNC (HandleCommand),
 			     GINT_TO_POINTER (ID_SHOW_ENTITIES));
     g_object_set_data (G_OBJECT (window), "tb_show_entities", w);
@@ -1953,7 +1953,7 @@ void MainFrame::create_main_statusbar (GtkWidget *window, GtkWidget *vbox)
   gtk_container_border_width (GTK_CONTAINER (hbox1), 0);
   gtk_widget_show (hbox1);
 
-  label = gtk_label_new (" Label ");
+  label = gtk_label_new (_(" Label "));
   gtk_widget_show (label);
   gtk_box_pack_start (GTK_BOX (hbox1), label, FALSE, TRUE, 0);
   gtk_label_set_justify (GTK_LABEL (label), GTK_JUSTIFY_LEFT);
@@ -1967,7 +1967,7 @@ void MainFrame::create_main_statusbar (GtkWidget *window, GtkWidget *vbox)
     gtk_box_pack_start (GTK_BOX (hbox), frame, FALSE, TRUE, 0);
     gtk_frame_set_shadow_type (GTK_FRAME (frame), GTK_SHADOW_IN);
 
-    label = gtk_label_new (" Label ");
+    label = gtk_label_new (_(" Label "));
     gtk_widget_show (label);
     gtk_container_add (GTK_CONTAINER (frame), label);
     m_pStatusLabel[i] = label;
@@ -2060,7 +2060,7 @@ void console_populate_popup(GtkTextView* textview, GtkMenu* menu, gpointer user_
 {
   menu_separator(GTK_WIDGET(menu));
 
-  GtkWidget* item = gtk_menu_item_new_with_label ("Clear");
+  GtkWidget* item = gtk_menu_item_new_with_label (_("Clear"));
   gtk_signal_connect (GTK_OBJECT (item), "activate", GTK_SIGNAL_FUNC (Sys_ClearPrintf), NULL);
   gtk_widget_show (item);
   gtk_menu_append (GTK_MENU (menu), item);
@@ -2735,7 +2735,7 @@ void MainFrame::Create ()
 
     {
       GtkWidget* wnd = create_floating (this);
-      gtk_window_set_title (GTK_WINDOW (wnd), "XZ View");
+      gtk_window_set_title (GTK_WINDOW (wnd), _("XZ View"));
 
 #ifdef _WIN32
       if( g_PrefsDlg.m_bStartOnPrimMon ) {
@@ -2759,7 +2759,7 @@ void MainFrame::Create ()
 
     {
       GtkWidget* wnd = create_floating (this);
-      gtk_window_set_title (GTK_WINDOW (wnd), "YZ View");
+      gtk_window_set_title (GTK_WINDOW (wnd), _("YZ View"));
 
 #ifdef _WIN32
       if( g_PrefsDlg.m_bStartOnPrimMon ) {
@@ -2787,7 +2787,7 @@ void MainFrame::Create ()
       m_pTexWnd->m_pParent = g_pGroupDlg->m_pWidget;
 
       {
-        GtkWidget* w = gtk_label_new ("Textures");
+        GtkWidget* w = gtk_label_new (_("Textures"));
         gtk_widget_show (w);
         gtk_notebook_insert_page (GTK_NOTEBOOK (g_pGroupDlg->m_pNotebook), frame, w, 1);
       }
@@ -2852,7 +2852,7 @@ void MainFrame::Create ()
       GtkWidget* frame = create_framed_texwnd(m_pTexWnd);
 
       {
-        GtkWidget* w = gtk_label_new ("Textures");
+        GtkWidget* w = gtk_label_new (_("Textures"));
         gtk_widget_show (w);
         gtk_notebook_insert_page (GTK_NOTEBOOK (g_pGroupDlg->m_pNotebook), frame, w, 1);
       }
@@ -3690,9 +3690,9 @@ void MainFrame::CreateQEChildren()
       }
       else
       {
-        gtk_MessageBox (NULL, "Failed to load project file.\nPlease enter a valid project file.", "Load Project");
+        gtk_MessageBox (NULL, _("Failed to load project file.\nPlease enter a valid project file."), _("Load Project"));
 
-        filename = file_dialog (m_pWidget, TRUE, "Choose Project File", buf, "project");
+        filename = file_dialog (m_pWidget, TRUE, _("Choose Project File"), buf, "project");
         if (filename != NULL)
           r = filename;
         else
@@ -4267,7 +4267,7 @@ void MainFrame::OnFileOpen()
   strcpy(buf, g_qeglobals.m_strHomeMaps.GetBuffer());
   strcat(buf, "maps/");
 
-  str = file_dialog (m_pWidget, TRUE, "Open Map", buf, MAP_MAJOR);
+  str = file_dialog (m_pWidget, TRUE, _("Open Map"), buf, MAP_MAJOR);
 
   if (str != NULL)
   {
@@ -4285,7 +4285,7 @@ void MainFrame::OnFileImportmap()
   strcpy(buf, g_qeglobals.m_strHomeMaps.GetBuffer());
   strcat(buf, "maps/");
 
-  str = file_dialog (m_pWidget, TRUE, "Import Map", buf, MAP_MAJOR);
+  str = file_dialog (m_pWidget, TRUE, _("Import Map"), buf, MAP_MAJOR);
 
   if (str != NULL)
   {
@@ -4309,7 +4309,7 @@ void MainFrame::OnFileSaveas()
   strcpy(buf, g_qeglobals.m_strHomeMaps.GetBuffer());
   strcat(buf, "maps/");
 
-  str = file_dialog (g_pParentWnd->m_pWidget, FALSE, "Save Map", buf, MAP_MAJOR);
+  str = file_dialog (g_pParentWnd->m_pWidget, FALSE, _("Save Map"), buf, MAP_MAJOR);
 
   if (str != NULL)
   {
@@ -4327,7 +4327,7 @@ void MainFrame::OnFileExportmap()
   strcpy(buf, g_qeglobals.m_strHomeMaps.GetBuffer());
   strcat(buf, "maps/");
 
-  str = file_dialog (m_pWidget, FALSE, "Export Selection", buf, MAP_MAJOR);
+  str = file_dialog (m_pWidget, FALSE, _("Export Selection"), buf, MAP_MAJOR);
 
   if (str != NULL)
   {
@@ -4343,7 +4343,7 @@ void MainFrame::OnFileSaveregion()
   strcpy(buf, g_qeglobals.m_strHomeMaps.GetBuffer());
   strcat(buf, "maps/");
 
-  str = file_dialog (g_pParentWnd->m_pWidget, FALSE, "Export Region", buf, MAP_MAJOR);
+  str = file_dialog (g_pParentWnd->m_pWidget, FALSE, _("Export Region"), buf, MAP_MAJOR);
 
   if (str != NULL)
   {
@@ -4377,7 +4377,7 @@ void MainFrame::OnFileNewproject()
       CString strMsg;
       strMsg.Format("The directory name %s already exists\nContinue anyway ?\n", strNewBasePath.GetBuffer ());
       Sys_Printf(strMsg);
-      if (gtk_MessageBox(m_pWidget, strMsg, "Error", MB_YESNO) != IDYES)
+      if (gtk_MessageBox(m_pWidget, _(strMsg), _("Error"), MB_YESNO) != IDYES)
       {
         Sys_Printf("New Project cancelled, directory already exists for project\n");
         free (name);
@@ -4576,7 +4576,7 @@ void MainFrame::OnEditLoadprefab()
     AddSlash (CurPath);
   }
 
-  filename = file_dialog (m_pWidget, TRUE, "Import Prefab", CurPath.GetBuffer(), MAP_MAJOR);
+  filename = file_dialog (m_pWidget, TRUE, _("Import Prefab"), CurPath.GetBuffer(), MAP_MAJOR);
 
   if (filename != NULL)
   {
@@ -4600,7 +4600,7 @@ void MainFrame::OnEditSaveprefab()
   }
   AddSlash (CurPath);
 
-  filename = file_dialog (m_pWidget, FALSE, "Export Prefab", CurPath.GetBuffer(), MAP_MAJOR);
+  filename = file_dialog (m_pWidget, FALSE, _("Export Prefab"), CurPath.GetBuffer(), MAP_MAJOR);
   if (filename != NULL)
   {
     Map_SaveSelected(filename);
@@ -4628,7 +4628,7 @@ void MainFrame::OnPrefs()
         (g_PrefsDlg.m_nLatchedTextureQuality != nTextureQuality)
         || (g_PrefsDlg.m_bLatchedFloatingZ != g_PrefsDlg.m_bFloatingZ)
         )
-      gtk_MessageBox(m_pWidget, "You must restart Radiant for the changes to take effect.");
+      gtk_MessageBox(m_pWidget, _("You must restart Radiant for the changes to take effect."));
 
     // if the view mode was switched to floating, set the Z window on by default
     // this was originally intended as a bug fix, but the fix is elsewhere .. anyway making sure we force Z on each time is good
@@ -5753,7 +5753,7 @@ void MainFrame::OnTexturesLoad()
   strcat (def_path, g_pGameDescription->mBaseGame.GetBuffer());
   strcat (def_path, "/");
 
-  char *dir = dir_dialog (m_pWidget, "Load textures from path", def_path);
+  char *dir = dir_dialog (m_pWidget, _("Load textures from path"), def_path);
 
   if (dir != NULL)
   {
@@ -6171,7 +6171,7 @@ void MainFrame::OnMiscGamma()
   DoGamma();
   if (fSave != g_qeglobals.d_savedinfo.fGamma)
   {
-    gtk_MessageBox(m_pWidget, "You must restart Radiant for Gamma settings to take effect.");
+    gtk_MessageBox(m_pWidget, _("You must restart Radiant for Gamma settings to take effect."));
   }
 }
 void MainFrame::OnMiscFindbrush()

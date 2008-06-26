@@ -2,15 +2,15 @@
 msgid "Select Complete Tall"
 msgstr ""
 
-#: radiant/mainframe.cpp:6687
+#: radiant/mainframe.cpp:6687 radiant/mainframe.cpp:1709
 msgid "Select Touching"
 msgstr ""
 
-#: radiant/mainframe.cpp:6687
+#: radiant/mainframe.cpp:6687 radiant/mainframe.cpp:1713
 msgid "Select Partial Tall"
 msgstr ""
 
-#: radiant/mainframe.cpp:6687
+#: radiant/mainframe.cpp:6687 radiant/mainframe.cpp:1717
 msgid "Select Inside"
 msgstr ""
 
@@ -522,7 +522,7 @@ msgstr ""
 msgid "Deselect"
 msgstr ""
 
-#: radiant/mainframe.cpp:1165
+#: radiant/mainframe.cpp:1165 radiant/mainframe.cpp:1526
 msgid "Invert"
 msgstr ""
 
@@ -618,7 +618,8 @@ msgstr ""
 msgid "Nudge Down"
 msgstr ""
 
-#: radiant/mainframe.cpp:1219
+#: radiant/mainframe.cpp:1219 radiant/mainframe.cpp:1751
+#: radiant/mainframe.cpp:1806
 msgid "Clipper"
 msgstr ""
 
@@ -716,4 +717,666 @@ msgstr ""
 
 #: radiant/mainframe.cpp:1293
 msgid "Show In _Use"
+msgstr ""
+
+#: radiant/mainframe.cpp:1296
+msgid "Show _All"
+msgstr ""
+
+#: radiant/mainframe.cpp:1300
+msgid "Show shaders"
+msgstr ""
+
+#: radiant/mainframe.cpp:1303
+msgid "Flush & Reload Shaders"
+msgstr ""
+
+#: radiant/mainframe.cpp:1306
+msgid "Load directory..."
+msgstr ""
+
+#: radiant/mainframe.cpp:1309
+msgid "Directory list..."
+msgstr ""
+
+#: radiant/mainframe.cpp:1313
+msgid "_Surface Inspector"
+msgstr ""
+
+#: radiant/mainframe.cpp:1316
+msgid "Render Quality"
+msgstr ""
+
+#: radiant/mainframe.cpp:1318
+msgid "_Wireframe"
+msgstr ""
+
+#: radiant/mainframe.cpp:1321
+msgid "_Flat shade"
+msgstr ""
+
+#: radiant/mainframe.cpp:1324
+msgid "_Nearest"
+msgstr ""
+
+#: radiant/mainframe.cpp:1327
+msgid "Nearest _Mipmap"
+msgstr ""
+
+#: radiant/mainframe.cpp:1330
+msgid "_Linear"
+msgstr ""
+
+#: radiant/mainframe.cpp:1333
+msgid "_Bilinear"
+msgstr ""
+
+#: radiant/mainframe.cpp:1336
+msgid "B_ilinear Mipmap"
+msgstr ""
+
+#: radiant/mainframe.cpp:1339
+msgid "T_rilinear"
+msgstr ""
+
+#: radiant/mainframe.cpp:1342
+msgid "Find / Replace..."
+msgstr ""
+
+#: radiant/mainframe.cpp:1345
+msgid "Texture Lock"
+msgstr ""
+
+#: radiant/mainframe.cpp:1346
+msgid "Moves"
+msgstr ""
+
+#: radiant/mainframe.cpp:1349
+msgid "Rotations"
+msgstr ""
+
+#: radiant/mainframe.cpp:1352
+msgid "Texture Window Scale"
+msgstr ""
+
+#: radiant/mainframe.cpp:1353
+msgid "200%"
+msgstr ""
+
+#: radiant/mainframe.cpp:1356
+msgid "100%"
+msgstr ""
+
+#: radiant/mainframe.cpp:1359
+msgid "50%"
+msgstr ""
+
+#: radiant/mainframe.cpp:1362
+msgid "25%"
+msgstr ""
+
+#: radiant/mainframe.cpp:1365
+msgid "10%"
+msgstr ""
+
+#: radiant/mainframe.cpp:1369
+msgid "shaderlist.txt only"
+msgstr ""
+
+#: radiant/mainframe.cpp:1377
+msgid "_Misc"
+msgstr ""
+
+#: radiant/mainframe.cpp:1381
+msgid "_Benchmark"
+msgstr ""
+
+#: radiant/mainframe.cpp:1382
+msgid "Colors"
+msgstr ""
+
+#: radiant/mainframe.cpp:1383
+msgid "Themes"
+msgstr ""
+
+#: radiant/mainframe.cpp:1384
+msgid "QE4 Original"
+msgstr ""
+
+#: radiant/mainframe.cpp:1385
+msgid "Q3Radiant Original"
+msgstr ""
+
+#: radiant/mainframe.cpp:1386
+msgid "Black and Green"
+msgstr ""
+
+#: radiant/mainframe.cpp:1387
+msgid "Maya/Max/Lightwave Emulation"
+msgstr ""
+
+#: radiant/mainframe.cpp:1390
+msgid "_Texture Background..."
+msgstr ""
+
+#: radiant/mainframe.cpp:1392
+msgid "Grid Background..."
+msgstr ""
+
+#: radiant/mainframe.cpp:1394
+msgid "Grid Major..."
+msgstr ""
+
+#: radiant/mainframe.cpp:1396
+msgid "Grid Minor..."
+msgstr ""
+
+#: radiant/mainframe.cpp:1398
+msgid "Grid Major Small..."
+msgstr ""
+
+#: radiant/mainframe.cpp:1400
+msgid "Grid Minor Small..."
+msgstr ""
+
+#: radiant/mainframe.cpp:1402
+msgid "Grid Text..."
+msgstr ""
+
+#: radiant/mainframe.cpp:1404
+msgid "Grid Block..."
+msgstr ""
+
+#: radiant/mainframe.cpp:1406
+msgid "Default Brush..."
+msgstr ""
+
+#: radiant/mainframe.cpp:1408
+msgid "Camera Background..."
+msgstr ""
+
+#: radiant/mainframe.cpp:1410
+msgid "Selected Brush..."
+msgstr ""
+
+#: radiant/mainframe.cpp:1412
+msgid "Selected Brush (Camera)..."
+msgstr ""
+
+#: radiant/mainframe.cpp:1414
+msgid "Clipper..."
+msgstr ""
+
+#: radiant/mainframe.cpp:1416
+msgid "Active View name..."
+msgstr ""
+
+#: radiant/mainframe.cpp:1419
+msgid "_Gamma..."
+msgstr ""
+
+#: radiant/mainframe.cpp:1421
+msgid "Find brush..."
+msgstr ""
+
+#: radiant/mainframe.cpp:1423
+msgid "Next leak spot"
+msgstr ""
+
+#: radiant/mainframe.cpp:1425
+msgid "Previous leak spot"
+msgstr ""
+
+#: radiant/mainframe.cpp:1429
+msgid "_Select Entity Color..."
+msgstr ""
+
+#: radiant/mainframe.cpp:1434
+msgid "_Region"
+msgstr ""
+
+#: radiant/mainframe.cpp:1438
+msgid "_Off"
+msgstr ""
+
+#: radiant/mainframe.cpp:1440
+msgid "_Set XY"
+msgstr ""
+
+#: radiant/mainframe.cpp:1442
+msgid "Set _Tall Brush"
+msgstr ""
+
+#: radiant/mainframe.cpp:1444
+msgid "Set _Brush"
+msgstr ""
+
+#: radiant/mainframe.cpp:1446
+msgid "Set Se_lected Brushes"
+msgstr ""
+
+#: radiant/mainframe.cpp:1450
+msgid "_Brush"
+msgstr ""
+
+#: radiant/mainframe.cpp:1454
+msgid "3 sided"
+msgstr ""
+
+#: radiant/mainframe.cpp:1455
+msgid "4 sided"
+msgstr ""
+
+#: radiant/mainframe.cpp:1456
+msgid "5 sided"
+msgstr ""
+
+#: radiant/mainframe.cpp:1457
+msgid "6 sided"
+msgstr ""
+
+#: radiant/mainframe.cpp:1458
+msgid "7 sided"
+msgstr ""
+
+#: radiant/mainframe.cpp:1459
+msgid "8 sided"
+msgstr ""
+
+#: radiant/mainframe.cpp:1460
+msgid "9 sided"
+msgstr ""
+
+#: radiant/mainframe.cpp:1462
+msgid "Arbitrary sided..."
+msgstr ""
+
+#: radiant/mainframe.cpp:1465
+msgid "Primitives"
+msgstr ""
+
+#: radiant/mainframe.cpp:1466
+msgid "Cone..."
+msgstr ""
+
+#: radiant/mainframe.cpp:1468
+msgid "Sphere..."
+msgstr ""
+
+#: radiant/mainframe.cpp:1474
+msgid "_Curve"
+msgstr ""
+
+#: radiant/mainframe.cpp:1478
+msgid "Cylinder"
+msgstr ""
+
+#: radiant/mainframe.cpp:1479
+msgid "More Cylinders"
+msgstr ""
+
+#: radiant/mainframe.cpp:1480
+msgid "Dense Cylinder"
+msgstr ""
+
+#: radiant/mainframe.cpp:1482
+msgid "Very Dense Cylinder"
+msgstr ""
+
+#: radiant/mainframe.cpp:1484
+msgid "Square Cylinder"
+msgstr ""
+
+#: radiant/mainframe.cpp:1487
+msgid "End cap"
+msgstr ""
+
+#: radiant/mainframe.cpp:1488
+msgid "Bevel"
+msgstr ""
+
+#: radiant/mainframe.cpp:1489
+msgid "More End caps, Bevels"
+msgstr ""
+
+#: radiant/mainframe.cpp:1490
+msgid "Square Endcap"
+msgstr ""
+
+#: radiant/mainframe.cpp:1492
+msgid "Square Bevel"
+msgstr ""
+
+#: radiant/mainframe.cpp:1495
+msgid "Cone"
+msgstr ""
+
+#: radiant/mainframe.cpp:1496
+msgid "Sphere"
+msgstr ""
+
+#: radiant/mainframe.cpp:1500
+msgid "Simple Patch Mesh..."
+msgstr ""
+
+#: radiant/mainframe.cpp:1504
+msgid "Insert"
+msgstr ""
+
+#: radiant/mainframe.cpp:1505
+msgid "Insert (2) Columns"
+msgstr ""
+
+#: radiant/mainframe.cpp:1507
+msgid "Add (2) Columns"
+msgstr ""
+
+#: radiant/mainframe.cpp:1510
+msgid "Insert (2) Rows"
+msgstr ""
+
+#: radiant/mainframe.cpp:1512
+msgid "Add (2) Rows"
+msgstr ""
+
+#: radiant/mainframe.cpp:1514
+msgid "Delete"
+msgstr ""
+
+#: radiant/mainframe.cpp:1515
+msgid "First (2) Columns"
+msgstr ""
+
+#: radiant/mainframe.cpp:1517
+msgid "Last (2) Columns"
+msgstr ""
+
+#: radiant/mainframe.cpp:1520
+msgid "First (2) Rows"
+msgstr ""
+
+#: radiant/mainframe.cpp:1522
+msgid "Last (2) Rows"
+msgstr ""
+
+#: radiant/mainframe.cpp:1525
+msgid "Matrix"
+msgstr ""
+
+#: radiant/mainframe.cpp:1528
+msgid "Re-disperse"
+msgstr ""
+
+#: radiant/mainframe.cpp:1529
+msgid "Rows"
+msgstr ""
+
+#: radiant/mainframe.cpp:1530
+msgid "Cols (Intermediate)"
+msgstr ""
+
+#: radiant/mainframe.cpp:1531
+msgid "Rows (Intermediate)"
+msgstr ""
+
+#: radiant/mainframe.cpp:1532
+msgid "Transpose"
+msgstr ""
+
+#: radiant/mainframe.cpp:1535
+msgid "Cap Selection"
+msgstr ""
+
+#: radiant/mainframe.cpp:1537
+msgid "Cycle Cap Texture"
+msgstr ""
+
+#: radiant/mainframe.cpp:1540
+msgid "Overlay"
+msgstr ""
+
+#: radiant/mainframe.cpp:1541
+msgid "Set"
+msgstr ""
+
+#: radiant/mainframe.cpp:1543 radiant/mainframe.cpp:2063
+msgid "Clear"
+msgstr ""
+
+#: radiant/mainframe.cpp:1546
+msgid "Thicken..."
+msgstr ""
+
+#: radiant/mainframe.cpp:1549
+msgid "_Plugins"
+msgstr ""
+
+#: radiant/mainframe.cpp:1562
+msgid "_Help"
+msgstr ""
+
+#: radiant/mainframe.cpp:1566
+msgid "Manual"
+msgstr ""
+
+#: radiant/mainframe.cpp:1577
+msgid "Bug report"
+msgstr ""
+
+#: radiant/mainframe.cpp:1579
+msgid "Shortcuts list"
+msgstr ""
+
+#: radiant/mainframe.cpp:1581
+msgid "_About"
+msgstr ""
+
+#: radiant/mainframe.cpp:1668
+msgid "Open"
+msgstr ""
+
+#: radiant/mainframe.cpp:1668
+msgid "Open an existing map"
+msgstr ""
+
+#: radiant/mainframe.cpp:1672
+msgid "Save"
+msgstr ""
+
+#: radiant/mainframe.cpp:1672
+msgid "Save the active map"
+msgstr ""
+
+#: radiant/mainframe.cpp:1677
+msgid "x-axis Flip"
+msgstr ""
+
+#: radiant/mainframe.cpp:1681
+msgid "x-axis Rotate"
+msgstr ""
+
+#: radiant/mainframe.cpp:1685
+msgid "y-axis Flip"
+msgstr ""
+
+#: radiant/mainframe.cpp:1689
+msgid "y-axis Rotate"
+msgstr ""
+
+#: radiant/mainframe.cpp:1693
+msgid "z-axis Flip"
+msgstr ""
+
+#: radiant/mainframe.cpp:1697
+msgid "z-axis Rotate"
+msgstr ""
+
+#: radiant/mainframe.cpp:1705
+msgid "Complete Tall"
+msgstr ""
+
+#: radiant/mainframe.cpp:1723
+msgid "Selection"
+msgstr ""
+
+#: radiant/mainframe.cpp:1730
+msgid "CSG Subtract"
+msgstr ""
+
+#: radiant/mainframe.cpp:1737
+msgid "CSG Merge"
+msgstr ""
+
+#: radiant/mainframe.cpp:1743
+msgid "Hollow"
+msgstr ""
+
+#: radiant/mainframe.cpp:1758
+msgid "Change views"
+msgstr ""
+
+#: radiant/mainframe.cpp:1768
+msgid "Texture view mode"
+msgstr ""
+
+#: radiant/mainframe.cpp:1776 radiant/mainframe.cpp:1795
+msgid "Cubic clip the camera view"
+msgstr ""
+
+#: radiant/mainframe.cpp:1787
+msgid "Camera preview"
+msgstr ""
+
+#: radiant/mainframe.cpp:1801
+msgid "Entity inspector"
+msgstr ""
+
+#: radiant/mainframe.cpp:1813
+msgid "Free Rotation"
+msgstr ""
+
+#: radiant/mainframe.cpp:1818
+msgid "Free Scaling"
+msgstr ""
+
+#: radiant/mainframe.cpp:1822
+msgid "Scale X"
+msgstr ""
+
+#: radiant/mainframe.cpp:1826
+msgid "Scale Y"
+msgstr ""
+
+#: radiant/mainframe.cpp:1830
+msgid "Scale Z"
+msgstr ""
+
+#: radiant/mainframe.cpp:1838
+msgid "Don't select model brushes"
+msgstr ""
+
+#: radiant/mainframe.cpp:1847
+msgid "Don't select curved brushes"
+msgstr ""
+
+#: radiant/mainframe.cpp:1858
+msgid "Show patch bounding box"
+msgstr ""
+
+#: radiant/mainframe.cpp:1863
+msgid "Show patches as wireframes"
+msgstr ""
+
+#: radiant/mainframe.cpp:1868
+msgid "Patch Bend mode"
+msgstr ""
+
+#: radiant/mainframe.cpp:1872
+msgid "Put caps on the current patch"
+msgstr ""
+
+#: radiant/mainframe.cpp:1877
+msgid "Welds equal patch points during moves"
+msgstr ""
+
+#: radiant/mainframe.cpp:1882
+msgid "Selects drill down rows and columns"
+msgstr ""
+
+#: radiant/mainframe.cpp:1891
+msgid "Show Entities as"
+msgstr ""
+
+#: radiant/mainframe.cpp:1956 radiant/mainframe.cpp:1970
+msgid " Label "
+msgstr ""
+
+#: radiant/mainframe.cpp:2738
+msgid "XZ View"
+msgstr ""
+
+#: radiant/mainframe.cpp:2762
+msgid "YZ View"
+msgstr ""
+
+#: radiant/mainframe.cpp:2790 radiant/mainframe.cpp:2855
+msgid "Textures"
+msgstr ""
+
+#: radiant/mainframe.cpp:3693
+msgid ""
+"Failed to load project file.\n"
+"Please enter a valid project file."
+msgstr ""
+
+#: radiant/mainframe.cpp:3693
+msgid "Load Project"
+msgstr ""
+
+#: radiant/mainframe.cpp:3695
+msgid "Choose Project File"
+msgstr ""
+
+#: radiant/mainframe.cpp:4270
+msgid "Open Map"
+msgstr ""
+
+#: radiant/mainframe.cpp:4288
+msgid "Import Map"
+msgstr ""
+
+#: radiant/mainframe.cpp:4312
+msgid "Save Map"
+msgstr ""
+
+#: radiant/mainframe.cpp:4330
+msgid "Export Selection"
+msgstr ""
+
+#: radiant/mainframe.cpp:4346
+msgid "Export Region"
+msgstr ""
+
+#: radiant/mainframe.cpp:4380
+msgid "Error"
+msgstr ""
+
+#: radiant/mainframe.cpp:4579
+msgid "Import Prefab"
+msgstr ""
+
+#: radiant/mainframe.cpp:4603
+msgid "Export Prefab"
+msgstr ""
+
+#: radiant/mainframe.cpp:4631
+msgid "You must restart Radiant for the changes to take effect."
+msgstr ""
+
+#: radiant/mainframe.cpp:5756
+msgid "Load textures from path"
+msgstr ""
+
+#: radiant/mainframe.cpp:6174
+msgid "You must restart Radiant for Gamma settings to take effect."
 msgstr ""
