@@ -23,10 +23,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 //
 // QERadiant Multilevel Undo/Redo
 //
-// 
+//
 
 //start operation
-void Undo_Start(char *operation);
+void Undo_Start(const char *operation);
 //end operation
 void Undo_End(void);
 //add brush to the undo

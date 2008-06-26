@@ -27,7 +27,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "stdafx.h"
 #include <gtk/gtk.h>
-#include <sys/stat.h> 
+#include <glib/gi18n.h>
+#include <sys/stat.h>
 #include "gtkmisc.h"
 #if defined (__linux__) || defined (__APPLE__)
 #include <unistd.h>
@@ -103,7 +104,7 @@ void WINAPI QE_CheckOpenGLForErrors(void)
   if (i != GL_NO_ERROR)
   {
     if (i == GL_OUT_OF_MEMORY)
-    {      
+    {
       sprintf(strMsg, "OpenGL out of memory error %s\nDo you wish to save before exiting?", qgluErrorString((GLenum)i));
       if (gtk_MessageBox(g_pParentWnd->m_pWidget, strMsg, "Radiant Error", MB_YESNO) == IDYES)
       {
@@ -441,7 +442,7 @@ xmlDocPtr ParseXMLFile(const char* filename, bool validate = false)
   FileStream stream;
   if (stream.Open(filename, "r"))
     return ParseXMLStream(&stream, validate);
-  
+
   Sys_FPrintf(SYS_ERR, "Failed to open file: %s\n",filename);
   return NULL;
 }
@@ -493,7 +494,7 @@ void ReplaceTemplates(char* w, const char* r)
         r++;
         p = "$";
       }
-          
+
       while(*p!='\0') *w++ = *p++;
     }
     else *w++ = *r++;
@@ -548,7 +549,7 @@ bool QE_LoadProject (const char *projectfile)
   }
 
   xmlFreeDoc(doc);
-  
+
   // project file version checking
   // add a version checking to avoid people loading later versions of the project file and bitching
   int ver = IntForKey( g_qeglobals.d_project_entity, "version" );
@@ -563,7 +564,7 @@ bool QE_LoadProject (const char *projectfile)
 		g_PrefsDlg.SavePrefs();
     return false;
   }
-  
+
   // set here some default project settings you need
   if ( strlen( ValueForKey( g_qeglobals.d_project_entity, "brush_primit" ) ) == 0 )
   {
@@ -581,7 +582,7 @@ bool QE_LoadProject (const char *projectfile)
   // don't forget to create the dirs
   Q_mkdir(g_qeglobals.m_strHomeGame.GetBuffer(), 0775);
   Q_mkdir(g_qeglobals.m_strHomeMaps.GetBuffer(), 0775);
-  
+
   // usefull for the log file and debuggin fucked up configurations from users:
   // output the basic information of the .qe4 project file
   // SPoG
@@ -596,22 +597,22 @@ bool QE_LoadProject (const char *projectfile)
   if (ValueForKey(g_qeglobals.d_project_entity, "user_project")[0] == '\0')
   {
     Sys_Printf("Loaded a template project file\n");
-    
+
     // create the user_project key
     SetKeyValue( g_qeglobals.d_project_entity, "user_project", "1" );
-    
+
     // http://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=672
     if (IntForKey( g_qeglobals.d_project_entity, "version" ) != PROJECT_VERSION)
     {
       char strMsg[2048];
-      sprintf(strMsg, 
+      sprintf(strMsg,
         "The template project '%s' has version %d. The editor binary is configured for version %d.\n"
         "This indicates a problem in your setup. See http://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=672\n"
         "I will keep going with this project till you fix this",
         projectfile, IntForKey( g_qeglobals.d_project_entity, "version" ), PROJECT_VERSION);
       gtk_MessageBox (g_pParentWnd->m_pWidget, strMsg, "Can't load project file", MB_ICONERROR | MB_OK);
     }
-    
+
     // create the writable project file path
     strcpy(buf, g_qeglobals.m_strHomeGame.GetBuffer());
     strcat(buf, g_pGameDescription->mBaseGame.GetBuffer());
@@ -620,7 +621,7 @@ bool QE_LoadProject (const char *projectfile)
     int counter = 0;
     char pUser[PATH_MAX];
     while (1)
-    {      
+    {
       sprintf( pUser, "%suser%d." PROJECT_FILETYPE, buf, counter );
       counter++;
       if (access( pUser, R_OK) != 0)
@@ -632,7 +633,7 @@ bool QE_LoadProject (const char *projectfile)
     }
     // saving project will cause a save prefs
     g_PrefsDlg.m_strLastProject = buf;
-    g_PrefsDlg.m_nLastProjectVer = IntForKey( g_qeglobals.d_project_entity, "version" );    
+    g_PrefsDlg.m_nLastProjectVer = IntForKey( g_qeglobals.d_project_entity, "version" );
     QE_SaveProject(buf);
   }
   else
@@ -736,7 +737,7 @@ void ConnectEntities (void)
 		Sys_Beep ();
 		return;
 	}
-    
+
   target = ValueForKey (e1, "target");
   if (target && target[0])
     newtarg = g_strdup(target);
@@ -755,7 +756,7 @@ void ConnectEntities (void)
     SetKeyValue(e2, "targetname", newtarg);
     g_free(newtarg);
   }
-  
+
 	Sys_UpdateWindows (W_XY | W_CAMERA);
 
 	Select_Deselect();
@@ -804,7 +805,7 @@ void QE_InitVFS (void)
     // plugins, scripts and config files.
     // it also helps when testing maps, as you'll know your files won't/can't be used
     // by the game engine itself.
-  
+
     // <gametools>
     directory = g_pGameDescription->mGameToolsPath;
     vfsInitDirectory(directory.GetBuffer());
@@ -904,13 +905,13 @@ void QE_CountBrushesAndUpdateStatusBar( void )
 {
 	static int      s_lastbrushcount, s_lastentitycount;
 	static qboolean s_didonce;
-	
+
 	//entity_t   *e;
 	brush_t	   *b, *next;
 
 	g_numbrushes = 0;
 	g_numentities = 0;
-	
+
 	if ( active_brushes.next != NULL )
 	{
 		for ( b = active_brushes.next ; b != NULL && b != &active_brushes ; b=next)
@@ -955,9 +956,9 @@ I_FloatTime
 double I_FloatTime (void)
 {
 	time_t	t;
-	
+
 	time (&t);
-	
+
 	return t;
 #if 0
 // more precise, less portable
@@ -966,13 +967,13 @@ double I_FloatTime (void)
 	static int		secbase;
 
 	gettimeofday(&tp, &tzp);
-	
+
 	if (!secbase)
 	{
 		secbase = tp.tv_sec;
 		return tp.tv_usec/1000000.0;
 	}
-	
+
 	return (tp.tv_sec - secbase) + tp.tv_usec/1000000.0;
 #endif
 }
@@ -992,10 +993,10 @@ char *COM_Parse (char *data)
 
 	len = 0;
 	com_token[0] = 0;
-	
+
 	if (!data)
 		return NULL;
-		
+
 // skip whitespace
 skipwhite:
 	while ( (c = *data) <= ' ')
@@ -1007,7 +1008,7 @@ skipwhite:
 		}
 		data++;
 	}
-	
+
 // skip // comments
 	if (c=='/' && data[1] == '/')
 	{
@@ -1015,7 +1016,7 @@ skipwhite:
 			data++;
 		goto skipwhite;
 	}
-	
+
 
 // handle quoted strings specially
 	if (c == '\"')
@@ -1053,7 +1054,7 @@ skipwhite:
 	if (c=='{' || c=='}'|| c==')'|| c=='(' || c=='\'' || c==':')
 			break;
 	} while (c>32);
-	
+
 	com_token[len] = 0;
 	return data;
 }
@@ -1103,7 +1104,7 @@ void ParseCommandLine (char *lpCmdLine)
 				*lpCmdLine = 0;
 				lpCmdLine++;
 			}
-			
+
 		}
 	}
 }
@@ -1118,7 +1119,7 @@ Checks for the given parameter in the program's command line arguments
 Returns the argument number (1 to argc-1) or 0 if not present
 =================
 */
-int CheckParm (char *check)
+int CheckParm (const char *check)
 {
 	int             i;
 
@@ -1139,7 +1140,7 @@ int CheckParm (char *check)
 ParseNum / ParseHex
 ==============
 */
-int ParseHex (char *hex)
+int ParseHex (const char *hex)
 {
 	char    *str;
 	int    num;
@@ -1165,7 +1166,7 @@ int ParseHex (char *hex)
 }
 
 
-int ParseNum (char *str)
+int ParseNum (const char *str)
 {
 	if (str[0] == '$')
 		return ParseHex (str+1);
@@ -1292,7 +1293,7 @@ void Sys_Beep (void)
 #if defined (__linux__) || defined (__APPLE__)
   gdk_beep ();
 #else
-	MessageBeep (MB_ICONASTERISK);  
+	MessageBeep (MB_ICONASTERISK);
 #endif
 }
 
@@ -1462,7 +1463,7 @@ FILE DIALOGS
 
 ======================================================================
 */
- 
+
 qboolean ConfirmModified ()
 {
   if (!modified)
@@ -1478,10 +1479,10 @@ void ProjectDialog ()
   const char *filename;
   char buffer[NAME_MAX];
 
-  /* 
-   * Obtain the system directory name and 
-   * store it in buffer. 
-   */ 
+  /*
+   * Obtain the system directory name and
+   * store it in buffer.
+   */
 
   strcpy(buffer, g_qeglobals.m_strHomeGame.GetBuffer());
   strcat(buffer, g_pGameDescription->mBaseGame.GetBuffer());
@@ -1498,7 +1499,7 @@ void ProjectDialog ()
   if (!QE_LoadProject(filename))
     Sys_Printf ("Failed to load project from file: %s\n", filename);
   else
-    // FIXME TTimo QE_Init is probably broken if you don't call it during startup right now .. 
+    // FIXME TTimo QE_Init is probably broken if you don't call it during startup right now ..
     QE_Init();
 }
 
@@ -1574,7 +1575,7 @@ void FillBSPMenu ()
     {
       if (strncmp(ep->key, "bsp_", 4)==0)
       {
-        bsp_commands[i] = ep->key;	
+        bsp_commands[i] = ep->key;
         item = gtk_menu_item_new_with_label (ep->key+4);
         gtk_widget_show (item);
         gtk_container_add (GTK_CONTAINER (menu), item);
@@ -1653,7 +1654,7 @@ void Sys_LogFile (void)
     // the file handle is g_qeglobals.hLogFile
     // the log file is erased
     Str name;
-    name = g_strTempPath;    
+    name = g_strTempPath;
     name += "radiant.log";
 #if defined (__linux__) || defined (__APPLE__)
     g_qeglobals.hLogFile = open( name.GetBuffer(), O_TRUNC | O_CREAT | O_WRONLY, S_IREAD | S_IWRITE );
@@ -1701,7 +1702,7 @@ void Sys_ClearPrintf (void)
 
 extern "C" void Sys_FPrintf_VA( int level, const char *text, va_list args ) {
   char buf[BUFFER_SIZE];
-  
+
   buf[0] = 0;
   vsnprintf( buf, BUFFER_SIZE, text, args );
   buf[BUFFER_SIZE-1] = 0;
@@ -1721,7 +1722,7 @@ extern "C" void Sys_FPrintf_VA( int level, const char *text, va_list args ) {
     // TTimo: FIXME: killed the console to avoid GDI leak fuckup
     if ( g_qeglobals_gui.d_edit != NULL ) {
       GtkTextBuffer* buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(g_qeglobals_gui.d_edit));
-      
+
       GtkTextIter iter;
       gtk_text_buffer_get_end_iter(buffer, &iter);
 
@@ -1764,7 +1765,7 @@ extern "C" void Sys_FPrintf_VA( int level, const char *text, va_list args ) {
         gtk_grab_remove(g_qeglobals_gui.d_edit);
       }
     }
-  }  
+  }
 }
 
 // NOTE: this is the handler sent to synapse

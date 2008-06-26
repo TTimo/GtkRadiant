@@ -18,6 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
 #include <gtk/gtk.h>
+#include <glib/gi18n.h>
 #include <stdio.h>
 #include <stdlib.h>
 /*
@@ -330,7 +331,7 @@ char *va (char *format, ...)
   vsprintf (string, format,argptr);
   va_end (argptr);
 
-  return string;	
+  return string;
 }
 
 
@@ -401,7 +402,7 @@ void SaveSetup (GtkWidget *parent)
 
   if (name != NULL)
   {
-    char key[32], text[32]; 
+    char key[32], text[32];
     int i, j;
 
     WriteIniFile (name);

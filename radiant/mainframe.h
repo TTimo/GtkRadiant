@@ -34,7 +34,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "gtkr_vector.h"
 
 #ifdef __APPLE__
-#define __toascii(c)    ((c) & 0x7f) 
+#define __toascii(c)    ((c) & 0x7f)
 #endif
 
 const int RAD_SHIFT =   0x01;
@@ -44,16 +44,16 @@ const int RAD_PRESS   = 0x08;
 
 struct SCommandInfo
 {
-  char* m_strCommand;
+  const char* m_strCommand;
   unsigned int   m_nKey;
   unsigned int   m_nModifiers;
   unsigned int m_nCommand;
-  char* m_strMenu;
+  const char* m_strMenu;
 };
 
 struct SKeyInfo
 {
-  char* m_strName;
+  const char* m_strName;
   unsigned int m_nVKKey;
 };
 
@@ -431,13 +431,13 @@ public:
   bool RequestAPI(APIDescriptor_t *pAPI);
   const char* GetInfo();
   const char* GetName();
-      
+
   void ImportMap(IDataStream *in, CPtrArray *ents, const char *type);
   void ExportMap(CPtrArray *ents, IDataStream *out, const char *type);
 
   CSynapseClientRadiant() { }
   virtual ~CSynapseClientRadiant() { }
-};  
+};
 
 class MainFrame
 {
@@ -475,7 +475,7 @@ protected:
   /*!
   build the menu once the filename is found
   */
-  void process_xlink (Str &FileName, char *menu_name, const char *base_url, GtkWidget *menu, GtkAccelGroup *accel);
+  void process_xlink (Str &FileName, const char *menu_name, const char *base_url, GtkWidget *menu, GtkAccelGroup *accel);
 
   void Create ();
   void create_main_menu (GtkWidget *window, GtkWidget *vbox);
@@ -542,7 +542,7 @@ public:
   void ReleaseContexts ();
   void CreateContexts ();
 
-  void SetActiveXY(XYWnd* p) 
+  void SetActiveXY(XYWnd* p)
   {
     if (m_pActiveXY)
       m_pActiveXY->SetActive(false);

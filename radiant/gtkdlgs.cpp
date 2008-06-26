@@ -2,30 +2,30 @@
 Copyright (c) 2001, Loki software, inc.
 All rights reserved.
 
-Redistribution and use in source and binary forms, with or without modification, 
+Redistribution and use in source and binary forms, with or without modification,
 are permitted provided that the following conditions are met:
 
-Redistributions of source code must retain the above copyright notice, this list 
+Redistributions of source code must retain the above copyright notice, this list
 of conditions and the following disclaimer.
 
 Redistributions in binary form must reproduce the above copyright notice, this
 list of conditions and the following disclaimer in the documentation and/or
 other materials provided with the distribution.
 
-Neither the name of Loki software nor the names of its contributors may be used 
-to endorse or promote products derived from this software without specific prior 
-written permission. 
+Neither the name of Loki software nor the names of its contributors may be used
+to endorse or promote products derived from this software without specific prior
+written permission.
 
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS'' 
-AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
-IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE 
-DISCLAIMED. IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE FOR ANY 
-DIRECT,INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES 
-(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; 
-LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON 
-ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT 
-(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS 
-SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE FOR ANY
+DIRECT,INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 //
@@ -37,6 +37,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "stdafx.h"
 #include <gdk/gdkkeysyms.h>
 #include <gtk/gtk.h>
+#include <glib/gi18n.h>
 
 #ifdef _WIN32
 #include <gdk/gdkwin32.h>
@@ -52,19 +53,19 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 qboolean DoColor (int iIndex)
 {
   static bool bColorOpen = false;
-   
+
   if(bColorOpen)
   {
     Sys_FPrintf(SYS_WRN, "DoColor dialog is already open\n");
     return false;
   }
 
-  bColorOpen = true;  
-   
+  bColorOpen = true;
+
   if (color_dialog (g_pParentWnd->m_pWidget, g_qeglobals.d_savedinfo.colors[iIndex]))
   {
-    /* 
-    ** scale colors so that at least one component is at 1.0F 
+    /*
+    ** scale colors so that at least one component is at 1.0F
     ** if this is meant to select an entity color
     */
     if (iIndex == COLOR_ENTITY)
@@ -604,7 +605,7 @@ void DoProjectSettings ()
     g_object_set_data(G_OBJECT (project), "view", view);
     g_object_set_data(G_OBJECT (project), "bsp_commands", store);
     gtk_container_add(GTK_CONTAINER (scr), view);
-    
+
     g_object_unref(G_OBJECT(store));
   }
 
@@ -617,7 +618,7 @@ void DoProjectSettings ()
   // HACK: hardcoded game stuff
   if (g_pGameDescription->mGameFile == "wolf.game" ||
     g_pGameDescription->mGameFile == "et.game" ||
-    g_pGameDescription->mGameFile == "jk2.game" || 
+    g_pGameDescription->mGameFile == "jk2.game" ||
     g_pGameDescription->mGameFile == "stvef.game" ||
     g_pGameDescription->mGameFile == "sof2.game" ||
     g_pGameDescription->mGameFile == "ja.game" )
@@ -709,7 +710,7 @@ void DoProjectSettings ()
   gtk_table_attach(GTK_TABLE(table2), game, 1, 2, 7, 8,
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
                     (GtkAttachOptions) (0), 0, 0);
-  
+
   /*
   wolf specific: select MP or SP mode
   */
@@ -718,7 +719,7 @@ void DoProjectSettings ()
     combo_list = NULL;
     combo_list = g_list_append (combo_list, (void *)sWolfSPCombo);
     combo_list = g_list_append (combo_list, (void *)sWolfMPCombo);
-    
+
     gamemode_combo = gtk_combo_new ();
     gtk_combo_set_popdown_strings (GTK_COMBO (gamemode_combo), combo_list);
     gtk_widget_show(gamemode_combo);
@@ -744,7 +745,7 @@ void DoProjectSettings ()
     combo_list = NULL;
     combo_list = g_list_append (combo_list, (void *)sJK2SPCombo);
     combo_list = g_list_append (combo_list, (void *)sJK2MPCombo);
-    
+
     gamemode_combo = gtk_combo_new ();
     gtk_combo_set_popdown_strings (GTK_COMBO (gamemode_combo), combo_list);
     gtk_widget_show(gamemode_combo);
@@ -769,7 +770,7 @@ void DoProjectSettings ()
     combo_list = NULL;
     combo_list = g_list_append (combo_list, (void *)sJASPCombo);
     combo_list = g_list_append (combo_list, (void *)sJAMPCombo);
-    
+
     gamemode_combo = gtk_combo_new ();
     gtk_combo_set_popdown_strings (GTK_COMBO (gamemode_combo), combo_list);
     gtk_widget_show(gamemode_combo);
@@ -794,7 +795,7 @@ void DoProjectSettings ()
     combo_list = NULL;
     combo_list = g_list_append (combo_list, (void *)sSTVEFSPCombo);
     combo_list = g_list_append (combo_list, (void *)sSTVEFMPCombo);
-    
+
     gamemode_combo = gtk_combo_new ();
     gtk_combo_set_popdown_strings (GTK_COMBO (gamemode_combo), combo_list);
     gtk_widget_show(gamemode_combo);
@@ -819,7 +820,7 @@ void DoProjectSettings ()
     combo_list = NULL;
     combo_list = g_list_append (combo_list, (void *)sSOF2SPCombo);
     combo_list = g_list_append (combo_list, (void *)sSOF2MPCombo);
-    
+
     gamemode_combo = gtk_combo_new ();
     gtk_combo_set_popdown_strings (GTK_COMBO (gamemode_combo), combo_list);
     gtk_widget_show(gamemode_combo);
@@ -1117,7 +1118,7 @@ void DoProjectSettings ()
     char buf[1024];
     const char *r;
     char *w;
-		
+
     // convert path to unix format
     for(r = gtk_entry_get_text (GTK_ENTRY (base)), w=buf; *r != '\0'; r++, w++)
       *w = (*r == '\\') ? '/' : *r;
@@ -1199,7 +1200,7 @@ void DoProjectSettings ()
         SetKeyValue (g_qeglobals.d_project_entity, "gamename", dir);
       }
     }
-    
+
     // HACK: hardcoded wolf stuff
     if (g_pGameDescription->mGameFile == "wolf.game")
     {
@@ -1245,7 +1246,7 @@ void DoProjectSettings ()
         SetKeyValue (g_qeglobals.d_project_entity, "gamemode", "mp");
       }
     }
-    
+
     // RIANT
     // STVEF HACK
     if (g_pGameDescription->mGameFile == "stvef.game")
@@ -1682,7 +1683,7 @@ void DoEntityList ()
         entitymap = g_slist_remove (entitymap, entitymap->data);
       }
     }
-    
+
     g_object_unref(G_OBJECT(store));
   }
 
@@ -1717,14 +1718,14 @@ void DoEntityList ()
 
     g_object_set_data(G_OBJECT(dlg), "keyvalues", store);
     gtk_container_add(GTK_CONTAINER (scr), view);
-    
+
     g_object_unref(G_OBJECT(store));
   }
 
   hbox2 = gtk_hbox_new (FALSE, 5);
   gtk_widget_show (hbox2);
   gtk_box_pack_start (GTK_BOX (vbox), hbox2, TRUE, TRUE, 0);
-  
+
   button = gtk_button_new_with_label ("Select");
   gtk_widget_show (button);
   gtk_box_pack_start (GTK_BOX (hbox2), button, FALSE, FALSE, 0);
@@ -1766,13 +1767,13 @@ static void rotatedlg_apply (GtkWidget *widget, gpointer data)
   if (f != 0.0)
     Select_RotateAxis(0,f);
   gtk_spin_button_set_value (GTK_SPIN_BUTTON (spin), 0.0f); // reset to 0 on Apply
-  
+
   spin = GTK_SPIN_BUTTON (g_object_get_data (G_OBJECT (data), "y"));
   f = gtk_spin_button_get_value_as_float (spin);
   if (f != 0.0)
     Select_RotateAxis(1,f);
   gtk_spin_button_set_value (GTK_SPIN_BUTTON (spin), 0.0f);
-  
+
   spin = GTK_SPIN_BUTTON (g_object_get_data (G_OBJECT (data), "z"));
   f = gtk_spin_button_get_value_as_float (spin);
   if (f != 0.0)
@@ -1800,13 +1801,13 @@ void DoRotateDlg ()
   gtk_widget_show (hbox);
   gtk_container_add (GTK_CONTAINER (dlg), hbox);
   gtk_container_set_border_width (GTK_CONTAINER (hbox), 5);
- 
+
   table = gtk_table_new (3, 2, FALSE);
   gtk_widget_show (table);
   gtk_box_pack_start (GTK_BOX (hbox), table, TRUE, TRUE, 0);
   gtk_table_set_row_spacings (GTK_TABLE (table), 5);
   gtk_table_set_col_spacings (GTK_TABLE (table), 5);
- 
+
   label = gtk_label_new ("  X  ");
   gtk_widget_show (label);
   gtk_table_attach (GTK_TABLE (table), label, 0, 1, 0, 1,
@@ -1818,14 +1819,14 @@ void DoRotateDlg ()
   gtk_table_attach (GTK_TABLE (table), label, 0, 1, 1, 2,
                     (GtkAttachOptions) (0),
                     (GtkAttachOptions) (0), 0, 0);
- 
+
   label = gtk_label_new ("  Z  ");
 
   gtk_widget_show (label);
   gtk_table_attach (GTK_TABLE (table), label, 0, 1, 2, 3,
                     (GtkAttachOptions) (0),
                     (GtkAttachOptions) (0), 0, 0);
- 
+
   adj = gtk_adjustment_new (0, -359, 359, 1, 10, 10);
   x = gtk_spin_button_new (GTK_ADJUSTMENT (adj), 1, 0);
   g_object_set_data (G_OBJECT (dlg), "x", x);
@@ -1835,7 +1836,7 @@ void DoRotateDlg ()
                     (GtkAttachOptions) (0), 0, 0);
   gtk_widget_set_usize (x, 60, -2);
   gtk_spin_button_set_wrap (GTK_SPIN_BUTTON (x), TRUE);
- 
+
   adj = gtk_adjustment_new (0, -359, 359, 1, 10, 10);
   y = gtk_spin_button_new (GTK_ADJUSTMENT (adj), 1, 0);
   g_object_set_data (G_OBJECT (dlg), "y", y);
@@ -1844,7 +1845,7 @@ void DoRotateDlg ()
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
                     (GtkAttachOptions) (0), 0, 0);
   gtk_spin_button_set_wrap (GTK_SPIN_BUTTON (y), TRUE);
- 
+
   adj = gtk_adjustment_new (0, -359, 359, 1, 10, 10);
   z = gtk_spin_button_new (GTK_ADJUSTMENT (adj), 1, 0);
   g_object_set_data (G_OBJECT (dlg), "z", z);
@@ -1853,24 +1854,24 @@ void DoRotateDlg ()
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
                     (GtkAttachOptions) (0), 0, 0);
   gtk_spin_button_set_wrap (GTK_SPIN_BUTTON (z), TRUE);
- 
+
   vbox = gtk_vbox_new (FALSE, 5);
   gtk_widget_show (vbox);
   gtk_box_pack_start (GTK_BOX (hbox), vbox, TRUE, TRUE, 0);
- 
+
   button = gtk_button_new_with_label ("OK");
   gtk_widget_show (button);
   gtk_box_pack_start (GTK_BOX (vbox), button, FALSE, FALSE, 0);
   gtk_signal_connect (GTK_OBJECT (button), "clicked",
 		      GTK_SIGNAL_FUNC (dialog_button_callback), GINT_TO_POINTER (IDOK));
   gtk_widget_set_usize (button, 60, -2);
- 
+
   button = gtk_button_new_with_label ("Cancel");
   gtk_widget_show (button);
   gtk_box_pack_start (GTK_BOX (vbox), button, FALSE, FALSE, 0);
   gtk_signal_connect (GTK_OBJECT (button), "clicked",
 		      GTK_SIGNAL_FUNC (dialog_button_callback), GINT_TO_POINTER (IDCANCEL));
- 
+
   button = gtk_button_new_with_label ("Apply");
   gtk_widget_show (button);
   gtk_box_pack_start (GTK_BOX (vbox), button, FALSE, FALSE, 0);
@@ -1938,7 +1939,7 @@ void DoGamma ()
   gtk_signal_connect (GTK_OBJECT (button), "clicked",
 		      GTK_SIGNAL_FUNC (dialog_button_callback), GINT_TO_POINTER (IDOK));
   gtk_widget_set_usize (button, 60, -2);
- 
+
   button = gtk_button_new_with_label ("Cancel");
   gtk_widget_show (button);
   gtk_box_pack_start (GTK_BOX (vbox), button, FALSE, FALSE, 0);
@@ -2027,7 +2028,7 @@ void SelectBrush (int entitynum, int brushnum)
           if (b==&active_brushes)
           {
             // this is a regioned out entity
-            e = e->next;        
+            e = e->next;
             // don't walk past the end either
             if (e == &entities)
             {
@@ -2078,7 +2079,7 @@ void SelectBrush (int entitynum, int brushnum)
 
     if (g_pParentWnd->GetXZWnd())
       g_pParentWnd->GetXZWnd()->GetOrigin()[i] = (b->mins[i] + b->maxs[i])/2;
-    
+
     if (g_pParentWnd->GetYZWnd())
       g_pParentWnd->GetYZWnd()->GetOrigin()[i] = (b->mins[i] + b->maxs[i])/2;
   }
@@ -2134,7 +2135,7 @@ void DoFind ()
   gtk_box_pack_start (GTK_BOX (vbox), table, TRUE, TRUE, 0);
   gtk_table_set_row_spacings (GTK_TABLE (table), 5);
   gtk_table_set_col_spacings (GTK_TABLE (table), 5);
- 
+
   label = gtk_label_new ("Entity number");
   gtk_widget_show (label);
   gtk_table_attach (GTK_TABLE (table), label, 0, 1, 0, 1,
@@ -2169,7 +2170,7 @@ void DoFind ()
   gtk_signal_connect (GTK_OBJECT (button), "clicked",
 		      GTK_SIGNAL_FUNC (dialog_button_callback), GINT_TO_POINTER (IDOK));
   gtk_widget_set_usize (button, 60, -2);
- 
+
   button = gtk_button_new_with_label ("Cancel");
   gtk_widget_show (button);
   gtk_box_pack_start (GTK_BOX (hbox), button, FALSE, FALSE, 0);
@@ -2243,7 +2244,7 @@ void DoSides (bool bCone, bool bSphere, bool bTorus)
   gtk_signal_connect (GTK_OBJECT (button), "clicked",
 		      GTK_SIGNAL_FUNC (dialog_button_callback), GINT_TO_POINTER (IDOK));
   gtk_widget_set_usize (button, 60, -2);
- 
+
   button = gtk_button_new_with_label ("Cancel");
   gtk_widget_show (button);
   gtk_box_pack_start (GTK_BOX (vbox), button, FALSE, FALSE, 0);
@@ -2301,7 +2302,7 @@ void DoNewPatchDlg ()
   gtk_box_pack_start (GTK_BOX (hbox), table, TRUE, TRUE, 0);
   gtk_table_set_row_spacings (GTK_TABLE (table), 5);
   gtk_table_set_col_spacings (GTK_TABLE (table), 5);
- 
+
   label = gtk_label_new ("Width:");
   gtk_widget_show (label);
   gtk_table_attach (GTK_TABLE (table), label, 0, 1, 0, 1,
@@ -2350,7 +2351,7 @@ void DoNewPatchDlg ()
   gtk_signal_connect (GTK_OBJECT (button), "clicked",
 		      GTK_SIGNAL_FUNC (dialog_button_callback), GINT_TO_POINTER (IDOK));
   gtk_widget_set_usize (button, 60, -2);
- 
+
   button = gtk_button_new_with_label ("Cancel");
   gtk_widget_show (button);
   gtk_box_pack_start (GTK_BOX (vbox), button, FALSE, FALSE, 0);
@@ -2411,7 +2412,7 @@ void DoScaleDlg ()
   gtk_box_pack_start (GTK_BOX (hbox), table, TRUE, TRUE, 0);
   gtk_table_set_row_spacings (GTK_TABLE (table), 5);
   gtk_table_set_col_spacings (GTK_TABLE (table), 5);
- 
+
   label = gtk_label_new ("X:");
   gtk_widget_show (label);
   gtk_table_attach (GTK_TABLE (table), label, 0, 1, 0, 1,
@@ -2461,7 +2462,7 @@ void DoScaleDlg ()
   gtk_signal_connect (GTK_OBJECT (button), "clicked",
 		      GTK_SIGNAL_FUNC (dialog_button_callback), GINT_TO_POINTER (IDOK));
   gtk_widget_set_usize (button, 60, -2);
- 
+
   button = gtk_button_new_with_label ("Cancel");
   gtk_widget_show (button);
   gtk_box_pack_start (GTK_BOX (vbox), button, FALSE, FALSE, 0);
@@ -2543,7 +2544,7 @@ void DoThickenDlg ()
   gtk_signal_connect (GTK_OBJECT (button), "clicked",
 		      GTK_SIGNAL_FUNC (dialog_button_callback), GINT_TO_POINTER (IDOK));
   gtk_widget_set_usize (button, 60, -2);
- 
+
   button = gtk_button_new_with_label ("Cancel");
   gtk_widget_show (button);
   gtk_box_pack_start (GTK_BOX (vbox2), button, FALSE, FALSE, 0);
@@ -2565,13 +2566,13 @@ void DoThickenDlg ()
   seams = gtk_check_button_new_with_label ("Seams");
   gtk_widget_show (seams);
   gtk_box_pack_start (GTK_BOX (hbox), seams, FALSE, FALSE, 0);
-  
+
   // bGroupResult
   group = gtk_check_button_new_with_label("Result to func_group");
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(group), bGroupResult);
   gtk_box_pack_start(GTK_BOX(vbox), group, FALSE, FALSE, 0);
   gtk_widget_show(group);
-  
+
 
   // Initialize dialog
   gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (seams), TRUE);
@@ -2664,7 +2665,7 @@ void DoAbout ()
     "you may report your problems at\n"
     "http://zerowing.idsoftware.com/bugzilla"
   );
-                         
+
   gtk_widget_show (label);
   gtk_box_pack_start (GTK_BOX (hbox), label, FALSE, FALSE, 0);
   gtk_misc_set_alignment (GTK_MISC (label), 1, 0.5);
@@ -2702,7 +2703,7 @@ void DoAbout ()
   gtk_table_set_row_spacings (GTK_TABLE (table), 5);
   gtk_table_set_col_spacings (GTK_TABLE (table), 5);
   gtk_container_set_border_width (GTK_CONTAINER (table), 5);
- 
+
   label = gtk_label_new ("Vendor:");
   gtk_widget_show (label);
   gtk_table_attach (GTK_TABLE (table), label, 0, 1, 0, 1,
@@ -2759,15 +2760,15 @@ void DoAbout ()
   gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sc_extensions), GTK_POLICY_AUTOMATIC, GTK_POLICY_ALWAYS);
   gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(sc_extensions), GTK_SHADOW_IN);
   gtk_widget_show(sc_extensions);
-	
+
   text_extensions = gtk_text_view_new();
   gtk_text_view_set_editable(GTK_TEXT_VIEW(text_extensions), FALSE);
   gtk_container_add (GTK_CONTAINER (sc_extensions), text_extensions);
   GtkTextBuffer* buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(text_extensions));
   gtk_text_buffer_set_text(buffer, (char *)qglGetString(GL_EXTENSIONS), -1);
   gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(text_extensions), GTK_WRAP_WORD);;
-  gtk_widget_show(text_extensions);	
-	
+  gtk_widget_show(text_extensions);
+
   gtk_grab_add (dlg);
   gtk_widget_show (dlg);
 
@@ -2779,7 +2780,7 @@ void DoAbout ()
 }
 
 // =============================================================================
-// Command List dialog 
+// Command List dialog
 
 void DoCommandListDlg ()
 {
@@ -2876,7 +2877,7 @@ void DoCommandListDlg ()
           gtk_list_store_append(store, &iter);
           gtk_list_store_set(store, &iter, 0, g_Commands[n].m_strCommand, 1, strMod.GetBuffer (), -1);
         }
- 
+
         if (fileout != NULL)
         {
           strLine.Format("%-25s %s\r\n", g_Commands[n].m_strCommand, strMod.GetBuffer ());
@@ -2889,7 +2890,7 @@ void DoCommandListDlg ()
       if (fileout != NULL)
         fclose (fileout);
     }
-    
+
     g_object_unref(G_OBJECT(store));
   }
 
@@ -2915,7 +2916,7 @@ void DoCommandListDlg ()
 }
 
 // =============================================================================
-// Texture List dialog 
+// Texture List dialog
 
 void DoTextureListDlg ()
 {
@@ -2949,7 +2950,7 @@ void DoTextureListDlg ()
     GtkListStore* store = gtk_list_store_new(1, G_TYPE_STRING);
 
     GtkWidget* view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(store));
-    gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(view), FALSE); 
+    gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(view), FALSE);
 
     {
       GtkCellRenderer* renderer = gtk_cell_renderer_text_new();
@@ -2975,7 +2976,7 @@ void DoTextureListDlg ()
         textures = g_slist_remove (textures, textures->data);
       }
     }
-    
+
     g_object_unref(G_OBJECT(store));
 
     texture_list = view;
@@ -3025,7 +3026,7 @@ void DoTextureListDlg ()
 }
 
 // =============================================================================
-// Cap dialog 
+// Cap dialog
 
 int DoCapDlg (int *type, bool *b_GroupResult)
 {
@@ -3033,7 +3034,7 @@ int DoCapDlg (int *type, bool *b_GroupResult)
   GtkWidget *bevel, *endcap, *ibevel, *iendcap;
   GSList *group = (GSList*)NULL;
 	int loop = 1, ret = IDCANCEL;
-	
+
   dlg = gtk_window_new (GTK_WINDOW_TOPLEVEL);
   gtk_window_set_title (GTK_WINDOW (dlg), "Cap");
   gtk_signal_connect (GTK_OBJECT (dlg), "delete_event",
@@ -3052,13 +3053,13 @@ int DoCapDlg (int *type, bool *b_GroupResult)
   radio_vbox = gtk_vbox_new(FALSE, 4);
   gtk_container_add(GTK_CONTAINER(hbox), radio_vbox);
   gtk_widget_show(radio_vbox);
-		
+
   table = gtk_table_new (4, 2, FALSE);
   gtk_widget_show (table);
   gtk_box_pack_start (GTK_BOX (radio_vbox), table, TRUE, TRUE, 0);
   gtk_table_set_row_spacings (GTK_TABLE (table), 5);
   gtk_table_set_col_spacings (GTK_TABLE (table), 5);
- 
+
   pixmap = new_pixmap (g_pParentWnd->m_pWidget, "cap_bevel.bmp");
   gtk_widget_show (pixmap);
   gtk_table_attach (GTK_TABLE (table), pixmap, 0, 1, 0, 1,
@@ -3115,7 +3116,7 @@ int DoCapDlg (int *type, bool *b_GroupResult)
   group_toggle = gtk_check_button_new_with_label("Result to func_group");
   gtk_container_add(GTK_CONTAINER(radio_vbox), group_toggle);
   gtk_widget_show(group_toggle);
-	
+
   vbox = gtk_vbox_new (FALSE, 5);
   gtk_widget_show (vbox);
   gtk_box_pack_start (GTK_BOX (hbox), vbox, FALSE, FALSE, 0);
@@ -3136,7 +3137,7 @@ int DoCapDlg (int *type, bool *b_GroupResult)
 
   // Gef: Set the state of the func_group toggle
   gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (group_toggle), *b_GroupResult);
-	
+
   // Initialize dialog
   gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (bevel), TRUE);
 
@@ -3168,7 +3169,7 @@ int DoCapDlg (int *type, bool *b_GroupResult)
 }
 
 // =============================================================================
-// Scripts dialog 
+// Scripts dialog
 
 void DoScriptsDlg ()
 {
@@ -3214,7 +3215,7 @@ void DoScriptsDlg ()
     GtkListStore* store = gtk_list_store_new(1, G_TYPE_STRING);
 
     GtkWidget* view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(store));
-    gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(view), FALSE); 
+    gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(view), FALSE);
 
     {
       GtkCellRenderer* renderer = gtk_cell_renderer_text_new();
@@ -3255,7 +3256,7 @@ void DoScriptsDlg ()
         fclose (f);
       }
     }
-    
+
     g_object_unref(G_OBJECT(store));
 
     scripts_list = view;
@@ -3317,7 +3318,7 @@ void DoScriptsDlg ()
 }
 
 // =============================================================================
-//  dialog 
+//  dialog
 
 int DoBSInputDlg (const char *fields[5], float values[5])
 {
@@ -3403,7 +3404,7 @@ int DoBSInputDlg (const char *fields[5], float values[5])
 }
 
 // =============================================================================
-// TextureLayout dialog 
+// TextureLayout dialog
 
 int DoTextureLayout (float *fx, float *fy)
 {
@@ -3442,7 +3443,7 @@ int DoTextureLayout (float *fx, float *fy)
   gtk_box_pack_start (GTK_BOX (vbox), table, TRUE, TRUE, 0);
   gtk_table_set_row_spacings (GTK_TABLE (table), 5);
   gtk_table_set_col_spacings (GTK_TABLE (table), 5);
- 
+
   label = gtk_label_new ("Texture x:");
   gtk_widget_show (label);
   gtk_table_attach (GTK_TABLE (table), label, 0, 1, 0, 1,
@@ -3510,7 +3511,7 @@ int DoTextureLayout (float *fx, float *fy)
 }
 
 // =============================================================================
-// Name dialog 
+// Name dialog
 
 char* DoNameDlg (const char* title)
 {
@@ -3576,7 +3577,7 @@ char* DoNameDlg (const char* title)
 }
 
 // =============================================================================
-// NewProject dialog 
+// NewProject dialog
 
 char* DoNewProjectDlg ()
 {
@@ -3670,7 +3671,7 @@ char* DoNewProjectDlg ()
 }
 
 // =============================================================================
-// Text Editor dialog 
+// Text Editor dialog
 
 // master window widget
 static GtkWidget *text_editor = NULL;
@@ -3916,7 +3917,7 @@ void DoTextEditor (const char* filename, int cursorpos)
     strEditCommand += " \"";
     strEditCommand += filename;
     strEditCommand += "\"";
-    
+
     Sys_Printf("Launching: %s\n", strEditCommand.GetBuffer());
     // note: linux does not return false if the command failed so it will assume success
     if (Q_Exec(NULL, (char *)strEditCommand.GetBuffer(), NULL, true) == false)
@@ -3930,7 +3931,7 @@ void DoTextEditor (const char* filename, int cursorpos)
     }
   }
 #endif
-  
+
   DoGtkTextEditor (filename, cursorpos);
 
   // old win32 code with EditPad bindings, broken
@@ -3965,7 +3966,7 @@ void DoTextEditor (const char* filename, int cursorpos)
 }
 
 // =============================================================================
-// Light Intensity dialog 
+// Light Intensity dialog
 
 int DoLightIntensityDlg (int *intensity)
 {

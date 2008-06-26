@@ -27,6 +27,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "stdafx.h"
 #include <gtk/gtk.h>
+#include <glib/gi18n.h>
 #include <assert.h>
 #include <GL/gl.h>
 
@@ -140,7 +141,7 @@ void WXY_Print ()
   img = (unsigned char*)malloc (width*height*3);
   qglReadPixels (0,0,width,height,GL_RGB,GL_UNSIGNED_BYTE,img);
 
-  FILE *fp; 
+  FILE *fp;
   fp = fopen(filename, "wb");
   if (fp)
   {
@@ -179,7 +180,7 @@ void WXY_Print ()
 
     unsigned long widthDW = (((width*24) + 31) / 32 * 4);
     long row, row_size = width*3;
-    for (row = 0; row < height; row++) 
+    for (row = 0; row < height; row++)
     {
         unsigned char* buf = img+row*row_size;
 
@@ -191,7 +192,7 @@ void WXY_Print ()
           putc(buf[col+1], fp);
           putc(buf[col], fp);
         }
-      byteswritten += row_size; 
+      byteswritten += row_size;
 
       unsigned long count;
       for (count = row_size; count < widthDW; count++)
@@ -223,7 +224,7 @@ float Betwixt(float f1, float f2)
 
 void CleanList(brush_t* pList)
 {
-  brush_t* pBrush = pList->next; 
+  brush_t* pBrush = pList->next;
   while (pBrush != NULL && pBrush != pList)
   {
     brush_t* pNext = pBrush->next;
@@ -234,7 +235,7 @@ void CleanList(brush_t* pList)
 
 void Brush_CopyList (brush_t* pFrom, brush_t* pTo)
 {
-  brush_t* pBrush = pFrom->next; 
+  brush_t* pBrush = pFrom->next;
   while (pBrush != NULL && pBrush != pFrom)
   {
     brush_t* pNext = pBrush->next;
@@ -288,7 +289,7 @@ void DrawPathLines (void)
   {
     return;
   }
-  
+
   num_entities = 0;
   for (te = entities.next ; te != &entities && num_entities != MAX_MAP_ENTITIES ; te = te->next)
   {
@@ -299,53 +300,53 @@ void DrawPathLines (void)
       num_entities++;
     }
   }
-  
+
   for (se = entities.next ; se != &entities ; se = se->next)
   {
     psz = ValueForKey(se, "targetname");
-    
+
     if (psz == NULL || psz[0] == '\0')
       continue;
-    
+
     sb = se->brushes.onext;
     if (sb == &se->brushes)
       continue;
-    
+
     for (k=0 ; k<num_entities ; k++)
     {
       if (strcmp (ent_target[k], psz))
         continue;
-      
+
       te = ent_entity[k];
       tb = te->brushes.onext;
       if (tb == &te->brushes)
         continue;
-      
+
       for (i=0 ; i<3 ; i++)
-        mid[i] = (sb->mins[i] + sb->maxs[i])*0.5; 
-      
+        mid[i] = (sb->mins[i] + sb->maxs[i])*0.5;
+
       for (i=0 ; i<3 ; i++)
-        mid1[i] = (tb->mins[i] + tb->maxs[i])*0.5; 
-      
+        mid1[i] = (tb->mins[i] + tb->maxs[i])*0.5;
+
       VectorSubtract (mid1, mid, dir);
       len = VectorNormalize (dir, dir);
       s1[0] = -dir[1]*8 + dir[0]*8;
       s2[0] = dir[1]*8 + dir[0]*8;
       s1[1] = dir[0]*8 + dir[1]*8;
       s2[1] = -dir[0]*8 + dir[1]*8;
-      
+
       qglColor3f (se->eclass->color[0], se->eclass->color[1], se->eclass->color[2]);
-      
+
       qglBegin(GL_LINES);
       qglVertex3fv(mid);
       qglVertex3fv(mid1);
-      
+
       arrows = (int)(len / 256) + 1;
-      
+
       for (i=0 ; i<arrows ; i++)
       {
         f = len * (i + 0.5) / arrows;
-        
+
         for (j=0 ; j<3 ; j++)
           mid1[j] = mid[j] + f*dir[j];
         qglVertex3fv (mid1);
@@ -353,7 +354,7 @@ void DrawPathLines (void)
         qglVertex3fv (mid1);
         qglVertex3f (mid1[0] + s2[0], mid1[1] + s2[1], mid1[2]);
       }
-      
+
       qglEnd();
     }
   }
@@ -765,7 +766,7 @@ void XYWnd::SetOrigin(vec3_t org)
   m_vOrigin[2] = org[2];
 }
 
-void XYWnd::OnSize(int cx, int cy) 
+void XYWnd::OnSize(int cx, int cy)
 {
   m_nWidth = cx;
   m_nHeight = cy;
@@ -784,7 +785,7 @@ void XYWnd::Clip()
       pList = (!g_bSwitch) ? &g_brFrontSplits : &g_brBackSplits;
     else
       pList = (g_bSwitch) ? &g_brFrontSplits : &g_brBackSplits;
-    
+
     if (pList->next != pList)
     {
       Brush_CopyList(pList, &hold_brushes);
@@ -893,7 +894,7 @@ void XYWnd::SetClipMode(bool bMode)
     CleanList(&g_brBackSplits);
     g_brFrontSplits.next = &g_brFrontSplits;
     g_brBackSplits.next = &g_brBackSplits;
-    
+
     // ydnar: set clipper points based on first selected patch mesh
     if( selected_brushes.next != &selected_brushes )
     {
@@ -912,7 +913,7 @@ void XYWnd::SetClipMode(bool bMode)
           break;
         }
       }
-      
+
       if( found )
       {
         // SetClipMode( true );
@@ -962,9 +963,9 @@ void XYWnd::SetPointMode(bool b)
     g_nPointCount = 0;
 }
 
-void XYWnd::SetViewType(int n) 
-{ 
-  m_nViewType = n; 
+void XYWnd::SetViewType(int n)
+{
+  m_nViewType = n;
   if (g_pParentWnd->CurrentStyle() == MainFrame::eFloating)
   {
     char* str = "YZ Side";
@@ -1003,7 +1004,7 @@ bool XYWnd::SetRotateMode(bool bMode)
     Select_GetTrueMid(g_vRotateOrigin);
     g_vRotation[0] = g_vRotation[1] = g_vRotation[2] = 0.0;
   }
-  else 
+  else
   {
     if (bMode)
       Sys_Printf("Need a brush selected to turn on Mouse Rotation mode\n");
@@ -1045,7 +1046,7 @@ void update_xor_rectangle_xy(XORRectangle& xor_rectangle)
   xor_rectangle.set(rectangle);
 }
 
-void XYWnd::OnMouseMove(guint32 nFlags, int pointx, int pointy) 
+void XYWnd::OnMouseMove(guint32 nFlags, int pointx, int pointy)
 {
   // plugin entities
   // TODO TTimo handle return code
@@ -1108,9 +1109,9 @@ void XYWnd::OnMouseMove(guint32 nFlags, int pointx, int pointy)
     g_strStatus.Format("x:: %.1f  y:: %.1f  z:: %.1f", tdp[0], tdp[1], tdp[2]);
     g_pParentWnd->SetStatusText(1, g_strStatus);
 
-    // i need to generalize the point code.. having 3 flavors pretty much sucks.. 
-    // once the new curve stuff looks like it is going to stick i will 
-    // rationalize this down to a single interface.. 
+    // i need to generalize the point code.. having 3 flavors pretty much sucks..
+    // once the new curve stuff looks like it is going to stick i will
+    // rationalize this down to a single interface..
     if (PointMode())
     {
       if (g_pMovingPoint && HasCapture ())
@@ -1209,7 +1210,7 @@ void XYWnd::OnMouseMove(guint32 nFlags, int pointx, int pointy)
       XY_MouseMoved (pointx, m_nHeight - 1 - pointy , nFlags);
     }
   }
-  else 
+  else
   {
     XY_MouseMoved (pointx, m_nHeight - 1 - pointy , nFlags);
   }
@@ -1244,7 +1245,7 @@ void XYWnd::OnMouseWheel(bool bUp)
   g_pParentWnd->OnTimer ();
 }
 
-void XYWnd::OnTimer () 
+void XYWnd::OnTimer ()
 {
   int nDim1 = (m_nViewType == YZ) ? 1 : 0;
   int nDim2 = (m_nViewType == XY) ? 1 : 2;
@@ -1258,7 +1259,7 @@ void XYWnd::OnTimer ()
   XY_MouseMoved (m_ptDragX, m_nHeight - 1 - m_ptDragY , m_nScrollFlags);
 }
 
-void XYWnd::OnLButtonDown(guint32 flags, int pointx, int pointy) 
+void XYWnd::OnLButtonDown(guint32 flags, int pointx, int pointy)
 {
   g_pParentWnd->SetActiveXY(this);
   UndoCopy();
@@ -1283,14 +1284,14 @@ void XYWnd::OnMButtonDown(guint32 flags, int pointx, int pointy)
   OriginalButtonDown(flags, pointx, pointy);
 }
 
-void XYWnd::OnRButtonDown(guint32 flags, int pointx, int pointy) 
+void XYWnd::OnRButtonDown(guint32 flags, int pointx, int pointy)
 {
   g_pParentWnd->SetActiveXY(this);
   m_ptDownX = pointx;
   m_ptDownY = pointy;
   m_bRButtonDown = true;
 
-  if (g_PrefsDlg.m_nMouseButtons == 3) // 3 button mouse 
+  if (g_PrefsDlg.m_nMouseButtons == 3) // 3 button mouse
   {
     if (flags & MK_CONTROL)
     {
@@ -1360,7 +1361,7 @@ void XYWnd::XY_MouseDown (int x, int y, int buttons)
 
   VectorClear(point);
   XY_ToPoint (x, y, point);
-    
+
   VectorCopy (point, origin);
 
     VectorClear (dir);
@@ -1368,20 +1369,20 @@ void XYWnd::XY_MouseDown (int x, int y, int buttons)
     {
         origin[2] = g_MaxWorldCoord;
         dir[2] = -1;
-        right[0] = 1 / m_fScale; 
-        right[1] = 0; 
+        right[0] = 1 / m_fScale;
+        right[1] = 0;
         right[2] = 0;
-        up[0] = 0; 
+        up[0] = 0;
         up[1] = 1 / m_fScale;
         up[2] = 0;
     }
-    else if (m_nViewType == XZ) 
+    else if (m_nViewType == XZ)
     {
         origin[1] = g_MinWorldCoord; // view facing dir = positive Y
         dir[1] = 1;
         right[0] = 1 / m_fScale;
         right[1] = 0;
-        right[2] = 0; 
+        right[2] = 0;
         up[0] = 0;
         up[1] = 0;
         up[2] = 1 / m_fScale;
@@ -1391,8 +1392,8 @@ void XYWnd::XY_MouseDown (int x, int y, int buttons)
         origin[0] = g_MaxWorldCoord;
         dir[0] = -1;
         right[0] = 0;
-        right[1] = 1 / m_fScale; 
-        right[2] = 0; 
+        right[1] = 1 / m_fScale;
+        right[2] = 0;
         up[0] = 0;
         up[1] = 0;
         up[2] = 1 / m_fScale;
@@ -1408,7 +1409,7 @@ void XYWnd::XY_MouseDown (int x, int y, int buttons)
        || (buttons == (MK_LBUTTON | MK_SHIFT))
        || (buttons == (MK_LBUTTON | MK_CONTROL))
        || (buttons == (MK_LBUTTON | MK_CONTROL | MK_SHIFT)) )
-  { 
+  {
     Patch_SetView( (m_nViewType == XY) ? W_XY : (m_nViewType == YZ) ? W_YZ : W_XZ);
     Drag_Begin (x, y, buttons, right, up,   origin, dir);
     return;
@@ -1418,7 +1419,7 @@ void XYWnd::XY_MouseDown (int x, int y, int buttons)
 
   // control mbutton = move camera
   if (m_nButtonstate == (MK_CONTROL|nMouseButton) )
-  { 
+  {
     VectorCopyXY(point, g_pParentWnd->GetCamWnd()->Camera()->origin);
     Sys_UpdateWindows (W_CAMERA|W_XY_OVERLAY);
   }
@@ -1426,7 +1427,7 @@ void XYWnd::XY_MouseDown (int x, int y, int buttons)
   // mbutton = angle camera
   if ((g_PrefsDlg.m_nMouseButtons == 3 && m_nButtonstate == MK_MBUTTON) ||
       (g_PrefsDlg.m_nMouseButtons == 2 && m_nButtonstate == (MK_SHIFT|MK_CONTROL|MK_RBUTTON)))
-  { 
+  {
     VectorSubtract (point, g_pParentWnd->GetCamWnd()->Camera()->origin, point);
 
     int n1 = (m_nViewType == XY) ? 1 : 2;
@@ -1554,7 +1555,7 @@ void XYWnd::HandleDrop()
     */
     create_menu_item_with_mnemonic (menu, "Ungroup Entity",
               GTK_SIGNAL_FUNC (HandleCommand), ID_SELECTION_UNGROUPENTITY);
-    
+
     create_menu_item_with_mnemonic (menu, "Move into entity",
       GTK_SIGNAL_FUNC (HandleCommand), ID_SELECTION_MERGE);
     create_menu_item_with_mnemonic (menu, "Move into worldspawn",
@@ -1611,7 +1612,7 @@ void XYWnd::HandleDrop()
             submenu_root = NULL;
           }
           strActive = strLeft;
-          
+
           submenu = gtk_menu_new ();
           submenu_root = submenu;
           item = gtk_menu_item_new_with_label (strName);
@@ -1636,7 +1637,7 @@ void XYWnd::HandleDrop()
           submenu_root = NULL;
         }
         strActive = "";
-        
+
         item = gtk_menu_item_new_with_label (strName);
         gtk_signal_connect (GTK_OBJECT (item), "activate", GTK_SIGNAL_FUNC (HandleCommand),
           GINT_TO_POINTER (nID++));
@@ -1667,7 +1668,7 @@ void XYWnd::NewBrushDrag (int x, int y)
   // delete the current selection
   if (selected_brushes.next != &selected_brushes)
     Brush_Free (selected_brushes.next);
-    
+
   SnapToPoint (m_nPressx, m_nPressy, mins);
 
   int nDim = (m_nViewType == XY) ? 2 : (m_nViewType == YZ) ? 0 : 1;
@@ -1861,7 +1862,7 @@ void XYWnd::XY_MouseMoved (int x, int y, int buttons)
           g_pParentWnd->OnViewZoomout ();
         else
           g_pParentWnd->OnViewZoomin ();
-        
+
         Sys_SetCursorPos (m_ptCursorX, m_ptCursorY);
       }
     }
@@ -1900,7 +1901,7 @@ void XYWnd::DropClipPoint(guint32 nFlags, int pointx, int pointy)
       g_Clip1.m_ptScreenX = pointx;
       g_Clip1.m_ptScreenY = pointy;
     }
-    else 
+    else
     if (g_Clip2.Set() == false)
     {
       pPt = g_Clip2;
@@ -1908,7 +1909,7 @@ void XYWnd::DropClipPoint(guint32 nFlags, int pointx, int pointy)
       g_Clip2.m_ptScreenX = pointx;
       g_Clip2.m_ptScreenY = pointy;
     }
-    else 
+    else
     if (g_Clip3.Set() == false)
     {
       pPt = g_Clip3;
@@ -1916,7 +1917,7 @@ void XYWnd::DropClipPoint(guint32 nFlags, int pointx, int pointy)
       g_Clip3.m_ptScreenX = pointx;
       g_Clip3.m_ptScreenY = pointy;
     }
-    else 
+    else
     {
       RetainClipMode(true);
       pPt = g_Clip1;
@@ -2045,7 +2046,7 @@ void XYWnd::PlanePointsFromClipPoints(vec3_t planepts[3], brush_t *pBrush)
 		int n = (g_pParentWnd->ActiveXY()->GetViewType() == XY) ? 2 : (g_pParentWnd->ActiveXY()->GetViewType() == YZ) ? 0 : 1;
 		int x = (n == 0) ? 1 : 0;
 		int y = (n == 2) ? 1 : 2;
-		
+
 		if (n == 1) // on viewtype XZ, flip clip points
 		{
 		planepts[0][n] = pBrush->maxs[n];
@@ -2069,7 +2070,7 @@ void XYWnd::ProduceSplitLists()
 {
 	bool bCaulk = false;
   int nFlags;
-	
+
 	if (AnyPatchesSelected())
 	{
 		Sys_Printf("Deselecting patches for clip operation.\n");
@@ -2087,7 +2088,7 @@ void XYWnd::ProduceSplitLists()
         // ydnar: update the window if any patches are selected
         Sys_UpdateWindows( XY | W_CAMERA_IFON );
 	}
-	
+
 	CleanList(&g_brFrontSplits);
 	CleanList(&g_brBackSplits);
 	g_brFrontSplits.next = &g_brFrontSplits;
@@ -2099,7 +2100,7 @@ void XYWnd::ProduceSplitLists()
 		{
 			brush_t* pFront = NULL;
 			brush_t* pBack = NULL;
-			
+
 			face_t face;
 			memset(&face,0,sizeof(face_t));
       PlanePointsFromClipPoints(face.planepts, pBrush);
@@ -2123,7 +2124,7 @@ void XYWnd::ProduceSplitLists()
 				Brush_AddToList(pBack, &g_brBackSplits);
 			if (pFront)
 				Brush_AddToList(pFront, &g_brFrontSplits);
-			
+
 		}
 	}
 }
@@ -2358,16 +2359,16 @@ void XYWnd::XY_DrawGrid()
     if (!g_qeglobals.d_savedinfo.show_axis)
     {
       qglRasterPos2f ( m_vOrigin[nDim1] - w + 35 / m_fScale, m_vOrigin[nDim2] + h - 20 / m_fScale );
-      
+
       char cView[20];
       if (m_nViewType == XY)
         strcpy(cView, "XY Top");
-      else 
+      else
         if (m_nViewType == XZ)
           strcpy(cView, "XZ Front");
         else
           strcpy(cView, "YZ Side");
-        
+
         gtk_glwidget_print_string(cView);
     }
   }
@@ -2478,7 +2479,7 @@ void XYWnd::XY_DrawBlockGrid()
   qglLineWidth (2);
 
   qglBegin (GL_LINES);
-	
+
   for (x=xb ; x<=xe ; x+=g_qeglobals.blockSize)
   {
     qglVertex2f (x, yb);
@@ -2493,7 +2494,7 @@ void XYWnd::XY_DrawBlockGrid()
 		qglVertex2f (xe, y);
 	}
   }
-	
+
   qglEnd ();
   qglLineWidth (1);
 
@@ -2602,7 +2603,7 @@ void XYWnd::DrawCameraIcon()
   qglVertex3f (x-box,y,0);
   qglVertex3f (x+box,y,0);
   qglEnd ();
-	
+
   qglBegin(GL_LINE_STRIP);
   qglVertex3f (x+fov*cos(a+Q_PI/4), y+fov*sin(a+Q_PI/4), 0);
   qglVertex3f (x, y, 0);
@@ -2650,7 +2651,7 @@ void XYWnd::DrawZIcon (void)
   }
 }
 
-// can be greatly simplified but per usual i am in a hurry 
+// can be greatly simplified but per usual i am in a hurry
 // which is not an excuse, just a fact
 void XYWnd::PaintSizeInfo(int nDim1, int nDim2, vec3_t vMinBounds, vec3_t vMaxBounds)
 {
@@ -2662,7 +2663,7 @@ void XYWnd::PaintSizeInfo(int nDim1, int nDim2, vec3_t vMinBounds, vec3_t vMaxBo
   vec3_t vSize;
   VectorSubtract(vMaxBounds, vMinBounds, vSize);
 
-  qglColor3f(g_qeglobals.d_savedinfo.colors[COLOR_SELBRUSHES][0] * .65, 
+  qglColor3f(g_qeglobals.d_savedinfo.colors[COLOR_SELBRUSHES][0] * .65,
 	     g_qeglobals.d_savedinfo.colors[COLOR_SELBRUSHES][1] * .65,
 	     g_qeglobals.d_savedinfo.colors[COLOR_SELBRUSHES][2] * .65);
 
@@ -2678,14 +2679,14 @@ void XYWnd::PaintSizeInfo(int nDim1, int nDim2, vec3_t vMinBounds, vec3_t vMaxBo
 
     qglVertex3f(vMaxBounds[nDim1], vMinBounds[nDim2] - 6.0f  / m_fScale, 0.0f);
     qglVertex3f(vMaxBounds[nDim1], vMinBounds[nDim2] - 10.0f / m_fScale, 0.0f);
-  
+
 
     qglVertex3f(vMaxBounds[nDim1] + 6.0f  / m_fScale, vMinBounds[nDim2], 0.0f);
     qglVertex3f(vMaxBounds[nDim1] + 10.0f  / m_fScale, vMinBounds[nDim2], 0.0f);
 
     qglVertex3f(vMaxBounds[nDim1] + 10.0f  / m_fScale, vMinBounds[nDim2], 0.0f);
     qglVertex3f(vMaxBounds[nDim1] + 10.0f  / m_fScale, vMaxBounds[nDim2], 0.0f);
-  
+
     qglVertex3f(vMaxBounds[nDim1] + 6.0f  / m_fScale, vMaxBounds[nDim2], 0.0f);
     qglVertex3f(vMaxBounds[nDim1] + 10.0f  / m_fScale, vMaxBounds[nDim2], 0.0f);
 
@@ -2694,7 +2695,7 @@ void XYWnd::PaintSizeInfo(int nDim1, int nDim2, vec3_t vMinBounds, vec3_t vMaxBo
     qglRasterPos3f (Betwixt(vMinBounds[nDim1], vMaxBounds[nDim1]),  vMinBounds[nDim2] - 20.0  / m_fScale, 0.0f);
     g_strDim.Format(g_pDimStrings[nDim1], vSize[nDim1]);
     gtk_glwidget_print_string((char *) g_strDim.GetBuffer());
-    
+
     qglRasterPos3f (vMaxBounds[nDim1] + 16.0  / m_fScale, Betwixt(vMinBounds[nDim2], vMaxBounds[nDim2]), 0.0f);
     g_strDim.Format(g_pDimStrings[nDim2], vSize[nDim2]);
     gtk_glwidget_print_string((char *) g_strDim.GetBuffer());
@@ -2715,14 +2716,14 @@ void XYWnd::PaintSizeInfo(int nDim1, int nDim2, vec3_t vMinBounds, vec3_t vMaxBo
 
     qglVertex3f(vMaxBounds[nDim1], 0,vMinBounds[nDim2] - 6.0f  / m_fScale);
     qglVertex3f(vMaxBounds[nDim1], 0,vMinBounds[nDim2] - 10.0f / m_fScale);
-  
+
 
     qglVertex3f(vMaxBounds[nDim1] + 6.0f  / m_fScale, 0,vMinBounds[nDim2]);
     qglVertex3f(vMaxBounds[nDim1] + 10.0f  / m_fScale, 0,vMinBounds[nDim2]);
 
     qglVertex3f(vMaxBounds[nDim1] + 10.0f  / m_fScale, 0,vMinBounds[nDim2]);
     qglVertex3f(vMaxBounds[nDim1] + 10.0f  / m_fScale, 0,vMaxBounds[nDim2]);
-  
+
     qglVertex3f(vMaxBounds[nDim1] + 6.0f  / m_fScale, 0,vMaxBounds[nDim2]);
     qglVertex3f(vMaxBounds[nDim1] + 10.0f  / m_fScale, 0,vMaxBounds[nDim2]);
 
@@ -2731,7 +2732,7 @@ void XYWnd::PaintSizeInfo(int nDim1, int nDim2, vec3_t vMinBounds, vec3_t vMaxBo
     qglRasterPos3f (Betwixt(vMinBounds[nDim1], vMaxBounds[nDim1]), 0, vMinBounds[nDim2] - 20.0  / m_fScale);
     g_strDim.Format(g_pDimStrings[nDim1], vSize[nDim1]);
     gtk_glwidget_print_string((char *) g_strDim.GetBuffer());
-    
+
     qglRasterPos3f (vMaxBounds[nDim1] + 16.0  / m_fScale, 0, Betwixt(vMinBounds[nDim2], vMaxBounds[nDim2]));
     g_strDim.Format(g_pDimStrings[nDim2], vSize[nDim2]);
     gtk_glwidget_print_string((char *) g_strDim.GetBuffer());
@@ -2752,14 +2753,14 @@ void XYWnd::PaintSizeInfo(int nDim1, int nDim2, vec3_t vMinBounds, vec3_t vMaxBo
 
     qglVertex3f(0, vMaxBounds[nDim1], vMinBounds[nDim2] - 6.0f  / m_fScale);
     qglVertex3f(0, vMaxBounds[nDim1], vMinBounds[nDim2] - 10.0f / m_fScale);
-  
+
 
     qglVertex3f(0, vMaxBounds[nDim1] + 6.0f  / m_fScale, vMinBounds[nDim2]);
     qglVertex3f(0, vMaxBounds[nDim1] + 10.0f  / m_fScale, vMinBounds[nDim2]);
 
     qglVertex3f(0, vMaxBounds[nDim1] + 10.0f  / m_fScale, vMinBounds[nDim2]);
     qglVertex3f(0, vMaxBounds[nDim1] + 10.0f  / m_fScale, vMaxBounds[nDim2]);
-  
+
     qglVertex3f(0, vMaxBounds[nDim1] + 6.0f  / m_fScale, vMaxBounds[nDim2]);
     qglVertex3f(0, vMaxBounds[nDim1] + 10.0f  / m_fScale, vMaxBounds[nDim2]);
 
@@ -2768,7 +2769,7 @@ void XYWnd::PaintSizeInfo(int nDim1, int nDim2, vec3_t vMinBounds, vec3_t vMaxBo
     qglRasterPos3f (0, Betwixt(vMinBounds[nDim1], vMaxBounds[nDim1]),  vMinBounds[nDim2] - 20.0  / m_fScale);
     g_strDim.Format(g_pDimStrings[nDim1], vSize[nDim1]);
     gtk_glwidget_print_string((char *) g_strDim.GetBuffer());
-    
+
     qglRasterPos3f (0, vMaxBounds[nDim1] + 16.0  / m_fScale, Betwixt(vMinBounds[nDim2], vMaxBounds[nDim2]));
     g_strDim.Format(g_pDimStrings[nDim2], vSize[nDim2]);
     gtk_glwidget_print_string((char *) g_strDim.GetBuffer());
@@ -2839,7 +2840,7 @@ void XYWnd::XY_Draw()
   if (!active_brushes.next)
     return;	// not valid yet
 
-  Patch_LODMatchAll(); // spog  
+  Patch_LODMatchAll(); // spog
 
   if (m_bTiming)
     start = Sys_DoubleTime();
@@ -2924,7 +2925,7 @@ void XYWnd::XY_Draw()
   drawn = culled = 0;
 
   e = world_entity;
-	
+
   if (m_bTiming)
     start2 = Sys_DoubleTime();
 
@@ -2933,9 +2934,9 @@ void XYWnd::XY_Draw()
 	  if (brush->bFiltered)
       continue;
 
-    if (brush->mins[nDim1] > maxs[0] || 
-        brush->mins[nDim2] > maxs[1] || 
-        brush->maxs[nDim1] < mins[0] || 
+    if (brush->mins[nDim1] > maxs[0] ||
+        brush->mins[nDim2] > maxs[1] ||
+        brush->maxs[nDim1] < mins[0] ||
         brush->maxs[nDim2] < mins[1])
     {
       culled++;
@@ -2963,7 +2964,7 @@ void XYWnd::XY_Draw()
 
     Brush_DrawXY(brush, m_nViewType);
   }
-  
+
   if (m_bTiming)
     end2 = Sys_DoubleTime();
 
@@ -3006,9 +3007,9 @@ void XYWnd::XY_Draw()
   for (brush = selected_brushes.next ; brush != &selected_brushes ; brush=brush->next)
   {
 	// spog - added culling of selected brushes in XY window
-	if (brush->mins[nDim1] > maxs[0] || 
-        brush->mins[nDim2] > maxs[1] || 
-        brush->maxs[nDim1] < mins[0] || 
+	if (brush->mins[nDim1] > maxs[0] ||
+        brush->mins[nDim2] > maxs[1] ||
+        brush->maxs[nDim1] < mins[0] ||
         brush->maxs[nDim2] < mins[1])
     {
       culled++;
@@ -3053,7 +3054,7 @@ void XYWnd::XY_Draw()
   // edge / vertex flags
   if (g_qeglobals.d_select_mode == sel_vertex)
   {
-    if(!g_PrefsDlg.m_bGlPtWorkaround) 
+    if(!g_PrefsDlg.m_bGlPtWorkaround)
     {
       // brush verts
       qglPointSize (4);
@@ -3062,7 +3063,7 @@ void XYWnd::XY_Draw()
         for (i=0 ; i<g_qeglobals.d_numpoints ; i++)
           qglVertex3fv (g_qeglobals.d_points[i]);
       qglEnd ();
-      
+
       if(g_qeglobals.d_num_move_points)
       {
         // selected brush verts
@@ -3084,7 +3085,7 @@ void XYWnd::XY_Draw()
         for (i=0; i < g_qeglobals.d_numpoints; i++)
           DrawAlternatePoint(g_qeglobals.d_points[i], m_fScale);
       qglEnd();
-      
+
       if(g_qeglobals.d_num_move_points)
       {
         // selected brush verts
@@ -3101,7 +3102,7 @@ void XYWnd::XY_Draw()
   else if (g_qeglobals.d_select_mode == sel_edge)
   {
     float	*v1, *v2;
-    if(!g_PrefsDlg.m_bGlPtWorkaround) 
+    if(!g_PrefsDlg.m_bGlPtWorkaround)
     {
       qglPointSize (4);
       qglColor3f (0,0,1);
@@ -3250,7 +3251,7 @@ bool XYWnd::AreaSelectOK()
   return RotateMode() ? false : ScaleMode() ? false : true;
 }
 
-void XYWnd::OnCreate () 
+void XYWnd::OnCreate ()
 {
   if (!MakeCurrent ())
     Error ("glXMakeCurrent failed");
@@ -3281,7 +3282,7 @@ void XYWnd::OnExpose ()
         qglRotatef (-90,  0, 1, 0);	    // put Z going up
       qglRotatef (-90,  1, 0, 0);	    // put Z going up
     }
- 
+
     if (g_bCrossHairs)
     {
       qglColor4f(0.2f, 0.9f, 0.2f, 0.8f);
@@ -3343,7 +3344,7 @@ void XYWnd::OnExpose ()
         }
       }
     }
-    
+
     if (PathMode())
     {
       int n;
@@ -3393,7 +3394,7 @@ void XYWnd::OnEntityCreate (const char* item)
       brush_t *b;
       for( b = selected_brushes.next; b != &selected_brushes; b = b->next )
       {
-	
+
       }
     }
 
@@ -3406,7 +3407,7 @@ void XYWnd::OnEntityCreate (const char* item)
 	Sys_Printf("TODO: hook drop down group menu\n");
 	return;
       }
-		
+
     if (strItem.Find("Smart_") >= 0)
     {
       CreateSmartEntity(this, m_ptDownX, m_ptDownY, strItem);
@@ -3415,7 +3416,7 @@ void XYWnd::OnEntityCreate (const char* item)
     {
       CreateRightClickEntity(this, m_ptDownX, m_ptDownY, (char*)strItem.GetBuffer());
     }
-		
+
     Sys_UpdateWindows(W_ALL);
     //OnLButtonDown((MK_LBUTTON | MK_SHIFT), CPoint(m_ptDown.x+2, m_ptDown.y+2));
   }

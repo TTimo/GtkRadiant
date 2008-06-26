@@ -28,12 +28,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "stdafx.h"
 #ifdef _WIN32
 extern "C" {
-#include <gdk/gdkwin32.h> 
+#include <gdk/gdkwin32.h>
 #define COMPILE_MULTIMON_STUBS
 #include <multimon.h>
 }
 #endif
 #include <gtk/gtk.h>
+#include <glib/gi18n.h>
 #include <gdk/gdkkeysyms.h>
 #include <gdk/gdkprivate.h>
 #include <sys/stat.h>
@@ -304,7 +305,7 @@ SKeyInfo g_Keys[] =
   {"F11", GDK_F11},
   {"F12", GDK_F12},
   {"Tab", GDK_Tab},
-  {"Return", GDK_Return},                           
+  {"Return", GDK_Return},
   {"Comma", GDK_comma},
   {"Period", GDK_period},
   {"Plus", GDK_KP_Add},
@@ -334,7 +335,7 @@ int g_nKeyCount = sizeof(g_Keys) / sizeof(SKeyInfo);
 void WINAPI Sys_UpdateWindows (int nBits)
 {
   g_nUpdateBits |= nBits;
-} 
+}
 
 // =============================================================================
 // Static functions
@@ -346,10 +347,10 @@ void HandleKeyUp (GtkWidget *widget, gpointer data)
 #ifdef DBG_KBD
   Sys_Printf("HandleKeyUp: %d\n", id);
 #endif
-  
+
   if(g_bIgnoreCommands)
     return;
-  
+
   switch (id)
   {
     case ID_CAMERA_FORWARD: g_pParentWnd->OnCameraForward (FALSE); break;
@@ -481,7 +482,7 @@ gint HandleCommand (GtkWidget *widget, gpointer data)
     case ID_SELECTION_CSGSUBTRACT: g_pParentWnd->OnSelectionCsgsubtract (); break;
     case ID_SELECTION_CSGMERGE: g_pParentWnd->OnSelectionCsgmerge (); break;
     case ID_SELECTION_NOOUTLINE: g_pParentWnd->OnSelectionNoOutline (); break;
-    case ID_SELECTION_OUTLINESTYLE: g_pParentWnd->OnSelectionOutlineStyle (); break;      
+    case ID_SELECTION_OUTLINESTYLE: g_pParentWnd->OnSelectionOutlineStyle (); break;
     case ID_SELECTION_SELECTCOMPLETETALL: g_pParentWnd->OnSelectionSelectcompletetall (); break;
     case ID_SELECTION_SELECTTOUCHING: g_pParentWnd->OnSelectionSelecttouching (); break;
     case ID_SELECTION_SELECTPARTIALTALL: g_pParentWnd->OnSelectionSelectpartialtall (); break;
@@ -510,7 +511,7 @@ gint HandleCommand (GtkWidget *widget, gpointer data)
     case ID_TEXTURES_LOAD: g_pParentWnd->OnTexturesLoad (); break;
     case ID_TEXTURES_RELOADSHADERS: g_pParentWnd->OnTexturesReloadshaders (); break;
     case ID_TEXTURES_SHADERS_SHOW: g_pParentWnd->OnTexturesShadersShow (); break;
-    case ID_TEXTURES_TEXTUREWINDOWSCALE_200: 
+    case ID_TEXTURES_TEXTUREWINDOWSCALE_200:
     case ID_TEXTURES_TEXTUREWINDOWSCALE_100:
     case ID_TEXTURES_TEXTUREWINDOWSCALE_50:
     case ID_TEXTURES_TEXTUREWINDOWSCALE_25:
@@ -719,14 +720,14 @@ static void mainframe_destroy (GtkWidget *widget, gpointer data)
   // NOTE TTimo this is very clumsy, in MainFrame::OnDestroy we might call SavePrefs again
   //   we will do more stuff in OnDestroy for window position saving too, so I guess this call is still relevant?
   g_PrefsDlg.SavePrefs ();
-  
+
   wnd->OnDestroy ();
-  
+
   // shutdown modules
   // NOTE: I've decided to do this before SavePrefs in case we broadcast some shutdown info
   // and modules / plugins decide to save some stuff
   g_pParentWnd->GetPlugInMgr().Shutdown();
-    
+
   delete wnd;
 
   QGL_Shutdown();
@@ -746,7 +747,7 @@ static gint mainframe_keypress (GtkWidget* widget, GdkEventKey* event, gpointer 
   if(code == GDK_ISO_Left_Tab) {
     code = GDK_Tab;
   }
-  
+
 #ifdef DBG_KBD
   Sys_Printf("key: %d (keyval: %d) (ctrl: %d)\n", code, event->keyval, event->state & GDK_CONTROL_MASK);
 #endif
@@ -788,10 +789,10 @@ static gint mainframe_keypress (GtkWidget* widget, GdkEventKey* event, gpointer 
 static gint mainframe_keyrelease (GtkWidget* widget, GdkEventKey* event, gpointer data)
 {
   unsigned int code = gdk_keyval_to_upper(event->keyval);
-  
+
   if (gtk_accelerator_valid (event->keyval, (GdkModifierType)0))
     return TRUE;
-  
+
   for (int i = 0; i < g_nCommandCount; i++)
   {
     if (g_Commands[i].m_nKey == code)    // find a match?
@@ -849,7 +850,7 @@ void HandleHelpCommand (GtkWidget *widget, gpointer data)
   g_pParentWnd->handle_help_command(id);
 }
 
-void MainFrame::process_xlink (Str &FileName, char *menu_name, const char *base_url, GtkWidget *menu, GtkAccelGroup *accel)
+void MainFrame::process_xlink (Str &FileName, const char *menu_name, const char *base_url, GtkWidget *menu, GtkAccelGroup *accel)
 {
   xmlDocPtr pDoc;
   pDoc = xmlParseFile(FileName.GetBuffer());
@@ -926,7 +927,7 @@ void MainFrame::create_main_menu (GtkWidget *window, GtkWidget *vbox)
   global_accel = accel;
   gtk_window_add_accel_group (GTK_WINDOW (window), accel);
 
-  handle_box = gtk_handle_box_new ();  
+  handle_box = gtk_handle_box_new ();
   gtk_box_pack_start (GTK_BOX (vbox), handle_box, FALSE, FALSE, 0);
   gtk_widget_show (handle_box);
 
@@ -999,7 +1000,7 @@ void MainFrame::create_main_menu (GtkWidget *window, GtkWidget *vbox)
     GTK_SIGNAL_FUNC (HandleCommand), ID_FILE_CHECKUPDATE);
   // disable, the functionality is no longer available
   gtk_widget_set_sensitive( item, FALSE );
-  
+
   create_menu_item_with_mnemonic (menu, "E_xit",
                     GTK_SIGNAL_FUNC (HandleCommand), ID_FILE_EXIT);
 
@@ -1405,7 +1406,7 @@ void MainFrame::create_main_menu (GtkWidget *window, GtkWidget *vbox)
   create_menu_item_with_mnemonic (menu_in_menu, "Default Brush...",
                     GTK_SIGNAL_FUNC (HandleCommand), ID_COLORS_BRUSH);
   create_menu_item_with_mnemonic (menu_in_menu, "Camera Background...",
-                    GTK_SIGNAL_FUNC (HandleCommand), ID_COLORS_CAMERABACK);    
+                    GTK_SIGNAL_FUNC (HandleCommand), ID_COLORS_CAMERABACK);
   create_menu_item_with_mnemonic (menu_in_menu, "Selected Brush...",
                     GTK_SIGNAL_FUNC (HandleCommand), ID_COLORS_SELECTEDBRUSH);
   create_menu_item_with_mnemonic (menu_in_menu, "Selected Brush (Camera)...",
@@ -2259,7 +2260,7 @@ BOOL CALLBACK m_pCountMonitor (HMONITOR hMonitor, HDC hdcMonitor, LPRECT lprcMon
   return TRUE;
 }
 
-struct monitorInfo_s { 
+struct monitorInfo_s {
   GdkRectangle *win_monitors;
   int i_win_mon;
 };
@@ -2395,7 +2396,7 @@ static ZWnd *create_floating_zwnd(MainFrame *mainframe)
 
   gtk_widget_realize (wnd);
 
-  // turn OFF minimize and maximize boxes. 
+  // turn OFF minimize and maximize boxes.
   // Must be *after* realize, or wnd->window is NULL
   // should do the right thing on *nix, need to verify.
   gdk_window_set_decorations ( wnd->window,
@@ -2405,7 +2406,7 @@ static ZWnd *create_floating_zwnd(MainFrame *mainframe)
     GdkGeometry geometry;
     geometry.min_width = 50;
     //we only care about width, but have to set this too, or get nasty bugs
-    geometry.min_height = 10; 
+    geometry.min_height = 10;
     gdk_window_set_geometry_hints( wnd->window,&geometry,GDK_HINT_MIN_SIZE);
   }
 
@@ -2483,7 +2484,7 @@ void MainFrame::Create ()
 
     screen = gdk_display_get_screen( display, 1 );
     n_gdk_monitors = gdk_screen_get_n_monitors( screen );
-      
+
     Sys_Printf( "GDK detects that screen 1 has %d monitors\n", n_gdk_monitors );
 
     for( i_mon = 0; i_mon < n_gdk_monitors; i_mon++ ) {
@@ -2499,9 +2500,9 @@ void MainFrame::Create ()
     PositionWindowOnPrimaryScreen( g_PrefsDlg.mWindowInfo.position );
   }
   else {
-    primaryMonitorRect.x = primaryMonitorRect.y = 0; 
+    primaryMonitorRect.x = primaryMonitorRect.y = 0;
     primaryMonitorRect.width = gdk_screen_width ();
-    primaryMonitorRect.height = gdk_screen_height (); 
+    primaryMonitorRect.height = gdk_screen_height ();
   }
 
 #endif
@@ -2920,7 +2921,7 @@ void MainFrame::Create ()
 
   SetActiveXY(m_pXYWnd);
 
-  s_idle_id = gtk_timeout_add (25, mainframe_idle, this);  
+  s_idle_id = gtk_timeout_add (25, mainframe_idle, this);
 
   QGL_InitExtensions ();
 
@@ -2931,7 +2932,7 @@ void MainFrame::Create ()
   }
 
   // remove the pid file
-  remove (g_pidGameFile.GetBuffer ());  
+  remove (g_pidGameFile.GetBuffer ());
 
   Sys_Printf ("Entering message loop\n");
 
@@ -3016,8 +3017,8 @@ static void Sys_Iconify (GtkWidget *w)
     return;
 
 #if defined (__linux__) || defined (__APPLE__)
-  Sys_FPrintf(SYS_WRN, "FIXME: Sys_Iconify\n");  
-#if 0  
+  Sys_FPrintf(SYS_WRN, "FIXME: Sys_Iconify\n");
+#if 0
   XWindowAttributes xattr;
   GdkWindowPrivate *Private;
 
@@ -3126,7 +3127,7 @@ void MainFrame::OnSleep()
     if (CurrentStyle() == eSplit)
       Sys_Iconify (m_pZWnd->m_pParent);
 
-    Sys_Iconify (m_pWidget);  
+    Sys_Iconify (m_pWidget);
     Select_Deselect();
     QERApp_FreeShaders ();
     g_bScreenUpdates = false;
@@ -3665,15 +3666,15 @@ void MainFrame::CreateQEChildren()
     char buf[PATH_MAX];
     const char *r;
     bool bTriedTemplate = false;
-    
+
     if (g_PrefsDlg.m_nLastProjectVer != 0 && g_PrefsDlg.m_nLastProjectVer != PROJECT_VERSION) {
       // we need to regenerate from template
       Sys_Printf("last project has version %d, this binary wants version %d - regenerating from the template\n", g_PrefsDlg.m_nLastProjectVer, PROJECT_VERSION);
       g_PrefsDlg.m_strLastProject = "";
     }
-    
-    r = g_PrefsDlg.m_strLastProject.GetBuffer();    
-    
+
+    r = g_PrefsDlg.m_strLastProject.GetBuffer();
+
     while(r == NULL || *r == '\0' || access(r, R_OK) != 0 || !QE_LoadProject(r))
     {
       if(!bTriedTemplate)
@@ -3703,7 +3704,7 @@ void MainFrame::CreateQEChildren()
   QE_Init ();
 }
 
-void MainFrame::OnTimer() 
+void MainFrame::OnTimer()
 {
   GdkModifierType mask;
 
@@ -3765,7 +3766,7 @@ void MainFrame::SetButtonMenuStates()
                                   (g_qeglobals.d_savedinfo.exclude & EXCLUDE_CLUSTERPORTALS) != 0);
   item = GTK_WIDGET (g_object_get_data (G_OBJECT (m_pWidget), "menu_filter_lightgrid"));
   gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (item),
-                                  (g_qeglobals.d_savedinfo.exclude & EXCLUDE_LIGHTGRID) != 0);  
+                                  (g_qeglobals.d_savedinfo.exclude & EXCLUDE_LIGHTGRID) != 0);
   item = GTK_WIDGET (g_object_get_data (G_OBJECT (m_pWidget), "menu_filter_world"));
   gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (item),
                                   (g_qeglobals.d_savedinfo.exclude & EXCLUDE_WORLD) != 0);
@@ -3789,7 +3790,7 @@ void MainFrame::SetButtonMenuStates()
                                   (g_qeglobals.d_savedinfo.exclude & EXCLUDE_CLIP) != 0);
   item = GTK_WIDGET (g_object_get_data (G_OBJECT (m_pWidget), "menu_filter_botclips"));
   gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (item),
-                                  (g_qeglobals.d_savedinfo.exclude & EXCLUDE_BOTCLIP) != 0);	
+                                  (g_qeglobals.d_savedinfo.exclude & EXCLUDE_BOTCLIP) != 0);
   item = GTK_WIDGET (g_object_get_data (G_OBJECT (m_pWidget), "menu_filter_structural"));
   gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (item),
                                   (g_qeglobals.d_savedinfo.exclude & EXCLUDE_STRUCTURAL) != 0);
@@ -3864,7 +3865,7 @@ void MainFrame::SetButtonMenuStates()
 /*
   if (g_qeglobals.d_project_entity)
   {
-    FillTextureMenu();      // redundant but i'll clean it up later.. yeah right.. 
+    FillTextureMenu();      // redundant but i'll clean it up later.. yeah right..
     FillBSPMenu();
   }
   */
@@ -4106,26 +4107,26 @@ void SignalToolbarButton(GtkWidget *widget, gpointer data)
 
 void MainFrame::AddPlugInToolbarButton(const IToolbarButton* button)
 {
-  GtkWidget*const toolbar = GTK_WIDGET(g_object_get_data (G_OBJECT (m_pWidget), "toolbar_plugin"));    
+  GtkWidget*const toolbar = GTK_WIDGET(g_object_get_data (G_OBJECT (m_pWidget), "toolbar_plugin"));
   toolbar_insert(toolbar, button->getImage(), button->getText(), button->getTooltip(), button->getType(), GTK_SIGNAL_FUNC(SignalToolbarButton), reinterpret_cast<gpointer>(const_cast<IToolbarButton*>(button)));
 }
 
-void MainFrame::OnSelectionSelectNudgedown() 
+void MainFrame::OnSelectionSelectNudgedown()
 {
   NudgeSelection(3, g_qeglobals.d_gridsize);
 }
 
-void MainFrame::OnSelectionSelectNudgeleft() 
+void MainFrame::OnSelectionSelectNudgeleft()
 {
   NudgeSelection(0, g_qeglobals.d_gridsize);
 }
 
-void MainFrame::OnSelectionSelectNudgeright() 
+void MainFrame::OnSelectionSelectNudgeright()
 {
   NudgeSelection(2, g_qeglobals.d_gridsize);
 }
 
-void MainFrame::OnSelectionSelectNudgeup() 
+void MainFrame::OnSelectionSelectNudgeup()
 {
   NudgeSelection(1, g_qeglobals.d_gridsize);
 }
@@ -4213,10 +4214,10 @@ void MainFrame::Nudge(int nDim, float fNudge)
   vec3_t vMove;
   vMove[0] = vMove[1] = vMove[2] = 0;
   vMove[nDim] = fNudge;
-  
-  if((g_qeglobals.d_select_mode == sel_vertex || 
-      g_qeglobals.d_select_mode == sel_curvepoint) 
-      && g_qeglobals.d_num_move_points) 
+
+  if((g_qeglobals.d_select_mode == sel_vertex ||
+      g_qeglobals.d_select_mode == sel_curvepoint)
+      && g_qeglobals.d_num_move_points)
     Select_NudgePoint(vMove, true);
   else
     Select_Move(vMove, true);
@@ -4249,13 +4250,13 @@ void MainFrame::UpdatePatchToolbarButtons()
 // =============================================================================
 // Command handlers
 
-void MainFrame::OnFileNew() 
+void MainFrame::OnFileNew()
 {
   if (ConfirmModified())
     Map_New ();
 }
 
-void MainFrame::OnFileOpen() 
+void MainFrame::OnFileOpen()
 {
   if (!ConfirmModified())
     return;
@@ -4276,7 +4277,7 @@ void MainFrame::OnFileOpen()
   }
 }
 
-void MainFrame::OnFileImportmap() 
+void MainFrame::OnFileImportmap()
 {
   const char *str;
 	char buf[NAME_MAX];
@@ -4292,7 +4293,7 @@ void MainFrame::OnFileImportmap()
   }
 }
 
-void MainFrame::OnFileSave() 
+void MainFrame::OnFileSave()
 {
   if (!strcmp(currentmap, "unnamed.map"))
     OnFileSaveas();
@@ -4300,16 +4301,16 @@ void MainFrame::OnFileSave()
     Map_SaveFile (currentmap, false);
 }
 
-void MainFrame::OnFileSaveas() 
+void MainFrame::OnFileSaveas()
 {
   const char* str;
 	char buf[NAME_MAX];
-  
+
   strcpy(buf, g_qeglobals.m_strHomeMaps.GetBuffer());
   strcat(buf, "maps/");
 
   str = file_dialog (g_pParentWnd->m_pWidget, FALSE, "Save Map", buf, MAP_MAJOR);
-    
+
   if (str != NULL)
   {
     strcpy (currentmap, str);
@@ -4318,7 +4319,7 @@ void MainFrame::OnFileSaveas()
   }
 }
 
-void MainFrame::OnFileExportmap() 
+void MainFrame::OnFileExportmap()
 {
   const char* str;
 	char buf[NAME_MAX];
@@ -4334,7 +4335,7 @@ void MainFrame::OnFileExportmap()
   }
 }
 
-void MainFrame::OnFileSaveregion() 
+void MainFrame::OnFileSaveregion()
 {
   const char* str;
 	char buf[NAME_MAX];
@@ -4343,14 +4344,14 @@ void MainFrame::OnFileSaveregion()
   strcat(buf, "maps/");
 
   str = file_dialog (g_pParentWnd->m_pWidget, FALSE, "Export Region", buf, MAP_MAJOR);
-    
+
   if (str != NULL)
   {
     Map_SaveFile (str, true);	// ignore region
   }
 }
 
-void MainFrame::OnFileNewproject() 
+void MainFrame::OnFileNewproject()
 {
   char* name = DoNewProjectDlg ();
 
@@ -4369,7 +4370,7 @@ void MainFrame::OnFileNewproject()
 
     CString strProjToLoad;
     CString strMapToLoad;
-    
+
     // if the dir exists, ask the user if they want to continue anyway
     if (Q_mkdir (strNewBasePath.GetBuffer(), 0755) != 0)
     {
@@ -4383,7 +4384,7 @@ void MainFrame::OnFileNewproject()
         return;
       }
     }
-    
+
     CString strDir;
     strDir = strNewBasePath;
     strDir += "maps/";
@@ -4400,13 +4401,13 @@ void MainFrame::OnFileNewproject()
     // print a warning for total conversions, since setting the basepath when required files are
     // not there _will_ break things (ie; textures/radiant/notex.tga, scripts/entities.def)
     Sys_FPrintf(SYS_WRN, "*** Note: basepath unchanged\n");
-    
+
     SetKeyValue( g_qeglobals.d_project_entity, "gamename", name);
-    
-    strDir = strNewBasePath; 
+
+    strDir = strNewBasePath;
     strDir += "maps/autosave.map";
     SetKeyValue( g_qeglobals.d_project_entity, "autosave", strDir.GetBuffer() );
-    
+
     // state that this is a user project file, no templating
     SetKeyValue( g_qeglobals.d_project_entity, "user_project", "1" );
     // create the project file
@@ -4414,19 +4415,19 @@ void MainFrame::OnFileNewproject()
     strProjToLoad += "scripts/";
 		strProjToLoad += name;
 		strProjToLoad += ".";
-		strProjToLoad += PROJECT_FILETYPE;    
+		strProjToLoad += PROJECT_FILETYPE;
     QE_SaveProject(strProjToLoad.GetBuffer());
     free (name);
   }
 }
 
-void MainFrame::OnFileLoadproject() 
+void MainFrame::OnFileLoadproject()
 {
   if (ConfirmModified())
     ProjectDialog ();
 }
 
-void MainFrame::OnFileProjectsettings() 
+void MainFrame::OnFileProjectsettings()
 {
   DoProjectSettings();
 }
@@ -4439,13 +4440,13 @@ void MainFrame::OnFilePointfile()
     Pointfile_Check ();
 }
 
-void MainFrame::OnMru(unsigned int nID) 
+void MainFrame::OnMru(unsigned int nID)
 {
   if (ConfirmModified())
     MRU_Activate (nID - ID_FILE_RECENT1);
 }
 
-void MainFrame::OnFileExit() 
+void MainFrame::OnFileExit()
 {
   if (ConfirmModified())
   {
@@ -4468,29 +4469,29 @@ void MainFrame::OnFileCheckUpdate()
 #ifdef _WIN32
   URL += "&OS_dlup=1";
 #else
-  URL += "&OS_dlup=2";  
+  URL += "&OS_dlup=2";
 #endif
   URL += "&Version_dlup=" RADIANT_VERSION;
   g_PrefsDlg.mGamesDialog.AddPacksURL(URL);
   OpenURL(URL.GetBuffer());
 }
 
-void MainFrame::OnEditUndo() 
+void MainFrame::OnEditUndo()
 {
   Undo_Undo();
 }
 
-void MainFrame::OnEditRedo() 
+void MainFrame::OnEditRedo()
 {
   Undo_Redo();
 }
 
-void MainFrame::OnEditCopybrush() 
+void MainFrame::OnEditCopybrush()
 {
   Copy();
 }
 
-void MainFrame::OnEditPastebrush() 
+void MainFrame::OnEditPastebrush()
 {
   Select_Deselect();
 
@@ -4504,7 +4505,7 @@ void MainFrame::OnEditPastebrush()
 
 void MainFrame::OnEditPastebrushToCamera()
 {
-  Select_Deselect();	
+  Select_Deselect();
   if (ActiveXY())
   {
     vec3_t mid, camorigin, delta;
@@ -4531,7 +4532,7 @@ void MainFrame::OnEditPastebrushToCamera()
   }
 }
 
-void MainFrame::OnSelectionDelete() 
+void MainFrame::OnSelectionDelete()
 {
   brush_t *brush;
   //if (ActiveXY())
@@ -4549,22 +4550,22 @@ void MainFrame::OnSelectionDelete()
   Undo_End();
 }
 
-void MainFrame::OnEditMapinfo() 
+void MainFrame::OnEditMapinfo()
 {
   DoMapInfo ();
 }
 
-void MainFrame::OnEditEntityinfo() 
+void MainFrame::OnEditEntityinfo()
 {
   DoEntityList ();
 }
 
-void MainFrame::OnBrushScripts() 
+void MainFrame::OnBrushScripts()
 {
   DoScriptsDlg ();
 }
 
-void MainFrame::OnEditLoadprefab() 
+void MainFrame::OnEditLoadprefab()
 {
   const char *filename;
   CString CurPath;
@@ -4583,7 +4584,7 @@ void MainFrame::OnEditLoadprefab()
   }
 }
 
-void MainFrame::OnEditSaveprefab() 
+void MainFrame::OnEditSaveprefab()
 {
   const char *filename;
   CString CurPath;
@@ -4606,7 +4607,7 @@ void MainFrame::OnEditSaveprefab()
   }
 }
 
-void MainFrame::OnPrefs() 
+void MainFrame::OnPrefs()
 {
   int nView = g_PrefsDlg.m_nView;
   bool bToolbar = g_PrefsDlg.m_bWideToolbar;
@@ -4615,7 +4616,7 @@ void MainFrame::OnPrefs()
   int nTextureQuality = g_PrefsDlg.m_nTextureQuality;
   int nLightRadiuses = g_PrefsDlg.m_nLightRadiuses;
   g_PrefsDlg.LoadPrefs();
-  
+
   if (g_PrefsDlg.DoModal() == IDOK)
   {
     if ((g_PrefsDlg.m_nLatchedView != nView) ||
@@ -4624,7 +4625,7 @@ void MainFrame::OnPrefs()
         (g_PrefsDlg.m_bLatchedPatchToolbar != bToolbar) ||
         (g_PrefsDlg.m_bLatchedPluginToolbar != bPluginToolbar) ||
         (g_PrefsDlg.m_nLatchedShader != nShader) ||
-        (g_PrefsDlg.m_nLatchedTextureQuality != nTextureQuality) 
+        (g_PrefsDlg.m_nLatchedTextureQuality != nTextureQuality)
         || (g_PrefsDlg.m_bLatchedFloatingZ != g_PrefsDlg.m_bFloatingZ)
         )
       gtk_MessageBox(m_pWidget, "You must restart Radiant for the changes to take effect.");
@@ -4648,7 +4649,7 @@ void MainFrame::OnPrefs()
   }
 }
 
-void MainFrame::OnTogglecamera() 
+void MainFrame::OnTogglecamera()
 {
   if (CurrentStyle() == eFloating) // floating views
   {
@@ -4668,7 +4669,7 @@ void MainFrame::OnTogglecamera()
   }
 }
 
-void MainFrame::OnToggleconsole() 
+void MainFrame::OnToggleconsole()
 {
   if (FloatingGroupDialog()) // QE4 style
   {
@@ -4692,7 +4693,7 @@ void MainFrame::OnViewEntity()
   // make sure we're working with the current selection (bugzilla #436)
   if( ! GTK_WIDGET_VISIBLE (g_qeglobals_gui.d_entity))
     Select_Reselect();
-  
+
   if (!FloatingGroupDialog())
   {
     if (GTK_WIDGET_VISIBLE (g_qeglobals_gui.d_entity) && inspector_mode == W_ENTITY)
@@ -4745,7 +4746,7 @@ void MainFrame::OnViewGroups()
   }
 }
 
-void MainFrame::OnToggleview() 
+void MainFrame::OnToggleview()
 {
   if (CurrentStyle() == eFloating) // QE4 style
   {
@@ -4759,7 +4760,7 @@ void MainFrame::OnToggleview()
   }
 }
 
-void MainFrame::OnToggleviewXz() 
+void MainFrame::OnToggleviewXz()
 {
   if (CurrentStyle() == eFloating) // QE4 style
   {
@@ -4777,7 +4778,7 @@ void MainFrame::OnToggleviewXz()
   }
 }
 
-void MainFrame::OnToggleviewYz() 
+void MainFrame::OnToggleviewYz()
 {
   if (CurrentStyle() == eFloating) // QE4 style
   {
@@ -4794,7 +4795,7 @@ void MainFrame::OnToggleviewYz()
   }
 }
 
-void MainFrame::OnTogglez() 
+void MainFrame::OnTogglez()
 {
   if ( g_pParentWnd->FloatingGroupDialog() ) // QE4 style
   {
@@ -4812,19 +4813,19 @@ void MainFrame::OnTogglez()
   }
 }
 
-void MainFrame::OnViewCenter() 
+void MainFrame::OnViewCenter()
 {
   m_pCamWnd->Camera()->angles[ROLL] = m_pCamWnd->Camera()->angles[PITCH] = 0;
   m_pCamWnd->Camera()->angles[YAW] = 22.5 * floor((m_pCamWnd->Camera()->angles[YAW]+11)/22.5);
   Sys_UpdateWindows (W_CAMERA | W_XY_OVERLAY);
 }
 
-void MainFrame::OnViewUpfloor() 
+void MainFrame::OnViewUpfloor()
 {
   m_pCamWnd->Cam_ChangeFloor (true);
 }
 
-void MainFrame::OnViewDownfloor() 
+void MainFrame::OnViewDownfloor()
 {
   m_pCamWnd->Cam_ChangeFloor (false);
 }
@@ -4844,7 +4845,7 @@ void MainFrame::OnViewCenterview()
   }
 }
 
-void MainFrame::OnViewNextview() 
+void MainFrame::OnViewNextview()
 {
   if (CurrentStyle() == eSplit)
   {
@@ -4866,7 +4867,7 @@ void MainFrame::OnViewNextview()
   }
 }
 
-void MainFrame::OnViewXy() 
+void MainFrame::OnViewXy()
 {
   if(!FloatingGroupDialog())
   {
@@ -4876,7 +4877,7 @@ void MainFrame::OnViewXy()
   Sys_UpdateWindows (W_XY);
 }
 
-void MainFrame::OnViewSide() 
+void MainFrame::OnViewSide()
 {
   if (!FloatingGroupDialog())
   {
@@ -4886,7 +4887,7 @@ void MainFrame::OnViewSide()
   Sys_UpdateWindows (W_XY);
 }
 
-void MainFrame::OnViewFront() 
+void MainFrame::OnViewFront()
 {
   if (!FloatingGroupDialog())
   {
@@ -4896,7 +4897,7 @@ void MainFrame::OnViewFront()
   Sys_UpdateWindows (W_XY);
 }
 
-void MainFrame::OnView100() 
+void MainFrame::OnView100()
 {
   if (m_pXYWnd)
     m_pXYWnd->SetScale(1);
@@ -4907,7 +4908,7 @@ void MainFrame::OnView100()
   Sys_UpdateWindows (W_XY|W_XY_OVERLAY);
 }
 
-void MainFrame::OnViewZoomin() 
+void MainFrame::OnViewZoomin()
 {
   if (m_pXYWnd && m_pXYWnd->Active())
   {
@@ -4936,7 +4937,7 @@ void MainFrame::OnViewZoomin()
 // NOTE: the zoom out factor is 4/5, we could think about customizing it
 //  we don't go below a zoom factor corresponding to 10% of the max world size
 //  (this has to be computed against the window size)
-void MainFrame::OnViewZoomout() 
+void MainFrame::OnViewZoomout()
 {
   float min_scale;
   if (m_pXYWnd && m_pXYWnd->Active())
@@ -4962,13 +4963,13 @@ void MainFrame::OnViewZoomout()
   Sys_UpdateWindows (W_XY|W_XY_OVERLAY);
 }
 
-void MainFrame::OnViewZ100() 
+void MainFrame::OnViewZ100()
 {
   z.scale = 1;
   Sys_UpdateWindows (W_Z|W_Z_OVERLAY);
 }
 
-void MainFrame::OnViewZzoomin() 
+void MainFrame::OnViewZzoomin()
 {
   z.scale *= 5.0/4;
   if (z.scale > 4)
@@ -4976,7 +4977,7 @@ void MainFrame::OnViewZzoomin()
   Sys_UpdateWindows (W_Z|W_Z_OVERLAY);
 }
 
-void MainFrame::OnViewZzoomout() 
+void MainFrame::OnViewZzoomout()
 {
   z.scale *= 4.0f/5;
   if (z.scale < 0.125)
@@ -4984,7 +4985,7 @@ void MainFrame::OnViewZzoomout()
   Sys_UpdateWindows (W_Z|W_Z_OVERLAY);
 }
 
-void MainFrame::OnViewCubein() 
+void MainFrame::OnViewCubein()
 {
   g_PrefsDlg.m_nCubicScale--;
   if (g_PrefsDlg.m_nCubicScale < 1)
@@ -4994,7 +4995,7 @@ void MainFrame::OnViewCubein()
   SetGridStatus();
 }
 
-void MainFrame::OnViewCubeout() 
+void MainFrame::OnViewCubeout()
 {
   g_PrefsDlg.m_nCubicScale++;
   if (g_PrefsDlg.m_nCubicScale > 22)
@@ -5004,7 +5005,7 @@ void MainFrame::OnViewCubeout()
   SetGridStatus();
 }
 
-void MainFrame::OnViewShownames() 
+void MainFrame::OnViewShownames()
 {
   g_qeglobals.d_savedinfo.show_names = !g_qeglobals.d_savedinfo.show_names;
   GtkWidget *item = GTK_WIDGET (g_object_get_data (G_OBJECT (m_pWidget), "menu_view_shownames"));
@@ -5015,7 +5016,7 @@ void MainFrame::OnViewShownames()
   Sys_UpdateWindows (W_XY);
 }
 
-void MainFrame::OnViewShowAngles() 
+void MainFrame::OnViewShowAngles()
 {
   g_qeglobals.d_savedinfo.show_angles = !g_qeglobals.d_savedinfo.show_angles;
   GtkWidget *item = GTK_WIDGET (g_object_get_data (G_OBJECT (m_pWidget), "menu_view_showangles"));
@@ -5026,7 +5027,7 @@ void MainFrame::OnViewShowAngles()
   Sys_UpdateWindows (W_XY);
 }
 
-void MainFrame::OnViewShowblocks() 
+void MainFrame::OnViewShowblocks()
 {
   g_qeglobals.show_blocks ^= 1;
   GtkWidget *item = GTK_WIDGET (g_object_get_data (G_OBJECT (m_pWidget), "menu_view_showblocks"));
@@ -5036,7 +5037,7 @@ void MainFrame::OnViewShowblocks()
   Sys_UpdateWindows (W_XY);
 }
 
-void MainFrame::OnViewShowcoordinates() 
+void MainFrame::OnViewShowcoordinates()
 {
   g_qeglobals.d_savedinfo.show_coordinates ^= 1;
   GtkWidget *item = GTK_WIDGET (g_object_get_data (G_OBJECT (m_pWidget), "menu_view_showcoordinates"));
@@ -5086,21 +5087,21 @@ void MainFrame::OnViewShowWorkzone()
   Sys_UpdateWindows (W_XY);
 }
 
-void MainFrame::OnViewHideshowHideselected() 
+void MainFrame::OnViewHideshowHideselected()
 {
   Select_Hide();
   Select_Deselect();
 }
 
-void MainFrame::OnViewHideshowShowhidden() 
+void MainFrame::OnViewHideshowShowhidden()
 {
   Select_ShowAllHidden();
 }
 
-/** 
+/**
 sets the view mode for the entities
 called upon LoadPrefs too
-NOTE TTimo previous implementation had a SavePrefs call 
+NOTE TTimo previous implementation had a SavePrefs call
   .. I don't think it is relevant, removed (the prefs are saved upon exit)
 NOTE TTimo we activate the menu item, this is only needed when we are called upon a prefs load
   (otherwise we are always called following user action on the widget)
@@ -5181,7 +5182,7 @@ void MainFrame::OnEntitiesSetViewAs(int mode)
   Sys_UpdateWindows(W_ALL);
 }
 
-void MainFrame::OnViewCubicclipping() 
+void MainFrame::OnViewCubicclipping()
 {
   GtkWidget *w;
 
@@ -5197,7 +5198,7 @@ void MainFrame::OnViewCubicclipping()
   Sys_UpdateWindows(W_CAMERA);
 }
 
-void MainFrame::OnViewOpengllighting() 
+void MainFrame::OnViewOpengllighting()
 {
   GtkWidget *item = GTK_WIDGET (g_object_get_data (G_OBJECT (m_pWidget), "menu_view_opengllighting"));
   g_PrefsDlg.m_bGLLighting ^= 1;
@@ -5208,7 +5209,7 @@ void MainFrame::OnViewOpengllighting()
   g_bIgnoreCommands--;
 }
 
-void MainFrame::OnSelectionDragedges() 
+void MainFrame::OnSelectionDragedges()
 {
   if (g_qeglobals.d_select_mode == sel_edge)
   {
@@ -5223,7 +5224,7 @@ void MainFrame::OnSelectionDragedges()
   }
 }
 
-void MainFrame::OnSelectionDragvertecies() 
+void MainFrame::OnSelectionDragvertecies()
 {
   if (g_qeglobals.d_select_mode == sel_vertex || g_qeglobals.d_select_mode == sel_curvepoint)
   {
@@ -5245,13 +5246,13 @@ void MainFrame::OnSelectionDragvertecies()
   }
 }
 
-void MainFrame::OnSelectionClone() 
+void MainFrame::OnSelectionClone()
 {
   Select_Clone();
 }
 
 // called when the escape key is used (either on the main window or on an inspector)
-void MainFrame::OnSelectionDeselect() 
+void MainFrame::OnSelectionDeselect()
 {
   if (g_bClipMode)
     OnViewClipper();
@@ -5280,7 +5281,7 @@ void MainFrame::OnSelectionDeselect()
   }
 }
 
-void MainFrame::OnBrushFlipx() 
+void MainFrame::OnBrushFlipx()
 {
   Undo_Start("flip X");
   Undo_AddBrushList(&selected_brushes);
@@ -5305,7 +5306,7 @@ void MainFrame::OnBrushFlipx()
   Undo_End();
 }
 
-void MainFrame::OnBrushFlipy() 
+void MainFrame::OnBrushFlipy()
 {
   Undo_Start("flip Y");
   Undo_AddBrushList(&selected_brushes);
@@ -5338,14 +5339,14 @@ void MainFrame::OnBrushFlipy()
       SetKeyValue(b->owner, "angle", buf);
       Brush_Build(b,true,true,false,false); // don't filter
     }
-  
+
   }
   */
   Undo_EndBrushList(&selected_brushes);
   Undo_End();
 }
 
-void MainFrame::OnBrushFlipz() 
+void MainFrame::OnBrushFlipz()
 {
   Undo_Start("flip Z");
   Undo_AddBrushList(&selected_brushes);
@@ -5354,7 +5355,7 @@ void MainFrame::OnBrushFlipz()
   Undo_End();
 }
 
-void MainFrame::OnBrushRotatex() 
+void MainFrame::OnBrushRotatex()
 {
   Undo_Start("rotate X");
   Undo_AddBrushList(&selected_brushes);
@@ -5363,7 +5364,7 @@ void MainFrame::OnBrushRotatex()
   Undo_End();
 }
 
-void MainFrame::OnBrushRotatey() 
+void MainFrame::OnBrushRotatey()
 {
   Undo_Start("rotate Y");
   Undo_AddBrushList(&selected_brushes);
@@ -5372,7 +5373,7 @@ void MainFrame::OnBrushRotatey()
   Undo_End();
 }
 
-void MainFrame::OnBrushRotatez() 
+void MainFrame::OnBrushRotatez()
 {
   Undo_Start("rotate Z");
   Undo_AddBrushList(&selected_brushes);
@@ -5381,7 +5382,7 @@ void MainFrame::OnBrushRotatez()
   Undo_End();
 }
 
-void MainFrame::OnSelectionArbitraryrotation() 
+void MainFrame::OnSelectionArbitraryrotation()
 {
   Undo_Start("arbitrary rotation");
   Undo_AddBrushList(&selected_brushes);
@@ -5392,7 +5393,7 @@ void MainFrame::OnSelectionArbitraryrotation()
   Undo_End();
 }
 
-void MainFrame::OnSelectScale() 
+void MainFrame::OnSelectScale()
 {
   Undo_Start("scale");
   Undo_AddBrushList(&selected_brushes);
@@ -5401,7 +5402,7 @@ void MainFrame::OnSelectScale()
   Undo_End();
 }
 
-void MainFrame::OnSelectionMakehollow() 
+void MainFrame::OnSelectionMakehollow()
 {
   //if (ActiveXY())
   //	ActiveXY()->UndoCopy();
@@ -5412,7 +5413,7 @@ void MainFrame::OnSelectionMakehollow()
   Undo_End();
 }
 
-void MainFrame::OnSelectionCsgsubtract() 
+void MainFrame::OnSelectionCsgsubtract()
 {
   Undo_Start("CSG subtract");
   CSG_Subtract();
@@ -5456,29 +5457,29 @@ void MainFrame::OnSelectionOutlineStyle()
   Sys_UpdateWindows (W_CAMERA);
 }
 
-void MainFrame::OnSelectionSelectcompletetall() 
+void MainFrame::OnSelectionSelectcompletetall()
 {
   if (ActiveXY())
     ActiveXY()->UndoCopy();
   Select_CompleteTall ();
 }
 
-void MainFrame::OnSelectionSelecttouching() 
+void MainFrame::OnSelectionSelecttouching()
 {
   Select_Touching();
 }
 
-void MainFrame::OnSelectionSelectpartialtall() 
+void MainFrame::OnSelectionSelectpartialtall()
 {
   Select_PartialTall();
 }
 
-void MainFrame::OnSelectionSelectinside() 
+void MainFrame::OnSelectionSelectinside()
 {
   Select_Inside ();
 }
 
-void MainFrame::OnViewClipper() 
+void MainFrame::OnViewClipper()
 {
   GtkWidget *w = GTK_WIDGET (g_object_get_data (G_OBJECT (m_pWidget), "tb_view_clipper"));
   g_bIgnoreCommands++;
@@ -5500,7 +5501,7 @@ void MainFrame::OnViewClipper()
   g_bIgnoreCommands--;
 }
 
-void MainFrame::OnClipSelected() 
+void MainFrame::OnClipSelected()
 {
   if (m_pActiveXY && m_pActiveXY->ClipMode())
   {
@@ -5518,7 +5519,7 @@ void MainFrame::OnClipSelected()
   }
 }
 
-void MainFrame::OnSplitSelected() 
+void MainFrame::OnSplitSelected()
 {
   if (m_pActiveXY)
   {
@@ -5530,13 +5531,13 @@ void MainFrame::OnSplitSelected()
   }
 }
 
-void MainFrame::OnFlipClip() 
+void MainFrame::OnFlipClip()
 {
   if (m_pActiveXY)
     m_pActiveXY->FlipClip();
 }
 
-void MainFrame::OnSelectionConnect() 
+void MainFrame::OnSelectionConnect()
 {
   Undo_Start("connect selected entities");
   Undo_AddBrushList(&selected_brushes);
@@ -5545,7 +5546,7 @@ void MainFrame::OnSelectionConnect()
   Undo_End();
 }
 
-void MainFrame::OnSelectionUngroupentity() 
+void MainFrame::OnSelectionUngroupentity()
 {
   Undo_Start("ungroup selected entities");
   Undo_AddBrushList(&selected_brushes);
@@ -5554,7 +5555,7 @@ void MainFrame::OnSelectionUngroupentity()
   Undo_End();
 }
 
-void MainFrame::OnSelectionMergeentity() 
+void MainFrame::OnSelectionMergeentity()
 {
   Undo_Start("merge entity");
   Undo_AddBrushList(&selected_brushes);
@@ -5563,7 +5564,7 @@ void MainFrame::OnSelectionMergeentity()
   Undo_End();
 }
 
-void MainFrame::OnSelectionGroupworld() 
+void MainFrame::OnSelectionGroupworld()
 {
   Undo_Start("group world");
   Undo_AddBrushList(&selected_brushes);
@@ -5572,7 +5573,7 @@ void MainFrame::OnSelectionGroupworld()
   Undo_End();
 }
 
-void MainFrame::OnSelectionMakeDetail() 
+void MainFrame::OnSelectionMakeDetail()
 {
   Undo_Start("make detail");
   Undo_AddBrushList(&selected_brushes);
@@ -5581,7 +5582,7 @@ void MainFrame::OnSelectionMakeDetail()
   Undo_End();
 }
 
-void MainFrame::OnSelectionMakeStructural() 
+void MainFrame::OnSelectionMakeStructural()
 {
   Undo_Start("make structural");
   Undo_AddBrushList(&selected_brushes);
@@ -5590,7 +5591,7 @@ void MainFrame::OnSelectionMakeStructural()
   Undo_End();
 }
 
-void MainFrame::OnBspCommand (unsigned int nID) 
+void MainFrame::OnBspCommand (unsigned int nID)
 {
   // http://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=503
   // make sure we don't attempt to region compile a map with the camera outside the region
@@ -5599,9 +5600,9 @@ void MainFrame::OnBspCommand (unsigned int nID)
     vec3_t vOrig;
     VectorSet(vOrig,
       (int)g_pParentWnd->GetCamWnd()->Camera()->origin[0],
-      (int)g_pParentWnd->GetCamWnd()->Camera()->origin[1], 
+      (int)g_pParentWnd->GetCamWnd()->Camera()->origin[1],
       (int)g_pParentWnd->GetCamWnd()->Camera()->origin[2]);
-    
+
     int i;
     for (i=0 ; i<3 ; i++)
     {
@@ -5632,7 +5633,7 @@ void MainFrame::OnBspCommand (unsigned int nID)
   }
 }
 
-void MainFrame::OnGrid (unsigned int nID) 
+void MainFrame::OnGrid (unsigned int nID)
 {
   if (nID == ID_GRID_025)
   {
@@ -5670,7 +5671,7 @@ void MainFrame::OnGrid (unsigned int nID)
   Sys_UpdateWindows (W_XY|W_Z);
 }
 
-void MainFrame::OnSnaptogrid() 
+void MainFrame::OnSnaptogrid()
 {
   g_PrefsDlg.m_bNoClamp ^= 1;
   g_PrefsDlg.SavePrefs ();
@@ -5681,7 +5682,7 @@ void MainFrame::OnSnaptogrid()
   g_bIgnoreCommands--;
 }
 
-void MainFrame::OnTexturesShowinuse() 
+void MainFrame::OnTexturesShowinuse()
 {
   Sys_BeginWait ();
   Texture_ShowInuse ();
@@ -5693,28 +5694,28 @@ void MainFrame::OnTexturesShowinuse()
   Sys_EndWait ();
 }
 
-void MainFrame::OnTexturesShowall() 
+void MainFrame::OnTexturesShowall()
 {
   Texture_ShowAll();
 }
 
 // do some triggering on/off, if the inspector is already up then hide it
-void MainFrame::OnTexturesInspector() 
+void MainFrame::OnTexturesInspector()
 {
   ToggleSurface();
 }
 
-void MainFrame::OnViewNearest(unsigned int nID) 
+void MainFrame::OnViewNearest(unsigned int nID)
 {
   Texture_SetMode(nID);
 }
 
-void MainFrame::OnTextureReplaceall() 
+void MainFrame::OnTextureReplaceall()
 {
   FindTextureDialog::show();
 }
 
-void MainFrame::OnToggleLock() 
+void MainFrame::OnToggleLock()
 {
   g_PrefsDlg.m_bTextureLock = !g_PrefsDlg.m_bTextureLock;
 
@@ -5726,7 +5727,7 @@ void MainFrame::OnToggleLock()
   SetGridStatus();
 }
 
-void MainFrame::OnToggleRotatelock() 
+void MainFrame::OnToggleRotatelock()
 {
   g_PrefsDlg.m_bRotateLock ^= 1;
 
@@ -5740,7 +5741,7 @@ void MainFrame::OnToggleRotatelock()
 
 // use a dialog for direct selection of a texture menu
 // the API is a bit crappy, we need to set texture_directory to the directory name in <basepath>/textures/
-void MainFrame::OnTexturesLoad() 
+void MainFrame::OnTexturesLoad()
 {
   char def_path[NAME_MAX];
 
@@ -5776,7 +5777,7 @@ void MainFrame::OnTexturesLoad()
     Sys_FPrintf(SYS_WRN, "texture load dialog cancelled\n");
 }
 
-void MainFrame::OnTexturesReloadshaders() 
+void MainFrame::OnTexturesReloadshaders()
 {
   Sys_BeginWait ();
   QERApp_ReloadShaders();
@@ -5787,7 +5788,7 @@ void MainFrame::OnTexturesReloadshaders()
   Sys_EndWait();
 }
 
-void MainFrame::OnTexturesShadersShow() 
+void MainFrame::OnTexturesShadersShow()
 {
   g_PrefsDlg.m_bShowShaders ^= 1;
   GtkWidget *item = GTK_WIDGET (g_object_get_data (G_OBJECT (m_pWidget), "menu_textures_shaders_show"));
@@ -5832,7 +5833,7 @@ void MainFrame::SetTextureScale(int id)
   Texture_ResetPosition();
 }
 
-void MainFrame::OnTexturewindowScaleup() 
+void MainFrame::OnTexturewindowScaleup()
 {
   switch(g_PrefsDlg.m_nTextureScale) {
   // 200, all the way in, don't do anything
@@ -5851,7 +5852,7 @@ void MainFrame::OnTexturewindowScaleup()
   }
 }
 
-void MainFrame::OnTexturewindowScaledown() 
+void MainFrame::OnTexturewindowScaledown()
 {
   switch(g_PrefsDlg.m_nTextureScale) {
   case 200:
@@ -5870,12 +5871,12 @@ void MainFrame::OnTexturewindowScaledown()
   }
 }
 
-void MainFrame::OnTexturesLoadlist() 
+void MainFrame::OnTexturesLoadlist()
 {
   DoTextureListDlg ();
 }
 
-void MainFrame::OnTexturesShaderlistonly() 
+void MainFrame::OnTexturesShaderlistonly()
 {
   g_PrefsDlg.m_bTexturesShaderlistOnly ^= 1;
   GtkWidget *item = GTK_WIDGET (g_object_get_data (G_OBJECT (m_pWidget),"menu_textures_shaderlistonly"));
@@ -5885,7 +5886,7 @@ void MainFrame::OnTexturesShaderlistonly()
   FillTextureMenu();
 }
 
-void MainFrame::OnTextureWad(unsigned int nID) 
+void MainFrame::OnTextureWad(unsigned int nID)
 {
   Sys_BeginWait ();
   Texture_ShowDirectory (nID);
@@ -5893,12 +5894,12 @@ void MainFrame::OnTextureWad(unsigned int nID)
   Sys_EndWait ();
 }
 
-void MainFrame::OnMiscBenchmark() 
+void MainFrame::OnMiscBenchmark()
 {
   m_pCamWnd->BenchMark();
 }
 
-void MainFrame::OnColorSetoriginal() 
+void MainFrame::OnColorSetoriginal()
 {
   for (int i=0 ; i<3 ; i++)
   {
@@ -5950,7 +5951,7 @@ void MainFrame::OnColorSetoriginal()
   Sys_UpdateWindows (W_ALL);
 }
 
-void MainFrame::OnColorSetqer() 
+void MainFrame::OnColorSetqer()
 {
   for (int i=0 ; i<3 ; i++)
   {
@@ -5992,7 +5993,7 @@ void MainFrame::OnColorSetqer()
   Sys_UpdateWindows (W_ALL);
 }
 
-void MainFrame::OnColorSetblack() 
+void MainFrame::OnColorSetblack()
 {
   for (int i=0 ; i<3 ; i++)
   {
@@ -6038,7 +6039,7 @@ void MainFrame::OnColorSetblack()
 }
 
 /* ydnar: to emulate maya/max/lightwave color schemes */
-void MainFrame::OnColorSetydnar() 
+void MainFrame::OnColorSetydnar()
 {
   for (int i=0 ; i<3 ; i++)
   {
@@ -6080,91 +6081,91 @@ void MainFrame::OnColorSetydnar()
   Sys_UpdateWindows (W_ALL);
 }
 
-void MainFrame::OnTexturebk() 
+void MainFrame::OnTexturebk()
 {
   DoColor(COLOR_TEXTUREBACK);
   Sys_UpdateWindows (W_ALL);
 }
 
-void MainFrame::OnColorsXybk() 
+void MainFrame::OnColorsXybk()
 {
   DoColor(COLOR_GRIDBACK);
   Sys_UpdateWindows (W_ALL);
 }
 
-void MainFrame::OnColorsMajor() 
+void MainFrame::OnColorsMajor()
 {
   DoColor(COLOR_GRIDMAJOR);
   Sys_UpdateWindows (W_ALL);
 }
 
-void MainFrame::OnColorsMinor() 
+void MainFrame::OnColorsMinor()
 {
   DoColor(COLOR_GRIDMINOR);
   Sys_UpdateWindows (W_ALL);
 }
 
-void MainFrame::OnColorsMajor_Alt() 
+void MainFrame::OnColorsMajor_Alt()
 {
   DoColor(COLOR_GRIDMAJOR_ALT);
   Sys_UpdateWindows (W_ALL);
 }
 
-void MainFrame::OnColorsMinor_Alt() 
+void MainFrame::OnColorsMinor_Alt()
 {
   DoColor(COLOR_GRIDMINOR_ALT);
   Sys_UpdateWindows (W_ALL);
 }
 
-void MainFrame::OnColorsGridtext() 
+void MainFrame::OnColorsGridtext()
 {
   DoColor(COLOR_GRIDTEXT);
   Sys_UpdateWindows (W_ALL);
 }
 
-void MainFrame::OnColorsGridblock() 
+void MainFrame::OnColorsGridblock()
 {
   DoColor(COLOR_GRIDBLOCK);
   Sys_UpdateWindows (W_ALL);
 }
 
-void MainFrame::OnColorsCameraBack() 
+void MainFrame::OnColorsCameraBack()
 {
   DoColor(COLOR_CAMERABACK);
   Sys_UpdateWindows (W_ALL);
 }
 
-void MainFrame::OnColorsBrush() 
+void MainFrame::OnColorsBrush()
 {
   DoColor(COLOR_BRUSHES);
   Sys_UpdateWindows (W_ALL);
 }
 
-void MainFrame::OnColorsSelectedbrush() 
+void MainFrame::OnColorsSelectedbrush()
 {
   DoColor(COLOR_SELBRUSHES);
   Sys_UpdateWindows (W_ALL);
 }
 
-void MainFrame::OnColorsSelectedbrush3D() 
+void MainFrame::OnColorsSelectedbrush3D()
 {
   DoColor(COLOR_SELBRUSHES3D);
   Sys_UpdateWindows (W_ALL);
 }
 
-void MainFrame::OnColorsClipper() 
+void MainFrame::OnColorsClipper()
 {
   DoColor(COLOR_CLIPPER);
   Sys_UpdateWindows (W_ALL);
 }
 
-void MainFrame::OnColorsViewname() 
+void MainFrame::OnColorsViewname()
 {
   DoColor(COLOR_VIEWNAME);
   Sys_UpdateWindows (W_ALL);
 }
 
-void MainFrame::OnMiscGamma() 
+void MainFrame::OnMiscGamma()
 {
   float fSave = g_qeglobals.d_savedinfo.fGamma;
   DoGamma();
@@ -6173,27 +6174,27 @@ void MainFrame::OnMiscGamma()
     gtk_MessageBox(m_pWidget, "You must restart Radiant for Gamma settings to take effect.");
   }
 }
-void MainFrame::OnMiscFindbrush() 
+void MainFrame::OnMiscFindbrush()
 {
   DoFind();
 }
 
-void MainFrame::OnMiscNextleakspot() 
+void MainFrame::OnMiscNextleakspot()
 {
   Pointfile_Next();
 }
 
-void MainFrame::OnMiscPreviousleakspot() 
+void MainFrame::OnMiscPreviousleakspot()
 {
   Pointfile_Prev();
 }
 
-void MainFrame::OnMiscPrintxy() 
+void MainFrame::OnMiscPrintxy()
 {
 //  WXY_Print();
 }
 
-void MainFrame::OnMiscSelectentitycolor() 
+void MainFrame::OnMiscSelectentitycolor()
 {
   if (edit_entity)
   {
@@ -6229,7 +6230,7 @@ void MainFrame::OnMiscSelectentitycolor()
   }
 }
 
-void MainFrame::OnConvertcurves() 
+void MainFrame::OnConvertcurves()
 {
 #if 0
   Select_Deselect();
@@ -6251,32 +6252,32 @@ void MainFrame::OnConvertcurves()
 #endif
 }
 
-void MainFrame::OnRegionOff() 
+void MainFrame::OnRegionOff()
 {
   Map_RegionOff ();
 }
 
-void MainFrame::OnRegionSetxy() 
+void MainFrame::OnRegionSetxy()
 {
   Map_RegionXY ();
 }
 
-void MainFrame::OnRegionSettallbrush() 
+void MainFrame::OnRegionSettallbrush()
 {
   Map_RegionTallBrush ();
 }
 
-void MainFrame::OnRegionSetbrush() 
+void MainFrame::OnRegionSetbrush()
 {
   Map_RegionBrush ();
 }
 
-void MainFrame::OnRegionSetselection() 
+void MainFrame::OnRegionSetselection()
 {
   Map_RegionSelectedBrushes ();
 }
 
-void MainFrame::OnBrush3sided() 
+void MainFrame::OnBrush3sided()
 {
   Undo_Start("3 sided");
   Undo_AddBrushList(&selected_brushes);
@@ -6285,7 +6286,7 @@ void MainFrame::OnBrush3sided()
   Undo_End();
 }
 
-void MainFrame::OnBrush4sided() 
+void MainFrame::OnBrush4sided()
 {
   Undo_Start("4 sided");
   Undo_AddBrushList(&selected_brushes);
@@ -6294,7 +6295,7 @@ void MainFrame::OnBrush4sided()
   Undo_End();
 }
 
-void MainFrame::OnBrush5sided() 
+void MainFrame::OnBrush5sided()
 {
   Undo_Start("5 sided");
   Undo_AddBrushList(&selected_brushes);
@@ -6303,7 +6304,7 @@ void MainFrame::OnBrush5sided()
   Undo_End();
 }
 
-void MainFrame::OnBrush6sided() 
+void MainFrame::OnBrush6sided()
 {
   Undo_Start("6 sided");
   Undo_AddBrushList(&selected_brushes);
@@ -6312,7 +6313,7 @@ void MainFrame::OnBrush6sided()
   Undo_End();
 }
 
-void MainFrame::OnBrush7sided() 
+void MainFrame::OnBrush7sided()
 {
   Undo_Start("7 sided");
   Undo_AddBrushList(&selected_brushes);
@@ -6321,7 +6322,7 @@ void MainFrame::OnBrush7sided()
   Undo_End();
 }
 
-void MainFrame::OnBrush8sided() 
+void MainFrame::OnBrush8sided()
 {
   Undo_Start("8 sided");
   Undo_AddBrushList(&selected_brushes);
@@ -6330,7 +6331,7 @@ void MainFrame::OnBrush8sided()
   Undo_End();
 }
 
-void MainFrame::OnBrush9sided() 
+void MainFrame::OnBrush9sided()
 {
   Undo_Start("9 sided");
   Undo_AddBrushList(&selected_brushes);
@@ -6339,7 +6340,7 @@ void MainFrame::OnBrush9sided()
   Undo_End();
 }
 
-void MainFrame::OnBrushArbitrarysided() 
+void MainFrame::OnBrushArbitrarysided()
 {
   Undo_Start("arbitrary sided");
   Undo_AddBrushList(&selected_brushes);
@@ -6348,7 +6349,7 @@ void MainFrame::OnBrushArbitrarysided()
   Undo_End();
 }
 
-void MainFrame::OnBrushMakecone() 
+void MainFrame::OnBrushMakecone()
 {
   Undo_Start("make cone");
   Undo_AddBrushList(&selected_brushes);
@@ -6357,7 +6358,7 @@ void MainFrame::OnBrushMakecone()
   Undo_End();
 }
 
-void MainFrame::OnBrushPrimitivesSphere() 
+void MainFrame::OnBrushPrimitivesSphere()
 {
   Undo_Start("make sphere");
   Undo_AddBrushList(&selected_brushes);
@@ -6368,7 +6369,7 @@ void MainFrame::OnBrushPrimitivesSphere()
   Undo_End();
 }
 
-void MainFrame::OnCurvePatchtube() 
+void MainFrame::OnCurvePatchtube()
 {
   Undo_Start("make curve cylinder");
   Undo_AddBrushList(&selected_brushes);
@@ -6378,7 +6379,7 @@ void MainFrame::OnCurvePatchtube()
   Undo_End();
 }
 
-void MainFrame::OnCurvePatchdensetube() 
+void MainFrame::OnCurvePatchdensetube()
 {
   Undo_Start("dense cylinder");
   Undo_AddBrushList(&selected_brushes);
@@ -6391,7 +6392,7 @@ void MainFrame::OnCurvePatchdensetube()
   Undo_End();
 }
 
-void MainFrame::OnCurvePatchverydensetube() 
+void MainFrame::OnCurvePatchverydensetube()
 {
   Undo_Start("very dense cylinder");
   Undo_AddBrushList(&selected_brushes);
@@ -6406,7 +6407,7 @@ void MainFrame::OnCurvePatchverydensetube()
   Undo_End();
 }
 
-void MainFrame::OnCurvePatchsquare() 
+void MainFrame::OnCurvePatchsquare()
 {
   Undo_Start("square cylinder");
   Undo_AddBrushList(&selected_brushes);
@@ -6418,7 +6419,7 @@ void MainFrame::OnCurvePatchsquare()
   Undo_End();
 }
 
-void MainFrame::OnCurvePatchendcap() 
+void MainFrame::OnCurvePatchendcap()
 {
   Undo_Start("make end cap");
   Undo_AddBrushList(&selected_brushes);
@@ -6428,7 +6429,7 @@ void MainFrame::OnCurvePatchendcap()
   Undo_End();
 }
 
-void MainFrame::OnCurvePatchbevel() 
+void MainFrame::OnCurvePatchbevel()
 {
   Undo_Start("make bevel");
   Undo_AddBrushList(&selected_brushes);
@@ -6438,7 +6439,7 @@ void MainFrame::OnCurvePatchbevel()
   Undo_End();
 }
 
-void MainFrame::OnCurveMoreendcapsbevelsSquarebevel() 
+void MainFrame::OnCurveMoreendcapsbevelsSquarebevel()
 {
   Undo_Start("square bevel");
   Undo_AddBrushList(&selected_brushes);
@@ -6450,7 +6451,7 @@ void MainFrame::OnCurveMoreendcapsbevelsSquarebevel()
   Undo_End();
 }
 
-void MainFrame::OnCurveMoreendcapsbevelsSquareendcap() 
+void MainFrame::OnCurveMoreendcapsbevelsSquareendcap()
 {
   Undo_Start("square endcap");
   Undo_AddBrushList(&selected_brushes);
@@ -6462,7 +6463,7 @@ void MainFrame::OnCurveMoreendcapsbevelsSquareendcap()
   Undo_End();
 }
 
-void MainFrame::OnCurvePatchcone() 
+void MainFrame::OnCurvePatchcone()
 {
   Undo_Start("make curve cone");
   Undo_AddBrushList(&selected_brushes);
@@ -6472,7 +6473,7 @@ void MainFrame::OnCurvePatchcone()
   Undo_End();
 }
 
-void MainFrame::OnCurveSimplepatchmesh() 
+void MainFrame::OnCurveSimplepatchmesh()
 {
   Undo_Start("make simpe patch mesh");
   Undo_AddBrushList(&selected_brushes);
@@ -6481,7 +6482,7 @@ void MainFrame::OnCurveSimplepatchmesh()
   Undo_End();
 }
 
-void MainFrame::OnCurveInsertInsertcolumn() 
+void MainFrame::OnCurveInsertInsertcolumn()
 {
   Undo_Start("insert (2) columns");
   Undo_AddBrushList(&selected_brushes);
@@ -6491,7 +6492,7 @@ void MainFrame::OnCurveInsertInsertcolumn()
   Undo_End();
 }
 
-void MainFrame::OnCurveInsertAddcolumn() 
+void MainFrame::OnCurveInsertAddcolumn()
 {
   Undo_Start("add (2) columns");
   Undo_AddBrushList(&selected_brushes);
@@ -6501,7 +6502,7 @@ void MainFrame::OnCurveInsertAddcolumn()
   Undo_End();
 }
 
-void MainFrame::OnCurveInsertInsertrow() 
+void MainFrame::OnCurveInsertInsertrow()
 {
   Undo_Start("insert (2) rows");
   Undo_AddBrushList(&selected_brushes);
@@ -6511,7 +6512,7 @@ void MainFrame::OnCurveInsertInsertrow()
   Undo_End();
 }
 
-void MainFrame::OnCurveInsertAddrow() 
+void MainFrame::OnCurveInsertAddrow()
 {
   Undo_Start("add (2) rows");
   Undo_AddBrushList(&selected_brushes);
@@ -6521,7 +6522,7 @@ void MainFrame::OnCurveInsertAddrow()
   Undo_End();
 }
 
-void MainFrame::OnCurveDeleteFirstcolumn() 
+void MainFrame::OnCurveDeleteFirstcolumn()
 {
   Undo_Start("delete first (2) columns");
   Undo_AddBrushList(&selected_brushes);
@@ -6531,7 +6532,7 @@ void MainFrame::OnCurveDeleteFirstcolumn()
   Undo_End();
 }
 
-void MainFrame::OnCurveDeleteLastcolumn() 
+void MainFrame::OnCurveDeleteLastcolumn()
 {
   Undo_Start("delete last (2) columns");
   Undo_AddBrushList(&selected_brushes);
@@ -6541,7 +6542,7 @@ void MainFrame::OnCurveDeleteLastcolumn()
   Undo_End();
 }
 
-void MainFrame::OnCurveDeleteFirstrow() 
+void MainFrame::OnCurveDeleteFirstrow()
 {
   Undo_Start("delete first (2) rows");
   Undo_AddBrushList(&selected_brushes);
@@ -6551,7 +6552,7 @@ void MainFrame::OnCurveDeleteFirstrow()
   Undo_End();
 }
 
-void MainFrame::OnCurveDeleteLastrow() 
+void MainFrame::OnCurveDeleteLastrow()
 {
   Undo_Start("delete last (2) rows");
   Undo_AddBrushList(&selected_brushes);
@@ -6561,13 +6562,13 @@ void MainFrame::OnCurveDeleteLastrow()
   Undo_End();
 }
 
-void MainFrame::OnCurveNegative() 
+void MainFrame::OnCurveNegative()
 {
   Patch_ToggleInverted();
   //Sys_UpdateWindows(W_ALL);
 }
 
-void MainFrame::OnCurveRedisperseRows() 
+void MainFrame::OnCurveRedisperseRows()
 {
   Undo_Start("redisperse rows");
   Undo_AddBrushList(&selected_brushes);
@@ -6577,7 +6578,7 @@ void MainFrame::OnCurveRedisperseRows()
   Undo_End();
 }
 
-void MainFrame::OnCurveRedisperseIntermediateCols() 
+void MainFrame::OnCurveRedisperseIntermediateCols()
 {
   Undo_Start("redisperse im cols");
   Undo_AddBrushList(&selected_brushes);
@@ -6587,7 +6588,7 @@ void MainFrame::OnCurveRedisperseIntermediateCols()
   Undo_End();
 }
 
-void MainFrame::OnCurveRedisperseIntermediateRows() 
+void MainFrame::OnCurveRedisperseIntermediateRows()
 {
   Undo_Start("redisperse im rows");
   Undo_AddBrushList(&selected_brushes);
@@ -6597,37 +6598,37 @@ void MainFrame::OnCurveRedisperseIntermediateRows()
   Undo_End();
 }
 
-void MainFrame::OnCurveMatrixTranspose() 
+void MainFrame::OnCurveMatrixTranspose()
 {
   Patch_Transpose();
   Sys_UpdateWindows (W_ALL);
 }
 
-void MainFrame::OnCurveCap() 
+void MainFrame::OnCurveCap()
 {
   Patch_CapCurrent();
   Sys_UpdateWindows (W_ALL);
 }
 
-void MainFrame::OnCurveCyclecap() 
+void MainFrame::OnCurveCyclecap()
 {
   Patch_CycleCapSelected();
   Sys_UpdateWindows (W_ALL);
 }
 
-void MainFrame::OnCurveOverlaySet() 
+void MainFrame::OnCurveOverlaySet()
 {
   Patch_SetOverlays();
   Sys_UpdateWindows(W_ALL);
 }
 
-void MainFrame::OnCurveOverlayClear() 
+void MainFrame::OnCurveOverlayClear()
 {
   Patch_ClearOverlays();
   Sys_UpdateWindows(W_ALL);
 }
 
-void MainFrame::OnCurveThicken() 
+void MainFrame::OnCurveThicken()
 {
   Undo_Start("curve thicken");
   Undo_AddBrushList(&selected_brushes);
@@ -6640,14 +6641,14 @@ void MainFrame::OnCurveThicken()
 this can no longer be trigger manually from the menu
 happens only once at startup
 */
-void MainFrame::OnPluginsRefresh() 
+void MainFrame::OnPluginsRefresh()
 {
   CleanPlugInMenu();
   m_PlugInMgr.Init();
 }
 
 // open the Q3Rad manual
-void MainFrame::OnHelp() 
+void MainFrame::OnHelp()
 {
   // at least on win32, g_strGameToolsPath + "Q3Rad_Manual/index.htm"
   Str help;
@@ -6657,7 +6658,7 @@ void MainFrame::OnHelp()
 }
 
 // FIXME: we'll go towards a unified help thing soon
-void MainFrame::OnHelpLinks() 
+void MainFrame::OnHelpLinks()
 {
   Str link;
   link = g_strAppPath;
@@ -6665,25 +6666,25 @@ void MainFrame::OnHelpLinks()
   OpenURL(link.GetBuffer());
 }
 
-void MainFrame::OnHelpBugreport() 
+void MainFrame::OnHelpBugreport()
 {
   OpenURL("http://www.qeradiant.com/faq/fom-serve/cache/138.html");
 }
 
-void MainFrame::OnHelpCommandlist() 
+void MainFrame::OnHelpCommandlist()
 {
   DoCommandListDlg ();
 }
 
-void MainFrame::OnHelpAbout() 
+void MainFrame::OnHelpAbout()
 {
   DoAbout();
 }
 
-void MainFrame::OnPopupSelection() 
+void MainFrame::OnPopupSelection()
 {
   GtkWidget *menu, *item;
-  char *labels[] = { "Select Complete Tall", "Select Touching", "Select Partial Tall", "Select Inside"};
+  const gchar *labels[] = { _("Select Complete Tall"), _("Select Touching"), _("Select Partial Tall"), _("Select Inside")};
   int ids[] = { ID_SELECTION_SELECTCOMPLETETALL, ID_SELECTION_SELECTTOUCHING,
     ID_SELECTION_SELECTPARTIALTALL, ID_SELECTION_SELECTINSIDE};
 
@@ -6701,13 +6702,13 @@ void MainFrame::OnPopupSelection()
   gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, NULL, 1, GDK_CURRENT_TIME);
 }
 
-void MainFrame::OnViewChange() 
+void MainFrame::OnViewChange()
 {
   OnViewNextview();
-  //HandlePopup(this, IDR_POPUP_VIEW); 
+  //HandlePopup(this, IDR_POPUP_VIEW);
 }
 
-void MainFrame::OnTexturesPopup() 
+void MainFrame::OnTexturesPopup()
 {
   gpointer item = g_object_get_data (G_OBJECT (m_pWidget), "render_quality_menu");
   gtk_menu_popup (GTK_MENU (item), NULL, NULL, NULL, NULL, 1, GDK_CURRENT_TIME);
@@ -6721,12 +6722,12 @@ void MainFrame::ToggleCamera()
     m_bCamPreview = true;
 }
 
-void MainFrame::OnViewCameraupdate() 
+void MainFrame::OnViewCameraupdate()
 {
   Sys_UpdateWindows(W_CAMERA);
 }
 
-void MainFrame::OnSelectMouserotate() 
+void MainFrame::OnSelectMouserotate()
 {
   GtkWidget *item = GTK_WIDGET (g_object_get_data (G_OBJECT (m_pWidget), "tb_select_mouserotate"));
   g_bIgnoreCommands++;
@@ -6753,7 +6754,7 @@ void MainFrame::OnSelectMouserotate()
   g_bIgnoreCommands--;
 }
 
-void MainFrame::OnSelectMousescale() 
+void MainFrame::OnSelectMousescale()
 {
   GtkWidget *item = GTK_WIDGET (g_object_get_data (G_OBJECT (m_pWidget), "tb_select_mousescale"));
   g_bIgnoreCommands++;
@@ -6781,7 +6782,7 @@ void MainFrame::OnSelectMousescale()
   g_bIgnoreCommands--;
 }
 
-void MainFrame::OnScalelockx() 
+void MainFrame::OnScalelockx()
 {
   GtkWidget *item = GTK_WIDGET (g_object_get_data (G_OBJECT (m_pWidget), "tb_scalelockx"));
   g_bIgnoreCommands++;
@@ -6798,7 +6799,7 @@ void MainFrame::OnScalelockx()
   g_bIgnoreCommands--;
 }
 
-void MainFrame::OnScalelocky() 
+void MainFrame::OnScalelocky()
 {
   GtkWidget *item = GTK_WIDGET (g_object_get_data (G_OBJECT (m_pWidget), "tb_scalelocky"));
   g_bIgnoreCommands++;
@@ -6815,7 +6816,7 @@ void MainFrame::OnScalelocky()
   g_bIgnoreCommands--;
 }
 
-void MainFrame::OnScalelockz() 
+void MainFrame::OnScalelockz()
 {
   GtkWidget *item = GTK_WIDGET (g_object_get_data (G_OBJECT (m_pWidget), "tb_scalelockz"));
   g_bIgnoreCommands++;
@@ -6832,7 +6833,7 @@ void MainFrame::OnScalelockz()
   g_bIgnoreCommands--;
 }
 
-void MainFrame::OnDontselectcurve() 
+void MainFrame::OnDontselectcurve()
 {
   GtkWidget *item = GTK_WIDGET (g_object_get_data (G_OBJECT (m_pWidget), "tb_dontselectcurve"));
   g_bIgnoreCommands++;
@@ -6851,7 +6852,7 @@ void MainFrame::OnPatchToggleBox()
   Sys_UpdateWindows(W_ALL);
 }
 
-void MainFrame::OnPatchWireframe() 
+void MainFrame::OnPatchWireframe()
 {
   GtkWidget *item = GTK_WIDGET (g_object_get_data (G_OBJECT (m_pWidget), "tb_patch_wireframe"));
   g_bIgnoreCommands++;
@@ -6861,7 +6862,7 @@ void MainFrame::OnPatchWireframe()
   Sys_UpdateWindows(W_ALL);
 }
 
-void MainFrame::OnPatchBend() 
+void MainFrame::OnPatchBend()
 {
   GtkWidget *item = GTK_WIDGET (g_object_get_data (G_OBJECT (m_pWidget), "tb_patch_bend"));
   g_bIgnoreCommands++;
@@ -6871,7 +6872,7 @@ void MainFrame::OnPatchBend()
   Sys_UpdateWindows(W_ALL);
 }
 
-void MainFrame::OnPatchWeld() 
+void MainFrame::OnPatchWeld()
 {
   GtkWidget *item = GTK_WIDGET (g_object_get_data (G_OBJECT (m_pWidget), "tb_patch_weld"));
   g_bIgnoreCommands++;
@@ -6881,7 +6882,7 @@ void MainFrame::OnPatchWeld()
   Sys_UpdateWindows(W_ALL);
 }
 
-void MainFrame::OnPatchDrilldown() 
+void MainFrame::OnPatchDrilldown()
 {
   GtkWidget *item = GTK_WIDGET (g_object_get_data (G_OBJECT (m_pWidget), "tb_patch_drilldown"));
   g_bIgnoreCommands++;
@@ -6891,13 +6892,13 @@ void MainFrame::OnPatchDrilldown()
   Sys_UpdateWindows(W_ALL);
 }
 
-void MainFrame::OnShowEntities() 
+void MainFrame::OnShowEntities()
 {
   gpointer item = g_object_get_data (G_OBJECT (m_pWidget), "view_entitiesas_menu"); // use pointer to existing menu object
   gtk_menu_popup (GTK_MENU (item), NULL, NULL, NULL, NULL, 1, GDK_CURRENT_TIME);
 }
 
-void MainFrame::OnDropGroupName() 
+void MainFrame::OnDropGroupName()
 {
   /*
   char* name = DoNameDlg ("Name Selection");
@@ -6911,12 +6912,12 @@ void MainFrame::OnDropGroupName()
   */
 }
 
-void MainFrame::OnDropGroupNewgroup() 
+void MainFrame::OnDropGroupNewgroup()
 {
 
 }
 
-void MainFrame::OnDropGroupRemove() 
+void MainFrame::OnDropGroupRemove()
 {
   /*
   Select_AddToGroup("World");
@@ -6930,7 +6931,7 @@ void MainFrame::OnFaceFit()
   SurfaceDlgFitAll();
 }
 
-void MainFrame::OnDontselectmodel() 
+void MainFrame::OnDontselectmodel()
 {
   GtkWidget *item = GTK_WIDGET (g_object_get_data (G_OBJECT (m_pWidget), "tb_dontselectmodel"));
   g_bIgnoreCommands++;
@@ -6939,7 +6940,7 @@ void MainFrame::OnDontselectmodel()
   g_bIgnoreCommands--;
 }
 
-void MainFrame::OnViewTexture() 
+void MainFrame::OnViewTexture()
 {
   if (FloatingGroupDialog()) // QE4 style
   {
@@ -6962,13 +6963,13 @@ void MainFrame::OnPatchInspector()
   TogglePatchInspector();
 }
 
-void MainFrame::OnCurveNegativeTextureX() 
+void MainFrame::OnCurveNegativeTextureX()
 {
   Patch_InvertTexture(false);
   //Sys_UpdateWindows(W_ALL);
 }
 
-void MainFrame::OnCurveNegativeTextureY() 
+void MainFrame::OnCurveNegativeTextureY()
 {
   Patch_InvertTexture(true);
   //Sys_UpdateWindows(W_ALL);
@@ -7000,7 +7001,7 @@ void MainFrame::OnCurveInsertrow()
   Undo_End();
 }
 
-void MainFrame::OnCurveDeletecolumn() 
+void MainFrame::OnCurveDeletecolumn()
 {
   if (&selected_brushes == selected_brushes.next)
     return;
@@ -7012,7 +7013,7 @@ void MainFrame::OnCurveDeletecolumn()
   Undo_End();
 }
 
-void MainFrame::OnCurveDeleterow() 
+void MainFrame::OnCurveDeleterow()
 {
   if (&selected_brushes == selected_brushes.next)
     return;
@@ -7024,7 +7025,7 @@ void MainFrame::OnCurveDeleterow()
   Undo_End();
 }
 
-void MainFrame::OnPatchTab() 
+void MainFrame::OnPatchTab()
 {
   if (g_bPatchBendMode)
     Patch_BendHandleTAB();
@@ -7033,7 +7034,7 @@ void MainFrame::OnPatchTab()
   else
   {
     // check to see if the selected brush is part of a func group
-    // if it is, deselect everything and reselect the next brush 
+    // if it is, deselect everything and reselect the next brush
     // in the group
     brush_t *b2, *b = selected_brushes.next;
     entity_t * e;
@@ -7061,7 +7062,7 @@ void MainFrame::OnPatchTab()
   }
 }
 
-void MainFrame::OnCameraForward(bool keydown) 
+void MainFrame::OnCameraForward(bool keydown)
 {
   if (g_PrefsDlg.m_bCamDiscrete && (m_pCamWnd && !m_pCamWnd->m_bFreeMove) )
   {
@@ -7080,7 +7081,7 @@ void MainFrame::OnCameraForward(bool keydown)
   }
 }
 
-void MainFrame::OnCameraBack(bool keydown) 
+void MainFrame::OnCameraBack(bool keydown)
 {
   if (g_PrefsDlg.m_bCamDiscrete && (m_pCamWnd && !m_pCamWnd->m_bFreeMove) )
   {
@@ -7099,7 +7100,7 @@ void MainFrame::OnCameraBack(bool keydown)
   }
 }
 
-void MainFrame::OnCameraLeft(bool keydown) 
+void MainFrame::OnCameraLeft(bool keydown)
 {
   if (m_pCamWnd)
   {
@@ -7127,7 +7128,7 @@ void MainFrame::OnCameraLeft(bool keydown)
   }
 }
 
-void MainFrame::OnCameraRight(bool keydown) 
+void MainFrame::OnCameraRight(bool keydown)
 {
   if (m_pCamWnd)
   {
@@ -7155,21 +7156,21 @@ void MainFrame::OnCameraRight(bool keydown)
   }
 }
 
-void MainFrame::OnCameraUp() 
+void MainFrame::OnCameraUp()
 {
   m_pCamWnd->Camera()->origin[2] += SPEED_MOVE;
   int nUpdate = (g_PrefsDlg.m_bCamXYUpdate) ? (W_CAMERA | W_XY | W_Z) : (W_CAMERA);
   Sys_UpdateWindows (nUpdate);
 }
 
-void MainFrame::OnCameraDown() 
+void MainFrame::OnCameraDown()
 {
   m_pCamWnd->Camera()->origin[2] -= SPEED_MOVE;
   int nUpdate = (g_PrefsDlg.m_bCamXYUpdate) ? (W_CAMERA | W_XY | W_Z) : (W_CAMERA);
   Sys_UpdateWindows (nUpdate);
 }
 
-void MainFrame::OnCameraAngleup() 
+void MainFrame::OnCameraAngleup()
 {
   m_pCamWnd->Camera()->angles[0] += SPEED_TURN;
   if (m_pCamWnd->Camera()->angles[0] > 85)
@@ -7177,7 +7178,7 @@ void MainFrame::OnCameraAngleup()
   Sys_UpdateWindows (W_CAMERA|W_XY_OVERLAY);
 }
 
-void MainFrame::OnCameraAngledown() 
+void MainFrame::OnCameraAngledown()
 {
   m_pCamWnd->Camera()->angles[0] -= SPEED_TURN;
   if (m_pCamWnd->Camera()->angles[0] < -85)
@@ -7185,7 +7186,7 @@ void MainFrame::OnCameraAngledown()
   Sys_UpdateWindows (W_CAMERA|W_XY_OVERLAY);
 }
 
-void MainFrame::OnCameraStrafeleft(bool keydown) 
+void MainFrame::OnCameraStrafeleft(bool keydown)
 {
   // FIXME: as soon as gtk supports proper keyup/down support, remove this bit
   if (m_pCamWnd)
@@ -7208,7 +7209,7 @@ void MainFrame::OnCameraStrafeleft(bool keydown)
     m_pCamWnd->Camera()->movementflags &= ~MOVE_STRAFELEFT;
 }
 
-void MainFrame::OnCameraStraferight(bool keydown) 
+void MainFrame::OnCameraStraferight(bool keydown)
 {
   // FIXME: as soon as gtk supports proper keyup/down support, remove this bit
   if (m_pCamWnd)
@@ -7231,69 +7232,69 @@ void MainFrame::OnCameraStraferight(bool keydown)
     m_pCamWnd->Camera()->movementflags &= ~MOVE_STRAFERIGHT;
 }
 
-void MainFrame::OnGridToggle() 
+void MainFrame::OnGridToggle()
 {
   g_qeglobals.d_showgrid = !g_qeglobals.d_showgrid;
   Sys_UpdateWindows (W_XY|W_Z);
 }
 
-void MainFrame::OnViewCrosshair() 
+void MainFrame::OnViewCrosshair()
 {
-  g_bCrossHairs ^= 1; 
+  g_bCrossHairs ^= 1;
   Sys_UpdateWindows (W_XY);
 }
 
-void MainFrame::OnSelectionTextureRotateclock() 
+void MainFrame::OnSelectionTextureRotateclock()
 {
   Select_RotateTexture(abs(g_PrefsDlg.m_nRotation));
 }
 
-void MainFrame::OnSelectionTextureRotatecounter() 
+void MainFrame::OnSelectionTextureRotatecounter()
 {
   Select_RotateTexture(-abs(g_PrefsDlg.m_nRotation));
 }
 
-void MainFrame::OnSelectionTextureScaleup() 
+void MainFrame::OnSelectionTextureScaleup()
 {
   Select_ScaleTexture(0, g_qeglobals.d_savedinfo.m_SIIncrement.scale[1]);
 }
 
-void MainFrame::OnSelectionTextureScaledown() 
+void MainFrame::OnSelectionTextureScaledown()
 {
   Select_ScaleTexture(0, -g_qeglobals.d_savedinfo.m_SIIncrement.scale[1]);
 }
 
-void MainFrame::OnSelectionTextureScaleLeft() 
+void MainFrame::OnSelectionTextureScaleLeft()
 {
   Select_ScaleTexture(-g_qeglobals.d_savedinfo.m_SIIncrement.scale[0],0);
 }
 
-void MainFrame::OnSelectionTextureScaleRight() 
+void MainFrame::OnSelectionTextureScaleRight()
 {
   Select_ScaleTexture(g_qeglobals.d_savedinfo.m_SIIncrement.scale[0],0);
 }
 
-void MainFrame::OnSelectionTextureShiftleft() 
+void MainFrame::OnSelectionTextureShiftleft()
 {
   Select_ShiftTexture((int)-g_qeglobals.d_savedinfo.m_SIIncrement.shift[0], 0);
 }
 
-void MainFrame::OnSelectionTextureShiftright() 
+void MainFrame::OnSelectionTextureShiftright()
 {
   Select_ShiftTexture((int)g_qeglobals.d_savedinfo.m_SIIncrement.shift[0], 0);
 }
 
-void MainFrame::OnSelectionTextureShiftup() 
+void MainFrame::OnSelectionTextureShiftup()
 {
   Select_ShiftTexture(0, (int)g_qeglobals.d_savedinfo.m_SIIncrement.shift[1]);
 }
 
-void MainFrame::OnSelectionTextureShiftdown() 
+void MainFrame::OnSelectionTextureShiftdown()
 {
   Select_ShiftTexture(0, (int)-g_qeglobals.d_savedinfo.m_SIIncrement.shift[1]);
 }
 
-void MainFrame::OnGridPrev() 
+void MainFrame::OnGridPrev()
 {
   GtkWidget *item;
   if (g_qeglobals.d_gridsize == 1)
@@ -7340,7 +7341,7 @@ void MainFrame::OnGridPrev()
   Sys_UpdateWindows(W_XY | W_Z);
 }
 
-void MainFrame::OnGridNext() 
+void MainFrame::OnGridNext()
 {
   GtkWidget *item;
   if (g_qeglobals.d_gridsize == 0.25)
@@ -7369,6 +7370,7 @@ void MainFrame::OnGridNext()
     case  64: item = GTK_WIDGET (g_object_get_data (G_OBJECT (m_pWidget), "menu_grid_64")); break;
     case 128: item = GTK_WIDGET (g_object_get_data (G_OBJECT (m_pWidget), "menu_grid_128")); break;
     case 256: item = GTK_WIDGET (g_object_get_data (G_OBJECT (m_pWidget), "menu_grid_256")); break;
+	default:  item = NULL;
     }
 
   } else
@@ -7387,7 +7389,7 @@ void MainFrame::OnGridNext()
   Sys_UpdateWindows(W_XY | W_Z);
 }
 
-void MainFrame::OnSelectionMovedown() 
+void MainFrame::OnSelectionMovedown()
 {
   if (&selected_brushes == selected_brushes.next)
     return;
@@ -7404,7 +7406,7 @@ void MainFrame::OnSelectionMovedown()
   Undo_End();
 }
 
-void MainFrame::OnSelectionMoveup() 
+void MainFrame::OnSelectionMoveup()
 {
   if (&selected_brushes == selected_brushes.next)
     return;
@@ -7421,13 +7423,13 @@ void MainFrame::OnSelectionMoveup()
   Undo_End();
 }
 
-void MainFrame::OnSelectionPrint() 
+void MainFrame::OnSelectionPrint()
 {
   for (brush_t* b=selected_brushes.next ; b != &selected_brushes ; b=b->next)
     Brush_Print(b);
 }
 
-void MainFrame::OnSelectionTogglesizepaint() 
+void MainFrame::OnSelectionTogglesizepaint()
 {
   g_PrefsDlg.m_bSizePaint = !g_PrefsDlg.m_bSizePaint;
   Sys_UpdateWindows(W_XY);
@@ -7474,7 +7476,7 @@ void PerformFiltering ()
 {
   brush_t *brush;
 
-  // mattn - this should be removed - otherwise the filters from the 
+  // mattn - this should be removed - otherwise the filters from the
   // plugins are wiped away with each update
 #if 0
   // spog - deletes old filters list and creates new one when
@@ -7490,7 +7492,7 @@ void PerformFiltering ()
     brush->bFiltered = FilterBrush( brush );
 }
 
-void MainFrame::OnFilterAreaportals() 
+void MainFrame::OnFilterAreaportals()
 {
   GtkWidget *item = GTK_WIDGET (g_object_get_data (G_OBJECT (m_pWidget), "menu_filter_areaportals"));
   g_bIgnoreCommands++;
@@ -7503,7 +7505,7 @@ void MainFrame::OnFilterAreaportals()
   Sys_UpdateWindows (W_XY|W_CAMERA);
 }
 
-void MainFrame::OnFilterCaulk() 
+void MainFrame::OnFilterCaulk()
 {
   GtkWidget *item = GTK_WIDGET (g_object_get_data (G_OBJECT (m_pWidget), "menu_filter_caulk"));
   g_bIgnoreCommands++;
@@ -7516,7 +7518,7 @@ void MainFrame::OnFilterCaulk()
   Sys_UpdateWindows (W_XY|W_CAMERA);
 }
 
-void MainFrame::OnFilterClips() 
+void MainFrame::OnFilterClips()
 {
   GtkWidget *item = GTK_WIDGET (g_object_get_data (G_OBJECT (m_pWidget), "menu_filter_clips"));
   g_bIgnoreCommands++;
@@ -7542,7 +7544,7 @@ void MainFrame::OnFilterBotClips()
   Sys_UpdateWindows (W_XY|W_CAMERA);
 }
 
-void MainFrame::OnFilterStructural() 
+void MainFrame::OnFilterStructural()
 {
   GtkWidget *item = GTK_WIDGET (g_object_get_data (G_OBJECT (m_pWidget), "menu_filter_structural"));
   g_bIgnoreCommands++;
@@ -7555,7 +7557,7 @@ void MainFrame::OnFilterStructural()
   Sys_UpdateWindows (W_XY|W_CAMERA);
 }
 
-void MainFrame::OnFilterDetails() 
+void MainFrame::OnFilterDetails()
 {
   GtkWidget *item = GTK_WIDGET (g_object_get_data (G_OBJECT (m_pWidget), "menu_filter_details"));
   g_bIgnoreCommands++;
@@ -7568,7 +7570,7 @@ void MainFrame::OnFilterDetails()
   Sys_UpdateWindows (W_XY|W_CAMERA);
 }
 
-void MainFrame::OnFilterEntities() 
+void MainFrame::OnFilterEntities()
 {
   GtkWidget *item = GTK_WIDGET (g_object_get_data (G_OBJECT (m_pWidget), "menu_filter_entities"));
   g_bIgnoreCommands++;
@@ -7581,7 +7583,7 @@ void MainFrame::OnFilterEntities()
   Sys_UpdateWindows (W_XY|W_CAMERA);
 }
 
-void MainFrame::OnFilterHintsskips() 
+void MainFrame::OnFilterHintsskips()
 {
   GtkWidget *item = GTK_WIDGET (g_object_get_data (G_OBJECT (m_pWidget), "menu_filter_hintsskips"));
   g_bIgnoreCommands++;
@@ -7594,7 +7596,7 @@ void MainFrame::OnFilterHintsskips()
   Sys_UpdateWindows (W_XY|W_CAMERA);
 }
 
-void MainFrame::OnFilterLights() 
+void MainFrame::OnFilterLights()
 {
   GtkWidget *item = GTK_WIDGET (g_object_get_data (G_OBJECT (m_pWidget), "menu_filter_lights"));
   g_bIgnoreCommands++;
@@ -7607,7 +7609,7 @@ void MainFrame::OnFilterLights()
   Sys_UpdateWindows (W_XY|W_CAMERA);
 }
 
-void MainFrame::OnFilterLiquids() 
+void MainFrame::OnFilterLiquids()
 {
   GtkWidget *item = GTK_WIDGET (g_object_get_data (G_OBJECT (m_pWidget), "menu_filter_liquids"));
   g_bIgnoreCommands++;
@@ -7620,7 +7622,7 @@ void MainFrame::OnFilterLiquids()
   Sys_UpdateWindows (W_XY|W_CAMERA);
 }
 
-void MainFrame::OnFilterModels() 
+void MainFrame::OnFilterModels()
 {
   GtkWidget *item = GTK_WIDGET (g_object_get_data (G_OBJECT (m_pWidget), "menu_filter_models"));
   g_bIgnoreCommands++;
@@ -7633,7 +7635,7 @@ void MainFrame::OnFilterModels()
   Sys_UpdateWindows (W_XY|W_CAMERA);
 }
 
-void MainFrame::OnFilterPatches() 
+void MainFrame::OnFilterPatches()
 {
   GtkWidget *item = GTK_WIDGET (g_object_get_data (G_OBJECT (m_pWidget), "menu_filter_patches"));
   g_bIgnoreCommands++;
@@ -7646,7 +7648,7 @@ void MainFrame::OnFilterPatches()
   Sys_UpdateWindows (W_XY|W_CAMERA);
 }
 
-void MainFrame::OnFilterPaths() 
+void MainFrame::OnFilterPaths()
 {
   GtkWidget *item = GTK_WIDGET (g_object_get_data (G_OBJECT (m_pWidget), "menu_filter_paths"));
   g_bIgnoreCommands++;
@@ -7659,7 +7661,7 @@ void MainFrame::OnFilterPaths()
   Sys_UpdateWindows (W_XY|W_CAMERA);
 }
 
-void MainFrame::OnFilterClusterportals() 
+void MainFrame::OnFilterClusterportals()
 {
   GtkWidget *item = GTK_WIDGET (g_object_get_data (G_OBJECT (m_pWidget), "menu_filter_clusterportals"));
   g_bIgnoreCommands++;
@@ -7685,7 +7687,7 @@ void MainFrame::OnFilterLightgrid()
   Sys_UpdateWindows (W_XY|W_CAMERA);
 }
 
-void MainFrame::OnFilterTranslucent() 
+void MainFrame::OnFilterTranslucent()
 {
   GtkWidget *item = GTK_WIDGET (g_object_get_data (G_OBJECT (m_pWidget), "menu_filter_translucent"));
   g_bIgnoreCommands++;
@@ -7698,7 +7700,7 @@ void MainFrame::OnFilterTranslucent()
   Sys_UpdateWindows (W_XY|W_CAMERA);
 }
 
-void MainFrame::OnFilterTriggers() 
+void MainFrame::OnFilterTriggers()
 {
   GtkWidget *item = GTK_WIDGET (g_object_get_data (G_OBJECT (m_pWidget), "menu_filter_triggers"));
   g_bIgnoreCommands++;
@@ -7711,7 +7713,7 @@ void MainFrame::OnFilterTriggers()
   Sys_UpdateWindows (W_XY|W_CAMERA);
 }
 
-void MainFrame::OnFilterWorld() 
+void MainFrame::OnFilterWorld()
 {
   GtkWidget *item = GTK_WIDGET (g_object_get_data (G_OBJECT (m_pWidget), "menu_filter_world"));
   g_bIgnoreCommands++;
@@ -7734,7 +7736,7 @@ void MainFrame::OnFilterWorld()
 // =============================================================================
 // leo: Unused functions, not called anywhere from the code (need to check)
 
-void MainFrame::OnViewConsole() 
+void MainFrame::OnViewConsole()
 {
   if (FloatingGroupDialog()) // QE4 style
   {
@@ -7782,7 +7784,7 @@ void MainFrame::OnPatchEnter()
 
 }
 
-void MainFrame::OnDropGroupAddtoWorld() 
+void MainFrame::OnDropGroupAddtoWorld()
 {
   /*
   Select_AddToGroup("World");

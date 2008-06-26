@@ -32,7 +32,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 extern MainFrame* g_pParentWnd;
 
 int	modified;	// for quit confirmation (0 = clean, 1 = unsaved,
-		     		// 2 = autosaved, but not regular saved) 
+		     		// 2 = autosaved, but not regular saved)
 
 char		currentmap[1024];
 
@@ -136,7 +136,7 @@ void Map_BuildBrushData(void)
   Sys_EndWait();
 }
 
-entity_t *Map_FindClass (char *cname)
+entity_t *Map_FindClass (const char *cname)
 {
 	entity_t	*ent;
 
@@ -335,7 +335,7 @@ void Map_ImportEntities(CPtrArray *ents, bool bAddSelected = false)
     num_brushes = 0;
     e = (entity_t*)ents->GetAt(i);
     brushes = (CPtrArray*)e->pData;
- 
+
     num_brushes = brushes->GetSize();
     // link brushes into entity
     for(j=0; j<num_brushes; j++)
@@ -374,22 +374,22 @@ void Map_ImportEntities(CPtrArray *ents, bool bAddSelected = false)
 #ifdef TERRAIN_HACK
     if ((strcmp(ValueForKey(e, "terrain"),"1") == 0 && strcmp(e->eclass->name,"func_group") == 0))
     {
-      
+
       // two aux pointers to the shaders used in the terrain entity
       // we don't keep refcount on them since they are only temporary
       // this avoids doing expensive lookups by name for all faces
       IShader *pTerrainShader, *pCaulk;
-      
+
       pTerrainShader = NULL;
       pCaulk = QERApp_Shader_ForName(SHADER_CAULK);
-      
+
       for(b = e->brushes.onext; b!=&e->brushes; b=b->onext)
       {
         if (pTerrainShader == NULL)
           for(f = b->brush_faces; f != NULL; f = f->next)
             if (strcmp(f->texdef.GetName(), SHADER_CAULK)!=0)
               pTerrainShader = f->pShader;
-            
+
             if (pTerrainShader)
             {
               for(f = b->brush_faces; f != NULL; f = f->next)
@@ -473,7 +473,7 @@ void Map_ImportEntities(CPtrArray *ents, bool bAddSelected = false)
         entity_t *e_target;
         const char *target = ValueForKey(e, "target");
         qboolean bCollision=FALSE;
-        
+
         // check the current map entities for an actual collision
         for (e_target = entities.next; e_target != &entities; e_target = e_target->next)
         {
@@ -488,7 +488,7 @@ void Map_ImportEntities(CPtrArray *ents, bool bAddSelected = false)
             }
           }
         }
-        
+
         // find the matching targeted entity(s)
         if(bCollision)
         {
@@ -513,17 +513,17 @@ void Map_ImportEntities(CPtrArray *ents, bool bAddSelected = false)
           g_ptr_array_free(t_ents, FALSE);
         }
       }
-      
+
       // add the entity to the end of the entity list
       Entity_AddToList(e, &entities);
       g_qeglobals.d_num_entities++;
-      
+
       // keep a list of ents added to avoid testing collisions against them
       g_ptr_array_add(new_ents, (gpointer)e);
     }
   }
   g_ptr_array_free(new_ents, FALSE);
-  
+
   ents->RemoveAll();
 
   g_qeglobals.bNeedConvert = false;
@@ -551,7 +551,7 @@ void Map_LoadFile (const char *filename)
   Sys_BeginWait ();
   Select_Deselect();
   /*!
-  \todo FIXME TTimo why is this commented out? 
+  \todo FIXME TTimo why is this commented out?
   stability issues maybe? or duplicate feature?
   forcing to show the console during map load was a good thing IMO
   */
@@ -609,15 +609,15 @@ void Map_LoadFile (const char *filename)
 
   Sys_Printf ("--- LoadMapFile ---\n");
   Sys_Printf ("%s\n", filename );
-  
+
   Sys_Printf ("%5i brushes\n",  g_qeglobals.d_parsed_brushes );
   Sys_Printf ("%5i entities\n", g_qeglobals.d_num_entities);
   Sys_Printf ("%5.2f second(s) load time\n", elapsed_time );
-  
+
   Sys_EndWait();
-  
+
   Map_RestoreBetween ();
-  
+
   //
   // move the view to a start position
   //
@@ -707,11 +707,11 @@ void Map_ExportEntities(CPtrArray* ents, bool bRegionOnly = false, bool bSelecte
 
   /*!
   \todo the entity_t needs to be reworked and asbtracted some more
-  
+
   keeping the entity_t as the struct providing access to a list of map objects, a list of epairs and various other info?
   but separating some more the data that belongs to the entity_t and the 'sons' data
   on a side note, I don't think that doing that with linked list would be a good thing
-  
+
   for now, we use the blind void* in entity_t casted to a CPtrArray of brush_t* to hand out a list of the brushes for map write
   the next step is very likely to be a change of the brush_t* to a more abstract object?
   */
@@ -747,7 +747,7 @@ void Map_Export(IDataStream *out, const char *type, bool bRegionOnly, bool bSele
   entity_t	*e;
 
   CPtrArray ents;
-  
+
   if (bRegionOnly && region_active)
     AddRegionBrushes();
 
@@ -855,7 +855,7 @@ void Map_New (void)
 	Sys_SetTitle (currentmap);
 
   world_entity = (entity_s*)qmalloc(sizeof(*world_entity));
-	world_entity->brushes.onext = 
+	world_entity->brushes.onext =
 		world_entity->brushes.oprev = &world_entity->brushes;
 	SetKeyValue (world_entity, "classname", "worldspawn");
 	world_entity->eclass = Eclass_ForName ("worldspawn", true);
@@ -935,13 +935,13 @@ void AddRegionBrushes (void)
     region_sides[i+3] = Brush_Create (mins, maxs, &td);
   }
 
-  
+
   // http://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=503
-  // this is a safe check, but it should not really happen anymore  
+  // this is a safe check, but it should not really happen anymore
   vec3_t vOrig;
   VectorSet(vOrig,
     (int)g_pParentWnd->GetCamWnd()->Camera()->origin[0],
-    (int)g_pParentWnd->GetCamWnd()->Camera()->origin[1], 
+    (int)g_pParentWnd->GetCamWnd()->Camera()->origin[1],
     (int)g_pParentWnd->GetCamWnd()->Camera()->origin[2]);
 
   for (i=0 ; i<3 ; i++)
@@ -951,7 +951,7 @@ void AddRegionBrushes (void)
       Sys_FPrintf(SYS_ERR, "Camera is NOT in the region, it's likely that the region won't compile correctly\n");
     }
   }
-  
+
   // write the info_playerstart
   region_startpoint = Entity_Alloc();
   SetKeyValue(region_startpoint, "classname", "info_player_start");
@@ -1010,7 +1010,7 @@ void Map_RegionOff (void)
 		region_maxs[i] = g_MaxWorldCoord-64;
 		region_mins[i] = g_MinWorldCoord+64;
 	}
-	
+
 	for (b=filtered_brushes.next ; b != &filtered_brushes ; b=next)
 	{
 		next = b->next;
@@ -1193,7 +1193,7 @@ GList *find_string(GList *glist, const char *buf)
 void Map_ImportBuffer(char *buf)
 {
   Select_Deselect();
-  
+
   Undo_Start("import buffer");
 
   MemStream stream;
@@ -1201,10 +1201,10 @@ void Map_ImportBuffer(char *buf)
   stream.Write(buf, strlen(buf));
   Map_Import(&stream, "xmap");
   stream.Close();
-  
+
   Sys_UpdateWindows (W_ALL);
   Sys_MarkMapModified();
-  
+
   Undo_End();
 }
 
@@ -1313,9 +1313,9 @@ void Region_SpawnPoint(FILE *f)
   // write the info_player_start, we use the camera position
   fprintf (f, "{\n");
   fprintf (f, "\"classname\" \"info_player_start\"\n");
-  fprintf (f, "\"origin\" \"%i %i %i\"\n", 
+  fprintf (f, "\"origin\" \"%i %i %i\"\n",
     (int)g_pParentWnd->GetCamWnd()->Camera()->origin[0],
-    (int)g_pParentWnd->GetCamWnd()->Camera()->origin[1], 
+    (int)g_pParentWnd->GetCamWnd()->Camera()->origin[1],
     (int)g_pParentWnd->GetCamWnd()->Camera()->origin[2]);
   fprintf (f, "\"angle\" \"%i\"\n", (int)g_pParentWnd->GetCamWnd()->Camera()->angles[YAW]);
   fprintf (f, "}\n");

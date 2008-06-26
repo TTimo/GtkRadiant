@@ -22,7 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #if defined (__linux__) || defined (__APPLE__)
   #include <gdk/gdkx.h>
   #include <pwd.h>
-  #include <unistd.h> 
+  #include <unistd.h>
   #ifdef __linux__
     #include <mntent.h>
   #endif
@@ -34,6 +34,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #endif
 
 #include <gtk/gtk.h>
+#include <glib/gi18n.h>
 #include "stdafx.h"
 #include <assert.h>
 #include <sys/types.h>
@@ -231,10 +232,10 @@ int loki_getmountpoint(const char *device, char *mntpt, int max_size)
     endmntent( mountfp );
   }
   return(mounted);
-} 
+}
   #endif
 
-/* 
+/*
     This function gets the directory containing the running program.
     argv0 - the 0'th argument to the program
 */
@@ -563,7 +564,7 @@ int main( int argc, char* argv[] ) {
   // (for now I had to create symlinks)
   g_strBitmapsPath = g_strAppPath;
   g_strBitmapsPath += "bitmaps/";
-  
+
   // we will set this right after the game selection is done
   g_strGameToolsPath = g_strAppPath;
 
@@ -631,7 +632,7 @@ int main( int argc, char* argv[] ) {
   if ( pid ) {
 	  fclose( pid );
   }
-  
+
   // a safe check to avoid people running broken installations
   // (otherwise, they run it, crash it, and blame us for not forcing them hard enough to pay attention while installing)
   // make something idiot proof and someone will make better idiots, this may be overkill
@@ -640,7 +641,7 @@ int main( int argc, char* argv[] ) {
 #ifndef _DEBUG
   //#define CHECK_VERSION
 #endif
-#ifdef CHECK_VERSION  
+#ifdef CHECK_VERSION
   // locate and open RADIANT_MAJOR and RADIANT_MINOR
   qboolean bVerIsGood = true;
   Str ver_file_name;
@@ -703,7 +704,7 @@ int main( int argc, char* argv[] ) {
     _exit(-1);
   }
 #endif
-  
+
   g_qeglobals.disable_ini = false;
   g_PrefsDlg.Init();
 
@@ -713,7 +714,7 @@ int main( int argc, char* argv[] ) {
     msg = "WARNING: Could not delete "; msg += g_pidGameFile;
     gtk_MessageBox (NULL, msg, "Radiant", MB_OK | MB_ICONERROR );
   }
-  
+
   /*!
   now the secondary game dependant .pid file
   http://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=297
@@ -867,7 +868,7 @@ int main( int argc, char* argv[] ) {
   gtk_window_set_transient_for( GTK_WINDOW( splash_screen ), GTK_WINDOW( g_pParentWnd->m_pWidget ) );
   gtk_timeout_add( 1000, try_destroy_splash, NULL );
 #endif
-  
+
   g_pParentWnd->GetSynapseServer().DumpActiveClients();
 
   //++timo: temporary debug
@@ -935,7 +936,7 @@ void QE_ExpandBspString (char *bspaction, GPtrArray *out_array, char *mapname)
   // HACK: halflife compiler tools don't support -fs_game
   // HACK: neither does JKII/SoF2/ etc..
   // do we use & have fs_game?
-  
+
   if (g_pGameDescription->mGameFile != "hl.game" &&
       *ValueForKey(g_qeglobals.d_project_entity,"gamename") != '\0')
     {
@@ -1090,9 +1091,9 @@ void RunBsp (char *command)
     {
       strSys += (char *)g_ptr_array_index( sys, i);
 #ifdef _WIN32  // write temp\junk.txt in win32... NOTE: stops output to shell prompt window
-      if (i==0) 
+      if (i==0)
         strSys += " >";
-      else 
+      else
         strSys += " >>";
       strSys += "\"";
       strSys += temppath;
@@ -1124,7 +1125,7 @@ void RunBsp (char *command)
     if (!hFile)
       Error ("Can't write to %s", batpath);
     fprintf (hFile, strSys.GetBuffer());
-    fclose (hFile); 
+    fclose (hFile);
 #endif
 
     Pointfile_Delete ();
@@ -1188,7 +1189,7 @@ int WINAPI QEW_SetupPixelFormat(HDC hDC, qboolean zbuffer )
     0,                              // reserved
     0, 0, 0                         // layer masks ignored
   };                              //
-  int pixelformat = 0;            
+  int pixelformat = 0;
 
   zbuffer = true;
   if ( !zbuffer )
@@ -1198,15 +1199,15 @@ int WINAPI QEW_SetupPixelFormat(HDC hDC, qboolean zbuffer )
   {
     LPVOID lpMsgBuf;
     FormatMessage(
-                 FORMAT_MESSAGE_ALLOCATE_BUFFER | 
-                 FORMAT_MESSAGE_FROM_SYSTEM | 
+                 FORMAT_MESSAGE_ALLOCATE_BUFFER |
+                 FORMAT_MESSAGE_FROM_SYSTEM |
                  FORMAT_MESSAGE_IGNORE_INSERTS,
                  NULL,
                  GetLastError(),
                  MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), // Default language
                  (LPTSTR) &lpMsgBuf,
                  0,
-                 NULL 
+                 NULL
                  );
     Sys_FPrintf (SYS_WRN, "GetLastError: %s", lpMsgBuf);
     Error ("ChoosePixelFormat failed");

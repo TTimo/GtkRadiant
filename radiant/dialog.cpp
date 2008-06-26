@@ -28,6 +28,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "stdafx.h"
 #include <gtk/gtk.h>
+#include <glib/gi18n.h>
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -130,13 +131,13 @@ void Dialog::UpdateData (bool retrieve)
   DLG_DATA *data;
   GSList *lst;
   char buf[32];
-  
+
   if (retrieve)
     {
     for (lst = m_pDataList; lst != NULL; lst = g_slist_next (lst))
       {
       data = (DLG_DATA*)lst->data;
-      
+
       switch (data->type)
         {
         case DLG_CHECK_BOOL:
@@ -181,14 +182,14 @@ void Dialog::UpdateData (bool retrieve)
           char *label;
           const char *entry;
           int i;
-          
+
           *(int*)data->buffer = -1;
           entry = gtk_entry_get_text (GTK_ENTRY (GTK_COMBO (data->object)->entry));
-          
+
           for (i = 0; lst != NULL; lst = g_list_next (lst))
             {
             gtk_label_get (GTK_LABEL (GTK_BIN (lst->data)->child), &label);
-            
+
             if (strcmp (label, entry) == 0)
               {
               *(int*)data->buffer = i;
@@ -249,16 +250,18 @@ void Dialog::UpdateData (bool retrieve)
           break;
         case DLG_COMBO_INT: {
           GList *lst = GTK_LIST (GTK_COMBO (data->object)->list)->children;
-          char *entry = "";
-          
+          char *entry = NULL;
+
           if (*(int*)data->buffer != -1)
             {
             lst = g_list_nth (lst, *(int*)data->buffer);
             if (lst != NULL)
               gtk_label_get (GTK_LABEL (GTK_BIN (lst->data)->child), &entry);
             }
-          
-          gtk_entry_set_text (GTK_ENTRY (GTK_COMBO (data->object)->entry), entry);
+		if (entry)
+			gtk_entry_set_text (GTK_ENTRY (GTK_COMBO (data->object)->entry), entry);
+		else
+			gtk_entry_set_text (GTK_ENTRY (GTK_COMBO (data->object)->entry), "");
           }
 		  break;
 		case DLG_COMBO_BOX_INT: {

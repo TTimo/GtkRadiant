@@ -25,7 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define UNDO_MAJOR "undo"
 
 //start operation
-typedef void (*PFN_UNDOSTART) (char *operation);
+typedef void (*PFN_UNDOSTART) (const char *operation);
 //end operation
 typedef void (*PFN_UNDOEND) (void);
 //add brush to the undo

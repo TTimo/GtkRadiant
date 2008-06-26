@@ -21,6 +21,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define __PRTVIEW_AFX_H__
 
 #include <gtk/gtk.h>
+#include <glib/gi18n.h>
 
 #if defined(__linux__) || defined(__APPLE__)
 #include <GL/glx.h>
@@ -69,8 +70,8 @@ typedef int 	BOOL;
 #define UPDATE_3D (W_CAMERA)
 #define UPDATE_ALL (UPDATE_2D | UPDATE_3D)
 
-int INIGetInt(char *key, int def);
-void INISetInt(char *key, int val, char *comment = NULL);
+int INIGetInt(const char *key, int def);
+void INISetInt(const char *key, int val, const char *comment = NULL);
 
 extern bool interfaces_started;
 

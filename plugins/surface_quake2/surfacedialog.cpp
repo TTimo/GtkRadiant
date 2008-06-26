@@ -29,6 +29,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 
 #include <gtk/gtk.h>
+#include <glib/gi18n.h>
 #include <gdk/gdkkeysyms.h>
 
 #include "surfdlg_plugin.h"
@@ -323,7 +324,7 @@ static void PopulateTextureComboList()
   int num_of_list_items = 0;
 
   blank[0] = 0;
-  
+
   if (texdef_face_list_empty())
   {
     items = g_list_append (items, (gpointer) blank);
@@ -332,7 +333,7 @@ static void PopulateTextureComboList()
   }
   else if ( !is_TextureName_conflicting )
   {
-    temp_texdef_face_list = get_texdef_face_list(); 
+    temp_texdef_face_list = get_texdef_face_list();
     tmp_texdef = (texdef_t *) &get_texdef_face_list()->texdef;
     items = g_list_append( items, (gpointer) tmp_texdef->GetName() );
     // For Texture Entry, activate only on entry change
@@ -358,7 +359,7 @@ static void PopulateTextureComboList()
     // For Texture Entry, activate only on entry change
     strcpy (old_texture_entry, blank);
   }
-  
+
   gtk_combo_set_popdown_strings (GTK_COMBO (texture_combo), items);
   g_list_free(items);
 
@@ -380,7 +381,7 @@ static void GetTexdefInfo_from_Radiant()
   unsigned int count = GetSelectedFaceCountfromBrushes();
   if(count == 0)
     count = GetSelectedFaceCount();
-    
+
   g_texdef_face_vector.resize(count);
 
   if (!texdef_face_list_empty())
@@ -388,9 +389,9 @@ static void GetTexdefInfo_from_Radiant()
     texdef_to_face_t* p = get_texdef_face_list();
     GetSelFacesTexdef( get_texdef_face_list() );
   }
-  
+
   IsFaceConflicting();
-  PopulateTextureComboList(); 
+  PopulateTextureComboList();
   ZeroOffsetValues();
   if ( texdef_face_list_empty() )
     SetFlagButtons_Quake2( get_texdef_face_list() , TRUE);
@@ -440,14 +441,14 @@ void UpdateSurfaceDialog()
 {
   if (!g_bListenUpdate)
     return;
-    
+
   if (!SurfaceInspector)
     return;
 
   // avoid long delays on slow computers
   while (gtk_events_pending ())
     gtk_main_iteration ();
-    
+
   if (g_surfwin)
   {
 #ifdef DBG_SI
@@ -468,7 +469,7 @@ void DoSurface (void)
 #endif
   if (!SurfaceInspector)
     create_SurfaceInspector ();
-  
+
   ShowDlg();
   SetTexMods ();
 }
@@ -555,7 +556,7 @@ void SetTexMods()
 
   if (!g_surfwin)
     return;
-    
+
   pt = &texturewin->texdef;
 
   g_bListenChanged = false;
@@ -563,24 +564,24 @@ void SetTexMods()
   if(strncmp(pt->GetName(), "textures/", 9) != 0)
     texdef_offset.SetName(SHADER_NOT_FOUND);
 
- 
+
   spin = GTK_SPIN_BUTTON (hshift_offset_spinbutton);
   gtk_spin_button_set_value (spin, texdef_offset.shift[0]);
   adjust = gtk_spin_button_get_adjustment (GTK_SPIN_BUTTON (spin));
   adjust->step_increment = l_pIncrement->shift[0];
   gtk_spin_button_set_value (GTK_SPIN_BUTTON(hshift_step_spinbutton), l_pIncrement->shift[0]);
-  
+
   spin = GTK_SPIN_BUTTON (hshift_value_spinbutton);
   adjust = gtk_spin_button_get_adjustment (GTK_SPIN_BUTTON (spin));
   adjust->step_increment = l_pIncrement->shift[0];
-  
+
 
   spin = GTK_SPIN_BUTTON (vshift_offset_spinbutton);
   gtk_spin_button_set_value (spin, texdef_offset.shift[1]);
   adjust = gtk_spin_button_get_adjustment (GTK_SPIN_BUTTON (spin));
   adjust->step_increment = l_pIncrement->shift[1];
   gtk_spin_button_set_value (GTK_SPIN_BUTTON(vshift_step_spinbutton), l_pIncrement->shift[1]);
-  
+
   spin = GTK_SPIN_BUTTON (vshift_value_spinbutton);
   adjust = gtk_spin_button_get_adjustment (GTK_SPIN_BUTTON (spin));
   adjust->step_increment = l_pIncrement->shift[1];
@@ -596,24 +597,24 @@ void SetTexMods()
   adjust = gtk_spin_button_get_adjustment (GTK_SPIN_BUTTON (spin));
   adjust->step_increment = l_pIncrement->scale[0];
 
-  
+
   spin = GTK_SPIN_BUTTON (vscale_offset_spinbutton);
   gtk_spin_button_set_value (spin, texdef_offset.scale[1]);
   adjust = gtk_spin_button_get_adjustment (GTK_SPIN_BUTTON (spin));
   adjust->step_increment = l_pIncrement->scale[1];
   gtk_spin_button_set_value (GTK_SPIN_BUTTON(vscale_step_spinbutton), l_pIncrement->scale[1]);
-  
+
   spin = GTK_SPIN_BUTTON (vscale_value_spinbutton);
   adjust = gtk_spin_button_get_adjustment (GTK_SPIN_BUTTON (spin));
   adjust->step_increment = l_pIncrement->scale[1];
-  
+
 
   spin = GTK_SPIN_BUTTON (rotate_offset_spinbutton);
   gtk_spin_button_set_value (spin, texdef_offset.rotate);
   adjust = gtk_spin_button_get_adjustment (GTK_SPIN_BUTTON (spin));
   adjust->step_increment = l_pIncrement->rotate;
   gtk_spin_button_set_value (GTK_SPIN_BUTTON(rotate_step_spinbutton), l_pIncrement->rotate);
-  
+
   spin = GTK_SPIN_BUTTON (rotate_value_spinbutton);
   adjust = gtk_spin_button_get_adjustment (GTK_SPIN_BUTTON (spin));
   adjust->step_increment = l_pIncrement->rotate;
@@ -665,7 +666,7 @@ void FitAll()
 
 GtkWidget* create_SurfaceInspector (void)
 {
-  
+
   GtkWidget *label;
   GtkWidget *hseparator;
   GtkWidget *eventbox;
@@ -703,7 +704,7 @@ GtkWidget* create_SurfaceInspector (void)
   SurfaceInspector = gtk_window_new (GTK_WINDOW_TOPLEVEL);
   gtk_container_set_border_width (GTK_CONTAINER (SurfaceInspector), 4);
   gtk_window_set_title (GTK_WINDOW (SurfaceInspector), "Surface Inspector");
-  
+
   SetWinPos_from_Prefs(SurfaceInspector);
 
   viewport8 = gtk_viewport_new (NULL, NULL);
@@ -734,7 +735,7 @@ GtkWidget* create_SurfaceInspector (void)
   texture_combo = gtk_combo_new ();
   g_object_set_data (G_OBJECT (GTK_COMBO (texture_combo)->popwin),
                      "KeepMeAround", texture_combo);
-  gtk_combo_disable_activate ( (GtkCombo*) texture_combo);		     
+  gtk_combo_disable_activate ( (GtkCombo*) texture_combo);
   gtk_widget_show (texture_combo);
   gtk_box_pack_start (GTK_BOX (hbox1), texture_combo, TRUE, TRUE, 0);
 
@@ -1035,7 +1036,7 @@ GtkWidget* create_SurfaceInspector (void)
   gtk_spin_button_set_update_policy (GTK_SPIN_BUTTON (vscale_value_spinbutton), GTK_UPDATE_IF_VALID);
   gtk_spin_button_set_wrap (GTK_SPIN_BUTTON (vscale_value_spinbutton), TRUE);
   gtk_widget_set_sensitive( GTK_WIDGET( vscale_value_spinbutton ), FALSE );
-  
+
   rotate_value_spinbutton_adj = gtk_adjustment_new (0.0, -360.0, 360.0, 1.0, 10.0, 10.0);
   rotate_value_spinbutton = gtk_spin_button_new (GTK_ADJUSTMENT (rotate_value_spinbutton_adj), 1, 0);
   gtk_widget_show (rotate_value_spinbutton);
@@ -1046,7 +1047,7 @@ GtkWidget* create_SurfaceInspector (void)
   gtk_spin_button_set_wrap (GTK_SPIN_BUTTON (rotate_value_spinbutton), TRUE);
   gtk_widget_set_sensitive( GTK_WIDGET( rotate_value_spinbutton ), FALSE );
 
-  // Offset Spins		   
+  // Offset Spins
   hshift_offset_spinbutton_adj = gtk_adjustment_new (0.0, -8192.0, 8192.0, 2.0, 8.0, 8.0);
   hshift_offset_spinbutton = gtk_spin_button_new (GTK_ADJUSTMENT (hshift_offset_spinbutton_adj), 0, 2);
   gtk_widget_show (hshift_offset_spinbutton);
@@ -1336,22 +1337,22 @@ GtkWidget* create_SurfaceInspector (void)
   gtk_label_set_justify (GTK_LABEL (label), GTK_JUSTIFY_LEFT);
 
 
-  g_signal_connect ( (gpointer) SurfaceInspector, 
-                      "delete_event", 
-                      G_CALLBACK (delete_event_callback), 
+  g_signal_connect ( (gpointer) SurfaceInspector,
+                      "delete_event",
+                      G_CALLBACK (delete_event_callback),
 		      NULL );
   g_signal_connect ((gpointer) SurfaceInspector, "destroy",
                     G_CALLBACK (gtk_widget_destroy),
                     NULL);
-  
+
   g_signal_connect ((gpointer) texture_combo_entry, "key_press_event",
                     G_CALLBACK (on_texture_combo_entry_key_press_event),
                     NULL);
   g_signal_connect ((gpointer) texture_combo_entry, "activate",
                     G_CALLBACK (on_texture_combo_entry_activate),
                     NULL);
-		    
-  
+
+
   g_signal_connect ((gpointer) hshift_offset_spinbutton, "value_changed",
                     G_CALLBACK (on_hshift_offset_spinbutton_value_changed),
                     NULL);
@@ -1367,7 +1368,7 @@ GtkWidget* create_SurfaceInspector (void)
   g_signal_connect ((gpointer) rotate_offset_spinbutton, "value_changed",
                     G_CALLBACK (on_rotate_offset_spinbutton_value_changed),
                     NULL);
-  
+
   g_signal_connect ((gpointer) hshift_value_spinbutton, "value_changed",
                     G_CALLBACK (on_hshift_value_spinbutton_value_changed),
                     NULL);
@@ -1383,7 +1384,7 @@ GtkWidget* create_SurfaceInspector (void)
   g_signal_connect ((gpointer) rotate_value_spinbutton, "value_changed",
                     G_CALLBACK (on_rotate_value_spinbutton_value_changed),
                     NULL);
-  
+
   g_signal_connect ((gpointer) hshift_step_spinbutton, "value_changed",
                     G_CALLBACK (on_hshift_step_spinbutton_value_changed),
                     NULL);
@@ -1399,14 +1400,14 @@ GtkWidget* create_SurfaceInspector (void)
   g_signal_connect ((gpointer) rotate_step_spinbutton, "value_changed",
                     G_CALLBACK (on_rotate_step_spinbutton_value_changed),
                     NULL);
-  
+
   g_signal_connect ((gpointer) match_grid_button, "clicked",
                     G_CALLBACK (on_match_grid_button_clicked),
                     NULL);
   g_signal_connect ((gpointer) lock_valuechange_togglebutton, "toggled",
                     G_CALLBACK (on_lock_valuechange_togglebutton_toggled),
                     NULL);
-  
+
   g_signal_connect ((gpointer) fit_width_spinbutton, "value_changed",
                     G_CALLBACK (on_fit_width_spinbutton_value_changed),
                     NULL);
@@ -1416,11 +1417,11 @@ GtkWidget* create_SurfaceInspector (void)
   g_signal_connect ((gpointer) fit_button, "clicked",
                     G_CALLBACK (on_fit_button_clicked),
                     NULL);
-  
+
   g_signal_connect ((gpointer) axial_button, "clicked",
                     G_CALLBACK (on_axial_button_clicked),
                     NULL);
-  
+
   g_signal_connect ((gpointer) done_button, "clicked",
                     G_CALLBACK (on_done_button_clicked),
                     NULL);
@@ -1430,8 +1431,8 @@ GtkWidget* create_SurfaceInspector (void)
   g_signal_connect ((gpointer) cancel_button, "clicked",
                     G_CALLBACK (on_cancel_button_clicked),
                     NULL);
-  
-  
+
+
   return SurfaceInspector;
 }
 
@@ -1453,7 +1454,7 @@ void on_texture_combo_entry_activate (GtkEntry *entry, gpointer user_data)
   texdef_t* tmp_orig_texdef;
   texdef_to_face_t* temp_texdef_face_list;
   char text[128] = { 0 };
-  
+
   if (!texdef_face_list_empty() && g_bListenChanged)
   {
     // activate only on entry change
@@ -1464,7 +1465,7 @@ void on_texture_combo_entry_activate (GtkEntry *entry, gpointer user_data)
       if (text[0] <= ' ' || strchr(text, ' '))
         Sys_FPrintf(SYS_WRN, "WARNING: spaces in shader names are not allowed, ignoring '%s'\n", text);
       else
-      {  
+      {
         for (temp_texdef_face_list = get_texdef_face_list(); temp_texdef_face_list; temp_texdef_face_list = temp_texdef_face_list->next)
         {
           tmp_texdef = (texdef_t *) &temp_texdef_face_list->texdef;
@@ -1484,9 +1485,9 @@ static void on_hshift_offset_spinbutton_value_changed (GtkSpinButton *spinbutton
   texdef_t* tmp_texdef;
   texdef_t* tmp_orig_texdef;
   texdef_to_face_t* temp_texdef_face_list;
-  
+
   texdef_offset.shift[0] = gtk_spin_button_get_value ( GTK_SPIN_BUTTON(hshift_offset_spinbutton) );
-  
+
   if (!texdef_face_list_empty() && g_bListenChanged)
   {
     for (temp_texdef_face_list = get_texdef_face_list(); temp_texdef_face_list; temp_texdef_face_list = temp_texdef_face_list->next)
@@ -1507,9 +1508,9 @@ static void on_vshift_offset_spinbutton_value_changed (GtkSpinButton *spinbutton
   texdef_t* tmp_texdef;
   texdef_t* tmp_orig_texdef;
   texdef_to_face_t* temp_texdef_face_list;
-  
+
   texdef_offset.shift[1] = gtk_spin_button_get_value ( GTK_SPIN_BUTTON(vshift_offset_spinbutton) );
-  
+
   if (!texdef_face_list_empty() && g_bListenChanged)
   {
     for (temp_texdef_face_list = get_texdef_face_list(); temp_texdef_face_list; temp_texdef_face_list = temp_texdef_face_list->next)
@@ -1523,7 +1524,7 @@ static void on_vshift_offset_spinbutton_value_changed (GtkSpinButton *spinbutton
     }
     GetTexMods();
   }
-  
+
 }
 
 static void on_hscale_offset_spinbutton_value_changed (GtkSpinButton *spinbutton, gpointer user_data)
@@ -1531,9 +1532,9 @@ static void on_hscale_offset_spinbutton_value_changed (GtkSpinButton *spinbutton
   texdef_t* tmp_texdef;
   texdef_t* tmp_orig_texdef;
   texdef_to_face_t* temp_texdef_face_list;
-  
+
   texdef_offset.scale[0] = gtk_spin_button_get_value ( GTK_SPIN_BUTTON(hscale_offset_spinbutton) );
-  
+
   if (!texdef_face_list_empty() && g_bListenChanged)
   {
     for (temp_texdef_face_list = get_texdef_face_list(); temp_texdef_face_list; temp_texdef_face_list = temp_texdef_face_list->next)
@@ -1547,8 +1548,8 @@ static void on_hscale_offset_spinbutton_value_changed (GtkSpinButton *spinbutton
     }
     GetTexMods();
   }
-  
-  
+
+
 }
 
 static void on_vscale_offset_spinbutton_value_changed (GtkSpinButton *spinbutton, gpointer user_data)
@@ -1556,9 +1557,9 @@ static void on_vscale_offset_spinbutton_value_changed (GtkSpinButton *spinbutton
   texdef_t* tmp_texdef;
   texdef_t* tmp_orig_texdef;
   texdef_to_face_t* temp_texdef_face_list;
-  
+
   texdef_offset.scale[1] = gtk_spin_button_get_value ( GTK_SPIN_BUTTON(vscale_offset_spinbutton) );
-  
+
   if (!texdef_face_list_empty() && g_bListenChanged)
   {
     for (temp_texdef_face_list = get_texdef_face_list(); temp_texdef_face_list; temp_texdef_face_list = temp_texdef_face_list->next)
@@ -1572,7 +1573,7 @@ static void on_vscale_offset_spinbutton_value_changed (GtkSpinButton *spinbutton
     }
     GetTexMods();
   }
-  
+
 }
 
 static void on_rotate_offset_spinbutton_value_changed (GtkSpinButton *spinbutton, gpointer user_data)
@@ -1580,9 +1581,9 @@ static void on_rotate_offset_spinbutton_value_changed (GtkSpinButton *spinbutton
   texdef_t* tmp_texdef;
   texdef_t* tmp_orig_texdef;
   texdef_to_face_t* temp_texdef_face_list;
-  
+
   texdef_offset.rotate = gtk_spin_button_get_value ( GTK_SPIN_BUTTON(rotate_offset_spinbutton) );
-  
+
   if (!texdef_face_list_empty() && g_bListenChanged)
   {
     for (temp_texdef_face_list = get_texdef_face_list(); temp_texdef_face_list; temp_texdef_face_list = temp_texdef_face_list->next)
@@ -1596,7 +1597,7 @@ static void on_rotate_offset_spinbutton_value_changed (GtkSpinButton *spinbutton
     }
     GetTexMods();
   }
- 
+
 }
 
 
@@ -1660,9 +1661,9 @@ static void on_vshift_value_spinbutton_value_changed (GtkSpinButton *spinbutton,
   texdef_t* tmp_texdef;
   texdef_t* tmp_orig_texdef;
   texdef_to_face_t* temp_texdef_face_list;
-  
+
   texdef_SI_values.shift[1]  = gtk_spin_button_get_value ( GTK_SPIN_BUTTON(vshift_value_spinbutton) );
-  
+
   if (!texdef_face_list_empty() && g_bListenChanged)
   {
     for (temp_texdef_face_list = get_texdef_face_list(); temp_texdef_face_list; temp_texdef_face_list = temp_texdef_face_list->next)
@@ -1681,9 +1682,9 @@ static void on_hscale_value_spinbutton_value_changed (GtkSpinButton *spinbutton,
   texdef_t* tmp_texdef;
   texdef_t* tmp_orig_texdef;
   texdef_to_face_t* temp_texdef_face_list;
-  
+
   texdef_SI_values.scale[0] = gtk_spin_button_get_value ( GTK_SPIN_BUTTON(hscale_value_spinbutton) );
-  
+
   if (!texdef_face_list_empty() && g_bListenChanged)
   {
     for (temp_texdef_face_list = get_texdef_face_list(); temp_texdef_face_list; temp_texdef_face_list = temp_texdef_face_list->next)
@@ -1702,9 +1703,9 @@ static void on_vscale_value_spinbutton_value_changed (GtkSpinButton *spinbutton,
   texdef_t* tmp_texdef;
   texdef_t* tmp_orig_texdef;
   texdef_to_face_t* temp_texdef_face_list;
-  
+
   texdef_SI_values.scale[1] = gtk_spin_button_get_value ( GTK_SPIN_BUTTON(vscale_value_spinbutton) );
-  
+
   if (!texdef_face_list_empty() && g_bListenChanged)
   {
     for (temp_texdef_face_list = get_texdef_face_list(); temp_texdef_face_list; temp_texdef_face_list = temp_texdef_face_list->next)
@@ -1723,9 +1724,9 @@ static void on_rotate_value_spinbutton_value_changed (GtkSpinButton *spinbutton,
   texdef_t* tmp_texdef;
   texdef_t* tmp_orig_texdef;
   texdef_to_face_t* temp_texdef_face_list;
-  
+
   texdef_SI_values.rotate = gtk_spin_button_get_value ( GTK_SPIN_BUTTON(rotate_value_spinbutton) );
-  
+
   if (!texdef_face_list_empty() && g_bListenChanged)
   {
     for (temp_texdef_face_list = get_texdef_face_list(); temp_texdef_face_list; temp_texdef_face_list = temp_texdef_face_list->next)

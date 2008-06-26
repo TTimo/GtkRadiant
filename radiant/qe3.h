@@ -43,6 +43,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "qgl.h"
 
 #include <gtk/gtk.h>
+#include <glib/gi18n.h>
 #include <math.h>
 #include <stdlib.h>
 
@@ -141,11 +142,11 @@ vec_t Rad_rint (vec_t in);
 
 double I_FloatTime (void);
 
-void   Error (char *error, ...);
-int    CheckParm (char *check);
+void   Error (const char *error, ...);
+int    CheckParm (const char *check);
 void   ParseCommandLine (char *lpCmdLine);
 
-int    ParseNum (char *str);
+int    ParseNum (const char *str);
 
 char*  COM_Parse (char *data);
 char*  Get_COM_Token();
@@ -273,7 +274,7 @@ bool read_var (const char *filename, const char *section, const char *key, char 
 // entityw.c
 //
 void FillClassList (void);
-bool UpdateEntitySel(eclass_t *pec);	
+bool UpdateEntitySel(eclass_t *pec);
 void SetInspectorMode(int iType);
 void SetSpawnFlags(void);
 void GetSpawnFlags(void);
@@ -367,7 +368,7 @@ qboolean IsBrushSelected(brush_t* bSel);
 
 // curve brushes
 
-void Curve_MakeCurvedBrush (qboolean negative, qboolean top, qboolean bottom, 
+void Curve_MakeCurvedBrush (qboolean negative, qboolean top, qboolean bottom,
 					qboolean s1, qboolean s2, qboolean s3, qboolean s4);
 
 void Curve_Invert (void);
@@ -387,7 +388,7 @@ patchMesh_t* MakeNewPatch();
 brush_t* AddBrushForPatch(patchMesh_t *pm, bool bLinkToWorld = true);
 brush_t* Patch_GenericMesh(int nWidth, int nHeight, int nOrientation = 2, bool bDeleteSource = true, bool bOverride = false);
 //void Patch_ReadFile (char *name);
-//void Patch_WriteFile (char *name); 
+//void Patch_WriteFile (char *name);
 void Patch_BuildPoints (brush_t *b);
 void Patch_Move(patchMesh_t *p, const vec3_t vMove, bool bRebuild = false);
 //++timo had to add a default value for bSnap (see Patch_ApplyMatrix call from Select_ApplyMatrix in select.cpp)
@@ -571,7 +572,7 @@ qboolean IsBrushPrimitMode();
 //
 // eclass.cpp
 //
-#include "ieclass.h"  
+#include "ieclass.h"
 
 /*!
   \todo those are at the eclass manager level, but some documentation about what they do will be helpful
@@ -589,7 +590,7 @@ eclass_t** Get_EClass_E();
 void Set_Eclass_Found(qboolean);
 qboolean Get_Parsing_Single();
 
-// .def loading, builtin module  
+// .def loading, builtin module
 #include "eclass_def.h"
 extern CSynapseBuiltinClientDef eclass_def;
 
@@ -605,7 +606,7 @@ support for one additional/optional entity format
 extern bool g_bHaveEClassExt;
 extern _EClassTable g_EClassExtTable;
 
-  
+
 #include "iplugin.h"
 // for interfaces, we require main plugin header included
 #include "qerplugin.h"

@@ -239,7 +239,7 @@ void Undo_GeneralStart(char *operation)
 	}
 
 	undo = (undo_t *) malloc(sizeof(undo_t));
-	if (!undo) 
+	if (!undo)
     return;
 	memset(undo, 0, sizeof(undo_t));
 	undo->brushlist.next = &undo->brushlist;
@@ -253,7 +253,7 @@ void Undo_GeneralStart(char *operation)
 	undo->prev = g_lastundo;
 	undo->next = NULL;
 	g_lastundo = undo;
-	
+
 	undo->time = Sys_DoubleTime();
 	//
 	if (g_undoId > g_undoMaxSize * 2) g_undoId = 1;
@@ -335,7 +335,7 @@ int Undo_EntityInUndo(undo_t *undo, entity_t *ent)
 Undo_Start
 =============
 */
-void Undo_Start(char *operation)
+void Undo_Start(const char *operation)
 {
 	// spog - disable undo if undo levels = 0
 	if (g_PrefsDlg.m_nUndoLevels == 0)
@@ -345,7 +345,7 @@ void Undo_Start(char *operation)
 #endif
 		return;
 	}
-	
+
 	Undo_ClearRedo();
 	Undo_GeneralStart(operation);
 }
@@ -365,7 +365,7 @@ void Undo_AddBrush(brush_t *pBrush)
 #endif
 		return;
 	}
-	
+
 	if (!g_lastundo)
 	{
 		Sys_Printf("Undo_AddBrushList: no last undo.\n");
@@ -409,7 +409,7 @@ void Undo_AddBrushList(brush_t *brushlist)
 #endif
 		return;
 	}
-	
+
 	brush_t *pBrush;
 
 	if (!g_lastundo)
@@ -461,7 +461,7 @@ void Undo_EndBrush(brush_t *pBrush)
 #endif
 		return;
 	}
-	
+
 
 	if (!g_lastundo)
 	{
@@ -491,7 +491,7 @@ void Undo_EndBrushList(brush_t *brushlist)
 #endif
 		return;
 	}
-	
+
 
 	if (!g_lastundo)
 	{
@@ -524,7 +524,7 @@ void Undo_AddEntity(entity_t *entity)
 #endif
 		return;
 	}
-	
+
 
 	entity_t* pClone;
 
@@ -604,7 +604,7 @@ void Undo_End(void)
 #endif
 		return;
 	}
-	
+
 
 	if (!g_lastundo)
 	{
@@ -642,7 +642,7 @@ void Undo_Undo(boolean bSilent)
 		Sys_Printf("Undo_Undo: undo is disabled.\n");
 		return;
 	}
-	
+
 	undo_t *undo, *redo;
 	brush_t *pBrush, *pNextBrush;
 	entity_t *pEntity, *pNextEntity, *pUndoEntity;
@@ -802,7 +802,7 @@ void Undo_Undo(boolean bSilent)
 	g_undoId--;
 	if (g_undoId <= 0) g_undoId = 2 * g_undoMaxSize;
 	//
-    g_bScreenUpdates = true; 
+    g_bScreenUpdates = true;
     UpdateSurfaceDialog();
     Sys_UpdateWindows(W_ALL);
 }
@@ -934,7 +934,7 @@ void Undo_Redo(void)
 	// free the undo
 	free(redo);
 	//
-    g_bScreenUpdates = true; 
+    g_bScreenUpdates = true;
     UpdateSurfaceDialog();
     Sys_UpdateWindows(W_ALL);
 }

@@ -35,8 +35,8 @@ For abnormal program terminations
 */
 
 /*!
-\todo 
-FIXME the prompt wether to do prefs dialog, may not even be possible 
+\todo
+FIXME the prompt wether to do prefs dialog, may not even be possible
 if the crash happens before the game is loaded
 */
 
@@ -64,16 +64,16 @@ void Error (const char *error, ...)
   if (GetLastError() != 0)
   {
     LPVOID lpMsgBuf;
-    FormatMessage( 
-      FORMAT_MESSAGE_ALLOCATE_BUFFER | 
-      FORMAT_MESSAGE_FROM_SYSTEM | 
+    FormatMessage(
+      FORMAT_MESSAGE_ALLOCATE_BUFFER |
+      FORMAT_MESSAGE_FROM_SYSTEM |
       FORMAT_MESSAGE_IGNORE_INSERTS,
       NULL,
       GetLastError(),
       MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), // Default language
       (LPTSTR) &lpMsgBuf,
       0,
-      NULL 
+      NULL
       );
     strcat( text, "GetLastError: " );
     /*
@@ -146,6 +146,6 @@ void WINAPI Error (char *error, ...)
   va_start (argptr,error);
   vsprintf (text, error,argptr);
   va_end (argptr);
-	
+
 	Error((const char *)text);
 }

@@ -33,14 +33,15 @@ Clean up texture menu.
 */
 
 #ifdef _WIN32
-//#include <gdk/win32/gdkwin32.h> 
-#include <gdk/gdkwin32.h> 
+//#include <gdk/win32/gdkwin32.h>
+#include <gdk/gdkwin32.h>
 #endif
 #if defined (__linux__) || defined (__APPLE__)
 #include <gdk/gdkx.h>
 #include <dirent.h>
 #endif
 #include <gtk/gtk.h>
+#include <glib/gi18n.h>
 #include <assert.h>
 #include <sys/stat.h>
 #include "stdafx.h"
@@ -521,10 +522,10 @@ void BuildShaderList()
       {
         GSList *tmp;
         bool found = false;
-        
+
         // each token should be a shader filename
         sprintf(dirstring, "%s.shader", token);
-        
+
         for (tmp = l_shaderfiles; tmp != NULL; tmp = tmp->next)
         {
           if (!strcmp (dirstring, (char*)tmp->data))
@@ -534,7 +535,7 @@ void BuildShaderList()
             break;
           }
         }
-        
+
         if (!found)
         {
           l_shaderfiles = g_slist_append (l_shaderfiles, strdup (dirstring));
@@ -570,9 +571,6 @@ void FillTextureMenu (GSList** pArray)
   GSList *texdirs_tmp = NULL;
   GSList *p;
   char dirRoot[NAME_MAX];
-  // this is an index used to count the number of texture items (for splitting/avoiding to get out of window)
-  // we start with a != 0 value to compensate for the initial number of items in the texture menu
-  int nMenuCount = 12;
 
   // delete everything
   menu = GTK_WIDGET (g_object_get_data (G_OBJECT (g_qeglobals_gui.d_main_window), "menu_textures"));
@@ -763,11 +761,11 @@ void Texture_ShowDirectory ()
   // if a texture is already in use to represent a shader, ignore it
 
   // need this function "GSList *lst SynapseServer::GetMinorList(char *major_name);"
-  
+
   sprintf (dirstring, "textures/%s", texture_directory);
   g_ImageManager.BeginExtensionsScan();
   const char* ext;
-  while(ext=g_ImageManager.GetNextExtension())
+  while((ext=g_ImageManager.GetNextExtension()) != NULL)
   {
     files = g_slist_concat(files, vfsGetFileList (dirstring, ext));
   }
@@ -863,9 +861,9 @@ void Texture_ResetPosition()
     q = current_texture;
     // if the current texture never found (because // 'show shaders' is off,
     // for example), do nothing
-    if (!q) 
+    if (!q)
       break;
-    
+
     int nHeight = (int)(q->height * ((float)g_PrefsDlg.m_nTextureScale / 100));
     // we have found when texdef->name and the shader name match
     // NOTE: as everywhere else for our comparisons, we are not case sensitive
@@ -877,7 +875,7 @@ void Texture_ResetPosition()
         break;
       }
       // if the bottom of our selected texture will fit with origin 0, use that
-      // to prevent scrolling uglyness (stuff scrolled off screen when 
+      // to prevent scrolling uglyness (stuff scrolled off screen when
       // everything would fit)
       if ( -(y -nHeight-2*FONT_HEIGHT) <  g_qeglobals.d_texturewin.height) {
         g_qeglobals.d_texturewin.originy = 0;
@@ -1372,7 +1370,7 @@ void SelectTexture (int mx, int my, bool bShift, bool bFitScale)
       return;
     }
   }
-  
+
   Sys_Status("Did not select a texture", 0);
 }
 

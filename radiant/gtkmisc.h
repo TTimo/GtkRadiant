@@ -2,30 +2,30 @@
 Copyright (c) 2001, Loki software, inc.
 All rights reserved.
 
-Redistribution and use in source and binary forms, with or without modification, 
+Redistribution and use in source and binary forms, with or without modification,
 are permitted provided that the following conditions are met:
 
-Redistributions of source code must retain the above copyright notice, this list 
+Redistributions of source code must retain the above copyright notice, this list
 of conditions and the following disclaimer.
 
 Redistributions in binary form must reproduce the above copyright notice, this
 list of conditions and the following disclaimer in the documentation and/or
 other materials provided with the distribution.
 
-Neither the name of Loki software nor the names of its contributors may be used 
-to endorse or promote products derived from this software without specific prior 
-written permission. 
+Neither the name of Loki software nor the names of its contributors may be used
+to endorse or promote products derived from this software without specific prior
+written permission.
 
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS'' 
-AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
-IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE 
-DISCLAIMED. IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE FOR ANY 
-DIRECT,INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES 
-(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; 
-LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON 
-ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT 
-(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS 
-SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE FOR ANY
+DIRECT,INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #ifndef _GTK_MISC_H_
@@ -62,14 +62,14 @@ gint widget_delete_hide (GtkWidget *widget);
 // GdkPixmap **gdkpixmap, GdkBitmap **mask
 bool WINAPI load_plugin_bitmap (const char* filename, void **gdkpixmap, void **mask);
 void load_pixmap (const char* filename, GtkWidget* widget, GdkPixmap **gdkpixmap, GdkBitmap **mask);
-GtkWidget* new_pixmap (GtkWidget* widget, char* filename);
+GtkWidget* new_pixmap (GtkWidget* widget, const char* filename);
 
 GtkWidget* menu_separator (GtkWidget *menu);
 GtkWidget* menu_tearoff (GtkWidget *menu);
-GtkWidget* create_sub_menu_with_mnemonic (GtkWidget *bar, char *mnemonic);
-GtkWidget* create_menu_item_with_mnemonic (GtkWidget *menu, gchar *mnemonic, GtkSignalFunc func, int id);
-GtkWidget* create_check_menu_item_with_mnemonic (GtkWidget *menu, gchar *mnemonic, GtkSignalFunc func, int id, gboolean active);
-GtkWidget* create_radio_menu_item_with_mnemonic (GtkWidget *menu, GtkWidget *last, gchar *mnemonic, GtkSignalFunc func, int id, gboolean state);
+GtkWidget* create_sub_menu_with_mnemonic (GtkWidget *bar, const gchar *mnemonic);
+GtkWidget* create_menu_item_with_mnemonic (GtkWidget *menu, const gchar *mnemonic, GtkSignalFunc func, int id);
+GtkWidget* create_check_menu_item_with_mnemonic (GtkWidget *menu, const gchar *mnemonic, GtkSignalFunc func, int id, gboolean active);
+GtkWidget* create_radio_menu_item_with_mnemonic (GtkWidget *menu, GtkWidget *last, const gchar *mnemonic, GtkSignalFunc func, int id, gboolean state);
 GtkWidget* create_menu_in_menu_with_mnemonic (GtkWidget *menu, const gchar *mnemonic);
 
 

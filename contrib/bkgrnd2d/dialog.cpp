@@ -28,6 +28,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 //
 
 #include <gtk/gtk.h>
+#include <glib/gi18n.h>
 
 #include "bkgrnd2d.h"
 #include "dialog.h"
@@ -104,12 +105,12 @@ void CBackgroundDialogPage::Browse()
 	const char *ct;
 	const char *newfile;
 	char *t;
-	
+
 	//TODO GetMapName saves the map. eeep!
 	//also with no map, returns unnamed.map, otherwise returns full path
 //	Syn_Printf(MSG_PREFIX "GetMapName() %s\n",
 //				g_FuncTable.m_pfnGetMapName());
-	
+
 	ct = g_FuncTable.m_pfnReadProjectKey("basepath");
 	// TODO shouldn't need this stuff
 	if(!ct || !strlen(ct)) {
@@ -123,7 +124,7 @@ void CBackgroundDialogPage::Browse()
 	}
 
 	strcpy(browsedir,ct);
-	// make sure we have a trailing / 
+	// make sure we have a trailing /
 	if(browsedir[strlen(browsedir) - 1] != '/')
 		strcat(browsedir,"/");
 
@@ -136,12 +137,12 @@ void CBackgroundDialogPage::Browse()
 
 		// lop off the file part
 		t = browsedir + strlen(browsedir) - 1;
-		while (t != browsedir && *t != '/') 
+		while (t != browsedir && *t != '/')
 			t--;
 		*t = 0;
 	}
 	Syn_Printf(MSG_PREFIX "browse directory %s\n",browsedir);
-	
+
 //does NOT need freeing contrary to include/qerplugin.h comments
 //TODO bug/patch for comments
 //TODO patern gets fucked up sometimes if empty
@@ -202,7 +203,7 @@ CBackgroundDialogPage::CBackgroundDialogPage(VIEWTYPE vt )
 			break;
 	}
 // A vbox to hold everything
-	m_pWidget = gtk_vbox_new(FALSE,0); 
+	m_pWidget = gtk_vbox_new(FALSE,0);
 // Frame for file row
 	frame = gtk_frame_new("File");
 	gtk_box_pack_start (GTK_BOX (m_pWidget),frame, FALSE, FALSE, 2);
@@ -226,7 +227,7 @@ CBackgroundDialogPage::CBackgroundDialogPage(VIEWTYPE vt )
 	gtk_box_pack_start (GTK_BOX (hbox),w, FALSE, FALSE, 5);
 	gtk_tooltips_set_tip (pTooltips, w, "Select a file", NULL);
   gtk_widget_show (w);
-	
+
 	w = gtk_button_new_with_label ("Reload");
 	g_signal_connect (G_OBJECT (w), "clicked", G_CALLBACK (reload_callback),
                                                               (gpointer)this);
@@ -348,7 +349,7 @@ void InitBackgroundDialog()
 	gtk_box_pack_start (GTK_BOX (GTK_DIALOG(pDialogWnd)->vbox), pNotebook, TRUE, TRUE, 0);
 
   gtk_widget_show ( pNotebook );
-	
+
 	gtk_widget_realize( pDialogWnd );
 }
 

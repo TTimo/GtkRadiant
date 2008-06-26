@@ -50,19 +50,19 @@ some portability related code should be moved to synapse (such as the GUID stuff
 #include "misc_def.h"
 #endif
 
-// the editor will look for plugins in two places, the plugins path 
+// the editor will look for plugins in two places, the plugins path
 // under the application path, and the path under the basepath as defined
 // in the project (.qe4) file.
 //
 // you can drop any number of new texture, model format DLL's in the standard plugin path
-// but only one plugin that overrides map loading/saving, surface dialog, surface flags, etc.. 
-// should be used at one time.. if multiples are loaded then the last one loaded will be the 
+// but only one plugin that overrides map loading/saving, surface dialog, surface flags, etc..
+// should be used at one time.. if multiples are loaded then the last one loaded will be the
 // active one
 //
 // type of services the plugin supplies, pass any combo of these flags
 // it is assumed the plugin will have a matching function as defined below
 // to correlate to the implied functionality
-// 
+//
 
 #define RADIANT_MAJOR "radiant"
 
@@ -82,9 +82,9 @@ some portability related code should be moved to synapse (such as the GUID stuff
 struct _QERTextureInfo
 {
   char m_TextureExtension[QER_MAX_NAMELEN];   // the extension these textures have
-  qboolean m_bHiColor;    // if textures are NOT high color, the default 
+  qboolean m_bHiColor;    // if textures are NOT high color, the default
                       // palette (as described inthe qe4 file will be used for gamma correction)
-                      // if they are high color, gamma and shading are computed on the fly 
+                      // if they are high color, gamma and shading are computed on the fly
                       // based on the rgba data
   //--bool m_bIsShader;   // will probably do q3 shaders this way when i merge
   qboolean m_bWadStyle;   // if this is true, the plugin will be presented with the texture path
@@ -95,7 +95,7 @@ struct _QERTextureInfo
 struct _QERTextureLoad    // returned by a plugin
 {
   _QERTextureLoad()
-  { 
+  {
     memset(reinterpret_cast<void*>(this), 0, sizeof(_QERTextureLoad));
   };
 
@@ -164,7 +164,7 @@ typedef void* (WINAPI *PFN_QERPLUG_GETTEXTUREINFO)();
 // transparency (for water, fog, lava, etc.. ) can be emulated in the editor
 // by passing in appropriate alpha data or by setting the appropriate surface flags
 // expected by q2 (which the editor will use.. )
-typedef void (WINAPI *PFN_QERPLUG_LOADTEXTURE)(const char* pFilename); 
+typedef void (WINAPI *PFN_QERPLUG_LOADTEXTURE)(const char* pFilename);
 
 // v1.6
 typedef void* (WINAPI *PFN_QERPLUG_GETSURFACEFLAGS)();
@@ -206,7 +206,7 @@ typedef void (* PFN_QERAPP_LOADIMAGE) (const char *name, unsigned char **pic, in
 typedef struct moduleentry_s {
   const GUID *interface_GUID;
   const char* interface_name;
-  const char* version_name; 
+  const char* version_name;
 } moduleentry_t;
 
 #define QERPLUG_LISTINTERFACES "QERPlug_ListInterfaces"
@@ -268,16 +268,16 @@ typedef char* (WINAPI* PFN_QERAPP_PROFILE_LOADSTR) (const char *filename, const 
 // 1. the list that contains brushes a plugin creates using CreateBrushHandle
 // 2. the selected brush list (brushes the user has selected)
 // 3. the active brush list (brushes in the map that are not selected)
-// 
+//
 // In general, the same things can be done to brush handles (face manip, delete brushhandle, etc.. ) in each
-// list. There are a few exceptions. 
-// 1. You cannot commit a selected or active brush handle to the map. This is because it is already in the map. 
+// list. There are a few exceptions.
+// 1. You cannot commit a selected or active brush handle to the map. This is because it is already in the map.
 // 2. You cannot bind brush handles from the selected or active brush list to an entity. As of v1.0 of the plugins
 // the only way for a plugin to create entities is to create a brush handles (or a list of handles) and then bind
 // them to an entity. This will commit the brush(s) and/or the entities to the map as well.
-// 
+//
 // To use the active or selected brush lists, you must first allocate them (which returns a count) and then
-// release them when you are finish manipulating brushes in one of those lists. 
+// release them when you are finish manipulating brushes in one of those lists.
 
 //++timo NOTE : the #defines here are never used, but can help finding where things are done in the editor
 #if 0
@@ -311,7 +311,7 @@ typedef char* (WINAPI* PFN_QERAPP_PROFILE_LOADSTR) (const char *filename, const 
 #define QERAPP_GETCURRENTTEXTURE "QERApp_GetCurrentTexture"
 #define QERAPP_SETCURRENTTEXTURE "QERApp_SetCurrentTexture"
 
-// selection 
+// selection
 #define QERAPP_DELETESELECTION "QERApp_DeleteSelection"
 #define QERAPP_SELECTBRUSH "QERApp_SelectBrush"					// PGM
 #define QERAPP_DESELECTBRUSH "QERApp_DeselectBrush"				// PGM
@@ -347,8 +347,8 @@ typedef char* (WINAPI* PFN_QERAPP_PROFILE_LOADSTR) (const char *filename, const 
 
 // FIXME: new primtives do not work in v1.00
 // primitives are new types of things in the map
-// for instance, the Q3 curves could have been done as 
-// primitives instead of being built in 
+// for instance, the Q3 curves could have been done as
+// primitives instead of being built in
 // it will be a plugins responsibility to hook the map load and save funcs to load
 // and/or save any additional data (like new primitives of some type)
 // the editor will call each registered renderer during the rendering process to repaint
@@ -356,10 +356,10 @@ typedef char* (WINAPI* PFN_QERAPP_PROFILE_LOADSTR) (const char *filename, const 
 // each primitive object has a temporary sibling brush that lives in the map
 // FIXME: go backwards on this a bit.. orient it more towards the temp brush mode as it will be cleaner
 // basically a plugin will hook the map load and save and will add the primitives to the map.. this will
-// produce a temporary 'primitive' brush and the appropriate renderer will be called as well as the 
+// produce a temporary 'primitive' brush and the appropriate renderer will be called as well as the
 // edit handler (for edge drags, sizes, rotates, etc.. ) and the vertex maker will be called when vertex
 // mode is attemped on the brush.. there will need to be a GetPrimitiveBounds callback in the edit handler
-// so the brush can resize appropriately as needed.. this might be the plugins responsibility to set the 
+// so the brush can resize appropriately as needed.. this might be the plugins responsibility to set the
 // sibling brushes size.. it will then be the plugins responsibility to hook map save to save the primitives
 // as the editor will discard any temp primitive brushes.. (there probably needs to be some kind of sanity check
 // here as far as keeping the brushes and the plugin in sync.. i suppose the edit handler can deal with all of that
@@ -495,7 +495,7 @@ typedef void (WINAPI * PFN_QERAPP_GETDISPATCHPARAMS)(vec3_t vMin, vec3_t vMax, b
 
 typedef int (WINAPI * PFN_QERAPP_REQUESTINTERFACE)( REFGUID, void* );
 // use this one for errors, Radiant will stop after the "edit preferences" dialog
-typedef void (WINAPI * PFN_QERAPP_ERROR)(char* pMsg, ...);
+typedef void (WINAPI * PFN_QERAPP_ERROR)(const char* pMsg, ...);
 // use to gain read access to the project epairs
 // FIXME: removed, accessed through QERPlug_RegisterPluginEntities with the IEpair interface
 // typedef void (WINAPI* PFN_QERAPP_GETPROJECTEPAIR)(epair_t **);
@@ -610,7 +610,7 @@ typedef const char* (* PFN_QERAPP_READPROJECTKEY)(const char* key);
 
 typedef char* (* PFN_GETMAPFILENAME)();
 
-typedef bfilter_t* (* PFN_QERPLUG_FILTERADD)(int type, int bmask, char *str, int exclude);
+typedef bfilter_t* (* PFN_QERPLUG_FILTERADD)(int type, int bmask, const char *str, int exclude);
 
 typedef void (* PFN_QERPLUG_FILTERACTIVATE) (void);
 

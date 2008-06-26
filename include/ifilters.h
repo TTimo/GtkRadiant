@@ -30,7 +30,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define FILTER_MAJOR "filter"
 
 // adds a new filter
-typedef bfilter_t* (* PFN_QERPLUG_FILTERADD) (int type, int bmask, char *str, int exclude);
+typedef bfilter_t* (* PFN_QERPLUG_FILTERADD) (int type, int bmask, const char *str, int exclude);
 
 // performs the filtering
 typedef void (* PFN_QERPLUG_FILTERACTIVATE) (void);

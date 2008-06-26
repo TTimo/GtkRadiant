@@ -322,7 +322,7 @@ typedef struct face_s
 	vec3_t					planepts[3];
 	texdef_t				texdef;
 	plane_t					plane;
-	
+
 	// Nurail: Face Undo
 	int				undoId;
 	int				redoId;
@@ -385,9 +385,9 @@ typedef struct {
 #define PATCH_BEZIER      0x00000000    // default bezier
 #define PATCH_BSPLINE     0x10000000    // bspline
 
-#define PATCH_TYPEMASK     0x00000fff    // 
-#define PATCH_BTYPEMASK    0x0000f000    // 
-#define PATCH_STYLEMASK    0xffff0000    // 
+#define PATCH_TYPEMASK     0x00000fff    //
+#define PATCH_BTYPEMASK    0x0000f000    //
+#define PATCH_STYLEMASK    0xffff0000    //
 
 typedef struct {
   vec3_t	xyz;
@@ -468,7 +468,7 @@ typedef struct brush_s
   // all are derived from brush_faces
   qboolean	patchBrush;
   qboolean	hiddenBrush;
-  
+
   //int nPatchID;
 
   patchMesh_t *pPatch;
@@ -575,8 +575,8 @@ extern	eclass_t	*eclass;
 #define W_CAMERA_IFON 0x0100
 #define W_XZ          0x0200  //--| only used for patch vertex manip stuff
 #define W_YZ          0x0400  //--|
-#define W_GROUP       0x0800 
-#define W_MEDIA       0x1000 
+#define W_GROUP       0x0800
+#define W_MEDIA       0x1000
 #define	W_ALL			0xFFFFFFFF
 
 // used in some Drawing routines
@@ -693,7 +693,7 @@ struct entity_interfaces_t
   IEdit *pEdit;
 };
 // MODEL END
-   
+
 typedef struct entity_s
 {
   struct entity_s	*prev, *next;
@@ -756,7 +756,7 @@ struct bfilter_t //c++ style
 							// 5=brush->face->texdef.flags (q2)
 							// 6=brush->face->texdef.contents (q2)
 	int		mask;
-	char	*string;
+	const char	*string;
 	bool	active;
 };
 
@@ -807,9 +807,9 @@ typedef struct
   qboolean  d_showgrid;
   float     d_gridsize;
   qboolean  d_bSmallGrid; // we use this flag to hack our way into editing of <1 grids
-	
+
   int      d_num_entities;
-	
+
   entity_t *d_project_entity;
 
   // defines the boundaries of the current work area
@@ -839,24 +839,24 @@ typedef struct
   xy_t         d_xyOld;
 
   SavedInfo_t  d_savedinfo;
-	
+
   int          d_workcount;
-	
+
   // connect entities uses the last two brushes selected
   int	         d_select_count;
   brush_t      *d_select_order[2];
   vec3_t       d_select_translate;    // for dragging w/o making new display lists
   select_t     d_select_mode;
-	
+
   int          d_parsed_brushes;
-	
+
   qboolean     show_blocks;
   int		       blockSize;
 
   // NOTE TTimo
   // a lot of this data should be in a property bag and available to the other modules through an API
   // this is generated from game configuration and the project settings, and should be still be part of it
-	
+
   // tells if we are internally using brush primitive (texture coordinates and map format)
   // this is a shortcut for IntForKey( g_qeglobals.d_project_entity, "brush_primit" )
   // NOTE: must keep the two ones in sync
@@ -877,17 +877,17 @@ typedef struct
   qboolean     bNeedConvert;
   qboolean     bOldBrushes;
   qboolean     bPrimitBrushes;
-	
+
   vec3_t       d_vAreaTL;
   vec3_t       d_vAreaBR;
-	
+
   // tells if we are using .INI files for prefs instead of registry
   qboolean	use_ini;
   // even in .INI mode we use the registry for all void* prefs
   char		use_ini_registry[64];
   // disabled all INI / registry read write .. used when shutting down after registry cleanup
   qboolean disable_ini;
-	
+
   // tells we are using a BSP frontend plugin
   qboolean	bBSPFrontendPlugin;
 
@@ -904,7 +904,7 @@ typedef struct
   // http://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=623
   bool m_bOpenGLCompressionSupported;
   bool m_bS3CompressionSupported;
-  
+
   // set to true after OpenGL has been initialized and extensions have been tested
   bool m_bOpenGLReady;
 

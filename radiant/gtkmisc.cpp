@@ -2,30 +2,30 @@
 Copyright (c) 2001, Loki software, inc.
 All rights reserved.
 
-Redistribution and use in source and binary forms, with or without modification, 
+Redistribution and use in source and binary forms, with or without modification,
 are permitted provided that the following conditions are met:
 
-Redistributions of source code must retain the above copyright notice, this list 
+Redistributions of source code must retain the above copyright notice, this list
 of conditions and the following disclaimer.
 
 Redistributions in binary form must reproduce the above copyright notice, this
 list of conditions and the following disclaimer in the documentation and/or
 other materials provided with the distribution.
 
-Neither the name of Loki software nor the names of its contributors may be used 
-to endorse or promote products derived from this software without specific prior 
-written permission. 
+Neither the name of Loki software nor the names of its contributors may be used
+to endorse or promote products derived from this software without specific prior
+written permission.
 
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS'' 
-AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
-IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE 
-DISCLAIMED. IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE FOR ANY 
-DIRECT,INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES 
-(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; 
-LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON 
-ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT 
-(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS 
-SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE FOR ANY
+DIRECT,INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 //
@@ -39,7 +39,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #endif
 
 #include <gtk/gtk.h>
-
+#include <glib/gi18n.h>
 
 #ifdef _WIN32
 #include <gdk/gdkwin32.h>
@@ -106,7 +106,7 @@ void win32_get_window_pos(GtkWidget *widget, gint *x, gint *y)
   }
 #ifdef DBG_WINDOWPOS
   Sys_Printf("win32_get_window_pos %p %d,%d\n",widget,*x,*y);
-#endif	
+#endif
 }
 #endif
 
@@ -318,7 +318,7 @@ unsigned char *load_bitmap_file (const char* filename, guint16 *width, guint16 *
 		return NULL;
 	  }
 
-	  rc = fread(&g, 1, 1, fp); 
+	  rc = fread(&g, 1, 1, fp);
 	  m_bytesRead++;
 	  if (rc!=1)
 	  {
@@ -327,7 +327,7 @@ unsigned char *load_bitmap_file (const char* filename, guint16 *width, guint16 *
 		return NULL;
 	  }
 
-	  rc = fread(&r, 1, 1, fp); 
+	  rc = fread(&r, 1, 1, fp);
 	  m_bytesRead++;
 	  if (rc != 1)
 	  {
@@ -336,7 +336,7 @@ unsigned char *load_bitmap_file (const char* filename, guint16 *width, guint16 *
 		return NULL;
 	  }
 
-	  rc = fread(&dummy, 1, 1, fp); 
+	  rc = fread(&dummy, 1, 1, fp);
 	  m_bytesRead++;
 	  if (rc != 1)
 	  {
@@ -372,7 +372,7 @@ unsigned char *load_bitmap_file (const char* filename, guint16 *width, guint16 *
   imagebits = (unsigned char *)malloc(w * h * 3);
   long row_size = w * 3;
 
-  if (imagebits != NULL) 
+  if (imagebits != NULL)
   {
 	  *width = w;
 	  *height = h;
@@ -386,7 +386,7 @@ unsigned char *load_bitmap_file (const char* filename, guint16 *width, guint16 *
 	    for (row = bmHeight - 1; row >= 0; row--)
 	    {
 		    // which row are we working on?
-		    rowOffset = (long unsigned)row * row_size;						      
+		    rowOffset = (long unsigned)row * row_size;
 
 		    if (bmBitsPixel == 24)
 		    {
@@ -477,13 +477,13 @@ unsigned char *load_bitmap_file (const char* filename, guint16 *width, guint16 *
 	    unsigned char c, c1 = 0, *pp;
 	    row = 0;
 	    pp = outbuf + (bmHeight - 1) * bmWidth * 3;
-    
+
 	    if (bmBitsPixel == 8)
 	    {
 		    while (row < bmHeight)
 		    {
 		      c = getc(fp);
-    	
+
 		      if (c)
 		      {
 			      // encoded mode
@@ -524,7 +524,7 @@ unsigned char *load_bitmap_file (const char* filename, guint16 *width, guint16 *
 				        *pp = colormap[c1].rgbGreen; pp++;
 				        *pp = colormap[c1].rgbBlue; pp++;
 			        }
-        
+
 			        if (c & 1)
 				      getc(fp); // odd length run: read an extra pad byte
 			      }
@@ -536,7 +536,7 @@ unsigned char *load_bitmap_file (const char* filename, guint16 *width, guint16 *
 		    while (row < bmHeight)
 		    {
 		      c = getc(fp);
-      
+
 		      if (c)
 		      {
 			      // encoded mode
@@ -552,7 +552,7 @@ unsigned char *load_bitmap_file (const char* filename, guint16 *width, guint16 *
 		      {
 			      // c==0x00,  escape codes
 			      c = getc(fp);
-        
+
 			      if (c == 0x00) // end of line
 			      {
 			        row++;
@@ -579,7 +579,7 @@ unsigned char *load_bitmap_file (const char* filename, guint16 *width, guint16 *
 				        *pp = colormap[(i&1) ? (c1 & 0x0f) : ((c1>>4)&0x0f)].rgbGreen; pp++;
 				        *pp = colormap[(i&1) ? (c1 & 0x0f) : ((c1>>4)&0x0f)].rgbBlue; pp++;
 			        }
-        
+
 			        if (((c & 3) == 1) || ((c & 3) == 2))
 				      getc(fp); // odd length run: read an extra pad byte
             }
@@ -589,7 +589,7 @@ unsigned char *load_bitmap_file (const char* filename, guint16 *width, guint16 *
 	  }
 	  if (colormap)
 	    delete [] colormap;
-    
+
 	  fclose(fp);
   }
   return imagebits;
@@ -686,7 +686,7 @@ void load_pixmap (const char* filename, GtkWidget* widget, GdkPixmap **gdkpixmap
   if (*gdkpixmap == NULL)
   {
     printf("gdkpixmap was null\n");
-    char *dummy[] = { "1 1 1 1", "  c None", " " };
+    gchar *dummy[] = { "1 1 1 1", "  c None", " " };
     printf("calling gdk_pixmap_create_from_xpm_d\n");
     *gdkpixmap = gdk_pixmap_create_from_xpm_d (gdk_get_default_root_window(), mask, NULL, dummy);
   }
@@ -715,17 +715,17 @@ bool WINAPI load_plugin_bitmap (const char* filename, void **gdkpixmap, void **m
 
     if (*gdkpixmap == NULL)
     {
-      
+
       // look in core modules
       str = g_strAppPath;
       str += g_strModulesDir;
       str += "bitmaps/";
       str += filename;
       bmp_to_pixmap (str.GetBuffer (), (GdkPixmap **)gdkpixmap, (GdkBitmap **)mask);
-      
+
       if (*gdkpixmap == NULL)
       {
-        char *dummy[] = { "1 1 1 1", "  c None", " " };
+        gchar *dummy[] = { "1 1 1 1", "  c None", " " };
         *gdkpixmap = gdk_pixmap_create_from_xpm_d (gdk_get_default_root_window(), (GdkBitmap **)mask, NULL, dummy);
         return false;
       }
@@ -735,7 +735,7 @@ bool WINAPI load_plugin_bitmap (const char* filename, void **gdkpixmap, void **m
 }
 
 // Load a xpm file and return a pixmap widget.
-GtkWidget* new_pixmap (GtkWidget* widget, char* filename)
+GtkWidget* new_pixmap (GtkWidget* widget, const char* filename)
 {
   GdkPixmap *gdkpixmap;
   GdkBitmap *mask;
@@ -748,7 +748,7 @@ GtkWidget* new_pixmap (GtkWidget* widget, char* filename)
   gdk_drawable_unref (mask);
 
   return pixmap;
-} 
+}
 
 // =============================================================================
 // Menu stuff
@@ -770,8 +770,8 @@ GtkWidget* menu_tearoff (GtkWidget *menu)
   gtk_widget_show (menu_item);
   return menu_item;
 }
- 
-GtkWidget* create_sub_menu_with_mnemonic (GtkWidget *bar, gchar *mnemonic)
+
+GtkWidget* create_sub_menu_with_mnemonic (GtkWidget *bar, const gchar *mnemonic)
 {
   GtkWidget *item, *sub_menu;
 
@@ -787,7 +787,7 @@ GtkWidget* create_sub_menu_with_mnemonic (GtkWidget *bar, gchar *mnemonic)
 
 extern void AddMenuItem (GtkWidget* menu, unsigned int id);
 
-GtkWidget* create_menu_item_with_mnemonic (GtkWidget *menu, gchar *mnemonic, GtkSignalFunc func, int id)
+GtkWidget* create_menu_item_with_mnemonic (GtkWidget *menu, const gchar *mnemonic, GtkSignalFunc func, int id)
 {
   GtkWidget *item;
 
@@ -801,7 +801,7 @@ GtkWidget* create_menu_item_with_mnemonic (GtkWidget *menu, gchar *mnemonic, Gtk
   return item;
 }
 
-GtkWidget* create_check_menu_item_with_mnemonic (GtkWidget *menu, gchar *mnemonic, GtkSignalFunc func, int id, gboolean active)
+GtkWidget* create_check_menu_item_with_mnemonic (GtkWidget *menu, const gchar *mnemonic, GtkSignalFunc func, int id, gboolean active)
 {
   GtkWidget *item;
 
@@ -816,7 +816,7 @@ GtkWidget* create_check_menu_item_with_mnemonic (GtkWidget *menu, gchar *mnemoni
   return item;
 }
 
-GtkWidget* create_radio_menu_item_with_mnemonic (GtkWidget *menu, GtkWidget *last, gchar *mnemonic, GtkSignalFunc func, int id, gboolean state)
+GtkWidget* create_radio_menu_item_with_mnemonic (GtkWidget *menu, GtkWidget *last, const gchar *mnemonic, GtkSignalFunc func, int id, gboolean state)
 {
   GtkWidget *item;
   GSList *group = (GSList*)NULL;
@@ -922,7 +922,7 @@ int WINAPI gtk_MessageBox (void *parent, const char* lpText, const char* lpCapti
   hbox = gtk_hbox_new (FALSE, 10);
   gtk_box_pack_start (GTK_BOX (vbox), hbox, FALSE, FALSE, 2);
   gtk_widget_show (hbox);
- 
+
   if (mode == MB_OK)
   {
     w = gtk_button_new_with_label ("Ok");
@@ -964,13 +964,13 @@ int WINAPI gtk_MessageBox (void *parent, const char* lpText, const char* lpCapti
     GTK_WIDGET_SET_FLAGS (w, GTK_CAN_DEFAULT);
     gtk_widget_grab_default (w);
     gtk_widget_show (w);
- 
+
     w = gtk_button_new_with_label ("No");
     gtk_box_pack_start (GTK_BOX (hbox), w, TRUE, TRUE, 0);
     gtk_signal_connect (GTK_OBJECT (w), "clicked",
                         GTK_SIGNAL_FUNC (dialog_button_callback), GINT_TO_POINTER (IDNO));
     gtk_widget_show (w);
- 
+
     w = gtk_button_new_with_label ("Cancel");
     gtk_box_pack_start (GTK_BOX (hbox), w, TRUE, TRUE, 0);
     gtk_signal_connect (GTK_OBJECT (w), "clicked",
@@ -987,7 +987,7 @@ int WINAPI gtk_MessageBox (void *parent, const char* lpText, const char* lpCapti
     GTK_WIDGET_SET_FLAGS (w, GTK_CAN_DEFAULT);
     gtk_widget_grab_default (w);
     gtk_widget_show (w);
- 
+
     w = gtk_button_new_with_label ("No");
     gtk_box_pack_start (GTK_BOX (hbox), w, TRUE, TRUE, 0);
     gtk_signal_connect (GTK_OBJECT (w), "clicked",
@@ -1037,7 +1037,7 @@ static void file_sel_callback (GtkWidget *widget, gpointer data)
   parent = gtk_widget_get_toplevel (widget);
   loop = (int*)g_object_get_data (G_OBJECT (parent), "loop");
   success = (bool*)g_object_get_data (G_OBJECT (parent), "success");
-  
+
   if ((int)data == IDOK)
     *success = true;
 
@@ -1045,18 +1045,18 @@ static void file_sel_callback (GtkWidget *widget, gpointer data)
   else
     Sys_Printf("file_sel_callback != IDOK\n");
 #endif
-  
+
   *loop = 0;
 }
 
 #ifdef _WIN32
 #include <commdlg.h>
-static OPENFILENAME ofn;       /* common dialog box structure   */ 
-static char szDirName[MAX_PATH];    /* directory string              */ 
-static char szFile[MAX_PATH];       /* filename string               */ 
-static char szFileTitle[MAX_PATH];  /* file title string             */ 
-static int i, cbString;        /* integer count variables       */ 
-static HANDLE hf;              /* file handle                   */ 
+static OPENFILENAME ofn;       /* common dialog box structure   */
+static char szDirName[MAX_PATH];    /* directory string              */
+static char szFile[MAX_PATH];       /* filename string               */
+static char szFileTitle[MAX_PATH];  /* file title string             */
+static int i, cbString;        /* integer count variables       */
+static HANDLE hf;              /* file handle                   */
 #else
 static char szFile[QER_MAX_NAMELEN];
 #endif
@@ -1107,7 +1107,7 @@ public:
     ConstructGTKMasks();
     ConstructWin32Filters();
   }
- 
+
   filetype_t GetTypeForWin32Filter(const char *filter) const
   {
     for(int i=0; i<m_nTypes; i++)
@@ -1169,7 +1169,7 @@ private:
         delete[] *p;
     delete[] m_pstrGTKMasks;
   }
-  
+
   void ConstructGTKMasks()
   {
     const char *r;
@@ -1234,12 +1234,12 @@ const char* file_dialog (void *parent, gboolean open, const char* title, const c
     Sys_Printf("Doing win32 file dialog...");
 #endif
     // do that the native way
-    /* Place the terminating null character in the szFile. */  
+    /* Place the terminating null character in the szFile. */
     szFile[0] = '\0';
     customfilter[0] = customfilter[1] = customfilter[2] = '\0';
-    
-    /* Set the members of the OPENFILENAME structure. */     
-    ofn.lStructSize = sizeof(OPENFILENAME); 
+
+    /* Set the members of the OPENFILENAME structure. */
+    ofn.lStructSize = sizeof(OPENFILENAME);
     ofn.hwndOwner = (HWND)GDK_WINDOW_HWND (g_pParentWnd->m_pWidget->window);
     if (pattern)
     {
@@ -1250,7 +1250,7 @@ const char* file_dialog (void *parent, gboolean open, const char* title, const c
     ofn.lpstrCustomFilter = customfilter;
     ofn.nMaxCustFilter = sizeof(customfilter);
     ofn.lpstrFile = szFile;
-    ofn.nMaxFile = sizeof(szFile); 
+    ofn.nMaxFile = sizeof(szFile);
     ofn.lpstrFileTitle = NULL; // we don't need to get the name of the file
     if(path)
     {
@@ -1265,7 +1265,7 @@ const char* file_dialog (void *parent, gboolean open, const char* title, const c
     }
     else ofn.lpstrInitialDir = NULL;
     ofn.lpstrTitle = title;
-    ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_HIDEREADONLY; 
+    ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_HIDEREADONLY;
 
     /* Display the Open dialog box. */
     // it's open or close depending on 'open' parameter
@@ -1282,7 +1282,7 @@ const char* file_dialog (void *parent, gboolean open, const char* title, const c
 
     if(pattern != NULL)
       type = typelist.GetTypeForWin32Filter(customfilter+1);
-    
+
 #ifdef FILEDLG_DBG
     Sys_Printf("Done.\n");
 #endif
@@ -1293,7 +1293,7 @@ const char* file_dialog (void *parent, gboolean open, const char* title, const c
     // do that the Gtk way
     if (title == NULL)
       title = open ? "Open File" : "Save File";
-    
+
 #ifdef FILEDLG_DBG
     Sys_Printf("Doing Gtk file dialog:\nBuilding new_path..");
 #endif
@@ -1351,10 +1351,10 @@ const char* file_dialog (void *parent, gboolean open, const char* title, const c
     gtk_signal_connect (GTK_OBJECT (file_sel), "delete_event",
       GTK_SIGNAL_FUNC (dialog_delete_callback), NULL);
     gtk_file_selection_hide_fileop_buttons (GTK_FILE_SELECTION (file_sel));
-    
+
     if (parent != NULL)
       gtk_window_set_transient_for (GTK_WINDOW (file_sel), GTK_WINDOW (parent));
-    
+
 #ifdef FILEDLG_DBG
     Sys_Printf("set_data...");
 #endif
@@ -1364,7 +1364,7 @@ const char* file_dialog (void *parent, gboolean open, const char* title, const c
 #ifdef FILEDLG_DBG
     Sys_Printf("Done.\n");
 #endif
-    
+
     if (!open)
     {
 #ifdef FILEDLG_DBG
@@ -1375,11 +1375,11 @@ const char* file_dialog (void *parent, gboolean open, const char* title, const c
       Sys_Printf("Done.\n");
 #endif
     }
-    
+
     if (new_path != NULL)
     {
 #ifdef FILEDLG_DBG
-      Sys_Printf("gtk_file_selection_set_filename... %p", file_sel); 
+      Sys_Printf("gtk_file_selection_set_filename... %p", file_sel);
 #endif
       gtk_file_selection_set_filename (GTK_FILE_SELECTION (file_sel), new_path);
       delete[] new_path;
@@ -1390,15 +1390,15 @@ const char* file_dialog (void *parent, gboolean open, const char* title, const c
 
     gtk_grab_add (file_sel);
 #ifdef FILEDLG_DBG
-    Sys_Printf("gtk_widget_show... %p", file_sel); 
+    Sys_Printf("gtk_widget_show... %p", file_sel);
 #endif
     gtk_widget_show (file_sel);
 #ifdef FILEDLG_DBG
-    Sys_Printf("Done.\n"); 
+    Sys_Printf("Done.\n");
 #endif
 
 #ifdef FILEDLG_DBG
-    Sys_Printf("gtk_main_iteration..."); 
+    Sys_Printf("gtk_main_iteration...");
 #endif
     while (loop)
       gtk_main_iteration ();
@@ -1413,7 +1413,7 @@ const char* file_dialog (void *parent, gboolean open, const char* title, const c
 #ifdef FILEDLG_DBG
     Sys_Printf("Done.\n");
 #endif
-    
+
     gtk_grab_remove (file_sel);
     gtk_widget_destroy (file_sel);
 #ifdef _WIN32

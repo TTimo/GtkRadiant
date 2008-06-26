@@ -50,7 +50,7 @@ public:
   PrefTypes_t mType;
   void *mVal;
 
-  CPrefAssignment(char *name, PrefTypes_t Type, void *Val)
+  CPrefAssignment(const char *name, PrefTypes_t Type, void *Val)
   {
     mName = name; mType = Type; mVal = Val;
   }
@@ -86,7 +86,7 @@ private:
   /*!
   store assignment in the property list if not already there
   */
-  void PushAssignment(char *name, PrefTypes_t type, void *pV);
+  void PushAssignment(const char *name, PrefTypes_t type, void *pV);
 
   /*!
   find the xmlnode relating to the epair name
@@ -95,7 +95,7 @@ private:
 
 public:
   CXMLPropertyBag();
-  virtual ~CXMLPropertyBag() 
+  virtual ~CXMLPropertyBag()
   {
     if (InUse())
       Clear();
@@ -110,12 +110,12 @@ public:
     (name, type and pointer to value)
     this is used in UpdatePrefTree
   */
-  void GetPref(char *name, Str *pV, char *V);
-  void GetPref(char *name, int *pV, int V);
-  void GetPref(char *name, bool *pV, bool V);
-  void GetPref(char *name, float *pV, float V);
-  void GetPref(char *name, float *pV, float* V);
-  void GetPref(char *name, window_position_t* pV, window_position_t V);
+  void GetPref(const char *name, Str *pV, const char *V);
+  void GetPref(const char *name, int *pV, int V);
+  void GetPref(const char *name, bool *pV, bool V);
+  void GetPref(const char *name, float *pV, float V);
+  void GetPref(const char *name, float *pV, float* V);
+  void GetPref(const char *name, window_position_t* pV, window_position_t V);
 
   /*!
   returns whether or not the property bag is already open
@@ -268,13 +268,13 @@ class CGameDialog : public Dialog
   CGameInstall mGameInstall;
 
 protected:
-  
+
   int m_nComboSelect; ///< intermediate int value for combo in dialog box
 
 public:
 
-  /*! 
-  those settings are saved in the global prefs file 
+  /*!
+  those settings are saved in the global prefs file
   I'm too lazy to wrap behind protected access, not sure this needs to be public
   NOTE: those are preference settings. if you change them it is likely that you would
   have to restart the editor for them to take effect
@@ -316,10 +316,10 @@ public:
 	  m_bDoGameInstall = true;	// go through DoModal at least once
 	  mGameCombo = NULL;
   }
-  virtual ~CGameDialog(); 
+  virtual ~CGameDialog();
 
   void AddPacksURL( Str &s );
-    
+
   /*!
   intialize the game dialog, called at CPrefsDlg::Init
   will scan for games, load prefs, and do game selection dialog if needed
@@ -332,7 +332,7 @@ public:
   void Reset();
 
   /*!
-  run the dialog UI for the list of games 
+  run the dialog UI for the list of games
   */
   void DoGameDialog();
 
@@ -371,7 +371,7 @@ public:
 
   /*!
   read or set netrun (check file)
-  \param retrieve 
+  \param retrieve
     if false, will check if netrun file is present and will set m_bNetRun
     if true, will create/erase the netrun file depending on m_bNetRun
     NOTE: this is not backwards, 'retrieve' means 'retrieve from settings dialog' - in terms of UI
@@ -409,7 +409,7 @@ private:
 typedef struct {
   int nEntitySplit1;
   int nEntitySplit2;
-  
+
   window_position_t position;
 
   window_position_t posEntityWnd;
@@ -434,7 +434,7 @@ typedef struct {
 
 class PrefsDlg : public Dialog
 {
-  
+
 public:
   /*!
   local prefs file
@@ -444,10 +444,10 @@ public:
   // will enable/disable stuff according to the situation
   void DoSensitivity();
   void PreModal() { DoSensitivity(); }
-  
+
   // enable/disable custom editor entry
   void DoEditorSensitivity();
-  
+
   /*!
   this holds global level preferences
   */
@@ -456,7 +456,7 @@ protected:
   // warning about old project files
   bool m_bWarn;
   list<CGameDescription *> mGames;
-  
+
 public:
   // last light intensity used in the CLightPrompt dialog, stored in registry
   int m_iLastLightIntensity;
@@ -468,15 +468,15 @@ public:
   /*! Preference notebook page numbers */
   enum {PTAB_FRONT = 0, PTAB_GAME_SETTINGS, PTAB_2D, PTAB_CAMERA, PTAB_TEXTURE, PTAB_LAYOUT, PTAB_MOUSE,
         PTAB_EDITING, PTAB_STARTUP, PTAB_PATHS, PTAB_MISC, PTAB_BSPMONITOR} pref_tabs;
-  
+
   GtkWidget *notebook;
-       
+
   void UpdateTextureCompression();
 
 #ifdef ATIHACK_812
   void UpdateATIHack();
 #endif
-        
+
   void LoadPrefs();
   void SavePrefs();
   void LoadTexdefPref(texdef_t* pTexdef, char* pName);
@@ -533,7 +533,7 @@ public:
 	// path to the project loaded at startup
 	// if g_PrefsDlg can't find the information in the ini file
 	// it will try to guess and eventually ask the user
-  Str   m_strLastProject;  
+  Str   m_strLastProject;
   /*!
   version of last loaded project file
   says -1 if there's no version loaded
@@ -624,7 +624,7 @@ public:
   bool  m_bRunQuake;
   // store prefs setting for automatic sleep mode activation
   bool  m_bDoSleep;
-  
+
   bool m_bClipCaulk;
 
   // make the texture increments match the grid changes
@@ -673,7 +673,7 @@ public:
   int m_nTextureCompressionFormat;
 
   int m_nLightRadiuses;
-  
+
   bool m_bQ3Map2Texturing;
 
 #ifdef ATIHACK_812

@@ -100,12 +100,12 @@ void FillClassList ()
     GtkTreeIter iter;
     gtk_list_store_append(store, &iter);
     gtk_list_store_set(store, &iter, 0, e->name, 1, e, -1);
-  }	
+  }
 }
 
 // SetKeyValuePairs
 //
-// Reset the key/value (aka property) listbox and fill it with the 
+// Reset the key/value (aka property) listbox and fill it with the
 // k/v pairs from the entity being edited.
 //
 
@@ -142,7 +142,7 @@ void SetKeyValuePairs (bool bClearMD3)
 }
 
 // SetSpawnFlags
-// 
+//
 // Update the checkboxes to reflect the flag state of the entity
 //
 void SetSpawnFlags(void)
@@ -167,7 +167,7 @@ void SetSpawnFlags(void)
 }
 
 // GetSpawnFlags
-// 
+//
 // Update the entity flags to reflect the state of the checkboxes
 //
 // NOTE: this function had a tendency to add "spawnflags" "0" on most entities
@@ -191,7 +191,7 @@ void GetSpawnFlags(void)
     if (multiple_entities)
     {
       brush_t	*b;
-      
+
       for (b=selected_brushes.next ; b != &selected_brushes ; b=b->next)
         DeleteKey (b->owner, "spawnflags");
     }
@@ -199,12 +199,12 @@ void GetSpawnFlags(void)
       DeleteKey (edit_entity, "spawnflags");
   }
   else
-  {    
-    sprintf (sz, "%i", f);    
+  {
+    sprintf (sz, "%i", f);
     if (multiple_entities)
     {
       brush_t	*b;
-      
+
       for (b=selected_brushes.next ; b != &selected_brushes ; b=b->next)
         SetKeyValue(b->owner, "spawnflags", sz);
     }
@@ -225,7 +225,7 @@ bool UpdateSel(int iIndex, eclass_t *pec)
   int i, next_state;
   brush_t *b;
 
-  // syndrom of crappy code, we may get into stack overflowing crap with this function and Gtk 
+  // syndrom of crappy code, we may get into stack overflowing crap with this function and Gtk
   // if we play with the list of entity classes
   // using a static flag to prevent recursion
   static bool bBlockUpdate = false;
@@ -453,7 +453,7 @@ void AddProp()
     SetKeyValue(edit_entity, key, value);
 
   // refresh the prop listbox
-  SetKeyValuePairs();	
+  SetKeyValuePairs();
 
 
 #ifdef USEPLUGINENTITIES
@@ -599,7 +599,7 @@ void AssignSound()
       str = filename;
     }
 
-    gtk_entry_set_text (GTK_ENTRY (EntWidgets[EntValueField]), str.GetBuffer());	
+    gtk_entry_set_text (GTK_ENTRY (EntWidgets[EntValueField]), str.GetBuffer());
     AddProp();
   }
 }
@@ -633,7 +633,7 @@ void AssignModel()
       str = filename;
     }
 
-    gtk_entry_set_text (GTK_ENTRY (EntWidgets[EntValueField]), str.GetBuffer());	
+    gtk_entry_set_text (GTK_ENTRY (EntWidgets[EntValueField]), str.GetBuffer());
     AddProp();
     edit_entity->brushes.onext->bModelFailed = false;
   }
@@ -664,7 +664,7 @@ void SetInspectorMode(int iType)
       iType = W_GROUP;
     else
       iType = W_ENTITY;
-  }		
+  }
 
   switch(iType)
   {
@@ -745,28 +745,28 @@ void Group_AddToItem(brush_t *b, GtkCTreeNode* item)
   }
   const char *pName = NULL;
   //  const char *pNamed = Brush_GetKeyValue(b, "name");
- 
+
   if (!b->owner || (b->owner == world_entity))
   {
-    if (b->patchBrush) 
+    if (b->patchBrush)
     {
       pName = "Generic Patch";
       nImage = IMG_PATCH;
-    } 
-    else 
+    }
+    else
     {
       pName = "Generic Brush";
       nImage = IMG_BRUSH;
     }
-  } 
-  else 
+  }
+  else
   {
     pName = b->owner->eclass->name;
-    if (b->owner->eclass->fixedsize) 
+    if (b->owner->eclass->fixedsize)
     {
       nImage = IMG_ENTITY;
-    } 
-    else 
+    }
+    else
     {
       nImage = IMG_ENTITYGROUP;
     }
@@ -989,7 +989,7 @@ static void eclasslist_selection_changed(GtkTreeSelection* selection, gpointer d
   // no world entity, we are not ready yet
   // http://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=917
   if( !world_entity ) {
-    return;  
+    return;
   }
   if(gtk_tree_selection_get_selected(selection, &model, &selected))
   {
@@ -1133,7 +1133,7 @@ static void groupdlg_add (GtkWidget *widget, gpointer data)
 
   if (name != NULL)
   {
-    // create a new group node	
+    // create a new group node
     GtkCTreeNode *item;
     item = gtk_ctree_insert_node (GTK_CTREE (g_wndGroup.m_pTree), g_pGroupDlg->m_hWorld, NULL, &name, 0,
 				  tree_pixmaps[IMG_GROUP], tree_masks[IMG_GROUP],
@@ -1178,7 +1178,7 @@ static void switch_page (GtkNotebook *notebook, GtkNotebookPage *page, guint pag
     else
       inspector_mode = W_GROUP;
   }
-  
+
   if (inspector_mode == W_ENTITY)
     gtk_widget_set_sensitive (GTK_WIDGET (item), TRUE);
   else
@@ -1259,7 +1259,7 @@ void GroupDlg::Create ()
         GtkWidget* split1 = gtk_vpaned_new ();
         gtk_box_pack_start (GTK_BOX (vbox), split1, TRUE, TRUE, 0);
         gtk_widget_show (split1);
-  
+
         {
           GtkWidget* split2 = gtk_vpaned_new ();
           gtk_paned_add1 (GTK_PANED (split1), split2);
@@ -1302,7 +1302,7 @@ void GroupDlg::Create ()
                 gtk_widget_show(view);
 
                 gtk_container_add(GTK_CONTAINER (scr), view);
-    
+
                 g_object_unref(G_OBJECT(store));
                 EntWidgets[EntList] = view;
                 g_entlist_store = store;
@@ -1329,7 +1329,7 @@ void GroupDlg::Create ()
 
             {
               // Spawnflags (4 colums wide max, or window gets too wide.)
-              GtkWidget* table = LayoutTable = gtk_table_new (4, 4, FALSE);
+              GtkWidget* LayoutTable = gtk_table_new (4, 4, FALSE);
               gtk_box_pack_start (GTK_BOX (vbox2), LayoutTable, FALSE, TRUE, 0);
               gtk_widget_show(LayoutTable);
 
@@ -1410,7 +1410,7 @@ void GroupDlg::Create ()
                 gtk_widget_show(view);
 
                 gtk_container_add(GTK_CONTAINER (scr), view);
-    
+
                 g_object_unref(G_OBJECT(store));
 
                 EntWidgets[EntProps] = view;

@@ -55,7 +55,7 @@ static char INIfn[NAME_MAX];
 #define CLIP_RANGE "ClipRange"
 #define CLIP "Clip"
 
-void InitInstance () 
+void InitInstance ()
 {
 #ifdef _WIN32
   char fn[_MAX_PATH];
@@ -128,7 +128,7 @@ void InitInstance ()
   portals.FixColors();
 }
 
-void SaveConfig () 
+void SaveConfig ()
 {
   INISetInt(RENDER_2D, portals.show_2d, "Draw in 2D windows");
   INISetInt(WIDTH_2D, (int)portals.width_2d, "Width of lines in 2D windows (in units of 1/2)");
@@ -162,27 +162,27 @@ static bool read_var (const char *filename, const char *section, const char *key
 {
   char line[1024], *ptr;
   FILE *rc;
-  
+
   rc = fopen (filename, "rt");
-  
+
   if (rc == NULL)
     return false;
-  
+
   while (fgets (line, 1024, rc) != 0)
   {
     // First we find the section
     if (line[0] != '[')
       continue;
-    
+
     ptr = strchr (line, ']');
     *ptr = '\0';
-    
+
     if (strcmp (&line[1], section) == 0)
     {
       while (fgets (line, 1024, rc) != 0)
       {
         ptr = strchr (line, '=');
-        
+
         if (ptr == NULL)
         {
           // reached the end of the section
@@ -190,16 +190,16 @@ static bool read_var (const char *filename, const char *section, const char *key
           return false;
         }
         *ptr = '\0';
-        
+
         if (strcmp (line, key) == 0)
         {
           strcpy (value, ptr+1);
           fclose (rc);
-          
-          while (value[strlen (value)-1] == 10 || 
+
+          while (value[strlen (value)-1] == 10 ||
             value[strlen (value)-1] == 13 ||
             value[strlen (value)-1] == 32)
-            value[strlen (value)-1] = 0; 
+            value[strlen (value)-1] = 0;
           return true;
         }
       }
@@ -261,7 +261,7 @@ static bool save_var (const char *filename, const char *section, const char *key
         break;
       }
     }
-  } 
+  }
 
   if (!found)
   {
@@ -283,7 +283,7 @@ static bool save_var (const char *filename, const char *section, const char *key
 
         if (strcmp (line, key) == 0)
           break;
- 
+
         *ptr = '=';
         fputs (line, rc);
       }
@@ -296,7 +296,7 @@ static bool save_var (const char *filename, const char *section, const char *key
 
     while (fgets (line, 1024, old_rc) != NULL)
       fputs (line, rc);
-    
+
     fclose (old_rc);
 
     char *tmpname = g_strdup_printf ("%s.tmp", filename);
@@ -311,7 +311,7 @@ static bool save_var (const char *filename, const char *section, const char *key
 
 #endif
 
-int INIGetInt(char *key, int def)
+int INIGetInt(const char *key, int def)
 {
 #if defined(__linux__) || defined(__APPLE__)
   char value[1024];
@@ -325,7 +325,7 @@ int INIGetInt(char *key, int def)
 #endif
 }
 
-void INISetInt(char *key, int val, char *comment /* = NULL */)
+void INISetInt(const char *key, int val, const char *comment /* = NULL */)
 {
   char s[1000];
 
@@ -363,10 +363,10 @@ extern "C" LPVOID WINAPI QERPlug_GetFuncTable()
 
 //extern "C" LPCSTR WINAPI QERPlug_Init (HMODULE hApp, GtkWidget* hwndMain)
 extern "C" const char* QERPlug_Init (void *hApp, void* pMainWidget)
-{  
+{
   // Setup defaults & load config
   InitInstance();
-  
+
   return "Portal Viewer for Q3Radiant";
 }
 
@@ -487,7 +487,7 @@ public:
   // CSynapseClient API
   bool RequestAPI(APIDescriptor_t *pAPI);
   const char* GetInfo();
-  
+
   CSynapseClientPrtView() { }
   virtual ~CSynapseClientPrtView() { }
 };
@@ -511,7 +511,7 @@ extern "C" CSynapseClient* SYNAPSE_DLL_EXPORT Synapse_EnumerateInterfaces( const
   g_pSynapseServer = pServer;
   g_pSynapseServer->IncRef();
   Set_Syn_Printf(g_pSynapseServer->Get_Syn_Printf());
-    
+
   g_SynapseClient.AddAPI(PLUGIN_MAJOR, PRTVIEW_MINOR, sizeof(_QERPluginTable));
 
   g_SynapseClient.AddAPI(RADIANT_MAJOR, NULL, sizeof(g_FuncTable), SYN_REQUIRE, &g_FuncTable);

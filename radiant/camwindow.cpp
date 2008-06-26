@@ -27,6 +27,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "stdafx.h"
 #include <gtk/gtk.h>
+#include <glib/gi18n.h>
 #include <GL/gl.h>
 
 extern void DrawPathLines();
@@ -81,11 +82,11 @@ void CamWnd::OnCreate ()
   // I Split this up so as to add support for extension and user-friendly
   // compression format selection.
   // ADD new globals for your new format so as to minimise
-  // calls to Sys_QGL_ExtensionSupported 
+  // calls to Sys_QGL_ExtensionSupported
   // NOTE TTimo: I don't really like this approach with globals. Frequent calls to Sys_QGL_ExtensionSupported don't sound like
   //   a problem to me. If there is some caching to be done, then I think it should be inside Sys_QGL_ExtensionSupported
   ///////////////////////////////////////////
-  // Check for default OpenGL 
+  // Check for default OpenGL
   if (Sys_QGL_ExtensionSupported ("GL_ARB_texture_compression"))
   {
     g_qeglobals.bTextureCompressionSupported = 1;
@@ -100,9 +101,9 @@ void CamWnd::OnCreate ()
     g_qeglobals.bTextureCompressionSupported = 1;
     g_qeglobals.m_bS3CompressionSupported = 1;
   }
-  
+
   g_qeglobals.m_bOpenGLReady = true;
-  
+
   g_PrefsDlg.UpdateTextureCompression();
 
 #ifdef ATIHACK_812
@@ -124,7 +125,7 @@ void CamWnd::Cam_Init ()
   m_nCambuttonstate = 0;
 }
 
-void CamWnd::OnSize(int cx, int cy) 
+void CamWnd::OnSize(int cx, int cy)
 {
   m_Camera.width = cx;
   m_Camera.height = cy;
@@ -148,7 +149,7 @@ void update_xor_rectangle(XORRectangle& xor_rectangle)
   xor_rectangle.set(rectangle);
 }
 
-void CamWnd::OnMouseMove(guint32 flags, int pointx, int pointy) 
+void CamWnd::OnMouseMove(guint32 flags, int pointx, int pointy)
 {
   int height = m_pWidget->allocation.height;
   // NOTE RR2DO2 this hasn't got any use anymore really. It is an old qeradiant feature
@@ -188,34 +189,34 @@ void CamWnd::OnMouseWheel(bool bUp)
   g_pParentWnd->OnTimer ();
 }
 
-void CamWnd::OnLButtonDown(guint32 nFlags, int pointx, int pointy) 
+void CamWnd::OnLButtonDown(guint32 nFlags, int pointx, int pointy)
 {
   m_ptLastCursorX = pointx;
   m_ptLastCursorY = pointy;
   OriginalMouseDown(nFlags, pointx, pointy);
 }
 
-void CamWnd::OnLButtonUp(guint32 nFlags, int pointx, int pointy) 
+void CamWnd::OnLButtonUp(guint32 nFlags, int pointx, int pointy)
 {
   OriginalMouseUp(nFlags, pointx, pointy);
 }
 
-void CamWnd::OnMButtonDown(guint32 nFlags, int pointx, int pointy) 
+void CamWnd::OnMButtonDown(guint32 nFlags, int pointx, int pointy)
 {
   OriginalMouseDown(nFlags, pointx, pointy);
 }
 
-void CamWnd::OnMButtonUp(guint32 nFlags, int pointx, int pointy) 
+void CamWnd::OnMButtonUp(guint32 nFlags, int pointx, int pointy)
 {
   OriginalMouseUp(nFlags, pointx, pointy);
 }
 
-void CamWnd::OnRButtonDown(guint32 nFlags, int pointx, int pointy) 
+void CamWnd::OnRButtonDown(guint32 nFlags, int pointx, int pointy)
 {
   OriginalMouseDown(nFlags, pointx, pointy);
 }
 
-void CamWnd::OnRButtonUp(guint32 nFlags, int pointx, int pointy) 
+void CamWnd::OnRButtonUp(guint32 nFlags, int pointx, int pointy)
 {
   OriginalMouseUp(nFlags, pointx, pointy);
 }
@@ -362,7 +363,7 @@ void CamWnd::Cam_MouseControl (float dtime)
 
     Sys_SetCursorPos(m_ptLastCamCursorX, m_ptLastCamCursorY);
 
-    // Don't use pitch 
+    // Don't use pitch
     if(!g_PrefsDlg.m_bCamFreeLookStrafe) {
       if (g_PrefsDlg.m_bCamInverseMouse)
             m_Camera.angles[PITCH] -= dy * dtime * g_PrefsDlg.m_nAngleSpeed;
@@ -415,7 +416,7 @@ void CamWnd::Cam_MouseControl (float dtime)
     xh = xl*2;
     yl = m_Camera.height/3;
     yh = yl*2;
-  
+
     xf *= 1.0 - fabs(yf);
     if (xf < 0)
     {
@@ -429,10 +430,10 @@ void CamWnd::Cam_MouseControl (float dtime)
       if (xf < 0)
         xf = 0;
     }
-  
+
     VectorMA (m_Camera.origin, yf*dtime*g_PrefsDlg.m_nMoveSpeed, m_Camera.forward, m_Camera.origin);
     m_Camera.angles[YAW] += xf*-dtime*g_PrefsDlg.m_nAngleSpeed;
-  
+
     int nUpdate = (g_PrefsDlg.m_bCamXYUpdate) ? (W_CAMERA | W_XY) : (W_CAMERA);
     Sys_UpdateWindows (nUpdate);
     g_pParentWnd->OnTimer ();
@@ -494,7 +495,7 @@ void CamWnd::ToggleFreeMove()
     widget = g_pParentWnd->m_pWidget;
     window = widget->window;
   }
-  
+
   if (m_bFreeMove)
   {
 
@@ -511,7 +512,7 @@ void CamWnd::ToggleFreeMove()
       pixmap = gdk_bitmap_create_from_data (NULL, buffer, 32, 32);
       mask   = gdk_bitmap_create_from_data (NULL, buffer, 32, 32);
       GdkCursor *cursor = gdk_cursor_new_from_pixmap (pixmap, mask, &white, &black, 1, 1);
-  
+
       gdk_window_set_cursor (window, cursor);
       gdk_cursor_unref (cursor);
       gdk_drawable_unref (pixmap);
@@ -523,7 +524,7 @@ void CamWnd::ToggleFreeMove()
     // mode seems to work fine though...)
     m_FocusOutHandler_id = gtk_signal_connect (GTK_OBJECT (widget), "focus_out_event",
                       GTK_SIGNAL_FUNC (camwindow_focusout), g_pParentWnd);
-    
+
     {
       GdkEventMask mask = (GdkEventMask)(GDK_POINTER_MOTION_MASK
       | GDK_POINTER_MOTION_HINT_MASK
@@ -533,7 +534,7 @@ void CamWnd::ToggleFreeMove()
       | GDK_BUTTON3_MOTION_MASK
       | GDK_BUTTON_PRESS_MASK
       | GDK_BUTTON_RELEASE_MASK);
-  
+
       gdk_pointer_grab(widget->window, TRUE, mask, widget->window, NULL, GDK_CURRENT_TIME);
     }
   }
@@ -665,7 +666,7 @@ void CamWnd::Cam_MouseMoved (int x, int y, int buttons)
         case sel_brush_on:
           Select_Ray( m_Camera.origin, dir, (SF_DRAG_ON|SF_CAMERA) );
           break;
-        
+
         case sel_brush_off:
           Select_Ray( m_Camera.origin, dir, (SF_DRAG_OFF|SF_CAMERA) );
           break;
@@ -818,7 +819,7 @@ void CamWnd::ProjectCamera(const vec3_t A, vec_t B[2])
 // vec defines a direction in geometric space and P an origin point
 // the user is interacting from the camera view
 // (for example with texture adjustment shortcuts)
-// and intuitively if he hits left / right / up / down 
+// and intuitively if he hits left / right / up / down
 //   what happens in geometric space should match the left/right/up/down move in camera space
 // axis = 0: vec is along left/right
 // axis = 1: vec is along up/down
@@ -891,7 +892,6 @@ extern void DrawModelBBox(brush_t *b);
 void CamWnd::Cam_DrawBrush(brush_t *b, int mode)
 {
   int nGLState = m_Camera.draw_glstate;
-  int nDrawMode = m_Camera.draw_mode;
   int nModelMode = g_PrefsDlg.m_nEntityShowState;
 
 	GLfloat material[4], identity[4];
@@ -909,7 +909,7 @@ void CamWnd::Cam_DrawBrush(brush_t *b, int mode)
       material[3] = 1.0f;
 
       qglColor4fv(material);
-				
+
       if (g_PrefsDlg.m_bNewLightDraw)
         DrawLight(b->owner, nGLState, (IsBrushSelected(b)) ? g_PrefsDlg.m_nLightRadiuses : 0, 0);
 
@@ -934,7 +934,7 @@ void CamWnd::Cam_DrawBrush(brush_t *b, int mode)
 				if(!(nGLState & DRAW_GL_TEXTURE_2D)) qglColor4fv(material);
         else qglColor4fv(identity);
 				if(nGLState & DRAW_GL_LIGHTING) qglShadeModel(GL_SMOOTH);
-				
+
 				b->owner->model.pRender->Draw(nGLState, DRAW_RF_CAM);
 			}
 			break;
@@ -1025,7 +1025,7 @@ void CamWnd::Cam_DrawBrush(brush_t *b, int mode)
       && (b->owner->eclass->nShowFlags & ECLASS_ANGLE))
 				Brush_DrawFacingAngle(b, b->owner);
     }
-  } 
+  }
 
   // brushes
   else
@@ -1037,14 +1037,14 @@ void CamWnd::Cam_DrawBrush(brush_t *b, int mode)
 			qglShadeModel(GL_FLAT);
       Brush_Draw(b);
     }
-  } 
+  }
 }
 
 void CamWnd::Cam_DrawBrushes(int mode)
 {
   brush_t *b;
   brush_t *pList = (g_bClipMode && g_pSplitList) ? g_pSplitList : &selected_brushes;
-  
+
   for(b = active_brushes.next; b != &active_brushes; b=b->next)
     if (!b->bFiltered && !b->bCamCulled) Cam_DrawBrush(b, mode);
   for(b = pList->next; b != pList; b=b->next)
@@ -1179,7 +1179,7 @@ void CamWnd::Cam_DrawStuff()
 			break;
 		default: Sys_Printf("CamWnd::Cam_DrawStuff:invalid render mode\n");
 	}
-	
+
   qglDisable(GL_CULL_FACE);
   Cam_DrawBrushes(DRAW_WIRE);
 
@@ -1213,7 +1213,7 @@ void CamWnd::Cam_DrawStuff()
 			m_Camera.draw_glstate = DRAW_GL_WIRE;
 			break;
 		default: Sys_Printf("CamWnd::Cam_DrawStuff:invalid render mode\n");
-	}	
+	}
 
 
 	qglEnable(GL_BLEND);
@@ -1294,7 +1294,7 @@ void CamWnd::Cam_Draw()
   //
   // set up viewpoint
   //
-  
+
 
   qglMatrixMode(GL_PROJECTION);
   qglLoadIdentity ();
@@ -1326,7 +1326,7 @@ void CamWnd::Cam_Draw()
   qglLoadIdentity();
 
   qglMultMatrixf(&m_Camera.modelview[0][0]);
-	
+
   // grab the GL_PROJECTION and GL_MODELVIEW matrixes
   //   used in GetRelativeAxes
   //qglGetFloatv (GL_PROJECTION_MATRIX, &m_Camera.projection[0][0]);
@@ -1348,14 +1348,14 @@ void CamWnd::Cam_Draw()
     diffuse[3] = 1.0f;
     //material[0] = material[1] = material[2] = 0.8f;
     //material[3] = 1.0f;
-    
+
     vec3_t vCam, vRotate;
     VectorSet(vCam, -1, 0, 0); //default cam pos
     VectorSet(vRotate, 0, -m_Camera.angles[0], 0);
     VectorRotate(vCam, vRotate, vCam);
     VectorSet(vRotate, 0, 0, m_Camera.angles[1]);
     VectorRotate(vCam, vRotate, vCam);
-    
+
     inverse_cam_dir[0] = vCam[0];
     inverse_cam_dir[1] = vCam[1];
     inverse_cam_dir[2] = vCam[2];
@@ -1378,7 +1378,7 @@ void CamWnd::Cam_Draw()
   //
 
 	Cam_DrawStuff();
-  
+
 	qglEnableClientState(GL_VERTEX_ARRAY);
 	qglDisableClientState(GL_NORMAL_ARRAY);
 	qglDisableClientState(GL_TEXTURE_COORD_ARRAY);
@@ -1418,7 +1418,7 @@ void CamWnd::Cam_Draw()
           Brush_FaceDraw(face, DRAW_GL_FLAT);
       }
     }
-    
+
 
     int nCount = g_ptrSelectedFaces.GetSize();
     if (nCount > 0)
@@ -1433,7 +1433,7 @@ void CamWnd::Cam_Draw()
     qglDisableClientState(GL_NORMAL_ARRAY);
 	  qglDepthFunc (GL_LESS);
   }
-  
+
   if (g_qeglobals.d_savedinfo.iSelectedOutlinesStyle & OUTLINE_ZBUF)
   {
     // non-zbuffered outline
@@ -1469,7 +1469,7 @@ void CamWnd::Cam_Draw()
   if (g_qeglobals.d_select_mode == sel_vertex)
   {
     // GL_POINTS on Kyro Workaround
-    if(!g_PrefsDlg.m_bGlPtWorkaround) 
+    if(!g_PrefsDlg.m_bGlPtWorkaround)
     {
       // brush verts
       qglPointSize (4);
@@ -1478,7 +1478,7 @@ void CamWnd::Cam_Draw()
         for (i=0 ; i<g_qeglobals.d_numpoints ; i++)
           qglVertex3fv (g_qeglobals.d_points[i]);
       qglEnd ();
-     
+
       if(g_qeglobals.d_num_move_points)
       {
         // selected brush verts
@@ -1489,7 +1489,7 @@ void CamWnd::Cam_Draw()
             qglVertex3fv (g_qeglobals.d_move_points[i]);
         qglEnd();
       }
-        
+
       qglPointSize (1);
     }
     else
@@ -1501,7 +1501,7 @@ void CamWnd::Cam_Draw()
         for (i=0; i < g_qeglobals.d_numpoints; i++)
           DrawAlternatePoint(g_qeglobals.d_points[i], 1.5);
       qglEnd();
-      
+
       if(g_qeglobals.d_num_move_points)
       {
         // selected brush verts
@@ -1519,7 +1519,7 @@ void CamWnd::Cam_Draw()
   {
     float	*v1, *v2;
     // GL_POINTS on Kyro Workaround
-    if(!g_PrefsDlg.m_bGlPtWorkaround) 
+    if(!g_PrefsDlg.m_bGlPtWorkaround)
     {
       qglPointSize (4);
       qglColor3f (0,0,1);
@@ -1651,7 +1651,7 @@ void CamWnd::Cam_Draw()
     brush->bCamCulled = false;
 }
 
-void CamWnd::OnExpose () 
+void CamWnd::OnExpose ()
 {
   if (!MakeCurrent ())
   {
@@ -1666,12 +1666,12 @@ void CamWnd::OnExpose ()
     {
       if (g_Clip1.Set() && g_Clip2.Set())
       {
-        g_pSplitList = (g_bSwitch) ? 
+        g_pSplitList = (g_bSwitch) ?
 	  &g_brBackSplits : &g_brFrontSplits;
       }
     }
 
-    Patch_LODMatchAll(); // spog  
+    Patch_LODMatchAll(); // spog
 
     Cam_Draw ();
     QE_CheckOpenGLForErrors ();
@@ -1685,7 +1685,7 @@ void CamWnd::BenchMark()
 {
   if (!MakeCurrent ())
     Error ("glXMakeCurrent failed in Benchmark");
-  
+
   qglDrawBuffer (GL_FRONT);
   double dStart = Sys_DoubleTime ();
   for (int i=0 ; i < 100 ; i++)

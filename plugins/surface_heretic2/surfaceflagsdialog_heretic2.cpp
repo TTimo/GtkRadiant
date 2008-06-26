@@ -20,6 +20,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
 #include <gtk/gtk.h>
+#include <glib/gi18n.h>
 #include <gdk/gdkkeysyms.h>
 
 #include "surfdlg_plugin.h"
@@ -983,7 +984,7 @@ on_surf_value_entry_insert_text         (GtkEditable     *editable,
 					user_data);
   }
   gtk_signal_emit_stop_by_name (GTK_OBJECT (editable), "insert_text");
-  
+
   g_free (result);
 }
 

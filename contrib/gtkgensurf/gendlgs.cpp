@@ -18,6 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
 #include <gtk/gtk.h>
+#include <glib/gi18n.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -1169,7 +1170,7 @@ void create_tooltips ()
 	gtk_tooltips_set_tip(GTK_TOOLTIPS (tooltips),
         GTK_WIDGET (g_object_get_data (G_OBJECT (g_pWnd), "main_antialiasing")),
         "The lines in the preview window are antialiased for better quality",
-        ""); 
+        "");
 
   // General tab
   gtk_tooltips_set_tip(GTK_TOOLTIPS (tooltips),
@@ -1191,7 +1192,7 @@ void create_tooltips ()
         "tab to select the image. GenSurf only supports 256-color (8 bit) "
         "bitmaps. GenSurf will work with any 256-color bitmap, but gray scale bitmaps are a bit "
         "more intuitive.",
-        "" ); 
+        "" );
   gtk_tooltips_set_tip(GTK_TOOLTIPS (tooltips),
         GTK_WIDGET (wave_radios[4]),
         "Builds a random surface using the Plasma Cloud technique. Variance is controlled "
@@ -1396,7 +1397,7 @@ GtkWidget* create_main_dialog ()
   char *waveforms[] = { "Alternating hill/valley", "Cylindrical left-to-right", "Cylindrical top-to-bottom",
                         "From bitmap", "Fractal" };
   char *orientations[] = { "Ground surface", "Ceiling", "Wall facing 0", "Wall facing 90",
-                           "Wall facing 180","Wall facing 270" }; 
+                           "Wall facing 180","Wall facing 270" };
 
   g_pWnd = dlg = gtk_window_new (GTK_WINDOW_TOPLEVEL);
   gtk_window_set_title (GTK_WINDOW (dlg), gszCaption);
@@ -2351,7 +2352,7 @@ qboolean CALLBACK AboutDlgProc( HWND hwnd, unsigned msg, UINT wparam, LONG lpara
 		return FALSE;
 	}
 	return FALSE;
-	
+
 } /* AboutDlgProc */
 
 void About()
@@ -2364,4 +2365,4 @@ void About()
 	}
 }
 
-#endif 
+#endif

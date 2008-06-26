@@ -30,6 +30,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <gdk/gdkkeysyms.h>
 #include <gtk/gtk.h>
+#include <glib/gi18n.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -53,25 +54,25 @@ typedef char* LPCSTR;
 #define MB_YESNOCANCEL              0x00000003L
 #define MB_YESNO                    0x00000004L
 #define MB_RETRYCANCEL              0x00000005L
- 
- 
+
+
 #define MB_ICONHAND                 0x00000010L
 #define MB_ICONQUESTION             0x00000020L
 #define MB_ICONEXCLAMATION          0x00000030L
 #define MB_ICONASTERISK             0x00000040L
- 
+
 #define MB_USERICON                 0x00000080L
 #define MB_ICONWARNING              MB_ICONEXCLAMATION
 #define MB_ICONERROR                MB_ICONHAND
 #define MB_ICONINFORMATION          MB_ICONASTERISK
 #define MB_ICONSTOP                 MB_ICONHAND
- 
+
 #define MB_TYPEMASK                 0x0000000FL
 #define MB_ICONMASK                 0x000000F0L
 #define MB_DEFMASK                  0x00000F00L
 #define MB_MODEMASK                 0x00003000L
 #define MB_MISCMASK                 0x0000C000L
- 
+
 #define IDOK                1
 #define IDCANCEL            2
 #define IDABORT             3
@@ -98,7 +99,7 @@ typedef struct _GUID
 #define stricmp strcasecmp
 
 #endif
- 
+
 #if defined(__cplusplus)
 #ifndef _REFGUID_DEFINED
 #define _REFGUID_DEFINED

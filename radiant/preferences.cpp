@@ -231,7 +231,7 @@ CXMLPropertyBag::CXMLPropertyBag() {
 
 // generic preference functions
 
-void CXMLPropertyBag::PushAssignment(char *name, PrefTypes_t type, void *pV)
+void CXMLPropertyBag::PushAssignment(const char *name, PrefTypes_t type, void *pV)
 {
   list<CPrefAssignment>::iterator iAssign;
   for(iAssign=mPrefAssignments.begin(); iAssign!=mPrefAssignments.end(); iAssign++)
@@ -274,7 +274,7 @@ xmlNodePtr CXMLPropertyBag::EpairForName(const char *name)
   return ret;
 }
 
-void CXMLPropertyBag::GetPref(char *name, Str *pV, char *V)
+void CXMLPropertyBag::GetPref(const char *name, Str *pV, const char *V)
 {
   xmlNodePtr pNode = EpairForName( name );
   if ( pNode )
@@ -296,9 +296,9 @@ void CXMLPropertyBag::GetPref(char *name, Str *pV, char *V)
   PushAssignment(name, PREF_STR, pV);
 }
 
-void CXMLPropertyBag::GetPref(char *name, int *pV, int V)
+void CXMLPropertyBag::GetPref(const char *name, int *pV, int V)
 {
-  xmlNodePtr pNode;  
+  xmlNodePtr pNode;
   if ((pNode = EpairForName(name)) && pNode->children && pNode->children->content)
   {
     *pV = atoi((char *)pNode->children->content);
@@ -312,12 +312,12 @@ void CXMLPropertyBag::GetPref(char *name, int *pV, int V)
     *pV=V;
   }
   // push the pref assignment if needed
-  PushAssignment(name, PREF_INT, pV); 
+  PushAssignment(name, PREF_INT, pV);
 }
 
-void CXMLPropertyBag::GetPref(char *name, bool *pV, bool V)
+void CXMLPropertyBag::GetPref(const char *name, bool *pV, bool V)
 {
-  xmlNodePtr pNode;  
+  xmlNodePtr pNode;
   if ((pNode = EpairForName(name)) && pNode->children && pNode->children->content)
   {
     if (!strcmp((char *)pNode->children->content, "true"))
@@ -338,12 +338,12 @@ void CXMLPropertyBag::GetPref(char *name, bool *pV, bool V)
     *pV=V;
   }
   // push the pref assignment
-  PushAssignment(name, PREF_BOOL, pV); 
+  PushAssignment(name, PREF_BOOL, pV);
 }
 
-void CXMLPropertyBag::GetPref(char *name, float *pV, float V)
+void CXMLPropertyBag::GetPref(const char *name, float *pV, float V)
 {
-  xmlNodePtr pNode;  
+  xmlNodePtr pNode;
   if ((pNode = EpairForName(name)) && pNode->children && pNode->children->content)
   {
     *pV = atof((char *)pNode->children->content);
@@ -357,12 +357,12 @@ void CXMLPropertyBag::GetPref(char *name, float *pV, float V)
     *pV=V;
   }
   // push the pref assignment if needed
-  PushAssignment(name, PREF_FLOAT, pV); 
+  PushAssignment(name, PREF_FLOAT, pV);
 }
 
-void CXMLPropertyBag::GetPref(char *name, float* pV, float* V)
+void CXMLPropertyBag::GetPref(const char *name, float* pV, float* V)
 {
-  xmlNodePtr pNode;  
+  xmlNodePtr pNode;
   if ((pNode = EpairForName(name)) && pNode->children && pNode->children->content)
   {
     sscanf((char *)pNode->children->content, "%f %f %f", &pV[0], &pV[1], &pV[2]);
@@ -378,12 +378,12 @@ void CXMLPropertyBag::GetPref(char *name, float* pV, float* V)
     pV[2] = V[2];
   }
   // push the pref assignment if needed
-  PushAssignment(name, PREF_VEC3, pV); 
+  PushAssignment(name, PREF_VEC3, pV);
 }
 
-void CXMLPropertyBag::GetPref(char *name, window_position_t* pV, window_position_t V)
+void CXMLPropertyBag::GetPref(const char *name, window_position_t* pV, window_position_t V)
 {
-  xmlNodePtr pNode;  
+  xmlNodePtr pNode;
   if ((pNode = EpairForName(name)) && pNode->children && pNode->children->content)
   {
     WindowPosition_Parse(*pV, CString((xmlChar *)pNode->children->content));
@@ -397,7 +397,7 @@ void CXMLPropertyBag::GetPref(char *name, window_position_t* pV, window_position
     *pV = V;
   }
   // push the pref assignment if needed
-  PushAssignment(name, PREF_WNDPOS, pV); 
+  PushAssignment(name, PREF_WNDPOS, pV);
 }
 
 void CXMLPropertyBag::UpdatePrefTree()
@@ -485,7 +485,7 @@ void CXMLPropertyBag::ReadXMLFile(const char* pFilename)
       Sys_FPrintf(SYS_ERR, "Wrong version '%s' in <qpref> node for '%s'\n", (char*)tmp_attr_ptr->children->content, mpDoc->URL);
       xmlFreeDoc(mpDoc);
       mpDoc = NULL;
-    }    
+    }
     Sys_Printf("Opened XML property file: '%s'\n", pFilename);
   }
 
@@ -504,7 +504,7 @@ void CXMLPropertyBag::ReadXMLFile(const char* pFilename)
 qboolean CXMLPropertyBag::WriteXMLFile(const char* pFilename)
 {
   int res = xmlSaveFormatFile(pFilename, mpDoc, 1);
-    
+
   if(res == -1)
     return false;
 
@@ -520,9 +520,9 @@ qboolean CXMLPropertyBag::WriteXMLFile(const char* pFilename)
 static void OnBtnBrowseEditor (GtkWidget *widget, gpointer data)
 {
   PrefsDlg *dlg = (PrefsDlg*)data;
-  
+
   const char *filename = file_dialog(g_PrefsDlg.GetWidget(), TRUE, "Executable for Custom Editor");
-  
+
   if(filename != NULL)
   {
     dlg->m_strEditorCommand = filename;
@@ -568,7 +568,7 @@ static void OnBtnBrowseuserini (GtkWidget *widget, gpointer data)
   }
 }
 
-static void OnButtonClean (GtkWidget *widget, gpointer data) 
+static void OnButtonClean (GtkWidget *widget, gpointer data)
 {
   // make sure this is what the user wants
   if (gtk_MessageBox (g_PrefsDlg.GetWidget (), "This will close Radiant and clean the corresponding registry entries.\n"
@@ -698,7 +698,7 @@ CGameDescription::CGameDescription(xmlDocPtr pDoc, const Str &GameFile)
 {
   char *p, *prop;
   mpDoc = pDoc;
-  // read the user-friendly game name 
+  // read the user-friendly game name
   xmlNodePtr pNode = mpDoc->children;
 
   while (strcmp((const char*)pNode->name, "game") && pNode != NULL) pNode=pNode->next;
@@ -918,8 +918,6 @@ CPrefAssignment::CPrefAssignment(const CPrefAssignment& ass)
 
 void CGameDialog::LoadPrefs()
 {
-  bool bEmpty = false;
-
   // if we already have a document loaded, we will free and reload from file
   if (mGlobalPrefs.InUse())
   {
@@ -962,10 +960,10 @@ void CGameDialog::SavePrefs()
 {
   // update the tree and save it
   mGlobalPrefs.UpdatePrefTree();
-  
+
   CString strGlobalPref = g_PrefsDlg.m_global_rc_path->str;
   strGlobalPref += "global.pref";
-  
+
   if ( !mGlobalPrefs.WriteXMLFile( strGlobalPref.GetBuffer() ) ) {
     Sys_FPrintf(SYS_ERR, "Error occured while saving global prefs file '%s'\n", strGlobalPref.GetBuffer());
   }
@@ -981,14 +979,14 @@ void CGameDialog::DoGameInstall() {
 void CGameDialog::DoGameDialog() {
 	// allow looping the game selection dialog with calls to the game configure dialog in between
 	while ( m_bDoGameInstall ) {
-		
+
 		m_bDoGameInstall = false;
 
 		if ( DoModal() == IDCANCEL ) {
 			Error( "game selection dialog canceled, cannot continue" );
 			return;
 		}
-		
+
 		if ( m_bDoGameInstall ) {
 			DoGameInstall();
 			ScanForGames();
@@ -1037,7 +1035,7 @@ GtkWidget* CGameDialog::GetGlobalFrame()
   gtk_widget_show(check);
   gtk_box_pack_start (GTK_BOX(vbox), check, FALSE, FALSE, 0);
   AddDialogData (check, &m_bAutoLoadGame, DLG_CHECK_BOOL);
-  
+
   text = gtk_label_new("(this frame is available in the prefs menu if you set auto-select)");
   gtk_widget_show(text);
   gtk_box_pack_start (GTK_BOX(vbox), text, FALSE, FALSE, 0);
@@ -1104,7 +1102,7 @@ void CGameDialog::SInstallCallback( GtkWidget *widget, gpointer data ) {
 
 void CGameDialog::BuildDialog() {
 	GtkWidget *dlg, *vbox1, *button, *setup_button;
-	
+
 	dlg = m_pWidget;
 	gtk_window_set_title( GTK_WINDOW( dlg ), "Select Game" );
 
@@ -1130,7 +1128,7 @@ void CGameDialog::BuildDialog() {
 	gtk_widget_show( button );
 	gtk_box_pack_start( GTK_BOX( vbox1 ), button, FALSE, FALSE, 0 );
 	AddModalButton( button, IDCANCEL );
-	
+
 	gtk_widget_set_usize( button, 60, -2 );
 }
 
@@ -1144,13 +1142,13 @@ void CGameDialog::UpdateGameCombo() {
   }
 
   // clear whatever is in - wtf no way to know how many text entries?
-  // use set/get active to track 
+  // use set/get active to track
   gtk_combo_box_set_active( mGameCombo, 0 );
   while ( gtk_combo_box_get_active( mGameCombo ) == 0 ) {
 	  gtk_combo_box_remove_text( mGameCombo, 0 );
 	  gtk_combo_box_set_active( mGameCombo, 0 );
   }
-  
+
   for ( iGame = mGames.begin(); iGame != mGames.end(); iGame++ ) {
 	  gtk_combo_box_append_text( mGameCombo, (*iGame)->mGameName.GetBuffer() );
   }
@@ -1304,7 +1302,7 @@ void CGameDialog::Init()
 #else
   g_qeglobals.m_strHomeGame = g_pGameDescription->mEnginePath.GetBuffer();
 #endif
-  
+
   g_pGameDescription->Dump();
 }
 
@@ -1330,8 +1328,8 @@ void CGameDialog::AddPacksURL(Str &URL)
   // FIXME: this is kinda hardcoded for now..
   list<CGameDescription *>::iterator iGame;
   for(iGame=mGames.begin(); iGame!=mGames.end(); iGame++)
-  {  
-    if ((*iGame)->mGameFile == "q3.game")      
+  {
+    if ((*iGame)->mGameFile == "q3.game")
       URL += "&Games_dlup%5B%5D=1";
     else if ((*iGame)->mGameFile == "wolf.game")
       URL += "&Games_dlup%5B%5D=2";
@@ -1448,16 +1446,16 @@ void PrefsDlg::Init()
 #endif
   // this is common to win32 and Linux init now
   m_rc_path = g_string_new (m_global_rc_path->str);
-  
+
   // game sub-dir
   g_string_append (m_rc_path, g_pGameDescription->mGameFile.GetBuffer());
   g_string_append (m_rc_path, "/");
   Q_mkdir (m_rc_path->str, 0775);
-  
+
   // then the ini file
   m_inipath = g_string_new (m_rc_path->str);
   g_string_append (m_inipath, PREFS_LOCAL_FILENAME);
-  
+
 }
 
 void PrefsDlg::UpdateData (bool retrieve)
@@ -1494,7 +1492,7 @@ void PrefsDlg::showPrefPage(int prefpage)
 {
   if(gtk_notebook_get_current_page(GTK_NOTEBOOK(notebook)) != prefpage)
     gtk_notebook_set_page(GTK_NOTEBOOK(notebook), prefpage);
-  
+
   return;
 }
 
@@ -1521,20 +1519,20 @@ void PrefsDlg::BuildDialog ()
   GtkWidget *check, *label, *scale, *hbox2, *combo,
             *table, *spin,  *entry, *pixmap,
             *radio, *button, *pageframe, *vbox;
-  
+
   GList *combo_list = (GList*)NULL;
-  
+
   GtkObject *adj;
-    
+
   dialog = m_pWidget;
   gtk_window_set_title(GTK_WINDOW(dialog), "GtkRadiant Preferences");
   gtk_widget_realize(dialog);
-    
+
   mainvbox = gtk_vbox_new(FALSE, 5);
   gtk_container_add(GTK_CONTAINER(dialog), mainvbox);
   gtk_container_set_border_width(GTK_CONTAINER(mainvbox), 5);
   gtk_widget_show(mainvbox);
-  
+
   hbox = gtk_hbox_new(FALSE, 5);
   gtk_widget_show(hbox);
   gtk_box_pack_end(GTK_BOX(mainvbox), hbox, FALSE, TRUE, 0);
@@ -1556,11 +1554,11 @@ void PrefsDlg::BuildDialog ()
   gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(OnButtonClean), this);
   gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
   gtk_widget_set_usize (button, 60, -2);
-  
+
   hbox = gtk_hbox_new(FALSE, 5);
   gtk_box_pack_start(GTK_BOX(mainvbox), hbox, TRUE, TRUE, 0);
   gtk_widget_show(hbox);
-  
+
   sc_win = gtk_scrolled_window_new(NULL, NULL);
   gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sc_win), GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
   gtk_box_pack_start(GTK_BOX(hbox), sc_win, FALSE, FALSE, 0);
@@ -1631,7 +1629,7 @@ void PrefsDlg::BuildDialog ()
           gtk_tree_store_set(store, &tab, 0, "Texture Settings", 1, (gpointer)PTAB_TEXTURE, -1);
         }
       }
-  
+
       {
         GtkTreeIter group;
         gtk_tree_store_append(store, &group, NULL);
@@ -1652,7 +1650,7 @@ void PrefsDlg::BuildDialog ()
           gtk_tree_store_set(store, &tab, 0, "Editing", 1, (gpointer)PTAB_EDITING, -1);
         }
       }
-  
+
       {
         GtkTreeIter group;
         gtk_tree_store_append(store, &group, NULL);
@@ -1682,14 +1680,14 @@ void PrefsDlg::BuildDialog ()
     }
 
     gtk_tree_view_expand_all(GTK_TREE_VIEW(view));
-    
+
     g_object_unref(G_OBJECT(store));
   }
-  
+
   /**********************************************************************/
   /* build the prefs pages                                              */
   /**********************************************************************/
-  
+
   // Front page...
   // todo : add something interesting here
   // NOTE TTimo: tip of the day? or a logo?
@@ -1703,7 +1701,7 @@ void PrefsDlg::BuildDialog ()
   gtk_widget_set_usize(GTK_WIDGET(vbox), 350, -2);
   gtk_container_set_border_width(GTK_CONTAINER(vbox), 5);
   gtk_container_add(GTK_CONTAINER(pageframe), vbox);
-  
+
   gtk_notebook_append_page(GTK_NOTEBOOK(notebook), pageframe, preflabel);
 
   /******** global preferences group ****************************/
@@ -1712,7 +1710,7 @@ void PrefsDlg::BuildDialog ()
 
   pageframe = mGamesDialog.GetGlobalFrame();
   gtk_notebook_append_page(GTK_NOTEBOOK(notebook), pageframe, preflabel);
-  
+
   /******** 2D prefs group (xy views/rendering options) *********/
   preflabel = gtk_label_new("2D Display");
   gtk_widget_show(preflabel);
@@ -1723,26 +1721,26 @@ void PrefsDlg::BuildDialog ()
   gtk_widget_show(vbox);
   gtk_container_set_border_width(GTK_CONTAINER(vbox), 5);
   gtk_container_add(GTK_CONTAINER(pageframe), vbox);
-  
+
   // OpenGL Display Lists
   check = gtk_check_button_new_with_label("OpenGL Display Lists");
   gtk_widget_show(check);
   gtk_box_pack_start(GTK_BOX(vbox), check, FALSE, FALSE, 0);
   AddDialogData(check, &m_bDisplayLists, DLG_CHECK_BOOL);
-  
+
   // Antialiased points & lines
   // Fishman - Add antialiazed points and lines support. 09/03/00
   check = gtk_check_button_new_with_label ("OpenGL antialiased points and lines");
   gtk_widget_show (check);
   gtk_box_pack_start (GTK_BOX (vbox), check, FALSE, FALSE, 0);
   AddDialogData (check, &m_bAntialiasedPointsAndLines, DLG_CHECK_BOOL);
-  
+
   // Solid selection boxes
   check = gtk_check_button_new_with_label ("Solid selection boxes");
   gtk_widget_show (check);
   gtk_box_pack_start (GTK_BOX (vbox), check, FALSE, FALSE, 0);
   AddDialogData (check, &m_bNoStipple, DLG_CHECK_BOOL);
-  
+
   // Display size info
   check = gtk_check_button_new_with_label ("Display size info");
   gtk_widget_show (check);
@@ -1766,10 +1764,10 @@ void PrefsDlg::BuildDialog ()
 	gtk_box_pack_start(GTK_BOX(vbox), check, FALSE, FALSE, 0);
 	AddDialogData(check, &m_bGlATIHack, DLG_CHECK_BOOL);
 #endif
-  
+
   // Add the page to the notebook
   gtk_notebook_append_page(GTK_NOTEBOOK(notebook), pageframe, preflabel);
-  
+
   /******** 3D Camera view group *********/
   preflabel = gtk_label_new("3D View");
   gtk_widget_show(preflabel);
@@ -1786,62 +1784,62 @@ void PrefsDlg::BuildDialog ()
   hbox2 = gtk_hbox_new (FALSE, 0);
   gtk_widget_show (hbox2);
   gtk_box_pack_start (GTK_BOX (vbox), hbox2, FALSE, FALSE, 0);
-  
+
   // label
   label = gtk_label_new("Movement Velocity");
   gtk_label_set_justify (GTK_LABEL (label), GTK_JUSTIFY_LEFT);
   gtk_widget_show(label);
   gtk_box_pack_start(GTK_BOX(hbox2), label, FALSE, FALSE, 0);
-  
+
   // adjustment
   adj = gtk_adjustment_new(100, 50, 300, 1, 10, 10);
   AddDialogData(adj, &m_nMoveSpeed, DLG_ADJ_INT);
-  
+
   // scale
   scale = gtk_hscale_new(GTK_ADJUSTMENT(adj));
   gtk_widget_show(scale);
   gtk_box_pack_start(GTK_BOX (vbox), scale, FALSE, TRUE, 2);
-  
+
   gtk_scale_set_draw_value (GTK_SCALE (scale), TRUE);
-  
+
   // Angular velocity (Rotational Velocity)
   // label container
   hbox2 = gtk_hbox_new (FALSE, 0);
   gtk_widget_show (hbox2);
   gtk_box_pack_start (GTK_BOX (vbox), hbox2, FALSE, FALSE, 0);
-  
+
   // label
   label = gtk_label_new ("Rotational Velocity");
   gtk_label_set_justify (GTK_LABEL (label), GTK_JUSTIFY_LEFT);
   gtk_widget_show (label);
   gtk_box_pack_start(GTK_BOX(hbox2), label, FALSE, FALSE, 0);
-  
+
   // adjustment
   adj = gtk_adjustment_new (3, 1, 180, 1, 10, 10); // value, low, high, step, page_step, page_size
   AddDialogData (adj, &m_nAngleSpeed, DLG_ADJ_INT);
-  
+
   // scale
   scale = gtk_hscale_new (GTK_ADJUSTMENT (adj));
   gtk_widget_show (scale);
   gtk_box_pack_start (GTK_BOX (vbox), scale, FALSE, TRUE, 2);
-  gtk_scale_set_draw_value (GTK_SCALE (scale), TRUE);  
+  gtk_scale_set_draw_value (GTK_SCALE (scale), TRUE);
 
   // Text under the velocity sliders
   // container
   hbox2 = gtk_hbox_new (FALSE, 0);
   gtk_widget_show (hbox2);
   gtk_box_pack_start (GTK_BOX (vbox), hbox2, FALSE, FALSE, 0);
-  
+
   // label
   label = gtk_label_new ("slow");
   gtk_widget_show (label);
   gtk_box_pack_start (GTK_BOX (hbox2), label, FALSE, FALSE, 0);
-  
+
   // label
   label = gtk_label_new ("fast");
   gtk_widget_show (label);
   gtk_box_pack_end (GTK_BOX (hbox2), label, FALSE, FALSE, 0);
-  
+
   // Allow drag to select multiple faces/brushes
   // container
   table = gtk_table_new(2, 1, FALSE);
@@ -1869,7 +1867,7 @@ void PrefsDlg::BuildDialog ()
                   (GtkAttachOptions) (GTK_FILL),
                   (GtkAttachOptions) (0), 0, 0);
   gtk_entry_set_editable (GTK_ENTRY (GTK_COMBO (combo)->entry), FALSE);
-  AddDialogData (combo, &m_nCamDragMultiSelect, DLG_COMBO_INT);  
+  AddDialogData (combo, &m_nCamDragMultiSelect, DLG_COMBO_INT);
 
   // Freelook in Camera view
   check = gtk_check_button_new_with_label ("Freelook in Camera view");
@@ -1919,7 +1917,7 @@ void PrefsDlg::BuildDialog ()
   gtk_widget_show(vbox);
   gtk_container_set_border_width(GTK_CONTAINER(vbox), 5);
   gtk_container_add(GTK_CONTAINER(pageframe), vbox);
-  
+
   // Texture quality slider
   // label
   label = gtk_label_new ("Texture quality");
@@ -1927,11 +1925,11 @@ void PrefsDlg::BuildDialog ()
   gtk_box_pack_start (GTK_BOX (vbox), label, FALSE, FALSE, 0);
   gtk_misc_set_alignment (GTK_MISC (label), 0, 0.5);
   gtk_label_set_justify (GTK_LABEL (label), GTK_JUSTIFY_LEFT);
-  
+
   // adjustment
   adj = gtk_adjustment_new (0, 0, 4, 1, 1, 1);
   AddDialogData (adj, &m_nLatchedTextureQuality, DLG_ADJ_INT);
-  
+
   // scale
   scale = gtk_hscale_new (GTK_ADJUSTMENT (adj));
   gtk_widget_show (scale);
@@ -1954,7 +1952,7 @@ void PrefsDlg::BuildDialog ()
   gtk_widget_show (check);
   gtk_box_pack_start (GTK_BOX (vbox), check, FALSE, FALSE, 0);
   AddDialogData (check, &m_bTextureWindow, DLG_CHECK_BOOL);
-  
+
   // texture scrollbar
   check = gtk_check_button_new_with_label ("Texture scrollbar");
   gtk_widget_show (check);
@@ -2030,7 +2028,7 @@ void PrefsDlg::BuildDialog ()
                   (GtkAttachOptions) (0),
                   (GtkAttachOptions) (0), 0, 0);
   gtk_misc_set_alignment (GTK_MISC (label), 0, 0.5);
-  
+
   // combo list
   combo_list = NULL;
   combo_list = g_list_append (combo_list, (void *)"None");
@@ -2050,10 +2048,10 @@ void PrefsDlg::BuildDialog ()
   gtk_entry_set_editable (GTK_ENTRY (GTK_COMBO (combo)->entry), FALSE);
   AddDialogData (combo, &m_nLatchedShader, DLG_COMBO_INT);
   g_list_free (combo_list);
-  
+
   // Add the page to the notebook
   gtk_notebook_append_page(GTK_NOTEBOOK(notebook), pageframe, preflabel);
-  
+
   /******** Layout group *********/
   preflabel = gtk_label_new("Layout");
   gtk_widget_show(preflabel);
@@ -2129,13 +2127,13 @@ void PrefsDlg::BuildDialog ()
                     (GtkAttachOptions) (0),
                     (GtkAttachOptions) (0), 0, 0);
   AddDialogData (radio, &m_nLatchedView, DLG_RADIO_INT);
-  
+
   // Floating Z window
   check = gtk_check_button_new_with_label ("Floating Z Window");
   gtk_widget_show (check);
   gtk_box_pack_start (GTK_BOX (vbox), check, FALSE, FALSE, 0);
   AddDialogData (check, &m_bLatchedFloatingZ, DLG_CHECK_BOOL);
-  
+
   // show menu tear-off seperators
   check = gtk_check_button_new_with_label ("Detachable Menus");
   gtk_widget_show (check);
@@ -2179,11 +2177,11 @@ void PrefsDlg::BuildDialog ()
   g_object_set_data (G_OBJECT (dialog), "check_startonprimary", check);
   gtk_signal_connect( GTK_OBJECT (check), "clicked", GTK_SIGNAL_FUNC(UpdateSensitivity), this );
   AddDialogData (check, &m_bStartOnPrimMon, DLG_CHECK_BOOL);
-#endif  
+#endif
 
   // Add the page to the notebook
   gtk_notebook_append_page(GTK_NOTEBOOK(notebook), pageframe, preflabel);
-  
+
   /******** Mouse group *********/
   preflabel = gtk_label_new("Mouse");
   gtk_widget_show(preflabel);
@@ -2194,7 +2192,7 @@ void PrefsDlg::BuildDialog ()
   gtk_widget_show(vbox);
   gtk_container_set_border_width(GTK_CONTAINER(vbox), 5);
   gtk_container_add(GTK_CONTAINER(pageframe), vbox);
-  
+
   // Buttons
   // container
   hbox2 = gtk_hbox_new (FALSE, 5);
@@ -2235,22 +2233,22 @@ void PrefsDlg::BuildDialog ()
   hbox2 = gtk_hbox_new (FALSE, 5);
   gtk_widget_show (hbox2);
   gtk_box_pack_start(GTK_BOX(vbox), hbox2, FALSE, FALSE, 0);
-  
+
   // label
   label = gtk_label_new ("Wheel Mouse inc:");
   gtk_widget_show (label);
   gtk_box_pack_start (GTK_BOX (hbox2), label, FALSE, FALSE, 0);
-  
+
   // entry
   entry = gtk_entry_new ();
   gtk_widget_show (entry);
   gtk_widget_set_usize (entry, 40, -2);
   gtk_box_pack_start (GTK_BOX (hbox2), entry, FALSE, FALSE, 0);
-  AddDialogData (entry, &m_nWheelInc, DLG_ENTRY_INT);  
+  AddDialogData (entry, &m_nWheelInc, DLG_ENTRY_INT);
 
   // Add the page to the notebook
   gtk_notebook_append_page(GTK_NOTEBOOK(notebook), pageframe, preflabel);
-  
+
   /******** Editing group *********/
   preflabel = gtk_label_new("Editing");
   gtk_widget_show(preflabel);
@@ -2261,7 +2259,7 @@ void PrefsDlg::BuildDialog ()
   gtk_widget_show(vbox);
   gtk_container_set_border_width(GTK_CONTAINER(vbox), 5);
   gtk_container_add(GTK_CONTAINER(pageframe), vbox);
-  
+
   // Vertex editing splits faces
   check = gtk_check_button_new_with_label ("Vertex editing splits face");
   gtk_widget_show (check);
@@ -2273,7 +2271,7 @@ void PrefsDlg::BuildDialog ()
   gtk_widget_show (check);
   gtk_box_pack_start(GTK_BOX(vbox), check, FALSE, FALSE, 0);
   AddDialogData (check, &m_bDoTargetFix, DLG_CHECK_BOOL);
-  
+
   // Clipper tool uses caulk
   check = gtk_check_button_new_with_label ("Clipper tool uses caulk");
   gtk_widget_show (check);
@@ -2290,8 +2288,8 @@ void PrefsDlg::BuildDialog ()
   check = gtk_check_button_new_with_label ("Select patches by bounding box");
   gtk_widget_show (check);
   gtk_box_pack_start (GTK_BOX (vbox), check, FALSE, FALSE, 0);
-  AddDialogData (check, &m_bPatchBBoxSelect, DLG_CHECK_BOOL);  
-  
+  AddDialogData (check, &m_bPatchBBoxSelect, DLG_CHECK_BOOL);
+
   // Rotation increment
   // container
   table = gtk_table_new (2, 3, FALSE);
@@ -2299,14 +2297,14 @@ void PrefsDlg::BuildDialog ()
   gtk_box_pack_start (GTK_BOX (vbox), table, FALSE, TRUE, 0);
   gtk_table_set_row_spacings (GTK_TABLE (table), 5);
   gtk_table_set_col_spacings (GTK_TABLE (table), 5);
-  
+
   // label
   label = gtk_label_new ("Rotation increment:");
   gtk_widget_show (label);
   gtk_table_attach (GTK_TABLE (table), label, 0, 1, 0, 1,
                    (GtkAttachOptions) (0),
                    (GtkAttachOptions) (0), 0, 0);
-                   
+
   // entry
   entry = gtk_entry_new ();
   gtk_widget_show (entry);
@@ -2315,7 +2313,7 @@ void PrefsDlg::BuildDialog ()
                    (GtkAttachOptions) (GTK_FILL),
                    (GtkAttachOptions) (0), 0, 0);
   AddDialogData (entry, &m_nRotation, DLG_ENTRY_INT);
-  
+
   // Undo levels
   // label
   label = gtk_label_new ("Undo Levels:");
@@ -2323,9 +2321,9 @@ void PrefsDlg::BuildDialog ()
   gtk_table_attach (GTK_TABLE (table), label, 0, 1, 1, 2,
                    (GtkAttachOptions) (0),
                    (GtkAttachOptions) (0), 0, 0);
-                   
+
   // spinner (allows undo levels to be set to zero)
-  spin = gtk_spin_button_new (GTK_ADJUSTMENT (gtk_adjustment_new (1, 0, 64, 1, 10, 10)), 1, 0); 
+  spin = gtk_spin_button_new (GTK_ADJUSTMENT (gtk_adjustment_new (1, 0, 64, 1, 10, 10)), 1, 0);
   gtk_widget_show (spin);
   gtk_table_attach (GTK_TABLE (table), spin, 1, 2, 1, 2,
                    (GtkAttachOptions) (GTK_FILL),
@@ -2340,7 +2338,7 @@ void PrefsDlg::BuildDialog ()
   gtk_table_attach (GTK_TABLE (table), label, 0, 1, 2, 3,
                    (GtkAttachOptions) (0),
                    (GtkAttachOptions) (0), 0, 0);
-                   
+
   // entry (spinner perhaps? [2-16])
   entry = gtk_entry_new ();
   gtk_widget_show (entry);
@@ -2352,7 +2350,7 @@ void PrefsDlg::BuildDialog ()
 
   // Add the page to the notebook
   gtk_notebook_append_page(GTK_NOTEBOOK(notebook), pageframe, preflabel);
-  
+
   /******** Save/Load group *********/
   preflabel = gtk_label_new("Startup/Auto save");
   gtk_widget_show(preflabel);
@@ -2369,7 +2367,7 @@ void PrefsDlg::BuildDialog ()
   gtk_widget_show (check);
   gtk_box_pack_start (GTK_BOX (vbox), check, FALSE, FALSE, 0);
   AddDialogData (check, &m_bSnapShots, DLG_CHECK_BOOL);
-  
+
   // load last project on open
   check = gtk_check_button_new_with_label ("Load last project on open");
   gtk_widget_show (check);
@@ -2388,28 +2386,28 @@ void PrefsDlg::BuildDialog ()
   gtk_widget_show (hbox2);
   gtk_box_pack_start(GTK_BOX(vbox), hbox2, FALSE, FALSE, 0);
   gtk_container_set_border_width (GTK_CONTAINER (hbox2), 0);
-  
+
   // label
   check = gtk_check_button_new_with_label ("Auto save every");
   gtk_widget_show (check);
   gtk_box_pack_start (GTK_BOX (hbox2), check, FALSE, FALSE, 0);
   AddDialogData (check, &m_bAutoSave, DLG_CHECK_BOOL);
-  
+
   // spinner
   spin = gtk_spin_button_new (GTK_ADJUSTMENT (gtk_adjustment_new (1, 1, 60, 1, 10, 10)), 1, 0);
   gtk_widget_show (spin);
   gtk_box_pack_start (GTK_BOX (hbox2), spin, FALSE, FALSE, 0);
   gtk_widget_set_usize (spin, 60, -2);
   AddDialogData (spin, &m_nAutoSave, DLG_SPIN_INT);
-  
+
   // label
   label = gtk_label_new ("minutes");
   gtk_widget_show (label);
   gtk_box_pack_start (GTK_BOX (hbox2), label, FALSE, FALSE, 0);
-  
+
   // Add the page to the notebook
   gtk_notebook_append_page(GTK_NOTEBOOK(notebook), pageframe, preflabel);
-  
+
   /******** Paths group *********/
   preflabel = gtk_label_new("Paths");
   gtk_widget_show(preflabel);
@@ -2428,7 +2426,7 @@ void PrefsDlg::BuildDialog ()
   gtk_box_pack_start (GTK_BOX (vbox), table, FALSE, TRUE, 0);
   gtk_table_set_row_spacings (GTK_TABLE (table), 5);
   gtk_table_set_col_spacings (GTK_TABLE (table), 5);
-  
+
   // label
   label = gtk_label_new ("Prefab path:");
   gtk_widget_show (label);
@@ -2436,7 +2434,7 @@ void PrefsDlg::BuildDialog ()
                    (GtkAttachOptions) (0),
                    (GtkAttachOptions) (0), 0, 0);
   gtk_misc_set_alignment (GTK_MISC (label), 1, 0.5);
-  
+
   // path entry
   entry = gtk_entry_new ();
   gtk_widget_show (entry);
@@ -2447,7 +2445,7 @@ void PrefsDlg::BuildDialog ()
   AddDialogData (entry, &m_strPrefabPath, DLG_ENTRY_TEXT);
 
   // http://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=805
-#if 0  
+#if 0
   // browse button
   button = gtk_button_new_with_label ("...");
   gtk_widget_show (button);
@@ -2465,7 +2463,7 @@ void PrefsDlg::BuildDialog ()
                    (GtkAttachOptions) (0),
                    (GtkAttachOptions) (0), 0, 0);
   gtk_misc_set_alignment (GTK_MISC (label), 1, 0.5);
-  
+
   // user ini path entry
   entry = gtk_entry_new ();
   gtk_widget_show (entry);
@@ -2473,7 +2471,7 @@ void PrefsDlg::BuildDialog ()
                    (GtkAttachOptions) (GTK_FILL),
                    (GtkAttachOptions) (0), 1, 0);
   AddDialogData (entry, &m_strUserPath, DLG_ENTRY_TEXT);
-  
+
   // user ini browse button
   button = gtk_button_new_with_label ("...");
   gtk_widget_show (button);
@@ -2484,7 +2482,7 @@ void PrefsDlg::BuildDialog ()
 
   // Add the page to the notebook
   gtk_notebook_append_page(GTK_NOTEBOOK(notebook), pageframe, preflabel);
-  
+
   /******** Misc group *********/
   preflabel = gtk_label_new("Misc");
   gtk_widget_show(preflabel);
@@ -2495,7 +2493,7 @@ void PrefsDlg::BuildDialog ()
   gtk_widget_show(vbox);
   gtk_container_set_border_width(GTK_CONTAINER(vbox), 5);
   gtk_container_add(GTK_CONTAINER(pageframe), vbox);
-  
+
   // Light drawing
   check = gtk_check_button_new_with_label ("Light drawing");
   gtk_widget_show (check);
@@ -2544,7 +2542,7 @@ void PrefsDlg::BuildDialog ()
   gtk_signal_connect( GTK_OBJECT (check), "clicked", GTK_SIGNAL_FUNC(UpdateEditorSensitivity), this);
   g_object_set_data (G_OBJECT(dialog), "check_customeditor", check);
   AddDialogData (check, &g_PrefsDlg.m_bUseCustomEditor, DLG_CHECK_BOOL);
-  
+
   // custom shader editor executable
   // table
   table = gtk_table_new (3, 1, FALSE);
@@ -2552,7 +2550,7 @@ void PrefsDlg::BuildDialog ()
   gtk_box_pack_start (GTK_BOX (vbox), table, FALSE, TRUE, 0);
   gtk_table_set_row_spacings (GTK_TABLE (table), 5);
   gtk_table_set_col_spacings (GTK_TABLE (table), 5);
-  
+
   // label
   label = gtk_label_new("Custom Editor Command");
   gtk_widget_show(label);
@@ -2562,7 +2560,7 @@ void PrefsDlg::BuildDialog ()
   gtk_misc_set_alignment (GTK_MISC (label), 1, 0.5);
   g_object_set_data (G_OBJECT(dialog), "label_customeditor", label);
   gtk_widget_set_sensitive (label, g_PrefsDlg.m_bUseCustomEditor);
-  
+
   // custom editor command entry
   entry = gtk_entry_new ();
   gtk_widget_show (entry);
@@ -2573,7 +2571,7 @@ void PrefsDlg::BuildDialog ()
   AddDialogData (entry, &m_strEditorCommand, DLG_ENTRY_TEXT);
   gtk_widget_set_sensitive (entry, g_PrefsDlg.m_bUseCustomEditor);
   g_object_set_data (G_OBJECT(dialog), "entry_customeditor", entry);
-  
+
   // browse button
   button = gtk_button_new_with_label ("...");
   gtk_widget_show (button);
@@ -2621,15 +2619,15 @@ void PrefsDlg::BuildDialog ()
   gtk_box_pack_start (GTK_BOX (vbox), check, FALSE, FALSE, 0);
   g_object_set_data (G_OBJECT (dialog), "check_runengine", check);
   gtk_signal_connect( GTK_OBJECT (check), "clicked", GTK_SIGNAL_FUNC(UpdateSensitivity), this );
-  AddDialogData( check, &g_PrefsDlg.m_bRunQuake, DLG_CHECK_BOOL );  
-  
+  AddDialogData( check, &g_PrefsDlg.m_bRunQuake, DLG_CHECK_BOOL );
+
   // sleep mode when running engine
   check = gtk_check_button_new_with_label ("Activate sleep mode when running the engine");
   gtk_widget_show (check);
   gtk_box_pack_start (GTK_BOX (vbox), check, FALSE, FALSE, 0);
   g_object_set_data (G_OBJECT (dialog), "check_sleep", check);
   AddDialogData( check, &g_PrefsDlg.m_bDoSleep, DLG_CHECK_BOOL );
-  
+
   // use q3map2's texture projection
   check = gtk_check_button_new_with_label ("Texturing compatible with q3map2");
   gtk_widget_show (check);
@@ -2654,7 +2652,7 @@ void PrefsDlg::LoadTexdefPref(texdef_t* pTexdef, char* pName)
   memset(pTexdef, 0, sizeof(texdef_t));
 
   sprintf(buffer, "%s%s", pName, TD_SCALE1_KEY);
-  mLocalPrefs.GetPref(buffer, &pTexdef->scale[0],   0.5f);      
+  mLocalPrefs.GetPref(buffer, &pTexdef->scale[0],   0.5f);
 
   sprintf(buffer, "%s%s", pName, TD_SCALE2_KEY);
   mLocalPrefs.GetPref(buffer, &pTexdef->scale[1],   0.5f);
@@ -2676,7 +2674,7 @@ void PrefsDlg::UpdateTextureCompression()
     Sys_Printf("OpenGL not ready - postpone texture compression capability check\n");
     return;
   }
-  
+
   if (g_qeglobals.bTextureCompressionSupported)
   {
     if (m_nTextureCompressionFormat >= 2 && !g_qeglobals.m_bS3CompressionSupported)
@@ -2755,7 +2753,7 @@ void PrefsDlg::UpdateATIHack() {
 }
 #endif
 
-// TTimo: m_strEnginePath has a special status, if not found in registry we need to 
+// TTimo: m_strEnginePath has a special status, if not found in registry we need to
 // initiliaze it for sure. It is not totally failsafe but we can use the same
 // code than in q3map, expecting to find some "quake" above us. If not, we prompt
 // for the engine executable path
@@ -2777,7 +2775,7 @@ void PrefsDlg::LoadPrefs ()
   mLocalPrefs.GetPref(PATCHSHOWBOUNDS_KEY,  &g_bPatchShowBounds,  FALSE);
   mLocalPrefs.GetPref(MOUSE_KEY,            &m_nMouse,            MOUSE_DEF);
   m_nMouseButtons = m_nMouse ? 3 : 2;
-  
+
 	// project file
 	// if it's not found here, mainframe.cpp will take care of finding one
   mLocalPrefs.GetPref(LASTPROJ_KEY, &m_strLastProject, "");
@@ -2827,7 +2825,7 @@ void PrefsDlg::LoadPrefs ()
 
   mLocalPrefs.GetPref(DETACHABLEMENUS_KEY,    &m_bLatchedDetachableMenus,            TRUE);
   m_bDetachableMenus = m_bLatchedDetachableMenus;
-  
+
   if (g_pGameDescription->mNoPatch)
   {
     m_bPatchToolbar = false;
@@ -2840,7 +2838,7 @@ void PrefsDlg::LoadPrefs ()
 
   mLocalPrefs.GetPref(WIDETOOLBAR_KEY,        &m_bLatchedWideToolbar,                TRUE);
   m_bWideToolbar = m_bLatchedWideToolbar;
- 
+
   mLocalPrefs.GetPref(PLUGINTOOLBAR_KEY, &m_bLatchedPluginToolbar, TRUE);
   m_bPluginToolbar = m_bLatchedPluginToolbar;
 
@@ -2911,7 +2909,7 @@ void PrefsDlg::LoadPrefs ()
   mLocalPrefs.GetPref(TARGETFIX_KEY,          &m_bDoTargetFix,                TRUE);
   mLocalPrefs.GetPref(WHEELINC_KEY,           &m_nWheelInc,                   64);
   mLocalPrefs.GetPref(PATCHBBOXSEL_KEY,       &m_bPatchBBoxSelect,            FALSE);
-  
+
   // Gef: Kyro GL_POINT workaround
   mLocalPrefs.GetPref(GLPOINTWORKAROUND_KEY,  &m_bGlPtWorkaround,             FALSE);
 
@@ -2949,11 +2947,11 @@ void PrefsDlg::LoadPrefs ()
 
   // menu stuff
   mLocalPrefs.GetPref(COUNT_KEY,              &m_nMRUCount,                   0);
-  for(i = 0; i < 4; i++) 
+  for(i = 0; i < 4; i++)
   {
     char buf[64];
     sprintf (buf, "%s%d", FILE_KEY, i);
-    mLocalPrefs.GetPref(buf,                  &m_strMRUFiles[i],              "");    
+    mLocalPrefs.GetPref(buf,                  &m_strMRUFiles[i],              "");
   }
 
   // some platform specific prefs
@@ -3126,7 +3124,7 @@ void PrefsDlg::DoSensitivity()
       Msg += g_PrefsDlg.m_strLastProject;
       Msg += ") is not at least version 2.\nI need version 2 or above to setup BSP monitoring correctly.";
       gtk_MessageBox(m_pWidget, Msg.GetBuffer(), MB_OK );
-      
+
       m_bWarn = false;
     }
 
@@ -3186,14 +3184,14 @@ void CGameInstall::OnGameSelectChanged( GtkWidget *widget, gpointer data ) {
 	Sys_Printf( "OnGameSelectChanged\n" );
 
 	CGameInstall* i = static_cast<CGameInstall*>( data );
-	i->UpdateData( TRUE );	
+	i->UpdateData( TRUE );
 	i->m_strName = gtk_combo_box_get_active_text( GTK_COMBO_BOX( widget ) );
 	i->UpdateData( FALSE );
 }
 
 void CGameInstall::BuildDialog() {
 	GtkWidget *dlg, *vbox1, *button, *text, *combo, *entry, *hbox;
-	
+
 	dlg = m_pWidget;
 	gtk_window_set_title( GTK_WINDOW( dlg ), "Configure games" );
 
@@ -3244,7 +3242,7 @@ void CGameInstall::BuildDialog() {
 	text = gtk_label_new( "Name:" );
 	gtk_widget_show( text );
 	gtk_box_pack_start( GTK_BOX( vbox1 ), text, FALSE, FALSE, 0 );
-	
+
 	entry = gtk_entry_new();
 	gtk_widget_show( entry );
 	gtk_box_pack_start( GTK_BOX( vbox1 ), entry, FALSE, FALSE, 0 );
@@ -3257,7 +3255,7 @@ void CGameInstall::BuildDialog() {
 	hbox = gtk_hbox_new( FALSE, 0 );
 	gtk_widget_show( hbox );
 	gtk_box_pack_start( GTK_BOX( vbox1 ), hbox, FALSE, FALSE, 0 );
-	
+
 	entry = gtk_entry_new();
 	gtk_widget_show( entry );
 	gtk_box_pack_start( GTK_BOX( hbox ), entry, FALSE, FALSE, 0 );
@@ -3408,7 +3406,7 @@ void CGameInstall::Run() {
 /*
 ===============
 CGameInstall::ScanGames
-scan for active games that can be installed, based on the presence 
+scan for active games that can be installed, based on the presence
 ===============
 */
 void CGameInstall::ScanGames() {

@@ -19,10 +19,10 @@ along with GtkRadiant; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-// 
+//
 // Preliminary patch stuff
 //
-// 
+//
 
 #include "stdafx.h"
 #include "gtkmisc.h"
@@ -92,9 +92,9 @@ patchMesh_t* MakeNewPatch()
 // used for a save spot
 patchMesh_t patchSave;
 
-// Tracks the selected patch for point manipulation/update. FIXME: Need to revert back to a generalized 
+// Tracks the selected patch for point manipulation/update. FIXME: Need to revert back to a generalized
 // brush approach
-//--int  g_nSelectedPatch = -1;  
+//--int  g_nSelectedPatch = -1;
 
 // HACK: for tracking which view generated the click
 // as we dont want to deselect a point on a same point
@@ -238,38 +238,38 @@ int Patch_MemorySize(patchMesh_t *p)
 InterpolateInteriorPoints
 ===============
 */
-void InterpolateInteriorPoints( patchMesh_t *p ) 
+void InterpolateInteriorPoints( patchMesh_t *p )
 {
 	int		i, j, k;
 	int		next, prev;
 
-	for ( i = 0 ; i < p->width ; i += 2 ) 
+	for ( i = 0 ; i < p->width ; i += 2 )
   {
 
     next = ( i == p->width - 1 ) ? 1 : ( i + 1 ) % p->width;
     prev = ( i == 0 ) ? p->width - 2 : i - 1;
 
 #if 0
-		if ( i == 0 ) 
+		if ( i == 0 )
     {
 			next = ( i + 1 ) % p->width;
 			prev = p->width - 2;		      // joined wrap case
-		} 
-    else if ( i == p->width - 1 ) 
+		}
+    else if ( i == p->width - 1 )
     {
 			next = 1;
 			prev = i - 1;
-		} 
-    else 
+		}
+    else
     {
 			next = ( i + 1 ) % p->width;
 			prev = i - 1;
 		}
 #endif
 
-		for ( j = 0 ; j < p->height ; j++ ) 
+		for ( j = 0 ; j < p->height ; j++ )
     {
-			for ( k = 0 ; k < 3 ; k++ ) 
+			for ( k = 0 ; k < 3 ; k++ )
       {
 				p->ctrl[i][j].xyz[k] = ( p->ctrl[next][j].xyz[k] + p->ctrl[prev][j].xyz[k] ) * 0.5;
 			}
@@ -287,7 +287,7 @@ int	neighbors[8][2] = {
 	{0,1}, {1,1}, {1,0}, {1,-1}, {0,-1}, {-1,-1}, {-1,0}, {-1,1}
 };
 
-void Patch_MeshNormals(patchMesh_t *in ) 
+void Patch_MeshNormals(patchMesh_t *in )
 {
 	int		i, j, k, dist;
 	vec3_t	normal;
@@ -303,90 +303,90 @@ void Patch_MeshNormals(patchMesh_t *in )
 	float		len;
 
 	wrapWidth = false;
-	for ( i = 0 ; i < in->height ; i++ ) 
+	for ( i = 0 ; i < in->height ; i++ )
 	{
 
-		VectorSubtract( in->ctrl[0][i].xyz, 
+		VectorSubtract( in->ctrl[0][i].xyz,
 			              in->ctrl[in->width-1][i].xyz, delta );
 		len = VectorLength( delta );
-		if ( len > 1.0 ) 
+		if ( len > 1.0 )
 		{
 			break;
 		}
 	}
-	if ( i == in->height ) 
+	if ( i == in->height )
 	{
 		wrapWidth = true;
 	}
 
 	wrapHeight = false;
-	for ( i = 0 ; i < in->width ; i++ ) 
+	for ( i = 0 ; i < in->width ; i++ )
 	{
-		VectorSubtract( in->ctrl[i][0].xyz, 
+		VectorSubtract( in->ctrl[i][0].xyz,
 			              in->ctrl[i][in->height-1].xyz, delta );
 		len = VectorLength( delta );
-		if ( len > 1.0 ) 
+		if ( len > 1.0 )
 		{
 			break;
 		}
 	}
-	if ( i == in->width) 
+	if ( i == in->width)
 	{
 		wrapHeight = true;
 	}
 
 
-	for ( i = 0 ; i < in->width ; i++ ) 
+	for ( i = 0 ; i < in->width ; i++ )
 	{
-		for ( j = 0 ; j < in->height ; j++ ) 
+		for ( j = 0 ; j < in->height ; j++ )
 		{
 			count = 0;
 			//--dv = reinterpret_cast<drawVert_t*>(in.ctrl[j*in.width+i]);
 			dv = &in->ctrl[i][j];
 			VectorCopy( dv->xyz, base );
-			for ( k = 0 ; k < 8 ; k++ ) 
+			for ( k = 0 ; k < 8 ; k++ )
 			{
 				VectorClear( around[k] );
 				good[k] = false;
 
-				for ( dist = 1 ; dist <= 3 ; dist++ ) 
+				for ( dist = 1 ; dist <= 3 ; dist++ )
 				{
 					x = i + neighbors[k][0] * dist;
 					y = j + neighbors[k][1] * dist;
-					if ( wrapWidth ) 
+					if ( wrapWidth )
 					{
-						if ( x < 0 ) 
+						if ( x < 0 )
 						{
 							x = in->width - 1 + x;
-						} 
-						else if ( x >= in->width ) 
+						}
+						else if ( x >= in->width )
 						{
 							x = 1 + x - in->width;
 						}
 					}
-					if ( wrapHeight ) 
+					if ( wrapHeight )
 					{
-						if ( y < 0 ) 
+						if ( y < 0 )
 						{
 							y = in->height - 1 + y;
-						} 
-						else if ( y >= in->height ) 
+						}
+						else if ( y >= in->height )
 						{
 							y = 1 + y - in->height;
 						}
 					}
 
-					if ( x < 0 || x >= in->width || y < 0 || y >= in->height ) 
+					if ( x < 0 || x >= in->width || y < 0 || y >= in->height )
 					{
 						break;					// edge of patch
 					}
 					//--VectorSubtract( in.ctrl[y*in.width+x]->xyz, base, temp );
 					VectorSubtract( in->ctrl[x][y].xyz, base, temp );
-					if ( __VectorNormalize( temp, temp ) == 0 ) 
+					if ( __VectorNormalize( temp, temp ) == 0 )
 					{
 						continue;				// degenerate edge, get more dist
-					} 
-					else                 
+					}
+					else
 					{
 						good[k] = true;
 						VectorCopy( temp, around[k] );
@@ -396,21 +396,21 @@ void Patch_MeshNormals(patchMesh_t *in )
 			}
 
 			VectorClear( sum );
-			for ( k = 0 ; k < 8 ; k++ ) 
+			for ( k = 0 ; k < 8 ; k++ )
 			{
-				if ( !good[k] || !good[(k+1)&7] ) 
+				if ( !good[k] || !good[(k+1)&7] )
 				{
 					continue;	// didn't get two points
 				}
 				CrossProduct( around[(k+1)&7], around[k], normal );
-				if ( __VectorNormalize( normal, normal ) == 0 ) 
+				if ( __VectorNormalize( normal, normal ) == 0 )
 				{
 					continue;
 				}
 				VectorAdd( normal, sum, sum );
 				count++;
 			}
-			if ( count == 0 ) 
+			if ( count == 0 )
 			{
         //printf("bad normal\n");
 				count = 1;
@@ -459,7 +459,7 @@ Brush_RebuildBrush
 void Brush_RebuildBrush(brush_t *b, vec3_t vMins, vec3_t vMaxs)
 {
   //
-  // Total hack job 
+  // Total hack job
   // Rebuilds a brush
 	int		i, j;
 	face_t	*f, *next;
@@ -476,7 +476,7 @@ void Brush_RebuildBrush(brush_t *b, vec3_t vMins, vec3_t vMaxs)
     }
   }
 
-  
+
   for (f=b->brush_faces ; f ; f=next)
 	{
 		next = f->next;
@@ -495,16 +495,16 @@ void Brush_RebuildBrush(brush_t *b, vec3_t vMins, vec3_t vMaxs)
 
 	pts[0][0][0] = vMins[0];
 	pts[0][0][1] = vMins[1];
-	
+
 	pts[1][0][0] = vMins[0];
 	pts[1][0][1] = vMaxs[1];
-	
+
 	pts[2][0][0] = vMaxs[0];
 	pts[2][0][1] = vMaxs[1];
-	
+
 	pts[3][0][0] = vMaxs[0];
 	pts[3][0][1] = vMins[1];
-	
+
 	for (i=0 ; i<4 ; i++)
 	{
 		pts[i][0][2] = vMins[2];
@@ -519,7 +519,7 @@ void Brush_RebuildBrush(brush_t *b, vec3_t vMins, vec3_t vMaxs)
 		f->texdef = texdef;
 		f->texdef.flags &= ~SURF_KEEP;
 		f->texdef.contents &= ~CONTENTS_KEEP;
-//		f->texdef.flags |= SURF_PATCH; 
+//		f->texdef.flags |= SURF_PATCH;
 		f->next = b->brush_faces;
 		b->brush_faces = f;
 		j = (i+1)%4;
@@ -528,12 +528,12 @@ void Brush_RebuildBrush(brush_t *b, vec3_t vMins, vec3_t vMaxs)
 		VectorCopy (pts[i][1], f->planepts[1]);
 		VectorCopy (pts[i][0], f->planepts[2]);
 	}
-	
+
 	f = Face_Alloc();
 	f->texdef = texdef;
   f->texdef.flags &= ~SURF_KEEP;
 	f->texdef.contents &= ~CONTENTS_KEEP;
-//  f->texdef.flags |= SURF_PATCH; 
+//  f->texdef.flags |= SURF_PATCH;
 	f->next = b->brush_faces;
 	b->brush_faces = f;
 
@@ -545,7 +545,7 @@ void Brush_RebuildBrush(brush_t *b, vec3_t vMins, vec3_t vMaxs)
 	f->texdef = texdef;
   f->texdef.flags &= ~SURF_KEEP;
 	f->texdef.contents &= ~CONTENTS_KEEP;
-//  f->texdef.flags |= SURF_PATCH; 
+//  f->texdef.flags |= SURF_PATCH;
 	f->next = b->brush_faces;
 	b->brush_faces = f;
 
@@ -700,10 +700,10 @@ void WINAPI Patch_Naturalize(patchMesh_t *p)
   float fPHeight = Patch_Height(p);
   float xAccum = 0.0f;
 
-  for ( int i = 0; i < p->width ; i++ ) 
+  for ( int i = 0; i < p->width ; i++ )
   {
 	float yAccum = 0.0f;
-	for ( int j = p->height-1; j >= 0 ; j-- ) 
+	for ( int j = p->height-1; j >= 0 ; j-- )
 	{
 	  p->ctrl[i][j].st[0] = (fPWidth / nWidth) * xAccum / fPWidth;
 	  p->ctrl[i][j].st[1] = (fPHeight / nHeight) * yAccum / fPHeight;
@@ -823,12 +823,12 @@ void Patch_CapTexture(patchMesh_t *p, bool bFaceCycle = false)
 			VectorClear ( Plane3.normal );
 			bThing = false;
 		}
-		
+
 		// find normal for plane from next 3 corner points
 		if (!Plane_FromPoints(p->ctrl[p->width-1][p->height-1].xyz,p->ctrl[p->width-1][0].xyz,p->ctrl[0][0].xyz,&Plane2))
 		{
 			if (bThing)
-			{	
+			{
 				VectorCopy ( Plane1.normal, Plane3.normal );
 				Plane3.dist = Plane1.dist;
 			}
@@ -903,7 +903,7 @@ void patchInvert(patchMesh_t *p)
 {
   drawVert_t vertTemp;
   p->bDirty = true;
-	for ( int i = 0 ; i < p->width ; i++ ) 
+	for ( int i = 0 ; i < p->width ; i++ )
   {
     for (int j = 0; j < p->height / 2; j++)
     {
@@ -946,7 +946,7 @@ brush_t* Cap(patchMesh_t *pParent, bool bByColumn, bool bFirst)
   vMax[0] = vMax[1] = vMax[2] = -9999;
 
   // we seam the column edge, FIXME: this might need to be able to seem either edge
-  // 
+  //
   int nSize = (bByColumn) ? pParent->width : pParent->height;
   int nIndex = (bFirst) ? 0 : (bByColumn) ? pParent->height-1 : pParent->width-1;
 
@@ -976,7 +976,7 @@ brush_t* Cap(patchMesh_t *pParent, bool bByColumn, bool bFirst)
         VectorCopy(pParent->ctrl[nIndex][i].xyz, p->ctrl[Index5By[i][0]][Index5By[i][1]].xyz);
       }
     }
-  
+
     for (j = 0; j < 3; j++)
     {
       float f = (bSmall) ? p->ctrl[Index3By[i][0]][Index3By[i][1]].xyz[j] : p->ctrl[Index5By[i][0]][Index5By[i][1]].xyz[j];
@@ -1062,7 +1062,7 @@ brush_t* CapSpecial(patchMesh_t *pParent, int nType, bool bFirst)
   {
     vTemp[j] = vMin[j] + fabs((vMax[j] - vMin[j]) * 0.5);
   }
-  
+
   if (nType == IBEVEL)
   {
     VectorCopy(pParent->ctrl[0][nIndex].xyz, p->ctrl[0][0].xyz);
@@ -1082,11 +1082,11 @@ brush_t* CapSpecial(patchMesh_t *pParent, int nType, bool bFirst)
     VectorCopy(pParent->ctrl[0][nIndex].xyz, p3);
     VectorCopy(pParent->ctrl[1][nIndex].xyz, p1);
     VectorCopy(pParent->ctrl[2][nIndex].xyz, p2);
-	
+
 	//Sys_Printf("CapSpecial() p1: %f %f %f\n",p1[0],p1[1],p1[2]);
 	//Sys_Printf("CapSpecial() p2: %f %f %f\n",p2[0],p2[1],p2[2]);
 	//Sys_Printf("CapSpecial() p3: %f %f %f\n",p3[0],p3[1],p3[2]);
-	
+
 	VectorSubtract(p2, p1, p4);
 	VectorAdd(p3, p4, p4);
 	// spog - use opposite-point-on-parallelogram to find p4
@@ -1130,7 +1130,7 @@ brush_t* CapSpecial(patchMesh_t *pParent, int nType, bool bFirst)
     VectorCopy(pParent->ctrl[2][nIndex].xyz, p->ctrl[1][2].xyz);
     VectorCopy(pParent->ctrl[2][nIndex].xyz, p->ctrl[2][2].xyz);
     VectorCopy(pParent->ctrl[2][nIndex].xyz, p->ctrl[1][1].xyz);
-    
+
     VectorCopy(pParent->ctrl[1][nIndex].xyz, p->ctrl[0][1].xyz);
     VectorCopy(pParent->ctrl[3][nIndex].xyz, p->ctrl[2][1].xyz);
   }
@@ -1141,7 +1141,7 @@ brush_t* CapSpecial(patchMesh_t *pParent, int nType, bool bFirst)
     VectorCopy(pParent->ctrl[2][nIndex].xyz, p->ctrl[2][0].xyz);
     VectorCopy(pParent->ctrl[1][nIndex].xyz, p->ctrl[3][0].xyz);
     VectorCopy(pParent->ctrl[0][nIndex].xyz, p->ctrl[4][0].xyz);
-    
+
     VectorCopy(pParent->ctrl[3][nIndex].xyz, p->ctrl[0][1].xyz);
     VectorCopy(pParent->ctrl[3][nIndex].xyz, p->ctrl[1][1].xyz);
     VectorCopy(pParent->ctrl[2][nIndex].xyz, p->ctrl[2][1].xyz);
@@ -1185,14 +1185,14 @@ void Patch_CapCurrent()
   b[0] = b[1] = b[2] = b[3] = NULL;
   int nIndex = 0;
   bool b_GroupResult = TRUE;
-  
+
   if (!QE_SingleBrush(true))
   {
     Sys_Printf("Patch_CapCurrent: you must have a single patch selected\n");
     return;
   }
-  
-  
+
+
   for (brush_t *pb = selected_brushes.next ; pb != NULL && pb != &selected_brushes ; pb = pb->next)
   {
     if (pb->patchBrush)
@@ -1200,7 +1200,7 @@ void Patch_CapCurrent()
       pParent = pb->pPatch;
       // decide which if any ends we are going to cap
       // if any of these compares hit, it is a closed patch and as such
-      // the generic capping will work.. if we do not find a closed edge 
+      // the generic capping will work.. if we do not find a closed edge
       // then we need to ask which kind of cap to add
       if (VectorCompare(pParent->ctrl[0][0].xyz, pParent->ctrl[pParent->width-1][0].xyz))
       {
@@ -1236,21 +1236,21 @@ void Patch_CapCurrent()
       }
     }
   }
-  
+
   if (pParent)
   {
     // if we did not cap anything with the above tests
     if (nIndex == 0)
     {
       int type;
-      
+
       if (DoCapDlg (&type, &b_GroupResult) == IDOK)
       {
         b[nIndex++] = CapSpecial(pParent, type, false);
         b[nIndex++] = CapSpecial(pParent, type, true);
       }
     }
-    
+
     if (nIndex > 0)
     {
       while (nIndex > 0)
@@ -1338,7 +1338,7 @@ void Patch_BrushToMesh(bool bCone, bool bBevel, bool bEndcap, bool bSquare, int 
       p->ctrl[2][i].xyz[0] =  b->mins[0] + ((b->maxs[0] - b->mins[0]) * 0.5);
       p->ctrl[2][i].xyz[1] =  b->maxs[1];
       p->ctrl[2][i].xyz[2] = nStart;
-	   
+
       p->ctrl[3][i].xyz[0] =  b->maxs[0];
       p->ctrl[3][i].xyz[1] =  b->maxs[1];
       p->ctrl[3][i].xyz[2] = nStart;
@@ -1364,7 +1364,7 @@ void Patch_BrushToMesh(bool bCone, bool bBevel, bool bEndcap, bool bSquare, int 
     p->ctrl[7][0].xyz[0] =  b->mins[0];
     p->ctrl[7][0].xyz[1] =  b->maxs[1];
 
-    for ( i = 1 ; i < p->width - 1 ; i += 2 ) 
+    for ( i = 1 ; i < p->width - 1 ; i += 2 )
     {
 
       p->ctrl[i][0].xyz[2] =  b->mins[2];
@@ -1425,8 +1425,8 @@ void Patch_BrushToMesh(bool bCone, bool bBevel, bool bEndcap, bool bSquare, int 
   if (bCone)
   {
     p->type = PATCH_CONE;
-    float xc = (b->maxs[0] + b->mins[0]) * 0.5; 
-    float yc = (b->maxs[1] + b->mins[1]) * 0.5; 
+    float xc = (b->maxs[0] + b->mins[0]) * 0.5;
+    float yc = (b->maxs[1] + b->mins[1]) * 0.5;
 
     for ( i = 0 ; i < p->width ; i ++)
     {
@@ -1434,7 +1434,7 @@ void Patch_BrushToMesh(bool bCone, bool bBevel, bool bEndcap, bool bSquare, int 
       p->ctrl[i][2].xyz[1] = yc;
     }
   }
-  
+
   b = AddBrushForPatch(p);
 
   Select_Delete();
@@ -1594,9 +1594,9 @@ void AddPoint(patchMesh_t* p, vec3_t v, bool bWeldOrDrill = true)
   g_qeglobals.d_move_points[g_qeglobals.d_num_move_points++] = v;
   if ((g_bPatchWeld || g_bPatchDrillDown) && bWeldOrDrill)
   {
-	  for ( int i = 0 ; i < p->width ; i++ ) 
+	  for ( int i = 0 ; i < p->width ; i++ )
     {
-		  for ( int j = 0 ; j < p->height ; j++ ) 
+		  for ( int j = 0 ; j < p->height ; j++ )
       {
         if (g_bPatchWeld)
         {
@@ -1609,8 +1609,8 @@ void AddPoint(patchMesh_t* p, vec3_t v, bool bWeldOrDrill = true)
         }
         if (g_bPatchDrillDown && g_nPatchClickedView != W_CAMERA)
         {
-          if ( (fabs(v[nDim1] - p->ctrl[i][j].xyz[nDim1]) <= EQUAL_EPSILON) 
-             &&(fabs(v[nDim2] - p->ctrl[i][j].xyz[nDim2]) <= EQUAL_EPSILON)) 
+          if ( (fabs(v[nDim1] - p->ctrl[i][j].xyz[nDim1]) <= EQUAL_EPSILON)
+             &&(fabs(v[nDim2] - p->ctrl[i][j].xyz[nDim2]) <= EQUAL_EPSILON))
           {
             if (PointInMoveList(p->ctrl[i][j].xyz) == -1)
             {
@@ -1675,9 +1675,9 @@ void AddPatchMovePoint(vec3_t v, bool bMulti, bool bFull)
     if (pb->patchBrush)
     {
 	    patchMesh_t* p = pb->pPatch;
-	    for ( int i = 0 ; i < p->width ; i++ ) 
+	    for ( int i = 0 ; i < p->width ; i++ )
       {
-		    for ( int j = 0 ; j < p->height ; j++ ) 
+		    for ( int j = 0 ; j < p->height ; j++ )
         {
           if (VectorCompare(v, p->ctrl[i][j].xyz))
           {
@@ -1744,19 +1744,19 @@ void Patch_UpdateSelected(vec3_t vMove)
 		{
 		}
 	}
-	
+
 	//--patchMesh_t* p = &patchMeshes[g_nSelectedPatch];
 	for (brush_t *pb = selected_brushes.next ; pb != &selected_brushes ; pb = pb->next)
 	{
 		if (pb->patchBrush)
 		{
 			patchMesh_t* p = pb->pPatch;
-			
+
 #if 0 //moving to SelectCurvePointByRay
 			g_qeglobals.d_numpoints = 0;
-			for (i = 0 ; i < p->width ; i++ ) 
+			for (i = 0 ; i < p->width ; i++ )
 			{
-				for ( j = 0 ; j < p->height ; j++ ) 
+				for ( j = 0 ; j < p->height ; j++ )
 				{
 					VectorCopy (p->ctrl[i][j].xyz, g_qeglobals.d_points[g_qeglobals.d_numpoints]);
 					if (g_qeglobals.d_numpoints < MAX_POINTS-1)
@@ -1765,7 +1765,7 @@ void Patch_UpdateSelected(vec3_t vMove)
 					}
 				}
 			}
-#endif			
+#endif
 			vec3_t vMin, vMax;
 			Patch_CalcBounds(p, vMin, vMax);
 			Brush_RebuildBrush(p->pSymbiot, vMin, vMax);
@@ -1788,9 +1788,9 @@ void SampleSinglePatch (float ctrl[3][3][5], float u, float v, float out[5]) {
 	int		axis;
 
 	// find the control points for the v coordinate
-	for (vPoint = 0 ; vPoint < 3 ; vPoint++) 
+	for (vPoint = 0 ; vPoint < 3 ; vPoint++)
 	{
-		for (axis = 0 ; axis < 5 ; axis++) 
+		for (axis = 0 ; axis < 5 ; axis++)
 		{
 			float	a, b, c;
 			float	qA, qB, qC;
@@ -1807,7 +1807,7 @@ void SampleSinglePatch (float ctrl[3][3][5], float u, float v, float out[5]) {
 	}
 
 	// interpolate the v value
-	for (axis = 0 ; axis < 5 ; axis++) 
+	for (axis = 0 ; axis < 5 ; axis++)
 	{
 		float	a, b, c;
 		float	qA, qB, qC;
@@ -1834,7 +1834,7 @@ float ShadeForNormal(vec3_t normal)
 	L[1] = 1.0f;
 	L[2] = 1.0f;
 
-  
+
 	// quick diffuse shading
   f = DotProduct(L, normal);
 
@@ -1843,7 +1843,7 @@ float ShadeForNormal(vec3_t normal)
   //if (f < 0.0f) f = 0.0f;
 
 	f += 0.5f;
-	
+
   return f;
 }
 
@@ -1883,7 +1883,7 @@ void Patch_CurveSplit(drawVert_t *vCurve[3], drawVert_t &pLeft, drawVert_t &pRig
 //	float a, b;
 	drawVert_t v1, v2, v3;
 //	vec3_t v4;
-	
+
 	for (i=0; i<3; i++)
 	{
 		 // xyz
@@ -1930,7 +1930,7 @@ float Patch_CurveIndex(vec3_t vCurve[])
 	float index, dot;
 
 	VectorClear(vClear);
-		
+
 	VectorSubtract(vCurve[2], vCurve[0], vTemp);
 	VectorSubtract(vCurve[1], vCurve[0], v1);
 	VectorSubtract(vCurve[2], vCurve[1], v2);
@@ -1942,13 +1942,13 @@ float Patch_CurveIndex(vec3_t vCurve[])
 	VectorNormalize(v2, v2);
 	if (VectorCompare(v1, v2))
 		return 0.0f;
-	
+
 	VectorCopy(vTemp, v3);
 	width = VectorNormalize(v3, v3);
 
 	if (VectorCompare(v1, v3) && VectorCompare(v2, v3))
 		return 0.0f;
-	
+
 	dot = DotProduct(v1, v2);
 
 	angle = acos(dot) / Q_PI;
@@ -2108,7 +2108,7 @@ void Patch_BezierInterpolate(vec3_t vCurve[], vec3_t &pMid)
 
 // take a pointer to the list of subtrees, and a threshold value
 // generate REAL surface curvature for the subtree curves, using bezier interpolation
-// if any of the real curves has an index greater than the threshold, return true 
+// if any of the real curves has an index greater than the threshold, return true
 bool Patch_MostCurvedRow(BTreeList_t *pBTList, int threshold)
 {
 	BTreeList_t *p;
@@ -2123,7 +2123,7 @@ bool Patch_MostCurvedRow(BTreeList_t *pBTList, int threshold)
 		VectorCopy(p->vLeft.xyz, vCurve[0]);
 		VectorCopy(p->pBT->info.xyz, vCurve[1]);
 		VectorCopy(p->vRight.xyz, vCurve[2]);
-		
+
 		index = Patch_CurveIndex(vCurve);
 		if (index > threshold)
 			return true;
@@ -2170,18 +2170,20 @@ void BTree_ListCurveRecurse(BTreeList_t *pBTList)
 	//int i;
 	bool bFlipped = false;
 
-  if (g_PrefsDlg.m_nSubdivisions >= 1)
-    threshold = g_PrefsDlg.m_nSubdivisions;
-	
+	if (g_PrefsDlg.m_nSubdivisions >= 1)
+		threshold = g_PrefsDlg.m_nSubdivisions;
+	else
+		threshold = 0;
+
 	leftBTList = rightBTList = NULL;
-	
+
 	if (Patch_MostCurvedRow(pBTList, threshold)) // split all subtrees in list if any subtree is above threshold
 	{
 		//Sys_Printf("| ");
 		// traverse nodes in list
 		for (p = pBTList; p != NULL; p=p->next)
 		{
-			if (p->pBT == NULL) 
+			if (p->pBT == NULL)
 			{
 				leftBTList = BTree_AddLinkToList(leftBTList, (p->vLeft.normal[0] == 1.0f));
 				rightBTList = BTree_AddLinkToList(rightBTList, (p->vLeft.normal[0] == 1.0f));
@@ -2193,7 +2195,7 @@ void BTree_ListCurveRecurse(BTreeList_t *pBTList)
 			BTNode_t *newLeft = new BTNode_t;
 			p->pBT->left = newLeft;
 			newLeft->left = newLeft->right = NULL;
-			
+
 			// create right node for this subtree
 			BTNode_t *newRight = new BTNode_t;
 			p->pBT->right = newRight;
@@ -2207,13 +2209,13 @@ void BTree_ListCurveRecurse(BTreeList_t *pBTList)
 
 			memcpy(&newLeft->vMid, &newLeft->info, sizeof(drawVert_t));
 			memcpy(&newRight->vMid, &newRight->info, sizeof(drawVert_t));
-			
-			
+
+
 			if (!bFlipped)
 			{
 				// add new left subtree to left subtree list
 				leftBTList = BTree_AddToList(leftBTList, newLeft, p->vLeft, p->pBT->vMid);
-				
+
 				// add new right subtree to right subtree list
 				rightBTList = BTree_AddToList(rightBTList, newRight, p->pBT->vMid, p->vRight);
 			}
@@ -2221,7 +2223,7 @@ void BTree_ListCurveRecurse(BTreeList_t *pBTList)
 			{
 				// add new left subtree to right subtree list
 				rightBTList = BTree_AddToList(rightBTList, newLeft, p->vLeft, p->pBT->vMid);
-				
+
 				// add new right subtree to left subtree list
 				leftBTList = BTree_AddToList(leftBTList, newRight, p->pBT->vMid, p->vRight);
 			}
@@ -2269,7 +2271,7 @@ BTreeList_t *Patch_CreateBTListForRows(BTreeList_t *pBTList, patchMesh_t *patch,
 {
 	int row, pos;
 	patch->colDirty[(col-1)/2] = true;
-						
+
 	if (start == 0)
 	{
 		for (row=0; row<patch->height; row++)
@@ -2434,7 +2436,7 @@ BTreeList_t *Patch_FindLODMatches(patchMesh_t *patch, BTreeList_t *pBTList, draw
 					{
 						pBTList = BTree_AddLinkToList(pBTList, true); // flip
 						pBTList = Patch_CreateBTListForRows(pBTList, pb->pPatch, row, col);
-						pBTList = Patch_FindLODMatches(pb->pPatch, pBTList, pBTList->pBT->info, pBTList->vLeft, pBTList->vRight);				
+						pBTList = Patch_FindLODMatches(pb->pPatch, pBTList, pBTList->pBT->info, pBTList->vLeft, pBTList->vRight);
 						pb->pPatch->LODUpdated = true;
             bAlreadyAdded = true;
 					}
@@ -2497,12 +2499,12 @@ void Patch_CreateLODTrees(patchMesh_t *patch)
 
 	BTListList_t *LODLists;
 	LODLists = NULL;
-	
+
 	pBTList = NULL;
 
 	patch->bDirty = false;
 	patch->LODUpdated = true;
-	
+
 	for(col=1; col<patch->width; col+=2)
 	{
 		if (patch->colDirty[(col-1)/2]) continue;
@@ -2516,7 +2518,7 @@ void Patch_CreateLODTrees(patchMesh_t *patch)
 			patch->rowLOD[pos] = BTree_Create(patch->ctrl[col][row]);
 			pBTList = BTree_AddToList(pBTList, patch->rowLOD[pos], patch->ctrl[col-1][row], patch->ctrl[col+1][row]);
 		}
-	
+
 		//create connection list for first row
 		pBTList = Patch_FindLODMatches(patch, pBTList, patch->ctrl[col][0], patch->ctrl[col-1][0], patch->ctrl[col+1][0]);
 		//create connection list for last row
@@ -2574,13 +2576,15 @@ void Patch_CVNormal(vec3_t ctrl[3][3], vec3_t &normal)
 {
 	vec3_t v1, v2, vTemp1, vTemp2;
   int a, b;
-	
+
   a = Patch_GetCVTangent(v1, ctrl[0][0], ctrl[1][0], ctrl[2][0]);
 	b = Patch_GetCVTangent(v2, ctrl[0][0], ctrl[0][1], ctrl[0][2]);
 
 	//Sys_Printf("p1: (%1.1f %1.1f %1.1f) p2: (%1.1f %1.1f %1.1f) p2: (%1.1f %1.1f %1.1f)\n",
 	//	ctrl[0][0][0], ctrl[0][0][1], ctrl[0][0][2], ctrl[0][2][0], ctrl[0][2][1], ctrl[0][2][2], ctrl[2][0][0], ctrl[2][0][1], ctrl[2][0][2]);
-	
+
+	v1[0] = v1[1] = v1[2] = v2[0] = v2[1] = v2[2] = 0;
+
   if (a == 2)
   {
     a = Patch_GetCVTangent(v1, ctrl[0][0], ctrl[1][1], ctrl[1][2]);
@@ -2589,7 +2593,7 @@ void Patch_CVNormal(vec3_t ctrl[3][3], vec3_t &normal)
   {
     b = Patch_GetCVTangent(v2, ctrl[0][0], ctrl[1][1], ctrl[2][1]);
   }
- 
+
   if (a == 2)
   {
     a = Patch_GetCVTangent(v1, ctrl[0][0], ctrl[2][1], ctrl[2][2]);
@@ -2597,11 +2601,11 @@ void Patch_CVNormal(vec3_t ctrl[3][3], vec3_t &normal)
   if (b == 2)
   {
     b = Patch_GetCVTangent(v2, ctrl[0][0], ctrl[1][2], ctrl[2][2]);
-  }  
+  }
 
 	CrossProduct(v1, v2, normal);
 
-  
+
   if (normal[0] == 0.0f && normal[1] == 0.0f && normal[2] == 0.0f)
   {
     // more degenerate cases
@@ -2628,12 +2632,12 @@ void Patch_CVNormal(vec3_t ctrl[3][3], vec3_t &normal)
         Patch_BezierInterpolate(vCurve, pMid);
 			  VectorSubtract(pMid, ctrl[0][0], v1);
       }
-      
-      
+
+
 		}
 	  else if (VectorCompare(ctrl[0][0], ctrl[0][2])) // endcap right
 		{
-      
+
       if (VectorCompare(ctrl[2][0], ctrl[2][1]))
       {
         VectorSubtract(ctrl[2][2], ctrl[0][0], v2);
@@ -2643,7 +2647,7 @@ void Patch_CVNormal(vec3_t ctrl[3][3], vec3_t &normal)
         VectorSubtract(ctrl[2][0], ctrl[0][0], v2);
       }
       else
-      
+
       b = Patch_DegenCurve(ctrl[2][0], ctrl[2][1], ctrl[2][2]);
       if (b == 0)
       {
@@ -2653,7 +2657,7 @@ void Patch_CVNormal(vec3_t ctrl[3][3], vec3_t &normal)
         Patch_BezierInterpolate(vCurve, pMid);
 			  VectorSubtract(pMid, ctrl[0][0], v2);
       }
-      
+
 		}
     */
     if (VectorCompare(ctrl[0][0], ctrl[2][0])) // bottom degen
@@ -2814,7 +2818,7 @@ void BTree_GenerateNormals(BTNode_t *pBTMid, BTNode_t *pBTLeft, BTNode_t *pBTRig
 		if (pBTMid->left != NULL && pBTMid->right != NULL)
 		{
 			vec3_t normal;
-     
+
       if (noleft) // left curve is degenerate
       {
         if (nomid) // mid curve is degenerate
@@ -2870,7 +2874,7 @@ void BTree_GenerateNormals(BTNode_t *pBTMid, BTNode_t *pBTLeft, BTNode_t *pBTRig
 				for (int i=0; i<3; i++)
 					pBTLeft->vMid.normal[i] = (normal[i] + pBTLeft->vMid.normal[i]) / 2.0f;
 			else VectorCopy(normal, pBTLeft->vMid.normal);
-     
+
 			VectorNormalize(pBTLeft->vMid.normal, pBTLeft->vMid.normal);
       VectorNormalize(pBTRight->vMid.normal, pBTRight->vMid.normal);
 
@@ -2893,11 +2897,11 @@ void Patch_GenerateLODNormals(patchMesh_t *patch)
 	{
 		for(row=0; row+2<patch->height; row+=2)
 		{
-      if (!patch->colDirty[col/2] && !patch->rowDirty[row/2]) continue;  
- 
+      if (!patch->colDirty[col/2] && !patch->rowDirty[row/2]) continue;
+
    		rowpos = ((col/2)*patch->height)+row;
       colpos = ((row/2)*patch->width)+col;
-      
+
       if (row==0) rowAvg = false;
       else rowAvg = true;
       if (col==0) colAvg = false;
@@ -2907,7 +2911,7 @@ void Patch_GenerateLODNormals(patchMesh_t *patch)
       {
         tree[0][i] = patch->rowLOD[rowpos+i];
         tree[1][i] = patch->colLOD[colpos+i];
-        
+
         degen[0][i] = Patch_DegenCurve(patch->ctrl[col][row+i].xyz, patch->ctrl[col+1][row+i].xyz, patch->ctrl[col+2][row+i].xyz);
         degen[1][i] = Patch_DegenCurve(patch->ctrl[col+i][row].xyz, patch->ctrl[col+i][row+1].xyz, patch->ctrl[col+i][row+2].xyz);
       }
@@ -3131,11 +3135,11 @@ void Patch_CreateDrawLists(patchMesh_t *patch)
 
       Patch_AddBTreeToDrawListInOrder((*iter1), patch->rowLOD[rowpos]);
 			(*iter1)->push_back(patch->ctrl[col+2][row]);
-			
+
 			if (row+1 == patch->height)
 				continue;
-		
-			iter1++;	
+
+			iter1++;
 
       Patch_TraverseColBTInOrder(iter1, patch->colLOD[colpos], patch->colLOD[colpos+1], patch->colLOD[colpos+2], patch->rowLOD[rowpos+1], patch->rowLOD[rowpos], 0.5, 0.25);
 		}
@@ -3231,7 +3235,7 @@ void Patch_DrawLODPatchMesh(patchMesh_t *patch)
 }
 
 /*
-// fast memory-efficient ray-triangle intersection - MollerTrumbore97 
+// fast memory-efficient ray-triangle intersection - MollerTrumbore97
 
 #define EPSILON 0.000001
 #define CROSS(dest,v1,v2) {dest[0]=v1[1]*v2[2]-v1[2]*v2[1];dest[1]=v1[2]*v2[0]-v1[0]*v2[2];dest[2]=v1[0]*v2[1]-v1[1]*v2[0];}
@@ -3249,7 +3253,7 @@ int intersect_triangle(float orig[3], float dir[3],
    SUB(edge1, vert1, vert0);
    SUB(edge2, vert2, vert0);
 
-   // begin calculating determinant - also used to calculate U parameter 
+   // begin calculating determinant - also used to calculate U parameter
    CROSS(pvec, dir, edge2);
 
    // if determinant is near zero, ray lies in plane of triangle
@@ -3315,38 +3319,38 @@ int Triangle_Ray(float orig[3], float dir[3], bool bCullBack,
 {
   float edge1[3], edge2[3], tvec[3], pvec[3], qvec[3];
   double det,inv_det;
-  
+
   /* find vectors for two edges sharing vert0 */
   VectorSubtract(vert1, vert0, edge1);
   VectorSubtract(vert2, vert0, edge2);
-  
+
   /* begin calculating determinant - also used to calculate U parameter */
   CrossProduct(dir, edge2, pvec);
-  
+
   /* if determinant is near zero, ray lies in plane of triangle */
   det = DotProduct(edge1, pvec);
-  
+
   if (bCullBack)
   {
     if (det < 0.000001)
       return 0;
-    
+
     // calculate distance from vert0 to ray origin
     VectorSubtract(orig, vert0, tvec);
-    
+
     // calculate U parameter and test bounds
     *u = DotProduct(tvec, pvec);
     if (*u < 0.0 || *u > det)
       return 0;
-    
+
     // prepare to test V parameter
     CrossProduct(tvec, edge1, qvec);
-    
+
     // calculate V parameter and test bounds
     *v = DotProduct(dir, qvec);
     if (*v < 0.0 || *u + *v > det)
       return 0;
-    
+
     // calculate t, scale parameters, ray intersects triangle
     *t = DotProduct(edge2, qvec);
     inv_det = 1.0 / det;
@@ -3360,23 +3364,23 @@ int Triangle_Ray(float orig[3], float dir[3], bool bCullBack,
     if (det > -0.000001 && det < 0.000001)
       return 0;
     inv_det = 1.0 / det;
-    
+
     /* calculate distance from vert0 to ray origin */
     VectorSubtract(orig, vert0, tvec);
-    
+
     /* calculate U parameter and test bounds */
     *u = DotProduct(tvec, pvec) * inv_det;
     if (*u < 0.0 || *u > 1.0)
       return 0;
-    
+
     /* prepare to test V parameter */
     CrossProduct(tvec, edge1, qvec);
-    
+
     /* calculate V parameter and test bounds */
     *v = DotProduct(dir, qvec) * inv_det;
     if (*v < 0.0 || *u + *v > 1.0)
       return 0;
-    
+
     /* calculate t, ray intersects triangle */
     *t = DotProduct(edge2, qvec) * inv_det;
   }
@@ -3415,7 +3419,7 @@ bool Patch_Ray(patchMesh_t *patch, vec3_t origin, vec3_t dir, double *t, double 
         bIntersect = true;
         if (*t < tBest)
           tBest = *t;
-      }      
+      }
       if (Triangle_Ray(origin, dir, false, (*i3).xyz, (*i4).xyz, (*i2).xyz, t, u, v))
       {
         bIntersect = true;
@@ -3462,7 +3466,7 @@ void DrawPatchMesh(patchMesh_t *pm)
 
       Patch_DeleteDrawLists(pm);
       Patch_CreateDrawLists(pm);
-	
+
 		  Patch_DrawLODPatchMesh(pm);
 
       if (pm->nListID > 0)
@@ -3499,8 +3503,8 @@ DrawPatchControls
 void DrawPatchControls(patchMesh_t *pm)
 {
   int i, j;
-  bool bSelectedPoints[MAX_PATCH_WIDTH][MAX_PATCH_HEIGHT]; 
- 
+  bool bSelectedPoints[MAX_PATCH_WIDTH][MAX_PATCH_HEIGHT];
+
   bool bOverlay = pm->bOverlay;
 
   // bending
@@ -3529,33 +3533,33 @@ void DrawPatchControls(patchMesh_t *pm)
         }
         qglEnd();
         qglLineWidth(1.0);
-      }				
-      
+      }
+
       if (g_nPatchBendState == BEND_SELECT_EDGE || g_nPatchBendState == BEND_BENDIT || g_nPatchBendState == BEND_SELECT_ORIGIN)
       {
         if(!g_PrefsDlg.m_bGlPtWorkaround)
         {
           qglColor3f(0, 0, 1);
           qglBegin(GL_POINTS);
-          if (g_nPatchBendState == BEND_SELECT_ORIGIN)        	
+          if (g_nPatchBendState == BEND_SELECT_ORIGIN)
           {
             qglVertex3fv(g_vBendOrigin);
           }
-          else        	
+          else
           {
-            for (i = 0; i < pm->width; i++)          	
+            for (i = 0; i < pm->width; i++)
             {
-              if (g_bPatchLowerEdge)            	
+              if (g_bPatchLowerEdge)
               {
                 for (j = 0; j < g_nPatchAxisIndex; j++)
                   qglVertex3fv(pm->ctrl[i][j].xyz);
               }
-              else            	
+              else
               {
                 for (j = pm->height-1; j > g_nPatchAxisIndex; j--)
                   qglVertex3fv(pm->ctrl[i][j].xyz);
               }
-            }        	
+            }
           }
           qglEnd();
         }
@@ -3563,29 +3567,29 @@ void DrawPatchControls(patchMesh_t *pm)
           qglColor3f(0, 0, 1);
           qglLineWidth(2.0);
           qglBegin(GL_LINES);
-          if(g_nPatchBendState == BEND_SELECT_ORIGIN)					
+          if(g_nPatchBendState == BEND_SELECT_ORIGIN)
           {
             DrawAlternatePoint(g_vBendOrigin, 0);
           }
-          else					
+          else
           {
-            for(i = 0; i < pm->width; i++)						
+            for(i = 0; i < pm->width; i++)
             {
-              if(g_bPatchLowerEdge)							
+              if(g_bPatchLowerEdge)
               {
                 for(j = 0; j < g_nPatchAxisIndex; j++)
                 {
                   DrawAlternatePoint(pm->ctrl[i][j].xyz, 0);
-                }							
+                }
               }
-              else            	
+              else
               {
-                for (j = pm->height-1; j > g_nPatchAxisIndex; j--)              	
+                for (j = pm->height-1; j > g_nPatchAxisIndex; j--)
                 {
                   DrawAlternatePoint(pm->ctrl[i][j].xyz, 0);
-                }           	
-              }						
-            }        	
+                }
+              }
+            }
           }
           qglEnd();
           qglLineWidth(1.0);
@@ -3615,7 +3619,7 @@ void DrawPatchControls(patchMesh_t *pm)
         qglEnd();
         qglLineWidth(1.0);
       }
-      
+
       if (g_nPatchBendState == BEND_SELECT_EDGE || g_nPatchBendState == BEND_BENDIT || g_nPatchBendState == BEND_SELECT_ORIGIN)
       {
         if(!g_PrefsDlg.m_bGlPtWorkaround)
@@ -3678,7 +3682,7 @@ void DrawPatchControls(patchMesh_t *pm)
       }
     }
   }
-  else 
+  else
   {
     //qglDisable(GL_TEXTURE_2D); // stops point colours being multiplied by texture colour..
     //draw CV lattice - could be made optional
@@ -3692,7 +3696,7 @@ void DrawPatchControls(patchMesh_t *pm)
     for ( i = 0 ; i+1 < pm->width ; i++ )
     {
       qglBegin(GL_QUAD_STRIP);
-      for ( j = 0 ; j < pm->height ; j++ ) 
+      for ( j = 0 ; j < pm->height ; j++ )
       {
         qglVertex3fv(pm->ctrl[i][j].xyz);
         qglVertex3fv(pm->ctrl[i+1][j].xyz);
@@ -3702,7 +3706,7 @@ void DrawPatchControls(patchMesh_t *pm)
     qglDisable (GL_POLYGON_OFFSET_LINE);
     //if (g_PrefsDlg.m_bNoStipple == FALSE)
     //  qglEnable (GL_LINE_STIPPLE);
-    
+
     // draw selection handles
     if(!g_PrefsDlg.m_bGlPtWorkaround)
     {
@@ -3710,20 +3714,20 @@ void DrawPatchControls(patchMesh_t *pm)
       qglBegin(GL_POINTS);
       for ( i = 0 ; i < pm->width ; i++ )
       {
-        for ( j = 0 ; j < pm->height ; j++ ) 
+        for ( j = 0 ; j < pm->height ; j++ )
         {
           if (PointInMoveList(pm->ctrl[i][j].xyz) != -1)
           {
             bSelectedPoints[i][j] = true;
           }
           else
-          {	
+          {
             bSelectedPoints[i][j] = false;
             if (i & 0x01 || j & 0x01)
               qglColor3f(1, 0, 1);
             else
               qglColor3f(0, 1, 0);
-            
+
             qglVertex3fv(pm->ctrl[i][j].xyz);
           }
         }
@@ -3731,7 +3735,7 @@ void DrawPatchControls(patchMesh_t *pm)
       qglColor3f(0, 0, 1);
       for ( i = 0 ; i < pm->width ; i++ )
       {
-        for ( j = 0 ; j < pm->height ; j++ ) 
+        for ( j = 0 ; j < pm->height ; j++ )
         {
           if (bSelectedPoints[i][j])
             qglVertex3fv(pm->ctrl[i][j].xyz);
@@ -3758,7 +3762,7 @@ void DrawPatchControls(patchMesh_t *pm)
               qglColor3f(1, 0, 1);
             else
               qglColor3f(0, 1, 0);
-            
+
             // draw verts
             DrawAlternatePoint(pm->ctrl[i][j].xyz, 0);
           }
@@ -3776,7 +3780,7 @@ void DrawPatchControls(patchMesh_t *pm)
           }
         }
       }
-      qglEnd();	
+      qglEnd();
       qglLineWidth(1.0);
     }
   }
@@ -3788,7 +3792,7 @@ void DrawPatchControls(patchMesh_t *pm)
       qglBegin(GL_POINTS);
       for ( i = 0 ; i < pm->width ; i++ )
       {
-        for ( j = 0 ; j < pm->height ; j++ ) 
+        for ( j = 0 ; j < pm->height ; j++ )
         {
           if (i & 0x01 || j & 0x01)
             qglColor3f(1, 0, 1);
@@ -3805,7 +3809,7 @@ void DrawPatchControls(patchMesh_t *pm)
       qglBegin(GL_LINES);
       for ( i = 0 ; i < pm->width ; i++ )
       {
-        for ( j = 0 ; j < pm->height ; j++ ) 
+        for ( j = 0 ; j < pm->height ; j++ )
         {
           if (i & 0x01 || j & 0x01)
             qglColor3f(1, 0, 1);
@@ -3884,7 +3888,7 @@ void Patch_DrawCam(patchMesh_t *pm)
       qglBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
       qglColor4f(pm->d_texture->color[0], pm->d_texture->color[1], pm->d_texture->color[2], pm->pShader->getTrans());
     }
-    
+
     DrawPatchMesh(pm); // both sides
   }
 
@@ -3902,13 +3906,13 @@ void BrushesForSection( float section[2][4][7] ) {
 Patch_BuildPoints
 ================
 */
-void Patch_BuildPoints (brush_t *b) 
+void Patch_BuildPoints (brush_t *b)
 {
 	face_t		*f;
 	b->patchBrush = false;
-	for (f=b->brush_faces ; f ; f=f->next) 
+	for (f=b->brush_faces ; f ; f=f->next)
   {
-		if (f->texdef.flags & SURF_PATCH) 
+		if (f->texdef.flags & SURF_PATCH)
     {
 			b->patchBrush = true;
       //vec3_t vMin, vMax;
@@ -3954,7 +3958,7 @@ Patch_ApplyMatrix
 void Patch_ApplyMatrix(patchMesh_t *p, const vec3_t vOrigin, const vec3_t vMatrix[3], bool bSnap)
 {
 	vec3_t vTemp;
-	
+
 	for (int w = 0; w < p->width; w++)
 	{
 		for (int h = 0; h < p->height; h++)
@@ -3988,15 +3992,15 @@ void Patch_EditPatch()
   //--patchMesh_t* p = &patchMeshes[n];
   g_qeglobals.d_numpoints = 0;
   g_qeglobals.d_num_move_points = 0;
-	
+
   for (brush_t *pb = selected_brushes.next ; pb != &selected_brushes ; pb = pb->next)
 	{
     if (pb->patchBrush)
     {
 	    patchMesh_t* p = pb->pPatch;
-	    for ( int i = 0 ; i < p->width ; i++ ) 
+	    for ( int i = 0 ; i < p->width ; i++ )
       {
-		    for ( int j = 0 ; j < p->height ; j++ ) 
+		    for ( int j = 0 ; j < p->height ; j++ )
         {
 	        VectorCopy (p->ctrl[i][j].xyz, g_qeglobals.d_points[g_qeglobals.d_numpoints]);
           if (g_qeglobals.d_numpoints < MAX_POINTS-1)
@@ -4049,7 +4053,7 @@ Patch_Select
 */
 void Patch_Select(patchMesh_t *p)
 {
-  // maintained for point manip.. which i need to fix as this 
+  // maintained for point manip.. which i need to fix as this
   // is pf error prone
   //--g_nSelectedPatch = n;
   p->bSelected = true;
@@ -4095,7 +4099,7 @@ void Patch_Delete(patchMesh_t *p)
   // delete display list associated with patch
   if (p->nListID != -1)
     qglDeleteLists (p->nListID, 1); // list#, number of lists
-  
+
   // delete LOD drawLists
   Patch_DeleteDrawLists(p);
 
@@ -4103,7 +4107,7 @@ void Patch_Delete(patchMesh_t *p)
   free(p);
   p = NULL;
 
-  
+
   UpdatePatchInspector();
 }
 
@@ -4194,7 +4198,7 @@ bool Patch_DragScale(patchMesh_t *p, vec3_t vAmt, vec3_t vMove)
       return false;
     }
   }
-  
+
   for (i=0 ; i<3 ; i++)
     vMid[i] = (vMin[i] + ((vMax[i] - vMin[i]) / 2));
 
@@ -4215,7 +4219,7 @@ bool Patch_DragScale(patchMesh_t *p, vec3_t vAmt, vec3_t vMove)
   VectorSubtract(vMax, vMin, vTemp);
 
   Patch_CalcBounds(p, vMin, vMax);
-  
+
   VectorSubtract(vMax, vMin, vMid);
 
   VectorSubtract(vMid, vTemp, vTemp);
@@ -4246,10 +4250,11 @@ void Patch_InsertColumn(patchMesh_t *p, bool bAdd)
 	int w, h, i, width;
 	vec3_t vTemp;
 	float stTemp[2];
-  
+
 	if (p->width + 2 >= MAX_PATCH_WIDTH)
 		return;
 
+	w = 1;
 	// check for selected column points
 	for (h = 0; h < p->height; h++)
 	{
@@ -4278,19 +4283,19 @@ void Patch_InsertColumn(patchMesh_t *p, bool bAdd)
 	{
 		for (width = p->width-1; width > w; width--)
 			memcpy(&p->ctrl[width+2][h],&p->ctrl[width][h], sizeof(drawVert_t));
-		
+
 		// set two new column points
 		memcpy(&p->ctrl[w+2][h],&p->ctrl[w][h], sizeof(drawVert_t));
 		memcpy(&p->ctrl[w+1][h],&p->ctrl[w-1][h], sizeof(drawVert_t));
-		
+
 		for (i=0; i<3; i++) // xyz
 		{
 			vTemp[i] = p->ctrl[w][h].xyz[i] - p->ctrl[w-1][h].xyz[i];
 			p->ctrl[w+1][h].xyz[i] = p->ctrl[w+1][h].xyz[i] + (vTemp[i] / 2);
-			
+
 			vTemp[i] = p->ctrl[w-2][h].xyz[i] - p->ctrl[w-1][h].xyz[i];
 			p->ctrl[w-1][h].xyz[i] = p->ctrl[w-1][h].xyz[i] + (vTemp[i] / 2);
-			
+
 			vTemp[i] = p->ctrl[w+1][h].xyz[i] - p->ctrl[w-1][h].xyz[i];
 			p->ctrl[w][h].xyz[i] = p->ctrl[w-1][h].xyz[i] + (vTemp[i] / 2);
 		}
@@ -4298,10 +4303,10 @@ void Patch_InsertColumn(patchMesh_t *p, bool bAdd)
 		{
 			stTemp[i] = p->ctrl[w][h].st[i] - p->ctrl[w-1][h].st[i];
 			p->ctrl[w+1][h].st[i] = p->ctrl[w+1][h].st[i] + (stTemp[i] / 2);
-			
+
 			stTemp[i] = p->ctrl[w-2][h].st[i] - p->ctrl[w-1][h].st[i];
 			p->ctrl[w-1][h].st[i] = p->ctrl[w-1][h].st[i] + (stTemp[i] / 2);
-			
+
 			stTemp[i] = p->ctrl[w+1][h].st[i] - p->ctrl[w-1][h].st[i];
 			p->ctrl[w][h].st[i] = p->ctrl[w-1][h].st[i] + (stTemp[i] / 2);
 		}
@@ -4326,10 +4331,11 @@ void Patch_InsertRow(patchMesh_t *p, bool bAdd)
 	int h, w, i, height;
 	vec3_t vTemp;
 	float stTemp[2];
-  
+
 	if (p->height + 2 >= MAX_PATCH_HEIGHT)
 		return;
 
+	h = 1;
 	// check for selected row points
 	for (w = 0; w < p->width; w++)
 	{
@@ -4357,19 +4363,19 @@ void Patch_InsertRow(patchMesh_t *p, bool bAdd)
 	{
 		for (height = p->height-1; height > h; height--)
 			memcpy(&p->ctrl[w][height+2],&p->ctrl[w][height], sizeof(drawVert_t));
-		
+
 		// set two new row points
 		memcpy(&p->ctrl[w][h+2],&p->ctrl[w][h], sizeof(drawVert_t));
 		memcpy(&p->ctrl[w][h+1],&p->ctrl[w][h-1], sizeof(drawVert_t));
-		
+
 		for (i=0; i<3; i++) // xyz
 		{
 			vTemp[i] = p->ctrl[w][h].xyz[i] - p->ctrl[w][h-1].xyz[i];
 			p->ctrl[w][h+1].xyz[i] = p->ctrl[w][h+1].xyz[i] + (vTemp[i] / 2);
-			
+
 			vTemp[i] = p->ctrl[w][h-2].xyz[i] - p->ctrl[w][h-1].xyz[i];
 			p->ctrl[w][h-1].xyz[i] = p->ctrl[w][h-1].xyz[i] + (vTemp[i] / 2);
-			
+
 			vTemp[i] = p->ctrl[w][h+1].xyz[i] - p->ctrl[w][h-1].xyz[i];
 			p->ctrl[w][h].xyz[i] = p->ctrl[w][h-1].xyz[i] + (vTemp[i] / 2);
 		}
@@ -4377,10 +4383,10 @@ void Patch_InsertRow(patchMesh_t *p, bool bAdd)
 		{
 			stTemp[i] = p->ctrl[w][h].st[i] - p->ctrl[w][h-1].st[i];
 			p->ctrl[w][h+1].st[i] = p->ctrl[w][h+1].st[i] + (stTemp[i] / 2);
-			
+
 			stTemp[i] = p->ctrl[w][h-2].st[i] - p->ctrl[w][h-1].st[i];
 			p->ctrl[w][h-1].st[i] = p->ctrl[w][h-1].st[i] + (stTemp[i] / 2);
-			
+
 			stTemp[i] = p->ctrl[w][h+1].st[i] - p->ctrl[w][h-1].st[i];
 			p->ctrl[w][h].st[i] = p->ctrl[w][h-1].st[i] + (stTemp[i] / 2);
 		}
@@ -4405,10 +4411,11 @@ void Patch_RemoveRow(patchMesh_t *p, bool bFirst)
 	vec3_t vTemp;
 	float stTemp[2];
 	bool bExtrapolate = true;
-  
+
 	if (p->height <= MIN_PATCH_HEIGHT)
 		return;
 
+	h = 0;
 	for (w = 0; w < p->width; w++)
 	{
 		for (h = 0; h < p->height; h+=2)
@@ -4432,7 +4439,7 @@ void Patch_RemoveRow(patchMesh_t *p, bool bFirst)
 	else if (h <= 0) h=2;
 	else if (h > p->height-3) h = p->height-3;
 	else if (h%2) h++;
-	
+
 	p->height -= 2;
 
 	for (w = 0; w < p->width; w++)
@@ -4464,12 +4471,12 @@ void Patch_RemoveRow(patchMesh_t *p, bool bFirst)
 			else h=0;
 		}
 		for (height = h; height < p->height; height++)
-			memcpy(&p->ctrl[w][height], &p->ctrl[w][height+2], sizeof(drawVert_t));			
+			memcpy(&p->ctrl[w][height], &p->ctrl[w][height+2], sizeof(drawVert_t));
 	}
 	// deselect all points to keep things neat
 	if (g_qeglobals.d_select_mode == sel_curvepoint)
 		Patch_EditPatch();
-	
+
 	UpdatePatchInspector();
 }
 
@@ -4484,10 +4491,11 @@ void Patch_RemoveColumn(patchMesh_t *p, bool bFirst)
 	vec3_t vTemp;
 	float stTemp[2];
 	bool bExtrapolate = true;
-  
+
 	if (p->width <= MIN_PATCH_WIDTH)
 		return;
 
+	w = 0;
 	for (h = 0; h < p->height; h++)
 	{
 		for (w = 0; w < p->width; w+=2)
@@ -4511,7 +4519,7 @@ void Patch_RemoveColumn(patchMesh_t *p, bool bFirst)
 	else if (w<=0) w=2;
 	else if (w > p->width-3) w = p->width-3;
 	else if (w%2) w++;
-	
+
 	p->width -= 2;
 
 	for (h = 0; h < p->height; h++)
@@ -4542,9 +4550,9 @@ void Patch_RemoveColumn(patchMesh_t *p, bool bFirst)
 			continue;
 			else w=0;
 		}
-		
+
 		for (width = w; width < p->width; width++)
-			memcpy(&p->ctrl[width][h], &p->ctrl[width+2][h], sizeof(drawVert_t));			
+			memcpy(&p->ctrl[width][h], &p->ctrl[width+2][h], sizeof(drawVert_t));
 	}
 	// deselect all points to keep things neat
 	if (g_qeglobals.d_select_mode == sel_curvepoint)
@@ -4572,10 +4580,10 @@ void Patch_AdjustColumns(patchMesh_t *p, int nCols)
 
   for (h = 0; h < p->height; h++)
   {
-    // for each column, we need to evenly disperse p->width number 
+    // for each column, we need to evenly disperse p->width number
     // of points across the old bounds
-    
-    // calc total distance to interpolate 
+
+    // calc total distance to interpolate
     VectorSubtract(p->ctrl[p->width - 1 - nCols][h].xyz, p->ctrl[0][h].xyz, vTemp);
 
     // amount per cycle
@@ -4591,9 +4599,9 @@ void Patch_AdjustColumns(patchMesh_t *p, int nCols)
     }
 
   }
-	for ( w = 0 ; w < p->width ; w++ ) 
+	for ( w = 0 ; w < p->width ; w++ )
   {
-		for ( h = 0 ; h < p->height ; h++ ) 
+		for ( h = 0 ; h < p->height ; h++ )
     {
 			p->ctrl[w][h].st[0] = 4 * (float)w / (p->width - 1);
 			p->ctrl[w][h].st[1] = 4 * (float)h / (p->height - 1);
@@ -4622,12 +4630,12 @@ void Patch_AdjustRows(patchMesh_t *p, int nRows)
 
   for (w = 0; w < p->width; w++)
   {
-    // for each row, we need to evenly disperse p->height number 
+    // for each row, we need to evenly disperse p->height number
     // of points across the old bounds
 
-    // calc total distance to interpolate 
+    // calc total distance to interpolate
     VectorSubtract(p->ctrl[w][p->height - 1 - nRows].xyz, p->ctrl[w][0].xyz, vTemp);
-    
+
     //vTemp[0] = vTemp[1] = vTemp[2] = 0;
     //for (h = 0; h < p->height - nRows; h ++)
     //{
@@ -4647,9 +4655,9 @@ void Patch_AdjustRows(patchMesh_t *p, int nRows)
     }
 
   }
-	for ( w = 0 ; w < p->width ; w++ ) 
+	for ( w = 0 ; w < p->width ; w++ )
   {
-		for ( h = 0 ; h < p->height ; h++ ) 
+		for ( h = 0 ; h < p->height ; h++ )
     {
 			p->ctrl[w][h].st[0] = 4 * (float)w / (p->width - 1);
 			p->ctrl[w][h].st[1] = 4 * (float)h / (p->height - 1);
@@ -4669,8 +4677,8 @@ void Patch_DisperseRows()
 {
 	vec3_t vTemp, vTemp2;
 	int i, w, h;
-	
-	
+
+
 	for (brush_t *pb = selected_brushes.next ; pb != &selected_brushes ; pb = pb->next)
 	{
      if (pb->patchBrush)
@@ -4679,31 +4687,31 @@ void Patch_DisperseRows()
        Patch_Rebuild(p);
        for (w = 0; w < p->width; w++)
        {
-         // for each row, we need to evenly disperse p->height number 
+         // for each row, we need to evenly disperse p->height number
          // of points across the old bounds
- 
-         // calc total distance to interpolate 
+
+         // calc total distance to interpolate
          VectorSubtract(p->ctrl[w][p->height - 1].xyz, p->ctrl[w][0].xyz, vTemp);
-     
+
          //vTemp[0] = vTemp[1] = vTemp[2] = 0;
          //for (h = 0; h < p->height - nRows; h ++)
          //{
          //  VectorAdd(vTemp, p->ctrl[w][h], vTemp);
          //}
- 
+
          // amount per cycle
          for (i = 0; i < 3; i ++)
          {
            vTemp2[i] = vTemp[i] / (p->height - 1);
          }
- 
+
          // move along
          for (h = 0; h < p->height-1; h++)
          {
            VectorAdd(p->ctrl[w][h].xyz, vTemp2, p->ctrl[w][h+1].xyz);
          }
          Patch_Naturalize(p);
- 
+
        }
      }
    }
@@ -4720,8 +4728,8 @@ void Patch_DisperseIntermediateRows()
 {
 	vec3_t vTemp, vTemp2;
 	int i, w, h;
-	
-	
+
+
 	for (brush_t *pb = selected_brushes.next ; pb != &selected_brushes ; pb = pb->next)
 	{
 		if (pb->patchBrush)
@@ -4733,15 +4741,15 @@ void Patch_DisperseIntermediateRows()
 				// move along
 				for (h = 0; h < p->height; h+=2)
 				{
-					// calc distance to interpolate 
+					// calc distance to interpolate
 					VectorSubtract(p->ctrl[w][h+2].xyz, p->ctrl[w][h].xyz, vTemp);
-					
+
 					// halve distance
 					for (i = 0; i < 3; i ++)
 					{
 						vTemp2[i] = vTemp[i] / 2;
 					}
-					
+
 					// move control points
 					VectorAdd(p->ctrl[w][h].xyz, vTemp2, p->ctrl[w][h+1].xyz);
 				}
@@ -4760,8 +4768,8 @@ void Patch_DisperseIntermediateColumns()
 {
 	vec3_t vTemp, vTemp2;
 	int i, w, h;
-	
-	
+
+
 	for (brush_t *pb = selected_brushes.next ; pb != &selected_brushes ; pb = pb->next)
 	{
 		if (pb->patchBrush)
@@ -4773,15 +4781,15 @@ void Patch_DisperseIntermediateColumns()
 					// move along
 				for (w = 0; w < p->width; w+=2)
 				{
-					// calc distance to interpolate 
+					// calc distance to interpolate
 					VectorSubtract(p->ctrl[w+2][h].xyz, p->ctrl[w][h].xyz, vTemp);
-					
+
 					// halve distance
 					for (i = 0; i < 3; i ++)
 					{
 						vTemp2[i] = vTemp[i] / 2;
 					}
-					
+
 					// move control points
 					VectorAdd(p->ctrl[w][h].xyz, vTemp2, p->ctrl[w+1][h].xyz);
 				}
@@ -4859,7 +4867,7 @@ void Patch_AdjustSelectedRowCols(int nRows, int nCols)
       {
         Patch_AdjustRows(pb->pPatch, nRows);
       }
-      
+
       if (nCols != 0)
       {
         Patch_AdjustColumns(pb->pPatch, nCols);
@@ -4905,7 +4913,7 @@ void CheckName( patchMesh_t *p, char *pname )
 
 /*
 ==================
-Patch_Write 
+Patch_Write
 ==================
 */
 void Patch_Write (patchMesh_t *p, MemStream *file)
@@ -5043,7 +5051,7 @@ void Patch_ScaleTexture(patchMesh_t *p, float fx, float fy, bool bFixup)
     if (fy == 0)
       fy = 1.0;
   }
-  
+
   for (int w = 0; w < p->width; w++)
   {
     for (int h = 0; h < p->height; h++)
@@ -5163,7 +5171,7 @@ void Patch_InvertTexture(bool bY)
       p->bDirty = true;
       if (bY)
       {
-	      for ( int i = 0 ; i < p->height ; i++ ) 
+	      for ( int i = 0 ; i < p->height ; i++ )
         {
           for (int j = 0; j < p->width / 2; j++)
           {
@@ -5175,7 +5183,7 @@ void Patch_InvertTexture(bool bY)
       }
       else
       {
-	      for ( int i = 0 ; i < p->width ; i++ ) 
+	      for ( int i = 0 ; i < p->width ; i++ )
         {
           for (int j = 0; j < p->height / 2; j++)
           {
@@ -5202,7 +5210,7 @@ void Patch_InvertTexture(bool bY)
 ==================
 Patch_Save
 ==================
- Saves patch ctrl info (originally to deal with a 
+ Saves patch ctrl info (originally to deal with a
  cancel in the surface dialog
 */
 void Patch_Save(patchMesh_t *p)
@@ -5233,9 +5241,9 @@ void Patch_ResetTexturing(float fx, float fy)
     {
       patchMesh_t *p = pb->pPatch;
       p->bDirty = true;
-	    for ( int i = 0 ; i < p->width ; i++ ) 
+	    for ( int i = 0 ; i < p->width ; i++ )
       {
-		    for ( int j = 0 ; j < p->height ; j++ ) 
+		    for ( int j = 0 ; j < p->height ; j++ )
         {
 			    p->ctrl[i][j].st[0] = fx * (float)i / (p->width - 1);
 			    p->ctrl[i][j].st[1] = 1 - fy * (float)j / (p->height - 1);
@@ -5443,7 +5451,7 @@ void Patch_BendHandleENTER()
     else
     if (g_nPatchBendState == BEND_BENDIT)
     {
-      // basically we go into rotation mode, set the axis to the center of the 
+      // basically we go into rotation mode, set the axis to the center of the
     }
   }
   else
@@ -5550,7 +5558,7 @@ void Patch_SelectBendAxis()
     SelectColumn(p, g_nPatchAxisIndex, false);
   }
 
-  //FIXME: this only needs to be set once... 
+  //FIXME: this only needs to be set once...
   Patch_SetBendRotateOrigin(p);
 
 }
@@ -5860,7 +5868,7 @@ void Patch_SelectAreaPoints(bool bMulti)
     CrossProduct( ray[1], ray[2], norm[2] ); VectorNormalize( norm[2], norm[2] );
     CrossProduct( ray[2], ray[3], norm[3] ); VectorNormalize( norm[3], norm[3] );
     CrossProduct( ray[3], ray[0], norm[4] ); VectorNormalize( norm[4], norm[4] );
-		
+
 		// 3D clipping
 		for (brush_t *pb = selected_brushes.next ; pb != &selected_brushes ; pb = pb->next)
 		{
@@ -5933,7 +5941,7 @@ patchMesh_t* Patch_Duplicate(patchMesh_t *pFrom)
 {
   patchMesh_t* p = MakeNewPatch();
   memcpy(p, pFrom , sizeof(patchMesh_t));
-  
+
 	// spog - initialise patch LOD pointers (again)
   Patch_InitialiseLODPointers(p);
   p->drawLists = NULL;
@@ -5943,7 +5951,7 @@ patchMesh_t* Patch_Duplicate(patchMesh_t *pFrom)
   p->bOverlay = false;
   p->nListID = -1;
   AddBrushForPatch(p);
- 
+
   return p;
 }
 
@@ -5988,7 +5996,7 @@ void Patch_Thicken(int nAmount, bool bSeam, qboolean bGroupResult)
       {
 
         // FIXME: this should detect if any edges of the patch are closed and act appropriately
-        // 
+        //
         if (!(p->type & PATCH_CYLINDER))
         {
           b = Patch_GenericMesh(3, p->height, 2, false, true);
@@ -6027,7 +6035,7 @@ void Patch_Thicken(int nAmount, bool bSeam, qboolean bGroupResult)
           Patch_Naturalize(pSeam);
           brushes.Add(b);
         }
-    
+
         //--{
           // otherwise we will add one per end
           b = Patch_GenericMesh(p->width, 3, 2, false, true);
@@ -6076,7 +6084,7 @@ void Patch_Thicken(int nAmount, bool bSeam, qboolean bGroupResult)
     Select_Brush(reinterpret_cast<brush_t*>(brushes.GetAt(i)));
   }
 
-  if(bGroupResult) 
+  if(bGroupResult)
   {
     entity_t *e = Entity_Alloc();
     SetKeyValue(e, "classname", "func_group");
@@ -6084,7 +6092,7 @@ void Patch_Thicken(int nAmount, bool bSeam, qboolean bGroupResult)
     Select_GroupEntity(e);
     Entity_AddToList(e, &entities);
   }
-  
+
   UpdatePatchInspector();
 }
 
@@ -6179,41 +6187,41 @@ void Patch_Transpose()
     {
       patchMesh_t *p = pb->pPatch;
 
-      if ( p->width > p->height ) 
+      if ( p->width > p->height )
       {
-	for ( i = 0 ; i < p->height ; i++ ) 
+	for ( i = 0 ; i < p->height ; i++ )
         {
-	  for ( j = i + 1 ; j < p->width ; j++ ) 
+	  for ( j = i + 1 ; j < p->width ; j++ )
           {
-	    if ( j < p->height ) 
+	    if ( j < p->height )
             {
 	      // swap the value
 	      memcpy(&dv,&p->ctrl[j][i],sizeof(drawVert_t));
 	      memcpy(&p->ctrl[j][i],&p->ctrl[i][j], sizeof(drawVert_t));
 	      memcpy(&p->ctrl[i][j],&dv, sizeof(drawVert_t));
-	    } 
-            else 
+	    }
+            else
             {
     					// just copy
 					memcpy(&p->ctrl[i][j],&p->ctrl[j][i], sizeof(drawVert_t));
 		    		}
     			}
   		  }
-	    } 
-      else 
+	    }
+      else
       {
-    		for ( i = 0 ; i < p->width ; i++ ) 
+    		for ( i = 0 ; i < p->width ; i++ )
         {
-		  	  for ( j = i + 1 ; j < p->height ; j++ ) 
+		  	  for ( j = i + 1 ; j < p->height ; j++ )
           {
-    				if ( j < p->width ) 
+    				if ( j < p->width )
             {
 					    // swap the value
 					    memcpy(&dv,&p->ctrl[i][j], sizeof(drawVert_t));
               memcpy(&p->ctrl[i][j],&p->ctrl[j][i], sizeof(drawVert_t));
     					memcpy(&p->ctrl[j][i],&dv, sizeof(drawVert_t));
-		    		} 
-            else 
+		    		}
+            else
             {
     					// just copy
 					memcpy(&p->ctrl[j][i],&p->ctrl[i][j], sizeof(drawVert_t));
@@ -6236,20 +6244,20 @@ void Patch_Transpose()
 void Patch_SnapToGrid(patchMesh_t *p)
 {
 	int i,j,k;
-	
+
 	// if patch points selected, snap only selected points
 	if (g_qeglobals.d_select_mode == sel_curvepoint && g_qeglobals.d_num_move_points != 0)
 		for (i=0; i<g_qeglobals.d_num_move_points; i++)
 			for (j = 0; j < 3; j++)
 				g_qeglobals.d_move_points[i][j] = floor(g_qeglobals.d_move_points[i][j] / g_qeglobals.d_gridsize + 0.5) * g_qeglobals.d_gridsize;
-			
+
 	// else snap all patch points
 	else
 		for (i = 0; i < p->width; i++)
 			for (j = 0; j < p->height; j++)
 				for (k = 0; k < 3; k++)
 					p->ctrl[i][j].xyz[k] = floor(p->ctrl[i][j].xyz[k] / g_qeglobals.d_gridsize + 0.5) * g_qeglobals.d_gridsize;
-				
+
 	vec3_t vMin, vMax;
 	Patch_CalcBounds(p, vMin, vMax);
 	Brush_RebuildBrush(p->pSymbiot, vMin, vMax);
@@ -6351,7 +6359,7 @@ void Patch_FromTriangle(vec5_t vx, vec5_t vy, vec5_t vz)
 
   //Patch_Naturalize(p);
 
-  //  brush_t *b = 
+  //  brush_t *b =
   AddBrushForPatch(p);
 
 }
@@ -6372,7 +6380,7 @@ void Patch_SetEpair(patchMesh_t *p, const char *pKey, const char *pValue)
 	}
 }
 
-/* 
+/*
 =================
 Patch_GetKeyValue
 =================

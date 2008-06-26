@@ -50,9 +50,9 @@ static const char *PLUGIN_ABOUT = "UFO: Alien Invasion plugin " PLUGIN_VERSION "
 #define NUM_TOOLBAR_BUTTONS FILTER_MAX
 typedef struct toolbar_button_info_s
 {
-	char *image;
-	char *text;
-	char *tip;
+	const char *image;
+	const char *text;
+	const char *tip;
 	void (*func)();
 	IToolbarButton::EType type;
 } toolbar_button_info_t;
@@ -61,29 +61,29 @@ static const toolbar_button_info_t toolbar_buttons[NUM_TOOLBAR_BUTTONS] =
 {
 	{
 		"ufoai_actorclip.bmp",
-		"Filter actorclip",
-		"Actorclip",
+		_("Filter actorclip"),
+		_("Actorclip"),
 		DoActorClipFiltering,
 		IToolbarButton::eToggleButton
 	},
 	{
 		"ufoai_weaponclip.bmp",
-		"Filter weaponclip",
-		"Weaponclip",
+		_("Filter weaponclip"),
+		_("Weaponclip"),
 		DoWeaponClipFiltering,
 		IToolbarButton::eToggleButton
 	},
 	{
 		"ufoai_nodraw.bmp",
-		"Filter nodraw",
-		"NoDraw",
+		_("Filter nodraw"),
+		_("NoDraw"),
 		DoNoDrawFiltering,
 		IToolbarButton::eToggleButton
 	},
 	{
 		"ufoai_stepon.bmp",
-		"Filter stepon",
-		"Stepon",
+		_("Filter stepon"),
+		_("Stepon"),
 		DoSteponFiltering,
 		IToolbarButton::eToggleButton
 	},
