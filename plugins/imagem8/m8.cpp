@@ -26,7 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 void LoadM8(const char *name, unsigned char **pic, int *width, int *height)
 {
-    FILE    	*f;
+//    FILE    	*f;
     m8_header_t	*m8_header;
     rgb_t	*palette;
     int		i, num_pixels, size;
@@ -44,7 +44,7 @@ void LoadM8(const char *name, unsigned char **pic, int *width, int *height)
     strcat(text_buf, ".pcx.m8");
 
     // open file
-	if ( length = vfsLoadFile ((char *) text_buf, (void **) &m8_file_buffer, 0) == (unsigned int) -1)
+	if ( (length = vfsLoadFile ((char *) text_buf, (void **) &m8_file_buffer, 0)) == (unsigned int) -1)
     {
     	strcpy(text_buf, name);
 	for(i=(strlen(text_buf)-1); i>0; i--)
@@ -62,7 +62,7 @@ void LoadM8(const char *name, unsigned char **pic, int *width, int *height)
 		return;
 	}
     }
-    
+
     m8_header = (m8_header_t *)m8_file_buffer;
 
     // make sure we have a valid M8 file

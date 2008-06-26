@@ -262,7 +262,7 @@ void IsFaceConflicting()
   {
     temp_texdef_face_list = get_texdef_face_list()->next;
 
-    for (temp_texdef_face_list; temp_texdef_face_list; temp_texdef_face_list = temp_texdef_face_list->next)
+    for (; temp_texdef_face_list; temp_texdef_face_list = temp_texdef_face_list->next)
     {
       tmp_texdef = &temp_texdef_face_list->texdef;
       if ( texdef_SI_values.shift[0] != tmp_texdef->shift[0] )

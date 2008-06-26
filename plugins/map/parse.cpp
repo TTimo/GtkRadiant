@@ -569,7 +569,7 @@ bool Primitive_Parse(brush_t *pBrush)
 void Entity_Parse(entity_t *pEntity)
 {
   brush_t *pBrush;
-  CPtrArray *brushes = NULL;
+//  CPtrArray *brushes = NULL;
   char temptoken[1024];
 
   char *token = Token();

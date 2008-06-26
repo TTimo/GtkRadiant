@@ -52,7 +52,7 @@ void Patch_Write(patchMesh_t *pPatch, IDataStream *out)
   if(!strncmp(str, "textures/", 9)) str+=9;
   out->printf("patchDef2\n{\n%s\n( %i %i 0 0 0 )\n",
     str, pPatch->width, pPatch->height);
-  
+
   // write matrix
   out->printf("(\n");
   for(i=0; i<pPatch->width; i++)
@@ -117,7 +117,7 @@ void Face_Write (face_t *face, IDataStream *out, bool bAlternateTexdef = false)
   if (g_MapVersion == MAPVERSION_HL)
   {
     char *pos;
-	while ( pos = (char*)strchr( str, '/' ) ) {
+	while ( (pos = (char*)strchr( str, '/' )) != NULL ) {
 		str = pos+1; // to speed optimize, change the "while" to an "if"
 	}
   }

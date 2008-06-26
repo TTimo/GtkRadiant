@@ -224,7 +224,7 @@ void IsFaceConflicting()
 {
   texdef_t* tmp_texdef;
   texdef_to_face_t* temp_texdef_face_list;
-  char buf[12];
+//  char buf[12];
   char texture_name[128];
 
   if (texdef_face_list_empty())
@@ -262,7 +262,7 @@ void IsFaceConflicting()
   {
     temp_texdef_face_list = get_texdef_face_list()->next;
 
-    for (temp_texdef_face_list; temp_texdef_face_list; temp_texdef_face_list = temp_texdef_face_list->next)
+    for (; temp_texdef_face_list; temp_texdef_face_list = temp_texdef_face_list->next)
     {
       tmp_texdef = &temp_texdef_face_list->texdef;
       if ( texdef_SI_values.shift[0] != tmp_texdef->shift[0] )
@@ -320,7 +320,7 @@ static void PopulateTextureComboList()
   texdef_to_face_t* temp_texdef_face_list;
   char blank[1];
   GList *items = NULL;
-  GList *tmp_item;
+//  GList *tmp_item;
   int num_of_list_items = 0;
 
   blank[0] = 0;
@@ -386,7 +386,7 @@ static void GetTexdefInfo_from_Radiant()
 
   if (!texdef_face_list_empty())
   {
-    texdef_to_face_t* p = get_texdef_face_list();
+//    texdef_to_face_t* p = get_texdef_face_list();
     GetSelFacesTexdef( get_texdef_face_list() );
   }
 
@@ -1875,7 +1875,7 @@ static void on_fit_button_clicked (GtkButton *button, gpointer user_data)
 static void on_axial_button_clicked (GtkButton *button, gpointer user_data)
 {
   texdef_t* tmp_texdef;
-  texdef_t* tmp_orig_texdef;
+//  texdef_t* tmp_orig_texdef;
   texdef_to_face_t* temp_texdef_face_list;
 
   if (!texdef_face_list_empty() && g_bListenChanged)

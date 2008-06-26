@@ -264,6 +264,8 @@ void Texture_SetMode(int iMenu)
     iMode = -1;
     texturing = false;
     break;
+  default:
+    return;
   }
 
   g_qeglobals.d_savedinfo.iTexMenu = iMenu;

@@ -243,7 +243,7 @@ static void DrawLightSphere(entity_t * e, int nGLState, int pref)
   const char *target = ValueForKey(e, "target");
   bool bIsSpotLight = !!target[0];
   //!\todo Write an API for modules to register preference settings, and make this preference module-specific.
-  int nPasses = pref == 1 ? 3 : 2;
+ // int nPasses = pref == 1 ? 3 : 2;
 
   g_QglTable.m_pfn_qglPushAttrib(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
   g_QglTable.m_pfn_qglDepthMask(GL_FALSE);
@@ -287,7 +287,7 @@ unsigned short indices[24] = { 0, 2, 3, 0, 3, 4, 0, 4, 5, 0, 5, 2,
 
 void DrawLight(entity_t* e, int nGLState, int pref, int nViewType)
 {
-  int i;
+//  int i;
   // top, bottom, tleft, tright, bright, bleft
   vec3_t points[6];
   vec3_t vMid, vMin, vMax;
@@ -479,7 +479,7 @@ void DrawLight(entity_t* e, int nGLState, int pref, int nViewType)
       g_QglTable.m_pfn_qglLineStipple(8, 0xAAAA);
       g_QglTable.m_pfn_qglEnable(GL_LINE_STIPPLE);
 
-      float* envelope = (pref == 1) ? e->fLightEnvelope1 : e->fLightEnvelope2; 
+      float* envelope = (pref == 1) ? e->fLightEnvelope1 : e->fLightEnvelope2;
       for (int iPass = 0; iPass < nPasses; iPass++)
       {
         float fRadius = envelope[iPass];

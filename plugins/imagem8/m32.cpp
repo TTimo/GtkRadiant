@@ -26,17 +26,17 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 void LoadM32(const char *name, unsigned char **pic, int *width, int *height)
 {
-    FILE    	*f;
+//    FILE    	*f;
     m32_header_t	*m32_header;
     //rgb_t	*palette;
     int		i, num_pixels, size;
-    char	text_buf[255];
+//    char	text_buf[255];
     unsigned int	length;
     unsigned char	*palette_ent, *buf_temp;
     unsigned char       *buffer, *m32_file_buffer;
 
     // open file
-    if ( length = vfsLoadFile ((char *) name, (void **) &m32_file_buffer, 0) == (unsigned int) -1)
+    if ( (length = vfsLoadFile ((char *) name, (void **) &m32_file_buffer, 0)) == (unsigned int) -1)
     {
     	Sys_Printf("Unable to open file %s\n",name);
 	return;
