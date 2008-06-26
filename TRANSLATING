@@ -18,3 +18,9 @@ You just have to copy the compiled mo-file (which is auto-generated when you
 save your translation in Poedit) into your radiant installation folder
 to lang/<your_language_id>/LC_MESSAGES/radiant.mo. The next time you start
 radiant, your translation should be available.
+
+General notes:
+==============
+
+In order to start radiant in a translated version, you have to make sure that
+the working dir is set correctly. Otherwise the mo files are not found.
