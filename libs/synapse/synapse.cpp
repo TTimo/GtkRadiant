@@ -39,8 +39,8 @@ diagnostic stuff
 extern "C"
 {
 
-static PFN_SYN_PRINTF_VA g_pPrintf = NULL;  
-  
+static PFN_SYN_PRINTF_VA g_pPrintf = NULL;
+
 void Set_Syn_Printf(PFN_SYN_PRINTF_VA pf)
 {
   g_pPrintf = pf;
@@ -52,10 +52,10 @@ void Syn_Printf (const char *text, ...)
 {
   char buf[BUFFER_SIZE];
   va_list args;
-  
+
   if (!text)
     return;
-  
+
   if (g_pPrintf)
   {
     va_start (args, text);
@@ -116,9 +116,9 @@ void CSynapseServer::AddSearchPath(char* path)
 bool CSynapseServer::Initialize(const char* conf_file, PFN_SYN_PRINTF_VA pf)
 {
   // browse the paths to locate all potential modules
-  
+
   Set_Syn_Printf(pf);
-  
+
   if (conf_file)
   {
     // if a config file is specified and we fail to load it, we fail
@@ -128,7 +128,7 @@ bool CSynapseServer::Initialize(const char* conf_file, PFN_SYN_PRINTF_VA pf)
     {
       Syn_Printf("'%s' invalid/not found\n", conf_file);
       return false;
-    }    
+    }
   }
 
   for (list<char *>::iterator iPath=mSearchPaths.begin(); iPath!=mSearchPaths.end(); iPath++)
@@ -159,7 +159,7 @@ bool CSynapseServer::Initialize(const char* conf_file, PFN_SYN_PRINTF_VA pf)
 
         Str newModule;
         newModule.Format("%s%s", path, name);
-        Syn_Printf("Found '%s'\n", newModule.GetBuffer());      
+        Syn_Printf("Found '%s'\n", newModule.GetBuffer());
         EnumerateInterfaces(newModule);
       }
 
@@ -169,20 +169,20 @@ bool CSynapseServer::Initialize(const char* conf_file, PFN_SYN_PRINTF_VA pf)
   return true;
 }
 
-#if defined(_WIN32)  
+#if defined(_WIN32)
 #define FORMAT_BUFSIZE 2048
 const char* CSynapseServer::FormatGetLastError()
 {
   static char buf[FORMAT_BUFSIZE];
   FormatMessage(
-    FORMAT_MESSAGE_FROM_SYSTEM | 
+    FORMAT_MESSAGE_FROM_SYSTEM |
     FORMAT_MESSAGE_IGNORE_INSERTS,
     NULL,
     GetLastError(),
     MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), // Default language
     buf,
     FORMAT_BUFSIZE,
-    NULL 
+    NULL
   );
   return buf;
 }
@@ -239,10 +239,9 @@ void CSynapseServer::EnumerateInterfaces(Str &soname)
 {
   CSynapseClientSlot slot;
   slot.mpDLL = dlopen (soname.GetBuffer(), RTLD_NOW);
-  PFN_SYNAPSE_ENUMERATEINTERFACES *pEnumerate;
   if (!slot.mpDLL)
   {
-    char* error;
+    const char* error;
     if ((error = (char *)dlerror()) == NULL)
       error = "Unknown";
     Syn_Printf("dlopen '%s' failed\n  dlerror: '%s'\n", soname.GetBuffer(), error);
@@ -251,7 +250,7 @@ void CSynapseServer::EnumerateInterfaces(Str &soname)
   slot.mpEnumerate = (PFN_SYNAPSE_ENUMERATEINTERFACES)dlsym(slot.mpDLL, NAME_SYNAPSE_ENUMERATEINTERFACES);
   if (!slot.mpEnumerate)
   {
-    char* error;
+    const char* error;
     if ((error = (char *)dlerror()) == NULL)
       error = "Unknown";
     Syn_Printf("dlsym '%s' failed on shared object '%s'\n  dlerror: '%s'\n", NAME_SYNAPSE_ENUMERATEINTERFACES, soname.GetBuffer(), error);
@@ -264,7 +263,7 @@ void CSynapseServer::EnumerateInterfaces(Str &soname)
     Syn_Printf("Enumerate interfaces on '%s' returned NULL, unloading.\n", soname.GetBuffer());
     if (dlclose(slot.mpDLL))
     {
-      char* error;
+      const char* error;
       if ((error = (char *)dlerror()) == NULL)
         error = "Unknown";
       Syn_Printf("  dlclose failed: dlerror: '%s'\n", error);
@@ -285,7 +284,7 @@ void CSynapseClientSlot::ReleaseSO()
   Syn_Printf("dlclose '%s'\n", mpClient->GetInfo());
   if (dlclose(mpDLL))
   {
-    char* error;
+    const char* error;
     if ((error = (char *)dlerror()) == NULL)
       error = "Unknown";
     Syn_Printf("  dlclose failed: dlerror: '%s'\n", error);
@@ -319,8 +318,8 @@ void CSynapseServer::TryPushStack(APIDescriptor_t *pAPI)
       return;
     }
   }
-  mStack.push_front(pAPI);      
-  mbStackChanged = true;  
+  mStack.push_front(pAPI);
+  mbStackChanged = true;
 }
 
 list<CSynapseClientSlot>::iterator CSynapseServer::ShutdownClient(list<CSynapseClientSlot>::iterator iSlot)
@@ -373,7 +372,7 @@ list<CSynapseClientSlot>::iterator CSynapseServer::ShutdownClient(list<CSynapseC
             Syn_Printf("ERROR: couldn't find the SYN_PROVIDE for an initialized SYN_REQUIRE API '%s' '%s' '%s'\n", pAPI->major_name, pAPI->minor_name, pClientSlot->mpClient->GetInfo());
           }
         }
-      }      
+      }
       else if (pAPI->mType == SYN_PROVIDE)
       {
         // this should never happen on non active clients, it may happen during a core shutdown though
@@ -389,14 +388,14 @@ list<CSynapseClientSlot>::iterator CSynapseServer::ShutdownClient(list<CSynapseC
   if (pClientSlot->mType == SYN_SO)
   {
     pClientSlot->ReleaseSO();
-  }  
+  }
   return mClients.erase(iSlot);
 }
 
 void CSynapseServer::PushRequired(CSynapseClient *pClient)
 {
   /* walk through the standard APIs and push them in */
-  int i,max = pClient->GetAPICount();  
+  int i,max = pClient->GetAPICount();
   for(i=0; i<max; i++)
   {
     APIDescriptor_t* pAPI = pClient->GetAPIDescriptor(i);
@@ -405,7 +404,7 @@ void CSynapseServer::PushRequired(CSynapseClient *pClient)
       TryPushStack(pAPI);
     }
   }
-  
+
   /* if this client has 'List' API Manager types, walk through them for addition too */
   max = pClient->GetManagerListCount();
   for(i=0; i<max; i++)
@@ -419,11 +418,11 @@ void CSynapseServer::PushRequired(CSynapseClient *pClient)
       TryPushStack(pManager->GetAPI(j));
     }
   }
-  
+
   /* if there are loose match managers, prompt them against the current list of SYN_PROVIDE interfaces
    * and let them decide which ones they might want
    */
-  
+
   max = pClient->GetManagerMatchCount();
 
   for(i=0; i<max; i++)
@@ -480,7 +479,7 @@ bool CSynapseServer::MatchAPI(const char* major1, const char* minor1, const char
 
 bool CSynapseServer::ResolveAPI(APIDescriptor_t* pAPI)
 {
-  //Syn_Printf("In ResolveAPI %s %p '%s' '%s'\n", APITypeName[pAPI->mType], pAPI, pAPI->major_name, pAPI->minor_name);  
+  //Syn_Printf("In ResolveAPI %s %p '%s' '%s'\n", APITypeName[pAPI->mType], pAPI, pAPI->major_name, pAPI->minor_name);
   // loop through active clients, search for a client providing what we are looking for
   list<CSynapseClientSlot>::iterator iClient;
   for(iClient=mClients.begin(); iClient!=mClients.end(); iClient++)
@@ -531,7 +530,7 @@ bool CSynapseServer::ResolveAPI(APIDescriptor_t* pAPI)
           }
         }
       }
-    }  
+    }
   }
   return false;
 }
@@ -560,7 +559,7 @@ bool CSynapseServer::DoResolve(CSynapseClient *pClient)
     (*iSlot).mpClient->ForceSetActive();
   }
 
-  // push the interfaces that need to be resolved for this client  
+  // push the interfaces that need to be resolved for this client
   // NOTE: this doesn't take care of the SYN_REQUIRE_ANY interfaces
   PushRequired(pClient);
   // start resolving now
@@ -573,7 +572,7 @@ bool CSynapseServer::DoResolve(CSynapseClient *pClient)
     //DumpStack();
     if (!mbStackChanged)
     {
-      // the stack didn't change last loop 
+      // the stack didn't change last loop
       iCurrent++;
       if (iCurrent==mStack.end())
       {
@@ -605,7 +604,7 @@ bool CSynapseServer::DoResolve(CSynapseClient *pClient)
 bool CSynapseServer::Resolve(CSynapseClient *pClient)
 {
   bool ret = DoResolve(pClient);
-  list<CSynapseClientSlot>::iterator iClient;  
+  list<CSynapseClientSlot>::iterator iClient;
   iClient = mClients.begin();
   while(iClient != mClients.end())
   {
@@ -626,18 +625,18 @@ void CSynapseServer::Shutdown()
   Syn_Printf("Synapse server core is shutting down\n");
   // do a first pass to shutdown the clients nicely (i.e. decref, release memory and drop everything)
   // we seperate the client shutdown calls from the dlclose cause that part is a clean decref / free situation whereas dlclose will break links without advice
-  list<CSynapseClientSlot>::iterator iClient;  
+  list<CSynapseClientSlot>::iterator iClient;
   iClient = mClients.begin();
   for(iClient = mClients.begin(); iClient != mClients.end(); iClient++)
   {
     (*iClient).mpClient->Shutdown();
-  }  
+  }
   // now release them from the server's point of view
   iClient = mClients.begin();
   while(iClient != mClients.end())
   {
     iClient = ShutdownClient(iClient);
-  }  
+  }
 }
 
 void CSynapseServer::DumpStack()
@@ -652,7 +651,7 @@ void CSynapseServer::DumpStack()
 
 void CSynapseServer::DumpActiveClients()
 {
-  list<CSynapseClientSlot>::iterator iClient;  
+  list<CSynapseClientSlot>::iterator iClient;
   for(iClient=mClients.begin(); iClient!=mClients.end(); iClient++)
   {
     CSynapseClient *pClient = (*iClient).mpClient;
@@ -713,7 +712,7 @@ bool CSynapseServer::GetNextConfig(char **api_name, char **minor)
       mpFocusedNode = mpFocusedNode->next;
       return true;
     }
-    mpFocusedNode = mpFocusedNode->next;    
+    mpFocusedNode = mpFocusedNode->next;
   }
   return false;
 }
@@ -874,7 +873,7 @@ bool CSynapseClient::AddAPI(const char *major, const char *minor, int size, EAPI
     pAPI->mSize = size;
   }
   else if (type == SYN_REQUIRE)
-  {    
+  {
     if (size != 0)
     {
       // if a non-zero value is given in function call, use this instead of the val in table
@@ -897,7 +896,7 @@ bool CSynapseClient::AddAPI(const char *major, const char *minor, int size, EAPI
     Syn_Printf("ERROR: AddAPI type '%d' not supported\n", type);
     return false;
   }
-  mAPIDescriptors.push_back(pAPI);  
+  mAPIDescriptors.push_back(pAPI);
   #ifdef SYNAPSE_VERBOSE
     Syn_Printf("AddAPI: %s %p '%s' '%s' from '%s', size %d\n", APITypeName[pAPI->mType], pAPI, major, minor, GetInfo(), pAPI->mSize);
   #endif
@@ -941,18 +940,18 @@ bool CSynapseClient::CheckSetActive()
 }
 
 bool CSynapseClient::ConfigXML( CSynapseServer *pServer, const char *client_name, const XMLConfigEntry_t entries[] ) {
-  
+
   if ( !client_name ) {
     client_name = GetName();
   }
-  
+
   Syn_Printf("Dynamic APIs for client '%s'\n", GetInfo());
   if ( !pServer->SelectClientConfig( client_name ) )
   {
     Syn_Printf( "Failed to select synapse client config '%s'\n", client_name );
     return false;
   }
-  
+
   int i = 0;
   while ( entries[i].type != SYN_UNKNOWN ) { // don't test pTable, for a SYN_PROVIDE it will be empty
     char *minor;
@@ -1028,7 +1027,7 @@ void CSynapseAPIManager::SetMatchAPI(const char *major, const char *minor)
 bool CSynapseAPIManager::MatchAPI(const char *major, const char *minor)
 {
   assert(mType == API_MATCH);
-  
+
   /*!
   if this interface has been allocated already, avoid requesting it again..
   */
@@ -1038,7 +1037,7 @@ bool CSynapseAPIManager::MatchAPI(const char *major, const char *minor)
     if (CSynapseServer::MatchAPI((*iAPI)->major_name, (*iAPI)->minor_name, major, minor))
       return false;
   }
-  
+
   if (!strcmp(major, major_pattern))
     return true;
   return false;
@@ -1062,13 +1061,13 @@ void CSynapseAPIManager::InitializeAPIList()
 {
   char minor_tok[MAX_PATTERN_STRING];
   char *token;
-  
+
   if (mAPIs.size())
   {
     Syn_Printf("WARNING: CSynapseAPIManager::InitializeAPIList on an already initialized APIManager\n");
     return;
   }
-  
+
   strncpy(minor_tok, minor_pattern, MAX_PATTERN_STRING);
   token = strtok(minor_tok, " ");
   while (token)
@@ -1084,7 +1083,7 @@ void CSynapseAPIManager::InitializeAPIList()
     token = strtok(NULL, " ");
   }
 }
-  
+
 int CSynapseAPIManager::GetAPICount()
 {
   return mAPIs.size();
