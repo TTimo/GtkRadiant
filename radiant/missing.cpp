@@ -149,6 +149,7 @@ FindFiles::FindFiles( const char *_directory ) {
 FindFiles::~FindFiles() {
 	if ( findHandle != NULL ) {
 		closedir( findHandle );
+		findHandle = NULL;
 	}
 }
 
@@ -173,8 +174,9 @@ FindFiles::FindFiles( const char *_directory ) {
 }
 
 FindFiles::~FindFiles() {
-	if ( findHandle != NULL ) {
+	if ( findHandle != INVALID_HANDLE_VALUE ) {
 		FindClose( findHandle );
+		findHandle = INVALID_HANDLE_VALUE;
 	}
 }
 
@@ -188,6 +190,7 @@ const char* FindFiles::NextFile() {
 	}
 	if ( FindNextFile( findHandle, &findFileData ) == 0 ) {
 		FindClose( findHandle );
+		findHandle = INVALID_HANDLE_VALUE;
 		return NULL;
 	}
 	return findFileData.cFileName;
