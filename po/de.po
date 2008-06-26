@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Zeroradiant\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2008-06-26 11:15+0100\n"
+"PO-Revision-Date: 2008-06-26 11:51+0100\n"
 "Last-Translator: Martin Gerhardy <martin.gerhardy@gmail.com>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -404,6 +404,7 @@ msgid "World"
 msgstr "Welt"
 
 #: radiant/mainframe.cpp:1095
+#: radiant/gtkdlgs.cpp:1590
 msgid "Entities"
 msgstr "Entities"
 
@@ -608,6 +609,7 @@ msgid "CSG _Merge"
 msgstr "CSG vereinen"
 
 #: radiant/mainframe.cpp:1199
+#: radiant/gtkdlgs.cpp:1729
 msgid "Select"
 msgstr ""
 
@@ -1059,6 +1061,7 @@ msgid "End cap"
 msgstr ""
 
 #: radiant/mainframe.cpp:1488
+#: radiant/gtkdlgs.cpp:3087
 msgid "Bevel"
 msgstr "Schräge"
 
@@ -1205,9 +1208,10 @@ msgstr "Öffnen"
 
 #: radiant/mainframe.cpp:1668
 msgid "Open an existing map"
-msgstr ""
+msgstr "Öffne eine bereits existierende Map"
 
 #: radiant/mainframe.cpp:1672
+#: radiant/gtkdlgs.cpp:3831
 msgid "Save"
 msgstr "Speichern"
 
@@ -1353,6 +1357,7 @@ msgstr "YZ Anzeige"
 #: radiant/mainframe.cpp:2855
 #: radiant/preferences.cpp:1912
 #: radiant/preferences.cpp:1914
+#: radiant/gtkdlgs.cpp:2927
 msgid "Textures"
 msgstr "Texturen"
 
@@ -1412,7 +1417,7 @@ msgstr "Lade Texturen aus Verzeichnis"
 
 #: radiant/mainframe.cpp:6174
 msgid "You must restart Radiant for Gamma settings to take effect."
-msgstr "Radiant muss neu gestartet werden, damit die Änderungen an den Gammawerten wirksam wird"
+msgstr "Radiant muss neu gestartet werden, damit die Änderungen an den Gammawerten wirksam werden."
 
 #: radiant/preferences.cpp:540
 msgid "Set prefab path"
@@ -1463,12 +1468,43 @@ msgstr "Weitere Spiele konfigurieren"
 #: radiant/preferences.cpp:1122
 #: radiant/preferences.cpp:1541
 #: radiant/preferences.cpp:3282
+#: radiant/gtkdlgs.cpp:176
+#: radiant/gtkdlgs.cpp:523
+#: radiant/gtkdlgs.cpp:1862
+#: radiant/gtkdlgs.cpp:1936
+#: radiant/gtkdlgs.cpp:2167
+#: radiant/gtkdlgs.cpp:2241
+#: radiant/gtkdlgs.cpp:2348
+#: radiant/gtkdlgs.cpp:2459
+#: radiant/gtkdlgs.cpp:2541
+#: radiant/gtkdlgs.cpp:2678
+#: radiant/gtkdlgs.cpp:3124
+#: radiant/gtkdlgs.cpp:3372
+#: radiant/gtkdlgs.cpp:3477
+#: radiant/gtkdlgs.cpp:3548
+#: radiant/gtkdlgs.cpp:3643
+#: radiant/gtkdlgs.cpp:4010
 msgid "OK"
 msgstr "OK"
 
 #: radiant/preferences.cpp:1127
 #: radiant/preferences.cpp:1547
 #: radiant/preferences.cpp:3287
+#: radiant/gtkdlgs.cpp:183
+#: radiant/gtkdlgs.cpp:530
+#: radiant/gtkdlgs.cpp:1869
+#: radiant/gtkdlgs.cpp:1943
+#: radiant/gtkdlgs.cpp:2174
+#: radiant/gtkdlgs.cpp:2248
+#: radiant/gtkdlgs.cpp:2355
+#: radiant/gtkdlgs.cpp:2466
+#: radiant/gtkdlgs.cpp:2548
+#: radiant/gtkdlgs.cpp:3131
+#: radiant/gtkdlgs.cpp:3379
+#: radiant/gtkdlgs.cpp:3484
+#: radiant/gtkdlgs.cpp:3555
+#: radiant/gtkdlgs.cpp:3650
+#: radiant/gtkdlgs.cpp:4019
 msgid "Cancel"
 msgstr "Abbrechen"
 
@@ -1508,9 +1544,8 @@ msgid "3D View"
 msgstr "3D Ansicht"
 
 #: radiant/preferences.cpp:1630
-#, fuzzy
 msgid "Texture Settings"
-msgstr "Texturen"
+msgstr "Textureinstellungen"
 
 #: radiant/preferences.cpp:1637
 msgid "Interface"
@@ -1638,9 +1673,8 @@ msgid "Update XY views on camera move"
 msgstr ""
 
 #: radiant/preferences.cpp:1924
-#, fuzzy
 msgid "Texture quality"
-msgstr "Render Qualität"
+msgstr "Texturqualität"
 
 #: radiant/preferences.cpp:1944
 msgid "low"
@@ -1917,6 +1951,7 @@ msgid "Nexuiz"
 msgstr "Nexuiz"
 
 #: radiant/preferences.cpp:3243
+#: radiant/gtkdlgs.cpp:3536
 msgid "Name:"
 msgstr "Name:"
 
@@ -1927,4 +1962,428 @@ msgstr "Engine Verzeichnis:"
 #: radiant/preferences.cpp:3272
 msgid "Mod subdirectory:"
 msgstr "Mod Unterverzeichnis..."
+
+#: radiant/gtkdlgs.cpp:121
+msgid "Edit Command"
+msgstr ""
+
+#: radiant/gtkdlgs.cpp:123
+msgid "Add Command"
+msgstr ""
+
+#: radiant/gtkdlgs.cpp:142
+msgid "Menu text"
+msgstr ""
+
+#: radiant/gtkdlgs.cpp:149
+#: radiant/gtkdlgs.cpp:2818
+msgid "Command"
+msgstr "Kommando"
+
+#: radiant/gtkdlgs.cpp:501
+msgid "Project Settings"
+msgstr "Projekteinstellungen"
+
+#: radiant/gtkdlgs.cpp:543
+msgid "Add..."
+msgstr "Hinzufügen..."
+
+#: radiant/gtkdlgs.cpp:550
+msgid "Change..."
+msgstr "Bearbeiten..."
+
+#: radiant/gtkdlgs.cpp:557
+msgid "Remove"
+msgstr "Löschen"
+
+#: radiant/gtkdlgs.cpp:564
+msgid "Misc settings"
+msgstr "Generelle Einstellungen"
+
+#: radiant/gtkdlgs.cpp:570
+msgid ""
+"Use brush primitives in MAP files (NOTE: experimental feature,\n"
+"required by the texture tools plugin)"
+msgstr ""
+
+#: radiant/gtkdlgs.cpp:576
+msgid "Menu commands"
+msgstr ""
+
+#: radiant/gtkdlgs.cpp:612
+msgid "Project settings"
+msgstr "Projekteinstellungen"
+
+#: radiant/gtkdlgs.cpp:1388
+#: radiant/gtkdlgs.cpp:1736
+#: radiant/gtkdlgs.cpp:2901
+#: radiant/gtkdlgs.cpp:2996
+#: radiant/gtkdlgs.cpp:3288
+#: radiant/gtkdlgs.cpp:3824
+msgid "Close"
+msgstr "Schließen"
+
+#: radiant/gtkdlgs.cpp:2627
+msgid "About GtkRadiant"
+msgstr "Über GtkRadiant"
+
+#: radiant/gtkdlgs.cpp:2657
+msgid "GtkRadiant "
+msgstr "GtkRadiant "
+
+#: radiant/gtkdlgs.cpp:2684
+msgid "Credits"
+msgstr "Credits"
+
+#: radiant/gtkdlgs.cpp:2690
+msgid "Changelog"
+msgstr "Changelog"
+
+#: radiant/gtkdlgs.cpp:2696
+msgid "OpenGL Properties"
+msgstr "OpenGL Eigenschaften"
+
+#: radiant/gtkdlgs.cpp:2707
+msgid "Vendor:"
+msgstr "Hersteller:"
+
+#: radiant/gtkdlgs.cpp:2714
+msgid "Version:"
+msgstr "Version:"
+
+#: radiant/gtkdlgs.cpp:2721
+msgid "Renderer:"
+msgstr "Renderer:"
+
+#: radiant/gtkdlgs.cpp:2749
+msgid "OpenGL Extensions"
+msgstr "OpenGL Erweiterungen"
+
+#: radiant/gtkdlgs.cpp:2791
+msgid "Mapped Commands"
+msgstr ""
+
+#: radiant/gtkdlgs.cpp:2824
+#: radiant/gtkdlgs.cpp:1707
+msgid "Key"
+msgstr "Schlüssel"
+
+#: radiant/gtkdlgs.cpp:2989
+msgid "Load"
+msgstr ""
+
+#: radiant/gtkdlgs.cpp:3039
+msgid "Cap"
+msgstr ""
+
+#: radiant/gtkdlgs.cpp:3094
+msgid "Endcap"
+msgstr ""
+
+#: radiant/gtkdlgs.cpp:3101
+#, fuzzy
+msgid "Inverted Bevel"
+msgstr "Invertieren"
+
+#: radiant/gtkdlgs.cpp:3108
+msgid "Inverted Endcap"
+msgstr ""
+
+#: radiant/gtkdlgs.cpp:3116
+#: radiant/gtkdlgs.cpp:2571
+msgid "Result to func_group"
+msgstr ""
+
+#: radiant/gtkdlgs.cpp:3180
+msgid "Available Scripts - Not Implemented Yet"
+msgstr ""
+
+#: radiant/gtkdlgs.cpp:3193
+msgid ""
+"WARNING: BrushScripting is in a highly experimental state and is\n"
+"far from complete. If you attempt to use them it is VERY LIKELY\n"
+"that Radiant will crash. Save your work before attempting to\n"
+"make use of any scripting features."
+msgstr ""
+
+#: radiant/gtkdlgs.cpp:3269
+msgid "Run"
+msgstr ""
+
+#: radiant/gtkdlgs.cpp:3276
+msgid "New..."
+msgstr "Neu..."
+
+#: radiant/gtkdlgs.cpp:3282
+msgid "Edit..."
+msgstr "Bearbeiten..."
+
+#: radiant/gtkdlgs.cpp:3330
+msgid "BrushScript Input"
+msgstr ""
+
+#: radiant/gtkdlgs.cpp:3416
+msgid "Patch texture layout"
+msgstr ""
+
+#: radiant/gtkdlgs.cpp:3433
+msgid ""
+"Texture will be fit across the patch based\n"
+"on the x and y values given. Values of 1x1\n"
+"will \"fit\" the texture. 2x2 will repeat\n"
+"it twice, etc."
+msgstr ""
+
+#: radiant/gtkdlgs.cpp:3447
+#, fuzzy
+msgid "Texture x:"
+msgstr "Texturen"
+
+#: radiant/gtkdlgs.cpp:3454
+#, fuzzy
+msgid "Texture y:"
+msgstr "Texturen"
+
+#: radiant/gtkdlgs.cpp:3492
+#: radiant/gtkdlgs.cpp:3493
+msgid "4.0"
+msgstr "4.0"
+
+#: radiant/gtkdlgs.cpp:3601
+msgid "New Project"
+msgstr "Neues Projekt"
+
+#: radiant/gtkdlgs.cpp:3618
+msgid ""
+"This will create a new directory beneath your\n"
+"game path based on the project name you give."
+msgstr ""
+
+#: radiant/gtkdlgs.cpp:3624
+msgid "Project name:"
+msgstr "Projektname:"
+
+#: radiant/gtkdlgs.cpp:3634
+msgid "Include game dll files"
+msgstr ""
+
+#: radiant/gtkdlgs.cpp:3683
+#: radiant/gtkdlgs.cpp:3709
+msgid "Close the shader editor ?"
+msgstr "Schließe den Shader Editor ?"
+
+#: radiant/gtkdlgs.cpp:3683
+#: radiant/gtkdlgs.cpp:3709
+msgid "Radiant"
+msgstr "Radiant"
+
+#: radiant/gtkdlgs.cpp:3698
+msgid "Error saving file !"
+msgstr "Fehler beim Speichern der Datei"
+
+#: radiant/gtkdlgs.cpp:3978
+msgid "Light intensity"
+msgstr "Lichtintensität"
+
+#: radiant/gtkdlgs.cpp:3998
+msgid "ESC for default, ENTER to validate"
+msgstr ""
+
+#: radiant/gtkdlgs.cpp:733
+#: radiant/gtkdlgs.cpp:759
+#: radiant/gtkdlgs.cpp:784
+#: radiant/gtkdlgs.cpp:809
+#: radiant/gtkdlgs.cpp:834
+msgid "Mapping mode"
+msgstr ""
+
+#: radiant/gtkdlgs.cpp:854
+msgid "basepath"
+msgstr "basepath"
+
+#: radiant/gtkdlgs.cpp:862
+msgid "Select mod"
+msgstr "Mod auswählen"
+
+#: radiant/gtkdlgs.cpp:869
+msgid "fs_game"
+msgstr "fs_game"
+
+#: radiant/gtkdlgs.cpp:1319
+#, fuzzy
+msgid "Map Info"
+msgstr "Map Info..."
+
+#: radiant/gtkdlgs.cpp:1363
+msgid "Total Brushes"
+msgstr ""
+
+#: radiant/gtkdlgs.cpp:1370
+#, fuzzy
+msgid "Total Entities"
+msgstr "Entities"
+
+#: radiant/gtkdlgs.cpp:1377
+msgid ""
+"Net brush count\n"
+"(non entity)"
+msgstr ""
+
+#: radiant/gtkdlgs.cpp:1395
+msgid "Entity breakdown"
+msgstr ""
+
+#: radiant/gtkdlgs.cpp:1416
+msgid "Entity"
+msgstr "Entity"
+
+#: radiant/gtkdlgs.cpp:1423
+#, fuzzy
+msgid "Count"
+msgstr "Kegel"
+
+#: radiant/gtkdlgs.cpp:1713
+msgid "Value"
+msgstr "Wert"
+
+#: radiant/gtkdlgs.cpp:1792
+msgid "Arbitrary rotation"
+msgstr "Beliebig drehen"
+
+#: radiant/gtkdlgs.cpp:1811
+msgid "  X  "
+msgstr "  X  "
+
+#: radiant/gtkdlgs.cpp:1817
+msgid "  Y  "
+msgstr "  Y  "
+
+#: radiant/gtkdlgs.cpp:1823
+msgid "  Z  "
+msgstr "  Z  "
+
+#: radiant/gtkdlgs.cpp:1875
+msgid "Apply"
+msgstr "Anwenden"
+
+#: radiant/gtkdlgs.cpp:1903
+msgid "Gamma"
+msgstr "Gamma"
+
+#: radiant/gtkdlgs.cpp:1924
+msgid ""
+"0.0 is brightest\n"
+"1.0 is darkest"
+msgstr ""
+
+#: radiant/gtkdlgs.cpp:1928
+msgid ""
+"You must restart for the\n"
+"settings to take effect"
+msgstr ""
+"Du musst neu starten, damit\n"
+"die Änderungen wirksam werden"
+
+#: radiant/gtkdlgs.cpp:2120
+msgid "Find Brush"
+msgstr "Finde Brush"
+
+#: radiant/gtkdlgs.cpp:2139
+msgid "Entity number"
+msgstr "Entitynummer"
+
+#: radiant/gtkdlgs.cpp:2145
+msgid "Brush number"
+msgstr "Brush Nummer"
+
+#: radiant/gtkdlgs.cpp:2216
+msgid "Arbitrary sides"
+msgstr "Beliebige Seiten"
+
+#: radiant/gtkdlgs.cpp:2229
+msgid "Sides:"
+msgstr "Seiten:"
+
+#: radiant/gtkdlgs.cpp:2287
+msgid "Patch density"
+msgstr ""
+
+#: radiant/gtkdlgs.cpp:2306
+msgid "Width:"
+msgstr "Weite:"
+
+#: radiant/gtkdlgs.cpp:2313
+msgid "Height:"
+msgstr "Höhe:"
+
+#: radiant/gtkdlgs.cpp:2320
+#: radiant/gtkdlgs.cpp:2363
+#: radiant/gtkdlgs.cpp:2365
+msgid "3"
+msgstr "3"
+
+#: radiant/gtkdlgs.cpp:2321
+msgid "5"
+msgstr "5"
+
+#: radiant/gtkdlgs.cpp:2322
+msgid "7"
+msgstr "7"
+
+#: radiant/gtkdlgs.cpp:2323
+msgid "9"
+msgstr "9"
+
+#: radiant/gtkdlgs.cpp:2324
+msgid "11"
+msgstr "11"
+
+#: radiant/gtkdlgs.cpp:2325
+msgid "13"
+msgstr "13"
+
+#: radiant/gtkdlgs.cpp:2326
+msgid "15"
+msgstr "15"
+
+#: radiant/gtkdlgs.cpp:2397
+msgid "Scale"
+msgstr "Skalierung"
+
+#: radiant/gtkdlgs.cpp:2416
+msgid "X:"
+msgstr "X:"
+
+#: radiant/gtkdlgs.cpp:2423
+msgid "Y:"
+msgstr "Y:"
+
+#: radiant/gtkdlgs.cpp:2430
+msgid "Z:"
+msgstr "Z:"
+
+#: radiant/gtkdlgs.cpp:2473
+#: radiant/gtkdlgs.cpp:2474
+#: radiant/gtkdlgs.cpp:2475
+msgid "1.0"
+msgstr "1.0"
+
+#: radiant/gtkdlgs.cpp:2514
+msgid "Thicken Patch"
+msgstr ""
+
+#: radiant/gtkdlgs.cpp:2531
+msgid ""
+"This produces a set of patches\n"
+"that contains the original patch along with the\n"
+"'thick' patch and an optimal set of seam patches."
+msgstr ""
+
+#: radiant/gtkdlgs.cpp:2558
+msgid "Amount:"
+msgstr "Anzahl:"
+
+#: radiant/gtkdlgs.cpp:2566
+msgid "Seams"
+msgstr ""
 

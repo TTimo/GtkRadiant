@@ -118,9 +118,9 @@ static void DoProjectAddEdit (bool edit, GtkWidget *parent)
 
   dlg = gtk_window_new (GTK_WINDOW_TOPLEVEL);
   if (edit)
-    gtk_window_set_title (GTK_WINDOW (dlg), "Edit Command");
+    gtk_window_set_title (GTK_WINDOW (dlg), _("Edit Command"));
   else
-    gtk_window_set_title (GTK_WINDOW (dlg), "Add Command");
+    gtk_window_set_title (GTK_WINDOW (dlg), _("Add Command"));
   gtk_signal_connect (GTK_OBJECT (dlg), "delete_event",
                       GTK_SIGNAL_FUNC (dialog_delete_callback), NULL);
   gtk_signal_connect (GTK_OBJECT (dlg), "destroy",
@@ -139,14 +139,14 @@ static void DoProjectAddEdit (bool edit, GtkWidget *parent)
   gtk_table_set_row_spacings (GTK_TABLE (table), 5);
   gtk_table_set_col_spacings (GTK_TABLE (table), 5);
 
-  label = gtk_label_new ("Menu text");
+  label = gtk_label_new (_("Menu text"));
   gtk_widget_show (label);
   gtk_table_attach (GTK_TABLE (table), label, 0, 1, 0, 1,
                     (GtkAttachOptions) (GTK_FILL),
                     (GtkAttachOptions) (0), 0, 0);
   gtk_misc_set_alignment (GTK_MISC (label), 1, 0.5);
 
-  label = gtk_label_new ("Command");
+  label = gtk_label_new (_("Command"));
   gtk_widget_show (label);
   gtk_table_attach (GTK_TABLE (table), label, 0, 1, 1, 2,
                     (GtkAttachOptions) (GTK_FILL),
@@ -173,14 +173,14 @@ static void DoProjectAddEdit (bool edit, GtkWidget *parent)
   gtk_widget_show (hbox);
   gtk_box_pack_start (GTK_BOX (vbox), hbox, FALSE, TRUE, 0);
 
-  button = gtk_button_new_with_label ("OK");
+  button = gtk_button_new_with_label (_("OK"));
   gtk_widget_show (button);
   gtk_box_pack_start (GTK_BOX (hbox), button, FALSE, FALSE, 0);
   gtk_signal_connect (GTK_OBJECT (button), "clicked",
 		      GTK_SIGNAL_FUNC (dialog_button_callback), GINT_TO_POINTER (IDOK));
   gtk_widget_set_usize (button, 60, -2);
 
-  button = gtk_button_new_with_label ("Cancel");
+  button = gtk_button_new_with_label (_("Cancel"));
   gtk_widget_show (button);
   gtk_box_pack_start (GTK_BOX (hbox), button, FALSE, FALSE, 0);
   gtk_signal_connect (GTK_OBJECT (button), "clicked",
@@ -498,7 +498,7 @@ void DoProjectSettings ()
   int loop = 1, ret = IDCANCEL;
 
   project = gtk_window_new (GTK_WINDOW_TOPLEVEL);
-  gtk_window_set_title (GTK_WINDOW (project), "Project Settings");
+  gtk_window_set_title (GTK_WINDOW (project), _("Project Settings"));
   gtk_signal_connect (GTK_OBJECT (project), "delete_event",
                       GTK_SIGNAL_FUNC (dialog_delete_callback), NULL);
   gtk_signal_connect (GTK_OBJECT (project), "destroy",
@@ -520,14 +520,14 @@ void DoProjectSettings ()
                     (GtkAttachOptions) (GTK_FILL),
                     (GtkAttachOptions) (GTK_FILL), 0, 0);
 
-  button = gtk_button_new_with_label ("OK");
+  button = gtk_button_new_with_label (_("OK"));
   gtk_widget_show (button);
   gtk_box_pack_start (GTK_BOX (vbox), button, FALSE, FALSE, 0);
   gtk_signal_connect (GTK_OBJECT (button), "clicked",
 		      GTK_SIGNAL_FUNC (dialog_button_callback), GINT_TO_POINTER (IDOK));
   gtk_widget_set_usize (button, 60, -2);
 
-  button = gtk_button_new_with_label ("Cancel");
+  button = gtk_button_new_with_label (_("Cancel"));
   gtk_widget_show (button);
   gtk_box_pack_start (GTK_BOX (vbox), button, FALSE, FALSE, 0);
   gtk_signal_connect (GTK_OBJECT (button), "clicked",
@@ -540,40 +540,40 @@ void DoProjectSettings ()
                     (GtkAttachOptions) (GTK_FILL),
                     (GtkAttachOptions) (GTK_FILL), 0, 0);
 
-  button = gtk_button_new_with_label ("Add...");
+  button = gtk_button_new_with_label (_("Add..."));
   gtk_widget_show (button);
   gtk_box_pack_start (GTK_BOX (vbox), button, FALSE, FALSE, 0);
   gtk_signal_connect (GTK_OBJECT (button), "clicked",
 		      GTK_SIGNAL_FUNC (project_add), project);
   gtk_widget_set_usize (button, 60, -2);
 
-  button = gtk_button_new_with_label ("Change...");
+  button = gtk_button_new_with_label (_("Change..."));
   gtk_widget_show (button);
   gtk_box_pack_start (GTK_BOX (vbox), button, FALSE, FALSE, 0);
   gtk_signal_connect (GTK_OBJECT (button), "clicked",
 		      GTK_SIGNAL_FUNC (project_change), project);
   gtk_widget_set_usize (button, 60, -2);
 
-  button = gtk_button_new_with_label ("Remove");
+  button = gtk_button_new_with_label (_("Remove"));
   gtk_widget_show (button);
   gtk_box_pack_start (GTK_BOX (vbox), button, FALSE, FALSE, 0);
   gtk_signal_connect (GTK_OBJECT (button), "clicked",
 		      GTK_SIGNAL_FUNC (project_remove), project);
   gtk_widget_set_usize (button, 60, -2);
 
-  frame = gtk_frame_new ("Misc settings");
+  frame = gtk_frame_new (_("Misc settings"));
   gtk_widget_show (frame);
   gtk_table_attach (GTK_TABLE (table1), frame, 0, 1, 2, 3,
                     (GtkAttachOptions) (GTK_FILL),
                     (GtkAttachOptions) (GTK_FILL), 0, 0);
 
-  brush = gtk_check_button_new_with_label ("Use brush primitives in MAP files (NOTE: experimental feature,\n"
-					   "required by the texture tools plugin)");
+  brush = gtk_check_button_new_with_label (_("Use brush primitives in MAP files (NOTE: experimental feature,\n"
+					   "required by the texture tools plugin)"));
   gtk_widget_show (brush);
   gtk_container_add (GTK_CONTAINER (frame), brush);
   gtk_container_set_border_width (GTK_CONTAINER (brush), 5);
 
-  frame = gtk_frame_new ("Menu commands");
+  frame = gtk_frame_new (_("Menu commands"));
   gtk_widget_show (frame);
   gtk_table_attach (GTK_TABLE (table1), frame, 0, 1, 1, 2,
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
@@ -609,7 +609,7 @@ void DoProjectSettings ()
     g_object_unref(G_OBJECT(store));
   }
 
-  frame = gtk_frame_new ("Project settings");
+  frame = gtk_frame_new (_("Project settings"));
   gtk_widget_show (frame);
   gtk_table_attach (GTK_TABLE (table1), frame, 0, 1, 0, 1,
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
@@ -730,7 +730,7 @@ void DoProjectSettings ()
     g_list_free (combo_list);
     combo_list = NULL;
 
-    label = gtk_label_new ("Mapping mode");
+    label = gtk_label_new (_("Mapping mode"));
     gtk_widget_show (label);
     gtk_table_attach (GTK_TABLE (table2), label, 0, 1, 8, 9,
       (GtkAttachOptions) (GTK_FILL),
@@ -756,7 +756,7 @@ void DoProjectSettings ()
     g_list_free (combo_list);
     combo_list = NULL;
 
-    label = gtk_label_new ("Mapping mode");
+    label = gtk_label_new (_("Mapping mode"));
     gtk_widget_show (label);
     gtk_table_attach (GTK_TABLE (table2), label, 0, 1, 8, 9,
       (GtkAttachOptions) (GTK_FILL),
@@ -781,7 +781,7 @@ void DoProjectSettings ()
     g_list_free (combo_list);
     combo_list = NULL;
 
-    label = gtk_label_new ("Mapping mode");
+    label = gtk_label_new (_("Mapping mode"));
     gtk_widget_show (label);
     gtk_table_attach (GTK_TABLE (table2), label, 0, 1, 8, 9,
       (GtkAttachOptions) (GTK_FILL),
@@ -806,7 +806,7 @@ void DoProjectSettings ()
     g_list_free (combo_list);
     combo_list = NULL;
 
-    label = gtk_label_new ("Mapping mode");
+    label = gtk_label_new (_("Mapping mode"));
     gtk_widget_show (label);
     gtk_table_attach (GTK_TABLE (table2), label, 0, 1, 8, 9,
       (GtkAttachOptions) (GTK_FILL),
@@ -831,7 +831,7 @@ void DoProjectSettings ()
     g_list_free (combo_list);
     combo_list = NULL;
 
-    label = gtk_label_new ("Mapping mode");
+    label = gtk_label_new (_("Mapping mode"));
     gtk_widget_show (label);
     gtk_table_attach (GTK_TABLE (table2), label, 0, 1, 8, 9,
       (GtkAttachOptions) (GTK_FILL),
@@ -851,7 +851,7 @@ void DoProjectSettings ()
                     (GtkAttachOptions) (0), 0, 0);
 
 
-  label = gtk_label_new ("basepath");
+  label = gtk_label_new (_("basepath"));
   gtk_widget_show (label);
   gtk_table_attach (GTK_TABLE (table2), label, 0, 1, 0, 1,
                     (GtkAttachOptions) (GTK_FILL),
@@ -859,14 +859,14 @@ void DoProjectSettings ()
   gtk_misc_set_alignment (GTK_MISC (label), 1, 0.5);
 
 
-  label = gtk_label_new ("Select mod");
+  label = gtk_label_new (_("Select mod"));
   gtk_widget_show (label);
   gtk_table_attach (GTK_TABLE (table2), label, 0, 1, 6, 7,
                     (GtkAttachOptions) (GTK_FILL),
                     (GtkAttachOptions) (0), 0, 0);
   gtk_misc_set_alignment (GTK_MISC (label), 1, 0.5);
 
-  label = gtk_label_new ("fs_game");
+  label = gtk_label_new (_("fs_game"));
   gtk_widget_show (label);
   gtk_table_attach (GTK_TABLE (table2), label, 0, 1, 7, 8,
                     (GtkAttachOptions) (GTK_FILL),
@@ -1316,7 +1316,7 @@ void DoMapInfo ()
 
   load_window_pos(dlg, g_PrefsDlg.mWindowInfo.posMapInfoWnd);
 
-  gtk_window_set_title (GTK_WINDOW (dlg), "Map Info");
+  gtk_window_set_title (GTK_WINDOW (dlg), _("Map Info"));
   gtk_signal_connect (GTK_OBJECT (dlg), "delete_event",
                       GTK_SIGNAL_FUNC (dialog_delete_callback), NULL);
   gtk_signal_connect (GTK_OBJECT (dlg), "destroy",
@@ -1360,21 +1360,21 @@ void DoMapInfo ()
                     (GtkAttachOptions) (0), 0, 0);
   gtk_entry_set_editable (GTK_ENTRY (net_entry), FALSE);
 
-  label = gtk_label_new ("Total Brushes");
+  label = gtk_label_new (_("Total Brushes"));
   gtk_widget_show (label);
   gtk_table_attach (GTK_TABLE (table), label, 0, 1, 0, 1,
                     (GtkAttachOptions) (GTK_FILL),
                     (GtkAttachOptions) (0), 0, 0);
   gtk_misc_set_alignment (GTK_MISC (label), 0, 0.5);
 
-  label = gtk_label_new ("Total Entities");
+  label = gtk_label_new (_("Total Entities"));
   gtk_widget_show (label);
   gtk_table_attach (GTK_TABLE (table), label, 0, 1, 1, 2,
                     (GtkAttachOptions) (GTK_FILL),
                     (GtkAttachOptions) (0), 0, 0);
   gtk_misc_set_alignment (GTK_MISC (label), 0, 0.5);
 
-  label = gtk_label_new ("Net brush count\n(non entity)");
+  label = gtk_label_new (_("Net brush count\n(non entity)"));
   gtk_widget_show (label);
   gtk_table_attach (GTK_TABLE (table), label, 0, 1, 2, 3,
                     (GtkAttachOptions) (GTK_FILL),
@@ -1385,14 +1385,14 @@ void DoMapInfo ()
   gtk_widget_show (vbox2);
   gtk_box_pack_start (GTK_BOX (hbox), vbox2, FALSE, FALSE, 0);
 
-  button = gtk_button_new_with_label ("Close");
+  button = gtk_button_new_with_label (_("Close"));;
   gtk_widget_show (button);
   gtk_box_pack_start (GTK_BOX (vbox2), button, FALSE, FALSE, 0);
   gtk_signal_connect (GTK_OBJECT (button), "clicked",
 		      GTK_SIGNAL_FUNC (dialog_button_callback), GINT_TO_POINTER (IDOK));
   gtk_widget_set_usize (button, 60, -2);
 
-  label = gtk_label_new ("Entity breakdown");
+  label = gtk_label_new (_("Entity breakdown"));
   gtk_widget_show (label);
   gtk_box_pack_start (GTK_BOX (vbox), label, FALSE, TRUE, 0);
   gtk_misc_set_alignment (GTK_MISC (label), 0, 0.5);
@@ -1413,14 +1413,14 @@ void DoMapInfo ()
 
     {
       GtkCellRenderer* renderer = gtk_cell_renderer_text_new();
-      GtkTreeViewColumn* column = gtk_tree_view_column_new_with_attributes("Entity", renderer, "text", 0, NULL);
+      GtkTreeViewColumn* column = gtk_tree_view_column_new_with_attributes(_("Entity"), renderer, "text", 0, NULL);
       gtk_tree_view_append_column(GTK_TREE_VIEW(view), column);
       gtk_tree_view_column_set_sort_column_id(column, 0);
     }
 
     {
       GtkCellRenderer* renderer = gtk_cell_renderer_text_new();
-      GtkTreeViewColumn* column = gtk_tree_view_column_new_with_attributes("Count", renderer, "text", 1, NULL);
+      GtkTreeViewColumn* column = gtk_tree_view_column_new_with_attributes(_("Count"), renderer, "text", 1, NULL);
       gtk_tree_view_append_column(GTK_TREE_VIEW(view), column);
       gtk_tree_view_column_set_sort_column_id(column, 1);
     }
@@ -1587,7 +1587,7 @@ void DoEntityList ()
 
   load_window_pos (dlg, g_PrefsDlg.mWindowInfo.posEntityInfoWnd);
 
-  gtk_window_set_title (GTK_WINDOW (dlg), "Entities");
+  gtk_window_set_title (GTK_WINDOW (dlg), _("Entities"));
   gtk_signal_connect (GTK_OBJECT (dlg), "delete_event",
                       GTK_SIGNAL_FUNC (dialog_delete_callback), NULL);
   gtk_signal_connect (GTK_OBJECT (dlg), "destroy",
@@ -1704,13 +1704,13 @@ void DoEntityList ()
 
     {
       GtkCellRenderer* renderer = gtk_cell_renderer_text_new();
-      GtkTreeViewColumn* column = gtk_tree_view_column_new_with_attributes("Key", renderer, "text", 0, NULL);
+      GtkTreeViewColumn* column = gtk_tree_view_column_new_with_attributes(_("Key"), renderer, "text", 0, NULL);
       gtk_tree_view_append_column(GTK_TREE_VIEW(view), column);
     }
 
     {
       GtkCellRenderer* renderer = gtk_cell_renderer_text_new();
-      GtkTreeViewColumn* column = gtk_tree_view_column_new_with_attributes("Value", renderer, "text", 1, NULL);
+      GtkTreeViewColumn* column = gtk_tree_view_column_new_with_attributes(_("Value"), renderer, "text", 1, NULL);
       gtk_tree_view_append_column(GTK_TREE_VIEW(view), column);
     }
 
@@ -1726,14 +1726,14 @@ void DoEntityList ()
   gtk_widget_show (hbox2);
   gtk_box_pack_start (GTK_BOX (vbox), hbox2, TRUE, TRUE, 0);
 
-  button = gtk_button_new_with_label ("Select");
+  button = gtk_button_new_with_label (_("Select"));
   gtk_widget_show (button);
   gtk_box_pack_start (GTK_BOX (hbox2), button, FALSE, FALSE, 0);
   gtk_signal_connect (GTK_OBJECT (button), "clicked",
   		      GTK_SIGNAL_FUNC (entitylist_select), dlg);
   gtk_widget_set_usize (button, 60, -2);
 
-  button = gtk_button_new_with_label ("Close");
+  button = gtk_button_new_with_label (_("Close"));;
   gtk_widget_show (button);
   gtk_box_pack_end (GTK_BOX (hbox2), button, FALSE, FALSE, 0);
   gtk_signal_connect (GTK_OBJECT (button), "clicked",
@@ -1789,7 +1789,7 @@ void DoRotateDlg ()
   int loop = 1, ret = IDCANCEL;
 
   dlg = gtk_window_new (GTK_WINDOW_TOPLEVEL);
-  gtk_window_set_title (GTK_WINDOW (dlg), "Arbitrary rotation");
+  gtk_window_set_title (GTK_WINDOW (dlg), _("Arbitrary rotation"));
   gtk_signal_connect (GTK_OBJECT (dlg), "delete_event",
                       GTK_SIGNAL_FUNC (dialog_delete_callback), NULL);
   gtk_signal_connect (GTK_OBJECT (dlg), "destroy",
@@ -1808,19 +1808,19 @@ void DoRotateDlg ()
   gtk_table_set_row_spacings (GTK_TABLE (table), 5);
   gtk_table_set_col_spacings (GTK_TABLE (table), 5);
 
-  label = gtk_label_new ("  X  ");
+  label = gtk_label_new (_("  X  "));
   gtk_widget_show (label);
   gtk_table_attach (GTK_TABLE (table), label, 0, 1, 0, 1,
                     (GtkAttachOptions) (0),
                     (GtkAttachOptions) (0), 0, 0);
 
-  label = gtk_label_new ("  Y  ");
+  label = gtk_label_new (_("  Y  "));
   gtk_widget_show (label);
   gtk_table_attach (GTK_TABLE (table), label, 0, 1, 1, 2,
                     (GtkAttachOptions) (0),
                     (GtkAttachOptions) (0), 0, 0);
 
-  label = gtk_label_new ("  Z  ");
+  label = gtk_label_new (_("  Z  "));
 
   gtk_widget_show (label);
   gtk_table_attach (GTK_TABLE (table), label, 0, 1, 2, 3,
@@ -1859,20 +1859,20 @@ void DoRotateDlg ()
   gtk_widget_show (vbox);
   gtk_box_pack_start (GTK_BOX (hbox), vbox, TRUE, TRUE, 0);
 
-  button = gtk_button_new_with_label ("OK");
+  button = gtk_button_new_with_label (_("OK"));
   gtk_widget_show (button);
   gtk_box_pack_start (GTK_BOX (vbox), button, FALSE, FALSE, 0);
   gtk_signal_connect (GTK_OBJECT (button), "clicked",
 		      GTK_SIGNAL_FUNC (dialog_button_callback), GINT_TO_POINTER (IDOK));
   gtk_widget_set_usize (button, 60, -2);
 
-  button = gtk_button_new_with_label ("Cancel");
+  button = gtk_button_new_with_label (_("Cancel"));;
   gtk_widget_show (button);
   gtk_box_pack_start (GTK_BOX (vbox), button, FALSE, FALSE, 0);
   gtk_signal_connect (GTK_OBJECT (button), "clicked",
 		      GTK_SIGNAL_FUNC (dialog_button_callback), GINT_TO_POINTER (IDCANCEL));
 
-  button = gtk_button_new_with_label ("Apply");
+  button = gtk_button_new_with_label (_("Apply"));
   gtk_widget_show (button);
   gtk_box_pack_start (GTK_BOX (vbox), button, FALSE, FALSE, 0);
   gtk_signal_connect (GTK_OBJECT (button), "clicked",
@@ -1900,7 +1900,7 @@ void DoGamma ()
   int loop = 1, ret = IDCANCEL;
 
   dlg = gtk_window_new (GTK_WINDOW_TOPLEVEL);
-  gtk_window_set_title (GTK_WINDOW (dlg), "Gamma");
+  gtk_window_set_title (GTK_WINDOW (dlg), _("Gamma"));
   gtk_signal_connect (GTK_OBJECT (dlg), "delete_event",
                       GTK_SIGNAL_FUNC (dialog_delete_callback), NULL);
   gtk_signal_connect (GTK_OBJECT (dlg), "destroy",
@@ -1921,11 +1921,11 @@ void DoGamma ()
   gtk_widget_show (entry);
   gtk_box_pack_start (GTK_BOX (vbox), entry, TRUE, TRUE, 0);
 
-  label = gtk_label_new ("0.0 is brightest\n1.0 is darkest");
+  label = gtk_label_new (_("0.0 is brightest\n1.0 is darkest"));
   gtk_widget_show (label);
   gtk_box_pack_start (GTK_BOX (vbox), label, TRUE, TRUE, 0);
 
-  label = gtk_label_new ("You must restart for the\nsettings to take effect");
+  label = gtk_label_new (_("You must restart for the\nsettings to take effect"));
   gtk_widget_show (label);
   gtk_box_pack_start (GTK_BOX (vbox), label, TRUE, TRUE, 0);
 
@@ -1933,14 +1933,14 @@ void DoGamma ()
   gtk_widget_show (vbox);
   gtk_box_pack_start (GTK_BOX (hbox), vbox, TRUE, TRUE, 0);
 
-  button = gtk_button_new_with_label ("OK");
+  button = gtk_button_new_with_label (_("OK"));
   gtk_widget_show (button);
   gtk_box_pack_start (GTK_BOX (vbox), button, FALSE, FALSE, 0);
   gtk_signal_connect (GTK_OBJECT (button), "clicked",
 		      GTK_SIGNAL_FUNC (dialog_button_callback), GINT_TO_POINTER (IDOK));
   gtk_widget_set_usize (button, 60, -2);
 
-  button = gtk_button_new_with_label ("Cancel");
+  button = gtk_button_new_with_label (_("Cancel"));;
   gtk_widget_show (button);
   gtk_box_pack_start (GTK_BOX (vbox), button, FALSE, FALSE, 0);
   gtk_signal_connect (GTK_OBJECT (button), "clicked",
@@ -2117,7 +2117,7 @@ void DoFind ()
   int loop = 1, ret = IDCANCEL;
 
   dlg = gtk_window_new (GTK_WINDOW_TOPLEVEL);
-  gtk_window_set_title (GTK_WINDOW (dlg), "Find Brush");
+  gtk_window_set_title (GTK_WINDOW (dlg), _("Find Brush"));
   gtk_signal_connect (GTK_OBJECT (dlg), "delete_event",
                       GTK_SIGNAL_FUNC (dialog_delete_callback), NULL);
   gtk_signal_connect (GTK_OBJECT (dlg), "destroy",
@@ -2136,13 +2136,13 @@ void DoFind ()
   gtk_table_set_row_spacings (GTK_TABLE (table), 5);
   gtk_table_set_col_spacings (GTK_TABLE (table), 5);
 
-  label = gtk_label_new ("Entity number");
+  label = gtk_label_new (_("Entity number"));
   gtk_widget_show (label);
   gtk_table_attach (GTK_TABLE (table), label, 0, 1, 0, 1,
                     (GtkAttachOptions) (0),
                     (GtkAttachOptions) (0), 0, 0);
 
-  label = gtk_label_new ("Brush number");
+  label = gtk_label_new (_("Brush number"));
   gtk_widget_show (label);
   gtk_table_attach (GTK_TABLE (table), label, 0, 1, 1, 2,
                     (GtkAttachOptions) (0),
@@ -2164,14 +2164,14 @@ void DoFind ()
   gtk_widget_show (hbox);
   gtk_box_pack_start (GTK_BOX (vbox), hbox, FALSE, TRUE, 0);
 
-  button = gtk_button_new_with_label ("OK");
+  button = gtk_button_new_with_label (_("OK"));
   gtk_widget_show (button);
   gtk_box_pack_start (GTK_BOX (hbox), button, FALSE, FALSE, 0);
   gtk_signal_connect (GTK_OBJECT (button), "clicked",
 		      GTK_SIGNAL_FUNC (dialog_button_callback), GINT_TO_POINTER (IDOK));
   gtk_widget_set_usize (button, 60, -2);
 
-  button = gtk_button_new_with_label ("Cancel");
+  button = gtk_button_new_with_label (_("Cancel"));;
   gtk_widget_show (button);
   gtk_box_pack_start (GTK_BOX (hbox), button, FALSE, FALSE, 0);
   gtk_signal_connect (GTK_OBJECT (button), "clicked",
@@ -2213,7 +2213,7 @@ void DoSides (bool bCone, bool bSphere, bool bTorus)
   int loop = 1, ret = IDCANCEL;
 
   dlg = gtk_window_new (GTK_WINDOW_TOPLEVEL);
-  gtk_window_set_title (GTK_WINDOW (dlg), "Arbitrary sides");
+  gtk_window_set_title (GTK_WINDOW (dlg), _("Arbitrary sides"));
   gtk_signal_connect (GTK_OBJECT (dlg), "delete_event",
                       GTK_SIGNAL_FUNC (dialog_delete_callback), NULL);
   gtk_signal_connect (GTK_OBJECT (dlg), "destroy",
@@ -2226,7 +2226,7 @@ void DoSides (bool bCone, bool bSphere, bool bTorus)
   gtk_container_add (GTK_CONTAINER (dlg), hbox);
   gtk_container_set_border_width (GTK_CONTAINER (hbox), 5);
 
-  label = gtk_label_new ("Sides:");
+  label = gtk_label_new (_("Sides:"));
   gtk_widget_show (label);
   gtk_box_pack_start (GTK_BOX (hbox), label, FALSE, FALSE, 0);
 
@@ -2238,14 +2238,14 @@ void DoSides (bool bCone, bool bSphere, bool bTorus)
   gtk_widget_show (vbox);
   gtk_box_pack_start (GTK_BOX (hbox), vbox, FALSE, TRUE, 0);
 
-  button = gtk_button_new_with_label ("OK");
+  button = gtk_button_new_with_label (_("OK"));
   gtk_widget_show (button);
   gtk_box_pack_start (GTK_BOX (vbox), button, FALSE, FALSE, 0);
   gtk_signal_connect (GTK_OBJECT (button), "clicked",
 		      GTK_SIGNAL_FUNC (dialog_button_callback), GINT_TO_POINTER (IDOK));
   gtk_widget_set_usize (button, 60, -2);
 
-  button = gtk_button_new_with_label ("Cancel");
+  button = gtk_button_new_with_label (_("Cancel"));;
   gtk_widget_show (button);
   gtk_box_pack_start (GTK_BOX (vbox), button, FALSE, FALSE, 0);
   gtk_signal_connect (GTK_OBJECT (button), "clicked",
@@ -2284,7 +2284,7 @@ void DoNewPatchDlg ()
   int loop = 1, ret = IDCANCEL;
 
   dlg = gtk_window_new (GTK_WINDOW_TOPLEVEL);
-  gtk_window_set_title (GTK_WINDOW (dlg), "Patch density");
+  gtk_window_set_title (GTK_WINDOW (dlg), _("Patch density"));
   gtk_signal_connect (GTK_OBJECT (dlg), "delete_event",
                       GTK_SIGNAL_FUNC (dialog_delete_callback), NULL);
   gtk_signal_connect (GTK_OBJECT (dlg), "destroy",
@@ -2303,27 +2303,27 @@ void DoNewPatchDlg ()
   gtk_table_set_row_spacings (GTK_TABLE (table), 5);
   gtk_table_set_col_spacings (GTK_TABLE (table), 5);
 
-  label = gtk_label_new ("Width:");
+  label = gtk_label_new (_("Width:"));
   gtk_widget_show (label);
   gtk_table_attach (GTK_TABLE (table), label, 0, 1, 0, 1,
                     (GtkAttachOptions) (GTK_FILL),
                     (GtkAttachOptions) (0), 0, 0);
   gtk_misc_set_alignment (GTK_MISC (label), 0, 0.5);
 
-  label = gtk_label_new ("Height:");
+  label = gtk_label_new (_("Height:"));
   gtk_widget_show (label);
   gtk_table_attach (GTK_TABLE (table), label, 0, 1, 1, 2,
                     (GtkAttachOptions) (GTK_FILL),
                     (GtkAttachOptions) (0), 0, 0);
   gtk_misc_set_alignment (GTK_MISC (label), 0, 0.5);
 
-  combo_list = g_list_append (combo_list, (void *)"3");
-  combo_list = g_list_append (combo_list, (void *)"5");
-  combo_list = g_list_append (combo_list, (void *)"7");
-  combo_list = g_list_append (combo_list, (void *)"9");
-  combo_list = g_list_append (combo_list, (void *)"11");
-  combo_list = g_list_append (combo_list, (void *)"13");
-  combo_list = g_list_append (combo_list, (void *)"15");
+  combo_list = g_list_append (combo_list, (void *)_("3"));
+  combo_list = g_list_append (combo_list, (void *)_("5"));
+  combo_list = g_list_append (combo_list, (void *)_("7"));
+  combo_list = g_list_append (combo_list, (void *)_("9"));
+  combo_list = g_list_append (combo_list, (void *)_("11"));
+  combo_list = g_list_append (combo_list, (void *)_("13"));
+  combo_list = g_list_append (combo_list, (void *)_("15"));
 
   combo = gtk_combo_new ();
   width = GTK_COMBO (combo)->entry;
@@ -2345,14 +2345,14 @@ void DoNewPatchDlg ()
   gtk_widget_show (vbox);
   gtk_box_pack_start (GTK_BOX (hbox), vbox, TRUE, TRUE, 0);
 
-  button = gtk_button_new_with_label ("OK");
+  button = gtk_button_new_with_label (_("OK"));
   gtk_widget_show (button);
   gtk_box_pack_start (GTK_BOX (vbox), button, FALSE, FALSE, 0);
   gtk_signal_connect (GTK_OBJECT (button), "clicked",
 		      GTK_SIGNAL_FUNC (dialog_button_callback), GINT_TO_POINTER (IDOK));
   gtk_widget_set_usize (button, 60, -2);
 
-  button = gtk_button_new_with_label ("Cancel");
+  button = gtk_button_new_with_label (_("Cancel"));;
   gtk_widget_show (button);
   gtk_box_pack_start (GTK_BOX (vbox), button, FALSE, FALSE, 0);
   gtk_signal_connect (GTK_OBJECT (button), "clicked",
@@ -2360,9 +2360,9 @@ void DoNewPatchDlg ()
 
   // Initialize dialog
   g_list_free (combo_list);
-  gtk_entry_set_text (GTK_ENTRY (width), "3");
+  gtk_entry_set_text (GTK_ENTRY (width), _("3"));
   gtk_entry_set_editable (GTK_ENTRY (width), FALSE);
-  gtk_entry_set_text (GTK_ENTRY (height), "3");
+  gtk_entry_set_text (GTK_ENTRY (height), _("3"));
   gtk_entry_set_editable (GTK_ENTRY (height), FALSE);
 
   gtk_grab_add (dlg);
@@ -2394,7 +2394,7 @@ void DoScaleDlg ()
   int loop = 1, ret = IDCANCEL;
 
   dlg = gtk_window_new (GTK_WINDOW_TOPLEVEL);
-  gtk_window_set_title (GTK_WINDOW (dlg), "Scale");
+  gtk_window_set_title (GTK_WINDOW (dlg), _("Scale"));
   gtk_signal_connect (GTK_OBJECT (dlg), "delete_event",
                       GTK_SIGNAL_FUNC (dialog_delete_callback), NULL);
   gtk_signal_connect (GTK_OBJECT (dlg), "destroy",
@@ -2413,21 +2413,21 @@ void DoScaleDlg ()
   gtk_table_set_row_spacings (GTK_TABLE (table), 5);
   gtk_table_set_col_spacings (GTK_TABLE (table), 5);
 
-  label = gtk_label_new ("X:");
+  label = gtk_label_new (_("X:"));
   gtk_widget_show (label);
   gtk_table_attach (GTK_TABLE (table), label, 0, 1, 0, 1,
                     (GtkAttachOptions) (GTK_FILL),
                     (GtkAttachOptions) (0), 0, 0);
   gtk_misc_set_alignment (GTK_MISC (label), 0, 0.5);
 
-  label = gtk_label_new ("Y:");
+  label = gtk_label_new (_("Y:"));
   gtk_widget_show (label);
   gtk_table_attach (GTK_TABLE (table), label, 0, 1, 1, 2,
                     (GtkAttachOptions) (GTK_FILL),
                     (GtkAttachOptions) (0), 0, 0);
   gtk_misc_set_alignment (GTK_MISC (label), 0, 0.5);
 
-  label = gtk_label_new ("Z:");
+  label = gtk_label_new (_("Z:"));
   gtk_widget_show (label);
   gtk_table_attach (GTK_TABLE (table), label, 0, 1, 2, 3,
                     (GtkAttachOptions) (GTK_FILL),
@@ -2456,23 +2456,23 @@ void DoScaleDlg ()
   gtk_widget_show (vbox);
   gtk_box_pack_start (GTK_BOX (hbox), vbox, TRUE, TRUE, 0);
 
-  button = gtk_button_new_with_label ("OK");
+  button = gtk_button_new_with_label (_("OK"));
   gtk_widget_show (button);
   gtk_box_pack_start (GTK_BOX (vbox), button, FALSE, FALSE, 0);
   gtk_signal_connect (GTK_OBJECT (button), "clicked",
 		      GTK_SIGNAL_FUNC (dialog_button_callback), GINT_TO_POINTER (IDOK));
   gtk_widget_set_usize (button, 60, -2);
 
-  button = gtk_button_new_with_label ("Cancel");
+  button = gtk_button_new_with_label (_("Cancel"));;
   gtk_widget_show (button);
   gtk_box_pack_start (GTK_BOX (vbox), button, FALSE, FALSE, 0);
   gtk_signal_connect (GTK_OBJECT (button), "clicked",
 		      GTK_SIGNAL_FUNC (dialog_button_callback), GINT_TO_POINTER (IDCANCEL));
 
   // Initialize dialog
-  gtk_entry_set_text (GTK_ENTRY (x), "1.0");
-  gtk_entry_set_text (GTK_ENTRY (y), "1.0");
-  gtk_entry_set_text (GTK_ENTRY (z), "1.0");
+  gtk_entry_set_text (GTK_ENTRY (x), _("1.0"));
+  gtk_entry_set_text (GTK_ENTRY (y), _("1.0"));
+  gtk_entry_set_text (GTK_ENTRY (z), _("1.0"));
 
   gtk_grab_add (dlg);
   gtk_widget_show (dlg);
@@ -2511,7 +2511,7 @@ void DoThickenDlg ()
   static qboolean bGroupResult = true;
 
   dlg = gtk_window_new (GTK_WINDOW_TOPLEVEL);
-  gtk_window_set_title (GTK_WINDOW (dlg), "Thicken Patch");
+  gtk_window_set_title (GTK_WINDOW (dlg), _("Thicken Patch"));
   gtk_signal_connect (GTK_OBJECT (dlg), "delete_event",
                       GTK_SIGNAL_FUNC (dialog_delete_callback), NULL);
   gtk_signal_connect (GTK_OBJECT (dlg), "destroy",
@@ -2528,9 +2528,9 @@ void DoThickenDlg ()
   gtk_widget_show (hbox);
   gtk_box_pack_start (GTK_BOX (vbox), hbox, FALSE, TRUE, 0);
 
-  label = gtk_label_new ("This produces a set of patches\n"
+  label = gtk_label_new (_("This produces a set of patches\n"
 			 "that contains the original patch along with the\n"
-			 "'thick' patch and an optimal set of seam patches.");
+			 "'thick' patch and an optimal set of seam patches."));
   gtk_widget_show (label);
   gtk_box_pack_start (GTK_BOX (hbox), label, FALSE, FALSE, 0);
 
@@ -2538,14 +2538,14 @@ void DoThickenDlg ()
   gtk_widget_show (vbox2);
   gtk_box_pack_start (GTK_BOX (hbox), vbox2, FALSE, TRUE, 0);
 
-  button = gtk_button_new_with_label ("OK");
+  button = gtk_button_new_with_label (_("OK"));
   gtk_widget_show (button);
   gtk_box_pack_start (GTK_BOX (vbox2), button, FALSE, FALSE, 0);
   gtk_signal_connect (GTK_OBJECT (button), "clicked",
 		      GTK_SIGNAL_FUNC (dialog_button_callback), GINT_TO_POINTER (IDOK));
   gtk_widget_set_usize (button, 60, -2);
 
-  button = gtk_button_new_with_label ("Cancel");
+  button = gtk_button_new_with_label (_("Cancel"));;
   gtk_widget_show (button);
   gtk_box_pack_start (GTK_BOX (vbox2), button, FALSE, FALSE, 0);
   gtk_signal_connect (GTK_OBJECT (button), "clicked",
@@ -2555,7 +2555,7 @@ void DoThickenDlg ()
   gtk_widget_show (hbox);
   gtk_box_pack_start (GTK_BOX (vbox), hbox, FALSE, TRUE, 0);
 
-  label = gtk_label_new ("Amount:");
+  label = gtk_label_new (_("Amount:"));
   gtk_widget_show (label);
   gtk_box_pack_start (GTK_BOX (hbox), label, FALSE, FALSE, 0);
 
@@ -2563,12 +2563,12 @@ void DoThickenDlg ()
   gtk_widget_show (amount);
   gtk_box_pack_start (GTK_BOX (hbox), amount, FALSE, FALSE, 0);
 
-  seams = gtk_check_button_new_with_label ("Seams");
+  seams = gtk_check_button_new_with_label (_("Seams"));
   gtk_widget_show (seams);
   gtk_box_pack_start (GTK_BOX (hbox), seams, FALSE, FALSE, 0);
 
   // bGroupResult
-  group = gtk_check_button_new_with_label("Result to func_group");
+  group = gtk_check_button_new_with_label(_("Result to func_group"));
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(group), bGroupResult);
   gtk_box_pack_start(GTK_BOX(vbox), group, FALSE, FALSE, 0);
   gtk_widget_show(group);
@@ -2624,7 +2624,7 @@ void DoAbout ()
   int loop = 1, ret = IDCANCEL;
 
   dlg = gtk_window_new (GTK_WINDOW_TOPLEVEL);
-  gtk_window_set_title (GTK_WINDOW (dlg), "About GtkRadiant");
+  gtk_window_set_title (GTK_WINDOW (dlg), _("About GtkRadiant"));
   gtk_signal_connect (GTK_OBJECT (dlg), "delete_event",
                       GTK_SIGNAL_FUNC (dialog_delete_callback), NULL);
   gtk_signal_connect (GTK_OBJECT (dlg), "destroy",
@@ -2675,25 +2675,25 @@ void DoAbout ()
   gtk_widget_show (vbox2);
   gtk_box_pack_start (GTK_BOX (hbox), vbox2, FALSE, TRUE, 0);
 
-  button = gtk_button_new_with_label ("OK");
+  button = gtk_button_new_with_label (_("OK"));
   gtk_widget_show (button);
   gtk_box_pack_start (GTK_BOX (vbox2), button, FALSE, FALSE, 0);
   gtk_signal_connect (GTK_OBJECT (button), "clicked",
 		      GTK_SIGNAL_FUNC (dialog_button_callback), GINT_TO_POINTER (IDOK));
 
-  button = gtk_button_new_with_label ("Credits");
+  button = gtk_button_new_with_label (_("Credits"));
   gtk_widget_show (button);
   gtk_box_pack_start (GTK_BOX (vbox2), button, FALSE, FALSE, 0);
   gtk_signal_connect (GTK_OBJECT (button), "clicked",
 		      GTK_SIGNAL_FUNC (about_button_credits), NULL);
 
-  button = gtk_button_new_with_label ("Changelog");
+  button = gtk_button_new_with_label (_("Changelog"));
   gtk_widget_show (button);
   gtk_box_pack_start (GTK_BOX (vbox2), button, FALSE, FALSE, 0);
   gtk_signal_connect (GTK_OBJECT (button), "clicked",
 		      GTK_SIGNAL_FUNC (about_button_changelog), NULL);
 
-  frame = gtk_frame_new ("OpenGL Properties");
+  frame = gtk_frame_new (_("OpenGL Properties"));
   gtk_widget_show (frame);
   gtk_box_pack_start (GTK_BOX (vbox), frame, FALSE, FALSE, 0);
 
@@ -2704,21 +2704,21 @@ void DoAbout ()
   gtk_table_set_col_spacings (GTK_TABLE (table), 5);
   gtk_container_set_border_width (GTK_CONTAINER (table), 5);
 
-  label = gtk_label_new ("Vendor:");
+  label = gtk_label_new (_("Vendor:"));
   gtk_widget_show (label);
   gtk_table_attach (GTK_TABLE (table), label, 0, 1, 0, 1,
                     (GtkAttachOptions) (GTK_FILL),
                     (GtkAttachOptions) (0), 0, 0);
   gtk_misc_set_alignment (GTK_MISC (label), 0, 0.5);
 
-  label = gtk_label_new ("Version:");
+  label = gtk_label_new (_("Version:"));
   gtk_widget_show (label);
   gtk_table_attach (GTK_TABLE (table), label, 0, 1, 1, 2,
                     (GtkAttachOptions) (GTK_FILL),
                     (GtkAttachOptions) (0), 0, 0);
   gtk_misc_set_alignment (GTK_MISC (label), 0, 0.5);
 
-  label = gtk_label_new ("Renderer:");
+  label = gtk_label_new (_("Renderer:"));
   gtk_widget_show (label);
   gtk_table_attach (GTK_TABLE (table), label, 0, 1, 2, 3,
                     (GtkAttachOptions) (GTK_FILL),
@@ -2746,7 +2746,7 @@ void DoAbout ()
                     (GtkAttachOptions) (0), 0, 0);
   gtk_misc_set_alignment (GTK_MISC (label), 0, 0.5);
 
-  frame = gtk_frame_new ("OpenGL Extensions");
+  frame = gtk_frame_new (_("OpenGL Extensions"));
   gtk_widget_show (frame);
   gtk_box_pack_start (GTK_BOX (vbox), frame, TRUE, TRUE, 0);
 
@@ -2788,7 +2788,7 @@ void DoCommandListDlg ()
   int loop = 1, ret = IDCANCEL;
 
   dlg = gtk_window_new (GTK_WINDOW_TOPLEVEL);
-  gtk_window_set_title (GTK_WINDOW (dlg), "Mapped Commands");
+  gtk_window_set_title (GTK_WINDOW (dlg), _("Mapped Commands"));
   gtk_signal_connect (GTK_OBJECT (dlg), "delete_event",
                       GTK_SIGNAL_FUNC (dialog_delete_callback), NULL);
   gtk_signal_connect (GTK_OBJECT (dlg), "destroy",
@@ -2815,13 +2815,13 @@ void DoCommandListDlg ()
 
     {
       GtkCellRenderer* renderer = gtk_cell_renderer_text_new();
-      GtkTreeViewColumn* column = gtk_tree_view_column_new_with_attributes("Command", renderer, "text", 0, NULL);
+      GtkTreeViewColumn* column = gtk_tree_view_column_new_with_attributes(_("Command"), renderer, "text", 0, NULL);
       gtk_tree_view_append_column(GTK_TREE_VIEW(view), column);
     }
 
     {
       GtkCellRenderer* renderer = gtk_cell_renderer_text_new();
-      GtkTreeViewColumn* column = gtk_tree_view_column_new_with_attributes("Key", renderer, "text", 1, NULL);
+      GtkTreeViewColumn* column = gtk_tree_view_column_new_with_attributes(_("Key"), renderer, "text", 1, NULL);
       gtk_tree_view_append_column(GTK_TREE_VIEW(view), column);
     }
 
@@ -2898,7 +2898,7 @@ void DoCommandListDlg ()
   gtk_widget_show (vbox);
   gtk_box_pack_start (GTK_BOX (hbox), vbox, FALSE, FALSE, 0);
 
-  button = gtk_button_new_with_label ("Close");
+  button = gtk_button_new_with_label (_("Close"));;
   gtk_widget_show (button);
   gtk_box_pack_end (GTK_BOX (vbox), button, FALSE, FALSE, 0);
   gtk_signal_connect (GTK_OBJECT (button), "clicked",
@@ -2924,7 +2924,7 @@ void DoTextureListDlg ()
   int loop = 1, ret = IDCANCEL;
 
   dlg = gtk_window_new (GTK_WINDOW_TOPLEVEL);
-  gtk_window_set_title (GTK_WINDOW (dlg), "Textures");
+  gtk_window_set_title (GTK_WINDOW (dlg), _("Textures"));
   gtk_signal_connect (GTK_OBJECT (dlg), "delete_event",
                       GTK_SIGNAL_FUNC (dialog_delete_callback), NULL);
   gtk_signal_connect (GTK_OBJECT (dlg), "destroy",
@@ -2986,14 +2986,14 @@ void DoTextureListDlg ()
   gtk_widget_show (vbox);
   gtk_box_pack_start (GTK_BOX (hbox), vbox, FALSE, FALSE, 0);
 
-  button = gtk_button_new_with_label ("Load");
+  button = gtk_button_new_with_label (_("Load"));;
   gtk_widget_show (button);
   gtk_box_pack_start (GTK_BOX (vbox), button, FALSE, FALSE, 0);
   gtk_signal_connect (GTK_OBJECT (button), "clicked",
 		      GTK_SIGNAL_FUNC (dialog_button_callback), GINT_TO_POINTER (IDOK));
   gtk_widget_set_usize (button, 60, -2);
 
-  button = gtk_button_new_with_label ("Close");
+  button = gtk_button_new_with_label (_("Close"));;
   gtk_widget_show (button);
   gtk_box_pack_start (GTK_BOX (vbox), button, FALSE, FALSE, 0);
   gtk_signal_connect (GTK_OBJECT (button), "clicked",
@@ -3036,7 +3036,7 @@ int DoCapDlg (int *type, bool *b_GroupResult)
 	int loop = 1, ret = IDCANCEL;
 
   dlg = gtk_window_new (GTK_WINDOW_TOPLEVEL);
-  gtk_window_set_title (GTK_WINDOW (dlg), "Cap");
+  gtk_window_set_title (GTK_WINDOW (dlg), _("Cap"));
   gtk_signal_connect (GTK_OBJECT (dlg), "delete_event",
                       GTK_SIGNAL_FUNC (dialog_delete_callback), NULL);
   gtk_signal_connect (GTK_OBJECT (dlg), "destroy",
@@ -3084,28 +3084,28 @@ int DoCapDlg (int *type, bool *b_GroupResult)
                     (GtkAttachOptions) (GTK_FILL),
                     (GtkAttachOptions) (0), 0, 0);
 
-  bevel = gtk_radio_button_new_with_label (group, "Bevel");
+  bevel = gtk_radio_button_new_with_label (group, _("Bevel"));
   gtk_widget_show (bevel);
   gtk_table_attach (GTK_TABLE (table), bevel, 1, 2, 0, 1,
                     (GtkAttachOptions) (GTK_FILL | GTK_EXPAND),
                     (GtkAttachOptions) (0), 0, 0);
   group = gtk_radio_button_group (GTK_RADIO_BUTTON (bevel));
 
-  endcap = gtk_radio_button_new_with_label (group, "Endcap");
+  endcap = gtk_radio_button_new_with_label (group, _("Endcap"));
   gtk_widget_show (endcap);
   gtk_table_attach (GTK_TABLE (table), endcap, 1, 2, 1, 2,
                     (GtkAttachOptions) (GTK_FILL | GTK_EXPAND),
                     (GtkAttachOptions) (0), 0, 0);
   group = gtk_radio_button_group (GTK_RADIO_BUTTON (endcap));
 
-  ibevel = gtk_radio_button_new_with_label (group, "Inverted Bevel");
+  ibevel = gtk_radio_button_new_with_label (group, _("Inverted Bevel"));
   gtk_widget_show (ibevel);
   gtk_table_attach (GTK_TABLE (table), ibevel, 1, 2, 2, 3,
                     (GtkAttachOptions) (GTK_FILL | GTK_EXPAND),
                     (GtkAttachOptions) (0), 0, 0);
   group = gtk_radio_button_group (GTK_RADIO_BUTTON (ibevel));
 
-  iendcap = gtk_radio_button_new_with_label (group, "Inverted Endcap");
+  iendcap = gtk_radio_button_new_with_label (group, _("Inverted Endcap"));
   gtk_widget_show (iendcap);
   gtk_table_attach (GTK_TABLE (table), iendcap, 1, 2, 3, 4,
                     (GtkAttachOptions) (GTK_FILL | GTK_EXPAND),
@@ -3113,7 +3113,7 @@ int DoCapDlg (int *type, bool *b_GroupResult)
   group = gtk_radio_button_group (GTK_RADIO_BUTTON (iendcap));
 
   // Gef: added radio toggle for func_grouping capped patches
-  group_toggle = gtk_check_button_new_with_label("Result to func_group");
+  group_toggle = gtk_check_button_new_with_label(_("Result to func_group"));
   gtk_container_add(GTK_CONTAINER(radio_vbox), group_toggle);
   gtk_widget_show(group_toggle);
 
@@ -3121,14 +3121,14 @@ int DoCapDlg (int *type, bool *b_GroupResult)
   gtk_widget_show (vbox);
   gtk_box_pack_start (GTK_BOX (hbox), vbox, FALSE, FALSE, 0);
 
-  button = gtk_button_new_with_label ("OK");
+  button = gtk_button_new_with_label (_("OK"));
   gtk_widget_show (button);
   gtk_box_pack_start (GTK_BOX (vbox), button, FALSE, FALSE, 0);
   gtk_signal_connect (GTK_OBJECT (button), "clicked",
 		      GTK_SIGNAL_FUNC (dialog_button_callback), GINT_TO_POINTER (IDOK));
   gtk_widget_set_usize (button, 60, -2);
 
-  button = gtk_button_new_with_label ("Cancel");
+  button = gtk_button_new_with_label (_("Cancel"));
   gtk_widget_show (button);
   gtk_box_pack_start (GTK_BOX (vbox), button, FALSE, FALSE, 0);
   gtk_signal_connect (GTK_OBJECT (button), "clicked",
@@ -3177,7 +3177,7 @@ void DoScriptsDlg ()
   int loop = 1, ret = IDCANCEL;
 
   dlg = gtk_window_new (GTK_WINDOW_TOPLEVEL);
-  gtk_window_set_title (GTK_WINDOW (dlg), "Available Scripts - Not Implemented Yet");
+  gtk_window_set_title (GTK_WINDOW (dlg), _("Available Scripts - Not Implemented Yet"));
   gtk_signal_connect (GTK_OBJECT (dlg), "delete_event",
                       GTK_SIGNAL_FUNC (dialog_delete_callback), NULL);
   gtk_signal_connect (GTK_OBJECT (dlg), "destroy",
@@ -3190,10 +3190,10 @@ void DoScriptsDlg ()
   gtk_container_add (GTK_CONTAINER (dlg), vbox);
   gtk_container_set_border_width (GTK_CONTAINER (vbox), 5);
 
-  label = gtk_label_new ("WARNING: BrushScripting is in a highly experimental state and is\n"
+  label = gtk_label_new (_("WARNING: BrushScripting is in a highly experimental state and is\n"
 			 "far from complete. If you attempt to use them it is VERY LIKELY\n"
 			 "that Radiant will crash. Save your work before attempting to\n"
-			 "make use of any scripting features.");
+			 "make use of any scripting features."));
   gtk_widget_show (label);
   gtk_box_pack_start (GTK_BOX (vbox), label, FALSE, FALSE, 0);
   gtk_misc_set_alignment (GTK_MISC (label), 1, 0.5);
@@ -3266,26 +3266,26 @@ void DoScriptsDlg ()
   gtk_widget_show (vbox2);
   gtk_box_pack_start (GTK_BOX (hbox), vbox2, FALSE, FALSE, 0);
 
-  button = gtk_button_new_with_label ("Run");
+  button = gtk_button_new_with_label (_("Run"));
   gtk_widget_show (button);
   gtk_box_pack_start (GTK_BOX (vbox2), button, FALSE, FALSE, 0);
   gtk_signal_connect (GTK_OBJECT (button), "clicked",
 		      GTK_SIGNAL_FUNC (dialog_button_callback), GINT_TO_POINTER (IDOK));
   gtk_widget_set_usize (button, 60, -2);
 
-  button = gtk_button_new_with_label ("New...");
+  button = gtk_button_new_with_label (_("New..."));
   gtk_widget_show (button);
   gtk_box_pack_start (GTK_BOX (vbox2), button, FALSE, FALSE, 0);
   gtk_widget_set_sensitive (button, FALSE);
   gtk_widget_set_usize (button, 60, -2);
 
-  button = gtk_button_new_with_label ("Edit...");
+  button = gtk_button_new_with_label (_("Edit..."));
   gtk_widget_show (button);
   gtk_box_pack_start (GTK_BOX (vbox2), button, FALSE, FALSE, 0);
   gtk_widget_set_sensitive (button, FALSE);
   gtk_widget_set_usize (button, 60, -2);
 
-  button = gtk_button_new_with_label ("Close");
+  button = gtk_button_new_with_label (_("Close"));
   gtk_widget_show (button);
   gtk_box_pack_end (GTK_BOX (vbox2), button, FALSE, FALSE, 0);
   gtk_signal_connect (GTK_OBJECT (button), "clicked",
@@ -3327,7 +3327,7 @@ int DoBSInputDlg (const char *fields[5], float values[5])
   int i, loop = 1, ret = IDCANCEL;
 
   dlg = gtk_window_new (GTK_WINDOW_TOPLEVEL);
-  gtk_window_set_title (GTK_WINDOW (dlg), "BrushScript Input");
+  gtk_window_set_title (GTK_WINDOW (dlg), _("BrushScript Input"));
   gtk_signal_connect (GTK_OBJECT (dlg), "delete_event",
                       GTK_SIGNAL_FUNC (dialog_delete_callback), NULL);
   gtk_signal_connect (GTK_OBJECT (dlg), "destroy",
@@ -3369,14 +3369,14 @@ int DoBSInputDlg (const char *fields[5], float values[5])
   gtk_widget_show (vbox);
   gtk_box_pack_start (GTK_BOX (hbox), vbox, FALSE, FALSE, 0);
 
-  button = gtk_button_new_with_label ("OK");
+  button = gtk_button_new_with_label (_("OK"));
   gtk_widget_show (button);
   gtk_box_pack_start (GTK_BOX (vbox), button, FALSE, FALSE, 0);
   gtk_signal_connect (GTK_OBJECT (button), "clicked",
 		      GTK_SIGNAL_FUNC (dialog_button_callback), GINT_TO_POINTER (IDOK));
   gtk_widget_set_usize (button, 60, -2);
 
-  button = gtk_button_new_with_label ("Cancel");
+  button = gtk_button_new_with_label (_("Cancel"));
   gtk_widget_show (button);
   gtk_box_pack_start (GTK_BOX (vbox), button, FALSE, FALSE, 0);
   gtk_signal_connect (GTK_OBJECT (button), "clicked",
@@ -3413,7 +3413,7 @@ int DoTextureLayout (float *fx, float *fy)
   int loop = 1, ret = IDCANCEL;
 
   dlg = gtk_window_new (GTK_WINDOW_TOPLEVEL);
-  gtk_window_set_title (GTK_WINDOW (dlg), "Patch texture layout");
+  gtk_window_set_title (GTK_WINDOW (dlg), _("Patch texture layout"));
   gtk_signal_connect (GTK_OBJECT (dlg), "delete_event",
                       GTK_SIGNAL_FUNC (dialog_delete_callback), NULL);
   gtk_signal_connect (GTK_OBJECT (dlg), "destroy",
@@ -3430,10 +3430,10 @@ int DoTextureLayout (float *fx, float *fy)
   gtk_widget_show (vbox);
   gtk_box_pack_start (GTK_BOX (hbox), vbox, TRUE, TRUE, 0);
 
-  label = gtk_label_new ("Texture will be fit across the patch based\n"
+  label = gtk_label_new (_("Texture will be fit across the patch based\n"
 			 "on the x and y values given. Values of 1x1\n"
 			 "will \"fit\" the texture. 2x2 will repeat\n"
-			 "it twice, etc.");
+			 "it twice, etc."));
   gtk_widget_show (label);
   gtk_box_pack_start (GTK_BOX (vbox), label, TRUE, TRUE, 0);
   gtk_label_set_justify (GTK_LABEL (label), GTK_JUSTIFY_LEFT);
@@ -3444,14 +3444,14 @@ int DoTextureLayout (float *fx, float *fy)
   gtk_table_set_row_spacings (GTK_TABLE (table), 5);
   gtk_table_set_col_spacings (GTK_TABLE (table), 5);
 
-  label = gtk_label_new ("Texture x:");
+  label = gtk_label_new (_("Texture x:"));
   gtk_widget_show (label);
   gtk_table_attach (GTK_TABLE (table), label, 0, 1, 0, 1,
                     (GtkAttachOptions) (GTK_FILL),
                     (GtkAttachOptions) (0), 0, 0);
   gtk_misc_set_alignment (GTK_MISC (label), 0, 0.5);
 
-  label = gtk_label_new ("Texture y:");
+  label = gtk_label_new (_("Texture y:"));
   gtk_widget_show (label);
   gtk_table_attach (GTK_TABLE (table), label, 0, 1, 1, 2,
                     (GtkAttachOptions) (GTK_FILL),
@@ -3474,14 +3474,14 @@ int DoTextureLayout (float *fx, float *fy)
   gtk_widget_show (vbox);
   gtk_box_pack_start (GTK_BOX (hbox), vbox, FALSE, FALSE, 0);
 
-  button = gtk_button_new_with_label ("OK");
+  button = gtk_button_new_with_label (_("OK"));
   gtk_widget_show (button);
   gtk_box_pack_start (GTK_BOX (vbox), button, FALSE, FALSE, 0);
   gtk_signal_connect (GTK_OBJECT (button), "clicked",
 		      GTK_SIGNAL_FUNC (dialog_button_callback), GINT_TO_POINTER (IDOK));
   gtk_widget_set_usize (button, 60, -2);
 
-  button = gtk_button_new_with_label ("Cancel");
+  button = gtk_button_new_with_label (_("Cancel"));
   gtk_widget_show (button);
   gtk_box_pack_start (GTK_BOX (vbox), button, FALSE, FALSE, 0);
   gtk_signal_connect (GTK_OBJECT (button), "clicked",
@@ -3489,8 +3489,8 @@ int DoTextureLayout (float *fx, float *fy)
   gtk_widget_set_usize (button, 60, -2);
 
   // Initialize
-  gtk_entry_set_text (GTK_ENTRY (x), "4.0");
-  gtk_entry_set_text (GTK_ENTRY (y), "4.0");
+  gtk_entry_set_text (GTK_ENTRY (x), _("4.0"));
+  gtk_entry_set_text (GTK_ENTRY (y), _("4.0"));
 
   gtk_grab_add (dlg);
   gtk_widget_show (dlg);
@@ -3533,7 +3533,7 @@ char* DoNameDlg (const char* title)
   gtk_container_add (GTK_CONTAINER (dlg), hbox);
   gtk_container_set_border_width (GTK_CONTAINER (hbox), 5);
 
-  label = gtk_label_new ("Name:");
+  label = gtk_label_new (_("Name:"));
   gtk_widget_show (label);
   gtk_box_pack_start (GTK_BOX (hbox), label, FALSE, FALSE, 0);
 
@@ -3545,14 +3545,14 @@ char* DoNameDlg (const char* title)
   gtk_widget_show (vbox);
   gtk_box_pack_start (GTK_BOX (hbox), vbox, FALSE, FALSE, 0);
 
-  button = gtk_button_new_with_label ("OK");
+  button = gtk_button_new_with_label (_("OK"));
   gtk_widget_show (button);
   gtk_box_pack_start (GTK_BOX (vbox), button, FALSE, FALSE, 0);
   gtk_signal_connect (GTK_OBJECT (button), "clicked",
 		      GTK_SIGNAL_FUNC (dialog_button_callback), GINT_TO_POINTER (IDOK));
   gtk_widget_set_usize (button, 60, -2);
 
-  button = gtk_button_new_with_label ("Cancel");
+  button = gtk_button_new_with_label (_("Cancel"));
   gtk_widget_show (button);
   gtk_box_pack_start (GTK_BOX (vbox), button, FALSE, FALSE, 0);
   gtk_signal_connect (GTK_OBJECT (button), "clicked",
@@ -3587,17 +3587,18 @@ char* DoNewProjectDlg ()
 
   // start by a warning message
   // http://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=459
-  CString msg;
-  msg = "Are you sure you want a new project?\n";
-  msg += "Please note that creating a new project is not the prefered way to setup GtkRadiant for mod editing.\n";
-  msg += "Check http://www.qeradiant.com/faq/index.cgi?file=220 for more information";
-  if (gtk_MessageBox(NULL, msg.GetBuffer(), "Confirm", MB_YESNO, "http://www.qeradiant.com/faq/index.cgi?file=220" ) == IDNO)
-  {
-    return NULL;
-  }
+// mattn: URLs no longer valid
+//  CString msg;
+//  msg = "Are you sure you want a new project?\n";
+//  msg += "Please note that creating a new project is not the prefered way to setup GtkRadiant for mod editing.\n";
+//  msg += "Check http://www.qeradiant.com/faq/index.cgi?file=220 for more information";
+//  if (gtk_MessageBox(NULL, msg.GetBuffer(), _("Confirm"), MB_YESNO, "http://www.qeradiant.com/faq/index.cgi?file=220" ) == IDNO)
+//  {
+//    return NULL;
+//  }
 
   dlg = gtk_window_new (GTK_WINDOW_TOPLEVEL);
-  gtk_window_set_title (GTK_WINDOW (dlg), "New Project");
+  gtk_window_set_title (GTK_WINDOW (dlg), _("New Project"));
   gtk_signal_connect (GTK_OBJECT (dlg), "delete_event",
                       GTK_SIGNAL_FUNC (dialog_delete_callback), NULL);
   gtk_signal_connect (GTK_OBJECT (dlg), "destroy",
@@ -3614,13 +3615,13 @@ char* DoNewProjectDlg ()
   gtk_widget_show (vbox);
   gtk_box_pack_start (GTK_BOX (hbox), vbox, FALSE, FALSE, 0);
 
-  label = gtk_label_new ("This will create a new directory beneath your\n"
-			 "game path based on the project name you give.");
+  label = gtk_label_new (_("This will create a new directory beneath your\n"
+			 "game path based on the project name you give."));
   gtk_widget_show (label);
   gtk_box_pack_start (GTK_BOX (vbox), label, FALSE, FALSE, 0);
   gtk_label_set_justify (GTK_LABEL (label), GTK_JUSTIFY_LEFT);
 
-  label = gtk_label_new ("Project name:");
+  label = gtk_label_new (_("Project name:"));
   gtk_widget_show (label);
   gtk_box_pack_start (GTK_BOX (vbox), label, TRUE, TRUE, 0);
   gtk_label_set_justify (GTK_LABEL (label), GTK_JUSTIFY_LEFT);
@@ -3630,7 +3631,7 @@ char* DoNewProjectDlg ()
   gtk_widget_show (entry);
   gtk_box_pack_start (GTK_BOX (vbox), entry, TRUE, TRUE, 0);
 
-  check = gtk_check_button_new_with_label ("Include game dll files");
+  check = gtk_check_button_new_with_label (_("Include game dll files"));
   gtk_widget_show (check);
   gtk_box_pack_start (GTK_BOX (vbox), check, TRUE, TRUE, 0);
   gtk_widget_set_sensitive (check, FALSE);
@@ -3639,14 +3640,14 @@ char* DoNewProjectDlg ()
   gtk_widget_show (vbox);
   gtk_box_pack_start (GTK_BOX (hbox), vbox, FALSE, FALSE, 0);
 
-  button = gtk_button_new_with_label ("OK");
+  button = gtk_button_new_with_label (_("OK"));
   gtk_widget_show (button);
   gtk_box_pack_start (GTK_BOX (vbox), button, FALSE, FALSE, 0);
   gtk_signal_connect (GTK_OBJECT (button), "clicked",
 		      GTK_SIGNAL_FUNC (dialog_button_callback), GINT_TO_POINTER (IDOK));
   gtk_widget_set_usize (button, 60, -2);
 
-  button = gtk_button_new_with_label ("Cancel");
+  button = gtk_button_new_with_label (_("Cancel"));
   gtk_widget_show (button);
   gtk_box_pack_start (GTK_BOX (vbox), button, FALSE, FALSE, 0);
   gtk_signal_connect (GTK_OBJECT (button), "clicked",
@@ -3679,7 +3680,7 @@ static GtkWidget *text_widget; // slave, text widget from the gtk editor
 
 static gint editor_delete (GtkWidget *widget, gpointer data)
 {
-  if (gtk_MessageBox (widget, "Close the shader editor ?", "Radiant", MB_YESNO) == IDNO)
+  if (gtk_MessageBox (widget, _("Close the shader editor ?"), _("Radiant"), MB_YESNO) == IDNO)
     return TRUE;
 
   gtk_widget_hide (text_editor);
@@ -3694,7 +3695,7 @@ static void editor_save (GtkWidget *widget, gpointer data)
 
   if (f == NULL)
   {
-    gtk_MessageBox (GTK_WIDGET(data), "Error saving file !");
+    gtk_MessageBox (GTK_WIDGET(data), _("Error saving file !"));
     return;
   }
 
@@ -3705,7 +3706,7 @@ static void editor_save (GtkWidget *widget, gpointer data)
 
 static void editor_close (GtkWidget *widget, gpointer data)
 {
-  if (gtk_MessageBox (text_editor, "Close the shader editor ?", "Radiant", MB_YESNO) == IDNO)
+  if (gtk_MessageBox (text_editor, _("Close the shader editor ?"), _("Radiant"), MB_YESNO) == IDNO)
     return;
 
   gtk_widget_hide (text_editor);
@@ -3820,14 +3821,14 @@ static void CreateGtkTextEditor ()
   gtk_widget_show (hbox);
   gtk_box_pack_start (GTK_BOX (vbox), hbox, FALSE, TRUE, 0);
 
-  button = gtk_button_new_with_label ("Close");
+  button = gtk_button_new_with_label (_("Close"));
   gtk_widget_show (button);
   gtk_box_pack_end (GTK_BOX (hbox), button, FALSE, FALSE, 0);
   gtk_signal_connect (GTK_OBJECT (button), "clicked",
 		      GTK_SIGNAL_FUNC (editor_close), dlg);
   gtk_widget_set_usize (button, 60, -2);
 
-  button = gtk_button_new_with_label ("Save");
+  button = gtk_button_new_with_label (_("Save"));
   gtk_widget_show (button);
   gtk_box_pack_end (GTK_BOX (hbox), button, FALSE, FALSE, 0);
   gtk_signal_connect (GTK_OBJECT (button), "clicked",
@@ -3974,7 +3975,7 @@ int DoLightIntensityDlg (int *intensity)
   int loop = 1, ret = IDCANCEL;
 
   dlg = gtk_window_new (GTK_WINDOW_TOPLEVEL);
-  gtk_window_set_title (GTK_WINDOW (dlg), "Light intensity");
+  gtk_window_set_title (GTK_WINDOW (dlg), _("Light intensity"));
   gtk_signal_connect (GTK_OBJECT (dlg), "delete_event",
                       GTK_SIGNAL_FUNC (dialog_delete_callback), NULL);
   gtk_signal_connect (GTK_OBJECT (dlg), "destroy",
@@ -3994,7 +3995,7 @@ int DoLightIntensityDlg (int *intensity)
   gtk_widget_show (vbox);
   gtk_box_pack_start (GTK_BOX (hbox), vbox, TRUE, TRUE, 0);
 
-  label = gtk_label_new ("ESC for default, ENTER to validate");
+  label = gtk_label_new (_("ESC for default, ENTER to validate"));
   gtk_widget_show (label);
   gtk_box_pack_start (GTK_BOX (vbox), label, FALSE, FALSE, 0);
 
@@ -4006,7 +4007,7 @@ int DoLightIntensityDlg (int *intensity)
   gtk_widget_show (vbox);
   gtk_box_pack_start (GTK_BOX (hbox), vbox, FALSE, FALSE, 0);
 
-  button = gtk_button_new_with_label ("OK");
+  button = gtk_button_new_with_label (_("OK"));
   gtk_widget_show (button);
   gtk_box_pack_start (GTK_BOX (vbox), button, FALSE, FALSE, 0);
   gtk_signal_connect (GTK_OBJECT (button), "clicked",
@@ -4015,7 +4016,7 @@ int DoLightIntensityDlg (int *intensity)
                               GDK_Return, (GdkModifierType)0, GTK_ACCEL_VISIBLE);
   gtk_widget_set_usize (button, 60, -2);
 
-  button = gtk_button_new_with_label ("Cancel");
+  button = gtk_button_new_with_label (_("Cancel"));
   gtk_widget_show (button);
   gtk_box_pack_start (GTK_BOX (vbox), button, FALSE, FALSE, 0);
   gtk_signal_connect (GTK_OBJECT (button), "clicked",
