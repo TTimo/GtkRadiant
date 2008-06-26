@@ -70,7 +70,7 @@ static int add_clip( char *s, lwClip **clist, int *nclips )
    clip->saturation.val = 1.0f;
    clip->gamma.val = 1.0f;
 
-   if ( p = strstr( s, "(sequence)" )) {
+   if ( (p = strstr( s, "(sequence)" )) != NULL ) {
       p[ -1 ] = 0;
       clip->type = ID_ISEQ;
       clip->source.seq.prefix = s;
@@ -81,7 +81,7 @@ static int add_clip( char *s, lwClip **clist, int *nclips )
       clip->source.still.name = s;
    }
 
-   *nclips++;
+   (*nclips)++;
    clip->index = *nclips;
 
    lwListAdd( clist, clip );
