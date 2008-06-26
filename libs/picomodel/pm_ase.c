@@ -712,7 +712,7 @@ static picoModel_t *_ase_load( PM_PARAMS_LOAD )
 		else if( !_pico_stricmp( p->token, "*material" ) )
 		{
 			aseSubMaterial_t*	subMaterial = NULL;
-			picoShader_t		*shader;
+			picoShader_t		*shader = NULL;
 			int					level = 1, index;
 			char				materialName[ 1024 ];
 			float				transValue = 0.0f, shineValue = 1.0f;
