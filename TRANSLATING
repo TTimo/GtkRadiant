@@ -1,0 +1,20 @@
+Call xgettext to generate the cataloge:
+=======================================
+
+xgettext -j --keyword="_" -C -o radiant.pot --omit-header radiant/*.cpp radiant/*.h
+
+Create new translation:
+=======================
+
+Use a po file editor like Poedit to edit and create new po files.
+Select 'New Cataloge from pot' and select the radiant.pot. Enter the translation
+data and you can start to translate the available strings. The po files should
+go into po/ in the radiant svn.
+
+Using translations:
+===================
+
+You just have to copy the compiled mo-file (which is auto-generated when you
+save your translation in Poedit) into your radiant installation folder
+to lang/<your_language_id>/LC_MESSAGES/radiant.mo. The next time you start
+radiant, your translation should be available.
