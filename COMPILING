@@ -12,8 +12,9 @@ The subversion client can be obtained from the Subversion site.
 
 To get a copy of the source using the commandline Subversion client:
   Change the current directory to the desired location for the source.
-  svn checkout https://zerowing.idsoftware.com/svn/radiant/GtkRadiant/trunk/ ./GtkRadiant
+  svn checkout https://zerowing.idsoftware.com/svn/radiant/GtkRadiant/branches/1.5/ ./GtkRadiant
   svn checkout https://zerowing.idsoftware.com/svn/radiant.gamepacks/Q3Pack/trunk/ ./GtkRadiant/games/Q3Pack
+  svn checkout https://zerowing.idsoftware.com/svn/radiant.gamepacks/UFOAIPack/branches/1.5/ ./GtkRadiant/games/UFOAIPack
 
 
 
@@ -59,7 +60,7 @@ dependencies are prepackaged archives, extract them to the directory above GtkRa
 
 build:
 Open GtkRadiant.sln.
-In tools > options > projects > VC++ Directories > executables, add the paths to python.exe (e.g. c:\python23\) and svn.exe (e.g. c:\svn\) 
+In tools > options > projects > VC++ Directories > executables, add the paths to python.exe (e.g. c:\python23\) and svn.exe (e.g. c:\svn\)
 Hit 'Build > Build Solution' (F7)
 
 install:
