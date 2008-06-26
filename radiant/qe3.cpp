@@ -1142,7 +1142,7 @@ ParseNum / ParseHex
 */
 int ParseHex (const char *hex)
 {
-	char    *str;
+	const char    *str;
 	int    num;
 
 	num = 0;
