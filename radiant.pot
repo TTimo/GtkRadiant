@@ -292,6 +292,8 @@ msgstr ""
 
 #: radiant/mainframe.cpp:1056 radiant/preferences.cpp:1641
 #: radiant/preferences.cpp:2057 radiant/preferences.cpp:2059
+#: radiant/preferences.cpp:1642 radiant/preferences.cpp:2058
+#: radiant/preferences.cpp:2060
 msgid "Layout"
 msgstr ""
 
@@ -409,6 +411,8 @@ msgstr ""
 
 #: radiant/mainframe.cpp:1101 radiant/preferences.cpp:1667
 #: radiant/preferences.cpp:2413 radiant/preferences.cpp:2415
+#: radiant/preferences.cpp:1668 radiant/preferences.cpp:2414
+#: radiant/preferences.cpp:2416
 msgid "Paths"
 msgstr ""
 
@@ -1323,7 +1327,8 @@ msgstr ""
 
 #: radiant/mainframe.cpp:2790 radiant/mainframe.cpp:2855
 #: radiant/preferences.cpp:1912 radiant/preferences.cpp:1914
-#: radiant/gtkdlgs.cpp:2927
+#: radiant/gtkdlgs.cpp:2927 radiant/preferences.cpp:1913
+#: radiant/preferences.cpp:1915
 msgid "Textures"
 msgstr ""
 
@@ -1385,49 +1390,49 @@ msgstr ""
 msgid "You must restart Radiant for Gamma settings to take effect."
 msgstr ""
 
-#: radiant/preferences.cpp:540
+#: radiant/preferences.cpp:540 radiant/preferences.cpp:541
 msgid "Set prefab path"
 msgstr ""
 
-#: radiant/preferences.cpp:561
+#: radiant/preferences.cpp:561 radiant/preferences.cpp:562
 msgid "Find INI file"
 msgstr ""
 
-#: radiant/preferences.cpp:574
+#: radiant/preferences.cpp:574 radiant/preferences.cpp:575
 msgid ""
 "This will close Radiant and clean the corresponding registry entries.\n"
 "Next time you start Radiant it will be good as new. Do you wish to continue?"
 msgstr ""
 
-#: radiant/preferences.cpp:576
+#: radiant/preferences.cpp:576 radiant/preferences.cpp:577
 msgid "Reset Registry"
 msgstr ""
 
-#: radiant/preferences.cpp:1022
+#: radiant/preferences.cpp:1022 radiant/preferences.cpp:1023
 msgid "Select the game:"
 msgstr ""
 
-#: radiant/preferences.cpp:1034
+#: radiant/preferences.cpp:1034 radiant/preferences.cpp:1035
 msgid "Auto load selected game on startup"
 msgstr ""
 
-#: radiant/preferences.cpp:1039
+#: radiant/preferences.cpp:1039 radiant/preferences.cpp:1040
 msgid "(this frame is available in the prefs menu if you set auto-select)"
 msgstr ""
 
-#: radiant/preferences.cpp:1044
+#: radiant/preferences.cpp:1044 radiant/preferences.cpp:1045
 msgid "Networked install - per-user settings"
 msgstr ""
 
-#: radiant/preferences.cpp:1050
+#: radiant/preferences.cpp:1050 radiant/preferences.cpp:1051
 msgid "Log the console to radiant.log"
 msgstr ""
 
-#: radiant/preferences.cpp:1107
+#: radiant/preferences.cpp:1107 radiant/preferences.cpp:1108
 msgid "Select Game"
 msgstr ""
 
-#: radiant/preferences.cpp:1116
+#: radiant/preferences.cpp:1116 radiant/preferences.cpp:1117
 msgid "Configure more games"
 msgstr ""
 
@@ -1438,6 +1443,8 @@ msgstr ""
 #: radiant/gtkdlgs.cpp:2459 radiant/gtkdlgs.cpp:2541 radiant/gtkdlgs.cpp:2678
 #: radiant/gtkdlgs.cpp:3124 radiant/gtkdlgs.cpp:3372 radiant/gtkdlgs.cpp:3477
 #: radiant/gtkdlgs.cpp:3548 radiant/gtkdlgs.cpp:3643 radiant/gtkdlgs.cpp:4010
+#: radiant/preferences.cpp:1123 radiant/preferences.cpp:1542
+#: radiant/preferences.cpp:3283
 msgid "OK"
 msgstr ""
 
@@ -1448,445 +1455,458 @@ msgstr ""
 #: radiant/gtkdlgs.cpp:2466 radiant/gtkdlgs.cpp:2548 radiant/gtkdlgs.cpp:3131
 #: radiant/gtkdlgs.cpp:3379 radiant/gtkdlgs.cpp:3484 radiant/gtkdlgs.cpp:3555
 #: radiant/gtkdlgs.cpp:3650 radiant/gtkdlgs.cpp:4019
+#: radiant/preferences.cpp:1128 radiant/preferences.cpp:1548
+#: radiant/preferences.cpp:3288
 msgid "Cancel"
 msgstr ""
 
-#: radiant/preferences.cpp:1529
+#: radiant/preferences.cpp:1529 radiant/preferences.cpp:1530
 msgid "GtkRadiant Preferences"
 msgstr ""
 
-#: radiant/preferences.cpp:1553
+#: radiant/preferences.cpp:1553 radiant/preferences.cpp:1554
 msgid "Clean"
 msgstr ""
 
-#: radiant/preferences.cpp:1585
+#: radiant/preferences.cpp:1585 radiant/preferences.cpp:1586
 msgid "Preferences"
 msgstr ""
 
 #: radiant/preferences.cpp:1605 radiant/preferences.cpp:1709
+#: radiant/preferences.cpp:1606 radiant/preferences.cpp:1710
 msgid "Globals"
 msgstr ""
 
-#: radiant/preferences.cpp:1609
+#: radiant/preferences.cpp:1609 radiant/preferences.cpp:1610
 msgid "Game settings"
 msgstr ""
 
-#: radiant/preferences.cpp:1616
+#: radiant/preferences.cpp:1616 radiant/preferences.cpp:1617
 msgid "Display"
 msgstr ""
 
-#: radiant/preferences.cpp:1620
+#: radiant/preferences.cpp:1620 radiant/preferences.cpp:1621
 msgid "2D Display/Rendering"
 msgstr ""
 
 #: radiant/preferences.cpp:1625 radiant/preferences.cpp:1773
-#: radiant/preferences.cpp:1775
+#: radiant/preferences.cpp:1775 radiant/preferences.cpp:1626
+#: radiant/preferences.cpp:1774 radiant/preferences.cpp:1776
 msgid "3D View"
 msgstr ""
 
-#: radiant/preferences.cpp:1630
+#: radiant/preferences.cpp:1630 radiant/preferences.cpp:1631
 msgid "Texture Settings"
 msgstr ""
 
-#: radiant/preferences.cpp:1637
+#: radiant/preferences.cpp:1637 radiant/preferences.cpp:1638
 msgid "Interface"
 msgstr ""
 
 #: radiant/preferences.cpp:1646 radiant/preferences.cpp:2187
-#: radiant/preferences.cpp:2189
+#: radiant/preferences.cpp:2189 radiant/preferences.cpp:1647
+#: radiant/preferences.cpp:2188 radiant/preferences.cpp:2190
 msgid "Mouse"
 msgstr ""
 
 #: radiant/preferences.cpp:1651 radiant/preferences.cpp:2254
-#: radiant/preferences.cpp:2256
+#: radiant/preferences.cpp:2256 radiant/preferences.cpp:1652
+#: radiant/preferences.cpp:2255 radiant/preferences.cpp:2257
 msgid "Editing"
 msgstr ""
 
-#: radiant/preferences.cpp:1658
+#: radiant/preferences.cpp:1658 radiant/preferences.cpp:1659
 msgid "Other"
 msgstr ""
 
 #: radiant/preferences.cpp:1662 radiant/preferences.cpp:2356
-#: radiant/preferences.cpp:2358
+#: radiant/preferences.cpp:2358 radiant/preferences.cpp:1663
+#: radiant/preferences.cpp:2357 radiant/preferences.cpp:2359
 msgid "Startup/Auto save"
 msgstr ""
 
 #: radiant/preferences.cpp:1672 radiant/preferences.cpp:2488
-#: radiant/preferences.cpp:2490
+#: radiant/preferences.cpp:2490 radiant/preferences.cpp:1673
+#: radiant/preferences.cpp:2489 radiant/preferences.cpp:2491
 msgid "Misc"
 msgstr ""
 
 #: radiant/preferences.cpp:1678 radiant/preferences.cpp:2592
-#: radiant/preferences.cpp:2594
+#: radiant/preferences.cpp:2594 radiant/preferences.cpp:1679
+#: radiant/preferences.cpp:2593 radiant/preferences.cpp:2595
 msgid "BSP Monitoring"
 msgstr ""
 
-#: radiant/preferences.cpp:1695
+#: radiant/preferences.cpp:1695 radiant/preferences.cpp:1696
 msgid "Front Page"
 msgstr ""
 
 #: radiant/preferences.cpp:1716 radiant/preferences.cpp:1718
+#: radiant/preferences.cpp:1717 radiant/preferences.cpp:1719
 msgid "2D Display"
 msgstr ""
 
-#: radiant/preferences.cpp:1727
+#: radiant/preferences.cpp:1727 radiant/preferences.cpp:1728
 msgid "OpenGL Display Lists"
 msgstr ""
 
-#: radiant/preferences.cpp:1734
+#: radiant/preferences.cpp:1734 radiant/preferences.cpp:1735
 msgid "OpenGL antialiased points and lines"
 msgstr ""
 
-#: radiant/preferences.cpp:1740
+#: radiant/preferences.cpp:1740 radiant/preferences.cpp:1741
 msgid "Solid selection boxes"
 msgstr ""
 
-#: radiant/preferences.cpp:1746
+#: radiant/preferences.cpp:1746 radiant/preferences.cpp:1747
 msgid "Display size info"
 msgstr ""
 
-#: radiant/preferences.cpp:1753
+#: radiant/preferences.cpp:1753 radiant/preferences.cpp:1754
 msgid "Alternate vertex/edge handles"
 msgstr ""
 
-#: radiant/preferences.cpp:1763
+#: radiant/preferences.cpp:1763 radiant/preferences.cpp:1764
 msgid "ATI cards with broken drivers - bug #802"
 msgstr ""
 
-#: radiant/preferences.cpp:1790
+#: radiant/preferences.cpp:1790 radiant/preferences.cpp:1791
 msgid "Movement Velocity"
 msgstr ""
 
-#: radiant/preferences.cpp:1813
+#: radiant/preferences.cpp:1813 radiant/preferences.cpp:1814
 msgid "Rotational Velocity"
 msgstr ""
 
-#: radiant/preferences.cpp:1835
+#: radiant/preferences.cpp:1835 radiant/preferences.cpp:1836
 msgid "slow"
 msgstr ""
 
-#: radiant/preferences.cpp:1840
+#: radiant/preferences.cpp:1840 radiant/preferences.cpp:1841
 msgid "fast"
 msgstr ""
 
-#: radiant/preferences.cpp:1852
+#: radiant/preferences.cpp:1852 radiant/preferences.cpp:1853
 msgid "Use paint-select in camera view:"
 msgstr ""
 
-#: radiant/preferences.cpp:1860
+#: radiant/preferences.cpp:1860 radiant/preferences.cpp:1861
 msgid "No"
 msgstr ""
 
-#: radiant/preferences.cpp:1861
+#: radiant/preferences.cpp:1861 radiant/preferences.cpp:1862
 msgid "Yes"
 msgstr ""
 
-#: radiant/preferences.cpp:1862
+#: radiant/preferences.cpp:1862 radiant/preferences.cpp:1863
 msgid "Yes (Classic Key Setup)"
 msgstr ""
 
-#: radiant/preferences.cpp:1874
+#: radiant/preferences.cpp:1874 radiant/preferences.cpp:1875
 msgid "Freelook in Camera view"
 msgstr ""
 
-#: radiant/preferences.cpp:1881
+#: radiant/preferences.cpp:1881 radiant/preferences.cpp:1882
 msgid "Freelook strafes Forward and Back"
 msgstr ""
 
-#: radiant/preferences.cpp:1888
+#: radiant/preferences.cpp:1888 radiant/preferences.cpp:1889
 msgid "Invert mouse in freelook"
 msgstr ""
 
-#: radiant/preferences.cpp:1895
+#: radiant/preferences.cpp:1895 radiant/preferences.cpp:1896
 msgid "Discrete movement"
 msgstr ""
 
-#: radiant/preferences.cpp:1902
+#: radiant/preferences.cpp:1902 radiant/preferences.cpp:1903
 msgid "Update XY views on camera move"
 msgstr ""
 
-#: radiant/preferences.cpp:1924
+#: radiant/preferences.cpp:1924 radiant/preferences.cpp:1925
 msgid "Texture quality"
 msgstr ""
 
-#: radiant/preferences.cpp:1944
+#: radiant/preferences.cpp:1944 radiant/preferences.cpp:1945
 msgid "low"
 msgstr ""
 
-#: radiant/preferences.cpp:1947
+#: radiant/preferences.cpp:1947 radiant/preferences.cpp:1948
 msgid "high"
 msgstr ""
 
-#: radiant/preferences.cpp:1952
+#: radiant/preferences.cpp:1952 radiant/preferences.cpp:1953
 msgid "Texture subsets"
 msgstr ""
 
-#: radiant/preferences.cpp:1958
+#: radiant/preferences.cpp:1958 radiant/preferences.cpp:1959
 msgid "Texture scrollbar"
 msgstr ""
 
-#: radiant/preferences.cpp:1964
+#: radiant/preferences.cpp:1964 radiant/preferences.cpp:1965
 msgid "Tex increment matches grid"
 msgstr ""
 
-#: radiant/preferences.cpp:1978
+#: radiant/preferences.cpp:1978 radiant/preferences.cpp:1979
 msgid "Texture Compression (if available):"
 msgstr ""
 
 #: radiant/preferences.cpp:1989 radiant/preferences.cpp:2035
+#: radiant/preferences.cpp:1990 radiant/preferences.cpp:2036
 msgid "None"
 msgstr ""
 
-#: radiant/preferences.cpp:1995
+#: radiant/preferences.cpp:1995 radiant/preferences.cpp:1996
 msgid "OpenGL ARB"
 msgstr ""
 
-#: radiant/preferences.cpp:2001
+#: radiant/preferences.cpp:2001 radiant/preferences.cpp:2002
 msgid "S3TC DXT1"
 msgstr ""
 
-#: radiant/preferences.cpp:2002
+#: radiant/preferences.cpp:2002 radiant/preferences.cpp:2003
 msgid "S3TC DXT3"
 msgstr ""
 
-#: radiant/preferences.cpp:2003
+#: radiant/preferences.cpp:2003 radiant/preferences.cpp:2004
 msgid "S3TC DXT5"
 msgstr ""
 
-#: radiant/preferences.cpp:2025
+#: radiant/preferences.cpp:2025 radiant/preferences.cpp:2026
 msgid "Startup Shaders:"
 msgstr ""
 
-#: radiant/preferences.cpp:2037
+#: radiant/preferences.cpp:2037 radiant/preferences.cpp:2038
 msgid "System"
 msgstr ""
 
-#: radiant/preferences.cpp:2041
+#: radiant/preferences.cpp:2041 radiant/preferences.cpp:2042
 msgid "Common"
 msgstr ""
 
-#: radiant/preferences.cpp:2042
+#: radiant/preferences.cpp:2042 radiant/preferences.cpp:2043
 msgid "All"
 msgstr ""
 
-#: radiant/preferences.cpp:2133
+#: radiant/preferences.cpp:2133 radiant/preferences.cpp:2134
 msgid "Floating Z Window"
 msgstr ""
 
-#: radiant/preferences.cpp:2139
+#: radiant/preferences.cpp:2139 radiant/preferences.cpp:2140
 msgid "Detachable Menus"
 msgstr ""
 
-#: radiant/preferences.cpp:2147
+#: radiant/preferences.cpp:2147 radiant/preferences.cpp:2148
 msgid "Patch Toolbar"
 msgstr ""
 
-#: radiant/preferences.cpp:2155
+#: radiant/preferences.cpp:2155 radiant/preferences.cpp:2156
 msgid "Wide Toolbar"
 msgstr ""
 
-#: radiant/preferences.cpp:2161
+#: radiant/preferences.cpp:2161 radiant/preferences.cpp:2162
 msgid "Plugin Toolbar"
 msgstr ""
 
-#: radiant/preferences.cpp:2168
+#: radiant/preferences.cpp:2168 radiant/preferences.cpp:2169
 msgid "Use win32 file load dialog"
 msgstr ""
 
-#: radiant/preferences.cpp:2175
+#: radiant/preferences.cpp:2175 radiant/preferences.cpp:2176
 msgid "Start on Primary Monitor"
 msgstr ""
 
-#: radiant/preferences.cpp:2204
+#: radiant/preferences.cpp:2204 radiant/preferences.cpp:2205
 msgid "2 button"
 msgstr ""
 
-#: radiant/preferences.cpp:2209
+#: radiant/preferences.cpp:2209 radiant/preferences.cpp:2210
 msgid "3 button"
 msgstr ""
 
-#: radiant/preferences.cpp:2215
+#: radiant/preferences.cpp:2215 radiant/preferences.cpp:2216
 msgid "Right click to drop entities"
 msgstr ""
 
-#: radiant/preferences.cpp:2221
+#: radiant/preferences.cpp:2221 radiant/preferences.cpp:2222
 msgid "Mouse chaser"
 msgstr ""
 
-#: radiant/preferences.cpp:2227
+#: radiant/preferences.cpp:2227 radiant/preferences.cpp:2228
 msgid "ALT + multi-drag"
 msgstr ""
 
-#: radiant/preferences.cpp:2239
+#: radiant/preferences.cpp:2239 radiant/preferences.cpp:2240
 msgid "Wheel Mouse inc:"
 msgstr ""
 
-#: radiant/preferences.cpp:2265
+#: radiant/preferences.cpp:2265 radiant/preferences.cpp:2266
 msgid "Vertex editing splits face"
 msgstr ""
 
-#: radiant/preferences.cpp:2271
+#: radiant/preferences.cpp:2271 radiant/preferences.cpp:2272
 msgid "Fix target/targetname collisions"
 msgstr ""
 
-#: radiant/preferences.cpp:2277
+#: radiant/preferences.cpp:2277 radiant/preferences.cpp:2278
 msgid "Clipper tool uses caulk"
 msgstr ""
 
-#: radiant/preferences.cpp:2283
+#: radiant/preferences.cpp:2283 radiant/preferences.cpp:2284
 msgid "Don't clamp plane points"
 msgstr ""
 
-#: radiant/preferences.cpp:2289
+#: radiant/preferences.cpp:2289 radiant/preferences.cpp:2290
 msgid "Select patches by bounding box"
 msgstr ""
 
-#: radiant/preferences.cpp:2303
+#: radiant/preferences.cpp:2303 radiant/preferences.cpp:2304
 msgid "Rotation increment:"
 msgstr ""
 
-#: radiant/preferences.cpp:2320
+#: radiant/preferences.cpp:2320 radiant/preferences.cpp:2321
 msgid "Undo Levels:"
 msgstr ""
 
-#: radiant/preferences.cpp:2337
+#: radiant/preferences.cpp:2337 radiant/preferences.cpp:2338
 msgid "Patch subdivisions:"
 msgstr ""
 
-#: radiant/preferences.cpp:2367
+#: radiant/preferences.cpp:2367 radiant/preferences.cpp:2368
 msgid "Snapshots"
 msgstr ""
 
-#: radiant/preferences.cpp:2373
+#: radiant/preferences.cpp:2373 radiant/preferences.cpp:2374
 msgid "Load last project on open"
 msgstr ""
 
-#: radiant/preferences.cpp:2379
+#: radiant/preferences.cpp:2379 radiant/preferences.cpp:2380
 msgid "Load last map on open"
 msgstr ""
 
-#: radiant/preferences.cpp:2392
+#: radiant/preferences.cpp:2392 radiant/preferences.cpp:2393
 msgid "Auto save every"
 msgstr ""
 
-#: radiant/preferences.cpp:2405
+#: radiant/preferences.cpp:2405 radiant/preferences.cpp:2406
 msgid "minutes"
 msgstr ""
 
-#: radiant/preferences.cpp:2432
+#: radiant/preferences.cpp:2432 radiant/preferences.cpp:2433
 msgid "Prefab path:"
 msgstr ""
 
-#: radiant/preferences.cpp:2461
+#: radiant/preferences.cpp:2461 radiant/preferences.cpp:2462
 msgid "User INI path:"
 msgstr ""
 
-#: radiant/preferences.cpp:2499
+#: radiant/preferences.cpp:2499 radiant/preferences.cpp:2500
 msgid "Light drawing"
 msgstr ""
 
-#: radiant/preferences.cpp:2512
+#: radiant/preferences.cpp:2512 radiant/preferences.cpp:2513
 msgid "Light radiuses:"
 msgstr ""
 
-#: radiant/preferences.cpp:2520
+#: radiant/preferences.cpp:2520 radiant/preferences.cpp:2521
 msgid "Disabled"
 msgstr ""
 
-#: radiant/preferences.cpp:2521
+#: radiant/preferences.cpp:2521 radiant/preferences.cpp:2522
 msgid "True Q3Map2 Style"
 msgstr ""
 
-#: radiant/preferences.cpp:2522
+#: radiant/preferences.cpp:2522 radiant/preferences.cpp:2523
 msgid "Classic Style"
 msgstr ""
 
-#: radiant/preferences.cpp:2534
+#: radiant/preferences.cpp:2534 radiant/preferences.cpp:2535
 msgid ""
 "Use win32 file associations to open text files instead of builtin editor"
 msgstr ""
 
-#: radiant/preferences.cpp:2540
+#: radiant/preferences.cpp:2540 radiant/preferences.cpp:2541
 msgid "Use Custom Shader Editor"
 msgstr ""
 
-#: radiant/preferences.cpp:2556
+#: radiant/preferences.cpp:2556 radiant/preferences.cpp:2557
 msgid "Custom Editor Command"
 msgstr ""
 
 #: radiant/preferences.cpp:2577 radiant/preferences.cpp:3265
+#: radiant/preferences.cpp:2578 radiant/preferences.cpp:3266
 msgid "..."
 msgstr ""
 
-#: radiant/preferences.cpp:2603
+#: radiant/preferences.cpp:2603 radiant/preferences.cpp:2604
 msgid "Enable BSP process monitoring"
 msgstr ""
 
-#: radiant/preferences.cpp:2611
+#: radiant/preferences.cpp:2611 radiant/preferences.cpp:2612
 msgid "Stop compilation on leak"
 msgstr ""
 
-#: radiant/preferences.cpp:2618
+#: radiant/preferences.cpp:2618 radiant/preferences.cpp:2619
 msgid "Run engine after compile"
 msgstr ""
 
-#: radiant/preferences.cpp:2626
+#: radiant/preferences.cpp:2626 radiant/preferences.cpp:2627
 msgid "Activate sleep mode when running the engine"
 msgstr ""
 
-#: radiant/preferences.cpp:2633
+#: radiant/preferences.cpp:2633 radiant/preferences.cpp:2634
 msgid "Texturing compatible with q3map2"
 msgstr ""
 
-#: radiant/preferences.cpp:3173
+#: radiant/preferences.cpp:3173 radiant/preferences.cpp:3174
 msgid "Select game directory"
 msgstr ""
 
-#: radiant/preferences.cpp:3197
+#: radiant/preferences.cpp:3197 radiant/preferences.cpp:3198
 msgid "Configure games"
 msgstr ""
 
-#: radiant/preferences.cpp:3203
+#: radiant/preferences.cpp:3203 radiant/preferences.cpp:3204
 msgid "Select the game to configure"
 msgstr ""
 
-#: radiant/preferences.cpp:3216
+#: radiant/preferences.cpp:3216 radiant/preferences.cpp:3217
 msgid "Quake II"
 msgstr ""
 
-#: radiant/preferences.cpp:3219
+#: radiant/preferences.cpp:3219 radiant/preferences.cpp:3220
 msgid "Quake III Arena and mods"
 msgstr ""
 
-#: radiant/preferences.cpp:3222
+#: radiant/preferences.cpp:3222 radiant/preferences.cpp:3223
 msgid "Urban Terror (standalone)"
 msgstr ""
 
-#: radiant/preferences.cpp:3225
+#: radiant/preferences.cpp:3225 radiant/preferences.cpp:3226
 msgid "UFO: Alien Invasion"
 msgstr ""
 
-#: radiant/preferences.cpp:3228
+#: radiant/preferences.cpp:3228 radiant/preferences.cpp:3229
 msgid "Quake2World"
 msgstr ""
 
-#: radiant/preferences.cpp:3231
+#: radiant/preferences.cpp:3231 radiant/preferences.cpp:3232
 msgid "Warsow"
 msgstr ""
 
-#: radiant/preferences.cpp:3234
+#: radiant/preferences.cpp:3234 radiant/preferences.cpp:3235
 msgid "Nexuiz"
 msgstr ""
 
 #: radiant/preferences.cpp:3243 radiant/gtkdlgs.cpp:3536
+#: radiant/preferences.cpp:3244
 msgid "Name:"
 msgstr ""
 
-#: radiant/preferences.cpp:3252
+#: radiant/preferences.cpp:3252 radiant/preferences.cpp:3253
 msgid "Engine directory:"
 msgstr ""
 
-#: radiant/preferences.cpp:3272
+#: radiant/preferences.cpp:3272 radiant/preferences.cpp:3273
 msgid "Mod subdirectory:"
 msgstr ""
 
@@ -2287,4 +2307,28 @@ msgstr ""
 
 #: radiant/gtkdlgs.cpp:2566
 msgid "Seams"
+msgstr ""
+
+#: radiant/groupdialog.cpp:589
+msgid "Open Wav File"
+msgstr ""
+
+#: radiant/groupdialog.cpp:622
+msgid "Open Model"
+msgstr ""
+
+#: radiant/gtkmisc.cpp:1295 radiant/qe3.cpp:1492
+msgid "Open File"
+msgstr ""
+
+#: radiant/gtkmisc.cpp:1295
+msgid "Save File"
+msgstr ""
+
+#: radiant/preferences.cpp:525
+msgid "Executable for Custom Editor"
+msgstr ""
+
+#: radiant/xywindow.cpp:135
+msgid "Save Image"
 msgstr ""

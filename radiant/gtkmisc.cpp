@@ -33,6 +33,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 
 #include <gdk/gdkkeysyms.h>
+#include <glib/gi18n.h>
 
 #if defined (__linux__) || defined (__APPLE__)
 #include <unistd.h>
@@ -1291,7 +1292,7 @@ const char* file_dialog (void *parent, gboolean open, const char* title, const c
 #endif
     // do that the Gtk way
     if (title == NULL)
-      title = open ? "Open File" : "Save File";
+      title = open ? _("Open File") : _("Save File");
 
 #ifdef FILEDLG_DBG
     Sys_Printf("Doing Gtk file dialog:\nBuilding new_path..");
@@ -1324,6 +1325,7 @@ const char* file_dialog (void *parent, gboolean open, const char* title, const c
 #endif
 
     file_sel = gtk_file_selection_new (title);
+	gtk_file_selection_set_filename(GTK_FILE_SELECTION(file_sel), "/home/mattn/dev/ufoai/trunk/base/maps/");
 
 #ifdef FILEDLG_DBG
     Sys_Printf("Done.\n");

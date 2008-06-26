@@ -132,7 +132,7 @@ void WXY_Print ()
   unsigned char* img;
   const char* filename;
 
-  filename = file_dialog (g_pParentWnd->m_pWidget, FALSE, "Save Image", NULL, FILTER_BMP);
+  filename = file_dialog (g_pParentWnd->m_pWidget, FALSE, _("Save Image"), NULL, FILTER_BMP);
   if (!filename)
     return;
 

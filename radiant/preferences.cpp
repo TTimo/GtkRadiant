@@ -522,7 +522,7 @@ static void OnBtnBrowseEditor (GtkWidget *widget, gpointer data)
 {
   PrefsDlg *dlg = (PrefsDlg*)data;
 
-  const char *filename = file_dialog(g_PrefsDlg.GetWidget(), TRUE, "Executable for Custom Editor");
+  const char *filename = file_dialog(g_PrefsDlg.GetWidget(), TRUE, _("Executable for Custom Editor"));
 
   if(filename != NULL)
   {

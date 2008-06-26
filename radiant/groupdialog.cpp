@@ -30,6 +30,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
   #include <unistd.h>
 #endif
 #include <gdk/gdkkeysyms.h>
+#include <glib/gi18n.h>
 #include "stdafx.h"
 #include "groupdialog.h"
 
@@ -585,7 +586,7 @@ void AssignSound()
     strcat (buffer, "/");
   }
 
-  const char *filename = file_dialog (g_pGroupDlg->m_pWidget, TRUE, "Open Wav File", buffer, "sound");
+  const char *filename = file_dialog (g_pGroupDlg->m_pWidget, TRUE, _("Open Wav File"), buffer, "sound");
   if (filename != NULL)
   {
     gtk_entry_set_text (GTK_ENTRY (EntWidgets[EntKeyField]), "noise");
@@ -618,7 +619,7 @@ void AssignModel()
     strcat (buffer, "/");
   }
 
-  const char *filename = file_dialog (g_pGroupDlg->m_pWidget, TRUE, "Open Model", buffer, MODEL_MAJOR);
+  const char *filename = file_dialog (g_pGroupDlg->m_pWidget, TRUE, _("Open Model"), buffer, MODEL_MAJOR);
   if (filename != NULL)
   {
     gtk_entry_set_text (GTK_ENTRY (EntWidgets[EntKeyField]), "model");

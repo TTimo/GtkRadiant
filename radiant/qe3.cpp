@@ -29,6 +29,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <gtk/gtk.h>
 #include <sys/stat.h>
 #include "gtkmisc.h"
+#include <glib/gi18n.h>
 #if defined (__linux__) || defined (__APPLE__)
 #include <unistd.h>
 #include <X11/keysym.h>
@@ -1488,7 +1489,7 @@ void ProjectDialog ()
   strcat (buffer, "/scripts/");
 
   // Display the Open dialog box
-  filename = file_dialog (NULL, TRUE, "Open File", buffer, "project");
+  filename = file_dialog (NULL, TRUE, _("Open File"), buffer, "project");
 
   if (filename == NULL)
     return;	// canceled
