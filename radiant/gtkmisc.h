@@ -81,7 +81,7 @@ URL adds an optional 'go to URL' button
 int WINAPI gtk_MessageBox (void *parent, const char* lpText, const char* lpCaption = "Radiant", guint32 uType = MB_OK, const char* URL = NULL);
 // NOTE: the returned filename is allocated with g_malloc and MUST be freed with g_free (both for win32 and Gtk dialogs)
 // GtkWidget *parent
-const char* file_dialog (void *parent, gboolean open, const char* title, const char* path = (char*)NULL, const char* pattern = NULL);
+const char* file_dialog (void *parent, gboolean open, const char* title, const char* path = (char*)NULL, const char* pattern = NULL, const char *baseSubDir = NULL);
 
 /*!
 \fn dir_dialog, prompts for a directory

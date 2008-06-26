@@ -1197,7 +1197,10 @@ private:
 
 };
 
-const char* file_dialog (void *parent, gboolean open, const char* title, const char* path, const char* pattern)
+/**
+ * @param[in] baseSubDir should have a trailing slash if not @c NULL
+ */
+const char* file_dialog (void *parent, gboolean open, const char* title, const char* path, const char* pattern, const char *baseSubDir)
 {
   // Gtk dialog
   GtkWidget* file_sel;
@@ -1290,6 +1293,7 @@ const char* file_dialog (void *parent, gboolean open, const char* title, const c
   else
   {
 #endif
+	char buf[PATH_MAX];
     // do that the Gtk way
     if (title == NULL)
       title = open ? _("Open File") : _("Save File");
@@ -1300,14 +1304,13 @@ const char* file_dialog (void *parent, gboolean open, const char* title, const c
     // we expect an actual path below, if the path is NULL we might crash
     if (!path || path[0] == '\0')
     {
-#ifdef _WIN32
-      path = "C:\\";
-#elif defined (__linux__) || defined (__APPLE__)
-      path = "/";
-#else
-      path = "/";
-#endif
-    }
+		strcpy(buf, g_pGameDescription->mEnginePath.GetBuffer());
+		strcat(buf, g_pGameDescription->mBaseGame.GetBuffer());
+		strcat(buf, "/");
+		if (baseSubDir)
+			strcat(buf, baseSubDir);
+		path = buf;
+	}
 
     // alloc new path with extra char for dir separator
     new_path = new char[strlen(path)+1+1];
@@ -1320,16 +1323,13 @@ const char* file_dialog (void *parent, gboolean open, const char* title, const c
     *w = '\0';
 
 #ifdef FILEDLG_DBG
-    Sys_Printf("Done.\n");
-    Sys_Printf("Calling gtk_file_selection_new with title: %s...", title);
+	Sys_Printf("Done.\n");
+	Sys_Printf("Calling gtk_file_selection_new with title: %s...", title);
 #endif
-
     file_sel = gtk_file_selection_new (title);
-	gtk_file_selection_set_filename(GTK_FILE_SELECTION(file_sel), "/home/mattn/dev/ufoai/trunk/base/maps/");
-
 #ifdef FILEDLG_DBG
-    Sys_Printf("Done.\n");
-    Sys_Printf("Set the masks...");
+	Sys_Printf("Done.\n");
+	Sys_Printf("Set the masks...");
 #endif
 
 #if 0 //!\todo Add masks to GtkFileSelection in gtk-2.0
@@ -1380,7 +1380,7 @@ const char* file_dialog (void *parent, gboolean open, const char* title, const c
     if (new_path != NULL)
     {
 #ifdef FILEDLG_DBG
-      Sys_Printf("gtk_file_selection_set_filename... %p", file_sel);
+      Sys_Printf("gtk_file_selection_set_filename... %p (%s)", file_sel, new_path);
 #endif
       gtk_file_selection_set_filename (GTK_FILE_SELECTION (file_sel), new_path);
       delete[] new_path;

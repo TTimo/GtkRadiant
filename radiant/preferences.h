@@ -181,6 +181,7 @@ public:
   bool mNoPatch; ///< this game doesn't support patch technology
   Str mCaulkShader; ///< the shader to use for caulking
   bool quake2; ///< set this to true to get quake2
+  bool noMapsInHome; ///< set this if you want to open the engine path/base dir/maps dir for map open/save dialoges */
 
   CGameDescription() { mpDoc = NULL; }
   /*!

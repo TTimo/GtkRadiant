@@ -759,6 +759,20 @@ CGameDescription::CGameDescription(xmlDocPtr pDoc, const Str &GameFile)
     xmlFree(prop);
   }
 
+  // if this is set, the open maps dialoge will open the engine path not the
+  // home dir for map loading and saving
+  prop = (char*)xmlGetProp(pNode, (xmlChar*)"no_maps_in_home");
+  if (prop == NULL)
+  {
+    // default
+    noMapsInHome = false;
+  }
+  else
+  {
+    noMapsInHome = true;
+    xmlFree(prop);
+  }
+
   prop = (char*)xmlGetProp(pNode, (xmlChar*)"basegame");
   if (prop == NULL)
   {

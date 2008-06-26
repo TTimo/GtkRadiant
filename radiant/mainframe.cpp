@@ -1425,7 +1425,7 @@ void MainFrame::create_main_menu (GtkWidget *window, GtkWidget *vbox)
   item = create_menu_item_with_mnemonic (menu, _("Previous leak spot"),
                            GTK_SIGNAL_FUNC (HandleCommand), ID_MISC_PREVIOUSLEAKSPOT);
   // http://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=394
-//  create_menu_item_with_mnemonic (menu, "_Print XY View", GTK_SIGNAL_FUNC (HandleCommand), ID_MISC_PRINTXY);
+//  create_menu_item_with_mnemonic (menu, _("_Print XY View"), GTK_SIGNAL_FUNC (HandleCommand), ID_MISC_PRINTXY);
   item = create_menu_item_with_mnemonic (menu, _("_Select Entity Color..."),
                            GTK_SIGNAL_FUNC (HandleCommand), ID_MISC_SELECTENTITYCOLOR);
   g_object_set_data (G_OBJECT (window), "menu_misc_selectentitycolor", item);
@@ -4264,10 +4264,14 @@ void MainFrame::OnFileOpen()
   const char *str;
 	char buf[NAME_MAX];
 
-  strcpy(buf, g_qeglobals.m_strHomeMaps.GetBuffer());
-  strcat(buf, "maps/");
+	if (!g_pGameDescription->noMapsInHome) {
+		strcpy(buf, g_qeglobals.m_strHomeMaps.GetBuffer());
+		strcat(buf, "maps/");
+	} else {
+		buf[0] = '\0';
+	}
 
-  str = file_dialog (m_pWidget, TRUE, _("Open Map"), buf, MAP_MAJOR);
+  str = file_dialog (m_pWidget, TRUE, _("Open Map"), buf, MAP_MAJOR, "maps/");
 
   if (str != NULL)
   {
@@ -4282,10 +4286,14 @@ void MainFrame::OnFileImportmap()
   const char *str;
 	char buf[NAME_MAX];
 
-  strcpy(buf, g_qeglobals.m_strHomeMaps.GetBuffer());
-  strcat(buf, "maps/");
+	if (!g_pGameDescription->noMapsInHome) {
+		strcpy(buf, g_qeglobals.m_strHomeMaps.GetBuffer());
+		strcat(buf, "maps/");
+	} else {
+		buf[0] = '\0';
+	}
 
-  str = file_dialog (m_pWidget, TRUE, _("Import Map"), buf, MAP_MAJOR);
+  str = file_dialog (m_pWidget, TRUE, _("Import Map"), buf, MAP_MAJOR, "maps/");
 
   if (str != NULL)
   {
@@ -4306,10 +4314,14 @@ void MainFrame::OnFileSaveas()
   const char* str;
 	char buf[NAME_MAX];
 
-  strcpy(buf, g_qeglobals.m_strHomeMaps.GetBuffer());
-  strcat(buf, "maps/");
+	if (!g_pGameDescription->noMapsInHome) {
+		strcpy(buf, g_qeglobals.m_strHomeMaps.GetBuffer());
+		strcat(buf, "maps/");
+	} else {
+		buf[0] = '\0';
+	}
 
-  str = file_dialog (g_pParentWnd->m_pWidget, FALSE, _("Save Map"), buf, MAP_MAJOR);
+  str = file_dialog (g_pParentWnd->m_pWidget, FALSE, _("Save Map"), buf, MAP_MAJOR, "maps/");
 
   if (str != NULL)
   {
@@ -4324,10 +4336,14 @@ void MainFrame::OnFileExportmap()
   const char* str;
 	char buf[NAME_MAX];
 
-  strcpy(buf, g_qeglobals.m_strHomeMaps.GetBuffer());
-  strcat(buf, "maps/");
+	if (!g_pGameDescription->noMapsInHome) {
+		strcpy(buf, g_qeglobals.m_strHomeMaps.GetBuffer());
+		strcat(buf, "maps/");
+	} else {
+		buf[0] = '\0';
+	}
 
-  str = file_dialog (m_pWidget, FALSE, _("Export Selection"), buf, MAP_MAJOR);
+  str = file_dialog (m_pWidget, FALSE, _("Export Selection"), buf, MAP_MAJOR, "maps/");
 
   if (str != NULL)
   {
@@ -4340,10 +4356,14 @@ void MainFrame::OnFileSaveregion()
   const char* str;
 	char buf[NAME_MAX];
 
-  strcpy(buf, g_qeglobals.m_strHomeMaps.GetBuffer());
-  strcat(buf, "maps/");
+	if (!g_pGameDescription->noMapsInHome) {
+		strcpy(buf, g_qeglobals.m_strHomeMaps.GetBuffer());
+		strcat(buf, "maps/");
+	} else {
+		buf[0] = '\0';
+	}
 
-  str = file_dialog (g_pParentWnd->m_pWidget, FALSE, _("Export Region"), buf, MAP_MAJOR);
+  str = file_dialog (g_pParentWnd->m_pWidget, FALSE, _("Export Region"), buf, MAP_MAJOR, "maps/");
 
   if (str != NULL)
   {
@@ -4576,7 +4596,7 @@ void MainFrame::OnEditLoadprefab()
     AddSlash (CurPath);
   }
 
-  filename = file_dialog (m_pWidget, TRUE, _("Import Prefab"), CurPath.GetBuffer(), MAP_MAJOR);
+  filename = file_dialog (m_pWidget, TRUE, _("Import Prefab"), CurPath.GetBuffer(), MAP_MAJOR, "prefabs/");
 
   if (filename != NULL)
   {
@@ -4600,7 +4620,7 @@ void MainFrame::OnEditSaveprefab()
   }
   AddSlash (CurPath);
 
-  filename = file_dialog (m_pWidget, FALSE, _("Export Prefab"), CurPath.GetBuffer(), MAP_MAJOR);
+  filename = file_dialog (m_pWidget, FALSE, _("Export Prefab"), CurPath.GetBuffer(), MAP_MAJOR, "prefabs/");
   if (filename != NULL)
   {
     Map_SaveSelected(filename);
