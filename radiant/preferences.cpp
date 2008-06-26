@@ -537,7 +537,7 @@ static void OnBtnBrowseprefab (GtkWidget *widget, gpointer data)
   char *path = dlg->m_strPrefabPath;
   if (strlen (path) == 0)
     path = g_strGameToolsPath;
-  char *dir = dir_dialog (g_PrefsDlg.GetWidget (), "Set prefab path", path);
+  char *dir = dir_dialog (g_PrefsDlg.GetWidget (), _("Set prefab path"), path);
   dlg->UpdateData(TRUE);
 
   if (dir != NULL)
@@ -558,7 +558,7 @@ static void OnBtnBrowseuserini (GtkWidget *widget, gpointer data)
   if (strlen (path) == 0)
     path = g_strGameToolsPath;
   // TODO: INI filter?
-  const char *filename = file_dialog (g_PrefsDlg.GetWidget(), TRUE, "Find INI file", path);
+  const char *filename = file_dialog (g_PrefsDlg.GetWidget(), TRUE, _("Find INI file"), path);
 
   if (filename != NULL)
   {
@@ -571,9 +571,9 @@ static void OnBtnBrowseuserini (GtkWidget *widget, gpointer data)
 static void OnButtonClean (GtkWidget *widget, gpointer data)
 {
   // make sure this is what the user wants
-  if (gtk_MessageBox (g_PrefsDlg.GetWidget (), "This will close Radiant and clean the corresponding registry entries.\n"
-		  "Next time you start Radiant it will be good as new. Do you wish to continue?",
-		  "Reset Registry", MB_YESNO) == IDYES)
+  if (gtk_MessageBox (g_PrefsDlg.GetWidget (), _("This will close Radiant and clean the corresponding registry entries.\n"
+		  "Next time you start Radiant it will be good as new. Do you wish to continue?"),
+		  _("Reset Registry"), MB_YESNO) == IDYES)
   {
     PrefsDlg *dlg = (PrefsDlg*)data;
     dlg->EndModal (IDCANCEL);
@@ -1019,7 +1019,7 @@ GtkWidget* CGameDialog::GetGlobalFrame()
   gtk_container_add( GTK_CONTAINER( mFrame ), vbox );
   gtk_container_set_border_width( GTK_CONTAINER( vbox ), 5 );
 
-  text = gtk_label_new( "Select the game:" );
+  text = gtk_label_new( _("Select the game:") );
   gtk_widget_show( text );
   gtk_box_pack_start( GTK_BOX( vbox ), text, FALSE, FALSE, 0 );
 
@@ -1031,23 +1031,23 @@ GtkWidget* CGameDialog::GetGlobalFrame()
 
   UpdateGameCombo();
 
-  check = gtk_check_button_new_with_label( "Auto load selected game on startup" );
+  check = gtk_check_button_new_with_label( _("Auto load selected game on startup") );
   gtk_widget_show(check);
   gtk_box_pack_start (GTK_BOX(vbox), check, FALSE, FALSE, 0);
   AddDialogData (check, &m_bAutoLoadGame, DLG_CHECK_BOOL);
 
-  text = gtk_label_new("(this frame is available in the prefs menu if you set auto-select)");
+  text = gtk_label_new(_("(this frame is available in the prefs menu if you set auto-select)"));
   gtk_widget_show(text);
   gtk_box_pack_start (GTK_BOX(vbox), text, FALSE, FALSE, 0);
 
 #ifdef _WIN32
-  check = gtk_check_button_new_with_label( "Networked install - per-user settings" );
+  check = gtk_check_button_new_with_label( _("Networked install - per-user settings") );
   gtk_widget_show( check );
   gtk_box_pack_start( GTK_BOX( vbox ), check, FALSE, FALSE, 0 );
   AddDialogData( check, &m_bNetRun, DLG_CHECK_BOOL );
 #endif
 
-  check = gtk_check_button_new_with_label( "Log the console to radiant.log" );
+  check = gtk_check_button_new_with_label( _("Log the console to radiant.log") );
   gtk_widget_show( check );
   gtk_box_pack_start( GTK_BOX( vbox ), check, FALSE, FALSE, 0 );
   AddDialogData( check, &m_bLogConsole, DLG_CHECK_BOOL );
@@ -1104,7 +1104,7 @@ void CGameDialog::BuildDialog() {
 	GtkWidget *dlg, *vbox1, *button, *setup_button;
 
 	dlg = m_pWidget;
-	gtk_window_set_title( GTK_WINDOW( dlg ), "Select Game" );
+	gtk_window_set_title( GTK_WINDOW( dlg ), _("Select Game") );
 
 	vbox1 = gtk_vbox_new( FALSE, 0 );
 	gtk_widget_show( vbox1 );
@@ -1113,18 +1113,18 @@ void CGameDialog::BuildDialog() {
 	gtk_container_add( GTK_CONTAINER( vbox1 ), GetGlobalFrame() );
 	mTopBox = vbox1;
 
-	setup_button = gtk_button_new_with_label( "Configure more games" );
+	setup_button = gtk_button_new_with_label( _("Configure more games") );
 	gtk_widget_show( setup_button );
 	gtk_box_pack_start( GTK_BOX( vbox1 ), setup_button, FALSE, FALSE, 0 );
 	gtk_signal_connect( GTK_OBJECT( setup_button ), "clicked",
 						GTK_SIGNAL_FUNC( SInstallCallback ), this );
 
-	button = gtk_button_new_with_label( "OK" );
+	button = gtk_button_new_with_label( _("OK") );
 	gtk_widget_show( button );
 	gtk_box_pack_start( GTK_BOX( vbox1 ), button, FALSE, FALSE, 0 );
 	AddModalButton( button, IDOK );
 
-	button = gtk_button_new_with_label( "Cancel" );
+	button = gtk_button_new_with_label( _("Cancel") );
 	gtk_widget_show( button );
 	gtk_box_pack_start( GTK_BOX( vbox1 ), button, FALSE, FALSE, 0 );
 	AddModalButton( button, IDCANCEL );
@@ -1333,6 +1333,7 @@ void CGameDialog::AddPacksURL(Str &URL)
       URL += "&Games_dlup%5B%5D=1";
     else if ((*iGame)->mGameFile == "wolf.game")
       URL += "&Games_dlup%5B%5D=2";
+	// FIXME: double entry
     else if ((*iGame)->mGameFile == "wolf.game")
       URL += "&Games_dlup%5B%5D=3";
     else if ((*iGame)->mGameFile == "jk2.game")
@@ -1525,7 +1526,7 @@ void PrefsDlg::BuildDialog ()
   GtkObject *adj;
 
   dialog = m_pWidget;
-  gtk_window_set_title(GTK_WINDOW(dialog), "GtkRadiant Preferences");
+  gtk_window_set_title(GTK_WINDOW(dialog), _("GtkRadiant Preferences"));
   gtk_widget_realize(dialog);
 
   mainvbox = gtk_vbox_new(FALSE, 5);
@@ -1537,19 +1538,19 @@ void PrefsDlg::BuildDialog ()
   gtk_widget_show(hbox);
   gtk_box_pack_end(GTK_BOX(mainvbox), hbox, FALSE, TRUE, 0);
 
-  button = gtk_button_new_with_label("OK");
+  button = gtk_button_new_with_label(_("OK"));
   gtk_widget_show(button);
   gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
   gtk_widget_set_usize(button, 60, -2);
   AddModalButton(button, IDOK);
 
-  button = gtk_button_new_with_label("Cancel");
+  button = gtk_button_new_with_label(_("Cancel"));
   gtk_widget_show(button);
   gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
   gtk_widget_set_usize(button, 60, -2);
   AddModalButton(button, IDCANCEL);
 
-  button = gtk_button_new_with_label ("Clean");
+  button = gtk_button_new_with_label (_("Clean"));
   gtk_widget_show(button);
   gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(OnButtonClean), this);
   gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
@@ -1581,7 +1582,7 @@ void PrefsDlg::BuildDialog ()
 
     {
       GtkCellRenderer* renderer = gtk_cell_renderer_text_new();
-      GtkTreeViewColumn* column = gtk_tree_view_column_new_with_attributes("Preferences", renderer, "text", 0, NULL);
+      GtkTreeViewColumn* column = gtk_tree_view_column_new_with_attributes(_("Preferences"), renderer, "text", 0, NULL);
       gtk_tree_view_append_column(GTK_TREE_VIEW(view), column);
     }
 
@@ -1601,80 +1602,80 @@ void PrefsDlg::BuildDialog ()
       {
         GtkTreeIter group;
         gtk_tree_store_append(store, &group, NULL);
-        gtk_tree_store_set(store, &group, 0, "Globals", 1, PTAB_FRONT, -1);
+        gtk_tree_store_set(store, &group, 0, _("Globals"), 1, PTAB_FRONT, -1);
         {
           GtkTreeIter tab;
           gtk_tree_store_append(store, &tab, &group);
-          gtk_tree_store_set(store, &tab, 0, "Game settings", 1, (gpointer)PTAB_GAME_SETTINGS, -1);
+          gtk_tree_store_set(store, &tab, 0, _("Game settings"), 1, (gpointer)PTAB_GAME_SETTINGS, -1);
         }
       }
 
       {
         GtkTreeIter group;
         gtk_tree_store_append(store, &group, NULL);
-        gtk_tree_store_set(store, &group, 0, "Display", 1, PTAB_FRONT, -1);
+        gtk_tree_store_set(store, &group, 0, _("Display"), 1, PTAB_FRONT, -1);
         {
           GtkTreeIter tab;
           gtk_tree_store_append(store, &tab, &group);
-          gtk_tree_store_set(store, &tab, 0, "2D Display/Rendering", 1, (gpointer)PTAB_2D, -1);
+          gtk_tree_store_set(store, &tab, 0, _("2D Display/Rendering"), 1, (gpointer)PTAB_2D, -1);
         }
         {
           GtkTreeIter tab;
           gtk_tree_store_append(store, &tab, &group);
-          gtk_tree_store_set(store, &tab, 0, "3D View", 1, (gpointer)PTAB_CAMERA, -1);
+          gtk_tree_store_set(store, &tab, 0, _("3D View"), 1, (gpointer)PTAB_CAMERA, -1);
         }
         {
           GtkTreeIter tab;
           gtk_tree_store_append(store, &tab, &group);
-          gtk_tree_store_set(store, &tab, 0, "Texture Settings", 1, (gpointer)PTAB_TEXTURE, -1);
-        }
-      }
-
-      {
-        GtkTreeIter group;
-        gtk_tree_store_append(store, &group, NULL);
-        gtk_tree_store_set(store, &group, 0, "Interface", 1, PTAB_FRONT, -1);
-        {
-          GtkTreeIter tab;
-          gtk_tree_store_append(store, &tab, &group);
-          gtk_tree_store_set(store, &tab, 0, "Layout", 1, (gpointer)PTAB_LAYOUT, -1);
-        }
-        {
-          GtkTreeIter tab;
-          gtk_tree_store_append(store, &tab, &group);
-          gtk_tree_store_set(store, &tab, 0, "Mouse", 1, (gpointer)PTAB_MOUSE, -1);
-        }
-        {
-          GtkTreeIter tab;
-          gtk_tree_store_append(store, &tab, &group);
-          gtk_tree_store_set(store, &tab, 0, "Editing", 1, (gpointer)PTAB_EDITING, -1);
+          gtk_tree_store_set(store, &tab, 0, _("Texture Settings"), 1, (gpointer)PTAB_TEXTURE, -1);
         }
       }
 
       {
         GtkTreeIter group;
         gtk_tree_store_append(store, &group, NULL);
-        gtk_tree_store_set(store, &group, 0, "Other", 1, PTAB_FRONT, -1);
+        gtk_tree_store_set(store, &group, 0, _("Interface"), 1, PTAB_FRONT, -1);
         {
           GtkTreeIter tab;
           gtk_tree_store_append(store, &tab, &group);
-          gtk_tree_store_set(store, &tab, 0, "Startup/Auto save", 1, (gpointer)PTAB_STARTUP, -1);
+          gtk_tree_store_set(store, &tab, 0, _("Layout"), 1, (gpointer)PTAB_LAYOUT, -1);
         }
         {
           GtkTreeIter tab;
           gtk_tree_store_append(store, &tab, &group);
-          gtk_tree_store_set(store, &tab, 0, "Paths", 1, (gpointer)PTAB_PATHS, -1);
+          gtk_tree_store_set(store, &tab, 0, _("Mouse"), 1, (gpointer)PTAB_MOUSE, -1);
         }
         {
           GtkTreeIter tab;
           gtk_tree_store_append(store, &tab, &group);
-          gtk_tree_store_set(store, &tab, 0, "Misc", 1, (gpointer)PTAB_MISC, -1);
+          gtk_tree_store_set(store, &tab, 0, _("Editing"), 1, (gpointer)PTAB_EDITING, -1);
+        }
+      }
+
+      {
+        GtkTreeIter group;
+        gtk_tree_store_append(store, &group, NULL);
+        gtk_tree_store_set(store, &group, 0, _("Other"), 1, PTAB_FRONT, -1);
+        {
+          GtkTreeIter tab;
+          gtk_tree_store_append(store, &tab, &group);
+          gtk_tree_store_set(store, &tab, 0, _("Startup/Auto save"), 1, (gpointer)PTAB_STARTUP, -1);
+        }
+        {
+          GtkTreeIter tab;
+          gtk_tree_store_append(store, &tab, &group);
+          gtk_tree_store_set(store, &tab, 0, _("Paths"), 1, (gpointer)PTAB_PATHS, -1);
+        }
+        {
+          GtkTreeIter tab;
+          gtk_tree_store_append(store, &tab, &group);
+          gtk_tree_store_set(store, &tab, 0, _("Misc"), 1, (gpointer)PTAB_MISC, -1);
         }
         if (!g_qeglobals.bBSPFrontendPlugin)
         {
           GtkTreeIter tab;
           gtk_tree_store_append(store, &tab, &group);
-          gtk_tree_store_set(store, &tab, 0, "BSP Monitoring", 1, (gpointer)PTAB_BSPMONITOR, -1);
+          gtk_tree_store_set(store, &tab, 0, _("BSP Monitoring"), 1, (gpointer)PTAB_BSPMONITOR, -1);
         }
       }
     }
@@ -1691,7 +1692,7 @@ void PrefsDlg::BuildDialog ()
   // Front page...
   // todo : add something interesting here
   // NOTE TTimo: tip of the day? or a logo?
-  preflabel = gtk_label_new("Front Page");
+  preflabel = gtk_label_new(_("Front Page"));
   gtk_widget_show(preflabel);
   pageframe = gtk_frame_new(NULL);
   gtk_container_set_border_width(GTK_CONTAINER(pageframe), 5);
@@ -1705,16 +1706,16 @@ void PrefsDlg::BuildDialog ()
   gtk_notebook_append_page(GTK_NOTEBOOK(notebook), pageframe, preflabel);
 
   /******** global preferences group ****************************/
-  preflabel = gtk_label_new("Globals");
+  preflabel = gtk_label_new(_("Globals"));
   gtk_widget_show(preflabel);
 
   pageframe = mGamesDialog.GetGlobalFrame();
   gtk_notebook_append_page(GTK_NOTEBOOK(notebook), pageframe, preflabel);
 
   /******** 2D prefs group (xy views/rendering options) *********/
-  preflabel = gtk_label_new("2D Display");
+  preflabel = gtk_label_new(_("2D Display"));
   gtk_widget_show(preflabel);
-  pageframe = gtk_frame_new("2D Display");
+  pageframe = gtk_frame_new(_("2D Display"));
   gtk_container_set_border_width(GTK_CONTAINER(pageframe), 5);
   gtk_widget_show(pageframe);
   vbox = gtk_vbox_new(FALSE, 5);
@@ -1723,33 +1724,33 @@ void PrefsDlg::BuildDialog ()
   gtk_container_add(GTK_CONTAINER(pageframe), vbox);
 
   // OpenGL Display Lists
-  check = gtk_check_button_new_with_label("OpenGL Display Lists");
+  check = gtk_check_button_new_with_label(_("OpenGL Display Lists"));
   gtk_widget_show(check);
   gtk_box_pack_start(GTK_BOX(vbox), check, FALSE, FALSE, 0);
   AddDialogData(check, &m_bDisplayLists, DLG_CHECK_BOOL);
 
   // Antialiased points & lines
   // Fishman - Add antialiazed points and lines support. 09/03/00
-  check = gtk_check_button_new_with_label ("OpenGL antialiased points and lines");
+  check = gtk_check_button_new_with_label (_("OpenGL antialiased points and lines"));
   gtk_widget_show (check);
   gtk_box_pack_start (GTK_BOX (vbox), check, FALSE, FALSE, 0);
   AddDialogData (check, &m_bAntialiasedPointsAndLines, DLG_CHECK_BOOL);
 
   // Solid selection boxes
-  check = gtk_check_button_new_with_label ("Solid selection boxes");
+  check = gtk_check_button_new_with_label (_("Solid selection boxes"));
   gtk_widget_show (check);
   gtk_box_pack_start (GTK_BOX (vbox), check, FALSE, FALSE, 0);
   AddDialogData (check, &m_bNoStipple, DLG_CHECK_BOOL);
 
   // Display size info
-  check = gtk_check_button_new_with_label ("Display size info");
+  check = gtk_check_button_new_with_label (_("Display size info"));
   gtk_widget_show (check);
   gtk_box_pack_start(GTK_BOX(vbox), check, FALSE, FALSE, 0);
   AddDialogData (check, &m_bSizePaint, DLG_CHECK_BOOL);
 
   // Alternate vertex/edge handles
   // Gef: Kyro GL_POINT work around 25-aug-2001
-  check = gtk_check_button_new_with_label ("Alternate vertex/edge handles");
+  check = gtk_check_button_new_with_label (_("Alternate vertex/edge handles"));
   gtk_widget_show(check);
   gtk_box_pack_start(GTK_BOX(vbox), check, FALSE, FALSE, 0);
   AddDialogData(check, &m_bGlPtWorkaround, DLG_CHECK_BOOL);
@@ -1759,7 +1760,7 @@ void PrefsDlg::BuildDialog ()
 #ifdef ATIHACK_812
 	// ATI bugs
 	// http://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=812
-	check = gtk_check_button_new_with_label ("ATI cards with broken drivers - bug #802");
+	check = gtk_check_button_new_with_label (_("ATI cards with broken drivers - bug #802"));
 	gtk_widget_show(check);
 	gtk_box_pack_start(GTK_BOX(vbox), check, FALSE, FALSE, 0);
 	AddDialogData(check, &m_bGlATIHack, DLG_CHECK_BOOL);
@@ -1769,9 +1770,9 @@ void PrefsDlg::BuildDialog ()
   gtk_notebook_append_page(GTK_NOTEBOOK(notebook), pageframe, preflabel);
 
   /******** 3D Camera view group *********/
-  preflabel = gtk_label_new("3D View");
+  preflabel = gtk_label_new(_("3D View"));
   gtk_widget_show(preflabel);
-  pageframe = gtk_frame_new("3D View");
+  pageframe = gtk_frame_new(_("3D View"));
   gtk_container_set_border_width(GTK_CONTAINER(pageframe), 5);
   gtk_widget_show(pageframe);
   vbox = gtk_vbox_new(FALSE, 5);
@@ -1786,7 +1787,7 @@ void PrefsDlg::BuildDialog ()
   gtk_box_pack_start (GTK_BOX (vbox), hbox2, FALSE, FALSE, 0);
 
   // label
-  label = gtk_label_new("Movement Velocity");
+  label = gtk_label_new(_("Movement Velocity"));
   gtk_label_set_justify (GTK_LABEL (label), GTK_JUSTIFY_LEFT);
   gtk_widget_show(label);
   gtk_box_pack_start(GTK_BOX(hbox2), label, FALSE, FALSE, 0);
@@ -1809,7 +1810,7 @@ void PrefsDlg::BuildDialog ()
   gtk_box_pack_start (GTK_BOX (vbox), hbox2, FALSE, FALSE, 0);
 
   // label
-  label = gtk_label_new ("Rotational Velocity");
+  label = gtk_label_new (_("Rotational Velocity"));
   gtk_label_set_justify (GTK_LABEL (label), GTK_JUSTIFY_LEFT);
   gtk_widget_show (label);
   gtk_box_pack_start(GTK_BOX(hbox2), label, FALSE, FALSE, 0);
@@ -1831,12 +1832,12 @@ void PrefsDlg::BuildDialog ()
   gtk_box_pack_start (GTK_BOX (vbox), hbox2, FALSE, FALSE, 0);
 
   // label
-  label = gtk_label_new ("slow");
+  label = gtk_label_new (_("slow"));
   gtk_widget_show (label);
   gtk_box_pack_start (GTK_BOX (hbox2), label, FALSE, FALSE, 0);
 
   // label
-  label = gtk_label_new ("fast");
+  label = gtk_label_new (_("fast"));
   gtk_widget_show (label);
   gtk_box_pack_end (GTK_BOX (hbox2), label, FALSE, FALSE, 0);
 
@@ -1848,7 +1849,7 @@ void PrefsDlg::BuildDialog ()
   gtk_table_set_row_spacings (GTK_TABLE (table), 5);
   gtk_table_set_col_spacings (GTK_TABLE (table), 5);
 
-  label = gtk_label_new ("Use paint-select in camera view:");
+  label = gtk_label_new (_("Use paint-select in camera view:"));
   gtk_widget_show (label);
   gtk_label_set_justify (GTK_LABEL (label), GTK_JUSTIFY_LEFT);
   gtk_table_attach(GTK_TABLE(table), label, 0, 1, 0, 1,
@@ -1856,9 +1857,9 @@ void PrefsDlg::BuildDialog ()
                   (GtkAttachOptions) (0), 0, 0);
 
   combo_list = NULL;
-  combo_list = g_list_append (combo_list, (void *)"No");
-  combo_list = g_list_append (combo_list, (void *)"Yes");
-  combo_list = g_list_append (combo_list, (void *)"Yes (Classic Key Setup)");
+  combo_list = g_list_append (combo_list, (void *)_("No"));
+  combo_list = g_list_append (combo_list, (void *)_("Yes"));
+  combo_list = g_list_append (combo_list, (void *)_("Yes (Classic Key Setup)"));
 
   combo = gtk_combo_new ();
   gtk_combo_set_popdown_strings (GTK_COMBO (combo), combo_list);
@@ -1870,35 +1871,35 @@ void PrefsDlg::BuildDialog ()
   AddDialogData (combo, &m_nCamDragMultiSelect, DLG_COMBO_INT);
 
   // Freelook in Camera view
-  check = gtk_check_button_new_with_label ("Freelook in Camera view");
+  check = gtk_check_button_new_with_label (_("Freelook in Camera view"));
   gtk_widget_show (check);
   gtk_box_pack_start (GTK_BOX (vbox), check, FALSE, FALSE, 0);
   gtk_label_set_justify (GTK_LABEL (GTK_BIN (check)->child), GTK_JUSTIFY_LEFT);
   AddDialogData (check, &m_bCamFreeLook, DLG_CHECK_BOOL);
 
   // Freelook in Camera view w/ forward & back strafing instead of up and down looking
-  check = gtk_check_button_new_with_label ("Freelook strafes Forward and Back");
+  check = gtk_check_button_new_with_label (_("Freelook strafes Forward and Back"));
   gtk_widget_show (check);
   gtk_box_pack_start (GTK_BOX (vbox), check, FALSE, FALSE, 0);
   gtk_label_set_justify (GTK_LABEL (GTK_BIN (check)->child), GTK_JUSTIFY_LEFT);
   AddDialogData (check, &m_bCamFreeLookStrafe, DLG_CHECK_BOOL);
 
   // Invert mouse in freelook
-  check = gtk_check_button_new_with_label ("Invert mouse in freelook");
+  check = gtk_check_button_new_with_label (_("Invert mouse in freelook"));
   gtk_widget_show (check);
   gtk_box_pack_start (GTK_BOX (vbox), check, FALSE, FALSE, 0);
   gtk_label_set_justify (GTK_LABEL (GTK_BIN (check)->child), GTK_JUSTIFY_LEFT);
   AddDialogData (check, &m_bCamInverseMouse, DLG_CHECK_BOOL);
 
   // Discrete movement
-  check = gtk_check_button_new_with_label ("Discrete movement");
+  check = gtk_check_button_new_with_label (_("Discrete movement"));
   gtk_widget_show (check);
   gtk_box_pack_start (GTK_BOX (vbox), check, FALSE, FALSE, 0);
   gtk_label_set_justify (GTK_LABEL (GTK_BIN (check)->child), GTK_JUSTIFY_LEFT);
   AddDialogData (check, &m_bCamDiscrete, DLG_CHECK_BOOL);
 
   // Update XY views on camera move
-  check = gtk_check_button_new_with_label ("Update XY views on camera move");
+  check = gtk_check_button_new_with_label (_("Update XY views on camera move"));
   gtk_widget_show (check);
   gtk_box_pack_start (GTK_BOX (vbox), check, FALSE, FALSE, 0);
   gtk_label_set_justify (GTK_LABEL (GTK_BIN (check)->child), GTK_JUSTIFY_LEFT);
@@ -1908,9 +1909,9 @@ void PrefsDlg::BuildDialog ()
   gtk_notebook_append_page(GTK_NOTEBOOK(notebook), pageframe, preflabel);
 
   /******** Texture group *********/
-  preflabel = gtk_label_new("Textures");
+  preflabel = gtk_label_new(_("Textures"));
   gtk_widget_show(preflabel);
-  pageframe = gtk_frame_new("Textures");
+  pageframe = gtk_frame_new(_("Textures"));
   gtk_container_set_border_width(GTK_CONTAINER(pageframe), 5);
   gtk_widget_show(pageframe);
   vbox = gtk_vbox_new(FALSE, 6);
@@ -1920,7 +1921,7 @@ void PrefsDlg::BuildDialog ()
 
   // Texture quality slider
   // label
-  label = gtk_label_new ("Texture quality");
+  label = gtk_label_new (_("Texture quality"));
   gtk_widget_show (label);
   gtk_box_pack_start (GTK_BOX (vbox), label, FALSE, FALSE, 0);
   gtk_misc_set_alignment (GTK_MISC (label), 0, 0.5);
@@ -1940,27 +1941,27 @@ void PrefsDlg::BuildDialog ()
   hbox2 = gtk_hbox_new (FALSE, 0);
   gtk_widget_show (hbox2);
   gtk_box_pack_start (GTK_BOX (vbox), hbox2, FALSE, FALSE, 0);
-  label = gtk_label_new ("low");
+  label = gtk_label_new (_("low"));
   gtk_widget_show (label);
   gtk_box_pack_start (GTK_BOX (hbox2), label, FALSE, FALSE, 0);
-  label = gtk_label_new ("high");
+  label = gtk_label_new (_("high"));
   gtk_widget_show (label);
   gtk_box_pack_end (GTK_BOX (hbox2), label, FALSE, FALSE, 0);
 
   // texture subsets
-  check = gtk_check_button_new_with_label ("Texture subsets");
+  check = gtk_check_button_new_with_label (_("Texture subsets"));
   gtk_widget_show (check);
   gtk_box_pack_start (GTK_BOX (vbox), check, FALSE, FALSE, 0);
   AddDialogData (check, &m_bTextureWindow, DLG_CHECK_BOOL);
 
   // texture scrollbar
-  check = gtk_check_button_new_with_label ("Texture scrollbar");
+  check = gtk_check_button_new_with_label (_("Texture scrollbar"));
   gtk_widget_show (check);
   gtk_box_pack_start (GTK_BOX (vbox), check, FALSE, FALSE, 0);
   AddDialogData (check, &m_bTextureScrollbar, DLG_CHECK_BOOL);
 
   // texture increment matches grid
-  check = gtk_check_button_new_with_label ("Tex increment matches grid");
+  check = gtk_check_button_new_with_label (_("Tex increment matches grid"));
   gtk_widget_show (check);
   gtk_box_pack_start(GTK_BOX(vbox), check, FALSE, FALSE, 0);
   AddDialogData (check, &m_bSnapTToGrid, DLG_CHECK_BOOL);
@@ -1974,7 +1975,7 @@ void PrefsDlg::BuildDialog ()
   gtk_table_set_row_spacings (GTK_TABLE (table), 5);
   gtk_table_set_col_spacings (GTK_TABLE (table), 5);
 
-  label = gtk_label_new ("Texture Compression (if available):");
+  label = gtk_label_new (_("Texture Compression (if available):"));
   gtk_widget_show (label);
   gtk_label_set_justify (GTK_LABEL (label), GTK_JUSTIFY_LEFT);
   gtk_table_attach(GTK_TABLE(table), label, 0, 1, 0, 1,
@@ -1985,21 +1986,21 @@ void PrefsDlg::BuildDialog ()
   // Texture compression choice label
   combo_list = NULL;
   // NONE will always be in pos 0
-  combo_list = g_list_append (combo_list, (void *)"None");
+  combo_list = g_list_append (combo_list, (void *)_("None"));
 
   // if OpenGL compression is enabled it will always be
   // in pos 1
   if (g_qeglobals.m_bOpenGLCompressionSupported)
   {
-    combo_list = g_list_append (combo_list, (void *)"OpenGL ARB");
+    combo_list = g_list_append (combo_list, (void *)_("OpenGL ARB"));
   }
 
   // If S3 is enabled offer all 3 valid compression schemes in RGBA
   if (g_qeglobals.m_bS3CompressionSupported)
   {
-    combo_list = g_list_append (combo_list, (void *)"S3TC DXT1");
-    combo_list = g_list_append (combo_list, (void *)"S3TC DXT3");
-    combo_list = g_list_append (combo_list, (void *)"S3TC DXT5");
+    combo_list = g_list_append (combo_list, (void *)_("S3TC DXT1"));
+    combo_list = g_list_append (combo_list, (void *)_("S3TC DXT3"));
+    combo_list = g_list_append (combo_list, (void *)_("S3TC DXT5"));
   }
 
   combo = gtk_combo_new ();
@@ -2021,7 +2022,7 @@ void PrefsDlg::BuildDialog ()
 
   // Startup shaders
   // label
-  label = gtk_label_new ("Startup Shaders:");
+  label = gtk_label_new (_("Startup Shaders:"));
   gtk_widget_show (label);
   gtk_label_set_justify(GTK_LABEL(label), GTK_JUSTIFY_LEFT);
   gtk_table_attach(GTK_TABLE(table), label, 0, 1, 0, 1,
@@ -2031,14 +2032,14 @@ void PrefsDlg::BuildDialog ()
 
   // combo list
   combo_list = NULL;
-  combo_list = g_list_append (combo_list, (void *)"None");
+  combo_list = g_list_append (combo_list, (void *)_("None"));
   if (g_pGameDescription->mGameFile == "jk2.game" || g_pGameDescription->mGameFile == "ja.game")
-    combo_list = g_list_append (combo_list, (void *)"System");
+    combo_list = g_list_append (combo_list, (void *)_("System"));
   else if (g_pGameDescription->mGameFile == "sof2.game")
-    combo_list = g_list_append (combo_list, (void *)"Tools");
+    combo_list = g_list_append (combo_list, (void *)("Tools"));
   else
-    combo_list = g_list_append (combo_list, (void *)"Common");
-  combo_list = g_list_append (combo_list, (void *)"All");
+    combo_list = g_list_append (combo_list, (void *)_("Common"));
+  combo_list = g_list_append (combo_list, (void *)_("All"));
   combo = gtk_combo_new ();
   gtk_combo_set_popdown_strings (GTK_COMBO (combo), combo_list);
   gtk_widget_show (combo);
@@ -2053,9 +2054,9 @@ void PrefsDlg::BuildDialog ()
   gtk_notebook_append_page(GTK_NOTEBOOK(notebook), pageframe, preflabel);
 
   /******** Layout group *********/
-  preflabel = gtk_label_new("Layout");
+  preflabel = gtk_label_new(_("Layout"));
   gtk_widget_show(preflabel);
-  pageframe = gtk_frame_new("Layout");
+  pageframe = gtk_frame_new(_("Layout"));
   gtk_container_set_border_width(GTK_CONTAINER(pageframe), 5);
   gtk_widget_show(pageframe);
   vbox = gtk_vbox_new(FALSE, 5);
@@ -2129,13 +2130,13 @@ void PrefsDlg::BuildDialog ()
   AddDialogData (radio, &m_nLatchedView, DLG_RADIO_INT);
 
   // Floating Z window
-  check = gtk_check_button_new_with_label ("Floating Z Window");
+  check = gtk_check_button_new_with_label (_("Floating Z Window"));
   gtk_widget_show (check);
   gtk_box_pack_start (GTK_BOX (vbox), check, FALSE, FALSE, 0);
   AddDialogData (check, &m_bLatchedFloatingZ, DLG_CHECK_BOOL);
 
   // show menu tear-off seperators
-  check = gtk_check_button_new_with_label ("Detachable Menus");
+  check = gtk_check_button_new_with_label (_("Detachable Menus"));
   gtk_widget_show (check);
   gtk_box_pack_start (GTK_BOX (vbox), check, FALSE, FALSE, 0);
   AddDialogData (check, &m_bLatchedDetachableMenus, DLG_CHECK_BOOL);
@@ -2143,7 +2144,7 @@ void PrefsDlg::BuildDialog ()
   if (!g_pGameDescription->mNoPatch)
   {
     // show patch toolbar
-    check = gtk_check_button_new_with_label ("Patch Toolbar");
+    check = gtk_check_button_new_with_label (_("Patch Toolbar"));
     gtk_widget_show (check);
     gtk_box_pack_start (GTK_BOX (vbox), check, FALSE, FALSE, 0);
     g_object_set_data (G_OBJECT (dialog), "check_patchtoolbar", check); // Allow to be disabled for Q1/Q2
@@ -2151,27 +2152,27 @@ void PrefsDlg::BuildDialog ()
   }
 
   // use wide toolbar
-  check = gtk_check_button_new_with_label ("Wide Toolbar");
+  check = gtk_check_button_new_with_label (_("Wide Toolbar"));
   gtk_widget_show (check);
   gtk_box_pack_start (GTK_BOX (vbox), check, FALSE, FALSE, 0);
   AddDialogData (check, &m_bLatchedWideToolbar, DLG_CHECK_BOOL);
 
   // use plugin toolbar
-  check = gtk_check_button_new_with_label ("Plugin Toolbar");
+  check = gtk_check_button_new_with_label (_("Plugin Toolbar"));
   gtk_widget_show (check);
   gtk_box_pack_start (GTK_BOX (vbox), check, FALSE, FALSE, 0);
   AddDialogData (check, &m_bLatchedPluginToolbar, DLG_CHECK_BOOL);
 
 #ifdef _WIN32
   // win32 file dialog
-  check = gtk_check_button_new_with_label ("Use win32 file load dialog");
+  check = gtk_check_button_new_with_label (_("Use win32 file load dialog"));
   gtk_widget_show (check);
   // gtk_container_add (GTK_CONTAINER (vbox), check);
   gtk_box_pack_start(GTK_BOX(vbox), check, FALSE, FALSE, 0);
   AddDialogData (check, &m_bNativeGUI, DLG_CHECK_BOOL);
 
   // position on primary monitor
-  check = gtk_check_button_new_with_label ("Start on Primary Monitor");
+  check = gtk_check_button_new_with_label (_("Start on Primary Monitor"));
   gtk_widget_show (check);
   gtk_box_pack_start (GTK_BOX (vbox), check, FALSE, FALSE, 0);
   g_object_set_data (G_OBJECT (dialog), "check_startonprimary", check);
@@ -2183,9 +2184,9 @@ void PrefsDlg::BuildDialog ()
   gtk_notebook_append_page(GTK_NOTEBOOK(notebook), pageframe, preflabel);
 
   /******** Mouse group *********/
-  preflabel = gtk_label_new("Mouse");
+  preflabel = gtk_label_new(_("Mouse"));
   gtk_widget_show(preflabel);
-  pageframe = gtk_frame_new("Mouse");
+  pageframe = gtk_frame_new(_("Mouse"));
   gtk_container_set_border_width(GTK_CONTAINER(pageframe), 5);
   gtk_widget_show(pageframe);
   vbox = gtk_vbox_new(FALSE, 5);
@@ -2200,30 +2201,30 @@ void PrefsDlg::BuildDialog ()
   gtk_box_pack_start(GTK_BOX(vbox), hbox2, FALSE, FALSE, 0);
 
   // 2 button radio
-  radio = gtk_radio_button_new_with_label (NULL, "2 button");
+  radio = gtk_radio_button_new_with_label (NULL, _("2 button"));
   gtk_widget_show (radio);
   gtk_box_pack_start (GTK_BOX (hbox2), radio, FALSE, FALSE, 0);
 
   // 3 button radio
-  radio = gtk_radio_button_new_with_label_from_widget (GTK_RADIO_BUTTON (radio), "3 button");
+  radio = gtk_radio_button_new_with_label_from_widget (GTK_RADIO_BUTTON (radio), _("3 button"));
   gtk_widget_show (radio);
   gtk_box_pack_start (GTK_BOX (hbox2), radio, FALSE, FALSE, 0);
   AddDialogData (radio, &m_nMouse, DLG_RADIO_INT);
 
   // right click to drop entity
-  check = gtk_check_button_new_with_label ("Right click to drop entities");
+  check = gtk_check_button_new_with_label (_("Right click to drop entities"));
   gtk_widget_show (check);
   gtk_box_pack_start(GTK_BOX(vbox), check, FALSE, FALSE, 0);
   AddDialogData (check, &m_bRightClick, DLG_CHECK_BOOL);
 
   // Mouse chaser (and this does what?)
-  check = gtk_check_button_new_with_label ("Mouse chaser");
+  check = gtk_check_button_new_with_label (_("Mouse chaser"));
   gtk_widget_show (check);
   gtk_box_pack_start(GTK_BOX(vbox), check, FALSE, FALSE, 0);
   AddDialogData (check, &m_bChaseMouse, DLG_CHECK_BOOL);
 
   // Alt + multi-drag
-  check = gtk_check_button_new_with_label ("ALT + multi-drag");
+  check = gtk_check_button_new_with_label (_("ALT + multi-drag"));
   gtk_widget_show (check);
   gtk_box_pack_start(GTK_BOX(vbox), check, FALSE, FALSE, 0);
   AddDialogData (check, &m_bALTEdge, DLG_CHECK_BOOL);
@@ -2235,7 +2236,7 @@ void PrefsDlg::BuildDialog ()
   gtk_box_pack_start(GTK_BOX(vbox), hbox2, FALSE, FALSE, 0);
 
   // label
-  label = gtk_label_new ("Wheel Mouse inc:");
+  label = gtk_label_new (_("Wheel Mouse inc:"));
   gtk_widget_show (label);
   gtk_box_pack_start (GTK_BOX (hbox2), label, FALSE, FALSE, 0);
 
@@ -2250,9 +2251,9 @@ void PrefsDlg::BuildDialog ()
   gtk_notebook_append_page(GTK_NOTEBOOK(notebook), pageframe, preflabel);
 
   /******** Editing group *********/
-  preflabel = gtk_label_new("Editing");
+  preflabel = gtk_label_new(_("Editing"));
   gtk_widget_show(preflabel);
-  pageframe = gtk_frame_new("Editing");
+  pageframe = gtk_frame_new(_("Editing"));
   gtk_container_set_border_width(GTK_CONTAINER(pageframe), 5);
   gtk_widget_show(pageframe);
   vbox = gtk_vbox_new(FALSE, 5);
@@ -2261,31 +2262,31 @@ void PrefsDlg::BuildDialog ()
   gtk_container_add(GTK_CONTAINER(pageframe), vbox);
 
   // Vertex editing splits faces
-  check = gtk_check_button_new_with_label ("Vertex editing splits face");
+  check = gtk_check_button_new_with_label (_("Vertex editing splits face"));
   gtk_widget_show (check);
   gtk_box_pack_start(GTK_BOX(vbox), check, FALSE, FALSE, 0);
   AddDialogData (check, &m_bVertexSplit, DLG_CHECK_BOOL);
 
   // Fix target/targetname collisions
-  check = gtk_check_button_new_with_label ("Fix target/targetname collisions");
+  check = gtk_check_button_new_with_label (_("Fix target/targetname collisions"));
   gtk_widget_show (check);
   gtk_box_pack_start(GTK_BOX(vbox), check, FALSE, FALSE, 0);
   AddDialogData (check, &m_bDoTargetFix, DLG_CHECK_BOOL);
 
   // Clipper tool uses caulk
-  check = gtk_check_button_new_with_label ("Clipper tool uses caulk");
+  check = gtk_check_button_new_with_label (_("Clipper tool uses caulk"));
   gtk_widget_show (check);
   gtk_box_pack_start(GTK_BOX(vbox), check, FALSE, FALSE, 0);
   AddDialogData (check, &m_bClipCaulk, DLG_CHECK_BOOL);
 
   // Don't clamp plane points
-  check = gtk_check_button_new_with_label ("Don't clamp plane points");
+  check = gtk_check_button_new_with_label (_("Don't clamp plane points"));
   gtk_widget_show (check);
   gtk_box_pack_start(GTK_BOX(vbox), check, FALSE, FALSE, 0);
   AddDialogData (check, &m_bNoClamp, DLG_CHECK_BOOL);
 
   // Select patch by bounding box
-  check = gtk_check_button_new_with_label ("Select patches by bounding box");
+  check = gtk_check_button_new_with_label (_("Select patches by bounding box"));
   gtk_widget_show (check);
   gtk_box_pack_start (GTK_BOX (vbox), check, FALSE, FALSE, 0);
   AddDialogData (check, &m_bPatchBBoxSelect, DLG_CHECK_BOOL);
@@ -2299,7 +2300,7 @@ void PrefsDlg::BuildDialog ()
   gtk_table_set_col_spacings (GTK_TABLE (table), 5);
 
   // label
-  label = gtk_label_new ("Rotation increment:");
+  label = gtk_label_new (_("Rotation increment:"));
   gtk_widget_show (label);
   gtk_table_attach (GTK_TABLE (table), label, 0, 1, 0, 1,
                    (GtkAttachOptions) (0),
@@ -2316,7 +2317,7 @@ void PrefsDlg::BuildDialog ()
 
   // Undo levels
   // label
-  label = gtk_label_new ("Undo Levels:");
+  label = gtk_label_new (_("Undo Levels:"));
   gtk_widget_show (label);
   gtk_table_attach (GTK_TABLE (table), label, 0, 1, 1, 2,
                    (GtkAttachOptions) (0),
@@ -2333,7 +2334,7 @@ void PrefsDlg::BuildDialog ()
 
   // Patch subdivisions
   // label
-  label = gtk_label_new ("Patch subdivisions:");
+  label = gtk_label_new (_("Patch subdivisions:"));
   gtk_widget_show (label);
   gtk_table_attach (GTK_TABLE (table), label, 0, 1, 2, 3,
                    (GtkAttachOptions) (0),
@@ -2352,9 +2353,9 @@ void PrefsDlg::BuildDialog ()
   gtk_notebook_append_page(GTK_NOTEBOOK(notebook), pageframe, preflabel);
 
   /******** Save/Load group *********/
-  preflabel = gtk_label_new("Startup/Auto save");
+  preflabel = gtk_label_new(_("Startup/Auto save"));
   gtk_widget_show(preflabel);
-  pageframe = gtk_frame_new("Startup/Auto save");
+  pageframe = gtk_frame_new(_("Startup/Auto save"));
   gtk_container_set_border_width(GTK_CONTAINER(pageframe), 5);
   gtk_widget_show(pageframe);
   vbox = gtk_vbox_new(FALSE, 5);
@@ -2363,19 +2364,19 @@ void PrefsDlg::BuildDialog ()
   gtk_container_add(GTK_CONTAINER(pageframe), vbox);
 
   // Snapshots
-  check = gtk_check_button_new_with_label ("Snapshots");
+  check = gtk_check_button_new_with_label (_("Snapshots"));
   gtk_widget_show (check);
   gtk_box_pack_start (GTK_BOX (vbox), check, FALSE, FALSE, 0);
   AddDialogData (check, &m_bSnapShots, DLG_CHECK_BOOL);
 
   // load last project on open
-  check = gtk_check_button_new_with_label ("Load last project on open");
+  check = gtk_check_button_new_with_label (_("Load last project on open"));
   gtk_widget_show (check);
   gtk_box_pack_start (GTK_BOX (vbox), check, FALSE, FALSE, 0);
   AddDialogData (check, &m_bLoadLast, DLG_CHECK_BOOL);
 
   // load last map on open
-  check = gtk_check_button_new_with_label ("Load last map on open");
+  check = gtk_check_button_new_with_label (_("Load last map on open"));
   gtk_widget_show (check);
   gtk_box_pack_start (GTK_BOX (vbox), check, FALSE, FALSE, 0);
   AddDialogData (check, &m_bLoadLastMap, DLG_CHECK_BOOL);
@@ -2388,7 +2389,7 @@ void PrefsDlg::BuildDialog ()
   gtk_container_set_border_width (GTK_CONTAINER (hbox2), 0);
 
   // label
-  check = gtk_check_button_new_with_label ("Auto save every");
+  check = gtk_check_button_new_with_label (_("Auto save every"));
   gtk_widget_show (check);
   gtk_box_pack_start (GTK_BOX (hbox2), check, FALSE, FALSE, 0);
   AddDialogData (check, &m_bAutoSave, DLG_CHECK_BOOL);
@@ -2401,7 +2402,7 @@ void PrefsDlg::BuildDialog ()
   AddDialogData (spin, &m_nAutoSave, DLG_SPIN_INT);
 
   // label
-  label = gtk_label_new ("minutes");
+  label = gtk_label_new (_("minutes"));
   gtk_widget_show (label);
   gtk_box_pack_start (GTK_BOX (hbox2), label, FALSE, FALSE, 0);
 
@@ -2409,9 +2410,9 @@ void PrefsDlg::BuildDialog ()
   gtk_notebook_append_page(GTK_NOTEBOOK(notebook), pageframe, preflabel);
 
   /******** Paths group *********/
-  preflabel = gtk_label_new("Paths");
+  preflabel = gtk_label_new(_("Paths"));
   gtk_widget_show(preflabel);
-  pageframe = gtk_frame_new("Paths");
+  pageframe = gtk_frame_new(_("Paths"));
   gtk_container_set_border_width(GTK_CONTAINER(pageframe), 5);
   gtk_widget_show(pageframe);
   vbox = gtk_vbox_new(FALSE, 5);
@@ -2428,7 +2429,7 @@ void PrefsDlg::BuildDialog ()
   gtk_table_set_col_spacings (GTK_TABLE (table), 5);
 
   // label
-  label = gtk_label_new ("Prefab path:");
+  label = gtk_label_new (_("Prefab path:"));
   gtk_widget_show (label);
   gtk_table_attach (GTK_TABLE (table), label, 0, 1, 0, 1,
                    (GtkAttachOptions) (0),
@@ -2457,7 +2458,7 @@ void PrefsDlg::BuildDialog ()
 
   // User ini path
   // label
-  label = gtk_label_new ("User INI path:");
+  label = gtk_label_new (_("User INI path:"));
   gtk_widget_show (label);
   gtk_table_attach (GTK_TABLE (table), label, 0, 1, 1, 2,
                    (GtkAttachOptions) (0),
@@ -2484,9 +2485,9 @@ void PrefsDlg::BuildDialog ()
   gtk_notebook_append_page(GTK_NOTEBOOK(notebook), pageframe, preflabel);
 
   /******** Misc group *********/
-  preflabel = gtk_label_new("Misc");
+  preflabel = gtk_label_new(_("Misc"));
   gtk_widget_show(preflabel);
-  pageframe = gtk_frame_new("Misc");
+  pageframe = gtk_frame_new(_("Misc"));
   gtk_container_set_border_width(GTK_CONTAINER(pageframe), 5);
   gtk_widget_show(pageframe);
   vbox = gtk_vbox_new(FALSE, 5);
@@ -2495,7 +2496,7 @@ void PrefsDlg::BuildDialog ()
   gtk_container_add(GTK_CONTAINER(pageframe), vbox);
 
   // Light drawing
-  check = gtk_check_button_new_with_label ("Light drawing");
+  check = gtk_check_button_new_with_label (_("Light drawing"));
   gtk_widget_show (check);
   gtk_box_pack_start (GTK_BOX (vbox), check, FALSE, FALSE, 0);
   AddDialogData (check, &m_bNewLightDraw, DLG_CHECK_BOOL);
@@ -2508,7 +2509,7 @@ void PrefsDlg::BuildDialog ()
   gtk_table_set_row_spacings (GTK_TABLE (table), 5);
   gtk_table_set_col_spacings (GTK_TABLE (table), 5);
 
-  label = gtk_label_new ("Light radiuses:");
+  label = gtk_label_new (_("Light radiuses:"));
   gtk_widget_show (label);
   gtk_label_set_justify (GTK_LABEL (label), GTK_JUSTIFY_LEFT);
   gtk_table_attach(GTK_TABLE(table), label, 0, 1, 0, 1,
@@ -2516,9 +2517,9 @@ void PrefsDlg::BuildDialog ()
                   (GtkAttachOptions) (0), 0, 0);
 
   combo_list = NULL;
-  combo_list = g_list_append (combo_list, (void *)"Disabled");
-  combo_list = g_list_append (combo_list, (void *)"True Q3Map2 Style");
-  combo_list = g_list_append (combo_list, (void *)"Classic Style");
+  combo_list = g_list_append (combo_list, (void *)_("Disabled"));
+  combo_list = g_list_append (combo_list, (void *)_("True Q3Map2 Style"));
+  combo_list = g_list_append (combo_list, (void *)_("Classic Style"));
 
   combo = gtk_combo_new ();
   gtk_combo_set_popdown_strings (GTK_COMBO (combo), combo_list);
@@ -2530,13 +2531,13 @@ void PrefsDlg::BuildDialog ()
   AddDialogData (combo, &m_nLightRadiuses, DLG_COMBO_INT);
 
 #ifdef _WIN32
-  check = gtk_check_button_new_with_label ("Use win32 file associations to open text files instead of builtin editor");
+  check = gtk_check_button_new_with_label (_("Use win32 file associations to open text files instead of builtin editor"));
   gtk_widget_show(check);
   gtk_box_pack_start(GTK_BOX (vbox), check, FALSE, FALSE, 0);
   AddDialogData (check, &g_PrefsDlg.m_bUseWin32Editor, DLG_CHECK_BOOL);
 #else
   // use custom shader editor
-  check = gtk_check_button_new_with_label ("Use Custom Shader Editor");
+  check = gtk_check_button_new_with_label (_("Use Custom Shader Editor"));
   gtk_widget_show(check);
   gtk_box_pack_start(GTK_BOX (vbox), check, FALSE, FALSE, 0);
   gtk_signal_connect( GTK_OBJECT (check), "clicked", GTK_SIGNAL_FUNC(UpdateEditorSensitivity), this);
@@ -2552,7 +2553,7 @@ void PrefsDlg::BuildDialog ()
   gtk_table_set_col_spacings (GTK_TABLE (table), 5);
 
   // label
-  label = gtk_label_new("Custom Editor Command");
+  label = gtk_label_new(_("Custom Editor Command"));
   gtk_widget_show(label);
   gtk_table_attach (GTK_TABLE (table), label, 0, 1, 0, 1,
                    (GtkAttachOptions) (0),
@@ -2573,7 +2574,7 @@ void PrefsDlg::BuildDialog ()
   g_object_set_data (G_OBJECT(dialog), "entry_customeditor", entry);
 
   // browse button
-  button = gtk_button_new_with_label ("...");
+  button = gtk_button_new_with_label (_("..."));
   gtk_widget_show (button);
   gtk_signal_connect (GTK_OBJECT (button), "clicked", GTK_SIGNAL_FUNC (OnBtnBrowseEditor), this);
   gtk_table_attach (GTK_TABLE (table), button, 2, 3, 0, 1,
@@ -2588,9 +2589,9 @@ void PrefsDlg::BuildDialog ()
 
   /******** BSP Monitoring group *********/
   // this is never displayed if the plugin isn't available
-  preflabel = gtk_label_new("BSP Monitoring");
+  preflabel = gtk_label_new(_("BSP Monitoring"));
   gtk_widget_show(preflabel);
-  pageframe = gtk_frame_new("BSP Monitoring");
+  pageframe = gtk_frame_new(_("BSP Monitoring"));
   gtk_container_set_border_width(GTK_CONTAINER(pageframe), 5);
   gtk_widget_show(pageframe);
   vbox = gtk_vbox_new(FALSE, 5);
@@ -2599,7 +2600,7 @@ void PrefsDlg::BuildDialog ()
   gtk_container_add(GTK_CONTAINER(pageframe), vbox);
 
   // Enable BSP process monitoring
-  check = gtk_check_button_new_with_label ("Enable BSP process monitoring");
+  check = gtk_check_button_new_with_label (_("Enable BSP process monitoring"));
   gtk_widget_show (check);
   gtk_box_pack_start (GTK_BOX (vbox), check, FALSE, FALSE, 0);
   g_object_set_data (G_OBJECT (dialog), "check_monitorbsp", check);
@@ -2607,14 +2608,14 @@ void PrefsDlg::BuildDialog ()
   AddDialogData (check, &g_PrefsDlg.m_bWatchBSP, DLG_CHECK_BOOL);
 
   // Stop on leak
-  check = gtk_check_button_new_with_label ("Stop compilation on leak");
+  check = gtk_check_button_new_with_label (_("Stop compilation on leak"));
   gtk_widget_show (check);
   gtk_box_pack_start (GTK_BOX (vbox), check, FALSE, FALSE, 0);
   g_object_set_data (G_OBJECT (dialog), "check_leakstop", check);
   AddDialogData (check, &g_PrefsDlg.m_bLeakStop, DLG_CHECK_BOOL);
 
   // engine after compile
-  check = gtk_check_button_new_with_label ("Run engine after compile");
+  check = gtk_check_button_new_with_label (_("Run engine after compile"));
   gtk_widget_show (check);
   gtk_box_pack_start (GTK_BOX (vbox), check, FALSE, FALSE, 0);
   g_object_set_data (G_OBJECT (dialog), "check_runengine", check);
@@ -2622,14 +2623,14 @@ void PrefsDlg::BuildDialog ()
   AddDialogData( check, &g_PrefsDlg.m_bRunQuake, DLG_CHECK_BOOL );
 
   // sleep mode when running engine
-  check = gtk_check_button_new_with_label ("Activate sleep mode when running the engine");
+  check = gtk_check_button_new_with_label (_("Activate sleep mode when running the engine"));
   gtk_widget_show (check);
   gtk_box_pack_start (GTK_BOX (vbox), check, FALSE, FALSE, 0);
   g_object_set_data (G_OBJECT (dialog), "check_sleep", check);
   AddDialogData( check, &g_PrefsDlg.m_bDoSleep, DLG_CHECK_BOOL );
 
   // use q3map2's texture projection
-  check = gtk_check_button_new_with_label ("Texturing compatible with q3map2");
+  check = gtk_check_button_new_with_label (_("Texturing compatible with q3map2"));
   gtk_widget_show (check);
   gtk_box_pack_start (GTK_BOX (vbox), check, FALSE, FALSE, 0);
   g_object_set_data (G_OBJECT (dialog), "check_q3map2", check);
@@ -3169,7 +3170,7 @@ void CGameInstall::OnBtnBrowseEngine( GtkWidget *widget, gpointer data ) {
 	Sys_Printf( "OnBtnBrowseEngine\n" );
 
 	CGameInstall* i = static_cast<CGameInstall*>( data );
-	char *dir = dir_dialog( widget, "Select game directory", NULL );
+	char *dir = dir_dialog( widget, _("Select game directory"), NULL );
 
 	i->UpdateData( TRUE );
 
@@ -3193,13 +3194,13 @@ void CGameInstall::BuildDialog() {
 	GtkWidget *dlg, *vbox1, *button, *text, *combo, *entry, *hbox;
 
 	dlg = m_pWidget;
-	gtk_window_set_title( GTK_WINDOW( dlg ), "Configure games" );
+	gtk_window_set_title( GTK_WINDOW( dlg ), _("Configure games") );
 
 	vbox1 = gtk_vbox_new( FALSE, 0 );
 	gtk_widget_show( vbox1 );
 	gtk_container_add( GTK_CONTAINER( dlg ), vbox1 );
 
-	text = gtk_label_new( "Select the game to configure" );
+	text = gtk_label_new( _("Select the game to configure") );
 	gtk_widget_show( text );
 	gtk_box_pack_start( GTK_BOX( vbox1 ), text, FALSE, FALSE, 0 );
 
@@ -3212,25 +3213,25 @@ void CGameInstall::BuildDialog() {
 	while ( m_availGames[ iGame ] != GAME_NONE ) {
 		switch ( m_availGames[ iGame ] ) {
 		case GAME_Q2:
-			gtk_combo_box_append_text( GTK_COMBO_BOX( combo ), "Quake II" );
+			gtk_combo_box_append_text( GTK_COMBO_BOX( combo ), _("Quake II") );
 			break;
 		case GAME_Q3:
-			gtk_combo_box_append_text( GTK_COMBO_BOX( combo ), "Quake III Arena and mods" );
+			gtk_combo_box_append_text( GTK_COMBO_BOX( combo ), _("Quake III Arena and mods") );
 			break;
 		case GAME_URT:
-			gtk_combo_box_append_text( GTK_COMBO_BOX( combo ), "Urban Terror (standalone)" );
+			gtk_combo_box_append_text( GTK_COMBO_BOX( combo ), _("Urban Terror (standalone)") );
 			break;
 		case GAME_UFOAI:
-			gtk_combo_box_append_text( GTK_COMBO_BOX( combo ), "UFO: Alien Invasion" );
+			gtk_combo_box_append_text( GTK_COMBO_BOX( combo ), _("UFO: Alien Invasion") );
 			break;
 		case GAME_Q2W:
-			gtk_combo_box_append_text( GTK_COMBO_BOX( combo ), "Quake2World" );
+			gtk_combo_box_append_text( GTK_COMBO_BOX( combo ), _("Quake2World") );
 			break;
 		case GAME_WARSOW:
-			gtk_combo_box_append_text( GTK_COMBO_BOX( combo ), "Warsow" );
+			gtk_combo_box_append_text( GTK_COMBO_BOX( combo ), _("Warsow") );
 			break;
 		case GAME_NEXUIZ:
-			gtk_combo_box_append_text( GTK_COMBO_BOX( combo ), "Nexuiz" );
+			gtk_combo_box_append_text( GTK_COMBO_BOX( combo ), _("Nexuiz") );
 			break;
 		}
 		iGame++;
@@ -3239,7 +3240,7 @@ void CGameInstall::BuildDialog() {
 	gtk_signal_connect( GTK_OBJECT( combo ), "changed", G_CALLBACK( OnGameSelectChanged ), this );
 	gtk_combo_box_set_active( GTK_COMBO_BOX( combo ), 0 );	// NOTE: will trigger signal
 
-	text = gtk_label_new( "Name:" );
+	text = gtk_label_new( _("Name:") );
 	gtk_widget_show( text );
 	gtk_box_pack_start( GTK_BOX( vbox1 ), text, FALSE, FALSE, 0 );
 
@@ -3248,7 +3249,7 @@ void CGameInstall::BuildDialog() {
 	gtk_box_pack_start( GTK_BOX( vbox1 ), entry, FALSE, FALSE, 0 );
 	AddDialogData( entry, &m_strName, DLG_ENTRY_TEXT );
 
-	text = gtk_label_new( "Engine directory:" );
+	text = gtk_label_new( _("Engine directory:") );
 	gtk_widget_show( text );
 	gtk_box_pack_start( GTK_BOX( vbox1 ), text, FALSE, FALSE, 0 );
 
@@ -3261,14 +3262,14 @@ void CGameInstall::BuildDialog() {
 	gtk_box_pack_start( GTK_BOX( hbox ), entry, FALSE, FALSE, 0 );
 	AddDialogData( entry, &m_strEngine, DLG_ENTRY_TEXT );
 
-	button = gtk_button_new_with_label ("...");
+	button = gtk_button_new_with_label (_("..."));
 	gtk_widget_show( button );
 	gtk_signal_connect( GTK_OBJECT( button ), "clicked", GTK_SIGNAL_FUNC( OnBtnBrowseEngine ), this );
 	gtk_box_pack_start( GTK_BOX( hbox ), button, FALSE, FALSE, 0 );
 
 	// this gets done in the project stuff atm
 #if 0
-	text = gtk_label_new( "Mod subdirectory:" );
+	text = gtk_label_new( _("Mod subdirectory:") );
 	gtk_widget_show( text );
 	gtk_box_pack_start( GTK_BOX( vbox1 ), text, FALSE, FALSE, 0 );
 
@@ -3278,12 +3279,12 @@ void CGameInstall::BuildDialog() {
 	AddDialogData( entry, &m_strMod, DLG_ENTRY_TEXT );
 #endif
 
-	button = gtk_button_new_with_label( "OK" );
+	button = gtk_button_new_with_label( _("OK") );
 	gtk_widget_show( button );
 	gtk_box_pack_start( GTK_BOX( vbox1 ), button, FALSE, FALSE, 0 );
 	AddModalButton( button, IDOK );
 
-	button = gtk_button_new_with_label( "Cancel" );
+	button = gtk_button_new_with_label( _("Cancel") );
 	gtk_widget_show( button );
 	gtk_box_pack_start( GTK_BOX( vbox1 ), button, FALSE, FALSE, 0 );
 	AddModalButton( button, IDCANCEL );
