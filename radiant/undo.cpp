@@ -44,7 +44,7 @@ typedef struct undo_s
 	double time;				//time operation was performed
 	int id;						//every undo has an unique id
 	int done;					//true when undo is build
-	char *operation;			//name of the operation
+	const char *operation;			//name of the operation
 	brush_t brushlist;			//deleted brushes
 	entity_t entitylist;		//deleted entities
 	struct undo_s *prev, *next;	//next and prev undo in list
@@ -223,7 +223,7 @@ void Undo_FreeFirstUndo(void)
 Undo_GeneralStart
 =============
 */
-void Undo_GeneralStart(char *operation)
+void Undo_GeneralStart(const char *operation)
 {
 	undo_t *undo;
 	brush_t *pBrush;
