@@ -28,48 +28,73 @@ ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
 */
 
-#if !defined(INCLUDED_GTKMISC_H)
-#define INCLUDED_GTKMISC_H
+#ifndef _GTK_MISC_H_
+#define _GTK_MISC_H_
 
-#include <gtk/gtkmain.h>
+#ifdef _WIN32
 
-inline void process_gui()
+void win32_get_window_pos(GtkWidget *widget, gint *x, gint *y);
+
+inline void get_window_pos(GtkWidget *wnd, int* x, int* y)
 {
-  while(gtk_events_pending())
-  {
-    gtk_main_iteration();
-  }
+  win32_get_window_pos(wnd, x, y);
 }
 
-void command_connect_accelerator(const char* commandName);
-void command_disconnect_accelerator(const char* commandName);
-void toggle_add_accelerator(const char* commandName);
+#else
 
-typedef struct _GtkMenu GtkMenu;
-typedef struct _GtkMenuItem GtkMenuItem;
-typedef struct _GtkCheckMenuItem GtkCheckMenuItem;
-
-// this also sets up the shortcut using command_connect_accelerator
-GtkMenuItem* create_menu_item_with_mnemonic(GtkMenu *menu, const char *mnemonic, const char* commandName);
-// this also sets up the shortcut using command_connect_accelerator
-GtkCheckMenuItem* create_check_menu_item_with_mnemonic(GtkMenu* menu, const char* mnemonic, const char* commandName);
-
-typedef struct _GtkButton GtkButton;
-typedef struct _GtkToggleButton GtkToggleButton;
-typedef struct _GtkToolbar GtkToolbar;
-
-// this DOES NOT set up the shortcut using command_connect_accelerator
-GtkButton* toolbar_append_button(GtkToolbar* toolbar, const char* description, const char* icon, const char* commandName);
-// this DOES NOT set up the shortcut using command_connect_accelerator
-GtkToggleButton* toolbar_append_toggle_button(GtkToolbar* toolbar, const char* description, const char* icon, const char* commandName);
-
-
-template<typename Element> class BasicVector3;
-typedef BasicVector3<float> Vector3;
-bool color_dialog (GtkWidget *parent, Vector3& color, const char* title = "Choose Color");
-
-typedef struct _GtkEntry GtkEntry;
-void button_clicked_entry_browse_file(GtkWidget* widget, GtkEntry* entry);
-void button_clicked_entry_browse_directory(GtkWidget* widget, GtkEntry* entry);
+inline void get_window_pos(GtkWidget *wnd, int* x, int* y)
+{
+  gdk_window_get_root_origin (wnd->window, x, y);
+}
 
 #endif
+
+
+struct window_position_t
+{
+  int x, y, w, h;
+};
+
+void save_window_pos (GtkWidget *wnd, window_position_t& pos);
+void load_window_pos (GtkWidget *wnd, window_position_t& pos);
+gint widget_delete_hide (GtkWidget *widget);
+
+// GdkPixmap **gdkpixmap, GdkBitmap **mask
+bool WINAPI load_plugin_bitmap (const char* filename, void **gdkpixmap, void **mask);
+void load_pixmap (const char* filename, GtkWidget* widget, GdkPixmap **gdkpixmap, GdkBitmap **mask);
+GtkWidget* new_pixmap (GtkWidget* widget, char* filename);
+
+GtkWidget* menu_separator (GtkWidget *menu);
+GtkWidget* menu_tearoff (GtkWidget *menu);
+GtkWidget* create_sub_menu_with_mnemonic (GtkWidget *bar, char *mnemonic);
+GtkWidget* create_menu_item_with_mnemonic (GtkWidget *menu, gchar *mnemonic, GtkSignalFunc func, int id);
+GtkWidget* create_check_menu_item_with_mnemonic (GtkWidget *menu, gchar *mnemonic, GtkSignalFunc func, int id, gboolean active);
+GtkWidget* create_radio_menu_item_with_mnemonic (GtkWidget *menu, GtkWidget *last, gchar *mnemonic, GtkSignalFunc func, int id, gboolean state);
+GtkWidget* create_menu_in_menu_with_mnemonic (GtkWidget *menu, const gchar *mnemonic);
+
+
+/*!
+\fn gtk_MessageBox
+do various message boxes, IDOK .. IDNO
+URL adds an optional 'go to URL' button
+*/
+int WINAPI gtk_MessageBox (void *parent, const char* lpText, const char* lpCaption = "Radiant", guint32 uType = MB_OK, const char* URL = NULL);
+// NOTE: the returned filename is allocated with g_malloc and MUST be freed with g_free (both for win32 and Gtk dialogs)
+// GtkWidget *parent
+const char* file_dialog (void *parent, gboolean open, const char* title, const char* path = (char*)NULL, const char* pattern = NULL);
+
+/*!
+\fn dir_dialog, prompts for a directory
+*/
+char* WINAPI dir_dialog (void *parent, const char* title = "Choose Directory", const char* path = (char*)NULL);
+// GtkWidget *parent
+bool WINAPI color_dialog (void *parent, float *color, const char* title = "Choose Color");
+
+void dialog_button_callback (GtkWidget *widget, gpointer data);
+gint dialog_delete_callback (GtkWidget *widget, GdkEvent* event, gpointer data);
+
+void OpenURL(const char *url);
+
+void CheckMenuSplitting (GtkWidget *&menu);
+
+#endif // _GTK_MISC_H_

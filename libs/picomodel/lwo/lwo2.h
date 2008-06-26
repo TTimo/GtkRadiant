@@ -642,7 +642,7 @@ int   sgetVX( unsigned char **bp );
 float sgetF4( unsigned char **bp );
 char *sgetS0( unsigned char **bp );
 
-#ifndef __BIG_ENDIAN__
+#ifdef _WIN32
   void revbytes( void *bp, int elsize, int elcount );
 #else
   #define revbytes( b, s, c )

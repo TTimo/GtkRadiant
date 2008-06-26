@@ -33,221 +33,34 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 // DESCRIPTION:
 // monitoring window for running BSP processes (and possibly various other stuff)
 
+#include "stdafx.h"
 #include "watchbsp.h"
-
-#include <algorithm>
-#include <gtk/gtkmain.h>
-
-#include "cmdlib.h"
-#include "convert.h"
-#include "string/string.h"
-#include "stream/stringstream.h"
-
-#include "gtkutil/messagebox.h"
-#include "xmlstuff.h"
-#include "console.h"
-#include "preferences.h"
-#include "points.h"
 #include "feedback.h"
-#include "mainframe.h"
-#include "sockets.h"
 
-void message_flush(message_info_t* self)
-{
-  Sys_Print(self->msg_level, self->m_buffer, self->m_length);
-  self->m_length = 0;
-}
+#ifdef _WIN32
+#include <winsock2.h>
+#endif
 
-void message_print(message_info_t* self, const char* characters, std::size_t length)
-{
-  const char* end = characters + length;
-  while(characters != end)
-  {
-    std::size_t space = message_info_t::bufsize - 1 - self->m_length;
-    if(space == 0)
-    {
-      message_flush(self);
-    }
-    else
-    {
-      std::size_t size = std::min(space, std::size_t(end - characters));
-      memcpy(self->m_buffer + self->m_length, characters, size);
-      self->m_length += size;
-      characters += size;
-    }
-  }
-}
+#if defined (__linux__) || defined (__APPLE__)
+#include <sys/time.h>
+#define SOCKET_ERROR -1
+#endif
 
+#ifdef __APPLE__
+#include <unistd.h>
+#endif
 
-#include <glib/gtimer.h>
-#include <glib/garray.h>
-#include "xmlstuff.h"
-
-class CWatchBSP
-{
-private:
-  // a flag we have set to true when using an external BSP plugin
-  // the resulting code with that is a bit dirty, cleaner solution would be to seperate the succession of commands from the listening loop
-  // (in two seperate classes probably)
-  bool m_bBSPPlugin;
-
-  // EIdle: we are not listening
-  //   DoMonitoringLoop will change state to EBeginStep
-  // EBeginStep: the socket is up for listening, we are expecting incoming connection
-  //   incoming connection will change state to EWatching
-  // EWatching: we have a connection, monitor it
-  //   connection closed will see if we start a new step (EBeginStep) or launch Quake3 and end (EIdle)
-  enum EWatchBSPState { EIdle, EBeginStep, EWatching } m_eState;
-  socket_t *m_pListenSocket;
-  socket_t *m_pInSocket;
-  netmessage_t msg;
-  GPtrArray *m_pCmd;
-  // used to timeout EBeginStep
-  GTimer    *m_pTimer;
-  std::size_t m_iCurrentStep;
-  // name of the map so we can run the engine
-  char    *m_sBSPName;
-  // buffer we use in push mode to receive data directly from the network
-  xmlParserInputBufferPtr m_xmlInputBuffer;
-  xmlParserInputPtr m_xmlInput;
-  xmlParserCtxtPtr m_xmlParserCtxt;
-  // call this to switch the set listening mode
-  bool SetupListening();
-  // start a new EBeginStep
-  void DoEBeginStep();
-  // the xml and sax parser state
-  char m_xmlBuf[MAX_NETMESSAGE];
-  bool m_bNeedCtxtInit;
-  message_info_t m_message_info;
-
-public:
-  CWatchBSP()
-  {
-    m_pCmd = 0;
-    m_bBSPPlugin = false;
-    m_pListenSocket = NULL;
-    m_pInSocket = NULL;
-    m_eState = EIdle;
-    m_pTimer = g_timer_new();
-    m_sBSPName = NULL;
-    m_xmlInputBuffer = NULL;
-    m_bNeedCtxtInit = true;
-  }
-  virtual ~CWatchBSP()
-  {
-    EndMonitoringLoop();
-    Net_Shutdown();
-
-    g_timer_destroy(m_pTimer);
-  }
-
-  bool HasBSPPlugin() const
-    { return m_bBSPPlugin; }
-
-  // called regularly to keep listening
-  void RoutineProcessing();
-  // start a monitoring loop with the following steps
-  void DoMonitoringLoop( GPtrArray *pCmd, const char *sBSPName );
-  void EndMonitoringLoop()
-  {
-    Reset();
-    if (m_sBSPName)
-    {
-      string_release(m_sBSPName, string_length(m_sBSPName));
-      m_sBSPName = 0;
-    }
-    if(m_pCmd)
-    {
-      g_ptr_array_free(m_pCmd, TRUE);
-      m_pCmd = 0;
-    }
-  }
-  // close everything - may be called from the outside to abort the process
-  void Reset();
-  // start a listening loop for an external process, possibly a BSP plugin
-  void ExternalListen();
-};
-
-CWatchBSP* g_pWatchBSP;
-
-  // watch the BSP process through network connections
-  // true: trigger the BSP steps one by one and monitor them through the network
-  // false: create a BAT / .sh file and execute it. don't bother monitoring it.
-bool g_WatchBSP_Enabled = true;
-  // do we stop the compilation process if we come accross a leak?
-bool g_WatchBSP_LeakStop = true;
-bool g_WatchBSP_RunQuake = false;
-  // store prefs setting for automatic sleep mode activation
-bool g_WatchBSP_DoSleep = true;
-  // timeout when beginning a step (in seconds)
-  // if we don't get a connection quick enough we assume something failed and go back to idling
-int g_WatchBSP_Timeout = 10;
-
-
-void Build_constructPreferences(PreferencesPage& page)
-{
-  GtkWidget* monitorbsp = page.appendCheckBox("", "Enable Build Process Monitoring", g_WatchBSP_Enabled);
-  GtkWidget* leakstop = page.appendCheckBox("", "Stop Compilation on Leak", g_WatchBSP_LeakStop);
-  GtkWidget* runengine = page.appendCheckBox("", "Run Engine After Compile", g_WatchBSP_RunQuake);
-  GtkWidget* sleep = page.appendCheckBox("", "Sleep When Running the Engine", g_WatchBSP_DoSleep);
-  Widget_connectToggleDependency(leakstop, monitorbsp);
-  Widget_connectToggleDependency(runengine, monitorbsp);
-  Widget_connectToggleDependency(sleep, runengine);
-}
-void Build_constructPage(PreferenceGroup& group)
-{
-  PreferencesPage page(group.createPage("Build", "Build Preferences"));
-  Build_constructPreferences(page);
-}
-void Build_registerPreferencesPage()
-{
-  PreferencesDialog_addSettingsPage(FreeCaller1<PreferenceGroup&, Build_constructPage>());
-}
-
-#include "preferencesystem.h"
-#include "stringio.h"
-
-void BuildMonitor_Construct()
-{
-  g_pWatchBSP = new CWatchBSP();
-
-  g_WatchBSP_Enabled = !string_equal(g_pGameDescription->getKeyValue("no_bsp_monitor"), "1");
-
-  GlobalPreferenceSystem().registerPreference("WatchBSP", BoolImportStringCaller(g_WatchBSP_Enabled), BoolExportStringCaller(g_WatchBSP_Enabled));
-  GlobalPreferenceSystem().registerPreference("RunQuake2Run", BoolImportStringCaller(g_WatchBSP_RunQuake), BoolExportStringCaller(g_WatchBSP_RunQuake));
-  GlobalPreferenceSystem().registerPreference("LeakStop", BoolImportStringCaller(g_WatchBSP_LeakStop), BoolExportStringCaller(g_WatchBSP_LeakStop));
-  GlobalPreferenceSystem().registerPreference("SleepMode", BoolImportStringCaller(g_WatchBSP_DoSleep), BoolExportStringCaller(g_WatchBSP_DoSleep));
-
-  Build_registerPreferencesPage();
-}
-
-void BuildMonitor_Destroy()
-{
-  delete g_pWatchBSP;
-}
-
-CWatchBSP *GetWatchBSP()
-{
-  return g_pWatchBSP;
-}
-
-void BuildMonitor_Run(GPtrArray* commands, const char* mapName)
-{
-  GetWatchBSP()->DoMonitoringLoop(commands, mapName);
-}
-
+#include <assert.h>
 
 // Static functions for the SAX callbacks -------------------------------------------------------
 
 // utility for saxStartElement below
 static void abortStream(message_info_t *data)
 {
-  GetWatchBSP()->EndMonitoringLoop();
+  g_pParentWnd->GetWatchBSP()->Reset();
   // tell there has been an error
-#if 0
-  if (GetWatchBSP()->HasBSPPlugin())
+  if (g_pParentWnd->GetWatchBSP()->HasBSPPlugin ())
     g_BSPFrontendTable.m_pfnEndListen(2);
-#endif
   // yeah this doesn't look good.. but it's needed so that everything will be ignored until the stream goes out
   data->ignore_depth = -1;
   data->recurse++;
@@ -257,91 +70,72 @@ static void abortStream(message_info_t *data)
 
 static void saxStartElement(message_info_t *data, const xmlChar *name, const xmlChar **attrs) 
 {
-#if 0
-  globalOutputStream() << "<" << name;
-  if(attrs != 0)
-  {
-    for(const xmlChar** p = attrs; *p != 0; p += 2)
-    {
-      globalOutputStream() << " " << p[0] << "=" << makeQuoted(p[1]);
-    }
-  }
-  globalOutputStream() << ">\n";
-#endif
-
   if (data->ignore_depth == 0)
   {
-    if(data->pGeometry != 0)
+    if (data->bGeometry)
       // we have a handler
     {
       data->pGeometry->saxStartElement (data, name, attrs);
     }
     else
     {
-      if (strcmp(reinterpret_cast<const char*>(name), "q3map_feedback") == 0)
+      if (strcmp ((char *)name, "q3map_feedback") == 0)
       {
         // check the correct version
         // old q3map don't send a version attribute
         // the ones we support .. send Q3MAP_STREAM_VERSION
-        if (!attrs[0] || !attrs[1] || (strcmp(reinterpret_cast<const char*>(attrs[0]), "version") != 0))
+        if (!attrs[0] || !attrs[1] || (strcmp((char*)attrs[0],"version") != 0))
         {
-          message_flush(data);
-          globalErrorStream() << "No stream version given in the feedback stream, this is an old q3map version.\n"
-                      "Please turn off monitored compiling if you still wish to use this q3map executable\n";
+          Sys_FPrintf(SYS_ERR, "No stream version given in the feedback stream, this is an old q3map version.\n"
+                      "Please turn off monitored compiling if you still wish to use this q3map executable\n");
           abortStream(data);
           return;
         }
-        else if (strcmp(reinterpret_cast<const char*>(attrs[1]), Q3MAP_STREAM_VERSION) != 0)
+        else if (strcmp((char*)attrs[1],Q3MAP_STREAM_VERSION) != 0)
         {
-          message_flush(data);
-          globalErrorStream() <<
-            "This version of Radiant reads version " Q3MAP_STREAM_VERSION " debug streams, I got an incoming connection with version " << reinterpret_cast<const char*>(attrs[1]) << "\n"
-            "Please make sure your versions of Radiant and q3map are matching.\n";
+          Sys_FPrintf(SYS_ERR, 
+            "This version of Radiant reads version %s debug streams, I got an incoming connection with version %s\n"
+            "Please make sure your versions of Radiant and q3map are matching.\n", Q3MAP_STREAM_VERSION, (char*)attrs[1]);
           abortStream(data);
           return;
         }
       }
       // we don't treat locally
-      else if (strcmp(reinterpret_cast<const char*>(name), "message") == 0)
+      else if (strcmp ((char *)name, "message") == 0)
       {
-        int msg_level = atoi(reinterpret_cast<const char*>(attrs[1]));
-        if(msg_level != data->msg_level)
-        {
-          message_flush(data);
-          data->msg_level = msg_level;
-        }
+        data->msg_level = atoi ((char *)attrs[1]);
       }
-      else if (strcmp(reinterpret_cast<const char*>(name), "polyline") == 0) 
+      else if (strcmp ((char *)name, "polyline") == 0) 
       // polyline has a particular status .. right now we only use it for leakfile ..
       {
-        data->geometry_depth = data->recurse;
+        data->bGeometry = true;
         data->pGeometry = &g_pointfile;
-        data->pGeometry->saxStartElement (data, name, attrs);  
+        data->pGeometry->saxStartElement( data, name, attrs );
       }
-      else if (strcmp(reinterpret_cast<const char*>(name), "select") == 0)
+      else if (strcmp ((char *)name, "select") == 0)
       {
         CSelectMsg *pSelect = new CSelectMsg();
-        data->geometry_depth = data->recurse;
+        data->bGeometry = true;
         data->pGeometry = pSelect;
-        data->pGeometry->saxStartElement (data, name, attrs);
+        data->pGeometry->saxStartElement( data, name, attrs );
       }
-      else if (strcmp(reinterpret_cast<const char*>(name), "pointmsg") == 0)
+      else if (strcmp ((char *)name, "pointmsg") == 0)
       {
         CPointMsg *pPoint = new CPointMsg();
-        data->geometry_depth = data->recurse;
+        data->bGeometry = true;
         data->pGeometry = pPoint;
-        data->pGeometry->saxStartElement (data, name, attrs);
+        data->pGeometry->saxStartElement( data, name, attrs );
       }
-      else if (strcmp(reinterpret_cast<const char*>(name), "windingmsg") == 0)
+      else if (strcmp ((char *)name, "windingmsg") == 0)
       {
         CWindingMsg *pWinding = new CWindingMsg();
-        data->geometry_depth = data->recurse;
+        data->bGeometry = true;
         data->pGeometry = pWinding;
-        data->pGeometry->saxStartElement (data, name, attrs);
+        data->pGeometry->saxStartElement( data, name, attrs );
       }
       else
       {
-        globalErrorStream() << "Warning: ignoring unrecognized node in XML stream (" << reinterpret_cast<const char*>(name) << ")\n";
+        Sys_FPrintf (SYS_WRN, "WARNING: ignoring unrecognized node in XML stream (%s)\n", name);
         // we don't recognize this node, jump over it
         // (NOTE: the ignore mechanism is a bit screwed, only works when starting an ignore at the highest level)
         data->ignore_depth = data->recurse;
@@ -351,92 +145,60 @@ static void saxStartElement(message_info_t *data, const xmlChar *name, const xml
   data->recurse++;
 }
 
-static void saxEndElement(message_info_t *data, const xmlChar *name) 
-{
-#if 0
-  globalOutputStream() << "<" << name << "/>\n";
-#endif
-
-  data->recurse--;
-  // we are out of an ignored chunk
-  if(data->recurse == data->ignore_depth)
-  {
-    data->ignore_depth = 0;
-    return;
-  }
-  if(data->pGeometry != 0)
-  {
-    data->pGeometry->saxEndElement (data, name);
-    // we add the object to the debug window
-    if(data->geometry_depth == data->recurse)
-    {
-      g_DbgDlg.Push(data->pGeometry);
-      data->pGeometry = 0;
-    }
-  }
-  if (data->recurse == data->stop_depth)
-  {
-    message_flush(data);
+static void saxEndElement(message_info_t *data, const xmlChar *name)  {
+	data->recurse--;
+	// we are out of an ignored chunk
+	if ( data->recurse == data->ignore_depth ) {
+		data->ignore_depth = 0;
+		return;
+	}
+	if ( data->bGeometry ) {
+		data->pGeometry->saxEndElement( data, name );
+		// we add the object to the debug window
+		if ( !data->bGeometry ) {
+			g_DbgDlg.Push( data->pGeometry );
+		}
+	}
+	if ( data->recurse == data->stop_depth ) {
 #ifdef _DEBUG
-    globalOutputStream() << "Received error msg .. shutting down..\n";
+		Sys_Printf ("Received error msg .. shutting down..\n");
 #endif
-    GetWatchBSP()->EndMonitoringLoop();
-    // tell there has been an error
-#if 0
-    if (GetWatchBSP()->HasBSPPlugin())
-      g_BSPFrontendTable.m_pfnEndListen(2);
-#endif
-    return;
-  }
-}
-
-class MessageOutputStream : public TextOutputStream
-{
-  message_info_t* m_data;
-public:
-  MessageOutputStream(message_info_t* data) : m_data(data)
-  {
-  }
-  std::size_t write(const char* buffer, std::size_t length)
-  {
-    if(m_data->pGeometry != 0)
-    {
-      m_data->pGeometry->saxCharacters(m_data, reinterpret_cast<const xmlChar*>(buffer), int(length));
-    }
-    else
-    {
-      if (m_data->ignore_depth == 0)
-      {
-        // output the message using the level
-        message_print(m_data, buffer, length);
-        // if this message has error level flag, we mark the depth to stop the compilation when we get out
-        // we don't set the msg level if we don't stop on leak
-        if (m_data->msg_level == 3)
-        {
-          m_data->stop_depth = m_data->recurse-1;
-        }
-      }
-    }
-
-    return length;
-  }
-};
-
-template<typename T>
-inline MessageOutputStream& operator<<(MessageOutputStream& ostream, const T& t)
-{
-  return ostream_write(ostream, t);
+		g_pParentWnd->GetWatchBSP()->Reset();
+		// tell there has been an error
+		if ( g_pParentWnd->GetWatchBSP()->HasBSPPlugin() ) {
+			g_BSPFrontendTable.m_pfnEndListen( 2 );
+		}
+		return;
+	}
 }
 
 static void saxCharacters(message_info_t *data, const xmlChar *ch, int len)
 {
-  MessageOutputStream ostream(data);
-  ostream << ConvertUTF8ToLocale(StringRange(reinterpret_cast<const char*>(ch), reinterpret_cast<const char*>(ch + len)));
+  if (data->bGeometry)
+  {
+    data->pGeometry->saxCharacters (data, ch, len);
+  }
+  else
+  {
+    if (data->ignore_depth != 0)
+      return;
+    // output the message using the level
+    char buf[1024];
+    memcpy( buf, ch, len );
+    buf[len] = '\0';
+    Sys_FPrintf (data->msg_level, "%s", buf);
+    // if this message has error level flag, we mark the depth to stop the compilation when we get out
+    // we don't set the msg level if we don't stop on leak
+    if (data->msg_level == 3)
+    {
+      data->stop_depth = data->recurse-1;
+    }
+  }
 }
 
 static void saxComment(void *ctx, const xmlChar *msg)
 {
-  globalOutputStream() << "XML comment: " << reinterpret_cast<const char*>(msg) << "\n";
+  Sys_Printf("XML comment: %s\n", msg);
 }
 
 static void saxWarning(void *ctx, const char *msg, ...)
@@ -447,7 +209,7 @@ static void saxWarning(void *ctx, const char *msg, ...)
   va_start(args, msg);
   vsprintf (saxMsgBuffer, msg, args);
   va_end(args);
-  globalOutputStream() << "XML warning: " << saxMsgBuffer << "\n";
+  Sys_FPrintf(SYS_WRN, "XML warning: %s\n", saxMsgBuffer);
 }
 
 static void saxError(void *ctx, const char *msg, ...)
@@ -458,7 +220,7 @@ static void saxError(void *ctx, const char *msg, ...)
   va_start(args, msg);
   vsprintf (saxMsgBuffer, msg, args);
   va_end(args);
-  globalErrorStream() << "XML error: " << saxMsgBuffer << "\n";
+  Sys_FPrintf(SYS_ERR, "XML error: %s\n", saxMsgBuffer);
 }
 
 static void saxFatal(void *ctx, const char *msg, ...)
@@ -470,7 +232,7 @@ static void saxFatal(void *ctx, const char *msg, ...)
   va_start(args, msg);
   vsprintf (buffer, msg, args);
   va_end(args);
-  globalErrorStream() << "XML fatal error: " << buffer << "\n";
+  Sys_FPrintf(SYS_ERR, "XML fatal error: %s\n", buffer);
 }
 
 static xmlSAXHandler saxParser = {
@@ -498,24 +260,19 @@ static xmlSAXHandler saxParser = {
     (warningSAXFunc)saxWarning, /* warning */
     (errorSAXFunc)saxError, /* error */
     (fatalErrorSAXFunc)saxFatal, /* fatalError */
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0
 };
 
 // ------------------------------------------------------------------------------------------------
 
-
-guint s_routine_id;
-static gint watchbsp_routine(gpointer data)
+CWatchBSP::~CWatchBSP()
 {
-  reinterpret_cast<CWatchBSP*>(data)->RoutineProcessing();
-  return TRUE;
+  Reset();
+  if (m_sBSPName)
+  {
+    delete[] m_sBSPName;
+    m_sBSPName = NULL;
+  }
+  Net_Shutdown();
 }
 
 void CWatchBSP::Reset()
@@ -536,8 +293,6 @@ void CWatchBSP::Reset()
     m_xmlInputBuffer = NULL;
   }
   m_eState = EIdle;
-  if (s_routine_id)
-    gtk_timeout_remove(s_routine_id);
 }
 
 bool CWatchBSP::SetupListening()
@@ -545,148 +300,87 @@ bool CWatchBSP::SetupListening()
 #ifdef _DEBUG
   if (m_pListenSocket)
   {
-    globalOutputStream() << "ERROR: m_pListenSocket != NULL in CWatchBSP::SetupListening\n";
+    Sys_Printf("ERROR: m_pListenSocket != NULL in CWatchBSP::SetupListening\n");
     return false;
   }
 #endif
-  globalOutputStream() << "Setting up\n";
-	Net_Setup();
-	m_pListenSocket = Net_ListenSocket(39000);
+  Sys_Printf("Setting up\n");
+  if( !Net_Setup() )
+    return false;
+
+  m_pListenSocket = Net_ListenSocket(39000);
   if (m_pListenSocket == NULL)
     return false;
-  globalOutputStream() << "Listening...\n";
+
+  Sys_Printf("Listening...\n");
   return true;
 }
 
-void CWatchBSP::DoEBeginStep()
-{
-  Reset();
-  if (SetupListening() == false)
-  {
-    const char* msg = "Failed to get a listening socket on port 39000.\nTry running with Build monitoring disabled if you can't fix this.\n";
-    globalOutputStream() << msg;
-    gtk_MessageBox(GTK_WIDGET(MainFrame_getWindow()), msg, "Build monitoring", eMB_OK, eMB_ICONERROR);
-    return;
-  }
-  // set the timer for timeouts and step cancellation
-  g_timer_reset( m_pTimer );
-  g_timer_start( m_pTimer );
+void CWatchBSP::DoEBeginStep() {
+	Reset();
+	if ( !SetupListening() ) {
+		CString msg;
+		msg = "Failed to get a listening socket on port 39000.\nTry running with BSP monitoring disabled if you can't fix this.\n";
+		Sys_Printf( msg );
+		gtk_MessageBox( g_pParentWnd->m_pWidget, msg, "BSP monitoring", MB_OK | MB_ICONERROR );
+		return;
+	}
+	// set the timer for timeouts and step cancellation
+	g_timer_reset( m_pTimer );
+	g_timer_start( m_pTimer );
 
-  if (!m_bBSPPlugin)
-  {
-    globalOutputStream() << "=== running build command ===\n"
-      << static_cast<const char*>(g_ptr_array_index( m_pCmd, m_iCurrentStep )) << "\n";
-    
-    if (!Q_Exec(NULL, (char *)g_ptr_array_index( m_pCmd, m_iCurrentStep ), NULL, true ))
-    {
-      StringOutputStream msg(256);
-      msg << "Failed to execute the following command: ";
-      msg << reinterpret_cast<const char*>(g_ptr_array_index(m_pCmd, m_iCurrentStep));
-      msg << "\nCheck that the file exists and that you don't run out of system resources.\n";
-      globalOutputStream() << msg.c_str();
-      gtk_MessageBox(GTK_WIDGET(MainFrame_getWindow()), msg.c_str(), "Build monitoring", eMB_OK, eMB_ICONERROR );
-      return;
-    }
-    // re-initialise the debug window
-    if (m_iCurrentStep == 0)
-      g_DbgDlg.Init();
-  }
-  m_eState = EBeginStep;
-  s_routine_id = gtk_timeout_add(25, watchbsp_routine, this);
+	if ( !m_bBSPPlugin ) {
+		Sys_Printf( "=== running BSP command ===\n%s\n", g_ptr_array_index( m_pCmd, m_iCurrentStep ) );
+
+		if ( !Q_Exec( NULL, (char *)g_ptr_array_index( m_pCmd, m_iCurrentStep ), NULL, true ) ) {
+			CString msg;
+			msg = "Failed to execute the following command: ";
+			msg += (char *)g_ptr_array_index( m_pCmd, m_iCurrentStep );
+			msg += "\nCheck that the file exists and that you don't run out of system resources.\n";
+			Sys_Printf( msg );
+			gtk_MessageBox( g_pParentWnd->m_pWidget,  msg, "BSP monitoring", MB_OK | MB_ICONERROR );
+			return;
+		}
+		// re-initialise the debug window
+		if ( m_iCurrentStep == 0 ) {
+			g_DbgDlg.Init();
+		}
+	}
+	m_eState = EBeginStep;
 }
-
-
-#if defined(WIN32)
-#define ENGINE_ATTRIBUTE "engine_win32"
-#define MP_ENGINE_ATTRIBUTE "mp_engine_win32"
-#elif defined(__linux__) || defined (__FreeBSD__)
-#define ENGINE_ATTRIBUTE "engine_linux"
-#define MP_ENGINE_ATTRIBUTE "mp_engine_linux"
-#elif defined(__APPLE__)
-#define ENGINE_ATTRIBUTE "engine_macos"
-#define MP_ENGINE_ATTRIBUTE "mp_engine_macos"
-#else
-#error "unsupported platform"
-#endif
-
-class RunEngineConfiguration
-{
-public:
-  const char* executable;
-  const char* mp_executable;
-  bool do_sp_mp;
-
-  RunEngineConfiguration() :
-    executable(g_pGameDescription->getRequiredKeyValue(ENGINE_ATTRIBUTE)),
-    mp_executable(g_pGameDescription->getKeyValue(MP_ENGINE_ATTRIBUTE))
-  {
-    do_sp_mp = !string_empty(mp_executable);
-  }
-};
-
-inline void GlobalGameDescription_string_write_mapparameter(StringOutputStream& string, const char* mapname)
-{
-  if(g_pGameDescription->mGameType == "q2"
-    || g_pGameDescription->mGameType == "heretic2")
-  {
-    string << ". +exec radiant.cfg +map " << mapname;
-  }
-  else
-  {
-    string << "+set sv_pure 0 ";
-    // TTimo: a check for vm_* but that's all fine
-    //cmdline = "+set sv_pure 0 +set vm_ui 0 +set vm_cgame 0 +set vm_game 0 ";
-    const char* fs_game = gamename_get();
-    if (!string_equal(fs_game, basegame_get()))
-    {
-      string << "+set fs_game " << fs_game << " ";
-    }
-    if(g_pGameDescription->mGameType == "wolf"
-      || g_pGameDescription->mGameType == "et")
-    {
-      if (string_equal(gamemode_get(), "mp"))
-      {
-        // MP
-        string << "+devmap " << mapname;
-      }
-      else
-      {
-        // SP                
-        string << "+set nextmap \"spdevmap " << mapname << "\"";
-      }
-    }
-    else
-    {
-      string << "+devmap " << mapname;
-    }
-  }
-}
-
 
 void CWatchBSP::RoutineProcessing()
 {
+  // used for select()
+#ifdef _WIN32
+    TIMEVAL tout = { 0, 0 };
+#endif
+#if defined (__linux__) || defined (__APPLE__)
+		timeval tout;
+		tout.tv_sec = 0;
+		tout.tv_usec = 0;
+#endif
+
   switch (m_eState)
   {
   case EBeginStep:
     // timeout: if we don't get an incoming connection fast enough, go back to idle
-    if ( g_timer_elapsed( m_pTimer, NULL ) > g_WatchBSP_Timeout )
+    if ( g_timer_elapsed( m_pTimer, NULL ) > g_PrefsDlg.m_iTimeout )
     {
-      gtk_MessageBox(GTK_WIDGET(MainFrame_getWindow()),  "The connection timed out, assuming the build process failed\nMake sure you are using a networked version of Q3Map?\nOtherwise you need to disable BSP Monitoring in prefs.", "BSP process monitoring", eMB_OK );
-      EndMonitoringLoop();
-#if 0
+      gtk_MessageBox(g_pParentWnd->m_pWidget,  "The connection timed out, assuming the BSP process failed\nMake sure you are using a networked version of Q3Map?\nOtherwise you need to disable BSP Monitoring in prefs.", "BSP process monitoring", MB_OK );
+      Reset();
       if (m_bBSPPlugin)
       {
         // status == 1 : didn't get the connection
         g_BSPFrontendTable.m_pfnEndListen(1);
       }
-#endif
       return;
     }
 #ifdef _DEBUG
     // some debug checks
     if (!m_pListenSocket)
     {
-      globalErrorStream() << "ERROR: m_pListenSocket == NULL in CWatchBSP::RoutineProcessing EBeginStep state\n";
+      Sys_Printf("ERROR: m_pListenSocket == NULL in CWatchBSP::RoutineProcessing EBeginStep state\n");
       return;
     }
 #endif
@@ -694,34 +388,50 @@ void CWatchBSP::RoutineProcessing()
     m_pInSocket = Net_Accept(m_pListenSocket);
     if (m_pInSocket)
     {
-      globalOutputStream() << "Connected.\n";
+      Sys_Printf("Connected.\n");
       // prepare the message info struct for diving in
-      memset (&m_message_info, 0, sizeof(message_info_t)); 
+      memset (&m_message_info, 0, sizeof(message_info_s)); 
       // a dumb flag to make sure we init the push parser context when first getting a msg
       m_bNeedCtxtInit = true;
       m_eState = EWatching;
     }
     break;
   case EWatching:
-    {
 #ifdef _DEBUG
     // some debug checks
     if (!m_pInSocket)
     {
-      globalErrorStream() << "ERROR: m_pInSocket == NULL in CWatchBSP::RoutineProcessing EWatching state\n";
+      Sys_Printf("ERROR: m_pInSocket == NULL in CWatchBSP::RoutineProcessing EWatching state\n");
       return;
     }
 #endif
-
-    int ret = Net_Wait(m_pInSocket, 0, 0);
-    if (ret == -1)
+    // select() will identify if the socket needs an update
+    // if the socket is identified that means there's either a message or the connection has been closed/reset/terminated
+    fd_set readfds;
+    int ret;
+    FD_ZERO(&readfds);
+    FD_SET(((unsigned int)m_pInSocket->socket), &readfds);
+		// from select man page:
+		// n is the highest-numbered descriptor in any of the three sets, plus 1
+		// (no use on windows)
+    ret = select( m_pInSocket->socket + 1, &readfds, NULL, NULL, &tout );
+    if (ret == SOCKET_ERROR)
     {
-      globalOutputStream() << "WARNING: SOCKET_ERROR in CWatchBSP::RoutineProcessing\n";
-      globalOutputStream() << "Terminating the connection.\n";
-      EndMonitoringLoop();
+      Sys_Printf("WARNING: SOCKET_ERROR in CWatchBSP::RoutineProcessing\n");
+      Sys_Printf("Terminating the connection.\n");
+      Reset();
       return;
     }
-
+#ifdef _DEBUG
+    if (ret == -1)
+    {
+      // we are non-blocking?? we should never get timeout errors
+      Sys_Printf("WARNING: unexpected timeout expired in CWatchBSP::Processing\n");
+      Sys_Printf("Terminating the connection.\n");
+      Reset();
+      return;
+    }
+#endif
     if (ret == 1)
     {
       // the socket has been identified, there's something (message or disconnection)
@@ -734,37 +444,33 @@ void CWatchBSP::RoutineProcessing()
         if (m_bNeedCtxtInit)
         {
           m_xmlParserCtxt = NULL;
-          m_xmlParserCtxt = xmlCreatePushParserCtxt (&saxParser, &m_message_info, m_xmlBuf, static_cast<int>(strlen(m_xmlBuf)), NULL);
-
+          m_xmlParserCtxt = xmlCreatePushParserCtxt (&saxParser, &m_message_info, m_xmlBuf, strlen(m_xmlBuf), NULL);
           if (m_xmlParserCtxt == NULL)
           {
-            globalErrorStream() << "Failed to create the XML parser (incoming stream began with: " << m_xmlBuf << ")\n";
-            EndMonitoringLoop();
+            Sys_FPrintf (SYS_ERR, "Failed to create the XML parser (incoming stream began with: %s)\n", m_xmlBuf);
+            Reset();
           }
           m_bNeedCtxtInit = false;
         }
         else
         {
-          xmlParseChunk(m_xmlParserCtxt, m_xmlBuf, static_cast<int>(strlen(m_xmlBuf)), 0);
+          xmlParseChunk (m_xmlParserCtxt, m_xmlBuf, strlen(m_xmlBuf), 0);
         }
       }
       else
       {
-        message_flush(&m_message_info);
         // error or connection closed/reset
         // NOTE: if we get an error down the XML stream we don't reach here
         Net_Disconnect( m_pInSocket );
         m_pInSocket = NULL;
-        globalOutputStream() << "Connection closed.\n";
-#if 0
+        Sys_Printf("Connection closed.\n");
         if (m_bBSPPlugin)
         {
-          EndMonitoringLoop();
+          Reset();
           // let the BSP plugin know that the job is done
           g_BSPFrontendTable.m_pfnEndListen(0);
           return;
         }
-#endif
         // move to next step or finish
         m_iCurrentStep++;
         if (m_iCurrentStep < m_pCmd->len )
@@ -773,60 +479,251 @@ void CWatchBSP::RoutineProcessing()
         }
         else
         {
-          // launch the engine .. OMG
-          if (g_WatchBSP_RunQuake)
+          // release the GPtrArray and the strings
+          if (m_pCmd != NULL)
           {
-#if 0
-            // do we enter sleep mode before?
-            if (g_WatchBSP_DoSleep)
+            for (m_iCurrentStep=0; m_iCurrentStep < m_pCmd->len; m_iCurrentStep++ )
             {
-              globalOutputStream() << "Going into sleep mode..\n";
+              delete[] (char *)g_ptr_array_index( m_pCmd, m_iCurrentStep );
+            }
+            g_ptr_array_free( m_pCmd, false );
+          }
+          m_pCmd = NULL;
+          // launch the engine .. OMG
+          if (g_PrefsDlg.m_bRunQuake)
+          {
+            // do we enter sleep mode before?
+            if (g_PrefsDlg.m_bDoSleep)
+            {
+              Sys_Printf("Going into sleep mode..\n");
               g_pParentWnd->OnSleep();
             }
-#endif
-            globalOutputStream() << "Running engine...\n";
-            StringOutputStream cmd(256);
+            Sys_Printf("Running engine...\n");
+            Str cmd;
             // build the command line
-            cmd << EnginePath_get();
+            cmd = g_pGameDescription->mEnginePath.GetBuffer();
             // this is game dependant
-
-            RunEngineConfiguration engineConfig;
-           
-            if(engineConfig.do_sp_mp)
+            //!\todo Read the engine binary name from a config file.
+            if (g_pGameDescription->mGameFile == "wolf.game")
             {
-              if (string_equal(gamemode_get(), "mp"))
+              if (!strcmp(ValueForKey(g_qeglobals.d_project_entity, "gamemode"),"mp"))
               {
-                cmd << engineConfig.mp_executable;
+                // MP
+#if defined(WIN32)
+                cmd += "WolfMP.exe";
+#elif defined(__linux__)
+                cmd += "wolfmp";
+#elif defined(__APPLE__)
+                cmd += "wolfmp.app";
+#else
+#error "WTF are you compiling on"
+#endif
               }
               else
               {
-                cmd << engineConfig.executable;
+                // SP
+#if defined(WIN32)
+                cmd += "WolfSP.exe";
+#elif defined(__linux__)
+                cmd += "wolfsp";
+#elif defined(__APPLE__)
+                cmd += "wolfsp.app";
+#else
+#error "WTF are you compiling on"
+#endif
+              }
+            } else if (g_pGameDescription->mGameFile == "et.game")
+            {
+#if defined(WIN32)
+              cmd += "et.exe";
+#elif defined(__linux__)
+              cmd += "et";
+#elif defined(__APPLE__)
+              cmd += "et.app";
+#else
+#error "WTF are you compiling on"
+#endif
+            }
+            // RIANT
+            // JK2 HACK
+            else if (g_pGameDescription->mGameFile == "jk2.game")
+            {
+              if (!strcmp(ValueForKey(g_qeglobals.d_project_entity, "gamemode"),"mp"))
+              {
+                // MP
+#if defined(WIN32)
+                cmd += "jk2MP.exe";
+#elif defined(__linux__)
+                cmd += "jk2mp";
+#elif defined(__APPLE__)
+                cmd += "jk2mp.app";
+#else
+#error "WTF are you compiling on"
+#endif
+              }
+              else
+              {
+                // SP
+#if defined(WIN32)
+                cmd += "jk2SP.exe";
+#elif defined(__linux__)
+                cmd += "jk2sp";
+#elif defined(__APPLE__)
+                cmd += "jk2sp.app";
+#else
+#error "WTF are you compiling on"
+#endif
+              }
+            }
+            // TTimo
+            // JA HACK
+            else if (g_pGameDescription->mGameFile == "ja.game")
+            {
+              if (!strcmp(ValueForKey(g_qeglobals.d_project_entity, "gamemode"),"mp"))
+              {
+                // MP
+#if defined(WIN32)
+                cmd += "jamp.exe";
+#elif !defined(__linux__) && !defined(__APPLE__)
+#error "WTF are you compiling on"
+#endif
+              }
+              else
+              {
+                // SP
+#if defined(WIN32)
+                cmd += "jasp.exe";
+#elif !defined(__linux__) && !defined(__APPLE__)
+#error "WTF are you compiling on"
+#endif
+              }
+            }
+            // RIANT
+            // STVEF HACK
+            else if (g_pGameDescription->mGameFile == "stvef.game")
+            {
+              if (!strcmp(ValueForKey(g_qeglobals.d_project_entity, "gamemode"),"mp"))
+              {
+                // MP
+#if defined(WIN32)
+                cmd += "stvoyHM.exe";
+#elif defined(__linux__)
+                cmd += "stvoyHM";
+#elif defined(__APPLE__)
+                cmd += "stvoyHM.app";
+#else
+#error "WTF are you compiling on"
+#endif
+              }
+              else
+              {
+                // SP
+#if defined(WIN32)
+                cmd += "stvoy.exe";
+#elif defined(__linux__)
+                cmd += "stvoy";
+#elif defined(__APPLE__)
+                cmd += "stvoy.app";
+#else
+#error "WTF are you compiling on"
+#endif
+              }
+            }
+            // RIANT
+            // SOF2 HACK
+            else if (g_pGameDescription->mGameFile == "sof2.game")
+            {
+              if (!strcmp(ValueForKey(g_qeglobals.d_project_entity, "gamemode"),"mp"))
+              {
+                // MP
+#if defined(WIN32)
+                cmd += "sof2MP.exe";
+#elif defined(__linux__)
+                cmd += "b00gus";
+#elif defined(__APPLE__)
+                cmd += "sof2MP.app";
+#else
+#error "WTF are you compiling on"
+#endif
+              }
+              else
+              {
+                // SP
+#if defined(WIN32)
+                cmd += "sof2.exe";
+#elif defined(__linux__)
+                cmd += "b00gus";
+#elif defined(__APPLE__)
+                cmd += "sof2.app";
+#else
+#error "WTF are you compiling on"
+#endif
               }
             }
             else
             {
-              cmd << engineConfig.executable;
+              cmd += g_pGameDescription->mEngine.GetBuffer();
+            }
+#ifdef _WIN32
+            // NOTE: we are using unix pathnames and CreateProcess doesn't like / in the program path
+            FindReplace( cmd, "/", "\\" );
+#endif
+            Str cmdline;
+            if ( (g_pGameDescription->mGameFile == "q2.game") || (g_pGameDescription->mGameFile == "heretic2.game") )
+            {
+            	cmdline = ". +exec radiant.cfg +map ";
+            	cmdline += m_sBSPName;
+            }
+            else
+            {
+              cmdline = "+set sv_pure 0 ";
+              // TTimo: a check for vm_* but that's all fine
+              //cmdline = "+set sv_pure 0 +set vm_ui 0 +set vm_cgame 0 +set vm_game 0 ";
+              if (*ValueForKey(g_qeglobals.d_project_entity, "gamename") != '\0')
+              {
+                cmdline += "+set fs_game ";
+                cmdline += ValueForKey(g_qeglobals.d_project_entity, "gamename");
+                cmdline += " ";
+              }
+              //!\todo Read the start-map args from a config file.
+              if (g_pGameDescription->mGameFile == "wolf.game")
+              {
+                if (!strcmp(ValueForKey(g_qeglobals.d_project_entity, "gamemode"),"mp"))
+                {
+                  // MP
+                  cmdline += "+devmap ";
+                  cmdline += m_sBSPName;
+                }
+                else
+                {
+                  // SP                
+                  cmdline += "+set nextmap \"spdevmap ";
+                  cmdline += m_sBSPName;
+                  cmdline += "\"";
+                }
+              }
+              else
+              {
+                cmdline += "+devmap ";
+                cmdline += m_sBSPName;
+              }
             }
 
-            StringOutputStream cmdline;
-
-            GlobalGameDescription_string_write_mapparameter(cmdline, m_sBSPName);
-
-            globalOutputStream() << cmd.c_str() << " " << cmdline.c_str() << "\n";
+            Sys_Printf("%s %s\n", cmd.GetBuffer(), cmdline.GetBuffer());
 
             // execute now
-            if (!Q_Exec(cmd.c_str(), (char *)cmdline.c_str(), EnginePath_get(), false))
+            if (!Q_Exec(cmd.GetBuffer(), (char *)cmdline.GetBuffer(), g_pGameDescription->mEnginePath.GetBuffer(), false))
             {
-              StringOutputStream msg;
-              msg << "Failed to execute the following command: " << cmd.c_str() << cmdline.c_str();
-              globalOutputStream() << msg.c_str();
-              gtk_MessageBox(GTK_WIDGET(MainFrame_getWindow()),  msg.c_str(), "Build monitoring", eMB_OK, eMB_ICONERROR );
+              CString msg;
+              msg = "Failed to execute the following command: ";
+              msg += cmd; msg += cmdline;
+              Sys_Printf(msg);
+              gtk_MessageBox(g_pParentWnd->m_pWidget,  msg, "BSP monitoring", MB_OK | MB_ICONERROR );
             }
           }
-          EndMonitoringLoop();
+          Reset();
         }
       }
-    }
     }
     break;
   default:
@@ -834,31 +731,25 @@ void CWatchBSP::RoutineProcessing()
   }
 }
 
-GPtrArray* str_ptr_array_clone(GPtrArray* array)
+void CWatchBSP::DoMonitoringLoop( GPtrArray *pCmd, char *sBSPName )
 {
-  GPtrArray* cloned = g_ptr_array_sized_new(array->len);
-  for(guint i = 0; i < array->len; ++i)
+  if (m_sBSPName)
   {
-    g_ptr_array_add(cloned, g_strdup((char*)g_ptr_array_index(array, i)));
+    delete[] m_sBSPName;
   }
-  return cloned;
-}
-
-void CWatchBSP::DoMonitoringLoop( GPtrArray *pCmd, const char *sBSPName )
-{
-  m_sBSPName = string_clone(sBSPName);
+  m_sBSPName = sBSPName;
   if (m_eState != EIdle)
   {
-    globalOutputStream() << "WatchBSP got a monitoring request while not idling...\n";
+    Sys_Printf("WatchBSP got a monitoring request while not idling...\n");
     // prompt the user, should we cancel the current process and go ahead?
-    if (gtk_MessageBox(GTK_WIDGET(MainFrame_getWindow()),  "I am already monitoring a Build process.\nDo you want me to override and start a new compilation?", 
-      "Build process monitoring", eMB_YESNO ) == eIDYES)
+    if (gtk_MessageBox(g_pParentWnd->m_pWidget,  "I am already monitoring a BSP process.\nDo you want me to override and start a new compilation?", 
+      "BSP process monitoring", MB_YESNO ) == IDYES)
     {
       // disconnect and set EIdle state
       Reset();
     }
   }
-  m_pCmd = str_ptr_array_clone(pCmd);
+  m_pCmd = pCmd;
   m_iCurrentStep = 0;
   DoEBeginStep();
 }
@@ -866,14 +757,14 @@ void CWatchBSP::DoMonitoringLoop( GPtrArray *pCmd, const char *sBSPName )
 void CWatchBSP::ExternalListen()
 {
   m_bBSPPlugin = true;
-  DoEBeginStep();
+  DoEBeginStep ();
 }
 
 // the part of the watchbsp interface we export to plugins
 // NOTE: in the long run, the whole watchbsp.cpp interface needs to go out and be handled at the BSP plugin level
 // for now we provide something really basic and limited, the essential is to have something that works fine and fast (for 1.1 final)
-void QERApp_Listen()
+void WINAPI QERApp_Listen()
 {
   // open the listening socket
-  GetWatchBSP()->ExternalListen();
+  g_pParentWnd->GetWatchBSP()->ExternalListen();
 }

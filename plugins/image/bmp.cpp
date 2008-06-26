@@ -1,6 +1,6 @@
 /*
-Copyright (C) 2001-2006, William Joseph.
-All Rights Reserved.
+Copyright (C) 1999-2007 id Software, Inc. and contributors.
+For a list of contributors, see the accompanying CONTRIBUTORS file.
 
 This file is part of GtkRadiant.
 
@@ -19,189 +19,384 @@ along with GtkRadiant; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
+#include <stdio.h>
+#include <string.h>
+#include <glib.h>
 #include "bmp.h"
 
-#include "ifilesystem.h"
+#include "image.h"
 
-typedef unsigned char byte;
-
-#include "imagelib.h"
-#include "bytestreamutils.h"
-
-
-typedef unsigned char PaletteEntry[4];
-typedef struct
+static void BMPLineNone(FILE *f, char *sline, int pixbytes, int width)
 {
-  char id[2];
-  unsigned long fileSize;
-  unsigned long reserved0;
-  unsigned long bitmapDataOffset;
-  unsigned long bitmapHeaderSize;
-  unsigned long width;
-  unsigned long height;
-  unsigned short planes;
-  unsigned short bitsPerPixel;
-  unsigned long compression;
-  unsigned long bitmapDataSize;
-  unsigned long hRes;
-  unsigned long vRes;
-  unsigned long colors;
-  unsigned long importantColors;
-  PaletteEntry palette[256];
-} BMPHeader_t;
+    int nbytes, i, k, j;
 
-class ReadPixel8
+	switch (pixbytes)
+	{
+	    case 1 :
+            nbytes = (width + 3) / 4;
+            nbytes *= 4;
+
+            fread(sline, width, 1, f);
+            nbytes -= width;
+
+            while (nbytes-- > 0) fgetc(f);
+			return;
+
+		case 3 :
+			nbytes = ((width * 3) + 3) / 4;
+			nbytes *= 4;
+
+			fread(sline, width, 3, f);
+			nbytes -= width * 3;
+
+			while (nbytes-- > 0) fgetc(f);
+
+			// reorder bgr to rgb
+			for (i = 0, j = 0; i < width; i++, j += 3)
+			{
+				k = sline[j];
+				sline[j] = sline[j+2];
+				sline[j+2] = k;
+			}
+
+			return;
+	}
+
+	Error("BMPLineNone failed.");
+}
+
+
+static void BMPLineRLE8(FILE *f, char *sline, int pixbytes, int width)
 {
-  PaletteEntry* m_palette;
-public:
-  ReadPixel8(PaletteEntry* palette) : m_palette(palette)
-  {
-  }
-  void operator()(PointerInputStream& inputStream, byte*& pixbuf) const
-  {
-    byte palIndex;
-    inputStream.read(&palIndex, 1);
-    *pixbuf++ = m_palette[palIndex][2];
-    *pixbuf++ = m_palette[palIndex][1];
-    *pixbuf++ = m_palette[palIndex][0];
-    *pixbuf++ = 0xff;
-  }
-};
+    Error("RLE8 not yet supported.");
+}
 
-class ReadPixel16
+
+static void BMPLineRLE4(FILE *f, char *sline, int pixbytes, int width)
 {
-public:
-  void operator()(PointerInputStream& inputStream, byte*& pixbuf) const
-  {
-    unsigned short shortPixel;
-    inputStream.read(reinterpret_cast<byte*>(&shortPixel), sizeof(unsigned short)); //!\todo Is this endian safe?
-    *pixbuf++ = static_cast<byte>(shortPixel & (31 << 10)) >> 7;
-    *pixbuf++ = static_cast<byte>(shortPixel & (31 << 5)) >> 2;
-    *pixbuf++ = static_cast<byte>(shortPixel & (31)) << 3;
-    *pixbuf++ = 0xff;
-  }
-};
+    Error("RLE4 not yet supported.");
+}
 
-class ReadPixel24
+
+static void BMPLine(FILE *f, char *scanline, int pixbytes, int width, int rle)
 {
-public:
-  void operator()(PointerInputStream& inputStream, byte*& pixbuf) const
-  {
-    byte bgr[3];
-    inputStream.read(bgr, 3);
-    *pixbuf++ = bgr[2];
-    *pixbuf++ = bgr[1];
-    *pixbuf++ = bgr[0];
-    *pixbuf++ = 255;
-  }
-};
-
-class ReadPixel32
-{
-public:
-  void operator()(PointerInputStream& inputStream, byte*& pixbuf) const
-  {
-    byte bgra[4];
-    inputStream.read(bgra, 4);
-    *pixbuf++ = bgra[2];
-    *pixbuf++ = bgra[1];
-    *pixbuf++ = bgra[0];
-    *pixbuf++ = bgra[3];
-  }
-};
-
-template<typename ReadPixel>
-void ReadBMP(PointerInputStream& inputStream, byte* bmpRGBA, int rows, int columns, ReadPixel readPixel)
-{
-  for (int row = rows - 1; row >= 0; row--)
-  {
-    byte* pixbuf = bmpRGBA + row * columns * 4;
-
-    for (int column = 0; column < columns; column++)
+    switch (rle)
     {
-      readPixel(inputStream, pixbuf);
+	    case xBI_NONE : BMPLineNone(f, scanline, pixbytes, width); return;
+	    case xBI_RLE8 : BMPLineRLE8(f, scanline, pixbytes, width); return;
+	    case xBI_RLE4 : BMPLineRLE4(f, scanline, pixbytes, width); return;
     }
-  }
+
+    Error("Unknown compression type.");
 }
 
-Image* LoadBMPBuff(PointerInputStream& inputStream, std::size_t length)
+
+/*
+static void PrintHeader(binfo_t *b)
 {
-  BMPHeader_t bmpHeader;
-  inputStream.read(reinterpret_cast<byte*>(bmpHeader.id), 2);
-  bmpHeader.fileSize = istream_read_uint32_le(inputStream);
-  bmpHeader.reserved0 = istream_read_uint32_le(inputStream);
-  bmpHeader.bitmapDataOffset = istream_read_uint32_le(inputStream);
-  bmpHeader.bitmapHeaderSize = istream_read_uint32_le(inputStream);
-  bmpHeader.width = istream_read_uint32_le(inputStream);
-  bmpHeader.height = istream_read_uint32_le(inputStream);
-  bmpHeader.planes = istream_read_uint16_le(inputStream);
-  bmpHeader.bitsPerPixel = istream_read_uint16_le(inputStream);
-  bmpHeader.compression = istream_read_uint32_le(inputStream);
-  bmpHeader.bitmapDataSize = istream_read_uint32_le(inputStream);
-  bmpHeader.hRes = istream_read_uint32_le(inputStream);
-  bmpHeader.vRes = istream_read_uint32_le(inputStream);
-  bmpHeader.colors = istream_read_uint32_le(inputStream);
-  bmpHeader.importantColors = istream_read_uint32_le(inputStream);
-
-  if (bmpHeader.bitsPerPixel == 8)
-  {
-    int paletteSize = bmpHeader.colors * 4;
-    inputStream.read(reinterpret_cast<byte*>(bmpHeader.palette), paletteSize);
-  }
-
-  if (bmpHeader.id[0] != 'B' && bmpHeader.id[1] != 'M')
-  {
-    globalErrorStream() << "LoadBMP: only Windows-style BMP files supported\n";
-    return 0;
-  }
-  if (bmpHeader.fileSize != length)
-  {
-    globalErrorStream() << "LoadBMP: header size does not match file size (" << Unsigned(bmpHeader.fileSize) << " vs. " << Unsigned(length) << ")\n";
-    return 0;
-  }
-  if (bmpHeader.compression != 0)
-  {
-    globalErrorStream() << "LoadBMP: only uncompressed BMP files supported\n";
-    return 0;
-  }
-  if (bmpHeader.bitsPerPixel < 8)
-  {
-    globalErrorStream() << "LoadBMP: monochrome and 4-bit BMP files not supported\n";
-    return 0;
-  }
-
-  int columns = bmpHeader.width;
-  int rows = bmpHeader.height;
-  if (rows < 0)
-    rows = -rows;
-
-  RGBAImage* image = new RGBAImage(columns, rows);
-
-  switch(bmpHeader.bitsPerPixel)
-  {
-  case 8:
-    ReadBMP(inputStream, image->getRGBAPixels(), rows, columns, ReadPixel8(bmpHeader.palette));
-    break;
-  case 16:
-    ReadBMP(inputStream, image->getRGBAPixels(), rows, columns, ReadPixel16());
-    break;
-  case 24:
-    ReadBMP(inputStream, image->getRGBAPixels(), rows, columns, ReadPixel24());
-    break;
-  case 32:
-    ReadBMP(inputStream, image->getRGBAPixels(), rows, columns, ReadPixel32());
-    break;
-  default:
-    globalErrorStream() << "LoadBMP: illegal pixel_size '" << bmpHeader.bitsPerPixel << "'\n";
-    image->release();
-    return 0;
-  }
-  return image;
+    printf("biSize         : %ld\n", b->biSize);
+    printf("biWidth        : %ld\n", b->biWidth);
+    printf("biHeight       : %ld\n", b->biHeight);
+    printf("biPlanes       : %d\n", b->biPlanes);
+    printf("biBitCount     : %d\n", b->biBitCount);
+    printf("biCompression  : %ld\n", b->biCompression);
+    printf("biSizeImage    : %ld\n", b->biSizeImage);
+    printf("biXPelsPerMeter: %ld\n", b->biXPelsPerMeter);
+    printf("biYPelsPerMeter: %ld\n", b->biYPelsPerMeter);
+    printf("biClrUsed      : %ld\n", b->biClrUsed);
+    printf("biClrImportant : %ld\n", b->biClrImportant);
 }
+*/
 
-Image* LoadBMP(ArchiveFile& file)
+// FIXME: calls to Error(const char *, ... ) are dependant on qe3.cpp
+void LoadBMP(char *filename, bitmap_t *bit)
 {
-  ScopedArchiveBuffer buffer(file);
-  PointerInputStream inputStream(buffer.buffer);
-  return LoadBMPBuff(inputStream, buffer.length);
+    FILE    *f;
+    bmphd_t  bhd;
+    binfo_t  info;
+    //    int      pxlsize = 1;
+    int      rowbytes, i, pixbytes;
+    char    *scanline;
+
+    // open file
+    if ((f = fopen(filename, "rb")) == NULL)
+    {
+	    Error("Unable to open file");// %s.", filename);
+    }
+
+    // read in bitmap header
+    if (fread(&bhd, sizeof(bhd), 1, f) != 1)
+    {
+		fclose(f);
+	    Error("Unable to read in bitmap header.");
+    }
+
+    // make sure we have a valid bitmap file
+    if (bhd.bfType != BMP_SIGNATURE_WORD)
+    {
+		fclose(f);
+	    Error("Invalid BMP file");//: %s", filename);
+    }
+
+    // load in info header
+    if (fread(&info, sizeof(info), 1, f) != 1)
+    {
+		fclose(f);
+	    Error("Unable to read bitmap info header.");
+    }
+
+    // make sure this is an info type of bitmap
+    if (info.biSize != sizeof(binfo_t))
+    {
+		fclose(f);
+	    Error("We only support the info bitmap type.");
+    }
+
+    // PrintHeader(&info);
+
+	bit->bpp      = info.biBitCount;
+	bit->width    = info.biWidth;
+    bit->height   = info.biHeight;
+    bit->data     = NULL;
+    bit->palette  = NULL;
+
+    //currently we only read in 8 and 24 bit bmp files
+	if      (info.biBitCount == 8)  pixbytes = 1;
+	else if (info.biBitCount == 24) pixbytes = 3;
+	else
+    {
+      Error("Only 8BPP and 24BPP supported");
+		//Error("BPP %d not supported.", info.biBitCount);
+    }
+
+    // if this is an eight bit image load palette
+	if (pixbytes == 1)
+    {
+	    drgb_t q;
+
+	    bit->palette = reinterpret_cast<rgb_t*>(g_malloc(sizeof(rgb_t) * 256));
+
+	    for (i = 0; i < 256; i++)
+	    {
+	        if (fread(&q, sizeof(drgb_t), 1, f) != 1)
+	        {
+				fclose(f); g_free(bit->palette);
+		        Error("Unable to read palette.");
+			}
+
+	        bit->palette[i].r   = q.red;
+	        bit->palette[i].g   = q.green;
+	        bit->palette[i].b   = q.blue;
+		}
+    }
+
+    // position to start of bitmap
+    fseek(f, bhd.bfOffBits, SEEK_SET);
+
+    // create scanline to read data into
+    rowbytes = ((info.biWidth * pixbytes) + 3) / 4;
+    rowbytes *= 4;
+
+    scanline = reinterpret_cast<char*>(g_malloc(rowbytes));
+
+    // alloc space for new bitmap
+    bit->data = reinterpret_cast<unsigned char*>(g_malloc(info.biWidth * pixbytes * info.biHeight));
+
+    // read in image
+    for (i = 0; i < info.biHeight; i++)
+    {
+	    BMPLine(f, scanline, pixbytes, info.biWidth, info.biCompression);
+
+	    // store line
+	    memcpy(&bit->data[info.biWidth * pixbytes * (info.biHeight - i - 1)], scanline, info.biWidth * pixbytes);
+    }
+
+    g_free(scanline);
+    fclose(f);
 }
+
+
+
+static void BMPEncodeLine(FILE *f, unsigned char *data, int npxls, int pixbytes)
+{
+    int nbytes, i, j, k;
+
+	switch (pixbytes)
+	{
+	    case 1 :
+            nbytes = (npxls + 3) / 4;
+            nbytes *= 4;
+
+            fwrite(data, npxls, 1, f);
+            nbytes -= npxls;
+
+            while (nbytes-- > 0) fputc(0, f);
+			return;
+
+        case 3 :
+			// reorder rgb to bgr
+			for (i = 0, j = 0; i < npxls; i++, j+= 3)
+			{
+				k = data[j];
+				data[j] = data[j + 2];
+				data[j + 2] = k;
+			}
+
+			nbytes = ((npxls * 3) + 3) / 4;
+			nbytes *= 4;
+
+			fwrite(data, npxls, 3, f);
+			nbytes -= npxls * 3;
+
+			while (nbytes-- > 0) fputc(0, f);
+			return;
+	}
+
+	Error("BMPEncodeLine Failed.");
+}
+
+
+
+void WriteBMP(char *filename, bitmap_t *bit)
+{
+    FILE    *f;
+    bmphd_t  header;
+    binfo_t  info;
+    drgb_t   q;        // palette that gets written
+    long     bmofs;
+    int      w, h, i;
+	int      pixbytes;
+
+    if      (bit->bpp == 8)  pixbytes = 1;
+	else if (bit->bpp == 24) pixbytes = 3;
+
+	else
+    {
+    Error("Only 8BPP and 24BPP supported");
+		//Error("BPP %d not supported.", bit->bpp);
+    }
+
+
+    if ((f = fopen(filename, "wb")) == NULL)
+    {
+	    Error("Unable to open file");//%s.", filename);
+    }
+
+    // write out an empty header as a place holder
+    if (fwrite(&header, sizeof(header), 1, f) != 1)
+    {
+	    Error("Unable to fwrite.");
+    }
+
+    // init and write info header
+    info.biSize          = sizeof(binfo_t);
+    info.biWidth         = bit->width;
+    info.biHeight        = bit->height;
+    info.biPlanes        = 1;
+    info.biBitCount      = bit->bpp;
+    info.biCompression   = xBI_NONE;
+    info.biSizeImage     = bit->width * bit->height;
+    info.biXPelsPerMeter = 0;
+    info.biYPelsPerMeter = 0;
+    info.biClrUsed       = 256;
+    info.biClrImportant  = 256;
+
+    if (fwrite(&info, sizeof(binfo_t), 1, f) != 1)
+    {
+	    Error("fwrite failed.");
+    }
+
+    // write out palette if we need to
+	if (bit->bpp == 8)
+	{
+        for (i = 0; i < 256; i++)
+        {
+	        q.red   = bit->palette[i].r;
+	        q.green = bit->palette[i].g;
+	        q.blue  = bit->palette[i].b;
+
+	        fwrite(&q, sizeof(q), 1, f);
+		}
+    }
+
+    // save offset to start of bitmap
+    bmofs = ftell(f);
+
+    // output bitmap
+    w = bit->width;
+    h = bit->height;
+
+    for (i = h - 1; i >= 0; i--)
+    {
+	    BMPEncodeLine(f, &bit->data[w * pixbytes * i], w, pixbytes);
+    }
+
+    // update and rewrite file header
+    header.bfType    = BMP_SIGNATURE_WORD;
+    header.bfSize    = ftell(f);
+    header.bfOffBits = bmofs;
+
+    fseek(f, 0L, SEEK_SET);
+    fwrite(&header, sizeof(header), 1, f);
+
+    fclose(f);
+}
+
+
+void NewBMP(int width, int height, int bpp, bitmap_t *bit)
+{
+	int pixbytes;
+
+	if      (bpp == 8)  pixbytes = 1;
+	else if (bpp == 24) pixbytes = 3;
+
+	else
+	{
+		Error("NewBMP: 8 or 24 bit only.");
+	}
+
+	bit->bpp    = bpp;
+	bit->width  = width;
+	bit->height = height;
+
+	bit->data = reinterpret_cast<unsigned char*>(g_malloc(width * height * pixbytes));
+
+	if (bit->data == NULL)
+	{
+		Error("NewBMP: g_malloc failed.");
+	}
+
+	// see if we need to create a palette
+	if (pixbytes == 1)
+	{
+		bit->palette = (rgb_t *) g_malloc(768);
+
+		if (bit->palette == NULL)
+		{
+			Error("NewBMP: unable to g_malloc palette.");
+		}
+	}
+	else
+	{
+		bit->palette = NULL;
+	}
+}
+
+
+
+void FreeBMP(bitmap_t *bitmap)
+{
+    if (bitmap->palette)
+    {
+	    g_free(bitmap->palette);
+	    bitmap->palette = NULL;
+    }
+
+    if (bitmap->data)
+    {
+	    g_free(bitmap->data);
+	    bitmap->data = NULL;
+    }
+}
+
+

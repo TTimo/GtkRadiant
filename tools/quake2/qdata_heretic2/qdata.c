@@ -1,5 +1,5 @@
 /*
-Copyright (C) 1999-2006 Id Software, Inc. and contributors.
+Copyright (C) 1999-2007 id Software, Inc. and contributors.
 For a list of contributors, see the accompanying CONTRIBUTORS file.
 
 This file is part of GtkRadiant.
@@ -54,8 +54,6 @@ extern qboolean	g_nomkdir;
 
 =======================================================
 */
-
-unsigned Com_BlockChecksum (void *buffer, int length);
 
 typedef struct
 {
@@ -155,7 +153,6 @@ void FinishPak (void)
 	int		dirlen;
 	int		d;
 	int		i;
-	unsigned	checksum;
 
 	if (!g_pak)
 		return;
@@ -168,8 +165,6 @@ void FinishPak (void)
 	pakheader.dirofs = LittleLong(ftell(pakfile));
 	pakheader.dirlen = LittleLong(dirlen);
 	
-	checksum = Com_BlockChecksum ( (void *)pfiles, dirlen );
-
 	SafeWrite (pakfile, pfiles, dirlen);
 
 	i = ftell (pakfile);
@@ -180,7 +175,6 @@ void FinishPak (void)
 	
 	d = pf - pfiles;
 	printf ("%i files packed in %i bytes\n",d, i);
-	printf ("checksum: 0x%x\n", checksum);
 }
 
 

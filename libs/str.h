@@ -38,19 +38,18 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include <string.h>
 #include <ctype.h>
-
-#include <stdio.h>
 #include <stdarg.h>
 
-#include <cstdio>
-
-#ifdef WIN32
-#define strcasecmp strcmpi
-#if _MSC_VER < 1400 
-#define vsnprintf std::vsnprintf
+#ifdef __APPLE__
+  #ifdef NULL
+    #undef NULL
+    #define NULL 0
+  #endif
 #endif
-#else
-#include <cstddef>
+
+
+#ifdef _WIN32
+#define strcasecmp strcmpi
 #endif
 
 // NOTE TTimo __StrDup was initially implemented in pakstuff.cpp
@@ -59,15 +58,24 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #define __StrDup Q_StrDup
 
-inline char* Q_StrDup(const char* pStr)
-{ 
-  if (pStr == 0)
-    pStr = "";
+inline char* Q_StrDup( char* _pStr ) {
+	const char* pStr = _pStr;
+	if ( pStr == NULL ) {		
+		pStr = "";
+	}
 
-  return strcpy(new char[strlen(pStr)+1], pStr); 
+	return strcpy( new char[ strlen( pStr ) + 1 ], pStr );
 }
 
-#if !defined(WIN32)
+inline char* Q_StrDup( const char* pStr ) {
+	if ( pStr == NULL ) {
+		pStr = "";
+	}
+
+	return strcpy( new char[strlen(pStr)+1], pStr );
+}
+
+#if defined (__linux__) || defined (__APPLE__)
 #define strcmpi strcasecmp
 #define stricmp strcasecmp
 #define strnicmp strncasecmp
@@ -97,7 +105,7 @@ inline char* strupr(char* string)
 }
 #endif
 
-static char *g_pStrWork = 0;
+static char *g_pStrWork = NULL;
 
 class Str
 {
@@ -128,7 +136,7 @@ public:
   Str(const unsigned char *p)
   {
     m_bIgnoreCase = true;
-    m_pStr = __StrDup(reinterpret_cast<const char *>(p));
+    m_pStr = __StrDup((const char *)p);
   }
 
   Str(const char c)
@@ -144,11 +152,6 @@ public:
     return m_pStr;
   }
 
-  char* GetBuffer()
-  {
-    return m_pStr;
-  }
-
   Str(const Str &s)
   {
     m_bIgnoreCase = true;
@@ -158,10 +161,10 @@ public:
   void Deallocate()
   {
     delete []m_pStr;
-    m_pStr = 0;
+    m_pStr = NULL;
   }
 
-  void Allocate(std::size_t n)
+  void Allocate(int n)
   {
     Deallocate();
     m_pStr = new char[n];
@@ -173,13 +176,13 @@ public:
     m_pStr = __StrDup("");
   }
 
-  ~Str()
+  virtual ~Str()
   {
     Deallocate();
     // NOTE TTimo: someone explain this g_pStrWork to me?
     if (g_pStrWork)
       delete []g_pStrWork;
-    g_pStrWork = 0;
+    g_pStrWork = NULL;
   }
 
   void MakeLower()
@@ -201,20 +204,20 @@ public:
   void TrimRight()
     {
       char* lpsz = m_pStr;
-      char* lpszLast = 0;
+      char* lpszLast = NULL;
       while (*lpsz != '\0')
       {
 	if (isspace(*lpsz))
 	{
-	  if (lpszLast == 0)
+	  if (lpszLast == NULL)
 	    lpszLast = lpsz;
 	}
 	else
-	  lpszLast = 0;
+	  lpszLast = NULL;
 	lpsz++;
       }
  
-      if (lpszLast != 0)
+      if (lpszLast != NULL)
       {
 	// truncate at trailing space start
 	*lpszLast = '\0';
@@ -229,29 +232,33 @@ public:
 	lpsz++;
  
       // fix up data and length
-      std::size_t nDataLength = GetLength() - (lpsz - m_pStr);
+      int nDataLength = GetLength() - (lpsz - m_pStr);
       memmove(m_pStr, lpsz, (nDataLength+1));
     }
 
-  char* Find(const char *p)
+  int Find(const char *p)
   {
-    return strstr(m_pStr, p);
+    char *pf = strstr(m_pStr, p);
+    return (pf) ? (pf - m_pStr) : -1;
   }
 
   // search starting at a given offset
-  char* Find(const char *p, std::size_t offset)
+  int Find(const char *p, int offset)
   {
-    return strstr(m_pStr+offset, p);
+    char *pf = strstr(m_pStr+offset, p);
+    return (pf) ? (pf - m_pStr) : -1;
   }
 
-  char* Find(const char ch)
+  int Find(const char ch)
   {
-    return strchr (m_pStr, ch);
+    char *pf = strchr (m_pStr, ch);
+    return (pf) ? (pf - m_pStr) : -1;
   }
 
-  char* ReverseFind(const char ch)
+  int ReverseFind(const char ch)
   {
-    return strrchr(m_pStr, ch);
+    char *pf = strrchr(m_pStr, ch);
+    return (pf) ? (pf - m_pStr) : -1;
   }
 
   int Compare (const char* str) const
@@ -264,12 +271,12 @@ public:
     return strcasecmp (m_pStr, str);
   }
 
-  std::size_t GetLength()
+  int GetLength()
   {
     return (m_pStr) ? strlen(m_pStr) : 0;
   }
 
-  const char* Left(std::size_t n)
+  const char* Left(int n)
   {
     delete []g_pStrWork;
     if (n > 0)
@@ -280,20 +287,19 @@ public:
     }
     else
     {
-      g_pStrWork = "";
       g_pStrWork = new char[1];
       g_pStrWork[0] = '\0';
     }
     return g_pStrWork;
   }
 
-  const char* Right(std::size_t n)
+  const char* Right(int n)
   {
     delete []g_pStrWork;
     if (n > 0)
     {
       g_pStrWork = new char[n+1];
-      std::size_t nStart = GetLength() - n;
+      int nStart = GetLength() - n;
       strncpy(g_pStrWork, &m_pStr[nStart], n);
       g_pStrWork[n] = '\0';
     }
@@ -305,12 +311,12 @@ public:
     return g_pStrWork;
   }
 
-  const char* Mid(std::size_t nFirst) const
-  {
-    return Mid(nFirst, strlen (m_pStr) - nFirst);
-  }
+  const char* Mid(int nFirst) const
+    {
+      return Mid(nFirst, strlen (m_pStr) - nFirst);
+    }
 
-  const char* Mid(std::size_t first, std::size_t n) const
+  const char* Mid(int first, int n) const
   {
     delete []g_pStrWork;
     if (n > 0)
@@ -321,14 +327,13 @@ public:
     }
     else
     {
-      g_pStrWork = "";
       g_pStrWork = new char[1];
       g_pStrWork[0] = '\0';
     }
     return g_pStrWork;
   }
 
-#if 0 // defined(__G_LIB_H__)
+#ifdef __G_LIB_H__
   void Format(const char* fmt, ...)
   {
     va_list args;
@@ -345,41 +350,38 @@ public:
 #else
   void Format(const char* fmt, ...)
   {
-    char buffer[1024];
+    va_list args;
+    m_pStr = new char[1024];
 
-    {
-      va_list args;
-      va_start (args, fmt);
-      vsnprintf(buffer, 1023, fmt, args);
-      va_end (args);
-    }
-
-    delete[] m_pStr;
-    m_pStr = __StrDup(buffer);
+    va_start (args, fmt);
+    vsprintf (m_pStr, fmt, args);
+    va_end (args);
   }
 #endif
 
-  void SetAt(std::size_t n, char ch)
+  void SetAt(int n, char ch)
   {
-    if (n < GetLength())
+    if (n >= 0 && n < GetLength ())
       m_pStr[n] = ch;
   }
 
 	// NOTE: unlike CString, this looses the pointer
-  void ReleaseBuffer(std::size_t n)
+  void ReleaseBuffer(int n = -1)
   {
+    if (n == -1)
+      n = GetLength ();
+
     char* tmp = m_pStr;
     tmp[n] = '\0';
     m_pStr = __StrDup(tmp);
     delete []tmp;
   }
-  void ReleaseBuffer()
-  {
-    ReleaseBuffer(GetLength());
-  }
 
-  char* GetBufferSetLength(std::size_t n)
+  char* GetBufferSetLength(int n)
   {
+    if (n < 0)
+      n = 0;
+
     char *p = new char[n+1];
     strncpy (p, m_pStr, n);
 		p[n] = '\0';
@@ -392,9 +394,9 @@ public:
   //  char& operator *() const { return *const_cast<Str*>(this)->m_pStr; }
   operator void*() { return m_pStr; }
   operator char*() { return m_pStr; }
-  operator const char*() const{ return reinterpret_cast<const char*>(m_pStr); }
+  operator const char*(){ return reinterpret_cast<const char*>(m_pStr); }
   operator unsigned char*() { return reinterpret_cast<unsigned char*>(m_pStr); }
-  operator const unsigned char*() const { return reinterpret_cast<const unsigned char*>(m_pStr); }
+  operator const unsigned char*() { return reinterpret_cast<const unsigned char*>(m_pStr); }
   Str& operator =(const Str& rhs)
   {
     if (&rhs != this)
@@ -417,7 +419,7 @@ public:
 
   Str& operator +=(const char ch)
   {
-    std::size_t len = GetLength();
+    int len = GetLength ();
     char *p = new char[len + 1 + 1];
 
     if (m_pStr)
@@ -466,47 +468,10 @@ public:
   bool operator >(const Str& rhs) const { return (m_bIgnoreCase) ? stricmp(m_pStr, rhs.m_pStr) > 0 : strcmp(m_pStr, rhs.m_pStr) > 0; }
   bool operator >(char* pStr) const { return (m_bIgnoreCase) ? stricmp(m_pStr, pStr) > 0 : strcmp(m_pStr, pStr) > 0; }
   bool operator >(const char* pStr) const { return (m_bIgnoreCase) ? stricmp(m_pStr, pStr) > 0 : strcmp(m_pStr, pStr) > 0; }
-  char& operator [](std::size_t nIndex) { return m_pStr[nIndex]; }
-  const char& operator [](std::size_t nIndex) const { return m_pStr[nIndex]; }
-  const char GetAt (std::size_t nIndex) { return m_pStr[nIndex]; }
+  char& operator [](int nIndex) { return m_pStr[nIndex]; }
+  char& operator [](int nIndex) const { return m_pStr[nIndex]; }
+  const char GetAt (int nIndex) { return m_pStr[nIndex]; }
 };
-
-
-template<typename TextOutputStreamType>
-inline TextOutputStreamType& ostream_write(TextOutputStreamType& ostream, const Str& str)
-{
-  return ostream << str.GetBuffer();
-}
-
-
-inline void AddSlash(Str& strPath)
-{
-  if (strPath.GetLength() > 0)
-  {
-    if ((strPath.GetAt(strPath.GetLength()-1) != '/') &&
-	(strPath.GetAt(strPath.GetLength()-1) != '\\'))
-      strPath += '/';
-  }
-}
-
-inline bool ExtractPath_and_Filename(const char* pPath, Str& strPath, Str& strFilename)
-{
-  Str strPathName;
-  strPathName = pPath;
-  const char* substr = strPathName.ReverseFind('\\');
-  if (substr == 0)
-    // TTimo: try forward slash, some are using forward
-    substr = strPathName.ReverseFind('/');
-  if (substr != 0)
-  {
-    std::size_t nSlash = substr - strPathName.GetBuffer();
-    strPath = strPathName.Left(nSlash+1);
-    strFilename = strPathName.Right(strPathName.GetLength() - nSlash - 1);
-  }
-  else
-    strFilename = pPath;
-  return true;
-}
 
 
 

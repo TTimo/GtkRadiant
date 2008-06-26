@@ -1,8 +1,0 @@
-<?xml version="1.0"?>
-<package name="Elite Force Example Maps" version="1.0.0" target="[ProgramFilesFolder]\Raven\Star Trek Voyager Elite Force\" code="afdb07d8-ea58-4af4-9305-1a61c40d34ea" license="..\license.rtf">
-  <feature name="Elite Force Example Maps" desc="This feature must be installed in your Star Trek Voyager: Elite Force folder.">
-    <feature name="Elite Force Maps" desc="Example maps, models and textures for Star Trek Voyager: Elite Force">
-      <component name=".\components\ef_data.xml" root="..\..\games\STVEFPack"/>
-    </feature>
-  </feature>
-</package>

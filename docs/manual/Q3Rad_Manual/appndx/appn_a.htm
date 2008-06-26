@@ -1,0 +1,56 @@
+<html>
+<head>
+<title>Q3Radiant Editor Manual: Appendix A</title>
+<link rel = "stylesheet" type = "text/css" href = "../styles/q3rad.css">
+</head>
+<body>
+<h1 class = "MsoTitle">Q3Radiant Editor Manual</h1>
+<hr>
+<h1>Appendix A: Glossary of Terms</h1>
+
+<b>Alpha Channel:</b> This is a fourth 8-bit grayscale channel that is used by the shaders to further manipulate the art. It is often used to create transparency and translucency.
+<br><b>Arena:</b> A confined space in which <i>Quake III Arena</i> game play occurs. This is also called a "map" or a "level".
+<br><b>B_Model:</b> An entity, such as a lift, train, door, or rotating object, made of geometry brushes. These models can also contain curve patches and md3 models as components.
+<br><b>Brush:</b> A single piece of map geometry defined by four or more vertices that define a solid, convex volume.
+<br><b>Bot:</b> A computer-controlled player. To the server, a bot is treated as if it were a player. Some entities can make a distinction between interaction with, or use by "live" players and/or bots.
+<br><b>Bsp:</b> An abbreviation for Binary Space Partitioning. This is used as a name for the compiling process.
+<br><b>BSPC:</b> The utility, which creates a bot navigation .aas file for a map. Currently, it is run from outside the editor.
+<br><b>Compile:</b> A number crunching process that turns editor code into game code. This is also referred to as "bsp".
+<br><b>CTF:</b> (g_gametype 4) Abbreviation for the team game type "Capture the Flag."
+<br><b>Delay:</b>&nbsp; A keyword for the amount of time, expressed in seconds (value), between the moment when activation occurs and the moment when the event it triggers occurs.
+<br><b>DM:</b> Abbreviation for "Death Match."
+<br><b>Editor:</b> Usually refers to the tool, in this case, Q3Radiant, used to make game maps.
+<br><b>Entity:</b> One of several classes of objects that are placed into game maps. Entities include miscellaneous models, ammo, weapons, point lights, doors, moving objects and so on.
+<br><b>Event:</b> Something that happens during game play. Activating a trigger is an event.
+<br><b>FFA:</b> (g_gametype 0) Abbreviation for "Free for All" a style of play in which every player is pitted against all other players.
+<br><b>FPS:</b> This is Frames per Second, sometimes call frame rate. This number shows approximately how many times the screen is being redrawn each second. This number depends on many factors, including the complexity of the map, the number of players in the map (bots are worse than humans), the processing power of the computer and the processing power of the video accelerator card in that computer. It is not the best measure for determining the playability of a map.
+<br><b>FOV:</b> Field of View how much of the game world can be see at one time, either in the game or the camera window of the editor.
+<br><b>Game Unit:</b> The basic unit of measure in a game map. Eight game units are approximately equal to one foot (30.48 cm) in the "real" world. This measure is also referred to as simply a "unit."
+<br><b>Grid</b>: In the Map Windows, this is a measuring tool, much like graph paper.
+<br><b>Key:</b> A key is a property possessed by an entity in the game. Light entities have a default value of 300. See the Entity description appendix for details Entering in the key "light" with a "value" of 150 reduces that by half.
+<br><b>Map:</b> Also called an arena or a game level. It is a self-contained game play area created by an editing tool like
+Q3Radiant. It can refer to both the map file and the final playable product.
+<br><b>Map Component:</b> This is anything placed in the editor to create the map. It includes geometry brushes, curve patches, lights, entities, and models.
+<br><b>Md3:</b> Shorthand for a mesh model created and textured outside of Q3Radiant. The acronym refers to the custom file format used for the models in <i>Quake III Arena</i>.
+<br><b>Patch:</b> Any map component built from bezier curves. This includes bevels, caps, patches, and cylinders.
+<br><b>Pathname:</b> The sequence of file folders/directories from a starting point to a game asset or executable.
+<br><b>Pixel:</b> The smallest definable graphic component. This literally means, "Picture element". A game unit typically consists of a square cluster of 4 pixels (two pixels by two pixels).
+<br><b>POV:</b> Point of View. This is essentially, where the eye sits in relation to the game world.
+<br><b>Project:</b> A text file that contains the path designations for the various editor functions of Q3Radiant.
+<br><b>PVS:</b> Potential Viewable Set. Refers to those world triangles that might be seen from a position in the game world.
+<br><b>R_Speeds:</b> This is a set of numbers used to debug maps for visual complexity<b>.&nbsp;</b> They show the number of triangles that are being drawn in a given point of view. Lower numbers are better.
+<br><b>Region:</b> A subset of the map. Selecting one or more map components and using a menu command to set them off temporarily from the rest of the map create regions.
+<br><b>Script:</b> A text file that contains instructions for the game. Examples: arena.txt, base_floor.shader, debug.cfg.
+<br><b>Shader:</b> A short script of program commands that define the way the graphic engine processes a texture.
+<br><b>Team DM:</b> (g_gametype 3) A team of players takes on another team to get the most frags.
+<br><b>Texture:</b> A graphic file designed to suggest a physical surface or a component for a graphic special effect.
+<br><b>T-Junction Cracks:</b> A visual artifact resulting from patch vertices that are not properly matched to world geometry. This is characterized by 'sparkles' running along the edge of the patch.
+<br><b>Tournament</b>: (g_gametype 1) This is a mode of game play characterized by a one on one match with other players watching as spectators while waiting their turns. The winner of the match plays the next opponent.
+<br><b>Trigger:</b> A map component that activates events in the game world under the right conditions.
+<br><b>Unit:</b> (See "Game Unit")
+<br><b>Value:</b> A setting for a key possessed by an entity. Depending on the key, values can be numbers, pathnames, word
+strings, or word commands. See individual Entity descriptions for details.
+<br><b>Z-fighting:</b> A visual artifact caused when two z-buffered surfaces share the same plane, resulting in the engine trying to draw both simultaneously.
+<p align = "center"><a href = "../ch12/pg12_1.htm">Back</a> | <a href = "../index.htm">Home</a> | <a href = "appn_b_1.htm">Next</a>
+</body>
+</html>

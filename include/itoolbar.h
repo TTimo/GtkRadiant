@@ -1,5 +1,5 @@
 /*
-Copyright (C) 1999-2006 Id Software, Inc. and contributors.
+Copyright (C) 1999-2007 id Software, Inc. and contributors.
 For a list of contributors, see the accompanying CONTRIBUTORS file.
 
 This file is part of GtkRadiant.
@@ -19,11 +19,16 @@ along with GtkRadiant; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#if !defined(INCLUDED_IPLUGTOOLBAR_H)
-#define INCLUDED_IPLUGTOOLBAR_H
+#ifndef __IPLUGTOOLBAR_H_
+#define __IPLUGTOOLBAR_H_
 
-#include <cstddef>
-#include "generic/constant.h"
+/*
+NOTE: this API requires Gtk
+it's a good practice to avoid putting #include <gtk/gtk.h> here
+in some cases, the compiler will get confused because of 'list' identifiers between Gtk and STL headers
+*/
+
+#define TOOLBAR_MAJOR "toolbar"
 
 class IToolbarButton
 {
@@ -36,6 +41,7 @@ public:
     eRadioButton,
   };
 
+  virtual ~IToolbarButton() { }
   virtual const char* getImage() const = 0;
   virtual const char* getText() const = 0;
   virtual const char* getTooltip() const = 0;
@@ -43,24 +49,14 @@ public:
   virtual void activate() const = 0;
 };
 
-typedef std::size_t  (* PFN_TOOLBARBUTTONCOUNT)();
-typedef const IToolbarButton* (* PFN_GETTOOLBARBUTTON)(std::size_t index);
+typedef unsigned int  (* PFN_TOOLBARBUTTONCOUNT)();
+typedef const IToolbarButton* (* PFN_GETTOOLBARBUTTON)(unsigned int index);
 
 struct _QERPlugToolbarTable
 {
-  INTEGER_CONSTANT(Version, 1);
-  STRING_CONSTANT(Name, "toolbar");
-
+  int m_nSize;
   PFN_TOOLBARBUTTONCOUNT m_pfnToolbarButtonCount;
   PFN_GETTOOLBARBUTTON   m_pfnGetToolbarButton;
 };
-
-template<typename Type>
-class Modules;
-typedef Modules<_QERPlugToolbarTable> ToolbarModules;
-
-template<typename Type>
-class ModulesRef;
-typedef ModulesRef<_QERPlugToolbarTable> ToolbarModulesRef;
 
 #endif

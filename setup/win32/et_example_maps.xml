@@ -1,8 +1,0 @@
-<?xml version="1.0"?>
-<package name="Enemy Territory Example Maps" version="1.0.0" target="[ProgramFilesFolder]\Wolfenstein - Enemy Territory\" code="d2644618-a31f-4dbe-91c0-9561b22764ce" license="..\license.rtf">
-  <feature name="Enemy Territory Example Maps" desc="This feature must be installed in your Wolfenstein: Enemy Territory folder.">
-    <feature name="Enemy Territory Maps" desc="Example maps, models and textures for Wolfenstein: Enemy Territory">
-      <component name=".\components\et_data.xml" root="..\..\games\ETPack"/>
-    </feature>
-  </feature>
-</package>

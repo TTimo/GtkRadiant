@@ -1,5 +1,5 @@
 /*
-Copyright (C) 1999-2006 Id Software, Inc. and contributors.
+Copyright (C) 1999-2007 id Software, Inc. and contributors.
 For a list of contributors, see the accompanying CONTRIBUTORS file.
 
 This file is part of GtkRadiant.
@@ -28,7 +28,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <stdio.h>
 #include <stdlib.h>
 
-#if !defined(WIN32)
+#if defined(__linux__) || defined(__APPLE__)
 
 // Necessary for proper boolean type declaration
 #include "qertypes.h"
@@ -125,7 +125,7 @@ typedef struct
 } CtrlPts_t;
 #include "ControlPointsManager.h"
 
-extern OpenGLBinding		        g_QglTable;
+extern _QERQglTable		        g_QglTable;
 extern _QERFuncTable_1			g_FuncTable;
 // prefs globals
 // NOTE: these are used by the CControlPointsManager classes, not very C++ish

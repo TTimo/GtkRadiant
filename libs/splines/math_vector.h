@@ -1,5 +1,5 @@
 /*
-Copyright (C) 1999-2006 Id Software, Inc. and contributors.
+Copyright (C) 1999-2007 id Software, Inc. and contributors.
 For a list of contributors, see the accompanying CONTRIBUTORS file.
 
 This file is part of GtkRadiant.
@@ -22,7 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #ifndef __MATH_VECTOR_H__
 #define __MATH_VECTOR_H__
 
-#ifdef WIN32
+#ifdef _WIN32
 #pragma warning(disable : 4244)
 #endif
 

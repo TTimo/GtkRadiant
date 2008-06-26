@@ -1,31 +1,13 @@
-/*
-Copyright (C) 1999-2006 Id Software, Inc. and contributors.
-For a list of contributors, see the accompanying CONTRIBUTORS file.
-
-This file is part of GtkRadiant.
-
-GtkRadiant is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-GtkRadiant is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with GtkRadiant; if not, write to the Free Software
-Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-*/
-
 #ifndef __SPLINES_H
 #define __SPLINES_H
 
 #define GTKRADIANT
 
+#ifndef CAMERA_PLUGIN
 #ifdef GTKRADIANT
-#include "igl.h"
+#include "misc_def.h"
+#include "igl_to_qgl.h"
+#endif
 #endif
 
 #include "util_list.h"
@@ -602,10 +584,10 @@ public:
 	virtual void draw(bool editMode) {
 		glLabeledPoint(blue, startPos, (editMode) ? 5 : 3, "Start interpolated");
 		glLabeledPoint(blue, endPos, (editMode) ? 5 : 3, "End interpolated");
-	  glBegin(GL_LINES);
-	  glVertex3fv(startPos);
-	  glVertex3fv(endPos);
-	  glEnd();
+		qglBegin(GL_LINES);
+		qglVertex3fv(startPos);
+		qglVertex3fv(endPos);
+		qglEnd();
 	}
 
 	virtual void start(long t) {

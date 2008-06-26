@@ -1,5 +1,5 @@
 /*
-Copyright (C) 1999-2006 Id Software, Inc. and contributors.
+Copyright (C) 1999-2007 id Software, Inc. and contributors.
 For a list of contributors, see the accompanying CONTRIBUTORS file.
 
 This file is part of GtkRadiant.
@@ -33,7 +33,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <sys/types.h>
 #include <sys/stat.h>
 
-#ifdef WIN32
+#ifdef _WIN32
 #include <direct.h>
 #include <windows.h>
 #endif
@@ -42,11 +42,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "l_net/l_net.h"
 #include "libxml/tree.h"
 
-// utf8 conversion
-#include <glib/gconvert.h>
-#include <glib/gmem.h>
-
-#ifdef WIN32
+#ifdef _WIN32
 HWND hwndOut = NULL;
 qboolean lookedForServer = qfalse;
 UINT wm_BroadcastCommand = -1;
@@ -293,11 +289,7 @@ void FPrintf (int flag, char *buf)
     bGotXML = qtrue;
   }
   node = xmlNewNode (NULL, "message");
-  {
-    gchar* utf8 = g_locale_to_utf8(buf, -1, NULL, NULL, NULL); 
-    xmlNodeSetContent(node, utf8);
-    g_free(utf8);
-  }
+  xmlNodeSetContent (node, buf);
   level[0] = (int)'0' + flag;
   level[1] = 0;
   xmlSetProp (node, "level", (char *)&level );

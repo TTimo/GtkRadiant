@@ -1,6 +1,6 @@
 /*
-Copyright (C) 2001-2006, William Joseph.
-All Rights Reserved.
+Copyright (C) 1999-2007 id Software, Inc. and contributors.
+For a list of contributors, see the accompanying CONTRIBUTORS file.
 
 This file is part of GtkRadiant.
 
@@ -19,109 +19,55 @@ along with GtkRadiant; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#if !defined(INCLUDED_IBRUSH_H)
-#define INCLUDED_IBRUSH_H
+#ifndef _IBRUSH_H_
+#define _IBRUSH_H_
 
-#include "generic/constant.h"
-#include "generic/callback.h"
-#include "generic/vector.h"
-#include "itexdef.h"
+//
+// API for brush stuff
+//
 
-namespace scene
+#define BRUSH_MAJOR "brush"
+// {c1c3f567-2541-4aa3-9d5b-031fbe2a013b}
+static const GUID QERBrushTable_GUID = 
+{ 0xc1c3f567, 0x2541, 0x4aa3, { 0x9d, 0x5b, 0x03, 0x1f, 0xbe, 0x2a, 0x01, 0x3b } };
+
+typedef void	    (* PFN_BRUSHADDTOLIST)  (brush_t *b, brush_t *lst);
+typedef void      (* PFN_BRUSHBUILD)      (brush_t *b, bool bSnap, bool bMarkMap, bool bConvert, bool bFilterTest);
+typedef brush_t*  (* PFN_BRUSHCREATE)     (vec3_t mins, vec3_t maxs, texdef_t *texdef);
+typedef void      (* PFN_BRUSHFREE)       (brush_t *b, bool bRemoveNode);
+typedef void      (* PFN_BRUSHROTATE)     (brush_t *b, vec3_t vAngle, vec3_t vOrigin, bool bBuild);
+typedef brush_t*  (* PFN_BRUSHALLOC)      ();
+typedef int       (* PFN_BPMESSAGEBOX)    (int);
+typedef face_t*   (* PFN_FACEALLOC)       (void);
+typedef eclass_t* (* PFN_HASMODEL)        (brush_t *b);
+
+struct _QERBrushTable
 {
-  class Node;
-}
-
-#if 0
-class IBrushFace
-{
-public:
-  virtual const char* GetShader() const = 0;
-  virtual void SetShader(const char* name) = 0;
-  virtual const TextureProjection& GetTexdef() const = 0;
-  virtual void GetTexdef(TextureProjection& projection) const = 0;
-  virtual void SetTexdef(const TextureProjection& projection) = 0;
-  virtual void GetFlags(ContentsFlagsValue& flags) const = 0;
-  virtual void SetFlags(const ContentsFlagsValue& flags) = 0;
-  virtual void ShiftTexdef(float s, float t) = 0;
-  virtual void ScaleTexdef(float s, float t) = 0;
-  virtual void RotateTexdef(float angle) = 0;
-  virtual void FitTexture(float s_repeat, float t_repeat) = 0;
-  virtual bool isDetail() const = 0;
-  virtual void setDetail(bool detail) = 0;
+  int m_nSize;
+  PFN_BRUSHADDTOLIST m_pfnBrush_AddToList;
+  PFN_BRUSHBUILD m_pfnBrush_Build;
+  PFN_BRUSHCREATE m_pfnBrush_Create;
+  PFN_BRUSHFREE m_pfnBrush_Free;
+  PFN_BRUSHROTATE m_pfnBrush_Rotate;
+  PFN_BRUSHALLOC m_pfnBrushAlloc;
+  PFN_BPMESSAGEBOX m_pfnBP_MessageBox;
+  PFN_FACEALLOC m_pfnFace_Alloc;
+  PFN_HASMODEL m_pfnHasModel;
 };
 
-class IBrush
-{
-public:
-  STRING_CONSTANT(Name, "IBrush");
-  virtual void reserve(std::size_t count) = 0;
-  virtual void clear() = 0;
-  virtual void copy(const IBrush& other) = 0;
-  virtual IBrushFace* addPlane(const Vector3& p0, const Vector3& p1, const Vector3& p2, const char* shader, const TextureProjection& projection) = 0;
-  virtual const AABB& localAABB() const = 0;
-  virtual void removeEmptyFaces() = 0;
-};
-
-class IBrushFaceInstance
-{
-public:
-  virtual IBrushFace& getFace() = 0;
-  virtual const IBrushFace& getFace() const = 0;
-  virtual bool isSelected() const = 0;
-  virtual void setSelected(SelectionSystem::EComponentMode mode, bool select) const = 0;
-};
-
-class IBrushInstance
-{
-public:
-  STRING_CONSTANT(Name, "IBrushInstance");
-  virtual void forEachFaceInstance(const BrushInstanceVisitor& visitor) = 0;
-};
+#ifdef USE_BRUSHTABLE_DEFINE
+#ifndef __BRUSHTABLENAME
+#define __BRUSHTABLENAME g_BrushTable
 #endif
-
-class _QERFaceData
-{
-public:
-  _QERFaceData() : m_shader(""), contents(0), flags(0), value(0)
-  {
-  }
-  Vector3 m_p0;
-  Vector3 m_p1;
-  Vector3 m_p2;
-  texdef_t m_texdef;
-  const char* m_shader;
-  int contents;
-  int flags;
-  int value;
-};
-
-typedef Callback1<const _QERFaceData&> BrushFaceDataCallback;
-
-class BrushCreator
-{
-public:
-  INTEGER_CONSTANT(Version, 1);
-  STRING_CONSTANT(Name, "brush");
-  virtual scene::Node& createBrush() = 0;
-  virtual bool useAlternativeTextureProjection() const = 0;
-  virtual void Brush_forEachFace(scene::Node& brush, const BrushFaceDataCallback& callback) = 0;
-  virtual bool Brush_addFace(scene::Node& brush, const _QERFaceData& faceData) = 0;
-};
-
-#include "modulesystem.h"
-
-template<typename Type>
-class GlobalModule;
-typedef GlobalModule<BrushCreator> GlobalBrushModule;
-
-template<typename Type>
-class GlobalModuleRef;
-typedef GlobalModuleRef<BrushCreator> GlobalBrushModuleRef;
-
-inline BrushCreator& GlobalBrushCreator()
-{
-  return GlobalBrushModule::getTable();
-}
+#define Brush_AddToList __BRUSHTABLENAME.m_pfnBrush_AddToList
+#define Brush_Build __BRUSHTABLENAME.m_pfnBrush_Build
+#define Brush_Create __BRUSHTABLENAME.m_pfnBrush_Create
+#define Brush_Free __BRUSHTABLENAME.m_pfnBrush_Free
+#define Brush_Rotate __BRUSHTABLENAME.m_pfnBrush_Rotate
+#define Brush_Alloc __BRUSHTABLENAME.m_pfnBrushAlloc
+#define BP_MessageBox __BRUSHTABLENAME.m_pfnBP_MessageBox
+#define Face_Alloc __BRUSHTABLENAME.m_pfnFace_Alloc
+#define HasModel __BRUSHTABLENAME.m_pfnHasModel
+#endif
 
 #endif

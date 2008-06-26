@@ -155,22 +155,32 @@ void *_pico_realloc( void **ptr, size_t oldSize, size_t newSize )
  *  as custom clone size (the string is cropped to fit into mem
  *  if needed). -sea
  */
-char *_pico_clone_alloc( const char *str )
+char *_pico_clone_alloc( char *str, int size )
 {
-  char* cloned;
+	char  *cloned;
+	size_t cloneSize;
 
 	/* sanity check */
-	if (str == NULL)
-    return NULL;
+	if (str == NULL) return NULL;
+
+	/* set real size of cloned string */
+	cloneSize = (size < 0) ? strlen(str) : size;
 
 	/* allocate memory */
-	cloned = _pico_alloc( strlen(str) + 1 );
+	cloned = _pico_alloc( cloneSize+1 ); /* bugfix! */
 	if (cloned == NULL)
 		return NULL;
 
-	/* copy input string to cloned string */
-	strcpy( cloned, str );
+	/* zero out memory allocated by cloned string */
+	memset( cloned,0,cloneSize );
 
+	/* copy input string to cloned string */
+	if (cloneSize < strlen( str )) {
+		memcpy( cloned,str,cloneSize );
+		cloned[ cloneSize ] = '\0';
+	} else {
+		strcpy( cloned,str );
+	}
 	/* return ptr to cloned string */
 	return cloned;
 }
@@ -257,21 +267,8 @@ void _pico_printf( int level, const char *format, ...)
 	_pico_ptr_print( level,str );
 }
 
-/* _pico_first_token:
- * trims everything after the first whitespace-delimited token
- */
-
-void _pico_first_token( char *str )
-{
-	if( !str || !*str )
-		return;
-	while( *str && !isspace( *str ) )
-		*str++;
-	*str = '\0';
-}
-
 /* _pico_strltrim:
- * left trims the given string -sea
+ *   left trims the given string -sea
  */
 char *_pico_strltrim( char *str )
 {
@@ -285,7 +282,7 @@ char *_pico_strltrim( char *str )
 }
 
 /* _pico_strrtrim:
- * right trims the given string -sea
+ *   right trims the given string -sea
  */
 char *_pico_strrtrim( char *str )
 {
@@ -557,7 +554,7 @@ float _pico_big_float( float src )
  */
 char *_pico_stristr( char *str, const char *substr )
 {
-	const size_t sublen = strlen(substr);
+	const int sublen = strlen(substr);
 	while (*str)
 	{
 		if (!_pico_strnicmp(str,substr,sublen)) break;
@@ -617,21 +614,21 @@ int _pico_nofname( const char *path, char *dest, int destSize )
  *  returns ptr to filename portion in given path or an empty
  *  string otherwise. given 'path' is not altered. -sea
  */
-const char *_pico_nopath( const char *path )
+char *_pico_nopath( const char *path )
 {
-	const char *src;
-	src = path + (strlen(path) - 1);
+	char *src;
+	src = (char *)path + (strlen(path) - 1);
 
-	if (path == NULL) return "";
-	if (!strchr(path,'/') && !strchr(path,'\\'))
-		return (path);
+	if (path == NULL) return (char *)"";
+	if (!strchr((char *)path,'/') && !strchr((char *)path,'\\'))
+		return ((char *)path);
 
 	while ((src--) != path)
 	{
 		if (*src == '/' || *src == '\\')
 			return (++src);
 	}
-	return "";
+	return (char *)"";
 }
 
 /* _pico_setfext:

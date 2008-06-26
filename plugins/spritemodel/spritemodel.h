@@ -1,5 +1,6 @@
 /*
-Copyright (C) 2002 Dominic Clifton.
+Copyright (C) 1999-2007 id Software, Inc. and contributors.
+For a list of contributors, see the accompanying CONTRIBUTORS file.
 
 This file is part of GtkRadiant.
 
@@ -54,6 +55,3 @@ private:
   int refCount;
 	aabb_t m_BBox;
 };
-
-void LoadSpriteModel(entity_interfaces_t *interfaces, const char *name);
-

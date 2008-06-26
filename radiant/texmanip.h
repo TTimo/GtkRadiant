@@ -29,12 +29,11 @@ ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
 */
 
-#if !defined(INCLUDED_TEXMANIP_H)
-#define INCLUDED_TEXMANIP_H
+#ifndef _TEXMANIP_H_
+#define _TEXMANIP_H_
 
-typedef unsigned char byte;
-
-void R_ResampleTexture (const void *indata, int inwidth, int inheight, void *outdata,  int outwidth, int outheight, int bytesperpixel);
+void R_ResampleTextureLerpLine (byte *in, byte *out, int inwidth, int outwidth, int bytesperpixel);
+void R_ResampleTexture (void *indata, int inwidth, int inheight, void *outdata,  int outwidth, int outheight, int bytesperpixel);
 void GL_MipReduce(byte *in, byte *out, int width, int height, int destwidth, int destheight);
 
-#endif
+#endif // _TEXMANIP_H_

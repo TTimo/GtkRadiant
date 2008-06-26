@@ -1,5 +1,5 @@
 /*
-Copyright (C) 1999-2006 Id Software, Inc. and contributors.
+Copyright (C) 1999-2007 id Software, Inc. and contributors.
 For a list of contributors, see the accompanying CONTRIBUTORS file.
 
 This file is part of GtkRadiant.
@@ -41,18 +41,18 @@ class CControlPointsManager
 {
 protected:
   // used by Render
-  OpenGLBinding *m_pQglTable;
+  _QERQglTable *m_pQglTable;
   C2DView		*m_p2DView;
 public:
   CControlPointsManager() { m_pQglTable = NULL; m_p2DView = NULL; }
   virtual ~CControlPointsManager() { }
-  void Init( C2DView *p2DView, OpenGLBinding *pQglTable ) { m_pQglTable = pQglTable; m_p2DView = p2DView; }
+  void Init( C2DView *p2DView, _QERQglTable *pQglTable ) { m_pQglTable = pQglTable; m_p2DView = p2DView; }
 
   virtual bool OnLButtonDown (int x, int y) = 0;
   virtual bool OnMouseMove (int x, int y) = 0;
   virtual bool OnLButtonUp (int x, int y) = 0;
 
-  virtual void render() = 0;
+  virtual void Render() = 0;
   virtual void Commit() = 0;
 };
 
@@ -87,14 +87,14 @@ public:
   CControlPointsManagerBFace() { ManagerState = Idle; }
   virtual ~CControlPointsManagerBFace() { }
   // NOTE: pQglTable is sent to CControlPointsManager::Init
-  void Init(int iPts, CtrlPts_t *Pts, C2DView *p2DView, int TexSize[2], _QERFaceData* pFaceData, OpenGLBinding *pQglTable);
+  void Init(int iPts, CtrlPts_t *Pts, C2DView *p2DView, int TexSize[2], _QERFaceData* pFaceData, _QERQglTable *pQglTable);
   // CControlPointsManager interface -------------------------------------
 
   virtual bool OnLButtonDown (int x, int y);
   virtual bool OnMouseMove (int x, int y);
   virtual bool OnLButtonUp (int x, int y);
 
-  virtual void render();
+  virtual void Render();
   virtual void Commit();
 
 private:
@@ -119,14 +119,14 @@ public:
   CControlPointsManagerPatch() { ManagerState = Idle; }
   virtual ~CControlPointsManagerPatch() { }
   // NOTE: pQglTable is sent to CControlPointsManager::Init
-  void Init( patchMesh_t* pWorkPatch, C2DView *p2DView, OpenGLBinding *pQglTable, patchMesh_t* pPatch );
+  void Init( patchMesh_t* pWorkPatch, C2DView *p2DView, _QERQglTable *pQglTable, patchMesh_t* pPatch );
   // CControlPointsManager interface -------------------------------------
 
   virtual bool OnLButtonDown (int x, int y);
   virtual bool OnMouseMove (int x, int y);
   virtual bool OnLButtonUp (int x, int y);
 
-  virtual void render();
+  virtual void Render();
   virtual void Commit();
 };
 

@@ -390,10 +390,7 @@ static int GetMeshShader (T3dsLoaderPers *pers)
 	/* get in the shader name */
 	if (!GetASCIIZ(pers,shaderName,sizeof(shaderName)))
 		return 0;
-	
-	/* ydnar: trim to first whitespace */
-	_pico_first_token( shaderName );
-	
+
 	/* now that we have the shader name we need to go through all of */
 	/* the shaders and check the name against each shader. when we */
 	/* find a shader in our shader list that matches this name we */
@@ -417,7 +414,7 @@ static int GetMeshShader (T3dsLoaderPers *pers)
 		if (mapNamePtr != NULL)
 		{
 			char  temp[128];
-			const char *name;
+			char *name;
 
 			/* copy map name to local buffer */
 			strcpy( mapName,mapNamePtr );
@@ -603,14 +600,11 @@ static int DoNextEditorDataChunk (T3dsLoaderPers *pers, long endofs)
 			/* but for now we skip the new material's name ... */
 			if (pers->shader)
 			{
-				char *name = (char*) (pers->bufptr + pers->cofs);
-				char *cleanedName = _pico_clone_alloc( name );
-				_pico_first_token( cleanedName );
-				PicoSetShaderName( pers->shader, cleanedName );
+				char *name = (char *)(pers->bufptr + pers->cofs);
+				PicoSetShaderName( pers->shader,name );
 #ifdef DEBUG_PM_3DS
-				printf( "NewShader: '%s'\n", cleanedName );
+				printf("NewShader: '%s'\n",name);
 #endif
-				_pico_free( cleanedName );
 			}
 		}
 		if (chunk->id == CHUNK_MATDIFFUSE)

@@ -1,321 +1,290 @@
 /*
-Copyright (C) 2001-2006, William Joseph.
-All Rights Reserved.
+Copyright (c) 2001, Loki software, inc.
+All rights reserved.
 
-This file is part of GtkRadiant.
+Redistribution and use in source and binary forms, with or without modification, 
+are permitted provided that the following conditions are met:
 
-GtkRadiant is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
+Redistributions of source code must retain the above copyright notice, this list 
+of conditions and the following disclaimer.
 
-GtkRadiant is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+Redistributions in binary form must reproduce the above copyright notice, this
+list of conditions and the following disclaimer in the documentation and/or
+other materials provided with the distribution.
 
-You should have received a copy of the GNU General Public License
-along with GtkRadiant; if not, write to the Free Software
-Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+Neither the name of Loki software nor the names of its contributors may be used 
+to endorse or promote products derived from this software without specific prior 
+written permission. 
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS'' 
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE 
+DISCLAIMED. IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE FOR ANY 
+DIRECT,INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES 
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; 
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON 
+ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT 
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS 
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
 */
 
-#include "filters.h"
+#include "stdafx.h"
 
-#include "debugging/debugging.h"
-
-#include "ifilter.h"
-
-#include "scenelib.h"
-
-#include <list>
-#include <set>
-
-#include "gtkutil/widget.h"
-#include "gtkutil/menu.h"
-#include "gtkmisc.h"
-#include "mainframe.h"
-#include "commands.h"
-#include "preferences.h"
-
-struct filters_globals_t
+// type 1 = texture filter (name)
+// type 3 = entity filter (name)
+// type 2 = QER_* shader flags
+// type 4 = entity classes
+// type 5 = surface flags (q2)
+// type 6 = content flags (q2)
+// type 7 = content flags - no match (q2)
+bfilter_t *FilterAdd(bfilter_t *pFilter, int type, int bmask, char *str, int exclude)
 {
-  std::size_t exclude;
-
-  filters_globals_t() :
-    exclude(0)
-  {
-  }
-};
-
-filters_globals_t g_filters_globals;
-
-inline bool filter_active(int mask)
-{
-  return (g_filters_globals.exclude & mask) > 0;
+	bfilter_t *pNew = new bfilter_t;
+	pNew->next = pFilter;
+	pNew->attribute = type;
+	if (type == 1 || type == 3) pNew->string = str;
+	if (type == 2 || type == 4 || type == 5 || type == 6 || type == 7) pNew->mask = bmask;
+	if (g_qeglobals.d_savedinfo.exclude & exclude)
+		pNew->active = true;
+	else
+		pNew->active = false;
+	return pNew;
 }
 
-class FilterWrapper
+bfilter_t *FilterCreate (int type, int bmask, char *str, int exclude)
 {
-public:
-  FilterWrapper(Filter& filter, int mask) : m_filter(filter), m_mask(mask)
-  {
-  }
-  void update()
-  {
-    m_filter.setActive(filter_active(m_mask));
-  }
-private:
-  Filter& m_filter;
-  int m_mask;
-};
+	g_qeglobals.d_savedinfo.filters = FilterAdd(g_qeglobals.d_savedinfo.filters, type, bmask, str, exclude);
+	Syn_Printf("Added filter %s (type: %i, bmask: %i, exclude: %i)\n", str, type, bmask, exclude);
+	return g_qeglobals.d_savedinfo.filters;
+}
 
-typedef std::list<FilterWrapper> Filters;
-Filters g_filters;
+extern void PerformFiltering();
 
-typedef std::set<Filterable*> Filterables;
-Filterables g_filterables;
-
-void UpdateFilters()
+void FiltersActivate (void)
 {
-  {
-    for(Filters::iterator i = g_filters.begin(); i != g_filters.end(); ++i)
-    {
-      (*i).update();
-    }
-  }
+	PerformFiltering();
+	Sys_UpdateWindows(W_XY|W_CAMERA);
+}
 
-  {
-    for(Filterables::iterator i = g_filterables.begin(); i != g_filterables.end(); ++i)
-    {
-      (*i)->updateFiltered();
-    }
-  }
+  // removes the filter list at *pFilter, returns NULL pointer
+bfilter_t *FilterListDelete(bfilter_t *pFilter)
+{
+	if (pFilter != NULL)
+	{
+		FilterListDelete(pFilter->next);
+		delete pFilter;
+	}
+	return NULL;
 }
 
 
-class BasicFilterSystem : public FilterSystem
+ //spog - FilterUpdate is called each time the filters are changed by menu or shortcuts
+bfilter_t *FilterUpdate(bfilter_t *pFilter)
 {
-public:
-  void addFilter(Filter& filter, int mask)
-  {
-    g_filters.push_back(FilterWrapper(filter, mask));
-    g_filters.back().update();
-  }
-  void registerFilterable(Filterable& filterable)
-  {
-    ASSERT_MESSAGE(g_filterables.find(&filterable) == g_filterables.end(), "filterable already registered");
-    filterable.updateFiltered();
-    g_filterables.insert(&filterable);
-  }
-  void unregisterFilterable(Filterable& filterable)
-  {
-    ASSERT_MESSAGE(g_filterables.find(&filterable) != g_filterables.end(), "filterable not registered");
-    g_filterables.erase(&filterable);
-  }
-};
-
-BasicFilterSystem g_FilterSystem;
-
-FilterSystem& GetFilterSystem()
-{
-  return g_FilterSystem;
+	pFilter = FilterAdd(pFilter,1,0,"clip",EXCLUDE_CLIP);
+	pFilter = FilterAdd(pFilter,1,0,"caulk",EXCLUDE_CAULK);
+	pFilter = FilterAdd(pFilter,1,0,"liquids",EXCLUDE_LIQUIDS);
+ 	pFilter = FilterAdd(pFilter,1,0,"hint",EXCLUDE_HINTSSKIPS);
+	pFilter = FilterAdd(pFilter,1,0,"clusterportal",EXCLUDE_CLUSTERPORTALS);
+	pFilter = FilterAdd(pFilter,1,0,"areaportal",EXCLUDE_AREAPORTALS);
+	pFilter = FilterAdd(pFilter,2,QER_TRANS,NULL,EXCLUDE_TRANSLUCENT);
+	pFilter = FilterAdd(pFilter,3,0,"trigger",EXCLUDE_TRIGGERS);
+	pFilter = FilterAdd(pFilter,3,0,"misc_model",EXCLUDE_MODELS);
+	pFilter = FilterAdd(pFilter,3,0,"misc_gamemodel",EXCLUDE_MODELS);
+	pFilter = FilterAdd(pFilter,4,ECLASS_LIGHT,NULL,EXCLUDE_LIGHTS);
+	pFilter = FilterAdd(pFilter,4,ECLASS_PATH,NULL,EXCLUDE_PATHS);
+	pFilter = FilterAdd(pFilter,1,0,"lightgrid",EXCLUDE_LIGHTGRID);
+	pFilter = FilterAdd(pFilter,1,0,"botclip",EXCLUDE_BOTCLIP);
+  pFilter = FilterAdd(pFilter,1,0,"clipmonster",EXCLUDE_BOTCLIP);
+	return pFilter;
 }
 
-void PerformFiltering()
+/*
+==================
+FilterBrush
+==================
+*/
+
+bool FilterBrush(brush_t *pb)
 {
-  UpdateFilters();
-  SceneChangeNotify();
+	
+	if (!pb->owner)
+		return FALSE;		// during construction
+	
+	if (pb->hiddenBrush)
+		return TRUE;
+	
+	if (g_qeglobals.d_savedinfo.exclude & EXCLUDE_WORLD)
+	{
+		if (strcmp(pb->owner->eclass->name, "worldspawn") == 0 || !strcmp(pb->owner->eclass->name,"func_group")) // hack, treating func_group as world
+		{
+			return TRUE;
+		}
+	}
+	
+	if (g_qeglobals.d_savedinfo.exclude & EXCLUDE_ENT)
+	{
+		if (strcmp(pb->owner->eclass->name, "worldspawn") != 0 && strcmp(pb->owner->eclass->name,"func_group")) // hack, treating func_group as world
+		{
+			return TRUE;
+		}
+	}
+	
+	if ( g_qeglobals.d_savedinfo.exclude & EXCLUDE_CURVES )
+	{
+		if (pb->patchBrush)
+		{
+			return TRUE;
+		}
+	}
+	
+	
+	if ( g_qeglobals.d_savedinfo.exclude & EXCLUDE_DETAILS )
+	{
+		if (!pb->patchBrush && pb->brush_faces->texdef.contents & CONTENTS_DETAIL )
+		{
+			return TRUE;
+		}
+	}
+	if ( g_qeglobals.d_savedinfo.exclude & EXCLUDE_STRUCTURAL )
+	{
+		if (!pb->patchBrush && !( pb->brush_faces->texdef.contents & CONTENTS_DETAIL ))
+		{
+			return TRUE;
+		}
+	}
+		
+	// if brush belongs to world entity or a brushmodel entity and is not a patch
+	if ( ( strcmp(pb->owner->eclass->name, "worldspawn") == 0
+		|| !strncmp( pb->owner->eclass->name, "func", 4)
+		|| !strncmp( pb->owner->eclass->name, "trigger", 7) ) && !pb->patchBrush )
+	{
+		bool filterbrush = false;
+		for (face_t *f=pb->brush_faces;f!=NULL;f = f->next)
+		{
+			filterbrush=false;
+			for (bfilter_t *filters = g_qeglobals.d_savedinfo.filters;
+			filters != NULL;
+			filters = filters->next)
+			{
+				if (!filters->active)
+					continue;
+				// exclude by attribute 1 brush->face->pShader->getName()
+				if (filters->attribute == 1)
+				{
+					if (strstr(f->pShader->getName(),filters->string))
+					{
+						filterbrush=true;
+						break;
+					}
+				}
+				// exclude by attribute 2 brush->face->pShader->getFlags()
+				else if (filters->attribute == 2)
+				{
+					if (f->pShader->getFlags() & filters->mask)
+					{
+						filterbrush=true;
+						break;
+					}
+				// quake2 - 5 == surface flags, 6 == content flags 
+				}
+				else if (filters->attribute == 5)
+				{
+					if (f->texdef.flags && f->texdef.flags & filters->mask)
+					{
+						filterbrush=true;
+						break;
+					}
+				}
+				else if (filters->attribute == 6)
+				{
+					if (f->texdef.contents && f->texdef.contents & filters->mask)
+					{
+						filterbrush=true;
+						break;
+					}
+				}
+				else if (filters->attribute == 7)
+				{
+					if (f->texdef.contents && !(f->texdef.contents & filters->mask))
+					{
+						filterbrush=true;
+						break;
+					}
+				}
+			}
+			if (!filterbrush)
+				break;
+		}
+		if (filterbrush)// if no face is found that should not be excluded
+			return true; // exclude this brush
+	}
+
+	// if brush is a patch
+	if ( pb->patchBrush )
+	{
+		bool drawpatch=true;
+		for (bfilter_t *filters = g_qeglobals.d_savedinfo.filters;
+		filters != NULL;
+		filters = filters->next)
+		{
+			// exclude by attribute 1 (for patch) brush->pPatch->pShader->getName()
+			if (filters->active
+				&& filters->attribute == 1)
+			{
+				if (strstr(pb->pPatch->pShader->getName(),filters->string))
+				{
+					drawpatch=false;
+					break;
+				}
+			}
+			
+			// exclude by attribute 2 (for patch) brush->pPatch->pShader->getFlags()
+			if (filters->active
+				&& filters->attribute == 2)
+			{
+				if (pb->pPatch->pShader->getFlags() & filters->mask)
+				{
+					drawpatch=false;
+					break;
+				}
+			}
+		}
+		if (!drawpatch) // if a shader is found that should be excluded
+			return TRUE; // exclude this patch
+	}
+	
+	if (strcmp(pb->owner->eclass->name, "worldspawn") != 0) // if brush does not belong to world entity
+	{
+		bool drawentity=true;
+		for (bfilter_t *filters = g_qeglobals.d_savedinfo.filters;
+		filters != NULL;
+		filters = filters->next)
+		{
+			// exclude by attribute 3 brush->owner->eclass->name
+			if (filters->active
+				&& filters->attribute == 3)
+			{
+				if (strstr(pb->owner->eclass->name,filters->string))
+				{
+					drawentity=false;
+					break;
+				}
+			}
+			
+			// exclude by attribute 4 brush->owner->eclass->nShowFlags
+			else if (filters->active
+				&& filters->attribute == 4)
+			{
+				if ( pb->owner->eclass->nShowFlags & filters->mask )
+				{
+					drawentity=false;
+					break;
+				}
+			}
+		}
+		if (!drawentity) // if an eclass property is found that should be excluded
+			return TRUE; // exclude this brush
+	}
+	return FALSE;
 }
-
-class ToggleFilterFlag
-{
-  const unsigned int m_mask;
-public:
-  ToggleItem m_item;
-
-  ToggleFilterFlag(unsigned int mask) : m_mask(mask), m_item(ActiveCaller(*this))
-  {
-  }
-  ToggleFilterFlag(const ToggleFilterFlag& other) : m_mask(other.m_mask), m_item(ActiveCaller(*this))
-  {
-  }
-  void active(const BoolImportCallback& importCallback)
-  {
-    importCallback((g_filters_globals.exclude & m_mask) != 0);
-  }
-  typedef MemberCaller1<ToggleFilterFlag, const BoolImportCallback&, &ToggleFilterFlag::active> ActiveCaller;
-  void toggle()
-  {
-    g_filters_globals.exclude ^= m_mask;
-    m_item.update();
-    PerformFiltering();
-  }
-  void reset()
-  {
-    g_filters_globals.exclude = 0;
-    m_item.update();
-    PerformFiltering();
-  }
-  typedef MemberCaller<ToggleFilterFlag, &ToggleFilterFlag::toggle> ToggleCaller;
-};
-
-
-typedef std::list<ToggleFilterFlag> ToggleFilterFlags;
-ToggleFilterFlags g_filter_items;
-
-void add_filter_command(unsigned int flag, const char* command, const Accelerator& accelerator)
-{
-  g_filter_items.push_back(ToggleFilterFlag(flag));
-  GlobalToggles_insert(command, ToggleFilterFlag::ToggleCaller(g_filter_items.back()), ToggleItem::AddCallbackCaller(g_filter_items.back().m_item), accelerator);
-}
-
-void InvertFilters()
-{
-  std::list<ToggleFilterFlag>::iterator iter;
-
-  for(iter = g_filter_items.begin(); iter != g_filter_items.end(); ++iter)
-  {
-      iter->toggle();
-  }
-}
-
-void ResetFilters()
-{
-  std::list<ToggleFilterFlag>::iterator iter;
-
-  for(iter = g_filter_items.begin(); iter != g_filter_items.end(); ++iter)
-  {
-      iter->reset();
-  }
-}
-
-void Filters_constructMenu(GtkMenu* menu_in_menu)
-{
-  create_check_menu_item_with_mnemonic(menu_in_menu, "World", "FilterWorldBrushes");
-  create_check_menu_item_with_mnemonic(menu_in_menu, "Entities", "FilterEntities");
-  if(g_pGameDescription->mGameType == "doom3")
-  {
-    create_check_menu_item_with_mnemonic(menu_in_menu, "Visportals", "FilterVisportals");
-  }
-  else
-  {
-    create_check_menu_item_with_mnemonic(menu_in_menu, "Areaportals", "FilterAreaportals");
-  }
-  create_check_menu_item_with_mnemonic(menu_in_menu, "Translucent", "FilterTranslucent");
-  if(g_pGameDescription->mGameType != "doom3")
-  {
-    create_check_menu_item_with_mnemonic(menu_in_menu, "Liquids", "FilterLiquids");
-  }
-  create_check_menu_item_with_mnemonic(menu_in_menu, "Caulk", "FilterCaulk");
-  create_check_menu_item_with_mnemonic(menu_in_menu, "Clips", "FilterClips");
-  create_check_menu_item_with_mnemonic(menu_in_menu, "Paths", "FilterPaths");
-  if(g_pGameDescription->mGameType != "doom3")
-  {
-    create_check_menu_item_with_mnemonic(menu_in_menu, "Clusterportals", "FilterClusterportals");
-  }
-  create_check_menu_item_with_mnemonic(menu_in_menu, "Lights", "FilterLights");
-  create_check_menu_item_with_mnemonic(menu_in_menu, "Structural", "FilterStructural");
-  if(g_pGameDescription->mGameType != "doom3")
-  {
-    create_check_menu_item_with_mnemonic(menu_in_menu, "Lightgrid", "FilterLightgrid");
-  }
-  create_check_menu_item_with_mnemonic(menu_in_menu, "Patches", "FilterPatches");
-  create_check_menu_item_with_mnemonic(menu_in_menu, "Details", "FilterDetails");
-  create_check_menu_item_with_mnemonic(menu_in_menu, "Hints", "FilterHintsSkips");
-  create_check_menu_item_with_mnemonic(menu_in_menu, "Models", "FilterModels");
-  create_check_menu_item_with_mnemonic(menu_in_menu, "Triggers", "FilterTriggers");
-  if(g_pGameDescription->mGameType != "doom3")
-  {
-    create_check_menu_item_with_mnemonic(menu_in_menu, "Botclips", "FilterBotClips");
-  }
-  // filter manipulation
-  menu_separator(menu_in_menu);
-  create_menu_item_with_mnemonic(menu_in_menu, "Invert filters", "InvertFilters");
-  create_menu_item_with_mnemonic(menu_in_menu, "Reset filters", "ResetFilters");
-}
-
-
-#include "preferencesystem.h"
-#include "stringio.h"
-
-void ConstructFilters()
-{
-  GlobalPreferenceSystem().registerPreference("SI_Exclude", SizeImportStringCaller(g_filters_globals.exclude), SizeExportStringCaller(g_filters_globals.exclude));
-
-  GlobalCommands_insert("InvertFilters", FreeCaller<InvertFilters>());
-  GlobalCommands_insert("ResetFilters", FreeCaller<ResetFilters>());  
-
-  add_filter_command(EXCLUDE_WORLD, "FilterWorldBrushes", Accelerator('1', (GdkModifierType)GDK_MOD1_MASK));
-  add_filter_command(EXCLUDE_ENT, "FilterEntities", Accelerator('2', (GdkModifierType)GDK_MOD1_MASK));
-  if(g_pGameDescription->mGameType == "doom3")
-  {
-    add_filter_command(EXCLUDE_VISPORTALS, "FilterVisportals", Accelerator('3', (GdkModifierType)GDK_MOD1_MASK));
-  }
-  else
-  {
-    add_filter_command(EXCLUDE_AREAPORTALS, "FilterAreaportals", Accelerator('3', (GdkModifierType)GDK_MOD1_MASK));
-  }
-  add_filter_command(EXCLUDE_TRANSLUCENT, "FilterTranslucent", Accelerator('4', (GdkModifierType)GDK_MOD1_MASK));
-  add_filter_command(EXCLUDE_LIQUIDS, "FilterLiquids", Accelerator('5', (GdkModifierType)GDK_MOD1_MASK));
-  add_filter_command(EXCLUDE_CAULK, "FilterCaulk", Accelerator('6', (GdkModifierType)GDK_MOD1_MASK ));
-  add_filter_command(EXCLUDE_CLIP, "FilterClips", Accelerator('7', (GdkModifierType)GDK_MOD1_MASK));
-  add_filter_command(EXCLUDE_PATHS, "FilterPaths", Accelerator('8', (GdkModifierType)GDK_MOD1_MASK));
-  if(g_pGameDescription->mGameType != "doom3")
-  {
-    add_filter_command(EXCLUDE_CLUSTERPORTALS, "FilterClusterportals", Accelerator('9', (GdkModifierType)GDK_MOD1_MASK));
-  }
-  add_filter_command(EXCLUDE_LIGHTS, "FilterLights", Accelerator('0', (GdkModifierType)GDK_MOD1_MASK));
-  add_filter_command(EXCLUDE_STRUCTURAL, "FilterStructural", Accelerator('D', (GdkModifierType)(GDK_SHIFT_MASK|GDK_CONTROL_MASK)));
-  if(g_pGameDescription->mGameType != "doom3")
-  {
-    add_filter_command(EXCLUDE_LIGHTGRID, "FilterLightgrid", accelerator_null());
-  }
-  add_filter_command(EXCLUDE_CURVES, "FilterPatches", Accelerator('P', (GdkModifierType)GDK_CONTROL_MASK));
-  add_filter_command(EXCLUDE_DETAILS, "FilterDetails", Accelerator('D', (GdkModifierType)GDK_CONTROL_MASK));
-  add_filter_command(EXCLUDE_HINTSSKIPS, "FilterHintsSkips", Accelerator('H', (GdkModifierType)GDK_CONTROL_MASK));
-  add_filter_command(EXCLUDE_MODELS, "FilterModels", Accelerator('M', (GdkModifierType)GDK_SHIFT_MASK));
-  add_filter_command(EXCLUDE_TRIGGERS, "FilterTriggers", Accelerator('T', (GdkModifierType)(GDK_SHIFT_MASK|GDK_CONTROL_MASK)));
-  if(g_pGameDescription->mGameType != "doom3")
-  {
-    add_filter_command(EXCLUDE_BOTCLIP, "FilterBotClips", Accelerator('M', (GdkModifierType)GDK_MOD1_MASK));
-  }
-
-  PerformFiltering();
-}
-
-void DestroyFilters()
-{
-  g_filters.clear();
-}
-
-#include "modulesystem/singletonmodule.h"
-#include "modulesystem/moduleregistry.h"
-
-class FilterAPI
-{
-  FilterSystem* m_filter;
-public:
-  typedef FilterSystem Type;
-  STRING_CONSTANT(Name, "*");
-
-  FilterAPI()
-  {
-    ConstructFilters();
-
-    m_filter = &GetFilterSystem();
-  }
-  ~FilterAPI()
-  {
-    DestroyFilters();
-  }
-  FilterSystem* getTable()
-  {
-    return m_filter;
-  }
-};
-
-typedef SingletonModule<FilterAPI> FilterModule;
-typedef Static<FilterModule> StaticFilterModule;
-StaticRegisterModule staticRegisterFilter(StaticFilterModule::instance());
-
-

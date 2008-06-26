@@ -1,5 +1,5 @@
 /*
-Copyright (C) 1999-2006 Id Software, Inc. and contributors.
+Copyright (C) 1999-2007 id Software, Inc. and contributors.
 For a list of contributors, see the accompanying CONTRIBUTORS file.
 
 This file is part of GtkRadiant.
@@ -19,155 +19,54 @@ along with GtkRadiant; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#if !defined(INCLUDED_MAP_H)
-#define INCLUDED_MAP_H
+// map.h -- the state of the current world that all views are displaying
 
-#include "iscenegraph.h"
-#include "generic/callback.h"
-#include "signal/signalfwd.h"
-#include "string/stringfwd.h"
+extern	char		currentmap[1024];
 
-class Map;
-extern Map g_map;
+// head/tail of doubly linked lists
+extern	brush_t	active_brushes;	// brushes currently being displayed
+extern	brush_t	selected_brushes;	// highlighted
 
-class MapFormat;
+extern CPtrArray& g_ptrSelectedFaces;
+extern CPtrArray& g_ptrSelectedFaceBrushes;
 
-void Map_addValidCallback(Map& map, const SignalHandler& handler);
-bool Map_Valid(const Map& map);
+extern	brush_t	filtered_brushes;	// brushes that have been filtered or regioned
 
-class DeferredDraw
-{
-  Callback m_draw;
-  bool m_defer;
-  bool m_deferred;
-public:
-  DeferredDraw(const Callback& draw) : m_draw(draw), m_defer(false), m_deferred(false)
-  {
-  }
-  void defer()
-  {
-    m_defer = true;
-  }
-  void draw()
-  {
-    if(m_defer)
-    {
-      m_deferred = true;
-    }
-    else
-    {
-      m_draw();
-    }
-  }
-  void flush()
-  {
-    if(m_defer && m_deferred)
-    {
-      m_draw();
-    }
-    m_deferred = false;
-    m_defer = false;
-  }
-};
+extern	entity_t	entities;
+extern	entity_t	*world_entity;	// the world entity is NOT included in
+									// the entities chain
 
-inline void DeferredDraw_onMapValidChanged(DeferredDraw& self)
-{
-  if(Map_Valid(g_map))
-  {
-    self.flush();
-  }
-  else
-  {
-    self.defer();
-  }
-}
-typedef ReferenceCaller<DeferredDraw, DeferredDraw_onMapValidChanged> DeferredDrawOnMapValidChangedCaller;
+extern	int	modified;		// for quit confirmations
 
+extern	vec3_t	region_mins, region_maxs;
+extern	qboolean	region_active;
 
+extern brush_t	  *region_sides[6];
 
-const char* Map_Name(const Map& map);
-const MapFormat& Map_getFormat(const Map& map);
-bool Map_Unnamed(const Map& map);
+void Map_Init();
 
+void 	Map_LoadFile (const char *filename);
+void 	Map_SaveFile (const char *filename, qboolean use_region);
 
-namespace scene
-{
-  class Node;
-  class Graph;
-}
+void	Map_New (void);
+void  Map_Free (void);
+void	Map_BuildBrushData(void);
 
-scene::Node* Map_GetWorldspawn(const Map& map);
-scene::Node* Map_FindWorldspawn(Map& map);
-scene::Node& Map_FindOrInsertWorldspawn(Map& map);
+void	Map_RegionOff (void);
+void	Map_RegionXY (void);
+void	Map_RegionTallBrush (void);
+void	Map_RegionBrush (void);
+void	Map_RegionSelectedBrushes (void);
+qboolean Map_IsBrushFiltered (brush_t *b);
 
-template<typename Element> class BasicVector3;
-typedef BasicVector3<float> Vector3;
+void Map_ImportFile (const char *filename);
+void Map_SaveSelected(const char* filename);
+//void Map_SaveSelected(MemStream* pMemFile, MemStream* pPatchFile = NULL);
+//void Map_ImportBuffer (char* buf);
 
-extern Vector3 region_mins, region_maxs;
-extern bool region_active;
+void  Map_StartPosition(void);
+void Region_SpawnPoint(FILE *f);
 
-// used to be #defines, multiple engine support suggests we should go towards dynamic
-extern float g_MaxWorldCoord;
-extern float g_MinWorldCoord;
+void Map_Import(IDataStream *in, const char* type, bool bAddSelected = false);
+void Map_Export(IDataStream *out, const char* type, bool bRegionOnly = false , bool bSelectedOnly = false);
 
-void Map_LoadFile(const char* filename);
-bool Map_SaveFile(const char* filename);
-
-void Map_New();
-void Map_Free();
-
-void Map_RegionOff();
-
-bool Map_SaveRegion(const char* filename);
-
-class TextInputStream;
-class TextOutputStream;
-
-void Map_ImportSelected(TextInputStream& in, const MapFormat& format);
-void Map_ExportSelected(TextOutputStream& out, const MapFormat& format);
-
-bool Map_Modified(const Map& map);
-void Map_SetModified(Map& map, bool modified);
-
-bool Map_Save();
-bool Map_SaveAs();
-
-scene::Node& Node_Clone(scene::Node& node);
-
-void DoMapInfo();
-
-void Scene_parentSelectedBrushesToEntity(scene::Graph& graph, scene::Node& parent);
-std::size_t Scene_countSelectedBrushes(scene::Graph& graph);
-
-void Scene_parentSelected();
-
-void OnUndoSizeChanged();
-
-void NewMap();
-void OpenMap();
-void ImportMap();
-void SaveMapAs();
-void SaveMap();
-void ExportMap();
-void SaveRegion();
-
-
-void Map_Traverse(scene::Node& root, const scene::Traversable::Walker& walker);
-
-
-void SelectBrush (int entitynum, int brushnum);
-
-extern CopiedString g_strLastMap;
-extern bool g_bLoadLastMap;
-
-void Map_Construct();
-void Map_Destroy();
-
-
-void Map_gatherNamespaced(scene::Node& root);
-void Map_mergeClonedNames();
-
-
-const char* getMapsPath();
-
-#endif

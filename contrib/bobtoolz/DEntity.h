@@ -24,41 +24,30 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #if !defined(AFX_DENTITY_H__35B2C523_F0A7_11D4_ACF7_004095A18133__INCLUDED_)
 #define AFX_DENTITY_H__35B2C523_F0A7_11D4_ACF7_004095A18133__INCLUDED_
 
+#include "DBrush.h"
+#include "DEPair.h"
+#include "DPatch.h"
+#include "StdAfx.h"	// Added by ClassView
+
 #if _MSC_VER > 1000
 #pragma once
 #endif // _MSC_VER > 1000
-
-#include <list>
-#include "str.h"
-#include "mathlib.h"
-
-class DEPair;
-class DBrush;
-class DPlane;
-class DPatch;
-class Entity;
-
-namespace scene
-{
-  class Node;
-}
-class _QERFaceData;
 
 class DEntity  
 {
 public:
 	void RemoveFromRadiant();
-  scene::Node* QER_Entity;
+	entity_t* QER_Entity;
 	int m_nID;
 
 //	Constrcution/Destruction
-	DEntity(const char* classname = "worldspawn", int ID = -1);	// sets classname
+	DEntity(char* classname = "worldspawn", int ID = -1);	// sets classname
 	virtual ~DEntity();
 //	---------------------------------------------
 
 //	epair functions........
-	void LoadEPairList(Entity* epl);
-	void AddEPair(const char* key, const char* value);
+	void LoadEPairList(epair_t* epl);
+	void AddEPair(char* key, char* value);
 	void ClearEPairs();
 	DEPair* FindEPairByKey(const char* keyname);
 //	---------------------------------------------
@@ -66,16 +55,16 @@ public:
 //	random functions........
 	bool ResetTextures(const char* textureName, float fScale[2], float fShift[2], int rotation, const char* newTextureName, int bResetTextureName, int bResetScale[2], int bResetShift[2], int bResetRotation, bool rebuild);
 	void SaveToFile(FILE* pFile);
-	void SetClassname(const char* classname);
+	void SetClassname(char* classname);
 	int GetIDMax();
 
 	void BuildInRadiant(bool allowDestruction);
-	void ResetChecks(std::list<Str>* exclusionList);
-	void RemoveNonCheckBrushes(std::list<Str>* exclusionList, bool useDetail);
+	void ResetChecks(list<Str>* exclusionList);
+	void RemoveNonCheckBrushes(list<Str>* exclusionList, bool useDetail);
 
 	DPlane* AddFaceToBrush(vec3_t va, vec3_t vb, vec3_t vc, _QERFaceData* faceData, int ID);	// slow, try not to use much
 	int GetBrushCount( void );
-  DBrush* FindBrushByPointer( scene::Node& brush );
+	DBrush* FindBrushByPointer( brush_t* brush );
 //	---------------------------------------------
 
 
@@ -100,17 +89,18 @@ public:
 //	---------------------------------------------
 
 //	vars
-	std::list<DEPair*> epairList;
-	std::list<DBrush*> brushList;
+	list<DEPair*> epairList;
+	list<DBrush*> brushList;
 	// new patches, wahey!!!
-	std::list<DPatch*> patchList;
+	list<DPatch*> patchList;
 	Str m_Classname;
 //	---------------------------------------------
 
 
-	int FixBrushes();
+	int FixBrushes(bool rebuild);
 
-	bool LoadFromEntity(scene::Node& ent, bool bLoadPatches = false);
+	bool LoadFromEntity(int id,	bool bLoadPatches = FALSE);
+	bool LoadFromEntity(entity_t* ent, bool bLoadPatches = FALSE);
 	void LoadSelectedBrushes();
 	void LoadSelectedPatches();
 

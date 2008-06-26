@@ -98,7 +98,7 @@ void About (GtkWidget *parent)
 															 "Enhancements\n"
 															 "Pablo Zurita (pablo@qeradiant.com)\n"
 															 "Hydra (hydra@hydras-world.com)",
-                               "About GtkGenSurf", eMB_OK);
+                               "About GtkGenSurf", MB_OK, NULL);
 }
 
 // =============================================================================
@@ -270,6 +270,8 @@ static void SetDlgValues (int tab)
   switch (tab)
   {
   case GENERAL_TAB:
+	// mattn: Deactivated because one wasn't able to switch the gametype or orientation
+#if 0
     // Hell if I know why, but in the release build the 2nd pass thru the
     // set_sensitive loop for game_radios crashes. No need to do this more
     // than once anyhow.
@@ -280,6 +282,7 @@ static void SetDlgValues (int tab)
       for (i = 0; i < 6; i++)
         gtk_widget_set_sensitive (plane_radios[i], (i == Plane ? TRUE : FALSE));
     }
+#endif
     gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (game_radios[Game]), TRUE);
     gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (plane_radios[Plane]), TRUE);
     gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (wave_radios[WaveType]), TRUE);
@@ -717,7 +720,7 @@ static void main_go (GtkWidget *widget, gpointer data)
   if (NH < 1 || NH > MAX_ROWS)
   {
     sprintf (Text, "The number of divisions must be > 0 and no greater than %d.", MAX_ROWS);
-    g_FuncTable.m_pfnMessageBox (g_pWnd, Text, "GenSurf", eMB_OK, eMB_ICONWARNING);
+    g_FuncTable.m_pfnMessageBox (g_pWnd, Text, "GenSurf", MB_ICONEXCLAMATION, NULL);
     gtk_notebook_set_page (GTK_NOTEBOOK (notebook), EXTENTS_TAB);
     return;
   }
@@ -725,7 +728,7 @@ static void main_go (GtkWidget *widget, gpointer data)
   if (NV < 1 || NV > MAX_ROWS)
   {
     sprintf (Text, "The number of divisions must be > 0 and no greater than %d.", MAX_ROWS);
-    g_FuncTable.m_pfnMessageBox (g_pWnd, Text, "GenSurf", eMB_OK, eMB_ICONWARNING);
+    g_FuncTable.m_pfnMessageBox (g_pWnd, Text, "GenSurf", MB_ICONEXCLAMATION, NULL);
     gtk_notebook_set_page (GTK_NOTEBOOK (notebook), EXTENTS_TAB);
     return;
   }
@@ -734,7 +737,7 @@ static void main_go (GtkWidget *widget, gpointer data)
   {
     g_FuncTable.m_pfnMessageBox (g_pWnd, "The \"lower-left\" values must be less than "
                                  "the corresponding \"upper-right\" values in "
-                                 "the \"Extent\" box.","GenSurf", eMB_OK, eMB_ICONWARNING);
+                                 "the \"Extent\" box.","GenSurf", MB_OK | MB_ICONEXCLAMATION, NULL);
     gtk_notebook_set_page (GTK_NOTEBOOK (notebook), EXTENTS_TAB);
     return;
   }
@@ -743,14 +746,14 @@ static void main_go (GtkWidget *widget, gpointer data)
   {
     g_FuncTable.m_pfnMessageBox (g_pWnd,"The \"lower-left\" values must be less than "
                                  "the corresponding \"upper-right\" values in "
-                                 "the \"Extent\" box.","GenSurf", eMB_OK, eMB_ICONWARNING);
+                                 "the \"Extent\" box.","GenSurf", MB_OK | MB_ICONEXCLAMATION, NULL);
     gtk_notebook_set_page (GTK_NOTEBOOK (notebook), EXTENTS_TAB);
     return;
   }
 
   if (!strlen (Texture[Game][0]))
   {
-    g_FuncTable.m_pfnMessageBox (g_pWnd, "You must supply a texture name.", "GenSurf", eMB_OK, eMB_ICONWARNING);
+    g_FuncTable.m_pfnMessageBox (g_pWnd, "You must supply a texture name.", "GenSurf", MB_ICONEXCLAMATION, NULL);
     gtk_notebook_set_page (GTK_NOTEBOOK (notebook), EXTENTS_TAB);
     return;
   }
@@ -760,7 +763,7 @@ static void main_go (GtkWidget *widget, gpointer data)
     MessageBox(hwnd,"You've elected to use a decimated grid and gimp's non-detail hint brushes. "
                "This combination usually produces bizarre visual errors in the game, "
                "so GenSurf has turned off the hint brush option.",
-               "GenSurf",eMB_ICONWARNING);
+               "GenSurf",MB_ICONEXCLAMATION);
     GimpHints = 0;
   } */
 
@@ -908,7 +911,7 @@ static void bitmap_browse (GtkWidget *widget, gpointer data)
   const char *filename;
   char *ptr;
 
-  filename = g_FuncTable.m_pfnFileDialog (g_pWnd, TRUE, "Bitmap File", gbmp.defpath);
+  filename = g_FuncTable.m_pfnFileDialog (g_pWnd, TRUE, "Bitmap File", gbmp.defpath, "gtkgensurf");
 
   if (filename != NULL)
   {
@@ -950,7 +953,7 @@ static gint fix_value_entryfocusout (GtkWidget* widget, GdkEventFocus *event, gp
   {
     gdk_beep ();
     g_FuncTable.m_pfnMessageBox (g_pWnd, "The value must be between -65536 and 65536, inclusive.",
-                                 "GenSurf", eMB_OK, eMB_ICONWARNING);
+                                 "GenSurf", MB_OK | MB_ICONEXCLAMATION, NULL);
     sprintf (Text, "%d", (int)xyz[Vertex[0].i][Vertex[0].j].fixed_value);
     gtk_entry_set_text (GTK_ENTRY(widget), Text);
     gtk_window_set_focus (GTK_WINDOW (gtk_widget_get_toplevel (widget)), widget);
@@ -2243,7 +2246,7 @@ GtkWidget* create_main_dialog ()
 HWND hwndDisplay = (HWND)NULL;
 HWND ghwndTab    = (HWND)NULL;
 int  iTab=0;
-Rect rcTab;
+RECT rcTab;
 FILE *ftex;
 
 char GenSurfURL[40] = {"http://tarot.telefragged.com/gensurf"};
@@ -2260,7 +2263,7 @@ qboolean CALLBACK AboutDlgProc( HWND hwnd, unsigned msg, UINT wparam, LONG lpara
 	HDC            hdc;
 	HPEN           hpen;
 	HWND           hwndURL;
-	Rect           rc;
+	RECT           rc;
 	SIZE           size;
 
 	lparam = lparam;					/* turn off warning */
@@ -2357,7 +2360,7 @@ void About()
 	{
 		char Text[256];
 		sprintf(Text,"In About(), GetLastError()=0x%08x",GetLastError());
-		MessageBox(ghwnd_main,Text,"GenSurf",eMB_ICONWARNING);
+		MessageBox(ghwnd_main,Text,"GenSurf",MB_ICONEXCLAMATION);
 	}
 }
 

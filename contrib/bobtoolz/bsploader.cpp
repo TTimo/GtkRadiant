@@ -1,6 +1,7 @@
+#include "StdAfx.h"
+#include "./dialogs/dialogs-gtk.h"
 #include "bsploader.h"
-#include "dialogs/dialogs-gtk.h"
-#include "cmdlib.h"
+#include "../../libs/cmdlib.h"
 
 int			numnodes;
 int			numplanes;
@@ -51,7 +52,7 @@ int FileLength (FILE *f)
 LoadFile
 ==============
 */
-bool    LoadFile( const char *filename, byte **bufferptr)
+qboolean    LoadFile( const char *filename, byte **bufferptr)
 {
 	FILE	*f;
 	int		length;
@@ -71,21 +72,15 @@ bool    LoadFile( const char *filename, byte **bufferptr)
 	return true;
 }
 
-int    LittleLong (int l)
+/*int    LittleLong (int l)
 {
-#if defined(__BIG_ENDIAN__)
-  std::reverse(reinterpret_cast<unsigned char*>(&l), reinterpret_cast<unsigned char*>(&l) + sizeof(int));
-#endif
 	return l;
 }
 
 float	LittleFloat (float l)
 {
-#if defined(__BIG_ENDIAN__)
-  std::reverse(reinterpret_cast<unsigned char*>(&l), reinterpret_cast<unsigned char*>(&l) + sizeof(float));
-#endif
 	return l;
-}
+}*/
 
 /*
 =============
@@ -199,7 +194,7 @@ int CopyLump( dheader_t	*header, int lump, void **dest, int size ) {
 LoadBSPFile
 =============
 */
-bool	LoadBSPFile( const char *filename ) {
+qboolean	LoadBSPFile( const char *filename ) {
 	dheader_t	*header;
 
 	// load the file header
@@ -210,12 +205,12 @@ bool	LoadBSPFile( const char *filename ) {
 	SwapBlock( (int *)header, sizeof(*header) );
 
 	if ( header->ident != BSP_IDENT ) {
-		DoMessageBox( "Cant find a valid IBSP file", "Error", eMB_OK);
+		DoMessageBox( "Cant find a valid IBSP file", "Error", MB_OK);
 		return false;
 	}
 	if ( (header->version != Q3_BSP_VERSION) &&
 																			(header->version != WOLF_BSP_VERSION) ) {
-		DoMessageBox( "File is incorrect version", "Error", eMB_OK);
+		DoMessageBox( "File is incorrect version", "Error", MB_OK);
 		return false;
 	}
 

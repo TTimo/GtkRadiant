@@ -1,5 +1,5 @@
 /*
-Copyright (C) 1999-2006 Id Software, Inc. and contributors.
+Copyright (C) 1999-2007 id Software, Inc. and contributors.
 For a list of contributors, see the accompanying CONTRIBUTORS file.
 
 This file is part of GtkRadiant.
@@ -96,7 +96,7 @@ void CRenderer::Draw3D() {
 
 	if( g_iPreviewRunning ) {
 		if( g_iPreviewRunning == 1 ) {
-			start = Q_QGetTickCount();
+			start = g_FuncTable.m_pfnQGetTickCount();
 			GetCurrentCam()->GetCam()->startCamera( start );
 			cycle = GetCurrentCam()->GetCam()->getTotalTime();
 			msecs = (long)(cycle * 1000);
@@ -111,7 +111,7 @@ void CRenderer::Draw3D() {
 			GetCurrentCam()->GetCam()->getCameraInfo( current, &origin[0], &dir[0], &fov );
 			VectorSet( angles, asin (dir[2])*180/3.14159, atan2 (dir[1], dir[0])*180/3.14159, 0 );
 			g_CameraTable.m_pfnSetCamera( origin, angles );
-			current = Q_QGetTickCount();
+			current = g_FuncTable.m_pfnQGetTickCount();
 		} else {
 			g_iPreviewRunning = 0;
 			GetCurrentCam()->GetCam()->setRunning( false );

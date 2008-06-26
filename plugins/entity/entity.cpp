@@ -1,6 +1,6 @@
 /*
-Copyright (C) 2001-2006, William Joseph.
-All Rights Reserved.
+Copyright (C) 1999-2007 id Software, Inc. and contributors.
+For a list of contributors, see the accompanying CONTRIBUTORS file.
 
 This file is part of GtkRadiant.
 
@@ -19,372 +19,359 @@ along with GtkRadiant; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
+#include "plugin.h"
 #include "entity.h"
-
-#include "ifilter.h"
-#include "selectable.h"
-#include "namespace.h"
-
-#include "scenelib.h"
-#include "entitylib.h"
-#include "eclasslib.h"
-#include "pivot.h"
-
-#include "targetable.h"
-#include "uniquenames.h"
-#include "namekeys.h"
-#include "stream/stringstream.h"
-#include "filters.h"
-
-
-#include "miscmodel.h"
+#include "entity_entitymodel.h"
 #include "light.h"
-#include "group.h"
-#include "eclassmodel.h"
-#include "generic.h"
-#include "doom3group.h"
+
+int g_entityId = 1;
 
 
 
-EGameType g_gameType;
+// internal
 
-inline scene::Node& entity_for_eclass(EntityClass* eclass)
+static void Entity_FreeEpairs(entity_t *e);
+
+static void SetKeyValue (epair_t *&e, const char *key, const char *value);
+static void  DeleteKey (epair_t *&e, const char *key);
+static const char *ValueForKey ( epair_t *&e, const char *key);
+
+static void Entity_OnKeyValueChanged(entity_t *e, const char* key, const char* value);
+
+// constructor
+entity_t *Entity_Alloc()
 {
-  if(classname_equal(eclass->name(), "misc_model")
-  || classname_equal(eclass->name(), "misc_gamemodel")
-  || classname_equal(eclass->name(), "model_static"))
+  entity_t *e;
+	e = (entity_t*)malloc (sizeof(*e));
+	e->entityId = g_entityId++;
+  VectorSet(e->origin, 0, 0, 0);
+  VectorSet(e->color, 1, 1, 1);
+  e->redoId = 0;
+  e->undoId = 0;
+  e->next = e->prev = NULL;
+	e->brushes.onext = e->brushes.oprev = &e->brushes;
+  e->epairs = NULL;
+  e->eclass = NULL;
+  e->model.pRender = NULL;
+  e->model.pSelect = NULL;
+  e->model.pEdit = NULL;
+  return e;
+}
+
+// destructor
+void Entity_Free (entity_t *e)
+{
+	while (e->brushes.onext != &e->brushes)
+		Brush_Free( e->brushes.onext, true );
+
+	if (e->next)
+	{
+		e->next->prev = e->prev;
+		e->prev->next = e->next;
+	}
+
+	Entity_FreeEpairs(e);
+
+  if (e->model.pRender)
   {
-    return New_MiscModel(eclass);
+    e->model.pRender->DecRef();
+    e->model.pRender = NULL;
   }
-  else if(classname_equal(eclass->name(), "light")
-    || classname_equal(eclass->name(), "lightJunior"))
+  if (e->model.pSelect)
   {
-    return New_Light(eclass);
+    e->model.pSelect->DecRef();
+    e->model.pSelect = NULL;
   }
-  if(!eclass->fixedsize)
+  if (e->model.pEdit)
   {
-    if(g_gameType == eGameTypeDoom3)
+    e->model.pEdit->DecRef();
+    e->model.pEdit = NULL;
+  }
+
+	free (e);
+}
+
+// construct from entity
+entity_t	*Entity_Clone (entity_t *e)
+{
+	entity_t	*n;
+	epair_t		*ep;
+
+	n = Entity_Alloc();
+	n->eclass = e->eclass;
+
+	for (ep = e->epairs ; ep ; ep=ep->next)
+    SetKeyValue(n, ep->key, ep->value);
+
+	// copy some misc stuff as well
+	VectorCopy( e->origin, n->origin );
+//	VectorCopy( e->vRotation, n->vRotation );
+//	VectorCopy( e->vScale, n->vScale );
+
+//  n->bDirty = true;
+
+	return n;
+}
+
+
+
+
+
+const char *ValueForKey ( epair_t *&e, const char *key)
+{
+  epair_t *ep;
+  for (ep=e ; ep ; ep=ep->next)
+  {
+		if (!strcmp (ep->key, key) )
     {
-      return New_Doom3Group(eclass);
-    }
-    else
-    {
-      return New_Group(eclass);
+      return ep->value;
     }
   }
-  else if(!string_empty(eclass->modelpath()))
+  return "";
+}
+
+const char *ValueForKey (entity_t *ent, const char *key)
+{
+  return ValueForKey(ent->epairs, key);
+}
+
+void 	SetKeyValue (epair_t *&e, const char *key, const char *value)
+{
+	epair_t	*ep;
+  for (ep=e ; ep ; ep=ep->next)
   {
-    return New_EclassModel(eclass);
+		if (!strcmp (ep->key, key) )
+		{
+			free (ep->value);
+			ep->value = (char*)malloc(strlen(value)+1);
+			strcpy (ep->value, value);
+			return;
+		}
   }
-  else
+	ep = (epair_t*)malloc (sizeof(*ep));
+	ep->next = e;
+	e = ep;
+	ep->key = (char*)malloc(strlen(key)+1);
+	strcpy (ep->key, key);
+	ep->value = (char*)malloc(strlen(value)+1);
+	strcpy (ep->value, value);
+
+}
+
+void SetKeyValue (entity_t *ent, const char *key, const char *value)
+{
+	if (ent == NULL)
   {
-    return New_GenericEntity(eclass);
+    Sys_FPrintf(SYS_ERR, "ERROR: SetKeyValue: NULL entity \n");
+		return;
+  }
+
+	if (!key || !key[0])
+  {
+    Sys_FPrintf(SYS_ERR, "ERROR: SetKeyValue: NULL or zero-length key\n");
+		return;
+  }
+
+  SetKeyValue(ent->epairs, key, value);
+  /*!
+  \todo TODO broadcast this through a clean messaging API ;-)
+  */
+  Entity_OnKeyValueChanged(ent, key, value);
+}
+
+void 	DeleteKey (epair_t *&e, const char *key)
+{
+	epair_t	**ep, *next;
+	
+	ep = &e;
+	while (*ep)
+	{
+		next = *ep;
+		if ( !strcmp (next->key, key) )
+		{
+			*ep = next->next;
+			free(next->key);
+			free(next->value);
+			free(next);
+			return;
+		}
+		ep = &next->next;
+	}
+}
+
+void 	DeleteKey (entity_t *ent, const char *key)
+{
+  DeleteKey(ent->epairs, key);
+  Entity_OnKeyValueChanged(ent, key, "");
+}
+
+float	FloatForKey (entity_t *ent, const char *key)
+{
+	const char	*k;
+	
+	k = ValueForKey (ent, key);
+	return (float) atof(k);
+}
+
+int IntForKey (entity_t *ent, const char *key)
+{
+	const char	*k;
+	
+	k = ValueForKey (ent, key);
+	return atoi(k);
+}
+
+void 	GetVectorForKey (entity_t *ent, const char *key, vec3_t vec)
+{
+	const char	*k;
+	
+	k = ValueForKey (ent, key);
+	sscanf (k, "%f %f %f", &vec[0], &vec[1], &vec[2]);
+}
+
+/*
+===============
+Entity_FreeEpairs
+
+Frees the entity epairs.
+===============
+*/
+void Entity_FreeEpairs(entity_t *e)
+{
+	epair_t	*ep, *next;
+
+	for (ep = e->epairs; ep; ep = next)
+	{
+		next = ep->next;
+		free (ep->key);
+		free (ep->value);
+		free (ep);
+	}
+	e->epairs = NULL;
+}
+
+void Entity_AddToList(entity_t *e, entity_t *elist)
+{
+	if (e->next || e->prev)
+		Error ("Entity_AddToList: already linked");
+	//e->next = elist->next;
+	//elist->next->prev = e;
+	//elist->next = e;
+	//e->prev = elist;
+	e->next = elist;
+	e->prev = elist->prev;
+	elist->prev->next = e;
+	elist->prev = e;
+}
+
+void Entity_RemoveFromList (entity_t *e)
+{
+	if (!e->next || !e->prev)
+		Error ("Entity_RemoveFromList: not linked");
+	e->next->prev = e->prev;
+	e->prev->next = e->next;
+	e->next = e->prev = NULL;
+}
+
+void Entity_LinkBrush (entity_t *e, brush_t *b)
+{
+	if (b->oprev || b->onext)
+		Error ("Entity_LinkBrush: Already linked");
+	b->owner = e;
+
+//	b->onext = e->brushes.onext;
+//	b->oprev = &e->brushes;
+//	e->brushes.onext->oprev = b;
+//	e->brushes.onext = b;
+  /*
+  SPoG - changed to add brushes to end of list instead of start - so this can be used by map loader.
+  This could concievably cause a problem if someone is traversing e->brushes while calling this function.
+  So don't.
+  */
+  b->onext = &e->brushes;
+	b->oprev = e->brushes.oprev;
+	e->brushes.oprev->onext = b;
+	e->brushes.oprev = b;
+}
+
+void Entity_UnlinkBrush (brush_t *b)
+{
+	if (!b->onext || !b->oprev)
+		Error ("Entity_UnlinkBrush: Not currently linked");
+	b->onext->oprev = b->oprev;
+	b->oprev->onext = b->onext;
+	b->onext = b->oprev = NULL;
+	b->owner = NULL;
+}
+
+// for undo
+int Entity_MemorySize(entity_t *e)
+{
+	epair_t	*ep;
+	int size = 0;
+
+	for (ep = e->epairs; ep; ep = ep->next)
+	{
+    size += strlen(ep->key);
+    size += strlen(ep->value);
+    size += sizeof(epair_t);
+	}
+  size += sizeof(entity_t);
+	return size;
+}
+
+epair_t* Entity_AllocateEpair(const char *key, const char *value)
+{
+  epair_t *ep = (epair_t*)malloc (sizeof(*ep));
+  ep->key = (char*)malloc(strlen(key)+1);
+  strcpy (ep->key, key);
+  ep->value = (char*)malloc(strlen(value)+1);
+  strcpy (ep->value, value);
+  ep->next = NULL;
+  return ep;
+}
+
+epair_t** Entity_GetKeyValList(entity_t *e)
+{
+  return &e->epairs;
+}
+
+void Entity_SetKeyValList(entity_t *e, epair_t* ep)
+{
+  if( e->epairs )
+    Sys_Printf( "Warning : pe->epairs != NULL in Entity_SetKeyValList, will not set\n" );
+  else {
+    e->epairs = ep;
+
+    for (epair_t *pe_ep = e->epairs; pe_ep; pe_ep = pe_ep->next)
+      Entity_OnKeyValueChanged(e, pe_ep->key, pe_ep->value);
   }
 }
 
-void Entity_setName(Entity& entity, const char* name)
+
+/*!
+\todo FIXME TTimo
+this is meant to raise messages instead of calling the IEdit directly
+*/
+static void Entity_OnKeyValueChanged(entity_t *e, const char *key, const char* value)
 {
-  entity.setKeyValue("name", name);
-}
-typedef ReferenceCaller1<Entity, const char*, Entity_setName> EntitySetNameCaller;
-
-inline Namespaced* Node_getNamespaced(scene::Node& node)
-{
-  return NodeTypeCast<Namespaced>::cast(node);
-}
-
-inline scene::Node& node_for_eclass(EntityClass* eclass)
-{
-  scene::Node& node = entity_for_eclass(eclass);
-  Node_getEntity(node)->setKeyValue("classname", eclass->name());
-
-  if(g_gameType == eGameTypeDoom3
-    && string_not_empty(eclass->name())
-    && !string_equal(eclass->name(), "worldspawn")
-    && !string_equal(eclass->name(), "UNKNOWN_CLASS"))
+  if(strcmp(key,"classname") == 0)
   {
-    char buffer[1024];
-    strcpy(buffer, eclass->name());
-    strcat(buffer, "_1");
-    GlobalNamespace().makeUnique(buffer, EntitySetNameCaller(*Node_getEntity(node)));
+    e->eclass = Eclass_ForName(value, false);
+    Entity_UpdateClass(e, value);
+    if(strcmp(value,"light") == 0)
+      for(epair_t* ep = e->epairs; ep != NULL; ep=ep->next)
+        Light_OnKeyValueChanged(e, ep->key, ep->value);
+    if(e->model.pEdit)
+      for(epair_t* ep = e->epairs; ep != NULL; ep=ep->next)
+        e->model.pEdit->OnKeyValueChanged(e, ep->key, ep->value);
   }
+  else if(Entity_IsLight(e))
+    Light_OnKeyValueChanged(e, key, value);
+  else if(e->model.pEdit)
+    e->model.pEdit->OnKeyValueChanged(e, key, value);
 
-  Namespaced* namespaced = Node_getNamespaced(node);
-  if(namespaced != 0)
-  {
-    namespaced->setNamespace(GlobalNamespace());
-  }
-
-  return node;
-}
-
-EntityCreator::KeyValueChangedFunc EntityKeyValues::m_entityKeyValueChanged = 0;
-EntityCreator::KeyValueChangedFunc KeyValue::m_entityKeyValueChanged = 0;
-Counter* EntityKeyValues::m_counter = 0;
-
-bool g_showNames = true;
-bool g_showAngles = true;
-bool g_newLightDraw = true;
-bool g_lightRadii = false;
-
-class ConnectEntities
-{
-public:
-  Entity* m_e1;
-  Entity* m_e2;
-  ConnectEntities(Entity* e1, Entity* e2) : m_e1(e1), m_e2(e2)
-  {
-  }
-  void connect(const char* name)
-  {
-	  m_e1->setKeyValue("target", name);
-	  m_e2->setKeyValue("targetname", name);
-  }
-  typedef MemberCaller1<ConnectEntities, const char*, &ConnectEntities::connect> ConnectCaller;
-};
-
-inline Entity* ScenePath_getEntity(const scene::Path& path)
-{
-  Entity* entity = Node_getEntity(path.top());
-  if(entity == 0)
-  {
-    entity = Node_getEntity(path.parent());
-  }
-  return entity;
-}
-
-class Quake3EntityCreator : public EntityCreator
-{
-public:
-  scene::Node& createEntity(EntityClass* eclass)
-  {
-    return node_for_eclass(eclass);
-  }
-  void setKeyValueChangedFunc(KeyValueChangedFunc func)
-  {
-    EntityKeyValues::setKeyValueChangedFunc(func);
-  }
-  void setCounter(Counter* counter)
-  {
-    EntityKeyValues::setCounter(counter);
-  }
-  void connectEntities(const scene::Path& path, const scene::Path& targetPath)
-  {
-    Entity* e1 = ScenePath_getEntity(path);
-    Entity* e2 = ScenePath_getEntity(targetPath);
-
-    if(e1 == 0 || e2 == 0)
-    {
-      globalErrorStream() << "entityConnectSelected: both of the selected instances must be an entity\n";
-      return;
-    }
-
-    if(e1 == e2)
-    {
-      globalErrorStream() << "entityConnectSelected: the selected instances must not both be from the same entity\n";
-      return;
-    }
-
-
-    UndoableCommand undo("entityConnectSelected");
-
-    if(g_gameType == eGameTypeDoom3)
-    {
-      StringOutputStream key(16);
-      for(unsigned int i = 0; ; ++i)
-      {
-        key << "target";
-        if(i != 0)
-        {
-           key << i;
-        }
-        const char* value = e1->getKeyValue(key.c_str());
-        if(string_empty(value))
-        {
-          e1->setKeyValue(key.c_str(), e2->getKeyValue("name"));
-          break;
-        }
-        key.clear();
-      }
-    }
-    else
-    {
-      ConnectEntities connector(e1, e2);
-      const char* value = e2->getKeyValue("targetname");
-      if(string_empty(value))
-      {
-        value = e1->getKeyValue("target");
-      }
-      if(!string_empty(value))
-      {
-        connector.connect(value);
-      }
-      else
-      {
-        const char* type = e2->getKeyValue("classname");
-        if(string_empty(type))
-        {
-          type = "t";
-        }
-        StringOutputStream key(64);
-        key << type << "1";
-        GlobalNamespace().makeUnique(key.c_str(), ConnectEntities::ConnectCaller(connector));
-      }
-    }
-
-    SceneChangeNotify();
-  }
-  void setLightRadii(bool lightRadii)
-  {
-    g_lightRadii = lightRadii;
-  }
-  bool getLightRadii()
-  {
-    return g_lightRadii;
-  }
-  void setShowNames(bool showNames)
-  {
-    g_showNames = showNames;
-  }
-  bool getShowNames()
-  {
-    return g_showNames;
-  }
-  void setShowAngles(bool showAngles)
-  {
-    g_showAngles = showAngles;
-  }
-  bool getShowAngles()
-  {
-    return g_showAngles;
-  }
-
-  void printStatistics() const
-  {
-    StringPool_analyse(EntityKeyValues::getPool());
-  }
-};
-
-Quake3EntityCreator g_Quake3EntityCreator;
-
-EntityCreator& GetEntityCreator()
-{
-  return g_Quake3EntityCreator;
-}
-
-
-
-class filter_entity_classname : public EntityFilter
-{
-  const char* m_classname;
-public:
-  filter_entity_classname(const char* classname) : m_classname(classname)
-  {
-  }
-  bool filter(const Entity& entity) const
-  {
-    return string_equal(entity.getKeyValue("classname"), m_classname);
-  }
-};
-
-class filter_entity_classgroup : public EntityFilter
-{
-  const char* m_classgroup;
-  std::size_t m_length;
-public:
-  filter_entity_classgroup(const char* classgroup) : m_classgroup(classgroup), m_length(string_length(m_classgroup))
-  {
-  }
-  bool filter(const Entity& entity) const
-  {
-    return string_equal_n(entity.getKeyValue("classname"), m_classgroup, m_length);
-  }
-};
-
-filter_entity_classname g_filter_entity_world("worldspawn");
-filter_entity_classname g_filter_entity_func_group("func_group");
-filter_entity_classname g_filter_entity_light("light");
-filter_entity_classname g_filter_entity_misc_model("misc_model");
-filter_entity_classname g_filter_entity_misc_gamemodel("misc_gamemodel");
-filter_entity_classgroup g_filter_entity_trigger("trigger_");
-filter_entity_classgroup g_filter_entity_path("path_");
-
-class filter_entity_doom3model : public EntityFilter
-{
-public:
-  bool filter(const Entity& entity) const
-  {
-    return string_equal(entity.getKeyValue("classname"), "func_static")
-      && !string_equal(entity.getKeyValue("model"), entity.getKeyValue("name"));
-  }
-};
-
-filter_entity_doom3model g_filter_entity_doom3model;
-
-
-void Entity_InitFilters()
-{
-	add_entity_filter(g_filter_entity_world, EXCLUDE_WORLD);
-	add_entity_filter(g_filter_entity_func_group, EXCLUDE_WORLD);
-	add_entity_filter(g_filter_entity_world, EXCLUDE_ENT, true);
-    add_entity_filter(g_filter_entity_trigger, EXCLUDE_TRIGGERS);
-	add_entity_filter(g_filter_entity_misc_model, EXCLUDE_MODELS);
-    add_entity_filter(g_filter_entity_misc_gamemodel, EXCLUDE_MODELS);
-	add_entity_filter(g_filter_entity_doom3model, EXCLUDE_MODELS);
-	add_entity_filter(g_filter_entity_light, EXCLUDE_LIGHTS);
-	add_entity_filter(g_filter_entity_path, EXCLUDE_PATHS);
-}
-
-
-#include "preferencesystem.h"
-
-void Entity_Construct(EGameType gameType)
-{
-  g_gameType = gameType;
-  if(g_gameType == eGameTypeDoom3)
-  {
-    g_targetable_nameKey = "name";
-
-    Static<KeyIsName>::instance().m_keyIsName = keyIsNameDoom3;
-    Static<KeyIsName>::instance().m_nameKey = "name";
-  }
-  else
-  {
-    Static<KeyIsName>::instance().m_keyIsName = keyIsNameQuake3;
-    Static<KeyIsName>::instance().m_nameKey = "targetname";
-  }
-
-  GlobalPreferenceSystem().registerPreference("SI_ShowNames", BoolImportStringCaller(g_showNames), BoolExportStringCaller(g_showNames));
-  GlobalPreferenceSystem().registerPreference("SI_ShowAngles", BoolImportStringCaller(g_showAngles), BoolExportStringCaller(g_showAngles));
-  GlobalPreferenceSystem().registerPreference("NewLightStyle", BoolImportStringCaller(g_newLightDraw), BoolExportStringCaller(g_newLightDraw));
-  GlobalPreferenceSystem().registerPreference("LightRadiuses", BoolImportStringCaller(g_lightRadii), BoolExportStringCaller(g_lightRadii));
-
-  Entity_InitFilters();
-  LightType lightType = LIGHTTYPE_DEFAULT;
-  if(g_gameType == eGameTypeRTCW)
-  {
-    lightType = LIGHTTYPE_RTCW;
-  }
-  else if(g_gameType == eGameTypeDoom3)
-  {
-    lightType = LIGHTTYPE_DOOM3;
-  }
-  Light_Construct(lightType);
-  MiscModel_construct();
-  Doom3Group_construct();
-
-  RenderablePivot::StaticShader::instance() = GlobalShaderCache().capture("$PIVOT");
-
-  GlobalShaderCache().attachRenderable(StaticRenderableConnectionLines::instance());
-}
-
-void Entity_Destroy()
-{
-  GlobalShaderCache().detachRenderable(StaticRenderableConnectionLines::instance());
-
-  GlobalShaderCache().release("$PIVOT");
-
-  Doom3Group_destroy();
-  MiscModel_destroy();
-  Light_Destroy();
+  // update brush mins/maxs for legacy culling system
+  if(e->model.pRender && e->brushes.onext != &e->brushes)
+    Brush_Build( e->brushes.onext, true, true, false, true );
 }

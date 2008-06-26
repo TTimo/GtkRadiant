@@ -220,6 +220,9 @@ static picoModel_t *_fm_load( PM_PARAMS_LOAD )
 	picoColor_t	color;
 	
 
+	// fm loading
+ 	_pico_printf( PICO_NORMAL, "Loading \"%s\"", fileName );
+
 	bb = (picoByte_t*) buffer;
 
 	// Header Header

@@ -1,6 +1,5 @@
-/* -------------------------------------------------------------------------------
-
-Copyright (C) 1999-2006 Id Software, Inc. and contributors.
+/*
+Copyright (C) 1999-2007 id Software, Inc. and contributors.
 For a list of contributors, see the accompanying CONTRIBUTORS file.
 
 This file is part of GtkRadiant.
@@ -323,7 +322,7 @@ void InsertModel( char *name, int frame, m4x4_t transform, remap_t *remap, shade
 		ds->lightmapScale = lightmapScale;
 		
 		/* force to meta? */
-		if( (si != NULL && si->forceMeta) || (spawnFlags & 4) )	/* 3rd bit */
+		if( si != NULL && si->forceMeta )
 			ds->type = SURFACE_FORCED_META;
 		
 		/* set particulars */
@@ -367,7 +366,6 @@ void InsertModel( char *name, int frame, m4x4_t transform, remap_t *remap, shade
 			}
 			
 			/* normal texture coordinates */
-			else
 			{
 				st = PicoGetSurfaceST( surface, 0, i );
 				dv->st[ 0 ] = st[ 0 ];
@@ -395,6 +393,9 @@ void InsertModel( char *name, int frame, m4x4_t transform, remap_t *remap, shade
 		/* set cel shader */
 		ds->celShader = celShader;
 		
+		/* finish surface */
+		FinishSurface( ds );
+		
 		/* ydnar: giant hack land: generate clipping brushes for model triangles */
 		if( si->clipModel || (spawnFlags & 2) )	/* 2nd bit */
 		{
@@ -404,8 +405,7 @@ void InsertModel( char *name, int frame, m4x4_t transform, remap_t *remap, shade
 			
 			
 			/* temp hack */
-			if( !si->clipModel &&
-				((si->compileFlags & C_TRANSLUCENT) || !(si->compileFlags & C_SOLID)) )
+			if( (si->compileFlags & C_TRANSLUCENT) || !(si->compileFlags & C_SOLID) )
 				continue;
 			
 			/* overflow check */

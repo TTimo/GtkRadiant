@@ -17,15 +17,20 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include "ConfigDialog.h"
+// ConfigDialog.cpp : implementation file
+//
+
+#include "stdafx.h"
 #include <stdio.h>
-#include <gtk/gtk.h>
-#include "gtkutil/pointer.h"
 
-#include "iscenegraph.h"
+#ifdef _DEBUG
+#define new DEBUG_NEW
+#undef THIS_FILE
+//static char THIS_FILE[] = __FILE__;
+#endif
 
-#include "prtview.h"
-#include "portals.h"
+/////////////////////////////////////////////////////////////////////////////
+// CConfigDialog dialog
 
 static void dialog_button_callback (GtkWidget *widget, gpointer data)
 {
@@ -37,7 +42,7 @@ static void dialog_button_callback (GtkWidget *widget, gpointer data)
   ret = (int*)g_object_get_data (G_OBJECT (parent), "ret");
 
   *loop = 0;
-  *ret = gpointer_to_int(data);
+  *ret = (int)data;
 }
 
 static gint dialog_delete_callback (GtkWidget *widget, GdkEvent* event, gpointer data)
@@ -54,10 +59,10 @@ static gint dialog_delete_callback (GtkWidget *widget, GdkEvent* event, gpointer
 // =============================================================================
 // Color selection dialog
 
-static int DoColor (PackedColour *c)
+static int DoColor (COLORREF *c)
 {
   GtkWidget* dlg;
-  double clr[4];
+  double clr[3];
   int loop = 1, ret = IDCANCEL;
 
   clr[0] = ((double)GetRValue (*c)) / 255.0;
@@ -134,60 +139,64 @@ static void SetClipText (GtkWidget* label)
 
 static void OnScroll2d (GtkAdjustment *adj, gpointer data)
 {
-  portals.width_2d = static_cast<float>(adj->value);
+  portals.width_2d = adj->value;
   Set2DText (GTK_WIDGET (data));
 
-  Portals_shadersChanged();
-  SceneChangeNotify();
+  if(interfaces_started)
+    g_FuncTable.m_pfnSysUpdateWindows(UPDATE_2D);
 }
 
 static void OnScroll3d (GtkAdjustment *adj, gpointer data)
 {
-  portals.width_3d = static_cast<float>(adj->value);
+  portals.width_3d = adj->value;
   Set3DText (GTK_WIDGET (data));
 
-  SceneChangeNotify();
+  if(interfaces_started)
+    g_FuncTable.m_pfnSysUpdateWindows(UPDATE_3D);
 }
 
 static void OnScrollTrans (GtkAdjustment *adj, gpointer data)
 {
-  portals.trans_3d = static_cast<float>(adj->value);
+  portals.trans_3d = adj->value;
   Set3DTransText (GTK_WIDGET (data));
 
-  SceneChangeNotify();
+  if(interfaces_started)
+    g_FuncTable.m_pfnSysUpdateWindows(UPDATE_3D);
 }
 
 static void OnScrollClip (GtkAdjustment *adj, gpointer data)
 {
-  portals.clip_range = static_cast<float>(adj->value);
+  portals.clip_range = adj->value;
   SetClipText (GTK_WIDGET (data));
 
-  SceneChangeNotify();
+  if(interfaces_started)
+    g_FuncTable.m_pfnSysUpdateWindows(UPDATE_3D);
 }
 
 static void OnAntiAlias2d (GtkWidget *widget, gpointer data)
 {
   portals.aa_2d = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (widget)) ? true : false;
 
-  Portals_shadersChanged();
-
-  SceneChangeNotify();
+  if(interfaces_started)
+    g_FuncTable.m_pfnSysUpdateWindows(UPDATE_2D);
 }
 
 static void OnConfig2d (GtkWidget *widget, gpointer data)
 {
   portals.show_2d = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (widget)) ? true : false;
 
-  SceneChangeNotify();
+  if(interfaces_started)
+    g_FuncTable.m_pfnSysUpdateWindows(UPDATE_2D);
 }
 
 static void OnColor2d (GtkWidget *widget, gpointer data)
 {
   if (DoColor (&portals.color_2d) == IDOK)
   {
-    Portals_shadersChanged();
+    portals.FixColors();
 
-    SceneChangeNotify();
+    if(interfaces_started)
+      g_FuncTable.m_pfnSysUpdateWindows(UPDATE_2D);
   }
 }
 
@@ -195,7 +204,8 @@ static void OnConfig3d (GtkWidget *widget, gpointer data)
 {
   portals.show_3d = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (widget)) ? true : false;
 
-  SceneChangeNotify();
+  if(interfaces_started)
+    g_FuncTable.m_pfnSysUpdateWindows(UPDATE_3D);
 }
 
 
@@ -203,17 +213,18 @@ static void OnAntiAlias3d (GtkWidget *widget, gpointer data)
 {
   portals.aa_3d = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (widget)) ? true : false;
 
-  Portals_shadersChanged();
-  SceneChangeNotify();
+  if(interfaces_started)
+    g_FuncTable.m_pfnSysUpdateWindows(UPDATE_3D);
 }
 
 static void OnColor3d (GtkWidget *widget, gpointer data)
 {
   if (DoColor (&portals.color_3d) == IDOK)
   {
-    Portals_shadersChanged();
+    portals.FixColors();
 
-    SceneChangeNotify();
+    if(interfaces_started)
+      g_FuncTable.m_pfnSysUpdateWindows(UPDATE_3D);
   }
 }
 
@@ -221,9 +232,10 @@ static void OnColorFog (GtkWidget *widget, gpointer data)
 {
   if (DoColor (&portals.color_fog) == IDOK)
   {
-    Portals_shadersChanged();
+    portals.FixColors();
 
-    SceneChangeNotify();
+    if(interfaces_started)
+      g_FuncTable.m_pfnSysUpdateWindows(UPDATE_3D);
   }
 }
 
@@ -231,37 +243,40 @@ static void OnFog (GtkWidget *widget, gpointer data)
 {
   portals.fog = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (widget)) ? true : false;
 
-  Portals_shadersChanged();
-  SceneChangeNotify();
+  if(interfaces_started)
+    g_FuncTable.m_pfnSysUpdateWindows(UPDATE_3D);
 }
 
 static void OnSelchangeZbuffer (GtkWidget *widget, gpointer data)
 {
-  portals.zbuffer = gpointer_to_int(data);
+  portals.zbuffer = GPOINTER_TO_INT (data);
 
-  Portals_shadersChanged();
-  SceneChangeNotify();
+  if(interfaces_started)
+    g_FuncTable.m_pfnSysUpdateWindows(UPDATE_3D);
 }
 
 static void OnPoly (GtkWidget *widget, gpointer data)
 {
   portals.polygons = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (widget));
 
-  SceneChangeNotify();
+  if(interfaces_started)
+    g_FuncTable.m_pfnSysUpdateWindows(UPDATE_3D);
 }
 
 static void OnLines (GtkWidget *widget, gpointer data)
 {
   portals.lines = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (widget));
 
-  SceneChangeNotify();
+  if(interfaces_started)
+    g_FuncTable.m_pfnSysUpdateWindows(UPDATE_3D);
 }
 
 static void OnClip (GtkWidget *widget, gpointer data)
 {
   portals.clip = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (widget)) ? true : false;
 
-  SceneChangeNotify();
+  if(interfaces_started)
+    g_FuncTable.m_pfnSysUpdateWindows(UPDATE_3D);
 }
 
 void DoConfigDialog ()
@@ -523,4 +538,3 @@ void DoConfigDialog ()
   gtk_grab_remove (dlg);
   gtk_widget_destroy (dlg);
 }
-

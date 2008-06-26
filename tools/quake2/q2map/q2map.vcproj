@@ -1,442 +1,152 @@
-<?xml version="1.0" encoding="Windows-1252"?>
-<VisualStudioProject
-	ProjectType="Visual C++"
-	Version="8,00"
-	Name="q2map"
-	ProjectGUID="{FB80DE6C-51C8-4D56-876D-C7878A4EB10B}"
-	RootNamespace="q2map"
-	>
+<?xml version="1.0" ?><VisualStudioProject Name="q2map" ProjectGUID="{65D02375-63EE-4A8A-9F8E-504B1D5A1D02}" ProjectType="Visual C++" RootNamespace="q2map" Version="8.00">
 	<Platforms>
-		<Platform
-			Name="Win32"
-		/>
+		<Platform Name="Win32"/>
 	</Platforms>
 	<ToolFiles>
 	</ToolFiles>
 	<Configurations>
-		<Configuration
-			Name="Debug|Win32"
-			OutputDirectory="Debug"
-			IntermediateDirectory="Debug"
-			ConfigurationType="1"
-			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
-			UseOfMFC="0"
-			ATLMinimizesCRunTimeLibraryUsage="false"
-			CharacterSet="2"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-				TypeLibraryName=".\Debug/q2map.tlb"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-				Optimization="0"
-				AdditionalIncludeDirectories="..\..\..\include;..\common;..\..\..\libs;&quot;..\..\..\..\libxml2-2.6\include&quot;;&quot;..\..\..\..\gtk2-2.10\include&quot;"
-				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;_DEBUG,WIN32,_CONSOLE"
-				ExceptionHandling="0"
-				BasicRuntimeChecks="0"
-				RuntimeLibrary="3"
-				BufferSecurityCheck="false"
-				PrecompiledHeaderFile=".\Debug/q2map.pch"
-				AssemblerListingLocation=".\Debug/"
-				ObjectFile=".\Debug/"
-				ProgramDataBaseFileName=".\Debug/"
-				BrowseInformation="0"
-				WarningLevel="3"
-				SuppressStartupBanner="true"
-				DebugInformationFormat="4"
-				CompileAs="0"
-				DisableSpecificWarnings="4996"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG"
-				Culture="1033"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLinkerTool"
-				AdditionalOptions="/MACHINE:I386"
-				AdditionalDependencies="wsock32.lib libxml2.lib"
-				OutputFile=".\Debug/q2map.exe"
-				LinkIncremental="2"
-				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="&quot;..\..\..\..\libxml2-2.6\lib&quot;"
-				IgnoreDefaultLibraryNames="libcd"
-				GenerateDebugInformation="true"
-				ProgramDatabaseFile=".\Debug/q2map.pdb"
-				GenerateMapFile="true"
-				MapFileName=".\Debug/q2map.map"
-				SubSystem="1"
-				StackReserveSize="4194304"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCWebDeploymentTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-				Description="Copy to dir..."
-				CommandLine="copy &quot;$(TargetPath)&quot; &quot;$(SolutionDir)install&quot;"
-			/>
+		<Configuration CharacterSet="2" ConfigurationType="1" IntermediateDirectory="$(ConfigurationName)" Name="Debug|Win32" OutputDirectory="$(SolutionDir)$(ConfigurationName)">
+			<Tool Name="VCPreBuildEventTool"/>
+			<Tool Name="VCCustomBuildTool"/>
+			<Tool Name="VCXMLDataGeneratorTool"/>
+			<Tool Name="VCWebServiceProxyGeneratorTool"/>
+			<Tool Name="VCMIDLTool"/>
+			<Tool AdditionalIncludeDirectories="&quot;$(SolutionDir)\include&quot;;&quot;$(SolutionDir)\libs&quot;;&quot;$(SolutionDir)\..\STLPort\stlport&quot;;&quot;$(SolutionDir)\..\gtk2\include&quot;;&quot;$(SolutionDir)\..\gtk2\include\glib-2.0&quot;;&quot;$(SolutionDir)\..\gtk2\lib\glib-2.0\include&quot;;&quot;$(SolutionDir)\..\libxml2\include&quot;" BasicRuntimeChecks="3" DebugInformationFormat="4" Detect64BitPortabilityProblems="true" DisableSpecificWarnings="4996;4244;4267" MinimalRebuild="true" Name="VCCLCompilerTool" Optimization="0" PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS" RuntimeLibrary="3" WarningLevel="3"/>
+			<Tool Name="VCManagedResourceCompilerTool"/>
+			<Tool Name="VCResourceCompilerTool"/>
+			<Tool Name="VCPreLinkEventTool"/>
+			<Tool GenerateDebugInformation="true" Name="VCLinkerTool" TargetMachine="1"/>
+			<Tool Name="VCALinkTool"/>
+			<Tool Name="VCManifestTool"/>
+			<Tool Name="VCXDCMakeTool"/>
+			<Tool Name="VCBscMakeTool"/>
+			<Tool Name="VCFxCopTool"/>
+			<Tool Name="VCAppVerifierTool"/>
+			<Tool Name="VCWebDeploymentTool"/>
+			<Tool Name="VCPostBuildEventTool"/>
 		</Configuration>
-		<Configuration
-			Name="Release|Win32"
-			OutputDirectory="Release"
-			IntermediateDirectory="Release"
-			ConfigurationType="1"
-			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
-			UseOfMFC="0"
-			ATLMinimizesCRunTimeLibraryUsage="false"
-			CharacterSet="2"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-				TypeLibraryName=".\Release/q2map.tlb"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-				Optimization="3"
-				InlineFunctionExpansion="2"
-				EnableIntrinsicFunctions="true"
-				FavorSizeOrSpeed="1"
-				AdditionalIncludeDirectories="..\..\..\include;..\common;..\..\..\libs;&quot;..\..\..\..\libxml2-2.6\include&quot;;&quot;..\..\..\..\gtk2-2.10\include&quot;"
-				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;NDEBUG,WIN32,_CONSOLE"
-				StringPooling="true"
-				ExceptionHandling="0"
-				BasicRuntimeChecks="0"
-				RuntimeLibrary="2"
-				BufferSecurityCheck="false"
-				EnableFunctionLevelLinking="true"
-				PrecompiledHeaderFile=".\Release/q2map.pch"
-				AssemblerListingLocation=".\Release/"
-				ObjectFile=".\Release/"
-				ProgramDataBaseFileName=".\Release/"
-				BrowseInformation="0"
-				WarningLevel="3"
-				SuppressStartupBanner="true"
-				DebugInformationFormat="3"
-				CompileAs="0"
-				DisableSpecificWarnings="4996"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="NDEBUG"
-				Culture="1033"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLinkerTool"
-				AdditionalOptions="/MACHINE:I386"
-				AdditionalDependencies="wsock32.lib libxml2.lib"
-				OutputFile=".\Release/q2map.exe"
-				LinkIncremental="1"
-				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="&quot;..\..\..\..\libxml2-2.6\lib&quot;"
-				ProgramDatabaseFile=".\Release/q2map.pdb"
-				GenerateMapFile="true"
-				MapFileName=".\Release/q2map.map"
-				SubSystem="1"
-				StackReserveSize="4194304"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCWebDeploymentTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-				Description="Copy to dir..."
-				CommandLine="copy &quot;$(TargetPath)&quot; &quot;$(SolutionDir)install&quot;"
-			/>
+		<Configuration CharacterSet="2" ConfigurationType="1" IntermediateDirectory="$(ConfigurationName)" Name="Release|Win32" OutputDirectory="$(SolutionDir)$(ConfigurationName)" WholeProgramOptimization="1">
+			<Tool Name="VCPreBuildEventTool"/>
+			<Tool Name="VCCustomBuildTool"/>
+			<Tool Name="VCXMLDataGeneratorTool"/>
+			<Tool Name="VCWebServiceProxyGeneratorTool"/>
+			<Tool Name="VCMIDLTool"/>
+			<Tool AdditionalIncludeDirectories="&quot;$(SolutionDir)\include&quot;;&quot;$(SolutionDir)\libs&quot;;&quot;$(SolutionDir)\..\STLPort\stlport&quot;;&quot;$(SolutionDir)\..\gtk2\include&quot;;&quot;$(SolutionDir)\..\gtk2\include\glib-2.0&quot;;&quot;$(SolutionDir)\..\gtk2\lib\glib-2.0\include&quot;;&quot;$(SolutionDir)\..\libxml2\include&quot;" DebugInformationFormat="3" Detect64BitPortabilityProblems="true" DisableSpecificWarnings="4996;4244;4267" Name="VCCLCompilerTool" PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS" RuntimeLibrary="2" WarningLevel="3"/>
+			<Tool Name="VCManagedResourceCompilerTool"/>
+			<Tool Name="VCResourceCompilerTool"/>
+			<Tool Name="VCPreLinkEventTool"/>
+			<Tool EnableCOMDATFolding="2" GenerateDebugInformation="true" Name="VCLinkerTool" OptimizeReferences="2" TargetMachine="1"/>
+			<Tool Name="VCALinkTool"/>
+			<Tool Name="VCManifestTool"/>
+			<Tool Name="VCXDCMakeTool"/>
+			<Tool Name="VCBscMakeTool"/>
+			<Tool Name="VCFxCopTool"/>
+			<Tool Name="VCAppVerifierTool"/>
+			<Tool Name="VCWebDeploymentTool"/>
+			<Tool Name="VCPostBuildEventTool"/>
 		</Configuration>
 	</Configurations>
 	<References>
 	</References>
 	<Files>
-		<Filter
-			Name="src"
-			>
-			<File
-				RelativePath=".\brushbsp.c"
-				>
+		<Filter Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat" Name="Source Files">
+			<File RelativePath=".\brushbsp.c">
 			</File>
-			<File
-				RelativePath="..\common\bspfile.c"
-				>
+			<File RelativePath="..\common\bspfile.c">
 			</File>
-			<File
-				RelativePath="..\common\bspfile.h"
-				>
+			<File RelativePath="..\common\cmdlib.c">
 			</File>
-			<File
-				RelativePath="..\common\cmdlib.c"
-				>
+			<File RelativePath=".\csg.c">
 			</File>
-			<File
-				RelativePath="..\common\cmdlib.h"
-				>
+			<File RelativePath=".\faces.c">
 			</File>
-			<File
-				RelativePath=".\csg.c"
-				>
+			<File RelativePath=".\flow.c">
 			</File>
-			<File
-				RelativePath=".\faces.c"
-				>
+			<File RelativePath=".\glfile.c">
 			</File>
-			<File
-				RelativePath=".\flow.c"
-				>
+			<File RelativePath="..\common\inout.c">
 			</File>
-			<File
-				RelativePath=".\glfile.c"
-				>
+			<File RelativePath="..\common\l3dslib.c">
 			</File>
-			<File
-				RelativePath="..\common\inout.c"
-				>
+			<File RelativePath="..\common\lbmlib.c">
 			</File>
-			<File
-				RelativePath="..\common\inout.h"
-				>
+			<File RelativePath=".\leakfile.c">
 			</File>
-			<File
-				RelativePath="..\common\l3dslib.c"
-				>
+			<File RelativePath=".\lightmap.c">
 			</File>
-			<File
-				RelativePath="..\common\l3dslib.h"
-				>
+			<File RelativePath=".\main.c">
 			</File>
-			<File
-				RelativePath="..\common\lbmlib.c"
-				>
+			<File RelativePath=".\map.c">
 			</File>
-			<File
-				RelativePath="..\common\lbmlib.h"
-				>
+			<File RelativePath="..\common\mathlib.c">
 			</File>
-			<File
-				RelativePath=".\leakfile.c"
-				>
+			<File RelativePath=".\nodraw.c">
 			</File>
-			<File
-				RelativePath=".\lightmap.c"
-				>
+			<File RelativePath=".\patches.c">
 			</File>
-			<File
-				RelativePath=".\main.c"
-				>
+			<File RelativePath="..\common\path_init.c">
 			</File>
-			<File
-				RelativePath=".\map.c"
-				>
+			<File RelativePath="..\common\polylib.c">
 			</File>
-			<File
-				RelativePath="..\common\mathlib.c"
-				>
+			<File RelativePath=".\portals.c">
 			</File>
-			<File
-				RelativePath="..\common\mathlib.h"
-				>
+			<File RelativePath=".\prtfile.c">
 			</File>
-			<File
-				RelativePath="..\common\md4.c"
-				>
+			<File RelativePath=".\qbsp.c">
 			</File>
-			<File
-				RelativePath=".\nodraw.c"
-				>
+			<File RelativePath=".\qrad.c">
 			</File>
-			<File
-				RelativePath=".\patches.c"
-				>
+			<File RelativePath=".\qvis.c">
 			</File>
-			<File
-				RelativePath="..\common\path_init.c"
-				>
+			<File RelativePath="..\common\scriplib.c">
 			</File>
-			<File
-				RelativePath="..\common\polylib.c"
-				>
+			<File RelativePath=".\textures.c">
 			</File>
-			<File
-				RelativePath="..\common\polylib.h"
-				>
+			<File RelativePath="..\common\threads.c">
 			</File>
-			<File
-				RelativePath=".\portals.c"
-				>
+			<File RelativePath=".\trace.c">
 			</File>
-			<File
-				RelativePath=".\prtfile.c"
-				>
+			<File RelativePath=".\tree.c">
 			</File>
-			<File
-				RelativePath="..\common\q2_threads.h"
-				>
+			<File RelativePath="..\common\trilib.c">
 			</File>
-			<File
-				RelativePath=".\q2map.h"
-				>
-			</File>
-			<File
-				RelativePath=".\qbsp.c"
-				>
-			</File>
-			<File
-				RelativePath=".\qbsp.h"
-				>
-			</File>
-			<File
-				RelativePath="..\common\qfiles.h"
-				>
-			</File>
-			<File
-				RelativePath=".\qrad.c"
-				>
-			</File>
-			<File
-				RelativePath=".\qrad.h"
-				>
-			</File>
-			<File
-				RelativePath=".\qvis.c"
-				>
-			</File>
-			<File
-				RelativePath=".\qvis.h"
-				>
-			</File>
-			<File
-				RelativePath="..\common\scriplib.c"
-				>
-			</File>
-			<File
-				RelativePath="..\common\scriplib.h"
-				>
-			</File>
-			<File
-				RelativePath=".\textures.c"
-				>
-			</File>
-			<File
-				RelativePath="..\common\threads.c"
-				>
-			</File>
-			<File
-				RelativePath=".\trace.c"
-				>
-			</File>
-			<File
-				RelativePath=".\tree.c"
-				>
-			</File>
-			<File
-				RelativePath="..\common\trilib.c"
-				>
-			</File>
-			<File
-				RelativePath="..\common\trilib.h"
-				>
-			</File>
-			<File
-				RelativePath=".\writebsp.c"
-				>
+			<File RelativePath=".\writebsp.c">
 			</File>
 		</Filter>
-		<File
-			RelativePath="..\..\..\touch.py"
-			>
-			<FileConfiguration
-				Name="Debug|Win32"
-				>
-				<Tool
-					Name="VCCustomBuildTool"
-					CommandLine="python &quot;$(SolutionDir)touch.py&quot; &quot;$(TargetPath)&quot;&#x0D;&#x0A;"
-					AdditionalDependencies="&quot;$(SolutionDir)install\$(TargetFileName)&quot;"
-					Outputs="&quot;$(TargetPath)&quot;"
-				/>
-			</FileConfiguration>
-			<FileConfiguration
-				Name="Release|Win32"
-				>
-				<Tool
-					Name="VCCustomBuildTool"
-					CommandLine="python &quot;$(SolutionDir)touch.py&quot; &quot;$(TargetPath)&quot;&#x0D;&#x0A;"
-					AdditionalDependencies="&quot;$(SolutionDir)install\$(TargetFileName)&quot;"
-					Outputs="&quot;$(TargetPath)&quot;"
-				/>
-			</FileConfiguration>
-		</File>
+		<Filter Filter="h;hpp;hxx;hm;inl" Name="Header Files">
+			<File RelativePath="..\common\bspfile.h">
+			</File>
+			<File RelativePath="..\common\cmdlib.h">
+			</File>
+			<File RelativePath="..\common\inout.h">
+			</File>
+			<File RelativePath="..\common\l3dslib.h">
+			</File>
+			<File RelativePath="..\common\lbmlib.h">
+			</File>
+			<File RelativePath="..\common\mathlib.h">
+			</File>
+			<File RelativePath="..\common\polylib.h">
+			</File>
+			<File RelativePath="..\common\q2_threads.h">
+			</File>
+			<File RelativePath=".\q2map.h">
+			</File>
+			<File RelativePath=".\qbsp.h">
+			</File>
+			<File RelativePath="..\common\qfiles.h">
+			</File>
+			<File RelativePath=".\qrad.h">
+			</File>
+			<File RelativePath=".\qvis.h">
+			</File>
+			<File RelativePath="..\common\scriplib.h">
+			</File>
+			<File RelativePath="..\common\trilib.h">
+			</File>
+		</Filter>
+		<Filter Filter="ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe" Name="Resource Files">
+		</Filter>
 	</Files>
 	<Globals>
 	</Globals>

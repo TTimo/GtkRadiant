@@ -1,6 +1,5 @@
-/* -------------------------------------------------------------------------------
-
-Copyright (C) 1999-2006 Id Software, Inc. and contributors.
+/*
+Copyright (C) 1999-2007 id Software, Inc. and contributors.
 For a list of contributors, see the accompanying CONTRIBUTORS file.
 
 This file is part of GtkRadiant.
@@ -180,7 +179,7 @@ int	CountFaceList( face_t *list )
 	
 
 	c = 0;
-	for( ; list != NULL; list = list->next )
+	for( list; list != NULL; list = list->next )
 		c++;
 	return c;
 }

@@ -21,18 +21,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //
 //////////////////////////////////////////////////////////////////////
 
+#include "StdAfx.h"
 #include "DShape.h"
-
-#include <list>
-#include <time.h>
-#include "str.h"
-
-#include "DPoint.h"
-#include "DPlane.h"
-#include "DBrush.h"
-#include "DEPair.h"
-#include "DPatch.h"
-#include "DEntity.h"
 
 //#include "dialogs-gtk.h"
 
@@ -43,7 +33,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-bool bFacesAll[6] = {true, true, true, true, true, true};
+bool bFacesAll[6] = {TRUE, TRUE, TRUE, TRUE, TRUE, TRUE};
 
 DShape::DShape()
 {
@@ -73,7 +63,7 @@ void DShape::BuildRegularPrism(vec3_t min, vec3_t max, int nSides, bool bAlignTo
 	if(bAlignTop)
 	{
 		phase = -(Q_PI/nSides);
-		VectorScale(radius, static_cast<float>(1.0 / cos(phase)), radius);
+		VectorScale(radius, static_cast< float >( 1/cos(phase) ), radius);
 	}
 
 	//----- Build Polygon Vertices -----
@@ -104,16 +94,16 @@ void DShape::BuildRegularPrism(vec3_t min, vec3_t max, int nSides, bool bAlignTo
 	DBrush* pB = m_Container.GetWorldSpawn()->NewBrush(m_nNextBrush++);
 
 	for(i = 1; i <= nSides; i++)
-		pB->AddFace(vc[i-1], vc[i], vd[i], GetCurrentTexture(), false);
+		pB->AddFace(vc[i-1], vc[i], vd[i], GetCurrentTexture(), FALSE);
 
-	pB->AddFace(vc[2], vc[1], vc[0], "textures/common/caulk", false);
-	pB->AddFace(vd[0], vd[1], vd[2], "textures/common/caulk", false);
+	pB->AddFace(vc[2], vc[1], vc[0], "textures/common/caulk", FALSE);
+	pB->AddFace(vd[0], vd[1], vd[2], "textures/common/caulk", FALSE);
 }
 
 void DShape::Commit()
 {
-	m_Container.GetWorldSpawn()->FixBrushes();
-	m_Container.BuildInRadiant(true);
+	m_Container.GetWorldSpawn()->FixBrushes(FALSE);
+	m_Container.BuildInRadiant(TRUE);
 }
 
 void DShape::BuildInversePrism(vec3_t min, vec3_t max, int nSides, bool bAlignTop)
@@ -133,7 +123,7 @@ void DShape::BuildInversePrism(vec3_t min, vec3_t max, int nSides, bool bAlignTo
 	if(bAlignTop)
 	{
 		phase = -(Q_PI/nSides);
-		VectorScale(radius, static_cast<float>(1.0 / cos(phase)), radius);
+		VectorScale(radius, static_cast< float >( 1/cos(phase) ), radius);
 	}
 
 	//----- Build Polygon Vertices -----
@@ -180,11 +170,11 @@ void DShape::BuildInversePrism(vec3_t min, vec3_t max, int nSides, bool bAlignTo
 		
 		if(top[1] != bottom[1])	// internal line is flat already if true
 		{			
-			pB->AddFace(va[i-1], top, vb[i-1], "textures/common/caulk", false);
-			pB->AddFace(va[i], vb[i], bottom, "textures/common/caulk", false);
+			pB->AddFace(va[i-1], top, vb[i-1], "textures/common/caulk", FALSE);
+			pB->AddFace(va[i], vb[i], bottom, "textures/common/caulk", FALSE);
 		}	// add cut-off planes
 
-		pB->AddFace(va[i-1], vb[i-1], vb[i], GetCurrentTexture(), false);
+		pB->AddFace(va[i-1], vb[i-1], vb[i], GetCurrentTexture(), FALSE);
 		// add internal polygon plane
 	}
 }
@@ -214,7 +204,7 @@ void DShape::BuildBorderedPrism(vec3_t min, vec3_t max, int nSides, int nBorder,
 	if(bAlignTop)
 	{
 		phase = -(Q_PI/nSides);
-		VectorScale(radius, static_cast<float>(1.0 / cos(phase)), radius);
+		VectorScale(radius, static_cast< float >( 1/cos(phase) ), radius);
 	}
 
 	//----- Build Polygon Vertices -----
@@ -264,11 +254,11 @@ void DShape::BuildBorderedPrism(vec3_t min, vec3_t max, int nSides, int nBorder,
 	{
 		DBrush* pB = GetBoundingCube(min, max, "textures/common/caulk");
 
-		pB->AddFace(origin, vc[i-1], vd[i-1], "textures/common/caulk", false);
-		pB->AddFace(origin, vd[i], vc[i], "textures/common/caulk", false); 
+		pB->AddFace(origin, vc[i-1], vd[i-1], "textures/common/caulk", FALSE);
+		pB->AddFace(origin, vd[i], vc[i], "textures/common/caulk", FALSE); 
 
-		pB->AddFace(vc[i-1], vc[i], vd[i], GetCurrentTexture(), false);
-		pB->AddFace(vb[i], va[i], va[i-1], GetCurrentTexture(), false);
+		pB->AddFace(vc[i-1], vc[i], vd[i], GetCurrentTexture(), FALSE);
+		pB->AddFace(vb[i], va[i], va[i-1], GetCurrentTexture(), FALSE);
 	}
 }
 
@@ -343,18 +333,18 @@ DBrush* DShape::GetBoundingCube(vec3_t min, vec3_t max, const char *textureName,
 	//----- Add Six Cube Faces ---------
 
 	if(bUseFaces[0])
-		pB->AddFace(v1, v2, v3, textureName, false);
+		pB->AddFace(v1, v2, v3, textureName, FALSE);
 	if(bUseFaces[1])
-		pB->AddFace(v1, v3, v6, textureName, false);
+		pB->AddFace(v1, v3, v6, textureName, FALSE);
 	if(bUseFaces[2])
-		pB->AddFace(v1, v7, v2, textureName, false);
+		pB->AddFace(v1, v7, v2, textureName, FALSE);
 
 	if(bUseFaces[3])
-		pB->AddFace(v5, v6, v3, textureName, false);
+		pB->AddFace(v5, v6, v3, textureName, FALSE);
 	if(bUseFaces[4])
-		pB->AddFace(v5, v2, v7, textureName, false);
+		pB->AddFace(v5, v2, v7, textureName, FALSE);
 	if(bUseFaces[5])
-		pB->AddFace(v5, v7, v6, textureName, false);
+		pB->AddFace(v5, v7, v6, textureName, FALSE);
 
 	//----------------------------------
 
@@ -364,7 +354,7 @@ DBrush* DShape::GetBoundingCube(vec3_t min, vec3_t max, const char *textureName,
 bool DShape::BuildPit(vec3_t min, vec3_t max)
 {
 	if((max[2] - min[2]) < 196)
-		return false;
+		return FALSE;
 
 	srand(time(NULL));
 
@@ -465,5 +455,5 @@ bool DShape::BuildPit(vec3_t min, vec3_t max)
 
 // ****** END NODROP ********
 
-	return true;
+	return TRUE;
 }

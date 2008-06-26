@@ -34,23 +34,18 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 // Leonardo Zide (leo@lokigames.com)
 //
 
-#include "jpeg.h"
-
+#include <stdio.h>
 #include <setjmp.h>
 #include <stdlib.h>
-#include <stdio.h>
 #include <string.h>
+#include <glib.h>
 
 extern "C" {
-#include "radiant_jpeglib.h"
-#include "jpeg6/jerror.h"
+#include <jpeglib.h>
+#include <jerror.h>
 }
 
-#include "ifilesystem.h"
-
-#include "imagelib.h"
-
-typedef unsigned char byte;
+#include "image.h"
 
 /* Expanded data source object for stdio input */
 
@@ -318,13 +313,8 @@ static void j_putRGBAScanline (unsigned char* jpegline, int widthPix, unsigned c
     *oRed = iRed;
     *oGrn = iGrn;
     *oBlu = iBlu;
-
-    //!\todo fix jpeglib, it leaves alpha channel uninitialised
-#if 1
-    *oAlp = 255;
-#else
-    *oAlp = iAlp;
-#endif
+	// ydnar: see bug 900
+    *oAlp = 255;	//%	iAlp;
   }
 }
 
@@ -354,53 +344,65 @@ static void j_putGrayScanlineToRGB (unsigned char* jpegline, int widthPix, unsig
   }
 }
 
-static Image* LoadJPGBuff_(const void *src_buffer, int src_size) 
-{
+static int LoadJPGBuff( void *src_buffer, int src_size, unsigned char **pic, int *width, int *height ) {
   struct jpeg_decompress_struct cinfo;
   struct my_jpeg_error_mgr jerr;
+  JSAMPARRAY buffer;
+  int row_stride, size;
 
   cinfo.err = jpeg_std_error (&jerr.pub);
   jerr.pub.error_exit = my_jpeg_error_exit;
 
-  if (setjmp (jerr.setjmp_buffer)) //< TODO: use c++ exceptions instead of setjmp/longjmp to handle errors
+  if (setjmp (jerr.setjmp_buffer))
   {
-    globalErrorStream() << "WARNING: JPEG library error: " << errormsg << "\n";
+    *pic = (unsigned char*)errormsg;
     jpeg_destroy_decompress (&cinfo);
-    return 0;
+    return -1;
   }
 
   jpeg_create_decompress (&cinfo);
-  jpeg_buffer_src (&cinfo, const_cast<void*>(src_buffer), src_size);
+  jpeg_buffer_src (&cinfo, src_buffer, src_size);
   jpeg_read_header (&cinfo, TRUE);
   jpeg_start_decompress (&cinfo);
 
-  int row_stride = cinfo.output_width * cinfo.output_components;
+  row_stride = cinfo.output_width * cinfo.output_components;
 
-  RGBAImage* image = new RGBAImage(cinfo.output_width, cinfo.output_height);
+  size = cinfo.output_width * cinfo.output_height * 4;
+  *width = cinfo.output_width;
+  *height = cinfo.output_height;
+  *pic = (unsigned char*) (g_malloc (size+1));
+  memset (*pic, 0, size+1);
 
-  JSAMPARRAY buffer = (*cinfo.mem->alloc_sarray) ((j_common_ptr) &cinfo, JPOOL_IMAGE, row_stride, 1);
+  buffer = (*cinfo.mem->alloc_sarray) ((j_common_ptr) &cinfo, JPOOL_IMAGE, row_stride, 1);
 
   while (cinfo.output_scanline < cinfo.output_height)
   {
     jpeg_read_scanlines (&cinfo, buffer, 1);
 
     if (cinfo.out_color_components == 4)
-      j_putRGBAScanline (buffer[0], cinfo.output_width, image->getRGBAPixels(), cinfo.output_scanline-1);
+      j_putRGBAScanline (buffer[0], cinfo.output_width, *pic, cinfo.output_scanline-1);
     else if (cinfo.out_color_components == 3)
-      j_putRGBScanline (buffer[0], cinfo.output_width, image->getRGBAPixels(), cinfo.output_scanline-1);
+      j_putRGBScanline (buffer[0], cinfo.output_width, *pic, cinfo.output_scanline-1);
     else if (cinfo.out_color_components == 1)
-      j_putGrayScanlineToRGB (buffer[0], cinfo.output_width, image->getRGBAPixels(), cinfo.output_scanline-1);
+      j_putGrayScanlineToRGB (buffer[0], cinfo.output_width, *pic, cinfo.output_scanline-1);
   }
 
   jpeg_finish_decompress (&cinfo);
   jpeg_destroy_decompress (&cinfo);
 
-  return image;
+  return 0;
 }
 
-Image* LoadJPG(ArchiveFile& file)
-{
-  ScopedArchiveBuffer buffer(file);
-  return LoadJPGBuff_(buffer.buffer, static_cast<int>(buffer.length));
-}
+void LoadJPG( const char *filename, unsigned char **pic, int *width, int *height ) {
+  unsigned char *fbuffer = NULL;
+  int nLen = vfsLoadFile ((char *)filename, (void **)&fbuffer, 0 );
+  if (nLen == -1)
+    return;
 
+  if ( LoadJPGBuff( fbuffer, nLen, pic, width, height ) != 0 ) {
+    g_FuncTable.m_pfnSysPrintf( "WARNING: JPEG library failed to load %s because %s\n", filename, *pic );
+    *pic = NULL;
+  }
+
+  vfsFreeFile( fbuffer );
+}

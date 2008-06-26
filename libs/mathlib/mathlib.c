@@ -1,5 +1,5 @@
 /*
-Copyright (C) 1999-2006 Id Software, Inc. and contributors.
+Copyright (C) 1999-2007 id Software, Inc. and contributors.
 For a list of contributors, see the accompanying CONTRIBUTORS file.
 
 This file is part of GtkRadiant.
@@ -24,11 +24,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 // we use memcpy and memset
 #include <memory.h>
 
-const vec3_t vec3_origin = {0.0f,0.0f,0.0f};
-
-const vec3_t g_vec3_axis_x = { 1, 0, 0, };
-const vec3_t g_vec3_axis_y = { 0, 1, 0, };
-const vec3_t g_vec3_axis_z = { 0, 0, 1, };
+vec3_t vec3_origin = {0.0f,0.0f,0.0f};
 
 /*
 ================
@@ -54,7 +50,7 @@ void MakeNormalVectors (vec3_t forward, vec3_t right, vec3_t up)
 	CrossProduct (right, forward, up);
 }
 
-vec_t VectorLength(const vec3_t v)
+vec_t VectorLength(vec3_t v)
 {
 	int		i;
 	float	length;
@@ -67,7 +63,7 @@ vec_t VectorLength(const vec3_t v)
 	return length;
 }
 
-qboolean VectorCompare (const vec3_t v1, const vec3_t v2)
+qboolean VectorCompare (vec3_t v1, vec3_t v2)
 {
 	int		i;
 	
@@ -77,6 +73,18 @@ qboolean VectorCompare (const vec3_t v1, const vec3_t v2)
 			
 	return qtrue;
 }
+
+/*
+// FIXME TTimo this implementation has to be particular to radiant
+//   through another name I'd say
+vec_t Q_rint (vec_t in)
+{
+  if (g_PrefsDlg.m_bNoClamp)
+    return in;
+  else
+    return (float)floor (in + 0.5);
+}
+*/
 
 void VectorMA( const vec3_t va, vec_t scale, const vec3_t vb, vec3_t vc )
 {
@@ -221,7 +229,7 @@ void VectorSnap(vec3_t v)
   int i;
   for (i = 0; i < 3; i++)
   {
-    v[i] = (vec_t)FLOAT_TO_INTEGER(v[i]);
+    v[i] = (vec_t)floor (v[i] + 0.5);
   }
 }
 
@@ -230,7 +238,7 @@ void VectorISnap(vec3_t point, int snap)
   int i;
 	for (i = 0 ;i < 3 ; i++)
 	{
-		point[i] = (vec_t)FLOAT_SNAP(point[i], snap);
+		point[i] = (vec_t)floor (point[i] / snap + 0.5) * snap;
 	}
 }
 
@@ -239,7 +247,7 @@ void VectorFSnap(vec3_t point, float snap)
   int i;
 	for (i = 0 ;i < 3 ; i++)
 	{
-		point[i] = (vec_t)FLOAT_SNAP(point[i], snap);
+		point[i] = (vec_t)floor (point[i] / snap + 0.5) * snap;
 	}
 }
 
@@ -290,19 +298,26 @@ void AddPointToBounds (vec3_t v, vec3_t mins, vec3_t maxs)
 	}
 }
 
+#define	PITCH				0		// up / down
+#define	YAW					1		// left / right
+#define	ROLL				2		// fall over
+#ifndef M_PI
+#define M_PI		3.14159265358979323846f	// matches value in gcc v2 math.h
+#endif
+
 void AngleVectors (vec3_t angles, vec3_t forward, vec3_t right, vec3_t up)
 {
 	float		angle;
 	static float		sr, sp, sy, cr, cp, cy;
 	// static to help MS compiler fp bugs
 	
-	angle = angles[YAW] * (Q_PI*2.0f / 360.0f);
+	angle = angles[YAW] * (M_PI*2.0f / 360.0f);
 	sy = (vec_t)sin(angle);
 	cy = (vec_t)cos(angle);
-	angle = angles[PITCH] * (Q_PI*2.0f / 360.0f);
+	angle = angles[PITCH] * (M_PI*2.0f / 360.0f);
 	sp = (vec_t)sin(angle);
 	cp = (vec_t)cos(angle);
-	angle = angles[ROLL] * (Q_PI*2.0f / 360.0f);
+	angle = angles[ROLL] * (M_PI*2.0f / 360.0f);
 	sr = (vec_t)sin(angle);
 	cr = (vec_t)cos(angle);
 	
@@ -345,14 +360,14 @@ void VectorToAngles( vec3_t vec, vec3_t angles )
 	}
 	else
 	{
-		yaw = (vec_t)atan2( vec[ 1 ], vec[ 0 ] ) * 180 / Q_PI;
+		yaw = (vec_t)atan2( vec[ 1 ], vec[ 0 ] ) * 180 / M_PI;
 		if ( yaw < 0 )
 		{
 			yaw += 360;
 		}
 		
 		forward = ( float )sqrt( vec[ 0 ] * vec[ 0 ] + vec[ 1 ] * vec[ 1 ] );
-		pitch = (vec_t)atan2( vec[ 2 ], forward ) * 180 / Q_PI;
+		pitch = (vec_t)atan2( vec[ 2 ], forward ) * 180 / M_PI;
 		if ( pitch < 0 )
 		{
 			pitch += 360;
@@ -563,7 +578,7 @@ void RotatePointAroundVector( vec3_t dst, const vec3_t dir, const vec3_t point,
 	memset( zrot, 0, sizeof( zrot ) );
 	zrot[0][0] = zrot[1][1] = zrot[2][2] = 1.0F;
 
-	rad = (float)DEG2RAD( degrees );
+	rad = DEG2RAD( degrees );
 	zrot[0][0] = (vec_t)cos( rad );
 	zrot[0][1] = (vec_t)sin( rad );
 	zrot[1][0] = (vec_t)-sin( rad );

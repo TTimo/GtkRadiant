@@ -1,5 +1,5 @@
 /*
-Copyright (C) 1999-2006 Id Software, Inc. and contributors.
+Copyright (C) 1999-2007 id Software, Inc. and contributors.
 For a list of contributors, see the accompanying CONTRIBUTORS file.
 
 This file is part of GtkRadiant.
@@ -19,28 +19,101 @@ along with GtkRadiant; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
+// =============================================================================
+// global tables
+
 #include "plugin.h"
 
-#include "debugging/debugging.h"
+_QERFuncTable_1 g_FuncTable;
+_QERFileSystemTable g_FileSystemTable;
 
-#include "ifilesystem.h"
-#include "iimage.h"
+// =============================================================================
+// SYNAPSE
 
-#include "imagelib.h"
+#include "synapse.h"
+
+class CSynapseClientImage : public CSynapseClient
+{
+public:
+  // CSynapseClient API
+  bool RequestAPI(APIDescriptor_t *pAPI);
+  const char* GetInfo();
+  
+  CSynapseClientImage() { }
+  virtual ~CSynapseClientImage() { }
+};
+
+CSynapseServer* g_pSynapseServer = NULL;
+CSynapseClientImage g_SynapseClient;
+
+#if __GNUC__ >= 4
+#pragma GCC visibility push(default)
+#endif
+extern "C" CSynapseClient* SYNAPSE_DLL_EXPORT Synapse_EnumerateInterfaces( const char *version, CSynapseServer *pServer ) {
+#if __GNUC__ >= 4
+#pragma GCC visibility pop
+#endif
+  if (strcmp(version, SYNAPSE_VERSION))
+  {
+    Syn_Printf("ERROR: synapse API version mismatch: should be '" SYNAPSE_VERSION "', got '%s'\n", version);
+    return NULL;
+  }
+  g_pSynapseServer = pServer;
+  g_pSynapseServer->IncRef();
+  Set_Syn_Printf(g_pSynapseServer->Get_Syn_Printf());
+
+  g_SynapseClient.AddAPI(IMAGE_MAJOR, "png", sizeof(_QERPlugImageTable));
+  g_SynapseClient.AddAPI(RADIANT_MAJOR, NULL, sizeof(_QERFuncTable_1), SYN_REQUIRE, &g_FuncTable);
+  // NOTE: if imagepng starts being used for non "VFS" "pk3" config, need to add a dynamic config chunk
+  // see:
+  // http://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=794
+  // http://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=800
+  g_SynapseClient.AddAPI(VFS_MAJOR, "pk3", sizeof(_QERFileSystemTable), SYN_REQUIRE, &g_FileSystemTable);
+
+  return &g_SynapseClient;
+}
+
+bool CSynapseClientImage::RequestAPI(APIDescriptor_t *pAPI)
+{
+  if (!strcmp(pAPI->major_name, IMAGE_MAJOR))
+  {    
+    _QERPlugImageTable* pTable= static_cast<_QERPlugImageTable*>(pAPI->mpTable);
+    if (!strcmp(pAPI->minor_name, "png"))
+    {
+      pTable->m_pfnLoadImage = &LoadImage;
+      return true;
+    }
+  }
+
+  Syn_Printf("ERROR: RequestAPI( '%s' ) not found in '%s'\n", pAPI->major_name, GetInfo());
+  return false;
+}
+
+#include "version.h"
+
+const char* CSynapseClientImage::GetInfo()
+{
+  return "PNG loader module built " __DATE__ " " RADIANT_VERSION;
+}
+
+
 
 // ====== PNG loader functionality ======
 
 #include "png.h"
+
+#ifdef __APPLE__	//tigital
 #include <stdlib.h>
+#endif
 
 void user_warning_fn(png_structp png_ptr, png_const_charp warning_msg)
 {
-  globalErrorStream() << "libpng warning: " << warning_msg << "\n";
+  g_FuncTable.m_pfnSysPrintf ("libpng warning: %s\n", warning_msg);
 }
 
 void user_error_fn(png_structp png_ptr, png_const_charp error_msg)
 {
-  globalErrorStream() << "libpng error: " << error_msg << "\n";
+  g_FuncTable.m_pfnSysPrintf ("libpng error: %s\n", error_msg);
   longjmp(png_ptr->jmpbuf, 0);
 }
 
@@ -51,10 +124,15 @@ void user_read_data(png_structp png_ptr, png_bytep data, png_uint_32 length)
   *p_p_fbuffer += length;
 }
 
-Image* LoadPNGBuff (unsigned char* fbuffer)
+void LoadImage (const char *filename, unsigned char **pic, int *width, int *height)
 {
   png_byte** row_pointers;
+  unsigned char *fbuffer = NULL;
   png_bytep p_fbuffer;
+
+  int nLen = g_FileSystemTable.m_pfnLoadFile( (char *)filename, (void **)&fbuffer, 0 );
+  if (nLen == -1)
+    return;
 
   p_fbuffer = fbuffer;
 	
@@ -62,28 +140,28 @@ Image* LoadPNGBuff (unsigned char* fbuffer)
   // http://www.libpng.org/pub/png/libpng-manual.html
 
   png_structp png_ptr = png_create_read_struct
-    (PNG_LIBPNG_VER_STRING, (png_voidp)NULL,
+    (PNG_LIBPNG_VER_STRING, png_voidp_NULL,
     user_error_fn, user_warning_fn);
   if (!png_ptr)
   {
-    globalErrorStream() << "libpng error: png_create_read_struct\n";
-    return 0;
+    g_FuncTable.m_pfnSysPrintf ("libpng error: png_create_read_struct\n");
+    return;
   }
 		
   png_infop info_ptr = png_create_info_struct(png_ptr);
   if (!info_ptr) {
     png_destroy_read_struct(&png_ptr,
-      (png_infopp)NULL, (png_infopp)NULL);
-    globalErrorStream() << "libpng error: png_create_info_struct (info_ptr)\n";
-    return 0;
+      png_infopp_NULL, png_infopp_NULL);
+    g_FuncTable.m_pfnSysPrintf ("libpng error: png_create_info_struct (info_ptr)\n");
+    return;
   }
 	
   png_infop end_info = png_create_info_struct(png_ptr);
   if (!end_info) {
     png_destroy_read_struct(&png_ptr, &info_ptr,
-      (png_infopp)NULL);
-    globalErrorStream() << "libpng error: png_create_info_struct (end_info)\n";
-    return 0;
+      png_infopp_NULL);
+    g_FuncTable.m_pfnSysPrintf ("libpng error: png_create_info_struct (end_info)\n");
+    return;
   }
 
   // configure the read function
@@ -92,7 +170,12 @@ Image* LoadPNGBuff (unsigned char* fbuffer)
   if (setjmp(png_ptr->jmpbuf)) {
     png_destroy_read_struct(&png_ptr, &info_ptr,
       &end_info);
-    return 0;
+    if (*pic)
+    {
+      g_free(*pic);
+      free(row_pointers);
+    }
+    return;
   }
 
   png_read_info(png_ptr, info_ptr);
@@ -134,17 +217,19 @@ Image* LoadPNGBuff (unsigned char* fbuffer)
   color_type = png_get_color_type(png_ptr, info_ptr);
   bit_depth = png_get_bit_depth(png_ptr, info_ptr);
 
-  int width = png_get_image_width(png_ptr, info_ptr);
-  int height = png_get_image_height(png_ptr, info_ptr);
+  *width = png_get_image_width(png_ptr, info_ptr);
+  *height = png_get_image_height(png_ptr, info_ptr);
 
   // allocate the pixel buffer, and the row pointers
-  RGBAImage* image = new RGBAImage(width, height);
-
-  row_pointers = (png_byte**) malloc((height) * sizeof(png_byte*));
+  int size = (*width)*(*height)*4;
+  // still have to use that g_malloc heresy
+  // http://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=491
+  *pic = (unsigned char *)g_malloc(size);
+  row_pointers = (png_byte**) malloc((*height) * sizeof(png_byte*));
 
   int i;
-  for(i = 0; i < (height); i++)
-    row_pointers[i] = (png_byte*)(image->getRGBAPixels()) + i * 4 * (width);
+  for(i = 0; i < (*height); i++)
+    row_pointers[i] = (png_byte*)(*pic) + i * 4 * (*width);
 
   // actual read
   png_read_image(png_ptr, row_pointers);
@@ -156,49 +241,5 @@ Image* LoadPNGBuff (unsigned char* fbuffer)
   png_destroy_read_struct(&png_ptr, &info_ptr, png_infopp_NULL);
 
   free(row_pointers);
-
-  return image;
-}
-
-Image* LoadPNG(ArchiveFile& file)
-{
-  ScopedArchiveBuffer buffer(file);
-  return LoadPNGBuff( buffer.buffer );
-}
-
-
-#include "modulesystem/singletonmodule.h"
-
-
-class ImageDependencies : public GlobalFileSystemModuleRef
-{
-};
-
-class ImagePNGAPI
-{
-  _QERPlugImageTable m_imagepng;
-public:
-  typedef _QERPlugImageTable Type;
-  STRING_CONSTANT(Name, "png");
-
-  ImagePNGAPI()
-  {
-    m_imagepng.loadImage = LoadPNG;
-  }
-  _QERPlugImageTable* getTable()
-  {
-    return &m_imagepng;
-  }
-};
-
-typedef SingletonModule<ImagePNGAPI, ImageDependencies> ImagePNGModule;
-
-ImagePNGModule g_ImagePNGModule;
-
-
-extern "C" void RADIANT_DLLEXPORT Radiant_RegisterModules(ModuleServer& server)
-{
-  initialiseModule(server);
-
-  g_ImagePNGModule.selfRegister();
+  g_FileSystemTable.m_pfnFreeFile (fbuffer);
 }

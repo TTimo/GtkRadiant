@@ -21,25 +21,20 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //
 //////////////////////////////////////////////////////////////////////
 
+#include "StdAfx.h"
 #include "DPlane.h"
-
-#include <list>
-
-#include "DPoint.h"
 #include "DWinding.h"
-
-#include "str.h"
 #include "misc.h"
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-DPlane::DPlane(const vec3_t va, const vec3_t vb, const vec3_t vc, const _QERFaceData* texData)
+DPlane::DPlane(vec3_t va, vec3_t vb, vec3_t vc, _QERFaceData* texData)
 {
 	MakeNormal( va, vb, vc, normal );
 	if(VectorNormalize(normal, normal) == 0)	// normalizes and returns length
-		globalErrorStream() << "DPlane::DPlane: Bad Normal.\n";
+		Sys_ERROR("DPlane::DPlane: Bad Normal.\n");
 
 	_d = (normal[0]*va[0]) + (normal[1]*va[1]) + (normal[2]*va[2]);
 
@@ -47,7 +42,7 @@ DPlane::DPlane(const vec3_t va, const vec3_t vb, const vec3_t vc, const _QERFace
 	VectorCopy(vb, points[1]);
 	VectorCopy(vc, points[2]);
 
-	m_bChkOk = true;
+	m_bChkOk = TRUE;
 
 	if(texData)
 		memcpy(&texInfo, texData, sizeof(_QERFaceData));
@@ -84,7 +79,7 @@ bool DPlane::PlaneIntersection(DPlane *pl1, DPlane *pl2, vec3_t out)
 	float d = Determinant3x3(a1, a2, a3, b1, b2, b3, c1, c2, c3);
 
 	if(d == 0)
-		return false;
+		return FALSE;
 	
 	float v1 = _d;
 	float v2 = pl1->_d;
@@ -98,23 +93,23 @@ bool DPlane::PlaneIntersection(DPlane *pl1, DPlane *pl2, vec3_t out)
 	out[1] = d2/d;	
 	out[2] = d3/d;	
 
-	return true;
+	return TRUE;
 }
 
-bool DPlane::IsRedundant(std::list<DPoint*>& pointList)
+bool DPlane::IsRedundant(list<DPoint*>& pointList)
 {
 	int cnt = 0;
 
-	//std::list<DPoint *>::const_iterator point=pointList.begin();
-	for(std::list<DPoint *>::const_iterator point=pointList.begin(); point!=pointList.end(); point++)
+	//list<DPoint *>::const_iterator point=pointList.begin();
+	for(list<DPoint *>::const_iterator point=pointList.begin(); point!=pointList.end(); point++)
 	{
 		 if(fabs(DistanceToPoint((*point)->_pnt)) < MAX_ROUND_ERROR)
 			 cnt++;
 
 		 if(cnt == 3)
-			 return false;
+			 return FALSE;
 	}
-	return true;
+	return TRUE;
 }
 
 bool DPlane::operator == (DPlane& other)
@@ -122,12 +117,12 @@ bool DPlane::operator == (DPlane& other)
 	vec3_t chk;
 	VectorSubtract(other.normal, normal, chk);
 	if(fabs(VectorLength(chk)) > MAX_ROUND_ERROR)
-		return false;
+		return FALSE;
 
 	if(fabs(other._d - _d) > MAX_ROUND_ERROR)
-		return false;
+		return FALSE;
 
-	return true;
+	return TRUE;
 }
 
 bool DPlane::operator != (DPlane& other)
@@ -135,9 +130,9 @@ bool DPlane::operator != (DPlane& other)
 	vec3_t chk;
 	VectorAdd(other.normal, normal, chk);
 	if(fabs(VectorLength(chk)) > MAX_ROUND_ERROR)
-		return false;
+		return FALSE;
 
-	return true;
+	return TRUE;
 }
 
 DWinding* DPlane::BaseWindingForPlane()
@@ -160,7 +155,7 @@ DWinding* DPlane::BaseWindingForPlane()
 		}
 	}
 	if (x==-1)
-		globalOutputStream() << "BaseWindingForPlane: no axis found";
+		Sys_Printf ("BaseWindingForPlane: no axis found");
 		
 	VectorCopy (vec3_origin, vup);	
 	switch (x)
@@ -212,39 +207,32 @@ void DPlane::Rebuild()
 	CrossProduct(v1, v2, normal);
 
 	if(VectorNormalize(normal, normal) == 0)	// normalizes and returns length
-		globalErrorStream() << "DPlane::Rebuild: Bad Normal.\n";
+		Sys_ERROR("DPlane::Rebuild: Bad Normal.\n");
 
 	_d = (normal[0]*points[0][0]) + (normal[1]*points[0][1]) + (normal[2]*points[0][2]);
 
-	VectorCopy(points[0], texInfo.m_p0);
-	VectorCopy(points[1], texInfo.m_p1);
-	VectorCopy(points[2], texInfo.m_p2);
+	VectorCopy(points[0], texInfo.m_v1);
+	VectorCopy(points[1], texInfo.m_v2);
+	VectorCopy(points[2], texInfo.m_v3);
 }
 
-bool DPlane::AddToBrush(scene::Node& brush)
+bool DPlane::AddToBrush_t(brush_t *brush)
 {
-  bool changed = false;
-  if(!(m_bChkOk || !strcmp(m_shader.c_str(), "textures/common/caulk")))
-  {
-	  m_shader = "textures/common/caulk";
-    changed = true;
-  }
+	if(m_bChkOk || !strcmp(texInfo.m_TextureName, "textures/common/caulk"))
+	{
+		g_FuncTable.m_pfnAddFaceData(brush, &texInfo);
+		return FALSE;
+	}
 
-  _QERFaceData faceData;
-  faceData.m_p0 = vector3_from_array(points[0]);
-  faceData.m_p1 = vector3_from_array(points[1]);
-  faceData.m_p2 = vector3_from_array(points[2]);
-  faceData.m_texdef = texInfo.m_texdef;
-  faceData.m_shader = m_shader.c_str();
-  GlobalBrushCreator().Brush_addFace(brush, faceData);
-
-	return changed;
+	strcpy(texInfo.m_TextureName, "textures/common/caulk");
+	g_FuncTable.m_pfnAddFaceData(brush, &texInfo);
+	return TRUE;
 }
 
 void DPlane::ScaleTexture()
 { }
 
-DPlane::DPlane(const vec3_t va, const vec3_t vb, const vec3_t vc, const char* textureName, bool bDetail)
+DPlane::DPlane(vec3_t va, vec3_t vb, vec3_t vc, const char* textureName, bool bDetail)
 {
 	vec3_t v1, v2;
 	VectorSubtract(va, vb, v1);
@@ -252,7 +240,7 @@ DPlane::DPlane(const vec3_t va, const vec3_t vb, const vec3_t vc, const char* te
 	CrossProduct(v1, v2, normal);
 
 	if(VectorNormalize(normal, normal) == 0)	// normalizes and returns length
-		globalErrorStream() << "DPlane::DPlane: Bad Normal.\n";
+		Sys_ERROR("DPlane::DPlane: Bad Normal.\n");
 
 	_d = (normal[0]*va[0]) + (normal[1]*va[1]) + (normal[2]*va[2]);
 
@@ -260,9 +248,9 @@ DPlane::DPlane(const vec3_t va, const vec3_t vb, const vec3_t vc, const char* te
 	VectorCopy(vb, points[1]);
 	VectorCopy(vc, points[2]);
 
-	m_bChkOk = true;
+	m_bChkOk = TRUE;
 
 	FillDefaultTexture(&texInfo, points[0], points[1], points[2], textureName);
 	if(bDetail)
-		texInfo.contents |= FACE_DETAIL;
+		texInfo.m_nContents |= FACE_DETAIL;
 }

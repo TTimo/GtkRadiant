@@ -1,5 +1,5 @@
 /*
-Copyright (C) 1999-2006 Id Software, Inc. and contributors.
+Copyright (C) 1999-2007 id Software, Inc. and contributors.
 For a list of contributors, see the accompanying CONTRIBUTORS file.
 
 This file is part of GtkRadiant.
@@ -26,8 +26,72 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #ifndef __CMDLIB__
 #define __CMDLIB__
 
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <ctype.h>
 #include <time.h>
+#include <stdarg.h>
+#include <limits.h>
+#ifdef _WIN32
+  #define PATH_MAX 260
+#endif
 
+// some easy portability crap
+#ifdef _WIN32
+  #include <direct.h>
+  #define Q_mkdir(a,b) _mkdir(a)
+#else
+  #include <sys/stat.h>
+  #define Q_mkdir(a,b) mkdir(a,b)
+#endif
+
+#ifdef __cplusplus
+  typedef bool qboolean;
+#endif
+
+// NOTE TTimo: is this worth anything?
+#ifndef __BYTEBOOL__
+#define __BYTEBOOL__
+
+#ifndef __cplusplus
+  typedef enum {false, true} boolean;
+#else
+  typedef unsigned char boolean;
+#endif
+
+typedef unsigned char byte;
+
+#endif // __BYTEBOOL__
+
+void 	DefaultExtension( char *path, char *extension );
+void 	DefaultPath( char *path, char *basepath );
+void 	StripFilename( char *path );
+void 	StripExtension( char *path );
+void 	ExtractFilePath( const char *path, char *dest );
+void	ExtractFileName( const char *path, char *dest );
+void 	ExtractFileBase( const char *path, char *dest );
+void	ExtractFileExtension( const char *path, char *dest );
+/*!
+\brief create all directories leading to a file path. if you pass a directory, terminate it with a '/'
+*/  
+void  CreateDirectoryPath (const char *path);
+  
+short	BigShort (short l);
+short	LittleShort (short l);
+int		BigLong (int l);
+int		LittleLong (int l);
+float	BigFloat (float l);
+float	LittleFloat (float l);
+void *qmalloc (size_t size);
+void* qblockmalloc(size_t nSize);
+
+void ConvertDOSToUnixName( char *dst, const char *src );
+#ifdef __cplusplus
+  char* StrDup(char* pStr);
+#endif
+char* StrDup(const char* pStr);
 
 // TTimo started adding portability code:
 // return true if spawning was successful, false otherwise
@@ -42,62 +106,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 // return values;
 //   if the spawn was fine
 //   TODO TTimo add functionality to track the process until it dies
-
 bool Q_Exec(const char *cmd, char *cmdline, const char *execdir, bool bCreateConsole);
-
-// some easy portability crap
-
-
-#define access_owner_read 0400
-#define access_owner_write 0200
-#define access_owner_execute 0100
-#define access_owner_rw_ 0600
-#define access_owner_r_x 0500
-#define access_owner__wx 0300
-#define access_owner_rwx 0700
-
-#define access_group_read 0040
-#define access_group_write 0020
-#define access_group_execute 0010
-#define access_group_rw_ 0060
-#define access_group_r_x 0050
-#define access_group__wx 0030
-#define access_group_rwx 0070
-
-#define access_others_read 0004
-#define access_others_write 0002
-#define access_others_execute 0001
-#define access_others_rw_ 0006
-#define access_others_r_x 0005
-#define access_others__wx 0003
-#define access_others_rwx 0007
-
-
-#define access_rwxrwxr_x (access_owner_rwx | access_group_rwx | access_others_r_x)
-#define access_rwxrwxrwx (access_owner_rwx | access_group_rwx | access_others_rwx)
-
-// Q_mkdir
-// returns true if succeeded in creating directory
-#ifdef WIN32
-#include <direct.h>
-inline bool Q_mkdir(const char* name)
-{
-  return _mkdir(name) != -1; 
-}
-#else
-#include <sys/stat.h>
-inline bool Q_mkdir(const char* name)
-{
-  return mkdir(name, access_rwxrwxr_x) != -1; 
-}
-#endif
-
-
-inline double Sys_DoubleTime(void)
-{
-  return clock()/ 1000.0;
-}
-
-
 
 #endif

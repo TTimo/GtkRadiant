@@ -1,6 +1,5 @@
-/* -------------------------------------------------------------------------------
-
-Copyright (C) 1999-2006 Id Software, Inc. and contributors.
+/*
+Copyright (C) 1999-2007 id Software, Inc. and contributors.
 For a list of contributors, see the accompanying CONTRIBUTORS file.
 
 This file is part of GtkRadiant.
@@ -201,19 +200,19 @@ void CleanPath( char *path )
 
 
 /*
-GetGame() - ydnar
-gets the game_t based on a -game argument
-returns NULL if no match found
+SetGame() - ydnar
+sets the game based on a -game argument
+doesn't set it if the game doesn't match any known games
 */
 
-game_t *GetGame( char *arg )
+void SetGame( char *arg )
 {
 	int	i;
 	
 	
 	/* dummy check */
 	if( arg == NULL || arg[ 0 ] == '\0' )
-		return NULL;
+		return;
 	
 	/* joke */
 	if( !Q_stricmp( arg, "quake1" ) ||
@@ -233,12 +232,9 @@ game_t *GetGame( char *arg )
 	while( games[ i ].arg != NULL )
 	{
 		if( Q_stricmp( arg, games[ i ].arg ) == 0 )
-			return &games[ i ];
+			game = &games[ i ];
 		i++;
 	}
-	
-	/* no matching game */
-	return NULL;
 }
 
 
@@ -353,9 +349,7 @@ void InitPaths( int *argc, char **argv )
 			if( ++i >= *argc )
 				Error( "Out of arguments: No game specified after %s", argv[ i - 1 ] );
 			argv[ i - 1 ] = NULL;
-			game = GetGame( argv[ i ] );
-			if( game == NULL )
-				game = &games[ 0 ];
+			SetGame( argv[ i ] );
 			argv[ i ] = NULL;
 		}
 
@@ -383,7 +377,7 @@ void InitPaths( int *argc, char **argv )
 	/* remove processed arguments */
 	for( i = 0, j = 0, k = 0; i < *argc && j < *argc; i++, j++ )
 	{
-		for( ; j < *argc && argv[ j ] == NULL; j++ );
+		for( j; j < *argc && argv[ j ] == NULL; j++ );
 		argv[ i ] = argv[ j ];
 		if( argv[ i ] != NULL )
 			k++;

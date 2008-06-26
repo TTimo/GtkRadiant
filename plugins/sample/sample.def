@@ -1,7 +1,8 @@
 ; sample.def : Declares the module parameters for the DLL.
 
 LIBRARY      "SAMPLE"
+DESCRIPTION  'SAMPLE Windows Dynamic Link Library'
 
 EXPORTS
     ; Explicit exports can go here
-	Radiant_RegisterModules @1
+	Synapse_EnumerateInterfaces @1

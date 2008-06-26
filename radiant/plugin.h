@@ -1,6 +1,6 @@
 /*
-Copyright (C) 2001-2006, William Joseph.
-All Rights Reserved.
+Copyright (C) 1999-2007 id Software, Inc. and contributors.
+For a list of contributors, see the accompanying CONTRIBUTORS file.
 
 This file is part of GtkRadiant.
 
@@ -19,29 +19,27 @@ along with GtkRadiant; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#if !defined(INCLUDED_PLUGIN_H)
-#define INCLUDED_PLUGIN_H
+#ifndef _PLUGIN_H_
+#define _PLUGIN_H_
 
-class ModuleServer;
-bool Radiant_Construct(ModuleServer& server);
-void Radiant_Destroy();
+/*!
+\class IPlugin
+pure virtual interface for a plugin
+temporary solution for migration from old plugin tech to synapse plugins
+FIXME/TODO: plugin toolbar
+*/
+class IPlugIn
+{
 
+public:
+  IPlugIn() { }
+  virtual ~IPlugIn() { }  
+  
+  virtual const char* getMenuName() = 0;
+  virtual int getCommandCount() = 0;
+  virtual const char* getCommand(int) = 0;
+  virtual void addMenuID(int) = 0;
+  virtual bool ownsCommandID(int n) = 0;
+};
 
-template<typename Type>
-class Modules;
-
-struct _QERPlugImageTable;
-typedef Modules<_QERPlugImageTable> ImageModules;
-ImageModules& Radiant_getImageModules();
-class MapFormat;
-typedef Modules<MapFormat> MapModules;
-MapModules& Radiant_getMapModules();
-struct _QERPlugToolbarTable;
-typedef Modules<_QERPlugToolbarTable> ToolbarModules;
-ToolbarModules& Radiant_getToolbarModules();
-struct _QERPluginTable;
-typedef Modules<_QERPluginTable> PluginModules;
-PluginModules& Radiant_getPluginModules();
-
-
-#endif
+#endif // _PLUGIN_H_

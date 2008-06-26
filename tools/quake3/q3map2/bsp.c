@@ -1,6 +1,5 @@
-/* -------------------------------------------------------------------------------
-
-Copyright (C) 1999-2006 Id Software, Inc. and contributors.
+/*
+Copyright (C) 1999-2007 id Software, Inc. and contributors.
 For a list of contributors, see the accompanying CONTRIBUTORS file.
 
 This file is part of GtkRadiant.
@@ -587,9 +586,7 @@ int BSPMain( int argc, char **argv )
 	
 	tempSource[ 0 ] = '\0';
 	
-	/* set standard game flags */
-	maxSurfaceVerts = game->maxSurfaceVerts;
-	maxSurfaceIndexes = game->maxSurfaceIndexes;
+	/* set flares flag */
 	emitFlares = game->emitFlares;
 	
 	/* process arguments */
@@ -690,13 +687,11 @@ int BSPMain( int argc, char **argv )
  		}
 		else if( !strcmp( argv[ i ],  "-mv" ) )
  		{
-			maxLMSurfaceVerts = atoi( argv[ i + 1 ] );
-			if( maxLMSurfaceVerts < 3 )
-				maxLMSurfaceVerts = 3;
-			if( maxLMSurfaceVerts > maxSurfaceVerts )
-				maxSurfaceVerts = maxLMSurfaceVerts;
+			maxSurfaceVerts = atoi( argv[ i + 1 ] );
+			if( maxSurfaceVerts < 3 )
+				maxSurfaceVerts = 3;
  			i++;
-			Sys_Printf( "Maximum lightmapped surface vertex count set to %d\n", maxLMSurfaceVerts );
+			Sys_Printf( "Maximum per-surface vertex count set to %d\n", maxSurfaceVerts );
  		}
 		else if( !strcmp( argv[ i ],  "-mi" ) )
  		{

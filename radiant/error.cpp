@@ -1,5 +1,5 @@
 /*
-Copyright (C) 1999-2006 Id Software, Inc. and contributors.
+Copyright (C) 1999-2007 id Software, Inc. and contributors.
 For a list of contributors, see the accompanying CONTRIBUTORS file.
 
 This file is part of GtkRadiant.
@@ -19,25 +19,12 @@ along with GtkRadiant; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#include "error.h"
-
-#include "debugging/debugging.h"
-#include "igl.h"
-
-#include "gtkutil/messagebox.h"
-#include "console.h"
-#include "preferences.h"
-
-
-#ifdef WIN32
 #define UNICODE
-#include <windows.h>
-#else
-#include <errno.h>
+#include "stdafx.h"
+
+#if defined (__linux__) || defined (__APPLE__)
 #include <unistd.h>
 #endif
-
-
 
 /*
 =================
@@ -64,7 +51,16 @@ void Error (const char *error, ...)
 
   strcat( text, "\n" );
 
-#ifdef WIN32
+#if defined (__linux__) || defined (__APPLE__)
+  if (errno != 0)
+  {
+    strcat( text, "errno: " );
+    strcat( text, strerror (errno));
+    strcat( text, "\n");
+  }
+#endif
+
+#ifdef _WIN32
   if (GetLastError() != 0)
   {
     LPVOID lpMsgBuf;
@@ -72,12 +68,12 @@ void Error (const char *error, ...)
       FORMAT_MESSAGE_ALLOCATE_BUFFER | 
       FORMAT_MESSAGE_FROM_SYSTEM | 
       FORMAT_MESSAGE_IGNORE_INSERTS,
-      0,
+      NULL,
       GetLastError(),
       MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), // Default language
       (LPTSTR) &lpMsgBuf,
       0,
-      0 
+      NULL 
       );
     strcat( text, "GetLastError: " );
     /*
@@ -91,7 +87,7 @@ void Error (const char *error, ...)
       scan = next;
       text[strlen(text)+1] = '\0';
       if ((scan[0] >= 0) && (scan[0] <= 127))
-        text[strlen(text)] = char(scan[0]);
+        text[strlen(text)] = scan[0];
       else
         text[strlen(text)] = '?';
       next = CharNext(scan);
@@ -99,40 +95,57 @@ void Error (const char *error, ...)
     strcat( text, "\n");
     LocalFree( lpMsgBuf );
   }
-#else
-  if (errno != 0)
-  {
-    strcat( text, "errno: " );
-    strcat( text, strerror (errno));
-    strcat( text, "\n");
-  }
 #endif
 
-
-#if 0
   // we need to have a current context to call glError()
-  if (g_glwindow_globals.d_glBase != 0)
+  if (g_qeglobals_gui.d_glBase != NULL)
   {
-    // glGetError .. can record several errors, clears after calling
+    // qglGetError .. can record several errors, clears after calling
     //++timo TODO: be able to deal with several errors if necessary, for now I'm just warning about pending error messages
     // NOTE: forget that, most boards don't seem to follow the OpenGL standard
-    GLenum iGLError = glGetError();
+    GLenum iGLError = qglGetError();
     if (iGLError != GL_NO_ERROR)
     {
       // use our own gluErrorString
-      strcat( text, "gluErrorString: " );
-      strcat( text, (char*)gluErrorString( iGLError ) );
+      strcat( text, "qgluErrorString: " );
+      strcat( text, (char*)qgluErrorString( iGLError ) );
       strcat( text, "\n" );
     }
   }
-#endif
 
-  strcat (text, "An unrecoverable error has occured.\n");
+  strcat (text, "An unrecoverable error has occured.\n"
+	  "Would you like to edit Preferences before exiting Radiant?");
 
-  ERROR_MESSAGE(text);
+  Sys_Printf(text);
+
+  if (gtk_MessageBox(NULL, text, "Error", MB_YESNO) == IDYES)
+  {
+    Sys_Printf("Doing prefs..\n");
+    g_PrefsDlg.LoadPrefs ();
+    g_PrefsDlg.DoModal();
+  }
+
+  QGL_Shutdown();
+
+  g_PrefsDlg.Destroy ();
+  g_dlgSurface.Destroy ();
+  g_dlgFind.Destroy ();
 
   // force close logging if necessary
-	Sys_LogFile(false);
+  g_PrefsDlg.mGamesDialog.m_bLogConsole = false;
+	Sys_LogFile();
 
   _exit (1);
+}
+
+void WINAPI Error (char *error, ...)
+{
+  va_list argptr;
+  char	text[1024];
+
+  va_start (argptr,error);
+  vsprintf (text, error,argptr);
+  va_end (argptr);
+	
+	Error((const char *)text);
 }

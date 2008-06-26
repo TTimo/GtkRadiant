@@ -1,6 +1,6 @@
 /*
-Copyright (C) 2001-2006, William Joseph.
-All Rights Reserved.
+Copyright (C) 1999-2007 id Software, Inc. and contributors.
+For a list of contributors, see the accompanying CONTRIBUTORS file.
 
 This file is part of GtkRadiant.
 
@@ -19,57 +19,22 @@ along with GtkRadiant; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#if !defined(INCLUDED_IIMAGE_H)
-#define INCLUDED_IIMAGE_H
+//
+// Plugin interface for loading image files
+//
 
-#include "generic/constant.h"
+#ifndef _IIMAGE_H_
+#define _IIMAGE_H_
 
-typedef unsigned char byte;
+#define IMAGE_MAJOR "image"
 
-class Image
-{
-public:
-  virtual void release() = 0;
-  virtual byte* getRGBAPixels() const = 0;
-  virtual unsigned int getWidth() const = 0;
-  virtual unsigned int getHeight() const = 0;
-
-  virtual int getSurfaceFlags() const
-  {
-    return 0;
-  }
-  virtual int getContentFlags() const
-  {
-    return 0;
-  }
-  virtual int getValue() const
-  {
-    return 0;
-  }
-};
-
-class ArchiveFile;
+// Load an image file
+typedef void (* PFN_QERPLUG_LOADIMAGE) (const char *name, unsigned char **pic, int *width, int *height);
 
 struct _QERPlugImageTable
 {
-  INTEGER_CONSTANT(Version, 1);
-  STRING_CONSTANT(Name, "image");
-
-  /// Read an image from the file.
-  /// Returns 0 if the image could not be read.
-  Image* (*loadImage)(ArchiveFile& file);
+  int m_nSize;
+  PFN_QERPLUG_LOADIMAGE m_pfnLoadImage;
 };
 
-template<typename Type>
-class ModuleRef;
-typedef ModuleRef<_QERPlugImageTable> ImageModuleRef;
-
-template<typename Type>
-class Modules;
-typedef Modules<_QERPlugImageTable> ImageModules;
-
-template<typename Type>
-class ModulesRef;
-typedef ModulesRef<_QERPlugImageTable> ImageModulesRef;
-
-#endif // _IIMAGE_H
+#endif // _IIMAGE_H_

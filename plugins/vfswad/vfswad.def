@@ -1,0 +1,8 @@
+; vfswad.def : Declares the module parameters for the DLL.
+
+LIBRARY      "vfswad"
+DESCRIPTION  'vfswad Windows Dynamic Link Library'
+
+EXPORTS
+    ; Explicit exports can go here
+	Synapse_EnumerateInterfaces @1

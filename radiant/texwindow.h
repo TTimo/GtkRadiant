@@ -1,5 +1,5 @@
 /*
-Copyright (C) 1999-2006 Id Software, Inc. and contributors.
+Copyright (C) 1999-2007 id Software, Inc. and contributors.
 For a list of contributors, see the accompanying CONTRIBUTORS file.
 
 This file is part of GtkRadiant.
@@ -19,44 +19,44 @@ along with GtkRadiant; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#if !defined(INCLUDED_TEXWINDOW_H)
-#define INCLUDED_TEXWINDOW_H
+#ifndef _TEXWINDOW_H_
+#define _TEXWINDOW_H_
 
-#include "math/vector.h"
-#include "generic/callbackfwd.h"
-#include "signal/signalfwd.h"
-#include "xml/xmltextags.h"
+#include "glwindow.h"
 
-typedef struct _GtkWidget GtkWidget;
+class TexWnd : public GLWindow
+{
+public:
+  TexWnd();
+  void UpdateFilter(const char* pFilter);
+  void UpdatePrefs();
+  void FocusEdit();
+  bool CheckFilter( const char* );
+  virtual ~TexWnd();
 
-class TextureBrowser;
-TextureBrowser& GlobalTextureBrowser();
+  GtkWidget *m_pFilter;
 
-typedef struct _GtkWindow GtkWindow;
-GtkWidget* TextureBrowser_constructWindow(GtkWindow* toplevel);
-void TextureBrowser_destroyWindow();
+protected:
+  bool m_bNeedRange;
 
+  void OnCreate ();
+  void OnExpose ();
+  void OnLButtonDown (guint32 flags, int x, int y);
+  void OnRButtonDown (guint32 flags, int x, int y);
+  void OnMButtonDown (guint32 flags, int x, int y);
+  void OnLButtonUp (guint32 flags, int pointx, int pointy);
+  void OnRButtonUp (guint32 flags, int pointx, int pointy);
+  void OnMButtonUp (guint32 flags, int pointx, int pointy);
+  void OnMouseMove (guint32 flags, int pointx, int pointy);
+  void OnSize (int cx, int cy);
 
-void TextureBrowser_ShowDirectory(TextureBrowser& textureBrowser, const char* name);
-void TextureBrowser_ShowStartupShaders(TextureBrowser& textureBrowser);
+  void OnMouseWheel(bool bUp);
 
-const char* TextureBrowser_GetSelectedShader(TextureBrowser& textureBrower);
+ public:
+  void OnVScroll ();
 
-void TextureBrowser_Construct();
-void TextureBrowser_Destroy();
+ private:
+   void DragDropTexture (guint32 flags, int pointx, int pointy);
+};
 
-typedef Callback1<const char*> StringImportCallback;
-template<typename FirstArgument, void (*func)(FirstArgument)> 
-class FreeCaller1;
-
-extern GtkWidget* g_page_textures;
-void TextureBrowser_exportTitle(const StringImportCallback& importer);
-typedef FreeCaller1<const StringImportCallback&, TextureBrowser_exportTitle> TextureBrowserExportTitleCaller;
-
-const Vector3& TextureBrowser_getBackgroundColour(TextureBrowser& textureBrowser);
-void TextureBrowser_setBackgroundColour(TextureBrowser& textureBrowser, const Vector3& colour);
-
-void TextureBrowser_addActiveShadersChangedCallback(const SignalHandler& handler);
-void TextureBrowser_addShadersRealiseCallback(const SignalHandler& handler);
-
-#endif
+#endif // _TEXWINDOW_H_

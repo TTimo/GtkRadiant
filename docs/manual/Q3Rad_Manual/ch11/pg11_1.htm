@@ -1,0 +1,116 @@
+<html>
+<head>
+<title>Q3Radiant Editor Manual: Page 11.1</title>
+<link rel = "stylesheet" type = "text/css" href = "../styles/q3rad.css">
+</head>
+<body>
+<h1 class = "MsoTitle">Q3Radiant Editor Manual</h1>
+<hr>
+<h1><a name = "tools8">Tools 8: Compiling Maps</a></h1>
+
+To turn a map file from editor code into game code, it must be
+processed or "compiled". In Quake engine gaming, this is often
+referred to by the name "BSP", as in "I need to BSP my map before
+you can play it." The word "BSP" is actually an abbreviation
+for "binary space partition", the type of data organization
+procedure John Carmack used when creating the graphic engine for
+"DOOM".
+
+<p>The primary BSP process builds the game spaces,
+establishes the position of entities, and builds a lighting map of
+the arena. Altogether, there are four distinct processes that
+can be run together or separately. The first, the bsp process
+establishes the data organization of the map. The second phase, the
+vis process, builds the walls and internal spaces. The third
+process lights the map, calculating brightness and shadow and the
+color of the light that falls on every map surface. The fourth and
+final process is the Bot bsp, which creates the area (.aas) file
+that the bots use to navigate the map.
+
+<p>The size and complexity of a map and the computer's raw
+processing speed determine how long it will take a map to compile.
+Tiny one-room maps that lack detail or numerous lights will compile
+rapidly.  As maps become larger, are broken up into more
+spaces and have more complex lighting, the speed of compile
+drops.
+
+<p>Generally speaking, if you have an older, slower processor, you
+may want to make very small maps.
+
+<p><div class = "subheading">The BSP Menu</div>
+
+The bsp menu contains a number of compile options. The process
+you choose will depend on what you are doing with the map at the
+time you choose to compile.
+
+<p><b>novis</b> - Only the bsp function is performed. Checks
+for map leaks. No light information is created, so the map is seen
+at "fullbright". Because there are no shadows to get in the
+way, this mode is also good for looking for overlapping brushes,
+and texture misalignment.
+
+
+
+<br><b>fastvis</b> - Performs a bsp and a quick version of the vis
+process. The entire world is made into a single bsp partition. It's
+fast, but when you look in a particular direction, you see every
+single detail in that direction. Nothing is blocked. A light map is
+created. This mode was used for space maps.
+
+
+
+<br><b>fullvis</b> - the world is subdivided and broken up
+into smaller chunks so you can see only what is logically in your
+view. A light map is created. This is what is used to check
+polygon-in-view counts. Combined with light extra, it is the final
+compile for all maps.
+
+
+
+<br><b>entities only</b> - When you add or subtract non-brush model
+entities from a map, use this compiler. It's very quick. If you
+change the brush components of a brush model entity (like a trigger
+or a door), you must do a compile that includes a vis stage (fast
+or full). If you are only changing the properties, an entities-only
+will do. However,, if a brush model entity also has a md3 model
+component, the map must be at least fastvis'd for that entity to
+appear in the map.
+
+
+
+<br><b>relight</b> - Use only if no geometry (or light emitting
+textures) have been changed. It will rebuild the light map with the
+new information.
+
+
+
+<br><b>(nocurves)</b> - This function is always a modifier to
+another bsp command. It does (or doesn't do) what it says. The map
+is compiled without curves.
+
+
+
+<br><b>(nowater)</b> - This function is always a modifier to another
+bsp command. The map is compiled without water, lava, or slime.
+
+
+
+<br><b>(no light)</b> - This function is always a modifier to
+another bsp command. No light map is generated. A fast way to check
+polycounts. Most often used in conjunction with the novis bsp
+command.
+
+
+
+<br><b>(-light extra)</b> - This function is always a modifier to
+another bsp command. A finer degree of subdivision is used to
+create a more detailed light map. This is generally only done when
+the lighting is going through a final fine-tuning because it takes
+a long time. Instead of being calculated in 16 unit increments, the
+light is calculated in 8 unit increments. This has no effect on
+final map size, only on the time needed to compile.
+
+<p align = "center"><a href = "../ch10/pg10_1.htm">Back</a> | <a href = "../index.htm">Home</a> | <a href = "../ch12/pg12_1.htm">Next</a>
+
+</body>
+</html>

@@ -29,21 +29,8 @@ FILE  *fmap;
 XYZ     xyz[MAX_ROWS+1][MAX_ROWS+1];
 int     contents;
 int     surface[3];
-
-#include "iundo.h"
-
-#include "refcounted_ptr.h"
-
-#include <vector>
-#include <list>
-#include <map>
-#include <algorithm>
-
-#include "scenelib.h"
-
-scene::Node* h_func_group;
-scene::Node* h_worldspawn;
-
+LPVOID  h_func_group;
+LPVOID	terrainkey; // ^Fishman - Add terrain key to func_group.
 
 //=============================================================
 // Hydra : snap-to-grid begin
@@ -89,9 +76,11 @@ int MapPatches()
   int     i, j, k1, k2, k3;
   int     i0, j0, ii;
   char    szOops[128];
+  patchMesh_t p;
 
   dh = (Hur-Hll)/NH;
   dv = (Vur-Vll)/NV;
+  memset(&p,0,sizeof(patchMesh_t));
 
   // Generate control points in pp array to give desired values currently
   // in p array.
@@ -183,7 +172,7 @@ int MapPatches()
     if(NH_remain < 0)
     {
       sprintf(szOops,"Oops... screwed up with NH=%d",NH);
-      g_FuncTable.m_pfnMessageBox(NULL,szOops,"Uh oh");
+      g_FuncTable.m_pfnMessageBox(NULL,szOops,"Uh oh", 0, NULL);
     }
     NV_remain = NV+1;
     j0 = 0;
@@ -215,12 +204,12 @@ int MapPatches()
       if(NV_remain < 0)
       {
         sprintf(szOops,"Oops... screwed up with NV=%d",NV);
-        g_FuncTable.m_pfnMessageBox(NULL,szOops,"Uh oh");
+        g_FuncTable.m_pfnMessageBox(NULL,szOops,"Uh oh", 0, NULL);
       }
 
-      scene::Node* patch = MakePatch();
-#if 0
-      b->pPatch->setDims(NH_patch, NV_patch);
+      p.width  = NH_patch;
+      p.height = NV_patch;
+      p.type   = PATCH_GENERIC;
       for(i=0; i<NH_patch; i++)
       {
         switch(Plane)
@@ -235,15 +224,14 @@ int MapPatches()
         }
         for(j=0; j<NV_patch; j++)
         {
-          b->pPatch->ctrlAt(COL,i,j)[0] = (float)xyz[ii][j0+j].pp[0];
-          b->pPatch->ctrlAt(COL,i,j)[1] = (float)xyz[ii][j0+j].pp[1];
-          b->pPatch->ctrlAt(COL,i,j)[2] = (float)xyz[ii][j0+j].pp[2];
-          b->pPatch->ctrlAt(COL,i,j)[3] = (float)i;
-          b->pPatch->ctrlAt(COL,i,j)[4] = (float)j;
+          p.ctrl[i][j].xyz[0] = (float)xyz[ii][j0+j].pp[0];
+          p.ctrl[i][j].xyz[1] = (float)xyz[ii][j0+j].pp[1];
+          p.ctrl[i][j].xyz[2] = (float)xyz[ii][j0+j].pp[2];
+          p.ctrl[i][j].st[0]  = (float)i;
+          p.ctrl[i][j].st[1]  = (float)j;
         }
       }
-      b->pPatch->UpdateCachedData();
-#endif
+      MakePatch(&p);
       BrushNum++;
       j0 += NV_patch-1;
     }
@@ -1069,9 +1057,7 @@ void GenerateMap()
   ghCursorCurrent = LoadCursor(NULL,IDC_WAIT);
   SetCursor(ghCursorCurrent);
         */
-#if 0
     if(SingleBrushSelected) g_FuncTable.m_pfnDeleteSelection();
-#endif
 
   GenerateXYZ();
   ntri = NH*NV*2;
@@ -1973,25 +1959,35 @@ void XYZtoV(XYZ *xyz, vec3 *v)
 }
 
 //=============================================================
-scene::Node* MakePatch(void)
+void MakePatch(patchMesh_t *p)
 {
-  scene::Node* patch = Patch_AllocNode();
-#if 0
-  patch->m_patch->SetShader(Texture[Game][0]);
-#endif
-  Node_getTraversable(h_worldspawn)->insert(patch);
-  return patch;
+  int ret;
+  char shadername[64+9];
+
+  ret = g_FuncTable.m_pfnCreatePatchHandle();
+  // strcpy(shadername, "textures/");
+  // strcpy(shadername+9, Texture[Game][0]);
+  strcpy(shadername, Texture[Game][0]);
+  g_FuncTable.m_pfnCommitPatchHandleToMap(ret,p,shadername);
+  g_FuncTable.m_pfnReleasePatchHandles();
 }
 
 //=============================================================
 void MakeBrush(BRUSH *brush)
 {
-  NodePtr node(Brush_AllocNode());
+  LPVOID vp;
+  int i;
+  _QERFaceData QERFaceData;
 
-#if 0
-  for(int i=0; i<brush->NumFaces; i++)
+  if(g_FuncTable.m_pfnCreateBrushHandle==NULL)
   {
-    _QERFaceData QERFaceData;
+    g_FuncTable.m_pfnMessageBox(g_pRadiantWnd,"m_pfnCreateBrushHandle==NULL","Aw damn",0, NULL);
+    return;
+  }
+  vp=(g_FuncTable.m_pfnCreateBrushHandle)();
+  if(!vp) return;
+  for(i=0; i<brush->NumFaces; i++)
+  {
     if(!strncmp(brush->face[i].texture, "textures/", 9))
       strcpy(QERFaceData.m_TextureName,brush->face[i].texture);
     else 
@@ -2019,22 +2015,42 @@ void MakeBrush(BRUSH *brush)
     QERFaceData.m_bBPrimit  = false;
     (g_FuncTable.m_pfnAddFaceData)(vp,&QERFaceData);
   }
-#endif
-
-  Node_getTraversable(h_func_group)->insert(node);
+  if(g_FuncTable.m_pfnCommitBrushHandle!=NULL)
+  {
+    if(h_func_group)
+      g_FuncTable.m_pfnCommitBrushHandleToEntity(vp,h_func_group);
+    else
+      g_FuncTable.m_pfnCommitBrushHandle(vp);
+  }
 }
 //=============================================================
 void OpenFuncGroup()
 {
-  h_func_group = GlobalEntityCreator().createEntity("func_group");
-  h_func_group->IncRef();
-  if(AddTerrainKey)
-    h_func_group->m_entity->setkeyvalue("terrain", "1");
+  if (g_FuncTable.m_pfnAllocateEpair!=NULL)
+  {
+    epair_t *ep;
+
+    h_func_group = g_FuncTable.m_pfnCreateEntityHandle();
+    ep = g_EntityTable.m_pfnAllocateEpair("classname","func_group");
+    g_EntityTable.m_pfnSetEntityKeyValList((entity_t *)h_func_group,ep);
+		
+		if (AddTerrainKey) // ^Fishman - Add terrain key to func_group.
+		{
+			epair_t *ep2;
+			terrainkey = g_FuncTable.m_pfnCreateEntityHandle();
+			ep2 = g_EntityTable.m_pfnAllocateEpair("terrain","1");
+			ep->next = ep2;
+			g_EntityTable.m_pfnSetEntityKeyValList((entity_t *)h_func_group,ep);
+		}
+	}
+	else
+    h_func_group = NULL;
 }
 //=============================================================
 void CloseFuncGroup()
 {
-  h_func_group->DecRef();
+  if (h_func_group)
+    g_FuncTable.m_pfnCommitEntityHandleToMap (h_func_group);
   if (g_FuncTable.m_pfnSysUpdateWindows != NULL)
     g_FuncTable.m_pfnSysUpdateWindows (W_ALL);
 }

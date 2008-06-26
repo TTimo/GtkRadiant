@@ -1,0 +1,945 @@
+<html>
+<head>
+<title>Q3Radiant Editor Manual: Page 7.1</title>
+<link rel = "stylesheet" type = "text/css" href = "../styles/q3rad.css">
+</head>
+<body>
+<h1 class = "MsoTitle">Q3Radiant Editor Manual</h1>
+<hr>
+<h1><a name = "tools4">Tools 4: Working with Textures</a></h1>
+
+There are three skill and knowledge components to working with
+textures as they regard <i>Quake III Arena</i>. They are Texture
+creation, Texture Manipulation, and Texture Application. Only the
+third, Texture Application, is absolutely necessary for making
+maps. You need not master all three.
+
+<h2><a name = "brushprim">Brush Primitives: A New Format</a></h2>
+
+With the release of version 192, the Q3Radiant editor takes a
+new direction in the way textures are mapped to the surfaces of
+brushes. The texturing format will roughly be the same as the way
+textures are handled on curve patches. While there are no changes
+to the user interface within the editor, you should see a change in
+the way textures behave on brushes during transformation operations
+like move and rotate. Because textures are mapped to the S
+and T coordinates of a brush (as they are with curve patches),
+locked textures will now maintain their positions on brushes when
+they are moved or located. Even complex rotations should now be
+possible without the textures going askew.
+
+<p>Checking the Brush Primitives checkbox turns on this feature.
+<span class = "menu">(Menu: Project Settings&hellip; &gt; Use brush primitives in map
+files)</span>. Once you change a map to Brush Primitives, you cannot go
+back to the earlier method of texture mapping with that map. The
+prudent mapper makes backups before making major changes to
+projects.
+
+<h2><a name = "newtex">Texture Creation: Making new Assets</a></h2>
+
+This is covered earlier in the manual.
+
+<h2><a name = "texman">Texture Manipulation: Shader Overview</a></h2>
+
+Technically, each texture already has a default shader that
+passes it through the pipeline to appear much as it does in the
+graphic program that made it. A shader is a short script,
+separate from the texture file, that the game engine uses to make
+further adjustments to the texture's appearance or function. The
+shader is to <i>Q3A</i> what the surface properties flags were to
+<i>Q2</i>, only ever so much more powerful. If you plan on creating
+your own textures, you should get to know and understand how
+shaders work. The Q3A Shader Manual contains the information you
+need.
+
+<p><div class = "subheading">Shaders and Multi-Pass Texture Effects</div>
+
+(<i>Drawn from an original essay by Small Pile of Gibs</i>)
+
+<p>Shaders give the mapper control over special graphics effects
+that require multiple redrawing passes before they are finally
+displayed on the game screen. Every shader that changes the visual
+component of a texture uses these "Multitexture" effects.
+Multitexture is ON by default in <i>Quake III Arena</i>. It is
+turned off with the cvar, "set r_ext_multitexture 0 (entered in the
+console or bound to a key) - see the Debugging section in this
+document for more details.
+
+<p>To understand how multitexture works, you need to understand how
+the <i>Quake III Arena</i> graphic engine renders a scene. All the
+faces you see in <i>Quake III Arena</i> are made up of triangles -
+you can see this by using the cvar command "r_showtris 1."
+Initially, each triangle adds one to the "tris" number in r_speeds
+(the numbers that are used to estimate whether a scene is too
+complex). With every frame that <i>Q3A</i> "paints", it draws
+triangles onto the scene in layers, starting at the back of the
+scene and drawing every triangle visible until it reaches the
+front. It takes time to draw each triangle. If a triangle is
+painted with a texture that is "see through" in some way (either
+transluscent, transparent, or containing cut-outs), any triangles
+seen through that triangle must be redrawn one additional time for
+each stage in the the shader. If a single transparent triangle
+takes up the whole screen, for example, a glass window - The whole
+area of the screen has to be redrawn. Each triangle of glass takes
+an entire screen worth of "overdraw" and each extra stage on the
+glass adds another screenful, which is why glass can be such a big
+framerate hit.
+
+<p>The simplest form of multitexture is a Lightmap. In most cases,
+the Q3A engine first draws the lightmap (precalculated light and
+shadow information). Then, on top of that, it adds in the
+information from the texture art specified for that triangle using
+a special effect (blendfunc filter) - which blends the lightmap
+with the texture to make areas of the texture look light or dark.
+Using the cvar command "r_vertexlight 1" (Vertex Lighting
+instead of Lightmaps) stops Q3 from drawing the lightmap triangles
+(which is why many gamers use vertex lighting to gain additional
+playing speed).
+
+<p>Every extra stage in a shader is an extra triangle drawn over
+and blended with the first triangle in a special way. Like the
+lightmap example above, each additional stage requires an extra
+triangle to be drawn for each frame. On certain 3D accelerator
+cards (like the TNT - TwiN Texture), the multitexture effect
+cancels out the real cost of the first pass of blending. The
+blending for the first additional stage is done before the triangle
+is drawn. However, if the shader takes 3 stages (like all the shiny
+metal effects) it costs an extra triangle for every triangle it is
+used on. Every extra triangle used adds a triangle to the r_speeds
+triangle count. Because there are cards that don't automatically
+handle this first blending pass, the map maker needs to
+occasionally check his r_speeds with the multitexture turned
+off.
+
+<h2><a name = "texapplic">Texture Application: Texture Handling
+Tools</a></h2>
+
+These tools manipulate textures within the editor. They do not
+create textures or shader scripts.
+
+<p><div class = "subheading">Escape (ESC)</div>
+
+This is the all-purpose deselect key. Use it to back out of
+operations you don't want to complete or to stop working on a brush
+face, a brush, a patch, or a group of brushes or patches.
+
+<p><div class = "subheading">View Textures</div>
+
+<div class = "menu">(Shortcut: T)</div>
+
+This is only used in the four-view and floating windows modes
+(as set in Preferences). It brings up the Texture selection window
+(also accessible from a folder tab). If the Entity window is open,
+you may need to click on a map view window first for the "T"
+command shortcut to work.
+
+<p><div class = "subheading">Show in <u>U</u>se</div>
+
+<div class = "menu">(Menu: Textures &gt; Show in <u>U</u>se)
+
+<br>(Shortcut: U)</div>
+
+This command affects the content of the Textures window. It
+filters the contents so that only those textures currently in use
+in the map are displayed in the window.
+
+<p><div class = "subheading">Show <u>A</u>ll</div>
+
+<div class = "menu">(Menu: Textures &gt; Show <u>A</u>ll)
+
+<br>(Shortcut: CTRL + A)</div>
+
+This command affects the content of the Textures window. It
+"un"-filters the contents so that all the texture directories
+previously loaded during the mapping session are re-displayed.
+
+<p><div class = "subheading">Surface Inspector</div>
+
+<div class = "menu">(Menu: Textures &gt; Surface Inspector)</div>
+
+<p><img src = "../Q3Rad_Manual_files/image035.png" width = 287 height = 376>
+
+<p>This brings up a pop-up dialogue box. This is one of the more
+complicated interfaces used during map development and may take
+some getting used to.
+
+<p><strong>Texture</strong>
+
+<br>This is the path/name (beginning in Textures directory) for the
+texture. You can copy from this field or paste into it. If you know
+the pathname of a texture, you can enter it here. It will load
+without having to first load the entire directory that contains
+it.
+
+<p>The next five commands work on both patches and brushes.
+However, the results of applying a Horizontal Shift to a brush and
+to a patch may be substantially different. When working with
+patches, the numbers in the fields do not change &hellip; although
+the texture on the map component may be changing.
+
+<p><div class = "tip"><b>Design Note:</b> When a curve patch butts flush up against a
+piece of solid geometry, as if it were an extension of that
+geometry, it may be difficult to align the textures exactly. In
+fact is often <i>extremely</i> difficult to align a texture on a
+patch with the texture on an adjacent geometry brush. It works best
+when the dimensions of the patch are an exact multiple of the
+dimensions of the texture being used. Otherwise, you may want to
+consider designing your architecture in such a way that it is
+logical for a new texture to begin at that point. Use your
+judgement.</div>
+
+<p><strong>Horizontal Shift</strong>
+
+<br>This allows you to change the Horizontal texture offset
+(position of texture on a surface). You can type an offset value
+into field or use the scroll buttons on the right to shift the
+texture. If "Snap T to Grid" is set in Preferences, the scroll
+increments will move a number of pixels equal to the grid size.
+
+<p><strong>Vertical Shift</strong>
+
+This allows you to change the Vertical texture offset (position
+of texture on a surface). You can type an offset value into field
+or use the scroll buttons on the right to shift the texture. If
+"Snap T to Grid" is set in Preferences, the scroll increments will
+move a number of pixels equal to the grid size.
+
+<p><strong>Horizontal Stretch</strong>
+
+This allows you to change the dimensions of textures as they are
+mapped into the world. You can type a size value into field or use
+the scroll buttons on the right to enlarge or reduce the texture.
+The default value is 0.5. This gives a presentation in the game
+world of two pixels for each game unit. A Horizontal Stretch value
+of 1.0 would double the amount of area covered by a single repeat
+of the texture. Of course, doing that also reduces the apparent
+resolution of the texture by half (can you say blurry?)! Making the
+stretch value a negative number horizontally flops the texture's
+normals (i.e.; flops the texture left to right).
+
+<p><div class = "tip"><b>Design note:</b> Textures are "projected" onto brush
+surfaces. This means that if a surface is angled, the texture
+stretches to fit the space upon which it is projected. To make the
+texture look "unstretched" you need to change the dimension so that
+it looks correct when stretched. Example: If you want to map a
+texture on a 45-degree angle, it should be scaled to 0.35 along the
+direction perpendicular to the axis of the angle.</div>
+
+<p><strong>Vertical Stretch</strong>
+
+This is the same as for the Horizontal Stretch, but along the
+vertical axis. Making the stretch value a negative number
+vertically flops the texture's normals (i.e.; flops the texture up
+and down).
+
+<p><strong>Rotate</strong>
+
+This rotates the texture around the center point of the brush
+(or patch). If the texture is not centered on the map component,
+the rotation will not necessarily look correct. The increment of
+rotation is set by the value given for the Rotation Inc field on
+the Preferences window. The default value is 45 (degrees), roughly
+1/8 rotation around the axis.
+
+<p><strong>Value</strong>
+
+(This <i>Quake 2</i> function is not used by <i>Quake III
+Arena</i>)
+
+<p><strong>Texturing</strong>
+
+<p>This next grouping of commands in the lower left corner of the
+window provides two separate sets of buttons. The top set deal with
+texturing geometry brushes. The lower set is for texturing curve
+patches.
+
+<ul><strong>Axial (Brush)</strong>
+
+<br>Realigns texture to the X and Y axes (removing the effects of
+rotation)
+
+<p><strong>Fit (Brush)</strong>
+
+<br>The texture is stretched to fit the dimensions of the brush. The
+width and height fields to the right are the number of repetitions
+to be used in the S and T dimensions (S corresponds to X on
+the actual texture and T corresponds to Y on the actual texture).
+The default value for the height and width fields is 1. You can
+type a size value into field or use the scroll buttons on the right
+to enlarge or reduce the texture. Only integer values can be
+entered (meaning that you can't enlarge a texture 1.5 times).
+
+<p><strong>CAP (Patch)</strong>
+
+<br>This function is most often applied to patches used to fill in
+the gaps between curves and solid geometry. It can also be applied
+to flat patches so that the texture doesn't appear to follow the
+arc of the patch. You may need to use the SHIFT + CTRL + N command
+to normalize the texture on the patch.
+
+<p><strong>Set&hellip; (Patch)</strong>
+
+<br>This command functions almost like the "Fit" command above for
+brushes. The texture will be fit across the patch based on the X
+and Y values given. However, there is a notable difference. The X
+and Y fields will accept non-integer values (e.g. 6.4 x 3.8). It
+may take some experimentation to determine which dimension of your
+patch is considered to be "X" and which is thought to be "Y". If a
+value of 1x1 is given, the texture will be "fit" to the
+patch.
+
+<p><strong>Natural (Patch)</strong>
+
+<br>The engine does its best to map the texture onto the patch in a
+"natural" appearing manner. This means that the texture will curve
+and flow with the curves and bends in the patch. Unless you are
+texturing a cap, this should be your first choice when applying a
+texture.
+
+<p><strong>Fit</strong>
+
+<br>The texture's coordinates are mapped to fit the patch
+(with no repeats).
+</ul>
+<p><div class = "subheading">Find / Replace</div>
+
+<div class = "menu">(Menu: Textures &gt;  Find / Replace)
+
+<br>(Shortcut: none)</div>
+
+This feature allows the user to replace a texture within a
+single brush, a set of selected brushes or globally throughout the
+entire map. Selecting the command from the menu opens up a dialogue
+window. The top line is for the texture path and name of the
+texture to be replaced. The second line is for the texture to be
+used for replacement. Several checkboxes allow fine control over
+what, exactly, is to be changed. This command does not respond to
+UNDO. If you accidentally mistype a texture name in the replace
+line, you will need to enter it again (as mistyped) on the find
+line and then enter the correct texture on the replace line.
+
+<p>Texture replacement is global (throughout the map) unless the
+selected checkboxes state otherwise.
+
+<ul><b>Replace within selected brushes only.</b> Only the hi-lighted
+brushes that contain the texture to be replaced will be
+affected.
+
+<p><b>Force replacement (ignore current texture name).</b> <i>
+All</i> textures in the map will be replaced. Best if used with <b>
+<i>Replace within selected brushes only.</i></b> Be very careful
+with this one.
+
+<p><b>Live Updates from Texture/Camera windows.</b> Using
+Live Update the user can find and replace textures with a fully
+point and click interface.
+
+<p><strong>Texture Replacement using Live Updates</strong>
+
+<br>Click on the Find box, then click on any texture in either the
+Camera window or the Texture window. The texture path/name for that
+texture appears in the box. Next click on the Replace box and click
+on the replacement texture. That texture's path/name appear in the
+Replace box. Select "OK" and the replacement will occur.</ul>
+
+<p><strong>Step-by-step for replacing a texture on a brush face
+(if live update is not used).</strong>
+
+<ul><li>In the Camera window, hi-light (CTRL+SHIFT+mouse1) the texture
+to be replaced.
+
+<li>Open Surface Inspector. If the name of the texture is not
+hi-lighted, then hi-light it.
+
+<li>Press CTRL+C to copy the texture name.
+
+<li>Open the Find/Replace window.
+
+<li>Paste (CTRL+V) the name into the find window.
+
+<li>Hit ESC to deselect the texture in the CAM winow.
+
+<li>Open the Textures Window. Find the texture you want to replace
+with and select it.
+
+<li>Open Surface Inspector again.
+
+<li>Copy the texture name there.
+
+<li>Open Find/Replace again and paste the new texture into the
+Replace box.
+
+<li>Select OK. Replacement occurs and the dialogue window
+closes.</ul>
+
+<p><div class = "subheading">Texture Lock</div>
+
+<div class = "menu">(Menu: Textures &gt; Texture Lock)
+
+<br>(Shortcut: none)</div>
+
+Opens Pop-up window with two options for "locking" texture
+shifting during brush or patch movement. <b>NOTE:</b> If you have
+selected the BRUSH PRIMITIVES option under Project Settings&hellip;
+then Texture lock will always be on.
+
+<ul><strong>Moves</strong>
+
+<div class = "menu">(Menu: Textures &gt; Texture Lock &gt; Moves)
+
+<br>(Shortcut: SHIFT + T)</div>
+When this option is checked, textures stay locked in position on
+the brush as brushes are moved around the map. If unchecked, the
+texture appears to shift across the brush, because they are fixed
+to the world, not the individual brush. On small brushes and small
+textures (such as the small square lights), some "creepage" may
+occur, with textures shifting 1 or 2 units off their locked
+position.
+
+<p><strong>Rotation</strong>
+
+<div class = "menu">(Menu: Textures &gt; Texture Lock &gt; Moves)
+
+<br>(Shortcut: SHIFT + R)</div>
+
+When this option is checked, textures stay locked in position on
+the brush or brushes as they are rotated around the map. If
+unchecked, the texture appears to shift across the brush, because
+they are fixed to the world, not the individual brush. On small
+brushes and small textures (such as the small square lights), some
+"creepage" may occur, with textures shifting 1 or 2 units off their
+locked position.</ul>
+
+<p><div class = "subheading">Load from List&hellip;</div>
+
+<div class = "menu">(Menu: Textures &gt; Load from List&hellip;)
+
+<br>(Shortcut: none)</div>
+
+Opens a dialogue box listing all texture directories currently
+recognized by the editor. Hi-light a directory title then
+click on the "Load" button. The textures in the selected
+directory will be loaded into the Textures window.
+
+<p><div class = "subheading">Shaders</div>
+
+<div class = "menu">(Menu: Textures &gt; Shaders)
+
+<br>(Shortcut: none)</div>
+
+This command pops up a Pop-up window with two shader-related
+commands.
+
+<ul><strong>Load All (Reload)</strong>
+
+<div class = "menu">(Menu: Textures &gt; Shaders &gt; Load (All) Reload)
+
+<br>(Shortcut: none)</div>
+
+This command loads or reloads all the .shader scripts recognized
+by your shaderlist.txt file. When you change and save a shader
+script, execute this command, then reload the affected texture
+directory to see any changes.
+
+<p><strong>Show</strong>
+
+<div class = "menu">(Menu: Textures &gt; Shaders &gt; Show)
+
+<br>(Shortcut: none)</div>
+
+When checked, this command surrounds all shader-manipulated
+textures in the Texture window with a thin white border.</ul>
+
+<p><div class = "subheading">Flush</div>
+
+<div class = "menu">(Menu: Textures &gt; Flush)
+
+<br>(Shortcut: none)</div>
+
+The flush command frees up texture memory and should improve
+editor performance. Exactly how much is flushed depends on your
+choice of commands.
+
+<ul><strong>Flush All</strong>
+
+<div class = "menu">(Menu: Textures &gt; Flush &gt; Flush All)
+
+<br>(Shortcut: none)</div>
+
+This command flushes all the texture memory, restarts OpenGL and
+reloads the map from the last saved copy.
+
+<p><strong>Flush Unused</strong>
+
+<div class = "menu">(Menu: Textures &gt; Flush &gt; Flush Unused)
+
+<br>(Shortcut: none)</div>
+
+This command flushes all UNUSED textures from memory.</ul>
+
+<p><div class = "subheading">Texture Window Scale-</div>
+
+<div class = "menu">>(Menu &gt; Textures &gt; Texture Window Scale)
+
+<br>(Shortcut: none)</div>
+
+This affects the size of the texture images displayed in the
+Textures window. Clicking on the menu entry opens up a pop-up
+window with the following size selections: 200%, 100%, 50%, 25%,
+and 10%. Adjust it to suit your liking. If seeing the detail in the
+textures is important to you, set the size to 100% or larger. If
+you know your way around the textures without having to see each
+pixel, set it for smaller.
+
+<p><div class = "subheading">Texture Directories</div>
+
+<div class = "menu">(Menu: Textures)</div>
+
+This is not a command. The entries on the Textures Menu below
+"Texture Window Scale" are the names of the available texture
+directories (all whose filenames are listed in the shaderlist.txt
+script). Clicking on one loads the contents of the directory into
+the Texture window.
+
+<p><div class = "subheading">Texture Shift Key Shortcuts</div>
+
+A brush, brush surface, or curve patch must already be selected
+before using these shortcuts. This feature closely copies the
+function of the Texture Shift fields and scroll bars on Surface
+Inspector pop-up window. If Snap to T is selected in preferences,
+then the texture shifts in pixel increments equal to the current
+grid setting. Shifting textures on curve patches may produce
+unexpected results.
+
+<p><table class = "menu">
+<tr>
+	<td>Texture Shift Down</td>
+	<td width = 50%>(SHIFT + DOWN ARROW)</td>
+</tr>
+<tr>
+	<td>Texture Shift Up</td>
+	<td width = 50%>(SHIFT + UP ARROW)</td>
+</tr>
+<tr>
+	<td>Texture Shift Left</td>
+	<td width = 50%>(SHIFT + LEFT ARROW)</td>
+</tr>
+<tr>
+	<td>Texture Shift Right</td>
+	<td width = 50%>(SHIFT + RIGHT ARROW)</td>
+</tr>
+</table>
+
+<p><div class = "subheading">Texture Rotate Key Shortcuts</div>
+
+A brush, brush surface, or curve patch must already be selected
+before using these shortcuts. This feature closely copies the
+function of the Texture Rotate field and scroll bar on Surface
+Inspector pop-up window. The texture rotates in degree increments
+set in Preferences. Rotating textures on curve patches may produce
+unexpected results.
+
+<p><table class = "menu">
+<tr>
+	<td>Texture Rotate Clockwise</td>
+	<td width = 40%>(SHIFT + PAGEDOWN)</td>
+</tr>
+<tr>
+	<td>Texture Rotate Counter-Clockwise</td>
+	<td width = 40%>(SHIFT + PAGEUP)</td>
+</tr>
+</table>
+
+<p><div class = "subheading">Texture Scaling Shortcuts</div>
+
+A brush, brush surface, or curve patch must already be selected
+before using these shortcuts. This feature changes the scale of the
+texture (the amount of area that a single instance of the texture
+covers). The texture scale seems inconsistent, except that opposite
+directions appear to cancel each other out. The amount of increase
+delivered by the first use appears to be about a ratio of 1:15.
+
+<p><table class = "menu">
+<tr>
+	<td>Texture Scale Down</td>
+	<td width = 50%>(CTRL + DOWN ARROW)</td>
+</tr>
+<tr>
+	<td>Texture Scale Up</td>
+	<td width = 50%>(CTRL + UP ARROW)</td>
+</tr>
+<tr>
+	<td>Texture Scale Left</td>
+	<td width = 50%>(CTRL + LEFT ARROW)</td>
+</tr>
+<tr>
+	<td>Texture Scale Right</td>
+	<td width = 50%>(CTRL + RIGHT ARROW)</td>
+</tr>
+</table>
+
+<h2><a name = "interactex">Using Interactive Textures</a></h2>
+
+Interactive textures are the shader-manipulated textures that
+have an effect on game play, not just the appearance of the map.
+There are two classes of Interactive Textures: Special Content
+Textures and Texture Entities. For more detail and
+instructions regarding shader manipulation of textures, refer to
+the <i>Q3A</i> Shader Manual.
+
+<p><strong>Special Content Textures</strong>
+
+Special content textures are textures where the "surface"
+parameters of the texture actually change the physical nature of
+the geometry brush and in so doing, affects the play of the
+game.
+
+<p><strong>Water</strong>
+
+<br>Water is a content parameter that allows a player to "swim"
+inside a geometry brush, causes a pulsing visual distortion of the
+underwater geometry, and prompts the game engine to draw bubbles as
+projectiles pass through it. A player can only remain under water
+for a short time (without a battlesuit) and then begins to
+drown.
+
+<p><strong>Water usage rules:</strong>
+
+<ul>
+<li>A water texture is defined by the presence of surfaceparm water
+in the shader that creates it.
+
+<li>Because water is typically a "transparent" surface, the shader
+passes used to create surface effects on water are added to the
+shader passes of textures seen through the water surface. This can
+significantly increase the number of redraw passes necessary to
+draw the game world and may negatively affect performance.
+
+<li>If you place water brushes side by side, the touching sides must
+be marked with the common/nodraw texture.
+
+<li>Both the top and the bottom surfaces of a water brush must be
+water texture.
+
+<li>Water brushes cannot be stacked so they touch another water
+brush vertically, only set side by side.
+
+<li> If you want to be able to exit water easily, keep the
+distance from the top of the water brush to the adjacent "shore" or
+pool edge at no more than 16 game units. Somewhat less is actually
+better.
+
+<li>If fog is to be used as a part of a water volume, the water
+surface should not deform.</ul>
+
+<p><strong>Fog</strong>
+
+Fog content is used to block or diminish player vision and
+provide "atmosphere" for a level. Like water, fog can affect game
+performance, especially if one can see additional shader effects
+within it. The following information is taken from the <i>Q3A</i>
+Shader Manual regarding fog creation and usage.
+
+<p><strong>fogparms &lt;red value&gt; &lt;green value&gt; &lt;blue
+value&gt; &lt;distance to Opaque&gt;</strong>
+
+<br>This surface parameter (or "surfaceparm") defines the contents
+of the fog.
+
+<br><b>Note:</b> you must also specify "surfaceparm fog" to cause
+q3map to identify the surfaces inside the volume. Fogparms
+only describes how to render the fog on the surfaces.
+
+<p><b>&lt;red value&gt; &lt;green value&gt; &lt;blue value&gt;</b>
+These are normalized values (number range from 0 to 1). A good
+computer art program should give you the RGB values for a color. To
+obtain the values that define fog color for <i>Quake III Arena,</i>
+divide the desired color's Red, Green and Blue values by 255 to
+obtain three normalized numbers within the 0.0 to 1.0
+range.
+
+<p><b>&lt;distance to opaque&gt;</b> This is the distance, in
+game units, until the fog becomes totally opaque, as measured from
+the point of view of the observer. By making the height of the fog
+brush shorter than the distance to opaque, the apparent density of
+the fog can be reduced (because it never reaches the depth at which
+full opacity occurs).
+
+<p><strong>Fog usage rules:</strong>
+
+<ul>
+<li>If a room (or rooms) is to be filled completely with a fog
+volume, it can only be entered through one surface (and still have
+the fog function correctly).
+
+<li>The fog volume can only have one surface visible (from outside
+the fog).
+
+<li>Fog must be made of one brush. It cannot be made of adjacent
+brushes.
+
+<li>Fog brushes must be axial. This means that only square or
+rectangular brushes may contain fog, and those must have their
+edges drawn along the axes of the map grid (all 90 degree
+angles).
+
+<li>If a water texture contains a fog parameter, it must be treated
+as if it were a fog texture when in use.
+
+<li>Additional shader passes may be placed on a fog brush, as with
+other brushes.
+
+<li>If a light-emitting fog brush is placed beneath normal brush
+geometry, the light may cause light artifacting on the solid brush
+surface. Use with care.
+
+<li>Brush models (trains, doors, rotating objects, etc.) within, or
+partially within fog volumes will have drawing priority problems
+against the fog.  It is best not to place these entities in
+fog volumes.
+
+<li>There are unconfirmed reports of moving entities being made with
+fog shaders.</ul>
+
+<p><strong>Lava</strong>
+
+<br>Lava content, for most practical purposes, is a variation of
+water content. The damage that it does to players in contact with
+it is defined by game code and cannot be directly affected by the
+map designer.
+
+<p><strong>Slime</strong>
+
+<br>Slime content, for most practical purposes, is a variation of
+water content. The damage that it does to players in contact with
+it is defined by game code and cannot be directly affected by the
+map designer.
+
+<p><div class = "subheading">Texture Entities</div>
+
+There are a number of shader-manipulated textures that are used
+in an entity-like fashion. The shader files that manipulate the
+textures are what give them their game properties. These are
+the ones that id used and their relevant properties.
+
+<p><strong>Areaportal</strong>
+
+<br><b>Color:</b> Opaque Red Orange
+
+<br><b>Location:</b> (textures/common/areaportal)
+
+<br>The bsp tool uses areaportals to create hard, visual breaks
+between areas in the map. Until triggered, the areaportal blocks
+geometry behind it from being drawn or seen. The area portal brush
+should be a thin (2 to 4 units thick) brush. It should touch all
+the brushes that form the hull of the opening being portalled. It
+must be placed inside a door. The opening of the door triggers the
+portal function. The closing of the door returns it to its former
+state. The areaportal texture must completely seal off a volume
+from another volume (although this can be in conjunction with other
+areaportals). If a door is being used to block off an area from
+view, consider placing an areaportal brush inside the door. Example
+in Quake III Arena: All the doors out of the central courtyard in
+Q3DM12, The Dredwerkz, are areaportalled.
+
+<p><strong>Caulk</strong>
+
+<br><b>Location:</b> (common/caulk)
+
+<br><b>Color:</b> Opaque Pink
+
+<br><b>Game Function:</b> Caulk, the miracle texture. It blocks vis.
+It seals the world off from the void. It doesn't draw (so it
+doesn't add to triangle counts). It keeps curves from competing
+with textures behind them. It looks like hell if you see it in your
+world. From the View menu (View &gt; Show &gt; Caulk), you can
+toggle on and off the display of caulk brush sides.
+
+<p><div class = "tip"><b>Design Tips:</b> When you build a brush entity (a.k.a.
+b_model), mark all the brush sides that you will never see with
+caulk. Otherwise, the game draws every one of them. Even if you're
+only making a one-piece door, mark all the non-viewed sides with
+caulk. The same holds true for detail brushes. If you can't
+(or won't ever) see a brush face on a brush that's been marked as
+detail, paint it with caulk. Next, whenever you build a curve, try
+to build the brush geometry immediately behind it out of caulk.
+Finally, look around your map for brush faces that you suspect are
+being drawn, but are never seen: door pockets, bars, underneath
+bridges or very low railings and so on. It may sound like work, but
+attention to detail like this buys you both the appearance of
+greater geometric detail in the map AND faster game running
+speed.
+
+<p><b>More Design Tips:</b> Finally, and this should be used with
+great care, a caulk brush can be used to create an invisible
+support for entities. If you place a very thin caulk brush floating
+above a surface that would otherwise not support an entity
+(example: a grate made of clip brush), the brush will not draw in
+the world, but will support the entity. The reason for this is that
+SUSPENDED entities are not "seen" by bots unless they can be
+reached by a jump pad.</div>
+
+<p><strong>Clip</strong>
+
+<br><b>Location:</b> (textures/common/clip)
+
+<br><b>Color:</b> Transparent Red
+
+<br><b>Game Function:</b> If you look at a professionally made map,
+quite often you'll see that nearly every bit of wall surface is
+covered in a transparent red texture called "common/clip." Clip is
+a nondrawing texture that blocks player movement. Clip does not
+block weapon fire. Entities, such as ammo or weapons, are not
+supported by clip brushes. If placed or dropped on a clip brush,
+they will pass through them.
+
+<p><div class = "tip"><b>Design Tips:</b> Place clip brushes to smooth the passage of
+players through the world. This could mean creating a slope that
+allows the player to slip past a piece of architectural trim, or
+filling a window to keep players from getting into it. It can be
+used to create an artificial ceiling that prevents players from
+flying or jumping too high.</div>
+
+<p><strong>Cluster Portal</strong>
+
+<br><b>Location:</b> (textures/common/clip)
+
+<br><b>Color:</b> Translucent lavender
+
+<br><b>Game Function:</b> Works like an area portal, but for the bot
+navigation file only. Cluster portal is used by the bspc utility to
+subdivide the map into smaller areas for calculating bot
+navigation. Appendix C: Bot Navigation Files contains the specific
+details for using cluster portal texture entities.
+
+<p><strong>Cushion</strong>
+
+<br><b>Location:</b> (textures/common/clusterportal)
+
+<br><b>Color:</b> Translucent pale aqua
+
+<br><b>Game Function:</b> A player falling on this does not take
+damage. They also don't make a "landing" sound, so use with
+caution.
+
+<p><strong>Do Not Enter</strong>
+
+<br><b>Location:</b> (textures/common/donotenter)
+
+<br><b>Color:</b> Transparent Pale Orange
+
+<br><b>Game Function:</b> It is a tool used to solve bot navigation
+problems. Use it like a clip brush, but sparingly. When you observe
+bots doing stupid things in your map, try to block off the area
+with this texture. The Bot Navigation Files appendix contains the
+specific details for using the Do Not Enter texture entity.
+
+<p><strong>Hint</strong>
+
+<br><b>Location:</b> (textures/common/clusterportal)
+
+<br><b>Color:</b> Transparent Yellow Green
+
+<br><b>Game Function:</b> Helps determine the vis portals. It is
+used as a suggestion to the compiler during the vis phase, when the
+world is subdivided. Generally speaking, they are used to correct
+vis problems, whose chief symptom is the "hall of mirrors" effect
+seen during game play. These can often be corrected by careful
+placement of a hint brush. If you fill the volume where the
+error is seen or the volume adjacent to it, the problem may be
+corrected in the next compile. This is really more art than
+science.
+
+<p><strong>Invisible</strong>
+
+<br><b>Location:</b> (textures/common/noimpact)
+
+<br>Color: 
+
+<br><b>Game Function:</b> This was used to create a surface that
+would be marked by weapon fire, but would not be drawn in the
+world. This was created specifically to resolve a problem where
+func_static brushes were being used to replace floor textures that
+marked the location of weapons in Q3DM8. Because the rocket
+launcher was located in different places between the team and the
+deathmatch games, the designer wanted to make floor markers that
+would not only change between game types, but would be marked like
+adjacent floor pieces.
+
+<p><strong>Nodrawnonsolid</strong>
+
+<br><b>Location:</b> (textures/common/trigger)
+
+<br><b>Color:</b> Opaque light yellow
+
+<br><b>Game Function:</b> This is the same as nodraw.
+
+<p><strong>Noimpact</strong>
+
+<br><b>Location:</b> (textures/common/noimpact)
+
+<br><b>Color:</b> black
+
+<br><b>Game Function:</b> Used to create a surface which does not
+block weapon fire.
+
+<br>Weapon fire will pass through this. This usually used as a
+shader key on other textures.
+
+<p><strong>Origin</strong>
+
+<br><b>Location:</b> (textures/common/origin)
+
+<br><b>Color:</b> Opaque Orange
+
+<br><b>Game Function:</b> Used to create origin point in moving
+b_models, such as trains, plats, and rotating objects. This
+texture, applied to a square or rectangular brush, is used to
+create the point of origin for moving b_models, such as trains,
+plats, and rotating objects. It is used by func_trains as the point
+that passes through path entities and the source for sound
+attachment
+
+<p><strong>Skip</strong>
+
+<br><b>Location:</b> (textures/common/skip)
+
+<br><b>Color:</b> Transparent yellow
+
+<br><b>Game Function:</b> Do not use in Q3A. This texture was used
+in Quake 2 maps to discard sides of hint brushes. It is
+nonfunctional in Q3A.
+
+<p><strong>Slick</strong>
+
+<br><b>Location:</b> (textures/common/trigger)
+
+<br><b>Color:</b> Translucent Pale Blue
+
+<br><b>Game Function:</b> Not stick coating for map surfaces.
+Reduces friction. Use like a very thin clip brush over surfaces you
+want to be low friction.
+
+<p><strong>Trigger</strong>
+
+<br><b>Location:</b> (textures/common/trigger)
+
+<br><b>Color:</b> Transparent Dark Yellow
+
+<br><b>Game Function:</b> Used to make trigger brushes.
+
+<p><strong>Weapon Clip</strong>
+
+<br><b>Location:</b> (textures/common/weap_clip)
+
+<br><b>Color:</b> Transparent Red
+
+<br><b>Game Function:</b> This version of the clip brush only stops
+weapon projectiles from passing through it. No marks are left on
+the surface.
+
+<br><b>Design Tip:</b> Use to create clip surfaces for map object
+models.
+<p align = "center"><a href = "../ch06/pg6_1.htm">Back</a> | <a href = "../index.htm">Home</a> | <a href = "../ch08/pg8_1.htm">Next</a>
+</body>
+</html>

@@ -1,6 +1,6 @@
 /*
-Copyright (C) 2001-2006, William Joseph.
-All Rights Reserved.
+Copyright (C) 1999-2007 id Software, Inc. and contributors.
+For a list of contributors, see the accompanying CONTRIBUTORS file.
 
 This file is part of GtkRadiant.
 
@@ -19,7 +19,17 @@ along with GtkRadiant; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#if !defined(INCLUDED_PARSE_H)
-#define INCLUDED_PARSE_H
+// parse.h -- text file parsing routines
 
-#endif
+#define	MAXTOKEN	1024
+
+extern	char	token[MAXTOKEN];
+extern	int	scriptline;
+
+// NOTE: added WINAPI call syntax to export these for plugins in _QERScripLibTable
+void	    StartTokenParsing (char *data);
+qboolean  GetToken (qboolean crossline);
+void      UngetToken (void);
+qboolean  TokenAvailable (void);
+qboolean  GetTokenExtra (qboolean crossline,char *delimiters,qboolean keepdelimiter); // Hydra: added support for GetTokenExtra()
+

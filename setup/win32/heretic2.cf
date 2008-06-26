@@ -1,4 +1,0 @@
-$SETUP_DIR = 'Setup-HER2';
-
-$DO_CORE = 1;
-$DO_GAME_HER2 = 1;

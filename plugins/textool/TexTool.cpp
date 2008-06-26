@@ -1,5 +1,5 @@
 /*
-Copyright (C) 1999-2006 Id Software, Inc. and contributors.
+Copyright (C) 1999-2007 id Software, Inc. and contributors.
 For a list of contributors, see the accompanying CONTRIBUTORS file.
 
 This file is part of GtkRadiant.
@@ -38,7 +38,7 @@ static void dialog_button_callback (GtkWidget *widget, gpointer data)
   ret = (int*)g_object_get_data (G_OBJECT (parent), "ret");
  
   *loop = 0;
-  *ret = gpointer_to_int (data);
+  *ret = (int)data;
 }
  
 static gint dialog_delete_callback (GtkWidget *widget, GdkEvent* event, gpointer data)
@@ -182,7 +182,7 @@ CWindowListener g_Listen;
 
 // plugin interfaces ---------------------------
 bool		        g_bQglInitDone = false;
-OpenGLBinding		g_QglTable;
+_QERQglTable		g_QglTable;
 bool			g_bSelectedFaceInitDone = false;
 _QERSelectedFaceTable	g_SelectedFaceTable;
 bool            g_bUITable = false;
@@ -533,7 +533,7 @@ static void DoExpose ()
   }
 
   // let the control points manager render
-  g_pManager->render( );
+  g_pManager->Render( );
 }
 
 static bool CanProcess ()
@@ -821,14 +821,14 @@ extern "C" void QERPlug_Dispatch(const char* p, vec3_t vMin, vec3_t vMax, bool b
   // if it's the first call, perhaps we need some additional init steps
   if (!g_bQglInitDone)
   {
-    g_QglTable.m_nSize = sizeof(OpenGLBinding);
+    g_QglTable.m_nSize = sizeof(_QERQglTable);
     if ( g_FuncTable.m_pfnRequestInterface( QERQglTable_GUID, static_cast<LPVOID>(&g_QglTable) ) )
     {
       g_bQglInitDone = true;
     }
     else
     {
-      Sys_Printf("TexTool plugin: OpenGLBinding interface request failed\n");
+      Sys_Printf("TexTool plugin: _QERQglTable interface request failed\n");
       return;
     }
   }
@@ -919,8 +919,13 @@ extern "C" void QERPlug_Dispatch(const char* p, vec3_t vMin, vec3_t vMax, bool b
 CSynapseServer* g_pSynapseServer = NULL;
 CSynapseClientTexTool g_SynapseClient;
 
-extern "C" CSynapseClient* SYNAPSE_DLL_EXPORT Synapse_EnumerateInterfaces (const char *version, CSynapseServer *pServer)
-{
+#if __GNUC__ >= 4
+#pragma GCC visibility push(default)
+#endif
+extern "C" CSynapseClient* SYNAPSE_DLL_EXPORT Synapse_EnumerateInterfaces( const char *version, CSynapseServer *pServer ) {
+#if __GNUC__ >= 4
+#pragma GCC visibility pop
+#endif
   if (strcmp(version, SYNAPSE_VERSION))
   {
     Syn_Printf("ERROR: synapse API version mismatch: should be '" SYNAPSE_VERSION "', got '%s'\n", version);

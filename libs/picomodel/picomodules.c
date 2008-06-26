@@ -54,7 +54,6 @@ extern const picoModule_t picoModuleMDC;
 extern const picoModule_t picoModuleMD2;
 extern const picoModule_t picoModuleFM;
 extern const picoModule_t picoModuleLWO;
-extern const picoModule_t picoModuleTerrain;
 
 
 
@@ -68,9 +67,8 @@ const picoModule_t *picoModules[] =
 	&picoModuleMDC,		/* return to castle wolfenstein mdc */
 	&picoModuleMD2,		/* quake2 md2 */
 	&picoModuleFM,		/* heretic2 fm */
-	&picoModuleLWO,		/* lightwave object */
-	&picoModuleTerrain,	/* picoterrain object */
 	&picoModuleOBJ,		/* wavefront object */
+	&picoModuleLWO,		/* lightwave object */
 	NULL				/* arnold */
 };
 

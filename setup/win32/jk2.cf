@@ -1,4 +1,0 @@
-$SETUP_DIR = 'Setup-JK2';
-
-$DO_CORE = 1;
-$DO_GAME_JKII = 1;

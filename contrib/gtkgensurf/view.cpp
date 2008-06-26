@@ -36,15 +36,15 @@ int       cxChar = 10, cyChar = 16;
 int       X0, Y0;
 int       X0G, Y0G;
 
-static Rect rcCoord;   // where X= Y= is drawn
-static Rect rcGrid;    // rectangle within rcLower that forms the border of the grid, plus
+static RECT rcCoord;   // where X= Y= is drawn
+static RECT rcGrid;    // rectangle within rcLower that forms the border of the grid, plus
                        //   a 3 pixel slop.
-static Rect rcLower;   // lower half of window, where plan view is drawn
-static Rect rcUpper;   // upper half or entire window, where isometric projection is drawn
+static RECT rcLower;   // lower half of window, where plan view is drawn
+static RECT rcUpper;   // upper half or entire window, where isometric projection is drawn
 
 void vertex_selected ();
 void texfont_init ();
-void texfont_write (const char *text, int l, int t);
+void texfont_write (const char *text, float l, float t);
 
 #define PEN_GRID { \
   g_GLTable.m_pfn_qglLineWidth (1); \
@@ -65,15 +65,15 @@ void texfont_write (const char *text, int l, int t);
 #define DRAW_QUAD(rc,r,g,b) { \
   g_GLTable.m_pfn_qglBegin (GL_QUADS); \
   g_GLTable.m_pfn_qglColor3f (0,1,0); \
-  g_GLTable.m_pfn_qglVertex2i (rc.left-1, rc.bottom); \
-  g_GLTable.m_pfn_qglVertex2i (rc.right, rc.bottom); \
-  g_GLTable.m_pfn_qglVertex2i (rc.right, rc.top+1); \
-  g_GLTable.m_pfn_qglVertex2i (rc.left-1, rc.top+1); \
+  g_GLTable.m_pfn_qglVertex2f (rc.left-1, rc.bottom); \
+  g_GLTable.m_pfn_qglVertex2f (rc.right, rc.bottom); \
+  g_GLTable.m_pfn_qglVertex2f (rc.right, rc.top+1); \
+  g_GLTable.m_pfn_qglVertex2f (rc.left-1, rc.top+1); \
   g_GLTable.m_pfn_qglColor3f (r,g,b); \
-  g_GLTable.m_pfn_qglVertex2i (rc.left, rc.bottom+1); \
-  g_GLTable.m_pfn_qglVertex2i (rc.right-1, rc.bottom+1); \
-  g_GLTable.m_pfn_qglVertex2i (rc.right-1, rc.top); \
-  g_GLTable.m_pfn_qglVertex2i (rc.left, rc.top); \
+  g_GLTable.m_pfn_qglVertex2f (rc.left, rc.bottom+1); \
+  g_GLTable.m_pfn_qglVertex2f (rc.right-1, rc.bottom+1); \
+  g_GLTable.m_pfn_qglVertex2f (rc.right-1, rc.top); \
+  g_GLTable.m_pfn_qglVertex2f (rc.left, rc.top); \
   g_GLTable.m_pfn_qglEnd (); }
 
 
@@ -143,8 +143,8 @@ static void draw_preview ()
     rcUpper.bottom = rcUpper.top/2;
     DrawPreview (rcUpper);
     g_GLTable.m_pfn_qglBegin (GL_LINES);
-    g_GLTable.m_pfn_qglVertex2i (rcUpper.left, rcUpper.bottom);
-    g_GLTable.m_pfn_qglVertex2i (rcUpper.right, rcUpper.bottom);
+    g_GLTable.m_pfn_qglVertex2f (rcUpper.left, rcUpper.bottom);
+    g_GLTable.m_pfn_qglVertex2f (rcUpper.right, rcUpper.bottom);
     g_GLTable.m_pfn_qglEnd ();
     rcLower.top = rcUpper.bottom-1;
     DrawGrid (rcLower);
@@ -184,7 +184,7 @@ static gint expose (GtkWidget *widget, GdkEventExpose *event, gpointer data)
 
 static void button_press (GtkWidget *widget, GdkEventButton *event, gpointer data)
 {
-  Point pt = { (long)event->x, widget->allocation.height - (long)event->y };
+  POINT pt = { (long)event->x, widget->allocation.height - (long)event->y };
   bool        Selected;
   double      x,y;
   int         i, j, k, ks;
@@ -296,7 +296,7 @@ static void button_press (GtkWidget *widget, GdkEventButton *event, gpointer dat
 
 static void motion (GtkWidget *widget, GdkEventMotion *event, gpointer data)
 {
-  Point pt = { (long)event->x, widget->allocation.height - (long)event->y };
+  POINT pt = { (long)event->x, widget->allocation.height - (long)event->y };
 
   if (!VertexMode)
     return;
@@ -450,7 +450,7 @@ void CreateViewWindow ()
 
 //=============================================================
 /* DrawPreview */
-void DrawPreview (Rect rc)
+void DrawPreview (RECT rc)
 {
 #define COSXA 0.8660254037844
 #define SINXA 0.5
@@ -460,7 +460,7 @@ void DrawPreview (Rect rc)
   double     L;
   double     x,y;
   int        i, j;
-  Point      pt[8];
+  POINT      pt[8];
   XYZ        v[8];
   char axis[3][2] = {"X","Y","Z"};
 
@@ -521,10 +521,10 @@ void DrawPreview (Rect rc)
           Scale(rc,vv[gTri[i].v[j]],&pt[j]);
 
         g_GLTable.m_pfn_qglBegin (GL_LINE_STRIP);
-        g_GLTable.m_pfn_qglVertex2i (pt[0].x, pt[0].y);
-        g_GLTable.m_pfn_qglVertex2i (pt[1].x, pt[1].y);
-        g_GLTable.m_pfn_qglVertex2i (pt[2].x, pt[2].y);
-        g_GLTable.m_pfn_qglVertex2i (pt[0].x, pt[0].y);
+        g_GLTable.m_pfn_qglVertex2f (pt[0].x, pt[0].y);
+        g_GLTable.m_pfn_qglVertex2f (pt[1].x, pt[1].y);
+        g_GLTable.m_pfn_qglVertex2f (pt[2].x, pt[2].y);
+        g_GLTable.m_pfn_qglVertex2f (pt[0].x, pt[0].y);
         g_GLTable.m_pfn_qglEnd ();
       }
       free(vv);
@@ -609,7 +609,7 @@ void DrawPreview (Rect rc)
             project(&out);
             Scale(rc,out,&pt[0]);
             g_GLTable.m_pfn_qglBegin (GL_LINE_STRIP);
-            g_GLTable.m_pfn_qglVertex2i (pt[0].x, pt[0].y);
+            g_GLTable.m_pfn_qglVertex2f (pt[0].x, pt[0].y);
             for(jj=1; jj<=SUBDIVS; jj++)
             {
               v = (float)(jj)/(float)(SUBDIVS);
@@ -627,7 +627,7 @@ void DrawPreview (Rect rc)
               }
               project(&out);
               Scale(rc,out,&pt[0]);
-              g_GLTable.m_pfn_qglVertex2i (pt[0].x, pt[0].y);
+              g_GLTable.m_pfn_qglVertex2f (pt[0].x, pt[0].y);
             }
             g_GLTable.m_pfn_qglEnd ();
           }
@@ -669,7 +669,7 @@ void DrawPreview (Rect rc)
             project(&out);
             Scale(rc,out,&pt[0]);
             g_GLTable.m_pfn_qglBegin (GL_LINE_STRIP);
-            g_GLTable.m_pfn_qglVertex2i (pt[0].x, pt[0].y);
+            g_GLTable.m_pfn_qglVertex2f (pt[0].x, pt[0].y);
             for(ii=1; ii<=SUBDIVS; ii++)
             {
               u = (float)(ii)/(float)(SUBDIVS);
@@ -687,7 +687,7 @@ void DrawPreview (Rect rc)
               }
               project(&out);
               Scale(rc,out,&pt[0]);
-              g_GLTable.m_pfn_qglVertex2i (pt[0].x, pt[0].y);
+              g_GLTable.m_pfn_qglVertex2f (pt[0].x, pt[0].y);
             }
             g_GLTable.m_pfn_qglEnd ();
           }
@@ -700,11 +700,11 @@ void DrawPreview (Rect rc)
       {
         Scale(rc,xyz[i][0],&pt[0]);
         g_GLTable.m_pfn_qglBegin (GL_LINE_STRIP);
-        g_GLTable.m_pfn_qglVertex2i (pt[0].x, pt[0].y);
+        g_GLTable.m_pfn_qglVertex2f (pt[0].x, pt[0].y);
         for(j=1; j<=NV; j++)
         {
           Scale(rc,xyz[i][j],&pt[0]);
-          g_GLTable.m_pfn_qglVertex2i (pt[0].x, pt[0].y);
+          g_GLTable.m_pfn_qglVertex2f (pt[0].x, pt[0].y);
         }
         g_GLTable.m_pfn_qglEnd ();
       }
@@ -712,11 +712,11 @@ void DrawPreview (Rect rc)
       {
         Scale(rc,xyz[0][j],&pt[0]);
         g_GLTable.m_pfn_qglBegin (GL_LINE_STRIP);
-        g_GLTable.m_pfn_qglVertex2i (pt[0].x, pt[0].y);
+        g_GLTable.m_pfn_qglVertex2f (pt[0].x, pt[0].y);
         for(i=1; i<=NH; i++)
         {
           Scale(rc,xyz[i][j],&pt[0]);
-          g_GLTable.m_pfn_qglVertex2i (pt[0].x, pt[0].y);
+          g_GLTable.m_pfn_qglVertex2f (pt[0].x, pt[0].y);
         }
         g_GLTable.m_pfn_qglEnd ();
       }
@@ -749,8 +749,8 @@ void DrawPreview (Rect rc)
 #endif
         Scale(rc,v[0],&pt[1]);
         g_GLTable.m_pfn_qglBegin (GL_LINE_STRIP);
-        g_GLTable.m_pfn_qglVertex2i (pt[0].x, pt[0].y);
-        g_GLTable.m_pfn_qglVertex2i (pt[1].x, pt[1].y);
+        g_GLTable.m_pfn_qglVertex2f (pt[0].x, pt[0].y);
+        g_GLTable.m_pfn_qglVertex2f (pt[1].x, pt[1].y);
         g_GLTable.m_pfn_qglEnd ();
       }
     }
@@ -785,16 +785,16 @@ void DrawPreview (Rect rc)
 #endif
     Scale(rc,v[3],&pt[0]);
     g_GLTable.m_pfn_qglBegin (GL_LINE_STRIP);
-    g_GLTable.m_pfn_qglVertex2i (pt[0].x, pt[0].y);
+    g_GLTable.m_pfn_qglVertex2f (pt[0].x, pt[0].y);
     for(i=0; i<3; i++)
     {
 #ifndef ISOMETRIC
       project(&v[i]);
 #endif
       Scale(rc,v[i],&pt[1]);
-      g_GLTable.m_pfn_qglVertex2i (pt[1].x, pt[1].y);
+      g_GLTable.m_pfn_qglVertex2f (pt[1].x, pt[1].y);
     }
-    g_GLTable.m_pfn_qglVertex2i (pt[0].x, pt[0].y);
+    g_GLTable.m_pfn_qglVertex2f (pt[0].x, pt[0].y);
     g_GLTable.m_pfn_qglEnd ();
   }
 
@@ -854,8 +854,8 @@ void DrawPreview (Rect rc)
   for(i=1; i<=3; i++)
   {
     g_GLTable.m_pfn_qglBegin (GL_LINES);
-    g_GLTable.m_pfn_qglVertex2i (pt[0].x, pt[0].y);
-    g_GLTable.m_pfn_qglVertex2i (pt[i].x, pt[i].y);
+    g_GLTable.m_pfn_qglVertex2f (pt[0].x, pt[0].y);
+    g_GLTable.m_pfn_qglVertex2f (pt[i].x, pt[i].y);
     g_GLTable.m_pfn_qglEnd ();
     texfont_write (axis[i-1], pt[i].x-cxChar/2,pt[i].y+cyChar/2);
   }
@@ -949,20 +949,20 @@ void DrawPreview (Rect rc)
     Scale(rc,v[i],&pt[i]);
   }
   g_GLTable.m_pfn_qglBegin (GL_LINE_STRIP);
-  g_GLTable.m_pfn_qglVertex2i (pt[3].x, pt[3].y);
+  g_GLTable.m_pfn_qglVertex2f (pt[3].x, pt[3].y);
   for(i=0; i<=3; i++)
-    g_GLTable.m_pfn_qglVertex2i (pt[i].x, pt[i].y);
+    g_GLTable.m_pfn_qglVertex2f (pt[i].x, pt[i].y);
   g_GLTable.m_pfn_qglEnd ();
   g_GLTable.m_pfn_qglBegin (GL_LINE_STRIP);
-  g_GLTable.m_pfn_qglVertex2i (pt[7].x, pt[7].y);
+  g_GLTable.m_pfn_qglVertex2f (pt[7].x, pt[7].y);
   for(i=4; i<=7; i++)
-    g_GLTable.m_pfn_qglVertex2i (pt[i].x, pt[i].y);
+    g_GLTable.m_pfn_qglVertex2f (pt[i].x, pt[i].y);
   g_GLTable.m_pfn_qglEnd ();
   g_GLTable.m_pfn_qglBegin (GL_LINES);
   for(i=0; i<=3; i++)
   {
-    g_GLTable.m_pfn_qglVertex2i (pt[i].x,pt[i].y);
-    g_GLTable.m_pfn_qglVertex2i (pt[i+4].x,pt[i+4].y);
+    g_GLTable.m_pfn_qglVertex2f (pt[i].x,pt[i].y);
+    g_GLTable.m_pfn_qglVertex2f (pt[i+4].x,pt[i+4].y);
   }
   g_GLTable.m_pfn_qglEnd ();
 
@@ -971,12 +971,12 @@ void DrawPreview (Rect rc)
   g_GLTable.m_pfn_qglDisable (GL_LINE_STIPPLE);
 }
 //=============================================================
-void DrawGrid(Rect rc)
+void DrawGrid(RECT rc)
 {
   int        i, j, k;
   double     h,w,x,y;
-  Point      pt[2];
-  Rect       rcBox;
+  POINT      pt[2];
+  RECT       rcBox;
 
   w = (double)(rc.right-rc.left+1) - cxChar;
   h = (double)(rc.top-rc.bottom+1) - cxChar - cyChar;
@@ -999,8 +999,8 @@ void DrawGrid(Rect rc)
   {
     x = Hll + i * dh;
     pt[0].x = X0G + (int)(SFG*(x-Hll));
-    g_GLTable.m_pfn_qglVertex2i(pt[0].x, pt[0].y);
-    g_GLTable.m_pfn_qglVertex2i(pt[0].x, pt[1].y);
+    g_GLTable.m_pfn_qglVertex2f(pt[0].x, pt[0].y);
+    g_GLTable.m_pfn_qglVertex2f(pt[0].x, pt[1].y);
   }
   g_GLTable.m_pfn_qglEnd ();
   pt[0].x = X0G;
@@ -1010,8 +1010,8 @@ void DrawGrid(Rect rc)
   {
     y = Vll + i * dv;
     pt[0].y = Y0G + (int)(SFG*(Vur-y));
-    g_GLTable.m_pfn_qglVertex2i (pt[0].x,pt[0].y);
-    g_GLTable.m_pfn_qglVertex2i (pt[1].x,pt[0].y);
+    g_GLTable.m_pfn_qglVertex2f (pt[0].x,pt[0].y);
+    g_GLTable.m_pfn_qglVertex2f (pt[1].x,pt[0].y);
   }
   g_GLTable.m_pfn_qglEnd ();
 
@@ -1023,8 +1023,8 @@ void DrawGrid(Rect rc)
   pt[1].x = pt[0].x + cyChar;
   pt[1].y = pt[0].y;
   g_GLTable.m_pfn_qglBegin (GL_LINES);
-  g_GLTable.m_pfn_qglVertex2i (pt[0].x,pt[0].y);
-  g_GLTable.m_pfn_qglVertex2i (pt[1].x,pt[1].y);
+  g_GLTable.m_pfn_qglVertex2f (pt[0].x,pt[0].y);
+  g_GLTable.m_pfn_qglVertex2f (pt[1].x,pt[1].y);
   g_GLTable.m_pfn_qglEnd ();
   switch(Plane)
   {
@@ -1038,8 +1038,8 @@ void DrawGrid(Rect rc)
   pt[1].x = pt[0].x;
   pt[1].y = pt[0].y + cyChar;
   g_GLTable.m_pfn_qglBegin (GL_LINES);
-  g_GLTable.m_pfn_qglVertex2i (pt[0].x,pt[0].y);
-  g_GLTable.m_pfn_qglVertex2i (pt[1].x,pt[1].y);
+  g_GLTable.m_pfn_qglVertex2f (pt[0].x,pt[0].y);
+  g_GLTable.m_pfn_qglVertex2f (pt[1].x,pt[1].y);
   g_GLTable.m_pfn_qglEnd ();
   switch(Plane)
   {
@@ -1125,7 +1125,7 @@ void DrawGrid(Rect rc)
 }
 
 //=============================================================
-void GetScaleFactor(Rect rc)
+void GetScaleFactor(RECT rc)
 {
 #ifdef ISOMETRIC
 	double      h, w;
@@ -1153,7 +1153,7 @@ void GetScaleFactor(Rect rc)
 }
 
 //=============================================================
-void Scale(Rect rc,XYZ xyz,Point *pt)
+void Scale(RECT rc,XYZ xyz,POINT *pt)
 {
 
 #ifdef ISOMETRIC

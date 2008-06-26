@@ -17,17 +17,11 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
+#include "../StdAfx.h"
 #include "dialogs-gtk.h"
 #include "../funchandlers.h"
-
-#include "str.h"
-#include <list>
-#include <gtk/gtk.h>
-#include "gtkutil/pointer.h"
-
 #include "../lists.h"
 #include "../misc.h"
-
 
 /*--------------------------------
 		Callback Functions
@@ -83,15 +77,14 @@ void Update_TextureReseter()
 static void dialog_button_callback (GtkWidget *widget, gpointer data)
 {
 	GtkWidget *parent;
-	int *loop;
-  EMessageBoxReturn *ret;
+	int *loop, *ret;
  
 	parent = gtk_widget_get_toplevel (widget);
 	loop = (int*)g_object_get_data (G_OBJECT (parent), "loop");
-	ret = (EMessageBoxReturn*)g_object_get_data (G_OBJECT (parent), "ret");
+	ret = (int*)g_object_get_data (G_OBJECT (parent), "ret");
  
 	*loop = 0;
-	*ret = (EMessageBoxReturn)gpointer_to_int(data);
+	*ret = (int)data;
 }
  
 static gint dialog_delete_callback (GtkWidget *widget, GdkEvent* event, gpointer data)
@@ -128,7 +121,7 @@ bool ValidateTextFloat(const char* pData, char* error_title, float* value)
 
 		if((testNum == 0.0f) && strcmp(pData, "0"))
 		{
-			DoMessageBox("Please Enter A Floating Point Number", error_title, eMB_OK);
+			DoMessageBox("Please Enter A Floating Point Number", error_title, MB_OK);
 			return FALSE;
 		}
 		else
@@ -138,7 +131,7 @@ bool ValidateTextFloat(const char* pData, char* error_title, float* value)
 		}
 	}
 
-	DoMessageBox("Please Enter A Floating Point Number", error_title, eMB_OK);
+	DoMessageBox("Please Enter A Floating Point Number", error_title, MB_OK);
 	return FALSE;
 }
 
@@ -153,7 +146,7 @@ bool ValidateTextFloatRange(const char* pData, float min, float max, char* error
 
 		if((testNum < min) || (testNum > max))
 		{
-			DoMessageBox(error_buffer, error_title, eMB_OK);
+			DoMessageBox(error_buffer, error_title, MB_OK);
 			return FALSE;
 		}
 		else
@@ -163,7 +156,7 @@ bool ValidateTextFloatRange(const char* pData, float min, float max, char* error
 		}
 	}
 
-	DoMessageBox(error_buffer, error_title, eMB_OK);
+	DoMessageBox(error_buffer, error_title, MB_OK);
 	return FALSE;
 }
 
@@ -178,7 +171,7 @@ bool ValidateTextIntRange(const char* pData, int min, int max, char* error_title
 
 		if((testNum < min) || (testNum > max))
 		{
-			DoMessageBox(error_buffer, error_title, eMB_OK);
+			DoMessageBox(error_buffer, error_title, MB_OK);
 			return FALSE;
 		}
 		else
@@ -188,7 +181,7 @@ bool ValidateTextIntRange(const char* pData, int min, int max, char* error_title
 		}
 	}
 
-	DoMessageBox(error_buffer, error_title, eMB_OK);
+	DoMessageBox(error_buffer, error_title, MB_OK);
 	return FALSE;
 }
 
@@ -200,7 +193,7 @@ bool ValidateTextInt(const char* pData, char* error_title, int* value)
 
 		if((testNum == 0) && strcmp(pData, "0"))
 		{
-			DoMessageBox("Please Enter An Integer", error_title, eMB_OK);
+			DoMessageBox("Please Enter An Integer", error_title, MB_OK);
 			return FALSE;
 		}
 		else
@@ -210,7 +203,7 @@ bool ValidateTextInt(const char* pData, char* error_title, int* value)
 		}
 	}
 
-	DoMessageBox("Please Enter An Integer", error_title, eMB_OK);
+	DoMessageBox("Please Enter An Integer", error_title, MB_OK);
 	return FALSE;
 }
 
@@ -225,11 +218,10 @@ bool ValidateTextInt(const char* pData, char* error_title, int* value)
 
 */
 
-EMessageBoxReturn DoMessageBox (const char* lpText, const char* lpCaption, EMessageBoxType type)
+int DoMessageBox (const char* lpText, const char* lpCaption, guint32 uType)
 {
 	GtkWidget *window, *w, *vbox, *hbox;
-	EMessageBoxReturn ret;
-  int loop = 1;
+	int mode = (uType & MB_TYPEMASK), ret, loop = 1;
  
 	window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
 	gtk_signal_connect (GTK_OBJECT (window), "delete_event",
@@ -259,23 +251,23 @@ EMessageBoxReturn DoMessageBox (const char* lpText, const char* lpCaption, EMess
 	gtk_box_pack_start (GTK_BOX (vbox), hbox, FALSE, FALSE, 2);
 	gtk_widget_show (hbox);
  
-	if (type == eMB_OK)
+	if (mode == MB_OK)
 	{
 		w = gtk_button_new_with_label ("Ok");
 		gtk_box_pack_start (GTK_BOX (hbox), w, TRUE, TRUE, 0);
 		gtk_signal_connect (GTK_OBJECT (w), "clicked",
-                        GTK_SIGNAL_FUNC (dialog_button_callback), GINT_TO_POINTER (eIDOK));
+                        GTK_SIGNAL_FUNC (dialog_button_callback), GINT_TO_POINTER (IDOK));
 		GTK_WIDGET_SET_FLAGS (w, GTK_CAN_DEFAULT);
 		gtk_widget_grab_default (w);
 		gtk_widget_show (w);
-		ret = eIDOK;
+		ret = IDOK;
 	}
-	else if (type ==  eMB_OKCANCEL)
+	else if (mode ==  MB_OKCANCEL)
 	{
 		w = gtk_button_new_with_label ("Ok");
 		gtk_box_pack_start (GTK_BOX (hbox), w, TRUE, TRUE, 0);
 		gtk_signal_connect (GTK_OBJECT (w), "clicked",
-                        GTK_SIGNAL_FUNC (dialog_button_callback), GINT_TO_POINTER (eIDOK));
+                        GTK_SIGNAL_FUNC (dialog_button_callback), GINT_TO_POINTER (IDOK));
 		GTK_WIDGET_SET_FLAGS (w, GTK_CAN_DEFAULT);
 		gtk_widget_grab_default (w);
 		gtk_widget_show (w);
@@ -283,16 +275,16 @@ EMessageBoxReturn DoMessageBox (const char* lpText, const char* lpCaption, EMess
 		w = gtk_button_new_with_label ("Cancel");
 		gtk_box_pack_start (GTK_BOX (hbox), w, TRUE, TRUE, 0);
 		gtk_signal_connect (GTK_OBJECT (w), "clicked",
-                        GTK_SIGNAL_FUNC (dialog_button_callback), GINT_TO_POINTER (eIDCANCEL));
+                        GTK_SIGNAL_FUNC (dialog_button_callback), GINT_TO_POINTER (IDCANCEL));
 		gtk_widget_show (w);
-		ret = eIDCANCEL;
+		ret = IDCANCEL;
 	}
-	else if (type == eMB_YESNOCANCEL)
+	else if (mode == MB_YESNOCANCEL)
 	{
 		w = gtk_button_new_with_label ("Yes");
 		gtk_box_pack_start (GTK_BOX (hbox), w, TRUE, TRUE, 0);
 		gtk_signal_connect (GTK_OBJECT (w), "clicked",
-                        GTK_SIGNAL_FUNC (dialog_button_callback), GINT_TO_POINTER (eIDYES));
+                        GTK_SIGNAL_FUNC (dialog_button_callback), GINT_TO_POINTER (IDYES));
 		GTK_WIDGET_SET_FLAGS (w, GTK_CAN_DEFAULT);
 		gtk_widget_grab_default (w);
 		gtk_widget_show (w);
@@ -300,22 +292,22 @@ EMessageBoxReturn DoMessageBox (const char* lpText, const char* lpCaption, EMess
 		w = gtk_button_new_with_label ("No");
 		gtk_box_pack_start (GTK_BOX (hbox), w, TRUE, TRUE, 0);
 		gtk_signal_connect (GTK_OBJECT (w), "clicked",
-                        GTK_SIGNAL_FUNC (dialog_button_callback), GINT_TO_POINTER (eIDNO));
+                        GTK_SIGNAL_FUNC (dialog_button_callback), GINT_TO_POINTER (IDNO));
 		gtk_widget_show (w);
  
 		w = gtk_button_new_with_label ("Cancel");
 		gtk_box_pack_start (GTK_BOX (hbox), w, TRUE, TRUE, 0);
 		gtk_signal_connect (GTK_OBJECT (w), "clicked",
-                        GTK_SIGNAL_FUNC (dialog_button_callback), GINT_TO_POINTER (eIDCANCEL));
+                        GTK_SIGNAL_FUNC (dialog_button_callback), GINT_TO_POINTER (IDCANCEL));
 		gtk_widget_show (w);
-		ret = eIDCANCEL;
+		ret = IDCANCEL;
 	}
 	else /* if (mode == MB_YESNO) */
 	{
 		w = gtk_button_new_with_label ("Yes");
 		gtk_box_pack_start (GTK_BOX (hbox), w, TRUE, TRUE, 0);
 		gtk_signal_connect (GTK_OBJECT (w), "clicked",
-                        GTK_SIGNAL_FUNC (dialog_button_callback), GINT_TO_POINTER (eIDYES));
+                        GTK_SIGNAL_FUNC (dialog_button_callback), GINT_TO_POINTER (IDYES));
 		GTK_WIDGET_SET_FLAGS (w, GTK_CAN_DEFAULT);
 		gtk_widget_grab_default (w);
 		gtk_widget_show (w);
@@ -323,9 +315,9 @@ EMessageBoxReturn DoMessageBox (const char* lpText, const char* lpCaption, EMess
 		w = gtk_button_new_with_label ("No");
 		gtk_box_pack_start (GTK_BOX (hbox), w, TRUE, TRUE, 0);
 		gtk_signal_connect (GTK_OBJECT (w), "clicked",
-                        GTK_SIGNAL_FUNC (dialog_button_callback), GINT_TO_POINTER (eIDNO));
+                        GTK_SIGNAL_FUNC (dialog_button_callback), GINT_TO_POINTER (IDNO));
 		gtk_widget_show (w);
-		ret = eIDNO;
+		ret = IDNO;
 	}
  
 	gtk_window_set_position(GTK_WINDOW(window),GTK_WIN_POS_CENTER);
@@ -341,13 +333,12 @@ EMessageBoxReturn DoMessageBox (const char* lpText, const char* lpCaption, EMess
 	return ret;
 }
 
-EMessageBoxReturn DoIntersectBox (IntersectRS* rs)
+int DoIntersectBox (IntersectRS* rs)
 {
 	GtkWidget *window, *w, *vbox, *hbox;
 	GtkWidget *radio1, *radio2;
 	GtkWidget *check1, *check2;
-	EMessageBoxReturn ret;
-  int loop = 1;
+	int ret, loop = 1;
  
 	window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
 	
@@ -398,7 +389,7 @@ EMessageBoxReturn DoIntersectBox (IntersectRS* rs)
 
 		w = gtk_button_new_with_label ("Ok");
 		gtk_box_pack_start (GTK_BOX (hbox), w, TRUE, TRUE, 0);
-		gtk_signal_connect (GTK_OBJECT (w), "clicked", GTK_SIGNAL_FUNC (dialog_button_callback), GINT_TO_POINTER (eIDOK));
+		gtk_signal_connect (GTK_OBJECT (w), "clicked", GTK_SIGNAL_FUNC (dialog_button_callback), GINT_TO_POINTER (IDOK));
 
 		GTK_WIDGET_SET_FLAGS (w, GTK_CAN_DEFAULT);
 		gtk_widget_grab_default (w);
@@ -406,9 +397,9 @@ EMessageBoxReturn DoIntersectBox (IntersectRS* rs)
  
 		w = gtk_button_new_with_label ("Cancel");
 		gtk_box_pack_start (GTK_BOX (hbox), w, TRUE, TRUE, 0);
-		gtk_signal_connect (GTK_OBJECT (w), "clicked", GTK_SIGNAL_FUNC (dialog_button_callback), GINT_TO_POINTER (eIDCANCEL));
+		gtk_signal_connect (GTK_OBJECT (w), "clicked", GTK_SIGNAL_FUNC (dialog_button_callback), GINT_TO_POINTER (IDCANCEL));
 		gtk_widget_show (w);
-		ret = eIDCANCEL;
+		ret = IDCANCEL;
 
 		// ---- /hbox ----
  
@@ -435,15 +426,14 @@ EMessageBoxReturn DoIntersectBox (IntersectRS* rs)
 	return ret;
 }
 
-EMessageBoxReturn DoPolygonBox (PolygonRS* rs)
+int DoPolygonBox (PolygonRS* rs)
 {
 	GtkWidget *window, *w, *vbox, *hbox, *vbox2, *hbox2;
 
 	GtkWidget *check1, *check2, *check3;
 	GtkWidget *text1, *text2;
 
-	EMessageBoxReturn ret;
-  int loop = 1;
+	int ret, loop = 1;
  
 	window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
 	
@@ -551,7 +541,7 @@ EMessageBoxReturn DoPolygonBox (PolygonRS* rs)
 
 			w = gtk_button_new_with_label ("Ok");
 			gtk_box_pack_start (GTK_BOX (hbox), w, TRUE, TRUE, 0);
-			gtk_signal_connect (GTK_OBJECT (w), "clicked", GTK_SIGNAL_FUNC (dialog_button_callback), GINT_TO_POINTER (eIDOK));
+			gtk_signal_connect (GTK_OBJECT (w), "clicked", GTK_SIGNAL_FUNC (dialog_button_callback), GINT_TO_POINTER (IDOK));
 
 			GTK_WIDGET_SET_FLAGS (w, GTK_CAN_DEFAULT);
 			gtk_widget_grab_default (w);
@@ -559,9 +549,9 @@ EMessageBoxReturn DoPolygonBox (PolygonRS* rs)
  
 			w = gtk_button_new_with_label ("Cancel");
 			gtk_box_pack_start (GTK_BOX (hbox), w, TRUE, TRUE, 0);
-			gtk_signal_connect (GTK_OBJECT (w), "clicked", GTK_SIGNAL_FUNC (dialog_button_callback), GINT_TO_POINTER (eIDCANCEL));
+			gtk_signal_connect (GTK_OBJECT (w), "clicked", GTK_SIGNAL_FUNC (dialog_button_callback), GINT_TO_POINTER (IDCANCEL));
 			gtk_widget_show (w);
-			ret = eIDCANCEL;
+			ret = IDCANCEL;
 
 		// ---- /hbox ----
 	
@@ -580,7 +570,7 @@ EMessageBoxReturn DoPolygonBox (PolygonRS* rs)
  
 		dialogError = FALSE;
 
-		if(ret == eIDOK)
+		if(ret == IDOK)
 		{
 			rs->bUseBorder = gtk_toggle_button_get_active((GtkToggleButton*)check1) ? true : false;
 			rs->bInverse = gtk_toggle_button_get_active((GtkToggleButton*)check2) ? true : false;
@@ -606,7 +596,7 @@ EMessageBoxReturn DoPolygonBox (PolygonRS* rs)
 // mars
 // for stair builder stuck as close as i could to the MFC version
 // obviously feel free to change it at will :)
-EMessageBoxReturn DoBuildStairsBox(BuildStairsRS* rs)
+int DoBuildStairsBox(BuildStairsRS* rs)
 {
 	// i made widgets for just about everything ... i think that's what i need to do  dunno tho 
 	GtkWidget	*window, *w, *vbox, *hbox;
@@ -615,8 +605,9 @@ EMessageBoxReturn DoBuildStairsBox(BuildStairsRS* rs)
 	GtkWidget	*radioOldStyle, *radioBobStyle, *radioCornerStyle;
 	GtkWidget	*checkUseDetail;
 	GSList		*radioDirection, *radioStyle;
-	EMessageBoxReturn ret;
-  int loop = 1;
+	int ret, loop;
+
+	loop = 1;
 
 	char	*text = "Please set a value in the boxes below and press 'OK' to build the stairs";
 
@@ -794,17 +785,17 @@ EMessageBoxReturn DoBuildStairsBox(BuildStairsRS* rs)
 
 	w = gtk_button_new_with_label( "OK" );
 	gtk_box_pack_start( GTK_BOX( hbox ), w, TRUE, TRUE, 0);
-	gtk_signal_connect( GTK_OBJECT( w ), "clicked", GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( eIDOK ) );
+	gtk_signal_connect( GTK_OBJECT( w ), "clicked", GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( IDOK ) );
 	GTK_WIDGET_SET_FLAGS( w, GTK_CAN_DEFAULT );
 	gtk_widget_grab_default( w );
 	gtk_widget_show( w );
 		
 	w = gtk_button_new_with_label( "Cancel" );
 	gtk_box_pack_start( GTK_BOX( hbox ), w, TRUE, TRUE, 0 );
-	gtk_signal_connect( GTK_OBJECT( w ), "clicked", GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( eIDCANCEL ) );
+	gtk_signal_connect( GTK_OBJECT( w ), "clicked", GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( IDCANCEL ) );
 	gtk_widget_show( w );
 		
-	ret = eIDCANCEL;
+	ret = IDCANCEL;
 
 // +djbob: need our "little" modal loop mars :P
 	gtk_window_set_position(GTK_WINDOW(window),GTK_WIN_POS_CENTER);
@@ -820,7 +811,7 @@ EMessageBoxReturn DoBuildStairsBox(BuildStairsRS* rs)
  
 		dialogError = FALSE;
 
-		if(ret == eIDOK)
+		if(ret == IDOK)
 		{
 			rs->bUseDetail = gtk_toggle_button_get_active((GtkToggleButton*)checkUseDetail) ? true : false;
 
@@ -857,7 +848,7 @@ EMessageBoxReturn DoBuildStairsBox(BuildStairsRS* rs)
 	// there we go, all done ... on my end at least, not bad for a night's work
 }
 
-EMessageBoxReturn DoDoorsBox(DoorRS* rs)
+int DoDoorsBox(DoorRS* rs)
 {
 	GtkWidget	*window, *hbox, *vbox, *w;
 	GtkWidget	*textFrontBackTex, *textTrimTex;
@@ -867,8 +858,9 @@ EMessageBoxReturn DoDoorsBox(DoorRS* rs)
 	GtkWidget	*radioNS, *radioEW; 
 	GSList		*radioOrientation;
 	TwinWidget	tw1, tw2;
-	EMessageBoxReturn ret;
-  int loop = 1;
+	int		ret, loop;
+
+	loop = 1;
 	
 	window = gtk_window_new( GTK_WINDOW_TOPLEVEL );
 	
@@ -1033,16 +1025,16 @@ EMessageBoxReturn DoDoorsBox(DoorRS* rs)
 
 		w = gtk_button_new_with_label( "OK" );
 		gtk_box_pack_start( GTK_BOX( hbox ), w, TRUE, TRUE, 0);
-		gtk_signal_connect( GTK_OBJECT( w ), "clicked", GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( eIDOK ) );
+		gtk_signal_connect( GTK_OBJECT( w ), "clicked", GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( IDOK ) );
 		GTK_WIDGET_SET_FLAGS( w, GTK_CAN_DEFAULT );
 		gtk_widget_grab_default( w );
 		gtk_widget_show( w );
 		
 		w = gtk_button_new_with_label( "Cancel" );
 		gtk_box_pack_start( GTK_BOX( hbox ), w, TRUE, TRUE, 0 );
-		gtk_signal_connect( GTK_OBJECT( w ), "clicked", GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( eIDCANCEL ) );
+		gtk_signal_connect( GTK_OBJECT( w ), "clicked", GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( IDCANCEL ) );
 		gtk_widget_show( w );
-		ret = eIDCANCEL;
+		ret = IDCANCEL;
 
 	// ----------------- //
 
@@ -1074,15 +1066,14 @@ EMessageBoxReturn DoDoorsBox(DoorRS* rs)
 //-djbob
 }
 
-EMessageBoxReturn DoPathPlotterBox(PathPlotterRS* rs)
+int DoPathPlotterBox(PathPlotterRS* rs)
 {
 	GtkWidget *window, *w, *vbox, *hbox;
 
 	GtkWidget *text1, *text2, *text3;
 	GtkWidget *check1, *check2;
 
-	EMessageBoxReturn ret;
-  int loop = 1;
+	int ret, loop = 1;
  
 	window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
 	
@@ -1193,7 +1184,7 @@ EMessageBoxReturn DoPathPlotterBox(PathPlotterRS* rs)
 
 		w = gtk_button_new_with_label( "Enable" );
 		gtk_box_pack_start( GTK_BOX( hbox ), w, TRUE, TRUE, 0);
-		gtk_signal_connect( GTK_OBJECT( w ), "clicked", GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( eIDYES ) );
+		gtk_signal_connect( GTK_OBJECT( w ), "clicked", GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( IDYES ) );
 		gtk_widget_show( w );
 		
 		GTK_WIDGET_SET_FLAGS( w, GTK_CAN_DEFAULT );
@@ -1201,15 +1192,15 @@ EMessageBoxReturn DoPathPlotterBox(PathPlotterRS* rs)
 
 		w = gtk_button_new_with_label( "Disable" );
 		gtk_box_pack_start( GTK_BOX( hbox ), w, TRUE, TRUE, 0);
-		gtk_signal_connect( GTK_OBJECT( w ), "clicked", GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( eIDNO ) );
+		gtk_signal_connect( GTK_OBJECT( w ), "clicked", GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( IDNO ) );
 		gtk_widget_show( w );
 		
 		w = gtk_button_new_with_label( "Cancel" );
 		gtk_box_pack_start( GTK_BOX( hbox ), w, TRUE, TRUE, 0 );
-		gtk_signal_connect( GTK_OBJECT( w ), "clicked", GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( eIDCANCEL ) );
+		gtk_signal_connect( GTK_OBJECT( w ), "clicked", GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( IDCANCEL ) );
 		gtk_widget_show( w );
 		
-		ret = eIDCANCEL;
+		ret = IDCANCEL;
 
 	// ----------------- //
 
@@ -1226,7 +1217,7 @@ EMessageBoxReturn DoPathPlotterBox(PathPlotterRS* rs)
  
 		dialogError = FALSE;
 
-		if(ret == eIDYES)
+		if(ret == IDYES)
 		{
 			if(!ValidateTextIntRange(gtk_entry_get_text(GTK_ENTRY(text1)), 1, 200, "Number Of Points", &rs->nPoints))
 				dialogError = TRUE;
@@ -1248,11 +1239,10 @@ EMessageBoxReturn DoPathPlotterBox(PathPlotterRS* rs)
 	return ret;
 }
 
-EMessageBoxReturn DoCTFColourChangeBox ()
+int DoCTFColourChangeBox ()
 {
 	GtkWidget *window, *w, *vbox, *hbox;
-	EMessageBoxReturn ret;
-  int loop = 1;
+	int ret, loop = 1;
  
 	window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
 	
@@ -1283,7 +1273,7 @@ EMessageBoxReturn DoCTFColourChangeBox ()
 
 		w = gtk_button_new_with_label ("Red->Blue");
 		gtk_box_pack_start (GTK_BOX (hbox), w, TRUE, TRUE, 0);
-		gtk_signal_connect (GTK_OBJECT (w), "clicked", GTK_SIGNAL_FUNC (dialog_button_callback), GINT_TO_POINTER (eIDOK));
+		gtk_signal_connect (GTK_OBJECT (w), "clicked", GTK_SIGNAL_FUNC (dialog_button_callback), GINT_TO_POINTER (IDOK));
 
 		GTK_WIDGET_SET_FLAGS (w, GTK_CAN_DEFAULT);
 		gtk_widget_grab_default (w);
@@ -1291,14 +1281,14 @@ EMessageBoxReturn DoCTFColourChangeBox ()
  
 		w = gtk_button_new_with_label ("Blue->Red");
 		gtk_box_pack_start (GTK_BOX (hbox), w, TRUE, TRUE, 0);
-		gtk_signal_connect (GTK_OBJECT (w), "clicked", GTK_SIGNAL_FUNC (dialog_button_callback), GINT_TO_POINTER (eIDYES));
+		gtk_signal_connect (GTK_OBJECT (w), "clicked", GTK_SIGNAL_FUNC (dialog_button_callback), GINT_TO_POINTER (IDYES));
 		gtk_widget_show (w);
 
 		w = gtk_button_new_with_label ("Cancel");
 		gtk_box_pack_start (GTK_BOX (hbox), w, TRUE, TRUE, 0);
-		gtk_signal_connect (GTK_OBJECT (w), "clicked", GTK_SIGNAL_FUNC (dialog_button_callback), GINT_TO_POINTER (eIDCANCEL));
+		gtk_signal_connect (GTK_OBJECT (w), "clicked", GTK_SIGNAL_FUNC (dialog_button_callback), GINT_TO_POINTER (IDCANCEL));
 		gtk_widget_show (w);
-		ret = eIDCANCEL;
+		ret = IDCANCEL;
 
 		// ---- /hbox ----
  
@@ -1317,15 +1307,14 @@ EMessageBoxReturn DoCTFColourChangeBox ()
 	return ret;
 }
 
-EMessageBoxReturn DoResetTextureBox (ResetTextureRS* rs)
+int DoResetTextureBox (ResetTextureRS* rs)
 {
 	Str texSelected;
 
 	GtkWidget *window, *w, *vbox, *hbox, *frame, *table;
 
-	EMessageBoxReturn ret;
-  int loop = 1;
-
+	int ret, loop = 1;
+ 
 	window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
 	
 	gtk_signal_connect (GTK_OBJECT (window), "delete_event", GTK_SIGNAL_FUNC (dialog_delete_callback), NULL);
@@ -1351,8 +1340,10 @@ EMessageBoxReturn DoResetTextureBox (ResetTextureRS* rs)
  	
 	// ---- hbox ----
 
-	texSelected = "Currently Selected Texture:   ";
-  texSelected += GetCurrentTexture();
+	texSelected = "Currently Selected Face:   ";
+	if(g_SelectedFaceTable.m_pfnGetSelectedFaceCount() == 1) {
+		texSelected += GetCurrentTexture();
+	}
 
 	w = gtk_label_new (texSelected);
 	gtk_box_pack_start (GTK_BOX (hbox), w, FALSE, FALSE, 2);
@@ -1563,7 +1554,7 @@ EMessageBoxReturn DoResetTextureBox (ResetTextureRS* rs)
 
 	w = gtk_button_new_with_label ("Use Selected Brushes");
 	gtk_box_pack_start (GTK_BOX (hbox), w, TRUE, TRUE, 0);
-	gtk_signal_connect (GTK_OBJECT (w), "clicked", GTK_SIGNAL_FUNC (dialog_button_callback), GINT_TO_POINTER (eIDOK));
+	gtk_signal_connect (GTK_OBJECT (w), "clicked", GTK_SIGNAL_FUNC (dialog_button_callback), GINT_TO_POINTER (IDOK));
 
 	GTK_WIDGET_SET_FLAGS (w, GTK_CAN_DEFAULT);
 	gtk_widget_grab_default (w);
@@ -1571,14 +1562,14 @@ EMessageBoxReturn DoResetTextureBox (ResetTextureRS* rs)
  
 	w = gtk_button_new_with_label ("Use All Brushes");
 	gtk_box_pack_start (GTK_BOX (hbox), w, TRUE, TRUE, 0);
-	gtk_signal_connect (GTK_OBJECT (w), "clicked", GTK_SIGNAL_FUNC (dialog_button_callback), GINT_TO_POINTER (eIDYES));
+	gtk_signal_connect (GTK_OBJECT (w), "clicked", GTK_SIGNAL_FUNC (dialog_button_callback), GINT_TO_POINTER (IDYES));
 	gtk_widget_show (w);
 
 	w = gtk_button_new_with_label ("Cancel");
 	gtk_box_pack_start (GTK_BOX (hbox), w, TRUE, TRUE, 0);
-	gtk_signal_connect (GTK_OBJECT (w), "clicked", GTK_SIGNAL_FUNC (dialog_button_callback), GINT_TO_POINTER (eIDCANCEL));
+	gtk_signal_connect (GTK_OBJECT (w), "clicked", GTK_SIGNAL_FUNC (dialog_button_callback), GINT_TO_POINTER (IDCANCEL));
 	gtk_widget_show (w);
-	ret = eIDCANCEL;
+	ret = IDCANCEL;
 
 	// ---- /hbox ----
 	
@@ -1599,7 +1590,7 @@ EMessageBoxReturn DoResetTextureBox (ResetTextureRS* rs)
  
 		dialogError = FALSE;
 
-		if(ret != eIDCANCEL)
+		if(ret != IDCANCEL)
 		{
 			rs->bResetRotation =  gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON( dlgTexReset.cbRotation ));
 			if(rs->bResetRotation)
@@ -1641,7 +1632,7 @@ EMessageBoxReturn DoResetTextureBox (ResetTextureRS* rs)
 	return ret;
 }
 
-EMessageBoxReturn DoTrainThingBox (TrainThingRS* rs)
+int DoTrainThingBox (TrainThingRS* rs)
 {
 	Str texSelected;
 
@@ -1652,8 +1643,7 @@ EMessageBoxReturn DoTrainThingBox (TrainThingRS* rs)
 	GtkWidget *heightStart, *heightEnd;
 	GtkWidget *numPoints;
 
-	EMessageBoxReturn ret;
-  int loop = 1;
+	int ret, loop = 1;
  
 	window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
 	
@@ -1843,7 +1833,7 @@ EMessageBoxReturn DoTrainThingBox (TrainThingRS* rs)
 
 			w = gtk_button_new_with_label ("Ok");
 			gtk_box_pack_start (GTK_BOX (hbox), w, TRUE, TRUE, 0);
-			gtk_signal_connect (GTK_OBJECT (w), "clicked", GTK_SIGNAL_FUNC (dialog_button_callback), GINT_TO_POINTER (eIDOK));
+			gtk_signal_connect (GTK_OBJECT (w), "clicked", GTK_SIGNAL_FUNC (dialog_button_callback), GINT_TO_POINTER (IDOK));
 
 			GTK_WIDGET_SET_FLAGS (w, GTK_CAN_DEFAULT);
 			gtk_widget_grab_default (w);
@@ -1851,9 +1841,9 @@ EMessageBoxReturn DoTrainThingBox (TrainThingRS* rs)
  
 			w = gtk_button_new_with_label ("Cancel");
 			gtk_box_pack_start (GTK_BOX (hbox), w, TRUE, TRUE, 0);
-			gtk_signal_connect (GTK_OBJECT (w), "clicked", GTK_SIGNAL_FUNC (dialog_button_callback), GINT_TO_POINTER (eIDCANCEL));
+			gtk_signal_connect (GTK_OBJECT (w), "clicked", GTK_SIGNAL_FUNC (dialog_button_callback), GINT_TO_POINTER (IDCANCEL));
 			gtk_widget_show (w);
-			ret = eIDCANCEL;
+			ret = IDCANCEL;
 
 		// ---- /hbox ----
 	
@@ -1872,7 +1862,7 @@ EMessageBoxReturn DoTrainThingBox (TrainThingRS* rs)
  
 		dialogError = FALSE;
 
-		if(ret != eIDCANCEL)
+		if(ret != IDCANCEL)
 		{
 			if(!ValidateTextFloat(gtk_entry_get_text(GTK_ENTRY(radiusX)), "Radius (X)", &rs->fRadiusX))
 				dialogError = TRUE;

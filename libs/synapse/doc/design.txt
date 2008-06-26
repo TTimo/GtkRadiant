@@ -1,0 +1,190 @@
+synapse code design documentation
+=================================
+
+Objective:
+----------
+
+Provide a simple cross platform layer to use dynamically loaded code
+inside a core application. Portability intended to win32 / linux / MacOS (?)
+
+Main features are:
+
+- designed for single process only, no remote clients, no asynchronous processes
+- a client/server architecture, based on configuration files: a main binary,
+  loading a set of shared objects
+  
+Constraints:
+------------
+
+- large existing plugin code in Radiant!
+  must be compatible with minimal changes, specially for plugins (i.e. clients)
+
+- make things as much transparent as possible
+  (ideally, no real difference between a static linkage and dynamic linkage,
+  cf usage of #define macros to wrap a function call onto a code pointer)
+  
+Features:
+---------
+
+Gather as much generic code as possible in a static .lib with minimal dependencies
+(only dependency should be configuration files parser)
+
+NOTE: current effective dependency is STL / glib / xml
+
+Main executable implemented as a server, all others as clients. What has to
+be done for a server / what has to be done for a client needs to be documented.
+Provide as much scripts and tools and guidelines as needed (scripted generation of
+some .h files?)
+
+Proposed implementation:
+------------------------
+
+- have linux/ and win32/ subdirectories with OS-specific implementations
+(such as dynamically loading shared objects, and doing the initial query?)
+
+- reduce the API of a client to the minimum: one exported function?
+provide a squeleton to make new clients easily?
+
+Server use case:
+1) build information about location of the modules (from code and config files)
+2) load all modules and query information about their APIs
+NOTE: could read the APIs from some XML description files instead of
+querying it from the modules?
+3) build information about the required function tables
+i.e.: setup a list with the function tables to be filled in, and what they
+need to be filled in with.
+4) resolve the function table
+NOTE: is this iterative? will some plugins request more APIs as they get filled
+up?
+NOTE: do we have optional tables?
+5) unload unreferences modules
+NOTE: we don't expect to be unloading a LOT of modules, otherwise we would
+setup a solution that allows exploring of the APIs a given module provides
+from a file description. Or you could 'cache' that (md5-checksum the file, and 
+maintain an XML list).
+
+Client use case:
+1) dynamically loaded
+2) prompted for the interfaces it provides
+2) prompted for the interfaces it requires
+3) either unloaded, or told what interfaces have been filled in
+
+The client module exports an Synapse_EnumerateInterfaces entry point
+This returns an ISynapseClient, which lists what the plugin provides, and what it requires
+
+The APIs:
+
+An interface is a function table, GUID / major string / minor string
+GUID is a shortcut to reference a major string (i.e. the human readable thing)
+the GUID / major string is unique for a given interface
+minor string is used to reference a particular version of an API
+  (for instance when talking about image loading functionality, tga and jpg etc.)
+  
+The GUID scheme is handy because it provides easy tests. They are not strictly
+necessary but we will probably want to keep them. Should we extend to GUIDs
+for minor too?
+
+Roadmap:
+--------
+
+Need to convert the core (as server) and the required modules. Will have
+clearer view of what's to be done along the way.
+
+Implementation design:
+----------------------
+
+There is a client and server side to synapse. Typically server is in Radiant or q3map,
+client is in any module. For implementation, we have one server class and one client class.
+It would be possible to have two seperate libraries, synapse-client and synapse-server. But 
+that only brings down the statically linked stuff to make things more complicated build-sysem
+wise.
+
+Initial implementation has been using isynapse.h and synapse.h, to provide a pure virtual
+base class for server and client. But that doesn't bring any major functionality, it's easier
+if both sides see the full API of the client and server classes.
+
+A side problem is the diagnostic printing functionality. For easy debugging we require that 
+the synapse code can have access to a Sys_Printf or similar function at all times (that is for 
+client and server implementation). On client we will pipe through the main API to the server 
+as soon as we can in most cases. Using Sys_Printf would bring us to a dead end situation, since
+when synapse is used as the server, the main code implements it's own Sys_Printf stuff.
+Instead we introduce a local Syn_Printf implementation, which can be overriden in the server
+to point to the appropriate print functions.
+
+Runtime config:
+---------------
+
+Something that has not been looked upon a lot yet, runtime configuration. What interfaces
+are loaded etc. Ideally, from an XML config file. A client explicitely requests the
+server to load all the interfaces it requires (in this case, the client is radiant or
+q3map).
+
+Plugins are somewhat out of the 'required interfaces' frame, since they are loaded 
+whenever they are found. It is possible however that some plugins would not want to be 
+loaded in if the game doesn't match etc. in case they would need to access the global 
+config?
+
+In most cases a given API is only required once for editor functionality. (VFS for 
+instance), so our #define strategy for easy mapping of the functions should still work.
+
+Version checks, reference counting:
+------------------------------------
+
+Need version checking at several levels. A version string (major/minor) on the main API
+entry point (straight in the exported function to save as much as possible for 
+compatibility). For individual APIs, we have been feeding the struct size into the first
+int of the struct so far, and it has worked very well.
+
+Reference counting: we introduced class based APIs to solve the ref counting issues,
+which are not easy to solve on C function tables. That problem would arise in plugin
+situations where we might want to 'reload' or 'unload' some plugins. The server could
+keep track of the ref count.
+
+Caching?
+--------
+
+We are going to load every shared object we find and query it for it's interfaces. Then
+we will unload the stuff we don't want. This is going to slow down the startup process.
+We could extract the API information in a cache to avoid the loading step.
+
+Interfaces with multiple minors against I* objects?
+---------------------------------------------------
+
+Looking at the iimage.h API, why not having instead something that enumerates C++ objects 
+directly? Mainly because we want to be able to spread several minors accross multiple modules
+and still use them together. And straight laid out function tables in C structs are only
+one indirection when the table is static.
+
+This raises a broader topic, instead of requesting APIs, we could request objects directly.
+Would that be of any use?
+
+Loading interfaces / resolving interdependencies strategy
+---------------------------------------------------------
+
+Some notes about how we load the modules and resolve interdependencies:
+
+We want to avoid requesting a module for an API it provides before all the APIs it requires
+have been filled in (mostly stability concerns, a module may be doing whatever internally 
+when we request something from it). The exception being the module we are trying to resolve
+for (since we need a start point for resolution). But in all likelyness we resolve for radiant
+or q3map for instance.
+
+With this approach, it is possible that some situations could not be resolved, for instance:
+Radiant
+  requires A
+  provides B
+module 1
+  requires C
+  provides A
+module 2
+  requires A
+  provides C
+if we start by resolving Radiant, we will get stuck
+if we are ready to ask module to provide the API even though the required is not meant, it would work
+but that kind of situation is very unlikely, so sticking to safer strategy
+  
+Configuration
+-------------
+
+the config info needs to go down to the clients too
+for instance, mapxml loaded for q3map or radiant, doesn't rely on the same major?

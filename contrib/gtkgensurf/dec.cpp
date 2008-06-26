@@ -150,7 +150,7 @@ void MakeDecimatedMap(int *NumNodes, int *NumTris, NODE **pNode, TRI **pTri)
                           */
 				g_FuncTable.m_pfnMessageBox(g_pRadiantWnd,
 					"Error: Couldn't find the triangle bounding a point.",
-					"Decimation Error", eMB_OK, eMB_ICONWARNING);
+					"Decimation Error",MB_ICONEXCLAMATION, NULL);
 				return;
 			}
 			if(!Tri[Node[i].tri].flag)
@@ -249,7 +249,7 @@ void MakeDecimatedMap(int *NumNodes, int *NumTris, NODE **pNode, TRI **pTri)
                           */
 				g_FuncTable.m_pfnMessageBox(g_pRadiantWnd,
 					"Error: Couldn't find the triangle bounding a point.",
-					"Decimation Error", eMB_OK, eMB_ICONWARNING);
+					"Decimation Error",MB_ICONEXCLAMATION, NULL);
 				return;
 			}
 			if(!Tri[Node[i].tri].flag)

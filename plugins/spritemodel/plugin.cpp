@@ -1,5 +1,6 @@
 /*
-Copyright (C) 2002 Dominic Clifton.
+Copyright (C) 1999-2007 id Software, Inc. and contributors.
+For a list of contributors, see the accompanying CONTRIBUTORS file.
 
 This file is part of GtkRadiant.
 
@@ -36,7 +37,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
     It allows the user to see a graphical representation of the entity in the 3D view (maybe 2D views later) where the entity would just otherwise be a non-descriptive coloured box.
 
-    It is designed to be used with the entity view set to WireFrame (as the sprite images are rendered in the middle of the entity's bbox.
+    It is designed to be used with the entity view set to WireFrame (as the sprite images are rendered in the middle of the entity's bbox).
 
     How ?
     -----
@@ -81,40 +82,76 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
         Also, I can't get the alpha map stuff right so I had to invert the alpha
         mask in the spr loader so that 0xff = not drawn pixel.
 
+    v0.2 - 10/March/2003
+      - Updated to coincide with Radiant 1.3.5 test builds.  Also, I made sure it worked
+        under quake3 and it does.
+
+    v0.3 - 10/March/2003
+      - Added about box.
+
     ToDo
     ====
 
     * make sprites always face the camera (is this done in camwindow.cpp ?)
+      but only if the entity model doesn't have "angle" keys.  At the moment
+      it's better to rotate the model with the angles.
 
     * maybe add an option to scale the sprites in the prefs ?
-
-    * un-hack the default fall-though to "sprite" model version (see m_version)
 
     * maybe convert to a new kind of class not based on model.
 
     * allow sprites on non-fixedsize ents
 
     * fix reversed alpha map in spr loader
+      -> is this actually broken?
 
-    * allow an entity to have both an .md? and a sprite model.
+    * allow an entity to have multiple models (e.g .md3 and a sprite model)
+      and allow the user to toggle either models on or off.
+
+    * dynamically add the api's depending on what image loading modules are
+      supported by radiant.
+      Currently, we hard code to the list in "supportedmodelformats" (see below)
+      but, all these extensions are stripped when the actual image is loaded.
+      current the bit of code that decided what model api to use needs reworking
+      as it decides by looking at the extension of the model name, when in fact
+      we don't even need an extension.
+
+      Previously the code fell though to use this model as the default model
+      plugin, but that also has issues.
+
+      what it means is, in the .def files you must specify an image filename
+      that has one of the extensions listed below, but in actual fact radiant
+      will use any available image module to load the image.
+
+
+      e.g. you could use a model name of "sprites/target_speaker.tga" and have
+      a file called sprites/target_speaker.png and it would be correctly loaded
+      even if it not listed below in "supportedmodelformats".
+
+      So, currently in the .def files you can just use the name
+      "sprites/target_speaker.spr" and it will load the file
+      from "sprites/target_speaker.*" which is what I propose anyone creating image sets for Q3/Wolf/etc does.
 */
 
 #include "plugin.h"
-#include "spritemodel.h"
 
 // =============================================================================
 // Globals
 
 // function tables
-_QERFuncTable_1 __QERTABLENAME;
-OpenGLBinding g_QglTable;
+_QERFuncTable_1 g_FuncTable;
+_QERQglTable g_QglTable;
 _QERShadersTable g_ShadersTable;
 
 // =============================================================================
-// SYNAPSE
+// plugin implementation
 
-#include "synapse.h"
+static const char *PLUGIN_NAME = "Sprite Model loading module";
 
+static const char *PLUGIN_COMMANDS = "About...";
+
+static const char *PLUGIN_ABOUT = "Sprite Model loading module v0.2 for GTKRadiant\n\n"
+                           "By Hydra!";
 
 char *supportedmodelformats[] = {"spr","bmp","tga","jpg","hlw",NULL}; // NULL is list delimiter
 
@@ -147,31 +184,42 @@ void init_filetypes()
   }
 }
 
-extern CSynapseServer* g_pSynapseServer;
-
-class CSynapseClientModel : public CSynapseClient
+extern "C" const char* QERPlug_Init (void *hApp, void* pMainWidget)
 {
-public:
-  // CSynapseClient API
-  bool RequestAPI(APIDescriptor_t *pAPI);
-  const char* GetInfo();
-  const char* GetName();
+  init_filetypes(); // see todo list above.
+  return (char *) PLUGIN_NAME;
+}
 
-  CSynapseClientModel() { }
-  virtual ~CSynapseClientModel() { }
+extern "C" const char* QERPlug_GetName ()
+{
+  return (char *) PLUGIN_NAME;
+}
 
-  bool OnActivate()
-  {
-    init_filetypes(); // see todo list above.
-    return true;
-  }
-};
+extern "C" const char* QERPlug_GetCommandList ()
+{
+  return (char *) PLUGIN_COMMANDS;
+}
+
+extern "C" void QERPlug_Dispatch (const char *p, vec3_t vMin, vec3_t vMax, bool bSingleBrush)
+{
+	// NOTE: this never happens in a module
+  if(!strcmp(p, "About..."))
+		g_FuncTable.m_pfnMessageBox(NULL, PLUGIN_ABOUT, "About", MB_OK, NULL);
+}
+
+// =============================================================================
+// SYNAPSE
 
 CSynapseServer* g_pSynapseServer = NULL;
 CSynapseClientModel g_SynapseClient;
     
-extern "C" CSynapseClient* SYNAPSE_DLL_EXPORT Synapse_EnumerateInterfaces (const char *version, CSynapseServer *pServer)
-{
+#if __GNUC__ >= 4
+#pragma GCC visibility push(default)
+#endif
+extern "C" CSynapseClient* SYNAPSE_DLL_EXPORT Synapse_EnumerateInterfaces( const char *version, CSynapseServer *pServer ) {
+#if __GNUC__ >= 4
+#pragma GCC visibility pop
+#endif
   if (strcmp(version, SYNAPSE_VERSION))
   {
     Syn_Printf("ERROR: synapse API version mismatch: should be '" SYNAPSE_VERSION "', got '%s'\n", version);
@@ -197,11 +245,21 @@ bool CSynapseClientModel::RequestAPI(APIDescriptor_t *pAPI)
   {
     _QERPlugModelTable* pTable= static_cast<_QERPlugModelTable*>(pAPI->mpTable);
 
-    if (!strcmp(pAPI->minor_name, "sprite"))
+    if (model_is_supported(pAPI->minor_name))  // see todo list above.
     {
       pTable->m_pfnLoadModel = &LoadSpriteModel;
       return true;
     }
+  }
+  else if (!strcmp(pAPI->major_name, PLUGIN_MAJOR))
+  {
+    _QERPluginTable* pTable= static_cast<_QERPluginTable*>(pAPI->mpTable);
+
+    pTable->m_pfnQERPlug_Init = QERPlug_Init;
+    pTable->m_pfnQERPlug_GetName = QERPlug_GetName;
+    pTable->m_pfnQERPlug_GetCommandList = QERPlug_GetCommandList;
+    pTable->m_pfnQERPlug_Dispatch = QERPlug_Dispatch;
+    return true;
   }
 
   Syn_Printf("ERROR: RequestAPI( '%s' ) not found in '%s'\n", pAPI->major_name, GetInfo());

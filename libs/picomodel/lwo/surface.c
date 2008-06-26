@@ -43,7 +43,6 @@ void lwFreeTexture( lwTexture *t )
       switch ( t->type ) {
          case ID_IMAP:
             if ( t->param.imap.vmap_name ) _pico_free( t->param.imap.vmap_name );
-            if ( t->tmap.ref_object ) _pico_free( t->tmap.ref_object );
             break;
          case ID_PROC:
             if ( t->param.proc.name ) _pico_free( t->param.proc.name );
@@ -72,18 +71,18 @@ void lwFreeSurface( lwSurface *surf )
       if ( surf->name ) _pico_free( surf->name );
       if ( surf->srcname ) _pico_free( surf->srcname );
 
-      lwListFree( surf->shader, (void *) lwFreePlugin );
+      lwListFree( surf->shader, lwFreePlugin );
 
-      lwListFree( surf->color.tex, (void *) lwFreeTexture );
-      lwListFree( surf->luminosity.tex, (void *) lwFreeTexture );
-      lwListFree( surf->diffuse.tex, (void *) lwFreeTexture );
-      lwListFree( surf->specularity.tex, (void *) lwFreeTexture );
-      lwListFree( surf->glossiness.tex, (void *) lwFreeTexture );
-      lwListFree( surf->reflection.val.tex, (void *) lwFreeTexture );
-      lwListFree( surf->transparency.val.tex, (void *) lwFreeTexture );
-      lwListFree( surf->eta.tex, (void *) lwFreeTexture );
-      lwListFree( surf->translucency.tex, (void *) lwFreeTexture );
-      lwListFree( surf->bump.tex, (void *) lwFreeTexture );
+      lwListFree( surf->color.tex, lwFreeTexture );
+      lwListFree( surf->luminosity.tex, lwFreeTexture );
+      lwListFree( surf->diffuse.tex, lwFreeTexture );
+      lwListFree( surf->specularity.tex, lwFreeTexture );
+      lwListFree( surf->glossiness.tex, lwFreeTexture );
+      lwListFree( surf->reflection.val.tex, lwFreeTexture );
+      lwListFree( surf->transparency.val.tex, lwFreeTexture );
+      lwListFree( surf->eta.tex, lwFreeTexture );
+      lwListFree( surf->translucency.tex, lwFreeTexture );
+      lwListFree( surf->bump.tex, lwFreeTexture );
 
       _pico_free( surf );
    }
@@ -738,7 +737,7 @@ static int add_texture( lwSurface *surf, lwTexture *tex )
       default:  return 0;
    }
 
-   lwListInsert( (void **) list, tex, ( void *) compare_textures );
+   lwListInsert( list, tex, compare_textures );
    return 1;
 }
 
@@ -963,7 +962,7 @@ lwSurface *lwGetSurface( picoMemStream_t *fp, int cksize )
                case ID_SHDR:
                   shdr = lwGetShader( fp, sz - 4 );
                   if ( !shdr ) goto Fail;
-                  lwListInsert( (void **) &surf->shader, shdr, (void *) compare_shaders );
+                  lwListInsert( &surf->shader, shdr, compare_shaders );
                   ++surf->nshaders;
                   set_flen( 4 + get_flen() );
                   break;

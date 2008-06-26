@@ -1,0 +1,222 @@
+<html>
+<head>
+<title>Quake III Arena Shader Manual: General Shader Keywords</title>
+<link rel = "stylesheet" type = "text/css" href = "../styles/q3rad.css">
+</head>
+<body>
+<h1 class = "MsoTitle">Q3Radiant Shader Manual</h1>
+<hr>
+<h1>3 General Shader Keywords</h1>
+<b>IMPORTANT NOTE:</b> Once again, be aware that some of the shader commands may be order dependent, so it's good practice to place all global shader commands (keywords defined inthis section) at the very beginning of the shader and to place shader stages at the end (see various examples).
+
+<p>These Keywords are global to a shader and affect all stages. They are also ignored by Q3MAP.
+
+<h2><a name = "skyparms">3.1 skyParms &lt;farbox&gt; &lt;cloudheight&gt; &lt;nearbox&gt;</a></h2>
+
+Specifies how to use the surface as a sky, including an optional far box (stars, moon, etc), optional cloud layers with any shader attributes, and an optional near box (mountains in front of the clouds, etc).
+
+<p><b>&lt;farbox&gt;</b> Specifies a set of files to use as an environment box behind all cloudlayers. Specify "-" for no
+farbox, or a file base name. A base name of "env/test" would look for files "env/test_rt.tga", "env/test_lf.tga",
+"env/test_ft.tga", "env/test_bk.tga", "env/test_up.tga", "env/test_dn.tga" to use as the right / left / front / back / up /
+down sides.
+
+<br><b>&lt;cloudheight&gt;</b> controls apparent curvature of the cloud layers - lower numbers mean more curvature (and thus more distortion at the horizons). Higher height values create "flatter" skies with less horizon distortion. Think of height
+as the radius of a sphere on which the clouds are mapped. Good ranges are 64 to 256. The default value is 128.
+
+<br><b>&lt;nearbox&gt;</b> Specified as farbox, to be alpha blended ontop of the clouds. This has not be tested in a long time, so it probably doesn't actually work. Set to "-" to ignore.
+
+<p><div class = "tip"><strong>Design Notes:</strong>
+
+<ul><li>If you are making a map where the sky is seen by looking up most of the time, use a lower cloudheight value. Under those circumstances the tighter curve looks more dynamic. If you are making a map where the sky is seen by looking out windows most of the time or has a map area that is open to the sky on one or more sides, use a higher height to make the clouds seem more natural.
+
+<li>It is possible to create a sky with up to 8 cloudlayers, but that also means 8 processing passes and a potentially large processing hit.
+
+<li>Be aware that the skybox does not wrap around the entire world. The "floor" or bottom face of the skybox is not drawn by the game. If a player in the game can see that face, they will see the "hall of mirrors" effect.</ul></div>
+
+<p align = "center"><strong>Example: Sky script</strong>
+
+<div><pre class = "type">textures/skies/xtoxicsky_dm9
+{
+	qer_editorimage textures/skies/toxicsky.tga
+	surfaceparm noimpact
+	surfaceparm nolightmap
+q3map_globaltexture
+q3map_lightsubdivide 256
+	q3map_surfacelight 400
+	surfaceparm sky
+	q3map_sun 1 1 0.5 150 30 60
+	skyparms full 512 -
+	{
+		map textures/skies/inteldimclouds.tga
+		tcMod scroll 0.1 0.1
+		tcMod scale 3 2
+	}
+	{
+		map textures/skies/intelredclouds.tga
+		blendFunc add
+		tcMod scroll 0.05 0.05
+		tcMod scale 3 3
+	}
+}</pre>
+</div>
+
+<h2><a name = "cull">3.2 cull &lt;side&gt;</a></h2>
+Every surface of a polygon has two sides, a front and a back. Typically, we only see the front or "out" side. For
+example, a solid block you only show the front side. In many applications we see both. For example, in water, you can see both front and a back. The same is true for things like grates and screens.
+
+<p>To "cull" means to remove. The value parameter determines the type of face culling to apply. The default value is cull <i>front</i> if this keyword is not specified. However for items that should be inverted then the value <i>back</i> should be used. To disable culling, the value <i>disable</i> or<i>none</i> should be used. Only one cull instruction can be set
+for the shader.
+
+<p><div class = "subheading">3.2.1 cull front</div>
+
+The front or "outside" of the polygon is not drawn in the world. This is the default value. It is used if the keyword "<b>cull</b> " appears in the content instructions without a <b>&lt;side&gt;</b>value or if the keyword cull does not appear at all in the shader.
+
+<p><div class = "subheading">3.2.2 cull back</div>
+
+Cull back removes the back or "inside" of a polygon from being drawn in the world.
+
+<p><div class = "subheading">3.2.3 cull disable, cull none</div>
+Neither side of the polygon is removed. Both sides are drawn in the game. Very useful for making panels or barriers that
+have no depth, such as grates, screens, metal wire fences and so on and for liquid volumes that the player can see from within. Also used for energy fields, sprites, and weapon effects (e.g. plasma).
+
+<p><div class = "tip"><strong>Design Notes:</strong> For things like grates and screens, put the texture with the cull none property on one face only. On the other faces, use a non-drawing texture.</div>
+
+<h2><a name = "deform">3.3 deformVertexes</a></h2>
+
+This function performs a general deformation on the surface's vertexes, changing the actual shape of the surface before drawing the shader passes. You can stack multiple deformVertexes commands to modify positions in more complex ways, making an object move in two dimensions, for instance.
+
+<p><div class = "subheading">3.3.1 
+deformVertexes wave &lt;div&gt; &lt;func&gt;
+&lt;base&gt;&lt;amplitude&gt; &lt;phase&gt; &lt;freq&gt;</div>
+
+Designed for water surfaces, modifying the values differently at each point. It accepts the standard wave functions of the type <b>sin</b>,<b>triangle</b>, <b>square, sawtooth</b> or<b>inversesawtooth</b> . The "div" parameter is used to
+control the wave "spread" - a value equal to the tessSizeof the surface is a good default value (tessSize is subdivision size, in game units, used for the shader when seen in the game world).
+
+<p><div class = "subheading">3.3.2 
+deformVertexes normal &lt;div&gt; &lt;func&gt;
+&lt;base&gt;&lt;amplitude ~0.1-~0.5&gt; &lt;frequency
+~1.0-~4.0&gt;</div>
+
+This deformation affects the normals of a vertex without actually moving it, which will effect later shader options like
+lighting and especially environment mapping. If the shader stages don't use normals in any of their calculations, there will
+be novisible effect.
+
+<p><div class = "tip"><strong>Design Notes:</strong> Putting values of 0.1 to 0.5 in Amplitude and 1.0 to 4.0 in the Frequency can produce some satisfying results. Some things that have been done with it: A small fluttering bat, falling leaves, rain, flags.</div>
+
+<p><div class = "subheading">3.3.3 
+deformVertexes bulge &lt;bulgeWidth&gt;
+&lt;bulgeHeight&gt;&lt;bulgeSpeed&gt;</div>
+
+This forces a bulge to move along the given <b>s</b> and <b> t</b> directions. Designed for use on curved pipes.
+
+<p><strong>Specific parameter definitions for deform keywords:</strong>
+
+<br><b>&lt;div&gt;</b> This is roughly defined as the size of the waves that occur. It is measured in game units. Smaller
+values create agreater density of smaller wave forms occurring in a given area. Larger values create a lesser density of waves, or otherwise put, the appearance of larger waves. To look correct this value should closely correspond to the value (in pixels) set for tessSize (tessellation size) of the texture. A value of 100.0 is a good default value (which means your tessSize should be close to that for things tolook "wavelike").
+
+<br><b>&lt;func&gt;</b> This is the type of wave form being created. Sin stands for sine wave, a regular smoothly flowing
+wave. Triangle is a wave with a sharp ascent and a sharp decay. It will make a choppy looking wave forms. A square
+wave is simply on or off for the period of the frequency with no in between. The sawtooth wave has the ascent of a triangle wave, but has the decay cut off sharply like a square wave. An inversesawtooth wave reverses this.
+
+<br><b>&lt;base&gt;</b> This is the distance, in game units that the apparent surface of the texture is displaced from the
+actual surface of the brush as placed in the editor. Apositive value appears above the brush surface. A negative value appears below the brush surface. An example of thisis the Quad effect, which essentially is a shell with a positive base value to stand it away from the model surface and a 0 (zero) value for amplitude.
+
+<br><b>&lt;amplitude&gt;</b> The distance that the deformation moves away from the base value. See Wave Forms in the introduction for a description of amplitude.
+
+<br><b>&lt;phase&gt;</b> SeeWave Forms in the introduction for a description of phase)
+<br><b>&lt;frequency&gt;</b> See Wave Forms in the introduction for a description of frequency)
+
+<p><div class = "tip"><strong>Design Note:</strong> The div and amplitude parameters, when used in conjunction with liquid volumes like water should take into consideration how much the water will be moving. A large ocean area would have have massive swells (big div values) that rose and fell dramatically (big amplitude values). While a small, quiet pool may move very little.</div>
+
+<p><div class = "subheading">3.3.4 <i>
+deformVertexes move&lt;x&gt; &lt;y&gt; &lt;z&gt; &lt;func&gt;
+&lt;base&gt; &lt;amplitude&gt; &lt;phase&gt; &lt;freq&gt;</i></div>
+
+This keyword is used to make a brush, curve patch or md3model appear to move together as a unit. The &lt;x&gt; &lt;y&gt;
+and &lt;z&gt; values are the distance and direction in game units the object appears to move relative to it's point of origin in the map.
+
+<p>The &lt;func&gt; &lt;base&gt; &lt;amplitude&gt;&lt;phase&gt; and &lt;freq&gt; values are the same as found in other wave
+form manipulations.
+
+<p>The product of the function modifies the values x, y, and z.Therefore, if you have an amplitude of 5 and an x value of 2, the object will travel 10 units from its point of origin along the x axis. This results in a total of 20 units of motion along the x axis, since the amplitude is the variation both above and below the base.
+
+<p>It must be noted that an object made with this shader does not actually change position, it only appears to.
+
+<p><div class = "tip"><b>Design Note:</b> If an object is made up of surfaces with different shaders, all must have matching deformVertexes move values or the object will appear to tear itself apart.</div>
+
+<p><div class = "subheading">3.3.5 
+DeformVertexes autosprite</div>
+
+This function can be used to make any given triangle quad (pair of triangles that form a square rectangle) automatically behave like a sprite without having to make it a separate entity. This means that the "sprite" on which the texture is placed will rotate to always appear at right angles to the player's view as a sprite would. Any four-sided brush side, flat patch, or pair of triangles in an .md3 model can have the <b>autosprite</b> effect on it. <b>The brush face containing a texture with this shader keyword must besquare.</b>
+
+<p><div class = "tip"><b>Design Note</b> :This is best used on objects that would appear the same regardless of viewing angle. An example might be a glowing light flare.</div>
+
+<p><div class = "subheading">3.3.6 
+DeformVertexes autosprite2</div>
+
+Is a slightly modified "sprite" that only rotates around the middle of its longest axis. This allows you to make a
+pillar of fire that you can walk around, or an energy beam stretched across the room.
+
+<h2><a name = "fogparms">3.4 fogparms &lt;red
+value&gt; &lt;green value&gt; &lt;bluevalue&gt; &lt;distance to
+Opaque&gt;</a></h2>
+
+<p>Note: you must also specify "surfaceparm fog" to cause q3map to identify the surfaces inside the volume. Fogparms only
+describes how to render the fog on the surfaces.
+
+<p><b>&lt;red value&gt; &lt;green value&gt; &lt;blue value&gt;</b> These are normalized values. A good computer art program should give you the RGB values for a color. To obtain the values that define fog color for Quake III Arena, divide the desired color's Red, Green and Blue values by 255 to obtain three normalized numbers within the 0.0 to 1.0 range.
+
+<br><b>&lt;distance toopaque&gt;</b> This is the distance, in game units, until the fog becomes totally opaque, as measured from the point of view of the observer. By making the height of the fog brush shorter than the distance to opaque, the apparent density of the fog can be reduced (because it never reaches the depth at which full opacity occurs).
+
+<ul><li>The fog volume can only have one surface visible (from outside the fog).
+<li>Fog must be made of one brush. It cannot be made of adjacent brushes.
+<li>Fog brushes must be axial. This means that only square or rectangular brushes may contain fog, and those must have their edges drawn along the axes of the map grid (all 90 degree angles).
+</ul>
+
+<p><div class = "tip"><strong>Design Notes:</strong>
+
+<ul><li>If a water texture contains a fog parameter, it must be treated as if it were a fog texture when in use.
+<li>If a room is to be filled completely with a fog volume,it can only be entered through one surface (and still have the fog function correctly).
+<li>Additional shader passes may be placed on a fog brush, as with other brushes.</ul></div>
+
+<h2><a name = "nopicmip">3.5 nopicmip</a></h2>
+This causes the texture to ignore user-set values for the <b>r_picmip</b> cvar command. The image will always be high
+resolution. Example: Used to keep images and text in the heads up display from blurring when user optimizes the game graphics.
+
+<h2><a name = "nomipmaps">3.6 nomipmaps</a></h2>
+This implies nopicmip, but also prevents the generation of any lower resolution mipmaps for use by the 3d card. This will
+cause the texture to alias when it gets smaller, but there are some cases where you would rather have this than a blurry image. Sometimes thin slivers of triangles force things to very low mipmap levels, which leave a few constant pixels on otherwise scrolling special effects.
+
+<h2><a name = "polygon">3.7 polygonOffset</a></h2>
+Surfaces rendered with the <b>polygonOffset</b> keyword are rendered slightly off the polygon's surface. This is typically
+used for wall markings and "decals." The distance between the offset and the polygon is fixed. It is not a variable in QuakeIII Arena.
+
+<h2><a name = "portal">3.8 portal</a></h2>
+Specifies that this texture is the surface for a portal or mirror. In the game map, a portal entity must be placed directly in front of the texture (within 64 game units). All this does is set "sortportal", so it isn't needed if you specify
+that explicitly.
+
+<h2><a name = "sort">3.9 sort &lt;value&gt;</a></h2>
+Use this keyword to fine-tune the depth sorting of shaders as they are compared against other shaders in the game world. The
+basic concept is that if there is a question or a problem with shaders drawing in the wrong order against each other, this allows the designer to create a hierarchy ofwhich shader draws in what order.
+
+<p>The default behavior is to put all blended shaders in sort "additive" and all other shaders in sort "opaque", so you only
+need to specify this when you are trying to work around a sorting problem with multiple transparent surfaces in a scene.
+
+<p>The value here can be either a numerical value or one of the keywords in the following list (listed in order of ascending priority):
+
+<ul><b>portal (1):</b> This surface is a portal, it draws over every other shader seen inside the portal, but before anything in the main view.
+
+<br><b>Sky (2):</b> Typically, the sky is the farthest surface in the game world. Drawing this after other opaque surfaces can be an optimization on some cards. This currently has the wrong value for this purpose, so it doesn't do much of anything.
+
+<br><b>Opaque (3):</b>This surface is opaque (rarely needed since this is the default with noblendfunc)
+
+<br><b>Banner (6) :</b>Transparent, but very close to walls.
+
+<br><b>Underwater (8):</b> Draw behind normal transparent surfaces.
+
+<br><b>Additive (9):</b> normal transparent surface (default for shaders with blendfuncs)
+<br><b>nearest (16):</b>this shader should always sort closest to the viewer, e.g. muzzle flashes and blend blobs</ul>
+<p align = "center"><a href = "../ch01/pg1_1.htm">Back</a> | <a href = "../index.htm">Home</a> | <a href = "../ch03/pg3_1.htm">Next</a>
+
+</body>
+</html>

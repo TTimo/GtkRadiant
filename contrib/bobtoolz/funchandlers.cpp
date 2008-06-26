@@ -39,8 +39,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "DShape.h"
 
 // for autocaulk
-std::list<Str> exclusionList;		// whole brush exclusion
-std::list<Str> exclusionList_Face;	// single face exclusion
+list<Str> exclusionList;		// whole brush exclusion
+list<Str> exclusionList_Face;	// single face exclusion
 
 BOOL el1Loaded;
 BOOL el2Loaded;
@@ -309,8 +309,6 @@ void FixBrushes()
 
 void AutoCaulk()
 {
-  UndoableCommand undo("bobToolz.autoCaulk");
-
 	if(!el1Loaded)
 		autocaulkDlg.m_Warning1 = "WARNING: Brush exclusion list not found\n, ALL BRUSHES WILL BE USED";
 

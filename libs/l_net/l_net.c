@@ -1,5 +1,5 @@
 /*
-Copyright (C) 1999-2006 Id Software, Inc. and contributors.
+Copyright (C) 1999-2007 id Software, Inc. and contributors.
 For a list of contributors, see the accompanying CONTRIBUTORS file.
 
 This file is part of GtkRadiant.
@@ -82,10 +82,11 @@ void Net_SetAddressPort(address_t *address, int port)
 //===========================================================================
 int Net_AddressCompare(address_t *addr1, address_t *addr2)
 {
-#ifdef WIN32
-  return _stricmp(addr1->ip, addr2->ip);
-#else
-  return strcasecmp(addr1->ip, addr2->ip);
+#ifdef _WIN32
+	return stricmp(addr1->ip, addr2->ip);
+#endif
+#ifdef __linux__
+	return strcasecmp(addr1->ip, addr2->ip);
 #endif
 } //end of the function Net_AddressCompare
 //===========================================================================
@@ -345,7 +346,9 @@ void Net_MyAddress(address_t *address)
 //===========================================================================
 int Net_Setup(void)
 {
-	WINS_Init();
+	if( !WINS_Init() )
+		return qfalse;
+
 	//
 	WinPrint("my address is %s\n", WINS_MyAddress());
 	//

@@ -21,21 +21,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //
 //////////////////////////////////////////////////////////////////////
 
+#include "StdAfx.h"
 #include "DBobView.h"
-//#include "misc.h"
-#include "funchandlers.h"
-
-#include <list>
-
-#include "iglrender.h"
-#include "qerplugin.h"
-#include "str.h"
-#include "math/matrix.h"
-
-#include "DEntity.h"
-#include "DEPair.h"
+#include "DListener.h"
 #include "misc.h"
-#include "dialogs/dialogs-gtk.h"
+#include "funchandlers.h"
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -44,22 +34,28 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 DBobView::DBobView()
 {
 	nPathCount = 0;
+	refCount = 1;
 	
+	m_bHooked = FALSE;
+
 	path = NULL;
+	eyes = NULL;
 
 	boundingShow = BOUNDS_APEX;
-
-  constructShaders();
-  GlobalShaderCache().attachRenderable(*this);
 }
 
 DBobView::~DBobView()
 {
-  GlobalShaderCache().detachRenderable(*this);
-  destroyShaders();
-
-  if(path)
+	if(path)
 		delete[] path;
+
+	// oops forgot to remove our eyes, was causing access violation when it tried
+	// to talk to it's parent
+	if(eyes)
+		delete eyes;
+
+	if(m_bHooked)
+		UnRegister();
 
 	g_PathView = NULL;
 }
@@ -68,77 +64,201 @@ DBobView::~DBobView()
 // Implementation
 //////////////////////////////////////////////////////////////////////
 
-void DBobView::render(RenderStateFlags state) const
-{
-	glBegin(GL_LINE_STRIP);
-
-	for(int i = 0; i < nPathCount; i++)
-		glVertex3fv(path[i]);
-
-	glEnd();
-}
-
-const char* DBobView_state_line = "$bobtoolz/bobview/line";
-const char* DBobView_state_box = "$bobtoolz/bobview/box";
-
-void DBobView::constructShaders()
-{
-  OpenGLState state;
-  GlobalOpenGLStateLibrary().getDefaultState(state);
-  state.m_state = RENDER_COLOURWRITE|RENDER_DEPTHWRITE|RENDER_BLEND|RENDER_LINESMOOTH;
-  state.m_sort = OpenGLState::eSortOpaque;
-  state.m_linewidth = 1;
-  state.m_colour[0] = 1;
-  state.m_colour[1] = 0;
-  state.m_colour[2] = 0;
-  state.m_colour[3] = 1;
-  GlobalOpenGLStateLibrary().insert(DBobView_state_line, state);
-
-  state.m_colour[0] = 0.25f;
-  state.m_colour[1] = 0.75f;
-  state.m_colour[2] = 0.75f;
-  state.m_colour[3] = 1;
-  GlobalOpenGLStateLibrary().insert(DBobView_state_box, state);
-
-  m_shader_line = GlobalShaderCache().capture(DBobView_state_line);
-  m_shader_box = GlobalShaderCache().capture(DBobView_state_box);
-}
-
-void DBobView::destroyShaders()
-{
-  GlobalOpenGLStateLibrary().erase(DBobView_state_line);
-  GlobalOpenGLStateLibrary().erase(DBobView_state_box);
-  GlobalShaderCache().release(DBobView_state_line);
-  GlobalShaderCache().release(DBobView_state_box);
-}
-
-Matrix4 g_transform_box1 = matrix4_translation_for_vec3(Vector3(16.0f, 16.0f, 28.0f));
-Matrix4 g_transform_box2 = matrix4_translation_for_vec3(Vector3(-16.0f, 16.0f, 28.0f));
-Matrix4 g_transform_box3 = matrix4_translation_for_vec3(Vector3(16.0f, -16.0f, -28.0f));
-Matrix4 g_transform_box4 = matrix4_translation_for_vec3(Vector3(-16.0f, -16.0f, -28.0f));
-
-void DBobView::renderSolid(Renderer& renderer, const VolumeTest& volume) const
+void DBobView::Draw2D(VIEWTYPE vt)
 {
 	if(!path)
 		return;
 
-  renderer.SetState(m_shader_line, Renderer::eWireframeOnly);
-  renderer.SetState(m_shader_line, Renderer::eFullMaterials);
-  renderer.addRenderable(*this, g_matrix4_identity);
+	g_QglTable.m_pfn_qglPushAttrib(GL_ALL_ATTRIB_BITS);
+
+	g_QglTable.m_pfn_qglDisable(GL_BLEND);
+	g_QglTable.m_pfn_qglEnable(GL_LINE_SMOOTH);
+
+	g_QglTable.m_pfn_qglPushMatrix();
+	
+	switch(vt)
+	{
+	case XY:
+		break;
+	case XZ:
+		g_QglTable.m_pfn_qglRotatef(270.0f, 1.0f, 0.0f, 0.0f);
+		break;
+	case YZ:
+		g_QglTable.m_pfn_qglRotatef(270.0f, 1.0f, 0.0f, 0.0f);
+		g_QglTable.m_pfn_qglRotatef(270.0f, 0.0f, 0.0f, 1.0f);
+		break;
+	}
+
+	g_QglTable.m_pfn_qglLineWidth(1.0f);
+	g_QglTable.m_pfn_qglColor4f(1.0f, 0.0f, 0.0f, 1.0f);
+
+	int i;
+
+	g_QglTable.m_pfn_qglBegin(GL_LINE_STRIP);
+
+	for(i = 0; i < nPathCount; i++)
+		g_QglTable.m_pfn_qglVertex3fv(path[i]);
+
+	g_QglTable.m_pfn_qglEnd();
 
 	if(m_bShowExtra)
 	{
-    renderer.SetState(m_shader_box, Renderer::eWireframeOnly);
-    renderer.SetState(m_shader_box, Renderer::eFullMaterials);
-    renderer.addRenderable(*this, g_transform_box1);
-    renderer.addRenderable(*this, g_transform_box2);
-    renderer.addRenderable(*this, g_transform_box3);
-    renderer.addRenderable(*this, g_transform_box4);
-  }
+		// +mars
+		// for the bounding box stuff
+		g_QglTable.m_pfn_qglColor4f(0.25f, 0.75f, 0.75f, 1.0f);
+
+		g_QglTable.m_pfn_qglTranslatef( 16.0f, 16.0f, 28.0f );
+
+		g_QglTable.m_pfn_qglBegin( GL_LINE_STRIP );
+	
+			for ( i = 0; i < nPathCount; i++ )
+				g_QglTable.m_pfn_qglVertex3fv( path[i] );
+
+		g_QglTable.m_pfn_qglEnd();
+	
+	// ---------------
+
+		g_QglTable.m_pfn_qglTranslatef( -16.0f, -16.0f, -28.0f );	// back to where we were
+		g_QglTable.m_pfn_qglTranslatef( -16.0f, 16.0f, 28.0f );		// move to new postion
+	
+		g_QglTable.m_pfn_qglBegin( GL_LINE_STRIP );
+
+			for ( i = 0; i < nPathCount; i++ )
+				g_QglTable.m_pfn_qglVertex3fv( path[i] );
+
+		g_QglTable.m_pfn_qglEnd();
+
+	// --------------
+
+		g_QglTable.m_pfn_qglTranslatef( 16.0f, -16.0f, -28.0f );		// back to where we were
+		g_QglTable.m_pfn_qglTranslatef( 16.0f, -16.0f, -28.0f );		// new pos
+
+		g_QglTable.m_pfn_qglBegin( GL_LINE_STRIP );
+		
+			for ( i = 0; i < nPathCount; i++ )
+				g_QglTable.m_pfn_qglVertex3fv( path[i] );
+
+		g_QglTable.m_pfn_qglEnd();
+
+	// ----------------
+
+		g_QglTable.m_pfn_qglTranslatef( -16.0f, 16.0f, 28.0f );		// back to where we were
+
+/*		g_QglTable.m_pfn_qglTranslatef( -16.0f, -16.0f, -28.0f );		// new pos
+
+		g_QglTable.m_pfn_qglBegin( GL_LINE_STRIP );
+		
+		if ( boundingShow == BOUNDS_ALL )
+		{
+			for ( i = 0; i < nPathCount; i++ )
+				g_QglTable.m_pfn_qglVertex3fv( path[i] );
+		}
+		else if ( boundingShow == BOUNDS_APEX )
+		{
+			for ( i = (nPathCount/4); i < (nPathCount/4) * 3; i++ )
+				g_QglTable.m_pfn_qglVertex3fv( path[i] );
+		}
+
+		g_QglTable.m_pfn_qglEnd();*/ // djbob: er, um doesn't really seem to do anyhting
+	}
+
+	// -mars
+	
+	g_QglTable.m_pfn_qglPopMatrix();
+
+	g_QglTable.m_pfn_qglPopAttrib();
 }
-void DBobView::renderWireframe(Renderer& renderer, const VolumeTest& volume) const
+
+void DBobView::Draw3D()
 {
-  renderSolid(renderer, volume);
+	if(!path)
+		return;
+
+	g_QglTable.m_pfn_qglPushAttrib(GL_ALL_ATTRIB_BITS);
+
+	g_QglTable.m_pfn_qglDisable(GL_BLEND);
+	g_QglTable.m_pfn_qglEnable(GL_LINE_SMOOTH);
+
+	g_QglTable.m_pfn_qglLineWidth(1.0f);
+	g_QglTable.m_pfn_qglColor4f(1.0f, 0.0f, 0.0f, 1.0f);
+
+	g_QglTable.m_pfn_qglBegin(GL_LINE_STRIP);
+
+	for(int i = 0; i < nPathCount; i++)
+		g_QglTable.m_pfn_qglVertex3fv(path[i]);
+
+	g_QglTable.m_pfn_qglEnd();
+
+	if(m_bShowExtra)
+	{
+		// +mars
+		// ahhh -- a nice C&P job :)
+		// for the bounding box stuff
+		g_QglTable.m_pfn_qglColor4f(0.25f, 0.75f, 0.75f, 1.0f);
+
+		g_QglTable.m_pfn_qglTranslatef( 16.0f, 16.0f, 28.0f );
+
+		g_QglTable.m_pfn_qglBegin( GL_LINE_STRIP );
+		
+		int i;	
+		for ( i = 0; i < nPathCount; i++ )
+			g_QglTable.m_pfn_qglVertex3fv( path[i] );
+
+		g_QglTable.m_pfn_qglEnd();
+	
+	// ---------------
+
+		g_QglTable.m_pfn_qglTranslatef( -16.0f, -16.0f, -28.0f );	// back to where we were
+		g_QglTable.m_pfn_qglTranslatef( -16.0f, 16.0f, 28.0f );		// move to new postion
+	
+		g_QglTable.m_pfn_qglBegin( GL_LINE_STRIP );
+		
+			for ( i = 0; i < nPathCount; i++ )
+				g_QglTable.m_pfn_qglVertex3fv( path[i] );
+
+		g_QglTable.m_pfn_qglEnd();
+
+	// --------------
+
+		g_QglTable.m_pfn_qglTranslatef( 16.0f, -16.0f, -28.0f );		// back to where we were
+		g_QglTable.m_pfn_qglTranslatef( 16.0f, -16.0f, -28.0f );		// new pos
+
+		g_QglTable.m_pfn_qglBegin( GL_LINE_STRIP );
+		
+			for ( i = 0; i < nPathCount; i++ )
+				g_QglTable.m_pfn_qglVertex3fv( path[i] );
+
+		g_QglTable.m_pfn_qglEnd();
+
+	// ----------------
+
+		g_QglTable.m_pfn_qglTranslatef( -16.0f, 16.0f, 28.0f );		// back to where we were
+		g_QglTable.m_pfn_qglTranslatef( -16.0f, -16.0f, -28.0f );		// new pos
+
+		g_QglTable.m_pfn_qglBegin( GL_LINE_STRIP );
+		
+			for ( i = 0; i < nPathCount; i++ )
+				g_QglTable.m_pfn_qglVertex3fv( path[i] );
+
+		g_QglTable.m_pfn_qglEnd();
+	}
+	// -mars
+
+	g_QglTable.m_pfn_qglPopAttrib();
+}
+
+void DBobView::Register()
+{
+	g_QglTable.m_pfnHookGL2DWindow( this );
+	g_QglTable.m_pfnHookGL3DWindow( this );
+	m_bHooked = TRUE;
+}
+
+void DBobView::UnRegister()
+{
+	g_QglTable.m_pfnUnHookGL2DWindow( this );
+	g_QglTable.m_pfnUnHookGL3DWindow( this );
+	m_bHooked = FALSE;
 }
 
 void DBobView::SetPath(vec3_t *pPath)
@@ -156,7 +276,7 @@ bool DBobView::CalculateTrajectory(vec3_t start, vec3_t apex, float multiplier, 
 	if(apex[2] <= start[2])
 	{
 		SetPath(NULL);
-		return false;
+		return FALSE;
 	}
 	// ----think q3a actually would allow these
 	//scrub that, coz the plugin wont :]
@@ -194,7 +314,7 @@ bool DBobView::CalculateTrajectory(vec3_t start, vec3_t apex, float multiplier, 
 	}
 
 	SetPath(pPath);
-	return true;
+	return TRUE;
 }
 
 void DBobView::Begin(const char* trigger, const char *target, float multiplier, int points, float varGravity, bool bNoUpdate, bool bShowExtra)
@@ -207,9 +327,20 @@ void DBobView::Begin(const char* trigger, const char *target, float multiplier, 
 	nPathCount = points;
 	m_bShowExtra = bShowExtra;
 
-	if(!UpdatePath())
+	Register();
+
+	if(UpdatePath())
 	{
-		globalErrorStream() << "Initialization Failure in DBobView::Begin";
+		if(!bNoUpdate)
+		{
+			eyes = new DListener;
+			eyes->parent = this;
+			eyes->Register();
+		}
+	}
+	else
+	{
+		Sys_ERROR("Initialization Failure in DBobView::Begin");
 		delete this;
 	}
 }
@@ -223,55 +354,8 @@ bool DBobView::UpdatePath()
 		if(GetEntityCentre(entTarget, apex))
 		{
 			CalculateTrajectory(start, apex, fMultiplier, nPathCount, fVarGravity);
-			return true;
+			return TRUE;
 		}
 	}
-	return false;
-}
-
-void DBobView_setEntity(Entity& entity, float multiplier, int points, float varGravity, bool bNoUpdate, bool bShowExtra)
-{
-	DEntity trigger;
-	trigger.LoadEPairList(&entity);
-
-	DEPair* trigger_ep = trigger.FindEPairByKey("targetname");
-
-	if(trigger_ep)
-	{
-		if(!strcmp(trigger.m_Classname, "trigger_push"))
-		{
-			DEPair* target_ep = trigger.FindEPairByKey("target");
-			if(target_ep)
-			{
-        const scene::Path* entTarget = FindEntityFromTargetname(target_ep->value);
-				if(entTarget)
-				{
-					if(g_PathView)
-						delete g_PathView;
-					g_PathView = new DBobView;
-
-          Entity* target = Node_getEntity(entTarget->top());
-          if(target != 0)
-          {
-            if(!bNoUpdate)
-            {
-              g_PathView->trigger = &entity;
-              entity.attach(*g_PathView);
-              g_PathView->target = target;
-              target->attach(*g_PathView);
-            }
-					  g_PathView->Begin(trigger_ep->value, target_ep->value, multiplier, points, varGravity, bNoUpdate, bShowExtra);
-          }
-				}
-				else
-					DoMessageBox("trigger_push target could not be found.", "Error", eMB_OK);
-			}
-			else
-				DoMessageBox("trigger_push has no target.", "Error", eMB_OK);
-		}
-		else
-			DoMessageBox("You must select a 'trigger_push' entity.", "Error", eMB_OK);
-	}	
-	else
-		DoMessageBox("Entity must have a targetname", "Error", eMB_OK);
+	return FALSE;
 }

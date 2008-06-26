@@ -1,0 +1,224 @@
+<html>
+<head>
+<title>Q3Radiant Editor Manual: Appendix B9</title>
+<link rel = "stylesheet" type = "text/css" href = "../styles/q3rad.css">
+</head>
+<body>
+<h1 class = "MsoTitle">Q3Radiant Editor Manual</h1>
+<hr>
+<h1>Appendix B: Entity Descriptions</h1>
+<h2><a name = "weapon">Weapon Entities</a></h2>
+
+<p><div class = "subheading">weapon_bfg</div>
+
+<b>Map Entity Color:</b> blue
+
+<br><b>Dimensions:</b> 32x32
+
+<br><b>Game Function:</b> Big Freaking Gun. Default ammo load
+is 20.
+
+
+
+<p><div class = "subheading">weapon_gauntlet</div>
+
+<b>Map Entity Color:</b> blue
+
+<br><b>Dimensions:</b> 32x32
+
+<br><b>Game Function:</b> Melee weapon. No ammo. There is no
+reason to place this entity in a map.
+
+
+
+<p><div class = "subheading">weapon_ grapplinghook</div>
+
+<b>Map Entity Color:</b> blue
+
+<br><b>Dimensions:</b> 32x32
+
+<br><b>Game Function:</b> Grappling Hook. Spawns in the game and
+works but is unskinned. Does not use ammo.
+
+
+
+<p><div class = "subheading">weapon_grenadelauncher</div>
+
+<b>Map Entity Color:</b> blue
+
+<br><b>Dimensions:</b> 32x32
+
+<br><b>Game Function:</b> Lobs bouncing grenades. Comes with 10
+grenades.
+
+
+
+<p><div class = "subheading">weapon_lightning</div>
+
+<b>Map Entity Color:</b> blue
+
+<br><b>Dimensions:</b> 32x32
+
+<br><b>Game Function:</b> Also called the "shaft" by some. Comes
+with 100 "shocks"
+
+
+
+<p><div class = "subheading">weapon_machinegun</div>
+
+<b>Map Entity Color:</b> blue
+
+<br><b>Dimensions:</b> 32x32
+
+<br><b>Game Function:</b> Player automatically starts with this.
+Comes with a default load of 100 "shots."
+
+<p><div class = "tip"><b>Design Tip:</b> For a "Rocket Arena" type game, the designer
+may wish to use the target_give entity to "give" the player an
+ammo_bullets entity with a count of -100 to remove the
+machinegun from play.</div>
+
+
+
+<p><div class = "subheading">weapon_plasmagun</div>
+
+<b>Map Entity Color:</b> blue
+
+<br><b>Dimensions:</b> 32x32
+
+<br><b>Game Function:</b> Comes with 50 shots.
+
+
+
+<p><div class = "subheading">weapon_railgun</div>
+
+<b>Map Entity Color:</b> blue
+
+<br><b>Dimensions:</b> 32x32
+
+<br><b>Game Function:</b> Comes with 10 slugs.
+
+
+
+<p><div class = "subheading">weapon_rocketlauncher</div>
+
+<b>Map Entity Color:</b> blue
+
+<br><b>Dimensions:</b> 32x32
+
+<br><b>Game Function:</b> Comes with 10 rockets.
+
+
+
+<p><div class = "subheading">weapon_shotgun</div>
+
+<b>Map Entity Color:</b> blue
+
+<br><b>Dimensions:</b> 32x32
+
+<br><b>Game Function:</b> Also called the "shaft" by some. Comes
+with 10 rockets.
+
+
+
+<p><strong>Keys</strong>
+
+<br><b>wait:</b> time in seconds before item respawns after being
+picked up (default 5, -1 = never respawn).
+
+<br><b>random:</b> random time variance in seconds added or
+subtracted from "wait" delay (default 0 - see Notes).
+
+<br><b>count:</b> sets the amount of ammo given to the player when
+weapon is picked up.
+
+<br><b>team:</b> set this to team items. Teamed items will respawn
+randomly after team master is picked up (see Notes).
+
+<br><b>target:</b> picking up the item will trigger the entity this
+points to.
+
+<br><b>targetname:</b> a target_give entity can point to this for
+respawn freebies.
+
+<br><b>notfree:</b> when set to 1, entity will not spawn in "Free
+for all" and "Tournament" modes.
+
+<br><b>notteam:</b> when set to 1, entity will not spawn in
+"Teamplay" and "CTF" modes.
+
+<br><b>notsingle:</b> when set to 1, entity will not spawn in Single
+Player mode (bot play mode).
+
+
+
+<p><strong>Check Boxes/Spawnflags</strong>
+
+<br>SUSPENDED : item will spawn where it was placed in map and won't
+drop to the floor. Bots will only be attracted to suspended
+entities if they are reachable by way of a jump pad or launch pad
+(trigger_push).
+
+
+
+<p><strong>Notes</strong>
+
+<br>The amount of time it takes for an item in the team to respawn
+is determined by the "wait" value of the item that was picked up
+previously. So if one of the items in the team has it's "wait" key
+set to -1 (never respawn), the random respawning cycle of the
+teamed items will stop after that item is picked up.
+
+
+
+<p>When the random key is set, its value is used to calculate a
+minimum and a maximum delay. The final time delay will be a random
+value anywhere between the minimum and maximum values: (min delay =
+wait - random) (max delay = wait + random).
+
+
+
+
+
+<h2><a name = "world">Worldspawn Entity</a></h2>
+
+<div class = "subheading">Worldspawn</div>
+
+Only used for the world. You access the worldspawn entity by
+selecting any non-entity brush in your map.
+
+
+
+<p><strong>Keys</strong>
+
+<br><b>message:</b> text to print at user logon. Used for name of
+level.
+
+<br><b>music:</b> path/name of looping .wav file used for level's
+music (eg. music/sonic5.wav). This is for a piece of music
+with only one part. To make a song play with both an intro and a
+looping portion, the following is the correct form for the music
+value:
+
+
+
+<ul>music/intro.wav music/loop.wav</ul>
+
+
+
+<p><b>ambient:</b> Adds a constant value to overall lighting. Use
+not recommended. Ambient light will have a tendency to flatten out
+variations in light and shade.
+
+<br><b>_color:</b> This is the normalized formula for RGB
+values for ambient light. A value is considered normalized
+when it fits in a range between 0 and 1. If you are using a
+tool like the Windows color picker, divide the value for each
+component of the RGB values by 255. The result will be a
+normalized value.
+
+<br><b>gravity:</b> gravity of level (default is normal gravity:
+800).
+<p align = "center"><a href = "appn_b_8.htm">Back</a> | <a href = "../index.htm">Home</a> | <a href = "appn_c.htm">Next</a>
+</body>
+</html>

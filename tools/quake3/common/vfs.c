@@ -60,7 +60,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "cmdlib.h"
 #include "mathlib.h"
-#include <glib.h>
+#include "glib.h"
 #include "inout.h"
 #include "vfs.h"
 #include "unzip.h"

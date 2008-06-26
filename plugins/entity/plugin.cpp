@@ -1,6 +1,6 @@
 /*
-Copyright (C) 2001-2006, William Joseph.
-All Rights Reserved.
+Copyright (C) 1999-2007 id Software, Inc. and contributors.
+For a list of contributors, see the accompanying CONTRIBUTORS file.
 
 This file is part of GtkRadiant.
 
@@ -19,142 +19,103 @@ along with GtkRadiant; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
+//
+// Model Plugin
+//
+
 #include "plugin.h"
-
-#include "debugging/debugging.h"
-
-#include "iscenegraph.h"
-#include "irender.h"
-#include "iselection.h"
-#include "ientity.h"
-#include "iundo.h"
-#include "ieclass.h"
-#include "igl.h"
-#include "ireference.h"
-#include "ifilter.h"
-#include "preferencesystem.h"
-#include "qerplugin.h"
-#include "namespace.h"
-#include "modelskin.h"
-
-#include "typesystem.h"
-
 #include "entity.h"
-#include "skincache.h"
+#include "entity_entitymodel.h"
+#include "light.h"
 
-#include "modulesystem/singletonmodule.h"
+// =============================================================================
+// Globals
 
-class EntityDependencies :
-  public GlobalRadiantModuleRef,
-  public GlobalOpenGLModuleRef,
-  public GlobalUndoModuleRef,
-  public GlobalSceneGraphModuleRef,
-  public GlobalShaderCacheModuleRef,
-  public GlobalSelectionModuleRef,
-  public GlobalReferenceModuleRef,
-  public GlobalFilterModuleRef,
-  public GlobalPreferenceSystemModuleRef,
-  public GlobalNamespaceModuleRef,
-  public GlobalModelSkinCacheModuleRef
+// function tables
+_QERFuncTable_1 g_FuncTable;
+_QERQglTable g_QglTable;
+_QERBrushTable __BRUSHTABLENAME;
+_QERUndoTable __UNDOTABLENAME;
+_EClassManagerTable __ECLASSMANAGERTABLENAME;
+
+// =============================================================================
+// SYNAPSE
+
+class CSynapseClientEntity : public CSynapseClient
 {
-};
-
-class EntityQ3API : public TypeSystemRef
-{
-  EntityCreator* m_entityq3;
 public:
-  typedef EntityCreator Type;
-  STRING_CONSTANT(Name, "quake3");
-
-  EntityQ3API()
-  {
-    Entity_Construct();
-
-    m_entityq3 = &GetEntityCreator();
-
-    GlobalReferenceCache().setEntityCreator(*m_entityq3);
-  }
-  ~EntityQ3API()
-  {
-    Entity_Destroy();
-  }
-  EntityCreator* getTable()
-  {
-    return m_entityq3;
-  }
+  // CSynapseClient API
+  bool RequestAPI(APIDescriptor_t *pAPI);
+  const char* GetInfo();
+  
+  CSynapseClientEntity() { }
+  virtual ~CSynapseClientEntity() { }
 };
 
-typedef SingletonModule<EntityQ3API, EntityDependencies> EntityQ3Module;
 
-EntityQ3Module g_EntityQ3Module;
+CSynapseServer* g_pSynapseServer = NULL;
+CSynapseClientEntity g_SynapseClient;
 
+#if __GNUC__ >= 4
+#pragma GCC visibility push(default)
+#endif
+extern "C" CSynapseClient* SYNAPSE_DLL_EXPORT Synapse_EnumerateInterfaces( const char *version, CSynapseServer *pServer ) {
+#if __GNUC__ >= 4
+#pragma GCC visibility pop
+#endif
+  if (strcmp(version, SYNAPSE_VERSION))
+  {
+    Syn_Printf("ERROR: synapse API version mismatch: should be '" SYNAPSE_VERSION "', got '%s'\n", version);
+    return NULL;
+  }
+  g_pSynapseServer = pServer;
+  g_pSynapseServer->IncRef();
+  Set_Syn_Printf(g_pSynapseServer->Get_Syn_Printf());
+  
+  g_SynapseClient.AddAPI(ENTITY_MAJOR, NULL, sizeof(_QEREntityTable));
+  g_SynapseClient.AddAPI(RADIANT_MAJOR, NULL, sizeof(g_FuncTable), SYN_REQUIRE, &g_FuncTable);
+  g_SynapseClient.AddAPI(QGL_MAJOR, NULL, sizeof(g_QglTable), SYN_REQUIRE, &g_QglTable);
+  g_SynapseClient.AddAPI(BRUSH_MAJOR, NULL, sizeof(__BRUSHTABLENAME), SYN_REQUIRE, &__BRUSHTABLENAME);
+  g_SynapseClient.AddAPI(UNDO_MAJOR, NULL, sizeof(__UNDOTABLENAME), SYN_REQUIRE, &__UNDOTABLENAME);
+  g_SynapseClient.AddAPI(ECLASSMANAGER_MAJOR, NULL, sizeof(__ECLASSMANAGERTABLENAME), SYN_REQUIRE, &__ECLASSMANAGERTABLENAME);
 
-class EntityWolfAPI : public TypeSystemRef
+  return &g_SynapseClient;
+}
+
+bool CSynapseClientEntity::RequestAPI(APIDescriptor_t *pAPI)
 {
-  EntityCreator* m_entitywolf;
-public:
-  typedef EntityCreator Type;
-  STRING_CONSTANT(Name, "wolf");
-
-  EntityWolfAPI()
+  if (!strcmp(pAPI->major_name, ENTITY_MAJOR))
   {
-    Entity_Construct(eGameTypeRTCW);
+    _QEREntityTable* pTable= static_cast<_QEREntityTable*>(pAPI->mpTable);
+    pTable->m_pfnEntity_Alloc = &Entity_Alloc;
+    pTable->m_pfnEntity_Free = &Entity_Free;
+    pTable->m_pfnEntity_Clone = &Entity_Clone;
+    pTable->m_pfnSetKeyValue = &SetKeyValue;
+    pTable->m_pfnDeleteKey = &DeleteKey;
+    pTable->m_pfnValueForKey = &ValueForKey;
+    pTable->m_pfnFloatForKey = &FloatForKey;
+    pTable->m_pfnIntForKey = &IntForKey;
+    pTable->m_pfnGetVectorForKey = &GetVectorForKey;
+    pTable->m_pfnEntity_AddToList = &Entity_AddToList;
+    pTable->m_pfnEntity_RemoveFromList = &Entity_RemoveFromList;
+    pTable->m_pfnEntity_LinkBrush = &Entity_LinkBrush;
+    pTable->m_pfnEntity_UnlinkBrush = &Entity_UnlinkBrush;
+    pTable->m_pfnDrawLight = &DrawLight;
+    pTable->m_pfnEntity_MemorySize = &Entity_MemorySize;
+    pTable->m_pfnAllocateEpair = &Entity_AllocateEpair;
+    pTable->m_pfnGetEntityKeyValList = &Entity_GetKeyValList;
+    pTable->m_pfnSetEntityKeyValList = &Entity_SetKeyValList;
 
-    m_entitywolf = &GetEntityCreator();
-
-    GlobalReferenceCache().setEntityCreator(*m_entitywolf);
+    return true;
   }
-  ~EntityWolfAPI()
-  {
-    Entity_Destroy();
-  }
-  EntityCreator* getTable()
-  {
-    return m_entitywolf;
-  }
-};
 
-typedef SingletonModule<EntityWolfAPI, EntityDependencies> EntityWolfModule;
+  Syn_Printf("ERROR: RequestAPI( '%s' ) not found in '%s'\n", pAPI->major_name, GetInfo());
+  return false;
+}
 
-EntityWolfModule g_EntityWolfModule;
+#include "version.h"
 
-
-class EntityDoom3API : public TypeSystemRef
+const char* CSynapseClientEntity::GetInfo()
 {
-  EntityCreator* m_entitydoom3;
-public:
-  typedef EntityCreator Type;
-  STRING_CONSTANT(Name, "doom3");
-
-  EntityDoom3API()
-  {
-    Entity_Construct(eGameTypeDoom3);
-
-    m_entitydoom3 = &GetEntityCreator();
-
-    GlobalReferenceCache().setEntityCreator(*m_entitydoom3);
-  }
-  ~EntityDoom3API()
-  {
-    Entity_Destroy();
-  }
-  EntityCreator* getTable()
-  {
-    return m_entitydoom3;
-  }
-};
-
-typedef SingletonModule<EntityDoom3API, EntityDependencies> EntityDoom3Module;
-
-EntityDoom3Module g_EntityDoom3Module;
-
-
-extern "C" void RADIANT_DLLEXPORT Radiant_RegisterModules(ModuleServer& server)
-{
-  initialiseModule(server);
-
-  g_EntityQ3Module.selfRegister();
-  g_EntityWolfModule.selfRegister();
-  g_EntityDoom3Module.selfRegister();
-  Doom3ModelSkinCacheModule_selfRegister(server);
+  return "Entity module built " __DATE__ " " RADIANT_VERSION;
 }

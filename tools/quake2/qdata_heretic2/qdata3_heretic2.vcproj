@@ -1,325 +1,175 @@
-<?xml version="1.0" encoding = "Windows-1252"?>
-<VisualStudioProject
-	ProjectType="Visual C++"
-	Version="7.00"
-	Name="qdata3_heretic2"
-	
-	>
+<?xml version="1.0" ?><VisualStudioProject Name="qdata3_heretic2" ProjectGUID="{65D02375-63EE-4A8A-9F8E-504B1D5A1D02}" ProjectType="Visual C++" RootNamespace="qdata3_heretic2" Version="8.00">
 	<Platforms>
-		<Platform
-			Name="Win32"/>
+		<Platform Name="Win32"/>
 	</Platforms>
+	<ToolFiles>
+	</ToolFiles>
 	<Configurations>
-		<Configuration
-			Name="Release|Win32"
-			OutputDirectory=".\Release"
-			IntermediateDirectory=".\Release"
-			ConfigurationType="1"
-			UseOfMFC="0"
-			ATLMinimizesCRunTimeLibraryUsage="FALSE"
-			CharacterSet="2">
-			<Tool
-				Name="VCCLCompilerTool"
-				InlineFunctionExpansion="1"
-				AdditionalIncludeDirectories="./common,./qcommon,.,..\..\..\..\libxml2\include,..\..\..\libs,..\..\..\include"
-				PreprocessorDefinitions="WIN32,NDEBUG,_CONSOLE"
-				StringPooling="TRUE"
-				RuntimeLibrary="2"
-				EnableFunctionLevelLinking="TRUE"
-				PrecompiledHeaderFile=".\Release/qdata3_heretic2.pch"
-				AssemblerListingLocation=".\Release/"
-				ObjectFile=".\Release/"
-				ProgramDataBaseFileName=".\Release/"
-				BrowseInformation="1"
-				WarningLevel="3"
-				SuppressStartupBanner="TRUE"
-				DebugInformationFormat="3"
-				CompileAs="0"/>
-			<Tool
-				Name="VCCustomBuildTool"/>
-			<Tool
-				Name="VCLinkerTool"
-				AdditionalOptions="/MACHINE:I386"
-				AdditionalDependencies="wsock32.lib"
-				OutputFile="Release/qdata3.exe"
-				LinkIncremental="1"
-				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories="..\..\..\libs\l_net\release,..\..\..\..\libxml2-2.6\lib,..\..\..\libs\mathlib\release"
-				ProgramDatabaseFile=".\Release/qdata3.pdb"
-				GenerateMapFile="TRUE"
-				MapFileName=".\Release/qdata3.map"
-				SubSystem="1"/>
-			<Tool
-				Name="VCMIDLTool"
-				TypeLibraryName=".\Release/qdata3_heretic2.tlb"/>
-			<Tool
-				Name="VCPostBuildEventTool"/>
-			<Tool
-				Name="VCPreBuildEventTool"/>
-			<Tool
-				Name="VCPreLinkEventTool"/>
-			<Tool
-				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="NDEBUG"
-				Culture="1033"/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"/>
-			<Tool
-				Name="VCWebDeploymentTool"/>
+		<Configuration CharacterSet="2" ConfigurationType="1" IntermediateDirectory="$(ConfigurationName)" Name="Debug|Win32" OutputDirectory="$(SolutionDir)$(ConfigurationName)">
+			<Tool Name="VCPreBuildEventTool"/>
+			<Tool Name="VCCustomBuildTool"/>
+			<Tool Name="VCXMLDataGeneratorTool"/>
+			<Tool Name="VCWebServiceProxyGeneratorTool"/>
+			<Tool Name="VCMIDLTool"/>
+			<Tool AdditionalIncludeDirectories="&quot;$(SolutionDir)\include&quot;;&quot;$(SolutionDir)\libs&quot;;&quot;$(SolutionDir)\..\STLPort\stlport&quot;;&quot;$(SolutionDir)\..\gtk2\include&quot;;&quot;$(SolutionDir)\..\gtk2\include\glib-2.0&quot;;&quot;$(SolutionDir)\..\gtk2\lib\glib-2.0\include&quot;;&quot;$(SolutionDir)\..\libxml2\include&quot;" BasicRuntimeChecks="3" DebugInformationFormat="4" Detect64BitPortabilityProblems="true" DisableSpecificWarnings="4996;4244;4267" MinimalRebuild="true" Name="VCCLCompilerTool" Optimization="0" PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS" RuntimeLibrary="3" WarningLevel="3"/>
+			<Tool Name="VCManagedResourceCompilerTool"/>
+			<Tool Name="VCResourceCompilerTool"/>
+			<Tool Name="VCPreLinkEventTool"/>
+			<Tool GenerateDebugInformation="true" Name="VCLinkerTool" TargetMachine="1"/>
+			<Tool Name="VCALinkTool"/>
+			<Tool Name="VCManifestTool"/>
+			<Tool Name="VCXDCMakeTool"/>
+			<Tool Name="VCBscMakeTool"/>
+			<Tool Name="VCFxCopTool"/>
+			<Tool Name="VCAppVerifierTool"/>
+			<Tool Name="VCWebDeploymentTool"/>
+			<Tool Name="VCPostBuildEventTool"/>
 		</Configuration>
-		<Configuration
-			Name="Debug|Win32"
-			OutputDirectory=".\Debug"
-			IntermediateDirectory=".\Debug"
-			ConfigurationType="1"
-			UseOfMFC="0"
-			ATLMinimizesCRunTimeLibraryUsage="FALSE"
-			CharacterSet="2">
-			<Tool
-				Name="VCCLCompilerTool"
-				Optimization="0"
-				AdditionalIncludeDirectories="./common,./qcommon,.,..\..\..\..\libxml2\include,..\..\..\libs,..\..\..\include"
-				PreprocessorDefinitions="WIN32,_DEBUG,_CONSOLE"
-				BasicRuntimeChecks="3"
-				RuntimeLibrary="3"
-				PrecompiledHeaderFile=".\Debug/qdata3_heretic2.pch"
-				AssemblerListingLocation=".\Debug/"
-				ObjectFile=".\Debug/"
-				ProgramDataBaseFileName=".\Debug/"
-				BrowseInformation="1"
-				WarningLevel="3"
-				SuppressStartupBanner="TRUE"
-				DebugInformationFormat="4"
-				CompileAs="0"/>
-			<Tool
-				Name="VCCustomBuildTool"/>
-			<Tool
-				Name="VCLinkerTool"
-				AdditionalOptions="/MACHINE:I386"
-				AdditionalDependencies="wsock32.lib"
-				OutputFile="Debug/qdata3.exe"
-				LinkIncremental="2"
-				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories="..\..\..\libs\l_net\debug,..\..\..\..\libxml2-2.6\lib,..\..\..\libs\mathlib\debug"
-				GenerateDebugInformation="TRUE"
-				ProgramDatabaseFile=".\Debug/qdata3.pdb"
-				GenerateMapFile="TRUE"
-				MapFileName=".\Debug/qdata3.map"
-				SubSystem="1"/>
-			<Tool
-				Name="VCMIDLTool"
-				TypeLibraryName=".\Debug/qdata3_heretic2.tlb"/>
-			<Tool
-				Name="VCPostBuildEventTool"/>
-			<Tool
-				Name="VCPreBuildEventTool"/>
-			<Tool
-				Name="VCPreLinkEventTool"/>
-			<Tool
-				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG"
-				Culture="1033"/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"/>
-			<Tool
-				Name="VCWebDeploymentTool"/>
+		<Configuration CharacterSet="2" ConfigurationType="1" IntermediateDirectory="$(ConfigurationName)" Name="Release|Win32" OutputDirectory="$(SolutionDir)$(ConfigurationName)" WholeProgramOptimization="1">
+			<Tool Name="VCPreBuildEventTool"/>
+			<Tool Name="VCCustomBuildTool"/>
+			<Tool Name="VCXMLDataGeneratorTool"/>
+			<Tool Name="VCWebServiceProxyGeneratorTool"/>
+			<Tool Name="VCMIDLTool"/>
+			<Tool AdditionalIncludeDirectories="&quot;$(SolutionDir)\include&quot;;&quot;$(SolutionDir)\libs&quot;;&quot;$(SolutionDir)\..\STLPort\stlport&quot;;&quot;$(SolutionDir)\..\gtk2\include&quot;;&quot;$(SolutionDir)\..\gtk2\include\glib-2.0&quot;;&quot;$(SolutionDir)\..\gtk2\lib\glib-2.0\include&quot;;&quot;$(SolutionDir)\..\libxml2\include&quot;" DebugInformationFormat="3" Detect64BitPortabilityProblems="true" DisableSpecificWarnings="4996;4244;4267" Name="VCCLCompilerTool" PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS" RuntimeLibrary="2" WarningLevel="3"/>
+			<Tool Name="VCManagedResourceCompilerTool"/>
+			<Tool Name="VCResourceCompilerTool"/>
+			<Tool Name="VCPreLinkEventTool"/>
+			<Tool EnableCOMDATFolding="2" GenerateDebugInformation="true" Name="VCLinkerTool" OptimizeReferences="2" TargetMachine="1"/>
+			<Tool Name="VCALinkTool"/>
+			<Tool Name="VCManifestTool"/>
+			<Tool Name="VCXDCMakeTool"/>
+			<Tool Name="VCBscMakeTool"/>
+			<Tool Name="VCFxCopTool"/>
+			<Tool Name="VCAppVerifierTool"/>
+			<Tool Name="VCWebDeploymentTool"/>
+			<Tool Name="VCPostBuildEventTool"/>
 		</Configuration>
 	</Configurations>
+	<References>
+	</References>
 	<Files>
-		<Filter
-			Name="Source Files"
-			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat">
-			<File
-				RelativePath=".\animcomp.c">
+		<Filter Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat" Name="Source Files">
+			<File RelativePath=".\animcomp.c">
 			</File>
-			<File
-				RelativePath=".\book.c">
+			<File RelativePath=".\book.c">
 			</File>
-			<File
-				RelativePath=".\common\bspfile.c">
+			<File RelativePath=".\common\bspfile.c">
 			</File>
-			<File
-				RelativePath=".\common\cmdlib.c">
+			<File RelativePath=".\common\cmdlib.c">
 			</File>
-			<File
-				RelativePath=".\fmodels.c">
+			<File RelativePath=".\fmodels.c">
 			</File>
-			<File
-				RelativePath=".\images.c">
+			<File RelativePath=".\images.c">
 			</File>
-			<File
-				RelativePath=".\common\inout.c">
+			<File RelativePath=".\common\inout.c">
 			</File>
-			<File
-				RelativePath=".\jointed.c">
+			<File RelativePath=".\jointed.c">
 			</File>
-			<File
-				RelativePath=".\common\l3dslib.c">
+			<File RelativePath=".\common\l3dslib.c">
 			</File>
-			<File
-				RelativePath=".\common\lbmlib.c">
+			<File RelativePath=".\common\lbmlib.c">
 			</File>
-			<File
-				RelativePath=".\common\mathlib.c">
+			<File RelativePath=".\common\mathlib.c">
 			</File>
-			<File
-				RelativePath=".\common\md4.c">
+			<File RelativePath=".\models.c">
 			</File>
-			<File
-				RelativePath=".\models.c">
+			<File RelativePath=".\common\path_init.c">
 			</File>
-			<File
-				RelativePath=".\common\path_init.c">
+			<File RelativePath=".\pics.c">
 			</File>
-			<File
-				RelativePath=".\pics.c">
+			<File RelativePath=".\qd_skeletons.c">
 			</File>
-			<File
-				RelativePath=".\qd_skeletons.c">
+			<File RelativePath=".\qdata.c">
 			</File>
-			<File
-				RelativePath=".\qdata.c">
+			<File RelativePath=".\common\qfiles.c">
 			</File>
-			<File
-				RelativePath=".\common\qfiles.c">
+			<File RelativePath=".\qcommon\reference.c">
 			</File>
-			<File
-				RelativePath=".\qcommon\reference.c">
+			<File RelativePath=".\qcommon\resourcemanager.c">
 			</File>
-			<File
-				RelativePath=".\qcommon\resourcemanager.c">
+			<File RelativePath=".\common\scriplib.c">
 			</File>
-			<File
-				RelativePath=".\common\scriplib.c">
+			<File RelativePath=".\qcommon\skeletons.c">
 			</File>
-			<File
-				RelativePath=".\qcommon\skeletons.c">
+			<File RelativePath=".\sprites.c">
 			</File>
-			<File
-				RelativePath=".\sprites.c">
+			<File RelativePath=".\svdcmp.c">
 			</File>
-			<File
-				RelativePath=".\svdcmp.c">
+			<File RelativePath=".\tables.c">
 			</File>
-			<File
-				RelativePath=".\tables.c">
+			<File RelativePath=".\common\threads.c">
 			</File>
-			<File
-				RelativePath=".\common\threads.c">
+			<File RelativePath=".\tmix.c">
 			</File>
-			<File
-				RelativePath=".\tmix.c">
+			<File RelativePath=".\common\token.c">
 			</File>
-			<File
-				RelativePath=".\common\token.c">
+			<File RelativePath=".\common\trilib.c">
 			</File>
-			<File
-				RelativePath=".\common\trilib.c">
-			</File>
-			<File
-				RelativePath=".\video.c">
+			<File RelativePath=".\video.c">
 			</File>
 		</Filter>
-		<Filter
-			Name="Header Files"
-			Filter="h;hpp;hxx;hm;inl">
-			<File
-				RelativePath=".\adpcm.h">
+		<Filter Filter="h;hpp;hxx;hm;inl" Name="Header Files">
+			<File RelativePath=".\adpcm.h">
 			</File>
-			<File
-				RelativePath=".\animcomp.h">
+			<File RelativePath=".\animcomp.h">
 			</File>
-			<File
-				RelativePath=".\anorms.h">
+			<File RelativePath=".\anorms.h">
 			</File>
-			<File
-				RelativePath=".\common\bspfile.h">
+			<File RelativePath=".\common\bspfile.h">
 			</File>
-			<File
-				RelativePath=".\common\cmdlib.h">
+			<File RelativePath=".\common\cmdlib.h">
 			</File>
-			<File
-				RelativePath=".\common\her2_threads.h">
+			<File RelativePath=".\common\her2_threads.h">
 			</File>
-			<File
-				RelativePath=".\common\inout.h">
+			<File RelativePath=".\common\inout.h">
 			</File>
-			<File
-				RelativePath=".\jointed.h">
+			<File RelativePath=".\jointed.h">
 			</File>
-			<File
-				RelativePath=".\joints.h">
+			<File RelativePath=".\joints.h">
 			</File>
-			<File
-				RelativePath=".\common\l3dslib.h">
+			<File RelativePath=".\common\l3dslib.h">
 			</File>
-			<File
-				RelativePath=".\common\lbmlib.h">
+			<File RelativePath=".\common\lbmlib.h">
 			</File>
-			<File
-				RelativePath=".\common\mathlib.h">
+			<File RelativePath=".\common\mathlib.h">
 			</File>
-			<File
-				RelativePath=".\qd_fmodel.h">
+			<File RelativePath=".\qd_fmodel.h">
 			</File>
-			<File
-				RelativePath=".\qd_skeletons.h">
+			<File RelativePath=".\qd_skeletons.h">
 			</File>
-			<File
-				RelativePath=".\qdata.h">
+			<File RelativePath=".\qdata.h">
 			</File>
-			<File
-				RelativePath=".\common\qfiles.h">
+			<File RelativePath=".\common\qfiles.h">
 			</File>
-			<File
-				RelativePath=".\qcommon\reference.h">
+			<File RelativePath=".\qcommon\reference.h">
 			</File>
-			<File
-				RelativePath=".\resource.h">
+			<File RelativePath=".\resource.h">
 			</File>
-			<File
-				RelativePath=".\qcommon\resourcemanager.h">
+			<File RelativePath=".\qcommon\resourcemanager.h">
 			</File>
-			<File
-				RelativePath=".\common\scriplib.h">
+			<File RelativePath=".\common\scriplib.h">
 			</File>
-			<File
-				RelativePath=".\qcommon\skeletons.h">
+			<File RelativePath=".\qcommon\skeletons.h">
 			</File>
-			<File
-				RelativePath=".\common\token.h">
+			<File RelativePath=".\common\token.h">
 			</File>
-			<File
-				RelativePath=".\common\trilib.h">
+			<File RelativePath=".\common\trilib.h">
 			</File>
 		</Filter>
-		<Filter
-			Name="Resource Files"
-			Filter="ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe">
+		<Filter Filter="ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe" Name="Resource Files">
 		</Filter>
-		<Filter
-			Name="debug"
-			Filter="">
-			<File
-				RelativePath="..\..\..\..\libxml2-2.6\lib\libxml2.lib">
-				<FileConfiguration
-					Name="Release|Win32"
-					ExcludedFromBuild="TRUE">
-					<Tool
-						Name="VCCustomBuildTool"/>
+		<Filter Name="debug">
+			<File RelativePath="..\..\..\..\libxml2\win32\binaries-debug\libxml2.lib">
+				<FileConfiguration ExcludedFromBuild="true" Name="Release|Win32">
+					<Tool Name="VCCustomBuildTool"/>
 				</FileConfiguration>
 			</File>
 		</Filter>
-		<Filter
-			Name="release"
-			Filter="">
-			<File
-				RelativePath="..\..\..\..\libxml2-2.6\lib\libxml2.lib">
-				<FileConfiguration
-					Name="Debug|Win32"
-					ExcludedFromBuild="TRUE">
-					<Tool
-						Name="VCCustomBuildTool"/>
+		<Filter Name="release">
+			<File RelativePath="..\..\..\..\libxml2\win32\binaries-release\libxml2.lib">
+				<FileConfiguration ExcludedFromBuild="true" Name="Debug|Win32">
+					<Tool Name="VCCustomBuildTool"/>
 				</FileConfiguration>
 			</File>
 		</Filter>

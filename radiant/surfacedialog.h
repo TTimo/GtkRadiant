@@ -1,5 +1,5 @@
 /*
-Copyright (C) 1999-2006 Id Software, Inc. and contributors.
+Copyright (C) 1999-2007 id Software, Inc. and contributors.
 For a list of contributors, see the accompanying CONTRIBUTORS file.
 
 This file is part of GtkRadiant.
@@ -19,42 +19,51 @@ along with GtkRadiant; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#if !defined(INCLUDED_SURFACEDIALOG_H)
-#define INCLUDED_SURFACEDIALOG_H
+#ifndef _SURFACEDIALOG_H_
+#define _SURFACEDIALOG_H_
 
+#include "dialog.h"
 
-void SurfaceInspector_Construct();
-void SurfaceInspector_Destroy();
-
-typedef struct _GtkWidget GtkWidget;
-typedef struct _GtkWindow GtkWindow;
-void SurfaceInspector_constructWindow(GtkWindow* widget);
-void SurfaceInspector_destroyWindow();
-
-bool SelectedFaces_empty();
-void SelectedFaces_copyTexture();
-void SelectedFaces_pasteTexture();
-void FaceTextureClipboard_setDefault();
-
-
-// the increment we are using for the surface inspector (this is saved in the prefs)
-struct si_globals_t
-{
-  float shift[2];
-  float scale[2];
-  float rotate;
-
-  bool m_bSnapTToGrid;
-
-  si_globals_t() : m_bSnapTToGrid(false)
-  {
-    shift[0] = 8.0f;
-    shift[1] = 8.0f;
-    scale[0] = 0.5f;
-    scale[1] = 0.5f;
-    rotate = 45.0f;
-  }
-};
-extern si_globals_t g_si_globals;
-
+#ifdef _DEBUG
+//#define DBG_SI 1
 #endif
+
+class SurfaceDlg : public Dialog
+{
+  bool m_bPatchMode;
+  // brush primitive fake shift scale rot coords
+  float	m_shift[2];
+  float	m_rotate;
+  float	m_scale[2];
+    
+public:
+  SurfaceDlg ();
+
+  virtual void ShowDlg();
+  virtual void HideDlg();
+  void SetTexMods();
+  void GetTexMods();
+
+  void InitDefaultIncrement(texdef_t *);
+
+  // Dialog Data
+  int m_nHeight;
+  int m_nWidth;
+
+  // 0 is invalid, otherwise it's the Id of the last 'do' we are responsible for
+  int m_nUndoId;
+
+  // is the user editing the texture widget (that changes the behaviour of 'Enter' key from OnDone to OnApply
+  // reset to false at each SetTexMods or when dealing with Enter key
+  bool m_bEditingTextureWidget;
+
+protected:
+  void BuildDialog ();
+
+public:
+  // called to perform a fitting from the outside (shortcut key)
+  void FitAll();
+  GtkWidget *GetWidget (); // { return m_pWidget; }
+};
+
+#endif // _SURFACEDIALOG_H_

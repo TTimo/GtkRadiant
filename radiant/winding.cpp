@@ -1,5 +1,5 @@
 /*
-Copyright (C) 1999-2006 Id Software, Inc. and contributors.
+Copyright (C) 1999-2007 id Software, Inc. and contributors.
 For a list of contributors, see the accompanying CONTRIBUTORS file.
 
 This file is part of GtkRadiant.
@@ -19,328 +19,804 @@ along with GtkRadiant; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
+
+
+#include "stdafx.h"
+#include <assert.h>
 #include "winding.h"
 
-#include <algorithm>
+#define BOGUS_RANGE (g_MaxWorldCoord+1)
 
-#include "math/line.h"
+/*
+=============
+Plane_Equal
+=============
+*/
+#define	NORMAL_EPSILON	0.0001
+#define	DIST_EPSILON	0.02
 
-
-inline double plane3_distance_to_point(const Plane3& plane, const DoubleVector3& point)
+int Plane_Equal(plane_t *a, plane_t *b, int flip)
 {
-  return vector3_dot(point, plane.normal()) - plane.dist();
+	vec3_t normal;
+	float dist;
+
+	if (flip) {
+		normal[0] = - b->normal[0];
+		normal[1] = - b->normal[1];
+		normal[2] = - b->normal[2];
+		dist = - b->dist;
+	}
+	else {
+		normal[0] = b->normal[0];
+		normal[1] = b->normal[1];
+		normal[2] = b->normal[2];
+		dist = b->dist;
+	}
+	if (
+	   fabs(a->normal[0] - normal[0]) < NORMAL_EPSILON
+	&& fabs(a->normal[1] - normal[1]) < NORMAL_EPSILON
+	&& fabs(a->normal[2] - normal[2]) < NORMAL_EPSILON
+	&& fabs(a->dist - dist) < DIST_EPSILON )
+		return true;
+	return false;
 }
 
-inline double plane3_distance_to_point(const Plane3& plane, const Vector3& point)
+/*
+============
+Plane_FromPoints
+============
+*/
+int Plane_FromPoints(vec3_t p1, vec3_t p2, vec3_t p3, plane_t *plane)
 {
-  return vector3_dot(point, plane.normal()) - plane.dist();
+	vec3_t v1, v2;
+
+	VectorSubtract(p2, p1, v1);
+	VectorSubtract(p3, p1, v2);
+	//CrossProduct(v2, v1, plane->normal);
+	CrossProduct(v1, v2, plane->normal);
+	if (VectorNormalize(plane->normal, plane->normal) < 0.1) return false;
+	plane->dist = DotProduct(p1, plane->normal);
+	return true;
 }
 
-/// \brief Returns the point at which \p line intersects \p plane, or an undefined value if there is no intersection.
-inline DoubleVector3 line_intersect_plane(const DoubleLine& line, const Plane3& plane)
+/*
+=================
+Point_Equal
+=================
+*/
+int Point_Equal(vec3_t p1, vec3_t p2, float epsilon)
 {
-  return line.origin + vector3_scaled(
-    line.direction,
-    -plane3_distance_to_point(plane, line.origin)
-    / vector3_dot(line.direction, plane.normal())
-  );
-}
+	int i;
 
-inline bool float_is_largest_absolute(double axis, double other)
-{
-  return fabs(axis) > fabs(other);
-}
-
-/// \brief Returns the index of the component of \p v that has the largest absolute value.
-inline int vector3_largest_absolute_component_index(const DoubleVector3& v)
-{
-  return (float_is_largest_absolute(v[1], v[0]))
-    ? (float_is_largest_absolute(v[1], v[2]))
-      ? 1
-      : 2
-    : (float_is_largest_absolute(v[0], v[2]))
-      ? 0
-      : 2;
-}
-
-/// \brief Returns the infinite line that is the intersection of \p plane and \p other.
-inline DoubleLine plane3_intersect_plane3(const Plane3& plane, const Plane3& other)
-{
-  DoubleLine line;
-  line.direction = vector3_cross(plane.normal(), other.normal());
-  switch(vector3_largest_absolute_component_index(line.direction))
-  {
-  case 0:
-    line.origin.x() = 0;
-    line.origin.y() = (-other.dist() * plane.normal().z() - -plane.dist() * other.normal().z()) / line.direction.x();
-    line.origin.z() = (-plane.dist() * other.normal().y() - -other.dist() * plane.normal().y()) / line.direction.x();
-    break;
-  case 1:
-    line.origin.x() = (-plane.dist() * other.normal().z() - -other.dist() * plane.normal().z()) / line.direction.y();
-    line.origin.y() = 0;
-    line.origin.z() = (-other.dist() * plane.normal().x() - -plane.dist() * other.normal().x()) / line.direction.y();
-    break;
-  case 2:
-    line.origin.x() = (-other.dist() * plane.normal().y() - -plane.dist() * other.normal().y()) / line.direction.z();
-    line.origin.y() = (-plane.dist() * other.normal().x() - -other.dist() * plane.normal().x()) / line.direction.z();
-    line.origin.z() = 0;
-    break;
-  default:
-    break;
-  }
-
-  return line;
-}
-
-
-/// \brief Keep the value of \p infinity as small as possible to improve precision in Winding_Clip.
-void Winding_createInfinite(FixedWinding& winding, const Plane3& plane, double infinity)
-{
-  double max = -infinity;
-  int x = -1;
-  for (int i=0 ; i<3; i++)
-  {
-    double d = fabs(plane.normal()[i]);
-    if (d > max)
-    {
-      x = i;
-      max = d;
-    }
-  }
-  if(x == -1)
-  {
-    globalErrorStream() << "invalid plane\n";
-    return;
-  }
-    
-  DoubleVector3 vup = g_vector3_identity;  
-  switch (x)
-  {
-  case 0:
-  case 1:
-    vup[2] = 1;
-    break;    
-  case 2:
-    vup[0] = 1;
-    break;    
-  }
-
-
-  vector3_add(vup, vector3_scaled(plane.normal(), -vector3_dot(vup, plane.normal())));
-  vector3_normalise(vup);
-    
-  DoubleVector3 org = vector3_scaled(plane.normal(), plane.dist());
-  
-  DoubleVector3 vright = vector3_cross(vup, plane.normal());
-  
-  vector3_scale(vup, infinity);
-  vector3_scale(vright, infinity);
-
-  // project a really big  axis aligned box onto the plane
-  
-  DoubleLine r1, r2, r3, r4;
-  r1.origin = vector3_added(vector3_subtracted(org, vright), vup);
-  r1.direction = vector3_normalised(vright);
-  winding.push_back(FixedWindingVertex(r1.origin, r1, c_brush_maxFaces));
-  r2.origin = vector3_added(vector3_added(org, vright), vup);
-  r2.direction = vector3_normalised(vector3_negated(vup));
-  winding.push_back(FixedWindingVertex(r2.origin, r2, c_brush_maxFaces));
-  r3.origin = vector3_subtracted(vector3_added(org, vright), vup);
-  r3.direction = vector3_normalised(vector3_negated(vright));
-  winding.push_back(FixedWindingVertex(r3.origin, r3, c_brush_maxFaces));
-  r4.origin = vector3_subtracted(vector3_subtracted(org, vright), vup);
-  r4.direction = vector3_normalised(vup);
-  winding.push_back(FixedWindingVertex(r4.origin, r4, c_brush_maxFaces));
+	for (i = 0; i < 3; i++)
+	{
+		if (fabs(p1[i] - p2[i]) > epsilon) return false;
+	}
+	return true;
 }
 
 
-inline PlaneClassification Winding_ClassifyDistance(const double distance, const double epsilon)
+/*
+=================
+Winding_BaseForPlane
+=================
+*/
+//#define DBG_WNDG
+winding_t *Winding_BaseForPlane (plane_t *p)
 {
-  if(distance > epsilon)
-  {
-    return ePlaneFront;
-  }
-  if(distance < -epsilon)
-  {
-    return ePlaneBack;
-  }
-  return ePlaneOn;
+	int		i, x;
+	vec_t	max, v;
+	vec3_t	org, vright, vup;
+	winding_t	*w;
+	
+	// find the major axis
+#ifdef DBG_WNDG
+  Sys_Printf("Winding_BaseForPlane %p\n",p);
+#endif
+
+  max = -BOGUS_RANGE;
+	x = -1;
+	for (i=0 ; i<3; i++)
+	{
+		v = fabs(p->normal[i]);
+		if (v > max)
+		{
+			x = i;
+			max = v;
+		}
+	}
+	if (x==-1)
+		Error ("Winding_BaseForPlane: no axis found");
+		
+	VectorCopy (vec3_origin, vup);	
+	switch (x)
+	{
+	case 0:
+	case 1:
+		vup[2] = 1;
+		break;		
+	case 2:
+		vup[0] = 1;
+		break;		
+	}
+
+
+	v = DotProduct (vup, p->normal);
+	VectorMA (vup, -v, p->normal, vup);
+	VectorNormalize (vup, vup);
+		
+	VectorScale (p->normal, p->dist, org);
+	
+	CrossProduct (vup, p->normal, vright);
+	
+	VectorScale (vup, BOGUS_RANGE, vup);
+	VectorScale (vright, BOGUS_RANGE, vright);
+
+  // project a really big	axis aligned box onto the plane
+	w = Winding_Alloc (4);
+	
+	VectorSubtract (org, vright, w->points[0]);
+	VectorAdd (w->points[0], vup, w->points[0]);
+	
+	VectorAdd (org, vright, w->points[1]);
+	VectorAdd (w->points[1], vup, w->points[1]);
+	
+	VectorAdd (org, vright, w->points[2]);
+	VectorSubtract (w->points[2], vup, w->points[2]);
+	
+	VectorSubtract (org, vright, w->points[3]);
+	VectorSubtract (w->points[3], vup, w->points[3]);
+	
+	w->numpoints = 4;
+
+	return w;	
 }
 
-/// \brief Returns true if
-/// !flipped && winding is completely BACK or ON
-/// or flipped && winding is completely FRONT or ON
-bool Winding_TestPlane(const Winding& winding, const Plane3& plane, bool flipped) 
+// macro to compute winding size
+#define WINDING_SIZE(pt) (sizeof(int)*2+sizeof(float)*5*(pt))
+
+/*
+==================
+Winding_Alloc
+==================
+*/
+winding_t *Winding_Alloc (int points)
 {
-  const int test = (flipped) ? ePlaneBack : ePlaneFront;
-  for(Winding::const_iterator i = winding.begin(); i != winding.end(); ++i)
-  {
-    if(test == Winding_ClassifyDistance(plane3_distance_to_point(plane, (*i).vertex), ON_EPSILON))
-    {
-      return false;
-    }
-  }
-  return true;
+	winding_t	*w;
+	int			size;
+	
+	if (points > MAX_POINTS_ON_WINDING)
+		Error ("Winding_Alloc: %i points", points);
+	
+//	size = (int)((winding_t *)0)->points[points];
+  size = WINDING_SIZE(points);
+	w = (winding_t*) malloc (size);
+	memset (w, 0, size);
+	w->maxpoints = points;
+	
+	return w;
 }
 
-/// \brief Returns true if any point in \p w1 is in front of plane2, or any point in \p w2 is in front of plane1
-bool Winding_PlanesConcave(const Winding& w1, const Winding& w2, const Plane3& plane1, const Plane3& plane2)
+void Winding_Free (winding_t *w)
 {
-  return !Winding_TestPlane(w1, plane2, false) || !Winding_TestPlane(w2, plane1, false);
+	free(w);
 }
 
-brushsplit_t Winding_ClassifyPlane(const Winding& winding, const Plane3& plane) 
+/*
+==================
+Winding_Clone
+==================
+*/
+winding_t *Winding_Clone(winding_t *w)
 {
-  brushsplit_t split;
-  for(Winding::const_iterator i = winding.begin(); i != winding.end(); ++i)
-  {
-    ++split.counts[Winding_ClassifyDistance(plane3_distance_to_point(plane, (*i).vertex), ON_EPSILON)];
-  }
-  return split;
+	int			size;
+	winding_t	*c;
+	
+//	size = (int)((winding_t *)0)->points[w->numpoints];
+  size = WINDING_SIZE(w->numpoints);
+	c = (winding_t*)qmalloc (size);
+	memcpy (c, w, size);
+	return c;
+}
+
+/*
+==================
+ReverseWinding
+==================
+*/
+winding_t *Winding_Reverse(winding_t *w)
+{
+	int			i;
+	winding_t	*c;
+
+	c = Winding_Alloc(w->numpoints);
+	for (i = 0; i < w->numpoints; i++)
+	{
+		VectorCopy (w->points[w->numpoints-1-i], c->points[i]);
+	}
+	c->numpoints = w->numpoints;
+	return c;
+}
+
+/*
+==============
+Winding_RemovePoint
+==============
+*/
+void Winding_RemovePoint(winding_t *w, int point)
+{
+	if (point < 0 || point >= w->numpoints)
+		Error("Winding_RemovePoint: point out of range");
+
+	if (point < w->numpoints-1)
+	{
+		memmove(&w->points[point], &w->points[point+1], (int)((winding_t *)0)->points[w->numpoints - point - 1]);
+	}
+	w->numpoints--;
+}
+
+/*
+=============
+Winding_InsertPoint
+=============
+*/
+winding_t *Winding_InsertPoint(winding_t *w, vec3_t point, int spot)
+{
+	int i, j;
+	winding_t *neww;
+
+	if (spot > w->numpoints)
+	{
+		Error("Winding_InsertPoint: spot > w->numpoints");
+	} //end if
+	if (spot < 0)
+	{
+		Error("Winding_InsertPoint: spot < 0");
+	} //end if
+	neww = Winding_Alloc(w->numpoints + 1);
+	neww->numpoints = w->numpoints + 1;
+	for (i = 0, j = 0; i < neww->numpoints; i++)
+	{
+		if (i == spot)
+		{
+			VectorCopy(point, neww->points[i]);
+		}
+		else
+		{
+			VectorCopy(w->points[j], neww->points[i]);
+			j++;
+		}
+	}
+	return neww;
+}
+
+/*
+==============
+Winding_IsTiny
+==============
+*/
+#define	EDGE_LENGTH	0.2
+
+int Winding_IsTiny (winding_t *w)
+{
+	int		i, j;
+	vec_t	len;
+	vec3_t	delta;
+	int		edges;
+
+	edges = 0;
+	for (i=0 ; i<w->numpoints ; i++)
+	{
+		j = i == w->numpoints - 1 ? 0 : i+1;
+		VectorSubtract (w->points[j], w->points[i], delta);
+		len = VectorLength (delta);
+		if (len > EDGE_LENGTH)
+		{
+			if (++edges == 3)
+				return false;
+		}
+	}
+	return true;
+}
+
+/*
+==============
+Winding_IsHuge
+==============
+*/
+int Winding_IsHuge(winding_t *w)
+{
+	int		i, j;
+
+	for (i=0 ; i<w->numpoints ; i++)
+	{
+		for (j=0 ; j<3 ; j++)
+			if (w->points[i][j] < -BOGUS_RANGE+1 || w->points[i][j] > BOGUS_RANGE-1)
+				return true;
+	}
+	return false;
+}
+
+/*
+=============
+Winding_PlanesConcave
+=============
+*/
+#define WCONVEX_EPSILON		0.2
+
+int Winding_PlanesConcave(winding_t *w1, winding_t *w2,
+							 vec3_t normal1, vec3_t normal2,
+							 float dist1, float dist2)
+{
+	int i;
+
+	if (!w1 || !w2) return false;
+
+	// check if one of the points of winding 1 is at the back of the plane of winding 2
+	for (i = 0; i < w1->numpoints; i++)
+	{
+		if (DotProduct(normal2, w1->points[i]) - dist2 > WCONVEX_EPSILON) return true;
+	}
+	// check if one of the points of winding 2 is at the back of the plane of winding 1
+	for (i = 0; i < w2->numpoints; i++)
+	{
+		if (DotProduct(normal1, w2->points[i]) - dist1 > WCONVEX_EPSILON) return true;
+	}
+
+	return false;
+}
+
+/*
+==================
+Winding_Clip
+
+Clips the winding to the plane, returning the new winding on the positive side
+Frees the input winding.
+If keepon is true, an exactly on-plane winding will be saved, otherwise
+it will be clipped away.
+==================
+*/
+winding_t *Winding_Clip (winding_t *in, plane_t *split, qboolean keepon)
+{
+	vec_t	dists[MAX_POINTS_ON_WINDING];
+	int		sides[MAX_POINTS_ON_WINDING];
+	int		counts[3];
+	vec_t	dot;
+	int		i, j;
+	vec_t	*p1, *p2;
+	vec3_t	mid;
+	winding_t	*neww;
+	int		maxpts;
+	
+	counts[0] = counts[1] = counts[2] = 0;
+
+	// determine sides for each point
+	for (i=0 ; i<in->numpoints ; i++)
+	{
+		dot = DotProduct (in->points[i], split->normal);
+		dot -= split->dist;
+		dists[i] = dot;
+		if (dot > ON_EPSILON)
+			sides[i] = SIDE_FRONT;
+		else if (dot < -ON_EPSILON)
+			sides[i] = SIDE_BACK;
+		else
+		{
+			sides[i] = SIDE_ON;
+		}
+		counts[sides[i]]++;
+	}
+	sides[i] = sides[0];
+	dists[i] = dists[0];
+	
+	if (keepon && !counts[0] && !counts[1])
+		return in;
+		
+	if (!counts[0])
+	{
+		Winding_Free (in);
+		return NULL;
+	}
+	if (!counts[1])
+		return in;
+	
+	maxpts = in->numpoints+4;	// can't use counts[0]+2 because
+								// of fp grouping errors
+	neww = Winding_Alloc (maxpts);
+		
+	for (i=0 ; i<in->numpoints ; i++)
+	{
+		p1 = in->points[i];
+		
+		if (sides[i] == SIDE_ON)
+		{
+			VectorCopy (p1, neww->points[neww->numpoints]);
+			neww->numpoints++;
+			continue;
+		}
+	
+		if (sides[i] == SIDE_FRONT)
+		{
+			VectorCopy (p1, neww->points[neww->numpoints]);
+			neww->numpoints++;
+		}
+		
+		if (sides[i+1] == SIDE_ON || sides[i+1] == sides[i])
+			continue;
+			
+		// generate a split point
+		p2 = in->points[(i+1)%in->numpoints];
+		
+		dot = dists[i] / (dists[i]-dists[i+1]);
+		for (j=0 ; j<3 ; j++)
+		{	// avoid round off error when possible
+			if (split->normal[j] == 1)
+				mid[j] = split->dist;
+			else if (split->normal[j] == -1)
+				mid[j] = -split->dist;
+			else
+				mid[j] = p1[j] + dot*(p2[j]-p1[j]);
+		}
+			
+		VectorCopy (mid, neww->points[neww->numpoints]);
+		neww->numpoints++;
+	}
+	
+	if (neww->numpoints > maxpts)
+		Error ("Winding_Clip: points exceeded estimate");
+		
+	// free the original winding
+	Winding_Free (in);
+	
+	return neww;
+}
+
+/*
+=============
+Winding_SplitEpsilon
+
+  split the input winding with the plane
+  the input winding stays untouched
+=============
+*/
+void Winding_SplitEpsilon (winding_t *in, vec3_t normal, double dist, 
+				vec_t epsilon, winding_t **front, winding_t **back)
+{
+	vec_t	dists[MAX_POINTS_ON_WINDING+4];
+	int		sides[MAX_POINTS_ON_WINDING+4];
+	int		counts[3];
+	vec_t	dot;
+	int		i, j;
+	vec_t	*p1, *p2;
+	vec3_t	mid;
+	winding_t	*f, *b;
+	int		maxpts;
+	
+	counts[0] = counts[1] = counts[2] = 0;
+
+	// determine sides for each point
+	for (i = 0; i < in->numpoints; i++)
+	{
+		dot = DotProduct (in->points[i], normal);
+		dot -= dist;
+		dists[i] = dot;
+		if (dot > epsilon)
+			sides[i] = SIDE_FRONT;
+		else if (dot < -epsilon)
+			sides[i] = SIDE_BACK;
+		else
+		{
+			sides[i] = SIDE_ON;
+		}
+		counts[sides[i]]++;
+	}
+	sides[i] = sides[0];
+	dists[i] = dists[0];
+	
+	*front = *back = NULL;
+
+	if (!counts[0])
+	{
+		*back = Winding_Clone(in);
+		return;
+	}
+	if (!counts[1])
+	{
+		*front = Winding_Clone(in);
+		return;
+	}
+
+	maxpts = in->numpoints+4;	// cant use counts[0]+2 because
+								// of fp grouping errors
+
+	*front = f = Winding_Alloc (maxpts);
+	*back = b = Winding_Alloc (maxpts);
+		
+	for (i = 0; i < in->numpoints; i++)
+	{
+		p1 = in->points[i];
+		
+		if (sides[i] == SIDE_ON)
+		{
+			VectorCopy (p1, f->points[f->numpoints]);
+			f->numpoints++;
+			VectorCopy (p1, b->points[b->numpoints]);
+			b->numpoints++;
+			continue;
+		}
+	
+		if (sides[i] == SIDE_FRONT)
+		{
+			VectorCopy (p1, f->points[f->numpoints]);
+			f->numpoints++;
+		}
+		if (sides[i] == SIDE_BACK)
+		{
+			VectorCopy (p1, b->points[b->numpoints]);
+			b->numpoints++;
+		}
+
+		if (sides[i+1] == SIDE_ON || sides[i+1] == sides[i])
+			continue;
+			
+		// generate a split point
+		p2 = in->points[(i+1)%in->numpoints];
+		
+		dot = dists[i] / (dists[i]-dists[i+1]);
+		for (j = 0; j < 3; j++)
+		{
+			// avoid round off error when possible
+			if (normal[j] == 1)
+				mid[j] = dist;
+			else if (normal[j] == -1)
+				mid[j] = -dist;
+			else
+				mid[j] = p1[j] + dot*(p2[j]-p1[j]);
+		}
+			
+		VectorCopy (mid, f->points[f->numpoints]);
+		f->numpoints++;
+		VectorCopy (mid, b->points[b->numpoints]);
+		b->numpoints++;
+	}
+	
+	if (f->numpoints > maxpts || b->numpoints > maxpts)
+		Error ("Winding_Clip: points exceeded estimate");
+	if (f->numpoints > MAX_POINTS_ON_WINDING || b->numpoints > MAX_POINTS_ON_WINDING)
+		Error ("Winding_Clip: MAX_POINTS_ON_WINDING");
+}
+
+/*
+=============
+Winding_TryMerge
+
+If two windings share a common edge and the edges that meet at the
+common points are both inside the other polygons, merge them
+
+Returns NULL if the windings couldn't be merged, or the new winding.
+The originals will NOT be freed.
+
+if keep is true no points are ever removed
+=============
+*/
+#define	CONTINUOUS_EPSILON	0.005
+
+winding_t *Winding_TryMerge(winding_t *f1, winding_t *f2, vec3_t planenormal, int keep)
+{
+	vec_t		*p1, *p2, *p3, *p4, *back;
+	winding_t	*newf;
+	int			i, j, k, l;
+	vec3_t		normal, delta;
+	vec_t		dot;
+	qboolean	keep1, keep2;
+	
+
+	//
+	// find a common edge
+	//	
+	p1 = p2 = NULL;	// stop compiler warning
+	j = 0;			// 
+	
+	for (i = 0; i < f1->numpoints; i++)
+	{
+		p1 = f1->points[i];
+		p2 = f1->points[(i+1) % f1->numpoints];
+		for (j = 0; j < f2->numpoints; j++)
+		{
+			p3 = f2->points[j];
+			p4 = f2->points[(j+1) % f2->numpoints];
+			for (k = 0; k < 3; k++)
+			{
+				if (fabs(p1[k] - p4[k]) > 0.1)//EQUAL_EPSILON) //ME
+					break;
+				if (fabs(p2[k] - p3[k]) > 0.1)//EQUAL_EPSILON) //ME
+					break;
+			} //end for
+			if (k==3)
+				break;
+		} //end for
+		if (j < f2->numpoints)
+			break;
+	} //end for
+	
+	if (i == f1->numpoints)
+		return NULL;			// no matching edges
+
+	//
+	// check slope of connected lines
+	// if the slopes are colinear, the point can be removed
+	//
+	back = f1->points[(i+f1->numpoints-1)%f1->numpoints];
+	VectorSubtract (p1, back, delta);
+	CrossProduct (planenormal, delta, normal);
+	VectorNormalize (normal, normal);
+	
+	back = f2->points[(j+2)%f2->numpoints];
+	VectorSubtract (back, p1, delta);
+	dot = DotProduct (delta, normal);
+	if (dot > CONTINUOUS_EPSILON)
+		return NULL;			// not a convex polygon
+	keep1 = (qboolean)(dot < -CONTINUOUS_EPSILON);
+	
+	back = f1->points[(i+2)%f1->numpoints];
+	VectorSubtract (back, p2, delta);
+	CrossProduct (planenormal, delta, normal);
+	VectorNormalize (normal, normal);
+
+	back = f2->points[(j+f2->numpoints-1)%f2->numpoints];
+	VectorSubtract (back, p2, delta);
+	dot = DotProduct (delta, normal);
+	if (dot > CONTINUOUS_EPSILON)
+		return NULL;			// not a convex polygon
+	keep2 = (qboolean)(dot < -CONTINUOUS_EPSILON);
+
+	//
+	// build the new polygon
+	//
+	newf = Winding_Alloc (f1->numpoints + f2->numpoints);
+	
+	// copy first polygon
+	for (k=(i+1)%f1->numpoints ; k != i ; k=(k+1)%f1->numpoints)
+	{
+		if (!keep && k==(i+1)%f1->numpoints && !keep2)
+			continue;
+		
+		VectorCopy (f1->points[k], newf->points[newf->numpoints]);
+		newf->numpoints++;
+	}
+	
+	// copy second polygon
+	for (l= (j+1)%f2->numpoints ; l != j ; l=(l+1)%f2->numpoints)
+	{
+		if (!keep && l==(j+1)%f2->numpoints && !keep1)
+			continue;
+		VectorCopy (f2->points[l], newf->points[newf->numpoints]);
+		newf->numpoints++;
+	}
+
+	return newf;
+}
+
+/*
+============
+Winding_Plane
+============
+*/
+void Winding_Plane (winding_t *w, vec3_t normal, double *dist)
+{
+	vec3_t v1, v2;
+	int i;
+
+	//find two vectors each longer than 0.5 units
+	for (i = 0; i < w->numpoints; i++)
+	{
+		VectorSubtract(w->points[(i+1) % w->numpoints], w->points[i], v1);
+		VectorSubtract(w->points[(i+2) % w->numpoints], w->points[i], v2);
+		if (VectorLength(v1) > 0.5 && VectorLength(v2) > 0.5) break;
+	}
+	CrossProduct(v2, v1, normal);
+	VectorNormalize(normal, normal);
+	*dist = DotProduct(w->points[0], normal);
+}
+
+/*
+=============
+Winding_Area
+=============
+*/
+float Winding_Area (winding_t *w)
+{
+	int		i;
+	vec3_t	d1, d2, cross;
+	float	total;
+
+	total = 0;
+	for (i=2 ; i<w->numpoints ; i++)
+	{
+		VectorSubtract (w->points[i-1], w->points[0], d1);
+		VectorSubtract (w->points[i], w->points[0], d2);
+		CrossProduct (d1, d2, cross);
+		total += 0.5 * VectorLength ( cross );
+	}
+	return total;
+}
+
+/*
+=============
+Winding_Bounds
+=============
+*/
+void Winding_Bounds (winding_t *w, vec3_t mins, vec3_t maxs)
+{
+	vec_t	v;
+	int		i,j;
+
+	mins[0] = mins[1] = mins[2] = 99999;
+	maxs[0] = maxs[1] = maxs[2] = -99999;
+
+	for (i=0 ; i<w->numpoints ; i++)
+	{
+		for (j=0 ; j<3 ; j++)
+		{
+			v = w->points[i][j];
+			if (v < mins[j])
+				mins[j] = v;
+			if (v > maxs[j])
+				maxs[j] = v;
+		}
+	}
 }
 
 
-#define DEBUG_EPSILON ON_EPSILON
-const double DEBUG_EPSILON_SQUARED = DEBUG_EPSILON * DEBUG_EPSILON;
-
-#define WINDING_DEBUG 0
-
-/// \brief Clip \p winding which lies on \p plane by \p clipPlane, resulting in \p clipped.
-/// If \p winding is completely in front of the plane, \p clipped will be identical to \p winding.  
-/// If \p winding is completely in back of the plane, \p clipped will be empty.  
-/// If \p winding intersects the plane, the edge of \p clipped which lies on \p clipPlane will store the value of \p adjacent.
-void Winding_Clip(const FixedWinding& winding, const Plane3& plane, const Plane3& clipPlane, std::size_t adjacent, FixedWinding& clipped)
+/*
+=================
+Winding_PointInside
+=================
+*/
+int Winding_PointInside(winding_t *w, plane_t *plane, vec3_t point, float epsilon)
 {
-  PlaneClassification classification = Winding_ClassifyDistance(plane3_distance_to_point(clipPlane, winding.back().vertex), ON_EPSILON);
-  PlaneClassification nextClassification;
-  // for each edge
-  for(std::size_t next = 0, i = winding.size()-1; next != winding.size(); i = next, ++next, classification = nextClassification)
-  {
-    nextClassification = Winding_ClassifyDistance(plane3_distance_to_point(clipPlane, winding[next].vertex), ON_EPSILON);
-    const FixedWindingVertex& vertex = winding[i];
+	int i;
+	vec3_t dir, normal, pointvec;
 
-    // if first vertex of edge is ON
-    if(classification == ePlaneOn)
-    {
-      // append first vertex to output winding
-      if(nextClassification == ePlaneBack)
-      {
-        // this edge lies on the clip plane
-        clipped.push_back(FixedWindingVertex(vertex.vertex, plane3_intersect_plane3(plane, clipPlane), adjacent));
-      }
-      else
-      {
-        clipped.push_back(vertex);
-      }
-      continue;
-    }
-  
-    // if first vertex of edge is FRONT
-    if(classification == ePlaneFront)
-    {
-      // add first vertex to output winding
-      clipped.push_back(vertex);
-    }
-    // if second vertex of edge is ON
-    if(nextClassification == ePlaneOn)
-    {
-      continue;
-    }
-    // else if second vertex of edge is same as first
-    else if(nextClassification == classification)
-    {
-      continue;
-    }
-    // else if first vertex of edge is FRONT and there are only two edges
-    else if(classification == ePlaneFront && winding.size() == 2)
-    {
-      continue;
-    }
-    // else first vertex is FRONT and second is BACK or vice versa
-    else
-    {
-      // append intersection point of line and plane to output winding
-      DoubleVector3 mid(line_intersect_plane(vertex.edge, clipPlane));
-
-      if(classification == ePlaneFront)
-      {
-        // this edge lies on the clip plane
-        clipped.push_back(FixedWindingVertex(mid, plane3_intersect_plane3(plane, clipPlane), adjacent));
-      }
-      else
-      {
-        clipped.push_back(FixedWindingVertex(mid, vertex.edge, vertex.adjacent));
-      }
-    }
-  }
+	for (i = 0; i < w->numpoints; i++)
+	{
+		VectorSubtract(w->points[(i+1) % w->numpoints], w->points[i], dir);
+		VectorSubtract(point, w->points[i], pointvec);
+		//
+		CrossProduct(dir, plane->normal, normal);
+		//
+		if (DotProduct(pointvec, normal) < -epsilon) return false;
+	}
+	return true;
 }
 
-std::size_t Winding_FindAdjacent(const Winding& winding, std::size_t face)
+/*
+=================
+Winding_VectorIntersect
+=================
+*/
+int Winding_VectorIntersect(winding_t *w, plane_t *plane, vec3_t p1, vec3_t p2, float epsilon)
 {
-  for(std::size_t i=0; i<winding.numpoints; ++i)
-  {
-    ASSERT_MESSAGE(winding[i].adjacent != c_brush_maxFaces, "edge connectivity data is invalid");
-    if(winding[i].adjacent == face)
-    {
-      return i;
-    }
-  }
-  return c_brush_maxFaces;
+	float front, back, frac;
+	vec3_t mid;
+
+	front = DotProduct(p1, plane->normal) - plane->dist;
+	back = DotProduct(p2, plane->normal) - plane->dist;
+	//if both points at the same side of the plane
+	if (front < -epsilon && back < -epsilon) return false;
+	if (front > epsilon && back > epsilon) return false;
+	//get point of intersection with winding plane
+	if (fabs(front-back) < 0.001)
+	{
+		VectorCopy(p2, mid);
+	}
+	else
+	{
+		frac = front/(front-back);
+		mid[0] = p1[0] + (p2[0] - p1[0]) * frac;
+		mid[1] = p1[1] + (p2[1] - p1[1]) * frac;
+		mid[2] = p1[2] + (p2[2] - p1[2]) * frac;
+	}
+	return Winding_PointInside(w, plane, mid, epsilon);
 }
 
-std::size_t Winding_Opposite(const Winding& winding, const std::size_t index, const std::size_t other)
-{
-  ASSERT_MESSAGE(index < winding.numpoints && other < winding.numpoints, "Winding_Opposite: index out of range");
-
-  double dist_best = 0;
-  std::size_t index_best = c_brush_maxFaces;
-
-  Ray edge(ray_for_points(winding[index].vertex, winding[other].vertex));
-
-  for(std::size_t i=0; i<winding.numpoints; ++i)
-  {
-    if(i == index || i == other)
-    {
-      continue;
-    }
-
-    double dist_squared = ray_squared_distance_to_point(edge, winding[i].vertex);
-
-    if(dist_squared > dist_best)
-    {
-      dist_best = dist_squared;
-      index_best = i;
-    }
-  }
-  return index_best;
-}
-
-std::size_t Winding_Opposite(const Winding& winding, const std::size_t index)
-{
-  return Winding_Opposite(winding, index, Winding_next(winding, index));
-}
-
-/// \brief Calculate the \p centroid of the polygon defined by \p winding which lies on plane \p plane.
-void Winding_Centroid(const Winding& winding, const Plane3& plane, Vector3& centroid)
-{
-  double area2 = 0, x_sum = 0, y_sum = 0;
-  const ProjectionAxis axis = projectionaxis_for_normal(plane.normal());
-  const indexremap_t remap = indexremap_for_projectionaxis(axis);
-  for(std::size_t i = winding.numpoints-1, j = 0; j < winding.numpoints; i = j, ++j)
-  {
-    const double ai = winding[i].vertex[remap.x] * winding[j].vertex[remap.y] - winding[j].vertex[remap.x] * winding[i].vertex[remap.y];
-    area2 += ai;
-    x_sum += (winding[j].vertex[remap.x] + winding[i].vertex[remap.x]) * ai;
-    y_sum += (winding[j].vertex[remap.y] + winding[i].vertex[remap.y]) * ai;
-  }
-
-  centroid[remap.x] = static_cast<float>(x_sum / (3 * area2));
-  centroid[remap.y] = static_cast<float>(y_sum / (3 * area2));
-  {
-    Ray ray(Vector3(0, 0, 0), Vector3(0, 0, 0));
-    ray.origin[remap.x] = centroid[remap.x];
-    ray.origin[remap.y] = centroid[remap.y];
-    ray.direction[remap.z] = 1;
-    centroid[remap.z] = static_cast<float>(ray_distance_to_plane(ray, plane));
-  }
-}

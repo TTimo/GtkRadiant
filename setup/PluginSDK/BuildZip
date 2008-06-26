@@ -1,6 +1,0 @@
-#!/bin/sh
-# temporary..
-
-# build the SDK zip
-rm PluginSDK.zip
-zip -r PluginSDK.zip src GtkRadiant README.html

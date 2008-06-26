@@ -1,6 +1,6 @@
 /*
-Copyright (C) 2001-2006, William Joseph.
-All Rights Reserved.
+Copyright (C) 1999-2007 id Software, Inc. and contributors.
+For a list of contributors, see the accompanying CONTRIBUTORS file.
 
 This file is part of GtkRadiant.
 
@@ -19,10 +19,14 @@ along with GtkRadiant; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#if !defined(INCLUDED_FILTERS_H)
-#define INCLUDED_FILTERS_H
+#ifndef _FILTERS_H_
+#define _FILTERS_H_
 
-typedef struct _GtkMenu GtkMenu;
-void Filters_constructMenu(GtkMenu* menu_in_menu);
+void FiltersActivate(void);
+bfilter_t *FilterCreate(int type, int bmask, char *str, int exclude);
+bfilter_t *FilterAdd(bfilter_t *pFilter, int type, int bmask, char *str, int exclude);
+bfilter_t *FilterListDelete(bfilter_t *pFilter);
+bfilter_t *FilterUpdate(bfilter_t *pFilter);
+bool FilterBrush(brush_t *pb);
 
-#endif
+#endif // _FILTERS_H_

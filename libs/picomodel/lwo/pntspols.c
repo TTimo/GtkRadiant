@@ -361,7 +361,7 @@ int lwResolvePolySurfaces( lwPolygonList *polygon, lwTagList *tlist,
          s[ index ]->name = _pico_alloc( strlen( tlist->tag[ index ] ) + 1 );
          if ( !s[ index ]->name ) return 0;
          strcpy( s[ index ]->name, tlist->tag[ index ] );
-         lwListAdd( (void *) surf, s[ index ] );
+         lwListAdd( surf, s[ index ] );
          *nsurfs = *nsurfs + 1;
       }
       polygon->pol[ i ].surf = s[ index ];
@@ -486,7 +486,7 @@ int lwGetTags( picoMemStream_t *fp, int cksize, lwTagList *tlist )
 
    bp = buf;
    for ( i = 0; i < ntags; i++ )
-      tlist->tag[ i + tlist->offset ] = sgetS0( (unsigned char **) &bp );
+      tlist->tag[ i + tlist->offset ] = sgetS0( &bp );
 
    _pico_free( buf );
    return 1;

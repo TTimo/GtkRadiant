@@ -1,0 +1,101 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+<meta name="ProgId" content="FrontPage.Editor.Document">
+<title>Blocking Vis</title>
+</head>
+
+<body background="../pics/background.jpg" text="#FFFFFF" link="#FFFFFF" vlink="#FFFFFF" alink="#FFFFFF">
+
+<b>
+<p align="center"><font size="5">Blocking Vis</font></p>
+<div align="right">
+  <table border="1" cellspacing="1" width="100%" bordercolor="#808080" bgcolor="#000000" cellpadding="10">
+    <tr>
+      <td width="100%"><font FACE="Times New Roman">
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Terrain maps still have to follow the rules that apply to all Q3A engine
+maps. There’s only so much that you can allow to be seen at one time, or the
+game starts slowing down. The good news is that the engine will only draw the
+terrain triangles that are in the player’s PVS (potential visible set). It
+doesn’t have to draw all the triangles in the terrain entity just because part
+of the entity is in view.</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; At first, most of the usual bag of tricks that mappers use to create vis
+blocking structures in architectural maps don’t seem to apply to terrain. But
+that is not the case. If anything, you <font color="#FFFF00"> NEED</font> to think of terrain in much the same
+way as you think of buildings. You are still dealing with open spaces that could
+be considered corridors and large rooms … even though they look like large
+valleys.</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; In fact, it would be best to plan out the layout of your terrain
+<font color="#FFFF00"> BEFORE</font>
+creating your height map. If you know you want to block vis, you can design your
+terrain to work with vis blocking techniques and avoid the agony of having to go
+all the way back to the start when you discover that your killer terrain map
+lets you see too much at once.</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; If you want the player, even in spectator mode, to be able to fly everywhere
+and see the whole world laid out below him … an unrestricted vista, so to
+speak, you’re going to be much more limited. Every single triangle in the map
+will essentially be viewable at any moment in time. However, if you’re willing
+to place restrictions on your players - limit how high they can fly or climb,
+you suddenly have more options for blocking player visibility.</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; First, the terrain entity is entirely detail content, so it doesn’t block
+vis. That’s a key part of how this whole process works. Otherwise, vis time
+would be measured in eras (not minutes or hours) and visdata size would be very,
+very large.</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; To block vis in the terrain, start by creating simple
+vis-blocking structures
+out of caulk texture inside the forms of the terrain (they are not part of the
+terrain entity). You can try to match the silhouette of the terrain, but in the
+end, you may only end up complicating the visdata without gaining any real
+benefit.</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Next, and this is going to sound strange, build thin walls of caulk that
+follow the divide line (where the terrain falls away on both sides) of the
+highest mountains, buttes or hills. Only do this where you know that you will
+not allow the player to move over or see over </font><font FACE="Times New Roman" COLOR="#000000">that
+part of the terrain (we’ll talk about clipping real soon).</p>
+<p>&nbsp;</p>
+</font><b><font SIZE="4">
+<p>Other Tips:</p>
+<blockquote>
+  <blockquote>
+  </font></b><font FACE="Symbol" SIZE="2">
+<p>· </font><b><font FACE="Times New Roman">Sky Texture in Place of Caulk:</font></b><font FACE="Times New Roman">
+You sometimes want to apply the sky texture to some of the surfaces of the thin
+walls used as vis blockers. This can remove some HOM effects. The caulk brushes
+that block the vis around the bases in mpterra2 have sky texture painted on the
+surfaces facing the base.</p>
+</font><font FACE="Symbol" SIZE="2">
+<p>· </font><b><font FACE="Times New Roman">Hint Brushes:</font></b><font FACE="Times New Roman">
+Use these extremely sparingly and only after trying to solve the problem in
+other ways. Hint brushes can add hours to vis compile times. Even so, they can
+make a difference. One trick you can try is to put a horizontal hint brush at a
+point about midway up the slopes of your terrain. It can add some additional vis
+break points.</p>
+</font><b><font FACE="Symbol" SIZE="2">
+<p><font color="#FFFFFF">· </font> </font><font FACE="Times New Roman" color="#FFFFFF">Adjusting Terrain:</font></b><font FACE="Times New Roman" color="#FFFFFF">
+Vis times totally depend on the placement of your vis blockers. Vis times are
+not affected by modifying the terrain surfaces (terrain entities are detail
+content, remember?). With that being said, you may want to modify the terrain to
+allow you to more effectively position the vis-blockers.
+</font>
+
+</p>
+</blockquote>
+</blockquote>
+
+<p align="center"><a href="terrain_texture.html">Back</a> - <a href="table_of_contents.html">Table
+of Contents</a> - <a href="clipping_the_terrain.html">Clipping the Terrain</a></p>
+
+        <p>&nbsp;</td>
+    </tr>
+  </table>
+</div>
+</b>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p align="center">-18-</p>
+
+</body>
+
+</html>

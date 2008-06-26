@@ -1,5 +1,5 @@
 /*
-Copyright (C) 1999-2006 Id Software, Inc. and contributors.
+Copyright (C) 1999-2007 id Software, Inc. and contributors.
 For a list of contributors, see the accompanying CONTRIBUTORS file.
 
 This file is part of GtkRadiant.
@@ -25,40 +25,18 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 // camera interface
 //
 
-#if !defined(INCLUDED_ICAMERA_H)
-#define INCLUDED_ICAMERA_H
+#ifndef __ICAMERA_H_
+#define __ICAMERA_H_
 
-#include "generic/constant.h"
-#include "generic/callbackfwd.h"
+#define CAMERA_MAJOR "camera"
 
-class Matrix4;
-
-class CameraView
-{
-public:
-  virtual void setModelview(const Matrix4& modelview) = 0;
-  virtual void setFieldOfView(float fieldOfView) = 0;
-};
-
-class CameraModel
-{
-public:
-  STRING_CONSTANT(Name, "CameraModel");
-  virtual void setCameraView(CameraView* view, const Callback& disconnect) = 0;
-};
-
-template<typename Element> class BasicVector3;
-typedef BasicVector3<float> Vector3;
-
-typedef void		(* PFN_GETCAMERA)		( Vector3& origin, Vector3& angles );
-typedef void		(* PFN_SETCAMERA)		( const Vector3& origin, const Vector3& angles );
+typedef void		(* PFN_GETCAMERA)		( vec3_t origin, vec3_t angles );
+typedef void		(* PFN_SETCAMERA)		( vec3_t origin, vec3_t angles );
 typedef void		(* PFN_GETCAMWINDOWEXTENTS)	( int *x, int *y, int *width, int *height );
 
 struct _QERCameraTable
 {
-  INTEGER_CONSTANT(Version, 1);
-  STRING_CONSTANT(Name, "camera");
-
+	int m_nSize;
 	PFN_GETCAMERA		m_pfnGetCamera;
 	PFN_SETCAMERA		m_pfnSetCamera;
 	PFN_GETCAMWINDOWEXTENTS	m_pfnGetCamWindowExtents;

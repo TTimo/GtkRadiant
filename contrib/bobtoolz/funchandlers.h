@@ -17,10 +17,10 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-class DBobView;
-class DVisDrawer;
-class DTrainDrawer;
-class DTreePlanter;
+#include "DBobView.h"
+#include "DVisDrawer.h"
+#include "DTrainDrawer.h"
+#include "DTreePlanter.h"
 
 extern DBobView* g_PathView;
 extern DVisDrawer* g_VisView;
@@ -50,23 +50,23 @@ void LoadLists();
 
 
 // djbob
-void DoIntersect();
-void DoPolygonsTB();
-void DoPolygons();
-void DoFixBrushes();
-void DoResetTextures();
-void DoBuildStairs();
-void DoBuildDoors();
-void DoPathPlotter();
-void DoPitBuilder();
-void DoCTFColourChanger();
-void DoMergePatches();
-void DoSplitPatch();
-void DoVisAnalyse();
-void DoTrainThing();
-void DoTrainPathPlot();
-void DoCaulkSelection();
-void DoTreePlanter();
-void DoDropEnts();
-void DoMakeChain();
-void DoFlipTerrain();
+void DoIntersect( void );
+void DoPolygonsTB( void );
+void DoPolygons(vec3_t vMin, vec3_t vMax);
+void DoFixBrushes( void );
+void DoResetTextures( void );
+void DoBuildStairs(vec3_t vMin, vec3_t vMax);
+void DoBuildDoors(vec3_t vMin, vec3_t vMax);
+void DoPathPlotter( void );
+void DoPitBuilder(vec3_t vMin, vec3_t vMax);
+void DoCTFColourChanger( void );
+void DoMergePatches( void );
+void DoSplitPatch( void );
+void DoVisAnalyse( void );
+void DoTrainThing( void );
+void DoTrainPathPlot( void );
+void DoCaulkSelection( void );
+void DoTreePlanter( void );
+void DoDropEnts( void );
+void DoMakeChain( void );
+void DoFlipTerrain( void );

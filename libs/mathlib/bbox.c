@@ -1,6 +1,6 @@
 /*
-Copyright (C) 2001-2006, William Joseph.
-All Rights Reserved.
+Copyright (C) 1999-2007 id Software, Inc. and contributors.
+For a list of contributors, see the accompanying CONTRIBUTORS file.
 
 This file is part of GtkRadiant.
 
@@ -23,26 +23,25 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "mathlib.h"
 
-const aabb_t g_aabb_null = {
-  { 0, 0, 0, },
-  { -FLT_MAX, -FLT_MAX, -FLT_MAX, },
-};
-
 void aabb_construct_for_vec3(aabb_t *aabb, const vec3_t min, const vec3_t max)
 {
   VectorMid(min, max, aabb->origin);
   VectorSubtract(max, aabb->origin, aabb->extents);
 }
 
+void aabb_update_radius(aabb_t *aabb)
+{
+  aabb->radius = VectorLength(aabb->extents);
+}
+
 void aabb_clear(aabb_t *aabb)
 {
-  VectorCopy(g_aabb_null.origin, aabb->origin);
-  VectorCopy(g_aabb_null.extents, aabb->extents);
+  aabb->origin[0] = aabb->origin[1] = aabb->origin[2] = 0;
+  aabb->extents[0] = aabb->extents[1] = aabb->extents[2] = -FLT_MAX;
 }
 
 void aabb_extend_by_point(aabb_t *aabb, const vec3_t point)
 {
-#if 1
   int i;
   vec_t min, max, displacement;
   for(i=0; i<3; i++)
@@ -68,28 +67,6 @@ void aabb_extend_by_point(aabb_t *aabb, const vec3_t point)
       aabb->extents[i] = max - aabb->origin[i];
     }
   }
-#else
-  unsigned int i;
-  for(i=0; i<3; ++i)
-  {
-    if(aabb->extents[i] < 0) // degenerate
-    {
-      aabb->origin[i] = point[i];
-      aabb->extents[i] = 0;
-    }
-    else
-    {
-      vec_t displacement = point[i] - aabb->origin[i];
-      vec_t increment = (vec_t)fabs(displacement) - aabb->extents[i];
-      if(increment > 0)
-      {
-        increment *= (vec_t)((displacement > 0) ? 0.5 : -0.5);
-        aabb->extents[i] += increment;
-        aabb->origin[i] += increment;
-      }
-    }
-  }
-#endif
 }
 
 void aabb_extend_by_aabb(aabb_t *aabb, const aabb_t *aabb_src)
@@ -137,7 +114,7 @@ void aabb_extend_by_vec3(aabb_t *aabb, vec3_t extension)
   VectorAdd(aabb->extents, extension, aabb->extents);
 }
 
-int aabb_test_point(const aabb_t *aabb, const vec3_t point)
+int aabb_intersect_point(const aabb_t *aabb, const vec3_t point)
 {
   int i;
   for(i=0; i<3; i++)
@@ -146,7 +123,7 @@ int aabb_test_point(const aabb_t *aabb, const vec3_t point)
   return 1;
 }
 
-int aabb_test_aabb(const aabb_t *aabb, const aabb_t *aabb_src)
+int aabb_intersect_aabb(const aabb_t *aabb, const aabb_t *aabb_src)
 {
   int i;
   for (i=0; i<3; i++)
@@ -155,14 +132,23 @@ int aabb_test_aabb(const aabb_t *aabb, const aabb_t *aabb_src)
   return 1;
 }
 
-int aabb_test_plane(const aabb_t *aabb, const float *plane)
+int aabb_intersect_plane(const aabb_t *aabb, const float *plane)
 {
   float fDist, fIntersect;
 
   // calc distance of origin from plane
   fDist = DotProduct(plane, aabb->origin) + plane[3];
   
-   // calc extents distance relative to plane normal
+  // trivial accept/reject using bounding sphere
+	if (fabs(fDist) > aabb->radius)
+	{
+		if (fDist < 0)
+			return 2; // totally inside
+		else
+			return 0; // totally outside
+	}
+
+  // calc extents distance relative to plane normal
   fIntersect = (vec_t)(fabs(plane[0] * aabb->extents[0]) + fabs(plane[1] * aabb->extents[1]) + fabs(plane[2] * aabb->extents[2]));
   // accept if origin is less than or equal to this distance
   if (fabs(fDist) < fIntersect) return 1; // partially inside
@@ -181,7 +167,7 @@ from "Graphics Gems", Academic Press, 1990
 #define LEFT	1
 #define MIDDLE	2
 
-int aabb_intersect_ray(const aabb_t *aabb, const ray_t *ray, vec3_t intersection)
+int aabb_intersect_ray(const aabb_t *aabb, const ray_t *ray, vec_t *dist)
 {
 	int inside = 1;
 	char quadrant[NUMDIM];
@@ -189,6 +175,7 @@ int aabb_intersect_ray(const aabb_t *aabb, const ray_t *ray, vec3_t intersection
 	int whichPlane;
 	double maxT[NUMDIM];
 	double candidatePlane[NUMDIM];
+  vec3_t coord, segment;
   
   const float *origin = ray->origin;
   const float *direction = ray->direction;
@@ -218,7 +205,7 @@ int aabb_intersect_ray(const aabb_t *aabb, const ray_t *ray, vec3_t intersection
 	/* Ray origin inside bounding box */
 	if(inside == 1)
   {
-		VectorCopy(ray->origin, intersection);
+		*dist = 0.0f;
 		return 1;
 	}
 
@@ -245,15 +232,18 @@ int aabb_intersect_ray(const aabb_t *aabb, const ray_t *ray, vec3_t intersection
   {
 		if (whichPlane != i)
     {
-			intersection[i] = (vec_t)(origin[i] + maxT[whichPlane] * direction[i]);
-			if (fabs(intersection[i] - aabb->origin[i]) > aabb->extents[i])
+			coord[i] = (vec_t)(origin[i] + maxT[whichPlane] * direction[i]);
+			if (fabs(coord[i] - aabb->origin[i]) > aabb->extents[i])
 				return 0;
 		}
     else
     {
-			intersection[i] = (vec_t)candidatePlane[i];
+			coord[i] = (vec_t)candidatePlane[i];
 		}
   }
+
+  VectorSubtract(coord, origin, segment);
+  *dist = DotProduct(segment, direction);
 
 	return 1;				/* ray hits box */
 }
@@ -294,22 +284,6 @@ int aabb_test_ray(const aabb_t* aabb, const ray_t* ray)
  return 1;
 }
 
-void aabb_orthogonal_transform(aabb_t* dst, const aabb_t* src, const m4x4_t transform)
-{
-  VectorCopy(src->origin, dst->origin);
-  m4x4_transform_point(transform, dst->origin);
-
-  dst->extents[0] = (vec_t)(fabs(transform[0]  * src->extents[0])
-                          + fabs(transform[4]  * src->extents[1])
-                          + fabs(transform[8]  * src->extents[2]));
-  dst->extents[1] = (vec_t)(fabs(transform[1]  * src->extents[0])
-                          + fabs(transform[5]  * src->extents[1])
-                          + fabs(transform[9]  * src->extents[2]));
-  dst->extents[2] = (vec_t)(fabs(transform[2]  * src->extents[0])
-                          + fabs(transform[6]  * src->extents[1])
-                          + fabs(transform[10] * src->extents[2]));
-}
-
 void aabb_for_bbox(aabb_t *aabb, const bbox_t *bbox)
 {
 	int i;
@@ -332,54 +306,8 @@ void aabb_for_area(aabb_t *aabb, vec3_t area_tl, vec3_t area_br, int axis)
   aabb_extend_by_point(aabb, area_br);
 }
 
-int aabb_oriented_intersect_plane(const aabb_t *aabb, const m4x4_t transform, const vec_t* plane)
-{
-  vec_t fDist, fIntersect;
-
-  // calc distance of origin from plane
-  fDist = DotProduct(plane, aabb->origin) + plane[3];
-
-  // calc extents distance relative to plane normal
-  fIntersect = (vec_t)(fabs(aabb->extents[0] * DotProduct(plane, transform))
-    + fabs(aabb->extents[1] * DotProduct(plane, transform+4))
-    + fabs(aabb->extents[2] * DotProduct(plane, transform+8)));
-  // accept if origin is less than this distance
-  if (fabs(fDist) < fIntersect) return 1; // partially inside
-  else if (fDist < 0) return 2; // totally inside
-  return 0; // totally outside
-}
-
-void aabb_corners(const aabb_t* aabb, vec3_t corners[8])
-{
-  vec3_t min, max;
-  VectorSubtract(aabb->origin, aabb->extents, min);
-  VectorAdd(aabb->origin, aabb->extents, max);
-  VectorSet(corners[0], min[0], max[1], max[2]);
-  VectorSet(corners[1], max[0], max[1], max[2]);
-  VectorSet(corners[2], max[0], min[1], max[2]);
-  VectorSet(corners[3], min[0], min[1], max[2]);
-  VectorSet(corners[4], min[0], max[1], min[2]);
-  VectorSet(corners[5], max[0], max[1], min[2]);
-  VectorSet(corners[6], max[0], min[1], min[2]);
-  VectorSet(corners[7], min[0], min[1], min[2]);
-}
-
-
-void bbox_update_radius(bbox_t *bbox)
-{
-  bbox->radius = VectorLength(bbox->aabb.extents);
-}
-
 void aabb_for_transformed_aabb(aabb_t* dst, const aabb_t* src, const m4x4_t transform)
 {
-  if(src->extents[0] < 0
-    || src->extents[1] < 0
-    || src->extents[2] < 0)
-  {
-    aabb_clear(dst);
-    return;
-  }
-
   VectorCopy(src->origin, dst->origin);
   m4x4_transform_point(transform, dst->origin);
 
@@ -393,6 +321,7 @@ void aabb_for_transformed_aabb(aabb_t* dst, const aabb_t* src, const m4x4_t tran
                           + fabs(transform[6]  * src->extents[1])
                           + fabs(transform[10] * src->extents[2]));
 }
+
 
 void bbox_for_oriented_aabb(bbox_t *bbox, const aabb_t *aabb, const m4x4_t matrix, const vec3_t euler, const vec3_t scale)
 {
@@ -432,7 +361,7 @@ void bbox_for_oriented_aabb(bbox_t *bbox, const aabb_t *aabb, const m4x4_t matri
 	bbox->axes[2][1] = (vec_t)(-B*C);
 	bbox->axes[2][2] = (vec_t)(A*C);
 
-  bbox_update_radius(bbox);
+  aabb_update_radius(&bbox->aabb);
 }
 
 int bbox_intersect_plane(const bbox_t *bbox, const vec_t* plane)
@@ -443,7 +372,7 @@ int bbox_intersect_plane(const bbox_t *bbox, const vec_t* plane)
   fDist = DotProduct(plane, bbox->aabb.origin) + plane[3];
 
 	// trivial accept/reject using bounding sphere
-	if (fabs(fDist) > bbox->radius)
+	if (fabs(fDist) > bbox->aabb.radius)
 	{
 		if (fDist < 0)
 			return 2; // totally inside

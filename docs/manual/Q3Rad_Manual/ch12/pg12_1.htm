@@ -1,0 +1,285 @@
+<html>
+<head>
+<title>Q3Radiant Editor Manual: Page 12.1</title>
+<link rel = "stylesheet" type = "text/css" href = "../styles/q3rad.css">
+</head>
+<body>
+<h1 class = "MsoTitle">Q3Radiant Editor Manual</h1>
+<hr>
+<h1><a name = "tools9">Tools 9: Debugging Maps</a></h1>
+
+Regardless of your skills, you can almost guarantee that you are going to make mistakes building your maps. You need tools to help you find and correct those mistakes. There are two classes of map debugging tools usable with <i>Quake III Arena</i>. The first are those that the editor gives you. The second are commands usable in the game.
+
+<h2><a name = "eddebug">The Editor's Debug Tools</a></h2>
+
+The Q3Radiant editor has some built in debugging tools
+
+<p><div class = "subheading">The Pointfile</div>
+
+One of the most useful tools in the box, this is the "red flag" that warns you about problems with the "hull" or "shell" of the map. When you compile a map, the bsp process checks the integrity of the map hull. If a map has a hole in it's hull or if an entity's origin point is placed outside the map hull, the map will "leak". <i>Quake III Arena</i> maps must be totally contained volumes. They cannot have "leaks" in them. Leaks are openings in the hull between the contained space (or "breathable" as one mapper has described it) and the outer void where nothing can abide.
+
+<p>The pointfile appears as a series of points, connected by red line segments, that traces a connecting path between an entity inside the hull and a point in the outside world.. Follow the pointfile through the map and note where it passes out of the enclosed space and into the void. In the case of an entity outside the world, it may just draw a line near the entity. You may need to turn off the display of clip and hint brushes, and curves to find the leaks. Adjust your solid map geometry to close up the leaks.
+
+<p>When you save the map (or an auto-save occurs), the pointfile disappears. You can bring the pointfile back by toggling this command.
+
+<p><b>Note:</b> If you use a front-end program for compiling, such as <i>Q3Build,</i> you will need to reload the map file and select the "pointfile" command under the File menu.
+
+<p><div class = "subheading">Next leak spot</div>
+<div class = "menu">(Menu: Misc &gt; Next leak spot)
+<br>(Shortcut: SHIFT + CTRL +K)</div>
+
+If you have a pointfile displayed in your map, use this command to move from point to point along the file. It's an easy way to move along the path to the point where the red line passes out of the contained space of the map.
+
+<p><div class = "subheading">Previous leak spot</div>
+<div class = "menu">(Menu: Misc &gt; Next leak spot)
+<br>(Shortcut: SHIFT + CTRL +K)</div>
+A feature just like "Next leak spot", except that you move backwards along the pointfile.
+
+<p><div class = "subheading">Junk.txt</div>
+The Q3MAP compiler outputs this log file. It logs what the compiler is doing during the process; displays error messages and
+gives final compile times for each phase. Because the compiler works in three discrete phases, you can also use this
+output to gauge how far along the compile has gone. Edit the project file to change the path to the destination for this
+output.
+
+<p><div class = "subheading">Error Messages</div>
+When you compile a map, you are likely to get error messages. Most of these are not serious and the game engine either corrects them or ignores them. This is a sampling of common messages and what you should do about them.
+
+<p><b>Mixed faces:</b> One or more faces on a brush has a surface parameter that conflicts with the other surface parameters. This is not a problem. Putting nodraw or clip on a brush that has a face that draws will cause this. That includes most all "flame" brushes, many water brushes, and just about every instance where alpha-channel textures are used to create see-through brush faces.
+
+<p><b>Bad point to polygon form factor:</b> A curve patch is larger than 512 units in at least one dimension. This is not fatal, but may result in some unusual light artifacts on the curve.
+
+<p><b>Unknown surfaceparm: "nomipmaps"</b> Some shaders contain old or incorrectly spelled parameters. This is not a problem.
+
+<p><b>Too many portals.</b> Your map is broken into too many separate hulls by areaportal brushes. Try to keep the number of
+discrete portalled areas under 16.
+
+<p><b>Duplicate plane.</b> During the course of manipulating brushes, you may have moved edges in such a manner that two
+adjacent sides of a brush now form a single brush side. Use Find brush to locate the problem brush. Use the old brush as a template or pattern, but build the new one with a single side in the place of the duplicate plane sides. One way to solve the problem is to use the Clipper tool cut off a corner instead of collapsing two faces into one. While this is not a serious problem for multiplayer play, it can create "solid" areas in the bot navigation (.aas) file. This makes the bots think there are walls in places where there appear to be none. You can check for solid areas with the "bot_testsolid 1" inside the game (after creating an .aas file). See the <a href = "../appndx/appn_c.htm">Bot Navigation appendix</a> for more details.
+
+<p><b>******* Leaked *******.</b> There is a hole between the contained space of your map and the outer void. Use the pointfile to locate the problem.
+
+<p><b>Couldn't load baseq3/pics/colormap.pcx trying tools/colormap.pcx...failed!</b> This is not a compile error,
+but a loading error. Correct it by checking the hi-color textures setting in Preferences.
+
+<p><b>Loading base_light/light_flare...failed, using default shader.</b> Just ignore this.
+
+<p><b>match token ("{") failed at line [line number].</b> You broke a shader while editing it. Go closely look at the shader you most recently edited. Chances are you'll find a bracket error in the syntax.
+
+<h2><a name = "gamedebug">In-game Debug tools</a></h2>
+One of the best places to look for errors in your map is within the Quake III Arena game itself. After the map has compiled,
+execute your Debug Config and load your map. The commands here will help you discover the errors in your map.
+
+<p><div class = "subheading">General Cheats</div>
+The following are the general <i>Quake III Arena</i> cheat codes (they're actually developer's tools). You can enter them from the console, or bind them to whatever keys you prefer using the syntax <span class = "type">bind [key] [command]</span>. If the command is a string with spaces, then the string should be enclosed with quotation marks.
+
+<p><b>give [weapon/item/ammo/health]</b> <b>[amount]</b> <span class = "type">// Give selected weapon/item/ammo/health</span>
+
+<p><b>give all</b> <span class = "type">// Gives all weapons, ammo, armor, and items</span>
+
+<p><b>god</b> <span class = "type">// Godmode</span>
+
+<p><b>noclip</b> <span class = "type">// Pass through anything. Use in conjunction with r_fastsky 1 or r_clear 1, or you will have hall of mirror problems when you pass out of the bounds of the map.</span>
+
+<p><b>notarget</b> <span class = "type">// Bots think you're a pal viewpos // Outputs player coordinate position and facing angle.</span>
+
+<p><div class = "subheading">General Toggle Binds</div>
+<i>(Thanks to original authors GrandMaMa and Eutectic</i>)
+<br>The following are some binds that you might like handy. Note that some of these will alter saved settings, so make sure that your preferred settings are loaded on startup, like in your autoexec.cfg file.
+
+<p><div class = "type">bind "<i>your key</i>" toggle r_speeds // polycount report
+<br>bind "<i>your key</i>" toggle r_showtris // tris triangles
+<br>bind "<i>your key</i>" toggle cg_drawfps // framerate counter
+<br>bind "<i>your key</i>" toggle com_speeds // shows all stats
+<br>bind "<i>your key</i>" toggle r_drawentities // ents won't be drawn
+</div>
+
+<p><div class = "subheading">Debug Mode: Logfile Creation</div>
+One method that can be used for troubleshooting maps where curious errors occur (usually when simply too much is going on at
+once) is to resort to poring over the developer output. The console buffer is limited, and error-producing maps may crash, so printing the output to a logfile is desired. This script allows the toggling of these functions.
+
+<p><div class = "type">bind "<i>your key</i>" vstr dbg set dbg vstr debug_1
+
+<p>set developer 0 set logfile 0 set debug_1 "set dbg vstr debug_0;echo DEBUGMODE ON;developer 1;logfile 2" set debug_0 "set
+dbg vstr debug_1;echo DEBUGMODE OFF;developer 0;logfile 0" </div>
+
+<p><div class = "subheading">GL_Showtris/R_Speeds/FrameCounter Toggle</div>
+<i>(Based in part on an article by orginal author MD</i>)
+<p>The "gl_showtris" and "r_speeds" commands allow you to see the number and location of polygons (surface triangles) in your view. The "
+
+<p><strong>Show me the Triangles</strong>
+Showtris draws a white line around each triangle used to create the world when it is a part of a map's potential viewable set (PVS). This is especially effective tool, since it shows the triangle outlines of map areas that are being "seen" by the engine, which are not always just the ones that the player sees.
+
+<p>Depending on your video card, this may work well, or it may not. For some (like the Matrox cards, it comes with a huge performance hit).
+
+<p><strong>The Need for (R_) Speeds</strong>
+This output is one of the more valuable reports you can get on a map. The numbers show you the numbers that can tell you what kind of real visual costs you are encounter. Combined with other commands that turn features like entities, curves, and multi-pass texturing on and off, you can get a realistic idea of where you're having problems.
+
+<p><strong>Here's what those cryptic numbers mean.</strong>
+When r_speeds = 1, the numbers read as follows (where the # sign equals a number)
+
+<p class = "menu" align = "center"># / # shaders/surfs # leafs # verts # / # tris #.## mtex #.## dc
+
+<p><b># / # shaders/surfs</b> is the number of shaders in view, followec by the number of surfaces in view.
+
+<p><b># leafs</b> is how many leaf nodes are potentially visible.
+
+<p><b># verts</b> is how many vertexes are in view
+
+<p><b># / # tris</b> is the number of trangles drawn by the renderer in a single pass single pass followed by the number of
+triangles drawn by the renderer with all passes. These are the numbers that are most often implied when someone talks about
+"r_speeds." If the r_ext_multitexture variable is off, the numbers will reflect a more accurate accounting of the real triangle count (see multi-pass texturing section below).
+
+<p><b># .## mtex #.## dc</b> [definition under construction]
+
+<p><strong>Frame Rate</strong>
+There is a tendency for rate of frame display to become a sort of god (or at least a "greatest good") for some players. Their quality of play, whether real or psychological, revolves around how fast their computer is flipping through screen updates. Everything else, to them, is throw away. While the design and complexity of a map can affect this, so can many features that are outside of the designer's control. For that reason, frame rate is not a particularly good way to judge the quality of your map.
+
+<p>The "cg_drawfps 1" command gives you instantaneous frame rate readout.
+
+<p>Use this command string to toggle the three at once. Include the following lines in your Debug Config script:
+
+<p><div class = "type">set r_showtris 0
+<br>set r_speeds 0
+<br>set cg_drawfps 0</p>
+<br>bind "<i>your key</i>" "toggle r_showtris;toggle r_speeds;toggle cg_drawfps"</div>
+
+<p><div class = "subheading">Lock the PVS Table</div>
+<i>(Author: MD)</i>
+<br>"PVS" means "potential viewable set." The PVS includes all the polygons that can be seen from a particular location in the map (i.e., where you are standing now). The game engine updates what is visible and what is not as you move through the map. You can stop this updating process, and see just how far the engine can see by moving until you find an area of the world that's not being drawn. Use this to debug views where the frame rate drops below an acceptable level. Go to a place where you get a bad "fps" reading. Execute this command. When the PVS Table is locked, you can walk through the map and see exactly how far your view extends. Surfaces in view will be drawn as normal. Non-seen surfaces will show up as the Hall of Mirrors effect (unless the fast sky or r_clear options are also set). Use the information as a guide for changing what can be seen in a view.
+
+<p>This command string script toggles the use of the PVS table to let you do this. It also toggles on the r_clear option, so
+instead of Hall of Mirrors the void beyond the world is seen in fashion doll pink.
+
+<p><div class = "type">set r_lockpvs 0 set r_clear 0
+<br>bind "<i>your key</i>" vstr lockview set lockview vstr lockview1
+<br>set lockview1 "set lockview vstr lockview0;echo PVS Locked;r_lockpvs 1;r_clear 1"
+<br>set lockview0 "set lockview vstr lockview1;echo PVS Unlocked;r_lockpvs 0;r_clear 0"</div>
+
+<p><div class = "subheading">MultiPass Texturing Toggle</div>
+<i>(Based on an article by original author: MD<)</i>
+<br>The number of triangles that must be drawn before a frame can be displayed affects the speed at which the game is played. More triangles means lower speed. When a texture on a triangle requires additional drawing passes, it is the same as drawing an additional triangle again for each pass of redraw. The ideal video card for the <i>Quake III Arena</i> game is one that has a multi-pass texturing feature. What this means is that the second rendering pass on a texture is essentially free. Its triangle cost is not calculated into the r-speeds. Unfortunately, the map designer cannot plan on every user having such a card and must instead design for worst case scenarios. If you are working on machine that has a multi-pass texturing feature, you will need to find out how the other half plays. You need to toggle the feature off for this.
+
+<p>This feature toggles between multi-pass texturing and single-pass texturing. When multi-pass texturing is enabled, the
+additional triangles are masked. They won't appear in the r_speeds report.
+
+<p>For this feature to work, the video must be restarted. That command is included in the binding. For best results, refrain from pressing the bound key again until the video has re-initialized and the map has re-loaded. Your normal setting for r_ext_multitexture should appear also. In the key binding below, it's been set to a value of 1, which is the most common. This way it will be properly set on startup, since this toggle can hose that setting.
+
+<p><div class = "type">set r_ext_multitexture 1
+<br>bind "<i>your key</i>" "toggle r_ext_multitexture;vid_restart"</div>
+
+<p><div class = "subheading">Turning Off Curves and Entities</div>
+How much of the r_speed cost in your map can be attributed to entities. How much to curves? These two commands turn off the
+drawing of those entities. The set commands start by setting the features to their "on" condition.
+
+<p><div class = "type">bind "<i>your key</i>" toggle r_drawentities // entities won't be drawn
+<br>bind "<i>your key</i>" toggle r_nocurves // curves won't be drawn</div>
+
+<h2><a name = "sparklies">Curves, Caulk, T-Junctions and Cracks</a></h2>
+(From an article on the same by Martin Ka'ai Cluney)
+
+<p>During the course of <i>Quake III Arena</i> development, a number of solutions were created to deal with the idiosyncrasies of the compiling process. None of these problems is a game killer, but the presence of these little flaws tends to reduce the professional appearance of game maps.
+
+<p><div class = "subheading">An Explanation of "Z-Fighting"</div>
+"Z-fighting" is caused when the engine tries to simultaneously draw two surfaces that share the same plane. "Z-fighting"
+commonly occurs when two brushes with different textures are in the same place (see fig. X-1,) but it can also occur on some video cards when a patch is placed over a textured brush (see fig. X-2.)
+
+<p><div class = "subheading">An Explanation of T-Junction Cracks</div>
+"T-junction cracks" are a little more complicated than 'Z-fighting', and can be more difficult to track down and fix. They
+are caused when the vertices (control points) of a curve patch don't match up with surrounding world geometry. They can be caused when a patch extends into the world on one or more sides (see fig. X-3,) or when there is a split in the faces that make up one or more edges of a patch (fig. X-4.)
+
+<p><div class = "subheading">Avoiding T-Junction Cracks and Z-fighting</div>
+The best way to keep maps free of "T-junction cracks" and "Z-fighting" is to keep these problems in mind while adding patches and supporting geometry. There are a few simple methods for adding patches. Initially, they may seem like more work that they're worth, but they will save hours of hunting down and fixing problems that can arise through careless construction.
+
+<ol><li><b>Avoid spanning more than one brush with one edge of a patch.</b> For example, if an inverted bevel is 128 units tall, back it with 128 unit tall caulk brushes. Likewise, if the wall is made up of two vertically stacked brushes; use two
+vertically stacked patches of matching heights.
+
+<li><b>Avoid patches that extend into world brushes, unless <i>all</i> of the edges extend into world brushes.</b> When
+adding patches, if one edge of the patch extends into the world, while the other edges line up with other brushes, there will most likely be cracking. Sometimes, particularly in the case of 'flesh' elements, it is necessary to extend parts of a patch into the world. In these cases, extend all edges into the world, or into surrounding patches.
+
+<li><b>Be Careful with vertices.</b> Use Snap to Grid. Without it, your curves will create far more problems than they will otherwise might. Sometimes, especially after resizing patches, vertices can get "knocked off" the grid. Always make sure vertices are where they're supposed to be. If needed, patch vertices can always be snapped back to the grid using CTRL+ G. It's always a good idea to be completely aware of where things are in relation to the grid.
+
+<li><b>Caulk, caulk and more caulk.</b> Get into the habit early of building the space behind curve patches with caulk brushes. You will eliminate Z-fighting, seal up the area behind the curves, and unless you are building a map in fashion doll pink, edges that aren't aligned with the curves have a better chance of showing up.</ol>
+
+<p>Here are a few examples of common elements from the maps in <i>Quake III Arena</i>, and how they should (and should not) be built to avoid Cracks and "Z-Fighting":
+
+<p><strong>Jump Pads</strong>
+<br>Jump pads are probably the most common occurrence of T-junction cracks in Quake III Arena Maps. They usually extend upwards
+through at least two 'levels' (layers) of textures, so they're a perfect illustration of proper caulking. They are also a
+perfect illustration of 'binding' curves within structural brushes.
+
+<p><strong>Flat arches</strong>
+<br>Flat Arches are another good example of 'binding' curves with structural brushes. This is a handy technique when incorporating a curve into a complex map element seamlessly.
+
+<p><strong>Rounded Wall Edges (endcapped)</strong>
+<br>This is a simple example of terminating a wall in a rounded edge. The most important thing to keep in mind here is where
+the vertices are placed. If the patch is extended into the ceiling or floor, there will almost certainly be cracks.
+
+<p><strong>Inverted Wall Bevels</strong>
+<br>Filleting a wall seems like it would be a simple thing, but there are many cases that could cause cracks. It's important
+to make sure heights are consistent, especially in the case of layered texturing, as is the case in this example.
+
+<p><div class = "subheading">Finding and Fixing T-Junction Cracks and Z-Fighting</div>
+There will usually be cases where, despite careful building, cracks appear. When looking for cracks that may have been missed, there are three console commands that will be a great help:
+
+<p><b>\r_clear 1:</b> This will clear the frame buffer on each frame, eliminating the Hall of Mirrors effect.
+
+<p><b>\r_fastsky 1:</b> This will draw the sky as a single, solid color, making it easier to see the void behind curves. This makes cracks stand out. Be aware that fastsky also disables the function of portal screens and mirrors.
+
+<p><b>\r_showtris 1:</b> This will draw white lines around all of the triangles in the world, showing exactly how the geometry in the map is affecting the patches.
+
+<p><b>NOTE:</b> Another good way to use these commands is to set them to toggle on a key. The Debug Config below contains these commands as toggles.
+
+<p>Turn on r_clear, and r_fastsky, and run through the map, looking at the patches from all possible angles. If there is a crack, turn on r_showtris, and make sure that the patch does not extend into the world, unless it was intended to. Next, look at the surrounding brushes. Make sure that no splits meet the edge of the patch. If neither case is true (it happens these case&hellip; 'mystery cracks'), then try a different approach to building the area; perhaps splitting one patch into two, or rearranging the brushes surrounding the patch. When none of the above seems to work, experiment with as many different ways as possible. If something works, keep it in mind for the next time.
+
+<h2><a name = "debugconf">A Debug Config</a></h2>
+The following script should be copied and pasted into a text file. Save the text file as "debug.cfg". When you want to use
+these commands while playing a map, you need to load the map using the console. First type in "/devmap [mymapname] to load the map. Next type in "/debug.cfg". This executes your development configuration. Note that this changes the key assignments of some keys (you define which one is used for each assignment of "<i>yourkey</i>". These debugging tools are considered "cheats." They will not function during normal game play.
+
+<p><div class = "type">//+++++++++++++++++++++
+<br>//toggle on/off frames per second, polygon wireframes, and polygon in view counts with one keypress
+<br>set r_showtris 0 //sets triangle display to off
+<br>set r_speeds 0 //sets triangle counter display to off
+<br>set cg_drawfps 0 //sets frame display counter to off
+<br>bind "<i>your key</i>" "toggle r_showtris;toggle r_speeds;toggle cg_drawfps"
+
+<p>//The following are some individual binds for a few debug tools
+<br>set r_drawentities 1
+<br>set toggle r_nocurves 0
+<br>bind "<i>your key</i>" "toggle r_speeds" // polycount report
+<br>bind "<i>your key</i>" "toggle r_showtris" // Shows the actual triangles that form the world
+<br>bind "<i>your key</i>" "toggle cg_drawfps" // framerate counter
+<br>bind "<i>your key</i>" "toggle com_speeds" // shows all stats
+<br>bind "your key" "toggle r_fastsky" //turns off detailed sky and turns void to sky color
+<br>bind "your key" "toggle r_clear 1" <b></b>// This will clear the frame buffer on each frame.
+
+<p>//Show coordinates that can be related to map coordinates.
+<br>bind "your key" "viewpos" // Outputs player coordinate position and facing angle.
+
+<p>//Turn off Entities and Curves
+<br>bind "<i>your key</i>" "toggle r_drawentities" // entities won't be drawn
+<br>bind "<i>your key</i>" "toggle r_nocurves" // curves won't be drawn
+
+<p>//Toggle off the multi-pass texturing feature
+<br>set r_ext_multitexture 1
+<br>bind "<i>your key</i>" "toggle r_ext_multitexture;vid_restart"
+
+<p>//Output console messages to a log file
+<br>bind "<i>your key</i>" vstr dbg set dbg vstr debug_1
+<br>set developer 0 set logfile 0 set debug_1 "set dbg vstr debug_0;echo DEBUGMODE ON;developer 1;logfile 2" set debug_0 "set dbg vstr debug_1;echo DEBUGMODE OFF;developer 0;logfile 0"
+
+<p>//Lock the PVS Table
+<br>set r_lockpvs 0 //turns off any existing PVS lock
+<br>set r_clear 0 //turns "void" bright pink
+<br>bind "<i>your key</i>" vstr lockview set lockview vstr lockview1 //binds three vstr scripts to a key
+<br>set lockview 1 "set lockview vstr lockview 0;echo PVS Locked;r_lockpvs 1;r_clear 1"
+<br>set lockview 0 "set lockview vstr lockview 1;echo PVS Unlocked;r_lockpvs 0;r_clear 0"
+
+<p>//Game Cheats (for debugging purposes)
+<br>bind "your key" "give all" // Gives all weapons, ammo, armor, and items
+<br>bind "<i>your key</i>" "god" //toggles god mode //makes player invulnerable to everything but kill triggers
+<br>bind "<i>your key</i>" "toggle noclip; toggle r_clear 1"//toggles ability to pass through walls and clear function
+<br>bind "<i>your key</i>" "notarget" // Bots think you're a pal (until you shoot them)
+</div>
+<p align = "center"><a href = "../ch11/pg11_1.htm">Back</a> | <a href = "../index.htm">Home</a> | <a href = "../appndx/appn_a.htm">Next</a>
+</body>
+</html>

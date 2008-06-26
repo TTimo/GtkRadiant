@@ -28,12 +28,41 @@ ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
 */
 
-#if !defined(INCLUDED_VFS_H)
-#define INCLUDED_VFS_H
+#ifndef _VFS_H_
+#define _VFS_H_
 
-void FileSystem_Init();
-void FileSystem_Shutdown();
-class VirtualFileSystem;
-VirtualFileSystem& GetFileSystem();
+#define VFS_MAXDIRS 8
 
-#endif
+void vfsInitDirectory (const char *path);
+void vfsShutdown ();
+void vfsFreeFile (void *p);
+GSList* vfsGetFileList (const char *dir, const char *ext);
+GSList* vfsGetDirList (const char *dir);
+void vfsClearFileDirList (GSList **lst);
+int vfsGetFileCount (const char *filename, int flag);
+int vfsLoadFile (const char *filename, void **buffer, int index = 0);
+int vfsLoadFullPathFile (const char *filename, void **buffer);
+
+// some useful functions
+// clean a file name to a unique representation
+// very usefull if you have to do some weird manips on the files
+// works on regular files and dirs
+// will convert to lowercase, unix path ('/' filename seperator)
+// on win32, will build the short path name
+// directories will be cleaned, no ending filename seperator
+// we modify the entry directly, the size of the string can only go down
+void vfsCleanFileName(char *);
+// these return a static char*, doesn't need to be freed or anything
+// get the base path to use when raising file dialogs
+// we manually add "maps/" or "sounds/" or "mapobjects/models/" etc.
+const char* vfsBasePromptPath();
+// extract the relative path from a full path
+// will match against any of the base paths we have
+// returns NULL if not found
+char* vfsExtractRelativePath(const char *in);
+// returns the full path (in a static buff) to a file given it's relative path
+// returns the first file in the list or NULL if not found
+// see ifilesystem.h for more notes
+char* vfsGetFullPath(const char*, int index = 0, int flag = 0);
+
+#endif // _VFS_H_

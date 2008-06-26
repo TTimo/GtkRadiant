@@ -1,6 +1,5 @@
-/* -------------------------------------------------------------------------------
-
-Copyright (C) 1999-2006 Id Software, Inc. and contributors.
+/*
+Copyright (C) 1999-2007 id Software, Inc. and contributors.
 For a list of contributors, see the accompanying CONTRIBUTORS file.
 
 This file is part of GtkRadiant.
@@ -39,21 +38,20 @@ several games based on the Quake III Arena engine, in the form of "Q3Map2."
 
 
 /*
-ColorMod()
-routines for dealing with vertex color/alpha modification
+AlphaMod()
+routines for dealing with vertex alpha modification
 */
 
-void ColorMod( colorMod_t *cm, int numVerts, bspDrawVert_t *drawVerts )
+void AlphaMod( alphaMod_t *am, int numVerts, bspDrawVert_t *drawVerts )
 {
-	int				i, j, k;
-	float			c;
-	vec4_t			mult, add;
+	int				i, j;
+	float			mult, add, a;
 	bspDrawVert_t	*dv;
-	colorMod_t		*cm2;
+	alphaMod_t		*am2;
 	
 	
 	/* dummy check */
-	if( cm == NULL || numVerts < 1 || drawVerts == NULL )
+	if( am == NULL || numVerts < 1 || drawVerts == NULL )
 		return;
 	
 	
@@ -63,72 +61,32 @@ void ColorMod( colorMod_t *cm, int numVerts, bspDrawVert_t *drawVerts )
 		/* get vertex */
 		dv = &drawVerts[ i ];
 		
-		/* walk colorMod list */
-		for( cm2 = cm; cm2 != NULL; cm2 = cm2->next )
+		/* walk alphamod list */
+		for( am2 = am; am2 != NULL; am2 = am2->next )
 		{
-			/* default */
-			VectorSet( mult, 1.0f, 1.0f, 1.0f );
-			mult[ 3 ] = 1.0f;
-			VectorSet( add, 0.0f, 0.0f, 0.0f );
-			mult[ 3 ] = 0.0f;
-			
 			/* switch on type */
-			switch( cm2->type )
+			switch( am->type )
 			{
-				case CM_COLOR_SET:
-					VectorClear( mult );
-					VectorScale( cm2->data, 255.0f, add );
-					break;
-				
-				case CM_ALPHA_SET:
-					mult[ 3 ] = 0.0f;
-					add[ 3 ] = cm2->data[ 0 ] * 255.0f;
-					break;
-				
-				case CM_COLOR_SCALE:
-					VectorCopy( cm2->data, mult );
-					break;
-				
-				case CM_ALPHA_SCALE:
-					mult[ 3 ] = cm2->data[ 0 ];
-					break;
-				
-				case CM_COLOR_DOT_PRODUCT:
-					c = DotProduct( dv->normal, cm2->data );
-					VectorSet( mult, c, c, c );
-					break;
-				
-				case CM_ALPHA_DOT_PRODUCT:
-					mult[ 3 ] = DotProduct( dv->normal, cm2->data );
-					break;
-				
-				case CM_COLOR_DOT_PRODUCT_2:
-					c = DotProduct( dv->normal, cm2->data );
-					c *= c;
-					VectorSet( mult, c, c, c );
-					break;
-				
-				case CM_ALPHA_DOT_PRODUCT_2:
-					mult[ 3 ] = DotProduct( dv->normal, cm2->data );
-					mult[ 3 ] *= mult[ 3 ];
+				case AM_DOT_PRODUCT:
+					mult = DotProduct( dv->normal, am2->data );
+					add = 0.0f;
 					break;
 				
 				default:
+					mult = 1.0f;
+					add = 0.0f;
 					break;
 			}
 			
 			/* apply mod */
 			for( j = 0; j < MAX_LIGHTMAPS; j++ )
 			{
-				for( k = 0; k < 4; k++ )
-				{
-					c = (mult[ k ] * dv->color[ j ][ k ]) + add[ k ];
-					if( c < 0 )
-						c = 0;
-					else if( c > 255 )
-						c = 255;
-					dv->color[ j ][ k ] = c;
-				}
+				a = (mult * dv->color[ j ][ 3 ]) + add;
+				if( a < 0 )
+					a = 0;
+				else if( a > 255 )
+					a = 255;
+				dv->color[ j ][ 3 ] = a;
 			}
 		}
 	}
@@ -137,11 +95,11 @@ void ColorMod( colorMod_t *cm, int numVerts, bspDrawVert_t *drawVerts )
 
 
 /*
-TCMod*()
+TcMod*()
 routines for dealing with a 3x3 texture mod matrix
 */
 
-void TCMod( tcMod_t mod, float st[ 2 ] )
+void TcMod( tcMod_t mod, float st[ 2 ] )
 {
 	float	old[ 2 ];
 	
@@ -153,7 +111,7 @@ void TCMod( tcMod_t mod, float st[ 2 ] )
 }
 
 
-void TCModIdentity( tcMod_t mod )
+void TcModIdentity( tcMod_t mod )
 {
 	mod[ 0 ][ 0 ] = 1.0f;	mod[ 0 ][ 1 ] = 0.0f;	mod[ 0 ][ 2 ] = 0.0f;
 	mod[ 1 ][ 0 ] = 0.0f;	mod[ 1 ][ 1 ] = 1.0f;	mod[ 1 ][ 2 ] = 0.0f;
@@ -161,7 +119,7 @@ void TCModIdentity( tcMod_t mod )
 }
 
 
-void TCModMultiply( tcMod_t a, tcMod_t b, tcMod_t out )
+void TcModMultiply( tcMod_t a, tcMod_t b, tcMod_t out )
 {
 	int		i;
 	
@@ -175,28 +133,28 @@ void TCModMultiply( tcMod_t a, tcMod_t b, tcMod_t out )
 }
 
 
-void TCModTranslate( tcMod_t mod, float s, float t )
+void TcModTranslate( tcMod_t mod, float s, float t )
 {
 	mod[ 0 ][ 2 ] += s;
 	mod[ 1 ][ 2 ] += t;
 }
 
 
-void TCModScale( tcMod_t mod, float s, float t )
+void TcModScale( tcMod_t mod, float s, float t )
 {
 	mod[ 0 ][ 0 ] *= s;
 	mod[ 1 ][ 1 ] *= t;
 }
 
 
-void TCModRotate( tcMod_t mod, float euler )
+void TcModRotate( tcMod_t mod, float euler )
 {
 	tcMod_t	old, temp;
 	float	radians, sinv, cosv;
 	
 	
 	memcpy( old, mod, sizeof( tcMod_t ) );
-	TCModIdentity( temp );
+	TcModIdentity( temp );
 
 	radians = euler / 180 * Q_PI;
 	sinv = sin( radians );
@@ -205,7 +163,7 @@ void TCModRotate( tcMod_t mod, float euler )
 	temp[ 0 ][ 0 ] = cosv;	temp[ 0 ][ 1 ] = -sinv;
 	temp[ 1 ][ 0 ] = sinv;	temp[ 1 ][ 1 ] = cosv;
 	
-	TCModMultiply( old, temp, mod );
+	TcModMultiply( old, temp, mod );
 }
 
 
@@ -407,7 +365,7 @@ shaderInfo_t *CustomShader( shaderInfo_t *si, char *find, char *replace )
 	char			shader[ MAX_QPATH ];
 	char			*s;
 	int				loc;
-	MHASH			mh;
+	md5_state_t		md5;
 	byte			digest[ 16 ];
 	char			*srcShaderText, temp[ 8192 ], shaderText[ 8192 ];	/* ydnar: fixme (make this bigger?) */
 	
@@ -529,11 +487,9 @@ shaderInfo_t *CustomShader( shaderInfo_t *si, char *find, char *replace )
 	}
 	
 	/* make md5 hash of the shader text */
-	mh = mhash_init( MHASH_MD5 );
-	if( !mh )
-		Error( "Unable to initialize MD5 hash context" );
-	mhash( mh, shaderText, strlen( shaderText ) );
-	mhash_deinit( mh, digest );
+	md5_init( &md5 );
+	md5_append( &md5, shaderText, strlen( shaderText ) );
+	md5_finish( &md5, digest );
 	
 	/* mangle hash into a shader name */
 	sprintf( shader, "%s/%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X", mapName,
@@ -569,7 +525,7 @@ adds a vertexremapshader key/value pair to worldspawn
 
 void EmitVertexRemapShader( char *from, char *to )
 {
-	MHASH			mh;
+	md5_state_t		md5;
 	byte			digest[ 16 ];
 	char			key[ 64 ], value[ 256 ];
 	
@@ -583,11 +539,9 @@ void EmitVertexRemapShader( char *from, char *to )
 	sprintf( value, "%s;%s", from, to );
 	
 	/* make md5 hash */
-	mh = mhash_init( MHASH_MD5 );
-	if( !mh )
-		Error( "Unable to initialize MD5 hash context" );
-	mhash( mh, value, strlen( value ) );
-	mhash_deinit( mh, digest );
+	md5_init( &md5 );
+	md5_append( &md5, value, strlen( value ) );
+	md5_finish( &md5, digest );
 
 	/* make key (this is annoying, as vertexremapshader is precisely 17 characters,
 	   which is one too long, so we leave off the last byte of the md5 digest) */
@@ -649,11 +603,11 @@ static shaderInfo_t	*AllocShaderInfo( void )
 	si->notjunc = qfalse;
 	
 	/* ydnar: set texture coordinate transform matrix to identity */
-	TCModIdentity( si->mod );
+	TcModIdentity( si->mod );
 	
-	/* ydnar: lightmaps can now be > 128x128 in certain games or an externally generated tga */
-	si->lmCustomWidth = lmCustomSize;
-	si->lmCustomHeight = lmCustomSize;
+	/* ydnar: lightmaps can now be > 128x128 in an externally generated tga */
+	si->lmCustomWidth = lmCustomSize;	//%	LIGHTMAP_WIDTH;
+	si->lmCustomHeight = lmCustomSize;	//%	LIGHTMAP_HEIGHT;
 	
 	/* return to sender */
 	return si;
@@ -829,7 +783,7 @@ shaderInfo_t *ShaderInfoForShader( const char *shaderName )
 		if( !Q_stricmp( shader, si->shader ) )
 		{
 			/* load image if necessary */
-			if( si->finished == qfalse )
+			if( si->shaderImage == NULL )
 			{
 				LoadShaderImages( si );
 				FinishShader( si );
@@ -1124,21 +1078,17 @@ static void ParseShaderFile( const char *filename )
 			else if( !Q_stricmp( token, "light" ) )
 			{
 				GetTokenAppend( shaderText, qfalse );
-				si->flareShader = game->flareShader;
+				strcpy( si->flareShader, "flareshader" );
 			}
 			
 			/* ydnar: damageShader <shader> <health> (sof2 mods) */
 			else if( !Q_stricmp( token, "damageShader" ) )
 			{
 				GetTokenAppend( shaderText, qfalse );
-				if( token[ 0 ] != '\0' )
-				{
-					si->damageShader = safe_malloc( strlen( token ) + 1 );
-					strcpy( si->damageShader, token );
-				}
+				strcpy( si->damageShader, token );
 				GetTokenAppend( shaderText, qfalse );	/* don't do anything with health */
 			}
-			
+
 			/* ydnar: enemy territory implicit shaders */
 			else if( !Q_stricmp( token, "implicitMap" ) )
 			{
@@ -1244,9 +1194,6 @@ static void ParseShaderFile( const char *filename )
 				sun = safe_malloc( sizeof( *sun ) );
 				memset( sun, 0, sizeof( *sun ) );
 				
-				/* set style */
-				sun->style = si->lightStyle;
-				
 				/* get color */
 				GetTokenAppend( shaderText, qfalse );
 				sun->color[ 0 ] = atof( token );
@@ -1329,8 +1276,6 @@ static void ParseShaderFile( const char *filename )
 						
 						/* restore name and set to unfinished */
 						strcpy( si->shader, temp );
-						si->shaderWidth = 0;
-						si->shaderHeight = 0;
 						si->finished = qfalse;
 					}
 				}
@@ -1403,8 +1348,8 @@ static void ParseShaderFile( const char *filename )
 					si->bounceScale = atof( token );
 				}
 
-				/* ydnar/splashdamage: q3map_skyLight <value> <iterations> */
-				else if( !Q_stricmp( token, "q3map_skyLight" )  )
+				/* ydnar/splashdamage: q3map_skylight <value> <iterations> */
+				else if( !Q_stricmp( token, "q3map_skylight" )  )
 				{
 					GetTokenAppend( shaderText, qfalse );
 					si->skyLightValue = atof( token );
@@ -1424,6 +1369,7 @@ static void ParseShaderFile( const char *filename )
 					GetTokenAppend( shaderText, qfalse );
 					si->value = atof( token );
 				}
+				
 				
 				/* q3map_lightStyle (sof2/jk2 lightstyle) */
 				else if( !Q_stricmp( token, "q3map_lightStyle" ) )
@@ -1520,18 +1466,18 @@ static void ParseShaderFile( const char *filename )
 					{
 						Sys_Printf( "WARNING: Non power-of-two lightmap size specified (%d, %d)\n",
 							 si->lmCustomWidth, si->lmCustomHeight );
-						si->lmCustomWidth = lmCustomSize;
-						si->lmCustomHeight = lmCustomSize;
+						si->lmCustomWidth = LIGHTMAP_WIDTH;
+						si->lmCustomHeight = LIGHTMAP_HEIGHT;
 					}
 				}
 
-				/* ydnar: q3map_lightmapBrightness N (for autogenerated shaders + external tga lightmaps) */
-				else if( !Q_stricmp( token, "q3map_lightmapBrightness" ) || !Q_stricmp( token, "q3map_lightmapGamma" ) )
+				/* ydnar: q3map_lightmapGamma N (for autogenerated shaders + external tga lightmaps) */
+				else if( !Q_stricmp( token, "q3map_lightmapGamma" ) )
 				{
 					GetTokenAppend( shaderText, qfalse );
-					si->lmBrightness = atof( token );
-					if( si->lmBrightness < 0 )
-						si->lmBrightness = 1.0;
+					si->lmGamma = atof( token );
+					if( si->lmGamma < 0 )
+						si->lmGamma = 1.0;
 				}
 				
 				/* q3map_vertexScale (scale vertex lighting by this fraction) */
@@ -1541,54 +1487,18 @@ static void ParseShaderFile( const char *filename )
 					si->vertexScale = atof( token );
 				}
 				
-				/* q3map_noVertexLight */
-				else if( !Q_stricmp( token, "q3map_noVertexLight" )  )
-				{
-					si->noVertexLight = qtrue;
-				}
-				
-				/* q3map_flare[Shader] <shader> */
+				/* q3map_flare <shader> */
 				else if( !Q_stricmp( token, "q3map_flare" ) || !Q_stricmp( token, "q3map_flareShader" ) )
 				{
 					GetTokenAppend( shaderText, qfalse );
-					if( token[ 0 ] != '\0' )
-					{
-						si->flareShader = safe_malloc( strlen( token ) + 1 );
-						strcpy( si->flareShader, token );
-					}
+					strcpy( si->flareShader, token );
 				}
 				
 				/* q3map_backShader <shader> */
 				else if( !Q_stricmp( token, "q3map_backShader" ) )
 				{
 					GetTokenAppend( shaderText, qfalse );
-					if( token[ 0 ] != '\0' )
-					{
-						si->backShader = safe_malloc( strlen( token ) + 1 );
-						strcpy( si->backShader, token );
-					}
-				}
-				
-				/* ydnar: q3map_cloneShader <shader> */
-				else if ( !Q_stricmp( token, "q3map_cloneShader" ) )
-				{
-					GetTokenAppend( shaderText, qfalse );
-					if( token[ 0 ] != '\0' )
-					{
-						si->cloneShader = safe_malloc( strlen( token ) + 1 );
-						strcpy( si->cloneShader, token );
-					}
-				}
-				
-				/* q3map_remapShader <shader> */
-				else if( !Q_stricmp( token, "q3map_remapShader" ) )
-				{
-					GetTokenAppend( shaderText, qfalse );
-					if( token[ 0 ] != '\0' )
-					{
-						si->remapShader = safe_malloc( strlen( token ) + 1 );
-						strcpy( si->remapShader, token );
-					}
+					strcpy( si->backShader, token );
 				}
 				
 				/* ydnar: q3map_offset <value> */
@@ -1596,6 +1506,13 @@ static void ParseShaderFile( const char *filename )
 				{
 					GetTokenAppend( shaderText, qfalse );
 					si->offset = atof( token );
+				}
+				
+				/* ydnar: q3map_cloneShader <shader> */
+				else if ( !Q_stricmp( token, "q3map_cloneShader" ) )
+				{
+					GetTokenAppend( shaderText, qfalse );
+					strcpy( si->cloneShader, token );
 				}
 				
 				/* ydnar: q3map_textureSize <width> <height> (substitute for q3map_lightimage derivation for terrain) */
@@ -1678,32 +1595,26 @@ static void ParseShaderFile( const char *filename )
 					}
 				}
 				
-				/* ydnar: gs mods: q3map_[color|rgb|alpha][Gen|Mod] <style> <parameters> */
-				else if( !Q_stricmp( token, "q3map_colorGen" ) || !Q_stricmp( token, "q3map_colorMod" ) ||
-					!Q_stricmp( token, "q3map_rgbGen" ) || !Q_stricmp( token, "q3map_rgbMod" ) ||
-					!Q_stricmp( token, "q3map_alphaGen" ) || !Q_stricmp( token, "q3map_alphaMod" ) )
+				/* ydnar: gs mods: q3map_alphaMod <style> <parameters> */
+				else if( !Q_stricmp( token, "q3map_alphaMod" ) )
 				{
-					colorMod_t	*cm, *cm2;
-					int			alpha;
+					alphaMod_t	*am, *am2;
 					
 					
-					/* alphamods are colormod + 1 */
-					alpha = (!Q_stricmp( token, "q3map_alphaGen" ) || !Q_stricmp( token, "q3map_alphaMod" )) ? 1 : 0;
-					
-					/* allocate new colormod */
-					cm = safe_malloc( sizeof( *cm ) );
-					memset( cm, 0, sizeof( *cm ) );
+					/* allocate new alpha mod */
+					am = safe_malloc( sizeof( *am ) );
+					memset( am, 0, sizeof( *am ) );
 					
 					/* attach to shader */
-					if( si->colorMod == NULL )
-						si->colorMod = cm;
+					if( si->alphaMod == NULL )
+						si->alphaMod = am;
 					else
 					{
-						for( cm2 = si->colorMod; cm2 != NULL; cm2 = cm2->next )
+						for( am2 = si->alphaMod; am2 != NULL; am2 = am2->next )
 						{
-							if( cm2->next == NULL )
+							if( am2->next == NULL )
 							{
-								cm2->next = cm;
+								am2->next = am;
 								break;
 							}
 						}
@@ -1712,60 +1623,14 @@ static void ParseShaderFile( const char *filename )
 					/* get type */
 					GetTokenAppend( shaderText, qfalse );
 					
-					/* alpha set|const A */
-					if( alpha && (!Q_stricmp( token, "set" ) || !Q_stricmp( token, "const" )) )
+					/* q3map_alphaMod dotproduct ( X Y Z ) */
+					if( !Q_stricmp( token, "dotproduct" ) )
 					{
-						cm->type = CM_ALPHA_SET;
-						GetTokenAppend( shaderText, qfalse );
-						cm->data[ 0 ] = atof( token );
+						am->type = AM_DOT_PRODUCT;
+						Parse1DMatrixAppend( shaderText, 3, am->data );
 					}
-					
-					/* color|rgb set|const ( X Y Z ) */
-					else if( !Q_stricmp( token, "set" ) || !Q_stricmp( token, "const" ) )
-					{
-						cm->type = CM_COLOR_SET;
-						Parse1DMatrixAppend( shaderText, 3, cm->data );
-					}
-					
-					/* alpha scale A */
-					else if( alpha && !Q_stricmp( token, "scale" ) )
-					{
-						cm->type = CM_ALPHA_SCALE;
-						GetTokenAppend( shaderText, qfalse );
-						cm->data[ 0 ] = atof( token );
-					}
-					
-					/* color|rgb scale ( X Y Z ) */
-					else if( !Q_stricmp( token, "scale" ) )
-					{
-						cm->type = CM_COLOR_SCALE;
-						Parse1DMatrixAppend( shaderText, 3, cm->data );
-					}
-					
-					/* dotProduct ( X Y Z ) */
-					else if( !Q_stricmp( token, "dotProduct" ) )
-					{
-						cm->type = CM_COLOR_DOT_PRODUCT + alpha;
-						Parse1DMatrixAppend( shaderText, 3, cm->data );
-					}
-					
-					/* dotProduct2 ( X Y Z ) */
-					else if( !Q_stricmp( token, "dotProduct2" ) )
-					{
-						cm->type = CM_COLOR_DOT_PRODUCT_2 + alpha;
-						Parse1DMatrixAppend( shaderText, 3, cm->data );
-					}
-					
-					/* volume */
-					else if( !Q_stricmp( token, "volume" ) )
-					{
-						/* special stub mode for flagging volume brushes */
-						cm->type = CM_VOLUME;
-					}
-					
-					/* unknown */
 					else
-						Sys_Printf( "WARNING: Unknown colorMod method: %s\n", token );
+						Sys_Printf( "WARNING: Unknown q3map_alphaMod method: %s\n", token );
 				}
 				
 				/* ydnar: gs mods: q3map_tcMod <style> <parameters> */
@@ -1784,7 +1649,7 @@ static void ParseShaderFile( const char *filename )
 						GetTokenAppend( shaderText, qfalse );
 						b = atof( token );
 						
-						TCModTranslate( si->mod, a, b );
+						TcModTranslate( si->mod, a, b );
 					}
 
 					/* q3map_tcMod scale <s> <t> */
@@ -1795,7 +1660,7 @@ static void ParseShaderFile( const char *filename )
 						GetTokenAppend( shaderText, qfalse );
 						b = atof( token );
 						
-						TCModScale( si->mod, a, b );
+						TcModScale( si->mod, a, b );
 					}
 					
 					/* q3map_tcMod rotate <s> <t> (fixme: make this communitive) */
@@ -1803,7 +1668,7 @@ static void ParseShaderFile( const char *filename )
 					{
 						GetTokenAppend( shaderText, qfalse );
 						a = atof( token );
-						TCModRotate( si->mod, a );
+						TcModRotate( si->mod, a );
 					}
 					else
 						Sys_Printf( "WARNING: Unknown q3map_tcMod method: %s\n", token );

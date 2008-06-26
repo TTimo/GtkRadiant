@@ -1,5 +1,5 @@
 /*
-Copyright (C) 1999-2006 Id Software, Inc. and contributors.
+Copyright (C) 1999-2007 id Software, Inc. and contributors.
 For a list of contributors, see the accompanying CONTRIBUTORS file.
 
 This file is part of GtkRadiant.
@@ -19,15 +19,34 @@ along with GtkRadiant; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#if !defined (INCLUDED_TEXTURES_H)
-#define INCLUDED_TEXTURES_H
 
-#include "generic/callbackfwd.h"
+// a texturename of the form (0 0 0) will
+// create a solid color texture
 
-void Textures_Realise();
-void Textures_Unrealise();
-void Textures_sharedContextDestroyed();
+void Texture_Init();
+void	Texture_ShowDirectory (int menunum);
+void Texture_ShowDirectory ();
+void	Texture_ShowAll();
+void	WINAPI Texture_ShowInuse();
+extern char texture_directory[];
 
-void Textures_setModeChangedNotify(const Callback& notify);
+// Timo
+// added an optional IPluginTexdef when one is available
+// we need a forward declaration, this is crap
+class IPluginTexdef;
+//++timo clean
+void	Texture_SetTexture2 (IShader *pShader, texdef_t *texdef, brushprimit_texdef_t *brushprimit_texdef, bool bFitScale = false, IPluginTexdef *pTexdef = NULL, bool bSetSelection = true);
+void	WINAPI Texture_SetTexture (texdef_t *texdef, brushprimit_texdef_t *brushprimit_texdef, bool bFitScale = false, IPluginTexdef *pTexdef = (IPluginTexdef*)NULL, bool bSetSelection = true);
 
-#endif
+void	Texture_SetMode(int iMenu);	// GL_TEXTURE_NEAREST, etc..
+void Texture_ResetPosition();
+
+// build the list of shader files used by PreloadShaders
+void BuildShaderList();
+// preload the shaders: build a list of shader names and properties .. don't load their assets
+void PreloadShaders();
+int WINAPI Texture_LoadSkin(char *pName, int *pnWidth, int *pnHeight);
+qtexture_t* Texture_LoadFromPlugIn(void* vp);
+void Texture_StartPos (void);
+IShader* Texture_NextPos (int *x, int *y);
+

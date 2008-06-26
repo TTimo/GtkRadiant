@@ -23,9 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 _QERFuncTable_1 g_FuncTable;
 _QERQglTable g_GLTable;
 _QERUIGtkTable g_UIGtkTable;
-_QEREntityTable __ENTITYTABLENAME;
-_QERBrushTable __BRUSHTABLENAME;
-_QERPatchTable __PATCHTABLENAME;
+_QEREntityTable g_EntityTable;
 bool SingleBrushSelected;
 bool g_bInitDone;
 
@@ -159,6 +157,11 @@ void QERPlug_Dispatch (const char *p, vec3_t vMin, vec3_t vMax, bool bSingleBrus
   }
 }
 
+extern "C" LPVOID WINAPI QERPlug_GetFuncTable()
+{
+  return &g_FuncTable;
+}
+
 // =============================================================================
 // SYNAPSE
 
@@ -178,8 +181,13 @@ public:
 CSynapseServer* g_pSynapseServer = NULL;
 GenSurfSynapseClient g_SynapseClient;
 
-extern "C" CSynapseClient* SYNAPSE_DLL_EXPORT Synapse_EnumerateInterfaces (const char *version, CSynapseServer *pServer)
-{
+#if __GNUC__ >= 4
+#pragma GCC visibility push(default)
+#endif
+extern "C" CSynapseClient* SYNAPSE_DLL_EXPORT Synapse_EnumerateInterfaces( const char *version, CSynapseServer *pServer ) {
+#if __GNUC__ >= 4
+#pragma GCC visibility pop
+#endif
   if (strcmp(version, SYNAPSE_VERSION))
   {
     Syn_Printf("ERROR: synapse API version mismatch: should be '" SYNAPSE_VERSION "', got '%s'\n", version);

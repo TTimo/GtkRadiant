@@ -1,6 +1,5 @@
-/* -------------------------------------------------------------------------------
-
-Copyright (C) 1999-2006 Id Software, Inc. and contributors.
+/*
+Copyright (C) 1999-2007 id Software, Inc. and contributors.
 For a list of contributors, see the accompanying CONTRIBUTORS file.
 
 This file is part of GtkRadiant.
@@ -78,7 +77,7 @@ int	CountBrushList( brush_t *brushes )
 	
 	
 	/* count brushes */
-	for( ; brushes != NULL; brushes = brushes->next )
+	for( brushes; brushes != NULL; brushes = brushes->next )
 		c++;
 	return c;
 }
@@ -122,7 +121,7 @@ void FreeBrush( brush_t *b )
 	
 	
 	/* error check */
-	if( *((unsigned int*) b) == 0xFEFEFEFE )
+	if( *((int*) b) == 0xFEFEFEFE )
 	{
 		Sys_FPrintf( SYS_VRB, "WARNING: Attempt to free an already freed brush!\n" );
 		return;
@@ -135,7 +134,7 @@ void FreeBrush( brush_t *b )
 	
 	/* ydnar: overwrite it */
 	memset( b, 0xFE, (int) &(((brush_t*) 0)->sides[ b->numsides ]) );
-	*((unsigned int*) b) = 0xFEFEFEFE;
+	*((int*) b) = 0xFEFEFEFE;
 	
 	/* free it */
 	free( b );
@@ -156,7 +155,7 @@ void FreeBrushList( brush_t *brushes )
 	
 	
 	/* walk brush list */
-	for( ; brushes != NULL; brushes = next )
+	for( brushes; brushes != NULL; brushes = next )
 	{
 		next = brushes->next;
 		FreeBrush( brushes );
@@ -376,6 +375,8 @@ qboolean CreateBrushWindings( brush_t *brush )
 			if( brush->sides[ j ].planenum == (brush->sides[ i ].planenum ^ 1) )
 				continue;		/* back side clipaway */
 			if( brush->sides[ j ].bevel )
+				continue;
+			if( brush->sides[ j ].backSide )
 				continue;
 			plane = &mapplanes[ brush->sides[ j ].planenum ^ 1 ];
 			ChopWindingInPlace( &w, plane->normal, plane->dist, 0 ); // CLIP_EPSILON );
@@ -849,6 +850,9 @@ void SplitBrush( brush_t *brush, int planenum, brush_t **front, brush_t **back )
 	w = BaseWindingForPlane (plane->normal, plane->dist);
 	for (i=0 ; i<brush->numsides && w ; i++)
 	{
+		if ( brush->sides[i].backSide ) {
+			continue;	// fake back-sided polygons never split
+		}
 		plane2 = &mapplanes[brush->sides[i].planenum ^ 1];
 		ChopWindingInPlace (&w, plane2->normal, plane2->dist, 0); // PLANESIDE_EPSILON);
 	}
@@ -906,10 +910,18 @@ void SplitBrush( brush_t *brush, int planenum, brush_t **front, brush_t **back )
 	// see if we have valid polygons on both sides
 	for (i=0 ; i<2 ; i++)
 	{
-		if (b[i]->numsides < 3 || !BoundBrush (b[i]))
+		BoundBrush (b[i]);
+		for (j=0 ; j<3 ; j++)
 		{
-			if (b[i]->numsides >= 3)
+			if (b[i]->mins[j] < MIN_WORLD_COORD || b[i]->maxs[j] > MAX_WORLD_COORD)
+			{
 				Sys_FPrintf (SYS_VRB,"bogus brush after clip\n");
+				break;
+			}
+		}
+
+		if (b[i]->numsides < 3 || j < 3)
+		{
 			FreeBrush (b[i]);
 			b[i] = NULL;
 		}

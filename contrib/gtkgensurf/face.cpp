@@ -28,7 +28,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define	SIDE_BACK		1
 #define	SIDE_CROSS		-2
 
-//vec3 vec3_origin = {0,0,0};
+vec3 gensurf_vec3_origin;
 
 void PlaneFromPoints (float *p0, float *p1, float *p2, PLANE *plane)
 {
@@ -56,7 +56,7 @@ void PlaneFromPoints (float *p0, float *p1, float *p2, PLANE *plane)
 	}
 	plane->dist = DotProduct (p0, plane->normal);
 }
-/*
+
 void VectorMA (vec3 va, vec scale, vec3 vb, vec3 vc)
 {
 	vc[0] = va[0] + scale*vb[0];
@@ -70,7 +70,7 @@ void CrossProduct (vec3 v1, vec3 v2, vec3 cross)
 	cross[1] = v1[2]*v2[0] - v1[0]*v2[2];
 	cross[2] = v1[0]*v2[1] - v1[1]*v2[0];
 }
-*/
+
 /*
 =============
 AllocWinding
@@ -86,7 +86,7 @@ MY_WINDING	*AllocWinding (int points)
 	memset (w, 0, s); 
 	return w;
 }
-/*
+
 vec VectorNormalize (vec3 in, vec3 out)
 {
 	vec	length, ilength;
@@ -105,7 +105,6 @@ vec VectorNormalize (vec3 in, vec3 out)
 
 	return length;
 }
-*/
 
 /*
 =================
@@ -134,7 +133,7 @@ MY_WINDING *BaseWindingForPlane (vec3 normal, vec dist)
 	}
 	if (x==-1) x = 2;
 		
-	VectorCopy(vec3_origin,vup);
+	VectorCopy(gensurf_vec3_origin,vup);
 	switch (x)
 	{
 	case 0:
@@ -298,6 +297,7 @@ void UseFaceBounds()
 	int          NumFaces;
 	vec3         SurfNormal;
 	vec3         vmin,vmax;
+	_QERFaceData *QERFaceData;
 	PLANE        plane[MAX_FACES*2];
 	PLANE        pface;
 	MY_WINDING   *w;
@@ -335,7 +335,6 @@ void UseFaceBounds()
 		SurfNormal[2] = 1.0;
 	}
 
-#if 0
 	i  = g_FuncTable.m_pfnAllocateSelectedBrushHandles();
 	vp = g_FuncTable.m_pfnGetSelectedBrushHandle(0);
 	NumFaces = g_FuncTable.m_pfnGetFaceCount(vp);
@@ -345,7 +344,7 @@ void UseFaceBounds()
 
 	for(i=0; i<NumFaces; i++)
 	{
-	  _QERFaceData* QERFaceData = g_FuncTable.m_pfnGetFaceData(vp,i);
+		QERFaceData = g_FuncTable.m_pfnGetFaceData(vp,i);
 		planepts[0][0] = QERFaceData->m_v1[0];
 		planepts[0][1] = QERFaceData->m_v1[1];
 		planepts[0][2] = QERFaceData->m_v1[2];
@@ -357,7 +356,7 @@ void UseFaceBounds()
 		planepts[2][2] = QERFaceData->m_v3[2];
 
 		PlaneFromPoints (planepts[0], planepts[1], planepts[2], &plane[2*i]);
-		VectorSubtract (vec3_origin, plane[2*i].normal, plane[2*i+1].normal);
+		VectorSubtract (gensurf_vec3_origin, plane[2*i].normal, plane[2*i+1].normal);
 		plane[2*i+1].dist = -plane[2*i].dist;
 
 		Dot = DotProduct(plane[2*i].normal,SurfNormal);
@@ -372,7 +371,7 @@ void UseFaceBounds()
 	for(i=0; i<NumFaces; i++)
 	{
 		if(i==BestFace) continue;
-		_QERFaceData* QERFaceData = g_FuncTable.m_pfnGetFaceData(vp,i);
+		QERFaceData = g_FuncTable.m_pfnGetFaceData(vp,i);
 		if(strlen(QERFaceData->m_TextureName))
 		{
 			if(strcmp(Texture[Game][0],QERFaceData->m_TextureName))
@@ -448,5 +447,4 @@ void UseFaceBounds()
 		Z10 = (pface.dist - pface.normal[0]*Hur - pface.normal[1]*Vll)/pface.normal[2];
 		Z11 = (pface.dist - pface.normal[0]*Hur - pface.normal[1]*Vur)/pface.normal[2];
 	}
-#endif
 }

@@ -1,5 +1,5 @@
-developer documentation for GtkRadiant 1.5.0
-============================================
+developer documentation for GtkRadiant 1.6.0 (Zeroradiant)
+==========================================================
 
 getting the source
 ==================
@@ -12,10 +12,9 @@ The subversion client can be obtained from the Subversion site.
 
 To get a copy of the source using the commandline Subversion client:
   Change the current directory to the desired location for the source.
-  svn checkout https://zerowing.idsoftware.com/svn/radiant/GtkRadiant/branches/1.5/ ./GtkRadiant
+  svn checkout https://zerowing.idsoftware.com/svn/radiant/GtkRadiant/trunk/ ./GtkRadiant
   svn checkout https://zerowing.idsoftware.com/svn/radiant.gamepacks/Q3Pack/trunk/ ./GtkRadiant/games/Q3Pack
-  svn checkout https://zerowing.idsoftware.com/svn/radiant.gamepacks/UFOAIPack/branches/1.5/ ./GtkRadiant/games/UFOAIPack
-
+  svn checkout https://zerowing.idsoftware.com/svn/radiant.gamepacks/UFOAIPack/trunk/ ./GtkRadiant/games/UFOAIPack
 
 
 Linux/OSX(using X-windows)
@@ -44,7 +43,6 @@ note - this script should be run after each time you update from svn
 
 run:
 Execute './GtkRadiant/install/radiant.x86' (or './GtkRadiant/install/radiant.ppc' on osx)
-
 
 
 Win32 (2000, XP or Vista)

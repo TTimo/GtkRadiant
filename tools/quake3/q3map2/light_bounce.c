@@ -1,6 +1,5 @@
-/* -------------------------------------------------------------------------------
-
-Copyright (C) 1999-2006 Id Software, Inc. and contributors.
+/*
+Copyright (C) 1999-2007 id Software, Inc. and contributors.
 For a list of contributors, see the accompanying CONTRIBUTORS file.
 
 This file is part of GtkRadiant.
@@ -510,7 +509,7 @@ static void RadSubdivideDiffuseLight( int lightmapNum, bspDrawSurface_t *ds, raw
 			break;
 		
 		case MST_TRIANGLE_SOUP:
-			numTriangleDiffuseLights++;
+			numTriangleDiffuseLights;
 			break;
 		
 		case MST_PATCH:
@@ -547,9 +546,9 @@ static void RadSubdivideDiffuseLight( int lightmapNum, bspDrawSurface_t *ds, raw
 		light->add = value * formFactorValueScale * areaScale;
 		VectorCopy( si->color, light->color );
 		VectorScale( light->color, light->add, light->emitColor );
-		light->style = noStyles ? LS_NORMAL : si->lightStyle;
-		if( light->style < LS_NORMAL || light->style >= LS_NONE )
-			light->style = LS_NORMAL;
+		light->style = si->lightStyle;
+		if( light->style < 0 || light->style >= LS_NONE )
+			light->style = 0;
 		
 		/* set origin */
 		VectorAdd( mins, maxs, light->origin );
@@ -578,7 +577,7 @@ static void RadSubdivideDiffuseLight( int lightmapNum, bspDrawSurface_t *ds, raw
 			VectorMA( light->origin, si->backsplashDistance, normal, splash->origin );
 			VectorCopy( si->color, splash->color );
 			splash->falloffTolerance = falloffTolerance;
-			splash->style = noStyles ? LS_NORMAL : light->style;
+			splash->style = light->style;
 			
 			/* add to counts */
 			numPointLights++;
@@ -592,9 +591,9 @@ static void RadSubdivideDiffuseLight( int lightmapNum, bspDrawSurface_t *ds, raw
 		light->add = value * formFactorValueScale * bounceScale;
 		VectorCopy( color, light->color );
 		VectorScale( light->color, light->add, light->emitColor );
-		light->style = noStyles ? LS_NORMAL : style;
-		if( light->style < LS_NORMAL || light->style >= LS_NONE )
-			light->style = LS_NORMAL;
+		light->style = style;
+		if( light->style < 0 || light->style >= LS_NONE )
+			light->style = 0;
 		
 		/* set origin */
 		WindingCenter( w, light->origin );
@@ -948,7 +947,6 @@ void RadCreateDiffuseLights( void )
 	Sys_FPrintf( SYS_VRB, "%8d patch diffuse lights\n", numPatchDiffuseLights );
 	Sys_FPrintf( SYS_VRB, "%8d triangle diffuse lights\n", numTriangleDiffuseLights );
 }
-
 
 
 

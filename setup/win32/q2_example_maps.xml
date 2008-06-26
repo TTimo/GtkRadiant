@@ -1,8 +1,0 @@
-<?xml version="1.0"?>
-<package name="Quake II Example Maps" version="1.0.0" target="c:\quake2\" code="8825ff1d-6b24-4f6a-b068-0b19fa6c2b61" license="..\license.rtf">
-  <feature name="Quake II Maps" desc="This feature must be installed in your Quake II Folder.">
-    <feature name="Quake II Maps" desc="Example maps, models and textures for Quake II">
-      <component name=".\components\q2_data.xml" root="..\..\games\Q2Pack\baseq2"/>
-    </feature>
-  </feature>
-</package>

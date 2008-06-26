@@ -1,5 +1,5 @@
 /*
-Copyright (C) 1999-2006 Id Software, Inc. and contributors.
+Copyright (C) 1999-2007 id Software, Inc. and contributors.
 For a list of contributors, see the accompanying CONTRIBUTORS file.
 
 This file is part of GtkRadiant.
@@ -27,31 +27,24 @@ Copyright (C) 2002 Splash Damage Ltd.
 #ifndef _CAMERA_H_
 #define _CAMERA_H_
 
-typedef unsigned char byte;
-
-#include "mathlib.h"
-#include <string.h>
-#include "qertypes.h"
-#include <stdio.h>
-
-#define USE_QERTABLE_DEFINE
-#include "iscenegraph.h"
-#include "qerplugin.h"
-
-#define USE_QGLTABLE_DEFINE
-#include "igl.h"
-extern _QERQglTable __QGLTABLENAME;
-
-#include "iui.h"
-#include "icamera.h"
-
-#include "bytebool.h"
+#ifdef _WIN32
+	#pragma warning(disable : 4267)
+#else
+	typedef unsigned char byte;
+#endif
 
 class CCamera;
+
 #include <gtk/gtk.h>
 
 #include "str.h"
 
+#define USE_QERTABLE_DEFINE
+#include "qerplugin.h"
+
+#include "igl.h"
+#include "iui.h"
+#include "icamera.h"
 
 #include "misc.h"
 #include "dialogs.h"
@@ -71,6 +64,12 @@ extern CListener          *Listener;
 #define CAMERA_PLUGIN
 #define DotProduct(a,b)			((a)[0]*(b)[0]+(a)[1]*(b)[1]+(a)[2]*(b)[2])
 
+extern void ( APIENTRY * qglBegin )(GLenum mode);
+extern void ( APIENTRY * qglEnd )(void);
+extern void ( APIENTRY * qglVertex3fv )(const GLfloat *v);
+
+extern "C" void InitIglToQgl( _QERQglTable *g_QglTable );
+
 #include "splines/splines.h"
 
 // this needs to match splines.cpp
@@ -78,8 +77,6 @@ extern CListener          *Listener;
 extern idCameraDef camera[MAX_CAMERAS];
 
 extern "C" qboolean loadCamera(int camNum, const	char *name);
-
-#define PATH_MAX 260
 
 //
 // CCamera

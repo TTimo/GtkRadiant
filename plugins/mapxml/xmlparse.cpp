@@ -1,277 +1,295 @@
-/*
-Copyright (C) 2001-2006, William Joseph.
-All Rights Reserved.
-
-This file is part of GtkRadiant.
-
-GtkRadiant is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-GtkRadiant is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with GtkRadiant; if not, write to the Free Software
-Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-*/
-
 //
 // parses xml tree format into internal objects
 //
 
-#include "xmlparse.h"
 
-#include <vector>
+#include "plugin.h"
 
-#include "ientity.h"
-#include "ibrush.h"
-#include "ipatch.h"
-#include "ieclass.h"
-#include "eclasslib.h"
-
-#include "xml/xmlparser.h"
-#include "scenelib.h"
-#include "generic/reference.h"
-#include "generic/object.h"
-
-
-#define PARSE_ERROR "XML PARSE ERROR"
-
-
-inline XMLImporter* Node_getXMLImporter(scene::Node& node)
+void Patch_XMLParse(patchMesh_t *pPatch, xmlNodePtr surface)
 {
-  return NodeTypeCast<XMLImporter>::cast(node);
+  char *str, *content;
+  int i, j;
+
+  for(xmlNodePtr current = surface->children; current != NULL; current = current->next)
+  {
+    if(current->type != XML_ELEMENT_NODE) continue;
+    if(!strcmp((char *)current->name, "matrix"))
+    {
+      str = (char *)xmlGetProp(current, (xmlChar *)"width");
+      pPatch->width = atoi(str);
+      xmlFree(str);
+      str = (char *)xmlGetProp(current, (xmlChar *)"height");
+      pPatch->height = atoi(str);
+      xmlFree(str);
+
+      content = Q_StrDup((char *)current->children->content);
+
+      str = strtok(content, " \n\r\t\v\0");
+      for(i=0; i<pPatch->width; i++)
+      {
+        for(j=0; j<pPatch->height; j++)
+        {
+          pPatch->ctrl[i][j].xyz[0] = atof(str);
+          str = strtok(NULL, " \n\r\t\v\0");
+          pPatch->ctrl[i][j].xyz[1] = atof(str);
+          str = strtok(NULL, " \n\r\t\v\0");
+          pPatch->ctrl[i][j].xyz[2] = atof(str);
+          str = strtok(NULL, " \n\r\t\v\0");
+          pPatch->ctrl[i][j].st[0] = atof(str);
+          str = strtok(NULL, " \n\r\t\v\0");
+          pPatch->ctrl[i][j].st[1] = atof(str);
+          str = strtok(NULL, " \n\r\t\v\0");
+        }
+      }
+
+      delete [] content;
+    }
+    else if(!strcmp((char *)current->name, "shader")) {
+      pPatch->pShader = QERApp_Shader_ForName((char*)current->children->content);
+      pPatch->d_texture = pPatch->pShader->getTexture();
+    }
+  }
 }
 
-
-scene::Node& createPrimitive(const char* name)
+void Face_XMLParse (face_t *face, xmlNodePtr surface)
 {
-  if(string_equal(name, "brush"))
-  {
-    return GlobalBrushCreator().createBrush();
-  }
-  else if(string_equal(name, "patch"))
-  {
-    return GlobalPatchCreator().createPatch();
-  }
+  char *str, *content;
+  int i, j;
 
-  ASSERT_MESSAGE(0, PARSE_ERROR << ": primitive type not supported: \"" << name << "\"\n");
-  scene::Node* node = 0;
-  return *node;
+  for(xmlNodePtr current = surface->children; current != NULL; current = current->next)
+  {
+    if(current->type != XML_ELEMENT_NODE) continue;
+    if(!strcmp((char *)current->name, "planepts"))
+    {
+      content = Q_StrDup((char *)current->children->content);
+
+      str = strtok(content, " \n\r\t\v\0");
+      for (i=0 ; i<3 ; i++)
+	    {
+		    for (j=0 ; j<3 ; j++)
+		    {
+			    face->planepts[i][j] = atof(str);
+          str = strtok(NULL, " \n\r\t\v\0");
+		    }
+      }
+
+      delete [] content;
+    }
+    else if(!strcmp((char *)current->name, "texdef"))
+    {
+      content = Q_StrDup((char *)current->children->content);
+  
+      str = strtok(content, " \n\r\t\v\0");
+      face->texdef.shift[0] = atof(str);
+      str = strtok(NULL, " \n\r\t\v\0");
+      face->texdef.shift[1] = atof(str);
+      str = strtok(NULL, " \n\r\t\v\0");
+      face->texdef.rotate = atof(str);
+      str = strtok(NULL, " \n\r\t\v\0");
+      face->texdef.scale[0] = atof(str);
+      str = strtok(NULL, " \n\r\t\v\0");
+      face->texdef.scale[1] = atof(str);
+
+      delete [] content;
+    }
+    else if(!strcmp((char *)current->name, "bpmatrix"))
+    {
+      content = Q_StrDup((char *)current->children->content);
+  
+      str = strtok(content, " \n\r\t\v\0");
+      face->brushprimit_texdef.coords[0][0] = atof(str);
+      str = strtok(NULL, " \n\r\t\v\0");
+      face->brushprimit_texdef.coords[0][1] = atof(str);
+      str = strtok(NULL, " \n\r\t\v\0");
+      face->brushprimit_texdef.coords[0][2] = atof(str);
+      str = strtok(NULL, " \n\r\t\v\0");
+      face->brushprimit_texdef.coords[1][0] = atof(str);
+      str = strtok(NULL, " \n\r\t\v\0");
+      face->brushprimit_texdef.coords[1][1] = atof(str);
+      str = strtok(NULL, " \n\r\t\v\0");
+      face->brushprimit_texdef.coords[1][2] = atof(str);
+
+      delete [] content;
+    }
+    else if(!strcmp((char *)current->name, "flags"))
+    {
+      content = Q_StrDup((char *)current->children->content);
+
+      str = strtok(content, " \n\r\t\v\0");
+      face->texdef.contents = atoi(str);
+      str = strtok(NULL, " \n\r\t\v\0");
+      face->texdef.flags = atoi(str);
+      str = strtok(NULL, " \n\r\t\v\0");
+      face->texdef.value = atoi(str);
+
+      delete [] content;
+    }
+    else if(!strcmp((char *)current->name, "shader"))
+    {
+      face->texdef.SetName((char *)current->children->content);
+    }
+  }
 }
 
-class TreeXMLImporter : public XMLImporter
+void Brush_XMLParse (brush_t *pBrush, xmlNodePtr primitive)
 {
-public:
-  virtual TreeXMLImporter& child() = 0;
-};
+  face_t    *f;
 
-class SubPrimitiveImporter : public TreeXMLImporter
+  for(xmlNodePtr current = primitive->children; current != NULL; current = current->next)
+  {
+    if(current->type != XML_ELEMENT_NODE) continue;
+    f = pBrush->brush_faces;
+    pBrush->brush_faces = Face_Alloc();
+    Face_XMLParse(pBrush->brush_faces, current);
+    pBrush->brush_faces->next = f;
+  }
+}
+
+void Entity_XMLParse(entity_t *pEntity, xmlNodePtr entity)
 {
-  XMLImporter* m_importer;
-public:
-  SubPrimitiveImporter(XMLImporter* importer) : m_importer(importer)
-  {
-  }
-  void pushElement(const XMLElement& element)
-  {
-    m_importer->pushElement(element);
-  }
-  void popElement(const char* name)
-  {
-    m_importer->popElement(name);
-  }
-  std::size_t write(const char* buffer, std::size_t length)
-  {
-    return m_importer->write(buffer, length);
-  }
-  SubPrimitiveImporter& child()
-  {
-    return *this;
-  }
-};
+  brush_t *pBrush;
 
-class PrimitiveImporter : public TreeXMLImporter
-{
-  scene::Node& m_parent;
-  XMLImporter* m_importer;
-  char m_child[sizeof(SubPrimitiveImporter)];
-
-  SubPrimitiveImporter& subprimitive()
+  for(xmlNodePtr current = entity->children; current != NULL; current = current->next)
   {
-    return *reinterpret_cast<SubPrimitiveImporter*>(m_child);
-  }
-public:
-  PrimitiveImporter(scene::Node& parent) : m_parent(parent), m_importer(0)
-  {
-  }
-  void pushElement(const XMLElement& element)
-  {
-    if(string_equal(element.name(), "epair"))
+    if(current->type != XML_ELEMENT_NODE) continue;
+    if(!strcmp((char *)current->name, "epair"))
     {
-      ASSERT_MESSAGE(string_equal(element.name(), "epair"), PARSE_ERROR);
-      Node_getEntity(m_parent)->setKeyValue(element.attribute("key"), element.attribute("value"));
+      char *key = (char *)xmlGetProp(current, (xmlChar *)"key");
+      char *value = (char *)xmlGetProp(current, (xmlChar *)"value");
+      SetKeyValue(pEntity, key, value);
+      xmlFree(key);
+      xmlFree(value);
     }
-    else
+    else if(strcmp((char *)current->name, "brush") == 0)
     {
-      NodeSmartReference node(createPrimitive(element.name()));
-
-      m_importer = Node_getXMLImporter(node);
-
-      constructor(subprimitive(), m_importer);
-
-      m_importer->pushElement(element);
-
-      Node_getTraversable(m_parent)->insert(node);
+      pBrush = Brush_Alloc();
+      Brush_XMLParse(pBrush, current);
+      ((CPtrArray*)pEntity->pData)->Add(pBrush);
+    }
+    else if(strcmp((char *)current->name, "patch") == 0)
+    {
+      pBrush = Brush_Alloc();
+      pBrush->patchBrush = true;
+      pBrush->pPatch = Patch_Alloc();
+      pBrush->pPatch->pSymbiot = pBrush;
+      Patch_XMLParse(pBrush->pPatch, current);
+      ((CPtrArray*)pEntity->pData)->Add(pBrush);
     }
   }
-  void popElement(const char* name)
-  {
-    if(string_equal(name, "epair"))
-    {
-    }
-    else
-    {
-      m_importer->popElement(name);
+}
 
-      destructor(subprimitive());
-      m_importer = 0;
-    }
-  }
-  std::size_t write(const char* buffer, std::size_t length)
-  {
-    return m_importer->write(buffer, length);
-  }
-  TreeXMLImporter& child()
-  {
-    return subprimitive();
-  }
-};
-
-class EntityImporter : public TreeXMLImporter
+void Map_XMLRead(CPtrArray *map, xmlNodePtr map_node)
 {
-  scene::Node& m_parent;
-  char m_node[sizeof(NodeSmartReference)];
-  char m_child[sizeof(PrimitiveImporter)];
-  EntityCreator& m_entityTable;
+  entity_t *pEntity;
+  xmlNodePtr current;
 
-  NodeSmartReference& node()
+  for(current = map_node->children; current != NULL; current = current->next)
   {
-    return *reinterpret_cast<NodeSmartReference*>(m_node);
+    if(current->type != XML_ELEMENT_NODE) continue;
+    pEntity = Entity_Alloc();
+    pEntity->pData = new CPtrArray;
+    Entity_XMLParse(pEntity, current);
+    map->Add(pEntity);
   }
-  PrimitiveImporter& primitive()
+}
+
+// SPoG
+// temporarily copied from qe3.cpp
+// duplicate code starts here (note: g_strAppPath swapped for g_FuncTable.m_pfnGetQERPath())
+
+void HandleXMLError( void* ctxt, const char* text, ... )
+{
+  va_list argptr;
+  static char buf[32768];
+
+  va_start (argptr,text);
+  vsprintf (buf, text, argptr);
+  Sys_FPrintf (SYS_ERR, "XML %s\n", buf);
+  va_end (argptr);
+}
+
+#define DTD_BUFFER_LENGTH 1024
+xmlDocPtr ParseXMLStream(IDataStream *stream, bool validate = false)
+{
+  xmlDocPtr doc = NULL;
+  bool wellFormed = false, valid = false;
+  int res, size = 1024;
+  char chars[1024];
+  xmlParserCtxtPtr ctxt;
+
+  // SPoG
+  // HACK: use AppPath to resolve DTD location
+  // do a buffer-safe string copy and concatenate
+  int i;
+  char* w;
+  const char* r;
+  char buf[DTD_BUFFER_LENGTH];
+
+  w = buf;
+  i = 0;
+  // copy
+  //assert(g_FuncTable.m_pfnGetQERPath() != NULL);
+  for(r = g_FuncTable.m_pfnGetQERPath(); i<DTD_BUFFER_LENGTH && *r != '\0'; i++, r++)  w[i] = *r;
+  // concatenate
+  for(r = "dtds/"; i<DTD_BUFFER_LENGTH && *r != '\0'; i++, r++)  w[i] = *r;
+  // terminate
+  w[i] = '\0';
+
+  if(i == DTD_BUFFER_LENGTH)
   {
-    return *reinterpret_cast<PrimitiveImporter*>(m_child);
+    HandleXMLError(NULL, "ERROR: buffer overflow: DTD path length too large\n");
+    return NULL;
   }
 
-public:
-  EntityImporter(scene::Node& parent, EntityCreator& entityTable) : m_parent(parent), m_entityTable(entityTable)
-  {
-  }
-  void pushElement(const XMLElement& element)
-  {
-    ASSERT_MESSAGE(string_equal(element.name(), "entity"), PARSE_ERROR);
-    constructor(node(), NodeSmartReference(m_entityTable.createEntity(GlobalEntityClassManager().findOrInsert("", true))));
-    constructor(primitive(), makeReference(node().get()));
-  }
-  void popElement(const char* name)
-  {
-    ASSERT_MESSAGE(string_equal(name, "entity"), PARSE_ERROR);
-    NodeSmartReference entity(m_entityTable.createEntity(GlobalEntityClassManager().findOrInsert(Node_getEntity(node())->getKeyValue("classname"), node_is_group(node()))));
+  //if(validate)
+  //  xmlDoValidityCheckingDefaultValue = 1;
+  //else
+    xmlDoValidityCheckingDefaultValue = 0;
 
+  xmlSetGenericErrorFunc(NULL, HandleXMLError);
+
+  res = stream->Read(chars, 4);
+  if (res > 0)
+  {
+    ctxt = xmlCreatePushParserCtxt(NULL, NULL, chars, res, buf);
+
+    while ((res = stream->Read(chars, size)) > 0)
     {
-      EntityCopyingVisitor visitor(*Node_getEntity(entity));
-      Node_getEntity(node())->forEachKeyValue(visitor);
+      xmlParseChunk(ctxt, chars, res, 0);
     }
+    xmlParseChunk(ctxt, chars, 0, 1);
+    doc = ctxt->myDoc;
 
-    if(Node_getTraversable(entity) != 0 && !Node_getEntity(entity)->getEntityClass().fixedsize)
-    {
-      parentBrushes(node(), entity);
-    }
+    wellFormed = (ctxt->wellFormed == 1);
+    valid = (ctxt->valid == 1);
 
-    Node_getTraversable(m_parent)->insert(entity);
-
-    destructor(primitive());
-    destructor(node());
+    xmlFreeParserCtxt(ctxt);
   }
-  std::size_t write(const char* buffer, std::size_t length)
-  {
-    return length;
-  }
-  TreeXMLImporter& child()
-  {
-    return primitive();
-  }
-};
 
-class MapDoom3Importer : public TreeXMLImporter
+  if(wellFormed && (!validate || (validate && valid)))
+    return doc;
+
+  if(doc != NULL)
+    xmlFreeDoc(doc);
+
+  return NULL;
+}
+
+// duplicate code ends here
+
+void Map_Read (IDataStream *in, CPtrArray *map)
 {
-  scene::Node& m_root;
-  char m_child[sizeof(EntityImporter)];
-  EntityCreator& m_entityTable;
+  xmlDocPtr doc;
 
-  EntityImporter& getEntity()
-  {
-    return *reinterpret_cast<EntityImporter*>(m_child);
-  }
-public:
-  MapDoom3Importer(scene::Node& root, EntityCreator& entityTable) : m_root(root), m_entityTable(entityTable)
-  {
-  }
-  void pushElement(const XMLElement& element)
-  {
-    ASSERT_MESSAGE(string_equal(element.name(), "mapdoom3"), PARSE_ERROR);
-    constructor(getEntity(), makeReference(m_root), makeReference(m_entityTable));
-  }
-  void popElement(const char* name)
-  {
-    ASSERT_MESSAGE(string_equal(name, "mapdoom3"), PARSE_ERROR);
-    destructor(getEntity());
-  }
-  std::size_t write(const char* data, std::size_t length)
-  {
-    return length;
-  }
-  TreeXMLImporter& child()
-  {
-    return getEntity();
-  }
-};
+  doc = ParseXMLStream(in, false ); // quick hack while dtd validation is broken
 
-class TreeXMLImporterStack : public XMLImporter
-{
-  std::vector< Reference<TreeXMLImporter> > m_importers;
-public:
-  TreeXMLImporterStack(TreeXMLImporter& importer)
+  if(doc != NULL)
   {
-    m_importers.push_back(makeReference(importer));
+    xmlNodePtr node=doc->children;
+    while(node != NULL && node->type != XML_ELEMENT_NODE) node=node->next;
+    if(node != NULL)
+      Map_XMLRead(map, node);
   }
-  void pushElement(const XMLElement& element)
-  {
-    m_importers.back().get().pushElement(element);
-    m_importers.push_back(makeReference(m_importers.back().get().child()));
-  }
-  void popElement(const char* name)
-  {
-    m_importers.pop_back();
-    m_importers.back().get().popElement(name);
-  }
-  std::size_t write(const char* buffer, std::size_t length)
-  {
-    return (*(m_importers.end() - 2)).get().write(buffer, length);
-  }
-};
-
-
-void Map_Read(scene::Node& root, TextInputStream& in, EntityCreator& entityTable)
-{
-  XMLStreamParser parser(in);
-
-  MapDoom3Importer importer(root, entityTable);
-  TreeXMLImporterStack stack(importer);
-  parser.exportXML(stack);
+ 
+  xmlFreeDoc(doc);
 }

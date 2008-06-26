@@ -1,0 +1,85 @@
+Release / Reload of modules
+---------------------------
+
+The 'not active' modules are unloaded after startup
+Plugins should be allowed to be unloaded and reloaded on the fly
+Modules too, when possible?
+
+Don't want to 'force' all plugins to have unload capabilities
+Just has to be something specified at compile time wether or not they can unload 'cleanly'
+
+Dependency implications. When you release a module, you need to remove a number of interfaces.
+If those interfaces are being used, can you explicitely ask for them to be unloaded?
+
+Also, problem with plugins breaking the startup process:
+http://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=441
+
+The most important is to provide a clean shutdown method
+What's the != between unload and shutdown?
+
+Means that the server proceeds to the shutdown, and nothing else is supposed to be making
+calls through APIs post shutdown.
+
+Should be done in 3 steps:
+#1 prepare shutdown, all APIs are active, just release and save all the stuff you want
+#2 tell the modules to shutdown, i.e. release the APIs they point to? (at this point they can't call through anymore)
+#3 force all things to be unloaded, warn about reference count problems
+
+What is different when we unload a module, and we want to keep the editor up?
+All the interfaces obtained from this plugin need to be released
+If some pure virtual classes have been obtained from this plugin, we need a mecanism to have them removed
+Do we need a first path to check if the unload procedure is going to be allowed?
+
+For instance, a plugin that provides custom entities rendering etc.
+Need to unload first, then need to reload (scan the map again, rebuild)
+
+Summing up, when doing a reload we need to keep track of the modules and let them know after the
+module has been reloaded, so that the links can be rebuilt. When doing unload we need to do a
+'check' pass prior to anything to know if the release is possible. Because it does not depend
+on the module we unload, it depends on the other clients that use it.
+
+Objectives:
+-----------
+
+- 'release check' of a module
+  walk through the interfaces this module has provided, and make sure the release will be possible
+- 'release' of a module
+  actually drop all the interfaces. this should be done only after a 'release check'
+	if something fails here, we are in an unstable state and need to abort
+- 'client shutdown' unused modules after initial startup
+  actual DLL unload / complete shutdown of the client interface	
+	this comes after 'release check' and 'release'
+- 'refresh' modules
+  'release check', 'release', 'shutdown' and then, reload and build the links again
+- 'core shutdown'
+  'release' and force 'shutdown' of all clients
+	even if we encounter some interfaces that we are not able to release cleanly
+	force things and shutdown all clients
+	then the core process is ready to exit..
+
+Constraints:
+------------
+
+- refresh and shutdown are sharing some code
+- the 'release' part of a module refresh may not be always possible (that's what 'release check' is there for)
+- 'core shutdown' has to be forced to happen, in the safest way possible obviously
+
+Implementation:
+---------------
+
+- 'client shutdown' comes first
+  this is used after initial startup, since we don't have to do a prior 'release' on those
+	this will be used in the 'core shutdown' and 'refresh' too 
+- then 'core shutdown' procedure?
+  that's the most urgent thing we need
+	but 'release check' and 'release' have to be written in and used during 'core shutdown'
+- 'refresh' takes an essential part of the design, but that's not something we need to have written right now?
+  (it mostly relies on 'release check' 'release' 'client shutdown', and then reload and rebuild the links)
+	
+'client shutdown':
+this is server side code though, you tell the server 'shutdown this client'
+we don't have to exchange anything with the client while we do that
+(written initially for unload of unused modules after startup)
+
+'core shutdown':
+is a shutdown of all clients

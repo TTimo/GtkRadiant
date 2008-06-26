@@ -1,5 +1,5 @@
 /*
-Copyright (C) 1999-2006 Id Software, Inc. and contributors.
+Copyright (C) 1999-2007 id Software, Inc. and contributors.
 For a list of contributors, see the accompanying CONTRIBUTORS file.
 
 This file is part of GtkRadiant.
@@ -495,31 +495,17 @@ void BeginBSPFile (void)
 EndBSPFile
 ============
 */
-void EndBSPFile (void)
-{
+void EndBSPFile( void ) {
 	char	path[1024];
 
-#if 0
-	int		len;
-	byte	*buf;
-#endif
-
-	EmitBrushes ();
-	EmitPlanes ();
-	UnparseEntities ();
-
-	// load the pop
-#if 0
-	sprintf (path, "%s/pics/pop.lmp", gamedir);
-	len = LoadFile (path, &buf);
-	memcpy (dpop, buf, sizeof(dpop));
-	free (buf);
-#endif
+	EmitBrushes();
+	EmitPlanes();
+	UnparseEntities();
 
 	// write the map
-	sprintf (path, "%s.bsp", source);
-	Sys_Printf ("Writing %s\n", path);
-	WriteBSPFile (path);
+	sprintf( path, "%s.bsp", source );
+	Sys_Printf( "Writing %s\n", path );
+	WriteBSPFile( path );
 }
 
 

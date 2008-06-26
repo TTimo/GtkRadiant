@@ -20,14 +20,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __DTREE_H__
 #define __DTREE_H__
 
-#include "qerplugin.h"
-#include "signal/isignal.h"
-#include "string/string.h"
-
+#include "../include/igl.h"
 #include "DEntity.h"
-#include "ScriptParser.h"
-#include "mathlib.h"
 #include "misc.h"
+#include "ScriptParser.h"
 
 #define MAX_QPATH 64
 
@@ -37,20 +33,23 @@ typedef struct treeModel_s {
 
 #define MAX_TP_MODELS 256
 
-class DTreePlanter {
-  MouseEventHandlerId m_mouseDown;
-  SignalHandlerId m_destroyed;
+class DTreePlanter : public IWindowListener {
 public:
-	SignalHandlerResult mouseDown(const WindowVector& position, ButtonIdentifier button, ModifierFlags modifiers);
-  typedef Member3<DTreePlanter, const WindowVector&, ButtonIdentifier, ModifierFlags, SignalHandlerResult, &DTreePlanter::mouseDown> MouseDownCaller;
-	void destroyed()
-  {
-    m_mouseDown = MouseEventHandlerId();
-    m_destroyed = SignalHandlerId();
-  }
-  typedef Member<DTreePlanter, void, &DTreePlanter::destroyed> DestroyedCaller;
-
-  DTreePlanter() {
+	virtual bool OnMouseMove(guint32 nFlags, gdouble x, gdouble y);
+	virtual bool OnLButtonDown(guint32 nFlags, gdouble x, gdouble y);
+	virtual bool OnMButtonDown(guint32 nFlags, gdouble x, gdouble y);
+	virtual bool OnRButtonDown(guint32 nFlags, gdouble x, gdouble y);
+	virtual bool OnLButtonUp(guint32 nFlags, gdouble x, gdouble y);
+	virtual bool OnMButtonUp(guint32 nFlags, gdouble x, gdouble y);
+	virtual bool OnRButtonUp(guint32 nFlags, gdouble x, gdouble y);
+	virtual bool OnKeyPressed(char *s) { return false; }
+	virtual bool Paint() { return true; }
+	virtual void Close() { }
+	
+	DTreePlanter() {
+		m_refCount =	1;
+		m_hooked =		false;
+		m_XYWrapper =	NULL;
 		m_numModels =	0;
 		m_offset =		0;
 		m_maxPitch =	0;
@@ -61,6 +60,8 @@ public:
 		m_useScale =	false;
 		m_autoLink =	false;
 		m_linkNum =		0;
+
+		Register();
 
 		m_world.LoadSelectedBrushes();
 
@@ -88,24 +89,9 @@ public:
 
 			fclose( file );
 		}
-
-    m_mouseDown = GlobalRadiant().XYWindowMouseDown_connect(makeSignalHandler3(MouseDownCaller(), *this));
-    m_destroyed = GlobalRadiant().XYWindowDestroyed_connect(makeSignalHandler(DestroyedCaller(), *this));
 	}
 
-  virtual ~DTreePlanter()
-  {
-    if(!m_mouseDown.isNull())
-    {
-      GlobalRadiant().XYWindowMouseDown_disconnect(m_mouseDown);
-    }
-    if(!m_destroyed.isNull())
-    {
-      GlobalRadiant().XYWindowDestroyed_disconnect(m_destroyed);
-    }
-  }
-
-#define MT(t)	string_equal_nocase( pToken, t )
+#define MT(t)	!stricmp( pToken, t )
 #define GT		pToken = pScriptParser->GetToken( true )
 #define CT		if(!*pToken) { return; }
 
@@ -164,11 +150,11 @@ public:
 			} else if(MT("scale")) {
 				GT; CT;
 
-				m_minScale = static_cast<float>(atof(pToken));
+				m_minScale = static_cast< float >( atof( pToken ) );
 
 				GT; CT;
 
-				m_maxScale = static_cast<float>(atof(pToken));
+				m_maxScale = static_cast< float >( atof( pToken ) );
 
 				m_useScale = true;
 			} else if(MT("numlinks")) {
@@ -179,16 +165,41 @@ public:
 		} while( true );
 	}
 
+	virtual ~DTreePlanter() {
+		UnRegister();
+	}
+
+	virtual void IncRef() { m_refCount++; }
+	virtual void DecRef() { m_refCount--; if (m_refCount <= 0) delete this; }
+
+	void Register() {
+		if(!m_hooked) {
+			g_MessageTable.m_pfnHookWindow( this );
+			m_XYWrapper = g_MessageTable.m_pfnGetXYWndWrapper();
+			m_hooked = true;
+		}
+	}
+
+	void UnRegister() {
+		if(m_hooked) {
+			g_MessageTable.m_pfnUnHookWindow( this );
+			m_XYWrapper = NULL;
+			m_hooked = false;
+		}
+	}
+
 	bool FindDropPoint(vec3_t in, vec3_t out);
 	void DropEntsToGround( void );
 	void MakeChain( void );
 	void SelectChain( void );
 
 private:
+	IXYWndWrapper*	m_XYWrapper;
 	DEntity			m_world;
 
 	treeModel_t		m_trees[MAX_TP_MODELS];
 
+	int				m_refCount;
 	int				m_numModels;
 	int				m_offset;
 	int				m_maxPitch;
@@ -203,6 +214,7 @@ private:
 	float			m_minScale;
 	float			m_maxScale;
 
+	bool			m_hooked;
 	bool			m_useScale;
 	bool			m_setAngles;
 	bool			m_autoLink;

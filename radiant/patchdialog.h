@@ -1,5 +1,5 @@
 /*
-Copyright (C) 1999-2006 Id Software, Inc. and contributors.
+Copyright (C) 1999-2007 id Software, Inc. and contributors.
 For a list of contributors, see the accompanying CONTRIBUTORS file.
 
 This file is part of GtkRadiant.
@@ -19,25 +19,67 @@ along with GtkRadiant; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#if !defined(INCLUDED_PATCHDIALOG_H)
-#define INCLUDED_PATCHDIALOG_H
+#ifndef _PATCHDIALOG_H_
+#define _PATCHDIALOG_H_
 
-void PatchInspector_Construct();
-void PatchInspector_Destroy();
+#include "dialog.h"
 
-typedef struct _GtkWidget GtkWidget;
-typedef struct _GtkWindow GtkWindow;
-void PatchInspector_constructWindow(GtkWindow* main_window);
-void PatchInspector_destroyWindow();
-
-namespace scene
-{
-  class Graph;
-}
-
-void Scene_PatchTranslateTexture_Selected(scene::Graph& graph, float s, float t);
-void Scene_PatchRotateTexture_Selected(scene::Graph& graph, float angle);
-void Scene_PatchScaleTexture_Selected(scene::Graph& graph, float s, float t);
-
-
+#ifdef _DEBUG
+//#define DBG_PI
 #endif
+
+class PatchDialog : public Dialog
+{
+ public:
+  // overrides from Dialog
+  void HideDlg();
+  void ShowDlg();
+
+//  void UpdateInfo();
+//  void SetPatchInfo();
+  void GetPatchInfo();
+  void UpdateSpinners(bool bUp, int nID);
+  // read the current patch on map and initialize m_fX m_fY accordingly
+  void UpdateRowColInfo();
+  // sync the dialog our internal data structures
+  // depending on the flag it will read or write
+  // we use m_nCol m_nRow m_fX m_fY m_fZ m_fS m_fT m_strName
+  // (NOTE: this doesn't actually commit stuff to the map or read from it)
+  void UpdateData (bool retrieve);
+
+  void InitDefaultIncrement(texdef_t *);
+
+  PatchDialog();
+  patchMesh_t *m_Patch;
+
+  Str	m_strName;
+  float	m_fS;
+  float	m_fT;
+  float	m_fX;
+  float	m_fY;
+  float	m_fZ;
+/*  float	m_fHScale;
+  float	m_fHShift;
+  float	m_fRotate;
+  float	m_fVScale;
+  float	m_fVShift; */
+  int   m_nCol;
+  int   m_nRow;
+  GtkWidget *m_pRowCombo;
+  GtkWidget *m_pColCombo;
+
+  GtkWidget *GetWidget () { return m_pWidget; }
+
+  // 0 is invalid, otherwise it's the Id of the last 'do' we are responsible for
+//  int m_nUndoId;
+  
+  // turn on/off processing of the "changed" "value_changed" messages
+  // (need to turn off when we are feeding data in)
+  // NOTE: much more simple than blocking signals
+  bool m_bListenChanged;
+
+protected:
+  void BuildDialog ();
+};
+
+#endif // _PATCHDIALOG_H_

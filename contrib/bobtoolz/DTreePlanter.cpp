@@ -17,33 +17,16 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
+#include "StdAfx.h"
 #include "DTreePlanter.h"
-
-#include <list>
-#include "str.h"
-
-#include "DPoint.h"
-#include "DPlane.h"
-#include "DBrush.h"
-#include "DEPair.h"
-#include "DPatch.h"
-#include "DEntity.h"
-
-#include "ScriptParser.h"
-#include "misc.h"
-#include "scenelib.h"
-
-
-
 #include "funchandlers.h"
 
-SignalHandlerResult DTreePlanter::mouseDown(const WindowVector& position, ButtonIdentifier button, ModifierFlags modifiers)
-{
-  if(button != c_buttonLeft)
-  {
-    return SIGNAL_CONTINUE_EMISSION;
-  }
-	VIEWTYPE vt = GlobalRadiant().XYWindow_getViewType();
+bool DTreePlanter::OnMouseMove(guint32 nFlags, gdouble x, gdouble y) {
+	return false;
+}
+
+bool DTreePlanter::OnLButtonDown(guint32 nFlags, gdouble x, gdouble y) {
+	VIEWTYPE vt = m_XYWrapper->GetViewType();
 
 	switch(vt) {
 		case XY:
@@ -51,14 +34,14 @@ SignalHandlerResult DTreePlanter::mouseDown(const WindowVector& position, Button
 		case YZ:
 		case XZ:
 		default:
-			return SIGNAL_CONTINUE_EMISSION;
+			return false;
 	}
 
-	Vector3 pt, vhit;
+	vec3_t pt, vhit;
 
-  pt = vector3_snapped(GlobalRadiant().XYWindow_windowToWorld(position), GlobalRadiant().getGridSize());
+	m_XYWrapper->SnapToGrid( static_cast< int >( x ), static_cast< int >( y ), pt );
 
-	if(FindDropPoint(vector3_to_array(pt), vector3_to_array(vhit))) {
+	if(FindDropPoint(pt, vhit)) {
 		vhit[2] += m_offset;
 
 		char buffer[128];
@@ -68,17 +51,17 @@ SignalHandlerResult DTreePlanter::mouseDown(const WindowVector& position, Button
 		e.AddEPair("origin", buffer);
 
 		if(m_autoLink) {
+			entity_t* pLastEntity = NULL;
+			entity_t* pThisEntity = NULL;
 
-      const scene::Path* pLastEntity = NULL;
-			const scene::Path* pThisEntity = NULL;
-
-			int entpos;
+			int entNum = -1, lastEntNum = -1, entpos;
 			for(int i = 0; i < 256; i++) {
 				sprintf(buffer, m_linkName, i);
-        pThisEntity = FindEntityFromTargetname( buffer );
+				pThisEntity = FindEntityFromTargetname( buffer, &entNum );
 
 				if(pThisEntity) {
 					entpos = i;
+					lastEntNum = entNum;
 					pLastEntity = pThisEntity;
 				}
 			}
@@ -93,12 +76,11 @@ SignalHandlerResult DTreePlanter::mouseDown(const WindowVector& position, Button
 
 			if(pLastEntity) {
 				DEntity e2;
-				e2.LoadFromEntity(pLastEntity->top(), true);
+				e2.LoadFromEntity(lastEntNum, TRUE);
 				e2.AddEPair("target", buffer);
 				e2.RemoveFromRadiant();
-				e2.BuildInRadiant(false);
+				e2.BuildInRadiant(FALSE);
 			}
-
 		}
 
 		if(m_setAngles) {
@@ -121,14 +103,34 @@ SignalHandlerResult DTreePlanter::mouseDown(const WindowVector& position, Button
 			e.AddEPair("modelscale", buffer);
 		}
 
-		e.BuildInRadiant( false );
+		e.BuildInRadiant( FALSE );
 	}
 
 	if(m_autoLink) {
 		DoTrainPathPlot();
 	}
 
-	return SIGNAL_STOP_EMISSION;
+	return true;
+}
+
+bool DTreePlanter::OnLButtonUp(guint32 nFlags, gdouble x, gdouble y) {
+	return false;
+}
+
+bool DTreePlanter::OnRButtonDown(guint32 nFlags, gdouble x, gdouble y) {
+	return false;
+}
+
+bool DTreePlanter::OnRButtonUp(guint32 nFlags, gdouble x, gdouble y) {
+	return false;
+}
+
+bool DTreePlanter::OnMButtonDown(guint32 nFlags, gdouble x, gdouble y) {
+	return false;
+}
+
+bool DTreePlanter::OnMButtonUp(guint32 nFlags, gdouble x, gdouble y) {
+	return false;
 }
 
 bool DTreePlanter::FindDropPoint(vec3_t in, vec3_t out) {
@@ -179,42 +181,36 @@ bool DTreePlanter::FindDropPoint(vec3_t in, vec3_t out) {
 	return found;
 }
 
-class TreePlanterDropEntityIfSelected
-{
-  mutable DEntity ent;
-  DTreePlanter& planter;
-public:
-  TreePlanterDropEntityIfSelected(DTreePlanter& planter) : planter(planter)
-  {
-  }
-  void operator()(scene::Instance& instance) const
-  {
-    if(!instance.isSelected())
-    {
-      return;
-    }
-		ent.LoadFromEntity(instance.path().top());
+void DTreePlanter::DropEntsToGround( void ) {
+	// tell Radiant we want to access the selected brushes
+	g_FuncTable.m_pfnAllocateSelectedBrushHandles();
+			
+	DEntity ent;
+
+	int cnt = g_FuncTable.m_pfnSelectedBrushCount();
+	for(int i = 0; i < cnt; i++) {
+		brush_t *brush = (brush_t*)g_FuncTable.m_pfnGetSelectedBrushHandle(i);
+
+		ent.LoadFromEntity(brush->owner, TRUE);
 
 		DEPair* pEpair = ent.FindEPairByKey("origin");
 		if(!pEpair) {
-			return;
+			continue;
 		}
 
 		vec3_t vec, out;
 		sscanf( pEpair->value.GetBuffer(), "%f %f %f", &vec[0], &vec[1], &vec[2]);
 
-		planter.FindDropPoint( vec, out );
+		FindDropPoint( vec, out );
 
 		char buffer[256];
 		sprintf( buffer, "%f %f %f", out[0], out[1], out[2] );
 		ent.AddEPair( "origin", buffer );
 		ent.RemoveFromRadiant();
-		ent.BuildInRadiant(false);
-  }
-};
+		ent.BuildInRadiant(FALSE);
+	}
 
-void DTreePlanter::DropEntsToGround( void ) {
-  Scene_forEachEntity(TreePlanterDropEntityIfSelected(*this));
+	g_FuncTable.m_pfnReleaseSelectedBrushHandles();
 }
 
 void DTreePlanter::MakeChain( void ) {
@@ -238,7 +234,7 @@ void DTreePlanter::MakeChain( void ) {
 			e.AddEPair( "control", buffer );
 		}
 
-		e.BuildInRadiant( false );
+		e.BuildInRadiant( FALSE );
 	}
 
 	for(i = 0; i < m_linkNum-1; i++) {
@@ -250,7 +246,7 @@ void DTreePlanter::MakeChain( void ) {
 		sprintf( buffer, "0 %i 0", (i * 64) + 32);
 		e.AddEPair( "origin", buffer );
 
-		e.BuildInRadiant( false );
+		e.BuildInRadiant( FALSE );
 	}
 }
 
@@ -274,7 +270,7 @@ void DTreePlanter::SelectChain( void ) {
 			e.AddEPair( "control", buffer );
 		}
 
-		e.BuildInRadiant( false );
+		e.BuildInRadiant( FALSE );
 	}
 
 	for(int i = 0; i < m_linkNum-1; i++) {
@@ -286,6 +282,6 @@ void DTreePlanter::SelectChain( void ) {
 		sprintf( buffer, "0 %i 0", (i * 64) + 32);
 		e.AddEPair( "origin", buffer );
 
-		e.BuildInRadiant( false );
+		e.BuildInRadiant( FALSE );
 	}*/
 }

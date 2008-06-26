@@ -1,8 +1,0 @@
-# Linux build config
-# q3.cf
-#
-# includes core + q3pack
-
-$DO_CORE=1;
-$DO_GAME_Q3=1;
-$DO_GAME_WOLF=0;

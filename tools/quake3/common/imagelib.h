@@ -1,5 +1,5 @@
 /*
-Copyright (C) 1999-2006 Id Software, Inc. and contributors.
+Copyright (C) 1999-2007 id Software, Inc. and contributors.
 For a list of contributors, see the accompanying CONTRIBUTORS file.
 
 This file is part of GtkRadiant.
@@ -36,9 +36,9 @@ void Save256Image (const char *name, byte *pixels, byte *palette,
 				   int width, int height);
 
 
-void LoadTGA (const char *filename, byte **pixels, int *width, int *height);
-void LoadTGABuffer ( const byte *buffer, const byte* enddata, byte **pic, int *width, int *height);
-void WriteTGA (const char *filename, byte *data, int width, int height);
+void LoadTGA( const char *filename, byte **pixels, int *width, int *height );
+void LoadTGABuffer( byte *buffer, byte **pic, int *width, int *height );
+void WriteTGA( const char *filename, byte *data, int width, int height );
+int LoadJPGBuff( void *src_buffer, int src_size, unsigned char **pic, int *width, int *height );
 
-void Load32BitImage (const char *name, unsigned **pixels, int *width, int *height);
-
+void Load32BitImage( const char *name, unsigned **pixels, int *width, int *height );

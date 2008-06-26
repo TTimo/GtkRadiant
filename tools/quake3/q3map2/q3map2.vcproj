@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8,00"
+	Version="8.00"
 	Name="q3map2"
-	ProjectGUID="{8ED67991-58A6-44AA-9B3A-3217085EF187}"
+	ProjectGUID="{F5D0509C-80E0-49B7-B033-885D8253063A}"
 	RootNamespace="q3map2"
 	>
 	<Platforms>
@@ -16,12 +16,10 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="Debug"
-			IntermediateDirectory="Debug"
+			OutputDirectory="$(SolutionDir)\install"
+			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="1"
-			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="0"
-			ATLMinimizesCRunTimeLibraryUsage="false"
 			CharacterSet="2"
 			>
 			<Tool
@@ -38,54 +36,37 @@
 			/>
 			<Tool
 				Name="VCMIDLTool"
-				TypeLibraryName=".\Debug/q3map2.tlb"
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;..\..\..\..\mhash-0.9\lib&quot;;..\..\..\include;..\common;..\..\..\libs;&quot;..\..\..\..\libxml2-2.6\include&quot;;&quot;..\..\..\..\gtk2-2.10\include\glib-2.0&quot;;&quot;..\..\..\..\gtk2-2.10\lib\glib-2.0\include&quot;;&quot;..\..\..\..\gtk2-2.10\include\&quot;;$(NOINHERIT)"
-				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;_DEBUG,WIN32,_CONSOLE"
-				ExceptionHandling="0"
-				BasicRuntimeChecks="0"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)\tools\quake3\common&quot;;&quot;$(SolutionDir)\include&quot;;&quot;$(SolutionDir)\libs&quot;;&quot;$(SolutionDir)\..\STLPort\stlport&quot;;&quot;$(SolutionDir)\..\gtk2\include&quot;;&quot;$(SolutionDir)\..\gtk2\include\glib-2.0&quot;;&quot;$(SolutionDir)\..\gtk2\lib\glib-2.0\include&quot;;&quot;$(SolutionDir)\..\libxml2\include&quot;"
+				PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS"
+				MinimalRebuild="true"
+				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
-				BufferSecurityCheck="false"
-				PrecompiledHeaderFile=".\Debug/q3map2.pch"
-				AssemblerListingLocation=".\Debug/"
-				ObjectFile=".\Debug/"
-				ProgramDataBaseFileName=".\Debug/"
-				BrowseInformation="0"
 				WarningLevel="3"
-				SuppressStartupBanner="true"
+				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="4"
-				CompileAs="0"
-				DisableSpecificWarnings="4996"
+				DisableSpecificWarnings="4996;4244;4267"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
 			/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG"
-				Culture="1033"
 			/>
 			<Tool
 				Name="VCPreLinkEventTool"
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalOptions="/MACHINE:I386"
-				AdditionalDependencies="glib-2.0.lib wsock32.lib libxml2.lib libpng.lib libmhash.lib"
-				OutputFile=".\Debug/q3map2.exe"
-				LinkIncremental="2"
-				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="&quot;..\..\..\..\mhash-0.9\win32\libmhash\Debug&quot;;&quot;..\..\..\..\libxml2-2.6\lib&quot;;&quot;..\..\..\..\gtk2-2.10\lib&quot;"
-				IgnoreDefaultLibraryNames="libcd"
+				AdditionalDependencies="md5lib.lib ddslib.lib l_net.lib mathlib.lib picomodel.lib libxml2.lib libpng.lib glib-2.0.lib gobject-2.0.lib Wsock32.lib libjpeg.lib"
+				AdditionalLibraryDirectories="&quot;$(SolutionDir)\..\libxml2\lib&quot;;&quot;$(SolutionDir)\..\gtk2\lib&quot;;&quot;$(SolutionDir)\build\$(ConfigurationName)\libs&quot;;&quot;$(SolutionDir)\..\jpeg-6b&quot;"
+				IgnoreAllDefaultLibraries="false"
+				IgnoreDefaultLibraryNames=""
 				GenerateDebugInformation="true"
-				ProgramDatabaseFile=".\Debug/q3map2.pdb"
-				GenerateMapFile="true"
-				MapFileName=".\Debug/q3map2.map"
-				SubSystem="1"
-				StackReserveSize="4194304"
+				TargetMachine="1"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -110,19 +91,15 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				Description="Copy to dir..."
-				CommandLine="copy &quot;$(TargetPath)&quot; &quot;$(SolutionDir)install&quot;"
 			/>
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="Release"
-			IntermediateDirectory="Release"
+			OutputDirectory="$(SolutionDir)\install"
+			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="1"
-			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
-			UseOfMFC="0"
-			ATLMinimizesCRunTimeLibraryUsage="false"
 			CharacterSet="2"
+			WholeProgramOptimization="1"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -138,57 +115,34 @@
 			/>
 			<Tool
 				Name="VCMIDLTool"
-				TypeLibraryName=".\Release/q3map2.tlb"
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				Optimization="3"
-				InlineFunctionExpansion="2"
-				EnableIntrinsicFunctions="true"
-				FavorSizeOrSpeed="1"
-				AdditionalIncludeDirectories="&quot;..\..\..\..\mhash-0.9\lib&quot;;..\..\..\include;..\common;..\..\..\libs;&quot;..\..\..\..\libxml2-2.6\include&quot;;&quot;..\..\..\..\gtk2-2.10\include\glib-2.0&quot;;&quot;..\..\..\..\gtk2-2.10\lib\glib-2.0\include&quot;;&quot;..\..\..\..\gtk2-2.10\include\&quot;;$(NOINHERIT)"
-				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;NDEBUG,WIN32,_CONSOLE"
-				StringPooling="true"
-				ExceptionHandling="0"
-				BasicRuntimeChecks="0"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)\tools\quake3\common&quot;;&quot;$(SolutionDir)\include&quot;;&quot;$(SolutionDir)\libs&quot;;&quot;$(SolutionDir)\..\STLPort\stlport&quot;;&quot;$(SolutionDir)\..\gtk2\include&quot;;&quot;$(SolutionDir)\..\gtk2\include\glib-2.0&quot;;&quot;$(SolutionDir)\..\gtk2\lib\glib-2.0\include&quot;;&quot;$(SolutionDir)\..\libxml2\include&quot;"
+				PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS"
 				RuntimeLibrary="2"
-				BufferSecurityCheck="false"
-				EnableFunctionLevelLinking="true"
-				PrecompiledHeaderFile=".\Release/q3map2.pch"
-				AssemblerListingLocation=".\Release/"
-				ObjectFile=".\Release/"
-				ProgramDataBaseFileName=".\Release/"
-				BrowseInformation="0"
 				WarningLevel="3"
-				SuppressStartupBanner="true"
+				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="3"
-				CompileAs="0"
-				DisableSpecificWarnings="4996"
+				DisableSpecificWarnings="4996;4244;4267"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
 			/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="NDEBUG"
-				Culture="1033"
 			/>
 			<Tool
 				Name="VCPreLinkEventTool"
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalOptions="/MACHINE:I386"
-				AdditionalDependencies="glib-2.0.lib wsock32.lib libxml2.lib libpng.lib libmhash.lib"
-				OutputFile=".\Release/q3map2.exe"
-				LinkIncremental="1"
-				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="&quot;..\..\..\..\mhash-0.9\win32\libmhash\Release&quot;;&quot;..\..\..\..\libxml2-2.6\lib&quot;;&quot;..\..\..\..\gtk2-2.10\lib&quot;"
-				ProgramDatabaseFile=".\Release/q3map2.pdb"
-				GenerateMapFile="true"
-				MapFileName=".\Release/q3map2.map"
-				SubSystem="1"
-				StackReserveSize="4194304"
+				AdditionalDependencies="md5lib.lib ddslib.lib l_net.lib mathlib.lib picomodel.lib libxml2.lib libpng.lib glib-2.0.lib gobject-2.0.lib Wsock32.lib libjpeg.lib"
+				AdditionalLibraryDirectories="&quot;$(SolutionDir)\..\libxml2\lib&quot;;&quot;$(SolutionDir)\..\gtk2\lib&quot;;&quot;$(SolutionDir)\build\$(ConfigurationName)\libs&quot;;&quot;$(SolutionDir)\..\jpeg-6b&quot;"
+				GenerateDebugInformation="true"
+				OptimizeReferences="2"
+				EnableCOMDATFolding="2"
+				TargetMachine="1"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -213,8 +167,6 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				Description="Copy to dir..."
-				CommandLine="copy &quot;$(TargetPath)&quot; &quot;$(SolutionDir)install&quot;"
 			/>
 		</Configuration>
 	</Configurations>
@@ -282,6 +234,26 @@
 					>
 				</File>
 				<File
+					RelativePath="..\common\jpeg.c"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							AdditionalIncludeDirectories="&quot;$(SolutionDir)\..\jpeg-6b&quot;"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							AdditionalIncludeDirectories="&quot;$(SolutionDir)\..\jpeg-6b&quot;"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
 					RelativePath="..\common\mutex.c"
 					>
 				</File>
@@ -304,6 +276,26 @@
 				<File
 					RelativePath="..\common\vfs.c"
 					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							AdditionalIncludeDirectories="&quot;$(SolutionDir)\include&quot;;&quot;$(SolutionDir)\libs&quot;;&quot;$(SolutionDir)\..\STLPort\stlport&quot;;&quot;$(SolutionDir)\..\gtk2\include&quot;;&quot;$(SolutionDir)\..\gtk2\include\glib-2.0&quot;;&quot;$(SolutionDir)\..\gtk2\lib\glib-2.0\include&quot;;&quot;$(SolutionDir)\..\libxml2\include&quot;"
+							PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS"
+							DisableSpecificWarnings="4996;4244;4267"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							AdditionalIncludeDirectories="&quot;$(SolutionDir)\include&quot;;&quot;$(SolutionDir)\libs&quot;;&quot;$(SolutionDir)\..\STLPort\stlport&quot;;&quot;$(SolutionDir)\..\gtk2\include&quot;;&quot;$(SolutionDir)\..\gtk2\include\glib-2.0&quot;;&quot;$(SolutionDir)\..\gtk2\lib\glib-2.0\include&quot;;&quot;$(SolutionDir)\..\libxml2\include&quot;"
+							PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS"
+							DisableSpecificWarnings="4996;4244;4267"
+						/>
+					</FileConfiguration>
 				</File>
 			</Filter>
 			<Filter
@@ -444,10 +436,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\game_etut.h"
-				>
-			</File>
-			<File
 				RelativePath=".\game_ja.h"
 				>
 			</File>
@@ -461,10 +449,6 @@
 			</File>
 			<File
 				RelativePath=".\game_sof2.h"
-				>
-			</File>
-			<File
-				RelativePath=".\game_tenebrae.h"
 				>
 			</File>
 			<File
@@ -502,30 +486,6 @@
 				>
 			</File>
 		</Filter>
-		<File
-			RelativePath="..\..\..\touch.py"
-			>
-			<FileConfiguration
-				Name="Debug|Win32"
-				>
-				<Tool
-					Name="VCCustomBuildTool"
-					CommandLine="python &quot;$(SolutionDir)touch.py&quot; &quot;$(TargetPath)&quot;&#x0D;&#x0A;"
-					AdditionalDependencies="&quot;$(SolutionDir)install\$(TargetFileName)&quot;"
-					Outputs="&quot;$(TargetPath)&quot;"
-				/>
-			</FileConfiguration>
-			<FileConfiguration
-				Name="Release|Win32"
-				>
-				<Tool
-					Name="VCCustomBuildTool"
-					CommandLine="python &quot;$(SolutionDir)touch.py&quot; &quot;$(TargetPath)&quot;&#x0D;&#x0A;"
-					AdditionalDependencies="&quot;$(SolutionDir)install\$(TargetFileName)&quot;"
-					Outputs="&quot;$(TargetPath)&quot;"
-				/>
-			</FileConfiguration>
-		</File>
 	</Files>
 	<Globals>
 	</Globals>

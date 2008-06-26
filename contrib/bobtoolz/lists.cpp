@@ -17,17 +17,16 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include "lists.h"
+#include "StdAfx.h"
 
-#ifdef WIN32
+#ifdef _WIN32
 #pragma warning(disable : 4786)
 #endif
 
-#include <glib/glist.h>
-
+#include "lists.h"
 #include "misc.h"
 
-bool LoadExclusionList(char* filename, std::list<Str>* exclusionList)
+bool LoadExclusionList(char* filename, list<Str>* exclusionList)
 {
 	FILE* eFile = fopen(filename, "r");
 	if(eFile)
@@ -50,7 +49,7 @@ bool LoadExclusionList(char* filename, std::list<Str>* exclusionList)
 		return TRUE;
 	}
 
-	globalErrorStream() << "Failed To Load Exclusion List: " << filename << "\n";
+	Sys_ERROR("Failed To Load Exclusion List: %s\n", filename);
 	return FALSE;
 }
 
@@ -81,6 +80,6 @@ bool LoadGList(char* filename, GList** loadlist)
 		return TRUE;
 	}
 
-	globalErrorStream() << "Failed To Load GList: " << filename << "\n";
+	Sys_ERROR("Failed To Load GList: %s\n", filename);
 	return FALSE;
 }

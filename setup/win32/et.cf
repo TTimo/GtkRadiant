@@ -1,7 +1,0 @@
-# ET setup
-
-# output dir name
-$SETUP_DIR = 'Setup-ET';
-
-$DO_CORE = 1;
-$DO_GAME_ET = 1;

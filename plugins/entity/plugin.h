@@ -1,6 +1,6 @@
 /*
-Copyright (C) 2001-2006, William Joseph.
-All Rights Reserved.
+Copyright (C) 1999-2007 id Software, Inc. and contributors.
+For a list of contributors, see the accompanying CONTRIBUTORS file.
 
 This file is part of GtkRadiant.
 
@@ -19,7 +19,40 @@ along with GtkRadiant; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#if !defined(INCLUDED_PLUGIN_H)
-#define INCLUDED_PLUGIN_H
+#ifndef _PLUGIN_H_
+#define _PLUGIN_H_
 
-#endif
+/*!
+\todo need general notice about lib purpose etc.
+and the external dependencies (such as GLib, STL, mathlib etc.)
+*/
+
+/*!
+\todo not sure about what should be used for common data structures, GLib or STL
+I think STL would be better since I intend on using STL in synapse
+*/
+
+#include <stdio.h>
+
+#include "synapse.h"
+#define USE_QERTABLE_DEFINE
+#include "qerplugin.h"
+#include "ientity.h"
+#define USE_ECLASSMANAGER_DEFINE
+#include "ieclass.h"
+#define USE_BRUSHTABLE_DEFINE
+#include "ibrush.h"
+#define USE_UNDOTABLE_DEFINE
+#include "iundo.h"
+#include "imodel.h"
+#include "igl.h"
+
+extern _QERFuncTable_1 g_FuncTable;
+extern _QERQglTable g_QglTable;
+extern _QERBrushTable __BRUSHTABLENAME;
+extern _QERUndoTable __UNDOTABLENAME;
+extern _EClassManagerTable __ECLASSMANAGERTABLENAME;
+
+#define Error g_FuncTable.m_pfnError
+
+#endif // _PLUGIN_H_

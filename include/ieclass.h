@@ -1,5 +1,5 @@
 /*
-Copyright (C) 1999-2006 Id Software, Inc. and contributors.
+Copyright (C) 1999-2007 id Software, Inc. and contributors.
 For a list of contributors, see the accompanying CONTRIBUTORS file.
 
 This file is part of GtkRadiant.
@@ -19,100 +19,66 @@ along with GtkRadiant; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-/// \file ieclass.h
-/// \brief Entity Class definition loader API.
+/*! \file ieclass.h
+    \brief entity files loader API
+    this describes the APIs involved when loading entity description files
+    (initially, .def and .fgd)
+*/
 
+#ifndef _IECLASS_H_
+#define _IECLASS_H_
 
-#if !defined(INCLUDED_IECLASS_H)
-#define INCLUDED_IECLASS_H
+#define ECLASS_MAJOR "eclass"
 
-#include "generic/constant.h"
+typedef void (* PFN_ECLASS_SCANFILE) (char *filename);
+typedef const char*       (* PFN_ECLASS_GETEXTENSION)     ();
 
-#define	MAX_FLAGS	16
-
-// eclass show flags
-
-#define     ECLASS_LIGHT      0x00000001
-#define     ECLASS_ANGLE      0x00000002
-#define     ECLASS_PATH       0x00000004
-#define     ECLASS_MISCMODEL  0x00000008
-
-class Shader;
-
-class EntityClass;
-class ListAttributeType;
-
-class EntityClassCollector
+struct _EClassTable
 {
-public:
-  virtual void insert(EntityClass* eclass) = 0;
-  virtual void insert(const char* name, const ListAttributeType& list)
-  {
-  }
+  int m_nSize;
+  PFN_ECLASS_SCANFILE m_pfnScanFile;
+  PFN_ECLASS_GETEXTENSION       m_pfnGetExtension;
 };
 
-struct EntityClassScanner
-{
-  INTEGER_CONSTANT(Version, 1);
-  STRING_CONSTANT(Name, "eclass");
+#ifdef USE_ECLASSTABLE_DEFINE
+#ifndef __ECLASSTABLENAME
+#define __ECLASSTABLENAME g_EClassTable
+#endif
+#define EClass_ScanFile __ECLASSTABLENAME.m_pfnEClass_ScanFile
+#define EClass_GetExtension __ECLASSTABLENAME.m_pfnEClass_GetExtension
+#endif
 
-  void (*scanFile)(EntityClassCollector& collector, const char* filename);
-  const char* (*getExtension)();
+#define ECLASSMANAGER_MAJOR "eclassmanager"
+
+typedef void (* PFN_ECLASS_INSERTALPHABETIZED) (eclass_t *e);
+typedef eclass_t** (* PFN_GET_ECLASS_E) ();
+typedef void (* PFN_SET_ECLASS_FOUND) (qboolean);
+typedef qboolean (* PFN_GET_PARSING_SINGLE) ();
+typedef eclass_t* (* PFN_ECLASS_CREATE) (const char *name, float col1, float col2, float col3, const vec3_t *mins, const vec3_t *maxs, const char *comments);
+typedef eclass_t* (* PFN_ECLASS_FORNAME) (const char* name, qboolean has_brushes);
+
+struct _EClassManagerTable
+{
+  int m_nSize;
+  PFN_ECLASS_INSERTALPHABETIZED m_pfnEclass_InsertAlphabetized;
+  PFN_GET_ECLASS_E m_pfnGet_Eclass_E;
+  PFN_SET_ECLASS_FOUND m_pfnSet_Eclass_Found;
+  PFN_GET_PARSING_SINGLE m_pfnGet_Parsing_Single;
+  PFN_ECLASS_CREATE m_pfnEClass_Create;
+  PFN_ECLASS_FORNAME m_pfnEclass_ForName;
 };
 
-#include "modulesystem.h"
-
-template<typename Type>
-class ModuleRef;
-typedef ModuleRef<EntityClassScanner> EClassModuleRef;
-
-template<typename Type>
-class Modules;
-typedef Modules<EntityClassScanner> EClassModules;
-
-template<typename Type>
-class ModulesRef;
-typedef ModulesRef<EntityClassScanner> EClassModulesRef;
-
-
-
-
-
-
-class EntityClassVisitor
-{
-public:
-  virtual void visit(EntityClass* eclass) = 0;
-};
-
-class ModuleObserver;
-
-
-struct EntityClassManager
-{
-  INTEGER_CONSTANT(Version, 1);
-  STRING_CONSTANT(Name, "eclassmanager");
-
-  EntityClass* (*findOrInsert)(const char* name, bool has_brushes);
-  const ListAttributeType* (*findListType)(const char* name);
-  void (*forEach)(EntityClassVisitor& visitor);
-  void (*attach)(ModuleObserver& observer);
-  void (*detach)(ModuleObserver& observer);
-  void (*realise)();
-  void (*unrealise)();
-};
-
-template<typename Type>
-class GlobalModule;
-typedef GlobalModule<EntityClassManager> GlobalEntityClassManagerModule;
-
-template<typename Type>
-class GlobalModuleRef;
-typedef GlobalModuleRef<EntityClassManager> GlobalEntityClassManagerModuleRef;
-
-inline EntityClassManager& GlobalEntityClassManager()
-{
-  return GlobalEntityClassManagerModule::getTable();
-}
+#ifdef USE_ECLASSMANAGER_DEFINE
+#ifndef __ECLASSMANAGERTABLENAME
+#define __ECLASSMANAGERTABLENAME g_EClassManagerTable
+#endif
+#define Eclass_InsertAlphabetized __ECLASSMANAGERTABLENAME.m_pfnEclass_InsertAlphabetized
+#define Get_Eclass_E __ECLASSMANAGERTABLENAME.m_pfnGet_Eclass_E
+#define Set_Eclass_Found __ECLASSMANAGERTABLENAME.m_pfnSet_Eclass_Found
+#define Get_Parsing_Single __ECLASSMANAGERTABLENAME.m_pfnGet_Parsing_Single
+#define EClass_Create __ECLASSMANAGERTABLENAME.m_pfnEClass_Create
+#define Eclass_ForName __ECLASSMANAGERTABLENAME.m_pfnEclass_ForName
+#endif
 
 #endif
+

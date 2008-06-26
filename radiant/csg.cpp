@@ -1,5 +1,5 @@
 /*
-Copyright (C) 1999-2006 Id Software, Inc. and contributors.
+Copyright (C) 1999-2007 id Software, Inc. and contributors.
 For a list of contributors, see the accompanying CONTRIBUTORS file.
 
 This file is part of GtkRadiant.
@@ -19,138 +19,9 @@ along with GtkRadiant; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#include "csg.h"
-
-#include "debugging/debugging.h"
-
-#include <list>
-
-#include "map.h"
-#include "brushmanip.h"
-#include "brushnode.h"
-#include "grid.h"
-
-void Face_makeBrush(Face& face, const Brush& brush, brush_vector_t& out, float offset)
-{
-  if(face.contributes())
-  {
-    out.push_back(new Brush(brush));
-    Face* newFace = out.back()->addFace(face);
-    if(newFace != 0)
-    {
-      newFace->flipWinding();
-      newFace->getPlane().offset(offset);
-      newFace->planeChanged();
-    }
-  }
-}
-
-class FaceMakeBrush
-{
-  const Brush& brush;
-  brush_vector_t& out;
-  float offset;
-public:
-  FaceMakeBrush(const Brush& brush, brush_vector_t& out, float offset)
-    : brush(brush), out(out), offset(offset)
-  {
-  }
-  void operator()(Face& face) const
-  {
-    Face_makeBrush(face, brush, out, offset);
-  }
-};
-
-void Brush_makeHollow(const Brush& brush, brush_vector_t& out, float offset)
-{
-  Brush_forEachFace(brush, FaceMakeBrush(brush, out, offset));
-}
-
-class BrushHollowSelectedWalker : public scene::Graph::Walker
-{
-  float m_offset;
-public:
-  BrushHollowSelectedWalker(float offset)
-    : m_offset(offset)
-  {
-  }
-  bool pre(const scene::Path& path, scene::Instance& instance) const
-  {
-    if(path.top().get().visible())
-    {
-      Brush* brush = Node_getBrush(path.top());
-      if(brush != 0
-        && Instance_getSelectable(instance)->isSelected()
-        && path.size() > 1)
-      {
-        brush_vector_t out;
-        Brush_makeHollow(*brush, out, m_offset);
-        for(brush_vector_t::const_iterator i = out.begin(); i != out.end(); ++i)
-        {
-          (*i)->removeEmptyFaces();
-          NodeSmartReference node((new BrushNode())->node());
-          Node_getBrush(node)->copy(*(*i));
-          delete (*i);
-          Node_getTraversable(path.parent())->insert(node);
-        }
-      }
-    }
-    return true;
-  }
-};
-
-typedef std::list<Brush*> brushlist_t;
-
-class BrushGatherSelected : public scene::Graph::Walker
-{
-  brush_vector_t& m_brushlist;
-public:
-  BrushGatherSelected(brush_vector_t& brushlist)
-    : m_brushlist(brushlist)
-  {
-  }
-  bool pre(const scene::Path& path, scene::Instance& instance) const
-  {
-    if(path.top().get().visible())
-    {
-      Brush* brush = Node_getBrush(path.top());
-      if(brush != 0
-        && Instance_getSelectable(instance)->isSelected())
-      {
-        m_brushlist.push_back(brush);
-      }
-    }
-    return true;
-  }
-};
-
-class BrushDeleteSelected : public scene::Graph::Walker
-{
-public:
-  bool pre(const scene::Path& path, scene::Instance& instance) const
-  {
-    return true;
-  }
-  void post(const scene::Path& path, scene::Instance& instance) const
-  {
-    if(path.top().get().visible())
-    {
-      Brush* brush = Node_getBrush(path.top());
-      if(brush != 0
-        && Instance_getSelectable(instance)->isSelected()
-        && path.size() > 1)
-      {
-        Path_deleteTop(path);
-      }
-    }
-  }
-};
-
-void Scene_BrushMakeHollow_Selected(scene::Graph& graph)
-{
-  GlobalSceneGraph().traverse(BrushHollowSelectedWalker(GetGridSize()));
-  GlobalSceneGraph().traverse(BrushDeleteSelected());
-}
+#include "stdafx.h"
+#include "winding.h"
+#include "filters.h"
 
 /*
 =============
@@ -158,394 +29,557 @@ CSG_MakeHollow
 =============
 */
 
+void Brush_Scale(brush_t* b)
+{
+  for (face_t* f = b->brush_faces ; f ; f=f->next)
+  {
+	  for (int i=0 ; i<3 ; i++)
+    {
+      VectorScale (f->planepts[i], g_qeglobals.d_gridsize, f->planepts[i]);
+    }
+  }
+}
+
 void CSG_MakeHollow (void)
 {
-  UndoableCommand undo("brushHollow");
+	brush_t		*b, *front, *back, *next;
+	face_t		*f;
+	face_t		split;
+	vec3_t		move;
+	int			i;
 
-  Scene_BrushMakeHollow_Selected(GlobalSceneGraph());
+	for (b = selected_brushes.next ; b != &selected_brushes ; b=next)
+	{
+		next = b->next;
 
-  SceneChangeNotify();
+    if (b->owner->eclass->fixedsize || b->patchBrush || b->bFiltered)
+		  continue;
+
+		for (f = b->brush_faces ; f ; f=f->next)
+		{
+			split = *f;
+			VectorScale (f->plane.normal, g_qeglobals.d_gridsize, move);
+			for (i=0 ; i<3 ; i++)
+				VectorSubtract (split.planepts[i], move, split.planepts[i]);
+
+			Brush_SplitBrushByFace (b, &split, &front, &back);
+			if (back)
+				Brush_Free (back);
+			if (front)
+				Brush_AddToList (front, &selected_brushes);
+		}
+		Brush_Free (b);
+	}
+	Sys_UpdateWindows (W_ALL);
 }
 
-template<typename Type>
-class RemoveReference
-{
-public:
-  typedef Type type;
-};
+/*
+=============
+Brush_Merge
 
-template<typename Type>
-class RemoveReference<Type&>
-{
-public:
-  typedef Type type;
-};
+ Returns a new brush that is created by merging brush1 and brush2.
+ May return NULL if brush1 and brush2 do not create a convex brush when merged.
+ The input brushes brush1 and brush2 stay intact.
 
-template<typename Functor>
-class Dereference
+ if onlyshape is true then the merge is allowed based on the shape only
+ otherwise the texture/shader references of faces in the same plane have to
+ be the same as well.
+=============
+*/
+brush_t *Brush_Merge(brush_t *brush1, brush_t *brush2, int onlyshape)
 {
-  const Functor& functor;
-public:
-  typedef typename RemoveReference<typename Functor::first_argument_type>::type* first_argument_type;
-  typedef typename Functor::result_type result_type;
-  Dereference(const Functor& functor) : functor(functor)
-  {
-  }
-  result_type operator()(first_argument_type firstArgument) const
-  {
-    return functor(*firstArgument);
-  }
-};
+	int i, shared;
+	brush_t *newbrush;
+	face_t *face1, *face2, *newface, *f;
 
-template<typename Functor>
-inline Dereference<Functor> makeDereference(const Functor& functor)
-{
-  return Dereference<Functor>(functor);
+	// check for bounding box overlapp
+	for (i = 0; i < 3; i++)
+	{
+		if (brush1->mins[i] > brush2->maxs[i] + ON_EPSILON
+				|| brush1->maxs[i] < brush2->mins[i] - ON_EPSILON)
+		{
+			// never merge if the brushes overlap
+			return NULL;
+		}
+	}
+	//
+	shared = 0;
+	// check if the new brush would be convex... flipped planes make a brush non-convex
+	for (face1 = brush1->brush_faces; face1; face1 = face1->next)
+	{
+		// don't check the faces of brush 1 and 2 touching each other
+		for (face2 = brush2->brush_faces; face2; face2 = face2->next)
+		{
+			if (Plane_Equal(&face1->plane, &face2->plane, true))
+			{
+				shared++;
+				// there may only be ONE shared side
+				if (shared > 1)
+					return NULL;
+				break;
+			}
+		}
+		// if this face plane is shared
+		if (face2) continue;
+		//
+		for (face2 = brush2->brush_faces; face2; face2 = face2->next)
+		{
+			// don't check the faces of brush 1 and 2 touching each other
+			for (f = brush1->brush_faces; f; f = f->next)
+			{
+				if (Plane_Equal(&face2->plane, &f->plane, true)) break;
+			}
+			if (f)
+				continue;
+			//
+			if (Plane_Equal(&face1->plane, &face2->plane, false))
+			{
+				//if the texture/shader references should be the same but are not
+				if (!onlyshape && stricmp(face1->texdef.GetName(), face2->texdef.GetName()) != 0) return NULL;
+				continue;
+			}
+			//
+			if (Winding_PlanesConcave(face1->face_winding, face2->face_winding,
+									face1->plane.normal, face2->plane.normal,
+									face1->plane.dist, face2->plane.dist))
+			{
+				return NULL;
+			} //end if
+		} //end for
+	} //end for
+	//
+	newbrush = Brush_Alloc();
+	//
+	for (face1 = brush1->brush_faces; face1; face1 = face1->next)
+	{
+		// don't add the faces of brush 1 and 2 touching each other
+		for (face2 = brush2->brush_faces; face2; face2 = face2->next)
+		{
+			if (Plane_Equal(&face1->plane, &face2->plane, true))
+				break;
+		}
+		if (face2)
+			continue;
+		// don't add faces with the same plane twice
+		for (f = newbrush->brush_faces; f; f = f->next)
+		{
+			if (Plane_Equal(&face1->plane, &f->plane, false))
+				break;
+			if (Plane_Equal(&face1->plane, &f->plane, true))
+				break;
+		}
+		if (f)
+			continue;
+		//
+		newface = Face_Alloc();
+		newface->texdef = face1->texdef;
+		VectorCopy(face1->planepts[0], newface->planepts[0]);
+		VectorCopy(face1->planepts[1], newface->planepts[1]);
+		VectorCopy(face1->planepts[2], newface->planepts[2]);
+		newface->plane = face1->plane;
+		newface->next = newbrush->brush_faces;
+		newbrush->brush_faces = newface;
+	}
+	//
+	for (face2 = brush2->brush_faces; face2; face2 = face2->next)
+	{
+		// don't add the faces of brush 1 and 2 touching each other
+		for (face1 = brush1->brush_faces; face1; face1 = face1->next)
+		{
+			if (Plane_Equal(&face2->plane, &face1->plane, true))
+				break;
+		}
+		if (face1)
+			continue;
+		// don't add faces with the same plane twice
+		for (f = newbrush->brush_faces; f; f = f->next)
+		{
+			if (Plane_Equal(&face2->plane, &f->plane, false))
+				break;
+			if (Plane_Equal(&face2->plane, &f->plane, true))
+				break;
+		}
+		if (f)
+			continue;
+		//
+		newface = Face_Alloc();
+		newface->texdef = face2->texdef;
+		VectorCopy(face2->planepts[0], newface->planepts[0]);
+		VectorCopy(face2->planepts[1], newface->planepts[1]);
+		VectorCopy(face2->planepts[2], newface->planepts[2]);
+		newface->plane = face2->plane;
+		newface->next = newbrush->brush_faces;
+		newbrush->brush_faces = newface;
+	}
+	// link the new brush to an entity
+	Entity_LinkBrush (brush1->owner, newbrush);
+	// build windings for the faces
+	Brush_BuildWindings( newbrush, false);
+
+	return newbrush;
 }
 
-typedef Face* FacePointer;
-const FacePointer c_nullFacePointer = 0;
+/*
+=============
+Brush_MergeListPairs
 
-template<typename Predicate>
-Face* Brush_findIf(const Brush& brush, const Predicate& predicate)
+  Returns a list with merged brushes.
+  Tries to merge brushes pair wise.
+  The input list is destroyed.
+  Input and output should be a single linked list using .next
+=============
+*/
+brush_t *Brush_MergeListPairs(brush_t *brushlist, int onlyshape)
 {
-  Brush::const_iterator i = std::find_if(brush.begin(), brush.end(), makeDereference(predicate));
-  return i == brush.end() ? c_nullFacePointer : *i; // uses c_nullFacePointer instead of 0 because otherwise gcc 4.1 attempts conversion to int
+	int nummerges, merged;
+	brush_t *b1, *b2, *tail, *newbrush, *newbrushlist;
+	brush_t *lastb2;
+
+	if (!brushlist) return NULL;
+
+	nummerges = 0;
+	do
+	{
+		for (tail = brushlist; tail; tail = tail->next)
+		{
+			if (!tail->next) break;
+		}
+		merged = 0;
+		newbrushlist = NULL;
+		for (b1 = brushlist; b1; b1 = brushlist)
+		{
+			lastb2 = b1;
+			for (b2 = b1->next; b2; b2 = b2->next)
+			{
+				newbrush = Brush_Merge(b1, b2, onlyshape);
+				if (newbrush)
+				{
+					tail->next = newbrush;
+					lastb2->next = b2->next;
+					brushlist = brushlist->next;
+					b1->next = b1->prev = NULL;
+					b2->next = b2->prev = NULL;
+					Brush_Free(b1);
+					Brush_Free(b2);
+					for (tail = brushlist; tail; tail = tail->next)
+					{
+						if (!tail->next) break;
+					} //end for
+					merged++;
+					nummerges++;
+					break;
+				}
+				lastb2 = b2;
+			}
+			//if b1 can't be merged with any of the other brushes
+			if (!b2)
+			{
+				brushlist = brushlist->next;
+				//keep b1
+				b1->next = newbrushlist;
+				newbrushlist = b1;
+			}
+		}
+		brushlist = newbrushlist;
+	} while(merged);
+	return newbrushlist;
 }
 
-template<typename Caller>
-class BindArguments1
-{
-  typedef typename Caller::second_argument_type FirstBound;
-  FirstBound firstBound;
-public:
-  typedef typename Caller::result_type result_type;
-  typedef typename Caller::first_argument_type first_argument_type;
-  BindArguments1(FirstBound firstBound)
-    : firstBound(firstBound)
-  {
-  }
-  result_type operator()(first_argument_type firstArgument) const
-  {
-    return Caller::call(firstArgument, firstBound);
-  }
-};
+/*
+=============
+Brush_MergeList
 
-template<typename Caller>
-class BindArguments2
-{
-  typedef typename Caller::second_argument_type FirstBound;
-  typedef typename Caller::third_argument_type SecondBound;
-  FirstBound firstBound;
-  SecondBound secondBound;
-public:
-  typedef typename Caller::result_type result_type;
-  typedef typename Caller::first_argument_type first_argument_type;
-  BindArguments2(FirstBound firstBound, SecondBound secondBound)
-    : firstBound(firstBound), secondBound(secondBound)
-  {
-  }
-  result_type operator()(first_argument_type firstArgument) const
-  {
-    return Caller::call(firstArgument, firstBound, secondBound);
-  }
-};
+ Tries to merge all brushes in the list into one new brush.
+ The input brush list stays intact.
+ Returns NULL if no merged brush can be created.
+ To create a new brush the brushes in the list may not overlap and
+ the outer faces of the brushes together should make a new convex brush.
 
-template<typename Caller, typename FirstBound, typename SecondBound>
-BindArguments2<Caller> bindArguments(const Caller& caller, FirstBound firstBound, SecondBound secondBound)
+ if onlyshape is true then the merge is allowed based on the shape only
+ otherwise the texture/shader references of faces in the same plane have to
+ be the same as well.
+=============
+*/
+brush_t *Brush_MergeList(brush_t *brushlist, int onlyshape)
 {
-  return BindArguments2<Caller>(firstBound, secondBound);
+	brush_t *brush1, *brush2, *brush3, *newbrush;
+	face_t *face1, *face2, *face3, *newface, *f;
+
+	if (!brushlist) return NULL;
+	for (brush1 = brushlist; brush1; brush1 = brush1->next)
+	{
+		// check if the new brush would be convex... flipped planes make a brush concave
+		for (face1 = brush1->brush_faces; face1; face1 = face1->next)
+		{
+			// don't check face1 if it touches another brush
+			for (brush2 = brushlist; brush2; brush2 = brush2->next)
+			{
+				if (brush2 == brush1) continue;
+				for (face2 = brush2->brush_faces; face2; face2 = face2->next)
+				{
+					if (Plane_Equal(&face1->plane, &face2->plane, true))
+					{
+						break;
+					}
+				}
+				if (face2) break;
+			}
+			// if face1 touches another brush
+			if (brush2) continue;
+			//
+			for (brush2 = brush1->next; brush2; brush2 = brush2->next)
+			{
+				// don't check the faces of brush 2 touching another brush
+				for (face2 = brush2->brush_faces; face2; face2 = face2->next)
+				{
+					for (brush3 = brushlist; brush3; brush3 = brush3->next)
+					{
+						if (brush3 == brush2) continue;
+						for (face3 = brush3->brush_faces; face3; face3 = face3->next)
+						{
+							if (Plane_Equal(&face2->plane, &face3->plane, true)) break;
+						}
+						if (face3) break;
+					}
+					// if face2 touches another brush
+					if (brush3) continue;
+					//
+					if (Plane_Equal(&face1->plane, &face2->plane, false))
+					{
+						//if the texture/shader references should be the same but are not
+						if (!onlyshape && stricmp(face1->texdef.GetName(), face2->texdef.GetName()) != 0) return NULL;
+						continue;
+					}
+					//
+					if (Winding_PlanesConcave(face1->face_winding, face2->face_winding,
+											face1->plane.normal, face2->plane.normal,
+											face1->plane.dist, face2->plane.dist))
+					{
+						return NULL;
+					}
+				}
+			}
+		}
+	}
+	//
+	newbrush = Brush_Alloc();
+	//
+	for (brush1 = brushlist; brush1; brush1 = brush1->next)
+	{
+		for (face1 = brush1->brush_faces; face1; face1 = face1->next)
+		{
+			// don't add face1 to the new brush if it touches another brush
+			for (brush2 = brushlist; brush2; brush2 = brush2->next)
+			{
+				if (brush2 == brush1) continue;
+				for (face2 = brush2->brush_faces; face2; face2 = face2->next)
+				{
+					if (Plane_Equal(&face1->plane, &face2->plane, true))
+					{
+						break;
+					}
+				}
+				if (face2) break;
+			}
+			if (brush2) continue;
+			// don't add faces with the same plane twice
+			for (f = newbrush->brush_faces; f; f = f->next)
+			{
+				if (Plane_Equal(&face1->plane, &f->plane, false))
+					break;
+				if (Plane_Equal(&face1->plane, &f->plane, true))
+					break;
+			}
+			if (f)
+				continue;
+			//
+			newface = Face_Alloc();
+			newface->texdef = face1->texdef;
+			VectorCopy(face1->planepts[0], newface->planepts[0]);
+			VectorCopy(face1->planepts[1], newface->planepts[1]);
+			VectorCopy(face1->planepts[2], newface->planepts[2]);
+			newface->plane = face1->plane;
+			newface->next = newbrush->brush_faces;
+			newbrush->brush_faces = newface;
+		}
+	}
+	// link the new brush to an entity
+	Entity_LinkBrush (brushlist->owner, newbrush);
+	// build windings for the faces
+	Brush_BuildWindings( newbrush, false);
+
+	return newbrush;
 }
 
-inline bool Face_testPlane(const Face& face, const Plane3& plane, bool flipped)
+/*
+=============
+Brush_Subtract
+
+ Returns a list of brushes that remain after B is subtracted from A.
+ May by empty if A is contained inside B.
+ The originals are undisturbed.
+=============
+*/
+brush_t *Brush_Subtract(brush_t *a, brush_t *b)
 {
-  return face.contributes() && !Winding_TestPlane(face.getWinding(), plane, flipped);
-}
-typedef Function3<const Face&, const Plane3&, bool, bool, Face_testPlane> FaceTestPlane;
+	// a - b = out (list)
+	brush_t *front, *back;
+	brush_t *in, *out, *next;
+	face_t *f;
 
-
-
-/// \brief Returns true if
-/// \li !flipped && brush is BACK or ON
-/// \li flipped && brush is FRONT or ON
-bool Brush_testPlane(const Brush& brush, const Plane3& plane, bool flipped)
-{
-  brush.evaluateBRep();
-#if 1
-  for(Brush::const_iterator i(brush.begin()); i != brush.end(); ++i)
-  {
-    if(Face_testPlane(*(*i), plane, flipped))
-    {
-      return false;
-    }
-  }
-  return true;
-#else
-  return Brush_findIf(brush, bindArguments(FaceTestPlane(), makeReference(plane), flipped)) == 0;
-#endif
-}
-
-brushsplit_t Brush_classifyPlane(const Brush& brush, const Plane3& plane)
-{
-  brush.evaluateBRep();
-  brushsplit_t split;
-  for(Brush::const_iterator i(brush.begin()); i != brush.end(); ++i)
-  {
-    if((*i)->contributes())
-    {
-      split += Winding_ClassifyPlane((*i)->getWinding(), plane);
-    }
-  }
-  return split;
-}
-
-bool Brush_subtract(const Brush& brush, const Brush& other, brush_vector_t& ret_fragments)
-{
-  if(aabb_intersects_aabb(brush.localAABB(), other.localAABB()))
-  {
-    brush_vector_t fragments;
-    fragments.reserve(other.size());
-    Brush back(brush);
-
-    for(Brush::const_iterator i(other.begin()); i != other.end(); ++i)
-    {
-      if((*i)->contributes())
-      {
-        brushsplit_t split = Brush_classifyPlane(back, (*i)->plane3());
-        if(split.counts[ePlaneFront] != 0
-          && split.counts[ePlaneBack] != 0)
-        {
-          fragments.push_back(new Brush(back));
-          Face* newFace = fragments.back()->addFace(*(*i));
-          if(newFace != 0)
-          {
-            newFace->flipWinding();
-          }
-          back.addFace(*(*i));
-        }
-        else if(split.counts[ePlaneBack] == 0)
-        {
-          for(brush_vector_t::iterator i = fragments.begin(); i != fragments.end(); ++i)
-          {
-            delete(*i);
-          }
-          return false;
-        }
-      }
-    }
-    ret_fragments.insert(ret_fragments.end(), fragments.begin(), fragments.end());
-    return true;
-  }
-  return false;
+	in = a;
+	out = NULL;
+	for (f = b->brush_faces; f && in; f = f->next)
+	{
+		Brush_SplitBrushByFace(in, f, &front, &back);
+		if (in != a) Brush_Free(in);
+		if (front)
+		{	// add to list
+			front->next = out;
+			out = front;
+		}
+		in = back;
+	}
+	//NOTE: in != a just in case brush b has no faces
+	if (in && in != a)
+	{
+		Brush_Free(in);
+	}
+	else
+	{	//didn't really intersect
+		for (b = out; b; b = next)
+		{
+			next = b->next;
+			b->next = b->prev = NULL;
+			Brush_Free(b);
+		}
+		return a;
+	}
+	return out;
 }
 
-class SubtractBrushesFromUnselected : public scene::Graph::Walker
+/*
+=============
+CSG_Subtract
+=============
+*/
+void CSG_Subtract (void)
 {
-  const brush_vector_t& m_brushlist;
-  std::size_t& m_before;
-  std::size_t& m_after;
-public:
-  SubtractBrushesFromUnselected(const brush_vector_t& brushlist, std::size_t& before, std::size_t& after)
-    : m_brushlist(brushlist), m_before(before), m_after(after)
-  {
-  }
-  bool pre(const scene::Path& path, scene::Instance& instance) const
-  {
-    return true;
-  }
-  void post(const scene::Path& path, scene::Instance& instance) const
-  {
-    if(path.top().get().visible())
-    {
-      Brush* brush = Node_getBrush(path.top());
-      if(brush != 0
-        && !Instance_getSelectable(instance)->isSelected())
-      {
-        brush_vector_t buffer[2];
-        bool swap = false;
-        Brush* original = new Brush(*brush);
-        buffer[static_cast<std::size_t>(swap)].push_back(original);
-        
-        {
-          for(brush_vector_t::const_iterator i(m_brushlist.begin()); i != m_brushlist.end(); ++i)
-          {
-            for(brush_vector_t::iterator j(buffer[static_cast<std::size_t>(swap)].begin()); j != buffer[static_cast<std::size_t>(swap)].end(); ++j)
-            {
-              if(Brush_subtract(*(*j), *(*i), buffer[static_cast<std::size_t>(!swap)]))
-              {
-                delete (*j);
-              }
-              else
-              {
-                buffer[static_cast<std::size_t>(!swap)].push_back((*j));
-              }
-            }
-            buffer[static_cast<std::size_t>(swap)].clear();
-            swap = !swap;
-          }
-        }
+	brush_t		*b, *s, *fragments, *nextfragment, *frag, *next, *snext;
+	brush_t		fragmentlist;
+	int			i, numfragments, numbrushes;
 
-        brush_vector_t& out = buffer[static_cast<std::size_t>(swap)];
+	Sys_Printf ("Subtracting...\n");
 
-        if(out.size() == 1 && out.back() == original)
-        {
-          delete original;
-        }
-        else
-        {
-          ++m_before;
-          for(brush_vector_t::const_iterator i = out.begin(); i != out.end(); ++i)
-          {
-            ++m_after;
-            NodeSmartReference node((new BrushNode())->node());
-            (*i)->removeEmptyFaces();
-            ASSERT_MESSAGE(!(*i)->empty(), "brush left with no faces after subtract");
-            Node_getBrush(node)->copy(*(*i));
-            delete (*i);
-            Node_getTraversable(path.parent())->insert(node);
-          }
-          Path_deleteTop(path);
-        }
-      }
-    }
-  }
-};
+	if (selected_brushes.next == &selected_brushes)
+	{
+		Sys_Printf("No brushes selected.\n");
+		return;
+	}
 
-void CSG_Subtract()
-{
-  brush_vector_t selected_brushes;
-  GlobalSceneGraph().traverse(BrushGatherSelected(selected_brushes));
+	fragmentlist.next = &fragmentlist;
+	fragmentlist.prev = &fragmentlist;
 
-  if (selected_brushes.empty())
-  {
-    globalOutputStream() << "CSG Subtract: No brushes selected.\n";
-  }
-  else
-  {
-    globalOutputStream() << "CSG Subtract: Subtracting " << Unsigned(selected_brushes.size()) << " brushes.\n";
+	numfragments = 0;
+	numbrushes = 0;
+	for (b = selected_brushes.next ; b != &selected_brushes ; b=next)
+	{
+		next = b->next;
 
-    UndoableCommand undo("brushSubtract");
+		if (b->owner->eclass->fixedsize)
+			continue;	// can't use texture from a fixed entity, so don't subtract
 
-    // subtract selected from unselected
-    std::size_t before = 0;
-    std::size_t after = 0;
-    GlobalSceneGraph().traverse(SubtractBrushesFromUnselected(selected_brushes, before, after));
-    globalOutputStream() << "CSG Subtract: Result: "
-      << Unsigned(after) << " fragment" << (after == 1 ? "" : "s")
-      << " from " << Unsigned(before) << " brush" << (before == 1? "" : "es") << ".\n";
+		// chop all fragments further up
+		for (s = fragmentlist.next; s != &fragmentlist; s = snext)
+		{
+			snext = s->next;
 
-    SceneChangeNotify();
-  }
-}
+			for (i=0 ; i<3 ; i++)
+				if (b->mins[i] >= s->maxs[i] - ON_EPSILON 
+				|| b->maxs[i] <= s->mins[i] + ON_EPSILON)
+					break;
+			if (i != 3)
+				continue;	// definately don't touch
+			fragments = Brush_Subtract(s, b);
+			// if the brushes did not really intersect
+			if (fragments == s)
+				continue;
+			// try to merge fragments
+			fragments = Brush_MergeListPairs(fragments, true);
+			// add the fragments to the list
+			for (frag = fragments; frag; frag = nextfragment)
+			{
+				nextfragment = frag->next;
+				frag->next = NULL;
+				frag->owner = s->owner;
+				Brush_AddToList(frag, &fragmentlist);
+			}
+			// free the original brush
+			Brush_Free(s);
+		}
 
-class BrushSplitByPlaneSelected : public scene::Graph::Walker
-{
-  const Vector3& m_p0;
-  const Vector3& m_p1;
-  const Vector3& m_p2;
-  const char* m_shader;
-  const TextureProjection& m_projection;
-  EBrushSplit m_split;
-public:
-  BrushSplitByPlaneSelected(const Vector3& p0, const Vector3& p1, const Vector3& p2, const char* shader, const TextureProjection& projection, EBrushSplit split)
-    : m_p0(p0), m_p1(p1), m_p2(p2), m_shader(shader), m_projection(projection), m_split(split)
-  {
-  }
-  bool pre(const scene::Path& path, scene::Instance& instance) const
-  {
-    return true; 
-  }
-  void post(const scene::Path& path, scene::Instance& instance) const
-  {
-    if(path.top().get().visible())
-    {
-      Brush* brush = Node_getBrush(path.top());
-      if(brush != 0
-        && Instance_getSelectable(instance)->isSelected())
-      {
-        Plane3 plane(plane3_for_points(m_p0, m_p1, m_p2));
-        if(plane3_valid(plane))
-        {
-          brushsplit_t split = Brush_classifyPlane(*brush, m_split == eFront ? plane3_flipped(plane) : plane);
-          if(split.counts[ePlaneBack] && split.counts[ePlaneFront])
-          {
-            // the plane intersects this brush
-            if(m_split == eFrontAndBack)
-            {
-              NodeSmartReference node((new BrushNode())->node());
-              Brush* fragment = Node_getBrush(node);
-              fragment->copy(*brush);
-              Face* newFace = fragment->addPlane(m_p0, m_p1, m_p2, m_shader, m_projection);
-              if(newFace != 0 && m_split != eFront)
-              {
-                newFace->flipWinding();
-              }
-              fragment->removeEmptyFaces();
-              ASSERT_MESSAGE(!fragment->empty(), "brush left with no faces after split");
+		// chop any active brushes up
+		for (s = active_brushes.next; s != &active_brushes; s = snext)
+		{
+			snext = s->next;
 
-              Node_getTraversable(path.parent())->insert(node);
-              {
-                scene::Path fragmentPath = path;
-                fragmentPath.top() = makeReference(node.get());
-                selectPath(fragmentPath, true);
-              }
-            }
+			if (s->owner->eclass->fixedsize || s->patchBrush || s->bFiltered)
+				continue;
 
-            Face* newFace = brush->addPlane(m_p0, m_p1, m_p2, m_shader, m_projection);
-            if(newFace != 0 && m_split == eFront)
-            {
-              newFace->flipWinding();
-            }
-            brush->removeEmptyFaces();
-            ASSERT_MESSAGE(!brush->empty(), "brush left with no faces after split");
-          }
-          else
-            // the plane does not intersect this brush
-          if(m_split != eFrontAndBack && split.counts[ePlaneBack] != 0)
-          {
-            // the brush is "behind" the plane
-            Path_deleteTop(path);
-          }
-        }
-      }
-    }
-  }
-};
+      if (s->brush_faces->pShader->getFlags() & QER_NOCARVE)
+			{
+				continue;
+			}
 
-void Scene_BrushSplitByPlane(scene::Graph& graph, const Vector3& p0, const Vector3& p1, const Vector3& p2, const char* shader, EBrushSplit split)
-{
-  TextureProjection projection;
-  TexDef_Construct_Default(projection);
-  graph.traverse(BrushSplitByPlaneSelected(p0, p1, p2, shader, projection, split));
-  SceneChangeNotify();
-}
+			for (i=0 ; i<3 ; i++)
+				if (b->mins[i] >= s->maxs[i] - ON_EPSILON 
+				|| b->maxs[i] <= s->mins[i] + ON_EPSILON)
+					break;
+			if (i != 3)
+				continue;	// definately don't touch
 
+			fragments = Brush_Subtract(s, b);
+			// if the brushes did not really intersect
+			if (fragments == s)
+				continue;
+			//
+			Undo_AddBrush(s);
+			// one extra brush chopped up
+			numbrushes++;
+			// try to merge fragments
+			fragments = Brush_MergeListPairs(fragments, true);
+			// add the fragments to the list
+			for (frag = fragments; frag; frag = nextfragment)
+			{
+				nextfragment = frag->next;
+				frag->next = NULL;
+				frag->owner = s->owner;
+				Brush_AddToList(frag, &fragmentlist);
+			}
+			// free the original brush
+			Brush_Free(s);
+		}
+	}
 
-class BrushInstanceSetClipPlane : public scene::Graph::Walker
-{
-  Plane3 m_plane;
-public:
-  BrushInstanceSetClipPlane(const Plane3& plane)
-    : m_plane(plane)
-  {
-  }
-  bool pre(const scene::Path& path, scene::Instance& instance) const
-  {
-    BrushInstance* brush = Instance_getBrush(instance);
-    if(brush != 0
-      && path.top().get().visible()
-      && brush->isSelected())
-    {
-      BrushInstance& brushInstance = *brush;
-      brushInstance.setClipPlane(m_plane);
-    }
-    return true; 
-  }
-};
+	// move all fragments to the active brush list
+	for (frag = fragmentlist.next; frag != &fragmentlist; frag = nextfragment)
+	{
+		nextfragment = frag->next;
+		numfragments++;
+		Brush_RemoveFromList(frag);
+		Brush_AddToList(frag, &active_brushes);
+		Undo_EndBrush(frag);
+	}
 
-void Scene_BrushSetClipPlane(scene::Graph& graph, const Plane3& plane)
-{
-  graph.traverse(BrushInstanceSetClipPlane(plane));
+	/*if (numfragments == 0)
+	{
+		Sys_Printf("Selected brush%s did not intersect with any other brushes.\n",
+					(selected_brushes.next->next == &selected_brushes) ? "":"es");
+		return;
+	}*/
+	Sys_Printf("done. (created %d fragment%s out of %d brush%s)\n", numfragments, (numfragments == 1)?"":"s",
+							numbrushes, (numbrushes == 1)?"":"es");
+	Sys_UpdateWindows(W_ALL);
 }
 
 /*
@@ -553,140 +587,101 @@ void Scene_BrushSetClipPlane(scene::Graph& graph, const Plane3& plane)
 CSG_Merge
 =============
 */
-bool Brush_merge(Brush& brush, const brush_vector_t& in, bool onlyshape)
-{
-  // gather potential outer faces 
-
-  {
-    typedef std::vector<const Face*> Faces;
-    Faces faces;
-    for(brush_vector_t::const_iterator i(in.begin()); i != in.end(); ++i)
-    {
-      (*i)->evaluateBRep();
-      for(Brush::const_iterator j((*i)->begin()); j != (*i)->end(); ++j)
-      {
-        if(!(*j)->contributes())
-        {
-          continue;
-        }
-
-        const Face& face1 = *(*j);
-
-        bool skip = false;
-        // test faces of all input brushes
-        //!\todo SPEEDUP: Flag already-skip faces and only test brushes from i+1 upwards.
-        for(brush_vector_t::const_iterator k(in.begin()); !skip && k != in.end(); ++k)
-        {
-          if(k != i) // don't test a brush against itself
-          {
-            for(Brush::const_iterator l((*k)->begin()); !skip && l != (*k)->end(); ++l)
-            {
-              const Face& face2 = *(*l);
-
-              // face opposes another face
-              if(plane3_opposing(face1.plane3(), face2.plane3()))
-              {
-                // skip opposing planes
-                skip  = true;
-                break;
-              }
-            }
-          }
-        }
-
-        // check faces already stored
-        for(Faces::const_iterator m = faces.begin(); !skip && m != faces.end(); ++m)
-        {
-          const Face& face2 = *(*m);
-
-          // face equals another face
-          if (plane3_equal(face1.plane3(), face2.plane3()))
-          {
-            //if the texture/shader references should be the same but are not
-            if (!onlyshape && !shader_equal(face1.getShader().getShader(), face2.getShader().getShader()))
-            {
-              return false;
-            }
-            // skip duplicate planes
-            skip = true;
-            break;
-          }
-
-          // face1 plane intersects face2 winding or vice versa
-          if (Winding_PlanesConcave(face1.getWinding(), face2.getWinding(), face1.plane3(), face2.plane3()))
-          {
-            // result would not be convex
-            return false;
-          }
-        }
-
-        if(!skip)
-        {
-          faces.push_back(&face1);
-        }
-      }
-    }
-    for(Faces::const_iterator i = faces.begin(); i != faces.end(); ++i)
-    {
-      if(!brush.addFace(*(*i)))
-      {
-        // result would have too many sides
-        return false;
-      }
-    }
-  }
-
-  brush.removeEmptyFaces();
-
-  return true;
-}
-
 void CSG_Merge(void)
 {
-  brush_vector_t selected_brushes;
+	brush_t *b, *next, *newlist, *newbrush;
+	struct entity_s	*owner;
 
-  // remove selected
-  GlobalSceneGraph().traverse(BrushGatherSelected(selected_brushes));
+	Sys_Printf ("Merging...\n");
 
-  if (selected_brushes.empty())
-  {
-    globalOutputStream() << "CSG Merge: No brushes selected.\n";
-    return;
-  }
+	if (selected_brushes.next == &selected_brushes)
+	{
+		Sys_Printf("No brushes selected.\n");
+		return;
+	}
 
-  if (selected_brushes.size() < 2)
-  {
-    globalOutputStream() << "CSG Merge: At least two brushes have to be selected.\n";
-    return;
-  }
+	if (selected_brushes.next->next == &selected_brushes)
+	{
+		Sys_Printf("At least two brushes have to be selected.\n");
+		return;
+	}
 
-  globalOutputStream() << "CSG Merge: Merging " << Unsigned(selected_brushes.size()) << " brushes.\n";
+	owner = selected_brushes.next->owner;
 
-  UndoableCommand undo("brushMerge");
+	for (b = selected_brushes.next; b != &selected_brushes; b = next)
+	{
+		next = b->next;
 
-  scene::Path merged_path = GlobalSelectionSystem().ultimateSelected().path();
+		if (b->owner->eclass->fixedsize)
+		{
+			// can't use texture from a fixed entity, so don't subtract
+			Sys_Printf("Cannot add fixed size entities.\n");
+			return;
+		}
 
-  NodeSmartReference node((new BrushNode())->node());
-  Brush* brush = Node_getBrush(node);
-  // if the new brush would not be convex
-  if(!Brush_merge(*brush, selected_brushes, true))
-  {
-    globalOutputStream() << "CSG Merge: Failed - result would not be convex.\n";
-  }
-  else
-  {
-    ASSERT_MESSAGE(!brush->empty(), "brush left with no faces after merge");
+		if (b->patchBrush)
+		{
+			Sys_Printf("Cannot add patches.\n");
+			return;
+		}
 
-    // free the original brushes
-    GlobalSceneGraph().traverse(BrushDeleteSelected());
+		// TTimo: cleanup
+		// disable the qer_nocarve for CSG-MERGE operations
+#if 0
+		if (b->brush_faces->d_texture->bFromShader && (b->brush_faces->d_texture->nShaderFlags & QER_NOCARVE))
+		{
+			Sys_Printf("Cannot add brushes using shaders that don't allows CSG operations.\n");
+			return;
+		}
+#endif
 
-    merged_path.pop();
-    Node_getTraversable(merged_path.top())->insert(node);
-    merged_path.push(makeReference(node.get()));
+		if (b->owner != owner)
+		{
+			Sys_Printf("Cannot add brushes from different entities.\n");
+			return;
+		}
 
-    selectPath(merged_path, true);
+	}
 
-    globalOutputStream() << "CSG Merge: Succeeded.\n";
-    SceneChangeNotify();
-  }
+	newlist = NULL;
+	for (b = selected_brushes.next; b != &selected_brushes; b = next)
+	{
+		next = b->next;
+
+		Brush_RemoveFromList(b);
+		b->next = newlist;
+		b->prev = NULL;
+		newlist = b;
+	}
+
+	newbrush = Brush_MergeList(newlist, true);
+	// if the new brush would not be convex
+	if (!newbrush)
+	{
+		// add the brushes back into the selection
+		for (b = newlist; b; b = next)
+		{
+			next = b->next;
+			b->next = NULL;
+			b->prev = NULL;
+			Brush_AddToList(b, &selected_brushes);
+		}
+		Sys_Printf("Cannot add a set of brushes with a concave hull.\n");
+		return;
+	}
+	// free the original brushes
+	for (b = newlist; b; b = next)
+	{
+		next = b->next;
+		b->next = NULL;
+		b->prev = NULL;
+		Brush_Free(b);
+	}
+
+	newbrush->bFiltered = FilterBrush(newbrush); // spog - set filters for the new brush
+
+	Brush_AddToList(newbrush, &selected_brushes);
+
+	Sys_Printf ("done.\n");
+	Sys_UpdateWindows (W_ALL);
 }

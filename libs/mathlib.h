@@ -1,5 +1,5 @@
 /*
-Copyright (C) 1999-2006 Id Software, Inc. and contributors.
+Copyright (C) 1999-2007 id Software, Inc. and contributors.
 For a list of contributors, see the accompanying CONTRIBUTORS file.
 
 This file is part of GtkRadiant.
@@ -25,15 +25,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 // mathlib.h
 #include <math.h>
 
-#ifdef __cplusplus
+#include "bytebool.h"
 
-// start declarations of functions defined in C library.
+#ifdef __cplusplus
 extern "C"
 {
-
 #endif
-
-#include "bytebool.h"
 
 typedef float vec_t;
 typedef vec_t vec3_t[3];
@@ -54,13 +51,15 @@ typedef vec_t vec4_t[4];
 
 #define	Q_PI	3.14159265358979323846f
 
-extern const vec3_t vec3_origin;
-
-extern const vec3_t g_vec3_axis_x;
-extern const vec3_t g_vec3_axis_y;
-extern const vec3_t g_vec3_axis_z;
+extern vec3_t vec3_origin;
 
 #define	EQUAL_EPSILON	0.001
+
+#ifndef VEC_MAX
+#define VEC_MAX 3.402823466e+38F
+#endif
+
+qboolean VectorCompare (vec3_t v1, vec3_t v2);
 
 #define DotProduct(x,y) ((x)[0]*(y)[0]+(x)[1]*(y)[1]+(x)[2]*(y)[2])
 #define VectorSubtract(a,b,c) ((c)[0]=(a)[0]-(b)[0],(c)[1]=(a)[1]-(b)[1],(c)[2]=(a)[2]-(b)[2])
@@ -70,18 +69,13 @@ extern const vec3_t g_vec3_axis_z;
 #define VectorSet(v, a, b, c) ((v)[0]=(a),(v)[1]=(b),(v)[2]=(c))
 #define VectorScale(a,b,c) ((c)[0]=(b)*(a)[0],(c)[1]=(b)*(a)[1],(c)[2]=(b)*(a)[2])
 #define VectorMid(a,b,c) ((c)[0]=((a)[0]+(b)[0])*0.5f,(c)[1]=((a)[1]+(b)[1])*0.5f,(c)[2]=((a)[2]+(b)[2])*0.5f)
-#define VectorNegate(a,b) ((b)[0]=-(a)[0],(b)[1]=-(a)[1],(b)[2]=-(a)[2])
+#define VectorNegative(a,b) ((b)[0]=-(a)[0],(b)[1]=-(a)[1],(b)[2]=-(a)[2])
 #define CrossProduct(a,b,c) ((c)[0]=(a)[1]*(b)[2]-(a)[2]*(b)[1],(c)[1]=(a)[2]*(b)[0]-(a)[0]*(b)[2],(c)[2]=(a)[0]*(b)[1]-(a)[1]*(b)[0])
 #define VectorClear(x) ((x)[0]=(x)[1]=(x)[2]=0)
 
-#define FLOAT_SNAP(f,snap) ( (float)( floor( (f) / (snap) + 0.5 ) * (snap) ) )
-#define FLOAT_TO_INTEGER(f) ( (float)( floor( (f) + 0.5 ) ) )
-
 #define Q_rint(in) ((vec_t)floor(in+0.5))
 
-qboolean VectorCompare (const vec3_t v1, const vec3_t v2);
-
-vec_t VectorLength(const vec3_t v);
+vec_t VectorLength(vec3_t v);
 
 void VectorMA( const vec3_t va, vec_t scale, const vec3_t vb, vec3_t vc );
 
@@ -107,11 +101,6 @@ void VectorFSnap(vec3_t point, float snap);
 void ClearBounds (vec3_t mins, vec3_t maxs);
 void AddPointToBounds (vec3_t v, vec3_t mins, vec3_t maxs);
 
-
-#define	PITCH				0		// up / down
-#define	YAW					1		// left / right
-#define	ROLL				2		// fall over
-
 void AngleVectors (vec3_t angles, vec3_t forward, vec3_t right, vec3_t up);
 void VectorToAngles( vec3_t vec, vec3_t angles );
 
@@ -131,6 +120,8 @@ void NormalToLatLong( const vec3_t normal, byte bytes[2] );
 int	PlaneTypeForNormal (vec3_t normal);
 void RotatePointAroundVector( vec3_t dst, const vec3_t dir, const vec3_t point, float degrees );
 
+// Spog
+// code imported from geomlib
 
 /*!
 \todo
@@ -152,49 +143,9 @@ typedef vec_t m4x4_t[16];
 
 #define M4X4_INDEX(m,row,col) (m[(col<<2)+row])
 
+typedef enum { TRANSLATE, SCALE, ROTATE } transformtype; // legacy, used only in pmesh.cpp
+
 typedef enum { eXYZ, eYZX, eZXY, eXZY, eYXZ, eZYX } eulerOrder_t;
-
-#define CLIP_PASS 0x00 // 000000
-#define CLIP_LT_X 0x01 // 000001
-#define CLIP_GT_X 0x02 // 000010
-#define CLIP_LT_Y 0x04 // 000100
-#define CLIP_GT_Y 0x08 // 001000
-#define CLIP_LT_Z 0x10 // 010000
-#define CLIP_GT_Z 0x20 // 100000
-#define CLIP_FAIL 0x3F // 111111
-typedef unsigned char clipmask_t;
-
-extern const m4x4_t g_m4x4_identity;
-
-#define M4X4_COPY(dst,src) (\
-(dst)[0]=(src)[0],\
-(dst)[1]=(src)[1],\
-(dst)[2]=(src)[2],\
-(dst)[3]=(src)[3],\
-(dst)[4]=(src)[4],\
-(dst)[5]=(src)[5],\
-(dst)[6]=(src)[6],\
-(dst)[7]=(src)[7],\
-(dst)[8]=(src)[8],\
-(dst)[9]=(src)[9],\
-(dst)[10]=(src)[10],\
-(dst)[11]=(src)[11],\
-(dst)[12]=(src)[12],\
-(dst)[13]=(src)[13],\
-(dst)[14]=(src)[14],\
-(dst)[15]=(src)[15])
-
-typedef enum
-{
-  eRightHanded = 0,
-  eLeftHanded = 1,
-} 
-m4x4Handedness_t;
-
-m4x4Handedness_t m4x4_handedness(const m4x4_t matrix);
-
-/*! assign other m4x4 to this m4x4 */
-void m4x4_assign(m4x4_t matrix, const m4x4_t other);
 
 // constructors
 /*! create m4x4 as identity matrix */
@@ -208,19 +159,7 @@ void m4x4_scale_for_vec3(m4x4_t matrix, const vec3_t scale);
 /*! create m4x4 as a rotation matrix, for a quaternion vec4 */
 void m4x4_rotation_for_quat(m4x4_t matrix, const vec4_t rotation);
 /*! create m4x4 as a rotation matrix, for an axis vec3 and an angle (radians) */
-void m4x4_rotation_for_axisangle(m4x4_t matrix, const vec3_t axis, double angle);
-/*! generate a perspective matrix by specifying the view frustum */
-void m4x4_frustum(m4x4_t matrix, vec_t left, vec_t right, vec_t bottom, vec_t top, vec_t nearval, vec_t farval);
-
-// a valid m4x4 to access is always first argument
-/*! extract translation vec3 from matrix */
-void m4x4_get_translation_vec3(const m4x4_t matrix, vec3_t translation);
-/*! extract euler rotation angles from a rotation-only matrix */
-void m4x4_get_rotation_vec3(const m4x4_t matrix, vec3_t euler, eulerOrder_t order);
-/*! extract scale vec3 from matrix */
-void m4x4_get_scale_vec3(const m4x4_t matrix, vec3_t scale);
-/*! extract translation/euler/scale from an orthogonal matrix. NOTE: requires right-handed axis-base */
-void m4x4_get_transform_vec3(const m4x4_t matrix, vec3_t translation, vec3_t euler, eulerOrder_t order, vec3_t scale);
+void m4x4_rotation_for_axisangle(m4x4_t matrix, const vec3_t axis, vec_t angle);
 
 // a valid m4x4 to be modified is always first argument
 /*! translate m4x4 by a translation vec3 */
@@ -232,30 +171,23 @@ void m4x4_scale_by_vec3(m4x4_t matrix, const vec3_t scale);
 /*! rotate m4x4 by a quaternion vec4 */
 void m4x4_rotate_by_quat(m4x4_t matrix, const vec4_t rotation);
 /*! rotate m4x4 by an axis vec3 and an angle (radians) */
-void m4x4_rotate_by_axisangle(m4x4_t matrix, const vec3_t axis, double angle);
-/*! transform m4x4 by translation/eulerZYX/scaling vec3 (transform = scale * eulerZ * eulerY * eulerX * translation) */
+void m4x4_rotate_by_axisangle(m4x4_t matrix, const vec3_t axis, vec_t angle);
+/*! transform m4x4 by translation/euler/scaling vec3 (transform = translation.euler.scale) */
 void m4x4_transform_by_vec3(m4x4_t matrix, const vec3_t translation, const vec3_t euler, eulerOrder_t order, const vec3_t scale);
-/*! rotate m4x4 around a pivot point by eulerZYX vec3 */
+/*! rotate m4x4 around a pivot point by euler(degrees) vec3 */
 void m4x4_pivoted_rotate_by_vec3(m4x4_t matrix, const vec3_t euler, eulerOrder_t order, const vec3_t pivotpoint);
 /*! scale m4x4 around a pivot point by scaling vec3 */
 void m4x4_pivoted_scale_by_vec3(m4x4_t matrix, const vec3_t scale, const vec3_t pivotpoint);
-/*! transform m4x4 around a pivot point by translation/eulerZYX/scaling vec3 */
+/*! transform m4x4 around a pivot point by translation/euler/scaling vec3 */
 void m4x4_pivoted_transform_by_vec3(m4x4_t matrix, const vec3_t translation, const vec3_t euler, eulerOrder_t order, const vec3_t scale, const vec3_t pivotpoint);
-/*! transform m4x4 around a pivot point by translation/rotation/scaling vec3 */
-void m4x4_pivoted_transform_by_rotation(m4x4_t matrix, const vec3_t translation, const m4x4_t rotation, const vec3_t scale, const vec3_t pivotpoint);
 /*! rotate m4x4 around a pivot point by quaternion vec4 */
-void m4x4_pivoted_rotate_by_quat(m4x4_t matrix, const vec4_t quat, const vec3_t pivotpoint);
+void m4x4_pivoted_rotate_by_quat(m4x4_t matrix, const vec4_t rotation, const vec3_t pivotpoint);
 /*! rotate m4x4 around a pivot point by axis vec3 and angle (radians) */
-void m4x4_pivoted_rotate_by_axisangle(m4x4_t matrix, const vec3_t axis, double angle, const vec3_t pivotpoint);
-
-/*! postmultiply m4x4 by another m4x4 */
-void m4x4_multiply_by_m4x4(m4x4_t matrix, const m4x4_t matrix_src);
-/*! premultiply m4x4 by another m4x4 */
-void m4x4_premultiply_by_m4x4(m4x4_t matrix, const m4x4_t matrix_src);
-/*! postmultiply orthogonal m4x4 by another orthogonal m4x4 */
-void m4x4_orthogonal_multiply_by_m4x4(m4x4_t matrix, const m4x4_t matrix_src);
-/*! premultiply orthogonal m4x4 by another orthogonal m4x4 */
-void m4x4_orthogonal_premultiply_by_m4x4(m4x4_t matrix, const m4x4_t matrix_src);
+void m4x4_pivoted_rotate_by_axisangle(m4x4_t matrix, const vec3_t axis, vec_t angle, const vec3_t pivotpoint);
+/*! post-multiply m4x4 by another m4x4 */
+void m4x4_multiply_by_m4x4(m4x4_t matrix, const m4x4_t other);
+/*! pre-multiply m4x4 by another m4x4 */
+void m4x4_premultiply_by_m4x4(m4x4_t matrix, const m4x4_t other);
 
 /*! multiply a point (x,y,z,1) by matrix */
 void m4x4_transform_point(const m4x4_t matrix, vec3_t point);
@@ -272,32 +204,9 @@ void m4x4_transform_normal(const m4x4_t matrix, vec3_t normal);
 /*! transpose a m4x4 */
 void m4x4_transpose(m4x4_t matrix);
 /*! invert an orthogonal 4x3 subset of a 4x4 matrix */
-int m4x4_orthogonal_invert(m4x4_t matrix);
+void m4x4_orthogonal_invert(m4x4_t matrix);
 /*! invert any m4x4 using Kramer's rule.. return 1 if matrix is singular, else return 0 */
 int m4x4_invert(m4x4_t matrix);
-
-/*! clip a point (x,y,z,1) by canonical matrix */
-clipmask_t m4x4_clip_point(const m4x4_t matrix, const vec3_t point, vec4_t clipped);
-/*! device-space polygon for clipped triangle */
-unsigned int m4x4_clip_triangle(const m4x4_t matrix, const vec3_t p0, const vec3_t p1, const vec3_t p2, vec4_t clipped[9]);
-/*! device-space line for clipped line  */
-unsigned int m4x4_clip_line(const m4x4_t matrix, const vec3_t p0, const vec3_t p1, vec4_t clipped[2]);
-
-
-//! quaternion identity
-void quat_identity(vec4_t quat);
-//! quaternion from two unit vectors
-void quat_for_unit_vectors(vec4_t quat, const vec3_t from, const vec3_t to);
-//! quaternion from axis and angle (radians)
-void quat_for_axisangle(vec4_t quat, const vec3_t axis, double angle);
-//! concatenates two rotations.. equivalent to m4x4_multiply_by_m4x4 .. postmultiply.. the right-hand side is the first rotation performed
-void quat_multiply_by_quat(vec4_t quat, const vec4_t other);
-//! negate a quaternion
-void quat_conjugate(vec4_t quat);
-//! normalise a quaternion
-void quat_normalise(vec4_t quat);
-
-
 
 /*!
 \todo object/ray intersection functions should maybe return a point rather than a distance?
@@ -307,14 +216,14 @@ void quat_normalise(vec4_t quat);
 aabb_t -  "axis-aligned" bounding box... 
   origin: centre of bounding box... 
   extents: +/- extents of box from origin... 
+  radius: cached length of extents vector... 
 */
 typedef struct aabb_s
 {
   vec3_t origin;
   vec3_t extents;
+  vec_t radius;
 } aabb_t;
-
-extern const aabb_t g_aabb_null;
 
 /*!
 bbox_t - oriented bounding box... 
@@ -325,7 +234,6 @@ typedef struct bbox_s
 {
   aabb_t aabb;
   vec3_t axes[3];
-  vec_t radius;
 } bbox_t;
 
 /*!
@@ -337,83 +245,58 @@ typedef struct ray_s
   vec3_t direction;
 } ray_t;
 
-/*!
-line_t - centre point and displacement of end point from centre
-*/
-typedef struct line_s
-{
-  vec3_t origin;
-  vec3_t extents;
-} line_t;
-
-
-/*! Generate line from start/end points. */
-void line_construct_for_vec3(line_t* line, const vec3_t start, const vec3_t end);
-/*! Return 2 if line is behind plane, else return 1 if line intersects plane, else return 0. */
-int line_test_plane(const line_t* line, const vec4_t plane);
 
 /*! Generate AABB from min/max. */
-void aabb_construct_for_vec3(aabb_t* aabb, const vec3_t min, const vec3_t max);
+void aabb_construct_for_vec3(aabb_t *aabb, const vec3_t min, const vec3_t max);
+/*! Update bounding-sphere radius. */
+void aabb_update_radius(aabb_t *aabb);
 /*! Initialise AABB to negative size. */
-void aabb_clear(aabb_t* aabb);
+void aabb_clear(aabb_t *aabb);
 
 /*! Extend AABB to include point. */
-void aabb_extend_by_point(aabb_t* aabb, const vec3_t point);
+void aabb_extend_by_point(aabb_t *aabb, const vec3_t point);
 /*! Extend AABB to include aabb_src. */
-void aabb_extend_by_aabb(aabb_t* aabb, const aabb_t* aabb_src);
+void aabb_extend_by_aabb(aabb_t *aabb, const aabb_t *aabb_src);
 /*! Extend AABB by +/- extension vector. */
-void aabb_extend_by_vec3(aabb_t* aabb, vec3_t extension);
+void aabb_extend_by_vec3(aabb_t *aabb, vec3_t extension);
 
 /*! Return 2 if point is inside, else 1 if point is on surface, else 0. */
-int aabb_test_point(const aabb_t* aabb, const vec3_t point);
+int aabb_intersect_point(const aabb_t *aabb, const vec3_t point);
 /*! Return 2 if aabb_src intersects, else 1 if aabb_src touches exactly, else 0. */
-int aabb_test_aabb(const aabb_t* aabb, const aabb_t* aabb_src);
+int aabb_intersect_aabb(const aabb_t *aabb, const aabb_t *aabb_src);
 /*! Return 2 if aabb is behind plane, else 1 if aabb intersects plane, else 0. */
-int aabb_test_plane(const aabb_t* aabb, const float* plane);
+int aabb_intersect_plane(const aabb_t *aabb, const float *plane);
 /*! Return 1 if aabb intersects ray, else 0... dist = closest intersection. */
-int aabb_intersect_ray(const aabb_t* aabb, const ray_t* ray, vec3_t intersection);
+int aabb_intersect_ray(const aabb_t *aabb, const ray_t *ray, vec_t *dist);
 /*! Return 1 if aabb intersects ray, else 0. Faster, but does not provide point of intersection */
 int aabb_test_ray(const aabb_t* aabb, const ray_t* ray);
 
-/*! Return 2 if oriented aabb is behind plane, else 1 if aabb intersects plane, else 0. */
-int aabb_oriented_intersect_plane(const aabb_t* aabb, const m4x4_t transform, const vec_t* plane);
-
-/*! Calculate the corners of the aabb. */
-void aabb_corners(const aabb_t* aabb, vec3_t corners[8]);
-
-/*! (deprecated) Generate AABB from oriented bounding box. */
-void aabb_for_bbox(aabb_t* aabb, const bbox_t* bbox);
-/*! (deprecated) Generate AABB from 2-dimensions of min/max, specified by axis. */
-void aabb_for_area(aabb_t* aabb, vec3_t area_tl, vec3_t area_br, int axis);
-/*! Generate AABB to contain src*  transform. NOTE: transform must be orthogonal */
+/*! Generate AABB from oriented bounding box. */
+void aabb_for_bbox(aabb_t *aabb, const bbox_t *bbox);
+/*! Generate AABB from 2-dimensions of min/max, specified by axis. */
+void aabb_for_area(aabb_t *aabb, vec3_t area_tl, vec3_t area_br, int axis);
+/*! Generate AABB to contain src * transform. NOTE: transform must be orthogonal */
 void aabb_for_transformed_aabb(aabb_t* dst, const aabb_t* src, const m4x4_t transform);
 
-/*! Update bounding-sphere radius. */
-void bbox_update_radius(bbox_t* bbox);
+
 /*! Generate oriented bounding box from AABB and transformation matrix. */
-/*!\todo Remove need to specify eulerZYX/scale. */
-void bbox_for_oriented_aabb(bbox_t* bbox, const aabb_t* aabb,
-                    const m4x4_t matrix, const vec3_t eulerZYX, const vec3_t scale);
-/*! Return 2 if bbox is behind plane, else return 1 if bbox intersects plane, else return 0. */
-int bbox_intersect_plane(const bbox_t* bbox, const vec_t* plane);
+/*!\todo Remove need to specify euler/scale. */
+void bbox_for_oriented_aabb(bbox_t *bbox, const aabb_t *aabb,
+                    const m4x4_t matrix, const vec3_t euler, const vec3_t scale);
+/*! Return 2 is bbox is behind plane, else return 1 if bbox intersects plane, else return 0. */
+int bbox_intersect_plane(const bbox_t *bbox, const vec_t* plane);
 
 
 /*! Generate a ray from an origin point and a direction unit-vector */
-void ray_construct_for_vec3(ray_t* ray, const vec3_t origin, const vec3_t direction);
+void ray_construct_for_vec3(ray_t *ray, const vec3_t origin, const vec3_t direction);
   
 /*! Transform a ray */
-void ray_transform(ray_t* ray, const m4x4_t matrix);
+void ray_transform(ray_t *ray, const m4x4_t matrix);
 
-/*! distance from ray origin in ray direction to point. FLT_MAX if no intersection. */
-vec_t ray_intersect_point(const ray_t* ray, const vec3_t point, vec_t epsilon, vec_t divergence);
-/*! distance from ray origin in ray direction to triangle. FLT_MAX if no intersection. */
-vec_t ray_intersect_triangle(const ray_t* ray, qboolean bCullBack, const vec3_t vert0, const vec3_t vert1, const vec3_t vert2);
-/*! distance from ray origin in ray direction to plane. */
-vec_t ray_intersect_plane(const ray_t* ray, const vec3_t normal, vec_t dist);
-
-
-int plane_intersect_planes(const vec4_t plane1, const vec4_t plane2, const vec4_t plane3, vec3_t intersection);
-
+/*! return true if point intersects cone formed by ray, divergence and epsilon */
+vec_t ray_intersect_point(const ray_t *ray, const vec3_t point, vec_t epsilon, vec_t divergence);
+/*! return true if triangle intersects ray... dist = dist from intersection point to ray-origin */
+vec_t ray_intersect_triangle(const ray_t *ray, qboolean bCullBack, const vec3_t vert0, const vec3_t vert1, const vec3_t vert2);
 
 #ifdef __cplusplus
 }

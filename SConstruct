@@ -1,338 +1,59 @@
-# scons build script
+# -*- mode: python -*-
+# ZeroRadiant build scripts
+# TTimo <ttimo@idsoftware.com>
 # http://scons.sourceforge.net
 
-import commands, re, sys, os, pickle, string, popen2
-from makeversion import radiant_makeversion, get_version
+import sys, os, platform, cPickle
 
-# to access some internal stuff
-import SCons
+import utils, config
 
-conf_filename='site.conf'
-# there is a default hardcoded value, you can override on command line, those are saved between runs
-# we only handle strings
-serialized=['CC', 'CXX', 'JOBS', 'BUILD']
+conf_filename = 'site.sconf'
 
-# help -------------------------------------------
-
-Help("""
-Usage: scons [OPTIONS] [TARGET] [CONFIG]
-
-[OPTIONS] and [TARGET] are covered in command line options, use scons -H
-
-[CONFIG]: KEY="VALUE" [...]
-a number of configuration options saved between runs in the """ + conf_filename + """ file
-erase """ + conf_filename + """ to start with default settings again
-
-CC
-CXX
-	Specify C and C++ compilers (defaults gcc and g++)
-	ex: CC="gcc-3.2"
-	You can use ccache and distcc, for instance:
-	CC="ccache distcc gcc" CXX="ccache distcc g++"
-
-JOBS
-	Parallel build
-	ex: JOBS="4" is a good setting on SMP machines
-
-BUILD
-	Use debug/release to select build settings
-	ex: BUILD="debug" - default is debug
+try:
+	sys.argv.index( '-h' )
+except:
+	pass
+else:
+	Help(
 """
-)
+======================================================================
+ZeroRadiant build system quick help
 
-# end help ---------------------------------------
-  
-# sanity -----------------------------------------
+You need scons v0.97.0d20070918.r2446 or newer
 
-# get a recent python release
-# that is broken in current version:
-# http://sourceforge.net/tracker/index.php?func=detail&aid=794145&group_id=30337&atid=398971
-#EnsurePythonVersion(2,1)
-# above 0.90
-EnsureSConsVersion( 0, 96 )
-print 'SCons ' + SCons.__version__
+Default build (release), just run scons at the toplevel
 
-# end sanity -------------------------------------
+debug build:
+$ scons config=debug
+======================================================================
+""" )
+	Return()
 
-# system detection -------------------------------
+active_configs = []
 
-# TODO: detect Darwin / OSX
+# load up configurations from the save file
+if ( os.path.exists( conf_filename ) ):
+	f = open( conf_filename )
+	print 'reading saved configuration from site.conf'
+	try:
+		while ( True ):
+			c = cPickle.load( f )
+			active_configs.append( c )
+	except:
+		pass
 
-# CPU type
-g_cpu = commands.getoutput('uname -m')
-exp = re.compile('.*i?86.*')
-if (g_cpu == 'Power Macintosh' or g_cpu == 'ppc'):
-  g_cpu = 'ppc'
-elif exp.match(g_cpu):
-  g_cpu = 'x86'
-else:
-  g_cpu = 'cpu'
+# read the command line and build configs
+config_statements = sys.argv[1:]
+active_configs = config.ConfigParser().parseStatements( active_configs, config_statements )
+assert( len( active_configs ) >= 1 )
 
-# OS
-OS = commands.getoutput('uname')
-print "OS=\"" + OS + "\""
+# save the config
+print 'saving updated configuration'
+f = open( conf_filename, 'wb' )
+for c in active_configs:
+	cPickle.dump( c, f, -1 )
 
-if (OS == 'Linux'):
-  # libc .. do the little magic!
-  libc = commands.getoutput('/lib/libc.so.6 |grep "GNU C "|grep version|awk -F "version " \'{ print $2 }\'|cut -b -3')
-
-# end system detection ---------------------------
-
-# default settings -------------------------------
-
-CC='gcc'
-CXX='g++'
-JOBS='1'
-BUILD='debug'
-INSTALL='#install'
-g_build_root = 'build'
-
-# end default settings ---------------------------
-
-# site settings ----------------------------------
-
-site_dict = {}
-if (os.path.exists(conf_filename)):
-	site_file = open(conf_filename, 'r')
-	p = pickle.Unpickler(site_file)
-	site_dict = p.load()
-	print 'Loading build configuration from ' + conf_filename
-	for k, v in site_dict.items():
-		exec_cmd = k + '=\"' + v + '\"'
-		print exec_cmd
-		exec(exec_cmd)
-
-# end site settings ------------------------------
-
-# command line settings --------------------------
-
-for k in serialized:
-	if (ARGUMENTS.has_key(k)):
-		exec_cmd = k + '=\"' + ARGUMENTS[k] + '\"'
-		print 'Command line: ' + exec_cmd
-		exec(exec_cmd)
-
-# end command line settings ----------------------
-
-# sanity check -----------------------------------
-
-
-def GetGCCVersion(name):
-  ret = commands.getstatusoutput('%s -dumpversion' % name)
-  if ( ret[0] != 0 ):
-    return None
-  vers = string.split(ret[1], '.')
-  if ( len(vers) == 2 ):
-    return [ vers[0], vers[1], 0 ]
-  elif ( len(vers) == 3 ):
-    return vers
-  return None
-
-ver_cc = GetGCCVersion(CC)
-ver_cxx = GetGCCVersion(CXX)
-
-if ( ver_cc is None or ver_cxx is None or ver_cc[0] < '3' or ver_cxx[0] < '3' or ver_cc != ver_cxx ):
-  print 'Compiler version check failed - need gcc 3.x or later:'
-  print 'CC: %s %s\nCXX: %s %s' % ( CC, repr(ver_cc), CXX, repr(ver_cxx) )
-  Exit(1)
-
-# end sanity check -------------------------------
-
-# save site configuration ----------------------
-
-for k in serialized:
-	exec_cmd = 'site_dict[\'' + k + '\'] = ' + k
-	exec(exec_cmd)
-
-site_file = open(conf_filename, 'w')
-p = pickle.Pickler(site_file)
-p.dump(site_dict)
-site_file.close()
-
-# end save site configuration ------------------
-
-# general configuration, target selection --------
-
-SConsignFile( "scons.signatures" )
-
-g_build = g_build_root + '/' + BUILD
-
-SetOption('num_jobs', JOBS)
-
-LINK = CXX
-# common flags
-warningFlags = '-W -Wall -Wcast-align -Wcast-qual -Wno-unused-parameter '
-warningFlagsCXX = '-Wno-non-virtual-dtor -Wreorder ' # -Wold-style-cast
-# POSIX macro: platform supports posix IEEE Std 1003.1:2001
-# XWINDOWS macro: platform supports X-Windows API
-CCFLAGS = '-DPOSIX -DXWINDOWS ' + warningFlags
-CXXFLAGS = '-pipe -DPOSIX -DXWINDOWS ' + warningFlags + warningFlagsCXX
-CPPPATH = []
-if (BUILD == 'debug'):
-	CXXFLAGS += '-g3 -D_DEBUG '
-	CCFLAGS += '-g3 -D_DEBUG '
-elif (BUILD == 'release' or BUILD == 'final'):
-	CXXFLAGS += '-O2 '
-	CCFLAGS += '-O2 '
-else:
-	print 'Unknown build configuration ' + BUILD
-	sys.exit( 0 )
-
-LINKFLAGS = ''
-if ( OS == 'Linux' ):
-
-  if ( BUILD == 'final' ):
-    # static
-    # 2112833 /opt/gtkradiant/radiant.x86
-    # 35282 /opt/gtkradiant/modules/archivezip.so
-    # 600099 /opt/gtkradiant/modules/entity.so
-  
-    # dynamic
-    # 2237060 /opt/gtkradiant/radiant.x86
-    # 110605 /opt/gtkradiant/modules/archivezip.so
-    # 730222 /opt/gtkradiant/modules/entity.so
-  
-    # EVIL HACK - force static-linking for libstdc++ - create a symbolic link to the static libstdc++ in the root
-    os.system("ln -s `g++ -print-file-name=libstdc++.a`")
-  
-    #if not os.path.exists("./install"):
-    #  os.mkdir("./install")
-    #os.system("cp `g++ -print-file-name=libstdc++.so` ./install")
-  
-  # -fPIC might be worth removing when building for 32-bit x86
-  CCFLAGS += '-fPIC '
-  CXXFLAGS += '-fPIC -fno-exceptions -fno-rtti '
-  LINKFLAGS += '-fPIC -Wl,-fini,fini_stub -L. -static-libgcc '
-
-if ( OS == 'Darwin' ):
-  CCFLAGS += '-force_cpusubtype_ALL -fPIC '
-  CXXFLAGS += '-force_cpusubtype_ALL -fPIC -fno-exceptions -fno-rtti '
-  CPPPATH.append('/sw/include')
-  CPPPATH.append('/usr/X11R6/include')
-  LINKFLAGS += '-L/sw/lib -L/usr/lib -L/usr/X11R6/lib '
-
-CPPPATH.append('libs')
-
-# extend the standard Environment a bit
-class idEnvironment(Environment):
-
-  def __init__(self):
-    Environment.__init__(self,
-      ENV = os.environ, 
-      CC = CC,
-      CXX = CXX,
-      LINK = LINK,
-      CCFLAGS = CCFLAGS,
-      CXXFLAGS = CXXFLAGS,
-      CPPPATH = CPPPATH,
-      LINKFLAGS = LINKFLAGS)
-
-  def useGlib2(self):
-    self['CXXFLAGS'] += '`pkg-config glib-2.0 --cflags` '
-    self['CCFLAGS'] += '`pkg-config glib-2.0 --cflags` '
-    if BUILD == 'final':
-      self['LINKFLAGS'] += '-lglib-2.0 '
-    else:
-      self['LINKFLAGS'] += '`pkg-config glib-2.0 --libs` '
-      
-    
-  def useXML2(self):
-    self['CXXFLAGS'] += '`xml2-config --cflags` '      
-    self['CCFLAGS'] += '`xml2-config --cflags` '      
-    if BUILD == 'final':
-      self['LINKFLAGS'] += '-lxml2 '
-    else:
-      self['LINKFLAGS'] += '`xml2-config --libs` '
-
-  def useGtk2(self):
-    self['CXXFLAGS'] += '`pkg-config gtk+-2.0 --cflags` '
-    self['CCFLAGS'] += '`pkg-config gtk+-2.0 --cflags` '
-    if BUILD == 'final':
-      self['LINKFLAGS'] += '-lgtk-x11-2.0 -lgdk-x11-2.0 -latk-1.0 -lpango-1.0 -lgdk_pixbuf-2.0 '
-    else:
-      self['LINKFLAGS'] += '`pkg-config gtk+-2.0 --libs-only-L` `pkg-config gtk+-2.0 --libs-only-l` '
-   
-  def useGtkGLExt(self):
-    self['CXXFLAGS'] += '`pkg-config gtkglext-1.0 --cflags` '
-    self['CCFLAGS'] += '`pkg-config gtkglext-1.0 --cflags` '
-    #if BUILD == 'final':
-    self['LINKFLAGS'] += '-lgtkglext-x11-1.0 -lgdkglext-x11-1.0 '
-    # apparently pkg-config for gtkglext includes --export-dynamic, which b0rks everything.     
-    #else:
-    #  self['LINKFLAGS'] += 'pkg-config gtkglext-1.0 --libs-only-L` `pkg-config gtkglext-1.0 --libs-only-l` '      
-    
-  def usePNG(self):
-    self['CXXFLAGS'] += '`libpng-config --cflags` '
-    self['CCFLAGS'] += '`libpng-config --cflags` '
-    self['LINKFLAGS'] += '`libpng-config --ldflags` '
-    
-  def useMHash(self):
-    self['LINKFLAGS'] += '-lmhash '
-  
-  def useZLib(self):
-    self['LINKFLAGS'] += '-lz '
-    
-  def usePThread(self):
-    if ( OS == 'Darwin' ):
-      self['LINKFLAGS'] += '-lpthread -Wl,-stack_size,0x400000 '
-    else:
-      self['LINKFLAGS'] += '-lpthread '
-
-  def CheckLDD(self, target, source, env):
-    file = target[0]
-    if (not os.path.isfile(file.abspath)):
-        print('ERROR: CheckLDD: target %s not found\n' % target[0])
-        Exit(1)
-    # not using os.popen3 as I want to check the return code
-    ldd = popen2.Popen3('`which ldd` -r %s' % target[0], 1)
-    stdout_lines = ldd.fromchild.readlines()
-    stderr_lines = ldd.childerr.readlines()
-    ldd_ret = ldd.wait()
-    del ldd
-    have_undef = 0
-    if ( ldd_ret != 0 ):
-        print "ERROR: ldd command returned with exit code %d" % ldd_ret
-        os.system('rm %s' % target[0])
-        Exit()
-    for i_line in stderr_lines:
-        print repr(i_line)
-        regex = re.compile('undefined symbol: (.*)\t\\((.*)\\)\n')
-        if ( regex.match(i_line) ):
-            symbol = regex.sub('\\1', i_line)
-            try:
-                env['ALLOWED_SYMBOLS'].index(symbol)
-            except:
-                have_undef = 1
-        else:
-            print "ERROR: failed to parse ldd stderr line: %s" % i_line
-            os.system('rm %s' % target[0])
-            Exit(1)
-    if ( have_undef ):
-        print "ERROR: undefined symbols"
-        os.system('rm %s' % target[0])
-        Exit(1)
-  
-  def SharedLibrarySafe(self, target, source, LIBS=[], LIBPATH='.'):
-    result = self.SharedLibrary(target, source, LIBS=LIBS, LIBPATH=LIBPATH)
-    if (OS != 'Darwin'):
-      AddPostAction(target + '.so', self.CheckLDD)
-    return result
-
-g_env = idEnvironment()
-
-# export the globals
-GLOBALS = 'g_env INSTALL g_cpu'
-
-radiant_makeversion('\\ngcc version: %s.%s.%s' % ( ver_cc[0], ver_cc[1], ver_cc[2] ) )
-
-# end general configuration ----------------------
-
-# targets ----------------------------------------
-
-Default('.')
-
-Export('GLOBALS ' + GLOBALS)
-BuildDir(g_build, '.', duplicate = 0)
-SConscript(g_build + '/SConscript')
-
-# end targets ------------------------------------
+print 'emit build rules'
+for c in active_configs:
+	print 'emit configuration: %s' % repr( c )
+	c.emit()

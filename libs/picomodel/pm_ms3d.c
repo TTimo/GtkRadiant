@@ -41,7 +41,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "picointernal.h"
 
 /* disable warnings */
-#ifdef WIN32
+#ifdef _WIN32
 #pragma warning( disable:4100 )		/* unref param */
 #endif
 

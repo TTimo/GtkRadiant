@@ -1,0 +1,11 @@
+Changes file for the MacOS port of GtkRadiant 1.1-TA
+----------------------------------------------------
+05/24/2001
+TTimo
+ Patching the MacOS branch to build on linux
+04/15/2001
+Pradeep
+ Changes so that the whole project compiles under MacOSX/XFree. 
+03/28/2001
+TTimo
+  added this file and gave write access to pradeep on the tree (testing write access)

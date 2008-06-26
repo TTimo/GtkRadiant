@@ -1,0 +1,352 @@
+<html>
+<head>
+<title>Q3Radiant Editor Manual: Appendix B8</title>
+<link rel = "stylesheet" type = "text/css" href = "../styles/q3rad.css">
+</head>
+<body>
+<h1 class = "MsoTitle">Q3Radiant Editor Manual</h1>
+<hr>
+<h1>Appendix B: Entity Descriptions</h1>
+<h2><a name = "team">Team_* Entities</a></h2>
+
+These entities only function when a team style game is being
+played. Most are for Capture the Flag. They do not need to be
+marked with notfree, since that is part of their nature.
+
+
+
+<p><div class = "subheading">team_CTF_blueflag</div>
+
+<b>Map Entity Color:</b> blue
+
+<br><b>Dimensions:</b> (-16 -16 -24) (16 16 32)
+
+<br><b>Game Function:</b> Blue team flag for CTF games.
+
+
+
+<p><strong>Notes</strong>
+
+<br>This cannot be suspended (or the bots won't find it). It must be
+reachable by players of both teams, since it is where a player must
+return an opponent's flag.
+
+
+
+<p><div class = "subheading">team_CTF_blueplayer</div>
+
+<b>Map Entity Color:</b> blue
+
+<br><b>Dimensions:</b> (-16 -16 -24) (16 16 32)
+
+<br><b>Game Function:</b> Initial Blue team spawning position for
+CTF games. This is where players spawn when they join the Blue team
+(at the start of a game or upon entering a game in progress).
+
+
+
+<p><strong>Keys</strong>
+
+<br><b>target:</b> this can point at a target_give entity for
+respawn freebies.
+
+
+
+<p><div class = "subheading">team_CTF_bluespawn</div>
+
+<b>Map Entity Color:</b> blue
+
+<br><b>Dimensions:</b> (-16 -16 -24) (16 16 32)
+
+<br><b>Game Function:</b> Blue team respawning position for CTF
+games. This is where Blue team players respawn after they get
+fragged.
+
+
+
+<p><strong>Keys</strong>
+
+<br><b>target:</b> this can point at a target_give entity for
+respawn freebies.
+
+
+
+<p><div class = "subheading">team_CTF_redflag</div>
+
+<b>Map Entity Color:</b> red
+
+<br><b>Dimensions:</b> (-16 -16 -24) (16 16 32)
+
+<br><b>Game Function:</b> Blue team flag for CTF games.
+
+
+
+<p><strong>Notes</strong>
+
+<br>This cannot be suspended (or the bots won't find it). It must be
+reachable by players of both teams, since it is where a player must
+return an opponent's flag.
+
+
+
+<p><div class = "subheading">team_CTF_redplayer</div>
+
+<b>Map Entity Color:</b> red
+
+<br><b>Dimensions:</b> (-16 -16 -24) (16 16 32)
+
+<br><b>Game Function:</b> Initial Red team spawning position for CTF
+games. This is where players spawn when they join the red team (at
+the start of a game or upon entering a game in progress).
+
+
+
+<p><strong>Keys</strong>
+
+<br><b>target:</b> this can point at a target_give entity for
+respawn freebies.
+
+
+
+<p><div class = "subheading">team_CTF_redspawn</div>
+
+<b>Map Entity Color:</b> red
+
+<br><b>Dimensions:</b> (-16 -16 -24) (16 16 32)
+
+<br><b>Game Function:</b> Red team respawning position for CTF
+games. This is where red team players respawn after they get
+fragged.
+
+
+
+<p><strong>Keys</strong>
+
+<br><b>target:</b> this can point at a target_give entity for
+respawn freebies.
+
+
+
+<h2><a name = "trigger">Trigger_* Entities</a></h2>
+
+<div class = "subheading">trigger_always</div>
+
+<b>Map Entity Color:</b> gray
+
+<br><b>Dimensions:</b> (-8 -8 -8) (8 8 8)
+
+<br><b>Game Function:</b> Automatic trigger. It will fire the
+entities it targets as soon as it spawns in the game.
+
+
+
+<p><strong>Keys</strong>
+
+<br><b>target:</b> this points to the entity to activate.
+
+<br><b>notfree:</b> when set to 1, entity will not spawn in "Free
+for all" and "Tournament" modes.
+
+<br><b>notteam:</b> when set to 1, entity will not spawn in
+"Teamplay" and "CTF" modes.
+
+<br><b>notsingle:</b> when set to 1, entity will not spawn in Single
+Player mode (bot play mode).
+
+
+
+<p><strong>Notes</strong>
+
+<br>For reliable internet play, make any trigger which can be passed
+through at least 32 game units deep.
+
+
+
+<p><div class = "subheading">trigger_hurt</div>
+
+<b>Map Entity Color:</b> gray
+
+<br><b>Dimensions:</b> size of brush used
+
+<br><b>Game Function:</b> Any player that touches this will be hurt
+by "dmg" points of damage once per server frame (very fast). A
+sizzling sound is also played while the player is being hurt.
+
+
+
+<p><strong>Keys</strong>
+
+<br><b>dmg:</b> number of points of damage inflicted to player per
+server frame (default 5 - integer values only).
+
+<br><b>notfree:</b> when set to 1, entity will not spawn in "Free
+for all" and "Tournament" modes.
+
+<br><b>notteam:</b> when set to 1, entity will not spawn in
+"Teamplay" and "CTF" modes.
+
+<br><b>notsingle:</b> when set to 1, entity will not spawn in Single
+Player mode (bot play mode).
+
+<p><strong>Check Boxes/Spawnflags</strong>
+
+<br>START_OFF: if set, the trigger will initially start off in the
+game.
+
+<br>SILENT: supresses the sizzling sound while player is being
+hurt.
+
+<br>NO_PROTECTION: player will be hurt regardless of protection (see
+Notes).
+
+<br>SLOW: changes the damage rate to once per second.
+
+
+
+<p><strong>Notes</strong>
+
+<ul><li>The invulnerability power-up (item_enviro) does not protect the
+player from damage caused by this entity regardless of whether the
+NO_PROTECTION spawnflag is set or not.
+
+<li>A trigger_hurt always starts on in the game.
+
+<li>For reliable Internet play, make any trigger which can be passed
+through at least 32 game units deep.
+</ul>
+
+
+<p><div class = "subheading">trigger_multiple</div>
+
+<b>Map Entity Color:</b> gray
+
+<br><b>Dimensions:</b> size of brush used
+
+<br><b>Game Function:</b> Variable size repeatable trigger. It will
+fire the entities it targets when touched by player. Can be made to
+operate like a trigger_once entity by setting the "wait" key to -1.
+It can also be activated by another trigger that targets it.
+
+
+
+<p><strong>Keys</strong>
+
+<br><b>target:</b> this points to the entity to activate.
+
+<br><b>targetname:</b> activating trigger points to this.
+
+<br><b>wait:</b> time in seconds until trigger becomes
+re-triggerable after it's been touched (default 0.2, -1 = trigger
+once).
+
+<br><strong>random:</strong> random time variance in seconds added or subtracted from
+"wait" delay (default 0 - see Notes).
+
+<br><b>notfree:</b> when set to 1, entity will not spawn in "Free
+for all" and "Tournament" modes.
+
+<br><b>notteam:</b> when set to 1, entity will not spawn in
+"Teamplay" and "CTF" modes.
+
+<br><b>notsingle:</b> when set to 1, entity will not spawn in Single
+Player mode (bot play mode).
+
+
+
+<p><strong>Notes</strong>
+
+<ul><li>When the random key is set, its value is used to calculate a
+minimum and a maximum delay. The final time delay will be a random
+value anywhere between the minimum and maximum values: (min delay =
+wait - random) (max delay = wait + random).
+
+<li>For reliable Internet play, make any trigger which can be passed
+through at least 32 game units deep.
+</ul>
+
+
+<p><div class = "subheading">trigger_push</div>
+
+<b>Map Entity Color:</b> gray
+
+<br><b>Dimensions:</b> size of brush used
+
+<br><b>Game Function:</b> This is used to create jump pads and
+launch ramps. It MUST point to a target_position or info_notnull
+entity to work. Unlike target_push, this is client side
+predicted.
+
+
+
+<p><strong>Keys</strong>
+
+<br><b>target:</b> this points to the target_position to which the
+player will jump.
+
+<br><b>notfree:</b> when set to 1, entity will not spawn in "Free
+for all" and "Tournament" modes.
+
+<br><b>notteam:</b> when set to 1, entity will not spawn in
+"Teamplay" and "CTF" modes.
+
+<br><b>notsingle:</b> when set to 1, entity will not spawn in Single
+Player mode (bot play mode).
+
+
+
+<p><strong>Notes</strong>
+
+<ul><li>To make a jump pad or launch ramp, place the
+target_position/info_notnull entity at the highest point of the
+jump and target it with this entity.
+
+<li>This trigger automatically makes the bouncepad sound.
+
+<li>Speed of travel is determined by the distance needed to reach
+the target entity. Longer = faster.
+
+<li>For reliable Internet play, make any trigger which can be passed
+through at least 32 game units deep.
+</ul>
+
+
+<p><div class = "subheading">trigger_teleport</div>
+
+<b>Map Entity Color:</b> gray
+
+<br><b>Dimensions:</b> size of brush used
+
+<br><b>Game Function:</b> Touching this will teleport players to the
+location of the targeted misc_teleporter_dest or target_position
+entities. This entity allows client prediction of events. It is the
+preferred method.
+
+
+
+<p><strong>Keys</strong>
+
+<br><b>target:</b> this must point to a misc_teleporter_dest entity
+or a target_position entity.
+
+<br><b>notfree:</b> when set to 1, entity will not spawn in "Free
+for all" and "Tournament" modes.
+
+<br><b>notteam:</b> when set to 1, entity will not spawn in
+"Teamplay" and "CTF" modes.
+
+<br><b>notsingle:</b> when set to 1, entity will not spawn in Single
+Player mode (bot play mode).
+
+
+
+<p><strong>Notes</strong>
+
+<ul><li>For reliable Internet play, make any trigger which can be passed
+through at least 32 game units deep.
+
+<li>When you give multiple targets the same target name, the
+teleporter will randomly select from one each time it is used.
+</ul>
+<p align = "center"><a href = "appn_b_7.htm">Back</a> | <a href = "../index.htm">Home</a> | <a href = "appn_b_9.htm">Next</a>
+</body>
+</html>

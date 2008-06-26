@@ -41,82 +41,64 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 // Leonardo Zide (leo@lokigames.com)
 //
 
-#include "vfs.h"
-
+#include <glib.h>
 #include <stdio.h>
-#include <stdlib.h>
-#include <glib/gslist.h>
-#include <glib/gdir.h>
-#include <glib/gstrfuncs.h>
 
-#include "qerplugin.h"
-#include "idatastream.h"
-#include "iarchive.h"
-ArchiveModules& FileSystemQ3API_getArchiveModules();
-#include "ifilesystem.h"
-
-#include "generic/callback.h"
-#include "string/string.h"
-#include "stream/stringstream.h"
-#include "os/path.h"
-#include "moduleobservers.h"
-
-
-#define VFS_MAXDIRS 8
-
-#if defined(WIN32)
-#define PATH_MAX 260
+#if defined (__linux__) || defined (__APPLE__)
+  #include <dirent.h>
+  #include <unistd.h>
+#else
+  #include <wtypes.h>
+  #include <io.h>
+  #define R_OK 04
+  #define S_ISDIR(mode) (mode & _S_IFDIR)
 #endif
 
-#define gamemode_get GlobalRadiant().getGameMode
+// TTimo: String functions
+//   see http://www.qeradiant.com/faq/index.cgi?file=175
+#include "str.h"
 
+#include <stdlib.h>
+#include <sys/stat.h>
 
+#include "vfspk3.h"
+#include "vfs.h"
+#include "unzip-vfspk3.h"
+
+typedef struct
+{
+  char*   name;
+  unz_s   zipinfo;
+  unzFile zipfile;
+  guint32   size;
+} VFS_PAKFILE;
 
 // =============================================================================
 // Global variables
 
-Archive* OpenArchive(const char* name);
-
-struct archive_entry_t
-{
-  CopiedString name;
-  Archive* archive;
-  bool is_pakfile;
-};
-
-#include <list>
-
-typedef std::list<archive_entry_t> archives_t;
-
-static archives_t g_archives;
-static char    g_strDirs[VFS_MAXDIRS][PATH_MAX+1];
+static GSList* g_unzFiles;
+static GSList* g_pakFiles;
+static char    g_strDirs[VFS_MAXDIRS][PATH_MAX];
 static int     g_numDirs;
 static bool    g_bUsePak = true;
-
-ModuleObservers g_observers;
 
 // =============================================================================
 // Static functions
 
-static void AddSlash (char *str)
+static void vfsAddSlash (char *str)
 {
-  std::size_t n = strlen (str);
+  int n = strlen (str);
   if (n > 0)
   {
     if (str[n-1] != '\\' && str[n-1] != '/')
-    {
-      globalErrorStream() << "WARNING: directory path does not end with separator: " << str << "\n";
       strcat (str, "/");
-    }
   }
 }
 
-static void FixDOSName (char *src)
+static void vfsFixDOSName (char *src)
 {
-  if (src == 0 || strchr(src, '\\') == 0)
+  if (src == NULL)
     return;
-
-  globalErrorStream() << "WARNING: invalid path separator '\\': " << src << "\n";
 
   while (*src)
   {
@@ -126,389 +108,415 @@ static void FixDOSName (char *src)
   }
 }
 
-
-
-const _QERArchiveTable* GetArchiveTable(ArchiveModules& archiveModules, const char* ext)
+static void vfsInitPakFile (const char *filename)
 {
-  StringOutputStream tmp(16);
-  tmp << LowerCase(ext);
-  return archiveModules.findModule(tmp.c_str());
-}
-static void InitPakFile (ArchiveModules& archiveModules, const char *filename)
-{
-  const _QERArchiveTable* table = GetArchiveTable(archiveModules, path_get_extension(filename));
+  unz_global_info gi;
+  unzFile uf;
+  guint32 i;
+  int err;
 
-  if(table != 0)
+  uf = unzOpen (filename);
+  if (uf == NULL)
   {
-    archive_entry_t entry;
-    entry.name = filename;
+    g_FuncTable.m_pfnSysFPrintf(SYS_WRN, "  failed to init pak file %s\n", filename);
+    return;
+  }
+  g_FuncTable.m_pfnSysPrintf("  pak file: %s\n", filename);
 
-    entry.archive = table->m_pfnOpenArchive(filename);
-    entry.is_pakfile = true;
-    g_archives.push_back(entry);
-    globalOutputStream() << "  pak file: " << filename << "\n";
+  g_unzFiles = g_slist_append (g_unzFiles, uf);
+
+  err = unzGetGlobalInfo (uf,&gi);
+  if (err != UNZ_OK)
+    return;
+  unzGoToFirstFile(uf);
+
+  for (i = 0; i < gi.number_entry; i++)
+  {
+    char filename_inzip[NAME_MAX];
+    unz_file_info file_info;
+    VFS_PAKFILE* file;
+
+    err = unzGetCurrentFileInfo (uf, &file_info, filename_inzip, sizeof(filename_inzip), NULL, 0, NULL, 0);
+    if (err != UNZ_OK)
+      break;
+
+    file = (VFS_PAKFILE*)g_malloc (sizeof (VFS_PAKFILE));
+    g_pakFiles = g_slist_append (g_pakFiles, file);
+
+    vfsFixDOSName (filename_inzip);
+    g_strdown (filename_inzip);
+
+    file->name = g_strdup (filename_inzip);
+    file->size = file_info.uncompressed_size;
+    file->zipfile = uf;
+    memcpy (&file->zipinfo, uf, sizeof (unz_s));
+
+    if ((i+1) < gi.number_entry)
+    {
+      err = unzGoToNextFile(uf);
+      if (err!=UNZ_OK)
+        break;
+    }
   }
 }
 
-inline void pathlist_prepend_unique(GSList*& pathlist, char* path)
+static GSList* vfsGetListInternal (const char *refdir, const char *ext, bool directories)
 {
-  if(g_slist_find_custom(pathlist, path, (GCompareFunc)path_compare) == 0)
+  GSList *lst, *lst_aux, *files = NULL;
+  char dirname[NAME_MAX], extension[NAME_MAX], filename[NAME_MAX];
+  char basedir[NAME_MAX];
+  int dirlen;
+  char *ptr;
+  char *dirlist;
+  struct stat st;
+  GDir *diskdir;
+  int i;
+
+  if (refdir != NULL)
   {
-    pathlist = g_slist_prepend(pathlist, path);
-  }
+    strcpy (dirname, refdir);
+    g_strdown (dirname);
+    vfsFixDOSName (dirname);
+    vfsAddSlash (dirname);
+  } else
+    dirname[0] = '\0';
+  dirlen = strlen (dirname);
+
+  if (ext != NULL)
+    strcpy (extension, ext);
   else
-  {
-    g_free(path);
-  }
-}
+    extension[0] = '\0';
+  g_strdown (extension);
 
-class DirectoryListVisitor : public Archive::Visitor
-{
-  GSList*& m_matches;
-  const char* m_directory;
-public:
-  DirectoryListVisitor(GSList*& matches, const char* directory)
-    : m_matches(matches), m_directory(directory)
-  {}
-  void visit(const char* name)
+  for (lst = g_pakFiles; lst != NULL; lst = g_slist_next (lst))
   {
-    const char* subname = path_make_relative(name, m_directory);
-    if(subname != name)
-    {
-      if(subname[0] == '/')
-        ++subname;
-      char* dir = g_strdup(subname);
-      char* last_char = dir + strlen(dir);
-      if(last_char != dir && *(--last_char) == '/')
-        *last_char = '\0';
-      pathlist_prepend_unique(m_matches, dir);
-    }
-  }
-};
+    VFS_PAKFILE* file = (VFS_PAKFILE*)lst->data;
+    gboolean found = FALSE;
+    ptr = file->name;
 
-class FileListVisitor : public Archive::Visitor
-{
-  GSList*& m_matches;
-  const char* m_directory;
-  const char* m_extension;
-public:
-  FileListVisitor(GSList*& matches, const char* directory, const char* extension)
-    : m_matches(matches), m_directory(directory), m_extension(extension)
-  {}
-  void visit(const char* name)
-  {
-    const char* subname = path_make_relative(name, m_directory);
-    if(subname != name)
-    {
-      if(subname[0] == '/')
-        ++subname;
-      if(m_extension[0] == '*' || extension_equal(path_get_extension(subname), m_extension))
-        pathlist_prepend_unique(m_matches, g_strdup (subname));
-    }
-  }
-};
-    
-static GSList* GetListInternal (const char *refdir, const char *ext, bool directories, std::size_t depth)
-{
-  GSList* files = 0;
+    // check that the file name begins with dirname
+    for (i = 0; (*ptr && i < dirlen); i++, ptr++)
+      if (*ptr != dirname[i])
+        break;
 
-  ASSERT_MESSAGE(refdir[strlen(refdir) - 1] == '/', "search path does not end in '/'");
+    if (i != dirlen)
+      continue;
 
-  if(directories)
-  {
-    for(archives_t::iterator i = g_archives.begin(); i != g_archives.end(); ++i)
+    if (directories)
     {
-      DirectoryListVisitor visitor(files, refdir);
-      (*i).archive->forEachFile(Archive::VisitorFunc(visitor, Archive::eDirectories, depth), refdir);
-    }
-  }
-  else
-  {
-    for(archives_t::iterator i = g_archives.begin(); i != g_archives.end(); ++i)
+      char *sep = strchr (ptr, '/');
+      if (sep == NULL)
+        continue;
+
+      i = sep-ptr;
+
+      // check for duplicates
+      for (lst_aux = files; lst_aux; lst_aux = g_slist_next (lst_aux))
+        if (strncmp ((char*)lst_aux->data, ptr, i) == 0)
+        {
+          found = TRUE;
+          break;
+        }
+
+      if (!found)
+      {
+        char *name = g_strndup (ptr, i+1);
+        name[i] = '\0';
+        files = g_slist_append (files, name);
+      }
+    } else
     {
-      FileListVisitor visitor(files, refdir, ext);
-      (*i).archive->forEachFile(Archive::VisitorFunc(visitor, Archive::eFiles, depth), refdir);
+      // check extension
+      char *ptr_ext = strrchr (ptr, '.');
+      if ((ext != NULL) && ((ptr_ext == NULL) || (strcmp (ptr_ext+1, extension) != 0)))
+        continue;
+
+      // check for duplicates
+      for (lst_aux = files; lst_aux; lst_aux = g_slist_next (lst_aux))
+        if (strcmp ((char*)lst_aux->data, ptr) == 0)
+        {
+          found = TRUE;
+          break;
+        }
+
+      if (!found)
+        files = g_slist_append (files, g_strdup (ptr));
     }
   }
 
-  files = g_slist_reverse(files);
+  for (i = 0; i < g_numDirs; i++)
+  {
+    strcpy (basedir, g_strDirs[i]);
+    strcat (basedir, dirname);
+
+    diskdir = g_dir_open (basedir, 0, NULL);
+
+    if (diskdir != NULL)
+    {
+      while (1)
+      {
+        const char* name = g_dir_read_name(diskdir);
+        if(name == NULL)
+          break;
+
+        if (directories && (name[0] == '.'))
+          continue;
+
+        sprintf (filename, "%s%s", basedir, name);
+        stat (filename, &st);
+
+        if ((S_ISDIR (st.st_mode) != 0) != directories)
+          continue;
+
+        gboolean found = FALSE;
+
+        dirlist = g_strdup(name);
+
+        g_strdown (dirlist);
+
+        char *ptr_ext = strrchr (dirlist, '.');
+        if(ext == NULL
+          || (ext != NULL && ptr_ext != NULL && ptr_ext[0] != '\0' && strcmp (ptr_ext+1, extension) == 0))
+        {
+
+          // check for duplicates
+          for (lst_aux = files; lst_aux; lst_aux = g_slist_next (lst_aux))
+            if (strcmp ((char*)lst_aux->data, dirlist) == 0)
+            {
+              found = TRUE;
+              break;
+            }
+
+          if (!found)
+            files = g_slist_append (files, g_strdup (dirlist));
+        }
+
+        g_free(dirlist);
+      }
+      g_dir_close (diskdir);
+    }
+  }
 
   return files;
 }
 
-inline int ascii_to_upper(int c)
-{
-  if (c >= 'a' && c <= 'z')
-	{
-		return c - ('a' - 'A');
-	}
-  return c;
-}
-
 /*!
-This behaves identically to stricmp(a,b), except that ASCII chars
+This behaves identically to -stricmp(a,b), except that ASCII chars
 [\]^`_ come AFTER alphabet chars instead of before. This is because
-it converts all alphabet chars to uppercase before comparison,
+it effectively converts all alphabet chars to uppercase before comparison,
 while stricmp converts them to lowercase.
 */
-static int string_compare_nocase_upper(const char* a, const char* b)
+//!\todo Analyse the code in rtcw/q3 to see how it behaves.
+static int vfsPakSort (const void *a, const void *b)
 {
-	for(;;)
-  {
-		int c1 = ascii_to_upper(*a++);
-		int c2 = ascii_to_upper(*b++);
+	char	*s1, *s2;
+	int		c1, c2;
 
+	s1 = (char*)a;
+	s2 = (char*)b;
+
+	do {
+		c1 = *s1++;
+		c2 = *s2++;
+
+		if (c1 >= 'a' && c1 <= 'z')
+		{
+			c1 -= ('a' - 'A');
+		}
+		if (c2 >= 'a' && c2 <= 'z')
+		{
+			c2 -= ('a' - 'A');
+		}
+
+		if ( c1 == '\\' || c1 == ':' )
+		{
+			c1 = '/';
+		}
+		if ( c2 == '\\' || c2 == ':' )
+		{
+			c2 = '/';
+		}
+		
+		// Arnout: note - sort pakfiles in reverse order. This ensures that
+		// later pakfiles override earlier ones. This because the vfs module
+		// returns a filehandle to the first file it can find (while it should
+		// return the filehandle to the file in the most overriding pakfile, the
+		// last one in the list that is).
 		if (c1 < c2)
 		{
-			return -1; // a < b
+			//return -1;		// strings not equal
+			return 1;		// strings not equal
 		}
 		if (c1 > c2)
 		{
-			return 1; // a > b
+			//return 1;
+			return -1;
 		}
-    if(c1 == 0)
-    {
-      return 0; // a == b
-    }
-	}	
+	} while (c1);
+	
+	return 0;		// strings are equal
 }
-
-// Arnout: note - sort pakfiles in reverse order. This ensures that
-// later pakfiles override earlier ones. This because the vfs module
-// returns a filehandle to the first file it can find (while it should
-// return the filehandle to the file in the most overriding pakfile, the
-// last one in the list that is).
-
-//!\todo Analyse the code in rtcw/q3 to see which order it sorts pak files.
-class PakLess
-{
-public:
-  bool operator()(const CopiedString& self, const CopiedString& other) const
-  {
-    return string_compare_nocase_upper(self.c_str(), other.c_str()) > 0;
-  }
-};
-
-typedef std::set<CopiedString, PakLess> Archives;
 
 // =============================================================================
 // Global functions
 
 // reads all pak files from a dir
-void InitDirectory(const char* directory, ArchiveModules& archiveModules)
+/*!
+The gamemode hacks in here will do undefined things with files called zz_*.
+This is simple to fix by cleaning up the hacks, but may be better left alone
+if the engine code does the same thing.
+*/
+void vfsInitDirectory (const char *path)
 {
+  char filename[PATH_MAX];
+  GDir *dir;
+	GSList *dirlistptr, *dirlist = NULL;
+	int iGameMode; // 0: no filtering 1: SP 2: MP
+
   if (g_numDirs == (VFS_MAXDIRS-1))
     return;
 
-  strncpy(g_strDirs[g_numDirs], directory, PATH_MAX);
-  g_strDirs[g_numDirs][PATH_MAX] = '\0';
-  FixDOSName (g_strDirs[g_numDirs]);
-  AddSlash (g_strDirs[g_numDirs]);
+  // See if we are in "sp" or "mp" mapping mode
+  const char* gamemode = g_FuncTable.m_pfnReadProjectKey("gamemode");
 
-  const char* path = g_strDirs[g_numDirs];
-  
+	if (gamemode)
+	{
+		if (strcmp (gamemode, "sp") == 0)
+			iGameMode = 1;
+		else if (strcmp (gamemode, "mp") == 0)
+			iGameMode = 2;
+		else
+			iGameMode = 0;			
+	} else
+		iGameMode = 0;
+
+  strcpy (g_strDirs[g_numDirs], path);
+  vfsFixDOSName (g_strDirs[g_numDirs]);
+  vfsAddSlash (g_strDirs[g_numDirs]);
   g_numDirs++;
-
-  {
-    archive_entry_t entry;
-    entry.name = path;
-    entry.archive = OpenArchive(path);
-    entry.is_pakfile = false;
-    g_archives.push_back(entry);
-  }
 
   if (g_bUsePak)
   {
-    GDir* dir = g_dir_open (path, 0, 0);
+    dir = g_dir_open (path, 0, NULL);
 
-    if (dir != 0)
+    if (dir != NULL)
     {
-			globalOutputStream() << "vfs directory: " << path << "\n";
+      g_FuncTable.m_pfnSysPrintf("vfs directory: %s\n", path);
 
-      const char* ignore_prefix = "";
-      const char* override_prefix = "";
-
-      {
-        // See if we are in "sp" or "mp" mapping mode
-        const char* gamemode = gamemode_get();
-
-		    if (strcmp (gamemode, "sp") == 0)
-        {
-				  ignore_prefix = "mp_";
-          override_prefix = "sp_";
-        }
-		    else if (strcmp (gamemode, "mp") == 0)
-        {
-				  ignore_prefix = "sp_";
-          override_prefix = "mp_";
-        }
-      }
-
-      Archives archives;
-      Archives archivesOverride;
       for(;;)
       {
         const char* name = g_dir_read_name(dir);
-        if(name == 0)
+        if(name == NULL)
           break;
 
-        const char *ext = strrchr (name, '.');
-        if ((ext == 0) || *(++ext) == '\0' || GetArchiveTable(archiveModules, ext) == 0)
+        char *ext = (char*)strrchr(name, '.');
+        if ((ext == NULL) || (strcasecmp (ext, ".pk3") != 0))
           continue;
 
-        // using the same kludge as in engine to ensure consistency
-				if(!string_empty(ignore_prefix) && strncmp(name, ignore_prefix, strlen(ignore_prefix)) == 0)
-				{
-					continue;
-				}
-				if(!string_empty(override_prefix) && strncmp(name, override_prefix, strlen(override_prefix)) == 0)
-        {
-          archivesOverride.insert(name);
-					continue;
-        }
+        char* direntry = g_strdup(name);
 
-        archives.insert(name);
+				// using the same kludge as in engine to ensure consistency
+				switch (iGameMode)
+				{
+				case 1:	// SP
+					if (strncmp(direntry,"sp_",3) == 0)
+						memcpy(direntry,"zz",2);
+					break;
+				case 2: // MP
+					if (strncmp(direntry,"mp_",3) == 0)
+						memcpy(direntry,"zz",2);
+					break;
+				}
+
+				dirlist = g_slist_append (dirlist, direntry);
       }
 
       g_dir_close (dir);
 
-			// add the entries to the vfs
-      for(Archives::iterator i = archivesOverride.begin(); i != archivesOverride.end(); ++i)
+			// sort them
+			dirlist = g_slist_sort (dirlist, vfsPakSort);
+
+			// add the entries to the vfs and free the list
+			while (dirlist)
 			{
-        char filename[PATH_MAX];
-        strcpy(filename, path);
-        strcat(filename, (*i).c_str());
-        InitPakFile(archiveModules, filename);
-			}
-      for(Archives::iterator i = archives.begin(); i != archives.end(); ++i)
-			{
-        char filename[PATH_MAX];
-        strcpy(filename, path);
-        strcat(filename, (*i).c_str());
-        InitPakFile(archiveModules, filename);
+				GSList *cur = dirlist;
+				char* name = (char*)cur->data;
+
+				switch (iGameMode)
+				{
+				case 1:	// SP
+					if (strncmp(name,"mp_",3) == 0)
+					{
+						g_free (name);
+						dirlist = g_slist_remove (cur, name);
+						continue;
+					} else if (strncmp(name,"zz_",3) == 0)
+						memcpy(name,"sp",2);
+					break;
+				case 2: // MP
+					if (strncmp(name,"sp_",3) == 0)
+					{
+						g_free (name);
+						dirlist = g_slist_remove (cur, name);
+						continue;
+					} else if (strncmp(name,"zz_",3) == 0)
+						memcpy(name,"mp",2);
+					break;
+				}
+
+				sprintf (filename, "%s/%s", path, name);
+        vfsInitPakFile (filename);
+
+				g_free (name);
+				dirlist = g_slist_remove (cur, name);
 			}
     }
     else
-    {
-      globalErrorStream() << "vfs directory not found: " << path << "\n";
-    }
+      g_FuncTable.m_pfnSysFPrintf(SYS_WRN, "vfs directory not found: %s\n", path);
   }
 }
 
 // frees all memory that we allocated
 // FIXME TTimo this should be improved so that we can shutdown and restart the VFS without exiting Radiant?
 //   (for instance when modifying the project settings)
-void Shutdown()
+void vfsShutdown ()
 {
-  for(archives_t::iterator i = g_archives.begin(); i != g_archives.end(); ++i)
+  while (g_unzFiles)
   {
-    (*i).archive->release();
-  }
-  g_archives.clear();
-
-  g_numDirs = 0;
-}
-
-#define VFS_SEARCH_PAK 0x1
-#define VFS_SEARCH_DIR 0x2
-
-int GetFileCount (const char *filename, int flag)
-{
-  int count = 0;
-  char fixed[PATH_MAX+1];
-
-  strncpy(fixed, filename, PATH_MAX);
-  fixed[PATH_MAX] = '\0';
-  FixDOSName (fixed);
-
-  if(!flag)
-    flag = VFS_SEARCH_PAK | VFS_SEARCH_DIR;
-
-  for(archives_t::iterator i = g_archives.begin(); i != g_archives.end(); ++i)
-  {
-    if((*i).is_pakfile && (flag & VFS_SEARCH_PAK) != 0
-      || !(*i).is_pakfile && (flag & VFS_SEARCH_DIR) != 0)
-    {
-      if((*i).archive->containsFile(fixed))
-        ++count;
-    }
+    unzClose ((unzFile)g_unzFiles->data);
+    g_unzFiles = g_slist_remove (g_unzFiles, g_unzFiles->data);
   }
 
-  return count;
-}
-
-ArchiveFile* OpenFile(const char* filename)
-{
-  ASSERT_MESSAGE(strchr(filename, '\\') == 0, "path contains invalid separator '\\': \"" << filename << "\""); 
-  for(archives_t::iterator i = g_archives.begin(); i != g_archives.end(); ++i)
+  // avoid dangling pointer operation (makes BC hangry)
+  GSList *cur = g_pakFiles;
+  GSList *next = cur;
+  while (next)
   {
-    ArchiveFile* file = (*i).archive->openFile(filename);
-    if(file != 0)
-    {
-      return file;
-    }
+    cur = next;
+    VFS_PAKFILE* file = (VFS_PAKFILE*)cur->data;
+    g_free (file->name);
+    g_free (file);
+    next = g_slist_remove (cur, file);
   }
-
-  return 0;
+  g_pakFiles = NULL;
 }
 
-ArchiveTextFile* OpenTextFile(const char* filename)
+void vfsFreeFile (void *p)
 {
-  ASSERT_MESSAGE(strchr(filename, '\\') == 0, "path contains invalid separator '\\': \"" << filename << "\""); 
-  for(archives_t::iterator i = g_archives.begin(); i != g_archives.end(); ++i)
-  {
-    ArchiveTextFile* file = (*i).archive->openTextFile(filename);
-    if(file != 0)
-    {
-      return file;
-    }
-  }
-
-  return 0;
+  g_free(p);
 }
 
-// NOTE: when loading a file, you have to allocate one extra byte and set it to \0
-std::size_t LoadFile (const char *filename, void **bufferptr, int index)
+GSList* vfsGetFileList (const char *dir, const char *ext)
 {
-  char fixed[PATH_MAX+1];
-
-  strncpy (fixed, filename, PATH_MAX);
-  fixed[PATH_MAX] = '\0';
-  FixDOSName (fixed);
-
-  ArchiveFile* file = OpenFile(fixed);
-  
-  if(file != 0)
-  {
-    *bufferptr = malloc (file->size()+1);
-    // we need to end the buffer with a 0
-    ((char*) (*bufferptr))[file->size()] = 0;
-
-    std::size_t length = file->getInputStream().read((InputStream::byte_type*)*bufferptr, file->size());
-    file->release();
-    return length;
-  }
-
-  *bufferptr = 0;
-  return 0;
+  return vfsGetListInternal (dir, ext, false);
 }
 
-void FreeFile (void *p)
+GSList* vfsGetDirList (const char *dir)
 {
-  free(p);
+  return vfsGetListInternal (dir, NULL, true);
 }
 
-GSList* GetFileList (const char *dir, const char *ext, std::size_t depth)
-{
-  return GetListInternal (dir, ext, false, depth);
-}
-
-GSList* GetDirList (const char *dir, std::size_t depth)
-{
-  return GetListInternal (dir, 0, true, depth);
-}
-
-void ClearFileDirList (GSList **lst)
+void vfsClearFileDirList (GSList **lst)
 {
   while (*lst)
   {
@@ -516,168 +524,331 @@ void ClearFileDirList (GSList **lst)
     *lst = g_slist_remove (*lst, (*lst)->data);
   }
 }
-    
-const char* FindFile(const char* relative)
+
+int vfsGetFileCount (const char *filename, int flag)
 {
-  for(archives_t::iterator i = g_archives.begin(); i != g_archives.end(); ++i)
+  int i, count = 0;
+  char fixed[NAME_MAX], tmp[NAME_MAX];
+  GSList *lst;
+
+  strcpy (fixed, filename);
+  vfsFixDOSName (fixed);
+  g_strdown (fixed);
+
+  if (!flag || (flag & VFS_SEARCH_PAK))
   {
-    if((*i).archive->containsFile(relative))
+    for (lst = g_pakFiles; lst != NULL; lst = g_slist_next (lst))
     {
-      return (*i).name.c_str();
+      VFS_PAKFILE* file = (VFS_PAKFILE*)lst->data;
+      
+      if (strcmp (file->name, fixed) == 0)
+        count++;
     }
   }
 
-  return "";
+  if (!flag || (flag & VFS_SEARCH_DIR))
+  {
+    for (i = 0; i < g_numDirs; i++)
+    {
+      strcpy (tmp, g_strDirs[i]);
+      strcat (tmp, fixed);
+      if (access (tmp, R_OK) == 0)
+        count++;
+    }
+  }
+
+  return count;
 }
 
-const char* FindPath(const char* absolute)
+// open a full path file
+int vfsLoadFullPathFile (const char *filename, void **bufferptr)
 {
-  for(archives_t::iterator i = g_archives.begin(); i != g_archives.end(); ++i)
-  {
-    if(path_equal_n(absolute, (*i).name.c_str(), string_length((*i).name.c_str())))
-    {
-      return (*i).name.c_str();
-    }
-  }
+  FILE *f;
+  long len;
 
-  return "";
+  f = fopen (filename, "rb");
+  if (f == NULL)
+    return -1;
+
+  fseek (f, 0, SEEK_END);
+  len = ftell (f);
+  rewind (f);
+
+  *bufferptr = g_malloc (len+1);
+  if (*bufferptr == NULL)
+    return -1;
+
+  fread (*bufferptr, 1, len, f);
+  fclose (f);
+
+  // we need to end the buffer with a 0
+  ((char*) (*bufferptr))[len] = 0;
+
+  return len;
 }
 
-
-class Quake3FileSystem : public VirtualFileSystem
+// NOTE: when loading a file, you have to allocate one extra byte and set it to \0
+int vfsLoadFile (const char *filename, void **bufferptr, int index)
 {
-public:
-  void initDirectory(const char *path)
-  {
-    InitDirectory(path, FileSystemQ3API_getArchiveModules());
-  }
-  void initialise()
-  {
-    globalOutputStream() << "filesystem initialised\n";
-    g_observers.realise();
-  }
-  void shutdown()
-  {
-    g_observers.unrealise();
-    globalOutputStream() << "filesystem shutdown\n";
-    Shutdown();
-  }
+  int i, count = 0;
+  char tmp[NAME_MAX], fixed[NAME_MAX];
+  GSList *lst;
 
-  int getFileCount(const char *filename, int flags)
-  {
-    return GetFileCount(filename, flags);
-  }
-  ArchiveFile* openFile(const char* filename)
-  {
-    return OpenFile(filename);
-  }
-  ArchiveTextFile* openTextFile(const char* filename)
-  {
-    return OpenTextFile(filename);
-  }
-  std::size_t loadFile(const char *filename, void **buffer)
-  {
-    return LoadFile(filename, buffer, 0);
-  }
-  void freeFile(void *p)
-  {
-    FreeFile(p);
-  }
+  *bufferptr = NULL;
+  strcpy (fixed, filename);
+  vfsFixDOSName (fixed);
+  g_strdown (fixed);
 
-  void forEachDirectory(const char* basedir, const FileNameCallback& callback, std::size_t depth)
+  for (i = 0; i < g_numDirs; i++)
   {
-    GSList* list = GetDirList(basedir, depth);
-
-    for(GSList* i = list; i != 0; i = g_slist_next(i))
+    strcpy (tmp, g_strDirs[i]);
+    strcat (tmp, filename);
+    if (access (tmp, R_OK) == 0)
     {
-      callback(reinterpret_cast<const char*>((*i).data));
-    }
-
-    ClearFileDirList(&list);
-  }
-  void forEachFile(const char* basedir, const char* extension, const FileNameCallback& callback, std::size_t depth)
-  {
-    GSList* list = GetFileList(basedir, extension, depth);
-
-    for(GSList* i = list; i != 0; i = g_slist_next(i))
-    {
-      const char* name = reinterpret_cast<const char*>((*i).data);
-      if(extension_equal(path_get_extension(name), extension))
+      if (count == index)
       {
-        callback(name);
+        return vfsLoadFullPathFile(tmp,bufferptr);
+      }
+
+      count++;
+    }
+  }
+
+  for (lst = g_pakFiles; lst != NULL; lst = g_slist_next (lst))
+  {
+    VFS_PAKFILE* file = (VFS_PAKFILE*)lst->data;
+
+    if (strcmp (file->name, fixed) != 0)
+      continue;
+
+    if (count == index)
+    {
+      memcpy (file->zipfile, &file->zipinfo, sizeof (unz_s));
+
+      if (unzOpenCurrentFile (file->zipfile) != UNZ_OK)
+        return -1;
+
+      *bufferptr = g_malloc (file->size+1);
+      // we need to end the buffer with a 0
+      ((char*) (*bufferptr))[file->size] = 0;
+
+      i = unzReadCurrentFile (file->zipfile , *bufferptr, file->size);
+      unzCloseCurrentFile (file->zipfile); 
+      if (i > 0)
+        return file->size;
+      else
+        return -1;
+    }
+
+    count++;
+  }
+
+  return -1;
+}
+
+//#ifdef _DEBUG
+#if 1
+  #define DBG_RLTPATH
+#endif
+
+/*!
+\param shorten will try to match against the short version
+http://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=144
+recent switch back to short path names in project settings has broken some stuff
+with shorten == true, we will convert in to short version before looking for root
+FIXME WAAA .. the stuff below is much more simple on linux .. add appropriate #ifdef
+*/
+char* vfsExtractRelativePath_short(const char *in, bool shorten)
+{
+  int i;
+  char l_in[PATH_MAX];
+  char check[PATH_MAX];
+  static char out[PATH_MAX];
+  out[0] = 0;
+
+#ifdef DBG_RLTPATH
+  Sys_Printf("vfsExtractRelativePath: %s\n", in);
+#endif
+
+#ifdef _WIN32  
+  if (shorten)
+  {
+    // make it short
+    if (GetShortPathName(in, l_in, PATH_MAX) == 0)
+    {
+#ifdef DBG_RLTPATH
+      Sys_Printf("GetShortPathName failed\n");
+#endif
+      return NULL;
+    }
+  }
+  else
+  {
+    strcpy(l_in,in);
+  }
+  vfsCleanFileName(l_in);
+#else
+  strcpy(l_in, in);
+  vfsCleanFileName(l_in);
+#endif // ifdef WIN32  
+
+
+#ifdef DBG_RLTPATH
+  Sys_Printf("cleaned path: %s\n", l_in);
+#endif
+
+  for (i = 0; i < g_numDirs; i++)
+  {
+    strcpy(check,g_strDirs[i]);
+    vfsCleanFileName(check);
+#ifdef DBG_RLTPATH
+    Sys_Printf("Matching against %s\n", check);
+#endif
+
+    // try to find a match
+    if (strstr(l_in, check))
+    {
+      strcpy(out,l_in+strlen(check)+1);
+      break;
+    }
+
+  }
+  if (out[0]!=0)
+  {
+#ifdef DBG_RLTPATH
+    Sys_Printf("vfsExtractRelativePath: success\n");
+#endif
+    return out;
+  }
+#ifdef DBG_RLTPATH
+  Sys_Printf("vfsExtractRelativePath: failed\n");
+#endif
+  return NULL;
+}
+
+
+// FIXME TTimo: this and the above should be merged at some point
+char* vfsExtractRelativePath(const char *in)
+{
+  static char out[PATH_MAX];
+  unsigned int i, count;
+  char *chunk, *backup = NULL; // those point to out stuff
+  char *ret = vfsExtractRelativePath_short(in, false);
+  if (!ret)
+  {
+#ifdef DBG_RLTPATH
+    Sys_Printf("trying with a short version\n");
+#endif
+    ret = vfsExtractRelativePath_short(in, true);
+    if (ret)
+    {
+      // ok, but we have a relative short version now
+      // hack the long relative version out of here
+      count = 0;
+      for(i=0;i<strlen(ret);i++)
+      {
+        if (ret[i]=='/')
+          count++;
+      }
+      // this is the clean, not short version
+      strcpy(out, in);
+      vfsCleanFileName(out);
+      for(i=0;i<=count;i++)
+      {
+        chunk = strrchr(out, '/');
+        if (backup)
+          backup[0] = '/';
+        chunk[0] = '\0';
+        backup = chunk;
+      }
+      return chunk+1;
+    }
+  }
+  return ret;
+}
+
+void vfsCleanFileName(char *in)
+{
+  strlwr(in);
+  vfsFixDOSName(in);
+  int n = strlen(in);
+  if (in[n-1] == '/')
+    in[n-1] = '\0';
+}
+
+// HYDRA: this now searches VFS/PAK files in addition to the filesystem
+// if FLAG is unspecified then ONLY dirs are searched.
+// PAK's are searched before DIRs to mimic engine behaviour
+// index is ignored when searching PAK files.
+// see ifilesystem.h
+char* vfsGetFullPath(const char *in, int index, int flag)
+{
+  int count = 0;
+  static char out[PATH_MAX];
+  char tmp[NAME_MAX];
+  int i;
+
+  if (flag & VFS_SEARCH_PAK)
+  {
+    char fixed[NAME_MAX];
+    GSList *lst;
+
+    strcpy (fixed, in);
+    vfsFixDOSName (fixed);
+    g_strdown (fixed);
+
+    for (lst = g_pakFiles; lst != NULL; lst = g_slist_next (lst))
+    {
+      VFS_PAKFILE* file = (VFS_PAKFILE*)lst->data;
+
+      char *ptr,*lastptr;
+      lastptr = file->name;
+
+      while (ptr = strchr(lastptr,'/'))
+        lastptr = ptr+1;
+
+      if (strcmp (lastptr, fixed) == 0)
+      {
+        strncpy(out,file->name,PATH_MAX);
+        return out;
       }
     }
 
-    ClearFileDirList(&list);
-  }
-  GSList* getDirList(const char *basedir)
-  {
-    return GetDirList(basedir, 1);
-  }
-  GSList* getFileList(const char *basedir, const char *extension)
-  {
-    return GetFileList(basedir, extension, 1);
-  }
-  void clearFileDirList(GSList **lst)
-  {
-    ClearFileDirList(lst);
   }
 
-  const char* findFile(const char *name)
+  if (!flag || (flag & VFS_SEARCH_DIR))
   {
-    return FindFile(name);
-  }
-  const char* findRoot(const char *name)
+  for (i = 0; i < g_numDirs; i++)
   {
-    return FindPath(name);
-  }
-
-  void attach(ModuleObserver& observer)
-  {
-    g_observers.attach(observer);
-  }
-  void detach(ModuleObserver& observer)
-  {
-    g_observers.detach(observer);
-  }
-
-  Archive* getArchive(const char* archiveName)
-  {
-    for(archives_t::iterator i = g_archives.begin(); i != g_archives.end(); ++i)
+    strcpy (tmp, g_strDirs[i]);
+    strcat (tmp, in);
+    if (access (tmp, R_OK) == 0)
     {
-      if((*i).is_pakfile)
+      if (count == index)
       {
-        if(path_equal((*i).name.c_str(), archiveName))
-        {
-          return (*i).archive;
-        }
+        strcpy (out, tmp);
+        return out;
       }
-    }
-    return 0;
-  }
-  void forEachArchive(const ArchiveNameCallback& callback)
-  {
-    for(archives_t::iterator i = g_archives.begin(); i != g_archives.end(); ++i)
-    {
-      if((*i).is_pakfile)
-      {
-        callback((*i).name.c_str());
-      }
+      count++;
     }
   }
-};
-
-Quake3FileSystem g_Quake3FileSystem;
-
-void FileSystem_Init()
-{
+  }
+  return NULL;
 }
 
-void FileSystem_Shutdown()
+
+// TODO TTimo on linux the base prompt is ~/.q3a/<fs_game>
+// given the file dialog, we could push the strFSBasePath and ~/.q3a into the directory shortcuts
+// FIXME TTimo is this really a VFS functionality?
+//   actually .. this should be the decision of the core isn't it?
+//   or .. add an API so that the base prompt can be set during VFS init
+const char* vfsBasePromptPath()
 {
+#ifdef _WIN32  
+  static char* path = "C:";
+#else
+  static char* path = "/";
+#endif
+  return path;
 }
 
-VirtualFileSystem& GetFileSystem()
-{
-  return g_Quake3FileSystem;
-}

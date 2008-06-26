@@ -1,5 +1,5 @@
 /*
-Copyright (C) 1999-2006 Id Software, Inc. and contributors.
+Copyright (C) 1999-2007 id Software, Inc. and contributors.
 For a list of contributors, see the accompanying CONTRIBUTORS file.
 
 This file is part of GtkRadiant.
@@ -19,16 +19,31 @@ along with GtkRadiant; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#if !defined(INCLUDED_FINDTEXTUREDIALOG_H)
-#define INCLUDED_FINDTEXTUREDIALOG_H
+#ifndef _FINDTEXTUREDIALOG_H_
+#define _FINDTEXTUREDIALOG_H_
 
-void FindTextureDialog_Construct();
-void FindTextureDialog_Destroy();
+#include "dialog.h"
 
-typedef struct _GtkWindow GtkWindow;
-void FindTextureDialog_constructWindow(GtkWindow* main_window);
-void FindTextureDialog_destroyWindow();
-bool FindTextureDialog_isOpen();
-void FindTextureDialog_selectTexture(const char* name);
+class FindTextureDialog : public Dialog
+{
+ public:
+  static void setReplaceStr(const char* p);
+  static void setFindStr(const char* p);
+  static bool isOpen();
+  static void show();
+  static void updateTextures(const char* p);
 
-#endif
+  FindTextureDialog ();
+  virtual ~FindTextureDialog ();
+  void BuildDialog ();
+
+  bool	m_bSelectedOnly;
+  Str	m_strFind;
+  Str	m_strReplace;
+  bool	m_bForce;
+  bool	m_bLive;
+
+};
+
+
+#endif //_FINDTEXTUREDIALOG_H_

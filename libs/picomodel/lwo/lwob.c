@@ -12,7 +12,7 @@ Ernie Wright  17 Sep 00
 #include "lwo2.h"
 
 /* disable warnings */
-#ifdef WIN32
+#ifdef _WIN32
 #pragma warning( disable:4018 )		/* signed/unsigned mismatch */
 #endif
 
@@ -84,7 +84,7 @@ static int add_clip( char *s, lwClip **clist, int *nclips )
    *nclips++;
    clip->index = *nclips;
 
-   lwListAdd( (void *) clist, clip );
+   lwListAdd( clist, clip );
 
    return clip->index;
 }
@@ -130,7 +130,7 @@ static int add_tvel( float pos[], float vel[], lwEnvelope **elist, int *nenvs )
       env->behavior[ 0 ] = BEH_LINEAR;
       env->behavior[ 1 ] = BEH_LINEAR;
 
-      lwListAdd( (void *) elist, env );
+      lwListAdd( elist, env );
    }
 
    *nenvs += 3;
@@ -312,43 +312,43 @@ lwSurface *lwGetSurface5( picoMemStream_t *fp, int cksize, lwObject *obj )
          case ID_BTEX:
             s = getbytes( fp, sz );
             tex = get_texture( s );
-            lwListAdd( (void *) &surf->bump.tex, tex );
+            lwListAdd( &surf->bump.tex, tex );
             break;
 
          case ID_CTEX:
             s = getbytes( fp, sz );
             tex = get_texture( s );
-            lwListAdd( (void *) &surf->color.tex, tex );
+            lwListAdd( &surf->color.tex, tex );
             break;
 
          case ID_DTEX:
             s = getbytes( fp, sz );
             tex = get_texture( s );
-            lwListAdd( (void *) &surf->diffuse.tex, tex );
+            lwListAdd( &surf->diffuse.tex, tex );
             break;
 
          case ID_LTEX:
             s = getbytes( fp, sz );
             tex = get_texture( s );
-            lwListAdd( (void *) &surf->luminosity.tex, tex );
+            lwListAdd( &surf->luminosity.tex, tex );
             break;
 
          case ID_RTEX:
             s = getbytes( fp, sz );
             tex = get_texture( s );
-            lwListAdd( (void *) &surf->reflection.val.tex, tex );
+            lwListAdd( &surf->reflection.val.tex, tex );
             break;
 
          case ID_STEX:
             s = getbytes( fp, sz );
             tex = get_texture( s );
-            lwListAdd( (void *) &surf->specularity.tex, tex );
+            lwListAdd( &surf->specularity.tex, tex );
             break;
 
          case ID_TTEX:
             s = getbytes( fp, sz );
             tex = get_texture( s );
-            lwListAdd( (void *) &surf->transparency.val.tex, tex );
+            lwListAdd( &surf->transparency.val.tex, tex );
             break;
 
          case ID_TFLG:
@@ -441,7 +441,7 @@ lwSurface *lwGetSurface5( picoMemStream_t *fp, int cksize, lwObject *obj )
             shdr = _pico_calloc( 1, sizeof( lwPlugin ));
             if ( !shdr ) goto Fail;
             shdr->name = getbytes( fp, sz );
-            lwListAdd( (void *) &surf->shader, shdr );
+            lwListAdd( &surf->shader, shdr );
             surf->nshaders++;
             break;
 
@@ -654,7 +654,7 @@ lwObject *lwGetObject5( char *filename, picoMemStream_t *fp, unsigned int *failI
          case ID_SURF:
             node = ( lwNode * ) lwGetSurface5( fp, cksize, object );
             if ( !node ) goto Fail;
-            lwListAdd( (void *) &object->surf, node );
+            lwListAdd( &object->surf, node );
             object->nsurfs++;
             break;
 

@@ -21,14 +21,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //
 //////////////////////////////////////////////////////////////////////
 
+#include "StdAfx.h"
 #include "DPatch.h"
-
-#include <list>
-#include "str.h"
-#include "scenelib.h"
-
-#include "ipatch.h"
-
 #include "misc.h"
 #include "./dialogs/dialogs-gtk.h"
 
@@ -46,7 +40,7 @@ DPatch::DPatch()
 {
 	width = MIN_PATCH_WIDTH;
 	height = MIN_PATCH_HEIGHT;
-	QER_entity = NULL;
+	QER_patch = NULL;
 	QER_brush = NULL;
 }
 
@@ -70,53 +64,27 @@ void CopyDrawVert(const drawVert_t* in, drawVert_t* out)
 	VectorCopy(in->xyz, out->xyz);
 }
 
-void DPatch::BuildInRadiant(scene::Node* entity)
+void DPatch::BuildInRadiant(void* entity)
 {
-	NodeSmartReference patch(GlobalPatchCreator().createPatch());
-
-  scene::Node& parent = entity != 0 ? *entity : GlobalRadiant().getMapWorldEntity();
-  Node_getTraversable(parent)->insert(patch);
-
-  GlobalPatchCreator().Patch_setShader(patch, texture);
-  GlobalPatchCreator().Patch_resize(patch, height, width);
-  PatchControlMatrix matrix = GlobalPatchCreator().Patch_getControlPoints(patch);
-	for(int x = 0; x < height; x++)
-  {
-		for(int y = 0; y < width; y++)
-    {
-      PatchControl& p = matrix(y, x);
-      p.m_vertex[0] = points[x][y].xyz[0];
-      p.m_vertex[1] = points[x][y].xyz[1];
-      p.m_vertex[2] = points[x][y].xyz[2];
-      p.m_texcoord[0] = points[x][y].st[0];
-      p.m_texcoord[1] = points[x][y].st[1];
-    }
-  }
-  GlobalPatchCreator().Patch_controlPointsChanged(patch);
-  
-  QER_entity = entity;
-	QER_brush = patch.get_pointer();
-
-
-#if 0
 	int nIndex = g_FuncTable.m_pfnCreatePatchHandle();
     //$ FIXME: m_pfnGetPatchHandle
 	patchMesh_t* pm = g_FuncTable.m_pfnGetPatchData(nIndex);
 
-  b->patchBrush = true;
-  b->pPatch = Patch_Alloc();
-	b->pPatch->setDims(width,height);
+	pm->height = height;
+	pm->width = width;
 
 	for(int x = 0; x < width; x++)
 		for(int y = 0; y < height; y++)
 			CopyDrawVert(&points[x][y], &pm->ctrl[x][y]);
+
+	QER_patch = pm;
 
 /*	if(entity)
 	{
 //		strcpy(pm->d_texture->name, texture);
 
 		brush_t* brush = (brush_t*)g_FuncTable.m_pfnCreateBrushHandle();
-		brush->patchBrush = true;
+		brush->patchBrush = TRUE;
 		brush->pPatch = pm;		
 
 		pm->pSymbiot = brush;
@@ -135,52 +103,27 @@ void DPatch::BuildInRadiant(scene::Node* entity)
 		g_FuncTable.m_pfnCommitPatchHandleToMap(nIndex, pm, texture);
 
 	QER_brush = pm->pSymbiot;
-#endif
 }
 
-void DPatch::LoadFromPatch(scene::Instance& patch)
+void DPatch::LoadFromBrush_t(brush_t* brush)
 {
-  QER_entity = patch.path().parent().get_pointer();
-	QER_brush = patch.path().top().get_pointer();
+	QER_brush = brush;
+	QER_patch = brush->pPatch;
 
-  PatchControlMatrix matrix = GlobalPatchCreator().Patch_getControlPoints(patch.path().top());
+	SetTexture(QER_patch->pShader->getName());
 
-  width = static_cast<int>(matrix.x());
-	height = static_cast<int>(matrix.y());
+	for(int x = 0; x < QER_patch->width; x++)
+		for(int y = 0; y < QER_patch->height; y++)
+			CopyDrawVert(&QER_patch->ctrl[x][y], &points[x][y]);
 
-  for(int x = 0; x < height; x++)
-  {
-		for(int y = 0; y < width; y++)
-    {
-      PatchControl& p = matrix(y, x);
-      points[x][y].xyz[0] = p.m_vertex[0];
-      points[x][y].xyz[1] = p.m_vertex[1];
-      points[x][y].xyz[2] = p.m_vertex[2];
-      points[x][y].st[0] = p.m_texcoord[0];
-      points[x][y].st[1] = p.m_texcoord[1];
-    }
-  }
-	SetTexture(GlobalPatchCreator().Patch_getShader(patch.path().top()));
+	width = QER_patch->width;
+	height = QER_patch->height;
+}
 
-#if 0
-	SetTexture(brush->pPatch->GetShader());
-
-	width = brush->pPatch->getWidth();
-	height = brush->pPatch->getHeight();
-
-  for(int x = 0; x < height; x++)
-  {
-		for(int y = 0; y < width; y++)
-    {
-      float *p = brush->pPatch->ctrlAt(ROW,x,y);
-      p[0] = points[x][y].xyz[0];
-      p[1] = points[x][y].xyz[1];
-      p[2] = points[x][y].xyz[2];
-      p[3] = points[x][y].st[0];
-      p[4] = points[x][y].st[1];
-    }
-  }
-#endif
+void DPatch::RemoveFromRadiant()
+{
+	if(QER_brush)
+		g_FuncTable.m_pfnDeleteBrushHandle(QER_brush);
 }
 
 bool DPatch::ResetTextures(const char *oldTextureName, const char *newTextureName)
@@ -188,10 +131,10 @@ bool DPatch::ResetTextures(const char *oldTextureName, const char *newTextureNam
 	if( !oldTextureName || !strcmp(texture, oldTextureName))
 	{
 		strcpy(texture, newTextureName);
-		return true;
+		return TRUE;
 	}
 
-	return false;
+	return FALSE;
 }
 
 void Build1dArray(vec3_t* array, drawVert_t points[MAX_PATCH_WIDTH][MAX_PATCH_HEIGHT], 
@@ -218,8 +161,8 @@ void Build1dArray(vec3_t* array, drawVert_t points[MAX_PATCH_WIDTH][MAX_PATCH_HE
 void Print1dArray(vec3_t* array, int size)
 {
 	for(int i = 0; i < size; i++)
-		globalOutputStream() << "(" << array[i][0] << " " << array[i][1] << " " << array[i][2] << ")\t";
-	globalOutputStream() << "\n";
+		Sys_Printf("(%.0f %.0f %.0f)\t", array[i][0], array[i][1], array[i][2]);
+	Sys_Printf("\n");
 }
 
 bool Compare1dArrays(vec3_t* a1, vec3_t* a2, int size)
@@ -322,11 +265,11 @@ DPatch* DPatch::MergePatches(patch_merge_t merge_info, DPatch *p1, DPatch *p2)
 	int i;
 	for(i = 0; i < p1->height; i++, y++)
 		for(int x = 0; x < p1->width; x++)
-			newPatch->points[x][y] = p1->points[x][i];
+			memcpy(&newPatch->points[x][y],	&p1->points[x][i],	sizeof(drawVert_t));
 
 	for(i = 1; i < p2->height; i++, y++)
 		for(int x = 0; x < p2->width; x++)
-			newPatch->points[x][y] = p2->points[x][i];
+			memcpy(&newPatch->points[x][y],	&p2->points[x][i],	sizeof(drawVert_t));
 
 //	newPatch->Invert();
 
@@ -335,13 +278,16 @@ DPatch* DPatch::MergePatches(patch_merge_t merge_info, DPatch *p1, DPatch *p2)
 
 void DPatch::Invert()
 {
+	drawVert_t vertTemp;
 	int i, j;
 
 	for(i = 0 ; i < width ; i++ ) 
 	{
 		for(j = 0; j < height / 2; j++)
 		{
-      std::swap(points[i][height - 1- j], points[i][j]);
+			memcpy(&vertTemp, &points[i][height - 1- j], sizeof (drawVert_t));
+			memcpy(&points[i][height - 1 - j], &points[i][j], sizeof(drawVert_t));
+			memcpy(&points[i][j], &vertTemp, sizeof(drawVert_t));
 		}
 	}
 }
@@ -349,6 +295,7 @@ void DPatch::Invert()
 void DPatch::Transpose()
 {
 	int		i, j, w;
+	drawVert_t dv;
 
 	if ( width > height ) 
 	{
@@ -359,12 +306,14 @@ void DPatch::Transpose()
 				if ( j < height ) 
 				{
 					// swap the value
-          std::swap(points[j][i], points[i][j]);
+					memcpy(&dv,				&points[j][i],	sizeof(drawVert_t));
+					memcpy(&points[j][i],	&points[i][j],	sizeof(drawVert_t));
+					memcpy(&points[i][j],	&dv,			sizeof(drawVert_t));
 				} 
 				else 
 				{
     				// just copy
-					points[i][j] = points[j][i];
+					memcpy(&points[i][j],	&points[j][i],	sizeof(drawVert_t));
 		    	}
     		}
   		 }
@@ -378,12 +327,14 @@ void DPatch::Transpose()
     			if ( j < width ) 
 				{
 					// swap the value
-          std::swap(points[i][j], points[j][i]);
+					memcpy(&dv,				&points[i][j],	sizeof(drawVert_t));
+					memcpy(&points[i][j],	&points[j][i],	sizeof(drawVert_t));
+    				memcpy(&points[j][i],	&dv,			sizeof(drawVert_t));
 		    	} 
 				else 
 				{
     				// just copy
-					points[j][i] = points[i][j];
+					memcpy(&points[j][i],	&points[i][j],	sizeof(drawVert_t));
 		    	}
     		}
     	}
@@ -396,9 +347,9 @@ void DPatch::Transpose()
 	Invert();
 }
 
-std::list<DPatch> DPatch::Split(bool rows, bool cols)
+list<DPatch> DPatch::Split(bool rows, bool cols)
 {
-	std::list<DPatch> patchList;
+	list<DPatch> patchList;
 	int i;
 	int x, y;
 
@@ -416,7 +367,7 @@ std::list<DPatch> DPatch::Split(bool rows, bool cols)
 			{
 				for(x = 0; x < p.width; x++)
 				{
-					p.points[x][y] = points[x][(i*2)+y];
+					memcpy(&p.points[x][y],	&points[x][(i*2)+y],	sizeof(drawVert_t));
 				}
 			}
 			patchList.push_back(p);
@@ -424,13 +375,13 @@ std::list<DPatch> DPatch::Split(bool rows, bool cols)
 
 		if(cols && width >= 5)
 		{
-			std::list<DPatch> patchList2;
+			list<DPatch> patchList2;
 
-			for(std::list<DPatch>::iterator patches = patchList.begin(); patches != patchList.end(); patches++)
+			for(list<DPatch>::iterator patches = patchList.begin(); patches != patchList.end(); patches++)
 			{
-				std::list<DPatch> patchList3 = (*patches).Split(false, true);
+				list<DPatch> patchList3 = (*patches).Split(false, true);
 				
-				for(std::list<DPatch>::iterator patches2 = patchList3.begin(); patches2 != patchList3.end(); patches2++)
+				for(list<DPatch>::iterator patches2 = patchList3.begin(); patches2 != patchList3.end(); patches2++)
 					patchList2.push_front(*patches2);
 			}
 
@@ -451,7 +402,7 @@ std::list<DPatch> DPatch::Split(bool rows, bool cols)
 			{
 				for(y = 0; y < p.height; y++)
 				{
-					p.points[x][y] = points[(i*2)+x][y];
+					memcpy(&p.points[x][y],	&points[(i*2)+x][y],	sizeof(drawVert_t));
 				}
 			}
 

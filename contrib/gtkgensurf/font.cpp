@@ -232,7 +232,7 @@ void texfont_init ()
   free (buf);
 }
 
-void texfont_write (const char *text, int l, int t)
+void texfont_write (const char *text, float l, float t)
 {
   if (texture == 0)
     return;
@@ -253,13 +253,13 @@ void texfont_write (const char *text, int l, int t)
       continue;
 
     g_GLTable.m_pfn_qglTexCoord2f (glyphs[*p-32].left, glyphs[*p-32].top);
-    g_GLTable.m_pfn_qglVertex2i (l, t);
+    g_GLTable.m_pfn_qglVertex2f (l, t);
     g_GLTable.m_pfn_qglTexCoord2f (glyphs[*p-32].left, glyphs[*p-32].bottom);
-    g_GLTable.m_pfn_qglVertex2i (l, t-16);
+    g_GLTable.m_pfn_qglVertex2f (l, t-16);
     g_GLTable.m_pfn_qglTexCoord2f (glyphs[*p-32].right, glyphs[*p-32].bottom);
-    g_GLTable.m_pfn_qglVertex2i (l + glyphs[*p-32].width, t-16);
+    g_GLTable.m_pfn_qglVertex2f (l + glyphs[*p-32].width, t-16);
     g_GLTable.m_pfn_qglTexCoord2f (glyphs[*p-32].right, glyphs[*p-32].top);
-    g_GLTable.m_pfn_qglVertex2i (l + glyphs[*p-32].width, t);
+    g_GLTable.m_pfn_qglVertex2f (l + glyphs[*p-32].width, t);
     l += glyphs[*p-32].width;
   }
   g_GLTable.m_pfn_qglEnd ();

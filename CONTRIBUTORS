@@ -1,18 +1,6 @@
 GtkRadiant CONTRIBUTORS and CREDITS
-last update: 28/02/2007
+last update: 01/15/2001
 =======================
-
-GtkRadiant 1.5 development:
--------
-Thomas "namespace" Nitschke spam@codecreator.net
-Stefan "Shaderman" Greven
-"Topsun"
-SmallPileofGibs spog@planetquake.com
-"Tr3b"
-
-Small contributions and improvements for 1.5
---------
-Eric "eb" Barth
 
 Loki
 ----
@@ -22,15 +10,15 @@ Bernd Kreimeier (overall coordination)
 
 QER.com
 -------
-TTimo timo@idsoftware.com
+TTimo timo@qeradiant.com
 ^Fishman (Pablo Zurita) fish@gamedesign.net
 RR2DO2 rr2do2@q3f.com
-SmallPileofGibs spog@planetquake.com
 
 Curry plugin
 ------------
 Mike "mickey" Jackman
 Tim "Maj" Rennie
+William "SmallPileOfGibs" Joseph
 
 PrtView plugin, various bug fixes and q3map guru
 ------------------------------------------------
@@ -57,19 +45,10 @@ Improvements and bug fixing
 ---------------------------
 Jan Paul "MrElusive" van Waveren
 Robert Duffy
-Forest "LordHavoc" Wroncy-Hale
-Nurail
-AcidDeath
-Chronos
-Michael Schlueter
-Jamie Wilkinson
-Robert "Tr3B" Beckebans
 
 Web
 ---
-Dave "Bargle" Koenig
-Jason "Wolfen" Spencer
-Shawn "EvilTypeGuy" Walker
+Dave "Bargle" Koenig and Jason "Wolfen" Spencer
 
 Thanks to John Hutton, AstroCreep and W2k for web help
 
@@ -77,18 +56,10 @@ FAQ
 ---
 Equim and Wex
 
-
-Testing/Feedback
----
-Black_Dog, d0nkey, Fjoggis, Jago, jetscreamer, gibbie, Godmil, Gom Jabbar,
-Mindlink, mslaf, necros, Promit, Ravo, RPG, scampie, sock, sponge, thiste,
-voodoochopsticks, Zwiffle
-
-
 Misc
 ----
 Thanks to everyone on the beta mailing list and
 irc.telefragged.com #qeradiant for testing and feedback.
 Updated icons by AstroCreep!
 Bitch-slapping by RaYGunn!
-Last minute bugs by SPoG! (SPoG--)
+Last minute bugs by SpoG! (SpoG--)

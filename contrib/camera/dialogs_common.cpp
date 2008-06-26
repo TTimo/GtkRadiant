@@ -1,5 +1,5 @@
 /*
-Copyright (C) 1999-2006 Id Software, Inc. and contributors.
+Copyright (C) 1999-2007 id Software, Inc. and contributors.
 For a list of contributors, see the accompanying CONTRIBUTORS file.
 
 This file is part of GtkRadiant.
@@ -36,7 +36,7 @@ void dialog_button_callback (GtkWidget *widget, gpointer data)
 	ret = (int*)g_object_get_data (G_OBJECT (parent), "ret");
  
 	*loop = 0;
-	*ret = gpointer_to_int (data);
+	*ret = (int)data;
 }
 
 gint dialog_delete_callback (GtkWidget *widget, GdkEvent* event, gpointer data)

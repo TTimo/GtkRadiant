@@ -1,6 +1,5 @@
-/* -------------------------------------------------------------------------------
-
-Copyright (C) 1999-2006 Id Software, Inc. and contributors.
+/*
+Copyright (C) 1999-2007 id Software, Inc. and contributors.
 For a list of contributors, see the accompanying CONTRIBUTORS file.
 
 This file is part of GtkRadiant.
@@ -60,264 +59,6 @@ static void ExitQ3Map( void )
 	BSPFilesCleanup();
 	if( mapDrawSurfs != NULL )
 		free( mapDrawSurfs );
-}
-
-
-
-/*
-MD4BlockChecksum()
-calculates an md4 checksum for a block of data
-*/
-
-static int MD4BlockChecksum( void *buffer, int length )
-{
-	MHASH	mh;
-	int		digest[ 4 ], checksum;
-	
-	
-	/* make md4 hash */
-	mh = mhash_init( MHASH_MD4 );
-	if( !mh )
-		Error( "Unable to initialize MD4 hash context" );
-	mhash( mh, buffer, length );
-	mhash_deinit( mh, digest );
-	
-	/* xor the bits and return */
-	checksum = digest[ 0 ] ^ digest[ 1 ] ^ digest[ 2 ] ^ digest[ 3 ];
-	return checksum;
-}
-
-
-
-/*
-FixAAS()
-resets an aas checksum to match the given BSP
-*/
-
-int FixAAS( int argc, char **argv )
-{
-	int			length, checksum;
-	void		*buffer;
-	FILE		*file;
-	char		aas[ 1024 ], **ext;
-	char		*exts[] =
-				{
-					".aas",
-					"_b0.aas",
-					"_b1.aas",
-					NULL
-				};
-	
-	
-	/* arg checking */
-	if( argc < 2 )
-	{
-		Sys_Printf( "Usage: q3map -fixaas [-v] <mapname>\n" );
-		return 0;
-	}
-	
-	/* do some path mangling */
-	strcpy( source, ExpandArg( argv[ argc - 1 ] ) );
-	StripExtension( source );
-	DefaultExtension( source, ".bsp" );
-	
-	/* note it */
-	Sys_Printf( "--- FixAAS ---\n" );
-	
-	/* load the bsp */
-	Sys_Printf( "Loading %s\n", source );
-	length = LoadFile( source, &buffer );
-	
-	/* create bsp checksum */
-	Sys_Printf( "Creating checksum...\n" );
-	checksum = LittleLong( MD4BlockChecksum( buffer, length ) );
-	
-	/* write checksum to aas */
-	ext = exts;
-	while( *ext )
-	{
-		/* mangle name */
-		strcpy( aas, source );
-		StripExtension( aas );
-		strcat( aas, *ext );
-		Sys_Printf( "Trying %s\n", aas );
-		ext++;
-		
-		/* fix it */
-		file = fopen( aas, "r+b" );
-		if( !file )
-			continue;
-		if( fwrite( &checksum, 4, 1, file ) != 1 )
-			Error( "Error writing checksum to %s", aas );
-		fclose( file );
-	}
-	
-	/* return to sender */
-	return 0;
-}
-
-
-
-/*
-AnalyzeBSP() - ydnar
-analyzes a Quake engine BSP file
-*/
-
-typedef struct abspHeader_s
-{
-	char			ident[ 4 ];
-	int				version;
-	
-	bspLump_t		lumps[ 1 ];	/* unknown size */
-}
-abspHeader_t;
-
-typedef struct abspLumpTest_s
-{
-	int				radix, minCount;
-	char			*name;
-}
-abspLumpTest_t;
-
-int AnalyzeBSP( int argc, char **argv )
-{
-	abspHeader_t			*header;
-	int						size, i, version, offset, length, lumpInt, count;
-	char					ident[ 5 ];
-	void					*lump;
-	float					lumpFloat;
-	char					lumpString[ 1024 ], source[ 1024 ];
-	qboolean				lumpSwap = qfalse;
-	abspLumpTest_t			*lumpTest;
-	static abspLumpTest_t	lumpTests[] =
-							{
-								{ sizeof( bspPlane_t ),			6,		"IBSP LUMP_PLANES" },
-								{ sizeof( bspBrush_t ),			1,		"IBSP LUMP_BRUSHES" },
-								{ 8,							6,		"IBSP LUMP_BRUSHSIDES" },
-								{ sizeof( bspBrushSide_t ),		6,		"RBSP LUMP_BRUSHSIDES" },
-								{ sizeof( bspModel_t ),			1,		"IBSP LUMP_MODELS" },
-								{ sizeof( bspNode_t ),			2,		"IBSP LUMP_NODES" },
-								{ sizeof( bspLeaf_t ),			1,		"IBSP LUMP_LEAFS" },
-								{ 104,							3,		"IBSP LUMP_DRAWSURFS" },
-								{ 44,							3,		"IBSP LUMP_DRAWVERTS" },
-								{ 4,							6,		"IBSP LUMP_DRAWINDEXES" },
-								{ 128 * 128 * 3,				1,		"IBSP LUMP_LIGHTMAPS" },
-								{ 256 * 256 * 3,				1,		"IBSP LUMP_LIGHTMAPS (256 x 256)" },
-								{ 512 * 512 * 3,				1,		"IBSP LUMP_LIGHTMAPS (512 x 512)" },
-								{ 0, 0, NULL }
-							};
-	
-	
-	/* arg checking */
-	if( argc < 1 )
-	{
-		Sys_Printf( "Usage: q3map -analyze [-lumpswap] [-v] <mapname>\n" );
-		return 0;
-	}
-	
-	/* process arguments */
-	for( i = 1; i < (argc - 1); i++ )
-	{
-		/* -format map|ase|... */
-		if( !strcmp( argv[ i ],  "-lumpswap" ) )
-		{
-			Sys_Printf( "Swapped lump structs enabled\n" );
- 			lumpSwap = qtrue;
- 		}
-	}
-	
-	/* clean up map name */
-	strcpy( source, ExpandArg( argv[ i ] ) );
-	Sys_Printf( "Loading %s\n", source );
-	
-	/* load the file */
-	size = LoadFile( source, (void**) &header );
-	if( size == 0 || header == NULL )
-	{
-		Sys_Printf( "Unable to load %s.\n", source );
-		return -1;
-	}
-	
-	/* analyze ident/version */
-	memcpy( ident, header->ident, 4 );
-	ident[ 4 ] = '\0';
-	version = LittleLong( header->version );
-	
-	Sys_Printf( "Identity:      %s\n", ident );
-	Sys_Printf( "Version:       %d\n", version );
-	Sys_Printf( "---------------------------------------\n" );
-	
-	/* analyze each lump */
-	for( i = 0; i < 100; i++ )
-	{
-		/* call of duty swapped lump pairs */
-		if( lumpSwap )
-		{
-			offset = LittleLong( header->lumps[ i ].length );
-			length = LittleLong( header->lumps[ i ].offset );
-		}
-		
-		/* standard lump pairs */
-		else
-		{
-			offset = LittleLong( header->lumps[ i ].offset );
-			length = LittleLong( header->lumps[ i ].length );
-		}
-		
-		/* extract data */
-		lump = (byte*) header + offset;
-		lumpInt = LittleLong( (int) *((int*) lump) );
-		lumpFloat = LittleFloat( (float) *((float*) lump) );
-		memcpy( lumpString, (char*) lump, (length < 1024 ? length : 1024) );
-		lumpString[ 1024 ] = '\0';
-		
-		/* print basic lump info */
-		Sys_Printf( "Lump:          %d\n", i );
-		Sys_Printf( "Offset:        %d bytes\n", offset );
-		Sys_Printf( "Length:        %d bytes\n", length );
-		
-		/* only operate on valid lumps */
-		if( length > 0 )
-		{
-			/* print data in 4 formats */
-			Sys_Printf( "As hex:        %08X\n", lumpInt );
-			Sys_Printf( "As int:        %d\n", lumpInt );
-			Sys_Printf( "As float:      %f\n", lumpFloat );
-			Sys_Printf( "As string:     %s\n", lumpString );
-			
-			/* guess lump type */
-			if( lumpString[ 0 ] == '{' && lumpString[ 2 ] == '"' )
-				Sys_Printf( "Type guess:    IBSP LUMP_ENTITIES\n" );
-			else if( strstr( lumpString, "textures/" ) )
-				Sys_Printf( "Type guess:    IBSP LUMP_SHADERS\n" );
-			else
-			{
-				/* guess based on size/count */
-				for( lumpTest = lumpTests; lumpTest->radix > 0; lumpTest++ )
-				{
-					if( (length % lumpTest->radix) != 0 )
-						continue;
-					count = length / lumpTest->radix;
-					if( count < lumpTest->minCount )
-						continue;
-					Sys_Printf( "Type guess:    %s (%d x %d)\n", lumpTest->name, count, lumpTest->radix );
-				}
-			}
-		}
-		
-		Sys_Printf( "---------------------------------------\n" );
-		
-		/* end of file */
-		if( offset + length >= size )
-			break;
-	}
-	
-	/* last stats */
-	Sys_Printf( "Lump count:    %d\n", i + 1 );
-	Sys_Printf( "File size:     %d bytes\n", size );
-	
-	/* return to caller */
-	return 0;
 }
 
 
@@ -509,12 +250,10 @@ int ConvertBSPMain( int argc, char **argv )
 {
 	int		i;
 	int		(*convertFunc)( char * );
-	game_t	*convertGame;
 	
 	
 	/* set default */
 	convertFunc = ConvertBSPToASE;
-	convertGame = NULL;
 	
 	/* arg checking */
 	if( argc < 1 )
@@ -535,11 +274,7 @@ int ConvertBSPMain( int argc, char **argv )
 			else if( !Q_stricmp( argv[ i ], "map" ) )
 				convertFunc = ConvertBSPToMap;
 			else
-			{
-				convertGame = GetGame( argv[ i ] );
-				if( convertGame == NULL )
-					Sys_Printf( "Unknown conversion format \"%s\". Defaulting to ASE.\n", argv[ i ] );
-			}
+				Sys_Printf( "Unknown conversion format \"%s\". Defaulting to ASE.\n", argv[ i ] );
  		}
 	}
 	
@@ -560,23 +295,7 @@ int ConvertBSPMain( int argc, char **argv )
 	/* parse bsp entities */
 	ParseEntities();
 	
-	/* bsp format convert? */
-	if( convertGame != NULL )
-	{
-		/* set global game */
-		game = convertGame;
-		
-		/* write bsp */
-		StripExtension( source );
-		DefaultExtension( source, "_c.bsp" );
-		Sys_Printf( "Writing %s\n", source );
-		WriteBSPFile( source );
-		
-		/* return to sender */
-		return 0;
-	}
-	
-	/* normal convert */
+	/* convert */
 	return convertFunc( source );
 }
 
@@ -685,16 +404,8 @@ int main( int argc, char **argv )
 	if( argc < 2 )
 		Error( "Usage: %s [general options] [options] mapfile", argv[ 0 ] );
 	
-	/* fixaas */
-	if( !strcmp( argv[ 1 ], "-fixaas" ) )
-		r = FixAAS( argc - 1, argv + 1 );
-	
-	/* analyze */
-	else if( !strcmp( argv[ 1 ], "-analyze" ) )
-		r = AnalyzeBSP( argc - 1, argv + 1 );
-	
 	/* info */
-	else if( !strcmp( argv[ 1 ], "-info" ) )
+	if( !strcmp( argv[ 1 ], "-info" ) )
 		r = BSPInfo( argc - 2, argv + 2 );
 	
 	/* vis */

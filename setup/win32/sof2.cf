@@ -1,4 +1,0 @@
-$SETUP_DIR = 'Setup-SOF2';
-
-$DO_CORE = 1;
-$DO_GAME_SOF2 = 1;

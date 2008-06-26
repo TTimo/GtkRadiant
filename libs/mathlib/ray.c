@@ -1,6 +1,6 @@
 /*
-Copyright (C) 2001-2006, William Joseph.
-All Rights Reserved.
+Copyright (C) 1999-2007 id Software, Inc. and contributors.
+For a list of contributors, see the accompanying CONTRIBUTORS file.
 
 This file is part of GtkRadiant.
 
@@ -20,7 +20,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
 #include "mathlib.h"
-#include <float.h>
+/*! for memcpy */
+#include <memory.h>
 
 vec3_t identity = { 0,0,0 };
 
@@ -45,13 +46,13 @@ vec_t ray_intersect_point(const ray_t *ray, const vec3_t point, vec_t epsilon, v
   VectorSubtract(point, ray->origin, displacement);
   // calc length of displacement vector along ray direction
 	depth = DotProduct(displacement, ray->direction);
-  if(depth < 0.0f) return (vec_t)FLT_MAX;
+  if(depth < 0.0f) return (vec_t)VEC_MAX;
   // calc position of closest point on ray to test point
   VectorMA (ray->origin, depth, ray->direction, displacement);
   // calc displacement of test point from closest point
 	VectorSubtract(point, displacement, displacement);
   // calc length of displacement, subtract depth-dependant epsilon
-  if (VectorLength(displacement) - (epsilon + (depth * divergence)) > 0.0f) return (vec_t)FLT_MAX;
+  if (VectorLength(displacement) - (epsilon + (depth * divergence)) > 0.0f) return (vec_t)VEC_MAX;
   return depth;
 }
 
@@ -64,7 +65,7 @@ vec_t ray_intersect_triangle(const ray_t *ray, qboolean bCullBack, const vec3_t 
   float edge1[3], edge2[3], tvec[3], pvec[3], qvec[3];
   float det,inv_det;
   float u, v;
-  vec_t depth = (vec_t)FLT_MAX;
+  vec_t depth = (vec_t)VEC_MAX;
   
   /* find vectors for two edges sharing vert0 */
   VectorSubtract(vert1, vert0, edge1);
@@ -132,9 +133,3 @@ vec_t ray_intersect_triangle(const ray_t *ray, qboolean bCullBack, const vec3_t 
   }
   return depth;
 }
-
-vec_t ray_intersect_plane(const ray_t* ray, const vec3_t normal, vec_t dist)
-{
-  return -(DotProduct(normal, ray->origin) - dist) / DotProduct(ray->direction, normal);
-}
-

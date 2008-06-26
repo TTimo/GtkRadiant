@@ -1,0 +1,487 @@
+<html>
+<head>
+<title>Q3Radiant Editor Manual: Appendix B5</title>
+<link rel = "stylesheet" type = "text/css" href = "../styles/q3rad.css">
+</head>
+<body>
+<h1 class = "MsoTitle">Q3Radiant Editor Manual</h1>
+<hr>
+<h1>Appendix B: Entity Descriptions</h1>
+<h2><a name = "item">Item_* Entities</a></h2>
+
+Most of the properties for item entities are the same and are
+listed immediately below. Properties that are unique to specific
+entities follow those entries.
+
+
+
+<p><strong>Shared Keys (for all item entities)</strong>
+
+<br>All the entities in this grouping can have the following
+keys.
+
+<p><b>team:</b> set this to team items. Teamed items will respawn
+randomly after team master is picked up (see Notes).
+
+<br><b>target:</b> picking up the item will trigger the entity this
+points to.
+
+<br><b>targetname:</b> a target_give entity can point to this for
+respawn freebies.
+
+<br><b>notbot:</b> when set to 1, a bot will never seek out this
+item.
+
+<br><b>notfree:</b> when set to 1, entity will not spawn in "Free
+for all" and "Tournament" modes.
+
+<br><b>notteam:</b> when set to 1, entity will not spawn in
+"Teamplay" and "CTF" modes.
+
+<br><b>notsingle:</b> when set to 1, entity will not spawn in Single
+Player mode (bot play mode).
+
+
+
+<p>Two other keys, wait and count, do not apply to all entities and
+are described as they apply to individual entity types.
+
+
+
+<p><strong>Check Boxes/Spawnflags</strong>
+
+<br>SUSPENDED: item will spawn where it was placed in map and won't
+drop to the floor. Bots will only be attracted to suspended
+entities if they are reachable by way of a jump pad or launch pad
+(trigger_push).
+
+
+
+<p><strong>Notes</strong>
+
+<br><b>Team:</b> Just as you would set doors to work together with
+the "team" key, you can do the same for item, weapon and ammo
+entities. Give each entity in the team the same key value (example:
+"team" "powerups"). The game randomly selects which team member
+respawns next. You can set your own wait times. You can skew the
+weighting towards a particular item by including multiple copies of
+it. Example: 1 quad and 2 hastes in a team mean a greater chance
+that a haste entity will appear next.
+
+<p>The amount of time it takes for an item in the team to respawn
+is determined by the "wait" value of the item that was picked up
+previously. So if one of the items in the team has it's "wait" key
+set to -1 (never respawn), the random respawning cycle of the
+teamed items will stop after that item is picked up.
+
+
+
+<p>When the random key is set, its value is used to calculate a
+minimum and a maximum delay. The final time delay will be a random
+value anywhere between the minimum and maximum values: (min delay =
+wait - random) (max delay = wait + random).
+
+
+
+<p><div class = "subheading">item_armor_body</div>
+
+<b>Map Entity Color:</b> blue
+
+<br><b>Dimensions:</b> (-16 -16 -16) (16 16 16)
+
+<br><b>Game Function:</b> Red Armor - 100 points of protection. All
+armor can be cumulated up to a maximum of 200 points and slowly
+decays back to 100 points.
+
+
+
+<p><strong>Custom Keys</strong>
+
+<br><b>wait:</b> time in seconds before item respawns after being
+picked up (default 25, -1 = never respawn).
+
+
+
+<p><div class = "subheading">item_armor_combat</div>
+
+<b>Map Entity Color:</b> blue
+
+<br><b>Dimensions:</b> (-16 -16 -16) (16 16 16)
+
+<br><b>Game Function:</b> Yellow Armor - 50 points of protectiong.
+All armor can be cumulated up to a maximum of 200 points and slowly
+decays back to 100 points.
+
+
+
+<p><strong>Custom Keys</strong>
+
+<br><b>wait:</b> time in seconds before item respawns after being
+picked up (default 25, -1 = never respawn).
+
+<p><div class = "subheading">item_armor_shard</div>
+
+<b>Map Entity Color:</b> blue
+
+<br><b>Dimensions:</b> (-16 -16 -16) (16 16 16)
+
+<br><b>Game Function:</b> Green Armor Shard - 5 points of
+protection. All armor can be cumulated up to a maximum of 200
+points and slowly decays back to 100 points.
+
+
+
+<p><strong>Custom Keys</strong>
+
+<br><b>wait:</b> time in seconds before item respawns after being
+picked up (default 25, -1 = never respawn).
+
+
+
+<p><div class = "subheading">Item_botroam</div>
+
+<b>Map Entity Color:</b> orange
+
+<br><b>Dimensions:</b> (-16 -16 -16) (16 16 16)
+
+<br><b>Game Function:</b> An invisible entity that attracts a bot to
+it. Used to move bots to parts of a map that might otherwise not be
+used.
+
+
+
+<p><strong>Custom Keys</strong>
+
+<br><b>Weight:</b> non-zero floating point value, most often in the
+range 0 to 400. Very low values are unlikely to attract a bot to
+that area, since most bots have "desires" that attract them to
+other game entities. (Higher values are allowed but keep in mind
+that the bot should also be attracted to normal items. Don't
+make the weight value too high.
+
+
+
+<p><strong>Notes</strong>
+
+<br>The item_botroam entity can be used when a bot does not roam the
+whole level or prefers to go to only specific areas. But don't
+confuse these items with "way points". They are more like magnets.
+This (invisible) item can be placed in a map just like regular
+items. Nobody can actually pick up the item it's only used to
+attract bots to certain places of the map. The value is the weight
+of the roam_item is relative to the weight assigned other items in
+the map (each bot has its own weights). The bot character specific
+item weights are stored with the bot characters in the
+botfiles/bots/ sub-folder in the .pk3 file.
+
+<p>When a bot should never go for a specific item the key "notbot"
+with value "1" can be used for that item. This key with value can
+be used for every available item in Quake III Arena.
+
+<p><div class = "tip"><b>Design Tip:</b> Wait to place these items until you've done a
+significant amount of live play testing on the final map against
+bots. Observe a bot-only match. See which parts of the map they
+DON'T use frequently. Use bot_roam entities to encourage the
+bots to follow more paths through the map. Example: In one of id's
+CTF maps, it was eventually observed that bots were most likely to
+use only one entrance when assaulting the base. Placement of
+item_botroam entities along the other entrance paths might have
+solved this.</div>
+
+
+
+<p><div class = "subheading">item_enviro</div>
+
+<b>Map Entity Color:</b> blue
+
+<br><b>Dimensions:</b> (-16 -16 -16) (16 16 16)
+
+<br><b>Game Function:</b> Battle Suit power-up. Lasts 30 seconds.
+Battle suit provides full protection against explosion radius
+damage, slime, and lava damage. It gives partial protection against
+falling, and direct rocket hits.
+
+
+
+<p><strong>Custom Keys</strong>
+
+<br><b>wait:</b> time in seconds before item respawns after being
+picked up (default 120, -1 = never respawn).
+
+<br><b>count:</b> time in seconds that power-up will last when
+picked up (default 30).
+
+
+
+<p><div class = "subheading">item_flight</div>
+
+<b>Map Entity Color:</b> blue
+
+<br><b>Dimensions:</b> (-16 -16 -16) (16 16 16)
+
+<br><b>Game Function:</b> Flight power-up. Lasts 60 seconds. Will
+not appear in single player games. Bots do not understand its
+use.
+
+
+
+<p><strong>Custom Keys</strong>
+
+<br><b>wait:</b> time in seconds before item respawns after being
+picked up (default 120, -1 = never respawn).
+
+<br><b>count:</b> time in seconds power-up will last when picked up
+(default 60).
+
+
+
+<p><div class = "subheading">item_haste</div>
+
+<b>Map Entity Color:</b> blue
+
+<br><b>Dimensions:</b> (-16 -16 -16) (16 16 16)
+
+<br><b>Game Function:</b> Speed power-up. Makes player run at double
+speed for 30 seconds.
+
+
+
+<p><strong>Custom Keys</strong>
+
+<br><b>wait:</b> time in seconds before item respawns after being
+picked up (default 120, -1 = never respawn).
+
+<br><b>count:</b> time in seconds power-up will last when picked up
+(default 30).
+
+
+
+<p><div class = "subheading">item_health</div>
+
+<b>Map Entity Color:</b> blue
+
+<br><b>Dimensions:</b> (-16 -16 -16) (16 16 16)
+
+<br><b>Game Function:</b> Yellow cross bubble - 25 Health. Cannot be
+picked up over 100 health.
+
+
+
+<p><strong>Custom Keys</strong>
+
+<br><b>wait:</b> time in seconds before item respawns after being
+picked up (default 35, -1 = never respawn).
+
+<br><b>count:</b> sets the amount of health points given to the
+player when item is picked up (default 25).
+
+
+
+<p><div class = "subheading">item_health_large</div>
+<b>Map Entity Color:</b> blue <b></b>
+
+<br><b>Dimensions:</b> (-16 -16 -16) (16 16 16)
+
+<br><b>Game Function:</b> Gold cross bubble - 50 Health. Cannot be
+picked up over 100 health.
+
+
+
+<p><strong>Custom Keys</strong>
+
+<br><b>wait:</b> time in seconds before item respawns after being
+picked up (default 35, -1 = never respawn).
+
+<br><b>count:</b> sets the amount of health points given to the
+player when item is picked up (default 50).
+
+
+
+<p><div class = "subheading">item_health_mega</div>
+
+<b>Map Entity Color:</b> blue <b></b>
+
+<br><b>Dimensions:</b> (-16 -16 -16) (16 16 16)
+
+<br><b>Game Function:</b> Blue M bubble - 100 Health. Adds 100
+health points to current health up to a maximum of 200.
+
+
+
+<p><strong>Custom Keys</strong>
+
+<br><b>wait:</b> time in seconds before item respawns after being
+picked up (default 40, -1 = never respawn).
+
+<br><b>count:</b> sets the amount of health points given to the
+player when item is picked up (default 100).
+
+
+
+<p><div class = "subheading">item_health_small</div>
+
+<br><b>Map Entity Color:</b> blue
+
+<br><b>Dimensions:</b> (-16 -16 -16) (16 16 16)
+
+<br><b>Game Function:</b> Green cross bubble - 5 Health. Can be
+picked up to give over 100 health but slowly decays back to
+100.
+
+
+
+<p><strong>Custom Keys</strong>
+
+<br><b>wait:</b> time in seconds before item respawns after being
+picked up (default 35, -1 = never respawn).
+
+<br><b>count:</b> sets the amount of health points given to the
+player when item is picked up (default 5).
+
+<p><div class = "subheading">item_invis</div>
+
+<b>Map Entity Color: blue</b> 
+
+<br><b>Dimensions:</b> (-16 -16 -16) (16 16 16)
+
+<br><b>Game Function:</b> Invisibility power-up. Lasts 30
+seconds.
+
+
+
+<p><strong>Custom Keys</strong>
+
+<br><b>wait:</b> time in seconds before item respawns after being
+picked up (default 120, -1 = never respawn).
+
+<br><b>count:</b> time in seconds power-up will last when picked up
+(default 30).
+
+<br>team : set this to team items. Teamed items will respawn
+randomly after team master is picked up (see Notes).
+
+
+
+<p><div class = "subheading">item_quad</div>
+
+<b>Map Entity Color:</b> blue <b></b>
+
+<br><b>Dimensions:</b> (-16 -16 -16) (16 16 16)
+
+<br><b>Game Function:</b> Quad Damage power-up (3 times damage).
+Lasts 30 seconds.
+
+
+
+<p><strong>Custom Keys</strong>
+
+<br><b>wait:</b> time in seconds before item respawns after being
+picked up (default 120, -1 = never respawn).
+
+<br><b>count:</b> time in seconds power-up will last when picked up
+(default 30).
+
+
+
+<p><div class = "subheading">item_regen</div>
+
+<b>Map Entity Color:</b> blue <b></b>
+
+<br><b>Dimensions:</b> (-16 -16 -16) (16 16 16)
+
+<br><b>Game Function:</b> Health Regeneration power-up. This will
+boost your current health by 5 points every second up to a maximum
+of 200. The boost continues for a period of 30 seconds. Aftewards,
+any health points over 100 slowly decay back to 100.
+
+
+
+<p><strong>Custom Keys</strong>
+
+<br><b>wait:</b> time in seconds before item respawns after being
+picked up (default 120, -1 = never respawn).
+
+<br><b>count:</b> time in seconds power-up will last when picked up
+(default 30).
+
+<h2><a name = "light">Light Entity</a></h2>
+
+<p><div class = "subheading">light</div>
+
+<b>Map Entity Color:</b> bright green&nbsp; (see Notes)
+
+<br><b>Dimensions</b>: (-8 -8 -8) (8 8 8)
+
+<br><b>Game Function:</b> Non-displayed light entity. The default
+condition emits white light in all directions at a value of 300.
+The apparent brightness of the light is modeled on "real world"
+physics, so the falloff in brightness willl be an inverse square of
+distance from the source. It can be colored. It can be targeted on
+an info_null entity to make a spotlight.
+
+
+
+<p><strong>Keys</strong>
+
+<br><b>light:</b> value of light intensity (default 300).
+
+<br><b>_color:</b> weighted RGB value of light color (default white
+- 1 1 1).
+
+<br><b>target:</b> point this to an target_position, info_null or
+info_notnull to create a spotlight effect.
+
+<br><b>radius:</b> sets radius of light cone for spotlights (default
+64) in game units. Radius measurement is made at the targeted
+entity. Light must target an info_null entity (info_nulls are only
+used by the compiler and need not be "remembered" by the game
+engine during play).
+
+
+
+<p><strong>Check Boxes/Spawnflags</strong>
+
+<br>LINEAR: light falloff will be linear instead of inverse square
+of distance from source.
+
+
+
+<p><strong>Notes</strong>
+
+<ul><li>Linear fall off will not make much difference on low value
+lights. Useful on high value lights where the light travels long
+distances.
+
+<li>If the "Light drawing" preference is selected (under
+Preferences), the editor shows the light entities as diamond shaped
+pieces the color of the light they cast. If not, they are light
+yellow green cubes.</ul>
+
+
+<p><strong>Coloring Lights</strong>
+
+<br>To quickly change the color of a light entity, use on of the
+following methods.
+
+<ol><li><b>CTRL + k:</b>&nbsp; With the entity
+window open, select a light entity in either the map or camera
+window. Press CTRL + k. This brings up the windows color selector.
+Select a color and choose "OK".&nbsp; The editor automatically
+normalizes the light colors.
+
+<li><b>Sample Texture:</b> Select the light
+entity. Select a texture in either the texture window or the camera
+window.&nbsp; Hit SHIFT + middle mouse button.
+
+<li><b>Manual Entry:</b> Type in the value
+for the key _color as a 3 numbers between 0 and 1 (inclusive).
+
+<li><b>Copy Existing:</b> Select another
+light entity whose color value the user would like to duplicate. In
+the editor window, lef click on the key "_color". Now select the
+light entity to be colored. Hit ENTER.</ol>
+
+
+<p align = "center"><a href = "appn_b_4.htm">Back</a> | <a href = "../index.htm">Home</a> | <a href = "appn_b_6.htm">Next</a>
+</body>
+</html>

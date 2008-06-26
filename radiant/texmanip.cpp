@@ -29,15 +29,13 @@ ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
 */
 
-#include "texmanip.h"
-
-#include <stdlib.h>
-#include "stream/textstream.h"
+#include "stdafx.h"
+#include "str.h"
 
 static byte *row1 = NULL, *row2 = NULL;
 static int rowsize = 0;
 
-void R_ResampleTextureLerpLine (const byte *in, byte *out, int inwidth, int outwidth, int bytesperpixel)
+void R_ResampleTextureLerpLine (byte *in, byte *out, int inwidth, int outwidth, int bytesperpixel)
 {
   int   j, xi, oldx = 0, f, fstep, endx, lerp;
 #define LERPBYTE(i) out[i] = (byte) ((((row2[i] - row1[i]) * lerp) >> 16) + row1[i])
@@ -99,9 +97,7 @@ void R_ResampleTextureLerpLine (const byte *in, byte *out, int inwidth, int outw
     }
   }
   else
-  {
-    globalOutputStream() << "R_ResampleTextureLerpLine: unsupported bytesperpixel " << bytesperpixel << "\n";
-  }
+    Sys_Printf("R_ResampleTextureLerpLine: unsupported bytesperpixel %i\n", bytesperpixel);
 }
 
 /*
@@ -109,7 +105,7 @@ void R_ResampleTextureLerpLine (const byte *in, byte *out, int inwidth, int outw
 R_ResampleTexture
 ================
 */
-void R_ResampleTexture (const void *indata, int inwidth, int inheight, void *outdata,  int outwidth, int outheight, int bytesperpixel)
+void R_ResampleTexture (void *indata, int inwidth, int inheight, void *outdata,  int outwidth, int outheight, int bytesperpixel)
 {
   if (rowsize < outwidth * bytesperpixel)
   {
@@ -125,8 +121,8 @@ void R_ResampleTexture (const void *indata, int inwidth, int inheight, void *out
 
   if (bytesperpixel == 4)
   {
-    int i, j, yi, oldy, f, fstep, lerp, endy = (inheight-1), inwidth4 = inwidth*4, outwidth4 = outwidth*4;
-    byte *inrow, *out;
+    int		i, j, yi, oldy, f, fstep, lerp, endy = (inheight-1), inwidth4 = inwidth*4, outwidth4 = outwidth*4;
+    byte	*inrow, *out;
     out = (byte *)outdata;
     fstep = (int) (inheight * 65536.0f / outheight);
 #define LERPBYTE(i) out[i] = (byte) ((((row2[i] - row1[i]) * lerp) >> 16) + row1[i])
@@ -222,8 +218,8 @@ void R_ResampleTexture (const void *indata, int inwidth, int inheight, void *out
   }
   else if (bytesperpixel == 3)
   {
-    int i, j, yi, oldy, f, fstep, lerp, endy = (inheight-1), inwidth3 = inwidth * 3, outwidth3 = outwidth * 3;
-    byte *inrow, *out;
+    int		i, j, yi, oldy, f, fstep, lerp, endy = (inheight-1), inwidth3 = inwidth * 3, outwidth3 = outwidth * 3;
+    byte	*inrow, *out;
     out = (byte *)outdata;
     fstep = (int) (inheight*65536.0f/outheight);
 #define LERPBYTE(i) out[i] = (byte) ((((row2[i] - row1[i]) * lerp) >> 16) + row1[i])
@@ -310,9 +306,7 @@ void R_ResampleTexture (const void *indata, int inwidth, int inheight, void *out
     }
   }
   else
-  {
-    globalOutputStream() << "R_ResampleTexture: unsupported bytesperpixel " << bytesperpixel << "\n";
-  }
+    Sys_Printf("R_ResampleTexture: unsupported bytesperpixel %i\n", bytesperpixel);
 }
 
 // in can be the same as out
@@ -381,8 +375,6 @@ void GL_MipReduce(byte *in, byte *out, int width, int height, int destwidth, int
       }
     }
     else
-    {
-      globalOutputStream() << "GL_MipReduce: desired size already achieved\n";
-    }
+      Sys_Printf("GL_MipReduce: desired size already achieved\n");
   }
 }

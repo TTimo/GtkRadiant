@@ -1,5 +1,6 @@
 /*
-Copyright (C) 2002 Dominic Clifton.
+Copyright (C) 1999-2007 id Software, Inc. and contributors.
+For a list of contributors, see the accompanying CONTRIBUTORS file.
 
 This file is part of GtkRadiant.
 
@@ -37,7 +38,7 @@ void LoadSpriteModel(entity_interfaces_t *interfaces, const char *name)
   if (!pShader)
   {
     Sys_Printf("ERROR: can't find shader (or image) for: %s\n", name );
-    return;// NULL;
+    return;
   }
 
   CSpriteModel *model = new CSpriteModel();
@@ -140,14 +141,14 @@ void CSpriteModel::Draw(int state, int rflags) const
 
   // so draw it using y/z instead.
   g_QglTable.m_pfn_qglBegin(GL_QUADS);
-  g_QglTable.m_pfn_qglTexCoord2f(0.0f, 0.0f);
-  g_QglTable.m_pfn_qglVertex3f(0.0f, static_cast<float>(w), static_cast<float>(h));
-  g_QglTable.m_pfn_qglTexCoord2f(1.0f, 0.0f);
-  g_QglTable.m_pfn_qglVertex3f(0.0f, 0.0f - static_cast<float>(w), static_cast<float>(h));
-  g_QglTable.m_pfn_qglTexCoord2f(1.0f, 1.0f);
-  g_QglTable.m_pfn_qglVertex3f(0.0f, 0.0f - static_cast<float>(w), 0.0f - static_cast<float>(h));
-  g_QglTable.m_pfn_qglTexCoord2f(0.0f, 0.0f);
-  g_QglTable.m_pfn_qglVertex3f(0.0f, static_cast<float>(w), 0.0f - static_cast<float>(h));
+  g_QglTable.m_pfn_qglTexCoord2f (0,0);
+  g_QglTable.m_pfn_qglVertex3f (0,w,h);
+  g_QglTable.m_pfn_qglTexCoord2f (1,0);
+  g_QglTable.m_pfn_qglVertex3f (0,0-w,h);
+  g_QglTable.m_pfn_qglTexCoord2f (1,1);
+  g_QglTable.m_pfn_qglVertex3f (0,0-w,0-h);
+  g_QglTable.m_pfn_qglTexCoord2f (0,1);
+  g_QglTable.m_pfn_qglVertex3f (0,w,0-h);
   g_QglTable.m_pfn_qglEnd ();
 #endif
 

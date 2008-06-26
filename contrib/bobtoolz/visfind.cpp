@@ -2,12 +2,10 @@
 // Date: Oct 5, 2001
 // Written by: Brad Whitehead (whiteheb@gamerstv.net)
 
-#include "visfind.h"
+#include "StdAfx.h"
 #include "dialogs/dialogs-gtk.h"
 #include "DWinding.h"
 #include "bsploader.h"
-
-#include <list>
 
 typedef struct {
 	int		portalclusters;
@@ -122,7 +120,7 @@ int bsp_countclusters_mask(byte *bitvector, byte *maskvector, int length)
 	return(c);
 }
 
-void AddCluster(std::list<DWinding*> *pointlist, dleaf_t	*cl, bool* repeatlist, vec3_t clr)
+void AddCluster(list<DWinding*> *pointlist, dleaf_t	*cl, qboolean* repeatlist, vec3_t clr)
 {
 	DWinding*	w;
 	
@@ -138,7 +136,7 @@ void AddCluster(std::list<DWinding*> *pointlist, dleaf_t	*cl, bool* repeatlist, 
 
 		qdrawVert_t* vert = &drawVerts[surf->firstVert];
 		if(surf->firstVert + surf->numVerts > numDrawVerts)
-			DoMessageBox("Warning", "Warning", eMB_OK);
+			DoMessageBox("Warning", "Warning", MB_OK);
 
 		w = new DWinding();
 		w->AllocWinding(surf->numVerts);
@@ -164,12 +162,12 @@ void AddCluster(std::list<DWinding*> *pointlist, dleaf_t	*cl, bool* repeatlist, 
 CreateTrace
 =============
 */
-std::list<DWinding*> *CreateTrace( dleaf_t *leaf, int c, vis_header *header, byte *visdata, byte *seen )
+list<DWinding*> *CreateTrace( dleaf_t *leaf, int c, vis_header *header, byte *visdata, byte *seen )
 {
 	byte		*vis;
 	int			i, j, clusterNum;
-	std::list<DWinding*> *pointlist = new std::list<DWinding*>;
-	bool*	repeatlist = new bool[numDrawSurfaces];
+	list<DWinding*> *pointlist = new list<DWinding*>;
+	qboolean*	repeatlist = new qboolean[numDrawSurfaces];
 	dleaf_t		*cl;
 
 	vec3_t clrRnd[5] =	{
@@ -182,7 +180,7 @@ std::list<DWinding*> *CreateTrace( dleaf_t *leaf, int c, vis_header *header, byt
 
 	vec3_t clrGreen =	{0.f, 1.f, 0.f};
 	
-	memset(repeatlist, 0, sizeof(bool)*numDrawSurfaces);
+	memset(repeatlist, 0, sizeof(qboolean)*numDrawSurfaces);
 	
 	vis = visdata + ( c * header->leafbytes );
 
@@ -214,7 +212,7 @@ TraceCluster
 setup for CreateTrace
 =============
 */
-std::list<DWinding*> *TraceCluster (int leafnum)
+list<DWinding*> *TraceCluster (int leafnum)
 {
 	byte			seen[(MAX_MAP_LEAFS/8) + 1];
 	vis_header		*vheader;
@@ -232,14 +230,14 @@ std::list<DWinding*> *TraceCluster (int leafnum)
 	return CreateTrace(leaf, leaf->cluster, vheader, visdata, seen);
 }
 
-std::list<DWinding *>* BuildTrace(char* filename, vec3_t v_origin)
+list<DWinding *>* BuildTrace(char* filename, vec3_t v_origin)
 {
 	if(!LoadBSPFile(filename))
 		return NULL;
 	
 	int leafnum = bsp_leafnumfororigin(v_origin);
 
-	std::list<DWinding*> *pointlist = TraceCluster(leafnum);
+	list<DWinding*> *pointlist = TraceCluster(leafnum);
 
 	FreeBSPData();
 

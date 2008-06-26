@@ -1,6 +1,5 @@
-/* -------------------------------------------------------------------------------
-
-Copyright (C) 1999-2006 Id Software, Inc. and contributors.
+/*
+Copyright (C) 1999-2007 id Software, Inc. and contributors.
 For a list of contributors, see the accompanying CONTRIBUTORS file.
 
 This file is part of GtkRadiant.
@@ -871,7 +870,7 @@ void LoadPortals (char *name)
 	Sys_Printf ("%6i portalclusters\n", portalclusters);
 	Sys_Printf ("%6i numportals\n", numportals);
 	Sys_Printf ("%6i numfaces\n", numfaces);
-	
+
 	// these counts should take advantage of 64 bit systems automatically
 	leafbytes = ((portalclusters+63)&~63)>>3;
 	leaflongs = leafbytes/sizeof(long);
@@ -1094,13 +1093,6 @@ int VisMain (int argc, char **argv)
 	strcat( portalfile, ".prt" );
 	Sys_Printf( "Loading %s\n", portalfile );
 	LoadPortals( portalfile );
-	
-	/* ydnar: exit if no portals, hence no vis */
-	if( numportals == 0 )
-	{
-		Sys_Printf( "No portals means no vis, exiting.\n" );
-		return 0;
-	}
 	
 	/* ydnar: for getting far plane */
 	ParseEntities();

@@ -32,7 +32,7 @@ void set_flen( int i ) { flen = i; }
 int get_flen( void ) { return flen; }
 
 
-#ifndef __BIG_ENDIAN__
+#ifdef _WIN32
 /*
 =====================================================================
 revbytes()

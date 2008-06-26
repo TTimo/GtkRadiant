@@ -1,0 +1,60 @@
+<html>
+<head>
+<title>Quake III Arena Shader Manual: Appendix A</title>
+<link rel = "stylesheet" type = "text/css" href = "../styles/q3rad.css">
+</head>
+<body>
+<h1 class = "MsoTitle">Q3Radiant Shader Manual</h1>
+<i>
+TTimo<br>
+2001.31.08<br>
+</i>
+<hr>
+<h1>Appendix A: usage of targetShaderName and targetShaderNewName</h1>
+
+<p>
+The targetShaderName and targetShaderNewName keys can be used with any entity 
+that supports the target key (the entity instance does not actually have to use 
+the target key for these new keys to work).  If both are defined, then when the 
+entity decides to activate its targets, all shaders/textures in the map that 
+were originally the same name as the targetShaderName value, will be changed to 
+the targetShaderNewName value.
+</p>
+
+<p>
+For example this would make it look like the red light shader is "turning on":
+</p>
+
+<p>
+"targetShaderName" "textures/proto2/redlight_off"<br>
+"targetShaderNewName" "textures/proto2/redlight_on"
+</p>
+
+<p>
+And this would turn it back off:
+</p>
+
+<p>
+"targetShaderName" "textures/proto2/redlight_off"<br>
+"targetShaderNewName" "textures/proto2/redlight_off"
+</p>
+
+<p>
+Note that the ORIGINAL shader name is used in both instances, not whatever it 
+happens to be currently.  Also, of course, this will happen globally.  If the 
+mapper wanted to affect only a certain set of red lights, he/she would need to 
+make a unique shader name to be used with that set.
+</p>
+
+<p>
+The code that supports these keys is in G_UseTargets in g_utils.c.
+</p>
+
+<p>
+For more information, see this thread:<br>
+<a href="http://www.quake3world.com/ubb/Forum6/HTML/014812.html#9">
+http://www.quake3world.com/ubb/Forum6/HTML/014812.html#9
+</a>
+</p>
+
+

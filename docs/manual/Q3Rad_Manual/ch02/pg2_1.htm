@@ -1,0 +1,213 @@
+<html>
+<head>
+<title>Q3Radiant Editor Manual: Page 2.1</title>
+<link rel = "stylesheet" type = "text/css" href = "../styles/q3rad.css">
+</head>
+<body>
+<h1 class = "MsoTitle">Q3Radiant Editor Manual</h1>
+<hr>
+<h1><a name = "entities">Entities and Assets</a></h1>
+<h2><a name = "whatent">What are Entities?</a></h2>
+Quake III Arena divides map components into two classes: World Geometry and Entities.  World Geometry represents the brushes (the Q3A term for the blocks of geometry used to build the physical game world) and patches (anything built with calculated curves).  Entities are a broad category that not only includes simplistic editor representations of game play objects like weapons and ammo, but also includes diverse things like player start spots, and lights. Typically, they are displayed as brightly colored cubes (for those entities not constructed of brushes).  The following are the general category of entity types. The actual entities and the rules and tips for their use are listed in <a href = "../appndx/appn_b_1.htm">Appendix B</a>.
+
+<p><strong>Brush entities.</strong>  The “brush” is the basic building block of Quake engine games (including Quake, Quake 2, Quake III Arena, and a host of games using the engine licenses).  In its most basic form, it’s a block, a solid rectangular volume defined by the coordinates of its corner vertices.  A single brush or a linked grouping of brushes can be turned into a brush entity.  Brush entities include the movers (see below), triggers, and func_statics.
+
+<p><strong>Movers.</strong> Most moving objects or "Movers" are built from brushes. These include doors, lifts or “plats”, rotating objects, buttons, pendulums and trains (objects following pre-defined paths), and bobbers (platforms that are constantly in motion, up and down or side to side).
+
+<p><strong>Triggers.</strong> Triggers are brush entities that cause an event to occur when a player’s bounding box moves inside the volume of the trigger. Triggers can be targeted on many other entities, including most movers and targets.  Some triggers also have more specialized functions.  There are triggers that cause injury, activate other entities, and push or teleport the players.
+
+<p><strong>Targets.</strong> Targets are the entities that are activated to cause events to happen in Q3A, or to redirect activations, insert time delays, mark locations for team play, or act as destination points for teleportation or pushing.
+
+<p><strong>Lights.</strong>  These are point lights, disembodied (read as no visible source) sources of illumination. They ca n be targeted at info_nulls to create spotlights. They can be turned into colored lights. Usually, they are used to create unfocused fill light in a large area or placed near glowing surface textures to create an effect.
+
+<p><strong>Info.</strong> This category includes non-team player spawn spots, targets for lights, and camera locators for intermission shots.
+
+<p><strong>Items.</strong> With the exception of ammo and weapons, these are things in the map that the players grab to use during play.  Included are armor, power ups like the quad, and one-use items like the personal teleporter.
+
+<p><strong>Ammo.</strong> Locations for ammo boxes. Each weapon type in Q3A has its own unique ammo entity.
+
+<p><strong>Weapons.</strong>  Each of the weapons that can be picked up has an entity that can be placed.
+
+<p><strong>Miscellaneous.</strong> This is another catchall category. It includes things like the misc_model which links into the models directory when placed, func_timers which are automated repeating triggers, shooters which fire one of three different weapon fire types, camera and portal surfaces, and path corners. 
+
+<h2><a name = "whatass">What are Assets?</a></h2>
+Assets are the textures, sounds, and models that are used to flesh out the appearance and ambience of a game map.  The editor is designed to use the assets stored in the pak0.pk3 file in your quake3 directory. Using Q3Radiant, the mapmaker can work with the assets in the Quake III Arena pak0.pk3 file or create new ones.
+
+<p><span class = "subheading">What are Textures?</span>
+<br>The art appearing on the walls of maps are generally referred to as “textures.”  Textures are created and stored as true color targa (.tga) or jpeg (.jpg) graphic files. The textures do not use a pre-defined color palette (as was the case with both Quake and Quake 2). Shader scripts can further combine textures and/or modify them in numerous ways. This document will briefly touch on shaders. For an in-depth treatment of shaders, refer to the accompanying Shader Manual.
+
+<p><span class = "subheading">What are Sounds?</span>
+<br>Quake III Arena world sounds are  played by target_speaker entities in the maps. They are stored as 22 khz, 16-bit, mono format .wav files.
+
+<p><span class = "subheading">What are Models?</span>
+<br>The statues and lights in Q3A are models, just like the player characters.  They are placed with the misc_model entity.
+
+<h2><a name = "newass">Creating New Assets</a></h2>
+If you are familiar with the required tools, creating new assets for use in Quake III Arena is not particularly difficult. As a rule, you should create new directories for each map with names different from the names used by id. If you are making a map that will be called “H4x0r_D00M”, every directory containing new assets for that map should be titled H4x0r_D00M. This is to try and avoid asset directories overwriting each other as the editor and the game load in assets.
+
+<p><span class = "subheading">Creating Textures</span>
+<br>Any combination of graphic programs and plug-ins that can output a 24 bit MS windows compatible Targa (.tga) or JPEG (.jpg) graphic file. If you plan to make textures that will have an alpha channel component (see glossary for definition), you must have a program that can create 32-bit art with that fourth channel. 
+
+<p>Adobe PhotoShop has the ability to easily create alpha channels. Paint Shop Pro from JASC (v5.0+) can also make an alpha channel by creating a mask and naming it “alpha”. 
+
+<p>Generally speaking, regardless of the program used, we found it best to do most of the art manipulation of the alpha channel in a separate layer or file and then paste it into the alpha channel before saving.
+
+<p><strong>Setting up Files</strong>
+<br>The editor and the game program look for assets to be located along the paths set up in your project file. Start by creating a directory for you new textures by creating file folders to make a directory path as follows: quake3\baseq3\textures\[mymapname]
+
+<p>The installation of Q3Radiant will create a text document called “shaderlist.txt” in the following path:
+
+<ul>Quake3\baseq3\scripts\shaderlist.txt</ul>
+
+<p>Q3Radiant will use the contents of this script to grab your new textures for inclusion in the game. The contents of shaderlist.txt document will contain a listing of all the shader documents that were used by id Software to create Quake III Arena. 
+
+<p>Since you will obviously want to create your own shaders, you need to put them in separate folders and create a new shader script for them.
+
+<p>If you plan to work on several maps at once and want to distinguish between textures used in each map, simply add additional map names here. For map and mod makers, we STRONGLY recommend that any new shader scripts created use the name of the map or mod in the shader file name. We know we can’t avoid every incident of files overwriting each other, but we certainly can advise you how to try.
+
+<p>Now, create another text file within the scripts directory and call it:
+
+<ul>[mymapname].<span class = "type">shader</span></ul>
+
+ 
+
+<p>This file will contain the shader scripts you write to modify a particular texture.
+
+ 
+
+<p><strong>Rules</strong>
+<br>Follow these rules when creating textures for the Quake III Arena engine:
+<ul>
+<li>Save your textures into your new [map name] directories.
+<li>Don’t use the same names that id used for textures. It will cause problems.
+<li>For best quality, save textures without an alpha channel as 24 bit TARGA files. Using JPEG files can save memory space, but at the risk of losing detail and depth in the texture. JPEG files cannot be used for textures requiring an alpha channel.
+<li>Textures containing an alpha channel must be saved as 32 bit TARGA files.
+<li>If a new texture requires no further manipulation, it does not need a shader script.
+<li>Size textures in powers of 2. Example: 8x8, 16x16, 32x32, 64x64 pixels and so on.
+<li>Textures don’t need to be square. A 32x256-pixel texture is perfectly acceptable.
+</ul>
+
+<p><strong>Guidelines</strong>
+<br>The following are some things the id designers learned about textures.
+<ul>
+<li>Create textures in “suites” built around one or two large textures with a number of much smaller supporting detail or accent textures.
+<li>Very large textures are possible, but some video cards compress textures larger than 256x256 pixels.
+<li>Textures are grouped alphabetically by name in the texture display window, so you may want to give suites of textures similar names. 
+<li>Use the shader function qe3_editorimage to conserve memory when making multiple versions of a single texture (as in the case of a glowing texture with several light values).
+<li>Unless you are creating special effects or textures designed to draw the player’s eye to a specific spot, muted, middle value colors work best with the game engine.
+<li>Extremely busy (a lot of fussy detail) textures can break up or form visually unpleasant patterns when seen at distances.
+</ul>
+
+<p><span class = "subheading">Creating Sounds</span>
+<br><strong>Tools needed:</strong> Any sound editing program that can create and save out sound files as 22 khz, 16-bit, mono format .wav files.
+
+<p><strong>Set up:</strong> The editor and the game program look for assets to be located along the paths set up in your project file. Start by creating a directory for you new textures by creating file folders to make a directory path as follows: quake3\baseq3\sounds\world\[map name]
+
+<p>Place your completed .wav files in the [map name] folder. You can access (and play) this file from within the editor (see instructions for Target_Speaker).
+
+<p><span class = "subheading">Creating Models</span>
+<br>Map models need to be converted from their native file format into Quake III Arena’s native md3 file format. The modeling program, Milkshape 3D supports the file format needed to create map models for Quake III Arena (a link for this program is in the On-line Resources appendix). The compiling process merges the models into the bsp file. If you want other mappers to be able to use your models, you will need to include the md3 and supporting texture files within your pk3.
+
+<h2><a name = "makepk3">Making the .pk3 File</a></h2>
+When you go to distribute your creation to the gaming world, you need to put your newly created map, textures, bot area files, and shader documents into an archive format called a “pk3” file.  You do not need to include the shaderlist.txt file, since only the Q3Radiant editor uses that. Start by creating folders/directories in your root drive (C: for most of us). The game assumes that these folders are placed in the baseq3 directory, so you need to write your path names accordingly. You will need to keep the paths to the various assets the same as they are for the rest of the assets in the game. So your paths should be something like this:
+
+<ul>Textures: textures/[mymapnamefolder]
+
+<br>New Models: models/mapobjects/[mymodelnamefolder]
+
+<br>Map, bsp & aas: maps/mymapname.bsp , mymapname.aas
+
+<br>Shader scripts: scripts/mymapname.shader
+
+<br>Server scripts: scripts/mymapname.arena
+</ul>
+ 
+
+<p>Move or copy all your new game assets in their folders.
+
+ 
+
+<p>We used an archiving program call Winzip to make the pk3 file. Get Winzip from <a href = "http://www.winzip.com/winzip/winzip.htm" target = _blank>WinZip.com</a>
+
+<p><strong>NOTE:</strong> Do not include or redistribute any game assets that are not your own (at least without permission). This specifically refers to id-copyrighted material that came with the original game or subsequent id released patches.
+
+<p>Make a zip archive called “map-mymapname.zip”
+
+ 
+
+<p>If you plan on distributing other resources separately, we strongly recommend the following naming conventions:
+
+ 
+<p><table>
+<tr>
+	<td><strong>md3-xxx.pk3</strong></td>
+	<td>User Model with original associated skin files and sound files</td>
+</tr>
+<tr>
+	<td><strong>bot-xxx.pk3</strong></td>
+	<td>User bot files. May contain additional model or skin and texture files</td>
+</tr>
+<tr>
+	<td><strong>skin-xxx.pk3</strong></td>
+	<td>User skin with associated skin and texture files</td>
+</tr>
+<tr>
+	<td><strong>map-xxx.pk3</strong></td>
+	<td>User created map(s) and supporting files (arena, texture, sound, music)</td>
+</tr>
+<tr>
+	<td><strong>tex-xxx.pk3</strong></td>
+	<td>User texture and shader files</td>
+</tr>
+<tr>
+	<td><strong>snd-xxx.pk3</strong></td>
+	<td>Sounds only</td>
+</tr>
+<tr>
+	<td><strong>mus-xxx.pk3</strong></td>
+	<td>Music only</td>
+</tr>
+<tr>
+	<td><strong>pfb-xxx.pk3</strong></td>
+	<td>Map prefabs</td>
+</tr>
+</table>
+ 
+
+<p>(special thanks to Rogue13 of <a href = "http://www.polycount.com" target = _blank>http://www.polycount.com</a> for this naming convention)
+
+ 
+
+<p>When you go to add a resource to the archive, click on options to “Recurse Folders” and “Save Extra Folder Info”
+
+ 
+
+<p>Zip all the required assets into a zip archive file (Quake III Arena DOES support compressed pk3 files).
+
+ 
+
+<p>Rename the zip archive to mymapname.pk3
+
+ 
+
+<p>Put it where the Quake III Arena community can find it.
+
+ 
+
+<p><span class = "subheading">My .pk3 File is Huge! No One is downloading it!</span>
+<br>Large pak files are daunting as downloads. And as specified by the Quake III Arena End User License Agreement, that is the only way those new game assets may be distributed. Be kind and remember that not everyone has access to DSL, ADSL, ISDN, Satellite, Cable Modem or other high speed internet connections. Before packing up your resources, you may want to look into some dieting tricks to make it smaller.
+
+ 
+
+<ul>
+<li>First, resave all your new non-alpha channel textures in JPG format. That will give you some significant art size savings. 
+<li>Streamline your map’s art package. Id designers had to go on a rip ‘n strip rampage through their levels to cut down on unique texture usage. Do you really need all that additional art? Can you substitute more of the original Q3A art, or get more duty out of some of your new work?
+<li>Recompile your area files with the optomize switch. That will reduce their size. That's why it's in there as a command. This is also one of the biggest savings that you can make.
+<li>Turn up the level of compression when archiving into the pk3 file. 
+<li>Compress again when zipping up the files. 
+<li>Take a SERIOUS look at any new sound resources you've created. Sounds, especially long sounds can be HUGE! Can short sounds be cleverly used to replace longer sounds in your map? The id designers did a bunch of that for Q3A. Very short sounds, played off sync against each other were made to sound like longer, more expensive sound files.
+</ul>
+ 
+<p align = "center"><a href = "../ch01/pg1_2.htm">Back</a> | <a href = "../index.htm">Home</a> | <a href = "../ch03/pg3_1.htm">Next</a>
+</body>
+</html>

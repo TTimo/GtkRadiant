@@ -21,6 +21,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //
 //////////////////////////////////////////////////////////////////////
 
+#include "StdAfx.h"
 #include "DEPair.h"
 
 //////////////////////////////////////////////////////////////////////
@@ -41,7 +42,7 @@ DEPair::~DEPair()
 // Implementation
 //////////////////////////////////////////////////////////////////////
 
-void DEPair::Build(const char *pKey, const char *pValue)
+void DEPair::Build(char *pKey, char *pValue)
 {
   key = pKey;
   value = pValue;

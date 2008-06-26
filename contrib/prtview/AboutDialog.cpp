@@ -17,14 +17,19 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include "AboutDialog.h"
-#include <gtk/gtk.h>
-#include <gtkutil/pointer.h>
-#include "version.h"
-#include "gtkutil/pointer.h"
+// AboutDialog.cpp : implementation file
+//
 
-#include "prtview.h"
-#include "ConfigDialog.h"
+#include "stdafx.h"
+
+#ifdef _DEBUG
+#define new DEBUG_NEW
+#undef THIS_FILE
+//static char THIS_FILE[] = __FILE__;
+#endif
+
+/////////////////////////////////////////////////////////////////////////////
+// CAboutDialog dialog
 
 static void dialog_button_callback (GtkWidget *widget, gpointer data)
 {
@@ -36,7 +41,7 @@ static void dialog_button_callback (GtkWidget *widget, gpointer data)
   ret = (int*)g_object_get_data (G_OBJECT (parent), "ret");
 
   *loop = 0;
-  *ret = gpointer_to_int(data);
+  *ret = (int)data;
 }
 
 static gint dialog_delete_callback (GtkWidget *widget, GdkEvent* event, gpointer data)
@@ -99,7 +104,6 @@ void DoAboutDlg ()
   gtk_grab_remove (dlg);
   gtk_widget_destroy (dlg);
 }
-
 
 /////////////////////////////////////////////////////////////////////////////
 // CAboutDialog message handlers

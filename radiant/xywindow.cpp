@@ -1,5 +1,5 @@
 /*
-Copyright (C) 1999-2006 Id Software, Inc. and contributors.
+Copyright (C) 1999-2007 id Software, Inc. and contributors.
 For a list of contributors, see the accompanying CONTRIBUTORS file.
 
 This file is part of GtkRadiant.
@@ -25,541 +25,106 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 // Leonardo Zide (leo@lokigames.com)
 //
 
-#include "xywindow.h"
-
-#include "debugging/debugging.h"
-
-#include "ientity.h"
-#include "igl.h"
-#include "ibrush.h"
-#include "iundo.h"
-
-#include <gtk/gtklabel.h>
-#include <gtk/gtkmenuitem.h>
-
-#include "generic/callback.h"
-#include "string/string.h"
-#include "stream/stringstream.h"
-
-#include "scenelib.h"
-#include "eclasslib.h"
-#include "renderer.h"
-#include "moduleobserver.h"
-
-#include "gtkutil/menu.h"
-#include "gtkutil/container.h"
-#include "gtkutil/widget.h"
-#include "gtkutil/glwidget.h"
-#include "gtkmisc.h"
-#include "select.h"
-#include "csg.h"
-#include "brushmanip.h"
-#include "selection.h"
-#include "entity.h"
-#include "camwindow.h"
-#include "texwindow.h"
-#include "mainframe.h"
-#include "preferences.h"
-#include "commands.h"
-#include "feedback.h"
-#include "grid.h"
-#include "windowobservers.h"
-
-
-// d1223m
-extern bool g_brush_always_caulk;
-
-//!\todo Rewrite.
-class ClipPoint
-{
-public:
-  Vector3 m_ptClip;      // the 3d point
-  bool m_bSet;
-
-  ClipPoint()
-  {
-    Reset();
-  };
-  void Reset()
-  {
-    m_ptClip[0] = m_ptClip[1] = m_ptClip[2] = 0.0;
-    m_bSet = false;
-  }
-  bool Set()
-  {
-    return m_bSet;
-  }
-  void Set(bool b)
-  {
-    m_bSet = b;
-  }
-  operator Vector3&()
-  {
-    return m_ptClip;
-  };
-  
-  /*! Draw clip/path point with rasterized number label */
-  void Draw(int num, float scale);
-  /*! Draw clip/path point with rasterized string label */
-  void Draw(const char *label, float scale);
-};
-
-VIEWTYPE g_clip_viewtype;
-bool g_bSwitch = true;
-bool g_clip_useCaulk = false;
-ClipPoint g_Clip1;
-ClipPoint g_Clip2;
-ClipPoint g_Clip3;
-ClipPoint* g_pMovingClip = 0;
-
-/* Drawing clip points */
-void ClipPoint::Draw(int num, float scale)
-{
-  StringOutputStream label(4);
-  label << num;
-  Draw(label.c_str(), scale);
-}
-
-void ClipPoint::Draw(const char *label, float scale)
-{
-  // draw point
-  glPointSize (4);
-  glColor3fv(vector3_to_array(g_xywindow_globals.color_clipper));
-  glBegin (GL_POINTS);
-  glVertex3fv(vector3_to_array(m_ptClip));
-  glEnd();
-  glPointSize (1);
-
-  float offset = 2.0f / scale;
-
-  // draw label
-  glRasterPos3f (m_ptClip[0] + offset, m_ptClip[1] + offset, m_ptClip[2] + offset);
-  glCallLists (GLsizei(strlen(label)), GL_UNSIGNED_BYTE, label);
-}
-
-float fDiff(float f1, float f2)
-{
-  if (f1 > f2)
-    return f1 - f2;
-  else
-    return f2 - f1;
-}
-
-inline double ClipPoint_Intersect(const ClipPoint& clip, const Vector3& point, VIEWTYPE viewtype, float scale)
-{
-  int nDim1 = (viewtype == YZ) ? 1 : 0;
-  int nDim2 = (viewtype == XY) ? 1 : 2;
-  double screenDistanceSquared(vector2_length_squared(Vector2(fDiff(clip.m_ptClip[nDim1], point[nDim1]) * scale, fDiff(clip.m_ptClip[nDim2], point[nDim2])  * scale)));
-  if(screenDistanceSquared < 8*8)
-  {
-    return screenDistanceSquared;
-  }
-  return FLT_MAX;
-}
-
-inline void ClipPoint_testSelect(ClipPoint& clip, const Vector3& point, VIEWTYPE viewtype, float scale, double& bestDistance, ClipPoint*& bestClip)
-{
-  if(clip.Set())
-  {
-    double distance = ClipPoint_Intersect(clip, point, viewtype, scale);
-    if(distance < bestDistance)
-    {
-      bestDistance = distance;
-      bestClip = &clip;
-    }
-  }
-}
-
-inline ClipPoint* GlobalClipPoints_Find(const Vector3& point, VIEWTYPE viewtype, float scale)
-{
-  double bestDistance = FLT_MAX;
-  ClipPoint* bestClip = 0;
-  ClipPoint_testSelect(g_Clip1, point, viewtype, scale, bestDistance, bestClip);
-  ClipPoint_testSelect(g_Clip2, point, viewtype, scale, bestDistance, bestClip);
-  ClipPoint_testSelect(g_Clip3, point, viewtype, scale, bestDistance, bestClip);
-  return bestClip;
-}
-
-inline void GlobalClipPoints_Draw(float scale)
-{
-  // Draw clip points
-  if (g_Clip1.Set())
-    g_Clip1.Draw(1, scale);
-  if (g_Clip2.Set())
-    g_Clip2.Draw(2, scale);
-  if (g_Clip3.Set())
-    g_Clip3.Draw(3, scale);
-}
-
-inline bool GlobalClipPoints_valid()
-{
-  return g_Clip1.Set() && g_Clip2.Set();
-}
-
-void PlanePointsFromClipPoints(Vector3 planepts[3], const AABB& bounds, int viewtype)
-{
-  ASSERT_MESSAGE(GlobalClipPoints_valid(), "clipper points not initialised");
-  planepts[0] = g_Clip1.m_ptClip;
-	planepts[1] = g_Clip2.m_ptClip;
-	planepts[2] = g_Clip3.m_ptClip;
-  Vector3 maxs(vector3_added(bounds.origin, bounds.extents));
-  Vector3 mins(vector3_subtracted(bounds.origin, bounds.extents));
-	if(!g_Clip3.Set())
-	{
-		int n = (viewtype == XY) ? 2 : (viewtype == YZ) ? 0 : 1;
-		int x = (n == 0) ? 1 : 0;
-		int y = (n == 2) ? 1 : 2;
-		
-		if (n == 1) // on viewtype XZ, flip clip points
-		{
-		  planepts[0][n] = maxs[n];
-		  planepts[1][n] = maxs[n];
-		  planepts[2][x] = g_Clip1.m_ptClip[x];
-		  planepts[2][y] = g_Clip1.m_ptClip[y];
-		  planepts[2][n] = mins[n];
-		}
-		else
-		{
-		  planepts[0][n] = mins[n];
-		  planepts[1][n] = mins[n];
-		  planepts[2][x] = g_Clip1.m_ptClip[x];
-		  planepts[2][y] = g_Clip1.m_ptClip[y];
-		  planepts[2][n] = maxs[n];
-		}
-	}
-}
-
-void Clip_Update()
-{
-  Vector3 planepts[3];
-  if(!GlobalClipPoints_valid())
-  {
-    planepts[0] = Vector3(0, 0, 0);
-	  planepts[1] = Vector3(0, 0, 0);
-	  planepts[2] = Vector3(0, 0, 0);
-    Scene_BrushSetClipPlane(GlobalSceneGraph(), Plane3(0, 0, 0, 0));
-  }
-  else
-  {
-    AABB bounds(Vector3(0, 0, 0), Vector3(64, 64, 64));
-    PlanePointsFromClipPoints(planepts, bounds, g_clip_viewtype);
-    if(g_bSwitch)
-    {
-      std::swap(planepts[0], planepts[1]);
-    }
-    Scene_BrushSetClipPlane(GlobalSceneGraph(), plane3_for_points(planepts[0], planepts[1], planepts[2]));
-  }
-  ClipperChangeNotify();
-}
-
-const char* Clip_getShader()
-{
-  return g_clip_useCaulk ? "textures/common/caulk" : TextureBrowser_GetSelectedShader(GlobalTextureBrowser());
-}
-
-void Clip()
-{
-  if (ClipMode() && GlobalClipPoints_valid())
-  {
-    Vector3 planepts[3];
-    AABB bounds(Vector3(0, 0, 0), Vector3(64, 64, 64));
-    PlanePointsFromClipPoints(planepts, bounds, g_clip_viewtype);
-    Scene_BrushSplitByPlane(GlobalSceneGraph(), planepts[0], planepts[1], planepts[2], Clip_getShader(), (!g_bSwitch) ? eFront : eBack);
-    g_Clip1.Reset();
-    g_Clip2.Reset();
-    g_Clip3.Reset();
-    Clip_Update();
-    ClipperChangeNotify();
-  }
-}
-
-void SplitClip()
-{
-  if (ClipMode() && GlobalClipPoints_valid())
-  {
-    Vector3 planepts[3];
-    AABB bounds(Vector3(0, 0, 0), Vector3(64, 64, 64));
-    PlanePointsFromClipPoints(planepts, bounds, g_clip_viewtype);
-    Scene_BrushSplitByPlane(GlobalSceneGraph(), planepts[0], planepts[1], planepts[2], Clip_getShader(), eFrontAndBack);
-    g_Clip1.Reset();
-    g_Clip2.Reset();
-    g_Clip3.Reset();
-    Clip_Update();
-    ClipperChangeNotify();
-  }
-}
-
-void FlipClip()
-{
-  g_bSwitch = !g_bSwitch;
-  Clip_Update();
-  ClipperChangeNotify();
-}
-
-void OnClipMode(bool enabled)
-{
-  g_Clip1.Reset();
-  g_Clip2.Reset();
-  g_Clip3.Reset();
-
-  if(!enabled && g_pMovingClip)
-  {
-    g_pMovingClip = 0;
-  }
-
-  Clip_Update();
-  ClipperChangeNotify();
-}
-
-bool ClipMode()
-{
-  return GlobalSelectionSystem().ManipulatorMode() == SelectionSystem::eClip;
-}
-
-void NewClipPoint(const Vector3& point)
-{
-  if (g_Clip1.Set() == false)
-  {
-    g_Clip1.m_ptClip = point;
-    g_Clip1.Set(true);
-  }
-  else if (g_Clip2.Set() == false)
-  {
-    g_Clip2.m_ptClip = point;
-    g_Clip2.Set(true);
-  }
-  else if (g_Clip3.Set() == false)
-  {
-    g_Clip3.m_ptClip = point;
-    g_Clip3.Set(true);
-  }
-  else 
-  {
-    g_Clip1.Reset();
-    g_Clip2.Reset();
-    g_Clip3.Reset();
-    g_Clip1.m_ptClip = point;
-    g_Clip1.Set(true);
-  }
-
-  Clip_Update();
-  ClipperChangeNotify();
-}
-
-
-
-struct xywindow_globals_private_t
-{
-  bool  d_showgrid;
-
-  // these are in the View > Show menu with Show coordinates
-  bool  show_names;
-  bool  show_coordinates;
-  bool  show_angles;
-  bool  show_outline;
-  bool  show_axis;
-
-  bool d_show_work;
-
-  bool     show_blocks;
-  int		       blockSize;
-
-  bool m_bCamXYUpdate;
-  bool m_bChaseMouse;
-  bool m_bSizePaint;
-
-  xywindow_globals_private_t() :
-    d_showgrid(true),
-
-    show_names(false),
-    show_coordinates(true),
-    show_angles(true),
-    show_outline(false),
-    show_axis(true),
-
-    d_show_work(false),
-
-    show_blocks(false),
-
-    m_bCamXYUpdate(true),
-    m_bChaseMouse(true),
-    m_bSizePaint(false)
-  {
-  }
-
-};
-
-xywindow_globals_t g_xywindow_globals;
-xywindow_globals_private_t g_xywindow_globals_private;
-
-const unsigned int RAD_NONE =    0x00;
-const unsigned int RAD_SHIFT =   0x01;
-const unsigned int RAD_ALT =     0x02;
-const unsigned int RAD_CONTROL = 0x04;
-const unsigned int RAD_PRESS   = 0x08;
-const unsigned int RAD_LBUTTON = 0x10;
-const unsigned int RAD_MBUTTON = 0x20;
-const unsigned int RAD_RBUTTON = 0x40;
-
-inline ButtonIdentifier button_for_flags(unsigned int flags)
-{
-  if(flags & RAD_LBUTTON)
-    return c_buttonLeft;
-  if(flags & RAD_RBUTTON)
-    return c_buttonRight;
-  if(flags & RAD_MBUTTON)
-    return c_buttonMiddle;
-  return c_buttonInvalid;
-}
-
-inline ModifierFlags modifiers_for_flags(unsigned int flags)
-{
-  ModifierFlags modifiers = c_modifierNone;
-  if(flags & RAD_SHIFT)
-    modifiers |= c_modifierShift;
-  if(flags & RAD_CONTROL)
-    modifiers |= c_modifierControl;
-  if(flags & RAD_ALT)
-    modifiers |= c_modifierAlt;
-  return modifiers;
-}
-
-inline unsigned int buttons_for_button_and_modifiers(ButtonIdentifier button, ModifierFlags flags)
-{
-  unsigned int buttons = 0;
-
-  switch (button.get())
-  {
-  case ButtonEnumeration::LEFT: buttons |= RAD_LBUTTON; break;
-  case ButtonEnumeration::MIDDLE: buttons |= RAD_MBUTTON; break;
-  case ButtonEnumeration::RIGHT: buttons |= RAD_RBUTTON; break;
-  }
-
-  if(bitfield_enabled(flags, c_modifierControl))
-    buttons |= RAD_CONTROL;
-
-  if(bitfield_enabled(flags, c_modifierShift))
-    buttons |= RAD_SHIFT;
-
-  if(bitfield_enabled(flags, c_modifierAlt))
-    buttons |= RAD_ALT;
-
-  return buttons;
-}
-
-inline unsigned int buttons_for_event_button(GdkEventButton* event)
-{
-  unsigned int flags = 0;
-
-  switch (event->button)
-  {
-  case 1: flags |= RAD_LBUTTON; break;
-  case 2: flags |= RAD_MBUTTON; break;
-  case 3: flags |= RAD_RBUTTON; break;
-  }
-
-  if ((event->state & GDK_CONTROL_MASK) != 0)
-    flags |= RAD_CONTROL;
-
-  if ((event->state & GDK_SHIFT_MASK) != 0)
-    flags |= RAD_SHIFT;
-
-  if((event->state & GDK_MOD1_MASK) != 0)
-    flags |= RAD_ALT;
-
-  return flags;
-}
-
-inline unsigned int buttons_for_state(guint state)
-{
-  unsigned int flags = 0;
-
-  if ((state & GDK_BUTTON1_MASK) != 0)
-    flags |= RAD_LBUTTON;
-
-  if ((state & GDK_BUTTON2_MASK) != 0)
-    flags |= RAD_MBUTTON;
-
-  if ((state & GDK_BUTTON3_MASK) != 0)
-    flags |= RAD_RBUTTON;
-
-  if ((state & GDK_CONTROL_MASK) != 0)
-    flags |= RAD_CONTROL;
-
-  if ((state & GDK_SHIFT_MASK) != 0)
-    flags |= RAD_SHIFT;
-
-  if ((state & GDK_MOD1_MASK) != 0)
-    flags |= RAD_ALT;
-
-  return flags;
-}
-
-
-void XYWnd::SetScale(float f)
-{
-  m_fScale = f;
-  updateProjection();
-  updateModelview();
-  XYWnd_Update(*this);
-}
-
-void XYWnd_ZoomIn(XYWnd* xy)
-{
-  float max_scale = 64;
-  float scale = xy->Scale() * 5.0f / 4.0f;
-  if(scale > max_scale)
-  {
-    if(xy->Scale() != max_scale)
-    {
-      xy->SetScale (max_scale);
-    }
-  }
-  else
-  {
-    xy->SetScale(scale);
-  }
-}
-
-
-// NOTE: the zoom out factor is 4/5, we could think about customizing it
-//  we don't go below a zoom factor corresponding to 10% of the max world size
-//  (this has to be computed against the window size)
-void XYWnd_ZoomOut(XYWnd* xy)
-{
-  float min_scale = MIN(xy->Width(),xy->Height()) / ( 1.1f * (g_MaxWorldCoord-g_MinWorldCoord));
-  float scale = xy->Scale() * 4.0f / 5.0f;
-  if(scale < min_scale)
-  {
-    if(xy->Scale() != min_scale)
-    {
-      xy->SetScale (min_scale);
-    }
-  }
-  else
-  {
-    xy->SetScale(scale);
-  }
-}
-
-VIEWTYPE GlobalXYWnd_getCurrentViewType()
-{
-  ASSERT_NOTNULL(g_pParentWnd);
-  ASSERT_NOTNULL(g_pParentWnd->ActiveXY());
-  return g_pParentWnd->ActiveXY()->GetViewType();
-}
+#include "stdafx.h"
+#include <gtk/gtk.h>
+#include <assert.h>
+#include <GL/gl.h>
+
+#ifdef _WIN32
+#include <gdk/gdkwin32.h>
+#endif
 
 // =============================================================================
 // variables
 
-bool g_bCrossHairs = false;
+#define PAGEFLIPS   2
 
-GtkMenu* XYWnd::m_mnuDrop = 0;
+CString g_strStatus;
+bool g_bCrossHairs = false;
+bool g_bScaleMode;
+int g_nScaleHow;
+bool g_bRotateMode;
+bool g_bClipMode;
+bool g_bRogueClipMode;
+bool g_bSwitch;
+ClipPoint g_Clip1;
+ClipPoint g_Clip2;
+ClipPoint g_Clip3;
+ClipPoint* g_pMovingClip;
+brush_t g_brFrontSplits;
+brush_t g_brBackSplits;
+
+brush_t g_brClipboard;
+brush_t g_brUndo;
+entity_t g_enClipboard;
+
+vec3_t g_vRotateOrigin;
+vec3_t g_vRotation;
+
+bool g_bPathMode;
+ClipPoint g_PathPoints[256]; // this limit isn't enforced?
+ClipPoint* g_pMovingPath;
+int g_nPathCount;
+int g_nPathLimit;
+
+bool g_bSmartGo;
+
+bool g_bPointMode;
+ClipPoint g_PointPoints[512];
+ClipPoint* g_pMovingPoint;
+int g_nPointCount;
+int g_nPointLimit;
+
+const int XY_LEFT = 0x01;
+const int XY_RIGHT = 0x02;
+const int XY_UP = 0x04;
+const int XY_DOWN = 0x08;
+
+PFNPathCallback* g_pPathFunc = NULL;
+
+static unsigned s_stipple[32] =
+{
+    0xaaaaaaaa, 0x55555555,0xaaaaaaaa, 0x55555555,
+    0xaaaaaaaa, 0x55555555,0xaaaaaaaa, 0x55555555,
+    0xaaaaaaaa, 0x55555555,0xaaaaaaaa, 0x55555555,
+    0xaaaaaaaa, 0x55555555,0xaaaaaaaa, 0x55555555,
+    0xaaaaaaaa, 0x55555555,0xaaaaaaaa, 0x55555555,
+    0xaaaaaaaa, 0x55555555,0xaaaaaaaa, 0x55555555,
+    0xaaaaaaaa, 0x55555555,0xaaaaaaaa, 0x55555555,
+    0xaaaaaaaa, 0x55555555,0xaaaaaaaa, 0x55555555,
+};
+
+void AcquirePath(int nCount, PFNPathCallback* pFunc)
+{
+  g_nPathCount = 0;
+  g_nPathLimit = nCount;
+  g_pPathFunc = pFunc;
+  g_bPathMode = true;
+}
+
+
+CPtrArray g_ptrMenus;
+
+MemStream g_Clipboard(4096);
+MemStream g_PatchClipboard(4096);
+
+extern int pressx;
+extern int pressy;
+extern bool g_bWaitCursor;
+
+vec3_t tdp;
+
+GtkWidget* XYWnd::m_mnuDrop = NULL;
+
+extern int g_nPatchClickedView;
+
+// =============================================================================
+// global functions
 
 // this is disabled, and broken
 // http://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=394
 #if 0
-void WXY_Print()
+void WXY_Print ()
 {
   long width, height;
   width = g_pParentWnd->ActiveXY()->Width();
@@ -567,13 +132,13 @@ void WXY_Print()
   unsigned char* img;
   const char* filename;
 
-  filename = file_dialog(GTK_WIDGET(MainFrame_getWindow()), FALSE, "Save Image", 0, FILTER_BMP);
+  filename = file_dialog (g_pParentWnd->m_pWidget, FALSE, "Save Image", NULL, FILTER_BMP);
   if (!filename)
     return;
 
   g_pParentWnd->ActiveXY()->MakeCurrent();
   img = (unsigned char*)malloc (width*height*3);
-  glReadPixels (0,0,width,height,GL_RGB,GL_UNSIGNED_BYTE,img);
+  qglReadPixels (0,0,width,height,GL_RGB,GL_UNSIGNED_BYTE,img);
 
   FILE *fp; 
   fp = fopen(filename, "wb");
@@ -614,7 +179,7 @@ void WXY_Print()
 
     unsigned long widthDW = (((width*24) + 31) / 32 * 4);
     long row, row_size = width*3;
-    for (row = 0; row < height; row++)
+    for (row = 0; row < height; row++) 
     {
         unsigned char* buf = img+row*row_size;
 
@@ -643,402 +208,1445 @@ void WXY_Print()
 }
 #endif
 
-
-#include "timer.h"
-
-Timer g_chasemouse_timer;
-
-void XYWnd::ChaseMouse()
+float ptSum(vec3_t pt)
 {
-  float multiplier = g_chasemouse_timer.elapsed_msec() / 10.0f;
-  Scroll(float_to_integer(multiplier * m_chasemouse_delta_x), float_to_integer(multiplier * -m_chasemouse_delta_y));
-
-  //globalOutputStream() << "chasemouse: multiplier=" << multiplier << " x=" << m_chasemouse_delta_x << " y=" << m_chasemouse_delta_y << '\n';
-
-  XY_MouseMoved(m_chasemouse_current_x, m_chasemouse_current_y , getButtonState());
-  g_chasemouse_timer.start();
+  return pt[0] + pt[1] + pt[2];
 }
 
-gboolean xywnd_chasemouse(gpointer data)
+float Betwixt(float f1, float f2)
 {
-  reinterpret_cast<XYWnd*>(data)->ChaseMouse();
-  return TRUE;
+  if (f1 > f2)
+    return f2 + ((f1 - f2) / 2);
+  else
+    return f1 + ((f2 - f1) / 2);
 }
 
-inline const int& min_int(const int& left, const int& right)
+void CleanList(brush_t* pList)
 {
-  return std::min(left, right);
-}
-
-bool XYWnd::chaseMouseMotion(int pointx, int pointy)
-{
-  m_chasemouse_delta_x = 0;
-  m_chasemouse_delta_y = 0;
-
-  if (g_xywindow_globals_private.m_bChaseMouse && getButtonState() == RAD_LBUTTON)
+  brush_t* pBrush = pList->next; 
+  while (pBrush != NULL && pBrush != pList)
   {
-    const int epsilon = 16;
+    brush_t* pNext = pBrush->next;
+    Brush_Free(pBrush);
+    pBrush = pNext;
+  }
+}
 
-    if (pointx < epsilon)
-    {
-      m_chasemouse_delta_x = std::max(pointx, 0) - epsilon;
-    }
-    else if ((pointx - m_nWidth) > -epsilon)
-    {
-      m_chasemouse_delta_x = min_int((pointx - m_nWidth), 0) + epsilon;
-    }
+void Brush_CopyList (brush_t* pFrom, brush_t* pTo)
+{
+  brush_t* pBrush = pFrom->next; 
+  while (pBrush != NULL && pBrush != pFrom)
+  {
+    brush_t* pNext = pBrush->next;
+    Brush_RemoveFromList(pBrush);
+    Brush_AddToList(pBrush, pTo);
+    pBrush = pNext;
+  }
+}
 
-    if (pointy < epsilon)
-    {
-      m_chasemouse_delta_y = std::max(pointy, 0) - epsilon;
-    }
-    else if ((pointy - m_nHeight) > -epsilon)
-    {
-      m_chasemouse_delta_y = min_int((pointy - m_nHeight), 0) + epsilon;
-    }
+float fDiff(float f1, float f2)
+{
+  if (f1 > f2)
+    return f1 - f2;
+  else
+    return f2 - f1;
+}
 
-    if(m_chasemouse_delta_y != 0 || m_chasemouse_delta_x != 0)
+/*
+=============================================================
+
+  PATH LINES
+
+=============================================================
+*/
+
+/*
+==================
+DrawPathLines
+
+Draws connections between entities.
+Needs to consider all entities, not just ones on screen,
+because the lines can be visible when neither end is.
+Called for both camera view and xy view.
+==================
+*/
+void DrawPathLines (void)
+{
+  int       i, j, k;
+  vec3_t    mid, mid1;
+  entity_t *se, *te;
+  brush_t   *sb, *tb;
+  const char    *psz;
+  vec3_t    dir, s1, s2;
+  vec_t len, f;
+  int       arrows;
+  int           num_entities;
+  const char        *ent_target[MAX_MAP_ENTITIES];
+  entity_t  *ent_entity[MAX_MAP_ENTITIES];
+
+  if (g_qeglobals.d_savedinfo.exclude & EXCLUDE_PATHS)
+  {
+    return;
+  }
+  
+  num_entities = 0;
+  for (te = entities.next ; te != &entities && num_entities != MAX_MAP_ENTITIES ; te = te->next)
+  {
+    ent_target[num_entities] = ValueForKey (te, "target");
+    if (ent_target[num_entities][0])
     {
-      //globalOutputStream() << "chasemouse motion: x=" << pointx << " y=" << pointy << "... ";
-      m_chasemouse_current_x = pointx;
-      m_chasemouse_current_y = pointy;
-      if(m_chasemouse_handler == 0)
+      ent_entity[num_entities] = te;
+      num_entities++;
+    }
+  }
+  
+  for (se = entities.next ; se != &entities ; se = se->next)
+  {
+    psz = ValueForKey(se, "targetname");
+    
+    if (psz == NULL || psz[0] == '\0')
+      continue;
+    
+    sb = se->brushes.onext;
+    if (sb == &se->brushes)
+      continue;
+    
+    for (k=0 ; k<num_entities ; k++)
+    {
+      if (strcmp (ent_target[k], psz))
+        continue;
+      
+      te = ent_entity[k];
+      tb = te->brushes.onext;
+      if (tb == &te->brushes)
+        continue;
+      
+      for (i=0 ; i<3 ; i++)
+        mid[i] = (sb->mins[i] + sb->maxs[i])*0.5; 
+      
+      for (i=0 ; i<3 ; i++)
+        mid1[i] = (tb->mins[i] + tb->maxs[i])*0.5; 
+      
+      VectorSubtract (mid1, mid, dir);
+      len = VectorNormalize (dir, dir);
+      s1[0] = -dir[1]*8 + dir[0]*8;
+      s2[0] = dir[1]*8 + dir[0]*8;
+      s1[1] = dir[0]*8 + dir[1]*8;
+      s2[1] = -dir[0]*8 + dir[1]*8;
+      
+      qglColor3f (se->eclass->color[0], se->eclass->color[1], se->eclass->color[2]);
+      
+      qglBegin(GL_LINES);
+      qglVertex3fv(mid);
+      qglVertex3fv(mid1);
+      
+      arrows = (int)(len / 256) + 1;
+      
+      for (i=0 ; i<arrows ; i++)
       {
-        //globalOutputStream() << "chasemouse timer start... ";
-        g_chasemouse_timer.start();
-        m_chasemouse_handler = g_idle_add(xywnd_chasemouse, this);
+        f = len * (i + 0.5) / arrows;
+        
+        for (j=0 ; j<3 ; j++)
+          mid1[j] = mid[j] + f*dir[j];
+        qglVertex3fv (mid1);
+        qglVertex3f (mid1[0] + s1[0], mid1[1] + s1[1], mid1[2]);
+        qglVertex3fv (mid1);
+        qglVertex3f (mid1[0] + s2[0], mid1[1] + s2[1], mid1[2]);
       }
-      return true;
+      
+      qglEnd();
     }
-    else
+  }
+}
+
+extern void AssignModel();
+
+void CreateEntityFromName(const char* name, const vec3_t origin)
+{
+  entity_t *e;
+  brush_t* b;
+  if (stricmp(name, "worldspawn") == 0)
+  {
+    gtk_MessageBox(g_pParentWnd->m_pWidget, "Can't create an entity with worldspawn.", "info", 0);
+    return;
+  }
+
+  e = Entity_Alloc();
+  SetKeyValue(e, "classname", name);
+
+  if(e->eclass->fixedsize)
+  {
+    Select_Delete();
+    b = Brush_Create(e->eclass->mins, e->eclass->maxs, &e->eclass->texdef);
+    Entity_LinkBrush(e, b);
+    Brush_AddToList(b, &active_brushes);
+    Select_Brush(b);
+    Brush_Move(b, origin, true);
+  }
+  else
+  {
+    Select_GroupEntity(e);
+    if(e->brushes.onext == &e->brushes)
     {
-      if(m_chasemouse_handler != 0)
+      Sys_FPrintf(SYS_ERR, "CreateEntityFromName: selection could not be grouped\n");
+      Entity_Free(e);
+      return;
+    }
+  }
+
+  Entity_AddToList(e, &entities);
+  Undo_EndEntity(e);
+
+  Select_Deselect ();
+
+  // tweaking: when right clic dropping a light entity, ask for light value in a custom dialog box
+  // see SF bug 105383
+
+  if (g_pGameDescription->mGameFile == "hl.game")
+  {
+    // FIXME - Hydra: really we need a combined light AND color dialog for halflife.
+    if ((stricmp(name, "light") == 0)  ||
+        (stricmp(name, "light_environment") == 0) ||
+        (stricmp(name, "light_spot") == 0) )
+    {
+      int intensity = g_PrefsDlg.m_iLastLightIntensity;
+
+      // Create and show the dialog box
+      //    CWnd *pWnd;
+      //    pWnd = prompt.GetDlgItem( IDC_EDIT1 );
+      //    prompt.GotoDlgCtrl( pWnd );
+      if (DoLightIntensityDlg (&intensity) == IDOK)
       {
-        //globalOutputStream() << "chasemouse cancel\n";
-        g_source_remove(m_chasemouse_handler);
-        m_chasemouse_handler = 0;
+        g_PrefsDlg.m_iLastLightIntensity = intensity;
+        char buf[30];
+        sprintf( buf, "255 255 255 %d", intensity );
+        SetKeyValue(e, "_light", buf);
       }
     }
   }
   else
   {
-    if(m_chasemouse_handler != 0)
+  if (stricmp(name, "light") == 0)
+  {
+    int intensity = g_PrefsDlg.m_iLastLightIntensity;
+
+    // Create and show the dialog box
+      //    CWnd *pWnd;
+      //    pWnd = prompt.GetDlgItem( IDC_EDIT1 );
+      //    prompt.GotoDlgCtrl( pWnd );
+    if (DoLightIntensityDlg (&intensity) == IDOK)
     {
-      //globalOutputStream() << "chasemouse cancel\n";
-      g_source_remove(m_chasemouse_handler);
-      m_chasemouse_handler = 0;
+      g_PrefsDlg.m_iLastLightIntensity = intensity;
+      char buf[10];
+      sprintf( buf, "%d", intensity );
+      SetKeyValue(e, "light", buf);
     }
+  }
+  }
+  Select_Brush (e->brushes.onext);
+
+  if ( (stricmp(name, "misc_model") == 0) || (stricmp(name, "misc_gamemodel") == 0) || (strcmpi(name, "model_static") == 0) )
+  {
+    SetInspectorMode(W_ENTITY);
+    AssignModel();
+  }
+}
+
+void CreateRightClickEntity(XYWnd* pWnd, int x, int y, char* pName)
+{
+  int height = pWnd->GetWidget()->allocation.height;
+  vec3_t point;
+  pWnd->SnapToPoint (x, height - 1 - y, point);
+
+  int nDim = (pWnd->GetViewType() == XY) ? 2 : (pWnd->GetViewType() == YZ) ? 0 : 1;
+  float fWorkMid = (g_qeglobals.d_work_min[nDim] + g_qeglobals.d_work_max[nDim]) * 0.5;
+  point[nDim] = g_qeglobals.d_gridsize * ((int)(fWorkMid/g_qeglobals.d_gridsize));
+
+  CreateEntityFromName(pName, point);
+}
+
+
+brush_t* CreateSmartBrush(vec3_t v)
+{
+  vec3_t    mins, maxs;
+  int       i;
+  brush_t   *n;
+
+  for (i=0 ; i<3 ; i++)
+  {
+    mins[i] = v[i] - 16;
+    maxs[i] = v[i] + 16;
+  }
+
+  n = Brush_Create (mins, maxs, &g_qeglobals.d_texturewin.texdef);
+  if (!n)
+    return NULL;
+
+  Brush_AddToList(n, &selected_brushes);
+  //Entity_LinkBrush(world_entity, n);
+  Brush_Build(n);
+  return n;
+}
+
+CString g_strSmartEntity;
+int g_nSmartX;
+int g_nSmartY;
+bool g_bSmartWaiting;
+void _SmartPointDone(bool b, int n)
+{
+  g_bSmartWaiting = false;
+}
+
+void CreateSmartEntity(XYWnd* pWnd, int x, int y, const char* pName)
+{
+  g_nSmartX = x;
+  g_nSmartY = y;
+  g_strSmartEntity = pName;
+  if (g_strSmartEntity.Find("Smart_Train") >= 0)
+  {
+    ShowInfoDialog("Select the path of the train by left clicking in XY, YZ and/or XZ views. You can move an already dropped point by grabbing and moving it. When you are finished, press ENTER to accept and create the entity and path(s), press ESC to abandon the creation");
+    g_bPathMode = true;
+    g_nPathLimit = 0;
+    g_nPathCount = 0;
+    g_bSmartGo = true;
+  }
+  else
+  if (g_strSmartEntity.Find("Smart_Monster...") >= 0)
+  {
+    g_bPathMode = true;
+    g_nPathLimit = 0;
+    g_nPathCount = 0;
+  }
+  else
+  if (g_strSmartEntity.Find("Smart_Rotating") >= 0)
+  {
+    g_bSmartWaiting = true;
+    ShowInfoDialog("Left click to specify the rotation origin");
+    AcquirePath(1, &_SmartPointDone);
+    while (g_bSmartWaiting)
+      gtk_main_iteration ();
+    HideInfoDialog();
+    CPtrArray array;
+    g_bScreenUpdates = false;
+    CreateRightClickEntity(g_pParentWnd->ActiveXY(), g_nSmartX, g_nSmartY, "func_rotating");
+    array.Add(reinterpret_cast<void*>(selected_brushes.next));
+    Select_Deselect();
+    brush_t* pBrush = CreateSmartBrush(g_PathPoints[0]);
+    array.Add(pBrush);
+    Select_Deselect();
+    Select_Brush(reinterpret_cast<brush_t*>(array.GetAt(0)));
+    Select_Brush(reinterpret_cast<brush_t*>(array.GetAt(1)));
+    ConnectEntities();
+    g_bScreenUpdates = true;
+  }
+}
+
+void FinishSmartCreation()
+{
+  CPtrArray array;
+  HideInfoDialog();
+  //  brush_t* pEntities = NULL;
+  int n;
+
+  if (g_strSmartEntity.Find("Smart_Train") >= 0)
+  {
+    g_bScreenUpdates = false;
+    CreateRightClickEntity(g_pParentWnd->ActiveXY(), g_nSmartX, g_nSmartY, "func_train");
+    array.Add(reinterpret_cast<void*>(selected_brushes.next));
+    for (n = 0; n < g_nPathCount; n++)
+    {
+      Select_Deselect();
+      CreateRightClickEntity(g_pParentWnd->ActiveXY(), g_PathPoints[n].m_ptScreenX,
+                 g_PathPoints[n].m_ptScreenY, "path_corner");
+      array.Add(reinterpret_cast<void*>(selected_brushes.next));
+    }
+
+    for (n = 0; n < g_nPathCount; n++)
+    {
+      Select_Deselect();
+      Select_Brush(reinterpret_cast<brush_t*>(array.GetAt(n)));
+      Select_Brush(reinterpret_cast<brush_t*>(array.GetAt(n+1)));
+      ConnectEntities();
+    }
+    g_bScreenUpdates = true;
+
+  }
+  g_nPathCount = 0;
+  g_bPathMode = false;
+  Sys_UpdateWindows(W_ALL);
+}
+
+void CleanCopyEntities()
+{
+  entity_t* pe = g_enClipboard.next;
+  while (pe != NULL && pe != &g_enClipboard)
+  {
+    entity_t* next = pe->next;
+    epair_t* enext = NULL;
+      for (epair_t* ep = pe->epairs ; ep ; ep=enext)
+    {
+          enext = ep->next;
+      free (ep->key);
+      free (ep->value);
+          free (ep);
+    }
+      free (pe);
+    pe = next;
+  }
+  g_enClipboard.next = g_enClipboard.prev = &g_enClipboard;
+}
+
+entity_t *Entity_CopyClone (entity_t *e)
+{
+  entity_t  *n;
+  epair_t       *ep, *np;
+
+  n = (entity_t*)qmalloc(sizeof(*n));
+  n->brushes.onext = n->brushes.oprev = &n->brushes;
+  n->eclass = e->eclass;
+
+  // add the entity to the entity list
+  n->next = g_enClipboard.next;
+  g_enClipboard.next = n;
+  n->next->prev = n;
+  n->prev = &g_enClipboard;
+
+  for (ep = e->epairs ; ep ; ep=ep->next)
+  {
+    np = (epair_t*)qmalloc(sizeof(*np));
+    np->key = copystring(ep->key);
+    np->value = copystring(ep->value);
+    np->next = n->epairs;
+    n->epairs = np;
+  }
+  return n;
+}
+
+bool OnList(entity_t* pFind, CPtrArray* pList)
+{
+  int nSize = pList->GetSize();
+  while (nSize-- > 0)
+  {
+    entity_t* pEntity = reinterpret_cast<entity_t*>(pList->GetAt(nSize));
+    if (pEntity == pFind)
+      return true;
   }
   return false;
 }
 
 // =============================================================================
 // XYWnd class
-Shader* XYWnd::m_state_selected = 0;
 
-void xy_update_xor_rectangle(XYWnd& self, rect_t area)
+XYWnd::XYWnd ()
+  : GLWindow (FALSE), m_XORRectangle(m_pWidget)
 {
-  if(GTK_WIDGET_VISIBLE(self.GetWidget()))
-  {
-    self.m_XORRectangle.set(rectangle_from_area(area.min, area.max, self.Width(), self.Height()));
-  }
-}
-
-gboolean xywnd_button_press(GtkWidget* widget, GdkEventButton* event, XYWnd* xywnd)
-{
-  if(event->type == GDK_BUTTON_PRESS)
-  {
-    g_pParentWnd->SetActiveXY(xywnd);
-
-    xywnd->ButtonState_onMouseDown(buttons_for_event_button(event));
-
-    xywnd->onMouseDown(WindowVector(event->x, event->y), button_for_button(event->button), modifiers_for_state(event->state));
-  }
-  return FALSE;
-}
-
-gboolean xywnd_button_release(GtkWidget* widget, GdkEventButton* event, XYWnd* xywnd)
-{
-  if(event->type == GDK_BUTTON_RELEASE)
-  {
-    xywnd->XY_MouseUp(static_cast<int>(event->x), static_cast<int>(event->y), buttons_for_event_button(event));
-
-    xywnd->ButtonState_onMouseUp(buttons_for_event_button(event));
-  }
-  return FALSE;
-}
-
-void xywnd_motion(gdouble x, gdouble y, guint state, void* data)
-{
-  if(reinterpret_cast<XYWnd*>(data)->chaseMouseMotion(static_cast<int>(x), static_cast<int>(y)))
-  {
-    return;
-  }
-  reinterpret_cast<XYWnd*>(data)->XY_MouseMoved(static_cast<int>(x), static_cast<int>(y), buttons_for_state(state));
-}
-
-gboolean xywnd_wheel_scroll(GtkWidget* widget, GdkEventScroll* event, XYWnd* xywnd)
-{
-  if(event->direction == GDK_SCROLL_UP)
-  {
-    XYWnd_ZoomIn(xywnd);
-  }
-  else if(event->direction == GDK_SCROLL_DOWN)
-  {
-    XYWnd_ZoomOut(xywnd);
-  }
-  return FALSE;
-}
-
-gboolean xywnd_size_allocate(GtkWidget* widget, GtkAllocation* allocation, XYWnd* xywnd)
-{
-  xywnd->m_nWidth = allocation->width;
-  xywnd->m_nHeight = allocation->height;
-  xywnd->updateProjection();
-  xywnd->m_window_observer->onSizeChanged(xywnd->Width(), xywnd->Height());
-  return FALSE;
-}
-
-gboolean xywnd_expose(GtkWidget* widget, GdkEventExpose* event, XYWnd* xywnd)
-{
-  if(glwidget_make_current(xywnd->GetWidget()) != FALSE)
-  {
-    if(Map_Valid(g_map) && ScreenUpdates_Enabled())
-    {
-      GlobalOpenGL_debugAssertNoErrors();
-      xywnd->XY_Draw();
-      GlobalOpenGL_debugAssertNoErrors();
-
-      xywnd->m_XORRectangle.set(rectangle_t());
-    }
-    glwidget_swap_buffers(xywnd->GetWidget());
-  }
-  return FALSE;
-}
-
-
-void XYWnd_CameraMoved(XYWnd& xywnd)
-{
-  if(g_xywindow_globals_private.m_bCamXYUpdate)
-  {
-    XYWnd_Update(xywnd);
-  }
-}
-
-XYWnd::XYWnd() :
-  m_gl_widget(glwidget_new(FALSE)),
-  m_deferredDraw(WidgetQueueDrawCaller(*m_gl_widget)),
-  m_deferred_motion(xywnd_motion, this),
-  m_parent(0),
-  m_window_observer(NewWindowObserver()),
-  m_XORRectangle(m_gl_widget),
-  m_chasemouse_handler(0)
-{
+  g_brClipboard.next = &g_brClipboard;
+  g_brUndo.next = &g_brUndo;
+  g_nScaleHow = 0;
+  g_bRotateMode = false;
+  g_bClipMode = false;
+  g_bRogueClipMode = false;
+  g_bSwitch = true;
+  g_pMovingClip = (ClipPoint*)NULL;
+  g_pMovingPath = (ClipPoint*)NULL;
+  g_brFrontSplits.next = &g_brFrontSplits;
+  g_brBackSplits.next = &g_brBackSplits;
   m_bActive = false;
-  m_buttonstate = 0;
-
-  m_bNewBrushDrag = false;
-  m_move_started = false;
-  m_zoom_started = false;
-
-  m_nWidth = 0;
-  m_nHeight = 0;
-
-  m_vOrigin[0] = 0;
-  m_vOrigin[1] = 20;
-  m_vOrigin[2] = 46;
-  m_fScale = 1;
-  m_viewType = XY;
-
-  m_entityCreate = false;
-
-  m_mnuDrop = 0;
-
-  GlobalWindowObservers_add(m_window_observer);
-  GlobalWindowObservers_connectWidget(m_gl_widget);
-
-  m_window_observer->setRectangleDrawCallback(ReferenceCaller1<XYWnd, rect_t, xy_update_xor_rectangle>(*this));
-  m_window_observer->setView(m_view);
-
-  gtk_widget_ref(m_gl_widget);
-
-  gtk_widget_set_events(m_gl_widget, GDK_DESTROY | GDK_EXPOSURE_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK | GDK_POINTER_MOTION_MASK | GDK_SCROLL_MASK);
-  GTK_WIDGET_SET_FLAGS(m_gl_widget, GTK_CAN_FOCUS);
-
-  m_sizeHandler = g_signal_connect(G_OBJECT(m_gl_widget), "size_allocate", G_CALLBACK(xywnd_size_allocate), this);
-  m_exposeHandler = g_signal_connect(G_OBJECT(m_gl_widget), "expose_event", G_CALLBACK(xywnd_expose), this);
-
-  g_signal_connect(G_OBJECT(m_gl_widget), "button_press_event", G_CALLBACK(xywnd_button_press), this);
-  g_signal_connect(G_OBJECT(m_gl_widget), "button_release_event", G_CALLBACK(xywnd_button_release), this);
-  g_signal_connect(G_OBJECT(m_gl_widget), "motion_notify_event", G_CALLBACK(DeferredMotion::gtk_motion), &m_deferred_motion);
-
-  g_signal_connect(G_OBJECT(m_gl_widget), "scroll_event", G_CALLBACK(xywnd_wheel_scroll), this);
-
-  Map_addValidCallback(g_map, DeferredDrawOnMapValidChangedCaller(m_deferredDraw));
-
-  updateProjection();
-  updateModelview();
-
-  AddSceneChangeCallback(ReferenceCaller<XYWnd, &XYWnd_Update>(*this));
-  AddCameraMovedCallback(ReferenceCaller<XYWnd, &XYWnd_CameraMoved>(*this));
-
-  PressedButtons_connect(g_pressedButtons, m_gl_widget);
-
-  onMouseDown.connectLast(makeSignalHandler3(MouseDownCaller(), *this));
+  //m_bTiming = true;
+  m_bTiming = false;
+  m_bRButtonDown = false;
+  m_nUpdateBits = W_XY;
+  g_bPathMode = false;
+  g_nPathCount = 0;
+  g_nPathLimit = 0;
+  m_nButtonstate = 0;
+//  m_mnuDrop = (GtkWidget*)NULL;
+  XY_Init();
 }
 
-XYWnd::~XYWnd()
+vec3_t& XYWnd::Rotation()
 {
-  onDestroyed();
+  return g_vRotation;
+}
 
-  if(m_mnuDrop != 0)
+vec3_t& XYWnd::RotateOrigin()
+{
+  return g_vRotateOrigin;
+}
+
+/*
+==============
+XY_Overlay
+==============
+*/
+void XYWnd::XY_Overlay()
+{
+  int   w, h;
+  int   r[4];
+  static vec3_t lastz;
+  static vec3_t lastcamera;
+
+  qglViewport(0, 0, m_nWidth, m_nHeight);
+
+  //
+  // set up viewpoint
+  //
+  qglMatrixMode(GL_PROJECTION);
+  qglLoadIdentity ();
+
+  w = (int)(m_nWidth / 2 / m_fScale);
+  h = (int)(m_nHeight / 2 / m_fScale);
+
+  qglOrtho (m_vOrigin[0] - w, m_vOrigin[0] + w  , m_vOrigin[1] - h, m_vOrigin[1] + h, g_MinWorldCoord, g_MaxWorldCoord);
+  //
+  // erase the old camera and z checker positions
+  // if the entire xy hasn't been redrawn
+  //
+  if (m_bDirty)
   {
-    gtk_widget_destroy(GTK_WIDGET(m_mnuDrop));
-    m_mnuDrop = 0;
+    qglReadBuffer (GL_BACK);
+    qglDrawBuffer (GL_FRONT);
+
+    qglRasterPos2f (lastz[0]-9, lastz[1]-9);
+    qglGetIntegerv (GL_CURRENT_RASTER_POSITION,r);
+    qglCopyPixels(r[0], r[1], 18,18, GL_COLOR);
+
+    qglRasterPos2f (lastcamera[0]-50, lastcamera[1]-50);
+    qglGetIntegerv (GL_CURRENT_RASTER_POSITION,r);
+    qglCopyPixels(r[0], r[1], 100,100, GL_COLOR);
   }
+  m_bDirty = true;
 
-  g_signal_handler_disconnect(G_OBJECT(m_gl_widget), m_sizeHandler);
-  g_signal_handler_disconnect(G_OBJECT(m_gl_widget), m_exposeHandler);
+  //
+  // save off underneath where we are about to draw
+  //
+  VectorCopy (z.origin, lastz);
+  VectorCopy (g_pParentWnd->GetCamWnd()->Camera()->origin, lastcamera);
 
-  gtk_widget_unref(m_gl_widget);
+  qglReadBuffer (GL_FRONT);
+  qglDrawBuffer (GL_BACK);
 
-  m_window_observer->release();
+  qglRasterPos2f (lastz[0]-9, lastz[1]-9);
+  qglGetIntegerv (GL_CURRENT_RASTER_POSITION,r);
+  qglCopyPixels(r[0], r[1], 18,18, GL_COLOR);
+
+  qglRasterPos2f (lastcamera[0]-50, lastcamera[1]-50);
+  qglGetIntegerv (GL_CURRENT_RASTER_POSITION,r);
+  qglCopyPixels(r[0], r[1], 100,100, GL_COLOR);
+
+  //
+  // draw the new icons
+  //
+  qglDrawBuffer (GL_FRONT);
+
+  qglShadeModel (GL_FLAT);
+  qglDisable(GL_TEXTURE_2D);
+  qglDisable(GL_TEXTURE_1D);
+  qglDisable(GL_DEPTH_TEST);
+  qglDisable(GL_BLEND);
+  qglColor3f(0, 0, 0);
+
+  DrawCameraIcon ();
+  DrawZIcon ();
+
+  qglDrawBuffer (GL_BACK);
+  qglFinish();
 }
 
-void XYWnd::captureStates()
-{
-  m_state_selected = GlobalShaderCache().capture("$XY_OVERLAY");
-}
-
-void XYWnd::releaseStates()
-{
-  GlobalShaderCache().release("$XY_OVERLAY");
-}
-
-const Vector3& XYWnd::GetOrigin()
+vec3_t& XYWnd::GetOrigin()
 {
   return m_vOrigin;
 }
 
-void XYWnd::SetOrigin(const Vector3& origin)
+void XYWnd::SetOrigin(vec3_t org)
 {
-  m_vOrigin = origin;
-  updateModelview();
+  m_vOrigin[0] = org[0];
+  m_vOrigin[1] = org[1];
+  m_vOrigin[2] = org[2];
 }
 
-void XYWnd::Scroll(int x, int y)
+void XYWnd::OnSize(int cx, int cy) 
 {
-  int nDim1 = (m_viewType == YZ) ? 1 : 0;
-  int nDim2 = (m_viewType == XY) ? 1 : 2;
-  m_vOrigin[nDim1] += x / m_fScale;
-  m_vOrigin[nDim2] += y / m_fScale;
-  updateModelview();
-  queueDraw();
+  m_nWidth = cx;
+  m_nHeight = cy;
 }
 
-unsigned int Clipper_buttons()
+brush_t hold_brushes;
+
+void XYWnd::Clip()
 {
-  return RAD_LBUTTON;
-}
-
-void XYWnd::DropClipPoint(int pointx, int pointy)
-{
-  Vector3 point;
-
-  XY_ToPoint(pointx, pointy, point);
-
-  Vector3 mid;
-  Select_GetMid(mid);
-  g_clip_viewtype = static_cast<VIEWTYPE>(GetViewType());
-  int nDim = (g_clip_viewtype == YZ ) ? nDim = 0 : ( (g_clip_viewtype == XZ) ? nDim = 1 : nDim = 2 );
-  point[nDim] = mid[nDim];
-  vector3_snap(point, GetGridSize());
-  NewClipPoint(point);
-}
-
-void XYWnd::Clipper_OnLButtonDown(int x, int y)
-{
-  Vector3 mousePosition;
-  XY_ToPoint(x, y , mousePosition);
-  g_pMovingClip = GlobalClipPoints_Find(mousePosition, (VIEWTYPE)m_viewType, m_fScale);
-  if(!g_pMovingClip)
+  if (ClipMode())
   {
-    DropClipPoint(x, y);
+    hold_brushes.next = &hold_brushes;
+    ProduceSplitLists();
+    brush_t* pList;
+    if (g_PrefsDlg.m_bSwitchClip)
+      pList = (!g_bSwitch) ? &g_brFrontSplits : &g_brBackSplits;
+    else
+      pList = (g_bSwitch) ? &g_brFrontSplits : &g_brBackSplits;
+    
+    if (pList->next != pList)
+    {
+      Brush_CopyList(pList, &hold_brushes);
+      CleanList(&g_brFrontSplits);
+      CleanList(&g_brBackSplits);
+      Select_Delete();
+      Brush_CopyList(&hold_brushes, &selected_brushes);
+      if (RogueClipMode())
+        RetainClipMode(false);
+      else
+        RetainClipMode(true);
+      Sys_UpdateWindows(W_ALL);
+    }
+  }
+  else if (PathMode())
+  {
+    FinishSmartCreation();
+    if (g_pPathFunc)
+      g_pPathFunc(true, g_nPathCount);
+    g_pPathFunc = NULL;
+    g_nPathCount = 0;
+    g_bPathMode = false;
   }
 }
 
-void XYWnd::Clipper_OnLButtonUp(int x, int y)
+void XYWnd::SplitClip()
 {
-  if (g_pMovingClip)
+  ProduceSplitLists();
+  if ((g_brFrontSplits.next != &g_brFrontSplits) &&
+      (g_brBackSplits.next != &g_brBackSplits))
   {
-    g_pMovingClip = 0;
+    Select_Delete();
+    Brush_CopyList(&g_brFrontSplits, &selected_brushes);
+    Brush_CopyList(&g_brBackSplits, &selected_brushes);
+    CleanList(&g_brFrontSplits);
+    CleanList(&g_brBackSplits);
+    if (RogueClipMode())
+      RetainClipMode(false);
+    else
+      RetainClipMode(true);
   }
 }
 
-void XYWnd::Clipper_OnMouseMoved(int x, int y)
+void XYWnd::FlipClip()
 {
-  if (g_pMovingClip)
-  {
-    XY_ToPoint(x, y , g_pMovingClip->m_ptClip);
-    XY_SnapToGrid(g_pMovingClip->m_ptClip);
-    Clip_Update();
-    ClipperChangeNotify();
-  }
+  g_bSwitch = !g_bSwitch;
+  Sys_UpdateWindows(XY | W_CAMERA_IFON);
 }
 
-void XYWnd::Clipper_Crosshair_OnMouseMoved(int x, int y)
+// makes sure the selected brush or camera is in view
+void XYWnd::PositionView()
 {
-  Vector3 mousePosition;
-  XY_ToPoint(x, y , mousePosition);
-  if(ClipMode() && GlobalClipPoints_Find(mousePosition, (VIEWTYPE)m_viewType, m_fScale) != 0)
+  int nDim1 = (m_nViewType == YZ) ? 1 : 0;
+  int nDim2 = (m_nViewType == XY) ? 1 : 2;
+  brush_t* b = selected_brushes.next;
+  if (b && b->next != b)
   {
-    GdkCursor *cursor;
-    cursor = gdk_cursor_new (GDK_CROSSHAIR);
-    gdk_window_set_cursor (m_gl_widget->window, cursor);
-    gdk_cursor_unref (cursor);
+    Select_GetMid (m_vOrigin);
   }
   else
   {
-    gdk_window_set_cursor (m_gl_widget->window, 0);
+    m_vOrigin[nDim1] = g_pParentWnd->GetCamWnd()->Camera()->origin[nDim1];
+    m_vOrigin[nDim2] = g_pParentWnd->GetCamWnd()->Camera()->origin[nDim2];
   }
 }
 
-unsigned int MoveCamera_buttons()
+void XYWnd::VectorCopyXY(vec3_t in, vec3_t out)
 {
-  return RAD_CONTROL | (g_glwindow_globals.m_nMouseType == ETwoButton ? RAD_RBUTTON : RAD_MBUTTON);
-}
-
-void XYWnd_PositionCamera(XYWnd* xywnd, int x, int y, CamWnd& camwnd)
-{
-  Vector3 origin(Camera_getOrigin(camwnd));
-  xywnd->XY_ToPoint(x, y, origin);
-  xywnd->XY_SnapToGrid(origin);
-  Camera_setOrigin(camwnd, origin);
-}
-
-unsigned int OrientCamera_buttons()
-{
-  if(g_glwindow_globals.m_nMouseType == ETwoButton)
-    return RAD_RBUTTON | RAD_SHIFT | RAD_CONTROL;
-  return RAD_MBUTTON;
-}
-
-void XYWnd_OrientCamera(XYWnd* xywnd, int x, int y, CamWnd& camwnd)
-{
-  Vector3	point = g_vector3_identity;
-  xywnd->XY_ToPoint(x, y, point);
-  xywnd->XY_SnapToGrid(point);
-  vector3_subtract(point, Camera_getOrigin(camwnd));
-
-  int n1 = (xywnd->GetViewType() == XY) ? 1 : 2;
-  int n2 = (xywnd->GetViewType() == YZ) ? 1 : 0;
-  int nAngle = (xywnd->GetViewType() == XY) ? CAMERA_YAW : CAMERA_PITCH;
-  if (point[n1] || point[n2])
+  if (m_nViewType == XY)
   {
-    Vector3 angles(Camera_getAngles(camwnd));
-    angles[nAngle] = static_cast<float>(radians_to_degrees(atan2 (point[n1], point[n2])));
-    Camera_setAngles(camwnd, angles);
+    out[0] = in[0];
+    out[1] = in[1];
   }
+  else if (m_nViewType == XZ)
+  {
+    out[0] = in[0];
+    out[2] = in[2];
+  }
+  else
+  {
+    out[1] = in[1];
+    out[2] = in[2];
+  }
+}
+
+void XYWnd::RetainClipMode(bool bMode)
+{
+  bool bSave = g_bRogueClipMode;
+  SetClipMode(bMode);
+  if (bMode == true)
+    g_bRogueClipMode = bSave;
+  else
+    g_bRogueClipMode = false;
+}
+
+void XYWnd::SetClipMode(bool bMode)
+{
+  g_bClipMode = bMode;
+  g_bRogueClipMode = false;
+  if (bMode)
+  {
+    g_Clip1.Reset();
+    g_Clip2.Reset();
+    g_Clip3.Reset();
+    CleanList(&g_brFrontSplits);
+    CleanList(&g_brBackSplits);
+    g_brFrontSplits.next = &g_brFrontSplits;
+    g_brBackSplits.next = &g_brBackSplits;
+    
+    // ydnar: set clipper points based on first selected patch mesh
+    if( selected_brushes.next != &selected_brushes )
+    {
+      bool found = false;
+      for( brush_t *pb = selected_brushes.next; pb != &selected_brushes; pb = pb->next )
+      {
+        if( pb->patchBrush )
+        {
+          found = true;
+          VectorCopy( pb->pPatch->ctrl[ 0 ][ 0 ].xyz, g_Clip1.m_ptClip );
+          VectorCopy( pb->pPatch->ctrl[ pb->pPatch->width - 1 ][ pb->pPatch->height - 1 ].xyz, g_Clip2.m_ptClip );
+          VectorCopy( pb->pPatch->ctrl[ pb->pPatch->width - 1 ][ 0 ].xyz, g_Clip3.m_ptClip );
+          g_Clip1.Set( true );
+          g_Clip2.Set( true );
+          g_Clip3.Set( true );
+          break;
+        }
+      }
+      
+      if( found )
+      {
+        // SetClipMode( true );
+        Sys_UpdateWindows( XY | W_CAMERA_IFON );
+      }
+    }
+  }
+  else
+  {
+    if (g_pMovingClip)
+    {
+      ReleaseCapture();
+      g_pMovingClip = NULL;
+    }
+    CleanList(&g_brFrontSplits);
+    CleanList(&g_brBackSplits);
+    g_brFrontSplits.next = &g_brFrontSplits;
+    g_brBackSplits.next = &g_brBackSplits;
+    Sys_UpdateWindows(XY | W_CAMERA_IFON);
+  }
+}
+
+bool XYWnd::ClipMode()
+{
+  return g_bClipMode;
+}
+
+bool XYWnd::RogueClipMode()
+{
+  return g_bRogueClipMode;
+}
+
+bool XYWnd::PathMode()
+{
+  return g_bPathMode;
+}
+
+bool XYWnd::PointMode()
+{
+  return g_bPointMode;
+}
+
+void XYWnd::SetPointMode(bool b)
+{
+  g_bPointMode = b;
+  if (!b)
+    g_nPointCount = 0;
+}
+
+void XYWnd::SetViewType(int n) 
+{ 
+  m_nViewType = n; 
+  if (g_pParentWnd->CurrentStyle() == MainFrame::eFloating)
+  {
+    char* str = "YZ Side";
+    if (m_nViewType == XY)
+      str = "XY Top";
+    else if (m_nViewType == XZ)
+      str = "XZ Front";
+
+    if (m_pParent != NULL)
+      gtk_window_set_title (GTK_WINDOW (m_pParent), str);
+  }
+}
+
+void XYWnd::Redraw(unsigned int nBits)
+{
+  m_nUpdateBits = nBits;
+  gtk_widget_queue_draw(m_pWidget);
+  m_nUpdateBits = W_XY;
+}
+
+bool XYWnd::RotateMode()
+{
+  return g_bRotateMode;
+}
+
+bool XYWnd::ScaleMode()
+{
+  return g_bScaleMode;
+}
+
+bool XYWnd::SetRotateMode(bool bMode)
+{
+  if (bMode && selected_brushes.next != &selected_brushes)
+  {
+    g_bRotateMode = true;
+    Select_GetTrueMid(g_vRotateOrigin);
+    g_vRotation[0] = g_vRotation[1] = g_vRotation[2] = 0.0;
+  }
+  else 
+  {
+    if (bMode)
+      Sys_Printf("Need a brush selected to turn on Mouse Rotation mode\n");
+    g_bRotateMode = false;
+  }
+  RedrawWindow();
+  return g_bRotateMode;
+}
+
+void XYWnd::SetScaleMode(bool bMode)
+{
+  g_bScaleMode = bMode;
+  RedrawWindow();
+}
+
+rectangle_t rectangle_from_area_xy()
+{
+  XYWnd* xy = g_pParentWnd->ActiveXY();
+  int nDim1 = (xy->GetViewType() == YZ) ? 1 : 0;
+  int nDim2 = (xy->GetViewType() == XY) ? 1 : 2;
+  float origin_left = xy->GetOrigin()[nDim1] - (xy->Width() / 2) / xy->Scale();
+  float origin_bottom = xy->GetOrigin()[nDim2] - (xy->Height() / 2) / xy->Scale();
+  float left = MIN(g_qeglobals.d_vAreaTL[nDim1], g_qeglobals.d_vAreaBR[nDim1]) - origin_left;
+  float top = MAX(g_qeglobals.d_vAreaTL[nDim2], g_qeglobals.d_vAreaBR[nDim2]) - origin_bottom;
+  float right = MAX(g_qeglobals.d_vAreaTL[nDim1], g_qeglobals.d_vAreaBR[nDim1]) - origin_left;
+  float bottom = MIN(g_qeglobals.d_vAreaTL[nDim2], g_qeglobals.d_vAreaBR[nDim2]) - origin_bottom;
+  left *= xy->Scale();
+  top *= xy->Scale();
+  right *= xy->Scale();
+  bottom *= xy->Scale();
+  return rectangle_t(left, bottom, right - left, top - bottom);
+}
+
+void update_xor_rectangle_xy(XORRectangle& xor_rectangle)
+{
+  rectangle_t rectangle;
+    if ((g_qeglobals.d_select_mode == sel_area))
+    rectangle = rectangle_from_area_xy();
+  xor_rectangle.set(rectangle);
+}
+
+void XYWnd::OnMouseMove(guint32 nFlags, int pointx, int pointy) 
+{
+  // plugin entities
+  // TODO TTimo handle return code
+  DispatchOnMouseMove (nFlags, pointx, pointy);
+
+  m_ptDownX = 0;
+  m_ptDownY = 0;
+
+  if (g_PrefsDlg.m_bChaseMouse == TRUE &&
+      (pointx < 0 || pointy < 0 || pointx > m_nWidth || pointy > m_nHeight) &&
+       HasCapture ())
+  {
+    float fAdjustment = (g_qeglobals.d_gridsize / 8 * 64) / m_fScale;
+    //m_ptDrag = point;
+    m_ptDragAdjX = 0;
+    m_ptDragAdjY = 0;
+
+    if (pointx < 0)
+    {
+      m_ptDragAdjX = (int)(-fAdjustment);
+    }
+    else if (pointx > m_nWidth)
+    {
+      m_ptDragAdjX = (int)(fAdjustment);
+    }
+
+    if (pointy < 0)
+    {
+      m_ptDragAdjY = (int)(-fAdjustment);
+    }
+    else if (pointy > m_nHeight)
+    {
+      m_ptDragAdjY = (int)(fAdjustment);
+    }
+
+    if (!HasTimer ())
+    {
+      SetTimer (50);
+      m_ptDragX = pointx;
+      m_ptDragY = pointy;
+      m_ptDragTotalX = 0;
+      m_ptDragTotalY = 0;
+    }
+    return;
+  }
+
+  if (HasTimer ())
+  {
+    KillTimer ();
+    pressx -= m_ptDragTotalX;
+    pressy += m_ptDragTotalY;
+  }
+
+  bool bCrossHair = false;
+  if (!m_bRButtonDown)
+  {
+    tdp[0] = tdp[1] = tdp[2] = 0.0;
+    SnapToPoint (pointx, m_nHeight - 1 - pointy , tdp);
+
+    g_strStatus.Format("x:: %.1f  y:: %.1f  z:: %.1f", tdp[0], tdp[1], tdp[2]);
+    g_pParentWnd->SetStatusText(1, g_strStatus);
+
+    // i need to generalize the point code.. having 3 flavors pretty much sucks.. 
+    // once the new curve stuff looks like it is going to stick i will 
+    // rationalize this down to a single interface.. 
+    if (PointMode())
+    {
+      if (g_pMovingPoint && HasCapture ())
+      {
+        bCrossHair = true;
+        SnapToPoint (pointx, m_nHeight - 1 - pointy , g_pMovingPoint->m_ptClip);
+        g_pMovingPoint->UpdatePointPtr();
+        Sys_UpdateWindows(XY | W_CAMERA_IFON);
+      }
+      else
+      {
+        g_pMovingPoint = NULL;
+        int nDim1 = (m_nViewType == YZ) ? 1 : 0;
+        int nDim2 = (m_nViewType == XY) ? 1 : 2;
+        for (int n = 0; n < g_nPointCount; n++)
+        {
+          if ( fDiff(g_PointPoints[n].m_ptClip[nDim1], tdp[nDim1]) < 3 &&
+               fDiff(g_PointPoints[n].m_ptClip[nDim2], tdp[nDim2]) < 3 )
+          {
+            bCrossHair = true;
+            g_pMovingPoint = &g_PointPoints[n];
+          }
+        }
+      }
+    }
+    else if (ClipMode())
+    {
+      if (g_pMovingClip && HasCapture ())
+      {
+        bCrossHair = true;
+        SnapToPoint (pointx, m_nHeight - 1 - pointy , g_pMovingClip->m_ptClip);
+        Sys_UpdateWindows(XY | W_CAMERA_IFON);
+      }
+      else
+      {
+        g_pMovingClip = NULL;
+        int nDim1 = (m_nViewType == YZ) ? 1 : 0;
+        int nDim2 = (m_nViewType == XY) ? 1 : 2;
+        if (g_Clip1.Set())
+        {
+          if ( fDiff(g_Clip1.m_ptClip[nDim1], tdp[nDim1]) < 3 &&
+               fDiff(g_Clip1.m_ptClip[nDim2], tdp[nDim2]) < 3 )
+          {
+            bCrossHair = true;
+            g_pMovingClip = &g_Clip1;
+          }
+        }
+        if (g_Clip2.Set())
+        {
+          if ( fDiff(g_Clip2.m_ptClip[nDim1], tdp[nDim1]) < 3 &&
+               fDiff(g_Clip2.m_ptClip[nDim2], tdp[nDim2]) < 3 )
+          {
+            bCrossHair = true;
+            g_pMovingClip = &g_Clip2;
+          }
+        }
+        if (g_Clip3.Set())
+        {
+          if ( fDiff(g_Clip3.m_ptClip[nDim1], tdp[nDim1]) < 3 &&
+               fDiff(g_Clip3.m_ptClip[nDim2], tdp[nDim2]) < 3 )
+          {
+            bCrossHair = true;
+            g_pMovingClip = &g_Clip3;
+          }
+        }
+      }
+      if (bCrossHair == false)
+        XY_MouseMoved (pointx, m_nHeight - 1 - pointy , nFlags);
+    }
+    else if (PathMode())
+    {
+      if (g_pMovingPath && HasCapture ())
+      {
+        bCrossHair = true;
+        SnapToPoint (pointx, m_nHeight - 1 - pointy , g_pMovingPath->m_ptClip);
+        Sys_UpdateWindows(XY | W_CAMERA_IFON);
+      }
+      else
+      {
+        g_pMovingPath = NULL;
+        int nDim1 = (m_nViewType == YZ) ? 1 : 0;
+        int nDim2 = (m_nViewType == XY) ? 1 : 2;
+        for (int n = 0; n < g_nPathCount; n++)
+        {
+          if ( fDiff(g_PathPoints[n].m_ptClip[nDim1], tdp[nDim1]) < 3 &&
+               fDiff(g_PathPoints[n].m_ptClip[nDim2], tdp[nDim2]) < 3 )
+          {
+            bCrossHair = true;
+            g_pMovingPath = &g_PathPoints[n];
+          }
+        }
+      }
+    }
+    else
+    {
+      XY_MouseMoved (pointx, m_nHeight - 1 - pointy , nFlags);
+    }
+  }
+  else 
+  {
+    XY_MouseMoved (pointx, m_nHeight - 1 - pointy , nFlags);
+  }
+
+  if ((nFlags & MK_RBUTTON) == 0)
+  {
+    if (bCrossHair && !g_bWaitCursor)
+    {
+      GdkCursor *cursor;
+      cursor = gdk_cursor_new (GDK_CROSSHAIR);
+      gdk_window_set_cursor (m_pWidget->window, cursor);
+      gdk_cursor_unref (cursor);
+    }
+    else
+    {
+      gdk_window_set_cursor (m_pWidget->window, NULL);
+    }
+  }
+
+  update_xor_rectangle_xy(m_XORRectangle);
+}
+
+void XYWnd::OnMouseWheel(bool bUp)
+{
+  if (bUp)
+    g_pParentWnd->OnViewZoomin ();
+  else
+    g_pParentWnd->OnViewZoomout ();
+
+  int nUpdate = (g_PrefsDlg.m_bCamXYUpdate) ? (W_CAMERA | W_XY) : (W_CAMERA);
+  Sys_UpdateWindows (nUpdate);
+  g_pParentWnd->OnTimer ();
+}
+
+void XYWnd::OnTimer () 
+{
+  int nDim1 = (m_nViewType == YZ) ? 1 : 0;
+  int nDim2 = (m_nViewType == XY) ? 1 : 2;
+  m_vOrigin[nDim1] += m_ptDragAdjX / m_fScale;
+  m_vOrigin[nDim2] -= m_ptDragAdjY / m_fScale;
+  Sys_UpdateWindows(W_XY | W_CAMERA);
+  m_ptDragX += m_ptDragAdjX;
+  m_ptDragY += m_ptDragAdjY;
+  m_ptDragTotalX += m_ptDragAdjX;
+  m_ptDragTotalY += m_ptDragAdjY;
+  XY_MouseMoved (m_ptDragX, m_nHeight - 1 - m_ptDragY , m_nScrollFlags);
+}
+
+void XYWnd::OnLButtonDown(guint32 flags, int pointx, int pointy) 
+{
+  g_pParentWnd->SetActiveXY(this);
+  UndoCopy();
+
+  // plugin entities
+  if (DispatchOnLButtonDown(flags, pointx, pointy))
+    return;
+
+  if (ClipMode() && !RogueClipMode())
+  {
+    DropClipPoint(flags, pointx, pointy);
+  }
+  else if (PathMode())
+  {
+    DropPathPoint(flags, pointx, pointy);
+  }
+  else OriginalButtonDown(flags, pointx, pointy);
+}
+
+void XYWnd::OnMButtonDown(guint32 flags, int pointx, int pointy)
+{
+  OriginalButtonDown(flags, pointx, pointy);
+}
+
+void XYWnd::OnRButtonDown(guint32 flags, int pointx, int pointy) 
+{
+  g_pParentWnd->SetActiveXY(this);
+  m_ptDownX = pointx;
+  m_ptDownY = pointy;
+  m_bRButtonDown = true;
+
+  if (g_PrefsDlg.m_nMouseButtons == 3) // 3 button mouse 
+  {
+    if (flags & MK_CONTROL)
+    {
+      if (ClipMode()) // already there?
+        DropClipPoint(flags, pointx, pointy);
+      else
+      {
+        SetClipMode(true);
+        g_bRogueClipMode = true;
+        DropClipPoint(flags, pointx, pointy);
+      }
+      return;
+    }
+  }
+  OriginalButtonDown(flags, pointx, pointy);
+}
+
+void XYWnd::OnLButtonUp(guint32 flags, int pointx, int pointy)
+{
+  // plugin entities
+  if (DispatchOnLButtonUp(flags, pointx, pointy))
+    return;
+
+  if (ClipMode())
+  {
+    if (g_pMovingClip)
+    {
+      ReleaseCapture();
+      g_pMovingClip = NULL;
+    }
+  }
+  OriginalButtonUp(flags, pointx, pointy);
+}
+
+void XYWnd::OnMButtonUp(guint32 flags, int pointx, int pointy)
+{
+  OriginalButtonUp(flags, pointx, pointy);
+}
+
+void XYWnd::OnRButtonUp(guint32 flags, int pointx, int pointy)
+{
+  m_bRButtonDown = false;
+  if ((pointx == m_ptDownX) && (pointy == m_ptDownY))   // mouse didn't move
+  {
+    bool bGo = true;
+    if (Sys_AltDown ())
+      bGo = false;
+    if (flags & MK_CONTROL)
+      bGo = false;
+    if (flags & MK_SHIFT)
+      bGo = false;
+    if (bGo)
+      HandleDrop();
+  }
+  OriginalButtonUp(flags, pointx, pointy);
+}
+
+void XYWnd::XY_MouseDown (int x, int y, int buttons)
+{
+  vec3_t    point;
+  vec3_t    origin, dir, right, up;
+
+  m_nButtonstate = buttons;
+  m_nPressx = x;
+  m_nPressy = y;
+  VectorCopy (vec3_origin, m_vPressdelta);
+
+  VectorClear(point);
+  XY_ToPoint (x, y, point);
+    
+  VectorCopy (point, origin);
+
+    VectorClear (dir);
+    if (m_nViewType == XY) // view facing dir = negative Z
+    {
+        origin[2] = g_MaxWorldCoord;
+        dir[2] = -1;
+        right[0] = 1 / m_fScale; 
+        right[1] = 0; 
+        right[2] = 0;
+        up[0] = 0; 
+        up[1] = 1 / m_fScale;
+        up[2] = 0;
+    }
+    else if (m_nViewType == XZ) 
+    {
+        origin[1] = g_MinWorldCoord; // view facing dir = positive Y
+        dir[1] = 1;
+        right[0] = 1 / m_fScale;
+        right[1] = 0;
+        right[2] = 0; 
+        up[0] = 0;
+        up[1] = 0;
+        up[2] = 1 / m_fScale;
+    }
+    else  // if (m_nViewType == YZ)  // view facing dir = negative X
+    {
+        origin[0] = g_MaxWorldCoord;
+        dir[0] = -1;
+        right[0] = 0;
+        right[1] = 1 / m_fScale; 
+        right[2] = 0; 
+        up[0] = 0;
+        up[1] = 0;
+        up[2] = 1 / m_fScale;
+    }
+
+  m_bPress_selection = (selected_brushes.next != &selected_brushes);
+
+  Sys_GetCursorPos(&m_ptCursorX, &m_ptCursorY);
+
+  // lbutton = manipulate selection
+  // shift-LBUTTON = select
+  if ( (buttons == MK_LBUTTON)
+       || (buttons == (MK_LBUTTON | MK_SHIFT))
+       || (buttons == (MK_LBUTTON | MK_CONTROL))
+       || (buttons == (MK_LBUTTON | MK_CONTROL | MK_SHIFT)) )
+  { 
+    Patch_SetView( (m_nViewType == XY) ? W_XY : (m_nViewType == YZ) ? W_YZ : W_XZ);
+    Drag_Begin (x, y, buttons, right, up,   origin, dir);
+    return;
+  }
+
+  int nMouseButton = g_PrefsDlg.m_nMouseButtons == 2 ? MK_RBUTTON : MK_MBUTTON;
+
+  // control mbutton = move camera
+  if (m_nButtonstate == (MK_CONTROL|nMouseButton) )
+  { 
+    VectorCopyXY(point, g_pParentWnd->GetCamWnd()->Camera()->origin);
+    Sys_UpdateWindows (W_CAMERA|W_XY_OVERLAY);
+  }
+
+  // mbutton = angle camera
+  if ((g_PrefsDlg.m_nMouseButtons == 3 && m_nButtonstate == MK_MBUTTON) ||
+      (g_PrefsDlg.m_nMouseButtons == 2 && m_nButtonstate == (MK_SHIFT|MK_CONTROL|MK_RBUTTON)))
+  { 
+    VectorSubtract (point, g_pParentWnd->GetCamWnd()->Camera()->origin, point);
+
+    int n1 = (m_nViewType == XY) ? 1 : 2;
+    int n2 = (m_nViewType == YZ) ? 1 : 0;
+    int nAngle = (m_nViewType == XY) ? YAW : PITCH;
+    if (point[n1] || point[n2])
+    {
+      g_pParentWnd->GetCamWnd()->Camera()->angles[nAngle] = 180/Q_PI*atan2 (point[n1], point[n2]);
+      Sys_UpdateWindows (W_CAMERA_IFON|W_XY_OVERLAY);
+    }
+  }
+
+  // shift mbutton = move z checker
+  if (m_nButtonstate == (MK_SHIFT | nMouseButton))
+  {
+    if (RotateMode() || g_bPatchBendMode)
+    {
+      SnapToPoint (x, y, point);
+      VectorCopyXY(point, g_vRotateOrigin);
+      if (g_bPatchBendMode)
+      {
+        VectorCopy(point, g_vBendOrigin);
+      }
+      Sys_UpdateWindows (W_XY);
+      return;
+    }
+    else
+    {
+      SnapToPoint (x, y, point);
+      if (m_nViewType == XY)
+      {
+        z.origin[0] = point[0];
+        z.origin[1] = point[1];
+      }
+      else if (m_nViewType == YZ)
+      {
+        z.origin[0] = point[1];
+        z.origin[1] = point[2];
+      }
+      else
+      {
+        z.origin[0] = point[0];
+        z.origin[1] = point[2];
+      }
+      Sys_UpdateWindows (W_XY_OVERLAY|W_Z);
+      return;
+    }
+  }
+
+  update_xor_rectangle_xy(m_XORRectangle);
+}
+
+void XYWnd::XY_MouseUp(int x, int y, int buttons)
+{
+  Drag_MouseUp (buttons);
+  if (!m_bPress_selection)
+    Sys_UpdateWindows (W_ALL);
+  m_nButtonstate = 0;
+
+  gdk_window_set_cursor (m_pWidget->window, NULL);
+
+  update_xor_rectangle_xy(m_XORRectangle);
+}
+
+qboolean XYWnd::DragDelta (int x, int y, vec3_t move)
+{
+  vec3_t xvec, yvec, delta;
+  int    i;
+
+  xvec[0] = 1 / m_fScale;
+  xvec[1] = xvec[2] = 0;
+  yvec[1] = 1 / m_fScale;
+  yvec[0] = yvec[2] = 0;
+
+  for (i=0 ; i<3 ; i++)
+  {
+    delta[i] = xvec[i] * (x - m_nPressx) + yvec[i] * (y - m_nPressy);
+    if (!g_PrefsDlg.m_bNoClamp)
+    {
+      delta[i] = floor(delta[i] / g_qeglobals.d_gridsize + 0.5) * g_qeglobals.d_gridsize;
+    }
+  }
+  VectorSubtract (delta, m_vPressdelta, move);
+  VectorCopy (delta, m_vPressdelta);
+
+  if (move[0] || move[1] || move[2])
+    return true;
+  return false;
+}
+
+void XYWnd::HandleDrop()
+{
+  if (g_PrefsDlg.m_bRightClick == false)
+    return;
+
+  if (m_mnuDrop == NULL) // first time, load it up
+  {
+    int nID = ID_ENTITY_START;
+    GtkWidget *menu, *menu_in_menu, *item, *submenu, *submenu_root;
+
+    menu = m_mnuDrop = gtk_menu_new ();
+
+    menu_in_menu = create_menu_in_menu_with_mnemonic (menu, "Select");
+    create_menu_item_with_mnemonic (menu_in_menu, "Select Complete Tall",
+              GTK_SIGNAL_FUNC (HandleCommand), ID_SELECTION_SELECTCOMPLETETALL);
+    create_menu_item_with_mnemonic (menu_in_menu, "Select Touching",
+              GTK_SIGNAL_FUNC (HandleCommand), ID_SELECTION_SELECTTOUCHING);
+    create_menu_item_with_mnemonic (menu_in_menu, "Select Partial Tall",
+              GTK_SIGNAL_FUNC (HandleCommand), ID_SELECTION_SELECTPARTIALTALL);
+    create_menu_item_with_mnemonic (menu_in_menu, "Select Inside",
+              GTK_SIGNAL_FUNC (HandleCommand), ID_SELECTION_SELECTINSIDE);
+    menu_separator (menu); nID++;
+    // NOTE: temporary commented out until we put it back in for good (that is with actual features)
+    /*
+    menu_in_menu = create_menu_in_menu_with_mnemonic (menu, "Group",);
+    create_menu_item_with_mnemonic (menu_in_menu, "Add to...",
+              GTK_SIGNAL_FUNC (HandleCommand), ID_DROP_GROUP_ADDTO);
+    create_menu_item_with_mnemonic (menu_in_menu, "Remove",
+              GTK_SIGNAL_FUNC (HandleCommand), ID_DROP_GROUP_REMOVE);
+    create_menu_item_with_mnemonic (menu_in_menu, "Name...",
+              GTK_SIGNAL_FUNC (HandleCommand), ID_DROP_GROUP_NAME);
+    menu_separator (menu_in_menu); nID++;
+    create_menu_item_with_mnemonic (menu_in_menu, "New Group...",
+              GTK_SIGNAL_FUNC (HandleCommand), ID_DROP_GROUP_NEWGROUP);
+    */
+    create_menu_item_with_mnemonic (menu, "Ungroup Entity",
+              GTK_SIGNAL_FUNC (HandleCommand), ID_SELECTION_UNGROUPENTITY);
+    
+    create_menu_item_with_mnemonic (menu, "Move into entity",
+      GTK_SIGNAL_FUNC (HandleCommand), ID_SELECTION_MERGE);
+    create_menu_item_with_mnemonic (menu, "Move into worldspawn",
+      GTK_SIGNAL_FUNC (HandleCommand), ID_SELECTION_SEPERATE);
+
+    create_menu_item_with_mnemonic (menu, "Make Detail",
+              GTK_SIGNAL_FUNC (HandleCommand), ID_SELECTION_MAKE_DETAIL);
+    create_menu_item_with_mnemonic (menu, "Make Structural",
+              GTK_SIGNAL_FUNC (HandleCommand), ID_SELECTION_MAKE_STRUCTURAL);
+    menu_separator (menu); nID++;
+
+    menu_in_menu = create_menu_in_menu_with_mnemonic (menu, "Smart Entities");
+    create_menu_item_with_mnemonic (menu_in_menu, "Smart__Train",
+              GTK_SIGNAL_FUNC (HandleCommand), nID++);
+    menu_separator (menu); nID++;
+
+    submenu = NULL;
+    submenu_root = NULL;
+    eclass_t    *e;
+    CString strActive;
+    CString strLast;
+    CString strName;
+    for (e=eclass ; e ; e=e->next)
+    {
+      strLast = strName;
+      strName = e->name;
+      int n_ = strName.Find("_");
+      if (n_ > 0)
+      {
+        CString strLeft = strName.Left(n_);
+        CString strRight = strName.Right(strName.GetLength() - n_ - 1);
+        if (strLeft == strActive) // this is a child
+        {
+          assert (submenu);
+          item = gtk_menu_item_new_with_label (strName);
+          gtk_signal_connect (GTK_OBJECT (item), "activate", GTK_SIGNAL_FUNC (HandleCommand),
+            GINT_TO_POINTER (nID++));
+          gtk_widget_show (item);
+          CheckMenuSplitting(submenu);
+          gtk_menu_append (GTK_MENU (submenu), item);
+        }
+        else
+        {
+          if (submenu)
+          {
+            // this is submenu from previous main_item, hook it back
+            // we use submenu_root cause we may have been cascading submenu
+            item = gtk_menu_item_new_with_label (strActive);
+            gtk_widget_show (item);
+            gtk_menu_append (GTK_MENU (menu), item);
+            gtk_menu_item_set_submenu (GTK_MENU_ITEM (item), submenu_root);
+            g_ptrMenus.Add(submenu_root);
+            submenu = NULL;
+            submenu_root = NULL;
+          }
+          strActive = strLeft;
+          
+          submenu = gtk_menu_new ();
+          submenu_root = submenu;
+          item = gtk_menu_item_new_with_label (strName);
+          gtk_signal_connect (GTK_OBJECT (item), "activate", GTK_SIGNAL_FUNC (HandleCommand),
+            GINT_TO_POINTER (nID++));
+          gtk_widget_show (item);
+          gtk_menu_append (GTK_MENU (submenu), item);
+        }
+      }
+      else
+      {
+        if (submenu)
+        {
+          // this is submenu from previous main_item, hook it back
+          // we use submenu_root cause we may have been cascading submenu
+          item = gtk_menu_item_new_with_label (strActive);
+          gtk_widget_show (item);
+          gtk_menu_append (GTK_MENU (menu), item);
+          gtk_menu_item_set_submenu (GTK_MENU_ITEM (item), submenu_root);
+          g_ptrMenus.Add(submenu_root);
+          submenu = NULL;
+          submenu_root = NULL;
+        }
+        strActive = "";
+        
+        item = gtk_menu_item_new_with_label (strName);
+        gtk_signal_connect (GTK_OBJECT (item), "activate", GTK_SIGNAL_FUNC (HandleCommand),
+          GINT_TO_POINTER (nID++));
+        gtk_widget_show (item);
+        gtk_menu_append (GTK_MENU (menu), item);
+      }
+    }
+  }
+
+  gtk_menu_popup (GTK_MENU (m_mnuDrop), NULL, NULL, NULL, NULL, 1, GDK_CURRENT_TIME);
 }
 
 /*
@@ -1046,513 +1654,546 @@ void XYWnd_OrientCamera(XYWnd* xywnd, int x, int y, CamWnd& camwnd)
 NewBrushDrag
 ==============
 */
-unsigned int NewBrushDrag_buttons()
+void XYWnd::NewBrushDrag (int x, int y)
 {
-  return RAD_LBUTTON;
-}
+  vec3_t    mins, maxs, junk;
+  int       i;
+  float temp;
+  brush_t   *n;
 
-void XYWnd::NewBrushDrag_Begin(int x, int y)
-{
-  m_NewBrushDrag = 0;
-  m_nNewBrushPressx = x;
-  m_nNewBrushPressy = y;
+  if (!DragDelta (x,y, junk))
+    return;
 
-  m_bNewBrushDrag = true;
-  GlobalUndoSystem().start();
-}
+  // delete the current selection
+  if (selected_brushes.next != &selected_brushes)
+    Brush_Free (selected_brushes.next);
+    
+  SnapToPoint (m_nPressx, m_nPressy, mins);
 
-void XYWnd::NewBrushDrag_End(int x, int y)
-{
-  if(m_NewBrushDrag != 0)
-  {
-    GlobalUndoSystem().finish("brushDragNew");
-  }
-}
+  int nDim = (m_nViewType == XY) ? 2 : (m_nViewType == YZ) ? 0 : 1;
 
-void XYWnd::NewBrushDrag(int x, int y)
-{
-  Vector3	mins, maxs;
-  XY_ToPoint(m_nNewBrushPressx, m_nNewBrushPressy, mins);
-  XY_SnapToGrid(mins);
-	XY_ToPoint(x, y, maxs);
-  XY_SnapToGrid(maxs);
+  //++timo clean
+//  mins[nDim] = g_qeglobals.d_gridsize * ((int)(g_qeglobals.d_new_brush_bottom_z / g_qeglobals.d_gridsize));
+  mins[nDim] = g_qeglobals.d_gridsize * ((int)(g_qeglobals.d_work_min[nDim]/g_qeglobals.d_gridsize));
 
-  int nDim = (m_viewType == XY) ? 2 : (m_viewType == YZ) ? 0 : 1;
-
-  mins[nDim] = float_snapped(Select_getWorkZone().d_work_min[nDim], GetGridSize());
-  maxs[nDim] = float_snapped(Select_getWorkZone().d_work_max[nDim], GetGridSize());
-
+    SnapToPoint (x, y, maxs);
+//  maxs[nDim] = g_qeglobals.d_gridsize * ((int)(g_qeglobals.d_new_brush_top_z / g_qeglobals.d_gridsize));
+  maxs[nDim] = g_qeglobals.d_gridsize * ((int)(g_qeglobals.d_work_max[nDim]/g_qeglobals.d_gridsize));
   if (maxs[nDim] <= mins[nDim])
-    maxs[nDim] = mins[nDim] + GetGridSize();
+    maxs[nDim] = mins[nDim] + g_qeglobals.d_gridsize;
 
-  for(int i=0 ; i<3 ; i++)
+  for (i=0 ; i<3 ; i++)
   {
     if (mins[i] == maxs[i])
-      return;	// don't create a degenerate brush
+      return;   // don't create a degenerate brush
     if (mins[i] > maxs[i])
     {
-      float	temp = mins[i];
+      temp = mins[i];
       mins[i] = maxs[i];
       maxs[i] = temp;
     }
   }
 
-  if(m_NewBrushDrag == 0)
-  {
-    NodeSmartReference node(GlobalBrushCreator().createBrush());
-    Node_getTraversable(Map_FindOrInsertWorldspawn(g_map))->insert(node);
-
-    scene::Path brushpath(makeReference(GlobalSceneGraph().root()));
-    brushpath.push(makeReference(*Map_GetWorldspawn(g_map)));
-    brushpath.push(makeReference(node.get()));
-    selectPath(brushpath, true);
-
-    m_NewBrushDrag = node.get_pointer();
-  }
-
-  // d1223m
-  //Scene_BrushResize_Selected(GlobalSceneGraph(), aabb_for_minmax(mins, maxs), TextureBrowser_GetSelectedShader(GlobalTextureBrowser()));
-  Scene_BrushResize_Selected(GlobalSceneGraph(), aabb_for_minmax(mins, maxs), 
-        g_brush_always_caulk ? 
-            "textures/common/caulk" : TextureBrowser_GetSelectedShader(GlobalTextureBrowser()));
-}
-
-void entitycreate_activated(GtkWidget* item)
-{
-  scene::Node* world_node = Map_FindWorldspawn(g_map);
-  const char* entity_name = gtk_label_get_text(GTK_LABEL(GTK_BIN(item)->child));
-
-  if(!(world_node && string_equal(entity_name, "worldspawn")))
-  {
-    g_pParentWnd->ActiveXY()->OnEntityCreate(entity_name);
-  } else {
-    GlobalRadiant().m_pfnMessageBox(GTK_WIDGET(MainFrame_getWindow()), "There's already a worldspawn in your map!"
-                                        "",
-                                        "Info",
-                                        eMB_OK,
-                                        eMB_ICONDEFAULT);
-  }
-}
-
-void EntityClassMenu_addItem(GtkMenu* menu, const char* name)
-{
-  GtkMenuItem* item = GTK_MENU_ITEM(gtk_menu_item_new_with_label(name));
-  g_signal_connect(G_OBJECT(item), "activate", G_CALLBACK(entitycreate_activated), item);
-  gtk_widget_show(GTK_WIDGET(item));
-  menu_add_item(menu, item);
-}
-
-class EntityClassMenuInserter : public EntityClassVisitor
-{
-  typedef std::pair<GtkMenu*, CopiedString> MenuPair;
-  typedef std::vector<MenuPair> MenuStack;
-  MenuStack m_stack;
-  CopiedString m_previous;
-public:
-  EntityClassMenuInserter(GtkMenu* menu)
-  {
-    m_stack.reserve(2);
-    m_stack.push_back(MenuPair(menu, ""));
-  }
-  ~EntityClassMenuInserter()
-  {
-    if(!string_empty(m_previous.c_str()))
-    {
-      addItem(m_previous.c_str(), "");
-    }
-  }
-  void visit(EntityClass* e)
-  {
-    ASSERT_MESSAGE(!string_empty(e->name()), "entity-class has no name");
-    if(!string_empty(m_previous.c_str()))
-    {
-      addItem(m_previous.c_str(), e->name());
-    }
-    m_previous = e->name();
-  }
-  void pushMenu(const CopiedString& name)
-  {
-    GtkMenuItem* item = GTK_MENU_ITEM(gtk_menu_item_new_with_label(name.c_str()));
-    gtk_widget_show(GTK_WIDGET(item));
-    container_add_widget(GTK_CONTAINER(m_stack.back().first), GTK_WIDGET(item));
-
-    GtkMenu* submenu = GTK_MENU(gtk_menu_new());
-    gtk_menu_item_set_submenu(item, GTK_WIDGET(submenu));
-
-    m_stack.push_back(MenuPair(submenu, name));
-  }
-  void popMenu()
-  {
-    m_stack.pop_back();
-  }
-  void addItem(const char* name, const char* next)
-  {
-    const char* underscore = strchr(name, '_');
-
-    if(underscore != 0 && underscore != name)
-    {
-      bool nextEqual = string_equal_n(name, next, (underscore + 1) - name);
-      const char* parent = m_stack.back().second.c_str();
-
-      if(!string_empty(parent)
-        && string_length(parent) == std::size_t(underscore - name)
-        && string_equal_n(name, parent, underscore - name)) // this is a child
-      {
-      }
-      else if(nextEqual)
-      {
-        if(m_stack.size() == 2)
-        {
-          popMenu();
-        }
-        pushMenu(CopiedString(StringRange(name, underscore)));
-      }
-      else if(m_stack.size() == 2)
-      {
-        popMenu();
-      }
-    }
-    else if(m_stack.size() == 2)
-    {
-      popMenu();
-    }
-
-    EntityClassMenu_addItem(m_stack.back().first, name);
-  }
-};
-
-void XYWnd::OnContextMenu()
-{
-  if (g_xywindow_globals.m_bRightClick == false)
+  n = Brush_Create (mins, maxs, &g_qeglobals.d_texturewin.texdef);
+  if (!n)
     return;
 
-  if (m_mnuDrop == 0) // first time, load it up
+  vec3_t vSize;
+  VectorSubtract(maxs, mins, vSize);
+  g_strStatus.Format("Size X:: %.1f  Y:: %.1f  Z:: %.1f", vSize[0], vSize[1], vSize[2]);
+  g_pParentWnd->SetStatusText(2, g_strStatus);
+
+  Brush_AddToList (n, &selected_brushes);
+
+  Entity_LinkBrush (world_entity, n);
+
+  Brush_Build( n );
+
+  //    Sys_UpdateWindows (W_ALL);
+  Sys_UpdateWindows (W_XY| W_CAMERA);
+
+}
+
+/*
+==============
+XY_MouseMoved
+==============
+*/
+void XYWnd::XY_MouseMoved (int x, int y, int buttons)
+{
+  vec3_t point;
+
+  if (!m_nButtonstate)
   {
-    GtkMenu* menu = m_mnuDrop = GTK_MENU(gtk_menu_new());
-
-    EntityClassMenuInserter inserter(menu);
-    GlobalEntityClassManager().forEach(inserter);
-  }
-
-  gtk_menu_popup(m_mnuDrop, 0, 0, 0, 0, 1, GDK_CURRENT_TIME);
-}
-
-FreezePointer g_xywnd_freezePointer;
-
-unsigned int Move_buttons()
-{
-  return RAD_RBUTTON;
-}
-
-void XYWnd_moveDelta(int x, int y, unsigned int state, void* data)
-{
-  reinterpret_cast<XYWnd*>(data)->EntityCreate_MouseMove(x, y);
-  reinterpret_cast<XYWnd*>(data)->Scroll(-x, y);
-}
-
-gboolean XYWnd_Move_focusOut(GtkWidget* widget, GdkEventFocus* event, XYWnd* xywnd)
-{
-  xywnd->Move_End();
-  return FALSE;
-}
-
-void XYWnd::Move_Begin()
-{
-  if(m_move_started)
-  {
-    Move_End();
-  }
-  m_move_started = true;
-  g_xywnd_freezePointer.freeze_pointer(m_parent != 0 ? m_parent : MainFrame_getWindow(), XYWnd_moveDelta, this);
-  m_move_focusOut = g_signal_connect(G_OBJECT(m_gl_widget), "focus_out_event", G_CALLBACK(XYWnd_Move_focusOut), this);
-}
-
-void XYWnd::Move_End()
-{
-  m_move_started = false;
-  g_xywnd_freezePointer.unfreeze_pointer(m_parent != 0 ? m_parent : MainFrame_getWindow());
-  g_signal_handler_disconnect(G_OBJECT(m_gl_widget), m_move_focusOut);
-}
-
-unsigned int Zoom_buttons()
-{
-  return RAD_RBUTTON | RAD_SHIFT;
-}
-
-int g_dragZoom = 0;
-
-void XYWnd_zoomDelta(int x, int y, unsigned int state, void* data)
-{
-  if(y != 0)
-  {
-    g_dragZoom += y;
-
-    while(abs(g_dragZoom) > 8)
+    if (g_bCrossHairs)
     {
-      if(g_dragZoom > 0)
+      Sys_UpdateWindows (W_XY | W_XY_OVERLAY);
+    }
+    return;
+  }
+
+  // lbutton without selection = drag new brush
+  if (m_nButtonstate == MK_LBUTTON && !m_bPress_selection && g_qeglobals.d_select_mode != sel_curvepoint && g_qeglobals.d_select_mode != sel_areatall)
+  {
+    NewBrushDrag (x, y);
+    return;
+  }
+
+  // lbutton (possibly with control and or shift)
+  // with selection = drag selection
+  if (m_nButtonstate & MK_LBUTTON)
+  {
+    Drag_MouseMoved (x, y, buttons);
+    if(g_qeglobals.d_select_mode != sel_area)
+      Sys_UpdateWindows (W_XY_OVERLAY | W_CAMERA_IFON | W_Z);
+    return;
+  }
+
+  int nMouseButton = g_PrefsDlg.m_nMouseButtons == 2 ? MK_RBUTTON : MK_MBUTTON;
+  // control mbutton = move camera
+  if (m_nButtonstate == (MK_CONTROL|nMouseButton) )
+  {
+    SnapToPoint (x, y, point);
+    VectorCopyXY(point, g_pParentWnd->GetCamWnd()->Camera()->origin);
+    Sys_UpdateWindows (W_XY_OVERLAY | W_CAMERA);
+    return;
+  }
+
+  // shift mbutton = move z checker
+  if (m_nButtonstate == (MK_SHIFT|nMouseButton) )
+  {
+    if (RotateMode() || g_bPatchBendMode)
+    {
+      SnapToPoint (x, y, point);
+      VectorCopyXY(point, g_vRotateOrigin);
+      if (g_bPatchBendMode)
       {
-        XYWnd_ZoomOut(reinterpret_cast<XYWnd*>(data));
-        g_dragZoom -= 8;
+        VectorCopy(point, g_vBendOrigin);
+      }
+      Sys_UpdateWindows (W_XY);
+      return;
+    }
+    else
+    {
+      SnapToPoint (x, y, point);
+      if (m_nViewType == XY)
+      {
+        z.origin[0] = point[0];
+        z.origin[1] = point[1];
+      }
+      else if (m_nViewType == YZ)
+      {
+        z.origin[0] = point[1];
+        z.origin[1] = point[2];
       }
       else
       {
-        XYWnd_ZoomIn(reinterpret_cast<XYWnd*>(data));
-        g_dragZoom += 8;
+        z.origin[0] = point[0];
+        z.origin[1] = point[2];
       }
     }
-  }
-}
-
-gboolean XYWnd_Zoom_focusOut(GtkWidget* widget, GdkEventFocus* event, XYWnd* xywnd)
-{
-  xywnd->Zoom_End();
-  return FALSE;
-}
-
-void XYWnd::Zoom_Begin()
-{
-  if(m_zoom_started)
-  {
-    Zoom_End();
-  }
-  m_zoom_started = true;
-  g_dragZoom = 0;
-  g_xywnd_freezePointer.freeze_pointer(m_parent != 0 ? m_parent : MainFrame_getWindow(), XYWnd_zoomDelta, this);
-  m_zoom_focusOut = g_signal_connect(G_OBJECT(m_gl_widget), "focus_out_event", G_CALLBACK(XYWnd_Zoom_focusOut), this);
-}
-
-void XYWnd::Zoom_End()
-{
-  m_zoom_started = false;
-  g_xywnd_freezePointer.unfreeze_pointer(m_parent != 0 ? m_parent : MainFrame_getWindow());
-  g_signal_handler_disconnect(G_OBJECT(m_gl_widget), m_zoom_focusOut);
-}
-
-// makes sure the selected brush or camera is in view
-void XYWnd::PositionView(const Vector3& position)
-{
-  int nDim1 = (m_viewType == YZ) ? 1 : 0;
-  int nDim2 = (m_viewType == XY) ? 1 : 2;
-
-  m_vOrigin[nDim1] = position[nDim1];
-  m_vOrigin[nDim2] = position[nDim2];
-
-  updateModelview();
-
-  XYWnd_Update(*this);
-}
-
-void XYWnd::SetViewType(VIEWTYPE viewType)
-{
-  m_viewType = viewType; 
-  updateModelview();
-
-  if(m_parent != 0)
-  {
-    gtk_window_set_title(m_parent, ViewType_getTitle(m_viewType));
-  }
-}
-
-
-inline WindowVector WindowVector_forInteger(int x, int y)
-{
-  return WindowVector(static_cast<float>(x), static_cast<float>(y));
-}
-
-void XYWnd::mouseDown(const WindowVector& position, ButtonIdentifier button, ModifierFlags modifiers)
-{
-  XY_MouseDown(static_cast<int>(position.x()), static_cast<int>(position.y()), buttons_for_button_and_modifiers(button, modifiers));
-}
-void XYWnd::XY_MouseDown (int x, int y, unsigned int buttons)
-{
-  if(buttons == Move_buttons())
-  {
-    Move_Begin();
-    EntityCreate_MouseDown(x, y);
-  }
-  else if(buttons == Zoom_buttons())
-  {
-    Zoom_Begin();
-  }
-  else if(ClipMode() && buttons == Clipper_buttons())
-  {
-    Clipper_OnLButtonDown(x, y);
-  }
-  else if(buttons == NewBrushDrag_buttons() && GlobalSelectionSystem().countSelected() == 0)
-  {
-    NewBrushDrag_Begin(x, y);
-  }
-  // control mbutton = move camera
-  else if (buttons == MoveCamera_buttons())
-  {
-    XYWnd_PositionCamera(this, x, y, *g_pParentWnd->GetCamWnd());
-  }
-  // mbutton = angle camera
-  else if(buttons == OrientCamera_buttons())
-  {	
-    XYWnd_OrientCamera(this, x, y, *g_pParentWnd->GetCamWnd());
-  }
-  else
-  {
-    m_window_observer->onMouseDown(WindowVector_forInteger(x, y), button_for_flags(buttons), modifiers_for_flags(buttons));
-  }
-}
-
-void XYWnd::XY_MouseUp(int x, int y, unsigned int buttons)
-{
-  if(m_move_started)
-  {
-    Move_End();
-    EntityCreate_MouseUp(x, y);
-  }
-  else if(m_zoom_started)
-  {
-    Zoom_End();
-  }
-  else if (ClipMode() && buttons == Clipper_buttons())
-  {
-    Clipper_OnLButtonUp(x, y);
-  }
-  else if (m_bNewBrushDrag)
-  {
-    m_bNewBrushDrag = false;
-    NewBrushDrag_End(x, y);
-  }
-  else
-  {
-    m_window_observer->onMouseUp(WindowVector_forInteger(x, y), button_for_flags(buttons), modifiers_for_flags(buttons));
-  }
-}
-
-void XYWnd::XY_MouseMoved (int x, int y, unsigned int buttons)
-{
-  // rbutton = drag xy origin
-  if(m_move_started)
-  {
-  }
-  // zoom in/out
-  else if(m_zoom_started)
-  {
-  }
-
-  else if (ClipMode() && g_pMovingClip != 0)
-  {
-    Clipper_OnMouseMoved(x, y);
-  }
-  // lbutton without selection = drag new brush
-  else if (m_bNewBrushDrag)
-  {
-    NewBrushDrag(x, y);
-  }
-
-  // control mbutton = move camera
-  else if (getButtonState() == MoveCamera_buttons())
-  {
-    XYWnd_PositionCamera(this, x, y, *g_pParentWnd->GetCamWnd());
+    Sys_UpdateWindows (W_XY_OVERLAY|W_Z);
+    return;
   }
 
   // mbutton = angle camera
-  else if (getButtonState() == OrientCamera_buttons())
-  {	
-    XYWnd_OrientCamera(this, x, y, *g_pParentWnd->GetCamWnd());
-  }
-
-  else
+  if ((g_PrefsDlg.m_nMouseButtons == 3 && m_nButtonstate == MK_MBUTTON) ||
+      (g_PrefsDlg.m_nMouseButtons == 2 && m_nButtonstate == (MK_SHIFT|MK_CONTROL|MK_RBUTTON)))
   {
-    m_window_observer->onMouseMotion(WindowVector_forInteger(x, y), modifiers_for_flags(buttons));
+    SnapToPoint (x, y, point);
+    VectorSubtract (point, g_pParentWnd->GetCamWnd()->Camera()->origin, point);
 
-    m_mousePosition[0] = m_mousePosition[1] = m_mousePosition[2] = 0.0;
-    XY_ToPoint(x, y , m_mousePosition);
-    XY_SnapToGrid(m_mousePosition);
-
-    StringOutputStream status(64);
-    status << "x:: " << FloatFormat(m_mousePosition[0], 6, 1)
-      << "  y:: " << FloatFormat(m_mousePosition[1], 6, 1)
-      << "  z:: " << FloatFormat(m_mousePosition[2], 6, 1);
-    g_pParentWnd->SetStatusText(g_pParentWnd->m_position_status, status.c_str());
-
-    if (g_bCrossHairs)
+    int n1 = (m_nViewType == XY) ? 1 : 2;
+    int n2 = (m_nViewType == YZ) ? 1 : 0;
+    int nAngle = (m_nViewType == XY) ? YAW : PITCH;
+    if (point[n1] || point[n2])
     {
-      XYWnd_Update(*this);
+      g_pParentWnd->GetCamWnd()->Camera()->angles[nAngle] = 180/Q_PI*atan2 (point[n1], point[n2]);
+      Sys_UpdateWindows (W_CAMERA_IFON|W_XY_OVERLAY);
     }
-
-    Clipper_Crosshair_OnMouseMoved(x, y);
+    return;
   }
-}
 
-void XYWnd::EntityCreate_MouseDown(int x, int y)
-{
-  m_entityCreate = true;
-  m_entityCreate_x = x;
-  m_entityCreate_y = y;
-}
-
-void XYWnd::EntityCreate_MouseMove(int x, int y)
-{
-  if(m_entityCreate && (m_entityCreate_x != x || m_entityCreate_y != y))
+  // rbutton = drag xy origin
+  if (m_nButtonstate == MK_RBUTTON)
   {
-    m_entityCreate = false;
-  }
-}
+    Sys_GetCursorPos (&x, &y);
+    if (x != m_ptCursorX || y != m_ptCursorY)
+    {
+      int nDim1 = (m_nViewType == YZ) ? 1 : 0;
+      int nDim2 = (m_nViewType == XY) ? 1 : 2;
+      m_vOrigin[nDim1] -= (x - m_ptCursorX) / m_fScale;
+      m_vOrigin[nDim2] += (y - m_ptCursorY) / m_fScale;
+      Sys_SetCursorPos (m_ptCursorX, m_ptCursorY);
 
-void XYWnd::EntityCreate_MouseUp(int x, int y)
-{
-  if(m_entityCreate)
+      // create an empty cursor
+      if (!g_bWaitCursor)
+      {
+        GdkPixmap *pixmap;
+        GdkBitmap *mask;
+        char buffer [(32 * 32)/8];
+        memset (buffer, 0, (32 * 32)/8);
+        GdkColor white = {0, 0xffff, 0xffff, 0xffff};
+        GdkColor black = {0, 0x0000, 0x0000, 0x0000};
+        pixmap = gdk_bitmap_create_from_data (NULL, buffer, 32, 32);
+        mask   = gdk_bitmap_create_from_data (NULL, buffer, 32, 32);
+        GdkCursor *cursor = gdk_cursor_new_from_pixmap (pixmap, mask, &white, &black, 1, 1);
+        gdk_window_set_cursor (m_pWidget->window, cursor);
+        gdk_cursor_unref (cursor);
+        gdk_drawable_unref (pixmap);
+        gdk_drawable_unref (mask);
+      }
+
+      Sys_UpdateWindows (W_XY | W_XY_OVERLAY);
+    }
+    return;
+  }
+
+  // zoom in/out
+  if (m_nButtonstate == (MK_SHIFT | MK_RBUTTON))
   {
-    m_entityCreate = false;
-    OnContextMenu();
+    Sys_GetCursorPos (&x, &y);
+    if (y != m_ptCursorY)
+    {
+      if (abs (m_ptCursorY - y) > 10)
+      {
+        if (m_ptCursorY < y)
+          g_pParentWnd->OnViewZoomout ();
+        else
+          g_pParentWnd->OnViewZoomin ();
+        
+        Sys_SetCursorPos (m_ptCursorX, m_ptCursorY);
+      }
+    }
+    return;
   }
 }
 
-inline float screen_normalised(int pos, unsigned int size)
+void XYWnd::OriginalButtonDown(guint32 nFlags, int pointx, int pointy)
 {
-  return ((2.0f * pos) / size) - 1.0f;
+  SetFocus();
+  SetCapture();
+  XY_MouseDown (pointx, m_pWidget->allocation.height - 1 - pointy , nFlags);
+  m_nScrollFlags = nFlags;
 }
 
-inline float normalised_to_world(float normalised, float world_origin, float normalised2world_scale)
+void XYWnd::OriginalButtonUp(guint32 nFlags, int pointx, int pointy)
 {
-  return world_origin + normalised * normalised2world_scale;
+  XY_MouseUp (pointx, m_pWidget->allocation.height - 1 - pointy , nFlags);
+  ReleaseCapture ();
 }
 
+void XYWnd::DropClipPoint(guint32 nFlags, int pointx, int pointy)
+{
+  if (g_pMovingClip)
+  {
+    SetCapture();
+    SnapToPoint (pointx, m_pWidget->allocation.height - 1 - pointy , *g_pMovingClip);
+  }
+  else
+  {
+    vec3_t* pPt = NULL;
+    if (g_Clip1.Set() == false)
+    {
+      pPt = g_Clip1;
+      g_Clip1.Set(true);
+      g_Clip1.m_ptScreenX = pointx;
+      g_Clip1.m_ptScreenY = pointy;
+    }
+    else 
+    if (g_Clip2.Set() == false)
+    {
+      pPt = g_Clip2;
+      g_Clip2.Set(true);
+      g_Clip2.m_ptScreenX = pointx;
+      g_Clip2.m_ptScreenY = pointy;
+    }
+    else 
+    if (g_Clip3.Set() == false)
+    {
+      pPt = g_Clip3;
+      g_Clip3.Set(true);
+      g_Clip3.m_ptScreenX = pointx;
+      g_Clip3.m_ptScreenY = pointy;
+    }
+    else 
+    {
+      RetainClipMode(true);
+      pPt = g_Clip1;
+      g_Clip1.Set(true);
+      g_Clip1.m_ptScreenX = pointx;
+      g_Clip1.m_ptScreenY = pointy;
+    }
+    SnapToPoint (pointx, m_pWidget->allocation.height - 1 - pointy , *pPt);
+    // third coordinates for clip point: use d_work_max
+    // Arnout: changed to use center of selection for clipping, saves level designers moving points all over the map
+    // g_pParentWnd->ActiveXY()->GetViewType()
+    // cf VIEWTYPE defintion: enum VIEWTYPE {YZ, XZ, XY};
+    int nViewType = g_pParentWnd->ActiveXY()->GetViewType();
+    int nDim = (nViewType == YZ ) ? nDim = 0 : ( (nViewType == XZ) ? nDim = 1 : nDim = 2 );
+    //(*pPt)[nDim] = g_qeglobals.d_work_max[nDim];
+    vec3_t mid;
+    Select_GetMid( mid );
+    (*pPt)[nDim] = mid[nDim];
+  }
+  Sys_UpdateWindows(XY | W_CAMERA_IFON);
+}
+
+void XYWnd::DropPathPoint(guint32 nFlags, int pointx, int pointy)
+{
+  if (g_pMovingPath)
+  {
+    SetCapture();
+    SnapToPoint (pointx, m_pWidget->allocation.height - 1 - pointy , *g_pMovingPath);
+  }
+  else
+  {
+    g_PathPoints[g_nPathCount].Set(true);
+    g_PathPoints[g_nPathCount].m_ptScreenX = pointx;
+    g_PathPoints[g_nPathCount].m_ptScreenY = pointy;
+    SnapToPoint(pointx, m_pWidget->allocation.height - 1 - pointy, g_PathPoints[g_nPathCount]);
+    // third coordinates for dropped point: use d_work_max
+    // g_pParentWnd->ActiveXY()->GetViewType()
+    // cf VIEWTYPE definition: enum VIEWTYPE {YZ, XZ, XY};
+    int nViewType = g_pParentWnd->ActiveXY()->GetViewType();
+    int nDim = (nViewType == YZ ) ? nDim = 0 : ( (nViewType == XZ) ? nDim = 1 : nDim = 2 );
+    g_PathPoints[g_nPathCount].m_ptClip[nDim] = g_qeglobals.d_work_max[nDim];
+
+    g_nPathCount++;
+    if (g_nPathCount == g_nPathLimit)
+    {
+      if (g_pPathFunc)
+        g_pPathFunc(true, g_nPathCount);
+      g_nPathCount = 0;
+      g_bPathMode = false;
+      g_pPathFunc = NULL;
+    }
+  }
+  Sys_UpdateWindows(XY | W_CAMERA_IFON);
+}
+
+// FIXME: AddPointPoint() redundant function never called
+#if 0
+void XYWnd::AddPointPoint(guint32 nFlags, vec3_t* pVec)
+{
+  g_PointPoints[g_nPointCount].Set(true);
+  //g_PointPoints[g_nPointCount].m_ptScreen = point;
+  _VectorCopy(*pVec, g_PointPoints[g_nPointCount]);
+  g_PointPoints[g_nPointCount].SetPointPtr(pVec);
+  g_nPointCount++;
+  Sys_UpdateWindows(XY | W_CAMERA_IFON);
+}
+
+// FIXME: ProduceSplits() redundant function never called
+void XYWnd::ProduceSplits(brush_t** pFront, brush_t** pBack)
+{
+  *pFront = NULL;
+  *pBack = NULL;
+  if (ClipMode())
+  {
+    if (g_Clip1.Set() && g_Clip2.Set())
+    {
+      face_t face;
+      VectorCopy(g_Clip1.m_ptClip,face.planepts[0]);
+      VectorCopy(g_Clip2.m_ptClip,face.planepts[1]);
+      VectorCopy(g_Clip3.m_ptClip,face.planepts[2]);
+      if (selected_brushes.next && (selected_brushes.next->next == &selected_brushes))
+      {
+        if (g_Clip3.Set() == false)
+        {
+          if (m_nViewType == XY)
+          {
+            face.planepts[0][2] = selected_brushes.next->mins[2];
+            face.planepts[1][2] = selected_brushes.next->mins[2];
+            face.planepts[2][0] = Betwixt(g_Clip1.m_ptClip[0], g_Clip2.m_ptClip[0]);
+            face.planepts[2][1] = Betwixt(g_Clip1.m_ptClip[1], g_Clip2.m_ptClip[1]);
+            face.planepts[2][2] = selected_brushes.next->maxs[2];
+          }
+          else if (m_nViewType == YZ)
+          {
+            face.planepts[0][0] = selected_brushes.next->mins[0];
+            face.planepts[1][0] = selected_brushes.next->mins[0];
+            face.planepts[2][1] = Betwixt(g_Clip1.m_ptClip[1], g_Clip2.m_ptClip[1]);
+            face.planepts[2][2] = Betwixt(g_Clip1.m_ptClip[2], g_Clip2.m_ptClip[2]);
+            face.planepts[2][0] = selected_brushes.next->maxs[0];
+          }
+          else
+          {
+            face.planepts[0][1] = selected_brushes.next->mins[1];
+            face.planepts[1][1] = selected_brushes.next->mins[1];
+            face.planepts[2][0] = Betwixt(g_Clip1.m_ptClip[0], g_Clip2.m_ptClip[0]);
+            face.planepts[2][2] = Betwixt(g_Clip1.m_ptClip[2], g_Clip2.m_ptClip[2]);
+            face.planepts[2][1] = selected_brushes.next->maxs[1];
+          }
+        }
+
+        Brush_SplitBrushByFace (selected_brushes.next, &face, pFront, pBack);
+      }
+
+    }
+  }
+}
+#endif
+
+void XYWnd::PlanePointsFromClipPoints(vec3_t planepts[3], brush_t *pBrush)
+{
+  VectorCopy(g_Clip1.m_ptClip,planepts[0]);
+	VectorCopy(g_Clip2.m_ptClip,planepts[1]);
+	VectorCopy(g_Clip3.m_ptClip,planepts[2]);
+	if (g_Clip3.Set() == false)
+	{
+		int n = (g_pParentWnd->ActiveXY()->GetViewType() == XY) ? 2 : (g_pParentWnd->ActiveXY()->GetViewType() == YZ) ? 0 : 1;
+		int x = (n == 0) ? 1 : 0;
+		int y = (n == 2) ? 1 : 2;
+		
+		if (n == 1) // on viewtype XZ, flip clip points
+		{
+		planepts[0][n] = pBrush->maxs[n];
+		planepts[1][n] = pBrush->maxs[n];
+		planepts[2][x] = g_Clip1.m_ptClip[x];
+		planepts[2][y] = g_Clip1.m_ptClip[y];
+		planepts[2][n] = pBrush->mins[n];
+		}
+		else
+		{
+		planepts[0][n] = pBrush->mins[n];
+		planepts[1][n] = pBrush->mins[n];
+		planepts[2][x] = g_Clip1.m_ptClip[x];
+		planepts[2][y] = g_Clip1.m_ptClip[y];
+		planepts[2][n] = pBrush->maxs[n];
+		}
+	}
+}
+
+void XYWnd::ProduceSplitLists()
+{
+	bool bCaulk = false;
+  int nFlags;
+	
+	if (AnyPatchesSelected())
+	{
+		Sys_Printf("Deselecting patches for clip operation.\n");
+		brush_t *next;
+		for (brush_t *pb = selected_brushes.next ; pb != &selected_brushes ; pb = next)
+		{
+			next = pb->next;
+			if (pb->patchBrush)
+			{
+				Brush_RemoveFromList (pb);
+				Brush_AddToList (pb, &active_brushes);
+				UpdatePatchInspector();
+			}
+		}
+        // ydnar: update the window if any patches are selected
+        Sys_UpdateWindows( XY | W_CAMERA_IFON );
+	}
+	
+	CleanList(&g_brFrontSplits);
+	CleanList(&g_brBackSplits);
+	g_brFrontSplits.next = &g_brFrontSplits;
+	g_brBackSplits.next = &g_brBackSplits;
+	if (ClipMode() && (g_Clip1.Set() && g_Clip2.Set()))
+	{
+		brush_t* pBrush;
+		for (pBrush = selected_brushes.next ; pBrush != NULL && pBrush != &selected_brushes ; pBrush=pBrush->next)
+		{
+			brush_t* pFront = NULL;
+			brush_t* pBack = NULL;
+			
+			face_t face;
+			memset(&face,0,sizeof(face_t));
+      PlanePointsFromClipPoints(face.planepts, pBrush);
+
+			// decide wether caulking should be applied on the splits
+      // FIXME: hack
+      // this should take the first brush face, check shader for NODRAW, if it isn't nodraw then find the appropriate
+      // common/ shader to use, out of solid+nodraw, nonsolid+nodraw, water+nodraw, lava+nodraw, nonsolid+nodraw+trans, water+nodraw+trans, lava+nodraw+trans.. and fog.. etc
+      // or if none of those apply (unlikely), construct a new shader (shadername_nodraw) based on the shader of the first face, but with surfaceparm nodraw
+			if (g_PrefsDlg.m_bClipCaulk)
+			{
+        nFlags = pBrush->brush_faces->pShader->getFlags();
+			  if ((nFlags & QER_NODRAW) || (nFlags & QER_NONSOLID) || (nFlags & QER_WATER) || (nFlags & QER_LAVA) || (nFlags & QER_FOG)) // first face shader is anything other than solid AND opaque like caulk
+					bCaulk = false; // use first face's shader for the splitting face
+				else
+					bCaulk = true; // use caulk
+			}
+
+			Brush_SplitBrushByFace (pBrush, &face, &pFront, &pBack, bCaulk);
+			if (pBack)
+				Brush_AddToList(pBack, &g_brBackSplits);
+			if (pFront)
+				Brush_AddToList(pFront, &g_brFrontSplits);
+			
+		}
+	}
+}
+
+void XYWnd::XY_Init()
+{
+  m_vOrigin[0] = 0;
+  m_vOrigin[1] = 20;
+  m_vOrigin[2] = 46;
+  m_fScale = 1;
+}
+
+void XYWnd::SnapToPoint (int x, int y, vec3_t point)
+{
+  if (g_PrefsDlg.m_bNoClamp)
+  {
+    XY_ToPoint(x, y, point);
+  }
+  else
+  {
+    XY_ToGridPoint(x, y, point);
+  }
+}
 
 // TTimo: watch it, this doesn't init one of the 3 coords
-void XYWnd::XY_ToPoint (int x, int y, Vector3& point)
+void XYWnd::XY_ToPoint (int x, int y, vec3_t point)
 {
-  float normalised2world_scale_x = m_nWidth / 2 / m_fScale;
-  float normalised2world_scale_y = m_nHeight / 2 / m_fScale;
-  if (m_viewType == XY)
+  float fx = x;
+  float fy = y;
+  float fw = m_nWidth;
+  float fh = m_nHeight;
+  if (m_nViewType == XY)
   {
-    point[0] = normalised_to_world(screen_normalised(x, m_nWidth), m_vOrigin[0], normalised2world_scale_x);
-    point[1] = normalised_to_world(-screen_normalised(y, m_nHeight), m_vOrigin[1], normalised2world_scale_y);
+    point[0] = m_vOrigin[0] + (fx - fw / 2) / m_fScale;
+    point[1] = m_vOrigin[1] + (fy - fh / 2) / m_fScale;
   }
-  else if (m_viewType == YZ)
+  else if (m_nViewType == YZ)
   {
-    point[1] = normalised_to_world(screen_normalised(x, m_nWidth), m_vOrigin[1], normalised2world_scale_x);
-    point[2] = normalised_to_world(-screen_normalised(y, m_nHeight), m_vOrigin[2], normalised2world_scale_y);
+    point[1] = m_vOrigin[1] + (fx - fw / 2) / m_fScale;
+    point[2] = m_vOrigin[2] + (fy - fh / 2 ) / m_fScale;
   }
   else
   {
-    point[0] = normalised_to_world(screen_normalised(x, m_nWidth), m_vOrigin[0], normalised2world_scale_x);
-    point[2] = normalised_to_world(-screen_normalised(y, m_nHeight), m_vOrigin[2], normalised2world_scale_y);
+    point[0] = m_vOrigin[0] + (fx - fw / 2) / m_fScale;
+    point[2] = m_vOrigin[2] + (fy - fh / 2) / m_fScale;
   }
 }
 
-void XYWnd::XY_SnapToGrid(Vector3& point)
+void XYWnd::XY_ToGridPoint (int x, int y, vec3_t point)
 {
-  if (m_viewType == XY)
+  if (m_nViewType == XY)
   {
-    point[0] = float_snapped(point[0], GetGridSize());
-    point[1] = float_snapped(point[1], GetGridSize());
+    point[0] = m_vOrigin[0] + (x - m_nWidth / 2) / m_fScale;
+    point[1] = m_vOrigin[1] + (y - m_nHeight / 2) / m_fScale;
+    point[0] = floor(point[0] / g_qeglobals.d_gridsize + 0.5) * g_qeglobals.d_gridsize;
+    point[1] = floor(point[1] / g_qeglobals.d_gridsize + 0.5) * g_qeglobals.d_gridsize;
   }
-  else if (m_viewType == YZ)
+  else if (m_nViewType == YZ)
   {
-    point[1] = float_snapped(point[1], GetGridSize());
-    point[2] = float_snapped(point[2], GetGridSize());
+    point[1] = m_vOrigin[1] + (x - m_nWidth / 2) / m_fScale;
+    point[2] = m_vOrigin[2] + (y - m_nHeight / 2) / m_fScale;
+    point[1] = floor(point[1] / g_qeglobals.d_gridsize + 0.5) * g_qeglobals.d_gridsize;
+    point[2] = floor(point[2] / g_qeglobals.d_gridsize + 0.5) * g_qeglobals.d_gridsize;
   }
   else
   {
-    point[0] = float_snapped(point[0], GetGridSize());
-    point[2] = float_snapped(point[2], GetGridSize());
+    point[0] = m_vOrigin[0] + (x - m_nWidth / 2) / m_fScale;
+    point[2] = m_vOrigin[2] + (y - m_nHeight / 2) / m_fScale;
+    point[0] = floor(point[0] / g_qeglobals.d_gridsize + 0.5) * g_qeglobals.d_gridsize;
+    point[2] = floor(point[2] / g_qeglobals.d_gridsize + 0.5) * g_qeglobals.d_gridsize;
   }
 }
 
@@ -1569,52 +2210,46 @@ DRAWING
 XY_DrawGrid
 ==============
 */
-
-double two_to_the_power(int power)
-{
-  return pow(2.0f, power);
-}
-
 void XYWnd::XY_DrawGrid()
 {
-  float	x, y, xb, xe, yb, ye;
-  float		w, h;
-  char	text[32];
-  float step, minor_step, stepx, stepy;
-  step = minor_step = stepx = stepy = GetGridSize();
-  
-  int minor_power = Grid_getPower();
-  int mask;
+  float x, y, xb, xe, yb, ye;
+  float w, h;
+  char  text[32];
+  int   step, stepx, stepy, colour;
+  step = stepx = stepy = MAX (64, (int)g_qeglobals.d_gridsize);
 
-  while((minor_step * m_fScale) <= 4.0f) // make sure minor grid spacing is at least 4 pixels on the screen
+  /*
+  int stepSize = (int)(8 / m_fScale);
+  if (stepSize > step)
   {
-    ++minor_power;
-    minor_step *= 2;
+    int i;
+    for (i = 1; i < stepSize; i <<= 1)
+      ;
+    step = i;
   }
-  int power = minor_power;
-  while((power % 3) != 0 || (step * m_fScale) <= 32.0f) // make sure major grid spacing is at least 32 pixels on the screen
-  {
-    ++power;
-    step = float(two_to_the_power(power));
-  }
-  mask = (1 << (power - minor_power)) - 1;
-  while ((stepx * m_fScale) <= 32.0f) // text step x must be at least 32
+  */
+
+  //Sys_Printf("scale: %f\n", m_fScale);
+  //Sys_Printf("step before: %i\n", step);
+  //Sys_Printf("scaled step: %f\n", step * m_fScale);
+  while ((step * m_fScale) < 4.0f) // make sure major grid spacing is at least 4 pixels on the screen
+    step *= 8;
+  //Sys_Printf("step after: %i\n", step);
+  while ((stepx * m_fScale) < 32.0f) // text step x must be at least 32
     stepx *= 2;
-  while ((stepy * m_fScale) <= 32.0f) // text step y must be at least 32
+  while ((stepy * m_fScale) < 32.0f) // text step y must be at least 32
     stepy *= 2;
-  
 
-  glDisable(GL_TEXTURE_2D);
-  glDisable(GL_TEXTURE_1D);
-  glDisable(GL_DEPTH_TEST);
-  glDisable(GL_BLEND);
-  glLineWidth(1);
+  qglDisable(GL_TEXTURE_2D);
+  qglDisable(GL_TEXTURE_1D);
+  qglDisable(GL_DEPTH_TEST);
+  qglDisable(GL_BLEND);
 
   w = (m_nWidth / 2 / m_fScale);
   h = (m_nHeight / 2 / m_fScale);
 
-  int nDim1 = (m_viewType == YZ) ? 1 : 0;
-  int nDim2 = (m_viewType == XY) ? 1 : 2;
+  int nDim1 = (m_nViewType == YZ) ? 1 : 0;
+  int nDim2 = (m_nViewType == XY) ? 1 : 2;
 
   xb = m_vOrigin[nDim1] - w;
   if (xb < region_mins[nDim1])
@@ -1637,142 +2272,153 @@ void XYWnd::XY_DrawGrid()
   ye = step * ceil (ye/step);
 
 #define COLORS_DIFFER(a,b) \
-  ((a)[0] != (b)[0] || \
-   (a)[1] != (b)[1] || \
-   (a)[2] != (b)[2])
+  (g_qeglobals.d_savedinfo.colors[a][0] != g_qeglobals.d_savedinfo.colors[b][0] || \
+   g_qeglobals.d_savedinfo.colors[a][1] != g_qeglobals.d_savedinfo.colors[b][1] || \
+   g_qeglobals.d_savedinfo.colors[a][2] != g_qeglobals.d_savedinfo.colors[b][2])
 
   // djbob
   // draw minor blocks
-  if (g_xywindow_globals_private.d_showgrid)
+  if (m_fScale > .1 && g_qeglobals.d_showgrid && g_qeglobals.d_gridsize * m_fScale >= 4)
   {
-    if (COLORS_DIFFER(g_xywindow_globals.color_gridminor, g_xywindow_globals.color_gridback))
+    if (g_qeglobals.d_gridsize < 1)
+      colour = COLOR_GRIDMINOR_ALT;
+    else
+      colour = COLOR_GRIDMINOR;
+
+    if (COLORS_DIFFER(colour, COLOR_GRIDBACK))
     {
-      glColor3fv(vector3_to_array(g_xywindow_globals.color_gridminor));
+      qglColor3fv(g_qeglobals.d_savedinfo.colors[colour]);
 
-      glBegin (GL_LINES);
-      int i = 0;
-      for (x = xb ; x < xe ; x += minor_step, ++i)
+      qglBegin (GL_LINES);
+      for (x=xb ; x<xe ; x += g_qeglobals.d_gridsize)
       {
-        if((i & mask) != 0)
-        {
-          glVertex2f (x, yb);
-          glVertex2f (x, ye);
-        }
+        if (!((int)x & (step-1)) && !((int)x - x))
+          continue;
+        qglVertex2f (x, yb);
+        qglVertex2f (x, ye);
       }
-      i = 0;
-      for (y = yb ; y < ye ; y += minor_step, ++i)
+      for (y=yb ; y<ye ; y+=g_qeglobals.d_gridsize)
       {
-        if((i & mask) != 0)
-        {
-          glVertex2f (xb, y);
-          glVertex2f (xe, y);
-        }
+        if (!((int)y & (step-1))  && !((int)y - y))
+          continue;
+        qglVertex2f (xb, y);
+        qglVertex2f (xe, y);
       }
-      glEnd();
+      qglEnd ();
     }
+  }
 
-    // draw major blocks
-    if (COLORS_DIFFER(g_xywindow_globals.color_gridmajor, g_xywindow_globals.color_gridback))
+  if(g_qeglobals.d_gridsize < 1)
+    colour = COLOR_GRIDMAJOR_ALT;
+  else
+    colour = COLOR_GRIDMAJOR;
+
+  // draw major blocks
+  if (COLORS_DIFFER(colour, COLOR_GRIDBACK))
+    qglColor3fv(g_qeglobals.d_savedinfo.colors[colour]);
+
+  if ( g_qeglobals.d_showgrid )
+  {
+    qglBegin (GL_LINES);
+    for (x=xb ; x<=xe ; x+=step)
     {
-      glColor3fv(vector3_to_array(g_xywindow_globals.color_gridmajor));
-
-      glBegin (GL_LINES);
-      for (x=xb ; x<=xe ; x+=step)
-      {
-        glVertex2f (x, yb);
-        glVertex2f (x, ye);
-      }
-      for (y=yb ; y<=ye ; y+=step)
-      {
-        glVertex2f (xb, y);
-        glVertex2f (xe, y);
-      }
-      glEnd();
+      qglVertex2f (x, yb);
+      qglVertex2f (x, ye);
     }
+    for (y=yb ; y<=ye ; y+=step)
+    {
+      qglVertex2f (xb, y);
+      qglVertex2f (xe, y);
+    }
+    qglEnd();
   }
 
   // draw coordinate text if needed
-  if ( g_xywindow_globals_private.show_coordinates)
+  if ( g_qeglobals.d_savedinfo.show_coordinates)
   {
-    glColor3fv(vector3_to_array(g_xywindow_globals.color_gridtext));
+    qglColor3fv(g_qeglobals.d_savedinfo.colors[COLOR_GRIDTEXT]);
 		float offx = m_vOrigin[nDim2] + h - 6 / m_fScale, offy = m_vOrigin[nDim1] - w + 1 / m_fScale;
-		for (x = xb - fmod(xb, stepx); x <= xe ; x += stepx)
+		for (x=xb-((int)xb)%stepx; x<=xe ; x+=stepx)
 		{
-		  glRasterPos2f (x, offx);
-			sprintf (text, "%g", x);
-			GlobalOpenGL().drawString(text);
+			qglRasterPos2f (x, offx);
+			sprintf (text, "%i",(int)x);
+			gtk_glwidget_print_string(text);
 		}
-		for (y = yb - fmod(yb, stepy); y <= ye ; y += stepy)
+		for (y=yb-((int)yb)%stepy; y<=ye ; y+=stepy)
 		{
-		  glRasterPos2f (offy, y);
-			sprintf (text, "%g", y);
-			GlobalOpenGL().drawString(text);
+			qglRasterPos2f (offy, y);
+			sprintf (text, "%i",(int)y);
+			gtk_glwidget_print_string(text);
 		}
 
     if (Active())
-      glColor3fv(vector3_to_array(g_xywindow_globals.color_viewname));
+      qglColor3fv(g_qeglobals.d_savedinfo.colors[COLOR_VIEWNAME]);
 
     // we do this part (the old way) only if show_axis is disabled
-    if (!g_xywindow_globals_private.show_axis)
+    if (!g_qeglobals.d_savedinfo.show_axis)
     {
-      glRasterPos2f ( m_vOrigin[nDim1] - w + 35 / m_fScale, m_vOrigin[nDim2] + h - 20 / m_fScale );
-
-      GlobalOpenGL().drawString(ViewType_getTitle(m_viewType));
+      qglRasterPos2f ( m_vOrigin[nDim1] - w + 35 / m_fScale, m_vOrigin[nDim2] + h - 20 / m_fScale );
+      
+      char cView[20];
+      if (m_nViewType == XY)
+        strcpy(cView, "XY Top");
+      else 
+        if (m_nViewType == XZ)
+          strcpy(cView, "XZ Front");
+        else
+          strcpy(cView, "YZ Side");
+        
+        gtk_glwidget_print_string(cView);
     }
   }
 
-  if ( g_xywindow_globals_private.show_axis)
+  if ( g_qeglobals.d_savedinfo.show_axis)
   {
-    const char g_AxisName[3] = { 'X', 'Y', 'Z' };
-
-    const Vector3& colourX = (m_viewType == YZ) ? g_xywindow_globals.AxisColorY : g_xywindow_globals.AxisColorX;
-    const Vector3& colourY = (m_viewType == XY) ? g_xywindow_globals.AxisColorY : g_xywindow_globals.AxisColorZ;
-
     // draw two lines with corresponding axis colors to highlight current view
     // horizontal line: nDim1 color
-    glLineWidth(2);
-    glBegin( GL_LINES );
-    glColor3fv (vector3_to_array(colourX));
-    glVertex2f( m_vOrigin[nDim1] - w + 40 / m_fScale, m_vOrigin[nDim2] + h - 45 / m_fScale );
-    glVertex2f( m_vOrigin[nDim1] - w + 65 / m_fScale, m_vOrigin[nDim2] + h - 45 / m_fScale );
-    glVertex2f( 0, 0 );
-    glVertex2f( 32 / m_fScale, 0 );
-    glColor3fv (vector3_to_array(colourY));
-    glVertex2f( m_vOrigin[nDim1] - w + 40 / m_fScale, m_vOrigin[nDim2] + h - 45 / m_fScale );
-    glVertex2f( m_vOrigin[nDim1] - w + 40 / m_fScale, m_vOrigin[nDim2] + h - 20 / m_fScale );
-    glVertex2f( 0, 0 );
-    glVertex2f( 0, 32 / m_fScale );
-    glEnd();
-    glLineWidth(1);
+    qglLineWidth(2);
+    qglBegin( GL_LINES );
+    qglColor3fv (g_qeglobals.d_savedinfo.AxisColors[nDim1]);
+    qglVertex2f( m_vOrigin[nDim1] - w + 40 / m_fScale, m_vOrigin[nDim2] + h - 45 / m_fScale );
+    qglVertex2f( m_vOrigin[nDim1] - w + 65 / m_fScale, m_vOrigin[nDim2] + h - 45 / m_fScale );
+    qglVertex2f( 0, 0 );
+    qglVertex2f( 32 / m_fScale, 0 );
+    qglColor3fv (g_qeglobals.d_savedinfo.AxisColors[nDim2]);
+    qglVertex2f( m_vOrigin[nDim1] - w + 40 / m_fScale, m_vOrigin[nDim2] + h - 45 / m_fScale );
+    qglVertex2f( m_vOrigin[nDim1] - w + 40 / m_fScale, m_vOrigin[nDim2] + h - 20 / m_fScale );
+    qglVertex2f( 0, 0 );
+    qglVertex2f( 0, 32 / m_fScale );
+    qglEnd();
+    qglLineWidth(1);
     // now print axis symbols
-    glColor3fv (vector3_to_array(colourX));
-    glRasterPos2f ( m_vOrigin[nDim1] - w + 55 / m_fScale, m_vOrigin[nDim2] + h - 55 / m_fScale );
-    GlobalOpenGL().drawChar(g_AxisName[nDim1]);
-    glRasterPos2f (28 / m_fScale, -10 / m_fScale );
-    GlobalOpenGL().drawChar(g_AxisName[nDim1]);
-    glColor3fv (vector3_to_array(colourY));
-    glRasterPos2f ( m_vOrigin[nDim1] - w + 25 / m_fScale, m_vOrigin[nDim2] + h - 30 / m_fScale );
-    GlobalOpenGL().drawChar(g_AxisName[nDim2]);
-    glRasterPos2f ( -10 / m_fScale, 28 / m_fScale );
-    GlobalOpenGL().drawChar(g_AxisName[nDim2]);
+    qglColor3fv (g_qeglobals.d_savedinfo.AxisColors[nDim1]);
+    qglRasterPos2f ( m_vOrigin[nDim1] - w + 55 / m_fScale, m_vOrigin[nDim2] + h - 55 / m_fScale );
+    gtk_glwidget_print_char(g_AxisName[nDim1]);
+    qglRasterPos2f (28 / m_fScale, -10 / m_fScale );
+    gtk_glwidget_print_char(g_AxisName[nDim1]);
+    qglColor3fv (g_qeglobals.d_savedinfo.AxisColors[nDim2]);
+    qglRasterPos2f ( m_vOrigin[nDim1] - w + 25 / m_fScale, m_vOrigin[nDim2] + h - 30 / m_fScale );
+    gtk_glwidget_print_char(g_AxisName[nDim2]);
+    qglRasterPos2f ( -10 / m_fScale, 28 / m_fScale );
+    gtk_glwidget_print_char(g_AxisName[nDim2]);
 
   }
 
   // show current work zone?
   // the work zone is used to place dropped points and brushes
-  if (g_xywindow_globals_private.d_show_work)
+  if (g_qeglobals.d_show_work)
   {
-    glColor3f( 1.0f, 0.0f, 0.0f );
-    glBegin( GL_LINES );
-    glVertex2f( xb, Select_getWorkZone().d_work_min[nDim2] );
-    glVertex2f( xe, Select_getWorkZone().d_work_min[nDim2] );
-    glVertex2f( xb, Select_getWorkZone().d_work_max[nDim2] );
-    glVertex2f( xe, Select_getWorkZone().d_work_max[nDim2] );
-    glVertex2f( Select_getWorkZone().d_work_min[nDim1], yb );
-    glVertex2f( Select_getWorkZone().d_work_min[nDim1], ye );
-    glVertex2f( Select_getWorkZone().d_work_max[nDim1], yb );
-    glVertex2f( Select_getWorkZone().d_work_max[nDim1], ye );
-    glEnd();
+    qglColor3f( 1.0f, 0.0f, 0.0f );
+    qglBegin( GL_LINES );
+    qglVertex2f( xb, g_qeglobals.d_work_min[nDim2] );
+    qglVertex2f( xe, g_qeglobals.d_work_min[nDim2] );
+    qglVertex2f( xb, g_qeglobals.d_work_max[nDim2] );
+    qglVertex2f( xe, g_qeglobals.d_work_max[nDim2] );
+    qglVertex2f( g_qeglobals.d_work_min[nDim1], yb );
+    qglVertex2f( g_qeglobals.d_work_min[nDim1], ye );
+    qglVertex2f( g_qeglobals.d_work_max[nDim1], yb );
+    qglVertex2f( g_qeglobals.d_work_max[nDim1], ye );
+    qglEnd();
   }
 }
 
@@ -1783,442 +2429,354 @@ XY_DrawBlockGrid
 */
 void XYWnd::XY_DrawBlockGrid()
 {
-  if(Map_FindWorldspawn(g_map) == 0)
-  {
-    return;
-  }
-  const char *value = Node_getEntity(*Map_GetWorldspawn(g_map))->getKeyValue("_blocksize" );
+  const char *value = ValueForKey( world_entity, "_blocksize" );
   if (strlen(value))
-	sscanf( value, "%i", &g_xywindow_globals_private.blockSize );
+	sscanf( value, "%i", &g_qeglobals.blockSize );
 
-  if (!g_xywindow_globals_private.blockSize || g_xywindow_globals_private.blockSize > 65536 || g_xywindow_globals_private.blockSize < 1024)
+  if (!g_qeglobals.blockSize || g_qeglobals.blockSize > 65536 || g_qeglobals.blockSize < 1024)
 	  // don't use custom blocksize if it is less than the default, or greater than the maximum world coordinate
-	g_xywindow_globals_private.blockSize = 1024;
+	g_qeglobals.blockSize = 1024;
 
   float	x, y, xb, xe, yb, ye;
   float		w, h;
   char	text[32];
 
-  glDisable(GL_TEXTURE_2D);
-  glDisable(GL_TEXTURE_1D);
-  glDisable(GL_DEPTH_TEST);
-  glDisable(GL_BLEND);
+  qglDisable(GL_TEXTURE_2D);
+  qglDisable(GL_TEXTURE_1D);
+  qglDisable(GL_DEPTH_TEST);
+  qglDisable(GL_BLEND);
 
   w = (m_nWidth / 2 / m_fScale);
   h = (m_nHeight / 2 / m_fScale);
 
-  int nDim1 = (m_viewType == YZ) ? 1 : 0;
-  int nDim2 = (m_viewType == XY) ? 1 : 2;
+  int nDim1 = (m_nViewType == YZ) ? 1 : 0;
+  int nDim2 = (m_nViewType == XY) ? 1 : 2;
 
   xb = m_vOrigin[nDim1] - w;
   if (xb < region_mins[nDim1])
     xb = region_mins[nDim1];
-  xb = static_cast<float>(g_xywindow_globals_private.blockSize * floor (xb/g_xywindow_globals_private.blockSize));
+  xb = g_qeglobals.blockSize * floor (xb/g_qeglobals.blockSize);
 
   xe = m_vOrigin[nDim1] + w;
   if (xe > region_maxs[nDim1])
     xe = region_maxs[nDim1];
-  xe = static_cast<float>(g_xywindow_globals_private.blockSize * ceil (xe/g_xywindow_globals_private.blockSize));
+  xe = g_qeglobals.blockSize * ceil (xe/g_qeglobals.blockSize);
 
   yb = m_vOrigin[nDim2] - h;
   if (yb < region_mins[nDim2])
     yb = region_mins[nDim2];
-  yb = static_cast<float>(g_xywindow_globals_private.blockSize * floor (yb/g_xywindow_globals_private.blockSize));
+  yb = g_qeglobals.blockSize * floor (yb/g_qeglobals.blockSize);
 
   ye = m_vOrigin[nDim2] + h;
   if (ye > region_maxs[nDim2])
     ye = region_maxs[nDim2];
-  ye = static_cast<float>(g_xywindow_globals_private.blockSize * ceil (ye/g_xywindow_globals_private.blockSize));
+  ye = g_qeglobals.blockSize * ceil (ye/g_qeglobals.blockSize);
 
   // draw major blocks
 
-  glColor3fv(vector3_to_array(g_xywindow_globals.color_gridblock));
-  glLineWidth (2);
+  qglColor3fv(g_qeglobals.d_savedinfo.colors[COLOR_GRIDBLOCK]);
+  qglLineWidth (2);
 
-  glBegin (GL_LINES);
+  qglBegin (GL_LINES);
 	
-  for (x=xb ; x<=xe ; x+=g_xywindow_globals_private.blockSize)
+  for (x=xb ; x<=xe ; x+=g_qeglobals.blockSize)
   {
-    glVertex2f (x, yb);
-    glVertex2f (x, ye);
+    qglVertex2f (x, yb);
+    qglVertex2f (x, ye);
   }
 
-  if (m_viewType == XY)
+  if (m_nViewType == XY)
   {
-	for (y=yb ; y<=ye ; y+=g_xywindow_globals_private.blockSize)
+	for (y=yb ; y<=ye ; y+=g_qeglobals.blockSize)
 	{
-	  glVertex2f (xb, y);
-	  glVertex2f (xe, y);
+		qglVertex2f (xb, y);
+		qglVertex2f (xe, y);
 	}
   }
 	
-  glEnd();
-  glLineWidth (1);
+  qglEnd ();
+  qglLineWidth (1);
 
   // draw coordinate text if needed
 
-  if (m_viewType == XY && m_fScale > .1)
+  if (m_nViewType == XY && m_fScale > .1)
   {
-	for (x=xb ; x<xe ; x+=g_xywindow_globals_private.blockSize)
-		for (y=yb ; y<ye ; y+=g_xywindow_globals_private.blockSize)
+	for (x=xb ; x<xe ; x+=g_qeglobals.blockSize)
+		for (y=yb ; y<ye ; y+=g_qeglobals.blockSize)
 		{
-		  glRasterPos2f (x+(g_xywindow_globals_private.blockSize/2), y+(g_xywindow_globals_private.blockSize/2));
-			sprintf (text, "%i,%i",(int)floor(x/g_xywindow_globals_private.blockSize), (int)floor(y/g_xywindow_globals_private.blockSize) );
-			GlobalOpenGL().drawString(text);
+			qglRasterPos2f (x+(g_qeglobals.blockSize/2), y+(g_qeglobals.blockSize/2));
+			sprintf (text, "%i,%i",(int)floor(x/g_qeglobals.blockSize), (int)floor(y/g_qeglobals.blockSize) );
+			gtk_glwidget_print_string(text);
 		}
   }
 
-  glColor4f(0, 0, 0, 0);
+  qglColor4f(0, 0, 0, 0);
 }
 
-void XYWnd::DrawCameraIcon(const Vector3& origin, const Vector3& angles)
+void XYWnd::DrawRotateIcon()
 {
-  float	x, y, fov, box;
-  double a;
+  float	x, y, a, b;
+
+  a = 4.0 / m_fScale;  // compensate for zoom level
+  b = 6.0 / m_fScale;
+
+  if (m_nViewType == XY)
+  {
+    x = g_vRotateOrigin[0];
+    y = g_vRotateOrigin[1];
+  }
+  else if (m_nViewType == YZ)
+  {
+    x = g_vRotateOrigin[1];
+    y = g_vRotateOrigin[2];
+  }
+  else
+  {
+    x = g_vRotateOrigin[0];
+    y = g_vRotateOrigin[2];
+  }
+
+  qglEnable (GL_BLEND);
+  qglDisable (GL_TEXTURE_2D);
+  qglPolygonMode (GL_FRONT_AND_BACK, GL_FILL);
+  qglDisable (GL_CULL_FACE);
+  qglBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  qglColor4f (0.8f, 0.1f, 0.9f, 0.25f);
+
+  qglBegin(GL_QUADS);
+  qglVertex3f (x-a,y-a,0);
+  qglVertex3f (x+a,y-a,0);
+  qglVertex3f (x+a,y+a,0);
+  qglVertex3f (x-a,y+a,0);
+  qglEnd ();
+  qglDisable (GL_BLEND);
+
+  qglColor4f (1.0f, 0.2f, 1.0f, 1.f);
+  qglBegin(GL_POINTS);
+  qglVertex3f (x,y,0);
+  qglEnd ();
+
+#if 0
+  qglBegin(GL_LINES);
+  qglVertex3f (x-b,y+b,0);
+  qglVertex3f (x+b,y+b,0);
+  qglVertex3f (x-b,y-b,0);
+  qglVertex3f (x+b,y-b,0);
+  qglEnd ();
+#endif
+
+}
+
+void XYWnd::DrawCameraIcon()
+{
+  float	x, y, a, fov, box;
 
   fov = 48 / m_fScale;
   box = 16 / m_fScale;
 
-  if (m_viewType == XY)
+  if (m_nViewType == XY)
   {
-    x = origin[0];
-    y = origin[1];
-    a = degrees_to_radians(angles[CAMERA_YAW]);
+    x = g_pParentWnd->GetCamWnd()->Camera()->origin[0];
+    y = g_pParentWnd->GetCamWnd()->Camera()->origin[1];
+    a = g_pParentWnd->GetCamWnd()->Camera()->angles[YAW]/180*Q_PI;
   }
-  else if (m_viewType == YZ)
+  else if (m_nViewType == YZ)
   {
-    x = origin[1];
-    y = origin[2];
-    a = degrees_to_radians(angles[CAMERA_PITCH]);
+    x = g_pParentWnd->GetCamWnd()->Camera()->origin[1];
+    y = g_pParentWnd->GetCamWnd()->Camera()->origin[2];
+    a = g_pParentWnd->GetCamWnd()->Camera()->angles[PITCH]/180*Q_PI;
   }
   else
   {
-    x = origin[0];
-    y = origin[2];
-    a = degrees_to_radians(angles[CAMERA_PITCH]);
+    x = g_pParentWnd->GetCamWnd()->Camera()->origin[0];
+    y = g_pParentWnd->GetCamWnd()->Camera()->origin[2];
+    a = g_pParentWnd->GetCamWnd()->Camera()->angles[PITCH]/180*Q_PI;
   }
 
-  glColor3f (0.0, 0.0, 1.0);
-  glBegin(GL_LINE_STRIP);
-  glVertex3f (x-box,y,0);
-  glVertex3f (x,y+(box/2),0);
-  glVertex3f (x+box,y,0);
-  glVertex3f (x,y-(box/2),0);
-  glVertex3f (x-box,y,0);
-  glVertex3f (x+box,y,0);
-  glEnd();
+  qglColor3f (0.0, 0.0, 1.0);
+  qglBegin(GL_LINE_STRIP);
+  qglVertex3f (x-box,y,0);
+  qglVertex3f (x,y+(box/2),0);
+  qglVertex3f (x+box,y,0);
+  qglVertex3f (x,y-(box/2),0);
+  qglVertex3f (x-box,y,0);
+  qglVertex3f (x+box,y,0);
+  qglEnd ();
 	
-  glBegin(GL_LINE_STRIP);
-  glVertex3f (x + static_cast<float>(fov*cos(a+c_pi/4)), y + static_cast<float>(fov*sin(a+c_pi/4)), 0);
-  glVertex3f (x, y, 0);
-  glVertex3f (x + static_cast<float>(fov*cos(a-c_pi/4)), y + static_cast<float>(fov*sin(a-c_pi/4)), 0);
-  glEnd();
+  qglBegin(GL_LINE_STRIP);
+  qglVertex3f (x+fov*cos(a+Q_PI/4), y+fov*sin(a+Q_PI/4), 0);
+  qglVertex3f (x, y, 0);
+  qglVertex3f (x+fov*cos(a-Q_PI/4), y+fov*sin(a-Q_PI/4), 0);
+  qglEnd ();
 
 }
 
-
-float Betwixt(float f1, float f2)
+void XYWnd::DrawZIcon (void)
 {
-  if (f1 > f2)
-    return f2 + ((f1 - f2) / 2);
-  else
-    return f1 + ((f2 - f1) / 2);
-}
+  if (m_nViewType == XY)
+  {
+    float x = z.origin[0];
+    float y = z.origin[1];
+	float zdim = 8 / m_fScale;
+    qglEnable (GL_BLEND);
+    qglDisable (GL_TEXTURE_2D);
+    qglPolygonMode (GL_FRONT_AND_BACK, GL_FILL);
+    qglDisable (GL_CULL_FACE);
+    qglBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    qglColor4f (0.0, 0.0, 1.0, 0.25);
+    qglBegin(GL_QUADS);
+    qglVertex3f (x-zdim,y-zdim,0);
+    qglVertex3f (x+zdim,y-zdim,0);
+    qglVertex3f (x+zdim,y+zdim,0);
+    qglVertex3f (x-zdim,y+zdim,0);
+    qglEnd ();
+    qglDisable (GL_BLEND);
 
+    qglColor4f (0.0, 0.0, 1.0, 1);
+
+    qglBegin(GL_LINE_LOOP);
+    qglVertex3f (x-zdim,y-zdim,0);
+    qglVertex3f (x+zdim,y-zdim,0);
+    qglVertex3f (x+zdim,y+zdim,0);
+    qglVertex3f (x-zdim,y+zdim,0);
+    qglEnd ();
+
+    qglBegin(GL_LINE_STRIP);
+    qglVertex3f (x-(zdim/2),y+(zdim/2),0);
+    qglVertex3f (x+(zdim/2),y+(zdim/2),0);
+    qglVertex3f (x-(zdim/2),y-(zdim/2),0);
+    qglVertex3f (x+(zdim/2),y-(zdim/2),0);
+    qglEnd ();
+  }
+}
 
 // can be greatly simplified but per usual i am in a hurry 
 // which is not an excuse, just a fact
-void XYWnd::PaintSizeInfo(int nDim1, int nDim2, Vector3& vMinBounds, Vector3& vMaxBounds)
+void XYWnd::PaintSizeInfo(int nDim1, int nDim2, vec3_t vMinBounds, vec3_t vMaxBounds)
 {
-  if(vector3_equal(vMinBounds, vMaxBounds))
+  const char* g_pDimStrings[] = {"x:%.f", "y:%.f", "z:%.f"};
+  const char* g_pOrgStrings[] = {"(x:%.f  y:%.f)", "(x:%.f  z:%.f)", "(y:%.f  z:%.f)"};
+
+  CString g_strDim;
+
+  vec3_t vSize;
+  VectorSubtract(vMaxBounds, vMinBounds, vSize);
+
+  qglColor3f(g_qeglobals.d_savedinfo.colors[COLOR_SELBRUSHES][0] * .65, 
+	     g_qeglobals.d_savedinfo.colors[COLOR_SELBRUSHES][1] * .65,
+	     g_qeglobals.d_savedinfo.colors[COLOR_SELBRUSHES][2] * .65);
+
+  if (m_nViewType == XY)
   {
-    return;
-  }
-  const char* g_pDimStrings[] = {"x:", "y:", "z:"};
-  typedef const char* OrgStrings[2];
-  const OrgStrings g_pOrgStrings[] = { { "x:", "y:", }, { "x:", "z:", }, { "y:", "z:", } };
+    qglBegin (GL_LINES);
 
-  Vector3 vSize(vector3_subtracted(vMaxBounds, vMinBounds));
+    qglVertex3f(vMinBounds[nDim1], vMinBounds[nDim2] - 6.0f  / m_fScale, 0.0f);
+    qglVertex3f(vMinBounds[nDim1], vMinBounds[nDim2] - 10.0f / m_fScale, 0.0f);
 
-  glColor3f(g_xywindow_globals.color_selbrushes[0] * .65f, 
-	     g_xywindow_globals.color_selbrushes[1] * .65f,
-	     g_xywindow_globals.color_selbrushes[2] * .65f);
+    qglVertex3f(vMinBounds[nDim1], vMinBounds[nDim2] - 10.0f  / m_fScale, 0.0f);
+    qglVertex3f(vMaxBounds[nDim1], vMinBounds[nDim2] - 10.0f  / m_fScale, 0.0f);
 
-  StringOutputStream dimensions(16);
-
-  if (m_viewType == XY)
-  {
-    glBegin (GL_LINES);
-
-    glVertex3f(vMinBounds[nDim1], vMinBounds[nDim2] - 6.0f  / m_fScale, 0.0f);
-    glVertex3f(vMinBounds[nDim1], vMinBounds[nDim2] - 10.0f / m_fScale, 0.0f);
-
-    glVertex3f(vMinBounds[nDim1], vMinBounds[nDim2] - 10.0f  / m_fScale, 0.0f);
-    glVertex3f(vMaxBounds[nDim1], vMinBounds[nDim2] - 10.0f  / m_fScale, 0.0f);
-
-    glVertex3f(vMaxBounds[nDim1], vMinBounds[nDim2] - 6.0f  / m_fScale, 0.0f);
-    glVertex3f(vMaxBounds[nDim1], vMinBounds[nDim2] - 10.0f / m_fScale, 0.0f);
+    qglVertex3f(vMaxBounds[nDim1], vMinBounds[nDim2] - 6.0f  / m_fScale, 0.0f);
+    qglVertex3f(vMaxBounds[nDim1], vMinBounds[nDim2] - 10.0f / m_fScale, 0.0f);
   
 
-    glVertex3f(vMaxBounds[nDim1] + 6.0f  / m_fScale, vMinBounds[nDim2], 0.0f);
-    glVertex3f(vMaxBounds[nDim1] + 10.0f  / m_fScale, vMinBounds[nDim2], 0.0f);
+    qglVertex3f(vMaxBounds[nDim1] + 6.0f  / m_fScale, vMinBounds[nDim2], 0.0f);
+    qglVertex3f(vMaxBounds[nDim1] + 10.0f  / m_fScale, vMinBounds[nDim2], 0.0f);
 
-    glVertex3f(vMaxBounds[nDim1] + 10.0f  / m_fScale, vMinBounds[nDim2], 0.0f);
-    glVertex3f(vMaxBounds[nDim1] + 10.0f  / m_fScale, vMaxBounds[nDim2], 0.0f);
+    qglVertex3f(vMaxBounds[nDim1] + 10.0f  / m_fScale, vMinBounds[nDim2], 0.0f);
+    qglVertex3f(vMaxBounds[nDim1] + 10.0f  / m_fScale, vMaxBounds[nDim2], 0.0f);
   
-    glVertex3f(vMaxBounds[nDim1] + 6.0f  / m_fScale, vMaxBounds[nDim2], 0.0f);
-    glVertex3f(vMaxBounds[nDim1] + 10.0f  / m_fScale, vMaxBounds[nDim2], 0.0f);
+    qglVertex3f(vMaxBounds[nDim1] + 6.0f  / m_fScale, vMaxBounds[nDim2], 0.0f);
+    qglVertex3f(vMaxBounds[nDim1] + 10.0f  / m_fScale, vMaxBounds[nDim2], 0.0f);
 
-    glEnd();
+    qglEnd();
 
-    glRasterPos3f (Betwixt(vMinBounds[nDim1], vMaxBounds[nDim1]),  vMinBounds[nDim2] - 20.0f  / m_fScale, 0.0f);
-    dimensions << g_pDimStrings[nDim1] << vSize[nDim1];
-    GlobalOpenGL().drawString(dimensions.c_str());
-    dimensions.clear();
+    qglRasterPos3f (Betwixt(vMinBounds[nDim1], vMaxBounds[nDim1]),  vMinBounds[nDim2] - 20.0  / m_fScale, 0.0f);
+    g_strDim.Format(g_pDimStrings[nDim1], vSize[nDim1]);
+    gtk_glwidget_print_string((char *) g_strDim.GetBuffer());
     
-    glRasterPos3f (vMaxBounds[nDim1] + 16.0f  / m_fScale, Betwixt(vMinBounds[nDim2], vMaxBounds[nDim2]), 0.0f);
-    dimensions << g_pDimStrings[nDim2] << vSize[nDim2];
-    GlobalOpenGL().drawString(dimensions.c_str());
-    dimensions.clear();
+    qglRasterPos3f (vMaxBounds[nDim1] + 16.0  / m_fScale, Betwixt(vMinBounds[nDim2], vMaxBounds[nDim2]), 0.0f);
+    g_strDim.Format(g_pDimStrings[nDim2], vSize[nDim2]);
+    gtk_glwidget_print_string((char *) g_strDim.GetBuffer());
 
-    glRasterPos3f (vMinBounds[nDim1] + 4, vMaxBounds[nDim2] + 8 / m_fScale, 0.0f);
-    dimensions << "(" << g_pOrgStrings[0][0] << vMinBounds[nDim1] << "  " << g_pOrgStrings[0][1] << vMaxBounds[nDim2] << ")";
-    GlobalOpenGL().drawString(dimensions.c_str());
+    qglRasterPos3f (vMinBounds[nDim1] + 4, vMaxBounds[nDim2] + 8 / m_fScale, 0.0f);
+    g_strDim.Format(g_pOrgStrings[0], vMinBounds[nDim1], vMaxBounds[nDim2]);
+    gtk_glwidget_print_string((char *) g_strDim.GetBuffer());
   }
-  else if (m_viewType == XZ)
+  else if (m_nViewType == XZ)
   {
-    glBegin (GL_LINES);
+    qglBegin (GL_LINES);
 
-    glVertex3f(vMinBounds[nDim1], 0, vMinBounds[nDim2] - 6.0f  / m_fScale);
-    glVertex3f(vMinBounds[nDim1], 0, vMinBounds[nDim2] - 10.0f / m_fScale);
+    qglVertex3f(vMinBounds[nDim1], 0, vMinBounds[nDim2] - 6.0f  / m_fScale);
+    qglVertex3f(vMinBounds[nDim1], 0, vMinBounds[nDim2] - 10.0f / m_fScale);
 
-    glVertex3f(vMinBounds[nDim1], 0,vMinBounds[nDim2] - 10.0f  / m_fScale);
-    glVertex3f(vMaxBounds[nDim1], 0,vMinBounds[nDim2] - 10.0f  / m_fScale);
+    qglVertex3f(vMinBounds[nDim1], 0,vMinBounds[nDim2] - 10.0f  / m_fScale);
+    qglVertex3f(vMaxBounds[nDim1], 0,vMinBounds[nDim2] - 10.0f  / m_fScale);
 
-    glVertex3f(vMaxBounds[nDim1], 0,vMinBounds[nDim2] - 6.0f  / m_fScale);
-    glVertex3f(vMaxBounds[nDim1], 0,vMinBounds[nDim2] - 10.0f / m_fScale);
+    qglVertex3f(vMaxBounds[nDim1], 0,vMinBounds[nDim2] - 6.0f  / m_fScale);
+    qglVertex3f(vMaxBounds[nDim1], 0,vMinBounds[nDim2] - 10.0f / m_fScale);
   
 
-    glVertex3f(vMaxBounds[nDim1] + 6.0f  / m_fScale, 0,vMinBounds[nDim2]);
-    glVertex3f(vMaxBounds[nDim1] + 10.0f  / m_fScale, 0,vMinBounds[nDim2]);
+    qglVertex3f(vMaxBounds[nDim1] + 6.0f  / m_fScale, 0,vMinBounds[nDim2]);
+    qglVertex3f(vMaxBounds[nDim1] + 10.0f  / m_fScale, 0,vMinBounds[nDim2]);
 
-    glVertex3f(vMaxBounds[nDim1] + 10.0f  / m_fScale, 0,vMinBounds[nDim2]);
-    glVertex3f(vMaxBounds[nDim1] + 10.0f  / m_fScale, 0,vMaxBounds[nDim2]);
+    qglVertex3f(vMaxBounds[nDim1] + 10.0f  / m_fScale, 0,vMinBounds[nDim2]);
+    qglVertex3f(vMaxBounds[nDim1] + 10.0f  / m_fScale, 0,vMaxBounds[nDim2]);
   
-    glVertex3f(vMaxBounds[nDim1] + 6.0f  / m_fScale, 0,vMaxBounds[nDim2]);
-    glVertex3f(vMaxBounds[nDim1] + 10.0f  / m_fScale, 0,vMaxBounds[nDim2]);
+    qglVertex3f(vMaxBounds[nDim1] + 6.0f  / m_fScale, 0,vMaxBounds[nDim2]);
+    qglVertex3f(vMaxBounds[nDim1] + 10.0f  / m_fScale, 0,vMaxBounds[nDim2]);
 
-    glEnd();
+    qglEnd();
 
-    glRasterPos3f (Betwixt(vMinBounds[nDim1], vMaxBounds[nDim1]), 0, vMinBounds[nDim2] - 20.0f  / m_fScale);
-    dimensions << g_pDimStrings[nDim1] << vSize[nDim1];
-    GlobalOpenGL().drawString(dimensions.c_str());
-    dimensions.clear();
+    qglRasterPos3f (Betwixt(vMinBounds[nDim1], vMaxBounds[nDim1]), 0, vMinBounds[nDim2] - 20.0  / m_fScale);
+    g_strDim.Format(g_pDimStrings[nDim1], vSize[nDim1]);
+    gtk_glwidget_print_string((char *) g_strDim.GetBuffer());
     
-    glRasterPos3f (vMaxBounds[nDim1] + 16.0f  / m_fScale, 0, Betwixt(vMinBounds[nDim2], vMaxBounds[nDim2]));
-    dimensions << g_pDimStrings[nDim2] << vSize[nDim2];
-    GlobalOpenGL().drawString(dimensions.c_str());
-    dimensions.clear();
+    qglRasterPos3f (vMaxBounds[nDim1] + 16.0  / m_fScale, 0, Betwixt(vMinBounds[nDim2], vMaxBounds[nDim2]));
+    g_strDim.Format(g_pDimStrings[nDim2], vSize[nDim2]);
+    gtk_glwidget_print_string((char *) g_strDim.GetBuffer());
 
-    glRasterPos3f (vMinBounds[nDim1] + 4, 0, vMaxBounds[nDim2] + 8 / m_fScale);
-    dimensions << "(" << g_pOrgStrings[1][0] << vMinBounds[nDim1] << "  " << g_pOrgStrings[1][1] << vMaxBounds[nDim2] << ")";
-    GlobalOpenGL().drawString(dimensions.c_str());
+    qglRasterPos3f (vMinBounds[nDim1] + 4, 0, vMaxBounds[nDim2] + 8 / m_fScale);
+    g_strDim.Format(g_pOrgStrings[1], vMinBounds[nDim1], vMaxBounds[nDim2]);
+    gtk_glwidget_print_string((char *) g_strDim.GetBuffer());
   }
   else
   {
-    glBegin (GL_LINES);
+    qglBegin (GL_LINES);
 
-    glVertex3f(0, vMinBounds[nDim1], vMinBounds[nDim2] - 6.0f  / m_fScale);
-    glVertex3f(0, vMinBounds[nDim1], vMinBounds[nDim2] - 10.0f / m_fScale);
+    qglVertex3f(0, vMinBounds[nDim1], vMinBounds[nDim2] - 6.0f  / m_fScale);
+    qglVertex3f(0, vMinBounds[nDim1], vMinBounds[nDim2] - 10.0f / m_fScale);
 
-    glVertex3f(0, vMinBounds[nDim1], vMinBounds[nDim2] - 10.0f  / m_fScale);
-    glVertex3f(0, vMaxBounds[nDim1], vMinBounds[nDim2] - 10.0f  / m_fScale);
+    qglVertex3f(0, vMinBounds[nDim1], vMinBounds[nDim2] - 10.0f  / m_fScale);
+    qglVertex3f(0, vMaxBounds[nDim1], vMinBounds[nDim2] - 10.0f  / m_fScale);
 
-    glVertex3f(0, vMaxBounds[nDim1], vMinBounds[nDim2] - 6.0f  / m_fScale);
-    glVertex3f(0, vMaxBounds[nDim1], vMinBounds[nDim2] - 10.0f / m_fScale);
+    qglVertex3f(0, vMaxBounds[nDim1], vMinBounds[nDim2] - 6.0f  / m_fScale);
+    qglVertex3f(0, vMaxBounds[nDim1], vMinBounds[nDim2] - 10.0f / m_fScale);
   
 
-    glVertex3f(0, vMaxBounds[nDim1] + 6.0f  / m_fScale, vMinBounds[nDim2]);
-    glVertex3f(0, vMaxBounds[nDim1] + 10.0f  / m_fScale, vMinBounds[nDim2]);
+    qglVertex3f(0, vMaxBounds[nDim1] + 6.0f  / m_fScale, vMinBounds[nDim2]);
+    qglVertex3f(0, vMaxBounds[nDim1] + 10.0f  / m_fScale, vMinBounds[nDim2]);
 
-    glVertex3f(0, vMaxBounds[nDim1] + 10.0f  / m_fScale, vMinBounds[nDim2]);
-    glVertex3f(0, vMaxBounds[nDim1] + 10.0f  / m_fScale, vMaxBounds[nDim2]);
+    qglVertex3f(0, vMaxBounds[nDim1] + 10.0f  / m_fScale, vMinBounds[nDim2]);
+    qglVertex3f(0, vMaxBounds[nDim1] + 10.0f  / m_fScale, vMaxBounds[nDim2]);
   
-    glVertex3f(0, vMaxBounds[nDim1] + 6.0f  / m_fScale, vMaxBounds[nDim2]);
-    glVertex3f(0, vMaxBounds[nDim1] + 10.0f  / m_fScale, vMaxBounds[nDim2]);
+    qglVertex3f(0, vMaxBounds[nDim1] + 6.0f  / m_fScale, vMaxBounds[nDim2]);
+    qglVertex3f(0, vMaxBounds[nDim1] + 10.0f  / m_fScale, vMaxBounds[nDim2]);
 
-    glEnd();
+    qglEnd();
 
-    glRasterPos3f (0, Betwixt(vMinBounds[nDim1], vMaxBounds[nDim1]),  vMinBounds[nDim2] - 20.0f  / m_fScale);
-    dimensions << g_pDimStrings[nDim1] << vSize[nDim1];
-    GlobalOpenGL().drawString(dimensions.c_str());
-    dimensions.clear();
+    qglRasterPos3f (0, Betwixt(vMinBounds[nDim1], vMaxBounds[nDim1]),  vMinBounds[nDim2] - 20.0  / m_fScale);
+    g_strDim.Format(g_pDimStrings[nDim1], vSize[nDim1]);
+    gtk_glwidget_print_string((char *) g_strDim.GetBuffer());
     
-    glRasterPos3f (0, vMaxBounds[nDim1] + 16.0f  / m_fScale, Betwixt(vMinBounds[nDim2], vMaxBounds[nDim2]));
-    dimensions << g_pDimStrings[nDim2] << vSize[nDim2];
-    GlobalOpenGL().drawString(dimensions.c_str());
-    dimensions.clear();
+    qglRasterPos3f (0, vMaxBounds[nDim1] + 16.0  / m_fScale, Betwixt(vMinBounds[nDim2], vMaxBounds[nDim2]));
+    g_strDim.Format(g_pDimStrings[nDim2], vSize[nDim2]);
+    gtk_glwidget_print_string((char *) g_strDim.GetBuffer());
 
-    glRasterPos3f (0, vMinBounds[nDim1] + 4.0f, vMaxBounds[nDim2] + 8 / m_fScale);
-    dimensions << "(" << g_pOrgStrings[2][0] << vMinBounds[nDim1] << "  " << g_pOrgStrings[2][1] << vMaxBounds[nDim2] << ")";
-    GlobalOpenGL().drawString(dimensions.c_str());
+    qglRasterPos3f (0, vMinBounds[nDim1] + 4.0, vMaxBounds[nDim2] + 8 / m_fScale);
+    g_strDim.Format(g_pOrgStrings[2], vMinBounds[nDim1], vMaxBounds[nDim2]);
+    gtk_glwidget_print_string((char *) g_strDim.GetBuffer());
   }
-}
-
-class XYRenderer: public Renderer
-{
-  struct state_type
-  {
-    state_type() :
-    m_highlight(0),
-    m_state(0)
-    {
-    }  
-    unsigned int m_highlight;
-    Shader* m_state;
-  };
-public:
-  XYRenderer(RenderStateFlags globalstate, Shader* selected) :
-    m_globalstate(globalstate),
-    m_state_selected(selected)
-  {
-    ASSERT_NOTNULL(selected);
-    m_state_stack.push_back(state_type());
-  }
-
-  void SetState(Shader* state, EStyle style)
-  {
-    ASSERT_NOTNULL(state);
-    if(style == eWireframeOnly)
-      m_state_stack.back().m_state = state;
-  }
-  const EStyle getStyle() const
-  {
-    return eWireframeOnly;
-  }
-  void PushState()
-  {
-    m_state_stack.push_back(m_state_stack.back());
-  }
-  void PopState()
-  {
-    ASSERT_MESSAGE(!m_state_stack.empty(), "popping empty stack");
-    m_state_stack.pop_back();
-  }
-  void Highlight(EHighlightMode mode, bool bEnable = true)
-  {
-    (bEnable)
-      ? m_state_stack.back().m_highlight |= mode
-      : m_state_stack.back().m_highlight &= ~mode;
-  }
-  void addRenderable(const OpenGLRenderable& renderable, const Matrix4& localToWorld)
-  {
-    if(m_state_stack.back().m_highlight & ePrimitive)
-    {
-      m_state_selected->addRenderable(renderable, localToWorld);
-    }
-    else
-    {
-      m_state_stack.back().m_state->addRenderable(renderable, localToWorld);
-    }
-  }
-
-  void render(const Matrix4& modelview, const Matrix4& projection)
-  {
-    GlobalShaderCache().render(m_globalstate, modelview, projection);
-  }
-private:
-  std::vector<state_type> m_state_stack;
-  RenderStateFlags m_globalstate;
-  Shader* m_state_selected;
-};
-
-void XYWnd::updateProjection()
-{
-  m_projection[0] = 1.0f / static_cast<float>(m_nWidth / 2);
-  m_projection[5] = 1.0f / static_cast<float>(m_nHeight / 2);
-  m_projection[10] = 1.0f / (g_MaxWorldCoord * m_fScale);
-
-  m_projection[12] = 0.0f;
-  m_projection[13] = 0.0f;
-  m_projection[14] = -1.0f;
-
-  m_projection[1] =
-  m_projection[2] =
-  m_projection[3] =
-
-  m_projection[4] =
-  m_projection[6] =
-  m_projection[7] =
-
-  m_projection[8] =
-  m_projection[9] =
-  m_projection[11] = 0.0f;
-
-  m_projection[15] = 1.0f;
-
-  m_view.Construct(m_projection, m_modelview, m_nWidth, m_nHeight);
-}
-
-// note: modelview matrix must have a uniform scale, otherwise strange things happen when rendering the rotation manipulator.
-void XYWnd::updateModelview()
-{
-  int nDim1 = (m_viewType == YZ) ? 1 : 0;
-  int nDim2 = (m_viewType == XY) ? 1 : 2;
-
-  // translation
-  m_modelview[12] = -m_vOrigin[nDim1] * m_fScale;
-  m_modelview[13] = -m_vOrigin[nDim2] * m_fScale;
-  m_modelview[14] = g_MaxWorldCoord * m_fScale;
-
-  // axis base
-  switch(m_viewType)
-  {
-  case XY:
-    m_modelview[0]  =  m_fScale;
-    m_modelview[1]  =  0;
-    m_modelview[2]  =  0;
-
-    m_modelview[4]  =  0;
-    m_modelview[5]  =  m_fScale;
-    m_modelview[6]  =  0;
-
-    m_modelview[8]  =  0;
-    m_modelview[9]  =  0;
-    m_modelview[10] = -m_fScale;
-    break;
-  case XZ:
-    m_modelview[0]  =  m_fScale;
-    m_modelview[1]  =  0;
-    m_modelview[2]  =  0;
-
-    m_modelview[4]  =  0;
-    m_modelview[5]  =  0;
-    m_modelview[6]  =  m_fScale;
-
-    m_modelview[8]  =  0;
-    m_modelview[9]  =  m_fScale;
-    m_modelview[10] =  0;
-    break;
-  case YZ:
-    m_modelview[0]  =  0;
-    m_modelview[1]  =  0;
-    m_modelview[2]  = -m_fScale;
-
-    m_modelview[4]  =  m_fScale;
-    m_modelview[5]  =  0;
-    m_modelview[6]  =  0;
-
-    m_modelview[8]  =  0;
-    m_modelview[9]  =  m_fScale;
-    m_modelview[10] =  0;
-    break;
-  }
-
-  m_modelview[3] = m_modelview[7] = m_modelview[11] = 0;
-  m_modelview[15] = 1;
-
-  m_view.Construct(m_projection, m_modelview, m_nWidth, m_nHeight);
 }
 
 /*
@@ -2226,618 +2784,679 @@ void XYWnd::updateModelview()
 XY_Draw
 ==============
 */
+#define ALT_POINT_SIZE 4
+// Alternative to GL_POINTS (for; vertex handles, patch handles, clip points, path points)
+void DrawAlternatePoint(vec3_t v, float scale)
+{
+  if(scale == 0)
+  {
+    scale = g_pParentWnd->GetXYWnd()->Scale();
+    //scale = g_qeglobals.d_xyOld.scale;
+  }
+
+  // ugly gl_line cross
+  qglVertex3f	 ( v[0]+(ALT_POINT_SIZE/scale), v[1], v[2] );
+  qglVertex3f	 ( v[0]-(ALT_POINT_SIZE/scale), v[1], v[2] );
+  qglVertex3f	 ( v[0], v[1]+(ALT_POINT_SIZE/scale), v[2] );
+  qglVertex3f	 ( v[0], v[1]-(ALT_POINT_SIZE/scale), v[2] );
+  qglVertex3f	 ( v[0], v[1], v[2]+(ALT_POINT_SIZE/scale) );
+  qglVertex3f	 ( v[0], v[1], v[2]-(ALT_POINT_SIZE/scale) );
+}
+
+
+long g_lCount = 0;
+long g_lTotal = 0;
+extern void DrawBrushEntityName (brush_t *b);
 
 //#define DBG_SCENEDUMP
 
 void XYWnd::XY_Draw()
 {
+#ifdef DBG_SCENEDUMP
+  static time_t s_start = 0; // we use that to dump the selected stuff every 2 seconds
+  time_t now;
+  time (&now);
+  bool bDump;
+
+  if ((now - s_start) > 3)
+  {
+    bDump = true;
+    s_start = now;
+    Sys_FPrintf(SYS_WRN, "Starting scene dump\n");
+  }
+  else bDump = false;
+#endif
+
+  brush_t	*brush;
+  float	w, h;
+  entity_t	*e;
+  double	start, end;
+  double	start2, end2;
+  vec3_t	mins, maxs;
+  int		drawn, culled;
+  int		i;
+
+  if (!active_brushes.next)
+    return;	// not valid yet
+
+  Patch_LODMatchAll(); // spog  
+
+  if (m_bTiming)
+    start = Sys_DoubleTime();
   //
   // clear
   //
-  glViewport(0, 0, m_nWidth, m_nHeight);
-  glClearColor (g_xywindow_globals.color_gridback[0],
-		 g_xywindow_globals.color_gridback[1],
-		 g_xywindow_globals.color_gridback[2],0);
+  m_bDirty = false;
 
-  glClear(GL_COLOR_BUFFER_BIT);
+  qglViewport(0, 0, m_nWidth, m_nHeight);
+  qglClearColor (g_qeglobals.d_savedinfo.colors[COLOR_GRIDBACK][0],
+		 g_qeglobals.d_savedinfo.colors[COLOR_GRIDBACK][1],
+		 g_qeglobals.d_savedinfo.colors[COLOR_GRIDBACK][2],0);
+
+  qglClear(GL_COLOR_BUFFER_BIT);
 
   //
   // set up viewpoint
   //
+  qglMatrixMode(GL_PROJECTION);
+  qglLoadIdentity ();
 
-  glMatrixMode(GL_PROJECTION);
-  glLoadMatrixf(reinterpret_cast<const float*>(&m_projection));
+  w = m_nWidth / 2 / m_fScale;
+  h = m_nHeight / 2/ m_fScale;
 
-  glMatrixMode(GL_MODELVIEW);
-  glLoadIdentity();
-  glScalef(m_fScale, m_fScale, 1);
-  int nDim1 = (m_viewType == YZ) ? 1 : 0;
-  int nDim2 = (m_viewType == XY) ? 1 : 2;
-  glTranslatef(-m_vOrigin[nDim1], -m_vOrigin[nDim2], 0);
+  // fix GL_INVALID_VALUE error on first time the window is updated (win32)
+  if (w == 0)
+    w = 1;
 
-  glDisable (GL_LINE_STIPPLE);
-  glLineWidth(1);
-  glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-  glDisableClientState(GL_NORMAL_ARRAY);
-  glDisableClientState(GL_COLOR_ARRAY);
-  glDisable(GL_TEXTURE_2D);
-  glDisable(GL_LIGHTING);
-  glDisable(GL_COLOR_MATERIAL);
-  glDisable(GL_DEPTH_TEST);
+  int nDim1 = (m_nViewType == YZ) ? 1 : 0;
+  int nDim2 = (m_nViewType == XY) ? 1 : 2;
+  mins[0] = m_vOrigin[nDim1] - w;
+  maxs[0] = m_vOrigin[nDim1] + w;
+  mins[1] = m_vOrigin[nDim2] - h;
+  maxs[1] = m_vOrigin[nDim2] + h;
 
-  XY_DrawGrid();
-  if ( g_xywindow_globals_private.show_blocks)
-    XY_DrawBlockGrid();
+  qglOrtho (mins[0], maxs[0], mins[1], maxs[1], g_MinWorldCoord, g_MaxWorldCoord);
 
-  glLoadMatrixf(reinterpret_cast<const float*>(&m_modelview));
+  qglMatrixMode(GL_MODELVIEW);
+  qglLoadIdentity ();
 
-  unsigned int globalstate = RENDER_COLOURARRAY | RENDER_COLOURWRITE | RENDER_POLYGONSMOOTH | RENDER_LINESMOOTH;
-  if(!g_xywindow_globals.m_bNoStipple)
+  //
+  // now draw the grid
+  //
+  XY_DrawGrid ();
+
+  //
+  // draw block grid
+  //
+  if ( g_qeglobals.show_blocks)
+    XY_DrawBlockGrid ();
+
+  if (m_nViewType != XY)
   {
-    globalstate |= RENDER_LINESTIPPLE;
+    qglPushMatrix();
+    if (m_nViewType == YZ)
+      qglRotatef (-90,  0, 1, 0);	    // put Z going up
+    qglRotatef (-90,  1, 0, 0);	    // put Z going up
   }
 
+  //
+  // draw stuff
+  //
+  qglShadeModel (GL_FLAT);
+  qglDisable(GL_TEXTURE_2D);
+  qglDisable(GL_TEXTURE_1D);
+  qglDisable(GL_DEPTH_TEST);
+  qglDisable(GL_BLEND);
+  qglDisable(GL_CULL_FACE);
+  qglPolygonMode (GL_FRONT_AND_BACK, GL_LINE);
+  qglColor3f(0, 0, 0);
+  qglEnableClientState(GL_VERTEX_ARRAY);
+
+	// Fishman - Add antialiazed points and lines support. 09/15/00
+	if (g_PrefsDlg.m_bAntialiasedPointsAndLines)
+	{
+		qglEnable(GL_BLEND);
+		qglBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		qglEnable(GL_POINT_SMOOTH);
+		qglEnable(GL_LINE_SMOOTH);
+	}
+
+  drawn = culled = 0;
+
+  e = world_entity;
+	
+  if (m_bTiming)
+    start2 = Sys_DoubleTime();
+
+  for (brush = active_brushes.next ; brush != &active_brushes ; brush=brush->next)
   {
-    XYRenderer renderer(globalstate, m_state_selected);
+	  if (brush->bFiltered)
+      continue;
 
-    Scene_Render(renderer, m_view);
-
-    GlobalOpenGL_debugAssertNoErrors();
-    renderer.render(m_modelview, m_projection);
-    GlobalOpenGL_debugAssertNoErrors();
-  }
-
-  glDepthMask(GL_FALSE);
-
-  GlobalOpenGL_debugAssertNoErrors();
-
-  glLoadMatrixf(reinterpret_cast<const float*>(&m_modelview));
-  
-  GlobalOpenGL_debugAssertNoErrors();
-  glDisable(GL_LINE_STIPPLE);
-  GlobalOpenGL_debugAssertNoErrors();
-  glLineWidth(1);
-  GlobalOpenGL_debugAssertNoErrors();
-  if(GlobalOpenGL().GL_1_3())
-  {
-    glActiveTexture(GL_TEXTURE0);
-    glClientActiveTexture(GL_TEXTURE0);
-  }
-  glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-  GlobalOpenGL_debugAssertNoErrors();
-  glDisableClientState(GL_NORMAL_ARRAY);
-  GlobalOpenGL_debugAssertNoErrors();
-  glDisableClientState(GL_COLOR_ARRAY);
-  GlobalOpenGL_debugAssertNoErrors();
-  glDisable(GL_TEXTURE_2D);
-  GlobalOpenGL_debugAssertNoErrors();
-  glDisable(GL_LIGHTING);
-  GlobalOpenGL_debugAssertNoErrors();
-  glDisable(GL_COLOR_MATERIAL);
-  GlobalOpenGL_debugAssertNoErrors();
-
-  GlobalOpenGL_debugAssertNoErrors();
-
-
-  // size info
-  if(g_xywindow_globals_private.m_bSizePaint && GlobalSelectionSystem().countSelected() != 0)
-  {
-    Vector3 min, max;
-    Select_GetBounds(min, max);
-    PaintSizeInfo(nDim1, nDim2, min, max);
-  }
-
-  if (g_bCrossHairs)
-  {
-    glColor4f(0.2f, 0.9f, 0.2f, 0.8f);
-    glBegin (GL_LINES);
-    if (m_viewType == XY)
+    if (brush->mins[nDim1] > maxs[0] || 
+        brush->mins[nDim2] > maxs[1] || 
+        brush->maxs[nDim1] < mins[0] || 
+        brush->maxs[nDim2] < mins[1])
     {
-      glVertex2f(2.0f * g_MinWorldCoord, m_mousePosition[1]);
-      glVertex2f(2.0f * g_MaxWorldCoord, m_mousePosition[1]);
-      glVertex2f(m_mousePosition[0], 2.0f * g_MinWorldCoord);
-      glVertex2f(m_mousePosition[0], 2.0f * g_MaxWorldCoord);
+      culled++;
+      continue;		// off screen
     }
-    else if (m_viewType == YZ)
+
+    drawn++;
+
+    if (brush->owner != e && brush->owner)
     {
-      glVertex3f(m_mousePosition[0], 2.0f * g_MinWorldCoord, m_mousePosition[2]);
-      glVertex3f(m_mousePosition[0], 2.0f * g_MaxWorldCoord, m_mousePosition[2]);
-      glVertex3f(m_mousePosition[0], m_mousePosition[1], 2.0f * g_MinWorldCoord);
-      glVertex3f(m_mousePosition[0], m_mousePosition[1], 2.0f * g_MaxWorldCoord);
+      qglColor3fv(brush->owner->eclass->color);
     }
     else
     {
-      glVertex3f (2.0f * g_MinWorldCoord, m_mousePosition[1], m_mousePosition[2]);
-      glVertex3f (2.0f * g_MaxWorldCoord, m_mousePosition[1], m_mousePosition[2]);
-      glVertex3f(m_mousePosition[0], m_mousePosition[1], 2.0f * g_MinWorldCoord);
-      glVertex3f(m_mousePosition[0], m_mousePosition[1], 2.0f * g_MaxWorldCoord);
+      qglColor3fv(g_qeglobals.d_savedinfo.colors[COLOR_BRUSHES]);
     }
-    glEnd();
-  }
 
-  if (ClipMode())
+#ifdef DBG_SCENEDUMP
+    if (bDump)
+    {
+      Sys_FPrintf(SYS_WRN, "Active brush: %p ", brush);
+      Sys_FPrintf(SYS_WRN, "owner->eclass: %s\n", brush->owner->eclass->name);
+    }
+#endif
+
+    Brush_DrawXY(brush, m_nViewType);
+  }
+  
+  if (m_bTiming)
+    end2 = Sys_DoubleTime();
+
+  DrawPathLines ();
+
+  //
+  // draw pointfile
+  //
+  //++timo why is the display list broken?
+  if ( g_qeglobals.d_pointfile_display_list)
+    Pointfile_Draw();
+
+  //
+  // now draw selected brushes
+  //
+
+  if (RotateMode())
+    qglColor3f(0.8f, 0.1f, 0.9f);
+  else
+  if (ScaleMode())
+    qglColor3f(0.1f, 0.8f, 0.1f);
+  else
+    qglColor3fv(g_qeglobals.d_savedinfo.colors[COLOR_SELBRUSHES]);
+
+
+  if (g_PrefsDlg.m_bNoStipple == FALSE)
   {
-    GlobalClipPoints_Draw(m_fScale);
+    qglEnable (GL_LINE_STIPPLE);
+    qglLineStipple (3, 0xaaaa);
+  }
+  qglLineWidth (2);
+
+  vec3_t vMinBounds;
+  vec3_t vMaxBounds;
+  vMinBounds[0] = vMinBounds[1] = vMinBounds[2] = g_MaxWorldCoord;
+  vMaxBounds[0] = vMaxBounds[1] = vMaxBounds[2] = g_MinWorldCoord;
+
+  int nSaveDrawn = drawn;
+  bool bFixedSize = false;
+  for (brush = selected_brushes.next ; brush != &selected_brushes ; brush=brush->next)
+  {
+	// spog - added culling of selected brushes in XY window
+	if (brush->mins[nDim1] > maxs[0] || 
+        brush->mins[nDim2] > maxs[1] || 
+        brush->maxs[nDim1] < mins[0] || 
+        brush->maxs[nDim2] < mins[1])
+    {
+      culled++;
+      continue;		// off screen
+    }
+    drawn++;
+#ifdef DBG_SCENEDUMP
+    if (bDump)
+    {
+      Sys_FPrintf(SYS_WRN, "Selected brush: %p ", brush);
+      Sys_FPrintf(SYS_WRN, "owner->eclass: %s\n", brush->owner->eclass->name);
+    }
+#endif
+    Brush_DrawXY(brush, m_nViewType);
+
+    if (!bFixedSize)
+    {
+      if (brush->owner->eclass->fixedsize)
+        bFixedSize = true;
+      if (g_PrefsDlg.m_bSizePaint)
+      {
+        for (i = 0; i < 3; i ++)
+        {
+          if (brush->mins[i] < vMinBounds[i])
+            vMinBounds[i] = brush->mins[i];
+          if (brush->maxs[i] > vMaxBounds[i])
+            vMaxBounds[i] = brush->maxs[i];
+        }
+      }
+    }
   }
 
-  GlobalOpenGL_debugAssertNoErrors();
-    
-    // reset modelview
-  glLoadIdentity();
-  glScalef(m_fScale, m_fScale, 1);
-  glTranslatef(-m_vOrigin[nDim1], -m_vOrigin[nDim2], 0);
+  if (g_PrefsDlg.m_bNoStipple == FALSE)
+  {
+    qglDisable (GL_LINE_STIPPLE);
+  }
+  qglLineWidth (1);
 
-  DrawCameraIcon (Camera_getOrigin(*g_pParentWnd->GetCamWnd()), Camera_getAngles(*g_pParentWnd->GetCamWnd()));
+  if (!bFixedSize && !RotateMode() && !ScaleMode() && drawn - nSaveDrawn > 0 && g_PrefsDlg.m_bSizePaint)
+    PaintSizeInfo(nDim1, nDim2, vMinBounds, vMaxBounds);
 
-  Feedback_draw2D( m_viewType );
+  // edge / vertex flags
+  if (g_qeglobals.d_select_mode == sel_vertex)
+  {
+    if(!g_PrefsDlg.m_bGlPtWorkaround) 
+    {
+      // brush verts
+      qglPointSize (4);
+ 	   	qglColor3f (0,1,0);
+      qglBegin (GL_POINTS);
+        for (i=0 ; i<g_qeglobals.d_numpoints ; i++)
+          qglVertex3fv (g_qeglobals.d_points[i]);
+      qglEnd ();
+      
+      if(g_qeglobals.d_num_move_points)
+      {
+        // selected brush verts
+        qglPointSize (5);
+        qglColor3f (0,0,1);
+        qglBegin (GL_POINTS);
+          for(i = 0; i < g_qeglobals.d_num_move_points; i++)
+            qglVertex3fv (g_qeglobals.d_move_points[i]);
+        qglEnd();
+      }
+      qglPointSize (1);
+    }
+    else
+    {
+      // brush verts
+      qglColor3f (0,1,0);
+      qglLineWidth(2.0);
+      qglBegin (GL_LINES);
+        for (i=0; i < g_qeglobals.d_numpoints; i++)
+          DrawAlternatePoint(g_qeglobals.d_points[i], m_fScale);
+      qglEnd();
+      
+      if(g_qeglobals.d_num_move_points)
+      {
+        // selected brush verts
+        qglColor3f (0,0,1);
+        qglLineWidth (3.0);
+        qglBegin (GL_LINES);
+          for(i = 0; i < g_qeglobals.d_num_move_points; i++)
+            qglVertex3fv (g_qeglobals.d_move_points[i]);
+        qglEnd();
+      }
+      qglLineWidth(1.0);
+    }
+  }
+  else if (g_qeglobals.d_select_mode == sel_edge)
+  {
+    float	*v1, *v2;
+    if(!g_PrefsDlg.m_bGlPtWorkaround) 
+    {
+      qglPointSize (4);
+      qglColor3f (0,0,1);
+      qglBegin (GL_POINTS);
+      for (i=0 ; i<g_qeglobals.d_numedges ; i++)
+      {
+        v1 = g_qeglobals.d_points[g_qeglobals.d_edges[i].p1];
+        v2 = g_qeglobals.d_points[g_qeglobals.d_edges[i].p2];
+        qglVertex3f ( (v1[0]+v2[0])*0.5,(v1[1]+v2[1])*0.5,(v1[2]+v2[2])*0.5);
+      }
+      qglEnd ();
+      qglPointSize (1);
+    }
+    else {
+      qglColor3f (0,0,1);
+      qglLineWidth(2.0);
+      qglBegin (GL_LINES);
+      for (i=0; i < g_qeglobals.d_numedges; i++)
+      {
+        v1 = g_qeglobals.d_points[g_qeglobals.d_edges[i].p1];
+        v2 = g_qeglobals.d_points[g_qeglobals.d_edges[i].p2];
+        vec3_t v3;
+        v3[0] = (v1[0]+v2[0])*0.5;
+        v3[1] = (v1[1]+v2[1])*0.5;
+        v3[2] = (v1[2]+v2[2])*0.5;
+        DrawAlternatePoint(v3, m_fScale);
+      }
+      qglEnd();
+      qglLineWidth(1.0);
+    }
+  }
 
-  if (g_xywindow_globals_private.show_outline)
+  if (!(m_nViewType == XY))
+    qglPopMatrix();
+#if 0
+  // area selection hack
+  if ((g_qeglobals.d_select_mode == sel_area || g_qeglobals.d_select_mode == sel_areatall) && (g_nPatchClickedView == ((m_nViewType == XY) ? W_XY : (m_nViewType == YZ) ? W_YZ : W_XZ)))
+  {
+    qglEnable (GL_BLEND);
+    qglPolygonMode (GL_FRONT_AND_BACK, GL_FILL);
+    qglBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    qglColor4f(0.0, 0.0, 1.0, 0.25);
+    qglRectf(g_qeglobals.d_vAreaTL[nDim1], g_qeglobals.d_vAreaTL[nDim2], g_qeglobals.d_vAreaBR[nDim1], g_qeglobals.d_vAreaBR[nDim2]);
+    qglPolygonMode (GL_FRONT_AND_BACK, GL_LINE);
+    qglDisable (GL_BLEND);
+  }
+#endif
+
+
+  //
+  // now draw camera point
+  //
+  DrawCameraIcon ();
+  DrawZIcon ();
+
+  if (RotateMode())
+  {
+    DrawRotateIcon();
+  }
+
+  // plugin entities
+  //++timo TODO: use an object for the 2D view
+  Draw2DPluginEntities( (VIEWTYPE)m_nViewType );
+
+  if (g_qeglobals.d_savedinfo.show_outline)
   {
     if (Active())
     {
-      glMatrixMode (GL_PROJECTION);
-      glLoadIdentity();
-      glOrtho (0, m_nWidth, 0, m_nHeight, 0, 1);
-
-      glMatrixMode (GL_MODELVIEW);
-      glLoadIdentity();
+      qglMatrixMode (GL_PROJECTION);
+      qglPushMatrix ();
+      qglLoadIdentity ();
+      qglOrtho (0, m_nWidth, 0, m_nHeight, 0, 1);
+      qglMatrixMode (GL_MODELVIEW);
+      qglPushMatrix ();
+      qglLoadIdentity ();
 
       // four view mode doesn't colorize
       if (g_pParentWnd->CurrentStyle() == MainFrame::eSplit)
-        glColor3fv(vector3_to_array(g_xywindow_globals.color_viewname));
+        qglColor3fv(g_qeglobals.d_savedinfo.colors[COLOR_VIEWNAME]);
+      else
+        qglColor3fv( g_qeglobals.d_savedinfo.AxisColors[m_nViewType]);
+      qglBegin (GL_LINE_LOOP);
+      qglVertex2i (0, 0);
+      qglVertex2i (m_nWidth-1, 0);
+      qglVertex2i (m_nWidth-1, m_nHeight-1);
+      qglVertex2i (0, m_nHeight-1);
+      qglEnd ();
+
+      qglMatrixMode (GL_PROJECTION);
+      qglPopMatrix ();
+      qglMatrixMode (GL_MODELVIEW);
+      qglPopMatrix ();
+    }
+  }
+
+  qglFinish();
+
+  if (m_bTiming)
+  {
+    end = Sys_DoubleTime ();
+    i = (int)(1000*(end-start));
+    int i3 = (int)(1000*(end2-start2));
+    g_lCount++;
+    g_lTotal += i;
+    int i2 = g_lTotal / g_lCount;
+    Sys_Printf ("xy: %i ab: %i  avg: %i\n", i, i3, i2);
+  }
+
+	// Fishman - Add antialiazed points and lines support. 09/03/00
+  if (g_PrefsDlg.m_bAntialiasedPointsAndLines)
+  {
+	  qglDisable(GL_POINT_SMOOTH);
+	  qglDisable(GL_LINE_SMOOTH);
+	  qglDisable(GL_BLEND);
+  }
+}
+
+void XYWnd::Copy()
+{
+}
+
+void XYWnd::Undo()
+{
+}
+
+void XYWnd::UndoClear()
+{
+}
+
+void XYWnd::UndoCopy()
+{
+}
+
+bool XYWnd::UndoAvailable()
+{
+  return (g_brUndo.next != &g_brUndo);
+}
+
+void XYWnd::Paste()
+{
+}
+
+// should be static as should be the rotate scale stuff
+bool XYWnd::AreaSelectOK()
+{
+  return RotateMode() ? false : ScaleMode() ? false : true;
+}
+
+void XYWnd::OnCreate () 
+{
+  if (!MakeCurrent ())
+    Error ("glXMakeCurrent failed");
+
+  qglPolygonStipple ((unsigned char *)s_stipple);
+  qglLineStipple (3, 0xaaaa);
+}
+
+void XYWnd::OnExpose ()
+{
+  bool bPaint = true;
+  if (!MakeCurrent ())
+  {
+    Sys_Printf("ERROR: glXMakeCurrent failed.. Error:%i\n",qglGetError());
+    Sys_Printf("Please restart Radiant if the Map view is not working\n");
+    bPaint = false;
+  }
+  if (bPaint)
+  {
+    QE_CheckOpenGLForErrors();
+    XY_Draw ();
+    QE_CheckOpenGLForErrors();
+
+    if (m_nViewType != XY)
+    {
+      qglPushMatrix();
+      if (m_nViewType == YZ)
+        qglRotatef (-90,  0, 1, 0);	    // put Z going up
+      qglRotatef (-90,  1, 0, 0);	    // put Z going up
+    }
+ 
+    if (g_bCrossHairs)
+    {
+      qglColor4f(0.2f, 0.9f, 0.2f, 0.8f);
+      qglBegin (GL_LINES);
+      if (m_nViewType == XY)
+      {
+        qglVertex2f(2*g_MinWorldCoord, tdp[1]);
+        qglVertex2f(2*g_MaxWorldCoord, tdp[1]);
+        qglVertex2f(tdp[0], 2*g_MinWorldCoord);
+        qglVertex2f(tdp[0], 2*g_MaxWorldCoord);
+      }
+      else if (m_nViewType == YZ)
+      {
+        qglVertex3f(tdp[0], 2*g_MinWorldCoord, tdp[2]);
+        qglVertex3f(tdp[0], 2*g_MaxWorldCoord, tdp[2]);
+        qglVertex3f(tdp[0], tdp[1], 2*g_MinWorldCoord);
+        qglVertex3f(tdp[0], tdp[1], 2*g_MaxWorldCoord);
+      }
       else
       {
-        switch(m_viewType)
+        qglVertex3f (2*g_MinWorldCoord, tdp[1], tdp[2]);
+        qglVertex3f (2*g_MaxWorldCoord, tdp[1], tdp[2]);
+        qglVertex3f(tdp[0], tdp[1], 2*g_MinWorldCoord);
+        qglVertex3f(tdp[0], tdp[1], 2*g_MaxWorldCoord);
+      }
+      qglEnd();
+    }
+
+    if (ClipMode())
+    {
+      // Draw clip points
+      if (g_Clip1.Set())
+        g_Clip1.Draw(m_fScale, 1); // qglVertex3fv (g_Clip1);
+      if (g_Clip2.Set())
+        g_Clip2.Draw(m_fScale, 2); // qglVertex3fv (g_Clip2);
+      if (g_Clip3.Set())
+        g_Clip3.Draw(m_fScale, 3); // qglVertex3fv (g_Clip3);
+      if (g_Clip1.Set() && g_Clip2.Set())
+      {
+        ProduceSplitLists();
+        brush_t* pBrush;
+        brush_t* pList = (g_bSwitch) ? &g_brBackSplits : &g_brFrontSplits;
+        for (pBrush = pList->next ; pBrush != NULL && pBrush != pList ; pBrush=pBrush->next)
         {
-        case YZ:
-          glColor3fv(vector3_to_array(g_xywindow_globals.AxisColorX));
-          break;
-        case XZ:
-          glColor3fv(vector3_to_array(g_xywindow_globals.AxisColorY));
-          break;
-        case XY:
-          glColor3fv(vector3_to_array(g_xywindow_globals.AxisColorZ));
-          break;
+          qglColor3f (1,1,0);
+          face_t *face;
+          int order;
+          for (face = pBrush->brush_faces,order = 0 ; face ; face=face->next, order++)
+          {
+            winding_t* w = face->face_winding;
+            if (!w)
+              continue;
+            // draw the polygon
+            qglBegin(GL_LINE_LOOP);
+            for (int i=0 ; i<w->numpoints ; i++)
+              qglVertex3fv(w->points[i]);
+            qglEnd();
+          }
         }
       }
-      glBegin (GL_LINE_LOOP);
-      glVertex2i (0, 0);
-      glVertex2i (m_nWidth-1, 0);
-      glVertex2i (m_nWidth-1, m_nHeight-1);
-      glVertex2i (0, m_nHeight-1);
-      glEnd();
     }
+    
+    if (PathMode())
+    {
+      int n;
+      for (n = 0; n < g_nPathCount; n++)
+        g_PathPoints[n].Draw(m_fScale, n+1); // qglVertex3fv(g_PathPoints[n]);
+    }
+    if (m_nViewType != XY)
+      qglPopMatrix();
+
+    m_XORRectangle.set(rectangle_t());
+    SwapBuffers ();
   }
-
-  GlobalOpenGL_debugAssertNoErrors();
-
-  glFinish();
 }
 
-void XYWnd_MouseToPoint(XYWnd* xywnd, int x, int y, Vector3& point)
+void XYWnd::KillPathMode()
 {
-  xywnd->XY_ToPoint(x, y, point);
-  xywnd->XY_SnapToGrid(point);
-
-  int nDim = (xywnd->GetViewType() == XY) ? 2 : (xywnd->GetViewType() == YZ) ? 0 : 1;
-  float fWorkMid = float_mid(Select_getWorkZone().d_work_min[nDim], Select_getWorkZone().d_work_max[nDim]);
-  point[nDim] = float_snapped(fWorkMid, GetGridSize());
+  g_bSmartGo = false;
+  g_bPathMode = false;
+  if (g_pPathFunc)
+    g_pPathFunc(false, g_nPathCount);
+  g_nPathCount = 0;
+  g_pPathFunc = NULL;
+  Sys_UpdateWindows(W_ALL);
 }
 
+// gets called for drop down menu messages
+// TIP: it's not always about EntityCreate
 void XYWnd::OnEntityCreate (const char* item)
 {
-  StringOutputStream command;
-  command << "entityCreate -class " << item;
-  UndoableCommand undo(command.c_str());
-  Vector3 point;
-  XYWnd_MouseToPoint(this, m_entityCreate_x, m_entityCreate_y, point);
-  Entity_createFromSelection(item, point);
-}
+  Undo_Start("create entity");
+  Undo_AddBrushList(&selected_brushes);
 
-
-
-void GetFocusPosition(Vector3& position)
-{
-  if(GlobalSelectionSystem().countSelected() != 0)
+  if (m_mnuDrop != NULL)
   {
-    Select_GetMid(position);
-  }
-  else
-  {
-    position = Camera_getOrigin(*g_pParentWnd->GetCamWnd());
-  }
-}
+    CString strItem;
+    strItem = item;
 
-void XYWnd_Focus(XYWnd* xywnd)
-{
-  Vector3 position;
-  GetFocusPosition(position);
-  xywnd->PositionView(position);
-}
-
-void XY_Split_Focus()
-{
-  Vector3 position;
-  GetFocusPosition(position);
-  g_pParentWnd->GetXYWnd()->PositionView(position);
-  g_pParentWnd->GetXZWnd()->PositionView(position);
-  g_pParentWnd->GetYZWnd()->PositionView(position);
-}
-
-void XY_Focus()
-{
-  XYWnd* xywnd = g_pParentWnd->GetXYWnd();
-  XYWnd_Focus(xywnd);
-}
-
-void XY_Top()
-{
-  XYWnd* xywnd = g_pParentWnd->GetXYWnd();
-  xywnd->SetViewType(XY);
-  XYWnd_Focus(xywnd);
-}
-
-void XY_Side()
-{
-  XYWnd* xywnd = g_pParentWnd->GetXYWnd();
-  xywnd->SetViewType(XZ);
-  XYWnd_Focus(xywnd);
-}
-
-void XY_Front()
-{
-  g_pParentWnd->GetXYWnd()->SetViewType(YZ);
-  XYWnd_Focus(g_pParentWnd->GetXYWnd());
-}
-
-void XY_Next()
-{
-  XYWnd* xywnd = g_pParentWnd->GetXYWnd();
-  if (xywnd->GetViewType() == XY)
-    xywnd->SetViewType(XZ);
-  else if (xywnd->GetViewType() ==  XZ)
-    xywnd->SetViewType(YZ);
-  else
-    xywnd->SetViewType(XY);
-  XYWnd_Focus(xywnd);
-}
-
-void XY_Zoom100()
-{
-  if (g_pParentWnd->GetXYWnd())
-    g_pParentWnd->GetXYWnd()->SetScale(1);
-  if (g_pParentWnd->GetXZWnd())
-    g_pParentWnd->GetXZWnd()->SetScale(1);
-  if (g_pParentWnd->GetYZWnd())
-    g_pParentWnd->GetYZWnd()->SetScale(1);
-}
-
-void XY_ZoomIn()
-{
-  XYWnd_ZoomIn(g_pParentWnd->ActiveXY());
-}
-
-// NOTE: the zoom out factor is 4/5, we could think about customizing it
-//  we don't go below a zoom factor corresponding to 10% of the max world size
-//  (this has to be computed against the window size)
-void XY_ZoomOut()
-{
-  XYWnd_ZoomOut(g_pParentWnd->ActiveXY());
-}
-
-
-
-void ToggleShowCrosshair()
-{
-  g_bCrossHairs ^= 1; 
-  XY_UpdateAllWindows();
-}
-
-void ToggleShowSizeInfo()
-{
-  g_xywindow_globals_private.m_bSizePaint = !g_xywindow_globals_private.m_bSizePaint;
-  XY_UpdateAllWindows();
-}
-
-void ToggleShowGrid()
-{
-  g_xywindow_globals_private.d_showgrid = !g_xywindow_globals_private.d_showgrid;
-  XY_UpdateAllWindows();
-}
-
-ToggleShown g_xy_top_shown(true);
-
-void XY_Top_Shown_Construct(GtkWindow* parent)
-{
-  g_xy_top_shown.connect(GTK_WIDGET(parent));
-}
-
-ToggleShown g_yz_side_shown(false);
-
-void YZ_Side_Shown_Construct(GtkWindow* parent)
-{
-  g_yz_side_shown.connect(GTK_WIDGET(parent));
-}
-
-ToggleShown g_xz_front_shown(false);
-
-void XZ_Front_Shown_Construct(GtkWindow* parent)
-{
-  g_xz_front_shown.connect(GTK_WIDGET(parent));
-}
-
-
-class EntityClassMenu : public ModuleObserver
-{
-  std::size_t m_unrealised;
-public:
-  EntityClassMenu() : m_unrealised(1)
-  {
-  }
-  void realise()
-  {
-    if(--m_unrealised == 0)
+    if (strItem.CompareNoCase("Add to...") == 0)
     {
+      //++timo TODO: fill the menu with current groups?
+      // this one is for adding to existing groups only
+      Sys_Printf("TODO: Add to... in XYWnd::OnEntityCreate\n");
     }
-  }
-  void unrealise()
-  {
-    if(++m_unrealised == 1)
+    else if (strItem.CompareNoCase("Remove") == 0)
     {
-      if(XYWnd::m_mnuDrop != 0)
+      // remove selected brushes from their current group
+      brush_t *b;
+      for( b = selected_brushes.next; b != &selected_brushes; b = b->next )
       {
-        gtk_widget_destroy(GTK_WIDGET(XYWnd::m_mnuDrop));
-        XYWnd::m_mnuDrop = 0;
+	
       }
     }
+
+    //++timo FIXME: remove when all hooks are in
+    if (strItem.CompareNoCase("Add to...") == 0
+	|| strItem.CompareNoCase("Remove") == 0
+	|| strItem.CompareNoCase("Name...") == 0
+	|| strItem.CompareNoCase("New group...") == 0)
+      {
+	Sys_Printf("TODO: hook drop down group menu\n");
+	return;
+      }
+		
+    if (strItem.Find("Smart_") >= 0)
+    {
+      CreateSmartEntity(this, m_ptDownX, m_ptDownY, strItem);
+    }
+    else
+    {
+      CreateRightClickEntity(this, m_ptDownX, m_ptDownY, (char*)strItem.GetBuffer());
+    }
+		
+    Sys_UpdateWindows(W_ALL);
+    //OnLButtonDown((MK_LBUTTON | MK_SHIFT), CPoint(m_ptDown.x+2, m_ptDown.y+2));
   }
-};
-
-EntityClassMenu g_EntityClassMenu;
-
-
-
-
-void ShowNamesToggle()
-{
-  GlobalEntityCreator().setShowNames(!GlobalEntityCreator().getShowNames());
-  XY_UpdateAllWindows();
-}
-typedef FreeCaller<ShowNamesToggle> ShowNamesToggleCaller;
-void ShowNamesExport(const BoolImportCallback& importer)
-{
-  importer(GlobalEntityCreator().getShowNames());
-}
-typedef FreeCaller1<const BoolImportCallback&, ShowNamesExport> ShowNamesExportCaller;
-
-void ShowAnglesToggle()
-{
-  GlobalEntityCreator().setShowAngles(!GlobalEntityCreator().getShowAngles());
-  XY_UpdateAllWindows();
-}
-typedef FreeCaller<ShowAnglesToggle> ShowAnglesToggleCaller;
-void ShowAnglesExport(const BoolImportCallback& importer)
-{
-  importer(GlobalEntityCreator().getShowAngles());
-}
-typedef FreeCaller1<const BoolImportCallback&, ShowAnglesExport> ShowAnglesExportCaller;
-
-void ShowBlocksToggle()
-{
-  g_xywindow_globals_private.show_blocks ^= 1;
-  XY_UpdateAllWindows();
-}
-typedef FreeCaller<ShowBlocksToggle> ShowBlocksToggleCaller;
-void ShowBlocksExport(const BoolImportCallback& importer)
-{
-  importer(g_xywindow_globals_private.show_blocks);
-}
-typedef FreeCaller1<const BoolImportCallback&, ShowBlocksExport> ShowBlocksExportCaller;
-
-void ShowCoordinatesToggle()
-{
-  g_xywindow_globals_private.show_coordinates ^= 1;
-  XY_UpdateAllWindows();
-}
-typedef FreeCaller<ShowCoordinatesToggle> ShowCoordinatesToggleCaller;
-void ShowCoordinatesExport(const BoolImportCallback& importer)
-{
-  importer(g_xywindow_globals_private.show_coordinates);
-}
-typedef FreeCaller1<const BoolImportCallback&, ShowCoordinatesExport> ShowCoordinatesExportCaller;
-
-void ShowOutlineToggle()
-{
-  g_xywindow_globals_private.show_outline ^= 1;
-  XY_UpdateAllWindows();
-}
-typedef FreeCaller<ShowOutlineToggle> ShowOutlineToggleCaller;
-void ShowOutlineExport(const BoolImportCallback& importer)
-{
-  importer(g_xywindow_globals_private.show_outline);
-}
-typedef FreeCaller1<const BoolImportCallback&, ShowOutlineExport> ShowOutlineExportCaller;
-
-void ShowAxesToggle()
-{
-  g_xywindow_globals_private.show_axis ^= 1;
-  XY_UpdateAllWindows();
-}
-typedef FreeCaller<ShowAxesToggle> ShowAxesToggleCaller;
-void ShowAxesExport(const BoolImportCallback& importer)
-{
-  importer(g_xywindow_globals_private.show_axis);
-}
-typedef FreeCaller1<const BoolImportCallback&, ShowAxesExport> ShowAxesExportCaller;
-
-void ShowWorkzoneToggle()
-{
-  g_xywindow_globals_private.d_show_work ^= 1;
-  XY_UpdateAllWindows();
-}
-typedef FreeCaller<ShowWorkzoneToggle> ShowWorkzoneToggleCaller;
-void ShowWorkzoneExport(const BoolImportCallback& importer)
-{
-  importer(g_xywindow_globals_private.d_show_work);
-}
-typedef FreeCaller1<const BoolImportCallback&, ShowWorkzoneExport> ShowWorkzoneExportCaller;
-
-ShowNamesExportCaller g_show_names_caller;
-BoolExportCallback g_show_names_callback(g_show_names_caller);
-ToggleItem g_show_names(g_show_names_callback);
-
-ShowAnglesExportCaller g_show_angles_caller;
-BoolExportCallback g_show_angles_callback(g_show_angles_caller);
-ToggleItem g_show_angles(g_show_angles_callback);
-
-ShowBlocksExportCaller g_show_blocks_caller;
-BoolExportCallback g_show_blocks_callback(g_show_blocks_caller);
-ToggleItem g_show_blocks(g_show_blocks_callback);
-
-ShowCoordinatesExportCaller g_show_coordinates_caller;
-BoolExportCallback g_show_coordinates_callback(g_show_coordinates_caller);
-ToggleItem g_show_coordinates(g_show_coordinates_callback);
-
-ShowOutlineExportCaller g_show_outline_caller;
-BoolExportCallback g_show_outline_callback(g_show_outline_caller);
-ToggleItem g_show_outline(g_show_outline_callback);
-
-ShowAxesExportCaller g_show_axes_caller;
-BoolExportCallback g_show_axes_callback(g_show_axes_caller);
-ToggleItem g_show_axes(g_show_axes_callback);
-
-ShowWorkzoneExportCaller g_show_workzone_caller;
-BoolExportCallback g_show_workzone_callback(g_show_workzone_caller);
-ToggleItem g_show_workzone(g_show_workzone_callback);
-
-void XYShow_registerCommands()
-{
-  GlobalToggles_insert("ShowAngles", ShowAnglesToggleCaller(), ToggleItem::AddCallbackCaller(g_show_angles));
-  GlobalToggles_insert("ShowNames", ShowNamesToggleCaller(), ToggleItem::AddCallbackCaller(g_show_names));
-  GlobalToggles_insert("ShowBlocks", ShowBlocksToggleCaller(), ToggleItem::AddCallbackCaller(g_show_blocks));
-  GlobalToggles_insert("ShowCoordinates", ShowCoordinatesToggleCaller(), ToggleItem::AddCallbackCaller(g_show_coordinates));
-  GlobalToggles_insert("ShowWindowOutline", ShowOutlineToggleCaller(), ToggleItem::AddCallbackCaller(g_show_outline));
-  GlobalToggles_insert("ShowAxes", ShowAxesToggleCaller(), ToggleItem::AddCallbackCaller(g_show_axes));
-  GlobalToggles_insert("ShowWorkzone", ShowWorkzoneToggleCaller(), ToggleItem::AddCallbackCaller(g_show_workzone));
+  Undo_EndBrushList(&selected_brushes);
+  Undo_End();
 }
 
-void XYWnd_registerShortcuts()
+/* Drawing clip points */
+void ClipPoint::Draw(float fScale, int num)
 {
-  command_connect_accelerator("ToggleCrosshairs");
-  command_connect_accelerator("ToggleSizePaint");
+  CString strLabel;
+  strLabel.Format("%d", num);
+  Draw(fScale, strLabel.GetBuffer());
 }
 
+#define ALT_POINT_VERTS 6
 
+void ClipPoint::Draw(float fScale, const char *label)
+{
+  // draw point
+  if(!g_PrefsDlg.m_bGlPtWorkaround)
+  {
+    qglPointSize (4);
+    qglColor3fv(g_qeglobals.d_savedinfo.colors[COLOR_CLIPPER]);
+    qglBegin (GL_POINTS);
+    qglVertex3fv (m_ptClip);
+    qglEnd();
+    qglPointSize (1);
+  }
+  else
+  {
+    qglColor3fv(g_qeglobals.d_savedinfo.colors[COLOR_CLIPPER]);
+    qglLineWidth(2.0);
+    qglBegin (GL_LINES);
+      DrawAlternatePoint(m_ptClip, fScale);
+    qglEnd();
+    qglLineWidth(1.0);
+  }
 
-void Orthographic_constructPreferences(PreferencesPage& page)
-{
-  page.appendCheckBox("", "Solid selection boxes", g_xywindow_globals.m_bNoStipple);
-  page.appendCheckBox("", "Display size info", g_xywindow_globals_private.m_bSizePaint);
-  page.appendCheckBox("", "Chase mouse during drags", g_xywindow_globals_private.m_bChaseMouse);
-  page.appendCheckBox("", "Update views on camera move", g_xywindow_globals_private.m_bCamXYUpdate);
-}
-void Orthographic_constructPage(PreferenceGroup& group)
-{
-  PreferencesPage page(group.createPage("Orthographic", "Orthographic View Preferences"));
-  Orthographic_constructPreferences(page);
-}
-void Orthographic_registerPreferencesPage()
-{
-  PreferencesDialog_addSettingsPage(FreeCaller1<PreferenceGroup&, Orthographic_constructPage>());
-}
-
-void Clipper_constructPreferences(PreferencesPage& page)
-{
-  page.appendCheckBox("", "Clipper tool uses caulk", g_clip_useCaulk);
-}
-void Clipper_constructPage(PreferenceGroup& group)
-{
-  PreferencesPage page(group.createPage("Clipper", "Clipper Tool Settings"));
-  Clipper_constructPreferences(page);
-}
-void Clipper_registerPreferencesPage()
-{
-  PreferencesDialog_addSettingsPage(FreeCaller1<PreferenceGroup&, Clipper_constructPage>());
+  // draw label
+  qglRasterPos3f (m_ptClip[0]+2, m_ptClip[1]+2, m_ptClip[2]+2);
+  qglCallLists (strlen(label), GL_UNSIGNED_BYTE, label);
 }
 
-
-#include "preferencesystem.h"
-#include "stringio.h"
-
-
-
-
-void ToggleShown_importBool(ToggleShown& self, bool value)
-{
-  self.set(value);
-}
-typedef ReferenceCaller1<ToggleShown, bool, ToggleShown_importBool> ToggleShownImportBoolCaller;
-void ToggleShown_exportBool(const ToggleShown& self, const BoolImportCallback& importer)
-{
-  importer(self.active());
-}
-typedef ConstReferenceCaller1<ToggleShown, const BoolImportCallback&, ToggleShown_exportBool> ToggleShownExportBoolCaller;
-
-
-void XYWindow_Construct()
-{
-  GlobalCommands_insert("ToggleCrosshairs", FreeCaller<ToggleShowCrosshair>(), Accelerator('X', (GdkModifierType)GDK_SHIFT_MASK));
-  GlobalCommands_insert("ToggleSizePaint", FreeCaller<ToggleShowSizeInfo>(), Accelerator('J'));
-  GlobalCommands_insert("ToggleGrid", FreeCaller<ToggleShowGrid>(), Accelerator('0'));
-
-  GlobalToggles_insert("ToggleView", ToggleShown::ToggleCaller(g_xy_top_shown), ToggleItem::AddCallbackCaller(g_xy_top_shown.m_item), Accelerator('V', (GdkModifierType)(GDK_SHIFT_MASK|GDK_CONTROL_MASK)));
-  GlobalToggles_insert("ToggleSideView", ToggleShown::ToggleCaller(g_yz_side_shown), ToggleItem::AddCallbackCaller(g_yz_side_shown.m_item));
-  GlobalToggles_insert("ToggleFrontView", ToggleShown::ToggleCaller(g_xz_front_shown), ToggleItem::AddCallbackCaller(g_xz_front_shown.m_item));
-  GlobalCommands_insert("NextView", FreeCaller<XY_Next>(), Accelerator(GDK_Tab, (GdkModifierType)GDK_CONTROL_MASK));
-  GlobalCommands_insert("ZoomIn", FreeCaller<XY_ZoomIn>(), Accelerator(GDK_Delete));
-  GlobalCommands_insert("ZoomOut", FreeCaller<XY_ZoomOut>(), Accelerator(GDK_Insert));
-  GlobalCommands_insert("ViewTop", FreeCaller<XY_Top>());
-  GlobalCommands_insert("ViewSide", FreeCaller<XY_Side>());
-  GlobalCommands_insert("ViewFront", FreeCaller<XY_Front>());
-  GlobalCommands_insert("Zoom100", FreeCaller<XY_Zoom100>());
-  GlobalCommands_insert("CenterXYViews", FreeCaller<XY_Split_Focus>(), Accelerator(GDK_Tab, (GdkModifierType)(GDK_SHIFT_MASK|GDK_CONTROL_MASK)));
-  GlobalCommands_insert("CenterXYView", FreeCaller<XY_Focus>(), Accelerator(GDK_Tab, (GdkModifierType)(GDK_SHIFT_MASK|GDK_CONTROL_MASK)));
-
-  GlobalPreferenceSystem().registerPreference("ClipCaulk", BoolImportStringCaller(g_clip_useCaulk), BoolExportStringCaller(g_clip_useCaulk));
-
-  GlobalPreferenceSystem().registerPreference("NewRightClick", BoolImportStringCaller(g_xywindow_globals.m_bRightClick), BoolExportStringCaller(g_xywindow_globals.m_bRightClick));
-  GlobalPreferenceSystem().registerPreference("ChaseMouse", BoolImportStringCaller(g_xywindow_globals_private.m_bChaseMouse), BoolExportStringCaller(g_xywindow_globals_private.m_bChaseMouse));
-  GlobalPreferenceSystem().registerPreference("SizePainting", BoolImportStringCaller(g_xywindow_globals_private.m_bSizePaint), BoolExportStringCaller(g_xywindow_globals_private.m_bSizePaint));
-  GlobalPreferenceSystem().registerPreference("NoStipple", BoolImportStringCaller(g_xywindow_globals.m_bNoStipple), BoolExportStringCaller(g_xywindow_globals.m_bNoStipple));
-  GlobalPreferenceSystem().registerPreference("SI_ShowCoords", BoolImportStringCaller(g_xywindow_globals_private.show_coordinates), BoolExportStringCaller(g_xywindow_globals_private.show_coordinates));
-  GlobalPreferenceSystem().registerPreference("SI_ShowOutlines", BoolImportStringCaller(g_xywindow_globals_private.show_outline), BoolExportStringCaller(g_xywindow_globals_private.show_outline));
-  GlobalPreferenceSystem().registerPreference("SI_ShowAxis", BoolImportStringCaller(g_xywindow_globals_private.show_axis), BoolExportStringCaller(g_xywindow_globals_private.show_axis));
-  GlobalPreferenceSystem().registerPreference("CamXYUpdate", BoolImportStringCaller(g_xywindow_globals_private.m_bCamXYUpdate), BoolExportStringCaller(g_xywindow_globals_private.m_bCamXYUpdate));
-  GlobalPreferenceSystem().registerPreference("ShowWorkzone", BoolImportStringCaller(g_xywindow_globals_private.d_show_work), BoolExportStringCaller(g_xywindow_globals_private.d_show_work));
-
-  GlobalPreferenceSystem().registerPreference("SI_AxisColors0", Vector3ImportStringCaller(g_xywindow_globals.AxisColorX), Vector3ExportStringCaller(g_xywindow_globals.AxisColorX));
-  GlobalPreferenceSystem().registerPreference("SI_AxisColors1", Vector3ImportStringCaller(g_xywindow_globals.AxisColorY), Vector3ExportStringCaller(g_xywindow_globals.AxisColorY));
-  GlobalPreferenceSystem().registerPreference("SI_AxisColors2", Vector3ImportStringCaller(g_xywindow_globals.AxisColorZ), Vector3ExportStringCaller(g_xywindow_globals.AxisColorZ));
-  GlobalPreferenceSystem().registerPreference("SI_Colors1", Vector3ImportStringCaller(g_xywindow_globals.color_gridback), Vector3ExportStringCaller(g_xywindow_globals.color_gridback));
-  GlobalPreferenceSystem().registerPreference("SI_Colors2", Vector3ImportStringCaller(g_xywindow_globals.color_gridminor), Vector3ExportStringCaller(g_xywindow_globals.color_gridminor));
-  GlobalPreferenceSystem().registerPreference("SI_Colors3", Vector3ImportStringCaller(g_xywindow_globals.color_gridmajor), Vector3ExportStringCaller(g_xywindow_globals.color_gridmajor));
-  GlobalPreferenceSystem().registerPreference("SI_Colors6", Vector3ImportStringCaller(g_xywindow_globals.color_gridblock), Vector3ExportStringCaller(g_xywindow_globals.color_gridblock));
-  GlobalPreferenceSystem().registerPreference("SI_Colors7", Vector3ImportStringCaller(g_xywindow_globals.color_gridtext), Vector3ExportStringCaller(g_xywindow_globals.color_gridtext));
-  GlobalPreferenceSystem().registerPreference("SI_Colors8", Vector3ImportStringCaller(g_xywindow_globals.color_brushes), Vector3ExportStringCaller(g_xywindow_globals.color_brushes));
-  GlobalPreferenceSystem().registerPreference("SI_Colors9", Vector3ImportStringCaller(g_xywindow_globals.color_selbrushes), Vector3ExportStringCaller(g_xywindow_globals.color_selbrushes));
-  GlobalPreferenceSystem().registerPreference("SI_Colors10", Vector3ImportStringCaller(g_xywindow_globals.color_clipper), Vector3ExportStringCaller(g_xywindow_globals.color_clipper));
-  GlobalPreferenceSystem().registerPreference("SI_Colors11", Vector3ImportStringCaller(g_xywindow_globals.color_viewname), Vector3ExportStringCaller(g_xywindow_globals.color_viewname));
-  GlobalPreferenceSystem().registerPreference("SI_Colors13", Vector3ImportStringCaller(g_xywindow_globals.color_gridminor_alt), Vector3ExportStringCaller(g_xywindow_globals.color_gridminor_alt));
-  GlobalPreferenceSystem().registerPreference("SI_Colors14", Vector3ImportStringCaller(g_xywindow_globals.color_gridmajor_alt), Vector3ExportStringCaller(g_xywindow_globals.color_gridmajor_alt));
-
-
-  GlobalPreferenceSystem().registerPreference("XZVIS", makeBoolStringImportCallback(ToggleShownImportBoolCaller(g_xz_front_shown)), makeBoolStringExportCallback(ToggleShownExportBoolCaller(g_xz_front_shown)));
-  GlobalPreferenceSystem().registerPreference("YZVIS", makeBoolStringImportCallback(ToggleShownImportBoolCaller(g_yz_side_shown)), makeBoolStringExportCallback(ToggleShownExportBoolCaller(g_yz_side_shown)));
-
-  Orthographic_registerPreferencesPage();
-  Clipper_registerPreferencesPage();
-
-  XYWnd::captureStates();
-  GlobalEntityClassManager().attach(g_EntityClassMenu);
-}
-
-void XYWindow_Destroy()
-{
-  GlobalEntityClassManager().detach(g_EntityClassMenu);
-  XYWnd::releaseStates();
-}

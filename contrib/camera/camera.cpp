@@ -1,5 +1,5 @@
 /*
-Copyright (C) 1999-2006 Id Software, Inc. and contributors.
+Copyright (C) 1999-2007 id Software, Inc. and contributors.
 For a list of contributors, see the accompanying CONTRIBUTORS file.
 
 This file is part of GtkRadiant.
@@ -82,7 +82,9 @@ const char* QERPlug_Init(void* hApp, void* pMainWidget)
   if( g_pCameraInspectorWnd == NULL )
     g_pCameraInspectorWnd = CreateCameraInspectorDialog();
 
-  GetFileTypeRegistry()->addType("camera", "", filetype_t("Camera file", "*.camera"));
+  InitIglToQgl(&g_QglTable);
+
+  GetFileTypeRegistry()->addType("camera", filetype_t("Camera file", "*.camera"));
 
   return "Camera for GtkRadiant";
 }
@@ -112,7 +114,7 @@ void QERPlug_Dispatch (const char* p, float* vMin, float* vMax, bool bSingleBrus
   else if( !strcmp( p, "Load Camera..." ) )
     DoLoadCamera();
   else if( !strcmp( p, "About..." ) )
-    g_FuncTable.m_pfnMessageBox( (GtkWidget *)g_pRadiantWnd, PLUGIN_ABOUT, "About", eMB_OK );
+    g_FuncTable.m_pfnMessageBox( (GtkWidget *)g_pRadiantWnd, PLUGIN_ABOUT, "About", MB_OK, NULL );
 }
 
 
@@ -182,8 +184,13 @@ public:
 CSynapseServer* g_pSynapseServer = NULL;
 CameraSynapseClient g_SynapseClient;
 
-extern "C" CSynapseClient* SYNAPSE_DLL_EXPORT Synapse_EnumerateInterfaces (const char *version, CSynapseServer *pServer)
-{
+#if __GNUC__ >= 4
+#pragma GCC visibility push(default)
+#endif
+extern "C" CSynapseClient* SYNAPSE_DLL_EXPORT Synapse_EnumerateInterfaces( const char *version, CSynapseServer *pServer ) {
+#if __GNUC__ >= 4
+#pragma GCC visibility pop
+#endif
   if (strcmp(version, SYNAPSE_VERSION))
   {
     Syn_Printf("ERROR: synapse API version mismatch: should be '" SYNAPSE_VERSION "', got '%s'\n", version);

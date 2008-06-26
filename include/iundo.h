@@ -1,6 +1,6 @@
 /*
-Copyright (C) 2001-2006, William Joseph.
-All Rights Reserved.
+Copyright (C) 1999-2007 id Software, Inc. and contributors.
+For a list of contributors, see the accompanying CONTRIBUTORS file.
 
 This file is part of GtkRadiant.
 
@@ -19,92 +19,69 @@ along with GtkRadiant; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#if !defined(INCLUDED_IUNDO_H)
-#define INCLUDED_IUNDO_H
+#ifndef _IUNDO_H_
+#define _IUNDO_H_
 
-/// \file
-/// \brief The undo-system interface. Uses the 'memento' pattern.
+#define UNDO_MAJOR "undo"
 
-#include <cstddef>
-#include "generic/constant.h"
-#include "generic/callbackfwd.h"
+//start operation
+typedef void (*PFN_UNDOSTART) (char *operation);
+//end operation
+typedef void (*PFN_UNDOEND) (void);
+//add brush to the undo
+typedef void (*PFN_UNDOADDBRUSH) (brush_t *pBrush);
+//end a brush after the operation is performed
+typedef void (*PFN_UNDOENDBRUSH) (brush_t *pBrush);
+//add a list with brushes to the undo
+typedef void (*PFN_UNDOADDBRUSHLIST) (brush_t *brushlist);
+//end a list with brushes after the operation is performed
+typedef void (*PFN_UNDOENDBRUSHLIST) (brush_t *brushlist);
+//add entity to undo
+typedef void (*PFN_UNDOADDENTITY) (entity_t *entity);
+//end an entity after the operation is performed
+typedef void (*PFN_UNDOENDENTITY) (entity_t *entity);
+//undo last operation (bSilent == true -> will not print the "undone blah blah message")
+typedef void (*PFN_UNDO) (unsigned char bSilent);
+//redo last undone operation
+typedef void (*PFN_REDO) (void);
+//get the undo Id of the next undo (0 if none available)
+typedef int (*PFN_GETUNDOID) (void);
+//returns true if there is something to be undone available
+typedef int  (*PFN_UNDOAVAILABLE) (void);
+//returns true if there is something to redo available
+typedef int  (*PFN_REDOAVAILABLE) (void);
 
-class UndoMemento
+struct _QERUndoTable
 {
-public:
-  virtual void release() = 0;
+  int m_nSize;
+  PFN_UNDOSTART m_pfnUndo_Start;
+  PFN_UNDOEND m_pfnUndo_End;
+  PFN_UNDOADDBRUSH m_pfnUndo_AddBrush;
+  PFN_UNDOENDBRUSH m_pfnUndo_EndBrush;
+  PFN_UNDOADDBRUSHLIST m_pfnUndo_AddBrushList;
+  PFN_UNDOENDBRUSHLIST m_pfnUndo_EndBrushList;
+  PFN_UNDOADDENTITY m_pfnUndo_AddEntity;
+  PFN_UNDOENDENTITY m_pfnUndo_EndEntity;
+  PFN_UNDO m_pfnUndo_Undo;
+  PFN_REDO m_pfnUndo_Redo;
+  PFN_GETUNDOID m_pfnUndo_GetUndoId;
+  PFN_UNDOAVAILABLE m_pfnUndo_UndoAvailable;
+  PFN_REDOAVAILABLE m_pfnUndo_RedoAvailable;
 };
 
-class Undoable
-{
-public:
-  virtual UndoMemento* exportState() const = 0;
-  virtual void importState(const UndoMemento* state) = 0;
-};
-
-class UndoObserver
-{
-public:
-  virtual void save(Undoable* undoable) = 0;
-};
-
-class UndoTracker
-{
-public:
-  virtual void clear() = 0;
-  virtual void begin() = 0;
-  virtual void undo() = 0;
-  virtual void redo() = 0;
-};
-
-class UndoSystem
-{
-public:
-  INTEGER_CONSTANT(Version, 1);
-  STRING_CONSTANT(Name, "undo");
-
-  virtual UndoObserver* observer(Undoable* undoable) = 0;
-  virtual void release(Undoable* undoable) = 0;
-
-  virtual std::size_t size() const = 0;
-  virtual void start() = 0;
-  virtual void finish(const char* command) = 0;
-  virtual void undo() = 0;
-  virtual void redo() = 0;
-  virtual void clear() = 0;
-
-  virtual void trackerAttach(UndoTracker& tracker) = 0;
-  virtual void trackerDetach(UndoTracker& tracker) = 0;
-};
-
-#include "modulesystem.h"
-
-template<typename Type>
-class GlobalModule;
-typedef GlobalModule<UndoSystem> GlobalUndoModule;
-
-template<typename Type>
-class GlobalModuleRef;
-typedef GlobalModuleRef<UndoSystem> GlobalUndoModuleRef;
-
-inline UndoSystem& GlobalUndoSystem()
-{
-  return GlobalUndoModule::getTable();
-}
-
-class UndoableCommand
-{
-  const char* m_command;
-public:
-  UndoableCommand(const char* command) : m_command(command)
-  {
-    GlobalUndoSystem().start();
-  }
-  ~UndoableCommand()
-  {
-    GlobalUndoSystem().finish(m_command);
-  }
-};
-
-
+#ifdef USE_UNDOTABLE_DEFINE
+#ifndef __UNDOTABLENAME
+#define __UNDOTABLENAME g_UndoTable
 #endif
+#define Undo_Start __UNDOTABLENAME.m_pfnUndo_Start
+#define Undo_End __UNDOTABLENAME.m_pfnUndo_End
+#define Undo_AddBrush __UNDOTABLENAME.m_pfnUndo_AddBrush
+#define Undo_EndBrush __UNDOTABLENAME.m_pfnUndo_EndBrush
+#define Undo_AddBrushList __UNDOTABLENAME.m_pfnUndo_AddBrushList
+#define Undo_EndBrushList __UNDOTABLENAME.m_pfnUndo_EndBrushList
+#define Undo_AddEntity __UNDOTABLENAME.m_pfnUndo_AddEntity
+#define Undo_EndEntity __UNDOTABLENAME.m_pfnUndo_EndEntity
+#endif
+
+#endif // _IUNDO_H_
+

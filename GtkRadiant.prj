@@ -1,4 +1,4 @@
-# Anjuta Version 1.0.2 
+# Anjuta Version 1.1.97 
 Compatibility Level: 1 
 
 <PROJECT_DESCRIPTION_START>
@@ -23,7 +23,7 @@ level editor for Id technology games
 
 props.file.type=project
 
-anjuta.version=1.0.2
+anjuta.version=1.1.97
 anjuta.compatibility.level=1
 
 project.name=GtkRadiant
@@ -33,6 +33,7 @@ project.version=changesallthetime
 project.author=qeradiant.com dev team
 project.source.target=install/radiant.x86
 project.has.gettext=0
+project.gui.command=
 project.programming.language=C_C++
 project.excluded.modules=	intl
 
@@ -49,19 +50,26 @@ project.menu.need.terminal=0
 
 project.configure.options=
 anjuta.program.arguments=
+cons.linkeddir=
+
+preferences.build.option.jobs=0
+preferences.build.option.silent=0
+preferences.build.option.autosave=1
+preferences.make=scons
+preferences.build.option.keep.going=1
+preferences.build.option.warn.undef=0
+preferences.autoformat.custom.style= -i8 -sc -bli0 -bl0 -cbi0 -ss
+preferences.autoformat.style=Style of Kangleipak
+preferences.indent.opening=0
+preferences.autoformat.disable=0
 preferences.indent.automatic=1
 preferences.use.tabs=0
-preferences.indent.opening=0
-preferences.indent.closing=0
-preferences.tabsize=2
 preferences.indent.size=2
-preferences.autoformat.style=Style of Kangleipak
-preferences.autoformat.custom.style= -i8 -sc -bli0 -bl0 -cbi0 -ss
-preferences.autoformat.disable=0
+preferences.tabsize=2
+preferences.indent.closing=0
 
 module.include.name=.
 module.include.type=
-module.include.expanded=1
 module.include.files=\
 	Doxygen_files/doxy_mainpage.h\
 	contrib/bobtoolz/CPortals.h\
@@ -260,14 +268,10 @@ module.include.files=\
 	tools/quake3/q3map/mesh.h\
 	tools/quake3/q3map/qbsp.h\
 	tools/quake3/q3map/shaders.h\
-	tools/quake3/q3map/vis.h\
-	libs/function.h\
-	include/iarchive.h\
-	libs/filestream.h
+	tools/quake3/q3map/vis.h
 
 module.source.name=.
 module.source.type=
-module.source.expanded=1
 module.source.files=\
 	contrib/bobtoolz/DBobView.cpp\
 	contrib/bobtoolz/DBrush.cpp\
@@ -506,13 +510,10 @@ module.source.files=\
 	tools/quake3/q3map/vis.c\
 	tools/quake3/q3map/visflow.c\
 	tools/quake3/q3map/writebsp.c\
-	tools/quake3/q3map/NetTest/main.c\
-	plugins/archivepak/archive.cpp\
-	plugins/archivepak/plugin.cpp
+	tools/quake3/q3map/NetTest/main.c
 
 module.pixmap.name=.
 module.pixmap.type=
-module.pixmap.expanded=0
 module.pixmap.files=\
 	Doxygen_files/example/doxygen.gif\
 	Doxygen_files/example/graph_legend.gif\
@@ -579,17 +580,14 @@ module.pixmap.files=\
 
 module.data.name=.
 module.data.type=
-module.data.expanded=0
 module.data.files=
 
 module.help.name=.
 module.help.type=
-module.help.expanded=0
 module.help.files=
 
 module.doc.name=.
 module.doc.type=
-module.doc.expanded=0
 module.doc.files=\
 	INSTALL\
 	README\
@@ -668,7 +666,6 @@ module.doc.files=\
 	www/index.html\
 	www/reviews.html
 
-module.po.expanded=0
 module.po.files=
 
 compiler.options.supports=
@@ -680,11 +677,12 @@ compiler.options.libraries=
 compiler.options.libraries.selected=
 compiler.options.defines=\
 	HAVE_CONFIG_H
+compiler.options.defines.selected=
 compiler.options.warning.buttons=0 0 1 1 0 1 0 0 0 0 0 0 0 1 0 0 
 compiler.options.optimize.buttons=0 0 1 0 
 compiler.options.other.buttons=1 0 
 compiler.options.other.c.flags=
 compiler.options.other.l.flags=
 compiler.options.other.l.libs=
-project.source.paths=
 
+project.src.paths=

@@ -1,6 +1,6 @@
 /*
-Copyright (C) 2001-2006, William Joseph.
-All Rights Reserved.
+Copyright (C) 1999-2007 id Software, Inc. and contributors.
+For a list of contributors, see the accompanying CONTRIBUTORS file.
 
 This file is part of GtkRadiant.
 
@@ -19,28 +19,34 @@ along with GtkRadiant; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#if !defined(INCLUDED_ENTITY_H)
-#define INCLUDED_ENTITY_H
+// entity.h
 
-class EntityCreator;
-EntityCreator& GetEntityCreator();
+// external API
 
-enum EGameType
-{
-  eGameTypeQuake3,
-  eGameTypeRTCW,
-  eGameTypeDoom3,
-};
+// construct
+entity_t* Entity_Alloc();
+// destruct
+void Entity_Free (entity_t *e);
+// construct from entity
+entity_t* Entity_Clone (entity_t *e);
 
-extern EGameType g_gameType;
+// epair interface
+void  SetKeyValue (entity_t *ent, const char *key, const char *value);
+void  DeleteKey (entity_t *ent, const char *key);
+const char* ValueForKey (entity_t *ent, const char *key);
+float FloatForKey (entity_t *ent, const char *key);
+int   IntForKey (entity_t *ent, const char *key);
+void  GetVectorForKey (entity_t *ent, const char *key, vec3_t vec);
 
-class FilterSystem;
-void Entity_Construct(EGameType gameType = eGameTypeQuake3);
-void Entity_Destroy();
+void Entity_AddToList(entity_t *e, entity_t *lst);
+void Entity_RemoveFromList(entity_t *e);
 
-extern bool g_showNames;
-extern bool g_showAngles;
-extern bool g_newLightDraw;
-extern bool g_lightRadii;
+void Entity_LinkBrush (entity_t *e, brush_t *b);
+void Entity_UnlinkBrush (brush_t *b);
 
-#endif
+// for undo
+int Entity_MemorySize(entity_t *e);
+
+epair_t* Entity_AllocateEpair(const char *key, const char *value);
+epair_t** Entity_GetKeyValList(entity_t *e);
+void Entity_SetKeyValList(entity_t *e, epair_t* ep);

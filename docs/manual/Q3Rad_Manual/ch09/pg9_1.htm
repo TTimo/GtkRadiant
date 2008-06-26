@@ -1,0 +1,87 @@
+<html>
+<head>
+<title>Q3Radiant Editor Manual: Page 9.1</title>
+<link rel = "stylesheet" type = "text/css" href = "../styles/q3rad.css">
+</head>
+<body>
+<h1 class = "MsoTitle">Q3Radiant Editor Manual</h1>
+<hr>
+<h1><a name = "tools6">Tools 6: Lights &amp; Lighting</a></h1>
+
+Lighting a map is both an art and a science. For <i>Quake III
+Arena,</i> the id designers worked to create instances of dramatic
+lighting, while attempting to maintain a relatively consistent
+intensity of light throughout the maps. Other designers worked to
+create dark realms, full of shadows in which lurking assassins
+could hide.
+
+<p>Whatever style of lighting you strive for, remember one key
+rule: The bots don't use light information. In a pitch-black room,
+they would still see an opponent. Keep that in mind when designing
+your maps.
+
+<p><div class = "subheading">Entity Lights</div>
+
+There are several ways to create light emitting objects.&nbsp;
+The simplest is to place a light entity into your map.&nbsp; If you
+do nothing, it has a default value of 300 and emits white light. If
+you think of the light value as the wattage for an incandescent
+light bulb, you are not far off target. The section on the Light
+entity in the Entities Description Appendix contains specific
+information on using light entities.
+
+<p><div class = "subheading">Texture Lights</div>
+
+Textures can be made to emit light. The amount of light that
+they give off is determined by two factors: the size of the texture
+and the value given for its q3map_surfacelight parameter.
+
+<p>If you only plan on using id textures in your maps, simply use
+the textures surrounded by a white box in the texture window. Many
+of them have their light values as part of their names: Example:
+ceil22a_5k.&nbsp; This would be a small, square light with a light
+value of 5000.&nbsp; There is not a direct correspondence between
+the light value of a texture light and an entity light.
+
+<p>If you want to make your own lights, either with new, custom
+textures, or changing the light and/or color values of the emitted
+light in existing id textures, plan on learning your way around the
+shader files.&nbsp; The Shader Manual explains the light commands.
+Place the new lights in unique directories. Example:
+Mymapname_light\skull_light_2k.&nbsp; Use the q3map_editorimage key
+to make multiple light intensity versions of your new lights.
+
+<p>Generally speaking, very small lights need to have very large
+values to look right (a 32x32 pixel light could easily have a
+surfacelight value of 10,000 or more).&nbsp; As the surface area of
+the light becomes larger, the amount of light needs to be
+substantially reduced for it to look right in the world.&nbsp; A
+word of warning, though. Very large glowing surfaces (other than
+skies) can look odd in the game world, especially if they are made
+from a repeating texture.&nbsp; The light source will appear to be
+generated from the center of the brush with the glowing
+texture.
+
+<p><div class = "subheading">"Sky" Lights</div>
+
+<i>Quake III Arena</i> was designed so that sky textures could
+appear to emit light in a natural way. The q3map_sun parameter
+creates a single light source in the sky. The mapper can control
+the brightness, color, and position in the sky of this light
+source.&nbsp; Furthermore, the designer can add a
+q3map_surfacelight value to the sky, giving it an overall lighting
+value.
+
+<p><div class = "subheading">Ambient Light</div>
+
+Ambient light is a property of the map's worldspawn entity. By
+assigning a number value to the ambient key, the overall lighting
+level of the map is raised. This has the tendency to flatten the
+difference between light and shadow. The color of the light can
+also be modified. This technique is considered a "hack." It does
+not come recommended. You will find instructions that are more
+complete later in this manual under the worldspawn entity heading
+in the Entities Appendix.
+<p align = "center"><a href = "../ch08/pg8_1.htm">Back</a> | <a href = "../index.htm">Home</a> | <a href = "../ch10/pg10_1.htm">Next</a>
+</body>
+</html>

@@ -1,5 +1,5 @@
 /*
-Copyright (C) 1999-2006 Id Software, Inc. and contributors.
+Copyright (C) 1999-2007 id Software, Inc. and contributors.
 For a list of contributors, see the accompanying CONTRIBUTORS file.
 
 This file is part of GtkRadiant.
@@ -21,7 +21,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 // imagelib.c
 
-#include "inout.h"
 #include "cmdlib.h"
 #include "imagelib.h"
 #include "vfs.h"
@@ -885,240 +884,231 @@ typedef struct _TargaHeader {
 	unsigned char	pixel_size, attributes;
 } TargaHeader;
 
-void TargaError(TargaHeader *t, const char *message)
-{
-	Sys_Printf("%s\n:TargaHeader:\nuint8 id_length = %i;\nuint8 colormap_type = %i;\nuint8 image_type = %i;\nuint16 colormap_index = %i;\nuint16 colormap_length = %i;\nuint8 colormap_size = %i;\nuint16 x_origin = %i;\nuint16 y_origin = %i;\nuint16 width = %i;\nuint16 height = %i;\nuint8 pixel_size = %i;\nuint8 attributes = %i;\n", message, t->id_length, t->colormap_type, t->image_type, t->colormap_index, t->colormap_length, t->colormap_size, t->x_origin, t->y_origin, t->width, t->height, t->pixel_size, t->attributes);
-}
-
 /*
 =============
 LoadTGABuffer
 =============
 */
-void LoadTGABuffer (const byte *f, const byte *enddata, byte **pic, int *width, int *height)
+void LoadTGABuffer ( byte *buffer, byte **pic, int *width, int *height)
 {
-	int x, y, row_inc, compressed, readpixelcount, red, green, blue, alpha, runlen, pindex, alphabits, image_width, image_height;
-	byte *pixbuf, *image_rgba;
-	const byte *fin;
-	unsigned char *p;
-	TargaHeader targa_header;
-	unsigned char palette[256*4];
+	int		columns, rows, numPixels;
+	byte	*pixbuf;
+	int		row, column;
+	byte	*buf_p;
+	TargaHeader	targa_header;
+	byte		*targa_rgba;
 
 	*pic = NULL;
 
-	// abort if it is too small to parse
-	if (enddata - f < 19)
-		return;
+	buf_p = buffer;
 
-	targa_header.id_length = f[0];
-	targa_header.colormap_type = f[1];
-	targa_header.image_type = f[2];
+	targa_header.id_length = *buf_p++;
+	targa_header.colormap_type = *buf_p++;
+	targa_header.image_type = *buf_p++;
+	
+	targa_header.colormap_index = LittleShort ( *(short *)buf_p );
+	buf_p += 2;
+	targa_header.colormap_length = LittleShort ( *(short *)buf_p );
+	buf_p += 2;
+	targa_header.colormap_size = *buf_p++;
+	targa_header.x_origin = LittleShort ( *(short *)buf_p );
+	buf_p += 2;
+	targa_header.y_origin = LittleShort ( *(short *)buf_p );
+	buf_p += 2;
+	targa_header.width = LittleShort ( *(short *)buf_p );
+	buf_p += 2;
+	targa_header.height = LittleShort ( *(short *)buf_p );
+	buf_p += 2;
+	targa_header.pixel_size = *buf_p++;
+	targa_header.attributes = *buf_p++;
 
-	targa_header.colormap_index = f[3] + f[4] * 256;
-	targa_header.colormap_length = f[5] + f[6] * 256;
-	targa_header.colormap_size = f[7];
-	targa_header.x_origin = f[8] + f[9] * 256;
-	targa_header.y_origin = f[10] + f[11] * 256;
-	targa_header.width = image_width = f[12] + f[13] * 256;
-	targa_header.height = image_height = f[14] + f[15] * 256;
-
-	targa_header.pixel_size = f[16];
-	targa_header.attributes = f[17];
-
-	// advance to end of header
-	fin = f + 18;
-
-	// skip TARGA image comment (usually 0 bytes)
-	fin += targa_header.id_length;
-
-	// read/skip the colormap if present (note: according to the TARGA spec it
-	// can be present even on truecolor or greyscale images, just not used by
-	// the image data)
-	if (targa_header.colormap_type)
+	if (targa_header.image_type!=2 
+		&& targa_header.image_type!=10
+		&& targa_header.image_type != 3 ) 
 	{
-		if (targa_header.colormap_length > 256)
+		Error("LoadTGA: Only type 2 (RGB), 3 (gray), and 10 (RGB) TGA images supported\n");
+	}
+
+	if ( targa_header.colormap_type != 0 )
+	{
+		Error("LoadTGA: colormaps not supported\n" );
+	}
+
+	if ( ( targa_header.pixel_size != 32 && targa_header.pixel_size != 24 ) && targa_header.image_type != 3 )
+	{
+		Error("LoadTGA: Only 32 or 24 bit images supported (no colormaps)\n");
+	}
+
+	columns = targa_header.width;
+	rows = targa_header.height;
+	numPixels = columns * rows;
+
+	if (width)
+		*width = columns;
+	if (height)
+		*height = rows;
+
+	targa_rgba = safe_malloc (numPixels*4);
+	*pic = targa_rgba;
+
+	if (targa_header.id_length != 0)
+		buf_p += targa_header.id_length;  // skip TARGA image comment
+	
+	if ( targa_header.image_type==2 || targa_header.image_type == 3 )
+	{ 
+		// Uncompressed RGB or gray scale image
+		for(row=rows-1; row>=0; row--) 
 		{
-			TargaError(&targa_header, "LoadTGA: only up to 256 colormap_length supported\n");
-			return;
-		}
-		if (targa_header.colormap_index)
-		{
-			TargaError(&targa_header, "LoadTGA: colormap_index not supported\n");
-			return;
-		}
-		if (targa_header.colormap_size == 24)
-		{
-			for (x = 0;x < targa_header.colormap_length;x++)
+			pixbuf = targa_rgba + row*columns*4;
+			for(column=0; column<columns; column++) 
 			{
-				palette[x*4+2] = *fin++;
-				palette[x*4+1] = *fin++;
-				palette[x*4+0] = *fin++;
-				palette[x*4+3] = 255;
-			}
-		}
-		else if (targa_header.colormap_size == 32)
-		{
-			for (x = 0;x < targa_header.colormap_length;x++)
-			{
-				palette[x*4+2] = *fin++;
-				palette[x*4+1] = *fin++;
-				palette[x*4+0] = *fin++;
-				palette[x*4+3] = *fin++;
-			}
-		}
-		else
-		{
-			TargaError(&targa_header, "LoadTGA: Only 32 and 24 bit colormap_size supported\n");
-			return;
-		}
-	}
-
-	// check our pixel_size restrictions according to image_type
-	if (targa_header.image_type == 2 || targa_header.image_type == 10)
-	{
-		if (targa_header.pixel_size != 24 && targa_header.pixel_size != 32)
-		{
-			TargaError(&targa_header, "LoadTGA: only 24bit and 32bit pixel sizes supported for type 2 and type 10 images\n");
-			return;
-		}
-	}
-	else if (targa_header.image_type == 1 || targa_header.image_type == 9)
-	{
-		if (targa_header.pixel_size != 8)
-		{
-			TargaError(&targa_header, "LoadTGA: only 8bit pixel size for type 1, 3, 9, and 11 images supported\n");
-			return;
-		}
-	}
-	else if (targa_header.image_type == 3 || targa_header.image_type == 11)
-	{
-		if (targa_header.pixel_size != 8)
-		{
-			TargaError(&targa_header, "LoadTGA: only 8bit pixel size for type 1, 3, 9, and 11 images supported\n");
-			return;
-		}
-	}
-	else
-	{
-		TargaError(&targa_header, "LoadTGA: Only type 1, 2, 3, 9, 10, and 11 targa RGB images supported");
-		return;
-	}
-
-	if (targa_header.attributes & 0x10)
-	{
-		TargaError(&targa_header, "LoadTGA: origin must be in top left or bottom left, top right and bottom right are not supported\n");
-		return;
-	}
-
-	// number of attribute bits per pixel, we only support 0 or 8
-	alphabits = targa_header.attributes & 0x0F;
-	if (alphabits != 8 && alphabits != 0)
-	{
-		TargaError(&targa_header, "LoadTGA: only 0 or 8 attribute (alpha) bits supported\n");
-		return;
-	}
-
-	image_rgba = safe_malloc(image_width * image_height * 4);
-	if (!image_rgba)
-	{
-		Sys_Printf("LoadTGA: not enough memory for %i by %i image\n", image_width, image_height);
-		return;
-	}
-
-	// If bit 5 of attributes isn't set, the image has been stored from bottom to top
-	if ((targa_header.attributes & 0x20) == 0)
-	{
-		pixbuf = image_rgba + (image_height - 1)*image_width*4;
-		row_inc = -image_width*4*2;
-	}
-	else
-	{
-		pixbuf = image_rgba;
-		row_inc = 0;
-	}
-
-	compressed = targa_header.image_type == 9 || targa_header.image_type == 10 || targa_header.image_type == 11;
-	x = 0;
-	y = 0;
-	red = green = blue = alpha = 255;
-	while (y < image_height)
-	{
-		// decoder is mostly the same whether it's compressed or not
-		readpixelcount = 1000000;
-		runlen = 1000000;
-		if (compressed && fin < enddata)
-		{
-			runlen = *fin++;
-			// high bit indicates this is an RLE compressed run
-			if (runlen & 0x80)
-				readpixelcount = 1;
-			runlen = 1 + (runlen & 0x7f);
-		}
-
-		while((runlen--) && y < image_height)
-		{
-			if (readpixelcount > 0)
-			{
-				readpixelcount--;
-				red = green = blue = alpha = 255;
-				if (fin < enddata)
+				unsigned char red,green,blue,alphabyte;
+				switch (targa_header.pixel_size) 
 				{
-					switch(targa_header.image_type)
-					{
-					case 1:
-					case 9:
-						// colormapped
-						pindex = *fin++;
-						if (pindex >= targa_header.colormap_length)
-							pindex = 0; // error
-						p = palette + pindex * 4;
-						red = p[0];
-						green = p[1];
-						blue = p[2];
-						alpha = p[3];
-						break;
-					case 2:
-					case 10:
-						// BGR or BGRA
-						blue = *fin++;
-						if (fin < enddata)
-							green = *fin++;
-						if (fin < enddata)
-							red = *fin++;
-						if (targa_header.pixel_size == 32 && fin < enddata)
-							alpha = *fin++;
-						break;
-					case 3:
-					case 11:
-						// greyscale
-						red = green = blue = *fin++;
-						break;
-					}
-					if (!alphabits)
-						alpha = 255;
+					
+				case 8:
+					blue = *buf_p++;
+					green = blue;
+					red = blue;
+					*pixbuf++ = red;
+					*pixbuf++ = green;
+					*pixbuf++ = blue;
+					*pixbuf++ = 255;
+					break;
+
+				case 24:
+					blue = *buf_p++;
+					green = *buf_p++;
+					red = *buf_p++;
+					*pixbuf++ = red;
+					*pixbuf++ = green;
+					*pixbuf++ = blue;
+					*pixbuf++ = 255;
+					break;
+				case 32:
+					blue = *buf_p++;
+					green = *buf_p++;
+					red = *buf_p++;
+					alphabyte = *buf_p++;
+					*pixbuf++ = red;
+					*pixbuf++ = green;
+					*pixbuf++ = blue;
+					*pixbuf++ = alphabyte;
+					break;
+				default:
+					//Error("LoadTGA: illegal pixel_size '%d' in file '%s'\n", targa_header.pixel_size, name );
+					break;
 				}
 			}
-			*pixbuf++ = red;
-			*pixbuf++ = green;
-			*pixbuf++ = blue;
-			*pixbuf++ = alpha;
-			x++;
-			if (x == image_width)
+		}
+	}
+	else if (targa_header.image_type==10) {   // Runlength encoded RGB images
+		unsigned char red,green,blue,alphabyte,packetHeader,packetSize,j;
+
+		red = 0;
+		green = 0;
+		blue = 0;
+		alphabyte = 0xff;
+
+		for(row=rows-1; row>=0; row--) {
+			pixbuf = targa_rgba + row*columns*4;
+			for(column=0; column<columns; ) {
+				packetHeader= *buf_p++;
+				packetSize = 1 + (packetHeader & 0x7f);
+				if (packetHeader & 0x80) {        // run-length packet
+					switch (targa_header.pixel_size) {
+						case 24:
+								blue = *buf_p++;
+								green = *buf_p++;
+								red = *buf_p++;
+								alphabyte = 255;
+								break;
+						case 32:
+								blue = *buf_p++;
+								green = *buf_p++;
+								red = *buf_p++;
+								alphabyte = *buf_p++;
+								break;
+						default:
+							//Error("LoadTGA: illegal pixel_size '%d' in file '%s'\n", targa_header.pixel_size, name );
+							break;
+					}
+	
+					for(j=0;j<packetSize;j++) {
+						*pixbuf++=red;
+						*pixbuf++=green;
+						*pixbuf++=blue;
+						*pixbuf++=alphabyte;
+						column++;
+						if (column==columns) { // run spans across rows
+							column=0;
+							if (row>0)
+								row--;
+							else
+								goto breakOut;
+							pixbuf = targa_rgba + row*columns*4;
+						}
+					}
+				}
+				else {                            // non run-length packet
+					for(j=0;j<packetSize;j++) {
+						switch (targa_header.pixel_size) {
+							case 24:
+									blue = *buf_p++;
+									green = *buf_p++;
+									red = *buf_p++;
+									*pixbuf++ = red;
+									*pixbuf++ = green;
+									*pixbuf++ = blue;
+									*pixbuf++ = 255;
+									break;
+							case 32:
+									blue = *buf_p++;
+									green = *buf_p++;
+									red = *buf_p++;
+									alphabyte = *buf_p++;
+									*pixbuf++ = red;
+									*pixbuf++ = green;
+									*pixbuf++ = blue;
+									*pixbuf++ = alphabyte;
+									break;
+							default:
+								//Sysprintf("LoadTGA: illegal pixel_size '%d' in file '%s'\n", targa_header.pixel_size, name );
+								break;
+						}
+						column++;
+						if (column==columns) { // pixel packet run spans across rows
+							column=0;
+							if (row>0)
+								row--;
+							else
+								goto breakOut;
+							pixbuf = targa_rgba + row*columns*4;
+						}						
+					}
+				}
+			}
+			breakOut:;
+		}
+	}
+
+	// vertically flipped
+	if ( (targa_header.attributes & (1<<5)) ) {
+		int flip;
+		for (row = 0; row < .5f * rows; row++)
+		{
+			for (column = 0; column < columns; column++)
 			{
-				// end of line, advance to next
-				x = 0;
-				y++;
-				pixbuf += row_inc;
+				flip = *( (int*)targa_rgba + row * columns + column);
+				*( (int*)targa_rgba + row * columns + column) = *( (int*)targa_rgba + ( ( rows - 1 ) - row ) * columns + column );
+				*( (int*)targa_rgba + ( ( rows - 1 ) - row ) * columns + column ) = flip;
 			}
 		}
 	}
 
-	*pic = image_rgba;
-	if (width)
-		*width = image_width;
-	if (height)
-		*height = image_height;
+	//free(buffer);
 }
+
 
 
 /*
@@ -1129,17 +1119,17 @@ LoadTGA
 void LoadTGA (const char *name, byte **pixels, int *width, int *height)
 {
 	byte			*buffer;
-	int nLen;
+  int nLen;
 	//
 	// load the file
 	//
 	nLen = vfsLoadFile ( ( char * ) name, (void **)&buffer, 0);
-	if (nLen == -1)
-	{
+	if (nLen == -1) 
+  {
 		Error ("Couldn't read %s", name);
-	}
+  }
 
-	LoadTGABuffer(buffer, buffer + nLen, pixels, width, height);
+  LoadTGABuffer(buffer, pixels, width, height);
 
 }
 

@@ -1,6 +1,6 @@
 /*
-Copyright (C) 2001-2006, William Joseph.
-All Rights Reserved.
+Copyright (C) 1999-2007 id Software, Inc. and contributors.
+For a list of contributors, see the accompanying CONTRIBUTORS file.
 
 This file is part of GtkRadiant.
 
@@ -20,13 +20,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
 #include "mathlib.h"
-
-const m4x4_t g_m4x4_identity = {
-  1, 0, 0, 0,
-  0, 1, 0, 0,
-  0, 0, 1, 0,
-  0, 0, 0, 1,
-};
+#include "memory.h"
 
 void m4x4_identity(m4x4_t matrix)
 {
@@ -36,18 +30,6 @@ void m4x4_identity(m4x4_t matrix)
   matrix[12] = matrix[13] = matrix[14] = 0;
 
   matrix[0] = matrix[5] = matrix[10] = matrix[15] = 1;
-}
-
-m4x4Handedness_t m4x4_handedness(const m4x4_t matrix)
-{
-  vec3_t cross;
-  CrossProduct(matrix+0, matrix+4, cross);
-  return (DotProduct(matrix+8, cross) < 0) ? eLeftHanded : eRightHanded;
-}
-
-void m4x4_assign(m4x4_t matrix, const m4x4_t other)
-{
-  M4X4_COPY(matrix, other);
 }
 
 void m4x4_translation_for_vec3(m4x4_t matrix, const vec3_t translation)
@@ -63,29 +45,6 @@ void m4x4_translation_for_vec3(m4x4_t matrix, const vec3_t translation)
   matrix[14] = translation[2];
 }
 
-/*
-clockwise rotation around X, Y, Z, facing along axis
- 1  0   0    cy 0  sy   cz  sz 0
- 0  cx  sx   0  1  0   -sz  cz 0
- 0 -sx  cx  -sy 0  cy   0   0  1
-
-rows of Z by cols of Y
- cy*cz -sy*cz+sz -sy*sz+cz
--sz*cy -sz*sy+cz 
-
-  .. or something like that..
-
-final rotation is Z * Y * X
- cy*cz -sx*-sy*cz+cx*sz  cx*-sy*sz+sx*cz
--cy*sz  sx*sy*sz+cx*cz  -cx*-sy*sz+sx*cz
- sy    -sx*cy            cx*cy
-*/
-
-/* transposed
-|  cy.cz + 0.sz + sy.0            cy.-sz + 0 .cz +  sy.0          cy.0  + 0 .0  +   sy.1       |
-|  sx.sy.cz + cx.sz + -sx.cy.0    sx.sy.-sz + cx.cz + -sx.cy.0    sx.sy.0  + cx.0  + -sx.cy.1  |
-| -cx.sy.cz + sx.sz +  cx.cy.0   -cx.sy.-sz + sx.cz +  cx.cy.0   -cx.sy.0  + 0 .0  +  cx.cy.1  |
-*/
 void m4x4_rotation_for_vec3(m4x4_t matrix, const vec3_t euler, eulerOrder_t order)
 {
   double cx, sx, cy, sy, cz, sz;
@@ -277,6 +236,7 @@ void m4x4_rotation_for_vec3(m4x4_t matrix, const vec3_t euler, eulerOrder_t orde
   break;
 
   }
+
 }
 
 void m4x4_scale_for_vec3(m4x4_t matrix, const vec3_t scale)
@@ -293,20 +253,21 @@ void m4x4_scale_for_vec3(m4x4_t matrix, const vec3_t scale)
   matrix[10] = scale[2];
 }
 
-void m4x4_rotation_for_quat(m4x4_t matrix, const vec4_t quat)
+void m4x4_rotation_for_quat(m4x4_t matrix, const vec4_t rotation)
 {
-#if 0
-  const double xx = quat[0] * quat[0];
-  const double xy = quat[0] * quat[1];
-  const double xz = quat[0] * quat[2];
-  const double xw = quat[0] * quat[3];
+  float xx,xy,xz,xw,yy,yz,yw,zz,zw;
 
-  const double yy = quat[1] * quat[1];
-  const double yz = quat[1] * quat[2];
-  const double yw = quat[1] * quat[3];
+  xx      = rotation[0] * rotation[0];
+  xy      = rotation[0] * rotation[1];
+  xz      = rotation[0] * rotation[2];
+  xw      = rotation[0] * rotation[3];
 
-  const double zz = quat[2] * quat[2];
-  const double zw = quat[2] * quat[3];
+  yy      = rotation[1] * rotation[1];
+  yz      = rotation[1] * rotation[2];
+  yw      = rotation[1] * rotation[3];
+
+  zz      = rotation[2] * rotation[2];
+  zw      = rotation[2] * rotation[3];
 
   matrix[0]  = 1 - 2 * ( yy + zz );
   matrix[4]  =     2 * ( xy - zw );
@@ -319,192 +280,24 @@ void m4x4_rotation_for_quat(m4x4_t matrix, const vec4_t quat)
   matrix[2]  =     2 * ( xz - yw );
   matrix[6]  =     2 * ( yz + xw );
   matrix[10] = 1 - 2 * ( xx + yy );
-#else
-  const double x2 = quat[0] + quat[0];
-  const double y2 = quat[1] + quat[1]; 
-  const double z2 = quat[2] + quat[2];
-  const double xx = quat[0] * x2;
-  const double xy = quat[0] * y2;
-  const double xz = quat[0] * z2;
-  const double yy = quat[1] * y2;
-  const double yz = quat[1] * z2;
-  const double zz = quat[2] * z2;
-  const double wx = quat[3] * x2;
-  const double wy = quat[3] * y2;
-  const double wz = quat[3] * z2;
-
-  matrix[0] = (vec_t)( 1.0 - (yy + zz) );
-  matrix[4] = (vec_t)(xy - wz);
-  matrix[8] = (vec_t)(xz + wy);
-
-  matrix[1] = (vec_t)(xy + wz);
-  matrix[5] = (vec_t)( 1.0 - (xx + zz) );
-  matrix[9] = (vec_t)(yz - wx);
-
-  matrix[2] = (vec_t)(xz - wy);
-  matrix[6] = (vec_t)(yz + wx);
-  matrix[10] = (vec_t)( 1.0 - (xx + yy) );
-#endif
 
   matrix[3]  = matrix[7] = matrix[11] = matrix[12] = matrix[13] = matrix[14] = 0;
   matrix[15] = 1;
 }
 
-void m4x4_rotation_for_axisangle(m4x4_t matrix, const vec3_t axis, double angle)
+void m4x4_rotation_for_axisangle(m4x4_t matrix, const vec3_t axis, vec_t angle)
 {
-  vec4_t quat;
-  quat_for_axisangle(quat, axis, angle);
-  m4x4_rotation_for_quat(matrix, quat);
-}
+  vec4_t rotation;
+  angle *= 0.5;
 
-void m4x4_frustum(m4x4_t matrix,
-		      vec_t left, vec_t right,
-		      vec_t bottom, vec_t top,
-		      vec_t nearval, vec_t farval)
-{
-   matrix[0] = (vec_t)( (2*nearval) / (right-left) );
-   matrix[1] = 0;
-   matrix[2] = 0;
-   matrix[3] = 0;
+  rotation[3] = (float)sin((float)(angle));
 
-   matrix[4] = 0;
-   matrix[5] = (vec_t)( (2*nearval) / (top-bottom) );
-   matrix[6] = 0;
-   matrix[7] = 0;
+  rotation[0]    = axis[0] * rotation[3];
+  rotation[1]    = axis[1] * rotation[3];
+  rotation[2]    = axis[2] * rotation[3];
+  rotation[3]    = (float)cos((float)(angle));
 
-   matrix[8] = (vec_t)( (right+left) / (right-left) );
-   matrix[9] = (vec_t)( (top+bottom) / (top-bottom) );
-   matrix[10] = (vec_t)( -(farval+nearval) / (farval-nearval) );
-   matrix[11] =-1;
-
-   matrix[12] = 0;
-   matrix[13] = 0;
-   matrix[14] = (vec_t)( -(2*farval*nearval) / (farval-nearval) );
-   matrix[15] = 0;
-}
-
-
-void m4x4_get_translation_vec3(const m4x4_t matrix, vec3_t translation)
-{
-  translation[0] = matrix[12];
-	translation[1] = matrix[13];
-	translation[2] = matrix[14];
-}
-
-void m4x4_get_rotation_vec3(const m4x4_t matrix, vec3_t euler, eulerOrder_t order)
-{
-  double a, ca;
-
-  switch(order)
-  {
-  case eXYZ:
-    a = asin(-matrix[2]);
-    ca = cos(a);
-    euler[1] = (vec_t)RAD2DEG(a);  /* Calculate Y-axis angle */    
-
-    if (fabs(ca) > 0.005) /* Gimbal lock? */
-    {
-      /* No, so get Z-axis angle */
-      euler[2] = (vec_t)RAD2DEG(atan2(matrix[1] / ca, matrix[0]/ ca));
-
-      /* Get X-axis angle */
-      euler[0] = (vec_t)RAD2DEG(atan2(matrix[6] / ca, matrix[10] / ca));
-    }
-    else /* Gimbal lock has occurred */
-    {
-      /* Set Z-axis angle to zero */
-      euler[2]  = 0;
-
-      /* And calculate X-axis angle */
-      euler[0] = (vec_t)RAD2DEG(atan2(-matrix[9], matrix[5]));
-    }
-    break;
-  case eYZX:
-    /* NOT IMPLEMENTED */
-    break;
-  case eZXY:
-    /* NOT IMPLEMENTED */
-    break;
-  case eXZY:
-    /* NOT IMPLEMENTED */
-    break;
-  case eYXZ:
-    a = asin(matrix[6]);
-    ca = cos(a);
-    euler[0] = (vec_t)RAD2DEG(a);  /* Calculate X-axis angle */    
-
-    if (fabs(ca) > 0.005) /* Gimbal lock? */
-    {
-      /* No, so get Y-axis angle */
-      euler[1] = (vec_t)RAD2DEG(atan2(-matrix[2] / ca, matrix[10]/ ca));
-
-      /* Get Z-axis angle */
-      euler[2] = (vec_t)RAD2DEG(atan2(-matrix[4] / ca, matrix[5] / ca));
-    }
-    else /* Gimbal lock has occurred */
-    {
-      /* Set Z-axis angle to zero */
-      euler[2]  = 0;
-
-      /* And calculate Y-axis angle */
-      euler[1] = (vec_t)RAD2DEG(atan2(matrix[8], matrix[0]));
-    }
-    break;
-  case eZYX:
-    a = asin(matrix[8]);
-    ca = cos(a);
-    euler[1] = (vec_t)RAD2DEG(a);  /* Calculate Y-axis angle */    
-
-    if (fabs(ca) > 0.005) /* Gimbal lock? */
-    {
-      /* No, so get X-axis angle */
-      euler[0] = (vec_t)RAD2DEG(atan2(-matrix[9] / ca, matrix[10]/ ca));
-
-      /* Get Z-axis angle */
-      euler[2] = (vec_t)RAD2DEG(atan2(-matrix[4] / ca, matrix[0] / ca));
-    }
-    else /* Gimbal lock has occurred */
-    {
-      /* Set X-axis angle to zero */
-      euler[0]  = 0;
-
-      /* And calculate Z-axis angle */
-      euler[2] = (vec_t)RAD2DEG(atan2(matrix[1], matrix[5]));
-    }
-    break;
-  }
-
-  /* return only positive angles in [0,360] */
-  if (euler[0] < 0) euler[0] += 360;
-  if (euler[1] < 0) euler[1] += 360;
-  if (euler[2] < 0) euler[2] += 360;
-}
-
-void m4x4_get_scale_vec3(const m4x4_t matrix, vec3_t scale)
-{
-  scale[0] = VectorLength(matrix+0);
-  scale[1] = VectorLength(matrix+4);
-  scale[2] = VectorLength(matrix+8);
-}
-
-void m4x4_get_transform_vec3(const m4x4_t matrix, vec3_t translation, vec3_t euler, eulerOrder_t order, vec3_t scale)
-{
-  m4x4_t normalised;
-  m4x4_assign(normalised, matrix);
-  scale[0] = VectorNormalize(normalised+0, normalised+0);
-  scale[1] = VectorNormalize(normalised+4, normalised+4);
-  scale[2] = VectorNormalize(normalised+8, normalised+8);
-  if(m4x4_handedness(normalised) == eLeftHanded)
-  {
-    VectorNegate(normalised+0, normalised+0);
-    VectorNegate(normalised+4, normalised+4);
-    VectorNegate(normalised+8, normalised+8);
-    scale[0] = -scale[0];
-    scale[1] = -scale[1];
-    scale[2] = -scale[2];
-  }
-  m4x4_get_rotation_vec3(normalised, euler, order);
-  m4x4_get_translation_vec3(matrix, translation);
+  m4x4_rotation_for_quat(matrix, rotation);
 }
 
 void m4x4_translate_by_vec3(m4x4_t matrix, const vec3_t translation)
@@ -535,7 +328,7 @@ void m4x4_rotate_by_quat(m4x4_t matrix, const vec4_t rotation)
   m4x4_multiply_by_m4x4(matrix, temp);
 }
 
-void m4x4_rotate_by_axisangle(m4x4_t matrix, const vec3_t axis, double angle)
+void m4x4_rotate_by_axisangle(m4x4_t matrix, const vec3_t axis, vec_t angle)
 {
   m4x4_t temp;
   m4x4_rotation_for_axisangle(temp, axis, angle);
@@ -552,7 +345,7 @@ void m4x4_transform_by_vec3(m4x4_t matrix, const vec3_t translation, const vec3_
 void m4x4_pivoted_rotate_by_vec3(m4x4_t matrix, const vec3_t euler, eulerOrder_t order, const vec3_t pivotpoint)
 {
   vec3_t vec3_temp;
-  VectorNegate(pivotpoint, vec3_temp);
+  VectorNegative(pivotpoint, vec3_temp);
 
   m4x4_translate_by_vec3(matrix, pivotpoint);
   m4x4_rotate_by_vec3(matrix, euler, order);
@@ -562,7 +355,7 @@ void m4x4_pivoted_rotate_by_vec3(m4x4_t matrix, const vec3_t euler, eulerOrder_t
 void m4x4_pivoted_scale_by_vec3(m4x4_t matrix, const vec3_t scale, const vec3_t pivotpoint)
 {
   vec3_t vec3_temp;
-  VectorNegate(pivotpoint, vec3_temp);
+  VectorNegative(pivotpoint, vec3_temp);
 
   m4x4_translate_by_vec3(matrix, pivotpoint);
   m4x4_scale_by_vec3(matrix, scale);
@@ -577,41 +370,30 @@ void m4x4_pivoted_transform_by_vec3(m4x4_t matrix, const vec3_t translation, con
   m4x4_translate_by_vec3(matrix, vec3_temp);
   m4x4_rotate_by_vec3(matrix, euler, order);
   m4x4_scale_by_vec3(matrix, scale);
-  VectorNegate(pivotpoint, vec3_temp);
-  m4x4_translate_by_vec3(matrix, vec3_temp);
-}
-
-void m4x4_pivoted_transform_by_rotation(m4x4_t matrix, const vec3_t translation, const m4x4_t rotation, const vec3_t scale, const vec3_t pivotpoint)
-{
-  vec3_t vec3_temp;
-
-  VectorAdd(pivotpoint, translation, vec3_temp);
-  m4x4_translate_by_vec3(matrix, vec3_temp);
-  m4x4_multiply_by_m4x4(matrix, rotation);
-  m4x4_scale_by_vec3(matrix, scale);
-  VectorNegate(pivotpoint, vec3_temp);
+  VectorNegative(pivotpoint, vec3_temp);
   m4x4_translate_by_vec3(matrix, vec3_temp);
 }
 
 void m4x4_pivoted_rotate_by_quat(m4x4_t matrix, const vec4_t rotation, const vec3_t pivotpoint)
 {
   vec3_t vec3_temp;
-  VectorNegate(pivotpoint, vec3_temp);
+  VectorNegative(pivotpoint, vec3_temp);
 
   m4x4_translate_by_vec3(matrix, pivotpoint);
   m4x4_rotate_by_quat(matrix, rotation);
   m4x4_translate_by_vec3(matrix, vec3_temp);
 }
 
-void m4x4_pivoted_rotate_by_axisangle(m4x4_t matrix, const vec3_t axis, double angle, const vec3_t pivotpoint)
+void m4x4_pivoted_rotate_by_axisangle(m4x4_t matrix, const vec3_t axis, vec_t angle, const vec3_t pivotpoint)
 {
   vec3_t vec3_temp;
-  VectorNegate(pivotpoint, vec3_temp);
+  VectorNegative(pivotpoint, vec3_temp);
 
   m4x4_translate_by_vec3(matrix, pivotpoint);
   m4x4_rotate_by_axisangle(matrix, axis, angle);
   m4x4_translate_by_vec3(matrix, vec3_temp);
 }
+
 
 /*
 A = A.B
@@ -784,61 +566,22 @@ void m4x4_premultiply_by_m4x4(m4x4_t dst, const m4x4_t src)
 #endif
 }
 
-void m4x4_orthogonal_multiply_by_m4x4(m4x4_t dst, const m4x4_t src)
-{
-	vec_t dst0, dst1, dst2, dst3;
-
-  dst0 = src[0] * dst[0] + src[1] * dst[4] + src[2] * dst[8];
-  dst1 = src[4] * dst[0] + src[5] * dst[4] + src[6] * dst[8];
-  dst2 = src[8] * dst[0] + src[9] * dst[4] + src[10]* dst[8];
-  dst3 = src[12]* dst[0] + src[13]* dst[4] + src[14]* dst[8] + dst[12];
-  dst[0] = dst0; dst[4] = dst1; dst[8] = dst2; dst[12]= dst3;
-
-  dst0 = src[0] * dst[1] + src[1] * dst[5] + src[2] * dst[9];
-  dst1 = src[4] * dst[1] + src[5] * dst[5] + src[6] * dst[9];
-  dst2 = src[8] * dst[1] + src[9] * dst[5] + src[10]* dst[9];
-  dst3 = src[12]* dst[1] + src[13]* dst[5] + src[14]* dst[9] + dst[13];
-  dst[1] = dst0; dst[5] = dst1; dst[9] = dst2; dst[13]= dst3;
-
-  dst0 = src[0] * dst[2] + src[1] * dst[6] + src[2] * dst[10];
-  dst1 = src[4] * dst[2] + src[5] * dst[6] + src[6] * dst[10];
-  dst2 = src[8] * dst[2] + src[9] * dst[6] + src[10]* dst[10];
-  dst3 = src[12]* dst[2] + src[13]* dst[6] + src[14]* dst[10]+ dst[14];
-  dst[2] = dst0; dst[6] = dst1; dst[10]= dst2; dst[14]= dst3;
-}
-
-void m4x4_orthogonal_premultiply_by_m4x4(m4x4_t dst, const m4x4_t src)
-{
-	vec_t dst0, dst1, dst2;
-
-  dst0 = dst[0] * src[0] + dst[1] * src[4] + dst[2] * src[8];
-  dst1 = dst[0] * src[1] + dst[1] * src[5] + dst[2] * src[9];
-  dst2 = dst[0] * src[2] + dst[1] * src[6] + dst[2] * src[10];
-  dst[0] = dst0; dst[1] = dst1; dst[2] = dst2;
-
-  dst0 = dst[4] * src[0] + dst[5] * src[4] + dst[6] * src[8];
-  dst1 = dst[4] * src[1] + dst[5] * src[5] + dst[6] * src[9];
-  dst2 = dst[4] * src[2] + dst[5] * src[6] + dst[6] * src[10];
-  dst[4] = dst0; dst[5] = dst1; dst[6] = dst2;
-
-  dst0 = dst[8] * src[0] + dst[9] * src[4] + dst[10]* src[8];
-  dst1 = dst[8] * src[1] + dst[9] * src[5] + dst[10]* src[9];
-  dst2 = dst[8] * src[2] + dst[9] * src[6] + dst[10]* src[10];
-  dst[8] = dst0; dst[9] = dst1; dst[10] = dst2;
-
-  dst0 = dst[12]* src[0] + dst[13]* src[4] + dst[14]* src[8] + dst[15]* src[12];
-  dst1 = dst[12]* src[1] + dst[13]* src[5] + dst[14]* src[9] + dst[15]* src[13];
-  dst2 = dst[12]* src[2] + dst[13]* src[6] + dst[14]* src[10]+ dst[15]* src[14];
-  dst[12] = dst0; dst[13] = dst1; dst[14] = dst2;
-}
-
 void m4x4_transform_point(const m4x4_t matrix, vec3_t point)
 {
   float out1, out2, out3;
 
-	out1 =  matrix[0]  * point[0] + matrix[4]  * point[1] + matrix[8]  * point[2] + matrix[12];
-	out2 =  matrix[1]  * point[0] + matrix[5]  * point[1] + matrix[9]  * point[2] + matrix[13];
-	out3 =  matrix[2]  * point[0] + matrix[6]  * point[1] + matrix[10] * point[2] + matrix[14];
+	out1 =  matrix[0]  * point[0];
+	out2 =  matrix[1]  * point[0];
+	out3 =  matrix[2]  * point[0];
+	out1 += matrix[4]  * point[1];
+	out2 += matrix[5]  * point[1];
+	out3 += matrix[6]  * point[1];
+	out1 += matrix[8]  * point[2];
+	out2 += matrix[9]  * point[2];
+	out3 += matrix[10] * point[2];
+  out1 += matrix[12];
+  out2 += matrix[13];
+  out3 += matrix[14];
 
 	point[0] = out1;
 	point[1] = out2;
@@ -849,9 +592,15 @@ void m4x4_transform_normal(const m4x4_t matrix, vec3_t normal)
 {
   float out1, out2, out3;
 
-	out1 =  matrix[0]  * normal[0] + matrix[4]  * normal[1] + matrix[8]  * normal[2];
-	out2 =  matrix[1]  * normal[0] + matrix[5]  * normal[1] + matrix[9]  * normal[2];
-	out3 =  matrix[2]  * normal[0] + matrix[6]  * normal[1] + matrix[10] * normal[2];
+	out1 =  matrix[0]  * normal[0];
+	out2 =  matrix[1]  * normal[0];
+	out3 =  matrix[2]  * normal[0];
+	out1 += matrix[4]  * normal[1];
+	out2 += matrix[5]  * normal[1];
+	out3 += matrix[6]  * normal[1];
+	out1 += matrix[8]  * normal[2];
+	out2 += matrix[9]  * normal[2];
+	out3 += matrix[10] * normal[2];
 
 	normal[0] = out1;
 	normal[1] = out2;
@@ -862,532 +611,27 @@ void m4x4_transform_vec4(const m4x4_t matrix, vec4_t vector)
 {
   float out1, out2, out3, out4;
 
-	out1 =  matrix[0]  * vector[0] + matrix[4]  * vector[1] + matrix[8]  * vector[2] + matrix[12] * vector[3];
-	out2 =  matrix[1]  * vector[0] + matrix[5]  * vector[1] + matrix[9]  * vector[2] + matrix[13] * vector[3];
-	out3 =  matrix[2]  * vector[0] + matrix[6]  * vector[1] + matrix[10] * vector[2] + matrix[14] * vector[3];
-	out4 =  matrix[3]  * vector[0] + matrix[7]  * vector[1] + matrix[11] * vector[2] + matrix[15] * vector[3];
+	out1 =  matrix[0]  * vector[0];
+	out2 =  matrix[1]  * vector[0];
+	out3 =  matrix[2]  * vector[0];
+	out4 =  matrix[3]  * vector[0];
+	out1 += matrix[4]  * vector[1];
+	out2 += matrix[5]  * vector[1];
+	out3 += matrix[6]  * vector[1];
+	out4 += matrix[7]  * vector[1];
+	out1 += matrix[8]  * vector[2];
+	out2 += matrix[9]  * vector[2];
+	out3 += matrix[10] * vector[2];
+	out4 += matrix[11] * vector[2];
+  out1 += matrix[12] * vector[3];
+  out2 += matrix[13] * vector[3];
+  out3 += matrix[14] * vector[3];
+  out4 += matrix[15] * vector[3];
 
 	vector[0] = out1;
 	vector[1] = out2;
 	vector[2] = out3;
   vector[3] = out4;
-}
-
-#define CLIP_X_LT_W(p) ((p)[0] < (p)[3])
-#define CLIP_X_GT_W(p) ((p)[0] > -(p)[3])
-#define CLIP_Y_LT_W(p) ((p)[1] < (p)[3])
-#define CLIP_Y_GT_W(p) ((p)[1] > -(p)[3])
-#define CLIP_Z_LT_W(p) ((p)[2] < (p)[3])
-#define CLIP_Z_GT_W(p) ((p)[2] > -(p)[3])
-
-clipmask_t homogenous_clip_point(const vec4_t clipped)
-{
-  clipmask_t result = CLIP_FAIL;
-  if(CLIP_X_LT_W(clipped)) result &= ~CLIP_LT_X; // X < W
-  if(CLIP_X_GT_W(clipped)) result &= ~CLIP_GT_X; // X > -W
-  if(CLIP_Y_LT_W(clipped)) result &= ~CLIP_LT_Y; // Y < W
-  if(CLIP_Y_GT_W(clipped)) result &= ~CLIP_GT_Y; // Y > -W
-  if(CLIP_Z_LT_W(clipped)) result &= ~CLIP_LT_Z; // Z < W
-  if(CLIP_Z_GT_W(clipped)) result &= ~CLIP_GT_Z; // Z > -W
-  return result;
-}
-
-clipmask_t m4x4_clip_point(const m4x4_t matrix, const vec3_t point, vec4_t clipped)
-{
-  clipped[0] = point[0];
-  clipped[1] = point[1];
-  clipped[2] = point[2];
-  clipped[3] = 1;
-  m4x4_transform_vec4(matrix, clipped);
-  return homogenous_clip_point(clipped);
-}
-
-
-unsigned int homogenous_clip_triangle(vec4_t clipped[9])
-{
-  vec4_t buffer[9];
-  unsigned int rcount = 3;
-  unsigned int wcount = 0;
-  vec_t const* rptr = clipped[0];
-  vec_t* wptr = buffer[0];
-  const vec_t* p0;
-  const vec_t* p1;
-  unsigned char b0, b1;
-
-  unsigned int i;
-  double scale;
-
-  p0 = rptr;
-  b0 = CLIP_X_LT_W(p0);
-  for(i=0; i<rcount; ++i)
-  {
-    p1 = (i+1 != rcount) ? p0 + 4 : rptr;
-    b1 = CLIP_X_LT_W(p1);
-    if(b0 ^ b1)
-    {
-			wptr[0] = p1[0] - p0[0];
-			wptr[1] = p1[1] - p0[1];
-			wptr[2] = p1[2] - p0[2];
-			wptr[3] = p1[3] - p0[3];
-
-      scale = (p0[0] - p0[3]) / (wptr[3] - wptr[0]);
-
-			wptr[0] = (vec_t)(p0[0] + scale*(wptr[0]));
-			wptr[1] = (vec_t)(p0[1] + scale*(wptr[1]));
-			wptr[2] = (vec_t)(p0[2] + scale*(wptr[2]));
-			wptr[3] = (vec_t)(p0[3] + scale*(wptr[3]));
-
-      wptr += 4;
-      ++wcount;
-    }
-
-    if(b1)
-    {
-      wptr[0] = p1[0];
-      wptr[1] = p1[1];
-      wptr[2] = p1[2];
-      wptr[3] = p1[3];
-
-      wptr += 4;
-      ++wcount;
-    }
-
-    p0 = p1;
-    b0 = b1;
-  }
-
-  rcount = wcount;
-  wcount = 0;
-  rptr = buffer[0];
-  wptr = clipped[0];
-  p0 = rptr;
-  b0 = CLIP_X_GT_W(p0);
-
-  for(i=0; i<rcount; ++i)
-  {
-    p1 = (i+1 != rcount) ? p0 + 4 : rptr;
-    b1 = CLIP_X_GT_W(p1);
-    if(b0 ^ b1)
-    {
-			wptr[0] = p1[0] - p0[0];
-			wptr[1] = p1[1] - p0[1];
-			wptr[2] = p1[2] - p0[2];
-			wptr[3] = p1[3] - p0[3];
-
-      scale = (p0[0] + p0[3]) / (-wptr[3] - wptr[0]);
-
-			wptr[0] = (vec_t)(p0[0] + scale*(wptr[0]));
-			wptr[1] = (vec_t)(p0[1] + scale*(wptr[1]));
-			wptr[2] = (vec_t)(p0[2] + scale*(wptr[2]));
-			wptr[3] = (vec_t)(p0[3] + scale*(wptr[3]));
-
-      wptr += 4;
-      ++wcount;
-    }
-
-    if(b1)
-    {
-      wptr[0] = p1[0];
-      wptr[1] = p1[1];
-      wptr[2] = p1[2];
-      wptr[3] = p1[3];
-
-      wptr += 4;
-      ++wcount;
-    }
-
-    p0 = p1;
-    b0 = b1;
-  }
-
-  rcount = wcount;
-  wcount = 0;
-  rptr = clipped[0];
-  wptr = buffer[0];
-  p0 = rptr;
-  b0 = CLIP_Y_LT_W(p0);
-
-  for(i=0; i<rcount; ++i)
-  {
-    p1 = (i+1 != rcount) ? p0 + 4 : rptr;
-    b1 = CLIP_Y_LT_W(p1);
-    if(b0 ^ b1)
-    {
-			wptr[0] = p1[0] - p0[0];
-			wptr[1] = p1[1] - p0[1];
-			wptr[2] = p1[2] - p0[2];
-			wptr[3] = p1[3] - p0[3];
-
-      scale = (p0[1] - p0[3]) / (wptr[3] - wptr[1]);
-
-			wptr[0] = (vec_t)(p0[0] + scale*(wptr[0]));
-			wptr[1] = (vec_t)(p0[1] + scale*(wptr[1]));
-			wptr[2] = (vec_t)(p0[2] + scale*(wptr[2]));
-			wptr[3] = (vec_t)(p0[3] + scale*(wptr[3]));
-
-      wptr += 4;
-      ++wcount;
-    }
-
-    if(b1)
-    {
-      wptr[0] = p1[0];
-      wptr[1] = p1[1];
-      wptr[2] = p1[2];
-      wptr[3] = p1[3];
-
-      wptr += 4;
-      ++wcount;
-    }
-
-    p0 = p1;
-    b0 = b1;
-  }
-
-  rcount = wcount;
-  wcount = 0;
-  rptr = buffer[0];
-  wptr = clipped[0];
-  p0 = rptr;
-  b0 = CLIP_Y_GT_W(p0);
-
-  for(i=0; i<rcount; ++i)
-  {
-    p1 = (i+1 != rcount) ? p0 + 4 : rptr;
-    b1 = CLIP_Y_GT_W(p1);
-    if(b0 ^ b1)
-    {
-			wptr[0] = p1[0] - p0[0];
-			wptr[1] = p1[1] - p0[1];
-			wptr[2] = p1[2] - p0[2];
-			wptr[3] = p1[3] - p0[3];
-
-      scale = (p0[1] + p0[3]) / (-wptr[3] - wptr[1]);
-
-			wptr[0] = (vec_t)(p0[0] + scale*(wptr[0]));
-			wptr[1] = (vec_t)(p0[1] + scale*(wptr[1]));
-			wptr[2] = (vec_t)(p0[2] + scale*(wptr[2]));
-			wptr[3] = (vec_t)(p0[3] + scale*(wptr[3]));
-
-      wptr += 4;
-      ++wcount;
-    }
-
-    if(b1)
-    {
-      wptr[0] = p1[0];
-      wptr[1] = p1[1];
-      wptr[2] = p1[2];
-      wptr[3] = p1[3];
-
-      wptr += 4;
-      ++wcount;
-    }
-
-    p0 = p1;
-    b0 = b1;
-  }
-
-  rcount = wcount;
-  wcount = 0;
-  rptr = clipped[0];
-  wptr = buffer[0];
-  p0 = rptr;
-  b0 = CLIP_Z_LT_W(p0);
-
-  for(i=0; i<rcount; ++i)
-  {
-    p1 = (i+1 != rcount) ? p0 + 4 : rptr;
-    b1 = CLIP_Z_LT_W(p1);
-    if(b0 ^ b1)
-    {
-			wptr[0] = p1[0] - p0[0];
-			wptr[1] = p1[1] - p0[1];
-			wptr[2] = p1[2] - p0[2];
-			wptr[3] = p1[3] - p0[3];
-
-      scale = (p0[2] - p0[3]) / (wptr[3] - wptr[2]);
-
-			wptr[0] = (vec_t)(p0[0] + scale*(wptr[0]));
-			wptr[1] = (vec_t)(p0[1] + scale*(wptr[1]));
-			wptr[2] = (vec_t)(p0[2] + scale*(wptr[2]));
-			wptr[3] = (vec_t)(p0[3] + scale*(wptr[3]));
-
-      wptr += 4;
-      ++wcount;
-    }
-
-    if(b1)
-    {
-      wptr[0] = p1[0];
-      wptr[1] = p1[1];
-      wptr[2] = p1[2];
-      wptr[3] = p1[3];
-
-      wptr += 4;
-      ++wcount;
-    }
-
-    p0 = p1;
-    b0 = b1;
-  }
-
-  rcount = wcount;
-  wcount = 0;
-  rptr = buffer[0];
-  wptr = clipped[0];
-  p0 = rptr;
-  b0 = CLIP_Z_GT_W(p0);
-
-  for(i=0; i<rcount; ++i)
-  {
-    p1 = (i+1 != rcount) ? p0 + 4 : rptr;
-    b1 = CLIP_Z_GT_W(p1);
-    if(b0 ^ b1)
-    {
-			wptr[0] = p1[0] - p0[0];
-			wptr[1] = p1[1] - p0[1];
-			wptr[2] = p1[2] - p0[2];
-			wptr[3] = p1[3] - p0[3];
-
-      scale = (p0[2] + p0[3]) / (-wptr[3] - wptr[2]);
-
-			wptr[0] = (vec_t)(p0[0] + scale*(wptr[0]));
-			wptr[1] = (vec_t)(p0[1] + scale*(wptr[1]));
-			wptr[2] = (vec_t)(p0[2] + scale*(wptr[2]));
-			wptr[3] = (vec_t)(p0[3] + scale*(wptr[3]));
-
-      wptr += 4;
-      ++wcount;
-    }
-
-    if(b1)
-    {
-      wptr[0] = p1[0];
-      wptr[1] = p1[1];
-      wptr[2] = p1[2];
-      wptr[3] = p1[3];
-
-      wptr += 4;
-      ++wcount;
-    }
-
-    p0 = p1;
-    b0 = b1;
-  }
-
-  return wcount;
-}
-
-unsigned int m4x4_clip_triangle(const m4x4_t matrix, const vec3_t p0, const vec3_t p1, const vec3_t p2, vec4_t clipped[9])
-{
-  clipped[0][0] = p0[0];
-  clipped[0][1] = p0[1];
-  clipped[0][2] = p0[2];
-  clipped[0][3] = 1;
-  clipped[1][0] = p1[0];
-  clipped[1][1] = p1[1];
-  clipped[1][2] = p1[2];
-  clipped[1][3] = 1;
-  clipped[2][0] = p2[0];
-  clipped[2][1] = p2[1];
-  clipped[2][2] = p2[2];
-  clipped[2][3] = 1;
-
-  m4x4_transform_vec4(matrix, clipped[0]);
-  m4x4_transform_vec4(matrix, clipped[1]);
-  m4x4_transform_vec4(matrix, clipped[2]);
-
-  return homogenous_clip_triangle(clipped);
-}
-
-unsigned int homogenous_clip_line(vec4_t clipped[2])
-{
-  vec4_t clip;
-  double scale;
-  const vec_t* const p0 = clipped[0];
-  const vec_t* const p1 = clipped[1];
-
-  // early out
-  {
-    clipmask_t mask0 = homogenous_clip_point(clipped[0]);
-    clipmask_t mask1 = homogenous_clip_point(clipped[1]);
-
-    if((mask0 | mask1) == CLIP_PASS) // both points passed all planes
-      return 2;
-
-    if(mask0 & mask1) // both points failed any one plane
-      return 0;
-  }
-
-  {
-    const unsigned int index = CLIP_X_LT_W(p0);
-    if(index ^ CLIP_X_LT_W(p1))
-    {
-		  clip[0] = p1[0] - p0[0];
-		  clip[1] = p1[1] - p0[1];
-		  clip[2] = p1[2] - p0[2];
-		  clip[3] = p1[3] - p0[3];
-
-      scale = (p0[0] - p0[3]) / (clip[3] - clip[0]);
-
-		  clip[0] = (vec_t)(p0[0] + scale*(clip[0]));
-		  clip[1] = (vec_t)(p0[1] + scale*(clip[1]));
-		  clip[2] = (vec_t)(p0[2] + scale*(clip[2]));
-		  clip[3] = (vec_t)(p0[3] + scale*(clip[3]));
-
-      clipped[index][0] = clip[0];
-      clipped[index][1] = clip[1];
-      clipped[index][2] = clip[2];
-      clipped[index][3] = clip[3];
-    }
-    else if(index == 0)
-      return 0;
-  }
-
-  {
-    const unsigned int index = CLIP_X_GT_W(p0);
-    if(index ^ CLIP_X_GT_W(p1))
-    {
-		  clip[0] = p1[0] - p0[0];
-		  clip[1] = p1[1] - p0[1];
-		  clip[2] = p1[2] - p0[2];
-		  clip[3] = p1[3] - p0[3];
-
-      scale = (p0[0] + p0[3]) / (-clip[3] - clip[0]);
-
-		  clip[0] = (vec_t)(p0[0] + scale*(clip[0]));
-		  clip[1] = (vec_t)(p0[1] + scale*(clip[1]));
-		  clip[2] = (vec_t)(p0[2] + scale*(clip[2]));
-		  clip[3] = (vec_t)(p0[3] + scale*(clip[3]));
-
-      clipped[index][0] = clip[0];
-      clipped[index][1] = clip[1];
-      clipped[index][2] = clip[2];
-      clipped[index][3] = clip[3];
-    }
-    else if(index == 0)
-      return 0;
-  }
-
-  {
-    const unsigned int index = CLIP_Y_LT_W(p0);
-    if(index ^ CLIP_Y_LT_W(p1))
-    {
-		  clip[0] = p1[0] - p0[0];
-		  clip[1] = p1[1] - p0[1];
-		  clip[2] = p1[2] - p0[2];
-		  clip[3] = p1[3] - p0[3];
-
-      scale = (p0[1] - p0[3]) / (clip[3] - clip[1]);
-
-		  clip[0] = (vec_t)(p0[0] + scale*(clip[0]));
-		  clip[1] = (vec_t)(p0[1] + scale*(clip[1]));
-		  clip[2] = (vec_t)(p0[2] + scale*(clip[2]));
-		  clip[3] = (vec_t)(p0[3] + scale*(clip[3]));
-
-      clipped[index][0] = clip[0];
-      clipped[index][1] = clip[1];
-      clipped[index][2] = clip[2];
-      clipped[index][3] = clip[3];
-    }
-    else if(index == 0)
-      return 0;
-  }
-
-  {
-    const unsigned int index = CLIP_Y_GT_W(p0);
-    if(index ^ CLIP_Y_GT_W(p1))
-    {
-		  clip[0] = p1[0] - p0[0];
-		  clip[1] = p1[1] - p0[1];
-		  clip[2] = p1[2] - p0[2];
-		  clip[3] = p1[3] - p0[3];
-
-      scale = (p0[1] + p0[3]) / (-clip[3] - clip[1]);
-
-		  clip[0] = (vec_t)(p0[0] + scale*(clip[0]));
-		  clip[1] = (vec_t)(p0[1] + scale*(clip[1]));
-		  clip[2] = (vec_t)(p0[2] + scale*(clip[2]));
-		  clip[3] = (vec_t)(p0[3] + scale*(clip[3]));
-
-      clipped[index][0] = clip[0];
-      clipped[index][1] = clip[1];
-      clipped[index][2] = clip[2];
-      clipped[index][3] = clip[3];
-    }
-    else if(index == 0)
-      return 0;
-  }
-
-  {
-    const unsigned int index = CLIP_Z_LT_W(p0);
-    if(index ^ CLIP_Z_LT_W(p1))
-    {
-		  clip[0] = p1[0] - p0[0];
-		  clip[1] = p1[1] - p0[1];
-		  clip[2] = p1[2] - p0[2];
-		  clip[3] = p1[3] - p0[3];
-
-      scale = (p0[2] - p0[3]) / (clip[3] - clip[2]);
-
-		  clip[0] = (vec_t)(p0[0] + scale*(clip[0]));
-		  clip[1] = (vec_t)(p0[1] + scale*(clip[1]));
-		  clip[2] = (vec_t)(p0[2] + scale*(clip[2]));
-		  clip[3] = (vec_t)(p0[3] + scale*(clip[3]));
-
-      clipped[index][0] = clip[0];
-      clipped[index][1] = clip[1];
-      clipped[index][2] = clip[2];
-      clipped[index][3] = clip[3];
-    }
-    else if(index == 0)
-      return 0;
-  }
-
-  {
-    const unsigned int index = CLIP_Z_GT_W(p0);
-    if(index ^ CLIP_Z_GT_W(p1))
-    {
-		  clip[0] = p1[0] - p0[0];
-		  clip[1] = p1[1] - p0[1];
-		  clip[2] = p1[2] - p0[2];
-		  clip[3] = p1[3] - p0[3];
-
-      scale = (p0[2] + p0[3]) / (-clip[3] - clip[2]);
-
-		  clip[0] = (vec_t)(p0[0] + scale*(clip[0]));
-		  clip[1] = (vec_t)(p0[1] + scale*(clip[1]));
-		  clip[2] = (vec_t)(p0[2] + scale*(clip[2]));
-		  clip[3] = (vec_t)(p0[3] + scale*(clip[3]));
-
-      clipped[index][0] = clip[0];
-      clipped[index][1] = clip[1];
-      clipped[index][2] = clip[2];
-      clipped[index][3] = clip[3];
-    }
-    else if(index == 0)
-      return 0;
-  }
-
-  return 2;
-}
-
-unsigned int m4x4_clip_line(const m4x4_t matrix, const vec3_t p0, const vec3_t p1, vec4_t clipped[2])
-{
-  clipped[0][0] = p0[0];
-  clipped[0][1] = p0[1];
-  clipped[0][2] = p0[2];
-  clipped[0][3] = 1;
-  clipped[1][0] = p1[0];
-  clipped[1][1] = p1[1];
-  clipped[1][2] = p1[2];
-  clipped[1][3] = 1;
-
-  m4x4_transform_vec4(matrix, clipped[0]);
-  m4x4_transform_vec4(matrix, clipped[1]);
-
-  return homogenous_clip_line(clipped);
 }
 
 void m4x4_transpose(m4x4_t matrix)
@@ -1406,180 +650,39 @@ void m4x4_transpose(m4x4_t matrix)
   }
 }
 
-/* adapted from Graphics Gems 2
- invert a 3d matrix (4x3) */
-int m4x4_orthogonal_invert(m4x4_t matrix)
+void m4x4_orthogonal_invert(m4x4_t matrix)
 {
-  m4x4_t temp;
-  vec_t* src = temp;
+  float temp;
 
-  m4x4_assign(src, matrix);
-  
-  /* Calculate the determinant of upper left 3x3 submatrix and
-  * determine if the matrix is singular.
+  temp = -matrix[3];
+  matrix[3] = matrix[12];
+  matrix[12] = temp;
+
+  temp = -matrix[7];
+  matrix[7] = matrix[13];
+  matrix[13] = temp;
+
+  temp = -matrix[11];
+  matrix[11] = matrix[14];
+  matrix[14] = temp;
+
+  /*
+  temp = matrix[1];
+  matrix[1] = matrix[4];
+  matrix[4] = temp;
+
+  temp = matrix[2];
+  matrix[2] = matrix[8];
+  matrix[8] = temp;
+
+  temp = matrix[6];
+  matrix[6] = matrix[9];
+  matrix[9] = temp;
+
+  matrix[3] = -matrix[3];
+  matrix[7] = -matrix[7];
+  matrix[11] = -matrix[11];
   */
-  {
-#if 0
-  float pos = 0.0f;
-  float neg = 0.0f;
-  float det = src[0] * src[5] * src[10];
-  if (det >= 0.0) pos += det; else neg += det;
-  
-  det = src[1] * src[6] * src[8];
-  if (det >= 0.0) pos += det; else neg += det;
-  
-  det = src[2] * src[4] * src[9];
-  if (det >= 0.0) pos += det; else neg += det;
-  
-  det = -src[2] * src[5] * src[8];
-  if (det >= 0.0) pos += det; else neg += det;
-  
-  det = -src[1] * src[4] * src[10];
-  if (det >= 0.0) pos += det; else neg += det;
-  
-  det = -src[0] * src[6] * src[9];
-  if (det >= 0.0) pos += det; else neg += det;
-  
-  det = pos + neg;
-#elif 0
-  float det
-    = (src[0] * src[5] * src[10])
-    + (src[1] * src[6] * src[8])
-    + (src[2] * src[4] * src[9])
-    - (src[2] * src[5] * src[8])
-    - (src[1] * src[4] * src[10])  
-    - (src[0] * src[6] * src[9]);
-#else
-  float det
-    = src[0] * ( src[5]*src[10] - src[9]*src[6] )
-    - src[1] * ( src[4]*src[10] - src[8]*src[6] )
-    + src[2] * ( src[4]*src[9] - src[8]*src[5] );
-
-#endif
-  
-  if (det*det < 1e-25)
-    return 1;
-  
-  det = 1.0f / det;
-  matrix[0] = (  (src[5]*src[10]- src[6]*src[9] )*det);
-  matrix[1] = (- (src[1]*src[10]- src[2]*src[9] )*det);
-  matrix[2] = (  (src[1]*src[6] - src[2]*src[5] )*det);
-  matrix[4] = (- (src[4]*src[10]- src[6]*src[8] )*det);
-  matrix[5] = (  (src[0]*src[10]- src[2]*src[8] )*det);
-  matrix[6] = (- (src[0]*src[6] - src[2]*src[4] )*det);
-  matrix[8] = (  (src[4]*src[9] - src[5]*src[8] )*det);
-  matrix[9] = (- (src[0]*src[9] - src[1]*src[8] )*det);
-  matrix[10]= (  (src[0]*src[5] - src[1]*src[4] )*det);
-  }
-  
-  /* Do the translation part */
-  matrix[12] = - (src[12] * matrix[0] +
-    src[13] * matrix[4] +
-    src[14] * matrix[8]);
-  matrix[13] = - (src[12] * matrix[1] +
-    src[13] * matrix[5] +
-    src[14] * matrix[9]);
-  matrix[14] = - (src[12] * matrix[2] +
-    src[13] * matrix[6] +
-    src[14] * matrix[10]);
-  
-  return 0;
-}
-
-void quat_identity(vec4_t quat)
-{
-  quat[0] = quat[1] = quat[2] = 0;
-  quat[3] = 1;
-}
-
-void quat_multiply_by_quat(vec4_t quat, const vec4_t other)
-{
-  const vec_t x = quat[3]*other[0] + quat[0]*other[3] + quat[1]*other[2] - quat[2]*other[1];
-  const vec_t y = quat[3]*other[1] + quat[1]*other[3] + quat[2]*other[0] - quat[0]*other[2];
-  const vec_t z = quat[3]*other[2] + quat[2]*other[3] + quat[0]*other[1] - quat[1]*other[0];
-  const vec_t w = quat[3]*other[3] - quat[0]*other[0] - quat[1]*other[1] - quat[2]*other[2];
-  quat[0] = x;
-  quat[1] = y;
-  quat[2] = z;
-  quat[3] = w;
-}
-
-void quat_conjugate(vec4_t quat)
-{
-  VectorNegate(quat, quat);
-}
-
-//! quaternion from two unit vectors
-void quat_for_unit_vectors(vec4_t quat, const vec3_t from, const vec3_t to)
-{
-  CrossProduct(from, to, quat);
-  quat[3] = DotProduct(from, to);
-}
-
-void quat_normalise(vec4_t quat)
-{
-  const vec_t n = 1 / ( quat[0] * quat[0] +  quat[1] * quat[1] +  quat[2] * quat[2] +  quat[3] *  quat[3] );
-  quat[0] *= n;
-  quat[1] *= n;
-  quat[2] *= n;
-  quat[3] *= n;
-}
-
-void quat_for_axisangle(vec4_t quat, const vec3_t axis, double angle)
-{
-  angle *= 0.5;
-
-  quat[3] = (float)sin(angle);
-
-  quat[0] = axis[0] * quat[3];
-  quat[1] = axis[1] * quat[3];
-  quat[2] = axis[2] * quat[3];
-  quat[3] = (float)cos(angle);
-}
-
-void m3x3_multiply_by_m3x3(m3x3_t matrix, const m3x3_t matrix_src)
-{
-  float *pDest = matrix;
-	float out1, out2, out3;
-  int i;
-
-	for(i=0;i<3;i++)
-	{
-		out1 =  matrix_src[0] * pDest[0];
-		out1 += matrix_src[1] * pDest[3];
-		out1 += matrix_src[2] * pDest[6];
-		out2 =  matrix_src[3] * pDest[0];
-		out2 += matrix_src[4] * pDest[3];
-		out2 += matrix_src[5] * pDest[6];
-		out3 =  matrix_src[6] * pDest[0];
-		out3 += matrix_src[7] * pDest[3];
-		out3 += matrix_src[8] * pDest[6];
-
-		pDest[0] = out1;
-		pDest[3] = out2;
-		pDest[6] = out3;
-
-    pDest++;
-	}
-}
-
-void m3x3_transform_vec3(const m3x3_t matrix, vec3_t vector)
-{
-  float out1, out2, out3;
-
-	out1 =  matrix[0]  * vector[0];
-	out1 += matrix[3]  * vector[1];
-	out1 += matrix[6]  * vector[2];
-	out2 =  matrix[1]  * vector[0];
-	out2 += matrix[4]  * vector[1];
-	out2 += matrix[7]  * vector[2];
-	out3 =  matrix[2]  * vector[0];
-	out3 += matrix[5]  * vector[1];
-	out3 += matrix[8] * vector[2];
-
-	vector[0] = out1;
-	vector[1] = out2;
-	vector[2] = out3;
 }
 
 float m3_det( m3x3_t mat )
@@ -1593,15 +696,16 @@ float m3_det( m3x3_t mat )
   return( det );
 }
 
-int m3_inverse( m3x3_t mr, m3x3_t ma )
+/*
+void m3_inverse( m3x3_t mr, m3x3_t ma )
 {
   float det = m3_det( ma );
- 
-  if (det == 0 )
+  
+  if ( fabs( det ) < 0.0005 )
   {
-    return 1;
+    m3_identity( ma );
+    return;
   }
-
   
   mr[0] =    ma[4]*ma[8] - ma[5]*ma[7]   / det;
   mr[1] = -( ma[1]*ma[8] - ma[7]*ma[2] ) / det;
@@ -1614,9 +718,8 @@ int m3_inverse( m3x3_t mr, m3x3_t ma )
   mr[6] =    ma[3]*ma[7] - ma[6]*ma[4]   / det;
   mr[7] = -( ma[0]*ma[7] - ma[6]*ma[1] ) / det;
   mr[8] =    ma[0]*ma[4] - ma[1]*ma[3]   / det;
-
-  return 0;
 }
+*/
 
 void m4_submat( m4x4_t mr, m3x3_t mb, int i, int j )
 {
@@ -1668,12 +771,10 @@ int m4x4_invert(m4x4_t matrix)
   int     i, j, sign;
   m4x4_t m4x4_temp;
   
-#if 0
-  if ( fabs( mdet ) < 0.0000000001 )
+  if ( fabs( mdet ) < 0.0000000001 )	//% 0.0005
     return 1;
-#endif
 
-  m4x4_assign(m4x4_temp, matrix);
+  memcpy(m4x4_temp, matrix, sizeof(m4x4_t));
   
   for ( i = 0; i < 4; i++ )
     for ( j = 0; j < 4; j++ )
@@ -1682,196 +783,8 @@ int m4x4_invert(m4x4_t matrix)
       
       m4_submat( m4x4_temp, mtemp, i, j );
       
-      matrix[i+j*4] = ( m3_det( mtemp ) * sign ) / mdet; /*  FIXME: try using * inverse det and see if speed/accuracy are good enough */
+      matrix[i+j*4] = ( m3_det( mtemp ) * sign ) / mdet;
     }
     
   return 0;
-}
-#if 0
-void m4x4_solve_ge(m4x4_t matrix, vec4_t x)
-{
-  int indx[4];
-  int c,r;
-  int i;
-  int best;
-  float scale[4];
-  float f, pivot;
-  float aug[4];
-  float recip, ratio;
-  float* p;
-
-  for(r=0; r<4; r++)
-  {
-    aug[r] = 0;
-    indx[r] = r;
-  }
-
-  for (r=0; r<4; r++)
-  {
-    scale[r] = 0;
-    for (c=0; c<4; c++, p++)
-    {
-      if (fabs(*p) > scale[r])
-      {
-        scale[r] = (float)fabs(*p);
-      }
-    }
-  }
-
-  for (c=0; c<3; c++)
-  {
-    pivot = 0;
-    for (r=c; r<4; r++)
-    {
-      f = (float)fabs(matrix[(indx[r]<<2)+c]) / scale[indx[r]];
-      if (f > pivot)
-      {
-        pivot = f;
-        best = r;
-      }
-    }
-
-    i = indx[c];
-    indx[c] = indx[best];
-    indx[best] = i;
-
-    recip = 1 / matrix[(indx[c]<<2)+c];
-
-    for (r=c+1; r<4; r++)
-    {
-      p = matrix + (indx[r]<<2);
-      ratio = p[c] * recip;
-
-      for (i=c+1; i<4; i++)
-        p[i] -= ratio * matrix[(indx[c]<<2)+i];
-      aug[indx[r]] -= ratio * aug[indx[c]];
-    }
-  }
-
-  x[indx[3]] = aug[indx[3]] / matrix[(indx[3]<<2)+3];
-  for(r=2; r>=0; r--)
-  {
-    f = aug[indx[r]];
-    p = matrix + (indx[r]<<2);
-    recip = 1 / p[r];
-    for(c=(r+1); c<4; c++)
-    {
-      f -= (p[c] * x[indx[c]]);
-    }
-    x[indx[r]] = f * recip;
-  }
-}
-#endif
-
-#define N 3
-
-int matrix_solve_ge(vec_t* matrix, vec_t* aug, vec3_t x)
-{
-  int indx[N];
-  int c,r;
-  int i;
-  int best;
-  float scale[N];
-  float f, pivot;
-  float ratio;
-  float* p;
-
-  for(r=0; r<N; r++)
-  {
-    indx[r] = r;
-  }
-
-  for (r=0; r<N; r++)
-  {
-    p = matrix+r;
-    scale[r] = 0;
-    for (c=0; c<N; c++, p++)
-    {
-      if (fabs(*p) > scale[r])
-      {
-        scale[r] = (float)fabs(*p);
-      }
-    }
-  }
-
-  for (c=0; c<N; c++)
-  {
-    pivot = 0;
-    best = -1;
-    for (r=c; r<N; r++)
-    {
-      f = (float)fabs(matrix[(indx[r]*N)+c]) / scale[indx[r]];
-      if (f > pivot)
-      {
-        pivot = f;
-        best = r;
-      }
-    }
-
-    if(best == -1) return 1;
-
-    i = indx[c];
-    indx[c] = indx[best];
-    indx[best] = i;
-
-    for (r=c+1; r<N; r++)
-    {
-      p = matrix + (indx[r]*N);
-      ratio = p[c] / matrix[(indx[c]*N)+c];
-
-      for (i=c+1; i<N; i++) p[i] -= ratio * matrix[(indx[c]*N)+i];
-      aug[indx[r]] -= ratio * aug[indx[c]];
-    }
-  }
-
-  x[N-1] = aug[indx[N-1]] / matrix[(indx[N-1]*N)+N-1];
-  for(r=1; r>=0; r--)
-  {
-    f = aug[indx[r]];
-    p = matrix + (indx[r]*N);
-    for(c=(r+1); c<N; c++) f -= (p[c] * x[c]);
-    x[r] = f / p[r];
-  }
-  return 0;
-}
-
-#ifdef YOU_WANT_IT_TO_BORK
- /* Gaussian elimination */
-  for(i=0;i<4;i++)
-  {
-    for(j=(i+1);j<4;j++)
-    {
-      ratio = matrix[j][i] / matrix[i][i];
-      for(count=i;count<n;count++) {
-        matrix[j][count] -= (ratio * matrix[i][count]);
-      }
-      b[j] -= (ratio * b[i]);
-    }
-  }
-
-  /* Back substitution */
-  x[n-1] = b[n-1] / matrix[n-1][n-1];
-  for(i=(n-2);i>=0;i--)
-  {
-    temp = b[i];
-    for(j=(i+1);j<n;j++)
-    {
-      temp -= (matrix[i][j] * x[j]);
-    }
-    x[i] = temp / matrix[i][i];
-  }
-#endif
-
-int plane_intersect_planes(const vec4_t plane1, const vec4_t plane2, const vec4_t plane3, vec3_t intersection)
-{
-  m3x3_t planes;
-  vec3_t b;
-  VectorCopy(plane1, planes+0);
-  b[0] = plane1[3];
-  VectorCopy(plane2, planes+3);
-  b[1] = plane2[3];
-  VectorCopy(plane3, planes+6);
-  b[2] = plane3[3];
-
-  return matrix_solve_ge(planes, b, intersection);
 }

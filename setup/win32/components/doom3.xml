@@ -1,9 +1,0 @@
-<?xml version="1.0"?>
-<component>
-  <dir name="games">
-    <file name="doom3.game"/>
-  </dir>
-  <dir name="doom3.game">
-    <file name="default_build_menu.xml"/>
- </dir>
-</component>

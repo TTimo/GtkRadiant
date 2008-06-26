@@ -1,0 +1,651 @@
+<html>
+<head>
+<title>Q3Radiant Editor Manual: Appendix B2</title>
+<link rel = "stylesheet" type = "text/css" href = "../styles/q3rad.css">
+</head>
+<body>
+<h1 class = "MsoTitle">Q3Radiant Editor Manual</h1>
+<hr>
+<h1>Appendix B: Entity Descriptions</h1>
+<h2><a name = "func">Func_* Entities</a></h2>
+Func_Entities include a wider variety of game purposes than
+other entity classes. They are sometimes represented by simple
+function boxes. But many are built out of brushes, patches and
+models. These constructions are sometimes called "b_models", though
+for many of them the word "mover" works as well, since they are
+made to be moving objects in the game world.
+
+<p><div class = "subheading">func_bobbing</div>
+
+<b>Map Entity Color:</b> N/A
+
+<br><b>Dimensions:</b> size of map components used
+
+<br><b>Game Function:</b> Solid entity that oscillates back and
+forth in a linear motion. By default, it will have an amount of
+displacement in either direction equal to the dimension of the
+brush in the axis in which it's bobbing. Entity bobs on the Z axis
+(up-down) by default. It can also emit sound if the "noise" key is
+set. Will crush the player when blocked.
+
+
+
+<p><strong>Keys</strong>
+
+<br><b>speed:</b> amount of time in seconds for one complete
+oscillation cycle (default 4).
+
+<br><b>height:</b> sets the amount of travel of the oscillation
+movement (default 32).
+
+<br><b>phase:</b> sets the start offset of the oscillation cycle.
+Values must be 0 &lt; phase &lt; 1. Any integer phase value is the
+same as no offset (default 0).
+
+<br><b>noise:</b> path/name of .wav file to play. Use looping sounds
+only (eg. sound/world/drone6.wav - See Notes).
+
+<br><b>model2:</b> path/name of model to include (eg:
+models/mapobjects/jets/jets01.md3).
+
+<br><b>origin:</b> alternate method of setting XYZ origin of sound
+and .md3 model included with entity (See Notes).
+
+<br><b>light:</b> constantLight radius of .md3 model included with
+entity. Has no effect on the entity's brushes (default 0).
+
+<br><b>color:</b> constantLight color of .md3 model included with
+entity. Has no effect on the entity's brushes (default 1 1 1).
+
+<br><b>notfree:</b> when set to 1, entity will not spawn in "Free
+for all" and "Tournament" modes.
+
+<br><b>notteam:</b> when set to 1, entity will not spawn in
+"Teamplay" and "CTF" modes.
+
+<br><b>notsingle:</b> when set to 1, entity will not spawn in Single
+Player mode (bot play mode).
+
+
+
+<p><strong>Check Boxes/Spawnflags</strong>
+<br>X_AXIS : entity will bob along the X axis.
+<br>Y_AXIS : entity will bob along the Y axis.
+
+
+
+<p><strong>Notes</strong>
+<br>In order for the sound to be emitted from the location of the
+entity, it is recommended to include a brush with an origin shader
+at its center, otherwise the sound will not follow the entity as it
+moves. Setting the origin key is simply an alternate method to
+using an origin brush. When using the model2 key, the origin point
+of the model will correspond to the origin point defined by either
+the origin brush or the origin coordinate value. The movement of
+the func_bobbing follows a sinoid wave pattern.
+
+
+
+<p><div class = "subheading">func_button</div>
+<b>Map Entity Color:</b> N/A
+
+<br><b>Dimensions:</b> size of map components used
+
+<br><b>Game Function:</b> When a button is touched by a player, it
+moves in the direction set by the "angle" key, triggers all its
+targets, stays pressed by an amount of time set by the "wait" key,
+then returns to its original position where it can be operated
+again.
+
+
+
+<p><strong>Keys</strong>
+<br><b>angle:</b> determines the direction in which the button will
+move (up = -1, down = -2).
+
+<br><b>target:</b> all entities with a matching targetname will be
+triggered.
+
+<br><b>speed:</b> speed of button's displacement (default 40). Speed
+is in game units per second.
+
+<br><b>wait:</b> number of seconds button stays pressed (default 1,
+-1 = return immediately).
+
+<br><b>lip:</b> lip remaining at end of move (default 4 units).
+
+<br><b>health:</b> if set to a non-zero value, the button must be
+damaged by "health" amount of points to operate.
+
+<br><b>light:</b> constantLight radius of .md3 model included with
+entity. Has no effect on the entity's brushes (default 0).
+
+<br><b>color:</b> constantLight color of .md3 model included with
+entity. Has no effect on the entity's brushes (default 1 1 1).
+
+<br><b>model2:</b> path/name of model to include (eg:
+models/mapobjects/pipe/pipe02.md3).
+
+<br><b>origin:</b> alternate method of setting XYZ origin of .md3
+model included with entity (See Notes).
+
+<br><b>notfree:</b> when set to 1, entity will not spawn in "Free
+for all" and "Tournament" modes.
+
+<br><b>notteam:</b> when set to 1, entity will not spawn in
+"Teamplay" and "CTF" modes.
+
+<br><b>notsingle:</b> when set to 1, entity will not spawn in Single
+Player mode (bot play mode).
+
+
+
+<p><strong>Notes</strong>
+<br>Setting the origin key is simply an alternate method to using an
+origin brush. When using the model2 key, the origin point of the
+model will correspond to the origin point defined by either the
+origin brush or the origin coordinate value.
+
+
+
+<p><div class = "subheading">func_door</div>
+
+<b>Map Entity Color:</b> N/A
+
+<br><b>Dimensions:</b> size of map components used
+
+<br><b>Game Function:</b> Normal sliding door entity. By default,
+the door will activate when player walks close to it or when damage
+is inflicted on it. Doors move a distance equal to their dimension
+along the selected angle of&nbsp; travel, minus the "lip" key
+value.
+
+
+
+<p><strong>Keys</strong>
+
+<br><b>angle:</b> determines the opening direction of door&nbsp; (up
+= -1, down = -2).
+
+<br><b>speed:</b> determines how fast the door moves (default 100).
+Speed is in game units per second.
+
+<br><b>wait:</b> number of seconds before door returns (default 2,
+-1 = return immediately - see Notes).
+
+<br><b>lip:</b> lip remaining at end of move (default 8).
+
+<br><b>targetname:</b> if set, a func_button or trigger is required
+to activate the door.
+
+<br><b>health:</b> if set to a non-zero value, the door must be
+damaged by "health" amount of points to activate (default 0).
+
+<br><b>dmg:</b> damage to inflict on player when he blocks operation
+of door (default 4). Door will reverse direction when blocked
+unless CRUSHER spawnflag is set.
+
+<br><b>team:</b> assign the same team name to multiple doors that
+should operate together (see Notes).
+
+<br>light: constantLight radius of .md3 model included with entity.
+Has no effect on the entity's brushes (default 0).
+
+<br><b>color:</b> constantLight color of .md3 model included with
+entity. Has no effect on the entity's brushes. (default 1 1 1).
+
+<br><b>model2:</b> path/name of model to include (eg:
+models/mapobjects/pipe/pipe02.md3).
+
+<br><b>origin:</b> alternate method of setting XYZ origin of .md3
+model included with entity (See Notes).
+
+<br><b>notfree:</b> when set to 1, entity will not spawn in "Free
+for all" and "Tournament" modes.
+
+<br><b>notteam:</b> when set to 1, entity will not spawn in
+"Teamplay" and "CTF" modes.
+
+<br><b>notsingle:</b> when set to 1, entity will not spawn in Single
+Player mode (bot play mode).
+
+
+
+<p><strong>Check Boxes/Spawnflags</strong>
+
+<br><b>START_OPEN:</b> the door will spawn in the open state and
+operate in reverse.
+
+<br><b>CRUSHER:</b> door will not reverse direction when blocked and
+will keep damaging player until he dies or gets out of the way.
+
+
+
+<p><strong>Notes</strong>
+
+<br>Unlike in Quake 2, doors that touch are NOT automatically
+teamed. If you want doors to operate together, you have to team
+them manually by assigning the same team name to all of them.
+Setting wait =-1 for normal touch doors makes them work
+erratically. Use this only for damage-only ("health" key set to
+non-zero value) or targeted doors. Setting the origin key is simply
+an alternate method to using an origin brush. When using the model2
+key, the origin point of the model will correspond to the origin
+point defined by either the origin brush or the origin coordinate
+value.
+
+
+
+<p><div class = "subheading">func_group</div>
+
+<b>Map Entity Color:</b>&nbsp; Light blue
+
+<br><b>Dimensions</b>: Determined by dimensions of map
+components.
+
+<br><b>Game Function:</b> This is not an entity. It is strictly an
+editor utility to group world brushes and patches together for
+convenience (selecting, moving, copying, etc). You cannot group
+entities with this.
+
+
+
+<p><strong>Notes</strong>
+
+<br>The TAB key can be used to flip through the component pieces of
+a selected func_group entity, isolating individual components.
+
+
+
+<p><div class = "subheading">func_pendulum</div>
+
+<b>Map Entity Color:</b> Light blue
+
+<br><b>Dimensions</b>: Determined by dimensions of map
+components.
+
+<br><b>Game Function:</b> Solid entity that describes a pendulum
+back and forth rotation movement. Rotates on the X axis by default.
+Pendulum frequency is a physical constant based on the length of
+the beam and gravity. Contact with the pendulum instantly kills a
+player.
+
+
+
+<p><strong>Keys</strong>
+
+<br><b>angle:</b> angle offset of axis of rotation from default X
+axis (default 0/360).
+
+<br><b>speed:</b> angle of swing arc in either direction from
+initial vertical position (default 30).
+
+<br><b>phase:</b> sets the start offset of the swinging cycle.
+Values must be 0 &lt; phase &lt; 1. Any integer phase value is the
+same as no offset (default 0).
+
+<br><b>noise:</b> path/name of .wav file to play. Use looping sounds
+only (eg. sound/world/drone6.wav).
+
+<br><b>model2:</b> path/name of model to include (eg:
+models/mapobjects/jets/jets01.md3).
+
+<br><b>origin:</b> alternate method of setting XYZ origin of
+entity's rotation axis and .md3 model included with entity (default
+"0 0 0" - See Notes).
+
+<br><b>light:</b> constantLight radius of .md3 model included with
+entity. Has no effect on the entity's brushes (default 0).
+
+<br><b>color:</b> constantLight color of .md3 model included with
+entity. Has no effect on the entity's brushes (default 1 1 1).
+
+<br><b>notfree:</b> when set to 1, entity will not spawn in "Free
+for all" and "Tournament" modes.
+
+<br><b>notteam:</b> when set to 1, entity will not spawn in
+"Teamplay" and "CTF" modes.
+
+<br><b>notsingle:</b> when set to 1, entity will not spawn in Single
+Player mode (bot play mode).
+
+
+
+<p><strong>Notes</strong>
+
+<br>You need to have an origin brush as part of this entity. The
+center of that brush will be the point through which the rotation
+axis passes. Setting the origin key is simply an alternate method
+to using an origin brush. Pendulum will rotate along the X axis by
+default. Pendulum cannot rotate along Z axis. The speed of swing
+(frequency) is not adjustable, and the "dmg" key (although set in
+the Q3A maps) has no effect whatsoever. When using the model2 key,
+the origin point of the model will correspond to the origin point
+defined by either the origin brush or the origin coordinate
+value.
+
+<p><div class = "subheading">func_plat</div>
+
+<b>Map Entity Color:</b> Light blue
+
+<br><b>Dimensions</b>: Determined by dimensions of map
+components.
+
+<br><b>Game Function:</b> This is a rising platform that a player
+can ride to reach higher places. Plats must always be drawn in the
+raised position, so they will operate and be lighted correctly but
+they spawn in the lowered position. The plat will stay in the
+raised position until the player steps off. There are no proper
+sounds for this entity, only beep noises, so sound call paths must
+be adjusted (see Notes).
+
+
+
+<p><strong>Keys</strong>
+
+<br><b>speed:</b> determines how fast the plat moves (default 150)
+in game units per second.
+
+<br><b>lip:</b> lip remaining at end of move (default 16). Has no
+effect if "height" is set.
+
+<br><b>height:</b> if set, this will determine the total amount of
+vertical travel of the plat (see Design Notes).
+
+<br><b>dmg:</b> damage to inflict on a player when he blocks
+operation of plat (default 4). Plat will reverse direction when
+blocked.
+
+<br><b>targetname:</b> if set, the trigger that points to this will
+raise the plat each time it fires. The plat raises and comes back
+down a second later if no player is on it.
+
+<br><b>light:</b> constantLight radius of .md3 model included with
+entity. Has no effect on the entity's brushes (default 0).
+
+<br><b>color:</b> constantLight color of .md3 model included with
+entity. Has no effect on the entity's brushes (default 1 1 1).
+
+<br><b>model2:</b> path/name of model to include (eg:
+models/mapobjects/pipe/pipe02.md3).
+
+<br><b>origin:</b> alternate method of setting XYZ origin of .md3
+model included with entity (See Notes).
+
+<br><b>notfree:</b> when set to 1, entity will not spawn in "Free
+for all" and "Tournament" modes.
+
+<br><b>notteam:</b> when set to 1, entity will not spawn in
+"Teamplay" and "CTF" modes.
+
+<br><b>notsingle:</b> when set to 1, entity will not spawn in Single
+Player mode (bot play mode).
+
+
+
+<p><strong>Notes</strong>
+
+<br>By default, the total amount of vertical travel of a platform is
+implicitly determined by the overall vertical size of the brushes
+of which it's made minus the lip value. But if the "height" key is
+used, then the total amount of vertical travel of the plat will be
+exactly that value regardless of the shape and size of the plat and
+regardless of the value of the "lip" key. Using the "height" key is
+the best method for any kind of platforms and the only possible one
+for thin plats which need to travel vertical distances many times
+their own thickness. Setting the origin key is simply an alternate
+method to using an origin brush. When using the model2 key, the
+origin point of the model will correspond to the origin point
+defined by either the origin brush or the origin coordinate
+value.
+
+
+
+<p><div class = "tip"><strong>Design Notes:</strong>
+
+<br>&nbsp;&nbsp;&nbsp;&nbsp; Clip brushes can be used to create the
+additional size for "thin" plats. Func_plats were pulled from all
+maps in the final build of Quake 3 Arena due to some problems in
+their operation, particularly as it related to bot function.&nbsp;
+The id designers recommend using plats with care and that plats be
+built as "solid" pillar-like lifts (more like those in Doom).
+
+<br>&nbsp;&nbsp;&nbsp;&nbsp; There is a way to make plats play
+proper sounds. Just create a sound\movers\plats folder under baseq3
+and put 2 sounds named pt1_start.wav and pt1_end.wav in it. Those
+can be the renamed sounds from the Q2 plats or renamed copies of
+the sound\movers\doors sounds you can extract from your pak0.pk3
+file or new custom sounds if you're up to it. Thanks to Fragzilla
+for the tip.</div>
+
+
+
+<p><div class = "subheading">func_rotating</div>
+
+<b>Map Entity Color:</b> Light blue
+
+<br><b>Dimensions</b>: Determined by dimensions of map
+components.
+
+<br><b>Game Function:</b> Solid entity that rotates continuously.
+Rotates on the Z axis by default and requires an origin brush. It
+will always start on in the game and is not targetable.
+
+
+
+<p><strong>Keys</strong>
+
+<br><b>speed:</b> determines how fast entity rotates (default
+100).
+
+<br><b>noise:</b> path/name of .wav file to play. Use looping sounds
+only (eg. sound/world/drone6.wav).
+
+<br><b>model2:</b> path/name of model to include (eg:
+models/mapobjects/bitch/fembotbig.md3).
+
+<br><b>origin:</b> alternate method of setting XYZ origin of
+entity's rotation axis and .md3 model included with entity (default
+"0 0 0" - See Notes).
+
+<br><b>light:</b> constantLight radius of .md3 model included with
+entity. Has no effect on the entity's brushes (default 0).
+
+<br><b>color:</b> constantLight color of .md3 model included with
+entity. Has no effect on the entity's brushes (default 1 1 1).
+
+<br><b>notfree:</b> when set to 1, entity will not spawn in "Free
+for all" and "Tournament" modes.
+
+<br><b>notteam:</b> when set to 1, entity will not spawn in
+"Teamplay" and "CTF" modes.
+
+<br><b>notsingle:</b> when set to 1, entity will not spawn in Single
+Player mode (bot play mode).
+
+
+
+<p><strong>Check Boxes/Spawnflags</strong>
+
+<br><b>X_AXIS:</b> entity will rotate along the X axis.
+
+<br>Y<b>_AXIS:</b> entity will rotate along the Y axis.
+
+
+
+<p><strong>Notes</strong>
+
+<br>You need to have an origin brush as part of this entity. The
+center of that brush will be the point through which the rotation
+axis passes. Setting the origin key is simply an alternate method
+to using an origin brush. It will rotate along the Z axis by
+default. You can check either the X_AXIS or Y_AXIS box to change
+that
+
+
+
+<p><div class = "subheading">func_static</div>
+
+<b>Map Entity Color:</b> N/A
+
+<br><b>Dimensions:</b> Determined by components
+
+<br><b>Game Function:</b> Static solid bspmodel. Can be used for
+conditional walls and models for different game types.
+
+
+
+<p><strong>Keys</strong>
+
+<br><b>model2:</b> path/name of model to include (eg:
+models/mapobjects/bitch/fembotbig.md3).
+
+<br><b>light:</b> constantLight radius of .md3 model included with
+entity. Has no effect on the entity's brushes (default 0).
+
+<br><b>color:</b> constantLight color of .md3 model included with
+entity. Has no effect on the entity's brushes (default 1 1 1).
+
+<br><b>notfree:</b> when set to 1, entity will not spawn in "Free
+for all" and "Tournament" modes.
+
+<br><b>notteam:</b> when set to 1, entity will not spawn in
+"Teamplay" and "CTF" modes.
+
+<br><b>notsingle:</b> when set to 1, entity will not spawn in Single
+Player mode (bot play mode).
+
+
+
+<p><strong>Notes</strong>
+
+<br>When using the model2 key, the origin point of the model will
+correspond to the origin point defined by either the origin brush
+or the origin coordinate value. Because the map has only a single
+bot navigation file, Func_Statics cannot be used to make
+significant changes in game play flow between differing game
+types.
+
+
+
+<br><div class = "subheading">func_timer</div>
+
+<b>Map Entity Color:</b> Dark blue (0.3 0.1 0.6)
+
+<br><b>Dimensions:</b> (-8 -8 -8) (8 8
+8)
+
+<br><b>Game Function:</b> Time delay trigger that will continuously
+fire its targets after a preset time delay. The time delay can also
+be randomized. When triggered, the timer will toggle on/off.
+
+
+
+<p><strong>Keys</strong>
+
+<br><b>wait:</b> delay in seconds between each triggering of its
+targets (default 1).
+
+<br><b>random:</b> random time variance in seconds added or
+subtracted from "wait" delay (default 0 - see Notes).
+
+<br><b>target:</b> this points to the entities to trigger.
+
+<br><b>targetname:</b> a func_button or trigger that points to this
+will toggle the timer on/off when activated.
+
+<br><b>notfree:</b> when set to 1, entity will not spawn in "Free
+for all" and "Tournament" modes.
+
+<br><b>notteam:</b> when set to 1, entity will not spawn in
+"Teamplay" and "CTF" modes.
+
+<br><b>notsingle:</b> when set to 1, entity will not spawn in Single
+Player mode (bot play mode).
+
+
+
+<p><strong>Check Boxes/Spawnflags</strong>
+
+<br><b>START_ON:</b> timer will start on in the game and
+continuously fire its targets.
+
+
+
+<p><strong>Notes</strong>
+
+<br>When the random key is set, its value is used to calculate a
+minimum and a maximum delay. The final time delay will be a random
+value anywhere between the minimum and maximum values: (min delay =
+wait - random) (max delay = wait + random).
+
+
+
+<p><div class = "subheading">func_train</div>
+
+<b>Map Entity Color:</b> (0 .5 .8)
+
+<br><b>Dimensions:</b> Determined by
+components<b><o:p><b></b></o:p></b>
+
+<br><b>Game Function:</b> Trains are moving solids that follow a
+string of path_corner entities. Trains in Q3A are very basic, they
+also require an origin brush (see Notes).
+
+
+
+<p><strong>Keys</strong>
+
+<br><b>speed:</b> speed of displacement of train (default 100 or
+overridden by speed value of path).
+
+<br><b>target:</b> this points to the first path_corner of the path
+which is also the spawn location of the train's origin.
+
+<br><b>model2:</b> path/name of model to include (eg:
+models/mapobjects/pipe/pipe02.md3).
+
+<br><b>origin:</b> alternate method of setting XYZ origin of the
+train's brush(es) and .md3 model included with entity (See
+Notes).
+
+<br><b>light:</b> constantLight radius of .md3 model included with
+entity. Has no effect on the entity's brushes (default 0).
+
+<br><b>color:</b> constantLight color of .md3 model included with
+entity. Has no effect on the entity's brushes (default 1 1 1).
+
+<br><b>notfree:</b> when set to 1, entity will not spawn in "Free
+for all" and "Tournament" modes.
+
+<br><b>notteam:</b> when set to 1, entity will not spawn in
+"Teamplay" and "CTF" modes.
+
+<br><b>notsingle:</b> when set to 1, entity will not spawn in Single
+Player mode (bot play mode).
+
+
+
+<p><strong>Notes</strong>
+
+<br>1. Trains always start on in the game.
+
+<br>2. Trains do not damage the player when blocked.
+
+<br>3. Trains cannot emit sound.
+
+<br>4. Trains are not triggerable or toggle-able.
+
+<br>5. Trains cannot be block-stopped just by getting in their way,
+the player must be wedged between the train and another obstacle to
+block it.
+
+
+
+<p>Setting the origin key is simply an alternate method to using an
+origin brush. When using the model2 key, the origin point of the
+model will correspond to the origin point defined by either the
+origin brush or the origin coordinate value.
+<p align = "center"><a href = "appn_b_1.htm">Back</a> | <a href = "../index.htm">Home</a> | <a href = "appn_b_3.htm">Next</a>
+</body>
+</html>

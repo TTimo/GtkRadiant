@@ -24,39 +24,35 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #if !defined(AFX_VISDRAWER_H__6E36062A_EF0B_11D4_ACF7_004095A18133__INCLUDED_)
 #define AFX_VISDRAWER_H__6E36062A_EF0B_11D4_ACF7_004095A18133__INCLUDED_
 
+#include "DWinding.h"
+
 #if _MSC_VER > 1000
 
 #pragma once
 #endif // _MSC_VER > 1000
 
-#include <list>
-#include "renderable.h"
-#include "irender.h"
-
-#include "DWinding.h"
-
-class DVisDrawer : public Renderable, public OpenGLRenderable
+class DVisDrawer : 
+	public IGL2DWindow, 
+	public IGL3DWindow  
 {
-  Shader* m_shader_solid;
-  Shader* m_shader_wireframe;
 public:
 	DVisDrawer();
 	virtual ~DVisDrawer();
 
 protected:
-	std::list<DWinding*>* m_list;
+	list<DWinding*>* m_list;
 	int refCount;
 public:
 	void ClearPoints();
-	void SetList(std::list<DWinding*>* pointList);
+	void SetList(list<DWinding*>* pointList);
+	void UnRegister();
+	void Register();
+	void Draw3D();
+	void Draw2D(VIEWTYPE vt);
+	void IncRef() { refCount++; }
+	void DecRef() { refCount--; if (refCount <= 0) delete this; }
 
-  void render(RenderStateFlags state) const;
-  void renderSolid(Renderer& renderer, const VolumeTest& volume) const;
-  void renderWireframe(Renderer& renderer, const VolumeTest& volume) const;
-
-  void constructShaders();
-	void destroyShaders();
-
+	bool m_bHooked;
 };
 
 #endif // !defined(AFX_VISDRAWER_H__6E36062A_EF0B_11D4_ACF7_004095A18133__INCLUDED_)

@@ -34,2041 +34,956 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 // Leonardo Zide (leo@lokigames.com)
 //
 
-#include "shaders.h"
-
+// standard headers
 #include <stdio.h>
 #include <stdlib.h>
-#include <map>
-#include <list>
+#include "plugin.h"
+#include "mathlib.h"
+#include "missing.h" //++timo FIXME: this one is intended to go away some day, it's MFC compatibility classes
+#include "shaders.h"
 
-#include "ifilesystem.h"
-#include "ishaders.h"
-#include "iscriplib.h"
-#include "itextures.h"
-#include "qerplugin.h"
-#include "irender.h"
+// some forward declarations
+IShader *WINAPI QERApp_Shader_ForName (const char *name);
+qtexture_t *WINAPI QERApp_Try_Texture_ForName (const char *name);
+qtexture_t *WINAPI QERApp_Texture_ForName2 (const char *filename);
+IShader *WINAPI QERApp_ColorShader_ForName (const char *name);
+void WINAPI QERApp_LoadShaderFile (const char *filename);
 
-#include <glib/gslist.h>
-
-#include "debugging/debugging.h"
-#include "string/pooledstring.h"
-#include "math/vector.h"
-#include "generic/callback.h"
-#include "generic/referencecounted.h"
-#include "stream/memstream.h"
-#include "stream/stringstream.h"
-#include "stream/textfilestream.h"
-#include "os/path.h"
-#include "os/dir.h"
-#include "os/file.h"
-#include "stringio.h"
-#include "shaderlib.h"
-#include "texturelib.h"
-#include "cmdlib.h"
-#include "moduleobservers.h"
-#include "archivelib.h"
-#include "imagelib.h"
-
-const char* g_shadersExtension = "";
-const char* g_shadersDirectory = "";
-bool g_enableDefaultShaders = true;
-ShaderLanguage g_shaderLanguage = SHADERLANGUAGE_QUAKE3;
-bool g_useShaderList = true;
-_QERPlugImageTable* g_bitmapModule = 0;
-const char* g_texturePrefix = "textures/";
-
-void ActiveShaders_IteratorBegin();
-bool ActiveShaders_IteratorAtEnd();
-IShader *ActiveShaders_IteratorCurrent();
-void ActiveShaders_IteratorIncrement();
-Callback g_ActiveShadersChangedNotify;
-
-void FreeShaders();
-void LoadShaderFile (const char *filename);
-qtexture_t *Texture_ForName (const char *filename);
-
-
-/*!
-NOTE TTimo: there is an important distinction between SHADER_NOT_FOUND and SHADER_NOTEX:
-SHADER_NOT_FOUND means we didn't find the raw texture or the shader for this
-SHADER_NOTEX means we recognize this as a shader script, but we are missing the texture to represent it
-this was in the initial design of the shader code since early GtkRadiant alpha, and got sort of foxed in 1.2 and put back in
-*/
-
-Image* loadBitmap(void* environment, const char* name)
-{
-  DirectoryArchiveFile file(name, name);
-  if(!file.failed())
-  {
-    return g_bitmapModule->loadImage(file);
-  }
-  return 0;
-}
-
-inline byte* getPixel(byte* pixels, int width, int height, int x, int y)
-{
-  return pixels + (((((y + height) % height) * width) + ((x + width) % width)) * 4);
-}
-
-class KernelElement
-{
-public:
-  int x, y;
-  float w;
-};
-
-Image& convertHeightmapToNormalmap(Image& heightmap, float scale)
-{
-  int w = heightmap.getWidth();
-  int h = heightmap.getHeight();
-  
-  Image& normalmap = *(new RGBAImage(heightmap.getWidth(), heightmap.getHeight()));
-  
-  byte* in = heightmap.getRGBAPixels();
-  byte* out = normalmap.getRGBAPixels();
-
-#if 1
-  // no filtering
-  const int kernelSize = 2;
-  KernelElement kernel_du[kernelSize] = {
-    {-1, 0,-0.5f },
-    { 1, 0, 0.5f }
-  };
-  KernelElement kernel_dv[kernelSize] = {
-    { 0, 1, 0.5f },
-    { 0,-1,-0.5f }
-  };
-#else
-  // 3x3 Prewitt
-  const int kernelSize = 6;
-  KernelElement kernel_du[kernelSize] = {
-    {-1, 1,-1.0f },
-    {-1, 0,-1.0f },
-    {-1,-1,-1.0f },
-    { 1, 1, 1.0f },
-    { 1, 0, 1.0f },
-    { 1,-1, 1.0f }
-  };
-  KernelElement kernel_dv[kernelSize] = {
-    {-1, 1, 1.0f },
-    { 0, 1, 1.0f },
-    { 1, 1, 1.0f },
-    {-1,-1,-1.0f },
-    { 0,-1,-1.0f },
-    { 1,-1,-1.0f }
-  };
-#endif
-
-  int x, y = 0;
-  while( y < h )
-  {
-    x = 0;
-    while( x < w )
-    {
-      float du = 0;
-      for(KernelElement* i = kernel_du; i != kernel_du + kernelSize; ++i)
-      {
-        du += (getPixel(in, w, h, x + (*i).x, y + (*i).y)[0] / 255.0) * (*i).w;
-      }
-      float dv = 0;
-      for(KernelElement* i = kernel_dv; i != kernel_dv + kernelSize; ++i)
-      {
-        dv += (getPixel(in, w, h, x + (*i).x, y + (*i).y)[0] / 255.0) * (*i).w;
-      }
-
-      float nx = -du * scale;
-      float ny = -dv * scale;
-      float nz = 1.0;
-
-      // Normalize      
-      float norm = 1.0/sqrt(nx*nx + ny*ny + nz*nz);
-      out[0] = float_to_integer(((nx * norm) + 1) * 127.5);
-      out[1] = float_to_integer(((ny * norm) + 1) * 127.5);
-      out[2] = float_to_integer(((nz * norm) + 1) * 127.5);
-      out[3] = 255;
-     
-      x++;
-      out += 4;
-    }
-    
-    y++;
-  }
-  
-  return normalmap;
-}
-
-Image* loadHeightmap(void* environment, const char* name)
-{
-  Image* heightmap = GlobalTexturesCache().loadImage(name);
-  if(heightmap != 0)
-  {
-    Image& normalmap = convertHeightmapToNormalmap(*heightmap, *reinterpret_cast<float*>(environment));
-    heightmap->release();
-    return &normalmap;
-  }
-  return 0;
-}
-
-
-Image* loadSpecial(void* environment, const char* name)
-{
-  if(*name == '_') // special image
-  {
-    StringOutputStream bitmapName(256);
-    bitmapName << GlobalRadiant().getAppPath() << "bitmaps/" << name + 1 << ".bmp";
-    Image* image = loadBitmap(environment, bitmapName.c_str());
-    if(image != 0)
-    {
-      return image;
-    }
-  }
-  return GlobalTexturesCache().loadImage(name);
-}
-
-class ShaderPoolContext
-{
-};
-typedef Static<StringPool, ShaderPoolContext> ShaderPool;
-typedef PooledString<ShaderPool> ShaderString;
-typedef ShaderString ShaderVariable;
-typedef ShaderString ShaderValue;
-typedef CopiedString TextureExpression;
+//++timo TODO: use stl::map !! (I tried having a look to CMap but it obviously sucks)
+CShaderArray g_Shaders;
+// whenever a shader gets activated / deactivated this list is updated
+// NOTE: make sure you don't add a shader that's already in
+// NOTE: all shaders in this array are in the main g_Shaders
+CShaderArray g_ActiveShaders;
 
 // clean a texture name to the qtexture_t name format we use internally
+// NOTE: there are so many cases .. this may need to get updated to cover all of them
+// we expect a "textures/" path on top, except if bAddTexture is set to true .. in case we add in needed
 // NOTE: case sensitivity: the engine is case sensitive. we store the shader name with case information and save with case
 // information as well. but we assume there won't be any case conflict and so when doing lookups based on shader name,
 // we compare as case insensitive. That is Radiant is case insensitive, but knows that the engine is case sensitive.
 //++timo FIXME: we need to put code somewhere to detect when two shaders that are case insensitive equal are present
-template<typename StringType>
-void parseTextureName(StringType& name, const char* token)
+const char *WINAPI QERApp_CleanTextureName (const char *name, bool bAddTexture = false)
 {
-  StringOutputStream cleaned(256);
-  cleaned << PathCleaned(token);
-  name = CopiedString(StringRange(cleaned.c_str(), path_get_filename_base_end(cleaned.c_str()))).c_str(); // remove extension
-}
-
-bool Tokeniser_parseTextureName(Tokeniser& tokeniser, TextureExpression& name)
-{
-  const char* token = tokeniser.getToken();
-  if(token == 0)
-  {
-    Tokeniser_unexpectedError(tokeniser, token, "#texture-name");
-    return false;
-  }
-  parseTextureName(name, token);
-  return true;
-}
-
-bool Tokeniser_parseShaderName(Tokeniser& tokeniser, CopiedString& name)
-{
-  const char* token = tokeniser.getToken();
-  if(token == 0)
-  {
-    Tokeniser_unexpectedError(tokeniser, token, "#shader-name");
-    return false;
-  }
-  parseTextureName(name, token);
-  return true;
-}
-
-bool Tokeniser_parseString(Tokeniser& tokeniser, ShaderString& string)
-{
-  const char* token = tokeniser.getToken();
-  if(token == 0)
-  {
-    Tokeniser_unexpectedError(tokeniser, token, "#string");
-    return false;
-  }
-  string = token;
-  return true;
-}
-
-
-
-typedef std::list<ShaderVariable> ShaderParameters;
-typedef std::list<ShaderVariable> ShaderArguments;
-
-typedef std::pair<ShaderVariable, ShaderVariable> BlendFuncExpression;
-
-class ShaderTemplate
-{
-  std::size_t m_refcount;
-  CopiedString m_Name;
-public:
-
-  ShaderParameters m_params;
-
-  TextureExpression m_textureName;
-  TextureExpression m_diffuse;
-  TextureExpression m_bump;
-  ShaderValue m_heightmapScale;
-  TextureExpression m_specular;
-  TextureExpression m_lightFalloffImage;
-
-  int m_nFlags;
-  float m_fTrans;
-
-  // alphafunc stuff
-  IShader::EAlphaFunc m_AlphaFunc;
-  float m_AlphaRef;
-  // cull stuff
-  IShader::ECull m_Cull;
-
-  ShaderTemplate() :
-    m_refcount(0)
-  {
-    m_nFlags = 0;
-    m_fTrans = 1.0f;
-  }
-
-  void IncRef()
-  {
-    ++m_refcount;
-  }
-  void DecRef() 
-  {
-    ASSERT_MESSAGE(m_refcount != 0, "shader reference-count going below zero");
-    if(--m_refcount == 0)
-    {
-      delete this;
-    }
-  }
-
-  std::size_t refcount()
-  {
-    return m_refcount;
-  }
-
-  const char* getName() const
-  {
-    return m_Name.c_str();
-  }
-  void setName(const char* name)
-  {
-    m_Name = name;
-  }
-
-  // -----------------------------------------
-
-  bool parseDoom3(Tokeniser& tokeniser);
-  bool parseQuake3(Tokeniser& tokeniser);
-  bool parseTemplate(Tokeniser& tokeniser);
-
-
-  void CreateDefault(const char *name)
-  {
-    if(g_enableDefaultShaders)
-    {
-      m_textureName = name;
-    }
-    else
-    {
-      m_textureName = "";
-    }
-    setName(name);
-  }
-
-
-  class MapLayerTemplate
-  {
-    TextureExpression m_texture;
-    BlendFuncExpression m_blendFunc;
-    bool m_clampToBorder;
-    ShaderValue m_alphaTest;
-  public:
-    MapLayerTemplate(const TextureExpression& texture, const BlendFuncExpression& blendFunc, bool clampToBorder, const ShaderValue& alphaTest) :
-      m_texture(texture),
-      m_blendFunc(blendFunc),
-      m_clampToBorder(false),
-      m_alphaTest(alphaTest)
-    {
-    }
-    const TextureExpression& texture() const
-    {
-      return m_texture;
-    }
-    const BlendFuncExpression& blendFunc() const
-    {
-      return m_blendFunc;
-    }
-    bool clampToBorder() const
-    {
-      return m_clampToBorder;
-    }
-    const ShaderValue& alphaTest() const
-    {
-      return m_alphaTest;
-    }
-  };
-  typedef std::vector<MapLayerTemplate> MapLayers;
-  MapLayers m_layers;
-};
-
-
-bool Doom3Shader_parseHeightmap(Tokeniser& tokeniser, TextureExpression& bump, ShaderValue& heightmapScale)
-{
-  RETURN_FALSE_IF_FAIL(Tokeniser_parseToken(tokeniser, "("));
-  RETURN_FALSE_IF_FAIL(Tokeniser_parseTextureName(tokeniser, bump));
-  RETURN_FALSE_IF_FAIL(Tokeniser_parseToken(tokeniser, ","));
-  RETURN_FALSE_IF_FAIL(Tokeniser_parseString(tokeniser, heightmapScale));
-  RETURN_FALSE_IF_FAIL(Tokeniser_parseToken(tokeniser, ")"));
-  return true;
-}
-
-bool Doom3Shader_parseAddnormals(Tokeniser& tokeniser, TextureExpression& bump)
-{
-  RETURN_FALSE_IF_FAIL(Tokeniser_parseToken(tokeniser, "("));
-  RETURN_FALSE_IF_FAIL(Tokeniser_parseTextureName(tokeniser, bump));
-  RETURN_FALSE_IF_FAIL(Tokeniser_parseToken(tokeniser, ","));
-  RETURN_FALSE_IF_FAIL(Tokeniser_parseToken(tokeniser, "heightmap"));
-  TextureExpression heightmapName;
-  ShaderValue heightmapScale;
-  RETURN_FALSE_IF_FAIL(Doom3Shader_parseHeightmap(tokeniser, heightmapName, heightmapScale));
-  RETURN_FALSE_IF_FAIL(Tokeniser_parseToken(tokeniser, ")"));
-  return true;
-}
-
-bool Doom3Shader_parseBumpmap(Tokeniser& tokeniser, TextureExpression& bump, ShaderValue& heightmapScale)
-{
-  const char* token = tokeniser.getToken();
-  if(token == 0)
-  {
-    Tokeniser_unexpectedError(tokeniser, token, "#bumpmap");
-    return false;
-  }
-  if(string_equal(token, "heightmap"))
-  {
-    RETURN_FALSE_IF_FAIL(Doom3Shader_parseHeightmap(tokeniser, bump, heightmapScale));
-  }
-  else if(string_equal(token, "addnormals"))
-  {
-    RETURN_FALSE_IF_FAIL(Doom3Shader_parseAddnormals(tokeniser, bump));
-  }
-  else
-  {
-    parseTextureName(bump, token);
-  }
-  return true;
-}
-
-enum LayerTypeId
-{
-  LAYER_NONE,
-  LAYER_BLEND,
-  LAYER_DIFFUSEMAP,
-  LAYER_BUMPMAP,
-  LAYER_SPECULARMAP
-};
-
-class LayerTemplate
-{
-public:
-  LayerTypeId m_type;
-  TextureExpression m_texture;
-  BlendFuncExpression m_blendFunc;
-  bool m_clampToBorder;
-  ShaderValue m_alphaTest;
-  ShaderValue m_heightmapScale;
-
-  LayerTemplate() : m_type(LAYER_NONE), m_blendFunc("GL_ONE", "GL_ZERO"), m_clampToBorder(false), m_alphaTest("-1"), m_heightmapScale("0")
-  {
-  }
-};
-
-bool parseShaderParameters(Tokeniser& tokeniser, ShaderParameters& params)
-{
-  Tokeniser_parseToken(tokeniser, "(");
-  for(;;)
-  {
-    const char* param = tokeniser.getToken();
-    if(string_equal(param, ")"))
-    {
-      break;
-    }
-    params.push_back(param);
-    const char* comma = tokeniser.getToken();
-    if(string_equal(comma, ")"))
-    {
-      break;
-    }
-    if(!string_equal(comma, ","))
-    {
-      Tokeniser_unexpectedError(tokeniser, comma, ",");
-      return false;
-    }
-  }
-  return true;
-}
-
-bool ShaderTemplate::parseTemplate(Tokeniser& tokeniser)
-{
-  m_Name = tokeniser.getToken();
-  if(!parseShaderParameters(tokeniser, m_params))
-  {
-    globalErrorStream() << "shader template: " << makeQuoted(m_Name.c_str()) << ": parameter parse failed\n";
-    return false;
-  }
-
-  return parseDoom3(tokeniser);
-}
-
-bool ShaderTemplate::parseDoom3(Tokeniser& tokeniser)
-{
-  LayerTemplate currentLayer;
-  bool isFog = false;
-
-  // we need to read until we hit a balanced }
-  int depth = 0;
-  for(;;)
-  {
-    tokeniser.nextLine();
-    const char* token = tokeniser.getToken();
-
-    if(token == 0)
-      return false;
-
-    if(string_equal(token, "{"))
-    {
-      ++depth;
-      continue;
-    }
-    else if(string_equal(token, "}"))
-    {
-      --depth;
-      if(depth < 0) // error
-      {
-        return false;
-      }
-      if(depth == 0) // end of shader
-      {
-        break;
-      }
-      if(depth == 1) // end of layer
-      {
-        if(currentLayer.m_type == LAYER_DIFFUSEMAP)
-        {
-          m_diffuse = currentLayer.m_texture;
-        }
-        else if(currentLayer.m_type == LAYER_BUMPMAP)
-        {
-          m_bump = currentLayer.m_texture;
-        }
-        else if(currentLayer.m_type == LAYER_SPECULARMAP)
-        {
-          m_specular = currentLayer.m_texture;
-        }
-        else if(!string_empty(currentLayer.m_texture.c_str()))
-        {
-          m_layers.push_back(MapLayerTemplate(
-            currentLayer.m_texture.c_str(),
-            currentLayer.m_blendFunc,
-            currentLayer.m_clampToBorder,
-            currentLayer.m_alphaTest
-          ));
-        }
-        currentLayer.m_type = LAYER_NONE;
-        currentLayer.m_texture = "";
-      }
-      continue;
-    }
-
-    if(depth == 2) // in layer
-    {
-      if(string_equal_nocase(token, "blend"))
-      {
-        const char* blend = tokeniser.getToken();
-
-        if(blend == 0)
-        {
-          Tokeniser_unexpectedError(tokeniser, blend, "#blend");
-          return false;
-        }
-
-        if(string_equal_nocase(blend, "diffusemap"))
-        {
-          currentLayer.m_type = LAYER_DIFFUSEMAP;
-        }
-        else if(string_equal_nocase(blend, "bumpmap"))
-        {
-          currentLayer.m_type = LAYER_BUMPMAP;
-        }
-        else if(string_equal_nocase(blend, "specularmap"))
-        {
-          currentLayer.m_type = LAYER_SPECULARMAP;
-        }
-        else
-        {
-          currentLayer.m_blendFunc.first = blend;
-
-          const char* comma = tokeniser.getToken();
-
-          if(comma == 0)
-          {
-            Tokeniser_unexpectedError(tokeniser, comma, "#comma");
-            return false;
-          }
-
-          if(string_equal(comma, ","))
-          {
-            RETURN_FALSE_IF_FAIL(Tokeniser_parseString(tokeniser, currentLayer.m_blendFunc.second));
-          }
-          else
-          {
-            currentLayer.m_blendFunc.second = "";
-            tokeniser.ungetToken();
-          }
-        }
-      }
-      else if(string_equal_nocase(token, "map"))
-      {
-        if(currentLayer.m_type == LAYER_BUMPMAP)
-        {
-          RETURN_FALSE_IF_FAIL(Doom3Shader_parseBumpmap(tokeniser, currentLayer.m_texture, currentLayer.m_heightmapScale));
-        }
-        else
-        {
-          const char* map = tokeniser.getToken();
-
-          if(map == 0)
-          {
-            Tokeniser_unexpectedError(tokeniser, map, "#map");
-            return false;
-          }
-
-          if(string_equal(map, "makealpha"))
-          {
-            RETURN_FALSE_IF_FAIL(Tokeniser_parseToken(tokeniser, "("));
-            const char* texture = tokeniser.getToken();
-            if(texture == 0)
-            {
-              Tokeniser_unexpectedError(tokeniser, texture, "#texture");
-              return false;
-            }
-            currentLayer.m_texture = texture;
-            RETURN_FALSE_IF_FAIL(Tokeniser_parseToken(tokeniser, ")")); 
-          }
-          else
-          {
-            parseTextureName(currentLayer.m_texture, map);
-          }
-        }
-      }
-      else if(string_equal_nocase(token, "zeroclamp"))
-      {
-        currentLayer.m_clampToBorder = true;
-      }
-#if 0
-      else if(string_equal_nocase(token, "alphaTest"))
-      {
-        Tokeniser_getFloat(tokeniser, currentLayer.m_alphaTest);
-      }
+  static char stdName[QER_MAX_NAMELEN];
+#ifdef _DEBUG
+  if (strlen(name)>QER_MAX_NAMELEN)
+    g_FuncTable.m_pfnSysFPrintf(SYS_WRN, "WARNING: name exceeds QER_MAX_NAMELEN in CleanTextureName\n");
 #endif
-    }
-    else if(depth == 1)
+
+  strcpy (stdName, name);
+  g_FuncTable.m_pfnQE_ConvertDOSToUnixName (stdName, stdName);
+  if (stdName[strlen (name) - 4] == '.')
+    // strip extension
+    stdName[strlen (stdName) - 4] = '\0';
+
+	if (bAddTexture)
+  {
+    char aux[QER_MAX_NAMELEN];
+    sprintf (aux, "textures/%s", stdName);
+    strcpy (stdName, aux);
+	}
+  return stdName;
+}
+
+int WINAPI QERApp_GetActiveShaderCount ()
+{
+  return g_ActiveShaders.GetSize ();
+}
+
+IShader *WINAPI QERApp_ActiveShader_ForIndex (int i)
+{
+  return static_cast < CShader * >(g_ActiveShaders.GetAt (i));
+}
+
+void CShaderArray::SortShaders ()
+{
+  CPtrArray aux;
+  int i, icount;
+  int j, jcount;
+  CShader *pSort;
+  const char *sSort;
+  // dumb sort .. would it ever grow big enough so we would have to do something clever? noooo
+  icount = CPtrArray::GetSize ();
+  for (i = 0; i < icount; i++)
+  {
+    pSort = static_cast < CShader * >(GetAt (i));
+    sSort = pSort->getName ();
+    jcount = aux.GetSize ();
+    for (j = 0; j < jcount; j++)
     {
-      if(string_equal_nocase(token, "qer_editorimage"))
-      {
-        RETURN_FALSE_IF_FAIL(Tokeniser_parseTextureName(tokeniser, m_textureName));
-      }
-      else if (string_equal_nocase(token, "qer_trans"))
-      {
-        m_fTrans = string_read_float(tokeniser.getToken());
-        m_nFlags |= QER_TRANS;
-      }
-      else if (string_equal_nocase(token, "translucent"))
-      {
-        m_fTrans = 1;
-        m_nFlags |= QER_TRANS;
-      }
-      else if (string_equal(token, "DECAL_MACRO"))
-      {
-        m_fTrans = 1;
-        m_nFlags |= QER_TRANS;
-      }
-      else if (string_equal_nocase(token, "bumpmap"))
-      {
-        RETURN_FALSE_IF_FAIL(Doom3Shader_parseBumpmap(tokeniser, m_bump, m_heightmapScale));
-      }
-      else if (string_equal_nocase(token, "diffusemap"))
-      {
-        RETURN_FALSE_IF_FAIL(Tokeniser_parseTextureName(tokeniser, m_diffuse));
-      }
-      else if (string_equal_nocase(token, "specularmap"))
-      {
-        RETURN_FALSE_IF_FAIL(Tokeniser_parseTextureName(tokeniser, m_specular));
-      }
-      else if (string_equal_nocase(token, "twosided"))
-      {
-        m_Cull = IShader::eCullNone;
-        m_nFlags |= QER_CULL;
-      }
-      else if (string_equal_nocase(token, "nodraw"))
-      {
-        m_nFlags |= QER_NODRAW;
-      }
-      else if (string_equal_nocase(token, "nonsolid"))
-      {
-        m_nFlags |= QER_NONSOLID;
-      }
-      else if (string_equal_nocase(token, "liquid"))
-      {
-        m_nFlags |= QER_WATER;
-      }
-      else if (string_equal_nocase(token, "areaportal"))
-      {
-        m_nFlags |= QER_AREAPORTAL;
-      }
-      else if (string_equal_nocase(token, "playerclip")
-        || string_equal_nocase(token, "monsterclip")
-        || string_equal_nocase(token, "ikclip")
-        || string_equal_nocase(token, "moveableclip"))
-      {
-        m_nFlags |= QER_CLIP;
-      }
-      if (string_equal_nocase(token, "fogLight"))
-      {
-        isFog = true;
-      }
-      else if (!isFog && string_equal_nocase(token, "lightFalloffImage"))
-      {
-        const char* lightFalloffImage = tokeniser.getToken();
-        if(lightFalloffImage == 0)
-        {
-          Tokeniser_unexpectedError(tokeniser, lightFalloffImage, "#lightFalloffImage");
-          return false;
-        }
-        if(string_equal_nocase(lightFalloffImage, "makeintensity"))
-        {
-          RETURN_FALSE_IF_FAIL(Tokeniser_parseToken(tokeniser, "("));
-          TextureExpression name;
-          RETURN_FALSE_IF_FAIL(Tokeniser_parseTextureName(tokeniser, name));
-          m_lightFalloffImage = name;
-          RETURN_FALSE_IF_FAIL(Tokeniser_parseToken(tokeniser, ")"));
-        }
-        else
-        {
-          m_lightFalloffImage = lightFalloffImage;
-        }
-      }
-    }
-  }
-
-  if(string_empty(m_textureName.c_str()))
-  {
-    m_textureName = m_diffuse;
-  }
-
-  return true;
-}
-
-typedef SmartPointer<ShaderTemplate> ShaderTemplatePointer;
-typedef std::map<CopiedString, ShaderTemplatePointer> ShaderTemplateMap;
-
-ShaderTemplateMap g_shaders;
-ShaderTemplateMap g_shaderTemplates;
-
-ShaderTemplate* findTemplate(const char* name)
-{
-  ShaderTemplateMap::iterator i = g_shaderTemplates.find(name);
-  if(i != g_shaderTemplates.end())
-  {
-    return (*i).second.get();
-  }
-  return 0;
-}
-
-class ShaderDefinition
-{
-public:
-  ShaderDefinition(ShaderTemplate* shaderTemplate, const ShaderArguments& args, const char* filename)
-    : shaderTemplate(shaderTemplate), args(args), filename(filename)
-  {
-  }
-  ShaderTemplate* shaderTemplate;
-  ShaderArguments args;
-  const char* filename;
-};
-
-typedef std::map<CopiedString, ShaderDefinition> ShaderDefinitionMap;
-
-ShaderDefinitionMap g_shaderDefinitions;
-
-bool parseTemplateInstance(Tokeniser& tokeniser, const char* filename)
-{
-  CopiedString name;
-  RETURN_FALSE_IF_FAIL(Tokeniser_parseShaderName(tokeniser, name));
-  const char* templateName = tokeniser.getToken();
-  ShaderTemplate* shaderTemplate = findTemplate(templateName);
-  if(shaderTemplate == 0)
-  {
-    globalErrorStream() << "shader instance: " << makeQuoted(name.c_str()) << ": shader template not found: " << makeQuoted(templateName) << "\n";
-  }
-
-  ShaderArguments args;
-  if(!parseShaderParameters(tokeniser, args))
-  {
-    globalErrorStream() << "shader instance: " << makeQuoted(name.c_str()) << ": argument parse failed\n";
-    return false;
-  }
-
-  if(shaderTemplate != 0)
-  {
-    if(!g_shaderDefinitions.insert(ShaderDefinitionMap::value_type(name, ShaderDefinition(shaderTemplate, args, filename))).second)
-    {
-      globalErrorStream() << "shader instance: " << makeQuoted(name.c_str()) << ": already exists, second definition ignored\n";
-    }
-  }
-  return true;
-}
-
-
-const char* evaluateShaderValue(const char* value, const ShaderParameters& params, const ShaderArguments& args)
-{
-  ShaderArguments::const_iterator j = args.begin();
-  for(ShaderParameters::const_iterator i = params.begin(); i != params.end(); ++i, ++j)
-  {
-    const char* other = (*i).c_str();
-    if(string_equal(value, other))
-    {
-      return (*j).c_str();
-    }
-  }
-  return value;
-}
-
-///\todo BlendFunc parsing
-BlendFunc evaluateBlendFunc(const BlendFuncExpression& blendFunc, const ShaderParameters& params, const ShaderArguments& args)
-{
-  return BlendFunc(BLEND_ONE, BLEND_ZERO);
-}
-
-qtexture_t* evaluateTexture(const TextureExpression& texture, const ShaderParameters& params, const ShaderArguments& args, const LoadImageCallback& loader = GlobalTexturesCache().defaultLoader())
-{
-  StringOutputStream result(64);
-  const char* expression = texture.c_str();
-  const char* end = expression + string_length(expression);
-  if(!string_empty(expression))
-  {
-    for(;;)
-    {
-      const char* best = end;
-      const char* bestParam = 0;
-      const char* bestArg = 0;
-      ShaderArguments::const_iterator j = args.begin();
-      for(ShaderParameters::const_iterator i = params.begin(); i != params.end(); ++i, ++j)
-      {
-        const char* found = strstr(expression, (*i).c_str());
-        if(found != 0 && found < best)
-        {
-          best = found;
-          bestParam = (*i).c_str();
-          bestArg = (*j).c_str();
-        }
-      }
-      if(best != end)
-      {
-        result << StringRange(expression, best);
-        result << PathCleaned(bestArg);
-        expression = best + string_length(bestParam);
-      }
-      else
-      {
+      if (strcmp (sSort, static_cast < CShader * >(aux.GetAt (j))->getName ()) < 0)
         break;
-      }
     }
-    result << expression;
+    aux.InsertAt (j, pSort);
   }
-  return GlobalTexturesCache().capture(loader, result.c_str());
+  CPtrArray::RemoveAll ();
+  CPtrArray::InsertAt (0, &aux);
 }
 
-float evaluateFloat(const ShaderValue& value, const ShaderParameters& params, const ShaderArguments& args)
+// will sort the active shaders list by name
+// NOTE: it would be easier if the thing would stay sorted by using a map<name,CShader> thing
+//++timo FIXME: would need to export that to allow external override?
+void WINAPI QERApp_SortActiveShaders ()
 {
-  const char* result = evaluateShaderValue(value.c_str(), params, args);
-  float f;
-  if(!string_parse_float(result, f))
-  {
-    globalErrorStream() << "parsing float value failed: " << makeQuoted(result) << "\n";
-  }
-  return f;
+  g_ActiveShaders.SortShaders ();
 }
 
-BlendFactor evaluateBlendFactor(const ShaderValue& value, const ShaderParameters& params, const ShaderArguments& args)
+// NOTE: case sensitivity
+// although we store shader names with case information, Radiant does case insensitive searches
+// (we assume there's no case conflict with the names)
+CShader *CShaderArray::Shader_ForName (const char *name) const
 {
-  const char* result = evaluateShaderValue(value.c_str(), params, args);
-
-  if(string_equal_nocase(result, "gl_zero"))
+  int i;
+  for (i = 0; i < CPtrArray::GetSize (); i++)
   {
-    return BLEND_ZERO;
+    CShader *pShader = static_cast < CShader * >(CPtrArray::GetAt (i));
+    if (stricmp (pShader->getName (), name) == 0)
+      return pShader;
   }
-  if(string_equal_nocase(result, "gl_one"))
-  {
-    return BLEND_ONE;
-  }
-  if(string_equal_nocase(result, "gl_src_color"))
-  {
-    return BLEND_SRC_COLOUR;
-  }
-  if(string_equal_nocase(result, "gl_one_minus_src_color"))
-  {
-    return BLEND_ONE_MINUS_SRC_COLOUR;
-  }
-  if(string_equal_nocase(result, "gl_src_alpha"))
-  {
-    return BLEND_SRC_ALPHA;
-  }
-  if(string_equal_nocase(result, "gl_one_minus_src_alpha"))
-  {
-    return BLEND_ONE_MINUS_SRC_ALPHA;
-  }
-  if(string_equal_nocase(result, "gl_dst_color"))
-  {
-    return BLEND_DST_COLOUR;
-  }
-  if(string_equal_nocase(result, "gl_one_minus_dst_color"))
-  {
-    return BLEND_ONE_MINUS_DST_COLOUR;
-  }
-  if(string_equal_nocase(result, "gl_dst_alpha"))
-  {
-    return BLEND_DST_ALPHA;
-  }
-  if(string_equal_nocase(result, "gl_one_minus_dst_alpha"))
-  {
-    return BLEND_ONE_MINUS_DST_ALPHA;
-  }
-  if(string_equal_nocase(result, "gl_src_alpha_saturate"))
-  {
-    return BLEND_SRC_ALPHA_SATURATE;
-  }
-
-  globalErrorStream() << "parsing blend-factor value failed: " << makeQuoted(result) << "\n";
-  return BLEND_ZERO;
+  return NULL;
 }
 
-class CShader : public IShader
+void CShader::CreateDefault (const char *name)
 {
-  std::size_t m_refcount;
-
-  const ShaderTemplate& m_template;
-  const ShaderArguments& m_args;
-  const char* m_filename;
-  // name is shader-name, otherwise texture-name (if not a real shader)
-  CopiedString m_Name;
-
-  qtexture_t* m_pTexture;
-  qtexture_t* m_notfound;
-  qtexture_t* m_pDiffuse;
-  float m_heightmapScale;
-  qtexture_t* m_pBump;
-  qtexture_t* m_pSpecular;
-  qtexture_t* m_pLightFalloffImage;
-  BlendFunc m_blendFunc;
-
-  bool m_bInUse;
-
-
-public:
-  static bool m_lightingEnabled;
-
-  CShader(const ShaderDefinition& definition) :
-    m_refcount(0),
-    m_template(*definition.shaderTemplate),
-    m_args(definition.args),
-    m_filename(definition.filename),
-    m_blendFunc(BLEND_SRC_ALPHA, BLEND_ONE_MINUS_SRC_ALPHA),
-    m_bInUse(false)
-  {
-    m_pTexture = 0;
-    m_pDiffuse = 0;
-    m_pBump = 0;
-    m_pSpecular = 0;
-
-    m_notfound = 0;
-
-    realise();
-  }
-  virtual ~CShader()
-  {
-    unrealise();
-
-    ASSERT_MESSAGE(m_refcount == 0, "deleting active shader");
-  }
-
-  // IShaders implementation -----------------
-  void IncRef()
-  {
-    ++m_refcount;
-  }
-  void DecRef() 
-  {
-    ASSERT_MESSAGE(m_refcount != 0, "shader reference-count going below zero");
-    if(--m_refcount == 0)
-    {
-      delete this;
-    }
-  }
-
-  std::size_t refcount()
-  {
-    return m_refcount;
-  }
-
-  // get/set the qtexture_t* Radiant uses to represent this shader object
-  qtexture_t* getTexture() const
-  {
-    return m_pTexture;
-  }
-  qtexture_t* getDiffuse() const
-  {
-    return m_pDiffuse;
-  }
-  qtexture_t* getBump() const
-  {
-    return m_pBump;
-  }
-  qtexture_t* getSpecular() const
-  {
-    return m_pSpecular;
-  }
-  // get shader name
-  const char* getName() const
-  {
-    return m_Name.c_str();
-  }
-  bool IsInUse() const
-  {
-    return m_bInUse;
-  }
-  void SetInUse(bool bInUse)
-  {
-    m_bInUse = bInUse;
-    g_ActiveShadersChangedNotify();
-  }
-  // get the shader flags
-  int getFlags() const
-  {
-    return m_template.m_nFlags;
-  }
-  // get the transparency value
-  float getTrans() const
-  {
-    return m_template.m_fTrans;
-  }
-  // test if it's a true shader, or a default shader created to wrap around a texture
-  bool IsDefault() const 
-  {
-    return string_empty(m_filename);
-  }
-  // get the alphaFunc
-  void getAlphaFunc(EAlphaFunc *func, float *ref) { *func = m_template.m_AlphaFunc; *ref = m_template.m_AlphaRef; };
-  BlendFunc getBlendFunc() const
-  {
-    return m_blendFunc;
-  }
-  // get the cull type
-  ECull getCull()
-  {
-    return m_template.m_Cull;
-  };
-  // get shader file name (ie the file where this one is defined)
-  const char* getShaderFileName() const
-  {
-    return m_filename;
-  }
-  // -----------------------------------------
-
-  void realise()
-  {
-    m_pTexture = evaluateTexture(m_template.m_textureName, m_template.m_params, m_args);
-
-    if(m_pTexture->texture_number == 0)
-    {
-      m_notfound = m_pTexture;
-
-      {
-        StringOutputStream name(256);
-        name << GlobalRadiant().getAppPath() << "bitmaps/" << (IsDefault() ? "notex.bmp" : "shadernotex.bmp");
-        m_pTexture = GlobalTexturesCache().capture(LoadImageCallback(0, loadBitmap), name.c_str());
-      }
-    }
-
-    realiseLighting();
-  }
-
-  void unrealise()
-  {
-    GlobalTexturesCache().release(m_pTexture);
-
-    if(m_notfound != 0)
-    {
-      GlobalTexturesCache().release(m_notfound);
-    }
-
-    unrealiseLighting();
-  }
-
-  void realiseLighting()
-  {
-    if(m_lightingEnabled)
-    {
-      LoadImageCallback loader = GlobalTexturesCache().defaultLoader();
-      if(!string_empty(m_template.m_heightmapScale.c_str()))
-      {
-        m_heightmapScale = evaluateFloat(m_template.m_heightmapScale, m_template.m_params, m_args);
-        loader = LoadImageCallback(&m_heightmapScale, loadHeightmap);
-      }
-      m_pDiffuse = evaluateTexture(m_template.m_diffuse, m_template.m_params, m_args);
-      m_pBump = evaluateTexture(m_template.m_bump, m_template.m_params, m_args, loader);
-      m_pSpecular = evaluateTexture(m_template.m_specular, m_template.m_params, m_args);
-      m_pLightFalloffImage = evaluateTexture(m_template.m_lightFalloffImage, m_template.m_params, m_args);
-
-      for(ShaderTemplate::MapLayers::const_iterator i = m_template.m_layers.begin(); i != m_template.m_layers.end(); ++i)
-      {
-        m_layers.push_back(evaluateLayer(*i, m_template.m_params, m_args));
-      }
-
-      if(m_layers.size() == 1)
-      {
-        const BlendFuncExpression& blendFunc = m_template.m_layers.front().blendFunc();
-        if(!string_empty(blendFunc.second.c_str()))
-        {
-          m_blendFunc = BlendFunc(
-            evaluateBlendFactor(blendFunc.first.c_str(), m_template.m_params, m_args),
-            evaluateBlendFactor(blendFunc.second.c_str(), m_template.m_params, m_args)
-          );
-        }
-        else
-        {
-          const char* blend = evaluateShaderValue(blendFunc.first.c_str(), m_template.m_params, m_args);
-
-          if(string_equal_nocase(blend, "add"))
-          {
-            m_blendFunc = BlendFunc(BLEND_ONE, BLEND_ONE);
-          }
-          else if(string_equal_nocase(blend, "filter"))
-          {
-            m_blendFunc = BlendFunc(BLEND_DST_COLOUR, BLEND_ZERO);
-          }
-          else if(string_equal_nocase(blend, "blend"))
-          {
-            m_blendFunc = BlendFunc(BLEND_SRC_ALPHA, BLEND_ONE_MINUS_SRC_ALPHA);
-          }
-          else
-          {
-            globalErrorStream() << "parsing blend value failed: " << makeQuoted(blend) << "\n";
-          }
-        }
-      }
-    }
-  }
-
-  void unrealiseLighting()
-  {
-    if(m_lightingEnabled)
-    {
-      GlobalTexturesCache().release(m_pDiffuse);
-      GlobalTexturesCache().release(m_pBump);
-      GlobalTexturesCache().release(m_pSpecular);
-
-      GlobalTexturesCache().release(m_pLightFalloffImage);
-
-      for(MapLayers::iterator i = m_layers.begin(); i != m_layers.end(); ++i)
-      {
-        GlobalTexturesCache().release((*i).texture());
-      }
-      m_layers.clear();
-
-      m_blendFunc = BlendFunc(BLEND_SRC_ALPHA, BLEND_ONE_MINUS_SRC_ALPHA);
-    }
-  }
-
-  // set shader name
-  void setName(const char* name)
-  {
-    m_Name = name;
-  }
-
-  class MapLayer : public ShaderLayer
-  {
-    qtexture_t* m_texture;
-    BlendFunc m_blendFunc;
-    bool m_clampToBorder;
-    float m_alphaTest;
-  public:
-    MapLayer(qtexture_t* texture, BlendFunc blendFunc, bool clampToBorder, float alphaTest) :
-      m_texture(texture),
-      m_blendFunc(blendFunc),
-      m_clampToBorder(false),
-      m_alphaTest(alphaTest)
-    {
-    }
-    qtexture_t* texture() const
-    {
-      return m_texture;
-    }
-    BlendFunc blendFunc() const
-    {
-      return m_blendFunc;
-    }
-    bool clampToBorder() const
-    {
-      return m_clampToBorder;
-    }
-    float alphaTest() const
-    {
-      return m_alphaTest;
-    }
-  };
-
-  static MapLayer evaluateLayer(const ShaderTemplate::MapLayerTemplate& layerTemplate, const ShaderParameters& params, const ShaderArguments& args)
-  {
-    return MapLayer(
-      evaluateTexture(layerTemplate.texture(), params, args),
-      evaluateBlendFunc(layerTemplate.blendFunc(), params, args),
-      layerTemplate.clampToBorder(),
-      evaluateFloat(layerTemplate.alphaTest(), params, args)
-    );
-  }
-
-  typedef std::vector<MapLayer> MapLayers;
-  MapLayers m_layers;
-
-  const ShaderLayer* firstLayer() const
-  {
-    if(m_layers.empty())
-    {
-      return 0;
-    }
-    return &m_layers.front();
-  }
-  void forEachLayer(const ShaderLayerCallback& callback) const
-  {
-    for(MapLayers::const_iterator i = m_layers.begin(); i != m_layers.end(); ++i)
-    {
-      callback(*i);
-    }
-  }
-
-  qtexture_t* lightFalloffImage() const
-  {
-    if(!string_empty(m_template.m_lightFalloffImage.c_str()))
-    {
-      return m_pLightFalloffImage;
-    }
-    return 0;
-  }
-};
-
-bool CShader::m_lightingEnabled = false;
-
-typedef SmartPointer<CShader> ShaderPointer;
-typedef std::map<CopiedString, ShaderPointer, shader_less_t> shaders_t;
-
-shaders_t g_ActiveShaders;
-
-static shaders_t::iterator g_ActiveShadersIterator;
-
-void ActiveShaders_IteratorBegin()
-{
-  g_ActiveShadersIterator = g_ActiveShaders.begin();
+  const char *stdName = QERApp_CleanTextureName (name);
+  m_strTextureName = stdName;
+  setName (name);
 }
 
-bool ActiveShaders_IteratorAtEnd()
+CShader *CShaderArray::Shader_ForTextureName (const char *name) const
 {
-  return g_ActiveShadersIterator == g_ActiveShaders.end();
-}
-
-IShader *ActiveShaders_IteratorCurrent()
-{
-  return static_cast<CShader*>(g_ActiveShadersIterator->second);
-}
-
-void ActiveShaders_IteratorIncrement()
-{
-  ++g_ActiveShadersIterator;
-}
-
-void debug_check_shaders(shaders_t& shaders)
-{
-  for(shaders_t::iterator i = shaders.begin(); i != shaders.end(); ++i)
+#ifdef _DEBUG
+  // check we were given a texture name that fits the qtexture_t naming conventions
+  if (strcmp (name, QERApp_CleanTextureName (name)) != 0)
+    Sys_Printf
+      ("WARNING: texture name %s doesn't fit qtexture_t conventions in CShaderArray::Shader_ForTextureName\n",
+       name);
+#endif
+  int i;
+  for (i = 0; i < CPtrArray::GetSize (); i++)
   {
-    ASSERT_MESSAGE(i->second->refcount() == 1, "orphan shader still referenced");
+    CShader *pShader = static_cast < CShader * >(CPtrArray::GetAt (i));
+    if (strcmp (name, QERApp_CleanTextureName (pShader->getTextureName ())) == 0)
+      return pShader;
   }
+  return NULL;
 }
+
+IShader *WINAPI QERApp_ActiveShader_ForTextureName (char *name)
+{
+  return g_ActiveShaders.Shader_ForTextureName (name);
+}
+
+void CShaderArray::AddSingle (void *lp)
+{
+  int i;
+  for (i = 0; i < CPtrArray::GetSize (); i++)
+  {
+    if (CPtrArray::GetAt (i) == lp)
+      return;
+  }
+  CPtrArray::Add (lp);
+  static_cast < CShader * >(CPtrArray::GetAt (i))->IncRef();
+}
+
+void CShaderArray::operator = (const class CShaderArray & src)
+{
+  int i;
+
+#ifdef _DEBUG
+  if (CPtrArray::GetSize () != 0)
+    Sys_Printf ("WARNING: CShaderArray::operator = expects an empty array\n");
+#endif
+  Copy (src);
+  // now go through and IncRef
+  for (i = 0; i < CPtrArray::GetSize (); i++)
+    static_cast < IShader * >(CPtrArray::GetAt (i))->IncRef ();
+}
+
+//++timo NOTE: for debugging we may need to keep track and tell wether everything has been properly unloaded
+void CShaderArray::ReleaseAll ()
+{
+  int i;
+  int count = CPtrArray::GetSize ();
+  // decref
+  for (i = 0; i < count; i++)
+    static_cast < IShader * >(CPtrArray::GetAt (i))->DecRef ();
+  // get rid
+  CPtrArray::RemoveAll ();
+}
+
+// NOTE TTimo:
+// this was hacked to work a long time ago
+// in Loki's fenris tracker as bug #104655
+// since that info is no longer available, and the hack has been there for so long, it's part of the code now
+// don't remember the details, but basically across a flush and reload for the shaders
+// we have to keep track of the patches texture names in a seperate entry
+// not sure why anymore, but I know that doesn't happen with brushes
+typedef struct patchEntry_s
+{
+  char name[QER_MAX_NAMELEN];
+  patchMesh_t *p;
+} patchEntry_t;
+
+CPtrArray PatchShaders;
+
+void PushPatch (patchMesh_t * patch)
+{
+  patchEntry_t *pEntry = new patchEntry_s;
+  pEntry->p = patch;
+  strcpy (pEntry->name, patch->pShader->getName ());
+  PatchShaders.Add (pEntry);
+}
+
+char *ShaderNameLookup (patchMesh_t * patch)
+{
+  int i;
+  int count = PatchShaders.GetSize ();
+  for (i = 0; i < count; i++)
+  {
+    if (static_cast < patchEntry_t * >(PatchShaders.GetAt (i))->p == patch)
+      return static_cast < patchEntry_t * >(PatchShaders.GetAt (i))->name;
+  }
+  Sys_Printf ("ERROR: failed to lookup name in ShaderNameLookup??\n");
+  return SHADER_NOT_FOUND;
+}
+//++timo end clean
 
 // will free all GL binded qtextures and shaders
 // NOTE: doesn't make much sense out of Radiant exit or called during a reload
-void FreeShaders()
+void WINAPI QERApp_FreeShaders ()
 {
-  // reload shaders
-  // empty the actives shaders list
-  debug_check_shaders(g_ActiveShaders);
-  g_ActiveShaders.clear();
-  g_shaders.clear();
-  g_shaderTemplates.clear();
-  g_shaderDefinitions.clear();
-  g_ActiveShadersChangedNotify();
-}
+  int i;
+  brush_t *b;
+  brush_t *active_brushes;
+  brush_t *selected_brushes;
+  brush_t *filtered_brushes;
+  qtexture_t **d_qtextures;
 
-bool ShaderTemplate::parseQuake3(Tokeniser& tokeniser)
-{
-  // name of the qtexture_t we'll use to represent this shader (this one has the "textures\" before)
-  m_textureName = m_Name.c_str();
+  active_brushes = g_DataTable.m_pfnActiveBrushes ();
+  selected_brushes = g_DataTable.m_pfnSelectedBrushes ();
+  filtered_brushes = g_DataTable.m_pfnFilteredBrushes ();
+  d_qtextures = g_ShadersTable.m_pfnQTextures ();
 
-  tokeniser.nextLine();
+  // store the shader names used by the patches
+  for (i = 0; i < PatchShaders.GetSize (); i++)
+    delete static_cast < patchMesh_t * >(PatchShaders.GetAt (i));
+  PatchShaders.RemoveAll ();
 
-  // we need to read until we hit a balanced }
-  int depth = 0;
-  for(;;)
+  for (b = active_brushes->next; b != NULL && b != active_brushes; b = b->next)
   {
-    tokeniser.nextLine();
-    const char* token = tokeniser.getToken();
-
-    if(token == 0)
-      return false;
-
-    if(string_equal(token, "{"))
-    {
-      ++depth;
-      continue;
-    }
-    else if(string_equal(token, "}"))
-    {
-      --depth;
-      if(depth < 0) // underflow
-      {
-        return false;
-      }
-      if(depth == 0) // end of shader
-      {
-        break;
-      }
-
-      continue;
-    }
-
-    if(depth == 1)
-    {
-      if (string_equal_nocase(token, "qer_nocarve"))
-      {
-        m_nFlags |= QER_NOCARVE;
-      }
-      else if (string_equal_nocase(token, "qer_trans"))
-      {
-        RETURN_FALSE_IF_FAIL(Tokeniser_getFloat(tokeniser, m_fTrans));
-        m_nFlags |= QER_TRANS;
-      }
-      else if (string_equal_nocase(token, "qer_editorimage"))
-      {
-        RETURN_FALSE_IF_FAIL(Tokeniser_parseTextureName(tokeniser, m_textureName));
-      }
-      else if (string_equal_nocase(token, "qer_alphafunc"))
-      {
-        const char* alphafunc = tokeniser.getToken();
-      
-        if(alphafunc == 0)
-        {
-          Tokeniser_unexpectedError(tokeniser, alphafunc, "#alphafunc");
-          return false;
-        }
-
-        if(string_equal_nocase(alphafunc, "equal"))
-        {
-          m_AlphaFunc = IShader::eEqual;
-        }
-        else if(string_equal_nocase(alphafunc, "greater"))
-        {
-          m_AlphaFunc = IShader::eGreater;
-        }
-        else if(string_equal_nocase(alphafunc, "less"))
-        {
-          m_AlphaFunc = IShader::eLess;
-        }
-        else if(string_equal_nocase(alphafunc, "gequal"))
-        {
-          m_AlphaFunc = IShader::eGEqual;
-        }
-        else if(string_equal_nocase(alphafunc, "lequal"))
-        {
-          m_AlphaFunc = IShader::eLEqual;
-        }
-        else
-        {
-          m_AlphaFunc = IShader::eAlways;
-        }
-
-        m_nFlags |= QER_ALPHATEST;
-
-        RETURN_FALSE_IF_FAIL(Tokeniser_getFloat(tokeniser, m_AlphaRef));
-      }
-      else if (string_equal_nocase(token, "cull"))
-      {
-        const char* cull = tokeniser.getToken();
-
-        if(cull == 0)
-        {
-          Tokeniser_unexpectedError(tokeniser, cull, "#cull");
-          return false;
-        }
-
-        if(string_equal_nocase(cull, "none")
-          || string_equal_nocase(cull, "twosided")
-          || string_equal_nocase(cull, "disable"))
-        {
-          m_Cull = IShader::eCullNone;
-        }
-        else if(string_equal_nocase(cull, "back")
-          || string_equal_nocase(cull, "backside")
-          || string_equal_nocase(cull, "backsided"))
-        {
-          m_Cull = IShader::eCullBack;
-        }
-        else
-        {
-          m_Cull = IShader::eCullBack;
-        }
-
-        m_nFlags |= QER_CULL;
-      }
-      else if (string_equal_nocase(token, "surfaceparm"))
-      {
-        const char* surfaceparm = tokeniser.getToken();
-
-        if(surfaceparm == 0)
-        {
-          Tokeniser_unexpectedError(tokeniser, surfaceparm, "#surfaceparm");
-          return false;
-        }
-
-        if (string_equal_nocase(surfaceparm, "fog"))
-        {
-          m_nFlags |= QER_FOG;
-          if (m_fTrans == 1.0f)  // has not been explicitly set by qer_trans
-          {
-            m_fTrans = 0.35f;
-          }
-        }
-        else if (string_equal_nocase(surfaceparm, "nodraw"))
-        {
-          m_nFlags |= QER_NODRAW;
-        }
-        else if (string_equal_nocase(surfaceparm, "nonsolid"))
-        {
-          m_nFlags |= QER_NONSOLID;
-        }
-        else if (string_equal_nocase(surfaceparm, "water"))
-        {
-          m_nFlags |= QER_WATER;
-        }
-        else if (string_equal_nocase(surfaceparm, "lava"))
-        {
-          m_nFlags |= QER_LAVA;
-        }
-        else if (string_equal_nocase(surfaceparm, "areaportal"))
-        {
-          m_nFlags |= QER_AREAPORTAL;
-        }
-        else if (string_equal_nocase(surfaceparm, "playerclip"))
-        {
-          m_nFlags |= QER_CLIP;
-        }
-        else if (string_equal_nocase(surfaceparm, "botclip"))
-        {
-          m_nFlags |= QER_BOTCLIP;
-        }
-      }
-    }
+    if (b->patchBrush)
+      PushPatch (b->pPatch);
+  }
+  for (b = selected_brushes->next; b != NULL && b != selected_brushes; b = b->next)
+  {
+    if (b->patchBrush)
+      PushPatch (b->pPatch);
+  }
+  for (b = filtered_brushes->next; b != NULL && b != filtered_brushes; b = b->next)
+  {
+    if (b->patchBrush)
+      PushPatch (b->pPatch);
   }
 
+  // reload shaders
+  // empty the actives shaders list
+  g_ActiveShaders.ReleaseAll ();
+  g_Shaders.ReleaseAll ();
+  // empty the main g_qeglobals.d_qtextures list
+  // FIXME: when we reload later on, we need to have the shader names
+  // for brushes it's stored in the texdef
+  // but patches don't have texdef
+  // see bug 104655 for details
+  // so the solution, build an array of patchMesh_t* and their shader names
+#ifdef _DEBUG
+  Sys_Printf ("FIXME: patch shader reload workaround (old fenris? bug 104655)\n");
+#endif
+
+  //GtkWidget *widget = g_QglTable.m_pfn_GetQeglobalsGLWidget ();
+  GHashTable *texmap = g_ShadersTable.m_pfnQTexmap ();
+
+  // NOTE: maybe before we'd like to set all qtexture_t in the shaders list to notex?
+  // NOTE: maybe there are some qtexture_t we don't want to erase? For plain color faces maybe?
+  while (*d_qtextures)
+  {
+    qtexture_t *pTex = *d_qtextures;
+    qtexture_t *pNextTex = pTex->next;
+
+    //if (widget != NULL)
+    g_QglTable.m_pfn_qglDeleteTextures (1, &pTex->texture_number);
+
+    g_hash_table_remove (texmap, pTex->name);
+      
+    // all qtexture_t should be manipulated with the glib alloc handlers for now
+    g_free (pTex);
+    *d_qtextures = pNextTex;
+  }
+
+  g_QglTable.m_pfn_QE_CheckOpenGLForErrors ();
+}
+
+// those functions are only used during a shader reload phase
+// the patch one relies on ShaderNameLookup, a table that is being built only when a flush is performed
+// so it's not something we want to expose publicly
+
+void SetShader (patchMesh_t * patch)
+{
+  // unhook current shader
+  patch->pShader->DecRef();
+  // don't access this one! it has been deleted .. it's DEAD
+  patch->d_texture = NULL;
+  // hook the new one, increment the refcount
+  // NOTE TTimo this function increments the refcount, don't incref ourselves
+  patch->pShader = QERApp_Shader_ForName (ShaderNameLookup (patch));
+  patch->d_texture = patch->pShader->getTexture ();
+}
+
+void SetShader (face_t * f)
+{
+  // unhook current shader
+  f->pShader->DecRef();
+  // don't access the texdef! it's DEAD
+  f->d_texture = NULL;
+  // hook
+  // NOTE TTimo this function increments the refcount, don't incref ourselves
+  f->pShader = QERApp_Shader_ForName (f->texdef.GetName());
+  f->d_texture = f->pShader->getTexture ();
+}
+
+void Brush_RefreshShader(brush_t *b)
+{
+  if (b->patchBrush)
+    SetShader(b->pPatch);
+  else if (b->owner->eclass->fixedsize)
+  {
+    /*eclass_t *eclass = HasModel(b);
+    if (eclass)
+    {
+      for(entitymodel *model = eclass->model; model!=NULL; model=model->pNext)
+        if(model && model->strSkin)
+          model->nTextureBind = g_FuncTable.m_pfnTexture_LoadSkin(((GString *)model->strSkin)->str, &model->nSkinWidth, &model->nSkinHeight);
+    }*/
+  }
+  else
+		for (face_t *f=b->brush_faces ; f ; f=f->next)
+			SetShader(f);
+}
+
+void WINAPI QERApp_ReloadShaders ()
+{
+  brush_t *b;
+  brush_t *active_brushes;
+  brush_t *selected_brushes;
+  brush_t *filtered_brushes;
+
+  QERApp_FreeShaders ();
+
+  g_DataTable.m_pfnLstSkinCache()->RemoveAll(); //md3 skins
+
+  active_brushes = g_DataTable.m_pfnActiveBrushes ();
+  selected_brushes = g_DataTable.m_pfnSelectedBrushes ();
+  filtered_brushes = g_DataTable.m_pfnFilteredBrushes ();
+
+  // now we must reload the shader information from shaderfiles
+  g_ShadersTable.m_pfnBuildShaderList();
+  g_ShadersTable.m_pfnPreloadShaders();
+
+  // refresh the map visuals: replace our old shader objects by the new ones
+  // on brush faces we have the shader name in texdef.name
+  // on patches we have the shader name in PatchShaders
+  // while we walk through the map data, we DecRef the old shaders and push the new ones in
+  // if all goes well, most of our old shaders will get deleted on the way
+
+  // FIXME: bug 104655, when we come accross a patch, we use the above array since the d_texture is lost
+  // NOTE: both face_t and patchMesh_t store pointers to the shader and qtexture_t
+  // in an ideal world they would only store shader and access the qtexture_t through it
+  // reassign all current shaders
+  for (b = active_brushes->next; b != NULL && b != active_brushes; b = b->next)
+    Brush_RefreshShader(b);
+  for (b = selected_brushes->next; b != NULL && b != selected_brushes; b = b->next)
+    Brush_RefreshShader(b);
+  // do that to the filtered brushes as well (we might have some region compiling going on)
+  for (b = filtered_brushes->next; b != NULL && b != filtered_brushes; b = b->next)
+    Brush_RefreshShader(b);
+}
+
+int WINAPI QERApp_LoadShadersFromDir (const char *path)
+{
+  int count = 0;
+  // scan g_Shaders, and call QERApp_Shader_ForName for each in the given path
+  // this will load the texture if needed and will set it in use..
+  int nSize = g_Shaders.GetSize ();
+  for (int i = 0; i < nSize; i++)
+  {
+    CShader *pShader = reinterpret_cast < CShader * >(g_Shaders[i]);
+    if (strstr (pShader->getShaderFileName (), path) || strstr (pShader->getName (), path))
+    {
+      count++;
+      // request the shader, this will load the texture if needed and set "inuse"
+      //++timo FIXME: should we put an Activate member on CShader?
+      // this QERApp_Shader_ForName call is a kind of hack
+      IShader *pFoo = QERApp_Shader_ForName (pShader->getName ());
+#ifdef _DEBUG
+      // check we activated the right shader
+      // NOTE: if there was something else loaded, the size of g_Shaders may have changed and strange behaviours are to be expected
+      if (pFoo != pShader)
+	Sys_Printf ("WARNING: unexpected pFoo != pShader in QERApp_LoadShadersFromDir\n");
+#else
+      pFoo = NULL;		// leo: shut up the compiler
+#endif
+    }
+  }
+  return count;
+}
+
+bool CShader::Parse ()
+{
+  char *token = g_ScripLibTable.m_pfnToken ();
+
+  // the parsing needs to be taken out in another module
+//  Sys_Printf("TODO: CShader::Parse\n");
+
+  // token is shader name (full path with a "textures\")
+  // we remove the "textures\" part
+  //setName ((char *) &token[9]));
+	// no we don't
+	setName (token);
+  // name of the qtexture_t we'll use to represent this shader (this one has the "textures\" before)
+  const char *stdName = QERApp_CleanTextureName (token);
+  m_strTextureName = stdName; // FIXME: BC reports stdName is uninitialised?
+  g_ScripLibTable.m_pfnGetToken (true);
+  if (strcmp (token, "{"))
+    return false;
+  else
+  {
+    // we need to read until we hit a balanced }
+    int nMatch = 1;
+    while (nMatch > 0 && g_ScripLibTable.m_pfnGetToken (true))
+    {
+      if (strcmp (token, "{") == 0)
+      {
+      	nMatch++;
+        continue;
+      }
+      else if (strcmp (token, "}") == 0)
+      {
+      	nMatch--;
+        continue;
+      }
+      if (nMatch > 1) continue; // ignore layers for now
+      if (strcmpi (token, "qer_nocarve") == 0)
+      {
+      	m_nFlags |= QER_NOCARVE;
+      }
+      else if (strcmpi (token, "qer_trans") == 0)
+      {
+	      if (g_ScripLibTable.m_pfnGetToken (true))
+	      {
+	        m_fTrans = (float) atof (token);
+	      }
+	      m_nFlags |= QER_TRANS;
+      }
+      else if (strcmpi (token, "qer_editorimage") == 0)
+      {
+	      if (g_ScripLibTable.m_pfnGetToken (true))
+	      {
+          // bAddTexture changed to false to allow editorimages in other locations than "textures/"
+	        m_strTextureName = QERApp_CleanTextureName (token, false);
+	      }
+      }
+      else if (strcmpi (token, "qer_alphafunc") == 0)
+      {
+	      if (g_ScripLibTable.m_pfnGetToken (true))
+	      {
+          
+          if(stricmp( token, "greater" ) == 0 )
+          {
+	          m_nAlphaFunc = GL_GREATER;
+          }
+          else if(stricmp( token, "less" ) == 0 )
+          {
+            m_nAlphaFunc = GL_LESS;
+          }
+          else if(stricmp( token, "gequal" ) == 0 )
+          {
+            m_nAlphaFunc = GL_GEQUAL;
+          }
+
+          if( m_nAlphaFunc )
+            m_nFlags |= QER_ALPHAFUNC;
+	      }
+        if (g_ScripLibTable.m_pfnGetToken (true))
+	      {
+	        m_fAlphaRef = (float) atof (token);
+	      }
+      }
+      else if (strcmpi (token, "cull") == 0)
+      {
+        if (g_ScripLibTable.m_pfnGetToken (true))
+	      {
+          if( stricmp( token, "none" ) == 0 || stricmp( token, "twosided" ) == 0 || stricmp( token, "disable" ) == 0 )
+          {
+	          m_nCull = 2;
+          }
+          else if( stricmp( token, "back" ) == 0 || stricmp( token, "backside" ) == 0 || stricmp( token, "backsided" ) == 0 )
+          {
+	          m_nCull = 1;
+          }
+
+          if( m_nCull )
+             m_nFlags |= QER_CULL;
+        }
+      }
+      else if (strcmpi (token, "surfaceparm") == 0)
+      {
+	      if (g_ScripLibTable.m_pfnGetToken (true))
+	      {
+	        if (strcmpi (token, "fog") == 0)
+	        {
+            m_nFlags |= QER_FOG;
+	          if (m_fTrans == 1.0f)	// has not been explicitly set by qer_trans
+	          {
+	            m_fTrans = 0.35f;
+	          }
+	        }
+          else if (strcmpi (token, "nodraw") == 0)
+          {
+            m_nFlags |= QER_NODRAW;
+          }
+          else if (strcmpi (token, "nonsolid") == 0)
+          {
+            m_nFlags |= QER_NONSOLID;
+          }
+          else if (strcmpi (token, "water") == 0)
+          {
+            m_nFlags |= QER_WATER;
+          }
+          else if (strcmpi (token, "lava") == 0)
+          {
+            m_nFlags |= QER_LAVA;
+          }
+	      }
+      }
+    }
+    if (nMatch != 0)
+      return false;
+  }
   return true;
 }
 
-class Layer
+void CShader::RegisterActivate ()
 {
-public:
-  LayerTypeId m_type;
-  TextureExpression m_texture;
-  BlendFunc m_blendFunc;
-  bool m_clampToBorder;
-  float m_alphaTest;
-  float m_heightmapScale;
+  // fill the qtexture_t with shader information
+  //++timo FIXME: a lot of that won't be necessary, will be stored at IShader* level
+//  strcpy (m_pTexture->shadername, m_Name);
+  // this flag is set only if we have a shaderfile name
+//  if (m_ShaderFileName[0] != '\0')
+//    m_pTexture->bFromShader = true;
+//  else
+//    m_pTexture->bFromShader = false;
+  //++timo FIXME: what do we do with that?
+  //m_pTexture->fTrans = pInfo->m_fTransValue;
+//  m_pTexture->fTrans = 1.0f;	// if != 1.0 it's ot getting drawn in Cam_Draw
+//  m_pTexture->nShaderFlags = m_nFlags;
+  // store in the active shaders list (if necessary)
+  g_ActiveShaders.AddSingle (this);
+  // when you activate a shader, it gets displayed in the texture browser
+  m_bDisplayed = true;
+  IncRef ();
+}
 
-  Layer() : m_type(LAYER_NONE), m_blendFunc(BLEND_ONE, BLEND_ZERO), m_clampToBorder(false), m_alphaTest(-1), m_heightmapScale(0)
+void CShader::Try_Activate ()
+{
+  m_pTexture = QERApp_Try_Texture_ForName (m_strTextureName.GetBuffer());
+  if (m_pTexture)
+    RegisterActivate ();
+}
+
+// Hydra: now returns false if the ORIGINAL shader could not be activated
+// (missing texture, or incorrect shader script), true otherwise
+// the shader is still activated in all cases.
+bool CShader::Activate ()
+{
+  Try_Activate ();
+  if (!m_pTexture)
   {
+    m_pTexture = QERApp_Texture_ForName2 (SHADER_NOTEX);
+    RegisterActivate ();
+    return false;
   }
-};
+  return true;
+}
 
-std::list<CopiedString> g_shaderFilenames;
-
-void ParseShaderFile(Tokeniser& tokeniser, const char* filename)
+void WINAPI QERApp_LoadShaderFile (const char *filename)
 {
-  g_shaderFilenames.push_back(filename);
-  filename = g_shaderFilenames.back().c_str();
-  tokeniser.nextLine();
-  for(;;)
+  char *pBuff;
+  int nSize = vfsLoadFile (filename, reinterpret_cast < void **>(&pBuff), 0);
+  if (nSize > 0)
   {
-    const char* token = tokeniser.getToken();
-
-    if(token == 0)
+    Sys_Printf ("Parsing shaderfile %s\n", filename);
+    g_ScripLibTable.m_pfnStartTokenParsing (pBuff);
+    while (g_ScripLibTable.m_pfnGetToken (true))
     {
-      break;
-    }
+      // first token should be the path + name.. (from base)
+      CShader *pShader = new CShader ();
+      // we want the relative filename only, it's easier for later lookup .. see QERApp_ReloadShaderFile
+      char cTmp[1024];
+      g_FuncTable.m_pfnQE_ConvertDOSToUnixName (cTmp, filename);
+      // given the vfs, we should not store the full path
+      //pShader->setShaderFileName( filename + strlen(ValueForKey(g_qeglobals.d_project_entity, "basepath")));
+      pShader->setShaderFileName (filename);
+      if (pShader->Parse ())
+      {
+	      // do we already have this shader?
+	      //++timo NOTE: this may a bit slow, we may need to use a map instead of a dumb list
+	      if (g_Shaders.Shader_ForName (pShader->getName ()) != NULL)
+	      {
+#ifdef _DEBUG
+	        Sys_Printf ("WARNING: shader %s is already in memory, definition in %s ignored.\n",
+		            pShader->getName (), filename);
+#endif
+	        delete pShader;
+	      }
+	      else
+	      {
+	        pShader->IncRef ();
 
-    if(string_equal(token, "table"))
-    {
-      if(tokeniser.getToken() == 0)
-      {
-        Tokeniser_unexpectedError(tokeniser, 0, "#table-name");
-        return;
-      }
-      if(!Tokeniser_parseToken(tokeniser, "{"))
-      {
-        return;
-      }
-      for(;;)
-      {
-        const char* option = tokeniser.getToken();
-        if(string_equal(option, "{"))
-        {
-          for(;;)
-          {
-            const char* value = tokeniser.getToken();
-            if(string_equal(value, "}"))
-            {
-              break;
-            }
-          }
-
-          if(!Tokeniser_parseToken(tokeniser, "}"))
-          {
-            return;
-          }
-          break;
-        }
-      }
-    }
-    else
-    {
-      if(string_equal(token, "guide"))
-      {
-        parseTemplateInstance(tokeniser, filename);
+	        g_Shaders.Add ((void *) pShader);
+	      }
       }
       else
       {
-        if(!string_equal(token, "material")
-          && !string_equal(token, "particle")
-          && !string_equal(token, "skin"))
-        {
-          tokeniser.ungetToken();
-        }
-        // first token should be the path + name.. (from base)
-        CopiedString name;
-        if(!Tokeniser_parseShaderName(tokeniser, name))
-        {
-        }
-        ShaderTemplatePointer shaderTemplate(new ShaderTemplate());
-        shaderTemplate->setName(name.c_str());
-
-        g_shaders.insert(ShaderTemplateMap::value_type(shaderTemplate->getName(), shaderTemplate));
-
-        bool result = (g_shaderLanguage == SHADERLANGUAGE_QUAKE3)
-          ? shaderTemplate->parseQuake3(tokeniser)
-          : shaderTemplate->parseDoom3(tokeniser);
-        if (result)
-        {
-          // do we already have this shader?
-          if(!g_shaderDefinitions.insert(ShaderDefinitionMap::value_type(shaderTemplate->getName(), ShaderDefinition(shaderTemplate.get(), ShaderArguments(), filename))).second)
-          {
-  #ifdef _DEBUG
-            globalOutputStream() << "WARNING: shader " << shaderTemplate->getName() << " is already in memory, definition in " << filename << " ignored.\n";
-  #endif
-          }
-        }
-        else
-        {
-          globalErrorStream() << "Error parsing shader " << shaderTemplate->getName() << "\n";
-          return;
-        }
+	      Sys_Printf ("Error parsing shader %s\n", pShader->getName ());
+	      delete pShader;
       }
     }
-  }
-}
-
-void parseGuideFile(Tokeniser& tokeniser, const char* filename)
-{
-  tokeniser.nextLine();
-  for(;;)
-  {
-    const char* token = tokeniser.getToken();
-
-    if(token == 0)
-    {
-      break;
-    }
-
-    if(string_equal(token, "guide"))
-    {
-      // first token should be the path + name.. (from base)
-      ShaderTemplatePointer shaderTemplate(new ShaderTemplate);
-      shaderTemplate->parseTemplate(tokeniser);
-      if(!g_shaderTemplates.insert(ShaderTemplateMap::value_type(shaderTemplate->getName(), shaderTemplate)).second)
-      {
-        globalErrorStream() << "guide " << makeQuoted(shaderTemplate->getName()) << ": already defined, second definition ignored\n";
-      }
-    }
-    else if(string_equal(token, "inlineGuide"))
-    {
-      // skip entire inlineGuide definition
-      std::size_t depth = 0;
-      for(;;)
-      {
-        tokeniser.nextLine();
-        token = tokeniser.getToken();
-        if(string_equal(token, "{"))
-        {
-          ++depth;
-        }
-        else if(string_equal(token, "}"))
-        {
-          if(--depth == 0)
-          {
-            break;
-          }
-        }
-      }
-    }
-  }
-}
-
-void LoadShaderFile(const char* filename)
-{
-  ArchiveTextFile* file = GlobalFileSystem().openTextFile(filename);
-
-  if(file != 0)
-  {
-    globalOutputStream() << "Parsing shaderfile " << filename << "\n";
-
-    Tokeniser& tokeniser = GlobalScriptLibrary().m_pfnNewScriptTokeniser(file->getInputStream());
-
-    ParseShaderFile(tokeniser, filename);
-
-    tokeniser.release();
-    file->release();
+    vfsFreeFile (pBuff);
   }
   else
   {
-    globalOutputStream() << "Unable to read shaderfile " << filename << "\n";
+    Sys_Printf ("Unable to read shaderfile %s\n", filename);
   }
 }
 
-typedef FreeCaller1<const char*, LoadShaderFile> LoadShaderFileCaller;
-
-
-void loadGuideFile(const char* filename)
+IShader *WINAPI QERApp_Try_Shader_ForName (const char *name)
 {
-  StringOutputStream fullname(256);
-  fullname << "guides/" << filename;
-  ArchiveTextFile* file = GlobalFileSystem().openTextFile(fullname.c_str());
+  // look for the shader
+  CShader *pShader = g_Shaders.Shader_ForName (name);
+  if (!pShader)
+    // not found
+    return NULL;
+  // we may need to load the texture or use the "shader without texture" one
+  pShader->Activate ();
+  pShader->SetDisplayed (true);
+  return pShader;
+}
 
-  if(file != 0)
+IShader *WINAPI QERApp_CreateShader_ForTextureName (const char *name)
+{
+  CShader *pShader;
+  pShader = new CShader;
+  // CreateDefault expects a texture / shader name relative to the "textures" directory
+  // (cause shader names are reletive to "textures/")
+  pShader->CreateDefault (name);
+  // hook it into the shader list
+  g_Shaders.Add ((void *) pShader);
+  pShader->IncRef ();
+  // if it can't find the texture, SHADER_NOT_FOUND will be used
+  // Hydra: display an error message, so the user can quickly find a list of missing
+  // textures by looking at the console.
+  if (!pShader->Activate ())
   {
-    globalOutputStream() << "Parsing guide file " << fullname.c_str() << "\n";
-
-    Tokeniser& tokeniser = GlobalScriptLibrary().m_pfnNewScriptTokeniser(file->getInputStream());
-
-    parseGuideFile(tokeniser, fullname.c_str());
-
-    tokeniser.release();
-    file->release();
+    Sys_Printf ("WARNING: Activate shader failed for %s\n",pShader->getName());
   }
+  pShader->SetDisplayed (true);
+  
+  return pShader;
+}
+
+IShader *WINAPI QERApp_Shader_ForName (const char *name)
+{
+  if (name == NULL || strlen (name) == 0)
+  {
+    // Hydra: This error can occur if the user loaded a map with/dropped an entity that
+    // did not set a texture name "(r g b)" - check the entity definition loader
+
+    g_FuncTable.m_pfnSysFPrintf (SYS_ERR, "FIXME: name == NULL || strlen(name) == 0 in QERApp_Shader_ForName\n");
+    return QERApp_Shader_ForName (SHADER_NOT_FOUND);
+  }
+  // entities that should be represented with plain colors instead of textures
+  // request a texture name with (r g b) (it's stored in their class_t)
+  if (name[0] == '(')
+  {
+    return QERApp_ColorShader_ForName (name);
+  }
+
+  CShader *pShader = static_cast < CShader * >(QERApp_Try_Shader_ForName (name));
+  if (pShader)
+  {
+    pShader->SetDisplayed (true);
+    return pShader;
+  }
+  return QERApp_CreateShader_ForTextureName (name);
+}
+
+qtexture_t *WINAPI QERApp_Try_Texture_ForName (const char *name)
+{
+  qtexture_t *q;
+//  char f1[1024], f2[1024];
+  unsigned char *pPixels = NULL;
+  int nWidth, nHeight;
+
+  // convert the texture name to the standard format we use in qtexture_t
+  const char *stdName = QERApp_CleanTextureName (name);
+
+  // use the hash table
+  q = (qtexture_t*)g_hash_table_lookup (g_ShadersTable.m_pfnQTexmap (), stdName);
+  if (q)
+    return q;
+
+#ifdef QTEXMAP_DEBUG
+  for (q = g_qeglobals.d_qtextures; q; q = q->next)
+  {
+    if (!strcmp (stdName, q->name))
+    {
+      Sys_Printf ("ERROR: %s is not in texture map, but was found in texture list\n");
+      return q;
+    }
+  }
+#endif
+
+  g_FuncTable.m_pfnLoadImage (name, &pPixels, &nWidth, &nHeight);
+  
+  if (!pPixels)
+    return NULL; // we failed
   else
-  {
-    globalOutputStream() << "Unable to read guide file " << fullname.c_str() << "\n";
-  }
+    Sys_Printf ("LOADED: %s\n", name);
+
+  // instanciate a new qtexture_t
+  // NOTE: when called by a plugin we must make sure we have set Radiant's GL context before binding the texture
+
+  // we'll be binding the GL texture now
+  // need to check we are using a right GL context
+  // with GL plugins that have their own window, the GL context may be the plugin's, in which case loading textures will bug
+  //  g_QglTable.m_pfn_glwidget_make_current (g_QglTable.m_pfn_GetQeglobalsGLWidget ());
+  q = g_FuncTable.m_pfnLoadTextureRGBA (pPixels, nWidth, nHeight);
+  if (!q)
+    return NULL;
+  g_free (pPixels);
+
+  strcpy (q->name, name);
+  // only strip extension if extension there is!
+  if (q->name[strlen (q->name) - 4] == '.')
+    q->name[strlen (q->name) - 4] = '\0';
+  // hook into the main qtexture_t list
+  qtexture_t **d_qtextures = g_ShadersTable.m_pfnQTextures ();
+  q->next = *d_qtextures;
+  *d_qtextures = q;
+  // push it in the map
+  g_hash_table_insert (g_ShadersTable.m_pfnQTexmap (), q->name, q);
+  return q;
 }
 
-typedef FreeCaller1<const char*, loadGuideFile> LoadGuideFileCaller;
-
-
-CShader* Try_Shader_ForName(const char* name)
+int WINAPI QERApp_HasShader (const char *pName)
 {
-  {
-    shaders_t::iterator i = g_ActiveShaders.find(name);
-    if(i != g_ActiveShaders.end())
-    {
-      return (*i).second;
-    }
-  }
-  // active shader was not found
-  
-  // find matching shader definition
-  ShaderDefinitionMap::iterator i = g_shaderDefinitions.find(name);
-  if(i == g_shaderDefinitions.end())
-  {
-    // shader definition was not found
+  //  mickey check the global shader array for existense of pName
+  CShader *pShader = g_Shaders.Shader_ForName (pName);
+  if (pShader)
+    return 1;
+  return 0;
+}
 
-    // create new shader definition from default shader template
-    ShaderTemplatePointer shaderTemplate(new ShaderTemplate());
-    shaderTemplate->CreateDefault(name);
-    g_shaderTemplates.insert(ShaderTemplateMap::value_type(shaderTemplate->getName(), shaderTemplate));
-
-    i = g_shaderDefinitions.insert(ShaderDefinitionMap::value_type(name, ShaderDefinition(shaderTemplate.get(), ShaderArguments(), ""))).first;
-  }
-
-  // create shader from existing definition
-  ShaderPointer pShader(new CShader((*i).second));
-  pShader->setName(name);
-  g_ActiveShaders.insert(shaders_t::value_type(name, pShader));
-  g_ActiveShadersChangedNotify();
+IShader *WINAPI QERApp_Shader_ForName_NoLoad (const char *pName)
+{
+  CShader *pShader = g_Shaders.Shader_ForName (pName);
   return pShader;
 }
 
-IShader *Shader_ForName(const char *name)
+/*!
+This should NEVER return NULL, it is the last-chance call in the load cascade
+*/
+qtexture_t *WINAPI QERApp_Texture_ForName2 (const char *filename)
 {
-  ASSERT_NOTNULL(name);
+  qtexture_t *q;
+  q = QERApp_Try_Texture_ForName (filename);
+  if (q)
+    return q;
+  // not found? use "texture not found"
+  q = QERApp_Try_Texture_ForName (SHADER_NOT_FOUND);
+  if (q)
+    return q;
 
-  IShader *pShader = Try_Shader_ForName(name);
-  pShader->IncRef();
+  // still not found? this is a fatal error
+  g_FuncTable.m_pfnError("Failed to load " SHADER_NOT_FOUND ". Looks like your installation is broken / missing some essential elements.");
+  return NULL;
+}
+
+void CShader::CreateColor (const char *name)
+{
+  // parse
+  sscanf (name, "(%g %g %g)", m_vColor, m_vColor + 1, m_vColor + 2);
+  m_strTextureName = name;
+  setName ("color");
+  // create the qtexture_t
+  qtexture_t *q1 = QERApp_Texture_ForName2 (SHADER_NOT_FOUND);
+  // copy this one
+  qtexture_t *q2 = new qtexture_t;
+  memcpy (q2, q1, sizeof (qtexture_t));
+  strcpy (q2->name, m_strTextureName.GetBuffer ());
+  VectorCopy (m_vColor, q2->color);
+  m_pTexture = q2;
+}
+
+IShader *WINAPI QERApp_ColorShader_ForName (const char *name)
+{
+  CShader *pShader = new CShader ();
+  pShader->CreateColor (name);
+  // hook it into the shader list
+  pShader->IncRef ();
+  g_Shaders.Add ((void *) pShader);
   return pShader;
 }
 
-
-
-
-// the list of scripts/*.shader files we need to work with
-// those are listed in shaderlist file
-GSList *l_shaderfiles = 0;
-
-GSList* Shaders_getShaderFileList()
+void CShaderArray::ReleaseForShaderFile (const char *name)
 {
-  return l_shaderfiles;
-}
-
-/*
-==================
-DumpUnreferencedShaders
-usefull function: dumps the list of .shader files that are not referenced to the console
-==================
-*/
-void IfFound_dumpUnreferencedShader(bool& bFound, const char* filename)
-{
-  bool listed = false;
-
-  for(GSList* sh = l_shaderfiles; sh != 0; sh = g_slist_next(sh))
+  int i;
+  // decref
+  for (i = 0; i < CPtrArray::GetSize (); i++)
   {
-    if(!strcmp((char*)sh->data, filename))
+    IShader *pShader = static_cast < IShader * >(CPtrArray::GetAt (i));
+    if (!strcmp (name, pShader->getShaderFileName ()))
     {
-      listed = true;
-      break;
+      pShader->DecRef ();
+      CPtrArray::RemoveAt (i);
+      i--;			// get ready for next loop
     }
   }
-
-  if(!listed)
-  {
-    if(!bFound)
-    {
-      bFound = true;
-      globalOutputStream() << "Following shader files are not referenced in shaderlist.txt:\n";
-    }
-    globalOutputStream() << filename << "\n";
-  }
-}
-typedef ReferenceCaller1<bool, const char*, IfFound_dumpUnreferencedShader> IfFoundDumpUnreferencedShaderCaller;
-
-void DumpUnreferencedShaders()
-{
-  bool bFound = false;
-  GlobalFileSystem().forEachFile(g_shadersDirectory, g_shadersExtension, IfFoundDumpUnreferencedShaderCaller(bFound));
 }
 
-void ShaderList_addShaderFile(const char* dirstring)
+void WINAPI QERApp_ReloadShaderFile (const char *name)
 {
-  bool found = false;
+  brush_t *b;
+  face_t *f;
+  brush_t *active_brushes;
+  brush_t *selected_brushes;
+  brush_t *filtered_brushes;
 
-  for(GSList* tmp = l_shaderfiles; tmp != 0; tmp = tmp->next)
+//  Sys_Printf("TODO: QERApp_ReloadShaderFile\n");
+
+  active_brushes = g_DataTable.m_pfnActiveBrushes ();
+  selected_brushes = g_DataTable.m_pfnSelectedBrushes ();
+  filtered_brushes = g_DataTable.m_pfnFilteredBrushes ();
+
+#ifdef _DEBUG
+  // check the shader name is a reletive path
+  // I hacked together a few quick tests to make sure :-)
+  if (strstr (name, ":\\") || !strstr (name, "scripts"))
+    Sys_Printf ("WARNING: is %s a reletive path to a shader file? (QERApp_ReloadShaderFile\n");
+#endif
+
+  // in the actives and global shaders lists, decref and unhook the shaders
+  //++timo NOTE: maybe we'd like to keep track of the shaders we are unhooking?
+  g_ActiveShaders.ReleaseForShaderFile (name);
+  g_Shaders.ReleaseForShaderFile (name);
+  // go through a reload of the shader file
+  QERApp_LoadShaderFile (name);
+  // scan all the brushes, replace all the old ones by refs to their new equivalents
+  for (b = active_brushes->next; b != NULL && b != active_brushes; b = b->next)
   {
-    if(string_equal_nocase(dirstring, (char*)tmp->data))
-    {
-      found = true;
-      globalOutputStream() << "duplicate entry \"" << (char*)tmp->data << "\" in shaderlist.txt\n";
-      break;
-    }
+    if (b->patchBrush && !strcmp (b->pPatch->pShader->getShaderFileName (), name))
+      SetShader (b->pPatch);
+    else
+      for (f = b->brush_faces; f; f = f->next)
+	if (!strcmp (f->pShader->getShaderFileName (), name))
+	  SetShader (f);
   }
-  
-  if(!found)
+  for (b = selected_brushes->next; b != NULL && b != selected_brushes; b = b->next)
   {
-    l_shaderfiles = g_slist_append(l_shaderfiles, strdup(dirstring));
+    if (b->patchBrush && !strcmp (b->pPatch->pShader->getShaderFileName (), name))
+      SetShader (b->pPatch);
+    else
+      for (f = b->brush_faces; f; f = f->next)
+	if (!strcmp (f->pShader->getShaderFileName (), name))
+	  SetShader (f);
   }
+  // do that to the filtered brushes as well (we might have some region compiling going on)
+  for (b = filtered_brushes->next; b != NULL && b != filtered_brushes; b = b->next)
+  {
+    if (b->patchBrush && !strcmp (b->pPatch->pShader->getShaderFileName (), name))
+      SetShader (b->pPatch);
+    else
+      for (f = b->brush_faces; f; f = f->next)
+	if (!strcmp (f->pShader->getShaderFileName (), name))
+	  SetShader (f);
+  }
+  // call Texture_ShowInUse to clean and display only what's required
+  g_ShadersTable.m_pfnTexture_ShowInuse ();
+  QERApp_SortActiveShaders ();
+  g_FuncTable.m_pfnSysUpdateWindows (W_TEXTURE);
 }
 
-typedef FreeCaller1<const char*, ShaderList_addShaderFile> AddShaderFileCaller;
-
-
-/*
-==================
-BuildShaderList
-build a CStringList of shader names
-==================
-*/
-void BuildShaderList(TextInputStream& shaderlist)
+void CShaderArray::SetDisplayed (bool b)
 {
-  Tokeniser& tokeniser = GlobalScriptLibrary().m_pfnNewSimpleTokeniser(shaderlist);
-  tokeniser.nextLine();
-  const char* token = tokeniser.getToken();
-  StringOutputStream shaderFile(64);
-  while(token != 0)
+  int i, count;
+  count = CPtrArray::GetSize ();
+  for (i = 0; i < count; i++)
+    static_cast < IShader * >(CPtrArray::GetAt (i))->SetDisplayed (b);
+}
+
+void CShaderArray::SetInUse (bool b)
+{
+  int i, count;
+  count = CPtrArray::GetSize ();
+  for (i = 0; i < count; i++)
+    static_cast < IShader * >(CPtrArray::GetAt (i))->SetInUse (b);
+}
+
+// Set the IsDisplayed flag on all active shaders
+void WINAPI QERApp_ActiveShaders_SetDisplayed (bool b)
+{
+  g_ActiveShaders.SetDisplayed (b);
+}
+
+void WINAPI QERApp_ActiveShaders_SetInUse (bool b)
+{
+  g_ActiveShaders.SetInUse (b);
+}
+
+// =============================================================================
+// SYNAPSE
+
+bool CSynapseClientShaders::RequestAPI(APIDescriptor_t *pAPI)
+{
+  if (!strcmp(pAPI->major_name, SHADERS_MAJOR))
   {
-    // each token should be a shader filename
-    shaderFile << token << "." << g_shadersExtension;
+    _QERShadersTable* pTable= static_cast<_QERShadersTable*>(pAPI->mpTable);
     
-    ShaderList_addShaderFile(shaderFile.c_str());
-
-    tokeniser.nextLine();
-    token = tokeniser.getToken();
-
-    shaderFile.clear();
-  }
-  tokeniser.release();
-}
-
-void FreeShaderList()
-{
-  while(l_shaderfiles != 0)
-  {
-    free(l_shaderfiles->data);
-    l_shaderfiles = g_slist_remove(l_shaderfiles, l_shaderfiles->data);
-  }
-}
-
-#include "stream/filestream.h"
-
-bool shaderlist_findOrInstall(const char* enginePath, const char* toolsPath, const char* shaderPath, const char* gamename)
-{
-  StringOutputStream absShaderList(256);
-  absShaderList << enginePath << gamename << '/' << shaderPath << "shaderlist.txt";
-  if(file_exists(absShaderList.c_str()))
-  {
+    pTable->m_pfnFreeShaders = QERApp_FreeShaders;
+    pTable->m_pfnReloadShaders = QERApp_ReloadShaders;
+    pTable->m_pfnLoadShadersFromDir = QERApp_LoadShadersFromDir;
+    pTable->m_pfnReloadShaderFile = QERApp_ReloadShaderFile;
+    pTable->m_pfnLoadShaderFile = QERApp_LoadShaderFile;
+    pTable->m_pfnHasShader = QERApp_HasShader;
+    pTable->m_pfnTry_Shader_ForName = QERApp_Try_Shader_ForName;
+    pTable->m_pfnShader_ForName = QERApp_Shader_ForName;
+    pTable->m_pfnTry_Texture_ForName = QERApp_Try_Texture_ForName;
+    pTable->m_pfnTexture_ForName = QERApp_Texture_ForName2;
+    pTable->m_pfnGetActiveShaderCount = QERApp_GetActiveShaderCount;
+    pTable->m_pfnColorShader_ForName = QERApp_ColorShader_ForName;
+    pTable->m_pfnShader_ForName_NoLoad = QERApp_Shader_ForName_NoLoad;
+    pTable->m_pfnActiveShaders_SetInUse = QERApp_ActiveShaders_SetInUse;
+    pTable->m_pfnSortActiveShaders = QERApp_SortActiveShaders;
+    pTable->m_pfnActiveShader_ForTextureName = QERApp_ActiveShader_ForTextureName;
+    pTable->m_pfnCreateShader_ForTextureName = QERApp_CreateShader_ForTextureName;
+    pTable->m_pfnActiveShaders_SetDisplayed = QERApp_ActiveShaders_SetDisplayed;
+    pTable->m_pfnActiveShader_ForIndex = QERApp_ActiveShader_ForIndex;
+    pTable->m_pfnCleanTextureName = QERApp_CleanTextureName;    
+    
     return true;
   }
-  {
-    StringOutputStream directory(256);
-    directory << enginePath << gamename << '/' << shaderPath;
-    if(!file_exists(directory.c_str()) && !Q_mkdir(directory.c_str()))
-    {
-      return false;
-    }
-  }
-  {
-    StringOutputStream defaultShaderList(256);
-    defaultShaderList << toolsPath << gamename << '/' << "default_shaderlist.txt";
-    if(file_exists(defaultShaderList.c_str()))
-    {
-      return file_copy(defaultShaderList.c_str(), absShaderList.c_str());
-    }
-  }
+
+  Syn_Printf("ERROR: RequestAPI( '%s' ) not found in '%s'\n", pAPI->major_name, GetInfo());
   return false;
-}
-
-void Shaders_Load()
-{
-  if(g_shaderLanguage == SHADERLANGUAGE_QUAKE4)
-  {
-    GlobalFileSystem().forEachFile("guides/", "guide", LoadGuideFileCaller(), 0);
-  }
-
-  const char* shaderPath = GlobalRadiant().getGameDescriptionKeyValue("shaderpath");
-  if(!string_empty(shaderPath))
-  {
-    StringOutputStream path(256);
-    path << DirectoryCleaned(shaderPath);
-
-    if(g_useShaderList)
-    {
-      // preload shader files that have been listed in shaderlist.txt
-      const char* basegame = GlobalRadiant().getRequiredGameDescriptionKeyValue("basegame");
-      const char* gamename = GlobalRadiant().getGameName();
-      const char* enginePath = GlobalRadiant().getEnginePath();
-      const char* toolsPath = GlobalRadiant().getGameToolsPath();
-
-      bool isMod = !string_equal(basegame, gamename);
-
-      if(!isMod || !shaderlist_findOrInstall(enginePath, toolsPath, path.c_str(), gamename))
-      {
-        gamename = basegame;
-        shaderlist_findOrInstall(enginePath, toolsPath, path.c_str(), gamename);
-      }
-
-      StringOutputStream absShaderList(256);
-      absShaderList << enginePath << gamename << '/' << path.c_str() << "shaderlist.txt";
-
-      {
-        globalOutputStream() << "Parsing shader files from " << absShaderList.c_str() << "\n";
-        TextFileInputStream shaderlistFile(absShaderList.c_str());
-        if(shaderlistFile.failed())
-        {
-          globalErrorStream() << "Couldn't find '" << absShaderList.c_str() << "'\n";
-        }
-        else
-        {
-          BuildShaderList(shaderlistFile);
-          DumpUnreferencedShaders();
-        }
-      }
-    }
-    else
-    {
-      GlobalFileSystem().forEachFile(path.c_str(), g_shadersExtension, AddShaderFileCaller(), 0);
-    }
-
-    GSList *lst = l_shaderfiles;
-    StringOutputStream shadername(256);
-    while(lst)
-    {
-      shadername << path.c_str() << reinterpret_cast<const char*>(lst->data);
-      LoadShaderFile(shadername.c_str());
-      shadername.clear();
-      lst = lst->next;
-    }
-  }
-
-  //StringPool_analyse(ShaderPool::instance());
-}
-
-void Shaders_Free()
-{
-  FreeShaders();
-  FreeShaderList();
-  g_shaderFilenames.clear();
-}
-
-ModuleObservers g_observers;
-
-std::size_t g_shaders_unrealised = 1; // wait until filesystem and is realised before loading anything
-bool Shaders_realised()
-{
-  return g_shaders_unrealised == 0;
-}
-void Shaders_Realise()
-{
-  if(--g_shaders_unrealised == 0)
-  {
-    Shaders_Load();
-    g_observers.realise();
-  }
-}
-void Shaders_Unrealise()
-{
-  if(++g_shaders_unrealised == 1)
-  {
-    g_observers.unrealise();
-    Shaders_Free();
-  }
-}
-
-void Shaders_Refresh() 
-{
-  Shaders_Unrealise();
-  Shaders_Realise();
-}
-
-class Quake3ShaderSystem : public ShaderSystem, public ModuleObserver
-{
-public:
-  void realise()
-  {
-    Shaders_Realise();
-  }
-  void unrealise()
-  {
-    Shaders_Unrealise();
-  }
-  void refresh()
-  {
-    Shaders_Refresh();
-  }
-
-  IShader* getShaderForName(const char* name)
-  {
-    return Shader_ForName(name);
-  }
-
-  void foreachShaderName(const ShaderNameCallback& callback)
-  {
-    for(ShaderDefinitionMap::const_iterator i = g_shaderDefinitions.begin(); i != g_shaderDefinitions.end(); ++i)
-    {
-      callback((*i).first.c_str());
-    }
-  }
-
-  void beginActiveShadersIterator()
-  {
-    ActiveShaders_IteratorBegin();
-  }
-  bool endActiveShadersIterator()
-  {
-    return ActiveShaders_IteratorAtEnd();
-  }
-  IShader* dereferenceActiveShadersIterator()
-  {
-    return ActiveShaders_IteratorCurrent();
-  }
-  void incrementActiveShadersIterator()
-  {
-    ActiveShaders_IteratorIncrement();
-  }
-  void setActiveShadersChangedNotify(const Callback& notify)
-  {
-    g_ActiveShadersChangedNotify = notify;
-  }
-
-  void attach(ModuleObserver& observer)
-  {
-    g_observers.attach(observer);
-  }
-  void detach(ModuleObserver& observer)
-  {
-    g_observers.detach(observer);
-  }
-
-  void setLightingEnabled(bool enabled)
-  {
-    if(CShader::m_lightingEnabled != enabled)
-    {
-      for(shaders_t::const_iterator i = g_ActiveShaders.begin(); i != g_ActiveShaders.end(); ++i)
-      {
-        (*i).second->unrealiseLighting();
-      }
-      CShader::m_lightingEnabled = enabled;
-      for(shaders_t::const_iterator i = g_ActiveShaders.begin(); i != g_ActiveShaders.end(); ++i)
-      {
-        (*i).second->realiseLighting();
-      }
-    }
-  }
-
-  const char* getTexturePrefix() const
-  {
-    return g_texturePrefix;
-  }
-};
-
-Quake3ShaderSystem g_Quake3ShaderSystem;
-
-ShaderSystem& GetShaderSystem()
-{
-  return g_Quake3ShaderSystem;
-}
-
-void Shaders_Construct()
-{
-  GlobalFileSystem().attach(g_Quake3ShaderSystem);
-}
-void Shaders_Destroy()
-{
-  GlobalFileSystem().detach(g_Quake3ShaderSystem);
-
-  if(Shaders_realised())
-  {
-    Shaders_Free();
-  }
 }

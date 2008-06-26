@@ -18,32 +18,14 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
 
+#include "StdAfx.h"
+
 #include "shapes.h"
 
-#include <list>
-
-#include "DPoint.h"
 #include "DPlane.h"
 
-#include "str.h"
 #include "misc.h"
 #include "funchandlers.h"
-
-#include "iundo.h"
-#include "ishaders.h"
-#include "ientity.h"
-#include "ieclass.h"
-#include "ipatch.h"
-#include "qerplugin.h"
-
-#include <vector>
-#include <list>
-#include <map>
-#include <algorithm>
-#include <time.h>
-
-#include "scenelib.h"
-#include "texturelib.h"
 
 //#include "dialogs-gtk.h"
 
@@ -83,19 +65,22 @@ float Deg2Rad(float angle)
 	return (float)(angle*Q_PI/180);
 }
 
-void AddFaceWithTexture(scene::Node& brush, vec3_t va, vec3_t vb, vec3_t vc, const char* texture, bool detail)
+void AddFaceWithTexture(brush_t* brush, vec3_t va, vec3_t vb, vec3_t vc, const char* texture, bool detail)
 {
 	_QERFaceData faceData;
 	FillDefaultTexture(&faceData, va, vb, vc, texture);
 	if(detail)
-		faceData.contents |= FACE_DETAIL;
-  GlobalBrushCreator().Brush_addFace(brush, faceData);
+		faceData.m_nContents |= FACE_DETAIL;
+	
+	g_FuncTable.m_pfnAddFaceData(brush, &faceData);
 }
 
-void AddFaceWithTextureScaled(scene::Node& brush, vec3_t va, vec3_t vb, vec3_t vc, 
+void AddFaceWithTextureScaled(brush_t* brush, vec3_t va, vec3_t vb, vec3_t vc, 
 							  const char* texture, bool bVertScale, bool bHorScale, 
 							  float minX, float minY, float maxX, float maxY)
 {
+	g_ShadersTable.m_pfnShader_ForName(texture); // need to call frist to load?
+
 	qtexture_t* pqtTexInfo;
 
   // TTimo: there used to be a call to pfnHasShader here
@@ -103,7 +88,7 @@ void AddFaceWithTextureScaled(scene::Node& brush, vec3_t va, vec3_t vb, vec3_t v
   //   If a texture doesn't have a shader script, a default shader object is used.
   // The IShader object was leaking also
 	// collect texture info: sizes, etc
-	IShader* i = GlobalShaderSystem().getShaderForName(texture);
+	IShader* i = g_ShadersTable.m_pfnShader_ForName(texture);
   pqtTexInfo = i->getTexture();	// shader width/height doesn't come out properly
 
 	if(pqtTexInfo)
@@ -113,35 +98,37 @@ void AddFaceWithTextureScaled(scene::Node& brush, vec3_t va, vec3_t vb, vec3_t v
 
 		if(bHorScale)
 		{
+			int texWidth = pqtTexInfo->width;
 			float width = maxX - minX;
 
-			scale[0] = width/pqtTexInfo->width;
+			scale[0] = width/texWidth;
 			shift[0] = -(float)((int)maxX%(int)width)/scale[0];
 		}
 
 		if(bVertScale)
 		{
+			int texHeight = pqtTexInfo->height;
 			float height = maxY - minY;
 
-			scale[1] = height/pqtTexInfo->height;
+			scale[1] = height/texHeight;
 			shift[1] = (float)((int)minY%(int)height)/scale[1];
 		}
 
 		_QERFaceData addFace;
 		FillDefaultTexture(&addFace, va, vb, vc, texture);
-		addFace.m_texdef.scale[0] = scale[0];
-		addFace.m_texdef.scale[1] = scale[1];
-		addFace.m_texdef.shift[0] = shift[0];
-		addFace.m_texdef.shift[1] = shift[1];
+		addFace.m_fScale[0] = scale[0];
+		addFace.m_fScale[1] = scale[1];
+		addFace.m_fShift[0] = shift[0];
+		addFace.m_fShift[1] = shift[1];
 
-    GlobalBrushCreator().Brush_addFace(brush, addFace);
+		g_FuncTable.m_pfnAddFaceData(brush, &addFace);
 	}
 	else
 	{
 		// shouldn't even get here, as default missing texture should be returned if
 		// texture doesn't exist, but just in case
-		AddFaceWithTexture(brush, va, vb, vc, texture, false);
-		globalErrorStream() << "BobToolz::Invalid Texture Name-> " << texture;
+		AddFaceWithTexture(brush, va, vb, vc, texture, FALSE);
+		Sys_ERROR("BobToolz::Invalid Texture Name-> %s", texture);
 	}
   // the IShader is not kept referenced, DecRef it
   i->DecRef();
@@ -153,7 +140,7 @@ void AddFaceWithTextureScaled(scene::Node& brush, vec3_t va, vec3_t vb, vec3_t v
 
 void Build_Wedge(int dir, vec3_t min, vec3_t max, bool bUp)
 {
-  NodeSmartReference newBrush(GlobalBrushCreator().createBrush());
+	brush_t* newBrush = (brush_t*)g_FuncTable.m_pfnCreateBrushHandle();
 
 	vec3_t v1, v2, v3, v5, v6, v7, v8;
 	VectorCopy(min, v1);
@@ -175,62 +162,62 @@ void Build_Wedge(int dir, vec3_t min, vec3_t max, bool bUp)
 	{
 
 		if(dir != MOVE_EAST)
-			AddFaceWithTexture(newBrush, v1, v3, v6, "textures/common/caulk", false);
+			AddFaceWithTexture(newBrush, v1, v3, v6, "textures/common/caulk", FALSE);
 
 		if(dir != MOVE_WEST)
-			AddFaceWithTexture(newBrush, v7, v5, v8, "textures/common/caulk", false);
+			AddFaceWithTexture(newBrush, v7, v5, v8, "textures/common/caulk", FALSE);
 
 		if(dir != MOVE_NORTH)
-			AddFaceWithTexture(newBrush, v1, v7, v2, "textures/common/caulk", false);
+			AddFaceWithTexture(newBrush, v1, v7, v2, "textures/common/caulk", FALSE);
 
 		if(dir != MOVE_SOUTH)
-			AddFaceWithTexture(newBrush, v3, v8, v6, "textures/common/caulk", false);
+			AddFaceWithTexture(newBrush, v3, v8, v6, "textures/common/caulk", FALSE);
 
-		AddFaceWithTexture(newBrush, v1, v2, v3, "textures/common/caulk", false);
+		AddFaceWithTexture(newBrush, v1, v2, v3, "textures/common/caulk", FALSE);
 
 		if(dir == MOVE_EAST)
-			AddFaceWithTexture(newBrush, v1, v3, v5, "textures/common/caulk", false);
+			AddFaceWithTexture(newBrush, v1, v3, v5, "textures/common/caulk", FALSE);
 
 		if(dir == MOVE_WEST)
-			AddFaceWithTexture(newBrush, v2, v6, v8, "textures/common/caulk", false);
+			AddFaceWithTexture(newBrush, v2, v6, v8, "textures/common/caulk", FALSE);
 
 		if(dir == MOVE_NORTH)
-			AddFaceWithTexture(newBrush, v1, v6, v5, "textures/common/caulk", false);
+			AddFaceWithTexture(newBrush, v1, v6, v5, "textures/common/caulk", FALSE);
 
 		if(dir == MOVE_SOUTH)
-			AddFaceWithTexture(newBrush, v7, v3, v8, "textures/common/caulk", false);
+			AddFaceWithTexture(newBrush, v7, v3, v8, "textures/common/caulk", FALSE);
 	}
 	else
 	{
 		if(dir != MOVE_WEST)
-			AddFaceWithTexture(newBrush, v7, v5, v8, "textures/common/caulk", false);
+			AddFaceWithTexture(newBrush, v7, v5, v8, "textures/common/caulk", FALSE);
 
 		if(dir != MOVE_EAST)
-			AddFaceWithTexture(newBrush, v1, v3, v6, "textures/common/caulk", false);
+			AddFaceWithTexture(newBrush, v1, v3, v6, "textures/common/caulk", FALSE);
 
 		if(dir != MOVE_NORTH)
-			AddFaceWithTexture(newBrush, v3, v8, v6, "textures/common/caulk", false);
+			AddFaceWithTexture(newBrush, v3, v8, v6, "textures/common/caulk", FALSE);
 
 		if(dir != MOVE_SOUTH)
-			AddFaceWithTexture(newBrush, v1, v7, v2, "textures/common/caulk", false);
+			AddFaceWithTexture(newBrush, v1, v7, v2, "textures/common/caulk", FALSE);
 
 		
-		AddFaceWithTexture(newBrush, v6, v5, v7, "textures/common/caulk", false);
+		AddFaceWithTexture(newBrush, v6, v5, v7, "textures/common/caulk", FALSE);
 
 		if(dir == MOVE_WEST)
-			AddFaceWithTexture(newBrush, v1, v5, v3, "textures/common/caulk", false);
+			AddFaceWithTexture(newBrush, v1, v5, v3, "textures/common/caulk", FALSE);
 
 		if(dir == MOVE_EAST)
-			AddFaceWithTexture(newBrush, v2, v8, v6, "textures/common/caulk", false);
+			AddFaceWithTexture(newBrush, v2, v8, v6, "textures/common/caulk", FALSE);
 
 		if(dir == MOVE_NORTH)
-			AddFaceWithTexture(newBrush, v1, v5, v6, "textures/common/caulk", false);
+			AddFaceWithTexture(newBrush, v1, v5, v6, "textures/common/caulk", FALSE);
 
 		if(dir == MOVE_SOUTH)
-			AddFaceWithTexture(newBrush, v7, v8, v3, "textures/common/caulk", false);
+			AddFaceWithTexture(newBrush, v7, v8, v3, "textures/common/caulk", FALSE);
 	}
 
-	Node_getTraversable(GlobalRadiant().getMapWorldEntity())->insert(newBrush);
+	g_FuncTable.m_pfnCommitBrushHandle(newBrush);
 }
 
 //-----------------------------------------------------------------------------------
@@ -238,7 +225,7 @@ void Build_Wedge(int dir, vec3_t min, vec3_t max, bool bUp)
 
 void Build_StairStep_Wedge(int dir, vec3_t min, vec3_t max, const char* mainTexture, const char* riserTexture, bool detail)
 {
-  NodeSmartReference newBrush(GlobalBrushCreator().createBrush());
+	brush_t* newBrush = (brush_t*)g_FuncTable.m_pfnCreateBrushHandle();
 
 	//----- Build Outer Bounds ---------
 
@@ -309,16 +296,16 @@ void Build_StairStep_Wedge(int dir, vec3_t min, vec3_t max, const char* mainText
 	if(dir == MOVE_SOUTH)
 		AddFaceWithTexture(newBrush, v7, v8, v3, "textures/common/caulk", detail);
 
-  Node_getTraversable(GlobalRadiant().getMapWorldEntity())->insert(newBrush);
+	g_FuncTable.m_pfnCommitBrushHandle(newBrush);
 }
 
 //-----------------------------------------------------------------------------------
 //-----------------------------------------------------------------------------------
 
 // internal use only, to get a box without finishing construction
-scene::Node& Build_Get_BoundingCube_Selective(vec3_t min, vec3_t max, char* texture, bool* useFaces)
+brush_t* Build_Get_BoundingCube_Selective(vec3_t min, vec3_t max, char* texture, bool* useFaces)
 {
-  NodeSmartReference newBrush(GlobalBrushCreator().createBrush());
+	brush_t* newBrush = (brush_t*)g_FuncTable.m_pfnCreateBrushHandle();
 
 	//----- Build Outer Bounds ---------
 
@@ -341,25 +328,25 @@ scene::Node& Build_Get_BoundingCube_Selective(vec3_t min, vec3_t max, char* text
 	//----- Add Six Cube Faces ---------
 
 	if(useFaces[0])
-		AddFaceWithTexture(newBrush, v1, v2, v3, texture, false);
+		AddFaceWithTexture(newBrush, v1, v2, v3, texture, FALSE);
 	if(useFaces[1])
-		AddFaceWithTexture(newBrush, v1, v3, v6, texture, false);
+		AddFaceWithTexture(newBrush, v1, v3, v6, texture, FALSE);
 	if(useFaces[2])
-		AddFaceWithTexture(newBrush, v1, v7, v2, texture, false);
+		AddFaceWithTexture(newBrush, v1, v7, v2, texture, FALSE);
 
 	if(useFaces[3])
-		AddFaceWithTexture(newBrush, v5, v6, v3, texture, false);
+		AddFaceWithTexture(newBrush, v5, v6, v3, texture, FALSE);
 	if(useFaces[4])
-		AddFaceWithTexture(newBrush, v5, v2, v7, texture, false);
+		AddFaceWithTexture(newBrush, v5, v2, v7, texture, FALSE);
 	if(useFaces[5])
-		AddFaceWithTexture(newBrush, v5, v7, v6, texture, false);
+		AddFaceWithTexture(newBrush, v5, v7, v6, texture, FALSE);
 
 	//----------------------------------
 
 	return newBrush;
 }
 
-scene::Node& Build_Get_BoundingCube(vec3_t min, vec3_t max, char* texture)
+brush_t* Build_Get_BoundingCube(vec3_t min, vec3_t max, char* texture)
 {
 	return Build_Get_BoundingCube_Selective(min, max, texture, bFacesAll);
 }
@@ -369,7 +356,7 @@ scene::Node& Build_Get_BoundingCube(vec3_t min, vec3_t max, char* texture)
 
 void Build_StairStep(vec3_t min, vec3_t max, const char* mainTexture, const char* riserTexture, int direction)
 {
-  NodeSmartReference newBrush(GlobalBrushCreator().createBrush());
+	brush_t* newBrush = (brush_t*)g_FuncTable.m_pfnCreateBrushHandle();
 
 	//----- Build Outer Bounds ---------
 
@@ -389,37 +376,37 @@ void Build_StairStep(vec3_t min, vec3_t max, const char* mainTexture, const char
 
 	//----------------------------------
 
-	AddFaceWithTexture(newBrush, v6, v5, v7, mainTexture, false);
+	AddFaceWithTexture(newBrush, v6, v5, v7, mainTexture, FALSE);
 	// top gets current texture
 
 
 	if(direction == MOVE_EAST)
-		AddFaceWithTexture(newBrush, v1, v3, v6, riserTexture, false);
+		AddFaceWithTexture(newBrush, v1, v3, v6, riserTexture, FALSE);
 	else
-		AddFaceWithTexture(newBrush, v1, v3, v6, "textures/common/caulk", false);
+		AddFaceWithTexture(newBrush, v1, v3, v6, "textures/common/caulk", FALSE);
 	// west facing side, etc...
 
 	
 	if(direction == MOVE_NORTH)
-		AddFaceWithTexture(newBrush, v1, v7, v2, riserTexture, false);
+		AddFaceWithTexture(newBrush, v1, v7, v2, riserTexture, FALSE);
 	else
-		AddFaceWithTexture(newBrush, v1, v7, v2, "textures/common/caulk", false);
+		AddFaceWithTexture(newBrush, v1, v7, v2, "textures/common/caulk", FALSE);
 
 	if(direction == MOVE_SOUTH)
-		AddFaceWithTexture(newBrush, v3, v5, v6, riserTexture, false);
+		AddFaceWithTexture(newBrush, v3, v5, v6, riserTexture, FALSE);
 	else
-		AddFaceWithTexture(newBrush, v3, v5, v6, "textures/common/caulk", false);
+		AddFaceWithTexture(newBrush, v3, v5, v6, "textures/common/caulk", FALSE);
 	
 	if(direction == MOVE_WEST)
-		AddFaceWithTexture(newBrush, v7, v5, v2, riserTexture, false);
+		AddFaceWithTexture(newBrush, v7, v5, v2, riserTexture, FALSE);
 	else
-		AddFaceWithTexture(newBrush, v7, v5, v2, "textures/common/caulk", false);
+		AddFaceWithTexture(newBrush, v7, v5, v2, "textures/common/caulk", FALSE);
 
 
-	AddFaceWithTexture(newBrush, v1, v2, v3, "textures/common/caulk", false);
+	AddFaceWithTexture(newBrush, v1, v2, v3, "textures/common/caulk", FALSE);
 	// base is caulked
 
-	Node_getTraversable(GlobalRadiant().getMapWorldEntity())->insert(newBrush);
+	g_FuncTable.m_pfnCommitBrushHandle(newBrush);
 	// finish brush
 }
 
@@ -475,24 +462,24 @@ void BuildDoorsX2(vec3_t min, vec3_t max,
 
 	//----------------------------------
 
-  NodeSmartReference newBrush1(GlobalBrushCreator().createBrush());
-	NodeSmartReference newBrush2(GlobalBrushCreator().createBrush());
+	brush_t* newBrush1 = (brush_t*)g_FuncTable.m_pfnCreateBrushHandle();
+	brush_t* newBrush2 = (brush_t*)g_FuncTable.m_pfnCreateBrushHandle();
 
-	AddFaceWithTexture(newBrush1, v1, v2, v3, "textures/common/caulk", false);
-	AddFaceWithTexture(newBrush1, v5, v7, v6, "textures/common/caulk", false);
+	AddFaceWithTexture(newBrush1, v1, v2, v3, "textures/common/caulk", FALSE);
+	AddFaceWithTexture(newBrush1, v5, v7, v6, "textures/common/caulk", FALSE);
 
-	AddFaceWithTexture(newBrush2, v1, v2, v3, "textures/common/caulk", false);
-	AddFaceWithTexture(newBrush2, v5, v7, v6, "textures/common/caulk", false);
+	AddFaceWithTexture(newBrush2, v1, v2, v3, "textures/common/caulk", FALSE);
+	AddFaceWithTexture(newBrush2, v5, v7, v6, "textures/common/caulk", FALSE);
 
 	if(direction == 0)
 	{
-		AddFaceWithTexture(newBrush1, v1, v3, v6, "textures/common/caulk", false);
-		AddFaceWithTexture(newBrush2, v5, v2, v7, "textures/common/caulk", false);
+		AddFaceWithTexture(newBrush1, v1, v3, v6, "textures/common/caulk", FALSE);
+		AddFaceWithTexture(newBrush2, v5, v2, v7, "textures/common/caulk", FALSE);
 	}
 	else
 	{
-		AddFaceWithTexture(newBrush1, v1, v7, v2, "textures/common/caulk", false);
-		AddFaceWithTexture(newBrush2, v5, v6, v3, "textures/common/caulk", false);
+		AddFaceWithTexture(newBrush1, v1, v7, v2, "textures/common/caulk", FALSE);
+		AddFaceWithTexture(newBrush2, v5, v6, v3, "textures/common/caulk", FALSE);
 	}
 
 	if(direction == 0)
@@ -540,33 +527,41 @@ void BuildDoorsX2(vec3_t min, vec3_t max,
 	//----------------------------------
 	
 
-  EntityClass* doorClass = GlobalEntityClassManager().findOrInsert("func_door", true);
-  NodeSmartReference pEDoor1(GlobalEntityCreator().createEntity(doorClass));
-	NodeSmartReference pEDoor2(GlobalEntityCreator().createEntity(doorClass));
+	entity_t* pEDoor1 = (entity_t*)g_FuncTable.m_pfnCreateEntityHandle();
+	entity_t* pEDoor2 = (entity_t*)g_FuncTable.m_pfnCreateEntityHandle();
+
+	epair_t* epDoor11 = GetNextChainItem(NULL, "classname", "func_door");
+	epair_t* epDoor21 = GetNextChainItem(NULL, "classname", "func_door");
+
+	epair_t* epDoor12;
+	epair_t* epDoor22;
 
 	if(direction == 0)
 	{
-    Node_getEntity(pEDoor1)->setKeyValue("angle", "180");
-    Node_getEntity(pEDoor2)->setKeyValue("angle", "360");
+		epDoor12 = GetNextChainItem(epDoor11, "angle", "180");
+		epDoor22 = GetNextChainItem(epDoor21, "angle", "360");
 	}
 	else
 	{
-    Node_getEntity(pEDoor1)->setKeyValue("angle", "270");
-    Node_getEntity(pEDoor2)->setKeyValue("angle", "90");
+		epDoor12 = GetNextChainItem(epDoor11, "angle", "270");
+		epDoor22 = GetNextChainItem(epDoor21, "angle", "90");
 	}
 
 	srand((unsigned)time(NULL));
 
 	char teamname[256];
 	sprintf(teamname, "t%i", rand());
-  Node_getEntity(pEDoor1)->setKeyValue("team", teamname);
-  Node_getEntity(pEDoor2)->setKeyValue("team", teamname);
+	/*epair_t* epDoor13 = */ GetNextChainItem(epDoor12, "team", teamname);
+	/*epair_t* epDoor23 = */ GetNextChainItem(epDoor22, "team", teamname);
 
-	Node_getTraversable(pEDoor1)->insert(newBrush1);
-	Node_getTraversable(pEDoor2)->insert(newBrush2);
+	g_FuncTable.m_pfnCommitBrushHandleToEntity(newBrush1, pEDoor1);
+	g_FuncTable.m_pfnCommitBrushHandleToEntity(newBrush2, pEDoor2);
 
-  Node_getTraversable(GlobalSceneGraph().root())->insert(pEDoor1);
-  Node_getTraversable(GlobalSceneGraph().root())->insert(pEDoor2);
+	g_EntityTable.m_pfnSetEntityKeyValList(pEDoor1, epDoor11);
+	g_EntityTable.m_pfnSetEntityKeyValList(pEDoor2, epDoor21);
+
+	g_FuncTable.m_pfnCommitEntityHandleToMap(pEDoor1);
+	g_FuncTable.m_pfnCommitEntityHandleToMap(pEDoor2);
 
 //	ResetCurrentTexture();
 }
@@ -576,12 +571,13 @@ void BuildDoorsX2(vec3_t min, vec3_t max,
 
 void MakeBevel(vec3_t vMin, vec3_t vMax)
 {
-  NodeSmartReference patch(GlobalPatchCreator().createPatch());
-  PatchControlMatrix matrix = GlobalPatchCreator().Patch_getControlPoints(patch);
+	int nIndex = g_FuncTable.m_pfnCreatePatchHandle();
+    //$ FIXME: m_pfnGetPatchHandle
+  patchMesh_t* pm = g_FuncTable.m_pfnGetPatchData(nIndex);
 
-  GlobalPatchCreator().Patch_setShader(patch, "textures/common/caulk");
-  GlobalPatchCreator().Patch_resize(patch, 3, 3);
-	
+	pm->height = 3;
+	pm->width = 3;
+
 	vec3_t x_3, y_3, z_3;
 	x_3[0] = vMin[0];	x_3[1] = vMin[0];				x_3[2] = vMax[0];
 	y_3[0] = vMin[1];	y_3[1] = vMax[1];				y_3[2] = vMax[1];
@@ -595,13 +591,14 @@ void MakeBevel(vec3_t vMin, vec3_t vMax)
 	{
 		for(int j = 0; j < 3; j++)
 		{
-			matrix(i, j).m_vertex[0] = x_3[i];
-			matrix(i, j).m_vertex[1] = y_3[i];
-			matrix(i, j).m_vertex[2] = z_3[j];
+			pm->ctrl[i][j].xyz[0] = x_3[i];
+			pm->ctrl[i][j].xyz[1] = y_3[i];
+			pm->ctrl[i][j].xyz[2] = z_3[j];
 		}
 	}
 
-  Node_getTraversable(GlobalRadiant().getMapWorldEntity())->insert(patch);
+
+	g_FuncTable.m_pfnCommitPatchHandleToMap(nIndex, pm, "textures/common/caulk");
 }
 
 void BuildCornerStairs(vec3_t vMin, vec3_t vMax, int nSteps, const char* mainTexture, const char* riserTex)
@@ -609,7 +606,7 @@ void BuildCornerStairs(vec3_t vMin, vec3_t vMax, int nSteps, const char* mainTex
 	vec3_t* topPoints = new vec3_t[nSteps+1];
 	vec3_t* botPoints = new vec3_t[nSteps+1];
 
-	bool bFacesUse[6] = {true, true, false, true, false, false};
+	bool bFacesUse[6] = {TRUE, TRUE, FALSE, TRUE, FALSE, FALSE};
 
 	vec3_t centre;
 	VectorCopy(vMin, centre);
@@ -644,17 +641,17 @@ void BuildCornerStairs(vec3_t vMin, vec3_t vMax, int nSteps, const char* mainTex
 
 	for(i = 0; i < nSteps; i++)
 	{
-    scene::Node& brush = Build_Get_BoundingCube_Selective(vBot, vTop, "textures/common/caulk", bFacesUse);
+		brush_t* brush = Build_Get_BoundingCube_Selective(vBot, vTop, "textures/common/caulk", bFacesUse);
 
 		for(int j = 0; j < 3; j++)
 			tp[j][2] = vTop[2];
 
-		AddFaceWithTexture(brush, tp[2], tp[1], tp[0], mainTexture, false);
+		AddFaceWithTexture(brush, tp[2], tp[1], tp[0], mainTexture, FALSE);
 
-		AddFaceWithTexture(brush, centre, botPoints[i+1], topPoints[i+1], "textures/common/caulk", false);
-		AddFaceWithTexture(brush, centre, topPoints[i], botPoints[i], riserTex, false);
+		AddFaceWithTexture(brush, centre, botPoints[i+1], topPoints[i+1], "textures/common/caulk", FALSE);
+		AddFaceWithTexture(brush, centre, topPoints[i], botPoints[i], riserTex, FALSE);
 
-		Node_getTraversable(GlobalRadiant().getMapWorldEntity())->insert(brush);
+		g_FuncTable.m_pfnCommitBrushHandle(brush);
 
 		vTop[2] += height;
 		vBot[2] += height;

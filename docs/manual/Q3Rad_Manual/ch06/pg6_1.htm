@@ -1,0 +1,624 @@
+<html>
+<head>
+<title>Q3Radiant Editor Manual: Page 5.1</title>
+<link rel = "stylesheet" type = "text/css" href = "../styles/q3rad.css">
+</head>
+<body>
+<h1 class = "MsoTitle">Q3Radiant Editor Manual</h1>
+<hr>
+<h1><a name = "tools3">Tools 3: Working with Curve Patches</a></h1>
+
+<div class = "subheading">Escape (ESC)</div>
+
+This is the all-purpose deselect key. Use it to back out of
+operations you don't want to complete or to stop working on a patch
+or group of patches.
+
+<h2><a name = "curvemen">Curve Menu Commands</a></h2>
+
+The next set of commands comes from the Curve Menu. Some are
+duplicated on the Patch Tool Bar.
+
+<p><div class = "subheading">Cylinder</div>
+
+<div class = "menu">(Menu: Curve &gt; Cylinder)</div>
+This creates the simplest cylinder. Cylinders are always drawn
+with their open ends facing up and down. It does not matter which
+map view is open when the cylinder is created.
+
+<p><strong>More Cylinders:</strong>
+
+<div class = "menu">(Menu: Curve &gt; More Cylinders)</div>
+
+<ul><strong>Dense Cylinder</strong>
+
+<br>This is a cylinder with a set of extra rows. It allows a
+180-degree bend into a half donut (half torus).
+
+<p><strong>Very Dense Cylinder</strong>
+
+<br>This is a cylinder with two extra sets of rows. This allows a
+bend into a full donut (torus).
+
+<p><strong>Square Cylinder</strong>
+
+<br>This is a cylinder whose columns have been adjusted so that a
+square, with flat sides, is formed.
+</ul>
+
+<p><div class = "subheading">End Cap</div>
+
+<div class = "menu">(Menu: Curve &gt; Endcap)</div>
+This is a half cylinder.
+
+<p><div class = "subheading">Bevel</div>
+
+<div class = "menu">(Menu: Curve &gt; Bevel)</div>
+This is a quarter cylinder
+
+<p><strong>More End caps, Bevels:</strong>
+
+<div class = "menu">(Menu: Curve &gt; More End caps, Bevels)</div>
+
+<p><strong>Square Endcap</strong>
+
+<br>This is an endcap without the backside removed.
+
+<p><strong>Square Bevel</strong>
+
+<br>This is a bevel with squared off back faces
+
+<p><div class = "subheading">Cone</div>
+
+<div class = "menu">(Menu: Curve &gt; Cone)</div>
+
+A cone is a cylinder with control points drawn together and
+welded at one end to form a point.
+
+<p><div class = "subheading">Sphere</div>
+
+<div class = "menu">(Not implemented)</div>
+
+<div class = "tip"><b>Design Note:</b> A curve patch sphere can be constructed from
+a cone. Start with a cubic brush. Convert into a cone. Go into edit
+vertexes mode and grab the control point at the peak of the
+cone. Pull it downward to half the height of the cone. Clone
+the resulting piece and flip it upside down.</div>
+
+<p><div class = "subheading">Simple Patch Mesh&hellip;</div>
+
+<div class = "menu">(Menu: Curve &gt; Simple Patch Mesh&hellip;)</div>
+
+The patch mesh is the basic building block use to create all
+curves. All the curve primitives are deformations of this
+item. For this to work, you must first create a brush of the
+dimension desired for the patch. Selecting this opens a Patch
+dialogue window. This lets you select the vertical (rows) and
+horizontal (columns) complexity of the patch. The more complexity
+means being able to perform more deformations on the patch. It also
+means adding a greater number of triangles that must be
+rendered.
+
+<p><div class = "subheading">Insert</div>
+
+<div class = "menu">(Menu: Curve &gt; Insert)</div>
+Adding control points increases the complexity of a mesh. This
+action does not increase the physical size of a mesh. Additions are
+usually done before manipulating the patch mesh.
+
+<ul><strong>Insert (2) Columns</strong>
+<br>This adds two columns of control points to the left edge of a
+patch.
+
+<br><strong>Add (2) Columns</strong>
+
+<br>This adds two columns of control points to the right edge of a
+patch.
+
+<br><strong>Insert (2) Rows</strong>
+
+<br>This adds two rows of control points to the lower edge of a
+patch.
+
+<br><strong>Add (2) Rows</strong>
+<br>This adds two rows of control points to the upper edge of a
+patch.
+</ul>
+
+<p><div class = "subheading">Delete</div>
+
+<div class = "menu">(Menu: Curve &gt; Delete)</div>
+
+Deleting control points reduces the complexity of a patch mesh.
+Be warned that the features created by the removed points are also
+removed. It does not make the mesh a less complex version of the
+former design. Deletions also change the dimensions of the mesh,
+removing the area created by the deleted control points. A mesh
+cannot be reduced smaller than a 3 column by 3 row complexity.
+
+<ul><strong>First (2) Columns</strong>
+
+<br>This removes two columns of control points from the left edge of
+a patch.
+
+<br><strong>Last (2) Columns</strong>
+
+<br>This removes two columns of control points from the right edge
+of a patch.
+
+<br><strong>First (2) Rows</strong>
+
+<br>This removes two rows of control points from the lower edge of a
+patch.
+
+<br><strong>Last (2) Rows </strong>
+
+<br>This removes two rows of control points from the upper edge of a
+patch.
+</ul>
+
+<p><div class = "subheading">Matrix</div>
+
+<div class = "menu">(Menu: Curve &gt; Matrix)</div>
+
+This has nothing to do with Neo and Trinity. It's the patch mesh
+taken as a whole.
+
+<p><strong>Invert</strong>
+
+<div class = "menu">(Menu: Curve &gt; Matrix &gt; Invert)
+
+<br>(Shortcut: CTRL + I)</div>
+
+This command inverts the normals of the patch mesh. The normals
+control the direction of facing for the texture skin and the
+clipping surfaces.
+
+<p><strong>Re-disperse</strong>
+
+<div class = "menu">(Menu: Curve &gt; Matrix &gt; Re-disperse)</div>
+This is used on a selected patch. When rows or columns are
+inserted or added to a patch, the dimensions of the patch are not
+changed. The distances between the new additions and the old points
+are not the same. This command averages out the distance between
+the points. It does not change the size of the patch. <b>
+WARNING!</b> Only apply this BEFORE adjusting the patch. Otherwise,
+you may lose your work on it. With some patches, selecting this
+command will destroy the patch itself.
+
+
+<ul><strong>Cols</strong>
+
+<div class = "menu">(Menu:
+Curve &gt; Matrix &gt; Re-disperse &gt; Cols)
+
+<br>(Shortcut: SHIFT + CTRL + E)</div>
+
+The distance between columns is averaged and evened out.
+
+<p><strong>Rows</strong>
+
+<div class = "menu">(Menu:
+Curve &gt; Matrix &gt; Re-disperse &gt; Rows)
+
+<br>(Shortcut: CTRL + E)</div>
+The distance between rows is averaged and evened out.</ul>
+
+<p><strong>Transpose</strong>
+
+<div class = "menu">(Menu: Curve &gt; Transpose)
+
+<br>(Shortcut: SHIFT + CTRL + M)</div>
+
+(Function undetermined)
+
+<p><div class = "subheading">Cap</div>
+
+<div class = "menu">(Menu: Curve &gt; Cap)</div>
+
+This command adds "cap" patches to the ends of the patch. The
+original brush and the caps are linked together as a func_group
+entity. A Patch Tool Bar button duplicates this command. The type
+of cap depends on the selected patch:
+
+<p><table>
+<tr valign = "top">
+<td rowspan = 9><img src = "../Q3Rad_Manual_files/image032.png" width = 229 height = 147></td>
+	<td>
+<b>
+Cylinder</b></td>
+<td width = 70%>The ends of the cylinder are sealed with circular patches.</td>
+</tr>
+<tr valign = "top">
+<td><b>Square
+Cylinder</b></td>
+<td width = 70%>The ends of the cylinder are sealed with square patches.</td>
+</tr>
+<tr valign = "top">
+<td><b>
+Cone</b></td>
+<td width = 70%>Both ends are capped (open and point). You will want to discard the
+cap on the point end.</td>
+</tr>
+<tr valign = "top">
+<td><b>
+Bevel</b></td>
+<td width = 70%>If you select to cap a bevel, a dialogue window pops up.
+A normal bevel cap covers the space between the curve and the
+center.</td>
+</tr>
+<tr valign = "top">
+<td><b>Inverted
+Bevel</b></td>
+<td width = 70%>An inverted bevel covers the space between the curve and the outer
+corner.</td>
+</tr>
+<tr valign = "top">
+<td><b>
+Endcap</b></td>
+<td width = 70%>If you select to cap an endcap, the same dialogue window pops
+up.</td>
+</tr>
+<tr valign = "top">
+<td><b>Patch
+Mesh</b></td>
+<td width = 70%>The bevel/endcap window will pop up. Results will vary depending on
+the manipulations done to the mesh.</td>
+</tr>
+<tr valign = "top">
+<td><b>Square
+Bevel</b></td>
+<td width = 70%>Capped in the same manner as a cylinder</td>
+</tr>
+<tr valign = "top">
+<td><b>Square End Cap</b></td>
+<td width = 70%>Capped
+in the same manner as a cylinder</td>
+</tr>
+</table>
+
+<p><strong>Cycle Cap Texture</strong>
+
+<div class = "menu">(Shortcut: CTRL + SHIFT + N)</div>
+
+Press this repeatedly until the texture on the cap patch looks
+correct.
+
+<p><div class = "subheading">Overlay</div>
+
+<div class = "menu">(Menu: Curve &gt; Overlay)</div>
+
+Overlay turns the grid of control points on for the selected
+patches and leaves them on until the Clear command is selected. By
+having the control points on a curve patch be visible, it is easier
+for the designer to align the vertices of adjacent solid geometry
+brushes.
+
+<ul><strong>Set</strong>
+
+<div class = "menu">(Menu: Curve &gt; Overlay &gt; Set)
+
+<br>(Shortcut: Y)</div>
+
+This is the command to turn on the control points in a selected
+patch.
+
+<p><strong>Clear</strong>
+
+<div class = "menu">(Menu:
+Curve &gt; Overlay &gt; Clear)
+
+<br>(Shortcut: ALT + Y)</div>
+
+This is the command to turn off all control points in all
+patches.</ul>
+
+<p><div class = "subheading">Thicken</div>
+
+<div class = "menu">(Menu: Curve &gt; Thicken)
+
+<br>(Shortcut: CTRL + T)</div>
+
+If you think about it conceptually, Thicken transforms a curve
+patch into a three-dimensional object. It does this by duplicating
+the selected curve and moving it a distance away from the copied
+curve, and, if the "seams" checkbox is checked, it will cover the
+space between the original and the copy with patches. The distance
+between original and copy is selected in a pop-up dialogue window.
+The direction is determined by the facing of the curve's normals
+(the textured side). The duplicated curve appears on the opposite
+side of the textured face. The resulting object depends on the
+nature of the curve primitive being thickened. The following
+are some examples:
+
+<p><table>
+<tr>
+<td><b>
+Cylinder</b></td>
+<td width = 90%>A pipe is created. Checking "seams" caps the ends.</td>
+</tr>
+<tr>
+<td><b>Bevel</b></td>
+<td width = 90%>A matching bevel is created. Checking "seams" creates a bent square
+tube.</td>
+</tr>
+<tr>
+<td><b>Endcap</b></td>
+<td width = 90%>A matching endcap is created. Checking "seams" creates an
+arch.*</td>
+</tr>
+<tr valign = "top">
+<td><b>Patch
+Mesh</b></td>
+<td width = 90%>A mesh that echoes the shape of the selected patch is created, but
+with XY dimensions smaller or larger by the measure of the
+thickness (smaller if the normals are on the concave side; larger
+if on the convex side).</td>
+</tr>
+</table>
+
+<p>* Thickening an Endcap is not the best way to create this shape.
+Bending a square cylinder will produce better results.
+
+
+
+<h2>Patch Tool Bar</h2>
+<img src = "../Q3Rad_Manual_files/image034.png" width = 205 height = 22>
+<br>The patch tool part is turned on in the Preferences. Each
+of these buttons enables or disables a curve editing feature, or
+initiates a process on a selected curve patch.
+
+<p><div class = "subheading">Don't Select Curved Brushes</div>
+
+This button toggles the ability to select or not select curve
+patches in the map. If turned on (depressed), the user will not be
+able to individually select curve patches. Group selections
+will still include any curve patches within their boundaries.
+
+
+
+<p><div class = "subheading">Show Patch Bounding Box</div>
+
+This button toggles the display of the bounding box that defines
+the limits of the patch. On (button depressed) shows the bounding
+box.
+
+
+
+<p><div class = "subheading">Show Patches as Wireframe</div>
+
+This button toggles the display of patches between a fully
+textured mesh (off) and a wireframe-only mode (on). The wireframe
+mode makes it easier to see the deformations of the mesh and allows
+the user to see some control points that may be hidden by the
+texture when it is mapped on the mesh. It can also be a
+performance-enhancer for the editor (by setting the view to
+wireframe until you need to see the brush textured).
+
+
+
+<p><div class = "tip"><b>Design Tip:</b> When manipulating the control points on a
+patch mesh, using wire frame allows you to best see both the
+control points and the deformations.</div>
+
+
+
+<p><div class = "subheading">Patch Bend Mode</div>
+
+If a curve patch is selected, this button initiates a multi-step
+bending procedure. There are tutorials available on several
+sites that address the fine points of bending a patch, whether it
+is a cylinder or a simple flat mesh. The ESC key will exit the
+procedure at any point. The following are just the steps:
+
+
+
+<ul><li>Select the patch (and only the patch).
+
+<li>Press the Patch Bend Mode button. This brings up an instruction
+window that says:
+</ul>
+
+
+<div class = "menu">"Use TAB to cycle through available bend axis.
+
+<br>Press ENTER when the desired one is highlighted"</div>
+
+
+
+<p>This highlights (turns pink) a row or column of patch control
+points. One of these control points will likely be the axis for
+your bend. Pressing ENTER locks in your choice and advances to the
+next step.
+
+
+
+<ul><li>A second instruction window message appears:</ul>
+
+
+
+<div class = "menu">"Use TAB to cycle through available rotation axis.
+
+<br>This will LOCK around that point. You may also
+
+<br>use Shift + Middle Click to select an arbitrary
+
+<br>point. Press ENTER when the desired one is
+
+<br>highlighted."</div>
+
+
+
+<p>This highlights the specific control point around which the
+patch will bend. Pressing ENTER locks in your choice and advances
+to the next step. You can also choose the control point by
+SHIFT + middle mouse button clicking on the map window. The
+click need not be within the bounds of the patch.
+
+
+
+<ul><li>A third instruction window message appears:</ul>
+
+
+
+<div class = "menu">"Use TAB to choose which side to bend. Press
+
+<br>ENTER when the desired one is highlighted."</div>
+
+
+
+<p>This highlights the side or end of the patch (relative to the
+bend point) around which the patch will bend. Pressing ENTER
+locks in your choice and advances to the next step.
+
+
+
+<ul><li>A fourth instruction window message appears:</ul>
+
+
+
+<div class = "menu">"Use the MOUSE to bend the patch. It uses the
+
+<br>same ui rules as Free Rotation. Press ENTER to
+
+<br>accept the bend, press ESC to abandon it and exit
+
+<br>Bend mode."</div>
+
+
+
+<p>Clicking and holding the Left mouse button on the map window and
+dragging it around will cause the patch to bend. Pressing ENTER or
+ESC at this point will accept any changes that you have made.
+
+
+
+<p><div class = "subheading">Redisperse Patch Points</div>
+
+This is used on a selected patch. When rows or columns are
+inserted or added to a patch, the dimensions of the whole patch are
+not automatically adjusted. The distances between the new additions
+and the old points are not the same. This command averages out the
+distance between the points.
+
+
+
+<p><b>WARNING:</b> Only apply this BEFORE making adjustments to the
+patch, otherwise you may lose your work on it. With some
+patches, the patch itself will be destroyed.
+
+
+
+<p><div class = "subheading">CAP (put caps on the current patch)</div>
+This is used on a selected patch.
+
+
+
+<p><div class = "tip"><strong>Design Notes:</strong>
+
+<ul><b>Endcaps:</b> Don't cap endcaps with this tool. Make a
+pair of opposing bevel caps that match the arch of the endcap
+
+<br><b>Messed Up Texturing:</b> If an inverted bevel endcap covers
+something other than an arc of a perfect circle, it is likely that
+the texture won't appear right when you apply the CAP function to
+the texture. Press SHIFT + CTRL + P a few times until it looks
+right.</ul>
+</div>
+
+<p><strong>Weld Equal Patch Points (welds equal patch points during
+moves)</strong>
+
+<br>(Patch Control Bar only) This feature, when selected (button
+pressed in) causes control points to weld together if they are
+moved to the same coordinates. Undo will undo the move and the
+weld.
+
+
+
+<p><strong>Drill Down (selects drill down rows and columns)</strong>
+
+<br>When this is toggled on (depressed), clicking on a control point
+in a 2D Map view selects all the control points in the row or
+column beneath it.
+
+
+
+ 
+
+<h2><a name = "patchmove">Moving Patches</a></h2>
+
+<div class = "subheading">Moving Selected Curve Patch</div>
+
+These keys move the curve patch around the map in discrete map
+grid increments.
+
+<ul><strong>Move Selection Down</strong>
+
+<div class = "menu">(Shortcut: Keypad MINUS)</div>
+
+Each press moves the selected map component down along the
+Z-axis by one grid position (at current grid setting). Not affected
+by current 2D-map view.
+
+<p><strong>Move Selection Up</strong>
+
+<div class = "menu">(Shortcut: Keypad PLUS)</div>
+
+Each press moves the selected map component up along the Z-axis
+by one grid position (at current grid setting). Not affected by
+current 2D-map view.</ul>
+
+<p><div class = "subheading">Nudging the Curve Patch</div>
+
+These keys move the curve patch around the map in discrete map
+grid increments. The movement is in terms of the selected window,
+not in terms of XYZ coordinates.
+
+<ul><strong>Nudge Down</strong>
+
+<div class = "menu">(Shortcut: ALT + DOWN ARROW)</div>
+Each press moves the selected map component "down" the map view
+by one grid position (at the current grid setting). The movement is
+relative to the selected map view, not XYZ coordinates.
+
+
+
+<p><strong>Nudge Up</strong>
+
+<div class = "menu">(Shortcut: ALT + UP ARROW)</div>
+
+Each press moves the selected map component "up" the map view by
+one grid position (at the current grid setting). The movement is
+relative to the selected map view, not XYZ coordinates.
+
+<p><strong>Nudge Left</strong>
+
+<div class = "menu">(Shortcut: ALT + LEFT ARROW)</div>
+
+Each press moves the selected map component "left" the map view
+by one grid position (at the current grid setting). The movement is
+relative to the selected map view, not XYZ coordinates.
+
+<p><strong>Nudge Right</strong>
+
+<div class = "menu">(Shortcut: ALT + RIGHT ARROW)</div>
+
+Each press moves the selected map component "right" the map view
+by one grid position (at the current grid setting). The movement is
+relative to the selected map view, not XYZ coordinates.</ul>
+
+<p><div class = "subheading">Snap Selection To Grid</div>
+
+<div class = "menu">(Shortcut: CTRL + G)</div>
+
+If you are using the map grid to keep curve patches in
+alignment, this is a great tool. Rotated curve patches and curve
+patches that have had their vertices tweaked can have vertices that
+no longer lie on map grid intersections. This snaps the vertices to
+align with the grid. Be warned that snapping to large grids
+may be hazardous to the health of your curve patch (Snap and it's
+gone! But that's what UNDO is for).
+<p align = "center"><a href = "../ch05/pg5_1.htm">Back</a> | <a href = "../index.htm">Home</a> | <a href = "../ch07/pg7_1.htm">Next</a>
+</body>
+</html>

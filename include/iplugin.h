@@ -1,5 +1,5 @@
 /*
-Copyright (C) 1999-2006 Id Software, Inc. and contributors.
+Copyright (C) 1999-2007 id Software, Inc. and contributors.
 For a list of contributors, see the accompanying CONTRIBUTORS file.
 
 This file is part of GtkRadiant.
@@ -19,35 +19,23 @@ along with GtkRadiant; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#if !defined(INCLUDED_IPLUGIN_H)
-#define INCLUDED_IPLUGIN_H
+#ifndef _IPLUGIN_H_
+#define _IPLUGIN_H_
 
-#include "generic/constant.h"
+#define PLUGIN_MAJOR "plugin"
 
 typedef const char* (* PFN_QERPLUG_INIT) (void* hApp, void* pMainWidget);
-typedef const char* (* PFN_QERPLUG_GETNAME)();
-typedef const char* (* PFN_QERPLUG_GETCOMMANDLIST)();
-typedef const char* (* PFN_QERPLUG_GETCOMMANDTITLELIST)();
+typedef const char* (* PFN_QERPLUG_GETNAME) ();
+typedef const char* (* PFN_QERPLUG_GETCOMMANDLIST) ();
 typedef void        (* PFN_QERPLUG_DISPATCH) (const char* p, float* vMin, float* vMax, bool bSingleBrush);
 
 struct _QERPluginTable
 {
-  INTEGER_CONSTANT(Version, 1);
-  STRING_CONSTANT(Name, "plugin");
-
+  int m_nSize;
   PFN_QERPLUG_INIT m_pfnQERPlug_Init;
   PFN_QERPLUG_GETNAME m_pfnQERPlug_GetName;
   PFN_QERPLUG_GETCOMMANDLIST m_pfnQERPlug_GetCommandList;
-  PFN_QERPLUG_GETCOMMANDTITLELIST m_pfnQERPlug_GetCommandTitleList;
   PFN_QERPLUG_DISPATCH m_pfnQERPlug_Dispatch;
 };
-
-template<typename Type>
-class Modules;
-typedef Modules<_QERPluginTable> PluginModules;
-
-template<typename Type>
-class ModulesRef;
-typedef ModulesRef<_QERPluginTable> PluginModulesRef;
 
 #endif

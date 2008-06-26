@@ -1,6 +1,7 @@
+
 /*
-Copyright (C) 2001-2006, William Joseph.
-All Rights Reserved.
+Copyright (C) 1999-2007 id Software, Inc. and contributors.
+For a list of contributors, see the accompanying CONTRIBUTORS file.
 
 This file is part of GtkRadiant.
 
@@ -19,23 +20,7 @@ along with GtkRadiant; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#if !defined(INCLUDED_LIGHT_H)
-#define INCLUDED_LIGHT_H
+bool Entity_IsLight(entity_t *e);
+void Light_OnKeyValueChanged(entity_t *e, const char *key, const char* value);
+void DrawLight(entity_t* e, int nGLState, int pref, int nViewType);
 
-namespace scene
-{
-  class Node;
-};
-class EntityClass;
-
-scene::Node& New_Light(EntityClass* eclass);
-enum LightType
-{
-  LIGHTTYPE_DEFAULT,
-  LIGHTTYPE_RTCW,
-  LIGHTTYPE_DOOM3
-};
-void Light_Construct(LightType lightType);
-void Light_Destroy();
-
-#endif

@@ -1,6 +1,5 @@
-/* -------------------------------------------------------------------------------
-
-Copyright (C) 1999-2006 Id Software, Inc. and contributors.
+/*
+Copyright (C) 1999-2007 id Software, Inc. and contributors.
 For a list of contributors, see the accompanying CONTRIBUTORS file.
 
 This file is part of GtkRadiant.
@@ -35,8 +34,8 @@ several games based on the Quake III Arena engine, in the form of "Q3Map2."
 
 
 /* version */
-#define Q3MAP_VERSION	"2.5.17"
-#define Q3MAP_MOTD		"Last one turns the lights off"
+#define Q3MAP_VERSION	"2.5.11"
+#define Q3MAP_MOTD		"A well-oiled toaster oven"
 
 
 
@@ -57,7 +56,7 @@ dependencies
 	#include <limits.h>
 #endif
 
-#ifdef WIN32
+#ifdef _WIN32
 	#include <windows.h>
 #endif
 
@@ -67,6 +66,7 @@ dependencies
 
 #include "cmdlib.h"
 #include "mathlib.h"
+#include "md5lib.h"
 #include "ddslib.h"
 
 #include "picomodel.h"
@@ -78,8 +78,6 @@ dependencies
 #include "inout.h"
 #include "vfs.h"
 #include "png.h"
-#include "radiant_jpeglib.h"
-#include "mhash.h"
 
 #include <stdlib.h>
 
@@ -99,7 +97,7 @@ port-related hacks
 #endif
 
 #if 1
-	#ifdef WIN32
+	#ifdef _WIN32
 		#define Q_stricmp			stricmp
 		#define Q_strncasecmp		strnicmp
 	#else
@@ -264,7 +262,7 @@ constants
 #define RAD_LUXEL_SIZE			3
 #define SUPER_LUXEL_SIZE		4
 #define SUPER_ORIGIN_SIZE		3
-#define SUPER_NORMAL_SIZE		4
+#define SUPER_NORMAL_SIZE		3
 #define SUPER_DELUXEL_SIZE		3
 #define BSP_DELUXEL_SIZE		3
 
@@ -273,12 +271,11 @@ constants
 #define BSP_LUXEL( s, x, y )	(lm->bspLuxels[ s ] + ((((y) * lm->w) + (x)) * BSP_LUXEL_SIZE))
 #define RAD_LUXEL( s, x, y )	(lm->radLuxels[ s ] + ((((y) * lm->w) + (x)) * RAD_LUXEL_SIZE))
 #define SUPER_LUXEL( s, x, y )	(lm->superLuxels[ s ] + ((((y) * lm->sw) + (x)) * SUPER_LUXEL_SIZE))
-#define SUPER_DELUXEL( x, y )	(lm->superDeluxels + ((((y) * lm->sw) + (x)) * SUPER_DELUXEL_SIZE))
-#define BSP_DELUXEL( x, y )		(lm->bspDeluxels + ((((y) * lm->w) + (x)) * BSP_DELUXEL_SIZE))
-#define SUPER_CLUSTER( x, y )	(lm->superClusters + (((y) * lm->sw) + (x)))
 #define SUPER_ORIGIN( x, y )	(lm->superOrigins + ((((y) * lm->sw) + (x)) * SUPER_ORIGIN_SIZE))
 #define SUPER_NORMAL( x, y )	(lm->superNormals + ((((y) * lm->sw) + (x)) * SUPER_NORMAL_SIZE))
-#define SUPER_DIRT( x, y )		(lm->superNormals + ((((y) * lm->sw) + (x)) * SUPER_NORMAL_SIZE) + 3)	/* stash dirtyness in normal[ 3 ] */
+#define SUPER_CLUSTER( x, y )	(lm->superClusters + (((y) * lm->sw) + (x)))
+#define SUPER_DELUXEL( x, y )	(lm->superDeluxels + ((((y) * lm->sw) + (x)) * SUPER_DELUXEL_SIZE))
+#define BSP_DELUXEL( x, y )		(lm->bspDeluxels + ((((y) * lm->w) + (x)) * BSP_DELUXEL_SIZE))
 
 
 
@@ -304,7 +301,7 @@ abstracted bsp file
 #define	MAX_MAP_BRUSHES			0x8000
 #define	MAX_MAP_ENTITIES		0x1000		//%	0x800	/* ydnar */
 #define	MAX_MAP_ENTSTRING		0x80000		//%	0x40000	/* ydnar */
-#define	MAX_MAP_SHADERS			0x800		//%	0x400	/* ydnar */
+#define	MAX_MAP_SHADERS			0x400
 
 #define	MAX_MAP_AREAS			0x100		/* MAX_MAP_AREA_BYTES in q_shared must match! */
 #define	MAX_MAP_FOGS			30			//& 0x100	/* RBSP (32 - world fog - goggles) */
@@ -312,7 +309,7 @@ abstracted bsp file
 #define	MAX_MAP_NODES			0x20000
 #define	MAX_MAP_BRUSHSIDES		0x100000	//%	0x20000	/* ydnar */
 #define	MAX_MAP_LEAFS			0x20000
-#define	MAX_MAP_LEAFFACES		0x100000	//%	0x20000	/* ydnar */
+#define	MAX_MAP_LEAFFACES		0x20000
 #define	MAX_MAP_LEAFBRUSHES		0x40000
 #define	MAX_MAP_PORTALS			0x20000
 #define	MAX_MAP_LIGHTING		0x800000
@@ -345,7 +342,7 @@ typedef void					(*bspFunc)( const char * );
 
 typedef struct
 {
-	int			offset, length;
+	int		offset, length;
 }
 bspLump_t;
 
@@ -535,18 +532,11 @@ typedef struct game_s
 	char				*homeBasePath;					/* home sub-dir on unix */
 	char				*magic;							/* magic word for figuring out base path */
 	char				*shaderPath;					/* shader directory */
-	int					maxLMSurfaceVerts;				/* default maximum meta surface verts */
-	int					maxSurfaceVerts;				/* default maximum surface verts */
-	int					maxSurfaceIndexes;				/* default maximum surface indexes (tris * 3) */
+	qboolean			wolfLight;						/* when true, lights work like wolf q3map  */
 	qboolean			emitFlares;						/* when true, emit flare surfaces */
 	char				*flareShader;					/* default flare shader (MUST BE SET) */
-	qboolean			wolfLight;						/* when true, lights work like wolf q3map  */
-	int					lightmapSize;					/* bsp lightmap width/height */
-	float				lightmapGamma;					/* default lightmap gamma */
-	float				lightmapCompensate;				/* default lightmap compensate value */
 	char				*bspIdent;						/* 4-letter bsp file prefix */
-	int					bspVersion;						/* bsp version to use */
-	qboolean			lumpSwap;						/* cod-style len/ofs order */
+	int					bspVersion;						/* BSP version to use */
 	bspFunc				load, write;					/* load/write function pointers */
 	surfaceParm_t		surfaceParms[ 128 ];			/* surfaceparm array */
 }
@@ -568,7 +558,7 @@ typedef struct sun_s
 	struct sun_s		*next;
 	vec3_t				direction, color;
 	float				photons, deviance, filterRadius;
-	int					numSamples, style;
+	int					numSamples;
 }
 sun_t;
 
@@ -611,32 +601,21 @@ typedef struct remap_s
 remap_t;
 
 
-/* wingdi.h hack, it's the same: 0 */
-#undef CM_NONE
-
 typedef enum
 {
-	CM_NONE,
-	CM_VOLUME,
-	CM_COLOR_SET,
-	CM_ALPHA_SET,
-	CM_COLOR_SCALE,
-	CM_ALPHA_SCALE,
-	CM_COLOR_DOT_PRODUCT,
-	CM_ALPHA_DOT_PRODUCT,
-	CM_COLOR_DOT_PRODUCT_2,
-	CM_ALPHA_DOT_PRODUCT_2
+	AM_NONE,
+	AM_DOT_PRODUCT
 }
-colorModType_t;
+alphaModType_t;
 
 
-typedef struct colorMod_s
+typedef struct alphaMod_s
 {
-	struct colorMod_s	*next;
-	colorModType_t		type;
+	struct alphaMod_s	*next;
+	alphaModType_t		type;
 	vec_t				data[ 16 ];
 }
-colorMod_t;
+alphaMod_t;
 
 
 typedef enum
@@ -657,11 +636,10 @@ typedef struct shaderInfo_s
 	int					compileFlags;
 	float				value;							/* light value */
 	
-	char				*flareShader;					/* for light flares */
-	char				*damageShader;					/* ydnar: sof2 damage shader name */
-	char				*backShader;					/* for surfaces that generate different front and back passes */
-	char				*cloneShader;					/* ydnar: for cloning of a surface */
-	char				*remapShader;					/* ydnar: remap a shader in final stage */
+	char				backShader[ MAX_QPATH ];		/* for surfaces that generate different front and back passes */
+	char				flareShader[ MAX_QPATH ];		/* for light flares */
+	char				cloneShader[ MAX_QPATH ];		/* ydnar: for cloning of a surface */
+	char				damageShader[ MAX_QPATH ];		/* ydnar: sof2 damage shader name */
 
 	surfaceModel_t		*surfaceModel;					/* ydnar: for distribution of models */
 	foliage_t			*foliage;						/* ydnar/splash damage: wolf et foliage */
@@ -692,7 +670,7 @@ typedef struct shaderInfo_s
 	vec3_t				vecs[ 2 ];						/* ydnar: explicit texture vectors for [0,1] texture space */
 	tcMod_t				mod;							/* ydnar: q3map_tcMod matrix for djbob :) */
 	vec3_t				lightmapAxis;					/* ydnar: explicit lightmap axis projection */
-	colorMod_t			*colorMod;						/* ydnar: q3map_rgb/color/alpha/Set/Mod support */
+	alphaMod_t			*alphaMod;						/* ydnar: q3map_alphaMod support */
 	
 	int					furNumLayers;					/* ydnar: number of fur layers */
 	float				furOffset;						/* ydnar: offset of each layer */
@@ -711,8 +689,8 @@ typedef struct shaderInfo_s
 	qb_t				notjunc;						/* don't use this surface for tjunction fixing */
 	qb_t				fogParms;						/* ydnar: has fogparms */
 	qb_t				noFog;							/* ydnar: supress fogging */
+	
 	qb_t				clipModel;						/* ydnar: solid model hack */
-	qb_t				noVertexLight;					/* ydnar: leave vertex color alone */
 	
 	byte				styleMarker;					/* ydnar: light styles hack */
 	
@@ -741,7 +719,7 @@ typedef struct shaderInfo_s
 	
 	qb_t				lmMergable;						/* ydnar */
 	int					lmCustomWidth, lmCustomHeight;	/* ydnar */
-	float				lmBrightness;					/* ydnar */
+	float				lmGamma;						/* ydnar */
 	float				lmFilterRadius;					/* ydnar: lightmap filtering/blurring radius for this shader (default: 0) */
 	
 	int					shaderWidth, shaderHeight;		/* ydnar */
@@ -806,6 +784,8 @@ typedef struct side_s
 
 	qboolean			visible;			/* choose visble planes first */
 	qboolean			bevel;				/* don't ever use for bsp splitting, and don't bother making windings for it */
+	qboolean			backSide;			/* generated side for a q3map_backShader */
+	
 	qboolean			culled;				/* ydnar: face culling */
 }
 side_t;
@@ -833,7 +813,6 @@ indexMap_t;
 typedef struct brush_s
 {
 	struct brush_s		*next;
-	struct brush_s		*nextColorModBrush;	/* ydnar: colorMod volume brushes go here */
 	struct brush_s		*original;			/* chopped up brushes will reference the originals */
 	
 	int					entityNum, brushNum;/* editor numbering */
@@ -969,11 +948,8 @@ typedef struct mapDrawSurface_s
 	
 	qboolean			fur;				/* ydnar: this is kind of a hack, but hey... */
 	qboolean			skybox;				/* ydnar: yet another fun hack */
-	qboolean			backSide;			/* ydnar: q3map_backShader support */
 	
 	struct mapDrawSurface_s	*parent;		/* ydnar: for cloned (skybox) surfaces to share lighting data */
-	struct mapDrawSurface_s	*clone;			/* ydnar: for cloned surfaces */
-	struct mapDrawSurface_s	*cel;			/* ydnar: for cloned cel surfaces */
 	
 	shaderInfo_t		*shaderInfo;
 	shaderInfo_t		*celShader;
@@ -1056,7 +1032,7 @@ epair_t;
 typedef struct
 {
 	vec3_t				origin;
-	brush_t				*brushes, *lastBrush, *colorModBrushes;
+	brush_t				*brushes, *lastBrush;
 	parseMesh_t			*patches;
 	int					mapEntityNum, firstDrawSurf;
 	int					firstBrush, numBrushes;		/* only valid during BSP compile */
@@ -1298,7 +1274,6 @@ typedef struct
 	vec3_t				color;			/* starts out at full color, may be reduced if transparent surfaces are crossed */
 	
 	/* output */
-	vec3_t				hit;
 	int					compileFlags;	/* for determining surface compile flags traced through */
 	qboolean			passSolid;
 	qboolean			opaque;
@@ -1360,7 +1335,7 @@ typedef struct rawLightmap_s
 {
 	qboolean				finished, splotchFix, wrap[ 2 ];
 	int						customWidth, customHeight;
-	float					brightness;
+	float					gamma;
 	float					filterRadius;
 	
 	int						firstLightSurface, numLightSurfaces;	/* index into lightSurfaces */
@@ -1372,9 +1347,6 @@ typedef struct rawLightmap_s
 	vec3_t					mins, maxs, axis, origin, *vecs;
 	float					*plane;
 	int						w, h, sw, sh, used;
-	
-	qboolean				solid[ MAX_LIGHTMAPS ];
-	vec3_t					solidColor[ MAX_LIGHTMAPS ];
 	
 	int						numStyledTwins;
 	struct rawLightmap_s	*twins[ MAX_LIGHTMAPS ];
@@ -1437,7 +1409,6 @@ int							ConvertMain( int argc, char **argv );
 
 
 /* path_init.c */
-game_t						*GetGame( char *arg );
 void						InitPaths( int *argc, char **argv );
 
 
@@ -1699,11 +1670,6 @@ void						ColorToBytes( const float *color, byte *colorBytes, float scale );
 void						SmoothNormals( void );
 
 void						MapRawLightmap( int num );
-
-void						SetupDirt();
-float						DirtForSample( trace_t *trace );
-void						DirtyRawLightmap( int num );
-
 void						IlluminateRawLightmap( int num );
 void						IlluminateVertexes( int num );
 
@@ -1739,14 +1705,14 @@ image_t						*ImageLoad( const char *filename );
 
 
 /* shaders.c */
-void						ColorMod( colorMod_t *am, int numVerts, bspDrawVert_t *drawVerts );
+void						AlphaMod( alphaMod_t *am, int numVerts, bspDrawVert_t *drawVerts );
 
-void						TCMod( tcMod_t mod, float st[ 2 ] );
-void						TCModIdentity( tcMod_t mod );
-void						TCModMultiply( tcMod_t a, tcMod_t b, tcMod_t out );
-void						TCModTranslate( tcMod_t mod, float s, float t );
-void						TCModScale( tcMod_t mod, float s, float t );
-void						TCModRotate( tcMod_t mod, float euler );
+void						TcMod( tcMod_t mod, float st[ 2 ] );
+void						TcModIdentity( tcMod_t mod );
+void						TcModMultiply( tcMod_t a, tcMod_t b, tcMod_t out );
+void						TcModTranslate( tcMod_t mod, float s, float t );
+void						TcModScale( tcMod_t mod, float s, float t );
+void						TcModRotate( tcMod_t mod, float euler );
 
 qboolean					ApplySurfaceParm( char *name, int *contentFlags, int *surfaceFlags, int *compileFlags );
 
@@ -1825,15 +1791,11 @@ Q_EXTERN game_t				games[]
 							{
 								#include "game_quake3.h"
 								,
-								#include "game_tremulous.h" /*LinuxManMikeC: must be after game_quake3.h, depends on #define's set in it */
-								,
 								#include "game_tenebrae.h"
 								,
 								#include "game_wolf.h"
 								,
 								#include "game_wolfet.h"/* most be after game_wolf.h as they share defines! */
-								,
-								#include "game_etut.h"
 								,
 								#include "game_ef.h"
 								,
@@ -1843,9 +1805,7 @@ Q_EXTERN game_t				games[]
 								,
 								#include "game_ja.h"	/* most be after game_jk2.h as they share defines! */
 								,
-								#include "game_qfusion.h"	/* qfusion game */
-								,
-								{ NULL }	/* null game */
+								{ NULL, NULL, NULL, NULL, NULL, qfalse, 0, 0, NULL }	/* null game */
 							};
 #endif
 Q_EXTERN game_t				*game Q_ASSIGN( &games[ 0 ] );
@@ -1896,9 +1856,8 @@ Q_EXTERN qboolean			skyFixHack Q_ASSIGN( qfalse );			/* ydnar */
 
 Q_EXTERN int				patchSubdivisions Q_ASSIGN( 8 );		/* ydnar: -patchmeta subdivisions */
 
-Q_EXTERN int				maxLMSurfaceVerts Q_ASSIGN( 64 );		/* ydnar */
-Q_EXTERN int				maxSurfaceVerts Q_ASSIGN( 999 );		/* ydnar */
-Q_EXTERN int				maxSurfaceIndexes Q_ASSIGN( 6000 );		/* ydnar */
+Q_EXTERN int				maxSurfaceVerts Q_ASSIGN( 64 );			/* ydnar */
+Q_EXTERN int				maxSurfaceIndexes Q_ASSIGN( 1000 );		/* ydnar */
 Q_EXTERN float				npDegrees Q_ASSIGN( 0.0f );				/* ydnar: nonplanar degrees */
 Q_EXTERN int				bevelSnap Q_ASSIGN( 0 );				/* ydnar: bevel plane snap */
 Q_EXTERN int				texRange Q_ASSIGN( 0 );
@@ -2050,61 +2009,57 @@ light global variables
 ------------------------------------------------------------------------------- */
 
 /* commandline arguments */
-Q_EXTERN qboolean			wolfLight Q_ASSIGN( qfalse );
+Q_EXTERN qboolean			noSurfaces;
+
+Q_EXTERN qboolean			deluxemap;
+Q_EXTERN qboolean			debugDeluxemap;
+
 Q_EXTERN qboolean			loMem Q_ASSIGN( qfalse );
-Q_EXTERN qboolean			noStyles Q_ASSIGN( qfalse );
+
+Q_EXTERN qboolean			fast;
+Q_EXTERN qboolean			faster;
+Q_EXTERN qboolean			fastgrid;
+Q_EXTERN qboolean			fastbounce;
+Q_EXTERN qboolean			cheap;
+Q_EXTERN qboolean			cheapgrid;
+Q_EXTERN qboolean			smooth;
+Q_EXTERN int				bounce;
+Q_EXTERN qboolean			bounceOnly;
+Q_EXTERN qboolean			bouncing;
+Q_EXTERN qboolean			bouncegrid;
+Q_EXTERN qboolean			normalmap;
+Q_EXTERN qboolean			trisoup;
+Q_EXTERN qboolean			shade;
+Q_EXTERN float				shadeAngleDegrees Q_ASSIGN( 0.0f );
+Q_EXTERN int				superSample Q_ASSIGN( 0 );
+Q_EXTERN int				lightSamples Q_ASSIGN( 1 );
+Q_EXTERN qboolean			filter;
+Q_EXTERN qboolean			sunOnly;
+Q_EXTERN int				approximateTolerance Q_ASSIGN( 0 );
+Q_EXTERN qboolean			noCollapse;
+Q_EXTERN qboolean			debug;
+Q_EXTERN qboolean			debugSurfaces;
+Q_EXTERN qboolean			debugUnused;
+Q_EXTERN qboolean			debugAxis;
+Q_EXTERN qboolean			debugCluster;
+Q_EXTERN qboolean			debugOrigin;
+Q_EXTERN qboolean			exportLightmaps;
+Q_EXTERN qboolean			externalLightmaps;
+Q_EXTERN int				lmCustomSize Q_ASSIGN( LIGHTMAP_WIDTH );
+
+/* standard flags */
+Q_EXTERN qboolean			noTrace;
+Q_EXTERN qboolean			patchShadows;
+Q_EXTERN qboolean			dump;
+Q_EXTERN qboolean			extra;
+Q_EXTERN qboolean			extraWide;
+Q_EXTERN qboolean			lightmapBorder;
+
+Q_EXTERN qboolean			noSurfaces;
 
 Q_EXTERN int				sampleSize Q_ASSIGN( DEFAULT_LIGHTMAP_SAMPLE_SIZE );
 Q_EXTERN qboolean			noVertexLighting Q_ASSIGN( qfalse );
 Q_EXTERN qboolean			noGridLighting Q_ASSIGN( qfalse );
-
-Q_EXTERN qboolean			noTrace Q_ASSIGN( qfalse );
-Q_EXTERN qboolean			noSurfaces Q_ASSIGN( qfalse );
-Q_EXTERN qboolean			patchShadows Q_ASSIGN( qfalse );
-Q_EXTERN qboolean			cpmaHack Q_ASSIGN( qfalse );
-
-Q_EXTERN qboolean			deluxemap Q_ASSIGN( qfalse );
-Q_EXTERN qboolean			debugDeluxemap Q_ASSIGN( qfalse );
-
-Q_EXTERN qboolean			fast Q_ASSIGN( qfalse );
-Q_EXTERN qboolean			faster Q_ASSIGN( qfalse );
-Q_EXTERN qboolean			fastgrid Q_ASSIGN( qfalse );
-Q_EXTERN qboolean			fastbounce Q_ASSIGN( qfalse );
-Q_EXTERN qboolean			cheap Q_ASSIGN( qfalse );
-Q_EXTERN qboolean			cheapgrid Q_ASSIGN( qfalse );
-Q_EXTERN int				bounce Q_ASSIGN( 0 );
-Q_EXTERN qboolean			bounceOnly Q_ASSIGN( qfalse );
-Q_EXTERN qboolean			bouncing Q_ASSIGN( qfalse );
-Q_EXTERN qboolean			bouncegrid Q_ASSIGN( qfalse );
-Q_EXTERN qboolean			normalmap Q_ASSIGN( qfalse );
-Q_EXTERN qboolean			trisoup Q_ASSIGN( qfalse );
-Q_EXTERN qboolean			shade Q_ASSIGN( qfalse );
-Q_EXTERN float				shadeAngleDegrees Q_ASSIGN( 0.0f );
-Q_EXTERN int				superSample Q_ASSIGN( 0 );
-Q_EXTERN int				lightSamples Q_ASSIGN( 1 );
-Q_EXTERN qboolean			filter Q_ASSIGN( qfalse );
-Q_EXTERN qboolean			dark Q_ASSIGN( qfalse );
-Q_EXTERN qboolean			sunOnly Q_ASSIGN( qfalse );
-Q_EXTERN int				approximateTolerance Q_ASSIGN( 0 );
-Q_EXTERN qboolean			noCollapse Q_ASSIGN( qfalse );
-Q_EXTERN qboolean			exportLightmaps Q_ASSIGN( qfalse );
-Q_EXTERN qboolean			externalLightmaps Q_ASSIGN( qfalse );
-Q_EXTERN int				lmCustomSize Q_ASSIGN( LIGHTMAP_WIDTH );
-
-Q_EXTERN qboolean			dirty Q_ASSIGN( qfalse );
-Q_EXTERN qboolean			dirtDebug Q_ASSIGN( qfalse );
-Q_EXTERN int				dirtMode Q_ASSIGN( 0 );
-Q_EXTERN float				dirtDepth Q_ASSIGN( 128.0f );
-Q_EXTERN float				dirtScale Q_ASSIGN( 1.0f );
-Q_EXTERN float				dirtGain Q_ASSIGN( 1.0f );
-
-Q_EXTERN qboolean			dump Q_ASSIGN( qfalse );
-Q_EXTERN qboolean			debug Q_ASSIGN( qfalse );
-Q_EXTERN qboolean			debugUnused Q_ASSIGN( qfalse );
-Q_EXTERN qboolean			debugAxis Q_ASSIGN( qfalse );
-Q_EXTERN qboolean			debugCluster Q_ASSIGN( qfalse );
-Q_EXTERN qboolean			debugOrigin Q_ASSIGN( qfalse );
-Q_EXTERN qboolean			lightmapBorder Q_ASSIGN( qfalse );
 
 /* longest distance across the map */
 Q_EXTERN float				maxMapDistance Q_ASSIGN( 0 );
@@ -2115,14 +2070,13 @@ Q_EXTERN float				areaScale Q_ASSIGN( 0.25f );
 Q_EXTERN float				skyScale Q_ASSIGN( 1.0f );
 Q_EXTERN float				bounceScale Q_ASSIGN( 0.25f );
 
-/* ydnar: lightmap gamma/compensation */
-Q_EXTERN float				lightmapGamma Q_ASSIGN( 1.0f );
-Q_EXTERN float				lightmapCompensate Q_ASSIGN( 1.0f );
-
 /* ydnar: for runtime tweaking of falloff tolerance */
 Q_EXTERN float				falloffTolerance Q_ASSIGN( 1.0f );
+
 Q_EXTERN qboolean			exactPointToPolygon Q_ASSIGN( qtrue );
+
 Q_EXTERN float				formFactorValueScale Q_ASSIGN( 3.0f );
+
 Q_EXTERN float				linearScale Q_ASSIGN( 1.0f / 8000.0f );
 
 Q_EXTERN light_t			*lights;
@@ -2215,7 +2169,6 @@ Q_EXTERN float				*radVertexLuxels[ MAX_LIGHTMAPS ];
 
 /* bsp lightmaps */
 Q_EXTERN int				numLightmapShaders Q_ASSIGN( 0 );
-Q_EXTERN int				numSolidLightmaps Q_ASSIGN( 0 );
 Q_EXTERN int				numOutLightmaps Q_ASSIGN( 0 );
 Q_EXTERN int				numBSPLightmaps Q_ASSIGN( 0 );
 Q_EXTERN int				numExtLightmaps Q_ASSIGN( 0 );

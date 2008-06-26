@@ -1,5 +1,0 @@
-$SETUP_DIR = 'Setup-Q3Q1';
-
-$DO_CORE = 1;
-$DO_GAME_Q3 = 1;
-$DO_GAME_Q1 = 1;

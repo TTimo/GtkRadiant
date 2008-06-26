@@ -1,7 +1,0 @@
-; shaderplug.def : Declares the module parameters for the DLL.
-
-LIBRARY      "SHADERPLUG"
-
-EXPORTS
-    ; Explicit exports can go here
-	Radiant_RegisterModules @1

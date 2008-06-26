@@ -1,5 +1,5 @@
 /*
-Copyright (C) 1999-2006 Id Software, Inc. and contributors.
+Copyright (C) 1999-2007 id Software, Inc. and contributors.
 For a list of contributors, see the accompanying CONTRIBUTORS file.
 
 This file is part of GtkRadiant.
@@ -19,30 +19,90 @@ along with GtkRadiant; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#if !defined(INCLUDED_GROUPDIALOG_H)
-#define INCLUDED_GROUPDIALOG_H
+#ifndef _GROUPDIALOG_H_
+#define _GROUPDIALOG_H_
 
-#include "generic/callback.h"
+#define DlgXBorder 5
+#define DlgYBorder 5
 
-typedef struct _GtkWidget GtkWidget;
-typedef struct _GtkWindow GtkWindow;
 
-void GroupDialog_Construct();
-void GroupDialog_Destroy();
-
-void GroupDialog_constructWindow(GtkWindow* main_window);
-void GroupDialog_destroyWindow();
-GtkWindow* GroupDialog_getWindow();
-void GroupDialog_show();
-
-inline void RawStringExport(const char* string, const StringImportCallback& importer)
+enum
 {
-  importer(string);
-}
-typedef ConstPointerCaller1<char, const StringImportCallback&, RawStringExport> RawStringExportCaller;
-GtkWidget* GroupDialog_addPage(const char* tabLabel, GtkWidget* widget, const StringExportCallback& title);
+  EntList,
+  EntComment,
+// Spawnflags
+  EntCheck1,
+  EntCheck2,
+  EntCheck3,
+  EntCheck4,
+  EntCheck5,
+  EntCheck6,
+  EntCheck7,
+  EntCheck8,
+// Extra Spawnflags for Halflife Support
+  EntCheck9,
+  EntCheck10,
+  EntCheck11,
+  EntCheck12,
+  EntCheck13,
+  EntCheck14,
+  EntCheck15,
+  EntCheck16,
 
-void GroupDialog_showPage(GtkWidget* page);
-void GroupDialog_updatePageTitle(GtkWidget* page);
+/*
+  EntCheck17,
+  EntCheck18,
+  EntCheck19,
+  EntCheck20,
+*/
+  EntProps,
+  EntDir0,
+  EntDir45,
+  EntDir90,
+  EntDir135,
+  EntDir180,
+  EntDir225,
+  EntDir270,
+  EntDir315,
+  EntDirUp,
+  EntDirDown,
+  EntDelProp,
+  EntKeyLabel,
+  EntKeyField,
+  EntValueLabel,
+  EntValueField,
+  EntColor,
+  EntAssignSounds,
+  EntAssignModels,
+  EntTab,
 
-#endif
+  EntLast,
+};
+
+// 17..20 where used for spawnflags (!Easy !Medium !Hard etc.), empty now..
+extern GtkWidget* EntWidgets[EntLast];
+
+//extern int rgIds[EntLast];
+
+
+class GroupDlg 
+{
+ public:
+  GroupDlg ();
+  void Create ();
+
+  void Show ()
+    { gtk_widget_show (m_pWidget); };
+  void Hide ()
+    { gtk_widget_hide (m_pWidget); };
+
+ public:
+  GtkWidget* m_pNotebook;
+  GtkWidget* m_pWidget;
+  GtkWidget* m_pTree;
+  GtkCTreeNode* m_hWorld; //leo: not used keeping because of the win32 version
+};
+
+extern GroupDlg *g_pGroupDlg;
+
+#endif // _GROUPDIALOG_H_

@@ -1,5 +1,5 @@
 /*
-Copyright (C) 1999-2006 Id Software, Inc. and contributors.
+Copyright (C) 1999-2007 id Software, Inc. and contributors.
 For a list of contributors, see the accompanying CONTRIBUTORS file.
 
 This file is part of GtkRadiant.
@@ -29,7 +29,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "StdAfx.h"
 
 void CControlPointsManagerBFace::Init (int iPts, CtrlPts_t *Pts, C2DView *p2DView, int TexSize[2],
-				       _QERFaceData* pFaceData, OpenGLBinding *pQglTable)
+				       _QERFaceData* pFaceData, _QERQglTable *pQglTable)
 {
   ManagerState = Idle;
   m_NumPoints = iPts;
@@ -168,7 +168,7 @@ bool CControlPointsManagerBFace::OnLButtonUp (int x, int y)
   return false;
 }
 
-void CControlPointsManagerBFace::render()
+void CControlPointsManagerBFace::Render()
 {
   int i;
 
@@ -242,7 +242,7 @@ patch manager
 ======================================================================
 */
 
-void CControlPointsManagerPatch::Init( patchMesh_t* pWorkPatch, C2DView *p2DView, OpenGLBinding *pQglTable, patchMesh_t* pPatch )
+void CControlPointsManagerPatch::Init( patchMesh_t* pWorkPatch, C2DView *p2DView, _QERQglTable *pQglTable, patchMesh_t* pPatch )
 {
   CControlPointsManager::Init( p2DView, pQglTable );
   m_pPatch = pPatch;
@@ -302,7 +302,7 @@ bool CControlPointsManagerPatch::OnLButtonUp (int x, int y)
   return false;
 }
 
-void CControlPointsManagerPatch::render()
+void CControlPointsManagerPatch::Render()
 {
   int i,j;
 

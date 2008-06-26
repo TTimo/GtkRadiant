@@ -1,5 +1,5 @@
 /*
-Copyright (C) 1999-2006 Id Software, Inc. and contributors.
+Copyright (C) 1999-2007 id Software, Inc. and contributors.
 For a list of contributors, see the accompanying CONTRIBUTORS file.
 
 This file is part of GtkRadiant.
@@ -61,7 +61,7 @@ void CListener::UnRegister()
 	}
 }
 
-bool CListener::OnMouseMove( unsigned int nFlags, double x, double y )
+bool CListener::OnMouseMove( guint32 nFlags, gdouble x, gdouble y )
 {
   SetViewType( g_pXYWndWrapper->GetViewType() );
 
@@ -100,7 +100,7 @@ bool CListener::OnMouseMove( unsigned int nFlags, double x, double y )
   return false;
 }
 
-bool CListener::OnLButtonDown( unsigned int nFlags, double x, double y )
+bool CListener::OnLButtonDown( guint32 nFlags, gdouble x, gdouble y )
 {
   SetViewType( g_pXYWndWrapper->GetViewType() );
 
@@ -178,7 +178,7 @@ bool CListener::OnLButtonDown( unsigned int nFlags, double x, double y )
 	//return false;
 }
 
-bool CListener::OnLButtonUp( unsigned int nFlags, double x, double y )
+bool CListener::OnLButtonUp( guint32 nFlags, gdouble x, gdouble y )
 {
   SetViewType( g_pXYWndWrapper->GetViewType() );
 
@@ -197,7 +197,7 @@ bool CListener::OnLButtonUp( unsigned int nFlags, double x, double y )
 	return false;
 }
 
-bool CListener::OnRButtonDown( unsigned int nFlags, double x, double y )
+bool CListener::OnRButtonDown( guint32 nFlags, gdouble x, gdouble y )
 {
   SetViewType( g_pXYWndWrapper->GetViewType() );
 
@@ -206,7 +206,7 @@ bool CListener::OnRButtonDown( unsigned int nFlags, double x, double y )
 	return false;
 }
 
-bool CListener::OnRButtonUp( unsigned int nFlags, double x, double y )
+bool CListener::OnRButtonUp( guint32 nFlags, gdouble x, gdouble y )
 {
   SetViewType( g_pXYWndWrapper->GetViewType() );
 
@@ -215,7 +215,7 @@ bool CListener::OnRButtonUp( unsigned int nFlags, double x, double y )
 	return false;
 }
 
-bool CListener::OnMButtonDown( unsigned int nFlags, double x, double y )
+bool CListener::OnMButtonDown( guint32 nFlags, gdouble x, gdouble y )
 {
   SetViewType( g_pXYWndWrapper->GetViewType() );
 
@@ -224,7 +224,7 @@ bool CListener::OnMButtonDown( unsigned int nFlags, double x, double y )
 	return false;
 }
 
-bool CListener::OnMButtonUp( unsigned int nFlags, double x, double y )
+bool CListener::OnMButtonUp( guint32 nFlags, gdouble x, gdouble y )
 {
   SetViewType( g_pXYWndWrapper->GetViewType() );
 

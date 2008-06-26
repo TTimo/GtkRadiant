@@ -1,5 +1,5 @@
 /*
-Copyright (C) 1999-2006 Id Software, Inc. and contributors.
+Copyright (C) 1999-2007 id Software, Inc. and contributors.
 For a list of contributors, see the accompanying CONTRIBUTORS file.
 
 This file is part of GtkRadiant.
@@ -40,7 +40,7 @@ void Sys_ERROR( char* text, ... )
 
 char* UnixToDosPath( char* path )
 {
-#ifndef WIN32
+#ifndef _WIN32
 	return path;
 #else
 	for(char* p = path; *p; p++)
@@ -52,7 +52,7 @@ char* UnixToDosPath( char* path )
 #endif
 }
 
-void ExtractFilePath( const char *path, char *dest )
+void CAMERA_ExtractFilePath( const char *path, char *dest )
 {
   const char *src;
 
@@ -70,10 +70,10 @@ void ExtractFilePath( const char *path, char *dest )
 
 const char* ExtractFilename( const char* path )
 {
-	char* p = strrchr(path, '/');
+	char* p = (char *)strrchr(path, '/');
 	if(!p)
 	{
-		p = strrchr(path, '\\');
+		p = (char *)strrchr(path, '\\');
 
 		if(!p)
 			return path;
@@ -82,7 +82,7 @@ const char* ExtractFilename( const char* path )
 }
 
 int Q_stricmp (const char *s1, const char *s2) {
-	return string_equal_nocase( s1, s2 );
+	return stricmp( s1, s2 );
 }
 
 /*
@@ -162,7 +162,7 @@ void Com_Dealloc( void *ptr ) {
 // Filesystem
 //
 
-#ifdef WIN32
+#ifdef _WIN32
 	#pragma warning(disable : 4311)
 	#pragma warning(disable : 4312)
 #endif
@@ -208,7 +208,7 @@ void FS_FreeFile( void *buffer ) {
   Com_Dealloc( buffer );
 }
 
-int FS_FOpenFileRead( const char *filename, fileHandle_t *file, bool uniqueFILE ) {
+int FS_FOpenFileRead( const char *filename, fileHandle_t *file, qboolean uniqueFILE ) {
   FILE	*fh;
 	long len;
 

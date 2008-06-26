@@ -1,6 +1,5 @@
-/* -------------------------------------------------------------------------------
-
-Copyright (C) 1999-2006 Id Software, Inc. and contributors.
+/*
+Copyright (C) 1999-2007 id Software, Inc. and contributors.
 For a list of contributors, see the accompanying CONTRIBUTORS file.
 
 This file is part of GtkRadiant.
@@ -37,6 +36,12 @@ several games based on the Quake III Arena engine, in the form of "Q3Map2."
 #include "q3map2.h"
 
 
+
+/*
+
+this section handles drawsurface allocation and creation
+
+*/
 
 /*
 AllocDrawSurface()
@@ -78,31 +83,17 @@ ydnar: general surface finish pass
 
 void FinishSurface( mapDrawSurface_t *ds )
 {
-	mapDrawSurface_t	*ds2;
-	
-	
 	/* dummy check */
-	if( ds->type <= SURFACE_BAD || ds->type >= NUM_SURFACE_TYPES || ds == NULL || ds->shaderInfo == NULL )
+	if( ds == NULL || ds->shaderInfo == NULL )
 		return;
 	
 	/* ydnar: rocking tek-fu celshading */
 	if( ds->celShader != NULL )
 		MakeCelSurface( ds, ds->celShader );
 	
-	/* backsides stop here */
-	if( ds->backSide )
-		return;
-	
 	/* ydnar: rocking surface cloning (fur baby yeah!) */
-	if( ds->shaderInfo->cloneShader != NULL && ds->shaderInfo->cloneShader[ 0 ] != '\0' )
+	if( ds->shaderInfo->cloneShader[ 0 ] != '\0' )
 		CloneSurface( ds, ShaderInfoForShader( ds->shaderInfo->cloneShader ) );
-	
-	/* ydnar: q3map_backShader support */
-	if( ds->shaderInfo->backShader != NULL && ds->shaderInfo->backShader[ 0 ] != '\0' )
-	{
-		ds2 = CloneSurface( ds, ShaderInfoForShader( ds->shaderInfo->backShader ) );
-		ds2->backSide = qtrue;
-	}
 }
 
 
@@ -304,7 +295,7 @@ void TidyEntitySurfaces( entity_t *e )
 		out = &mapDrawSurfs[ i ];
 		
 		/* walk the surface list again until a proper surface is found */
-		for( ; j < numMapDrawSurfs; j++ )
+		for( j; j < numMapDrawSurfs; j++ )
 		{
 			/* get in surface */
 			in = &mapDrawSurfs[ j ];
@@ -484,7 +475,7 @@ void ClassifySurfaces( int numSurfs, mapDrawSurface_t *ds )
 	
 	
 	/* walk the list of surfaces */
-	for( ; numSurfs > 0; numSurfs--, ds++ )
+	for( numSurfs; numSurfs > 0; numSurfs--, ds++ )
 	{
 		/* ignore bogus (or flare) surfaces */
 		if( ds->type == SURFACE_BAD || ds->numVerts <= 0 )
@@ -663,10 +654,7 @@ void ClassifyEntitySurfaces( entity_t *e )
 	
 	/* walk the surface list */
 	for( i = e->firstDrawSurf; i < numMapDrawSurfs; i++ )
-	{
-		FinishSurface( &mapDrawSurfs[ i ] );
 		ClassifySurfaces( 1, &mapDrawSurfs[ i ] );
-	}
 	
 	/* tidy things up */
 	TidyEntitySurfaces( e );
@@ -987,6 +975,9 @@ mapDrawSurface_t *DrawSurfaceForSide( entity_t *e, brush_t *b, side_t *s, windin
 	/* set cel shader */
 	ds->celShader = b->celShader;
 	
+	/* finish surface */
+	FinishSurface( ds );
+	
 	/* ydnar: gs mods: moved st biasing elsewhere */
 	return ds;
 }
@@ -1182,6 +1173,9 @@ mapDrawSurface_t *DrawSurfaceForMesh( entity_t *e, parseMesh_t *p, mesh_t *mesh 
 	/* set cel shader */
 	ds->celShader = p->celShader;
 	
+	/* finish surface */
+	FinishSurface( ds );
+	
 	/* return the drawsurface */
 	return ds;
 }
@@ -1301,7 +1295,7 @@ SubdivideFace()
 subdivides a face surface until it is smaller than the specified size (subdivisions)
 */
 
-static void SubdivideFace_r( entity_t *e, brush_t *brush, side_t *side, winding_t *w, int fogNum, float subdivisions )
+static void SubdivideFace( entity_t *e, brush_t *brush, side_t *side, winding_t *w, int fogNum, float subdivisions )
 {
 	int					i;
 	int					axis;
@@ -1316,7 +1310,7 @@ static void SubdivideFace_r( entity_t *e, brush_t *brush, side_t *side, winding_
 	if( w == NULL )
 		return;
 	if( w->numpoints < 3 )
-		Error( "SubdivideFace_r: Bad w->numpoints (%d < 3)", w->numpoints );
+		Error( "SubdivideFaceSurface: Bad w->numpoints" );
 	
 	/* determine surface bounds */
 	ClearBounds( bounds[ 0 ], bounds[ 1 ] );
@@ -1351,8 +1345,8 @@ static void SubdivideFace_r( entity_t *e, brush_t *brush, side_t *side, winding_
 				w = frontWinding;
 			else
 			{
-				SubdivideFace_r( e, brush, side, frontWinding, fogNum, subdivisions );
-				SubdivideFace_r( e, brush, side, backWinding, fogNum, subdivisions );
+				SubdivideFace( e, brush, side, frontWinding, fogNum, subdivisions );
+				SubdivideFace( e, brush, side, backWinding, fogNum, subdivisions );
 				return;
 			}
 		}
@@ -1450,7 +1444,7 @@ void SubdivideFaceSurfaces( entity_t *e, tree_t *tree )
 		ClearSurface( ds );
 		
 		/* subdivide it */
-		SubdivideFace_r( e, brush, side, w, fogNum, subdivisions );
+		SubdivideFace( e, brush, side, w, fogNum, subdivisions );
 	}
 }
 
@@ -2460,7 +2454,7 @@ void EmitPatchSurface( mapDrawSurface_t *ds )
 	
 	
 	/* invert the surface if necessary */
-	if( ds->backSide || ds->shaderInfo->invert )
+	if( ds->shaderInfo->invert )
 	{
 		bspDrawVert_t	*dv1, *dv2, temp;
 		
@@ -2680,7 +2674,7 @@ static void EmitTriangleSurface( mapDrawSurface_t *ds )
 	
 	
 	/* invert the surface if necessary */
-	if( ds->backSide || ds->shaderInfo->invert )
+	if( ds->shaderInfo->invert )
 	{
 		/* walk the indexes, reverse the triangle order */
 		for( i = 0; i < ds->numIndexes; i += 3 )
@@ -2712,11 +2706,7 @@ static void EmitTriangleSurface( mapDrawSurface_t *ds )
 	
 	/* ydnar: gs mods: handle lightmapped terrain (force to planar type) */
 	//%	else if( VectorLength( ds->lightmapAxis ) <= 0.0f || ds->type == SURFACE_TRIANGLES || ds->type == SURFACE_FOGHULL || debugSurfaces )
-	else if( (VectorLength( ds->lightmapAxis ) <= 0.0f && ds->planar == qfalse) ||
-		ds->type == SURFACE_TRIANGLES ||
-		ds->type == SURFACE_FOGHULL ||
-		ds->numVerts > maxLMSurfaceVerts ||
-		debugSurfaces )
+	else if( (VectorLength( ds->lightmapAxis ) <= 0.0f && ds->planar == qfalse) || ds->type == SURFACE_TRIANGLES || ds->type == SURFACE_FOGHULL || debugSurfaces )
 		out->surfaceType = MST_TRIANGLE_SOUP;
 	
 	/* set to a planar face */
@@ -3340,58 +3330,6 @@ void AddEntitySurfaceModels( entity_t *e )
 
 
 /*
-VolumeColorMods() - ydnar
-applies brush/volumetric color/alpha modulation to vertexes
-*/
-
-static void VolumeColorMods( entity_t *e, mapDrawSurface_t *ds )
-{
-	int			i, j;
-	float		d;
-	brush_t		*b;
-	plane_t		*plane;
-	
-	
-	/* early out */
-	if( e->colorModBrushes == NULL )
-		return;
-	
-	/* iterate brushes */
-	for( b = e->colorModBrushes; b != NULL; b = b->nextColorModBrush )
-	{
-		/* worldspawn alpha brushes affect all, grouped ones only affect original entity */
-		if( b->entityNum != 0 && b->entityNum != ds->entityNum )
-			continue;
-		
-		/* test bbox */
-		if( b->mins[ 0 ] > ds->maxs[ 0 ] || b->maxs[ 0 ] < ds->mins[ 0 ] ||
-			b->mins[ 1 ] > ds->maxs[ 1 ] || b->maxs[ 1 ] < ds->mins[ 1 ] ||
-			b->mins[ 2 ] > ds->maxs[ 2 ] || b->maxs[ 2 ] < ds->mins[ 2 ] )
-			continue;
-		
-		/* iterate verts */
-		for( i = 0; i < ds->numVerts; i++ )
-		{
-			/* iterate planes */
-			for( j = 0; j < b->numsides; j++ )
-			{
-				/* point-plane test */
-				plane = &mapplanes[ b->sides[ j ].planenum ];
-				d = DotProduct( ds->verts[ i ].xyz, plane->normal ) - plane->dist;
-				if( d > 1.0f )
-					break;
-			}
-			
-			/* apply colormods */
-			if( j == b->numsides )
-				ColorMod( b->contentShader->colorMod, 1, &ds->verts[ i ] );
-		}
-	}
-}
-
-
-
-/*
 FilterDrawsurfsIntoTree()
 upon completion, all drawsurfs that actually generate a reference
 will have been emited to the bspfile arrays, and the references
@@ -3436,15 +3374,12 @@ void FilterDrawsurfsIntoTree( entity_t *e, tree_t *tree )
 			/* refs initially zero */
 			refs = 0;
 			
+			/* ydnar: apply alphamod */
+			AlphaMod( ds->shaderInfo->alphaMod, ds->numVerts, ds->verts );
+			
 			/* apply texture coordinate mods */
 			for( j = 0; j < ds->numVerts; j++ )
-				TCMod( si->mod, ds->verts[ j ].st );
-			
-			/* ydnar: apply shader colormod */
-			ColorMod( ds->shaderInfo->colorMod, ds->numVerts, ds->verts );
-			
-			/* ydnar: apply brush colormod */
-			VolumeColorMods( e, ds );
+				TcMod( si->mod, ds->verts[ j ].st );
 			
 			/* ydnar: make fur surfaces */
 			if( si->furNumLayers > 0 )
@@ -3455,7 +3390,7 @@ void FilterDrawsurfsIntoTree( entity_t *e, tree_t *tree )
 				Foliage( ds );
 			
 			/* create a flare surface if necessary */
-			if( si->flareShader != NULL && si->flareShader[ 0 ] )
+			if( si->flareShader[ 0 ] )
 				AddSurfaceFlare( ds, e->origin );
 			
 			/* ydnar: don't emit nodraw surfaces (like nodraw fog) */
@@ -3480,10 +3415,6 @@ void FilterDrawsurfsIntoTree( entity_t *e, tree_t *tree )
 				ds->fogNum = FogForBounds( mins, maxs, 1.0f );	//%	FogForPoint( origin, 0.0f );
 			}
 		}
-		
-		/* ydnar: remap shader */
-		if( ds->shaderInfo->remapShader && ds->shaderInfo->remapShader[ 0 ] )
-			ds->shaderInfo = ShaderInfoForShader( ds->shaderInfo->remapShader );
 		
 		/* ydnar: gs mods: handle the various types of surfaces */
 		switch( ds->type )

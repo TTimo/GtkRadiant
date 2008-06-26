@@ -1,5 +1,5 @@
 /*
-Copyright (C) 1999-2006 Id Software, Inc. and contributors.
+Copyright (C) 1999-2007 id Software, Inc. and contributors.
 For a list of contributors, see the accompanying CONTRIBUTORS file.
 
 This file is part of GtkRadiant.
@@ -19,7 +19,13 @@ along with GtkRadiant; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#if !defined(INCLUDED_PLUGIN_H)
-#define INCLUDED_PLUGIN_H
+#ifndef _PLUGIN_H_
+#define _PLUGIN_H_
 
-#endif
+#include "qerplugin.h"
+#include "iimage.h"
+#include "ifilesystem.h"
+
+void LoadImage (const char *filename, unsigned char **pic, int *width, int *height);
+
+#endif // _PLUGIN_H_

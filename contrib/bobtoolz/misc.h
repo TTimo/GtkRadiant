@@ -17,30 +17,23 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#if !defined(INCLUDED_MISC_H)
-#define INCLUDED_MISC_H
-
-#include "mathlib.h"
-#include <list>
-#include "str.h"
-#include "iscenegraph.h"
-
-#define MAX_ROUND_ERROR	0.05
-
 vec_t Min(vec_t a, vec_t b);
+
+epair_t* GetNextChainItem(epair_t* lastItem, char* key, char* value);
 
 // reads current texture into global, returns pointer to it
 const char* GetCurrentTexture();
 
-class _QERFaceData;
 void FillDefaultTexture(_QERFaceData* faceData, vec3_t va, vec3_t vb, vec3_t vc, const char* texture);
 
-void BuildMiniPrt(std::list<Str>* exclusionList);
+void Sys_ERROR (char* text, ...);
+
+void BuildMiniPrt(list<Str>* exclusionList);
 
 void MoveBlock(int dir, vec3_t min, vec3_t max, float dist);
 void SetInitialStairPos(int dir, vec3_t min, vec3_t max, float width);
 
-const scene::Path* FindEntityFromTargetname(const char* targetname);
+entity_s* FindEntityFromTargetname(const char* targetname, int* entNum);
 
 char* UnixToDosPath(char* path);
 
@@ -52,6 +45,4 @@ float Determinant3x3(float a1, float a2, float a3,
 					 float c1, float c2, float c3);
 
 bool GetEntityCentre(const char* entity, vec3_t centre);
-void MakeNormal( const vec_t* va, const vec_t* vb, const vec_t* vc, vec_t* out );
-
-#endif
+void MakeNormal( vec_t* va, vec_t* vb, vec_t* vc, vec_t* out );

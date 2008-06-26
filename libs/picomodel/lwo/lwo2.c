@@ -11,7 +11,7 @@ Ernie Wright  17 Sep 00
 #include "lwo2.h"
 
 /* disable warnings */
-#ifdef WIN32
+#ifdef _WIN32
 #pragma warning( disable:4018 )		/* signed/unsigned mismatch */
 #endif
 
@@ -29,7 +29,7 @@ void lwFreeLayer( lwLayer *layer )
       if ( layer->name ) _pico_free( layer->name );
       lwFreePoints( &layer->point );
       lwFreePolygons( &layer->polygon );
-      lwListFree( layer->vmap, (void *) lwFreeVMap );
+      lwListFree( layer->vmap, lwFreeVMap );
       _pico_free( layer );
    }
 }
@@ -45,10 +45,10 @@ Free memory used by an lwObject.
 void lwFreeObject( lwObject *object )
 {
    if ( object ) {
-      lwListFree( object->layer, (void *) lwFreeLayer );
-      lwListFree( object->env, (void *) lwFreeEnvelope );
-      lwListFree( object->clip, (void *) lwFreeClip );
-      lwListFree( object->surf, (void *) lwFreeSurface );
+      lwListFree( object->layer, lwFreeLayer );
+      lwListFree( object->env, lwFreeEnvelope );
+      lwListFree( object->clip, lwFreeClip );
+      lwListFree( object->surf, lwFreeSurface );
       lwFreeTags( &object->taglist );
       _pico_free( object );
    }
@@ -140,7 +140,7 @@ lwObject *lwGetObject( char *filename, picoMemStream_t *fp, unsigned int *failID
             if ( object->nlayers > 0 ) {
                layer = _pico_calloc( 1, sizeof( lwLayer ));
                if ( !layer ) goto Fail;
-               lwListAdd( (void **) &object->layer, layer );
+               lwListAdd( &object->layer, layer );
             }
             object->nlayers++;
 
@@ -177,7 +177,7 @@ lwObject *lwGetObject( char *filename, picoMemStream_t *fp, unsigned int *failID
             node = ( lwNode * ) lwGetVMap( fp, cksize, layer->point.offset,
                layer->polygon.offset, id == ID_VMAD );
             if ( !node ) goto Fail;
-            lwListAdd( (void **) &layer->vmap, node );
+            lwListAdd( &layer->vmap, node );
             layer->nvmaps++;
             break;
 
@@ -205,21 +205,21 @@ lwObject *lwGetObject( char *filename, picoMemStream_t *fp, unsigned int *failID
          case ID_ENVL:
             node = ( lwNode * ) lwGetEnvelope( fp, cksize );
             if ( !node ) goto Fail;
-            lwListAdd( (void **) &object->env, node );
+            lwListAdd( &object->env, node );
             object->nenvs++;
             break;
 
          case ID_CLIP:
             node = ( lwNode * ) lwGetClip( fp, cksize );
             if ( !node ) goto Fail;
-            lwListAdd( (void **) &object->clip, node );
+            lwListAdd( &object->clip, node );
             object->nclips++;
             break;
 
          case ID_SURF:
             node = ( lwNode * ) lwGetSurface( fp, cksize );
             if ( !node ) goto Fail;
-            lwListAdd( (void **) &object->surf, node );
+            lwListAdd( &object->surf, node );
             object->nsurfs++;
             break;
 

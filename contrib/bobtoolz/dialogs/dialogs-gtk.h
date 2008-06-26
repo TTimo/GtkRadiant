@@ -17,18 +17,13 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#if !defined(INCLUDED_DIALOGS_GTK_H)
-#define INCLUDED_DIALOGS_GTK_H
-
-#include "qerplugin.h"
-
 struct BuildStairsRS{
 	char mainTexture[256];
 	char riserTexture[256];
 	int direction;
 	int style;
 	int stairHeight;
-	bool bUseDetail;
+	qboolean bUseDetail;
 };
 
 struct ResetTextureRS {
@@ -55,14 +50,14 @@ struct TrainThingRS {
 
 struct IntersectRS{
 	int nBrushOptions;
-	bool bUseDetail;
-	bool bDuplicateOnly;
+	qboolean bUseDetail;
+	qboolean bDuplicateOnly;
 };
 
 struct PolygonRS{
-	bool bUseBorder;
-	bool bInverse;
-	bool bAlignTop;
+	qboolean bUseBorder;
+	qboolean bInverse;
+	qboolean bAlignTop;
 	int nSides;
 	int nBorderWidth;
 };
@@ -70,10 +65,10 @@ struct PolygonRS{
 struct DoorRS{
 	char mainTexture[256];
 	char trimTexture[256];
-	bool bScaleMainH;
-	bool bScaleMainV;
-	bool bScaleTrimH;
-	bool bScaleTrimV;
+	qboolean bScaleMainH;
+	qboolean bScaleMainV;
+	qboolean bScaleTrimH;
+	qboolean bScaleTrimV;
 	int nOrientation;
 };
 
@@ -81,27 +76,23 @@ struct PathPlotterRS{
 	int nPoints;
 	float fMultiplier;
 	float fGravity;
-	bool bNoUpdate;
-	bool bShowExtra;
+	qboolean bNoUpdate;
+	qboolean bShowExtra;
 };
-
-typedef struct _GtkWidget GtkWidget;
 
 struct TwinWidget{
 	GtkWidget* one;
 	GtkWidget* two;
 };
 
-EMessageBoxReturn DoMessageBox(const char* lpText, const char* lpCaption, EMessageBoxType type);
-EMessageBoxReturn DoIntersectBox(IntersectRS* rs);
-EMessageBoxReturn DoPolygonBox(PolygonRS* rs);
-EMessageBoxReturn DoResetTextureBox (ResetTextureRS* rs);
-EMessageBoxReturn DoBuildStairsBox(BuildStairsRS* rs);
-EMessageBoxReturn DoDoorsBox(DoorRS* rs);
-EMessageBoxReturn DoPathPlotterBox(PathPlotterRS* rs);
-EMessageBoxReturn DoCTFColourChangeBox();
-EMessageBoxReturn DoTrainThingBox (TrainThingRS* rs);
+int DoMessageBox(const char* lpText, const char* lpCaption, guint32 uType);
+int DoIntersectBox(IntersectRS* rs);
+int DoPolygonBox(PolygonRS* rs);
+int DoResetTextureBox (ResetTextureRS* rs);
+int DoBuildStairsBox(BuildStairsRS* rs);
+int DoDoorsBox(DoorRS* rs);
+int DoPathPlotterBox(PathPlotterRS* rs);
+int DoCTFColourChangeBox();
+int DoTrainThingBox (TrainThingRS* rs);
 
 //GtkWidget* GetProgressWindow(char* title, GtkProgressBar* feedback);
-
-#endif

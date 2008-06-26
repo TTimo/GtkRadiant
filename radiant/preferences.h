@@ -1,5 +1,5 @@
 /*
-Copyright (C) 1999-2006 Id Software, Inc. and contributors.
+Copyright (C) 1999-2007 id Software, Inc. and contributors.
 For a list of contributors, see the accompanying CONTRIBUTORS file.
 
 This file is part of GtkRadiant.
@@ -19,162 +19,135 @@ along with GtkRadiant; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-/*
-The following source code is licensed by Id Software and subject to the terms of 
-its LIMITED USE SOFTWARE LICENSE AGREEMENT, a copy of which is included with 
-GtkRadiant. If you did not receive a LIMITED USE SOFTWARE LICENSE AGREEMENT, 
-please contact Id Software immediately at info@idsoftware.com.
-*/
+#ifndef _PREFERENCES_H_
+#define _PREFERENCES_H_
 
-#if !defined(INCLUDED_PREFERENCES_H)
-#define INCLUDED_PREFERENCES_H
-
-#include "libxml/parser.h"
 #include "dialog.h"
-#include <list>
-#include <map>
+#include "gtkr_list.h"
+//#include "profile.h"
 
-void Widget_connectToggleDependency(GtkWidget* self, GtkWidget* toggleButton);
+#define MAX_TEXTURE_QUALITY 3
 
-class PreferencesPage
+enum PrefTypes_t
 {
-  Dialog& m_dialog;
-  GtkWidget* m_vbox;
-public:
-  PreferencesPage(Dialog& dialog, GtkWidget* vbox) : m_dialog(dialog), m_vbox(vbox)
-  {
-  }
-  GtkWidget* appendCheckBox(const char* name, const char* flag, bool& data)
-  {
-    return m_dialog.addCheckBox(m_vbox, name, flag, data);
-  }
-  GtkWidget* appendCheckBox(const char* name, const char* flag, const BoolImportCallback& importCallback, const BoolExportCallback& exportCallback)
-  {
-    return m_dialog.addCheckBox(m_vbox, name, flag, importCallback, exportCallback);
-  }
-  void appendCombo(const char* name, StringArrayRange values, const IntImportCallback& importCallback, const IntExportCallback& exportCallback)
-  {
-    m_dialog.addCombo(m_vbox, name, values, importCallback, exportCallback);
-  }
-  void appendCombo(const char* name, int& data, StringArrayRange values)
-  {
-    m_dialog.addCombo(m_vbox, name, data, values);
-  }
-  void appendSlider(const char* name, int& data, gboolean draw_value, const char* low, const char* high, double value, double lower, double upper, double step_increment, double page_increment, double page_size)
-  {
-    m_dialog.addSlider(m_vbox, name, data, draw_value, low, high, value, lower, upper, step_increment, page_increment, page_size);
-  }
-  void appendRadio(const char* name, StringArrayRange names, const IntImportCallback& importCallback, const IntExportCallback& exportCallback)
-  {
-    m_dialog.addRadio(m_vbox, name, names, importCallback, exportCallback);
-  }
-  void appendRadio(const char* name, int& data, StringArrayRange names)
-  {
-    m_dialog.addRadio(m_vbox, name, data, names);
-  }
-  void appendRadioIcons(const char* name, StringArrayRange icons, const IntImportCallback& importCallback, const IntExportCallback& exportCallback)
-  {
-    m_dialog.addRadioIcons(m_vbox, name, icons, importCallback, exportCallback);
-  }
-  void appendRadioIcons(const char* name, int& data, StringArrayRange icons)
-  {
-    m_dialog.addRadioIcons(m_vbox, name, data, icons);
-  }
-  GtkWidget* appendEntry(const char* name, const IntImportCallback& importCallback, const IntExportCallback& exportCallback)
-  {
-    return m_dialog.addIntEntry(m_vbox, name, importCallback, exportCallback);
-  }
-  GtkWidget* appendEntry(const char* name, int& data)
-  {
-    return m_dialog.addEntry(m_vbox, name, data);
-  }
-  GtkWidget* appendEntry(const char* name, const SizeImportCallback& importCallback, const SizeExportCallback& exportCallback)
-  {
-    return m_dialog.addSizeEntry(m_vbox, name, importCallback, exportCallback);
-  }
-  GtkWidget* appendEntry(const char* name, std::size_t& data)
-  {
-    return m_dialog.addEntry(m_vbox, name, data);
-  }
-  GtkWidget* appendEntry(const char* name, const FloatImportCallback& importCallback, const FloatExportCallback& exportCallback)
-  {
-    return m_dialog.addFloatEntry(m_vbox, name, importCallback, exportCallback);
-  }
-  GtkWidget* appendEntry(const char* name, float& data)
-  {
-    return m_dialog.addEntry(m_vbox, name, data);
-  }
-  GtkWidget* appendPathEntry(const char* name, bool browse_directory, const StringImportCallback& importCallback, const StringExportCallback& exportCallback)
-  {
-    return m_dialog.addPathEntry(m_vbox, name, browse_directory, importCallback, exportCallback);
-  }
-  GtkWidget* appendPathEntry(const char* name, CopiedString& data, bool directory)
-  {
-    return m_dialog.addPathEntry(m_vbox, name, data, directory);
-  }
-  GtkWidget* appendSpinner(const char* name, int& data, double value, double lower, double upper)
-  {
-    return m_dialog.addSpinner(m_vbox, name, data, value, lower, upper);
-  }
-  GtkWidget* appendSpinner(const char* name, double value, double lower, double upper, const IntImportCallback& importCallback, const IntExportCallback& exportCallback)
-  {
-    return m_dialog.addSpinner(m_vbox, name, value, lower, upper, importCallback, exportCallback);
-  }
-  GtkWidget* appendSpinner(const char* name, double value, double lower, double upper, const FloatImportCallback& importCallback, const FloatExportCallback& exportCallback)
-  {
-    return m_dialog.addSpinner(m_vbox, name, value, lower, upper, importCallback, exportCallback);
-  }
+  PREF_STR,
+  PREF_INT,
+  PREF_BOOL,
+  PREF_FLOAT,
+  PREF_VEC3,
+  PREF_WNDPOS,
 };
 
-typedef Callback1<PreferencesPage&> PreferencesPageCallback;
-
-class PreferenceGroup
+/*!
+a preference assignment, name, type and pointer to value
+we don't store the xmlNodePtr because the document itself can be thrown away upon any LoadPref
+(see CGameDialog::UpdatePrefTree)
+*/
+class CPrefAssignment
 {
 public:
-  virtual PreferencesPage createPage(const char* treeName, const char* frameName) = 0;
+  Str mName;
+  PrefTypes_t mType;
+  void *mVal;
+
+  CPrefAssignment(char *name, PrefTypes_t Type, void *Val)
+  {
+    mName = name; mType = Type; mVal = Val;
+  }
+  CPrefAssignment() { mVal = NULL; }
+  CPrefAssignment(const CPrefAssignment& ass);
+  virtual ~CPrefAssignment() { }
+  virtual CPrefAssignment& operator =(const CPrefAssignment& ass);
 };
 
-typedef Callback1<PreferenceGroup&> PreferenceGroupCallback;
 
-void PreferencesDialog_addInterfacePreferences(const PreferencesPageCallback& callback);
-void PreferencesDialog_addInterfacePage(const PreferenceGroupCallback& callback);
-void PreferencesDialog_addDisplayPreferences(const PreferencesPageCallback& callback);
-void PreferencesDialog_addDisplayPage(const PreferenceGroupCallback& callback);
-void PreferencesDialog_addSettingsPreferences(const PreferencesPageCallback& callback);
-void PreferencesDialog_addSettingsPage(const PreferenceGroupCallback& callback);
-
-void PreferencesDialog_restartRequired(const char* staticName);
-
-template<typename Value>
-class LatchedValue
+/*!
+generic preferences storage class, using xml files
+*/
+class CXMLPropertyBag
 {
+private:
+  /*!
+  local prefs file
+  */
+  xmlDocPtr mpDoc;
+  xmlNodePtr mpDocNode;
+
+  /*!
+  prefs assignments (what pref name, what type, what variable)
+  */
+  list<CPrefAssignment> mPrefAssignments;
+
+  /*!
+  name of file to load/save as
+  */
+  Str mStrFilename;
+
+  /*!
+  store assignment in the property list if not already there
+  */
+  void PushAssignment(char *name, PrefTypes_t type, void *pV);
+
+  /*!
+  find the xmlnode relating to the epair name
+  */
+  xmlNodePtr EpairForName(const char *name);
+
 public:
-  Value m_value;
-  Value m_latched;
-  const char* m_description;
+  CXMLPropertyBag();
+  virtual ~CXMLPropertyBag() 
+  {
+    if (InUse())
+      Clear();
+  };
 
-  LatchedValue(Value value, const char* description) : m_latched(value), m_description(description)
-  {
-  }
-  void useLatched()
-  {
-    m_value = m_latched;
-  }
-  void import(Value value)
-  {
-    m_latched = value;
-    if(m_latched != m_value)
-    {
-      PreferencesDialog_restartRequired(m_description);
-    }
-  }
+  /*!
+  read a pref setting, if doesn't exist, will add it to the xml tree (using default value provided)
+  \arg name the name of the pref
+  \arg pV pointer to the value
+  \arg V default value
+  those functions will fill in the list of preferences assignments
+    (name, type and pointer to value)
+    this is used in UpdatePrefTree
+  */
+  void GetPref(char *name, Str *pV, char *V);
+  void GetPref(char *name, int *pV, int V);
+  void GetPref(char *name, bool *pV, bool V);
+  void GetPref(char *name, float *pV, float V);
+  void GetPref(char *name, float *pV, float* V);
+  void GetPref(char *name, window_position_t* pV, window_position_t V);
+
+  /*!
+  returns whether or not the property bag is already open
+  */
+  qboolean InUse() { return (mpDoc != NULL); };
+
+  /*!
+  unload the xml doc, and free the tree
+  */
+  void Clear();
+
+  /*|
+  read data from our XML file
+  */
+  void ReadXMLFile(const char* pFilename);
+
+  /*|
+  write out the property bag to an XML data file
+  return is success/fail
+  */
+  qboolean WriteXMLFile(const char* pFilename);
+
+  /*!
+  update the xml tree with data form the property list, usually in preparation for a write
+  */
+  void UpdatePrefTree();
+
+  /*!
+  did the file have any data or not?
+  */
+  qboolean mbEmpty;
 };
-
-typedef LatchedValue<bool> LatchedBool;
-typedef MemberCaller1<LatchedBool, bool, &LatchedBool::import> LatchedBoolImportCaller;
-
-typedef LatchedValue<int> LatchedInt;
-typedef MemberCaller1<LatchedInt, int, &LatchedInt::import> LatchedIntImportCaller;
 
 /*!
 holds information for a given game
@@ -190,57 +163,113 @@ else (i.e. not generated, copied over during setup .. for instance in the game t
 */
 class CGameDescription
 {
-typedef std::map<CopiedString, CopiedString> GameDescription;
-
 public:
-  CopiedString mGameFile; ///< the .game file that describes this game
-  GameDescription m_gameDescription;
+  xmlDocPtr mpDoc; ///< the game description xml tree
+  Str mGameToolsPath; ///< the explicit path to the game-dependent modules
+  Str mGameName; ///< name of the game used in dialogs
+  Str mGameFile; ///< the .game file that describes this game
+  Str mBaseGame; ///< basegame directory
+  Str mEnginePath; ///< path to the engine
+  Str mEngine; ///< engine name
+#if defined (__linux__) || defined (__APPLE__)
+  Str mUserPathPrefix; ///< prefix for ~/.q3a ~/.wolf init, only on *nix
+#endif
+  Str mShaderPath; ///< the path in which to look for shaders
+  Str mShaderlist; ///< shaderlist file
+  float mTextureDefaultScale; ///< default scale (0.5 in q3, 1.0 in q1/q2, 0.25 in JK2 ..)
+  bool mEClassSingleLoad; ///< only load a single eclass definition file
+  bool mNoPatch; ///< this game doesn't support patch technology
+  Str mCaulkShader; ///< the shader to use for caulking
+  bool quake2; ///< set this to true to get quake2
 
-  CopiedString mGameToolsPath; ///< the explicit path to the game-dependent modules
-  CopiedString mGameType; ///< the type of the engine
-
-  const char* getKeyValue(const char* key) const
-  {
-    GameDescription::const_iterator i = m_gameDescription.find(key);
-    if(i != m_gameDescription.end())
-    {
-      return (*i).second.c_str();
-    }
-    return "";
-  }
-  const char* getRequiredKeyValue(const char* key) const
-  {
-    GameDescription::const_iterator i = m_gameDescription.find(key);
-    if(i != m_gameDescription.end())
-    {
-      return (*i).second.c_str();
-    }
-    ERROR_MESSAGE("game attribute " << makeQuoted(key) << " not found in " << makeQuoted(mGameFile.c_str()));
-    return "";
-  }
-
-  CGameDescription(xmlDocPtr pDoc, const CopiedString &GameFile);
+  CGameDescription() { mpDoc = NULL; }
+  /*!
+  \todo parse basic info from the node
+  user-friendly name of the game
+  essential parameters (such as the start dir)
+  */
+  CGameDescription(xmlDocPtr pDoc, const Str &GameFile);
+  virtual ~CGameDescription() { xmlFreeDoc(mpDoc); }
 
   void Dump();
 };
 
-extern CGameDescription *g_pGameDescription;
+/*!
+select games, copy editing assets and write out configuration files
+ */
 
-typedef struct _GtkWidget GtkWidget;
-class PrefsDlg;
+#define Q3_PACK "Q3Pack"
+#define URT_PACK "UrTPack"
+#define UFOAI_PACK "UFOAIPack"
+#define Q2W_PACK "Q2WPack"
+#define WARSOW_PACK "WarsowPack"
+#define NEXUIZ_PACK "NexuizPack"
+#define Q2_PACK "Q2Pack"
 
-class PreferencesPage;
+class CGameInstall : public Dialog {
+public:
+	CGameInstall();
+	void ScanGames();
+	void Run();
+	void BuildDialog();
 
-class StringOutputStream;
+	static void OnBtnBrowseEngine( GtkWidget *widget, gpointer data );
+	static void OnGameSelectChanged( GtkWidget *widget, gpointer data );
+
+	enum gameType_e {
+		GAME_NONE = 0,
+		GAME_Q3 = 1,
+		GAME_URT,
+		GAME_UFOAI,
+		GAME_Q2W,
+		GAME_WARSOW,
+		GAME_NEXUIZ,
+		GAME_Q2,
+		GAME_COUNT
+	};
+
+protected:
+	Str		m_strName;
+	Str		m_strMod;
+	Str		m_strEngine;
+	int		m_nComboSelect;
+
+	// maps from m_nComboSelect to the games
+	int 	m_availGames[GAME_COUNT];
+};
 
 /*!
 standalone dialog for games selection, and more generally global settings
 */
 class CGameDialog : public Dialog
 {
+  GtkWidget *mFrame; ///< this is built on-demand first time it's used
+  GtkWidget *mTopBox; ///< top level box used to store the dialog frame, must unhook after modal use
+
+  GtkComboBox	*mGameCombo;	// combo box holds the selection of available game
+
+  /*!
+  global prefs storage
+  */
+  CXMLPropertyBag mGlobalPrefs;
+
+#ifdef _WIN32
+  /*!
+  run from a network share
+  this one is not being saved out in prefs, since we need to know before we load prefs
+  we use a dummy file NETRUN_FILENAME as flag
+  all done with static stuff
+  */
+  static bool m_bNetRun;
+#endif
+
+  bool m_bDoGameInstall;
+
+  CGameInstall mGameInstall;
+
 protected:
   
-  mutable int m_nComboSelect; ///< intermediate int value for combo in dialog box
+  int m_nComboSelect; ///< intermediate int value for combo in dialog box
 
 public:
 
@@ -255,32 +284,41 @@ public:
   what game has been selected
   this is the name of the .game file
   */
-  CopiedString m_sGameFile;
+  Str m_sGameFile;
   /*!
-  prompt which game to load on startup
+  auto-load the game on startup
+  this is linked to auto-load checkbox
   */
-  bool m_bGamePrompt;
+  bool m_bAutoLoadGame;
   /*!
   log console to radiant.log
   m_bForceLogConsole is an obscure forced latching situation
   */
+  bool m_bLogConsole;
   bool m_bForceLogConsole;
   /*@}*/
 
   /*!
+  points somewhere in mGames, set once at startup
+  */
+  CGameDescription *m_pCurrentGameDescription;
+
+  /*!
   the list of game descriptions we scanned from the game/ dir
   */
-  std::list<CGameDescription*> mGames;
+  list<CGameDescription *> mGames;
 
-  CGameDialog() :
-    m_sGameFile(""),
-    m_bGamePrompt(true),
-    m_bForceLogConsole(false)
-  {
+  CGameDialog() {
+	  mFrame = NULL;
+	  m_pCurrentGameDescription = NULL;
+	  m_bLogConsole = false;
+	  m_bForceLogConsole = false;
+	  m_bDoGameInstall = true;	// go through DoModal at least once
+	  mGameCombo = NULL;
   }
   virtual ~CGameDialog(); 
 
-  void AddPacksURL(StringOutputStream &s);  
+  void AddPacksURL( Str &s );
     
   /*!
   intialize the game dialog, called at CPrefsDlg::Init
@@ -299,13 +337,16 @@ public:
   void DoGameDialog();
 
   /*!
+	call out to the game installation dialog
+  */
+  void DoGameInstall();
+
+  /*!
   Dialog API
   this is only called when the dialog is built at startup for main engine select
   */
-  GtkWindow* BuildDialog();
-
-  void GameFileImport(int value);
-  void GameFileExport(const IntImportCallback& importCallback) const;
+  void BuildDialog();
+  void UpdateData( bool retrieve );
 
   /*!
   construction of the dialog frame
@@ -314,7 +355,7 @@ public:
   for prefs, we hook the frame in the main notebook
   build the frame on-demand (only once)
   */
-  void CreateGlobalFrame(PreferencesPage& page);
+  GtkWidget *GetGlobalFrame();
 
   /*!
   global preferences subsystem
@@ -328,6 +369,19 @@ public:
   void SavePrefs(); ///< save pref variables to file
   /*@}*/
 
+  /*!
+  read or set netrun (check file)
+  \param retrieve 
+    if false, will check if netrun file is present and will set m_bNetRun
+    if true, will create/erase the netrun file depending on m_bNetRun
+    NOTE: this is not backwards, 'retrieve' means 'retrieve from settings dialog' - in terms of UI
+  */
+  static void UpdateNetrun(bool retrieve);
+  /*!
+  get current netrun setting
+  */
+  static bool GetNetrun();
+
 private:
   /*!
   scan for .game files, load them
@@ -335,7 +389,7 @@ private:
   void ScanForGames();
 
   /*!
-  inits g_Preferences.m_global_rc_path
+  inits g_PrefsDlg.m_global_rc_path
   */
   void InitGlobalPrefPath();
 
@@ -343,27 +397,92 @@ private:
   uses m_nComboItem to find the right mGames
   */
   CGameDescription *GameDescriptionForComboItem();
+
+  /*!
+	callback for the game install button
+  */
+  static void SInstallCallback( GtkWidget *widget, gpointer data );
+
+  void UpdateGameCombo();
 };
 
-/*!
-this holds global level preferences
-*/
-extern CGameDialog g_GamesDialog;
+typedef struct {
+  int nEntitySplit1;
+  int nEntitySplit2;
+  
+  window_position_t position;
 
+  window_position_t posEntityWnd;
+  window_position_t posMapInfoWnd;
+  window_position_t posCamWnd;
+  window_position_t posZWnd;
+  window_position_t posXYWnd;
+  window_position_t posXZWnd;
+  window_position_t posYZWnd;
+  window_position_t posPatchWnd;
+  window_position_t posSurfaceWnd;
+  window_position_t posEntityInfoWnd;
 
-class texdef_t;
+  int nXYHeight;
+  int nZWidth;
+  int nXYWidth;
+  int nCamWidth;
+  int nCamHeight;
+  int nZFloatWidth;
+  int nState;
+} windowPosInfo_t;
 
 class PrefsDlg : public Dialog
 {
-public:  
-protected:
-  std::list<CGameDescription *> mGames;
   
 public:
-  
-  GtkWidget *m_notebook;
+  /*!
+  local prefs file
+  */
+  CXMLPropertyBag mLocalPrefs;
 
-  virtual ~PrefsDlg()
+  // will enable/disable stuff according to the situation
+  void DoSensitivity();
+  void PreModal() { DoSensitivity(); }
+  
+  // enable/disable custom editor entry
+  void DoEditorSensitivity();
+  
+  /*!
+  this holds global level preferences
+  */
+  CGameDialog mGamesDialog;
+protected:
+  // warning about old project files
+  bool m_bWarn;
+  list<CGameDescription *> mGames;
+  
+public:
+  // last light intensity used in the CLightPrompt dialog, stored in registry
+  int m_iLastLightIntensity;
+  // these mirror what goes in the combo box
+  // see PrefDlg::m_nShader, tells wether to load NONE / COMMON or ALL shaders at parsing stage
+  enum {SHADER_NONE = 0, SHADER_COMMON, SHADER_ALL};
+
+  // Gef: updated preferences dialog
+  /*! Preference notebook page numbers */
+  enum {PTAB_FRONT = 0, PTAB_GAME_SETTINGS, PTAB_2D, PTAB_CAMERA, PTAB_TEXTURE, PTAB_LAYOUT, PTAB_MOUSE,
+        PTAB_EDITING, PTAB_STARTUP, PTAB_PATHS, PTAB_MISC, PTAB_BSPMONITOR} pref_tabs;
+  
+  GtkWidget *notebook;
+       
+  void UpdateTextureCompression();
+
+#ifdef ATIHACK_812
+  void UpdateATIHack();
+#endif
+        
+  void LoadPrefs();
+  void SavePrefs();
+  void LoadTexdefPref(texdef_t* pTexdef, char* pName);
+
+  PrefsDlg ();
+  virtual ~PrefsDlg ()
   {
     g_string_free (m_rc_path, true );
     g_string_free (m_inipath, true );
@@ -371,16 +490,16 @@ public:
 
   /*!
   path for global settings
-  win32: AppPath
-  linux: ~/.radiant/[version]/
+  win32: g_strAppPath
+  linux: ~/.radiant/<version>/
   */
   GString *m_global_rc_path;
 
   /*!
   path to per-game settings
   used for various game dependant storage
-  win32: GameToolsPath
-  linux: ~/.radiant/[version]/[gamename]/
+  win32: g_strGameToolsPath
+  linux: ~/.radiant/<version>/<gamename>/
   */
   GString *m_rc_path;
 
@@ -394,41 +513,185 @@ public:
   // initialize the above paths
   void Init();
 
+#if 0
+  // DEPRECATED: use engine path from the current game description instead
+	// path to the top-level installation
+	Str 	m_strEnginePath;
+  // name of executable
+  // quake2 quake3 etc
+	Str 	m_strEngine;
+  // we use this Str to store the full path to the engine: m_strEnginePath + m_strEngine
+  // it's not stored in the registry or anything, just ued for display in prefs
+  Str   m_strPrefsDlgEngine;
+#endif
+
+  // Dialog Data
+  int   m_nMouse;
+  MainFrame::EViewStyle m_nView;
+  bool  m_bTextureLock;
+  bool  m_bLoadLast;
+	// path to the project loaded at startup
+	// if g_PrefsDlg can't find the information in the ini file
+	// it will try to guess and eventually ask the user
+  Str   m_strLastProject;  
+  /*!
+  version of last loaded project file
+  says -1 if there's no version loaded
+  if it's a manually constructed project file, will be 0
+  otherwise the actual 'version' epair
+  */
+  int   m_nLastProjectVer;
+  Str   m_strLastMap;
+  bool  m_bInternalBSP;
+  bool  m_bRightClick;
+  bool  m_bSetGame;
+  bool  m_bAutoSave;
+  bool  m_bLoadLastMap;
+  bool  m_bTextureWindow;
+  bool  m_bSnapShots;
+  float m_fTinySize;
+  bool  m_bCleanTiny;
+  bool  m_bCamXYUpdate;
+  int   m_nCamDragMultiSelect;
+  bool  m_bCamDragMultiSelect;
+  bool  m_bCamFreeLook;
+  bool  m_bCamFreeLookStrafe;
+  bool	m_bCamInverseMouse;
+  bool	m_bCamDiscrete;
+  bool  m_bNewLightDraw;
+  Str   m_strPrefabPath;
+  int   m_nWhatGame;
+  bool  m_bALTEdge;
+  bool  m_bFaceColors;
+  bool  m_bXZVis;
+  bool  m_bYZVis;
+  bool  m_bZVis;
+  bool  m_bSizePaint;
+  bool  m_bDLLEntities;
+  bool  m_bRotateLock;
+  bool  m_bDetachableMenus;
+  bool  m_bPatchToolbar;
+  bool  m_bWideToolbar;
+  bool  m_bPluginToolbar;
+  bool  m_bNoClamp;
+	//++timo this is most likely broken, I don't know what it's supposed to do
+  Str   m_strUserPath;
+  int   m_nRotation;
+  bool  m_bChaseMouse;
+  bool  m_bTextureScrollbar;
+  bool  m_bDisplayLists;
+  bool	m_bAntialiasedPointsAndLines; // Fishman - Add antialiazed points and lines support. 09/03/00
+  bool  m_bShowShaders;
+  int   m_nShader;
+  bool  m_bNoStipple;
+  int   m_nUndoLevels;
+  bool  m_bVertexSplit;
+
+  int   m_nMouseButtons;
+  int   m_nAngleSpeed;
+  int   m_nMoveSpeed;
+  int   m_nAutoSave;
+  bool  m_bCubicClipping;
+  int   m_nCubicScale;
+  bool  m_bSelectCurves;
+  bool  m_bSelectModels;
+  int   m_nEntityShowState;
+  int   m_nTextureScale;
+  bool  m_bNormalizeColors;
+  bool  m_bSwitchClip;
+  bool  m_bSelectWholeEntities;
+  int   m_nTextureQuality;
+  bool  m_bGLLighting;
+  bool  m_bTexturesShaderlistOnly;
+  int   m_nSubdivisions;
+  bool  m_bFloatingZ;
+  bool  m_bLatchedFloatingZ;
+  // Gef: Kyro GL_POINT workaround
+  bool	m_bGlPtWorkaround;
+
+  // how many menus in the texture thing before we split?
+  int   m_nTextureMenuSplit;
+
+  // watch the BSP process through network connections
+  // true: trigger the BSP steps one by one and monitor them through the network
+  // false: create a BAT / .sh file and execute it. don't bother monitoring it.
+  bool  m_bWatchBSP;
+  // do we stop the compilation process if we come accross a leak?
+  bool  m_bLeakStop;
+  // timeout when beginning a step (in seconds)
+  // if we don't get a connection quick enough we assume something failed and go back to idling
+  int   m_iTimeout;
+  bool  m_bRunQuake;
+  // store prefs setting for automatic sleep mode activation
+  bool  m_bDoSleep;
+  
+  bool m_bClipCaulk;
+
+  // make the texture increments match the grid changes
+  bool m_bSnapTToGrid;
+
+  // try to fix the target/targetname conflicts when importing a map (default true)
+  bool m_bDoTargetFix;
+
+  // the increment step we use against the wheel mouse
+  int m_nWheelInc;
+
+#ifdef _WIN32
+  // use the file associations to open files instead of builtin Gtk editor
+  bool m_bUseWin32Editor;
+#else
+  // custom shader editor
+  bool m_bUseCustomEditor;
+  Str  m_strEditorCommand;  // this is the command executed
+#endif
+
+#ifdef _WIN32
+  bool m_bNativeGUI;
+  bool m_bStartOnPrimMon;
+#endif
+
+  bool m_bPatchBBoxSelect;
+
+  // RR2DO2: latched data, for settings that require a restart. We don't want to set
+  // these directly in case users set them under preferences and then continue working
+  // with the editor.
+  MainFrame::EViewStyle m_nLatchedView;
+  int m_nMRUCount;
+  Str m_strMRUFiles[4];
+
+  windowPosInfo_t mWindowInfo;
+
+  bool  m_bLatchedDetachableMenus;
+  bool  m_bLatchedPatchToolbar;
+  bool  m_bLatchedWideToolbar;
+  bool  m_bLatchedPluginToolbar;
+  int   m_nLatchedShader;
+  int   m_nLatchedTextureQuality;
+
+  // RIANT
+  // texture compression format
+  int m_nTextureCompressionFormat;
+
+  int m_nLightRadiuses;
+  
+  bool m_bQ3Map2Texturing;
+
+#ifdef ATIHACK_812
+	bool m_bGlATIHack;
+#endif
+
+  void UpdateData (bool retrieve);
+
   /*! Utility function for swapping notebook pages for tree list selections */
-  void showPrefPage(GtkWidget* prefpage);
+  void showPrefPage(int prefpage);
 
 protected:
+  /*! Scan for game description files and build a list */
+  void ScanForGames();
 
   /*! Dialog API */
-  GtkWindow* BuildDialog();
-  void PostModal (EMessageBoxReturn code);
+  void BuildDialog ();
+  void PostModal (int code);
 };
 
-extern PrefsDlg g_Preferences;
-
-struct preferences_globals_t
-{
-    // disabled all INI / registry read write .. used when shutting down after registry cleanup
-  bool disable_ini;
-  preferences_globals_t() : disable_ini(false)
-  {
-  }
-};
-extern preferences_globals_t g_preferences_globals;
-
-typedef struct _GtkWindow GtkWindow;
-void PreferencesDialog_constructWindow(GtkWindow* main_window);
-void PreferencesDialog_destroyWindow();
-
-void PreferencesDialog_showDialog();
-
-void GlobalPreferences_Init();
-void Preferences_Init();
-
-void Preferences_Load();
-void Preferences_Save();
-
-void Preferences_Reset();
-
-
-#endif
+#endif // _PREFERENCES_H_

@@ -30,7 +30,7 @@ OUTPUT_DIRECTORY       = ../GtkRadiant-doxygen
 # eg: To document just include, if the current directory is ../GtkRadiant/ 
 # then...
 #---------------------------------------------------------------------------
-INPUT                  = radiant/
+INPUT                  = GtkRadiant/include/
 
 #---------------------------------------------------------------------------
 # Misc settings

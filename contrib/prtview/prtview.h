@@ -17,19 +17,13 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#if !defined(INCLUDED_PRTVIEW_H)
-#define INCLUDED_PRTVIEW_H
+// PrtView.h : main header file for the PRTVIEW DLL
+//
 
-#define MSG_PREFIX "Portal Viewer plugin: "
+#if !defined(AFX_PRTVIEW_H__234356A6_1D66_11D4_BFEB_204C4F4F5020__INCLUDED_)
+#define AFX_PRTVIEW_H__234356A6_1D66_11D4_BFEB_204C4F4F5020__INCLUDED_
 
 void InitInstance ();
 void SaveConfig ();
 
-int INIGetInt(char *key, int def);
-void INISetInt(char *key, int val, char *comment = 0);
-
-#define IDOK                1
-#define IDCANCEL            2
-
-
-#endif
+#endif // !defined(AFX_PRTVIEW_H__234356A6_1D66_11D4_BFEB_204C4F4F5020__INCLUDED_)

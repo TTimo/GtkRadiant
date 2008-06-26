@@ -1,6 +1,3 @@
-
-#include "mathlib.h"
-
 #define	LUMP_ENTITIES		0
 #define	LUMP_SHADERS		1
 #define	LUMP_PLANES			2
@@ -133,5 +130,5 @@ extern	dbrush_t		*dbrushes;
 extern	dbrushside_t	*dbrushsides;
 extern	int				*dleafbrushes;
 
-bool LoadBSPFile( const char *filename );
+qboolean LoadBSPFile( const char *filename );
 void FreeBSPData();

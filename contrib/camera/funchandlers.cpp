@@ -1,5 +1,5 @@
 /*
-Copyright (C) 1999-2006 Id Software, Inc. and contributors.
+Copyright (C) 1999-2007 id Software, Inc. and contributors.
 For a list of contributors, see the accompanying CONTRIBUTORS file.
 
 This file is part of GtkRadiant.
@@ -30,12 +30,10 @@ extern GtkWidget *g_pEditModeAddRadioButton;
 
 char* Q_realpath(const char *path, char *resolved_path, size_t size)
 {
-#if defined(POSIX)
+#if defined  (__linux__) || defined (__APPLE__)
 	return realpath(path, resolved_path);
-#elif defined(WIN32)
-	return _fullpath(resolved_path, path, size);
 #else
-#error "unsupported platform"
+	return _fullpath(resolved_path, path, size);	
 #endif
 }
 
@@ -67,7 +65,7 @@ static void DoNewCamera( idCameraPosition::positionType type )
 		if( !g_bEditOn )
 			DoStartEdit( GetCurrentCam() );
 	} else {
-      g_FuncTable.m_pfnMessageBox( (GtkWidget *)g_pRadiantWnd, "No free cameras available.", "Create Camera Error", eMB_OK );
+      g_FuncTable.m_pfnMessageBox( (GtkWidget *)g_pRadiantWnd, "No free cameras available.", "Create Camera Error", MB_OK, NULL );
 	}
 }
 
@@ -104,7 +102,7 @@ void DoLoadCamera()
   char basepath[PATH_MAX];
 
 	if( firstCam && firstCam->HasBeenSaved() )
-    ExtractFilePath( firstCam->GetFileName(), basepath );
+    CAMERA_ExtractFilePath( firstCam->GetFileName(), basepath );
   else
     strcpy( basepath, g_FuncTable.m_pfnGetGamePath() );
 
@@ -125,7 +123,7 @@ void DoLoadCamera()
           char error[PATH_MAX+64];
           FreeCam( cam );
           sprintf( error, "Camera file \'%s\' is already loaded", fullpathtofile );
-          g_FuncTable.m_pfnMessageBox( (GtkWidget *)g_pRadiantWnd, error, "Load error", eMB_OK );
+          g_FuncTable.m_pfnMessageBox( (GtkWidget *)g_pRadiantWnd, error, "Load error", MB_OK, NULL );
           //g_free( filename );
           return;
         }
@@ -142,12 +140,12 @@ void DoLoadCamera()
         char error[PATH_MAX+64];
         FreeCam( cam );
         sprintf( error, "An error occured during the loading of \'%s\'", fullpathtofile );
-        g_FuncTable.m_pfnMessageBox( (GtkWidget *)g_pRadiantWnd, error, "Load error", eMB_OK );
+        g_FuncTable.m_pfnMessageBox( (GtkWidget *)g_pRadiantWnd, error, "Load error", MB_OK, NULL );
       }
 
       //g_free( filename );
     } else {
-      g_FuncTable.m_pfnMessageBox( (GtkWidget *)g_pRadiantWnd, "No free camera slots available", "Load error", eMB_OK );
+		g_FuncTable.m_pfnMessageBox( (GtkWidget *)g_pRadiantWnd, "No free camera slots available", "Load error", MB_OK, NULL );
 	  }
 	}
 }
@@ -159,11 +157,11 @@ void DoSaveCamera() {
     return;
 
   if( GetCurrentCam()->GetFileName()[0] )
-    ExtractFilePath( GetCurrentCam()->GetFileName(), basepath );
+    CAMERA_ExtractFilePath( GetCurrentCam()->GetFileName(), basepath );
   else
     strcpy( basepath, g_FuncTable.m_pfnGetGamePath() );
 
-  const gchar *filename = g_FuncTable.m_pfnFileDialog( g_pRadiantWnd, FALSE, "Save Camera File", basepath, "camera");
+  const gchar *filename = g_FuncTable.m_pfnFileDialog( (void *)g_pRadiantWnd, FALSE, "Save Camera File", basepath, "camera");
 
   if( filename ) {
     char fullpathtofile[PATH_MAX + 8];
@@ -176,8 +174,9 @@ void DoSaveCamera() {
 			strcat( fullpathtofile, ".camera" );
 
 			if( FileExists( fullpathtofile ) ) {
-				if( g_FuncTable.m_pfnMessageBox( (GtkWidget *)g_pRadiantWnd, "File already exists.\nOverwrite?", "Save Camera File", eMB_YESNO ) == eIDNO ) 
+				if ( g_FuncTable.m_pfnMessageBox( (GtkWidget *)g_pRadiantWnd, "File already exists.\nOverwrite?", "Save Camera File", MB_YESNO, NULL ) == IDNO ) {
 					return;
+				}
 			}
 		}
 
@@ -191,7 +190,7 @@ void DoSaveCamera() {
       } else if( !strcmp( fullpathtofile, checkCam->GetFileName() ) ) {
         char error[PATH_MAX+64];
         sprintf( error, "Camera file \'%s\' is currently loaded by GtkRadiant.\nPlease select a different filename.", fullpathtofile );
-        g_FuncTable.m_pfnMessageBox( (GtkWidget *)g_pRadiantWnd, error, "Save error", eMB_OK );
+		g_FuncTable.m_pfnMessageBox( (GtkWidget *)g_pRadiantWnd, error, "Save error", MB_OK, NULL );
         return;
       }
       checkCam = checkCam->GetNext();
@@ -212,13 +211,15 @@ void DoUnloadCamera() {
 	if( !GetCurrentCam()->HasBeenSaved() ) {
 		char buf[PATH_MAX+64];
 		sprintf( buf, "Do you want to save the changes for camera '%s'?", GetCurrentCam()->GetCam()->getName() );
-		if( g_FuncTable.m_pfnMessageBox( (GtkWidget *)g_pRadiantWnd, buf, "Warning", eMB_YESNO ) == eIDYES ) 
+		if ( g_FuncTable.m_pfnMessageBox( (GtkWidget *)g_pRadiantWnd, buf, "Warning", MB_YESNO, NULL ) == IDYES ) {
 			DoSaveCamera();
+		}
 	} else if( GetCurrentCam()->HasBeenSaved() == 2 ) {
 		char buf[PATH_MAX+64];
 		sprintf( buf, "Do you want to save the changes made to camera file '%s'?", GetCurrentCam()->GetFileName() );
-		if( g_FuncTable.m_pfnMessageBox( (GtkWidget *)g_pRadiantWnd, buf, "Warning", eMB_YESNO ) == eIDYES ) 
+		if( g_FuncTable.m_pfnMessageBox( (GtkWidget *)g_pRadiantWnd, buf, "Warning", MB_YESNO, NULL ) == IDYES ) {
 			DoSaveCamera();
+		}
 	}
 
   if( g_pCurrentEditCam ) {

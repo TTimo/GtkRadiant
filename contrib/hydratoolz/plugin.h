@@ -1,5 +1,5 @@
 /*
-Copyright (C) 1999-2006 Id Software, Inc. and contributors.
+Copyright (C) 1999-2007 id Software, Inc. and contributors.
 For a list of contributors, see the accompanying CONTRIBUTORS file.
 
 This file is part of GtkRadiant.
@@ -22,27 +22,20 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #ifndef _PLUGIN_H_
 #define _PLUGIN_H_
 
-#include "mathlib.h"
-#include <string.h>
-#include "qertypes.h"
-#include <stdio.h>
-
-#define USE_QERTABLE_DEFINE
-#include "iscenegraph.h"
-#include "qerplugin.h"
-
-#include "ifilesystem.h"
-#define USE_ENTITYTABLE_DEFINE
-#include "ientity.h"
-
-#include <gtk/gtk.h>
+//#include <gdk/gdkkeysyms.h>
+//#include <gtk/gtk.h>
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "iplugin.h"
-
-#include <glib.h>
 #include "synapse.h"
+#include "iplugin.h"
+#define USE_QERTABLE_DEFINE
+#include "qerplugin.h"
+#include "ishaders.h"
+#define USE_VFSTABLE_DEFINE
+#include "ifilesystem.h"
+#define USE_ENTITYTABLE_DEFINE
+#include "ientity.h"
 
 class CSynapseClientHydraToolz : public CSynapseClient
 {

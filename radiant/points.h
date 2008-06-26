@@ -1,5 +1,5 @@
 /*
-Copyright (C) 1999-2006 Id Software, Inc. and contributors.
+Copyright (C) 1999-2007 id Software, Inc. and contributors.
 For a list of contributors, see the accompanying CONTRIBUTORS file.
 
 This file is part of GtkRadiant.
@@ -25,16 +25,36 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 // header for Pointfile stuff (adding a C++ class to wrap the pointfile thing in the SAX parser)
 //
 
-#if !defined(INCLUDED_POINTS_H)
-#define INCLUDED_POINTS_H
+#ifndef __POINTS__
+#define __POINTS__
 
-void Pointfile_Clear();
 void Pointfile_Delete (void);
+void WINAPI Pointfile_Check (void);
+void Pointfile_Next (void);
+void Pointfile_Prev (void);
+void Pointfile_Clear (void);
+void Pointfile_Draw( void );
+void Pointfile_Load( void );
 
-void Pointfile_Construct();
-void Pointfile_Destroy();
+class CPointfile : public ISAXHandler
+{
+public:
+	CPointfile() { }
+	void Init();
+	void PushPoint( vec3_t v );
+	void GenerateDisplayList();
+	// SAX interface
+	void saxStartElement( message_info_t *ctx, const xmlChar *name, const xmlChar **attrs );
+	void saxEndElement( message_info_t *ctx, const xmlChar *name );
+	void saxCharacters( message_info_t *ctx, const xmlChar *ch, int len );
+	char *getName();
 
-class ISAXHandler;
-extern ISAXHandler& g_pointfile;
+	// class is only used for g_pointfile and we should not attempt to free it
+	bool ShouldDelete() { return false; }
+};
+
+// instead of using Pointfile_Load you can do it by hand through g_pointfile
+// but the usual pointfile mechanism remains the same, use Pointfile_Draw etc.
+extern CPointfile g_pointfile;
 
 #endif

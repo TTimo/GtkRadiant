@@ -21,37 +21,8 @@ Free memory used by an lwClip.
 void lwFreeClip( lwClip *clip )
 {
    if ( clip ) {
-      lwListFree( clip->ifilter, (void *) lwFreePlugin );
-      lwListFree( clip->pfilter, (void *) lwFreePlugin );
-
-      switch ( clip->type ) {
-          case ID_STIL:
-            _pico_free( clip->source.still.name);
-            break;
-
-          case ID_ISEQ:
-            _pico_free( clip->source.seq.prefix );
-            _pico_free( clip->source.seq.suffix );
-            break;
-
-          case ID_ANIM:
-            _pico_free( clip->source.anim.name );
-            _pico_free( clip->source.anim.server );
-            _pico_free( clip->source.anim.data );
-            break;
-
-          case ID_XREF:
-            _pico_free( clip->source.xref.string );
-            break;
-
-          case ID_STCC:
-            _pico_free( clip->source.cycle.name );
-            break;
-
-          default:
-            break;
-      }
-
+      lwListFree( (void*) clip->ifilter, lwFreePlugin );
+      lwListFree( (void*) clip->pfilter, lwFreePlugin );
       _pico_free( clip );
    }
 }
@@ -213,11 +184,11 @@ lwClip *lwGetClip( picoMemStream_t *fp, int cksize )
             filt->data = getbytes( fp, sz - rlen );
 
             if ( id == ID_IFLT ) {
-               lwListAdd( (void *) &clip->ifilter, filt );
+               lwListAdd( &clip->ifilter, filt );
                clip->nifilters++;
             }
             else {
-               lwListAdd( (void *) &clip->pfilter, filt );
+               lwListAdd( &clip->pfilter, filt );
                clip->npfilters++;
             }
             break;

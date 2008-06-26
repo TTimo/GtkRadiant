@@ -20,18 +20,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 // LoadPortalFileDialog.cpp : implementation file
 //
 
-#include "LoadPortalFileDialog.h"
+#include "stdafx.h"
 
-#include <gtk/gtk.h>
-#include <gtkutil/pointer.h>
-#include "stream/stringstream.h"
-#include "convert.h"
-#include "gtkutil/pointer.h"
-
-#include "qerplugin.h"
-
-#include "prtview.h"
-#include "portals.h"
+#ifdef _DEBUG
+#define new DEBUG_NEW
+#undef THIS_FILE
+//static char THIS_FILE[] = __FILE__;
+#endif
 
 static void dialog_button_callback (GtkWidget *widget, gpointer data)
 {
@@ -43,7 +38,7 @@ static void dialog_button_callback (GtkWidget *widget, gpointer data)
   ret = (int*)g_object_get_data (G_OBJECT (parent), "ret");
 
   *loop = 0;
-  *ret = gpointer_to_int(data);
+  *ret = (int)data;
 }
 
 static gint dialog_delete_callback (GtkWidget *widget, GdkEvent* event, gpointer data)
@@ -68,7 +63,7 @@ static void file_sel_callback (GtkWidget *widget, gpointer data)
   filename = (char**)g_object_get_data (G_OBJECT (parent), "filename");
  
   *loop = 0;
-  if (gpointer_to_int(data) == IDOK)
+  if ((int)data == IDOK)
     *filename = g_strdup (gtk_file_selection_get_filename (GTK_FILE_SELECTION (parent)));
 }
 
@@ -168,16 +163,16 @@ int DoLoadPortalFileDialog ()
 		      GTK_SIGNAL_FUNC (dialog_button_callback), GINT_TO_POINTER (IDOK));
   gtk_widget_set_usize (button, 60, -2);
 
-  strcpy (portals.fn, GlobalRadiant().getMapName());
-  char* fn = strrchr (portals.fn, '.');
+  char *fn = g_FuncTable.m_pfnGetMapName();
+  strcpy (portals.fn, fn);
+  fn = strrchr (portals.fn, '.');
   if (fn != NULL)
   {
-    strcpy(fn, ".prt");
+    *fn = '\0';
+    strcat (portals.fn, ".prt");
   }
 
-  StringOutputStream value(256);
-  value << ConvertLocaleToUTF8(portals.fn);
-  gtk_entry_set_text (GTK_ENTRY (entry), value.c_str());
+  gtk_entry_set_text (GTK_ENTRY (entry), portals.fn);
   gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (check2d), portals.show_2d);
   gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (check3d), portals.show_3d);
 

@@ -1,5 +1,5 @@
 /*
-Copyright (C) 1999-2006 Id Software, Inc. and contributors.
+Copyright (C) 1999-2007 id Software, Inc. and contributors.
 For a list of contributors, see the accompanying CONTRIBUTORS file.
 
 This file is part of GtkRadiant.
@@ -25,35 +25,17 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 // classes used for describing geometry information from q3map feedback
 //
 
+#include "stdafx.h"
+
 #include "feedback.h"
-
-#include "debugging/debugging.h"
-
-#include "igl.h"
-#include "iselection.h"
-
-#include <gtk/gtktreeview.h>
-#include <gtk/gtktreeselection.h>
-#include <gtk/gtkliststore.h>
-#include <gtk/gtkcellrenderertext.h>
-#include <gtk/gtkwindow.h>
-#include <gtk/gtkscrolledwindow.h>
-
-#include "map.h"
-#include "dialog.h"
-#include "mainframe.h"
-
+#include "glib.h"
+#include <assert.h>
 
 CDbgDlg g_DbgDlg;
 
-void Feedback_draw2D(VIEWTYPE viewType)
+void CSelectMsg::saxStartElement (message_info_t *ctx, const xmlChar *name, const xmlChar **attrs)
 {
-  g_DbgDlg.draw2D(viewType);
-}
-
-void CSelectMsg::saxStartElement(message_info_t *ctx, const xmlChar *name, const xmlChar **attrs)
-{
-  if(string_equal(reinterpret_cast<const char*>(name), "select"))
+  if (strcmp ((char *)name, "select")==0)
   {
     // read the message
     ESelectState = SELECT_MESSAGE;
@@ -61,46 +43,45 @@ void CSelectMsg::saxStartElement(message_info_t *ctx, const xmlChar *name, const
   else
   {
     // read the brush
-    ASSERT_MESSAGE(string_equal(reinterpret_cast<const char*>(name), "brush"), "FEEDBACK PARSE ERROR");
-    ASSERT_MESSAGE(ESelectState == SELECT_MESSAGE, "FEEDBACK PARSE ERROR");
+    assert (strcmp ((char *)name, "brush")==0);
+    assert (ESelectState == SELECT_MESSAGE);
     ESelectState = SELECT_BRUSH;
-    globalOutputStream() << message.c_str() << '\n';
   }
 }
 
-void CSelectMsg::saxEndElement(message_info_t *ctx, const xmlChar *name)
+void CSelectMsg::saxEndElement (message_info_t *ctx, const xmlChar *name)
 {
-  if(string_equal(reinterpret_cast<const char*>(name), "select"))
+  if (strcmp ((char *)name, "select")==0)
   {
+    ctx->bGeometry = false;
   }
 }
 
-void CSelectMsg::saxCharacters(message_info_t *ctx, const xmlChar *ch, int len)
+void CSelectMsg::saxCharacters (message_info_t *ctx, const xmlChar *ch, int len)
 {
-  if(ESelectState == SELECT_MESSAGE)
+  if (ESelectState == SELECT_MESSAGE)
   {
-    message.write(reinterpret_cast<const char*>(ch), len);
+    message = g_string_sized_new (len+1);
+    memcpy (message->str, ch, len);
+    message->str[len]='\0';
+    Sys_Printf ("%s\n", message->str);
   }
   else
   {
-    brush.write(reinterpret_cast<const char*>(ch), len);
+    assert (ESelectState == SELECT_BRUSH);
+    sscanf ((char *)ch, "%i %i", &entitynum, &brushnum);
   }
 }
 
-IGL2DWindow* CSelectMsg::Highlight()
+void CSelectMsg::Highlight ()
 {
-  GlobalSelectionSystem().setSelectedAll(false);
-  int entitynum, brushnum;
-  if(sscanf(reinterpret_cast<const char*>(brush.c_str()), "%i %i", &entitynum, &brushnum) == 2)
-  {
-    SelectBrush (entitynum, brushnum);
-  }
-  return 0;
+  Select_Deselect ();
+  SelectBrush (entitynum, brushnum);
 }
 
-void CPointMsg::saxStartElement(message_info_t *ctx, const xmlChar *name, const xmlChar **attrs)
+void CPointMsg::saxStartElement (message_info_t *ctx, const xmlChar *name, const xmlChar **attrs)
 {
-  if(string_equal(reinterpret_cast<const char*>(name), "pointmsg"))
+  if (strcmp ((char *)name, "pointmsg")==0)
   {
     // read the message
     EPointState = POINT_MESSAGE;
@@ -108,67 +89,75 @@ void CPointMsg::saxStartElement(message_info_t *ctx, const xmlChar *name, const 
   else
   {
     // read the brush
-    ASSERT_MESSAGE(string_equal(reinterpret_cast<const char*>(name), "point"), "FEEDBACK PARSE ERROR");
-    ASSERT_MESSAGE(EPointState == POINT_MESSAGE, "FEEDBACK PARSE ERROR");
+    assert (strcmp ((char *)name, "point")==0);
+    assert (EPointState == POINT_MESSAGE);
     EPointState = POINT_POINT;
-    globalOutputStream() << message.c_str() << '\n';
   }
 }
 
 void CPointMsg::saxEndElement (message_info_t *ctx, const xmlChar *name)
 {
-  if(string_equal(reinterpret_cast<const char*>(name), "pointmsg"))
+  if (strcmp ((char *)name, "pointmsg")==0)
   {
-  }
-  else if(string_equal(reinterpret_cast<const char*>(name), "point"))
-  {
-    sscanf(point.c_str(), "%g %g %g", &(pt[0]), &(pt[1]), &(pt[2]));
-    point.clear();
+    ctx->bGeometry = false;
   }
 }
 
 void CPointMsg::saxCharacters (message_info_t *ctx, const xmlChar *ch, int len)
 {
-  if(EPointState == POINT_MESSAGE)
+  if (EPointState == POINT_MESSAGE)
   {
-    message.write(reinterpret_cast<const char*>(ch), len);
+    message = g_string_sized_new (len+1);
+    memcpy (message->str, ch, len);
+    message->str[len]='\0';
+    Sys_Printf ("%s\n", message->str);
   }
   else
   {
-    ASSERT_MESSAGE(EPointState == POINT_POINT, "FEEDBACK PARSE ERROR");
-    point.write(reinterpret_cast<const char*>(ch), len);
+    assert (EPointState == POINT_POINT);
+    sscanf ((char *)ch, "%g %g %g", &(pt[0]), &(pt[1]), &(pt[2]));
   }
 }
 
-IGL2DWindow* CPointMsg::Highlight()
+void CPointMsg::Highlight ()
 {
-  return this;
+  // use the entity API to push a point
+  // the API requires a ref count, we do it manually for the current instance
+  if (refCount == 0)
+  {
+    refCount++;
+    QERApp_HookGL2DWindow (this);
+  }
 }
 
-void CPointMsg::DropHighlight()
+void CPointMsg::DropHighlight ()
 {
+  assert (refCount > 0);
+  QERApp_UnHookGL2DWindow (this);
+  // do a refCount-- locally (see Highlight)
+  refCount--;
 }
 
 void CPointMsg::Draw2D( VIEWTYPE vt )
 {
   int nDim1 = (vt == YZ) ? 1 : 0;
   int nDim2 = (vt == XY) ? 1 : 2;
-  glPointSize(4);
-  glColor3f(1.0f,0.0f,0.0f);
-  glBegin (GL_POINTS);
-  glVertex2f (pt[nDim1], pt[nDim2]);
-  glEnd();
-  glBegin (GL_LINE_LOOP);
-  glVertex2f (pt[nDim1]-8, pt[nDim2]-8);
-  glVertex2f (pt[nDim1]+8, pt[nDim2]-8);
-  glVertex2f (pt[nDim1]+8, pt[nDim2]+8);
-  glVertex2f (pt[nDim1]-8, pt[nDim2]+8);
-  glEnd();
+  qglPointSize(4);
+  qglColor3f(1.0f,0.0f,0.0f);
+  qglBegin (GL_POINTS);
+  qglVertex2f (pt[nDim1], pt[nDim2]);
+  qglEnd();
+  qglBegin (GL_LINE_LOOP);
+  qglVertex2f (pt[nDim1]-8, pt[nDim2]-8);
+  qglVertex2f (pt[nDim1]+8, pt[nDim2]-8);
+  qglVertex2f (pt[nDim1]+8, pt[nDim2]+8);
+  qglVertex2f (pt[nDim1]-8, pt[nDim2]+8);
+  qglEnd();
 }
 
-void CWindingMsg::saxStartElement(message_info_t *ctx, const xmlChar *name, const xmlChar **attrs)
+void CWindingMsg::saxStartElement (message_info_t *ctx, const xmlChar *name, const xmlChar **attrs)
 {
-  if(string_equal(reinterpret_cast<const char*>(name), "windingmsg"))
+  if (strcmp ((char *)name, "windingmsg")==0)
   {
     // read the message
     EPointState = WINDING_MESSAGE;
@@ -176,28 +165,44 @@ void CWindingMsg::saxStartElement(message_info_t *ctx, const xmlChar *name, cons
   else
   {
     // read the brush
-    ASSERT_MESSAGE(string_equal(reinterpret_cast<const char*>(name), "winding"), "FEEDBACK PARSE ERROR");
-    ASSERT_MESSAGE(EPointState == WINDING_MESSAGE, "FEEDBACK PARSE ERROR");
+    assert (strcmp ((char *)name, "winding")==0);
+    assert (EPointState == WINDING_MESSAGE);
     EPointState = WINDING_WINDING;
-    globalOutputStream() << message.c_str() << '\n';
   }
 }
 
-void CWindingMsg::saxEndElement(message_info_t *ctx, const xmlChar *name)
+void CWindingMsg::saxEndElement (message_info_t *ctx, const xmlChar *name)
 {
-  if(string_equal(reinterpret_cast<const char*>(name), "windingmsg"))
+  if (strcmp ((char *)name, "windingmsg")==0)
   {
+    ctx->bGeometry = false;
   }
-  else if(string_equal(reinterpret_cast<const char*>(name), "winding"))
-  {
-    const char* c = winding.c_str();
-    sscanf(c, "%i ", &numpoints);
+}
 
-    int i = 0;
-    for(; i < numpoints; i++)
+void CWindingMsg::saxCharacters (message_info_t *ctx, const xmlChar *ch, int len)
+{
+  if (EPointState == WINDING_MESSAGE)
+  {
+    message = g_string_sized_new (len+1);
+    memcpy (message->str, ch, len);
+    message->str[len]='\0';
+    Sys_Printf ("%s\n", message->str);
+  }
+  else
+  {
+    char* c;
+    int i;
+
+    assert (EPointState == WINDING_WINDING);
+
+
+    c = (char*)ch;
+    sscanf (c, "%i ", &numpoints);
+
+    for(i = 0; i < numpoints; i++)
     {
-      c = strchr(c + 1, '(');
-      if(c) // even if we are given the number of points when the cycle begins .. don't trust it too much
+      c = strchr(++c, '(');
+      if (c) // even if we are given the number of points when the cycle begins .. don't trust it too much
         sscanf(c, "(%g %g %g)", &wt[i][0], &wt[i][1], &wt[i][2]);
       else
         break;
@@ -206,26 +211,23 @@ void CWindingMsg::saxEndElement(message_info_t *ctx, const xmlChar *name)
   }
 }
 
-void CWindingMsg::saxCharacters(message_info_t *ctx, const xmlChar *ch, int len)
+void CWindingMsg::Highlight ()
 {
-  if(EPointState == WINDING_MESSAGE)
+  // use the entity API to push a point
+  // the API requires a ref count, we do it manually for the current instance
+  if (refCount == 0)
   {
-    message.write(reinterpret_cast<const char*>(ch), len);
-  }
-  else
-  {
-    ASSERT_MESSAGE(EPointState == WINDING_WINDING, "FEEDBACK PARSE ERROR");
-    winding.write(reinterpret_cast<const char*>(ch), len);
+    refCount++;
+    QERApp_HookGL2DWindow (this);
   }
 }
 
-IGL2DWindow* CWindingMsg::Highlight()
+void CWindingMsg::DropHighlight ()
 {
-  return this;
-}
-
-void CWindingMsg::DropHighlight()
-{
+  assert (refCount > 0);
+  QERApp_UnHookGL2DWindow (this);
+  // do a refCount-- locally (see Highlight)
+  refCount--;
 }
 
 void CWindingMsg::Draw2D( VIEWTYPE vt )
@@ -234,24 +236,24 @@ void CWindingMsg::Draw2D( VIEWTYPE vt )
 
   int nDim1 = (vt == YZ) ? 1 : 0;
   int nDim2 = (vt == XY) ? 1 : 2;
-  glColor3f(1.0f,0.f,0.0f);
+  qglColor3f(1.0f,0.f,0.0f);
 
-  glPointSize(4);
-  glBegin (GL_POINTS);
+  qglPointSize(4);
+  qglBegin (GL_POINTS);
   for(i = 0; i < numpoints; i++)
-    glVertex2f (wt[i][nDim1], wt[i][nDim2]);
-  glEnd();
-  glPointSize(1);
+  	qglVertex2f (wt[i][nDim1], wt[i][nDim2]);
+  qglEnd();
+  qglPointSize(1);
 
-  glEnable (GL_BLEND);
-  glPolygonMode (GL_FRONT_AND_BACK, GL_FILL);
-  glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-  glColor4f(0.133f,0.4f,1.0f,0.5f);
-  glBegin (GL_POLYGON);
+  qglEnable (GL_BLEND);
+  qglPolygonMode (GL_FRONT_AND_BACK, GL_FILL);
+  qglBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  qglColor4f(0.133f,0.4f,1.0f,0.5f);
+  qglBegin (GL_POLYGON);
 	for(i = 0; i < numpoints; i++)
-	  glVertex2f (wt[i][nDim1], wt[i][nDim2]);
-  glEnd();
-  glDisable (GL_BLEND);
+		qglVertex2f (wt[i][nDim1], wt[i][nDim2]);
+  qglEnd();
+  qglDisable (GL_BLEND);
 }
 
 // triggered when the user selects an entry in the feedback box
@@ -271,73 +273,75 @@ static void feedback_selection_changed(GtkTreeSelection* selection, gpointer dat
 
 void CDbgDlg::DropHighlight()
 {
-  if(m_pHighlight != 0)
+  if (m_pHighlight)
   {
     m_pHighlight->DropHighlight();
-    m_pHighlight = 0;
-    m_pDraw2D = 0;
+    m_pHighlight = NULL;
   }
 }
 
 void CDbgDlg::SetHighlight(gint row)
 {
   ISAXHandler *h = GetElement(row);
-  if(h != NULL)
+  if (h != NULL)
   {
-    m_pDraw2D = h->Highlight();
+    h->Highlight();
     m_pHighlight = h;
   }
 }
 
-ISAXHandler *CDbgDlg::GetElement (std::size_t row)
-{
-  return static_cast<ISAXHandler *>(g_ptr_array_index(m_pFeedbackElements, gint(row)));
+ISAXHandler *CDbgDlg::GetElement( gint row ) {
+	return static_cast<ISAXHandler *>( g_ptr_array_index( m_pFeedbackElements, row ) );
 }
 
-void CDbgDlg::Init()
-{
-  DropHighlight();
-
-  // free all the ISAXHandler*, clean it
-  while (m_pFeedbackElements->len)
-  {
-    static_cast<ISAXHandler *>(g_ptr_array_index (m_pFeedbackElements, 0))->Release();
-    g_ptr_array_remove_index (m_pFeedbackElements, 0);
-  }
-
-  if(m_clist != NULL)
-    gtk_list_store_clear (m_clist);
+void CDbgDlg::ClearFeedbackArray() {
+	// free all the ISAXHandler*, clean it
+	while ( m_pFeedbackElements->len ) {
+		// some ISAXHandler are static and passed around but should never be deleted
+		ISAXHandler *handler = static_cast< ISAXHandler * >( g_ptr_array_index( m_pFeedbackElements, 0 ) );
+		if ( handler->ShouldDelete() ) {
+			delete handler;
+		}
+		g_ptr_array_remove_index( m_pFeedbackElements, 0 );
+	}
 }
 
-void CDbgDlg::Push (ISAXHandler *pHandler)
-{
-  // push in the list
-  g_ptr_array_add (m_pFeedbackElements, (void *)pHandler);
+void CDbgDlg::Init() {
+	DropHighlight();
 
-  if(GetWidget() == 0)
-  {
-    Create();
-  }
+	ClearFeedbackArray();
 
-  // put stuff in the list
-  gtk_list_store_clear (m_clist);
-  for(std::size_t i = 0; i < static_cast<std::size_t>(m_pFeedbackElements->len); ++i)
-  {
-    GtkTreeIter iter;
-    gtk_list_store_append(m_clist, &iter);
-    gtk_list_store_set(m_clist, &iter, 0, GetElement(i)->getName(), -1);
-  }
-
-  ShowDlg();
+	if ( m_clist != NULL ) {
+		gtk_list_store_clear( m_clist );
+	}
 }
 
-GtkWindow* CDbgDlg::BuildDialog()
+void CDbgDlg::Push( ISAXHandler *pHandler ) {
+	// push in the list
+	g_ptr_array_add( m_pFeedbackElements, (void *)pHandler );
+
+	if ( m_pWidget == NULL ) {
+		Create();
+	}
+	// put stuff in the list
+	gtk_list_store_clear( m_clist );
+	unsigned int i;
+	for ( i = 0; i < m_pFeedbackElements->len; i++ ) {
+		GtkTreeIter iter;
+		gtk_list_store_append( m_clist, &iter );
+		gtk_list_store_set( m_clist, &iter, 0, GetElement(i)->getName(), -1 );
+	}
+
+	ShowDlg();
+}
+
+void CDbgDlg::BuildDialog ()
 {
-  GtkWindow* window = create_floating_window("Q3Map debug window", MainFrame_getWindow());
+  gtk_window_set_title (GTK_WINDOW (m_pWidget), "Q3Map debug window");
 
   GtkWidget* scr = gtk_scrolled_window_new (NULL, NULL);
   gtk_widget_show (scr);
-  gtk_container_add (GTK_CONTAINER (window), GTK_WIDGET (scr));
+  gtk_container_add (GTK_CONTAINER (m_pWidget), GTK_WIDGET (scr));
   gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scr), GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
   gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(scr), GTK_SHADOW_IN);
 
@@ -367,6 +371,4 @@ GtkWindow* CDbgDlg::BuildDialog()
 
     m_clist = store;
   }
-
-  return window;
 }

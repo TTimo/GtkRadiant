@@ -1,6 +1,6 @@
 /*
-Copyright (C) 2001-2006, William Joseph.
-All Rights Reserved.
+Copyright (C) 1999-2007 id Software, Inc. and contributors.
+For a list of contributors, see the accompanying CONTRIBUTORS file.
 
 This file is part of GtkRadiant.
 
@@ -19,63 +19,64 @@ along with GtkRadiant; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#if !defined(INCLUDED_IMAP_H)
-#define INCLUDED_IMAP_H
+//----------------------------------------------------------------------------
+//
+// DESCRIPTION:
+// map format interface (.map and .xmap, Q3 and other games)
+//
 
-#include "generic/constant.h"
+#ifndef __IMAP_H__
+#define __IMAP_H__
 
-class Tokeniser;
-class TokenWriter;
+/*! IMap depends on IDataStream, including the header there for now */
+#include "idatastream.h"
 
-/// \brief A node whose state can be imported from a token stream.
-class MapImporter
+/*! header for CPtrArray */
+#include "missing.h"
+
+#define MAP_MAJOR "map"
+/*!
+define a GUID for this interface so everyone can acces and reference it
+{75076973-3414-49c9-be5b-2378ec5601af}
+*/
+static const GUID QERPlugMapTable_GUID =
+{ 0x75076973, 0x3414, 0x49c9, { 0xbe, 0x5b, 0x23, 0x78, 0xec, 0x56, 0x01, 0xaf } };
+
+/*!
+read from a stream into a list of entities
+\param in the input stream. For regular map file parsing it's possible to copy the content in a text buffer
+and use the old school parser
+\param ents the list of entities read from the stream. They are not linked to the world, and their brushes
+are not either.
+*/
+typedef void (* PFN_MAP_READ) (IDataStream *in, CPtrArray *ents); ///< read from a stream into a list of entities
+typedef void (* PFN_MAP_WRITE) (CPtrArray *ents, IDataStream *out); ///< save a list of entities into a stream
+
+struct _QERPlugMapTable
 {
-public:
-  STRING_CONSTANT(Name, "MapImporter");
-
-  virtual bool importTokens(Tokeniser& tokeniser) = 0;
+  int m_nSize;
+  PFN_MAP_READ m_pfnMap_Read;
+  PFN_MAP_WRITE m_pfnMap_Write;
 };
 
-/// \brief A node whose state can be exported to a token stream.
-class MapExporter
-{
-public:
-  STRING_CONSTANT(Name, "MapExporter");
-
-  virtual void exportTokens(TokenWriter& writer) const = 0;
-};
-
-#include "iscenegraph.h"
-
-class EntityCreator;
-
-class TextInputStream;
-class TextOutputStream;
-
-
-typedef void(*GraphTraversalFunc)(scene::Node& root, const scene::Traversable::Walker& walker);
-
-/// \brief A module that reads and writes a map in a specific format.
-class MapFormat
-{
-public:
-  INTEGER_CONSTANT(Version, 2);
-  STRING_CONSTANT(Name, "map");
-
-  /// \brief Read a map graph into \p root from \p outputStream, using \p entityTable to create entities.
-  virtual void readGraph(scene::Node& root, TextInputStream& inputStream, EntityCreator& entityTable) const = 0;
-  /// \brief Write the map graph obtained by applying \p traverse to \p root into \p outputStream.
-  virtual void writeGraph(scene::Node& root, GraphTraversalFunc traverse, TextOutputStream& outputStream) const = 0;
-};
-
-
-template<typename Type>
-class Modules;
-typedef Modules<MapFormat> MapModules;
-
-template<typename Type>
-class ModulesRef;
-typedef ModulesRef<MapFormat> MapModulesRef;
-
+/*!
+this set of macros will define the functions to map on a given table
+  it should be used in the headers (see modules source, plugin.h)
+we don't want those defines in the part where WE implement the Map_LoadFile
+  so we're using a define to disable .. should find a standard define name
+  (for instance QCOM_CLIENT / QCOM_SERVER ?)
+  or the name should be specific to any interface .. it's not a client/server thing here anyway
+*/
+#ifdef USE_MAPTABLE_DEFINE
+#ifndef __MAPTABLENAME
+/*! 
+TTimo NOTE: this is the default table name we map to
+  if you are using a different table name, just define __MAPTABLENAME before you include the imap.h header
+*/
+#define __MAPTABLENAME g_MapTable
+#endif
+#define Map_Read __MAPTABLENAME.m_pfnMap_Read
+#define Map_Write __MAPTABLENAME.m_pfnMap_Write
+#endif
 
 #endif

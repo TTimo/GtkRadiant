@@ -17,53 +17,32 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include "funchandlers.h"
+#include "StdAfx.h"
 
-#ifdef WIN32
+#ifdef _WIN32
 #pragma warning(disable : 4786)
 #endif
 
 #include "dialogs/dialogs-gtk.h"
 
-#include <list>
-#include "str.h"
-
-#include "DPoint.h"
-#include "DPlane.h"
-#include "DBrush.h"
-#include "DEPair.h"
-#include "DPatch.h"
 #include "DEntity.h"
 #include "DShape.h"
-#include "DBobView.h"
-#include "DVisDrawer.h"
-#include "DTrainDrawer.h"
+#include "DPatch.h"
 
 #include "misc.h"
-#include "ScriptParser.h"
-#include "DTreePlanter.h"
-
 #include "shapes.h"
 #include "lists.h"
+#include "funchandlers.h"
 #include "visfind.h"
 
-#include "iundo.h"
-
-#include <vector>
-#include <list>
-#include <map>
-#include <algorithm>
-
-#include "scenelib.h"
-
 // for autocaulk
-std::list<Str> exclusionList;		// whole brush exclusion
-std::list<Str> exclusionList_Face;	// single face exclusion
+list<Str> exclusionList;		// whole brush exclusion
+list<Str> exclusionList_Face;	// single face exclusion
 
-bool el1Loaded =		false;
-bool el2Loaded =		false;
-bool clrLst1Loaded =	false;
-bool clrLst2Loaded =	false;
+bool el1Loaded =		FALSE;
+bool el2Loaded =		FALSE;
+bool clrLst1Loaded =	FALSE;
+bool clrLst2Loaded =	FALSE;
 
 DBobView*		g_PathView =		NULL;
 DVisDrawer*		g_VisView =			NULL;
@@ -92,17 +71,16 @@ void LoadLists()
 
 void DoIntersect()
 {
-  UndoableCommand undo("bobToolz.intersect");
 	IntersectRS rs;
 
-	if(DoIntersectBox(&rs) == eIDCANCEL)
+	if(DoIntersectBox(&rs) == IDCANCEL)
 		return;
 
 	if(rs.nBrushOptions == BRUSH_OPT_SELECTED)
 	{
-		if( GlobalSelectionSystem().countSelected() < 2 )
+		if( g_FuncTable.m_pfnSelectedBrushCount() < 2 )
 		{
-			DoMessageBox("Invalid number of brushes selected, choose at least 2", "Error", eMB_OK);
+			DoMessageBox("Invalid number of brushes selected, choose at least 2", "Error", MB_OK);
 			return; 
 		}
 	}
@@ -118,7 +96,7 @@ void DoIntersect()
 		}
 	case BRUSH_OPT_WHOLE_MAP:
 		{
-			world.LoadFromEntity(GlobalRadiant().getMapWorldEntity(), false);
+			world.LoadFromEntity(0, FALSE);
 			break;
 		}
 	}
@@ -138,35 +116,38 @@ void DoIntersect()
 
 void DoPolygonsTB()
 {
-  DoPolygons();
+  vec3_t vMin, vMax;
+
+  // figure out vMin and vMax
+  g_FuncTable.m_pfnGetDispatchParams( vMin, vMax, NULL );
+
+  DoPolygons( vMin, vMax );
 }
 
-void DoPolygons()
+void DoPolygons(vec3_t vMin, vec3_t vMax)
 {
-  UndoableCommand undo("bobToolz.polygons");
 	// ensure we have something selected
-	if( GlobalSelectionSystem().countSelected() != 1 )
+	if( g_FuncTable.m_pfnSelectedBrushCount() != 1 )
 	{
-		DoMessageBox("Invalid number of brushes selected, choose 1 only", "Error", eMB_OK);
+		DoMessageBox("Invalid number of brushes selected, choose 1 only", "Error", MB_OK);
 		return; 
 	}
+
+	// tell Radiant we want to access the selected brushes
+	g_FuncTable.m_pfnAllocateSelectedBrushHandles();
+			
+	// get handle to size definition brush
+	brush_t *brush = (brush_t*)g_FuncTable.m_pfnGetSelectedBrushHandle(0);
+	// cant release until we delete the brush, if we do...
 
 	PolygonRS rs;
 
 	// ask user for type, size, etc....
-	if(DoPolygonBox(&rs) == eIDOK)
+	if(DoPolygonBox(&rs) == IDOK)
 	{
+		g_FuncTable.m_pfnDeleteBrushHandle(brush);
+
 		DShape poly;
-
-    vec3_t vMin, vMax;
-
-    {
-      scene::Instance& instance = GlobalSelectionSystem().ultimateSelected();
-      VectorSubtract(instance.worldAABB().origin, instance.worldAABB().extents, vMin);
-      VectorAdd(instance.worldAABB().origin, instance.worldAABB().extents, vMax);
-
-      Path_deleteTop(instance.path());
-    }
 
 		if(rs.bInverse)
 			poly.BuildInversePrism(vMin, vMax, rs.nSides, rs.bAlignTop);
@@ -181,26 +162,27 @@ void DoPolygons()
 
 		poly.Commit();
 	}
+
+
+	g_FuncTable.m_pfnReleaseSelectedBrushHandles();
 }
 
 void DoFixBrushes()
 {
-  UndoableCommand undo("bobToolz.fixBrushes");
 	DMap world;
 	world.LoadAll();
 
-	int count = world.FixBrushes();
+	int count = world.FixBrushes(TRUE);
 	
-	globalOutputStream() << count << " invalid/duplicate planes removed\n";
+	Sys_Printf("%i invalid/duplicate planes removed\n", count);
 }
 
 void DoResetTextures()
 {
-  UndoableCommand undo("bobToolz.resetTextures");
 	static ResetTextureRS rs;
 
   const char* texName;
-	if(1/*g_SelectedFaceTable.m_pfnGetSelectedFaceCount() != 1*/)
+	if(g_SelectedFaceTable.m_pfnGetSelectedFaceCount() != 1)
   {
     texName = NULL;
   }
@@ -210,54 +192,53 @@ void DoResetTextures()
 	  strcpy(rs.textureName, GetCurrentTexture());
   }
 
-  EMessageBoxReturn ret;
-	if((ret = DoResetTextureBox(&rs)) == eIDCANCEL)
+  int ret;
+	if((ret = DoResetTextureBox(&rs)) == IDCANCEL)
 		return;  
 
   if(rs.bResetTextureName)
     texName = rs.textureName;
 
-  if(ret == eIDOK)
+  if(ret == IDOK)
   {
 	  DEntity world;
 	  world.LoadSelectedBrushes();
 	  world.ResetTextures(texName,              rs.fScale,      rs.fShift,      rs.rotation, rs.newTextureName, 
-                        rs.bResetTextureName, rs.bResetScale, rs.bResetShift, rs.bResetRotation, true);
+                        rs.bResetTextureName, rs.bResetScale, rs.bResetShift, rs.bResetRotation, TRUE);
   }
   else
   {
 	  DMap world;
-    world.LoadAll(true);
+    world.LoadAll(TRUE);
     world.ResetTextures(texName,              rs.fScale,      rs.fShift,      rs.rotation, rs.newTextureName, 
                         rs.bResetTextureName, rs.bResetScale, rs.bResetShift, rs.bResetRotation);
   }
 }
 
-void DoBuildStairs()
+void DoBuildStairs(vec3_t vMin, vec3_t vMax)
 {
-  UndoableCommand undo("bobToolz.buildStairs");
 	BuildStairsRS rs;
 
 	strcpy(rs.mainTexture, GetCurrentTexture());
 
 	// ensure we have something selected
-	if( GlobalSelectionSystem().countSelected() != 1 )
+	if( g_FuncTable.m_pfnSelectedBrushCount() != 1 )
 	{
-		DoMessageBox("Invalid number of brushes selected, choose 1 only", "Error", eMB_OK);
+		DoMessageBox("Invalid number of brushes selected, chose 1 only", "Error", MB_OK);
 		return; 
 	}
 
+	// tell Radiant we want to access the selected brushes
+	g_FuncTable.m_pfnAllocateSelectedBrushHandles();
+			
+	// get handle to size definition brush
+	brush_t *brush = (brush_t*)g_FuncTable.m_pfnGetSelectedBrushHandle(0);
+	// cant release until we delete the brush, if we do...
+
+
 	// ask user for type, size, etc....
-	if(DoBuildStairsBox(&rs) == eIDOK)
+	if(DoBuildStairsBox(&rs) == IDOK)
 	{
-    vec3_t vMin, vMax;
-
-    {
-      scene::Instance& instance = GlobalSelectionSystem().ultimateSelected();
-      VectorSubtract(instance.worldAABB().origin, instance.worldAABB().extents, vMin);
-      VectorAdd(instance.worldAABB().origin, instance.worldAABB().extents, vMax);
-    }
-
 		// calc brush size
 		vec3_t size;
 		VectorSubtract(vMax, vMin, size);
@@ -265,14 +246,14 @@ void DoBuildStairs()
 		if(((int)size[2] % rs.stairHeight) != 0)
 		{
 			// stairs must fit evenly into brush
-			DoMessageBox("Invalid stair height\nHeight of block must be divisable by stair height", "Error", eMB_OK);
+			DoMessageBox("Invalid stair height\nHeight of block must be divisable by stair height", "Error", MB_OK);
 		}
 		else
 		{
-      {
-        scene::Instance& instance = GlobalSelectionSystem().ultimateSelected();
-        Path_deleteTop(instance.path());
-      }
+			
+			// Remove Size Brush
+			g_FuncTable.m_pfnDeleteBrushHandle(brush);
+
 						
 			// Get Step Count
 			int numSteps = (int)size[2] / rs.stairHeight;
@@ -295,7 +276,7 @@ void DoBuildStairs()
 
 				// Build Base For Stair (bob's style)
 				if(rs.style == STYLE_BOB)
-					Build_Wedge(rs.direction, vMin, vMax, true);
+					Build_Wedge(rs.direction, vMin, vMax, TRUE);
 
 
 				// Set First Step Starting Position
@@ -320,31 +301,32 @@ void DoBuildStairs()
 			}
 		}
 	}
+
+	g_FuncTable.m_pfnReleaseSelectedBrushHandles();
 }
 
-void DoBuildDoors()
+void DoBuildDoors(vec3_t vMin, vec3_t vMax)
 {
-  UndoableCommand undo("bobToolz.buildDoors");
 	// ensure we have something selected
-	if( GlobalSelectionSystem().countSelected() != 1 )
+	if( g_FuncTable.m_pfnSelectedBrushCount() != 1 )
 	{
-		DoMessageBox("Invalid number of brushes selected, choose 1 only", "Error", eMB_OK);
+		DoMessageBox("Invalid number of brushes selected, chose 1 only", "Error", MB_OK);
 		return; 
 	}
 
-  DoorRS rs;
+	// tell Radiant we want to access the selected brushes
+	g_FuncTable.m_pfnAllocateSelectedBrushHandles();
+			
+	// get handle to size definition brush
+	brush_t *brush = (brush_t*)g_FuncTable.m_pfnGetSelectedBrushHandle(0);
+	// cant release until we delete the brush, if we do...
+
+	DoorRS rs;
 	strcpy(rs.mainTexture, GetCurrentTexture());
 
-	if(DoDoorsBox(&rs) == eIDOK)
+	if(DoDoorsBox(&rs) == IDOK)
 	{
-    vec3_t vMin, vMax;
-
-    {
-      scene::Instance& instance = GlobalSelectionSystem().ultimateSelected();
-      VectorSubtract(instance.worldAABB().origin, instance.worldAABB().extents, vMin);
-      VectorAdd(instance.worldAABB().origin, instance.worldAABB().extents, vMax);
-      Path_deleteTop(instance.path());
-    }
+		g_FuncTable.m_pfnDeleteBrushHandle(brush);
 
 		BuildDoorsX2(vMin, vMax, 
 			rs.bScaleMainH, rs.bScaleMainV,
@@ -352,51 +334,86 @@ void DoBuildDoors()
 			rs.mainTexture, rs.trimTexture,
 			rs.nOrientation);	// shapes.cpp
 	}
+
+	g_FuncTable.m_pfnReleaseSelectedBrushHandles();
 }
 
 void DoPathPlotter()
 {
-  UndoableCommand undo("bobToolz.pathPlotter");
 	PathPlotterRS rs;
-	EMessageBoxReturn ret = DoPathPlotterBox(&rs);
-	if(ret == eIDCANCEL)
+	int ret = DoPathPlotterBox(&rs);
+	if(ret == IDCANCEL)
 		return;
-	if(ret == eIDNO)
+	if(ret == IDNO)
 	{
 		if(g_PathView)
 			delete g_PathView;
 		return;
 	}
 
-	// ensure we have something selected
-	if( GlobalSelectionSystem().countSelected() != 1 )
+	if( g_FuncTable.m_pfnSelectedBrushCount() != 1)
 	{
-		DoMessageBox("Invalid number of brushes selected, choose 1 only", "Error", eMB_OK);
-		return; 
+		DoMessageBox("Invalid number of brushes selected, chose 1 only", "Error", MB_OK);
+		return;
 	}
 
-  Entity* entity = Node_getEntity(GlobalSelectionSystem().ultimateSelected().path().top());
-  if(entity != 0)
-  {
-    DBobView_setEntity(*entity, rs.fMultiplier, rs.nPoints, rs.fGravity, rs.bNoUpdate, rs.bShowExtra);
-  }
+	// tell Radiant we want to access the selected brushes
+	g_FuncTable.m_pfnAllocateSelectedBrushHandles();
+			
+	brush_t *brush = (brush_t*)g_FuncTable.m_pfnGetSelectedBrushHandle(0);
+	// should be our trigger brush
+
+	DEntity world;
+	world.LoadEPairList(*g_EntityTable.m_pfnGetEntityKeyValList(brush->owner));
+
+	DEPair* trigger_ep = world.FindEPairByKey("targetname");
+
+	if(trigger_ep)
+	{
+		if(!strcmp(world.m_Classname, "trigger_push"))
+		{
+			DEPair* target_ep = world.FindEPairByKey("target");
+			if(target_ep)
+			{
+				entity_s* entTarget = FindEntityFromTargetname(target_ep->value, NULL);
+				if(entTarget)
+				{
+					if(g_PathView)
+						delete g_PathView;
+					g_PathView = new DBobView;
+
+					g_PathView->Begin(trigger_ep->value, target_ep->value, rs.fMultiplier, rs.nPoints, rs.fGravity, rs.bNoUpdate, rs.bShowExtra);
+				}
+				else
+					DoMessageBox("trigger_push target could not be found.", "Error", MB_OK);
+			}
+			else
+				DoMessageBox("trigger_push has no target.", "Error", MB_OK);
+		}
+		else
+			DoMessageBox("You must select a 'trigger_push' entity.", "Error", MB_OK);
+	}	
+	else
+		DoMessageBox("Entity must have a targetname", "Error", MB_OK);
+
+	g_FuncTable.m_pfnReleaseSelectedBrushHandles();
 }
 
-void DoPitBuilder()
+void DoPitBuilder(vec3_t vMin, vec3_t vMax)
 {
-  UndoableCommand undo("bobToolz.pitBuilder");
 	// ensure we have something selected
-	if( GlobalSelectionSystem().countSelected() != 1 )
+	if( g_FuncTable.m_pfnSelectedBrushCount() != 1 )
 	{
-		DoMessageBox("Invalid number of brushes selected, choose 1 only", "Error", eMB_OK);
+		DoMessageBox("Invalid number of brushes selected, chose 1 only", "Error", MB_OK);
 		return; 
 	}
 
-  vec3_t vMin, vMax;
-
-  scene::Instance& instance = GlobalSelectionSystem().ultimateSelected();
-  VectorSubtract(instance.worldAABB().origin, instance.worldAABB().extents, vMin);
-  VectorAdd(instance.worldAABB().origin, instance.worldAABB().extents, vMax);
+	// tell Radiant we want to access the selected brushes
+	g_FuncTable.m_pfnAllocateSelectedBrushHandles();
+			
+	// get handle to size definition brush
+	brush_t *brush = (brush_t*)g_FuncTable.m_pfnGetSelectedBrushHandle(0);
+	// cant release until we delete the brush, if we do...
 
 	DShape pit;
 
@@ -404,39 +421,42 @@ void DoPitBuilder()
 	{
 		pit.Commit();
 
-    Path_deleteTop(instance.path());
+		g_FuncTable.m_pfnDeleteBrushHandle(brush);
 	}
 	else
-		DoMessageBox("Failed To Make Pit\nTry Making The Brush Bigger", "Error", eMB_OK);
+		DoMessageBox("Failed To Make Pit\nTry Making The Brush Bigger", "Error", MB_OK);
+
+	g_FuncTable.m_pfnReleaseSelectedBrushHandles();
 }
 
 void DoMergePatches()
 {
-  UndoableCommand undo("bobToolz.mergePatch");
   patch_merge_t merge_info;
   DPatch mrgPatches[2];
   int i;
 
-	// ensure we have something selected
-	if( GlobalSelectionSystem().countSelected() != 2 )
-	{
-		DoMessageBox("Invalid number of patches selected, choose 2 only", "Error", eMB_OK);
-		return; 
-	}
+  // ensure we have something selected
+  if ( g_FuncTable.m_pfnSelectedBrushCount() != 2 )
+  {
+    DoMessageBox("Invalid number of objects selected, chose 2 only", "Error", MB_OK);
+    return; 
+  }
 
-  scene::Instance* patches[2];
-  patches[0] = &GlobalSelectionSystem().ultimateSelected();
-  patches[1] = &GlobalSelectionSystem().penultimateSelected();
+
+  g_FuncTable.m_pfnAllocateSelectedBrushHandles();
 
   for (i = 0; i < 2; i++)
   {
-    if (!Node_isPatch(patches[i]->path().top()))
+    brush_t *brush = (brush_t*)g_FuncTable.m_pfnGetSelectedBrushHandle(i);
+
+    if (!brush->pPatch)
     {
-      DoMessageBox("You must select ONLY patches", "Error", eMB_OK);
+      g_FuncTable.m_pfnReleaseSelectedBrushHandles();
+      DoMessageBox("You must select ONLY patches", "Error", MB_OK);
       return; 
     }
 
-    mrgPatches[i].LoadFromPatch(*patches[i]);
+    mrgPatches[i].LoadFromBrush_t(brush);
   }
 
   /*  mrgPatches[0].Transpose();
@@ -447,9 +467,9 @@ void DoMergePatches()
 
   if (merge_info.mergable)
   {
-    globalOutputStream() << merge_info.pos1 << " " <<  merge_info.pos2;
+    Sys_Printf("%i %i", merge_info.pos1, merge_info.pos2);
 
-    globalOutputStream() << "Patches Mergable\n";
+    Sys_Printf("Patches Mergable\n");
     DPatch* newPatch = mrgPatches[0].MergePatches(merge_info, &mrgPatches[0], &mrgPatches[1]);
 
     /*                mrgPatches[0].RemoveFromRadiant();
@@ -465,53 +485,53 @@ void DoMergePatches()
     {
     } else
     {
-      Path_deleteTop(patches[0]->path());
-      Path_deleteTop(patches[1]->path());
+      mrgPatches[0].RemoveFromRadiant();
+      mrgPatches[1].RemoveFromRadiant();
 
       newPatch->BuildInRadiant();
       delete newPatch;
     }
   }
-  else
-  {
-    globalOutputStream() << "bobToolz.mergePatch: the selected patches are not mergable\n";
-  }
+
+  g_FuncTable.m_pfnReleaseSelectedBrushHandles();
 }
 
 void DoSplitPatch() {
-  UndoableCommand undo("bobToolz.splitPatch");
-
 	DPatch patch;
 
 	// ensure we have something selected
-	if( GlobalSelectionSystem().countSelected() != 1 )
-	{
-		DoMessageBox("Invalid number of patches selected, choose 1 only", "Error", eMB_OK);
+	if( g_FuncTable.m_pfnSelectedBrushCount() != 1 ) {
+		DoMessageBox("Invalid number of objects selected, select 1 patch only", "Error", MB_OK);
 		return; 
 	}
 
-  scene::Instance& instance = GlobalSelectionSystem().ultimateSelected();
+	g_FuncTable.m_pfnAllocateSelectedBrushHandles();
 
-	if( !Node_isPatch(instance.path().top()) ) {
-		DoMessageBox("You must select ONLY patches", "Error", eMB_OK);
+	brush_t *brush = (brush_t*)g_FuncTable.m_pfnGetSelectedBrushHandle(0);
+
+	if( !brush->pPatch ) {
+		g_FuncTable.m_pfnReleaseSelectedBrushHandles();
+		DoMessageBox("You must select ONLY patches", "Error", MB_OK);
 		return; 
 	}
 
-	patch.LoadFromPatch(instance);
+	patch.LoadFromBrush_t(brush);
 
-	std::list<DPatch> patchList = patch.Split( true, true );
-	for(std::list<DPatch>::iterator patches = patchList.begin(); patches != patchList.end(); patches++) {
+	list<DPatch> patchList = patch.Split( true, true );
+	for(list<DPatch>::iterator patches = patchList.begin(); patches != patchList.end(); patches++) {
 		(*patches).BuildInRadiant();
 	}
 
-	Path_deleteTop(instance.path());
+	patch.RemoveFromRadiant();
+
+	g_FuncTable.m_pfnReleaseSelectedBrushHandles();
 }
 
 void DoVisAnalyse()
 {
 	char filename[1024];
 
-	if( GlobalSelectionSystem().countSelected() == 0 )
+	if( g_FuncTable.m_pfnSelectedBrushCount() == 0 )
 	{
 		if(g_VisView) 
 		{
@@ -520,17 +540,20 @@ void DoVisAnalyse()
 		}
 	}
 
-	// ensure we have something selected
-	if( GlobalSelectionSystem().countSelected() != 1 )
+	if( g_FuncTable.m_pfnSelectedBrushCount() != 1 )
 	{
-		DoMessageBox("Invalid number of objects selected, choose 1 only", "Error", eMB_OK);
+		DoMessageBox("Invalid number of objects selected, select 1 only", "Error", MB_OK);
 		return; 
 	}
 
-  scene::Instance& brush = GlobalSelectionSystem().ultimateSelected();
+	g_FuncTable.m_pfnAllocateSelectedBrushHandles();
+
+	brush_t *brush = (brush_t*)g_FuncTable.m_pfnGetSelectedBrushHandle(0);
 
 	DBrush orgBrush;
-	orgBrush.LoadFromBrush(brush, false);
+	orgBrush.LoadFromBrush_t(brush, false);
+
+	g_FuncTable.m_pfnReleaseSelectedBrushHandles();
 
 	orgBrush.BuildBounds();
 	vec3_t origin;
@@ -539,10 +562,10 @@ void DoVisAnalyse()
 	origin[2] = (orgBrush.bbox_max[2] + orgBrush.bbox_min[2])/2.f;
 
 
-  const char* rad_filename = GlobalRadiant().getMapName();
+  char* rad_filename = g_FuncTable.m_pfnGetMapName();
 	if(!rad_filename)
 	{
-		DoMessageBox("An Error Occurred While Trying\n To Get The Map Filename", "Error", eMB_OK);
+		DoMessageBox("An Error Occurred While Trying\n To Get The Map Filename", "Error", MB_OK);
 		return;
 	}
 
@@ -551,11 +574,12 @@ void DoVisAnalyse()
 	char* ext = strrchr(filename, '.')+1;
 	strcpy(ext, "bsp");// rename the extension
 
-	std::list<DWinding*> *pointList = BuildTrace(filename, origin);
+	list<DWinding*> *pointList = BuildTrace(filename, origin);
 
 	if(!g_VisView)
 	{
 		g_VisView = new DVisDrawer;
+		g_VisView->Register();
 	}
 	
 	g_VisView->SetList(pointList);
@@ -570,8 +594,7 @@ void DoTrainPathPlot() {
 	g_TrainView = new DTrainDrawer();
 }
 
-void DoCaulkSelection() {
-  UndoableCommand undo("bobToolz.caulkSelection");
+void DoCaulkSelection( void ) {
 	DEntity world;
 	
 	float fScale[2] = { 0.5f, 0.5f };
@@ -585,8 +608,7 @@ void DoCaulkSelection() {
 	world.ResetTextures( NULL, fScale, fShift, 0, "textures/common/caulk", true, bResetScale, bResetShift, false, true );
 }
 
-void DoTreePlanter() {
-  UndoableCommand undo("bobToolz.treePlanter");
+void DoTreePlanter( void ) {
 	if(g_TreePlanter) {
 		delete g_TreePlanter;
 		g_TreePlanter = NULL;
@@ -596,15 +618,13 @@ void DoTreePlanter() {
 	g_TreePlanter = new DTreePlanter();
 }
 
-void DoDropEnts() {
-  UndoableCommand undo("bobToolz.dropEntities");
+void DoDropEnts( void ) {
 	if(g_TreePlanter) {
 		g_TreePlanter->DropEntsToGround();
 	}
 }
 
-void DoMakeChain() {
-  UndoableCommand undo("bobToolz.makeChain");
+void DoMakeChain( void ) {
 	DTreePlanter pl;
 	pl.MakeChain();
 }
@@ -613,29 +633,31 @@ typedef DPoint* pntTripple[3];
 
 bool bFacesNoTop[6] = {true, true, true, true, true, false};
 
-void DoFlipTerrain() {
-  UndoableCommand undo("bobToolz.flipTerrain");
+void DoFlipTerrain( void ) {
 	vec3_t vUp = { 0.f, 0.f, 1.f };
   int i;
 
 	// ensure we have something selected
-	if( GlobalSelectionSystem().countSelected() != 2 )
-	{
-		DoMessageBox("Invalid number of objects selected, choose 2 only", "Error", eMB_OK);
-		return; 
+	if( g_FuncTable.m_pfnSelectedBrushCount() != 2 ) {
+		DoMessageBox("Invalid number of objects selected, chose 2 only", "Error", MB_OK);
+		return;
 	}
 
-  scene::Instance* brushes[2];
-	brushes[0] = &GlobalSelectionSystem().ultimateSelected();
-	brushes[1] = &GlobalSelectionSystem().penultimateSelected();
+	g_FuncTable.m_pfnAllocateSelectedBrushHandles();
+
+	brush_t* brushes[2];
+	for( i = 0; i < 2; i++ ) {
+		brushes[i] = (brush_t*)g_FuncTable.m_pfnGetSelectedBrushHandle(i);
+	}
 
 	DBrush Brushes[2];
 	DPlane* Planes[2];
 	pntTripple Points[2];
 	for( i = 0; i < 2; i++ ) {
-		Brushes[i].LoadFromBrush( *brushes[i], false );
+		Brushes[i].LoadFromBrush_t( brushes[i], false );
 		if(!(Planes[i] = Brushes[i].FindPlaneWithClosestNormal( vUp )) || Brushes[i].FindPointsForPlane( Planes[i], Points[i], 3 ) != 3) {
-			DoMessageBox("Error", "Error", eMB_OK);
+			g_FuncTable.m_pfnReleaseSelectedBrushHandles();
+			DoMessageBox("Error", "Error", MB_OK);
 			return;
 		}
 	}
@@ -643,6 +665,15 @@ void DoFlipTerrain() {
 	vec3_t mins1, mins2, maxs1, maxs2;
 	Brushes[0].GetBounds( mins1, maxs1 );
 	Brushes[1].GetBounds( mins2, maxs2 );
+
+	entity_t* ents[2];
+	for( i = 0; i < 2; i++ ) {
+		ents[i] = brushes[i]->owner;
+		Brushes[i].RemoveFromRadiant();
+	}
+
+	g_FuncTable.m_pfnReleaseSelectedBrushHandles();
+
 
 
 
@@ -662,7 +693,7 @@ void DoFlipTerrain() {
 		found = false;
 	}
 	if(dontmatch[0] == -1) {
-		DoMessageBox("Error", "Error", eMB_OK);
+		DoMessageBox("Error", "Error", MB_OK);
 		return;
 	}
 
@@ -680,7 +711,7 @@ void DoFlipTerrain() {
 		found = false;
 	}
 	if(dontmatch[1] == -1) {
-		DoMessageBox("Error", "Error", eMB_OK);
+		DoMessageBox("Error", "Error", MB_OK);
 		return;
 	}
 
@@ -762,8 +793,7 @@ void DoFlipTerrain() {
 
 	for( i = 0; i < 2; i++ ) {
 		newBrushes[i]->RemoveRedundantPlanes();
-		newBrushes[i]->BuildInRadiant( false, NULL, brushes[i]->path().parent().get_pointer() );
-		Path_deleteTop(brushes[i]->path());
+		newBrushes[i]->BuildInRadiant( false, NULL, ents[i] );
 		delete newBrushes[i];
 	}
 

@@ -1,0 +1,174 @@
+<html>
+<head>
+<title>Q3Radiant Editor Manual: Page 4.1</title>
+<link rel = "stylesheet" type = "text/css" href = "../styles/q3rad.css">
+</head>
+<body>
+<h1 class = "MsoTitle">Q3Radiant Editor Manual</h1>
+<hr>
+<h1><a name = "tools1">Tools 1: Selecting and deselecting</a></h1>
+The most basic interaction with the editor is selecting and deselecting the map components. Everything else builds off from these commands. 
+
+ 
+
+<h2><a name = "comptool">The Component Handling Tools</a></h2>
+<div class = "subheading">Escape (ESC)</div>
+This is the all-purpose deselect key. Use it to back out of operations you don’t want to complete or to stop working on a map component or group of components.
+
+ 
+
+<p><div class = "subheading">Select single component</div>
+<div class = "menu">(SHIFT + mouse button 1 while mouse pointer is over desired unselected component)</div>
+
+In the XY Window (or XZ or YZ), this selects a single map component that is “closest” to the top of all components beneath the pointer. The following is an exception: If an entity is directly beneath the pointer, it will be chosen in preference to a non-entity, even if the non-entity is “between” it and the pointer.
+
+ 
+
+<p><div class = "subheading">Select single face on brush</div>
+<div class = "menu">(SHIFT + CTRL + mouse button 1 while mouse pointer is over desired unselected brush face in the Camera Window).</div>
+
+This selects a single face on one brush, not the brush itself.
+
+ 
+
+<p><div class = "subheading">Select multiple faces on one or more brushes</div>
+<div class = "menu">(SHIFT + CTRL + ALT + mouse button 1 while mouse pointer is over desired unselected brush face in the Camera Window).</div>
+Use this to select several brush faces on one or more brushes.
+
+<p><div class = "subheading">Cycle through stacked components</div>
+<div class = "menu">(SHIFT+ALT+mouse1 while pointer is over map view)</div>
+Beginning with the component that has the greatest Z value, the user can cycle through vertically stacked components that are directly beneath the mouse pointer.
+
+ 
+
+<p><div class = "subheading">Deselect single component</div>
+<div class = "menu">(SHIFT+mouse1 while mouse pointer is over desired selected component)</div>
+In the XY Window (or XZ or YZ), SHIFT clicking on a selected component deselects it. The following is an exception: If a selected entity is directly beneath the pointer, it will be chosen and deselected in preference to a non-entity, even if the non-entity is “between” it and the pointer.
+
+ 
+<p><div class = "subheading">Deselect all selected components</div>
+<div class = "menu">(Menu: Selection &gt; Deselect)
+<br>(Shortcut: ESC)</div>
+
+All selected components are deselected.
+
+ 
+
+<h2><a name = "groupsel">Group Component Selections</a></h2>
+<img src = "../Q3Rad_Manual_files/image012.png" align = "left" hspace = 2 vspace = 2 width = "91" height = "22">There are four commands for selecting large groups of components. These involve creating a brush that encloses or touches numerous other components. In most cases, the brush used to create the grouping is deleted by the operation. These operations can be selected by menu commands or by buttons on the toolbar. The toolbar buttons are in the third grouping (as counted from the left). The command buttons on the toolbar are given as they relate to the Selection sub-grouping on the toolbar.
+
+ 
+
+<p><div class = "tip"><strong>Design Note:</strong> These grouping commands are particularly useful when you want to region off a small area of the map.</div>
+
+<p><div class = "subheading">Select Complete Tall</div>
+<img src = "../Q3Rad_Manual_files/image014.png" width = "32" height = "30" align = "left" hspace = 2 vspace = 2><div class = "menu">(Menu: Selection &gt; Select Complete Tall)</div>
+All brushes from the top to the bottom of the map that are totally enclosed within the XY dimensions of the grouping brush will be selected. The grouping brush is discarded. 
+
+ 
+
+<p><strong>WARNING:</strong> Undo will restore selected components but will delete the selection brush.
+
+ 
+
+<p><div class = "subheading">Select Touching</div>
+<img src = "../Q3Rad_Manual_files/image016.png" width = "32" height = "30" align = "left" hspace = 2 vspace = 2><div class = "menu">(Menu: Selection &gt; Select Touching)</div>
+All brushes that are in contact with the grouping brush will be selected. The grouping brush is NOT discarded.
+
+ 
+
+<p><div class = "tip"><strong>Design Tip:</strong> Need to work an area around a particular brush? Use this tool to select the brush and then use the selected brushes to create a regioned area.</div>
+
+ 
+
+<p><div class = "subheading">Select Partial Tall</div>
+<img src = "../Q3Rad_Manual_files/image018.png" width = "32" height = "30" align = "left" hspace = 2 vspace = 2><div class = "menu">(Menu: Selection &gt; Select Partial Tall)</div>
+All brushes from the top to the bottom of the map that are touched by the XY dimensions of the grouping brush will be selected. The grouping brush is discarded. 
+
+ 
+
+<p><div class = "subheading">Select Inside</div>
+<img src = "../Q3Rad_Manual_files/image020.png" width = "32" height = "30" align = "left" hspace = 2 vspace = 2><div class = "menu">(Menu: Selection &gt; Select Inside)</div>
+All brushes from the top to the bottom of the map that are totally enclosed by the XY and Z dimensions of the grouping brush will be selected. The grouping brush is discarded.
+
+<h2><a name = "copy">Copying, Pasting, Cloning, Deleting and Prefabs</a></h2>
+<div class = "subheading">Save Selected</div>
+(Menu: File) 
+<br>The selected brushes are saved as a map file. Not a true prefab, but a way to duplicate pieces of a map for later insertion.
+
+<p><div class = "subheading">Copy brush</div>
+(Menu: Edit) 
+<br>(CTRL+C)
+<br>This function copies all hi-lighted brushes, patches, and entities onto clipboard. Contents of clipboard may be pasted into the current open map file or into another open map file.  
+
+<p><div class = "subheading">Paste brush</div>
+(Menu: Edit) 
+<br>(CTRL+V) 
+<br>The map information previously copied into the clipboard is pasted at the same XYZ coordinates as the original. UNDO will delete the paste
+
+<p><div class = "subheading">Clone</div>
+(Menu: Selection &gt; Clone) 
+<br>(Shortcut: SPACE) 
+<br>Selected map components are immediately duplicated. The clone appears +1x and -1y units (current map grid) away from the original (down and to the right). The clone remains hi-lighted until deselected.
+
+<p><div class = "subheading">Save Selection as Prefab</div>
+(Menu: EditèSave Selection as Prefab) 
+<br>(Shortcut: none)
+<br>The user is prompted to save the selected map components as a prefab file (*.pfb) in the directory set by Preferences. 
+
+ 
+<p><div class = "subheading">Load Prefab</div>
+(Menu: EditèLoad Prefab) 
+<br>(Shortcut: none)
+<br>Opens a file selection window into the directory set in Preferences. Select from that directory or browse for another. The selected prefab is pasted into the map at the same XYZ coordinates as the original.
+
+<p><div class = "subheading">Delete</div>
+(Menu: Selection &gt; Delete)
+<br>(Shortcut: BACKSPACE) 
+<br>All selected map components are removed from the map.
+
+<p><div class = "subheading">Undo</div>
+(Menu: Edit &gt; Undo) 
+<br>(Shortcut: none)
+<br>Undo will undo recent command actions affecting brush geometry, curve patches, and in-map comands that affect entities (move, rotate, delete, etc.). Undo has no effect on texture operations.
+
+<p>The number of levels or layers of Undo can be set in Preferences. The maximum number is 64. Unless your computer memory is extremely low, there is no real reason to use less than all 64 levels of Undo.
+
+<h2><a name = "workreg">Working with Regions</a></h2>
+Regions are an important tool to learn and use early on. Whether you isolate off a single brush, or half a map, you’ll wonder how you ever got along without this tool in other editing programs. The selections on the Region Menu allow the mapper to isolate, and work on, a subset of the map. There are innumerable benefits to working in a “regioned” area of the map. However, the following are the most important:
+<ul>
+<li>It allows you to work with a few map components at a time, without the distraction of the rest of the map pieces.
+<li>When you want to perform CSG operations, regioning lets you isolate the pieces from the rest of the map, reducing risk of making unwanted cuts or splits.
+<li>Map regions can be compiled without having to compile the rest of the map. This can be an incredible timesaver. Instead of spending hours to compile an entire map just to check for leaks in new construction, or check the appearance of a room, or test a lighting effect, minutes can be spent processing just the room itself.
+</ul>
+ 
+<p>There are several ways to select a region, by a group selection, by XY map window dimensions (or the corresponding view in YZ and XZ), or by a few selected map components.
+
+<p>The commands for selecting regioned areas are found under the Region Menu heading.
+
+<p><div class = "subheading">Region Menu</div>
+<strong>Off</strong>
+<div class = "menu">(Menu: Region &gt; Off)</div>
+This returns you back to the full map. Brushes that were selected while in the regioned mode remain selected until ESC is pressed to unselect them.
+
+<p><strong>Set XY</strong>
+<div class = "menu">(Menu: Region &gt; Set XY)</div>
+Any map components that are inside, or that are touched by the bounds of the XY Map window are converted into a region.  The size or shape of the window does not matter. Nor does the degree of Zoom matter.  This is an excellent way to select are larger subset of your map, such as a complex room or group of rooms. Any brushes selected before regioning the map remain selected.
+
+<p><strong>Set Tall Brush</strong>
+<div class = "menu">(Menu: Region &gt; Set Tall Brush)</div>
+This functions in a similar manner to the group selection command, Select Partial Tall. Any map components contained within the XY bounds, or touching the XY bounds of the brush will be regioned off.  The selecting brush itself is discarded.
+
+<p><strong>Set Brush</strong>
+<div class = "menu">(Menu: Region &gt; Set Brush)</div>
+This functions in a similar manner to the group selection command, Select Touching. Any map components contained within the XYZ bounds of the brush, or touching the XYZ bounds of the brush will be regioned off. The selecting brush itself is discarded.
+
+<p><strong>Set Selected Brushes</strong>
+<div class = "menu">(Menu: Region &gt; Set Selected Brushes)</div>
+If you need to work with just a few brushes, this is the option to choose. Hi-light the brushes to be worked upon then select this option. Only those brushes are moved to the region. The selected brushes are unselected when the region is created.
+
+<p><strong>Compiling Notes:</strong> Sometimes, when compiling a regioned area, md3 map object models near the edge of the region can cause a “false leak” situation to occur. This can usually be corrected by adjusting the region size to include more of the map near the md3 map object model.
+
+<p align = "center"><a href = "../ch03/pg3_1.htm">Back</a> | <a href = "../index.htm">Home</a> | <a href = "../ch05/pg5_1.htm">Next</a>
+</body>
+</html>

@@ -1,6 +1,6 @@
 /*
-Copyright (C) 2001-2006, William Joseph.
-All Rights Reserved.
+Copyright (C) 1999-2007 id Software, Inc. and contributors.
+For a list of contributors, see the accompanying CONTRIBUTORS file.
 
 This file is part of GtkRadiant.
 
@@ -19,67 +19,68 @@ along with GtkRadiant; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#if !defined(INCLUDED_ISCRIPLIB_H)
-#define INCLUDED_ISCRIPLIB_H
+//-----------------------------------------------------------------------------
+//
+// DESCRIPTION:
+// all purpose scriplib interface for Q3Radiant plugins (cf. parse.h)
+//
 
-/// \file iscriplib.h
-/// \brief Token input/output stream module.
+#ifndef __ISCRIPLIB_H_
+#define __ISCRIPLIB_H_
 
-#include <cstddef>
-#include "generic/constant.h"
+/*! \file iscriplib.h
+ \brief function tables for Radiant core's text parsing functions
+ two token based parsers cohexist in Radiant
+ the primary one (GetToken UnGetToken etc.) is used on the .map parsing etc.
+ COM_Parse is another parser, used on .def parse for instance
+ 
+ NOTE: I hope we can totally get rid of this part when we have XML support
+*/
 
-#define	MAXTOKEN	1024
+#define SCRIPLIB_MAJOR "scriptlib"
 
-class Tokeniser
-{
-public:
-  virtual void release() = 0;
-  virtual void nextLine() = 0;
-  virtual const char* getToken() = 0;
-  virtual void ungetToken() = 0;
-  virtual std::size_t getLine() const = 0;
-  virtual std::size_t getColumn() const = 0;
-};
-
-class TextInputStream;
-
-class TokenWriter
-{
-public:
-  virtual void release() = 0;
-  virtual void nextLine() = 0;
-  virtual void writeToken(const char* token) = 0;
-  virtual void writeString(const char* string) = 0;
-  virtual void writeInteger(int i) = 0;
-  virtual void writeUnsigned(std::size_t i) = 0;
-  virtual void writeFloat(double f) = 0;
-};
-
-class TextOutputStream;
+typedef qboolean	(* PFN_GETTOKEN)		(qboolean crossline);
+typedef void      (* PFN_UNGETTOKEN)	();
+// only used to retrieve &token
+typedef char*     (* PFN_TOKEN) ();
+typedef void      (* PFN_STARTTOKENPARSING) (char *);
+// script line
+typedef int       (* PFN_SCRIPTLINE) ();
+typedef qboolean  (* PFN_TOKENAVAILABLE) ();
+// COM_Parse
+typedef char*     (* PFN_COM_PARSE) (char *data);
+typedef char*     (* PFN_GET_COM_TOKEN) ();
+// Hydra: added support for GetTokenExtra()
+typedef qboolean	(* PFN_GETTOKENEXTRA)		(qboolean crossline,char *delimiters,qboolean keepdelimiter);
 
 struct _QERScripLibTable
 {
-  INTEGER_CONSTANT(Version, 1);
-  STRING_CONSTANT(Name, "scriptlib");
-
-  Tokeniser& (* m_pfnNewScriptTokeniser)(TextInputStream& istream);
-  Tokeniser& (* m_pfnNewSimpleTokeniser)(TextInputStream& istream);
-  TokenWriter& (* m_pfnNewSimpleTokenWriter)(TextOutputStream& ostream);
+	float m_fVersion;
+	int m_nSize;
+	PFN_GETTOKEN	m_pfnGetToken;
+	PFN_GETTOKENEXTRA	m_pfnGetTokenExtra; // Hydra: added support for GetTokenExtra()
+	PFN_UNGETTOKEN	m_pfnUnGetToken;
+	PFN_TOKEN		m_pfnToken;
+	PFN_STARTTOKENPARSING  m_pfnStartTokenParsing;
+  PFN_SCRIPTLINE m_pfnScriptLine;
+  PFN_TOKENAVAILABLE m_pfnTokenAvailable;
+  PFN_COM_PARSE m_pfnCOM_Parse;
+  PFN_GET_COM_TOKEN m_pfnGet_COM_Token;
 };
 
-#include "modulesystem.h"
-
-template<typename Type>
-class GlobalModule;
-typedef GlobalModule<_QERScripLibTable> GlobalScripLibModule;
-
-template<typename Type>
-class GlobalModuleRef;
-typedef GlobalModuleRef<_QERScripLibTable> GlobalScripLibModuleRef;
-
-inline _QERScripLibTable& GlobalScriptLibrary()
-{
-  return GlobalScripLibModule::getTable();
-}
+#ifdef USE_SCRIPLIBTABLE_DEFINE
+#ifndef __SCRIPLIBTABLENAME
+#define __SCRIPLIBTABLENAME g_ScripLibTable
+#endif
+#define GetToken __SCRIPLIBTABLENAME.m_pfnGetToken
+#define Token __SCRIPLIBTABLENAME.m_pfnToken
+#define UnGetToken __SCRIPLIBTABLENAME.m_pfnUnGetToken
+#define StartTokenParsing __SCRIPLIBTABLENAME.m_pfnStartTokenParsing
+#define ScriptLine __SCRIPLIBTABLENAME.m_pfnScriptLine
+#define TokenAvailable __SCRIPLIBTABLENAME.m_pfnTokenAvailable
+#define COM_Parse __SCRIPLIBTABLENAME.m_pfnCOM_Parse
+#define Get_COM_Token __SCRIPLIBTABLENAME.m_pfnGet_COM_Token
+#define GetTokenExtra __SCRIPLIBTABLENAME.m_pfnGetTokenExtra // Hydra: added support for GetTokenExtra()
+#endif
 
 #endif

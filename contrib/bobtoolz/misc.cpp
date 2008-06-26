@@ -17,36 +17,15 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include "misc.h"
+#include "StdAfx.h"
 
-#include <list>
-#include "str.h"
-
-#include "DPoint.h"
-#include "DPlane.h"
-#include "DBrush.h"
-#include "DEPair.h"
-#include "DPatch.h"
 #include "DEntity.h"
-
 #include "funchandlers.h"
 
 #ifdef __linux__
 #include <sys/types.h>
 #include <unistd.h>
 #endif
-
-#include "iundo.h"
-#include "ientity.h"
-#include "iscenegraph.h"
-#include "qerplugin.h"
-
-#include <vector>
-#include <list>
-#include <map>
-#include <algorithm>
-
-#include "scenelib.h"
 
 /*==========================
 		Global Vars
@@ -60,7 +39,7 @@ char	g_CurrentTexture[256] = "";
 
 void ReadCurrentTexture()
 {
-	const char* textureName = GlobalRadiant().TextureBrowser_getSelectedShader();
+	const char* textureName = g_FuncTable.m_pfnGetCurrentTexture();
 	strcpy(g_CurrentTexture, textureName);
 }
 
@@ -68,6 +47,16 @@ const char*  GetCurrentTexture()
 {
 	ReadCurrentTexture();
 	return g_CurrentTexture;
+}
+
+epair_t* GetNextChainItem(epair_t* lastItem, char* key, char* value)
+{
+	epair_t* nextEPair = g_FuncTable.m_pfnAllocateEpair(key, value);
+
+	if(lastItem != NULL)
+		lastItem->next = nextEPair;
+
+	return nextEPair;
 }
 
 void MoveBlock(int dir, vec3_t min, vec3_t max, float dist)
@@ -131,10 +120,12 @@ void SetInitialStairPos(int dir, vec3_t min, vec3_t max, float width)
 char* TranslateString (char *buf)
 {
 	static	char	buf2[32768];
+	int		i, l;
+	char	*out;
 
-  std::size_t l = strlen(buf);
-	char* out = buf2;
-	for (int i=0 ; i<l ; i++)
+	l = strlen(buf);
+	out = buf2;
+	for (i=0 ; i<l ; i++)
 	{
 		if (buf[i] == '\n')
 		{
@@ -149,10 +140,33 @@ char* TranslateString (char *buf)
 	return buf2;
 }
 
+void Sys_ERROR (char* text, ...)
+{
+	va_list argptr;
+	char	buf[32768];
+
+	va_start (argptr,text);
+	vsprintf (buf, text,argptr);
+	va_end (argptr);
+
+	Sys_Printf("BobToolz::ERROR->%s", buf);
+}
+
+/*void Sys_Printf (char *text, ...)
+{
+	va_list argptr;
+	char	buf[32768];
+
+	va_start (argptr,text);
+	vsprintf (buf, text,argptr);
+	va_end (argptr);
+
+	g_FuncTable.m_pfnSysMsg ( buf );
+}*/
 
 char* UnixToDosPath(char* path)
 {
-#ifndef WIN32
+#ifndef _WIN32
 	return path;
 #else
 	for(char* p = path; *p; p++)
@@ -166,7 +180,7 @@ char* UnixToDosPath(char* path)
 
 const char* ExtractFilename(const char* path)
 {
-	const char* p = strrchr(path, '/');
+	char* p = strrchr(path, '/');
 	if(!p)
 	{
 		p = strrchr(path, '\\');
@@ -188,7 +202,7 @@ extern char* PLUGIN_NAME;
 	return buffer;
 }*/
 
-#if defined (POSIX)
+#if defined (__linux__) || defined (__APPLE__)
 // the bCreateConsole parameter is ignored on linux ..
 bool Q_Exec( const char *pCmd, bool bCreateConsole )
 {
@@ -215,10 +229,7 @@ bool Q_Exec( const char *pCmd, bool bCreateConsole )
 }
 #endif
 
-#ifdef WIN32
-
-#include <windows.h>
-
+#ifdef _WIN32
 bool Q_Exec( const char *pCmd, bool bCreateConsole )
 {
 	// G_DeWan: Don't know if this is needed for linux version
@@ -235,7 +246,7 @@ bool Q_Exec( const char *pCmd, bool bCreateConsole )
 
 	for(; *pCmd == ' '; pCmd++);
 
-	if(!CreateProcess(NULL, (char *)pCmd, NULL, NULL, false, dwCreationFlags, NULL, NULL, &si, &pi))
+	if(!CreateProcess(NULL, (char *)pCmd, NULL, NULL, FALSE, dwCreationFlags, NULL, NULL, &si, &pi))
 		return false;
 
   return true;
@@ -249,7 +260,7 @@ void StartBSP()
 	UnixToDosPath(exename);	// do we want this done in linux version?
 
 	char mapname[256];  
-  const char *pn = GlobalRadiant().getMapsPath();
+  const char *pn = g_FuncTable.m_pfnReadProjectKey("mapspath");
   
 	strcpy( mapname, pn );
 	strcat( mapname, "/ac_prt.map" );
@@ -258,49 +269,19 @@ void StartBSP()
 	char command[1024];
 	sprintf(command, "%s -nowater -fulldetail %s", exename, mapname);
 
-	Q_Exec( command, true );
+	Q_Exec( command, TRUE );
 }
 
-class EntityWriteMiniPrt
-{
-	mutable DEntity world;
-  FILE* pFile;
-  std::list<Str>* exclusionList;
-public:
-  EntityWriteMiniPrt(FILE* pFile, std::list<Str>* exclusionList)
-    : pFile(pFile), exclusionList(exclusionList)
-  {
-  }
-  void operator()(scene::Instance& instance) const
-  {
-		const char* classname = Node_getEntity(instance.path().top())->getKeyValue("classname");
-
-		if(!strcmp(classname, "worldspawn"))
-		{
-			world.LoadFromEntity(instance.path().top(), false);
-			world.RemoveNonCheckBrushes(exclusionList, true);
-			world.SaveToFile(pFile);
-		}
-		else if(strstr(classname, "info_"))
-		{
-			world.ClearBrushes();
-			world.ClearEPairs();
-			world.LoadEPairList(Node_getEntity(instance.path().top()));
-			world.SaveToFile(pFile);
-		}
-  }
-};
- 
-void BuildMiniPrt(std::list<Str>* exclusionList)
+void BuildMiniPrt(list<Str>* exclusionList)
 {
 	// yes, we could just use -fulldetail option, but, as SPOG said
 	// it'd be faster without all the hint, donotenter etc textures and
 	// doors, etc
 
-	
+	DEntity world;
 	
 	char buffer[128];
-  const char *pn = GlobalRadiant().getMapsPath();
+  const char *pn = g_FuncTable.m_pfnReadProjectKey("mapspath");
 
 	strcpy( buffer, pn );
 	strcat( buffer, "/ac_prt.map" );
@@ -310,58 +291,88 @@ void BuildMiniPrt(std::list<Str>* exclusionList)
 	if(!pFile)
 		return;
 
-  Scene_forEachEntity(EntityWriteMiniPrt(pFile, exclusionList));
+	int count = g_FuncTable.m_pfnGetEntityCount();
+	for(int i = 0; i < count; i++)
+	{
+		entity_t* ent = (entity_t*)g_FuncTable.m_pfnGetEntityHandle(i);
+
+		epair_t* epl = *g_EntityTable.m_pfnGetEntityKeyValList(ent);
+
+		epair_t* ep = epl;
+		while(ep)
+		{
+			if(!strcmp(ep->key, "classname"))
+			{
+				if(!strcmp(ep->value, "worldspawn"))
+				{
+					world.LoadFromEntity(i, FALSE);
+					world.RemoveNonCheckBrushes(exclusionList, TRUE);
+					world.SaveToFile(pFile);
+				}
+				else if(strstr(ep->value, "info_"))
+				{
+					world.ClearBrushes();
+					world.ClearEPairs();
+					world.LoadEPairList(epl);
+					world.SaveToFile(pFile);
+				}
+				break;
+			}
+
+			ep = ep->next;
+		}
+	}
 
 	fclose(pFile);
 
 	StartBSP();
 }
 
-class EntityFindByTargetName
+entity_s* FindEntityFromTargetname(const char* targetname, int* entNum)
 {
-  const char* targetname;
-public:
-	mutable const scene::Path* result;
-  EntityFindByTargetName(const char* targetname)
-    : targetname(targetname), result(0)
-  {
-  }
-  void operator()(scene::Instance& instance) const
-  {
-    if(result == 0)
-    {
-		  const char* value = Node_getEntity(instance.path().top())->getKeyValue("targetname");
+	DEntity world;
 
-		  if(!strcmp(value, targetname))
-		  {
-			  result = &instance.path();
-		  }
-    }
-  }
-};
- 
-const scene::Path* FindEntityFromTargetname(const char* targetname)
-{
-  return Scene_forEachEntity(EntityFindByTargetName(targetname)).result;
+	int count = g_FuncTable.m_pfnGetEntityCount();
+	for(int i = 0; i < count; i++)
+	{
+		world.ClearEPairs();
+
+		entity_s* ent = (entity_s*)g_FuncTable.m_pfnGetEntityHandle(i);
+
+		world.LoadEPairList(*g_EntityTable.m_pfnGetEntityKeyValList(ent));
+
+		DEPair* tn = world.FindEPairByKey("targetname");
+		if(tn)
+		{
+			if(!stricmp(tn->value, targetname)) {
+				if(entNum) {
+					*entNum = i;
+				}
+				return ent;
+			}
+		}
+	}
+	return NULL;
 }
 
 void FillDefaultTexture(_QERFaceData* faceData, vec3_t va, vec3_t vb, vec3_t vc, const char* texture)
 {
-	faceData->m_texdef.rotate = 0;
-	faceData->m_texdef.scale[0] = 0.5;
-	faceData->m_texdef.scale[1] = 0.5;
-	faceData->m_texdef.shift[0] = 0;
-	faceData->m_texdef.shift[1] = 0;
-	faceData->contents = 0;
-	faceData->flags = 0;
-	faceData->value = 0;
+	faceData->m_bBPrimit = FALSE;
+	faceData->m_fRotate = 0;
+	faceData->m_fScale[0] = 0.5;
+	faceData->m_fScale[1] = 0.5;
+	faceData->m_fShift[0] = 0;
+	faceData->m_fShift[1] = 0;
+	faceData->m_nContents = 0;
+	faceData->m_nFlags = 0;
+	faceData->m_nValue = 0;
 	if(*texture)
-		faceData->m_shader = texture;
+		strcpy(faceData->m_TextureName, texture);
 	else
-		faceData->m_shader = "textures/common/caulk";
-	VectorCopy(va, faceData->m_p0);
-	VectorCopy(vb, faceData->m_p1);
-	VectorCopy(vc, faceData->m_p2);
+		strcpy(faceData->m_TextureName, "textures/common/caulk");
+	VectorCopy(va, faceData->m_v1);
+	VectorCopy(vb, faceData->m_v2);
+	VectorCopy(vc, faceData->m_v3);
 }
 
 float Determinant3x3(float a1, float a2, float a3,
@@ -373,14 +384,29 @@ float Determinant3x3(float a1, float a2, float a3,
 
 bool GetEntityCentre(const char* entity, vec3_t centre)
 {
-  const scene::Path* ent = FindEntityFromTargetname(entity);
+	entity_s* ent = FindEntityFromTargetname(entity, NULL);
 	if(!ent)
-		return false;
+		return FALSE;
 
-  scene::Instance& instance = *GlobalSceneGraph().find(*ent);
-  VectorCopy(instance.worldAABB().origin, centre);
+	int cnt = g_FuncTable.m_pfnAllocateEntityBrushHandles(ent);
+	if(cnt == 0)
+	{
+		g_FuncTable.m_pfnReleaseEntityBrushHandles();
+		return FALSE;
+	}
 
-	return true;
+	brush_t* brush = (brush_t*)g_FuncTable.m_pfnGetEntityBrushHandle(0);
+	DBrush cBrush;
+	cBrush.LoadFromBrush_t(brush, FALSE);
+
+	vec3_t min, max;
+	cBrush.GetBounds(min, max);
+
+	VectorAdd(min, max, centre);
+	VectorScale(centre, 0.5f, centre);
+
+	g_FuncTable.m_pfnReleaseEntityBrushHandles();
+	return TRUE;
 }
 
 vec_t Min(vec_t a, vec_t b)
@@ -390,17 +416,9 @@ vec_t Min(vec_t a, vec_t b)
 	return b;
 }
 
-void MakeNormal( const vec_t* va, const vec_t* vb, const vec_t* vc, vec_t* out ) {
+void MakeNormal( vec_t* va, vec_t* vb, vec_t* vc, vec_t* out ) {
 	vec3_t v1, v2;
 	VectorSubtract(va, vb, v1);
 	VectorSubtract(vc, vb, v2);
 	CrossProduct(v1, v2, out);
 }
-
-char* GetFilename(char* buffer, const char* filename) {
-	strcpy(buffer, GlobalRadiant().getAppPath());
-	strcat(buffer, "plugins/");
-	strcat(buffer, filename);
-	return buffer;
-}
-

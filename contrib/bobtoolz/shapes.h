@@ -26,15 +26,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 // defines for polygon stuff
 #define MAX_POLYGON_FACES	128
 
-namespace scene
-{
-  class Node;
-}
-
-#include "mathlib.h"
-
 // generic (detail added 12/01/01, for AC+)
-void AddFaceWithTexture(scene::Node& brush, vec3_t va, vec3_t vb, vec3_t vc, const char* texture, bool detail);
+void AddFaceWithTexture(brush_t* brush, vec3_t va, vec3_t vb, vec3_t vc, const char* texture, bool detail);
 
 // -------------
 // ---caulked---

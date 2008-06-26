@@ -1,8 +1,0 @@
-<?xml version="1.0"?>
-<package name="Jedi Academy Example Maps" version="1.0.0" target="[ProgramFilesFolder]\LucasArts\Star Wars Jedi Knight Jedi Academy\GameData\" code="d8f6a7d7-0c7a-4c3a-ae32-a70b11a039a2" license="..\license.rtf">
-  <feature name="Jedi Academy Example Maps" desc="This feature must be installed in your Jedi Knight Jedi Academy folder.">
-    <feature name="Jedi Academy Maps" desc="Example maps, models and textures for Jedi Knight Jedi Academy">
-      <component name=".\components\ja_data.xml" root="..\..\games\JAPack"/>
-    </feature>
-  </feature>
-</package>

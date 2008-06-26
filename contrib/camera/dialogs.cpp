@@ -1,5 +1,5 @@
 /*
-Copyright (C) 1999-2006 Id Software, Inc. and contributors.
+Copyright (C) 1999-2007 id Software, Inc. and contributors.
 For a list of contributors, see the accompanying CONTRIBUTORS file.
 
 This file is part of GtkRadiant.
@@ -66,8 +66,7 @@ static gint ci_new( GtkWidget *widget, gpointer data )
 {
 	GtkWidget *window, *w, *vbox, *vbox2, *hbox, *frame; //, *name;
 	GtkWidget *fixed, *interpolated, *spline;
-	EMessageBoxReturn ret;
-  int loop = 1;
+	int ret, loop = 1;
 	GSList *targetTypeRadio = NULL;
 //	char buf[128];
 
@@ -134,7 +133,7 @@ static gint ci_new( GtkWidget *widget, gpointer data )
 
 	w = gtk_button_new_with_label ("Ok");
 	gtk_box_pack_start (GTK_BOX (hbox), w, TRUE, TRUE, 0);
-	gtk_signal_connect (GTK_OBJECT (w), "clicked", GTK_SIGNAL_FUNC (dialog_button_callback), GINT_TO_POINTER (eIDOK));
+	gtk_signal_connect (GTK_OBJECT (w), "clicked", GTK_SIGNAL_FUNC (dialog_button_callback), GINT_TO_POINTER (IDOK));
 	gtk_widget_show (w);
 
 	GTK_WIDGET_SET_FLAGS( w, GTK_CAN_DEFAULT );
@@ -142,9 +141,9 @@ static gint ci_new( GtkWidget *widget, gpointer data )
 
 	w = gtk_button_new_with_label ("Cancel");
 	gtk_box_pack_start (GTK_BOX (hbox), w, TRUE, TRUE, 0);
-	gtk_signal_connect (GTK_OBJECT (w), "clicked", GTK_SIGNAL_FUNC (dialog_button_callback), GINT_TO_POINTER (eIDCANCEL));
+	gtk_signal_connect (GTK_OBJECT (w), "clicked", GTK_SIGNAL_FUNC (dialog_button_callback), GINT_TO_POINTER (IDCANCEL));
 	gtk_widget_show (w);
-	ret = eIDCANCEL;
+	ret = IDCANCEL;
 
 	// -------------------------- //
 
@@ -160,7 +159,7 @@ static gint ci_new( GtkWidget *widget, gpointer data )
  
 		dialogError = FALSE;
 
-		if( ret == eIDOK ) {
+		if( ret == IDOK ) {
 			if( gtk_toggle_button_get_active( (GtkToggleButton*)fixed ) )
 				DoNewFixedCamera();
 			else if( gtk_toggle_button_get_active( (GtkToggleButton*)interpolated ) )
@@ -357,8 +356,7 @@ static void RefreshEventList( void )
 static gint ci_rename( GtkWidget *widget, gpointer data )
 {
 	GtkWidget *window, *w, *vbox, *hbox, *name;
-	EMessageBoxReturn ret;
-  int loop = 1;
+	int ret, loop = 1;
 
 	if( !GetCurrentCam() )
 		return TRUE;
@@ -413,7 +411,7 @@ static gint ci_rename( GtkWidget *widget, gpointer data )
 
 	w = gtk_button_new_with_label ("Ok");
 	gtk_box_pack_start (GTK_BOX (hbox), w, TRUE, TRUE, 0);
-	gtk_signal_connect (GTK_OBJECT (w), "clicked", GTK_SIGNAL_FUNC (dialog_button_callback), GINT_TO_POINTER (eIDOK));
+	gtk_signal_connect (GTK_OBJECT (w), "clicked", GTK_SIGNAL_FUNC (dialog_button_callback), GINT_TO_POINTER (IDOK));
 	gtk_widget_show (w);
 
 	GTK_WIDGET_SET_FLAGS( w, GTK_CAN_DEFAULT );
@@ -421,9 +419,9 @@ static gint ci_rename( GtkWidget *widget, gpointer data )
 
 	w = gtk_button_new_with_label ("Cancel");
 	gtk_box_pack_start (GTK_BOX (hbox), w, TRUE, TRUE, 0);
-	gtk_signal_connect (GTK_OBJECT (w), "clicked", GTK_SIGNAL_FUNC (dialog_button_callback), GINT_TO_POINTER (eIDCANCEL));
+	gtk_signal_connect (GTK_OBJECT (w), "clicked", GTK_SIGNAL_FUNC (dialog_button_callback), GINT_TO_POINTER (IDCANCEL));
 	gtk_widget_show (w);
-	ret = eIDCANCEL;
+	ret = IDCANCEL;
 
 	// -------------------------- //
 
@@ -439,7 +437,7 @@ static gint ci_rename( GtkWidget *widget, gpointer data )
  
 		dialogError = FALSE;
 
-		if( ret == eIDOK ) {
+		if( ret == IDOK ) {
 			const char *str = gtk_entry_get_text( GTK_ENTRY(name) );
 
 			if( str && str[0] ) {
@@ -469,8 +467,7 @@ static gint ci_add_target( GtkWidget *widget, gpointer data )
 {
 	GtkWidget *window, *w, *vbox, *vbox2, *hbox, *frame, *name;
 	GtkWidget *fixed, *interpolated, *spline;
-	EMessageBoxReturn ret;
-  int loop = 1;
+	int ret, loop = 1;
 	GSList *targetTypeRadio = NULL;
 	char buf[128];
 
@@ -557,7 +554,7 @@ static gint ci_add_target( GtkWidget *widget, gpointer data )
 
 	w = gtk_button_new_with_label ("Ok");
 	gtk_box_pack_start (GTK_BOX (hbox), w, TRUE, TRUE, 0);
-	gtk_signal_connect (GTK_OBJECT (w), "clicked", GTK_SIGNAL_FUNC (dialog_button_callback), GINT_TO_POINTER (eIDOK));
+	gtk_signal_connect (GTK_OBJECT (w), "clicked", GTK_SIGNAL_FUNC (dialog_button_callback), GINT_TO_POINTER (IDOK));
 	gtk_widget_show (w);
 
 	GTK_WIDGET_SET_FLAGS( w, GTK_CAN_DEFAULT );
@@ -565,9 +562,9 @@ static gint ci_add_target( GtkWidget *widget, gpointer data )
 
 	w = gtk_button_new_with_label ("Cancel");
 	gtk_box_pack_start (GTK_BOX (hbox), w, TRUE, TRUE, 0);
-	gtk_signal_connect (GTK_OBJECT (w), "clicked", GTK_SIGNAL_FUNC (dialog_button_callback), GINT_TO_POINTER (eIDCANCEL));
+	gtk_signal_connect (GTK_OBJECT (w), "clicked", GTK_SIGNAL_FUNC (dialog_button_callback), GINT_TO_POINTER (IDCANCEL));
 	gtk_widget_show (w);
-	ret = eIDCANCEL;
+	ret = IDCANCEL;
 
 	// -------------------------- //
 
@@ -583,7 +580,7 @@ static gint ci_add_target( GtkWidget *widget, gpointer data )
  
 		dialogError = FALSE;
 
-		if( ret == eIDOK ) {
+		if( ret == IDOK ) {
 			const char *str = gtk_entry_get_text( GTK_ENTRY(name) );
 
 			if( str && str[0] ) {
@@ -810,8 +807,7 @@ static gint ci_add( GtkWidget *widget, gpointer data )
 {
 	GtkWidget *window, *w, *vbox, *vbox2, *hbox, *frame, *parameters;
 	GtkWidget *eventWidget[EVENT_COUNT];
-	EMessageBoxReturn ret;
-  int i, loop = 1;
+	int i, ret, loop = 1;
 	GSList *eventTypeRadio = NULL;
 //	char buf[128];
 
@@ -889,7 +885,7 @@ static gint ci_add( GtkWidget *widget, gpointer data )
 
 	w = gtk_button_new_with_label ("Ok");
 	gtk_box_pack_start (GTK_BOX (hbox), w, TRUE, TRUE, 0);
-	gtk_signal_connect (GTK_OBJECT (w), "clicked", GTK_SIGNAL_FUNC (dialog_button_callback), GINT_TO_POINTER (eIDOK));
+	gtk_signal_connect (GTK_OBJECT (w), "clicked", GTK_SIGNAL_FUNC (dialog_button_callback), GINT_TO_POINTER (IDOK));
 	gtk_widget_show (w);
 
 	GTK_WIDGET_SET_FLAGS( w, GTK_CAN_DEFAULT );
@@ -897,9 +893,9 @@ static gint ci_add( GtkWidget *widget, gpointer data )
 
 	w = gtk_button_new_with_label ("Cancel");
 	gtk_box_pack_start (GTK_BOX (hbox), w, TRUE, TRUE, 0);
-	gtk_signal_connect (GTK_OBJECT (w), "clicked", GTK_SIGNAL_FUNC (dialog_button_callback), GINT_TO_POINTER (eIDCANCEL));
+	gtk_signal_connect (GTK_OBJECT (w), "clicked", GTK_SIGNAL_FUNC (dialog_button_callback), GINT_TO_POINTER (IDCANCEL));
 	gtk_widget_show (w);
-	ret = eIDCANCEL;
+	ret = IDCANCEL;
 
 	// -------------------------- //
 
@@ -915,7 +911,7 @@ static gint ci_add( GtkWidget *widget, gpointer data )
  
 		dialogError = FALSE;
 
-		if( ret == eIDOK ) {
+		if( ret == IDOK ) {
 			const char *str = gtk_entry_get_text( GTK_ENTRY(parameters) );
 
 			if( !camEventFlags[i][0] || ( str && str[0] ) ) {

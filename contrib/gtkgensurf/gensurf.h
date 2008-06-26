@@ -20,64 +20,30 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef _GENSURF_H_
 #define _GENSURF_H_
 
-#include <string.h>
-#include "qertypes.h"
-#include <stdio.h>
-
-#include "mathlib.h"
-#include "iscenegraph.h"
-#define USE_QERTABLE_DEFINE
-#include "qerplugin.h"
-extern _QERFuncTable_1 g_FuncTable;
-
-#include "irender.h"
-#include "iselection.h"
-
-#define USE_ENTITYTABLE_DEFINE
-#include "ientity.h"
-extern _QEREntityTable __ENTITYTABLENAME;
-
-#define USE_PATCHTABLE_DEFINE
-#include "ipatch.h"
-extern _QERPatchTable __PATCHTABLENAME;
-
-#define USE_BRUSHTABLE_DEFINE
-#include "ibrush.h"
-extern _QERBrushTable __BRUSHTABLENAME;
-
-#include "igl.h"
-#include "ientity.h"
-
 #include <gtk/gtk.h>
 
+#include "qerplugin.h"
+//#include "qertypes.h"
+
+#include "igl.h"
 #include "iui_gtk.h"
+#include "ientity.h"
 
 #include "gendlgs.h"
-
 
 #define PLUGIN
 #define Q3RADIANT
 
-//#if defined(__linux__) || defined(__APPLE__)
-#if 1
-#include <algorithm>
-#else
+#if defined(__linux__) || defined(__APPLE__)
 template <class T>
 inline T min (T x, T y) { return (x < y) ? x : y; }
 template <class T>
 inline T max (T x, T y) { return (x > y) ? x : y; }
+
+typedef struct { long x, y; } POINT;
+typedef struct { long left, top, right, bottom; } RECT;
 #endif
-
-typedef struct { long x, y; } Point;
-typedef struct { long left, top, right, bottom; } Rect;
-
-#define NAME_MAX 255
-
-typedef void* LPVOID;
-typedef char* LPSTR;
-
-//#endif
-inline bool PtInRect (Rect *rc, Point pt)
+inline bool PtInRect (RECT *rc, POINT pt)
 {
   if (pt.x < rc->left) return false;
   if (pt.x > rc->right) return false;
@@ -100,14 +66,12 @@ inline bool PtInRect (Rect *rc, Point pt)
 #define DegreesToRadians(a) (a/57.2957795)
 
 #define	BOGUS_RANGE	65536
-/*
 #define DotProduct(x,y) (x[0]*y[0]+x[1]*y[1]+x[2]*y[2])
 #define VectorAdd(a,b,c) {c[0]=a[0]+b[0];c[1]=a[1]+b[1];c[2]=a[2]+b[2];}
 #define VectorClear(x) {x[0] = x[1] = x[2] = 0;}
 #define VectorCopy(a,b) {b[0]=a[0];b[1]=a[1];b[2]=a[2];}
 #define VectorScale(a,b,c) {c[0]=b*a[0];c[1]=b*a[1];c[2]=b*a[2];}
 #define VectorSubtract(a,b,c) {c[0]=a[0]-b[0];c[1]=a[1]-b[1];c[2]=a[2]-b[2];}
-*/
 #define XYZVectorSubtract(a,b,c) {c[0]=(float)a[0]-(float)b[0];c[1]=(float)a[1]-(float)b[1];c[2]=(float)a[2]-(float)b[2];}
 #define side(u1,v1,u2,v2,u3,v3) (v3-v1)*(u2-u1) - (u3-u1)*(v2-v1)
 
@@ -264,12 +228,11 @@ typedef struct
 
 //--------------- bitmap.c -----------------------------
 bool OpenBitmap ();
-double CalculateSnapValue(double value);
 void GenerateBitmapMapping ();
 //--------------- face.c -------------------------------
 void PlaneFromPoints (float *, float *, float *, PLANE *);
-//void CrossProduct (vec3 v1, vec3 v2, vec3 cross);
-//vec VectorNormalize (vec3 in, vec3 out);
+void CrossProduct (vec3 v1, vec3 v2, vec3 cross);
+vec VectorNormalize (vec3 in, vec3 out);
 //--------------- gendlg.c -----------------------------
 GtkWidget* create_main_dialog ();
 void About (GtkWidget *parent);
@@ -291,7 +254,8 @@ int PlayerStartZ(double,double);
 void SubdividePlasma(int,int,int,int);
 bool ValidSurface();
 void XYZtoV(XYZ *, vec3 *);
-scene::Node* MakePatch(void);
+void MakePatch(patchMesh_t *);
+double CalculateSnapValue(double value);
 
 //---------------- gensurf.c ---------------------------
 bool GenSurfInit ();
@@ -303,12 +267,12 @@ void SaveSetup (GtkWidget*);
 int GetDefSurfaceProps(char *);
 //---------------- view.c ------------------------------
 void CreateViewWindow ();
-void DrawGrid(Rect);
-void DrawPreview(Rect);
+void DrawGrid(RECT);
+void DrawPreview(RECT);
 void evaluate();
-void GetScaleFactor(Rect);
+void GetScaleFactor(RECT);
 void project(XYZ *);
-void Scale(Rect,XYZ,Point *);
+void Scale(RECT,XYZ,POINT *);
 void ShowPreview ();
 void UpdatePreview (bool);
 
@@ -400,7 +364,6 @@ extern int			 Antialiasing; // ^Fishman - Antializing for the preview window.
 extern int			 AddTerrainKey; // ^Fishman - Add terrain key to func_group.
 extern int			 SnapToGrid; // Hydra : snap to grid
 extern int       SP; // ^Fishman - Snap to grid.
-
 
 /*extern HCURSOR   ghCursorCurrent;
 extern HCURSOR   ghCursorDefault;

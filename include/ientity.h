@@ -1,6 +1,6 @@
 /*
-Copyright (C) 2001-2006, William Joseph.
-All Rights Reserved.
+Copyright (C) 1999-2007 id Software, Inc. and contributors.
+For a list of contributors, see the accompanying CONTRIBUTORS file.
 
 This file is part of GtkRadiant.
 
@@ -19,136 +19,98 @@ along with GtkRadiant; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#if !defined(INCLUDED_IENTITY_H)
-#define INCLUDED_IENTITY_H
+#ifndef _IENTITY_H_
+#define _IENTITY_H_
 
-#include "generic/constant.h"
+//
+// API for entity manip stuff
+//
 
-#include "string/string.h"
-#include "scenelib.h"
+// FIXME TTimo this prolly needs to merge with iepairs.h?
 
-class EntityClass;
+/*!
+SPoG
+generic "entity" module... 
+at first, there will only be one implementation for all entities, 
+perhaps later there will be one for each entity type? 
+it would probably make more sense to have a single implementation, 
+a generic one that is very flexible and can adapt the visualisation of 
+itself depending on an xml config specified in the entity definitions file
+*/
+#define ENTITY_MAJOR "entity"
+// {A1C9F9FD-75D5-4e4d-9D65-235D6D3F254C}
+static const GUID QEREntityTable_GUID = 
+{ 0xa1c9f9fd, 0x75d5, 0x4e4d, { 0x9d, 0x65, 0x23, 0x5d, 0x6d, 0x3f, 0x25, 0x4c } };
 
-typedef Callback1<const char*> KeyObserver;
+typedef entity_t* (* PFN_ENTITYALLOC) ();
+typedef void (* PFN_ENTITYFREE) (entity_t *e);
+typedef entity_t* (* PFN_ENTITYCREATE) (eclass_t *c);
+typedef entity_t* (* PFN_ENTITYCLONE) (entity_t *e);
+typedef void  (* PFN_ENTITYSETKEYVALUE) (entity_t *ent, const char *key, const char *value);
+typedef void  (* PFN_ENTITYDELETEKEY) (entity_t *ent, const char *key);
+typedef const char* (* PFN_ENTITYVALUEFORKEY) (entity_t *ent, const char *key);
+typedef float (* PFN_ENTITYFLOATFORKEY) (entity_t *ent, const char *key);
+typedef int   (* PFN_ENTITYINTFORKEY) (entity_t *ent, const char *key);
+typedef void  (* PFN_ENTITYVECTORFORKEY) (entity_t *ent, const char *key, vec3_t vec);
+typedef void (* PFN_ENTITYADDTOLIST) (entity_t *e, entity_t *lst);
+typedef void (* PFN_ENTITYREMOVEFROMLIST) (entity_t *e);
+typedef void (* PFN_ENTITYLINKBRUSH) (entity_t *e, brush_t *b);
+typedef void (* PFN_ENTITYUNLINKBRUSH) (brush_t *b);
+typedef void (* PFN_ENTITYDRAWLIGHT) (entity_t* e, int nGLState, int pref, int nViewType);
+typedef int (* PFN_ENTITYMEMORYSIZE) (entity_t *e);
+typedef void (* PFN_ENTITYUPDATEMODEL) (entity_t *e);
+typedef epair_t* (* PFN_ALLOCATEEPAIR) (const char *key, const char *value);
+typedef epair_t** (* PFN_GETENTITYKEYVALLIST) (entity_t *e);
+typedef void (* PFN_SETENTITYKEYVALLIST) (entity_t *e, epair_t* ep);
 
-class EntityKeyValue
+
+struct _QEREntityTable
 {
-public:
-  virtual const char* c_str() const = 0;
-  virtual void assign(const char* other) = 0;
-  virtual void attach(const KeyObserver& observer) = 0;
-  virtual void detach(const KeyObserver& observer) = 0;
+  int m_nSize;
+  PFN_ENTITYALLOC m_pfnEntity_Alloc;
+  PFN_ENTITYFREE m_pfnEntity_Free;
+  PFN_ENTITYCREATE m_pfnEntity_Create;
+  PFN_ENTITYCLONE m_pfnEntity_Clone;
+  PFN_ENTITYSETKEYVALUE m_pfnSetKeyValue;
+  PFN_ENTITYDELETEKEY m_pfnDeleteKey;
+  PFN_ENTITYVALUEFORKEY m_pfnValueForKey;
+  PFN_ENTITYFLOATFORKEY m_pfnFloatForKey;
+  PFN_ENTITYINTFORKEY m_pfnIntForKey;
+  PFN_ENTITYVECTORFORKEY m_pfnGetVectorForKey;
+  PFN_ENTITYADDTOLIST m_pfnEntity_AddToList;
+  PFN_ENTITYREMOVEFROMLIST m_pfnEntity_RemoveFromList;
+  PFN_ENTITYLINKBRUSH m_pfnEntity_LinkBrush;
+  PFN_ENTITYUNLINKBRUSH m_pfnEntity_UnlinkBrush;
+  PFN_ENTITYDRAWLIGHT m_pfnDrawLight;
+  PFN_ENTITYMEMORYSIZE m_pfnEntity_MemorySize;
+  PFN_ALLOCATEEPAIR m_pfnAllocateEpair;
+  PFN_GETENTITYKEYVALLIST m_pfnGetEntityKeyValList;
+  PFN_SETENTITYKEYVALLIST m_pfnSetEntityKeyValList;
 };
 
-class Entity
-{
-public:
-  STRING_CONSTANT(Name, "Entity");
-
-  class Observer
-  {
-  public:
-    virtual void insert(const char* key, EntityKeyValue& value) = 0;
-    virtual void erase(const char* key, EntityKeyValue& value) = 0;
-    virtual void clear() { };
-  };
-
-  class Visitor
-  {
-  public:
-    virtual void visit(const char* key, const char* value) = 0;
-  };
-
-  virtual const EntityClass& getEntityClass() const = 0;
-  virtual void forEachKeyValue(Visitor& visitor) const = 0;
-  virtual void setKeyValue(const char* key, const char* value) = 0;
-  virtual const char* getKeyValue(const char* key) const = 0;
-  virtual bool isContainer() const = 0;
-  virtual void attach(Observer& observer) = 0;
-  virtual void detach(Observer& observer) = 0;
-};
-
-class EntityCopyingVisitor : public Entity::Visitor
-{
-  Entity& m_entity;
-public:
-  EntityCopyingVisitor(Entity& entity)
-    : m_entity(entity)
-  {
-  }
-
-  void visit(const char* key, const char* value)
-  {
-    if(!string_equal(key, "classname"))
-    {
-      m_entity.setKeyValue(key, value);
-    }
-  }
-};
-
-inline Entity* Node_getEntity(scene::Node& node)
-{
-  return NodeTypeCast<Entity>::cast(node);
-}
-
-
-template<typename value_type>
-class Stack;
-template<typename Contained>
-class Reference;
-
-namespace scene
-{
-  class Node;
-}
-
-typedef Reference<scene::Node> NodeReference;
-
-namespace scene
-{
-  typedef Stack<NodeReference> Path;
-}
-
-class Counter;
-
-class EntityCreator
-{
-public:
-  INTEGER_CONSTANT(Version, 2);
-  STRING_CONSTANT(Name, "entity");
-
-  virtual scene::Node& createEntity(EntityClass* eclass) = 0;
-
-  typedef void (*KeyValueChangedFunc)();
-  virtual void setKeyValueChangedFunc(KeyValueChangedFunc func) = 0;
-
-  virtual void setCounter(Counter* counter) = 0;
-
-  virtual void connectEntities(const scene::Path& e1, const scene::Path& e2) = 0;
-
-  virtual void setLightRadii(bool lightRadii) = 0;
-  virtual bool getLightRadii() = 0;
-  virtual void setShowNames(bool showNames) = 0;
-  virtual bool getShowNames() = 0;
-  virtual void setShowAngles(bool showAngles) = 0;
-  virtual bool getShowAngles() = 0;
-
-  virtual void printStatistics() const = 0;
-};
-
-#include "modulesystem.h"
-
-template<typename Type>
-class GlobalModule;
-typedef GlobalModule<EntityCreator> GlobalEntityModule;
-
-template<typename Type>
-class GlobalModuleRef;
-typedef GlobalModuleRef<EntityCreator> GlobalEntityModuleRef;
-
-inline EntityCreator& GlobalEntityCreator()
-{
-  return GlobalEntityModule::getTable();
-}
+#ifdef USE_ENTITYTABLE_DEFINE
+#ifndef __ENTITYTABLENAME
+#define __ENTITYTABLENAME g_EntityTable
+#endif
+#define Entity_Alloc __ENTITYTABLENAME.m_pfnEntity_Alloc
+#define Entity_Free __ENTITYTABLENAME.m_pfnEntity_Free
+#define Entity_Clone __ENTITYTABLENAME.m_pfnEntity_Clone
+#define SetKeyValue __ENTITYTABLENAME.m_pfnSetKeyValue
+#define DeleteKey __ENTITYTABLENAME.m_pfnDeleteKey
+#define ValueForKey __ENTITYTABLENAME.m_pfnValueForKey
+#define FloatForKey __ENTITYTABLENAME.m_pfnFloatForKey
+#define IntForKey __ENTITYTABLENAME.m_pfnIntForKey
+#define GetVectorForKey __ENTITYTABLENAME.m_pfnGetVectorForKey
+#define Entity_AddToList __ENTITYTABLENAME.m_pfnEntity_AddToList
+#define Entity_RemoveFromList __ENTITYTABLENAME.m_pfnEntity_RemoveFromList
+#define Entity_LinkBrush __ENTITYTABLENAME.m_pfnEntity_LinkBrush
+#define Entity_UnlinkBrush __ENTITYTABLENAME.m_pfnEntity_UnlinkBrush
+#define DrawLight __ENTITYTABLENAME.m_pfnDrawLight
+#define Entity_MemorySize __ENTITYTABLENAME.m_pfnEntity_MemorySize
+#define Entity_AllocateEpair __ENTITYTABLENAME.m_pfnAllocateEpair
+#define Entity_GetKeyValList __ENTITYTABLENAME.m_pfnGetEntityKeyValList
+#define Entity_SetKeyValList __ENTITYTABLENAME.m_pfnSetEntityKeyValList
+#endif
 
 #endif
+

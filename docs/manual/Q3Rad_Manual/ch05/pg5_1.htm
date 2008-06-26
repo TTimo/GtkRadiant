@@ -1,0 +1,784 @@
+<html>
+<head>
+<title>Q3Radiant Editor Manual: Page 5.1</title>
+<link rel = "stylesheet" type = "text/css" href = "../styles/q3rad.css">
+</head>
+<body>
+<h1 class = "MsoTitle">Q3Radiant Editor Manual</h1>
+<hr>
+<h1><a name = "tools2">Tools 2: Working with Brushes</a></h1>
+
+<p>The geometry brushes are the basic building block of the Quake
+III Arena engine. These are the tools to make them work for
+you.
+
+<h2><a name = "geohand">Geometry Brush Handling Tools</a></h2>
+<div class = "subheading">Escape (ESC)</div>
+This is the all-purpose deselect key. Use it to back out of
+operations you don't want to complete or to stop working on a brush
+or group of brushes.
+
+<p><div class = "subheading">Create New Brush</div>
+
+<div class = "menu">(Click mouse button 1)
+<br>(Shortcut: none)</div>
+
+While mouse1 clicking over the main map window (or any open map
+window) drag the mouse pointer across the grid. A brush will be
+created that has the height of the current map grid size. If you
+have the "snap to grid" function set in your preferences, the brush
+will start and stop on gridlines. The texture will be either the
+default texture (if none has been selected) or the most recently
+used texture. For all these functions, you will first need to
+select a brush in either the Map or Camera windows.
+
+<p><div class = "subheading">Move Geometry Brush</div>
+
+<div class = "menu">(Click mouse button 1)</div>
+
+The Undo command will return the brush to its original size (if
+the brush is still selected). If the brush has been deselected, the
+resized version will remain and another brush will be created at
+full size.
+
+<ul><b>In the Map Window.</b> In the map window, select the
+brush. Click on the selected brush. With the mouse 1 button
+depressed move the brush around the map to the position you
+desire.
+
+<br><b>In the Z (height) Window.</b> In the map window, select the
+brush. Next, click on the selected brush in the Z window. With the
+mouse 1 button depressed move the brush around the map to the
+position you desire.
+
+<br><b>In the Camera Window.</b> Select a brush in the camera
+window (see <b><i>select single component</i></b> above).
+Mouse button 1 click on the brush and drag it in the desired
+direction. You may need to adjust your camera view to make dragging
+easier.</ul>
+
+<p><div class = "subheading">Stretching the Brush</div>
+
+<div class = "menu">(mouse1)</div>
+
+Think of this as stretching the brush. The Undo command will
+return the brush to its original size (if the brush is still
+selected). If the brush has been deselected, the resized version
+will remain and another brush will be created at full size.
+
+<ul><b>In the Map Window.</b> In the map window, click next to the
+selected brush on the side you want to pull. With the mouse 1
+button depressed pull in a direction away from the nearest edge.
+The brush will grow larger in that direction.
+
+<br><b>In the Z (height) Window.</b>  Use this to make the
+brush taller. In the Map or Camera window, select the brush.
+Next, click above or below the selected brush in the Z window. With
+the mouse 1 button depressed pull away from the select brush. The
+brush will grow in that direction.
+
+<br><b>In the Camera Window.</b> Select a brush in the camera
+window (see <b><i>select single component</i></b> above).
+Mouse1 click near the edge of the selected brush. With the mouse 1
+button depressed pull in a direction away from the nearest edge.
+The brush will grow larger in that direction. You may need to
+adjust your camera view to make dragging easier.</ul>
+
+<p><div class = "subheading">Shrinking the Brush</div>
+<div class = "menu">(mouse1)</div>
+Think of this as crunching the brush smaller.
+
+<ul><b>In the Map Window:</b> In the map window, select the
+brush. Click next to the selected brush on the side you want
+to pull. With the mouse 1 button depressed pull in a direction
+toward the nearest edge. The brush will shrink in that
+direction.
+
+<br><b>In the Z (height) Window:</b> Use this to make the brush
+shorter. In the Map or Camera window, select the brush. Next,
+click above or below the selected brush in the Z window. With the
+mouse button 1 depressed, push towards the select brush. The brush
+will shrink in that direction.
+
+<br><b>In the Camera Window:</b> Select a brush in the camera window
+(see <b><i>select single component</i></b> above). Mouse1
+click near the edge of the selected brush. With the mouse 1 button
+depressed push in a direction towards the nearest edge. The brush
+will grow larger in that direction. You may need to adjust your
+camera view to make dragging easier.</ul>
+
+<p><div class = "subheading">Flip Brush</div>
+
+<div class = "menu">(Menu: Selection &gt; Flip)</div>
+
+There are three separate actions here. They flip a brush
+along either X, Y, or Z-axes. A menu command and toolbar button
+controls each. The six flip and rotate toolbar commands are the
+second grouping (from the left) on the toolbar. The rotate
+command for the same axis is always next to the flip command.
+Flipping will not change the facing on non-model entities.
+
+<ul><b>Flip X</b> (Menu: Selection) (Toolbar: Leftmost button)
+
+<br>
+
+Flips brush along x-axis.
+
+<br>
+
+<b>Flip Y</b> (Menu: Selection) (Toolbar: left of center
+button)
+
+<br>
+
+Flips brush along y-axis.
+
+<br><b>Flip Z</b> (Menu: Selection) (Toolbar: second button from the
+right)
+
+<br>
+
+Flips brush along z-axis.</ul>
+
+<p><div class = "subheading">Rotate Brush</div>
+<div class = "menu">(Menu: Selection &gt; Rotate)</div>
+
+There are three separate actions here. They rotate a brush
+in 90 degree increments around a brush's X, Y, or Z axes. Both a
+menu command and toolbar button controls each action. The six flip
+and rotate toolbar commands are the second grouping (from the left)
+on the toolbar. The flip command for the same axis is always next
+to the rotate command for the same axis. The rotation will not
+change the facing on non-model entities.
+
+<ul><strong>
+
+Rotate X</strong>
+
+<div class = "menu">(Menu: Selection &gt; Rotate &gt; Rotate X)</div>
+Rotates brush around the x-axis.
+
+<br><strong>
+
+Rotate Y</strong>
+
+<div class = "menu">(Menu: Selection &gt; Rotate &gt; Rotate Y)</div>
+
+Rotates brush around the y-axis.
+
+<br><strong>Rotate Z</strong>
+
+<div class = "menu">(Menu: Selection &gt; Rotate &gt; Rotate Y)</div>
+Rotates brush around the Z-axis.</ul>
+
+<p><div class = "subheading">Arbitrary Rotation</div>
+
+The Rotate commands accessed from the toolbar all rotate
+affected map components 90 degrees; no more, no less. Arbitrary
+Rotation allows the user to set angles individually for the X, Y,
+and/or Z-axes. Enter a number value for each axis you want to
+rotate. Value can be positive or negative. After the values are
+entered, select OK. This rotates the object and closes the pop-up
+window. If you don't like the rotation, you can use Undo, so long
+as the brush is still selected, and the brush will return to its
+un-manipulated facing.
+
+<p><div class = "subheading">Free Rotate in Map Window</div>
+<div class = "menu">(Shortcut: R)</div>
+Press the "R" key. The selected map component(s) turns lavender.
+The purple square at the center is the center of the selection and
+the axis around which it will rotate. Left Mouse clicking on or
+near the selected component (in the map or camera window) and
+dragging will cause it to rotate. If the user does a SHIFT + middle
+mouse button click on the 2D map window, the axis square will
+relocate to the coordinates of the click. Deselecting and
+reselecting the component returns the axis to its original
+center.
+
+<p><div class = "subheading">Drag</div>
+
+There are two "drag" functions that involve control points or
+"handles" on the brush.
+
+<ul><strong>Drag Edges</strong>
+
+<div class = "menu">(Menu: Selection &gt; Drag Edges)
+
+<br>(Shortcut: CTRL + E)</div>
+
+This highlights the edges of a geometry brush, marking those
+edges with a blue "handle" box at the center of each side. Press
+again and the feature will toggle off. Pull on a handle to resize
+part of a brush. If <i>Snap-to-Grid</i> is active (Menu: Grid), the
+handle will snap to the nearest grid coordinate as it is pulled.
+Undo functions with this effect.
+
+<br><strong>Drag Vertices</strong>
+
+<div class = "menu">(Menu: Selection &gt; Drag Vertices)
+
+<br>(Shortcut: CTRL + V)</div>
+
+This highlights the corner vertices of a geometry brush, marking
+those corners with a green "handle" box where the sides of each
+brush face connect. Press again and the feature will toggle off.
+Pull on a handle to resize part of a brush. If <i>Snap-to-Grid</i>
+is active (Menu: Grid), the handle will usually snap to the nearest
+grid coordinate as it is pulled. Undo does NOT function with this
+effect.</ul>
+
+<p><div class = "tip"><strong>Design Note:</strong> Drag Vertices is a balky tool at best. It
+works well if the user is manipulating a triangular brush face,
+raising or lowering corners of the triangle. Work with care, it is
+quite easy to pull a brush out of useable (or recoverable)
+shape.</div>
+
+<p><div class = "subheading">Scale</div>
+
+<div class = "menu">(Menu: Selection &gt; Scale)</div>
+
+With Scale you can enlarge or reduce a brush, patch, or group of
+brushes and patches. You choose the axes to scale (X, Y, or Z) and
+the factor of the scale. The scaling factor can be different for
+each axis. Selecting this option brings up a tool window. The size
+of the brush or group of brushes is multiplied by the numbers in
+the boxes adjacent to the X, Y, or Z axes. Leave the value as 1 and
+no change occurs. If the value is a decimal less than one, the size
+of that axis shrinks. If the value is greater than 1, it grows. Hit
+OK to activate the scaling function with you chosen values. Undo
+functions with this effect.
+
+<p><div class = "subheading">CSG Operations</div>
+
+CSG stands for "Constructive Solid Geometry". The two
+functions here, <b><i>CSG Subtract</i></b> and <b><i>Make
+Hollow,</i></b> calculate the removing of sections from that
+geometry and breaking solid brushes (not curve patches) into
+smaller pieces. Although they are convenient to use for some
+operations, they often do things that the user may not care for.
+These "side effects" can include breaking brushes into inconvenient
+parts, cutting up adjacent brushes, and creating hard to find and
+remove micro brushes.
+
+<p><strong>Subtract</strong>
+<img src = "../Q3Rad_Manual_files/image022.png" width = 32 height = 30 align = "left" hspace = 2 vspace = 2><div class = "menu">(Menu: Selection &gt; CSG &gt; <u>S</u>ubtract)</div>
+When you select this, the selected brush or brushes subtract its
+volume from all the geometry that contacts it. The cutting brush is
+not removed. Undo does not fix this action.
+
+<p><div class = "tip"><strong>Design Note:</strong> Region off together the brushes that will be
+cut and the brushes which will be used for cutting. This keeps
+other brushes in the map from being affected by the action. It's
+also a good idea to save just before doing the action, so the user
+can "back up" to an earlier version.</div>
+
+<p><strong>Hollow</strong>
+
+<img src = "../Q3Rad_Manual_files/image024.png" width = 32 height = 30 align = "left" hspace = 2 vspace = 2><div class = "menu">(Menu: Selection &gt; CSG &gt; <u>H</u>ollow)</div>
+
+When the user selects this, the sides of the highlighted brush
+are turned into separate brushes. The thickness of these brushes is
+equal to the grid size. Undo functions with this action.
+
+<p><div class = "tip"><strong>Design Note:</strong> This works best with rectangular
+brushes. The edges of the created brushes overlap each
+other.</div>
+
+<p><strong>Merge</strong>
+<img src = "../Q3Rad_Manual_files/image026.png" width = 32 height = 30 align = "left" hspace = 2 vspace = 2><div class = "menu">(Menu: Selection &gt; CSG &gt; Merge)</div>
+When the user selects this, the highlighted brushes are turned
+into a single, convex brush. If the result of the merge would not
+create a convex brush, the following message appears in the editor
+console: " Cannot add a set of brushes with a concave hull."
+
+<p><b>Examples:</b> Example "<b>A</b>" shows two brushes can be
+merged together. Example "<b>B"</b> shows two brushes that cannot
+merge.
+
+<p align = "center"><img src = "../Q3Rad_Manual_files/image028.png" width = 383 height = 256 alt = "image028.png">
+
+<p><div class = "subheading">Clipper</div>
+
+<img src = "../Q3Rad_Manual_files/image030.png" width = 32 height = 30 align = "left" hspace = 2 vspace = 2><div class = "menu">(Menu: Selection &gt; Clipper)
+
+<br>(X toggles the clipper tool on or off)</div>
+
+If you think of this tool as being near the same as the miter
+box that a carpenter uses to cut wood or moldings, then you are not
+far from the truth.
+
+<p><strong>Placing Clip Points</strong>
+
+<br>Clip points are placed in the map views by two methods:
+
+<div class = "menu">(Mouse button 1 after Clipper has been toggled on)
+
+<br>(CTRL + Mouse button 2 at any time)</div>
+
+<p>The figure below shows a square brush that has been "clipped"
+from the lower left (point 1) to the upper right (point 2). The
+editor creates a line between the first point and the second point.
+The piece to be kept when the brush is cut is always created in a
+clockwise direction from the line (assuming that the first point is
+the center of the "clock")
+
+<p>In a two-point clip (shown here), the cut occurs perpendicular
+(at a 90 degree angle) from the plane of the map view. Adding a
+third point, and adjusting its position in a different map view can
+change the angle of the cutting plane. This will take practice to
+master.
+
+<ul><strong>Toggle Clipper</strong>
+
+<div class = "menu">(Menu: Selection &gt; Clipper &gt; Toggle Clipper)
+
+<br>(X)</div>
+
+This toggles the Clipper function on and off. After completing a
+cut, the tool remains active and must be toggled off before another
+brush is selected.
+
+<br><strong>Clip Selection</strong>
+
+<div class = "menu">(Menu: Selection &gt; Clipper &gt; Clip Selection)
+
+<br>(SHIFT)</div>
+
+If the "clip selection" action is completed the red portion of
+the brush will be discarded and only the yellow will remain. The
+brush is unselected. Undo currently returns the original brush and
+keeps the clipped off piece.
+
+<br><strong>Split Selection</strong>
+
+<div class = "menu">(Menu: Selection &gt; Clipper &gt; Split Selection)
+
+<br>(SHIFT + CTRL)</div>
+
+If the "split selection" action is completed the red and yellow
+portions of the brush will remain, split into two triangular
+brushes. The brush is unselected.
+
+<br><strong>Flip Clip Orientation</strong>
+
+<div class = "menu">(Menu: Selection &gt; Clipper &gt; Flip Clip
+Orientation)</div>
+The yellow and red hi-lights toggle so what was red is now
+yellow and what was yellow is now red.</ul>
+
+<p><div class = "subheading">Make Detail</div>
+
+<div class = "menu">(Menu: Selection &gt; Make Detail)
+
+<br>(Shortcut: CTRL + M)</div>
+
+In <i>Quake 2,</i> this was a surface flag. In <i>Quake III
+Arena,</i> it is used on the brush itself. Detail makes a brush
+non-structural. This means that it cannot be used to seal the hull
+of the map world. Don't use it for wall, floors, or ceilings. If it
+is used as a hull, the map will "leak" when compiled. But it can be
+used on things that jut out away from the walls (as long as there
+is a structural brush behind it).
+
+<p>Detail has two beneficial effects:
+
+<p>1. Detail brushes are less likely to cause additional cuts to
+occur in non-detail brushes that they touch ... thus reducing
+triangle counts. This can help reduce frame rate.
+
+<p>2. When the compiler does Vis, it breaks the world up into many
+small volumes. Any break in the surface of the box that forms a
+room creates additional volumes that must be. Detail brushes don't
+create these breaks. Therefore, using them speeds up compiling.
+
+<p><div class = "subheading">Make Structural</div>
+
+<div class = "menu">(Menu: Selection &gt; Make Structural)
+
+<br>(Shortcut: none)</div>
+
+Structural is the Default State for brushes. Textures that are
+not manipulated by shader scripts to be transparent or non-solid)
+do not change this. Essentially, this is a <i>change-it-back</i>
+command for Make Detail. It removes the detail flag from the brush.
+This surface WILL block Vis when the map is compiled (so long as
+there isn't shader content that says otherwise).
+
+<p><div class = "subheading">Func_Group</div>
+
+<div class = "menu">(Entity Window &gt; Func_Group &gt; Enter)</div>
+
+Technically, this is a b_model (brush model) entity. However,
+it's a great way to manage and handle related groups of map
+components for ease of selection. To use, select the brushes
+and patches you want to group and then open the Entity window
+(press "N"). Click on the entity list sub-window and type in "F" to
+move to the top of the "funcs". Double-click on Func_Group and all
+the brushes and patches selected are bound together into a group.
+Select one and you select them all.
+
+<p><strong>Thumb through Components</strong>
+
+<br>(Shortcut: TAB)</div>
+
+When you have a Func_Group b_model entity selected, press the
+TAB key to "thumb" through the component pieces, hi-lighting them
+individually, one at a time. This allows you to work on part of a
+multi-piece group without having to work on all pieces
+
+<p><div class = "subheading">Find Brush</div>
+
+<div class = "menu">(Menu: Misc &gt; Find Brush)</div>
+
+Find brush allows you to locate a brush in the map by its
+identifying number. As the map is built, the editor assigns
+identification numbers to each map component. For brushes (and
+patches) these include an Entity number and a brush number. For any
+brush that is not part of a brush model (b_model), the entity
+number is zero (0). Each b_model will have it's own number.
+
+<p>When the compiler outputs error messages in the console and
+junk.text file, an identification number will call out brushes with
+problems. Be prepared for them. Even when you do things right, you
+will get error messages.
+
+<p>Selecting Find brush pops up a dialogue window with two fields.
+The first field is the entity number. For most brushes, this will
+be zero. The second number is the brush's individual number.
+Selecting "OK," jumps the 2D map window(s) to the selected
+component and hi-lights it.
+
+<p><div class = "subheading">Brush scripts&hellip;</div>
+
+<div class = "menu">(Menu: Edit &gt; Brush scripts&hellip;)
+
+<br>(Shortcut: none)</div>
+
+The command allows you to perform multiple step operations that
+manipulate a single brush. Currently, only two of the list scripts
+function.
+
+<p><table>
+<tr valign = "top">
+	<td><b>BuildSpiral</b></td>
+	<td width = "90%">This walks you through the steps of building a spiral staircase.
+Select a brush, then click on the map to locate the spiral origin.
+Click again to bring up a dialogue window that prompts you to enter
+the number of steps, the angle of rotation, and the height of each
+step.</td>
+</tr>
+<tr>
+	<td><b>
+	BuildStep</b></td>
+	<td width = "90%">This clones the selected brush and moves it +X 16 units and +Z 8
+units.</td>
+</tr>
+</table>
+
+<h2><u>B</u>rush Menu Commands</a></h2>
+
+The Brush menu lets the mapmaker convert a selected brush into a
+brush of a different shape. Most of the commands change the number
+of sides that the brush possesses. It will also change the brush to
+a single color. There are individual commands for three through
+nine sides. The brush will be given the number of sides indicated
+by the command (Plus top and bottom). The "top" facing is always
+relative to the view in which it is created. The sides are always
+at right angles to the view facing.
+
+<p><div class = "subheading">Poly-Sided Brushes</div>
+
+<table class = "menu">
+<tr>
+<td>3
+sided</td>
+<td>(Menu: Brush &gt; 3
+sided)</td>
+<td>(Shortcut: CTRL + 3)</td>
+</tr>
+<tr>
+<td>4
+sided</td>
+<td>(Menu: Brush &gt; 4
+sided)</td>
+<td>(Shortcut: CTRL + 4)</td>
+</tr>
+<tr>
+<td>5
+sided</td>
+<td>(Menu: Brush &gt; 5
+sided)</td>
+<td>(Shortcut: CTRL + 5)</td>
+</tr>
+<tr>
+<td>6
+sided</td>
+<td>(Menu: Brush &gt; 6
+sided)</td>
+<td>(Shortcut: CTRL + 6)</td>
+</tr>
+<tr>
+<td>7
+sided</td>
+<td>(Menu: Brush &gt; 7
+sided)</td>
+<td>(Shortcut: CTRL + 7)</td>
+</tr>
+<tr>
+<td>8
+sided</td>
+<td>(Menu: Brush &gt; 8
+sided)</td>
+<td>(Shortcut: CTRL + 8)</td>
+<tr>
+<td>9
+sided</td>
+<td>(Menu: Brush &gt; 9
+sided)</td>
+<td>(Shortcut: CTRL + 9)</td>
+</tr>
+</table>
+
+<p><div class = "subheading">Arbitrary sided&hellip;</div>
+
+<div class = "menu">(Menu: Brush &gt; Arbitrary sided&hellip;)</div>
+
+This command opens a dialogue window. You can enter a number of
+sides in the field from 3 to 64. Select OK to execute the
+command.
+
+<p><div class = "subheading">Primitives</div>
+
+<div class = "menu">(Menu: Brush &gt; Primitives)</div>
+
+Primitives are pre-made shapes other than squares or the
+polygonal multisided boxes made by the "number" sided brush
+commands.
+
+<p><strong>Cone&hellip;</strong>
+
+<div class = "menu">(Menu: Brush &gt; Primitives &gt; Cone&hellip;)</div>
+
+This opens a pop-up dialogue window that lets you enter an
+arbitrary number of sides. The height of the cone is equal to the Z
+height of the brush. The cone is always made with its axis along
+the Z-axis. At first, the radius of the base of the cone appears to
+be unrelated, or at least unevenly related to the XY dimensions of
+the brush from which it is transformed. However, if you make a four
+sided brush, the point to point "diameter" of the resulting pyramid
+is equal to the longest XY dimension of the brush. Starting the
+same size brush as you used for the four-side cone, an eight-sided
+cone fits neatly within the volume of the four-sided cone, four of
+its sides congruent with the side planes of the four-sided cone. Do
+the same for a 16 sided cone, and the same again for both a 32
+sided cone. However, the number of sides seems to max out at
+56.
+
+<p><strong>Sphere&hellip;</strong>
+
+<div class = "menu">(Menu: Brush&gt;Primitives&gt;Sphere&hellip;)</div>
+
+This opens a pop-up dialogue window that lets you enter an
+arbitrary number of sides. The maximum number of sides, which the
+editor seems willing to handle is 32.The diameter of the sphere, is
+roughly equal to the length of the longest XY side of the brush
+from which it is transformed. Attempts to create spheres with more
+faces than 32 may result in the brush disappearing and becoming
+infinitely tall. Use Undo to back up from this or hit backspace to
+discard the brush.
+
+<p><strong>Torus&hellip;</strong>
+
+<br>Non functioniong command. No donuts for you!
+
+<h2><a name = "movebrush">Moving
+Selected Brushes</a></h2>
+
+<div class = "subheading">Moving the Brush</div>
+
+These keys move the brush around the map in discrete map grid
+increments.
+
+<ul><strong>Move Selection Down</strong>
+
+<div class = "menu">(Shortcut: Keypad MINUS)</div>
+Each press moves the selected map component down along the
+Z-axis by one grid position (at current grid setting). Not affected
+by current 2D-map view.
+
+<p><strong>Move Selection Up</strong>
+
+<div class = "menu">(Shortcut: Keypad PLUS)</div>
+Each press moves the selected map component up along the Z-axis
+by one grid position (at current grid setting). Not affected by
+current 2D-map view.</ul>
+
+<p><div class = "subheading">Nudging the Brush</div>
+
+These keys move the brush around the map in discrete map grid
+increments. The movement is in terms of the selected window, not in
+terms of XYZ coordinates.
+
+<ul><strong>Nudge Down</strong>
+
+<div class = "menu">(Shortcut: ALT + DOWN ARROW)</div>
+
+Each press moves the selected map component "down" the map view
+by one grid position (at the current grid setting). The movement is
+relative to the selected map view, not XYZ coordinates.
+
+
+
+<p><strong>Nudge Up</strong>
+
+<div class = "menu">(Shortcut: ALT + UP ARROW)</div>
+
+Each press moves the selected map component "up" the map view by
+one grid position (at the current grid setting). The movement is
+relative to the selected map view, not XYZ coordinates.
+
+<p><strong>Nudge Left</strong>
+
+<div class = "menu">(Shortcut: ALT + LEFT ARROW)</div>
+
+Each press moves the selected map component "left" the map view
+by one grid position (at the current grid setting). The movement is
+relative to the selected map view, not XYZ coordinates.
+
+<p><strong>Nudge Right</strong>
+
+<div class = "menu">(Shortcut: ALT + RIGHT ARROW)</div>
+
+Each press moves the selected map component "right" the map view
+by one grid position (at the current grid setting). The movement is
+relative to the selected map view, not XYZ coordinates.</ul>
+
+<p><div class = "subheading">Snap Selection To Grid</div>
+
+<div class = "menu">(Shortcut: CTRL + G)</div>
+
+If you are using the map grid to keep brushes in alignment, this
+is a great tool. Rotated brushes and brushes that have had their
+vertices tweaked can have vertices that no longer lie on map grid
+intersections. This snaps the vertices to align with the
+grid. Be warned that snapping to large grids may be hazardous
+to the health of your brush (Snap and it's gone! But that's what
+UNDO is for).
+
+<h2><a name = "brusheff">Efficient Brush Building
+Techniques</a></h2>
+
+<p><em>Developed from a Quake 3 World online posting by
+Astrocreep</em>
+
+<p>Compiling a map is a necessary evil. It takes time, it ties up
+your processor, and in the early phases of map construction, comes
+up with construction errors as often as not. Nothing you can do
+about that &hellip; except the time thing. It is possible,
+through more careful construction (or perhaps reconstruction) to
+significantly reduce both map and bot compile times, and reduce map
+and .bsp file sizes (the latter being important for downloads). The
+following is based on reports written by Astrocreep that documents
+his extensive work to streamline the compile on one of the id
+sample maps.
+
+<p><div class = "subheading">Brush Construction</div>
+
+It cannot be overstressed. If you want shorter compile times and
+small file sizes, efficient brush construction is "critical" in
+building your map. There is one rule that stands above all:
+
+<p>
+<b>DO NOT OVERLAP BRUSHES AT ANYTIME.</b>
+
+<p>No matter what you have to do to build your map, do not overlap
+brushes. Overlapping means that all or parts of two or more
+brushes share the same physical space. If brushes overlap, you can
+expect to add time to your compiling, and add size to your .map,
+.bsp and, .aas file sizes.
+
+<p>Efficient map construction means that all brushes butt up
+against each other, but never intersect.
+
+<p><div class = "subheading">Brush Counts</div>
+
+The sample map to be reworked on had 1,100 brushes in it.
+Without changing the layout or appearance of the map, Astrocreep
+was able to remove 110, or 10% of the total brush count.
+
+<p>Learn how to do more with a single brush than with multiple
+brushes. Evaluate your map after you complete initial construction
+phases on all or part of it. Pick a part of the map, look at
+the layout and ask yourself if you could do that with fewer
+brushes. In all likelihood, nine times out of 10, the answer will
+be yes.
+
+<p>If you make a structure out of three brushes (or whatever) and
+have the same floor height and ceiling height (in some cases
+heights can be different), look at it in the "top view". Can you
+draw a line from each vertex and not cross out side of those three
+brushes? If you can, then that grouping of three can become one
+brush instead of three.
+
+<p><b>Example</b>: here's how the engine might look at this.
+
+<p>Using 3 square brushes, you have 18 faces (with a texture mapped
+on each side) to be calculated. This doesn't take into
+consideration the number of in-game triangle faces that those
+brushes may generate. Even if two-thirds of those faces are not
+being drawn, they are still being calculated by both the compile
+process and the bot navigation compile process.
+
+<p>As compared to:
+
+<p>Using one brush (filling the same area), you have only 6 faces
+to be calculated. Here, you are compiling only a third of the total
+geometry. It should go faster.
+
+
+<p>Efficient map construction means using fewer brushes to build
+the world.
+
+<p><div class = "subheading">
+Caulking</div>
+
+It is possible to even further reduce the number of brush faces
+being calculated by applying a special non-drawing, but "solid"
+texture called "caulk" (common/caulk) to surfaces that cannot be
+seen in the game. When seen in the editor, this texture is a bright
+garish pink. In the game, it does not draw at all. Apply caulk to
+any brush face that either doesn't form the "shell" of the world or
+can't be seen by a player during play. Doing this may not improve
+your map's frame rate, but since your are telling the compiler that
+as many as five of the six faces on a square brush don't have to be
+calculated, it should have some significant effects on compile
+times. As long as you do not have any brushes that "share" the same
+space, caulking brushes should help reduce compile times. However,
+if you use caulk on a brush that "shares" the space of another,
+your compile time and all file sizes will actually increase.
+
+
+<p>Astrocreep compiled the test level nearly 200 times, many of
+those times were when he moved just a single brush, just to see
+what would change. Caulking seems to help the <i>-light</i> phase
+of compiling the most.
+
+<p>
+Efficient map construction means caulking all unseen brush
+faces.
+
+<p><div class = "subheading">Miscellaneous Tips</div>
+
+<b>Lights:</b> You can further improve compile times by careful
+use of lights. Entity lights, especially LOTS of entity lights can
+reduce compile time. If you need to reduce compiling time even more
+look to this.
+
+<p><b>Clip brushes:</b> Clip brushes that have more than two sides
+not touching another brush appear to increase compile times.
+
+<p><b>Hint brushes:</b> Use these only if you need to resolve a vis
+problem. Using them can significantly add to compile times.
+<p align = "center"><a href = "../ch04/pg4_1.htm">Back</a> | <a href = "../index.htm">Home</a> | <a href = "../ch06/pg6_1.htm">Next</a>
+</body>
+</html>

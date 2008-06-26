@@ -17,9 +17,5 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include <list>
-#include "str.h"
-typedef struct _GList		GList;
-
-bool LoadExclusionList(char* filename, std::list<Str>* exclusionList);
+bool LoadExclusionList(char* filename, list<Str>* exclusionList);
 bool LoadGList(char* filename, GList** loadlist);

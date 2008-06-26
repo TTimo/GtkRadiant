@@ -1,4 +1,0 @@
-$SETUP_DIR = 'Setup-JA';
-
-$DO_CORE = 1;
-$DO_GAME_JA = 1;
