@@ -8,5 +8,3 @@
 (that's a bit awkward)
 
 - the game list reload doesn't work right, the entries in the combo probably need to be initialized again
-
-- the open map dialoge should show the configure game maps/ dir, not the radiant dir
