@@ -48,7 +48,7 @@ void m4x4_translation_for_vec3(m4x4_t matrix, const vec3_t translation)
 void m4x4_rotation_for_vec3(m4x4_t matrix, const vec3_t euler, eulerOrder_t order)
 {
   double cx, sx, cy, sy, cz, sz;
-    
+
   cx = cos(DEG2RAD(euler[0]));
   sx = sin(DEG2RAD(euler[0]));
   cy = cos(DEG2RAD(euler[1]));
@@ -688,11 +688,11 @@ void m4x4_orthogonal_invert(m4x4_t matrix)
 float m3_det( m3x3_t mat )
 {
   float det;
-  
+
   det = mat[0] * ( mat[4]*mat[8] - mat[7]*mat[5] )
     - mat[1] * ( mat[3]*mat[8] - mat[6]*mat[5] )
     + mat[2] * ( mat[3]*mat[7] - mat[6]*mat[4] );
-  
+
   return( det );
 }
 
@@ -700,21 +700,21 @@ float m3_det( m3x3_t mat )
 void m3_inverse( m3x3_t mr, m3x3_t ma )
 {
   float det = m3_det( ma );
-  
+
   if ( fabs( det ) < 0.0005 )
   {
     m3_identity( ma );
     return;
   }
-  
+
   mr[0] =    ma[4]*ma[8] - ma[5]*ma[7]   / det;
   mr[1] = -( ma[1]*ma[8] - ma[7]*ma[2] ) / det;
   mr[2] =    ma[1]*ma[5] - ma[4]*ma[2]   / det;
-  
+
   mr[3] = -( ma[3]*ma[8] - ma[5]*ma[6] ) / det;
   mr[4] =    ma[0]*ma[8] - ma[6]*ma[2]   / det;
   mr[5] = -( ma[0]*ma[5] - ma[3]*ma[2] ) / det;
-  
+
   mr[6] =    ma[3]*ma[7] - ma[6]*ma[4]   / det;
   mr[7] = -( ma[0]*ma[7] - ma[6]*ma[1] ) / det;
   mr[8] =    ma[0]*ma[4] - ma[1]*ma[3]   / det;
@@ -724,7 +724,8 @@ void m3_inverse( m3x3_t mr, m3x3_t ma )
 void m4_submat( m4x4_t mr, m3x3_t mb, int i, int j )
 {
   int ti, tj, idst, jdst;
-  
+
+	idst = 0;
   for ( ti = 0; ti < 4; ti++ )
   {
     if ( ti < i )
@@ -732,7 +733,7 @@ void m4_submat( m4x4_t mr, m3x3_t mb, int i, int j )
     else
       if ( ti > i )
         idst = ti-1;
-      
+
       for ( tj = 0; tj < 4; tj++ )
       {
         if ( tj < j )
@@ -740,7 +741,7 @@ void m4_submat( m4x4_t mr, m3x3_t mb, int i, int j )
         else
           if ( tj > j )
             jdst = tj-1;
-          
+
           if ( ti != i && tj != j )
             mb[idst*3 + jdst] = mr[ti*4 + tj ];
       }
@@ -752,15 +753,15 @@ float m4_det( m4x4_t mr )
   float  det, result = 0, i = 1;
   m3x3_t msub3;
   int     n;
-  
+
   for ( n = 0; n < 4; n++, i *= -1 )
   {
     m4_submat( mr, msub3, 0, n );
-    
+
     det     = m3_det( msub3 );
     result += mr[n] * det * i;
   }
-  
+
   return result;
 }
 
@@ -770,21 +771,21 @@ int m4x4_invert(m4x4_t matrix)
   m3x3_t mtemp;
   int     i, j, sign;
   m4x4_t m4x4_temp;
-  
+
   if ( fabs( mdet ) < 0.0000000001 )	//% 0.0005
     return 1;
 
   memcpy(m4x4_temp, matrix, sizeof(m4x4_t));
-  
+
   for ( i = 0; i < 4; i++ )
     for ( j = 0; j < 4; j++ )
     {
       sign = 1 - ( (i +j) % 2 ) * 2;
-      
+
       m4_submat( m4x4_temp, mtemp, i, j );
-      
+
       matrix[i+j*4] = ( m3_det( mtemp ) * sign ) / mdet;
     }
-    
+
   return 0;
 }

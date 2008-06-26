@@ -37,7 +37,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define PM_ASE_C
 
 /* uncomment when debugging this module */
-//#define DEBUG_PM_ASE 
+//#define DEBUG_PM_ASE
 //#define DEBUG_PM_ASE_EX
 
 
@@ -61,14 +61,14 @@ typedef struct aseSubMaterial_s
 	struct aseSubMaterial_s* next;
 	int subMtlId;
 	picoShader_t* shader;
-	
+
 } aseSubMaterial_t;
 
 typedef struct aseMaterial_s
 {
 	struct aseMaterial_s* next;
 	struct aseSubMaterial_s* subMtls;
-	int mtlId;		
+	int mtlId;
 } aseMaterial_t;
 
 /* Material/SubMaterial management functions */
@@ -198,9 +198,6 @@ typedef struct aseFace_s
 /* ASE Face management functions */
 void _ase_add_face( aseFace_t **list, aseFace_t **tail, aseFace_t *newFace )
 {
-	aseFace_t* face = *list;
-	aseFace_t* tempFace = NULL;
-
 	/* insert as head of list */
 	if ( !(*list) )
 	{
@@ -209,11 +206,11 @@ void _ase_add_face( aseFace_t **list, aseFace_t **tail, aseFace_t *newFace )
 	else
 	{
 		(*tail)->next = newFace;
-	}	
+	}
 
 	*tail = newFace;
 	newFace->next = NULL;
-	
+
 	//tag the color indices so we can detect them and apply the default color to them
 	newFace->index[6] = -1;
 	newFace->index[7] = -1;
@@ -258,36 +255,36 @@ static void _ase_free_faces (aseFace_t** list, aseFace_t** tail )
 static int _ase_canload( PM_PARAMS_CANLOAD )
 {
 	picoParser_t *p;
-	
-	
+
+
 	/* quick data length validation */
 	if( bufSize < 80 )
 		return PICO_PMV_ERROR_SIZE;
-	
+
 	/* keep the friggin compiler happy */
 	*fileName = *fileName;
-	
+
 	/* create pico parser */
 	p = _pico_new_parser( (picoByte_t*) buffer, bufSize );
 	if( p == NULL )
 		return PICO_PMV_ERROR_MEMORY;
-	
+
 	/* get first token */
 	if( _pico_parse_first( p ) == NULL)
 	{
 		return PICO_PMV_ERROR_IDENT;
 	}
-	
+
 	/* check first token */
 	if( _pico_stricmp( p->token, "*3dsmax_asciiexport" ) )
 	{
 		_pico_free_parser( p );
 		return PICO_PMV_ERROR_IDENT;
 	}
-	
+
 	/* free the pico parser object */
 	_pico_free_parser( p );
-	
+
 	/* file seems to be a valid ase file */
 	return PICO_PMV_OK;
 }
@@ -329,14 +326,14 @@ static void _ase_submit_triangles ( picoSurface_t* surface , picoModel_t* model 
 				return;
 			}
 		}
-		
+
 		/* we pull the data from the surface using the facelist data */
 		for ( i = 0 ; i < 3 ; i ++ )
 		{
 			xyz[i]    = (picoVec3_t*) PicoGetSurfaceXYZ   ( surface, face->index[ i ] );
-			normal[i] = (picoVec3_t*) PicoGetSurfaceNormal( surface, face->index[ i ] );								
+			normal[i] = (picoVec3_t*) PicoGetSurfaceNormal( surface, face->index[ i ] );
 			st[i]     = (picoVec2_t*) PicoGetSurfaceST    ( surface, 0, face->index[ i + 3 ] );
-			
+
 			if ( face->index [ i + 6] >= 0 )
 			{
 				color[i]  = (picoColor_t*)PicoGetSurfaceColor ( surface, 0, face->index[ i + 6 ] );
@@ -345,15 +342,15 @@ static void _ase_submit_triangles ( picoSurface_t* surface , picoModel_t* model 
 			{
 				color[i] = &white;
 			}
-			
+
 		}
 
 		/* submit the triangle to the model */
 		PicoAddTriangleToModel ( model , xyz , normal , 1 , st , 1 , color , subMtl->shader );
 
 		/* advance to the next face */
-		face = face->next;		
-	}	
+		face = face->next;
+	}
 }
 
 /* _ase_load:
@@ -438,7 +435,7 @@ static picoModel_t *_ase_load( PM_PARAMS_LOAD )
 			//_ase_make_surface( model, &surface );
 			_ase_submit_triangles (surface, model ,materials,faces);
 			_ase_free_faces (&faces,&facesTail);
-						
+
 			/* allocate new pico surface */
 			surface = PicoNewSurface( NULL );
 			if (surface == NULL)
@@ -544,7 +541,7 @@ static picoModel_t *_ase_load( PM_PARAMS_LOAD )
 			PicoSetSurfaceIndex( surface, (index * 9 + 0), indexes[2] );
 			PicoSetSurfaceIndex( surface, (index * 9 + 1), indexes[1] );
 			PicoSetSurfaceIndex( surface, (index * 9 + 2), indexes[0] );
-			
+
 			/* parse to the subMaterial ID */
 			while ( 1 )
 			{
@@ -553,12 +550,12 @@ static picoModel_t *_ase_load( PM_PARAMS_LOAD )
 				{
 					aseFace_t* newFace;
 					int subMtlId;
-					
+
 					_pico_parse_int ( p , &subMtlId );
 					newFace = _pico_calloc ( 1 , sizeof ( aseFace_t ));
-					
+
 					/* we fix up the mtlId later when we parse the material_ref */
-					newFace->mtlId = 0;	
+					newFace->mtlId = 0;
 					newFace->subMtlId = subMtlId;
 					newFace->index[0] = indexes[2];
 					newFace->index[1] = indexes[1];
@@ -568,7 +565,7 @@ static picoModel_t *_ase_load( PM_PARAMS_LOAD )
 					break;
 				}
 			}
-			
+
 		}
 		/* model texture vertex */
 		else if (!_pico_stricmp(p->token,"*mesh_tvert"))
@@ -591,10 +588,10 @@ static picoModel_t *_ase_load( PM_PARAMS_LOAD )
 			/* get uv vertex t */
 			if (!_pico_parse_float( p,&uv[1] ))
 				_ase_error_return("UV vertex parse error");
-			
+
 			/* ydnar: invert t */
 			uv[ 1 ] = 1.0f - uv[ 1 ];
-			
+
 			/* set texture vertex */
 			PicoSetSurfaceST( surface,0,index,uv );
 		}
@@ -604,27 +601,27 @@ static picoModel_t *_ase_load( PM_PARAMS_LOAD )
 			picoIndex_t indexes[3];
 			int			index;
 			aseFace_t* face;
-			
+
 			/* we must have a valid surface */
 			if( surface == NULL )
 				continue;
-			
+
 			/* get face index */
 			if (!_pico_parse_int( p,&index ))
 				_ase_error_return("Texture face parse error");
-			
+
 			/* get 1st vertex index */
 			if (!_pico_parse_int( p,&indexes[0] ))
 				_ase_error_return("Texture face parse error");
-			
+
 			/* get 2nd vertex index */
 			if (!_pico_parse_int( p,&indexes[1] ))
 				_ase_error_return("Texture face parse error");
-			
+
 			/* get 3rd vertex index */
 			if (!_pico_parse_int( p,&indexes[2] ))
 				_ase_error_return("Texture face parse error");
-			
+
 			/* set face indexes (note interleaved offset!) */
 			PicoSetSurfaceIndex( surface, (index * 9 + 3), indexes[2] );
 			PicoSetSurfaceIndex( surface, (index * 9 + 4), indexes[1] );
@@ -664,7 +661,7 @@ static picoModel_t *_ase_load( PM_PARAMS_LOAD )
 			if (!_pico_parse_float( p,&colorInput ))
 				_ase_error_return("color vertex parse error");
 			color[2] = (picoByte_t)(colorInput * 255);
-			
+
 			/* leave alpha alone since we don't get any data from the ASE format */
 			color[3] = 255;
 
@@ -722,15 +719,15 @@ static picoModel_t *_ase_load( PM_PARAMS_LOAD )
 			picoColor_t			ambientColor, diffuseColor, specularColor;
 			char				*mapname = NULL;
 			int					subMtlId, subMaterialLevel = -1;
-			
-			
+
+
 			/* get material index */
 			_pico_parse_int( p,&index );
-			
+
 			/* check brace */
 			if (!_pico_parse_check(p,1,"{"))
 				_ase_error_return("Material missing opening brace");
-			
+
 			/* parse material block */
 			while( 1 )
 			{
@@ -775,7 +772,7 @@ static picoModel_t *_ase_load( PM_PARAMS_LOAD )
 
 				/* parse submaterial index */
 				if (!_pico_stricmp(p->token,"*submaterial"))
-				{											
+				{
 					/* allocate new pico shader */
 					_pico_parse_int( p , &subMtlId );
 
@@ -784,7 +781,7 @@ static picoModel_t *_ase_load( PM_PARAMS_LOAD )
 					{
 						PicoFreeModel( model );
 						return NULL;
-					}			
+					}
 					subMaterialLevel = level;
 				}
 				/* parse material name */
@@ -793,7 +790,7 @@ static picoModel_t *_ase_load( PM_PARAMS_LOAD )
 					char* name = _pico_parse(p,0);
 					if ( name == NULL)
 						_ase_error_return("Missing material name");
-					
+
 					strcpy ( materialName , name );
 					/* skip rest and continue with next token */
 					_pico_parse_skip_rest( p );
@@ -895,12 +892,12 @@ static picoModel_t *_ase_load( PM_PARAMS_LOAD )
 						/* get next token */
 						if (_pico_parse(p,1) == NULL) break;
 						if (!strlen(p->token)) continue;
-						
+
 						/* handle levels */
 						if (p->token[0] == '{') sublevel++;
 						if (p->token[0] == '}') sublevel--;
 						if (!sublevel) break;
-						
+
 						/* parse diffuse map bitmap */
 						if (!_pico_stricmp(p->token,"*bitmap"))
 						{
@@ -956,7 +953,7 @@ static picoModel_t *_ase_load( PM_PARAMS_LOAD )
 				/* this is just a material with 1 submaterial */
 				subMaterial = _ase_add_submaterial( &materials, index, 0, shader );
 			}
-			
+
 			/* ydnar: free mapname */
 			if( mapname != NULL )
 				_pico_free( mapname );
@@ -965,7 +962,7 @@ static picoModel_t *_ase_load( PM_PARAMS_LOAD )
 		/* skip unparsed rest of line and continue */
 		_pico_parse_skip_rest( p );
 	}
-	
+
 	/* ydnar: finish existing surface */
 //	_ase_make_surface( model, &surface );
 	_ase_submit_triangles (surface, model ,materials,faces);

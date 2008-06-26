@@ -2,30 +2,30 @@
 Copyright (c) 2001, Loki software, inc.
 All rights reserved.
 
-Redistribution and use in source and binary forms, with or without modification, 
+Redistribution and use in source and binary forms, with or without modification,
 are permitted provided that the following conditions are met:
 
-Redistributions of source code must retain the above copyright notice, this list 
+Redistributions of source code must retain the above copyright notice, this list
 of conditions and the following disclaimer.
 
 Redistributions in binary form must reproduce the above copyright notice, this
 list of conditions and the following disclaimer in the documentation and/or
 other materials provided with the distribution.
 
-Neither the name of Loki software nor the names of its contributors may be used 
-to endorse or promote products derived from this software without specific prior 
-written permission. 
+Neither the name of Loki software nor the names of its contributors may be used
+to endorse or promote products derived from this software without specific prior
+written permission.
 
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS'' 
-AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
-IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE 
-DISCLAIMED. IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE FOR ANY 
-DIRECT,INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES 
-(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; 
-LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON 
-ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT 
-(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS 
-SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE FOR ANY
+DIRECT,INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 //
@@ -336,7 +336,7 @@ static int vfsPakSort (const void *a, const void *b)
 		{
 			c2 = '/';
 		}
-		
+
 		// Arnout: note - sort pakfiles in reverse order. This ensures that
 		// later pakfiles override earlier ones. This because the vfs module
 		// returns a filehandle to the first file it can find (while it should
@@ -353,7 +353,7 @@ static int vfsPakSort (const void *a, const void *b)
 			return -1;
 		}
 	} while (c1);
-	
+
 	return 0;		// strings are equal
 }
 
@@ -370,7 +370,7 @@ void vfsInitDirectory (const char *path)
 {
   char filename[PATH_MAX];
   GDir *dir;
-	GSList *dirlistptr, *dirlist = NULL;
+	GSList *dirlist = NULL;
 	int iGameMode; // 0: no filtering 1: SP 2: MP
 
   if (g_numDirs == (VFS_MAXDIRS-1))
@@ -386,7 +386,7 @@ void vfsInitDirectory (const char *path)
 		else if (strcmp (gamemode, "mp") == 0)
 			iGameMode = 2;
 		else
-			iGameMode = 0;			
+			iGameMode = 0;
 	} else
 		iGameMode = 0;
 
@@ -540,7 +540,7 @@ int vfsGetFileCount (const char *filename, int flag)
     for (lst = g_pakFiles; lst != NULL; lst = g_slist_next (lst))
     {
       VFS_PAKFILE* file = (VFS_PAKFILE*)lst->data;
-      
+
       if (strcmp (file->name, fixed) == 0)
         count++;
     }
@@ -633,7 +633,7 @@ int vfsLoadFile (const char *filename, void **bufferptr, int index)
       ((char*) (*bufferptr))[file->size] = 0;
 
       i = unzReadCurrentFile (file->zipfile , *bufferptr, file->size);
-      unzCloseCurrentFile (file->zipfile); 
+      unzCloseCurrentFile (file->zipfile);
       if (i > 0)
         return file->size;
       else
@@ -670,7 +670,7 @@ char* vfsExtractRelativePath_short(const char *in, bool shorten)
   Sys_Printf("vfsExtractRelativePath: %s\n", in);
 #endif
 
-#ifdef _WIN32  
+#ifdef _WIN32
   if (shorten)
   {
     // make it short
@@ -690,7 +690,7 @@ char* vfsExtractRelativePath_short(const char *in, bool shorten)
 #else
   strcpy(l_in, in);
   vfsCleanFileName(l_in);
-#endif // ifdef WIN32  
+#endif // ifdef WIN32
 
 
 #ifdef DBG_RLTPATH
@@ -804,7 +804,7 @@ char* vfsGetFullPath(const char *in, int index, int flag)
       char *ptr,*lastptr;
       lastptr = file->name;
 
-      while (ptr = strchr(lastptr,'/'))
+      while ((ptr = strchr(lastptr,'/')) != NULL)
         lastptr = ptr+1;
 
       if (strcmp (lastptr, fixed) == 0)
@@ -844,10 +844,10 @@ char* vfsGetFullPath(const char *in, int index, int flag)
 //   or .. add an API so that the base prompt can be set during VFS init
 const char* vfsBasePromptPath()
 {
-#ifdef _WIN32  
-  static char* path = "C:";
+#ifdef _WIN32
+  static const char* path = "C:";
 #else
-  static char* path = "/";
+  static const char* path = "/";
 #endif
   return path;
 }

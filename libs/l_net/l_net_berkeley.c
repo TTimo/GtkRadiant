@@ -143,13 +143,13 @@ int WINS_Init(void)
 	char	buff[MAXHOSTNAMELEN];
 	struct sockaddr_s addr;
 	char	*p;
-	int		r;
-/* 
+/*
  linux doesn't have anything to initialize for the net
- "Windows .. built for the internet .. the internet .. built with unix" 
+ "Windows .. built for the internet .. the internet .. built with unix"
  */
 #if 0
-	WORD	wVersionRequested; 
+	int		r;
+	WORD	wVersionRequested;
 
 	wVersionRequested = MAKEWORD(2, 2);
 
@@ -432,7 +432,7 @@ static int PartialIPAddress (char *in, struct sockaddr_s *hostaddr)
 	int addr;
 	int num;
 	int mask;
-	
+
 	buff[0] = '.';
 	b = buff;
 	strcpy(buff+1, in);
@@ -449,11 +449,11 @@ static int PartialIPAddress (char *in, struct sockaddr_s *hostaddr)
 		mask<<=8;
 		addr = (addr<<8) + num;
 	}
-	
+
 	hostaddr->sa_family = AF_INET;
 	((struct sockaddr_in *)hostaddr)->sin_port = htons((u_short)net_hostport);
 	((struct sockaddr_in *)hostaddr)->sin_addr.s_addr = (myAddr & htonl(mask)) | htonl(addr);
-	
+
 	return 0;
 } //end of the function PartialIPAddress
 //===========================================================================
@@ -594,7 +594,7 @@ int WINS_Broadcast (int socket, byte *buf, int len)
 //===========================================================================
 int WINS_Write(int socket, byte *buf, int len, struct sockaddr_s *addr)
 {
-	int ret, written;
+	int ret = 0, written;
 
 	if (addr)
 	{
@@ -725,7 +725,7 @@ int WINS_GetAddrFromName(char *name, struct sockaddr_s *addr)
 
 	if (name[0] >= '0' && name[0] <= '9')
 		return PartialIPAddress (name, addr);
-	
+
 	hostentry = gethostbyname (name);
 	if (!hostentry)
 		return -1;

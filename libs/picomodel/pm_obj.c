@@ -215,9 +215,10 @@ static void FreeObjVertexData( TObjVertexData *vertexData )
 	}
 }
 
+#if 0
 static int _obj_mtl_load( picoModel_t *model )
 {
-	picoShader_t *curShader = NULL;
+	//picoShader_t *curShader = NULL;
 	picoParser_t *p;
 	picoByte_t   *mtlBuffer;
 	int			  mtlBufSize;
@@ -258,7 +259,7 @@ static int _obj_mtl_load( picoModel_t *model )
 	p = _pico_new_parser( mtlBuffer, mtlBufSize );
 	if (p == NULL)
 		_obj_mtl_error_return;
-	
+
 	/* doo teh .mtl parse */
 	while( 1 )
 	{
@@ -477,6 +478,7 @@ static int _obj_mtl_load( picoModel_t *model )
 	/* return with success */
 	return 1;
 }
+#endif
 
 /* _obj_load:
  *  loads a wavefront obj model file.

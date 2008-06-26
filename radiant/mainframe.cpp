@@ -4614,7 +4614,7 @@ void MainFrame::OnPrefs()
   bool bPluginToolbar = g_PrefsDlg.m_bPluginToolbar;
   int nShader = g_PrefsDlg.m_nShader;
   int nTextureQuality = g_PrefsDlg.m_nTextureQuality;
-  int nLightRadiuses = g_PrefsDlg.m_nLightRadiuses;
+//  int nLightRadiuses = g_PrefsDlg.m_nLightRadiuses;
   g_PrefsDlg.LoadPrefs();
 
   if (g_PrefsDlg.DoModal() == IDOK)

@@ -398,8 +398,6 @@ void vfsInitDirectory (const char *path)
 //   (for instance when modifying the project settings)
 void vfsShutdown ()
 {
-  wadFile_t *tmpptr;
-
   while (g_wadFiles)
   {
     wadCleanup((wadFile_t *)g_wadFiles->data);
@@ -710,7 +708,7 @@ char* vfsGetFullPath(const char *in, int index, int flag)
       char *ptr,*lastptr;
       lastptr = file->name;
 
-      while (ptr = strchr(lastptr,'/'))
+      while ((ptr = strchr(lastptr,'/')) != NULL)
         lastptr = ptr+1;
 
       if (strcmp (lastptr, fixed) == 0)
@@ -750,9 +748,9 @@ char* vfsGetFullPath(const char *in, int index, int flag)
 const char* vfsBasePromptPath()
 {
 #ifdef _WIN32
-  static char* path = "C:";
+  static const char* path = "C:";
 #else
-  static char* path = "/";
+  static const char* path = "/";
 #endif
   return path;
 }

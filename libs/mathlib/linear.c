@@ -52,6 +52,7 @@ int ludcmp(float **a, int n, int *indx, float *d)
 	float big,dum,sum,temp;
 	float *vv;
 
+	imax = 0;
 	vv=(float*)malloc(sizeof(float)*n);
 	*d=1.0;
 	for (i=0;i<n;i++) {
