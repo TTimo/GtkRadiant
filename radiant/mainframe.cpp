@@ -936,49 +936,49 @@ void MainFrame::create_main_menu (GtkWidget *window, GtkWidget *vbox)
   gtk_widget_show (menu_bar);
 
   // File menu
-  menu = create_sub_menu_with_mnemonic (menu_bar, "_File");
+  menu = create_sub_menu_with_mnemonic (menu_bar, _("_File"));
   if (g_PrefsDlg.m_bDetachableMenus)
     menu_tearoff (menu);
 
-  create_menu_item_with_mnemonic (menu, "_New Map",
+  create_menu_item_with_mnemonic (menu, _("_New Map"),
                     GTK_SIGNAL_FUNC (HandleCommand), ID_FILE_NEW);
   menu_separator (menu);
 
   //++timo temporary experimental stuff for sleep mode..
-  item = create_menu_item_with_mnemonic (menu, "_Sleep",
+  item = create_menu_item_with_mnemonic (menu, _("_Sleep"),
                            GTK_SIGNAL_FUNC (HandleCommand), ID_FILE_SLEEP);
   g_object_set_data (G_OBJECT (window), "menu_file_sleep", item );
   menu_separator (menu);
   // end experimental
 
-  item = create_menu_item_with_mnemonic (menu, "_Open...",
+  item = create_menu_item_with_mnemonic (menu, _("_Open..."),
                            GTK_SIGNAL_FUNC (HandleCommand), ID_FILE_OPEN);
   g_object_set_data (G_OBJECT (window), "menu_file_open", item);
-  create_menu_item_with_mnemonic (menu, "_Import...", // Hydra: give it it's proper name
+  create_menu_item_with_mnemonic (menu, _("_Import..."), // Hydra: give it it's proper name
                     GTK_SIGNAL_FUNC (HandleCommand), ID_FILE_IMPORTMAP);
-  item = create_menu_item_with_mnemonic (menu, "_Save",
+  item = create_menu_item_with_mnemonic (menu, _("_Save"),
                            GTK_SIGNAL_FUNC (HandleCommand), ID_FILE_SAVE);
   g_object_set_data (G_OBJECT (window), "menu_file_save", item);
-  create_menu_item_with_mnemonic (menu, "Save _as...",
+  create_menu_item_with_mnemonic (menu, _("Save _as..."),
                     GTK_SIGNAL_FUNC (HandleCommand), ID_FILE_SAVEAS);
-  create_menu_item_with_mnemonic (menu, "Save s_elected...",
+  create_menu_item_with_mnemonic (menu, _("Save s_elected..."),
                     GTK_SIGNAL_FUNC (HandleCommand), ID_FILE_EXPORTMAP);
   menu_separator (menu);
-  item = create_menu_item_with_mnemonic (menu, "Save re_gion...",
+  item = create_menu_item_with_mnemonic (menu, _("Save re_gion..."),
                            GTK_SIGNAL_FUNC (HandleCommand), ID_FILE_SAVEREGION);
   g_object_set_data (G_OBJECT (window), "menu_file_saveregion", item);
   menu_separator (menu);
-  create_menu_item_with_mnemonic (menu, "New p_roject...",
+  create_menu_item_with_mnemonic (menu, _("New p_roject..."),
                     GTK_SIGNAL_FUNC (HandleCommand), ID_FILE_NEWPROJECT);
-  create_menu_item_with_mnemonic (menu, "Load _project...",
+  create_menu_item_with_mnemonic (menu, _("Load _project..."),
                     GTK_SIGNAL_FUNC (HandleCommand), ID_FILE_LOADPROJECT);
-  create_menu_item_with_mnemonic (menu, "Pro_ject settings...",
+  create_menu_item_with_mnemonic (menu, _("Pro_ject settings..."),
                     GTK_SIGNAL_FUNC (HandleCommand), ID_FILE_PROJECTSETTINGS);
   menu_separator (menu);
-  create_menu_item_with_mnemonic (menu, "_Pointfile...",
+  create_menu_item_with_mnemonic (menu, _("_Pointfile..."),
                     GTK_SIGNAL_FUNC (HandleCommand), ID_FILE_POINTFILE);
   menu_separator (menu);
-  item = create_menu_item_with_mnemonic (menu, "Recent Files",
+  item = create_menu_item_with_mnemonic (menu, _("Recent Files"),
                            GTK_SIGNAL_FUNC (HandleCommand), ID_FILE_RECENT1);
   g_object_set_data (G_OBJECT (item), "accel", accel);
   gtk_widget_set_sensitive (item, FALSE);
@@ -996,301 +996,301 @@ void MainFrame::create_main_menu (GtkWidget *window, GtkWidget *vbox)
   gtk_widget_hide (item);
   MRU_AddWidget (item, 3);
   menu_separator (menu);
-  item = create_menu_item_with_mnemonic (menu, "Check for GtkRadiant update (web)",
+  item = create_menu_item_with_mnemonic (menu, _("Check for GtkRadiant update (web)"),
     GTK_SIGNAL_FUNC (HandleCommand), ID_FILE_CHECKUPDATE);
   // disable, the functionality is no longer available
   gtk_widget_set_sensitive( item, FALSE );
 
-  create_menu_item_with_mnemonic (menu, "E_xit",
+  create_menu_item_with_mnemonic (menu, _("E_xit"),
                     GTK_SIGNAL_FUNC (HandleCommand), ID_FILE_EXIT);
 
   // Edit menu
-  menu = create_sub_menu_with_mnemonic (menu_bar, "_Edit");
+  menu = create_sub_menu_with_mnemonic (menu_bar, _("_Edit"));
   if (g_PrefsDlg.m_bDetachableMenus)
     menu_tearoff (menu);
-  item = create_menu_item_with_mnemonic (menu, "_Undo",
+  item = create_menu_item_with_mnemonic (menu, _("_Undo"),
                            GTK_SIGNAL_FUNC (HandleCommand), ID_EDIT_UNDO);
   g_object_set_data (G_OBJECT (window), "menu_edit_undo", item);
-  item = create_menu_item_with_mnemonic (menu, "_Redo",
+  item = create_menu_item_with_mnemonic (menu, _("_Redo"),
                            GTK_SIGNAL_FUNC (HandleCommand), ID_EDIT_REDO);
   g_object_set_data (G_OBJECT (window), "menu_edit_redo", item);
   menu_separator (menu);
-  item = create_menu_item_with_mnemonic (menu, "_Copy", GTK_SIGNAL_FUNC (HandleCommand), ID_EDIT_COPYBRUSH);
-  item = create_menu_item_with_mnemonic (menu, "_Paste", GTK_SIGNAL_FUNC (HandleCommand), ID_EDIT_PASTEBRUSH);
-  item = create_menu_item_with_mnemonic (menu, "P_aste To Camera", GTK_SIGNAL_FUNC (HandleCommand), ID_EDIT_PASTEBRUSHTOCAMERA);
-  item = create_menu_item_with_mnemonic (menu, "_Delete", GTK_SIGNAL_FUNC (HandleCommand), ID_SELECTION_DELETE);
+  item = create_menu_item_with_mnemonic (menu, _("_Copy"), GTK_SIGNAL_FUNC (HandleCommand), ID_EDIT_COPYBRUSH);
+  item = create_menu_item_with_mnemonic (menu, _("_Paste"), GTK_SIGNAL_FUNC (HandleCommand), ID_EDIT_PASTEBRUSH);
+  item = create_menu_item_with_mnemonic (menu, _("P_aste To Camera"), GTK_SIGNAL_FUNC (HandleCommand), ID_EDIT_PASTEBRUSHTOCAMERA);
+  item = create_menu_item_with_mnemonic (menu, _("_Delete"), GTK_SIGNAL_FUNC (HandleCommand), ID_SELECTION_DELETE);
   g_object_set_data (G_OBJECT (window), "menu_selection_delete", item);
   menu_separator (menu);
-  create_menu_item_with_mnemonic (menu, "Map Info...", GTK_SIGNAL_FUNC (HandleCommand), ID_EDIT_MAPINFO);
-  create_menu_item_with_mnemonic (menu, "Entity Info...", GTK_SIGNAL_FUNC (HandleCommand), ID_EDIT_ENTITYINFO);
+  create_menu_item_with_mnemonic (menu, _("Map Info..."), GTK_SIGNAL_FUNC (HandleCommand), ID_EDIT_MAPINFO);
+  create_menu_item_with_mnemonic (menu, _("Entity Info..."), GTK_SIGNAL_FUNC (HandleCommand), ID_EDIT_ENTITYINFO);
   menu_separator (menu);
-  create_menu_item_with_mnemonic (menu, "Brush Scripts...", GTK_SIGNAL_FUNC (HandleCommand), ID_BRUSH_SCRIPTS);
+  create_menu_item_with_mnemonic (menu, _("Brush Scripts..."), GTK_SIGNAL_FUNC (HandleCommand), ID_BRUSH_SCRIPTS);
   menu_separator (menu);
-  create_menu_item_with_mnemonic (menu, "Load Pre_fab...", GTK_SIGNAL_FUNC (HandleCommand), ID_EDIT_LOADPREFAB);
-  create_menu_item_with_mnemonic (menu, "Save Selection as Prefab...", GTK_SIGNAL_FUNC (HandleCommand), ID_EDIT_SAVEPREFAB);
+  create_menu_item_with_mnemonic (menu, _("Load Pre_fab..."), GTK_SIGNAL_FUNC (HandleCommand), ID_EDIT_LOADPREFAB);
+  create_menu_item_with_mnemonic (menu, _("Save Selection as Prefab..."), GTK_SIGNAL_FUNC (HandleCommand), ID_EDIT_SAVEPREFAB);
   menu_separator (menu);
-  create_menu_item_with_mnemonic (menu, "Preferences...", GTK_SIGNAL_FUNC (HandleCommand), ID_PREFS);
+  create_menu_item_with_mnemonic (menu, _("Preferences..."), GTK_SIGNAL_FUNC (HandleCommand), ID_PREFS);
 
   // View menu
-  menu = create_sub_menu_with_mnemonic (menu_bar, "_View");
+  menu = create_sub_menu_with_mnemonic (menu_bar, _("_View"));
   if (g_PrefsDlg.m_bDetachableMenus)
     menu_tearoff (menu);
 
-  menu_in_menu = create_menu_in_menu_with_mnemonic (menu, "Toggle");
-  create_menu_item_with_mnemonic (menu_in_menu, "Camera View", GTK_SIGNAL_FUNC (HandleCommand), ID_TOGGLECAMERA);
-  create_menu_item_with_mnemonic (menu_in_menu, "Console View", GTK_SIGNAL_FUNC (HandleCommand), ID_TOGGLECONSOLE);
-  item = create_menu_item_with_mnemonic (menu_in_menu, "Entity View", GTK_SIGNAL_FUNC (HandleCommand), ID_VIEW_ENTITY);
+  menu_in_menu = create_menu_in_menu_with_mnemonic (menu, _("Toggle"));
+  create_menu_item_with_mnemonic (menu_in_menu, _("Camera View"), GTK_SIGNAL_FUNC (HandleCommand), ID_TOGGLECAMERA);
+  create_menu_item_with_mnemonic (menu_in_menu, _("Console View"), GTK_SIGNAL_FUNC (HandleCommand), ID_TOGGLECONSOLE);
+  item = create_menu_item_with_mnemonic (menu_in_menu, _("Entity View"), GTK_SIGNAL_FUNC (HandleCommand), ID_VIEW_ENTITY);
   g_object_set_data (G_OBJECT (window), "menu_view_entity", item);
   //  create_menu_item_with_mnemonic (menu_in_menu, "Groups View", GTK_SIGNAL_FUNC (HandleCommand), ID_VIEW_GROUPS);
-  create_menu_item_with_mnemonic (menu_in_menu, "XY (Top)", GTK_SIGNAL_FUNC (HandleCommand), ID_TOGGLEVIEW);
-  create_menu_item_with_mnemonic (menu_in_menu, "YZ (Side)", GTK_SIGNAL_FUNC (HandleCommand), ID_TOGGLEVIEW_YZ);
-  create_menu_item_with_mnemonic (menu_in_menu, "XZ (Front)", GTK_SIGNAL_FUNC (HandleCommand), ID_TOGGLEVIEW_XZ);
-  create_menu_item_with_mnemonic (menu_in_menu, "Z View", GTK_SIGNAL_FUNC (HandleCommand), ID_TOGGLEZ);
+  create_menu_item_with_mnemonic (menu_in_menu, _("XY (Top)"), GTK_SIGNAL_FUNC (HandleCommand), ID_TOGGLEVIEW);
+  create_menu_item_with_mnemonic (menu_in_menu, _("YZ (Side)"), GTK_SIGNAL_FUNC (HandleCommand), ID_TOGGLEVIEW_YZ);
+  create_menu_item_with_mnemonic (menu_in_menu, _("XZ (Front)"), GTK_SIGNAL_FUNC (HandleCommand), ID_TOGGLEVIEW_XZ);
+  create_menu_item_with_mnemonic (menu_in_menu, _("Z View"), GTK_SIGNAL_FUNC (HandleCommand), ID_TOGGLEZ);
   menu_separator (menu);
-  item = create_menu_item_with_mnemonic (menu, "_Center", GTK_SIGNAL_FUNC (HandleCommand), ID_VIEW_CENTER);
-  item = create_menu_item_with_mnemonic (menu, "_Center 2d", GTK_SIGNAL_FUNC (HandleCommand), ID_VIEW_CENTERVIEW);
-  item = create_menu_item_with_mnemonic (menu, "_Up Floor", GTK_SIGNAL_FUNC (HandleCommand), ID_VIEW_UPFLOOR);
-  item = create_menu_item_with_mnemonic (menu, "_Down Floor", GTK_SIGNAL_FUNC (HandleCommand), ID_VIEW_DOWNFLOOR);
+  item = create_menu_item_with_mnemonic (menu, _("_Center"), GTK_SIGNAL_FUNC (HandleCommand), ID_VIEW_CENTER);
+  item = create_menu_item_with_mnemonic (menu, _("_Center 2d"), GTK_SIGNAL_FUNC (HandleCommand), ID_VIEW_CENTERVIEW);
+  item = create_menu_item_with_mnemonic (menu, _("_Up Floor"), GTK_SIGNAL_FUNC (HandleCommand), ID_VIEW_UPFLOOR);
+  item = create_menu_item_with_mnemonic (menu, _("_Down Floor"), GTK_SIGNAL_FUNC (HandleCommand), ID_VIEW_DOWNFLOOR);
   menu_separator (menu);
-  item = create_menu_item_with_mnemonic (menu, "_Next (XY, YZ, XY)", GTK_SIGNAL_FUNC (HandleCommand), ID_VIEW_NEXTVIEW);
-  menu_in_menu = create_menu_in_menu_with_mnemonic (menu, "Layout");
-  create_menu_item_with_mnemonic (menu_in_menu, "XY (Top)", GTK_SIGNAL_FUNC (HandleCommand), ID_VIEW_XY);
-  create_menu_item_with_mnemonic (menu_in_menu, "YZ", GTK_SIGNAL_FUNC (HandleCommand), ID_VIEW_SIDE);
-  create_menu_item_with_mnemonic (menu_in_menu, "XZ", GTK_SIGNAL_FUNC (HandleCommand), ID_VIEW_FRONT);
-  menu_in_menu = create_menu_in_menu_with_mnemonic (menu, "Zoom");
-  create_menu_item_with_mnemonic (menu_in_menu, "_XY 100%", GTK_SIGNAL_FUNC (HandleCommand), ID_VIEW_100);
-  item = create_menu_item_with_mnemonic (menu_in_menu, "XY Zoom _In", GTK_SIGNAL_FUNC (HandleCommand), ID_VIEW_ZOOMIN);
-  item = create_menu_item_with_mnemonic (menu_in_menu, "XY Zoom _Out", GTK_SIGNAL_FUNC (HandleCommand), ID_VIEW_ZOOMOUT);
+  item = create_menu_item_with_mnemonic (menu, _("_Next (XY, YZ, XY)"), GTK_SIGNAL_FUNC (HandleCommand), ID_VIEW_NEXTVIEW);
+  menu_in_menu = create_menu_in_menu_with_mnemonic (menu, _("Layout"));
+  create_menu_item_with_mnemonic (menu_in_menu, _("XY (Top)"), GTK_SIGNAL_FUNC (HandleCommand), ID_VIEW_XY);
+  create_menu_item_with_mnemonic (menu_in_menu, _("YZ"), GTK_SIGNAL_FUNC (HandleCommand), ID_VIEW_SIDE);
+  create_menu_item_with_mnemonic (menu_in_menu, _("XZ"), GTK_SIGNAL_FUNC (HandleCommand), ID_VIEW_FRONT);
+  menu_in_menu = create_menu_in_menu_with_mnemonic (menu, _("Zoom"));
+  create_menu_item_with_mnemonic (menu_in_menu, _("_XY 100%"), GTK_SIGNAL_FUNC (HandleCommand), ID_VIEW_100);
+  item = create_menu_item_with_mnemonic (menu_in_menu, _("XY Zoom _In"), GTK_SIGNAL_FUNC (HandleCommand), ID_VIEW_ZOOMIN);
+  item = create_menu_item_with_mnemonic (menu_in_menu, _("XY Zoom _Out"), GTK_SIGNAL_FUNC (HandleCommand), ID_VIEW_ZOOMOUT);
   menu_separator (menu_in_menu);
-  create_menu_item_with_mnemonic (menu_in_menu, "_Z 100%", GTK_SIGNAL_FUNC (HandleCommand), ID_VIEW_Z100);
-  item = create_menu_item_with_mnemonic (menu_in_menu, "Z Zoo_m In", GTK_SIGNAL_FUNC (HandleCommand), ID_VIEW_ZZOOMIN);
+  create_menu_item_with_mnemonic (menu_in_menu, _("_Z 100%"), GTK_SIGNAL_FUNC (HandleCommand), ID_VIEW_Z100);
+  item = create_menu_item_with_mnemonic (menu_in_menu, _("Z Zoo_m In"), GTK_SIGNAL_FUNC (HandleCommand), ID_VIEW_ZZOOMIN);
   g_object_set_data (G_OBJECT (window), "menu_view_zzoomin", item);
-  item = create_menu_item_with_mnemonic (menu_in_menu, "Z Zoom O_ut", GTK_SIGNAL_FUNC (HandleCommand), ID_VIEW_ZZOOMOUT);
+  item = create_menu_item_with_mnemonic (menu_in_menu, _("Z Zoom O_ut"), GTK_SIGNAL_FUNC (HandleCommand), ID_VIEW_ZZOOMOUT);
   g_object_set_data (G_OBJECT (window), "menu_view_zzoomout", item);
   menu_separator (menu_in_menu);
-  item = create_menu_item_with_mnemonic (menu_in_menu, "Cubic Clip Zoom In", GTK_SIGNAL_FUNC (HandleCommand), ID_VIEW_CUBEIN);
-  item = create_menu_item_with_mnemonic (menu_in_menu, "Cubic Clip Zoom Out", GTK_SIGNAL_FUNC (HandleCommand), ID_VIEW_CUBEOUT);
+  item = create_menu_item_with_mnemonic (menu_in_menu, _("Cubic Clip Zoom In"), GTK_SIGNAL_FUNC (HandleCommand), ID_VIEW_CUBEIN);
+  item = create_menu_item_with_mnemonic (menu_in_menu, _("Cubic Clip Zoom Out"), GTK_SIGNAL_FUNC (HandleCommand), ID_VIEW_CUBEOUT);
   menu_separator (menu);
 
-  menu_in_menu = create_menu_in_menu_with_mnemonic (menu, "Show");
-  item = create_check_menu_item_with_mnemonic (menu_in_menu, "Show _Angles", GTK_SIGNAL_FUNC (HandleCommand), ID_VIEW_SHOWANGLES, FALSE);
+  menu_in_menu = create_menu_in_menu_with_mnemonic (menu, _("Show"));
+  item = create_check_menu_item_with_mnemonic (menu_in_menu, _("Show _Angles"), GTK_SIGNAL_FUNC (HandleCommand), ID_VIEW_SHOWANGLES, FALSE);
   g_object_set_data (G_OBJECT (window), "menu_view_showangles", item);
-  item = create_check_menu_item_with_mnemonic (menu_in_menu, "Show _Names", GTK_SIGNAL_FUNC (HandleCommand), ID_VIEW_SHOWNAMES, TRUE);
+  item = create_check_menu_item_with_mnemonic (menu_in_menu, _("Show _Names"), GTK_SIGNAL_FUNC (HandleCommand), ID_VIEW_SHOWNAMES, TRUE);
   g_object_set_data (G_OBJECT (window), "menu_view_shownames", item);
-  item = create_check_menu_item_with_mnemonic (menu_in_menu, "Show Blocks", GTK_SIGNAL_FUNC (HandleCommand), ID_VIEW_SHOWBLOCKS, FALSE);
+  item = create_check_menu_item_with_mnemonic (menu_in_menu, _("Show Blocks"), GTK_SIGNAL_FUNC (HandleCommand), ID_VIEW_SHOWBLOCKS, FALSE);
   g_object_set_data (G_OBJECT (window), "menu_view_showblocks", item);
-  item = create_check_menu_item_with_mnemonic (menu_in_menu, "Show C_oordinates", GTK_SIGNAL_FUNC (HandleCommand), ID_VIEW_SHOWCOORDINATES, TRUE);
+  item = create_check_menu_item_with_mnemonic (menu_in_menu, _("Show C_oordinates"), GTK_SIGNAL_FUNC (HandleCommand), ID_VIEW_SHOWCOORDINATES, TRUE);
   g_object_set_data (G_OBJECT (window), "menu_view_showcoordinates", item);
-  item = create_check_menu_item_with_mnemonic (menu_in_menu, "Show Window Outline", GTK_SIGNAL_FUNC (HandleCommand), ID_VIEW_SHOWOUTLINE, TRUE);
+  item = create_check_menu_item_with_mnemonic (menu_in_menu, _("Show Window Outline"), GTK_SIGNAL_FUNC (HandleCommand), ID_VIEW_SHOWOUTLINE, TRUE);
   g_object_set_data (G_OBJECT (window), "menu_view_showoutline", item);
-  item = create_check_menu_item_with_mnemonic (menu_in_menu, "Show ZBuffered Outline", GTK_SIGNAL_FUNC (HandleCommand), ID_SELECTION_NOOUTLINE, TRUE);
+  item = create_check_menu_item_with_mnemonic (menu_in_menu, _("Show ZBuffered Outline"), GTK_SIGNAL_FUNC (HandleCommand), ID_SELECTION_NOOUTLINE, TRUE);
   g_object_set_data (G_OBJECT (window), "menu_selection_nooutline", item);
-  item = create_check_menu_item_with_mnemonic (menu_in_menu, "Show Axes", GTK_SIGNAL_FUNC (HandleCommand), ID_VIEW_SHOWAXES, TRUE);
+  item = create_check_menu_item_with_mnemonic (menu_in_menu, _("Show Axes"), GTK_SIGNAL_FUNC (HandleCommand), ID_VIEW_SHOWAXES, TRUE);
   g_object_set_data (G_OBJECT (window), "menu_view_showaxes", item);
-  item = create_check_menu_item_with_mnemonic (menu_in_menu, "Show Workzone", GTK_SIGNAL_FUNC (HandleCommand), ID_VIEW_SHOWWORKZONE, FALSE);
+  item = create_check_menu_item_with_mnemonic (menu_in_menu, _("Show Workzone"), GTK_SIGNAL_FUNC (HandleCommand), ID_VIEW_SHOWWORKZONE, FALSE);
   g_object_set_data (G_OBJECT (window), "menu_view_showworkzone", item);
 
-  menu_in_menu = create_menu_in_menu_with_mnemonic (menu, "Filter");
-  create_check_menu_item_with_mnemonic (menu_in_menu, "World", GTK_SIGNAL_FUNC (HandleCommand), ID_FILTER_WORLD, FALSE);
-  create_check_menu_item_with_mnemonic (menu_in_menu, "Entities", GTK_SIGNAL_FUNC (HandleCommand), ID_FILTER_ENTITIES, FALSE);
-  create_check_menu_item_with_mnemonic (menu_in_menu, "Areaportals", GTK_SIGNAL_FUNC (HandleCommand), ID_FILTER_AREAPORTALS, FALSE);
-  create_check_menu_item_with_mnemonic (menu_in_menu, "Translucent", GTK_SIGNAL_FUNC (HandleCommand), ID_FILTER_TRANSLUCENT, FALSE);
-  create_check_menu_item_with_mnemonic (menu_in_menu, "Liquids", GTK_SIGNAL_FUNC (HandleCommand), ID_FILTER_LIQUIDS, FALSE);
-  create_check_menu_item_with_mnemonic (menu_in_menu, "Caulk", GTK_SIGNAL_FUNC (HandleCommand), ID_FILTER_CAULK, FALSE);
-  create_check_menu_item_with_mnemonic (menu_in_menu, "Clips", GTK_SIGNAL_FUNC (HandleCommand), ID_FILTER_CLIPS, FALSE);
-  create_check_menu_item_with_mnemonic (menu_in_menu, "Paths", GTK_SIGNAL_FUNC (HandleCommand), ID_FILTER_PATHS, FALSE);
-  create_check_menu_item_with_mnemonic (menu_in_menu, "Clusterportals", GTK_SIGNAL_FUNC (HandleCommand), ID_FILTER_CLUSTERPORTALS, FALSE);
-  create_check_menu_item_with_mnemonic (menu_in_menu, "Lights", GTK_SIGNAL_FUNC (HandleCommand), ID_FILTER_LIGHTS, FALSE);
-  create_check_menu_item_with_mnemonic (menu_in_menu, "Structural", GTK_SIGNAL_FUNC (HandleCommand), ID_FILTER_STRUCTURAL, FALSE);
-  item = create_check_menu_item_with_mnemonic (menu_in_menu, "Lightgrid", GTK_SIGNAL_FUNC (HandleCommand), ID_FILTER_LIGHTGRID, FALSE);
+  menu_in_menu = create_menu_in_menu_with_mnemonic (menu, _("Filter"));
+  create_check_menu_item_with_mnemonic (menu_in_menu, _("World"), GTK_SIGNAL_FUNC (HandleCommand), ID_FILTER_WORLD, FALSE);
+  create_check_menu_item_with_mnemonic (menu_in_menu, _("Entities"), GTK_SIGNAL_FUNC (HandleCommand), ID_FILTER_ENTITIES, FALSE);
+  create_check_menu_item_with_mnemonic (menu_in_menu, _("Areaportals"), GTK_SIGNAL_FUNC (HandleCommand), ID_FILTER_AREAPORTALS, FALSE);
+  create_check_menu_item_with_mnemonic (menu_in_menu, _("Translucent"), GTK_SIGNAL_FUNC (HandleCommand), ID_FILTER_TRANSLUCENT, FALSE);
+  create_check_menu_item_with_mnemonic (menu_in_menu, _("Liquids"), GTK_SIGNAL_FUNC (HandleCommand), ID_FILTER_LIQUIDS, FALSE);
+  create_check_menu_item_with_mnemonic (menu_in_menu, _("Caulk"), GTK_SIGNAL_FUNC (HandleCommand), ID_FILTER_CAULK, FALSE);
+  create_check_menu_item_with_mnemonic (menu_in_menu, _("Clips"), GTK_SIGNAL_FUNC (HandleCommand), ID_FILTER_CLIPS, FALSE);
+  create_check_menu_item_with_mnemonic (menu_in_menu, _("Paths"), GTK_SIGNAL_FUNC (HandleCommand), ID_FILTER_PATHS, FALSE);
+  create_check_menu_item_with_mnemonic (menu_in_menu, _("Clusterportals"), GTK_SIGNAL_FUNC (HandleCommand), ID_FILTER_CLUSTERPORTALS, FALSE);
+  create_check_menu_item_with_mnemonic (menu_in_menu, _("Lights"), GTK_SIGNAL_FUNC (HandleCommand), ID_FILTER_LIGHTS, FALSE);
+  create_check_menu_item_with_mnemonic (menu_in_menu, _("Structural"), GTK_SIGNAL_FUNC (HandleCommand), ID_FILTER_STRUCTURAL, FALSE);
+  item = create_check_menu_item_with_mnemonic (menu_in_menu, _("Lightgrid"), GTK_SIGNAL_FUNC (HandleCommand), ID_FILTER_LIGHTGRID, FALSE);
   g_object_set_data (G_OBJECT (window), "menu_filter_lightgrid", item);
-  create_check_menu_item_with_mnemonic (menu_in_menu, "Patches", GTK_SIGNAL_FUNC (HandleCommand), ID_FILTER_PATCHES, FALSE);
-  create_check_menu_item_with_mnemonic (menu_in_menu, "Details", GTK_SIGNAL_FUNC (HandleCommand), ID_FILTER_DETAILS, FALSE);
-  create_check_menu_item_with_mnemonic (menu_in_menu, "Hints", GTK_SIGNAL_FUNC (HandleCommand), ID_FILTER_HINTSSKIPS, FALSE);
-  create_check_menu_item_with_mnemonic (menu_in_menu, "Models", GTK_SIGNAL_FUNC (HandleCommand), ID_FILTER_MODELS, FALSE);
-  create_check_menu_item_with_mnemonic (menu_in_menu, "Triggers", GTK_SIGNAL_FUNC (HandleCommand), ID_FILTER_TRIGGERS, FALSE);
-  create_check_menu_item_with_mnemonic (menu_in_menu, "Botclips", GTK_SIGNAL_FUNC (HandleCommand), ID_FILTER_BOTCLIPS, FALSE);
+  create_check_menu_item_with_mnemonic (menu_in_menu, _("Patches"), GTK_SIGNAL_FUNC (HandleCommand), ID_FILTER_PATCHES, FALSE);
+  create_check_menu_item_with_mnemonic (menu_in_menu, _("Details"), GTK_SIGNAL_FUNC (HandleCommand), ID_FILTER_DETAILS, FALSE);
+  create_check_menu_item_with_mnemonic (menu_in_menu, _("Hints"), GTK_SIGNAL_FUNC (HandleCommand), ID_FILTER_HINTSSKIPS, FALSE);
+  create_check_menu_item_with_mnemonic (menu_in_menu, _("Models"), GTK_SIGNAL_FUNC (HandleCommand), ID_FILTER_MODELS, FALSE);
+  create_check_menu_item_with_mnemonic (menu_in_menu, _("Triggers"), GTK_SIGNAL_FUNC (HandleCommand), ID_FILTER_TRIGGERS, FALSE);
+  create_check_menu_item_with_mnemonic (menu_in_menu, _("Botclips"), GTK_SIGNAL_FUNC (HandleCommand), ID_FILTER_BOTCLIPS, FALSE);
 
   menu_separator (menu);
-  menu_in_menu = create_menu_in_menu_with_mnemonic (menu, "Hide/Show");
-  create_menu_item_with_mnemonic (menu_in_menu, "Hide Selected",
+  menu_in_menu = create_menu_in_menu_with_mnemonic (menu, _("Hide/Show"));
+  create_menu_item_with_mnemonic (menu_in_menu, _("Hide Selected"),
                     GTK_SIGNAL_FUNC (HandleCommand), ID_VIEW_HIDESHOW_HIDESELECTED);
-  create_menu_item_with_mnemonic (menu_in_menu, "Show Hidden",
+  create_menu_item_with_mnemonic (menu_in_menu, _("Show Hidden"),
                     GTK_SIGNAL_FUNC (HandleCommand), ID_VIEW_HIDESHOW_SHOWHIDDEN);
   menu_separator (menu);
-  menu_in_menu = create_menu_in_menu_with_mnemonic (menu, "Entities as");
+  menu_in_menu = create_menu_in_menu_with_mnemonic (menu, _("Entities as"));
   g_object_set_data (G_OBJECT (window), "view_entitiesas_menu", menu_in_menu);
-  item = create_radio_menu_item_with_mnemonic (menu_in_menu, NULL, "Bounding box",
+  item = create_radio_menu_item_with_mnemonic (menu_in_menu, NULL, _("Bounding box"),
                                  GTK_SIGNAL_FUNC (HandleCommand), ID_VIEW_ENTITIESAS_BOUNDINGBOX,FALSE);
   g_object_set_data (G_OBJECT (window), "menu_view_entitiesas_boundingbox", item);
-  item = create_radio_menu_item_with_mnemonic (menu_in_menu, item, "Wireframe",
+  item = create_radio_menu_item_with_mnemonic (menu_in_menu, item, _("Wireframe"),
                                  GTK_SIGNAL_FUNC (HandleCommand), ID_VIEW_ENTITIESAS_WIREFRAME,FALSE);
   g_object_set_data (G_OBJECT (window), "menu_view_entitiesas_wireframe", item);
-  item = create_radio_menu_item_with_mnemonic (menu_in_menu, item, "Selected Wireframe",
+  item = create_radio_menu_item_with_mnemonic (menu_in_menu, item, _("Selected Wireframe"),
                                  GTK_SIGNAL_FUNC (HandleCommand),ID_VIEW_ENTITIESAS_SELECTEDWIREFRAME,FALSE);
   g_object_set_data (G_OBJECT (window), "menu_view_entitiesas_selectedwireframe", item);
-  item = create_radio_menu_item_with_mnemonic (menu_in_menu, item, "Selected Skinned",
+  item = create_radio_menu_item_with_mnemonic (menu_in_menu, item, _("Selected Skinned"),
                                  GTK_SIGNAL_FUNC (HandleCommand), ID_VIEW_ENTITIESAS_SELECTEDSKINNED,FALSE);
   g_object_set_data (G_OBJECT (window), "menu_view_entitiesas_selectedskinned", item);
-  item = create_radio_menu_item_with_mnemonic (menu_in_menu, item, "Skinned",
+  item = create_radio_menu_item_with_mnemonic (menu_in_menu, item, _("Skinned"),
                                  GTK_SIGNAL_FUNC (HandleCommand), ID_VIEW_ENTITIESAS_SKINNED,FALSE);
   g_object_set_data (G_OBJECT (window), "menu_view_entitiesas_skinned", item);
-  item = create_radio_menu_item_with_mnemonic (menu_in_menu, item, "Skinned and Boxed",
+  item = create_radio_menu_item_with_mnemonic (menu_in_menu, item, _("Skinned and Boxed"),
                                  GTK_SIGNAL_FUNC (HandleCommand), ID_VIEW_ENTITIESAS_SKINNEDANDBOXED,FALSE);
   g_object_set_data (G_OBJECT (window), "menu_view_entitiesas_skinnedandboxed", item);
   menu_separator (menu);
-  item = create_check_menu_item_with_mnemonic (menu, "Cubic Clipping",
+  item = create_check_menu_item_with_mnemonic (menu, _("Cubic Clipping"),
                                  GTK_SIGNAL_FUNC (HandleCommand), ID_VIEW_CUBICCLIPPING, TRUE);
   g_object_set_data (G_OBJECT (window), "menu_view_cubicclipping", item);
   menu_separator (menu);
-  item = create_check_menu_item_with_mnemonic (menu, "OpenGL Lighting",
+  item = create_check_menu_item_with_mnemonic (menu, _("OpenGL Lighting"),
                                  GTK_SIGNAL_FUNC (HandleCommand), ID_VIEW_OPENGLLIGHTING, FALSE);
   g_object_set_data (G_OBJECT (window), "menu_view_opengllighting", item);
 
   // Selection menu
-  menu = create_sub_menu_with_mnemonic (menu_bar, "_Selection");
+  menu = create_sub_menu_with_mnemonic (menu_bar, _("_Selection"));
   if (g_PrefsDlg.m_bDetachableMenus)
     menu_tearoff (menu);
 
-  menu_in_menu = create_menu_in_menu_with_mnemonic (menu, "Drag");
-  create_menu_item_with_mnemonic (menu_in_menu, "Drag _Edges",
+  menu_in_menu = create_menu_in_menu_with_mnemonic (menu, _("Drag"));
+  create_menu_item_with_mnemonic (menu_in_menu, _("Drag _Edges"),
                     GTK_SIGNAL_FUNC (HandleCommand), ID_SELECTION_DRAGEDGES);
-  create_menu_item_with_mnemonic (menu_in_menu, "Drag _Vertices",
+  create_menu_item_with_mnemonic (menu_in_menu, _("Drag _Vertices"),
                     GTK_SIGNAL_FUNC (HandleCommand), ID_SELECTION_DRAGVERTECIES);
   menu_separator (menu);
-  create_menu_item_with_mnemonic (menu, "_Clone",
+  create_menu_item_with_mnemonic (menu, _("_Clone"),
                     GTK_SIGNAL_FUNC (HandleCommand), ID_SELECTION_CLONE);
-  item = create_menu_item_with_mnemonic (menu, "Deselect",
+  item = create_menu_item_with_mnemonic (menu, _("Deselect"),
                            GTK_SIGNAL_FUNC (HandleCommand), ID_SELECTION_DESELECT);
-  item = create_menu_item_with_mnemonic (menu, "Invert",
+  item = create_menu_item_with_mnemonic (menu, _("Invert"),
                            GTK_SIGNAL_FUNC (HandleCommand), ID_SELECTION_INVERT);
 #ifndef QUAKE3
-  create_menu_item_with_mnemonic (menu, "_Delete",
+  create_menu_item_with_mnemonic (menu, _("_Delete"),
                     GTK_SIGNAL_FUNC (HandleCommand), ID_SELECTION_DELETE);
 #endif
   menu_separator (menu);
-  menu_in_menu = create_menu_in_menu_with_mnemonic (menu, "Flip");
-  create_menu_item_with_mnemonic (menu_in_menu, "Flip _X",
+  menu_in_menu = create_menu_in_menu_with_mnemonic (menu, _("Flip"));
+  create_menu_item_with_mnemonic (menu_in_menu, _("Flip _X"),
                     GTK_SIGNAL_FUNC (HandleCommand), ID_BRUSH_FLIPX);
-  create_menu_item_with_mnemonic (menu_in_menu, "Flip _Y",
+  create_menu_item_with_mnemonic (menu_in_menu, _("Flip _Y"),
                     GTK_SIGNAL_FUNC (HandleCommand), ID_BRUSH_FLIPY);
-  create_menu_item_with_mnemonic (menu_in_menu, "Flip _Z",
+  create_menu_item_with_mnemonic (menu_in_menu, _("Flip _Z"),
                     GTK_SIGNAL_FUNC (HandleCommand), ID_BRUSH_FLIPZ);
   menu_separator (menu);
-  menu_in_menu = create_menu_in_menu_with_mnemonic (menu, "Rotate");
-  create_menu_item_with_mnemonic (menu_in_menu, "Rotate X",
+  menu_in_menu = create_menu_in_menu_with_mnemonic (menu, _("Rotate"));
+  create_menu_item_with_mnemonic (menu_in_menu, _("Rotate X"),
                     GTK_SIGNAL_FUNC (HandleCommand), ID_BRUSH_ROTATEX);
-  create_menu_item_with_mnemonic (menu_in_menu, "Rotate Y",
+  create_menu_item_with_mnemonic (menu_in_menu, _("Rotate Y"),
                     GTK_SIGNAL_FUNC (HandleCommand), ID_BRUSH_ROTATEY);
-  create_menu_item_with_mnemonic (menu_in_menu, "Rotate Z",
+  create_menu_item_with_mnemonic (menu_in_menu, _("Rotate Z"),
                     GTK_SIGNAL_FUNC (HandleCommand), ID_BRUSH_ROTATEZ);
-  create_menu_item_with_mnemonic (menu_in_menu, "Arbitrary rotation...",
+  create_menu_item_with_mnemonic (menu_in_menu, _("Arbitrary rotation..."),
                     GTK_SIGNAL_FUNC (HandleCommand), ID_SELECTION_ARBITRARYROTATION);
   menu_separator (menu);
-  create_menu_item_with_mnemonic (menu, "Scale...", GTK_SIGNAL_FUNC (HandleCommand), ID_SELECT_SCALE);
-  menu_in_menu = create_menu_in_menu_with_mnemonic (menu, "CSG");
-  create_menu_item_with_mnemonic (menu_in_menu, "Make _Hollow",
+  create_menu_item_with_mnemonic (menu, _("Scale..."), GTK_SIGNAL_FUNC (HandleCommand), ID_SELECT_SCALE);
+  menu_in_menu = create_menu_in_menu_with_mnemonic (menu, _("CSG"));
+  create_menu_item_with_mnemonic (menu_in_menu, _("Make _Hollow"),
                     GTK_SIGNAL_FUNC (HandleCommand), ID_SELECTION_MAKEHOLLOW);
-  create_menu_item_with_mnemonic (menu_in_menu, "CSG _Subtract",
+  create_menu_item_with_mnemonic (menu_in_menu, _("CSG _Subtract"),
                     GTK_SIGNAL_FUNC (HandleCommand), ID_SELECTION_CSGSUBTRACT);
-  create_menu_item_with_mnemonic (menu_in_menu, "CSG _Merge",
+  create_menu_item_with_mnemonic (menu_in_menu, _("CSG _Merge"),
                     GTK_SIGNAL_FUNC (HandleCommand), ID_SELECTION_CSGMERGE);
   menu_separator (menu);
-  menu_in_menu = create_menu_in_menu_with_mnemonic (menu, "Select");
-  create_menu_item_with_mnemonic (menu_in_menu, "Select Complete _Tall",
+  menu_in_menu = create_menu_in_menu_with_mnemonic (menu, _("Select"));
+  create_menu_item_with_mnemonic (menu_in_menu, _("Select Complete _Tall"),
                     GTK_SIGNAL_FUNC (HandleCommand), ID_SELECTION_SELECTCOMPLETETALL);
-  create_menu_item_with_mnemonic (menu_in_menu, "Select T_ouching",
+  create_menu_item_with_mnemonic (menu_in_menu, _("Select T_ouching"),
                     GTK_SIGNAL_FUNC (HandleCommand), ID_SELECTION_SELECTTOUCHING);
-  create_menu_item_with_mnemonic (menu_in_menu, "Select _Partial Tall",
+  create_menu_item_with_mnemonic (menu_in_menu, _("Select _Partial Tall"),
                     GTK_SIGNAL_FUNC (HandleCommand), ID_SELECTION_SELECTPARTIALTALL);
-  create_menu_item_with_mnemonic (menu_in_menu, "Select _Inside",
+  create_menu_item_with_mnemonic (menu_in_menu, _("Select _Inside"),
                     GTK_SIGNAL_FUNC (HandleCommand), ID_SELECTION_SELECTINSIDE);
 #ifndef QUAKE3
-  create_menu_item_with_mnemonic (menu_in_menu, "Nudge Left",
+  create_menu_item_with_mnemonic (menu_in_menu, _("Nudge Left"),
                     GTK_SIGNAL_FUNC (HandleCommand), ID_SELECTION_SELECT_NUDGELEFT);
-  create_menu_item_with_mnemonic (menu_in_menu, "Nudge Right",
+  create_menu_item_with_mnemonic (menu_in_menu, _("Nudge Right"),
                     GTK_SIGNAL_FUNC (HandleCommand), ID_SELECTION_SELECT_NUDGERIGHT);
-  create_menu_item_with_mnemonic (menu_in_menu, "Nudge Up",
+  create_menu_item_with_mnemonic (menu_in_menu, _("Nudge Up"),
                     GTK_SIGNAL_FUNC (HandleCommand), ID_SELECTION_SELECT_NUDGEUP);
-  create_menu_item_with_mnemonic (menu_in_menu, "Nudge Down",
+  create_menu_item_with_mnemonic (menu_in_menu, _("Nudge Down"),
                     GTK_SIGNAL_FUNC (HandleCommand), ID_SELECTION_SELECT_NUDGEDOWN);
 #endif
   menu_separator (menu);
-  menu_in_menu = create_menu_in_menu_with_mnemonic (menu, "Clipper");
-  create_menu_item_with_mnemonic (menu_in_menu, "Toggle Clipper",
+  menu_in_menu = create_menu_in_menu_with_mnemonic (menu, _("Clipper"));
+  create_menu_item_with_mnemonic (menu_in_menu, _("Toggle Clipper"),
                     GTK_SIGNAL_FUNC (HandleCommand), ID_VIEW_CLIPPER);
   menu_separator (menu_in_menu);
-  create_menu_item_with_mnemonic (menu_in_menu, "Clip selection",
+  create_menu_item_with_mnemonic (menu_in_menu, _("Clip selection"),
                     GTK_SIGNAL_FUNC (HandleCommand), ID_CLIP_SELECTED);
-  create_menu_item_with_mnemonic (menu_in_menu, "Split selection",
+  create_menu_item_with_mnemonic (menu_in_menu, _("Split selection"),
                     GTK_SIGNAL_FUNC (HandleCommand), ID_SPLIT_SELECTED);
-  create_menu_item_with_mnemonic (menu_in_menu, "Flip Clip orientation",
+  create_menu_item_with_mnemonic (menu_in_menu, _("Flip Clip orientation"),
                     GTK_SIGNAL_FUNC (HandleCommand), ID_FLIP_CLIP);
   menu_separator (menu);
-  create_menu_item_with_mnemonic (menu, "Connect entities",
+  create_menu_item_with_mnemonic (menu, _("Connect entities"),
                     GTK_SIGNAL_FUNC (HandleCommand), ID_SELECTION_CONNECT);
-  create_menu_item_with_mnemonic (menu, "Ungroup entity",
+  create_menu_item_with_mnemonic (menu, _("Ungroup entity"),
                     GTK_SIGNAL_FUNC (HandleCommand), ID_SELECTION_UNGROUPENTITY);
-  create_menu_item_with_mnemonic (menu, "Make detail",
+  create_menu_item_with_mnemonic (menu, _("Make detail"),
                     GTK_SIGNAL_FUNC (HandleCommand), ID_SELECTION_MAKE_DETAIL);
-  create_menu_item_with_mnemonic (menu, "Make structural",
+  create_menu_item_with_mnemonic (menu, _("Make structural"),
                     GTK_SIGNAL_FUNC (HandleCommand), ID_SELECTION_MAKE_STRUCTURAL);
 
   // BSP menu
-  menu = create_sub_menu_with_mnemonic (menu_bar, "_Bsp");
+  menu = create_sub_menu_with_mnemonic (menu_bar, _("_Bsp"));
 
   menu_separator (menu);
   g_object_set_data (G_OBJECT (window), "menu_bsp", menu);
 
   // Grid menu
-  menu = create_sub_menu_with_mnemonic (menu_bar, "_Grid");
+  menu = create_sub_menu_with_mnemonic (menu_bar, _("_Grid"));
   if (g_PrefsDlg.m_bDetachableMenus)
     menu_tearoff (menu);
 
-  item = create_radio_menu_item_with_mnemonic (menu, NULL, "Grid0.25",
+  item = create_radio_menu_item_with_mnemonic (menu, NULL, _("Grid0.25"),
                                  GTK_SIGNAL_FUNC (HandleCommand), ID_GRID_025, FALSE);
   g_object_set_data (G_OBJECT (window), "menu_grid_025", item);
-  item = create_radio_menu_item_with_mnemonic (menu, item, "Grid0.5",
+  item = create_radio_menu_item_with_mnemonic (menu, item, _("Grid0.5"),
                                  GTK_SIGNAL_FUNC (HandleCommand), ID_GRID_05, FALSE);
   g_object_set_data (G_OBJECT (window), "menu_grid_05", item);
-  item = create_radio_menu_item_with_mnemonic (menu, item, "Grid1",
+  item = create_radio_menu_item_with_mnemonic (menu, item, _("Grid1"),
                                  GTK_SIGNAL_FUNC (HandleCommand), ID_GRID_1, FALSE);
   g_object_set_data (G_OBJECT (window), "menu_grid_1", item);
-  item = create_radio_menu_item_with_mnemonic (menu, item, "Grid2",
+  item = create_radio_menu_item_with_mnemonic (menu, item, _("Grid2"),
                                  GTK_SIGNAL_FUNC (HandleCommand), ID_GRID_2, FALSE);
   g_object_set_data (G_OBJECT (window), "menu_grid_2", item);
-  item = create_radio_menu_item_with_mnemonic (menu, item, "Grid4",
+  item = create_radio_menu_item_with_mnemonic (menu, item, _("Grid4"),
                                  GTK_SIGNAL_FUNC (HandleCommand), ID_GRID_4, FALSE);
   g_object_set_data (G_OBJECT (window), "menu_grid_4", item);
-  item = create_radio_menu_item_with_mnemonic (menu, item, "Grid8",
+  item = create_radio_menu_item_with_mnemonic (menu, item, _("Grid8"),
                                  GTK_SIGNAL_FUNC (HandleCommand), ID_GRID_8, TRUE);
   g_object_set_data (G_OBJECT (window), "menu_grid_8", item);
-  item = create_radio_menu_item_with_mnemonic (menu, item, "Grid16",
+  item = create_radio_menu_item_with_mnemonic (menu, item, _("Grid16"),
                                  GTK_SIGNAL_FUNC (HandleCommand), ID_GRID_16, FALSE);
   g_object_set_data (G_OBJECT (window), "menu_grid_16", item);
-  item = create_radio_menu_item_with_mnemonic (menu, item, "Grid32",
+  item = create_radio_menu_item_with_mnemonic (menu, item, _("Grid32"),
                                  GTK_SIGNAL_FUNC (HandleCommand), ID_GRID_32, FALSE);
   g_object_set_data (G_OBJECT (window), "menu_grid_32", item);
-  item = create_radio_menu_item_with_mnemonic (menu, item, "Grid64",
+  item = create_radio_menu_item_with_mnemonic (menu, item, _("Grid64"),
                                  GTK_SIGNAL_FUNC (HandleCommand), ID_GRID_64, FALSE);
   g_object_set_data (G_OBJECT (window), "menu_grid_64", item);
-  item = create_radio_menu_item_with_mnemonic (menu, item, "Grid128",
+  item = create_radio_menu_item_with_mnemonic (menu, item, _("Grid128"),
                                  GTK_SIGNAL_FUNC (HandleCommand), ID_GRID_128, FALSE);
   g_object_set_data (G_OBJECT (window), "menu_grid_128", item);
-  item = create_radio_menu_item_with_mnemonic (menu, item, "Grid256",
+  item = create_radio_menu_item_with_mnemonic (menu, item, _("Grid256"),
                                  GTK_SIGNAL_FUNC (HandleCommand), ID_GRID_256, FALSE);
   g_object_set_data (G_OBJECT (window), "menu_grid_256", item);
   menu_separator (menu);
-  item = create_check_menu_item_with_mnemonic (menu, "Snap to grid",
+  item = create_check_menu_item_with_mnemonic (menu, _("Snap to grid"),
                                  GTK_SIGNAL_FUNC (HandleCommand), ID_SNAPTOGRID, TRUE);
   g_object_set_data (G_OBJECT (window), "menu_snaptogrid", item);
 
   // Textures menu
-  menu = create_sub_menu_with_mnemonic (menu_bar, "_Textures");
+  menu = create_sub_menu_with_mnemonic (menu_bar, _("_Textures"));
   if (g_PrefsDlg.m_bDetachableMenus)
     menu_tearoff (menu);
 
-  item = create_check_menu_item_with_mnemonic (menu, "Show In _Use",
+  item = create_check_menu_item_with_mnemonic (menu, _("Show In _Use"),
 				 GTK_SIGNAL_FUNC (HandleCommand), ID_TEXTURES_SHOWINUSE, FALSE);
   g_object_set_data (G_OBJECT (window), "menu_textures_showinuse", item);
   item = create_check_menu_item_with_mnemonic (menu, "Show _All",

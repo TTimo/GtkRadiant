@@ -45,7 +45,7 @@ void *g_pMainWidget;
 
 //backwards for some reason
 static const char *PLUGIN_COMMANDS = CMD_ABOUT ";" CMD_SEP;
-static const char *PLUGIN_ABOUT = "UFO: Alien Invasion plugin " PLUGIN_VERSION "\nby Martin Gerhardy";
+static const char *PLUGIN_ABOUT = _("UFO: Alien Invasion plugin " PLUGIN_VERSION "\nby Martin Gerhardy");
 
 #define NUM_TOOLBAR_BUTTONS FILTER_MAX
 typedef struct toolbar_button_info_s
@@ -89,57 +89,57 @@ static const toolbar_button_info_t toolbar_buttons[NUM_TOOLBAR_BUTTONS] =
 	},
 	{
 		"ufoai_level1.bmp",
-		"Filter level1",
-		"Level 1",
+		_("Filter level1"),
+		_("Level 1"),
 		DoLevel1Filtering,
 		IToolbarButton::eToggleButton
 	},
 	{
 		"ufoai_level2.bmp",
-		"Filter level2",
-		"Level 2",
+		_("Filter level2"),
+		_("Level 2"),
 		DoLevel2Filtering,
 		IToolbarButton::eToggleButton
 	},
 	{
 		"ufoai_level3.bmp",
-		"Filter level3",
-		"Level 3",
+		_("Filter level3"),
+		_("Level 3"),
 		DoLevel3Filtering,
 		IToolbarButton::eToggleButton
 	},
 	{
 		"ufoai_level4.bmp",
-		"Filter level4",
-		"Level 4",
+		_("Filter level4"),
+		_("Level 4"),
 		DoLevel4Filtering,
 		IToolbarButton::eToggleButton
 	},
 	{
 		"ufoai_level5.bmp",
-		"Filter level5",
-		"Level 5",
+		_("Filter level5"),
+		_("Level 5"),
 		DoLevel5Filtering,
 		IToolbarButton::eToggleButton
 	},
 	{
 		"ufoai_level6.bmp",
-		"Filter level6",
-		"Level 6",
+		_("Filter level6"),
+		_("Level 6"),
 		DoLevel6Filtering,
 		IToolbarButton::eToggleButton
 	},
 	{
 		"ufoai_level7.bmp",
-		"Filter level7",
-		"Level 7",
+		_("Filter level7"),
+		_("Level 7"),
 		DoLevel7Filtering,
 		IToolbarButton::eToggleButton
 	},
 	{
 		"ufoai_level8.bmp",
-		"Filter level8",
-		"Level 8",
+		_("Filter level8"),
+		_("Level 8"),
 		DoLevel8Filtering,
 		IToolbarButton::eToggleButton
 	},
@@ -207,7 +207,7 @@ extern "C" const char* QERPlug_GetCommandList (void)
 extern "C" void QERPlug_Dispatch (const char *p, vec3_t vMin, vec3_t vMax, bool bSingleBrush)
 {
 	if (!strcmp(p, CMD_ABOUT)) {
-		g_FuncTable.m_pfnMessageBox(NULL, PLUGIN_ABOUT, "About", MB_OK, NULL);
+		g_FuncTable.m_pfnMessageBox(NULL, PLUGIN_ABOUT, _("About"), MB_OK, NULL);
 	} else {
 		Sys_Printf("Message: %s\n", p);
 	}

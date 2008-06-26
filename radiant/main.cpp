@@ -420,6 +420,9 @@ void error_redirect (const gchar *domain, GLogLevelFlags log_level, const gchar 
 //  Sys_FPrintf (SYS_NOCON, buf);
 }
 
+#define GETTEXT_PACKAGE "radiant"
+#define LOCALEDIR "lang"
+
 int main( int argc, char* argv[] ) {
 	char *libgl, *ptr;
 	int i, j, k;
@@ -447,7 +450,11 @@ int main( int argc, char* argv[] ) {
   }
 #endif
 
-  gtk_disable_setlocale();
+
+	bindtextdomain(GETTEXT_PACKAGE, LOCALEDIR);
+	bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");
+	textdomain(GETTEXT_PACKAGE);
+//  gtk_disable_setlocale();
 
   gtk_init(&argc, &argv);
 

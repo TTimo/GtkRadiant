@@ -40,6 +40,7 @@ and the external dependencies (such as GLib, STL, mathlib etc.)
 #include "ifilesystem.h"
 #include "ientity.h"
 #include "idata.h"
+#include <glib/gi18n.h>
 
 extern _QERFuncTable_1 g_FuncTable;
 extern _QERQglTable g_QglTable;
