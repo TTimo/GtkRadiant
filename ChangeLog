@@ -1,0 +1,2 @@
+ * converted the project files to VC8
+ * default parameters can't be used in function typedefs anymore, removed those and fixed the code accordingly
