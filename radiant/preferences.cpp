@@ -3248,6 +3248,9 @@ void CGameInstall::BuildDialog() {
 		case GAME_NEXUIZ:
 			gtk_combo_box_append_text( GTK_COMBO_BOX( combo ), _("Nexuiz") );
 			break;
+		case GAME_TREMULOUS:
+			gtk_combo_box_append_text( GTK_COMBO_BOX( combo ), _("Tremulous") );
+			break;
 		}
 		iGame++;
 	}
@@ -3414,6 +3417,18 @@ void CGameInstall::Run() {
 		fprintf( fg, "  basegame=\"data\"\n" );
 		break;
 	}
+	case GAME_TREMULOUS: {
+		fprintf( fg, "  gametools=\"%sinstalls/TremulousPack/game\"\n", g_strAppPath.GetBuffer() );
+		fprintf( fg, "  prefix=\".tremulous\"\n" );
+		Str source = g_strAppPath.GetBuffer();
+		source += "installs/";
+		source += TREMULOUS_PACK;
+		source += "/install/";
+		Str dest = m_strEngine.GetBuffer();
+		CopyTree( source.GetBuffer(), dest.GetBuffer() );
+		fprintf( fg, "  basegame=\"base\"\n" );
+		break;
+	}
 	}
 	fprintf( fg, "/>\n" );
 	fclose( fg );
@@ -3453,6 +3468,9 @@ void CGameInstall::ScanGames() {
 		}
 		if ( stricmp( dirname, Q2_PACK ) == 0 ) {
 			m_availGames[ iGame++ ] = GAME_Q2;
+		}
+		if ( stricmp( dirname, TREMULOUS_PACK ) == 0 ) {
+			m_availGames[ iGame++ ] = GAME_TREMULOUS;
 		}
 	}
 }

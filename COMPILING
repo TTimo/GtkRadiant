@@ -13,9 +13,12 @@ The subversion client can be obtained from the Subversion site.
 To get a copy of the source using the commandline Subversion client:
   Change the current directory to the desired location for the source.
   svn checkout https://zerowing.idsoftware.com/svn/radiant/GtkRadiant/trunk/ ./GtkRadiant
-  svn checkout https://zerowing.idsoftware.com/svn/radiant.gamepacks/Q3Pack/trunk/ ./GtkRadiant/games/Q3Pack
-  svn checkout https://zerowing.idsoftware.com/svn/radiant.gamepacks/UFOAIPack/trunk/ ./GtkRadiant/games/UFOAIPack
 
+Download the desired game packs:
+  cd ./GtkRadiant/install/installs
+  svn checkout https://zerowing.idsoftware.com/svn/radiant.gamepacks/Q3Pack/trunk/ ./Q3Pack
+  svn checkout https://zerowing.idsoftware.com/svn/radiant.gamepacks/UFOAIPack/trunk/ ./UFOAIPack
+  svn checkout https://zerowing.idsoftware.com/svn/radiant.gamepacks/TremulousPack/trunk/ ./TremulousPack
 
 Linux/OSX(using X-windows)
 ==========================

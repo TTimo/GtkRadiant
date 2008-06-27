@@ -206,6 +206,7 @@ select games, copy editing assets and write out configuration files
 #define WARSOW_PACK "WarsowPack"
 #define NEXUIZ_PACK "NexuizPack"
 #define Q2_PACK "Q2Pack"
+#define TREMULOUS_PACK "TremulousPack"
 
 class CGameInstall : public Dialog {
 public:
@@ -226,6 +227,7 @@ public:
 		GAME_WARSOW,
 		GAME_NEXUIZ,
 		GAME_Q2,
+		GAME_TREMULOUS,
 		GAME_COUNT
 	};
 
