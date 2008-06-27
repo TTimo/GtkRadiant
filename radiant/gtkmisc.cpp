@@ -81,7 +81,6 @@ void save_window_pos (GtkWidget *wnd, window_position_t& pos)
 #ifdef _WIN32
 void win32_get_window_pos(GtkWidget *widget, gint *x, gint *y)
 {
-  // http://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=913
   if ( g_PrefsDlg.m_bStartOnPrimMon ) {
     RECT rc;
     POINT point;

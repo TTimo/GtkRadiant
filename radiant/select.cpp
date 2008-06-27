@@ -57,7 +57,7 @@ trace_t Test_Ray (vec3_t origin, vec3_t dir, int flags)
 		{
 			//if ( (flags & SF_ENTITIES_FIRST) && brush->owner == world_entity)
 			//  continue;
-		 
+
 			if (brush->bFiltered)
 				continue;
 
@@ -86,7 +86,7 @@ trace_t Test_Ray (vec3_t origin, vec3_t dir, int flags)
 				// did we hit the last one selected yet ?
 				if (b == pToSelect)
 				{
-					// yes we want to select the next one in the list 
+					// yes we want to select the next one in the list
 					int n = (i > 0) ? i-1 : nSize-1;
 					pToSelect = reinterpret_cast<brush_t*>(array.GetAt(n));
 					bFound = true;
@@ -113,7 +113,7 @@ trace_t Test_Ray (vec3_t origin, vec3_t dir, int flags)
 		{
       if ( (flags & SF_ENTITIES_FIRST) && (brush->owner == world_entity || !brush->owner->eclass->fixedsize))
 				continue;
-			
+
 			if (brush->bFiltered)
 				continue;
 
@@ -361,13 +361,13 @@ void Select_Ray (vec3_t origin, vec3_t dir, int flags)
   {
     if( flags & SF_DRAG_ON )
       return;
-		
+
     g_qeglobals.d_select_mode = sel_brush_off;
     Brush_RemoveFromList (t.brush);
     Brush_AddToList (t.brush, &active_brushes);
 
     UpdatePatchInspector();
-  } 
+  }
   else
   {
     if( flags & SF_DRAG_OFF )
@@ -551,7 +551,7 @@ the selected brushes off of their old positions
 */
 void Select_Clone (void)
 {
-  g_bScreenUpdates = false;  
+  g_bScreenUpdates = false;
   g_pParentWnd->Copy();
   Select_Deselect();
   g_pParentWnd->Paste();
@@ -560,7 +560,7 @@ void Select_Clone (void)
   Undo_Start("clone");
   Undo_EndBrushList(&selected_brushes);
   Undo_End();
-  g_bScreenUpdates = true;  
+  g_bScreenUpdates = true;
   Sys_UpdateWindows(W_ALL);
 }
 
@@ -772,13 +772,13 @@ void Select_ApplyMatrix (bool bSnap, bool bRotation, int nAxis, float fDeg)//, q
 			VectorSubtract (b->owner->origin, select_origin, temp);
 			for (j=0 ; j<3 ; j++)
 				b->owner->origin[j] = DotProduct(temp, select_matrix[j]) + select_origin[j];
-			
+
       // update the origin key
       char text[64];
       sprintf (text, "%i %i %i",
         (int)b->owner->origin[0], (int)b->owner->origin[1], (int)b->owner->origin[2]);
       SetKeyValue(b->owner, "origin", text);
- 
+
       /*\todo remove brush-based bounding box for fixedsize entities */
       VectorSubtract (b->owner->origin, tmporigin, temp);
 			for (f=b->brush_faces ; f ; f=f->next)
@@ -875,7 +875,7 @@ void ComputeAbsolute(face_t* f, vec3_t& p1, vec3_t& p2, vec3_t& p3)
   // compute first local axis base
   TextureAxisFromPlane(&f->plane, ex, ey);
   CrossProduct(ex, ey, ez);
-	    
+
 	vec3_t aux;
   VectorCopy(ex, aux);
   VectorScale(aux, -f->texdef.shift[0], aux);
@@ -904,7 +904,7 @@ void ComputeAbsolute(face_t* f, vec3_t& p1, vec3_t& p2, vec3_t& p3)
 	ComputeScale(rex,rey,p3,f);
 
 	// project on normal plane
-	// along ez 
+	// along ez
 	// assumes plane normal is normalized
 	ProjectOnPlane(f->plane.normal,f->plane.dist,ez,p1);
 	ProjectOnPlane(f->plane.normal,f->plane.dist,ez,p2);
@@ -934,7 +934,7 @@ void AbsoluteToLocal(plane_t normal2, face_t* f, vec3_t& p1, vec3_t& p2, vec3_t&
 	// rotation
   VectorCopy(p2, aux);
   VectorSubtract(aux, p1,aux);
-	
+
 	float x = DotProduct(aux,ex);
 	float y = DotProduct(aux,ey);
   f->texdef.rotate = 180 * atan2(y,x) / Q_PI;
@@ -959,7 +959,7 @@ void AbsoluteToLocal(plane_t normal2, face_t* f, vec3_t& p1, vec3_t& p2, vec3_t&
 	// shift
 	// only using p1
 	x = DotProduct(rex,p1);
-	y = DotProduct(rey,p1);                 
+	y = DotProduct(rey,p1);
 	x /= f->texdef.scale[0];
 	y /= f->texdef.scale[1];
 
@@ -986,13 +986,13 @@ void AbsoluteToLocal(plane_t normal2, face_t* f, vec3_t& p1, vec3_t& p2, vec3_t&
 
 void RotateFaceTexture(face_t* f, int nAxis, float fDeg)
 {
-	vec3_t p1,p2,p3, rota;   
+	vec3_t p1,p2,p3, rota;
 	p1[0] = p1[1] = p1[2] = 0;
 	VectorCopy(p1, p2);
 	VectorCopy(p1, p3);
 	VectorCopy(p1, rota);
 	ComputeAbsolute(f, p1, p2, p3);
-  
+
 	rota[nAxis] = fDeg;
 	VectorRotateOrigin (p1, rota, select_origin, p1);
 	VectorRotateOrigin (p2, rota, select_origin, p2);
@@ -1091,7 +1091,7 @@ void Select_Scale(float x, float y, float z)
         f->planepts[i][0] *= x;
         f->planepts[i][1] *= y;
         f->planepts[i][2] *= z;
-        
+
         f->planepts[i][0] += select_origin[0];
         f->planepts[i][1] += select_origin[1];
         f->planepts[i][2] += select_origin[2];
@@ -1144,7 +1144,7 @@ void Select_RotateAxis (int axis, float deg, bool bPaint, bool bMouse)
   // the "90" degrees algorithm is mostly used on axis rotate as a speedup and possibly avoiding rounding errors as much as possible
   // previous implementation was doing an indirect-oriented rotation over the plane whereas the general algo below was doing a direct-oriented rotation
   // this was confusing the texture locking algorithms, fixed it to be direct-oriented (side consequence is that the axis rotate toolbar button rotates the other way now)
-  // NOTE: previous algo was using vec3_origin in the matrix computation.. 
+  // NOTE: previous algo was using vec3_origin in the matrix computation..
   //   I don't see what an origin does in linear transformations (3x3 matrixes always relate to a (0,0,0) origin)
   //   in Radiant it's initialized as (0,0,0) and never set to another value
   //   so I got rid of it when it's not used for initialisation tasks (and even if it's not (0,0,0) it should not matter
@@ -1164,7 +1164,7 @@ void Select_RotateAxis (int axis, float deg, bool bPaint, bool bMouse)
 		VectorCopy (vec3_origin, select_matrix[i]);
 		select_matrix[i][i] = 1;
 	}
-	
+
 	switch (axis)
 	{
 	case 0:
@@ -1186,7 +1186,7 @@ void Select_RotateAxis (int axis, float deg, bool bPaint, bool bMouse)
 		select_matrix[1][1] = c;
 		break;
 	}
-	
+
 
   // texture locking
 	if (g_PrefsDlg.m_bRotateLock)
@@ -1230,7 +1230,7 @@ void Select_RealCompleteTall(vec3_t mins, vec3_t maxs)
 		if (b->bFiltered)
 	 		continue;
 
-		if ( (b->maxs[nDim1] > maxs[nDim1] || b->mins[nDim1] < mins[nDim1]) 
+		if ( (b->maxs[nDim1] > maxs[nDim1] || b->mins[nDim1] < mins[nDim1])
 			|| (b->maxs[nDim2] > maxs[nDim2] || b->mins[nDim2] < mins[nDim2]) )
 			continue;
 
@@ -1286,7 +1286,7 @@ void Select_PartialTall (void)
 		if (b->bFiltered)
 	 		continue;
 
-		if ( (b->mins[nDim1] > maxs[nDim1] || b->maxs[nDim1] < mins[nDim1]) 
+		if ( (b->mins[nDim1] > maxs[nDim1] || b->maxs[nDim1] < mins[nDim1])
 			|| (b->mins[nDim2] > maxs[nDim2] || b->maxs[nDim2] < mins[nDim2]) )
 			continue;
 
@@ -1424,7 +1424,7 @@ void Select_GroupEntity(entity_t* group)
   for (b = selected_brushes.next; b != &selected_brushes; b = b->next)
   {
     if(b->owner->eclass->fixedsize) continue;
-    e = b->owner; 
+    e = b->owner;
     Entity_UnlinkBrush(b);
     Entity_LinkBrush(group, b);
     if(e != world_entity && e->brushes.onext == &e->brushes)
@@ -1539,7 +1539,7 @@ void ShiftTextureRelative_Camera(face_t *f, int x, int y)
   pCam = g_pParentWnd->GetCamWnd();
   pCam->MatchViewAxes(C, vecS, axis[0], sgn[0]);
   pCam->MatchViewAxes(C, vecT, axis[1], sgn[1]);
-  
+
   // this happens when the two directions can't be mapped on two different directions on the screen
   // then the move will occur against a single axis
   // (i.e. the user is not positioned well enough to send understandable shift commands)
@@ -1643,7 +1643,7 @@ void Select_ScaleTexture(float x, float y)
 				float	shift[2];
 				float	rotate;
 				float	scale[2];
-				brushprimit_texdef_t bp; 
+				brushprimit_texdef_t bp;
 				// compute normalized texture matrix
 				ConvertTexMatWithQTexture( &f->brushprimit_texdef, f->d_texture, &bp, NULL );
 				// compute fake shift scale rot
@@ -1680,7 +1680,7 @@ void Select_ScaleTexture(float x, float y)
 			  float	shift[2];
 			  float	rotate;
 			  float	scale[2];
-			  brushprimit_texdef_t bp; 
+			  brushprimit_texdef_t bp;
 			  ConvertTexMatWithQTexture( &selFace->brushprimit_texdef, selFace->d_texture, &bp, NULL );
 			  TexMatToFakeTexCoords( bp.coords, shift, &rotate, scale );
 			  scale[0]+=static_cast<float>(x)*0.1;
@@ -1722,7 +1722,7 @@ void Select_RotateTexture(int amt)
 				float	shift[2];
 				float	rotate;
 				float	scale[2];
-				brushprimit_texdef_t bp; 
+				brushprimit_texdef_t bp;
 				// compute normalized texture matrix
 				ConvertTexMatWithQTexture( &f->brushprimit_texdef, f->d_texture, &bp, NULL );
 				// compute fake shift scale rot
@@ -1747,7 +1747,7 @@ void Select_RotateTexture(int amt)
 			Patch_RotateTexture(b->pPatch, amt);
 		}
 	}
-	
+
 	if (nFaceCount > 0)
 	{
     for (int i = 0; i < nFaceCount; i++)
@@ -1759,7 +1759,7 @@ void Select_RotateTexture(int amt)
 			  float	shift[2];
 			  float	rotate;
 			  float	scale[2];
-			  brushprimit_texdef_t bp; 
+			  brushprimit_texdef_t bp;
 			  ConvertTexMatWithQTexture( &selFace->brushprimit_texdef, selFace->d_texture, &bp, NULL );
 			  TexMatToFakeTexCoords( bp.coords, shift, &rotate, scale );
 			  rotate += amt;
@@ -1782,13 +1782,12 @@ void Select_RotateTexture(int amt)
 // expects shader names at input, comparison relies on shader names .. texture names no longer relevant
 void FindReplaceTextures(const char* pFind, const char* pReplace, bool bSelected, bool bForce, bool bSelectMatchingFaces)
 {
-  // http://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=391
   if (strchr(pFind, ' ') || strchr(pReplace, ' '))
   {
     Sys_FPrintf(SYS_WRN, "FindReplaceTextures: '%s' or '%s' have spaces, aborted\n", pFind, pReplace);
     return;
   }
-  
+
 	brush_t* pList = (bSelected) ? &selected_brushes : &active_brushes;
 	if (!bSelected)
 		Select_Deselect();
@@ -1805,7 +1804,7 @@ void FindReplaceTextures(const char* pFind, const char* pReplace, bool bSelected
     {
       Patch_FindReplaceTexture(pBrush, pFind, pReplace, bForce);
     }
-	
+
     bool found = false; //spog
     for (face_t* pFace = pBrush->brush_faces; pFace; pFace = pFace->next)
     {
@@ -1869,7 +1868,7 @@ void Select_AllOfType()
 	  for (b=active_brushes.next ; b != &active_brushes ; b=next)
     {
 		  next = b->next;
-    	
+
       if (b->bFiltered)
    	    continue;
 
@@ -1897,7 +1896,7 @@ void Select_AllOfType()
     return;
   }
 
-  
+
   b = selected_brushes.next;
 	e = b->owner;
 
@@ -1914,7 +1913,7 @@ void Select_AllOfType()
 	    for (b=active_brushes.next ; b != &active_brushes ; b=next)
     	{
 		    next = b->next;
-    	 	
+
 			if (b->bFiltered)
 	 	    	continue;
 
@@ -1945,7 +1944,7 @@ void Select_AllOfType()
 
 void Select_Reselect()
 {
-  Select_Brush(selected_brushes.next);  
+  Select_Brush(selected_brushes.next);
   Sys_UpdateWindows (W_ALL);
 }
 
@@ -2066,7 +2065,7 @@ void Select_Invert(void)
     else b = b->next;
 
   }
-  
+
   for (b = active_brushes.next; b != &active_brushes; b = b->next)
   {
 	  if (b->patchBrush)
@@ -2074,8 +2073,8 @@ void Select_Invert(void)
 		  b->pPatch->bSelected = false;
     }
   }
-  
-  // since invert selection only works at the brush level, 
+
+  // since invert selection only works at the brush level,
   // set g_qeglobals.d_select_mode accordingly
   g_qeglobals.d_select_mode = sel_brush;
 
@@ -2089,7 +2088,7 @@ void Select_Invert(void)
 }
 
 #ifdef ENABLE_GROUPS
-/* 
+/*
 ===========
 Select_Name
 ===========
@@ -2105,7 +2104,7 @@ void Select_Name(const char *pName)
   }
 }
 
-/* 
+/*
 =================
 Select_AddToGroup
 add selected brushes to a group, update the tree

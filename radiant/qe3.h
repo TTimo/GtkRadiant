@@ -48,7 +48,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include <stdio.h>
 
-// http://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=672
 // this is the version to expect from template projects
 #define PROJECT_VERSION 2
 
@@ -789,7 +788,7 @@ extern qtexture_t	*current_texture;
 extern void SaveWithRegion(char *name); // save the current map, sets the map name in the name buffer (deals with regioning)
 extern void RunBsp (char *command);
 extern void Map_Snapshot();
-//extern void WXY_Print();
+extern void WXY_Print();
 extern void AddProp( void );
 extern qboolean DoColor(int iIndex);
 extern entity_t	*edit_entity;

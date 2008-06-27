@@ -54,9 +54,6 @@ extern "C" {
 // globals
 CString g_strAppPath;                   ///< holds the full path of the executable
 CString g_strDTDPath;                   ///< path to the DTD files
-/*!
-see http://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=297 for the two below
-*/
 CString g_pidFile;                      ///< the global .pid file (only for global part of the startup)
 CString g_pidGameFile;                  ///< the game-specific .pid file
 CString g_strBitmapsPath;               // directory where the bitmaps are stored
@@ -743,7 +740,6 @@ static gint mainframe_keypress (GtkWidget* widget, GdkEventKey* event, gpointer 
 {
   unsigned int code = gdk_keyval_to_upper(event->keyval);
 
-  // http://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=924
   if(code == GDK_ISO_Left_Tab) {
     code = GDK_Tab;
   }
@@ -752,7 +748,6 @@ static gint mainframe_keypress (GtkWidget* widget, GdkEventKey* event, gpointer 
   Sys_Printf("key: %d (keyval: %d) (ctrl: %d)\n", code, event->keyval, event->state & GDK_CONTROL_MASK);
 #endif
 
-  // BUG: http://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=865
   // return only if Texture Viewport  is in main window, otherwise if Tex viewport is in it's own window
   // the Filter GtkEntry won't release focus
   if ( g_pParentWnd->GetTexWnd()->m_pFilter == gtk_window_get_focus(GTK_WINDOW(widget)) )
@@ -1424,8 +1419,7 @@ void MainFrame::create_main_menu (GtkWidget *window, GtkWidget *vbox)
                            GTK_SIGNAL_FUNC (HandleCommand), ID_MISC_NEXTLEAKSPOT);
   item = create_menu_item_with_mnemonic (menu, _("Previous leak spot"),
                            GTK_SIGNAL_FUNC (HandleCommand), ID_MISC_PREVIOUSLEAKSPOT);
-  // http://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=394
-//  create_menu_item_with_mnemonic (menu, _("_Print XY View"), GTK_SIGNAL_FUNC (HandleCommand), ID_MISC_PRINTXY);
+  create_menu_item_with_mnemonic (menu, _("_Print XY View"), GTK_SIGNAL_FUNC (HandleCommand), ID_MISC_PRINTXY);
   item = create_menu_item_with_mnemonic (menu, _("_Select Entity Color..."),
                            GTK_SIGNAL_FUNC (HandleCommand), ID_MISC_SELECTENTITYCOLOR);
   g_object_set_data (G_OBJECT (window), "menu_misc_selectentitycolor", item);
@@ -5613,7 +5607,6 @@ void MainFrame::OnSelectionMakeStructural()
 
 void MainFrame::OnBspCommand (unsigned int nID)
 {
-  // http://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=503
   // make sure we don't attempt to region compile a map with the camera outside the region
   if (region_active)
   {
@@ -5768,7 +5761,6 @@ void MainFrame::OnTexturesLoad()
 	// FIXME
 	// check if that works with fs_game (I suspect some more design is needed)
 	// see how this is done in 1.2?
-	// http://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=507
   strcpy (def_path, g_pGameDescription->mEnginePath.GetBuffer());
   strcat (def_path, g_pGameDescription->mBaseGame.GetBuffer());
   strcat (def_path, "/");
@@ -6211,7 +6203,7 @@ void MainFrame::OnMiscPreviousleakspot()
 
 void MainFrame::OnMiscPrintxy()
 {
-//  WXY_Print();
+  WXY_Print();
 }
 
 void MainFrame::OnMiscSelectentitycolor()

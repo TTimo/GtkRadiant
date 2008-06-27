@@ -27,6 +27,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "stdafx.h"
 #include <gtk/gtk.h>
+#include <glib/gi18n.h>
 #include <assert.h>
 #include <GL/gl.h>
 
@@ -121,18 +122,15 @@ extern int g_nPatchClickedView;
 // =============================================================================
 // global functions
 
-// this is disabled, and broken
-// http://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=394
-#if 0
+
 void WXY_Print ()
 {
-  long width, height;
-  width = g_pParentWnd->ActiveXY()->Width();
-  height = g_pParentWnd->ActiveXY()->Height();
+  const long width = g_pParentWnd->ActiveXY()->Width();
+  const long height = g_pParentWnd->ActiveXY()->Height();
   unsigned char* img;
   const char* filename;
 
-  filename = file_dialog (g_pParentWnd->m_pWidget, FALSE, _("Save Image"), NULL, FILTER_BMP);
+  filename = file_dialog (g_pParentWnd->m_pWidget, FALSE, _("Save BMP Image"), NULL, "bmp");
   if (!filename)
     return;
 
@@ -206,7 +204,6 @@ void WXY_Print ()
 
   free (img);
 }
-#endif
 
 float ptSum(vec3_t pt)
 {

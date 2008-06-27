@@ -95,7 +95,7 @@ CBackgroundImage::CBackgroundImage(VIEWTYPE vt)
 }
 
 /*
- * should cleanup, but I don't think we can be sure it happens before our 
+ * should cleanup, but I don't think we can be sure it happens before our
  * interfaces are gone
 CBackgroundImage::~CBackgroundImage()
 {
@@ -154,7 +154,7 @@ void CBackgroundImage::Render()
 bool CBackgroundImage::Load(const char *filename)
 {
 	qtexture_t *newtex;
-	
+
 	unsigned char *image = NULL; // gets allocated with what ? g_malloc
 	int width = 0, height = 0;
 
@@ -166,7 +166,6 @@ bool CBackgroundImage::Load(const char *filename)
 	}
 
 // just in case we want to build for an old version
-// http://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=900
 #ifdef BKGRND2D_JPG_WORKAROUND
 	if ( strlen(filename) > 4 && !strcmp(".jpg",filename + strlen(filename) - 4)) {
 		Syn_Printf(MSG_PREFIX ".jpg workaround, clearing alpha channel\n");
@@ -177,7 +176,7 @@ bool CBackgroundImage::Load(const char *filename)
 		}
 	}
 #endif
-	
+
 	//TODO bug for stored texture size
 	//TODO whose gl context are we in, anyway ?
 	newtex = g_FuncTable.m_pfnLoadTextureRGBA(image,width,height);
@@ -252,12 +251,12 @@ static bool get_selection_bounds (vec3_t mins, vec3_t maxs)
 	brush_t *selected_brushes = g_DataTable.m_pfnSelectedBrushes();
 	//TODO should never happen
 	if(!selected_brushes) {
-	  Sys_Printf (MSG_PREFIX "selected_brushes = NULL\n"); 
+	  Sys_Printf (MSG_PREFIX "selected_brushes = NULL\n");
 	  return false;
 	}
 	// this should mean no selection
 	if(selected_brushes == selected_brushes->next) {
-	  Sys_Printf (MSG_PREFIX "nothing selected\n"); 
+	  Sys_Printf (MSG_PREFIX "nothing selected\n");
 
 	  return false;
 	}
@@ -298,7 +297,7 @@ bool CBackgroundImage::SetExtentsSel()
 {
 	vec3_t mins,maxs;
 
-	if(!get_selection_bounds(mins,maxs)) 
+	if(!get_selection_bounds(mins,maxs))
 		return false;
 
 	if(((int)mins[m_ix] == (int)maxs[m_ix]) ||

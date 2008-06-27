@@ -1995,8 +1995,6 @@ Brush_Ray
 Itersects a ray with a brush
 Returns the face hit and the distance along the ray the intersection occured at
 Returns NULL and 0 if not hit at all
-
-http://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=556
 ==============
 */
 extern bool Patch_Ray(patchMesh_t *patch, vec3_t origin, vec3_t dir, double *t, double *u, double *v);

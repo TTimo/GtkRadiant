@@ -586,7 +586,6 @@ int main( int argc, char* argv[] ) {
   we need to catch when it happens, to cleanup the stateful prefs which might be killing it
   and to turn on console logging for lookup of the problem
   this is the first part of the two step .pid system
-  http://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=297
   */
   g_pidFile = g_strTempPath.GetBuffer ();
   g_pidFile += "radiant.pid";
@@ -644,7 +643,6 @@ int main( int argc, char* argv[] ) {
   // (otherwise, they run it, crash it, and blame us for not forcing them hard enough to pay attention while installing)
   // make something idiot proof and someone will make better idiots, this may be overkill
   // let's leave it disabled in debug mode in any case
-  // http://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=431
 #ifndef _DEBUG
   //#define CHECK_VERSION
 #endif
@@ -724,7 +722,6 @@ int main( int argc, char* argv[] ) {
 
   /*!
   now the secondary game dependant .pid file
-  http://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=297
   */
   g_pidGameFile = g_PrefsDlg.m_rc_path->str;
   g_pidGameFile += "radiant-game.pid";
@@ -800,7 +797,6 @@ int main( int argc, char* argv[] ) {
     Sys_LogFile();
   }
 
-  // FIXME http://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=639
   // we should search in g_strTempPath, then move over to look at g_strAppPath?
 #ifdef _WIN32
   // fine tune the look of the app using a gtk rc file

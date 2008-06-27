@@ -579,7 +579,6 @@ void Map_LoadFile (const char *filename)
   if(type!=NULL) type++;
     // NOTE TTimo opening has binary doesn't make a lot of sense
   // but opening as text confuses the scriptlib parser
-  // http://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=261
   // this may be a problem if we "rb" and use the XML parser, might have an incompatibility
   if (file.Open(filename, "rb"))
     Map_Import(&file, type);
@@ -936,7 +935,6 @@ void AddRegionBrushes (void)
   }
 
 
-  // http://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=503
   // this is a safe check, but it should not really happen anymore
   vec3_t vOrig;
   VectorSet(vOrig,

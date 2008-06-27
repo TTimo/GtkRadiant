@@ -145,7 +145,6 @@ void CBackgroundDialogPage::Browse()
 //does NOT need freeing contrary to include/qerplugin.h comments
 //TODO bug/patch for comments
 //TODO patern gets fucked up sometimes if empty
-//http://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=915
 	newfile = g_FuncTable.m_pfnFileDialog(pDialogWnd,TRUE,
 						                  "Load Background Image",browsedir,FILETYPE_KEY);
 	if(!newfile) {

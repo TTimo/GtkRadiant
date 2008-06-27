@@ -464,7 +464,6 @@ typedef void (WINAPI * PFN_QERAPP_RESETPLUGINS)();
 \param nHeight image height
 this will work from the RGBA data and create a GL texture (accessed through a GL bind number)
 it takes care of creating the mipmapping levels too
-see http://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=575 for some related issues
 */
 typedef qtexture_t* (* PFN_QERAPP_LOADTEXTURERGBA)(unsigned char* pPixels, int nWidth, int nHeight);
 

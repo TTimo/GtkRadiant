@@ -39,7 +39,6 @@ GtkListStore* g_entlist_store;
 GtkListStore* g_entprops_store;
 int					inspector_mode;		// W_TEXTURE, W_ENTITY, or W_CONSOLE
 qboolean		multiple_entities;
-// http://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=17
 qboolean		disable_spawn_get = false;
 entity_t		*edit_entity;
 /*
@@ -988,7 +987,6 @@ static void eclasslist_selection_changed(GtkTreeSelection* selection, gpointer d
   GtkTreeModel* model;
   GtkTreeIter selected;
   // no world entity, we are not ready yet
-  // http://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=917
   if( !world_entity ) {
     return;
   }

@@ -78,7 +78,7 @@ void	AxializeVector (vec3_t v)
 		v[i] = -1;
 	else
 		v[i] = 1;
-	
+
 }
 
 /*
@@ -96,7 +96,7 @@ void Drag_Setup (int x, int y, int buttons,
   face_t	*f;
 
   drag_first = true;
-  
+
   VectorCopy (vec3_origin, pressdelta);
   pressx = x;
   pressy = y;
@@ -109,7 +109,7 @@ void Drag_Setup (int x, int y, int buttons,
 
   if (g_qeglobals.d_select_mode == sel_curvepoint)
   {
-    SelectCurvePointByRay (origin, dir, buttons);	
+    SelectCurvePointByRay (origin, dir, buttons);
 
     if(g_qeglobals.d_select_mode == sel_area)
     {
@@ -141,7 +141,7 @@ void Drag_Setup (int x, int y, int buttons,
 
     Sys_UpdateWindows(W_ALL);
 
-    drag_ok = true; 
+    drag_ok = true;
     return;
   }
 
@@ -158,7 +158,7 @@ void Drag_Setup (int x, int y, int buttons,
 
   if (g_qeglobals.d_select_mode == sel_vertex)
   {
-    SelectVertexByRay (origin, dir);	
+    SelectVertexByRay (origin, dir);
     if (g_qeglobals.d_num_move_points)
     {
       drag_ok = true;
@@ -172,7 +172,7 @@ void Drag_Setup (int x, int y, int buttons,
 
   if (g_qeglobals.d_select_mode == sel_edge)
   {
-    SelectEdgeByRay (origin, dir);	
+    SelectEdgeByRay (origin, dir);
     if (g_qeglobals.d_num_move_points)
     {
       drag_ok = true;
@@ -206,7 +206,7 @@ void Drag_Setup (int x, int y, int buttons,
     }
     else
       Sys_Printf ("Dragging entire selection\n");
-    
+
     return;
   }
 
@@ -300,7 +300,7 @@ void UpdateTarget(vec3_t origin, vec3_t dir)
 	// promote the target to the src
 
 	peLink = pe;
-	
+
 }
 
 /*
@@ -363,7 +363,7 @@ void Drag_Begin (int x, int y, int buttons,
       nFlag |= SF_ENTITIES_FIRST;
     Select_Ray (origin, dir, nFlag);
     UpdateSurfaceDialog();
-    
+
 		return;
 	}
 
@@ -491,7 +491,7 @@ void Drag_Begin (int x, int y, int buttons,
 		          if (vColor[i] > fLargest)
 			          fLargest = vColor[i];
             }
-		        
+
 		        if (fLargest == 0.0f)
 		        {
               vColor[0] = vColor[1] = vColor[2] = 1.0f;
@@ -516,7 +516,6 @@ void Drag_Begin (int x, int y, int buttons,
       }
 			else
 			{
-        // http://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=425
         Face_SetShader(t.face, g_qeglobals.d_texturewin.texdef.GetName());
 				Brush_Build(t.brush);
 
@@ -566,7 +565,7 @@ void MoveSelection (vec3_t move)
 			fAdj = move[1];
 			nAxis = 2;
 		}
-		else 
+		else
 		if (g_pParentWnd->ActiveXY()->GetViewType() == XZ)
 		{
 			fDeg = move[2];
@@ -604,7 +603,7 @@ void MoveSelection (vec3_t move)
 			v[1] = 1.1f;
 			v[2] = 1.1f;
 		}
-		else 
+		else
 			if (move[1] < 0)
 		{
 			v[0] = 0.9f;
@@ -632,7 +631,7 @@ void MoveSelection (vec3_t move)
 
 	// this is fairly crappy way to deal with curvepoint and area selection
 	// but it touches the smallest amount of code this way
-	// 
+	//
 	if (g_qeglobals.d_num_move_points || g_qeglobals.d_select_mode == sel_vertex || g_qeglobals.d_select_mode == sel_area || g_qeglobals.d_select_mode == sel_areatall)
 	{
 		//area selection
@@ -829,15 +828,15 @@ void Drag_MouseUp (int nButtons)
 		VectorCopy (vec3_origin, g_qeglobals.d_select_translate);
 		Sys_UpdateWindows (W_CAMERA);
 	}
-  
-  /* note: added cleanup here, since an edge drag will leave selected vertices 
+
+  /* note: added cleanup here, since an edge drag will leave selected vertices
            in g_qeglobals.d_num_move_points
   */
-  if (  g_qeglobals.d_select_mode != sel_vertex && 
+  if (  g_qeglobals.d_select_mode != sel_vertex &&
         g_qeglobals.d_select_mode != sel_curvepoint &&
         g_qeglobals.d_select_mode != sel_edge)
     g_qeglobals.d_num_move_points = 0;
-  
+
   g_pParentWnd->SetStatusText(3, "");
   Undo_EndBrushList(&selected_brushes);
   Undo_End();

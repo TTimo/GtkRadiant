@@ -79,7 +79,6 @@ void Error (const char *error, ...)
     /*
     Gtk will only crunch 0<=char<=127
     this is a bit hackish, but I didn't find useful functions in win32 API for this
-    http://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=516
     */
     TCHAR *scan, *next = (TCHAR*)lpMsgBuf;
     do

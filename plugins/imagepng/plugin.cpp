@@ -38,7 +38,7 @@ public:
   // CSynapseClient API
   bool RequestAPI(APIDescriptor_t *pAPI);
   const char* GetInfo();
-  
+
   CSynapseClientImage() { }
   virtual ~CSynapseClientImage() { }
 };
@@ -65,9 +65,6 @@ extern "C" CSynapseClient* SYNAPSE_DLL_EXPORT Synapse_EnumerateInterfaces( const
   g_SynapseClient.AddAPI(IMAGE_MAJOR, "png", sizeof(_QERPlugImageTable));
   g_SynapseClient.AddAPI(RADIANT_MAJOR, NULL, sizeof(_QERFuncTable_1), SYN_REQUIRE, &g_FuncTable);
   // NOTE: if imagepng starts being used for non "VFS" "pk3" config, need to add a dynamic config chunk
-  // see:
-  // http://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=794
-  // http://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=800
   g_SynapseClient.AddAPI(VFS_MAJOR, "pk3", sizeof(_QERFileSystemTable), SYN_REQUIRE, &g_FileSystemTable);
 
   return &g_SynapseClient;
@@ -76,7 +73,7 @@ extern "C" CSynapseClient* SYNAPSE_DLL_EXPORT Synapse_EnumerateInterfaces( const
 bool CSynapseClientImage::RequestAPI(APIDescriptor_t *pAPI)
 {
   if (!strcmp(pAPI->major_name, IMAGE_MAJOR))
-  {    
+  {
     _QERPlugImageTable* pTable= static_cast<_QERPlugImageTable*>(pAPI->mpTable);
     if (!strcmp(pAPI->minor_name, "png"))
     {
@@ -135,7 +132,7 @@ void LoadImage (const char *filename, unsigned char **pic, int *width, int *heig
     return;
 
   p_fbuffer = fbuffer;
-	
+
   // the reading glue
   // http://www.libpng.org/pub/png/libpng-manual.html
 
@@ -147,7 +144,7 @@ void LoadImage (const char *filename, unsigned char **pic, int *width, int *heig
     g_FuncTable.m_pfnSysPrintf ("libpng error: png_create_read_struct\n");
     return;
   }
-		
+
   png_infop info_ptr = png_create_info_struct(png_ptr);
   if (!info_ptr) {
     png_destroy_read_struct(&png_ptr,
@@ -155,7 +152,7 @@ void LoadImage (const char *filename, unsigned char **pic, int *width, int *heig
     g_FuncTable.m_pfnSysPrintf ("libpng error: png_create_info_struct (info_ptr)\n");
     return;
   }
-	
+
   png_infop end_info = png_create_info_struct(png_ptr);
   if (!end_info) {
     png_destroy_read_struct(&png_ptr, &info_ptr,
@@ -184,8 +181,8 @@ void LoadImage (const char *filename, unsigned char **pic, int *width, int *heig
   int color_type = png_get_color_type(png_ptr, info_ptr);
 
   // we want to treat all images the same way
-  //   The following code transforms grayscale images of less than 8 to 8 bits, 
-  //   changes paletted images to RGB, and adds a full alpha channel if there is 
+  //   The following code transforms grayscale images of less than 8 to 8 bits,
+  //   changes paletted images to RGB, and adds a full alpha channel if there is
   //   transparency information in a tRNS chunk.
   if (color_type == PNG_COLOR_TYPE_PALETTE)
    png_set_palette_to_rgb(png_ptr);
@@ -201,7 +198,7 @@ void LoadImage (const char *filename, unsigned char **pic, int *width, int *heig
     png_color_16 my_background, *image_background;
 
     if (png_get_bKGD(png_ptr, info_ptr, &image_background))
-      png_set_background(png_ptr, image_background, 
+      png_set_background(png_ptr, image_background,
       PNG_BACKGROUND_GAMMA_FILE, 1, 1.0);
     else
       png_set_background(png_ptr, &my_background,
@@ -223,7 +220,6 @@ void LoadImage (const char *filename, unsigned char **pic, int *width, int *heig
   // allocate the pixel buffer, and the row pointers
   int size = (*width)*(*height)*4;
   // still have to use that g_malloc heresy
-  // http://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=491
   *pic = (unsigned char *)g_malloc(size);
   row_pointers = (png_byte**) malloc((*height) * sizeof(png_byte*));
 

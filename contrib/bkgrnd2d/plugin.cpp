@@ -24,7 +24,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 //
 // Code by reyalP aka Reed Mideke
 //
-// Based on 
+// Based on
 //
 
 /*
@@ -43,11 +43,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
     v0.25
       - tooltips, follow gtkradiant coding conventions
 
-    Why ?
-    -----
-      http://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=88
-
-
     How ?
     -----
      - textures 'n widgets 'n stuff.
@@ -58,7 +53,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "bkgrnd2d.h"
 #include "dialog.h"
 
-#define CMD_SEP "-" 
+#define CMD_SEP "-"
 #define CMD_CONFIG "Configure..."
 #define CMD_ABOUT "About..."
 // =============================================================================
@@ -80,7 +75,7 @@ void *g_pMainWidget;
 static const char *PLUGIN_NAME = "2d window background plugin";
 
 //backwards for some reason
-static const char *PLUGIN_COMMANDS = CMD_ABOUT ";" 
+static const char *PLUGIN_COMMANDS = CMD_ABOUT ";"
                                      CMD_SEP ";"
 								                  	 CMD_CONFIG
                                      ;
@@ -105,7 +100,7 @@ struct toolbar_button_info_s
 	IToolbarButton::EType type;
 };
 
-struct toolbar_button_info_s toolbar_buttons[NUM_TOOLBAR_BUTTONS] = 
+struct toolbar_button_info_s toolbar_buttons[NUM_TOOLBAR_BUTTONS] =
 {
 	{
 		"bkgrnd2d_xy_toggle.bmp",
@@ -204,10 +199,10 @@ extern "C" const char* QERPlug_GetCommandList ()
 
 extern "C" void QERPlug_Dispatch (const char *p, vec3_t vMin, vec3_t vMax, bool bSingleBrush)
 {
-  Sys_Printf (MSG_PREFIX "Command \"%s\"\n",p); 
+  Sys_Printf (MSG_PREFIX "Command \"%s\"\n",p);
   if(!strcmp(p, CMD_ABOUT)) {
   	g_FuncTable.m_pfnMessageBox(NULL, PLUGIN_ABOUT, "About", MB_OK, NULL);
-  } 
+  }
   else if(!strcmp(p,CMD_CONFIG)) {
   	ShowBackgroundDialog();
   }
@@ -216,7 +211,7 @@ extern "C" void QERPlug_Dispatch (const char *p, vec3_t vMin, vec3_t vMax, bool 
 //TODO these three suck
 void DoBkgrndToggleXY()
 {
-  Sys_Printf (MSG_PREFIX "DoBkgrndToggleXY\n"); 
+  Sys_Printf (MSG_PREFIX "DoBkgrndToggleXY\n");
   // always toggle, since the buttons do
   backgroundXY.m_bActive = (backgroundXY.m_bActive) ? false:true;
   // if we don't have image or extents, and we activated,
@@ -230,7 +225,7 @@ void DoBkgrndToggleXY()
 
 void DoBkgrndToggleXZ()
 {
-  Sys_Printf (MSG_PREFIX "DoBkgrndToggleXZ\n"); 
+  Sys_Printf (MSG_PREFIX "DoBkgrndToggleXZ\n");
   backgroundXZ.m_bActive = (backgroundXZ.m_bActive) ? false:true;
   if(backgroundXZ.m_bActive && !backgroundXZ.Valid())
 	  ShowBackgroundDialogPG(1);
@@ -240,7 +235,7 @@ void DoBkgrndToggleXZ()
 
 void DoBkgrndToggleYZ()
 {
-  Sys_Printf (MSG_PREFIX "DoBkgrndToggleYZ\n"); 
+  Sys_Printf (MSG_PREFIX "DoBkgrndToggleYZ\n");
   backgroundYZ.m_bActive = (backgroundYZ.m_bActive) ? false:true;
   if(backgroundYZ.m_bActive && !backgroundYZ.Valid())
 	  ShowBackgroundDialogPG(2);
@@ -253,7 +248,7 @@ void DoBkgrndToggleYZ()
 
 CSynapseServer* g_pSynapseServer = NULL;
 CSynapseClientBkgrnd2d g_SynapseClient;
-    
+
 #if __GNUC__ >= 4
 #pragma GCC visibility push(default)
 #endif

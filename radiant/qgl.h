@@ -26,7 +26,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #ifndef __QGL_H__
 #define __QGL_H__
 
-// http://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=812
 #define ATIHACK_812
 
 #include <GL/gl.h>

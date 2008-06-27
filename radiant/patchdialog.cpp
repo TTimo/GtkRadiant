@@ -53,10 +53,9 @@ static void OnApply (GtkWidget *widget, gpointer data)
     int r = g_PatchDialog.m_nRow;
     int c = g_PatchDialog.m_nCol;
     if (r >= 0 && r < g_PatchDialog.m_Patch->height && c >= 0 && c < g_PatchDialog.m_Patch->width)
-    {            
+    {
       if (g_PatchDialog.m_Patch->pShader)
         g_PatchDialog.m_Patch->pShader->DecRef();
-        // http://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=467
         if (g_PatchDialog.m_strName.Find(' ') >= 0)
         {
           Sys_FPrintf(SYS_WRN, "WARNING: spaces in shader names are not allowed, dropping '%s'\n", g_PatchDialog.m_strName.GetBuffer());
@@ -309,9 +308,9 @@ void PatchDialog::BuildDialog ()
   GtkWidget *button, *entry, *spin, *combo;
   GtkObject *adj;
   char buf[32];
- 
+
   dlg = m_pWidget;
-  
+
   load_window_pos (dlg, g_PrefsDlg.mWindowInfo.posPatchWnd);
 
   gtk_window_set_title (GTK_WINDOW (dlg), "Patch Properties");
@@ -324,7 +323,7 @@ void PatchDialog::BuildDialog ()
   vbox = gtk_vbox_new (FALSE, 5);
   gtk_widget_show (vbox);
   gtk_container_add (GTK_CONTAINER (dlg), vbox);
-  gtk_container_set_border_width (GTK_CONTAINER (vbox), 5); 
+  gtk_container_set_border_width (GTK_CONTAINER (vbox), 5);
 
   hbox = gtk_hbox_new (FALSE, 5);
   gtk_widget_show (hbox);
@@ -680,7 +679,7 @@ void PatchDialog::GetPatchInfo()
   if (m_Patch != NULL)
   {
     m_strName = m_Patch->pShader->getName();
-  
+
     GList *combo_list = NULL;
     int i;
 
@@ -708,9 +707,9 @@ void PatchDialog::GetPatchInfo()
       g_free (combo_list->data);
       combo_list = g_list_remove (combo_list, combo_list->data);
     }
-    
+
     m_bListenChanged = true;
-    
+
   }
   else
     Sys_Printf("WARNING: no patch\n");

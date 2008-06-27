@@ -1998,7 +1998,6 @@ void SelectBrush (int entitynum, int brushnum)
   brush_t *b;
   int i;
 
-  // http://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=503
   // making this work when regioning is on too
 
   if (entitynum == 0)
@@ -3586,7 +3585,6 @@ char* DoNewProjectDlg ()
   char *str;
 
   // start by a warning message
-  // http://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=459
 // mattn: URLs no longer valid
 //  CString msg;
 //  msg = "Are you sure you want a new project?\n";
@@ -3713,7 +3711,6 @@ static void editor_close (GtkWidget *widget, gpointer data)
 }
 
 // several attempts
-// http://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=355
 #if 0
 #ifdef _WIN32
 
@@ -3936,7 +3933,6 @@ void DoTextEditor (const char* filename, int cursorpos)
   DoGtkTextEditor (filename, cursorpos);
 
   // old win32 code with EditPad bindings, broken
-  // http://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=355
 #if 0
   strEditCommand = g_strAppPath.GetBuffer();
   strEditCommand += "editpad.exe";

@@ -1093,8 +1093,3 @@ APIDescriptor_t* CSynapseAPIManager::GetAPI(int i)
 {
   return mAPIs[i];
 }
-
-// http://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=879
-void fini_stub() {
-  printf( "fini_stub\n" );
-}

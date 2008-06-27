@@ -283,7 +283,6 @@ void CXMLPropertyBag::GetPref(const char *name, Str *pV, const char *V)
     if ( pNode->children && pNode->children->content ) {
       *pV = pNode->children->content;
     } else {
-      // http://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=427
       // means the pref exists, and that the value is ""
       *pV = "";
     }
@@ -1375,7 +1374,6 @@ void CGameDialog::UpdateNetrun(bool retrieve)
   strNetrun = g_strAppPath; strNetrun += NETRUN_FILENAME;
   if (!retrieve)
   {
-    // http://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=639
     // now check if we are running from a network installation
     // use a dummy file as the flag
     f_netrun = fopen(strNetrun.GetBuffer(), "r");
@@ -1774,7 +1772,6 @@ void PrefsDlg::BuildDialog ()
 
 #ifdef ATIHACK_812
 	// ATI bugs
-	// http://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=812
 	check = gtk_check_button_new_with_label (_("ATI cards with broken drivers - bug #802"));
 	gtk_widget_show(check);
 	gtk_box_pack_start(GTK_BOX(vbox), check, FALSE, FALSE, 0);
@@ -2460,7 +2457,6 @@ void PrefsDlg::BuildDialog ()
                    (GtkAttachOptions) (0), 1, 0);
   AddDialogData (entry, &m_strPrefabPath, DLG_ENTRY_TEXT);
 
-  // http://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=805
 #if 0
   // browse button
   button = gtk_button_new_with_label ("...");

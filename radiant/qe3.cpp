@@ -279,10 +279,8 @@ void QE_CheckAutoSave( void )
 //   the VFS provides a vfsCleanFileName which should perform the cleanup tasks
 //   in the long run I'd like to completely get rid of this
 
-// http://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=144
 // used to be disabled, but caused problems
 
-// http://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=291
 // can't work with long win32 names until the BSP commands are not working differently
 #ifdef _WIN32
 int BuildShortPathName(const char* pPath, char* pBuffer, int nBufferLen)
@@ -379,7 +377,6 @@ xmlDocPtr ParseXMLStream(IDataStream *stream, bool validate = false)
   char chars[1024];
   xmlParserCtxtPtr ctxt;
 
-  // http://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=433
   //if(validate)
   //  xmlDoValidityCheckingDefaultValue = 1;
   //else
@@ -601,13 +598,12 @@ bool QE_LoadProject (const char *projectfile)
     // create the user_project key
     SetKeyValue( g_qeglobals.d_project_entity, "user_project", "1" );
 
-    // http://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=672
     if (IntForKey( g_qeglobals.d_project_entity, "version" ) != PROJECT_VERSION)
     {
       char strMsg[2048];
       sprintf(strMsg,
         "The template project '%s' has version %d. The editor binary is configured for version %d.\n"
-        "This indicates a problem in your setup. See http://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=672\n"
+        "This indicates a problem in your setup.\n"
         "I will keep going with this project till you fix this",
         projectfile, IntForKey( g_qeglobals.d_project_entity, "version" ), PROJECT_VERSION);
       gtk_MessageBox (g_pParentWnd->m_pWidget, strMsg, "Can't load project file", MB_ICONERROR | MB_OK);

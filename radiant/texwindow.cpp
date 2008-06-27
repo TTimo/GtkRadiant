@@ -510,7 +510,6 @@ void BuildShaderList()
     if (!vfsGetFullPath(filename, 0, 0))
     {
       Sys_FPrintf(SYS_ERR, "Couldn't find full path for '%s'\n", g_pGameDescription->mShaderlist.GetBuffer());
-      Sys_FPrintf(SYS_ERR, "did you hit bug http://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=130 ?\n");
       return;
     }
     Sys_Printf("Parsing shader files from %s\n", vfsGetFullPath(filename, 0, 0));
@@ -1025,7 +1024,6 @@ void Texture_ShowStartupShaders()
     if (!vfsGetFullPath(filename, 0, 0))
     {
       Sys_FPrintf(SYS_ERR, "Couldn't find full path for '%s'\n", g_pGameDescription->mShaderlist.GetBuffer());
-      Sys_FPrintf(SYS_ERR, "did you hit bug http://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=130 ?\n");
       return;
     }
 
@@ -1792,7 +1790,6 @@ void TexWnd::OnMButtonDown (guint32 flags, int pointx, int pointy)
 void TexWnd::OnLButtonUp (guint32 flags, int pointx, int pointy)
 {
   ReleaseCapture ();
-  // NOTE TTimo http://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=23
   DragDropTexture (flags, pointx, pointy);
 }
 
@@ -1866,8 +1863,6 @@ void TexWnd::OnMouseWheel(bool bUp)
   RedrawWindow();
 }
 
-// NOTE TTimo
-// http://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=23
 void TexWnd::DragDropTexture (guint32 flags, int pointx, int pointy)
 {
   // This gets called from leftmouse up event. We see if the mouseup is above
@@ -1902,7 +1897,6 @@ void TexWnd::DragDropTexture (guint32 flags, int pointx, int pointy)
     return;
 
   // check if the camwindow isn't being partially hidden by another window at this point
-  // http://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=187
   m_ptXcheck = m_ptX;
   m_ptYcheck = m_ptY;
 

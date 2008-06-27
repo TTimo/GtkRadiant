@@ -85,7 +85,7 @@ void CleanEntityList(eclass_t *&pList)
       model->strSkin = NULL;
       model = model->pNext;
     }
-    
+
     if (pList->modelpath) {
       free(pList->modelpath);
       pList->modelpath = NULL;
@@ -94,7 +94,7 @@ void CleanEntityList(eclass_t *&pList)
       free(pList->skinpath);
       pList->skinpath = NULL;
     }
-    
+
     free(pList->name);
     free(pList->comments);
     free(pList);
@@ -123,7 +123,7 @@ void CleanUpEntities()
 void EClass_InsertSortedList(eclass_t *&pList, eclass_t *e)
 {
 	eclass_t	*s;
-	
+
 	if (!pList)
 	{
 		pList = e;
@@ -162,7 +162,7 @@ void Eclass_InsertAlphabetized (eclass_t *e)
   EClass_InsertSortedList(eclass, e);
 #else
 	eclass_t	*s;
-	
+
 	if (!eclass)
 	{
 		eclass = e;
@@ -209,7 +209,7 @@ void Eclass_CreateSpriteModelPaths()
 
   if (pFiles)
   {
-  
+
     // find an eclass without a modelpath.
     for (e=eclass ; e ; e=e->next)
     {
@@ -288,11 +288,9 @@ void EClass_InitForFileList(GSList *pFiles, _EClassTable *pTable)
     char relPath[PATH_MAX];
     strcpy(relPath, "scripts/");
     strcat(relPath, (char*)pFile->data);
-    // FIXME TTimo http://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=130
     if (!vfsGetFullPath(relPath, 0, 0))
     {
       Sys_FPrintf(SYS_ERR, "Failed to find the full path for '%s' in the VFS\n", relPath);
-      Sys_FPrintf(SYS_ERR, "did you hit bug http://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=130 ?\n");
     }
     else
       pTable->m_pfnScanFile(vfsGetFullPath(relPath, 0, 0));
@@ -359,7 +357,7 @@ void Eclass_Init ()
 
   // start by creating the default unknown eclass
   eclass_bad = EClass_Create("UNKNOWN_CLASS" , 0, 0.5, 0,NULL,NULL,NULL);
-  
+
   // now scan the definitions
   _EClassTable *pTable = &g_EClassDefTable;
   while (pTable)
@@ -433,12 +431,10 @@ void Eclass_Init ()
         char relPath[PATH_MAX];
         strcpy(relPath, "scripts/");
         strcat(relPath, (char*)pFile->data);
-        // FIXME TTimo http://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=130
         char *fullpath = vfsGetFullPath(relPath, 0, 0);
         if (!fullpath)
         {
           Sys_FPrintf(SYS_ERR, "Failed to find the full path for \"%s\" in the VFS\n", relPath);
-          Sys_FPrintf(SYS_ERR, "did you hit bug http://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=130 ?\n");
         }
         else
           pTable->m_pfnScanFile(fullpath);
@@ -451,7 +447,7 @@ void Eclass_Init ()
     }
     else
       Sys_FPrintf(SYS_ERR, "Didn't find any scripts/*.%s files to load EClass information\n", pTable->m_pfnGetExtension());
-    
+
     // we deal with two formats max, if the other table exists, loop again
     if (g_bHaveEClassExt && pTable == &g_EClassDefTable)
       pTable = &g_EClassExtTable;

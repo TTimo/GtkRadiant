@@ -46,7 +46,7 @@ typedef void (* PFN_VFSINITDIRECTORY) (const char *path);
 typedef void (* PFN_VFSSHUTDOWN) ();
 // free memory allocated by VFS for this pointer
 typedef void (* PFN_VFSFREEFILE) (void *p);
-// return a GSList with all the directories under basedir 
+// return a GSList with all the directories under basedir
 typedef GSList* (* PFN_VFSGETDIRLIST) (const char *basedir);
 // return a GSList with all the files under basedir (extension can be NULL)
 typedef GSList* (* PFN_VFSGETFILELIST) (const char *basedir, const char *extension);
@@ -68,7 +68,6 @@ typedef int (* PFN_VFSGETFILECOUNT) (const char *filename, int flags);
 this will scan in the search directories first, then it will search in the pak files
 WARNING: the allocated buffer must be freed with a g_free call
 NOTE TTimo: the g_free release is utter horror
- see http://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=491
 */
 typedef int (* PFN_VFSLOADFILE) (const char *filename, void **buffer, int index);
 // load a file from it's full path into the buffer, returns the file size or -1
@@ -90,7 +89,6 @@ HYDRA:
 WARNING: if you use index from vfsGetFileCount, it works only with a vfsGetFileCount for the search directories only (not the pak files)
 FIXME TTimo our VFS names are case insensitive.
    this function is not able to build the full path from case-insensitive name
-   ( this is http://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=130 )
 */
 typedef char* (* PFN_VFSGETFULLPATH) (const char *in, int index, int flag);
 /*!

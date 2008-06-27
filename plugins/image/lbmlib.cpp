@@ -286,18 +286,18 @@ static void LoadPCX( const char *filename, byte **pic, byte **palette, int *widt
   int		len;
   int		dataByte, runLength;
   byte	*out, *pix;
-	
+
 
   /* load the file */
   len = vfsLoadFile (filename, (void **)&raw, 0);
-  if( len == -1 ) 
+  if( len == -1 )
     Error( "LoadPCX: Couldn't read %s", filename );
 
 
   /* parse the PCX file */
   pcx = (pcx_t *)raw;
   raw = &pcx->data;
-  
+
   pcx->xmin = LittleShort(pcx->xmin);
   pcx->ymin = LittleShort(pcx->ymin);
   pcx->xmax = LittleShort(pcx->xmax);
@@ -306,7 +306,7 @@ static void LoadPCX( const char *filename, byte **pic, byte **palette, int *widt
   pcx->vres = LittleShort(pcx->vres);
   pcx->bytes_per_line = LittleShort(pcx->bytes_per_line);
   pcx->palette_type = LittleShort(pcx->palette_type);
-  
+
   if (pcx->manufacturer != 0x0a
     || pcx->version != 5
     || pcx->encoding != 1
@@ -335,10 +335,10 @@ static void LoadPCX( const char *filename, byte **pic, byte **palette, int *widt
 
   *pic = out;
   pix = out;
-	
+
   /* RR2DO2: pcx fix  */
   lsize = pcx->color_planes * pcx->bytes_per_line;
-	
+
   /* go scanline by scanline */
   for( y = 0; y <= pcx->ymax; y++, pix += pcx->xmax + 1 )
   {
@@ -360,7 +360,7 @@ static void LoadPCX( const char *filename, byte **pic, byte **palette, int *widt
     while( runLength-- > 0 )
       x++;
   }
-	
+
   /* validity check */
   if( raw - (byte *) pcx > len)
     Error( "PCX file %s was malformed", filename );
@@ -516,7 +516,7 @@ void LoadTGA (const char *name, byte ** pic, int *width, int *height)
             *pixbuf++ = blue;
             *pixbuf++ = 255;
             break;
-          
+
           case 24:
             blue = *buf_p++;
             green = *buf_p++;
@@ -552,8 +552,7 @@ void LoadTGA (const char *name, byte ** pic, int *width, int *height)
 
     if (!bAlphaOK)
     {
-      // http://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=444
-      if (targa_header.pixel_size == 32) 
+      if (targa_header.pixel_size == 32)
 				Sys_FPrintf (SYS_WRN, "WARNING: %s has empty alpha channel\n", name);
       // disable the alpha value
       for (row = rows - 1; row >= 0; row--)

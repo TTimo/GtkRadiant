@@ -714,7 +714,6 @@ typedef struct entity_s
   IPluginEntity *pPlugEnt;
 #endif // USEPLUGINENTITIES
 
-  // http://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=252
   // this is cam code addition?
   vec3_t color;
 
@@ -901,7 +900,6 @@ typedef struct
   // temporary values that should be initialised only once at run-time
   // there are too many uneccessary calls to Sys_QGL_ExtensionSupported
   // NOTE TTimo: those are unused atm (set right, but not used)
-  // http://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=623
   bool m_bOpenGLCompressionSupported;
   bool m_bS3CompressionSupported;
 

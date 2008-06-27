@@ -653,7 +653,6 @@ int vfsLoadFile (const char *filename, void **bufferptr, int index)
 
 /*!
 \param shorten will try to match against the short version
-http://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=144
 recent switch back to short path names in project settings has broken some stuff
 with shorten == true, we will convert in to short version before looking for root
 FIXME WAAA .. the stuff below is much more simple on linux .. add appropriate #ifdef
