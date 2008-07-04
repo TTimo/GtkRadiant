@@ -26,6 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 // custom Gtk dialog for brush primitives load/save
 
 #include "stdafx.h"
+#include <glib/gi18n.h>
 
 void BP_dialog_button_callback (GtkWidget *widget, gpointer data)
 {
@@ -67,7 +68,7 @@ int BP_MessageBox (int status)
   gtk_signal_connect (GTK_OBJECT (window), "destroy",
                       GTK_SIGNAL_FUNC (gtk_widget_destroy), NULL);
 
-  gtk_window_set_title (GTK_WINDOW (window), "Current map format is incompatible");
+  gtk_window_set_title (GTK_WINDOW (window), _("Current map format is incompatible"));
 
   gtk_container_border_width (GTK_CONTAINER (window), 10);
   g_object_set_data (G_OBJECT (window), "loop", &loop);
@@ -85,19 +86,19 @@ int BP_MessageBox (int status)
 
   if (status == 0)
   {
-    w = gtk_label_new ("This map was saved using brush primitives format\n"
+    w = gtk_label_new (_("This map was saved using brush primitives format\n"
       "and your project settings use the standard format.\n"
       "Do you want to convert the map, change default format or abort?\n"
       "NOTE: due to limitations of the standard format, "
-      "some texture alignments may be lost after conversion.");
+      "some texture alignments may be lost after conversion."));
   }
   else
   {
-    w = gtk_label_new ("This map was saved using standard format\n"
+    w = gtk_label_new (_("This map was saved using standard format\n"
       "and your project settings use the new \"brush primitives\" format.\n"
       "Do you want to convert the map, change default format or abort?\n"
       "NOTE: Next versions of Radiant will allow mixing the two formats"
-      "in the same maps for a smooth transition.");
+      "in the same maps for a smooth transition."));
   }
   gtk_box_pack_start (GTK_BOX (vbox), w, FALSE, FALSE, 2);
   gtk_label_set_justify (GTK_LABEL (w), GTK_JUSTIFY_LEFT);
@@ -110,28 +111,28 @@ int BP_MessageBox (int status)
   hbox = gtk_hbox_new (FALSE, 10);
   gtk_box_pack_start (GTK_BOX (vbox), hbox, FALSE, FALSE, 2);
   gtk_widget_show (hbox);
-  
-  w = gtk_button_new_with_label ("Convert");
+
+  w = gtk_button_new_with_label (_("Convert"));
   gtk_box_pack_start (GTK_BOX (hbox), w, TRUE, TRUE, 0);
   gtk_signal_connect (GTK_OBJECT (w), "clicked",
     GTK_SIGNAL_FUNC (BP_dialog_button_callback), GINT_TO_POINTER (1));
   GTK_WIDGET_SET_FLAGS (w, GTK_CAN_DEFAULT);
   gtk_widget_grab_default (w);
   gtk_widget_show (w);
-  
-  w = gtk_button_new_with_label ("Change default");
+
+  w = gtk_button_new_with_label (_("Change default"));
   gtk_box_pack_start (GTK_BOX (hbox), w, TRUE, TRUE, 0);
   gtk_signal_connect (GTK_OBJECT (w), "clicked",
     GTK_SIGNAL_FUNC (BP_dialog_button_callback), GINT_TO_POINTER (2));
   gtk_widget_show (w);
-  
-  w = gtk_button_new_with_label ("Abort load");
+
+  w = gtk_button_new_with_label (_("Abort load"));
   gtk_box_pack_start (GTK_BOX (hbox), w, TRUE, TRUE, 0);
   gtk_signal_connect (GTK_OBJECT (w), "clicked",
     GTK_SIGNAL_FUNC (BP_dialog_button_callback), GINT_TO_POINTER (0));
   gtk_widget_show (w);
   ret = 0; // abort
-  
+
   gtk_widget_show (window);
   gtk_grab_add (window);
 

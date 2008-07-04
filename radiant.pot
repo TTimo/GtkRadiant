@@ -1,16 +1,19 @@
-#: radiant/mainframe.cpp:6687
+#: radiant/mainframe.cpp:6687 radiant/mainframe.cpp:6699
 msgid "Select Complete Tall"
 msgstr ""
 
 #: radiant/mainframe.cpp:6687 radiant/mainframe.cpp:1709
+#: radiant/mainframe.cpp:1703 radiant/mainframe.cpp:6699
 msgid "Select Touching"
 msgstr ""
 
 #: radiant/mainframe.cpp:6687 radiant/mainframe.cpp:1713
+#: radiant/mainframe.cpp:1707 radiant/mainframe.cpp:6699
 msgid "Select Partial Tall"
 msgstr ""
 
 #: radiant/mainframe.cpp:6687 radiant/mainframe.cpp:1717
+#: radiant/mainframe.cpp:1711 radiant/mainframe.cpp:6699
 msgid "Select Inside"
 msgstr ""
 
@@ -118,1275 +121,1292 @@ msgstr ""
 msgid "About"
 msgstr ""
 
-#: radiant/mainframe.cpp:939
+#: radiant/mainframe.cpp:939 radiant/mainframe.cpp:934
 msgid "_File"
 msgstr ""
 
-#: radiant/mainframe.cpp:943
+#: radiant/mainframe.cpp:943 radiant/mainframe.cpp:938
 msgid "_New Map"
 msgstr ""
 
-#: radiant/mainframe.cpp:948
+#: radiant/mainframe.cpp:948 radiant/mainframe.cpp:943
 msgid "_Sleep"
 msgstr ""
 
-#: radiant/mainframe.cpp:954
+#: radiant/mainframe.cpp:954 radiant/mainframe.cpp:949
 msgid "_Open..."
 msgstr ""
 
-#: radiant/mainframe.cpp:957
+#: radiant/mainframe.cpp:957 radiant/mainframe.cpp:952
 msgid "_Import..."
 msgstr ""
 
-#: radiant/mainframe.cpp:959
+#: radiant/mainframe.cpp:959 radiant/mainframe.cpp:954
 msgid "_Save"
 msgstr ""
 
-#: radiant/mainframe.cpp:962
+#: radiant/mainframe.cpp:962 radiant/mainframe.cpp:957
 msgid "Save _as..."
 msgstr ""
 
-#: radiant/mainframe.cpp:964
+#: radiant/mainframe.cpp:964 radiant/mainframe.cpp:959
 msgid "Save s_elected..."
 msgstr ""
 
-#: radiant/mainframe.cpp:967
+#: radiant/mainframe.cpp:967 radiant/mainframe.cpp:962
 msgid "Save re_gion..."
 msgstr ""
 
-#: radiant/mainframe.cpp:971
+#: radiant/mainframe.cpp:971 radiant/mainframe.cpp:966
 msgid "New p_roject..."
 msgstr ""
 
-#: radiant/mainframe.cpp:973
+#: radiant/mainframe.cpp:973 radiant/mainframe.cpp:968
 msgid "Load _project..."
 msgstr ""
 
-#: radiant/mainframe.cpp:975
+#: radiant/mainframe.cpp:975 radiant/mainframe.cpp:970
 msgid "Pro_ject settings..."
 msgstr ""
 
-#: radiant/mainframe.cpp:978
+#: radiant/mainframe.cpp:978 radiant/mainframe.cpp:973
 msgid "_Pointfile..."
 msgstr ""
 
-#: radiant/mainframe.cpp:981
+#: radiant/mainframe.cpp:981 radiant/mainframe.cpp:976
 msgid "Recent Files"
 msgstr ""
 
-#: radiant/mainframe.cpp:999
+#: radiant/mainframe.cpp:999 radiant/mainframe.cpp:994
 msgid "Check for GtkRadiant update (web)"
 msgstr ""
 
-#: radiant/mainframe.cpp:1004
+#: radiant/mainframe.cpp:1004 radiant/mainframe.cpp:999
 msgid "E_xit"
 msgstr ""
 
-#: radiant/mainframe.cpp:1008
+#: radiant/mainframe.cpp:1008 radiant/mainframe.cpp:1003
 msgid "_Edit"
 msgstr ""
 
-#: radiant/mainframe.cpp:1011
+#: radiant/mainframe.cpp:1011 radiant/mainframe.cpp:1006
 msgid "_Undo"
 msgstr ""
 
-#: radiant/mainframe.cpp:1014
+#: radiant/mainframe.cpp:1014 radiant/mainframe.cpp:1009
 msgid "_Redo"
 msgstr ""
 
-#: radiant/mainframe.cpp:1018
+#: radiant/mainframe.cpp:1018 radiant/mainframe.cpp:1013
 msgid "_Copy"
 msgstr ""
 
-#: radiant/mainframe.cpp:1019
+#: radiant/mainframe.cpp:1019 radiant/mainframe.cpp:1014
 msgid "_Paste"
 msgstr ""
 
-#: radiant/mainframe.cpp:1020
+#: radiant/mainframe.cpp:1020 radiant/mainframe.cpp:1015
 msgid "P_aste To Camera"
 msgstr ""
 
 #: radiant/mainframe.cpp:1021 radiant/mainframe.cpp:1168
+#: radiant/mainframe.cpp:1016 radiant/mainframe.cpp:1163
 msgid "_Delete"
 msgstr ""
 
-#: radiant/mainframe.cpp:1024
+#: radiant/mainframe.cpp:1024 radiant/mainframe.cpp:1019
 msgid "Map Info..."
 msgstr ""
 
-#: radiant/mainframe.cpp:1025
+#: radiant/mainframe.cpp:1025 radiant/mainframe.cpp:1020
 msgid "Entity Info..."
 msgstr ""
 
-#: radiant/mainframe.cpp:1027
+#: radiant/mainframe.cpp:1027 radiant/mainframe.cpp:1022
 msgid "Brush Scripts..."
 msgstr ""
 
-#: radiant/mainframe.cpp:1029
+#: radiant/mainframe.cpp:1029 radiant/mainframe.cpp:1024
 msgid "Load Pre_fab..."
 msgstr ""
 
-#: radiant/mainframe.cpp:1030
+#: radiant/mainframe.cpp:1030 radiant/mainframe.cpp:1025
 msgid "Save Selection as Prefab..."
 msgstr ""
 
-#: radiant/mainframe.cpp:1032
+#: radiant/mainframe.cpp:1032 radiant/mainframe.cpp:1027
 msgid "Preferences..."
 msgstr ""
 
-#: radiant/mainframe.cpp:1035
+#: radiant/mainframe.cpp:1035 radiant/mainframe.cpp:1030
 msgid "_View"
 msgstr ""
 
-#: radiant/mainframe.cpp:1039
+#: radiant/mainframe.cpp:1039 radiant/mainframe.cpp:1034
 msgid "Toggle"
 msgstr ""
 
-#: radiant/mainframe.cpp:1040
+#: radiant/mainframe.cpp:1040 radiant/mainframe.cpp:1035
 msgid "Camera View"
 msgstr ""
 
-#: radiant/mainframe.cpp:1041
+#: radiant/mainframe.cpp:1041 radiant/mainframe.cpp:1036
 msgid "Console View"
 msgstr ""
 
-#: radiant/mainframe.cpp:1042
+#: radiant/mainframe.cpp:1042 radiant/mainframe.cpp:1037
 msgid "Entity View"
 msgstr ""
 
 #: radiant/mainframe.cpp:1045 radiant/mainframe.cpp:1057
+#: radiant/mainframe.cpp:1040 radiant/mainframe.cpp:1052
 msgid "XY (Top)"
 msgstr ""
 
-#: radiant/mainframe.cpp:1046
+#: radiant/mainframe.cpp:1046 radiant/mainframe.cpp:1041
 msgid "YZ (Side)"
 msgstr ""
 
-#: radiant/mainframe.cpp:1047
+#: radiant/mainframe.cpp:1047 radiant/mainframe.cpp:1042
 msgid "XZ (Front)"
 msgstr ""
 
-#: radiant/mainframe.cpp:1048
+#: radiant/mainframe.cpp:1048 radiant/mainframe.cpp:1043
 msgid "Z View"
 msgstr ""
 
-#: radiant/mainframe.cpp:1050
+#: radiant/mainframe.cpp:1050 radiant/mainframe.cpp:1045
 msgid "_Center"
 msgstr ""
 
-#: radiant/mainframe.cpp:1051
+#: radiant/mainframe.cpp:1051 radiant/mainframe.cpp:1046
 msgid "_Center 2d"
 msgstr ""
 
-#: radiant/mainframe.cpp:1052
+#: radiant/mainframe.cpp:1052 radiant/mainframe.cpp:1047
 msgid "_Up Floor"
 msgstr ""
 
-#: radiant/mainframe.cpp:1053
+#: radiant/mainframe.cpp:1053 radiant/mainframe.cpp:1048
 msgid "_Down Floor"
 msgstr ""
 
-#: radiant/mainframe.cpp:1055
+#: radiant/mainframe.cpp:1055 radiant/mainframe.cpp:1050
 msgid "_Next (XY, YZ, XY)"
 msgstr ""
 
 #: radiant/mainframe.cpp:1056 radiant/preferences.cpp:1641
 #: radiant/preferences.cpp:2057 radiant/preferences.cpp:2059
 #: radiant/preferences.cpp:1642 radiant/preferences.cpp:2058
-#: radiant/preferences.cpp:2060
+#: radiant/preferences.cpp:2060 radiant/mainframe.cpp:1051
+#: radiant/preferences.cpp:1654 radiant/preferences.cpp:2069
+#: radiant/preferences.cpp:2071
 msgid "Layout"
 msgstr ""
 
-#: radiant/mainframe.cpp:1058
+#: radiant/mainframe.cpp:1058 radiant/mainframe.cpp:1053
 msgid "YZ"
 msgstr ""
 
-#: radiant/mainframe.cpp:1059
+#: radiant/mainframe.cpp:1059 radiant/mainframe.cpp:1054
 msgid "XZ"
 msgstr ""
 
-#: radiant/mainframe.cpp:1060
+#: radiant/mainframe.cpp:1060 radiant/mainframe.cpp:1055
 msgid "Zoom"
 msgstr ""
 
-#: radiant/mainframe.cpp:1061
+#: radiant/mainframe.cpp:1061 radiant/mainframe.cpp:1056
 msgid "_XY 100%"
 msgstr ""
 
-#: radiant/mainframe.cpp:1062
+#: radiant/mainframe.cpp:1062 radiant/mainframe.cpp:1057
 msgid "XY Zoom _In"
 msgstr ""
 
-#: radiant/mainframe.cpp:1063
+#: radiant/mainframe.cpp:1063 radiant/mainframe.cpp:1058
 msgid "XY Zoom _Out"
 msgstr ""
 
-#: radiant/mainframe.cpp:1065
+#: radiant/mainframe.cpp:1065 radiant/mainframe.cpp:1060
 msgid "_Z 100%"
 msgstr ""
 
-#: radiant/mainframe.cpp:1066
+#: radiant/mainframe.cpp:1066 radiant/mainframe.cpp:1061
 msgid "Z Zoo_m In"
 msgstr ""
 
-#: radiant/mainframe.cpp:1068
+#: radiant/mainframe.cpp:1068 radiant/mainframe.cpp:1063
 msgid "Z Zoom O_ut"
 msgstr ""
 
-#: radiant/mainframe.cpp:1071
+#: radiant/mainframe.cpp:1071 radiant/mainframe.cpp:1066
 msgid "Cubic Clip Zoom In"
 msgstr ""
 
-#: radiant/mainframe.cpp:1072
+#: radiant/mainframe.cpp:1072 radiant/mainframe.cpp:1067
 msgid "Cubic Clip Zoom Out"
 msgstr ""
 
-#: radiant/mainframe.cpp:1075
+#: radiant/mainframe.cpp:1075 radiant/mainframe.cpp:1070
 msgid "Show"
 msgstr ""
 
-#: radiant/mainframe.cpp:1076
+#: radiant/mainframe.cpp:1076 radiant/mainframe.cpp:1071
 msgid "Show _Angles"
 msgstr ""
 
-#: radiant/mainframe.cpp:1078
+#: radiant/mainframe.cpp:1078 radiant/mainframe.cpp:1073
 msgid "Show _Names"
 msgstr ""
 
-#: radiant/mainframe.cpp:1080
+#: radiant/mainframe.cpp:1080 radiant/mainframe.cpp:1075
 msgid "Show Blocks"
 msgstr ""
 
-#: radiant/mainframe.cpp:1082
+#: radiant/mainframe.cpp:1082 radiant/mainframe.cpp:1077
 msgid "Show C_oordinates"
 msgstr ""
 
-#: radiant/mainframe.cpp:1084
+#: radiant/mainframe.cpp:1084 radiant/mainframe.cpp:1079
 msgid "Show Window Outline"
 msgstr ""
 
-#: radiant/mainframe.cpp:1086
+#: radiant/mainframe.cpp:1086 radiant/mainframe.cpp:1081
 msgid "Show ZBuffered Outline"
 msgstr ""
 
-#: radiant/mainframe.cpp:1088
+#: radiant/mainframe.cpp:1088 radiant/mainframe.cpp:1083
 msgid "Show Axes"
 msgstr ""
 
-#: radiant/mainframe.cpp:1090
+#: radiant/mainframe.cpp:1090 radiant/mainframe.cpp:1085
 msgid "Show Workzone"
 msgstr ""
 
-#: radiant/mainframe.cpp:1093
+#: radiant/mainframe.cpp:1093 radiant/mainframe.cpp:1088
 msgid "Filter"
 msgstr ""
 
-#: radiant/mainframe.cpp:1094
+#: radiant/mainframe.cpp:1094 radiant/mainframe.cpp:1089
 msgid "World"
 msgstr ""
 
 #: radiant/mainframe.cpp:1095 radiant/gtkdlgs.cpp:1590
+#: radiant/mainframe.cpp:1090
 msgid "Entities"
 msgstr ""
 
-#: radiant/mainframe.cpp:1096
+#: radiant/mainframe.cpp:1096 radiant/mainframe.cpp:1091
 msgid "Areaportals"
 msgstr ""
 
-#: radiant/mainframe.cpp:1097
+#: radiant/mainframe.cpp:1097 radiant/mainframe.cpp:1092
 msgid "Translucent"
 msgstr ""
 
-#: radiant/mainframe.cpp:1098
+#: radiant/mainframe.cpp:1098 radiant/mainframe.cpp:1093
 msgid "Liquids"
 msgstr ""
 
-#: radiant/mainframe.cpp:1099
+#: radiant/mainframe.cpp:1099 radiant/mainframe.cpp:1094
 msgid "Caulk"
 msgstr ""
 
-#: radiant/mainframe.cpp:1100
+#: radiant/mainframe.cpp:1100 radiant/mainframe.cpp:1095
 msgid "Clips"
 msgstr ""
 
 #: radiant/mainframe.cpp:1101 radiant/preferences.cpp:1667
 #: radiant/preferences.cpp:2413 radiant/preferences.cpp:2415
 #: radiant/preferences.cpp:1668 radiant/preferences.cpp:2414
-#: radiant/preferences.cpp:2416
+#: radiant/preferences.cpp:2416 radiant/mainframe.cpp:1096
+#: radiant/preferences.cpp:1680 radiant/preferences.cpp:2425
+#: radiant/preferences.cpp:2427
 msgid "Paths"
 msgstr ""
 
-#: radiant/mainframe.cpp:1102
+#: radiant/mainframe.cpp:1102 radiant/mainframe.cpp:1097
 msgid "Clusterportals"
 msgstr ""
 
-#: radiant/mainframe.cpp:1103
+#: radiant/mainframe.cpp:1103 radiant/mainframe.cpp:1098
 msgid "Lights"
 msgstr ""
 
-#: radiant/mainframe.cpp:1104
+#: radiant/mainframe.cpp:1104 radiant/mainframe.cpp:1099
 msgid "Structural"
 msgstr ""
 
-#: radiant/mainframe.cpp:1105
+#: radiant/mainframe.cpp:1105 radiant/mainframe.cpp:1100
 msgid "Lightgrid"
 msgstr ""
 
-#: radiant/mainframe.cpp:1107
+#: radiant/mainframe.cpp:1107 radiant/mainframe.cpp:1102
 msgid "Patches"
 msgstr ""
 
-#: radiant/mainframe.cpp:1108
+#: radiant/mainframe.cpp:1108 radiant/mainframe.cpp:1103
 msgid "Details"
 msgstr ""
 
-#: radiant/mainframe.cpp:1109
+#: radiant/mainframe.cpp:1109 radiant/mainframe.cpp:1104
 msgid "Hints"
 msgstr ""
 
-#: radiant/mainframe.cpp:1110
+#: radiant/mainframe.cpp:1110 radiant/mainframe.cpp:1105
 msgid "Models"
 msgstr ""
 
-#: radiant/mainframe.cpp:1111
+#: radiant/mainframe.cpp:1111 radiant/mainframe.cpp:1106
 msgid "Triggers"
 msgstr ""
 
-#: radiant/mainframe.cpp:1112
+#: radiant/mainframe.cpp:1112 radiant/mainframe.cpp:1107
 msgid "Botclips"
 msgstr ""
 
-#: radiant/mainframe.cpp:1115
+#: radiant/mainframe.cpp:1115 radiant/mainframe.cpp:1110
 msgid "Hide/Show"
 msgstr ""
 
-#: radiant/mainframe.cpp:1116
+#: radiant/mainframe.cpp:1116 radiant/mainframe.cpp:1111
 msgid "Hide Selected"
 msgstr ""
 
-#: radiant/mainframe.cpp:1118
+#: radiant/mainframe.cpp:1118 radiant/mainframe.cpp:1113
 msgid "Show Hidden"
 msgstr ""
 
-#: radiant/mainframe.cpp:1121
+#: radiant/mainframe.cpp:1121 radiant/mainframe.cpp:1116
 msgid "Entities as"
 msgstr ""
 
-#: radiant/mainframe.cpp:1123
+#: radiant/mainframe.cpp:1123 radiant/mainframe.cpp:1118
 msgid "Bounding box"
 msgstr ""
 
-#: radiant/mainframe.cpp:1126
+#: radiant/mainframe.cpp:1126 radiant/mainframe.cpp:1121
 msgid "Wireframe"
 msgstr ""
 
-#: radiant/mainframe.cpp:1129
+#: radiant/mainframe.cpp:1129 radiant/mainframe.cpp:1124
 msgid "Selected Wireframe"
 msgstr ""
 
-#: radiant/mainframe.cpp:1132
+#: radiant/mainframe.cpp:1132 radiant/mainframe.cpp:1127
 msgid "Selected Skinned"
 msgstr ""
 
-#: radiant/mainframe.cpp:1135
+#: radiant/mainframe.cpp:1135 radiant/mainframe.cpp:1130
 msgid "Skinned"
 msgstr ""
 
-#: radiant/mainframe.cpp:1138
+#: radiant/mainframe.cpp:1138 radiant/mainframe.cpp:1133
 msgid "Skinned and Boxed"
 msgstr ""
 
-#: radiant/mainframe.cpp:1142
+#: radiant/mainframe.cpp:1142 radiant/mainframe.cpp:1137
 msgid "Cubic Clipping"
 msgstr ""
 
-#: radiant/mainframe.cpp:1146
+#: radiant/mainframe.cpp:1146 radiant/mainframe.cpp:1141
 msgid "OpenGL Lighting"
 msgstr ""
 
-#: radiant/mainframe.cpp:1151
+#: radiant/mainframe.cpp:1151 radiant/mainframe.cpp:1146
 msgid "_Selection"
 msgstr ""
 
-#: radiant/mainframe.cpp:1155
+#: radiant/mainframe.cpp:1155 radiant/mainframe.cpp:1150
 msgid "Drag"
 msgstr ""
 
-#: radiant/mainframe.cpp:1156
+#: radiant/mainframe.cpp:1156 radiant/mainframe.cpp:1151
 msgid "Drag _Edges"
 msgstr ""
 
-#: radiant/mainframe.cpp:1158
+#: radiant/mainframe.cpp:1158 radiant/mainframe.cpp:1153
 msgid "Drag _Vertices"
 msgstr ""
 
-#: radiant/mainframe.cpp:1161
+#: radiant/mainframe.cpp:1161 radiant/mainframe.cpp:1156
 msgid "_Clone"
 msgstr ""
 
-#: radiant/mainframe.cpp:1163
+#: radiant/mainframe.cpp:1163 radiant/mainframe.cpp:1158
 msgid "Deselect"
 msgstr ""
 
 #: radiant/mainframe.cpp:1165 radiant/mainframe.cpp:1526
+#: radiant/mainframe.cpp:1160 radiant/mainframe.cpp:1520
 msgid "Invert"
 msgstr ""
 
-#: radiant/mainframe.cpp:1172
+#: radiant/mainframe.cpp:1172 radiant/mainframe.cpp:1167
 msgid "Flip"
 msgstr ""
 
-#: radiant/mainframe.cpp:1173
+#: radiant/mainframe.cpp:1173 radiant/mainframe.cpp:1168
 msgid "Flip _X"
 msgstr ""
 
-#: radiant/mainframe.cpp:1175
+#: radiant/mainframe.cpp:1175 radiant/mainframe.cpp:1170
 msgid "Flip _Y"
 msgstr ""
 
-#: radiant/mainframe.cpp:1177
+#: radiant/mainframe.cpp:1177 radiant/mainframe.cpp:1172
 msgid "Flip _Z"
 msgstr ""
 
-#: radiant/mainframe.cpp:1180
+#: radiant/mainframe.cpp:1180 radiant/mainframe.cpp:1175
 msgid "Rotate"
 msgstr ""
 
-#: radiant/mainframe.cpp:1181
+#: radiant/mainframe.cpp:1181 radiant/mainframe.cpp:1176
 msgid "Rotate X"
 msgstr ""
 
-#: radiant/mainframe.cpp:1183
+#: radiant/mainframe.cpp:1183 radiant/mainframe.cpp:1178
 msgid "Rotate Y"
 msgstr ""
 
-#: radiant/mainframe.cpp:1185
+#: radiant/mainframe.cpp:1185 radiant/mainframe.cpp:1180
 msgid "Rotate Z"
 msgstr ""
 
-#: radiant/mainframe.cpp:1187
+#: radiant/mainframe.cpp:1187 radiant/mainframe.cpp:1182
 msgid "Arbitrary rotation..."
 msgstr ""
 
-#: radiant/mainframe.cpp:1190
+#: radiant/mainframe.cpp:1190 radiant/mainframe.cpp:1185
 msgid "Scale..."
 msgstr ""
 
-#: radiant/mainframe.cpp:1191
+#: radiant/mainframe.cpp:1191 radiant/mainframe.cpp:1186
 msgid "CSG"
 msgstr ""
 
-#: radiant/mainframe.cpp:1192
+#: radiant/mainframe.cpp:1192 radiant/mainframe.cpp:1187
 msgid "Make _Hollow"
 msgstr ""
 
-#: radiant/mainframe.cpp:1194
+#: radiant/mainframe.cpp:1194 radiant/mainframe.cpp:1189
 msgid "CSG _Subtract"
 msgstr ""
 
-#: radiant/mainframe.cpp:1196
+#: radiant/mainframe.cpp:1196 radiant/mainframe.cpp:1191
 msgid "CSG _Merge"
 msgstr ""
 
 #: radiant/mainframe.cpp:1199 radiant/gtkdlgs.cpp:1729
+#: radiant/mainframe.cpp:1194
 msgid "Select"
 msgstr ""
 
-#: radiant/mainframe.cpp:1200
+#: radiant/mainframe.cpp:1200 radiant/mainframe.cpp:1195
 msgid "Select Complete _Tall"
 msgstr ""
 
-#: radiant/mainframe.cpp:1202
+#: radiant/mainframe.cpp:1202 radiant/mainframe.cpp:1197
 msgid "Select T_ouching"
 msgstr ""
 
-#: radiant/mainframe.cpp:1204
+#: radiant/mainframe.cpp:1204 radiant/mainframe.cpp:1199
 msgid "Select _Partial Tall"
 msgstr ""
 
-#: radiant/mainframe.cpp:1206
+#: radiant/mainframe.cpp:1206 radiant/mainframe.cpp:1201
 msgid "Select _Inside"
 msgstr ""
 
-#: radiant/mainframe.cpp:1209
+#: radiant/mainframe.cpp:1209 radiant/mainframe.cpp:1204
 msgid "Nudge Left"
 msgstr ""
 
-#: radiant/mainframe.cpp:1211
+#: radiant/mainframe.cpp:1211 radiant/mainframe.cpp:1206
 msgid "Nudge Right"
 msgstr ""
 
-#: radiant/mainframe.cpp:1213
+#: radiant/mainframe.cpp:1213 radiant/mainframe.cpp:1208
 msgid "Nudge Up"
 msgstr ""
 
-#: radiant/mainframe.cpp:1215
+#: radiant/mainframe.cpp:1215 radiant/mainframe.cpp:1210
 msgid "Nudge Down"
 msgstr ""
 
 #: radiant/mainframe.cpp:1219 radiant/mainframe.cpp:1751
-#: radiant/mainframe.cpp:1806
+#: radiant/mainframe.cpp:1806 radiant/mainframe.cpp:1214
+#: radiant/mainframe.cpp:1745 radiant/mainframe.cpp:1800
 msgid "Clipper"
 msgstr ""
 
-#: radiant/mainframe.cpp:1220
+#: radiant/mainframe.cpp:1220 radiant/mainframe.cpp:1215
 msgid "Toggle Clipper"
 msgstr ""
 
-#: radiant/mainframe.cpp:1223
+#: radiant/mainframe.cpp:1223 radiant/mainframe.cpp:1218
 msgid "Clip selection"
 msgstr ""
 
-#: radiant/mainframe.cpp:1225
+#: radiant/mainframe.cpp:1225 radiant/mainframe.cpp:1220
 msgid "Split selection"
 msgstr ""
 
-#: radiant/mainframe.cpp:1227
+#: radiant/mainframe.cpp:1227 radiant/mainframe.cpp:1222
 msgid "Flip Clip orientation"
 msgstr ""
 
-#: radiant/mainframe.cpp:1230
+#: radiant/mainframe.cpp:1230 radiant/mainframe.cpp:1225
 msgid "Connect entities"
 msgstr ""
 
-#: radiant/mainframe.cpp:1232
+#: radiant/mainframe.cpp:1232 radiant/mainframe.cpp:1227
 msgid "Ungroup entity"
 msgstr ""
 
-#: radiant/mainframe.cpp:1234
+#: radiant/mainframe.cpp:1234 radiant/mainframe.cpp:1229
 msgid "Make detail"
 msgstr ""
 
-#: radiant/mainframe.cpp:1236
+#: radiant/mainframe.cpp:1236 radiant/mainframe.cpp:1231
 msgid "Make structural"
 msgstr ""
 
-#: radiant/mainframe.cpp:1240
+#: radiant/mainframe.cpp:1240 radiant/mainframe.cpp:1235
 msgid "_Bsp"
 msgstr ""
 
-#: radiant/mainframe.cpp:1246
+#: radiant/mainframe.cpp:1246 radiant/mainframe.cpp:1241
 msgid "_Grid"
 msgstr ""
 
-#: radiant/mainframe.cpp:1250
+#: radiant/mainframe.cpp:1250 radiant/mainframe.cpp:1245
 msgid "Grid0.25"
 msgstr ""
 
-#: radiant/mainframe.cpp:1253
+#: radiant/mainframe.cpp:1253 radiant/mainframe.cpp:1248
 msgid "Grid0.5"
 msgstr ""
 
-#: radiant/mainframe.cpp:1256
+#: radiant/mainframe.cpp:1256 radiant/mainframe.cpp:1251
 msgid "Grid1"
 msgstr ""
 
-#: radiant/mainframe.cpp:1259
+#: radiant/mainframe.cpp:1259 radiant/mainframe.cpp:1254
 msgid "Grid2"
 msgstr ""
 
-#: radiant/mainframe.cpp:1262
+#: radiant/mainframe.cpp:1262 radiant/mainframe.cpp:1257
 msgid "Grid4"
 msgstr ""
 
-#: radiant/mainframe.cpp:1265
+#: radiant/mainframe.cpp:1265 radiant/mainframe.cpp:1260
 msgid "Grid8"
 msgstr ""
 
-#: radiant/mainframe.cpp:1268
+#: radiant/mainframe.cpp:1268 radiant/mainframe.cpp:1263
 msgid "Grid16"
 msgstr ""
 
-#: radiant/mainframe.cpp:1271
+#: radiant/mainframe.cpp:1271 radiant/mainframe.cpp:1266
 msgid "Grid32"
 msgstr ""
 
-#: radiant/mainframe.cpp:1274
+#: radiant/mainframe.cpp:1274 radiant/mainframe.cpp:1269
 msgid "Grid64"
 msgstr ""
 
-#: radiant/mainframe.cpp:1277
+#: radiant/mainframe.cpp:1277 radiant/mainframe.cpp:1272
 msgid "Grid128"
 msgstr ""
 
-#: radiant/mainframe.cpp:1280
+#: radiant/mainframe.cpp:1280 radiant/mainframe.cpp:1275
 msgid "Grid256"
 msgstr ""
 
-#: radiant/mainframe.cpp:1284
+#: radiant/mainframe.cpp:1284 radiant/mainframe.cpp:1279
 msgid "Snap to grid"
 msgstr ""
 
-#: radiant/mainframe.cpp:1289
+#: radiant/mainframe.cpp:1289 radiant/mainframe.cpp:1284
 msgid "_Textures"
 msgstr ""
 
-#: radiant/mainframe.cpp:1293
+#: radiant/mainframe.cpp:1293 radiant/mainframe.cpp:1288
 msgid "Show In _Use"
 msgstr ""
 
-#: radiant/mainframe.cpp:1296
+#: radiant/mainframe.cpp:1296 radiant/mainframe.cpp:1291
 msgid "Show _All"
 msgstr ""
 
-#: radiant/mainframe.cpp:1300
+#: radiant/mainframe.cpp:1300 radiant/mainframe.cpp:1295
 msgid "Show shaders"
 msgstr ""
 
-#: radiant/mainframe.cpp:1303
+#: radiant/mainframe.cpp:1303 radiant/mainframe.cpp:1298
 msgid "Flush & Reload Shaders"
 msgstr ""
 
-#: radiant/mainframe.cpp:1306
+#: radiant/mainframe.cpp:1306 radiant/mainframe.cpp:1301
 msgid "Load directory..."
 msgstr ""
 
-#: radiant/mainframe.cpp:1309
+#: radiant/mainframe.cpp:1309 radiant/mainframe.cpp:1304
 msgid "Directory list..."
 msgstr ""
 
-#: radiant/mainframe.cpp:1313
+#: radiant/mainframe.cpp:1313 radiant/mainframe.cpp:1308
 msgid "_Surface Inspector"
 msgstr ""
 
-#: radiant/mainframe.cpp:1316
+#: radiant/mainframe.cpp:1316 radiant/mainframe.cpp:1311
 msgid "Render Quality"
 msgstr ""
 
-#: radiant/mainframe.cpp:1318
+#: radiant/mainframe.cpp:1318 radiant/mainframe.cpp:1313
 msgid "_Wireframe"
 msgstr ""
 
-#: radiant/mainframe.cpp:1321
+#: radiant/mainframe.cpp:1321 radiant/mainframe.cpp:1316
 msgid "_Flat shade"
 msgstr ""
 
-#: radiant/mainframe.cpp:1324
+#: radiant/mainframe.cpp:1324 radiant/mainframe.cpp:1319
 msgid "_Nearest"
 msgstr ""
 
-#: radiant/mainframe.cpp:1327
+#: radiant/mainframe.cpp:1327 radiant/mainframe.cpp:1322
 msgid "Nearest _Mipmap"
 msgstr ""
 
-#: radiant/mainframe.cpp:1330
+#: radiant/mainframe.cpp:1330 radiant/mainframe.cpp:1325
 msgid "_Linear"
 msgstr ""
 
-#: radiant/mainframe.cpp:1333
+#: radiant/mainframe.cpp:1333 radiant/mainframe.cpp:1328
 msgid "_Bilinear"
 msgstr ""
 
-#: radiant/mainframe.cpp:1336
+#: radiant/mainframe.cpp:1336 radiant/mainframe.cpp:1331
 msgid "B_ilinear Mipmap"
 msgstr ""
 
-#: radiant/mainframe.cpp:1339
+#: radiant/mainframe.cpp:1339 radiant/mainframe.cpp:1334
 msgid "T_rilinear"
 msgstr ""
 
-#: radiant/mainframe.cpp:1342
+#: radiant/mainframe.cpp:1342 radiant/mainframe.cpp:1337
 msgid "Find / Replace..."
 msgstr ""
 
-#: radiant/mainframe.cpp:1345
+#: radiant/mainframe.cpp:1345 radiant/mainframe.cpp:1340
 msgid "Texture Lock"
 msgstr ""
 
-#: radiant/mainframe.cpp:1346
+#: radiant/mainframe.cpp:1346 radiant/mainframe.cpp:1341
 msgid "Moves"
 msgstr ""
 
-#: radiant/mainframe.cpp:1349
+#: radiant/mainframe.cpp:1349 radiant/mainframe.cpp:1344
 msgid "Rotations"
 msgstr ""
 
-#: radiant/mainframe.cpp:1352
+#: radiant/mainframe.cpp:1352 radiant/mainframe.cpp:1347
 msgid "Texture Window Scale"
 msgstr ""
 
-#: radiant/mainframe.cpp:1353
+#: radiant/mainframe.cpp:1353 radiant/mainframe.cpp:1348
 msgid "200%"
 msgstr ""
 
-#: radiant/mainframe.cpp:1356
+#: radiant/mainframe.cpp:1356 radiant/mainframe.cpp:1351
 msgid "100%"
 msgstr ""
 
-#: radiant/mainframe.cpp:1359
+#: radiant/mainframe.cpp:1359 radiant/mainframe.cpp:1354
 msgid "50%"
 msgstr ""
 
-#: radiant/mainframe.cpp:1362
+#: radiant/mainframe.cpp:1362 radiant/mainframe.cpp:1357
 msgid "25%"
 msgstr ""
 
-#: radiant/mainframe.cpp:1365
+#: radiant/mainframe.cpp:1365 radiant/mainframe.cpp:1360
 msgid "10%"
 msgstr ""
 
-#: radiant/mainframe.cpp:1369
+#: radiant/mainframe.cpp:1369 radiant/mainframe.cpp:1364
 msgid "shaderlist.txt only"
 msgstr ""
 
-#: radiant/mainframe.cpp:1377
+#: radiant/mainframe.cpp:1377 radiant/mainframe.cpp:1372
 msgid "_Misc"
 msgstr ""
 
-#: radiant/mainframe.cpp:1381
+#: radiant/mainframe.cpp:1381 radiant/mainframe.cpp:1376
 msgid "_Benchmark"
 msgstr ""
 
-#: radiant/mainframe.cpp:1382
+#: radiant/mainframe.cpp:1382 radiant/mainframe.cpp:1377
 msgid "Colors"
 msgstr ""
 
-#: radiant/mainframe.cpp:1383
+#: radiant/mainframe.cpp:1383 radiant/mainframe.cpp:1378
 msgid "Themes"
 msgstr ""
 
-#: radiant/mainframe.cpp:1384
+#: radiant/mainframe.cpp:1384 radiant/mainframe.cpp:1379
 msgid "QE4 Original"
 msgstr ""
 
-#: radiant/mainframe.cpp:1385
+#: radiant/mainframe.cpp:1385 radiant/mainframe.cpp:1380
 msgid "Q3Radiant Original"
 msgstr ""
 
-#: radiant/mainframe.cpp:1386
+#: radiant/mainframe.cpp:1386 radiant/mainframe.cpp:1381
 msgid "Black and Green"
 msgstr ""
 
-#: radiant/mainframe.cpp:1387
+#: radiant/mainframe.cpp:1387 radiant/mainframe.cpp:1382
 msgid "Maya/Max/Lightwave Emulation"
 msgstr ""
 
-#: radiant/mainframe.cpp:1390
+#: radiant/mainframe.cpp:1390 radiant/mainframe.cpp:1385
 msgid "_Texture Background..."
 msgstr ""
 
-#: radiant/mainframe.cpp:1392
+#: radiant/mainframe.cpp:1392 radiant/mainframe.cpp:1387
 msgid "Grid Background..."
 msgstr ""
 
-#: radiant/mainframe.cpp:1394
+#: radiant/mainframe.cpp:1394 radiant/mainframe.cpp:1389
 msgid "Grid Major..."
 msgstr ""
 
-#: radiant/mainframe.cpp:1396
+#: radiant/mainframe.cpp:1396 radiant/mainframe.cpp:1391
 msgid "Grid Minor..."
 msgstr ""
 
-#: radiant/mainframe.cpp:1398
+#: radiant/mainframe.cpp:1398 radiant/mainframe.cpp:1393
 msgid "Grid Major Small..."
 msgstr ""
 
-#: radiant/mainframe.cpp:1400
+#: radiant/mainframe.cpp:1400 radiant/mainframe.cpp:1395
 msgid "Grid Minor Small..."
 msgstr ""
 
-#: radiant/mainframe.cpp:1402
+#: radiant/mainframe.cpp:1402 radiant/mainframe.cpp:1397
 msgid "Grid Text..."
 msgstr ""
 
-#: radiant/mainframe.cpp:1404
+#: radiant/mainframe.cpp:1404 radiant/mainframe.cpp:1399
 msgid "Grid Block..."
 msgstr ""
 
-#: radiant/mainframe.cpp:1406
+#: radiant/mainframe.cpp:1406 radiant/mainframe.cpp:1401
 msgid "Default Brush..."
 msgstr ""
 
-#: radiant/mainframe.cpp:1408
+#: radiant/mainframe.cpp:1408 radiant/mainframe.cpp:1403
 msgid "Camera Background..."
 msgstr ""
 
-#: radiant/mainframe.cpp:1410
+#: radiant/mainframe.cpp:1410 radiant/mainframe.cpp:1405
 msgid "Selected Brush..."
 msgstr ""
 
-#: radiant/mainframe.cpp:1412
+#: radiant/mainframe.cpp:1412 radiant/mainframe.cpp:1407
 msgid "Selected Brush (Camera)..."
 msgstr ""
 
-#: radiant/mainframe.cpp:1414
+#: radiant/mainframe.cpp:1414 radiant/mainframe.cpp:1409
 msgid "Clipper..."
 msgstr ""
 
-#: radiant/mainframe.cpp:1416
+#: radiant/mainframe.cpp:1416 radiant/mainframe.cpp:1411
 msgid "Active View name..."
 msgstr ""
 
-#: radiant/mainframe.cpp:1419
+#: radiant/mainframe.cpp:1419 radiant/mainframe.cpp:1414
 msgid "_Gamma..."
 msgstr ""
 
-#: radiant/mainframe.cpp:1421
+#: radiant/mainframe.cpp:1421 radiant/mainframe.cpp:1416
 msgid "Find brush..."
 msgstr ""
 
-#: radiant/mainframe.cpp:1423
+#: radiant/mainframe.cpp:1423 radiant/mainframe.cpp:1418
 msgid "Next leak spot"
 msgstr ""
 
-#: radiant/mainframe.cpp:1425
+#: radiant/mainframe.cpp:1425 radiant/mainframe.cpp:1420
 msgid "Previous leak spot"
 msgstr ""
 
-#: radiant/mainframe.cpp:1429
+#: radiant/mainframe.cpp:1429 radiant/mainframe.cpp:1423
 msgid "_Select Entity Color..."
 msgstr ""
 
-#: radiant/mainframe.cpp:1434
+#: radiant/mainframe.cpp:1434 radiant/mainframe.cpp:1428
 msgid "_Region"
 msgstr ""
 
-#: radiant/mainframe.cpp:1438
+#: radiant/mainframe.cpp:1438 radiant/mainframe.cpp:1432
 msgid "_Off"
 msgstr ""
 
-#: radiant/mainframe.cpp:1440
+#: radiant/mainframe.cpp:1440 radiant/mainframe.cpp:1434
 msgid "_Set XY"
 msgstr ""
 
-#: radiant/mainframe.cpp:1442
+#: radiant/mainframe.cpp:1442 radiant/mainframe.cpp:1436
 msgid "Set _Tall Brush"
 msgstr ""
 
-#: radiant/mainframe.cpp:1444
+#: radiant/mainframe.cpp:1444 radiant/mainframe.cpp:1438
 msgid "Set _Brush"
 msgstr ""
 
-#: radiant/mainframe.cpp:1446
+#: radiant/mainframe.cpp:1446 radiant/mainframe.cpp:1440
 msgid "Set Se_lected Brushes"
 msgstr ""
 
-#: radiant/mainframe.cpp:1450
+#: radiant/mainframe.cpp:1450 radiant/mainframe.cpp:1444
 msgid "_Brush"
 msgstr ""
 
-#: radiant/mainframe.cpp:1454
+#: radiant/mainframe.cpp:1454 radiant/mainframe.cpp:1448
 msgid "3 sided"
 msgstr ""
 
-#: radiant/mainframe.cpp:1455
+#: radiant/mainframe.cpp:1455 radiant/mainframe.cpp:1449
 msgid "4 sided"
 msgstr ""
 
-#: radiant/mainframe.cpp:1456
+#: radiant/mainframe.cpp:1456 radiant/mainframe.cpp:1450
 msgid "5 sided"
 msgstr ""
 
-#: radiant/mainframe.cpp:1457
+#: radiant/mainframe.cpp:1457 radiant/mainframe.cpp:1451
 msgid "6 sided"
 msgstr ""
 
-#: radiant/mainframe.cpp:1458
+#: radiant/mainframe.cpp:1458 radiant/mainframe.cpp:1452
 msgid "7 sided"
 msgstr ""
 
-#: radiant/mainframe.cpp:1459
+#: radiant/mainframe.cpp:1459 radiant/mainframe.cpp:1453
 msgid "8 sided"
 msgstr ""
 
-#: radiant/mainframe.cpp:1460
+#: radiant/mainframe.cpp:1460 radiant/mainframe.cpp:1454
 msgid "9 sided"
 msgstr ""
 
-#: radiant/mainframe.cpp:1462
+#: radiant/mainframe.cpp:1462 radiant/mainframe.cpp:1456
 msgid "Arbitrary sided..."
 msgstr ""
 
-#: radiant/mainframe.cpp:1465
+#: radiant/mainframe.cpp:1465 radiant/mainframe.cpp:1459
 msgid "Primitives"
 msgstr ""
 
-#: radiant/mainframe.cpp:1466
+#: radiant/mainframe.cpp:1466 radiant/mainframe.cpp:1460
 msgid "Cone..."
 msgstr ""
 
-#: radiant/mainframe.cpp:1468
+#: radiant/mainframe.cpp:1468 radiant/mainframe.cpp:1462
 msgid "Sphere..."
 msgstr ""
 
-#: radiant/mainframe.cpp:1474
+#: radiant/mainframe.cpp:1474 radiant/mainframe.cpp:1468
 msgid "_Curve"
 msgstr ""
 
-#: radiant/mainframe.cpp:1478
+#: radiant/mainframe.cpp:1478 radiant/mainframe.cpp:1472
 msgid "Cylinder"
 msgstr ""
 
-#: radiant/mainframe.cpp:1479
+#: radiant/mainframe.cpp:1479 radiant/mainframe.cpp:1473
 msgid "More Cylinders"
 msgstr ""
 
-#: radiant/mainframe.cpp:1480
+#: radiant/mainframe.cpp:1480 radiant/mainframe.cpp:1474
 msgid "Dense Cylinder"
 msgstr ""
 
-#: radiant/mainframe.cpp:1482
+#: radiant/mainframe.cpp:1482 radiant/mainframe.cpp:1476
 msgid "Very Dense Cylinder"
 msgstr ""
 
-#: radiant/mainframe.cpp:1484
+#: radiant/mainframe.cpp:1484 radiant/mainframe.cpp:1478
 msgid "Square Cylinder"
 msgstr ""
 
-#: radiant/mainframe.cpp:1487
+#: radiant/mainframe.cpp:1487 radiant/mainframe.cpp:1481
 msgid "End cap"
 msgstr ""
 
 #: radiant/mainframe.cpp:1488 radiant/gtkdlgs.cpp:3087
+#: radiant/gtkdlgs.cpp:3086 radiant/mainframe.cpp:1482
 msgid "Bevel"
 msgstr ""
 
-#: radiant/mainframe.cpp:1489
+#: radiant/mainframe.cpp:1489 radiant/mainframe.cpp:1483
 msgid "More End caps, Bevels"
 msgstr ""
 
-#: radiant/mainframe.cpp:1490
+#: radiant/mainframe.cpp:1490 radiant/mainframe.cpp:1484
 msgid "Square Endcap"
 msgstr ""
 
-#: radiant/mainframe.cpp:1492
+#: radiant/mainframe.cpp:1492 radiant/mainframe.cpp:1486
 msgid "Square Bevel"
 msgstr ""
 
-#: radiant/mainframe.cpp:1495
+#: radiant/mainframe.cpp:1495 radiant/mainframe.cpp:1489
 msgid "Cone"
 msgstr ""
 
-#: radiant/mainframe.cpp:1496
+#: radiant/mainframe.cpp:1496 radiant/mainframe.cpp:1490
 msgid "Sphere"
 msgstr ""
 
-#: radiant/mainframe.cpp:1500
+#: radiant/mainframe.cpp:1500 radiant/mainframe.cpp:1494
 msgid "Simple Patch Mesh..."
 msgstr ""
 
-#: radiant/mainframe.cpp:1504
+#: radiant/mainframe.cpp:1504 radiant/mainframe.cpp:1498
 msgid "Insert"
 msgstr ""
 
-#: radiant/mainframe.cpp:1505
+#: radiant/mainframe.cpp:1505 radiant/mainframe.cpp:1499
 msgid "Insert (2) Columns"
 msgstr ""
 
-#: radiant/mainframe.cpp:1507
+#: radiant/mainframe.cpp:1507 radiant/mainframe.cpp:1501
 msgid "Add (2) Columns"
 msgstr ""
 
-#: radiant/mainframe.cpp:1510
+#: radiant/mainframe.cpp:1510 radiant/mainframe.cpp:1504
 msgid "Insert (2) Rows"
 msgstr ""
 
-#: radiant/mainframe.cpp:1512
+#: radiant/mainframe.cpp:1512 radiant/mainframe.cpp:1506
 msgid "Add (2) Rows"
 msgstr ""
 
-#: radiant/mainframe.cpp:1514
+#: radiant/mainframe.cpp:1514 radiant/mainframe.cpp:1508
 msgid "Delete"
 msgstr ""
 
-#: radiant/mainframe.cpp:1515
+#: radiant/mainframe.cpp:1515 radiant/mainframe.cpp:1509
 msgid "First (2) Columns"
 msgstr ""
 
-#: radiant/mainframe.cpp:1517
+#: radiant/mainframe.cpp:1517 radiant/mainframe.cpp:1511
 msgid "Last (2) Columns"
 msgstr ""
 
-#: radiant/mainframe.cpp:1520
+#: radiant/mainframe.cpp:1520 radiant/mainframe.cpp:1514
 msgid "First (2) Rows"
 msgstr ""
 
-#: radiant/mainframe.cpp:1522
+#: radiant/mainframe.cpp:1522 radiant/mainframe.cpp:1516
 msgid "Last (2) Rows"
 msgstr ""
 
-#: radiant/mainframe.cpp:1525
+#: radiant/mainframe.cpp:1525 radiant/mainframe.cpp:1519
 msgid "Matrix"
 msgstr ""
 
-#: radiant/mainframe.cpp:1528
+#: radiant/mainframe.cpp:1528 radiant/mainframe.cpp:1522
 msgid "Re-disperse"
 msgstr ""
 
-#: radiant/mainframe.cpp:1529
+#: radiant/mainframe.cpp:1529 radiant/mainframe.cpp:1523
 msgid "Rows"
 msgstr ""
 
-#: radiant/mainframe.cpp:1530
+#: radiant/mainframe.cpp:1530 radiant/mainframe.cpp:1524
 msgid "Cols (Intermediate)"
 msgstr ""
 
-#: radiant/mainframe.cpp:1531
+#: radiant/mainframe.cpp:1531 radiant/mainframe.cpp:1525
 msgid "Rows (Intermediate)"
 msgstr ""
 
-#: radiant/mainframe.cpp:1532
+#: radiant/mainframe.cpp:1532 radiant/mainframe.cpp:1526
 msgid "Transpose"
 msgstr ""
 
-#: radiant/mainframe.cpp:1535
+#: radiant/mainframe.cpp:1535 radiant/mainframe.cpp:1529
 msgid "Cap Selection"
 msgstr ""
 
-#: radiant/mainframe.cpp:1537
+#: radiant/mainframe.cpp:1537 radiant/mainframe.cpp:1531
 msgid "Cycle Cap Texture"
 msgstr ""
 
-#: radiant/mainframe.cpp:1540
+#: radiant/mainframe.cpp:1540 radiant/mainframe.cpp:1534
 msgid "Overlay"
 msgstr ""
 
-#: radiant/mainframe.cpp:1541
+#: radiant/mainframe.cpp:1541 radiant/mainframe.cpp:1535
 msgid "Set"
 msgstr ""
 
 #: radiant/mainframe.cpp:1543 radiant/mainframe.cpp:2063
+#: radiant/mainframe.cpp:1537 radiant/mainframe.cpp:2057
 msgid "Clear"
 msgstr ""
 
-#: radiant/mainframe.cpp:1546
+#: radiant/mainframe.cpp:1546 radiant/mainframe.cpp:1540
 msgid "Thicken..."
 msgstr ""
 
-#: radiant/mainframe.cpp:1549
+#: radiant/mainframe.cpp:1549 radiant/mainframe.cpp:1543
 msgid "_Plugins"
 msgstr ""
 
-#: radiant/mainframe.cpp:1562
+#: radiant/mainframe.cpp:1562 radiant/mainframe.cpp:1556
 msgid "_Help"
 msgstr ""
 
-#: radiant/mainframe.cpp:1566
+#: radiant/mainframe.cpp:1566 radiant/mainframe.cpp:1560
 msgid "Manual"
 msgstr ""
 
-#: radiant/mainframe.cpp:1577
+#: radiant/mainframe.cpp:1577 radiant/mainframe.cpp:1571
 msgid "Bug report"
 msgstr ""
 
-#: radiant/mainframe.cpp:1579
+#: radiant/mainframe.cpp:1579 radiant/mainframe.cpp:1573
 msgid "Shortcuts list"
 msgstr ""
 
-#: radiant/mainframe.cpp:1581
+#: radiant/mainframe.cpp:1581 radiant/mainframe.cpp:1575
 msgid "_About"
 msgstr ""
 
-#: radiant/mainframe.cpp:1668
+#: radiant/mainframe.cpp:1668 radiant/mainframe.cpp:1662
 msgid "Open"
 msgstr ""
 
-#: radiant/mainframe.cpp:1668
+#: radiant/mainframe.cpp:1668 radiant/mainframe.cpp:1662
 msgid "Open an existing map"
 msgstr ""
 
 #: radiant/mainframe.cpp:1672 radiant/gtkdlgs.cpp:3831
+#: radiant/gtkdlgs.cpp:3828 radiant/mainframe.cpp:1666
 msgid "Save"
 msgstr ""
 
-#: radiant/mainframe.cpp:1672
+#: radiant/mainframe.cpp:1672 radiant/mainframe.cpp:1666
 msgid "Save the active map"
 msgstr ""
 
-#: radiant/mainframe.cpp:1677
+#: radiant/mainframe.cpp:1677 radiant/mainframe.cpp:1671
 msgid "x-axis Flip"
 msgstr ""
 
-#: radiant/mainframe.cpp:1681
+#: radiant/mainframe.cpp:1681 radiant/mainframe.cpp:1675
 msgid "x-axis Rotate"
 msgstr ""
 
-#: radiant/mainframe.cpp:1685
+#: radiant/mainframe.cpp:1685 radiant/mainframe.cpp:1679
 msgid "y-axis Flip"
 msgstr ""
 
-#: radiant/mainframe.cpp:1689
+#: radiant/mainframe.cpp:1689 radiant/mainframe.cpp:1683
 msgid "y-axis Rotate"
 msgstr ""
 
-#: radiant/mainframe.cpp:1693
+#: radiant/mainframe.cpp:1693 radiant/mainframe.cpp:1687
 msgid "z-axis Flip"
 msgstr ""
 
-#: radiant/mainframe.cpp:1697
+#: radiant/mainframe.cpp:1697 radiant/mainframe.cpp:1691
 msgid "z-axis Rotate"
 msgstr ""
 
-#: radiant/mainframe.cpp:1705
+#: radiant/mainframe.cpp:1705 radiant/mainframe.cpp:1699
 msgid "Complete Tall"
 msgstr ""
 
-#: radiant/mainframe.cpp:1723
+#: radiant/mainframe.cpp:1723 radiant/mainframe.cpp:1717
 msgid "Selection"
 msgstr ""
 
-#: radiant/mainframe.cpp:1730
+#: radiant/mainframe.cpp:1730 radiant/mainframe.cpp:1724
 msgid "CSG Subtract"
 msgstr ""
 
-#: radiant/mainframe.cpp:1737
+#: radiant/mainframe.cpp:1737 radiant/mainframe.cpp:1731
 msgid "CSG Merge"
 msgstr ""
 
-#: radiant/mainframe.cpp:1743
+#: radiant/mainframe.cpp:1743 radiant/mainframe.cpp:1737
 msgid "Hollow"
 msgstr ""
 
-#: radiant/mainframe.cpp:1758
+#: radiant/mainframe.cpp:1758 radiant/mainframe.cpp:1752
 msgid "Change views"
 msgstr ""
 
-#: radiant/mainframe.cpp:1768
+#: radiant/mainframe.cpp:1768 radiant/mainframe.cpp:1762
 msgid "Texture view mode"
 msgstr ""
 
 #: radiant/mainframe.cpp:1776 radiant/mainframe.cpp:1795
+#: radiant/mainframe.cpp:1770 radiant/mainframe.cpp:1789
 msgid "Cubic clip the camera view"
 msgstr ""
 
-#: radiant/mainframe.cpp:1787
+#: radiant/mainframe.cpp:1787 radiant/mainframe.cpp:1781
 msgid "Camera preview"
 msgstr ""
 
-#: radiant/mainframe.cpp:1801
+#: radiant/mainframe.cpp:1801 radiant/mainframe.cpp:1795
 msgid "Entity inspector"
 msgstr ""
 
-#: radiant/mainframe.cpp:1813
+#: radiant/mainframe.cpp:1813 radiant/mainframe.cpp:1807
 msgid "Free Rotation"
 msgstr ""
 
-#: radiant/mainframe.cpp:1818
+#: radiant/mainframe.cpp:1818 radiant/mainframe.cpp:1812
 msgid "Free Scaling"
 msgstr ""
 
-#: radiant/mainframe.cpp:1822
+#: radiant/mainframe.cpp:1822 radiant/mainframe.cpp:1816
 msgid "Scale X"
 msgstr ""
 
-#: radiant/mainframe.cpp:1826
+#: radiant/mainframe.cpp:1826 radiant/mainframe.cpp:1820
 msgid "Scale Y"
 msgstr ""
 
-#: radiant/mainframe.cpp:1830
+#: radiant/mainframe.cpp:1830 radiant/mainframe.cpp:1824
 msgid "Scale Z"
 msgstr ""
 
-#: radiant/mainframe.cpp:1838
+#: radiant/mainframe.cpp:1838 radiant/mainframe.cpp:1832
 msgid "Don't select model brushes"
 msgstr ""
 
-#: radiant/mainframe.cpp:1847
+#: radiant/mainframe.cpp:1847 radiant/mainframe.cpp:1841
 msgid "Don't select curved brushes"
 msgstr ""
 
-#: radiant/mainframe.cpp:1858
+#: radiant/mainframe.cpp:1858 radiant/mainframe.cpp:1852
 msgid "Show patch bounding box"
 msgstr ""
 
-#: radiant/mainframe.cpp:1863
+#: radiant/mainframe.cpp:1863 radiant/mainframe.cpp:1857
 msgid "Show patches as wireframes"
 msgstr ""
 
-#: radiant/mainframe.cpp:1868
+#: radiant/mainframe.cpp:1868 radiant/mainframe.cpp:1862
 msgid "Patch Bend mode"
 msgstr ""
 
-#: radiant/mainframe.cpp:1872
+#: radiant/mainframe.cpp:1872 radiant/mainframe.cpp:1866
 msgid "Put caps on the current patch"
 msgstr ""
 
-#: radiant/mainframe.cpp:1877
+#: radiant/mainframe.cpp:1877 radiant/mainframe.cpp:1871
 msgid "Welds equal patch points during moves"
 msgstr ""
 
-#: radiant/mainframe.cpp:1882
+#: radiant/mainframe.cpp:1882 radiant/mainframe.cpp:1876
 msgid "Selects drill down rows and columns"
 msgstr ""
 
-#: radiant/mainframe.cpp:1891
+#: radiant/mainframe.cpp:1891 radiant/mainframe.cpp:1885
 msgid "Show Entities as"
 msgstr ""
 
 #: radiant/mainframe.cpp:1956 radiant/mainframe.cpp:1970
+#: radiant/mainframe.cpp:1950 radiant/mainframe.cpp:1964
 msgid " Label "
 msgstr ""
 
-#: radiant/mainframe.cpp:2738
+#: radiant/mainframe.cpp:2738 radiant/mainframe.cpp:2732
 msgid "XZ View"
 msgstr ""
 
-#: radiant/mainframe.cpp:2762
+#: radiant/mainframe.cpp:2762 radiant/mainframe.cpp:2756
 msgid "YZ View"
 msgstr ""
 
 #: radiant/mainframe.cpp:2790 radiant/mainframe.cpp:2855
 #: radiant/preferences.cpp:1912 radiant/preferences.cpp:1914
 #: radiant/gtkdlgs.cpp:2927 radiant/preferences.cpp:1913
-#: radiant/preferences.cpp:1915
+#: radiant/preferences.cpp:1915 radiant/gtkdlgs.cpp:2926
+#: radiant/mainframe.cpp:2784 radiant/mainframe.cpp:2849
+#: radiant/preferences.cpp:1924 radiant/preferences.cpp:1926
 msgid "Textures"
 msgstr ""
 
-#: radiant/mainframe.cpp:3693
+#: radiant/mainframe.cpp:3693 radiant/mainframe.cpp:3687
 msgid ""
 "Failed to load project file.\n"
 "Please enter a valid project file."
 msgstr ""
 
-#: radiant/mainframe.cpp:3693
+#: radiant/mainframe.cpp:3693 radiant/mainframe.cpp:3687
 msgid "Load Project"
 msgstr ""
 
-#: radiant/mainframe.cpp:3695
+#: radiant/mainframe.cpp:3695 radiant/mainframe.cpp:3689
 msgid "Choose Project File"
 msgstr ""
 
-#: radiant/mainframe.cpp:4270
+#: radiant/mainframe.cpp:4270 radiant/mainframe.cpp:4268
 msgid "Open Map"
 msgstr ""
 
-#: radiant/mainframe.cpp:4288
+#: radiant/mainframe.cpp:4288 radiant/mainframe.cpp:4290
 msgid "Import Map"
 msgstr ""
 
-#: radiant/mainframe.cpp:4312
+#: radiant/mainframe.cpp:4312 radiant/mainframe.cpp:4318
 msgid "Save Map"
 msgstr ""
 
-#: radiant/mainframe.cpp:4330
+#: radiant/mainframe.cpp:4330 radiant/mainframe.cpp:4340
 msgid "Export Selection"
 msgstr ""
 
-#: radiant/mainframe.cpp:4346
+#: radiant/mainframe.cpp:4346 radiant/mainframe.cpp:4360
 msgid "Export Region"
 msgstr ""
 
-#: radiant/mainframe.cpp:4380
+#: radiant/mainframe.cpp:4380 radiant/mainframe.cpp:4394
 msgid "Error"
 msgstr ""
 
-#: radiant/mainframe.cpp:4579
+#: radiant/mainframe.cpp:4579 radiant/mainframe.cpp:4593
 msgid "Import Prefab"
 msgstr ""
 
-#: radiant/mainframe.cpp:4603
+#: radiant/mainframe.cpp:4603 radiant/mainframe.cpp:4617
 msgid "Export Prefab"
 msgstr ""
 
-#: radiant/mainframe.cpp:4631
+#: radiant/mainframe.cpp:4631 radiant/mainframe.cpp:4645
 msgid "You must restart Radiant for the changes to take effect."
 msgstr ""
 
-#: radiant/mainframe.cpp:5756
+#: radiant/mainframe.cpp:5756 radiant/mainframe.cpp:5768
 msgid "Load textures from path"
 msgstr ""
 
-#: radiant/mainframe.cpp:6174
+#: radiant/mainframe.cpp:6174 radiant/mainframe.cpp:6186
 msgid "You must restart Radiant for Gamma settings to take effect."
 msgstr ""
 
@@ -1409,30 +1429,37 @@ msgid "Reset Registry"
 msgstr ""
 
 #: radiant/preferences.cpp:1022 radiant/preferences.cpp:1023
+#: radiant/preferences.cpp:1036
 msgid "Select the game:"
 msgstr ""
 
 #: radiant/preferences.cpp:1034 radiant/preferences.cpp:1035
+#: radiant/preferences.cpp:1048
 msgid "Auto load selected game on startup"
 msgstr ""
 
 #: radiant/preferences.cpp:1039 radiant/preferences.cpp:1040
+#: radiant/preferences.cpp:1053
 msgid "(this frame is available in the prefs menu if you set auto-select)"
 msgstr ""
 
 #: radiant/preferences.cpp:1044 radiant/preferences.cpp:1045
+#: radiant/preferences.cpp:1058
 msgid "Networked install - per-user settings"
 msgstr ""
 
 #: radiant/preferences.cpp:1050 radiant/preferences.cpp:1051
+#: radiant/preferences.cpp:1064
 msgid "Log the console to radiant.log"
 msgstr ""
 
 #: radiant/preferences.cpp:1107 radiant/preferences.cpp:1108
+#: radiant/preferences.cpp:1121
 msgid "Select Game"
 msgstr ""
 
 #: radiant/preferences.cpp:1116 radiant/preferences.cpp:1117
+#: radiant/preferences.cpp:1130
 msgid "Configure more games"
 msgstr ""
 
@@ -1444,7 +1471,13 @@ msgstr ""
 #: radiant/gtkdlgs.cpp:3124 radiant/gtkdlgs.cpp:3372 radiant/gtkdlgs.cpp:3477
 #: radiant/gtkdlgs.cpp:3548 radiant/gtkdlgs.cpp:3643 radiant/gtkdlgs.cpp:4010
 #: radiant/preferences.cpp:1123 radiant/preferences.cpp:1542
-#: radiant/preferences.cpp:3283
+#: radiant/preferences.cpp:3283 radiant/gtkdlgs.cpp:2166
+#: radiant/gtkdlgs.cpp:2240 radiant/gtkdlgs.cpp:2347 radiant/gtkdlgs.cpp:2458
+#: radiant/gtkdlgs.cpp:2540 radiant/gtkdlgs.cpp:2677 radiant/gtkdlgs.cpp:3123
+#: radiant/gtkdlgs.cpp:3371 radiant/gtkdlgs.cpp:3476 radiant/gtkdlgs.cpp:3547
+#: radiant/gtkdlgs.cpp:3641 radiant/gtkdlgs.cpp:4006
+#: radiant/preferences.cpp:1136 radiant/preferences.cpp:1554
+#: radiant/preferences.cpp:3296
 msgid "OK"
 msgstr ""
 
@@ -1456,457 +1489,576 @@ msgstr ""
 #: radiant/gtkdlgs.cpp:3379 radiant/gtkdlgs.cpp:3484 radiant/gtkdlgs.cpp:3555
 #: radiant/gtkdlgs.cpp:3650 radiant/gtkdlgs.cpp:4019
 #: radiant/preferences.cpp:1128 radiant/preferences.cpp:1548
-#: radiant/preferences.cpp:3288
+#: radiant/preferences.cpp:3288 radiant/gtkdlgs.cpp:2173
+#: radiant/gtkdlgs.cpp:2247 radiant/gtkdlgs.cpp:2354 radiant/gtkdlgs.cpp:2465
+#: radiant/gtkdlgs.cpp:2547 radiant/gtkdlgs.cpp:3130 radiant/gtkdlgs.cpp:3378
+#: radiant/gtkdlgs.cpp:3483 radiant/gtkdlgs.cpp:3554 radiant/gtkdlgs.cpp:3648
+#: radiant/gtkdlgs.cpp:4015 radiant/preferences.cpp:1141
+#: radiant/preferences.cpp:1560 radiant/preferences.cpp:3301
 msgid "Cancel"
 msgstr ""
 
 #: radiant/preferences.cpp:1529 radiant/preferences.cpp:1530
+#: radiant/preferences.cpp:1542
 msgid "GtkRadiant Preferences"
 msgstr ""
 
 #: radiant/preferences.cpp:1553 radiant/preferences.cpp:1554
+#: radiant/preferences.cpp:1566
 msgid "Clean"
 msgstr ""
 
 #: radiant/preferences.cpp:1585 radiant/preferences.cpp:1586
+#: radiant/preferences.cpp:1598
 msgid "Preferences"
 msgstr ""
 
 #: radiant/preferences.cpp:1605 radiant/preferences.cpp:1709
 #: radiant/preferences.cpp:1606 radiant/preferences.cpp:1710
+#: radiant/preferences.cpp:1618 radiant/preferences.cpp:1722
 msgid "Globals"
 msgstr ""
 
 #: radiant/preferences.cpp:1609 radiant/preferences.cpp:1610
+#: radiant/preferences.cpp:1622
 msgid "Game settings"
 msgstr ""
 
 #: radiant/preferences.cpp:1616 radiant/preferences.cpp:1617
+#: radiant/preferences.cpp:1629
 msgid "Display"
 msgstr ""
 
 #: radiant/preferences.cpp:1620 radiant/preferences.cpp:1621
+#: radiant/preferences.cpp:1633
 msgid "2D Display/Rendering"
 msgstr ""
 
 #: radiant/preferences.cpp:1625 radiant/preferences.cpp:1773
 #: radiant/preferences.cpp:1775 radiant/preferences.cpp:1626
 #: radiant/preferences.cpp:1774 radiant/preferences.cpp:1776
+#: radiant/preferences.cpp:1638 radiant/preferences.cpp:1785
+#: radiant/preferences.cpp:1787
 msgid "3D View"
 msgstr ""
 
 #: radiant/preferences.cpp:1630 radiant/preferences.cpp:1631
+#: radiant/preferences.cpp:1643
 msgid "Texture Settings"
 msgstr ""
 
 #: radiant/preferences.cpp:1637 radiant/preferences.cpp:1638
+#: radiant/preferences.cpp:1650
 msgid "Interface"
 msgstr ""
 
 #: radiant/preferences.cpp:1646 radiant/preferences.cpp:2187
 #: radiant/preferences.cpp:2189 radiant/preferences.cpp:1647
 #: radiant/preferences.cpp:2188 radiant/preferences.cpp:2190
+#: radiant/preferences.cpp:1659 radiant/preferences.cpp:2199
+#: radiant/preferences.cpp:2201
 msgid "Mouse"
 msgstr ""
 
 #: radiant/preferences.cpp:1651 radiant/preferences.cpp:2254
 #: radiant/preferences.cpp:2256 radiant/preferences.cpp:1652
 #: radiant/preferences.cpp:2255 radiant/preferences.cpp:2257
+#: radiant/preferences.cpp:1664 radiant/preferences.cpp:2266
+#: radiant/preferences.cpp:2268
 msgid "Editing"
 msgstr ""
 
 #: radiant/preferences.cpp:1658 radiant/preferences.cpp:1659
+#: radiant/preferences.cpp:1671
 msgid "Other"
 msgstr ""
 
 #: radiant/preferences.cpp:1662 radiant/preferences.cpp:2356
 #: radiant/preferences.cpp:2358 radiant/preferences.cpp:1663
 #: radiant/preferences.cpp:2357 radiant/preferences.cpp:2359
+#: radiant/preferences.cpp:1675 radiant/preferences.cpp:2368
+#: radiant/preferences.cpp:2370
 msgid "Startup/Auto save"
 msgstr ""
 
 #: radiant/preferences.cpp:1672 radiant/preferences.cpp:2488
 #: radiant/preferences.cpp:2490 radiant/preferences.cpp:1673
 #: radiant/preferences.cpp:2489 radiant/preferences.cpp:2491
+#: radiant/preferences.cpp:1685 radiant/preferences.cpp:2499
+#: radiant/preferences.cpp:2501
 msgid "Misc"
 msgstr ""
 
 #: radiant/preferences.cpp:1678 radiant/preferences.cpp:2592
 #: radiant/preferences.cpp:2594 radiant/preferences.cpp:1679
 #: radiant/preferences.cpp:2593 radiant/preferences.cpp:2595
+#: radiant/preferences.cpp:1691 radiant/preferences.cpp:2603
+#: radiant/preferences.cpp:2605
 msgid "BSP Monitoring"
 msgstr ""
 
 #: radiant/preferences.cpp:1695 radiant/preferences.cpp:1696
+#: radiant/preferences.cpp:1708
 msgid "Front Page"
 msgstr ""
 
 #: radiant/preferences.cpp:1716 radiant/preferences.cpp:1718
 #: radiant/preferences.cpp:1717 radiant/preferences.cpp:1719
+#: radiant/preferences.cpp:1729 radiant/preferences.cpp:1731
 msgid "2D Display"
 msgstr ""
 
 #: radiant/preferences.cpp:1727 radiant/preferences.cpp:1728
+#: radiant/preferences.cpp:1740
 msgid "OpenGL Display Lists"
 msgstr ""
 
 #: radiant/preferences.cpp:1734 radiant/preferences.cpp:1735
+#: radiant/preferences.cpp:1747
 msgid "OpenGL antialiased points and lines"
 msgstr ""
 
 #: radiant/preferences.cpp:1740 radiant/preferences.cpp:1741
+#: radiant/preferences.cpp:1753
 msgid "Solid selection boxes"
 msgstr ""
 
 #: radiant/preferences.cpp:1746 radiant/preferences.cpp:1747
+#: radiant/preferences.cpp:1759
 msgid "Display size info"
 msgstr ""
 
 #: radiant/preferences.cpp:1753 radiant/preferences.cpp:1754
+#: radiant/preferences.cpp:1766
 msgid "Alternate vertex/edge handles"
 msgstr ""
 
 #: radiant/preferences.cpp:1763 radiant/preferences.cpp:1764
+#: radiant/preferences.cpp:1775
 msgid "ATI cards with broken drivers - bug #802"
 msgstr ""
 
 #: radiant/preferences.cpp:1790 radiant/preferences.cpp:1791
+#: radiant/preferences.cpp:1802
 msgid "Movement Velocity"
 msgstr ""
 
 #: radiant/preferences.cpp:1813 radiant/preferences.cpp:1814
+#: radiant/preferences.cpp:1825
 msgid "Rotational Velocity"
 msgstr ""
 
 #: radiant/preferences.cpp:1835 radiant/preferences.cpp:1836
+#: radiant/preferences.cpp:1847
 msgid "slow"
 msgstr ""
 
 #: radiant/preferences.cpp:1840 radiant/preferences.cpp:1841
+#: radiant/preferences.cpp:1852
 msgid "fast"
 msgstr ""
 
 #: radiant/preferences.cpp:1852 radiant/preferences.cpp:1853
+#: radiant/preferences.cpp:1864
 msgid "Use paint-select in camera view:"
 msgstr ""
 
 #: radiant/preferences.cpp:1860 radiant/preferences.cpp:1861
+#: radiant/preferences.cpp:1872
 msgid "No"
 msgstr ""
 
 #: radiant/preferences.cpp:1861 radiant/preferences.cpp:1862
+#: radiant/preferences.cpp:1873
 msgid "Yes"
 msgstr ""
 
 #: radiant/preferences.cpp:1862 radiant/preferences.cpp:1863
+#: radiant/preferences.cpp:1874
 msgid "Yes (Classic Key Setup)"
 msgstr ""
 
 #: radiant/preferences.cpp:1874 radiant/preferences.cpp:1875
+#: radiant/preferences.cpp:1886
 msgid "Freelook in Camera view"
 msgstr ""
 
 #: radiant/preferences.cpp:1881 radiant/preferences.cpp:1882
+#: radiant/preferences.cpp:1893
 msgid "Freelook strafes Forward and Back"
 msgstr ""
 
 #: radiant/preferences.cpp:1888 radiant/preferences.cpp:1889
+#: radiant/preferences.cpp:1900
 msgid "Invert mouse in freelook"
 msgstr ""
 
 #: radiant/preferences.cpp:1895 radiant/preferences.cpp:1896
+#: radiant/preferences.cpp:1907
 msgid "Discrete movement"
 msgstr ""
 
 #: radiant/preferences.cpp:1902 radiant/preferences.cpp:1903
+#: radiant/preferences.cpp:1914
 msgid "Update XY views on camera move"
 msgstr ""
 
 #: radiant/preferences.cpp:1924 radiant/preferences.cpp:1925
+#: radiant/preferences.cpp:1936
 msgid "Texture quality"
 msgstr ""
 
 #: radiant/preferences.cpp:1944 radiant/preferences.cpp:1945
+#: radiant/preferences.cpp:1956
 msgid "low"
 msgstr ""
 
 #: radiant/preferences.cpp:1947 radiant/preferences.cpp:1948
+#: radiant/preferences.cpp:1959
 msgid "high"
 msgstr ""
 
 #: radiant/preferences.cpp:1952 radiant/preferences.cpp:1953
+#: radiant/preferences.cpp:1964
 msgid "Texture subsets"
 msgstr ""
 
 #: radiant/preferences.cpp:1958 radiant/preferences.cpp:1959
+#: radiant/preferences.cpp:1970
 msgid "Texture scrollbar"
 msgstr ""
 
 #: radiant/preferences.cpp:1964 radiant/preferences.cpp:1965
+#: radiant/preferences.cpp:1976
 msgid "Tex increment matches grid"
 msgstr ""
 
 #: radiant/preferences.cpp:1978 radiant/preferences.cpp:1979
+#: radiant/preferences.cpp:1990
 msgid "Texture Compression (if available):"
 msgstr ""
 
 #: radiant/preferences.cpp:1989 radiant/preferences.cpp:2035
 #: radiant/preferences.cpp:1990 radiant/preferences.cpp:2036
+#: radiant/preferences.cpp:2001 radiant/preferences.cpp:2047
 msgid "None"
 msgstr ""
 
 #: radiant/preferences.cpp:1995 radiant/preferences.cpp:1996
+#: radiant/preferences.cpp:2007
 msgid "OpenGL ARB"
 msgstr ""
 
 #: radiant/preferences.cpp:2001 radiant/preferences.cpp:2002
+#: radiant/preferences.cpp:2013
 msgid "S3TC DXT1"
 msgstr ""
 
 #: radiant/preferences.cpp:2002 radiant/preferences.cpp:2003
+#: radiant/preferences.cpp:2014
 msgid "S3TC DXT3"
 msgstr ""
 
 #: radiant/preferences.cpp:2003 radiant/preferences.cpp:2004
+#: radiant/preferences.cpp:2015
 msgid "S3TC DXT5"
 msgstr ""
 
 #: radiant/preferences.cpp:2025 radiant/preferences.cpp:2026
+#: radiant/preferences.cpp:2037
 msgid "Startup Shaders:"
 msgstr ""
 
 #: radiant/preferences.cpp:2037 radiant/preferences.cpp:2038
+#: radiant/preferences.cpp:2049
 msgid "System"
 msgstr ""
 
 #: radiant/preferences.cpp:2041 radiant/preferences.cpp:2042
+#: radiant/preferences.cpp:2053
 msgid "Common"
 msgstr ""
 
 #: radiant/preferences.cpp:2042 radiant/preferences.cpp:2043
+#: radiant/preferences.cpp:2054
 msgid "All"
 msgstr ""
 
 #: radiant/preferences.cpp:2133 radiant/preferences.cpp:2134
+#: radiant/preferences.cpp:2145
 msgid "Floating Z Window"
 msgstr ""
 
 #: radiant/preferences.cpp:2139 radiant/preferences.cpp:2140
+#: radiant/preferences.cpp:2151
 msgid "Detachable Menus"
 msgstr ""
 
 #: radiant/preferences.cpp:2147 radiant/preferences.cpp:2148
+#: radiant/preferences.cpp:2159
 msgid "Patch Toolbar"
 msgstr ""
 
 #: radiant/preferences.cpp:2155 radiant/preferences.cpp:2156
+#: radiant/preferences.cpp:2167
 msgid "Wide Toolbar"
 msgstr ""
 
 #: radiant/preferences.cpp:2161 radiant/preferences.cpp:2162
+#: radiant/preferences.cpp:2173
 msgid "Plugin Toolbar"
 msgstr ""
 
 #: radiant/preferences.cpp:2168 radiant/preferences.cpp:2169
+#: radiant/preferences.cpp:2180
 msgid "Use win32 file load dialog"
 msgstr ""
 
 #: radiant/preferences.cpp:2175 radiant/preferences.cpp:2176
+#: radiant/preferences.cpp:2187
 msgid "Start on Primary Monitor"
 msgstr ""
 
 #: radiant/preferences.cpp:2204 radiant/preferences.cpp:2205
+#: radiant/preferences.cpp:2216
 msgid "2 button"
 msgstr ""
 
 #: radiant/preferences.cpp:2209 radiant/preferences.cpp:2210
+#: radiant/preferences.cpp:2221
 msgid "3 button"
 msgstr ""
 
 #: radiant/preferences.cpp:2215 radiant/preferences.cpp:2216
+#: radiant/preferences.cpp:2227
 msgid "Right click to drop entities"
 msgstr ""
 
 #: radiant/preferences.cpp:2221 radiant/preferences.cpp:2222
+#: radiant/preferences.cpp:2233
 msgid "Mouse chaser"
 msgstr ""
 
 #: radiant/preferences.cpp:2227 radiant/preferences.cpp:2228
+#: radiant/preferences.cpp:2239
 msgid "ALT + multi-drag"
 msgstr ""
 
 #: radiant/preferences.cpp:2239 radiant/preferences.cpp:2240
+#: radiant/preferences.cpp:2251
 msgid "Wheel Mouse inc:"
 msgstr ""
 
 #: radiant/preferences.cpp:2265 radiant/preferences.cpp:2266
+#: radiant/preferences.cpp:2277
 msgid "Vertex editing splits face"
 msgstr ""
 
 #: radiant/preferences.cpp:2271 radiant/preferences.cpp:2272
+#: radiant/preferences.cpp:2283
 msgid "Fix target/targetname collisions"
 msgstr ""
 
 #: radiant/preferences.cpp:2277 radiant/preferences.cpp:2278
+#: radiant/preferences.cpp:2289
 msgid "Clipper tool uses caulk"
 msgstr ""
 
 #: radiant/preferences.cpp:2283 radiant/preferences.cpp:2284
+#: radiant/preferences.cpp:2295
 msgid "Don't clamp plane points"
 msgstr ""
 
 #: radiant/preferences.cpp:2289 radiant/preferences.cpp:2290
+#: radiant/preferences.cpp:2301
 msgid "Select patches by bounding box"
 msgstr ""
 
 #: radiant/preferences.cpp:2303 radiant/preferences.cpp:2304
+#: radiant/preferences.cpp:2315
 msgid "Rotation increment:"
 msgstr ""
 
 #: radiant/preferences.cpp:2320 radiant/preferences.cpp:2321
+#: radiant/preferences.cpp:2332
 msgid "Undo Levels:"
 msgstr ""
 
 #: radiant/preferences.cpp:2337 radiant/preferences.cpp:2338
+#: radiant/preferences.cpp:2349
 msgid "Patch subdivisions:"
 msgstr ""
 
 #: radiant/preferences.cpp:2367 radiant/preferences.cpp:2368
+#: radiant/preferences.cpp:2379
 msgid "Snapshots"
 msgstr ""
 
 #: radiant/preferences.cpp:2373 radiant/preferences.cpp:2374
+#: radiant/preferences.cpp:2385
 msgid "Load last project on open"
 msgstr ""
 
 #: radiant/preferences.cpp:2379 radiant/preferences.cpp:2380
+#: radiant/preferences.cpp:2391
 msgid "Load last map on open"
 msgstr ""
 
 #: radiant/preferences.cpp:2392 radiant/preferences.cpp:2393
+#: radiant/preferences.cpp:2404
 msgid "Auto save every"
 msgstr ""
 
 #: radiant/preferences.cpp:2405 radiant/preferences.cpp:2406
+#: radiant/preferences.cpp:2417
 msgid "minutes"
 msgstr ""
 
 #: radiant/preferences.cpp:2432 radiant/preferences.cpp:2433
+#: radiant/preferences.cpp:2444
 msgid "Prefab path:"
 msgstr ""
 
 #: radiant/preferences.cpp:2461 radiant/preferences.cpp:2462
+#: radiant/preferences.cpp:2472
 msgid "User INI path:"
 msgstr ""
 
 #: radiant/preferences.cpp:2499 radiant/preferences.cpp:2500
+#: radiant/preferences.cpp:2510
 msgid "Light drawing"
 msgstr ""
 
 #: radiant/preferences.cpp:2512 radiant/preferences.cpp:2513
+#: radiant/preferences.cpp:2523
 msgid "Light radiuses:"
 msgstr ""
 
 #: radiant/preferences.cpp:2520 radiant/preferences.cpp:2521
+#: radiant/preferences.cpp:2531
 msgid "Disabled"
 msgstr ""
 
 #: radiant/preferences.cpp:2521 radiant/preferences.cpp:2522
+#: radiant/preferences.cpp:2532
 msgid "True Q3Map2 Style"
 msgstr ""
 
 #: radiant/preferences.cpp:2522 radiant/preferences.cpp:2523
+#: radiant/preferences.cpp:2533
 msgid "Classic Style"
 msgstr ""
 
 #: radiant/preferences.cpp:2534 radiant/preferences.cpp:2535
+#: radiant/preferences.cpp:2545
 msgid ""
 "Use win32 file associations to open text files instead of builtin editor"
 msgstr ""
 
 #: radiant/preferences.cpp:2540 radiant/preferences.cpp:2541
+#: radiant/preferences.cpp:2551
 msgid "Use Custom Shader Editor"
 msgstr ""
 
 #: radiant/preferences.cpp:2556 radiant/preferences.cpp:2557
+#: radiant/preferences.cpp:2567
 msgid "Custom Editor Command"
 msgstr ""
 
 #: radiant/preferences.cpp:2577 radiant/preferences.cpp:3265
 #: radiant/preferences.cpp:2578 radiant/preferences.cpp:3266
+#: radiant/preferences.cpp:2588 radiant/preferences.cpp:3279
 msgid "..."
 msgstr ""
 
 #: radiant/preferences.cpp:2603 radiant/preferences.cpp:2604
+#: radiant/preferences.cpp:2614
 msgid "Enable BSP process monitoring"
 msgstr ""
 
 #: radiant/preferences.cpp:2611 radiant/preferences.cpp:2612
+#: radiant/preferences.cpp:2622
 msgid "Stop compilation on leak"
 msgstr ""
 
 #: radiant/preferences.cpp:2618 radiant/preferences.cpp:2619
+#: radiant/preferences.cpp:2629
 msgid "Run engine after compile"
 msgstr ""
 
 #: radiant/preferences.cpp:2626 radiant/preferences.cpp:2627
+#: radiant/preferences.cpp:2637
 msgid "Activate sleep mode when running the engine"
 msgstr ""
 
 #: radiant/preferences.cpp:2633 radiant/preferences.cpp:2634
+#: radiant/preferences.cpp:2644
 msgid "Texturing compatible with q3map2"
 msgstr ""
 
 #: radiant/preferences.cpp:3173 radiant/preferences.cpp:3174
+#: radiant/preferences.cpp:3184
 msgid "Select game directory"
 msgstr ""
 
 #: radiant/preferences.cpp:3197 radiant/preferences.cpp:3198
+#: radiant/preferences.cpp:3208
 msgid "Configure games"
 msgstr ""
 
 #: radiant/preferences.cpp:3203 radiant/preferences.cpp:3204
+#: radiant/preferences.cpp:3214
 msgid "Select the game to configure"
 msgstr ""
 
 #: radiant/preferences.cpp:3216 radiant/preferences.cpp:3217
+#: radiant/preferences.cpp:3227
 msgid "Quake II"
 msgstr ""
 
 #: radiant/preferences.cpp:3219 radiant/preferences.cpp:3220
+#: radiant/preferences.cpp:3230
 msgid "Quake III Arena and mods"
 msgstr ""
 
 #: radiant/preferences.cpp:3222 radiant/preferences.cpp:3223
+#: radiant/preferences.cpp:3233
 msgid "Urban Terror (standalone)"
 msgstr ""
 
 #: radiant/preferences.cpp:3225 radiant/preferences.cpp:3226
+#: radiant/preferences.cpp:3236
 msgid "UFO: Alien Invasion"
 msgstr ""
 
 #: radiant/preferences.cpp:3228 radiant/preferences.cpp:3229
+#: radiant/preferences.cpp:3239
 msgid "Quake2World"
 msgstr ""
 
 #: radiant/preferences.cpp:3231 radiant/preferences.cpp:3232
+#: radiant/preferences.cpp:3242
 msgid "Warsow"
 msgstr ""
 
 #: radiant/preferences.cpp:3234 radiant/preferences.cpp:3235
+#: radiant/preferences.cpp:3245
 msgid "Nexuiz"
 msgstr ""
 
 #: radiant/preferences.cpp:3243 radiant/gtkdlgs.cpp:3536
-#: radiant/preferences.cpp:3244
+#: radiant/preferences.cpp:3244 radiant/gtkdlgs.cpp:3535
+#: radiant/preferences.cpp:3257
 msgid "Name:"
 msgstr ""
 
 #: radiant/preferences.cpp:3252 radiant/preferences.cpp:3253
+#: radiant/preferences.cpp:3266
 msgid "Engine directory:"
 msgstr ""
 
 #: radiant/preferences.cpp:3272 radiant/preferences.cpp:3273
+#: radiant/preferences.cpp:3286
 msgid "Mod subdirectory:"
 msgstr ""
 
@@ -1922,7 +2074,7 @@ msgstr ""
 msgid "Menu text"
 msgstr ""
 
-#: radiant/gtkdlgs.cpp:149 radiant/gtkdlgs.cpp:2818
+#: radiant/gtkdlgs.cpp:149 radiant/gtkdlgs.cpp:2818 radiant/gtkdlgs.cpp:2817
 msgid "Command"
 msgstr ""
 
@@ -1962,10 +2114,12 @@ msgstr ""
 
 #: radiant/gtkdlgs.cpp:1388 radiant/gtkdlgs.cpp:1736 radiant/gtkdlgs.cpp:2901
 #: radiant/gtkdlgs.cpp:2996 radiant/gtkdlgs.cpp:3288 radiant/gtkdlgs.cpp:3824
+#: radiant/gtkdlgs.cpp:2900 radiant/gtkdlgs.cpp:2995 radiant/gtkdlgs.cpp:3287
+#: radiant/gtkdlgs.cpp:3821
 msgid "Close"
 msgstr ""
 
-#: radiant/gtkdlgs.cpp:2627
+#: radiant/gtkdlgs.cpp:2627 radiant/gtkdlgs.cpp:2626
 msgid "About GtkRadiant"
 msgstr ""
 
@@ -1973,71 +2127,72 @@ msgstr ""
 msgid "GtkRadiant "
 msgstr ""
 
-#: radiant/gtkdlgs.cpp:2684
+#: radiant/gtkdlgs.cpp:2684 radiant/gtkdlgs.cpp:2683
 msgid "Credits"
 msgstr ""
 
-#: radiant/gtkdlgs.cpp:2690
+#: radiant/gtkdlgs.cpp:2690 radiant/gtkdlgs.cpp:2689
 msgid "Changelog"
 msgstr ""
 
-#: radiant/gtkdlgs.cpp:2696
+#: radiant/gtkdlgs.cpp:2696 radiant/gtkdlgs.cpp:2695
 msgid "OpenGL Properties"
 msgstr ""
 
-#: radiant/gtkdlgs.cpp:2707
+#: radiant/gtkdlgs.cpp:2707 radiant/gtkdlgs.cpp:2706
 msgid "Vendor:"
 msgstr ""
 
-#: radiant/gtkdlgs.cpp:2714
+#: radiant/gtkdlgs.cpp:2714 radiant/gtkdlgs.cpp:2713
 msgid "Version:"
 msgstr ""
 
-#: radiant/gtkdlgs.cpp:2721
+#: radiant/gtkdlgs.cpp:2721 radiant/gtkdlgs.cpp:2720
 msgid "Renderer:"
 msgstr ""
 
-#: radiant/gtkdlgs.cpp:2749
+#: radiant/gtkdlgs.cpp:2749 radiant/gtkdlgs.cpp:2748
 msgid "OpenGL Extensions"
 msgstr ""
 
-#: radiant/gtkdlgs.cpp:2791
+#: radiant/gtkdlgs.cpp:2791 radiant/gtkdlgs.cpp:2790
 msgid "Mapped Commands"
 msgstr ""
 
-#: radiant/gtkdlgs.cpp:2824 radiant/gtkdlgs.cpp:1707
+#: radiant/gtkdlgs.cpp:2824 radiant/gtkdlgs.cpp:1707 radiant/gtkdlgs.cpp:2823
 msgid "Key"
 msgstr ""
 
-#: radiant/gtkdlgs.cpp:2989
+#: radiant/gtkdlgs.cpp:2989 radiant/gtkdlgs.cpp:2988
 msgid "Load"
 msgstr ""
 
-#: radiant/gtkdlgs.cpp:3039
+#: radiant/gtkdlgs.cpp:3039 radiant/gtkdlgs.cpp:3038
 msgid "Cap"
 msgstr ""
 
-#: radiant/gtkdlgs.cpp:3094
+#: radiant/gtkdlgs.cpp:3094 radiant/gtkdlgs.cpp:3093
 msgid "Endcap"
 msgstr ""
 
-#: radiant/gtkdlgs.cpp:3101
+#: radiant/gtkdlgs.cpp:3101 radiant/gtkdlgs.cpp:3100
 msgid "Inverted Bevel"
 msgstr ""
 
-#: radiant/gtkdlgs.cpp:3108
+#: radiant/gtkdlgs.cpp:3108 radiant/gtkdlgs.cpp:3107
 msgid "Inverted Endcap"
 msgstr ""
 
-#: radiant/gtkdlgs.cpp:3116 radiant/gtkdlgs.cpp:2571
+#: radiant/gtkdlgs.cpp:3116 radiant/gtkdlgs.cpp:2571 radiant/gtkdlgs.cpp:2570
+#: radiant/gtkdlgs.cpp:3115
 msgid "Result to func_group"
 msgstr ""
 
-#: radiant/gtkdlgs.cpp:3180
+#: radiant/gtkdlgs.cpp:3180 radiant/gtkdlgs.cpp:3179
 msgid "Available Scripts - Not Implemented Yet"
 msgstr ""
 
-#: radiant/gtkdlgs.cpp:3193
+#: radiant/gtkdlgs.cpp:3193 radiant/gtkdlgs.cpp:3192
 msgid ""
 "WARNING: BrushScripting is in a highly experimental state and is\n"
 "far from complete. If you attempt to use them it is VERY LIKELY\n"
@@ -2045,27 +2200,27 @@ msgid ""
 "make use of any scripting features."
 msgstr ""
 
-#: radiant/gtkdlgs.cpp:3269
+#: radiant/gtkdlgs.cpp:3269 radiant/gtkdlgs.cpp:3268
 msgid "Run"
 msgstr ""
 
-#: radiant/gtkdlgs.cpp:3276
+#: radiant/gtkdlgs.cpp:3276 radiant/gtkdlgs.cpp:3275
 msgid "New..."
 msgstr ""
 
-#: radiant/gtkdlgs.cpp:3282
+#: radiant/gtkdlgs.cpp:3282 radiant/gtkdlgs.cpp:3281
 msgid "Edit..."
 msgstr ""
 
-#: radiant/gtkdlgs.cpp:3330
+#: radiant/gtkdlgs.cpp:3330 radiant/gtkdlgs.cpp:3329
 msgid "BrushScript Input"
 msgstr ""
 
-#: radiant/gtkdlgs.cpp:3416
+#: radiant/gtkdlgs.cpp:3416 radiant/gtkdlgs.cpp:3415
 msgid "Patch texture layout"
 msgstr ""
 
-#: radiant/gtkdlgs.cpp:3433
+#: radiant/gtkdlgs.cpp:3433 radiant/gtkdlgs.cpp:3432
 msgid ""
 "Texture will be fit across the patch based\n"
 "on the x and y values given. Values of 1x1\n"
@@ -2073,53 +2228,55 @@ msgid ""
 "it twice, etc."
 msgstr ""
 
-#: radiant/gtkdlgs.cpp:3447
+#: radiant/gtkdlgs.cpp:3447 radiant/gtkdlgs.cpp:3446
 msgid "Texture x:"
 msgstr ""
 
-#: radiant/gtkdlgs.cpp:3454
+#: radiant/gtkdlgs.cpp:3454 radiant/gtkdlgs.cpp:3453
 msgid "Texture y:"
 msgstr ""
 
-#: radiant/gtkdlgs.cpp:3492 radiant/gtkdlgs.cpp:3493
+#: radiant/gtkdlgs.cpp:3492 radiant/gtkdlgs.cpp:3493 radiant/gtkdlgs.cpp:3491
 msgid "4.0"
 msgstr ""
 
-#: radiant/gtkdlgs.cpp:3601
+#: radiant/gtkdlgs.cpp:3601 radiant/gtkdlgs.cpp:3599
 msgid "New Project"
 msgstr ""
 
-#: radiant/gtkdlgs.cpp:3618
+#: radiant/gtkdlgs.cpp:3618 radiant/gtkdlgs.cpp:3616
 msgid ""
 "This will create a new directory beneath your\n"
 "game path based on the project name you give."
 msgstr ""
 
-#: radiant/gtkdlgs.cpp:3624
+#: radiant/gtkdlgs.cpp:3624 radiant/gtkdlgs.cpp:3622
 msgid "Project name:"
 msgstr ""
 
-#: radiant/gtkdlgs.cpp:3634
+#: radiant/gtkdlgs.cpp:3634 radiant/gtkdlgs.cpp:3632
 msgid "Include game dll files"
 msgstr ""
 
-#: radiant/gtkdlgs.cpp:3683 radiant/gtkdlgs.cpp:3709
+#: radiant/gtkdlgs.cpp:3683 radiant/gtkdlgs.cpp:3709 radiant/gtkdlgs.cpp:3681
+#: radiant/gtkdlgs.cpp:3707
 msgid "Close the shader editor ?"
 msgstr ""
 
-#: radiant/gtkdlgs.cpp:3683 radiant/gtkdlgs.cpp:3709
+#: radiant/gtkdlgs.cpp:3683 radiant/gtkdlgs.cpp:3709 radiant/gtkdlgs.cpp:3681
+#: radiant/gtkdlgs.cpp:3707
 msgid "Radiant"
 msgstr ""
 
-#: radiant/gtkdlgs.cpp:3698
+#: radiant/gtkdlgs.cpp:3698 radiant/gtkdlgs.cpp:3696
 msgid "Error saving file !"
 msgstr ""
 
-#: radiant/gtkdlgs.cpp:3978
+#: radiant/gtkdlgs.cpp:3978 radiant/gtkdlgs.cpp:3974
 msgid "Light intensity"
 msgstr ""
 
-#: radiant/gtkdlgs.cpp:3998
+#: radiant/gtkdlgs.cpp:3998 radiant/gtkdlgs.cpp:3994
 msgid "ESC for default, ENTER to validate"
 msgstr ""
 
@@ -2210,125 +2367,174 @@ msgid ""
 "settings to take effect"
 msgstr ""
 
-#: radiant/gtkdlgs.cpp:2120
+#: radiant/gtkdlgs.cpp:2120 radiant/gtkdlgs.cpp:2119
 msgid "Find Brush"
 msgstr ""
 
-#: radiant/gtkdlgs.cpp:2139
+#: radiant/gtkdlgs.cpp:2139 radiant/gtkdlgs.cpp:2138
 msgid "Entity number"
 msgstr ""
 
-#: radiant/gtkdlgs.cpp:2145
+#: radiant/gtkdlgs.cpp:2145 radiant/gtkdlgs.cpp:2144
 msgid "Brush number"
 msgstr ""
 
-#: radiant/gtkdlgs.cpp:2216
+#: radiant/gtkdlgs.cpp:2216 radiant/gtkdlgs.cpp:2215
 msgid "Arbitrary sides"
 msgstr ""
 
-#: radiant/gtkdlgs.cpp:2229
+#: radiant/gtkdlgs.cpp:2229 radiant/gtkdlgs.cpp:2228
 msgid "Sides:"
 msgstr ""
 
-#: radiant/gtkdlgs.cpp:2287
+#: radiant/gtkdlgs.cpp:2287 radiant/gtkdlgs.cpp:2286
 msgid "Patch density"
 msgstr ""
 
-#: radiant/gtkdlgs.cpp:2306
+#: radiant/gtkdlgs.cpp:2306 radiant/gtkdlgs.cpp:2305
 msgid "Width:"
 msgstr ""
 
-#: radiant/gtkdlgs.cpp:2313
+#: radiant/gtkdlgs.cpp:2313 radiant/gtkdlgs.cpp:2312
 msgid "Height:"
 msgstr ""
 
 #: radiant/gtkdlgs.cpp:2320 radiant/gtkdlgs.cpp:2363 radiant/gtkdlgs.cpp:2365
+#: radiant/gtkdlgs.cpp:2319 radiant/gtkdlgs.cpp:2362 radiant/gtkdlgs.cpp:2364
 msgid "3"
 msgstr ""
 
-#: radiant/gtkdlgs.cpp:2321
+#: radiant/gtkdlgs.cpp:2321 radiant/gtkdlgs.cpp:2320
 msgid "5"
 msgstr ""
 
-#: radiant/gtkdlgs.cpp:2322
+#: radiant/gtkdlgs.cpp:2322 radiant/gtkdlgs.cpp:2321
 msgid "7"
 msgstr ""
 
-#: radiant/gtkdlgs.cpp:2323
+#: radiant/gtkdlgs.cpp:2323 radiant/gtkdlgs.cpp:2322
 msgid "9"
 msgstr ""
 
-#: radiant/gtkdlgs.cpp:2324
+#: radiant/gtkdlgs.cpp:2324 radiant/gtkdlgs.cpp:2323
 msgid "11"
 msgstr ""
 
-#: radiant/gtkdlgs.cpp:2325
+#: radiant/gtkdlgs.cpp:2325 radiant/gtkdlgs.cpp:2324
 msgid "13"
 msgstr ""
 
-#: radiant/gtkdlgs.cpp:2326
+#: radiant/gtkdlgs.cpp:2326 radiant/gtkdlgs.cpp:2325
 msgid "15"
 msgstr ""
 
-#: radiant/gtkdlgs.cpp:2397
+#: radiant/gtkdlgs.cpp:2397 radiant/gtkdlgs.cpp:2396
 msgid "Scale"
 msgstr ""
 
-#: radiant/gtkdlgs.cpp:2416
+#: radiant/gtkdlgs.cpp:2416 radiant/gtkdlgs.cpp:2415
 msgid "X:"
 msgstr ""
 
-#: radiant/gtkdlgs.cpp:2423
+#: radiant/gtkdlgs.cpp:2423 radiant/gtkdlgs.cpp:2422
 msgid "Y:"
 msgstr ""
 
-#: radiant/gtkdlgs.cpp:2430
+#: radiant/gtkdlgs.cpp:2430 radiant/gtkdlgs.cpp:2429
 msgid "Z:"
 msgstr ""
 
 #: radiant/gtkdlgs.cpp:2473 radiant/gtkdlgs.cpp:2474 radiant/gtkdlgs.cpp:2475
+#: radiant/gtkdlgs.cpp:2472
 msgid "1.0"
 msgstr ""
 
-#: radiant/gtkdlgs.cpp:2514
+#: radiant/gtkdlgs.cpp:2514 radiant/gtkdlgs.cpp:2513
 msgid "Thicken Patch"
 msgstr ""
 
-#: radiant/gtkdlgs.cpp:2531
+#: radiant/gtkdlgs.cpp:2531 radiant/gtkdlgs.cpp:2530
 msgid ""
 "This produces a set of patches\n"
 "that contains the original patch along with the\n"
 "'thick' patch and an optimal set of seam patches."
 msgstr ""
 
-#: radiant/gtkdlgs.cpp:2558
+#: radiant/gtkdlgs.cpp:2558 radiant/gtkdlgs.cpp:2557
 msgid "Amount:"
 msgstr ""
 
-#: radiant/gtkdlgs.cpp:2566
+#: radiant/gtkdlgs.cpp:2566 radiant/gtkdlgs.cpp:2565
 msgid "Seams"
 msgstr ""
 
-#: radiant/groupdialog.cpp:589
+#: radiant/groupdialog.cpp:589 radiant/groupdialog.cpp:588
 msgid "Open Wav File"
 msgstr ""
 
-#: radiant/groupdialog.cpp:622
+#: radiant/groupdialog.cpp:622 radiant/groupdialog.cpp:621
 msgid "Open Model"
 msgstr ""
 
-#: radiant/gtkmisc.cpp:1295 radiant/qe3.cpp:1492
+#: radiant/gtkmisc.cpp:1295 radiant/qe3.cpp:1492 radiant/gtkmisc.cpp:1298
+#: radiant/qe3.cpp:1488
 msgid "Open File"
 msgstr ""
 
-#: radiant/gtkmisc.cpp:1295
+#: radiant/gtkmisc.cpp:1295 radiant/gtkmisc.cpp:1298
 msgid "Save File"
 msgstr ""
 
-#: radiant/preferences.cpp:525
+#: radiant/preferences.cpp:525 radiant/preferences.cpp:524
 msgid "Executable for Custom Editor"
 msgstr ""
 
 #: radiant/xywindow.cpp:135
 msgid "Save Image"
+msgstr ""
+
+#: radiant/bp_dlg.cpp:71
+msgid "Current map format is incompatible"
+msgstr ""
+
+#: radiant/bp_dlg.cpp:89
+msgid ""
+"This map was saved using brush primitives format\n"
+"and your project settings use the standard format.\n"
+"Do you want to convert the map, change default format or abort?\n"
+"NOTE: due to limitations of the standard format, some texture alignments may "
+"be lost after conversion."
+msgstr ""
+
+#: radiant/bp_dlg.cpp:97
+msgid ""
+"This map was saved using standard format\n"
+"and your project settings use the new \"brush primitives\" format.\n"
+"Do you want to convert the map, change default format or abort?\n"
+"NOTE: Next versions of Radiant will allow mixing the two formatsin the same "
+"maps for a smooth transition."
+msgstr ""
+
+#: radiant/bp_dlg.cpp:115
+msgid "Convert"
+msgstr ""
+
+#: radiant/bp_dlg.cpp:123
+msgid "Change default"
+msgstr ""
+
+#: radiant/bp_dlg.cpp:129
+msgid "Abort load"
+msgstr ""
+
+#: radiant/mainframe.cpp:1422
+msgid "_Print XY View"
+msgstr ""
+
+#: radiant/preferences.cpp:3248
+msgid "Tremulous"
+msgstr ""
+
+#: radiant/xywindow.cpp:133
+msgid "Save BMP Image"
 msgstr ""
