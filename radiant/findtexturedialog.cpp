@@ -27,26 +27,27 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "stdafx.h"
 #include "findtexturedialog.h"
+#include <glib/gi18n.h>
 
 FindTextureDialog g_TexFindDlg;
 FindTextureDialog& g_dlgFind = g_TexFindDlg;
 static bool g_bFindActive = true;
 
-static void OnApply(GtkWidget *widget, gpointer data) 
+static void OnApply(GtkWidget *widget, gpointer data)
 {
   g_dlgFind.UpdateData(TRUE);
   FindReplaceTextures(g_dlgFind.m_strFind, g_dlgFind.m_strReplace,
     g_dlgFind.m_bSelectedOnly, g_dlgFind.m_bForce, FALSE);
 }
 
-static void OnFind(GtkWidget *widget, gpointer data) 
+static void OnFind(GtkWidget *widget, gpointer data)
 {
   g_dlgFind.UpdateData(TRUE);
   FindReplaceTextures(g_dlgFind.m_strFind, g_dlgFind.m_strReplace,
     g_dlgFind.m_bSelectedOnly, FALSE, TRUE);
 }
 
-static void OnOK(GtkWidget *widget, gpointer data) 
+static void OnOK(GtkWidget *widget, gpointer data)
 {
   g_dlgFind.UpdateData(TRUE);
   FindReplaceTextures(g_dlgFind.m_strFind, g_dlgFind.m_strReplace,
@@ -54,12 +55,12 @@ static void OnOK(GtkWidget *widget, gpointer data)
   g_dlgFind.HideDlg ();
 }
 
-static void OnClose(GtkWidget *widget, gpointer data) 
+static void OnClose(GtkWidget *widget, gpointer data)
 {
   g_dlgFind.HideDlg ();
 }
 
-static void popup_selected (GtkWidget *widget, gpointer data) 
+static void popup_selected (GtkWidget *widget, gpointer data)
 {
   gchar *str;
 
@@ -67,7 +68,7 @@ static void popup_selected (GtkWidget *widget, gpointer data)
   gtk_entry_set_text (GTK_ENTRY (data), str);
 }
 
-static void find_clicked (GtkWidget *widget, gpointer data) 
+static void find_clicked (GtkWidget *widget, gpointer data)
 {
   GtkWidget *menu, *item;
   menu = gtk_menu_new ();
@@ -82,7 +83,7 @@ static void find_clicked (GtkWidget *widget, gpointer data)
     gtk_menu_append (GTK_MENU (menu), item);
   }
 
-  gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, NULL, 1, GDK_CURRENT_TIME); 
+  gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, NULL, 1, GDK_CURRENT_TIME);
 }
 
 static gint find_focus_in (GtkWidget *widget, GdkEventFocus *event, gpointer data)
@@ -212,28 +213,28 @@ void FindTextureDialog::BuildDialog ()
   gtk_widget_show (vbox);
   gtk_box_pack_start (GTK_BOX (hbox), vbox, TRUE, TRUE, 0);
 
-  button = gtk_button_new_with_label( "Find" );
+  button = gtk_button_new_with_label( _("Find") );
   gtk_widget_show( button );
   gtk_box_pack_start( GTK_BOX( vbox ), button, FALSE, FALSE, 0 );
   gtk_signal_connect( GTK_OBJECT( button ), "clicked",
                       GTK_SIGNAL_FUNC( OnFind ), NULL );
   gtk_widget_set_usize( button, 60, -2 );
 
-  button = gtk_button_new_with_label ("OK");
+  button = gtk_button_new_with_label (_("OK"));
   gtk_widget_show (button);
   gtk_box_pack_start (GTK_BOX (vbox), button, FALSE, FALSE, 0);
   gtk_signal_connect (GTK_OBJECT (button), "clicked",
                       GTK_SIGNAL_FUNC (OnOK), NULL);
   gtk_widget_set_usize (button, 60, -2);
 
-  button = gtk_button_new_with_label ("Apply");
+  button = gtk_button_new_with_label (_("Apply"));
   gtk_widget_show (button);
   gtk_box_pack_start (GTK_BOX (vbox), button, FALSE, FALSE, 0);
   gtk_signal_connect (GTK_OBJECT (button), "clicked",
                       GTK_SIGNAL_FUNC (OnApply), NULL);
   gtk_widget_set_usize (button, 60, -2);
 
-  button = gtk_button_new_with_label ("Close");
+  button = gtk_button_new_with_label (_("Close"));
   gtk_widget_show (button);
   gtk_box_pack_start (GTK_BOX (vbox), button, FALSE, FALSE, 0);
   gtk_signal_connect (GTK_OBJECT (button), "clicked",

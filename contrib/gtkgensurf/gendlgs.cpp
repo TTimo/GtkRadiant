@@ -23,6 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <string.h>
 #include <math.h>
 #include "gensurf.h"
+#include <glib/gi18n.h>
 
 #define GENERAL_TAB   0
 #define EXTENTS_TAB   1
@@ -265,7 +266,6 @@ static void SetDlgValues (int tab)
 {
   char Text[256];
   char RForm[16] = "%.5g";
-  int i;
 
   switch (tab)
   {
@@ -277,6 +277,7 @@ static void SetDlgValues (int tab)
     // than once anyhow.
     if (!FirstPassComplete)
     {
+      int i;
       for (i = 0; i < NUMGAMES; i++)
         gtk_widget_set_sensitive (game_radios[i], (i == Game ? TRUE : FALSE));
       for (i = 0; i < 6; i++)
@@ -1423,11 +1424,11 @@ GtkWidget* create_main_dialog ()
   gtk_table_set_row_spacings (GTK_TABLE (table), 5);
   gtk_table_set_col_spacings (GTK_TABLE (table), 5);
 
-  label = gtk_label_new ("General");
+  label = gtk_label_new (_("General"));
   gtk_widget_show (label);
   gtk_notebook_append_page (GTK_NOTEBOOK (notebook), table, label);
 
-  frame = gtk_frame_new ("Game");
+  frame = gtk_frame_new (_("Game"));
   gtk_widget_show (frame);
   gtk_table_attach (GTK_TABLE (table), frame, 0, 1, 0, 1,
                     (GtkAttachOptions) (GTK_EXPAND|GTK_FILL),
@@ -1448,7 +1449,7 @@ GtkWidget* create_main_dialog ()
     g_signal_connect (G_OBJECT (radio), "toggled", G_CALLBACK (general_game), GINT_TO_POINTER (i));
   }
 
-  frame = gtk_frame_new ("Waveform");
+  frame = gtk_frame_new (_("Waveform"));
   gtk_widget_show (frame);
   gtk_table_attach (GTK_TABLE (table), frame, 1, 2, 0, 1,
                     (GtkAttachOptions) (GTK_EXPAND|GTK_FILL),
@@ -1469,7 +1470,7 @@ GtkWidget* create_main_dialog ()
     g_signal_connect (G_OBJECT (radio), "toggled", G_CALLBACK (general_wave), GINT_TO_POINTER (i));
   }
 
-  frame = gtk_frame_new ("Orientation");
+  frame = gtk_frame_new (_("Orientation"));
   gtk_widget_show (frame);
   gtk_table_attach (GTK_TABLE (table), frame, 0, 1, 1, 2,
                     (GtkAttachOptions) (GTK_EXPAND|GTK_FILL),
@@ -1498,7 +1499,7 @@ GtkWidget* create_main_dialog ()
                     (GtkAttachOptions) (GTK_EXPAND|GTK_FILL),
                     (GtkAttachOptions) (GTK_EXPAND|GTK_FILL), 0, 0);
 
-  label = gtk_label_new ("Wavelength:");
+  label = gtk_label_new (_("Wavelength:"));
   gtk_widget_show (label);
   gtk_table_attach (GTK_TABLE (table2), label, 0, 1, 0, 1,
                     (GtkAttachOptions) (GTK_EXPAND|GTK_FILL),
@@ -1506,7 +1507,7 @@ GtkWidget* create_main_dialog ()
   gtk_misc_set_alignment (GTK_MISC (label), 1, 0.5);
   gtk_label_set_justify (GTK_LABEL (label), GTK_JUSTIFY_RIGHT);
 
-  label = gtk_label_new ("Max. amplitude:");
+  label = gtk_label_new (_("Max. amplitude:"));
   gtk_widget_show (label);
   gtk_table_attach (GTK_TABLE (table2), label, 0, 1, 1, 2,
                     (GtkAttachOptions) (GTK_EXPAND|GTK_FILL),
@@ -1514,7 +1515,7 @@ GtkWidget* create_main_dialog ()
   gtk_misc_set_alignment (GTK_MISC (label), 1, 0.5);
   gtk_label_set_justify (GTK_LABEL (label), GTK_JUSTIFY_RIGHT);
 
-  label = gtk_label_new ("Roughness:");
+  label = gtk_label_new (_("Roughness:"));
   gtk_widget_show (label);
   gtk_table_attach (GTK_TABLE (table2), label, 0, 1, 2, 3,
                     (GtkAttachOptions) (GTK_EXPAND|GTK_FILL),
@@ -1522,7 +1523,7 @@ GtkWidget* create_main_dialog ()
   gtk_misc_set_alignment (GTK_MISC (label), 1, 0.5);
   gtk_label_set_justify (GTK_LABEL (label), GTK_JUSTIFY_RIGHT);
 
-  label = gtk_label_new ("Random seed:");
+  label = gtk_label_new (_("Random seed:"));
   gtk_widget_show (label);
   gtk_table_attach (GTK_TABLE (table2), label, 0, 1, 3, 4,
                     (GtkAttachOptions) (GTK_EXPAND|GTK_FILL),
@@ -1571,7 +1572,7 @@ GtkWidget* create_main_dialog ()
   gtk_widget_show (vbox);
   gtk_container_set_border_width (GTK_CONTAINER (vbox), 5);
 
-  label = gtk_label_new ("Extents");
+  label = gtk_label_new (_("Extents"));
   gtk_widget_show (label);
   gtk_notebook_append_page (GTK_NOTEBOOK (notebook), vbox, label);
 
@@ -1579,7 +1580,7 @@ GtkWidget* create_main_dialog ()
   gtk_widget_show (hbox2);
   gtk_box_pack_start (GTK_BOX (vbox), hbox2, FALSE, TRUE, 0);
 
-  frame = gtk_frame_new ("Extents");
+  frame = gtk_frame_new (_("Extents"));
   gtk_widget_show (frame);
   gtk_box_pack_start (GTK_BOX (hbox2), frame, TRUE, TRUE, 0);
 
@@ -1590,41 +1591,41 @@ GtkWidget* create_main_dialog ()
   gtk_table_set_row_spacings (GTK_TABLE (table), 5);
   gtk_table_set_col_spacings (GTK_TABLE (table), 5);
 
-  label = gtk_label_new ("X:");
+  label = gtk_label_new (_("X:"));
   gtk_widget_show (label);
   gtk_table_attach (GTK_TABLE (table), label, 0, 1, 1, 2,
                     (GtkAttachOptions) (GTK_FILL),
                     (GtkAttachOptions) (GTK_FILL), 0, 0);
   g_object_set_data (G_OBJECT (dlg), "hmin_text", label);
 
-  label = gtk_label_new ("X:");
+  label = gtk_label_new (_("X:"));
   gtk_widget_show (label);
   gtk_table_attach (GTK_TABLE (table), label, 2, 3, 1, 2,
                     (GtkAttachOptions) (GTK_FILL),
                     (GtkAttachOptions) (GTK_FILL), 0, 0);
   g_object_set_data (G_OBJECT (dlg), "hmax_text", label);
 
-  label = gtk_label_new ("Y:");
+  label = gtk_label_new (_("Y:"));
   gtk_widget_show (label);
   gtk_table_attach (GTK_TABLE (table), label, 0, 1, 2, 3,
                     (GtkAttachOptions) (GTK_FILL),
                     (GtkAttachOptions) (GTK_FILL), 0, 0);
   g_object_set_data (G_OBJECT (dlg), "vmin_text", label);
 
-  label = gtk_label_new ("Y:");
+  label = gtk_label_new (_("Y:"));
   gtk_widget_show (label);
   gtk_table_attach (GTK_TABLE (table), label, 2, 3, 2, 3,
                     (GtkAttachOptions) (GTK_FILL),
                     (GtkAttachOptions) (GTK_FILL), 0, 0);
   g_object_set_data (G_OBJECT (dlg), "vmax_text", label);
 
-  label = gtk_label_new ("Lower-left");
+  label = gtk_label_new (_("Lower-left"));
   gtk_widget_show (label);
   gtk_table_attach (GTK_TABLE (table), label, 1, 2, 0, 1,
                     (GtkAttachOptions) (GTK_FILL),
                     (GtkAttachOptions) (GTK_FILL), 0, 0);
 
-  label = gtk_label_new ("Upper-right");
+  label = gtk_label_new (_("Upper-right"));
   gtk_widget_show (label);
   gtk_table_attach (GTK_TABLE (table), label, 3, 4, 0, 1,
                     (GtkAttachOptions) (GTK_FILL),
@@ -1666,7 +1667,7 @@ GtkWidget* create_main_dialog ()
   g_object_set_data (G_OBJECT (dlg), "vmax", entry);
   g_signal_connect (G_OBJECT (entry), "focus_out_event", G_CALLBACK (doublevariable_entryfocusout), &Vur);
 
-  frame = gtk_frame_new ("Divisions");
+  frame = gtk_frame_new (_("Divisions"));
   gtk_widget_show (frame);
   gtk_box_pack_start (GTK_BOX (hbox2), frame, TRUE, TRUE, 0);
 
@@ -1677,14 +1678,14 @@ GtkWidget* create_main_dialog ()
   gtk_table_set_row_spacings (GTK_TABLE (table), 5);
   gtk_table_set_col_spacings (GTK_TABLE (table), 5);
 
-  label = gtk_label_new ("X:");
+  label = gtk_label_new (_("X:"));
   gtk_widget_show (label);
   gtk_table_attach (GTK_TABLE (table), label, 0, 1, 0, 1,
                     (GtkAttachOptions) (GTK_FILL),
                     (GtkAttachOptions) (GTK_EXPAND|GTK_FILL), 0, 0);
   g_object_set_data (G_OBJECT (dlg), "nh_text", label);
 
-  label = gtk_label_new ("Y:");
+  label = gtk_label_new (_("Y:"));
   gtk_widget_show (label);
   gtk_table_attach (GTK_TABLE (table), label, 0, 1, 1, 2,
                     (GtkAttachOptions) (GTK_FILL),
@@ -1718,7 +1719,7 @@ GtkWidget* create_main_dialog ()
   g_signal_connect (G_OBJECT (check), "toggled", G_CALLBACK (extents_use_patches), NULL);
 
 	// ^Fishman - Snap to grid, replaced scroll bar with a texbox.
-	label = gtk_label_new ("Snap to grid:");
+	label = gtk_label_new (_("Snap to grid:"));
   gtk_widget_show (label);
 	gtk_box_pack_start (GTK_BOX (vbox), label, FALSE, TRUE, 0);
   gtk_object_set_data (GTK_OBJECT (dlg), "snap_text", label);
@@ -1736,7 +1737,7 @@ GtkWidget* create_main_dialog ()
   gtk_widget_show (hbox2);
   gtk_box_pack_start (GTK_BOX (vbox), hbox2, FALSE, TRUE, 10);
 
-  label = gtk_label_new ("Decimate:");
+  label = gtk_label_new (_("Decimate:"));
   gtk_widget_show (label);
   gtk_box_pack_start (GTK_BOX (hbox2), label, FALSE, TRUE, 0);
 
@@ -1750,7 +1751,7 @@ GtkWidget* create_main_dialog ()
   gtk_scale_set_digits (GTK_SCALE (scale), 0);
   g_object_set_data (G_OBJECT (dlg), "decimate", scale);
 
-  frame = gtk_frame_new ("Corner values");
+  frame = gtk_frame_new (_("Corner values"));
   gtk_widget_show (frame);
   gtk_box_pack_start (GTK_BOX (vbox), frame, FALSE, TRUE, 0);
 
@@ -1761,25 +1762,25 @@ GtkWidget* create_main_dialog ()
   gtk_table_set_row_spacings (GTK_TABLE (table), 5);
   gtk_table_set_col_spacings (GTK_TABLE (table), 5);
 
-  label = gtk_label_new ("Upper-left:");
+  label = gtk_label_new (_("Upper-left:"));
   gtk_widget_show (label);
   gtk_table_attach (GTK_TABLE (table), label, 0, 1, 0, 1,
                     (GtkAttachOptions) (GTK_FILL),
                     (GtkAttachOptions) (GTK_FILL), 0, 0);
 
-  label = gtk_label_new ("Lower-left:");
+  label = gtk_label_new (_("Lower-left:"));
   gtk_widget_show (label);
   gtk_table_attach (GTK_TABLE (table), label, 0, 1, 1, 2,
                     (GtkAttachOptions) (GTK_FILL),
                     (GtkAttachOptions) (GTK_FILL), 0, 0);
 
-  label = gtk_label_new ("Upper-right:");
+  label = gtk_label_new (_("Upper-right:"));
   gtk_widget_show (label);
   gtk_table_attach (GTK_TABLE (table), label, 2, 3, 0, 1,
                     (GtkAttachOptions) (GTK_FILL),
                     (GtkAttachOptions) (GTK_FILL), 0, 0);
 
-  label = gtk_label_new ("Lower-right:");
+  label = gtk_label_new (_("Lower-right:"));
   gtk_widget_show (label);
   gtk_table_attach (GTK_TABLE (table), label, 2, 3, 1, 2,
                     (GtkAttachOptions) (GTK_FILL),
@@ -1833,7 +1834,7 @@ GtkWidget* create_main_dialog ()
   gtk_widget_show (vbox);
   gtk_container_set_border_width (GTK_CONTAINER (vbox), 5);
 
-  label = gtk_label_new ("Bitmap");
+  label = gtk_label_new (_("Bitmap"));
   gtk_widget_show (label);
   gtk_notebook_append_page (GTK_NOTEBOOK (notebook), vbox, label);
 
@@ -1849,7 +1850,7 @@ GtkWidget* create_main_dialog ()
   gtk_table_set_row_spacings (GTK_TABLE (table), 5);
   gtk_table_set_col_spacings (GTK_TABLE (table), 5);
 
-  label = gtk_label_new ("Filename:");
+  label = gtk_label_new (_("Filename:"));
   gtk_widget_show (label);
   gtk_table_attach (GTK_TABLE (table), label, 0, 1, 0, 1,
                     (GtkAttachOptions) (GTK_FILL),
@@ -1870,14 +1871,14 @@ GtkWidget* create_main_dialog ()
                     (GtkAttachOptions) (0),
                     (GtkAttachOptions) (GTK_EXPAND|GTK_FILL), 0, 0);
 
-  button = gtk_button_new_with_label ("Browse...");
+  button = gtk_button_new_with_label (_("Browse..."));
   gtk_widget_show (button);
   gtk_box_pack_start (GTK_BOX (hbox2), button, FALSE, FALSE, 0);
   gtk_widget_set_usize (button, 60, -2);
   g_object_set_data (G_OBJECT (dlg), "bmp_file_browse", button);
   g_signal_connect (G_OBJECT (button), "clicked", G_CALLBACK (bitmap_browse), NULL);
 
-  button = gtk_button_new_with_label ("Reload");
+  button = gtk_button_new_with_label (_("Reload"));
   gtk_widget_show (button);
   gtk_box_pack_start (GTK_BOX (hbox2), button, FALSE, FALSE, 0);
   gtk_widget_set_usize (button, 60, -2);
@@ -1891,7 +1892,7 @@ GtkWidget* create_main_dialog ()
   gtk_table_set_row_spacings (GTK_TABLE (table), 5);
   gtk_table_set_col_spacings (GTK_TABLE (table), 5);
 
-  label = gtk_label_new ("Map color 0 to:");
+  label = gtk_label_new (_("Map color 0 to:"));
   gtk_widget_show (label);
   gtk_table_attach (GTK_TABLE (table), label, 0, 1, 0, 1,
                     (GtkAttachOptions) (GTK_FILL|GTK_EXPAND),
@@ -1900,7 +1901,7 @@ GtkWidget* create_main_dialog ()
   gtk_misc_set_alignment (GTK_MISC (label), 1, 0.5);
   gtk_label_set_justify (GTK_LABEL (label), GTK_JUSTIFY_RIGHT);
 
-  label = gtk_label_new ("Map color 255 to:");
+  label = gtk_label_new (_("Map color 255 to:"));
   gtk_widget_show (label);
   gtk_table_attach (GTK_TABLE (table), label, 0, 1, 1, 2,
                     (GtkAttachOptions) (GTK_FILL|GTK_EXPAND),
@@ -1939,16 +1940,16 @@ GtkWidget* create_main_dialog ()
   gtk_widget_show (vbox);
   gtk_container_set_border_width (GTK_CONTAINER (vbox), 5);
 
-  label = gtk_label_new ("Fix Points");
+  label = gtk_label_new (_("Fix Points"));
   gtk_widget_show (label);
   gtk_notebook_append_page (GTK_NOTEBOOK (notebook), vbox, label);
 
-  label = gtk_label_new ("Click on a vertex in the lower half of the preview window,\n"
+  label = gtk_label_new (_("Click on a vertex in the lower half of the preview window,\n"
                          "then use the arrow keys or text box to assign a value.\n"
                          "Use Ctrl+Click to select multiple vertices/toggle a\n"
                          "selection. Use Shift+Click to select a range of vertices.\n\n"
                          "Click \"Free\" to unlock a vertex. Vertices within \"Range\n"
-                         "affected\" will be influenced by this vertex.");
+                         "affected\" will be influenced by this vertex."));
   gtk_widget_show (label);
   gtk_box_pack_start (GTK_BOX (vbox), label, FALSE, TRUE, 0);
 
@@ -1959,7 +1960,7 @@ GtkWidget* create_main_dialog ()
   gtk_table_set_row_spacings (GTK_TABLE (table), 5);
   gtk_table_set_col_spacings (GTK_TABLE (table), 5);
 
-  label = gtk_label_new ("Value:");
+  label = gtk_label_new (_("Value:"));
   gtk_widget_show (label);
   gtk_table_attach (GTK_TABLE (table), label, 0, 1, 0, 1,
                     (GtkAttachOptions) (GTK_FILL),
@@ -1967,7 +1968,7 @@ GtkWidget* create_main_dialog ()
   gtk_misc_set_alignment (GTK_MISC (label), 1, 0.5);
   g_object_set_data (G_OBJECT (dlg), "fix_value_text", label);
 
-  label = gtk_label_new ("Range affected:");
+  label = gtk_label_new (_("Range affected:"));
   gtk_widget_show (label);
   gtk_table_attach (GTK_TABLE (table), label, 0, 1, 1, 2,
                     (GtkAttachOptions) (GTK_FILL),
@@ -1975,7 +1976,7 @@ GtkWidget* create_main_dialog ()
   gtk_misc_set_alignment (GTK_MISC (label), 1, 0.5);
   g_object_set_data (G_OBJECT (dlg), "fix_range_text", label);
 
-  label = gtk_label_new ("Rate of change:");
+  label = gtk_label_new (_("Rate of change:"));
   gtk_widget_show (label);
   gtk_table_attach (GTK_TABLE (table), label, 0, 1, 2, 3,
                     (GtkAttachOptions) (GTK_FILL),
@@ -2012,7 +2013,7 @@ GtkWidget* create_main_dialog ()
   g_object_set_data (G_OBJECT (dlg), "fix_rate", entry);
   g_signal_connect (G_OBJECT (entry), "focus_out_event", G_CALLBACK (fix_rate_entryfocusout), NULL);
 
-  button = gtk_button_new_with_label ("Free");
+  button = gtk_button_new_with_label (_("Free"));
   gtk_widget_show (button);
   gtk_table_attach (GTK_TABLE (table), button, 2, 3, 0, 1,
                     (GtkAttachOptions) (GTK_EXPAND),
@@ -2021,7 +2022,7 @@ GtkWidget* create_main_dialog ()
   g_object_set_data (G_OBJECT (dlg), "fix_free", button);
   g_signal_connect (G_OBJECT (button), "clicked", G_CALLBACK (fix_free), NULL);
 
-  button = gtk_button_new_with_label ("Free All");
+  button = gtk_button_new_with_label (_("Free All"));
   gtk_widget_show (button);
   gtk_table_attach (GTK_TABLE (table), button, 2, 3, 1, 2,
                     (GtkAttachOptions) (GTK_EXPAND),
@@ -2034,7 +2035,7 @@ GtkWidget* create_main_dialog ()
   gtk_widget_show (vbox);
   gtk_container_set_border_width (GTK_CONTAINER (vbox), 5);
 
-  label = gtk_label_new ("Texture");
+  label = gtk_label_new (_("Texture"));
   gtk_widget_show (label);
   gtk_notebook_append_page (GTK_NOTEBOOK (notebook), vbox, label);
 
@@ -2045,21 +2046,21 @@ GtkWidget* create_main_dialog ()
   gtk_table_set_row_spacings (GTK_TABLE (table), 5);
   gtk_table_set_col_spacings (GTK_TABLE (table), 5);
 
-  label = gtk_label_new ("Surface:");
+  label = gtk_label_new (_("Surface:"));
   gtk_widget_show (label);
   gtk_table_attach (GTK_TABLE (table), label, 0, 1, 0, 1,
                     (GtkAttachOptions) (GTK_FILL),
                     (GtkAttachOptions) (GTK_FILL), 0, 0);
   gtk_misc_set_alignment (GTK_MISC (label), 1, 0.5);
 
-  label = gtk_label_new ("Other:");
+  label = gtk_label_new (_("Other:"));
   gtk_widget_show (label);
   gtk_table_attach (GTK_TABLE (table), label, 0, 1, 1, 2,
                     (GtkAttachOptions) (GTK_FILL),
                     (GtkAttachOptions) (GTK_FILL), 0, 0);
   gtk_misc_set_alignment (GTK_MISC (label), 1, 0.5);
 
-  label = gtk_label_new ("Steep:");
+  label = gtk_label_new (_("Steep:"));
   gtk_widget_show (label);
   gtk_table_attach (GTK_TABLE (table), label, 0, 1, 2, 3,
                     (GtkAttachOptions) (GTK_FILL),
@@ -2096,7 +2097,7 @@ GtkWidget* create_main_dialog ()
   gtk_widget_show (hbox2);
   gtk_box_pack_start (GTK_BOX (vbox), hbox2, FALSE, TRUE, 0);
 
-  label = gtk_label_new ("\"Steep\" angle:");
+  label = gtk_label_new (_("\"Steep\" angle:"));
   gtk_widget_show (label);
   gtk_box_pack_start (GTK_BOX (hbox2), label, FALSE, TRUE, 0);
 
@@ -2112,13 +2113,13 @@ GtkWidget* create_main_dialog ()
   gtk_table_set_row_spacings (GTK_TABLE (table), 5);
   gtk_table_set_col_spacings (GTK_TABLE (table), 5);
 
-  label = gtk_label_new ("Offset <h,v>");
+  label = gtk_label_new (_("Offset <h,v>"));
   gtk_widget_show (label);
   gtk_table_attach (GTK_TABLE (table), label, 0, 2, 0, 1,
                     (GtkAttachOptions) (GTK_FILL),
                     (GtkAttachOptions) (GTK_FILL), 0, 0);
 
-  label = gtk_label_new ("Scale <h,v>");
+  label = gtk_label_new (_("Scale <h,v>"));
   gtk_widget_show (label);
   gtk_table_attach (GTK_TABLE (table), label, 2, 4, 0, 1,
                     (GtkAttachOptions) (GTK_FILL),
@@ -2158,20 +2159,20 @@ GtkWidget* create_main_dialog ()
 
 
 
-  check = gtk_check_button_new_with_label ("Use detail brushes");
+  check = gtk_check_button_new_with_label (_("Use detail brushes"));
   gtk_widget_show (check);
   gtk_box_pack_start (GTK_BOX (vbox), check, FALSE, TRUE, 0);
   g_object_set_data (G_OBJECT (dlg), "detail", check);
   g_signal_connect (G_OBJECT (check), "toggled", G_CALLBACK (texture_detail), NULL);
 
-  check = gtk_check_button_new_with_label ("Detail hint brushes");
+  check = gtk_check_button_new_with_label (_("Detail hint brushes"));
   gtk_widget_show (check);
   gtk_box_pack_start (GTK_BOX (vbox), check, FALSE, TRUE, 0);
   g_object_set_data (G_OBJECT (dlg), "hint", check);
   g_signal_connect (G_OBJECT (check), "toggled", G_CALLBACK (texture_hint), NULL);
 
 	// ^Fishman - Add terrain key to func_group.
-	check = gtk_check_button_new_with_label ("Add terrain key");
+	check = gtk_check_button_new_with_label (_("Add terrain key"));
   gtk_widget_show (check);
   gtk_box_pack_start (GTK_BOX (vbox), check, FALSE, TRUE, 0);
   g_object_set_data (G_OBJECT (dlg), "terrain_ent", check);
@@ -2181,14 +2182,14 @@ GtkWidget* create_main_dialog ()
   gtk_widget_show (vbox);
   gtk_box_pack_start (GTK_BOX (hbox), vbox, FALSE, TRUE, 0);
 
-  button = gtk_button_new_with_label ("OK");
+  button = gtk_button_new_with_label (_("OK"));
   gtk_widget_show (button);
   gtk_box_pack_start (GTK_BOX (vbox), button, FALSE, TRUE, 0);
   gtk_widget_set_usize (button, 60, -2);
   g_object_set_data (G_OBJECT (dlg), "go", button);
   g_signal_connect (G_OBJECT (button), "clicked", G_CALLBACK (main_go), NULL);
 
-  label = gtk_label_new ("Settings:");
+  label = gtk_label_new (_("Settings:"));
   gtk_widget_show (label);
   gtk_box_pack_start (GTK_BOX (vbox), label, FALSE, TRUE, 0);
 
@@ -2198,31 +2199,31 @@ GtkWidget* create_main_dialog ()
   g_object_set_data (G_OBJECT (dlg), "open", button);
   g_signal_connect (G_OBJECT (button), "clicked", G_CALLBACK (main_open), NULL);
 
-  button = gtk_button_new_with_label ("Save as...");
+  button = gtk_button_new_with_label (_("Save as..."));
   gtk_widget_show (button);
   gtk_box_pack_start (GTK_BOX (vbox), button, FALSE, TRUE, 0);
   g_object_set_data (G_OBJECT (dlg), "save", button);
   g_signal_connect (G_OBJECT (button), "clicked", G_CALLBACK (main_save), NULL);
 
-  button = gtk_button_new_with_label ("Defaults");
+  button = gtk_button_new_with_label (_("Defaults"));
   gtk_widget_show (button);
   gtk_box_pack_start (GTK_BOX (vbox), button, FALSE, TRUE, 0);
   g_object_set_data (G_OBJECT (dlg), "defaults", button);
   g_signal_connect (G_OBJECT (button), "clicked", G_CALLBACK (main_defaults), NULL);
 
-  button = gtk_button_new_with_label ("About...");
+  button = gtk_button_new_with_label (_("About..."));
   gtk_widget_show (button);
   gtk_box_pack_start (GTK_BOX (vbox), button, FALSE, TRUE, 0);
   g_signal_connect (G_OBJECT (button), "clicked", G_CALLBACK (main_about), NULL);
 
-  check = gtk_check_button_new_with_label ("Preview");
+  check = gtk_check_button_new_with_label (_("Preview"));
   gtk_widget_show (check);
   gtk_box_pack_start (GTK_BOX (vbox), check, FALSE, TRUE, 0);
   g_signal_connect (G_OBJECT (check), "toggled", G_CALLBACK (main_preview), NULL);
   g_object_set_data (G_OBJECT (dlg), "main_preview", check);
 
 	// ^Fishman - Antializing for the preview window.
-  check = gtk_check_button_new_with_label ("Antialised lines");
+  check = gtk_check_button_new_with_label (_("Antialised lines"));
   gtk_widget_show (check);
   gtk_box_pack_start (GTK_BOX (vbox), check, FALSE, TRUE, 0);
 	g_object_set_data (G_OBJECT (dlg), "main_antialiasing", check);

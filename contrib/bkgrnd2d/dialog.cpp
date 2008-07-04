@@ -31,6 +31,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "bkgrnd2d.h"
 #include "dialog.h"
+#include <glib/gi18n.h>
 
 // spaces to make label nice and big
 #define NO_FILE_MSG "        (no file loaded)        "
@@ -146,7 +147,7 @@ void CBackgroundDialogPage::Browse()
 //TODO bug/patch for comments
 //TODO patern gets fucked up sometimes if empty
 	newfile = g_FuncTable.m_pfnFileDialog(pDialogWnd,TRUE,
-						                  "Load Background Image",browsedir,FILETYPE_KEY);
+						                  _("Load Background Image"),browsedir,FILETYPE_KEY);
 	if(!newfile) {
 		Syn_Printf(MSG_PREFIX "newfile = NULL\n");
 		return;
@@ -169,8 +170,7 @@ void CBackgroundDialogPage::Browse()
 void CBackgroundDialogPage::SetPosLabel()
 {
 	char s[64];
-	// TODO no snprintf ?
-	sprintf(s, "Size/Position (%d,%d) (%d,%d)",(int)(m_pImage->m_xmin),
+	snprintf(s, sizeof(s) - 1, _("Size/Position (%d,%d) (%d,%d)"),(int)(m_pImage->m_xmin),
 			(int)(m_pImage->m_ymin),(int)(m_pImage->m_xmax),(int)(m_pImage->m_ymax));
 	gtk_label_set_text(GTK_LABEL(m_pPosLabel),s);
 }
@@ -188,22 +188,22 @@ CBackgroundDialogPage::CBackgroundDialogPage(VIEWTYPE vt )
 	switch(m_vt)
 	{
 		case XY:
-			m_pTabLabel = gtk_label_new("X/Y");
+			m_pTabLabel = gtk_label_new(_("X/Y"));
 			m_pImage = &backgroundXY;
 			break;
 		case XZ:
-			m_pTabLabel = gtk_label_new("X/Z");
+			m_pTabLabel = gtk_label_new(_("X/Z"));
 			m_pImage = &backgroundXZ;
 			break;
 		case YZ:
-			m_pTabLabel = gtk_label_new("Y/Z");
+			m_pTabLabel = gtk_label_new(_("Y/Z"));
 			m_pImage = &backgroundYZ;
 			break;
 	}
 // A vbox to hold everything
 	m_pWidget = gtk_vbox_new(FALSE,0);
 // Frame for file row
-	frame = gtk_frame_new("File");
+	frame = gtk_frame_new(_("File"));
 	gtk_box_pack_start (GTK_BOX (m_pWidget),frame, FALSE, FALSE, 2);
 
 // hbox for first row
@@ -239,14 +239,14 @@ CBackgroundDialogPage::CBackgroundDialogPage(VIEWTYPE vt )
 	gtk_widget_show (frame);
 
 // second row (rendering options)
-	frame = gtk_frame_new("Rendering");
+	frame = gtk_frame_new(_("Rendering"));
 	gtk_box_pack_start (GTK_BOX (m_pWidget),frame, FALSE, FALSE, 2);
 
 	hbox = gtk_hbox_new(FALSE,5);
 	gtk_container_set_border_width(GTK_CONTAINER (hbox),4);
 	gtk_container_add (GTK_CONTAINER (frame), hbox);
 
-	w = gtk_label_new("Vertex alpha:");
+	w = gtk_label_new(_("Vertex alpha:"));
 	gtk_box_pack_start (GTK_BOX (hbox),w, FALSE, FALSE, 5);
   gtk_widget_show (w);
 
@@ -256,13 +256,13 @@ CBackgroundDialogPage::CBackgroundDialogPage(VIEWTYPE vt )
 	g_signal_connect (G_OBJECT (w), "value-changed",
                           G_CALLBACK (alpha_adjust_callback), (gpointer)this);
 	gtk_box_pack_start (GTK_BOX (hbox),w, TRUE, TRUE, 5);
-	gtk_tooltips_set_tip (pTooltips, w, "Set image transparancy", NULL);
+	gtk_tooltips_set_tip (pTooltips, w, _("Set image transparancy"), NULL);
   gtk_widget_show (w);
 
 	gtk_widget_show (hbox);
 	gtk_widget_show (frame);
 // Third row (size and position)
-	frame = gtk_frame_new("Size/Position (undefined)");
+	frame = gtk_frame_new(_("Size/Position (undefined)"));
 	m_pPosLabel = gtk_frame_get_label_widget (GTK_FRAME(frame));
 	gtk_box_pack_start ( GTK_BOX (m_pWidget), frame, FALSE, FALSE, 2);
 
@@ -270,19 +270,19 @@ CBackgroundDialogPage::CBackgroundDialogPage(VIEWTYPE vt )
 	gtk_container_add (GTK_CONTAINER (frame), hbox);
 	gtk_container_set_border_width(GTK_CONTAINER (hbox),4);
 
-	w = gtk_button_new_with_label ("from selection");
+	w = gtk_button_new_with_label (_("from selection"));
 	gtk_box_pack_start (GTK_BOX (hbox),w, TRUE, FALSE, 5);
 	g_signal_connect (G_OBJECT (w), "clicked", G_CALLBACK (size_sel_callback),
                                                                 (gpointer)this);
-	gtk_tooltips_set_tip (pTooltips, w, "Set the size of the image to the bounding rectangle of all selected brushes and entities", NULL);
+	gtk_tooltips_set_tip (pTooltips, w, _("Set the size of the image to the bounding rectangle of all selected brushes and entities"), NULL);
   gtk_widget_show (w);
 
 	if(m_vt == XY) {
-		w = gtk_button_new_with_label ("from map mins/maxs");
+		w = gtk_button_new_with_label (_("from map mins/maxs"));
 		gtk_box_pack_start ( GTK_BOX (hbox),w, TRUE, FALSE, 2);
 		g_signal_connect (G_OBJECT (w), "clicked", G_CALLBACK (size_mm_callback),
                                                                 (gpointer)this);
-		gtk_tooltips_set_tip (pTooltips, w, "Set the size of the image using the mapcoordsmins and mapcoordsmaxs keys of the worldspawn entity", NULL);
+		gtk_tooltips_set_tip (pTooltips, w, _("Set the size of the image using the mapcoordsmins and mapcoordsmaxs keys of the worldspawn entity"), NULL);
 		gtk_widget_show (w);
 	}
 
@@ -321,7 +321,7 @@ void InitBackgroundDialog()
 {
 	CBackgroundDialogPage *pPage;
 
-	pDialogWnd = gtk_dialog_new_with_buttons ("Background Images",
+	pDialogWnd = gtk_dialog_new_with_buttons (_("Background Images"),
                               GTK_WINDOW(g_pMainWidget),
                               (GtkDialogFlags)(GTK_DIALOG_DESTROY_WITH_PARENT),
         // TODO dialog with no buttons

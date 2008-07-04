@@ -28,6 +28,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <gdk/gdkkeysyms.h>
 #include "stdafx.h"
 #include "patchdialog.h"
+#include <glib/gi18n.h>
 
 PatchDialog g_PatchDialog;
 // is the patch inspector currently displayed/active?
@@ -313,7 +314,7 @@ void PatchDialog::BuildDialog ()
 
   load_window_pos (dlg, g_PrefsDlg.mWindowInfo.posPatchWnd);
 
-  gtk_window_set_title (GTK_WINDOW (dlg), "Patch Properties");
+  gtk_window_set_title (GTK_WINDOW (dlg), _("Patch Properties"));
   gtk_signal_connect (GTK_OBJECT (dlg), "delete_event", GTK_SIGNAL_FUNC (OnDone), NULL);
   // catch 'Esc' and 'Enter'
   gtk_signal_connect (GTK_OBJECT (dlg), "key_press_event", GTK_SIGNAL_FUNC (OnDialogKey), NULL);
@@ -329,7 +330,7 @@ void PatchDialog::BuildDialog ()
   gtk_widget_show (hbox);
   gtk_box_pack_start (GTK_BOX (vbox), hbox, TRUE, TRUE, 0);
 
-  frame = gtk_frame_new ("Details");
+  frame = gtk_frame_new (_("Details"));
   gtk_widget_show (frame);
   gtk_box_pack_start (GTK_BOX (hbox), frame, TRUE, TRUE, 0);
 
@@ -344,13 +345,13 @@ void PatchDialog::BuildDialog ()
   gtk_table_set_row_spacings (GTK_TABLE (table), 5);
   gtk_table_set_col_spacings (GTK_TABLE (table), 5);
 
-  label = gtk_label_new ("Row:");
+  label = gtk_label_new (_("Row:"));
   gtk_widget_show (label);
   gtk_table_attach (GTK_TABLE (table), label, 0, 1, 0, 1,
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
                     (GtkAttachOptions) (0), 0, 0);
 
-  label = gtk_label_new ("Column:");
+  label = gtk_label_new (_("Column:"));
   gtk_widget_show (label);
   gtk_table_attach (GTK_TABLE (table), label, 1, 2, 0, 1,
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
@@ -386,31 +387,31 @@ void PatchDialog::BuildDialog ()
   gtk_table_set_row_spacings (GTK_TABLE (table), 5);
   gtk_table_set_col_spacings (GTK_TABLE (table), 5);
 
-  label = gtk_label_new ("X:");
+  label = gtk_label_new (_("X:"));
   gtk_widget_show (label);
   gtk_table_attach (GTK_TABLE (table), label, 0, 1, 0, 1,
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
                     (GtkAttachOptions) (0), 0, 0);
 
-  label = gtk_label_new ("Y:");
+  label = gtk_label_new (_("Y:"));
   gtk_widget_show (label);
   gtk_table_attach (GTK_TABLE (table), label, 0, 1, 1, 2,
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
                     (GtkAttachOptions) (0), 0, 0);
 
-  label = gtk_label_new ("Z:");
+  label = gtk_label_new (_("Z:"));
   gtk_widget_show (label);
   gtk_table_attach (GTK_TABLE (table), label, 0, 1, 2, 3,
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
                     (GtkAttachOptions) (0), 0, 0);
 
-  label = gtk_label_new ("S:");
+  label = gtk_label_new (_("S:"));
   gtk_widget_show (label);
   gtk_table_attach (GTK_TABLE (table), label, 0, 1, 3, 4,
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
                     (GtkAttachOptions) (0), 0, 0);
 
-  label = gtk_label_new ("T:");
+  label = gtk_label_new (_("T:"));
   gtk_widget_show (label);
   gtk_table_attach (GTK_TABLE (table), label, 0, 1, 4, 5,
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
@@ -451,7 +452,7 @@ void PatchDialog::BuildDialog ()
                     (GtkAttachOptions) (0), 0, 0);
   AddDialogData (entry, &m_fT, DLG_ENTRY_FLOAT);
 
-  frame = gtk_frame_new ("Texturing");
+  frame = gtk_frame_new (_("Texturing"));
   gtk_widget_show (frame);
   gtk_box_pack_start (GTK_BOX (hbox), frame, TRUE, TRUE, 0);
 
@@ -460,7 +461,7 @@ void PatchDialog::BuildDialog ()
   gtk_container_add (GTK_CONTAINER (frame), vbox2);
   gtk_container_set_border_width (GTK_CONTAINER (vbox2), 5);
 
-  label = gtk_label_new ("Name:");
+  label = gtk_label_new (_("Name:"));
   gtk_widget_show (label);
   gtk_box_pack_start (GTK_BOX (vbox2), label, TRUE, TRUE, 0);
   gtk_label_set_justify (GTK_LABEL (label), GTK_JUSTIFY_LEFT);
@@ -478,35 +479,35 @@ void PatchDialog::BuildDialog ()
   gtk_table_set_row_spacings (GTK_TABLE (table), 5);
   gtk_table_set_col_spacings (GTK_TABLE (table), 5);
 
-  label = gtk_label_new ("Horizontal Shift Step");
+  label = gtk_label_new (_("Horizontal Shift Step"));
   gtk_widget_show (label);
   gtk_table_attach (GTK_TABLE (table), label, 2, 3, 0, 1,
                     (GtkAttachOptions) (GTK_FILL),
                     (GtkAttachOptions) (0), 0, 0);
   gtk_misc_set_alignment (GTK_MISC (label), 0, 0.5);
 
-  label = gtk_label_new ("Vertical Shift Step");
+  label = gtk_label_new (_("Vertical Shift Step"));
   gtk_widget_show (label);
   gtk_table_attach (GTK_TABLE (table), label, 2, 3, 1, 2,
                     (GtkAttachOptions) (GTK_FILL),
                     (GtkAttachOptions) (0), 0, 0);
   gtk_misc_set_alignment (GTK_MISC (label), 0, 0.5);
 
-  label = gtk_label_new ("Horizontal Stretch Step");
+  label = gtk_label_new (_("Horizontal Stretch Step"));
   gtk_widget_show (label);
   gtk_table_attach (GTK_TABLE (table), label, 2, 3, 2, 3,
                     (GtkAttachOptions) (GTK_FILL),
                     (GtkAttachOptions) (0), 0, 0);
   gtk_misc_set_alignment (GTK_MISC (label), 0, 0.5);
 
-  label = gtk_label_new ("Vertical Stretch Step");
+  label = gtk_label_new (_("Vertical Stretch Step"));
   gtk_widget_show (label);
   gtk_table_attach (GTK_TABLE (table), label, 2, 3, 3, 4,
                     (GtkAttachOptions) (GTK_FILL),
                     (GtkAttachOptions) (0), 0, 0);
   gtk_misc_set_alignment (GTK_MISC (label), 0, 0.5);
 
-  label = gtk_label_new ("Rotate Step");
+  label = gtk_label_new (_("Rotate Step"));
   gtk_widget_show (label);
   gtk_table_attach (GTK_TABLE (table), label, 2, 3, 4, 5,
                     (GtkAttachOptions) (GTK_FILL),
@@ -620,25 +621,25 @@ void PatchDialog::BuildDialog ()
   gtk_widget_show (hbox2);
   gtk_box_pack_start (GTK_BOX (vbox2), hbox2, TRUE, FALSE, 0);
 
-  button = gtk_button_new_with_label ("CAP");
+  button = gtk_button_new_with_label (_("CAP"));
   gtk_widget_show (button);
   gtk_box_pack_end (GTK_BOX (hbox2), button, TRUE, FALSE, 0);
   gtk_signal_connect (GTK_OBJECT (button), "clicked", GTK_SIGNAL_FUNC (OnBtnPatchdetails), NULL);
   gtk_widget_set_usize (button, 60, -1);
 
-  button = gtk_button_new_with_label ("Set...");
+  button = gtk_button_new_with_label (_("Set..."));
   gtk_widget_show (button);
   gtk_box_pack_end (GTK_BOX (hbox2), button, TRUE, FALSE, 0);
   gtk_signal_connect (GTK_OBJECT (button), "clicked", GTK_SIGNAL_FUNC (OnBtnPatchreset), NULL);
   gtk_widget_set_usize (button, 60, -1);
 
-  button = gtk_button_new_with_label ("Natural");
+  button = gtk_button_new_with_label (_("Natural"));
   gtk_widget_show (button);
   gtk_box_pack_end (GTK_BOX (hbox2), button, TRUE, FALSE, 0);
   gtk_signal_connect (GTK_OBJECT (button), "clicked", GTK_SIGNAL_FUNC (OnBtnPatchnatural), NULL);
   gtk_widget_set_usize (button, 60, -1);
 
-  button = gtk_button_new_with_label ("Fit");
+  button = gtk_button_new_with_label (_("Fit"));
   gtk_widget_show (button);
   gtk_box_pack_end (GTK_BOX (hbox2), button, TRUE, FALSE, 0);
   gtk_signal_connect (GTK_OBJECT (button), "clicked", GTK_SIGNAL_FUNC (OnBtnPatchfit), NULL);
@@ -648,13 +649,13 @@ void PatchDialog::BuildDialog ()
   gtk_widget_show (hbox);
   gtk_box_pack_start (GTK_BOX (vbox), hbox, TRUE, FALSE, 0);
 
-  button = gtk_button_new_with_label ("Done");
+  button = gtk_button_new_with_label (_("Done"));
   gtk_widget_show (button);
   gtk_box_pack_end (GTK_BOX (hbox), button, FALSE, FALSE, 0);
   gtk_signal_connect (GTK_OBJECT (button), "clicked", GTK_SIGNAL_FUNC (OnDone), NULL);
   gtk_widget_set_usize (button, 60, -1);
 
-  button = gtk_button_new_with_label ("Apply");
+  button = gtk_button_new_with_label (_("Apply"));
   gtk_widget_show (button);
   gtk_box_pack_end (GTK_BOX (hbox), button, FALSE, FALSE, 0);
   gtk_signal_connect (GTK_OBJECT (button), "clicked", GTK_SIGNAL_FUNC (OnApply), NULL);

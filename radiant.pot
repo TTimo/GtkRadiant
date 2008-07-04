@@ -447,6 +447,7 @@ msgid "Patches"
 msgstr ""
 
 #: radiant/mainframe.cpp:1108 radiant/mainframe.cpp:1103
+#: radiant/patchdialog.cpp:333
 msgid "Details"
 msgstr ""
 
@@ -560,6 +561,7 @@ msgid "Flip _Z"
 msgstr ""
 
 #: radiant/mainframe.cpp:1180 radiant/mainframe.cpp:1175
+#: radiant/surfacedialog.cpp:715
 msgid "Rotate"
 msgstr ""
 
@@ -1477,7 +1479,7 @@ msgstr ""
 #: radiant/gtkdlgs.cpp:3371 radiant/gtkdlgs.cpp:3476 radiant/gtkdlgs.cpp:3547
 #: radiant/gtkdlgs.cpp:3641 radiant/gtkdlgs.cpp:4006
 #: radiant/preferences.cpp:1136 radiant/preferences.cpp:1554
-#: radiant/preferences.cpp:3296
+#: radiant/preferences.cpp:3296 radiant/findtexturedialog.cpp:223
 msgid "OK"
 msgstr ""
 
@@ -1495,6 +1497,8 @@ msgstr ""
 #: radiant/gtkdlgs.cpp:3483 radiant/gtkdlgs.cpp:3554 radiant/gtkdlgs.cpp:3648
 #: radiant/gtkdlgs.cpp:4015 radiant/preferences.cpp:1141
 #: radiant/preferences.cpp:1560 radiant/preferences.cpp:3301
+#: radiant/gtkmisc.cpp:949 radiant/gtkmisc.cpp:973
+#: radiant/surfacedialog.cpp:882
 msgid "Cancel"
 msgstr ""
 
@@ -1664,12 +1668,14 @@ msgid "Use paint-select in camera view:"
 msgstr ""
 
 #: radiant/preferences.cpp:1860 radiant/preferences.cpp:1861
-#: radiant/preferences.cpp:1872
+#: radiant/preferences.cpp:1872 radiant/gtkmisc.cpp:967
+#: radiant/gtkmisc.cpp:990
 msgid "No"
 msgstr ""
 
 #: radiant/preferences.cpp:1861 radiant/preferences.cpp:1862
-#: radiant/preferences.cpp:1873
+#: radiant/preferences.cpp:1873 radiant/gtkmisc.cpp:959
+#: radiant/gtkmisc.cpp:982
 msgid "Yes"
 msgstr ""
 
@@ -2048,7 +2054,7 @@ msgstr ""
 
 #: radiant/preferences.cpp:3243 radiant/gtkdlgs.cpp:3536
 #: radiant/preferences.cpp:3244 radiant/gtkdlgs.cpp:3535
-#: radiant/preferences.cpp:3257
+#: radiant/preferences.cpp:3257 radiant/patchdialog.cpp:464
 msgid "Name:"
 msgstr ""
 
@@ -2115,7 +2121,7 @@ msgstr ""
 #: radiant/gtkdlgs.cpp:1388 radiant/gtkdlgs.cpp:1736 radiant/gtkdlgs.cpp:2901
 #: radiant/gtkdlgs.cpp:2996 radiant/gtkdlgs.cpp:3288 radiant/gtkdlgs.cpp:3824
 #: radiant/gtkdlgs.cpp:2900 radiant/gtkdlgs.cpp:2995 radiant/gtkdlgs.cpp:3287
-#: radiant/gtkdlgs.cpp:3821
+#: radiant/gtkdlgs.cpp:3821 radiant/findtexturedialog.cpp:237
 msgid "Close"
 msgstr ""
 
@@ -2347,7 +2353,8 @@ msgstr ""
 msgid "  Z  "
 msgstr ""
 
-#: radiant/gtkdlgs.cpp:1875
+#: radiant/gtkdlgs.cpp:1875 radiant/findtexturedialog.cpp:230
+#: radiant/patchdialog.cpp:658 radiant/surfacedialog.cpp:875
 msgid "Apply"
 msgstr ""
 
@@ -2433,14 +2440,17 @@ msgid "Scale"
 msgstr ""
 
 #: radiant/gtkdlgs.cpp:2416 radiant/gtkdlgs.cpp:2415
+#: radiant/patchdialog.cpp:390
 msgid "X:"
 msgstr ""
 
 #: radiant/gtkdlgs.cpp:2423 radiant/gtkdlgs.cpp:2422
+#: radiant/patchdialog.cpp:396
 msgid "Y:"
 msgstr ""
 
 #: radiant/gtkdlgs.cpp:2430 radiant/gtkdlgs.cpp:2429
+#: radiant/patchdialog.cpp:402
 msgid "Z:"
 msgstr ""
 
@@ -2537,4 +2547,127 @@ msgstr ""
 
 #: radiant/xywindow.cpp:133
 msgid "Save BMP Image"
+msgstr ""
+
+#: radiant/findtexturedialog.cpp:216
+msgid "Find"
+msgstr ""
+
+#: radiant/gtkmisc.cpp:927 radiant/gtkmisc.cpp:940
+msgid "Ok"
+msgstr ""
+
+#: radiant/gtkmisc.cpp:1000
+msgid "Go to URL"
+msgstr ""
+
+#: radiant/patchdialog.cpp:317
+msgid "Patch Properties"
+msgstr ""
+
+#: radiant/patchdialog.cpp:348
+msgid "Row:"
+msgstr ""
+
+#: radiant/patchdialog.cpp:354
+msgid "Column:"
+msgstr ""
+
+#: radiant/patchdialog.cpp:408
+msgid "S:"
+msgstr ""
+
+#: radiant/patchdialog.cpp:414
+msgid "T:"
+msgstr ""
+
+#: radiant/patchdialog.cpp:455 radiant/surfacedialog.cpp:759
+msgid "Texturing"
+msgstr ""
+
+#: radiant/patchdialog.cpp:482
+msgid "Horizontal Shift Step"
+msgstr ""
+
+#: radiant/patchdialog.cpp:489
+msgid "Vertical Shift Step"
+msgstr ""
+
+#: radiant/patchdialog.cpp:496
+msgid "Horizontal Stretch Step"
+msgstr ""
+
+#: radiant/patchdialog.cpp:503
+msgid "Vertical Stretch Step"
+msgstr ""
+
+#: radiant/patchdialog.cpp:510
+msgid "Rotate Step"
+msgstr ""
+
+#: radiant/patchdialog.cpp:624 radiant/surfacedialog.cpp:812
+msgid "CAP"
+msgstr ""
+
+#: radiant/patchdialog.cpp:630 radiant/surfacedialog.cpp:821
+msgid "Set..."
+msgstr ""
+
+#: radiant/patchdialog.cpp:636 radiant/surfacedialog.cpp:830
+msgid "Natural"
+msgstr ""
+
+#: radiant/patchdialog.cpp:642 radiant/surfacedialog.cpp:803
+#: radiant/surfacedialog.cpp:839
+msgid "Fit"
+msgstr ""
+
+#: radiant/patchdialog.cpp:652 radiant/surfacedialog.cpp:868
+msgid "Done"
+msgstr ""
+
+#: radiant/surfacedialog.cpp:546
+msgid "Surface inspector"
+msgstr ""
+
+#: radiant/surfacedialog.cpp:562
+msgid "Texture"
+msgstr ""
+
+#: radiant/surfacedialog.cpp:579
+msgid "Horizontal shift"
+msgstr ""
+
+#: radiant/surfacedialog.cpp:596 radiant/surfacedialog.cpp:630
+#: radiant/surfacedialog.cpp:664 radiant/surfacedialog.cpp:698
+#: radiant/surfacedialog.cpp:733
+msgid "Step"
+msgstr ""
+
+#: radiant/surfacedialog.cpp:613
+msgid "Vertical shift"
+msgstr ""
+
+#: radiant/surfacedialog.cpp:647
+msgid "Horizontal stretch"
+msgstr ""
+
+#: radiant/surfacedialog.cpp:681
+msgid "Vertical stretch"
+msgstr ""
+
+#: radiant/surfacedialog.cpp:751
+msgid "Match Grid"
+msgstr ""
+
+#: radiant/surfacedialog.cpp:788
+msgid "Height"
+msgstr ""
+
+#: radiant/surfacedialog.cpp:794
+msgid "Axial"
+msgstr ""
+
+#: radiant/surfacedialog.cpp:892
+msgid "Test"
 msgstr ""

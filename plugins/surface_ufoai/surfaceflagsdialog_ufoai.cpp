@@ -22,6 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <gtk/gtk.h>
 #include <glib/gi18n.h>
 #include <gdk/gdkkeysyms.h>
+#include <glib/gi18n.h>
 
 #include "surfdlg_plugin.h"
 
@@ -291,7 +292,7 @@ GtkWidget* Create_UFOAIFlagsDialog (GtkWidget* surfacedialog_widget)
 	const char *buttonLabel;
 	char buffer[8];
 
-	frame1 = gtk_frame_new ("Flags");
+	frame1 = gtk_frame_new (_("Flags"));
 	gtk_widget_show (frame1);
 	gtk_container_add (GTK_CONTAINER (surfacedialog_widget), frame1);
 

@@ -28,6 +28,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <gdk/gdkkeysyms.h>
 #include "stdafx.h"
 #include "surfacedialog.h"
+#include <glib/gi18n.h>
 
 SurfaceDlg g_dlgSurface;
 
@@ -57,7 +58,7 @@ bool g_bListenUpdate = true;
 
 #ifdef _DEBUG
 // experimental stuff, work directly on BP
-static void OnTest(GtkWidget *widget, gpointer data) 
+static void OnTest(GtkWidget *widget, gpointer data)
 {
   if (!g_qeglobals.m_bBrushPrimitMode)
   {
@@ -100,7 +101,7 @@ static void OnTest(GtkWidget *widget, gpointer data)
   m[0][0] = 1; m[1][1] = 1; m[0][2] = -Os; m[1][2] = -Ot;
   BPMatMul(m, pBP->coords, aux);
   m[0][2] = Os; m[1][2] = Ot; // now M^-1
-  BPMatMul(aux, m, BPO); 
+  BPMatMul(aux, m, BPO);
 
 #if 0
   // apply a scaling
@@ -162,7 +163,7 @@ static void OnTest(GtkWidget *widget, gpointer data)
   vec_t BPO[2][3];
   memcpy(&BPO, &pBP->coords, sizeof(vec_t)*6);
   BPO[0][2] = Os*(pBP->coords[0][0]-1.0) + Ot*pBP->coords[0][1] + pBP->coords[0][2];
-  BPO[1][2] = Os*pBP->coords[1][0] + Ot*(pBP->coords[1][1]-1.0) + Ot*pBP->coords[1][2]; 
+  BPO[1][2] = Os*pBP->coords[1][0] + Ot*(pBP->coords[1][1]-1.0) + Ot*pBP->coords[1][2];
 
   // apply a scaling
   // scale factors against S and T axis, we apply on top of the existing matrix
@@ -192,7 +193,7 @@ static void OnTest(GtkWidget *widget, gpointer data)
   m[0][0] = 1; m[1][1] = 1; m[0][2] = -Os; m[1][2] = -Ot;
   BPMatMul(m, pBP->coords, aux);
   m[0][2] = Os; m[1][2] = Ot; // now M^-1
-  BPMatMul(aux, m, BPO); 
+  BPMatMul(aux, m, BPO);
 
   // apply a scaling
   // scale factors against S and T axis, we apply on top of the existing matrix
@@ -207,7 +208,7 @@ static void OnTest(GtkWidget *widget, gpointer data)
 */
 #endif
 
-static void OnDone(GtkWidget *widget, gpointer data) 
+static void OnDone(GtkWidget *widget, gpointer data)
 {
   g_dlgSurface.GetTexMods();
   g_dlgSurface.HideDlg ();
@@ -240,7 +241,7 @@ static void OnUpdate (GtkWidget *widget, gpointer data)
 
 // reflect the current changes in the views, and make sure
 // the changes are stored in the undo.
-static void OnApply (GtkWidget *widget, gpointer data) 
+static void OnApply (GtkWidget *widget, gpointer data)
 {
   if (!g_bListenChanged)
     return;
@@ -262,7 +263,7 @@ static gint OnTextureKey (GtkWidget* widget, GdkEventKey* event, gpointer data)
   return FALSE;
 }
 
-static void OnCancel(GtkWidget *widget, gpointer data) 
+static void OnCancel(GtkWidget *widget, gpointer data)
 {
   g_qeglobals.d_texturewin.texdef = g_old_texdef;
   // cancel the last do if we own it
@@ -364,7 +365,7 @@ static void OnIncrementChanged(GtkWidget *widget, gpointer data)
 // see fenris #2810
 void DoSnapTToGrid(float hscale, float vscale)
 {
-  if (hscale == 0.0f) 
+  if (hscale == 0.0f)
   {
     (g_qeglobals.m_bBrushPrimitMode) ? hscale = 1.0f : hscale = 0.5f;
   }
@@ -433,19 +434,19 @@ void SurfaceDlgFitAll()
   return;
 }
 
-static void OnBtnPatchdetails(GtkWidget *widget, gpointer data) 
+static void OnBtnPatchdetails(GtkWidget *widget, gpointer data)
 {
   Patch_NaturalizeSelected(true);
   Sys_UpdateWindows(W_ALL);
 }
 
-static void OnBtnPatchnatural(GtkWidget *widget, gpointer data) 
+static void OnBtnPatchnatural(GtkWidget *widget, gpointer data)
 {
   Patch_NaturalizeSelected();
   Sys_UpdateWindows(W_ALL);
 }
 
-static void OnBtnPatchreset(GtkWidget *widget, gpointer data) 
+static void OnBtnPatchreset(GtkWidget *widget, gpointer data)
 {
   float fx, fy;
 
@@ -454,7 +455,7 @@ static void OnBtnPatchreset(GtkWidget *widget, gpointer data)
   Sys_UpdateWindows(W_ALL);
 }
 
-static void OnBtnPatchFit(GtkWidget *widget, gpointer data) 
+static void OnBtnPatchFit(GtkWidget *widget, gpointer data)
 {
   Patch_ResetTexturing(1.0, 1.0);
   Sys_UpdateWindows(W_ALL);
@@ -467,7 +468,7 @@ static void OnBtnAxial(GtkWidget *widget, gpointer data)
   Sys_UpdateWindows(W_ALL);
 }
 
-static void OnBtnFaceFit(GtkWidget *widget, gpointer data) 
+static void OnBtnFaceFit(GtkWidget *widget, gpointer data)
 {
   g_dlgSurface.UpdateData(TRUE);
   if (g_ptrSelectedFaces.GetSize() == 0)
@@ -530,7 +531,7 @@ void SurfaceDlg::InitDefaultIncrement(texdef_t *tex)
   tex->shift[1] = 8;
   tex->scale[0] = 0.25;
   tex->scale[1] = 0.25;
-  tex->rotate = 10;      
+  tex->rotate = 10;
 }
 
 void SurfaceDlg::BuildDialog ()
@@ -542,7 +543,7 @@ void SurfaceDlg::BuildDialog ()
 
   load_window_pos (dlg, g_PrefsDlg.mWindowInfo.posSurfaceWnd);
 
-  gtk_window_set_title (GTK_WINDOW (dlg), "Surface inspector");
+  gtk_window_set_title (GTK_WINDOW (dlg), _("Surface inspector"));
   //g_signal_connect (G_OBJECT (dlg), "delete_event", G_CALLBACK (OnCancel), NULL);
   // we catch 'Enter' and interpret is as OnDone
   gtk_signal_connect (GTK_OBJECT (dlg), "key_press_event", GTK_SIGNAL_FUNC (OnDialogKey), NULL);
@@ -558,7 +559,7 @@ void SurfaceDlg::BuildDialog ()
   gtk_widget_show (hbox2);
   gtk_box_pack_start (GTK_BOX (vbox), hbox2, FALSE, TRUE, 0);
 
-  label = gtk_label_new ("Texture");
+  label = gtk_label_new (_("Texture"));
   gtk_widget_show (label);
   gtk_box_pack_start (GTK_BOX (hbox2), label, FALSE, TRUE, 0);
 
@@ -575,7 +576,7 @@ void SurfaceDlg::BuildDialog ()
   gtk_table_set_row_spacings (GTK_TABLE (table), 5);
   gtk_table_set_col_spacings (GTK_TABLE (table), 5);
 
-  label = gtk_label_new ("Horizontal shift");
+  label = gtk_label_new (_("Horizontal shift"));
   gtk_widget_show (label);
   gtk_misc_set_alignment (GTK_MISC (label), 0, 0);
   gtk_table_attach (GTK_TABLE (table), label, 0, 1, 0, 1,
@@ -592,13 +593,13 @@ void SurfaceDlg::BuildDialog ()
 		    (GtkAttachOptions) (0), 0, 0);
   gtk_widget_set_usize (spin, 60, -2);
 
-  label = gtk_label_new ("Step");
+  label = gtk_label_new (_("Step"));
   gtk_widget_show (label);
   gtk_misc_set_alignment (GTK_MISC (label), 0, 0);
   gtk_table_attach (GTK_TABLE (table), label, 2, 3, 0, 1,
 		    (GtkAttachOptions) (GTK_FILL),
 		    (GtkAttachOptions) (0), 0, 0);
-  
+
   entry = gtk_entry_new ();
   g_object_set_data (G_OBJECT (dlg), "hshift_inc", entry);
   gtk_signal_connect (GTK_OBJECT (entry), "changed",
@@ -609,7 +610,7 @@ void SurfaceDlg::BuildDialog ()
 		    (GtkAttachOptions) (0), 0, 0);
   gtk_widget_set_usize (entry, 50, -2);
 
-  label = gtk_label_new ("Vertical shift");
+  label = gtk_label_new (_("Vertical shift"));
   gtk_widget_show (label);
   gtk_misc_set_alignment (GTK_MISC (label), 0, 0);
   gtk_table_attach (GTK_TABLE (table), label, 0, 1, 1, 2,
@@ -625,14 +626,14 @@ void SurfaceDlg::BuildDialog ()
 		    (GtkAttachOptions) (GTK_FILL),
 		    (GtkAttachOptions) (0), 0, 0);
   gtk_widget_set_usize (spin, 60, -2);
-  
-  label = gtk_label_new ("Step");
+
+  label = gtk_label_new (_("Step"));
   gtk_widget_show (label);
   gtk_misc_set_alignment (GTK_MISC (label), 0, 0);
   gtk_table_attach (GTK_TABLE (table), label, 2, 3, 1, 2,
 		    (GtkAttachOptions) (GTK_FILL),
 		    (GtkAttachOptions) (0), 0, 0);
-  
+
   entry = gtk_entry_new ();
   g_object_set_data (G_OBJECT (dlg), "vshift_inc", entry);
   gtk_signal_connect (GTK_OBJECT (entry), "changed",
@@ -643,7 +644,7 @@ void SurfaceDlg::BuildDialog ()
 		    (GtkAttachOptions) (0), 0, 0);
   gtk_widget_set_usize (entry, 50, -2);
 
-  label = gtk_label_new ("Horizontal stretch");
+  label = gtk_label_new (_("Horizontal stretch"));
   gtk_widget_show (label);
   gtk_misc_set_alignment (GTK_MISC (label), 0, 0);
   gtk_table_attach (GTK_TABLE (table), label, 0, 1, 2, 3,
@@ -660,13 +661,13 @@ void SurfaceDlg::BuildDialog ()
 		    (GtkAttachOptions) (0), 0, 0);
   gtk_widget_set_usize (spin, 60, -2);
 
-  label = gtk_label_new ("Step");
+  label = gtk_label_new (_("Step"));
   gtk_widget_show (label);
   gtk_misc_set_alignment (GTK_MISC (label), 0, 0);
   gtk_table_attach (GTK_TABLE (table), label, 2, 3, 2, 3,
 		    (GtkAttachOptions) (GTK_FILL),
 		    (GtkAttachOptions) (0), 2, 3);
-  
+
   entry = gtk_entry_new ();
   g_object_set_data (G_OBJECT (dlg), "hscale_inc", entry);
   gtk_signal_connect (GTK_OBJECT (entry), "changed",
@@ -677,7 +678,7 @@ void SurfaceDlg::BuildDialog ()
 		    (GtkAttachOptions) (0), 2, 3);
   gtk_widget_set_usize (entry, 50, -2);
 
-  label = gtk_label_new ("Vertical stretch");
+  label = gtk_label_new (_("Vertical stretch"));
   gtk_widget_show (label);
   gtk_misc_set_alignment (GTK_MISC (label), 0, 0);
   gtk_table_attach (GTK_TABLE (table), label, 0, 1, 3, 4,
@@ -693,14 +694,14 @@ void SurfaceDlg::BuildDialog ()
 		    (GtkAttachOptions) (GTK_FILL),
 		    (GtkAttachOptions) (0), 0, 0);
   gtk_widget_set_usize (spin, 60, -2);
-  
-  label = gtk_label_new ("Step");
+
+  label = gtk_label_new (_("Step"));
   gtk_widget_show (label);
   gtk_misc_set_alignment (GTK_MISC (label), 0, 0);
   gtk_table_attach (GTK_TABLE (table), label, 2, 3, 3, 4,
 		    (GtkAttachOptions) (GTK_FILL),
 		    (GtkAttachOptions) (0), 0, 0);
-  
+
   entry = gtk_entry_new ();
   g_object_set_data (G_OBJECT (dlg), "vscale_inc", entry);
   gtk_signal_connect (GTK_OBJECT (entry), "changed",
@@ -711,7 +712,7 @@ void SurfaceDlg::BuildDialog ()
 		    (GtkAttachOptions) (0), 0, 0);
   gtk_widget_set_usize (entry, 50, -2);
 
-  label = gtk_label_new ("Rotate");
+  label = gtk_label_new (_("Rotate"));
   gtk_widget_show (label);
   gtk_misc_set_alignment (GTK_MISC (label), 0, 0);
   gtk_table_attach (GTK_TABLE (table), label, 0, 1, 4, 5,
@@ -729,13 +730,13 @@ void SurfaceDlg::BuildDialog ()
   gtk_widget_set_usize (spin, 60, -2);
   gtk_spin_button_set_wrap (GTK_SPIN_BUTTON (spin), TRUE);
 
-  label = gtk_label_new ("Step");
+  label = gtk_label_new (_("Step"));
   gtk_widget_show (label);
   gtk_misc_set_alignment (GTK_MISC (label), 0, 0);
   gtk_table_attach (GTK_TABLE (table), label, 2, 3, 4, 5,
 		    (GtkAttachOptions) (GTK_FILL),
 		    (GtkAttachOptions) (0), 0, 0);
-  
+
   entry = gtk_entry_new ();
   g_object_set_data (G_OBJECT (dlg), "rotate_inc", entry);
   gtk_signal_connect (GTK_OBJECT (entry), "changed",
@@ -747,7 +748,7 @@ void SurfaceDlg::BuildDialog ()
   gtk_widget_set_usize (entry, 50, -2);
 
   // match grid button
-  button = gtk_button_new_with_label ("Match Grid");
+  button = gtk_button_new_with_label (_("Match Grid"));
   gtk_widget_show (button);
   gtk_table_attach (GTK_TABLE (table), button, 2, 4, 5, 6,
 		    (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
@@ -755,7 +756,7 @@ void SurfaceDlg::BuildDialog ()
   gtk_signal_connect (GTK_OBJECT (button), "clicked",
                       GTK_SIGNAL_FUNC (OnBtnMatchGrid), NULL);
 
-  frame = gtk_frame_new ("Texturing");
+  frame = gtk_frame_new (_("Texturing"));
   gtk_widget_show (frame);
   gtk_box_pack_start (GTK_BOX (vbox), frame, FALSE, TRUE, 0);
 
@@ -784,13 +785,13 @@ void SurfaceDlg::BuildDialog ()
 		    (GtkAttachOptions) (GTK_FILL),
 		    (GtkAttachOptions) (0), 0, 0);
 
-  label = gtk_label_new ("Height");
+  label = gtk_label_new (_("Height"));
   gtk_widget_show (label);
   gtk_table_attach (GTK_TABLE (table), label, 3, 4, 0, 1,
 		    (GtkAttachOptions) (GTK_FILL),
 		    (GtkAttachOptions) (0), 0, 0);
 
-  button = gtk_button_new_with_label ("Axial");
+  button = gtk_button_new_with_label (_("Axial"));
   gtk_widget_show (button);
   gtk_table_attach (GTK_TABLE (table), button, 0, 1, 1, 2,
 		    (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
@@ -799,7 +800,7 @@ void SurfaceDlg::BuildDialog ()
                       GTK_SIGNAL_FUNC (OnBtnAxial), NULL);
   gtk_widget_set_usize (button, 60, -2);
 
-  button = gtk_button_new_with_label ("Fit");
+  button = gtk_button_new_with_label (_("Fit"));
   gtk_widget_show (button);
   gtk_table_attach (GTK_TABLE (table), button, 1, 2, 1, 2,
 		    (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
@@ -808,7 +809,7 @@ void SurfaceDlg::BuildDialog ()
                       GTK_SIGNAL_FUNC (OnBtnFaceFit), NULL);
   gtk_widget_set_usize (button, 60, -2);
 
-  button = gtk_button_new_with_label ("CAP");
+  button = gtk_button_new_with_label (_("CAP"));
   gtk_widget_show (button);
   gtk_table_attach (GTK_TABLE (table), button, 0, 1, 3, 4,
 		    (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
@@ -817,7 +818,7 @@ void SurfaceDlg::BuildDialog ()
                       GTK_SIGNAL_FUNC (OnBtnPatchdetails), NULL);
   gtk_widget_set_usize (button, 60, -2);
 
-  button = gtk_button_new_with_label ("Set...");
+  button = gtk_button_new_with_label (_("Set..."));
   gtk_widget_show (button);
   gtk_table_attach (GTK_TABLE (table), button, 1, 2, 3, 4,
 		    (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
@@ -826,7 +827,7 @@ void SurfaceDlg::BuildDialog ()
                       GTK_SIGNAL_FUNC (OnBtnPatchreset), NULL);
   gtk_widget_set_usize (button, 60, -2);
 
-  button = gtk_button_new_with_label ("Natural");
+  button = gtk_button_new_with_label (_("Natural"));
   gtk_widget_show (button);
   gtk_table_attach (GTK_TABLE (table), button, 2, 3, 3, 4,
 		    (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
@@ -835,7 +836,7 @@ void SurfaceDlg::BuildDialog ()
                       GTK_SIGNAL_FUNC (OnBtnPatchnatural), NULL);
   gtk_widget_set_usize (button, 60, -2);
 
-  button = gtk_button_new_with_label ("Fit");
+  button = gtk_button_new_with_label (_("Fit"));
   gtk_widget_show (button);
   gtk_table_attach (GTK_TABLE (table), button, 3, 4, 3, 4,
 		    (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
@@ -864,21 +865,21 @@ void SurfaceDlg::BuildDialog ()
   gtk_widget_show (hbox2);
   gtk_box_pack_start (GTK_BOX (vbox), hbox2, FALSE, TRUE, 0);
 
-  button = gtk_button_new_with_label ("Done");
+  button = gtk_button_new_with_label (_("Done"));
   gtk_widget_show (button);
   gtk_box_pack_start (GTK_BOX (hbox2), button, FALSE, FALSE, 0);
   gtk_signal_connect (GTK_OBJECT (button), "clicked",
                       GTK_SIGNAL_FUNC (OnDone), NULL);
   gtk_widget_set_usize (button, 60, -2);
 
-  button = gtk_button_new_with_label ("Apply");
+  button = gtk_button_new_with_label (_("Apply"));
   gtk_widget_show (button);
   gtk_box_pack_start (GTK_BOX (hbox2), button, FALSE, FALSE, 0);
   gtk_signal_connect (GTK_OBJECT (button), "clicked",
                       GTK_SIGNAL_FUNC (OnApply), NULL);
   gtk_widget_set_usize (button, 60, -2);
 
-  button = gtk_button_new_with_label ("Cancel");
+  button = gtk_button_new_with_label (_("Cancel"));
   gtk_widget_show (button);
   gtk_box_pack_start (GTK_BOX (hbox2), button, FALSE, FALSE, 0);
   gtk_signal_connect (GTK_OBJECT (button), "clicked",
@@ -888,7 +889,7 @@ void SurfaceDlg::BuildDialog ()
   // that's a bit of trashy stuff from Textool-v2 branch
 #ifdef _DEBUG
   // FIXME: testing only, scaling in BP mode
-  button = gtk_button_new_with_label ("Test");
+  button = gtk_button_new_with_label (_("Test"));
   gtk_widget_show (button);
   gtk_box_pack_start (GTK_BOX (hbox2), button, FALSE, FALSE, 0);
   gtk_signal_connect (GTK_OBJECT (button), "clicked",
@@ -923,7 +924,7 @@ void SurfaceDlg::SetTexMods()
 
   if (!g_surfwin)
     return;
-  
+
   if (g_ptrSelectedFaces.GetSize() > 0)
   {
     face_t *selFace = reinterpret_cast<face_t*>(g_ptrSelectedFaces.GetAt(0));
@@ -946,9 +947,9 @@ void SurfaceDlg::SetTexMods()
   // brush primitive mode : compute fake shift scale rot representation
   if (g_qeglobals.m_bBrushPrimitMode)
     TexMatToFakeTexCoords( bpt->coords, m_shift, &m_rotate, m_scale );
-  
+
   g_bListenChanged = false;
-  
+
   if(strncmp(pt->GetName(), "textures/", 9) != 0)
     pt->SetName(SHADER_NOT_FOUND);
   gtk_entry_set_text (GTK_ENTRY (GetDlgWidget ("texture")), pt->GetName()+9);
@@ -1010,7 +1011,7 @@ void SurfaceDlg::SetTexMods()
   gtk_entry_set_text (GTK_ENTRY (GetDlgWidget ("rotate_inc")), buf);
 
   g_bListenChanged = true;
-  
+
   // undo tricks: set the undo id to zero so we don't attempt to undo something that does not belong to us
   m_nUndoId = 0;
   // store the current texdef as our escape route if user hits OnCancel
@@ -1035,7 +1036,7 @@ void SurfaceDlg::GetTexMods()
 #ifdef DBG_SI
   Sys_Printf("SurfaceDlg::GetTexMods\n");
 #endif
-  
+
   if (g_ptrSelectedFaces.GetSize() > 0)
   {
     //++timo just a test, we disable the undo when working on selected faces
@@ -1053,13 +1054,13 @@ void SurfaceDlg::GetTexMods()
     Sys_Printf("pt = &g_qeglobals.d_texturewin.texdef\n");
 #endif
 //  }
-  
+
   const char* text = gtk_entry_get_text (GTK_ENTRY (GetDlgWidget ("texture")));
 
 #ifdef DBG_SI
   Sys_Printf("pt->SetName(%s)\n", text );
 #endif
-  
+
   // TTimo: detect and refuse invalid texture names (at least the ones with spaces)
   if (text[0] <= ' ' || strchr(text, ' '))
   {
@@ -1075,7 +1076,7 @@ void SurfaceDlg::GetTexMods()
   }
 
 
-  (g_qeglobals.m_bBrushPrimitMode ? m_shift[0] : pt->shift[0]) = 
+  (g_qeglobals.m_bBrushPrimitMode ? m_shift[0] : pt->shift[0]) =
     gtk_spin_button_get_value_as_float (GTK_SPIN_BUTTON (GetDlgWidget ("hshift")));
   (g_qeglobals.m_bBrushPrimitMode ? m_shift[1] : pt->shift[1]) =
     gtk_spin_button_get_value_as_float (GTK_SPIN_BUTTON (GetDlgWidget ("vshift")));

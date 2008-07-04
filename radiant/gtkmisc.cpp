@@ -924,7 +924,7 @@ int WINAPI gtk_MessageBox (void *parent, const char* lpText, const char* lpCapti
 
   if (mode == MB_OK)
   {
-    w = gtk_button_new_with_label ("Ok");
+    w = gtk_button_new_with_label (_("Ok"));
     gtk_box_pack_start (GTK_BOX (hbox), w, TRUE, TRUE, 0);
     gtk_signal_connect (GTK_OBJECT (w), "clicked",
                         GTK_SIGNAL_FUNC (dialog_button_callback), GINT_TO_POINTER (IDOK));
@@ -937,7 +937,7 @@ int WINAPI gtk_MessageBox (void *parent, const char* lpText, const char* lpCapti
   }
   else if (mode ==  MB_OKCANCEL)
   {
-    w = gtk_button_new_with_label ("Ok");
+    w = gtk_button_new_with_label (_("Ok"));
     gtk_box_pack_start (GTK_BOX (hbox), w, TRUE, TRUE, 0);
     gtk_signal_connect (GTK_OBJECT (w), "clicked",
                         GTK_SIGNAL_FUNC (dialog_button_callback), GINT_TO_POINTER (IDOK));
@@ -946,7 +946,7 @@ int WINAPI gtk_MessageBox (void *parent, const char* lpText, const char* lpCapti
     gtk_widget_grab_default (w);
     gtk_widget_show (w);
 
-    w = gtk_button_new_with_label ("Cancel");
+    w = gtk_button_new_with_label (_("Cancel"));
     gtk_box_pack_start (GTK_BOX (hbox), w, TRUE, TRUE, 0);
     gtk_signal_connect (GTK_OBJECT (w), "clicked",
                         GTK_SIGNAL_FUNC (dialog_button_callback), GINT_TO_POINTER (IDCANCEL));
@@ -956,7 +956,7 @@ int WINAPI gtk_MessageBox (void *parent, const char* lpText, const char* lpCapti
   }
   else if (mode == MB_YESNOCANCEL)
   {
-    w = gtk_button_new_with_label ("Yes");
+    w = gtk_button_new_with_label (_("Yes"));
     gtk_box_pack_start (GTK_BOX (hbox), w, TRUE, TRUE, 0);
     gtk_signal_connect (GTK_OBJECT (w), "clicked",
                         GTK_SIGNAL_FUNC (dialog_button_callback), GINT_TO_POINTER (IDYES));
@@ -964,13 +964,13 @@ int WINAPI gtk_MessageBox (void *parent, const char* lpText, const char* lpCapti
     gtk_widget_grab_default (w);
     gtk_widget_show (w);
 
-    w = gtk_button_new_with_label ("No");
+    w = gtk_button_new_with_label (_("No"));
     gtk_box_pack_start (GTK_BOX (hbox), w, TRUE, TRUE, 0);
     gtk_signal_connect (GTK_OBJECT (w), "clicked",
                         GTK_SIGNAL_FUNC (dialog_button_callback), GINT_TO_POINTER (IDNO));
     gtk_widget_show (w);
 
-    w = gtk_button_new_with_label ("Cancel");
+    w = gtk_button_new_with_label (_("Cancel"));
     gtk_box_pack_start (GTK_BOX (hbox), w, TRUE, TRUE, 0);
     gtk_signal_connect (GTK_OBJECT (w), "clicked",
                         GTK_SIGNAL_FUNC (dialog_button_callback), GINT_TO_POINTER (IDCANCEL));
@@ -979,7 +979,7 @@ int WINAPI gtk_MessageBox (void *parent, const char* lpText, const char* lpCapti
   }
   else /* if (mode == MB_YESNO) */
   {
-    w = gtk_button_new_with_label ("Yes");
+    w = gtk_button_new_with_label (_("Yes"));
     gtk_box_pack_start (GTK_BOX (hbox), w, TRUE, TRUE, 0);
     gtk_signal_connect (GTK_OBJECT (w), "clicked",
                         GTK_SIGNAL_FUNC (dialog_button_callback), GINT_TO_POINTER (IDYES));
@@ -987,7 +987,7 @@ int WINAPI gtk_MessageBox (void *parent, const char* lpText, const char* lpCapti
     gtk_widget_grab_default (w);
     gtk_widget_show (w);
 
-    w = gtk_button_new_with_label ("No");
+    w = gtk_button_new_with_label (_("No"));
     gtk_box_pack_start (GTK_BOX (hbox), w, TRUE, TRUE, 0);
     gtk_signal_connect (GTK_OBJECT (w), "clicked",
                         GTK_SIGNAL_FUNC (dialog_button_callback), GINT_TO_POINTER (IDNO));
@@ -997,7 +997,7 @@ int WINAPI gtk_MessageBox (void *parent, const char* lpText, const char* lpCapti
 
   if (URL)
   {
-    w = gtk_button_new_with_label ("Go to URL");
+    w = gtk_button_new_with_label (_("Go to URL"));
     gtk_box_pack_start (GTK_BOX (hbox), w, TRUE, TRUE, 0);
     gtk_signal_connect (GTK_OBJECT (w), "clicked",
                         GTK_SIGNAL_FUNC (dialog_url_callback), NULL);
