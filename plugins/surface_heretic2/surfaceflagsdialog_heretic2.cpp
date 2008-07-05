@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h>
+#include <glib/gi18n.h>
 
 #include "surfdlg_plugin.h"
 
@@ -192,7 +193,6 @@ void clear_all_buttons_and_values()
 
 void SetFlagButtons_Heretic2(texdef_to_face_t *texdef_face_list, bool b_isListEmpty)
 {
-  int i;
   int contents = 0;
   int flags = 0;
   int value = 0;
@@ -958,10 +958,6 @@ on_surf_value_entry_insert_text         (GtkEditable     *editable,
 {
   int i, count=0;
   gchar *result;
-  int entry_value;
-  texdef_t *pt;
-  brush_t *b;
-  face_t *f;
 
   // Limit input to digits, throwing out anything else
   // Modified from Gtk FAQ for text filtering of GtkEntry
@@ -998,7 +994,6 @@ GtkWidget* Create_Heretic2FlagsDialog (GtkWidget* surfacedialog_widget)
   GtkWidget *frame2;
   GtkWidget *hbox4;
   GtkWidget *label4;
-  GtkWidget *vbox4;
   GtkWidget *table3;
   GtkWidget *label5;
 
@@ -1009,7 +1004,7 @@ GtkWidget* Create_Heretic2FlagsDialog (GtkWidget* surfacedialog_widget)
   GtkWidget *label3;
 
 
-  frame1 = gtk_frame_new ("Brush/Face Flags");
+  frame1 = gtk_frame_new (_("Brush/Face Flags"));
   gtk_widget_show (frame1);
   gtk_container_add (GTK_CONTAINER (surfacedialog_widget), frame1);
 
@@ -1025,73 +1020,73 @@ GtkWidget* Create_Heretic2FlagsDialog (GtkWidget* surfacedialog_widget)
   gtk_widget_show (table1);
   gtk_box_pack_start (GTK_BOX (vbox3), table1, TRUE, TRUE, 0);
 
-  surface_lightbutton = gtk_toggle_button_new_with_mnemonic ("Light");
+  surface_lightbutton = gtk_toggle_button_new_with_mnemonic (_("Light"));
   gtk_widget_show (surface_lightbutton);
   gtk_table_attach (GTK_TABLE (table1), surface_lightbutton, 0, 1, 0, 1,
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), 0, 0);
 
-  surface_slickbutton = gtk_toggle_button_new_with_mnemonic ("Slick");
+  surface_slickbutton = gtk_toggle_button_new_with_mnemonic (_("Slick"));
   gtk_widget_show (surface_slickbutton);
   gtk_table_attach (GTK_TABLE (table1), surface_slickbutton, 1, 2, 0, 1,
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), 0, 0);
 
-  surface_skybutton = gtk_toggle_button_new_with_mnemonic ("Sky");
+  surface_skybutton = gtk_toggle_button_new_with_mnemonic (_("Sky"));
   gtk_widget_show (surface_skybutton);
   gtk_table_attach (GTK_TABLE (table1), surface_skybutton, 2, 3, 0, 1,
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), 0, 0);
 
-  surface_warpbutton = gtk_toggle_button_new_with_mnemonic ("Warp");
+  surface_warpbutton = gtk_toggle_button_new_with_mnemonic (_("Warp"));
   gtk_widget_show (surface_warpbutton);
   gtk_table_attach (GTK_TABLE (table1), surface_warpbutton, 3, 4, 0, 1,
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), 0, 0);
 
-  surface_trans33button = gtk_toggle_button_new_with_mnemonic ("Trans33");
+  surface_trans33button = gtk_toggle_button_new_with_mnemonic (_("Trans33"));
   gtk_widget_show (surface_trans33button);
   gtk_table_attach (GTK_TABLE (table1), surface_trans33button, 0, 1, 1, 2,
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), 0, 0);
 
-  surface_trans66button = gtk_toggle_button_new_with_mnemonic ("Trans66");
+  surface_trans66button = gtk_toggle_button_new_with_mnemonic (_("Trans66"));
   gtk_widget_show (surface_trans66button);
   gtk_table_attach (GTK_TABLE (table1), surface_trans66button, 1, 2, 1, 2,
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), 0, 0);
 
-  surface_flowingbutton = gtk_toggle_button_new_with_mnemonic ("Flowing");
+  surface_flowingbutton = gtk_toggle_button_new_with_mnemonic (_("Flowing"));
   gtk_widget_show (surface_flowingbutton);
   gtk_table_attach (GTK_TABLE (table1), surface_flowingbutton, 2, 3, 1, 2,
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), 0, 0);
 
-  surface_nodrawbutton = gtk_toggle_button_new_with_mnemonic ("NoDraw");
+  surface_nodrawbutton = gtk_toggle_button_new_with_mnemonic (_("NoDraw"));
   gtk_widget_show (surface_nodrawbutton);
   gtk_table_attach (GTK_TABLE (table1), surface_nodrawbutton, 3, 4, 1, 2,
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), 0, 0);
 
-  surface_tallwallbutton = gtk_toggle_button_new_with_mnemonic ("TallWall");
+  surface_tallwallbutton = gtk_toggle_button_new_with_mnemonic (_("TallWall"));
   gtk_widget_show (surface_tallwallbutton);
   gtk_table_attach (GTK_TABLE (table1), surface_tallwallbutton, 0, 1, 2, 3,
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), 0, 0);
 
-  surface_alphatexbutton = gtk_toggle_button_new_with_mnemonic ("AlphaTex");
+  surface_alphatexbutton = gtk_toggle_button_new_with_mnemonic (_("AlphaTex"));
   gtk_widget_show (surface_alphatexbutton);
   gtk_table_attach (GTK_TABLE (table1), surface_alphatexbutton, 1, 2, 2, 3,
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), 0, 0);
 
-  surface_animspeedbutton = gtk_toggle_button_new_with_mnemonic ("AnimSpeed");
+  surface_animspeedbutton = gtk_toggle_button_new_with_mnemonic (_("AnimSpeed"));
   gtk_widget_show (surface_animspeedbutton);
   gtk_table_attach (GTK_TABLE (table1), surface_animspeedbutton, 2, 3, 2, 3,
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), 0, 0);
 
-  surface_undulatebutton = gtk_toggle_button_new_with_mnemonic ("Undulate");
+  surface_undulatebutton = gtk_toggle_button_new_with_mnemonic (_("Undulate"));
   gtk_widget_show (surface_undulatebutton);
   gtk_table_attach (GTK_TABLE (table1), surface_undulatebutton, 3, 4, 2, 3,
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
@@ -1107,23 +1102,23 @@ GtkWidget* Create_Heretic2FlagsDialog (GtkWidget* surfacedialog_widget)
   gtk_widget_show (hbox4);
   gtk_container_add (GTK_CONTAINER (frame2), hbox4);
 
-  surf_gravel_radiobutton = gtk_radio_button_new_with_mnemonic (NULL, "Gravel");
+  surf_gravel_radiobutton = gtk_radio_button_new_with_mnemonic (NULL, _("Gravel"));
   gtk_widget_show (surf_gravel_radiobutton);
   gtk_box_pack_start (GTK_BOX (hbox4), surf_gravel_radiobutton, TRUE, FALSE, 0);
 
-  surf_metal_radiobutton = gtk_radio_button_new_with_mnemonic_from_widget (GTK_RADIO_BUTTON(surf_gravel_radiobutton), "Metal");
+  surf_metal_radiobutton = gtk_radio_button_new_with_mnemonic_from_widget (GTK_RADIO_BUTTON(surf_gravel_radiobutton), _("Metal"));
   gtk_widget_show (surf_metal_radiobutton);
   gtk_box_pack_start (GTK_BOX (hbox4), surf_metal_radiobutton, TRUE, FALSE, 0);
 
-  surf_stone_radiobutton = gtk_radio_button_new_with_mnemonic_from_widget (GTK_RADIO_BUTTON(surf_metal_radiobutton), "Stone");
+  surf_stone_radiobutton = gtk_radio_button_new_with_mnemonic_from_widget (GTK_RADIO_BUTTON(surf_metal_radiobutton), _("Stone"));
   gtk_widget_show (surf_stone_radiobutton);
   gtk_box_pack_start (GTK_BOX (hbox4), surf_stone_radiobutton, TRUE, FALSE, 0);
 
-  surf_wood_radiobutton = gtk_radio_button_new_with_mnemonic_from_widget (GTK_RADIO_BUTTON(surf_stone_radiobutton), "Wood");
+  surf_wood_radiobutton = gtk_radio_button_new_with_mnemonic_from_widget (GTK_RADIO_BUTTON(surf_stone_radiobutton), _("Wood"));
   gtk_widget_show (surf_wood_radiobutton);
   gtk_box_pack_start (GTK_BOX (hbox4), surf_wood_radiobutton, TRUE, FALSE, 0);
 
-  label4 = gtk_label_new ("Material");
+  label4 = gtk_label_new (_("Material"));
   gtk_widget_show (label4);
   gtk_frame_set_label_widget (GTK_FRAME (frame2), label4);
   gtk_label_set_justify (GTK_LABEL (label4), GTK_JUSTIFY_LEFT);
@@ -1139,7 +1134,7 @@ GtkWidget* Create_Heretic2FlagsDialog (GtkWidget* surfacedialog_widget)
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
                     (GtkAttachOptions) (GTK_FILL), 0, 0);
 
-  label5 = gtk_label_new ("Value: ");
+  label5 = gtk_label_new (_("Value: "));
   gtk_widget_show (label5);
   gtk_table_attach (GTK_TABLE (table3), label5, 1, 2, 0, 1,
                     (GtkAttachOptions) (0),
@@ -1159,7 +1154,7 @@ GtkWidget* Create_Heretic2FlagsDialog (GtkWidget* surfacedialog_widget)
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
                     (GtkAttachOptions) (GTK_FILL), 0, 0);
 
-  label2 = gtk_label_new ("Surface Flags");
+  label2 = gtk_label_new (_("Surface Flags"));
   gtk_widget_show (label2);
   gtk_notebook_set_tab_label (GTK_NOTEBOOK (notebook1), gtk_notebook_get_nth_page (GTK_NOTEBOOK (notebook1), 0), label2);
   gtk_label_set_justify (GTK_LABEL (label2), GTK_JUSTIFY_LEFT);
@@ -1168,127 +1163,127 @@ GtkWidget* Create_Heretic2FlagsDialog (GtkWidget* surfacedialog_widget)
   gtk_widget_show (table2);
   gtk_container_add (GTK_CONTAINER (notebook1), table2);
 
-  content_solidbutton = gtk_toggle_button_new_with_mnemonic ("Solid");
+  content_solidbutton = gtk_toggle_button_new_with_mnemonic (_("Solid"));
   gtk_widget_show (content_solidbutton);
   gtk_table_attach (GTK_TABLE (table2), content_solidbutton, 0, 1, 0, 1,
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), 0, 0);
 
-  content_windowbutton = gtk_toggle_button_new_with_mnemonic ("Window");
+  content_windowbutton = gtk_toggle_button_new_with_mnemonic (_("Window"));
   gtk_widget_show (content_windowbutton);
   gtk_table_attach (GTK_TABLE (table2), content_windowbutton, 1, 2, 0, 1,
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), 0, 0);
 
-  content_illusbutton = gtk_toggle_button_new_with_mnemonic ("Illusion");
+  content_illusbutton = gtk_toggle_button_new_with_mnemonic (_("Illusion"));
   gtk_widget_show (content_illusbutton);
   gtk_table_attach (GTK_TABLE (table2), content_illusbutton, 2, 3, 0, 1,
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), 0, 0);
 
-  content_lavabutton = gtk_toggle_button_new_with_mnemonic ("Lava");
+  content_lavabutton = gtk_toggle_button_new_with_mnemonic (_("Lava"));
   gtk_widget_show (content_lavabutton);
   gtk_table_attach (GTK_TABLE (table2), content_lavabutton, 3, 4, 0, 1,
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), 0, 0);
 
-  content_slimebutton = gtk_toggle_button_new_with_mnemonic ("Slime");
+  content_slimebutton = gtk_toggle_button_new_with_mnemonic (_("Slime"));
   gtk_widget_show (content_slimebutton);
   gtk_table_attach (GTK_TABLE (table2), content_slimebutton, 0, 1, 1, 2,
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), 0, 0);
 
-  content_waterbutton = gtk_toggle_button_new_with_mnemonic ("Water");
+  content_waterbutton = gtk_toggle_button_new_with_mnemonic (_("Water"));
   gtk_widget_show (content_waterbutton);
   gtk_table_attach (GTK_TABLE (table2), content_waterbutton, 1, 2, 1, 2,
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), 0, 0);
 
-  content_mistbutton = gtk_toggle_button_new_with_mnemonic ("Mist");
+  content_mistbutton = gtk_toggle_button_new_with_mnemonic (_("Mist"));
   gtk_widget_show (content_mistbutton);
   gtk_table_attach (GTK_TABLE (table2), content_mistbutton, 2, 3, 1, 2,
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), 0, 0);
 
-  content_areaportalbutton = gtk_toggle_button_new_with_mnemonic ("AreaPortal");
+  content_areaportalbutton = gtk_toggle_button_new_with_mnemonic (_("AreaPortal"));
   gtk_widget_show (content_areaportalbutton);
   gtk_table_attach (GTK_TABLE (table2), content_areaportalbutton, 3, 4, 1, 2,
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), 0, 0);
 
-  content_playerclipbutton = gtk_toggle_button_new_with_mnemonic ("PlayerClip");
+  content_playerclipbutton = gtk_toggle_button_new_with_mnemonic (_("PlayerClip"));
   gtk_widget_show (content_playerclipbutton);
   gtk_table_attach (GTK_TABLE (table2), content_playerclipbutton, 0, 1, 2, 3,
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), 0, 0);
 
-  content_monsterclipbutton = gtk_toggle_button_new_with_mnemonic ("MonsterClip");
+  content_monsterclipbutton = gtk_toggle_button_new_with_mnemonic (_("MonsterClip"));
   gtk_widget_show (content_monsterclipbutton);
   gtk_table_attach (GTK_TABLE (table2), content_monsterclipbutton, 1, 2, 2, 3,
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), 0, 0);
 
-  content_current0button = gtk_toggle_button_new_with_mnemonic ("Current 0");
+  content_current0button = gtk_toggle_button_new_with_mnemonic (_("Current 0"));
   gtk_widget_show (content_current0button);
   gtk_table_attach (GTK_TABLE (table2), content_current0button, 2, 3, 2, 3,
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), 0, 0);
 
-  content_current90button = gtk_toggle_button_new_with_mnemonic ("Current 90");
+  content_current90button = gtk_toggle_button_new_with_mnemonic (_("Current 90"));
   gtk_widget_show (content_current90button);
   gtk_table_attach (GTK_TABLE (table2), content_current90button, 3, 4, 2, 3,
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), 0, 0);
 
-  content_current180button = gtk_toggle_button_new_with_mnemonic ("Current 180");
+  content_current180button = gtk_toggle_button_new_with_mnemonic (_("Current 180"));
   gtk_widget_show (content_current180button);
   gtk_table_attach (GTK_TABLE (table2), content_current180button, 0, 1, 3, 4,
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), 0, 0);
 
-  content_current270button = gtk_toggle_button_new_with_mnemonic ("Current 270");
+  content_current270button = gtk_toggle_button_new_with_mnemonic (_("Current 270"));
   gtk_widget_show (content_current270button);
   gtk_table_attach (GTK_TABLE (table2), content_current270button, 1, 2, 3, 4,
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), 0, 0);
 
-  content_currentUPbutton = gtk_toggle_button_new_with_mnemonic ("Current UP");
+  content_currentUPbutton = gtk_toggle_button_new_with_mnemonic (_("Current UP"));
   gtk_widget_show (content_currentUPbutton);
   gtk_table_attach (GTK_TABLE (table2), content_currentUPbutton, 2, 3, 3, 4,
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), 0, 0);
 
-  content_currentDOWNbutton = gtk_toggle_button_new_with_mnemonic ("Current DOWN");
+  content_currentDOWNbutton = gtk_toggle_button_new_with_mnemonic (_("Current DOWN"));
   gtk_widget_show (content_currentDOWNbutton);
   gtk_table_attach (GTK_TABLE (table2), content_currentDOWNbutton, 3, 4, 3, 4,
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), 0, 0);
 
-  content_originbutton = gtk_toggle_button_new_with_mnemonic ("Origin");
+  content_originbutton = gtk_toggle_button_new_with_mnemonic (_("Origin"));
   gtk_widget_show (content_originbutton);
   gtk_table_attach (GTK_TABLE (table2), content_originbutton, 0, 1, 4, 5,
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), 0, 0);
 
-  content_detailbutton = gtk_toggle_button_new_with_mnemonic ("Detail");
+  content_detailbutton = gtk_toggle_button_new_with_mnemonic (_("Detail"));
   gtk_widget_show (content_detailbutton);
   gtk_table_attach (GTK_TABLE (table2), content_detailbutton, 1, 2, 4, 5,
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), 0, 0);
 
-  content_ladderbutton = gtk_toggle_button_new_with_mnemonic ("Ladder");
+  content_ladderbutton = gtk_toggle_button_new_with_mnemonic (_("Ladder"));
   gtk_widget_show (content_ladderbutton);
   gtk_table_attach (GTK_TABLE (table2), content_ladderbutton, 2, 3, 4, 5,
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), 0, 0);
 
-  content_camnoblockbutton = gtk_toggle_button_new_with_mnemonic ("Cam No Block");
+  content_camnoblockbutton = gtk_toggle_button_new_with_mnemonic (_("Cam No Block"));
   gtk_widget_show (content_camnoblockbutton);
   gtk_table_attach (GTK_TABLE (table2), content_camnoblockbutton, 3, 4, 4, 5,
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), 0, 0);
 
-  label3 = gtk_label_new ("Content Flags");
+  label3 = gtk_label_new (_("Content Flags"));
   gtk_widget_show (label3);
   gtk_notebook_set_tab_label (GTK_NOTEBOOK (notebook1), gtk_notebook_get_nth_page (GTK_NOTEBOOK (notebook1), 1), label3);
   gtk_label_set_justify (GTK_LABEL (label3), GTK_JUSTIFY_LEFT);

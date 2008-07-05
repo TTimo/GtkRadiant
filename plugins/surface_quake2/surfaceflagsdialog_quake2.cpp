@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h>
+#include <glib/gi18n.h>
 
 #include "surfdlg_plugin.h"
 
@@ -79,13 +80,10 @@ inline void set_inconsistent(GtkWidget *toggle_button)
 
 inline void clear_inconsistent(GtkWidget *toggle_button)
 {
-  GtkWidget *button_label;
-
   if ( gtk_toggle_button_get_inconsistent(GTK_TOGGLE_BUTTON (toggle_button)) )
   {
     gtk_toggle_button_set_inconsistent(GTK_TOGGLE_BUTTON (toggle_button), FALSE);
   }
-
 }
 
 void clear_all_inconsistent(void)
@@ -162,7 +160,6 @@ void clear_all_buttons_and_values()
 
 void SetFlagButtons_Quake2(texdef_to_face_t *texdef_face_list, bool b_isListEmpty)
 {
-  int i;
   int contents = 0;
   int flags = 0;
   int value = 0;
@@ -729,10 +726,6 @@ on_value_entry_insert_text             (GtkEditable     *editable,
 {
   int i, count=0;
   gchar *result;
-  int entry_value;
-  texdef_t *pt;
-  brush_t *b;
-  face_t *f;
 
   // Limit input to digits, throwing out anything else
   // Modified from Gtk FAQ for text filtering of GtkEntry
@@ -790,10 +783,8 @@ GtkWidget* Create_Quake2FlagsDialog (GtkWidget* surfacedialog_widget)
   GtkWidget *label5;
   GtkWidget *table3;
   GtkWidget *label6;
-  GtkWidget *table1;
 
-
-  frame1 = gtk_frame_new ("Flags");
+  frame1 = gtk_frame_new (_("Flags"));
   gtk_widget_show (frame1);
   gtk_container_add (GTK_CONTAINER (surfacedialog_widget), frame1);
 
@@ -815,7 +806,7 @@ GtkWidget* Create_Quake2FlagsDialog (GtkWidget* surfacedialog_widget)
   gtk_widget_show (table4);
   gtk_box_pack_start (GTK_BOX (vbox2), table4, TRUE, TRUE, 0);
 
-  surface_lightbutton = gtk_toggle_button_new_with_label ("Light");
+  surface_lightbutton = gtk_toggle_button_new_with_label (_("Light"));
   gtk_signal_connect (GTK_OBJECT (surface_lightbutton), "toggled",
                       GTK_SIGNAL_FUNC (on_surface_lightbutton_toggled),
                       NULL);
@@ -825,7 +816,7 @@ GtkWidget* Create_Quake2FlagsDialog (GtkWidget* surfacedialog_widget)
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), 0, 0);
   gtk_container_set_border_width (GTK_CONTAINER (surface_lightbutton), QUAKE2_FLAG_BUTTON_BORDER);
 
-  surface_slickbutton = gtk_toggle_button_new_with_label ("Slick");
+  surface_slickbutton = gtk_toggle_button_new_with_label (_("Slick"));
   gtk_signal_connect (GTK_OBJECT (surface_slickbutton), "toggled",
                       GTK_SIGNAL_FUNC (on_surface_slickbutton_toggled),
                       NULL);
@@ -835,7 +826,7 @@ GtkWidget* Create_Quake2FlagsDialog (GtkWidget* surfacedialog_widget)
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), 0, 0);
   gtk_container_set_border_width (GTK_CONTAINER (surface_slickbutton), QUAKE2_FLAG_BUTTON_BORDER);
 
-  surface_skybutton = gtk_toggle_button_new_with_label ("Sky");
+  surface_skybutton = gtk_toggle_button_new_with_label (_("Sky"));
   gtk_signal_connect (GTK_OBJECT (surface_skybutton), "toggled",
                       GTK_SIGNAL_FUNC (on_surface_skybutton_toggled),
                       NULL);
@@ -845,7 +836,7 @@ GtkWidget* Create_Quake2FlagsDialog (GtkWidget* surfacedialog_widget)
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), 0, 0);
   gtk_container_set_border_width (GTK_CONTAINER (surface_skybutton), QUAKE2_FLAG_BUTTON_BORDER);
 
-  surface_warpbutton = gtk_toggle_button_new_with_label ("Warp");
+  surface_warpbutton = gtk_toggle_button_new_with_label (_("Warp"));
   gtk_signal_connect (GTK_OBJECT (surface_warpbutton), "toggled",
                       GTK_SIGNAL_FUNC (on_surface_warpbutton_toggled),
                       NULL);
@@ -855,7 +846,7 @@ GtkWidget* Create_Quake2FlagsDialog (GtkWidget* surfacedialog_widget)
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), 0, 0);
   gtk_container_set_border_width (GTK_CONTAINER (surface_warpbutton), QUAKE2_FLAG_BUTTON_BORDER);
 
-  surface_trans33button = gtk_toggle_button_new_with_label ("Trans 33");
+  surface_trans33button = gtk_toggle_button_new_with_label (_("Trans 33"));
   gtk_signal_connect (GTK_OBJECT (surface_trans33button), "toggled",
                       GTK_SIGNAL_FUNC (on_surface_trans33button_toggled),
                       NULL);
@@ -865,7 +856,7 @@ GtkWidget* Create_Quake2FlagsDialog (GtkWidget* surfacedialog_widget)
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), 0, 0);
   gtk_container_set_border_width (GTK_CONTAINER (surface_trans33button), QUAKE2_FLAG_BUTTON_BORDER);
 
-  surface_trans66button = gtk_toggle_button_new_with_label ("Trans 66");
+  surface_trans66button = gtk_toggle_button_new_with_label (_("Trans 66"));
   gtk_signal_connect (GTK_OBJECT (surface_trans66button), "toggled",
                       GTK_SIGNAL_FUNC (on_surface_trans66button_toggled),
                       NULL);
@@ -875,7 +866,7 @@ GtkWidget* Create_Quake2FlagsDialog (GtkWidget* surfacedialog_widget)
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), 0, 0);
   gtk_container_set_border_width (GTK_CONTAINER (surface_trans66button), QUAKE2_FLAG_BUTTON_BORDER);
 
-  surface_flowingbutton = gtk_toggle_button_new_with_label ("Flowing");
+  surface_flowingbutton = gtk_toggle_button_new_with_label (_("Flowing"));
   gtk_signal_connect (GTK_OBJECT (surface_flowingbutton), "toggled",
                       GTK_SIGNAL_FUNC (on_surface_flowingbutton_toggled),
                       NULL);
@@ -885,7 +876,7 @@ GtkWidget* Create_Quake2FlagsDialog (GtkWidget* surfacedialog_widget)
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), 0, 0);
   gtk_container_set_border_width (GTK_CONTAINER (surface_flowingbutton), QUAKE2_FLAG_BUTTON_BORDER);
 
-  surface_nodrawbutton = gtk_toggle_button_new_with_label ("NoDraw");
+  surface_nodrawbutton = gtk_toggle_button_new_with_label (_("NoDraw"));
   gtk_signal_connect (GTK_OBJECT (surface_nodrawbutton), "toggled",
                       GTK_SIGNAL_FUNC (on_surface_nodrawbutton_toggled),
                       NULL);
@@ -895,7 +886,7 @@ GtkWidget* Create_Quake2FlagsDialog (GtkWidget* surfacedialog_widget)
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), 0, 0);
   gtk_container_set_border_width (GTK_CONTAINER (surface_nodrawbutton), QUAKE2_FLAG_BUTTON_BORDER);
 
-  surface_hintbutton = gtk_toggle_button_new_with_label ("Hint");
+  surface_hintbutton = gtk_toggle_button_new_with_label (_("Hint"));
   gtk_signal_connect (GTK_OBJECT (surface_hintbutton), "toggled",
                       GTK_SIGNAL_FUNC (on_surface_hintbutton_toggled),
                       NULL);
@@ -905,7 +896,7 @@ GtkWidget* Create_Quake2FlagsDialog (GtkWidget* surfacedialog_widget)
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), 0, 0);
   gtk_container_set_border_width (GTK_CONTAINER (surface_hintbutton), QUAKE2_FLAG_BUTTON_BORDER);
 
-  surface_skipbutton = gtk_toggle_button_new_with_label ("Skip");
+  surface_skipbutton = gtk_toggle_button_new_with_label (_("Skip"));
   gtk_signal_connect (GTK_OBJECT (surface_skipbutton), "toggled",
                       GTK_SIGNAL_FUNC (on_surface_skipbutton_toggled),
                       NULL);
@@ -932,7 +923,7 @@ GtkWidget* Create_Quake2FlagsDialog (GtkWidget* surfacedialog_widget)
   gtk_widget_show (vbox4);
   gtk_box_pack_start (GTK_BOX (hbox3), vbox4, TRUE, TRUE, 0);
 
-  value_label = gtk_label_new (" Value: ");
+  value_label = gtk_label_new (_("Value: "));
   gtk_widget_show (value_label);
   gtk_box_pack_start (GTK_BOX (hbox3), value_label, FALSE, FALSE, 0);
 
@@ -951,7 +942,7 @@ GtkWidget* Create_Quake2FlagsDialog (GtkWidget* surfacedialog_widget)
   gtk_widget_show (vbox3);
   gtk_box_pack_start (GTK_BOX (hbox3), vbox3, TRUE, TRUE, 0);
 
-  label5 = gtk_label_new ("Surface Flags");
+  label5 = gtk_label_new (_("Surface Flags"));
   gtk_widget_show (label5);
   gtk_notebook_set_tab_label (GTK_NOTEBOOK (notebook1), gtk_notebook_get_nth_page (GTK_NOTEBOOK (notebook1), 0), label5);
 
@@ -959,7 +950,7 @@ GtkWidget* Create_Quake2FlagsDialog (GtkWidget* surfacedialog_widget)
   gtk_widget_show (table3);
   gtk_container_add (GTK_CONTAINER (notebook1), table3);
 
-  content_solidbutton = gtk_toggle_button_new_with_label ("Solid");
+  content_solidbutton = gtk_toggle_button_new_with_label (_("Solid"));
   gtk_signal_connect (GTK_OBJECT (content_solidbutton), "toggled",
                       GTK_SIGNAL_FUNC (on_content_solidbutton_toggled),
                       NULL);
@@ -969,7 +960,7 @@ GtkWidget* Create_Quake2FlagsDialog (GtkWidget* surfacedialog_widget)
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), 0, 0);
   gtk_container_set_border_width (GTK_CONTAINER (content_solidbutton), QUAKE2_FLAG_BUTTON_BORDER);
 
-  content_windowbutton = gtk_toggle_button_new_with_label ("Window");
+  content_windowbutton = gtk_toggle_button_new_with_label (_("Window"));
   gtk_signal_connect (GTK_OBJECT (content_windowbutton), "toggled",
                       GTK_SIGNAL_FUNC (on_content_windowbutton_toggled),
                       NULL);
@@ -979,7 +970,7 @@ GtkWidget* Create_Quake2FlagsDialog (GtkWidget* surfacedialog_widget)
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), 0, 0);
   gtk_container_set_border_width (GTK_CONTAINER (content_windowbutton), QUAKE2_FLAG_BUTTON_BORDER);
 
-  content_auxbutton = gtk_toggle_button_new_with_label ("Aux");
+  content_auxbutton = gtk_toggle_button_new_with_label (_("Aux"));
   gtk_signal_connect (GTK_OBJECT (content_auxbutton), "toggled",
                       GTK_SIGNAL_FUNC (on_content_auxbutton_toggled),
                       NULL);
@@ -989,7 +980,7 @@ GtkWidget* Create_Quake2FlagsDialog (GtkWidget* surfacedialog_widget)
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), 0, 0);
   gtk_container_set_border_width (GTK_CONTAINER (content_auxbutton), QUAKE2_FLAG_BUTTON_BORDER);
 
-  content_lavabutton = gtk_toggle_button_new_with_label ("Lava");
+  content_lavabutton = gtk_toggle_button_new_with_label (_("Lava"));
   gtk_signal_connect (GTK_OBJECT (content_lavabutton), "toggled",
                       GTK_SIGNAL_FUNC (on_content_lavabutton_toggled),
                       NULL);
@@ -999,7 +990,7 @@ GtkWidget* Create_Quake2FlagsDialog (GtkWidget* surfacedialog_widget)
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), 0, 0);
   gtk_container_set_border_width (GTK_CONTAINER (content_lavabutton), QUAKE2_FLAG_BUTTON_BORDER);
 
-  content_slimebutton = gtk_toggle_button_new_with_label ("Slime");
+  content_slimebutton = gtk_toggle_button_new_with_label (_("Slime"));
   gtk_signal_connect (GTK_OBJECT (content_slimebutton), "toggled",
                       GTK_SIGNAL_FUNC (on_content_slimebutton_toggled),
                       NULL);
@@ -1009,7 +1000,7 @@ GtkWidget* Create_Quake2FlagsDialog (GtkWidget* surfacedialog_widget)
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), 0, 0);
   gtk_container_set_border_width (GTK_CONTAINER (content_slimebutton), QUAKE2_FLAG_BUTTON_BORDER);
 
-  content_waterbutton = gtk_toggle_button_new_with_label ("Water");
+  content_waterbutton = gtk_toggle_button_new_with_label (_("Water"));
   gtk_signal_connect (GTK_OBJECT (content_waterbutton), "toggled",
                       GTK_SIGNAL_FUNC (on_content_waterbutton_toggled),
                       NULL);
@@ -1019,7 +1010,7 @@ GtkWidget* Create_Quake2FlagsDialog (GtkWidget* surfacedialog_widget)
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), 0, 0);
   gtk_container_set_border_width (GTK_CONTAINER (content_waterbutton), QUAKE2_FLAG_BUTTON_BORDER);
 
-  content_mistbutton = gtk_toggle_button_new_with_label ("Mist");
+  content_mistbutton = gtk_toggle_button_new_with_label (_("Mist"));
   gtk_signal_connect (GTK_OBJECT (content_mistbutton), "toggled",
                       GTK_SIGNAL_FUNC (on_content_mistbutton_toggled),
                       NULL);
@@ -1029,7 +1020,7 @@ GtkWidget* Create_Quake2FlagsDialog (GtkWidget* surfacedialog_widget)
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), 0, 0);
   gtk_container_set_border_width (GTK_CONTAINER (content_mistbutton), QUAKE2_FLAG_BUTTON_BORDER);
 
-  content_areaportalbutton = gtk_toggle_button_new_with_label ("AreaPortal");
+  content_areaportalbutton = gtk_toggle_button_new_with_label (_("AreaPortal"));
   gtk_signal_connect (GTK_OBJECT (content_areaportalbutton), "toggled",
                       GTK_SIGNAL_FUNC (on_content_areaportalbutton_toggled),
                       NULL);
@@ -1039,7 +1030,7 @@ GtkWidget* Create_Quake2FlagsDialog (GtkWidget* surfacedialog_widget)
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), 0, 0);
   gtk_container_set_border_width (GTK_CONTAINER (content_areaportalbutton), QUAKE2_FLAG_BUTTON_BORDER);
 
-  content_playerclipbutton = gtk_toggle_button_new_with_label ("PlayerClip");
+  content_playerclipbutton = gtk_toggle_button_new_with_label (_("PlayerClip"));
   gtk_signal_connect (GTK_OBJECT (content_playerclipbutton), "toggled",
                       GTK_SIGNAL_FUNC (on_content_playerclipbutton_toggled),
                       NULL);
@@ -1049,7 +1040,7 @@ GtkWidget* Create_Quake2FlagsDialog (GtkWidget* surfacedialog_widget)
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), 0, 0);
   gtk_container_set_border_width (GTK_CONTAINER (content_playerclipbutton), QUAKE2_FLAG_BUTTON_BORDER);
 
-  content_monsterclipbutton = gtk_toggle_button_new_with_label ("MonsterClip");
+  content_monsterclipbutton = gtk_toggle_button_new_with_label (_("MonsterClip"));
   gtk_signal_connect (GTK_OBJECT (content_monsterclipbutton), "toggled",
                       GTK_SIGNAL_FUNC (on_content_monsterclipbutton_toggled),
                       NULL);
@@ -1059,7 +1050,7 @@ GtkWidget* Create_Quake2FlagsDialog (GtkWidget* surfacedialog_widget)
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), 0, 0);
   gtk_container_set_border_width (GTK_CONTAINER (content_monsterclipbutton), QUAKE2_FLAG_BUTTON_BORDER);
 
-  content_current0button = gtk_toggle_button_new_with_label ("Current 0");
+  content_current0button = gtk_toggle_button_new_with_label (_("Current 0"));
   gtk_signal_connect (GTK_OBJECT (content_current0button), "toggled",
                       GTK_SIGNAL_FUNC (on_content_current0button_toggled),
                       NULL);
@@ -1069,7 +1060,7 @@ GtkWidget* Create_Quake2FlagsDialog (GtkWidget* surfacedialog_widget)
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), 0, 0);
   gtk_container_set_border_width (GTK_CONTAINER (content_current0button), QUAKE2_FLAG_BUTTON_BORDER);
 
-  content_current90button = gtk_toggle_button_new_with_label ("Current 90");
+  content_current90button = gtk_toggle_button_new_with_label (_("Current 90"));
   gtk_signal_connect (GTK_OBJECT (content_current90button), "toggled",
                       GTK_SIGNAL_FUNC (on_content_current90button_toggled),
                       NULL);
@@ -1079,7 +1070,7 @@ GtkWidget* Create_Quake2FlagsDialog (GtkWidget* surfacedialog_widget)
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), 0, 0);
   gtk_container_set_border_width (GTK_CONTAINER (content_current90button), QUAKE2_FLAG_BUTTON_BORDER);
 
-  content_current180button = gtk_toggle_button_new_with_label ("Current 180");
+  content_current180button = gtk_toggle_button_new_with_label (_("Current 180"));
   gtk_signal_connect (GTK_OBJECT (content_current180button), "toggled",
                       GTK_SIGNAL_FUNC (on_content_current180button_toggled),
                       NULL);
@@ -1089,7 +1080,7 @@ GtkWidget* Create_Quake2FlagsDialog (GtkWidget* surfacedialog_widget)
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), 0, 0);
   gtk_container_set_border_width (GTK_CONTAINER (content_current180button), QUAKE2_FLAG_BUTTON_BORDER);
 
-  content_current270button = gtk_toggle_button_new_with_label ("Current 270");
+  content_current270button = gtk_toggle_button_new_with_label (_("Current 270"));
   gtk_signal_connect (GTK_OBJECT (content_current270button), "toggled",
                       GTK_SIGNAL_FUNC (on_content_current270button_toggled),
                       NULL);
@@ -1099,7 +1090,7 @@ GtkWidget* Create_Quake2FlagsDialog (GtkWidget* surfacedialog_widget)
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), 0, 0);
   gtk_container_set_border_width (GTK_CONTAINER (content_current270button), QUAKE2_FLAG_BUTTON_BORDER);
 
-  content_currentUPbutton = gtk_toggle_button_new_with_label ("Current UP");
+  content_currentUPbutton = gtk_toggle_button_new_with_label (_("Current UP"));
   gtk_signal_connect (GTK_OBJECT (content_currentUPbutton), "toggled",
                       GTK_SIGNAL_FUNC (on_content_currentUPbutton_toggled),
                       NULL);
@@ -1109,7 +1100,7 @@ GtkWidget* Create_Quake2FlagsDialog (GtkWidget* surfacedialog_widget)
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), 0, 0);
   gtk_container_set_border_width (GTK_CONTAINER (content_currentUPbutton), QUAKE2_FLAG_BUTTON_BORDER);
 
-  content_currentDOWNbutton = gtk_toggle_button_new_with_label ("Current DOWN");
+  content_currentDOWNbutton = gtk_toggle_button_new_with_label (_("Current DOWN"));
   gtk_signal_connect (GTK_OBJECT (content_currentDOWNbutton), "toggled",
                       GTK_SIGNAL_FUNC (on_content_currentDOWNbutton_toggled),
                       NULL);
@@ -1119,7 +1110,7 @@ GtkWidget* Create_Quake2FlagsDialog (GtkWidget* surfacedialog_widget)
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), 0, 0);
   gtk_container_set_border_width (GTK_CONTAINER (content_currentDOWNbutton), QUAKE2_FLAG_BUTTON_BORDER);
 
-  content_originbutton = gtk_toggle_button_new_with_label ("Origin");
+  content_originbutton = gtk_toggle_button_new_with_label (_("Origin"));
   gtk_signal_connect (GTK_OBJECT (content_originbutton), "toggled",
                       GTK_SIGNAL_FUNC (on_content_originbutton_toggled),
                       NULL);
@@ -1129,7 +1120,7 @@ GtkWidget* Create_Quake2FlagsDialog (GtkWidget* surfacedialog_widget)
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), 0, 0);
   gtk_container_set_border_width (GTK_CONTAINER (content_originbutton), QUAKE2_FLAG_BUTTON_BORDER);
 
-  content_detailbutton = gtk_toggle_button_new_with_label ("Detail");
+  content_detailbutton = gtk_toggle_button_new_with_label (_("Detail"));
   gtk_signal_connect (GTK_OBJECT (content_detailbutton), "toggled",
                       GTK_SIGNAL_FUNC (on_content_detailbutton_toggled),
                       NULL);
@@ -1139,7 +1130,7 @@ GtkWidget* Create_Quake2FlagsDialog (GtkWidget* surfacedialog_widget)
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), 0, 0);
   gtk_container_set_border_width (GTK_CONTAINER (content_detailbutton), QUAKE2_FLAG_BUTTON_BORDER);
 
-  content_translucentbutton = gtk_toggle_button_new_with_label ("Translucent");
+  content_translucentbutton = gtk_toggle_button_new_with_label (_("Translucent"));
   gtk_signal_connect (GTK_OBJECT (content_translucentbutton), "toggled",
                       GTK_SIGNAL_FUNC (on_content_translucentbutton_toggled),
                       NULL);
@@ -1149,7 +1140,7 @@ GtkWidget* Create_Quake2FlagsDialog (GtkWidget* surfacedialog_widget)
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), 0, 0);
   gtk_container_set_border_width (GTK_CONTAINER (content_translucentbutton), QUAKE2_FLAG_BUTTON_BORDER);
 
-  content_ladderbutton = gtk_toggle_button_new_with_label ("Ladder");
+  content_ladderbutton = gtk_toggle_button_new_with_label (_("Ladder"));
   gtk_signal_connect (GTK_OBJECT (content_ladderbutton), "toggled",
                       GTK_SIGNAL_FUNC (on_content_ladderbutton_toggled),
                       NULL);
@@ -1159,7 +1150,7 @@ GtkWidget* Create_Quake2FlagsDialog (GtkWidget* surfacedialog_widget)
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), 0, 0);
   gtk_container_set_border_width (GTK_CONTAINER (content_ladderbutton), QUAKE2_FLAG_BUTTON_BORDER);
 
-  label6 = gtk_label_new ("Content Flags");
+  label6 = gtk_label_new (_("Content Flags"));
   gtk_widget_show (label6);
   gtk_notebook_set_tab_label (GTK_NOTEBOOK (notebook1), gtk_notebook_get_nth_page (GTK_NOTEBOOK (notebook1), 1), label6);
 
