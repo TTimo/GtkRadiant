@@ -28,6 +28,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #undef THIS_FILE
 //static char THIS_FILE[] = __FILE__;
 #endif
+#include <glib/gi18n.h>
 
 /////////////////////////////////////////////////////////////////////////////
 // CConfigDialog dialog
@@ -290,7 +291,7 @@ void DoConfigDialog ()
   GtkObject *adj;
 
   dlg = gtk_window_new (GTK_WINDOW_TOPLEVEL);
-  gtk_window_set_title (GTK_WINDOW (dlg), "Portal Viewer Configuration");
+  gtk_window_set_title (GTK_WINDOW (dlg), _("Portal Viewer Configuration"));
   gtk_signal_connect (GTK_OBJECT (dlg), "delete_event",
                       GTK_SIGNAL_FUNC (dialog_delete_callback), NULL);
   gtk_signal_connect (GTK_OBJECT (dlg), "destroy",
@@ -303,7 +304,7 @@ void DoConfigDialog ()
   gtk_container_add (GTK_CONTAINER (dlg), vbox);
   gtk_container_set_border_width (GTK_CONTAINER (vbox), 5);
 
-  frame = gtk_frame_new ("3D View");
+  frame = gtk_frame_new (_("3D View"));
   gtk_widget_show (frame);
   gtk_box_pack_start (GTK_BOX (vbox), frame, TRUE, TRUE, 0);
 
@@ -333,14 +334,14 @@ void DoConfigDialog ()
   gtk_table_set_row_spacings (GTK_TABLE (table), 5);
   gtk_table_set_col_spacings (GTK_TABLE (table), 5);
 
-  button = gtk_button_new_with_label ("Color");
+  button = gtk_button_new_with_label (_("Color"));
   gtk_widget_show (button);
   gtk_table_attach (GTK_TABLE (table), button, 0, 1, 0, 1,
                     (GtkAttachOptions) (GTK_FILL),
                     (GtkAttachOptions) (0), 0, 0);
   gtk_signal_connect (GTK_OBJECT (button), "clicked", GTK_SIGNAL_FUNC (OnColor3d), NULL);
 
-  button = gtk_button_new_with_label ("Depth Color");
+  button = gtk_button_new_with_label (_("Depth Color"));
   gtk_widget_show (button);
   gtk_table_attach (GTK_TABLE (table), button, 0, 1, 1, 2,
                     (GtkAttachOptions) (GTK_FILL),
@@ -354,21 +355,21 @@ void DoConfigDialog ()
                     (GtkAttachOptions) (0), 0, 0);
   gtk_signal_connect (GTK_OBJECT (aa3check), "toggled", GTK_SIGNAL_FUNC (OnAntiAlias3d), NULL);
 
-  depthcheck = gtk_check_button_new_with_label ("Depth Cue");
+  depthcheck = gtk_check_button_new_with_label (_("Depth Cue"));
   gtk_widget_show (depthcheck);
   gtk_table_attach (GTK_TABLE (table), depthcheck, 1, 2, 1, 2,
                     (GtkAttachOptions) (GTK_EXPAND|GTK_FILL),
                     (GtkAttachOptions) (0), 0, 0);
   gtk_signal_connect (GTK_OBJECT (depthcheck), "toggled", GTK_SIGNAL_FUNC (OnFog), NULL);
 
-  linescheck = gtk_check_button_new_with_label ("Lines");
+  linescheck = gtk_check_button_new_with_label (_("Lines"));
   gtk_widget_show (linescheck);
   gtk_table_attach (GTK_TABLE (table), linescheck, 2, 3, 1, 2,
                     (GtkAttachOptions) (GTK_EXPAND|GTK_FILL),
                     (GtkAttachOptions) (0), 0, 0);
   gtk_signal_connect (GTK_OBJECT (linescheck), "toggled", GTK_SIGNAL_FUNC (OnLines), NULL);
 
-  polyscheck = gtk_check_button_new_with_label ("Polygons");
+  polyscheck = gtk_check_button_new_with_label (_("Polygons"));
   gtk_widget_show (polyscheck);
   gtk_table_attach (GTK_TABLE (table), polyscheck, 3, 4, 1, 2,
                     (GtkAttachOptions) (GTK_EXPAND|GTK_FILL),
@@ -383,19 +384,19 @@ void DoConfigDialog ()
   gtk_widget_show (menu);
   gtk_option_menu_set_menu (GTK_OPTION_MENU (zlist), menu);
 
-  item = gtk_menu_item_new_with_label ("Z-Buffer Test and Write (recommended for solid or no polygons)");
+  item = gtk_menu_item_new_with_label (_("Z-Buffer Test and Write (recommended for solid or no polygons)"));
   gtk_widget_show (item);
   gtk_signal_connect (GTK_OBJECT (item), "activate",
 		      GTK_SIGNAL_FUNC (OnSelchangeZbuffer), GINT_TO_POINTER (0));
   gtk_menu_append (GTK_MENU (menu), item);
 
-  item = gtk_menu_item_new_with_label ("Z-Buffer Test Only (recommended for transparent polygons)");
+  item = gtk_menu_item_new_with_label (_("Z-Buffer Test Only (recommended for transparent polygons)"));
   gtk_widget_show (item);
   gtk_signal_connect (GTK_OBJECT (item), "activate",
 		      GTK_SIGNAL_FUNC (OnSelchangeZbuffer), GINT_TO_POINTER (1));
   gtk_menu_append (GTK_MENU (menu), item);
 
-  item = gtk_menu_item_new_with_label ("Z-Buffer Off");
+  item = gtk_menu_item_new_with_label (_("Z-Buffer Off"));
   gtk_widget_show (item);
   gtk_signal_connect (GTK_OBJECT (item), "activate",
 		      GTK_SIGNAL_FUNC (OnSelchangeZbuffer), GINT_TO_POINTER (2));
@@ -443,17 +444,17 @@ void DoConfigDialog ()
   gtk_widget_show (hbox);
   gtk_box_pack_start (GTK_BOX (vbox2), hbox, TRUE, FALSE, 0);
 
-  show3check = gtk_check_button_new_with_label ("Show");
+  show3check = gtk_check_button_new_with_label (_("Show"));
   gtk_widget_show (show3check);
   gtk_box_pack_start (GTK_BOX (hbox), show3check, TRUE, TRUE, 0);
   gtk_signal_connect (GTK_OBJECT (show3check), "toggled", GTK_SIGNAL_FUNC (OnConfig3d), NULL);
 
-  portalcheck = gtk_check_button_new_with_label ("Portal cubic clipper");
+  portalcheck = gtk_check_button_new_with_label (_("Portal cubic clipper"));
   gtk_widget_show (portalcheck);
   gtk_box_pack_start (GTK_BOX (hbox), portalcheck, TRUE, TRUE, 0);
   gtk_signal_connect (GTK_OBJECT (portalcheck), "toggled", GTK_SIGNAL_FUNC (OnClip), NULL);
 
-  frame = gtk_frame_new ("2D View");
+  frame = gtk_frame_new (_("2D View"));
   gtk_widget_show (frame);
   gtk_box_pack_start (GTK_BOX (vbox), frame, TRUE, TRUE, 0);
 
@@ -481,13 +482,13 @@ void DoConfigDialog ()
   gtk_widget_show (hbox);
   gtk_box_pack_start (GTK_BOX (vbox2), hbox, TRUE, FALSE, 0);
 
-  button = gtk_button_new_with_label ("Color");
+  button = gtk_button_new_with_label (_("Color"));
   gtk_widget_show (button);
   gtk_box_pack_start (GTK_BOX (hbox), button, FALSE, FALSE, 0);
   gtk_signal_connect (GTK_OBJECT (button), "clicked", GTK_SIGNAL_FUNC (OnColor2d), NULL);
   gtk_widget_set_usize (button, 60, -2);
 
-  aa2check = gtk_check_button_new_with_label ("Anti-Alias (May not work on some video cards)");
+  aa2check = gtk_check_button_new_with_label (_("Anti-Alias (May not work on some video cards)"));
   gtk_widget_show (aa2check);
   gtk_box_pack_start (GTK_BOX (hbox), aa2check, TRUE, TRUE, 0);
   gtk_signal_connect (GTK_OBJECT (aa2check), "toggled", GTK_SIGNAL_FUNC (OnAntiAlias2d), NULL);
@@ -496,7 +497,7 @@ void DoConfigDialog ()
   gtk_widget_show (hbox);
   gtk_box_pack_start (GTK_BOX (vbox2), hbox, TRUE, FALSE, 0);
 
-  show2check = gtk_check_button_new_with_label ("Show");
+  show2check = gtk_check_button_new_with_label (_("Show"));
   gtk_widget_show (show2check);
   gtk_box_pack_start (GTK_BOX (hbox), show2check, FALSE, FALSE, 0);
   gtk_signal_connect (GTK_OBJECT (show2check), "toggled", GTK_SIGNAL_FUNC (OnConfig2d), NULL);
@@ -505,7 +506,7 @@ void DoConfigDialog ()
   gtk_widget_show (hbox);
   gtk_box_pack_start (GTK_BOX (vbox), hbox, FALSE, FALSE, 0);
 
-  button = gtk_button_new_with_label ("OK");
+  button = gtk_button_new_with_label (_("OK"));
   gtk_widget_show (button);
   gtk_box_pack_end (GTK_BOX (hbox), button, FALSE, FALSE, 0);
   gtk_signal_connect (GTK_OBJECT (button), "clicked",

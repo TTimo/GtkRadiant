@@ -21,7 +21,7 @@
  * Modified by the GTK+ Team and others 1997-1999.  See the AUTHORS
  * file for a list of people on the GTK+ Team.  See the ChangeLog
  * files for a list of changes.  These files are distributed with
- * GTK+ at ftp://ftp.gtk.org/pub/gtk/. 
+ * GTK+ at ftp://ftp.gtk.org/pub/gtk/.
  */
 #define LEO
 
@@ -309,7 +309,7 @@ static char * refresh_xpm[] = {
 #define MASK_FILE "/.gtkfilesel_masks"
 #define TIME_STRING_BUF 50
 
-/* I've put this here so it doesn't get confused with the 
+/* I've put this here so it doesn't get confused with the
  * file completion interface */
 typedef struct _HistoryCallbackArg HistoryCallbackArg;
 
@@ -454,7 +454,7 @@ struct _PropertiesPrivate
 };
 
 /* pixmap creation function */
-GtkWidget*                 create_pixmap          (GtkWidget *widget, 
+GtkWidget*                 create_pixmap          (GtkWidget *widget,
 						   const gchar *pixmap_char);
 
 /* File completion functions which would be external, were they used
@@ -524,8 +524,8 @@ static gchar*              cmpl_completion_fullname (gchar*, CompletionState* cm
 static CompletionDir* open_ref_dir         (gchar* text_to_complete,
 					    gchar** remaining_text,
 					    CompletionState* cmpl_state);
-static gboolean       check_dir            (gchar *dir_name, 
-					    struct stat *result, 
+static gboolean       check_dir            (gchar *dir_name,
+					    struct stat *result,
 					    gboolean *stat_subdirs);
 static CompletionDir* open_dir             (gchar* dir_name,
 					    CompletionState* cmpl_state);
@@ -533,7 +533,7 @@ static CompletionDir* open_user_dir        (gchar* text_to_complete,
 					    CompletionState *cmpl_state);
 static CompletionDir* open_relative_dir    (gchar* dir_name, CompletionDir* dir,
 					    CompletionState *cmpl_state);
-static CompletionDirSent* open_new_dir     (gchar* dir_name, 
+static CompletionDirSent* open_new_dir     (gchar* dir_name,
 					    struct stat* sbuf,
 					    gboolean stat_subdirs);
 static gint           correct_dir_fullname (CompletionDir* cmpl_dir);
@@ -572,8 +572,8 @@ static gint gtk_file_selection_key_press     (GtkWidget             *widget,
 					      gpointer               user_data);
 
 static void gtk_file_selection_file_button (GtkWidget *widget,
-					    gint row, 
-					    gint column, 
+					    gint row,
+					    gint column,
 					    GdkEventButton *bevent,
 					    gpointer user_data);
 
@@ -618,7 +618,7 @@ static gint gtk_file_selection_mask_entry_key_callback (GtkWidget *widget, GdkEv
 static gint gtk_file_selection_mask_entry_button_callback (GtkWidget *widget, GdkEventButton *event, gpointer data);
 
 //static void gtk_file_selection_home_button (GtkWidget *widget, gpointer data);
-static void gtk_file_selection_bookmark_button (GtkWidget *widget, 
+static void gtk_file_selection_bookmark_button (GtkWidget *widget,
 	      	                   GtkFileSelection *fs);
 
 static void gtk_file_selection_up_button (GtkWidget *widget, gpointer data);
@@ -638,11 +638,11 @@ gint gtk_file_selection_save_bookmarks (GtkFileSelection *fs);
 
 static void gtk_file_selection_load_masks(GtkFileSelection *fs);
 
-static gint gtk_file_selection_show_fileop_menu (GtkCList *clist, 
-						 GdkEvent *event, 
+static gint gtk_file_selection_show_fileop_menu (GtkCList *clist,
+						 GdkEvent *event,
 						 GtkFileSelection *fs);
 
-						 
+
 static GtkWindowClass *parent_class = NULL;
 
 /* Saves errno when something cmpl does fails. */
@@ -694,7 +694,7 @@ translate_win32_path (GtkFileSelection *filesel)
   }
 
   /*
-   * Now, replace backslashes with forward slashes 
+   * Now, replace backslashes with forward slashes
    * if necessary.
    */
   if (strchr (path, '\\'))
@@ -703,10 +703,10 @@ translate_win32_path (GtkFileSelection *filesel)
       for (index = 0; path[index] != '\0'; index++)
 	if (path[index] == '\\')
 	  path[index] = '/';
-      
+
       updated = 1;
     }
-    
+
   return updated;
 }
 #endif
@@ -794,9 +794,9 @@ static gint gtk_file_selection_match_mask1 (gchar *text, gchar *mask)
   int tc;
 
   tc = 0; mc = 0;
-	
+
   if (mask[0] == 0 && text[0] == 0) return 1;
-	
+
   if (mask[0] == '*')
     {
       for (tc = 0; tc <= strlen(text); tc++)
@@ -925,7 +925,7 @@ gtk_file_selection_load_bookmarks(GtkFileSelection *fs)
 	  item=g_malloc(sizeof(BookmarkMenuStruct));
 	  item->desc=g_strdup(bookmark_data+lp);
 	  lp=++cp;
-	  
+
           while (cp < file_info.st_size && bookmark_data[cp] != '>' )
             cp++;
 
@@ -955,8 +955,8 @@ gtk_file_selection_load_bookmarks(GtkFileSelection *fs)
   }
 }
 
-static void 
-gtk_file_selection_add_bookmark (GtkFileSelection *fs, gchar *desc, gchar *path) 
+static void
+gtk_file_selection_add_bookmark (GtkFileSelection *fs, gchar *desc, gchar *path)
 {
   /* Add item to menu */
   BookmarkMenuStruct *item;
@@ -972,7 +972,7 @@ gtk_file_selection_add_bookmark (GtkFileSelection *fs, gchar *desc, gchar *path)
   gtk_menu_insert (GTK_MENU(fs->bookmark_menu), item->menu_item, g_list_length(fs->bookmark_list) -1);
 }
 
-gint 
+gint
 gtk_file_selection_save_bookmarks (GtkFileSelection *fs)
 {
   BookmarkMenuStruct *item;
@@ -993,7 +993,7 @@ gtk_file_selection_save_bookmarks (GtkFileSelection *fs)
       }
       g_free(item_data);
     }
-    
+
     close(file);
   } else {
     return TRUE;
@@ -1170,7 +1170,7 @@ gtk_file_selection_init (GtkFileSelection *filesel)
 
   char *dir_title [2];
   char *file_title [2];
-  
+
   filesel->cmpl_state = cmpl_init_state ();
 
   filesel->mask=NULL;
@@ -1195,7 +1195,7 @@ gtk_file_selection_init (GtkFileSelection *filesel)
   pulldown_hbox = gtk_hbox_new (FALSE, 0);
   gtk_box_pack_start (GTK_BOX (filesel->main_vbox), pulldown_hbox, FALSE, FALSE, 0);
   gtk_widget_show (pulldown_hbox);
-  
+
   /* The horizontal box containing create, rename etc. buttons */
 
 /*
@@ -1227,7 +1227,7 @@ gtk_file_selection_init (GtkFileSelection *filesel)
   gtk_container_add (GTK_CONTAINER(bigframe), list_vbox);
   gtk_container_set_border_width (GTK_CONTAINER (list_vbox),2);
   gtk_widget_show (list_vbox);
-  
+
   /*  The horizontal box containing the directory and file listboxes  */
 //  list_hbox = gtk_hbox_new (FALSE, 3);
   //gtk_container_add (GTK_CONTAINER(bigframe), list_hbox);
@@ -1259,7 +1259,7 @@ gtk_file_selection_init (GtkFileSelection *filesel)
 //  gtk_box_pack_start (GTK_BOX (hbox), home_button, TRUE,TRUE, 0);
 
   /* Here we add the bookmark menu button */
-  #define If we're going to make bookmark a menu, we don't need 
+  #define If we're going to make bookmark a menu, we don't need
   #define   to keep it in the filesel structure
   button=gtk_button_new_with_label(_("Bookmarks"));
   gtk_widget_show(button);
@@ -1267,7 +1267,7 @@ gtk_file_selection_init (GtkFileSelection *filesel)
   gtk_signal_connect (GTK_OBJECT (button), "clicked",
 		      (GtkSignalFunc) gtk_file_selection_bookmark_button,
 		      (gpointer) filesel);
-  
+
   hbox2 = gtk_hbox_new (FALSE, 2);
   gtk_box_pack_start (GTK_BOX (hbox), hbox2, FALSE, FALSE, 0);
   gtk_widget_show(hbox2);
@@ -1318,15 +1318,15 @@ gtk_file_selection_init (GtkFileSelection *filesel)
 
   /* menu for right click file operations */
   filesel->fileop_menu = gtk_menu_new();
-  
-  menu_item = gtk_menu_item_new_with_label ("Rename...");
+
+  menu_item = gtk_menu_item_new_with_label (_("Rename..."));
   gtk_widget_show(menu_item);
   gtk_signal_connect_object (GTK_OBJECT (menu_item), "activate",
 			     (GtkSignalFunc) gtk_file_selection_rename_file,
 			     (gpointer) filesel);
   gtk_menu_append (GTK_MENU (filesel->fileop_menu), menu_item);
 
-  menu_item = gtk_menu_item_new_with_label ("Delete");
+  menu_item = gtk_menu_item_new_with_label (_("Delete"));
   gtk_widget_show(menu_item);
   gtk_menu_append (GTK_MENU (filesel->fileop_menu), menu_item);
   gtk_signal_connect_object (GTK_OBJECT (menu_item), "activate",
@@ -1337,9 +1337,9 @@ gtk_file_selection_init (GtkFileSelection *filesel)
   gtk_widget_show(menu_item);
   gtk_menu_append (GTK_MENU (filesel->fileop_menu), menu_item);
 
-  menu_item = gtk_menu_item_new_with_label ("Create Directory...");
+  menu_item = gtk_menu_item_new_with_label (_("Create Directory..."));
   gtk_signal_connect_object (GTK_OBJECT (menu_item), "activate",
-			     (GtkSignalFunc) gtk_file_selection_create_dir, 
+			     (GtkSignalFunc) gtk_file_selection_create_dir,
 			     (gpointer) filesel);
   gtk_widget_show(menu_item);
   gtk_menu_append (GTK_MENU (filesel->fileop_menu), menu_item);
@@ -1348,7 +1348,7 @@ gtk_file_selection_init (GtkFileSelection *filesel)
   gtk_menu_append (GTK_MENU (filesel->fileop_menu), menu_item);
   gtk_widget_show(menu_item);
 
-  menu_item = gtk_menu_item_new_with_label ("Properties...");
+  menu_item = gtk_menu_item_new_with_label (_("Properties..."));
   gtk_signal_connect_object (GTK_OBJECT (menu_item), "activate",
 			     (GtkSignalFunc) gtk_file_selection_properties,
 			     (gpointer) filesel);
@@ -1367,7 +1367,7 @@ gtk_file_selection_init (GtkFileSelection *filesel)
 		      (GtkSignalFunc) gtk_file_selection_undir_button,
 		      (gpointer) filesel);
   gtk_signal_connect (GTK_OBJECT (filesel->dir_list), "button_press_event",
-		      GTK_SIGNAL_FUNC(gtk_file_selection_show_fileop_menu), 
+		      GTK_SIGNAL_FUNC(gtk_file_selection_show_fileop_menu),
 		      (gpointer) filesel);
 
   gtk_clist_column_titles_passive (GTK_CLIST (filesel->dir_list));
@@ -1378,7 +1378,7 @@ gtk_file_selection_init (GtkFileSelection *filesel)
 				  GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
   gtk_box_pack_start (GTK_BOX (vbox), scrolled_win, TRUE,TRUE, 0);
   //gtk_container_add(GTK_CONTAINER(hpaned), scrolled_win);
-  
+
   gtk_widget_show (filesel->dir_list);
   gtk_widget_show (scrolled_win);
 
@@ -1410,7 +1410,7 @@ gtk_file_selection_init (GtkFileSelection *filesel)
   gtk_signal_connect(GTK_OBJECT(GTK_COMBO(filesel->mask_entry)->entry),"activate",
 		     (GtkSignalFunc) gtk_file_selection_mask_entry_callback,
 		     (gpointer) filesel);
-  gtk_signal_connect(GTK_OBJECT(((GtkCombo *)filesel->mask_entry)->entry),"key-press-event",				
+  gtk_signal_connect(GTK_OBJECT(((GtkCombo *)filesel->mask_entry)->entry),"key-press-event",
 		     (GtkSignalFunc) gtk_file_selection_mask_entry_key_callback,
 		     (gpointer) filesel);
 
@@ -1429,14 +1429,14 @@ gtk_file_selection_init (GtkFileSelection *filesel)
   filesel->file_list = gtk_clist_new_with_titles (1, (gchar**) file_title);
   gtk_widget_set_usize (filesel->file_list, FILE_LIST_WIDTH, FILE_LIST_HEIGHT);
   gtk_signal_connect (GTK_OBJECT (filesel->file_list), "select_row",
-		      (GtkSignalFunc) gtk_file_selection_file_button, 
+		      (GtkSignalFunc) gtk_file_selection_file_button,
 		      (gpointer) filesel);
   gtk_signal_connect (GTK_OBJECT (filesel->file_list), "key-press-event",
 		      (GtkSignalFunc) gtk_file_selection_files_list_key_callback,
 		      (gpointer) filesel);
-  
+
   gtk_signal_connect (GTK_OBJECT (filesel->file_list), "button_press_event",
-		      GTK_SIGNAL_FUNC(gtk_file_selection_show_fileop_menu), 
+		      GTK_SIGNAL_FUNC(gtk_file_selection_show_fileop_menu),
 		      (gpointer) filesel);
 
   gtk_clist_column_titles_passive (GTK_CLIST (filesel->file_list));
@@ -1451,7 +1451,7 @@ gtk_file_selection_init (GtkFileSelection *filesel)
 
   /* action area for packing buttons into. */
   filesel->action_area = gtk_hbox_new (TRUE, 0);
-  gtk_box_pack_start (GTK_BOX (filesel->main_vbox), filesel->action_area, 
+  gtk_box_pack_start (GTK_BOX (filesel->main_vbox), filesel->action_area,
 		      FALSE, FALSE, 2);
   gtk_widget_show (filesel->action_area);
 
@@ -1462,7 +1462,7 @@ gtk_file_selection_init (GtkFileSelection *filesel)
   */
 
   /*  The selection entry widget  */
-  
+
   entry_vbox = gtk_vbox_new (FALSE, 0);
   gtk_box_pack_end (GTK_BOX (filesel->main_vbox), entry_vbox, FALSE, FALSE, 0);
   gtk_widget_show (entry_vbox);
@@ -1495,7 +1495,7 @@ gtk_file_selection_init (GtkFileSelection *filesel)
                     (GtkAttachOptions) (0),
                     (GtkAttachOptions) (0), 0, 0);
   gtk_widget_show (label);
-  
+
 
   filesel->history_combo = gtk_combo_new();
   gtk_combo_set_value_in_list(GTK_COMBO(filesel->history_combo),FALSE,FALSE);
@@ -1504,7 +1504,7 @@ gtk_file_selection_init (GtkFileSelection *filesel)
                     (GtkAttachOptions) (0), 0, 0);
   gtk_widget_show(filesel->history_combo);
 
-  gtk_signal_connect(GTK_OBJECT(((GtkCombo *)filesel->history_combo)->entry),"key-press-event",				    
+  gtk_signal_connect(GTK_OBJECT(((GtkCombo *)filesel->history_combo)->entry),"key-press-event",
 		     (GtkSignalFunc) gtk_file_selection_history_combo_callback,
 		     (gpointer) filesel);
 
@@ -1582,7 +1582,7 @@ gtk_file_selection_new (const gchar *title)
   filesel = gtk_type_new (GTK_TYPE_FILE_SELECTION);
   gtk_window_set_title (GTK_WINDOW (filesel), title);
   /* !!! put check here to figure out if screen > 640x480, if true
-     We need to make the file selection dialog bigger. much bigger.. 
+     We need to make the file selection dialog bigger. much bigger..
      or maybe we should keep it at a certan percentage of the screen
      size? */
 
@@ -1597,27 +1597,27 @@ gtk_file_selection_show_fileop_buttons (GtkFileSelection *filesel)
   g_return_if_fail (GTK_IS_FILE_SELECTION (filesel));
 
   return;
-	
+
   /* delete, create directory, and rename */
 /*
-  if (!filesel->fileop_c_dir) 
+  if (!filesel->fileop_c_dir)
     {
       filesel->fileop_c_dir = gtk_button_new_with_label (_("MkDir"));
       gtk_signal_connect (GTK_OBJECT (filesel->fileop_c_dir), "clicked",
-			  (GtkSignalFunc) gtk_file_selection_create_dir, 
+			  (GtkSignalFunc) gtk_file_selection_create_dir,
 			  (gpointer) filesel);
-      gtk_box_pack_start (GTK_BOX (filesel->button_area), 
+      gtk_box_pack_start (GTK_BOX (filesel->button_area),
 			  filesel->fileop_c_dir, TRUE,TRUE, 0);
       gtk_widget_show (filesel->fileop_c_dir);
     }
-	
-  if (!filesel->fileop_del_file) 
+
+  if (!filesel->fileop_del_file)
     {
       filesel->fileop_del_file = gtk_button_new_with_label (_("Delete"));
       gtk_signal_connect (GTK_OBJECT (filesel->fileop_del_file), "clicked",
-			  (GtkSignalFunc) gtk_file_selection_delete_file, 
+			  (GtkSignalFunc) gtk_file_selection_delete_file,
 			  (gpointer) filesel);
-      gtk_box_pack_start (GTK_BOX (filesel->button_area), 
+      gtk_box_pack_start (GTK_BOX (filesel->button_area),
 			  filesel->fileop_del_file, TRUE,TRUE, 0);
       gtk_widget_show (filesel->fileop_del_file);
     }
@@ -1626,9 +1626,9 @@ gtk_file_selection_show_fileop_buttons (GtkFileSelection *filesel)
     {
       filesel->fileop_ren_file = gtk_button_new_with_label (_("Rename"));
       gtk_signal_connect (GTK_OBJECT (filesel->fileop_ren_file), "clicked",
-			  (GtkSignalFunc) gtk_file_selection_rename_file, 
+			  (GtkSignalFunc) gtk_file_selection_rename_file,
 			  (gpointer) filesel);
-      gtk_box_pack_start (GTK_BOX (filesel->button_area), 
+      gtk_box_pack_start (GTK_BOX (filesel->button_area),
 			  filesel->fileop_ren_file, TRUE,TRUE, 0);
       gtk_widget_show (filesel->fileop_ren_file);
     }
@@ -1637,15 +1637,15 @@ gtk_file_selection_show_fileop_buttons (GtkFileSelection *filesel)
   */
 }
 
-void       
+void
 gtk_file_selection_hide_fileop_buttons (GtkFileSelection *filesel)
 {
   g_return_if_fail (filesel != NULL);
   g_return_if_fail (GTK_IS_FILE_SELECTION (filesel));
-  
+
   return;
   /*
-  if (filesel->fileop_ren_file) 
+  if (filesel->fileop_ren_file)
     {
       gtk_widget_destroy (filesel->fileop_ren_file);
       filesel->fileop_ren_file = NULL;
@@ -1727,14 +1727,14 @@ gtk_file_selection_complete (GtkFileSelection *filesel,
 {
   gchar *new_pattern;
   gint x;
-	
+
   g_return_if_fail (filesel != NULL);
   g_return_if_fail (GTK_IS_FILE_SELECTION (filesel));
   g_return_if_fail (pattern != NULL);
 
   if (filesel->selection_entry)
     gtk_entry_set_text (GTK_ENTRY (filesel->selection_entry), pattern);
-	
+
   if(strchr(pattern,'*') || strchr(pattern,'?'))
     {
       for(x=strlen(pattern);x>=0;x--)
@@ -1742,9 +1742,9 @@ gtk_file_selection_complete (GtkFileSelection *filesel,
 	  if(pattern[x]=='/') break;
 	}
       gtk_entry_set_text(GTK_ENTRY(filesel->mask_entry),g_strdup(pattern+x+1));
-      
+
       if(filesel->mask) g_free(filesel->mask);
-      
+
       filesel->mask=g_strdup(pattern+x+1);
       new_pattern=g_strdup(pattern);
       new_pattern[x+1]=0;
@@ -1790,10 +1790,10 @@ gtk_file_selection_destroy (GtkObject *object)
   g_return_if_fail (GTK_IS_FILE_SELECTION (object));
 
   filesel = GTK_FILE_SELECTION (object);
-  
+
   if (filesel->fileop_dialog)
     gtk_widget_destroy (filesel->fileop_dialog);
-  
+
   if (filesel->next_history)
     {
       list = filesel->next_history;
@@ -1823,7 +1823,7 @@ gtk_file_selection_destroy (GtkObject *object)
       g_free (filesel->mask);
       filesel->mask = NULL;
     }
-  
+
   cmpl_free_state (filesel->cmpl_state);
   filesel->cmpl_state = NULL;
 
@@ -1843,19 +1843,19 @@ gtk_file_selection_show_fileop_menu (GtkCList *clist, GdkEvent *event, GtkFileSe
   g_return_val_if_fail (event != NULL, FALSE);
   g_return_val_if_fail (fs != NULL, FALSE);
   g_return_val_if_fail (GTK_FILE_SELECTION (fs), FALSE);
-  
+
   if (event->type == GDK_BUTTON_PRESS)
     {
       event_button = (GdkEventButton *) event;
       if (event_button->button == 3)
 	{
 
-	  gtk_menu_popup (GTK_MENU (fs->fileop_menu), NULL, NULL, NULL, NULL, 
+	  gtk_menu_popup (GTK_MENU (fs->fileop_menu), NULL, NULL, NULL, NULL,
 			  event_button->button, event_button->time);
 	  return TRUE;
 	}
     }
-  
+
   return FALSE;
 }
 
@@ -1866,19 +1866,19 @@ gtk_file_selection_fileop_error (GtkFileSelection *fs, gchar *error_message)
   GtkWidget *vbox;
   GtkWidget *button;
   GtkWidget *dialog;
-  
+
   g_return_if_fail (error_message != NULL);
-  
+
   /* main dialog */
   dialog = gtk_dialog_new ();
   /*
   gtk_signal_connect (GTK_OBJECT (dialog), "destroy",
-		      (GtkSignalFunc) gtk_file_selection_fileop_destroy, 
+		      (GtkSignalFunc) gtk_file_selection_fileop_destroy,
 		      (gpointer) fs);
   */
   gtk_window_set_title (GTK_WINDOW (dialog), _("Error"));
   gtk_window_set_position (GTK_WINDOW (dialog), GTK_WIN_POS_MOUSE);
-  
+
   /* If file dialog is grabbed, make this dialog modal too */
   /* When error dialog is closed, file dialog will be grabbed again */
   if (GTK_WINDOW(fs)->modal)
@@ -1897,11 +1897,11 @@ gtk_file_selection_fileop_error (GtkFileSelection *fs, gchar *error_message)
 
   /* yes, we free it */
   g_free (error_message);
-  
+
   /* close button */
   button = gtk_button_new_with_label (_("Close"));
   gtk_signal_connect_object (GTK_OBJECT (button), "clicked",
-			     (GtkSignalFunc) gtk_widget_destroy, 
+			     (GtkSignalFunc) gtk_widget_destroy,
 			     (gpointer) dialog);
   gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->action_area),
 		     button, TRUE, TRUE, 0);
@@ -1919,7 +1919,7 @@ gtk_file_selection_fileop_destroy (GtkWidget *widget, gpointer data)
 
   g_return_if_fail (fs != NULL);
   g_return_if_fail (GTK_IS_FILE_SELECTION (fs));
-  
+
   fs->fileop_dialog = NULL;
   g_free (fs->fileop_data);
   fs->fileop_data = NULL;
@@ -1935,27 +1935,27 @@ gtk_file_selection_create_dir_confirmed (GtkWidget *widget, gpointer data)
   gchar *full_path;
   gchar *buf;
   CompletionState *cmpl_state;
-  
+
   g_return_if_fail (fs != NULL);
   g_return_if_fail (GTK_IS_FILE_SELECTION (fs));
 
   dirname = gtk_entry_get_text (GTK_ENTRY (fs->fileop_entry));
   cmpl_state = (CompletionState*) fs->cmpl_state;
   path = cmpl_reference_position (cmpl_state);
-  
+
   full_path = g_strconcat (path, "/", dirname, NULL);
-  if ( (mkdir (full_path, 0755) < 0) ) 
+  if ( (mkdir (full_path, 0755) < 0) )
     {
-      buf = g_strconcat ("Error creating directory \"", dirname, "\":  ", 
+      buf = g_strconcat ("Error creating directory \"", dirname, "\":  ",
 			 g_strerror(errno), NULL);
       gtk_file_selection_fileop_error (fs, buf);
     }
   g_free (full_path);
-  
+
   gtk_widget_destroy (fs->fileop_dialog);
   gtk_file_selection_populate (fs, "", FALSE);
 }
-  
+
 static void
 gtk_file_selection_create_dir (gpointer data)
 {
@@ -1970,11 +1970,11 @@ gtk_file_selection_create_dir (gpointer data)
 
   if (fs->fileop_dialog)
 	  return;
-  
+
   /* main dialog */
   fs->fileop_dialog = dialog = gtk_dialog_new ();
   gtk_signal_connect (GTK_OBJECT (dialog), "destroy",
-		      (GtkSignalFunc) gtk_file_selection_fileop_destroy, 
+		      (GtkSignalFunc) gtk_file_selection_fileop_destroy,
 		      (gpointer) fs);
   gtk_window_set_title (GTK_WINDOW (dialog), _("Create Directory"));
   gtk_window_set_position (GTK_WINDOW (dialog), GTK_WIN_POS_MOUSE);
@@ -1989,7 +1989,7 @@ gtk_file_selection_create_dir (gpointer data)
   gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), vbox,
 		     FALSE, FALSE, 0);
   gtk_widget_show(vbox);
-  
+
   label = gtk_label_new(_("Directory name:"));
   gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.0);
   gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 5);
@@ -1997,24 +1997,24 @@ gtk_file_selection_create_dir (gpointer data)
 
   /*  The directory entry widget  */
   fs->fileop_entry = gtk_entry_new ();
-  gtk_box_pack_start (GTK_BOX (vbox), fs->fileop_entry, 
+  gtk_box_pack_start (GTK_BOX (vbox), fs->fileop_entry,
 		      TRUE, TRUE, 5);
   GTK_WIDGET_SET_FLAGS(fs->fileop_entry, GTK_CAN_DEFAULT);
   gtk_widget_show (fs->fileop_entry);
-  
+
   /* buttons */
   button = gtk_button_new_with_label (_("Create"));
   gtk_signal_connect (GTK_OBJECT (button), "clicked",
-		      (GtkSignalFunc) gtk_file_selection_create_dir_confirmed, 
+		      (GtkSignalFunc) gtk_file_selection_create_dir_confirmed,
 		      (gpointer) fs);
   gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->action_area),
 		     button, TRUE, TRUE, 0);
   GTK_WIDGET_SET_FLAGS(button, GTK_CAN_DEFAULT);
   gtk_widget_show(button);
-  
+
   button = gtk_button_new_with_label (_("Cancel"));
   gtk_signal_connect_object (GTK_OBJECT (button), "clicked",
-			     (GtkSignalFunc) gtk_widget_destroy, 
+			     (GtkSignalFunc) gtk_widget_destroy,
 			     (gpointer) dialog);
   gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->action_area),
 		     button, TRUE, TRUE, 0);
@@ -2033,22 +2033,22 @@ gtk_file_selection_delete_file_confirmed (GtkWidget *widget, gpointer data)
   gchar *path;
   gchar *full_path;
   gchar *buf;
-  
+
   g_return_if_fail (fs != NULL);
   g_return_if_fail (GTK_IS_FILE_SELECTION (fs));
 
   cmpl_state = (CompletionState*) fs->cmpl_state;
   path = cmpl_reference_position (cmpl_state);
-  
+
   full_path = g_strconcat (path, "/", fs->fileop_file, NULL);
-  if ( (unlink (full_path) < 0) ) 
+  if ( (unlink (full_path) < 0) )
     {
-      buf = g_strconcat ("Error deleting file \"", fs->fileop_file, "\":  ", 
+      buf = g_strconcat ("Error deleting file \"", fs->fileop_file, "\":  ",
 			 g_strerror(errno), NULL);
       gtk_file_selection_fileop_error (fs, buf);
     }
   g_free (full_path);
-  
+
   gtk_widget_destroy (fs->fileop_dialog);
   gtk_file_selection_populate (fs, "", FALSE);
 }
@@ -2063,7 +2063,7 @@ gtk_file_selection_delete_file (gpointer data)
   GtkWidget *dialog;
   gchar *filename;
   gchar *buf;
-  
+
   g_return_if_fail (fs != NULL);
   g_return_if_fail (GTK_IS_FILE_SELECTION (fs));
 
@@ -2075,11 +2075,11 @@ gtk_file_selection_delete_file (gpointer data)
 	  return;
 
   fs->fileop_file = filename;
-  
+
   /* main dialog */
   fs->fileop_dialog = dialog = gtk_dialog_new ();
   gtk_signal_connect (GTK_OBJECT (dialog), "destroy",
-		      (GtkSignalFunc) gtk_file_selection_fileop_destroy, 
+		      (GtkSignalFunc) gtk_file_selection_fileop_destroy,
 		      (gpointer) fs);
   gtk_window_set_title (GTK_WINDOW (dialog), _("Delete File"));
   gtk_window_set_position (GTK_WINDOW (dialog), GTK_WIN_POS_MOUSE);
@@ -2088,7 +2088,7 @@ gtk_file_selection_delete_file (gpointer data)
   /* When option dialog is closed, file dialog will be grabbed again */
   if (GTK_WINDOW(fs)->modal)
       gtk_window_set_modal (GTK_WINDOW(dialog), TRUE);
-  
+
   vbox = gtk_vbox_new(FALSE, 0);
   gtk_container_set_border_width(GTK_CONTAINER(vbox), 8);
   gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), vbox,
@@ -2101,20 +2101,20 @@ gtk_file_selection_delete_file (gpointer data)
   gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 5);
   gtk_widget_show(label);
   g_free(buf);
-  
+
   /* buttons */
   button = gtk_button_new_with_label (_("Delete"));
   gtk_signal_connect (GTK_OBJECT (button), "clicked",
-		      (GtkSignalFunc) gtk_file_selection_delete_file_confirmed, 
+		      (GtkSignalFunc) gtk_file_selection_delete_file_confirmed,
 		      (gpointer) fs);
   gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->action_area),
 		     button, TRUE, TRUE, 0);
   GTK_WIDGET_SET_FLAGS(button, GTK_CAN_DEFAULT);
   gtk_widget_show(button);
-  
+
   button = gtk_button_new_with_label (_("Cancel"));
   gtk_signal_connect_object (GTK_OBJECT (button), "clicked",
-			     (GtkSignalFunc) gtk_widget_destroy, 
+			     (GtkSignalFunc) gtk_widget_destroy,
 			     (gpointer) dialog);
   gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->action_area),
 		     button, TRUE, TRUE, 0);
@@ -2136,31 +2136,31 @@ gtk_file_selection_rename_file_confirmed (GtkWidget *widget, gpointer data)
   gchar *new_filename;
   gchar *old_filename;
   CompletionState *cmpl_state;
-  
+
   g_return_if_fail (fs != NULL);
   g_return_if_fail (GTK_IS_FILE_SELECTION (fs));
 
   file = gtk_entry_get_text (GTK_ENTRY (fs->fileop_entry));
   cmpl_state = (CompletionState*) fs->cmpl_state;
   path = cmpl_reference_position (cmpl_state);
-  
+
   new_filename = g_strconcat (path, "/", file, NULL);
   old_filename = g_strconcat (path, "/", fs->fileop_file, NULL);
 
   if (strcmp (new_filename, old_filename))
-    if ((rename (old_filename, new_filename)) < 0) 
+    if ((rename (old_filename, new_filename)) < 0)
       {
-        buf = g_strconcat ("Error renaming file \"", file, "\":  ", 
+        buf = g_strconcat ("Error renaming file \"", file, "\":  ",
                            g_strerror(errno), NULL);
         gtk_file_selection_fileop_error (fs, buf);
       }
   g_free (new_filename);
   g_free (old_filename);
-  
+
   gtk_widget_destroy (fs->fileop_dialog);
   gtk_file_selection_populate (fs, "", FALSE);
 }
-  
+
 static void
 gtk_file_selection_file_mode_confirmed (GtkWidget *widget, gpointer data)
 {
@@ -2179,7 +2179,7 @@ gtk_file_selection_file_mode_confirmed (GtkWidget *widget, gpointer data)
   filename = g_strconcat (path, "/", file, NULL);
   if (chmod (filename, mode) == -1)
     {
-      gchar *buf = g_strconcat ("Error changing file mode of \"", filename, "\":  ", 
+      gchar *buf = g_strconcat ("Error changing file mode of \"", filename, "\":  ",
                                 g_strerror (errno), NULL);
       gtk_file_selection_fileop_error (fs, buf);
       gtk_widget_destroy (fs->fileop_dialog);
@@ -2200,7 +2200,7 @@ gtk_file_selection_rename_file (gpointer data)
   GtkWidget *vbox;
   GtkWidget *button;
   gchar *buf;
-  
+
   g_return_if_fail (fs != NULL);
   g_return_if_fail (GTK_IS_FILE_SELECTION (fs));
 
@@ -2210,11 +2210,11 @@ gtk_file_selection_rename_file (gpointer data)
   fs->fileop_file = gtk_entry_get_text (GTK_ENTRY (fs->selection_entry));
   if (strlen(fs->fileop_file) < 1)
 	  return;
-  
+
   /* main dialog */
   fs->fileop_dialog = dialog = gtk_dialog_new ();
   gtk_signal_connect (GTK_OBJECT (dialog), "destroy",
-		      (GtkSignalFunc) gtk_file_selection_fileop_destroy, 
+		      (GtkSignalFunc) gtk_file_selection_fileop_destroy,
 		      (gpointer) fs);
   gtk_window_set_title (GTK_WINDOW (dialog), _("Rename File"));
   gtk_window_set_position (GTK_WINDOW (dialog), GTK_WIN_POS_MOUSE);
@@ -2223,13 +2223,13 @@ gtk_file_selection_rename_file (gpointer data)
   /* When option dialog  closed, file dialog will be grabbed again */
   if (GTK_WINDOW(fs)->modal)
     gtk_window_set_modal (GTK_WINDOW(dialog), TRUE);
-  
+
   vbox = gtk_vbox_new(FALSE, 0);
   gtk_container_set_border_width (GTK_CONTAINER(vbox), 8);
   gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), vbox,
 		     FALSE, FALSE, 0);
   gtk_widget_show(vbox);
-  
+
   buf = g_strconcat ("Rename file \"", fs->fileop_file, "\" to:", NULL);
   label = gtk_label_new(buf);
   gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.0);
@@ -2239,11 +2239,11 @@ gtk_file_selection_rename_file (gpointer data)
 
   /* New filename entry */
   fs->fileop_entry = gtk_entry_new ();
-  gtk_box_pack_start (GTK_BOX (vbox), fs->fileop_entry, 
+  gtk_box_pack_start (GTK_BOX (vbox), fs->fileop_entry,
 		      TRUE, TRUE, 5);
   GTK_WIDGET_SET_FLAGS(fs->fileop_entry, GTK_CAN_DEFAULT);
   gtk_widget_show (fs->fileop_entry);
-  
+
   gtk_entry_set_text (GTK_ENTRY (fs->fileop_entry), fs->fileop_file);
   gtk_editable_select_region (GTK_EDITABLE (fs->fileop_entry),
 			      0, strlen (fs->fileop_file));
@@ -2251,16 +2251,16 @@ gtk_file_selection_rename_file (gpointer data)
   /* buttons */
   button = gtk_button_new_with_label (_("Rename"));
   gtk_signal_connect (GTK_OBJECT (button), "clicked",
-		      (GtkSignalFunc) gtk_file_selection_rename_file_confirmed, 
+		      (GtkSignalFunc) gtk_file_selection_rename_file_confirmed,
 		      (gpointer) fs);
   gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->action_area),
 		     button, TRUE, TRUE, 0);
   GTK_WIDGET_SET_FLAGS(button, GTK_CAN_DEFAULT);
   gtk_widget_show(button);
-  
+
   button = gtk_button_new_with_label (_("Cancel"));
   gtk_signal_connect_object (GTK_OBJECT (button), "clicked",
-			     (GtkSignalFunc) gtk_widget_destroy, 
+			     (GtkSignalFunc) gtk_widget_destroy,
 			     (gpointer) dialog);
   gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->action_area),
 		     button, TRUE, TRUE, 0);
@@ -2345,11 +2345,11 @@ gtk_file_selection_properties (gpointer data)
 
   if (fs->fileop_dialog)
 	  return;
-  
+
   /* main dialog */
   fs->fileop_dialog = dialog = gtk_dialog_new ();
   gtk_signal_connect (GTK_OBJECT (dialog), "destroy",
-		      (GtkSignalFunc) gtk_file_selection_fileop_destroy, 
+		      (GtkSignalFunc) gtk_file_selection_fileop_destroy,
 		      (gpointer) fs);
   priv = fs->fileop_data = g_malloc (sizeof (PropertiesPrivate));
 
@@ -2360,7 +2360,7 @@ gtk_file_selection_properties (gpointer data)
   /* When option dialog  closed, file dialog will be grabbed again */
   if (GTK_WINDOW(fs)->modal)
     gtk_window_set_modal (GTK_WINDOW(dialog), TRUE);
-  
+
   /* Dialog guts go here */
   notebook = gtk_notebook_new ();
   gtk_widget_show (notebook);
@@ -2370,7 +2370,7 @@ gtk_file_selection_properties (gpointer data)
   path = cmpl_reference_position(fs->cmpl_state);
   fs->fileop_file = gtk_entry_get_text (GTK_ENTRY (fs->selection_entry));
   filename = g_strconcat(path, "/", fs->fileop_file, NULL);
-  if (strlen(fs->fileop_file) > 0 && !(stat(filename, &statbuf))) 
+  if (strlen(fs->fileop_file) > 0 && !(stat(filename, &statbuf)))
   {
     /* stats page */
     table = gtk_table_new (9, 2, FALSE);
@@ -2379,7 +2379,7 @@ gtk_file_selection_properties (gpointer data)
     gtk_container_set_border_width (GTK_CONTAINER (table), 5);
     gtk_table_set_row_spacings (GTK_TABLE (table), 4);
     gtk_table_set_col_spacings (GTK_TABLE (table), 6);
-    
+
     label = gtk_label_new (_("Statistics"));
     gtk_widget_show (label);
     gtk_notebook_set_tab_label (GTK_NOTEBOOK (notebook), gtk_notebook_get_nth_page (GTK_NOTEBOOK (notebook), pagenum), label);
@@ -2391,7 +2391,7 @@ gtk_file_selection_properties (gpointer data)
 		      (GtkAttachOptions) (GTK_FILL),
 		      (GtkAttachOptions) (0), 0, 0);
     gtk_misc_set_alignment (GTK_MISC (label), 0, 0.5);
-    
+
     label = gtk_label_new (_(path));
     gtk_widget_show (label);
     gtk_table_attach (GTK_TABLE (table), label, 1, 2, 0, 1,
@@ -2399,14 +2399,14 @@ gtk_file_selection_properties (gpointer data)
 		      (GtkAttachOptions) (0), 0, 0);
     gtk_label_set_justify (GTK_LABEL (label), GTK_JUSTIFY_LEFT);
     gtk_misc_set_alignment (GTK_MISC (label), 0, 0.5);
-    
+
     label = gtk_label_new (_("File Name:"));
     gtk_widget_show (label);
     gtk_table_attach (GTK_TABLE (table), label, 0, 1, 1, 2,
 		      (GtkAttachOptions) (GTK_FILL),
 		      (GtkAttachOptions) (0), 0, 0);
     gtk_misc_set_alignment (GTK_MISC (label), 0, 0.5);
-    
+
     fs->fileop_entry = entry = gtk_entry_new ();
     gtk_widget_show (entry);
     gtk_table_attach (GTK_TABLE (table), entry, 1, 2, 1, 2,
@@ -2415,13 +2415,13 @@ gtk_file_selection_properties (gpointer data)
     gtk_entry_set_text (GTK_ENTRY (entry), fs->fileop_file);
     if (access (filename, W_OK))
       gtk_widget_set_sensitive( GTK_WIDGET (entry), FALSE);
-    
+
     hseparator = gtk_hseparator_new ();
     gtk_widget_show (hseparator);
     gtk_table_attach (GTK_TABLE (table), hseparator, 0, 2, 2, 3,
 		      (GtkAttachOptions) (GTK_FILL),
 		      (GtkAttachOptions) (GTK_FILL), 0, 0);
-    
+
     /* file type and size */
     label = gtk_label_new (_("Type:"));
     gtk_widget_show (label);
@@ -2464,27 +2464,27 @@ gtk_file_selection_properties (gpointer data)
 		      (GtkAttachOptions) (GTK_FILL),
 		      (GtkAttachOptions) (0), 0, 0);
     gtk_misc_set_alignment (GTK_MISC (label), 0, 0.5);
-    
+
     label = gtk_label_new (_("Size:"));
     gtk_widget_show (label);
     gtk_table_attach (GTK_TABLE (table), label, 0, 1, 4, 5,
 		      (GtkAttachOptions) (GTK_FILL),
 		      (GtkAttachOptions) (0), 0, 0);
     gtk_misc_set_alignment (GTK_MISC (label), 0, 0.5);
-    
+
     label = gtk_label_new (_(g_strdup_printf ("%ld bytes", statbuf.st_size)));
     gtk_widget_show (label);
     gtk_table_attach (GTK_TABLE (table), label, 1, 2, 4, 5,
 		      (GtkAttachOptions) (GTK_FILL),
 		      (GtkAttachOptions) (0), 0, 0);
     gtk_misc_set_alignment (GTK_MISC (label), 0, 0.5);
-    
+
     hseparator = gtk_hseparator_new ();
     gtk_widget_show (hseparator);
     gtk_table_attach (GTK_TABLE (table), hseparator, 0, 2, 5, 6,
 		      (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
 		      (GtkAttachOptions) (GTK_FILL), 0, 0);
-    
+
     /* file dates */
     label = gtk_label_new (_("Created:"));
     gtk_widget_show (label);
@@ -2492,7 +2492,7 @@ gtk_file_selection_properties (gpointer data)
 		      (GtkAttachOptions) (GTK_FILL),
 		      (GtkAttachOptions) (0), 0, 0);
     gtk_misc_set_alignment (GTK_MISC (label), 0, 0.5);
-    
+
     strftime (timeBuf, TIME_STRING_BUF, "%a %b %d %X %Y", localtime(&statbuf.st_mtime));
     label = gtk_label_new (_(timeBuf));
     gtk_widget_show (label);
@@ -2500,16 +2500,16 @@ gtk_file_selection_properties (gpointer data)
 		      (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
 		      (GtkAttachOptions) (0), 0, 0);
     gtk_misc_set_alignment (GTK_MISC (label), 0, 0.5);
-    
-    
-    
+
+
+
     label = gtk_label_new (_("Modified:"));
     gtk_widget_show (label);
     gtk_table_attach (GTK_TABLE (table), label, 0, 1, 7, 8,
 		      (GtkAttachOptions) (GTK_FILL),
 		      (GtkAttachOptions) (0), 0, 0);
     gtk_misc_set_alignment (GTK_MISC (label), 0, 0.5);
-    
+
     strftime (timeBuf, TIME_STRING_BUF, "%a %b %d %X %Y", localtime(&statbuf.st_mtime));
     label = gtk_label_new (_(timeBuf));
     gtk_widget_show (label);
@@ -2518,15 +2518,15 @@ gtk_file_selection_properties (gpointer data)
 		      (GtkAttachOptions) (0), 0, 0);
     gtk_label_set_justify (GTK_LABEL (label), GTK_JUSTIFY_LEFT);
     gtk_misc_set_alignment (GTK_MISC (label), 0, 0.5);
-    
-    
+
+
     label = gtk_label_new (_("Accessed:"));
     gtk_widget_show (label);
     gtk_table_attach (GTK_TABLE (table), label, 0, 1, 8, 9,
 		      (GtkAttachOptions) (GTK_FILL),
 		      (GtkAttachOptions) (0), 0, 0);
     gtk_misc_set_alignment (GTK_MISC (label), 0, 0.5);
-    
+
     strftime (timeBuf, TIME_STRING_BUF, "%a %b %d %X %Y", localtime(&statbuf.st_atime));
     label = gtk_label_new (_(timeBuf));
     gtk_widget_show (label);
@@ -2534,14 +2534,14 @@ gtk_file_selection_properties (gpointer data)
 		      (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
 		      (GtkAttachOptions) (0), 0, 0);
     gtk_label_set_justify (GTK_LABEL (label), GTK_JUSTIFY_LEFT);
-    gtk_misc_set_alignment (GTK_MISC (label), 0, 0.5);  
-    
+    gtk_misc_set_alignment (GTK_MISC (label), 0, 0.5);
+
     /* permissions page */
     vbox = gtk_vbox_new (FALSE, 4);
     gtk_widget_show (vbox);
     gtk_container_add (GTK_CONTAINER (notebook), vbox);
     gtk_container_set_border_width (GTK_CONTAINER (vbox), 5);
-    
+
     label = gtk_label_new (_("Permissions"));
     gtk_widget_show (label);
     gtk_notebook_set_tab_label (GTK_NOTEBOOK (notebook), gtk_notebook_get_nth_page (GTK_NOTEBOOK (notebook), pagenum), label);
@@ -2553,7 +2553,7 @@ gtk_file_selection_properties (gpointer data)
     gtk_box_pack_start (GTK_BOX (vbox), table, FALSE, TRUE, 0);
     gtk_table_set_row_spacings (GTK_TABLE (table), 2);
     gtk_table_set_col_spacings (GTK_TABLE (table), 8);
-    
+
     label = gtk_label_new (_("Owner:"));
     gtk_widget_show (label);
     gtk_table_attach (GTK_TABLE (table), label, 0, 1, 0, 1,
@@ -2580,7 +2580,7 @@ gtk_file_selection_properties (gpointer data)
 		      (GtkAttachOptions) (GTK_FILL),
 		      (GtkAttachOptions) (0), 0, 0);
     gtk_misc_set_alignment (GTK_MISC (label), 0, 0.5);
-    
+
     entry = gtk_entry_new();
     gtk_widget_show (entry);
     gtk_table_attach (GTK_TABLE (table), entry, 1, 2, 1, 2,
@@ -2593,11 +2593,11 @@ gtk_file_selection_properties (gpointer data)
     if (access (filename, W_OK) || (getuid() != 0))
       gtk_widget_set_sensitive( GTK_WIDGET (entry), FALSE);
 
-    
+
     hseparator = gtk_hseparator_new ();
     gtk_widget_show (hseparator);
     gtk_box_pack_start (GTK_BOX (vbox), hseparator, FALSE, TRUE, 0);
-    
+
     /* permissions */
     table = gtk_table_new (4, 5, TRUE);
     gtk_widget_show (table);
@@ -2606,13 +2606,13 @@ gtk_file_selection_properties (gpointer data)
     gtk_table_set_col_spacings (GTK_TABLE (table), 4);
     if (access (filename, W_OK) || ((getuid() != statbuf.st_uid) && getuid() != 0))
       gtk_widget_set_sensitive (GTK_WIDGET (table), FALSE);
-    
+
     hbox = gtk_hbox_new (FALSE, 1);
     gtk_widget_show (hbox);
     gtk_table_attach (GTK_TABLE (table), hbox, 0, 1, 0, 1,
 		      (GtkAttachOptions) (GTK_FILL),
 		      (GtkAttachOptions) (GTK_FILL), 0, 0);
-    
+
     priv->mode_label = label = gtk_label_new ("(0000)");
     gtk_widget_show (label);
     gtk_box_pack_start (GTK_BOX (hbox), label, FALSE, FALSE, 0);
@@ -2622,33 +2622,33 @@ gtk_file_selection_properties (gpointer data)
     gtk_table_attach (GTK_TABLE (table), label, 1, 2, 0, 1,
 		      (GtkAttachOptions) (0),
 		      (GtkAttachOptions) (0), 0, 0);
-    
+
     label = gtk_label_new (_("Write"));
     gtk_widget_show (label);
     gtk_table_attach (GTK_TABLE (table), label, 2, 3, 0, 1,
 		      (GtkAttachOptions) (0),
 		      (GtkAttachOptions) (0), 0, 0);
-    
+
     label = gtk_label_new (_("Exec"));
     gtk_widget_show (label);
     gtk_table_attach (GTK_TABLE (table), label, 3, 4, 0, 1,
 		      (GtkAttachOptions) (0),
 		      (GtkAttachOptions) (0), 0, 0);
-    
+
     label = gtk_label_new (_("Special"));
     gtk_widget_show (label);
     gtk_table_attach (GTK_TABLE (table), label, 4, 5, 0, 1,
 		      (GtkAttachOptions) (0),
 		      (GtkAttachOptions) (0), 0, 0);
-    
-    
+
+
     label = gtk_label_new (_("User:"));
     gtk_widget_show (label);
     gtk_table_attach (GTK_TABLE (table), label, 0, 1, 1, 2,
 		      (GtkAttachOptions) (GTK_FILL),
 		      (GtkAttachOptions) (0), 0, 0);
     gtk_misc_set_alignment (GTK_MISC (label), 0, 0.5);
-    
+
     priv->mode_buttons[0] = togglebutton = gtk_toggle_button_new_with_label ("");
     gtk_widget_show (togglebutton);
     gtk_table_attach (GTK_TABLE (table), togglebutton, 1, 2, 1, 2,
@@ -2664,7 +2664,7 @@ gtk_file_selection_properties (gpointer data)
 		      (GtkAttachOptions) (0), 0, 0);
     if ((statbuf.st_mode & ~(S_IFMT)) & S_IWUSR)
       gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (togglebutton), TRUE);
-    
+
     priv->mode_buttons[2] = togglebutton = gtk_toggle_button_new_with_label ("");
     gtk_widget_show (togglebutton);
     gtk_table_attach (GTK_TABLE (table), togglebutton, 3, 4, 1, 2,
@@ -2672,7 +2672,7 @@ gtk_file_selection_properties (gpointer data)
 		      (GtkAttachOptions) (0), 0, 0);
     if ((statbuf.st_mode & ~(S_IFMT)) & S_IXUSR)
       gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (togglebutton), TRUE);
-    
+
     priv->mode_buttons[3] = togglebutton = gtk_toggle_button_new_with_label ("");
     gtk_widget_show (togglebutton);
     gtk_table_attach (GTK_TABLE (table), togglebutton, 4, 5, 1, 2,
@@ -2682,14 +2682,14 @@ gtk_file_selection_properties (gpointer data)
       gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (togglebutton), TRUE);
 
 
-    
+
     label = gtk_label_new (_("Group:"));
     gtk_widget_show (label);
     gtk_table_attach (GTK_TABLE (table), label, 0, 1, 2, 3,
 		      (GtkAttachOptions) (GTK_FILL),
 		      (GtkAttachOptions) (0), 0, 0);
     gtk_misc_set_alignment (GTK_MISC (label), 0, 0.5);
-    
+
     priv->mode_buttons[4] = togglebutton = gtk_toggle_button_new_with_label ("");
     gtk_widget_show (togglebutton);
     gtk_table_attach (GTK_TABLE (table), togglebutton, 1, 2, 2, 3,
@@ -2697,7 +2697,7 @@ gtk_file_selection_properties (gpointer data)
 		      (GtkAttachOptions) (0), 0, 0);
     if ((statbuf.st_mode & ~(S_IFMT)) & S_IRGRP)
       gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (togglebutton), TRUE);
-    
+
     priv->mode_buttons[5] = togglebutton = gtk_toggle_button_new_with_label ("");
     gtk_widget_show (togglebutton);
     gtk_table_attach (GTK_TABLE (table), togglebutton, 2, 3, 2, 3,
@@ -2705,7 +2705,7 @@ gtk_file_selection_properties (gpointer data)
 		      (GtkAttachOptions) (0), 0, 0);
     if ((statbuf.st_mode & ~(S_IFMT)) & S_IWGRP)
       gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (togglebutton), TRUE);
-    
+
     priv->mode_buttons[6] = togglebutton = gtk_toggle_button_new_with_label ("");
     gtk_widget_show (togglebutton);
     gtk_table_attach (GTK_TABLE (table), togglebutton, 3, 4, 2, 3,
@@ -2713,7 +2713,7 @@ gtk_file_selection_properties (gpointer data)
 		      (GtkAttachOptions) (0), 0, 0);
     if ((statbuf.st_mode & ~(S_IFMT)) & S_IXGRP)
       gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (togglebutton), TRUE);
-    
+
     priv->mode_buttons[7] = togglebutton = gtk_toggle_button_new_with_label ("");
     gtk_widget_show (togglebutton);
     gtk_table_attach (GTK_TABLE (table), togglebutton, 4, 5, 2, 3,
@@ -2721,14 +2721,14 @@ gtk_file_selection_properties (gpointer data)
 		      (GtkAttachOptions) (0), 0, 0);
     if ((statbuf.st_mode & ~(S_IFMT)) & S_ISGID)
       gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (togglebutton), TRUE);
-    
+
     label = gtk_label_new (_("Other:"));
     gtk_widget_show (label);
     gtk_table_attach (GTK_TABLE (table), label, 0, 1, 3, 4,
 		      (GtkAttachOptions) (GTK_FILL),
 		      (GtkAttachOptions) (0), 0, 0);
     gtk_misc_set_alignment (GTK_MISC (label), 0, 0.5);
-    
+
     priv->mode_buttons[8] = togglebutton = gtk_toggle_button_new_with_label ("");
     gtk_widget_show (togglebutton);
     gtk_table_attach (GTK_TABLE (table), togglebutton, 1, 2, 3, 4,
@@ -2744,7 +2744,7 @@ gtk_file_selection_properties (gpointer data)
 		      (GtkAttachOptions) (0), 0, 0);
     if ((statbuf.st_mode & ~(S_IFMT)) & S_IWOTH)
       gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (togglebutton), TRUE);
-    
+
     priv->mode_buttons[10] = togglebutton = gtk_toggle_button_new_with_label ("");
     gtk_widget_show (togglebutton);
     gtk_table_attach (GTK_TABLE (table), togglebutton, 3, 4, 3, 4,
@@ -2752,7 +2752,7 @@ gtk_file_selection_properties (gpointer data)
 		      (GtkAttachOptions) (0), 0, 0);
     if ((statbuf.st_mode & ~(S_IFMT)) & S_IXOTH)
       gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (togglebutton), TRUE);
-    
+
     priv->mode_buttons[11] = togglebutton = gtk_toggle_button_new_with_label ("");
     gtk_widget_show (togglebutton);
     gtk_table_attach (GTK_TABLE (table), togglebutton, 4, 5, 3, 4,
@@ -2785,19 +2785,19 @@ gtk_file_selection_properties (gpointer data)
   /* buttons */
   button = gtk_button_new_with_label (_("OK"));
   //  gtk_signal_connect (GTK_OBJECT (button), "clicked",
-  //		      (GtkSignalFunc) gtk_file_selection_rename_file_confirmed, 
+  //		      (GtkSignalFunc) gtk_file_selection_rename_file_confirmed,
   //		      (gpointer) fs);
   gtk_signal_connect (GTK_OBJECT (button), "clicked",
-		      (GtkSignalFunc) gtk_file_selection_file_mode_confirmed, 
+		      (GtkSignalFunc) gtk_file_selection_file_mode_confirmed,
 		      (gpointer) fs);
   gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->action_area),
 		     button, TRUE, TRUE, 0);
   GTK_WIDGET_SET_FLAGS(button, GTK_CAN_DEFAULT);
   gtk_widget_show(button);
-  
+
   button = gtk_button_new_with_label (_("Cancel"));
   gtk_signal_connect_object (GTK_OBJECT (button), "clicked",
-			     (GtkSignalFunc) gtk_widget_destroy, 
+			     (GtkSignalFunc) gtk_widget_destroy,
 			     (gpointer) dialog);
   gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->action_area),
 		     button, TRUE, TRUE, 0);
@@ -2814,7 +2814,7 @@ gtk_file_selection_key_press (GtkWidget   *widget,
 			      GdkEventKey *event,
 			      gpointer     user_data)
 {
-	
+
   GtkFileSelection *fs;
   char *text;
 
@@ -2853,7 +2853,7 @@ gtk_file_selection_key_press (GtkWidget   *widget,
 static void
 gtk_file_selection_home_button (GtkWidget *widget, gpointer data){
   GList *list;
-	
+
   GtkFileSelection *fs=data;
 
   list = fs->next_history;
@@ -2864,21 +2864,21 @@ gtk_file_selection_home_button (GtkWidget *widget, gpointer data){
     }
   g_list_free (fs->next_history);
   fs->next_history = NULL;
-		
+
   gtk_file_selection_populate (fs,"~/",FALSE);
 }
 */
 static void
-gtk_file_selection_bookmark_button (GtkWidget *widget, 
+gtk_file_selection_bookmark_button (GtkWidget *widget,
                                     GtkFileSelection *fs)
 {
 
   g_return_if_fail (fs != NULL);
   g_return_if_fail (GTK_FILE_SELECTION (fs));
-	 
-  gtk_menu_popup (GTK_MENU (fs->bookmark_menu), NULL, NULL, NULL, NULL, 
+
+  gtk_menu_popup (GTK_MENU (fs->bookmark_menu), NULL, NULL, NULL, NULL,
 		  0, 0);
-  
+
 }
 
 static void
@@ -2899,7 +2899,7 @@ gtk_file_selection_up_button (GtkWidget *widget, gpointer data){
   fs->next_history = NULL;
 
   gtk_file_selection_populate (fs, "../", FALSE); /*change directories. */
-		
+
 }
 
 static void
@@ -2920,22 +2920,22 @@ gtk_file_selection_prev_button (GtkWidget *widget, gpointer data){
       list = list->next;       /* pop off current directory */
 
       list->prev = NULL;       /* make this the new head. */
-  	
+
       fs->prev_history = list; /* update prev_history list */
       fs->next_history = g_list_prepend(fs->next_history,first->data); /* put it on next_history */
-  	
+
       first->next = NULL;      /* orphan the old first node */
       g_list_free (first);     /* free the node (data is now in use by next_history) */
 
 
-  	
+
       path = g_malloc(strlen(list->data)+4); /* plenty of space */
       strcpy(path,list->data);               /* get the 2nd path in the history */
       strcat(path,"/");                      /* append a '/' */
       gtk_file_selection_populate (fs, path, FALSE); /* change directories. */
       g_free (path);
     }
-}	
+}
 
 static void
 gtk_file_selection_next_button (GtkWidget *widget, gpointer data){
@@ -2953,23 +2953,23 @@ gtk_file_selection_next_button (GtkWidget *widget, gpointer data){
     {
       first = list;            /*get first element*/
       list = list->next;       /*pop off current directory*/
-      
+
       if (list)
 	list->prev = NULL;
-      
+
       fs->next_history = list;                       /*update prev_history list*/
-  	
+
       path = g_malloc(strlen(first->data)+4);        /*plenty of space*/
       strcpy(path,first->data);
       strcat(path,"/");                              /*append a /   */
       gtk_file_selection_populate (fs, path, FALSE); /*change directories.*/
       g_free(path);
-  	
+
       first->next = NULL;     /* orphan the old first node */
       g_list_free (first);    /* free the node (data is now in use by next_history) */
-      
+
     }
-}	
+}
 
 void static
 gtk_file_selection_refresh_button (GtkWidget *widget, gpointer data){
@@ -2987,15 +2987,15 @@ gtk_file_selection_mask_entry_callback (GtkWidget *widget, gpointer data){
 
   if(fs->mask)
     g_free (fs->mask);
-		
+
   fs->mask = g_strdup(gtk_entry_get_text (GTK_ENTRY(GTK_COMBO(fs->mask_entry)->entry)));
-	
+
   if (strlen(fs->mask) == 0)
     {
       g_free (fs->mask);
       fs->mask = NULL;
     }
-	
+
   gtk_file_selection_refresh_button (widget,data);
 }
 
@@ -3067,10 +3067,10 @@ static gint gtk_file_selection_mask_entry_key_callback (GtkWidget *widget, GdkEv
 {
   GtkEntry *entry=(GtkEntry *)widget;
   GtkFileSelection *fs=data;
-	
+
   g_return_val_if_fail (fs != NULL,FALSE);
   g_return_val_if_fail (GTK_IS_FILE_SELECTION (fs),FALSE);
-	
+
 
   if (event->keyval == GDK_Return || event->keyval == GDK_Tab)
     {
@@ -3093,7 +3093,7 @@ static gint gtk_file_selection_mask_entry_key_callback (GtkWidget *widget, GdkEv
 static gint gtk_file_selection_mask_entry_button_callback (GtkWidget *widget, GdkEventButton *event, gpointer data)
 {
   GtkFileSelection *fs = data;
-		
+
   if(fs->mask)
     g_free(fs->mask);
 
@@ -3111,7 +3111,7 @@ static gboolean gtk_file_selection_history_combo_list_key_handler(GtkWidget *wid
   /*
   g_print("Key pressed! \n");
   */
-	
+
   return TRUE;
 }
 
@@ -3123,7 +3123,7 @@ static gboolean gtk_file_selection_history_combo_list_callback (GtkWidget *theli
   GtkFileSelection *fs = user_data;
   GList *list;
   gchar *path;
-		
+
   list = fs->next_history;
   if(list)
     {
@@ -3132,13 +3132,13 @@ static gboolean gtk_file_selection_history_combo_list_callback (GtkWidget *theli
     }
   g_list_free (fs->next_history);
   fs->next_history = NULL;
-			
+
   path = g_malloc(strlen(gtk_entry_get_text(GTK_ENTRY (((GtkCombo *)fs->history_combo)->entry)))+4);
   strcpy (path,gtk_entry_get_text(GTK_ENTRY( ((GtkCombo *)fs->history_combo)->entry)));
   strcat (path,"/");
-	
+
   gtk_file_selection_populate (fs,path,TRUE);
-	
+
   g_free (path);
 
   return TRUE;
@@ -3151,10 +3151,10 @@ gtk_file_selection_history_combo_callback (GtkWidget *widget, GdkEventKey *event
   GtkFileSelection *fs=data;
   GList *list;
   gchar *path;
-	
+
   g_return_val_if_fail (fs != NULL,FALSE);
   g_return_val_if_fail (GTK_IS_FILE_SELECTION (fs),FALSE);
-	
+
 
   if (event->keyval == GDK_Return)
     {
@@ -3166,7 +3166,7 @@ gtk_file_selection_history_combo_callback (GtkWidget *widget, GdkEventKey *event
 	}
       g_list_free (fs->next_history);
       fs->next_history = NULL;
-      
+
       path = g_malloc(strlen(gtk_entry_get_text(entry))+4);
       strcpy (path,gtk_entry_get_text(entry));
       strcat (path,"/");
@@ -3188,7 +3188,7 @@ static void gtk_file_selection_bookmark_callback (GtkWidget *widget, gpointer da
   GtkFileSelection *fs = data;
   BookmarkMenuStruct *item;
   GList *list;
-	
+
   g_return_if_fail (fs != NULL);
   g_return_if_fail (GTK_IS_FILE_SELECTION (fs));
 
@@ -3203,7 +3203,7 @@ static void gtk_file_selection_bookmark_callback (GtkWidget *widget, gpointer da
       break;
     }
     list=list->next;
-  } 
+  }
 }
 
 static void
@@ -3215,7 +3215,7 @@ gtk_file_selection_update_history_menu (GtkFileSelection *fs,
   g_return_if_fail (fs != NULL);
   g_return_if_fail (GTK_IS_FILE_SELECTION (fs));
   g_return_if_fail (current_directory != NULL);
-  
+
   current_dir = g_strdup (current_directory);
 
   if(fs->prev_history)
@@ -3227,28 +3227,28 @@ gtk_file_selection_update_history_menu (GtkFileSelection *fs,
     } else {
       fs->prev_history = g_list_prepend(fs->prev_history,g_strdup(current_dir));
     }
-  
+
   gtk_combo_set_popdown_strings (GTK_COMBO (fs->history_combo),fs->prev_history);
-  
+
   g_free (current_dir);
 }
 
 static void
 gtk_file_selection_file_button (GtkWidget *widget,
-			       gint row, 
-			       gint column, 
+			       gint row,
+			       gint column,
 			       GdkEventButton *bevent,
 			       gpointer user_data)
 {
   GtkFileSelection *fs = NULL;
   gchar *filename, *temp = NULL;
-  
+
   g_return_if_fail (GTK_IS_CLIST (widget));
 
   fs = user_data;
   g_return_if_fail (fs != NULL);
   g_return_if_fail (GTK_IS_FILE_SELECTION (fs));
-  
+
   gtk_clist_get_text (GTK_CLIST (fs->file_list), row, 0, &temp);
   filename = g_strdup (temp);
 
@@ -3274,9 +3274,9 @@ gtk_file_selection_file_button (GtkWidget *widget,
 	  case GDK_2BUTTON_PRESS:
 	    gtk_button_clicked (GTK_BUTTON (fs->ok_button));
 	    break;
-	    
+
 	  default:
-/*	
+/*
 	    if (bevent->button && GDK_BUTTON2_MASK)
 	      {
 	        g_print("Right click! -- %d\n",bevent->button);
@@ -3284,7 +3284,7 @@ gtk_file_selection_file_button (GtkWidget *widget,
 	      else
 	      {
 	      */
-	
+
 	    gtk_entry_set_text (GTK_ENTRY (fs->selection_entry), filename);
 	      /*}*/
 	    break;
@@ -3298,8 +3298,8 @@ gtk_file_selection_file_button (GtkWidget *widget,
 
 static void
 gtk_file_selection_dir_button (GtkWidget *widget,
-			       gint row, 
-			       gint column, 
+			       gint row,
+			       gint column,
 			       GdkEventButton *bevent,
 			       gpointer user_data)
 {
@@ -3330,29 +3330,29 @@ gtk_file_selection_dir_button (GtkWidget *widget,
 	      }
 	    g_list_free (fs->next_history);
 	    fs->next_history = NULL;
-	
+
 	    gtk_file_selection_populate (fs, filename, FALSE);
 	    gtk_entry_set_text(GTK_ENTRY(fs->selection_entry),fs->saved_entry);
 	    g_free (fs->saved_entry);
 	    fs->saved_entry = NULL;
 	    break;
-	    
+
 	  default:
 	    /* here we need to add the "filename" to the beginning of what's already
 	       in the entry.  Save what's in the entry, then restore it on the double click
 	    */
 	    if (fs->saved_entry) g_free (fs->saved_entry);
 	    fs->saved_entry=g_strdup(gtk_entry_get_text(GTK_ENTRY (fs->selection_entry)));
-	
+
 	    temp=g_strconcat(filename,fs->saved_entry,NULL);
 	    gtk_entry_set_text (GTK_ENTRY (fs->selection_entry), temp);
 	    g_free (temp);
-	
+
 	    break;
 	  }
       else
 	gtk_entry_set_text (GTK_ENTRY (fs->selection_entry), filename);
-      
+
       g_free (filename);
     }
 }
@@ -3417,10 +3417,10 @@ gtk_file_selection_populate (GtkFileSelection *fs,
   gint selection_index = -1;
   gint file_list_width;
   gint dir_list_width;
-  
+
   g_return_if_fail (fs != NULL);
   g_return_if_fail (GTK_IS_FILE_SELECTION (fs));
-  
+
   cmpl_state = (CompletionState*) fs->cmpl_state;
   poss = cmpl_completion_matches (rel_path, &rem_path, cmpl_state);
 
@@ -3459,11 +3459,11 @@ gtk_file_selection_populate (GtkFileSelection *fs,
       if (cmpl_is_a_completion (poss))
   	{
 	  possible_count += 1;
-	  
+
 	  filename = cmpl_this_completion (poss);
 
 	  text[0] = filename;
-	  
+
 	  if (cmpl_is_directory (poss))
 	    {
 	      if (strcmp (filename, "./") != 0 &&
@@ -3718,9 +3718,9 @@ cmpl_init_state (void)
    */
 #if defined(sun) && !defined(__SVR4)
   if (!getwd (getcwd_buf))
-#else    
+#else
   if (!getcwd (getcwd_buf, MAXPATHLEN))
-#endif    
+#endif
     {
       /* Oh joy, we can't get the current directory. Um..., we should have
        * a root directory, right? Right? (Probably not portable to non-Unix)
@@ -3972,20 +3972,20 @@ open_ref_dir(gchar* text_to_complete,
 	{
 	  if (p == tmp)
 	    p++;
-      
+
 	  *p = '\0';
 
 	  new_dir = open_dir(tmp, cmpl_state);
 
 	  if(new_dir)
-	    *remaining_text = text_to_complete + 
+	    *remaining_text = text_to_complete +
 	      ((p == tmp + 1) ? (p - tmp) : (p + 1 - tmp));
 	}
       else
 	{
 	  /* If no possible candidates, use the cwd */
 	  gchar *curdir = g_get_current_dir ();
-	  
+
 	  new_dir = open_dir(curdir, cmpl_state);
 
 	  if (new_dir)
@@ -4303,7 +4303,7 @@ correct_dir_fullname(CompletionDir* cmpl_dir)
 
   if (strcmp(cmpl_dir->fullname + length - 2, "/.") == 0)
     {
-      if (length == 2) 
+      if (length == 2)
 	{
 	  strcpy(cmpl_dir->fullname, "/");
 	  cmpl_dir->fullname_len = 1;
@@ -4419,7 +4419,7 @@ find_parent_dir_fullname(gchar* dirname)
   if(!getwd(buffer))
 #else
   if(!getcwd(buffer, MAXPATHLEN))
-#endif    
+#endif
     {
       cmpl_errno = errno;
       return NULL;
@@ -4612,23 +4612,23 @@ find_completion_dir(gchar* text_to_complete,
 	}
 
       next = open_relative_dir(found_name, dir, cmpl_state);
-      
+
       if(!next)
 	{
 	  g_free (pat_buf);
 	  return NULL;
 	}
-      
+
       next->cmpl_parent = dir;
-      
+
       dir = next;
-      
+
       if(!correct_dir_fullname(dir))
 	{
 	  g_free(pat_buf);
 	  return NULL;
 	}
-      
+
       *remaining_text = first_slash + 1;
       first_slash = strchr(*remaining_text, '/');
 
@@ -4907,7 +4907,7 @@ create_pixmap(GtkWidget *widget, const gchar *pixmap_char)
   gdkpixmap = gdk_pixmap_colormap_create_from_xpm_d (GTK_WIDGET(widget)->window,
 						     colormap,
 						     &mask,
-						     NULL, 
+						     NULL,
 						     (gpointer) pixmap_char);
   if (gdkpixmap == NULL)
     {
@@ -4952,7 +4952,7 @@ int main( int   argc,
 //    gtk_file_selection_complete(GTK_FILE_SELECTION(filew),"bob");
 
     gtk_file_selection_set_masks (GTK_FILE_SELECTION (filew), masks);
-		
+
     gtk_signal_connect (GTK_OBJECT (filew), "destroy",
 			(GtkSignalFunc) destroy, &filew);
     /* Connect the ok_button to file_ok_sel function */
@@ -4978,7 +4978,7 @@ int main( int   argc,
 		g_print("%d",gtk_file_selection_match_mask("mask.cout","n*.c???"));
 		g_print("%d",gtk_file_selection_match_mask("mask.c","[mn]*"));
 		g_print("%d",gtk_file_selection_match_mask("COPYING","*.xpm"));
-*/	
+*/
     gtk_main ();
 
     return 0;

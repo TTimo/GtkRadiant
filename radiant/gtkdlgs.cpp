@@ -2644,7 +2644,7 @@ void DoAbout ()
   gtk_widget_show (vbox2);
   gtk_box_pack_start (GTK_BOX (hbox), vbox2, TRUE, FALSE, 0);
 
-  frame = gtk_frame_new ((char*)NULL);
+  frame = gtk_frame_new (NULL);
   gtk_widget_show (frame);
   gtk_box_pack_start (GTK_BOX (vbox2), frame, FALSE, FALSE, 0);
   gtk_frame_set_shadow_type (GTK_FRAME (frame), GTK_SHADOW_IN);
