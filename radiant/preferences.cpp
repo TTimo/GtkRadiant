@@ -694,6 +694,31 @@ Games selection dialog
 =========================================================
 */
 
+#if defined(WIN32)
+#define ENGINE_ATTRIBUTE "engine_win32"
+#define MP_ENGINE_ATTRIBUTE "mp_engine_win32"
+#elif defined(__linux__) || defined (__FreeBSD__)
+#define ENGINE_ATTRIBUTE "engine_linux"
+#define MP_ENGINE_ATTRIBUTE "mp_engine_linux"
+#elif defined(__APPLE__)
+#define ENGINE_ATTRIBUTE "engine_macos"
+#define MP_ENGINE_ATTRIBUTE "mp_engine_macos"
+#else
+#error "unsupported platform"
+#endif
+
+
+#if defined(WIN32)
+#define ENGINEPATH_ATTRIBUTE "enginepath_win32"
+#elif defined(__linux__) || defined (__FreeBSD__)
+#define ENGINEPATH_ATTRIBUTE "enginepath_linux"
+#elif defined(__APPLE__)
+#define ENGINEPATH_ATTRIBUTE "enginepath_macos"
+#else
+#error "unknown platform"
+#endif
+
+
 CGameDescription::CGameDescription(xmlDocPtr pDoc, const Str &GameFile)
 {
   char *p, *prop;
@@ -710,7 +735,7 @@ CGameDescription::CGameDescription(xmlDocPtr pDoc, const Str &GameFile)
   // on win32, game tools path can now be specified relative to the exe's cwd
   prop = (char*)xmlGetProp( pNode, (xmlChar*)"gametools" );
   if ( prop == NULL ) {
-	  Error( "Didn't find 'gametools' node in the game description file '%s'\n", pDoc->URL );
+	Error( "Didn't find 'gametools' node in the game description file '%s'\n", pDoc->URL );
   }
   {
 	char full[PATH_MAX];
@@ -784,58 +809,78 @@ CGameDescription::CGameDescription(xmlDocPtr pDoc, const Str &GameFile)
     xmlFree(prop);
   }
 
-  // on win32, engine path can now be specified relative to the exe's cwd
-  prop = (char*)xmlGetProp(pNode, (const xmlChar *)"enginepath");
-  if ( prop != NULL ) {
-    char full[PATH_MAX];
-#ifdef _WIN32
-	_fullpath( full, prop, PATH_MAX );
-#else
-	strncpy( full, prop, PATH_MAX );
-#endif
-    xmlFree( prop );
-	prop = NULL;
-    // process seperators
-    for ( p = full; *p != '\0'; p++ ) {
-	  if ( *p == '\\' ) {
-	    *p = '/';
-	  }
-	}
-    mEnginePath = full;
-	if ( p != full && *(p-1) != '/' ) {
-	  mEnginePath += "/";
-	}
-  }
-  else
-  {
-    // if engine path was not specified in the .game, it implies we can guess it from the gametools path
-    // on win32, and for most game package, the gametools are installed with the game
-    char aux_path[PATH_MAX]; // aux
-    strcpy( aux_path, mGameToolsPath.GetBuffer() );
-	if ( ( aux_path[ strlen(aux_path)-1 ] == '/' ) || ( aux_path[ strlen(aux_path)-1 ] == '\\' ) ) {
-      aux_path[strlen(aux_path)-1] = '\0'; // strip ending '/' if any
-	}
-    char up_path[PATH_MAX]; // up one level
-    ExtractFilePath( aux_path, up_path );
-    mEnginePath = up_path;
-  }
 
-  prop = (char*)xmlGetProp(pNode, (xmlChar*)"engine");
-  if (prop == NULL)
-  {
+	prop = (char*)xmlGetProp(pNode, (const xmlChar*)ENGINE_ATTRIBUTE);
+	if (prop == NULL)
+	{
 #ifdef _WIN32
-    mEngine = "quake3.exe";
+		mEngine = "quake3.exe";
 #elif __linux__
-    mEngine = "quake3";
+		mEngine = "quake3";
 #elif __APPLE__
-    mEngine = "Quake3.app";
+		mEngine = "Quake3.app";
 #endif
-  }
-  else
-  {
-    mEngine = prop;
-    xmlFree(prop);
-  }
+	}
+	else
+	{
+		mEngine = prop;
+		xmlFree(prop);
+	}
+
+	prop = (char*)xmlGetProp(pNode, (const xmlChar*)MP_ENGINE_ATTRIBUTE);
+	if (prop == NULL)
+	{
+#ifdef _WIN32
+		mMultiplayerEngine = "quake3.exe";
+#elif __linux__
+		mMultiplayerEngine = "quake3";
+#elif __APPLE__
+		mMultiplayerEngine = "Quake3.app";
+#endif
+	}
+	else
+	{
+		mMultiplayerEngine = prop;
+		xmlFree(prop);
+	}
+
+	{
+		// on win32, engine path can now be specified relative to the exe's cwd
+		prop = (char*)xmlGetProp(pNode, (const xmlChar *)ENGINEPATH_ATTRIBUTE);
+		if ( prop != NULL ) {
+			char full[PATH_MAX];
+		#ifdef _WIN32
+			_fullpath( full, prop, PATH_MAX );
+		#else
+			strncpy( full, prop, PATH_MAX );
+		#endif
+			xmlFree( prop );
+			prop = NULL;
+			// process seperators
+			for ( p = full; *p != '\0'; p++ ) {
+				if ( *p == '\\' ) {
+					*p = '/';
+				}
+			}
+			mEnginePath = full;
+			if ( p != full && *(p-1) != '/' ) {
+				mEnginePath += "/";
+			}
+		}
+		else
+		{
+			// if engine path was not specified in the .game, it implies we can guess it from the gametools path
+			// on win32, and for most game package, the gametools are installed with the game
+			char aux_path[PATH_MAX]; // aux
+			strcpy( aux_path, mGameToolsPath.GetBuffer() );
+			if ( ( aux_path[ strlen(aux_path)-1 ] == '/' ) || ( aux_path[ strlen(aux_path)-1 ] == '\\' ) ) {
+				aux_path[strlen(aux_path)-1] = '\0'; // strip ending '/' if any
+			}
+			char up_path[PATH_MAX]; // up one level
+			ExtractFilePath( aux_path, up_path );
+			mEnginePath = up_path;
+		}
+	}
 
 #if defined (__linux__) || defined (__APPLE__)
   // *nix specific
@@ -2884,7 +2929,7 @@ void PrefsDlg::LoadPrefs ()
     // Texture subset on by default (HL specific really, because of halflife.wad's size)
     mLocalPrefs.GetPref(TEXTURE_KEY,            &m_bTextureWindow,              TRUE);
   }
-  else if (g_pGameDescription->quake2 || ( g_pGameDescription->mGameFile == "q2.game" ) || ( g_pGameDescription->mGameFile == "heretic2.game" ))
+  else if (g_pGameDescription->quake2)
   {
     // BSP monitoring is implemented in Quake2 and Heretic2 tools
     mLocalPrefs.GetPref(WATCHBSP_KEY,           &m_bWatchBSP,                   TRUE);
@@ -3327,7 +3372,7 @@ void CGameInstall::Run() {
 	}
 	fprintf( fg, "<?xml version=\"1.0\" encoding=\"iso-8859-1\" standalone=\"yes\"?>\n<game\n" );
 	fprintf( fg, "  name=\"%s\"\n", m_strName.GetBuffer() );
-	fprintf( fg, "  enginepath=\"%s\"\n", m_strEngine.GetBuffer() );
+	fprintf( fg, "  "ENGINEPATH_ATTRIBUTE"=\"%s\"\n", m_strEngine.GetBuffer() );
 	switch ( m_availGames[ m_nComboSelect ] ) {
 	case GAME_Q2: {
 		fprintf( fg, "  gametools=\"%sinstalls/Quake2Pack/game\"\n", g_strAppPath.GetBuffer() );

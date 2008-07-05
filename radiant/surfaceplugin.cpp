@@ -168,14 +168,14 @@ void SI_SetTexdef_FaceList(texdef_to_face_t* texdef_face_list, bool b_SetUndoPoi
   texdef_to_face_t* texdef_to_face;
   bool b_isQuake2;
 
-  if ( ( g_pGameDescription->quake2 ) || ( g_pGameDescription->mGameFile == "q2.game" ) || ( g_pGameDescription->mGameFile == "heretic2.game" ) )
+  if (g_pGameDescription->quake2)
     b_isQuake2 = true;
   else
     b_isQuake2 = false;
 
   if (!texdef_face_list)
     return;
-    
+
  if (b_SetUndoPoint)
  {
     if(g_ptrSelectedFaces.GetSize() > 1)
@@ -190,42 +190,42 @@ void SI_SetTexdef_FaceList(texdef_to_face_t* texdef_face_list, bool b_SetUndoPoi
         SetFaceTexdef(texdef_to_face->face, &texdef_to_face->orig_texdef, NULL);
 
       Undo_Start("set facelist texdefs");
-      
+
       if( selected_brushes.next != &selected_brushes )
-        Undo_AddBrushList(&selected_brushes); 
+        Undo_AddBrushList(&selected_brushes);
       else
         Undo_AddBrush(texdef_face_list->brush);
-      
+
     }
- }  
-    
+ }
+
   for(texdef_to_face = texdef_face_list; texdef_to_face; texdef_to_face = texdef_to_face->next)
   {
     if (b_isQuake2)
       SetFaceTexdef_Q2(texdef_to_face->face, &texdef_to_face->texdef,  bFit_to_Scale);
     else
       SetFaceTexdef(texdef_to_face->face, &texdef_to_face->texdef, NULL , bFit_to_Scale);
-    Brush_Build(texdef_to_face->brush); 
+    Brush_Build(texdef_to_face->brush);
     if(bFit_to_Scale)
       texdef_to_face->texdef = texdef_to_face->face->texdef;
   }
-  
+
   if ( b_SetUndoPoint )
   {
       if( (selected_brushes.next != &selected_brushes) || (g_ptrSelectedFaces.GetSize() == 1) )
       {
         if(selected_brushes.next != &selected_brushes)
-          Undo_EndBrushList(&selected_brushes); 
+          Undo_EndBrushList(&selected_brushes);
 	else
 	  Undo_EndBrush(texdef_face_list->brush);
-	  
+
         Undo_End();
 	// Over-write the orig_texdef list, cementing the change.
 	for(texdef_to_face = texdef_face_list; texdef_to_face; texdef_to_face = texdef_to_face->next)
 	  texdef_to_face->orig_texdef = texdef_to_face->texdef;
       }
   }
-  
+
   Sys_UpdateWindows (W_ALL);
 }
 
@@ -239,7 +239,7 @@ void SI_FaceList_FitTexture(texdef_to_face_t* si_texdef_face_list, int nHeight, 
   for (temp_texdef_face_list = si_texdef_face_list; temp_texdef_face_list; temp_texdef_face_list = temp_texdef_face_list->next)
   {
     Face_FitTexture(temp_texdef_face_list->face, nHeight, nWidth);
-    Brush_Build(temp_texdef_face_list->brush,true,true,false,false); 
+    Brush_Build(temp_texdef_face_list->brush,true,true,false,false);
     // Write changes to our working Texdef list
     temp_texdef_face_list->texdef = temp_texdef_face_list->face->texdef;
   }

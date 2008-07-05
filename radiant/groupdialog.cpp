@@ -1340,7 +1340,7 @@ void GroupDlg::Create ()
                 EntWidgets[EntCheck1+i] = check;
               }
 
-				if (g_pGameDescription->quake2 || ( g_pGameDescription->mGameFile == "q2.game" ) || ( g_pGameDescription->mGameFile == "heretic2.game" )) {
+				if (g_pGameDescription->quake2) {
 					GtkWidget *check = gtk_check_button_new_with_label (_("!Easy"));
 					gtk_widget_show (check);
 					gtk_signal_connect (GTK_OBJECT (check), "toggled", GTK_SIGNAL_FUNC (entity_check), NULL);

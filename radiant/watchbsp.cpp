@@ -2,30 +2,30 @@
 Copyright (c) 2001, Loki software, inc.
 All rights reserved.
 
-Redistribution and use in source and binary forms, with or without modification, 
+Redistribution and use in source and binary forms, with or without modification,
 are permitted provided that the following conditions are met:
 
-Redistributions of source code must retain the above copyright notice, this list 
+Redistributions of source code must retain the above copyright notice, this list
 of conditions and the following disclaimer.
 
 Redistributions in binary form must reproduce the above copyright notice, this
 list of conditions and the following disclaimer in the documentation and/or
 other materials provided with the distribution.
 
-Neither the name of Loki software nor the names of its contributors may be used 
-to endorse or promote products derived from this software without specific prior 
-written permission. 
+Neither the name of Loki software nor the names of its contributors may be used
+to endorse or promote products derived from this software without specific prior
+written permission.
 
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS'' 
-AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
-IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE 
-DISCLAIMED. IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE FOR ANY 
-DIRECT,INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES 
-(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; 
-LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON 
-ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT 
-(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS 
-SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE FOR ANY
+DIRECT,INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 //-----------------------------------------------------------------------------
@@ -68,7 +68,7 @@ static void abortStream(message_info_t *data)
 
 #include "stream_version.h"
 
-static void saxStartElement(message_info_t *data, const xmlChar *name, const xmlChar **attrs) 
+static void saxStartElement(message_info_t *data, const xmlChar *name, const xmlChar **attrs)
 {
   if (data->ignore_depth == 0)
   {
@@ -93,7 +93,7 @@ static void saxStartElement(message_info_t *data, const xmlChar *name, const xml
         }
         else if (strcmp((char*)attrs[1],Q3MAP_STREAM_VERSION) != 0)
         {
-          Sys_FPrintf(SYS_ERR, 
+          Sys_FPrintf(SYS_ERR,
             "This version of Radiant reads version %s debug streams, I got an incoming connection with version %s\n"
             "Please make sure your versions of Radiant and q3map are matching.\n", Q3MAP_STREAM_VERSION, (char*)attrs[1]);
           abortStream(data);
@@ -105,7 +105,7 @@ static void saxStartElement(message_info_t *data, const xmlChar *name, const xml
       {
         data->msg_level = atoi ((char *)attrs[1]);
       }
-      else if (strcmp ((char *)name, "polyline") == 0) 
+      else if (strcmp ((char *)name, "polyline") == 0)
       // polyline has a particular status .. right now we only use it for leakfile ..
       {
         data->bGeometry = true;
@@ -205,7 +205,7 @@ static void saxWarning(void *ctx, const char *msg, ...)
 {
   char saxMsgBuffer[4096];
   va_list args;
- 
+
   va_start(args, msg);
   vsprintf (saxMsgBuffer, msg, args);
   va_end(args);
@@ -216,7 +216,7 @@ static void saxError(void *ctx, const char *msg, ...)
 {
   char saxMsgBuffer[4096];
   va_list args;
- 
+
   va_start(args, msg);
   vsprintf (saxMsgBuffer, msg, args);
   va_end(args);
@@ -226,9 +226,9 @@ static void saxError(void *ctx, const char *msg, ...)
 static void saxFatal(void *ctx, const char *msg, ...)
 {
   char buffer[4096];
-  
+
   va_list args;
- 
+
   va_start(args, msg);
   vsprintf (buffer, msg, args);
   va_end(args);
@@ -390,7 +390,7 @@ void CWatchBSP::RoutineProcessing()
     {
       Sys_Printf("Connected.\n");
       // prepare the message info struct for diving in
-      memset (&m_message_info, 0, sizeof(message_info_s)); 
+      memset (&m_message_info, 0, sizeof(message_info_s));
       // a dumb flag to make sure we init the push parser context when first getting a msg
       m_bNeedCtxtInit = true;
       m_eState = EWatching;
@@ -503,173 +503,23 @@ void CWatchBSP::RoutineProcessing()
             // build the command line
             cmd = g_pGameDescription->mEnginePath.GetBuffer();
             // this is game dependant
-            //!\todo Read the engine binary name from a config file.
-            if (g_pGameDescription->mGameFile == "wolf.game")
+            if (!strcmp(ValueForKey(g_qeglobals.d_project_entity, "gamemode"),"mp"))
             {
-              if (!strcmp(ValueForKey(g_qeglobals.d_project_entity, "gamemode"),"mp"))
-              {
-                // MP
-#if defined(WIN32)
-                cmd += "WolfMP.exe";
-#elif defined(__linux__)
-                cmd += "wolfmp";
-#elif defined(__APPLE__)
-                cmd += "wolfmp.app";
-#else
-#error "WTF are you compiling on"
-#endif
-              }
-              else
-              {
-                // SP
-#if defined(WIN32)
-                cmd += "WolfSP.exe";
-#elif defined(__linux__)
-                cmd += "wolfsp";
-#elif defined(__APPLE__)
-                cmd += "wolfsp.app";
-#else
-#error "WTF are you compiling on"
-#endif
-              }
-            } else if (g_pGameDescription->mGameFile == "et.game")
-            {
-#if defined(WIN32)
-              cmd += "et.exe";
-#elif defined(__linux__)
-              cmd += "et";
-#elif defined(__APPLE__)
-              cmd += "et.app";
-#else
-#error "WTF are you compiling on"
-#endif
-            }
-            // RIANT
-            // JK2 HACK
-            else if (g_pGameDescription->mGameFile == "jk2.game")
-            {
-              if (!strcmp(ValueForKey(g_qeglobals.d_project_entity, "gamemode"),"mp"))
-              {
-                // MP
-#if defined(WIN32)
-                cmd += "jk2MP.exe";
-#elif defined(__linux__)
-                cmd += "jk2mp";
-#elif defined(__APPLE__)
-                cmd += "jk2mp.app";
-#else
-#error "WTF are you compiling on"
-#endif
-              }
-              else
-              {
-                // SP
-#if defined(WIN32)
-                cmd += "jk2SP.exe";
-#elif defined(__linux__)
-                cmd += "jk2sp";
-#elif defined(__APPLE__)
-                cmd += "jk2sp.app";
-#else
-#error "WTF are you compiling on"
-#endif
-              }
-            }
-            // TTimo
-            // JA HACK
-            else if (g_pGameDescription->mGameFile == "ja.game")
-            {
-              if (!strcmp(ValueForKey(g_qeglobals.d_project_entity, "gamemode"),"mp"))
-              {
-                // MP
-#if defined(WIN32)
-                cmd += "jamp.exe";
-#elif !defined(__linux__) && !defined(__APPLE__)
-#error "WTF are you compiling on"
-#endif
-              }
-              else
-              {
-                // SP
-#if defined(WIN32)
-                cmd += "jasp.exe";
-#elif !defined(__linux__) && !defined(__APPLE__)
-#error "WTF are you compiling on"
-#endif
-              }
-            }
-            // RIANT
-            // STVEF HACK
-            else if (g_pGameDescription->mGameFile == "stvef.game")
-            {
-              if (!strcmp(ValueForKey(g_qeglobals.d_project_entity, "gamemode"),"mp"))
-              {
-                // MP
-#if defined(WIN32)
-                cmd += "stvoyHM.exe";
-#elif defined(__linux__)
-                cmd += "stvoyHM";
-#elif defined(__APPLE__)
-                cmd += "stvoyHM.app";
-#else
-#error "WTF are you compiling on"
-#endif
-              }
-              else
-              {
-                // SP
-#if defined(WIN32)
-                cmd += "stvoy.exe";
-#elif defined(__linux__)
-                cmd += "stvoy";
-#elif defined(__APPLE__)
-                cmd += "stvoy.app";
-#else
-#error "WTF are you compiling on"
-#endif
-              }
-            }
-            // RIANT
-            // SOF2 HACK
-            else if (g_pGameDescription->mGameFile == "sof2.game")
-            {
-              if (!strcmp(ValueForKey(g_qeglobals.d_project_entity, "gamemode"),"mp"))
-              {
-                // MP
-#if defined(WIN32)
-                cmd += "sof2MP.exe";
-#elif defined(__linux__)
-                cmd += "b00gus";
-#elif defined(__APPLE__)
-                cmd += "sof2MP.app";
-#else
-#error "WTF are you compiling on"
-#endif
-              }
-              else
-              {
-                // SP
-#if defined(WIN32)
-                cmd += "sof2.exe";
-#elif defined(__linux__)
-                cmd += "b00gus";
-#elif defined(__APPLE__)
-                cmd += "sof2.app";
-#else
-#error "WTF are you compiling on"
-#endif
-              }
+              // MP
+              cmd += g_pGameDescription->mMultiplayerEngine.GetBuffer();
             }
             else
             {
+              // SP
               cmd += g_pGameDescription->mEngine.GetBuffer();
             }
 #ifdef _WIN32
             // NOTE: we are using unix pathnames and CreateProcess doesn't like / in the program path
+			// FIXME: This isn't true anymore, doesn't it?
             FindReplace( cmd, "/", "\\" );
 #endif
             Str cmdline;
-            if ( (g_pGameDescription->mGameFile == "q2.game") || (g_pGameDescription->mGameFile == "heretic2.game") )
+            if ( g_pGameDescription->quake2 )
             {
             	cmdline = ". +exec radiant.cfg +map ";
             	cmdline += m_sBSPName;
@@ -696,7 +546,7 @@ void CWatchBSP::RoutineProcessing()
                 }
                 else
                 {
-                  // SP                
+                  // SP
                   cmdline += "+set nextmap \"spdevmap ";
                   cmdline += m_sBSPName;
                   cmdline += "\"";
@@ -742,7 +592,7 @@ void CWatchBSP::DoMonitoringLoop( GPtrArray *pCmd, char *sBSPName )
   {
     Sys_Printf("WatchBSP got a monitoring request while not idling...\n");
     // prompt the user, should we cancel the current process and go ahead?
-    if (gtk_MessageBox(g_pParentWnd->m_pWidget,  "I am already monitoring a BSP process.\nDo you want me to override and start a new compilation?", 
+    if (gtk_MessageBox(g_pParentWnd->m_pWidget,  "I am already monitoring a BSP process.\nDo you want me to override and start a new compilation?",
       "BSP process monitoring", MB_YESNO ) == IDYES)
     {
       // disconnect and set EIdle state

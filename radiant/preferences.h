@@ -171,6 +171,7 @@ public:
   Str mBaseGame; ///< basegame directory
   Str mEnginePath; ///< path to the engine
   Str mEngine; ///< engine name
+  Str mMultiplayerEngine; ///< engine name
 #if defined (__linux__) || defined (__APPLE__)
   Str mUserPathPrefix; ///< prefix for ~/.q3a ~/.wolf init, only on *nix
 #endif
