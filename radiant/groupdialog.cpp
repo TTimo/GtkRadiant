@@ -1340,40 +1340,39 @@ void GroupDlg::Create ()
                 EntWidgets[EntCheck1+i] = check;
               }
 
-              //++timo cleanme: these flags where Q2 stuff
-            /*
-              check = gtk_check_button_new_with_label ("!Easy");
-              gtk_widget_show (check);
-              gtk_signal_connect (GTK_OBJECT (check), "toggled", GTK_SIGNAL_FUNC (entity_check), NULL);
-              gtk_table_attach (GTK_TABLE (table), check, 2, 3, 0, 1,
-                                (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
-                                (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), 0, 0);
-              EntWidgets[EntCheck17] = check;
+				if (g_pGameDescription->quake2 || ( g_pGameDescription->mGameFile == "q2.game" ) || ( g_pGameDescription->mGameFile == "heretic2.game" )) {
+					GtkWidget *check = gtk_check_button_new_with_label (_("!Easy"));
+					gtk_widget_show (check);
+					gtk_signal_connect (GTK_OBJECT (check), "toggled", GTK_SIGNAL_FUNC (entity_check), NULL);
+/*					gtk_table_attach (GTK_TABLE (table), check, 2, 3, 0, 1,
+										(GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
+										(GtkAttachOptions) (GTK_EXPAND | GTK_FILL), 0, 0);*/
+					EntWidgets[EntCheck17] = check;
 
-              check = gtk_check_button_new_with_label ("!Medium");
-              gtk_widget_show (check);
-              gtk_signal_connect (GTK_OBJECT (check), "toggled", GTK_SIGNAL_FUNC (entity_check), NULL);
-              gtk_table_attach (GTK_TABLE (table), check, 2, 3, 1, 2,
-                                (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
-                                (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), 0, 0);
-              EntWidgets[EntCheck18] = check;
+					check = gtk_check_button_new_with_label (_("!Medium"));
+					gtk_widget_show (check);
+					gtk_signal_connect (GTK_OBJECT (check), "toggled", GTK_SIGNAL_FUNC (entity_check), NULL);
+/*					gtk_table_attach (GTK_TABLE (table), check, 2, 3, 1, 2,
+										(GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
+										(GtkAttachOptions) (GTK_EXPAND | GTK_FILL), 0, 0);*/
+					EntWidgets[EntCheck18] = check;
 
-              check = gtk_check_button_new_with_label ("!Hard");
-              gtk_widget_show (check);
-              gtk_signal_connect (GTK_OBJECT (check), "toggled", GTK_SIGNAL_FUNC (entity_check), NULL);
-              gtk_table_attach (GTK_TABLE (table), check, 2, 3, 2, 3,
-                                (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
-                                (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), 0, 0);
-              EntWidgets[EntCheck19] = check;
+					check = gtk_check_button_new_with_label (_("!Hard"));
+					gtk_widget_show (check);
+					gtk_signal_connect (GTK_OBJECT (check), "toggled", GTK_SIGNAL_FUNC (entity_check), NULL);
+/*					gtk_table_attach (GTK_TABLE (table), check, 2, 3, 2, 3,
+										(GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
+										(GtkAttachOptions) (GTK_EXPAND | GTK_FILL), 0, 0);*/
+					EntWidgets[EntCheck19] = check;
 
-              check = gtk_check_button_new_with_label ("!DeathMatch");
-              gtk_widget_show (check);
-              gtk_signal_connect (GTK_OBJECT (check), "toggled", GTK_SIGNAL_FUNC (entity_check), NULL);
-              gtk_table_attach (GTK_TABLE (table), check, 2, 3, 3, 4,
-                                (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
-                                (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), 0, 0);
-              EntWidgets[EntCheck20] = check;
-            */
+					check = gtk_check_button_new_with_label (_("!DeathMatch"));
+					gtk_widget_show (check);
+					gtk_signal_connect (GTK_OBJECT (check), "toggled", GTK_SIGNAL_FUNC (entity_check), NULL);
+/*					gtk_table_attach (GTK_TABLE (table), check, 2, 3, 3, 4,
+										(GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
+										(GtkAttachOptions) (GTK_EXPAND | GTK_FILL), 0, 0);*/
+					EntWidgets[EntCheck20] = check;
+				}
             }
 
             {
@@ -1464,7 +1463,7 @@ void GroupDlg::Create ()
         }
 
         {
-          GtkWidget* label = gtk_label_new ("Value");
+          GtkWidget* label = gtk_label_new (_("Value"));
           gtk_widget_show (label);
           gtk_table_attach (GTK_TABLE (table), label, 0, 1, 1, 2,
                             (GtkAttachOptions) (GTK_FILL),
@@ -1473,7 +1472,7 @@ void GroupDlg::Create ()
         }
 
         {
-          GtkWidget* label = gtk_label_new ("Key");
+          GtkWidget* label = gtk_label_new (_("Key"));
           gtk_widget_show (label);
           gtk_table_attach (GTK_TABLE (table), label, 0, 1, 0, 1,
                             (GtkAttachOptions) (GTK_FILL),
@@ -1493,7 +1492,7 @@ void GroupDlg::Create ()
           gtk_box_pack_start (GTK_BOX (hbox), table, FALSE, TRUE, 0);
 
           {
-            GtkWidget* button = gtk_button_new_with_label ("360");
+            GtkWidget* button = gtk_button_new_with_label (_("360"));
             gtk_widget_show (button);
             gtk_signal_connect (GTK_OBJECT (button), "clicked", GTK_SIGNAL_FUNC (entitylist_angle), (void *)"360");
             gtk_table_attach (GTK_TABLE (table), button, 2, 3, 1, 2,
@@ -1502,7 +1501,7 @@ void GroupDlg::Create ()
           }
 
           {
-            GtkWidget* button = gtk_button_new_with_label ("45");
+            GtkWidget* button = gtk_button_new_with_label (_("45"));
             gtk_widget_show (button);
             gtk_signal_connect (GTK_OBJECT (button), "clicked", GTK_SIGNAL_FUNC (entitylist_angle), (void *)"45");
             gtk_table_attach (GTK_TABLE (table), button, 2, 3, 0, 1,
@@ -1511,7 +1510,7 @@ void GroupDlg::Create ()
           }
 
           {
-            GtkWidget* button = gtk_button_new_with_label ("90");
+            GtkWidget* button = gtk_button_new_with_label (_("90"));
             gtk_widget_show (button);
             gtk_signal_connect (GTK_OBJECT (button), "clicked", GTK_SIGNAL_FUNC (entitylist_angle), (void *)"90");
             gtk_table_attach (GTK_TABLE (table), button, 1, 2, 0, 1,
@@ -1521,7 +1520,7 @@ void GroupDlg::Create ()
 
 
           {
-            GtkWidget* button = gtk_button_new_with_label ("135");
+            GtkWidget* button = gtk_button_new_with_label (_("135"));
             gtk_widget_show (button);
             gtk_signal_connect (GTK_OBJECT (button), "clicked", GTK_SIGNAL_FUNC (entitylist_angle), (void *)"135");
             gtk_table_attach (GTK_TABLE (table), button, 0, 1, 0, 1,
@@ -1530,7 +1529,7 @@ void GroupDlg::Create ()
           }
 
           {
-            GtkWidget* button = gtk_button_new_with_label ("180");
+            GtkWidget* button = gtk_button_new_with_label (_("180"));
             gtk_widget_show (button);
             gtk_signal_connect (GTK_OBJECT (button), "clicked", GTK_SIGNAL_FUNC (entitylist_angle), (void *)"180");
             gtk_table_attach (GTK_TABLE (table), button, 0, 1, 1, 2,
@@ -1539,7 +1538,7 @@ void GroupDlg::Create ()
           }
 
           {
-            GtkWidget* button = gtk_button_new_with_label ("225");
+            GtkWidget* button = gtk_button_new_with_label (_("225"));
             gtk_widget_show (button);
             gtk_signal_connect (GTK_OBJECT (button), "clicked", GTK_SIGNAL_FUNC (entitylist_angle), (void *)"225");
             gtk_table_attach (GTK_TABLE (table), button, 0, 1, 2, 3,
@@ -1548,7 +1547,7 @@ void GroupDlg::Create ()
           }
 
           {
-            GtkWidget* button = gtk_button_new_with_label ("270");
+            GtkWidget* button = gtk_button_new_with_label (_("270"));
             gtk_widget_show (button);
             gtk_signal_connect (GTK_OBJECT (button), "clicked", GTK_SIGNAL_FUNC (entitylist_angle), (void *)"270");
             gtk_table_attach (GTK_TABLE (table), button, 1, 2, 2, 3,
@@ -1557,7 +1556,7 @@ void GroupDlg::Create ()
           }
 
           {
-            GtkWidget* button = gtk_button_new_with_label ("315");
+            GtkWidget* button = gtk_button_new_with_label (_("315"));
             gtk_widget_show (button);
             gtk_signal_connect (GTK_OBJECT (button), "clicked", GTK_SIGNAL_FUNC (entitylist_angle), (void *)"315");
             gtk_table_attach (GTK_TABLE (table), button, 2, 3, 2, 3,
@@ -1572,21 +1571,21 @@ void GroupDlg::Create ()
           gtk_box_pack_start (GTK_BOX (hbox), vbox2, TRUE, TRUE, 0);
 
           {
-            GtkWidget* button = gtk_button_new_with_label ("Reset");
+            GtkWidget* button = gtk_button_new_with_label (_("Reset"));
             gtk_widget_show (button);
             gtk_signal_connect (GTK_OBJECT (button), "clicked", GTK_SIGNAL_FUNC (ResetEntity), NULL);
             gtk_box_pack_start (GTK_BOX (vbox2), button, FALSE, FALSE, 0);
           }
 
           {
-            GtkWidget* button = gtk_button_new_with_label ("Up");
+            GtkWidget* button = gtk_button_new_with_label (_("Up"));
             gtk_widget_show (button);
             gtk_signal_connect (GTK_OBJECT (button), "clicked", GTK_SIGNAL_FUNC (entitylist_angle), (void *)"-1");
             gtk_box_pack_start (GTK_BOX (vbox2), button, FALSE, FALSE, 0);
           }
 
           {
-            GtkWidget* button = gtk_button_new_with_label ("Dn");
+            GtkWidget* button = gtk_button_new_with_label (_("Dn"));
             gtk_widget_show (button);
             gtk_signal_connect (GTK_OBJECT (button), "clicked", GTK_SIGNAL_FUNC (entitylist_angle), (void *)"-2");
             gtk_box_pack_start (GTK_BOX (vbox2), button, FALSE, FALSE, 0);
@@ -1599,21 +1598,21 @@ void GroupDlg::Create ()
           gtk_box_pack_start (GTK_BOX (hbox), vbox2, TRUE, TRUE, 0);
 
           {
-            GtkWidget* button = gtk_button_new_with_label ("Del Key/Pair");
+            GtkWidget* button = gtk_button_new_with_label (_("Del Key/Pair"));
             gtk_widget_show (button);
             gtk_signal_connect (GTK_OBJECT (button), "clicked", GTK_SIGNAL_FUNC (DelProp), NULL);
             gtk_box_pack_start (GTK_BOX (vbox2), button, FALSE, FALSE, 0);
           }
 
           {
-            GtkWidget* button = gtk_button_new_with_label ("Sound...");
+            GtkWidget* button = gtk_button_new_with_label (_("Sound..."));
             gtk_widget_show (button);
             gtk_signal_connect (GTK_OBJECT (button), "clicked", GTK_SIGNAL_FUNC (AssignSound), NULL);
             gtk_box_pack_start (GTK_BOX (vbox2), button, FALSE, FALSE, 0);
           }
 
           {
-            GtkWidget* button = gtk_button_new_with_label ("Model...");
+            GtkWidget* button = gtk_button_new_with_label (_("Model..."));
             gtk_widget_show (button);
             gtk_signal_connect (GTK_OBJECT (button), "clicked", GTK_SIGNAL_FUNC (AssignModel), NULL);
             gtk_box_pack_start (GTK_BOX (vbox2), button, FALSE, FALSE, 0);
@@ -1642,7 +1641,7 @@ void GroupDlg::Create ()
         }
 
         {
-          GtkWidget* label = gtk_label_new ("Console");
+          GtkWidget* label = gtk_label_new (_("Console"));
           gtk_widget_show (label);
           gtk_notebook_append_page (GTK_NOTEBOOK (notebook), scr, label);
         }
@@ -1672,28 +1671,28 @@ void GroupDlg::Create ()
   gtk_widget_show (hbox);
   gtk_box_pack_start (GTK_BOX (vbox), hbox, FALSE, TRUE, 0);
 
-  button = gtk_button_new_with_label ("Add...");
+  button = gtk_button_new_with_label (_("Add..."));
   gtk_widget_show (button);
   gtk_signal_connect (GTK_OBJECT (button), "clicked", GTK_SIGNAL_FUNC (groupdlg_add), NULL);
   gtk_box_pack_start (GTK_BOX (hbox), button, FALSE, FALSE, 0);
   gtk_widget_set_usize (button, 60, -2);
 
-  button = gtk_button_new_with_label ("Edit...");
+  button = gtk_button_new_with_label (_("Edit..."));
   gtk_widget_show (button);
   gtk_box_pack_start (GTK_BOX (hbox), button, FALSE, FALSE, 0);
   gtk_widget_set_usize (button, 60, -2);
 
-  button = gtk_button_new_with_label ("Delete");
+  button = gtk_button_new_with_label (_("Delete"));
   gtk_widget_show (button);
   gtk_box_pack_start (GTK_BOX (hbox), button, FALSE, FALSE, 0);
   gtk_widget_set_usize (button, 60, -2);
 
-  label = gtk_label_new ("Groups");
+  label = gtk_label_new (_("Groups"));
   gtk_widget_show (label);
   gtk_notebook_append_page (GTK_NOTEBOOK (notebook), vbox, label);
   */
   inspector_mode = W_ENTITY;
-  //  gtk_window_set_title (GTK_WINDOW (dlg), "Entities");
+  //  gtk_window_set_title (GTK_WINDOW (dlg), _("Entities"));
   m_pWidget = dlg;
   /*
   load_pixmap ("grouptree1.bmp", g_pParentWnd->m_pWidget, &tree_pixmaps[0], &tree_masks[0]);

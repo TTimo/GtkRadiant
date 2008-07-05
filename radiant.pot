@@ -2166,6 +2166,7 @@ msgid "Mapped Commands"
 msgstr ""
 
 #: radiant/gtkdlgs.cpp:2824 radiant/gtkdlgs.cpp:1707 radiant/gtkdlgs.cpp:2823
+#: radiant/groupdialog.cpp:1475
 msgid "Key"
 msgstr ""
 
@@ -2333,7 +2334,7 @@ msgstr ""
 msgid "Count"
 msgstr ""
 
-#: radiant/gtkdlgs.cpp:1713
+#: radiant/gtkdlgs.cpp:1713 radiant/groupdialog.cpp:1466
 msgid "Value"
 msgstr ""
 
@@ -2670,4 +2671,80 @@ msgstr ""
 
 #: radiant/surfacedialog.cpp:892
 msgid "Test"
+msgstr ""
+
+#: radiant/groupdialog.cpp:1344
+msgid "!Easy"
+msgstr ""
+
+#: radiant/groupdialog.cpp:1352
+msgid "!Medium"
+msgstr ""
+
+#: radiant/groupdialog.cpp:1360
+msgid "!Hard"
+msgstr ""
+
+#: radiant/groupdialog.cpp:1368
+msgid "!DeathMatch"
+msgstr ""
+
+#: radiant/groupdialog.cpp:1495
+msgid "360"
+msgstr ""
+
+#: radiant/groupdialog.cpp:1504
+msgid "45"
+msgstr ""
+
+#: radiant/groupdialog.cpp:1513
+msgid "90"
+msgstr ""
+
+#: radiant/groupdialog.cpp:1523
+msgid "135"
+msgstr ""
+
+#: radiant/groupdialog.cpp:1532
+msgid "180"
+msgstr ""
+
+#: radiant/groupdialog.cpp:1541
+msgid "225"
+msgstr ""
+
+#: radiant/groupdialog.cpp:1550
+msgid "270"
+msgstr ""
+
+#: radiant/groupdialog.cpp:1559
+msgid "315"
+msgstr ""
+
+#: radiant/groupdialog.cpp:1574
+msgid "Reset"
+msgstr ""
+
+#: radiant/groupdialog.cpp:1581
+msgid "Up"
+msgstr ""
+
+#: radiant/groupdialog.cpp:1588
+msgid "Dn"
+msgstr ""
+
+#: radiant/groupdialog.cpp:1601
+msgid "Del Key/Pair"
+msgstr ""
+
+#: radiant/groupdialog.cpp:1608
+msgid "Sound..."
+msgstr ""
+
+#: radiant/groupdialog.cpp:1615
+msgid "Model..."
+msgstr ""
+
+#: radiant/groupdialog.cpp:1644
+msgid "Console"
 msgstr ""

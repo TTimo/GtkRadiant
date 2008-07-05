@@ -49,12 +49,11 @@ enum
   EntCheck15,
   EntCheck16,
 
-/*
   EntCheck17,
   EntCheck18,
   EntCheck19,
   EntCheck20,
-*/
+
   EntProps,
   EntDir0,
   EntDir45,
@@ -79,13 +78,12 @@ enum
   EntLast,
 };
 
-// 17..20 where used for spawnflags (!Easy !Medium !Hard etc.), empty now..
 extern GtkWidget* EntWidgets[EntLast];
 
 //extern int rgIds[EntLast];
 
 
-class GroupDlg 
+class GroupDlg
 {
  public:
   GroupDlg ();

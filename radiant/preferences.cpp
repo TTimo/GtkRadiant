@@ -2884,7 +2884,7 @@ void PrefsDlg::LoadPrefs ()
     // Texture subset on by default (HL specific really, because of halflife.wad's size)
     mLocalPrefs.GetPref(TEXTURE_KEY,            &m_bTextureWindow,              TRUE);
   }
-  else if ( ( g_pGameDescription->mGameFile == "q2.game" ) || ( g_pGameDescription->mGameFile == "heretic2.game" ) )
+  else if (g_pGameDescription->quake2 || ( g_pGameDescription->mGameFile == "q2.game" ) || ( g_pGameDescription->mGameFile == "heretic2.game" ))
   {
     // BSP monitoring is implemented in Quake2 and Heretic2 tools
     mLocalPrefs.GetPref(WATCHBSP_KEY,           &m_bWatchBSP,                   TRUE);
