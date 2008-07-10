@@ -1328,7 +1328,7 @@ void GroupDlg::Create ()
 
             {
               // Spawnflags (4 colums wide max, or window gets too wide.)
-              GtkWidget* LayoutTable = gtk_table_new (4, 4, FALSE);
+              LayoutTable = gtk_table_new (4, 4, FALSE);
               gtk_box_pack_start (GTK_BOX (vbox2), LayoutTable, FALSE, TRUE, 0);
               gtk_widget_show(LayoutTable);
 
