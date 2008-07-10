@@ -236,7 +236,7 @@ class Config:
 		if ( useZ ):
 			env.Append( LIBS = 'z' )
 
-		env.Append( CFLAGS = baseflags )
+		env.Append( CCFLAGS = baseflags )
 		env.Append( CXXFLAGS = baseflags + [ '-fpermissive', '-fvisibility-inlines-hidden' ] )
 		env.Append( CPPPATH = [ 'include', 'libs' ] )
 		env.Append( CPPDEFINES = [ 'Q_NO_STLPORT' ] )

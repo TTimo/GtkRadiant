@@ -3824,7 +3824,7 @@ void MainFrame::SetButtonMenuStates()
   item  = GTK_WIDGET (g_object_get_data (G_OBJECT (m_pWidget), "menu_view_opengllighting"));
   gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (item), (g_PrefsDlg.m_bGLLighting) ? TRUE : FALSE);
   item  = GTK_WIDGET (g_object_get_data (G_OBJECT (m_pWidget), "menu_snaptogrid"));
-  gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (item), (!g_PrefsDlg.m_bNoClamp) ? TRUE : FALSE);
+  gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (item), (g_PrefsDlg.m_bSnap) ? TRUE : FALSE);
 
   item = GTK_WIDGET (g_object_get_data (G_OBJECT (m_pWidget), "tb_view_cubicclipping"));
   gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (item), (g_PrefsDlg.m_bCubicClipping) ? TRUE : FALSE);
@@ -4658,7 +4658,7 @@ void MainFrame::OnPrefs()
     GtkWidget *item = GTK_WIDGET (g_object_get_data (G_OBJECT (m_pWidget), "menu_snaptogrid"));
     g_bIgnoreCommands++;
     gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (item),
-                                    (!g_PrefsDlg.m_bNoClamp) ? TRUE : FALSE);
+                                    (g_PrefsDlg.m_bSnap) ? TRUE : FALSE);
     g_bIgnoreCommands--;
   }
 }
@@ -5686,12 +5686,12 @@ void MainFrame::OnGrid (unsigned int nID)
 
 void MainFrame::OnSnaptogrid()
 {
-  g_PrefsDlg.m_bNoClamp ^= 1;
+  g_PrefsDlg.m_bSnap ^= 1;
   g_PrefsDlg.SavePrefs ();
 
   GtkWidget *item = GTK_WIDGET (g_object_get_data (G_OBJECT (m_pWidget), "menu_snaptogrid"));
   g_bIgnoreCommands++;
-  gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (item), g_PrefsDlg.m_bNoClamp ? FALSE : TRUE);
+  gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (item), g_PrefsDlg.m_bSnap ? TRUE : FALSE);
   g_bIgnoreCommands--;
 }
 

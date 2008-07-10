@@ -62,6 +62,7 @@ public:
   face_t *face;     // Face of Texdef
   texdef_t texdef;  // Working texdef
   texdef_t orig_texdef;  // Original, for baselining changes
+  brushprimit_texdef_t orig_bp_texdef; // Original, for undo
 };
 
 

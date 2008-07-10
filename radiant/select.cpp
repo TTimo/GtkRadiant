@@ -735,7 +735,7 @@ void Select_GetMid (vec3_t mid)
 	vec3_t	mins, maxs;
 	int		i;
 
-  if (g_PrefsDlg.m_bNoClamp)
+  if (!g_PrefsDlg.m_bSnap)
   {
     Select_GetTrueMid(mid);
     return;

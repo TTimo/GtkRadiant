@@ -186,11 +186,11 @@ void TexMatToFakeTexCoords( vec_t texMat[2][3], float shift[2], float *rot, floa
 {
 #ifdef DBG_BP
 	// check this matrix is orthogonal
-	if (fabs(texMat[0][0]*texMat[0][1]+texMat[1][0]*texMat[1][1])>ZERO_EPSILON)
+	if (fabs(texMat[0][0]*1.0L*texMat[0][1]+texMat[1][0]*1.0L*texMat[1][1])>ZERO_EPSILON)
 		Sys_Printf("Warning : non orthogonal texture matrix in TexMatToFakeTexCoords\n");
 #endif
-	scale[0]=sqrt(texMat[0][0]*texMat[0][0]+texMat[1][0]*texMat[1][0]);
-	scale[1]=sqrt(texMat[0][1]*texMat[0][1]+texMat[1][1]*texMat[1][1]);
+	scale[0]=sqrt(texMat[0][0]*1.0L*texMat[0][0]+texMat[1][0]*1.0L*texMat[1][0]);
+	scale[1]=sqrt(texMat[0][1]*1.0L*texMat[0][1]+texMat[1][1]*1.0L*texMat[1][1]);
 #ifdef DBG_BP
 	if (scale[0]<ZERO_EPSILON || scale[1]<ZERO_EPSILON)
 		Sys_Printf("Warning : unexpected scale==0 in TexMatToFakeTexCoords\n");
@@ -210,7 +210,7 @@ void TexMatToFakeTexCoords( vec_t texMat[2][3], float shift[2], float *rot, floa
 			*rot=-90.0f;
 	}
 	else
-	*rot = RAD2DEG( atan2( texMat[1][0], texMat[0][0] ) );
+	*rot = RAD2DEG( atan2( texMat[1][0]*1.0L, texMat[0][0]*1.0L ) );
 	shift[0] = -texMat[0][2];
 	shift[1] = texMat[1][2];
 }
@@ -219,10 +219,10 @@ void TexMatToFakeTexCoords( vec_t texMat[2][3], float shift[2], float *rot, floa
 // the matrix returned must be understood as a qtexture_t with width=2 height=2 ( the default one )
 void FakeTexCoordsToTexMat( float shift[2], float rot, float scale[2], vec_t texMat[2][3] )
 {
-	texMat[0][0] = scale[0] * cos( DEG2RAD( rot ) );
-	texMat[1][0] = scale[0] * sin( DEG2RAD( rot ) );
-	texMat[0][1] = -1.0f * scale[1] * sin( DEG2RAD( rot ) );
-	texMat[1][1] = scale[1] * cos( DEG2RAD( rot ) );
+	texMat[0][0] = scale[0] *1.0L* cos( DEG2RAD( 1.0L*rot ) );
+	texMat[1][0] = scale[0] *1.0L* sin( DEG2RAD( 1.0L*rot ) );
+	texMat[0][1] = -scale[1] *1.0L* sin( DEG2RAD( 1.0L*rot ) );
+	texMat[1][1] = scale[1] *1.0L* cos( DEG2RAD( 1.0L*rot ) );
 	texMat[0][2] = -shift[0];
 	texMat[1][2] = shift[1];
 }

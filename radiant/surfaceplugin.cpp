@@ -73,6 +73,7 @@ void SI_GetSelFacesTexdef(texdef_to_face_t *allocd_block_texdef)
   face_t	*f;
   brush_t	*b;
   texdef_to_face_t *position, *prev_pos;
+  brushprimit_texdef_t bp;
 
   if(selected_brushes.next != &selected_brushes)
   {
@@ -85,8 +86,14 @@ void SI_GetSelFacesTexdef(texdef_to_face_t *allocd_block_texdef)
         {
             position->face = f;
             position->brush = b;
-            position->texdef = f->texdef;
-            position->orig_texdef = f->texdef;
+			position->texdef = f->texdef;
+			if(g_qeglobals.m_bBrushPrimitMode)
+			{
+				ConvertTexMatWithQTexture(&f->brushprimit_texdef, QERApp_Shader_ForName( f->texdef.GetName() )->getTexture(), &bp, NULL);
+				TexMatToFakeTexCoords(bp.coords, position->texdef.shift, &position->texdef.rotate, position->texdef.scale);
+				position->orig_bp_texdef = bp;
+			}
+			position->orig_texdef = position->texdef;
             prev_pos->next = position;
             prev_pos = position;
             position++;
@@ -103,7 +110,13 @@ void SI_GetSelFacesTexdef(texdef_to_face_t *allocd_block_texdef)
     position->face = f;
     position->brush = b;
     position->texdef = f->texdef;
-    position->orig_texdef = f->texdef;
+	if(g_qeglobals.m_bBrushPrimitMode)
+	{
+		ConvertTexMatWithQTexture(&f->brushprimit_texdef, QERApp_Shader_ForName( f->texdef.GetName() )->getTexture(), &bp, NULL);
+		TexMatToFakeTexCoords(bp.coords, position->texdef.shift, &position->texdef.rotate, position->texdef.scale);
+		position->orig_bp_texdef = bp;
+	}
+    position->orig_texdef = position->texdef;
     prev_pos = position;
     for(i=1; i<g_ptrSelectedFaces.GetSize(); i++)
     {
@@ -113,7 +126,13 @@ void SI_GetSelFacesTexdef(texdef_to_face_t *allocd_block_texdef)
       position->face = f;
       position->brush = b;
       position->texdef = f->texdef;
-      position->orig_texdef = f->texdef;
+	  if(g_qeglobals.m_bBrushPrimitMode)
+	  {
+		  ConvertTexMatWithQTexture(&f->brushprimit_texdef, QERApp_Shader_ForName( f->texdef.GetName() )->getTexture(), &bp, NULL);
+		  TexMatToFakeTexCoords(bp.coords, position->texdef.shift, &position->texdef.rotate, position->texdef.scale);
+		  position->orig_bp_texdef = bp;
+	  }
+      position->orig_texdef = position->texdef;
       prev_pos->next = position;
       prev_pos = position;
     }
@@ -187,7 +206,7 @@ void SI_SetTexdef_FaceList(texdef_to_face_t* texdef_face_list, bool b_SetUndoPoi
       if (b_isQuake2)
         SetFaceTexdef_Q2(texdef_to_face->face, &texdef_to_face->orig_texdef, bFit_to_Scale);
       else
-        SetFaceTexdef(texdef_to_face->face, &texdef_to_face->orig_texdef, NULL);
+        SetFaceTexdef(texdef_to_face->face, &texdef_to_face->orig_texdef, &texdef_to_face->orig_bp_texdef, bFit_to_Scale);
 
       Undo_Start("set facelist texdefs");
 
@@ -204,7 +223,11 @@ void SI_SetTexdef_FaceList(texdef_to_face_t* texdef_face_list, bool b_SetUndoPoi
     if (b_isQuake2)
       SetFaceTexdef_Q2(texdef_to_face->face, &texdef_to_face->texdef,  bFit_to_Scale);
     else
-      SetFaceTexdef(texdef_to_face->face, &texdef_to_face->texdef, NULL , bFit_to_Scale);
+	{
+	  brushprimit_texdef_t brushprimit_texdef;
+	  FakeTexCoordsToTexMat(texdef_to_face->texdef.shift, texdef_to_face->texdef.rotate, texdef_to_face->texdef.scale, brushprimit_texdef.coords);
+      SetFaceTexdef(texdef_to_face->face, &texdef_to_face->texdef, &brushprimit_texdef , bFit_to_Scale);
+	}
     Brush_Build(texdef_to_face->brush);
     if(bFit_to_Scale)
       texdef_to_face->texdef = texdef_to_face->face->texdef;
@@ -222,7 +245,10 @@ void SI_SetTexdef_FaceList(texdef_to_face_t* texdef_face_list, bool b_SetUndoPoi
         Undo_End();
 	// Over-write the orig_texdef list, cementing the change.
 	for(texdef_to_face = texdef_face_list; texdef_to_face; texdef_to_face = texdef_to_face->next)
+	{
 	  texdef_to_face->orig_texdef = texdef_to_face->texdef;
+	  texdef_to_face->orig_bp_texdef = texdef_to_face->face->brushprimit_texdef;
+	}
       }
   }
 
@@ -232,6 +258,7 @@ void SI_SetTexdef_FaceList(texdef_to_face_t* texdef_face_list, bool b_SetUndoPoi
 void SI_FaceList_FitTexture(texdef_to_face_t* si_texdef_face_list, int nHeight, int nWidth)
 {
   texdef_to_face_t* temp_texdef_face_list;
+  brushprimit_texdef_t bp;
 
   if (!si_texdef_face_list)
     return;
@@ -241,6 +268,12 @@ void SI_FaceList_FitTexture(texdef_to_face_t* si_texdef_face_list, int nHeight, 
     Face_FitTexture(temp_texdef_face_list->face, nHeight, nWidth);
     Brush_Build(temp_texdef_face_list->brush,true,true,false,false);
     // Write changes to our working Texdef list
+	
+	if(g_qeglobals.m_bBrushPrimitMode)
+	{
+		ConvertTexMatWithQTexture(&temp_texdef_face_list->face->brushprimit_texdef, QERApp_Shader_ForName( temp_texdef_face_list->face->texdef.GetName() )->getTexture(), &bp, NULL);
+		TexMatToFakeTexCoords(bp.coords, temp_texdef_face_list->face->texdef.shift, &temp_texdef_face_list->face->texdef.rotate, temp_texdef_face_list->face->texdef.scale);
+	}
     temp_texdef_face_list->texdef = temp_texdef_face_list->face->texdef;
   }
 

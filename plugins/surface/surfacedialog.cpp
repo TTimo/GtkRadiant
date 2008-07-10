@@ -1027,7 +1027,7 @@ GtkWidget* create_SurfaceInspector (void)
   gtk_widget_set_sensitive( GTK_WIDGET( vscale_value_spinbutton ), FALSE );
 
   rotate_value_spinbutton_adj = gtk_adjustment_new (0.0, -360.0, 360.0, 1.0, 10.0, 10.0);
-  rotate_value_spinbutton = gtk_spin_button_new (GTK_ADJUSTMENT (rotate_value_spinbutton_adj), 1, 0);
+  rotate_value_spinbutton = gtk_spin_button_new (GTK_ADJUSTMENT (rotate_value_spinbutton_adj), 1, 4);
   gtk_widget_show (rotate_value_spinbutton);
   gtk_table_attach (GTK_TABLE (table1), rotate_value_spinbutton, 1, 2, 10, 11,
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
@@ -1078,7 +1078,7 @@ GtkWidget* create_SurfaceInspector (void)
   gtk_spin_button_set_wrap (GTK_SPIN_BUTTON (vscale_offset_spinbutton), TRUE);
 
   rotate_offset_spinbutton_adj = gtk_adjustment_new (0.0, -360.0, 360.0, 1.0, 10.0, 10.0);
-  rotate_offset_spinbutton = gtk_spin_button_new (GTK_ADJUSTMENT (rotate_offset_spinbutton_adj), 0, 2);
+  rotate_offset_spinbutton = gtk_spin_button_new (GTK_ADJUSTMENT (rotate_offset_spinbutton_adj), 0, 4);
   gtk_widget_show (rotate_offset_spinbutton);
   gtk_table_attach (GTK_TABLE (table1), rotate_offset_spinbutton, 2, 3, 10, 11,
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
@@ -1121,7 +1121,7 @@ GtkWidget* create_SurfaceInspector (void)
   gtk_spin_button_set_update_policy (GTK_SPIN_BUTTON (vscale_step_spinbutton), GTK_UPDATE_IF_VALID);
 
   rotate_step_spinbutton_adj = gtk_adjustment_new (0.0, -360.0, 360.0, 1.0, 10.0, 10.0);
-  rotate_step_spinbutton = gtk_spin_button_new (GTK_ADJUSTMENT (rotate_step_spinbutton_adj), 1, 2);
+  rotate_step_spinbutton = gtk_spin_button_new (GTK_ADJUSTMENT (rotate_step_spinbutton_adj), 1, 4);
   gtk_widget_show (rotate_step_spinbutton);
   gtk_table_attach (GTK_TABLE (table1), rotate_step_spinbutton, 3, 4, 10, 11,
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),

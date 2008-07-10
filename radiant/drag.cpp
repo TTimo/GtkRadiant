@@ -770,7 +770,7 @@ void Drag_MouseMoved (int x, int y, int buttons)
 		for (i=0 ; i<3 ; i++)
 		{
 			move[i] = drag_xvec[i]*(x - pressx)	+ drag_yvec[i]*(y - pressy);
-			if (!g_PrefsDlg.m_bNoClamp)
+			if (g_PrefsDlg.m_bSnap)
 			{
 				move[i] = floor(move[i]/g_qeglobals.d_gridsize+0.5)*g_qeglobals.d_gridsize;
 			}

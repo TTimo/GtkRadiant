@@ -579,6 +579,7 @@ public:
   bool  m_bPluginToolbar;
   bool  m_bNoClamp;
 	//++timo this is most likely broken, I don't know what it's supposed to do
+  bool  m_bSnap;
   Str   m_strUserPath;
   int   m_nRotation;
   bool  m_bChaseMouse;

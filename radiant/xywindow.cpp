@@ -1501,7 +1501,7 @@ qboolean XYWnd::DragDelta (int x, int y, vec3_t move)
   for (i=0 ; i<3 ; i++)
   {
     delta[i] = xvec[i] * (x - m_nPressx) + yvec[i] * (y - m_nPressy);
-    if (!g_PrefsDlg.m_bNoClamp)
+    if (g_PrefsDlg.m_bSnap)
     {
       delta[i] = floor(delta[i] / g_qeglobals.d_gridsize + 0.5) * g_qeglobals.d_gridsize;
     }
@@ -2135,13 +2135,13 @@ void XYWnd::XY_Init()
 
 void XYWnd::SnapToPoint (int x, int y, vec3_t point)
 {
-  if (g_PrefsDlg.m_bNoClamp)
+  if (g_PrefsDlg.m_bSnap)
   {
-    XY_ToPoint(x, y, point);
+    XY_ToGridPoint(x, y, point);
   }
   else
   {
-    XY_ToGridPoint(x, y, point);
+    XY_ToPoint(x, y, point);
   }
 }
 

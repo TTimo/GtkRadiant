@@ -96,6 +96,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define WIDETOOLBAR_KEY         "WideToolBar"
 #define PLUGINTOOLBAR_KEY "PluginToolBar"
 #define NOCLAMP_KEY             "NoClamp"
+#define SNAP_KEY                "Snap"
 #define PREFAB_KEY              "PrefabPath"
 #define USERINI_KEY             "UserINIPath"
 #define ROTATION_KEY            "Rotation"
@@ -635,6 +636,7 @@ PrefsDlg::PrefsDlg ()
   m_bWideToolbar = TRUE;
   m_bPluginToolbar = TRUE;
   m_bNoClamp = FALSE;
+  m_bSnap = TRUE;
   m_strUserPath = "";
   m_nRotation = 0;
   m_bChaseMouse = FALSE;
@@ -2336,6 +2338,12 @@ void PrefsDlg::BuildDialog ()
   gtk_box_pack_start(GTK_BOX(vbox), check, FALSE, FALSE, 0);
   AddDialogData (check, &m_bNoClamp, DLG_CHECK_BOOL);
 
+  // Snap to grid
+  check = gtk_check_button_new_with_label (_("Snap to grid"));
+  gtk_widget_show (check);
+  gtk_box_pack_start(GTK_BOX(vbox), check, FALSE, FALSE, 0);
+  AddDialogData (check, &m_bSnap, DLG_CHECK_BOOL);
+
   // Select patch by bounding box
   check = gtk_check_button_new_with_label (_("Select patches by bounding box"));
   gtk_widget_show (check);
@@ -2906,6 +2914,7 @@ void PrefsDlg::LoadPrefs ()
   m_nShader = m_nLatchedShader;
 
   mLocalPrefs.GetPref(NOCLAMP_KEY,            &m_bNoClamp,                    FALSE);
+  mLocalPrefs.GetPref(SNAP_KEY,               &m_bSnap,                       TRUE);
   mLocalPrefs.GetPref(USERINI_KEY,            &m_strUserPath,                 "");
   mLocalPrefs.GetPref(ROTATION_KEY,           &m_nRotation,                   45);
   mLocalPrefs.GetPref(CHASEMOUSE_KEY,         &m_bChaseMouse,                 TRUE);
