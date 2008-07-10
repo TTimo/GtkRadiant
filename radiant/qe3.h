@@ -535,6 +535,7 @@ void BrushPrimitFaceToFace(face_t *f);
 void EmitBrushPrimitTextureCoordinates(face_t *, winding_t *);
 // EmitTextureCoordinates, is old code used for brush to brush primitive conversion
 void EmitTextureCoordinates ( float *xyzst, qtexture_t *q, face_t *f);
+void Face_TexdefFromTextureCoordinates ( float *xyzst1, float *xyzst2, float *xyzst3, qtexture_t *q, face_t *f);
 //void BrushPrimit_Parse(brush_t *);
 // compute a fake shift scale rot representation from the texture matrix
 void TexMatToFakeTexCoords( vec_t texMat[2][3], float shift[2], float *rot, float scale[2] );

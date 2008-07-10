@@ -65,7 +65,7 @@ void MatrixForPoints( vec3_t M[3], vec3_t D[2], brushprimit_texdef_t *T )
 	T->coords[1][2] = SarrusDet( M[0], M[1], D[1] ) / det;
 }
 
-//++timo replace everywhere texX by texS etc. ( ----> and in q3map !) 
+//++timo replace everywhere texX by texS etc. ( ----> and in q3map !)
 // NOTE : ComputeAxisBase here and in q3map code must always BE THE SAME !
 // WARNING : special case behaviour of atan2(y,x) <-> atan(y/x) might not be the same everywhere when x == 0
 // rotation by (0,RotY,RotZ) assigns X to normal
@@ -334,7 +334,7 @@ void Face_FitTexture_BrushPrimit( face_t *f, vec3_t mins, vec3_t maxs, int nHeig
 	vec3_t M[3],D[2];
 //	vec3_t N[2],Mf[2];
 	brushprimit_texdef_t N;
-  vec3_t Mf[2];
+	vec3_t Mf[2];
 
 
 	// we'll be working on a standardized texture size
@@ -343,8 +343,8 @@ void Face_FitTexture_BrushPrimit( face_t *f, vec3_t mins, vec3_t maxs, int nHeig
 	EmitBrushPrimitTextureCoordinates( f, f->face_winding );
 	ClearBounds( BBoxSTMin, BBoxSTMax );
 	w = f->face_winding;
-  for (i=0 ; i<w->numpoints ; i++)
-		{
+	for (i=0 ; i<w->numpoints ; i++)
+	{
 		// AddPointToBounds in 2D on (S,T) coordinates
 		for (j=0 ; j<2 ; j++)
 		{
@@ -354,31 +354,31 @@ void Face_FitTexture_BrushPrimit( face_t *f, vec3_t mins, vec3_t maxs, int nHeig
 			if (val > BBoxSTMax[j])
 				BBoxSTMax[j] = val;
 		}
-		}
+	}
 	// we have the three points of the BBox (BBoxSTMin[0].BBoxSTMin[1]) (BBoxSTMax[0],BBoxSTMin[1]) (BBoxSTMin[0],BBoxSTMax[1]) in ST space
-  // the BP matrix we are looking for gives (0,0) (nwidth,0) (0,nHeight) coordinates in (Sfit,Tfit) space to these three points
+	// the BP matrix we are looking for gives (0,0) (nwidth,0) (0,nHeight) coordinates in (Sfit,Tfit) space to these three points
 	// we have A(Sfit,Tfit) = (0,0) = Mf * A(TexS,TexT) = N * M * A(TexS,TexT) = N * A(S,T)
 	// so we solve the system for N and then Mf = N * M
 	M[0][0] = BBoxSTMin[0]; M[0][1] = BBoxSTMax[0]; M[0][2] = BBoxSTMin[0];
 	M[1][0] = BBoxSTMin[1]; M[1][1] = BBoxSTMin[1]; M[1][2] = BBoxSTMax[1];
 	D[0][0] = 0.0f; D[0][1] = nWidth; D[0][2] = 0.0f;
 	D[1][0] = 0.0f; D[1][1] = 0.0f; D[1][2] = nHeight;
-  MatrixForPoints( M, D, &N );
+	MatrixForPoints( M, D, &N );
 
 #if 0
-  // FIT operation gives coordinates of three points of the bounding box in (S',T'), our target axis base
+	// FIT operation gives coordinates of three points of the bounding box in (S',T'), our target axis base
 	// A(S',T')=(0,0) B(S',T')=(nWidth,0) C(S',T')=(0,nHeight)
 	// and we have them in (S,T) axis base: A(S,T)=(BBoxSTMin[0],BBoxSTMin[1]) B(S,T)=(BBoxSTMax[0],BBoxSTMin[1]) C(S,T)=(BBoxSTMin[0],BBoxSTMax[1])
 	// we compute the N transformation so that: A(S',T') = N * A(S,T)
-  VectorSet( N[0], (BBoxSTMax[0]-BBoxSTMin[0])/(float)nWidth, 0.0f, BBoxSTMin[0] );
+	VectorSet( N[0], (BBoxSTMax[0]-BBoxSTMin[0])/(float)nWidth, 0.0f, BBoxSTMin[0] );
 	VectorSet( N[1], 0.0f, (BBoxSTMax[1]-BBoxSTMin[1])/(float)nHeight, BBoxSTMin[1] );
 #endif
 
 	// the final matrix is the product (Mf stands for Mfit)
-  Mf[0][0] = N.coords[0][0] * f->brushprimit_texdef.coords[0][0] + N.coords[0][1] * f->brushprimit_texdef.coords[1][0];
+	Mf[0][0] = N.coords[0][0] * f->brushprimit_texdef.coords[0][0] + N.coords[0][1] * f->brushprimit_texdef.coords[1][0];
 	Mf[0][1] = N.coords[0][0] * f->brushprimit_texdef.coords[0][1] + N.coords[0][1] * f->brushprimit_texdef.coords[1][1];
 	Mf[0][2] = N.coords[0][0] * f->brushprimit_texdef.coords[0][2] + N.coords[0][1] * f->brushprimit_texdef.coords[1][2] + N.coords[0][2];
-  Mf[1][0] = N.coords[1][0] * f->brushprimit_texdef.coords[0][0] + N.coords[1][1] * f->brushprimit_texdef.coords[1][0];
+	Mf[1][0] = N.coords[1][0] * f->brushprimit_texdef.coords[0][0] + N.coords[1][1] * f->brushprimit_texdef.coords[1][0];
 	Mf[1][1] = N.coords[1][0] * f->brushprimit_texdef.coords[0][1] + N.coords[1][1] * f->brushprimit_texdef.coords[1][1];
 	Mf[1][2] = N.coords[1][0] * f->brushprimit_texdef.coords[0][2] + N.coords[1][1] * f->brushprimit_texdef.coords[1][2] + N.coords[1][2];
 	// copy back
@@ -388,17 +388,42 @@ void Face_FitTexture_BrushPrimit( face_t *f, vec3_t mins, vec3_t maxs, int nHeig
 //	ConvertTexMatWithQTexture( &f->brushprimit_texdef, NULL, &f->brushprimit_texdef, f->d_texture );
 }
 
-void BrushPrimitFaceToFace(face_t *face)
+void BrushPrimitFaceToFace(face_t *f)
 {
-  // we have parsed brush primitives and need conversion back to standard format
-  // NOTE: converting back is a quick hack, there's some information lost and we can't do anything about it
-  // FIXME: if we normalize the texture matrix to a standard 2x2 size, we end up with wrong scaling
-  // I tried various tweaks, no luck .. seems shifting is lost
-  brushprimit_texdef_t aux;
-  ConvertTexMatWithQTexture( &face->brushprimit_texdef, face->d_texture, &aux, NULL );
-  TexMatToFakeTexCoords( aux.coords, face->texdef.shift, &face->texdef.rotate, face->texdef.scale );
-  face->texdef.scale[0]/=2.0;
-  face->texdef.scale[1]/=2.0;
+#if 0
+	// we have parsed brush primitives and need conversion back to standard format
+	// NOTE: converting back is a quick hack, there's some information lost and we can't do anything about it
+	// FIXME: if we normalize the texture matrix to a standard 2x2 size, we end up with wrong scaling
+	// I tried various tweaks, no luck .. seems shifting is lost
+	brushprimit_texdef_t aux;
+	ConvertTexMatWithQTexture( &face->brushprimit_texdef, face->d_texture, &aux, NULL );
+	TexMatToFakeTexCoords( aux.coords, face->texdef.shift, &face->texdef.rotate, face->texdef.scale );
+	face->texdef.scale[0]/=2.0;
+	face->texdef.scale[1]/=2.0;
+#else
+	// new method by divVerent@alientrap.org: Shift and scale no longer get lost when opening a BP map in texdef mode.
+	vec3_t texX,texY;
+	vec3_t proj;
+	vec_t ST[3][5];
+
+	ComputeAxisBase(f->plane.normal,texX,texY);
+	VectorCopy(f->plane.normal,proj);
+	VectorScale(proj,f->plane.dist,proj);
+	VectorCopy(proj,ST[0]);
+	VectorCopy(texX,ST[1]);
+	VectorAdd(ST[1],proj,ST[1]);
+	VectorCopy(texY,ST[2]);
+	VectorAdd(ST[2],proj,ST[2]);
+
+	ST[0][3] = f->brushprimit_texdef.coords[0][2];
+	ST[0][4] = f->brushprimit_texdef.coords[1][2];
+	ST[1][3] = f->brushprimit_texdef.coords[0][0] + ST[0][3];
+	ST[1][4] = f->brushprimit_texdef.coords[1][0] + ST[0][4];
+	ST[2][3] = f->brushprimit_texdef.coords[0][1] + ST[0][3];
+	ST[2][4] = f->brushprimit_texdef.coords[1][1] + ST[0][4];
+
+	Face_TexdefFromTextureCoordinates(ST[0], ST[1], ST[2], f->d_texture, f);
+#endif
 }
 
 // TEXTURE LOCKING -----------------------------------------------------------------------------------------------------
@@ -423,13 +448,13 @@ vec3_t txl_origin;
 
 void TextureLockTransformation_BrushPrimit(face_t *f)
 {
-  vec3_t Orig,texS,texT;        // axis base of initial plane
-  // used by transformation algo
-  vec3_t temp; int j;
+	vec3_t Orig,texS,texT;        // axis base of initial plane
+	// used by transformation algo
+	vec3_t temp; int j;
 	vec3_t vRotate;				        // rotation vector
 
-  vec3_t rOrig,rvecS,rvecT;     // geometric transformation of (0,0) (1,0) (0,1) { initial plane axis base }
-  vec3_t rNormal,rtexS,rtexT;   // axis base for the transformed plane
+	vec3_t rOrig,rvecS,rvecT;     // geometric transformation of (0,0) (1,0) (0,1) { initial plane axis base }
+	vec3_t rNormal,rtexS,rtexT;   // axis base for the transformed plane
 	vec3_t lOrig,lvecS,lvecT;	// [2] are not used ( but usefull for debugging )
 	vec3_t M[3];
 	vec_t det;
@@ -437,37 +462,37 @@ void TextureLockTransformation_BrushPrimit(face_t *f)
 
 	// compute plane axis base
 	ComputeAxisBase( f->plane.normal, texS, texT );
-  VectorSet(Orig, 0.0f, 0.0f, 0.0f);
+	VectorSet(Orig, 0.0f, 0.0f, 0.0f);
 
 	// compute coordinates of (0,0) (1,0) (0,1) ( expressed in initial plane axis base ) after transformation
 	// (0,0) (1,0) (0,1) ( expressed in initial plane axis base ) <-> (0,0,0) texS texT ( expressed world axis base )
-  // input: Orig, texS, texT (and the global locking params)
-  // ouput: rOrig, rvecS, rvecT, rNormal
-  if (txlock_bRotation) {
-    // rotation vector
-  	VectorSet( vRotate, 0.0f, 0.0f, 0.0f );
-  	vRotate[txl_nAxis]=txl_fDeg;
-  	VectorRotateOrigin ( Orig, vRotate, txl_vOrigin, rOrig );
-  	VectorRotateOrigin ( texS, vRotate, txl_vOrigin, rvecS );
-  	VectorRotateOrigin ( texT, vRotate, txl_vOrigin, rvecT );
-  	// compute normal of plane after rotation
-  	VectorRotate ( f->plane.normal, vRotate, rNormal );
-  }
-  else
-  {
-    VectorSubtract (Orig, txl_origin, temp);
-    for (j=0 ; j<3 ; j++)
-      rOrig[j] = DotProduct(temp, txl_matrix[j]) + txl_origin[j];
-    VectorSubtract (texS, txl_origin, temp);
-    for (j=0 ; j<3 ; j++)
-      rvecS[j] = DotProduct(temp, txl_matrix[j]) + txl_origin[j];
-    VectorSubtract (texT, txl_origin, temp);
-    for (j=0 ; j<3 ; j++)
-      rvecT[j] = DotProduct(temp, txl_matrix[j]) + txl_origin[j];
-    // we also need the axis base of the target plane, apply the transformation matrix to the normal too..
-    for (j=0 ; j<3 ; j++)
-      rNormal[j] = DotProduct(f->plane.normal, txl_matrix[j]);
-  }
+	// input: Orig, texS, texT (and the global locking params)
+	// ouput: rOrig, rvecS, rvecT, rNormal
+	if (txlock_bRotation) {
+		// rotation vector
+		VectorSet( vRotate, 0.0f, 0.0f, 0.0f );
+		vRotate[txl_nAxis]=txl_fDeg;
+		VectorRotateOrigin ( Orig, vRotate, txl_vOrigin, rOrig );
+		VectorRotateOrigin ( texS, vRotate, txl_vOrigin, rvecS );
+		VectorRotateOrigin ( texT, vRotate, txl_vOrigin, rvecT );
+		// compute normal of plane after rotation
+		VectorRotate ( f->plane.normal, vRotate, rNormal );
+	}
+	else
+	{
+		VectorSubtract (Orig, txl_origin, temp);
+		for (j=0 ; j<3 ; j++)
+		rOrig[j] = DotProduct(temp, txl_matrix[j]) + txl_origin[j];
+		VectorSubtract (texS, txl_origin, temp);
+		for (j=0 ; j<3 ; j++)
+		rvecS[j] = DotProduct(temp, txl_matrix[j]) + txl_origin[j];
+		VectorSubtract (texT, txl_origin, temp);
+		for (j=0 ; j<3 ; j++)
+		rvecT[j] = DotProduct(temp, txl_matrix[j]) + txl_origin[j];
+		// we also need the axis base of the target plane, apply the transformation matrix to the normal too..
+		for (j=0 ; j<3 ; j++)
+		rNormal[j] = DotProduct(f->plane.normal, txl_matrix[j]);
+	}
 
 	// compute rotated plane axis base
 	ComputeAxisBase( rNormal, rtexS, rtexT );
@@ -502,12 +527,12 @@ void TextureLockTransformation_BrushPrimit(face_t *f)
 // called before the points on the face are actually rotated
 void RotateFaceTexture_BrushPrimit(face_t *f, int nAxis, float fDeg, vec3_t vOrigin )
 {
-  // this is a placeholder to call the general texture locking algorithm
-  txlock_bRotation = true;
-  txl_nAxis = nAxis;
-  txl_fDeg = fDeg;
-  VectorCopy(vOrigin, txl_vOrigin);
-  TextureLockTransformation_BrushPrimit(f);
+	// this is a placeholder to call the general texture locking algorithm
+	txlock_bRotation = true;
+	txl_nAxis = nAxis;
+	txl_fDeg = fDeg;
+	VectorCopy(vOrigin, txl_vOrigin);
+	TextureLockTransformation_BrushPrimit(f);
 }
 
 // compute the new brush primit texture matrix for a transformation matrix and a flip order flag (change plane orientation)

@@ -423,6 +423,94 @@ void Face_TextureVectors (face_t *f, float STfromXYZ[2][4])
 	}
 }
 
+long double HighestImpactSign (long double a, long double b)
+{
+	// returns the sign of the value with larger abs
+	if (a + b > 0)
+		return +1;
+	else
+		return -1;
+}
+
+void Face_TexdefFromTextureVectors (face_t *f, long double STfromXYZ[2][4], vec3_t pvecs[2], int sv, int tv)
+{
+	texdef_t *td;
+	qtexture_t *q;
+	int j;
+	long double ang;
+
+	td = &f->texdef;
+	q = f->d_texture;
+
+	// undo the texture transform
+	for (j=0 ; j<4 ; j++) {
+		STfromXYZ[0][j] *= q->width;
+		STfromXYZ[1][j] *= q->height;
+	}
+
+	// shift
+	td->shift[0] = STfromXYZ[0][3];
+	td->shift[1] = STfromXYZ[1][3];
+
+	/**
+	 * SOLVE:
+	 *  STfromXYZ[0][sv] = (cosv * pvecs[0][sv] - sinv * pvecs[0][tv]) / td->scale[0];
+	 *  STfromXYZ[0][tv] = (sinv * pvecs[0][sv] + cosv * pvecs[0][tv]) / td->scale[0];
+	 *  STfromXYZ[1][sv] = (cosv * pvecs[1][sv] - sinv * pvecs[1][tv]) / td->scale[1];
+	 *  STfromXYZ[1][tv] = (sinv * pvecs[1][sv] + cosv * pvecs[1][tv]) / td->scale[1];
+	 * FOR:
+	 *  sinv, cosv, td->scale[0], td->scale[1]
+	 * WE KNOW:
+	 *  sinv^2 + cosv^2 = 1
+	 *  pvecs[0][sv] is +/-1
+	 *  pvecs[0][tv] is 0
+	 *  pvecs[1][sv] is 0
+	 *  pvecs[1][tv] is +/-1
+	 * THUS:
+	 *  STfromXYZ[0][sv] = +cosv * pvecs[0][sv] / td->scale[0];
+	 *  STfromXYZ[0][tv] = +sinv * pvecs[0][sv] / td->scale[0];
+	 *  STfromXYZ[1][sv] = -sinv * pvecs[1][tv] / td->scale[1];
+	 *  STfromXYZ[1][tv] = +cosv * pvecs[1][tv] / td->scale[1];
+	 */
+
+	td->scale[0] = sqrt(STfromXYZ[0][sv]*STfromXYZ[0][sv] + STfromXYZ[0][tv]*STfromXYZ[0][tv]);
+	td->scale[1] = sqrt(STfromXYZ[1][sv]*STfromXYZ[1][sv] + STfromXYZ[1][tv]*STfromXYZ[1][tv]);
+
+	if (td->scale[0])
+		td->scale[0] = 1 / td->scale[0]; // avoid NaNs
+	if (td->scale[1])
+		td->scale[1] = 1 / td->scale[1];
+
+	long double sign0tv = (STfromXYZ[0][tv] > 0) ? +1 : -1;
+	ang = atan2( sign0tv * STfromXYZ[0][tv], sign0tv * STfromXYZ[0][sv]); // atan2(y, x) with y positive is in [0, PI[
+
+	// STOP
+	// We have until now ignored the fact that td->scale[0] or td->scale[1] may
+	// have either sign (+ or -). Due to roundoff errors, our choice of
+	// sign0tv may even have been wrong in a sense.
+	// sign0tv may NOT indicate the appropriate sign for td->scale[0] (namely,
+	// if cosv is near zero)!
+	// let's look at the signs again
+	//   sign0sv =  signcosv * pvecs[0][sv] / td->scale[0]sign
+	//   sign0tv =             pvecs[0][sv] / td->scale[0]sign
+	//   sign1sv = -1        * pvecs[1][tv] / td->scale[1]sign
+	//   sign1tv =  signcosv * pvecs[1][tv] / td->scale[1]sign
+	// -->
+	//   td->scale[1]sign =  sign1tv * signcosv * pvecs[1][tv]
+	//   td->scale[1]sign = -sign1sv * signsinv * pvecs[1][tv]
+	//   td->scale[0]sign =  sign0tv * signsinv * pvecs[0][sv]
+	//   td->scale[0]sign =  sign0sv * signcosv * pvecs[0][sv]
+	// which to choose?
+	// the one with the larger impact on the original texcoords, of course
+	// to minimize the effect of roundoff errors that may flip the signs!
+
+	td->scale[0] *= HighestImpactSign(STfromXYZ[0][tv] * +sin(ang), STfromXYZ[0][sv] * cos(ang)) * pvecs[0][sv];
+	td->scale[1] *= HighestImpactSign(STfromXYZ[1][sv] * -sin(ang), STfromXYZ[1][tv] * cos(ang)) * pvecs[1][tv];
+
+	td->rotate = ang * 180 / Q_PI; // FIXME possibly snap this to 0/90/180 (270 can't happen)?
+}
+
+
 /*
 ================
 Face_MakePlane
@@ -461,6 +549,135 @@ void EmitTextureCoordinates ( float *xyzst, qtexture_t *q, face_t *f)
 	xyzst[3] = DotProduct (xyzst, STfromXYZ[0]) + STfromXYZ[0][3];
 	xyzst[4] = DotProduct (xyzst, STfromXYZ[1]) + STfromXYZ[1][3];
 }
+
+long double SarrusDetScalar(long double a1, long double b1, long double c1, long double a2, long double b2, long double c2, long double a3, long double b3, long double c3)
+{
+	return a1 * b2 * c3 + a2 * b3 * c1 + a3 * b1 * c2
+		- a1 * c2 * b3 - a2 * c3 * b1 - a3 * c1 * b2;
+}
+
+void SarrusSolve(long double a1, long double b1, long double c1, long double d1, long double a2, long double b2, long double c2, long double d2, long double a3, long double b3, long double c3, long double d3, long double *a, long double *b, long double *c)
+{
+	long double det;
+	det = SarrusDetScalar(a1, b1, c1,
+						a2, b2, c2,
+						a3, b3, c3);
+	*a =  SarrusDetScalar(d1, b1, c1,
+						d2, b2, c2,
+						d3, b3, c3) / det;
+	*b =  SarrusDetScalar(a1, d1, c1,
+						a2, d2, c2,
+						a3, d3, c3) / det;
+	*c =  SarrusDetScalar(a1, b1, d1,
+						a2, b2, d2,
+						a3, b3, d3) / det;
+}
+
+void Face_TexdefFromTextureCoordinates ( float *xyzst1, float *xyzst2, float *xyzst3, qtexture_t *q, face_t *f)
+{
+	vec3_t		pvecs[2];
+	int sv, tv, uv;
+
+	long double   STfromXYZ[2][4];
+
+	// get natural texture axis
+	TextureAxisFromPlane(&f->plane, pvecs[0], pvecs[1]);
+
+	if (pvecs[0][0])
+		sv = 0;
+	else if (pvecs[0][1])
+		sv = 1;
+	else
+		sv = 2;
+
+	if (pvecs[1][0])
+		tv = 0;
+	else if (pvecs[1][1])
+		tv = 1;
+	else
+		tv = 2;
+
+	uv = 3 - sv - tv; // the "other one"
+
+	// find the STfromXYZ 4-vectors
+	/*
+	SARRUS-SOLVE:
+		xyzst1[3] == xyzst1[sv] * STfromXYZ[0][sv] + xyzst1[tv] * STfromXYZ[0][tv] + STfromXYZ[0][3];
+		xyzst2[3] == xyzst2[sv] * STfromXYZ[0][sv] + xyzst2[tv] * STfromXYZ[0][tv] + STfromXYZ[0][3];
+		xyzst3[3] == xyzst3[sv] * STfromXYZ[0][sv] + xyzst3[tv] * STfromXYZ[0][tv] + STfromXYZ[0][3];
+	FOR: STfromXYZ[0]
+	GIVEN: one coord of them (uv) is empty (see Face_TextureVectors)
+	SARRUS-SOLVE:
+		xyzst1[4] == xyzst1[sv] * STfromXYZ[1][sv] + xyzst1[tv] * STfromXYZ[1][tv] + STfromXYZ[1][3];
+		xyzst2[4] == xyzst2[sv] * STfromXYZ[1][sv] + xyzst2[tv] * STfromXYZ[1][tv] + STfromXYZ[1][3];
+		xyzst3[4] == xyzst3[sv] * STfromXYZ[1][sv] + xyzst3[tv] * STfromXYZ[1][tv] + STfromXYZ[1][3];
+	FOR: STfromXYZ[1]
+	GIVEN: one coord of them (uv) is empty (see Face_TextureVectors)
+	*/
+
+	STfromXYZ[0][uv] = 0;
+	SarrusSolve(
+		xyzst1[sv],        xyzst1[tv],        1,               xyzst1[3],
+		xyzst2[sv],        xyzst2[tv],        1,               xyzst2[3],
+		xyzst3[sv],        xyzst3[tv],        1,               xyzst3[3],
+		&STfromXYZ[0][sv], &STfromXYZ[0][tv], &STfromXYZ[0][3]
+	);
+
+	STfromXYZ[1][uv] = 0;
+	SarrusSolve(
+		xyzst1[sv],        xyzst1[tv],        1,               xyzst1[4],
+		xyzst2[sv],        xyzst2[tv],        1,               xyzst2[4],
+		xyzst3[sv],        xyzst3[tv],        1,               xyzst3[4],
+		&STfromXYZ[1][sv], &STfromXYZ[1][tv], &STfromXYZ[1][3]
+	);
+
+	/*
+	printf("%s\n", q->name);
+
+	printf("%f == %Lf\n", xyzst1[3], DotProduct (xyzst1, STfromXYZ[0]) + STfromXYZ[0][3]);
+	printf("%f == %Lf\n", xyzst2[3], DotProduct (xyzst2, STfromXYZ[0]) + STfromXYZ[0][3]);
+	printf("%f == %Lf\n", xyzst3[3], DotProduct (xyzst3, STfromXYZ[0]) + STfromXYZ[0][3]);
+	printf("%f == %Lf\n", xyzst1[4], DotProduct (xyzst1, STfromXYZ[1]) + STfromXYZ[1][3]);
+	printf("%f == %Lf\n", xyzst2[4], DotProduct (xyzst2, STfromXYZ[1]) + STfromXYZ[1][3]);
+	printf("%f == %Lf\n", xyzst3[4], DotProduct (xyzst3, STfromXYZ[1]) + STfromXYZ[1][3]);
+
+	float   newSTfromXYZ[2][4];
+
+	printf("old: %Lf,%Lf,%Lf,%Lf %Lf,%Lf,%Lf,%Lf\n",
+		STfromXYZ[0][0], STfromXYZ[0][1], STfromXYZ[0][2], STfromXYZ[0][3],
+		STfromXYZ[1][0], STfromXYZ[1][1], STfromXYZ[1][2], STfromXYZ[1][3]);
+	*/
+
+	Face_TexdefFromTextureVectors (f,  STfromXYZ, pvecs, sv, tv);
+
+	/*
+	Face_TextureVectors(f, newSTfromXYZ);
+
+	printf("new: %f,%f,%f,%f %f,%f,%f,%f\n",
+		newSTfromXYZ[0][0], newSTfromXYZ[0][1], newSTfromXYZ[0][2], newSTfromXYZ[0][3],
+		newSTfromXYZ[1][0], newSTfromXYZ[1][1], newSTfromXYZ[1][2], newSTfromXYZ[1][3]);
+
+	float newxyzst1[5];
+	float newxyzst2[5];
+	float newxyzst3[5];
+	VectorCopy(xyzst1, newxyzst1);
+	VectorCopy(xyzst2, newxyzst2);
+	VectorCopy(xyzst3, newxyzst3);
+	EmitTextureCoordinates (newxyzst1, q, f);
+	EmitTextureCoordinates (newxyzst2, q, f);
+	EmitTextureCoordinates (newxyzst3, q, f);
+	printf("Face_TexdefFromTextureCoordinates: %f,%f %f,%f %f,%f -> %f,%f %f,%f %f,%f\n",
+		xyzst1[3], xyzst1[4],
+		xyzst2[3], xyzst2[4],
+		xyzst3[3], xyzst3[4],
+		newxyzst1[3], newxyzst1[4],
+		newxyzst2[3], newxyzst2[4],
+		newxyzst3[3], newxyzst3[4]);
+	// TODO why do these differ, but not the previous ones? this makes no sense whatsoever
+	*/
+}
+
+
 
 //==========================================================================
 
