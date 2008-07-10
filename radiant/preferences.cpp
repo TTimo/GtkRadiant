@@ -695,29 +695,23 @@ Games selection dialog
 */
 
 #if defined(WIN32)
+#define TOOLS_ATTRIBUTE "gametools_win32"
 #define ENGINE_ATTRIBUTE "engine_win32"
+#define ENGINEPATH_ATTRIBUTE "enginepath_win32"
 #define MP_ENGINE_ATTRIBUTE "mp_engine_win32"
 #elif defined(__linux__) || defined (__FreeBSD__)
+#define TOOLS_ATTRIBUTE "gametools_linux"
 #define ENGINE_ATTRIBUTE "engine_linux"
+#define ENGINEPATH_ATTRIBUTE "enginepath_linux"
 #define MP_ENGINE_ATTRIBUTE "mp_engine_linux"
 #elif defined(__APPLE__)
+#define TOOLS_ATTRIBUTE "gametools_macos"
 #define ENGINE_ATTRIBUTE "engine_macos"
+#define ENGINEPATH_ATTRIBUTE "enginepath_macos"
 #define MP_ENGINE_ATTRIBUTE "mp_engine_macos"
 #else
 #error "unsupported platform"
 #endif
-
-
-#if defined(WIN32)
-#define ENGINEPATH_ATTRIBUTE "enginepath_win32"
-#elif defined(__linux__) || defined (__FreeBSD__)
-#define ENGINEPATH_ATTRIBUTE "enginepath_linux"
-#elif defined(__APPLE__)
-#define ENGINEPATH_ATTRIBUTE "enginepath_macos"
-#else
-#error "unknown platform"
-#endif
-
 
 CGameDescription::CGameDescription(xmlDocPtr pDoc, const Str &GameFile)
 {
@@ -733,9 +727,9 @@ CGameDescription::CGameDescription(xmlDocPtr pDoc, const Str &GameFile)
     Error("Didn't find 'game' node in the game description file '%s'\n", pDoc->URL);
   }
   // on win32, game tools path can now be specified relative to the exe's cwd
-  prop = (char*)xmlGetProp( pNode, (xmlChar*)"gametools" );
+  prop = (char*)xmlGetProp( pNode, (xmlChar*)TOOLS_ATTRIBUTE);
   if ( prop == NULL ) {
-	Error( "Didn't find 'gametools' node in the game description file '%s'\n", pDoc->URL );
+	Error( "Didn't find '"TOOLS_ATTRIBUTE"' node in the game description file '%s'\n", pDoc->URL );
   }
   {
 	char full[PATH_MAX];
@@ -3375,7 +3369,7 @@ void CGameInstall::Run() {
 	fprintf( fg, "  "ENGINEPATH_ATTRIBUTE"=\"%s\"\n", m_strEngine.GetBuffer() );
 	switch ( m_availGames[ m_nComboSelect ] ) {
 	case GAME_Q2: {
-		fprintf( fg, "  gametools=\"%sinstalls/Quake2Pack/game\"\n", g_strAppPath.GetBuffer() );
+		fprintf( fg, "  "TOOLS_ATTRIBUTE"=\"%sinstalls/Quake2Pack/game\"\n", g_strAppPath.GetBuffer() );
 		fprintf( fg, "  prefix=\".quake2\"\n" );
 		Str source = g_strAppPath.GetBuffer();
 		source += "installs/";
@@ -3387,7 +3381,7 @@ void CGameInstall::Run() {
 		break;
 	}
 	case GAME_Q3: {
-		fprintf( fg, "  gametools=\"%sinstalls/Q3Pack/game\"\n", g_strAppPath.GetBuffer() );
+		fprintf( fg, "  "TOOLS_ATTRIBUTE"=\"%sinstalls/Q3Pack/game\"\n", g_strAppPath.GetBuffer() );
 		fprintf( fg, "  prefix=\".q3a\"\n" );
 		Str source = g_strAppPath.GetBuffer();
 		source += "installs/";
@@ -3399,7 +3393,7 @@ void CGameInstall::Run() {
 		break;
 	}
 	case GAME_URT: {
-		fprintf( fg, "  gametools=\"%sinstalls/UrTPack/game\"\n", g_strAppPath.GetBuffer() );
+		fprintf( fg, "  "TOOLS_ATTRIBUTE"=\"%sinstalls/UrTPack/game\"\n", g_strAppPath.GetBuffer() );
 		fprintf( fg, "  prefix=\".q3a\"\n" );
 		Str source = g_strAppPath.GetBuffer();
 		source += "installs/";
@@ -3411,7 +3405,7 @@ void CGameInstall::Run() {
 		break;
 	}
 	case GAME_UFOAI: {
-		fprintf( fg, "  gametools=\"%sinstalls/UFOAIPack/game\"\n", g_strAppPath.GetBuffer() );
+		fprintf( fg, "  "TOOLS_ATTRIBUTE"=\"%sinstalls/UFOAIPack/game\"\n", g_strAppPath.GetBuffer() );
 		fprintf( fg, "  prefix=\".ufoai\"\n" );
 		Str source = g_strAppPath.GetBuffer();
 		source += "installs/";
@@ -3423,7 +3417,7 @@ void CGameInstall::Run() {
 		break;
 	}
 	case GAME_Q2W: {
-		fprintf( fg, "  gametools=\"%sinstalls/Q2WPack/game\"\n", g_strAppPath.GetBuffer() );
+		fprintf( fg, "  "TOOLS_ATTRIBUTE"=\"%sinstalls/Q2WPack/game\"\n", g_strAppPath.GetBuffer() );
 		fprintf( fg, "  prefix=\".quake2world\"\n" );
 		Str source = g_strAppPath.GetBuffer();
 		source += "installs/";
@@ -3435,7 +3429,7 @@ void CGameInstall::Run() {
 		break;
 	}
 	case GAME_WARSOW: {
-		fprintf( fg, "  gametools=\"%sinstalls/WarsowPack/game\"\n", g_strAppPath.GetBuffer() );
+		fprintf( fg, "  "TOOLS_ATTRIBUTE"=\"%sinstalls/WarsowPack/game\"\n", g_strAppPath.GetBuffer() );
 		fprintf( fg, "  prefix=\".warsow\"\n" );
 		Str source = g_strAppPath.GetBuffer();
 		source += "installs/";
@@ -3447,7 +3441,7 @@ void CGameInstall::Run() {
 		break;
 	}
 	case GAME_NEXUIZ: {
-		fprintf( fg, "  gametools=\"%sinstalls/NexuizPack/game\"\n", g_strAppPath.GetBuffer() );
+		fprintf( fg, "  "TOOLS_ATTRIBUTE"=\"%sinstalls/NexuizPack/game\"\n", g_strAppPath.GetBuffer() );
 		fprintf( fg, "  prefix=\".nexuiz\"\n" );
 		Str source = g_strAppPath.GetBuffer();
 		source += "installs/";
@@ -3459,7 +3453,7 @@ void CGameInstall::Run() {
 		break;
 	}
 	case GAME_TREMULOUS: {
-		fprintf( fg, "  gametools=\"%sinstalls/TremulousPack/game\"\n", g_strAppPath.GetBuffer() );
+		fprintf( fg, "  "TOOLS_ATTRIBUTE"=\"%sinstalls/TremulousPack/game\"\n", g_strAppPath.GetBuffer() );
 		fprintf( fg, "  prefix=\".tremulous\"\n" );
 		Str source = g_strAppPath.GetBuffer();
 		source += "installs/";
