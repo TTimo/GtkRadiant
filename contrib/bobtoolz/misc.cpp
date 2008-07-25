@@ -49,7 +49,7 @@ const char*  GetCurrentTexture()
 	return g_CurrentTexture;
 }
 
-epair_t* GetNextChainItem(epair_t* lastItem, char* key, char* value)
+epair_t* GetNextChainItem(epair_t* lastItem, const char* key, const char* value)
 {
 	epair_t* nextEPair = g_FuncTable.m_pfnAllocateEpair(key, value);
 
@@ -259,9 +259,9 @@ void StartBSP()
 	GetFilename(exename, "q3map");
 	UnixToDosPath(exename);	// do we want this done in linux version?
 
-	char mapname[256];  
+	char mapname[256];
   const char *pn = g_FuncTable.m_pfnReadProjectKey("mapspath");
-  
+
 	strcpy( mapname, pn );
 	strcat( mapname, "/ac_prt.map" );
 	UnixToDosPath(mapname);
@@ -279,7 +279,7 @@ void BuildMiniPrt(list<Str>* exclusionList)
 	// doors, etc
 
 	DEntity world;
-	
+
 	char buffer[128];
   const char *pn = g_FuncTable.m_pfnReadProjectKey("mapspath");
 

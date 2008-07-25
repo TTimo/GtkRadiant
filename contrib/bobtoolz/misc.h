@@ -19,7 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 vec_t Min(vec_t a, vec_t b);
 
-epair_t* GetNextChainItem(epair_t* lastItem, char* key, char* value);
+epair_t* GetNextChainItem(epair_t* lastItem, const char* key, const char* value);
 
 // reads current texture into global, returns pointer to it
 const char* GetCurrentTexture();
