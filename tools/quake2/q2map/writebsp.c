@@ -495,17 +495,31 @@ void BeginBSPFile (void)
 EndBSPFile
 ============
 */
-void EndBSPFile( void ) {
+void EndBSPFile (void)
+{
 	char	path[1024];
 
-	EmitBrushes();
-	EmitPlanes();
-	UnparseEntities();
+#if 0
+	int		len;
+	byte	*buf;
+#endif
+
+	EmitBrushes ();
+	EmitPlanes ();
+	UnparseEntities ();
+
+	// load the pop
+#if 0
+	sprintf (path, "%s/pics/pop.lmp", gamedir);
+	len = LoadFile (path, &buf);
+	memcpy (dpop, buf, sizeof(dpop));
+	free (buf);
+#endif
 
 	// write the map
-	sprintf( path, "%s.bsp", source );
-	Sys_Printf( "Writing %s\n", path );
-	WriteBSPFile( path );
+	sprintf (path, "%s.bsp", source);
+	Sys_Printf ("Writing %s\n", path);
+	WriteBSPFile (path);
 }
 
 

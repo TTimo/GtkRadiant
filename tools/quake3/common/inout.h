@@ -24,6 +24,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 // inout is the only stuff relying on xml, include the headers there
 #include "libxml/tree.h"
+#include "mathlib.h"
 
 // some useful xml routines
 xmlNodePtr xml_NodeForVec( vec3_t v );

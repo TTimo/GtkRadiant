@@ -397,7 +397,7 @@ void UpdatePreview (bool DataChange)
 void SaveSetup (GtkWidget *parent)
 {
   const char *name = g_FuncTable.m_pfnFileDialog (parent, false, "Save GenSurf Settings",
-                                             g_FuncTable.m_pfnProfileGetDirectory (), "gtkgensurf");
+                                             g_FuncTable.m_pfnProfileGetDirectory (), "gtkgensurf", NULL);
 
   if (name != NULL)
   {
@@ -436,7 +436,7 @@ void OpenSetup (GtkWidget *parent, int UseDefaults)
     name = g_strdup ("plugins/defaults.srf"); // dummy string
   else
     name = g_FuncTable.m_pfnFileDialog (parent, true, "Open GenSurf Settings",
-                                        g_FuncTable.m_pfnProfileGetDirectory (), "gtkgensurf");
+                                        g_FuncTable.m_pfnProfileGetDirectory (), "gtkgensurf", NULL);
 
   if(name != NULL)
   {

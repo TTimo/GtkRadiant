@@ -1,87 +1,246 @@
-<?xml version="1.0" ?><VisualStudioProject Name="camera" ProjectGUID="{A43B5811-4BCC-483A-BDAC-F5721DCF9B4A}" ProjectType="Visual C++" RootNamespace="camera" Version="8.00">
+<?xml version="1.0" encoding="Windows-1252"?>
+<VisualStudioProject
+	ProjectType="Visual C++"
+	Version="8.00"
+	Name="camera"
+	ProjectGUID="{A43B5811-4BCC-483A-BDAC-F5721DCF9B4A}"
+	RootNamespace="camera"
+	>
 	<Platforms>
-		<Platform Name="Win32"/>
+		<Platform
+			Name="Win32"
+		/>
 	</Platforms>
 	<ToolFiles>
 	</ToolFiles>
 	<Configurations>
-		<Configuration CharacterSet="2" ConfigurationType="2" IntermediateDirectory="$(SolutionDir)\build\intermediate\$(ConfigurationName)\$(ProjectName)" Name="Debug|Win32" OutputDirectory="$(SolutionDir)\install\modules">
-			<Tool Name="VCPreBuildEventTool"/>
-			<Tool Name="VCCustomBuildTool"/>
-			<Tool Name="VCXMLDataGeneratorTool"/>
-			<Tool Name="VCWebServiceProxyGeneratorTool"/>
-			<Tool Name="VCMIDLTool"/>
-			<Tool AdditionalIncludeDirectories="&quot;$(SolutionDir)\include&quot;;&quot;$(SolutionDir)\libs&quot;;&quot;$(SolutionDir)\..\STLPort\stlport&quot;;&quot;$(SolutionDir)\..\gtk2\include&quot;;&quot;$(SolutionDir)\..\gtk2\include\glib-2.0&quot;;&quot;$(SolutionDir)\..\gtk2\lib\glib-2.0\include&quot;;&quot;$(SolutionDir)\..\gtk2\lib\gtk-2.0\include&quot;;&quot;$(SolutionDir)\..\gtk2\lib\gtkglext-1.0\include&quot;;&quot;$(SolutionDir)\..\gtk2\include\gtk-2.0&quot;;&quot;$(SolutionDir)\..\gtk2\include\cairo&quot;;&quot;$(SolutionDir)\..\gtk2\include\pango-1.0&quot;;&quot;$(SolutionDir)\..\gtk2\include\atk-1.0&quot;;&quot;$(SolutionDir)\..\gtk2\include\gtkglext-1.0&quot;;&quot;$(SolutionDir)\..\libxml2\include&quot;" BasicRuntimeChecks="3" DebugInformationFormat="4" Detect64BitPortabilityProblems="true" DisableSpecificWarnings="4996;4244;4267" MinimalRebuild="true" Name="VCCLCompilerTool" Optimization="0" PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS" RuntimeLibrary="3" WarningLevel="3"/>
-			<Tool Name="VCManagedResourceCompilerTool"/>
-			<Tool Name="VCResourceCompilerTool"/>
-			<Tool Name="VCPreLinkEventTool"/>
-			<Tool AdditionalDependencies="synapse.lib splines.lib libxml2.lib glib-2.0.lib gobject-2.0.lib gtk-win32-2.0.lib" AdditionalLibraryDirectories="&quot;$(SolutionDir)\..\libxml2\lib&quot;;&quot;$(SolutionDir)\..\gtk2\lib&quot;;&quot;$(SolutionDir)\build\$(ConfigurationName)\libs&quot;" GenerateDebugInformation="true" ModuleDefinitionFile="camera.def" Name="VCLinkerTool" TargetMachine="1"/>
-			<Tool Name="VCALinkTool"/>
-			<Tool Name="VCManifestTool"/>
-			<Tool Name="VCXDCMakeTool"/>
-			<Tool Name="VCBscMakeTool"/>
-			<Tool Name="VCFxCopTool"/>
-			<Tool Name="VCAppVerifierTool"/>
-			<Tool Name="VCWebDeploymentTool"/>
-			<Tool Name="VCPostBuildEventTool"/>
+		<Configuration
+			Name="Debug|Win32"
+			OutputDirectory="$(SolutionDir)\install\modules"
+			IntermediateDirectory="$(SolutionDir)\build\intermediate\$(ConfigurationName)\$(ProjectName)"
+			ConfigurationType="2"
+			CharacterSet="2"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="0"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)\include&quot;;&quot;$(SolutionDir)\libs&quot;;&quot;$(SolutionDir)\..\STLPort\stlport&quot;;&quot;$(SolutionDir)\..\gtk2\include&quot;;&quot;$(SolutionDir)\..\gtk2\include\glib-2.0&quot;;&quot;$(SolutionDir)\..\gtk2\lib\glib-2.0\include&quot;;&quot;$(SolutionDir)\..\gtk2\lib\gtk-2.0\include&quot;;&quot;$(SolutionDir)\..\gtk2\lib\gtkglext-1.0\include&quot;;&quot;$(SolutionDir)\..\gtk2\include\gtk-2.0&quot;;&quot;$(SolutionDir)\..\gtk2\include\cairo&quot;;&quot;$(SolutionDir)\..\gtk2\include\pango-1.0&quot;;&quot;$(SolutionDir)\..\gtk2\include\atk-1.0&quot;;&quot;$(SolutionDir)\..\gtk2\include\gtkglext-1.0&quot;;&quot;$(SolutionDir)\..\libxml2\include&quot;"
+				PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS"
+				MinimalRebuild="true"
+				BasicRuntimeChecks="3"
+				RuntimeLibrary="3"
+				WarningLevel="3"
+				Detect64BitPortabilityProblems="true"
+				DebugInformationFormat="4"
+				DisableSpecificWarnings="4996;4244;4267"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLinkerTool"
+				AdditionalDependencies="synapse.lib splines.lib libxml2.lib glib-2.0.lib gobject-2.0.lib gtk-win32-2.0.lib intl.lib"
+				AdditionalLibraryDirectories="&quot;$(SolutionDir)\..\libxml2\lib&quot;;&quot;$(SolutionDir)\..\gtk2\lib&quot;;&quot;$(SolutionDir)\build\$(ConfigurationName)\libs&quot;"
+				ModuleDefinitionFile="camera.def"
+				GenerateDebugInformation="true"
+				TargetMachine="1"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCWebDeploymentTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+			/>
 		</Configuration>
-		<Configuration CharacterSet="2" ConfigurationType="2" IntermediateDirectory="$(SolutionDir)\build\intermediate\$(ConfigurationName)\$(ProjectName)" Name="Release|Win32" OutputDirectory="$(SolutionDir)\install\modules">
-			<Tool Name="VCPreBuildEventTool"/>
-			<Tool Name="VCCustomBuildTool"/>
-			<Tool Name="VCXMLDataGeneratorTool"/>
-			<Tool Name="VCWebServiceProxyGeneratorTool"/>
-			<Tool Name="VCMIDLTool"/>
-			<Tool AdditionalIncludeDirectories="&quot;$(SolutionDir)\include&quot;;&quot;$(SolutionDir)\libs&quot;;&quot;$(SolutionDir)\..\STLPort\stlport&quot;;&quot;$(SolutionDir)\..\gtk2\include&quot;;&quot;$(SolutionDir)\..\gtk2\include\glib-2.0&quot;;&quot;$(SolutionDir)\..\gtk2\lib\glib-2.0\include&quot;;&quot;$(SolutionDir)\..\gtk2\lib\gtk-2.0\include&quot;;&quot;$(SolutionDir)\..\gtk2\lib\gtkglext-1.0\include&quot;;&quot;$(SolutionDir)\..\gtk2\include\gtk-2.0&quot;;&quot;$(SolutionDir)\..\gtk2\include\cairo&quot;;&quot;$(SolutionDir)\..\gtk2\include\pango-1.0&quot;;&quot;$(SolutionDir)\..\gtk2\include\atk-1.0&quot;;&quot;$(SolutionDir)\..\gtk2\include\gtkglext-1.0&quot;;&quot;$(SolutionDir)\..\libxml2\include&quot;" DebugInformationFormat="3" Detect64BitPortabilityProblems="true" DisableSpecificWarnings="4996;4244;4267" Name="VCCLCompilerTool" PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS" RuntimeLibrary="2" WarningLevel="3"/>
-			<Tool Name="VCManagedResourceCompilerTool"/>
-			<Tool Name="VCResourceCompilerTool"/>
-			<Tool Name="VCPreLinkEventTool"/>
-			<Tool AdditionalDependencies="synapse.lib splines.lib libxml2.lib glib-2.0.lib gobject-2.0.lib gtk-win32-2.0.lib" AdditionalLibraryDirectories="&quot;$(SolutionDir)\..\libxml2\lib&quot;;&quot;$(SolutionDir)\..\gtk2\lib&quot;;&quot;$(SolutionDir)\build\$(ConfigurationName)\libs&quot;" EnableCOMDATFolding="2" GenerateDebugInformation="true" ModuleDefinitionFile="camera.def" Name="VCLinkerTool" OptimizeReferences="2" TargetMachine="1"/>
-			<Tool Name="VCALinkTool"/>
-			<Tool Name="VCManifestTool"/>
-			<Tool Name="VCXDCMakeTool"/>
-			<Tool Name="VCBscMakeTool"/>
-			<Tool Name="VCFxCopTool"/>
-			<Tool Name="VCAppVerifierTool"/>
-			<Tool Name="VCWebDeploymentTool"/>
-			<Tool Name="VCPostBuildEventTool"/>
+		<Configuration
+			Name="Release|Win32"
+			OutputDirectory="$(SolutionDir)\install\modules"
+			IntermediateDirectory="$(SolutionDir)\build\intermediate\$(ConfigurationName)\$(ProjectName)"
+			ConfigurationType="2"
+			CharacterSet="2"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)\include&quot;;&quot;$(SolutionDir)\libs&quot;;&quot;$(SolutionDir)\..\STLPort\stlport&quot;;&quot;$(SolutionDir)\..\gtk2\include&quot;;&quot;$(SolutionDir)\..\gtk2\include\glib-2.0&quot;;&quot;$(SolutionDir)\..\gtk2\lib\glib-2.0\include&quot;;&quot;$(SolutionDir)\..\gtk2\lib\gtk-2.0\include&quot;;&quot;$(SolutionDir)\..\gtk2\lib\gtkglext-1.0\include&quot;;&quot;$(SolutionDir)\..\gtk2\include\gtk-2.0&quot;;&quot;$(SolutionDir)\..\gtk2\include\cairo&quot;;&quot;$(SolutionDir)\..\gtk2\include\pango-1.0&quot;;&quot;$(SolutionDir)\..\gtk2\include\atk-1.0&quot;;&quot;$(SolutionDir)\..\gtk2\include\gtkglext-1.0&quot;;&quot;$(SolutionDir)\..\libxml2\include&quot;"
+				PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS"
+				RuntimeLibrary="2"
+				WarningLevel="3"
+				Detect64BitPortabilityProblems="true"
+				DebugInformationFormat="3"
+				DisableSpecificWarnings="4996;4244;4267"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLinkerTool"
+				AdditionalDependencies="synapse.lib splines.lib libxml2.lib glib-2.0.lib gobject-2.0.lib gtk-win32-2.0.lib intl.lib"
+				AdditionalLibraryDirectories="&quot;$(SolutionDir)\..\libxml2\lib&quot;;&quot;$(SolutionDir)\..\gtk2\lib&quot;;&quot;$(SolutionDir)\build\$(ConfigurationName)\libs&quot;"
+				ModuleDefinitionFile="camera.def"
+				GenerateDebugInformation="true"
+				OptimizeReferences="2"
+				EnableCOMDATFolding="2"
+				TargetMachine="1"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCWebDeploymentTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+			/>
 		</Configuration>
 	</Configurations>
 	<References>
 	</References>
 	<Files>
-		<Filter Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat" Name="Source Files">
-			<File RelativePath=".\camera.cpp">
+		<Filter
+			Name="Source Files"
+			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
+			>
+			<File
+				RelativePath=".\camera.cpp"
+				>
 			</File>
-			<File RelativePath=".\camera.def">
+			<File
+				RelativePath=".\camera.def"
+				>
 			</File>
-			<File RelativePath=".\dialogs.cpp">
+			<File
+				RelativePath=".\dialogs.cpp"
+				>
 			</File>
-			<File RelativePath=".\dialogs_common.cpp">
+			<File
+				RelativePath=".\dialogs_common.cpp"
+				>
 			</File>
-			<File RelativePath=".\funchandlers.cpp">
+			<File
+				RelativePath=".\funchandlers.cpp"
+				>
 			</File>
-			<File RelativePath=".\listener.cpp">
+			<File
+				RelativePath=".\listener.cpp"
+				>
 			</File>
-			<File RelativePath=".\misc.cpp">
+			<File
+				RelativePath=".\misc.cpp"
+				>
 			</File>
-			<File RelativePath=".\renderer.cpp">
+			<File
+				RelativePath=".\renderer.cpp"
+				>
 			</File>
 		</Filter>
-		<Filter Filter="h;hpp;hxx;hm;inl" Name="Header Files">
-			<File RelativePath=".\camera.h">
+		<Filter
+			Name="Header Files"
+			Filter="h;hpp;hxx;hm;inl"
+			>
+			<File
+				RelativePath=".\camera.h"
+				>
 			</File>
-			<File RelativePath=".\dialogs.h">
+			<File
+				RelativePath=".\dialogs.h"
+				>
 			</File>
-			<File RelativePath=".\funchandlers.h">
+			<File
+				RelativePath=".\funchandlers.h"
+				>
 			</File>
-			<File RelativePath=".\listener.h">
+			<File
+				RelativePath=".\listener.h"
+				>
 			</File>
-			<File RelativePath=".\misc.h">
+			<File
+				RelativePath=".\misc.h"
+				>
 			</File>
-			<File RelativePath=".\renderer.h">
+			<File
+				RelativePath=".\renderer.h"
+				>
 			</File>
 		</Filter>
-		<Filter Filter="ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe" Name="Resource Files">
+		<Filter
+			Name="Resource Files"
+			Filter="ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe"
+			>
 		</Filter>
 	</Files>
 	<Globals>

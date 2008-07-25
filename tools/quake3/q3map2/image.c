@@ -1,4 +1,5 @@
-/*
+/* -------------------------------------------------------------------------------
+
 Copyright (C) 1999-2007 id Software, Inc. and contributors.
 For a list of contributors, see the accompanying CONTRIBUTORS file.
 
@@ -390,7 +391,7 @@ image_t *ImageLoad( const char *filename )
 	strcat( name, ".tga" );
 	size = vfsLoadFile( (const char*) name, (void**) &buffer, 0 );
 	if( size > 0 )
-		LoadTGABuffer( buffer, &image->pixels, &image->width, &image->height );
+		LoadTGABuffer( buffer, buffer + size, &image->pixels, &image->width, &image->height );
 	else
 	{
 		/* attempt to load png */

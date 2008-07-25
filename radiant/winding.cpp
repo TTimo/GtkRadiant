@@ -250,7 +250,7 @@ void Winding_RemovePoint(winding_t *w, int point)
 
 	if (point < w->numpoints-1)
 	{
-		memmove(&w->points[point], &w->points[point+1], (int)((winding_t *)0)->points[w->numpoints - point - 1]);
+		memmove(&w->points[point], &w->points[point+1], (size_t)((winding_t *)0)->points[w->numpoints - point - 1]);
 	}
 	w->numpoints--;
 }

@@ -1,4 +1,5 @@
-/*
+/* -------------------------------------------------------------------------------
+
 Copyright (C) 1999-2007 id Software, Inc. and contributors.
 For a list of contributors, see the accompanying CONTRIBUTORS file.
 
@@ -45,7 +46,8 @@ ydnar: moved to here 2001-02-04
 
 void ColorToBytes( const float *color, byte *colorBytes, float scale )
 {
-	float	max;
+	int		i;
+	float	max, gamma;
 	vec3_t	sample;
 	
 	
@@ -56,13 +58,20 @@ void ColorToBytes( const float *color, byte *colorBytes, float scale )
 	/* make a local copy */
 	VectorScale( color, scale, sample );
 	
-	/* handle negative light */
-	if( sample[ 0 ] < 0.0f )
-		sample[ 0 ] = 0.0f;
-	if( sample[ 1 ] < 0.0f )
-		sample[ 1 ] = 0.0f;
-	if( sample[ 2 ] < 0.0f )
-		sample[ 2 ] = 0.0f;
+	/* muck with it */
+	gamma = 1.0f / lightmapGamma;
+	for( i = 0; i < 3; i++ )
+	{
+		/* handle negative light */
+		if( sample[ i ] < 0.0f )
+		{
+			sample[ i ] = 0.0f;
+			continue;
+		}
+		
+		/* gamma */
+		sample[ i ] = pow( sample[ i ] / 255.0f, gamma ) * 255.0f;
+	}
 	
 	/* clamp with color normalization */
 	max = sample[ 0 ];
@@ -72,6 +81,9 @@ void ColorToBytes( const float *color, byte *colorBytes, float scale )
 		max = sample[ 2 ];
 	if( max > 255.0f )
 		VectorScale( sample, (255.0f / max), sample );
+	
+	/* compensate for ingame overbrighting/bitshifting */
+	VectorScale( sample, (1.0f / lightmapCompensate), sample );
 	
 	/* store it off */
 	colorBytes[ 0 ] = sample[ 0 ];
@@ -510,8 +522,8 @@ static int MapSingleLuxel( rawLightmap_t *lm, surfaceInfo_t *info, bspDrawVert_t
 	/* another retarded hack, storing nudge count in luxel[ 1 ] */
 	luxel[ 1 ] = 0.0f;	
 	
-	/* point in solid? */
-	if( pointCluster < 0 )
+	/* point in solid? (except in dark mode) */
+	if( pointCluster < 0 && dark == qfalse )
 	{
 		/* nudge the the location around */
 		nudge = nudges[ 0 ];
@@ -533,8 +545,8 @@ static int MapSingleLuxel( rawLightmap_t *lm, surfaceInfo_t *info, bspDrawVert_t
 		}
 	}
 	
-	/* as a last resort, if still in solid, try drawvert origin offset by normal */
-	if( pointCluster < 0 && si != NULL )
+	/* as a last resort, if still in solid, try drawvert origin offset by normal (except in dark mode) */
+	if( pointCluster < 0 && si != NULL && dark == qfalse )
 	{
 		VectorMA( dv->xyz, lightmapSampleOffset, dv->normal, nudged );
 		pointCluster = ClusterForPointExtFilter( nudged, LUXEL_EPSILON, numClusters, clusters );
@@ -1245,6 +1257,310 @@ void MapRawLightmap( int rawLightmapNum )
 
 
 /*
+SetupDirt()
+sets up dirtmap (ambient occlusion)
+*/
+
+#define DIRT_CONE_ANGLE				88	/* degrees */
+#define DIRT_NUM_ANGLE_STEPS		16
+#define DIRT_NUM_ELEVATION_STEPS	3
+#define	DIRT_NUM_VECTORS			(DIRT_NUM_ANGLE_STEPS * DIRT_NUM_ELEVATION_STEPS)
+
+static vec3_t		dirtVectors[ DIRT_NUM_VECTORS ];
+static int			numDirtVectors = 0;
+
+void SetupDirt( void )
+{
+	int		i, j;
+	float	angle, elevation, angleStep, elevationStep;
+	
+	
+	/* note it */
+	Sys_FPrintf( SYS_VRB, "--- SetupDirt ---\n" );
+	
+	/* calculate angular steps */
+	angleStep = DEG2RAD( 360.0f / DIRT_NUM_ANGLE_STEPS );
+	elevationStep = DEG2RAD( DIRT_CONE_ANGLE / DIRT_NUM_ELEVATION_STEPS );
+	
+	/* iterate angle */
+	angle = 0.0f;
+	for( i = 0, angle = 0.0f; i < DIRT_NUM_ANGLE_STEPS; i++, angle += angleStep )
+	{
+		/* iterate elevation */
+		for( j = 0, elevation = elevationStep * 0.5f; j < DIRT_NUM_ELEVATION_STEPS; j++, elevation += elevationStep )
+		{
+			dirtVectors[ numDirtVectors ][ 0 ] = sin( elevation ) * cos( angle );
+			dirtVectors[ numDirtVectors ][ 1 ] = sin( elevation ) * sin( angle );
+			dirtVectors[ numDirtVectors ][ 2 ] = cos( elevation );
+			numDirtVectors++;
+		}
+	}
+	
+	/* emit some statistics */
+	Sys_FPrintf( SYS_VRB, "%9d dirtmap vectors\n", numDirtVectors );
+}
+
+
+/*
+DirtForSample()
+calculates dirt value for a given sample
+*/
+
+float DirtForSample( trace_t *trace )
+{
+	int		i;
+	float	gatherDirt, outDirt, angle, elevation, ooDepth;
+	vec3_t	normal, worldUp, myUp, myRt, temp, direction, displacement;
+	
+	
+	/* dummy check */
+	if( !dirty )
+		return 1.0f;
+	if( trace == NULL || trace->cluster < 0 )
+		return 0.0f;
+	
+	/* setup */
+	gatherDirt = 0.0f;
+	ooDepth = 1.0f / dirtDepth;
+	VectorCopy( trace->normal, normal );
+	
+	/* check if the normal is aligned to the world-up */
+	if( normal[ 0 ] == 0.0f && normal[ 1 ] == 0.0f )
+	{
+		if( normal[ 2 ] == 1.0f )		
+		{
+			VectorSet( myRt, 1.0f, 0.0f, 0.0f );
+			VectorSet( myUp, 0.0f, 1.0f, 0.0f );
+		}
+		else if( normal[ 2 ] == -1.0f )
+		{
+			VectorSet( myRt, -1.0f, 0.0f, 0.0f );
+			VectorSet( myUp,  0.0f, 1.0f, 0.0f );
+		}
+	}
+	else
+	{
+		VectorSet( worldUp, 0.0f, 0.0f, 1.0f );
+		CrossProduct( normal, worldUp, myRt );
+		VectorNormalize( myRt, myRt );
+		CrossProduct( myRt, normal, myUp );
+		VectorNormalize( myUp, myUp );
+	}
+	
+	/* 1 = random mode, 0 (well everything else) = non-random mode */
+	if( dirtMode == 1 )
+	{
+		/* iterate */
+		for( i = 0; i < numDirtVectors; i++ )
+		{
+			/* get random vector */
+			angle = Random() * DEG2RAD( 360.0f );
+			elevation = Random() * DEG2RAD( DIRT_CONE_ANGLE );
+			temp[ 0 ] = cos( angle ) * sin( elevation );
+			temp[ 1 ] = sin( angle ) * sin( elevation );
+			temp[ 2 ] = cos( elevation );
+			
+			/* transform into tangent space */
+			direction[ 0 ] = myRt[ 0 ] * temp[ 0 ] + myUp[ 0 ] * temp[ 1 ] + normal[ 0 ] * temp[ 2 ];
+			direction[ 1 ] = myRt[ 1 ] * temp[ 0 ] + myUp[ 1 ] * temp[ 1 ] + normal[ 1 ] * temp[ 2 ];
+			direction[ 2 ] = myRt[ 2 ] * temp[ 0 ] + myUp[ 2 ] * temp[ 1 ] + normal[ 2 ] * temp[ 2 ];
+			
+			/* set endpoint */
+			VectorMA( trace->origin, dirtDepth, direction, trace->end );
+			SetupTrace( trace );
+			
+			/* trace */
+			TraceLine( trace );
+			if( trace->opaque )
+			{
+				VectorSubtract( trace->hit, trace->origin, displacement );
+				gatherDirt += 1.0f - ooDepth * VectorLength( displacement );
+			}
+		}
+	}
+	else
+	{
+		/* iterate through ordered vectors */
+		for( i = 0; i < numDirtVectors; i++ )
+		{
+			/* transform vector into tangent space */
+			direction[ 0 ] = myRt[ 0 ] * dirtVectors[ i ][ 0 ] + myUp[ 0 ] * dirtVectors[ i ][ 1 ] + normal[ 0 ] * dirtVectors[ i ][ 2 ];
+			direction[ 1 ] = myRt[ 1 ] * dirtVectors[ i ][ 0 ] + myUp[ 1 ] * dirtVectors[ i ][ 1 ] + normal[ 1 ] * dirtVectors[ i ][ 2 ];
+			direction[ 2 ] = myRt[ 2 ] * dirtVectors[ i ][ 0 ] + myUp[ 2 ] * dirtVectors[ i ][ 1 ] + normal[ 2 ] * dirtVectors[ i ][ 2 ];
+			
+			/* set endpoint */
+			VectorMA( trace->origin, dirtDepth, direction, trace->end );
+			SetupTrace( trace );
+			
+			/* trace */
+			TraceLine( trace );
+			if( trace->opaque )
+			{
+				VectorSubtract( trace->hit, trace->origin, displacement );
+				gatherDirt += 1.0f - ooDepth * VectorLength( displacement );
+			}
+		}
+	}
+	
+	/* direct ray */
+	VectorMA( trace->origin, dirtDepth, normal, trace->end );
+	SetupTrace( trace );
+	
+	/* trace */
+	TraceLine( trace );
+	if( trace->opaque )
+	{
+		VectorSubtract( trace->hit, trace->origin, displacement );
+		gatherDirt += 1.0f - ooDepth * VectorLength( displacement );
+	}
+	
+	/* early out */
+	if( gatherDirt <= 0.0f )
+		return 1.0f;
+	
+	/* apply gain (does this even do much? heh) */
+	outDirt = pow( gatherDirt / (numDirtVectors + 1), dirtGain );
+	if( outDirt > 1.0f )
+		outDirt = 1.0f;
+	
+	/* apply scale */
+	outDirt *= dirtScale;
+	if( outDirt > 1.0f )
+		outDirt = 1.0f;
+	
+	/* return to sender */
+	return 1.0f - outDirt;
+}
+
+
+
+/*
+DirtyRawLightmap()
+calculates dirty fraction for each luxel
+*/
+
+void DirtyRawLightmap( int rawLightmapNum )
+{
+	int					i, x, y, sx, sy, *cluster;
+	float				*origin, *normal, *dirt, *dirt2, average, samples;
+	rawLightmap_t		*lm;
+	surfaceInfo_t		*info;
+	trace_t				trace;
+	
+	
+	/* bail if this number exceeds the number of raw lightmaps */
+	if( rawLightmapNum >= numRawLightmaps )
+		return;
+	
+	/* get lightmap */
+	lm = &rawLightmaps[ rawLightmapNum ];
+	
+	/* setup trace */
+	trace.testOcclusion = qtrue;
+	trace.forceSunlight = qfalse;
+	trace.recvShadows = lm->recvShadows;
+	trace.numSurfaces = lm->numLightSurfaces;
+	trace.surfaces = &lightSurfaces[ lm->firstLightSurface ];
+	trace.inhibitRadius = DEFAULT_INHIBIT_RADIUS;
+	trace.testAll = qfalse;
+	
+	/* twosided lighting (may or may not be a good idea for lightmapped stuff) */
+	trace.twoSided = qfalse;
+	for( i = 0; i < trace.numSurfaces; i++ )
+	{
+		/* get surface */
+		info = &surfaceInfos[ trace.surfaces[ i ] ];
+		
+		/* check twosidedness */
+		if( info->si->twoSided )
+		{
+			trace.twoSided = qtrue;
+			break;
+		}
+	}
+	
+	/* gather dirt */
+	for( y = 0; y < lm->sh; y++ )
+	{
+		for( x = 0; x < lm->sw; x++ )
+		{
+			/* get luxel */
+			cluster = SUPER_CLUSTER( x, y );
+			origin = SUPER_ORIGIN( x, y );
+			normal = SUPER_NORMAL( x, y );
+			dirt = SUPER_DIRT( x, y );
+			
+			/* set default dirt */
+			*dirt = 0.0f;
+			
+			/* only look at mapped luxels */
+			if( *cluster < 0 )
+				continue;
+			
+			/* copy to trace */
+			trace.cluster = *cluster;
+			VectorCopy( origin, trace.origin );
+			VectorCopy( normal, trace.normal );
+			
+			/* get dirt */
+			*dirt = DirtForSample( &trace );
+		}
+	}
+	
+	/* testing no filtering */
+	//%	return;
+	
+	/* filter dirt */
+	for( y = 0; y < lm->sh; y++ )
+	{
+		for( x = 0; x < lm->sw; x++ )
+		{
+			/* get luxel */
+			cluster = SUPER_CLUSTER( x, y );
+			dirt = SUPER_DIRT( x, y );
+			
+			/* filter dirt by adjacency to unmapped luxels */
+			average = *dirt;
+			samples = 1.0f;
+			for( sy = (y - 1); sy <= (y + 1); sy++ )
+			{
+				if( sy < 0 || sy >= lm->sh )
+					continue;
+				
+				for( sx = (x - 1); sx <= (x + 1); sx++ )
+				{
+					if( sx < 0 || sx >= lm->sw || (sx == x && sy == y) )
+						continue;
+					
+					/* get neighboring luxel */
+					cluster = SUPER_CLUSTER( sx, sy );
+					dirt2 = SUPER_DIRT( sx, sy );
+					if( *cluster < 0 || *dirt2 <= 0.0f )
+						continue;
+					
+					/* add it */
+					average += *dirt2;
+					samples += 1.0f;
+				}
+				
+				/* bail */
+				if( samples <= 0.0f )
+					break;
+			}
+			
+			/* bail */
+			if( samples <= 0.0f )
+				continue;
+			
+			/* scale dirt */
+			*dirt = average / samples;
+		}
+	}
+}
+
+
+
+/*
 SubmapRawLuxel()
 calculates the pvs cluster, origin, normal of a sub-luxel
 */
@@ -1335,7 +1651,7 @@ SubsampleRawLuxel_r()
 recursively subsamples a luxel until its color gradient is low enough or subsampling limit is reached
 */
 
-void SubsampleRawLuxel_r( rawLightmap_t *lm, trace_t *trace, vec3_t sampleOrigin, int x, int y, float bias, float *lightLuxel )
+static void SubsampleRawLuxel_r( rawLightmap_t *lm, trace_t *trace, vec3_t sampleOrigin, int x, int y, float bias, float *lightLuxel )
 {
 	int			b, samples, mapped, lighted;
 	int			cluster[ 4 ];
@@ -1377,7 +1693,7 @@ void SubsampleRawLuxel_r( rawLightmap_t *lm, trace_t *trace, vec3_t sampleOrigin
 		VectorCopy( normal[ b ], trace->normal );
 		
 		/* sample light */
-		//%	LightContributionToSample( light, cluster[ b ], origin[ b ], normal[ b ], luxel[ b ], qtrue, qfalse, lm->numLightSurfaces, &lightSurfaces[ lm->firstLightSurface ] );
+
 		LightContributionToSample( trace );
 		
 		/* add to totals (fixme: make contrast function) */
@@ -1434,6 +1750,7 @@ IlluminateRawLightmap()
 illuminates the luxels
 */
 
+#define STACK_LL_SIZE			(SUPER_LUXEL_SIZE * 64 * 64)
 #define LIGHT_LUXEL( x, y )		(lightLuxels + ((((y) * lm->sw) + (x)) * SUPER_LUXEL_SIZE))
 
 void IlluminateRawLightmap( int rawLightmapNum )
@@ -1444,11 +1761,12 @@ void IlluminateRawLightmap( int rawLightmapNum )
 	surfaceInfo_t		*info;
 	qboolean			filterColor, filterDir;
 	float				brightness;
-	float				*origin, *normal, *luxel, *luxel2, *deluxel, *deluxel2;
+	float				*origin, *normal, *dirt, *luxel, *luxel2, *deluxel, *deluxel2;
 	float				*lightLuxels, *lightLuxel, samples, filterRadius, weight;
 	vec3_t				color, averageColor, averageDir, total, temp, temp2;
 	float				tests[ 4 ][ 2 ] = { { 0.0f, 0 }, { 1, 0 }, { 0, 1 }, { 1, 1 } };
 	trace_t				trace;
+	float				stackLightLuxels[ STACK_LL_SIZE ];
 	
 	
 	/* bail if this number exceeds the number of raw lightmaps */
@@ -1488,8 +1806,11 @@ void IlluminateRawLightmap( int rawLightmapNum )
 	   fill pass
 	   ----------------------------------------------------------------- */
 	
+	/* set counts */
+	numLuxelsIlluminated += (lm->sw * lm->sh);
+	
 	/* test debugging state */
-	if( debugSurfaces || debugAxis || debugCluster || debugOrigin || normalmap )
+	if( debugSurfaces || debugAxis || debugCluster || debugOrigin || dirtDebug || normalmap )
 	{
 		/* debug fill the luxels */
 		for( y = 0; y < lm->sh; y++ )
@@ -1543,8 +1864,11 @@ void IlluminateRawLightmap( int rawLightmapNum )
 					luxel[ 2 ] = (normal[ 2 ] + 1.0f) * 127.5f;
 				}
 				
+				/* otherwise clear it */
+				else
+					VectorClear( luxel );
+				
 				/* add to counts */
-				numLuxelsIlluminated++;
 				luxel[ 3 ] = 1.0f;
 			}
 		}
@@ -1553,7 +1877,10 @@ void IlluminateRawLightmap( int rawLightmapNum )
 	{
 		/* allocate temporary per-light luxel storage */
 		llSize = lm->sw * lm->sh * SUPER_LUXEL_SIZE * sizeof( float );
-		lightLuxels = safe_malloc( llSize );
+		if( llSize <= (STACK_LL_SIZE * sizeof( float )) )
+			lightLuxels = stackLightLuxels;
+		else
+			lightLuxels = safe_malloc( llSize );
 		
 		/* clear luxels */
 		//%	memset( lm->superLuxels[ 0 ], 0, llSize );
@@ -1751,6 +2078,29 @@ void IlluminateRawLightmap( int rawLightmapNum )
 				}
 			}
 			
+			/* tertiary pass, apply dirt map (ambient occlusion) */
+			if( 0 && dirty )
+			{
+				/* walk luxels */
+				for( y = 0; y < lm->sh; y++ )
+				{
+					for( x = 0; x < lm->sw; x++ )
+					{
+						/* get cluster  */
+						cluster = SUPER_CLUSTER( x, y );
+						if( *cluster < 0 )
+							continue;
+						
+						/* get particulars */
+						lightLuxel = LIGHT_LUXEL( x, y );
+						dirt = SUPER_DIRT( x, y );
+						
+						/* scale light value */
+						VectorScale( lightLuxel, *dirt, lightLuxel );
+					}
+				}
+			}
+			
 			/* allocate sampling lightmap storage */
 			if( lm->superLuxels[ lightmapNum ] == NULL )
 			{
@@ -1865,11 +2215,50 @@ void IlluminateRawLightmap( int rawLightmapNum )
 		}
 		
 		/* free temporary luxels */
-		free( lightLuxels );
+		if( lightLuxels != stackLightLuxels )
+			free( lightLuxels );
 	}
 	
 	/* free light list */
 	FreeTraceLights( &trace );
+	
+	/*	-----------------------------------------------------------------
+		dirt pass
+		----------------------------------------------------------------- */
+	
+	if( dirty )
+	{
+		/* walk lightmaps */
+		for( lightmapNum = 0; lightmapNum < MAX_LIGHTMAPS; lightmapNum++ )
+		{
+			/* early out */
+			if( lm->superLuxels[ lightmapNum ] == NULL )
+				continue;
+			
+			/* apply dirt to each luxel */
+			for( y = 0; y < lm->sh; y++ )
+			{
+				for( x = 0; x < lm->sw; x++ )
+				{
+					/* get cluster */
+					cluster	= SUPER_CLUSTER( x, y );
+					//%	if( *cluster < 0 )
+					//%		continue;
+					
+					/* get particulars */
+					luxel = SUPER_LUXEL( lightmapNum, x, y );
+					dirt = SUPER_DIRT( x, y );
+					
+					/* apply dirt */
+					VectorScale( luxel, *dirt, luxel );
+					
+					/* debugging */
+					if( dirtDebug )
+						VectorSet( luxel, *dirt * 255.0f, *dirt * 255.0f, *dirt * 255.0f );
+				}
+			}
+		}
+	}
 	
 	/* -----------------------------------------------------------------
 	   filter pass
@@ -1908,7 +2297,7 @@ void IlluminateRawLightmap( int rawLightmapNum )
 				/* choose seed amount */
 				VectorClear( averageColor );
 				VectorClear( averageDir );
-				samples = 0;
+				samples = 0.0f;
 				
 				/* walk 3x3 matrix */
 				for( sy = (y - 1); sy <= (y + 1); sy++ )
@@ -1940,8 +2329,16 @@ void IlluminateRawLightmap( int rawLightmapNum )
 				}
 				
 				/* fall through */
-				if( samples == 0.0f )
+				if( samples <= 0.0f )
 					continue;
+				
+				/* dark lightmap seams */
+				if( dark )
+				{
+					if( lightmapNum == 0 )
+						VectorMA( averageColor, 2.0f, ambientColor, averageColor );
+					samples += 2.0f;
+				}
 				
 				/* average it */
 				if( filterColor )
@@ -1967,24 +2364,20 @@ IlluminateVertexes()
 light the surface vertexes
 */
 
-#define VERTEX_NUDGE	2.0f
+#define VERTEX_NUDGE	4.0f
 
 void IlluminateVertexes( int num )
 {
 	int					i, x, y, z, x1, y1, z1, sx, sy, radius, maxRadius, *cluster;
-	int					lightmapNum;
-	float				samples, *vertLuxel, *radVertLuxel, *luxel;
-	vec3_t				origin, temp, temp2, colors[ MAX_LIGHTMAPS ];
+	int					lightmapNum, numAvg;
+	float				samples, *vertLuxel, *radVertLuxel, *luxel, dirt;
+	vec3_t				origin, temp, temp2, colors[ MAX_LIGHTMAPS ], avgColors[ MAX_LIGHTMAPS ];
 	bspDrawSurface_t	*ds;
 	surfaceInfo_t		*info;
 	rawLightmap_t		*lm;
 	bspDrawVert_t		*verts;
 	trace_t				trace;
 	
-	
-	/* der... */
-	if( noVertexLighting )
-		return;
 	
 	/* get surface, info, and raw lightmap */
 	ds = &bspDrawSurfaces[ num ];
@@ -1996,10 +2389,10 @@ void IlluminateVertexes( int num )
 	   ----------------------------------------------------------------- */
 	
 	/* calculate vertex lighting for surfaces without lightmaps */
-	if( lm == NULL )
+	if( lm == NULL || cpmaHack )
 	{
 		/* setup trace */
-		trace.testOcclusion = !noTrace;
+		trace.testOcclusion = (cpmaHack && lm != NULL) ? qfalse : !noTrace;
 		trace.forceSunlight = info->si->forceSunlight;
 		trace.recvShadows = info->recvShadows;
 		trace.numSurfaces = 1;
@@ -2012,8 +2405,12 @@ void IlluminateVertexes( int num )
 		/* make light list for this surface */
 		CreateTraceLightsForSurface( num, &trace );
 		
-		/* walk the surface verts */
+		/* setup */
 		verts = yDrawVerts + ds->firstVert;
+		numAvg = 0;
+		memset( avgColors, 0, sizeof( avgColors ) );
+		
+		/* walk the surface verts */
 		for( i = 0; i < ds->numVerts; i++ )
 		{
 			/* get vertex luxel */
@@ -2046,7 +2443,7 @@ void IlluminateVertexes( int num )
 			else
 			{
 				/* clear vertex luxel */
-				VectorCopy( ambientColor, radVertLuxel );
+				VectorSet( radVertLuxel, -1.0f, -1.0f, -1.0f );
 				
 				/* try at initial origin */
 				trace.cluster = ClusterForPointExtFilter( verts[ i ].xyz, VERTEX_EPSILON, info->numSurfaceClusters, &surfaceClusters[ info->firstSurfaceCluster ] );
@@ -2056,18 +2453,30 @@ void IlluminateVertexes( int num )
 					VectorCopy( verts[ i ].xyz, trace.origin );
 					VectorCopy( verts[ i ].normal, trace.normal );
 					
+					/* r7 dirt */
+					if( dirty )
+						dirt = DirtForSample( &trace );
+					else
+						dirt = 1.0f;
+
 					/* trace */
 					LightingAtSample( &trace, ds->vertexStyles, colors );
 					
 					/* store */
 					for( lightmapNum = 0; lightmapNum < MAX_LIGHTMAPS; lightmapNum++ )
 					{
+						/* r7 dirt */
+						VectorScale( colors[ lightmapNum ], dirt, colors[ lightmapNum ] );
+						
+						/* store */
 						radVertLuxel = RAD_VERTEX_LUXEL( lightmapNum, ds->firstVert + i );
 						VectorCopy( colors[ lightmapNum ], radVertLuxel );
+						VectorAdd( avgColors[ lightmapNum ], colors[ lightmapNum ], colors[ lightmapNum ] );
 					}
 				}
 				
 				/* is this sample bright enough? */
+				radVertLuxel = RAD_VERTEX_LUXEL( 0, ds->firstVert + i );
 				if( radVertLuxel[ 0 ] <= ambientColor[ 0 ] &&
 					radVertLuxel[ 1 ] <= ambientColor[ 1 ] &&
 					radVertLuxel[ 2 ] <= ambientColor[ 2 ] )
@@ -2102,6 +2511,10 @@ void IlluminateVertexes( int num )
 								/* store */
 								for( lightmapNum = 0; lightmapNum < MAX_LIGHTMAPS; lightmapNum++ )
 								{
+									/* r7 dirt */
+									VectorScale( colors[ lightmapNum ], dirt, colors[ lightmapNum ] );
+									
+									/* store */
 									radVertLuxel = RAD_VERTEX_LUXEL( lightmapNum, ds->firstVert + i );
 									VectorCopy( colors[ lightmapNum ], radVertLuxel );
 								}
@@ -2116,10 +2529,55 @@ void IlluminateVertexes( int num )
 						}
 					}
 				}
+				
+				/* add to average? */
+				radVertLuxel = RAD_VERTEX_LUXEL( 0, ds->firstVert + i );
+				if( radVertLuxel[ 0 ] > ambientColor[ 0 ] ||
+					radVertLuxel[ 1 ] > ambientColor[ 1 ] ||
+					radVertLuxel[ 2 ] > ambientColor[ 2 ] )
+				{
+					numAvg++;
+					for( lightmapNum = 0; lightmapNum < MAX_LIGHTMAPS; lightmapNum++ )
+					{
+						radVertLuxel = RAD_VERTEX_LUXEL( lightmapNum, ds->firstVert + i );
+						VectorAdd( avgColors[ lightmapNum ], radVertLuxel, avgColors[ lightmapNum ] );
+					}
+				}
 			}
 			
 			/* another happy customer */
 			numVertsIlluminated++;
+		}
+		
+		/* set average color */
+		if( numAvg > 0 )
+		{
+			for( lightmapNum = 0; lightmapNum < MAX_LIGHTMAPS; lightmapNum++ )
+				VectorScale( avgColors[ lightmapNum ], (1.0f / numAvg), avgColors[ lightmapNum ] );
+		}
+		else
+		{
+			VectorCopy( ambientColor, avgColors[ 0 ] );
+		}
+		
+		/* clean up and store vertex color */
+		for( i = 0; i < ds->numVerts; i++ )
+		{
+			/* get vertex luxel */
+			radVertLuxel = RAD_VERTEX_LUXEL( 0, ds->firstVert + i );
+			
+			/* store average in occluded vertexes */
+			if( radVertLuxel[ 0 ] < 0.0f )
+			{
+				for( lightmapNum = 0; lightmapNum < MAX_LIGHTMAPS; lightmapNum++ )
+				{
+					radVertLuxel = RAD_VERTEX_LUXEL( lightmapNum, ds->firstVert + i );
+					VectorCopy( avgColors[ lightmapNum ], radVertLuxel );
+					
+					/* debug code */
+					//%	VectorSet( radVertLuxel, 255.0f, 0.0f, 0.0f );
+				}
+			}
 			
 			/* store it */
 			for( lightmapNum = 0; lightmapNum < MAX_LIGHTMAPS; lightmapNum++ )
@@ -2131,7 +2589,8 @@ void IlluminateVertexes( int num )
 				/* store */
 				if( bouncing || bounce == 0 || !bounceOnly )
 					VectorAdd( vertLuxel, radVertLuxel, vertLuxel );
-				ColorToBytes( vertLuxel, verts[ i ].color[ lightmapNum ], info->si->vertexScale );
+				if( !info->si->noVertexLight )
+					ColorToBytes( vertLuxel, verts[ i ].color[ lightmapNum ], info->si->vertexScale );
 			}
 		}
 		
@@ -2241,7 +2700,8 @@ void IlluminateVertexes( int num )
 			numVertsIlluminated++;
 			
 			/* store into bytes (for vertex approximation) */
-			ColorToBytes( vertLuxel, verts[ i ].color[ lightmapNum ], 1.0f );
+			if( !info->si->noVertexLight )
+				ColorToBytes( vertLuxel, verts[ i ].color[ lightmapNum ], 1.0f );
 		}
 	}
 }
@@ -2923,6 +3383,10 @@ void SetupEnvelopes( qboolean forGrid, qboolean fastFlag )
 		/* filter into correct bucket */
 		light->next = buckets[ light->style ];
 		buckets[ light->style ] = light;
+		
+		/* if any styled light is present, automatically set nocollapse */
+		if( light->style != LS_NORMAL )
+			noCollapse = qtrue;
 	}
 	
 	/* filter back into light list */

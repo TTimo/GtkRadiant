@@ -1,4 +1,5 @@
-/*
+/* -------------------------------------------------------------------------------
+
 Copyright (C) 1999-2007 id Software, Inc. and contributors.
 For a list of contributors, see the accompanying CONTRIBUTORS file.
 
@@ -396,8 +397,6 @@ qboolean ChopFaceSurfaceByBrush( entity_t *e, mapDrawSurface_t *ds, brush_t *b )
 	{
 		/* get brush side and plane */
 		s = &b->sides[ i ];
-		if( s->backSide )
-			continue;
 		plane = &mapplanes[ s->planenum ];
 		
 		/* handle coplanar outfacing (don't fog) */

@@ -3158,7 +3158,7 @@ int DoCapDlg (int *type, bool *b_GroupResult)
       *type = IENDCAP; // *type = CapDialog::IENDCAP;
 
     // Gef: Added toggle for optional cap func_grouping
-    *b_GroupResult = (bool *)gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(group_toggle));
+    *b_GroupResult = (bool)gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(group_toggle));
   }
 
   gtk_grab_remove (dlg);

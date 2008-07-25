@@ -230,7 +230,7 @@ typedef gint (WINAPI* PFN_QERAPP_MESSAGEBOX) (void *parent, const char* text,
 // - 'pattern': the first pattern is for the win32 mode, then comes the Gtk pattern list, see Radiant source for samples
 // TTimo 04/01/2001 toolkit-independant, cast parent to a GtkWidget*
 typedef const gchar* (* PFN_QERAPP_FILEDIALOG) (void *parent, gboolean open, const char* title,
-                                                const char* path, const char* pattern);
+                                                const char* path, const char* pattern, const char *baseSubDir);
 typedef gchar* (WINAPI* PFN_QERAPP_DIRDIALOG) (void *parent, const char* title,
                                                const char* path);
 

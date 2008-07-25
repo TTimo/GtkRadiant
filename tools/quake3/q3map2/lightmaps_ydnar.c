@@ -1,4 +1,5 @@
-/*
+/* -------------------------------------------------------------------------------
+
 Copyright (C) 1999-2007 id Software, Inc. and contributors.
 For a list of contributors, see the accompanying CONTRIBUTORS file.
 
@@ -136,12 +137,12 @@ void ExportLightmaps( void )
 	Q_mkdir( dirname );
 	
 	/* iterate through the lightmaps */
-	for( i = 0, lightmap = bspLightBytes; lightmap < (bspLightBytes + numBSPLightBytes); i++, lightmap += (LIGHTMAP_WIDTH * LIGHTMAP_HEIGHT * 3) )
+	for( i = 0, lightmap = bspLightBytes; lightmap < (bspLightBytes + numBSPLightBytes); i++, lightmap += (game->lightmapSize * game->lightmapSize * 3) )
 	{
 		/* write a tga image out */
 		sprintf( filename, "%s/lightmap_%04d.tga", dirname, i );
 		Sys_Printf( "Writing %s\n", filename );
-		WriteTGA24( filename, lightmap, LIGHTMAP_WIDTH, LIGHTMAP_HEIGHT, qfalse );
+		WriteTGA24( filename, lightmap, game->lightmapSize, game->lightmapSize, qfalse );
 	}
 }
 
@@ -222,7 +223,7 @@ int ImportLightmapsMain( int argc, char **argv )
 	Q_mkdir( dirname );
 	
 	/* iterate through the lightmaps */
-	for( i = 0, lightmap = bspLightBytes; lightmap < (bspLightBytes + numBSPLightBytes); i++, lightmap += (LIGHTMAP_WIDTH * LIGHTMAP_HEIGHT * 3) )
+	for( i = 0, lightmap = bspLightBytes; lightmap < (bspLightBytes + numBSPLightBytes); i++, lightmap += (game->lightmapSize * game->lightmapSize * 3) )
 	{
 		/* read a tga image */
 		sprintf( filename, "%s/lightmap_%04d.tga", dirname, i );
@@ -237,7 +238,7 @@ int ImportLightmapsMain( int argc, char **argv )
 		
 		/* parse file into an image */
 		pixels = NULL;
-		LoadTGABuffer( buffer, &pixels, &width, &height );
+		LoadTGABuffer( buffer, buffer + len, &pixels, &width, &height );
 		free( buffer );
 		
 		/* sanity check it */
@@ -246,16 +247,16 @@ int ImportLightmapsMain( int argc, char **argv )
 			Sys_Printf( "WARNING: Unable to load image %s\n", filename );
 			continue;
 		}
-		if( width != LIGHTMAP_WIDTH || height != LIGHTMAP_HEIGHT )
+		if( width != game->lightmapSize || height != game->lightmapSize )
 			Sys_Printf( "WARNING: Image %s is not the right size (%d, %d) != (%d, %d)\n",
-				filename, width, height, LIGHTMAP_WIDTH, LIGHTMAP_HEIGHT );
+				filename, width, height, game->lightmapSize, game->lightmapSize );
 		
 		/* copy the pixels */
 		in = pixels;
-		for( y = 1; y <= LIGHTMAP_HEIGHT; y++ )
+		for( y = 1; y <= game->lightmapSize; y++ )
 		{
-			out = lightmap + ((LIGHTMAP_HEIGHT - y) * LIGHTMAP_WIDTH * 3);
-			for( x = 0; x < LIGHTMAP_WIDTH; x++, in += 4, out += 3 )
+			out = lightmap + ((game->lightmapSize - y) * game->lightmapSize * 3);
+			for( x = 0; x < game->lightmapSize; x++, in += 4, out += 3 )
 				VectorCopy( in, out );
 		}
 		
@@ -615,7 +616,7 @@ qboolean AddSurfaceToRawLightmap( int num, rawLightmap_t *lm )
 			info->recvShadows != lm->recvShadows ||
 			info->si->lmCustomWidth != lm->customWidth ||
 			info->si->lmCustomHeight != lm->customHeight ||
-			info->si->lmGamma != lm->gamma ||
+			info->si->lmBrightness != lm->brightness ||
 			info->si->lmFilterRadius != lm->filterRadius ||
 			info->si->splotchFix != lm->splotchFix )
 			return qfalse;
@@ -1095,7 +1096,7 @@ void SetupSurfaceLightmaps( void )
 		lm->actualSampleSize = info->sampleSize;
 		lm->entityNum = info->entityNum;
 		lm->recvShadows = info->recvShadows;
-		lm->gamma = info->si->lmGamma;
+		lm->brightness = info->si->lmBrightness;
 		lm->filterRadius = info->si->lmFilterRadius;
 		VectorCopy( info->axis, lm->axis );
 		lm->plane = info->plane;	
@@ -1327,6 +1328,7 @@ CompareBSPLuxels()
 compares two surface lightmaps' bsp luxels, ignoring occluded luxels
 */
 
+#define SOLID_EPSILON		0.0625
 #define LUXEL_TOLERANCE		0.0025
 #define LUXEL_COLOR_FRAC	0.001302083	/* 1 / 3 / 256 */
 
@@ -1343,11 +1345,31 @@ static qboolean CompareBSPLuxels( rawLightmap_t *a, int aNum, rawLightmap_t *b, 
 		((aNum == 0 && bNum != 0) || (aNum != 0 && bNum == 0)) )
 		return qfalse;
 	
-	/* compare */
-	if( a->w != b->w || a->h != b->h ||
-		a->customWidth != b->customWidth || a->customHeight != b->customHeight ||
-		a->gamma != b->gamma ||
+	/* basic tests */
+	if( a->customWidth != b->customWidth || a->customHeight != b->customHeight ||
+		a->brightness != b->brightness ||
+		a->solid[ aNum ] != b->solid[ bNum ] ||
 		a->bspLuxels[ aNum ] == NULL || b->bspLuxels[ bNum ] == NULL )
+		return qfalse;
+	
+	/* compare solid color lightmaps */
+	if( a->solid[ aNum ] && b->solid[ bNum ] )
+	{
+		/* get deltas */
+		rd = fabs( a->solidColor[ aNum ][ 0 ] - b->solidColor[ bNum ][ 0 ] );
+		gd = fabs( a->solidColor[ aNum ][ 1 ] - b->solidColor[ bNum ][ 1 ] );
+		bd = fabs( a->solidColor[ aNum ][ 2 ] - b->solidColor[ bNum ][ 2 ] );
+		
+		/* compare color */
+		if( rd > SOLID_EPSILON || gd > SOLID_EPSILON|| bd > SOLID_EPSILON )
+			return qfalse;
+		
+		/* okay */
+		return qtrue;
+	}
+	
+	/* compare nonsolid lightmaps */
+	if( a->w != b->w || a->h != b->h )
 		return qfalse;
 	
 	/* compare luxels */
@@ -1399,19 +1421,38 @@ MergeBSPLuxels()
 merges two surface lightmaps' bsp luxels, overwriting occluded luxels
 */
 
-static void MergeBSPLuxels( rawLightmap_t *a, int aNum, rawLightmap_t *b, int bNum )
+static qboolean MergeBSPLuxels( rawLightmap_t *a, int aNum, rawLightmap_t *b, int bNum )
 {
 	rawLightmap_t	*lm;
 	int				x, y;
 	float			luxel[ 3 ], *aLuxel, *bLuxel;
 	
 	
-	/* compare */
-	if( a->w != b->w || a->h != b->h ||
-		a->customWidth != b->customWidth || a->customHeight != b->customHeight ||
-		a->gamma != b->gamma ||
+	/* basic tests */
+	if( a->customWidth != b->customWidth || a->customHeight != b->customHeight ||
+		a->brightness != b->brightness ||
+		a->solid[ aNum ] != b->solid[ bNum ] ||
 		a->bspLuxels[ aNum ] == NULL || b->bspLuxels[ bNum ] == NULL )
-		return;
+		return qfalse;
+	
+	/* compare solid lightmaps */
+	if( a->solid[ aNum ] && b->solid[ bNum ] )
+	{
+		/* average */
+		VectorAdd( a->solidColor[ aNum ], b->solidColor[ bNum ], luxel );
+		VectorScale( luxel, 0.5f, luxel );
+		
+		/* copy to both */
+		VectorCopy( luxel, a->solidColor[ aNum ] );
+		VectorCopy( luxel, b->solidColor[ bNum ] );
+		
+		/* return to sender */
+		return qtrue;
+	}
+	
+	/* compare nonsolid lightmaps */
+	if( a->w != b->w || a->h != b->h )
+		return qfalse;
 	
 	/* merge luxels */
 	for( y = 0; y < a->h; y++ )
@@ -1442,6 +1483,9 @@ static void MergeBSPLuxels( rawLightmap_t *a, int aNum, rawLightmap_t *b, int bN
 			}
 		}
 	}
+	
+	/* done */
+	return qtrue;
 }
 
 
@@ -1631,18 +1675,23 @@ static qboolean ApproximateLightmap( rawLightmap_t *lm )
 		ds = &bspDrawSurfaces[ num ];
 		info = &surfaceInfos[ num ];
 		
+		/* assume not-reduced initially */
+		info->approximated = qfalse;
+		
 		/* bail if lightmap doesn't match up */
 		if( info->lm != lm )
 			continue;
 		
-		/* assume reduced initially */
-		info->approximated = qtrue;
+		/* bail if not vertex lit */
+		if( info->si->noVertexLight )
+			continue;
 		
 		/* assume that surfaces whose bounding boxes is smaller than 2x samplesize will be forced to vertex */
 		if( (info->maxs[ 0 ] - info->mins[ 0 ]) <= (2.0f * info->sampleSize) &&
 			(info->maxs[ 1 ] - info->mins[ 1 ]) <= (2.0f * info->sampleSize) &&
 			(info->maxs[ 2 ] - info->mins[ 2 ]) <= (2.0f * info->sampleSize) )
 		{
+			info->approximated = qtrue;
 			numSurfsVertexForced++;
 			continue;
 		}
@@ -1655,6 +1704,7 @@ static qboolean ApproximateLightmap( rawLightmap_t *lm )
 				verts = yDrawVerts + ds->firstVert;
 				
 				/* map the triangles */
+				info->approximated = qtrue;
 				for( i = 0; i < ds->numIndexes && info->approximated; i += 3 )
 				{
 					dv[ 0 ] = &verts[ bspDrawIndexes[ ds->firstIndex + i ] ];
@@ -1681,6 +1731,7 @@ static qboolean ApproximateLightmap( rawLightmap_t *lm )
 				verts = mesh->verts;
 				
 				/* map the mesh quads */
+				info->approximated = qtrue;
 				for( y = 0; y < (mesh->height - 1) && info->approximated; y++ )
 				{
 					for( x = 0; x < (mesh->width - 1) && info->approximated; x++ )
@@ -1746,6 +1797,15 @@ static qboolean TestOutLightmapStamp( rawLightmap_t *lm, int lightmapNum, outLig
 	if( x < 0 || y < 0 || (x + lm->w) > olm->customWidth || (y + lm->h) > olm->customHeight )
 		return qfalse;
 	
+	/* solid lightmaps test a 1x1 stamp */
+	if( lm->solid[ lightmapNum ] )
+	{
+		offset = (y * olm->customWidth) + x;
+		if( olm->lightBits[ offset >> 3 ] & (1 << (offset & 7)) )
+			return qfalse;
+		return qtrue;
+	}
+	
 	/* test the stamp */
 	for( sy = 0; sy < lm->h; sy++ )
 	{
@@ -1783,7 +1843,7 @@ static void SetupOutLightmap( rawLightmap_t *lm, outLightmap_t *olm )
 		return;
 	
 	/* is this a "normal" bsp-stored lightmap? */
-	if( (lm->customWidth == LIGHTMAP_WIDTH && lm->customHeight == LIGHTMAP_HEIGHT) || externalLightmaps )
+	if( (lm->customWidth == game->lightmapSize && lm->customHeight == game->lightmapSize) || externalLightmaps )
 	{
 		olm->lightmapNum = numBSPLightmaps;
 		numBSPLightmaps++;
@@ -1838,7 +1898,7 @@ static void FindOutLightmaps( rawLightmap_t *lm )
 	/* set default lightmap number (-3 = LIGHTMAP_BY_VERTEX) */
 	for( lightmapNum = 0; lightmapNum < MAX_LIGHTMAPS; lightmapNum++ )
 		lm->outLightmapNums[ lightmapNum ] = -3;
-		
+	
 	/* can this lightmap be approximated with vertex color? */
 	if( ApproximateLightmap( lm ) )
 		return;
@@ -1936,8 +1996,16 @@ static void FindOutLightmaps( rawLightmap_t *lm )
 					continue;
 				
 				/* set maxs */
-				xMax = (olm->customWidth - lm->w) + 1;
-				yMax = (olm->customHeight - lm->h) + 1;
+				if( lm->solid[ lightmapNum ] )
+				{
+					xMax = olm->customWidth;
+					yMax = olm->customHeight;
+				}
+				else
+				{
+					xMax = (olm->customWidth - lm->w) + 1;
+					yMax = (olm->customHeight - lm->h) + 1;
+				}
 				
 				/* walk the origin around the lightmap */
 				for( y = 0; y < yMax; y++ )
@@ -1994,7 +2062,7 @@ static void FindOutLightmaps( rawLightmap_t *lm )
 		}
 		
 		/* if this is a style-using lightmap, it must be exported */
-		if( lightmapNum > 0 )
+		if( lightmapNum > 0 && game->load != LoadRBSPFile )
 			olm->extLightmapNum = 0;
 		
 		/* add the surface lightmap to the bsp lightmap */
@@ -2025,20 +2093,40 @@ static void FindOutLightmaps( rawLightmap_t *lm )
 			}
 		}
 		
-		/* mark the bits used */
-		for( y = 0; y < lm->h; y++ )
+		/* set maxs */
+		if( lm->solid[ lightmapNum ] )
 		{
-			for( x = 0; x < lm->w; x++ )
+			xMax = 1;
+			yMax = 1;
+		}
+		else
+		{
+			xMax = lm->w;
+			yMax = lm->h;
+		}
+		
+		/* mark the bits used */
+		for( y = 0; y < yMax; y++ )
+		{
+			for( x = 0; x < xMax; x++ )
 			{
 				/* get luxel */
 				luxel = BSP_LUXEL( lightmapNum, x, y );
 				deluxel = BSP_DELUXEL( x, y );
-				if( luxel[ 0 ] < 0.0f )
+				if( luxel[ 0 ] < 0.0f && !lm->solid[ lightmapNum ])
 					continue;
 				
 				/* set minimum light */
-				VectorCopy( luxel, color );
-
+				if( lm->solid[ lightmapNum ] )
+				{
+					if( debug )
+						VectorSet( color, 255.0f, 0.0f, 0.0f );
+					else
+						VectorCopy( lm->solidColor[ lightmapNum ], color );
+				}
+				else
+					VectorCopy( luxel, color );
+				
 				/* styles are not affected by minlight */
 				if( lightmapNum == 0 )
 				{
@@ -2060,7 +2148,7 @@ static void FindOutLightmaps( rawLightmap_t *lm )
 				
 				/* store color */
 				pixel = olm->bspLightBytes + (((oy * olm->customWidth) + ox) * 3);
-				ColorToBytes( color, pixel, lm->gamma );
+				ColorToBytes( color, pixel, lm->brightness );
 				
 				/* store direction */
 				if( deluxemap )
@@ -2149,7 +2237,7 @@ void StoreSurfaceLightmaps( void )
 	int					i, j, k, x, y, lx, ly, sx, sy, *cluster, mappedSamples;
 	int					style, size, lightmapNum, lightmapNum2;
 	float				*normal, *luxel, *bspLuxel, *bspLuxel2, *radLuxel, samples, occludedSamples;
-	vec3_t				sample, occludedSample, dirSample;
+	vec3_t				sample, occludedSample, dirSample, colorMins, colorMaxs;
 	float				*deluxel, *bspDeluxel, *bspDeluxel2;
 	byte				*lb;
 	int					numUsed, numTwins, numTwinLuxels, numStored;
@@ -2187,6 +2275,7 @@ void StoreSurfaceLightmaps( void )
 	numUsed = 0;
 	numTwins = 0;
 	numTwinLuxels = 0;
+	numSolidLightmaps = 0;
 	for( i = 0; i < numRawLightmaps; i++ )
 	{
 		/* get lightmap */
@@ -2336,8 +2425,11 @@ void StoreSurfaceLightmaps( void )
 				}
 			}
 			
-			/* clean up and store into bsp luxels */
+			/* setup */
 			lm->used = 0;
+			ClearBounds( colorMins, colorMaxs );
+			
+			/* clean up and store into bsp luxels */
 			for( y = 0; y < lm->h; y++ )
 			{
 				for( x = 0; x < lm->w; x++ )
@@ -2433,6 +2525,41 @@ void StoreSurfaceLightmaps( void )
 					VectorAdd( bspLuxel, sample, bspLuxel );
 					if( deluxemap && lightmapNum == 0 )
 						VectorAdd( bspDeluxel, dirSample, bspDeluxel );
+					
+					/* add color to bounds for solid checking */
+					if( samples > 0.0f )
+						AddPointToBounds( bspLuxel, colorMins, colorMaxs );
+				}
+			}
+			
+			/* set solid color */
+			lm->solid[ lightmapNum ] = qfalse;
+			VectorAdd( colorMins, colorMaxs, lm->solidColor[ lightmapNum ] );
+			VectorScale( lm->solidColor[ lightmapNum ], 0.5f, lm->solidColor[ lightmapNum ] );
+			
+			/* nocollapse prevents solid lightmaps */
+			if( noCollapse == qfalse )
+			{
+				/* check solid color */
+				VectorSubtract( colorMaxs, colorMins, sample );
+				if( (sample[ 0 ] <= SOLID_EPSILON && sample[ 1 ] <= SOLID_EPSILON && sample[ 2 ] <= SOLID_EPSILON) ||
+					(lm->w <= 2 && lm->h <= 2) )	/* small lightmaps get forced to solid color */
+				{
+					/* set to solid */
+					VectorCopy( colorMins, lm->solidColor[ lightmapNum ] );
+					lm->solid[ lightmapNum ] = qtrue;
+					numSolidLightmaps++;
+				}
+				
+				/* if all lightmaps aren't solid, then none of them are solid */
+				if( lm->solid[ lightmapNum ] != lm->solid[ 0 ] )
+				{
+					for( y = 0; y < MAX_LIGHTMAPS; y++ )
+					{
+						if( lm->solid[ y ] )
+							numSolidLightmaps--;
+						lm->solid[ y ] = qfalse;
+					}
 				}
 			}
 			
@@ -2530,15 +2657,17 @@ void StoreSurfaceLightmaps( void )
 						if( CompareBSPLuxels( lm, lightmapNum, lm2, lightmapNum2 ) )
 						{
 							/* merge and set twin */
-							MergeBSPLuxels( lm, lightmapNum, lm2, lightmapNum2 );
-							lm2->twins[ lightmapNum2 ] = lm;
-							lm2->twinNums[ lightmapNum2 ] = lightmapNum;
-							numTwins++;
-							numTwinLuxels += (lm->w * lm->h);
-							
-							/* count styled twins */
-							if( lightmapNum > 0 )
-								lm->numStyledTwins++;
+							if( MergeBSPLuxels( lm, lightmapNum, lm2, lightmapNum2 ) )
+							{
+								lm2->twins[ lightmapNum2 ] = lm;
+								lm2->twinNums[ lightmapNum2 ] = lightmapNum;
+								numTwins++;
+								numTwinLuxels += (lm->w * lm->h);
+								
+								/* count styled twins */
+								if( lightmapNum > 0 )
+									lm->numStyledTwins++;
+							}
 						}
 					}
 				}
@@ -2632,7 +2761,7 @@ void StoreSurfaceLightmaps( void )
 	}
 	else
 	{
-		numBSPLightBytes = (numBSPLightmaps * LIGHTMAP_WIDTH * LIGHTMAP_HEIGHT * 3);
+		numBSPLightBytes = (numBSPLightmaps * game->lightmapSize * game->lightmapSize * 3);
 		bspLightBytes = safe_malloc( numBSPLightBytes );
 		memset( bspLightBytes, 0, numBSPLightBytes );
 	}
@@ -2647,14 +2776,14 @@ void StoreSurfaceLightmaps( void )
 		if( olm->lightmapNum >= 0 && !externalLightmaps )
 		{
 			/* copy lighting data */
-			lb = bspLightBytes + (olm->lightmapNum * LIGHTMAP_HEIGHT * LIGHTMAP_WIDTH * 3);
-			memcpy( lb, olm->bspLightBytes, LIGHTMAP_HEIGHT * LIGHTMAP_WIDTH * 3 );
+			lb = bspLightBytes + (olm->lightmapNum * game->lightmapSize * game->lightmapSize * 3);
+			memcpy( lb, olm->bspLightBytes, game->lightmapSize * game->lightmapSize * 3 );
 			
 			/* copy direction data */
 			if( deluxemap )
 			{
-				lb = bspLightBytes + ((olm->lightmapNum + 1) * LIGHTMAP_HEIGHT * LIGHTMAP_WIDTH * 3);
-				memcpy( lb, olm->bspDirBytes, LIGHTMAP_HEIGHT * LIGHTMAP_WIDTH * 3 );
+				lb = bspLightBytes + ((olm->lightmapNum + 1) * game->lightmapSize * game->lightmapSize * 3);
+				memcpy( lb, olm->bspDirBytes, game->lightmapSize * game->lightmapSize * 3 );
 			}
 		}
 		
@@ -2787,13 +2916,21 @@ void StoreSurfaceLightmaps( void )
 				lmx = (float) lm->lightmapX[ lightmapNum ] / (float) olm->customWidth;
 				lmy = (float) lm->lightmapY[ lightmapNum ] / (float) olm->customHeight;
 				
-				/* calc lightmap st coords and store lighting values */
+				/* calc lightmap st coords */
 				dv = &bspDrawVerts[ ds->firstVert ];
 				ydv = &yDrawVerts[ ds->firstVert ];
 				for( j = 0; j < ds->numVerts; j++ )
 				{
-					dv[ j ].lightmap[ lightmapNum ][ 0 ] = lmx + (ydv[ j ].lightmap[ 0 ][ 0 ] / (superSample * olm->customWidth));
-					dv[ j ].lightmap[ lightmapNum ][ 1 ] = lmy + (ydv[ j ].lightmap[ 0 ][ 1 ] / (superSample * olm->customHeight));
+					if( lm->solid[ lightmapNum ] )
+					{
+						dv[ j ].lightmap[ lightmapNum ][ 0 ] = lmx + (0.5f / (float) olm->customWidth);
+						dv[ j ].lightmap[ lightmapNum ][ 1 ] = lmy + (0.5f / (float) olm->customWidth);
+					}
+					else
+					{
+						dv[ j ].lightmap[ lightmapNum ][ 0 ] = lmx + (ydv[ j ].lightmap[ 0 ][ 0 ] / (superSample * olm->customWidth));
+						dv[ j ].lightmap[ lightmapNum ][ 1 ] = lmy + (ydv[ j ].lightmap[ 0 ][ 1 ] / (superSample * olm->customHeight));
+					}
 				}
 			}
 		}
@@ -2824,7 +2961,8 @@ void StoreSurfaceLightmaps( void )
 				}
 				
 				/* store to bytes */
-				ColorToBytes( color, dv[ j ].color[ lightmapNum ], info->si->vertexScale );
+				if( !info->si->noVertexLight )
+					ColorToBytes( color, dv[ j ].color[ lightmapNum ], info->si->vertexScale );
 			}
 		}
 		
@@ -2947,7 +3085,7 @@ void StoreSurfaceLightmaps( void )
 		
 		/* devise a custom shader for this surface (fixme: make this work with light styles) */
 		else if( olm != NULL && lm != NULL && !externalLightmaps &&
-			(olm->customWidth != LIGHTMAP_WIDTH || olm->customHeight != LIGHTMAP_HEIGHT) )
+			(olm->customWidth != game->lightmapSize || olm->customHeight != game->lightmapSize) )
 		{
 			/* get output lightmap */
 			olm = &outLightmaps[ lm->outLightmapNums[ 0 ] ];
@@ -2981,6 +3119,7 @@ void StoreSurfaceLightmaps( void )
 	/* print stats */
 	Sys_Printf( "%9d luxels used\n", numUsed );
 	Sys_Printf( "%9d luxels stored (%3.2f percent efficiency)\n", numStored, efficiency * 100.0f );
+	Sys_Printf( "%9d solid surface lightmaps\n", numSolidLightmaps );
 	Sys_Printf( "%9d identical surface lightmaps, using %d luxels\n", numTwins, numTwinLuxels );
 	Sys_Printf( "%9d vertex forced surfaces\n", numSurfsVertexForced );
 	Sys_Printf( "%9d vertex approximated surfaces\n", numSurfsVertexApproximated );

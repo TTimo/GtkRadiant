@@ -1,4 +1,5 @@
-/*
+/* -------------------------------------------------------------------------------
+
 Copyright (C) 1999-2007 id Software, Inc. and contributors.
 For a list of contributors, see the accompanying CONTRIBUTORS file.
 
@@ -1159,7 +1160,7 @@ int AddMetaVertToSurface( mapDrawSurface_t *ds, bspDrawVert_t *dv1, int *coincid
 	}
 
 	/* overflow check */
-	if( ds->numVerts >= maxSurfaceVerts )
+	if( ds->numVerts >= ((ds->shaderInfo->compileFlags & C_VERTEXLIT) ? maxSurfaceVerts : maxLMSurfaceVerts) )
 		return VERTS_EXCEEDED;
 	
 	/* made it this far, add the vert and return */
@@ -1265,6 +1266,8 @@ static int AddMetaTriangleToSurface( mapDrawSurface_t *ds, metaTriangle_t *tri, 
 		(VectorCompare( ds->mins, mins ) == qfalse || VectorCompare( ds->maxs, maxs ) == qfalse) )
 	{
 		/* set maximum size before lightmap scaling (normally 2032 units) */
+		/* 2004-02-24: scale lightmap test size by 2 to catch larger brush faces */
+		/* 2004-04-11: reverting to actual lightmap size */
 		lmMax = (ds->sampleSize * (ds->shaderInfo->lmCustomWidth - 1));
 		for( i = 0; i < 3; i++ )
 		{
@@ -1458,6 +1461,10 @@ static void MetaTrianglesToSurface( int numPossibles, metaTriangle_t *possibles,
 			/* walk the list of possible candidates for merging */
 			for( j = i + 1, test = &possibles[ j ]; j < numPossibles; j++, test++ )
 			{
+				/* skip this triangle if it has already been merged */
+				if( test->si == NULL )
+					continue;
+				
 				/* score this triangle */
 				score = AddMetaTriangleToSurface( ds, test, qtrue );
 				if( score > bestScore )
@@ -1533,33 +1540,55 @@ static int CompareMetaTriangles( const void *a, const void *b )
 	else if( ((metaTriangle_t*) a)->fogNum > ((metaTriangle_t*) b)->fogNum )
 		return -1;
 	
-	/* then position in world */
-	else
-	{
-		/* find mins */
-		VectorSet( aMins, 999999, 999999, 999999 );
-		VectorSet( bMins, 999999, 999999, 999999 );
-		for( i = 0; i < 3; i++ )
+	/* then plane */
+	#if 0
+		else if( npDegrees == 0.0f && ((metaTriangle_t*) a)->si->nonplanar == qfalse &&
+			((metaTriangle_t*) a)->planeNum >= 0 && ((metaTriangle_t*) a)->planeNum >= 0 )
 		{
-			av = ((metaTriangle_t*) a)->indexes[ i ];
-			bv = ((metaTriangle_t*) b)->indexes[ i ];
-			for( j = 0; j < 3; j++ )
-			{
-				if( metaVerts[ av ].xyz[ j ] < aMins[ j ] )
-					aMins[ j ] = metaVerts[ av ].xyz[ j ];
-				if( metaVerts[ bv ].xyz[ j ] < bMins[ j ] )
-					bMins[ j ] = metaVerts[ bv ].xyz[ j ];
-			}
-		}
-		
-		/* test it */
-		for( i = 0; i < 3; i++ )
-		{
-			if( aMins[ i ] < bMins[ i ] )
+			if( ((metaTriangle_t*) a)->plane[ 3 ] < ((metaTriangle_t*) b)->plane[ 3 ] )
 				return 1;
-			else if( aMins[ i ] > bMins[ i ] )
+			else if( ((metaTriangle_t*) a)->plane[ 3 ] > ((metaTriangle_t*) b)->plane[ 3 ] )
+				return -1;
+			else if( ((metaTriangle_t*) a)->plane[ 0 ] < ((metaTriangle_t*) b)->plane[ 0 ] )
+				return 1;
+			else if( ((metaTriangle_t*) a)->plane[ 0 ] > ((metaTriangle_t*) b)->plane[ 0 ] )
+				return -1;
+			else if( ((metaTriangle_t*) a)->plane[ 1 ] < ((metaTriangle_t*) b)->plane[ 1 ] )
+				return 1;
+			else if( ((metaTriangle_t*) a)->plane[ 1 ] > ((metaTriangle_t*) b)->plane[ 1 ] )
+				return -1;
+			else if( ((metaTriangle_t*) a)->plane[ 2 ] < ((metaTriangle_t*) b)->plane[ 2 ] )
+				return 1;
+			else if( ((metaTriangle_t*) a)->plane[ 2 ] > ((metaTriangle_t*) b)->plane[ 2 ] )
 				return -1;
 		}
+	#endif
+	
+	/* then position in world */
+	
+	/* find mins */
+	VectorSet( aMins, 999999, 999999, 999999 );
+	VectorSet( bMins, 999999, 999999, 999999 );
+	for( i = 0; i < 3; i++ )
+	{
+		av = ((metaTriangle_t*) a)->indexes[ i ];
+		bv = ((metaTriangle_t*) b)->indexes[ i ];
+		for( j = 0; j < 3; j++ )
+		{
+			if( metaVerts[ av ].xyz[ j ] < aMins[ j ] )
+				aMins[ j ] = metaVerts[ av ].xyz[ j ];
+			if( metaVerts[ bv ].xyz[ j ] < bMins[ j ] )
+				bMins[ j ] = metaVerts[ bv ].xyz[ j ];
+		}
+	}
+	
+	/* test it */
+	for( i = 0; i < 3; i++ )
+	{
+		if( aMins[ i ] < bMins[ i ] )
+			return 1;
+		else if( aMins[ i ] > bMins[ i ] )
+			return -1;
 	}
 	
 	/* functionally equivalent */
@@ -1595,18 +1624,25 @@ void MergeMetaTriangles( void )
 	numAdded = 0;
 	
 	/* merge */
-	for( i = 0; i < numMetaTriangles; i = j )
+	for( i = 0, j = 0; i < numMetaTriangles; i = j )
 	{
 		/* get head of list */
 		head = &metaTriangles[ i ];
 		
+		/* skip this triangle if it has already been merged */
+		if( head->si == NULL )
+			continue;
+		
 		/* find end */
-		for( j = i + 1; j < numMetaTriangles; j++ )
+		if( j <= i )
 		{
-			/* get end of list */
-			end = &metaTriangles[ j ];
-			if( head->si != end->si || head->fogNum != end->fogNum )
-				break;
+			for( j = i + 1; j < numMetaTriangles; j++ )
+			{
+				/* get end of list */
+				end = &metaTriangles[ j ];
+				if( head->si != end->si || head->fogNum != end->fogNum )
+					break;
+			}
 		}
 		
 		/* try to merge this list of possible merge candidates */

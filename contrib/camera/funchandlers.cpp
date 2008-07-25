@@ -106,7 +106,7 @@ void DoLoadCamera()
   else
     strcpy( basepath, g_FuncTable.m_pfnGetGamePath() );
 
-  const gchar *filename = g_FuncTable.m_pfnFileDialog( (GtkWidget *)g_pRadiantWnd, TRUE, "Open Camera File", basepath, "camera");
+  const gchar *filename = g_FuncTable.m_pfnFileDialog( (GtkWidget *)g_pRadiantWnd, TRUE, "Open Camera File", basepath, "camera", NULL);
 
   if( filename )
 	{
@@ -161,7 +161,7 @@ void DoSaveCamera() {
   else
     strcpy( basepath, g_FuncTable.m_pfnGetGamePath() );
 
-  const gchar *filename = g_FuncTable.m_pfnFileDialog( (void *)g_pRadiantWnd, FALSE, "Save Camera File", basepath, "camera");
+  const gchar *filename = g_FuncTable.m_pfnFileDialog( (void *)g_pRadiantWnd, FALSE, "Save Camera File", basepath, "camera", NULL);
 
   if( filename ) {
     char fullpathtofile[PATH_MAX + 8];

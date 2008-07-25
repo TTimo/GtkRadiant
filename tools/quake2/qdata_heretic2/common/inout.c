@@ -33,7 +33,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <sys/types.h>
 #include <sys/stat.h>
 
-#ifdef _WIN32
+#ifdef WIN32
 #include <direct.h>
 #include <windows.h>
 #endif
@@ -42,7 +42,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "l_net/l_net.h"
 #include "libxml/tree.h"
 
-#ifdef _WIN32
+#ifdef WIN32
 HWND hwndOut = NULL;
 qboolean lookedForServer = false;
 UINT wm_BroadcastCommand = -1;

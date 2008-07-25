@@ -1,4 +1,5 @@
-/*
+/* -------------------------------------------------------------------------------
+
 Copyright (C) 1999-2007 id Software, Inc. and contributors.
 For a list of contributors, see the accompanying CONTRIBUTORS file.
 
@@ -55,11 +56,18 @@ game_t struct
 	".jk2",				/* unix home sub-dir */
 	"GameData",			/* magic path word */
 	"shaders",			/* shader directory */
-	qfalse,				/* wolf lighting model? */
+	64,					/* max lightmapped surface verts */
+	999,				/* max surface verts */
+	6000,				/* max surface indexes */
 	qtrue,				/* flares */
 	"gfx/misc/flare",	/* default flare shader */
+	qfalse,				/* wolf lighting model? */
+	128,				/* lightmap width/height */
+	1.0f,				/* lightmap gamma */
+	1.0f,				/* lightmap compensate */
 	"RBSP",				/* bsp file prefix */
 	1,					/* bsp file version */
+	qfalse,				/* cod-style lump len/ofs order */
 	LoadRBSPFile,		/* bsp load function */
 	WriteRBSPFile,		/* bsp write function */
 	

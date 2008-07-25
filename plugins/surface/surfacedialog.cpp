@@ -1610,7 +1610,7 @@ static void on_lock_valuechange_togglebutton_toggled (GtkToggleButton *togglebut
 {
   bool is_Locked;
 
-  is_Locked = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(lock_valuechange_togglebutton));
+  is_Locked = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(lock_valuechange_togglebutton)) != false;
 
   gtk_widget_set_sensitive( GTK_WIDGET( hscale_value_spinbutton ), is_Locked );
   gtk_widget_set_sensitive( GTK_WIDGET( vscale_value_spinbutton ), is_Locked );

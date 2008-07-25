@@ -353,7 +353,7 @@ int lwResolvePolySurfaces( lwPolygonList *polygon, lwTagList *tlist,
    }
 
    for ( i = 0; i < polygon->count; i++ ) {
-      index = ( int ) polygon->pol[ i ].surf;
+      index = ( int ) ((size_t)polygon->pol[ i ].surf);
       if ( index < 0 || index > tlist->count ) return 0;
       if ( !s[ index ] ) {
          s[ index ] = lwDefaultSurface();
@@ -527,7 +527,7 @@ int lwGetPolygonTags( picoMemStream_t *fp, int cksize, lwTagList *tlist,
       if ( rlen < 0 || rlen > cksize ) return 0;
 
       switch ( type ) {
-         case ID_SURF:  plist->pol[ i ].surf = ( lwSurface * ) j;  break;
+         case ID_SURF:  plist->pol[ i ].surf = ( lwSurface * ) ((size_t)j);  break;
          case ID_PART:  plist->pol[ i ].part = j;  break;
          case ID_SMGP:  plist->pol[ i ].smoothgrp = j;  break;
       }

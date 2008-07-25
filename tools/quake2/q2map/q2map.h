@@ -31,7 +31,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	#include <limits.h>
 #endif
 
-#ifdef _WIN32
+#ifdef WIN32
 	#include <windows.h>
 #endif
 

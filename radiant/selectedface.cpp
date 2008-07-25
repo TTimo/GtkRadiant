@@ -55,7 +55,7 @@ brush_t* WINAPI QERApp_GetSelectedFaceBrush(int iface)
 // NOTE: we expect pWinding to have MAX_POINTS_ON_WINDING points ready for writing
 int WINAPI QERApp_GetFaceInfo(int iface, _QERFaceData *pFaceData, winding_t *pWinding)
 {
-  int size;
+  size_t size;
 
   if (iface>=g_ptrSelectedFaces.GetSize())
   {
@@ -74,7 +74,7 @@ int WINAPI QERApp_GetFaceInfo(int iface, _QERFaceData *pFaceData, winding_t *pWi
   VectorCopy( selFace->planepts[2], pFaceData->m_v3 );
   pFaceData->m_bBPrimit = true;
   memcpy( &pFaceData->brushprimit_texdef, &selFace->brushprimit_texdef, sizeof(brushprimit_texdef_t) );
-  size = (int)((winding_t *)0)->points[selFace->face_winding->numpoints];
+  size = (size_t)((winding_t *)0)->points[selFace->face_winding->numpoints];
   memcpy( pWinding, selFace->face_winding, size );
   return 1;
 }

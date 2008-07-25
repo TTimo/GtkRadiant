@@ -1,5 +1,107 @@
 Q3Map2 Version History + Changelog (Reverse Chronological Order)
 
+2.5.16 (2004-10-18)
+
+- New: -fixaas mode to reassociate an AAS file with a changed BSP
+- New: -nostyles switch on light phase disabling lightstyles
+- Using libmhash cryptographic hashing library instead of md5lib
+
+
+2.5.15 (2004-07-08)
+
+- New: q3map_rgbGen, q3map_rgbMod or q3map_colorGen, q3map_colorMod
+- New: q3map_alphaGen const (like q3map_alphaMod set)
+- New: q3map_noVertexLight to suppress overwriting of vertex rgb
+- q3map_backShader now works again, can be used instead of
+  q3map_cloneShader + q3map_invert on the target shader
+- q3map_alphaMod volume brushes in func_group entities will now only
+  affect that entity's surfaces
+- q3map_clipModel now works on trans/nonsolid shaders, allowing
+  simplified clipping surfaces in models
+- Fixed bug in alphaMod code where only the first vertex was being
+  modded (thanks Ratty)
+- Vis exits instead of crashing with divide-by-zero when there are
+  no portals on simple box maps
+- All of a surface's lightmaps must be solid or not solid, fixing
+  ST coord problem with non-Raven games using lightstyles
+- Reverted a change in the meta code which was causing lightmap coord
+  overflows and ugly self-shadowing errors on surface boundaries
+- Any use of lightstyles automatically sets -nocollapse to reduce
+  total shader counts
+- Tenebrae lightmap size changed to 512x512
+
+
+2.5.14 (2004-04-09)
+
+- New: -dirty mode courtesy of RaP7oR (dirtmapping/ambient occlusion)
+- New: q3map_skyLight code using more uniform angular distribution about
+  the sky hemisphere
+- New: q3map_alphaMod set N.N
+- New: q3map_alphaMod scale N.N
+- New: q3map_alphaMod volume - applies all other q3map_alphaMod directives
+  to each vertex inside a brush textured with this shader, allowing large
+  faded scrolling fire shaders, waterfalls, marquees, explicit dotProduct
+  terrain blending control, etc.
+- Fixed a bug in alphaMod code where the type of the first alphaMod was
+  being used for all subsequent alphaMods
+- Lowered vertex-lit surface limits to 999 verts, 1000 was breaking Quake 3
+- Tightened up solid lightmap tolerances
+- Fixed bug in solid lightmap code where lightmap SD coords were being
+  incorrectly set
+
+
+2.5.13 (2004-03-03)
+
+- New: -convert -format <game> to convert between different BSP formats.
+  Example, to convert a Jedi Academy map to Enemy Territory:
+  -game ja -convert -format et
+- New: -game etut support for Urban Terror on Enemy Territory
+- New: -analyze mode for reverse engineering a BSP format
+- New: -compensate N.N (default 1.0) for descaling lightmap/vertex/grid
+  data to compensate for ingame overbrighting. 4.0 is a good value for
+  Quake 3 if used in combination with -gamma 2.2
+- New: compensate/gamma per-game setting
+- New: -light -cpma argument for "classic" (sic) vertex lighting
+- Replaced malloc() with stack allocation in IlluminateRawLightmap for
+  most small/medium lightmap calculations
+- Misc cleanups in q3map2.h
+- Support for non-128x128 lightmaps
+- The -meta process will now generate surfaces with more than 64
+  verts that have non-lightmapped shaders
+- Extended lightmap size tolerance to 2x for merging meta triangles in
+  maps with aggressive lightmapscale. Sorry kids!
+- Moved surface finish pass (celshading, cloning) to final surface pass.
+  This should fix a bug involving fog/tesselation/celshading/cloning
+- Solid-color lightmaps (within 1/255 in RGB) are detected and replaced
+  with a single pixel lightmap, saving space
+
+
+2.5.12 (2004-01-18)
+
+- New: -dark option for dark lightmap/brush seams in -light (Unreal 1-ish)
+- New: spawnflags 4 on misc_model entities makes them forcemeta/lightmapped
+  unless explicitly set as vertex lit in their shader(s). This can be
+  combined with spawnflags 2 (solid) as spawnflags 6
+- New: -gamma N.N switch sets lightmap/vertex gamma value for more
+  realistic lighting, instead of using high ambient/minlight. Default
+  is 1.0 (linear ramp), good values are between 1.5 and 2.2
+- Changed q3map_lightmapGamma N.N to q3map_lightmapBrightness N.N, to
+  better match its intended function
+- Ported to VS.NET 2003 and GtkRadiant 1.5 (spog_branch)
+- Fixed bug in _skybox maps where sunlight was leaking through brushes.
+  Thanks pjw!
+- Fixed bug in ASE loader where models without submodels/submaterials
+  would not load properly.
+- Fixed bug where q3map_tcGen was not being applied to models
+- Optimized MergeMetaTriangles a bit
+- Added KOR's fix to raytracer
+- -bouncegrid no longer affects the lightgrid dir
+- Added feature to PicoModel where spaces in material names in 3DS, ASE
+  and LWO models will mark the end of the shader name, so you can have
+  "textures/foo/bar 1" and "textures/foo/bar 2" in Lightwave, and both
+  surfaces will map to "textures/foo/bar"
+
+
 2.5.11 (2003-12-01)
 
 - New: added support for _skybox entities to generate "portal sky"

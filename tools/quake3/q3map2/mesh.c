@@ -1,4 +1,5 @@
-/*
+/* -------------------------------------------------------------------------------
+
 Copyright (C) 1999-2007 id Software, Inc. and contributors.
 For a list of contributors, see the accompanying CONTRIBUTORS file.
 
@@ -381,7 +382,8 @@ mesh_t *SubdivideMesh( mesh_t in, float maxError, float minLength )
 	float						len;
 	mesh_t						out;
 	
-	static bspDrawVert_t expand[MAX_EXPANDED_AXIS][MAX_EXPANDED_AXIS];
+	/* ydnar: static for os x */
+	MAC_STATIC bspDrawVert_t	expand[MAX_EXPANDED_AXIS][MAX_EXPANDED_AXIS];
 	
 	
 	out.width = in.width;
@@ -547,7 +549,8 @@ mesh_t *SubdivideMesh2( mesh_t in, int iterations )
 	bspDrawVert_t				prev, next, mid;
 	mesh_t						out;
 	
-	static bspDrawVert_t expand[ MAX_EXPANDED_AXIS ][ MAX_EXPANDED_AXIS ];
+	/* ydnar: static for os x */
+	MAC_STATIC bspDrawVert_t	expand[ MAX_EXPANDED_AXIS ][ MAX_EXPANDED_AXIS ];
 	
 	
 	/* initial setup */
@@ -560,7 +563,7 @@ mesh_t *SubdivideMesh2( mesh_t in, int iterations )
 	}
 	
 	/* keep chopping */
-	for( iterations; iterations > 0; iterations-- )
+	for( ; iterations > 0; iterations-- )
 	{
 		/* horizontal subdivisions */
 		for( j = 0; j + 2 < out.width; j += 4 )
@@ -652,7 +655,8 @@ mesh_t *RemoveLinearMeshColumnsRows( mesh_t *in ) {
 	vec3_t						proj, dir;
 	mesh_t						out;
 	
-	static bspDrawVert_t expand[MAX_EXPANDED_AXIS][MAX_EXPANDED_AXIS];
+	/* ydnar: static for os x */
+	MAC_STATIC bspDrawVert_t	expand[MAX_EXPANDED_AXIS][MAX_EXPANDED_AXIS];
 	
 
 	out.width = in->width;
@@ -728,8 +732,7 @@ mesh_t *SubdivideMeshQuads( mesh_t *in, float minLength, int maxsize, int *width
 	vec3_t			dir;
 	float			length, maxLength, amount;
 	mesh_t			out;
-
-	static bspDrawVert_t expand[MAX_EXPANDED_AXIS][MAX_EXPANDED_AXIS];
+	bspDrawVert_t	expand[MAX_EXPANDED_AXIS][MAX_EXPANDED_AXIS];
 
 	out.width = in->width;
 	out.height = in->height;

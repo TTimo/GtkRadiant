@@ -110,7 +110,7 @@ WIN32
 
 ===================================================================
 */
-#ifdef _WIN32
+#ifdef WIN32
 
 #define	USED
 
@@ -602,7 +602,6 @@ RunThreadsOn
 */
 void RunThreadsOn (int workcnt, qboolean showpacifier, void(*func)(int))
 {
-	int		i;
 	int		start, end;
 
 	dispatch = 0;

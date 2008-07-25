@@ -3141,10 +3141,10 @@ void Brush_Draw(brush_t *b)
 		if (!bTrans) {
 			if (face->texdef.flags & Q2_SURF_TRANS33) {
 				bTrans = true;
-				transVal = 0.33;
+				transVal = 0.33f;
 			} else if (face->texdef.flags & Q2_SURF_TRANS66) {
 				bTrans = true;
-				transVal = 0.66;
+				transVal = 0.66f;
 			}
 		}
 

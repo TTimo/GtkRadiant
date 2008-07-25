@@ -147,7 +147,7 @@ void CBackgroundDialogPage::Browse()
 //TODO bug/patch for comments
 //TODO patern gets fucked up sometimes if empty
 	newfile = g_FuncTable.m_pfnFileDialog(pDialogWnd,TRUE,
-						                  _("Load Background Image"),browsedir,FILETYPE_KEY);
+						                  _("Load Background Image"),browsedir,FILETYPE_KEY, NULL);
 	if(!newfile) {
 		Syn_Printf(MSG_PREFIX "newfile = NULL\n");
 		return;

@@ -26,6 +26,9 @@ Copyright (C) 2002 Splash Damage Ltd.
 
 #include "camera.h"
 
+#include <glib.h>
+#include <glib/gi18n.h>
+
 static GSList *g_pEditTypeRadio = NULL;
 static GtkWidget *g_pEditModeEditRadioButton = NULL;
 GtkWidget *g_pEditModeAddRadioButton = NULL;

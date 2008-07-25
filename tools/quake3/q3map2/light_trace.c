@@ -1,4 +1,5 @@
-/*
+/* -------------------------------------------------------------------------------
+
 Copyright (C) 1999-2007 id Software, Inc. and contributors.
 For a list of contributors, see the accompanying CONTRIBUTORS file.
 
@@ -72,7 +73,7 @@ traceVert_t;
 typedef struct traceInfo_s
 {
 	shaderInfo_t				*si;
-	int							surfaceNum, castShadows, padding;
+	int							surfaceNum, castShadows;
 }
 traceInfo_t;
 
@@ -87,7 +88,7 @@ traceWinding_t;
 typedef struct traceTriangle_s
 {
 	vec3_t						edge1, edge2;
-	int							infoNum, padding;
+	int							infoNum;
 	traceVert_t					v[ 3 ];
 }
 traceTriangle_t;
@@ -326,6 +327,8 @@ static int AddItemToTraceNode( traceNode_t *node, int num )
 			node->maxItems *= 2;
 		else
 			node->maxItems += GROW_NODE_ITEMS;
+		if( node->maxItems <= 0 )
+			node->maxItems = GROW_NODE_ITEMS;
 		temp = safe_malloc( node->maxItems * sizeof( *node->items ) );
 		if( node->items != NULL )
 		{
@@ -383,16 +386,6 @@ static int SetupTraceNodes_r( int bspNodeNum )
 		if( bspNode->children[ i ] < 0 )
 		{
 			bspLeafNum = -bspNode->children[ i ] - 1;
-			
-			#if 0
-			/* solid leaf */
-			if( bspLeafs[ bspLeafNum ].cluster == -1 )
-				traceNodes[ nodeNum ].children[ i ] = -1;
-			
-			/* passable leaf */
-			else
-				traceNodes[ nodeNum ].children[ i ] = AllocTraceNode();
-			#endif
 			
 			/* new code */
 			traceNodes[ nodeNum ].children[ i ] = AllocTraceNode();
@@ -968,16 +961,22 @@ static void PopulateWithBSPModel( bspModel_t *model, m4x4_t transform )
 		ti.castShadows = info->castShadows;
 		ti.surfaceNum = model->firstBSPBrush + i;
 		
+		/* choose which node (normal or skybox) */
+		if( info->parentSurfaceNum >= 0 )
+		{
+			nodeNum = skyboxNodeNum;
+			
+			/* sky surfaces in portal skies are ignored */
+			if( info->si->compileFlags & C_SKY )
+				continue;
+		}
+		else
+			nodeNum = headNodeNum;
+		
 		/* setup trace winding */
 		memset( &tw, 0, sizeof( tw ) );
 		tw.infoNum = AddTraceInfo( &ti );
 		tw.numVerts = 3;
-		
-		/* choose which node (normal or skybox) */
-		if( info->parentSurfaceNum >= 0 )
-			nodeNum = skyboxNodeNum;
-		else
-			nodeNum = headNodeNum;
 		
 		/* switch on type */
 		switch( ds->surfaceType )
@@ -1436,7 +1435,7 @@ qboolean TraceTriangle( traceInfo_t *ti, traceTriangle_t *tt, trace_t *trace )
 	det = DotProduct( tt->edge1, pvec );
 	
 	/* the non-culling branch */
-	if( det > -COPLANAR_EPSILON && det < COPLANAR_EPSILON )
+	if( fabs( det ) < COPLANAR_EPSILON )
 		return qfalse;
 	invDet = 1.0f / det;
 	
@@ -1458,8 +1457,6 @@ qboolean TraceTriangle( traceInfo_t *ti, traceTriangle_t *tt, trace_t *trace )
 	
 	/* calculate t (depth) */
 	depth = DotProduct( tt->edge2, qvec ) * invDet;
-	//%	if( depth <= SELF_SHADOW_EPSILON || depth >= (trace->dist - SELF_SHADOW_EPSILON) )
-	//%		return qfalse;
 	if( depth <= trace->inhibitRadius || depth >= trace->distance )
 		return qfalse;
 	
@@ -1485,6 +1482,7 @@ qboolean TraceTriangle( traceInfo_t *ti, traceTriangle_t *tt, trace_t *trace )
 	if( !(si->compileFlags & (C_ALPHASHADOW | C_LIGHTFILTER)) ||
 		si->lightImage == NULL || si->lightImage->pixels == NULL )
 	{
+		VectorMA( trace->origin, depth, trace->direction, trace->hit );
 		VectorClear( trace->color );
 		trace->opaque = qtrue;
 		return qtrue;
@@ -1531,6 +1529,7 @@ qboolean TraceTriangle( traceInfo_t *ti, traceTriangle_t *tt, trace_t *trace )
 	/* check filter for opaque */
 	if( trace->color[ 0 ] <= 0.001f && trace->color[ 1 ] <= 0.001f && trace->color[ 2 ] <= 0.001f )
 	{
+		VectorMA( trace->origin, depth, trace->direction, trace->hit );
 		trace->opaque = qtrue;
 		return qtrue;
 	}
@@ -1596,6 +1595,7 @@ static qboolean TraceLine_r( int nodeNum, vec3_t origin, vec3_t end, trace_t *tr
 	/* bogus node number means solid, end tracing unless testing all */
 	if( nodeNum < 0 )
 	{
+		VectorCopy( origin, trace->hit );
 		trace->passSolid = qtrue;
 		return qtrue;
 	}
@@ -1606,6 +1606,7 @@ static qboolean TraceLine_r( int nodeNum, vec3_t origin, vec3_t end, trace_t *tr
 	/* solid? */
 	if( node->type == TRACE_LEAF_SOLID )
 	{
+		VectorCopy( origin, trace->hit );
 		trace->passSolid = qtrue;
 		return qtrue;
 	}
@@ -1666,6 +1667,9 @@ static qboolean TraceLine_r( int nodeNum, vec3_t origin, vec3_t end, trace_t *tr
 	
 	/* fixme: check inhibit radius, then solid nodes and ignore */
 	
+	/* set trace hit here */
+	//%	VectorCopy( mid, trace->hit );
+	
 	/* trace first side */
 	r = TraceLine_r( node->children[ side ], origin, mid, trace );
 	if( r )
@@ -1702,7 +1706,7 @@ void TraceLine( trace_t *trace )
 	
 	/* trace through nodes */
 	TraceLine_r( headNodeNum, trace->origin, trace->end, trace );
-	if( (trace->passSolid && !trace->testAll) )
+	if( trace->passSolid && !trace->testAll )
 	{
 		trace->opaque = qtrue;
 		return;
@@ -1714,6 +1718,7 @@ void TraceLine( trace_t *trace )
 	
 	/* testall means trace through sky */	
 	if( trace->testAll && trace->numTestNodes < MAX_TRACE_TEST_NODES &&
+		trace->compileFlags & C_SKY &&
 		(trace->numSurfaces == 0 || surfaceInfos[ trace->surfaces[ 0 ] ].childSurfaceNum < 0) )
 	{
 		//%	trace->testNodes[ trace->numTestNodes++ ] = skyboxNodeNum;
@@ -1750,5 +1755,6 @@ float SetupTrace( trace_t *trace )
 {
 	VectorSubtract( trace->end, trace->origin, trace->displacement );
 	trace->distance = VectorNormalize( trace->displacement, trace->direction );
+	VectorCopy( trace->origin, trace->hit );
 	return trace->distance;
 }

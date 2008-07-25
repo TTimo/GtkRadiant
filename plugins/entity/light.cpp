@@ -182,7 +182,7 @@ float CalculateLightRadius(entity_t * e, bool outer)
 
     if (!outer) {
       if (iSpawnFlags & 2)
-        fIntensity *= .9;
+        fIntensity *= .9f;
       else
         fIntensity *= .25f;
     }

@@ -1,4 +1,5 @@
-/*
+/* -------------------------------------------------------------------------------
+
 Copyright (C) 1999-2007 id Software, Inc. and contributors.
 For a list of contributors, see the accompanying CONTRIBUTORS file.
 
@@ -115,6 +116,7 @@ static void CreateSunLight( sun_t *sun )
 		light->fade = 1.0f;
 		light->falloffTolerance = falloffTolerance;
 		light->filterRadius = sun->filterRadius / sun->numSamples;
+		light->style = noStyles ? LS_NORMAL : sun->style;
 		
 		/* set the light's position out to infinity */
 		VectorMA( vec3_origin, (MAX_WORLD_COORD * 8.0f), direction, light->origin );	/* MAX_WORLD_COORD * 2.0f */
@@ -140,11 +142,13 @@ CreateSkyLights() - ydnar
 simulates sky light with multiple suns
 */
 
-static void CreateSkyLights( vec3_t color, float value, int iterations, float filterRadius )
+static void CreateSkyLights( vec3_t color, float value, int iterations, float filterRadius, int style )
 {
-	int			c, i, j, k, numSuns;
+	int			i, j, numSuns;
+	int			angleSteps, elevationSteps;
+	float		angle, elevation;
+	float		angleStep, elevationStep;
 	float		step, start;
-	vec3_t		in;
 	sun_t		sun;
 	
 	
@@ -161,36 +165,49 @@ static void CreateSkyLights( vec3_t color, float value, int iterations, float fi
 	sun.deviance = 0.0f;
 	sun.filterRadius = filterRadius;
 	sun.numSamples = 1;
+	sun.style = noStyles ? LS_NORMAL : style;
 	sun.next = NULL;
 	
-	/* iterate */
-	numSuns = 0;
-	for( c = 0; c < 2; c++ )
+	/* setup */
+	elevationSteps = iterations - 1;
+	angleSteps = elevationSteps * 4;
+	angle = 0.0f;
+	elevationStep = DEG2RAD( 90.0f / iterations );	/* skip elevation 0 */
+	angleStep = DEG2RAD( 360.0f / angleSteps );
+	
+	/* calc individual sun brightness */
+	numSuns = angleSteps * elevationSteps + 1;
+	sun.photons = value / numSuns;
+	
+	/* iterate elevation */
+	elevation = elevationStep * 0.5f;
+	angle = 0.0f;
+	for( i = 0, elevation = elevationStep * 0.5f; i < elevationSteps; i++ )
 	{
-		for( k = 0, in[ 2 ] = start; k < iterations; k++, in[ 2 ] += step )
+		/* iterate angle */
+		for( j = 0; j < angleSteps; j++ )
 		{
-			/* don't create sky light below the horizon */
-			if( in[ 2 ] <= 0.0f )
-				continue;
+			/* create sun */
+			sun.direction[ 0 ] = cos( angle ) * cos( elevation );
+			sun.direction[ 1 ] = sin( angle ) * cos( elevation );
+			sun.direction[ 2 ] = sin( elevation );
+			CreateSunLight( &sun );
 			
-			for( j = 0, in[ 1 ] = start; j < iterations; j++, in[ 1 ] += step )
-			{
-				for( i = 0, in[ 0 ] = start; i < iterations; i++, in[ 0 ] += step )
-				{
-					if( VectorNormalize( in, sun.direction ) )
-					{
-						if( c > 0 && numSuns > 0 )
-						{
-							sun.photons = value / numSuns;
-							CreateSunLight( &sun );
-						}
-						else
-							numSuns++;
-					}
-				}
-			}
+			/* move */
+			angle += angleStep;
 		}
+			
+		/* move */
+		elevation += elevationStep;
+		angle += angleStep / elevationSteps;
 	}
+	
+	/* create vertical sun */
+	VectorSet( sun.direction, 0.0f, 0.0f, 1.0f );
+	CreateSunLight( &sun );
+	
+	/* short circuit */
+	return;
 }
 
 
@@ -245,7 +262,7 @@ void CreateEntityLights( void )
 		spawnflags = IntForKey( e, "spawnflags" );
 		
 		/* ydnar: quake 3+ light behavior */
-		if( game->wolfLight == qfalse )
+		if( wolfLight == qfalse )
 		{
 			/* set default flags */
 			flags = LIGHT_Q3A_DEFAULT;
@@ -317,10 +334,14 @@ void CreateEntityLights( void )
 		/* set origin */
 		GetVectorForKey( e, "origin", light->origin);
 		light->style = IntForKey( e, "_style" );
-		if( light->style == 0 )
+		if( light->style == LS_NORMAL )
 			light->style = IntForKey( e, "style" );
 		if( light->style < LS_NORMAL || light->style >= LS_NONE )
 			Error( "Invalid lightstyle (%d) on entity %d", light->style, i );
+		
+		/* override */
+		if( noStyles )
+			light->style = LS_NORMAL;
 		
 		/* set light intensity */
 		intensity = FloatForKey( e, "_light" );
@@ -433,6 +454,7 @@ void CreateEntityLights( void )
 					sun.photons = (intensity / pointScale);
 					sun.deviance = deviance / 180.0f * Q_PI;
 					sun.numSamples = numSamples;
+					sun.style = noStyles ? LS_NORMAL : light->style;
 					sun.next = NULL;
 					
 					/* make a sun light */
@@ -516,7 +538,7 @@ void CreateSurfaceLights( void )
 		if( si->skyLightValue > 0.0f )
 		{
 			Sys_FPrintf( SYS_VRB, "Sky: %s\n", si->shader );
-			CreateSkyLights( si->color, si->skyLightValue, si->skyLightIterations, si->lightFilterRadius );
+			CreateSkyLights( si->color, si->skyLightValue, si->skyLightIterations, si->lightFilterRadius, si->lightStyle );
 			si->skyLightValue = 0.0f;	/* FIXME: hack! */
 		}
 		
@@ -546,7 +568,7 @@ void CreateSurfaceLights( void )
 			VectorCopy( origin, light->origin );
 			VectorCopy( si->color, light->color );
 			light->falloffTolerance = falloffTolerance;
-			light->style = light->style;
+			light->style = si->lightStyle;
 			
 			/* add to point light count and continue */
 			numPointLights++;
@@ -737,35 +759,8 @@ int LightContributionToSample( trace_t *trace )
 			return 0;
 	}
 	
-	/* ptpff approximation */
-	if( light->type == EMIT_AREA && faster )
-	{
-		/* get direction and distance */
-		VectorCopy( light->origin, trace->end );
-		dist = SetupTrace( trace );
-		if( dist >= light->envelope )
-			return 0;
-		
-		/* clamp the distance to prevent super hot spots */
-		if( dist < 16.0f )
-			dist = 16.0f;
-		
-		/* angle attenuation */
-		angle = DotProduct( trace->normal, trace->direction );
-		
-		/* twosided lighting */
-		if( trace->twoSided )
-			angle = fabs( angle );
-		
-		/* attenuate */
-		angle *= -DotProduct( light->normal, trace->direction );
-		if( angle <= 0.0f )
-			return 0;
-		add = light->photons / (dist * dist) * angle;
-	}
-	
 	/* exact point to polygon form factor */
-	else if( light->type == EMIT_AREA )
+	if( light->type == EMIT_AREA )
 	{
 		float		factor;
 		float		d;
@@ -774,8 +769,6 @@ int LightContributionToSample( trace_t *trace )
 		
 		/* project sample point into light plane */
 		d = DotProduct( trace->origin, light->normal ) - light->dist;
-		//%	if( !(light->flags & LIGHT_TWOSIDED) && d < -1.0f )
-		//%		return 0;
 		if( d < 3.0f )
 		{
 			/* sample point behind plane? */
@@ -800,29 +793,51 @@ int LightContributionToSample( trace_t *trace )
 		if( dist >= light->envelope )
 			return 0;
 		
-		/* calculate the contribution */
-		factor = PointToPolygonFormFactor( pushedOrigin, trace->normal, light->w );
-		if( factor == 0.0f )
-			return 0;
-		else if( factor < 0.0f )
+		/* ptpff approximation */
+		if( faster )
 		{
+			/* angle attenuation */
+			angle = DotProduct( trace->normal, trace->direction );
+			
 			/* twosided lighting */
-			if( trace->twoSided || (light->flags & LIGHT_TWOSIDED) )
+			if( trace->twoSided )
+				angle = fabs( angle );
+			
+			/* attenuate */
+			angle *= -DotProduct( light->normal, trace->direction );
+			if( angle == 0.0f )
+				return 0;
+			else if( angle < 0.0f &&
+				(trace->twoSided || (light->flags & LIGHT_TWOSIDED)) )
+				angle = -angle;
+			add = light->photons / (dist * dist) * angle;
+		}
+		else
+		{
+			/* calculate the contribution */
+			factor = PointToPolygonFormFactor( pushedOrigin, trace->normal, light->w );
+			if( factor == 0.0f )
+				return 0;
+			else if( factor < 0.0f )
 			{
-				factor = -factor;
+				/* twosided lighting */
+				if( trace->twoSided || (light->flags & LIGHT_TWOSIDED) )
+				{
+					factor = -factor;
 
-				/* push light origin to other side of the plane */
-				VectorMA( light->origin, -2.0f, light->normal, trace->end );
-				dist = SetupTrace( trace );
-				if( dist >= light->envelope )
+					/* push light origin to other side of the plane */
+					VectorMA( light->origin, -2.0f, light->normal, trace->end );
+					dist = SetupTrace( trace );
+					if( dist >= light->envelope )
+						return 0;
+				}
+				else
 					return 0;
 			}
-			else
-				return 0;
+			
+			/* ydnar: moved to here */
+			add = factor * light->add;
 		}
-		
-		/* ydnar: moved to here */
-		add = factor * light->add;
 	}
 	
 	/* point/spot lights */
@@ -1436,7 +1451,8 @@ void TraceGrid( int num )
 	#endif
 	
 	/* store direction */
-	NormalToLatLong( gp->dir, bgp->latLong );
+	if( !bouncing )
+		NormalToLatLong( gp->dir, bgp->latLong );
 }
 
 
@@ -1633,6 +1649,18 @@ void LightWorld( void )
 	Sys_Printf( "%9d luxels\n", numLuxels );
 	Sys_Printf( "%9d luxels mapped\n", numLuxelsMapped );
 	Sys_Printf( "%9d luxels occluded\n", numLuxelsOccluded );
+	
+	/* dirty them up */
+	if( dirty )
+	{
+		Sys_Printf( "--- DirtyRawLightmap ---\n" );
+
+
+
+
+		RunThreadsOnIndividual( numRawLightmaps, qtrue, DirtyRawLightmap );
+	}
+	
 
 	/* ydnar: set up light envelopes */
 	SetupEnvelopes( qfalse, fast );
@@ -1747,6 +1775,12 @@ int LightMain( int argc, char **argv )
 	/* note it */
 	Sys_Printf( "--- Light ---\n" );
 	
+	/* set standard game flags */
+	wolfLight = game->wolfLight;
+	lmCustomSize = game->lightmapSize;
+	lightmapGamma = game->lightmapGamma;
+	lightmapCompensate = game->lightmapCompensate;
+	
 	/* process commandline arguments */
 	for( i = 1; i < (argc - 1); i++ )
 	{
@@ -1794,6 +1828,24 @@ int LightMain( int argc, char **argv )
 			i++;
 		}
 		
+		else if( !strcmp( argv[ i ], "-gamma" ) )
+		{
+			f = atof( argv[ i + 1 ] );
+			lightmapGamma = f;
+			Sys_Printf( "Lighting gamma set to %f\n", lightmapGamma );
+			i++;
+		}
+		
+		else if( !strcmp( argv[ i ], "-compensate" ) )
+		{
+			f = atof( argv[ i + 1 ] );
+			if( f <= 0.0f )
+				f = 1.0f;
+			lightmapCompensate = f;
+			Sys_Printf( "Lighting compensation set to 1/%f\n", lightmapCompensate );
+			i++;
+		}
+		
 		/* ydnar switches */
 		else if( !strcmp( argv[ i ], "-bounce" ) )
 		{
@@ -1831,6 +1883,18 @@ int LightMain( int argc, char **argv )
 			Sys_Printf( "Lightmap filtering enabled\n" );
 		}
 		
+		else if( !strcmp( argv[ i ], "-dark" ) )
+		{
+			dark = qtrue;
+			Sys_Printf( "Dark lightmap seams enabled\n" );
+		}
+		
+
+
+
+
+
+
 		else if( !strcmp( argv[ i ], "-shadeangle" ) )
 		{
 			shadeAngleDegrees = atof( argv[ i + 1 ] );
@@ -1884,13 +1948,13 @@ int LightMain( int argc, char **argv )
 			if( ((lmCustomSize - 1) & lmCustomSize) || lmCustomSize < 2 )
 			{
 				Sys_Printf( "WARNING: Lightmap size must be a power of 2, greater or equal to 2 pixels.\n" );
-				lmCustomSize = LIGHTMAP_WIDTH;
+				lmCustomSize = game->lightmapSize;
 			}
 			i++;
 			Sys_Printf( "Default lightmap size set to %d x %d pixels\n", lmCustomSize, lmCustomSize );
 			
 			/* enable external lightmaps */
-			if( lmCustomSize != LIGHTMAP_WIDTH )
+			if( lmCustomSize != game->lightmapSize )
 			{
 				externalLightmaps = qtrue;
 				Sys_Printf( "Storing all lightmaps externally\n" );
@@ -1907,8 +1971,15 @@ int LightMain( int argc, char **argv )
 		else if( !strcmp( argv[ i ], "-wolf" ) )
 		{
 			/* -game should already be set */
-			game->wolfLight = qtrue;
-			Sys_Printf( "Enabling Wolf lighting model\n" );
+			wolfLight = qtrue;
+			Sys_Printf( "Enabling Wolf lighting model (linear default)\n" );
+		}
+		
+		else if( !strcmp( argv[ i ], "-q3" ) )
+		{
+			/* -game should already be set */
+			wolfLight = qfalse;
+			Sys_Printf( "Enabling Quake 3 lighting model (nonlinear default)\n" );
 		}
 		
 		else if( !strcmp( argv[ i ], "-sunonly" ) )
@@ -1944,7 +2015,6 @@ int LightMain( int argc, char **argv )
 		
 		else if( !strcmp( argv[ i ], "-smooth" ) )
 		{
-			smooth = qtrue;
 			lightSamples = EXTRA_SCALE;
 			Sys_Printf( "The -smooth argument is deprecated, use \"-samples 2\" instead\n" );
 		}
@@ -2064,14 +2134,11 @@ int LightMain( int argc, char **argv )
 		}
 		else if( !strcmp( argv[ i ], "-extra" ) )
 		{
-			extra = qtrue;
 			superSample = EXTRA_SCALE;		/* ydnar */
 			Sys_Printf( "The -extra argument is deprecated, use \"-super 2\" instead\n" );
 		}
 		else if( !strcmp( argv[ i ], "-extrawide" ) )
 		{
-			extra = qtrue;
-			extraWide = qtrue;
 			superSample = EXTRAWIDE_SCALE;	/* ydnar */
 			filter = qtrue;					/* ydnar */
 			Sys_Printf( "The -extrawide argument is deprecated, use \"-filter [-super 2]\" instead\n");
@@ -2114,9 +2181,64 @@ int LightMain( int argc, char **argv )
 			loMem = qtrue;
 			Sys_Printf( "Enabling low-memory (potentially slower) lighting mode\n" );
 		}
+		else if( !strcmp( argv[ i ], "-nostyle" ) || !strcmp( argv[ i ], "-nostyles" ) )
+		{
+			noStyles = qtrue;
+			Sys_Printf( "Disabling lightstyles\n" );
+		}
+		else if( !strcmp( argv[ i ], "-cpma" ) )
+		{
+			cpmaHack = qtrue;
+			Sys_Printf( "Enabling Challenge Pro Mode Asstacular Vertex Lighting Mode (tm)\n" );
+		}
 		
+		/* r7: dirtmapping */
+		else if( !strcmp( argv[ i ], "-dirty" ) )
+		{
+			dirty = qtrue;
+			Sys_Printf( "Dirtmapping enabled\n" );
+		}
+		else if( !strcmp( argv[ i ], "-dirtdebug" ) || !strcmp( argv[ i ], "-debugdirt" ) )
+		{
+			dirtDebug = qtrue;
+			Sys_Printf( "Dirtmap debugging enabled\n" );
+		}
+		else if( !strcmp( argv[ i ], "-dirtmode" ) )
+		{
+			dirtMode = atoi( argv[ i + 1 ] );
+			if( dirtMode != 0 && dirtMode != 1 )
+				dirtMode = 0;
+			if( dirtMode == 1 )
+				Sys_Printf( "Enabling randomized dirtmapping\n" );
+			else
+				Sys_Printf( "Enabling ordered dir mapping\n" );
+		}
+		else if( !strcmp( argv[ i ], "-dirtdepth" ) )
+		{
+			dirtDepth = atof( argv[ i + 1 ] );
+			if( dirtDepth <= 0.0f )
+				dirtDepth = 128.0f;
+			Sys_Printf( "Dirtmapping depth set to %.1f\n", dirtDepth );
+		}
+		else if( !strcmp( argv[ i ], "-dirtscale" ) )
+		{
+			dirtScale = atof( argv[ i + 1 ] );
+			if( dirtScale <= 0.0f )
+				dirtScale = 1.0f;
+			Sys_Printf( "Dirtmapping scale set to %.1f\n", dirtScale );
+		}
+		else if( !strcmp( argv[ i ], "-dirtgain" ) )
+		{
+			dirtGain = atof( argv[ i + 1 ] );
+			if( dirtGain <= 0.0f )
+				dirtGain = 1.0f;
+			Sys_Printf( "Dirtmapping gain set to %.1f\n", dirtGain );
+		}
+		
+		/* unhandled args */
 		else
-			Sys_Printf( "WARNING: Unknown option \"%s\"\n", argv[ i ] );
+			Sys_Printf( "WARNING: Unknown argument \"%s\"\n", argv[ i ] );
+
 	}
 	
 	/* clean up map name */
@@ -2156,6 +2278,7 @@ int LightMain( int argc, char **argv )
 	
 	/* ydnar: set up optimization */
 	SetupBrushes();
+	SetupDirt();
 	SetupSurfaceLightmaps();
 	
 	/* initialize the surface facet tracing */

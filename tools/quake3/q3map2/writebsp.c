@@ -1,4 +1,5 @@
-/*
+/* -------------------------------------------------------------------------------
+
 Copyright (C) 1999-2007 id Software, Inc. and contributors.
 For a list of contributors, see the accompanying CONTRIBUTORS file.
 
@@ -84,7 +85,7 @@ int	EmitShader( const char *shader, int *contentFlags, int *surfaceFlags )
 		bspShaders[ i ].contentFlags = *contentFlags;
 	
 	/* recursively emit any damage shaders */
-	if( si->damageShader[ 0 ] != '\0' )
+	if( si->damageShader != NULL && si->damageShader[ 0 ] != '\0' )
 	{
 		Sys_FPrintf( SYS_VRB, "Shader %s has damage shader %s\n", si->shader, si->damageShader );
 		EmitShader( si->damageShader, NULL, NULL );
@@ -135,7 +136,6 @@ void EmitLeaf( node_t *node )
 	bspLeaf_t		*leaf_p;
 	brush_t			*b;
 	drawSurfRef_t	*dsr;
-	int				i = 0;
 
 	
 	/* check limits */
@@ -157,7 +157,7 @@ void EmitLeaf( node_t *node )
 	for( b = node->brushlist; b; b = b->next )
 	{
 		/* something is corrupting brushes */
-		if( (int) b < 256 )
+		if( (size_t) b < 256 )
 		{
 			Sys_Printf( "WARNING: Node brush list corrupted (0x%08X)\n", b );
 			break;
@@ -458,10 +458,6 @@ void EmitBrushes( brush_t *brushes, int *firstBrush, int *numBrushes )
 		{
 			/* set output number to bogus initially */
 			b->sides[ j ].outputNum = -1;
-			
-			/* don't emit generated backSide sides */
-			if ( b->sides[ j ].backSide )
-				continue;
 			
 			/* check count */
 			if( numBSPBrushSides == MAX_MAP_BRUSHSIDES )

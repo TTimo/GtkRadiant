@@ -1,4 +1,5 @@
-/*
+/* -------------------------------------------------------------------------------
+
 Copyright (C) 1999-2007 id Software, Inc. and contributors.
 For a list of contributors, see the accompanying CONTRIBUTORS file.
 
@@ -57,11 +58,18 @@ game_t struct
 	".etwolf",			/* unix home sub-dir */
 	"et",				/* magic path word */
 	"scripts",			/* shader directory */
-	qtrue,				/* wolf lighting model? */
+	1024,				/* max lightmapped surface verts */
+	1024,				/* max surface verts */
+	6144,				/* max surface indexes */
 	qfalse,				/* flares */
 	"flareshader",		/* default flare shader */
+	qtrue,				/* wolf lighting model? */
+	128,				/* lightmap width/height */
+	1.0f,				/* lightmap gamma */
+	1.0f,				/* lightmap compensate */
 	"IBSP",				/* bsp file prefix */
 	47,					/* bsp file version */
+	qfalse,				/* cod-style lump len/ofs order */
 	LoadIBSPFile,		/* bsp load function */
 	WriteIBSPFile,		/* bsp write function */
 	

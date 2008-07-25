@@ -1,4 +1,5 @@
-/*
+/* -------------------------------------------------------------------------------
+
 Copyright (C) 1999-2007 id Software, Inc. and contributors.
 For a list of contributors, see the accompanying CONTRIBUTORS file.
 
@@ -659,9 +660,6 @@ static void ProjectDecalOntoWinding( decalProjector_t *dp, mapDrawSurface_t *ds,
 			dv->color[ j ][ 3 ] = alpha;
 		}
 	}
-	
-	/* ydnar: finish the surface */
-	FinishSurface( ds2 );
 }
 
 
@@ -788,8 +786,7 @@ static void ProjectDecalOntoTriangles( decalProjector_t *dp, mapDrawSurface_t *d
 	
 	
 	/* triangle surfaces without shaders don't get marks by default */
-	if( (ds->type == SURFACE_TRIANGLES || ds->type == SURFACE_FORCED_META) &&
-		ds->shaderInfo->shaderText == NULL )
+	if( ds->type == SURFACE_TRIANGLES && ds->shaderInfo->shaderText == NULL )
 		return;
 	
 	/* backface check */

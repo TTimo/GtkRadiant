@@ -33,7 +33,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <sys/types.h>
 #include <sys/stat.h>
 
-#ifdef _WIN32
+#ifdef WIN32
 #include <direct.h>
 #include <windows.h>
 #endif
@@ -42,7 +42,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "l_net/l_net.h"
 #include "libxml/tree.h"
 
-#ifdef _WIN32
+// utf8 conversion
+#include <glib/gconvert.h>
+#include <glib/gmem.h>
+
+#ifdef WIN32
 HWND hwndOut = NULL;
 qboolean lookedForServer = qfalse;
 UINT wm_BroadcastCommand = -1;
@@ -289,7 +293,11 @@ void FPrintf (int flag, char *buf)
     bGotXML = qtrue;
   }
   node = xmlNewNode (NULL, "message");
-  xmlNodeSetContent (node, buf);
+  {
+    gchar* utf8 = g_locale_to_utf8(buf, -1, NULL, NULL, NULL); 
+    xmlNodeSetContent(node, utf8);
+    g_free(utf8);
+  }
   level[0] = (int)'0' + flag;
   level[1] = 0;
   xmlSetProp (node, "level", (char *)&level );

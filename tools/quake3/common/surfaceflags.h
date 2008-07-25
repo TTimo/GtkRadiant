@@ -19,6 +19,8 @@ along with GtkRadiant; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
+// Copyright (C) 1999-2000 Id Software, Inc.
+//
 // This file must be identical in the quake and utils directories
 
 // contents flags are seperate bits

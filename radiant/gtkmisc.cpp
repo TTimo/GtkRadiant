@@ -859,7 +859,7 @@ void dialog_button_callback( GtkWidget *widget, gpointer data ) {
   ret = (int*)g_object_get_data( G_OBJECT( parent ), "ret" );
 
   *loop = 0;
-  *ret = (int)data;
+  *ret = GPOINTER_TO_INT (data);
 }
 
 gint dialog_delete_callback (GtkWidget *widget, GdkEvent* event, gpointer data)
@@ -1037,7 +1037,7 @@ static void file_sel_callback (GtkWidget *widget, gpointer data)
   loop = (int*)g_object_get_data (G_OBJECT (parent), "loop");
   success = (bool*)g_object_get_data (G_OBJECT (parent), "success");
 
-  if ((int)data == IDOK)
+  if (GPOINTER_TO_INT (data) == IDOK)
     *success = true;
 
 #ifdef FILEDLG_DBG

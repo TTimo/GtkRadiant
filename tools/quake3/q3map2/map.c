@@ -1,4 +1,5 @@
-/*
+/* -------------------------------------------------------------------------------
+
 Copyright (C) 1999-2007 id Software, Inc. and contributors.
 For a list of contributors, see the accompanying CONTRIBUTORS file.
 
@@ -185,6 +186,13 @@ snaps a plane to normal/distance epsilons
 
 void SnapPlane( vec3_t normal, vec_t *dist )
 {
+// SnapPlane disabled by LordHavoc because it often messes up collision
+// brushes made from triangles of embedded models, and it has little effect
+// on anything else (axial planes are usually derived from snapped points)
+/*
+  SnapPlane reenabled by namespace because of multiple reports of
+  q3map2-crashes which were triggered by this patch.
+*/
 	SnapNormal( normal );
 
 	if( fabs( *dist - Q_rint( *dist ) ) < distanceEpsilon )
@@ -573,7 +581,7 @@ and links it to the current entity
 
 brush_t *FinishBrush( void )
 {
-	brush_t	*b;
+	brush_t		*b;
 	
 	
 	/* create windings for sides and bounds for brush */
@@ -642,6 +650,15 @@ brush_t *FinishBrush( void )
 		b->next = NULL;
 		mapEnt->lastBrush->next = b;
 		mapEnt->lastBrush = b;
+	}
+	
+	/* link colorMod volume brushes to the entity directly */
+	if( b->contentShader != NULL &&
+		b->contentShader->colorMod != NULL &&
+		b->contentShader->colorMod->type == CM_VOLUME )
+	{
+		b->nextColorModBrush = mapEnt->colorModBrushes;
+		mapEnt->colorModBrushes = b;
 	}
 	
 	/* return to sender */
@@ -1062,16 +1079,24 @@ void MoveBrushesToWorld( entity_t *ent )
 			entities[ 0 ].lastBrush->next = b;
 			entities[ 0 ].lastBrush = b;
 		}
-		
-		//%	b->next = entities[ 0 ].brushes;
-		//%	entities[ 0 ].brushes = b;
 	}
 	ent->brushes = NULL;
+	
+	/* ydnar: move colormod brushes */
+	if( ent->colorModBrushes != NULL )
+	{
+		for( b = ent->colorModBrushes; b->nextColorModBrush != NULL; b = b->nextColorModBrush );
+		
+		b->nextColorModBrush = entities[ 0 ].colorModBrushes;
+		entities[ 0 ].colorModBrushes = ent->colorModBrushes;
+		
+		ent->colorModBrushes = NULL;
+	}
 	
 	/* move patches */
 	if( ent->patches != NULL )
 	{
-		for( pm = ent->patches; pm->next; pm = pm->next );
+		for( pm = ent->patches; pm->next != NULL; pm = pm->next );
 		
 		pm->next = entities[ 0 ].patches;
 		entities[ 0 ].patches = ent->patches;

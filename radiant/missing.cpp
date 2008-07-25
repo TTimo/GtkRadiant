@@ -208,11 +208,11 @@ EPathCheck CheckFile( const char *path ) {
 }
 
 bool radCreateDirectory( const char *directory ) {
-	return CreateDirectory( directory, NULL );
+	return CreateDirectory( directory, NULL ) != false;
 }
 
 bool radCopyFile( const char *lpExistingFileName, const char *lpNewFileName ) {
-	return CopyFile( lpExistingFileName, lpNewFileName, FALSE );
+	return CopyFile( lpExistingFileName, lpNewFileName, FALSE ) != false;
 }
 
 #endif

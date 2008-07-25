@@ -1,4 +1,5 @@
-/*
+/* -------------------------------------------------------------------------------
+
 Copyright (C) 1999-2007 id Software, Inc. and contributors.
 For a list of contributors, see the accompanying CONTRIBUTORS file.
 
@@ -435,7 +436,7 @@ void PrintBSPFileSizes( void )
 	Sys_Printf( "\n");
 	
 	Sys_Printf( "%9d lightmaps     %9d\n",
-		numBSPLightBytes / (LIGHTMAP_WIDTH * LIGHTMAP_HEIGHT * 3), numBSPLightBytes );
+		numBSPLightBytes / (game->lightmapSize * game->lightmapSize * 3), numBSPLightBytes );
 	Sys_Printf( "%9d lightgrid     %9d *\n",
 		numBSPGridPoints, (int) (numBSPGridPoints * sizeof( *bspGridPoints )) );
 	Sys_Printf( "          visibility    %9d\n",

@@ -546,7 +546,7 @@ int lwGetPolygons5( picoMemStream_t *fp, int cksize, lwPolygonList *plist, int p
          bp += 2;
       }
       j -= 1;
-      pp->surf = ( lwSurface * ) j;
+      pp->surf = ( lwSurface * ) ((size_t)j);
 
       pp++;
       pv += nv;

@@ -1,4 +1,5 @@
-/*
+/* -------------------------------------------------------------------------------
+
 Copyright (C) 1999-2007 id Software, Inc. and contributors.
 For a list of contributors, see the accompanying CONTRIBUTORS file.
 
@@ -200,19 +201,19 @@ void CleanPath( char *path )
 
 
 /*
-SetGame() - ydnar
-sets the game based on a -game argument
-doesn't set it if the game doesn't match any known games
+GetGame() - ydnar
+gets the game_t based on a -game argument
+returns NULL if no match found
 */
 
-void SetGame( char *arg )
+game_t *GetGame( char *arg )
 {
 	int	i;
 	
 	
 	/* dummy check */
 	if( arg == NULL || arg[ 0 ] == '\0' )
-		return;
+		return NULL;
 	
 	/* joke */
 	if( !Q_stricmp( arg, "quake1" ) ||
@@ -232,9 +233,12 @@ void SetGame( char *arg )
 	while( games[ i ].arg != NULL )
 	{
 		if( Q_stricmp( arg, games[ i ].arg ) == 0 )
-			game = &games[ i ];
+			return &games[ i ];
 		i++;
 	}
+	
+	/* no matching game */
+	return NULL;
 }
 
 
@@ -349,7 +353,9 @@ void InitPaths( int *argc, char **argv )
 			if( ++i >= *argc )
 				Error( "Out of arguments: No game specified after %s", argv[ i - 1 ] );
 			argv[ i - 1 ] = NULL;
-			SetGame( argv[ i ] );
+			game = GetGame( argv[ i ] );
+			if( game == NULL )
+				game = &games[ 0 ];
 			argv[ i ] = NULL;
 		}
 
@@ -377,7 +383,7 @@ void InitPaths( int *argc, char **argv )
 	/* remove processed arguments */
 	for( i = 0, j = 0, k = 0; i < *argc && j < *argc; i++, j++ )
 	{
-		for( j; j < *argc && argv[ j ] == NULL; j++ );
+		for( ; j < *argc && argv[ j ] == NULL; j++ );
 		argv[ i ] = argv[ j ];
 		if( argv[ i ] != NULL )
 			k++;

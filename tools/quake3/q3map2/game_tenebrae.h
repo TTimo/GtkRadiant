@@ -1,4 +1,5 @@
-/*
+/* -------------------------------------------------------------------------------
+
 Copyright (C) 1999-2007 id Software, Inc. and contributors.
 For a list of contributors, see the accompanying CONTRIBUTORS file.
 
@@ -103,11 +104,18 @@ game_t struct
 	".tenebrae",		/* unix home sub-dir */
 	"tenebrae",			/* magic path word */
 	"scripts",			/* shader directory */
-	qfalse,				/* wolf lighting model? */
+	1024,				/* max lightmapped surface verts */
+	1024,				/* max surface verts */
+	6144,				/* max surface indexes */
 	qfalse,				/* flares */
 	"flareshader",		/* default flare shader */
+	qfalse,				/* wolf lighting model? */
+	512,				/* lightmap width/height */
+	2.0f,				/* lightmap gamma */
+	1.0f,				/* lightmap compensate */
 	"IBSP",				/* bsp file prefix */
 	46,					/* bsp file version */
+	qfalse,				/* cod-style lump len/ofs order */
 	LoadIBSPFile,		/* bsp load function */
 	WriteIBSPFile,		/* bsp write function */
 
