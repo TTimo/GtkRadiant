@@ -133,7 +133,7 @@ struct camera_t
   Vector3 origin;
   Vector3 angles;
 
-  Vector3 color;   // background 
+  Vector3 color;   // background
 
   Vector3  forward, right; // move matrix (TTimo: used to have up but it was not updated)
   Vector3 vup, vpn, vright; // view matrix (taken from the modelview matrix)
@@ -493,7 +493,7 @@ void Camera_MoveRight_KeyDown(camera_t& camera)
   Camera_setMovementFlags(camera, MOVE_STRAFERIGHT);
 }
 void Camera_MoveRight_KeyUp(camera_t& camera)
-{ 
+{
   Camera_clearMovementFlags(camera, MOVE_STRAFERIGHT);
 }
 
@@ -510,7 +510,7 @@ void Camera_MoveDown_KeyDown(camera_t& camera)
   Camera_setMovementFlags(camera, MOVE_DOWN);
 }
 void Camera_MoveDown_KeyUp(camera_t& camera)
-{ 
+{
   Camera_clearMovementFlags(camera, MOVE_DOWN);
 }
 
@@ -527,7 +527,7 @@ void Camera_RotateRight_KeyDown(camera_t& camera)
   Camera_setMovementFlags(camera, MOVE_ROTRIGHT);
 }
 void Camera_RotateRight_KeyUp(camera_t& camera)
-{ 
+{
   Camera_clearMovementFlags(camera, MOVE_ROTRIGHT);
 }
 
@@ -544,7 +544,7 @@ void Camera_PitchDown_KeyDown(camera_t& camera)
   Camera_setMovementFlags(camera, MOVE_PITCHDOWN);
 }
 void Camera_PitchDown_KeyUp(camera_t& camera)
-{ 
+{
   Camera_clearMovementFlags(camera, MOVE_PITCHDOWN);
 }
 
@@ -1431,7 +1431,7 @@ class CamRenderer: public Renderer
   {
     state_type() : m_highlight(0), m_state(0), m_lights(0)
     {
-    }  
+    }
     unsigned int m_highlight;
     Shader* m_state;
     const LightList* m_lights;
@@ -1570,7 +1570,7 @@ void CamWnd::Cam_Draw()
     diffuse[3] = 1.0f;
     //material[0] = material[1] = material[2] = 0.8f;
     //material[3] = 1.0f;
-    
+
     inverse_cam_dir[0] = m_Camera.vpn[0];
     inverse_cam_dir[1] = m_Camera.vpn[1];
     inverse_cam_dir[2] = m_Camera.vpn[2];
@@ -1725,7 +1725,7 @@ void CamWnd::BenchMark()
     Camera_setAngles(*this, angles);
   }
   double dEnd = Sys_DoubleTime();
-  globalOutputStream() << FloatFormat(dEnd - dStart, 5, 2), " seconds\n";
+  globalOutputStream() << FloatFormat(dEnd - dStart, 5, 2) << " seconds\n";
 }
 
 
@@ -1808,7 +1808,7 @@ void CamWnd_constructToolbar(GtkToolbar* toolbar)
 void CamWnd_registerShortcuts()
 {
   toggle_add_accelerator("ToggleCubicClip");
-  
+
   if(g_pGameDescription->mGameType == "doom3")
   {
     command_connect_accelerator("TogglePreview");
