@@ -3171,14 +3171,14 @@ void CGameInstall::OnBtnBrowseEngine( GtkWidget *widget, gpointer data ) {
 	Sys_Printf( "OnBtnBrowseEngine\n" );
 
 	CGameInstall* i = static_cast<CGameInstall*>( data );
-	char *dir = dir_dialog( widget, "Select game directory", NULL );
+	char *dir = dir_dialog( i->m_pWidget, "Select game directory", NULL );
 
 	i->UpdateData( TRUE );
 
 	if ( dir != NULL ) {
 		i->m_strEngine = dir;
 		i->UpdateData( FALSE );
-		free( dir );
+		g_free( dir );
 	}
 }
 
