@@ -16,10 +16,9 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="$(SolutionDir)\install"
+			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="1"
-			UseOfMFC="0"
 			CharacterSet="2"
 			>
 			<Tool
@@ -40,7 +39,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)\..\mhash-0.9\lib&quot;;&quot;$(SolutionDir)\tools\quake3\common&quot;;&quot;$(SolutionDir)\include&quot;;&quot;$(SolutionDir)\libs&quot;;&quot;$(SolutionDir)\..\STLPort\stlport&quot;;&quot;$(SolutionDir)\..\gtk2\include&quot;;&quot;$(SolutionDir)\..\gtk2\include\glib-2.0&quot;;&quot;$(SolutionDir)\..\gtk2\lib\glib-2.0\include&quot;;&quot;$(SolutionDir)\..\libxml2\include&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)\tools\quake3\common&quot;;&quot;$(SolutionDir)\include&quot;;&quot;$(SolutionDir)\libs&quot;;&quot;$(SolutionDir)\..\STLPort\stlport&quot;;&quot;$(SolutionDir)\..\gtk2\include&quot;;&quot;$(SolutionDir)\..\gtk2\include\glib-2.0&quot;;&quot;$(SolutionDir)\..\gtk2\lib\glib-2.0\include&quot;;&quot;$(SolutionDir)\..\libxml2\include&quot;"
 				PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -61,11 +60,11 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="ddslib.lib l_net.lib mathlib.lib picomodel.lib libxml2.lib libpng.lib glib-2.0.lib gobject-2.0.lib Wsock32.lib libjpeg.lib libmhash.lib"
-				AdditionalLibraryDirectories="&quot;$(SolutionDir)\..\mhash-0.9\win32\libmhash\Debug&quot;;&quot;$(SolutionDir)\..\libxml2\lib&quot;;&quot;$(SolutionDir)\..\gtk2\lib&quot;;&quot;$(SolutionDir)\build\$(ConfigurationName)\libs&quot;;&quot;$(SolutionDir)\..\jpeg-6b&quot;"
-				IgnoreAllDefaultLibraries="false"
-				IgnoreDefaultLibraryNames=""
+				AdditionalDependencies="md5lib.lib ddslib.lib l_net.lib mathlib.lib picomodel.lib jpeg6.lib libxml2.lib libpng.lib glib-2.0.lib gobject-2.0.lib Wsock32.lib"
+				AdditionalLibraryDirectories="&quot;$(SolutionDir)\..\libxml2\lib&quot;;&quot;$(SolutionDir)\..\gtk2\lib&quot;;&quot;$(SolutionDir)\build\$(ConfigurationName)\libs&quot;"
 				GenerateDebugInformation="true"
+				StackReserveSize="2097152"
+				StackCommitSize="2097152"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -91,11 +90,12 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
+				CommandLine="copy &quot;$(TargetPath)&quot; C:\alienbrainWork\QuakeZero\radiant\$(TargetFileName)"
 			/>
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="$(SolutionDir)\install"
+			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="1"
 			CharacterSet="2"
@@ -118,7 +118,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)\..\mhash-0.9\lib&quot;;&quot;$(SolutionDir)\tools\quake3\common&quot;;&quot;$(SolutionDir)\include&quot;;&quot;$(SolutionDir)\libs&quot;;&quot;$(SolutionDir)\..\STLPort\stlport&quot;;&quot;$(SolutionDir)\..\gtk2\include&quot;;&quot;$(SolutionDir)\..\gtk2\include\glib-2.0&quot;;&quot;$(SolutionDir)\..\gtk2\lib\glib-2.0\include&quot;;&quot;$(SolutionDir)\..\libxml2\include&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)\tools\quake3\common&quot;;&quot;$(SolutionDir)\include&quot;;&quot;$(SolutionDir)\libs&quot;;&quot;$(SolutionDir)\..\STLPort\stlport&quot;;&quot;$(SolutionDir)\..\gtk2\include&quot;;&quot;$(SolutionDir)\..\gtk2\include\glib-2.0&quot;;&quot;$(SolutionDir)\..\gtk2\lib\glib-2.0\include&quot;;&quot;$(SolutionDir)\..\libxml2\include&quot;"
 				PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS"
 				RuntimeLibrary="2"
 				WarningLevel="3"
@@ -137,9 +137,11 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="ddslib.lib l_net.lib mathlib.lib picomodel.lib libxml2.lib libpng.lib glib-2.0.lib gobject-2.0.lib Wsock32.lib libjpeg.lib libmhash.lib"
-				AdditionalLibraryDirectories="&quot;$(SolutionDir)\..\mhash-0.9\lib&quot;;&quot;$(SolutionDir)\..\libxml2\lib&quot;;&quot;$(SolutionDir)\..\gtk2\lib&quot;;&quot;$(SolutionDir)\build\$(ConfigurationName)\libs&quot;;&quot;$(SolutionDir)\..\jpeg-6b&quot;"
+				AdditionalDependencies="md5lib.lib ddslib.lib l_net.lib mathlib.lib picomodel.lib jpeg6.lib libxml2.lib libpng.lib glib-2.0.lib gobject-2.0.lib Wsock32.lib"
+				AdditionalLibraryDirectories="&quot;$(SolutionDir)\..\libxml2\lib&quot;;&quot;$(SolutionDir)\..\gtk2\lib&quot;;&quot;$(SolutionDir)\build\$(ConfigurationName)\libs&quot;"
 				GenerateDebugInformation="true"
+				StackReserveSize="2097152"
+				StackCommitSize="2097152"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
 				TargetMachine="1"
@@ -167,6 +169,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
+				CommandLine="copy &quot;$(TargetPath)&quot; C:\alienbrainWork\QuakeZero\radiant\$(TargetFileName)"
 			/>
 		</Configuration>
 	</Configurations>
@@ -232,26 +235,6 @@
 				<File
 					RelativePath="..\common\inout.c"
 					>
-				</File>
-				<File
-					RelativePath="..\common\jpeg.c"
-					>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							AdditionalIncludeDirectories="&quot;$(SolutionDir)\..\jpeg-6b&quot;"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							AdditionalIncludeDirectories="&quot;$(SolutionDir)\..\jpeg-6b&quot;"
-						/>
-					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\common\mutex.c"

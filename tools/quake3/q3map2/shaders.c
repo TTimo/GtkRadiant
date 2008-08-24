@@ -380,12 +380,13 @@ void WriteMapShaderFile( void )
 
 		/* print it to the file */
 		fprintf( file, "%s%s\n", si->shader, si->shaderText );
-		//%	Sys_Printf( "%s%s\n", si->shader, si->shaderText ); /* FIXME: remove debugging code */
+		//Sys_Printf( "%s%s\n", si->shader, si->shaderText ); /* FIXME: remove debugging code */
 		
 		Sys_FPrintf( SYS_VRB, "." );
 	}
 	
 	/* close the shader */
+	fflush( file );
 	fclose( file );
 	
 	Sys_FPrintf( SYS_VRB, "\n" );

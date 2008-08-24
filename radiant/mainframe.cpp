@@ -122,6 +122,7 @@ SCommandInfo g_Commands[] =
   {"CSGMerge", 'U', 0x04, ID_SELECTION_CSGMERGE, "menu_selection_csgmerge"},
   {"CSGSubtract", 'U', 0x01, ID_SELECTION_CSGSUBTRACT, "menu_selection_csgsubstract"},
   //  {"ViewGroups", 'G', 0x00, ID_VIEW_GROUPS, "menu_view_groups"}, (temporary disabled)
+  {"SelectFuncGroup", 'G', 0x00, ID_SELECT_FUNC_GROUP, "menu_select_func_group"},
   {"HideSelected", 'H', 0x00, ID_VIEW_HIDESHOW_HIDESELECTED, "menu_view_hideshow_hideselected"},
   {"ShowHidden", 'H', 0x01, ID_VIEW_HIDESHOW_SHOWHIDDEN, "menu_view_hideshow_showhidden"},
   {"BendMode", 'B', 0x00, ID_PATCH_BEND, "menu_patch_bend"},
@@ -424,6 +425,7 @@ gint HandleCommand (GtkWidget *widget, gpointer data)
     case ID_TOGGLECONSOLE: g_pParentWnd->OnToggleconsole (); break;
     case ID_VIEW_ENTITY: g_pParentWnd->OnViewEntity (); break;
     case ID_VIEW_GROUPS: g_pParentWnd->OnViewGroups (); break;
+	case ID_SELECT_FUNC_GROUP: g_pParentWnd->OnSelectFuncGroup(); break;
     case ID_TOGGLEVIEW: g_pParentWnd->OnToggleview (); break;
     case ID_TOGGLEVIEW_YZ: g_pParentWnd->OnToggleviewYz (); break;
     case ID_TOGGLEVIEW_XZ: g_pParentWnd->OnToggleviewXz (); break;
@@ -1200,6 +1202,7 @@ void MainFrame::create_main_menu (GtkWidget *window, GtkWidget *vbox)
                     GTK_SIGNAL_FUNC (HandleCommand), ID_SELECTION_SELECTPARTIALTALL);
   create_menu_item_with_mnemonic (menu_in_menu, _("Select _Inside"),
                     GTK_SIGNAL_FUNC (HandleCommand), ID_SELECTION_SELECTINSIDE);
+  create_menu_item_with_mnemonic (menu_in_menu, "Select Func _Group", GTK_SIGNAL_FUNC (HandleCommand), ID_SELECT_FUNC_GROUP);
 #ifndef QUAKE3
   create_menu_item_with_mnemonic (menu_in_menu, _("Nudge Left"),
                     GTK_SIGNAL_FUNC (HandleCommand), ID_SELECTION_SELECT_NUDGELEFT);
@@ -7074,7 +7077,24 @@ void MainFrame::OnPatchTab()
   }
 }
 
-void MainFrame::OnCameraForward(bool keydown)
+void MainFrame::OnSelectFuncGroup() 
+{
+	// check to see if the selected brush is part of a func group
+	// if it is, deselect everything and reselect the next brush 
+	// in the group
+	brush_t *b2, *b = selected_brushes.next;
+	entity_t * e;
+	if (b != &selected_brushes)
+	{
+		if (strcmpi(b->owner->eclass->name, "worldspawn") != 0)
+		{
+			e = b->owner;
+			Select_SelectGroup(e);
+		}
+	}
+}
+
+void MainFrame::OnCameraForward(bool keydown) 
 {
   if (g_PrefsDlg.m_bCamDiscrete && (m_pCamWnd && !m_pCamWnd->m_bFreeMove) )
   {

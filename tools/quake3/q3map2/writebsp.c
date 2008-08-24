@@ -400,6 +400,8 @@ void EndBSPFile( void )
 	char	path[ 1024 ];
 	
 
+	Sys_FPrintf( SYS_VRB, "--- EndBSPFile ---\n" );
+
 	EmitPlanes();
 	
 	numBSPEntities = numEntities;
