@@ -208,11 +208,11 @@ EPathCheck CheckFile( const char *path ) {
 }
 
 bool radCreateDirectory( const char *directory ) {
-	return CreateDirectory( directory, NULL ) != false;
+	return ( CreateDirectory( directory, NULL ) != false );
 }
 
 bool radCopyFile( const char *lpExistingFileName, const char *lpNewFileName ) {
-	return CopyFile( lpExistingFileName, lpNewFileName, FALSE ) != false;
+	return ( CopyFile( lpExistingFileName, lpNewFileName, FALSE ) != false );
 }
 
 #endif
@@ -239,7 +239,10 @@ bool CopyTree( const char *source, const char *dest ) {
 		switch ( CheckFile( srcEntry.GetBuffer() ) ) {
 			case PATH_DIRECTORY: {
 				if ( CheckFile( dstEntry.GetBuffer() ) == PATH_FAIL ) {
-					radCreateDirectory( dstEntry.GetBuffer() );
+					if ( !radCreateDirectory( dstEntry.GetBuffer() ) ) {
+						Sys_Printf( "create directory %s failed\n", dstEntry.GetBuffer() );
+						return false;
+					}
 				}
 				bool ret;
 				ret = CopyTree( srcEntry.GetBuffer(), dstEntry.GetBuffer() );
