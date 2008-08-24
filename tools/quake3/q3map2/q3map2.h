@@ -167,7 +167,6 @@ constants
 #define C_ANTIPORTAL			0x00004000	/* like hint, but doesn't generate portals */
 #define C_SKIP					0x00008000	/* like hint, but skips this face (doesn't split bsp) */
 #define C_NOMARKS				0x00010000	/* no decals */
-
 #define C_DETAIL				0x08000000	/* THIS MUST BE THE SAME AS IN RADIANT! */
 
 
@@ -320,6 +319,7 @@ abstracted bsp file
 #define	MAX_MAP_DRAW_VERTS		0x80000
 #define	MAX_MAP_DRAW_INDEXES	0x80000
 
+#define MAX_MAP_ADVERTISEMENTS	30
 
 /* key / value pair sizes in the entities lump */
 #define	MAX_KEY					32
@@ -498,6 +498,14 @@ typedef struct
 }
 bspDrawSurface_t;
 
+
+/* advertisements */
+typedef struct {
+	int			cellId;
+	vec3_t		normal;
+	vec3_t		rect[4];
+	char		model[ MAX_QPATH ];
+} bspAdvertisement_t;
 
 
 /* -------------------------------------------------------------------------------
@@ -2269,6 +2277,8 @@ Q_EXTERN bspDrawSurface_t	*bspDrawSurfaces Q_ASSIGN( NULL );
 Q_EXTERN int				numBSPFogs Q_ASSIGN( 0 );
 Q_EXTERN bspFog_t			bspFogs[ MAX_MAP_FOGS ];
 
+Q_EXTERN int				numBSPAds Q_ASSIGN( 0 );
+Q_EXTERN bspAdvertisement_t	bspAds[ MAX_MAP_ADVERTISEMENTS ];
 
 
 /* end marker */

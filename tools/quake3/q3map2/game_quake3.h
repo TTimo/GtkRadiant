@@ -107,7 +107,7 @@ game_t struct
 	qfalse,				/* flares */
 	"flareshader",		/* default flare shader */
 	"IBSP",				/* bsp file prefix */
-	46,					/* bsp file version */
+	47,					/* bsp file version */
 	LoadIBSPFile,		/* bsp load function */
 	WriteIBSPFile,		/* bsp write function */
 
@@ -170,7 +170,6 @@ game_t struct
 		{ "nosteps",		0,							0,							Q_SURF_NOSTEPS,				0,							0,							0 },
 		{ "nodlight",		0,							0,							Q_SURF_NODLIGHT,			0,							0,							0 },
 		{ "dust",			0,							0,							Q_SURF_DUST,				0,							0,							0 },
-		
 		
 		/* null */
 		{ NULL, 0, 0, 0, 0, 0, 0 }
