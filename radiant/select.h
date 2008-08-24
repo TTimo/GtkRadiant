@@ -65,6 +65,8 @@ void Select_AllOfType();
 void Select_Reselect();
 void Select_FitTexture(int nHeight = 1, int nWidth = 1);
 
+void Select_SelectGroup(entity_t* group);
+
 // absolute texture coordinates
 // TTimo NOTE: this is stuff for old brushes format and rotation texture lock .. sort of in-between with bush primitives
 void ComputeAbsolute(face_t* f, vec3_t& p1, vec3_t& p2, vec3_t& p3);
