@@ -124,7 +124,7 @@ static char* strlwr (char* string)
     if ('A' <= *cp && *cp <= 'Z')
       *cp += 'a' - 'A';
   }
- 
+
   return string;
 }
 
@@ -159,7 +159,7 @@ void ASE_Load( const char *filename, qboolean verbose, qboolean grabAnims )
 	fclose( fp );
 
         strcpy(gl_filename, filename);
-        
+
 	ASE_Process();
 }
 
@@ -217,7 +217,7 @@ polyset_t *ASE_GetSurfaceAnimation( int which, int *pNumFrames, int skipFrameSta
 	{
 		numFramesInAnimation = maxFrames;
 	}
-	else 
+	else
 	{
 		numFramesInAnimation = pObject->anim.numFrames;
 		if ( maxFrames != -1 )
@@ -436,7 +436,7 @@ static void ASE_KeyMAP_DIFFUSE( const char *token )
 
 		// the purpose of this whole chunk of code below is to extract the relative path
 		// from a full path in the ASE
-			
+
 		strcpy( bitmap, s_token + 1 );
 		if ( strchr( bitmap, '"' ) )
 			*strchr( bitmap, '"' ) = 0;
@@ -659,7 +659,7 @@ static void ASE_KeyMESH_TVERTLIST( const char *token )
 	}
 	else
 	{
-		Error( "Unknown token '%s' while parsing MESH_TVERTLIST" );
+		Error( "Unknown token '%s' while parsing MESH_TVERTLIST", token );
 	}
 }
 
@@ -803,7 +803,7 @@ static void ASE_KeyGEOMOBJECT( const char *token )
 	else if ( !strcmp( token, "*MESH" ) && !ase.grabAnims )
 	{
 /*
-		if ( strstr( ase.objects[ase.currentObject].name, "tag_" ) == ase.objects[ase.currentObject].name ) 
+		if ( strstr( ase.objects[ase.currentObject].name, "tag_" ) == ase.objects[ase.currentObject].name )
 		{
 			s_forceStaticMesh = true;
 			ASE_ParseBracedBlock( ASE_KeyMESH );
@@ -818,7 +818,7 @@ static void ASE_KeyGEOMOBJECT( const char *token )
 		ase.objects[ase.currentObject].anim.numFrames = ase.objects[ase.currentObject].anim.currentFrame;
 		ase.objects[ase.currentObject].numAnimations++;
 /*
-		// ignore meshes that aren't part of animations if this object isn't a 
+		// ignore meshes that aren't part of animations if this object isn't a
 		// a tag
 		else
 		{
