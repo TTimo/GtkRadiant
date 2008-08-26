@@ -188,7 +188,7 @@ void HomePaths_Realise()
 {
 #if defined(POSIX)
   const char* prefix = g_pGameDescription->getKeyValue("prefix");
-  if(!string_empty(prefix)) 
+  if(!string_empty(prefix))
   {
     StringOutputStream path(256);
     path << DirectoryCleaned(g_get_home_dir()) << prefix << "/";
@@ -515,7 +515,7 @@ public:
     ASSERT_MESSAGE(strlen(m_path) + strlen(name) < 1024, "");
     strcpy(fullname, m_path);
     strcat(fullname, name);
-    globalOutputStream() << "Found '" << fullname << "'\n";      
+    globalOutputStream() << "Found '" << fullname << "'\n";
     GlobalModuleServer_loadModule(fullname);
   }
 };
@@ -548,7 +548,7 @@ void Radiant_loadModulesFromRoot(const char* directory)
     StringOutputStream path(256);
     path << directory << g_modulesDir;
     Radiant_loadModules(path.c_str());
-  } 
+  }
 }
 
 //! Make COLOR_BRUSHES override worldspawn eclass colour.
@@ -601,7 +601,7 @@ void Radiant_detachGameToolsPathObserver(ModuleObserver& observer)
 void Radiant_Initialise()
 {
   GlobalModuleServer_Initialise();
-  
+
   Radiant_loadModulesFromRoot(AppPath_get());
 
   Preferences_Load();
@@ -696,7 +696,7 @@ void Paste()
   if(SelectedFaces_empty())
   {
     UndoableCommand undo("paste");
-    
+
     GlobalSelectionSystem().setSelectedAll(false);
     Selection_Paste();
   }
@@ -710,16 +710,16 @@ void PasteToCamera()
 {
   CamWnd& camwnd = *g_pParentWnd->GetCamWnd();
   GlobalSelectionSystem().setSelectedAll(false);
-  
+
   UndoableCommand undo("pasteToCamera");
-  
+
   Selection_Paste();
-  
+
   // Work out the delta
   Vector3 mid;
   Select_GetMid(mid);
   Vector3 delta = vector3_subtracted(vector3_snapped(Camera_getOrigin(camwnd), GetGridSize()), mid);
-  
+
   // Move to camera
   GlobalSelectionSystem().translateSelected(delta);
 }
@@ -943,7 +943,7 @@ GtkMenuItem* create_colours_menu()
   create_menu_item_with_mnemonic(menu_in_menu, "Grid Text...", "ChooseGridTextColor");
   create_menu_item_with_mnemonic(menu_in_menu, "Grid Block...", "ChooseGridBlockColor");
   create_menu_item_with_mnemonic(menu_in_menu, "Default Brush...", "ChooseBrushColor");
-  create_menu_item_with_mnemonic(menu_in_menu, "Camera Background...", "ChooseCameraBackgroundColor");  
+  create_menu_item_with_mnemonic(menu_in_menu, "Camera Background...", "ChooseCameraBackgroundColor");
   create_menu_item_with_mnemonic(menu_in_menu, "Selected Brush...", "ChooseSelectedBrushColor");
   create_menu_item_with_mnemonic(menu_in_menu, "Selected Brush (Camera)...", "ChooseCameraSelectedBrushColor");
   create_menu_item_with_mnemonic(menu_in_menu, "Clipper...", "ChooseClipperColor");
@@ -1012,7 +1012,7 @@ void Console_ToggleShow()
 GtkWidget* g_page_entity;
 
 void EntityInspector_ToggleShow()
-{  
+{
   GroupDialog_showPage(g_page_entity);
 }
 
@@ -1191,7 +1191,7 @@ public:
   {
     if(path.size() == 1)
       return true;
-    
+
     if(!path.top().get().isRoot())
     {
       Selectable* selectable = Instance_getSelectable(instance);
@@ -2242,7 +2242,7 @@ GtkMenuItem* create_misc_menu()
   create_menu_item_with_mnemonic(menu, "Map Info...", "MapInfo");
   // http://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=394
 //  create_menu_item_with_mnemonic(menu, "_Print XY View", FreeCaller<WXY_Print>());
-
+  create_menu_item_with_mnemonic(menu, "_Background select", FreeCaller<WXY_BackgroundSelect>());
   return misc_menu_item;
 }
 
@@ -2641,7 +2641,7 @@ class MainWindowActive
     {
       gtk_widget_show(GTK_WIDGET(g_wait.m_window));
     }
-    
+
     return FALSE;
   }
 public:
@@ -2719,7 +2719,7 @@ MainFrame::~MainFrame()
   for(std::vector<GtkWidget*>::iterator i = g_floating_windows.begin(); i != g_floating_windows.end(); ++i)
   {
     gtk_widget_destroy(*i);
-  }  
+  }
 
   gtk_widget_destroy(GTK_WIDGET(m_window));
 }
@@ -3069,7 +3069,7 @@ void MainFrame::Create()
       m_pXYWnd = new XYWnd();
       m_pXYWnd->m_parent = window;
       m_pXYWnd->SetViewType(XY);
-      
+
 
       {
         GtkFrame* frame = create_framed_widget(m_pXYWnd->GetWidget());
@@ -3151,7 +3151,7 @@ void MainFrame::Create()
     GtkHPaned* split = create_split_views(camera, yz, xy, xz);
     gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(split), TRUE, TRUE, 0);
 
-    {      
+    {
       GtkFrame* frame = create_framed_widget(TextureBrowser_constructWindow(window));
       g_page_textures = GroupDialog_addPage("Textures", GTK_WIDGET(frame), TextureBrowserExportTitleCaller());
     }
@@ -3173,7 +3173,7 @@ void MainFrame::Create()
   SetStatusText(m_command_status, c_TranslateMode_status);
 
   EverySecondTimer_enable();
- 
+
   //GlobalShortcuts_reportUnregistered();
 }
 
@@ -3196,7 +3196,7 @@ void MainFrame::SaveWindowInfo()
   }
 
   g_layout_globals.m_position = m_position_tracker.getPosition();
- 
+
   g_layout_globals.nState = gdk_window_get_state(GTK_WIDGET(m_window)->window);
 }
 
