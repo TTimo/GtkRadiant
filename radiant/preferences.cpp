@@ -3229,14 +3229,14 @@ void CGameInstall::OnBtnBrowseEngine( GtkWidget *widget, gpointer data ) {
 	Sys_Printf( "OnBtnBrowseEngine\n" );
 
 	CGameInstall* i = static_cast<CGameInstall*>( data );
-	char *dir = dir_dialog( widget, _("Select game directory"), NULL );
+	char *dir = dir_dialog( i->m_pWidget, _("Select game directory"), NULL );
 
 	i->UpdateData( TRUE );
 
 	if ( dir != NULL ) {
 		i->m_strEngine = dir;
 		i->UpdateData( FALSE );
-		free( dir );
+		g_free( dir );
 	}
 }
 
@@ -3370,7 +3370,7 @@ void CGameInstall::Run() {
 	Sys_Printf( "game file: %s\n", gameFilePath.GetBuffer() );
 
 	FILE *fg = fopen( gameFilePath.GetBuffer(), "w" );
-	if ( fg == NULL ) {
+	if ( fg == NULL || ferror( fg ) ) {
 		Error( "Failed to open %s for writing\n", gameFilePath.GetBuffer() );
 	}
 	fprintf( fg, "<?xml version=\"1.0\" encoding=\"iso-8859-1\" standalone=\"yes\"?>\n<game\n" );

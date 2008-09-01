@@ -257,7 +257,7 @@ class Config:
 			cmd = 'svn checkout %s "%s"' % ( svnurl, path )
 		ret = os.system( cmd )
 		if ( ret != 0 ):
-			raise 'checkout or update failed'
+			raise Exception( 'checkout or update failed' )
 
 
 	def FetchGamePaks( self, path ):
@@ -267,10 +267,66 @@ class Config:
 				self.CheckoutOrUpdate( svnurl, os.path.join( path, 'installs', pak ) )
 
 	def Setup( self ):
-		for platform in self.setup_platforms:
 			if ( platform == 'local' ):
 				# special case, fetch external paks under the local install directory
 				self.FetchGamePaks( self.install_directory )
+		# NOTE: unrelated to self.setup_platforms - grab support files and binaries and install them
+		if ( self.platform == 'Windows' ):
+			depsfile = 'GtkR-deps-1.6-3.zip'
+			# TMP
+			#if ( not os.path.exists( depsfile ) ):
+			if ( True ):
+				cmd = 'wget http://zerowing.idsoftware.com/files/radiant/developer/1.6.1/%s' % depsfile
+				print cmd
+				ret = os.system( cmd )
+				if ( ret != 0 ):
+					raise Exception( 'Failed to download dependencies file' )
+
+				# extract one directoy above
+				f = os.path.abspath( depsfile )
+				backup_cwd = os.getcwd()
+				os.chdir( os.path.dirname( backup_cwd ) )
+				cmd = 'unzip %s' % f
+				print cmd
+				ret = os.system( cmd )
+				if ( ret != 0 ):
+					raise Exception( 'unzip dependencies file failed' )
+				os.chdir( backup_cwd )
+				
+				# copy all the dependent runtime data to the install directory
+				srcdir = os.path.dirname( backup_cwd )
+				for f in [
+					'libxml2/bin/libxml2.dll',
+					'gtk2/bin/libglib-2.0-0.dll',
+					'gtk2/bin/libgobject-2.0-0.dll',
+					'gtk2/bin/libgdk-win32-2.0-0.dll',
+					'gtk2/bin/libgtk-win32-2.0-0.dll',
+					'gtk2/bin/intl.dll',
+					'gtk2/bin/libatk-1.0-0.dll',
+					'gtk2/bin/libcairo-2.dll',
+					'gtk2/bin/libgdk_pixbuf-2.0-0.dll',
+					'gtk2/bin/libgmodule-2.0-0.dll',
+					'gtk2/bin/libpng13.dll',
+					'gtk2/bin/libpango-1.0-0.dll',
+					'gtk2/bin/libpangocairo-1.0-0.dll',
+					'gtk2/bin/libpangowin32-1.0-0.dll',
+					'gtk2/lib/libgtkglext-win32-1.0-0.dll',
+					'gtk2/lib/libgdkglext-win32-1.0-0.dll',
+					'gtk2/lib/iconv.dll', ]:
+					cmd = 'cp -v "%s" installs' % os.path.join( srcdir, f )
+					print cmd
+					ret = os.system( cmd )
+					if ( ret != 0 ):
+						raise Exception( 'runtime file copy failed' )
+				for d in [
+					'gtk2/etc',
+					'gtk2/share',
+					]:
+					cmd = 'cp -r -v "%s" install' % os.path.join( srcdir, d )
+					print cmd
+					ret = os.system( cmd )
+					if ( ret != 0 ):
+						raise Exception( 'runtime directory copy failed' )
 
 # parse the config statement line to produce/update an existing config list
 # the configs expose a list of keywords and accepted values, which the engine parses out

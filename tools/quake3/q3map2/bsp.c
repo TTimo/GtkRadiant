@@ -45,6 +45,76 @@ functions
 ------------------------------------------------------------------------------- */
 
 
+/*
+ProcessAdvertisements()
+copies advertisement info into the BSP structures
+*/
+
+static void ProcessAdvertisements( void ) {
+	int					i;
+	const char*			className;
+	const char*			modelKey;
+	int					modelNum;
+	bspModel_t*			adModel;
+	bspDrawSurface_t*	adSurface;
+
+	Sys_FPrintf( SYS_VRB, "--- ProcessAdvertisements ---\n" );
+
+	for( i = 0; i < numEntities; i++ ) {
+
+		/* is an advertisement? */
+		className = ValueForKey( &entities[ i ], "classname" );
+
+		if( !Q_stricmp( "advertisement", className ) ) {
+			
+			modelKey = ValueForKey( &entities[ i ], "model" );
+
+			if( strlen( modelKey ) > MAX_QPATH - 1 ) {
+				Error( "Model Key for entity exceeds ad struct string length." );
+			} else {
+				if( numBSPAds < MAX_MAP_ADVERTISEMENTS ) {
+					bspAds[numBSPAds].cellId = IntForKey( &entities[ i ], "cellId" );
+					strncpy( bspAds[numBSPAds].model, modelKey, sizeof( bspAds[numBSPAds].model ) );
+
+					modelKey++;
+					modelNum = atoi( modelKey );
+					adModel = &bspModels[modelNum];
+					
+					if( adModel->numBSPSurfaces != 1 ) {
+						Error( "Ad cell id %d has more than one surface.", bspAds[numBSPAds].cellId );
+					}
+
+					adSurface = &bspDrawSurfaces[adModel->firstBSPSurface];
+					
+					// store the normal for use at run time.. all ad verts are assumed to 
+					// have identical normals (because they should be a simple rectangle)
+					// so just use the first vert's normal
+					VectorCopy( bspDrawVerts[adSurface->firstVert].normal, bspAds[numBSPAds].normal );
+
+					// store the ad quad for quick use at run time
+					if( adSurface->surfaceType == MST_PATCH ) {
+						int v0 = adSurface->firstVert + adSurface->patchHeight - 1;
+						int v1 = adSurface->firstVert + adSurface->numVerts - 1;
+						int v2 = adSurface->firstVert + adSurface->numVerts - adSurface->patchWidth;
+						int v3 = adSurface->firstVert;
+						VectorCopy( bspDrawVerts[v0].xyz, bspAds[numBSPAds].rect[0] );
+						VectorCopy( bspDrawVerts[v1].xyz, bspAds[numBSPAds].rect[1] );
+						VectorCopy( bspDrawVerts[v2].xyz, bspAds[numBSPAds].rect[2] );
+						VectorCopy( bspDrawVerts[v3].xyz, bspAds[numBSPAds].rect[3] );
+					} else {
+						Error( "Ad cell %d has an unsupported Ad Surface type.", bspAds[numBSPAds].cellId );
+					}
+
+					numBSPAds++;
+				} else {
+					Error( "Maximum number of map advertisements exceeded." );
+				}
+			}
+		}
+	}
+
+	Sys_FPrintf( SYS_VRB, "%9d in-game advertisements\n", numBSPAds );
+}
 
 /*
 SetCloneModelNumbers() - ydnar
@@ -845,6 +915,9 @@ int BSPMain( int argc, char **argv )
 	/* set light styles from targetted light entities */
 	SetLightStyles();
 	
+	/* process in game advertisements */
+	ProcessAdvertisements();
+
 	/* finish and write bsp */
 	EndBSPFile();
 	

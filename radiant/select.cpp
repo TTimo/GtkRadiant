@@ -1372,6 +1372,30 @@ void Select_Inside (void)
 	Sys_UpdateWindows (W_ALL);
 }
 
+void Select_SelectGroup(entity_t* group)
+{
+	brush_t*  b;
+	//brush_t*  next;
+
+	Undo_Start ("select func group");
+	Undo_AddBrushList (&selected_brushes);
+	Undo_End();
+
+	Select_Deselect();
+
+	b = &group->brushes;
+
+	do
+	{
+		b = b->onext;
+		Brush_RemoveFromList(b);
+		Brush_AddToList(b, &selected_brushes);
+	} while( b->onext != &group->brushes );
+
+	Sys_UpdateWindows (W_ALL);
+}
+
+
 void Select_Ungroup(void)
 {
 	int numselectedgroups;

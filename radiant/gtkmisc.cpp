@@ -1474,8 +1474,9 @@ char* WINAPI dir_dialog (void *parent, const char* title, const char* path)
                       GTK_SIGNAL_FUNC (dialog_delete_callback), NULL);
   gtk_file_selection_hide_fileop_buttons (GTK_FILE_SELECTION (file_sel));
 
-  if (parent != NULL)
-    gtk_window_set_transient_for (GTK_WINDOW (file_sel), GTK_WINDOW (parent));
+	if ( parent != NULL ) {
+		gtk_window_set_transient_for( GTK_WINDOW( file_sel ), GTK_WINDOW( parent ) );
+	}
 
   gtk_widget_hide (GTK_FILE_SELECTION (file_sel)->file_list->parent);
 
@@ -1491,10 +1492,10 @@ char* WINAPI dir_dialog (void *parent, const char* title, const char* path)
   while (loop)
     gtk_main_iteration ();
 
-  filename = g_strdup(gtk_file_selection_get_filename (GTK_FILE_SELECTION (file_sel)));
+  filename = g_strdup( gtk_file_selection_get_filename( GTK_FILE_SELECTION( file_sel ) ) );
 
-  gtk_grab_remove (file_sel);
-  gtk_widget_destroy (file_sel);
+  gtk_grab_remove( file_sel );
+  gtk_widget_destroy( file_sel );
 
   return filename;
 }

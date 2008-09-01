@@ -240,6 +240,24 @@ void SwapBSPFile( void )
 		bspFogs[ i ].brushNum = LittleLong( bspFogs[ i ].brushNum );
 		bspFogs[ i ].visibleSide = LittleLong( bspFogs[ i ].visibleSide );
 	}
+
+	/* advertisements */
+	for( i = 0; i < numBSPAds; i++ )
+	{
+		bspAds[ i ].cellId = LittleLong( bspAds[ i ].cellId );
+		bspAds[ i ].normal[ 0 ] = LittleFloat( bspAds[ i ].normal[ 0 ] );
+		bspAds[ i ].normal[ 1 ] = LittleFloat( bspAds[ i ].normal[ 1 ] );
+		bspAds[ i ].normal[ 2 ] = LittleFloat( bspAds[ i ].normal[ 2 ] );
+
+		for( j = 0; j < 4; j++ ) 
+		{
+			bspAds[ i ].rect[j][ 0 ] = LittleFloat( bspAds[ i ].rect[j][ 0 ] );
+			bspAds[ i ].rect[j][ 1 ] = LittleFloat( bspAds[ i ].rect[j][ 1 ] );
+			bspAds[ i ].rect[j][ 2 ] = LittleFloat( bspAds[ i ].rect[j][ 2 ] );
+		}
+
+		//bspAds[ i ].model[ MAX_QPATH ];
+	}
 }
 
 

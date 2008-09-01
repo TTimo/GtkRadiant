@@ -64,7 +64,8 @@ into the abstracted bsp file used by q3map2.
 #define	LUMP_LIGHTMAPS		14
 #define	LUMP_LIGHTGRID		15
 #define	LUMP_VISIBILITY		16
-#define	HEADER_LUMPS		17
+#define LUMP_ADVERTISEMENTS 17
+#define	HEADER_LUMPS		18
 
 
 /* types */
@@ -453,8 +454,6 @@ static void AddLightGridLumps( FILE *file, ibspHeader_t *header )
 	free( buffer );
 }
 
-
-
 /*
 LoadIBSPFile()
 loads a quake 3 bsp file into memory
@@ -513,7 +512,10 @@ void LoadIBSPFile( const char *filename )
 	bspEntDataSize = CopyLump( (bspHeader_t*) header, LUMP_ENTITIES, bspEntData, 1);
 	
 	CopyLightGridLumps( header );
-	
+
+	/* advertisements */
+	numBSPAds = CopyLump( (bspHeader_t*) header, LUMP_ADVERTISEMENTS, bspAds, sizeof( bspAdvertisement_t ) );
+
 	/* free the file buffer */
 	free( header );
 }
@@ -571,7 +573,10 @@ void WriteIBSPFile( const char *filename )
 	AddLump( file, (bspHeader_t*) header, LUMP_ENTITIES, bspEntData, bspEntDataSize );
 	AddLump( file, (bspHeader_t*) header, LUMP_FOGS, bspFogs, numBSPFogs * sizeof( bspFog_t ) );
 	AddLump( file, (bspHeader_t*) header, LUMP_DRAWINDEXES, bspDrawIndexes, numBSPDrawIndexes * sizeof( bspDrawIndexes[ 0 ] ) );
-	
+
+	/* advertisements */
+	AddLump( file, (bspHeader_t*) header, LUMP_ADVERTISEMENTS, bspAds, numBSPAds * sizeof( bspAdvertisement_t ) );
+
 	/* emit bsp size */
 	size = ftell( file );
 	Sys_Printf( "Wrote %.1f MB (%d bytes)\n", (float) size / (1024 * 1024), size );

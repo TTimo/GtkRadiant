@@ -339,10 +339,10 @@ void CreateEntityLights( void )
 		if( light->style < LS_NORMAL || light->style >= LS_NONE )
 			Error( "Invalid lightstyle (%d) on entity %d", light->style, i );
 		
-		/* override */
-		if( noStyles )
-			light->style = LS_NORMAL;
-		
+		if( light->style != LS_NORMAL ) {
+			Sys_FPrintf (SYS_WRN, "WARNING: Styled light found targeting %s\n **", target );
+		}
+
 		/* set light intensity */
 		intensity = FloatForKey( e, "_light" );
 		if( intensity == 0.0f )
