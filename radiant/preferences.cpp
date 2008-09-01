@@ -3370,7 +3370,7 @@ void CGameInstall::Run() {
 	Sys_Printf( "game file: %s\n", gameFilePath.GetBuffer() );
 
 	FILE *fg = fopen( gameFilePath.GetBuffer(), "w" );
-	if ( fg == NULL ) {
+	if ( fg == NULL || ferror( fg ) ) {
 		Error( "Failed to open %s for writing\n", gameFilePath.GetBuffer() );
 	}
 	fprintf( fg, "<?xml version=\"1.0\" encoding=\"iso-8859-1\" standalone=\"yes\"?>\n<game\n" );
