@@ -47,7 +47,7 @@ void MakeDecimatedMap(int *NumNodes, int *NumTris, NODE **pNode, TRI **pTri)
 	int Bisect(NODE *, int, int, int);
 	void CalcAngles(NODE *, int *, float *);
 	void EdgeOnSide(int *, int *, int *);
-	int tricall(int, NODE *, int *, TRI **, TRI **, char *);
+	int tricall(int, NODE *, int *, TRI **, TRI **, const char *);
 	int CheckBorders(int *,int,NODE *,int *,TRI **);
 
 	float       biggesterror;
@@ -195,7 +195,7 @@ void MakeDecimatedMap(int *NumNodes, int *NumTris, NODE **pNode, TRI **pTri)
 			Tri = *pTri;
 			// Sliver-check along borders. Since borders are often linear, the errors
 			// along borders will often be zero, so no new points will be added. This
-			// tends to produce long, thin brushes. For all border triangles, check 
+			// tends to produce long, thin brushes. For all border triangles, check
 			// that minimum angle isn't less than SLIVER_ANGLE. If it is, add another
 			// vertex.
 			while(CheckBorders(&NumNodesUsed,NumNodes[0],Node,NumTris,pTri) > 0)
@@ -323,9 +323,8 @@ void MakeDecimatedMap(int *NumNodes, int *NumTris, NODE **pNode, TRI **pTri)
 /*  tricall Takes an array of nodes, spits out an array of triangles         */
 /*                                                                           */
 /*****************************************************************************/
-int tricall(int NumNodes, NODE *Node, int *NumTris, TRI **inTri, TRI **Tri, LPSTR Options)
+int tricall(int NumNodes, NODE *Node, int *NumTris, TRI **inTri, TRI **Tri, const char *Options)
 {
-
 	struct triangulateio in, out;
 	int    i, N;
 	int    NumUsedNodes;
@@ -426,18 +425,18 @@ int tricall(int NumNodes, NODE *Node, int *NumTris, TRI **inTri, TRI **Tri, LPST
 
 	/* Make necessary initializations */
 	out.pointlist          = (REAL *) NULL;  /* Not needed if -N switch used. */
-	out.pointattributelist = (REAL *) NULL;  /* Not needed if -N switch used or 
+	out.pointattributelist = (REAL *) NULL;  /* Not needed if -N switch used or
 	                                            number of point attributes is zero: */
 	out.pointmarkerlist    = (int *) NULL;   /* Not needed if -N or -B switch used. */
 	out.trianglelist       = (int *) NULL;   /* Not needed if -E switch used. */
-	out.triangleattributelist = (REAL *) NULL;   /* Not needed if -E switch used or 
-	                                                number of triangle attributes is 
+	out.triangleattributelist = (REAL *) NULL;   /* Not needed if -E switch used or
+	                                                number of triangle attributes is
                                                     zero: */
 	out.trianglearealist   = (REAL *) NULL;
 	out.neighborlist       = (int *) NULL;   /* Needed only if -n switch used. */
-	out.segmentlist        = (int *) NULL;   /* Needed only if segments are output 
+	out.segmentlist        = (int *) NULL;   /* Needed only if segments are output
 	                                            (-p or -c) and -P not used: */
-	out.segmentmarkerlist  = (int *) NULL;   /* Needed only if segments are output 
+	out.segmentmarkerlist  = (int *) NULL;   /* Needed only if segments are output
 	                                            (-p or -c) and -P and -B not used: */
 	out.edgelist           = (int *) NULL;   /* Needed only if -e switch used. */
 	out.edgemarkerlist     = (int *) NULL;   /* Needed if -e used and -B not used. */
@@ -715,7 +714,7 @@ void MakeBrushes(int NumTris, NODE *Node, TRI *Tri,bool surf,
 		if(UseDetail) contents += CONTENTS_DETAIL;
 		if(UseLadder) contents += CONTENTS_LADDER;
 	}
-	
+
 	OpenFuncGroup();
 	for(i=0; i<NumTris; i++)
 	{
@@ -725,11 +724,11 @@ void MakeBrushes(int NumTris, NODE *Node, TRI *Tri,bool surf,
 		brush.face[0].v[0][0] = Node[Tri[i].v[0]].p[0];
 		brush.face[0].v[0][1] = Node[Tri[i].v[0]].p[1];
 		brush.face[0].v[0][2] = Node[Tri[i].v[0]].p[2];
-		
+
 		brush.face[0].v[1][0] = Node[Tri[i].v[2]].p[0];
 		brush.face[0].v[1][1] = Node[Tri[i].v[2]].p[1];
 		brush.face[0].v[1][2] = Node[Tri[i].v[2]].p[2];
-		
+
 		brush.face[0].v[2][0] = Node[Tri[i].v[1]].p[0];
 		brush.face[0].v[2][1] = Node[Tri[i].v[1]].p[1];
 		brush.face[0].v[2][2] = Node[Tri[i].v[1]].p[2];
@@ -778,50 +777,50 @@ void MakeBrushes(int NumTris, NODE *Node, TRI *Tri,bool surf,
 			brush.face[1].v[0][0] = Node[Tri[i].v[0]].p[0];
 			brush.face[1].v[0][1] = (float)backface;
 			brush.face[1].v[0][2] = Node[Tri[i].v[0]].p[2];
-			
+
 			brush.face[1].v[1][0] = Node[Tri[i].v[1]].p[0];
 			brush.face[1].v[1][1] = (float)backface;
 			brush.face[1].v[1][2] = Node[Tri[i].v[1]].p[2];
-			
+
 			brush.face[1].v[2][0] = Node[Tri[i].v[2]].p[0];
 			brush.face[1].v[2][1] = (float)backface;
 			brush.face[1].v[2][2] = Node[Tri[i].v[2]].p[2];
-			
+
 			// 0-1 side
 			brush.face[2].v[0][0] = Node[Tri[i].v[0]].p[0];
 			brush.face[2].v[0][1] = Node[Tri[i].v[0]].p[1];
 			brush.face[2].v[0][2] = Node[Tri[i].v[0]].p[2];
-			
+
 			brush.face[2].v[1][0] = Node[Tri[i].v[1]].p[0];
 			brush.face[2].v[1][1] = Node[Tri[i].v[1]].p[1];
 			brush.face[2].v[1][2] = Node[Tri[i].v[1]].p[2];
-			
+
 			brush.face[2].v[2][0] = Node[Tri[i].v[1]].p[0];
 			brush.face[2].v[2][1] = (float)backface;
 			brush.face[2].v[2][2] = Node[Tri[i].v[1]].p[2];
-			
+
 			// 1-2 side
 			brush.face[3].v[0][0] = Node[Tri[i].v[1]].p[0];
 			brush.face[3].v[0][1] = Node[Tri[i].v[1]].p[1];
 			brush.face[3].v[0][2] = Node[Tri[i].v[1]].p[2];
-			
+
 			brush.face[3].v[1][0] = Node[Tri[i].v[2]].p[0];
 			brush.face[3].v[1][1] = Node[Tri[i].v[2]].p[1];
 			brush.face[3].v[1][2] = Node[Tri[i].v[2]].p[2];
-			
+
 			brush.face[3].v[2][0] = Node[Tri[i].v[2]].p[0];
 			brush.face[3].v[2][1] = (float)backface;
 			brush.face[3].v[2][2] = Node[Tri[i].v[2]].p[2];
-			
+
 			// 2-0 side
 			brush.face[4].v[0][0] = Node[Tri[i].v[2]].p[0];
 			brush.face[4].v[0][1] = Node[Tri[i].v[2]].p[1];
 			brush.face[4].v[0][2] = Node[Tri[i].v[2]].p[2];
-			
+
 			brush.face[4].v[1][0] = Node[Tri[i].v[0]].p[0];
 			brush.face[4].v[1][1] = Node[Tri[i].v[0]].p[1];
 			brush.face[4].v[1][2] = Node[Tri[i].v[0]].p[2];
-			
+
 			brush.face[4].v[2][0] = Node[Tri[i].v[0]].p[0];
 			brush.face[4].v[2][1] = (float)backface;
 			brush.face[4].v[2][2] = Node[Tri[i].v[0]].p[2];
@@ -832,50 +831,50 @@ void MakeBrushes(int NumTris, NODE *Node, TRI *Tri,bool surf,
 			brush.face[1].v[0][0] = (float)backface;
 			brush.face[1].v[0][1] = Node[Tri[i].v[0]].p[1];
 			brush.face[1].v[0][2] = Node[Tri[i].v[0]].p[2];
-			
+
 			brush.face[1].v[1][0] = (float)backface;
 			brush.face[1].v[1][1] = Node[Tri[i].v[1]].p[1];
 			brush.face[1].v[1][2] = Node[Tri[i].v[1]].p[2];
-			
+
 			brush.face[1].v[2][0] = (float)backface;
 			brush.face[1].v[2][1] = Node[Tri[i].v[2]].p[1];
 			brush.face[1].v[2][2] = Node[Tri[i].v[2]].p[2];
-			
+
 			// 0-1 side
 			brush.face[2].v[0][0] = Node[Tri[i].v[0]].p[0];
 			brush.face[2].v[0][1] = Node[Tri[i].v[0]].p[1];
 			brush.face[2].v[0][2] = Node[Tri[i].v[0]].p[2];
-			
+
 			brush.face[2].v[1][0] = Node[Tri[i].v[1]].p[0];
 			brush.face[2].v[1][1] = Node[Tri[i].v[1]].p[1];
 			brush.face[2].v[1][2] = Node[Tri[i].v[1]].p[2];
-			
+
 			brush.face[2].v[2][0] = (float)backface;
 			brush.face[2].v[2][1] = Node[Tri[i].v[1]].p[1];
 			brush.face[2].v[2][2] = Node[Tri[i].v[1]].p[2];
-			
+
 			// 1-2 side
 			brush.face[3].v[0][0] = Node[Tri[i].v[1]].p[0];
 			brush.face[3].v[0][1] = Node[Tri[i].v[1]].p[1];
 			brush.face[3].v[0][2] = Node[Tri[i].v[1]].p[2];
-			
+
 			brush.face[3].v[1][0] = Node[Tri[i].v[2]].p[0];
 			brush.face[3].v[1][1] = Node[Tri[i].v[2]].p[1];
 			brush.face[3].v[1][2] = Node[Tri[i].v[2]].p[2];
-			
+
 			brush.face[3].v[2][0] = (float)backface;
 			brush.face[3].v[2][1] = Node[Tri[i].v[2]].p[1];
 			brush.face[3].v[2][2] = Node[Tri[i].v[2]].p[2];
-			
+
 			// 2-0 side
 			brush.face[4].v[0][0] = Node[Tri[i].v[2]].p[0];
 			brush.face[4].v[0][1] = Node[Tri[i].v[2]].p[1];
 			brush.face[4].v[0][2] = Node[Tri[i].v[2]].p[2];
-			
+
 			brush.face[4].v[1][0] = Node[Tri[i].v[0]].p[0];
 			brush.face[4].v[1][1] = Node[Tri[i].v[0]].p[1];
 			brush.face[4].v[1][2] = Node[Tri[i].v[0]].p[2];
-			
+
 			brush.face[4].v[2][0] = (float)backface;
 			brush.face[4].v[2][1] = Node[Tri[i].v[0]].p[1];
 			brush.face[4].v[2][2] = Node[Tri[i].v[0]].p[2];
@@ -885,55 +884,55 @@ void MakeBrushes(int NumTris, NODE *Node, TRI *Tri,bool surf,
 			brush.face[1].v[0][0] = Node[Tri[i].v[0]].p[0];
 			brush.face[1].v[0][1] = Node[Tri[i].v[0]].p[1];
 			brush.face[1].v[0][2] = (float)backface;
-			
+
 			brush.face[1].v[1][0] = Node[Tri[i].v[1]].p[0];
 			brush.face[1].v[1][1] = Node[Tri[i].v[1]].p[1];
 			brush.face[1].v[1][2] = (float)backface;
-			
+
 			brush.face[1].v[2][0] = Node[Tri[i].v[2]].p[0];
 			brush.face[1].v[2][1] = Node[Tri[i].v[2]].p[1];
 			brush.face[1].v[2][2] = (float)backface;
-			
+
 			// 0-1 side
 			brush.face[2].v[0][0] = Node[Tri[i].v[0]].p[0];
 			brush.face[2].v[0][1] = Node[Tri[i].v[0]].p[1];
 			brush.face[2].v[0][2] = Node[Tri[i].v[0]].p[2];
-			
+
 			brush.face[2].v[1][0] = Node[Tri[i].v[1]].p[0];
 			brush.face[2].v[1][1] = Node[Tri[i].v[1]].p[1];
 			brush.face[2].v[1][2] = Node[Tri[i].v[1]].p[2];
-			
+
 			brush.face[2].v[2][0] = Node[Tri[i].v[1]].p[0];
 			brush.face[2].v[2][1] = Node[Tri[i].v[1]].p[1];
 			brush.face[2].v[2][2] = (float)backface;
-			
+
 			// 1-2 side
 			brush.face[3].v[0][0] = Node[Tri[i].v[1]].p[0];
 			brush.face[3].v[0][1] = Node[Tri[i].v[1]].p[1];
 			brush.face[3].v[0][2] = Node[Tri[i].v[1]].p[2];
-			
+
 			brush.face[3].v[1][0] = Node[Tri[i].v[2]].p[0];
 			brush.face[3].v[1][1] = Node[Tri[i].v[2]].p[1];
 			brush.face[3].v[1][2] = Node[Tri[i].v[2]].p[2];
-			
+
 			brush.face[3].v[2][0] = Node[Tri[i].v[2]].p[0];
 			brush.face[3].v[2][1] = Node[Tri[i].v[2]].p[1];
 			brush.face[3].v[2][2] = (float)backface;
-			
+
 			// 2-0 side
 			brush.face[4].v[0][0] = Node[Tri[i].v[2]].p[0];
 			brush.face[4].v[0][1] = Node[Tri[i].v[2]].p[1];
 			brush.face[4].v[0][2] = Node[Tri[i].v[2]].p[2];
-			
+
 			brush.face[4].v[1][0] = Node[Tri[i].v[0]].p[0];
 			brush.face[4].v[1][1] = Node[Tri[i].v[0]].p[1];
 			brush.face[4].v[1][2] = Node[Tri[i].v[0]].p[2];
-			
+
 			brush.face[4].v[2][0] = Node[Tri[i].v[0]].p[0];
 			brush.face[4].v[2][1] = Node[Tri[i].v[0]].p[1];
 			brush.face[4].v[2][2] = (float)backface;
 		}
-		
+
 		for(j=0; j<5; j++)
 		{
 			strcpy(brush.face[j].texture,
@@ -1052,10 +1051,10 @@ void MapOut(int NumNodes,int NumTris, NODE *Node, TRI *Tri)
 		default:
 			front  = MoreThan(zmax,32.);
 		}
-		
+
 		for(i=0; i<NumTris; i++)
 			Tri[i].flag = 0;
-		
+
 		switch(Plane)
 		{
 		case PLANE_XZ0:
@@ -1075,7 +1074,7 @@ void MapOut(int NumNodes,int NumTris, NODE *Node, TRI *Tri)
 			j1 = 0;
 			j2 = 1;
 		}
-		
+
 		brush.Number = 0;
 		brush.NumFaces = 6;
 		MaxHints = NH*NV-1;
@@ -1131,41 +1130,41 @@ void MapOut(int NumNodes,int NumTris, NODE *Node, TRI *Tri)
 							brush.face[0].v[0][0] = Node[q[2]].p[0];
 							brush.face[0].v[0][1] = (float)front;
 							brush.face[0].v[0][2] = Node[q[2]].p[2];
-							
+
 							brush.face[0].v[1][0] = Node[q[1]].p[0];
 							brush.face[0].v[1][1] = (float)front;
 							brush.face[0].v[1][2] = Node[q[1]].p[2];
-							
+
 							brush.face[0].v[2][0] = Node[q[0]].p[0];
 							brush.face[0].v[2][1] = (float)front;
 							brush.face[0].v[2][2] = Node[q[0]].p[2];
-							
+
 							// back
 							brush.face[1].v[0][0] = Node[q[0]].p[0];
 							brush.face[1].v[0][1] = (float)backface;
 							brush.face[1].v[0][2] = Node[q[0]].p[2];
-							
+
 							brush.face[1].v[1][0] = Node[q[1]].p[0];
 							brush.face[1].v[1][1] = (float)backface;
 							brush.face[1].v[1][2] = Node[q[1]].p[2];
-							
+
 							brush.face[1].v[2][0] = Node[q[2]].p[0];
 							brush.face[1].v[2][1] = (float)backface;
 							brush.face[1].v[2][2] = Node[q[2]].p[2];
-							
+
 							for(k0=0; k0<brush.NumFaces-2; k0++)
 							{
 								k =k0+2;
 								k1=(k0+1) % (brush.NumFaces-2);
-								
+
 								brush.face[k].v[0][0] = Node[q[k0]].p[0];
 								brush.face[k].v[0][1] = (float)front;
 								brush.face[k].v[0][2] = Node[q[k0]].p[2];
-								
+
 								brush.face[k].v[1][0] = Node[q[k1]].p[0];
 								brush.face[k].v[1][1] = (float)front;
 								brush.face[k].v[1][2] = Node[q[k1]].p[2];
-								
+
 								brush.face[k].v[2][0] = Node[q[k1]].p[0];
 								brush.face[k].v[2][1] = (float)backface;
 								brush.face[k].v[2][2] = Node[q[k1]].p[2];
@@ -1177,41 +1176,41 @@ void MapOut(int NumNodes,int NumTris, NODE *Node, TRI *Tri)
 							brush.face[0].v[0][0] = (float)front;
 							brush.face[0].v[0][1] = Node[q[2]].p[1];
 							brush.face[0].v[0][2] = Node[q[2]].p[2];
-							
+
 							brush.face[0].v[1][0] = (float)front;
 							brush.face[0].v[1][1] = Node[q[1]].p[1];
 							brush.face[0].v[1][2] = Node[q[1]].p[2];
-							
+
 							brush.face[0].v[2][0] = (float)front;
 							brush.face[0].v[2][1] = Node[q[0]].p[1];
 							brush.face[0].v[2][2] = Node[q[0]].p[2];
-							
+
 							// back
 							brush.face[1].v[0][0] = (float)backface;
 							brush.face[1].v[0][1] = Node[q[0]].p[1];
 							brush.face[1].v[0][2] = Node[q[0]].p[2];
-							
+
 							brush.face[1].v[1][0] = (float)backface;
 							brush.face[1].v[1][1] = Node[q[1]].p[1];
 							brush.face[1].v[1][2] = Node[q[1]].p[2];
-							
+
 							brush.face[1].v[2][0] = (float)backface;
 							brush.face[1].v[2][1] = Node[q[2]].p[1];
 							brush.face[1].v[2][2] = Node[q[2]].p[2];
-							
+
 							for(k0=0; k0<brush.NumFaces-2; k0++)
 							{
 								k =k0+2;
 								k1=(k0+1) % (brush.NumFaces-2);
-								
+
 								brush.face[k].v[0][0] = (float)front;
 								brush.face[k].v[0][1] = Node[q[k0]].p[1];
 								brush.face[k].v[0][2] = Node[q[k0]].p[2];
-								
+
 								brush.face[k].v[1][0] = (float)front;
 								brush.face[k].v[1][1] = Node[q[k1]].p[1];
 								brush.face[k].v[1][2] = Node[q[k1]].p[2];
-								
+
 								brush.face[k].v[2][0] = (float)backface;
 								brush.face[k].v[2][1] = Node[q[k1]].p[1];
 								brush.face[k].v[2][2] = Node[q[k1]].p[2];
@@ -1222,41 +1221,41 @@ void MapOut(int NumNodes,int NumTris, NODE *Node, TRI *Tri)
 							brush.face[0].v[0][0] = Node[q[2]].p[0];
 							brush.face[0].v[0][1] = Node[q[2]].p[1];
 							brush.face[0].v[0][2] = (float)front;
-							
+
 							brush.face[0].v[1][0] = Node[q[1]].p[0];
 							brush.face[0].v[1][1] = Node[q[1]].p[1];
 							brush.face[0].v[1][2] = (float)front;
-							
+
 							brush.face[0].v[2][0] = Node[q[0]].p[0];
 							brush.face[0].v[2][1] = Node[q[0]].p[1];
 							brush.face[0].v[2][2] = (float)front;
-							
+
 							// back
 							brush.face[1].v[0][0] = Node[q[0]].p[0];
 							brush.face[1].v[0][1] = Node[q[0]].p[1];
 							brush.face[1].v[0][2] = (float)backface;
-							
+
 							brush.face[1].v[1][0] = Node[q[1]].p[0];
 							brush.face[1].v[1][1] = Node[q[1]].p[1];
 							brush.face[1].v[1][2] = (float)backface;
-							
+
 							brush.face[1].v[2][0] = Node[q[2]].p[0];
 							brush.face[1].v[2][1] = Node[q[2]].p[1];
 							brush.face[1].v[2][2] = (float)backface;
-							
+
 							for(k0=0; k0<brush.NumFaces-2; k0++)
 							{
 								k =k0+2;
 								k1=(k0+1) % (brush.NumFaces-2);
-								
+
 								brush.face[k].v[0][0] = Node[q[k0]].p[0];
 								brush.face[k].v[0][1] = Node[q[k0]].p[1];
 								brush.face[k].v[0][2] = (float)front;
-								
+
 								brush.face[k].v[1][0] = Node[q[k1]].p[0];
 								brush.face[k].v[1][1] = Node[q[k1]].p[1];
 								brush.face[k].v[1][2] = (float)front;
-								
+
 								brush.face[k].v[2][0] = Node[q[k1]].p[0];
 								brush.face[k].v[2][1] = Node[q[k1]].p[1];
 								brush.face[k].v[2][2] = (float)backface;

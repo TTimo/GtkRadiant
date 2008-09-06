@@ -93,9 +93,9 @@ void DoBkgrndToggleYZ();
 #define NUM_TOOLBAR_BUTTONS 4
 struct toolbar_button_info_s
 {
-	char *image;
-	char *text;
-	char *tip;
+	const char *image;
+	const char *text;
+	const char *tip;
 	void (*func)();
 	IToolbarButton::EType type;
 };

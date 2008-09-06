@@ -48,7 +48,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "version.h"
 
 CRadiantImageManager g_ImageManager;
-CRadiantPluginManager g_PluginsManager;    
+CRadiantPluginManager g_PluginsManager;
 
 _QERPlugSurfaceTable g_SurfaceTable;
 _QERFileSystemTable g_FileSystemTable;
@@ -127,7 +127,7 @@ void InitFileTypes()
 
   GetFileTypeRegistry()->addType(MAP_MAJOR, g_pattern_mapq3);
   GetFileTypeRegistry()->addType(MAP_MAJOR, g_pattern_mapxml);
-  
+
   GetFileTypeRegistry()->addType("region", g_pattern_regq3);
 /*
   GetFileTypeRegistry()->addType(MODEL_MAJOR, g_pattern_modelmd3);
@@ -282,7 +282,7 @@ public:
         return &elem->m_model;
       }
     }
-    
+
     elem = new CModelWrapper(id, version);
     g_ptr_array_add(m_ptrs, elem);
 
@@ -327,7 +327,7 @@ public:
     }
     mAPIs.clear();
   }
-  
+
   // CSynapseAPIManager interface -------------------
   APIDescriptor_t* BuildRequireAPI(APIDescriptor_t* pAPI)
   {
@@ -346,7 +346,7 @@ public:
     for(i=mAPIs.begin(); i!=mAPIs.end(); i++)
       AddItem((_QERPlugToolbarTable*)(*i)->mpTable);
   }
-  
+
 private:
 
   void AddItem(_QERPlugToolbarTable* pTable)
@@ -423,7 +423,7 @@ void CRadiantImageManager::LoadImage(const char *name, byte **pic, int *width, i
     }
     return;
   }
-  
+
   // start walking the interfaces
   list<CImageTableSlot *>::iterator iSlot;
   for(iSlot = mSlots.begin(); iSlot != mSlots.end(); iSlot++)
@@ -456,7 +456,7 @@ const char* CRadiantImageManager::GetNextExtension()
 
 /* plugin manager --------------------------------------- */
 APIDescriptor_t* CRadiantPluginManager::BuildRequireAPI(APIDescriptor_t *pAPI)
-{  
+{
   CPluginSlot *pSlot = new CPluginSlot(pAPI);
   mSlots.push_front(pSlot);
   return pSlot->GetDescriptor();
@@ -479,7 +479,7 @@ void CSynapseClientRadiant::ImportMap(IDataStream *in, CPtrArray *ents, const ch
   }
   else if (strcmp(type,"xmap")==0)
   {
-    g_MapTable2.m_pfnMap_Read(in, ents);    
+    g_MapTable2.m_pfnMap_Read(in, ents);
   }
   else
     Sys_FPrintf(SYS_WRN, "WARNING: no module found for map interface type '%s'\n", type);
@@ -512,7 +512,7 @@ CPluginSlot::CPluginSlot(APIDescriptor_t *pAPI)
 }
 
 CPluginSlot::~CPluginSlot()
-{  
+{
   delete mpAPI;
   delete mpTable;
   while (m_CommandStrings)
@@ -551,14 +551,14 @@ int CPluginSlot::getCommandCount()
 {
   if (!m_bReady)
     Init();
-  return g_slist_length (m_CommandStrings);  
+  return g_slist_length (m_CommandStrings);
 }
-  
+
 const char* CPluginSlot::getCommand(int n)
 {
   if (!m_bReady)
     Init();
-  return (char*)g_slist_nth_data (m_CommandStrings, n);  
+  return (char*)g_slist_nth_data (m_CommandStrings, n);
 }
 
 void CPluginSlot::addMenuID(int n)
@@ -647,11 +647,11 @@ void CPlugInManager::InitForDir(const Str &dir)
     path += g_strModulesDir;
     // SYNAPSE
     g_pParentWnd->GetSynapseServer().AddSearchPath(path);
-  } 
+  }
 }
 
-static const XMLConfigEntry_t manager_entries[] = 
-  { 
+static const XMLConfigEntry_t manager_entries[] =
+  {
     { VFS_MAJOR,            SYN_REQUIRE, sizeof(g_FileSystemTable), &g_FileSystemTable },
     { SHADERS_MAJOR,        SYN_REQUIRE, sizeof(g_ShadersTable),    &g_ShadersTable },
     { MAP_MAJOR,            SYN_REQUIRE, sizeof(g_MapTable),        &g_MapTable },
@@ -662,9 +662,9 @@ static const XMLConfigEntry_t manager_entries[] =
 void CPlugInManager::Init()
 {
   Str synapse_config;
-  
+
   Cleanup();
-  
+
   // set some globals
   g_qeglobals.bBSPFrontendPlugin = false;
 
@@ -675,10 +675,10 @@ void CPlugInManager::Init()
   synapse_config += "synapse.config";
   if (!g_pParentWnd->GetSynapseServer().Initialize(synapse_config.GetBuffer(), &Sys_Printf_VA))
     Error("Synpase server initialization failed (see console)\n");
-  
+
   // builtin modules
   g_pParentWnd->GetSynapseServer().EnumerateBuiltinModule(&eclass_def);
-  
+
   // APIs we provide
   g_pParentWnd->GetSynapseClient().AddAPI(RADIANT_MAJOR, NULL, sizeof(_QERFuncTable_1));
   g_pParentWnd->GetSynapseClient().AddAPI(SCRIPLIB_MAJOR, NULL, sizeof(_QERScripLibTable));
@@ -691,15 +691,15 @@ void CPlugInManager::Init()
   g_pParentWnd->GetSynapseClient().AddAPI(SELECTEDFACE_MAJOR, NULL, sizeof(_QERSelectedFaceTable));
   g_pParentWnd->GetSynapseClient().AddAPI(APPSURFACEDIALOG_MAJOR, NULL, sizeof(_QERAppSurfaceTable));
   g_pParentWnd->GetSynapseClient().AddAPI(UNDO_MAJOR, NULL, sizeof(_QERUndoTable));
-  g_pParentWnd->GetSynapseClient().AddAPI(UI_MAJOR, NULL, sizeof(_QERUITable));  
-  g_pParentWnd->GetSynapseClient().AddAPI(UIGTK_MAJOR, NULL, sizeof(_QERUIGtkTable));  
-  g_pParentWnd->GetSynapseClient().AddAPI(CAMERA_MAJOR, NULL, sizeof(_QERCameraTable));  
-  
+  g_pParentWnd->GetSynapseClient().AddAPI(UI_MAJOR, NULL, sizeof(_QERUITable));
+  g_pParentWnd->GetSynapseClient().AddAPI(UIGTK_MAJOR, NULL, sizeof(_QERUIGtkTable));
+  g_pParentWnd->GetSynapseClient().AddAPI(CAMERA_MAJOR, NULL, sizeof(_QERCameraTable));
+
   // modules configured by XML
   if ( !g_pParentWnd->GetSynapseClient().ConfigXML( &g_pParentWnd->GetSynapseServer(), "core", manager_entries ) ) {
     Error("Synapse server initialization failed (see console)\n");
   }
-  
+
   // adding a manager is a special case that ConfigXML doesn't take care of
   g_pParentWnd->GetSynapseServer().SelectClientConfig( "core" );
   char *minor;
@@ -709,11 +709,11 @@ void CPlugInManager::Init()
   }
   g_ImageManager.SetMatchAPI( IMAGE_MAJOR, minor );
   g_pParentWnd->GetSynapseClient().AddManager( &g_ImageManager );
-  
+
   // SYN_REQUIRE entries which are still hardcoded
   g_pParentWnd->GetSynapseClient().AddAPI(MAP_MAJOR, "mapxml", sizeof(g_MapTable2), SYN_REQUIRE, &g_MapTable2);
   g_pParentWnd->GetSynapseClient().AddAPI(ENTITY_MAJOR, NULL, sizeof(g_EntityTable), SYN_REQUIRE, &g_EntityTable);
-  
+
   // plugins: load anything that claims to be a plugin
   // minor becomes some kind of matching pattern
   // g_PluginsManager is an API any class, it receives several function tables as needed
@@ -850,7 +850,7 @@ void CPlugInManager::DeleteBrushHandle(void * vp)
 
 void CPlugInManager::CommitBrushHandleToMap(void * vp)
 {
-  g_bScreenUpdates = false; 
+  g_bScreenUpdates = false;
   for (int i = 0; i < m_BrushHandles.GetSize(); i++)
   {
     brush_t *pb = reinterpret_cast<brush_t*>(m_BrushHandles.GetAt(i));
@@ -863,7 +863,7 @@ void CPlugInManager::CommitBrushHandleToMap(void * vp)
       Select_Brush(pb);
     }
   }
-  g_bScreenUpdates = true; 
+  g_bScreenUpdates = true;
   Sys_UpdateWindows(W_ALL);
 }
 
@@ -971,7 +971,7 @@ void QERApp_SetCamera( vec3_t origin, vec3_t angles )
   VectorCopy( origin, g_pParentWnd->GetCamWnd()->Camera()->origin );
   VectorCopy( angles, g_pParentWnd->GetCamWnd()->Camera()->angles );
 
-  Sys_UpdateWindows( W_ALL ); // specify 
+  Sys_UpdateWindows( W_ALL ); // specify
   g_pParentWnd->OnTimer();
 }
 
@@ -1484,7 +1484,7 @@ void* WINAPI QERApp_GetEntityHandle(int nIndex)
   return static_cast<void*>(pe);
 }
 
-epair_t* WINAPI QERApp_AllocateEpair( char *key, char *val )
+epair_t* WINAPI QERApp_AllocateEpair( const char *key, const char *val )
 {
   epair_t *e = (epair_t*)qmalloc (sizeof(*e));
   e->key = (char*)qmalloc(strlen(key)+1);
@@ -1503,7 +1503,7 @@ IEpair* WINAPI QERApp_IEpairForEntityHandle(void *vp)
   return pEp;
 }
 
-IEpair* WINAPI QERApp_IEpairForProjectKeys()	
+IEpair* WINAPI QERApp_IEpairForProjectKeys()
 {
   CEpairsWrapper *pEp = new CEpairsWrapper(g_qeglobals.d_project_entity);
   pEp->IncRef();
@@ -1784,7 +1784,7 @@ void CPlugInManager::CommitEntityHandleToMap(void* vpEntity)
 
 void WINAPI QERApp_SetScreenUpdate(int bScreenUpdates)
 {
-  g_bScreenUpdates = bScreenUpdates; 
+  g_bScreenUpdates = bScreenUpdates;
 }
 
 texturewin_t* QERApp_QeglobalsTexturewin()
@@ -2123,7 +2123,7 @@ unsigned long QERApp_GetTickCount()
   gettimeofday(&tp, &tzp);
   if (!basetime)
     basetime = tp.tv_sec;
-  return (tp.tv_sec-basetime) + tp.tv_usec/1000;	
+  return (tp.tv_sec-basetime) + tp.tv_usec/1000;
 #endif
 }
 
@@ -2274,7 +2274,7 @@ bool CSynapseClientRadiant::RequestAPI(APIDescriptor_t *pAPI)
     pShadersTable->m_pfnTexture_ShowInuse = Texture_ShowInuse;
     pShadersTable->m_pfnBuildShaderList = &BuildShaderList;
     pShadersTable->m_pfnPreloadShaders = &PreloadShaders;
-    
+
     return true;
   }
   if (!strcmp(pAPI->major_name, QGL_MAJOR))
@@ -2304,7 +2304,7 @@ bool CSynapseClientRadiant::RequestAPI(APIDescriptor_t *pAPI)
     pQglTable->m_pfn_qglDeleteTextures = qglDeleteTextures;
     pQglTable->m_pfn_qglDrawElements = qglDrawElements;
     pQglTable->m_pfn_qglEnable = qglEnable;
-    pQglTable->m_pfn_qglEnableClientState = qglEnableClientState;	
+    pQglTable->m_pfn_qglEnableClientState = qglEnableClientState;
     pQglTable->m_pfn_qglEnd = qglEnd;
     pQglTable->m_pfn_qglEndList = qglEndList;
     pQglTable->m_pfn_qglFogf = qglFogf;
@@ -2380,7 +2380,7 @@ bool CSynapseClientRadiant::RequestAPI(APIDescriptor_t *pAPI)
     pDataTable->m_pfnSelectedBrushes = QERApp_SelectedBrushes;
     pDataTable->m_pfnFilteredBrushes = QERApp_FilteredBrushes;
     pDataTable->m_pfnLstSkinCache = QERApp_LstSkinCache;
-    
+
     return true;
   }
   if (!strcmp(pAPI->major_name, PATCH_MAJOR))
@@ -2389,24 +2389,24 @@ bool CSynapseClientRadiant::RequestAPI(APIDescriptor_t *pAPI)
     pPatchTable->m_pfnPatch_Alloc = &Patch_Alloc;
     pPatchTable->m_pfnAddBrushForPatch = &AddBrushForPatch;
     pPatchTable->m_pfnMakeNewPatch = &MakeNewPatch;
-  
+
     return true;
   }
   if (!strcmp(pAPI->major_name, ECLASSMANAGER_MAJOR))
   {
     _EClassManagerTable *pEClassManTable = static_cast<_EClassManagerTable *>(pAPI->mpTable);
-    
+
     pEClassManTable->m_pfnEclass_InsertAlphabetized = &Eclass_InsertAlphabetized;
     pEClassManTable->m_pfnGet_Eclass_E = &Get_EClass_E;
     pEClassManTable->m_pfnSet_Eclass_Found = &Set_Eclass_Found;
     pEClassManTable->m_pfnGet_Parsing_Single = &Get_Parsing_Single;
     pEClassManTable->m_pfnEClass_Create = &EClass_Create;
     pEClassManTable->m_pfnEclass_ForName = &Eclass_ForName;
-  
+
     return true;
   }
   if (!strcmp(pAPI->major_name, SELECTEDFACE_MAJOR))
-  { 
+  {
     _QERSelectedFaceTable *pSelectedFaceTable = static_cast<_QERSelectedFaceTable *>(pAPI->mpTable);
 
     pSelectedFaceTable->m_pfnGetSelectedFaceCount = &QERApp_GetSelectedFaceCount;
@@ -2452,7 +2452,7 @@ bool CSynapseClientRadiant::RequestAPI(APIDescriptor_t *pAPI)
     return true;
   }
   if (!strcmp(pAPI->major_name, UNDO_MAJOR))
-  { 
+  {
     _QERUndoTable *pUndoTable = static_cast<_QERUndoTable *>(pAPI->mpTable);
 
     pUndoTable->m_pfnUndo_Start = &Undo_Start;
@@ -2482,7 +2482,7 @@ bool CSynapseClientRadiant::RequestAPI(APIDescriptor_t *pAPI)
     return true;
   }
   if (!strcmp(pAPI->major_name, UI_MAJOR))
-  { 
+  {
     _QERUITable *pUITable = static_cast<_QERUITable *>(pAPI->mpTable);
 
     pUITable->m_pfnCreateGLWindow = QERApp_CreateGLWindow;
@@ -2495,7 +2495,7 @@ bool CSynapseClientRadiant::RequestAPI(APIDescriptor_t *pAPI)
     return true;
   }
   if (!strcmp(pAPI->major_name, UIGTK_MAJOR))
-  { 
+  {
     _QERUIGtkTable *pUIGtkTable = static_cast<_QERUIGtkTable *>(pAPI->mpTable);
 
     pUIGtkTable->m_pfn_GetQeglobalsGLWidget = &QERApp_GetQeGlobalsGLWidget;

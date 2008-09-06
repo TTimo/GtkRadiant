@@ -135,7 +135,7 @@ bool DEntity::LoadFromPrt(char *filename)
 
 	ClearBrushes();
 	ClearEPairs();
-	
+
   bool build = false;
 	for(unsigned int i = 0; i < portals.node_count; i++)
 	{
@@ -144,7 +144,7 @@ bool DEntity::LoadFromPrt(char *filename)
 
 		for(unsigned int j = 0; j < portals.node[i].portal_count; j++)
 		{
-      for(unsigned int k = 0; k < portals.node[i].portal[j].point_count-2; k++) 
+      for(unsigned int k = 0; k < portals.node[i].portal[j].point_count-2; k++)
       {
 	      vec3_t v1, v2, normal, n;
 	      VectorSubtract(portals.node[i].portal[j].point[k+2].p, portals.node[i].portal[j].point[k+1].p, v1);
@@ -152,7 +152,7 @@ bool DEntity::LoadFromPrt(char *filename)
 	      CrossProduct(v1, v2, n);
         VectorNormalize(n, v2);
 
-        if(k == 0) 
+        if(k == 0)
         {
           VectorCopy(v2, normal);
         }
@@ -520,8 +520,8 @@ void DEntity::ClearEPairs()
 	epairList.clear();
 }
 
-void DEntity::AddEPair(char *key, char *value) {	
-	DEPair* newEPair; 
+void DEntity::AddEPair(const char *key, const char *value) {
+	DEPair* newEPair;
 	newEPair = FindEPairByKey( key );
 	if(!newEPair) {
 		newEPair = new DEPair;
@@ -539,14 +539,14 @@ void DEntity::LoadEPairList(epair_t *epl)
 	{
 		if(!strcmp(ep->key, "classname"))
 			SetClassname(ep->value);
-		else	
+		else
 			AddEPair(ep->key, ep->value);
 
 		ep = ep->next;
 	}
 }
 
-bool DEntity::ResetTextures(const char* textureName, float fScale[2],     float fShift[2],    int rotation, const char* newTextureName, 
+bool DEntity::ResetTextures(const char* textureName, float fScale[2],     float fShift[2],    int rotation, const char* newTextureName,
                             int bResetTextureName,    int bResetScale[2], int bResetShift[2], int bResetRotation, bool rebuild)
 {
 	g_FuncTable.m_pfnDeselectAllBrushes();
@@ -557,7 +557,7 @@ bool DEntity::ResetTextures(const char* textureName, float fScale[2],     float 
 
 	for(list<DBrush *>::const_iterator resetBrush=brushList.begin(); resetBrush!=brushList.end(); resetBrush++)
 	{
-		bool tmp = (*resetBrush)->ResetTextures(textureName,        fScale,       fShift,       rotation, newTextureName, 
+		bool tmp = (*resetBrush)->ResetTextures(textureName,        fScale,       fShift,       rotation, newTextureName,
                                             bResetTextureName,  bResetScale,  bResetShift,  bResetRotation);
 
 		if(tmp)
@@ -566,7 +566,7 @@ bool DEntity::ResetTextures(const char* textureName, float fScale[2],     float 
 
 			if(rebuild)
 			{
-        entity_t *pE = (*resetBrush)->QER_brush->owner;       
+        entity_t *pE = (*resetBrush)->QER_brush->owner;
 				g_FuncTable.m_pfnDeleteBrushHandle((*resetBrush)->QER_brush);
         (*resetBrush)->BuildInRadiant(FALSE, NULL, pE->entityId == 0 ? NULL : pE);
 
@@ -589,7 +589,7 @@ bool DEntity::ResetTextures(const char* textureName, float fScale[2],     float 
 
 			  if(rebuild)
 			  {
-          entity_t *pE = (*resetPatch)->QER_brush->owner;       
+          entity_t *pE = (*resetPatch)->QER_brush->owner;
 				  g_FuncTable.m_pfnDeleteBrushHandle((*resetPatch)->QER_brush);
           (*resetPatch)->BuildInRadiant(pE->entityId == 0 ? NULL : pE);
 			  }

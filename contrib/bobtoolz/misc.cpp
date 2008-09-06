@@ -117,7 +117,7 @@ void SetInitialStairPos(int dir, vec3_t min, vec3_t max, float width)
 	}
 }
 
-char* TranslateString (char *buf)
+char* TranslateString (const char *buf)
 {
 	static	char	buf2[32768];
 	int		i, l;
@@ -140,7 +140,7 @@ char* TranslateString (char *buf)
 	return buf2;
 }
 
-void Sys_ERROR (char* text, ...)
+void Sys_ERROR (const char* text, ...)
 {
 	va_list argptr;
 	char	buf[32768];
@@ -191,7 +191,7 @@ const char* ExtractFilename(const char* path)
 	return ++p;
 }
 
-extern char* PLUGIN_NAME;
+extern const char* PLUGIN_NAME;
 /*char* GetGameFilename(char* buffer, const char* filename)
 {
 	strcpy(buffer, g_FuncTable.m_pfnGetGamePath());

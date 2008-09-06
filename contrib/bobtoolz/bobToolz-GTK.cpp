@@ -36,10 +36,10 @@ _QERUITable					  g_MessageTable;			// for path plotting (listening for update)
 _QEREntityTable			  g_EntityTable;
 
 // plugin name
-char* PLUGIN_NAME = "bobToolz";
+const char* PLUGIN_NAME = "bobToolz";
 
 // commands in the menu
-static char* PLUGIN_COMMANDS = "About...,-,Reset Textures...,PitOMatic,-,Vis Viewer,Brush Cleanup,Polygon Builder,Caulk Selection,-,Tree Planter,Drop Entity,Plot Splines,-,Merge Patches,Split patches,Turn edge";
+static const char* PLUGIN_COMMANDS = "About...,-,Reset Textures...,PitOMatic,-,Vis Viewer,Brush Cleanup,Polygon Builder,Caulk Selection,-,Tree Planter,Drop Entity,Plot Splines,-,Merge Patches,Split patches,Turn edge";
 
 // globals
 GtkWidget *g_pRadiantWnd = NULL;
@@ -108,14 +108,14 @@ GtkWidget* new_pixmap (char* filename) {
 	GdkBitmap *mask;
 	GtkWidget *pixmap;
 
-	g_FuncTable.m_pfnLoadBitmap(filename, (void **)&gdkpixmap, (void **)&mask);	
+	g_FuncTable.m_pfnLoadBitmap(filename, (void **)&gdkpixmap, (void **)&mask);
 	pixmap = gtk_pixmap_new (gdkpixmap, mask);
 
 	gdk_pixmap_unref (gdkpixmap);
 	gdk_pixmap_unref (mask);
 
 	return pixmap;
-} 
+}
 
 class CBobtoolzToolbarButton : public IToolbarButton
 {
@@ -140,7 +140,7 @@ public:
     switch( mIndex ) {
       case 3: return eToggleButton;
       default: return eButton;
-    }    
+    }
   }
   virtual const char* getText() const
   {
@@ -210,7 +210,7 @@ public:
   // CSynapseClient API
   bool RequestAPI(APIDescriptor_t *pAPI);
   const char* GetInfo();
-  
+
   CSynapseClientBobtoolz() { }
   virtual ~CSynapseClientBobtoolz() { }
 };
@@ -234,7 +234,7 @@ extern "C" CSynapseClient* SYNAPSE_DLL_EXPORT Synapse_EnumerateInterfaces( const
   g_pSynapseServer = pServer;
   g_pSynapseServer->IncRef();
   Set_Syn_Printf(g_pSynapseServer->Get_Syn_Printf());
-    
+
   g_SynapseClient.AddAPI(TOOLBAR_MAJOR, BOBTOOLZ_MINOR, sizeof(_QERPlugToolbarTable));
   g_SynapseClient.AddAPI(PLUGIN_MAJOR, BOBTOOLZ_MINOR, sizeof(_QERPluginTable));
 

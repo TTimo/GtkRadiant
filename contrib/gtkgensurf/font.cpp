@@ -176,7 +176,7 @@ void texfont_init ()
 
   int i, j, x, y;
   float inv = 1.0f/128;
-  char *charlines[16] = { 
+  const char *charlines[16] = {
     "abcdefghijklmn", "opqrstuvwxyz0", "123456789ABC", "DEFGHIJKLMN", 
     "OPQRSTUVWX", "YZ,.!;:<>/?{}@$%", "&*()-+=_[] #" };
   unsigned char lefts[7][17] = { 

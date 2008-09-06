@@ -26,7 +26,7 @@ const char* GetCurrentTexture();
 
 void FillDefaultTexture(_QERFaceData* faceData, vec3_t va, vec3_t vb, vec3_t vc, const char* texture);
 
-void Sys_ERROR (char* text, ...);
+void Sys_ERROR (const char* text, ...);
 
 void BuildMiniPrt(list<Str>* exclusionList);
 

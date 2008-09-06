@@ -42,7 +42,7 @@ DEPair::~DEPair()
 // Implementation
 //////////////////////////////////////////////////////////////////////
 
-void DEPair::Build(char *pKey, char *pValue)
+void DEPair::Build(const char *pKey, const char *pValue)
 {
   key = pKey;
   value = pValue;

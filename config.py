@@ -267,9 +267,9 @@ class Config:
 				self.CheckoutOrUpdate( svnurl, os.path.join( path, 'installs', pak ) )
 
 	def Setup( self ):
-			if ( platform == 'local' ):
-				# special case, fetch external paks under the local install directory
-				self.FetchGamePaks( self.install_directory )
+		if ( platform == 'local' ):
+			# special case, fetch external paks under the local install directory
+			self.FetchGamePaks( self.install_directory )
 		# NOTE: unrelated to self.setup_platforms - grab support files and binaries and install them
 		if ( self.platform == 'Windows' ):
 			depsfile = 'GtkR-deps-1.6-3.zip'
@@ -292,7 +292,7 @@ class Config:
 				if ( ret != 0 ):
 					raise Exception( 'unzip dependencies file failed' )
 				os.chdir( backup_cwd )
-				
+
 				# copy all the dependent runtime data to the install directory
 				srcdir = os.path.dirname( backup_cwd )
 				for f in [

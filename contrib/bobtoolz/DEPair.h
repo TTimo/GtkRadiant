@@ -28,13 +28,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #pragma once
 #endif // _MSC_VER > 1000
 
-class DEPair  
+class DEPair
 {
 public:
 	DEPair();
 	virtual ~DEPair();
 
-	void Build(char* pKey, char* pValue);
+	void Build(const char* pKey, const char* pValue);
 
 	Str	key;
 	Str	value;

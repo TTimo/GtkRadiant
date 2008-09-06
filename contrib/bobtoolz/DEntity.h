@@ -33,7 +33,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #pragma once
 #endif // _MSC_VER > 1000
 
-class DEntity  
+class DEntity
 {
 public:
 	void RemoveFromRadiant();
@@ -47,7 +47,7 @@ public:
 
 //	epair functions........
 	void LoadEPairList(epair_t* epl);
-	void AddEPair(char* key, char* value);
+	void AddEPair(const char* key, const char* value);
 	void ClearEPairs();
 	DEPair* FindEPairByKey(const char* keyname);
 //	---------------------------------------------
@@ -73,7 +73,7 @@ public:
 	bool* BuildDuplicateList();
 	bool* BuildIntersectList();
 //	---------------------------------------------
-	
+
 
 //	brush operations
 	void ClearBrushes();	// clears brush list and frees memory for brushes

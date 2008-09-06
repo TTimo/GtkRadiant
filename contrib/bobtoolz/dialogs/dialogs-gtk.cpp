@@ -161,7 +161,7 @@ bool ValidateTextFloatRange(const char* pData, float min, float max, char* error
 	return FALSE;
 }
 
-bool ValidateTextIntRange(const char* pData, int min, int max, char* error_title, int* value)
+bool ValidateTextIntRange(const char* pData, int min, int max, const char* error_title, int* value)
 {
 	char error_buffer[256];
 	sprintf(error_buffer, "Please Enter An Integer Between %i and %i", min, max);
