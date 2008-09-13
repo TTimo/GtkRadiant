@@ -239,7 +239,7 @@ qboolean SnapNormal( vec3_t normal ){
    snaps a plane to normal/distance epsilons
  */
 
-void SnapPlane( vec3_t normal, vec_t *dist ){
+void SnapPlane( vec3_t normal, vec_t *dist, vec3_t center ){
 // SnapPlane disabled by LordHavoc because it often messes up collision
 // brushes made from triangles of embedded models, and it has little effect
 // on anything else (axial planes are usually derived from snapped points)
@@ -247,7 +247,13 @@ void SnapPlane( vec3_t normal, vec_t *dist ){
    SnapPlane reenabled by namespace because of multiple reports of
    q3map2-crashes which were triggered by this patch.
  */
+	// div0: ensure the point "center" stays on the plane (actually, this
+	// rotates the plane around the point center).
+	// if center lies on the plane, it is guaranteed to stay on the plane by
+	// this fix.
+	vec_t centerDist = DotProduct( normal, center );
 	SnapNormal( normal );
+	*dist += ( DotProduct( normal, center ) - centerDist );
 
 	// TODO: Rambetter has some serious comments here as well.  First off,
 	// in the case where a normal is non-axial, there is nothing special
@@ -315,7 +321,7 @@ void SnapPlaneImproved( vec3_t normal, vec_t *dist, int numPoints, const vec3_t 
    must be within an epsilon distance of the plane
  */
 
-int FindFloatPlane( vec3_t normal, vec_t dist, int numPoints, vec3_t *points )
+int FindFloatPlane( vec3_t normal, vec_t dist, int numPoints, vec3_t *points ) // NOTE: this has a side effect on the normal. Good or bad?
 
 #ifdef USE_HASHING
 
@@ -323,12 +329,16 @@ int FindFloatPlane( vec3_t normal, vec_t dist, int numPoints, vec3_t *points )
 	int i, j, hash, h;
 	plane_t *p;
 	vec_t d;
+	vec3_t centerofweight;
 
+	VectorClear( centerofweight );
+	for ( i = 0; i < numPoints; ++i )
+		VectorMA( centerofweight, 1.0 / numPoints, points[i], centerofweight );
 
 #if Q3MAP2_EXPERIMENTAL_SNAP_PLANE_FIX
 	SnapPlaneImproved( normal, &dist, numPoints, (const vec3_t *) points );
 #else
-	SnapPlane( normal, &dist );
+	SnapPlane( normal, &dist, centerofweight );
 #endif
 	/* hash the plane */
 	hash = ( PLANE_HASHES - 1 ) & (int) fabs( dist );
@@ -382,7 +392,13 @@ int FindFloatPlane( vec3_t normal, vec_t dist, int numPoints, vec3_t *points )
 #if Q3MAP2_EXPERIMENTAL_SNAP_PLANE_FIX
 	SnapPlaneImproved( normal, &dist, numPoints, (const vec3_t *) points );
 #else
-	SnapPlane( normal, &dist );
+	vec3_t centerofweight;
+
+	VectorClear( centerofweight );
+	for ( i = 0; i < numPoints; ++i )
+		VectorMA( centerofweight, 1.0 / numPoints, points[i], centerofweight );
+
+	SnapPlane( normal, &dist, centerofweight );
 #endif
 	for ( i = 0, p = mapplanes; i < nummapplanes; i++, p++ )
 	{

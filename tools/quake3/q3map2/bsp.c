@@ -852,7 +852,9 @@ int BSPMain( int argc, char **argv ){
 			deepBSP = qtrue;
 		}
 		else if( !strcmp( argv[ i ], "-bsp" ) )
+		{
 			Sys_Printf( "-bsp argument unnecessary\n" );
+		}
 		else
 		{
 			Sys_Printf( "WARNING: Unknown option \"%s\"\n", argv[ i ] );

@@ -411,6 +411,13 @@ void FinishRawLightmap( rawLightmap_t *lm ){
 	memset( lm->superNormals, 0, size );
 
 	/* allocate cluster map storage */
+	size = lm->sw * lm->sh * SUPER_FLOODLIGHT_SIZE * sizeof( float );
+	if ( lm->superFloodLight == NULL ) {
+		lm->superFloodLight = safe_malloc( size );
+	}
+	memset( lm->superFloodLight, 0, size );
+
+	/* allocate cluster map storage */
 	size = lm->sw * lm->sh * sizeof( int );
 	if ( lm->superClusters == NULL ) {
 		lm->superClusters = safe_malloc( size );
@@ -1210,7 +1217,7 @@ void StitchSurfaceLightmaps( void ){
 		numStitched, numCandidates, numLuxels, f, fOld, start;
 	rawLightmap_t   *lm, *a, *b, *c[ MAX_STITCH_CANDIDATES ];
 	float           *luxel, *luxel2, *origin, *origin2, *normal, *normal2,
-					 sampleSize, average[ 3 ], totalColor, ootc, *luxels[ MAX_STITCH_LUXELS ];
+					sampleSize, average[ 3 ], totalColor, ootc, *luxels[ MAX_STITCH_LUXELS ];
 
 
 	/* disabled for now */
@@ -2111,8 +2118,7 @@ static void FindOutLightmaps( rawLightmap_t *lm ){
 			/* allocate two new output lightmaps */
 			numOutLightmaps += 2;
 			olm = safe_malloc( numOutLightmaps * sizeof( outLightmap_t ) );
-			if ( !olm )
-			{
+			if ( !olm ) {
 				Error( "FindOutLightmaps: Failed to allocate memory.\n" );
 			}
 
