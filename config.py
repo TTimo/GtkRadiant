@@ -267,7 +267,11 @@ class Config:
 				self.CheckoutOrUpdate( svnurl, os.path.join( path, 'installs', pak ) )
 
 	def Setup( self ):
-		if ( platform == 'local' ):
+		try:
+			self.setup_platforms.index( 'local' )
+		except:
+			pass
+		else:
 			# special case, fetch external paks under the local install directory
 			self.FetchGamePaks( self.install_directory )
 		# NOTE: unrelated to self.setup_platforms - grab support files and binaries and install them
