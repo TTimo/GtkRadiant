@@ -52,9 +52,9 @@ game_t struct
 
 {
 	"quakelive",		/* -game x */
-	"baseq3",			/* default base game data dir (FIXME what does quake live really use?) */
-	".q3a",				/* unix home sub-dir (FIXME what does quake live really use?) */
-	"quake",			/* magic path word (FIXME where does quake live install to?) */
+	"baseq3",			/* default base game data dir */
+	".q3a",				/* unix home sub-dir */
+	"quake",			/* magic path word */
 	"scripts",			/* shader directory */
 	64,					/* max lightmapped surface verts */
 	999,				/* max surface verts */
