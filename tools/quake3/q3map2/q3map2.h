@@ -1833,6 +1833,10 @@ Q_EXTERN game_t				games[]
 							{
 								#include "game_quake3.h"
 								,
+								#include "game_quakelive.h"/* most be after game_quake3.h as they share defines! */
+								,
+								#include "game_nexuiz.h"/* most be after game_quake3.h as they share defines! */
+								,
 								#include "game_tremulous.h" /*LinuxManMikeC: must be after game_quake3.h, depends on #define's set in it */
 								,
 								#include "game_tenebrae.h"
