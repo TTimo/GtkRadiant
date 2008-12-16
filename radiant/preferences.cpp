@@ -3295,6 +3295,9 @@ void CGameInstall::BuildDialog() {
 		case GAME_TREMULOUS:
 			gtk_combo_box_append_text( GTK_COMBO_BOX( combo ), _("Tremulous") );
 			break;
+		case GAME_JA:
+			gtk_combo_box_append_text( GTK_COMBO_BOX( combo ), _("Jedi Academy and mods") );
+			break;
 		}
 		iGame++;
 	}
@@ -3473,6 +3476,18 @@ void CGameInstall::Run() {
 		fprintf( fg, "  basegame=\"base\"\n" );
 		break;
 	}
+	case GAME_JA: {
+		fprintf( fg, "  "TOOLS_ATTRIBUTE"=\"%sinstalls/JAPack/game\"\n", g_strAppPath.GetBuffer() );
+		fprintf( fg, "  prefix=\".ja\"\n" );
+		Str source = g_strAppPath.GetBuffer();
+		source += "installs/";
+		source += JA_PACK;
+		source += "/install/";
+		Str dest = m_strEngine.GetBuffer();
+		CopyTree( source.GetBuffer(), dest.GetBuffer() );
+		fprintf( fg, "  basegame=\"base\"\n" );
+		break;
+	}
 	}
 	fprintf( fg, "/>\n" );
 	fclose( fg );
@@ -3515,6 +3530,9 @@ void CGameInstall::ScanGames() {
 		}
 		if ( stricmp( dirname, TREMULOUS_PACK ) == 0 ) {
 			m_availGames[ iGame++ ] = GAME_TREMULOUS;
+		}
+		if ( stricmp( dirname, JA_PACK ) == 0 ) {
+			m_availGames[ iGame++ ] = GAME_JA;
 		}
 	}
 }
