@@ -77,24 +77,33 @@ void GenerateBitmapMapping ()
 
 static unsigned char* OpenBitmapFile ()
 {
-  int bmWidth;
-  int bmHeight;
-  unsigned char bmPlanes;
-  unsigned char bmBitsPixel;
-  unsigned char m1,m2;
-  unsigned long sizeimage;
-  short res1,res2;
-  long filesize, pixoff;
-  long bmisize, compression;
-  long xscale, yscale;
-  long colors, impcol;
-  unsigned long m_bytesRead = 0;
+#define INVALID_FORMAT do{\
+  fprintf(stderr,"%s:%d: Error file '%s' is malformed.\n",__FILE__,__LINE__,gbmp.name);\
+  fclose(fp);\
+  return NULL;\
+}while(0);
+
+  int32_t bmWidth;
+  int32_t bmHeight;
+  uint16_t bmPlanes;
+  uint16_t bmBitsPixel;
+  uint8_t m1,m2;
+  uint32_t sizeimage;
+  int16_t res1,res2;
+  int32_t filesize, pixoff;
+  int32_t bmisize, compression;
+  int32_t xscale, yscale;
+  int32_t colors, impcol;
+  uint32_t m_bytesRead = 0;
   unsigned char *image;
   FILE *fp;
 
   fp = fopen (gbmp.name, "rb");
   if (fp == NULL)
-    return NULL;
+  {
+	  fprintf(stderr,"Error: Invalid filename '%s'\n",gbmp.name);
+	  return NULL;
+  }
 
   long rc;
   rc = fread(&m1, 1, 1, fp);
@@ -108,62 +117,58 @@ static unsigned char* OpenBitmapFile ()
   rc = fread(&m2, 1, 1, fp);
   m_bytesRead++;
   if ((m1 != 'B') || (m2 != 'M'))
-  {
-    fclose(fp);
-    return NULL;
-  }
+  INVALID_FORMAT;
 
-  rc = fread((long*)&(filesize),4,1,fp); m_bytesRead+=4;
-  if (rc != 1) { fclose(fp); return NULL; }
+  rc = fread((uint32_t*)&(filesize),4,1,fp); m_bytesRead+=4;
+  if (rc != 1)  INVALID_FORMAT;
 
-  rc = fread((int*)&(res1),2,1,fp); m_bytesRead+=2;
-  if (rc != 1) { fclose(fp); return NULL; }
+  rc = fread((uint16_t*)&(res1),2,1,fp); m_bytesRead+=2;
+  if (rc != 1) INVALID_FORMAT;
 
-  rc = fread((int*)&(res2),2,1,fp); m_bytesRead+=2;
-  if (rc != 1) { fclose(fp); return NULL; }
+  rc = fread((uint16_t*)&(res2),2,1,fp); m_bytesRead+=2;
+  if (rc != 1) INVALID_FORMAT;
 
-  rc = fread((long*)&(pixoff),4,1,fp); m_bytesRead+=4;
-  if (rc != 1) { fclose(fp); return NULL; }
+  rc = fread((uint32_t*)&(pixoff),4,1,fp); m_bytesRead+=4;
+  if (rc != 1) INVALID_FORMAT;
 
-  rc = fread((long*)&(bmisize),4,1,fp); m_bytesRead+=4;
-  if (rc != 1) { fclose(fp); return NULL; }
+  rc = fread((uint32_t*)&(bmisize),4,1,fp); m_bytesRead+=4;
+  if (rc != 1) INVALID_FORMAT;
 
-  rc = fread((long  *)&(bmWidth),4,1,fp); m_bytesRead+=4;
-  if (rc != 1) { fclose(fp); return NULL; }
+  rc = fread((uint32_t  *)&(bmWidth),4,1,fp); m_bytesRead+=4;
+  if (rc != 1) INVALID_FORMAT;
 
-  rc = fread((long*)&(bmHeight),4,1,fp); m_bytesRead+=4;
-  if (rc != 1) { fclose(fp); return NULL; }
+  rc = fread((uint32_t*)&(bmHeight),4,1,fp); m_bytesRead+=4;
+  if (rc != 1) INVALID_FORMAT;
 
-  rc = fread((int*)&(bmPlanes),2,1,fp); m_bytesRead+=2;
-  if (rc != 1) { fclose(fp); return NULL; }
+  rc = fread((uint16_t*)&(bmPlanes),2,1,fp); m_bytesRead+=2;
+  if (rc != 1) INVALID_FORMAT;
 
-  rc = fread((int*)&(bmBitsPixel),2,1,fp); m_bytesRead+=2;
-  if (rc != 1) { fclose(fp); return NULL; }
+  rc = fread((uint16_t*)&(bmBitsPixel),2,1,fp); m_bytesRead+=2;
+  if (rc != 1)  INVALID_FORMAT;
 
-  rc = fread((long*)&(compression),4,1,fp); m_bytesRead+=4;
-  if (rc != 1) { fclose(fp); return NULL; }
+  rc = fread((uint32_t*)&(compression),4,1,fp); m_bytesRead+=4;
+  if (rc != 1)  INVALID_FORMAT;
 
-  rc = fread((long*)&(sizeimage),4,1,fp); m_bytesRead+=4;
-  if (rc != 1) {fclose(fp); return NULL; }
+  rc = fread((uint32_t*)&(sizeimage),4,1,fp); m_bytesRead+=4;
+  if (rc != 1)  INVALID_FORMAT;
 
-  rc = fread((long*)&(xscale),4,1,fp); m_bytesRead+=4;
-  if (rc != 1) { fclose(fp); return NULL; }
+  rc = fread((uint32_t*)&(xscale),4,1,fp); m_bytesRead+=4;
+  if (rc != 1)  INVALID_FORMAT;
 
-  rc = fread((long*)&(yscale),4,1,fp); m_bytesRead+=4;
-  if (rc != 1) { fclose(fp); return NULL; }
+  rc = fread((uint32_t*)&(yscale),4,1,fp); m_bytesRead+=4;
+  if (rc != 1)  INVALID_FORMAT;
 
-  rc = fread((long*)&(colors),4,1,fp); m_bytesRead+=4;
-  if (rc != 1) { fclose(fp); return NULL; }
+  rc = fread((uint32_t*)&(colors),4,1,fp); m_bytesRead+=4;
+  if (rc != 1)  INVALID_FORMAT;
 
-  rc = fread((long*)&(impcol),4,1,fp); m_bytesRead+=4;
-  if (rc != 1) { fclose(fp); return NULL; }
+  rc = fread((uint32_t*)&(impcol),4,1,fp); m_bytesRead+=4;
+  if (rc != 1)  INVALID_FORMAT;
 
   if (bmBitsPixel != 8)
   {
     g_FuncTable.m_pfnMessageBox (g_pWnd, "This is not an 8-bit image. GenSurf can't use it.",
                                  "Bitmap", MB_ICONEXCLAMATION, NULL);
-    fclose(fp);
-    return NULL; 
+     INVALID_FORMAT;
   }
 
   if (colors == 0)
@@ -180,40 +185,35 @@ static unsigned char* OpenBitmapFile ()
       m_bytesRead++;
       if (rc!=1)
       {
-        fclose(fp);
-        return NULL;
+	       INVALID_FORMAT;
       }
 
       rc = fread(&g, 1, 1, fp); 
       m_bytesRead++;
       if (rc!=1)
       {
-        fclose(fp);
-        return NULL;
+	       INVALID_FORMAT;
       }
 
       rc = fread(&r, 1, 1, fp); 
       m_bytesRead++;
       if (rc != 1)
       {
-        fclose(fp);
-        return NULL;
+	       INVALID_FORMAT;
       }
 
       rc = fread(&dummy, 1, 1, fp); 
       m_bytesRead++;
       if (rc != 1)
       {
-        fclose(fp);
-        return NULL;
+	       INVALID_FORMAT;
       }
     }
   }
 
   if ((long)m_bytesRead > pixoff)
   {
-    fclose(fp);
-    return NULL;
+	   INVALID_FORMAT;
   }
 
   while ((long)m_bytesRead < pixoff)
@@ -231,8 +231,6 @@ static unsigned char* OpenBitmapFile ()
 
   if (image != NULL) 
   {
-    gbmp.width = w;
-    gbmp.height = h;
     unsigned char* outbuf = image;
     long row = 0;
     long rowOffset = 0;
@@ -261,8 +259,7 @@ static unsigned char* OpenBitmapFile ()
               if (fread(&inbyte,1,1,fp) != 1)
               {
                 free(image);
-                fclose(fp);
-                return NULL;
+		 INVALID_FORMAT;
               }
               m_bytesRead++;
             }
@@ -283,8 +280,7 @@ static unsigned char* OpenBitmapFile ()
             if (fread(&dummy,1,1,fp)!=1)
             {
               free(image);
-              fclose(fp);
-              return NULL;
+	       INVALID_FORMAT;
             }
             m_bytesRead++;
           }
@@ -402,18 +398,25 @@ static unsigned char* OpenBitmapFile ()
     }
   }
   fclose(fp);
+
+  gbmp.width = w;
+  gbmp.height = h;
+  if(gbmp.colors)
+	free(gbmp.colors);
+  gbmp.colors = image;
   return image;
+
+
 }
 
 bool OpenBitmap ()
 {
-  if (gbmp.colors)
-    free (gbmp.colors);
 
-  gbmp.colors = OpenBitmapFile ();
+  OpenBitmapFile ();
 
   if (!gbmp.colors)
   {
+    g_print("failed to load file gbmp %s\n",gbmp.name);
     char Text[256];
 
     sprintf (Text, "Error opening %s", gbmp.name);

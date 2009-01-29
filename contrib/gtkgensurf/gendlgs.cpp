@@ -894,11 +894,6 @@ static gint bitmap_file_entryfocusout(GtkWidget* widget, GdkEventFocus* event, g
   strcpy (filename, gtk_entry_get_text (GTK_ENTRY(widget)));
   if(strcmp (filename,gbmp.name))
   {
-    if (gbmp.colors)
-    {
-      free(gbmp.colors);
-      gbmp.colors=NULL;
-    }
     strcpy (gbmp.name,filename);
     if (strlen(gbmp.name) )
       OpenBitmap ();

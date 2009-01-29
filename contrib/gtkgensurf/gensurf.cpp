@@ -133,10 +133,11 @@ bool GenSurfInit ()
   else */
     Game = QUAKE3;
 
-  ReadIniFile (gszIni);
 
   if (g_pWnd == NULL)
     g_pWnd = create_main_dialog ();
+
+  ReadIniFile (gszIni);
 
   return true;
 }
@@ -291,9 +292,10 @@ void ReadIniFile (const char *file)
   if(!strlen(Texture[GENESIS3D][0])) strcpy(Texture[GENESIS3D][0],"textures/rock13");
   if(!strlen(Texture[QUAKE3][0]))    strcpy(Texture[QUAKE3][0],   "textures/organics/grass3");
   if(!strlen(Texture[QUAKE3][1]))    strcpy(Texture[QUAKE3][1],   "textures/common/caulk");
-
   strcpy (gbmp.name, g_FuncTable.m_pfnProfileLoadString (file, "Bitmap","Filename",""));
 
+
+  gbmp.colors = NULL;
   if (strlen(gbmp.name))
     OpenBitmap ();
 
