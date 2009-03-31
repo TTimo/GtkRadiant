@@ -88,8 +88,8 @@ static void SelectSplitPlaneNum( node_t *node, face_t *list, int *splitPlaneNum,
 	vec3_t normal;
 	float dist;
 	int planenum;
-
-
+	float sizeBias;
+	
 	/* ydnar: set some defaults */
 	*splitPlaneNum = -1; /* leaf */
 	*compileFlags = 0;
@@ -148,11 +148,30 @@ static void SelectSplitPlaneNum( node_t *node, face_t *list, int *splitPlaneNum,
 				back++;
 			}
 		}
-		value =  5 * facing - 5 * splits; // - abs(front-back);
-		if ( plane->type < 3 ) {
-			value += 5;       // axial is better
+
+		if(bspAlternateSplitWeights)
+		{
+			// from 27
+
+			//Bigger is better
+			sizeBias=WindingArea(split->w);
+
+			//Base score = 20000 perfectly balanced
+			value = 20000-(abs(front-back));
+			value -= plane->counter;// If we've already used this plane sometime in the past try not to use it again
+			value -= facing ;       // if we're going to have alot of other surfs use this plane, we want to get it in quickly.
+			value -= splits*5;        //more splits = bad
+			value +=  sizeBias*10; //We want a huge score bias based on plane size
 		}
-		value += split->priority;       // prioritize hints higher
+		else
+		{
+			value =  5*facing - 5*splits; // - abs(front-back);
+			if ( plane->type < 3 ) {
+				value+=5;		// axial is better
+			}
+		}
+
+		value += split->priority;		// prioritize hints higher
 
 		if ( value > bestValue ) {
 			bestValue = value;
@@ -168,6 +187,8 @@ static void SelectSplitPlaneNum( node_t *node, face_t *list, int *splitPlaneNum,
 	/* set best split data */
 	*splitPlaneNum = bestSplit->planenum;
 	*compileFlags = bestSplit->compileFlags;
+
+   if (*splitPlaneNum>-1) mapplanes[ *splitPlaneNum ].counter++;
 }
 
 
@@ -323,6 +344,11 @@ tree_t *FaceBSP( face_t *list ) {
 		}
 	}
 	Sys_FPrintf( SYS_VRB, "%9d faces\n", count );
+
+   for( i = 0; i < nummapplanes; i++)
+   {
+      mapplanes[ i ].counter=0;
+   }
 
 	tree->headnode = AllocNode();
 	VectorCopy( tree->mins, tree->headnode->mins );
