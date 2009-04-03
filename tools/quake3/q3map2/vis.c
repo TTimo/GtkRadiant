@@ -1086,6 +1086,9 @@ int VisMain( int argc, char **argv ){
 		else if ( !strcmp( argv[i], "-merge" ) ) {
 			Sys_Printf( "merge = true\n" );
 			mergevis = qtrue;
+		} else if (!strcmp(argv[i], "-mergeportals")) {
+			Sys_Printf ("mergeportals = true\n");
+			mergevisportals = qtrue;
 		}
 		else if ( !strcmp( argv[i], "-nopassage" ) ) {
 			Sys_Printf( "nopassage = true\n" );
@@ -1150,9 +1153,12 @@ int VisMain( int argc, char **argv ){
 
 	/* ydnar: for getting far plane */
 	ParseEntities();
-
-	if ( mergevis ) {
+	
+	if( mergevis ) {
 		MergeLeaves();
+	}
+
+	if( mergevis || mergevisportals ) {
 		MergeLeafPortals();
 	}
 
