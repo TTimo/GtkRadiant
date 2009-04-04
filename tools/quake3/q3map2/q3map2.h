@@ -202,6 +202,7 @@
 #define HINT_PRIORITY           1000        /* ydnar: force hint splits first and antiportal/areaportal splits last */
 #define ANTIPORTAL_PRIORITY     -1000
 #define AREAPORTAL_PRIORITY     -1000
+#define DETAIL_PRIORITY		-3000
 
 #define PSIDE_FRONT             1
 #define PSIDE_BACK              2
@@ -789,7 +790,7 @@ typedef struct face_s
 	struct face_s       *next;
 	int planenum;
 	int priority;
-	qboolean checked;
+	//qboolean			checked;
 	int compileFlags;
 	winding_t           *w;
 }
@@ -1116,6 +1117,8 @@ typedef struct node_s
 	entity_t            *occupant;      /* for leak file testing */
 
 	struct portal_s     *portals;       /* also on nodes during construction */
+
+	qboolean            has_structural_children;
 }
 node_t;
 
@@ -1948,6 +1951,7 @@ Q_EXTERN qboolean noHint Q_ASSIGN( qfalse );                        /* ydnar */
 Q_EXTERN qboolean renameModelShaders Q_ASSIGN( qfalse );            /* ydnar */
 Q_EXTERN qboolean skyFixHack Q_ASSIGN( qfalse );                    /* ydnar */
 Q_EXTERN qboolean			bspAlternateSplitWeights Q_ASSIGN( qfalse );			/* 27 */
+Q_EXTERN qboolean			deepBSP Q_ASSIGN( qfalse );			/* div0 */
 
 Q_EXTERN int patchSubdivisions Q_ASSIGN( 8 );                       /* ydnar: -patchmeta subdivisions */
 
@@ -2081,10 +2085,13 @@ Q_EXTERN qboolean fastvis;
 Q_EXTERN qboolean noPassageVis;
 Q_EXTERN qboolean passageVisOnly;
 Q_EXTERN qboolean mergevis;
+Q_EXTERN qboolean mergevisportals;
 Q_EXTERN qboolean nosort;
 Q_EXTERN qboolean saveprt;
 Q_EXTERN qboolean hint;             /* ydnar */
 Q_EXTERN char inbase[ MAX_QPATH ];
+Q_EXTERN char inbase[ MAX_QPATH ];
+Q_EXTERN char globalCelShader[ MAX_QPATH ];
 
 /* other bits */
 Q_EXTERN int totalvis;
