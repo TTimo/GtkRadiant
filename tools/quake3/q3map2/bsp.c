@@ -44,6 +44,132 @@
 
    ------------------------------------------------------------------------------- */
 
+static const char *miniMap = NULL;
+
+void WriteTGA24( char *filename, byte *data, int width, int height, qboolean flip );
+qboolean BrushIntersectionWithLine(bspBrush_t *brush, vec3_t start, vec3_t dir, float *t_in, float *t_out)
+{
+	int i;
+	qboolean in = qfalse, out = qfalse;
+	bspBrushSide_t *sides = &bspBrushSides[brush->firstSide];
+
+	for(i = 0; i < brush->numSides; ++i)
+	{
+		bspPlane_t *p = &bspPlanes[sides[i].planeNum];
+		float sn = DotProduct(start, p->normal);
+		float dn = DotProduct(dir, p->normal);
+		if(dn == 0)
+		{
+			if(sn > p->dist)
+				return qfalse; // outside!
+		}
+		else
+		{
+			float t = (p->dist - sn) / dn;
+			if(dn < 0)
+			{
+				if(!in || t > *t_in)
+				{
+					*t_in = t;
+					in = qtrue;
+					// as t_in can only increase, and t_out can only decrease, early out
+					if(*t_in >= *t_out)
+						return qfalse;
+				}
+			}
+			else
+			{
+				if(!out || t < *t_out)
+				{
+					*t_out = t;
+					out = qtrue;
+					// as t_in can only increase, and t_out can only decrease, early out
+					if(*t_in >= *t_out)
+						return qfalse;
+				}
+			}
+		}
+	}
+	return in && out;
+}
+
+static float MiniMapSample(float x, float y)
+{
+	vec3_t org, dir;
+	int i, bi;
+	float t0, t1;
+	float samp;
+	bspBrush_t *b;
+	int cnt;
+
+	org[0] = x;
+	org[1] = y;
+	org[2] = 0;
+	dir[0] = 0;
+	dir[1] = 0;
+	dir[2] = 1;
+
+	cnt = 0;
+	samp = 0;
+	for(i = 0; i < bspModels[0].numBSPBrushes; ++i)
+	{
+		bi = bspModels[0].firstBSPBrush + i;
+		if(opaqueBrushes[bi >> 3] & (1 << (bi & 7)))
+		{
+			b = &bspBrushes[bi];
+			if(BrushIntersectionWithLine(b, org, dir, &t0, &t1))
+			{
+				samp += t1 - t0;
+				++cnt;
+			}
+		}
+	}
+
+	return samp;
+}
+
+#define MINIMAP_SIZE 512
+#define MINIMAP_SAMPLES 16
+static byte radarmapdata[MINIMAP_SIZE * MINIMAP_SIZE * 3];
+static vec3_t mi_min, mi_sz;
+static void GenerateMiniMapRunner(int y)
+{
+	int x, i;
+
+	float ymin = mi_min[1] + mi_sz[1] * ( y      / (float) MINIMAP_SIZE);
+	float ymax = mi_min[1] + mi_sz[1] * ((y + 1) / (float) MINIMAP_SIZE);
+	for(x = 0; x < MINIMAP_SIZE; ++x)
+	{
+		byte *p = &radarmapdata[(y * MINIMAP_SIZE + x) * 3];
+		float xmin = mi_min[0] + mi_sz[0] * ( x      / (float) MINIMAP_SIZE);
+		float xmax = mi_min[0] + mi_sz[0] * ((x + 1) / (float) MINIMAP_SIZE);
+		float val = 0;
+		for(i = 0; i < MINIMAP_SAMPLES; ++i)
+			val += MiniMapSample(
+				xmin + Random() * (xmax - xmin),
+				ymin + Random() * (ymax - ymin)
+			);
+		val /= MINIMAP_SAMPLES * mi_sz[2];
+		if(val < 0)
+			val = 0;
+		if(val > 255.0/256.0)
+			val = 255.0/256.0;
+		p[0] = p[1] = p[2] = val * 256.0;
+	}
+}
+
+static void GenerateMiniMap()
+{
+	VectorCopy(bspModels[0].mins, mi_min);
+	VectorSubtract(bspModels[0].maxs, bspModels[0].mins, mi_sz);
+
+	SetupBrushes();
+
+	Sys_Printf( "\n--- GenerateMiniMap (%d) ---\n", MINIMAP_SIZE );
+	RunThreadsOnIndividual(MINIMAP_SIZE, qtrue, GenerateMiniMapRunner);
+
+	WriteTGA24(miniMap, radarmapdata, MINIMAP_SIZE, MINIMAP_SIZE, qfalse);
+}
 
 /*
    ProcessAdvertisements()
@@ -852,12 +978,16 @@ int BSPMain( int argc, char **argv ){
 			Sys_Printf( "Deep BSP tree generation enabled\n" );
 			deepBSP = qtrue;
 		}
-		else if( !strcmp( argv[ i ], "-bsp" ) )
+		else if( !strcmp( argv[ i ], "-minimap" ) )
 		{
-			Sys_Printf( "-bsp argument unnecessary\n" );
+			miniMap = argv[i + 1];
+			i++;
 		}
-		else{
-			Sys_FPrintf( SYS_WRN, "WARNING: Unknown option \"%s\"\n", argv[ i ] );
+		else if( !strcmp( argv[ i ], "-bsp" ) )
+			Sys_Printf( "-bsp argument unnecessary\n" );
+		else
+		{
+			Sys_Printf( "WARNING: Unknown option \"%s\"\n", argv[ i ] );
 		}
 	}
 
@@ -924,6 +1054,10 @@ int BSPMain( int argc, char **argv ){
 
 	/* finish and write bsp */
 	EndBSPFile();
+	
+	/* write the mini map if needed */
+	if(miniMap)
+		GenerateMiniMap();
 
 	/* remove temp map source file if appropriate */
 	if ( strlen( tempSource ) > 0 ) {
