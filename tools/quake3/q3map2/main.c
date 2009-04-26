@@ -102,7 +102,7 @@ typedef struct minimap_s
 	int width;
 	int height;
 	int samples;
-	float sharpen;
+	float *sample_offsets;
 	float sharpen_boxmult;
 	float sharpen_centermult;
 	float *data1f;
@@ -205,7 +205,7 @@ static float MiniMapSample(float x, float y)
 	return samp;
 }
 
-static void GenerateMiniMapRunner(int y)
+static void MiniMapRandomlySubsampled(int y)
 {
 	int x, i;
 	float *p = &minimap.data1f[y * minimap.width];
@@ -231,7 +231,33 @@ static void GenerateMiniMapRunner(int y)
 	}
 }
 
-static void GenerateMiniMapRunnerNoSamples(int y)
+static void MiniMapSubsampled(int y)
+{
+	int x, i;
+	float *p = &minimap.data1f[y * minimap.width];
+	float ymin = minimap.mins[1] + minimap.size[1] * (y / (float) minimap.height);
+	float dx   =                   minimap.size[0]      / (float) minimap.width;
+	float dy   =                   minimap.size[1]      / (float) minimap.height;
+
+	for(x = 0; x < minimap.width; ++x)
+	{
+		float xmin = minimap.mins[0] + minimap.size[0] * (x / (float) minimap.width);
+		float val = 0;
+
+		for(i = 0; i < minimap.samples; ++i)
+		{
+			float thisval = MiniMapSample(
+				xmin + minimap.sample_offsets[2*i+0] * dx,
+				ymin + minimap.sample_offsets[2*i+1] * dy
+			);
+			val += thisval;
+		}
+		val /= minimap.samples * minimap.size[2];
+		*p++ = val;
+	}
+}
+
+static void MiniMapNoSubsampling(int y)
 {
 	int x;
 	float *p = &minimap.data1f[y * minimap.width];
@@ -244,7 +270,7 @@ static void GenerateMiniMapRunnerNoSamples(int y)
 	}
 }
 
-static void SharpenMiniMapRunner(int y)
+static void MiniMapSharpen(int y)
 {
 	int x;
 	qboolean up = (y > 0);
@@ -286,6 +312,10 @@ void MiniMapMakeMinsMaxs()
 	vec3_t mins, maxs, extend;
 	VectorCopy(minimap.model->mins, mins);
 	VectorCopy(minimap.model->maxs, maxs);
+
+	// line compatible to nexuiz mapinfo
+	Sys_Printf("size %f %f %f %f %f %f\n", mins[0], mins[1], mins[2], maxs[0], maxs[1], maxs[2]);
+
 	VectorSubtract(maxs, mins, extend);
 
 	if(extend[1] > extend[0])
@@ -309,69 +339,122 @@ void MiniMapMakeMinsMaxs()
 	VectorSubtract(maxs, mins, minimap.size);
 
 	// line compatible to nexuiz mapinfo
-	Sys_Printf("size %f %f %f %f %f %f\n", mins[0], mins[1], mins[2], maxs[0], maxs[1], maxs[2]);
+	Sys_Printf("size_texcoords %f %f %f %f %f %f\n", mins[0], mins[1], mins[2], maxs[0], maxs[1], maxs[2]);
 }
 
 int MiniMapBSPMain( int argc, char **argv )
 {
 	char minimapFilename[1024];
+	float minimapSharpen;
 	byte *data3b, *p;
 	float *q;
 	int x, y;
+	int i;
 
 	/* arg checking */
 	if( argc < 2 )
 	{
-		Sys_Printf( "Usage: q3map [-v] -minimap [-size n] [-sharpen n] [-samples f] [-o filename.tga] <mapname>\n" );
+		Sys_Printf( "Usage: q3map [-v] -minimap [-size n] [-sharpen n] [-samples f] [-o filename.tga] [-minmax Xmin Ymin Zmin Xmax Ymax Zmax] <mapname>\n" );
 		return 0;
 	}
 
+	/* load the BSP first */
 	strcpy( source, ExpandArg( argv[ argc - 1 ] ) );
 	StripExtension( source );
 	DefaultExtension( source, ".bsp" );
-
-	strcpy( minimapFilename, ExpandArg( argv[ argc - 1 ] ) );
-	StripExtension( minimapFilename );
-	DefaultExtension( minimapFilename, ".tga" );
-
-	minimap.width = minimap.height = 512;
-	minimap.samples = 1;
-	minimap.sharpen = 1;
-	if(minimap.sharpen)
-	{
-		minimap.sharpen_centermult = 8 * minimap.sharpen + 1;
-		minimap.sharpen_boxmult    =    -minimap.sharpen;
-	}
-
-	minimap.data1f = safe_malloc(minimap.width * minimap.height * sizeof(*minimap.data1f));
-	data3b = safe_malloc(minimap.width * minimap.height * 3);
-	if(minimap.sharpen >= 0)
-		minimap.sharpendata1f = safe_malloc(minimap.width * minimap.height * sizeof(*minimap.data1f));
-
-	/* load the bsp */
 	Sys_Printf( "Loading %s\n", source );
 	LoadBSPFile( source );
 
 	minimap.model = &bspModels[0];
 	MiniMapMakeMinsMaxs();
 
+	*minimapFilename = 0;
+	minimapSharpen = 1;
+	minimap.width = minimap.height = 512;
+	minimap.samples = 1;
+	minimap.sample_offsets = NULL;
+
+	/* process arguments */
+	for( i = 1; i < (argc - 1); i++ )
+	{
+		if( !strcmp( argv[ i ],  "-size" ) )
+ 		{
+			minimap.width = minimap.height = atoi(argv[i + 1]);
+			i++;
+			Sys_Printf( "Image size set to %i\n", minimap.width );
+ 		}
+		else if( !strcmp( argv[ i ],  "-sharpen" ) )
+ 		{
+			minimapSharpen = atof(argv[i + 1]);
+			i++;
+			Sys_Printf( "Sharpening coefficient set to %f\n", minimapSharpen );
+ 		}
+		else if( !strcmp( argv[ i ],  "-samples" ) )
+ 		{
+			minimap.samples = atoi(argv[i + 1]);
+			i++;
+			Sys_Printf( "Samples set to %i\n", minimap.samples );
+			/* TODO generate a static subsampling pattern */
+ 		}
+		else if( !strcmp( argv[ i ],  "-o" ) )
+ 		{
+			strcpy(minimapFilename, argv[i + 1]);
+			i++;
+			Sys_Printf( "Output file name set to %s\n", minimapFilename );
+ 		}
+		else if( !strcmp( argv[ i ],  "-minmax" ) && i < (argc - 7) )
+ 		{
+			minimap.mins[0] = atof(argv[i + 1]);
+			minimap.mins[1] = atof(argv[i + 2]);
+			minimap.mins[2] = atof(argv[i + 3]);
+			minimap.size[0] = atof(argv[i + 4]) - minimap.mins[0];
+			minimap.size[1] = atof(argv[i + 5]) - minimap.mins[1];
+			minimap.size[2] = atof(argv[i + 6]) - minimap.mins[2];
+			i += 6;
+			Sys_Printf( "Map mins/maxs overridden\n" );
+ 		}
+	}
+
+	strcpy( minimapFilename, ExpandArg( argv[ argc - 1 ] ) );
+	StripExtension( minimapFilename );
+	DefaultExtension( minimapFilename, ".tga" );
+
+	if(minimapSharpen >= 0)
+	{
+		minimap.sharpen_centermult = 8 * minimapSharpen + 1;
+		minimap.sharpen_boxmult    =    -minimapSharpen;
+	}
+
+	minimap.data1f = safe_malloc(minimap.width * minimap.height * sizeof(*minimap.data1f));
+	data3b = safe_malloc(minimap.width * minimap.height * 3);
+	if(minimapSharpen >= 0)
+		minimap.sharpendata1f = safe_malloc(minimap.width * minimap.height * sizeof(*minimap.data1f));
+
 	SetupBrushes();
 
 	if(minimap.samples <= 1)
 	{
-		Sys_Printf( "\n--- GenerateMiniMap (%d) ---\n", minimap.height );
-		RunThreadsOnIndividual(minimap.height, qtrue, GenerateMiniMapRunnerNoSamples);
+		Sys_Printf( "\n--- MiniMapNoSubsampling (%d) ---\n", minimap.height );
+		RunThreadsOnIndividual(minimap.height, qtrue, MiniMapNoSubsampling);
 	}
 	else
 	{
-		Sys_Printf( "\n--- GenerateMiniMap (%d) ---\n", minimap.height );
-		RunThreadsOnIndividual(minimap.height, qtrue, GenerateMiniMapRunner);
+		if(minimap.sample_offsets)
+		{
+			Sys_Printf( "\n--- MiniMapSubsampled (%d) ---\n", minimap.height );
+			RunThreadsOnIndividual(minimap.height, qtrue, MiniMapSubsampled);
+		}
+		else
+		{
+			Sys_Printf( "\n--- MiniMapRandomlySubsampled (%d) ---\n", minimap.height );
+			RunThreadsOnIndividual(minimap.height, qtrue, MiniMapRandomlySubsampled);
+		}
 	}
 
 	if(minimap.sharpendata1f)
 	{
-		Sys_Printf( "\n--- SharpenMiniMap (%d) ---\n", minimap.height );
-		RunThreadsOnIndividual(minimap.height, qtrue, SharpenMiniMapRunner);
+		Sys_Printf( "\n--- MiniMapSharpen (%d) ---\n", minimap.height );
+		RunThreadsOnIndividual(minimap.height, qtrue, MiniMapSharpen);
 		q = minimap.sharpendata1f;
 	}
 	else
@@ -384,8 +467,8 @@ int MiniMapBSPMain( int argc, char **argv )
 	for(y = 0; y < minimap.height; ++y)
 		for(x = 0; x < minimap.width; ++x)
 		{
-			float v = *q++;
 			byte b;
+			float v = *q++;
 			if(v < 0) v = 0;
 			if(v > 255.0/256.0) v = 255.0/256.0;
 			b = v * 256;
