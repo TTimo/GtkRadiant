@@ -342,6 +342,68 @@ void MiniMapMakeMinsMaxs()
 	Sys_Printf("size_texcoords %f %f %f %f %f %f\n", mins[0], mins[1], mins[2], maxs[0], maxs[1], maxs[2]);
 }
 
+/*
+MiniMapSetupBrushes()
+determines solid non-sky brushes in the world
+*/
+
+void MiniMapSetupBrushes( void )
+{
+	int				i, j, b, compileFlags;
+	bspBrush_t		*brush;
+	bspBrushSide_t	*side;
+	bspShader_t		*shader;
+	shaderInfo_t	*si;
+	
+	
+	/* note it */
+	Sys_FPrintf( SYS_VRB, "--- MiniMapSetupBrushes ---\n" );
+	
+	/* allocate */
+	if( opaqueBrushes == NULL )
+		opaqueBrushes = safe_malloc( numBSPBrushes / 8 + 1 );
+	
+	/* clear */
+	memset( opaqueBrushes, 0, numBSPBrushes / 8 + 1 );
+	numOpaqueBrushes = 0;
+	
+	/* walk the list of worldspawn brushes */
+	for( i = 0; i < minimap.model->numBSPBrushes; i++ )
+	{
+		/* get brush */
+		b = minimap.model->firstBSPBrush + i;
+		brush = &bspBrushes[ b ];
+		
+		/* check all sides */
+		compileFlags = 0;
+		for( j = 0; j < brush->numSides; j++ )
+		{
+			/* do bsp shader calculations */
+			side = &bspBrushSides[ brush->firstSide + j ];
+			shader = &bspShaders[ side->shaderNum ];
+			
+			/* get shader info */
+			si = ShaderInfoForShader( shader->shader );
+			if( si == NULL )
+				continue;
+			
+			/* or together compile flags */
+			compileFlags |= si->compileFlags;
+		}
+		
+		/* determine if this brush is solid */
+		if( (compileFlags & (C_SOLID | C_SKY)) == C_SOLID )
+		{
+			opaqueBrushes[ b >> 3 ] |= (1 << (b & 7));
+			numOpaqueBrushes++;
+			maxOpaqueBrush = i;
+		}
+	}
+	
+	/* emit some statistics */
+	Sys_FPrintf( SYS_VRB, "%9d solid brushes\n", numOpaqueBrushes );
+}
+
 int MiniMapBSPMain( int argc, char **argv )
 {
 	char minimapFilename[1024];
@@ -366,6 +428,8 @@ int MiniMapBSPMain( int argc, char **argv )
 	StripExtension( source );
 	DefaultExtension( source, ".bsp" );
 	Sys_Printf( "Loading %s\n", source );
+	BeginMapShaderFile( source );
+	LoadShaderInfo();
 	LoadBSPFile( source );
 
 	minimap.model = &bspModels[0];
@@ -456,7 +520,7 @@ int MiniMapBSPMain( int argc, char **argv )
 	if(minimapSharpen >= 0)
 		minimap.sharpendata1f = safe_malloc(minimap.width * minimap.height * sizeof(*minimap.data1f));
 
-	SetupBrushes();
+	MiniMapSetupBrushes();
 
 	if(minimap.samples <= 1)
 	{
