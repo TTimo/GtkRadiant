@@ -205,7 +205,7 @@ static float MiniMapSample(float x, float y)
 	return samp;
 }
 
-static void MiniMapRandomlySubsampled(int y)
+static void MiniMapRandomlySupersampled(int y)
 {
 	int x, i;
 	float *p = &minimap.data1f[y * minimap.width];
@@ -221,8 +221,8 @@ static void MiniMapRandomlySubsampled(int y)
 		for(i = 0; i < minimap.samples; ++i)
 		{
 			float thisval = MiniMapSample(
-				xmin + Random() * dx,
-				ymin + Random() * dy
+				xmin + (2 * Random() - 0.5) * dx, /* exaggerated random pattern for better results */
+				ymin + (2 * Random() - 0.5) * dy  /* exaggerated random pattern for better results */
 			);
 			val += thisval;
 		}
@@ -231,7 +231,7 @@ static void MiniMapRandomlySubsampled(int y)
 	}
 }
 
-static void MiniMapSubsampled(int y)
+static void MiniMapSupersampled(int y)
 {
 	int x, i;
 	float *p = &minimap.data1f[y * minimap.width];
@@ -257,7 +257,7 @@ static void MiniMapSubsampled(int y)
 	}
 }
 
-static void MiniMapNoSubsampling(int y)
+static void MiniMapNoSupersampling(int y)
 {
 	int x;
 	float *p = &minimap.data1f[y * minimap.width];
@@ -345,6 +345,9 @@ void MiniMapMakeMinsMaxs()
 int MiniMapBSPMain( int argc, char **argv )
 {
 	char minimapFilename[1024];
+	char basename[1024];
+	char path[1024];
+	char parentpath[1024];
 	float minimapSharpen;
 	byte *data3b, *p;
 	float *q;
@@ -354,7 +357,7 @@ int MiniMapBSPMain( int argc, char **argv )
 	/* arg checking */
 	if( argc < 2 )
 	{
-		Sys_Printf( "Usage: q3map [-v] -minimap [-size n] [-sharpen n] [-samples f] [-o filename.tga] [-minmax Xmin Ymin Zmin Xmax Ymax Zmax] <mapname>\n" );
+		Sys_Printf( "Usage: q3map [-v] -minimap [-size n] [-sharpen f] [-samples n | -random n] [-o filename.tga] [-minmax Xmin Ymin Zmin Xmax Ymax Zmax] <mapname>\n" );
 		return 0;
 	}
 
@@ -394,7 +397,21 @@ int MiniMapBSPMain( int argc, char **argv )
 			minimap.samples = atoi(argv[i + 1]);
 			i++;
 			Sys_Printf( "Samples set to %i\n", minimap.samples );
-			/* TODO generate a static subsampling pattern */
+			if(minimap.sample_offsets)
+				free(minimap.sample_offsets);
+			minimap.sample_offsets = malloc(2 * sizeof(*minimap.sample_offsets) * minimap.samples);
+			/* TODO use a better pattern */
+			for(x = 0; x < 2 * minimap.samples; ++x)
+				minimap.sample_offsets[x] = Random();
+ 		}
+		else if( !strcmp( argv[ i ],  "-random" ) )
+ 		{
+			minimap.samples = atoi(argv[i + 1]);
+			i++;
+			Sys_Printf( "Random samples set to %i\n", minimap.samples );
+			if(minimap.sample_offsets)
+				free(minimap.sample_offsets);
+			minimap.sample_offsets = NULL;
  		}
 		else if( !strcmp( argv[ i ],  "-o" ) )
  		{
@@ -415,9 +432,18 @@ int MiniMapBSPMain( int argc, char **argv )
  		}
 	}
 
-	strcpy( minimapFilename, ExpandArg( argv[ argc - 1 ] ) );
-	StripExtension( minimapFilename );
-	DefaultExtension( minimapFilename, ".tga" );
+	if(!*minimapFilename)
+	{
+		ExtractFileBase(source, basename);
+		ExtractFilePath(source, path);
+		if(*path)
+			path[strlen(path)-1] = 0;
+		ExtractFilePath(path, parentpath);
+		sprintf(minimapFilename, "%sgfx", parentpath);
+		Q_mkdir(minimapFilename);
+		sprintf(minimapFilename, "%sgfx/%s_mini.tga", parentpath, basename);
+		Sys_Printf("Output file name automatically set to %s\n", minimapFilename);
+	}
 
 	if(minimapSharpen >= 0)
 	{
@@ -434,20 +460,20 @@ int MiniMapBSPMain( int argc, char **argv )
 
 	if(minimap.samples <= 1)
 	{
-		Sys_Printf( "\n--- MiniMapNoSubsampling (%d) ---\n", minimap.height );
-		RunThreadsOnIndividual(minimap.height, qtrue, MiniMapNoSubsampling);
+		Sys_Printf( "\n--- MiniMapNoSupersampling (%d) ---\n", minimap.height );
+		RunThreadsOnIndividual(minimap.height, qtrue, MiniMapNoSupersampling);
 	}
 	else
 	{
 		if(minimap.sample_offsets)
 		{
-			Sys_Printf( "\n--- MiniMapSubsampled (%d) ---\n", minimap.height );
-			RunThreadsOnIndividual(minimap.height, qtrue, MiniMapSubsampled);
+			Sys_Printf( "\n--- MiniMapSupersampled (%d) ---\n", minimap.height );
+			RunThreadsOnIndividual(minimap.height, qtrue, MiniMapSupersampled);
 		}
 		else
 		{
-			Sys_Printf( "\n--- MiniMapRandomlySubsampled (%d) ---\n", minimap.height );
-			RunThreadsOnIndividual(minimap.height, qtrue, MiniMapRandomlySubsampled);
+			Sys_Printf( "\n--- MiniMapRandomlySupersampled (%d) ---\n", minimap.height );
+			RunThreadsOnIndividual(minimap.height, qtrue, MiniMapRandomlySupersampled);
 		}
 	}
 
