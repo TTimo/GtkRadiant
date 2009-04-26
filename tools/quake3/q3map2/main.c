@@ -307,11 +307,11 @@ static void MiniMapSharpen(int y)
 	}
 }
 
-void MiniMapMakeMinsMaxs()
+void MiniMapMakeMinsMaxs(vec3_t mins_in, vec3_t maxs_in)
 {
 	vec3_t mins, maxs, extend;
-	VectorCopy(minimap.model->mins, mins);
-	VectorCopy(minimap.model->maxs, maxs);
+	VectorCopy(mins_in, mins);
+	VectorCopy(maxs_in, maxs);
 
 	// line compatible to nexuiz mapinfo
 	Sys_Printf("size %f %f %f %f %f %f\n", mins[0], mins[1], mins[2], maxs[0], maxs[1], maxs[2]);
@@ -424,6 +424,7 @@ int MiniMapBSPMain( int argc, char **argv )
 	float *q;
 	int x, y;
 	int i;
+	vec3_t mins, maxs;
 
 	/* arg checking */
 	if( argc < 2 )
@@ -442,8 +443,8 @@ int MiniMapBSPMain( int argc, char **argv )
 	LoadBSPFile( source );
 
 	minimap.model = &bspModels[0];
-	MiniMapMakeMinsMaxs();
-
+	VectorCopy(minimap.model->mins, mins);
+	VectorCopy(minimap.model->maxs, maxs);
 	*minimapFilename = 0;
 	minimapSharpen = 1;
 	minimap.width = minimap.height = 512;
@@ -494,16 +495,18 @@ int MiniMapBSPMain( int argc, char **argv )
  		}
 		else if( !strcmp( argv[ i ],  "-minmax" ) && i < (argc - 7) )
  		{
-			minimap.mins[0] = atof(argv[i + 1]);
-			minimap.mins[1] = atof(argv[i + 2]);
-			minimap.mins[2] = atof(argv[i + 3]);
-			minimap.size[0] = atof(argv[i + 4]) - minimap.mins[0];
-			minimap.size[1] = atof(argv[i + 5]) - minimap.mins[1];
-			minimap.size[2] = atof(argv[i + 6]) - minimap.mins[2];
+			mins[0] = atof(argv[i + 1]);
+			mins[1] = atof(argv[i + 2]);
+			mins[2] = atof(argv[i + 3]);
+			maxs[0] = atof(argv[i + 4]);
+			maxs[1] = atof(argv[i + 5]);
+			maxs[2] = atof(argv[i + 6]);
 			i += 6;
 			Sys_Printf( "Map mins/maxs overridden\n" );
  		}
 	}
+
+	MiniMapMakeMinsMaxs(mins, maxs);
 
 	if(!*minimapFilename)
 	{
