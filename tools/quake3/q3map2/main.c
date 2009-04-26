@@ -281,6 +281,37 @@ static void SharpenMiniMapRunner(int y)
 	}
 }
 
+void MiniMapMakeMinsMaxs()
+{
+	vec3_t mins, maxs, extend;
+	VectorCopy(minimap.model->mins, mins);
+	VectorCopy(minimap.model->maxs, maxs);
+	VectorSubtract(maxs, mins, extend);
+
+	if(extend[1] > extend[0])
+	{
+		mins[0] -= (extend[1] - extend[0]) * 0.5;
+		maxs[0] += (extend[1] - extend[0]) * 0.5;
+	}
+	else
+	{
+		mins[1] -= (extend[0] - extend[1]) * 0.5;
+		maxs[1] += (extend[0] - extend[1]) * 0.5;
+	}
+
+	VectorSubtract(maxs, mins, extend);
+	VectorScale(extend, 1.0 / 64.0, extend);
+
+	VectorSubtract(mins, extend, mins);
+	VectorAdd(maxs, extend, maxs);
+
+	VectorCopy(mins, minimap.mins);
+	VectorSubtract(maxs, mins, minimap.size);
+
+	// line compatible to nexuiz mapinfo
+	Sys_Printf("size %f %f %f %f %f %f\n", mins[0], mins[1], mins[2], maxs[0], maxs[1], maxs[2]);
+}
+
 int MiniMapBSPMain( int argc, char **argv )
 {
 	char minimapFilename[1024];
@@ -322,8 +353,7 @@ int MiniMapBSPMain( int argc, char **argv )
 	LoadBSPFile( source );
 
 	minimap.model = &bspModels[0];
-	VectorCopy(minimap.model->mins, minimap.mins);
-	VectorSubtract(minimap.model->maxs, minimap.model->mins, minimap.size);
+	MiniMapMakeMinsMaxs();
 
 	SetupBrushes();
 
