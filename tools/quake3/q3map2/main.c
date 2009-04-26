@@ -92,6 +92,287 @@ static void ExitQ3Map( void ){
 }
 
 
+/* minimap stuff */
+
+/* borrowed from light.c */
+void WriteTGA24( char *filename, byte *data, int width, int height, qboolean flip );
+typedef struct minimap_s
+{
+	bspModel_t *model;
+	int width;
+	int height;
+	int samples;
+	float sharpen;
+	float sharpen_boxmult;
+	float sharpen_centermult;
+	float *data1f;
+	float *sharpendata1f;
+	vec3_t mins, size;
+}
+minimap_t;
+static minimap_t minimap;
+
+qboolean BrushIntersectionWithLine(bspBrush_t *brush, vec3_t start, vec3_t dir, float *t_in, float *t_out)
+{
+	int i;
+	qboolean in = qfalse, out = qfalse;
+	bspBrushSide_t *sides = &bspBrushSides[brush->firstSide];
+
+	for(i = 0; i < brush->numSides; ++i)
+	{
+		bspPlane_t *p = &bspPlanes[sides[i].planeNum];
+		float sn = DotProduct(start, p->normal);
+		float dn = DotProduct(dir, p->normal);
+		if(dn == 0)
+		{
+			if(sn > p->dist)
+				return qfalse; // outside!
+		}
+		else
+		{
+			float t = (p->dist - sn) / dn;
+			if(dn < 0)
+			{
+				if(!in || t > *t_in)
+				{
+					*t_in = t;
+					in = qtrue;
+					// as t_in can only increase, and t_out can only decrease, early out
+					if(out && *t_in >= *t_out)
+						return qfalse;
+				}
+			}
+			else
+			{
+				if(!out || t < *t_out)
+				{
+					*t_out = t;
+					out = qtrue;
+					// as t_in can only increase, and t_out can only decrease, early out
+					if(in && *t_in >= *t_out)
+						return qfalse;
+				}
+			}
+		}
+	}
+	return in && out;
+}
+
+static float MiniMapSample(float x, float y)
+{
+	vec3_t org, dir;
+	int i, bi;
+	float t0, t1;
+	float samp;
+	bspBrush_t *b;
+	int cnt;
+
+	org[0] = x;
+	org[1] = y;
+	org[2] = 0;
+	dir[0] = 0;
+	dir[1] = 0;
+	dir[2] = 1;
+
+	cnt = 0;
+	samp = 0;
+	for(i = 0; i < minimap.model->numBSPBrushes; ++i)
+	{
+		bi = minimap.model->firstBSPBrush + i;
+		if(opaqueBrushes[bi >> 3] & (1 << (bi & 7)))
+		{
+			b = &bspBrushes[bi];
+
+			// sort out mins/maxs of the brush
+			bspBrushSide_t *s = &bspBrushSides[b->firstSide];
+			if(x < -bspPlanes[s[0].planeNum].dist)
+				continue;
+			if(x > +bspPlanes[s[1].planeNum].dist)
+				continue;
+			if(y < -bspPlanes[s[2].planeNum].dist)
+				continue;
+			if(y > +bspPlanes[s[3].planeNum].dist)
+				continue;
+
+			if(BrushIntersectionWithLine(b, org, dir, &t0, &t1))
+			{
+				samp += t1 - t0;
+				++cnt;
+			}
+		}
+	}
+
+	return samp;
+}
+
+static void GenerateMiniMapRunner(int y)
+{
+	int x, i;
+	float *p = &minimap.data1f[y * minimap.width];
+	float ymin = minimap.mins[1] + minimap.size[1] * (y / (float) minimap.height);
+	float dx   =                   minimap.size[0]      / (float) minimap.width;
+	float dy   =                   minimap.size[1]      / (float) minimap.height;
+
+	for(x = 0; x < minimap.width; ++x)
+	{
+		float xmin = minimap.mins[0] + minimap.size[0] * (x / (float) minimap.width);
+		float val = 0;
+
+		for(i = 0; i < minimap.samples; ++i)
+		{
+			float thisval = MiniMapSample(
+				xmin + Random() * dx,
+				ymin + Random() * dy
+			);
+			val += thisval;
+		}
+		val /= minimap.samples * minimap.size[2];
+		*p++ = val;
+	}
+}
+
+static void GenerateMiniMapRunnerNoSamples(int y)
+{
+	int x;
+	float *p = &minimap.data1f[y * minimap.width];
+	float ymin = minimap.mins[1] + minimap.size[1] * (y / (float) minimap.height);
+
+	for(x = 0; x < minimap.width; ++x)
+	{
+		float xmin = minimap.mins[0] + minimap.size[0] * (x / (float) minimap.width);
+		*p++ = MiniMapSample(xmin, ymin) / minimap.size[2];
+	}
+}
+
+static void SharpenMiniMapRunner(int y)
+{
+	int x;
+	qboolean up = (y > 0);
+	qboolean down = (y < minimap.height - 1);
+	float *p = &minimap.data1f[y * minimap.width];
+	float *q = &minimap.sharpendata1f[y * minimap.width];
+
+	for(x = 0; x < minimap.width; ++x)
+	{
+		qboolean left = (x > 0);
+		qboolean right = (x < minimap.width - 1);
+		float val = p[0] * minimap.sharpen_centermult;
+
+		if(left && up)
+			val += p[-1 -minimap.width] * minimap.sharpen_boxmult;
+		if(left && down)
+			val += p[-1 +minimap.width] * minimap.sharpen_boxmult;
+		if(right && up)
+			val += p[+1 -minimap.width] * minimap.sharpen_boxmult;
+		if(right && down)
+			val += p[+1 +minimap.width] * minimap.sharpen_boxmult;
+			
+		if(left)
+			val += p[-1] * minimap.sharpen_boxmult;
+		if(right)
+			val += p[+1] * minimap.sharpen_boxmult;
+		if(up)
+			val += p[-minimap.width] * minimap.sharpen_boxmult;
+		if(down)
+			val += p[+minimap.width] * minimap.sharpen_boxmult;
+
+		++p;
+		*q++ = val;
+	}
+}
+
+int MiniMapBSPMain( int argc, char **argv )
+{
+	char minimapFilename[1024];
+	byte *data3b, *p;
+	float *q;
+	int x, y;
+
+	/* arg checking */
+	if( argc < 2 )
+	{
+		Sys_Printf( "Usage: q3map [-v] -minimap [-size n] [-sharpen n] [-samples f] [-o filename.tga] <mapname>\n" );
+		return 0;
+	}
+
+	strcpy( source, ExpandArg( argv[ argc - 1 ] ) );
+	StripExtension( source );
+	DefaultExtension( source, ".bsp" );
+
+	strcpy( minimapFilename, ExpandArg( argv[ argc - 1 ] ) );
+	StripExtension( minimapFilename );
+	DefaultExtension( minimapFilename, ".tga" );
+
+	minimap.width = minimap.height = 512;
+	minimap.samples = 1;
+	minimap.sharpen = 1;
+	if(minimap.sharpen)
+	{
+		minimap.sharpen_centermult = 8 * minimap.sharpen + 1;
+		minimap.sharpen_boxmult    =    -minimap.sharpen;
+	}
+
+	minimap.data1f = safe_malloc(minimap.width * minimap.height * sizeof(*minimap.data1f));
+	data3b = safe_malloc(minimap.width * minimap.height * 3);
+	if(minimap.sharpen >= 0)
+		minimap.sharpendata1f = safe_malloc(minimap.width * minimap.height * sizeof(*minimap.data1f));
+
+	/* load the bsp */
+	Sys_Printf( "Loading %s\n", source );
+	LoadBSPFile( source );
+
+	minimap.model = &bspModels[0];
+	VectorCopy(minimap.model->mins, minimap.mins);
+	VectorSubtract(minimap.model->maxs, minimap.model->mins, minimap.size);
+
+	SetupBrushes();
+
+	if(minimap.samples <= 1)
+	{
+		Sys_Printf( "\n--- GenerateMiniMap (%d) ---\n", minimap.height );
+		RunThreadsOnIndividual(minimap.height, qtrue, GenerateMiniMapRunnerNoSamples);
+	}
+	else
+	{
+		Sys_Printf( "\n--- GenerateMiniMap (%d) ---\n", minimap.height );
+		RunThreadsOnIndividual(minimap.height, qtrue, GenerateMiniMapRunner);
+	}
+
+	if(minimap.sharpendata1f)
+	{
+		Sys_Printf( "\n--- SharpenMiniMap (%d) ---\n", minimap.height );
+		RunThreadsOnIndividual(minimap.height, qtrue, SharpenMiniMapRunner);
+		q = minimap.sharpendata1f;
+	}
+	else
+	{
+		q = minimap.data1f;
+	}
+
+	Sys_Printf( "\nConverting...");
+	p = data3b;
+	for(y = 0; y < minimap.height; ++y)
+		for(x = 0; x < minimap.width; ++x)
+		{
+			float v = *q++;
+			byte b;
+			if(v < 0) v = 0;
+			if(v > 255.0/256.0) v = 255.0/256.0;
+			b = v * 256;
+			*p++ = b;
+			*p++ = b;
+			*p++ = b;
+		}
+
+	Sys_Printf( " writing to %s...", minimapFilename );
+	WriteTGA24(minimapFilename, data3b, minimap.width, minimap.height, qfalse);
+
+	Sys_Printf( " done.\n" );
+
+	/* return to sender */
+	return 0;
+}
+
 /*
    main()
    q3map mojo...
@@ -247,6 +528,10 @@ int main( int argc, char **argv ){
 	else if ( !strcmp( argv[ 1 ], "-convert" ) ) {
 		r = ConvertBSPMain( argc - 1, argv + 1 );
 	}
+
+	/* div0: minimap */
+	else if( !strcmp( argv[ 1 ], "-minimap" ) )
+		r = MiniMapBSPMain(argc - 1, argv + 1);
 
 	/* ydnar: otherwise create a bsp */
 	else{
