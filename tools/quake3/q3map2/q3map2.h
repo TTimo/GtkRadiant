@@ -566,6 +566,10 @@ typedef struct game_s
 	int lightmapSize;                                   /* bsp lightmap width/height */
 	float lightmapGamma;                                /* default lightmap gamma */
 	float lightmapCompensate;                           /* default lightmap compensate value */
+	int                 miniMapSize;                    /* minimap size */
+	float               miniMapSharpen;                 /* minimap sharpening coefficient */
+	float               miniMapBorder;                  /* minimap border amount */
+	char                *miniMapNameFormat;             /* minimap name format */
 	char                *bspIdent;                      /* 4-letter bsp file prefix */
 	int bspVersion;                                     /* bsp version to use */
 	qboolean lumpSwap;                                  /* cod-style len/ofs order */

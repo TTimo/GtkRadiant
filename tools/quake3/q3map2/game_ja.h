@@ -68,6 +68,10 @@
 	128,                /* lightmap width/height */
 	1.0f,               /* lightmap gamma */
 	1.0f,               /* lightmap compensate */
+	512,                /* minimap size */
+	1.0f,               /* minimap sharpener */
+	0.0f,               /* minimap border */
+	"%s.tga",           /* minimap name format */
 	"RBSP",             /* bsp file prefix */
 	1,                  /* bsp file version */
 	qfalse,             /* cod-style lump len/ofs order */

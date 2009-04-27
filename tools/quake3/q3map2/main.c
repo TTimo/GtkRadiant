@@ -366,9 +366,8 @@ determines solid non-sky brushes in the world
 
 void MiniMapSetupBrushes( void )
 {
-	int				i, j, b, compileFlags;
+	int				i, b, compileFlags;
 	bspBrush_t		*brush;
-	bspBrushSide_t	*side;
 	bspShader_t		*shader;
 	shaderInfo_t	*si;
 	
@@ -462,7 +461,7 @@ qboolean MiniMapEvaluateSampleOffsets(int *bestj, int *bestk, float *bestval)
 void MiniMapMakeSampleOffsets()
 {
 	int i, j, k, jj, kk;
-	float val, valj, valk, dx, dy, sx, sy, rx, ry;
+	float val, valj, valk, sx, sy, rx, ry;
 
 	Sys_Printf( "Generating good sample offsets (this may take a while)...\n" );
 
@@ -529,12 +528,34 @@ void MiniMapMakeSampleOffsets()
 	}
 }
 
+void MergeRelativePath(char *out, const char *absolute, const char *relative)
+{
+	const char *endpos = absolute + strlen(absolute);
+	while(endpos != absolute && (endpos[-1] == '/' || endpos[-1] == '\\'))
+		--endpos;
+	while(relative[0] == '.' && relative[1] == '.' && (relative[2] == '/' || relative[2] == '\\'))
+	{
+		relative += 3;
+		while(endpos != absolute)
+		{
+			--endpos;
+			if(*endpos == '/' || *endpos == '\\')
+				break;
+		}
+		while(endpos != absolute && (endpos[-1] == '/' || endpos[-1] == '\\'))
+			--endpos;
+	}
+	memcpy(out, absolute, endpos - absolute);
+	out[endpos - absolute] = '/';
+	strcpy(out + (endpos - absolute + 1), relative);
+}
+
 int MiniMapBSPMain( int argc, char **argv )
 {
 	char minimapFilename[1024];
 	char basename[1024];
 	char path[1024];
-	char parentpath[1024];
+	char relativeMinimapFilename[1024];
 	float minimapSharpen;
 	float border;
 	byte *data3b, *p;
@@ -562,12 +583,14 @@ int MiniMapBSPMain( int argc, char **argv )
 	minimap.model = &bspModels[0];
 	VectorCopy(minimap.model->mins, mins);
 	VectorCopy(minimap.model->maxs, maxs);
+
 	*minimapFilename = 0;
-	minimapSharpen = 1;
-	minimap.width = minimap.height = 512;
+	minimapSharpen = game->miniMapSharpen;
+	minimap.width = minimap.height = game->miniMapSize;
+	border = game->miniMapBorder;
+
 	minimap.samples = 1;
 	minimap.sample_offsets = NULL;
-	border = 1/66.0; /* good default for Nexuiz */
 
 	/* process arguments */
 	for( i = 1; i < (argc - 1); i++ )
@@ -634,12 +657,8 @@ int MiniMapBSPMain( int argc, char **argv )
 	{
 		ExtractFileBase(source, basename);
 		ExtractFilePath(source, path);
-		if(*path)
-			path[strlen(path)-1] = 0;
-		ExtractFilePath(path, parentpath);
-		sprintf(minimapFilename, "%sgfx", parentpath);
-		Q_mkdir(minimapFilename);
-		sprintf(minimapFilename, "%sgfx/%s_mini.tga", parentpath, basename);
+		sprintf(relativeMinimapFilename, game->miniMapNameFormat, basename);
+		MergeRelativePath(minimapFilename, path, relativeMinimapFilename);
 		Sys_Printf("Output file name automatically set to %s\n", minimapFilename);
 	}
 
