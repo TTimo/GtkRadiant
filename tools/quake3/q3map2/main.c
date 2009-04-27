@@ -498,7 +498,6 @@ void MiniMapMakeSampleOffsets()
 					minimap.sample_offsets[2*j+0] = rx;
 					minimap.sample_offsets[2*j+1] = ry;
 					i = -1;
-					Sys_Printf("%f\n", val);
 				}
 				else
 				{
@@ -513,7 +512,6 @@ void MiniMapMakeSampleOffsets()
 					minimap.sample_offsets[2*k+0] = rx;
 					minimap.sample_offsets[2*k+1] = ry;
 					i = -1;
-					Sys_Printf("%f\n", val);
 				}
 				else
 				{
