@@ -103,6 +103,7 @@ typedef struct minimap_s
 	float *sample_offsets;
 	float sharpen_boxmult;
 	float sharpen_centermult;
+	float boost;
 	float *data1f;
 	float *sharpendata1f;
 	vec3_t mins, size;
@@ -316,6 +317,17 @@ static void MiniMapSharpen(int y)
 
 		++p;
 		*q++ = val;
+	}
+}
+
+static void MiniMapContrastBoost(int y)
+{
+	int x;
+	float *q = &minimap.data1f[y * minimap.width];
+	for(x = 0; x < minimap.width; ++x)
+	{
+		*q = *q * minimap.boost / ((minimap.boost - 1) * *q + 1);
+		++q;
 	}
 }
 
@@ -595,6 +607,7 @@ int MiniMapBSPMain( int argc, char **argv )
 
 	minimap.samples = 1;
 	minimap.sample_offsets = NULL;
+	minimap.boost = 1.0;
 
 	/* process arguments */
 	for( i = 1; i < (argc - 1); i++ )
@@ -678,6 +691,12 @@ int MiniMapBSPMain( int argc, char **argv )
 			mode = MINIMAP_MODE_WHITE;
 			Sys_Printf( "Writing as white alpha image\n" );
  		}
+		else if( !strcmp( argv[ i ],  "-boost" ) )
+ 		{
+			minimap.boost = atof(argv[i + 1]);
+			i++;
+			Sys_Printf( "Contrast boost set to %f\n", minimap.boost );
+ 		}
 	}
 
 	MiniMapMakeMinsMaxs(mins, maxs, border, keepaspect);
@@ -723,6 +742,12 @@ int MiniMapBSPMain( int argc, char **argv )
 			Sys_Printf( "\n--- MiniMapRandomlySupersampled (%d) ---\n", minimap.height );
 			RunThreadsOnIndividual(minimap.height, qtrue, MiniMapRandomlySupersampled);
 		}
+	}
+
+	if(minimap.boost != 1.0)
+	{
+		Sys_Printf( "\n--- MiniMapContrastBoost (%d) ---\n", minimap.height );
+		RunThreadsOnIndividual(minimap.height, qtrue, MiniMapContrastBoost);
 	}
 
 	if(minimap.sharpendata1f)
