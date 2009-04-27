@@ -273,11 +273,11 @@ static void MiniMapNoSupersampling(int y)
 {
 	int x;
 	float *p = &minimap.data1f[y * minimap.width];
-	float ymin = minimap.mins[1] + minimap.size[1] * (y / (float) minimap.height);
+	float ymin = minimap.mins[1] + minimap.size[1] * ((y + 0.5) / (float) minimap.height);
 
 	for(x = 0; x < minimap.width; ++x)
 	{
-		float xmin = minimap.mins[0] + minimap.size[0] * (x / (float) minimap.width);
+		float xmin = minimap.mins[0] + minimap.size[0] * ((x + 0.5) / (float) minimap.width);
 		*p++ = MiniMapSample(xmin, ymin) / minimap.size[2];
 	}
 }
