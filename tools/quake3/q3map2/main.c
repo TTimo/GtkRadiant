@@ -321,7 +321,7 @@ static void MiniMapSharpen(int y)
 	}
 }
 
-void MiniMapMakeMinsMaxs(vec3_t mins_in, vec3_t maxs_in)
+void MiniMapMakeMinsMaxs(vec3_t mins_in, vec3_t maxs_in, float border)
 {
 	vec3_t mins, maxs, extend;
 	VectorCopy(mins_in, mins);
@@ -343,8 +343,11 @@ void MiniMapMakeMinsMaxs(vec3_t mins_in, vec3_t maxs_in)
 		maxs[1] += (extend[0] - extend[1]) * 0.5;
 	}
 
+	/* border: amount of black area around the image */
+	/* input: border, 1-2*border, border but we need border/(1-2*border) */
+
 	VectorSubtract(maxs, mins, extend);
-	VectorScale(extend, 1.0 / 64.0, extend);
+	VectorScale(extend, border / (1 - 2 * border), extend);
 
 	VectorSubtract(mins, extend, mins);
 	VectorAdd(maxs, extend, maxs);
@@ -533,6 +536,7 @@ int MiniMapBSPMain( int argc, char **argv )
 	char path[1024];
 	char parentpath[1024];
 	float minimapSharpen;
+	float border;
 	byte *data3b, *p;
 	float *q;
 	int x, y;
@@ -563,6 +567,7 @@ int MiniMapBSPMain( int argc, char **argv )
 	minimap.width = minimap.height = 512;
 	minimap.samples = 1;
 	minimap.sample_offsets = NULL;
+	border = 1/66.0; /* good default for Nexuiz */
 
 	/* process arguments */
 	for( i = 1; i < (argc - 1); i++ )
@@ -598,6 +603,12 @@ int MiniMapBSPMain( int argc, char **argv )
 				free(minimap.sample_offsets);
 			minimap.sample_offsets = NULL;
  		}
+		else if( !strcmp( argv[ i ],  "-border" ) )
+ 		{
+			border = atof(argv[i + 1]);
+			i++;
+			Sys_Printf( "Border set to %f\n", border );
+ 		}
 		else if( !strcmp( argv[ i ],  "-o" ) )
  		{
 			strcpy(minimapFilename, argv[i + 1]);
@@ -617,7 +628,7 @@ int MiniMapBSPMain( int argc, char **argv )
  		}
 	}
 
-	MiniMapMakeMinsMaxs(mins, maxs);
+	MiniMapMakeMinsMaxs(mins, maxs, border);
 
 	if(!*minimapFilename)
 	{
