@@ -205,6 +205,16 @@ static float MiniMapSample(float x, float y)
 	return samp;
 }
 
+void RandomVector2f(float v[2])
+{
+	do
+	{
+		v[0] = 2 * Random() - 1;
+		v[1] = 2 * Random() - 1;
+	}
+	while(v[0] * v[0] + v[1] * v[1] > 1);
+}
+
 static void MiniMapRandomlySupersampled(int y)
 {
 	int x, i;
@@ -212,6 +222,7 @@ static void MiniMapRandomlySupersampled(int y)
 	float ymin = minimap.mins[1] + minimap.size[1] * (y / (float) minimap.height);
 	float dx   =                   minimap.size[0]      / (float) minimap.width;
 	float dy   =                   minimap.size[1]      / (float) minimap.height;
+	float uv[2];
 
 	for(x = 0; x < minimap.width; ++x)
 	{
@@ -220,9 +231,10 @@ static void MiniMapRandomlySupersampled(int y)
 
 		for(i = 0; i < minimap.samples; ++i)
 		{
+			RandomVector2f(uv);
 			float thisval = MiniMapSample(
-				xmin + (2 * Random() - 0.5) * dx, /* exaggerated random pattern for better results */
-				ymin + (2 * Random() - 0.5) * dy  /* exaggerated random pattern for better results */
+				xmin + (uv[0] + 0.5) * dx, /* exaggerated random pattern for better results */
+				ymin + (uv[1] + 0.5) * dy  /* exaggerated random pattern for better results */
 			);
 			val += thisval;
 		}
@@ -413,6 +425,107 @@ void MiniMapSetupBrushes( void )
 	Sys_FPrintf( SYS_VRB, "%9d solid brushes\n", numOpaqueBrushes );
 }
 
+qboolean MiniMapEvaluateSampleOffsets(int *bestj, int *bestk, float *bestval)
+{
+	float val, dx, dy;
+	int j, k;
+
+	*bestj = *bestk = -1;
+	*bestval = 3; /* max possible val is 2 */
+
+	for(j = 0; j < minimap.samples; ++j)
+		for(k = j + 1; k < minimap.samples; ++k)
+		{
+			dx = minimap.sample_offsets[2*j+0] - minimap.sample_offsets[2*k+0];
+			dy = minimap.sample_offsets[2*j+1] - minimap.sample_offsets[2*k+1];
+			if(dx > +0.5) dx -= 1;
+			if(dx < -0.5) dx += 1;
+			if(dy > +0.5) dy -= 1;
+			if(dy < -0.5) dy += 1;
+			val = dx * dx + dy * dy;
+			if(val < *bestval)
+			{
+				*bestj = j;
+				*bestk = k;
+				*bestval = val;
+			}
+		}
+	
+	return *bestval < 3;
+}
+
+void MiniMapMakeSampleOffsets()
+{
+	int i, j, k, jj, kk;
+	float val, valj, valk, dx, dy, sx, sy, rx, ry;
+
+	Sys_Printf( "Generating good sample offsets (this may take a while)...\n" );
+
+	/* start with entirely random samples */
+	for(i = 0; i < minimap.samples; ++i)
+	{
+		minimap.sample_offsets[2*i+0] = Random();
+		minimap.sample_offsets[2*i+1] = Random();
+	}
+
+	for(i = 0; i < 1000; ++i)
+	{
+		if(MiniMapEvaluateSampleOffsets(&j, &k, &val))
+		{
+			sx = minimap.sample_offsets[2*j+0];
+			sy = minimap.sample_offsets[2*j+1];
+			minimap.sample_offsets[2*j+0] = rx = Random();
+			minimap.sample_offsets[2*j+1] = ry = Random();
+			if(!MiniMapEvaluateSampleOffsets(&jj, &kk, &valj))
+				valj = -1;
+			minimap.sample_offsets[2*j+0] = sx;
+			minimap.sample_offsets[2*j+1] = sy;
+
+			sx = minimap.sample_offsets[2*k+0];
+			sy = minimap.sample_offsets[2*k+1];
+			minimap.sample_offsets[2*k+0] = rx;
+			minimap.sample_offsets[2*k+1] = ry;
+			if(!MiniMapEvaluateSampleOffsets(&jj, &kk, &valk))
+				valk = -1;
+			minimap.sample_offsets[2*k+0] = sx;
+			minimap.sample_offsets[2*k+1] = sy;
+
+			if(valj > valk)
+			{
+				if(valj > val)
+				{
+					/* valj is the greatest */
+					minimap.sample_offsets[2*j+0] = rx;
+					minimap.sample_offsets[2*j+1] = ry;
+					i = -1;
+					Sys_Printf("%f\n", val);
+				}
+				else
+				{
+					/* valj is the greater and it is useless - forget it */
+				}
+			}
+			else
+			{
+				if(valk > val)
+				{
+					/* valk is the greatest */
+					minimap.sample_offsets[2*k+0] = rx;
+					minimap.sample_offsets[2*k+1] = ry;
+					i = -1;
+					Sys_Printf("%f\n", val);
+				}
+				else
+				{
+					/* valk is the greater and it is useless - forget it */
+				}
+			}
+		}
+		else
+			break;
+	}
+}
+
 int MiniMapBSPMain( int argc, char **argv )
 {
 	char minimapFilename[1024];
@@ -474,9 +587,7 @@ int MiniMapBSPMain( int argc, char **argv )
 			if(minimap.sample_offsets)
 				free(minimap.sample_offsets);
 			minimap.sample_offsets = malloc(2 * sizeof(*minimap.sample_offsets) * minimap.samples);
-			/* TODO use a better pattern */
-			for(x = 0; x < 2 * minimap.samples; ++x)
-				minimap.sample_offsets[x] = Random();
+			MiniMapMakeSampleOffsets();
  		}
 		else if( !strcmp( argv[ i ],  "-random" ) )
  		{
