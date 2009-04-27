@@ -549,6 +549,13 @@ typedef struct surfaceParm_s
 }
 surfaceParm_t;
 
+typedef enum
+{
+	MINIMAP_MODE_GRAY,
+	MINIMAP_MODE_BLACK,
+	MINIMAP_MODE_WHITE
+}
+miniMapMode_t;
 
 typedef struct game_s
 {
@@ -570,6 +577,7 @@ typedef struct game_s
 	float               miniMapSharpen;                 /* minimap sharpening coefficient */
 	float               miniMapBorder;                  /* minimap border amount */
 	qboolean            miniMapKeepAspect;              /* minimap keep aspect ratio by letterboxing */
+	miniMapMode_t       miniMapMode;                    /* minimap mode */
 	char                *miniMapNameFormat;             /* minimap name format */
 	char                *bspIdent;                      /* 4-letter bsp file prefix */
 	int bspVersion;                                     /* bsp version to use */

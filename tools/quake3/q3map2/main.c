@@ -94,8 +94,6 @@ static void ExitQ3Map( void ){
 
 /* minimap stuff */
 
-/* borrowed from light.c */
-void WriteTGA24( char *filename, byte *data, int width, int height, qboolean flip );
 typedef struct minimap_s
 {
 	bspModel_t *model;
@@ -560,10 +558,11 @@ int MiniMapBSPMain( int argc, char **argv )
 	char relativeMinimapFilename[1024];
 	float minimapSharpen;
 	float border;
-	byte *data3b, *p;
+	byte *data4b, *p;
 	float *q;
 	int x, y;
 	int i;
+	miniMapMode_t mode;
 	vec3_t mins, maxs;
 	qboolean keepaspect;
 
@@ -592,6 +591,7 @@ int MiniMapBSPMain( int argc, char **argv )
 	minimap.width = minimap.height = game->miniMapSize;
 	border = game->miniMapBorder;
 	keepaspect = game->miniMapKeepAspect;
+	mode = game->miniMapMode;
 
 	minimap.samples = 1;
 	minimap.sample_offsets = NULL;
@@ -663,6 +663,21 @@ int MiniMapBSPMain( int argc, char **argv )
 			i += 6;
 			Sys_Printf( "Map mins/maxs overridden\n" );
  		}
+		else if( !strcmp( argv[ i ],  "-gray" ) )
+ 		{
+			mode = MINIMAP_MODE_GRAY;
+			Sys_Printf( "Writing as white-on-black image\n" );
+ 		}
+		else if( !strcmp( argv[ i ],  "-black" ) )
+ 		{
+			mode = MINIMAP_MODE_BLACK;
+			Sys_Printf( "Writing as black alpha image\n" );
+ 		}
+		else if( !strcmp( argv[ i ],  "-white" ) )
+ 		{
+			mode = MINIMAP_MODE_WHITE;
+			Sys_Printf( "Writing as white alpha image\n" );
+ 		}
 	}
 
 	MiniMapMakeMinsMaxs(mins, maxs, border, keepaspect);
@@ -675,6 +690,8 @@ int MiniMapBSPMain( int argc, char **argv )
 		MergeRelativePath(minimapFilename, path, relativeMinimapFilename);
 		Sys_Printf("Output file name automatically set to %s\n", minimapFilename);
 	}
+	ExtractFilePath(minimapFilename, path);
+	Q_mkdir(path);
 
 	if(minimapSharpen >= 0)
 	{
@@ -683,7 +700,7 @@ int MiniMapBSPMain( int argc, char **argv )
 	}
 
 	minimap.data1f = safe_malloc(minimap.width * minimap.height * sizeof(*minimap.data1f));
-	data3b = safe_malloc(minimap.width * minimap.height * 3);
+	data4b = safe_malloc(minimap.width * minimap.height * 4);
 	if(minimapSharpen >= 0)
 		minimap.sharpendata1f = safe_malloc(minimap.width * minimap.height * sizeof(*minimap.data1f));
 
@@ -720,24 +737,61 @@ int MiniMapBSPMain( int argc, char **argv )
 	}
 
 	Sys_Printf( "\nConverting...");
-	p = data3b;
-	for(y = 0; y < minimap.height; ++y)
-		for(x = 0; x < minimap.width; ++x)
-		{
-			byte b;
-			float v = *q++;
-			if(v < 0) v = 0;
-			if(v > 255.0/256.0) v = 255.0/256.0;
-			b = v * 256;
-			*p++ = b;
-			*p++ = b;
-			*p++ = b;
-		}
 
-	Sys_Printf( " writing to %s...", minimapFilename );
-	ExtractFilePath(minimapFilename, path);
-	Q_mkdir(path);
-	WriteTGA24(minimapFilename, data3b, minimap.width, minimap.height, qfalse);
+	switch(mode)
+	{
+		case MINIMAP_MODE_GRAY:
+			p = data4b;
+			for(y = 0; y < minimap.height; ++y)
+				for(x = 0; x < minimap.width; ++x)
+				{
+					byte b;
+					float v = *q++;
+					if(v < 0) v = 0;
+					if(v > 255.0/256.0) v = 255.0/256.0;
+					b = v * 256;
+					*p++ = b;
+				}
+			Sys_Printf( " writing to %s...", minimapFilename );
+			WriteTGAGray(minimapFilename, data4b, minimap.width, minimap.height);
+			break;
+		case MINIMAP_MODE_BLACK:
+			p = data4b;
+			for(y = 0; y < minimap.height; ++y)
+				for(x = 0; x < minimap.width; ++x)
+				{
+					byte b;
+					float v = *q++;
+					if(v < 0) v = 0;
+					if(v > 255.0/256.0) v = 255.0/256.0;
+					b = v * 256;
+					*p++ = 0;
+					*p++ = 0;
+					*p++ = 0;
+					*p++ = b;
+				}
+			Sys_Printf( " writing to %s...", minimapFilename );
+			WriteTGA(minimapFilename, data4b, minimap.width, minimap.height);
+			break;
+		case MINIMAP_MODE_WHITE:
+			p = data4b;
+			for(y = 0; y < minimap.height; ++y)
+				for(x = 0; x < minimap.width; ++x)
+				{
+					byte b;
+					float v = *q++;
+					if(v < 0) v = 0;
+					if(v > 255.0/256.0) v = 255.0/256.0;
+					b = v * 256;
+					*p++ = 255;
+					*p++ = 255;
+					*p++ = 255;
+					*p++ = b;
+				}
+			Sys_Printf( " writing to %s...", minimapFilename );
+			WriteTGA(minimapFilename, data4b, minimap.width, minimap.height);
+			break;
+	}
 
 	Sys_Printf( " done.\n" );
 

@@ -68,6 +68,7 @@
 	1.0f,               /* minimap sharpener */
 	1.0f/66.0f,         /* minimap border */
 	qtrue,              /* minimap keep aspect */
+	MINIMAP_MODE_GRAY,  /* minimap mode */
 	"../gfx/%s_mini.tga", /* minimap name format */
 	"IBSP",             /* bsp file prefix */
 	46,                 /* bsp file version */
