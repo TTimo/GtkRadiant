@@ -165,6 +165,7 @@ static float MiniMapSample(float x, float y)
 	float t0, t1;
 	float samp;
 	bspBrush_t *b;
+	bspBrushSide_t *s;
 	int cnt;
 
 	org[0] = x;
@@ -184,7 +185,7 @@ static float MiniMapSample(float x, float y)
 			b = &bspBrushes[bi];
 
 			// sort out mins/maxs of the brush
-			bspBrushSide_t *s = &bspBrushSides[b->firstSide];
+			s = &bspBrushSides[b->firstSide];
 			if(x < -bspPlanes[s[0].planeNum].dist)
 				continue;
 			if(x > +bspPlanes[s[1].planeNum].dist)
@@ -223,6 +224,7 @@ static void MiniMapRandomlySupersampled(int y)
 	float dx   =                   minimap.size[0]      / (float) minimap.width;
 	float dy   =                   minimap.size[1]      / (float) minimap.height;
 	float uv[2];
+	float thisval;
 
 	for(x = 0; x < minimap.width; ++x)
 	{
@@ -232,7 +234,7 @@ static void MiniMapRandomlySupersampled(int y)
 		for(i = 0; i < minimap.samples; ++i)
 		{
 			RandomVector2f(uv);
-			float thisval = MiniMapSample(
+			thisval = MiniMapSample(
 				xmin + (uv[0] + 0.5) * dx, /* exaggerated random pattern for better results */
 				ymin + (uv[1] + 0.5) * dy  /* exaggerated random pattern for better results */
 			);
