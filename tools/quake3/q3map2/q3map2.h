@@ -569,6 +569,7 @@ typedef struct game_s
 	int                 miniMapSize;                    /* minimap size */
 	float               miniMapSharpen;                 /* minimap sharpening coefficient */
 	float               miniMapBorder;                  /* minimap border amount */
+	qboolean            miniMapKeepAspect;              /* minimap keep aspect ratio by letterboxing */
 	char                *miniMapNameFormat;             /* minimap name format */
 	char                *bspIdent;                      /* 4-letter bsp file prefix */
 	int bspVersion;                                     /* bsp version to use */

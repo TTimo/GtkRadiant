@@ -321,7 +321,7 @@ static void MiniMapSharpen(int y)
 	}
 }
 
-void MiniMapMakeMinsMaxs(vec3_t mins_in, vec3_t maxs_in, float border)
+void MiniMapMakeMinsMaxs(vec3_t mins_in, vec3_t maxs_in, float border, qboolean keepaspect)
 {
 	vec3_t mins, maxs, extend;
 	VectorCopy(mins_in, mins);
@@ -330,17 +330,19 @@ void MiniMapMakeMinsMaxs(vec3_t mins_in, vec3_t maxs_in, float border)
 	// line compatible to nexuiz mapinfo
 	Sys_Printf("size %f %f %f %f %f %f\n", mins[0], mins[1], mins[2], maxs[0], maxs[1], maxs[2]);
 
-	VectorSubtract(maxs, mins, extend);
-
-	if(extend[1] > extend[0])
+	if(keepaspect)
 	{
-		mins[0] -= (extend[1] - extend[0]) * 0.5;
-		maxs[0] += (extend[1] - extend[0]) * 0.5;
-	}
-	else
-	{
-		mins[1] -= (extend[0] - extend[1]) * 0.5;
-		maxs[1] += (extend[0] - extend[1]) * 0.5;
+		VectorSubtract(maxs, mins, extend);
+		if(extend[1] > extend[0])
+		{
+			mins[0] -= (extend[1] - extend[0]) * 0.5;
+			maxs[0] += (extend[1] - extend[0]) * 0.5;
+		}
+		else
+		{
+			mins[1] -= (extend[0] - extend[1]) * 0.5;
+			maxs[1] += (extend[0] - extend[1]) * 0.5;
+		}
 	}
 
 	/* border: amount of black area around the image */
@@ -563,6 +565,7 @@ int MiniMapBSPMain( int argc, char **argv )
 	int x, y;
 	int i;
 	vec3_t mins, maxs;
+	qboolean keepaspect;
 
 	/* arg checking */
 	if( argc < 2 )
@@ -588,6 +591,7 @@ int MiniMapBSPMain( int argc, char **argv )
 	minimapSharpen = game->miniMapSharpen;
 	minimap.width = minimap.height = game->miniMapSize;
 	border = game->miniMapBorder;
+	keepaspect = game->miniMapKeepAspect;
 
 	minimap.samples = 1;
 	minimap.sample_offsets = NULL;
@@ -632,6 +636,16 @@ int MiniMapBSPMain( int argc, char **argv )
 			i++;
 			Sys_Printf( "Border set to %f\n", border );
  		}
+		else if( !strcmp( argv[ i ],  "-keepaspect" ) )
+ 		{
+			keepaspect = qtrue;
+			Sys_Printf( "Keeping aspect ratio by letterboxing\n", border );
+ 		}
+		else if( !strcmp( argv[ i ],  "-nokeepaspect" ) )
+ 		{
+			keepaspect = qfalse;
+			Sys_Printf( "Not keeping aspect ratio\n", border );
+ 		}
 		else if( !strcmp( argv[ i ],  "-o" ) )
  		{
 			strcpy(minimapFilename, argv[i + 1]);
@@ -651,7 +665,7 @@ int MiniMapBSPMain( int argc, char **argv )
  		}
 	}
 
-	MiniMapMakeMinsMaxs(mins, maxs, border);
+	MiniMapMakeMinsMaxs(mins, maxs, border, keepaspect);
 
 	if(!*minimapFilename)
 	{
