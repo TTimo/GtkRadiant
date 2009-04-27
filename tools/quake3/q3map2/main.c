@@ -735,6 +735,8 @@ int MiniMapBSPMain( int argc, char **argv )
 		}
 
 	Sys_Printf( " writing to %s...", minimapFilename );
+	ExtractFilePath(minimapFilename, path);
+	Q_mkdir(path);
 	WriteTGA24(minimapFilename, data3b, minimap.width, minimap.height, qfalse);
 
 	Sys_Printf( " done.\n" );
