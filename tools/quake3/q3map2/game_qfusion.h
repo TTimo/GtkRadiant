@@ -113,8 +113,8 @@
 	512,                /* lightmap width/height */
 	1.0f,               /* lightmap gamma */
 	1.0f,               /* lightmap compensate */
-	512,                /* minimap size */
-	0.0f,               /* minimap sharpener */
+	256,                /* minimap size */
+	1.0f,               /* minimap sharpener */
 	0.0f,               /* minimap border */
 	qtrue,              /* minimap keep aspect */
 	MINIMAP_MODE_WHITE, /* minimap mode */
