@@ -79,6 +79,8 @@ dependencies
 #include "inout.h"
 #include "vfs.h"
 #include "png.h"
+
+/* mhash library must be installed locally or system wide - http://mhash.sourceforge.net/ */
 #include "mhash.h"
 
 #include <stdlib.h>
