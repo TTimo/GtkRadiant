@@ -224,13 +224,18 @@ private:
       const char* surfShaderName = m_model->GetShaderNameForSurface(j);
       IShader* shader = shader_for_remap(surfShaderName);
 //      m_shaders.push_back((shader) ? shader : (global_shader) ? global_shader : QERApp_Shader_ForName(surfShaderName));
-      if( shader ) {
-        m_shaders.push_back(shader);
-      } else if( global_shader ) {
-        m_shaders.push_back(global_shader);
-      } else {
-        m_shaders.push_back(QERApp_Shader_ForName(surfShaderName));
+      // Determine which shader it is going to be
+      if( !shader ) {
+        if( global_shader ) {
+          shader = global_shader;
+        } else {
+          shader = QERApp_Shader_ForName(surfShaderName);
+        }
       }
+      // Add reference
+      shader->IncRef();
+      // Done, continue
+      m_shaders.push_back( shader );
     }
   }
   

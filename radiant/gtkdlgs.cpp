@@ -3697,9 +3697,13 @@ static void editor_save (GtkWidget *widget, gpointer data)
     return;
   }
 
-  char *str = gtk_editable_get_chars (GTK_EDITABLE (text), 0, -1);
+  GtkTextBuffer *buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (text));
+  GtkTextIter start, end;
+  gtk_text_buffer_get_bounds ( buffer, &start, &end);
+  char *str = gtk_text_buffer_get_text(buffer, &start, &end, FALSE);
   fwrite (str, 1, strlen (str), f);
   fclose (f);
+  g_free(str);
 }
 
 static void editor_close (GtkWidget *widget, gpointer data)

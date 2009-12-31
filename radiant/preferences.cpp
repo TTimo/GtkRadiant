@@ -3359,6 +3359,9 @@ void CGameInstall::BuildDialog() {
 
 void CGameInstall::Run() {
 	ScanGames();
+	if (m_availGames[0] == GAME_NONE) {
+		return;
+	}
 	if ( DoModal() == IDCANCEL ) {
 		Sys_Printf( "game dialog cancelled\n" );
 		return;
@@ -3535,5 +3538,7 @@ void CGameInstall::ScanGames() {
 			m_availGames[ iGame++ ] = GAME_JA;
 		}
 	}
+	Sys_Printf("No installable games found in: %s\n",
+		pakPaths.GetBuffer() );
 }
 

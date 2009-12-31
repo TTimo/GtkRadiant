@@ -476,7 +476,7 @@ typedef void* (WINAPI * PFN_QERAPP_GETENTITYHANDLE)(int nIndex);
 //   but you don't have a clean epair read/write query
 //   and you rely on the C structs directly, which might go away soon
 //   ok now, stop using, it's bad for your karma (see iepairs.h instead)
-typedef epair_t* (WINAPI * PFN_QERAPP_ALLOCATEEPAIR)( char*, char* );
+typedef epair_t* (WINAPI * PFN_QERAPP_ALLOCATEEPAIR)( const char*, const char* );
 typedef int (WINAPI * PFN_QERAPP_ALLOCATEENTITYBRUSHHANDLES)(void* vp);
 typedef void (WINAPI * PFN_QERAPP_RELEASEENTITYBRUSHHANDLES)();
 typedef void* (WINAPI * PFN_QERAPP_GETENTITYBRUSHHANDLE)(int nIndex);
