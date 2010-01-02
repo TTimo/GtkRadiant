@@ -251,8 +251,6 @@ const char* QERPlug_Init (void* hApp, void *pWidget)
   GtkWidget* pMainWidget = static_cast<GtkWidget*>(pWidget);
 
   g_pMainWnd = pMainWidget;
-  memset(&g_FuncTable, 0, sizeof(_QERFuncTable_1));
-  g_FuncTable.m_nSize = sizeof(_QERFuncTable_1);
   size = (int)((winding_t *)0)->points[MAX_POINTS_ON_WINDING];
   g_pSelectedFaceWinding = (winding_t *)malloc( size );
   memset( g_pSelectedFaceWinding, 0, size );
@@ -939,6 +937,8 @@ extern "C" CSynapseClient* SYNAPSE_DLL_EXPORT Synapse_EnumerateInterfaces( const
   g_SynapseClient.AddAPI(RADIANT_MAJOR, NULL, sizeof(g_FuncTable), SYN_REQUIRE, &g_FuncTable);
   g_SynapseClient.AddAPI(QGL_MAJOR, NULL, sizeof(g_QglTable), SYN_REQUIRE, &g_QglTable);
   g_SynapseClient.AddAPI(SELECTEDFACE_MAJOR, NULL, sizeof(g_SelectedFaceTable), SYN_REQUIRE, &g_SelectedFaceTable);
+  g_SynapseClient.AddAPI(UI_MAJOR, NULL, sizeof(_QERUITable), SYN_REQUIRE, &g_UITable);
+  g_SynapseClient.AddAPI(APPSURFACEDIALOG_MAJOR, NULL, sizeof(_QERAppSurfaceTable), SYN_REQUIRE, &g_SurfaceTable);
   
   return &g_SynapseClient;
 }
