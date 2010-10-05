@@ -297,7 +297,7 @@ void ClearSurface( mapDrawSurface_t *ds ){
 
 void TidyEntitySurfaces( entity_t *e ){
 	int i, j, deleted;
-	mapDrawSurface_t    *out, *in;
+	mapDrawSurface_t    *out, *in = NULL;
 
 
 	/* note it */

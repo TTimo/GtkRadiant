@@ -289,6 +289,7 @@ int vfsLoadFile( const char *filename, void **bufferptr, int index ){
 
 		f = fopen( filename, "rb" );
 		if ( f == NULL ) {
+			fclose(f);
 			return -1;
 		}
 
@@ -298,6 +299,7 @@ int vfsLoadFile( const char *filename, void **bufferptr, int index ){
 
 		*bufferptr = safe_malloc( len + 1 );
 		if ( *bufferptr == NULL ) {
+			fclose(f);
 			return -1;
 		}
 

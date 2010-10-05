@@ -954,7 +954,10 @@ void LoadPortals( char *name ){
 			for ( k = 0 ; k < 3 ; k++ )
 				w->points[j][k] = v[k];
 		}
-		fscanf( f, "\n" );
+		if ( fscanf( f, "\n" ) != 0)
+		{
+			// silence gcc warning
+		}
 
 		// calc plane
 		PlaneFromWinding( w, &plane );
@@ -1029,7 +1032,10 @@ void LoadPortals( char *name ){
 			for ( k = 0 ; k < 3 ; k++ )
 				w->points[j][k] = v[k];
 		}
-		fscanf( f, "\n" );
+		if ( fscanf( f, "\n" ) != 0)
+		{
+			// silence gcc warning
+		}
 
 		// calc plane
 		PlaneFromWinding( w, &plane );
