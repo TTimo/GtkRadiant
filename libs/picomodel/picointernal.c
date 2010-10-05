@@ -52,7 +52,7 @@
 /* function pointers */
 void *( *_pico_ptr_malloc    )( size_t ) = malloc;
 void ( *_pico_ptr_free      )( void* ) = free;
-void ( *_pico_ptr_load_file )( char*, unsigned char**, int* ) = NULL;
+void ( *_pico_ptr_load_file )( const char*, unsigned char**, int* ) = NULL;
 void ( *_pico_ptr_free_file )( void* ) = NULL;
 void ( *_pico_ptr_print     )( int, const char* ) = NULL;
 
@@ -201,7 +201,7 @@ void _pico_free( void *ptr ){
 /* _pico_load_file:
  * wrapper around the loadfile function pointer
  */
-void _pico_load_file( char *name, unsigned char **buffer, int *bufSize ){
+void _pico_load_file( const char *name, unsigned char **buffer, int *bufSize ){
 	/* sanity checks */
 	if ( name == NULL ) {
 		*bufSize = -1;
@@ -542,7 +542,7 @@ float _pico_big_float( float src ){
 /* _pico_stristr:
  *  case-insensitive strstr. -sea
  */
-char *_pico_stristr( char *str, const char *substr ){
+const char *_pico_stristr( const char *str, const char *substr ){
 	const size_t sublen = strlen( substr );
 	while ( *str )
 	{
@@ -738,7 +738,7 @@ void _pico_parse_skip_white( picoParser_t *p, int *hasLFs ){
 /* _pico_new_parser:
  *  allocates a new ascii parser object.
  */
-picoParser_t *_pico_new_parser( picoByte_t *buffer, int bufSize ){
+picoParser_t *_pico_new_parser( const picoByte_t *buffer, int bufSize ){
 	picoParser_t *p;
 
 	/* sanity check */
@@ -762,7 +762,7 @@ picoParser_t *_pico_new_parser( picoByte_t *buffer, int bufSize ){
 		return NULL;
 	}
 	/* setup */
-	p->buffer   = (char *)buffer;
+	p->buffer   = (const char *)buffer;
 	p->cursor   = p->buffer;
 	p->bufSize  = bufSize;
 	p->max      = p->buffer + bufSize;
@@ -798,7 +798,7 @@ void _pico_free_parser( picoParser_t *p ){
  */
 int _pico_parse_ex( picoParser_t *p, int allowLFs, int handleQuoted ){
 	int hasLFs = 0;
-	char *old;
+	const char *old;
 
 	/* sanity checks */
 	if ( p == NULL || p->buffer == NULL ||
@@ -1220,7 +1220,7 @@ int _pico_parse_vec4_def( picoParser_t *p, picoVec4_t out, picoVec4_t def ){
 /* _pico_new_memstream:
  *  allocates a new memorystream object.
  */
-picoMemStream_t *_pico_new_memstream( picoByte_t *buffer, int bufSize ){
+picoMemStream_t *_pico_new_memstream( const picoByte_t *buffer, int bufSize ){
 	picoMemStream_t *s;
 
 	/* sanity check */

@@ -164,19 +164,16 @@ TMsKeyframe;
  *	validates a milkshape3d model file.
  */
 static int _ms3d_canload( PM_PARAMS_CANLOAD ){
-	TMsHeader *hdr;
+	const TMsHeader *hdr;
 
-
-	/* to keep the compiler happy */
-	*fileName = *fileName;
 
 	/* sanity check */
-	if ( bufSize < sizeof( TMsHeader ) ) {
+	if ( (size_t) bufSize < sizeof( TMsHeader ) ) {
 		return PICO_PMV_ERROR_SIZE;
 	}
 
 	/* get ms3d header */
-	hdr = (TMsHeader *)buffer;
+	hdr = (const TMsHeader *)buffer;
 
 	/* check ms3d magic */
 	if ( strncmp( hdr->magic,"MS3D000000",10 ) != 0 ) {
@@ -206,7 +203,7 @@ static unsigned char *GetWord( unsigned char *bufptr, int *out ){
  */
 static picoModel_t *_ms3d_load( PM_PARAMS_LOAD ){
 	picoModel_t    *model;
-	unsigned char  *bufptr;
+	unsigned char  *bufptr, *bufptr0;
 	int shaderRefs[ MS3D_MAX_GROUPS ];
 	int numGroups;
 	int numMaterials;
@@ -228,8 +225,10 @@ static picoModel_t *_ms3d_load( PM_PARAMS_LOAD ){
 	PicoSetModelName( model, fileName );
 	PicoSetModelFileName( model, fileName );
 
+	bufptr0 = bufptr = (picoByte_t*) _pico_alloc( bufSize );
+	memcpy( bufptr, buffer, bufSize );
 	/* skip header */
-	bufptr = (unsigned char *)buffer + sizeof( TMsHeader );
+	bufptr += sizeof( TMsHeader );
 
 	/* get number of vertices */
 	bufptr = GetWord( bufptr,&numVerts );
@@ -289,6 +288,7 @@ static picoModel_t *_ms3d_load( PM_PARAMS_LOAD ){
 			if ( triangle->vertexIndices[ k ] >= numVerts ) {
 				_pico_printf( PICO_ERROR,"Vertex %d index %d out of range (%d, max %d)",i,k,triangle->vertexIndices[k],numVerts - 1 );
 				PicoFreeModel( model );
+				_pico_free( bufptr0 );
 				return NULL; /* yuck */
 			}
 		}
@@ -321,6 +321,7 @@ static picoModel_t *_ms3d_load( PM_PARAMS_LOAD ){
 		surface = PicoNewSurface( model );
 		if ( surface == NULL ) {
 			PicoFreeModel( model );
+			_pico_free( bufptr0 );
 			return NULL;
 		}
 		/* do surface setup */
@@ -413,6 +414,7 @@ static picoModel_t *_ms3d_load( PM_PARAMS_LOAD ){
 		shader = PicoNewShader( model );
 		if ( shader == NULL ) {
 			PicoFreeModel( model );
+			_pico_free( bufptr0 );
 			return NULL;
 		}
 		/* scale shader colors */
@@ -476,6 +478,7 @@ static picoModel_t *_ms3d_load( PM_PARAMS_LOAD ){
 #endif
 	}
 	/* return allocated pico model */
+	_pico_free( bufptr0 );
 	return model;
 //	return NULL;
 }

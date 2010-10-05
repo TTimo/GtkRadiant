@@ -610,8 +610,8 @@ qboolean FixBrokenSurface( mapDrawSurface_t *ds ){
 int EdgeCompare( const void *elem1, const void *elem2 ) {
 	float d1, d2;
 
-	d1 = ( (originalEdge_t *)elem1 )->length;
-	d2 = ( (originalEdge_t *)elem2 )->length;
+	d1 = ( (const originalEdge_t *)elem1 )->length;
+	d2 = ( (const originalEdge_t *)elem2 )->length;
 
 	if ( d1 < d2 ) {
 		return -1;

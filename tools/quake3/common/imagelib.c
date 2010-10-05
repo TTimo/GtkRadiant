@@ -532,6 +532,7 @@ void LoadPCX( const char *filename, byte **pic, byte **palette, int *width, int 
 	for ( y = 0; y <= pcx->ymax; y++, pix += pcx->xmax + 1 )
 	{
 		/* do a scanline */
+		runLength = 0;
 		for ( x = 0; x <= pcx->xmax; )
 		{
 			/* RR2DO2 */
@@ -1123,7 +1124,7 @@ void LoadTGA( const char *name, byte **pixels, int *width, int *height ){
 	//
 	// load the file
 	//
-	nLen = vfsLoadFile( ( char * ) name, (void **)&buffer, 0 );
+	nLen = vfsLoadFile( name, (void **)&buffer, 0 );
 	if ( nLen == -1 ) {
 		Error( "Couldn't read %s", name );
 	}

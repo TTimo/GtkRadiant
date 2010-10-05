@@ -417,7 +417,7 @@ static void RadSample( int lightmapNum, bspDrawSurface_t *ds, rawLightmap_t *lm,
 
 static void RadSubdivideDiffuseLight( int lightmapNum, bspDrawSurface_t *ds, rawLightmap_t *lm, shaderInfo_t *si,
 									  float scale, float subdivide, qboolean original, radWinding_t *rw, clipWork_t *cw ){
-	int i, style;
+	int i, style = 0;
 	float dist, area, value;
 	vec3_t mins, maxs, normal, d1, d2, cross, color, gradient;
 	light_t         *light, *splash;
@@ -543,7 +543,7 @@ static void RadSubdivideDiffuseLight( int lightmapNum, bspDrawSurface_t *ds, raw
 	light->falloffTolerance = falloffTolerance;
 
 	/* bouncing light? */
-	if ( bouncing == qfalse ) {
+	if ( !bouncing ) {
 		/* handle first-pass lights in normal q3a style */
 		value = si->value;
 		light->photons = value * area * areaScale;

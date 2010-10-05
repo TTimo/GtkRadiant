@@ -514,53 +514,16 @@ void ClipTraceWinding( traceWinding_t *tw, vec4_t plane, traceWinding_t *front, 
 					mid.xyz[ k ] = a->xyz[ k ] + frac * ( b->xyz[ k ] - a->xyz[ k ] );
 				}
 
-				/* set texture coordinates */
-				if ( k > 1 ) {
-					continue;
-				}
-				mid.st[ 0 ] = a->st[ 0 ] + frac * ( b->st[ 0 ] - a->st[ 0 ] );
-				mid.st[ 1 ] = a->st[ 1 ] + frac * ( b->st[ 1 ] - a->st[ 1 ] );
 			}
+			/* set texture coordinates */
+			mid.st[ 0 ] = a->st[ 0 ] + frac * ( b->st[ 0 ] - a->st[ 0 ] );
+			mid.st[ 1 ] = a->st[ 1 ] + frac * ( b->st[ 1 ] - a->st[ 1 ] );
 
 			/* copy midpoint to front and back polygons */
 			front->v[ front->numVerts++ ] = mid;
 			back->v[ back->numVerts++ ] = mid;
 		}
 	}
-}
-
-
-
-/*
-   FilterPointToTraceNodes_r() - ydnar
-   debugging tool
- */
-
-static int FilterPointToTraceNodes_r( vec3_t pt, int nodeNum ){
-	float dot;
-	traceNode_t     *node;
-
-
-	if ( nodeNum < 0 || nodeNum >= numTraceNodes ) {
-		return -1;
-	}
-
-	node = &traceNodes[ nodeNum ];
-
-	if ( node->type >= 0 ) {
-		dot = DotProduct( pt, node->plane ) - node->plane[ 3 ];
-		if ( dot > -0.001f ) {
-			FilterPointToTraceNodes_r( pt, node->children[ 0 ] );
-		}
-		if ( dot < 0.001f ) {
-			FilterPointToTraceNodes_r( pt, node->children[ 1 ] );
-		}
-		return -1;
-	}
-
-	Sys_Printf( "%d ", nodeNum );
-
-	return nodeNum;
 }
 
 
@@ -1264,7 +1227,7 @@ static void PopulateTraceNodes( void ){
 		/* external model */
 		default:
 			frame = IntForKey( e, "_frame" );
-			model = LoadModel( (char*) value, frame );
+			model = LoadModel( value, frame );
 			if ( model == NULL ) {
 				continue;
 			}
@@ -1294,7 +1257,7 @@ static void PopulateTraceNodes( void ){
 		/* external model */
 		default:
 			frame = IntForKey( e, "_frame2" );
-			model = LoadModel( (char*) value, frame );
+			model = LoadModel( value, frame );
 			if ( model == NULL ) {
 				continue;
 			}

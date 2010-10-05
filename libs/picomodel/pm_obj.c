@@ -85,7 +85,7 @@ static int _obj_canload( PM_PARAMS_CANLOAD ){
 	/* appearing at the beginning of wavefront objects */
 
 	/* alllocate a new pico parser */
-	p = _pico_new_parser( (picoByte_t *)buffer,bufSize );
+	p = _pico_new_parser( (const picoByte_t *)buffer,bufSize );
 	if ( p == NULL ) {
 		return PICO_PMV_ERROR_MEMORY;
 	}
@@ -521,7 +521,7 @@ static picoModel_t *_obj_load( PM_PARAMS_LOAD ){
 		return NULL; \
 	}
 	/* alllocate a new pico parser */
-	p = _pico_new_parser( (picoByte_t *)buffer,bufSize );
+	p = _pico_new_parser( (const picoByte_t *)buffer,bufSize );
 	if ( p == NULL ) {
 		return NULL;
 	}
@@ -685,8 +685,8 @@ static picoModel_t *_obj_load( PM_PARAMS_LOAD ){
 			int ivt[ 4 ], has_vt = 0;
 			int ivn[ 4 ], has_vn = 0;
 			int have_quad = 0;
-			int slashcount;
-			int doubleslash;
+			int slashcount = 0;
+			int doubleslash = 0;
 			int i;
 
 			/* group defs *must* come before faces */

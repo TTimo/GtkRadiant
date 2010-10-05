@@ -111,7 +111,7 @@ void PicoSetFreeFunc( void ( *func )( void* ) ){
    sets the ptr to the file load function
  */
 
-void PicoSetLoadFileFunc( void ( *func )( char*, unsigned char**, int* ) ){
+void PicoSetLoadFileFunc( void ( *func )( const char*, unsigned char**, int* ) ){
 	if ( func != NULL ) {
 		_pico_ptr_load_file = func;
 	}
@@ -143,7 +143,7 @@ void PicoSetPrintFunc( void ( *func )( int, const char* ) ){
 	}
 }
 
-picoModel_t *PicoModuleLoadModel( const picoModule_t* pm, char* fileName, picoByte_t* buffer, int bufSize, int frameNum ){
+picoModel_t *PicoModuleLoadModel( const picoModule_t* pm, const char* fileName, picoByte_t* buffer, int bufSize, int frameNum ){
 	char    *modelFileName, *remapFileName;
 
 	/* see whether this module can load the model file or not */
@@ -188,7 +188,7 @@ picoModel_t *PicoModuleLoadModel( const picoModule_t* pm, char* fileName, picoBy
    the meat and potatoes function
  */
 
-picoModel_t *PicoLoadModel( char *fileName, int frameNum ){
+picoModel_t *PicoLoadModel( const char *fileName, int frameNum ){
 	const picoModule_t  **modules, *pm;
 	picoModel_t         *model;
 	picoByte_t          *buffer;
@@ -761,7 +761,7 @@ picoSurface_t *PicoFindSurface(
    PicoSet*() Setter Functions
    ----------------------------------------------------------------------------*/
 
-void PicoSetModelName( picoModel_t *model, char *name ){
+void PicoSetModelName( picoModel_t *model, const char *name ){
 	if ( model == NULL || name == NULL ) {
 		return;
 	}
@@ -774,7 +774,7 @@ void PicoSetModelName( picoModel_t *model, char *name ){
 
 
 
-void PicoSetModelFileName( picoModel_t *model, char *fileName ){
+void PicoSetModelFileName( picoModel_t *model, const char *fileName ){
 	if ( model == NULL || fileName == NULL ) {
 		return;
 	}

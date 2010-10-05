@@ -97,7 +97,7 @@ static void LoadDDSBuffer( byte *buffer, int size, byte **pixels, int *width, in
 typedef struct pngBuffer_s
 {
 	byte    *buffer;
-	int size, offset;
+	png_size_t size, offset;
 } pngBuffer_t;
 
 void PNGReadData( png_struct *png, png_byte *buffer, png_size_t size ){
@@ -123,8 +123,8 @@ static void LoadPNGBuffer( byte *buffer, int size, byte **pixels, int *width, in
 	png_struct  *png;
 	png_info    *info, *end;
     pngBuffer_t pb;
-	int i, bitDepth, colorType, channels;
-	png_uint_32 w, h;
+	int bitDepth, colorType, channels;
+	png_uint_32 w, h, i;
 	byte        **rowPointers;
 
 	/* dummy check */
