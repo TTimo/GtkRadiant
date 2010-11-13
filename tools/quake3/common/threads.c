@@ -520,7 +520,8 @@ void RunThreadsOn (int workcnt, qboolean showpacifier, void(*func)(int))
   pthread_t work_threads[MAX_THREADS];
   
   int	  start, end;
-  int   i=0, status=0;
+  int   i=0;
+  void *exit_value;
   
   start     = I_FloatTime ();
   pacifier  = showpacifier;
@@ -556,7 +557,7 @@ void RunThreadsOn (int workcnt, qboolean showpacifier, void(*func)(int))
     }
     for (i=0 ; i<numthreads ; i++)
     {
-      if(pthread_join(work_threads[i], (void **)&status) != 0)
+      if(pthread_join(work_threads[i], &exit_value) != 0)
         Error("pthread_join failed");
     }
     pthread_mutexattr_destroy(&mattrib);
