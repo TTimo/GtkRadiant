@@ -427,6 +427,52 @@ int main( int argc, char* argv[] ) {
 	char *libgl, *ptr;
 	int i, j, k;
 
+  /*
+    Rambetter on Sat Nov 13, 2010:
+
+    The following line fixes parsing and writing of floating point numbers in locales such as
+    Italy, Germany, and others outside of en_US.  In particular, in such problem locales, users
+    are not able to use certain map entities such as "light" because the definitions of these entities
+    in the entity definition files contain floating point values written in the standard "C" format
+    (containing a dot instead of, for example, a comma).  The call sscanf() is all over the code,
+    including parsing entity definition files and reading Radiant preferences.  sscanf() is sensitive
+    to locale (in particular when reading floating point numbers).
+
+    The line below is the minimalistic way to address only this particular problem - the parsing
+    and writing of floating point values.  There may be other yet-undiscovered bugs related to
+    locale still lingering in the code.  When such bugs are discovered, they should be addressed by
+    setting more than just "LC_NUMERIC=C" (for example LC_CTYPE for regular expression matching)
+    or by fixing the problem in the actual code instead of fiddling with LC_* variables.
+
+    Another way to fix the floating point format problem is to locate all calls such as *scanf()
+    and *printf() in the code and replace them with other functions.  However, we're also using
+    external libraries such as libxml and [maybe?] they use locale to parse their numeric values.
+    I'm just saying, it may get ugly if we try to fix the problem without setting LC_NUMERIC.
+
+    Usage of sscanf() throughout the code looks like so:
+      sscanf(str, "%f %f %f", &val1, &val2, &val3);
+    Code like this exists in many files, here are 4 examples:
+      tools/quake3/q3map2/light.c
+      tools/quake3/q3map2/model.c
+      radiant/preferences.cpp
+      plugins/entity/miscmodel.cpp
+
+    Also affected are printf() calls when using formats that contain "%f".
+
+    I did some research and putenv() seems to be the best choice for being cross-platform.  It
+    used to be a function in Windows (now deprecated):
+      http://msdn.microsoft.com/en-us/library/ms235321(VS.80).aspx
+    And of course it's defined in UNIX.
+
+    One more thing.  the gtk_init() call below modifies all of the locale settings.  In fact if it
+    weren't for gtk_init(), we wouldn't have to set LC_NUMERIC (parsing of floating points with
+    a dot works just fine before the gtk_init() call on a sample Linux system).  If we were to
+    just setlocale() here, it would get clobbered by gtk_init().  So instead of using setlocale()
+    _after_ gtk_init(), I chose to fix this problem via environment variable.  I think it's cleaner
+    that way.
+  */
+  putenv("LC_NUMERIC=C");
+
 #ifdef _WIN32
   libgl = "opengl32.dll";
 #endif
