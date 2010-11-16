@@ -36,10 +36,11 @@ void       WINAPI gtk_glwidget_swap_buffers (GtkWidget *widget);
 gboolean   WINAPI gtk_glwidget_make_current (GtkWidget *widget);
 void       WINAPI gtk_glwidget_destroy_context (GtkWidget *widget);
 void       WINAPI gtk_glwidget_create_context (GtkWidget *widget);
-void       gtk_glwidget_create_font (GtkWidget *widget);
-
+void       gtk_glwidget_create_font();
+int        gtk_glwidget_font_ascent();
+int        gtk_glwidget_font_descent();
 void       gtk_glwidget_print_string(const char *s);
 void       gtk_glwidget_print_char(char s);
-
+void       gtk_glwidget_destroy_font();
 
 #endif /* _GLWIDGET_H_ */
