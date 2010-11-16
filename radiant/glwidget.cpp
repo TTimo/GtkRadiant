@@ -208,7 +208,7 @@ gboolean WINAPI gtk_glwidget_make_current (GtkWidget *widget)
 }
 
 
-// Think about rewriting this font stuff to use OpenGL display lists and bit maps.
+// Think about rewriting this font stuff to use OpenGL display lists and glBitmap().
 // Bit maps together with display lists may offer a performance increase, but
 // they would not allow antialiased fonts.
 static const char font_string[] = "Monospace";
@@ -309,24 +309,21 @@ void gtk_glwidget_destroy_font()
 // Google for "glDrawPixels clipping".
 void gtk_glwidget_print_string(const char *s)
 {
-  // Much of this code is copied from the font-pangoft2.c example that comes with GtkGLExt.
+  // The idea for this code initially came from the font-pangoft2.c example that comes with GtkGLExt.
 
   PangoLayout *layout;
-  PangoRectangle ink_rect;
   PangoRectangle log_rect;
   FT_Bitmap bitmap;
-  GLvoid *pixels;
-  guint32 *p;
+  unsigned char *begin_bitmap_buffer;
   GLfloat color[4];
-  guint32 rgb;
-  GLfloat alpha;
-  guint8 *row, *row_end;
-  int i;
   GLint previous_unpack_alignment;
   GLboolean previous_blend_enabled;
-  GLint previous_blend_src;
-  GLint previous_blend_dst;
-
+  GLint previous_blend_func_src;
+  GLint previous_blend_func_dst;
+  GLfloat previous_red_bias;
+  GLfloat previous_green_bias;
+  GLfloat previous_blue_bias;
+  GLfloat previous_alpha_scale;
 
   if (!_debug_font_created) {
     Error("Programming error: gtk_glwidget_print_string() called but font does not exist; "
@@ -336,90 +333,52 @@ void gtk_glwidget_print_string(const char *s)
   layout = pango_layout_new(ft2_context);
   pango_layout_set_width(layout, -1); // -1 no wrapping.  All text on one line.
   pango_layout_set_text(layout, s, -1); // -1 null-terminated string.
-  pango_layout_get_extents(layout, &ink_rect, &log_rect);
+  pango_layout_get_extents(layout, NULL, &log_rect);
 
   if (log_rect.width > 0 && log_rect.height > 0) {
     bitmap.rows = font_ascent + font_descent;
     bitmap.width = PANGO_PIXELS_CEIL(log_rect.width);
-    bitmap.pitch = bitmap.width;
-    bitmap.buffer = g_malloc(bitmap.rows * bitmap.width);
+    bitmap.pitch = -bitmap.width; // Rendering it "upside down" for OpenGL.
+    begin_bitmap_buffer = (unsigned char *) g_malloc(bitmap.rows * bitmap.width);
+    memset(begin_bitmap_buffer, 0, bitmap.rows * bitmap.width);
+    bitmap.buffer = begin_bitmap_buffer + (bitmap.rows - 1) * bitmap.width; // See pitch above.
     bitmap.num_grays = 0xff;
     bitmap.pixel_mode = FT_PIXEL_MODE_GRAY;
-    memset(bitmap.buffer, 0, bitmap.rows * bitmap.width);
     pango_ft2_render_layout_subpixel(&bitmap, layout, -log_rect.x,
                                      y_offset_bitmap_render_pango_units);
-
-    pixels = g_malloc(bitmap.rows * bitmap.width * 4);
-    p = (guint32 *) pixels;
     qglGetFloatv(GL_CURRENT_COLOR, color);
-#if !defined(GL_VERSION_1_2) && G_BYTE_ORDER == G_LITTLE_ENDIAN
-    rgb =
-      (((guint32) (color[0] * 255.0)) << 0) |
-      (((guint32) (color[1] * 255.0)) << 8) |
-      (((guint32) (color[2] * 255.0)) << 16);
-#else
-    rgb =
-      (((guint32) (color[0] * 255.0)) << 24) |
-      (((guint32) (color[1] * 255.0)) << 16) |
-      (((guint32) (color[2] * 255.0)) << 8);
-#endif
-    alpha = color[3];
-
-    row = bitmap.buffer + bitmap.rows * bitmap.width; // Past the end.
-    row_end = bitmap.buffer; // Beginning.
-
-    if (alpha == 1.0) {
-      do {
-        row -= bitmap.width;
-        for (i = 0; i < bitmap.width; i++) {
-#if !defined(GL_VERSION_1_2) && G_BYTE_ORDER == G_LITTLE_ENDIAN
-          *p++ = rgb | (((guint32) row[i]) << 24);
-#else
-          *p++ = rgb | ((guint32) row[i]);
-#endif
-        }
-      } while (row != row_end);
-    }
-
-    else { // Translucent.  Much less efficient, so try to avoid.
-      do {
-        row -= bitmap.width;
-        for (i = 0; i < bitmap.width; i++) {
-#if !defined(GL_VERSION_1_2) && G_BYTE_ORDER == G_LITTLE_ENDIAN
-          *p++ = rgb | (((guint32) (alpha * row[i])) << 24);
-#else
-          *p++ = rgb | ((guint32) (alpha * row[i]));
-#endif
-        }
-      } while (row != row_end);
-    }
 
     // Save state.  I didn't see any OpenGL push/pop operations for these.
-    // Question: Is saving/restoring this state necessary?
+    // Question: Is saving/restoring this state necessary?  Being safe.
     qglGetIntegerv(GL_UNPACK_ALIGNMENT, &previous_unpack_alignment);
     previous_blend_enabled = qglIsEnabled(GL_BLEND);
-    qglGetIntegerv(GL_BLEND_SRC, &previous_blend_src);
-    qglGetIntegerv(GL_BLEND_DST, &previous_blend_dst);
+    qglGetIntegerv(GL_BLEND_SRC, &previous_blend_func_src);
+    qglGetIntegerv(GL_BLEND_DST, &previous_blend_func_dst);
+    qglGetFloatv(GL_RED_BIAS, &previous_red_bias);
+    qglGetFloatv(GL_GREEN_BIAS, &previous_green_bias);
+    qglGetFloatv(GL_BLUE_BIAS, &previous_blue_bias);
+    qglGetFloatv(GL_ALPHA_SCALE, &previous_alpha_scale);
 
-    qglPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+    qglPixelStorei(GL_UNPACK_ALIGNMENT, 1);
     qglEnable(GL_BLEND);
     qglBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    qglPixelTransferf(GL_RED_BIAS, color[0]);
+    qglPixelTransferf(GL_GREEN_BIAS, color[1]);
+    qglPixelTransferf(GL_BLUE_BIAS, color[2]);
+    qglPixelTransferf(GL_ALPHA_SCALE, color[3]);
 
-#if !defined(GL_VERSION_1_2)
     qglDrawPixels(bitmap.width, bitmap.rows,
-                  GL_RGBA, GL_UNSIGNED_BYTE, pixels);
-#else
-    qglDrawPixels(bitmap.width, bitmap.rows,
-                  GL_RGBA, GL_UNSIGNED_INT_8_8_8_8, pixels);
-#endif
+                  GL_ALPHA, GL_UNSIGNED_BYTE, begin_bitmap_buffer);
+    g_free(begin_bitmap_buffer);
 
     // Restore state in reverse order of how we set it.
-    qglBlendFunc(previous_blend_src, previous_blend_dst);
+    qglPixelTransferf(GL_ALPHA_SCALE, previous_alpha_scale);
+    qglPixelTransferf(GL_BLUE_BIAS, previous_blue_bias);
+    qglPixelTransferf(GL_GREEN_BIAS, previous_green_bias);
+    qglPixelTransferf(GL_RED_BIAS, previous_red_bias);
+    qglBlendFunc(previous_blend_func_src, previous_blend_func_dst);
     if (!previous_blend_enabled) { qglDisable(GL_BLEND); }
     qglPixelStorei(GL_UNPACK_ALIGNMENT, previous_unpack_alignment);
-
-    g_free(bitmap.buffer);
-    g_free(pixels);
   }
 
   g_object_unref(G_OBJECT(layout));
