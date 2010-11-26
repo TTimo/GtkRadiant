@@ -62,6 +62,8 @@ void CamWnd::OnCreate ()
   if (!MakeCurrent ())
     Error ("glMakeCurrent failed");
 
+  gtk_glwidget_create_font (m_pWidget);
+
   // report OpenGL information
   Sys_Printf ("GL_VENDOR: %s\n", qglGetString (GL_VENDOR));
   Sys_Printf ("GL_RENDERER: %s\n", qglGetString (GL_RENDERER));
