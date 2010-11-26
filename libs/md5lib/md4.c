@@ -18,10 +18,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#ifdef _WIN32
-	#include "../stdint.msvc.h"
-#endif
-
 #include "md4lib.h"
 
 /*

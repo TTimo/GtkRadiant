@@ -158,7 +158,7 @@ class Config:
 			build_dir = os.path.join( 'build', config_name, 'q3map2' )
 			BuildDir( build_dir, '.', duplicate = 0 )
 			lib_objects = []
-			for project in [ 'libs/cmdlib/cmdlib.vcproj', 'libs/mathlib/mathlib.vcproj', 'libs/l_net/l_net.vcproj', 'libs/ddslib/ddslib.vcproj', 'libs/picomodel/picomodel.vcproj', 'libs/md5lib/md5lib.vcproj' ]:
+			for project in [ 'libs/cmdlib/cmdlib.vcproj', 'libs/mathlib/mathlib.vcproj', 'libs/l_net/l_net.vcproj', 'libs/ddslib/ddslib.vcproj', 'libs/picomodel/picomodel.vcproj', 'libs/md5lib/md5lib_VC9.vcproj' ]:
 				Export( 'project' )
 				lib_objects += SConscript( os.path.join( build_dir, 'SConscript.lib' ) )
 			Export( 'lib_objects' )

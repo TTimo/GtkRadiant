@@ -10,7 +10,7 @@ Import( [ 'utils', 'config', 'settings', 'lib_objects' ] )
 env = Environment()
 settings.SetupEnvironment( env, config['name'] )
 env.Prepend( CPPPATH = [ '#tools/quake3/common' ] )
-env.Append( LIBS = [ 'pthread', 'png', 'jpeg', 'mhash' ] )
+env.Append( LIBS = [ 'pthread', 'png', 'jpeg' ] )
 proj = utils.vcproj( os.path.join( GetLaunchDir(), 'tools/quake3/q3map2/q3map2.vcproj' ) )
 objects = lib_objects
 objects += [ os.path.join( 'tools/quake3/q3map2', i ) for i in proj.getSourceFiles() ]

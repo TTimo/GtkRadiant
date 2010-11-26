@@ -9,6 +9,12 @@
 #ifndef MD4_H
 #define MD4_H
 
+#ifdef _WIN32
+	#include "stdint.msvc.h"
+#else
+	#include <stdint.h>
+#endif
+
 struct hash_method {
 	const char *name;
 	/* Number of bytes that must be allocated for context */
@@ -25,8 +31,6 @@ const struct hash_method *hash_method_lookup(const char *name);
 
 /* NULL-terminated list of all hash methods */
 extern const struct hash_method *hash_methods[];
-
-typedef unsigned int uint_fast32_t;
 
 #define	MD4_RESULTLEN (128/8)
 
