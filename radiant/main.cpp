@@ -34,6 +34,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #endif
 
 #include <gtk/gtk.h>
+#include <gtk/gtkgl.h>
 #include <glib/gi18n.h>
 #include "stdafx.h"
 #include <assert.h>
@@ -44,6 +45,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "watchbsp.h"
 #include "filters.h"
+#include "glwidget.h"
 
 bool g_bBuildList = false;
 int g_argc;
@@ -503,6 +505,11 @@ int main( int argc, char* argv[] ) {
 //  gtk_disable_setlocale();
 
   gtk_init(&argc, &argv);
+  gtk_gl_init(&argc, &argv);
+  gdk_gl_init(&argc, &argv);
+
+  // TODO: Find a better place to call this.
+  gtk_glwidget_create_font();
 
   if ((ptr = getenv ("Q3R_LIBGL")) != NULL)
     libgl = ptr;

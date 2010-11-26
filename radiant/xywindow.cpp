@@ -2232,9 +2232,9 @@ void XYWnd::XY_DrawGrid()
   while ((step * m_fScale) < 4.0f) // make sure major grid spacing is at least 4 pixels on the screen
     step *= 8;
   //Sys_Printf("step after: %i\n", step);
-  while ((stepx * m_fScale) < 32.0f) // text step x must be at least 32
+  while ((stepx * m_fScale) < 40.0f) // text step x must be at least 40 pixels
     stepx *= 2;
-  while ((stepy * m_fScale) < 32.0f) // text step y must be at least 32
+  while ((stepy * m_fScale) < 40.0f) // text step y must be at least 40 pixels
     stepy *= 2;
 
   qglDisable(GL_TEXTURE_2D);
@@ -2334,19 +2334,41 @@ void XYWnd::XY_DrawGrid()
   if ( g_qeglobals.d_savedinfo.show_coordinates)
   {
     qglColor3fv(g_qeglobals.d_savedinfo.colors[COLOR_GRIDTEXT]);
-		float offx = m_vOrigin[nDim2] + h - 6 / m_fScale, offy = m_vOrigin[nDim1] - w + 1 / m_fScale;
-		for (x=xb-((int)xb)%stepx; x<=xe ; x+=stepx)
-		{
-			qglRasterPos2f (x, offx);
-			sprintf (text, "%i",(int)x);
-			gtk_glwidget_print_string(text);
-		}
-		for (y=yb-((int)yb)%stepy; y<=ye ; y+=stepy)
-		{
-			qglRasterPos2f (offy, y);
-			sprintf (text, "%i",(int)y);
-			gtk_glwidget_print_string(text);
-		}
+
+    // Pixels between top of label for vertical grid line and top of grid view window.
+    // Note: There is currently a bug where the top few pixels of the grid view are hidden
+    // under the border.  So you should add about 5 to the desired value here.  However,
+    // the font ascent reaches higher than all digits, so you can subtract a few from the final
+    // number.
+    const int pixelsTopCushion = 4;
+
+    // Pixels between left of label and
+    //   - left of grid view window (for horizontal grid line label) or
+    //   - drawn vertical grid line (for vertical grid line label).
+    const int pixelsLeftCushion = 2; // IMPORTANT!  Must be at least 1 otherwise labels might not be drawn
+                                     // because the origin of the text might be off screen due to rounding.
+
+    // Pixels between baseline of horizontal grid line label and drawn horizontal grid line.
+    const int pixelsButtomCushion = 2;
+
+    float yPosLabelsTop = m_vOrigin[nDim2] + h - (gtk_glwidget_font_ascent() + pixelsTopCushion) / m_fScale;
+    float xPosLabelsLeft = m_vOrigin[nDim1] - w + pixelsLeftCushion / m_fScale;
+    float leftCushion = pixelsLeftCushion / m_fScale;
+    float bottomOffset = (pixelsButtomCushion - gtk_glwidget_font_descent()) / m_fScale;
+
+    // This renders the numbers along varying X on top of the grid view (labels vertical grid lines).
+    for (x = xb - ((int) xb) % stepx; x <= xe; x += stepx) {
+      qglRasterPos2f(x + leftCushion, yPosLabelsTop);
+      sprintf(text, "%i", (int) x);
+      gtk_glwidget_print_string(text);
+    }
+
+    // This renders the numbers along varying Y on the left of the grid view (labels horizontal grid lines).
+    for (y = yb - ((int) yb) % stepy; y <= ye; y += stepy) {
+      qglRasterPos2f(xPosLabelsLeft, y + bottomOffset);
+      sprintf(text, "%i", (int) y);
+      gtk_glwidget_print_string(text);
+    }
 
     if (Active())
       qglColor3fv(g_qeglobals.d_savedinfo.colors[COLOR_VIEWNAME]);

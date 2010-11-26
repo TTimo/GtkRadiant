@@ -1,4 +1,4 @@
-import sys, traceback, platform, re, commands, platform
+import sys, traceback, platform, re, commands, platform, subprocess
 
 if __name__ != '__main__':
 	from SCons.Script import *
@@ -250,14 +250,11 @@ class Config:
 
 	def CheckoutOrUpdate( self, svnurl, path ):
 		if ( os.path.exists( path ) ):
-			# NOTE: check the svnurl matches?
-			cmd = 'svn update "%s"' % path
-			print cmd
+                        cmd = [ 'svn', 'update', path ]
 		else:
-			cmd = 'svn checkout %s "%s"' % ( svnurl, path )
-		ret = os.system( cmd )
-		if ( ret != 0 ):
-			raise Exception( 'checkout or update failed' )
+                        cmd = [ 'svn', 'checkout', svnurl, path ]
+                print( repr( cmd ) )
+                subprocess.check_call( cmd )
 
 
 	def FetchGamePaks( self, path ):
