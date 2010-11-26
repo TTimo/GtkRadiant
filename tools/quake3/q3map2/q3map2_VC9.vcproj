@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)\..\mhash-0.9.9\include&quot;;&quot;$(SolutionDir)\..\jpeg-6b&quot;;&quot;$(SolutionDir)\tools\quake3\common&quot;;&quot;$(SolutionDir)\include&quot;;&quot;$(SolutionDir)\libs&quot;;&quot;$(SolutionDir)\..\STLPort\stlport&quot;;&quot;$(SolutionDir)\..\gtk2\include&quot;;&quot;$(SolutionDir)\..\gtk2\include\glib-2.0&quot;;&quot;$(SolutionDir)\..\gtk2\lib\glib-2.0\include&quot;;&quot;$(SolutionDir)\..\libxml2\include&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)\..\jpeg-6b&quot;;&quot;$(SolutionDir)\tools\quake3\common&quot;;&quot;$(SolutionDir)\include&quot;;&quot;$(SolutionDir)\libs&quot;;&quot;$(SolutionDir)\..\STLPort\stlport&quot;;&quot;$(SolutionDir)\..\gtk2\include&quot;;&quot;$(SolutionDir)\..\gtk2\include\glib-2.0&quot;;&quot;$(SolutionDir)\..\gtk2\lib\glib-2.0\include&quot;;&quot;$(SolutionDir)\..\libxml2\include&quot;"
 				PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -62,8 +62,8 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="libmhash.lib md5lib.lib ddslib.lib l_net.lib mathlib.lib picomodel.lib libjpeg.lib libxml2.lib libpng.lib glib-2.0.lib gobject-2.0.lib Wsock32.lib"
-				AdditionalLibraryDirectories="&quot;$(SolutionDir)\..\mhash-0.9.9\win32\libmhash\Release&quot;;&quot;$(SolutionDir)\..\jpeg-6b&quot;;&quot;$(SolutionDir)\..\libxml2\lib&quot;;&quot;$(SolutionDir)\..\gtk2\lib&quot;;&quot;$(SolutionDir)\build\$(ConfigurationName)\libs&quot;"
+				AdditionalDependencies="md5lib.lib ddslib.lib l_net.lib mathlib.lib picomodel.lib libjpeg.lib libxml2.lib libpng.lib glib-2.0.lib gobject-2.0.lib Wsock32.lib"
+				AdditionalLibraryDirectories="&quot;$(SolutionDir)\..\jpeg-6b&quot;;&quot;$(SolutionDir)\..\libxml2\lib&quot;;&quot;$(SolutionDir)\..\gtk2\lib&quot;;&quot;$(SolutionDir)\build\$(ConfigurationName)\libs&quot;"
 				GenerateDebugInformation="true"
 				StackReserveSize="2097152"
 				StackCommitSize="2097152"
@@ -119,7 +119,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)\..\mhash-0.9.9\include&quot;;&quot;$(SolutionDir)\..\jpeg-6b&quot;;&quot;$(SolutionDir)\tools\quake3\common&quot;;&quot;$(SolutionDir)\include&quot;;&quot;$(SolutionDir)\libs&quot;;&quot;$(SolutionDir)\..\STLPort\stlport&quot;;&quot;$(SolutionDir)\..\gtk2\include&quot;;&quot;$(SolutionDir)\..\gtk2\include\glib-2.0&quot;;&quot;$(SolutionDir)\..\gtk2\lib\glib-2.0\include&quot;;&quot;$(SolutionDir)\..\libxml2\include&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)\..\jpeg-6b&quot;;&quot;$(SolutionDir)\tools\quake3\common&quot;;&quot;$(SolutionDir)\include&quot;;&quot;$(SolutionDir)\libs&quot;;&quot;$(SolutionDir)\..\STLPort\stlport&quot;;&quot;$(SolutionDir)\..\gtk2\include&quot;;&quot;$(SolutionDir)\..\gtk2\include\glib-2.0&quot;;&quot;$(SolutionDir)\..\gtk2\lib\glib-2.0\include&quot;;&quot;$(SolutionDir)\..\libxml2\include&quot;"
 				PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS"
 				RuntimeLibrary="2"
 				WarningLevel="3"
@@ -138,8 +138,8 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="libmhash.lib md5lib.lib ddslib.lib l_net.lib mathlib.lib picomodel.lib libjpeg.lib libxml2.lib libpng.lib glib-2.0.lib gobject-2.0.lib Wsock32.lib"
-				AdditionalLibraryDirectories="&quot;$(SolutionDir)\..\mhash-0.9.9\win32\libmhash\Release&quot;;&quot;$(SolutionDir)\..\jpeg-6b&quot;;&quot;$(SolutionDir)\..\libxml2\lib&quot;;&quot;$(SolutionDir)\..\gtk2\lib&quot;;&quot;$(SolutionDir)\build\$(ConfigurationName)\libs&quot;"
+				AdditionalDependencies="md5lib.lib ddslib.lib l_net.lib mathlib.lib picomodel.lib libjpeg.lib libxml2.lib libpng.lib glib-2.0.lib gobject-2.0.lib Wsock32.lib"
+				AdditionalLibraryDirectories="&quot;$(SolutionDir)\..\jpeg-6b&quot;;&quot;$(SolutionDir)\..\libxml2\lib&quot;;&quot;$(SolutionDir)\..\gtk2\lib&quot;;&quot;$(SolutionDir)\build\$(ConfigurationName)\libs&quot;"
 				GenerateDebugInformation="true"
 				StackReserveSize="2097152"
 				StackCommitSize="2097152"

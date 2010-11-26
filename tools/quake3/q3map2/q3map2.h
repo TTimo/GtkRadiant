@@ -68,6 +68,7 @@ dependencies
 #include "cmdlib.h"
 #include "mathlib.h"
 #include "md5lib.h"
+#include "md4lib.h"
 #include "ddslib.h"
 
 #include "picomodel.h"
@@ -81,7 +82,7 @@ dependencies
 #include "png.h"
 
 /* mhash library must be installed locally or system wide - http://mhash.sourceforge.net/ */
-#include "mhash.h"
+//#include "mhash.h"
 
 #include <stdlib.h>
 

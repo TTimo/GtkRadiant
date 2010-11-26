@@ -148,6 +148,10 @@
 			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 			>
 			<File
+				RelativePath=".\md4.c"
+				>
+			</File>
+			<File
 				RelativePath=".\md5lib.c"
 				>
 			</File>
@@ -156,6 +160,10 @@
 			Name="include"
 			Filter="h;hpp;hxx;hm;inl"
 			>
+			<File
+				RelativePath="..\md4.h"
+				>
+			</File>
 			<File
 				RelativePath="..\md5lib.h"
 				>

@@ -408,7 +408,7 @@ shaderInfo_t *CustomShader( shaderInfo_t *si, char *find, char *replace )
 	char			shader[ MAX_QPATH ];
 	char			*s;
 	int				loc;
-	MHASH			mh;
+	md5_state_t		mh;
 	byte			digest[ 16 ];
 	char			*srcShaderText, temp[ 8192 ], shaderText[ 8192 ];	/* ydnar: fixme (make this bigger?) */
 	
@@ -530,11 +530,9 @@ shaderInfo_t *CustomShader( shaderInfo_t *si, char *find, char *replace )
 	}
 	
 	/* make md5 hash of the shader text */
-	mh = mhash_init( MHASH_MD5 );
-	if( !mh )
-		Error( "Unable to initialize MD5 hash context" );
-	mhash( mh, shaderText, strlen( shaderText ) );
-	mhash_deinit( mh, digest );
+	md5_init( &mh );
+	md5_append( &mh, shaderText, strlen( shaderText ) );
+	md5_finish( &mh, digest );
 	
 	/* mangle hash into a shader name */
 	sprintf( shader, "%s/%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X", mapName,
@@ -570,7 +568,7 @@ adds a vertexremapshader key/value pair to worldspawn
 
 void EmitVertexRemapShader( char *from, char *to )
 {
-	MHASH			mh;
+	md5_state_t		mh;
 	byte			digest[ 16 ];
 	char			key[ 64 ], value[ 256 ];
 	
@@ -584,11 +582,9 @@ void EmitVertexRemapShader( char *from, char *to )
 	sprintf( value, "%s;%s", from, to );
 	
 	/* make md5 hash */
-	mh = mhash_init( MHASH_MD5 );
-	if( !mh )
-		Error( "Unable to initialize MD5 hash context" );
-	mhash( mh, value, strlen( value ) );
-	mhash_deinit( mh, digest );
+	md5_init( &mh );
+	md5_append( &mh, value, strlen( value ) );
+	md5_finish( &mh, digest );
 
 	/* make key (this is annoying, as vertexremapshader is precisely 17 characters,
 	   which is one too long, so we leave off the last byte of the md5 digest) */

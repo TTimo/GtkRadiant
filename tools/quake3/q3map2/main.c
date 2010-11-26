@@ -36,8 +36,6 @@ several games based on the Quake III Arena engine, in the form of "Q3Map2."
 /* dependencies */
 #include "q3map2.h"
 
-
-
 /*
 Random()
 returns a pseudorandom number between 0 and 1
@@ -62,32 +60,18 @@ static void ExitQ3Map( void )
 		free( mapDrawSurfs );
 }
 
+static int MD4BlockChecksum( void * buffer, int length ) {
+	unsigned char digest[16];
+	int checksum;
 
-
-/*
-MD4BlockChecksum()
-calculates an md4 checksum for a block of data
-*/
-
-static int MD4BlockChecksum( void *buffer, int length )
-{
-	MHASH	mh;
-	int		digest[ 4 ], checksum;
-	
-	
-	/* make md4 hash */
-	mh = mhash_init( MHASH_MD4 );
-	if( !mh )
-		Error( "Unable to initialize MD4 hash context" );
-	mhash( mh, buffer, length );
-	mhash_deinit( mh, digest );
-	
-	/* xor the bits and return */
-	checksum = digest[ 0 ] ^ digest[ 1 ] ^ digest[ 2 ] ^ digest[ 3 ];
+	md4_get_digest( buffer, length, digest );
+	/* I suppose it has to be done that way for legacy reasons? */
+	checksum = digest[0] & ( digest[1] << 8 ) & ( digest[2] << 16 ) & ( digest[3] << 24 );
+	checksum ^= digest[4] & ( digest[5] << 8 ) & ( digest[6] << 16 ) & ( digest[7] << 24 );
+	checksum ^= digest[8] & ( digest[9] << 8 ) & ( digest[10] << 16 ) & ( digest[11] << 24 );
+	checksum ^= digest[12] & ( digest[13] << 8 ) & ( digest[14] << 16 ) & ( digest[15] << 24 );
 	return checksum;
 }
-
-
 
 /*
 FixAAS()
