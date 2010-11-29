@@ -273,25 +273,19 @@ class Config:
 			self.FetchGamePaks( self.install_directory )
 		# NOTE: unrelated to self.setup_platforms - grab support files and binaries and install them
 		if ( self.platform == 'Windows' ):
-			depsfile = 'GtkR-deps-1.6-3.zip'
-			# TMP
-			#if ( not os.path.exists( depsfile ) ):
-			if ( True ):
-				cmd = 'wget http://zerowing.idsoftware.com/files/radiant/developer/1.6.1/%s' % depsfile
-				print cmd
-				ret = os.system( cmd )
-				if ( ret != 0 ):
-					raise Exception( 'Failed to download dependencies file' )
+			depsfile = 'GtkR-deps-1.6-4.zip'
+			if ( not os.path.exists( depsfile ) ):
+				cmd = [ 'wget', '-N', 'http://zerowing.idsoftware.com/files/radiant/developer/1.6.1/%s' % depsfile ]
+				print( repr( cmd ) )
+				subprocess.check_call( cmd )
 
 				# extract one directoy above
 				f = os.path.abspath( depsfile )
 				backup_cwd = os.getcwd()
 				os.chdir( os.path.dirname( backup_cwd ) )
-				cmd = 'unzip %s' % f
-				print cmd
-				ret = os.system( cmd )
-				if ( ret != 0 ):
-					raise Exception( 'unzip dependencies file failed' )
+				cmd = [ 'unzip', '-o', f ]
+				print( repr( cmd ) )
+				subprocess.check_call( cmd )
 				os.chdir( backup_cwd )
 
 				# copy all the dependent runtime data to the install directory
@@ -309,25 +303,30 @@ class Config:
 					'gtk2/bin/libgmodule-2.0-0.dll',
 					'gtk2/bin/libpng13.dll',
 					'gtk2/bin/libpango-1.0-0.dll',
+                                        'gtk2/bin/libpangoft2-1.0-0.dll',
 					'gtk2/bin/libpangocairo-1.0-0.dll',
 					'gtk2/bin/libpangowin32-1.0-0.dll',
 					'gtk2/lib/libgtkglext-win32-1.0-0.dll',
 					'gtk2/lib/libgdkglext-win32-1.0-0.dll',
-					'gtk2/lib/iconv.dll', ]:
-					cmd = 'cp -v "%s" installs' % os.path.join( srcdir, f )
-					print cmd
-					ret = os.system( cmd )
-					if ( ret != 0 ):
-						raise Exception( 'runtime file copy failed' )
+					'gtk2/lib/iconv.dll',
+                                        'gtk2/zlib1.dll',
+                                        'freetype-dev_2.4.2-1_win32/bin/freetype6.dll',
+                                        'fontconfig-dev_2.8.0-2_win32/bin/libfontconfig-1.dll',
+                                        'expat_2.0.1-1_win32/bin/libexpat-1.dll',
+                                        ]:
+                                        cmd = [ 'cp', '-v', os.path.join( srcdir, f ), 'install' ]
+                                        print( repr( cmd ) )
+                                        subprocess.check_call( cmd )
 				for d in [
 					'gtk2/etc',
 					'gtk2/share',
+                                        'fontconfig-dev_2.8.0-2_win32/etc',
+                                        'fontconfig-dev_2.8.0-2_win32/share',
+                                        'freetype-dev_2.4.2-1_win32/share',
 					]:
-					cmd = 'cp -r -v "%s" install' % os.path.join( srcdir, d )
-					print cmd
-					ret = os.system( cmd )
-					if ( ret != 0 ):
-						raise Exception( 'runtime directory copy failed' )
+                                        cmd = [ 'cp', '-r', '-v', os.path.join( srcdir, d ), 'install' ]
+					print( repr( cmd ) )
+					subprocess.check_call( cmd )
 
 # parse the config statement line to produce/update an existing config list
 # the configs expose a list of keywords and accepted values, which the engine parses out
