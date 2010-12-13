@@ -168,7 +168,17 @@ const char* FindFiles::NextFile() {
 #else
 
 FindFiles::FindFiles( const char *_directory ) {
+	char endChar;
 	directory = _directory;
+	if (directory.GetLength() > 0) {
+		endChar = directory.GetAt(directory.GetLength() - 1);
+		if (!(endChar == '/' || endChar == '\\')) {
+			// We're only using '/' as the path separator throughout this code, not '\'.
+			// However, I'd hate to see the code silently fail due to a trailing '\', so
+			// I added the check for it.
+			directory += '/';
+		}
+	}
 	directory += '*';
 	findHandle = INVALID_HANDLE_VALUE;
 }
