@@ -273,7 +273,7 @@ class Config:
 			self.FetchGamePaks( self.install_directory )
 		# NOTE: unrelated to self.setup_platforms - grab support files and binaries and install them
 		if ( self.platform == 'Windows' ):
-			depsfile = 'GtkR-deps-1.6-4.zip'
+			depsfile = 'GtkR-deps-1.6-5.zip'
 			if ( not os.path.exists( depsfile ) ):
 				cmd = [ 'wget', '-N', 'http://zerowing.idsoftware.com/files/radiant/developer/1.6.1/%s' % depsfile ]
 				print( repr( cmd ) )
@@ -291,28 +291,37 @@ class Config:
 				# copy all the dependent runtime data to the install directory
 				srcdir = os.path.dirname( backup_cwd )
 				for f in [
+        				# USE THE DEPENDENCY WALKER
+                                        # tier 1: radiant.exe direct deps
+                                        # tier 2: deps of tier 1 DLLs
+                                        # etc.
+                                        # tier 1
 					'libxml2/bin/libxml2.dll',
+                                        'libxml2/bin/iconv.dll',
 					'gtk2/bin/libglib-2.0-0.dll',
 					'gtk2/bin/libgobject-2.0-0.dll',
 					'gtk2/bin/libgdk-win32-2.0-0.dll',
 					'gtk2/bin/libgtk-win32-2.0-0.dll',
 					'gtk2/bin/intl.dll',
-					'gtk2/bin/libatk-1.0-0.dll',
-					'gtk2/bin/libcairo-2.dll',
-					'gtk2/bin/libgdk_pixbuf-2.0-0.dll',
-					'gtk2/bin/libgmodule-2.0-0.dll',
-					'gtk2/bin/libpng13.dll',
 					'gtk2/bin/libpango-1.0-0.dll',
                                         'gtk2/bin/libpangoft2-1.0-0.dll',
+					'gtk2/lib/gtkglext-1.2.0/lib/libgtkglext-win32-1.0-0.dll',
+					'gtk2/lib/gtkglext-1.2.0/lib/libgdkglext-win32-1.0-0.dll',
+                                        # tier 2
+                                        'gtk2/bin/libgthread-2.0-0.dll',
+					'gtk2/bin/libcairo-2.dll',
+					'gtk2/bin/libgdk_pixbuf-2.0-0.dll',
 					'gtk2/bin/libpangocairo-1.0-0.dll',
 					'gtk2/bin/libpangowin32-1.0-0.dll',
-					'gtk2/lib/libgtkglext-win32-1.0-0.dll',
-					'gtk2/lib/libgdkglext-win32-1.0-0.dll',
-					'gtk2/lib/iconv.dll',
-                                        'gtk2/zlib1.dll',
-                                        'freetype-dev_2.4.2-1_win32/bin/freetype6.dll',
-                                        'fontconfig-dev_2.8.0-2_win32/bin/libfontconfig-1.dll',
-                                        'expat_2.0.1-1_win32/bin/libexpat-1.dll',
+					'gtk2/bin/libatk-1.0-0.dll',
+					'gtk2/bin/libgmodule-2.0-0.dll',
+                                        'gtk2/bin/libfontconfig-1.dll',
+                                        'gtk2/bin/freetype6.dll',
+                                        # tier 3
+                                        'gtk2/bin/libexpat-1.dll',
+                                        'gtk2/bin/libpng14-14.dll',
+                                        'gtk2/bin/zlib1.dll',
+                                        'gtk2/bin/libgio-2.0-0.dll',                                        
                                         ]:
                                         cmd = [ 'cp', '-v', os.path.join( srcdir, f ), 'install' ]
                                         print( repr( cmd ) )
@@ -320,9 +329,6 @@ class Config:
 				for d in [
 					'gtk2/etc',
 					'gtk2/share',
-                                        'fontconfig-dev_2.8.0-2_win32/etc',
-                                        'fontconfig-dev_2.8.0-2_win32/share',
-                                        'freetype-dev_2.4.2-1_win32/share',
 					]:
                                         cmd = [ 'cp', '-r', '-v', os.path.join( srcdir, d ), 'install' ]
 					print( repr( cmd ) )

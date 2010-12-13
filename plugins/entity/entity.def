@@ -1,7 +1,6 @@
 ; entity.def : Declares the module parameters for the DLL.
 
 LIBRARY      "ENTITY"
-DESCRIPTION  'ENTITY Windows Dynamic Link Library'
 
 EXPORTS
     ; Explicit exports can go here

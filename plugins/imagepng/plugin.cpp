@@ -137,7 +137,7 @@ void LoadImage (const char *filename, unsigned char **pic, int *width, int *heig
   // http://www.libpng.org/pub/png/libpng-manual.html
 
   png_structp png_ptr = png_create_read_struct
-    (PNG_LIBPNG_VER_STRING, png_voidp_NULL,
+    (PNG_LIBPNG_VER_STRING, NULL,
     user_error_fn, user_warning_fn);
   if (!png_ptr)
   {
@@ -148,7 +148,7 @@ void LoadImage (const char *filename, unsigned char **pic, int *width, int *heig
   png_infop info_ptr = png_create_info_struct(png_ptr);
   if (!info_ptr) {
     png_destroy_read_struct(&png_ptr,
-      png_infopp_NULL, png_infopp_NULL);
+      NULL, NULL);
     g_FuncTable.m_pfnSysPrintf ("libpng error: png_create_info_struct (info_ptr)\n");
     return;
   }
@@ -156,7 +156,7 @@ void LoadImage (const char *filename, unsigned char **pic, int *width, int *heig
   png_infop end_info = png_create_info_struct(png_ptr);
   if (!end_info) {
     png_destroy_read_struct(&png_ptr, &info_ptr,
-      png_infopp_NULL);
+      NULL);
     g_FuncTable.m_pfnSysPrintf ("libpng error: png_create_info_struct (end_info)\n");
     return;
   }
@@ -187,8 +187,10 @@ void LoadImage (const char *filename, unsigned char **pic, int *width, int *heig
   if (color_type == PNG_COLOR_TYPE_PALETTE)
    png_set_palette_to_rgb(png_ptr);
 
-  if (color_type == PNG_COLOR_TYPE_GRAY && bit_depth < 8)
-    png_set_gray_1_2_4_to_8(png_ptr);
+  if ( color_type == PNG_COLOR_TYPE_GRAY && bit_depth < 8 ) {
+	  // png_set_gray_1_2_4_to_8 was renamed to png_set_expand_gray_1_2_4_to_8
+    png_set_expand_gray_1_2_4_to_8(png_ptr);
+  }
 
   if (png_get_valid(png_ptr, info_ptr, PNG_INFO_tRNS))
     png_set_tRNS_to_alpha(png_ptr);
@@ -234,7 +236,7 @@ void LoadImage (const char *filename, unsigned char **pic, int *width, int *heig
   png_read_end(png_ptr, info_ptr);
 
   /* free up the memory structure */
-  png_destroy_read_struct(&png_ptr, &info_ptr, png_infopp_NULL);
+  png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
 
   free(row_pointers);
   g_FileSystemTable.m_pfnFreeFile (fbuffer);
