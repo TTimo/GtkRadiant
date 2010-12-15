@@ -40,7 +40,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)\include&quot;;&quot;$(SolutionDir)\libs&quot;;&quot;$(SolutionDir)\..\STLPort\stlport&quot;;&quot;$(SolutionDir)\..\gtk2\include&quot;;&quot;$(SolutionDir)\..\gtk2\include\glib-2.0&quot;;&quot;$(SolutionDir)\..\gtk2\lib\glib-2.0\include&quot;;&quot;$(SolutionDir)\..\gtk2\lib\gtk-2.0\include&quot;;&quot;$(SolutionDir)\..\gtk2\lib\gtkglext-1.0\include&quot;;&quot;$(SolutionDir)\..\gtk2\include\gtk-2.0&quot;;&quot;$(SolutionDir)\..\gtk2\include\cairo&quot;;&quot;$(SolutionDir)\..\gtk2\include\pango-1.0&quot;;&quot;$(SolutionDir)\..\gtk2\include\atk-1.0&quot;;&quot;$(SolutionDir)\..\gtk2\include\gtkglext-1.0&quot;;&quot;$(SolutionDir)\..\gtk2\include\gdk-pixbuf-2.0&quot;;&quot;$(SolutionDir)\..\libxml2\include&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)\include&quot;;&quot;$(SolutionDir)\libs&quot;;&quot;$(SolutionDir)\..\STLPort\stlport&quot;;&quot;$(SolutionDir)\..\gtk2\include&quot;;&quot;$(SolutionDir)\..\gtk2\include\glib-2.0&quot;;&quot;$(SolutionDir)\..\gtk2\lib\glib-2.0\include&quot;;&quot;$(SolutionDir)\..\gtk2\lib\gtk-2.0\include&quot;;&quot;$(SolutionDir)\..\gtk2\lib\gtkglext-1.0\include&quot;;&quot;$(SolutionDir)\..\gtk2\include\gtk-2.0&quot;;&quot;$(SolutionDir)\..\gtk2\include\cairo&quot;;&quot;$(SolutionDir)\..\gtk2\include\pango-1.0&quot;;&quot;$(SolutionDir)\..\gtk2\include\atk-1.0&quot;;&quot;$(SolutionDir)\..\gtk2\include\gtkglext-1.0&quot;;&quot;$(SolutionDir)\..\libxml2\include&quot;"
 				PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -115,8 +115,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				WholeProgramOptimization="true"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)\include&quot;;&quot;$(SolutionDir)\libs&quot;;&quot;$(SolutionDir)\..\STLPort\stlport&quot;;&quot;$(SolutionDir)\..\gtk2\include&quot;;&quot;$(SolutionDir)\..\gtk2\include\glib-2.0&quot;;&quot;$(SolutionDir)\..\gtk2\lib\glib-2.0\include&quot;;&quot;$(SolutionDir)\..\gtk2\lib\gtk-2.0\include&quot;;&quot;$(SolutionDir)\..\gtk2\lib\gtkglext-1.0\include&quot;;&quot;$(SolutionDir)\..\gtk2\include\gtk-2.0&quot;;&quot;$(SolutionDir)\..\gtk2\include\cairo&quot;;&quot;$(SolutionDir)\..\gtk2\include\pango-1.0&quot;;&quot;$(SolutionDir)\..\gtk2\include\atk-1.0&quot;;&quot;$(SolutionDir)\..\gtk2\include\gtkglext-1.0&quot;;&quot;$(SolutionDir)\..\gtk2\include\gdk-pixbuf-2.0&quot;;&quot;$(SolutionDir)\..\libxml2\include&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)\include&quot;;&quot;$(SolutionDir)\libs&quot;;&quot;$(SolutionDir)\..\STLPort\stlport&quot;;&quot;$(SolutionDir)\..\gtk2\include&quot;;&quot;$(SolutionDir)\..\gtk2\include\glib-2.0&quot;;&quot;$(SolutionDir)\..\gtk2\lib\glib-2.0\include&quot;;&quot;$(SolutionDir)\..\gtk2\lib\gtk-2.0\include&quot;;&quot;$(SolutionDir)\..\gtk2\lib\gtkglext-1.0\include&quot;;&quot;$(SolutionDir)\..\gtk2\include\gtk-2.0&quot;;&quot;$(SolutionDir)\..\gtk2\include\cairo&quot;;&quot;$(SolutionDir)\..\gtk2\include\pango-1.0&quot;;&quot;$(SolutionDir)\..\gtk2\include\atk-1.0&quot;;&quot;$(SolutionDir)\..\gtk2\include\gtkglext-1.0&quot;;&quot;$(SolutionDir)\..\libxml2\include&quot;"
 				PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS"
 				RuntimeLibrary="2"
 				WarningLevel="3"
@@ -141,7 +140,6 @@
 				GenerateDebugInformation="true"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
-				LinkTimeCodeGeneration="1"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
 				TargetMachine="1"

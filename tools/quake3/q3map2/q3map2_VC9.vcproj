@@ -62,7 +62,6 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalOptions="/NODEFAULTLIB:MSVCRT"
 				AdditionalDependencies="md5lib.lib ddslib.lib l_net.lib mathlib.lib picomodel.lib libjpeg.lib libxml2.lib libpng.lib glib-2.0.lib gobject-2.0.lib Wsock32.lib"
 				AdditionalLibraryDirectories="&quot;$(SolutionDir)\..\jpeg-6b&quot;;&quot;$(SolutionDir)\..\libxml2\lib&quot;;&quot;$(SolutionDir)\..\gtk2\lib&quot;;&quot;$(SolutionDir)\build\$(ConfigurationName)\libs&quot;"
 				GenerateDebugInformation="true"

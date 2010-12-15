@@ -1,6 +1,7 @@
 ; mapq3.def : Declares the module parameters for the DLL.
 
-LIBRARY      "MAP"
+LIBRARY      "MAPQ3"
+DESCRIPTION  'MAPQ3 Windows Dynamic Link Library'
 
 EXPORTS
     ; Explicit exports can go here

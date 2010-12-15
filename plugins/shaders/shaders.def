@@ -1,6 +1,7 @@
 ; shaders.def : Declares the module parameters for the DLL.
 
 LIBRARY      "Shaders"
+DESCRIPTION  'Shaders Windows Dynamic Link Library'
 
 EXPORTS
     ; Explicit exports can go here

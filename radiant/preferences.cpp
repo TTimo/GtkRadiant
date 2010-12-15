@@ -40,10 +40,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "gtkmisc.h"
 
 #ifdef _WIN32
-#undef fprintf
-#endif
-
-#ifdef _WIN32
 #include <io.h>
 #define X_OK 0
 #include <sys/stat.h>
@@ -3363,7 +3359,7 @@ void CGameInstall::BuildDialog() {
 
 void CGameInstall::Run() {
 	ScanGames();
-	if ( m_availGames[0] == GAME_NONE ) {
+	if (m_availGames[0] == GAME_NONE) {
 		return;
 	}
 	if ( DoModal() == IDCANCEL ) {
@@ -3379,8 +3375,8 @@ void CGameInstall::Run() {
 	gameFilePath += ".game";
 	Sys_Printf( "game file: %s\n", gameFilePath.GetBuffer() );
 
-	FILE * fg = fopen( gameFilePath.GetBuffer(), "w" );
-	if ( fg == NULL ) {
+	FILE *fg = fopen( gameFilePath.GetBuffer(), "w" );
+	if ( fg == NULL || ferror( fg ) ) {
 		Error( "Failed to open %s for writing\n", gameFilePath.GetBuffer() );
 	}
 	fprintf( fg, "<?xml version=\"1.0\" encoding=\"iso-8859-1\" standalone=\"yes\"?>\n<game\n" );

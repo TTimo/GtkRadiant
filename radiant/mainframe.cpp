@@ -7079,7 +7079,7 @@ void MainFrame::OnSelectFuncGroup()
 	// check to see if the selected brush is part of a func group
 	// if it is, deselect everything and reselect the next brush 
 	// in the group
-	brush_t *b = selected_brushes.next;
+	brush_t *b2, *b = selected_brushes.next;
 	entity_t * e;
 	if (b != &selected_brushes)
 	{

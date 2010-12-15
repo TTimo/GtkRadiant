@@ -244,7 +244,7 @@ bool FileStream::Open(const char *filename, const char *mode)
   m_hFile = fopen(filename, mode);
   m_bCloseOnDelete = true;
 
-  return m_hFile != NULL;
+  return (m_hFile != NULL);
 }
 
 void MemStream::Close()
