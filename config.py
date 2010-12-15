@@ -273,7 +273,7 @@ class Config:
 			self.FetchGamePaks( self.install_directory )
 		# NOTE: unrelated to self.setup_platforms - grab support files and binaries and install them
 		if ( self.platform == 'Windows' ):
-			depsfile = 'GtkR-deps-1.6-4.zip'
+			depsfile = 'GtkR-deps-1.6-3.zip'
 			if ( not os.path.exists( depsfile ) ):
 				cmd = [ 'wget', '-N', 'http://zerowing.idsoftware.com/files/radiant/developer/1.6.1/%s' % depsfile ]
 				print( repr( cmd ) )
@@ -310,9 +310,9 @@ class Config:
 					'gtk2/lib/libgdkglext-win32-1.0-0.dll',
 					'gtk2/lib/iconv.dll',
                                         'gtk2/zlib1.dll',
-                                        'freetype-dev_2.4.2-1_win32/bin/freetype6.dll',
-                                        'fontconfig-dev_2.8.0-2_win32/bin/libfontconfig-1.dll',
-                                        'expat_2.0.1-1_win32/bin/libexpat-1.dll',
+#                                       'freetype-dev_2.4.2-1_win32/bin/freetype6.dll',
+#                                       'fontconfig-dev_2.8.0-2_win32/bin/libfontconfig-1.dll',
+#                                       'expat_2.0.1-1_win32/bin/libexpat-1.dll',
                                         ]:
                                         cmd = [ 'cp', '-v', os.path.join( srcdir, f ), 'install' ]
                                         print( repr( cmd ) )
@@ -320,9 +320,9 @@ class Config:
 				for d in [
 					'gtk2/etc',
 					'gtk2/share',
-                                        'fontconfig-dev_2.8.0-2_win32/etc',
-                                        'fontconfig-dev_2.8.0-2_win32/share',
-                                        'freetype-dev_2.4.2-1_win32/share',
+#                                       'fontconfig-dev_2.8.0-2_win32/etc',
+#                                       'fontconfig-dev_2.8.0-2_win32/share',
+#                                       'freetype-dev_2.4.2-1_win32/share',
 					]:
                                         cmd = [ 'cp', '-r', '-v', os.path.join( srcdir, d ), 'install' ]
 					print( repr( cmd ) )
