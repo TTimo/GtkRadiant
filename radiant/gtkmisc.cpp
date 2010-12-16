@@ -1123,6 +1123,13 @@ public:
     return filetype_t();
   }
 
+  filetype_t GetTypeForIndex(int index) // Zero-based index.
+  {
+    if (index >= 0 && index < m_nTypes)
+      return filetype_t(m_pTypes[index].m_name.c_str(), m_pTypes[index].m_pattern.c_str());
+    return filetype_t();
+  }
+
   char *m_strWin32Filters;
   char **m_pstrGTKMasks;
 private:
@@ -1227,9 +1234,6 @@ const char* file_dialog (void *parent, gboolean open, const char* title, const c
 #endif
 
 #ifdef _WIN32
-  // win32 dialog stores the selected "save as type" extension in the second null-terminated string
-  char customfilter[FILEDLG_CUSTOM_FILTER_LENGTH];
-
   if (g_PrefsDlg.m_bNativeGUI)
   {
 #ifdef FILEDLG_DBG
@@ -1238,19 +1242,22 @@ const char* file_dialog (void *parent, gboolean open, const char* title, const c
     // do that the native way
     /* Place the terminating null character in the szFile. */
     szFile[0] = '\0';
-    customfilter[0] = customfilter[1] = customfilter[2] = '\0';
 
     /* Set the members of the OPENFILENAME structure. */
+    // See http://msdn.microsoft.com/en-us/library/ms646839%28v=vs.85%29.aspx .
     ofn.lStructSize = sizeof(OPENFILENAME);
     ofn.hwndOwner = (HWND)GDK_WINDOW_HWND (g_pParentWnd->m_pWidget->window);
+    ofn.nFilterIndex = 1; // The index is 1-based, not 0-based.  This basically says,
+                          // "select the first filter by default".
     if (pattern)
     {
-      ofn.nFilterIndex = 0;
       ofn.lpstrFilter = typelist.m_strWin32Filters;
     }
-    else ofn.nFilterIndex = 1;
-    ofn.lpstrCustomFilter = customfilter;
-    ofn.nMaxCustFilter = sizeof(customfilter);
+    else
+    {
+      ofn.lpstrFilter = "All files\0*\0\0";
+    }
+    ofn.lpstrCustomFilter = NULL;
     ofn.lpstrFile = szFile;
     ofn.nMaxFile = sizeof(szFile);
     ofn.lpstrFileTitle = NULL; // we don't need to get the name of the file
@@ -1283,7 +1290,7 @@ const char* file_dialog (void *parent, gboolean open, const char* title, const c
     }
 
     if(pattern != NULL)
-      type = typelist.GetTypeForWin32Filter(customfilter+1);
+      type = typelist.GetTypeForIndex(ofn.nFilterIndex - 1);
 
 #ifdef FILEDLG_DBG
     Sys_Printf("Done.\n");
