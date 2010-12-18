@@ -1203,11 +1203,45 @@ private:
 
 };
 
+#ifdef _WIN32
+
+static int in_file_dialog = 0;
+
+typedef struct {
+  gboolean open;
+  OPENFILENAME *ofn;
+  BOOL dlgRtnVal;
+  int done;
+} win32_native_file_dialog_comms_t;
+
+DWORD WINAPI win32_native_file_dialog_thread_func(LPVOID lpParam)
+{
+  win32_native_file_dialog_comms_t *fileDialogComms;
+  fileDialogComms = (win32_native_file_dialog_comms_t *) lpParam;
+  if (fileDialogComms->open) {
+    fileDialogComms->dlgRtnVal = GetOpenFileName(fileDialogComms->ofn);
+  }
+  else {
+    fileDialogComms->dlgRtnVal = GetSaveFileName(fileDialogComms->ofn);
+  }
+  fileDialogComms->done = -1; // No need to synchronize around lock.
+  return 0;
+}
+
+#endif
+
 /**
  * @param[in] baseSubDir should have a trailing slash if not @c NULL
  */
 const char* file_dialog (void *parent, gboolean open, const char* title, const char* path, const char* pattern, const char *baseSubDir)
 {
+
+#ifdef _WIN32
+  HANDLE fileDialogThreadHandle;
+  win32_native_file_dialog_comms_t fileDialogComms;
+  int dialogDone;
+#endif
+
   // Gtk dialog
   GtkWidget* file_sel;
   int loop = 1;
@@ -1240,27 +1274,29 @@ const char* file_dialog (void *parent, gboolean open, const char* title, const c
     Sys_Printf("Doing win32 file dialog...");
 #endif
     // do that the native way
-    /* Place the terminating null character in the szFile. */
-    szFile[0] = '\0';
 
+    if (in_file_dialog) return NULL; // Avoid recursive entry.
+    in_file_dialog = 1;
     /* Set the members of the OPENFILENAME structure. */
     // See http://msdn.microsoft.com/en-us/library/ms646839%28v=vs.85%29.aspx .
-    ofn.lStructSize = sizeof(OPENFILENAME);
+    memset(&ofn, 0, sizeof(ofn));
+    ofn.lStructSize = sizeof(ofn);
     ofn.hwndOwner = (HWND)GDK_WINDOW_HWND (g_pParentWnd->m_pWidget->window);
     ofn.nFilterIndex = 1; // The index is 1-based, not 0-based.  This basically says,
-                          // "select the first filter by default".
+                          // "select the first filter as default".
     if (pattern)
     {
       ofn.lpstrFilter = typelist.m_strWin32Filters;
     }
     else
     {
-      ofn.lpstrFilter = "All files\0*\0\0";
+      // TODO: Would be a bit cleaner if we could extract this string from
+      // GetFileTypeRegistry() instead of hardcoding it here.
+      ofn.lpstrFilter = "all files\0*.*\0"; // Second '\0' will be added to end of string.
     }
-    ofn.lpstrCustomFilter = NULL;
+    szFile[0] = '\0';
     ofn.lpstrFile = szFile;
     ofn.nMaxFile = sizeof(szFile);
-    ofn.lpstrFileTitle = NULL; // we don't need to get the name of the file
     if(path)
     {
       // szDirName: Radiant uses unix convention for paths internally
@@ -1272,21 +1308,42 @@ const char* file_dialog (void *parent, gboolean open, const char* title, const c
       *w = '\0';
       ofn.lpstrInitialDir = szDirName;
     }
-    else ofn.lpstrInitialDir = NULL;
     ofn.lpstrTitle = title;
     ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_HIDEREADONLY;
 
-    /* Display the Open dialog box. */
-    // it's open or close depending on 'open' parameter
-    if (open)
-    {
-      if (!GetOpenFileName(&ofn))
-        return NULL;	// canceled
+    memset(&fileDialogComms, 0, sizeof(fileDialogComms));
+    fileDialogComms.open = open;
+    fileDialogComms.ofn = &ofn;
+
+    fileDialogThreadHandle =
+      CreateThread(NULL, // lpThreadAttributes
+                   0, // dwStackSize, default stack size
+                   win32_native_file_dialog_thread_func, // lpStartAddress, funcion to call
+                   &fileDialogComms, // lpParameter, argument to pass to function
+                   0, // dwCreationFlags
+                   NULL); // lpThreadId
+
+    dialogDone = 0;
+    while (1) {
+      // Avoid blocking indefinitely.  Another thread will set fileDialogComms->done to nonzero;
+      // we don't want to be in an indefinite blocked state when this happens.  We want to break
+      // out of here eventually.
+      while (gtk_events_pending()) {
+        gtk_main_iteration();
+      }
+      if (dialogDone) break;
+      if (fileDialogComms.done) dialogDone = 1; // One more loop of gtk_main_iteration() to get things in sync.
+      // Avoid tight infinte loop, add a small amount of sleep.
+      Sleep(10);
     }
-    else
-    {
-      if (!GetSaveFileName(&ofn))
-        return NULL;	// canceled
+    // Make absolutely sure that the thread is finished before we call CloseHandle().
+    WaitForSingleObject(fileDialogThreadHandle, INFINITE);
+    CloseHandle(fileDialogThreadHandle);
+
+    in_file_dialog = 0;
+    
+    if (!fileDialogComms.dlgRtnVal) {
+      return NULL; // Cancelled.
     }
 
     if(pattern != NULL)

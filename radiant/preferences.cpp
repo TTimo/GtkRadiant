@@ -2218,7 +2218,7 @@ void PrefsDlg::BuildDialog ()
 
 #ifdef _WIN32
   // win32 file dialog
-  check = gtk_check_button_new_with_label (_("Use win32 file load dialog"));
+  check = gtk_check_button_new_with_label (_("Use win32 file load dialog (hacky)"));
   gtk_widget_show (check);
   // gtk_container_add (GTK_CONTAINER (vbox), check);
   gtk_box_pack_start(GTK_BOX(vbox), check, FALSE, FALSE, 0);
