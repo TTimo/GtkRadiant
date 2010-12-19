@@ -1513,7 +1513,7 @@ const char* file_dialog (void *parent, gboolean open, const char* title, const c
         int knownExtension = 0;
         for (int i = typelist.GetNumTypes() - 1; i >= 0; i--) {
           type = typelist.GetTypeForIndex(i);
-          if (stricmp(w, type.pattern + 1) == 0) {
+          if (strcmp(w, type.pattern + 1) == 0) {
             knownExtension = 1;
             break;
           }
