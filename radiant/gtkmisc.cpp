@@ -1203,13 +1203,11 @@ private:
 
 #ifdef _WIN32
 
-static int in_file_dialog = 0;
-
 typedef struct {
   gboolean open;
   OPENFILENAME *ofn;
   BOOL dlgRtnVal;
-  int done;
+  bool done;
 } win32_native_file_dialog_comms_t;
 
 DWORD WINAPI win32_native_file_dialog_thread_func(LPVOID lpParam)
@@ -1222,7 +1220,7 @@ DWORD WINAPI win32_native_file_dialog_thread_func(LPVOID lpParam)
   else {
     fileDialogComms->dlgRtnVal = GetSaveFileName(fileDialogComms->ofn);
   }
-  fileDialogComms->done = -1; // No need to synchronize around lock.
+  fileDialogComms->done = true; // No need to synchronize around lock, one-way gate.
   return 0;
 }
 
@@ -1235,14 +1233,14 @@ const char* file_dialog (void *parent, gboolean open, const char* title, const c
 {
 
 #ifdef _WIN32
+  static bool in_file_dialog = false;
   HANDLE fileDialogThreadHandle;
   win32_native_file_dialog_comms_t fileDialogComms;
-  int dialogDone;
+  bool dialogDone;
 #endif
 
   // Gtk dialog
   GtkWidget* file_sel;
-  int loop = 1;
   char *new_path = NULL;
 
   const char* r;
@@ -1258,7 +1256,7 @@ const char* file_dialog (void *parent, gboolean open, const char* title, const c
     // do that the native way
 
     if (in_file_dialog) return NULL; // Avoid recursive entry.
-    in_file_dialog = 1;
+    in_file_dialog = true;
     /* Set the members of the OPENFILENAME structure. */
     // See http://msdn.microsoft.com/en-us/library/ms646839%28v=vs.85%29.aspx .
     memset(&ofn, 0, sizeof(ofn));
@@ -1305,16 +1303,16 @@ const char* file_dialog (void *parent, gboolean open, const char* title, const c
                    0, // dwCreationFlags
                    NULL); // lpThreadId
 
-    dialogDone = 0;
+    dialogDone = false;
     while (1) {
-      // Avoid blocking indefinitely.  Another thread will set fileDialogComms->done to nonzero;
+      // Avoid blocking indefinitely.  Another thread will set fileDialogComms->done to true;
       // we don't want to be in an indefinite blocked state when this happens.  We want to break
       // out of here eventually.
       while (gtk_events_pending()) {
         gtk_main_iteration();
       }
       if (dialogDone) break;
-      if (fileDialogComms.done) dialogDone = 1; // One more loop of gtk_main_iteration() to get things in sync.
+      if (fileDialogComms.done) dialogDone = true; // One more loop of gtk_main_iteration() to get things in sync.
       // Avoid tight infinte loop, add a small amount of sleep.
       Sleep(10);
     }
@@ -1322,7 +1320,7 @@ const char* file_dialog (void *parent, gboolean open, const char* title, const c
     WaitForSingleObject(fileDialogThreadHandle, INFINITE);
     CloseHandle(fileDialogThreadHandle);
 
-    in_file_dialog = 0;
+    in_file_dialog = false;
     
     if (!fileDialogComms.dlgRtnVal) {
       return NULL; // Cancelled.
