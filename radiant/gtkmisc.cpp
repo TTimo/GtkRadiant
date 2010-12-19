@@ -1123,7 +1123,12 @@ public:
     return filetype_t();
   }
 
-  filetype_t GetTypeForIndex(int index) // Zero-based index.
+  int GetNumTypes()
+  {
+    return m_nTypes;
+  }
+
+  filetype_t GetTypeForIndex(int index) const // Zero-based index.
   {
     if (index >= 0 && index < m_nTypes)
       return filetype_t(m_pTypes[index].m_name.c_str(), m_pTypes[index].m_pattern.c_str());
@@ -1493,17 +1498,33 @@ const char* file_dialog (void *parent, gboolean open, const char* title, const c
       *w = '/';
 
 #if defined(WIN32)
-  if (g_PrefsDlg.m_bNativeGUI) // filetype mask not supported in gtk dialog yet
+  if (g_PrefsDlg.m_bNativeGUI)
   {
-    // when saving, force an extension depending on filetype
     /* \todo SPoG - file_dialog should return filetype information separately.. not force file extension.. */
     if(!open && pattern != NULL)
     {
       // last ext separator
       w = strrchr(szFile, '.');
-      // no extension
-      w = (w!=NULL) ? w : szFile+strlen(szFile);
-      strcpy(w, type.pattern+1);
+      if (w == NULL) { // No extension.
+        w = szFile + strlen(szFile);
+        strcpy(w, type.pattern + 1); // Add extension of selected filter type.
+      }
+      else { // An extension was explicitly in the filename.
+        int knownExtension = 0;
+        for (int i = typelist.GetNumTypes() - 1; i >= 0; i--) {
+          type = typelist.GetTypeForIndex(i);
+          if (stricmp(w, type.pattern + 1) == 0) {
+            knownExtension = 1;
+            break;
+          }
+        }
+        if (!knownExtension) {
+          if (gtk_MessageBox(parent, "Unknown file extension for this save operation.\nAttempt to save anyways?",
+                             "GtkRadiant", MB_YESNO) == IDNO) {
+            return NULL;
+          }
+        }
+      }
     }
   }
 #endif
