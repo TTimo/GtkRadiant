@@ -2841,7 +2841,7 @@ void DoCommandListDlg ()
       cmds = g_slist_sort (cmds, (gint (*)(const void *, const void *))strcmp);
 
       Sys_Printf("Writing the command list to %s", path.GetBuffer() );
-      FILE* fileout = fopen (path.GetBuffer (), "wt");
+      FILE * fileout = fopen( path.GetBuffer (), "wt" );
 
       while (cmds)
       {

@@ -61,6 +61,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalOptions="/NODEFAULTLIB:MSVCRT"
 				AdditionalDependencies=" synapse.lib libxml2.lib glib-2.0.lib gobject-2.0.lib libjpeg.lib"
 				AdditionalLibraryDirectories="&quot;$(SolutionDir)\..\libxml2\lib&quot;;&quot;$(SolutionDir)\..\gtk2\lib&quot;;&quot;$(SolutionDir)\build\$(ConfigurationName)\libs&quot;;&quot;$(SolutionDir)\..\jpeg-6b&quot;"
 				ModuleDefinitionFile="image.def"
