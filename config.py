@@ -273,7 +273,7 @@ class Config:
 			self.FetchGamePaks( self.install_directory )
 		# NOTE: unrelated to self.setup_platforms - grab support files and binaries and install them
 		if ( self.platform == 'Windows' ):
-			depsfile = 'GtkR-deps-1.6-5.zip'
+			depsfile = 'GtkR-deps-1.6-6.zip'
 			if ( not os.path.exists( depsfile ) ):
 				cmd = [ 'wget', '-N', 'http://zerowing.idsoftware.com/files/radiant/developer/1.6.1/%s' % depsfile ]
 				print( repr( cmd ) )
