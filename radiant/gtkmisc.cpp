@@ -1025,8 +1025,6 @@ int WINAPI gtk_MessageBox (void *parent, const char* lpText, const char* lpCapti
 
 // fenris #3078 WHENHELLISFROZENOVER
 
-//#define FILEDLG_DBG
-
 static void file_sel_callback (GtkWidget *widget, gpointer data)
 {
   GtkWidget *parent;
@@ -1039,11 +1037,6 @@ static void file_sel_callback (GtkWidget *widget, gpointer data)
 
   if (GPOINTER_TO_INT (data) == IDOK)
     *success = true;
-
-#ifdef FILEDLG_DBG
-  else
-    Sys_Printf("file_sel_callback != IDOK\n");
-#endif
 
   *loop = 0;
 }
@@ -1123,6 +1116,18 @@ public:
     return filetype_t();
   }
 
+  int GetNumTypes()
+  {
+    return m_nTypes;
+  }
+
+  filetype_t GetTypeForIndex(int index) const // Zero-based index.
+  {
+    if (index >= 0 && index < m_nTypes)
+      return filetype_t(m_pTypes[index].m_name.c_str(), m_pTypes[index].m_pattern.c_str());
+    return filetype_t();
+  }
+
   char *m_strWin32Filters;
   char **m_pstrGTKMasks;
 private:
@@ -1185,10 +1190,10 @@ private:
       for(r = m_pTypes[i].m_name.c_str(); *r!='\0'; r++, w++)
         *w = *r;
       *w++ = ' ';
-      *w++ = '<';
+      *w++ = '(';
       for(r = m_pTypes[i].m_pattern.c_str(); *r!='\0'; r++, w++)
         *w = *r;
-      *w++ = '>';
+      *w++ = ')';
       *w++ = '\0';
     }
     m_pstrGTKMasks[m_nTypes] = NULL;
@@ -1196,64 +1201,82 @@ private:
 
 };
 
+#ifdef _WIN32
+
+typedef struct {
+  gboolean open;
+  OPENFILENAME *ofn;
+  BOOL dlgRtnVal;
+  bool done;
+} win32_native_file_dialog_comms_t;
+
+DWORD WINAPI win32_native_file_dialog_thread_func(LPVOID lpParam)
+{
+  win32_native_file_dialog_comms_t *fileDialogComms;
+  fileDialogComms = (win32_native_file_dialog_comms_t *) lpParam;
+  if (fileDialogComms->open) {
+    fileDialogComms->dlgRtnVal = GetOpenFileName(fileDialogComms->ofn);
+  }
+  else {
+    fileDialogComms->dlgRtnVal = GetSaveFileName(fileDialogComms->ofn);
+  }
+  fileDialogComms->done = true; // No need to synchronize around lock, one-way gate.
+  return 0;
+}
+
+#endif
+
 /**
  * @param[in] baseSubDir should have a trailing slash if not @c NULL
  */
 const char* file_dialog (void *parent, gboolean open, const char* title, const char* path, const char* pattern, const char *baseSubDir)
 {
+
+#ifdef _WIN32
+  static bool in_file_dialog = false;
+  HANDLE fileDialogThreadHandle;
+  win32_native_file_dialog_comms_t fileDialogComms;
+  bool dialogDone;
+#endif
+
   // Gtk dialog
   GtkWidget* file_sel;
-  int loop = 1;
   char *new_path = NULL;
 
   const char* r;
-  char* w;
+  char *v, *w;
   filetype_t type;
   CFileType typelist;
   if(pattern != NULL)
     GetFileTypeRegistry()->getTypeList(pattern, &typelist);
 
-#ifdef FILEDLG_DBG
-  Sys_Printf("file_dialog: open = %d title = %s path = %s\n", open, title, path);
-  if (pattern)
-  {
-    Sys_Printf("Patterns:\n");
-    char** p = typelist.m_pstrGTKMasks;
-    while(*p!=NULL)
-      Sys_Printf("%s\n", *p++);
-  }
-  else
-    Sys_Printf("no patterns\n");
-#endif
-
 #ifdef _WIN32
-  // win32 dialog stores the selected "save as type" extension in the second null-terminated string
-  char customfilter[FILEDLG_CUSTOM_FILTER_LENGTH];
-
   if (g_PrefsDlg.m_bNativeGUI)
   {
-#ifdef FILEDLG_DBG
-    Sys_Printf("Doing win32 file dialog...");
-#endif
     // do that the native way
-    /* Place the terminating null character in the szFile. */
-    szFile[0] = '\0';
-    customfilter[0] = customfilter[1] = customfilter[2] = '\0';
 
+    if (in_file_dialog) return NULL; // Avoid recursive entry.
+    in_file_dialog = true;
     /* Set the members of the OPENFILENAME structure. */
-    ofn.lStructSize = sizeof(OPENFILENAME);
+    // See http://msdn.microsoft.com/en-us/library/ms646839%28v=vs.85%29.aspx .
+    memset(&ofn, 0, sizeof(ofn));
+    ofn.lStructSize = sizeof(ofn);
     ofn.hwndOwner = (HWND)GDK_WINDOW_HWND (g_pParentWnd->m_pWidget->window);
+    ofn.nFilterIndex = 1; // The index is 1-based, not 0-based.  This basically says,
+                          // "select the first filter as default".
     if (pattern)
     {
-      ofn.nFilterIndex = 0;
       ofn.lpstrFilter = typelist.m_strWin32Filters;
     }
-    else ofn.nFilterIndex = 1;
-    ofn.lpstrCustomFilter = customfilter;
-    ofn.nMaxCustFilter = sizeof(customfilter);
+    else
+    {
+      // TODO: Would be a bit cleaner if we could extract this string from
+      // GetFileTypeRegistry() instead of hardcoding it here.
+      ofn.lpstrFilter = "all files\0*.*\0"; // Second '\0' will be added to end of string.
+    }
+    szFile[0] = '\0';
     ofn.lpstrFile = szFile;
     ofn.nMaxFile = sizeof(szFile);
-    ofn.lpstrFileTitle = NULL; // we don't need to get the name of the file
     if(path)
     {
       // szDirName: Radiant uses unix convention for paths internally
@@ -1265,29 +1288,47 @@ const char* file_dialog (void *parent, gboolean open, const char* title, const c
       *w = '\0';
       ofn.lpstrInitialDir = szDirName;
     }
-    else ofn.lpstrInitialDir = NULL;
     ofn.lpstrTitle = title;
     ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_HIDEREADONLY;
 
-    /* Display the Open dialog box. */
-    // it's open or close depending on 'open' parameter
-    if (open)
-    {
-      if (!GetOpenFileName(&ofn))
-        return NULL;	// canceled
+    memset(&fileDialogComms, 0, sizeof(fileDialogComms));
+    fileDialogComms.open = open;
+    fileDialogComms.ofn = &ofn;
+
+    fileDialogThreadHandle =
+      CreateThread(NULL, // lpThreadAttributes
+                   0, // dwStackSize, default stack size
+                   win32_native_file_dialog_thread_func, // lpStartAddress, funcion to call
+                   &fileDialogComms, // lpParameter, argument to pass to function
+                   0, // dwCreationFlags
+                   NULL); // lpThreadId
+
+    dialogDone = false;
+    while (1) {
+      // Avoid blocking indefinitely.  Another thread will set fileDialogComms->done to true;
+      // we don't want to be in an indefinite blocked state when this happens.  We want to break
+      // out of here eventually.
+      while (gtk_events_pending()) {
+        gtk_main_iteration();
+      }
+      if (dialogDone) break;
+      if (fileDialogComms.done) dialogDone = true; // One more loop of gtk_main_iteration() to get things in sync.
+      // Avoid tight infinte loop, add a small amount of sleep.
+      Sleep(10);
     }
-    else
-    {
-      if (!GetSaveFileName(&ofn))
-        return NULL;	// canceled
+    // Make absolutely sure that the thread is finished before we call CloseHandle().
+    WaitForSingleObject(fileDialogThreadHandle, INFINITE);
+    CloseHandle(fileDialogThreadHandle);
+
+    in_file_dialog = false;
+    
+    if (!fileDialogComms.dlgRtnVal) {
+      return NULL; // Cancelled.
     }
 
     if(pattern != NULL)
-      type = typelist.GetTypeForWin32Filter(customfilter+1);
+      type = typelist.GetTypeForIndex(ofn.nFilterIndex - 1);
 
-#ifdef FILEDLG_DBG
-    Sys_Printf("Done.\n");
-#endif
   }
   else
   {
@@ -1297,9 +1338,6 @@ const char* file_dialog (void *parent, gboolean open, const char* title, const c
     if (title == NULL)
       title = open ? _("Open File") : _("Save File");
 
-#ifdef FILEDLG_DBG
-    Sys_Printf("Doing Gtk file dialog:\nBuilding new_path..");
-#endif
     // we expect an actual path below, if the path is NULL we might crash
     if (!path || path[0] == '\0')
     {
@@ -1321,101 +1359,51 @@ const char* file_dialog (void *parent, gboolean open, const char* title, const c
     // terminate string
     *w = '\0';
 
-#ifdef FILEDLG_DBG
-	Sys_Printf("Done.\n");
-	Sys_Printf("Calling gtk_file_selection_new with title: %s...", title);
-#endif
-    file_sel = gtk_file_selection_new (title);
-#ifdef FILEDLG_DBG
-	Sys_Printf("Done.\n");
-	Sys_Printf("Set the masks...");
-#endif
+    file_sel = gtk_file_chooser_dialog_new(title,
+                                           GTK_WINDOW(parent),
+                                           open ? GTK_FILE_CHOOSER_ACTION_OPEN : GTK_FILE_CHOOSER_ACTION_SAVE,
+                                           GTK_STOCK_CANCEL,
+                                           GTK_RESPONSE_CANCEL,
+                                           open ? GTK_STOCK_OPEN : GTK_STOCK_SAVE,
+                                           GTK_RESPONSE_ACCEPT,
+                                           NULL);
+    gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(file_sel), new_path);
+    delete[] new_path;
 
-#if 0 //!\todo Add masks to GtkFileSelection in gtk-2.0
-    // set the masks
-    if (pattern)
-    {
-      gtk_file_selection_clear_masks (GTK_FILE_SELECTION (file_sel));
-      gtk_file_selection_set_masks (GTK_FILE_SELECTION (file_sel), const_cast<const char**>(typelist.m_pstrGTKMasks));
-    }
-#endif
+    // Setting the file chooser dialog to modal and centering it on the parent is done automatically.
 
-#ifdef FILEDLG_DBG
-    Sys_Printf("Done.\n");
-#endif
-
-    gtk_signal_connect (GTK_OBJECT (GTK_FILE_SELECTION (file_sel)->ok_button), "clicked",
-      GTK_SIGNAL_FUNC (file_sel_callback), GINT_TO_POINTER (IDOK));
-    gtk_signal_connect (GTK_OBJECT (GTK_FILE_SELECTION (file_sel)->cancel_button), "clicked",
-      GTK_SIGNAL_FUNC (file_sel_callback), GINT_TO_POINTER (IDCANCEL));
-    gtk_signal_connect (GTK_OBJECT (file_sel), "delete_event",
-      GTK_SIGNAL_FUNC (dialog_delete_callback), NULL);
-    gtk_file_selection_hide_fileop_buttons (GTK_FILE_SELECTION (file_sel));
-
-    if (parent != NULL)
-      gtk_window_set_transient_for (GTK_WINDOW (file_sel), GTK_WINDOW (parent));
-
-#ifdef FILEDLG_DBG
-    Sys_Printf("set_data...");
-#endif
-    bool success = false;
-    g_object_set_data (G_OBJECT (file_sel), "loop", &loop);
-    g_object_set_data (G_OBJECT (file_sel), "success", &success);
-#ifdef FILEDLG_DBG
-    Sys_Printf("Done.\n");
-#endif
-
-    if (!open)
-    {
-#ifdef FILEDLG_DBG
-      Sys_Printf("set_data \"overwrite\" ...");
-#endif
-      g_object_set_data (G_OBJECT (file_sel), "overwrite", GINT_TO_POINTER (1));
-#ifdef FILEDLG_DBG
-      Sys_Printf("Done.\n");
-#endif
+    if (pattern != NULL) {
+      for (int i = 0; i < typelist.GetNumTypes(); i++) {
+        GtkFileFilter *filter = gtk_file_filter_new();
+        type = typelist.GetTypeForIndex(i);
+        // We can use type.name here, or m_pstrGTKMasks[i], which includes the actual pattern.
+        gtk_file_filter_set_name(filter, typelist.m_pstrGTKMasks[i]);
+        gtk_file_filter_add_pattern(filter, type.pattern);
+        // "Note that the chooser takes ownership of the filter, so
+        // you have to ref and sink it if you want to keep a reference."
+        // So I guess we won't need to garbage collect this.
+        gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(file_sel), filter);
+      }
     }
 
-    if (new_path != NULL)
-    {
-#ifdef FILEDLG_DBG
-      Sys_Printf("gtk_file_selection_set_filename... %p (%s)", file_sel, new_path);
-#endif
-      gtk_file_selection_set_filename (GTK_FILE_SELECTION (file_sel), new_path);
-      delete[] new_path;
-#ifdef FILEDLG_DBG
-      Sys_Printf("Done.\n");
-#endif
+    if (gtk_dialog_run(GTK_DIALOG(file_sel)) == GTK_RESPONSE_ACCEPT) {
+      strcpy(szFile, gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(file_sel)));
+    }
+    else {
+      szFile[0] = '\0';
     }
 
-    gtk_grab_add (file_sel);
-#ifdef FILEDLG_DBG
-    Sys_Printf("gtk_widget_show... %p", file_sel);
-#endif
-    gtk_widget_show (file_sel);
-#ifdef FILEDLG_DBG
-    Sys_Printf("Done.\n");
-#endif
-
-#ifdef FILEDLG_DBG
-    Sys_Printf("gtk_main_iteration...");
-#endif
-    while (loop)
-      gtk_main_iteration ();
-    if(success)
-    {
-#if 0 //!\todo Add masks to GtkFileSelection in gtk2
-      if(pattern!=NULL)
-        type = typelist.GetTypeForGTKMask(GTK_FILE_SELECTION (file_sel)->mask);
-#endif
-      strcpy(szFile, gtk_file_selection_get_filename (GTK_FILE_SELECTION (file_sel)));
+    if (pattern != NULL) {
+      GtkFileFilter *filter = gtk_file_chooser_get_filter(GTK_FILE_CHOOSER(file_sel));
+      if (filter == NULL) {
+        type = filetype_t();
+      }
+      else {
+        type = typelist.GetTypeForGTKMask(gtk_file_filter_get_name(filter));
+      }
     }
-#ifdef FILEDLG_DBG
-    Sys_Printf("Done.\n");
-#endif
+    gtk_widget_destroy(file_sel);
 
-    gtk_grab_remove (file_sel);
-    gtk_widget_destroy (file_sel);
 #ifdef _WIN32
   }
 #endif
@@ -1428,32 +1416,48 @@ const char* file_dialog (void *parent, gboolean open, const char* title, const c
     if(*w=='\\')
       *w = '/';
 
-#if defined(WIN32)
-  if (g_PrefsDlg.m_bNativeGUI) // filetype mask not supported in gtk dialog yet
-  {
-    // when saving, force an extension depending on filetype
-    /* \todo SPoG - file_dialog should return filetype information separately.. not force file extension.. */
-    if(!open && pattern != NULL)
-    {
-      // last ext separator
-      w = strrchr(szFile, '.');
-      // no extension
-      w = (w!=NULL) ? w : szFile+strlen(szFile);
-      strcpy(w, type.pattern+1);
+  /* \todo SPoG - file_dialog should return filetype information separately.. not force file extension.. */
+  if(!open && pattern != NULL) {
+    v = strrchr(szFile, '/');
+    w = strrchr(szFile, '.');
+    if ((v && w && w < v) || // Last '.' is before the file.
+        w == NULL) { // Extension missing.
+      if (type.pattern[0]) {
+        w = szFile + strlen(szFile);
+        strcpy(w, type.pattern + 1); // Add extension of selected filter type.
+      }
+      else {
+        // type will be empty if for example there were no filters for pattern,
+        // or if some other UI inconsistencies happen.
+        if (gtk_MessageBox(parent, "No file extension specified in file to be saved.\nAttempt to save anyways?",
+                           "GtkRadiant", MB_YESNO) == IDNO) {
+          return NULL;
+        }
+      }
+    }
+    else { // An extension was explicitly in the filename.
+      bool knownExtension = false;
+      for (int i = typelist.GetNumTypes() - 1; i >= 0; i--) {
+        type = typelist.GetTypeForIndex(i);
+        if (type.pattern[0] && strcmp(w, type.pattern + 1) == 0) {
+          knownExtension = true;
+          break;
+        }
+      }
+      if (!knownExtension) {
+        if (gtk_MessageBox(parent, "Unknown file extension for this save operation.\nAttempt to save anyways?",
+                           "GtkRadiant", MB_YESNO) == IDNO) {
+          return NULL;
+        }
+      }
     }
   }
-#endif
 
   // prompt to overwrite existing files
   if (!open)
     if (access (szFile, R_OK) == 0)
       if (gtk_MessageBox (parent, "File already exists.\nOverwrite?", "GtkRadiant", MB_YESNO) == IDNO)
         return NULL;
-
-#ifdef FILEDLG_DBG
-  // ... let's use a static filename
-  Sys_Printf("filename: %p\n", szFile);
-#endif
 
   return szFile;
 }

@@ -33,7 +33,11 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "stdafx.h"
 
 #include <gtk/gtkgl.h>
+
+#ifndef _WIN32
 #include <pango/pangoft2.h>
+#endif
+
 #include "glwidget.h"
 #include "qgl.h"
 
@@ -208,6 +212,15 @@ gboolean WINAPI gtk_glwidget_make_current (GtkWidget *widget)
 }
 
 
+#ifdef _WIN32
+
+GLuint font_list_base;
+static gchar font_string[] = "courier 8";
+static gint font_height;
+static int font_created = 0;
+
+#else
+
 // Think about rewriting this font stuff to use OpenGL display lists and glBitmap().
 // Bit maps together with display lists may offer a performance increase, but
 // they would not allow antialiased fonts.
@@ -219,31 +232,88 @@ static int y_offset_bitmap_render_pango_units = -1;
 static PangoContext *ft2_context = NULL;
 static int _debug_font_created = 0;
 
+#endif
+
 
 // Units are pixels.  Returns a positive value [most likely].
 int gtk_glwidget_font_ascent()
 {
+#ifdef _WIN32
+
+  return 6; // Approximation.
+
+#else
+
   if (!_debug_font_created) {
     Error("Programming error: gtk_glwidget_font_ascent() called but font does not exist; "
           "you should have called gtk_glwidget_create_font() first");
   }
 
   return font_ascent;
+
+#endif
 }
 
 // Units are pixels.  Returns a positive value [most likely].
 int gtk_glwidget_font_descent()
 {
+#ifdef _WIN32
+
+  return 0; // Approximation.
+
+#else
+
   if (!_debug_font_created) {
     Error("Programming error: gtk_glwidget_font_descent() called but font does not exist; "
           "you should have called gtk_glwidget_create_font() first");
   }
 
   return font_descent;
+
+#endif
 }
+
+#ifdef _WIN32
+
+void gtk_glwidget_create_font_win_internal()
+{
+  if (font_created) return;
+  font_created = 1;
+
+  PangoFontDescription *font_desc;
+  PangoFont *font;
+  PangoFontMetrics *font_metrics;
+
+  font_list_base = qglGenLists (256);
+
+  font_desc = pango_font_description_from_string (font_string);
+
+  font = gdk_gl_font_use_pango_font (font_desc, 0, 256, font_list_base);
+
+  if(font != NULL)
+  {
+    font_metrics = pango_font_get_metrics (font, NULL);
+
+    font_height = pango_font_metrics_get_ascent (font_metrics) +
+                  pango_font_metrics_get_descent (font_metrics);
+    font_height = PANGO_PIXELS (font_height);
+
+    pango_font_metrics_unref (font_metrics);
+  }
+
+  pango_font_description_free (font_desc);
+}
+
+#endif
 
 void gtk_glwidget_create_font()
 {
+#ifdef _WIN32
+
+  // Do nothing.
+
+#else
+
   PangoFontDescription *font_desc;
   PangoLayout *layout;
   PangoRectangle log_rect;
@@ -294,10 +364,18 @@ void gtk_glwidget_create_font()
   font_ascent = PANGO_PIXELS_CEIL(font_ascent_pango_units);
   font_descent = PANGO_PIXELS_CEIL(font_descent_pango_units);
   y_offset_bitmap_render_pango_units = (font_ascent * PANGO_SCALE) - font_ascent_pango_units;
+
+#endif
 }
 
 void gtk_glwidget_destroy_font()
 {
+#ifdef _WIN32
+
+  // Do nothing.
+
+#else
+
   if (!_debug_font_created) {
     Error("Programming error: gtk_glwidget_destroy_font() called when font "
           "does not exist");
@@ -308,6 +386,8 @@ void gtk_glwidget_destroy_font()
   y_offset_bitmap_render_pango_units = -1;
   g_object_unref(G_OBJECT(ft2_context));
   _debug_font_created = 0;
+
+#endif
 }
 
 
@@ -323,6 +403,14 @@ void gtk_glwidget_destroy_font()
 // Google for "glDrawPixels clipping".
 void gtk_glwidget_print_string(const char *s)
 {
+#ifdef _WIN32
+
+  gtk_glwidget_create_font_win_internal();
+  qglListBase(font_list_base);
+  qglCallLists(strlen(s), GL_UNSIGNED_BYTE, (unsigned char *)s);
+
+#else
+
   // The idea for this code initially came from the font-pangoft2.c example that comes with GtkGLExt.
 
   PangoLayout *layout;
@@ -396,12 +484,24 @@ void gtk_glwidget_print_string(const char *s)
   }
 
   g_object_unref(G_OBJECT(layout));
+
+#endif
 }
 
 void gtk_glwidget_print_char(char s)
 {
+#ifdef _WIN32
+
+  gtk_glwidget_create_font_win_internal();
+  qglListBase(font_list_base);
+  qglCallLists(1, GL_UNSIGNED_BYTE, (unsigned char *) &s);
+
+#else
+
   char str[2];
   str[0] = s;
   str[1] = '\0';
   gtk_glwidget_print_string(str);
+
+#endif
 }
