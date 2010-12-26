@@ -305,8 +305,8 @@ class Config:
 					'gtk2/bin/intl.dll',
 					'gtk2/bin/libpango-1.0-0.dll',
                                         'gtk2/bin/libpangoft2-1.0-0.dll',
-					'gtk2/lib/gtkglext-1.2.0/lib/libgtkglext-win32-1.0-0.dll',
-					'gtk2/lib/gtkglext-1.2.0/lib/libgdkglext-win32-1.0-0.dll',
+					'gtk2/lib/gtkglext-1.0/lib/libgtkglext-win32-1.0-0.dll',
+					'gtk2/lib/gtkglext-1.0/lib/libgdkglext-win32-1.0-0.dll',
                                         # tier 2
                                         'gtk2/bin/libgthread-2.0-0.dll',
 					'gtk2/bin/libcairo-2.dll',
