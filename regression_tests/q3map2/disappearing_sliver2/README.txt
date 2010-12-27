@@ -1,9 +1,9 @@
 DESCRIPTION OF PROBLEM:
 =======================
 
-The example map, maps/sparkly_seam.map, contains two triangular brushes near
-the side of the room.  The seam between these two brushes "sparkles" even
-though the endpoints of the edges are exactly the same.
+The example map, maps/disappearing_sliver2.map, contains an example of this
+bug.  The triangle sliver surface in the middle of the room is not rendered
+in the final BSP.
 
 To trigger the bug, compile the map; you don't need -vis or -light.  Only
 -bsp (the first q3map2 stage) is necessary to trigger the bug.  The only
