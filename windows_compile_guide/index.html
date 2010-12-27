@@ -1,0 +1,345 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <title>Compiling GtkRadiant on Windows</title>
+    <style type="text/css">
+      body
+      {
+        color: black;
+        background-color: white;
+        font-family: sans-serif;
+        margin: 1em 1em 1em 1em;
+      }
+      a { color: blue; text-decoration: underline; }
+      a:hover { color: red; text-decoration: underline; }
+      .error { color: #dd0000; }
+    </style>
+  </head>
+  <body>
+    <div style="left:0px; top:0px; width:88px; height:31px; position:absolute">
+      <a href="http://validator.w3.org/check?uri=referer">
+        <img src="http://www.w3.org/Icons/valid-xhtml10"
+             style="border-style:none"
+             alt="Valid XHTML 1.0!" height="31" width="88" />
+      </a>
+    </div>
+    <br />
+    <center><h1>Compiling GtkRadiant on Windows</h1></center>
+    <hr />
+    <p>This guide explains how to compile GtkRadiant 1.6.x from source code on Windows operating systems.
+      The source code is obtained from
+      id Software's official GtkRadiant SVN repository, which is open to the public (details follow).
+      These instructions are aimed at developers wanting to test changes to GtkRadiant source code.
+      The instructions below have been executed successfully on
+      Windows XP 32 bit (some late service pack) and on Windows 7 Ultimate 32 bit.  Since 64 bit systems have not been tested by me, I cannot
+      give any advice on how to complete these instructions on those systems.  (Also, I'm an advanced UNIX user but a complete Windows nub.)</p>
+    <p>This guide is divided into the following main sections.  I choose to use MSYS instead of Cygwin in this
+      tutorial because using MinGW/MSYS is the documented and supported way to compile ioquake3.  The need for MinGW/MSYS is
+      really only to execute a single SCons build target; you could presumably execute those needed steps by
+      hand if you really don't want to bother with installing MSYS (but you're on your own if you choose that route).
+    </p>
+    <ul>
+      <li><h3><a href="#mingw">Section 1: Installing MinGW</a></h3></li>
+      <li><h3><a href="#msys">Section 2: Installing MSYS</a></h3></li>
+      <li><h3><a href="#python">Section 3: Installing Python</a></h3></li>
+      <li><h3><a href="#scons">Section 4: Installing SCons</a></h3></li>
+      <li><h3><a href="#svn">Section 5: Installing SVN</a></h3></li>
+      <li><h3><a href="#vcpp">Section 6: Installing Visual C++</a></h3></li>
+      <li><h3><a href="#sources">Section 7: Obtaining Source Code, Game Paks, and Libs</a></h3></li>
+      <li><h3><a href="#compile">Section 8: Compiling GtkRadiant</a></h3></li>
+      <li><h3><a href="#run">Section 9: Running GtkRadiant</a></h3></li>
+    </ul>
+    <hr />
+    <br />
+    <a name="mingw"></a>
+    <h2>Section 1: Installing MinGW</h2>
+    <p>The following URL can be used as a coarse guide for installing MinGW:
+      <a href="http://www.mingw.org/wiki/Getting_Started">http://www.mingw.org/wiki/Getting_Started</a>.
+      The needed steps are reproduced below.
+    </p>
+    <h3>Step A: Download</h3>
+    <p>Download the <tt>mingw-get</tt> program.  We're going to use <tt>mingw-get</tt>
+      as opposed to the graphical installer <tt>mingw-get-inst</tt> .  You can download the most
+      recent version of <tt>mingw-get</tt> from
+      <a href="http://sourceforge.net/projects/mingw/files/Automated%20MinGW%20Installer/mingw-get/">this SourceForge page</a>.
+      (That page also contains a <tt>readme.txt</tt> file that has very useful information on how to use
+      <tt>mingw-get</tt> , for your reading pleasure.)  Download the binary zip file version;
+      the downloaded file should have a name along the lines of <tt>mingw-get-0.1-mingw32-alpha-5-bin.zip</tt> .
+    </p>
+    <h3>Step B: Extract</h3>
+    <p>
+      Extract the zip file you just downloaded to <tt>C:\MinGW</tt> .  I would use that exact location; I will be referring to
+      that location in the rest of the instructions.  After extraction, double check that there exists a file
+      <tt>C:\MinGW\bin\mingw-get.exe</tt> .  If such a file does not exist, you extracted at an incorrect level or you downloaded
+      the wrong zip archive.
+    </p>
+    <h3>Step C: Set <tt>PATH</tt></h3>
+    <p>
+      You need to add <tt>C:\MinGW\bin</tt> to your <tt>PATH</tt> system environment variable.  Don't forget that the semicolon
+      character is the separator for the elements in <tt>PATH</tt> .  The steps to find where <tt>PATH</tt> can be edited are roughly
+      as follows on Windows XP:
+    </p>
+    <ol>
+      <li>Go to Control Panel (usually in Start menu).</li>
+      <li>In Control Panel, go to System.</li>
+      <li>Hit "Advanced" tab.</li>
+      <li>Hit "Environment Variables" button.</li>
+      <li>Near the bottom, under "System variables", highlight "Path" and click "Edit".</li>
+      <li>Tack on the string "C:\MinGW\bin" to the end, making sure to use a semicolon to separate the existing <tt>PATH</tt> from
+        your new entry.</li>
+      <li>Reboot? (I don't know if it's necessary.)</li>
+    </ol>
+    <h3>Step D: Update/Upgrade</h3>
+    <p>
+      We're going to update the <tt>mingw-get</tt> program with the latest version and pull in the latest distribution manifest.
+      Open up Command Prompt.  Execute the following commands:
+    </p>
+    <blockquote>
+      <pre width="80" style="background: #CCCCCC; padding: 2mm; border-style: ridge">C:\MinGW> <b>mingw-get update</b>
+C:\MinGW> <b>mingw-get upgrade mingw-get</b>
+</pre>
+    </blockquote>
+    <p>
+      The above commands can be executed from any directory; <tt>C:\MinGW</tt> happened to be the currect directory in my case.
+    </p>
+    <p>
+      Note: If you execute <tt>mingw-get</tt> without any arguments, you might get an unpleasant-looking error.
+      This is normal.
+    </p>
+    <p>
+      We're all done installing the base of the MinGW system.  You don't need to install any additional <tt>mingw-*</tt> packages
+      to get GtkRadiant to compile (because we're using different software to actually compile GtkRadiant).
+    </p>
+    <hr />
+    <br />
+    <a name="msys"></a>
+    <h2>Section 2: Installing MSYS</h2>
+    <p>We're now going to install MSYS, which sits on top of MinGW.</p>
+    <h3>Step A: Install <tt>msys-base</tt></h3>
+    <p>
+      Open up Command Prompt.  Execute the following command:
+    </p>
+    <blockquote>
+      <pre width="80" style="background: #CCCCCC; padding: 2mm; border-style: ridge">C:\MinGW> <b>mingw-get install msys-base</b>
+</pre>
+    </blockquote>
+    <p>You can now close the Command Prompt.  You won't have to use it again!</p>
+    <h3>Step B: Fire Up MSYS</h3>
+    <p>
+      In your native file exploring application in Windows, navigate to <tt>C:\MinGW\msys\1.0</tt> .  Here you will find
+      a file <tt>msys.bat</tt> .  This script is what launches MSYS.  You can make a shortcut to this file and place the shortcut
+      in a convenient location such as your Desktop.  You can also use the provided icon <tt>msys.ico</tt> (in the same
+      directory) for your shortcut icon.
+    </p>
+    <p>
+      Now start MSYS by double-clicking <tt>msys.bat</tt> (or your shortcut).  We will use MSYS to install some remaining packages that are needed.
+      In case you are completely new to MSYS, I'd like to point out that it's much like a UNIX shell.
+      In fact you can access the <tt>C:</tt> Windows drive in MSYS via the <tt>/c</tt> path.
+    </p>
+    <h3>Step C: Install MSYS Additions</h3>
+    <p>
+      There are many MinGW/MSYS packages you can install; you may even choose to install all of them.
+      However, for the purposes of compiling GtkRadiant, you will need only the following.  Execute this
+      from your MSYS shell:
+    </p>
+    <blockquote>
+      <pre width="80" style="background: #CCCCCC; padding: 2mm; border-style: ridge">$ <b>mingw-get install msys-wget</b>
+$ <b>mingw-get install msys-unzip</b>
+</pre>
+    </blockquote>
+    <p>You should now have the two commands <tt>wget</tt> and <tt>unzip</tt> at your disposal in the MSYS shell.
+      We will be needing these commands to successfully execute the SCons build target later on.</p>
+    <p>You can leave your MSYS shell open because we will use it again in a little while.</p>
+    <p>Side Note: The <tt>msys-openssh</tt> package comes with traditional <tt>scp</tt> and <tt>ssh</tt> commands that work
+      orders of magnitude faster than WinSCP or PuTTY.</p>
+    <hr />
+    <br />
+    <a name="python"></a>
+    <h2>Section 3: Installing Python</h2>
+    <p>We will now install the Python programming language, which is needed for SCons to work.</p>
+    <p>
+      The homepage for Python is <a href="http://www.python.org/download">www.python.org</a>.  You should download and install
+      a version of Python suitable for your version of Windows.  I would strongly recommend sticking to a version of Python
+      that is 2.x.x, <i>not</i> 3.x.x.  This is because lots of legacy software that uses Python is known to work correctly
+      with 2.x.x, but might not necessarily work with 3.x.x.  At the time of writing this tutorial, the preferred version of Python
+      was 2.7.1.  For purposes of this tutorial, Python is installed to <tt>C:\Python27</tt> .  All of the default
+      options for installing Python should be fine.
+    </p>
+    <p>
+      The following step is needed since we're going to be calling SCons in such a way that requires the <tt>python</tt>
+      command to be in our <tt>PATH</tt> in MSYS.  In your MSYS shell, execute this:
+    </p>
+    <blockquote>
+      <pre width="80" style="background: #CCCCCC; padding: 2mm; border-style: ridge">$ <b>mkdir -p /usr/local/bin</b>
+$ <b>ln -s /c/Python27/python.exe /usr/local/bin/python</b>
+</pre>
+    </blockquote>
+    <p>You should now have the <tt>python</tt> command at your disposal in your MSYS shell.</p>
+    <hr />
+    <br />
+    <a name="scons"></a>
+    <h2>Section 4: Installing SCons</h2>
+    <p>We will now install SCons, which is a multi-platform substitute for traditional Make.</p>
+    <p>
+      The homepage for SCons is <a href="http://www.scons.org/download.php">www.scons.org</a>.  You should download and install the
+      latest production release.  During the install procedure you will be asked to confirm the location of your Python
+      installation.
+    </p>
+    <p>
+      SCons gets installed into <tt>C:\Python27\Scripts</tt> because it's basically a Python script.
+      You would normally invoke SCons by using the <tt>scons.bat</tt> script
+      in this directory.  However, since we will be invoking SCons from MSYS (which is UNIX-like), we're actually going to call the UNIX script version
+      of SCons, which is the plain-old file <tt>scons</tt> in this same directory.  Furthermore, we're going to make sure that the <tt>scons</tt>
+      command is available under MSYS.  Execute these commands in your MSYS shell:
+    </p>
+    <blockquote>
+      <pre width="80" style="background: #CCCCCC; padding: 2mm; border-style: ridge">$ <b>mkdir -p /usr/local/bin</b>
+$ <b>ln -s /c/Python27/Scripts/scons /usr/local/bin/scons</b>
+</pre>
+    </blockquote>
+    <p>
+      You now have the <tt>scons</tt> command at your disposal in the MSYS shell.
+    </p>
+    <hr />
+    <br />
+    <a name="svn"></a>
+    <h2>Section 5: Installing SVN</h2>
+    <p>
+      We're now going to install a command-line version of the SVN client that we can use from MSYS.  We don't need no
+      stinkin' GUI.  Anyhow, command-line SVN is required to perform the SCons build target later on.
+      In fact, you don't need to touch TortoiseSVN or any other GUI-based SVN client for any part of this entire tutorial.
+      (I wouldn't touch a GUI-based SVN client with a 10 foot pole given the opportunity to use command-line SVN instead.)
+    </p>
+    <p>
+      The preferred download site for SVN client for Windows is <a href="http://www.collab.net/downloads/subversion/">CollabNet</a>.
+      You should download and install CollabNet Subversion Command-Line Client,
+      <i>not</i> CollabNet Subversion Edge or something of any other nature.  Unfortunately you'll have to create an account with CollabNet
+      to download this software, but everything is free.  You can use all defaults when installing SVN.
+    </p>
+    <p>
+      The CollabNet version of SVN client for Windows should automatically modify your <tt>PATH</tt> , and you should be able to
+      execute the <tt>svn</tt> command in MSYS after closing MSYS and starting it again.  If this is not the case for some strange
+      reason, you'll have to tweak your environment to ensure that you can execute the <tt>svn</tt> command from MSYS.
+    </p>
+    <hr />
+    <br />
+    <a name="vcpp"></a>
+    <h2>Section 6: Installing Visual C++</h2>
+    <p>
+      The GtkRadiant developers are currently using Microsoft Visual C++ 2008 to compile GtkRadiant.  Even though Visual C++ 2010 is a newer
+      version, don't use it [unless you want to be on your own].  You can download Visual C++ 2008 Express Edition from
+      <a href="http://www.microsoft.com/express/Downloads/#Visual_Studio_2008_Express_Downloads">this Microsoft webpage</a>.
+    </p>
+    <p>
+      When you install Visual C++ 2008 Express Edition, you can install the bare minimum application <i>without</i> any extras such as
+      Microsoft Silverlight Runtime or Microsoft SQL Server 2008 Express Edition.  For the rest of the install options, the
+      defaults can be chosen.
+    </p>
+    <hr />
+    <br />
+    <a name="sources"></a>
+    <h2>Section 7: Obtaining Source Code, Game Paks, and Libs</h2>
+    <p>We are now ready to get the source code for GtkRadiant.</p>
+    <h3>Step A: Get Base Project</h3>
+    <p>
+      Open an MSYS shell.  When you start the shell, you will be in what is called your "home directory".  You can execute the
+      <tt>pwd</tt> command in MSYS to find out which directory you are currently in.  For example, when I start MSYS, my
+      current directory is <tt>/home/rambetter</tt> .  In reality, this path is relative to the MSYS install root.
+      For example, in the Windows operating system, my home directory is actually <tt>C:\MinGw\msys\1.0\home\rambetter</tt> .
+    </p>
+    <p>
+      In any case, we need to create ourselves a work area for purposes of downloading files and compiling software.  I would recommend
+      creating a directory <tt>radiant-work</tt> in your home directory.  So:
+    </p>
+    <blockquote>
+      <pre width="80" style="background: #CCCCCC; padding: 2mm; border-style: ridge">$ <b>mkdir radiant-work</b>
+</pre>
+    </blockquote>
+    <p>Now, we're going to change to that directory and get the base GtkRadiant project:</p>
+    <blockquote>
+      <pre width="88" style="background: #CCCCCC; padding: 2mm; border-style: ridge">$ <b>cd radiant-work</b>
+$ <b>svn checkout https://zerowing.idsoftware.com/svn/radiant/GtkRadiant/trunk ./GtkRadiant</b>
+</pre>
+    </blockquote>
+    <p>We created the extra <tt>radiant-work</tt> parent directory of <tt>GtkRadiant</tt> because the following step will
+      place many files into the project's parent directory, and we don't want to litter our home directory with these files.</p>
+    <h3>Step B: Execute SCons Build Target</h3>
+    <p>
+      Remember all the work we did earlier in order to install SCons?  Well, thanks to all that work we did,
+      obtaining the remaining things we need for compiling is really really easy:
+    </p>
+    <blockquote>
+      <pre width="80" style="background: #CCCCCC; padding: 2mm; border-style: ridge">$ <b>cd GtkRadiant</b>
+$ <b>scons target=setup</b>
+</pre>
+    </blockquote>
+    <p>This SCons build target performs several actions:</p>
+    <ul>
+      <li>Downloads "install paks" for several games such as Quake III Arena and Urban Terror.</li>
+      <li>Downloads library dependencies (such as GTK+) for building and running GtkRadiant.</li>
+      <li>Places library dependencies in proper locations.</li>
+      <li>Performs any other actions needed prior to compiling GtkRadiant.</li>
+    </ul>
+    <hr />
+    <br />
+    <a name="compile"></a>
+    <h2>Section 8: Compiling GtkRadiant</h2>
+    <p>We are now finally going to compile GtkRadiant using Microsoft Visual C++.</p>
+    <p>
+      Start Microsoft Visual C++.  From the "File" menu, choose "Open" -> "Project/Solution...".
+      Navigate to your <tt>GtkRadiant</tt> directory (in my case <tt>C:\MinGW\msys\1.0\home\rambetter\radiant-work\GtkRadiant</tt>).
+      Choose the project file <tt>radiant_VC9.sln</tt> from this directory.
+    </p>
+    <p>
+      You now have the GtkRadiant project loaded in Visual C++.  You can poke around if you like, e.g. open up some source code
+      files and edit them.
+    </p>
+    <p>
+      Before you build the project, you might want to select the "Release" target (as pictured below).
+    </p>
+    <table border="0" cellpadding="0" cellspacing="0">
+      <tr>
+        <td width="20">&nbsp;</td>
+        <td><img src="vc-radiant-release.png" alt="vc-radiant-release.png"></img></td>
+      </tr>
+    </table>
+    <p>
+      To build GtkRadiant, choose "Build Solution" from the "Build" menu.  The build will take
+      about 5 minutes [on a Pentium 4 with HTT], so this would be a good time to go get coffee.
+    </p>
+    <p>If the build completes successfully, you will get a message similar to the following in the output
+      of Visual C++:</p>
+    <blockquote>
+      <pre width="80" style="background: #CCCCCC; padding: 2mm; border-style: ridge">radiant - 0 error(s), 1 warning(s)
+========== Build: 20 succeeded, 0 failed, 0 up-to-date, 0 skipped ==========
+</pre>
+    </blockquote>
+    <hr />
+    <br />
+    <a name="run"></a>
+    <h2>Section 9: Running GtkRadiant</h2>
+    <p>All of the files needed to run GtkRadiant are going to be in the folder <tt>radiant-work\GtkRadiant\install</tt> [relative
+      to your home directory in MSYS].  You can copy the entire <tt>install</tt> folder to some place such as your Desktop
+      and you can rename this folder to <tt>ZeroRadiant</tt> for example.
+      Then, you will use <tt>radiant.exe</tt> in that directory to launch the application.
+    </p>
+    <p>
+      There is one little bit of optional cleanup you can perform on your installation folder.  You can remove all SVN-related
+      files since they are no longer needed and only take up disk space.  Let's say that you renamed your installation folder
+      to <tt>ZeroRadiant</tt> (as the previous paragraph suggests), and let's say that you're in the MSYS shell, and that your current
+      working directory is the parent directory of <tt>ZeroRadiant</tt>.  Then, in your MSYS shell, you can execute this command to
+      delete all SVN-related files (all <tt>.svn</tt> directories):
+    </p>
+    <blockquote>
+      <pre width="80" style="background: #CCCCCC; padding: 2mm; border-style: ridge">$ <b>find ZeroRadiant/ -type d -name '\.svn' -print0 | xargs -0 rm -rf</b>
+</pre>
+    </blockquote>
+    <p>
+      That's it!  Good luck and thanks for reading my tutorial!  If you have comments or suggestions please email me at nlandys@gmail.com .
+      More information about GtkRadiant is on <a href="http://www.qeradiant.com/cgi-bin/trac.cgi">www.qeradiant.com</a>.
+    </p>
+    <br />
+    <br />
+  </body>
+</html>
