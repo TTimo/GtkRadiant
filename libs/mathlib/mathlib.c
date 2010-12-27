@@ -127,7 +127,7 @@ void _VectorCopy (vec3_t in, vec3_t out)
 }
 
 vec_t VectorNormalize( const vec3_t in, vec3_t out ) {
-	vec_t	length, ilength;
+	vec_t	length;
 
 	length = (vec_t)sqrt (in[0]*in[0] + in[1]*in[1] + in[2]*in[2]);
 	if (length == 0)
@@ -136,10 +136,9 @@ vec_t VectorNormalize( const vec3_t in, vec3_t out ) {
 		return 0;
 	}
 
-	ilength = 1.0f/length;
-	out[0] = in[0]*ilength;
-	out[1] = in[1]*ilength;
-	out[2] = in[2]*ilength;
+	out[0] = in[0]/length;
+	out[1] = in[1]/length;
+	out[2] = in[2]/length;
 
 	return length;
 }
