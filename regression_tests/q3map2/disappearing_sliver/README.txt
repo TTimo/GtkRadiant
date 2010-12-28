@@ -103,9 +103,7 @@ ChopWindingInPlace() calls in the above stack trace:
   (87.989571 -891.969116 -768.174316)
   (133.998917 -1014.997314 0.000000)
 
-(If you want to print this out for yourself, print out the coordinates of the
-winding_t "w" parameter right after the ChopWindingInPlace() call in
-CreateBrushWindings() in brush.c.)
+(If you want to print this out for yourself, use winding_logging.patch.)
 
 The same vertices after the bugfix have the following coordinates:
 
