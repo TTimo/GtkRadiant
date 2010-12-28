@@ -66,3 +66,18 @@ is this:
 
 As you can see, all points but one have an increase in accuracy.  This is
 still not accurate enough in my opinion, but is a step in the right direction.
+
+
+MORE NOTES:
+===========
+
+I attempted to improve upon revision 371 by streamlining the code in
+BaseWindingForPlane() some more.  Those attempts were committed as r375.
+After revision 375:
+
+  (6784.09375000 16241.01757812 -1722.04687500)
+  (6144.00000000 16082.99414062 -1443.00390625)
+  (6144.00000000 16122.00000000 -1424.00097656)
+
+Revision 375 has since been reverted (undone) because of the loss in
+accuracy.

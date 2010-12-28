@@ -253,9 +253,13 @@ winding_t *BaseWindingForPlane (vec3_t normal, vec_t dist)
 			vright[2] = normal[1];
 			break;
 	}
-	// NOTE: vright is NOT a unit vector at this point.
-	VectorSetLength(vright, MAX_WORLD_COORD * 2, vright);
 	CrossProduct(normal, vright, vup);
+
+	// IMPORTANT NOTE: vright and vup are NOT unit vectors at this point.
+	// However, normal, vup, and vright are pairwise perpendicular.
+
+	VectorSetLength(vup, MAX_WORLD_COORD * 2, vup);
+	VectorSetLength(vright, MAX_WORLD_COORD * 2, vright);
 	VectorScale(normal, dist, org);
 
 	w = AllocWinding(4);
