@@ -14,5 +14,55 @@ compile for any Q3 mod.
 SOLUTION TO PROBLEM:
 ====================
 
-None yet.  The problem is likely caused by sloppy math operations (significant
-loss of precision).
+It was discovered that BaseWindingForPlane() in polylib.c did some sloppy
+mathematics with significant loss of precision.  Those problems have been
+addressed in commit revision 371.
+
+
+POSSIBLE SIDE EFFECTS:
+======================
+
+Great care was taken to preserve the exact behavior of the original
+BaseWindingForPlane() function except for the loss of precision.  Therefore
+no negative side effects should be seen.  In fact performance may be
+increased.
+
+
+IN-DEPTH DISCUSSION:
+====================
+
+Turns out that the problem is very similar to the original disappearing_sliver
+regression test.  You should read that README.txt to familiarize yourself
+with the situation.
+
+The thing we need to look at is side 0 of brush 0, if you applied
+winding_logging.patch from disappearing_sliver regression test:
+
+  In ParseRawBrush() for brush 0
+      Side 0:
+          (6784.000000 16241.000000 -1722.000000)
+          (6144.000000 16083.000000 -1443.000000)
+          (6144.000000 16122.000000 -1424.000000)
+
+That is the exact plane defninition of our problem sliver, and in fact those
+are also the correct points for the actual vertices of the triangle.
+
+Now the results of the winding for this surface after all the clipping takes
+place:
+
+  (6784.12500000 16241.02343750 -1722.06250000)
+  (6144.00000000 16082.99218750 -1443.00781250)
+  (6144.00000000 16122.00000000 -1424.00390625)
+
+As you can see, 6784.12500000 is more than epsilon distance (0.1) away from
+the correct point.  This is a big problem.
+
+After we apply the fix committed in revision 371, the result after clipping
+is this:
+
+  (6784.06250000 16241.01171875 -1722.03515625)
+  (6144.00000000 16082.99609375 -1443.00781250)
+  (6144.00000000 16122.00000000 -1424.00585938)
+
+As you can see, all points but one have an increase in accuracy.  This is
+still not accurate enough in my opinion, but is a step in the right direction.
