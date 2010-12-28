@@ -46,6 +46,8 @@ And we get rid of the recpirocal length ilength altogether.  Even the
 slightest math errors are magnified in successive calls to linear algebra
 functions.
 
+The change described above was commmitted to GtkRadiant trunk as revision r363.
+
 
 POSSIBLE SIDE EFFECTS:
 ======================
