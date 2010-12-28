@@ -81,6 +81,7 @@ void VectorMA( const vec3_t va, vec_t scale, const vec3_t vb, vec3_t vc );
 
 void _CrossProduct (vec3_t v1, vec3_t v2, vec3_t cross);
 vec_t VectorNormalize (const vec3_t in, vec3_t out);
+vec_t VectorSetLength (const vec3_t in, vec_t length, vec3_t out);
 vec_t ColorNormalize( const vec3_t in, vec3_t out );
 void VectorInverse (vec3_t v);
 void VectorPolar(vec3_t v, float radius, float theta, float phi);

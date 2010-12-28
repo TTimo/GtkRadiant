@@ -143,6 +143,21 @@ vec_t VectorNormalize( const vec3_t in, vec3_t out ) {
 	return length;
 }
 
+vec_t VectorSetLength(const vec3_t in, vec_t length, vec3_t out) {
+	vec_t	origLength;
+
+	origLength = (vec_t) sqrt((in[0] * in[0]) + (in[1] * in[1]) + (in[2] * in[2]));
+	if (origLength == 0)
+	{
+		VectorClear(out);
+		return 0;
+	}
+
+	VectorScale(in, length / origLength, out);
+
+	return origLength;
+}
+
 vec_t ColorNormalize( const vec3_t in, vec3_t out ) {
 	float	max, scale;
 

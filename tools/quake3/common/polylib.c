@@ -208,6 +208,83 @@ BaseWindingForPlane
 */
 winding_t *BaseWindingForPlane (vec3_t normal, vec_t dist)
 {
+	// The goal in this function is to replicate the exact behavior that was in the original
+	// BaseWindingForPlane() function (see below).  The only thing we're going to change is the
+	// accuracy of the operation.  The original code gave a preference for the vup vector to start
+	// out as (0, 0, 1), unless the normal had a dominant Z value, in which case vup started out
+	// as (1, 0, 0).  After that, vup was "bent" [along the plane defined by normal and vup] to
+	// become perpendicular to normal.  After that the vright vector was computed as the cross
+	// product of vup and normal.
+
+	// Once these vectors are calculated, I'm constructing the winding points in exactly the same
+	// way as was done in the original function.  Orientation is the same.
+
+	// Note that the 4 points in the returned winding_t may actually not be necessary (3 might
+	// be enough).  However, I want to minimize the chance of ANY bugs popping up due to any
+	// change in behavior of this function.  Therefore, behavior stays exactly the same, except
+	// for precision of math.  Performance might be better in the new function as well.
+
+	int		x, i;
+	vec_t		max, v;
+	vec3_t		vright, vup, org;
+	winding_t	*w;
+
+	max = -BOGUS_RANGE;
+	x = -1;
+	for (i = 0; i < 3; i++) {
+		v = fabs(normal[i]);
+		if (v > max) {
+			x = i;
+			max = v;
+		}
+	}
+	if (x == -1) Error("BaseWindingForPlane: no axis found");
+
+	switch (x) {
+		case 0: // Fall through to next case.
+		case 1:
+			vright[0] = -normal[1];
+			vright[1] = normal[0];
+			vright[2] = 0;
+			break;
+		case 2:
+			vright[0] = 0;
+			vright[1] = -normal[2];
+			vright[2] = normal[1];
+			break;
+	}
+	CrossProduct(normal, vright, vup);
+
+	// IMPORTANT NOTE: vright and vup are NOT unit vectors at this point.
+	// However, normal, vup, and vright are pairwise perpendicular.
+
+	VectorSetLength(vup, MAX_WORLD_COORD * 2, vup);
+	VectorSetLength(vright, MAX_WORLD_COORD * 2, vright);
+	VectorScale(normal, dist, org);
+
+	w = AllocWinding(4);
+
+	VectorSubtract(org, vright, w->p[0]);
+	VectorAdd(w->p[0], vup, w->p[0]);
+
+	VectorAdd(org, vright, w->p[1]);
+	VectorAdd(w->p[1], vup, w->p[1]);
+
+	VectorAdd(org, vright, w->p[2]);
+	VectorSubtract(w->p[2], vup, w->p[2]);
+
+	VectorSubtract(org, vright, w->p[3]);
+	VectorSubtract(w->p[3], vup, w->p[3]);
+
+	w->numpoints = 4;
+
+	return w;
+}
+
+// Old function, not used but here for reference.  Please do not modify it.
+// (You may remove it at some point.)
+winding_t *_BaseWindingForPlane_orig_(vec3_t normal, vec_t dist)
+{
 	int		i, x;
 	vec_t	max, v;
 	vec3_t	org, vright, vup;
