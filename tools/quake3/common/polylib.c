@@ -219,10 +219,8 @@ winding_t *BaseWindingForPlane (vec3_t normal, vec_t dist)
 	// Once these vectors are calculated, I'm constructing the winding points in exactly the same
 	// way as was done in the original function.  Orientation is the same.
 
-	// Note that the 4 points in the returned winding_t may actually not be necessary (3 might
-	// be enough).  However, I want to minimize the chance of ANY bugs popping up due to any
-	// change in behavior of this function.  Therefore, behavior stays exactly the same, except
-	// for precision of math.  Performance might be better in the new function as well.
+	// EDIT: We're also changing the size of the winding polygon; this is a side effect of
+	// eliminating a VectorNormalize() call.  The new winding polygon is actually bigger.
 
 	int		x, i;
 	vec_t		max, v;
@@ -253,14 +251,41 @@ winding_t *BaseWindingForPlane (vec3_t normal, vec_t dist)
 			vright[2] = normal[1];
 			break;
 	}
+	// vright and normal are now perpendicular, you can prove this by taking their
+	// dot product and seeing that it's always exactly 0 (with no error).
+
+	// NOTE: vright is NOT a unit vector at this point.  vright will have length
+	// not exceeding 1.0.  The minimum length that vright can achieve happens when,
+	// for example, the Z and X components of the normal input vector are equal,
+	// and when its Y component is zero.  In that case Z and X of the normal vector
+	// are both approximately 0.70711.  The resulting vright vector in this case
+	// will have a length of 0.70711.
+
+	// We're relying on the fact that MAX_WORLD_COORD is a power of 2 to keep
+	// our calculation precise and relatively free of floating point error.
+	// The code will work if that's not the case, but not as well.
+	VectorScale(vright, MAX_WORLD_COORD * 4, vright);
+
+	// At time time of this writing, MAX_WORLD_COORD was 65536 (2^16).  Therefore
+	// the length of vright at this point is at least 185364.  A corner of the world
+	// at location (65536, 65536, 65536) is distance 113512 away from the origin.
+
 	CrossProduct(normal, vright, vup);
 
-	// IMPORTANT NOTE: vright and vup are NOT unit vectors at this point.
-	// However, normal, vup, and vright are pairwise perpendicular.
+	// vup now has length equal to that of vright.
 
-	VectorSetLength(vup, MAX_WORLD_COORD * 2, vup);
-	VectorSetLength(vright, MAX_WORLD_COORD * 2, vright);
 	VectorScale(normal, dist, org);
+
+	// org is now a point on the plane defined by normal and dist.  Furthermore,
+	// org, vright, and vup are pairwise perpendicular.  Now, the 4 vectors
+	// (+-)vright + (+-)vup have length that is at least sqrt(185364^2 + 185364^2),
+	// which is about 262144.  That length lies outside the world, since the furthest
+	// point in the world has distance 113512 from the origin as mentioned above.
+	// Also, these 4 vectors are perpendicular to the org vector.  So adding them
+	// to org will only increase their length.  Therefore the 4 points defined below
+	// all lie outside of the world.  Furthermore, it can be easily seen that the
+	// edges connecting these 4 points (in the winding_t below) lie completely outside
+	// the world.  sqrt(262144^2 + 262144^2)/2 = 185363, which is greater than 113512.
 
 	w = AllocWinding(4);
 
