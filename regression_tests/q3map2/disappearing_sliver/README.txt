@@ -46,7 +46,7 @@ And we get rid of the recpirocal length ilength altogether.  Even the
 slightest math errors are magnified in successive calls to linear algebra
 functions.
 
-The change described above was commmitted to GtkRadiant trunk as revision r363.
+The change described above was commmitted to GtkRadiant trunk as revision 363.
 
 
 POSSIBLE SIDE EFFECTS:
@@ -162,3 +162,22 @@ It seems that FixBrokenSurface() should be fixed to completely fix the case
 where there are two close points, and should report the surface as fixed.
 This might be a destabilizing change however, so if this is indeed fixed, it
 may make sense to activate the fix only if a certain flag is set.
+
+
+MORE NOTES:
+===========
+
+As stated above, the accuracy after revision 363 is:
+
+  (67.000229 -1021.998657 0.000000)
+  (88.000175 -891.999146 -767.997437)
+  (133.999146 -1014.998779 0.000000)
+
+A further change was committed for a related problem in revision 377.  After
+this change:
+
+  (66.99955750 -1022.00262451 0.00000000)
+  (87.99969482 -892.00170898 -768.00524902)
+  (133.99958801 -1015.00195312 0.00000000)
+
+The results look similar with respect to the amount of error present.

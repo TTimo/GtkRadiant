@@ -15,4 +15,7 @@ SOLUTION TO PROBLEM:
 ====================
 
 None yet.  The problem is likely caused by sloppy math operations (significant
-loss of precision).
+loss of precision).  This bug pops in and out of existence with every other
+commit at the moment.  The problem is likely caused by the operations in the
+brush winding computation (where the planes are intersected with each other).
+I have not gotten around to addressing that code yet.

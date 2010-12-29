@@ -16,7 +16,7 @@ SOLUTION TO PROBLEM:
 
 It was discovered that BaseWindingForPlane() in polylib.c did some sloppy
 mathematics with significant loss of precision.  Those problems have been
-addressed in commit revision 371.
+addressed in commits to revisions 371 and 377.
 
 
 POSSIBLE SIDE EFFECTS:
@@ -67,17 +67,27 @@ is this:
 As you can see, all points but one have an increase in accuracy.  This is
 still not accurate enough in my opinion, but is a step in the right direction.
 
+After the fix committed in revision 377, which is a further attempt to address
+BaseWindingForPlane(), we get the following accuracy:
+
+  (6784.00000000 16241.00000000 -1722.00000000)
+  (6144.00000000 16083.00000000 -1443.00000000)
+  (6144.00000000 16122.00000000 -1424.00000000)
+
+It's just a fluke for this particular case, but obviouly revision 377 looks
+favorably upon this regression test, because there is zero percent error.
+
 
 MORE NOTES:
 ===========
 
 I attempted to improve upon revision 371 by streamlining the code in
-BaseWindingForPlane() some more.  Those attempts were committed as r375.
-After revision 375:
+BaseWindingForPlane() some more.  Those attempts were committed as revision
+375.  After revision 375:
 
   (6784.09375000 16241.01757812 -1722.04687500)
   (6144.00000000 16082.99414062 -1443.00390625)
   (6144.00000000 16122.00000000 -1424.00097656)
 
 Revision 375 has since been reverted (undone) because of the loss in
-accuracy.
+accuracy.  Revision 377 is a fix for those failed attempts.
