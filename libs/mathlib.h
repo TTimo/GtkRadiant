@@ -38,12 +38,12 @@ typedef vec_t vec3_t[3];
 typedef vec_t vec5_t[5];
 typedef vec_t vec4_t[4];
 
-// Smallest positive value such that 1.0 + VEC_SMALLEST_EPSILON != 1.0
-// In the case of 32 bits (which is the case), it's 0.00000011921.
+// Smallest positive value such that 1.0 + VEC_SMALLEST_EPSILON_AROUND_ONE != 1.0.
+// In the case of 32 bits (which is likely the case), it's 0.00000011921.
 // Don't forget that your epsilons should depend on the possible range of values,
-// because for example 1000.0 + VEC_SMALLEST_EPSILON will almost certainly be
-// equal to 1000.0.
-#define VEC_SMALLEST_EPSILON FLT_EPSILON
+// because for example adding VEC_SMALLEST_EPSILON_AROUND_ONE to 1024.0 will almost
+// certainly not change its value.
+#define VEC_SMALLEST_EPSILON_AROUND_ONE FLT_EPSILON
 
 #define	SIDE_FRONT		0
 #define	SIDE_ON			2
@@ -316,12 +316,12 @@ vec_t ray_intersect_triangle(const ray_t *ray, qboolean bCullBack, const vec3_t 
 typedef double vec_accu_t;
 typedef vec_accu_t vec3_accu_t[3];
 
-// Smallest positive value such that 1.0 + VEC_ACCU_SMALLEST_EPSILON != 1.0
-// In the case of 64 bits (which is the case), it's 0.00000000000000022204.
+// Smallest positive value such that 1.0 + VEC_ACCU_SMALLEST_EPSILON_AROUND_ONE != 1.0.
+// In the case of 64 bits (which is likely the case), it's 0.00000000000000022204.
 // Don't forget that your epsilons should depend on the possible range of values,
-// because for example 1000.0 + VEC_ACCU_SMALLEST_EPSILON will almost certainly
-// be equal to 1000.0.
-#define VEC_ACCU_SMALLEST_EPSILON DBL_EPSILON
+// because for example adding VEC_ACCU_SMALLEST_EPSILON_AROUND_ONE to 1024.0 will almost
+// certainly not change its value.
+#define VEC_ACCU_SMALLEST_EPSILON_AROUND_ONE DBL_EPSILON
 
 // TODO: I have a feeling it may be safer to break these function out into actual functions
 // in order to avoid accidental loss of precision.  For example, say you call

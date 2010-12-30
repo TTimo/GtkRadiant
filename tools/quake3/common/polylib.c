@@ -632,7 +632,18 @@ void ChopWindingInPlaceAccu(winding_accu_t **inout, vec3_t normal, vec_t dist, v
 	// want the resolution of vec_accu_t to have a large resolution around the epsilon.
 	// Some of that leftover resolution even goes away after we scale to points far away.
 
-	static const vec_accu_t smallestEpsilonAllowed = ((vec_accu_t) VEC_SMALLEST_EPSILON) * 0.5;
+	// Here is a further discussion regarding the choice of smallestEpsilonAllowed.
+	// In the 32 float world (we can assume vec_t is that), the "epsilon around 1.0" is
+	// 0.00000011921.  In the 64 bit float world (we can assume vec_accu_t is that), the
+	// "epsilon around 1.0" is 0.00000000000000022204.  (By the way these two epsilons
+	// are defined as VEC_SMALLEST_EPSILON_AROUND_ONE VEC_ACCU_SMALLEST_EPSILON_AROUND_ONE
+	// respectively.)  If you divide the first by the second, you get approximately
+	// 536,885,246.  Dividing that number by 200,000 (a typical base winding coordinate)
+	// gives 2684.  So in other words, if our smallestEpsilonAllowed was chosen as exactly
+	// VEC_SMALLEST_EPSILON_AROUND_ONE, you would be guaranteed at least 2000 "ticks" in
+	// 64-bit land inside of the epsilon for all numbers we're dealing with.
+
+	static const vec_accu_t smallestEpsilonAllowed = ((vec_accu_t) VEC_SMALLEST_EPSILON_AROUND_ONE) * 0.5;
 	if (crudeEpsilon < smallestEpsilonAllowed)	fineEpsilon = smallestEpsilonAllowed;
 	else						fineEpsilon = (vec_accu_t) crudeEpsilon;
 
