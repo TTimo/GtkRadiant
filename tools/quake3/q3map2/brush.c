@@ -277,6 +277,34 @@ void SnapWeldVector( vec3_t a, vec3_t b, vec3_t out )
 	}
 }
 
+void SnapWeldVectorAccu(vec3_accu_t a, vec3_accu_t b, vec3_accu_t out)
+{
+	// I have very serious concerns about this function.
+	// This is a first pass where I just copy the original SnapWeldVector()
+	// and make sure it works with the higher resolution data types.
+	// TODO: Examine this function with a fine-toothed comb.
+
+	int		i;
+	vec_accu_t	ai, bi, outi;
+	
+	if (a == NULL || b == NULL || out == NULL) return;
+	
+	for (i = 0; i < 3; i++)
+	{
+		ai = Q_rintAccu(a[i]);
+		bi = Q_rintAccu(a[i]); // Note, it's using a[i].  This is from legacy code.
+		
+		if (ai == a[i])					out[i] = a[i];
+		else if (bi == b[i])				out[i] = b[i];
+
+		else if (fabs(ai - a[i]) < fabs(bi < b[i]))	out[i] = a[i];
+		else						out[i] = b[i];
+		
+		outi = Q_rintAccu(out[i]);
+		if (fabs(outi - out[i]) <= SNAP_EPSILON)	out[i] = outi;
+	}
+}
+
 
 
 /*
@@ -338,11 +366,44 @@ qboolean FixWinding( winding_t *w )
 	return valid;
 }
 
+qboolean FixWindingAccu(winding_accu_t *w)
+{
+	// Serious doubts about this function.  Will check it out later.
+	// This is just a copy from the original for high res data types.
+	// TODO: Examine this function with a fine-toothed comb.
 
+	qboolean	valid = qtrue;
+	int		i, j, k;
+	vec3_accu_t	vec;
+	vec_accu_t	dist;
 
+	if (!w)	return qfalse;
 
+	for (i = 0; i < w->numpoints; i++)
+	{
+		if (w->numpoints == 3) return valid;
 
+		j = (i + 1) % w->numpoints;
 
+		VectorSubtractAccu(w->p[i], w->p[j], vec);
+		dist = VectorLengthAccu(vec);
+		if (dist < DEGENERATE_EPSILON)
+		{
+			valid = qfalse;
+			SnapWeldVectorAccu(w->p[i], w->p[j], vec);
+			VectorCopyAccu(vec, w->p[i]);
+			for (k = i + 2; k < w->numpoints; k++) {
+				VectorCopyAccu(w->p[k], w->p[k - 1]);
+			}
+			w->numpoints--;
+		}
+	}
+
+	if (w->numpoints < 3) valid = qfalse;
+	return valid;
+}
+
+#define EXPERIMENTAL_HIGH_PRECISION_MATH_Q3MAP2_FIXES 1
 
 /*
 CreateBrushWindings()
@@ -353,7 +414,11 @@ returns false if the brush doesn't enclose a valid volume
 qboolean CreateBrushWindings( brush_t *brush )
 {
 	int			i, j;
+#ifdef EXPERIMENTAL_HIGH_PRECISION_MATH_Q3MAP2_FIXES
+	winding_accu_t	*w;
+#else
 	winding_t	*w;
+#endif
 	side_t		*side;
 	plane_t		*plane;
 	
@@ -366,7 +431,11 @@ qboolean CreateBrushWindings( brush_t *brush )
 		plane = &mapplanes[ side->planenum ];
 		
 		/* make huge winding */
+#ifdef EXPERIMENTAL_HIGH_PRECISION_MATH_Q3MAP2_FIXES
+		w = BaseWindingForPlaneAccu(plane->normal, plane->dist);
+#else
 		w = BaseWindingForPlane( plane->normal, plane->dist );
+#endif
 		
 		/* walk the list of brush sides */
 		for( j = 0; j < brush->numsides && w != NULL; j++ )
@@ -378,14 +447,27 @@ qboolean CreateBrushWindings( brush_t *brush )
 			if( brush->sides[ j ].bevel )
 				continue;
 			plane = &mapplanes[ brush->sides[ j ].planenum ^ 1 ];
+#ifdef EXPERIMENTAL_HIGH_PRECISION_MATH_Q3MAP2_FIXES
+			ChopWindingInPlaceAccu(&w, plane->normal, plane->dist, 0);
+#else
 			ChopWindingInPlace( &w, plane->normal, plane->dist, 0 ); // CLIP_EPSILON );
+#endif
 			
 			/* ydnar: fix broken windings that would generate trifans */
+#ifdef EXPERIMENTAL_HIGH_PRECISION_MATH_Q3MAP2_FIXES
+			FixWindingAccu(w);
+#else
 			FixWinding( w );
+#endif
 		}
 		
 		/* set side winding */
+#ifdef EXPERIMENTAL_HIGH_PRECISION_MATH_Q3MAP2_FIXES
+		side->winding = CopyWindingAccuToNormal(w);
+		FreeWindingAccu(w);
+#else
 		side->winding = w;
+#endif
 	}
 	
 	/* find brush bounds */

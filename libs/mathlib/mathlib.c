@@ -63,6 +63,11 @@ vec_t VectorLength(vec3_t v)
 	return length;
 }
 
+vec_accu_t VectorLengthAccu(vec3_accu_t v)
+{
+	return (vec_accu_t) sqrt((v[0] * v[0]) + (v[1] * v[1]) + (v[2] * v[2]));
+}
+
 qboolean VectorCompare (vec3_t v1, vec3_t v2)
 {
 	int		i;

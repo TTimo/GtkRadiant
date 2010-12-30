@@ -461,6 +461,28 @@ winding_t	*CopyWinding (winding_t *w)
 
 /*
 ==================
+CopyWindingAccuToNormal
+==================
+*/
+winding_t	*CopyWindingAccuToNormal(winding_accu_t *w)
+{
+	int		i;
+	winding_t	*c;
+
+	c = AllocWinding(w->numpoints);
+	c->numpoints = w->numpoints;
+	for (i = 0; i < c->numpoints; i++)
+	{
+		// TODO: Add VectorCopyAccuToNormal() to mathlib.h.
+		c->p[i][0] = (vec_t) w->p[i][0];
+		c->p[i][1] = (vec_t) w->p[i][1];
+		c->p[i][2] = (vec_t) w->p[i][2];
+	}
+	return c;
+}
+
+/*
+==================
 ReverseWinding
 ==================
 */

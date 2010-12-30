@@ -335,6 +335,9 @@ typedef vec_accu_t vec3_accu_t[3];
 #define VectorCopyAccu(a, b) ((b)[0] = (a)[0], (b)[1] = (a)[1], (b)[2] = (a)[2])
 #define VectorScaleAccu(a, b, c) ((c)[0] = (b) * (a)[0], (c)[1] = (b) * (a)[1], (c)[2] = (b) * (a)[2])
 #define CrossProductAccu(a, b, c) ((c)[0] = (a)[1] * (b)[2] - (a)[2] * (b)[1], (c)[1] = (a)[2] * (b)[0] - (a)[0] * (b)[2], (c)[2] = (a)[0] * (b)[1] - (a)[1] * (b)[0])
+#define Q_rintAccu(in) ((vec_accu_t) floor(in + 0.5))
+
+vec_accu_t VectorLengthAccu(vec3_accu_t v);
 
 #ifdef __cplusplus
 }
