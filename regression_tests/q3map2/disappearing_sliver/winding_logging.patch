@@ -1,18 +1,17 @@
 Index: tools/quake3/q3map2/brush.c
 ===================================================================
---- tools/quake3/q3map2/brush.c	(revision 371)
+--- tools/quake3/q3map2/brush.c	(revision 384)
 +++ tools/quake3/q3map2/brush.c	(working copy)
-@@ -356,17 +356,29 @@
- 	winding_t	*w;
+@@ -422,10 +422,16 @@
  	side_t		*side;
  	plane_t		*plane;
-+
+ 	
+-	
 +	static	int	brushord = -1;
 +	brushord++;
 +
 +	Sys_Printf("In CreateBrushWindings() for brush %i\n", brushord);	
- 	
--	
++
  	/* walk the list of brush sides */
  	for( i = 0; i < brush->numsides; i++ )
  	{
@@ -21,33 +20,38 @@ Index: tools/quake3/q3map2/brush.c
  		/* get side and plane */
  		side = &brush->sides[ i ];
  		plane = &mapplanes[ side->planenum ];
- 		
- 		/* make huge winding */
+@@ -436,7 +442,13 @@
+ #else
  		w = BaseWindingForPlane( plane->normal, plane->dist );
+ #endif
+-		
 +
 +		Sys_Printf("        Before clipping we have:\n");
 +		int z;
 +		for (z = 0; z < w->numpoints; z++) {
 +			Sys_Printf("            (%.8f %.8f %.8f)\n", w->p[z][0], w->p[z][1], w->p[z][2]);
 +		}
- 		
++
  		/* walk the list of brush sides */
  		for( j = 0; j < brush->numsides && w != NULL; j++ )
-@@ -379,6 +391,11 @@
- 				continue;
- 			plane = &mapplanes[ brush->sides[ j ].planenum ^ 1 ];
+ 		{
+@@ -452,7 +464,12 @@
+ #else
  			ChopWindingInPlace( &w, plane->normal, plane->dist, 0 ); // CLIP_EPSILON );
+ #endif
+-			
 +
 +			Sys_Printf("        After clipping w/ side %i we have:\n", j);
 +			for (z = 0; z < w->numpoints; z++) {
 +				Sys_Printf("            (%.8f %.8f %.8f)\n", w->p[z][0], w->p[z][1], w->p[z][2]);
 +			}
- 			
++
  			/* ydnar: fix broken windings that would generate trifans */
- 			FixWinding( w );
+ #ifdef EXPERIMENTAL_HIGH_PRECISION_MATH_Q3MAP2_FIXES
+ 			FixWindingAccu(w);
 Index: tools/quake3/q3map2/map.c
 ===================================================================
---- tools/quake3/q3map2/map.c	(revision 371)
+--- tools/quake3/q3map2/map.c	(revision 384)
 +++ tools/quake3/q3map2/map.c	(working copy)
 @@ -803,7 +803,11 @@
  	char			shader[ MAX_QPATH ];
