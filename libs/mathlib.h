@@ -81,7 +81,6 @@ void VectorMA( const vec3_t va, vec_t scale, const vec3_t vb, vec3_t vc );
 
 void _CrossProduct (vec3_t v1, vec3_t v2, vec3_t cross);
 vec_t VectorNormalize (const vec3_t in, vec3_t out);
-vec_t VectorSetLength (const vec3_t in, vec_t length, vec3_t out);
 vec_t ColorNormalize( const vec3_t in, vec3_t out );
 void VectorInverse (vec3_t v);
 void VectorPolar(vec3_t v, float radius, float theta, float phi);
@@ -298,6 +297,26 @@ void ray_transform(ray_t *ray, const m4x4_t matrix);
 vec_t ray_intersect_point(const ray_t *ray, const vec3_t point, vec_t epsilon, vec_t divergence);
 /*! return true if triangle intersects ray... dist = dist from intersection point to ray-origin */
 vec_t ray_intersect_triangle(const ray_t *ray, qboolean bCullBack, const vec3_t vert0, const vec3_t vert1, const vec3_t vert2);
+
+
+////////////////////////////////////////////////////////////////////////////////////////////
+// Below is double-precision math stuff.  This was initially needed by the base winding code
+// in q3map2 brush processing.  These definitions can be used wherever extra precision is an
+// absolute must.
+////////////////////////////////////////////////////////////////////////////////////////////
+
+typedef double vec_accu_t;
+typedef vec_accu_t vec3_accu_t[3];
+
+// TODO: I have a feeling it may be safer to break these function out into actual functions
+// in order to avoid accidental loss of precision.  For example, say you call
+// VectorScaleAccu(vec3_t, vec_t, vec3_accu_t).  The scale would take place in 32 bit land
+// and the result would be cast to 64 bit, which would cause total loss of precision when
+// scaling by a large factor.
+#define VectorSubtractAccu(a, b, c) ((c)[0] = (a)[0] - (b)[0], (c)[1] = (a)[1] - (b)[1], (c)[2] = (a)[2] - (b)[2])
+#define VectorAddAccu(a, b, c) ((c)[0] = (a)[0] + (b)[0], (c)[1] = (a)[1] + (b)[1], (c)[2] = (a)[2] + (b)[2])
+#define VectorScaleAccu(a, b, c) ((c)[0] = (b) * (a)[0], (c)[1] = (b) * (a)[1], (c)[2] = (b) * (a)[2])
+#define CrossProductAccu(a, b, c) ((c)[0] = (a)[1] * (b)[2] - (a)[2] * (b)[1], (c)[1] = (a)[2] * (b)[0] - (a)[0] * (b)[2], (c)[2] = (a)[0] * (b)[1] - (a)[1] * (b)[0])
 
 #ifdef __cplusplus
 }

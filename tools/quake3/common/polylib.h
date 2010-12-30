@@ -55,3 +55,17 @@ void	ChopWindingInPlace (winding_t **w, vec3_t normal, vec_t dist, vec_t epsilon
 // frees the original if clipped
 
 void pw(winding_t *w);
+
+
+///////////////////////////////////////////////////////////////////////////////////////
+// Below is double-precision stuff.  This was initially needed by the base winding code
+// in q3map2 brush processing.
+///////////////////////////////////////////////////////////////////////////////////////
+
+typedef struct
+{
+	int		numpoints;
+	vec3_accu_t	p[4]; // variable sized
+} winding_accu_t;
+
+winding_accu_t	*BaseWindingForPlaneAccu(vec3_t normal, vec_t dist);

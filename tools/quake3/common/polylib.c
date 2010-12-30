@@ -73,6 +73,39 @@ winding_t	*AllocWinding (int points)
 	return w;
 }
 
+/*
+=============
+AllocWindingAccu
+=============
+*/
+winding_accu_t *AllocWindingAccu(int points)
+{
+	winding_accu_t	*w;
+	int		s;
+
+	if (points >= MAX_POINTS_ON_WINDING)
+		Error("AllocWindingAccu failed: MAX_POINTS_ON_WINDING exceeded");
+
+	if (numthreads == 1)
+	{
+		// At the time of this writing, these statistics were not used in any way.
+		c_winding_allocs++;
+		c_winding_points += points;
+		c_active_windings++;
+		if (c_active_windings > c_peak_windings)
+			c_peak_windings = c_active_windings;
+	}
+	s = sizeof(vec_accu_t) * 3 * points + sizeof(int);
+	w = safe_malloc(s);
+	memset(w, 0, s); 
+	return w;
+}
+
+/*
+=============
+FreeWinding
+=============
+*/
 void FreeWinding (winding_t *w)
 {
 	if (*(unsigned *)w == 0xdeaddead)
@@ -82,6 +115,22 @@ void FreeWinding (winding_t *w)
 	if (numthreads == 1)
 		c_active_windings--;
 	free (w);
+}
+
+/*
+=============
+FreeWindingAccu
+=============
+*/
+void FreeWindingAccu(winding_accu_t *w)
+{
+	if (*((unsigned *) w) == 0xdeaddead)
+		Error("FreeWindingAccu: freed a freed winding");
+	*((unsigned *) w) = 0xdeaddead;
+
+	if (numthreads == 1)
+		c_active_windings--;
+	free(w);
 }
 
 /*
@@ -203,33 +252,34 @@ void	WindingCenter (winding_t *w, vec3_t center)
 
 /*
 =================
-BaseWindingForPlane
+BaseWindingForPlaneAccu
 =================
 */
-winding_t *BaseWindingForPlane (vec3_t normal, vec_t dist)
+winding_accu_t *BaseWindingForPlaneAccu(vec3_t normal, vec_t dist)
 {
-	// The goal in this function is to replicate the exact behavior that was in the original
-	// BaseWindingForPlane() function (see below).  The only thing we're going to change is the
-	// accuracy of the operation.  The original code gave a preference for the vup vector to start
-	// out as (0, 0, 1), unless the normal had a dominant Z value, in which case vup started out
-	// as (1, 0, 0).  After that, vup was "bent" [along the plane defined by normal and vup] to
-	// become perpendicular to normal.  After that the vright vector was computed as the cross
-	// product of vup and normal.
+	// The goal in this function is to replicate the behavior of the original BaseWindingForPlane()
+	// function (see below) but at the same time increasing accuracy substantially.
 
-	// Once these vectors are calculated, I'm constructing the winding points in exactly the same
-	// way as was done in the original function.  Orientation is the same.
+	// The original code gave a preference for the vup vector to start out as (0, 0, 1), unless the
+	// normal had a dominant Z value, in which case vup started out as (1, 0, 0).  After that, vup
+	// was "bent" [along the plane defined by normal and vup] to become perpendicular to normal.
+	// After that the vright vector was computed as the cross product of vup and normal.
 
-	// Note that the 4 points in the returned winding_t may actually not be necessary (3 might
-	// be enough).  However, I want to minimize the chance of ANY bugs popping up due to any
-	// change in behavior of this function.  Therefore, behavior stays exactly the same, except
-	// for precision of math.  Performance might be better in the new function as well.
+	// I'm constructing the winding polygon points in a fashion similar to the method used in the
+	// original function.  Orientation is the same.  The size of the winding polygon, however, is
+	// variable in this function (depending on the angle of normal), and is larger (by about a factor
+	// of 2) than the winding polygon in the original function.
 
 	int		x, i;
 	vec_t		max, v;
-	vec3_t		vright, vup, org;
-	winding_t	*w;
+	vec3_accu_t	vright, vup, org;
+	winding_accu_t	*w;
 
-	max = -BOGUS_RANGE;
+	// One of the components of normal must have a magnitiude greater than this value,
+	// otherwise normal is not a unit vector.  This is a little bit of inexpensive
+	// partial error checking we can do.
+	max = 0.56; // 1 / sqrt(1^2 + 1^2 + 1^2) = 0.577350269
+
 	x = -1;
 	for (i = 0; i < 3; i++) {
 		v = fabs(normal[i]);
@@ -238,52 +288,93 @@ winding_t *BaseWindingForPlane (vec3_t normal, vec_t dist)
 			max = v;
 		}
 	}
-	if (x == -1) Error("BaseWindingForPlane: no axis found");
+	if (x == -1) Error("BaseWindingForPlaneAccu: no dominant axis found because normal is too short");
 
 	switch (x) {
 		case 0: // Fall through to next case.
 		case 1:
-			vright[0] = -normal[1];
-			vright[1] = normal[0];
+			vright[0] = (vec_accu_t) -normal[1];
+			vright[1] = (vec_accu_t) normal[0];
 			vright[2] = 0;
 			break;
 		case 2:
 			vright[0] = 0;
-			vright[1] = -normal[2];
-			vright[2] = normal[1];
+			vright[1] = (vec_accu_t) -normal[2];
+			vright[2] = (vec_accu_t) normal[1];
 			break;
 	}
-	CrossProduct(normal, vright, vup);
 
-	// IMPORTANT NOTE: vright and vup are NOT unit vectors at this point.
-	// However, normal, vup, and vright are pairwise perpendicular.
+	// vright and normal are now perpendicular; you can prove this by taking their
+	// dot product and seeing that it's always exactly 0 (with no error).
 
-	VectorSetLength(vup, MAX_WORLD_COORD * 2, vup);
-	VectorSetLength(vright, MAX_WORLD_COORD * 2, vright);
-	VectorScale(normal, dist, org);
+	// NOTE: vright is NOT a unit vector at this point.  vright will have length
+	// not exceeding 1.0.  The minimum length that vright can achieve happens when,
+	// for example, the Z and X components of the normal input vector are equal,
+	// and when normal's Y component is zero.  In that case Z and X of the normal
+	// vector are both approximately 0.70711.  The resulting vright vector in this
+	// case will have a length of 0.70711.
 
-	w = AllocWinding(4);
+	// We're relying on the fact that MAX_WORLD_COORD is a power of 2 to keep
+	// our calculation precise and relatively free of floating point error.
+	// [However, the code will still work fine if that's not the case.]
+	VectorScaleAccu(vright, ((vec_accu_t) MAX_WORLD_COORD) * 4.0, vright);
 
-	VectorSubtract(org, vright, w->p[0]);
-	VectorAdd(w->p[0], vup, w->p[0]);
+	// At time time of this writing, MAX_WORLD_COORD was 65536 (2^16).  Therefore
+	// the length of vright at this point is at least 185364.  In comparison, a
+	// corner of the world at location (65536, 65536, 65536) is distance 113512
+	// away from the origin.
 
-	VectorAdd(org, vright, w->p[1]);
-	VectorAdd(w->p[1], vup, w->p[1]);
+	CrossProductAccu(normal, vright, vup); // NOTE: normal is NOT a vec3_accu_t.
 
-	VectorAdd(org, vright, w->p[2]);
-	VectorSubtract(w->p[2], vup, w->p[2]);
+	// vup now has length equal to that of vright.
 
-	VectorSubtract(org, vright, w->p[3]);
-	VectorSubtract(w->p[3], vup, w->p[3]);
+	// Here, we're casting dist to the more accurate data type just in case
+	// VectorScaleAccu() is a #define and not a true function, since normal
+	// has the lower resolution too.  We want the multiply operations to take
+	// place in the higher resolution data types to prevent loss of accuracy,
+	// especially considering that we may be scaling by a very large amount.
+	VectorScaleAccu(normal, (vec_accu_t) dist, org);
+
+	// org is now a point on the plane defined by normal and dist.  Furthermore,
+	// org, vright, and vup are pairwise perpendicular.  Now, the 4 vectors
+	// { (+-)vright + (+-)vup } have length that is at least sqrt(185364^2 + 185364^2),
+	// which is about 262144.  That length lies outside the world, since the furthest
+	// point in the world has distance 113512 from the origin as mentioned above.
+	// Also, these 4 vectors are perpendicular to the org vector.  So adding them
+	// to org will only increase their length.  Therefore the 4 points defined below
+	// all lie outside of the world.  Furthermore, it can be easily seen that the
+	// edges connecting these 4 points (in the winding_accu_t below) lie completely
+	// outside the world.  sqrt(262144^2 + 262144^2)/2 = 185363, which is greater than
+	// 113512.
+
+	w = AllocWindingAccu(4);
+
+	VectorSubtractAccu(org, vright, w->p[0]);
+	VectorAddAccu(w->p[0], vup, w->p[0]);
+
+	VectorAddAccu(org, vright, w->p[1]);
+	VectorAddAccu(w->p[1], vup, w->p[1]);
+
+	VectorAddAccu(org, vright, w->p[2]);
+	VectorSubtractAccu(w->p[2], vup, w->p[2]);
+
+	VectorSubtractAccu(org, vright, w->p[3]);
+	VectorSubtractAccu(w->p[3], vup, w->p[3]);
 
 	w->numpoints = 4;
 
 	return w;
 }
 
-// Old function, not used but here for reference.  Please do not modify it.
-// (You may remove it at some point.)
-winding_t *_BaseWindingForPlane_orig_(vec3_t normal, vec_t dist)
+/*
+=================
+BaseWindingForPlane
+
+Original BaseWindingForPlane() function that has serious accuracy problems.  Here is why.
+TODO: Explain why.
+=================
+*/
+winding_t *BaseWindingForPlane(vec3_t normal, vec_t dist)
 {
 	int		i, x;
 	vec_t	max, v;
