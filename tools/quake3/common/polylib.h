@@ -69,3 +69,4 @@ typedef struct
 } winding_accu_t;
 
 winding_accu_t	*BaseWindingForPlaneAccu(vec3_t normal, vec_t dist);
+void	ChopWindingInPlaceAccu(winding_accu_t **w, vec3_t normal, vec_t dist, vec_t epsilon);

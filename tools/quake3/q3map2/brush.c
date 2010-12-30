@@ -506,6 +506,8 @@ void WriteBSPBrushMap( char *name, brush_t *list )
 		fprintf (f, "{\n");
 		for (i=0,s=list->sides ; i<list->numsides ; i++,s++)
 		{
+			// TODO: See if we can use a smaller winding to prevent resolution loss.
+			// Is WriteBSPBrushMap() used only to decompile maps?
 			w = BaseWindingForPlane (mapplanes[s->planenum].normal, mapplanes[s->planenum].dist);
 
 			fprintf (f,"( %i %i %i ) ", (int)w->p[0][0], (int)w->p[0][1], (int)w->p[0][2]);

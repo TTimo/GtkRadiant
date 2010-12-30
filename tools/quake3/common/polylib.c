@@ -594,6 +594,138 @@ void	ClipWindingEpsilon (winding_t *in, vec3_t normal, vec_t dist,
 
 /*
 =============
+ChopWindingInPlaceAccu
+=============
+*/
+void ChopWindingInPlaceAccu(winding_accu_t **inout, vec3_t normal, vec_t dist, vec_t crudeEpsilon)
+{
+	vec_accu_t	fineEpsilon;
+	winding_accu_t	*in;
+	int		counts[3];
+	int		i, j;
+	vec_accu_t	dists[MAX_POINTS_ON_WINDING + 1];
+	int		sides[MAX_POINTS_ON_WINDING + 1];
+	int		maxpts;
+	winding_accu_t	*f;
+	vec_accu_t	*p1, *p2;
+	vec_accu_t	w;
+	vec3_accu_t	mid;
+
+	// We require at least a very small epsilon.  It's a good idea for several reasons.
+	// First, we will be dividing by a potentially very small distance below.  We don't
+	// want that distance to be too small; otherwise, things "blow up" with little accuracy
+	// due to the division.  (After a second look, the value w below is in range (0,1), but
+	// graininess problem remains.)  Second, Having minimum epsilon also prevents the following
+	// situation.  Say for example we have a perfect octagon defined by the input winding.
+	// Say our chopping plane (defined by normal and dist) is essentially the same plane
+	// that the octagon is sitting on.  Well, due to rounding errors, it may be that point
+	// 1 of the octagon might be in front, point 2 might be in back, point 3 might be in
+	// front, point 4 might be in back, and so on.  So we could end up with a very ugly-
+	// looking chopped winding, and this might be undesirable, and would at least lead to
+	// a possible exhaustion of MAX_POINTS_ON_WINDING.  It's better to assume that points
+	// very very close to the plane ore on the plane, using an infinitesimal epsilon amount.
+
+	// Now, the original ChopWindingInPlace() function used a vec_t-based winding_t.
+	// So this minimum epsilon is quite similar to casting the higher resolution numbers to
+	// the lower resolution and comparing them in the lower resolution mode.  We explicitly
+	// choose the minimum epsilon as something around the vec_t epsilon of one because we
+	// want the resolution of vec_accu_t to have a large resolution around the epsilon.
+	// Some of that leftover resolution even goes away after we scale to points far away.
+
+	static const vec_accu_t smallestEpsilonAllowed = ((vec_accu_t) VEC_SMALLEST_EPSILON) * 0.5;
+	if (crudeEpsilon < smallestEpsilonAllowed)	fineEpsilon = smallestEpsilonAllowed;
+	else						fineEpsilon = (vec_accu_t) crudeEpsilon;
+
+	in = *inout;
+	counts[0] = counts[1] = counts[2] = 0;
+
+	for (i = 0; i < in->numpoints; i++)
+	{
+		dists[i] = DotProductAccu(in->p[i], normal) - dist;
+		if (dists[i] > fineEpsilon)		sides[i] = SIDE_FRONT;
+		else if (dists[i] < -fineEpsilon)	sides[i] = SIDE_BACK;
+		else					sides[i] = SIDE_ON;
+		counts[sides[i]]++;
+	}
+	sides[i] = sides[0];
+	dists[i] = dists[0];
+	
+	if (!counts[SIDE_FRONT]) {
+		FreeWindingAccu(in);
+		*inout = NULL;
+		return;
+	}
+	if (!counts[SIDE_BACK]) {
+		return; // Winding is unmodified.
+	}
+
+	// TODO: Why the hell are we using this number?  The original comment says something along
+	// the lines of "Can't use counts[0] + 2 because of fp grouping errors", and I'm not
+	// entirely sure what that means.  Is it a problem later on in how the caller of this function
+	// uses the returned winding afterwards?  Is it a problem in that the algorithm below will
+	// bump into the max in some cases?  Anyhow, investigate and fix this number to be a correct
+	// and predictable number.  We can also dynamically grow inside of this function in case we
+	// do hit the max for some strange reason.
+	maxpts = in->numpoints + 4;
+
+	f = AllocWindingAccu(maxpts);
+
+	for (i = 0; i < in->numpoints; i++)
+	{
+		p1 = in->p[i];
+
+		if (sides[i] == SIDE_ON)
+		{
+			if (f->numpoints >= maxpts)
+				Error("ChopWindingInPlaceAccu: points exceeded estimate");
+			if (f->numpoints >= MAX_POINTS_ON_WINDING)
+				Error("ChopWindingInPlaceAccu: MAX_POINTS_ON_WINDING");
+			VectorCopyAccu(p1, f->p[f->numpoints]);
+			f->numpoints++;
+			continue;
+		}
+		if (sides[i] == SIDE_FRONT)
+		{
+			if (f->numpoints >= maxpts)
+				Error("ChopWindingInPlaceAccu: points exceeded estimate");
+			if (f->numpoints >= MAX_POINTS_ON_WINDING)
+				Error("ChopWindingInPlaceAccu: MAX_POINTS_ON_WINDING");
+			VectorCopyAccu(p1, f->p[f->numpoints]);
+			f->numpoints++;
+		}
+		if (sides[i + 1] == SIDE_ON || sides[i + 1] == sides[i])
+		{
+			continue;
+		}
+			
+		// Generate a split point.
+		p2 = in->p[((i + 1) == in->numpoints) ? 0 : (i + 1)];
+
+		// The divisor's absolute value is greater than the dividend's absolute value.
+		// w is in the range (0,1).
+		w = dists[i] / (dists[i] - dists[i + 1]);
+
+		for (j = 0; j < 3; j++)
+		{
+			// Avoid round-off error when possible.  Check axis-aligned normal.
+			if (normal[j] == 1)		mid[j] = dist;
+			else if (normal[j] == -1)	mid[j] = -dist;
+			else				mid[j] = p1[j] + (w * (p2[j] - p1[j]));
+		}
+		if (f->numpoints >= maxpts)
+			Error("ChopWindingInPlaceAccu: points exceeded estimate");
+		if (f->numpoints >= MAX_POINTS_ON_WINDING)
+			Error("ChopWindingInPlaceAccu: MAX_POINTS_ON_WINDING");
+		VectorCopyAccu(mid, f->p[f->numpoints]);
+		f->numpoints++;
+	}
+
+	FreeWindingAccu(in);
+	*inout = f;
+}
+
+/*
+=============
 ChopWindingInPlace
 =============
 */
