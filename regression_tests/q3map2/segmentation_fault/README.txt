@@ -12,6 +12,16 @@ To trigger the bug, compile the map; you don't need -vis or -light.  Only
 entities in the map are a light and a info_player_deathmatch, so the map will
 compile for any Q3 mod.
 
+Here is a description of the problem brush (brush #0):
+
+  side 0: -z face
+  side 1: +z face
+  side 2: -y face
+  side 3: +x face
+  side 4: +y face
+  side 5: -x face
+  side 6: problem side "accidentally showed up" :-)
+
 
 SOLUTION TO PROBLEM:
 ====================
