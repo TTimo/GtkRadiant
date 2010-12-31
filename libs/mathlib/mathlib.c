@@ -132,18 +132,28 @@ void _VectorCopy (vec3_t in, vec3_t out)
 }
 
 vec_t VectorNormalize( const vec3_t in, vec3_t out ) {
-	vec_t	length;
 
-	length = (vec_t)sqrt (in[0]*in[0] + in[1]*in[1] + in[2]*in[2]);
+	// The sqrt() function takes double as an input and returns double as an
+	// output according the the man pages on Debian and on FreeBSD.  Therefore,
+	// I don't see a reason why using a double outright (instead of using the
+	// vec_accu_t alias for example) could possibly be frowned upon.
+
+	double	x, y, z, length;
+
+	x = (double) in[0];
+	y = (double) in[1];
+	z = (double) in[2];
+
+	length = sqrt((x * x) + (y * y) + (z * z));
 	if (length == 0)
 	{
 		VectorClear (out);
 		return 0;
 	}
 
-	out[0] = in[0]/length;
-	out[1] = in[1]/length;
-	out[2] = in[2]/length;
+	out[0] = (vec_t) (x / length);
+	out[1] = (vec_t) (y / length);
+	out[2] = (vec_t) (z / length);
 
 	return length;
 }
