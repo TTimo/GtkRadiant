@@ -1,8 +1,8 @@
 Index: tools/quake3/q3map2/brush.c
 ===================================================================
---- tools/quake3/q3map2/brush.c	(revision 384)
+--- tools/quake3/q3map2/brush.c	(revision 388)
 +++ tools/quake3/q3map2/brush.c	(working copy)
-@@ -422,10 +422,16 @@
+@@ -421,10 +421,16 @@
  	side_t		*side;
  	plane_t		*plane;
  	
@@ -20,7 +20,7 @@ Index: tools/quake3/q3map2/brush.c
  		/* get side and plane */
  		side = &brush->sides[ i ];
  		plane = &mapplanes[ side->planenum ];
-@@ -436,7 +442,13 @@
+@@ -435,7 +441,13 @@
  #else
  		w = BaseWindingForPlane( plane->normal, plane->dist );
  #endif
@@ -35,7 +35,7 @@ Index: tools/quake3/q3map2/brush.c
  		/* walk the list of brush sides */
  		for( j = 0; j < brush->numsides && w != NULL; j++ )
  		{
-@@ -452,7 +464,12 @@
+@@ -451,7 +463,12 @@
  #else
  			ChopWindingInPlace( &w, plane->normal, plane->dist, 0 ); // CLIP_EPSILON );
  #endif
@@ -47,11 +47,11 @@ Index: tools/quake3/q3map2/brush.c
 +			}
 +
  			/* ydnar: fix broken windings that would generate trifans */
- #ifdef EXPERIMENTAL_HIGH_PRECISION_MATH_Q3MAP2_FIXES
+ #if EXPERIMENTAL_HIGH_PRECISION_MATH_Q3MAP2_FIXES
  			FixWindingAccu(w);
 Index: tools/quake3/q3map2/map.c
 ===================================================================
---- tools/quake3/q3map2/map.c	(revision 384)
+--- tools/quake3/q3map2/map.c	(revision 388)
 +++ tools/quake3/q3map2/map.c	(working copy)
 @@ -803,7 +803,11 @@
  	char			shader[ MAX_QPATH ];
@@ -78,7 +78,7 @@ Index: tools/quake3/q3map2/map.c
  		if( !GetToken( qtrue ) )
  			break;
  		if( !strcmp( token, "}" ) )
-@@ -917,6 +924,10 @@
+@@ -917,7 +924,16 @@
  		}
  		
  		/* find the plane number */
@@ -87,5 +87,11 @@ Index: tools/quake3/q3map2/map.c
 +		Sys_Printf("        (%f %f %f)\n", planePoints[1][0], planePoints[1][1], planePoints[1][2]);
 +		Sys_Printf("        (%f %f %f)\n", planePoints[2][0], planePoints[2][1], planePoints[2][2]);
  		planenum = MapPlaneFromPoints( planePoints );
++		Sys_Printf("        normal: (%.10f %.10f %.10f)\n",
++				mapplanes[planenum].normal[0],
++				mapplanes[planenum].normal[1],
++				mapplanes[planenum].normal[2]);
++		Sys_Printf("        dist: %.10f\n", mapplanes[planenum].dist);
  		side->planenum = planenum;
  		
+ 		/* bp: get the texture mapping for this texturedef / plane combination */
