@@ -280,6 +280,25 @@ takes 3 points and finds the plane they lie in
 
 int MapPlaneFromPoints( vec3_t *p )
 {
+#if EXPERIMENTAL_HIGH_PRECISION_MATH_Q3MAP2_FIXES
+	vec3_accu_t	paccu[3];
+	vec3_accu_t	t1, t2, normalAccu;
+	vec3_t		normal;
+	vec_t		dist;
+
+	VectorCopyRegularToAccu(p[0], paccu[0]);
+	VectorCopyRegularToAccu(p[1], paccu[1]);
+	VectorCopyRegularToAccu(p[2], paccu[2]);
+
+	VectorSubtractAccu(paccu[0], paccu[1], t1);
+	VectorSubtractAccu(paccu[2], paccu[1], t2);
+	CrossProductAccu(t1, t2, normalAccu);
+	VectorNormalizeAccu(normalAccu, normalAccu);
+	dist = (vec_t) DotProductAccu(paccu[0], normalAccu);
+	VectorCopyAccuToRegular(normalAccu, normal);
+
+	return FindFloatPlane(normal, dist, 3, p);
+#else
 	vec3_t	t1, t2, normal;
 	vec_t	dist;
 	
@@ -295,6 +314,7 @@ int MapPlaneFromPoints( vec3_t *p )
 	
 	/* store the plane */
 	return FindFloatPlane( normal, dist, 3, p );
+#endif
 }
 
 

@@ -347,6 +347,7 @@ vec_accu_t Q_rintAccu(vec_accu_t val);
 
 void VectorCopyAccuToRegular(const vec3_accu_t in, vec3_t out);
 void VectorCopyRegularToAccu(const vec3_t in, vec3_accu_t out);
+vec_accu_t VectorNormalizeAccu(const vec3_accu_t in, vec3_accu_t out);
 
 #ifdef __cplusplus
 }

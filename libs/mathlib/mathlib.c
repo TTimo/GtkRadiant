@@ -150,7 +150,7 @@ vec_t VectorNormalize( const vec3_t in, vec3_t out ) {
 	out[1] = (vec_t) (y / length);
 	out[2] = (vec_t) (z / length);
 
-	return length;
+	return (vec_t) length;
 }
 
 vec_t ColorNormalize( const vec3_t in, vec3_t out ) {
@@ -721,4 +721,32 @@ void VectorCopyRegularToAccu(const vec3_t in, vec3_accu_t out)
 	out[0] = (vec_accu_t) in[0];
 	out[1] = (vec_accu_t) in[1];
 	out[2] = (vec_accu_t) in[2];
+}
+
+/*
+=================
+VectorNormalizeAccu
+=================
+*/
+vec_accu_t VectorNormalizeAccu(const vec3_accu_t in, vec3_accu_t out)
+{
+	// The sqrt() function takes double as an input and returns double as an
+	// output according the the man pages on Debian and on FreeBSD.  Therefore,
+	// I don't see a reason why using a double outright (instead of using the
+	// vec_accu_t alias for example) could possibly be frowned upon.
+
+	vec_accu_t	length;
+
+	length = (vec_accu_t) sqrt((in[0] * in[0]) + (in[1] * in[1]) + (in[2] * in[2]));
+	if (length == 0)
+	{
+		VectorClear(out);
+		return 0;
+	}
+
+	out[0] = in[0] / length;
+	out[1] = in[1] / length;
+	out[2] = in[2] / length;
+
+	return length;
 }
