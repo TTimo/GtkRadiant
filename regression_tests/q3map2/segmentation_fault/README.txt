@@ -2,7 +2,7 @@ DESCRIPTION OF PROBLEM:
 =======================
 
 The example map, maps/segmentation_fault.map, contains an example of this
-bug.  q3map2 will segfault while compiling this map.  This sort of thing
+bug.  q3map2 might segfault while compiling this map.  This sort of thing
 might happen in certain intermediate versions of q3map2 while work is being
 done on fixing the math accuracy.  The bug may not have happened in older
 version of q3map2, before the math accuracy issues were addressed.
@@ -22,6 +22,6 @@ Here is a description of the problem brush (brush #0):
   side 5: -x face
   side 6: problem side "accidentally showed up" :-)
 
-
-SOLUTION TO PROBLEM:
-====================
+Side 6 is actually a superfluous plane and will be NULL'ed out in the code.
+If the code does not handle a NULL'ed out winding correctly, it will
+segfault.
