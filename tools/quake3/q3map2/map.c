@@ -160,6 +160,42 @@ void SnapNormal( vec3_t normal )
 {
 	int		i;
 
+	// TODO: I would suggest that you uncomment the following code and look
+	// at the results:
+
+	/*
+	Sys_Printf("normalEpsilon is %f\n", normalEpsilon);
+	for (i = 0;; i++)
+	{
+		normal[0] = 1.0;
+		normal[1] = 0.0;
+		normal[2] = i * 0.000001;
+		VectorNormalize(normal, normal);
+		if (1.0 - normal[0] >= normalEpsilon) {
+			Sys_Printf("(%f %f %f)\n", normal[0], normal[1], normal[2]);
+			Error("SnapNormal: test completed");
+		}
+	}
+	*/
+
+	// When the normalEpsilon is 0.00001, the loop will break out when normal is
+	// (0.999990 0.000000 0.004469).  In other words, this is the vector closest
+	// to axial that will NOT be snapped.  Anything closer will be snaped.  Now,
+	// 0.004469 is close to 1/225.  The length of a circular quarter-arc of radius
+	// 1 is PI/2, or about 1.57.  And 0.004469/1.57 is about 0.0028, or about
+	// 1/350.  Expressed a different way, 1/350 is also about 0.26/90.
+	// This means is that a normal with an angle that is within 1/4 of a degree
+	// from axial will be "snapped".  My belief is that the person who wrote the
+	// code below did not intend it this way.  I think the person intended that
+	// the epsilon be measured against the vector components close to 0, not 1.0.
+	// I think the logic should be: if 2 of the normal components are within
+	// epsilon of 0, then the vector can be snapped to be perfectly axial.
+	// The epsilon should probably be adjusted to a larger value when we make this
+	// code change.  Really, this code must be incorrect.  Rambetter will address
+	// this issue after the base winding math problems are solved.  In fact I will
+	// create a regression test that will display the effects of this coarse
+	// snapping behavior.
+
 	for( i = 0; i < 3; i++ )
 	{
 		if( fabs( normal[ i ] - 1 ) < normalEpsilon )
@@ -194,6 +230,27 @@ void SnapPlane( vec3_t normal, vec_t *dist )
   q3map2-crashes which were triggered by this patch.
 */
 	SnapNormal( normal );
+
+	// TODO: Rambetter has some serious comments here as well.  First off,
+	// in the case where a normal is non-axial, there is nothing special
+	// about integer distances.  I would think that snapping a distance might
+	// make sense for axial normals, but I'm not so sure about snapping
+	// non-axial normals.  A shift by 0.01 in a plane, multiplied by a clipping
+	// against another plane that is 5 degrees off, and we introduce 0.1 error
+	// easily.  A 0.1 error in a vertex is where problems start to happen, such
+	// as disappearing triangles.
+
+	// Second, assuming we have snapped the normal above, let's say that the
+	// plane we just snapped was defined for some points that are actually
+	// quite far away from normal * dist.  Well, snapping the normal in this
+	// case means that we've just moved those points by potentially many units!
+	// Therefore, if we are going to snap the normal, we need to know the
+	// points we're snapping for so that the plane snaps with those points in
+	// mind (points remain close to the plane).
+
+	// I would like to know exactly which problems SnapPlane() is trying to
+	// solve so that we can better engineer it (I'm not saying that SnapPlane()
+	// should be removed altogether).  Fix all this snapping code at some point!
 
 	if( fabs( *dist - Q_rint( *dist ) ) < distanceEpsilon )
 		*dist = Q_rint( *dist );
