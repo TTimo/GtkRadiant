@@ -403,7 +403,6 @@ qboolean FixWindingAccu(winding_accu_t *w)
 	return valid;
 }
 
-#define EXPERIMENTAL_HIGH_PRECISION_MATH_Q3MAP2_FIXES 1
 
 /*
 CreateBrushWindings()
@@ -414,7 +413,7 @@ returns false if the brush doesn't enclose a valid volume
 qboolean CreateBrushWindings( brush_t *brush )
 {
 	int			i, j;
-#ifdef EXPERIMENTAL_HIGH_PRECISION_MATH_Q3MAP2_FIXES
+#if EXPERIMENTAL_HIGH_PRECISION_MATH_Q3MAP2_FIXES
 	winding_accu_t	*w;
 #else
 	winding_t	*w;
@@ -431,7 +430,7 @@ qboolean CreateBrushWindings( brush_t *brush )
 		plane = &mapplanes[ side->planenum ];
 		
 		/* make huge winding */
-#ifdef EXPERIMENTAL_HIGH_PRECISION_MATH_Q3MAP2_FIXES
+#if EXPERIMENTAL_HIGH_PRECISION_MATH_Q3MAP2_FIXES
 		w = BaseWindingForPlaneAccu(plane->normal, plane->dist);
 #else
 		w = BaseWindingForPlane( plane->normal, plane->dist );
@@ -447,14 +446,14 @@ qboolean CreateBrushWindings( brush_t *brush )
 			if( brush->sides[ j ].bevel )
 				continue;
 			plane = &mapplanes[ brush->sides[ j ].planenum ^ 1 ];
-#ifdef EXPERIMENTAL_HIGH_PRECISION_MATH_Q3MAP2_FIXES
+#if EXPERIMENTAL_HIGH_PRECISION_MATH_Q3MAP2_FIXES
 			ChopWindingInPlaceAccu(&w, plane->normal, plane->dist, 0);
 #else
 			ChopWindingInPlace( &w, plane->normal, plane->dist, 0 ); // CLIP_EPSILON );
 #endif
 			
 			/* ydnar: fix broken windings that would generate trifans */
-#ifdef EXPERIMENTAL_HIGH_PRECISION_MATH_Q3MAP2_FIXES
+#if EXPERIMENTAL_HIGH_PRECISION_MATH_Q3MAP2_FIXES
 			FixWindingAccu(w);
 #else
 			FixWinding( w );
@@ -462,7 +461,7 @@ qboolean CreateBrushWindings( brush_t *brush )
 		}
 		
 		/* set side winding */
-#ifdef EXPERIMENTAL_HIGH_PRECISION_MATH_Q3MAP2_FIXES
+#if EXPERIMENTAL_HIGH_PRECISION_MATH_Q3MAP2_FIXES
 		side->winding = CopyWindingAccuToNormal(w);
 		FreeWindingAccu(w);
 #else
