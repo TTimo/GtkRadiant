@@ -108,6 +108,8 @@ FreeWinding
 */
 void FreeWinding (winding_t *w)
 {
+	if (!w) Error("FreeWinding: winding is NULL");
+
 	if (*(unsigned *)w == 0xdeaddead)
 		Error ("FreeWinding: freed a freed winding");
 	*(unsigned *)w = 0xdeaddead;
@@ -124,6 +126,8 @@ FreeWindingAccu
 */
 void FreeWindingAccu(winding_accu_t *w)
 {
+	if (!w) Error("FreeWindingAccu: winding is NULL");
+
 	if (*((unsigned *) w) == 0xdeaddead)
 		Error("FreeWindingAccu: freed a freed winding");
 	*((unsigned *) w) = 0xdeaddead;
@@ -453,6 +457,8 @@ winding_t	*CopyWinding (winding_t *w)
 	int			size;
 	winding_t	*c;
 
+	if (!w) Error("CopyWinding: winding is NULL");
+
 	c = AllocWinding (w->numpoints);
 	size = (int)((size_t)((winding_t *)0)->p[w->numpoints]);
 	memcpy (c, w, size);
@@ -468,6 +474,8 @@ winding_t	*CopyWindingAccuToNormal(winding_accu_t *w)
 {
 	int		i;
 	winding_t	*c;
+
+	if (!w) Error("CopyWindingAccuToNormal: winding is NULL");
 
 	c = AllocWinding(w->numpoints);
 	c->numpoints = w->numpoints;
