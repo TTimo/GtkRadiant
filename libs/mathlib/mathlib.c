@@ -63,11 +63,6 @@ vec_t VectorLength(vec3_t v)
 	return length;
 }
 
-vec_accu_t VectorLengthAccu(vec3_accu_t v)
-{
-	return (vec_accu_t) sqrt((v[0] * v[0]) + (v[1] * v[1]) + (v[2] * v[2]));
-}
-
 qboolean VectorCompare (vec3_t v1, vec3_t v2)
 {
 	int		i;
@@ -604,4 +599,126 @@ void RotatePointAroundVector( vec3_t dst, const vec3_t dir, const vec3_t point,
 	for ( i = 0; i < 3; i++ ) {
 		dst[i] = rot[i][0] * point[0] + rot[i][1] * point[1] + rot[i][2] * point[2];
 	}
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+// Below is double-precision math stuff.  This was initially needed by the new
+// "base winding" code in q3map2 brush processing in order to fix the famous
+// "disappearing triangles" issue.  These definitions can be used wherever extra
+// precision is needed.
+////////////////////////////////////////////////////////////////////////////////
+
+/*
+=================
+VectorLengthAccu
+=================
+*/
+vec_accu_t VectorLengthAccu(const vec3_accu_t v)
+{
+	return (vec_accu_t) sqrt((v[0] * v[0]) + (v[1] * v[1]) + (v[2] * v[2]));
+}
+
+/*
+=================
+DotProductAccu
+=================
+*/
+vec_accu_t DotProductAccu(const vec3_accu_t a, const vec3_accu_t b)
+{
+	return (a[0] * b[0]) + (a[1] * b[1]) + (a[2] * b[2]);
+}
+
+/*
+=================
+VectorSubtractAccu
+=================
+*/
+void VectorSubtractAccu(const vec3_accu_t a, const vec3_accu_t b, vec3_accu_t out)
+{
+	out[0] = a[0] - b[0];
+	out[1] = a[1] - b[1];
+	out[2] = a[2] - b[2];
+}
+
+/*
+=================
+VectorAddAccu
+=================
+*/
+void VectorAddAccu(const vec3_accu_t a, const vec3_accu_t b, vec3_accu_t out)
+{
+	out[0] = a[0] + b[0];
+	out[1] = a[1] + b[1];
+	out[2] = a[2] + b[2];
+}
+
+/*
+=================
+VectorCopyAccu
+=================
+*/
+void VectorCopyAccu(const vec3_accu_t in, vec3_accu_t out)
+{
+	out[0] = in[0];
+	out[1] = in[1];
+	out[2] = in[2];
+}
+
+/*
+=================
+VectorScaleAccu
+=================
+*/
+void VectorScaleAccu(const vec3_accu_t in, vec_accu_t scaleFactor, vec3_accu_t out)
+{
+	out[0] = in[0] * scaleFactor;
+	out[1] = in[1] * scaleFactor;
+	out[2] = in[2] * scaleFactor;
+}
+
+/*
+=================
+CrossProductAccu
+=================
+*/
+void CrossProductAccu(const vec3_accu_t a, const vec3_accu_t b, vec3_accu_t out)
+{
+	out[0] = (a[1] * b[2]) - (a[2] * b[1]);
+	out[1] = (a[2] * b[0]) - (a[0] * b[2]);
+	out[2] = (a[0] * b[1]) - (a[1] * b[0]);
+}
+
+/*
+=================
+Q_rintAccu
+=================
+*/
+vec_accu_t Q_rintAccu(vec_accu_t val)
+{
+	return (vec_accu_t) floor(val + 0.5);
+}
+
+/*
+=================
+VectorCopyAccuToRegular
+=================
+*/
+void VectorCopyAccuToRegular(const vec3_accu_t in, vec3_t out)
+{
+	out[0] = (vec_t) in[0];
+	out[1] = (vec_t) in[1];
+	out[2] = (vec_t) in[2];
+}
+
+/*
+=================
+VectorCopyRegularToAccu
+=================
+*/
+void VectorCopyRegularToAccu(const vec3_t in, vec3_accu_t out)
+{
+	out[0] = (vec_accu_t) in[0];
+	out[1] = (vec_accu_t) in[1];
+	out[2] = (vec_accu_t) in[2];
 }

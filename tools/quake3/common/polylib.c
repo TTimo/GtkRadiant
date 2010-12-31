@@ -276,7 +276,7 @@ winding_accu_t *BaseWindingForPlaneAccu(vec3_t normal, vec_t dist)
 
 	int		x, i;
 	vec_t		max, v;
-	vec3_accu_t	vright, vup, org;
+	vec3_accu_t	vright, vup, org, normalAccu;
 	winding_accu_t	*w;
 
 	// One of the components of normal must have a magnitiude greater than this value,
@@ -286,7 +286,7 @@ winding_accu_t *BaseWindingForPlaneAccu(vec3_t normal, vec_t dist)
 
 	x = -1;
 	for (i = 0; i < 3; i++) {
-		v = fabs(normal[i]);
+		v = (vec_t) fabs(normal[i]);
 		if (v > max) {
 			x = i;
 			max = v;
@@ -328,16 +328,12 @@ winding_accu_t *BaseWindingForPlaneAccu(vec3_t normal, vec_t dist)
 	// corner of the world at location (65536, 65536, 65536) is distance 113512
 	// away from the origin.
 
-	CrossProductAccu(normal, vright, vup); // NOTE: normal is NOT a vec3_accu_t.
+	VectorCopyRegularToAccu(normal, normalAccu);
+	CrossProductAccu(normalAccu, vright, vup);
 
 	// vup now has length equal to that of vright.
 
-	// Here, we're casting dist to the more accurate data type just in case
-	// VectorScaleAccu() is a #define and not a true function, since normal
-	// has the lower resolution too.  We want the multiply operations to take
-	// place in the higher resolution data types to prevent loss of accuracy,
-	// especially considering that we may be scaling by a very large amount.
-	VectorScaleAccu(normal, (vec_accu_t) dist, org);
+	VectorScaleAccu(normalAccu, (vec_accu_t) dist, org);
 
 	// org is now a point on the plane defined by normal and dist.  Furthermore,
 	// org, vright, and vup are pairwise perpendicular.  Now, the 4 vectors
@@ -467,24 +463,21 @@ winding_t	*CopyWinding (winding_t *w)
 
 /*
 ==================
-CopyWindingAccuToNormal
+CopyWindingAccuToRegular
 ==================
 */
-winding_t	*CopyWindingAccuToNormal(winding_accu_t *w)
+winding_t	*CopyWindingAccuToRegular(winding_accu_t *w)
 {
 	int		i;
 	winding_t	*c;
 
-	if (!w) Error("CopyWindingAccuToNormal: winding is NULL");
+	if (!w) Error("CopyWindingAccuToRegular: winding is NULL");
 
 	c = AllocWinding(w->numpoints);
 	c->numpoints = w->numpoints;
 	for (i = 0; i < c->numpoints; i++)
 	{
-		// TODO: Add VectorCopyAccuToNormal() to mathlib.h.
-		c->p[i][0] = (vec_t) w->p[i][0];
-		c->p[i][1] = (vec_t) w->p[i][1];
-		c->p[i][2] = (vec_t) w->p[i][2];
+		VectorCopyAccuToRegular(w->p[i], c->p[i]);
 	}
 	return c;
 }
@@ -639,7 +632,7 @@ void ChopWindingInPlaceAccu(winding_accu_t **inout, vec3_t normal, vec_t dist, v
 	winding_accu_t	*f;
 	vec_accu_t	*p1, *p2;
 	vec_accu_t	w;
-	vec3_accu_t	mid;
+	vec3_accu_t	mid, normalAccu;
 
 	// We require at least a very small epsilon.  It's a good idea for several reasons.
 	// First, we will be dividing by a potentially very small distance below.  We don't
@@ -679,10 +672,11 @@ void ChopWindingInPlaceAccu(winding_accu_t **inout, vec3_t normal, vec_t dist, v
 
 	in = *inout;
 	counts[0] = counts[1] = counts[2] = 0;
+	VectorCopyRegularToAccu(normal, normalAccu);
 
 	for (i = 0; i < in->numpoints; i++)
 	{
-		dists[i] = DotProductAccu(in->p[i], normal) - dist;
+		dists[i] = DotProductAccu(in->p[i], normalAccu) - dist;
 		if (dists[i] > fineEpsilon)		sides[i] = SIDE_FRONT;
 		else if (dists[i] < -fineEpsilon)	sides[i] = SIDE_BACK;
 		else					sides[i] = SIDE_ON;

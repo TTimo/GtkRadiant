@@ -462,7 +462,7 @@ qboolean CreateBrushWindings( brush_t *brush )
 		
 		/* set side winding */
 #if EXPERIMENTAL_HIGH_PRECISION_MATH_Q3MAP2_FIXES
-		side->winding = (w ? CopyWindingAccuToNormal(w) : NULL);
+		side->winding = (w ? CopyWindingAccuToRegular(w) : NULL);
 		if (w) FreeWindingAccu(w);
 #else
 		side->winding = w;
