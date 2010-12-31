@@ -127,7 +127,7 @@ void _VectorCopy (vec3_t in, vec3_t out)
 }
 
 vec_t VectorNormalize( const vec3_t in, vec3_t out ) {
-	vec_t	length;
+	vec_t	length, ilength;
 
 	length = (vec_t)sqrt (in[0]*in[0] + in[1]*in[1] + in[2]*in[2]);
 	if (length == 0)
@@ -136,26 +136,12 @@ vec_t VectorNormalize( const vec3_t in, vec3_t out ) {
 		return 0;
 	}
 
-	out[0] = in[0]/length;
-	out[1] = in[1]/length;
-	out[2] = in[2]/length;
+	ilength = 1.0f/length;
+	out[0] = in[0]*ilength;
+	out[1] = in[1]*ilength;
+	out[2] = in[2]*ilength;
 
 	return length;
-}
-
-vec_t VectorSetLength(const vec3_t in, vec_t length, vec3_t out) {
-	vec_t	origLength;
-
-	origLength = (vec_t) sqrt((in[0] * in[0]) + (in[1] * in[1]) + (in[2] * in[2]));
-	if (origLength == 0)
-	{
-		VectorClear(out);
-		return 0;
-	}
-
-	VectorScale(in, length / origLength, out);
-
-	return origLength;
 }
 
 vec_t ColorNormalize( const vec3_t in, vec3_t out ) {
