@@ -59,7 +59,6 @@ PlaneEqual()
 ydnar: replaced with variable epsilon for djbob
 */
 
-#define	NORMAL_EPSILON	0.00001
 #define	DIST_EPSILON	0.01
 
 qboolean PlaneEqual( plane_t *p, vec3_t normal, vec_t dist )
@@ -158,10 +157,42 @@ snaps a near-axial normal vector
 
 void SnapNormal( vec3_t normal )
 {
+#if EXPERIMENTAL_SNAP_NORMAL_FIX
+	int		i;
+	vec_t		ourNormalEpsilon;
+	qboolean	adjusted = qfalse;
+
+	// We should maybe think about scaling normalEpsilon by a factor of 10
+	// or so to compensate for the fact that we're comparing the near-zero
+	// magnitude components, not the near-one component.  For now, don't scale.
+
+	ourNormalEpsilon = (vec_t) (normalEpsilon * 1.0);
+
+	// Another change from the original SnapNormal() is that we snap each
+	// component that's close to 0.  So for example if a normal is
+	// (0.707, 0.707, 0.0000001), it will get snapped to lie perfectly in the
+	// XY plane (its Z component will be set to 0 and its length will be
+	// normalized).  The original SnapNormal() didn't snap such vectors - it
+	// only snapped vectors that were near a perfect axis.
+
+	for (i = 0; i < 3; i++)
+	{
+		if (normal[i] != 0.0 && -ourNormalEpsilon < normal[i] && normal[i] < ourNormalEpsilon)
+		{
+			normal[i] = 0.0;
+			adjusted = qtrue;
+		}
+	}
+
+	if (adjusted)
+	{
+		VectorNormalize(normal, normal);
+	}
+#else
 	int		i;
 
-	// TODO: I would suggest that you uncomment the following code and look
-	// at the results:
+	// I would suggest that you uncomment the following code and look at the
+	// results:
 
 	/*
 	Sys_Printf("normalEpsilon is %f\n", normalEpsilon);
@@ -211,6 +242,7 @@ void SnapNormal( vec3_t normal )
 			break;
 		}
 	}
+#endif
 }
 
 
