@@ -82,6 +82,9 @@ qboolean VectorCompare (vec3_t v1, vec3_t v2);
 
 #define Q_rint(in) ((vec_t)floor(in+0.5))
 
+qboolean VectorIsOnAxis(vec3_t v);
+qboolean VectorIsOnAxialPlane(vec3_t v);
+
 vec_t VectorLength(vec3_t v);
 
 void VectorMA( const vec3_t va, vec_t scale, const vec3_t vb, vec3_t vc );

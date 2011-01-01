@@ -59,8 +59,6 @@ PlaneEqual()
 ydnar: replaced with variable epsilon for djbob
 */
 
-#define	DIST_EPSILON	0.01
-
 qboolean PlaneEqual( plane_t *p, vec3_t normal, vec_t dist )
 {
 	float	ne, de;
@@ -291,6 +289,30 @@ void SnapPlane( vec3_t normal, vec_t *dist )
 		*dist = Q_rint( *dist );
 }
 
+/*
+SnapPlaneImproved()
+snaps a plane to normal/distance epsilons, improved code
+*/
+void SnapPlaneImproved(vec3_t normal, vec_t *dist, vec3_t center)
+{
+	vec_t	distNearestInt;
+
+	if (SnapNormal(normal))
+	{
+		*dist = DotProduct(normal, center);
+	}
+
+	if (VectorIsOnAxis(normal))
+	{
+		// Only snap distance if the normal is an axis.  Otherwise there
+		// is nothing "natural" about snapping the distance to an integer.
+		distNearestInt = Q_rint(*dist);
+		if (-distanceEpsilon < *dist - distNearestInt && *dist - distNearestInt < distanceEpsilon)
+		{
+			*dist = distNearestInt;
+		}
+	}
+}
 
 
 /*

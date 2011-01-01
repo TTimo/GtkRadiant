@@ -28,6 +28,54 @@ vec3_t vec3_origin = {0.0f,0.0f,0.0f};
 
 /*
 ================
+VectorIsOnAxis
+================
+*/
+qboolean VectorIsOnAxis(vec3_t v)
+{
+	int	i, zeroComponentCount;
+
+	zeroComponentCount = 0;
+	for (i = 0; i < 3; i++)
+	{
+		if (v[i] == 0.0)
+		{
+			zeroComponentCount++;
+		}
+	}
+
+	if (zeroComponentCount > 1)
+	{
+		// The zero vector will be on axis.
+		return qtrue;
+	}
+
+	return qfalse;
+}
+
+/*
+================
+VectorIsOnAxis
+================
+*/
+qboolean VectorIsOnAxialPlane(vec3_t v)
+{
+	int	i;
+
+	for (i = 0; i < 3; i++)
+	{
+		if (v[i] == 0.0)
+		{
+			// The zero vector will be on axial plane.
+			return qtrue;
+		}
+	}
+
+	return qfalse;
+}
+
+/*
+================
 MakeNormalVectors
 
 Given a normalized forward vector, create two
