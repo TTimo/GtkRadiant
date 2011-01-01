@@ -291,37 +291,26 @@ void SnapPlane( vec3_t normal, vec_t *dist )
 
 /*
 SnapPlaneImproved()
-snaps a plane to normal/distance epsilons, improved code
-*/
-void SnapPlaneImproved(vec3_t normal, vec_t *dist)
-{
-	vec_t	distNearestInt;
-
-	SnapNormal(normal);
-
-	if (VectorIsOnAxis(normal))
-	{
-		// Only snap distance if the normal is an axis.  Otherwise there
-		// is nothing "natural" about snapping the distance to an integer.
-		distNearestInt = Q_rint(*dist);
-		if (-distanceEpsilon < *dist - distNearestInt && *dist - distNearestInt < distanceEpsilon)
-		{
-			*dist = distNearestInt;
-		}
-	}
-}
-
-/*
-SnapPlaneImprovedWithCenter()
 snaps a plane to normal/distance epsilons, improved code uses center
 */
-void SnapPlaneImprovedWithCenter(vec3_t normal, vec_t *dist, const vec3_t center)
+void SnapPlaneImproved(vec3_t normal, vec_t *dist, int numPoints, vec3_t *points) // TODO: const const on points
 {
+	int	i;
+	vec3_t	center;
 	vec_t	distNearestInt;
 
 	if (SnapNormal(normal))
 	{
-		*dist = DotProduct(normal, center);
+		if (numPoints > 0)
+		{
+			VectorClear(center);
+			for (i = 0; i < numPoints; i++)
+			{
+				VectorAdd(center, points[i], center);
+			}
+			for (i = 0; i < 3; i++) { center[i] = center[i] / numPoints; }
+			*dist = DotProduct(normal, center);
+		}
 	}
 
 	if (VectorIsOnAxis(normal))
@@ -354,22 +343,7 @@ int FindFloatPlane( vec3_t normal, vec_t dist, int numPoints, vec3_t *points )
 	
 	
 #if EXPERIMENTAL_SNAP_PLANE_FIX
-	vec3_t	center;
-
-	if (numPoints > 0)
-	{
-		VectorClear(center);
-		for (i = 0; i < numPoints; i++)
-		{
-			VectorAdd(center, points[i], center);
-		}
-		for (j = 0; j < 3; j++) { center[j] = center[j] / numPoints; }
-		SnapPlaneImprovedWithCenter(normal, &dist, center);
-	}
-	else
-	{
-		SnapPlaneImproved(normal, &dist);
-	}
+	SnapPlaneImproved(normal, &dist, numPoints, points);
 #else
 	SnapPlane( normal, &dist );
 #endif
@@ -413,8 +387,11 @@ int FindFloatPlane( vec3_t normal, vec_t dist, int numPoints, vec3_t *points )
 	int		i;
 	plane_t	*p;
 	
-
+#if EXPERIMENTAL_SNAP_PLANE_FIX
+	SnapPlaneImproved(normal, &dist, numPoints, points);
+#else
 	SnapPlane( normal, &dist );
+#endif
 	for( i = 0, p = mapplanes; i < nummapplanes; i++, p++ )
 	{
 		if( PlaneEqual( p, normal, dist ) )
