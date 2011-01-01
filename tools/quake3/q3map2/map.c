@@ -155,7 +155,7 @@ SnapNormal()
 snaps a near-axial normal vector
 */
 
-void SnapNormal( vec3_t normal )
+qboolean SnapNormal( vec3_t normal )
 {
 #if EXPERIMENTAL_SNAP_NORMAL_FIX
 	int		i;
@@ -187,7 +187,9 @@ void SnapNormal( vec3_t normal )
 	if (adjusted)
 	{
 		VectorNormalize(normal, normal);
+		return qtrue;
 	}
+	return qfalse;
 #else
 	int		i;
 
@@ -233,15 +235,16 @@ void SnapNormal( vec3_t normal )
 		{
 			VectorClear( normal );
 			normal[ i ] = 1;
-			break;
+			return qtrue;
 		}
 		if( fabs( normal[ i ] - -1 ) < normalEpsilon )
 		{
 			VectorClear( normal );
 			normal[ i ] = -1;
-			break;
+			return qtrue;
 		}
 	}
+	return qfalse;
 #endif
 }
 
