@@ -69,10 +69,14 @@ qboolean PlaneEqual( plane_t *p, vec3_t normal, vec_t dist )
 	de = distanceEpsilon;
 	
 	/* compare */
-	if( fabs( p->dist - dist ) <= de &&
-		fabs( p->normal[ 0 ] - normal[ 0 ] ) <= ne &&
-		fabs( p->normal[ 1 ] - normal[ 1 ] ) <= ne &&
-		fabs( p->normal[ 2 ] - normal[ 2 ] ) <= ne )
+	// We check equality of each component since the we're using '<', not '<='
+	// (the epsilons may be zero).  We want to use '<' intead of '<=' to be
+	// consistent with the true meaning of "epsilon", and also because other
+	// parts of the code uses this inequality.
+	if ((p->dist == dist || fabs(p->dist - dist) < de) &&
+			(p->normal[0] == normal[0] || fabs(p->normal[0] - normal[0]) < ne) &&
+			(p->normal[1] == normal[1] || fabs(p->normal[1] - normal[1]) < ne) &&
+			(p->normal[2] == normal[2] || fabs(p->normal[2] - normal[2]) < ne))
 		return qtrue;
 	
 	/* different */
