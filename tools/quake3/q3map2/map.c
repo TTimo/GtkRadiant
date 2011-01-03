@@ -395,6 +395,9 @@ int FindFloatPlane( vec3_t normal, vec_t dist, int numPoints, vec3_t *points )
 	{
 		if( PlaneEqual( p, normal, dist ) )
 			return i;
+		// TODO: Note that the non-USE_HASHING code does not compute epsilons
+		// for the provided points.  It should do that.  I think this code
+		// is unmaintained because nobody sets USE_HASHING to off.
 	}
 	
 	return CreateNewFloatPlane( normal, dist );
