@@ -164,13 +164,7 @@ qboolean SnapNormal( vec3_t normal )
 	vec_t		ourNormalEpsilon;
 	qboolean	adjusted = qfalse;
 
-	// We should maybe think about scaling normalEpsilon by a factor of 10
-	// or so to compensate for the fact that we're comparing the near-zero
-	// magnitude components, not the near-one component.  For now, don't scale.
-
-	ourNormalEpsilon = (vec_t) (normalEpsilon * 1.0);
-
-	// Another change from the original SnapNormal() is that we snap each
+	// A change from the original SnapNormal() is that we snap each
 	// component that's close to 0.  So for example if a normal is
 	// (0.707, 0.707, 0.0000001), it will get snapped to lie perfectly in the
 	// XY plane (its Z component will be set to 0 and its length will be
@@ -179,7 +173,7 @@ qboolean SnapNormal( vec3_t normal )
 
 	for (i = 0; i < 3; i++)
 	{
-		if (normal[i] != 0.0 && -ourNormalEpsilon < normal[i] && normal[i] < ourNormalEpsilon)
+		if (normal[i] != 0.0 && -normalEpsilon < normal[i] && normal[i] < normalEpsilon)
 		{
 			normal[i] = 0.0;
 			adjusted = qtrue;
@@ -295,9 +289,9 @@ void SnapPlane( vec3_t normal, vec_t *dist )
 
 /*
 SnapPlaneImproved()
-snaps a plane to normal/distance epsilons, improved code uses center
+snaps a plane to normal/distance epsilons, improved code
 */
-void SnapPlaneImproved(vec3_t normal, vec_t *dist, int numPoints, vec3_t *points) // TODO: const const on points
+void SnapPlaneImproved(vec3_t normal, vec_t *dist, int numPoints, const vec3_t *points)
 {
 	int	i;
 	vec3_t	center;
@@ -307,6 +301,7 @@ void SnapPlaneImproved(vec3_t normal, vec_t *dist, int numPoints, vec3_t *points
 	{
 		if (numPoints > 0)
 		{
+			// Adjust the dist so that the provided points don't drift away.
 			VectorClear(center);
 			for (i = 0; i < numPoints; i++)
 			{
@@ -347,7 +342,7 @@ int FindFloatPlane( vec3_t normal, vec_t dist, int numPoints, vec3_t *points )
 	
 	
 #if EXPERIMENTAL_SNAP_PLANE_FIX
-	SnapPlaneImproved(normal, &dist, numPoints, points);
+	SnapPlaneImproved(normal, &dist, numPoints, (const vec3_t *) points);
 #else
 	SnapPlane( normal, &dist );
 #endif
@@ -392,7 +387,7 @@ int FindFloatPlane( vec3_t normal, vec_t dist, int numPoints, vec3_t *points )
 	plane_t	*p;
 	
 #if EXPERIMENTAL_SNAP_PLANE_FIX
-	SnapPlaneImproved(normal, &dist, numPoints, points);
+	SnapPlaneImproved(normal, &dist, numPoints, (const vec3_t *) points);
 #else
 	SnapPlane( normal, &dist );
 #endif

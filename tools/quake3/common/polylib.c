@@ -463,6 +463,28 @@ winding_t	*CopyWinding (winding_t *w)
 
 /*
 ==================
+CopyWindingAccuIncreaseSizeAndFreeOld
+==================
+*/
+winding_accu_t *CopyWindingAccuIncreaseSizeAndFreeOld(winding_accu_t *w)
+{
+	int		i;
+	winding_accu_t	*c;
+
+	if (!w) Error("CopyWindingAccuIncreaseSizeAndFreeOld: winding is NULL");
+
+	c = AllocWindingAccu(w->numpoints + 1);
+	c->numpoints = w->numpoints;
+	for (i = 0; i < c->numpoints; i++)
+	{
+		VectorCopyAccu(w->p[i], c->p[i]);
+	}
+	FreeWindingAccu(w);
+	return c;
+}
+
+/*
+==================
 CopyWindingAccuToRegular
 ==================
 */
@@ -690,19 +712,17 @@ void ChopWindingInPlaceAccu(winding_accu_t **inout, vec3_t normal, vec_t dist, v
 		*inout = NULL;
 		return;
 	}
+	// TODO: I'm wondering what happens if a brush has 2 planes that are the same.  In
+	// other words, nothing is on SIDE_FRONT but everything is on SIDE_ON.  This will cause
+	// both of the duplicate planes to have a NULL winding, as far as I can tell, because if
+	// all points are on SIDE_ON, the above "if" statement will be true and the winding will
+	// be NULL'ed out.  This may actually be the legacy and desired behavior.  Write a
+	// regression test for this.
 	if (!counts[SIDE_BACK]) {
 		return; // Winding is unmodified.
 	}
 
-	// TODO: Why the hell are we using this number?  The original comment says something along
-	// the lines of "Can't use counts[0] + 2 because of fp grouping errors", and I'm not
-	// entirely sure what that means.  Is it a problem later on in how the caller of this function
-	// uses the returned winding afterwards?  Is it a problem in that the algorithm below will
-	// bump into the max in some cases?  Anyhow, investigate and fix this number to be a correct
-	// and predictable number.  We can also dynamically grow inside of this function in case we
-	// do hit the max for some strange reason.
-	maxpts = in->numpoints + 4;
-
+	maxpts = counts[SIDE_FRONT] + 2; // We dynamically expand if this is too small.
 	f = AllocWindingAccu(maxpts);
 
 	for (i = 0; i < in->numpoints; i++)
@@ -711,20 +731,28 @@ void ChopWindingInPlaceAccu(winding_accu_t **inout, vec3_t normal, vec_t dist, v
 
 		if (sides[i] == SIDE_ON)
 		{
-			if (f->numpoints >= maxpts)
-				Error("ChopWindingInPlaceAccu: points exceeded estimate");
 			if (f->numpoints >= MAX_POINTS_ON_WINDING)
 				Error("ChopWindingInPlaceAccu: MAX_POINTS_ON_WINDING");
+			if (f->numpoints >= maxpts) // This will probably never happen.
+			{
+				Sys_FPrintf(SYS_VRB, "WARNING: estimate on chopped winding size incorrect (no problem)\n");
+				f = CopyWindingAccuIncreaseSizeAndFreeOld(f);
+				maxpts++;
+			}
 			VectorCopyAccu(p1, f->p[f->numpoints]);
 			f->numpoints++;
 			continue;
 		}
 		if (sides[i] == SIDE_FRONT)
 		{
-			if (f->numpoints >= maxpts)
-				Error("ChopWindingInPlaceAccu: points exceeded estimate");
 			if (f->numpoints >= MAX_POINTS_ON_WINDING)
 				Error("ChopWindingInPlaceAccu: MAX_POINTS_ON_WINDING");
+			if (f->numpoints >= maxpts) // This will probably never happen.
+			{
+				Sys_FPrintf(SYS_VRB, "WARNING: estimate on chopped winding size incorrect (no problem)\n");
+				f = CopyWindingAccuIncreaseSizeAndFreeOld(f);
+				maxpts++;
+			}
 			VectorCopyAccu(p1, f->p[f->numpoints]);
 			f->numpoints++;
 		}
@@ -747,10 +775,14 @@ void ChopWindingInPlaceAccu(winding_accu_t **inout, vec3_t normal, vec_t dist, v
 			else if (normal[j] == -1)	mid[j] = -dist;
 			else				mid[j] = p1[j] + (w * (p2[j] - p1[j]));
 		}
-		if (f->numpoints >= maxpts)
-			Error("ChopWindingInPlaceAccu: points exceeded estimate");
 		if (f->numpoints >= MAX_POINTS_ON_WINDING)
 			Error("ChopWindingInPlaceAccu: MAX_POINTS_ON_WINDING");
+		if (f->numpoints >= maxpts) // This will probably never happen.
+		{
+			Sys_FPrintf(SYS_VRB, "WARNING: estimate on chopped winding size incorrect (no problem)\n");
+			f = CopyWindingAccuIncreaseSizeAndFreeOld(f);
+			maxpts++;
+		}
 		VectorCopyAccu(mid, f->p[f->numpoints]);
 		f->numpoints++;
 	}
