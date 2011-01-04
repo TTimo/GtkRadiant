@@ -277,15 +277,18 @@ void SnapWeldVector( vec3_t a, vec3_t b, vec3_t out )
 	}
 }
 
+/*
+SnapWeldVectorAccu()
+welds two vec3_accu_t's into a third, taking into account nearest-to-integer
+instead of averaging
+*/
 void SnapWeldVectorAccu(vec3_accu_t a, vec3_accu_t b, vec3_accu_t out)
 {
-	// I have very serious concerns about this function.
-	// This is a first pass where I just copy the original SnapWeldVector()
-	// and make sure it works with the higher resolution data types.
-	// TODO: Examine this function with a fine-toothed comb.
-
+	// I'm just preserving what I think was the intended logic of the original
+	// SnapWeldVector().  I'm not actually sure where this function should even
+	// be used.
 	int		i;
-	vec_accu_t	ai, bi, outi;
+	vec_accu_t	ai, bi, ad, bd;
 	
 	if (a == NULL || b == NULL || out == NULL)
 		Error("SnapWeldVectorAccu: NULL argument");
@@ -293,16 +296,20 @@ void SnapWeldVectorAccu(vec3_accu_t a, vec3_accu_t b, vec3_accu_t out)
 	for (i = 0; i < 3; i++)
 	{
 		ai = Q_rintAccu(a[i]);
-		bi = Q_rintAccu(a[i]); // Note, it's using a[i].  This is from legacy code.
+		bi = Q_rintAccu(b[i]);
+		ad = fabs(ai - a[i]);
+		bd = fabs(bi - b[i]);
 		
-		if (ai == a[i])					out[i] = a[i];
-		else if (bi == b[i])				out[i] = b[i];
-
-		else if (fabs(ai - a[i]) < fabs(bi < b[i]))	out[i] = a[i];
-		else						out[i] = b[i];
-		
-		outi = Q_rintAccu(out[i]);
-		if (fabs(outi - out[i]) <= SNAP_EPSILON)	out[i] = outi;
+		if (ad < bd)
+		{
+			if (ad < SNAP_EPSILON)	out[i] = ai;
+			else			out[i] = a[i];
+		}
+		else
+		{
+			if (bd < SNAP_EPSILON)	out[i] = bi;
+			else			out[i] = b[i];
+		}
 	}
 }
 
