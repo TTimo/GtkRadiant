@@ -287,7 +287,8 @@ void SnapWeldVectorAccu(vec3_accu_t a, vec3_accu_t b, vec3_accu_t out)
 	int		i;
 	vec_accu_t	ai, bi, outi;
 	
-	if (a == NULL || b == NULL || out == NULL) return;
+	if (a == NULL || b == NULL || out == NULL)
+		Error("SnapWeldVectorAccu: NULL argument");
 	
 	for (i = 0; i < 3; i++)
 	{
@@ -366,40 +367,70 @@ qboolean FixWinding( winding_t *w )
 	return valid;
 }
 
+/*
+FixWindingAccu()
+removes degenerate edges from a winding
+returns qtrue if the winding is valid
+*/
 qboolean FixWindingAccu(winding_accu_t *w)
 {
-	// Serious doubts about this function.  Will check it out later.
-	// This is just a copy from the original for high res data types.
-	// TODO: Examine this function with a fine-toothed comb.
+	// TODO: Write regression test that chops tip off slim triangle tip.
+	// TODO: Test to see what happens if our winding degenerates to less
+	// than 3 points.
 
-	qboolean	valid = qtrue;
+	// I still have serious doubts about this function.  The caller isn't
+	// even using the return value.
+
 	int		i, j, k;
 	vec3_accu_t	vec;
 	vec_accu_t	dist;
+	qboolean	done, valid;
 
 	if (!w)	return qfalse;
+	valid = qtrue;
 
-	for (i = 0; i < w->numpoints; i++)
+	while (qtrue)
 	{
-		if (w->numpoints == 3) return valid;
-
-		j = (i + 1) % w->numpoints;
-
-		VectorSubtractAccu(w->p[i], w->p[j], vec);
-		dist = VectorLengthAccu(vec);
-		if (dist < DEGENERATE_EPSILON)
+		// NOTE: Original FixWinding() didn't remove points if the winding
+		// had 3 points.  We may have to go back to doing that after we
+		// understand more about what a winding with 2 or 1 points implies.
+		if (w->numpoints < 2) break; // Don't remove the only remaining point.
+		done = qtrue;
+		for (i = 0; i < w->numpoints; i++)
 		{
-			valid = qfalse;
-			SnapWeldVectorAccu(w->p[i], w->p[j], vec);
-			VectorCopyAccu(vec, w->p[i]);
-			for (k = i + 2; k < w->numpoints; k++) {
-				VectorCopyAccu(w->p[k], w->p[k - 1]);
+			j = (((i + 1) == w->numpoints) ? 0 : (i + 1));
+
+			VectorSubtractAccu(w->p[i], w->p[j], vec);
+			dist = VectorLengthAccu(vec);
+			if (dist < DEGENERATE_EPSILON)
+			{
+				valid = qfalse;
+				SnapWeldVectorAccu(w->p[i], w->p[j], vec);
+				VectorCopyAccu(vec, w->p[i]);
+				// NOTE: The new code initializes k to j + 1.
+				for (k = j + 1; k < w->numpoints; k++)
+				{
+					VectorCopyAccu(w->p[k], w->p[k - 1]);
+				}
+				w->numpoints--;
+				// The only way to finish off fixing the winding consistently and
+				// accurately is by fixing the winding all over again.  For example,
+				// the point at index i and the point at index i-1 could now be
+				// less than the epsilon distance apart.  There are too many special
+				// case problems we'd need to handle if we didn't start from the
+				// beginning.
+				done = qfalse;
+				break; // This will cause us to return to the "while" loop.
 			}
-			w->numpoints--;
 		}
+		if (done) break;
 	}
 
-	if (w->numpoints < 3) valid = qfalse;
+	if (w->numpoints < 3)
+	{
+		valid = qfalse;
+		Sys_FPrintf(SYS_VRB, "WARNING: winding degenerated to less than 3 points in FixWindingAccu\n");
+	}
 	return valid;
 }
 
