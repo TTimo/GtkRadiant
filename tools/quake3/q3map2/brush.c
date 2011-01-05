@@ -278,9 +278,12 @@ void SnapWeldVector( vec3_t a, vec3_t b, vec3_t out )
 }
 
 /*
-SnapWeldVectorAccu()
-welds two vec3_accu_t's into a third, taking into account nearest-to-integer
-instead of averaging
+==================
+SnapWeldVectorAccu
+
+Welds two vectors into a third, taking into account nearest-to-integer
+instead of averaging.
+==================
 */
 void SnapWeldVectorAccu(vec3_accu_t a, vec3_accu_t b, vec3_accu_t out)
 {
@@ -299,7 +302,7 @@ void SnapWeldVectorAccu(vec3_accu_t a, vec3_accu_t b, vec3_accu_t out)
 		bi = Q_rintAccu(b[i]);
 		ad = fabs(ai - a[i]);
 		bd = fabs(bi - b[i]);
-		
+	
 		if (ad < bd)
 		{
 			if (ad < SNAP_EPSILON)	out[i] = ai;
@@ -375,32 +378,32 @@ qboolean FixWinding( winding_t *w )
 }
 
 /*
-FixWindingAccu()
-removes degenerate edges from a winding
-returns qtrue if the winding is valid
+==================
+FixWindingAccu
+
+Removes degenerate edges (edges that are too short) from a winding.
+Returns qtrue if the winding has been altered by this function.
+Returns qfalse if the winding is untouched by this function.
+
+It's advised that you check the winding after this function exits to make
+sure it still has at least 3 points.  If that is not the case, the winding
+cannot be considered valid.  The winding may degenerate to one or two points
+if the some of the winding's points are close together.
+==================
 */
 qboolean FixWindingAccu(winding_accu_t *w)
 {
-	// TODO: Write regression test that chops tip off slim triangle tip.
-	// TODO: Test to see what happens if our winding degenerates to less
-	// than 3 points.
-
-	// I still have serious doubts about this function.  The caller isn't
-	// even using the return value.
-
 	int		i, j, k;
 	vec3_accu_t	vec;
 	vec_accu_t	dist;
-	qboolean	done, valid;
+	qboolean	done, altered;
 
-	if (!w)	return qfalse;
-	valid = qtrue;
+	if (w == NULL) Error("FixWindingAccu: NULL argument");
+
+	altered = qfalse;
 
 	while (qtrue)
 	{
-		// NOTE: Original FixWinding() didn't remove points if the winding
-		// had 3 points.  We may have to go back to doing that after we
-		// understand more about what a winding with 2 or 1 points implies.
 		if (w->numpoints < 2) break; // Don't remove the only remaining point.
 		done = qtrue;
 		for (i = 0; i < w->numpoints; i++)
@@ -411,15 +414,14 @@ qboolean FixWindingAccu(winding_accu_t *w)
 			dist = VectorLengthAccu(vec);
 			if (dist < DEGENERATE_EPSILON)
 			{
-				valid = qfalse;
 				SnapWeldVectorAccu(w->p[i], w->p[j], vec);
 				VectorCopyAccu(vec, w->p[i]);
-				// NOTE: The new code initializes k to j + 1.
 				for (k = j + 1; k < w->numpoints; k++)
 				{
 					VectorCopyAccu(w->p[k], w->p[k - 1]);
 				}
 				w->numpoints--;
+				altered = qtrue;
 				// The only way to finish off fixing the winding consistently and
 				// accurately is by fixing the winding all over again.  For example,
 				// the point at index i and the point at index i-1 could now be
@@ -433,12 +435,7 @@ qboolean FixWindingAccu(winding_accu_t *w)
 		if (done) break;
 	}
 
-	if (w->numpoints < 3)
-	{
-		valid = qfalse;
-		Sys_FPrintf(SYS_VRB, "WARNING: winding degenerated to less than 3 points in FixWindingAccu\n");
-	}
-	return valid;
+	return altered;
 }
 
 
@@ -492,7 +489,15 @@ qboolean CreateBrushWindings( brush_t *brush )
 			
 			/* ydnar: fix broken windings that would generate trifans */
 #if EXPERIMENTAL_HIGH_PRECISION_MATH_Q3MAP2_FIXES
-			FixWindingAccu(w);
+			if (w != NULL)
+			{
+				FixWindingAccu(w);
+				if (w->numpoints < 3)
+				{
+					FreeWindingAccu(w);
+					w = NULL;
+				}
+			}
 #else
 			FixWinding( w );
 #endif

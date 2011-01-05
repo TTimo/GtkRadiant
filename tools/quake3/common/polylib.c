@@ -729,7 +729,7 @@ void ChopWindingInPlaceAccu(winding_accu_t **inout, vec3_t normal, vec_t dist, v
 	{
 		p1 = in->p[i];
 
-		if (sides[i] == SIDE_ON)
+		if (sides[i] == SIDE_ON || sides[i] == SIDE_FRONT)
 		{
 			if (f->numpoints >= MAX_POINTS_ON_WINDING)
 				Error("ChopWindingInPlaceAccu: MAX_POINTS_ON_WINDING");
@@ -741,20 +741,7 @@ void ChopWindingInPlaceAccu(winding_accu_t **inout, vec3_t normal, vec_t dist, v
 			}
 			VectorCopyAccu(p1, f->p[f->numpoints]);
 			f->numpoints++;
-			continue;
-		}
-		if (sides[i] == SIDE_FRONT)
-		{
-			if (f->numpoints >= MAX_POINTS_ON_WINDING)
-				Error("ChopWindingInPlaceAccu: MAX_POINTS_ON_WINDING");
-			if (f->numpoints >= maxpts) // This will probably never happen.
-			{
-				Sys_FPrintf(SYS_VRB, "WARNING: estimate on chopped winding size incorrect (no problem)\n");
-				f = CopyWindingAccuIncreaseSizeAndFreeOld(f);
-				maxpts++;
-			}
-			VectorCopyAccu(p1, f->p[f->numpoints]);
-			f->numpoints++;
+			if (sides[i] == SIDE_ON) continue;
 		}
 		if (sides[i + 1] == SIDE_ON || sides[i + 1] == sides[i])
 		{
