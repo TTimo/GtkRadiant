@@ -668,7 +668,7 @@ void ChopWindingInPlaceAccu(winding_accu_t **inout, vec3_t normal, vec_t dist, v
 	// front, point 4 might be in back, and so on.  So we could end up with a very ugly-
 	// looking chopped winding, and this might be undesirable, and would at least lead to
 	// a possible exhaustion of MAX_POINTS_ON_WINDING.  It's better to assume that points
-	// very very close to the plane ore on the plane, using an infinitesimal epsilon amount.
+	// very very close to the plane are on the plane, using an infinitesimal epsilon amount.
 
 	// Now, the original ChopWindingInPlace() function used a vec_t-based winding_t.
 	// So this minimum epsilon is quite similar to casting the higher resolution numbers to
@@ -707,20 +707,20 @@ void ChopWindingInPlaceAccu(winding_accu_t **inout, vec3_t normal, vec_t dist, v
 	sides[i] = sides[0];
 	dists[i] = dists[0];
 	
+	// I'm wondering if whatever code that handles duplicate planes is robust enough
+	// that we never get a case where two nearly equal planes result in 2 NULL windings
+	// due to the 'if' statement below.  TODO: Investigate this.
 	if (!counts[SIDE_FRONT]) {
 		FreeWindingAccu(in);
 		*inout = NULL;
 		return;
 	}
-	// TODO: I'm wondering what happens if a brush has 2 planes that are the same.  In
-	// other words, nothing is on SIDE_FRONT but everything is on SIDE_ON.  This will cause
-	// both of the duplicate planes to have a NULL winding, as far as I can tell, because if
-	// all points are on SIDE_ON, the above "if" statement will be true and the winding will
-	// be NULL'ed out.  This may actually be the legacy and desired behavior.  Write a
-	// regression test for this.
 	if (!counts[SIDE_BACK]) {
 		return; // Winding is unmodified.
 	}
+
+	// NOTE: The least number of points that a winding can have at this point is 2.
+	// In that case, one point is SIDE_FRONT and the other is SIDE_BACK.
 
 	maxpts = counts[SIDE_FRONT] + 2; // We dynamically expand if this is too small.
 	f = AllocWindingAccu(maxpts);

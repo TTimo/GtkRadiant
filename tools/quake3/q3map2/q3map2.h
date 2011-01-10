@@ -1930,8 +1930,30 @@ Q_EXTERN qboolean			debugSurfaces Q_ASSIGN( qfalse );
 Q_EXTERN qboolean			debugInset Q_ASSIGN( qfalse );
 Q_EXTERN qboolean			debugPortals Q_ASSIGN( qfalse );
 
+#if EXPERIMENTAL_SNAP_NORMAL_FIX
+// Increasing the normalEpsilon to compensate for new logic in SnapNormal(), where
+// this epsilon is now used to compare against 0 components instead of the 1 or -1
+// components.  Unfortunately, normalEpsilon is also used in PlaneEqual().  So changing
+// this will affect anything that calls PlaneEqual() as well (which are, at the time
+// of this writing, FindFloatPlane() and AddBrushBevels()).
+Q_EXTERN double				normalEpsilon Q_ASSIGN(0.00005);
+#else
 Q_EXTERN double				normalEpsilon Q_ASSIGN( 0.00001 );
+#endif
+
+#if EXPERIMENTAL_HIGH_PRECISION_MATH_Q3MAP2_FIXES
+// NOTE: This distanceEpsilon is too small if parts of the map are at maximum world
+// extents (in the range of plus or minus 2^16).  The smallest epsilon at values
+// close to 2^16 is about 0.007, which is greater than distanceEpsilon.  Therefore,
+// maps should be constrained to about 2^15, otherwise slightly undesirable effects
+// may result.  The 0.01 distanceEpsilon used previously is just too coarse in my
+// opinion.  The real fix for this problem is to have 64 bit distances and then make
+// this epsilon even smaller, or to constrain world coordinates to plus minus 2^15
+// (or even 2^14).
+Q_EXTERN double				distanceEpsilon Q_ASSIGN(0.005);
+#else
 Q_EXTERN double				distanceEpsilon Q_ASSIGN( 0.01 );
+#endif
 
 
 /* bsp */

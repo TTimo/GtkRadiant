@@ -154,14 +154,14 @@ int CreateNewFloatPlane (vec3_t normal, vec_t dist)
 
 /*
 SnapNormal()
-snaps a near-axial normal vector
+Snaps a near-axial normal vector.
+Returns qtrue if and only if the normal was adjusted.
 */
 
 qboolean SnapNormal( vec3_t normal )
 {
 #if EXPERIMENTAL_SNAP_NORMAL_FIX
 	int		i;
-	vec_t		ourNormalEpsilon;
 	qboolean	adjusted = qfalse;
 
 	// A change from the original SnapNormal() is that we snap each
@@ -219,11 +219,8 @@ qboolean SnapNormal( vec3_t normal )
 	// the epsilon be measured against the vector components close to 0, not 1.0.
 	// I think the logic should be: if 2 of the normal components are within
 	// epsilon of 0, then the vector can be snapped to be perfectly axial.
-	// The epsilon should probably be adjusted to a larger value when we make this
-	// code change.  Really, this code must be incorrect.  Rambetter will address
-	// this issue after the base winding math problems are solved.  In fact I will
-	// create a regression test that will display the effects of this coarse
-	// snapping behavior.
+	// We may consider adjusting the epsilon to a larger value when we make this
+	// code fix.
 
 	for( i = 0; i < 3; i++ )
 	{
@@ -365,9 +362,15 @@ int FindFloatPlane( vec3_t normal, vec_t dist, int numPoints, vec3_t *points )
 			/* ydnar: test supplied points against this plane */
 			for( j = 0; j < numPoints; j++ )
 			{
+				// NOTE: When dist approaches 2^16, the resolution of 32 bit floating
+				// point number is greatly decreased.  The distanceEpsilon cannot be
+				// very small when world coordinates extend to 2^16.  Making the
+				// dot product here in 64 bit land will not really help the situation
+				// because the error will already be carried in dist.
 				d = DotProduct( points[ j ], normal ) - dist;
-				if( fabs( d ) > distanceEpsilon )
-					break;
+				d = fabs(d);
+				if (d != 0.0 && d >= distanceEpsilon)
+					break; // Point is too far from plane.
 			}
 			
 			/* found a matching plane */
@@ -428,6 +431,9 @@ int MapPlaneFromPoints( vec3_t *p )
 	VectorSubtractAccu(paccu[2], paccu[1], t2);
 	CrossProductAccu(t1, t2, normalAccu);
 	VectorNormalizeAccu(normalAccu, normalAccu);
+	// TODO: A 32 bit float for the plane distance isn't enough resolution
+	// if the plane is 2^16 units away from the origin (the "epsilon" approaches
+	// 0.01 in that case).
 	dist = (vec_t) DotProductAccu(paccu[0], normalAccu);
 	VectorCopyAccuToRegular(normalAccu, normal);
 

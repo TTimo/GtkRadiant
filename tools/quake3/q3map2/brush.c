@@ -289,7 +289,12 @@ void SnapWeldVectorAccu(vec3_accu_t a, vec3_accu_t b, vec3_accu_t out)
 {
 	// I'm just preserving what I think was the intended logic of the original
 	// SnapWeldVector().  I'm not actually sure where this function should even
-	// be used.
+	// be used.  I'd like to know which kinds of problems this function addresses.
+
+	// TODO: I thought we're snapping all coordinates to nearest 1/8 unit?
+	// So what is natural about snapping to the nearest integer?  Maybe we should
+	// be snapping to the nearest 1/8 unit instead?
+
 	int		i;
 	vec_accu_t	ai, bi, ad, bd;
 	
@@ -414,6 +419,11 @@ qboolean FixWindingAccu(winding_accu_t *w)
 			dist = VectorLengthAccu(vec);
 			if (dist < DEGENERATE_EPSILON)
 			{
+				// TODO: I think the "snap weld vector" was written before
+				// some of the math precision fixes, and its purpose was
+				// probably to address math accuracy issues.  We can think
+				// about changing the logic here.  Maybe once plane distance
+				// gets 64 bits, we can look at it then.
 				SnapWeldVectorAccu(w->p[i], w->p[j], vec);
 				VectorCopyAccu(vec, w->p[i]);
 				for (k = j + 1; k < w->numpoints; k++)
@@ -489,15 +499,10 @@ qboolean CreateBrushWindings( brush_t *brush )
 			
 			/* ydnar: fix broken windings that would generate trifans */
 #if EXPERIMENTAL_HIGH_PRECISION_MATH_Q3MAP2_FIXES
-			if (w != NULL)
-			{
-				FixWindingAccu(w);
-				if (w->numpoints < 3)
-				{
-					FreeWindingAccu(w);
-					w = NULL;
-				}
-			}
+			// I think it's better to FixWindingAccu() once after we chop with all planes
+			// so that error isn't multiplied.  There is nothing natural about welding
+			// the points unless they are the final endpoints.  ChopWindingInPlaceAccu()
+			// is able to handle all kinds of degenerate windings.
 #else
 			FixWinding( w );
 #endif
@@ -505,6 +510,15 @@ qboolean CreateBrushWindings( brush_t *brush )
 		
 		/* set side winding */
 #if EXPERIMENTAL_HIGH_PRECISION_MATH_Q3MAP2_FIXES
+		if (w != NULL)
+		{
+			FixWindingAccu(w);
+			if (w->numpoints < 3)
+			{
+				FreeWindingAccu(w);
+				w = NULL;
+			}
+		}
 		side->winding = (w ? CopyWindingAccuToRegular(w) : NULL);
 		if (w) FreeWindingAccu(w);
 #else
