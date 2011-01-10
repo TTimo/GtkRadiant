@@ -28,6 +28,54 @@ vec3_t vec3_origin = {0.0f,0.0f,0.0f};
 
 /*
 ================
+VectorIsOnAxis
+================
+*/
+qboolean VectorIsOnAxis(vec3_t v)
+{
+	int	i, zeroComponentCount;
+
+	zeroComponentCount = 0;
+	for (i = 0; i < 3; i++)
+	{
+		if (v[i] == 0.0)
+		{
+			zeroComponentCount++;
+		}
+	}
+
+	if (zeroComponentCount > 1)
+	{
+		// The zero vector will be on axis.
+		return qtrue;
+	}
+
+	return qfalse;
+}
+
+/*
+================
+VectorIsOnAxialPlane
+================
+*/
+qboolean VectorIsOnAxialPlane(vec3_t v)
+{
+	int	i;
+
+	for (i = 0; i < 3; i++)
+	{
+		if (v[i] == 0.0)
+		{
+			// The zero vector will be on axial plane.
+			return qtrue;
+		}
+	}
+
+	return qfalse;
+}
+
+/*
+================
 MakeNormalVectors
 
 Given a normalized forward vector, create two
@@ -127,21 +175,30 @@ void _VectorCopy (vec3_t in, vec3_t out)
 }
 
 vec_t VectorNormalize( const vec3_t in, vec3_t out ) {
-	vec_t	length, ilength;
 
-	length = (vec_t)sqrt (in[0]*in[0] + in[1]*in[1] + in[2]*in[2]);
+	// The sqrt() function takes double as an input and returns double as an
+	// output according the the man pages on Debian and on FreeBSD.  Therefore,
+	// I don't see a reason why using a double outright (instead of using the
+	// vec_accu_t alias for example) could possibly be frowned upon.
+
+	double	x, y, z, length;
+
+	x = (double) in[0];
+	y = (double) in[1];
+	z = (double) in[2];
+
+	length = sqrt((x * x) + (y * y) + (z * z));
 	if (length == 0)
 	{
 		VectorClear (out);
 		return 0;
 	}
 
-	ilength = 1.0f/length;
-	out[0] = in[0]*ilength;
-	out[1] = in[1]*ilength;
-	out[2] = in[2]*ilength;
+	out[0] = (vec_t) (x / length);
+	out[1] = (vec_t) (y / length);
+	out[2] = (vec_t) (z / length);
 
-	return length;
+	return (vec_t) length;
 }
 
 vec_t ColorNormalize( const vec3_t in, vec3_t out ) {
@@ -590,4 +647,154 @@ void RotatePointAroundVector( vec3_t dst, const vec3_t dir, const vec3_t point,
 	for ( i = 0; i < 3; i++ ) {
 		dst[i] = rot[i][0] * point[0] + rot[i][1] * point[1] + rot[i][2] * point[2];
 	}
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+// Below is double-precision math stuff.  This was initially needed by the new
+// "base winding" code in q3map2 brush processing in order to fix the famous
+// "disappearing triangles" issue.  These definitions can be used wherever extra
+// precision is needed.
+////////////////////////////////////////////////////////////////////////////////
+
+/*
+=================
+VectorLengthAccu
+=================
+*/
+vec_accu_t VectorLengthAccu(const vec3_accu_t v)
+{
+	return (vec_accu_t) sqrt((v[0] * v[0]) + (v[1] * v[1]) + (v[2] * v[2]));
+}
+
+/*
+=================
+DotProductAccu
+=================
+*/
+vec_accu_t DotProductAccu(const vec3_accu_t a, const vec3_accu_t b)
+{
+	return (a[0] * b[0]) + (a[1] * b[1]) + (a[2] * b[2]);
+}
+
+/*
+=================
+VectorSubtractAccu
+=================
+*/
+void VectorSubtractAccu(const vec3_accu_t a, const vec3_accu_t b, vec3_accu_t out)
+{
+	out[0] = a[0] - b[0];
+	out[1] = a[1] - b[1];
+	out[2] = a[2] - b[2];
+}
+
+/*
+=================
+VectorAddAccu
+=================
+*/
+void VectorAddAccu(const vec3_accu_t a, const vec3_accu_t b, vec3_accu_t out)
+{
+	out[0] = a[0] + b[0];
+	out[1] = a[1] + b[1];
+	out[2] = a[2] + b[2];
+}
+
+/*
+=================
+VectorCopyAccu
+=================
+*/
+void VectorCopyAccu(const vec3_accu_t in, vec3_accu_t out)
+{
+	out[0] = in[0];
+	out[1] = in[1];
+	out[2] = in[2];
+}
+
+/*
+=================
+VectorScaleAccu
+=================
+*/
+void VectorScaleAccu(const vec3_accu_t in, vec_accu_t scaleFactor, vec3_accu_t out)
+{
+	out[0] = in[0] * scaleFactor;
+	out[1] = in[1] * scaleFactor;
+	out[2] = in[2] * scaleFactor;
+}
+
+/*
+=================
+CrossProductAccu
+=================
+*/
+void CrossProductAccu(const vec3_accu_t a, const vec3_accu_t b, vec3_accu_t out)
+{
+	out[0] = (a[1] * b[2]) - (a[2] * b[1]);
+	out[1] = (a[2] * b[0]) - (a[0] * b[2]);
+	out[2] = (a[0] * b[1]) - (a[1] * b[0]);
+}
+
+/*
+=================
+Q_rintAccu
+=================
+*/
+vec_accu_t Q_rintAccu(vec_accu_t val)
+{
+	return (vec_accu_t) floor(val + 0.5);
+}
+
+/*
+=================
+VectorCopyAccuToRegular
+=================
+*/
+void VectorCopyAccuToRegular(const vec3_accu_t in, vec3_t out)
+{
+	out[0] = (vec_t) in[0];
+	out[1] = (vec_t) in[1];
+	out[2] = (vec_t) in[2];
+}
+
+/*
+=================
+VectorCopyRegularToAccu
+=================
+*/
+void VectorCopyRegularToAccu(const vec3_t in, vec3_accu_t out)
+{
+	out[0] = (vec_accu_t) in[0];
+	out[1] = (vec_accu_t) in[1];
+	out[2] = (vec_accu_t) in[2];
+}
+
+/*
+=================
+VectorNormalizeAccu
+=================
+*/
+vec_accu_t VectorNormalizeAccu(const vec3_accu_t in, vec3_accu_t out)
+{
+	// The sqrt() function takes double as an input and returns double as an
+	// output according the the man pages on Debian and on FreeBSD.  Therefore,
+	// I don't see a reason why using a double outright (instead of using the
+	// vec_accu_t alias for example) could possibly be frowned upon.
+
+	vec_accu_t	length;
+
+	length = (vec_accu_t) sqrt((in[0] * in[0]) + (in[1] * in[1]) + (in[2] * in[2]));
+	if (length == 0)
+	{
+		VectorClear(out);
+		return 0;
+	}
+
+	out[0] = in[0] / length;
+	out[1] = in[1] / length;
+	out[2] = in[2] / length;
+
+	return length;
 }
