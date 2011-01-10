@@ -55,7 +55,7 @@ qboolean VectorIsOnAxis(vec3_t v)
 
 /*
 ================
-VectorIsOnAxis
+VectorIsOnAxialPlane
 ================
 */
 qboolean VectorIsOnAxialPlane(vec3_t v)

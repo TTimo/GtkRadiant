@@ -371,7 +371,14 @@ winding_accu_t *BaseWindingForPlaneAccu(vec3_t normal, vec_t dist)
 BaseWindingForPlane
 
 Original BaseWindingForPlane() function that has serious accuracy problems.  Here is why.
-TODO: Explain why.
+The base winding is computed as a rectangle with very large coordinates.  These coordinates
+are in the range 2^17 or 2^18.  "Epsilon" (meaning the distance between two adjacent numbers)
+at these magnitudes in 32 bit floating point world is about 0.02.  So for example, if things
+go badly (by bad luck), then the whole plane could be shifted by 0.02 units (its distance could
+be off by that much).  Then if we were to compute the winding of this plane and another of
+the brush's planes met this winding at a very acute angle, that error could multiply to around
+0.1 or more when computing the final vertex coordinates of the winding.  0.1 is a very large
+error, and can lead to all sorts of disappearing triangle problems.
 =================
 */
 winding_t *BaseWindingForPlane(vec3_t normal, vec_t dist)

@@ -69,7 +69,7 @@ qboolean PlaneEqual( plane_t *p, vec3_t normal, vec_t dist )
 	de = distanceEpsilon;
 	
 	/* compare */
-	// We check equality of each component since the we're using '<', not '<='
+	// We check equality of each component since we're using '<', not '<='
 	// (the epsilons may be zero).  We want to use '<' intead of '<=' to be
 	// consistent with the true meaning of "epsilon", and also because other
 	// parts of the code uses this inequality.
