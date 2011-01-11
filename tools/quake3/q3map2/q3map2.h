@@ -123,9 +123,10 @@ constants
 ------------------------------------------------------------------------------- */
 
 /* temporary hacks and tests (please keep off in SVN to prevent anyone's legacy map from screwing up) */
-#define EXPERIMENTAL_HIGH_PRECISION_MATH_Q3MAP2_FIXES	0
-#define EXPERIMENTAL_SNAP_NORMAL_FIX			0
-#define EXPERIMENTAL_SNAP_PLANE_FIX			0
+/* 2011-01-10 TTimo says we should turn these on in SVN, so turning on now */
+#define EXPERIMENTAL_HIGH_PRECISION_MATH_Q3MAP2_FIXES	1
+#define EXPERIMENTAL_SNAP_NORMAL_FIX			1
+#define EXPERIMENTAL_SNAP_PLANE_FIX			1
 
 /* general */
 #define MAX_QPATH				64
