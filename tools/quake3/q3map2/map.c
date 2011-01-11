@@ -247,13 +247,7 @@ void SnapPlane( vec3_t normal, vec_t *dist, vec3_t center ){
    SnapPlane reenabled by namespace because of multiple reports of
    q3map2-crashes which were triggered by this patch.
  */
-	// div0: ensure the point "center" stays on the plane (actually, this
-	// rotates the plane around the point center).
-	// if center lies on the plane, it is guaranteed to stay on the plane by
-	// this fix.
-	vec_t centerDist = DotProduct( normal, center );
 	SnapNormal( normal );
-	*dist += ( DotProduct( normal, center ) - centerDist );
 
 	// TODO: Rambetter has some serious comments here as well.  First off,
 	// in the case where a normal is non-axial, there is nothing special
@@ -329,16 +323,11 @@ int FindFloatPlane( vec3_t normal, vec_t dist, int numPoints, vec3_t *points ) /
 	int i, j, hash, h;
 	plane_t *p;
 	vec_t d;
-	vec3_t centerofweight;
-
-	VectorClear( centerofweight );
-	for ( i = 0; i < numPoints; ++i )
-		VectorMA( centerofweight, 1.0 / numPoints, points[i], centerofweight );
 
 #if Q3MAP2_EXPERIMENTAL_SNAP_PLANE_FIX
 	SnapPlaneImproved( normal, &dist, numPoints, (const vec3_t *) points );
 #else
-	SnapPlane( normal, &dist, centerofweight );
+	SnapPlane( normal, &dist );
 #endif
 	/* hash the plane */
 	hash = ( PLANE_HASHES - 1 ) & (int) fabs( dist );
@@ -392,13 +381,7 @@ int FindFloatPlane( vec3_t normal, vec_t dist, int numPoints, vec3_t *points ) /
 #if Q3MAP2_EXPERIMENTAL_SNAP_PLANE_FIX
 	SnapPlaneImproved( normal, &dist, numPoints, (const vec3_t *) points );
 #else
-	vec3_t centerofweight;
-
-	VectorClear( centerofweight );
-	for ( i = 0; i < numPoints; ++i )
-		VectorMA( centerofweight, 1.0 / numPoints, points[i], centerofweight );
-
-	SnapPlane( normal, &dist, centerofweight );
+	SnapPlane( normal, &dist );
 #endif
 	for ( i = 0, p = mapplanes; i < nummapplanes; i++, p++ )
 	{
