@@ -1,0 +1,14 @@
+// entity 0
+{
+"classname" "worldspawn"
+// brush 0
+{
+( 7 0 0 ) ( 7 0 1 ) ( 7 64 1 ) radiant_regression_tests/green 0 0 0 0.500000 0.500000 0 0 0
+( 7 0 0 ) ( 7 64 0 ) ( -1 64 0 ) radiant_regression_tests/blue 0 0 0 0.500000 0.500000 0 0 0
+( 7 0 1 ) ( 7 0 0 ) ( -1 0 0 ) radiant_regression_tests/green 0 0 0 0.500000 0.500000 0 0 0
+( -1 64 0 ) ( 7 64 0 ) ( 7 64 1 ) radiant_regression_tests/green 0 0 0 0.500000 0.500000 0 0 0
+( 7 0 1 ) ( -1 0 0 ) ( -1 64 0 ) radiant_regression_tests/blue 0 0 0 0.500000 0.500000 0 0 0
+( -1 0 2 ) ( 0 0 0 ) ( 0 64 0 ) radiant_regression_tests/red 0 0 0 0.500000 0.500000 0 0 0
+( 1 0 2 ) ( -7 0 -13 ) ( -7 64 -13 ) radiant_regression_tests/red 0 0 0 0.500000 0.500000 0 0 0
+}
+}
