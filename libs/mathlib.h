@@ -90,6 +90,9 @@ vec_t VectorLength(vec3_t v);
 void VectorMA( const vec3_t va, vec_t scale, const vec3_t vb, vec3_t vc );
 
 void _CrossProduct (vec3_t v1, vec3_t v2, vec3_t cross);
+// I need this define in order to test some of the regression tests from time to time.
+// This define affect the precision of VectorNormalize() function only.
+#define MATHLIB_VECTOR_NORMALIZE_PRECISION_FIX 1
 vec_t VectorNormalize (const vec3_t in, vec3_t out);
 vec_t ColorNormalize( const vec3_t in, vec3_t out );
 void VectorInverse (vec3_t v);
