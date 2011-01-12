@@ -124,9 +124,9 @@ constants
 
 /* temporary hacks and tests (please keep off in SVN to prevent anyone's legacy map from screwing up) */
 /* 2011-01-10 TTimo says we should turn these on in SVN, so turning on now */
-#define EXPERIMENTAL_HIGH_PRECISION_MATH_Q3MAP2_FIXES	1
-#define EXPERIMENTAL_SNAP_NORMAL_FIX			1
-#define EXPERIMENTAL_SNAP_PLANE_FIX			1
+#define Q3MAP2_EXPERIMENTAL_HIGH_PRECISION_MATH_FIXES	1
+#define Q3MAP2_EXPERIMENTAL_SNAP_NORMAL_FIX		1
+#define Q3MAP2_EXPERIMENTAL_SNAP_PLANE_FIX		1
 
 /* general */
 #define MAX_QPATH				64
@@ -1931,7 +1931,7 @@ Q_EXTERN qboolean			debugSurfaces Q_ASSIGN( qfalse );
 Q_EXTERN qboolean			debugInset Q_ASSIGN( qfalse );
 Q_EXTERN qboolean			debugPortals Q_ASSIGN( qfalse );
 
-#if EXPERIMENTAL_SNAP_NORMAL_FIX
+#if Q3MAP2_EXPERIMENTAL_SNAP_NORMAL_FIX
 // Increasing the normalEpsilon to compensate for new logic in SnapNormal(), where
 // this epsilon is now used to compare against 0 components instead of the 1 or -1
 // components.  Unfortunately, normalEpsilon is also used in PlaneEqual().  So changing
@@ -1942,7 +1942,7 @@ Q_EXTERN double				normalEpsilon Q_ASSIGN(0.00005);
 Q_EXTERN double				normalEpsilon Q_ASSIGN( 0.00001 );
 #endif
 
-#if EXPERIMENTAL_HIGH_PRECISION_MATH_Q3MAP2_FIXES
+#if Q3MAP2_EXPERIMENTAL_HIGH_PRECISION_MATH_FIXES
 // NOTE: This distanceEpsilon is too small if parts of the map are at maximum world
 // extents (in the range of plus or minus 2^16).  The smallest epsilon at values
 // close to 2^16 is about 0.007, which is greater than distanceEpsilon.  Therefore,

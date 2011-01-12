@@ -458,7 +458,7 @@ returns false if the brush doesn't enclose a valid volume
 qboolean CreateBrushWindings( brush_t *brush )
 {
 	int			i, j;
-#if EXPERIMENTAL_HIGH_PRECISION_MATH_Q3MAP2_FIXES
+#if Q3MAP2_EXPERIMENTAL_HIGH_PRECISION_MATH_FIXES
 	winding_accu_t	*w;
 #else
 	winding_t	*w;
@@ -475,7 +475,7 @@ qboolean CreateBrushWindings( brush_t *brush )
 		plane = &mapplanes[ side->planenum ];
 		
 		/* make huge winding */
-#if EXPERIMENTAL_HIGH_PRECISION_MATH_Q3MAP2_FIXES
+#if Q3MAP2_EXPERIMENTAL_HIGH_PRECISION_MATH_FIXES
 		w = BaseWindingForPlaneAccu(plane->normal, plane->dist);
 #else
 		w = BaseWindingForPlane( plane->normal, plane->dist );
@@ -491,14 +491,14 @@ qboolean CreateBrushWindings( brush_t *brush )
 			if( brush->sides[ j ].bevel )
 				continue;
 			plane = &mapplanes[ brush->sides[ j ].planenum ^ 1 ];
-#if EXPERIMENTAL_HIGH_PRECISION_MATH_Q3MAP2_FIXES
+#if Q3MAP2_EXPERIMENTAL_HIGH_PRECISION_MATH_FIXES
 			ChopWindingInPlaceAccu(&w, plane->normal, plane->dist, 0);
 #else
 			ChopWindingInPlace( &w, plane->normal, plane->dist, 0 ); // CLIP_EPSILON );
 #endif
 			
 			/* ydnar: fix broken windings that would generate trifans */
-#if EXPERIMENTAL_HIGH_PRECISION_MATH_Q3MAP2_FIXES
+#if Q3MAP2_EXPERIMENTAL_HIGH_PRECISION_MATH_FIXES
 			// I think it's better to FixWindingAccu() once after we chop with all planes
 			// so that error isn't multiplied.  There is nothing natural about welding
 			// the points unless they are the final endpoints.  ChopWindingInPlaceAccu()
@@ -509,7 +509,7 @@ qboolean CreateBrushWindings( brush_t *brush )
 		}
 		
 		/* set side winding */
-#if EXPERIMENTAL_HIGH_PRECISION_MATH_Q3MAP2_FIXES
+#if Q3MAP2_EXPERIMENTAL_HIGH_PRECISION_MATH_FIXES
 		if (w != NULL)
 		{
 			FixWindingAccu(w);
