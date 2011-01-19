@@ -431,6 +431,9 @@ void InsertModel( char *name, int frame, m4x4_t transform, remap_t *remap, shade
 					
 					/* copy xyz */
 					VectorCopy( dv->xyz, points[ j ] );
+#if ! Q3MAP2_EXPERIMENTAL_MODEL_CLIPPING_FIX
+					// The code below is totally unneeded regardless of Q3MAP2_EXPERIMENTAL_MODEL_CLIPPING_FIX.
+					// backs is reinitialized further below.  However, the extra code does not hurt anything.
 					VectorCopy( dv->xyz, backs[ j ] );
 					
 					/* find nearest axial to normal and push back points opposite */
@@ -444,6 +447,7 @@ void InsertModel( char *name, int frame, m4x4_t transform, remap_t *remap, shade
 							break;
 						}
 					}
+#endif
 				}
 				
 				/* make plane for triangle */
@@ -461,8 +465,15 @@ void InsertModel( char *name, int frame, m4x4_t transform, remap_t *remap, shade
 						/* find nearest axial to plane normal and push back points opposite */
 						for( k = 0; k < 3; k++ )
 						{
+#if Q3MAP2_EXPERIMENTAL_MODEL_CLIPPING_FIX
+							if( fabs( plane[ k ] ) >= fabs( plane[ (k + 1) % 3 ] ) &&
+								fabs( plane[ k ] ) >= fabs( plane[ (k + 2) % 3 ] ) )
+#else
+							// This code is broken for 45 degree angles where there
+							// is no clear winner.
 							if( fabs( plane[ k ] ) > fabs( plane[ (k + 1) % 3 ] ) &&
 								fabs( plane[ k ] ) > fabs( plane[ (k + 2) % 3 ] ) )
+#endif
 							{
 								backs[ j ][ k ] += plane[ k ] < 0.0f ? 64.0f : -64.0f;
 								break;
