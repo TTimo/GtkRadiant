@@ -3305,6 +3305,9 @@ void CGameInstall::BuildDialog() {
 		case GAME_JA:
 			gtk_combo_box_append_text( GTK_COMBO_BOX( combo ), _("Jedi Academy and mods") );
 			break;
+		case GAME_REACTION:
+			gtk_combo_box_append_text( GTK_COMBO_BOX( combo ), _("Reaction Quake 3") );
+			break;
 		}
 		iGame++;
 	}
@@ -3498,6 +3501,18 @@ void CGameInstall::Run() {
 		fprintf( fg, "  basegame=\"base\"\n" );
 		break;
 	}
+	case GAME_REACTION: {
+		fprintf( fg, "  "TOOLS_ATTRIBUTE"=\"%sinstalls/"REACTION_PACK"/game\"\n", g_strAppPath.GetBuffer() );
+		fprintf( fg, "  prefix=\".Reaction\"\n" );
+		Str source = g_strAppPath.GetBuffer();
+		source += "installs/";
+		source += REACTION_PACK;
+		source += "/install/";
+		Str dest = m_strEngine.GetBuffer();
+		CopyTree( source.GetBuffer(), dest.GetBuffer() );
+		fprintf( fg, "  basegame=\"Boomstick\"\n" );
+		break;
+	}
 	}
 	fprintf( fg, "/>\n" );
 	fclose( fg );
@@ -3543,6 +3558,9 @@ void CGameInstall::ScanGames() {
 		}
 		if ( stricmp( dirname, JA_PACK ) == 0 ) {
 			m_availGames[ iGame++ ] = GAME_JA;
+		}
+		if ( stricmp( dirname, REACTION_PACK ) == 0 ) {
+			m_availGames[ iGame++ ] = GAME_REACTION;
 		}
 	}
 	Sys_Printf("No installable games found in: %s\n",

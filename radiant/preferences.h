@@ -209,6 +209,7 @@ select games, copy editing assets and write out configuration files
 #define Q2_PACK "Q2Pack"
 #define TREMULOUS_PACK "TremulousPack"
 #define JA_PACK "JAPack"
+#define REACTION_PACK "ReactionPack"
 
 class CGameInstall : public Dialog {
 public:
@@ -231,6 +232,7 @@ public:
 		GAME_Q2,
 		GAME_TREMULOUS,
 		GAME_JA,
+		GAME_REACTION,
 		GAME_COUNT
 	};
 
