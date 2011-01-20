@@ -1867,6 +1867,8 @@ Q_EXTERN game_t				games[]
 								,
 								#include "game_qfusion.h"	/* qfusion game */
 								,
+								#include "game_reaction.h" /* must be after game_quake3.h */
+								,
 								{ NULL }	/* null game */
 							};
 #endif
