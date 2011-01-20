@@ -303,6 +303,8 @@ adds a game path to the list
 
 void AddGamePath( char *path )
 {
+	int	i;
+
 	/* dummy check */
 	if( path == NULL || path[ 0 ] == '\0' || numGamePaths >= MAX_GAME_PATHS )
 		return;
@@ -312,6 +314,19 @@ void AddGamePath( char *path )
 	strcpy( gamePaths[ numGamePaths ], path );
 	CleanPath( gamePaths[ numGamePaths ] );
 	numGamePaths++;
+
+	/* don't add it if it's already there */
+	for (i = 0; i < numGamePaths - 1; i++)
+	{
+		if (strcmp(gamePaths[i], gamePaths[numGamePaths - 1]) == 0)
+		{
+			free(gamePaths[numGamePaths - 1]);
+			gamePaths[numGamePaths - 1] = NULL;
+			numGamePaths--;
+			break;
+		}
+	}
+	
 }
 
 
