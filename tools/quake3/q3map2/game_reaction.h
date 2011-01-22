@@ -36,11 +36,31 @@ several games based on the Quake III Arena engine, in the form of "Q3Map2."
 
 /* -------------------------------------------------------------------------------
 
-no content and surface flags here
-they are the same as Quake 3's
+inherit content and surface flags from game_quake3.h
 (this file must be included AFTER game_quake3.h)
 
+Additional surface flags follow.  These were given to me (Rambetter) by TTI from the Reaction team.
+Note that some of these values have more than one bit set.  I'm not sure how Reaction is using these
+bits, but this is what I got from TTI.
+
 ------------------------------------------------------------------------------- */
+
+#define	REACTION_SURF_GRAVEL	0x80000
+#define	REACTION_SURF_WOOD	0x81000
+#define	REACTION_SURF_CARPET	0x100000
+#define	REACTION_SURF_METAL2	0x101000
+#define	REACTION_SURF_GLASS	0x180000
+#define	REACTION_SURF_GRASS	0x181000
+#define	REACTION_SURF_SNOW	0x200000
+#define	REACTION_SURF_MUD	0x201000
+#define	REACTION_SURF_WOOD2	0x280000
+#define	REACTION_SURF_HARDMETAL	0x281000
+#define	REACTION_SURF_LEAVES	0x300000
+#define	REACTION_SURF_CEMENT	0x301000
+#define	REACTION_SURF_MARBLE	0x380000
+#define	REACTION_SURF_SNOW2	0x381000
+#define	REACTION_SURF_HARDSTEPS	0x400000
+#define	REACTION_SURF_SAND	0x401000
 
 
 
@@ -130,6 +150,22 @@ game_t struct
 		{ "nosteps",		0,							0,							Q_SURF_NOSTEPS,				0,							0,							0 },
 		{ "nodlight",		0,							0,							Q_SURF_NODLIGHT,			0,							0,							0 },
 		{ "dust",			0,							0,							Q_SURF_DUST,				0,							0,							0 },
+		{ "rq3_gravel",		0,	0,	REACTION_SURF_GRAVEL,		0,	0,	0 },
+		{ "rq3_wood",		0,	0,	REACTION_SURF_WOOD,		0,	0,	0 },
+		{ "rq3_carpet",		0,	0,	REACTION_SURF_CARPET,		0,	0,	0 },
+		{ "rq3_metal2",		0,	0,	REACTION_SURF_METAL2,		0,	0,	0 },
+		{ "rq3_glass",		0,	0,	REACTION_SURF_GLASS,		0,	0,	0 },
+		{ "rq3_grass",		0,	0,	REACTION_SURF_GRASS,		0,	0,	0 },
+		{ "rq3_snow",		0,	0,	REACTION_SURF_SNOW,		0,	0,	0 },
+		{ "rq3_mud",		0,	0,	REACTION_SURF_MUD,		0,	0,	0 },
+		{ "rq3_wood2",		0,	0,	REACTION_SURF_WOOD2,		0,	0,	0 },
+		{ "rq3_hardmetal",	0,	0,	REACTION_SURF_HARDMETAL,	0,	0,	0 },
+		{ "rq3_leaves",		0,	0,	REACTION_SURF_LEAVES,		0,	0,	0 },
+		{ "rq3_cement",		0,	0,	REACTION_SURF_CEMENT,		0,	0,	0 },
+		{ "rq3_marble",		0,	0,	REACTION_SURF_MARBLE,		0,	0,	0 },
+		{ "rq3_snow2",		0,	0,	REACTION_SURF_SNOW2,		0,	0,	0 },
+		{ "rq3_hardsteps",	0,	0,	REACTION_SURF_HARDSTEPS,	0,	0,	0 },
+		{ "rq3_sand",		0,	0,	REACTION_SURF_SAND,		0,	0,	0 },
 		
 		/* null */
 		{ NULL, 0, 0, 0, 0, 0, 0 }
