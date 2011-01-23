@@ -30,14 +30,38 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "stdafx.h"
 
-// type 1 = texture filter (name)
-// type 3 = entity filter (name)
-// type 2 = QER_* shader flags
-// type 4 = entity classes
-// type 5 = surface flags (q2)
-// type 6 = content flags (q2)
-// type 7 = content flags - no match (q2)
-bfilter_t *FilterAdd(bfilter_t *pFilter, int type, int bmask, const char *str, int exclude)
+/*
+	Rambetter on Sun Jan 23, 2011:
+
+	What follows is a discussion of the introduction to some new members and functions
+	such as baseFilters, baseFilterExcludes, FilterAddImpl(), and so on.
+
+	There was a problem that "base" filters were not taking effect as a result of
+	user action such as clicking a filter checkbox.  The reason why the base filters
+	were not being updated is because the previous logic of updating the filters had
+	been commented out.  It was commented out because the previous logic deleted ALL
+	filters (including plugin filters) and re-created only the base filters.  So in
+	effect, all plugin filters would be deleted whenever a filter checkbox was altered.
+
+	So, we need some way of knowing which are the base filters so that we can take
+	action when a filter checkbox is marked [or unmarked].  Then we can update
+	the base filters by either deleting and recreating them, or by changing their
+	active state in an intelligent manner.  I am choosing to do the latter.
+
+	My goal here is to preserve the structure bfilter_t completely as it has been
+	historically.  I feel that modifying bfilter_t is dangerous with respect to breaking
+	plugins.  So what I'm doing instead is tracking which are the base filters via
+	external array, baseFilters.  The array baseFilterExcludes keeps track of the "exclude"
+	parameter for the corresponding filter.
+*/
+
+#define MAX_BASE_FILTERS 32
+static	bfilter_t	*baseFilters[MAX_BASE_FILTERS];
+static	int		baseFilterExcludes[MAX_BASE_FILTERS];
+static	int		numBaseFilters = 0;
+
+// This shall not be called from outside filters.cpp.
+bfilter_t *FilterAddImpl(bfilter_t *pFilter, int type, int bmask, const char *str, int exclude, bool baseFilter)
 {
 	bfilter_t *pNew = new bfilter_t;
 	pNew->next = pFilter;
@@ -48,7 +72,27 @@ bfilter_t *FilterAdd(bfilter_t *pFilter, int type, int bmask, const char *str, i
 		pNew->active = true;
 	else
 		pNew->active = false;
+	if (baseFilter)
+	{
+		if (numBaseFilters >= MAX_BASE_FILTERS)
+			Error("Base filters count exceeds MAX_BASE_FILTERS");
+		baseFilters[numBaseFilters] = pNew;
+		baseFilterExcludes[numBaseFilters] = exclude;
+		numBaseFilters++;
+	}
 	return pNew;
+}
+
+// type 1 = texture filter (name)
+// type 3 = entity filter (name)
+// type 2 = QER_* shader flags
+// type 4 = entity classes
+// type 5 = surface flags (q2)
+// type 6 = content flags (q2)
+// type 7 = content flags - no match (q2)
+bfilter_t *FilterAdd(bfilter_t *pFilter, int type, int bmask, const char *str, int exclude)
+{
+	return FilterAddImpl(pFilter, type, bmask, str, exclude, false);
 }
 
 bfilter_t *FilterCreate (int type, int bmask, const char *str, int exclude)
@@ -67,6 +111,8 @@ void FiltersActivate (void)
 }
 
   // removes the filter list at *pFilter, returns NULL pointer
+// IMPORTANT NOTE: Some plugins add filters, and those will be removed here as well.
+// Therefore, this function should rarely be used.
 bfilter_t *FilterListDelete(bfilter_t *pFilter)
 {
 	if (pFilter != NULL)
@@ -74,29 +120,50 @@ bfilter_t *FilterListDelete(bfilter_t *pFilter)
 		FilterListDelete(pFilter->next);
 		delete pFilter;
 	}
+	else
+	{
+		memset(baseFilters, 0, sizeof(baseFilters)); // Strictly speaking we don't really need this.
+		memset(baseFilterExcludes, 0, sizeof(baseFilterExcludes)); // Strictly speaking we don't really need this.
+		numBaseFilters = 0; // We do need this.
+	}
 	return NULL;
 }
 
 
- //spog - FilterUpdate is called each time the filters are changed by menu or shortcuts
-bfilter_t *FilterUpdate(bfilter_t *pFilter)
+bfilter_t *FilterAddBase(bfilter_t *pFilter)
 {
-	pFilter = FilterAdd(pFilter,1,0,"clip",EXCLUDE_CLIP);
-	pFilter = FilterAdd(pFilter,1,0,"caulk",EXCLUDE_CAULK);
-	pFilter = FilterAdd(pFilter,1,0,"liquids",EXCLUDE_LIQUIDS);
- 	pFilter = FilterAdd(pFilter,1,0,"hint",EXCLUDE_HINTSSKIPS);
-	pFilter = FilterAdd(pFilter,1,0,"clusterportal",EXCLUDE_CLUSTERPORTALS);
-	pFilter = FilterAdd(pFilter,1,0,"areaportal",EXCLUDE_AREAPORTALS);
-	pFilter = FilterAdd(pFilter,2,QER_TRANS,NULL,EXCLUDE_TRANSLUCENT);
-	pFilter = FilterAdd(pFilter,3,0,"trigger",EXCLUDE_TRIGGERS);
-	pFilter = FilterAdd(pFilter,3,0,"misc_model",EXCLUDE_MODELS);
-	pFilter = FilterAdd(pFilter,3,0,"misc_gamemodel",EXCLUDE_MODELS);
-	pFilter = FilterAdd(pFilter,4,ECLASS_LIGHT,NULL,EXCLUDE_LIGHTS);
-	pFilter = FilterAdd(pFilter,4,ECLASS_PATH,NULL,EXCLUDE_PATHS);
-	pFilter = FilterAdd(pFilter,1,0,"lightgrid",EXCLUDE_LIGHTGRID);
-	pFilter = FilterAdd(pFilter,1,0,"botclip",EXCLUDE_BOTCLIP);
-  pFilter = FilterAdd(pFilter,1,0,"clipmonster",EXCLUDE_BOTCLIP);
+	pFilter = FilterAddImpl(pFilter,1,0,"clip",EXCLUDE_CLIP,true);
+	pFilter = FilterAddImpl(pFilter,1,0,"caulk",EXCLUDE_CAULK,true);
+	pFilter = FilterAddImpl(pFilter,1,0,"liquids",EXCLUDE_LIQUIDS,true);
+ 	pFilter = FilterAddImpl(pFilter,1,0,"hint",EXCLUDE_HINTSSKIPS,true);
+	pFilter = FilterAddImpl(pFilter,1,0,"clusterportal",EXCLUDE_CLUSTERPORTALS,true);
+	pFilter = FilterAddImpl(pFilter,1,0,"areaportal",EXCLUDE_AREAPORTALS,true);
+	pFilter = FilterAddImpl(pFilter,2,QER_TRANS,NULL,EXCLUDE_TRANSLUCENT,true);
+	pFilter = FilterAddImpl(pFilter,3,0,"trigger",EXCLUDE_TRIGGERS,true);
+	pFilter = FilterAddImpl(pFilter,3,0,"misc_model",EXCLUDE_MODELS,true);
+	pFilter = FilterAddImpl(pFilter,3,0,"misc_gamemodel",EXCLUDE_MODELS,true);
+	pFilter = FilterAddImpl(pFilter,4,ECLASS_LIGHT,NULL,EXCLUDE_LIGHTS,true);
+	pFilter = FilterAddImpl(pFilter,4,ECLASS_PATH,NULL,EXCLUDE_PATHS,true);
+	pFilter = FilterAddImpl(pFilter,1,0,"lightgrid",EXCLUDE_LIGHTGRID,true);
+	pFilter = FilterAddImpl(pFilter,1,0,"botclip",EXCLUDE_BOTCLIP,true);
+	pFilter = FilterAddImpl(pFilter,1,0,"clipmonster",EXCLUDE_BOTCLIP,true);
 	return pFilter;
+}
+
+void FilterUpdateBase()
+{
+	int		i;
+	bfilter_t	*filter;
+	int		exclude;
+	for (i = 0; i < numBaseFilters; i++)
+	{
+		filter = baseFilters[i];
+		exclude = baseFilterExcludes[i];
+		if (g_qeglobals.d_savedinfo.exclude & exclude)
+			filter->active = true;
+		else
+			filter->active = false;
+	}
 }
 
 /*

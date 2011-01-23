@@ -932,7 +932,7 @@ int main( int argc, char* argv[] ) {
 
   // spog - creates new filters list for the first time
   g_qeglobals.d_savedinfo.filters = NULL;
-  g_qeglobals.d_savedinfo.filters = FilterUpdate(g_qeglobals.d_savedinfo.filters);
+  g_qeglobals.d_savedinfo.filters = FilterAddBase(g_qeglobals.d_savedinfo.filters);
 
   g_pParentWnd = new MainFrame();
 

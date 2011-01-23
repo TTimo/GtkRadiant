@@ -7505,14 +7505,7 @@ void PerformFiltering ()
 {
   brush_t *brush;
 
-  // mattn - this should be removed - otherwise the filters from the
-  // plugins are wiped away with each update
-#if 0
-  // spog - deletes old filters list and creates new one when
-  // g_qeglobals.d_savedinfo.exclude is updated
-  g_qeglobals.d_savedinfo.filters = FilterListDelete(g_qeglobals.d_savedinfo.filters);
-  g_qeglobals.d_savedinfo.filters = FilterUpdate(g_qeglobals.d_savedinfo.filters);
-#endif
+  FilterUpdateBase();
 
   for ( brush = active_brushes.next; brush != &active_brushes; brush = brush->next )
     brush->bFiltered = FilterBrush( brush );
