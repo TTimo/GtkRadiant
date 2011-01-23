@@ -137,6 +137,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define LEAKSTOP_KEY            "LeakStop"
 #define DOSLEEP_KEY             "SleepMode"
 #define SUBDIVISIONS_KEY        "Subdivisions"
+#define DEFAULTTEXURESCALE_KEY  "DefaultTextureScale"
 #define CLIPCAULK_KEY           "ClipCaulk"
 #define PATCHSHOWBOUNDS_KEY     "PatchShowBounds"
 #define NATIVEGUI_KEY           "NativeGUI"
@@ -1730,6 +1731,11 @@ void PrefsDlg::BuildDialog ()
         {
           GtkTreeIter tab;
           gtk_tree_store_append(store, &tab, &group);
+          gtk_tree_store_set(store, &tab, 0, _("Brush"), 1, (gpointer)PTAB_BRUSH, -1);
+        }
+        {
+          GtkTreeIter tab;
+          gtk_tree_store_append(store, &tab, &group);
           gtk_tree_store_set(store, &tab, 0, _("Misc"), 1, (gpointer)PTAB_MISC, -1);
         }
         if (!g_qeglobals.bBSPFrontendPlugin)
@@ -2549,6 +2555,47 @@ void PrefsDlg::BuildDialog ()
   // Add the page to the notebook
   gtk_notebook_append_page(GTK_NOTEBOOK(notebook), pageframe, preflabel);
 
+  /******** Brush group ********/
+  preflabel = gtk_label_new(_("Brush"));
+  gtk_widget_show(preflabel);
+  pageframe = gtk_frame_new(_("Brush"));
+  gtk_container_set_border_width(GTK_CONTAINER(pageframe), 5);
+  gtk_widget_show(pageframe);
+  vbox = gtk_vbox_new(FALSE, 5);
+  gtk_widget_show(vbox);
+  gtk_container_set_border_width(GTK_CONTAINER(vbox), 5);
+  gtk_container_add(GTK_CONTAINER(pageframe), vbox);
+
+  // default texture scale
+  // table
+  table = gtk_table_new(2, 1, FALSE); // I believe that the 2 and 1 are switched here, and this is
+                                      // intentional to be consistent with other calls to gtk_table_new()
+                                      // [that are probably also switched].
+  gtk_widget_show(table);
+  gtk_box_pack_start(GTK_BOX(vbox), table, FALSE, TRUE, 0);
+  gtk_table_set_row_spacings(GTK_TABLE(table), 5);
+  gtk_table_set_col_spacings(GTK_TABLE(table), 5);
+
+  // label
+  label = gtk_label_new(_("Default texture scale:"));
+  gtk_widget_show(label);
+  gtk_label_set_justify(GTK_LABEL(label), GTK_JUSTIFY_LEFT);
+  gtk_table_attach(GTK_TABLE(table), label, 0, 1, 0, 1,
+                   (GtkAttachOptions) (0),
+                   (GtkAttachOptions) (0), 0, 0);
+
+  // scale entry
+  entry = gtk_entry_new();
+  gtk_widget_show(entry);
+  gtk_widget_set_usize(GTK_WIDGET(entry), 60, -2);
+  gtk_table_attach(GTK_TABLE(table), entry, 1, 2, 0, 1,
+                   (GtkAttachOptions) (GTK_FILL),
+                   (GtkAttachOptions) (0), 0, 0);
+  AddDialogData(entry, &m_fDefTextureScale, DLG_ENTRY_FLOAT);
+
+  // Add the page to the notebook
+  gtk_notebook_append_page(GTK_NOTEBOOK(notebook), pageframe, preflabel);
+
   /******** Misc group *********/
   preflabel = gtk_label_new(_("Misc"));
   gtk_widget_show(preflabel);
@@ -2970,6 +3017,7 @@ void PrefsDlg::LoadPrefs ()
   mLocalPrefs.GetPref(SELECTCURVES_KEY,       &m_bSelectCurves,               TRUE);
   mLocalPrefs.GetPref(SELECTMODELS_KEY,       &m_bSelectModels,               TRUE);
   mLocalPrefs.GetPref(SHADERLISTONLY_KEY,     &m_bTexturesShaderlistOnly,     FALSE);
+  mLocalPrefs.GetPref(DEFAULTTEXURESCALE_KEY, &m_fDefTextureScale,            g_pGameDescription->mTextureDefaultScale);
   mLocalPrefs.GetPref(SUBDIVISIONS_KEY,       &m_nSubdivisions,               SUBDIVISIONS_DEF);
   mLocalPrefs.GetPref(CLIPCAULK_KEY,          &m_bClipCaulk,                  FALSE);
   mLocalPrefs.GetPref(SNAPTTOGRID_KEY,        &m_bSnapTToGrid,                FALSE);
@@ -3511,6 +3559,9 @@ void CGameInstall::Run() {
 		Str dest = m_strEngine.GetBuffer();
 		CopyTree( source.GetBuffer(), dest.GetBuffer() );
 		fprintf( fg, "  basegame=\"Boomstick\"\n" );
+		fprintf( fg, "  default_scale=\"0.5\"\n" ); // Superfluous because the default is already 0.5,
+							// but demonstrates how to set the default texture scale
+							// for a specific game.
 		break;
 	}
 	}

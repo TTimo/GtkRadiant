@@ -475,7 +475,7 @@ public:
   // Gef: updated preferences dialog
   /*! Preference notebook page numbers */
   enum {PTAB_FRONT = 0, PTAB_GAME_SETTINGS, PTAB_2D, PTAB_CAMERA, PTAB_TEXTURE, PTAB_LAYOUT, PTAB_MOUSE,
-        PTAB_EDITING, PTAB_STARTUP, PTAB_PATHS, PTAB_MISC, PTAB_BSPMONITOR} pref_tabs;
+        PTAB_EDITING, PTAB_STARTUP, PTAB_PATHS, PTAB_BRUSH, PTAB_MISC, PTAB_BSPMONITOR} pref_tabs;
 
   GtkWidget *notebook;
 
@@ -613,6 +613,7 @@ public:
   bool  m_bGLLighting;
   bool  m_bTexturesShaderlistOnly;
   int   m_nSubdivisions;
+  float m_fDefTextureScale;
   bool  m_bFloatingZ;
   bool  m_bLatchedFloatingZ;
   // Gef: Kyro GL_POINT workaround

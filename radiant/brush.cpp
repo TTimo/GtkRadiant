@@ -309,9 +309,9 @@ void Face_MoveTexture(face_t *f, vec3_t delta)
 		vShift[1] = vDP[0] * s + vDP[1] * c;
 
 		if (!f->texdef.scale[0])
-			f->texdef.scale[0] = g_pGameDescription->mTextureDefaultScale;
+			f->texdef.scale[0] = g_PrefsDlg.m_fDefTextureScale;
 		if (!f->texdef.scale[1])
-			f->texdef.scale[1] = g_pGameDescription->mTextureDefaultScale;
+			f->texdef.scale[1] = g_PrefsDlg.m_fDefTextureScale;
 
 		f->texdef.shift[0] -= vShift[0] / f->texdef.scale[0];
 		f->texdef.shift[1] -= vShift[1] / f->texdef.scale[1];
@@ -364,9 +364,9 @@ void Face_TextureVectors (face_t *f, float STfromXYZ[2][4])
 	memset (STfromXYZ, 0, 8*sizeof(float));
 
 	if (!td->scale[0])
-		td->scale[0] = g_pGameDescription->mTextureDefaultScale;
+		td->scale[0] = g_PrefsDlg.m_fDefTextureScale;
 	if (!td->scale[1])
-		td->scale[1] = g_pGameDescription->mTextureDefaultScale;
+		td->scale[1] = g_PrefsDlg.m_fDefTextureScale;
 
 	// get natural texture axis
 	TextureAxisFromPlane(&f->plane, pvecs[0], pvecs[1]);

@@ -694,8 +694,8 @@ dist( this control point to first control point ) / dist ( last control pt to fi
 */
 void WINAPI Patch_Naturalize(patchMesh_t *p)
 {
-  int nWidth = (int)(p->d_texture->width * g_pGameDescription->mTextureDefaultScale);
-  int nHeight = (int)(p->d_texture->height * g_pGameDescription->mTextureDefaultScale);
+  int nWidth = (int)(p->d_texture->width * g_PrefsDlg.m_fDefTextureScale);
+  int nHeight = (int)(p->d_texture->height * g_PrefsDlg.m_fDefTextureScale);
   float fPWidth = Patch_Width(p);
   float fPHeight = Patch_Height(p);
   float xAccum = 0.0f;
@@ -865,18 +865,18 @@ void Patch_CapTexture(patchMesh_t *p, bool bFaceCycle = false)
 		{
 			if (vProjection[2] == 1.0f || (vX[0] == 1.0f && vY[1] == -1.0f))
 			{
-				p->ctrl[w][h].st[0] = p->ctrl[w][h].xyz[0] / (texture->width * g_pGameDescription->mTextureDefaultScale);
-				p->ctrl[w][h].st[1] = p->ctrl[w][h].xyz[1] / (texture->height * g_pGameDescription->mTextureDefaultScale) * -1;
+				p->ctrl[w][h].st[0] = p->ctrl[w][h].xyz[0] / (texture->width * g_PrefsDlg.m_fDefTextureScale);
+				p->ctrl[w][h].st[1] = p->ctrl[w][h].xyz[1] / (texture->height * g_PrefsDlg.m_fDefTextureScale) * -1;
 			}
 			else if (vProjection[0] == 1.0f || (vX[1] == 1.0f && vY[2] == -1.0f))
 			{
-				p->ctrl[w][h].st[0] = p->ctrl[w][h].xyz[1] / (texture->width * g_pGameDescription->mTextureDefaultScale);
-				p->ctrl[w][h].st[1] = p->ctrl[w][h].xyz[2] / (texture->height * g_pGameDescription->mTextureDefaultScale) * -1;
+				p->ctrl[w][h].st[0] = p->ctrl[w][h].xyz[1] / (texture->width * g_PrefsDlg.m_fDefTextureScale);
+				p->ctrl[w][h].st[1] = p->ctrl[w][h].xyz[2] / (texture->height * g_PrefsDlg.m_fDefTextureScale) * -1;
 			}
 			else if (vProjection[1] == 1.0f || (vX[0] == 1.0f && vY[2] == -1.0f))
 			{
-				p->ctrl[w][h].st[0] = p->ctrl[w][h].xyz[0] / (texture->width * g_pGameDescription->mTextureDefaultScale);
-				p->ctrl[w][h].st[1] = p->ctrl[w][h].xyz[2] / (texture->height * g_pGameDescription->mTextureDefaultScale) * -1;
+				p->ctrl[w][h].st[0] = p->ctrl[w][h].xyz[0] / (texture->width * g_PrefsDlg.m_fDefTextureScale);
+				p->ctrl[w][h].st[1] = p->ctrl[w][h].xyz[2] / (texture->height * g_PrefsDlg.m_fDefTextureScale) * -1;
 			}
 			//Sys_Printf("(%i,%i) (%f,%f,%f) (%f,%f) %f\n",w,h,
 			//	p->ctrl[w][h].xyz[0],p->ctrl[w][h].xyz[1],p->ctrl[w][h].xyz[2],

@@ -1330,8 +1330,8 @@ void SelectTexture (int mx, int my, bool bShift, bool bFitScale)
         }
         else
         {
-          tex.scale[0] = g_pGameDescription->mTextureDefaultScale;
-          tex.scale[1] = g_pGameDescription->mTextureDefaultScale;
+          tex.scale[0] = g_PrefsDlg.m_fDefTextureScale;
+          tex.scale[1] = g_PrefsDlg.m_fDefTextureScale;
         }
         tex.flags = pCurrentShader->getFlags();
         // TTimo - shader code cleanup
@@ -1935,8 +1935,8 @@ void TexWnd::DragDropTexture (guint32 flags, int pointx, int pointy)
       brushprimit_tex.coords[1][1] = 1.0f;
     } else
     {
-      tex.scale[0] = g_pGameDescription->mTextureDefaultScale;
-      tex.scale[1] = g_pGameDescription->mTextureDefaultScale;
+      tex.scale[0] = g_PrefsDlg.m_fDefTextureScale;
+      tex.scale[1] = g_PrefsDlg.m_fDefTextureScale;
     }
     tex.flags = g_qeglobals.d_texturewin.texdef.flags;
     tex.value = g_qeglobals.d_texturewin.texdef.value;
