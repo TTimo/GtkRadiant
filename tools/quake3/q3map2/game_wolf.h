@@ -131,7 +131,7 @@ game_t struct
 	1.0f,				/* lightmap gamma */
 	1.0f,				/* lightmap compensate */
 	"IBSP",				/* bsp file prefix */
-	46,					/* bsp file version */
+	47,					/* bsp file version */
 	qfalse,				/* cod-style lump len/ofs order */
 	LoadIBSPFile,		/* bsp load function */
 	WriteIBSPFile,		/* bsp write function */
