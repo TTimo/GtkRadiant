@@ -273,60 +273,71 @@ class Config:
 			self.FetchGamePaks( self.install_directory )
 		# NOTE: unrelated to self.setup_platforms - grab support files and binaries and install them
 		if ( self.platform == 'Windows' ):
-			depsfile = 'GtkR-deps-1.6-3.zip'
-			if ( not os.path.exists( depsfile ) ):
-				cmd = [ 'wget', '-N', 'http://zerowing.idsoftware.com/files/radiant/developer/1.6.1/%s' % depsfile ]
-				print( repr( cmd ) )
-				subprocess.check_call( cmd )
-
-				# extract one directoy above
-				f = os.path.abspath( depsfile )
-				backup_cwd = os.getcwd()
-				os.chdir( os.path.dirname( backup_cwd ) )
-				cmd = [ 'unzip', '-o', f ]
-				print( repr( cmd ) )
-				subprocess.check_call( cmd )
-				os.chdir( backup_cwd )
-
-				# copy all the dependent runtime data to the install directory
-				srcdir = os.path.dirname( backup_cwd )
-				for f in [
-					'libxml2/bin/libxml2.dll',
-					'gtk2/bin/libglib-2.0-0.dll',
-					'gtk2/bin/libgobject-2.0-0.dll',
-					'gtk2/bin/libgdk-win32-2.0-0.dll',
-					'gtk2/bin/libgtk-win32-2.0-0.dll',
-					'gtk2/bin/intl.dll',
-					'gtk2/bin/libatk-1.0-0.dll',
-					'gtk2/bin/libcairo-2.dll',
-					'gtk2/bin/libgdk_pixbuf-2.0-0.dll',
-					'gtk2/bin/libgmodule-2.0-0.dll',
-					'gtk2/bin/libpng13.dll',
-					'gtk2/bin/libpango-1.0-0.dll',
-                                        'gtk2/bin/libpangoft2-1.0-0.dll',
-					'gtk2/bin/libpangocairo-1.0-0.dll',
-					'gtk2/bin/libpangowin32-1.0-0.dll',
-					'gtk2/lib/libgtkglext-win32-1.0-0.dll',
-					'gtk2/lib/libgdkglext-win32-1.0-0.dll',
-					'gtk2/lib/iconv.dll',
-                                        'gtk2/zlib1.dll',
-#                                       'freetype-dev_2.4.2-1_win32/bin/freetype6.dll',
-#                                       'fontconfig-dev_2.8.0-2_win32/bin/libfontconfig-1.dll',
-#                                       'expat_2.0.1-1_win32/bin/libexpat-1.dll',
-                                        ]:
-                                        cmd = [ 'cp', '-v', os.path.join( srcdir, f ), 'install' ]
-                                        print( repr( cmd ) )
-                                        subprocess.check_call( cmd )
-				for d in [
-					'gtk2/etc',
-					'gtk2/share',
-#                                       'fontconfig-dev_2.8.0-2_win32/etc',
-#                                       'fontconfig-dev_2.8.0-2_win32/share',
-#                                       'freetype-dev_2.4.2-1_win32/share',
-					]:
-                                        cmd = [ 'cp', '-r', '-v', os.path.join( srcdir, d ), 'install' ]
+			for lib_archive in [
+				'gtk+-bundle-2.16.6-20100912-0-win32.zip',
+				'gtkglext-1.2.0-3-win32.zip',
+				'libxml2-2.7.3-2-win32.zip',
+				'jpeg-8c-4-win32.zip',
+				'STLport-5.2.1-1.zip'
+				]:
+				if ( not os.path.exists( lib_archive ) ):
+					cmd = [ 'wget', '-N', 'http://porky.nerius.com/radiant-libs-win32/%s' % lib_archive ]
 					print( repr( cmd ) )
 					subprocess.check_call( cmd )
+					lib_archive_path = os.path.abspath( lib_archive )
+					backup_cwd = os.getcwd()
+					os.chdir( os.path.dirname( backup_cwd ) )
+					cmd = [ 'unzip', '-o', lib_archive_path ]
+					print( repr( cmd ) )
+					subprocess.check_call( cmd )
+					os.chdir( backup_cwd )
+
+			# copy all the dependent runtime data to the install directory
+			srcdir = os.path.dirname( backup_cwd )
+			for dll in [
+				'gtk-2.16.6/bin/freetype6.dll',
+				'gtk-2.16.6/bin/intl.dll',
+				'gtk-2.16.6/bin/libasprintf-0.dll',
+				'gtk-2.16.6/bin/libatk-1.0-0.dll',
+				'gtk-2.16.6/bin/libcairo-2.dll',
+				'gtk-2.16.6/bin/libexpat-1.dll',
+				'gtk-2.16.6/bin/libfontconfig-1.dll',
+				'gtk-2.16.6/bin/libgailutil-18.dll',
+				'gtk-2.16.6/bin/libgcc_s_dw2-1.dll',
+				'gtk-2.16.6/bin/libgdk-win32-2.0-0.dll',
+				'gtk-2.16.6/bin/libgdk_pixbuf-2.0-0.dll',
+				'gtk-2.16.6/bin/libgio-2.0-0.dll',
+				'gtk-2.16.6/bin/libglib-2.0-0.dll',
+				'gtk-2.16.6/bin/libgmodule-2.0-0.dll',
+				'gtk-2.16.6/bin/libgobject-2.0-0.dll',
+				'gtk-2.16.6/bin/libgthread-2.0-0.dll',
+				'gtk-2.16.6/bin/libgtk-win32-2.0-0.dll',
+				'gtk-2.16.6/bin/libpango-1.0-0.dll',
+				'gtk-2.16.6/bin/libpangocairo-1.0-0.dll',
+				'gtk-2.16.6/bin/libpangoft2-1.0-0.dll',
+				'gtk-2.16.6/bin/libpangowin32-1.0-0.dll',
+				'gtk-2.16.6/bin/libpng14-14.dll',
+				'gtk-2.16.6/bin/zlib1.dll',
+				'gtk-2.16.6/lib/GNU.Gettext.dll',
+				'gtk-2.16.6/lib/gtk-2.0/2.10.0/engines/libpixmap.dll',
+				'gtk-2.16.6/lib/gtk-2.0/2.10.0/engines/libwimp.dll',
+				'gtk-2.16.6/lib/gtk-2.0/modules/libgail.dll',
+				'gtkglext-1.2.0/bin/libgdkglext-win32-1.0-0.dll',
+				'gtkglext-1.2.0/bin/libgtkglext-win32-1.0-0.dll',
+				'libxml2-2.7.3/bin/libxml2-2.dll'
+				]:
+				cmd = [ 'cp', '-v', os.path.join( srcdir, dll ), 'install' ]
+				print( repr( cmd ) )
+				subprocess.check_call( cmd )
+			for extra in [
+				'gtk-2.16.6/etc',
+				'gtk-2.16.6/share',
+				'gtkglext-1.2.0/share',
+				'libxml2-2.7.3/share'
+				]:
+				cmd = [ 'cp', '-r', '-v', os.path.join( srcdir, extra ), 'install' ]
+				print( repr( cmd ) )
+				subprocess.check_call( cmd )
 
 # parse the config statement line to produce/update an existing config list
 # the configs expose a list of keywords and accepted values, which the engine parses out
