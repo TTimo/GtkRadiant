@@ -39,7 +39,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)\include&quot;;&quot;$(SolutionDir)\tools\quake3\common&quot;;&quot;$(SolutionDir)\libs&quot;;&quot;$(SolutionDir)\..\libxml2-2.7.3\include\libxml2&quot;;&quot;$(SolutionDir)\..\gtk-2.16.6\include\libpng14&quot;;&quot;$(SolutionDir)\..\gtk-2.16.6\include&quot;;&quot;$(SolutionDir)\tools\quake2\q2map&quot;;&quot;$(SolutionDir)\plugins\entity&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)\include&quot;;&quot;$(SolutionDir)\tools\quake3\common&quot;;&quot;$(SolutionDir)\libs&quot;;&quot;$(SolutionDir)\..\gtk-2.16.6\include\glib-2.0&quot;;&quot;$(SolutionDir)\..\gtk-2.16.6\lib\glib-2.0\include&quot;;&quot;$(SolutionDir)\..\libxml2-2.7.3\include\libxml2&quot;;&quot;$(SolutionDir)\..\gtk-2.16.6\include\libpng14&quot;;&quot;$(SolutionDir)\..\gtk-2.16.6\include&quot;;&quot;$(SolutionDir)\..\jpeg-8c\include&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -48,6 +48,7 @@
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="4"
+				DisableSpecificWarnings="4996"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -61,6 +62,8 @@
 			<Tool
 				Name="VCLinkerTool"
 				LinkIncremental="2"
+				AdditionalDependencies="libpng.lib"
+				AdditionalLibraryDirectories="&quot;$(SolutionDir)\..\gtk-2.16.6\lib&quot;"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				TargetMachine="1"
@@ -110,7 +113,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)\include&quot;;&quot;$(SolutionDir)\tools\quake3\common&quot;;&quot;$(SolutionDir)\libs&quot;;&quot;$(SolutionDir)\..\libxml2-2.7.3\include\libxml2&quot;;&quot;$(SolutionDir)\..\gtk-2.16.6\include\libpng14&quot;;&quot;$(SolutionDir)\..\gtk-2.16.6\include&quot;;&quot;$(SolutionDir)\tools\quake2\q2map&quot;;&quot;$(SolutionDir)\plugins\entity&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)\include&quot;;&quot;$(SolutionDir)\tools\quake3\common&quot;;&quot;$(SolutionDir)\libs&quot;;&quot;$(SolutionDir)\..\gtk-2.16.6\include\gtk-2.0&quot;;&quot;$(SolutionDir)\..\gtk-2.16.6\lib\gtk-2.0\include&quot;;&quot;$(SolutionDir)\..\gtk-2.16.6\include\atk-1.0&quot;;&quot;$(SolutionDir)\..\gtk-2.16.6\include\cairo&quot;;&quot;$(SolutionDir)\..\gtk-2.16.6\include\pango-1.0&quot;;&quot;$(SolutionDir)\..\gtk-2.16.6\include\glib-2.0&quot;;&quot;$(SolutionDir)\..\gtk-2.16.6\lib\glib-2.0\include&quot;;&quot;$(SolutionDir)\..\gtk-2.16.6\include\libpng14&quot;;&quot;$(SolutionDir)\..\gtkglext-1.2.0\include\gtkglext-1.0&quot;;&quot;$(SolutionDir)\..\gtkglext-1.2.0\lib\gtkglext-1.0\include&quot;;&quot;$(SolutionDir)\..\libxml2-2.7.3\include\libxml2&quot;;&quot;$(SolutionDir)\..\jpeg-8c\include&quot;;&quot;$(SolutionDir)\..\STLport-5.2.1\stlport&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
@@ -130,6 +133,8 @@
 			<Tool
 				Name="VCLinkerTool"
 				LinkIncremental="2"
+				AdditionalDependencies="gtk-win32-2.0.lib gdk-win32-2.0.lib atk-1.0.lib gio-2.0.lib gdk_pixbuf-2.0.lib pangowin32-1.0.lib gdi32.lib pangocairo-1.0.lib pango-1.0.lib cairo.lib gobject-2.0.lib gmodule-2.0.lib glib-2.0.lib intl.lib gdkglext-win32-1.0.lib gtkglext-win32-1.0.lib libxml2.lib libjpeg.lib opengl32.lib glu32.lib"
+				AdditionalLibraryDirectories="&quot;$(SolutionDir)\..\gtk-2.16.6\lib&quot;;&quot;$(SolutionDir)\..\gtkglext-1.2.0\lib&quot;;&quot;$(SolutionDir)\..\libxml2-2.7.3\lib&quot;;&quot;$(SolutionDir)\..\jpeg-8c\lib&quot;"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				OptimizeReferences="2"
@@ -163,16 +168,229 @@
 	</References>
 	<Files>
 		<Filter
-			Name="Header Files"
-			Filter="h;hpp;hxx;hm;inl;inc;xsd"
-			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
+			Name="src"
+			Filter="c;cpp;cxx;cc;C"
 			>
 			<File
-				RelativePath=".\game_ef.h"
+				RelativePath=".\bspfile_abstract.c"
 				>
 			</File>
 			<File
-				RelativePath=".\game_etut.h"
+				RelativePath=".\bspfile_ibsp.c"
+				>
+			</File>
+			<File
+				RelativePath=".\bspfile_rbsp.c"
+				>
+			</File>
+			<File
+				RelativePath=".\image.c"
+				>
+			</File>
+			<File
+				RelativePath=".\main.c"
+				>
+			</File>
+			<File
+				RelativePath=".\mesh.c"
+				>
+			</File>
+			<File
+				RelativePath=".\model.c"
+				>
+			</File>
+			<File
+				RelativePath=".\path_init.c"
+				>
+			</File>
+			<File
+				RelativePath=".\shaders.c"
+				>
+			</File>
+			<File
+				RelativePath=".\surface_extra.c"
+				>
+			</File>
+			<Filter
+				Name="common"
+				Filter=".c"
+				>
+				<File
+					RelativePath="..\common\cmdlib.c"
+					>
+				</File>
+				<File
+					RelativePath="..\common\imagelib.c"
+					>
+				</File>
+				<File
+					RelativePath="..\common\inout.c"
+					>
+				</File>
+				<File
+					RelativePath="..\common\jpeg.c"
+					>
+				</File>
+				<File
+					RelativePath="..\common\mutex.c"
+					>
+				</File>
+				<File
+					RelativePath="..\common\polylib.c"
+					>
+				</File>
+				<File
+					RelativePath="..\common\scriplib.c"
+					>
+				</File>
+				<File
+					RelativePath="..\common\threads.c"
+					>
+				</File>
+				<File
+					RelativePath="..\common\unzip.c"
+					>
+				</File>
+				<File
+					RelativePath="..\common\vfs.c"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="bsp"
+				Filter=".c"
+				>
+				<File
+					RelativePath=".\brush.c"
+					>
+				</File>
+				<File
+					RelativePath=".\brush_primit.c"
+					>
+				</File>
+				<File
+					RelativePath=".\bsp.c"
+					>
+				</File>
+				<File
+					RelativePath=".\decals.c"
+					>
+				</File>
+				<File
+					RelativePath=".\facebsp.c"
+					>
+				</File>
+				<File
+					RelativePath=".\fog.c"
+					>
+				</File>
+				<File
+					RelativePath=".\leakfile.c"
+					>
+				</File>
+				<File
+					RelativePath=".\map.c"
+					>
+				</File>
+				<File
+					RelativePath=".\patch.c"
+					>
+				</File>
+				<File
+					RelativePath=".\portals.c"
+					>
+				</File>
+				<File
+					RelativePath=".\prtfile.c"
+					>
+				</File>
+				<File
+					RelativePath=".\surface.c"
+					>
+				</File>
+				<File
+					RelativePath=".\surface_foliage.c"
+					>
+				</File>
+				<File
+					RelativePath=".\surface_fur.c"
+					>
+				</File>
+				<File
+					RelativePath=".\surface_meta.c"
+					>
+				</File>
+				<File
+					RelativePath=".\tjunction.c"
+					>
+				</File>
+				<File
+					RelativePath=".\tree.c"
+					>
+				</File>
+				<File
+					RelativePath=".\writebsp.c"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="light"
+				Filter=".c"
+				>
+				<File
+					RelativePath=".\light.c"
+					>
+				</File>
+				<File
+					RelativePath=".\light_bounce.c"
+					>
+				</File>
+				<File
+					RelativePath=".\light_trace.c"
+					>
+				</File>
+				<File
+					RelativePath=".\light_ydnar.c"
+					>
+				</File>
+				<File
+					RelativePath=".\lightmaps_ydnar.c"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="vis"
+				Filter=".c"
+				>
+				<File
+					RelativePath=".\vis.c"
+					>
+				</File>
+				<File
+					RelativePath=".\visflow.c"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="convert"
+				Filter=".c"
+				>
+				<File
+					RelativePath=".\convert_ase.c"
+					>
+				</File>
+				<File
+					RelativePath=".\convert_map.c"
+					>
+				</File>
+			</Filter>
+		</Filter>
+		<Filter
+			Name="include"
+			Filter="h"
+			>
+			<File
+				RelativePath=".\game_ef.h"
 				>
 			</File>
 			<File
@@ -184,39 +402,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\game_nexuiz.h"
-				>
-			</File>
-			<File
-				RelativePath=".\game_qfusion.h"
-				>
-			</File>
-			<File
 				RelativePath=".\game_quake3.h"
 				>
 			</File>
 			<File
-				RelativePath=".\game_quakelive.h"
-				>
-			</File>
-			<File
-				RelativePath=".\game_reaction.h"
-				>
-			</File>
-			<File
 				RelativePath=".\game_sof2.h"
-				>
-			</File>
-			<File
-				RelativePath=".\game_t.h"
-				>
-			</File>
-			<File
-				RelativePath=".\game_tenebrae.h"
-				>
-			</File>
-			<File
-				RelativePath=".\game_tremulous.h"
 				>
 			</File>
 			<File
@@ -233,174 +423,24 @@
 			</File>
 		</Filter>
 		<Filter
-			Name="Resource Files"
-			Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx"
-			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}"
+			Name="doc"
+			Filter="*.txt"
 			>
 			<File
-				RelativePath=".\q3map2.rc"
+				RelativePath=".\changelog.q3map2.txt"
 				>
 			</File>
 		</Filter>
 		<Filter
-			Name="Source Files"
-			Filter="cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx"
-			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
+			Name="rc"
+			Filter=".rc;.ico"
 			>
 			<File
-				RelativePath=".\brush.c"
+				RelativePath=".\q3map2.ico"
 				>
 			</File>
 			<File
-				RelativePath=".\brush_primit.c"
-				>
-			</File>
-			<File
-				RelativePath=".\bsp.c"
-				>
-			</File>
-			<File
-				RelativePath=".\bspfile_abstract.c"
-				>
-			</File>
-			<File
-				RelativePath=".\bspfile_ibsp.c"
-				>
-			</File>
-			<File
-				RelativePath=".\bspfile_rbsp.c"
-				>
-			</File>
-			<File
-				RelativePath=".\convert_ase.c"
-				>
-			</File>
-			<File
-				RelativePath=".\convert_map.c"
-				>
-			</File>
-			<File
-				RelativePath=".\decals.c"
-				>
-			</File>
-			<File
-				RelativePath=".\facebsp.c"
-				>
-			</File>
-			<File
-				RelativePath=".\fog.c"
-				>
-			</File>
-			<File
-				RelativePath=".\image.c"
-				>
-			</File>
-			<File
-				RelativePath=".\leakfile.c"
-				>
-			</File>
-			<File
-				RelativePath=".\light.c"
-				>
-			</File>
-			<File
-				RelativePath=".\light_bounce.c"
-				>
-			</File>
-			<File
-				RelativePath=".\light_shadows.c"
-				>
-			</File>
-			<File
-				RelativePath=".\light_trace.c"
-				>
-			</File>
-			<File
-				RelativePath=".\light_ydnar.c"
-				>
-			</File>
-			<File
-				RelativePath=".\lightmaps.c"
-				>
-			</File>
-			<File
-				RelativePath=".\lightmaps_ydnar.c"
-				>
-			</File>
-			<File
-				RelativePath=".\main.c"
-				>
-			</File>
-			<File
-				RelativePath=".\map.c"
-				>
-			</File>
-			<File
-				RelativePath=".\mesh.c"
-				>
-			</File>
-			<File
-				RelativePath=".\model.c"
-				>
-			</File>
-			<File
-				RelativePath=".\patch.c"
-				>
-			</File>
-			<File
-				RelativePath=".\path_init.c"
-				>
-			</File>
-			<File
-				RelativePath=".\portals.c"
-				>
-			</File>
-			<File
-				RelativePath=".\prtfile.c"
-				>
-			</File>
-			<File
-				RelativePath=".\shaders.c"
-				>
-			</File>
-			<File
-				RelativePath=".\surface.c"
-				>
-			</File>
-			<File
-				RelativePath=".\surface_extra.c"
-				>
-			</File>
-			<File
-				RelativePath=".\surface_foliage.c"
-				>
-			</File>
-			<File
-				RelativePath=".\surface_fur.c"
-				>
-			</File>
-			<File
-				RelativePath=".\surface_meta.c"
-				>
-			</File>
-			<File
-				RelativePath=".\tjunction.c"
-				>
-			</File>
-			<File
-				RelativePath=".\tree.c"
-				>
-			</File>
-			<File
-				RelativePath=".\vis.c"
-				>
-			</File>
-			<File
-				RelativePath=".\visflow.c"
-				>
-			</File>
-			<File
-				RelativePath=".\writebsp.c"
+				RelativePath=".\q3map2.rc"
 				>
 			</File>
 		</Filter>
