@@ -155,6 +155,10 @@
 				RelativePath=".\pm_fm.h"
 				>
 			</File>
+			<File
+				RelativePath="..\picomodel.h"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Resource Files"
