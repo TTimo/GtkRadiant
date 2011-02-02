@@ -141,14 +141,9 @@
 	</References>
 	<Files>
 		<Filter
-			Name="Header Files"
-			Filter="h;hpp;hxx;hm;inl;inc;xsd"
-			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
+			Name="include"
+			Filter="h;hpp;hxx;hm;inl"
 			>
-			<File
-				RelativePath=".\lwo\lwo2.h"
-				>
-			</File>
 			<File
 				RelativePath=".\picointernal.h"
 				>
@@ -157,42 +152,20 @@
 				RelativePath=".\pm_fm.h"
 				>
 			</File>
+			<Filter
+				Name="lwo"
+				Filter="h;hpp;hxx;hm;inl"
+				>
+				<File
+					RelativePath=".\lwo\lwo2.h"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
-			Name="Resource Files"
-			Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx"
-			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}"
+			Name="src"
+			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 			>
-		</Filter>
-		<Filter
-			Name="Source Files"
-			Filter="cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx"
-			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
-			>
-			<File
-				RelativePath=".\lwo\clip.c"
-				>
-			</File>
-			<File
-				RelativePath=".\lwo\envelope.c"
-				>
-			</File>
-			<File
-				RelativePath=".\lwo\list.c"
-				>
-			</File>
-			<File
-				RelativePath=".\lwo\lwio.c"
-				>
-			</File>
-			<File
-				RelativePath=".\lwo\lwo2.c"
-				>
-			</File>
-			<File
-				RelativePath=".\lwo\lwob.c"
-				>
-			</File>
 			<File
 				RelativePath=".\picointernal.c"
 				>
@@ -241,22 +214,51 @@
 				RelativePath=".\pm_obj.c"
 				>
 			</File>
-			<File
-				RelativePath=".\lwo\pntspols.c"
+			<Filter
+				Name="lwo"
+				Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 				>
-			</File>
-			<File
-				RelativePath=".\lwo\surface.c"
-				>
-			</File>
-			<File
-				RelativePath=".\lwo\vecmath.c"
-				>
-			</File>
-			<File
-				RelativePath=".\lwo\vmap.c"
-				>
-			</File>
+				<File
+					RelativePath=".\lwo\clip.c"
+					>
+				</File>
+				<File
+					RelativePath=".\lwo\envelope.c"
+					>
+				</File>
+				<File
+					RelativePath=".\lwo\list.c"
+					>
+				</File>
+				<File
+					RelativePath=".\lwo\lwio.c"
+					>
+				</File>
+				<File
+					RelativePath=".\lwo\lwo2.c"
+					>
+				</File>
+				<File
+					RelativePath=".\lwo\lwob.c"
+					>
+				</File>
+				<File
+					RelativePath=".\lwo\pntspols.c"
+					>
+				</File>
+				<File
+					RelativePath=".\lwo\surface.c"
+					>
+				</File>
+				<File
+					RelativePath=".\lwo\vecmath.c"
+					>
+				</File>
+				<File
+					RelativePath=".\lwo\vmap.c"
+					>
+				</File>
+			</Filter>
 		</Filter>
 	</Files>
 	<Globals>
