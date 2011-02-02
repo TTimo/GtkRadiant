@@ -39,6 +39,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)\libs&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -153,10 +154,6 @@
 			</File>
 			<File
 				RelativePath=".\pm_fm.h"
-				>
-			</File>
-			<File
-				RelativePath="..\picomodel.h"
 				>
 			</File>
 		</Filter>
