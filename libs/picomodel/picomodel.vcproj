@@ -142,7 +142,7 @@
 	<Files>
 		<Filter
 			Name="include"
-			Filter="h;hpp;hxx;hm;inl"
+			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			>
 			<File
 				RelativePath=".\picointernal.h"
@@ -154,7 +154,7 @@
 			</File>
 			<Filter
 				Name="lwo"
-				Filter="h;hpp;hxx;hm;inl"
+				Filter="h;hpp;hxx;hm;inl;inc;xsd"
 				>
 				<File
 					RelativePath=".\lwo\lwo2.h"
@@ -164,7 +164,7 @@
 		</Filter>
 		<Filter
 			Name="src"
-			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
+			Filter="cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx"
 			>
 			<File
 				RelativePath=".\picointernal.c"
@@ -216,7 +216,7 @@
 			</File>
 			<Filter
 				Name="lwo"
-				Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
+				Filter="cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx"
 				>
 				<File
 					RelativePath=".\lwo\clip.c"
