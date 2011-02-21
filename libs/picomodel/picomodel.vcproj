@@ -1,105 +1,242 @@
-<?xml version="1.0" ?><VisualStudioProject Name="picomodel" ProjectGUID="{444E6FDA-83BD-49F1-89A4-7CF716F742A8}" ProjectType="Visual C++" RootNamespace="picomodel" Version="8.00">
+<?xml version="1.0" encoding="UTF-8"?>
+<VisualStudioProject
+	ProjectType="Visual C++"
+	Version="9.00"
+	Name="picomodel"
+	ProjectGUID="{818BAC3D-0399-4416-930D-0AA28D55F798}"
+	Keyword="Win32Proj"
+	TargetFrameworkVersion="0"
+	>
 	<Platforms>
-		<Platform Name="Win32"/>
+		<Platform
+			Name="Win32"
+		/>
 	</Platforms>
 	<ToolFiles>
 	</ToolFiles>
 	<Configurations>
-		<Configuration CharacterSet="2" ConfigurationType="4" IntermediateDirectory="$(SolutionDir)\build\intermediate\$(ConfigurationName)\$(ProjectName)" Name="Debug|Win32" OutputDirectory="$(SolutionDir)\build\$(ConfigurationName)\libs">
-			<Tool Name="VCPreBuildEventTool"/>
-			<Tool Name="VCCustomBuildTool"/>
-			<Tool Name="VCXMLDataGeneratorTool"/>
-			<Tool Name="VCWebServiceProxyGeneratorTool"/>
-			<Tool Name="VCMIDLTool"/>
-			<Tool AdditionalIncludeDirectories="&quot;$(SolutionDir)\include&quot;;&quot;$(SolutionDir)\libs&quot;;&quot;$(SolutionDir)\..\STLPort\stlport&quot;;&quot;$(SolutionDir)\..\gtk2\include&quot;;&quot;$(SolutionDir)\..\gtk2\include\glib-2.0&quot;;&quot;$(SolutionDir)\..\gtk2\lib\glib-2.0\include&quot;;&quot;$(SolutionDir)\..\libxml2\include&quot;" BasicRuntimeChecks="3" DebugInformationFormat="4" Detect64BitPortabilityProblems="true" DisableSpecificWarnings="4996;4244;4267" MinimalRebuild="true" Name="VCCLCompilerTool" Optimization="0" PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS" RuntimeLibrary="3" WarningLevel="3"/>
-			<Tool Name="VCManagedResourceCompilerTool"/>
-			<Tool Name="VCResourceCompilerTool"/>
-			<Tool Name="VCPreLinkEventTool"/>
-			<Tool Name="VCLibrarianTool"/>
-			<Tool Name="VCALinkTool"/>
-			<Tool Name="VCXDCMakeTool"/>
-			<Tool Name="VCBscMakeTool"/>
-			<Tool Name="VCFxCopTool"/>
-			<Tool Name="VCPostBuildEventTool"/>
+		<Configuration
+			Name="Debug|Win32"
+			OutputDirectory="$(SolutionDir)\build\$(ConfigurationName)\libs"
+			IntermediateDirectory="$(SolutionDir)\build\intermediate\$(ConfigurationName)\$(ProjectName)"
+			ConfigurationType="4"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="0"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)\libs&quot;"
+				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;"
+				MinimalRebuild="true"
+				BasicRuntimeChecks="3"
+				RuntimeLibrary="3"
+				UsePrecompiledHeader="0"
+				WarningLevel="3"
+				DebugInformationFormat="4"
+				DisableSpecificWarnings="4996;4244;4267"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLibrarianTool"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+			/>
 		</Configuration>
-		<Configuration CharacterSet="2" ConfigurationType="4" IntermediateDirectory="$(SolutionDir)\build\intermediate\$(ConfigurationName)\$(ProjectName)" Name="Release|Win32" OutputDirectory="$(SolutionDir)\build\$(ConfigurationName)\libs" WholeProgramOptimization="1">
-			<Tool Name="VCPreBuildEventTool"/>
-			<Tool Name="VCCustomBuildTool"/>
-			<Tool Name="VCXMLDataGeneratorTool"/>
-			<Tool Name="VCWebServiceProxyGeneratorTool"/>
-			<Tool Name="VCMIDLTool"/>
-			<Tool AdditionalIncludeDirectories="&quot;$(SolutionDir)\include&quot;;&quot;$(SolutionDir)\libs&quot;;&quot;$(SolutionDir)\..\STLPort\stlport&quot;;&quot;$(SolutionDir)\..\gtk2\include&quot;;&quot;$(SolutionDir)\..\gtk2\include\glib-2.0&quot;;&quot;$(SolutionDir)\..\gtk2\lib\glib-2.0\include&quot;;&quot;$(SolutionDir)\..\libxml2\include&quot;" DebugInformationFormat="3" Detect64BitPortabilityProblems="true" DisableSpecificWarnings="4996;4244;4267" Name="VCCLCompilerTool" PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS" RuntimeLibrary="2" WarningLevel="3"/>
-			<Tool Name="VCManagedResourceCompilerTool"/>
-			<Tool Name="VCResourceCompilerTool"/>
-			<Tool Name="VCPreLinkEventTool"/>
-			<Tool Name="VCLibrarianTool"/>
-			<Tool Name="VCALinkTool"/>
-			<Tool Name="VCXDCMakeTool"/>
-			<Tool Name="VCBscMakeTool"/>
-			<Tool Name="VCFxCopTool"/>
-			<Tool Name="VCPostBuildEventTool"/>
+		<Configuration
+			Name="Release|Win32"
+			OutputDirectory="$(SolutionDir)\build\$(ConfigurationName)\libs"
+			IntermediateDirectory="$(SolutionDir)\build\intermediate\$(ConfigurationName)\$(ProjectName)"
+			ConfigurationType="4"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)\libs&quot;"
+				PreprocessorDefinitions="WIN32;NDEBUG;_LIB;"
+				RuntimeLibrary="2"
+				UsePrecompiledHeader="0"
+				WarningLevel="3"
+				DebugInformationFormat="3"
+				DisableSpecificWarnings="4996;4244;4267"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLibrarianTool"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+			/>
 		</Configuration>
 	</Configurations>
 	<References>
 	</References>
 	<Files>
-		<Filter Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat" Name="src">
-			<File RelativePath=".\picointernal.c">
+		<Filter
+			Name="src"
+			Filter="cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx"
+			>
+			<File
+				RelativePath=".\picointernal.c"
+				>
 			</File>
-			<File RelativePath=".\picomodel.c">
+			<File
+				RelativePath=".\picomodel.c"
+				>
 			</File>
-			<File RelativePath=".\picomodules.c">
+			<File
+				RelativePath=".\picomodules.c"
+				>
 			</File>
-			<File RelativePath=".\pm_3ds.c">
+			<File
+				RelativePath=".\pm_3ds.c"
+				>
 			</File>
-			<File RelativePath=".\pm_ase.c">
+			<File
+				RelativePath=".\pm_ase.c"
+				>
 			</File>
-			<File RelativePath=".\pm_fm.c">
+			<File
+				RelativePath=".\pm_fm.c"
+				>
 			</File>
-			<File RelativePath=".\pm_lwo.c">
+			<File
+				RelativePath=".\pm_lwo.c"
+				>
 			</File>
-			<File RelativePath=".\pm_md2.c">
+			<File
+				RelativePath=".\pm_md2.c"
+				>
 			</File>
-			<File RelativePath=".\pm_md3.c">
+			<File
+				RelativePath=".\pm_md3.c"
+				>
 			</File>
-			<File RelativePath=".\pm_mdc.c">
+			<File
+				RelativePath=".\pm_mdc.c"
+				>
 			</File>
-			<File RelativePath=".\pm_ms3d.c">
+			<File
+				RelativePath=".\pm_ms3d.c"
+				>
 			</File>
-			<File RelativePath=".\pm_obj.c">
+			<File
+				RelativePath=".\pm_obj.c"
+				>
 			</File>
-			<Filter Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat" Name="lwo">
-				<File RelativePath=".\lwo\clip.c">
+			<Filter
+				Name="lwo"
+				Filter="cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx"
+				>
+				<File
+					RelativePath=".\lwo\clip.c"
+					>
 				</File>
-				<File RelativePath=".\lwo\envelope.c">
+				<File
+					RelativePath=".\lwo\envelope.c"
+					>
 				</File>
-				<File RelativePath=".\lwo\list.c">
+				<File
+					RelativePath=".\lwo\list.c"
+					>
 				</File>
-				<File RelativePath=".\lwo\lwio.c">
+				<File
+					RelativePath=".\lwo\lwio.c"
+					>
 				</File>
-				<File RelativePath=".\lwo\lwo2.c">
+				<File
+					RelativePath=".\lwo\lwo2.c"
+					>
 				</File>
-				<File RelativePath=".\lwo\lwob.c">
+				<File
+					RelativePath=".\lwo\lwob.c"
+					>
 				</File>
-				<File RelativePath=".\lwo\pntspols.c">
+				<File
+					RelativePath=".\lwo\pntspols.c"
+					>
 				</File>
-				<File RelativePath=".\lwo\surface.c">
+				<File
+					RelativePath=".\lwo\surface.c"
+					>
 				</File>
-				<File RelativePath=".\lwo\vecmath.c">
+				<File
+					RelativePath=".\lwo\vecmath.c"
+					>
 				</File>
-				<File RelativePath=".\lwo\vmap.c">
+				<File
+					RelativePath=".\lwo\vmap.c"
+					>
 				</File>
 			</Filter>
-		</Filter>
-		<Filter Filter="h;hpp;hxx;hm;inl" Name="include">
-			<File RelativePath=".\lwo\lwo2.h">
-			</File>
-			<File RelativePath=".\picointernal.h">
-			</File>
-			<File RelativePath="..\picomodel.h">
-			</File>
-			<File RelativePath=".\pm_fm.h">
-			</File>
 		</Filter>
 	</Files>
 	<Globals>

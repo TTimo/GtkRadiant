@@ -1,11 +1,11 @@
-<?xml version="1.0" encoding="Windows-1252"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9.00"
-	Name="mathlib"
-	ProjectGUID="{320CF5DE-0DFD-4C3F-B558-5F4098E111C8}"
-	RootNamespace="mathlib"
-	TargetFrameworkVersion="131072"
+	Name="quake3-common"
+	ProjectGUID="{B99A58B4-E5AB-42F6-A28F-D7ACB80E0B06}"
+	Keyword="Win32Proj"
+	TargetFrameworkVersion="0"
 	>
 	<Platforms>
 		<Platform
@@ -20,7 +20,6 @@
 			OutputDirectory="$(SolutionDir)\build\$(ConfigurationName)\libs"
 			IntermediateDirectory="$(SolutionDir)\build\intermediate\$(ConfigurationName)\$(ProjectName)"
 			ConfigurationType="4"
-			CharacterSet="2"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -40,15 +39,15 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)\include&quot;;&quot;$(SolutionDir)\libs&quot;;&quot;$(SolutionDir)\..\STLPort\stlport&quot;;&quot;$(SolutionDir)\..\gtk2\include&quot;;&quot;$(SolutionDir)\..\gtk2\include\glib-2.0&quot;;&quot;$(SolutionDir)\..\gtk2\lib\glib-2.0\include&quot;;&quot;$(SolutionDir)\..\libxml2\include&quot;"
-				PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)\include&quot;;&quot;$(SolutionDir)\libs&quot;;&quot;$(SolutionDir)\..\libxml2-2.7.3\include\libxml2&quot;;&quot;$(SolutionDir)\..\jpeg-8c\include&quot;;&quot;$(SolutionDir)\..\gtk-2.16.6\include\glib-2.0&quot;;&quot;$(SolutionDir)\..\gtk-2.16.6\lib\glib-2.0\include&quot;"
+				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
+				UsePrecompiledHeader="0"
 				WarningLevel="3"
-				Detect64BitPortabilityProblems="false"
 				DebugInformationFormat="4"
-				DisableSpecificWarnings="4996;4244;4267"
+				DisableSpecificWarnings="4996;4312;4267"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -83,8 +82,6 @@
 			OutputDirectory="$(SolutionDir)\build\$(ConfigurationName)\libs"
 			IntermediateDirectory="$(SolutionDir)\build\intermediate\$(ConfigurationName)\$(ProjectName)"
 			ConfigurationType="4"
-			CharacterSet="2"
-			WholeProgramOptimization="1"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -103,13 +100,13 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)\include&quot;;&quot;$(SolutionDir)\libs&quot;;&quot;$(SolutionDir)\..\STLPort\stlport&quot;;&quot;$(SolutionDir)\..\gtk2\include&quot;;&quot;$(SolutionDir)\..\gtk2\include\glib-2.0&quot;;&quot;$(SolutionDir)\..\gtk2\lib\glib-2.0\include&quot;;&quot;$(SolutionDir)\..\libxml2\include&quot;"
-				PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)\include&quot;;&quot;$(SolutionDir)\libs&quot;;&quot;$(SolutionDir)\..\libxml2-2.7.3\include\libxml2&quot;;&quot;$(SolutionDir)\..\jpeg-8c\include&quot;;&quot;$(SolutionDir)\..\gtk-2.16.6\include\glib-2.0&quot;;&quot;$(SolutionDir)\..\gtk-2.16.6\lib\glib-2.0\include&quot;"
+				PreprocessorDefinitions="WIN32;NDEBUG;_LIB;"
 				RuntimeLibrary="2"
+				UsePrecompiledHeader="0"
 				WarningLevel="3"
-				Detect64BitPortabilityProblems="false"
 				DebugInformationFormat="3"
-				DisableSpecificWarnings="4996;4244;4267"
+				DisableSpecificWarnings="4996;4312;4267"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -144,36 +141,47 @@
 	</References>
 	<Files>
 		<Filter
-			Name="Source Files"
-			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
+			Name="src"
+			Filter="cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx"
 			>
 			<File
-				RelativePath=".\bbox.c"
+				RelativePath=".\cmdlib.c"
 				>
 			</File>
 			<File
-				RelativePath=".\linear.c"
+				RelativePath=".\imagelib.c"
 				>
 			</File>
 			<File
-				RelativePath=".\m4x4.c"
+				RelativePath=".\inout.c"
 				>
 			</File>
 			<File
-				RelativePath=".\mathlib.c"
+				RelativePath=".\jpeg.c"
 				>
 			</File>
 			<File
-				RelativePath=".\ray.c"
+				RelativePath=".\mutex.c"
 				>
 			</File>
-		</Filter>
-		<Filter
-			Name="Header Files"
-			Filter="h;hpp;hxx;hm;inl"
-			>
 			<File
-				RelativePath="..\mathlib.h"
+				RelativePath=".\polylib.c"
+				>
+			</File>
+			<File
+				RelativePath=".\scriplib.c"
+				>
+			</File>
+			<File
+				RelativePath=".\threads.c"
+				>
+			</File>
+			<File
+				RelativePath=".\unzip.c"
+				>
+			</File>
+			<File
+				RelativePath=".\vfs.c"
 				>
 			</File>
 		</Filter>

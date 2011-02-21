@@ -1,10 +1,11 @@
-<?xml version="1.0" encoding="Windows-1252"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8.00"
+	Version="9.00"
 	Name="q3map2"
-	ProjectGUID="{F5D0509C-80E0-49B7-B033-885D8253063A}"
-	RootNamespace="q3map2"
+	ProjectGUID="{CD40B764-1D47-4FAE-8C6A-EF036E478D65}"
+	Keyword="Win32Proj"
+	TargetFrameworkVersion="0"
 	>
 	<Platforms>
 		<Platform
@@ -17,10 +18,8 @@
 		<Configuration
 			Name="Debug|Win32"
 			OutputDirectory="$(SolutionDir)\install"
-			IntermediateDirectory="$(ConfigurationName)"
+			IntermediateDirectory="$(SolutionDir)\build\intermediate\$(ConfigurationName)\$(ProjectName)"
 			ConfigurationType="1"
-			UseOfMFC="0"
-			CharacterSet="2"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -40,15 +39,15 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)\tools\quake3\common&quot;;&quot;$(SolutionDir)\include&quot;;&quot;$(SolutionDir)\libs&quot;;&quot;$(SolutionDir)\..\STLPort\stlport&quot;;&quot;$(SolutionDir)\..\gtk2\include&quot;;&quot;$(SolutionDir)\..\gtk2\include\glib-2.0&quot;;&quot;$(SolutionDir)\..\gtk2\lib\glib-2.0\include&quot;;&quot;$(SolutionDir)\..\libxml2\include&quot;"
-				PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)\include&quot;;&quot;$(SolutionDir)\tools\quake3\common&quot;;&quot;$(SolutionDir)\libs&quot;;&quot;$(SolutionDir)\..\gtk-2.16.6\include\glib-2.0&quot;;&quot;$(SolutionDir)\..\gtk-2.16.6\lib\glib-2.0\include&quot;;&quot;$(SolutionDir)\..\libxml2-2.7.3\include\libxml2&quot;;&quot;$(SolutionDir)\..\gtk-2.16.6\include\libpng14&quot;;&quot;$(SolutionDir)\..\gtk-2.16.6\include&quot;;&quot;$(SolutionDir)\..\jpeg-8c\include&quot;"
+				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
+				UsePrecompiledHeader="0"
 				WarningLevel="3"
-				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="4"
-				DisableSpecificWarnings="4996;4244;4267"
+				DisableSpecificWarnings="4996;4267;4312"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -61,11 +60,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="md5lib.lib ddslib.lib l_net.lib mathlib.lib picomodel.lib jpeg6.lib libxml2.lib libpng.lib glib-2.0.lib gobject-2.0.lib Wsock32.lib"
-				AdditionalLibraryDirectories="&quot;$(SolutionDir)\..\libxml2\lib&quot;;&quot;$(SolutionDir)\..\gtk2\lib&quot;;&quot;$(SolutionDir)\build\$(ConfigurationName)\libs&quot;"
+				AdditionalDependencies="Ws2_32.lib glib-2.0.lib libpng.lib libxml2.lib libjpegd.lib md5lib.lib mathlib.lib picomodel.lib l_net.lib ddslib.lib quake3-common.lib"
+				AdditionalLibraryDirectories="&quot;$(SolutionDir)\..\gtk-2.16.6\lib&quot;;&quot;$(SolutionDir)\..\libxml2-2.7.3\lib&quot;;&quot;$(SolutionDir)\..\jpeg-8c\lib&quot;;&quot;$(SolutionDir)\build\$(ConfigurationName)\libs&quot;"
 				GenerateDebugInformation="true"
-				StackReserveSize="2097152"
-				StackCommitSize="2097152"
+				SubSystem="1"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -87,20 +85,14 @@
 				Name="VCAppVerifierTool"
 			/>
 			<Tool
-				Name="VCWebDeploymentTool"
-			/>
-			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="copy &quot;$(TargetPath)&quot; C:\alienbrainWork\QuakeZero\radiant\$(TargetFileName)"
 			/>
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
 			OutputDirectory="$(SolutionDir)\install"
-			IntermediateDirectory="$(ConfigurationName)"
+			IntermediateDirectory="$(SolutionDir)\build\intermediate\$(ConfigurationName)\$(ProjectName)"
 			ConfigurationType="1"
-			CharacterSet="2"
-			WholeProgramOptimization="1"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -119,13 +111,13 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)\tools\quake3\common&quot;;&quot;$(SolutionDir)\include&quot;;&quot;$(SolutionDir)\libs&quot;;&quot;$(SolutionDir)\..\STLPort\stlport&quot;;&quot;$(SolutionDir)\..\gtk2\include&quot;;&quot;$(SolutionDir)\..\gtk2\include\glib-2.0&quot;;&quot;$(SolutionDir)\..\gtk2\lib\glib-2.0\include&quot;;&quot;$(SolutionDir)\..\libxml2\include&quot;"
-				PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)\include&quot;;&quot;$(SolutionDir)\tools\quake3\common&quot;;&quot;$(SolutionDir)\libs&quot;;&quot;$(SolutionDir)\..\gtk-2.16.6\include\glib-2.0&quot;;&quot;$(SolutionDir)\..\gtk-2.16.6\lib\glib-2.0\include&quot;;&quot;$(SolutionDir)\..\libxml2-2.7.3\include\libxml2&quot;;&quot;$(SolutionDir)\..\gtk-2.16.6\include\libpng14&quot;;&quot;$(SolutionDir)\..\gtk-2.16.6\include&quot;;&quot;$(SolutionDir)\..\jpeg-8c\include&quot;"
+				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;"
 				RuntimeLibrary="2"
+				UsePrecompiledHeader="0"
 				WarningLevel="3"
-				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="3"
-				DisableSpecificWarnings="4996;4244;4267"
+				DisableSpecificWarnings="4996;4267;4312"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -138,11 +130,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="md5lib.lib ddslib.lib l_net.lib mathlib.lib picomodel.lib jpeg6.lib libxml2.lib libpng.lib glib-2.0.lib gobject-2.0.lib Wsock32.lib"
-				AdditionalLibraryDirectories="&quot;$(SolutionDir)\..\libxml2\lib&quot;;&quot;$(SolutionDir)\..\gtk2\lib&quot;;&quot;$(SolutionDir)\build\$(ConfigurationName)\libs&quot;"
+				AdditionalDependencies="Ws2_32.lib glib-2.0.lib libpng.lib libxml2.lib libjpeg.lib md5lib.lib mathlib.lib picomodel.lib l_net.lib ddslib.lib quake3-common.lib"
+				AdditionalLibraryDirectories="&quot;$(SolutionDir)\..\gtk-2.16.6\lib&quot;;&quot;$(SolutionDir)\..\libxml2-2.7.3\lib&quot;;&quot;$(SolutionDir)\..\jpeg-8c\lib&quot;;&quot;$(SolutionDir)\build\$(ConfigurationName)\libs&quot;"
 				GenerateDebugInformation="true"
-				StackReserveSize="2097152"
-				StackCommitSize="2097152"
+				SubSystem="1"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
 				TargetMachine="1"
@@ -166,11 +157,7 @@
 				Name="VCAppVerifierTool"
 			/>
 			<Tool
-				Name="VCWebDeploymentTool"
-			/>
-			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="copy &quot;$(TargetPath)&quot; C:\alienbrainWork\QuakeZero\radiant\$(TargetFileName)"
 			/>
 		</Configuration>
 	</Configurations>
@@ -179,7 +166,7 @@
 	<Files>
 		<Filter
 			Name="src"
-			Filter="c;cpp;cxx;cc;C"
+			Filter="cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx"
 			>
 			<File
 				RelativePath=".\bspfile_abstract.c"
@@ -221,249 +208,118 @@
 				RelativePath=".\surface_extra.c"
 				>
 			</File>
-			<Filter
-				Name="common"
-				Filter=".c"
-				>
-				<File
-					RelativePath="..\common\cmdlib.c"
-					>
-				</File>
-				<File
-					RelativePath="..\common\imagelib.c"
-					>
-				</File>
-				<File
-					RelativePath="..\common\inout.c"
-					>
-				</File>
-				<File
-					RelativePath="..\common\jpeg.c"
-					>
-				</File>
-				<File
-					RelativePath="..\common\mutex.c"
-					>
-				</File>
-				<File
-					RelativePath="..\common\polylib.c"
-					>
-				</File>
-				<File
-					RelativePath="..\common\scriplib.c"
-					>
-				</File>
-				<File
-					RelativePath="..\common\threads.c"
-					>
-				</File>
-				<File
-					RelativePath="..\common\unzip.c"
-					>
-				</File>
-				<File
-					RelativePath="..\common\vfs.c"
-					>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							AdditionalIncludeDirectories="&quot;$(SolutionDir)\include&quot;;&quot;$(SolutionDir)\libs&quot;;&quot;$(SolutionDir)\..\STLPort\stlport&quot;;&quot;$(SolutionDir)\..\gtk2\include&quot;;&quot;$(SolutionDir)\..\gtk2\include\glib-2.0&quot;;&quot;$(SolutionDir)\..\gtk2\lib\glib-2.0\include&quot;;&quot;$(SolutionDir)\..\libxml2\include&quot;"
-							PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS"
-							DisableSpecificWarnings="4996;4244;4267"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							AdditionalIncludeDirectories="&quot;$(SolutionDir)\include&quot;;&quot;$(SolutionDir)\libs&quot;;&quot;$(SolutionDir)\..\STLPort\stlport&quot;;&quot;$(SolutionDir)\..\gtk2\include&quot;;&quot;$(SolutionDir)\..\gtk2\include\glib-2.0&quot;;&quot;$(SolutionDir)\..\gtk2\lib\glib-2.0\include&quot;;&quot;$(SolutionDir)\..\libxml2\include&quot;"
-							PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS"
-							DisableSpecificWarnings="4996;4244;4267"
-						/>
-					</FileConfiguration>
-				</File>
-			</Filter>
-			<Filter
-				Name="bsp"
-				Filter=".c"
-				>
-				<File
-					RelativePath=".\brush.c"
-					>
-				</File>
-				<File
-					RelativePath=".\brush_primit.c"
-					>
-				</File>
-				<File
-					RelativePath=".\bsp.c"
-					>
-				</File>
-				<File
-					RelativePath=".\decals.c"
-					>
-				</File>
-				<File
-					RelativePath=".\facebsp.c"
-					>
-				</File>
-				<File
-					RelativePath=".\fog.c"
-					>
-				</File>
-				<File
-					RelativePath=".\leakfile.c"
-					>
-				</File>
-				<File
-					RelativePath=".\map.c"
-					>
-				</File>
-				<File
-					RelativePath=".\patch.c"
-					>
-				</File>
-				<File
-					RelativePath=".\portals.c"
-					>
-				</File>
-				<File
-					RelativePath=".\prtfile.c"
-					>
-				</File>
-				<File
-					RelativePath=".\surface.c"
-					>
-				</File>
-				<File
-					RelativePath=".\surface_foliage.c"
-					>
-				</File>
-				<File
-					RelativePath=".\surface_fur.c"
-					>
-				</File>
-				<File
-					RelativePath=".\surface_meta.c"
-					>
-				</File>
-				<File
-					RelativePath=".\tjunction.c"
-					>
-				</File>
-				<File
-					RelativePath=".\tree.c"
-					>
-				</File>
-				<File
-					RelativePath=".\writebsp.c"
-					>
-				</File>
-			</Filter>
-			<Filter
-				Name="light"
-				Filter=".c"
-				>
-				<File
-					RelativePath=".\light.c"
-					>
-				</File>
-				<File
-					RelativePath=".\light_bounce.c"
-					>
-				</File>
-				<File
-					RelativePath=".\light_trace.c"
-					>
-				</File>
-				<File
-					RelativePath=".\light_ydnar.c"
-					>
-				</File>
-				<File
-					RelativePath=".\lightmaps_ydnar.c"
-					>
-				</File>
-			</Filter>
-			<Filter
-				Name="vis"
-				Filter=".c"
-				>
-				<File
-					RelativePath=".\vis.c"
-					>
-				</File>
-				<File
-					RelativePath=".\visflow.c"
-					>
-				</File>
-			</Filter>
-			<Filter
-				Name="convert"
-				Filter=".c"
-				>
-				<File
-					RelativePath=".\convert_ase.c"
-					>
-				</File>
-				<File
-					RelativePath=".\convert_map.c"
-					>
-				</File>
-			</Filter>
-		</Filter>
-		<Filter
-			Name="include"
-			Filter="h"
-			>
 			<File
-				RelativePath=".\game_ef.h"
+				RelativePath=".\brush.c"
 				>
 			</File>
 			<File
-				RelativePath=".\game_ja.h"
+				RelativePath=".\brush_primit.c"
 				>
 			</File>
 			<File
-				RelativePath=".\game_jk2.h"
+				RelativePath=".\bsp.c"
 				>
 			</File>
 			<File
-				RelativePath=".\game_quake3.h"
+				RelativePath=".\decals.c"
 				>
 			</File>
 			<File
-				RelativePath=".\game_sof2.h"
+				RelativePath=".\facebsp.c"
 				>
 			</File>
 			<File
-				RelativePath=".\game_wolf.h"
+				RelativePath=".\fog.c"
 				>
 			</File>
 			<File
-				RelativePath=".\game_wolfet.h"
+				RelativePath=".\leakfile.c"
 				>
 			</File>
 			<File
-				RelativePath=".\q3map2.h"
+				RelativePath=".\map.c"
 				>
 			</File>
-		</Filter>
-		<Filter
-			Name="doc"
-			Filter="*.txt"
-			>
 			<File
-				RelativePath=".\changelog.q3map2.txt"
+				RelativePath=".\patch.c"
+				>
+			</File>
+			<File
+				RelativePath=".\portals.c"
+				>
+			</File>
+			<File
+				RelativePath=".\prtfile.c"
+				>
+			</File>
+			<File
+				RelativePath=".\surface.c"
+				>
+			</File>
+			<File
+				RelativePath=".\surface_foliage.c"
+				>
+			</File>
+			<File
+				RelativePath=".\surface_fur.c"
+				>
+			</File>
+			<File
+				RelativePath=".\surface_meta.c"
+				>
+			</File>
+			<File
+				RelativePath=".\tjunction.c"
+				>
+			</File>
+			<File
+				RelativePath=".\tree.c"
+				>
+			</File>
+			<File
+				RelativePath=".\writebsp.c"
+				>
+			</File>
+			<File
+				RelativePath=".\light.c"
+				>
+			</File>
+			<File
+				RelativePath=".\light_bounce.c"
+				>
+			</File>
+			<File
+				RelativePath=".\light_trace.c"
+				>
+			</File>
+			<File
+				RelativePath=".\light_ydnar.c"
+				>
+			</File>
+			<File
+				RelativePath=".\lightmaps_ydnar.c"
+				>
+			</File>
+			<File
+				RelativePath=".\vis.c"
+				>
+			</File>
+			<File
+				RelativePath=".\visflow.c"
+				>
+			</File>
+			<File
+				RelativePath=".\convert_ase.c"
+				>
+			</File>
+			<File
+				RelativePath=".\convert_map.c"
 				>
 			</File>
 		</Filter>
 		<Filter
 			Name="rc"
-			Filter=".rc;.ico"
+			Filter="rc;ico"
 			>
 			<File
 				RelativePath=".\q3map2.ico"

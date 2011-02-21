@@ -34,6 +34,11 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 // Leonardo Zide (leo@lokigames.com)
 //
 
+#ifdef _WIN32
+// Ugly hack so that INT32 is defined before jmorecfg.h is parsed.
+#include <basetsd.h>
+#endif
+
 #include <stdio.h>
 #include <setjmp.h>
 #include <stdlib.h>

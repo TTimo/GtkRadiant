@@ -35,7 +35,6 @@ dependencies:
 - libxml2 >= 2.0.0
 - zlib >= 1.2.0 (for archivezip module)
 - libpng >= 1.2.0 (for imagepng module)
-- libmhash = 0.9.0 (for q3map2)
 
 build:
 Execute 'scons' in the directory containing SConscript
