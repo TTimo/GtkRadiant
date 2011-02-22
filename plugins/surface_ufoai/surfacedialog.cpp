@@ -42,7 +42,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "gtkr_vector.h"
 
-std::vector<texdef_to_face_t> g_texdef_face_vector;
+vector<texdef_to_face_t> g_texdef_face_vector;
 
 inline texdef_to_face_t* get_texdef_face_list()
 {

@@ -405,7 +405,7 @@ void vfsInitDirectory (const char *path)
         if(name == NULL)
           break;
 
-        char *ext = strrchr (name, '.');
+        const char *ext = strrchr (name, '.');
         if ((ext == NULL) || (strcasecmp (ext, ".pak") != 0))
           continue;
 

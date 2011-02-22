@@ -913,7 +913,7 @@ static void bitmap_browse (GtkWidget *widget, gpointer data)
   {
     strcpy (gbmp.name, filename);
 
-    ptr = strrchr (filename, G_DIR_SEPARATOR);
+    ptr = (char *) strrchr (filename, G_DIR_SEPARATOR);
     if (ptr != NULL)
     {
       *(ptr+1) = '\0';

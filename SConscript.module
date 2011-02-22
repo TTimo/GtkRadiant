@@ -11,39 +11,43 @@ Import( [ 'utils', 'config', 'settings', 'project', 'shlib_objects' ] )
 libname = os.path.splitext( libname )[0]
 
 env = Environment()
-useJPEG = False
-useGtk = False
-useZ = False
-usePNG = False
-if ( libname == 'image' ):
-	useJPEG = True
-if ( libname == 'surface' ):
-	useGtk = True
-if ( libname == 'surface_ufoai' ):
-	useGtk = True
-if ( libname == 'surface_quake2' ):
-	useGtk = True
-if ( libname == 'surface_heretic2' ):
-	useGtk = True
-if ( libname == 'bkgrnd2d' ):
-	useGtk = True
-if ( libname == 'gtkgensurf' ):
-	useGtk = True
-if ( libname == 'bobToolz_gtk' ):
-	useGtk = True
-if ( libname == 'camera' ):
-	useGtk = True
-if ( libname == 'PrtView' ):
-	useGtk = True
-if ( libname == 'spritemodel' ):
-	useGtk = True
-if ( libname == 'model' ):
-	useGtk = True
-if ( libname == 'TexTool' ):
-	useGtk = True
-if ( libname == 'imagepng' ):
-	usePNG = True
+# useJPEG = False
+# useGtk = False
+# useZ = False
+# usePNG = False
+# if ( libname == 'image' ):
+# 	useJPEG = True
+# if ( libname == 'surface' ):
+# 	useGtk = True
+# if ( libname == 'surface_ufoai' ):
+# 	useGtk = True
+# if ( libname == 'surface_quake2' ):
+# 	useGtk = True
+# if ( libname == 'surface_heretic2' ):
+# 	useGtk = True
+# if ( libname == 'bkgrnd2d' ):
+# 	useGtk = True
+# if ( libname == 'gtkgensurf' ):
+# 	useGtk = True
+# if ( libname == 'bobtoolz' ):
+# 	useGtk = True
+# if ( libname == 'camera' ):
+# 	useGtk = True
+# if ( libname == 'prtview' ):
+# 	useGtk = True
+# if ( libname == 'spritemodel' ):
+# 	useGtk = True
+# if ( libname == 'model' ):
+# 	useGtk = True
+# if ( libname == 'textool' ):
+# 	useGtk = True
+# if ( libname == 'imagepng' ):
+# 	usePNG = True
 
+useJPEG = True
+useGtk = True
+useZ = True
+usePNG = True
 
 settings.SetupEnvironment( env, config['name'], useGtk = useGtk, useJPEG = useJPEG, useZ = useZ, usePNG = usePNG )
 proj = utils.vcproj( os.path.join( GetLaunchDir(), project ) )

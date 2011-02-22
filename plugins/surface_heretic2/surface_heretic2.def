@@ -1,7 +1,6 @@
 ; surface_heretic2.def : Declares the module parameters for the DLL.
 
 LIBRARY      "Surface_Heretic2"
-DESCRIPTION  'Surface_Heretic2 Windows Dynamic Link Library'
 
 EXPORTS
     ; Explicit exports can go here

@@ -39,7 +39,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)\include&quot;;&quot;$(SolutionDir)\libs&quot;;&quot;$(SolutionDir)\..\STLport-5.2.1\stlport&quot;;&quot;$(SolutionDir)\..\gtk-2.16.6\include\glib-2.0&quot;;&quot;$(SolutionDir)\..\gtk-2.16.6\lib\glib-2.0\include&quot;;&quot;$(SolutionDir)\..\gtk-2.16.6\include\gtk-2.0&quot;;&quot;$(SolutionDir)\..\gtk-2.16.6\include\cairo&quot;;&quot;$(SolutionDir)\..\gtk-2.16.6\include\pango-1.0&quot;;&quot;$(SolutionDir)\..\gtk-2.16.6\lib\gtk-2.0\include&quot;;&quot;$(SolutionDir)\..\gtk-2.16.6\include\atk-1.0&quot;;&quot;$(SolutionDir)\..\libxml2-2.7.3\include\libxml2&quot;;&quot;$(SolutionDir)\..\gtk-2.16.6\include&quot;;&quot;$(SolutionDir)\..\gtkglext-1.2.0\include\gtkglext-1.0&quot;;&quot;$(SolutionDir)\..\gtkglext-1.2.0\lib\gtkglext-1.0\include&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)\include&quot;;&quot;$(SolutionDir)\libs&quot;;&quot;$(SolutionDir)\..\STLport-5.2.1\stlport&quot;;&quot;$(SolutionDir)\..\gtk-2.16.6\include\glib-2.0&quot;;&quot;$(SolutionDir)\..\gtk-2.16.6\lib\glib-2.0\include&quot;;&quot;$(SolutionDir)\..\gtk-2.16.6\include\gtk-2.0&quot;;&quot;$(SolutionDir)\..\gtk-2.16.6\include\cairo&quot;;&quot;$(SolutionDir)\..\gtk-2.16.6\include\pango-1.0&quot;;&quot;$(SolutionDir)\..\gtk-2.16.6\lib\gtk-2.0\include&quot;;&quot;$(SolutionDir)\..\gtk-2.16.6\include\atk-1.0&quot;;&quot;$(SolutionDir)\..\gtk-2.16.6\include&quot;;&quot;$(SolutionDir)\..\gtk-2.16.6\include\freetype2&quot;;&quot;$(SolutionDir)\..\gtkglext-1.2.0\include\gtkglext-1.0&quot;;&quot;$(SolutionDir)\..\gtkglext-1.2.0\lib\gtkglext-1.0\include&quot;;&quot;$(SolutionDir)\..\libxml2-2.7.3\include\libxml2&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -60,7 +60,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="Ws2_32.lib glib-2.0.lib gobject-2.0.lib intl.lib gtk-win32-2.0.lib gdk-win32-2.0.lib pango-1.0.lib gdkglext-win32-1.0.lib gtkglext-win32-1.0.lib libxml2.lib mathlib.lib synapse.lib l_net.lib cmdlib.lib"
+				AdditionalDependencies="Ws2_32.lib glib-2.0.lib gobject-2.0.lib intl.lib gtk-win32-2.0.lib gdk-win32-2.0.lib pango-1.0.lib pangoft2-1.0.lib gdkglext-win32-1.0.lib gtkglext-win32-1.0.lib libxml2.lib mathlib.lib synapse.lib l_net.lib cmdlib.lib"
 				AdditionalLibraryDirectories="&quot;$(SolutionDir)\..\gtk-2.16.6\lib&quot;;&quot;$(SolutionDir)\..\libxml2-2.7.3\lib&quot;;&quot;$(SolutionDir)\..\gtkglext-1.2.0\lib&quot;;&quot;$(SolutionDir)\build\$(ConfigurationName)\libs&quot;"
 				GenerateDebugInformation="true"
 				SubSystem="1"
@@ -111,7 +111,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)\include&quot;;&quot;$(SolutionDir)\libs&quot;;&quot;$(SolutionDir)\..\STLport-5.2.1\stlport&quot;;&quot;$(SolutionDir)\..\gtk-2.16.6\include\glib-2.0&quot;;&quot;$(SolutionDir)\..\gtk-2.16.6\lib\glib-2.0\include&quot;;&quot;$(SolutionDir)\..\gtk-2.16.6\include\gtk-2.0&quot;;&quot;$(SolutionDir)\..\gtk-2.16.6\include\cairo&quot;;&quot;$(SolutionDir)\..\gtk-2.16.6\include\pango-1.0&quot;;&quot;$(SolutionDir)\..\gtk-2.16.6\lib\gtk-2.0\include&quot;;&quot;$(SolutionDir)\..\gtk-2.16.6\include\atk-1.0&quot;;&quot;$(SolutionDir)\..\libxml2-2.7.3\include\libxml2&quot;;&quot;$(SolutionDir)\..\gtk-2.16.6\include&quot;;&quot;$(SolutionDir)\..\gtkglext-1.2.0\include\gtkglext-1.0&quot;;&quot;$(SolutionDir)\..\gtkglext-1.2.0\lib\gtkglext-1.0\include&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)\include&quot;;&quot;$(SolutionDir)\libs&quot;;&quot;$(SolutionDir)\..\STLport-5.2.1\stlport&quot;;&quot;$(SolutionDir)\..\gtk-2.16.6\include\glib-2.0&quot;;&quot;$(SolutionDir)\..\gtk-2.16.6\lib\glib-2.0\include&quot;;&quot;$(SolutionDir)\..\gtk-2.16.6\include\gtk-2.0&quot;;&quot;$(SolutionDir)\..\gtk-2.16.6\include\cairo&quot;;&quot;$(SolutionDir)\..\gtk-2.16.6\include\pango-1.0&quot;;&quot;$(SolutionDir)\..\gtk-2.16.6\lib\gtk-2.0\include&quot;;&quot;$(SolutionDir)\..\gtk-2.16.6\include\atk-1.0&quot;;&quot;$(SolutionDir)\..\gtk-2.16.6\include&quot;;&quot;$(SolutionDir)\..\gtk-2.16.6\include\freetype2&quot;;&quot;$(SolutionDir)\..\gtkglext-1.2.0\include\gtkglext-1.0&quot;;&quot;$(SolutionDir)\..\gtkglext-1.2.0\lib\gtkglext-1.0\include&quot;;&quot;$(SolutionDir)\..\libxml2-2.7.3\include\libxml2&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
@@ -130,7 +130,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="Ws2_32.lib glib-2.0.lib gobject-2.0.lib intl.lib gtk-win32-2.0.lib gdk-win32-2.0.lib pango-1.0.lib gdkglext-win32-1.0.lib gtkglext-win32-1.0.lib libxml2.lib mathlib.lib synapse.lib l_net.lib cmdlib.lib"
+				AdditionalDependencies="Ws2_32.lib glib-2.0.lib gobject-2.0.lib intl.lib gtk-win32-2.0.lib gdk-win32-2.0.lib pango-1.0.lib pangoft2-1.0.lib gdkglext-win32-1.0.lib gtkglext-win32-1.0.lib libxml2.lib mathlib.lib synapse.lib l_net.lib cmdlib.lib"
 				AdditionalLibraryDirectories="&quot;$(SolutionDir)\..\gtk-2.16.6\lib&quot;;&quot;$(SolutionDir)\..\libxml2-2.7.3\lib&quot;;&quot;$(SolutionDir)\..\gtkglext-1.2.0\lib&quot;;&quot;$(SolutionDir)\build\$(ConfigurationName)\libs&quot;"
 				GenerateDebugInformation="true"
 				SubSystem="1"

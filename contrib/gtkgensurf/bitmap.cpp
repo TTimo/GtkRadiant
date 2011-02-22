@@ -19,6 +19,16 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <stdio.h>
 #include <stdlib.h>
+
+#ifdef _WIN32
+// cough, cough
+typedef __int32 int32_t;
+typedef unsigned __int16 uint16_t;
+typedef unsigned __int8 uint8_t;
+typedef unsigned __int32 uint32_t;
+typedef __int16 int16_t;
+#endif
+
 #include <math.h>
 #include "gensurf.h"
 

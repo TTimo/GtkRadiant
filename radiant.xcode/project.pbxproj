@@ -597,7 +597,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = text;
-			path = "TexTool.def.svn-base";
+			path = "textool.def.svn-base";
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -613,7 +613,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = text;
-			path = "TexTool.vcproj.svn-base";
+			path = "textool.vcproj.svn-base";
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -731,7 +731,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = text;
-			path = "TexTool.def.svn-work";
+			path = "textool.def.svn-work";
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -747,7 +747,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = text;
-			path = "TexTool.vcproj.svn-work";
+			path = "textool.vcproj.svn-work";
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -873,7 +873,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = text;
-			path = "TexTool.def.svn-base";
+			path = "textool.def.svn-base";
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -889,7 +889,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = text.plist.xml;
-			path = "TexTool.vcproj.svn-base";
+			path = "textool.vcproj.svn-base";
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -1051,7 +1051,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = text;
-			path = "TexTool.def.svn-work";
+			path = "textool.def.svn-work";
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -1067,7 +1067,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = text;
-			path = "TexTool.vcproj.svn-work";
+			path = "textool.vcproj.svn-work";
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -1423,7 +1423,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = text;
-			path = TexTool.def;
+			path = textool.def;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -1439,7 +1439,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = text.plist.xml;
-			path = TexTool.vcproj;
+			path = textool.vcproj;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -52114,7 +52114,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = text;
-			path = "bobToolz.def.svn-base";
+			path = "bobtoolz.def.svn-base";
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -52138,7 +52138,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = text;
-			path = "bobToolz_gtk.vcproj.svn-base";
+			path = "bobtoolz.vcproj.svn-base";
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -52662,7 +52662,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = text;
-			path = "bobToolz.def.svn-work";
+			path = "bobtoolz.def.svn-work";
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -52686,7 +52686,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = text;
-			path = "bobToolz_gtk.vcproj.svn-work";
+			path = "bobtoolz.vcproj.svn-work";
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -53218,7 +53218,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = text;
-			path = "bobToolz.def.svn-base";
+			path = "bobtoolz.def.svn-base";
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -53242,7 +53242,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = text.plist.xml;
-			path = "bobToolz_gtk.vcproj.svn-base";
+			path = "bobtoolz.vcproj.svn-base";
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -53810,7 +53810,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = text;
-			path = "bobToolz.def.svn-work";
+			path = "bobtoolz.def.svn-work";
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -53834,7 +53834,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = text;
-			path = "bobToolz_gtk.vcproj.svn-work";
+			path = "bobtoolz.vcproj.svn-work";
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -54820,7 +54820,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = text;
-			path = bobToolz.def;
+			path = bobtoolz.def;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -54844,7 +54844,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = text.plist.xml;
-			path = bobToolz_gtk.vcproj;
+			path = bobtoolz.vcproj;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -58770,7 +58770,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = text;
-			path = "gensurf.def.svn-base";
+			path = "gtkgensurf.def.svn-base";
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -58940,7 +58940,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = text;
-			path = "gensurf.def.svn-work";
+			path = "gtkgensurf.def.svn-work";
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -59118,7 +59118,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = text;
-			path = "gensurf.def.svn-base";
+			path = "gtkgensurf.def.svn-base";
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -59332,7 +59332,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = text;
-			path = "gensurf.def.svn-work";
+			path = "gtkgensurf.def.svn-work";
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -59468,7 +59468,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = text;
-			path = gensurf.def;
+			path = gtkgensurf.def;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -60508,7 +60508,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = text;
-			path = "PrtView.def.svn-base";
+			path = "prtview.def.svn-base";
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -60540,7 +60540,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = text;
-			path = "PrtView.vcproj.svn-base";
+			path = "prtview.vcproj.svn-base";
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -60705,7 +60705,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = text;
-			path = "PrtView.def.svn-work";
+			path = "prtview.def.svn-work";
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -60737,7 +60737,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = text;
-			path = "PrtView.vcproj.svn-work";
+			path = "prtview.vcproj.svn-work";
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -60909,7 +60909,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = text;
-			path = "PrtView.def.svn-base";
+			path = "prtview.def.svn-base";
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -60941,7 +60941,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = text.plist.xml;
-			path = "PrtView.vcproj.svn-base";
+			path = "prtview.vcproj.svn-base";
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -61150,7 +61150,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = text;
-			path = "PrtView.def.svn-work";
+			path = "prtview.def.svn-work";
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -61182,7 +61182,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = text;
-			path = "PrtView.vcproj.svn-work";
+			path = "prtview.vcproj.svn-work";
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -61309,7 +61309,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = text;
-			path = PrtView.def;
+			path = prtview.def;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -61341,7 +61341,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = text.plist.xml;
-			path = PrtView.vcproj;
+			path = prtview.vcproj;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -86923,7 +86923,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = text;
-			path = "Splines.vcproj.svn-base";
+			path = "splines.vcproj.svn-base";
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -87093,7 +87093,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = text;
-			path = "Splines.vcproj.svn-work";
+			path = "splines.vcproj.svn-work";
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -87271,7 +87271,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = text.plist.xml;
-			path = "Splines.vcproj.svn-base";
+			path = "splines.vcproj.svn-base";
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -87485,7 +87485,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = text;
-			path = "Splines.vcproj.svn-work";
+			path = "splines.vcproj.svn-work";
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -87621,7 +87621,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = text.plist.xml;
-			path = Splines.vcproj;
+			path = splines.vcproj;
 			refType = 4;
 			sourceTree = "<group>";
 		};

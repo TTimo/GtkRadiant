@@ -162,7 +162,7 @@ void DVisDrawer::UnRegister()
 	m_bHooked = FALSE;
 }
 
-void DVisDrawer::SetList(std::list<DWinding*> *pointList)
+void DVisDrawer::SetList(list<DWinding*> *pointList)
 {
 	if(m_list)
 		ClearPoints();

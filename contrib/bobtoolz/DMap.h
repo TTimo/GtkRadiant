@@ -43,7 +43,7 @@ public:
 	void ClearEntities();
 
 	DEntity* DMap::GetEntityForID(int ID);
-	DEntity* AddEntity(const char* classname = "worldspawn", int ID = -1);
+	DEntity* AddEntity(char* classname = "worldspawn", int ID = -1);
 
 	list<DEntity*> entityList;
 

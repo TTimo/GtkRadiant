@@ -77,9 +77,8 @@ class Config:
 			Export( 'utils', 'settings', 'config' )
 			build_dir = os.path.join( 'build', config_name, 'radiant' )
 			BuildDir( build_dir, '.', duplicate = 0 )
-			# left out jpeg6, splines (FIXME: I think jpeg6 is not used at all, can trash?)
 			lib_objects = []
-			for project in [ 'libs/synapse/synapse.vcproj', 'libs/cmdlib/cmdlib.vcproj', 'libs/mathlib/mathlib.vcproj', 'libs/l_net/l_net.vcproj', 'libs/ddslib/ddslib.vcproj', 'libs/picomodel/picomodel.vcproj', 'libs/md5lib/md5lib.vcproj' ]:
+			for project in [ 'libs/synapse/synapse.vcproj', 'libs/cmdlib/cmdlib.vcproj', 'libs/mathlib/mathlib.vcproj', 'libs/l_net/l_net.vcproj' ]:
 				Export( 'project' )
 				lib_objects += SConscript( os.path.join( build_dir, 'SConscript.lib' ) )
 			Export( 'lib_objects' )
@@ -88,7 +87,7 @@ class Config:
 
 			# PIC versions of the libs for the modules
 			shlib_objects_extra = {}
-			for project in [ 'libs/synapse/synapse.vcproj', 'libs/mathlib/mathlib.vcproj', 'libs/picomodel/picomodel.vcproj', 'libs/cmdlib/cmdlib.vcproj' ]:
+			for project in [ 'libs/synapse/synapse.vcproj', 'libs/mathlib/mathlib.vcproj', 'libs/picomodel/picomodel.vcproj', 'libs/cmdlib/cmdlib.vcproj', 'libs/splines/splines.vcproj' ]:
 				( libpath, libname ) = os.path.split( project )
 				libname = os.path.splitext( libname )[0]
 				config['shared'] = True
@@ -108,8 +107,7 @@ class Config:
 					 'plugins/imagewal/imagewal.vcproj',
 					 'plugins/imagem8/imagem8.vcproj',
 					 'plugins/spritemodel/spritemodel.vcproj',
-					 'plugins/textool/TexTool.vcproj',
-					# 'plugins/sample/sample.vcproj',
+					 'plugins/textool/textool.vcproj',
 					 'plugins/map/map.vcproj',
 					 'plugins/mapxml/mapxml.vcproj',
 					 'plugins/shaders/shaders.vcproj',
@@ -117,32 +115,35 @@ class Config:
 					 'plugins/surface_ufoai/surface_ufoai.vcproj',
 					 'plugins/surface_quake2/surface_quake2.vcproj',
 					 'plugins/surface_heretic2/surface_heretic2.vcproj',
-					# FIXME Needs splines
-					# 'contrib/camera/camera.vcproj',
-
-					# FIXME What is this? Empty dir for me - remove me?
-					# 'contrib/patches/patches.vcproj',
-					# 'plugins/archivewad/archivewad.vcproj',
-
-					 'contrib/prtview/PrtView.vcproj',
+					 'contrib/camera/camera.vcproj',
+					 'contrib/prtview/prtview.vcproj',
 					 'contrib/hydratoolz/hydratoolz.vcproj',
-					 'contrib/bobtoolz/bobToolz_gtk.vcproj',
+					 'contrib/bobtoolz/bobtoolz.vcproj',
 					 'contrib/gtkgensurf/gtkgensurf.vcproj',
 					 'contrib/ufoai/ufoai.vcproj',
 					 'contrib/bkgrnd2d/bkgrnd2d.vcproj'
 				 ]:
 				( libpath, libname ) = os.path.split( project )
 				libname = os.path.splitext( libname )[0]
-				shlib_objects = shlib_objects_extra['synapse']
-				if ( libname == 'entity' ):
+				# The old code assigned shlib_objects to shlib_objects_extra['synapse'],
+				# and this resulted in a non-copy.  Stuff is added to shlib_objects below.
+				# So we need the explicit copy so we don't modify shlib_objects_extra['synapse'].
+				shlib_objects = shlib_objects_extra['synapse'][:]
+				if ( libname == 'camera' ):
+					shlib_objects += shlib_objects_extra['splines']
+				elif ( libname == 'entity' ):
 					shlib_objects += shlib_objects_extra['mathlib']
+				elif ( libname == 'map' ):
+					shlib_objects += shlib_objects_extra['cmdlib']
 				elif ( libname == 'model' ):
 					shlib_objects += shlib_objects_extra['picomodel']
-#				elif ( libname == 'spritemodel' ):
-#					shlib_objects += shlib_objects_extra['mathlib']
-#				elif ( libname == 'TexTool' ):
-#					shlib_objects += shlib_objects_extra['mathlib']
-				elif ( libname == 'map' ):
+					shlib_objects += shlib_objects_extra['mathlib']
+				elif ( libname == 'spritemodel' ):
+					shlib_objects += shlib_objects_extra['mathlib']
+				elif ( libname == 'textool' ):
+					shlib_objects += shlib_objects_extra['mathlib']
+				elif ( libname == 'bobtoolz' ):
+					shlib_objects += shlib_objects_extra['mathlib']
 					shlib_objects += shlib_objects_extra['cmdlib']
 				Export( 'project', 'shlib_objects' )
 				module = SConscript( os.path.join( build_dir, 'SConscript.module' ) )
@@ -158,7 +159,7 @@ class Config:
 			build_dir = os.path.join( 'build', config_name, 'q3map2' )
 			BuildDir( build_dir, '.', duplicate = 0 )
 			lib_objects = []
-			for project in [ 'libs/cmdlib/cmdlib.vcproj', 'libs/mathlib/mathlib.vcproj', 'libs/l_net/l_net.vcproj', 'libs/ddslib/ddslib.vcproj', 'libs/picomodel/picomodel.vcproj', 'libs/md5lib/md5lib_VC9.vcproj' ]:
+			for project in [ 'tools/quake3/common/quake3-common.vcproj', 'libs/mathlib/mathlib.vcproj', 'libs/l_net/l_net.vcproj', 'libs/ddslib/ddslib.vcproj', 'libs/picomodel/picomodel.vcproj', 'libs/md5lib/md5lib.vcproj' ]:
 				Export( 'project' )
 				lib_objects += SConscript( os.path.join( build_dir, 'SConscript.lib' ) )
 			Export( 'lib_objects' )
@@ -275,7 +276,7 @@ class Config:
 		if ( self.platform == 'Windows' ):
 			backup_cwd = os.getcwd()
 			for lib_archive in [
-				'gtk+-bundle-2.16.6-20100912-2-win32.zip',
+				'gtk+-bundle-2.16.6-20100912-3-win32.zip',
 				'gtkglext-1.2.0-3-win32.zip',
 				'libxml2-2.7.3-2-win32.zip',
 				'jpeg-8c-4-win32.zip',

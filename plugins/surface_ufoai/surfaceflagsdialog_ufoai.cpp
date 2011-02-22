@@ -33,6 +33,11 @@ GtkWidget *notebook1;
 // 32 bit is the max
 #define MAX_BUTTONS 32
 
+#ifdef _WIN32
+  // TTimo: THIS IS UGLY
+#define snprintf _snprintf
+#endif
+
 GtkWidget *surface_buttons[MAX_BUTTONS];
 GtkWidget *content_buttons[MAX_BUTTONS];
 

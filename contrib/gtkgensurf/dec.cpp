@@ -441,7 +441,7 @@ int tricall(int NumNodes, NODE *Node, int *NumTris, TRI **inTri, TRI **Tri, cons
 	out.edgelist           = (int *) NULL;   /* Needed only if -e switch used. */
 	out.edgemarkerlist     = (int *) NULL;   /* Needed if -e used and -B not used. */
 
-	triangulate(Options, &in, &out, NULL);
+	triangulate((char *) Options, &in, &out, NULL);
 
 	NumTris[0] = out.numberoftriangles;
 	*Tri = (TRI *) malloc(NumTris[0] * sizeof(TRI));

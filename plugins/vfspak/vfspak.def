@@ -1,7 +1,6 @@
 ; vfspak.def : Declares the module parameters for the DLL.
 
 LIBRARY      "VFSPAK"
-DESCRIPTION  'VFSPAK Windows Dynamic Link Library'
 
 EXPORTS
     ; Explicit exports can go here

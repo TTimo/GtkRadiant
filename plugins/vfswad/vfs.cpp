@@ -380,7 +380,7 @@ void vfsInitDirectory (const char *path)
         if(name == NULL)
           break;
 
-        char *ext = strrchr (name, '.');
+        const char *ext = strrchr (name, '.');
         if ((ext == NULL) || (strcmp (ext, ".wad") != 0))
           continue;
 

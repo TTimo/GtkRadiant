@@ -1,7 +1,6 @@
 ; surface_ufoai.def : Declares the module parameters for the DLL.
 
 LIBRARY      "SURFACE_UFOAI"
-DESCRIPTION  'SURFACE_UFOAI Windows Dynamic Link Library'
 
 EXPORTS
     ; Explicit exports can go here

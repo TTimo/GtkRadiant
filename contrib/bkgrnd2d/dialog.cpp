@@ -36,6 +36,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 // spaces to make label nice and big
 #define NO_FILE_MSG "        (no file loaded)        "
 
+#ifdef _WIN32
+  // TTimo: THIS IS UGLY
+#define snprintf _snprintf
+#endif
+
 static GtkWidget *pDialogWnd;
 static GtkWidget *pNotebook;
 static GtkTooltips *pTooltips;

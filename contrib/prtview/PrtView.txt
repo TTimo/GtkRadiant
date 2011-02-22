@@ -1,4 +1,4 @@
-Put PrtView.dll in the Q3Radiant plugins directory.
+Put prtview.dll in the Q3Radiant plugins directory.
 
 This program is pretty self explanitary, but point needs to
 be mentioned.  In the configuration menu for 3D view options,
