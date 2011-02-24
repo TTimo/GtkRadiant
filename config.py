@@ -246,8 +246,8 @@ class Config:
 			env.Append( CXXFLAGS = [ '-g' ] )
 			env.Append( CPPDEFINES = [ '_DEBUG' ] )
 		else:
-			env.Append( CFLAGS = [ '-O3', '-Winline', '-ffast-math', '-fno-unsafe-math-optimizations', '-fno-strict-aliasing' ] )
-			env.Append( CXXFLAGS = [ '-O3', '-Winline', '-ffast-math', '-fno-unsafe-math-optimizations','-fno-strict-aliasing' ] )
+			env.Append( CFLAGS = [ '-O2', '-fno-strict-aliasing' ] )
+			env.Append( CXXFLAGS = [ '-O2', '-fno-strict-aliasing' ] )
 
 	def CheckoutOrUpdate( self, svnurl, path ):
 		if ( os.path.exists( path ) ):
