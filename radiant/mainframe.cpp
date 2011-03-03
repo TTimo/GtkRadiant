@@ -5960,6 +5960,7 @@ void MainFrame::OnColorSetoriginal()
   g_qeglobals.d_savedinfo.colors[COLOR_SELBRUSHES3D][1] = 0.0f;
   g_qeglobals.d_savedinfo.colors[COLOR_SELBRUSHES3D][2] = 0.0f;
 
+  g_PrefsDlg.SavePrefs();
   Sys_UpdateWindows (W_ALL);
 }
 
@@ -6002,6 +6003,7 @@ void MainFrame::OnColorSetqer()
   g_qeglobals.d_savedinfo.colors[COLOR_SELBRUSHES3D][1] = 0.0f;
   g_qeglobals.d_savedinfo.colors[COLOR_SELBRUSHES3D][2] = 0.0f;
 
+  g_PrefsDlg.SavePrefs();
   Sys_UpdateWindows (W_ALL);
 }
 
@@ -6047,6 +6049,7 @@ void MainFrame::OnColorSetblack()
   g_qeglobals.d_savedinfo.colors[COLOR_SELBRUSHES3D][1] = 0.0f;
   g_qeglobals.d_savedinfo.colors[COLOR_SELBRUSHES3D][2] = 0.0f;
 
+  g_PrefsDlg.SavePrefs();
   Sys_UpdateWindows (W_ALL);
 }
 
@@ -6090,6 +6093,7 @@ void MainFrame::OnColorSetydnar()
   g_qeglobals.d_savedinfo.colors[COLOR_SELBRUSHES3D][1] = 0.0f;
   g_qeglobals.d_savedinfo.colors[COLOR_SELBRUSHES3D][2] = 0.0f;
 
+  g_PrefsDlg.SavePrefs();
   Sys_UpdateWindows (W_ALL);
 }
 

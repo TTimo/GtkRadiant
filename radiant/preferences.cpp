@@ -148,7 +148,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define TEXTURECOMPRESSIONFORMAT_KEY "TextureCompressionFormat"
 #define LIGHTRADIUS_KEY "LightRadiuses"
 #define Q3MAP2TEX_KEY "Q3Map2Tex"
+
+#ifdef ATIHACK_812
 #define ATIHACK_KEY "ATIHack"
+#endif
+
+#ifdef NVIDIA_AERO_HACK
+#define NVAEROHACK_KEY "NvidiaAeroHack"
+#endif
 
 // window stuff
 #define ENTITYSPLIT1_KEY  "EntitySplit1"
@@ -687,7 +694,11 @@ PrefsDlg::PrefsDlg ()
   m_nLightRadiuses = 1;
   m_bQ3Map2Texturing = TRUE;
 #ifdef ATIHACK_812
-	m_bGlATIHack = FALSE;
+  m_bGlATIHack = FALSE;
+#endif
+#ifdef NVIDIA_AERO_HACK
+  m_bGlNvidiaAeroHack = TRUE;
+  m_bGlNvidiaAeroHackPrevState = -1; // -1 is uninitialized, 0 is FALSE, 1 is TRUE
 #endif
 }
 
@@ -1818,11 +1829,18 @@ void PrefsDlg::BuildDialog ()
   g_list_free (combo_list);
 
 #ifdef ATIHACK_812
-	// ATI bugs
-	check = gtk_check_button_new_with_label (_("ATI cards with broken drivers - bug #802"));
-	gtk_widget_show(check);
-	gtk_box_pack_start(GTK_BOX(vbox), check, FALSE, FALSE, 0);
-	AddDialogData(check, &m_bGlATIHack, DLG_CHECK_BOOL);
+  // ATI bugs
+  check = gtk_check_button_new_with_label (_("ATI and Intel cards w/ buggy drivers (disappearing polygons)"));
+  gtk_widget_show(check);
+  gtk_box_pack_start(GTK_BOX(vbox), check, FALSE, FALSE, 0);
+  AddDialogData(check, &m_bGlATIHack, DLG_CHECK_BOOL);
+#endif
+
+#ifdef NVIDIA_AERO_HACK
+  check = gtk_check_button_new_with_label (_("NVIDIA/Aero bug - disable Windows composition"));
+  gtk_widget_show(check);
+  gtk_box_pack_start(GTK_BOX(vbox), check, FALSE, FALSE, 0);
+  AddDialogData(check, &m_bGlNvidiaAeroHack, DLG_CHECK_BOOL);
 #endif
 
   // Add the page to the notebook
@@ -2859,6 +2877,40 @@ void PrefsDlg::UpdateATIHack() {
 }
 #endif
 
+#ifdef NVIDIA_AERO_HACK
+void PrefsDlg::UpdateNvidiaAeroHack() {
+  if (m_bGlNvidiaAeroHack && m_bGlNvidiaAeroHackPrevState == 1) { return; }
+  if ((!m_bGlNvidiaAeroHack) && m_bGlNvidiaAeroHackPrevState == 0) { return; }
+  if ((!m_bGlNvidiaAeroHack) && m_bGlNvidiaAeroHackPrevState < 0) {
+    // The hack state is uninitialized, meaning that this is the first call
+    // to this function.  I prefer not to explicitly enable composition because
+    // the user may have set the application to disable it, and I don't want to
+    // override that.  Leave the state of composition as-is if the hack checkbox
+    // isn't checked.
+    m_bGlNvidiaAeroHackPrevState = 0;
+    return;
+  }
+  HMODULE lib = LoadLibrary("dwmapi.dll");
+  if (lib) {
+    void (WINAPI *qDwmEnableComposition) (bool bEnable) =
+      (void (WINAPI *) (bool bEnable)) GetProcAddress(lib, "DwmEnableComposition");
+    if (qDwmEnableComposition) {
+      if (m_bGlNvidiaAeroHack) {
+        Sys_Printf("Disabling Windows composition\n");
+        qDwmEnableComposition(0);
+        m_bGlNvidiaAeroHackPrevState = 1;
+      }
+      else {
+        Sys_Printf("Enabling Windows composition\n");
+        qDwmEnableComposition(1);
+        m_bGlNvidiaAeroHackPrevState = 0;
+      }
+    }
+    FreeLibrary(lib);
+  }
+}
+#endif
+
 // TTimo: m_strEnginePath has a special status, if not found in registry we need to
 // initiliaze it for sure. It is not totally failsafe but we can use the same
 // code than in q3map, expecting to find some "quake" above us. If not, we prompt
@@ -3139,12 +3191,20 @@ void PrefsDlg::LoadPrefs ()
 	mLocalPrefs.GetPref(ATIHACK_KEY, &m_bGlATIHack, FALSE);
 #endif
 
+#ifdef NVIDIA_AERO_HACK
+  mLocalPrefs.GetPref(NVAEROHACK_KEY, &m_bGlNvidiaAeroHack, TRUE);
+#endif
+
   Undo_SetMaxSize(m_nUndoLevels); // set it internally as well / FIXME: why not just have one global value?
 
   UpdateTextureCompression();
 
 #ifdef ATIHACK_812
   UpdateATIHack();
+#endif
+
+#ifdef NVIDIA_AERO_HACK
+  UpdateNvidiaAeroHack();
 #endif
 
   if (mLocalPrefs.mbEmpty)
@@ -3191,9 +3251,12 @@ void PrefsDlg::PostModal (int code)
     SavePrefs();
     // make sure the logfile is ok
     Sys_LogFile();
-    #ifdef ATIHACK_812
-      UpdateATIHack();
-    #endif
+#ifdef ATIHACK_812
+    UpdateATIHack();
+#endif
+#ifdef NVIDIA_AERO_HACK
+    UpdateNvidiaAeroHack();
+#endif
     if (g_pParentWnd)
       g_pParentWnd->SetGridStatus();
     Sys_UpdateWindows(W_ALL);

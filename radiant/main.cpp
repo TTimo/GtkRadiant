@@ -429,32 +429,6 @@ int main( int argc, char* argv[] ) {
 	char *libgl, *ptr;
 	int i, j, k;
 
-  /*
-    Rambetter on Fri Jan 21, 2011:
-
-    People with recent NVIDIA cards and Windows 7 (Aero) are complaining about "hall of mirrors"
-    effect in the OpenGL viewports.  The code below is borrowed from NetRadiant to address
-    this issue.  This change turns off desktop compositing (globally) while Radiant is running.
-    It's a real hack but the "correct" fix is very involving, so until the underlying problem
-    is addressed we need this code here.  I don't know for sure what the underlying problem is,
-    but I have a hunch it's the version of gtkglext.dll we're using.
-  */
-
-#ifdef _WIN32
-  HMODULE lib;
-  lib = LoadLibrary("dwmapi.dll");
-  if (lib != 0)
-  {
-    void (WINAPI *qDwmEnableComposition) (bool bEnable) =
-      (void (WINAPI *) (bool bEnable)) GetProcAddress(lib, "DwmEnableComposition");
-    if (qDwmEnableComposition)
-    {
-      qDwmEnableComposition(FALSE);
-    }
-    FreeLibrary(lib);
-  }
-#endif
-
 
   /*
     Rambetter on Sat Nov 13, 2010:

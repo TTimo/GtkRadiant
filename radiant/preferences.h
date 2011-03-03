@@ -26,6 +26,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "gtkr_list.h"
 //#include "profile.h"
 
+#ifdef _WIN32
+#define NVIDIA_AERO_HACK
+#endif
+
 #define MAX_TEXTURE_QUALITY 3
 
 enum PrefTypes_t
@@ -485,6 +489,10 @@ public:
   void UpdateATIHack();
 #endif
 
+#ifdef NVIDIA_AERO_HACK
+  void UpdateNvidiaAeroHack();
+#endif
+
   void LoadPrefs();
   void SavePrefs();
   void LoadTexdefPref(texdef_t* pTexdef, char* pName);
@@ -687,7 +695,12 @@ public:
   bool m_bQ3Map2Texturing;
 
 #ifdef ATIHACK_812
-	bool m_bGlATIHack;
+  bool m_bGlATIHack;
+#endif
+
+#ifdef NVIDIA_AERO_HACK
+  bool m_bGlNvidiaAeroHack;
+  int m_bGlNvidiaAeroHackPrevState;
 #endif
 
   void UpdateData (bool retrieve);

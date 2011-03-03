@@ -105,6 +105,7 @@ class Config:
 					 'plugins/model/model.vcproj',
 					 'plugins/imagepng/imagepng.vcproj',
 					 'plugins/imagewal/imagewal.vcproj',
+					 'plugins/imagehl/imagehl.vcproj',
 					 'plugins/imagem8/imagem8.vcproj',
 					 'plugins/spritemodel/spritemodel.vcproj',
 					 'plugins/textool/textool.vcproj',
