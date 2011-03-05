@@ -76,7 +76,7 @@ class Config:
 			config['shared'] = False
 			Export( 'utils', 'settings', 'config' )
 			build_dir = os.path.join( 'build', config_name, 'radiant' )
-			BuildDir( build_dir, '.', duplicate = 0 )
+			VariantDir( build_dir, '.', duplicate = 0 )
 			lib_objects = []
 			for project in [ 'libs/synapse/synapse.vcproj', 'libs/cmdlib/cmdlib.vcproj', 'libs/mathlib/mathlib.vcproj', 'libs/l_net/l_net.vcproj' ]:
 				Export( 'project' )
@@ -93,7 +93,7 @@ class Config:
 				config['shared'] = True
 				Export( 'project', 'config' )
 				build_dir = os.path.join( 'build', config_name, 'shobjs' )
-				BuildDir( build_dir, '.', duplicate = 0 )
+				VariantDir( build_dir, '.', duplicate = 0 )
 				shlib_objects_extra[libname] = SConscript( os.path.join( build_dir, 'SConscript.lib' ) )
 
 			for project in [ 'plugins/vfspk3/vfspk3.vcproj',
@@ -158,7 +158,7 @@ class Config:
 			config['shared'] = False
 			Export( 'utils', 'settings', 'config' )
 			build_dir = os.path.join( 'build', config_name, 'q3map2' )
-			BuildDir( build_dir, '.', duplicate = 0 )
+			VariantDir( build_dir, '.', duplicate = 0 )
 			lib_objects = []
 			for project in [ 'tools/quake3/common/quake3-common.vcproj', 'libs/mathlib/mathlib.vcproj', 'libs/l_net/l_net.vcproj', 'libs/ddslib/ddslib.vcproj', 'libs/picomodel/picomodel.vcproj', 'libs/md5lib/md5lib.vcproj' ]:
 				Export( 'project' )
