@@ -284,7 +284,7 @@ class Config:
 				'STLport-5.2.1-4.zip'
 				]:
 				if ( not os.path.exists( lib_archive ) ):
-					cmd = [ 'wget', '-N', 'http://porky.nerius.com/radiant-libs-win32/%s' % lib_archive ]
+					cmd = [ 'wget', '-N', 'http://zerowing.idsoftware.com/files/radiant/developer/1.6.2/%s' % lib_archive ]
 					print( repr( cmd ) )
 					subprocess.check_call( cmd )
 					lib_archive_path = os.path.abspath( lib_archive )
