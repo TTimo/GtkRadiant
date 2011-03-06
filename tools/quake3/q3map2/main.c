@@ -503,7 +503,7 @@ int ConvertBSPMain( int argc, char **argv )
 	/* arg checking */
 	if( argc < 1 )
 	{
-		Sys_Printf( "Usage: q3map -scale <value> [-v] <mapname>\n" );
+		Sys_Printf( "Usage: q3map -convert [-format <ase|map>] [-v] <mapname>\n" );
 		return 0;
 	}
 	
