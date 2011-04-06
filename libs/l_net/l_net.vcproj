@@ -38,7 +38,6 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalOptions="/F 8388608"
 				Optimization="0"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;"
 				MinimalRebuild="true"
@@ -100,7 +99,6 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalOptions="/F 8388608"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB;"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"

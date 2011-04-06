@@ -38,7 +38,6 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalOptions="/F 8388608"
 				Optimization="0"
 				AdditionalIncludeDirectories="&quot;$(SolutionDir)\libs&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;"
@@ -101,7 +100,6 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalOptions="/F 8388608"
 				AdditionalIncludeDirectories="&quot;$(SolutionDir)\libs&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB;"
 				RuntimeLibrary="2"
