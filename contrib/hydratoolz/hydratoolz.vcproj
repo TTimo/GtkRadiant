@@ -38,6 +38,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
+				AdditionalOptions="/F 8388608"
 				Optimization="0"
 				AdditionalIncludeDirectories="&quot;$(SolutionDir)\libs&quot;;&quot;$(SolutionDir)\include&quot;;&quot;$(SolutionDir)\..\STLport-5.2.1\stlport&quot;;&quot;$(SolutionDir)\..\gtk-2.16.6\include\glib-2.0&quot;;&quot;$(SolutionDir)\..\gtk-2.16.6\lib\glib-2.0\include&quot;;&quot;$(SolutionDir)\..\gtk-2.16.6\include&quot;;&quot;$(SolutionDir)\..\gtk-2.16.6\include\gtk-2.0&quot;;&quot;$(SolutionDir)\..\gtk-2.16.6\lib\gtk-2.0\include&quot;;&quot;$(SolutionDir)\..\gtk-2.16.6\include\cairo&quot;;&quot;$(SolutionDir)\..\gtk-2.16.6\include\pango-1.0&quot;;&quot;$(SolutionDir)\..\gtk-2.16.6\include\atk-1.0&quot;;&quot;$(SolutionDir)\..\libxml2-2.7.3\include\libxml2&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;HYDRATOOLZ_EXPORTS;"
@@ -112,6 +113,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
+				AdditionalOptions="/F 8388608"
 				AdditionalIncludeDirectories="&quot;$(SolutionDir)\libs&quot;;&quot;$(SolutionDir)\include&quot;;&quot;$(SolutionDir)\..\STLport-5.2.1\stlport&quot;;&quot;$(SolutionDir)\..\gtk-2.16.6\include\glib-2.0&quot;;&quot;$(SolutionDir)\..\gtk-2.16.6\lib\glib-2.0\include&quot;;&quot;$(SolutionDir)\..\gtk-2.16.6\include&quot;;&quot;$(SolutionDir)\..\gtk-2.16.6\include\gtk-2.0&quot;;&quot;$(SolutionDir)\..\gtk-2.16.6\lib\gtk-2.0\include&quot;;&quot;$(SolutionDir)\..\gtk-2.16.6\include\cairo&quot;;&quot;$(SolutionDir)\..\gtk-2.16.6\include\pango-1.0&quot;;&quot;$(SolutionDir)\..\gtk-2.16.6\include\atk-1.0&quot;;&quot;$(SolutionDir)\..\libxml2-2.7.3\include\libxml2&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;HYDRATOOLZ_EXPORTS;"
 				RuntimeLibrary="2"
