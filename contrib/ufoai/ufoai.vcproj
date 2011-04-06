@@ -60,6 +60,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalOptions="/STACK:8388608"
 				AdditionalDependencies="glib-2.0.lib gobject-2.0.lib intl.lib gtk-win32-2.0.lib libxml2.lib synapse.lib"
 				AdditionalLibraryDirectories="&quot;$(SolutionDir)\..\gtk-2.16.6\lib&quot;;&quot;$(SolutionDir)\..\libxml2-2.7.3\lib&quot;;&quot;$(SolutionDir)\build\$(ConfigurationName)\libs&quot;"
 				ModuleDefinitionFile="ufoai.def"
@@ -131,6 +132,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalOptions="/STACK:8388608"
 				AdditionalDependencies="glib-2.0.lib gobject-2.0.lib intl.lib gtk-win32-2.0.lib libxml2.lib synapse.lib"
 				AdditionalLibraryDirectories="&quot;$(SolutionDir)\..\gtk-2.16.6\lib&quot;;&quot;$(SolutionDir)\..\libxml2-2.7.3\lib&quot;;&quot;$(SolutionDir)\build\$(ConfigurationName)\libs&quot;"
 				ModuleDefinitionFile="ufoai.def"
