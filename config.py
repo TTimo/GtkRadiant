@@ -247,8 +247,9 @@ class Config:
 			env.Append( CXXFLAGS = [ '-g' ] )
 			env.Append( CPPDEFINES = [ '_DEBUG' ] )
 		else:
-			env.Append( CFLAGS = [ '-O2', '-fno-strict-aliasing' ] )
-			env.Append( CXXFLAGS = [ '-O2', '-fno-strict-aliasing' ] )
+                        # '-O' causes q3map2 errors on Ubuntu 10.10 32 bit.
+			env.Append( CFLAGS = [ ] )
+			env.Append( CXXFLAGS = [ ] )
 
 	def CheckoutOrUpdate( self, svnurl, path ):
 		if ( os.path.exists( path ) ):
