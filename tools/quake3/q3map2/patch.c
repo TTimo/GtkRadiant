@@ -271,8 +271,10 @@ void ParsePatch( qboolean onlyLights ){
 	// if brush primitives format, we may have some epairs to ignore here
 	GetToken( qtrue );
 	if ( g_bBrushPrimit != BPRIMIT_OLDBRUSHES && strcmp( token,"}" ) ) {
-		// NOTE: we leak that!
 		ep = ParseEPair();
+		free( ep->key );
+		free( ep->value );
+		free( ep );
 	}
 	else{
 		UnGetToken();
