@@ -1764,6 +1764,7 @@ void                        DirtyRawLightmap( int num );
 void                        IlluminateRawLightmap( int num );
 void                        IlluminateVertexes( int num );
 
+void						SetupBrushesFlags( int mask, int test );
 void                        SetupBrushes( void );
 void                        SetupClusters( void );
 qboolean                    ClusterVisible( int a, int b );

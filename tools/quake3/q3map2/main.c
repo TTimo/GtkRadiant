@@ -389,67 +389,7 @@ determines solid non-sky brushes in the world
 
 void MiniMapSetupBrushes( void )
 {
-	int				i, b, compileFlags;
-	bspBrush_t		*brush;
-	bspShader_t		*shader;
-	shaderInfo_t	*si;
-	
-	
-	/* note it */
-	Sys_FPrintf( SYS_VRB, "--- MiniMapSetupBrushes ---\n" );
-	
-	/* allocate */
-	if( opaqueBrushes == NULL )
-		opaqueBrushes = safe_malloc( numBSPBrushes / 8 + 1 );
-	
-	/* clear */
-	memset( opaqueBrushes, 0, numBSPBrushes / 8 + 1 );
-	numOpaqueBrushes = 0;
-	
-	/* walk the list of worldspawn brushes */
-	for( i = 0; i < minimap.model->numBSPBrushes; i++ )
-	{
-		/* get brush */
-		b = minimap.model->firstBSPBrush + i;
-		brush = &bspBrushes[ b ];
-		
-#if 0
-		/* check all sides */
-		compileFlags = 0;
-		for( j = 0; j < brush->numSides; j++ )
-		{
-			/* do bsp shader calculations */
-			side = &bspBrushSides[ brush->firstSide + j ];
-			shader = &bspShaders[ side->shaderNum ];
-			
-			/* get shader info */
-			si = ShaderInfoForShader( shader->shader );
-			if( si == NULL )
-				continue;
-			
-			/* or together compile flags */
-			compileFlags |= si->compileFlags;
-		}
-#else
-		shader = &bspShaders[ brush->shaderNum ];
-		si = ShaderInfoForShader( shader->shader );
-		if( si == NULL )
-			compileFlags = 0;
-		else
-			compileFlags = si->compileFlags;
-#endif
-		
-		/* determine if this brush is solid */
-		if( (compileFlags & (C_SOLID | C_SKY)) == C_SOLID )
-		{
-			opaqueBrushes[ b >> 3 ] |= (1 << (b & 7));
-			numOpaqueBrushes++;
-			maxOpaqueBrush = i;
-		}
-	}
-	
-	/* emit some statistics */
-	Sys_FPrintf( SYS_VRB, "%9d solid brushes\n", numOpaqueBrushes );
+	SetupBrushesFlags(C_SOLID | C_SKY, C_SOLID);
 }
 
 qboolean MiniMapEvaluateSampleOffsets(int *bestj, int *bestk, float *bestval)
@@ -794,6 +734,7 @@ int MiniMapBSPMain( int argc, char **argv )
 		float s, o;
 
 		// TODO threads!
+		q = minimap.data1f;
 		for(y = 0; y < minimap.height; ++y)
 			for(x = 0; x < minimap.width; ++x)
 			{
@@ -815,7 +756,7 @@ int MiniMapBSPMain( int argc, char **argv )
 		minimap.brightness = minimap.brightness - minimap.contrast * o;
 		minimap.contrast *= s;
 
-		Sys_Printf( "Auto level: Brightness changed to %f\n", minimap.boost );
+		Sys_Printf( "Auto level: Brightness changed to %f\n", minimap.brightness );
 		Sys_Printf( "Auto level: Contrast changed to %f\n", minimap.contrast );
 	}
 

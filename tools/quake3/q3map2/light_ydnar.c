@@ -2774,15 +2774,16 @@ void IlluminateVertexes( int num ){
    determines opaque brushes in the world and find sky shaders for sunlight calculations
  */
 
-void SetupBrushes( void ){
+void SetupBrushesFlags( int mask, int test )
+{
 	int i, j, b, compileFlags;
 	qboolean inside;
 	bspBrush_t      *brush;
 	bspBrushSide_t  *side;
 	bspShader_t     *shader;
 	shaderInfo_t    *si;
-
-
+	
+	
 	/* note it */
 	Sys_FPrintf( SYS_VRB, "--- SetupBrushes ---\n" );
 
@@ -2822,8 +2823,9 @@ void SetupBrushes( void ){
 		}
 
 		/* determine if this brush is opaque to light */
-		if ( !( compileFlags & C_TRANSLUCENT ) ) {
-			opaqueBrushes[ b >> 3 ] |= ( 1 << ( b & 7 ) );
+		if( (compileFlags & mask) == test )
+		{
+			opaqueBrushes[ b >> 3 ] |= (1 << (b & 7));
 			numOpaqueBrushes++;
 			maxOpaqueBrush = i;
 		}
@@ -2831,6 +2833,10 @@ void SetupBrushes( void ){
 
 	/* emit some statistics */
 	Sys_FPrintf( SYS_VRB, "%9d opaque brushes\n", numOpaqueBrushes );
+}
+void SetupBrushes( void )
+{
+	SetupBrushesFlags(C_TRANSLUCENT, 0);
 }
 
 
