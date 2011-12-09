@@ -389,7 +389,10 @@ determines solid non-sky brushes in the world
 
 void MiniMapSetupBrushes( void )
 {
-	SetupBrushesFlags(C_SOLID | C_SKY, C_SOLID);
+	SetupBrushesFlags(C_SOLID | C_SKY, C_SOLID, C_NODRAW, 0);
+		// at least one must be solid
+		// none may be sky
+		// not all may be nodraw
 }
 
 qboolean MiniMapEvaluateSampleOffsets(int *bestj, int *bestk, float *bestval)
@@ -744,20 +747,25 @@ int MiniMapBSPMain( int argc, char **argv )
 				if(v > ma)
 					ma = v;
 			}
-		s = 1 / (ma - mi);
-		o = mi / (ma - mi);
+		if(ma > mi)
+		{
+			s = 1 / (ma - mi);
+			o = mi / (ma - mi);
 
-		// equations:
-		//   brightness + contrast * v
-		// after autolevel:
-		//   brightness + contrast * (v * s - o)
-		// =
-		//   (brightness - contrast * o) + (contrast * s) * v
-		minimap.brightness = minimap.brightness - minimap.contrast * o;
-		minimap.contrast *= s;
+			// equations:
+			//   brightness + contrast * v
+			// after autolevel:
+			//   brightness + contrast * (v * s - o)
+			// =
+			//   (brightness - contrast * o) + (contrast * s) * v
+			minimap.brightness = minimap.brightness - minimap.contrast * o;
+			minimap.contrast *= s;
 
-		Sys_Printf( "Auto level: Brightness changed to %f\n", minimap.brightness );
-		Sys_Printf( "Auto level: Contrast changed to %f\n", minimap.contrast );
+			Sys_Printf( "Auto level: Brightness changed to %f\n", minimap.brightness );
+			Sys_Printf( "Auto level: Contrast changed to %f\n", minimap.contrast );
+		}
+		else
+			Sys_Printf( "Auto level: failed because all pixels are the same value\n" );
 	}
 
 	if(minimap.brightness != 0 || minimap.contrast != 1)

@@ -1764,7 +1764,7 @@ void                        DirtyRawLightmap( int num );
 void                        IlluminateRawLightmap( int num );
 void                        IlluminateVertexes( int num );
 
-void						SetupBrushesFlags( int mask, int test );
+void						SetupBrushesFlags( int mask_any, int test_any, int mask_all, int test_all );
 void                        SetupBrushes( void );
 void                        SetupClusters( void );
 qboolean                    ClusterVisible( int a, int b );
@@ -1820,6 +1820,7 @@ void                        EmitVertexRemapShader( char *from, char *to );
 
 void                        LoadShaderInfo( void );
 shaderInfo_t                *ShaderInfoForShader( const char *shader );
+shaderInfo_t				*ShaderInfoForShaderNull( const char *shader );
 
 
 /* bspfile_abstract.c */

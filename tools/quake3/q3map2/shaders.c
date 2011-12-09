@@ -801,6 +801,12 @@ static void LoadShaderImages( shaderInfo_t *si ){
    finds a shaderinfo for a named shader
  */
 
+shaderInfo_t *ShaderInfoForShaderNull( const char *shaderName ){
+	if(!strcmp(shaderName, "noshader"))
+		return NULL;
+	return ShaderInfoForShader(shaderName);
+}
+
 shaderInfo_t *ShaderInfoForShader( const char *shaderName ){
 	int i;
 	shaderInfo_t    *si;

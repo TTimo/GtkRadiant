@@ -2774,9 +2774,10 @@ void IlluminateVertexes( int num ){
    determines opaque brushes in the world and find sky shaders for sunlight calculations
  */
 
-void SetupBrushesFlags( int mask, int test )
+void SetupBrushesFlags( unsigned int mask_any, unsigned int test_any, unsigned int mask_all, unsigned int test_all )
 {
-	int i, j, b, compileFlags;
+	int i, j, b;
+	unsigned int compileFlags, allCompileFlags;
 	qboolean inside;
 	bspBrush_t      *brush;
 	bspBrushSide_t  *side;
@@ -2806,6 +2807,7 @@ void SetupBrushesFlags( int mask, int test )
 		/* check all sides */
 		inside = qtrue;
 		compileFlags = 0;
+		allCompileFlags = ~(0u);
 		for ( j = 0; j < brush->numSides && inside; j++ )
 		{
 			/* do bsp shader calculations */
@@ -2813,7 +2815,7 @@ void SetupBrushesFlags( int mask, int test )
 			shader = &bspShaders[ side->shaderNum ];
 
 			/* get shader info */
-			si = ShaderInfoForShader( shader->shader );
+			si = ShaderInfoForShaderNull( shader->shader );
 			if ( si == NULL ) {
 				continue;
 			}
@@ -2823,7 +2825,7 @@ void SetupBrushesFlags( int mask, int test )
 		}
 
 		/* determine if this brush is opaque to light */
-		if( (compileFlags & mask) == test )
+		if( (compileFlags & mask_any) == test_any && (allCompileFlags & mask_all) == test_all )
 		{
 			opaqueBrushes[ b >> 3 ] |= (1 << (b & 7));
 			numOpaqueBrushes++;
@@ -2836,7 +2838,7 @@ void SetupBrushesFlags( int mask, int test )
 }
 void SetupBrushes( void )
 {
-	SetupBrushesFlags(C_TRANSLUCENT, 0);
+	SetupBrushesFlags(C_TRANSLUCENT, 0, 0, 0);
 }
 
 
