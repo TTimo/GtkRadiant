@@ -389,7 +389,7 @@ determines solid non-sky brushes in the world
 
 void MiniMapSetupBrushes( void )
 {
-	SetupBrushesFlags(C_SOLID | C_SKY, C_SOLID, C_NODRAW, 0);
+	SetupBrushesFlags(C_SOLID | C_SKY, C_SOLID, 0, 0);
 		// at least one must be solid
 		// none may be sky
 		// not all may be nodraw
