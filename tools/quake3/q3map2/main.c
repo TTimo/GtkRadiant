@@ -103,7 +103,7 @@ typedef struct minimap_s
 	float *sample_offsets;
 	float sharpen_boxmult;
 	float sharpen_centermult;
-	float boost;
+	float boost, brightness, contrast;
 	float *data1f;
 	float *sharpendata1f;
 	vec3_t mins, size;
@@ -327,6 +327,17 @@ static void MiniMapContrastBoost(int y)
 	for(x = 0; x < minimap.width; ++x)
 	{
 		*q = *q * minimap.boost / ((minimap.boost - 1) * *q + 1);
+		++q;
+	}
+}
+
+static void MiniMapBrightnessContrast(int y)
+{
+	int x;
+	float *q = &minimap.data1f[y * minimap.width];
+	for(x = 0; x < minimap.width; ++x)
+	{
+		*q = *q * minimap.contrast + minimap.brightness;
 		++q;
 	}
 }
@@ -568,6 +579,7 @@ int MiniMapBSPMain( int argc, char **argv )
 	char basename[1024];
 	char path[1024];
 	char relativeMinimapFilename[1024];
+	qboolean autolevel;
 	float minimapSharpen;
 	float border;
 	byte *data4b, *p;
@@ -605,9 +617,12 @@ int MiniMapBSPMain( int argc, char **argv )
 	keepaspect = game->miniMapKeepAspect;
 	mode = game->miniMapMode;
 
+	autolevel = qfalse;
 	minimap.samples = 1;
 	minimap.sample_offsets = NULL;
 	minimap.boost = 1.0;
+	minimap.brightness = 0.0;
+	minimap.contrast = 1.0;
 
 	/* process arguments */
 	for( i = 1; i < (argc - 1); i++ )
@@ -691,11 +706,33 @@ int MiniMapBSPMain( int argc, char **argv )
 			mode = MINIMAP_MODE_WHITE;
 			Sys_Printf( "Writing as white alpha image\n" );
  		}
-		else if( !strcmp( argv[ i ],  "-boost" ) )
+		else if( !strcmp( argv[ i ],  "-boost" ) && i < (argc - 2) )
  		{
 			minimap.boost = atof(argv[i + 1]);
 			i++;
 			Sys_Printf( "Contrast boost set to %f\n", minimap.boost );
+ 		}
+		else if( !strcmp( argv[ i ],  "-brightness" ) && i < (argc - 2) )
+ 		{
+			minimap.brightness = atof(argv[i + 1]);
+			i++;
+			Sys_Printf( "Brightness set to %f\n", minimap.brightness );
+ 		}
+		else if( !strcmp( argv[ i ],  "-contrast" ) && i < (argc - 2) )
+ 		{
+			minimap.contrast = atof(argv[i + 1]);
+			i++;
+			Sys_Printf( "Contrast set to %f\n", minimap.contrast );
+ 		}
+		else if( !strcmp( argv[ i ],  "-autolevel" ) )
+ 		{
+			autolevel = qtrue;
+			Sys_Printf( "Auto level enabled\n", border );
+ 		}
+		else if( !strcmp( argv[ i ],  "-noautolevel" ) )
+ 		{
+			autolevel = qfalse;
+			Sys_Printf( "Auto level disabled\n", border );
  		}
 	}
 
@@ -748,6 +785,44 @@ int MiniMapBSPMain( int argc, char **argv )
 	{
 		Sys_Printf( "\n--- MiniMapContrastBoost (%d) ---\n", minimap.height );
 		RunThreadsOnIndividual(minimap.height, qtrue, MiniMapContrastBoost);
+	}
+
+	if(autolevel)
+	{
+		Sys_Printf( "\n--- MiniMapAutoLevel (%d) ---\n", minimap.height );
+		float mi = 1, ma = 0;
+		float s, o;
+
+		// TODO threads!
+		for(y = 0; y < minimap.height; ++y)
+			for(x = 0; x < minimap.width; ++x)
+			{
+				float v = *q++;
+				if(v < mi)
+					mi = v;
+				if(v > ma)
+					ma = v;
+			}
+		s = 1 / (ma - mi);
+		o = mi / (ma - mi);
+
+		// equations:
+		//   brightness + contrast * v
+		// after autolevel:
+		//   brightness + contrast * (v * s - o)
+		// =
+		//   (brightness - contrast * o) + (contrast * s) * v
+		minimap.brightness = minimap.brightness - minimap.contrast * o;
+		minimap.contrast *= s;
+
+		Sys_Printf( "Auto level: Brightness changed to %f\n", minimap.boost );
+		Sys_Printf( "Auto level: Contrast changed to %f\n", minimap.contrast );
+	}
+
+	if(minimap.brightness != 0 || minimap.contrast != 1)
+	{
+		Sys_Printf( "\n--- MiniMapBrightnessContrast (%d) ---\n", minimap.height );
+		RunThreadsOnIndividual(minimap.height, qtrue, MiniMapBrightnessContrast);
 	}
 
 	if(minimap.sharpendata1f)
