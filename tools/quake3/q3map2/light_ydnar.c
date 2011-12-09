@@ -2824,8 +2824,6 @@ void SetupBrushesFlags( unsigned int mask_any, unsigned int test_any, unsigned i
 			compileFlags |= si->compileFlags;
 		}
 
-	Sys_FPrintf( SYS_VRB, "flags: %d (all: %d)\n", compileFlags, allCompileFlags );
-
 		/* determine if this brush is opaque to light */
 		if( (compileFlags & mask_any) == test_any && (allCompileFlags & mask_all) == test_all )
 		{

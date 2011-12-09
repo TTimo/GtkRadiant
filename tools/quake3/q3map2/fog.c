@@ -787,7 +787,7 @@ void CreateMapFogs( void ){
 
 		/* set up fog */
 		fog = &mapFogs[ numMapFogs++ ];
-		fog->si = ShaderInfoForShader( globalFog );
+		fog->si = ShaderInfoForShaderNull( globalFog );
 		if ( fog->si == NULL ) {
 			Error( "Invalid shader \"%s\" referenced trying to add global fog", globalFog );
 		}
