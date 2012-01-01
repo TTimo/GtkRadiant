@@ -263,7 +263,7 @@ class Config:
 	def FetchGamePaks( self, path ):
 		for pak in self.setup_packs:
 			if ( pak == 'Q3Pack' or pak == 'UrTPack' or pak == 'UFOAIPack' or pak == 'Q2WPack' or pak == 'ReactionPack' ):
-				svnurl = 'https://zerowing.idsoftware.com/svn/radiant.gamepacks/%s/trunk' % pak
+				svnurl = 'svn://svn.icculus.org/gtkradiant-gamepacks/%s/trunk' % pak
 				self.CheckoutOrUpdate( svnurl, os.path.join( path, 'installs', pak ) )
 
 	def Setup( self ):
