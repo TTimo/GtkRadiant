@@ -29,7 +29,7 @@
     <hr />
     <p>This guide explains how to compile GtkRadiant 1.6.x from source code on Windows operating systems.
       The source code is obtained from
-      id Software's official GtkRadiant SVN repository, which is open to the public (details follow).
+      the GtkRadiant SVN repository, which is open to the public (details follow).
       These instructions are aimed at developers wanting to test changes to GtkRadiant source code.
       The instructions below have been executed successfully on
       Windows XP 32 bit (some late service pack) and on Windows 7 Ultimate 32 bit.  Since 64 bit systems have not been tested by me, I cannot
@@ -260,7 +260,7 @@ $ <b>ln -s /c/Python27/Scripts/scons /usr/local/bin/scons</b>
     <p>Now, we're going to change to that directory and get the base GtkRadiant project:</p>
     <blockquote>
       <pre width="88" style="background: #CCCCCC; padding: 2mm; border-style: ridge">$ <b>cd radiant-work</b>
-$ <b>svn checkout https://zerowing.idsoftware.com/svn/radiant/GtkRadiant/trunk ./GtkRadiant</b>
+$ <b>svn checkout svn://svn.icculus.org/gtkradiant/GtkRadiant/trunk ./GtkRadiant</b>
 </pre>
     </blockquote>
     <p>We created the extra <tt>radiant-work</tt> parent directory of <tt>GtkRadiant</tt> because the following step will
