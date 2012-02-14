@@ -67,8 +67,8 @@ const picoModule_t *picoModules[] =
 	&picoModuleMDC,		/* return to castle wolfenstein mdc */
 	&picoModuleMD2,		/* quake2 md2 */
 	&picoModuleFM,		/* heretic2 fm */
-	&picoModuleOBJ,		/* wavefront object */
 	&picoModuleLWO,		/* lightwave object */
+	&picoModuleOBJ,		/* wavefront object */
 	NULL				/* arnold */
 };
 
