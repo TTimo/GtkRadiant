@@ -29,21 +29,21 @@ extern _QERPatchTable g_PatchTable;
 
 extern void *g_pRadiantWnd;
 
-void Map_Read (IDataStream *in, CPtrArray *map);
-void Map_Write (CPtrArray *map, IDataStream *out);
+void Map_Read( IDataStream *in, CPtrArray *map );
+void Map_Write( CPtrArray *map, IDataStream *out );
 
 extern CSynapseServer* g_pSynapseServer;
 
 class CSynapseClientXMap : public CSynapseClient
 {
 public:
-  // CSynapseClient API
-  bool RequestAPI(APIDescriptor_t *pAPI);
-  const char* GetInfo();
-  const char* GetName(); ///< required for XML runtime config
-  
-  CSynapseClientXMap() { }
-  virtual ~CSynapseClientXMap() { }
+// CSynapseClient API
+bool RequestAPI( APIDescriptor_t *pAPI );
+const char* GetInfo();
+const char* GetName();   ///< required for XML runtime config
+
+CSynapseClientXMap() { }
+virtual ~CSynapseClientXMap() { }
 };
 
 #endif // _PLUGIN_H_

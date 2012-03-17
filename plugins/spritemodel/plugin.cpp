@@ -1,23 +1,23 @@
 /*
-Copyright (C) 1999-2007 id Software, Inc. and contributors.
-For a list of contributors, see the accompanying CONTRIBUTORS file.
+   Copyright (C) 1999-2007 id Software, Inc. and contributors.
+   For a list of contributors, see the accompanying CONTRIBUTORS file.
 
-This file is part of GtkRadiant.
+   This file is part of GtkRadiant.
 
-GtkRadiant is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
+   GtkRadiant is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 2 of the License, or
+   (at your option) any later version.
 
-GtkRadiant is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+   GtkRadiant is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
 
-You should have received a copy of the GNU General Public License
-along with GtkRadiant; if not, write to the Free Software
-Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-*/
+   You should have received a copy of the GNU General Public License
+   along with GtkRadiant; if not, write to the Free Software
+   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ */
 
 //
 // Sprite Model Plugin
@@ -51,7 +51,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
       baseq3/scripts/entities.def
       ===========================
 
-      \/\*QUAKED ammo_bfg (.3 .3 1) (-16 -16 -16) (16 16 16) SUSPENDED
+   \/\*QUAKED ammo_bfg (.3 .3 1) (-16 -16 -16) (16 16 16) SUSPENDED
       ...
       -------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
       model="sprites/powerups/ammo/bfgam.bmp"\*\/
@@ -92,23 +92,23 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
     ToDo
     ====
 
-    * make sprites always face the camera (is this done in camwindow.cpp ?)
+ * make sprites always face the camera (is this done in camwindow.cpp ?)
       but only if the entity model doesn't have "angle" keys.  At the moment
       it's better to rotate the model with the angles.
 
-    * maybe add an option to scale the sprites in the prefs ?
+ * maybe add an option to scale the sprites in the prefs ?
 
-    * maybe convert to a new kind of class not based on model.
+ * maybe convert to a new kind of class not based on model.
 
-    * allow sprites on non-fixedsize ents
+ * allow sprites on non-fixedsize ents
 
-    * fix reversed alpha map in spr loader
+ * fix reversed alpha map in spr loader
       -> is this actually broken?
 
-    * allow an entity to have multiple models (e.g .md3 and a sprite model)
+ * allow an entity to have multiple models (e.g .md3 and a sprite model)
       and allow the user to toggle either models on or off.
 
-    * dynamically add the api's depending on what image loading modules are
+ * dynamically add the api's depending on what image loading modules are
       supported by radiant.
       Currently, we hard code to the list in "supportedmodelformats" (see below)
       but, all these extensions are stripped when the actual image is loaded.
@@ -131,7 +131,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
       So, currently in the .def files you can just use the name
       "sprites/target_speaker.spr" and it will load the file
       from "sprites/target_speaker.*" which is what I propose anyone creating image sets for Q3/Wolf/etc does.
-*/
+ */
 
 #include "plugin.h"
 
@@ -151,60 +151,55 @@ static const char *PLUGIN_NAME = "Sprite Model loading module";
 static const char *PLUGIN_COMMANDS = "About...";
 
 static const char *PLUGIN_ABOUT = "Sprite Model loading module v0.2 for GTKRadiant\n\n"
-                           "By Hydra!";
+								  "By Hydra!";
 
 char *supportedmodelformats[] = {"spr","bmp","tga","jpg","hlw",NULL}; // NULL is list delimiter
 
-static void add_model_apis(CSynapseClient& client)
-{
-  char **ext;
-  for (ext = supportedmodelformats; *ext != NULL; ext++)
-  {
-    client.AddAPI(MODEL_MAJOR, *ext, sizeof(_QERPlugModelTable));
-  }
+static void add_model_apis( CSynapseClient& client ){
+	char **ext;
+	for ( ext = supportedmodelformats; *ext != NULL; ext++ )
+	{
+		client.AddAPI( MODEL_MAJOR, *ext, sizeof( _QERPlugModelTable ) );
+	}
 }
 
-static bool model_is_supported(const char* extension)
-{
-  char **ext;
-  for (ext = supportedmodelformats; *ext != NULL; ext++)
-  {
-    if (stricmp(extension,*ext)==0)
-      return true;
-  }
-  return false;
+static bool model_is_supported( const char* extension ){
+	char **ext;
+	for ( ext = supportedmodelformats; *ext != NULL; ext++ )
+	{
+		if ( stricmp( extension,*ext ) == 0 ) {
+			return true;
+		}
+	}
+	return false;
 }
 
-void init_filetypes()
-{
-  char **ext;
-  for (ext = supportedmodelformats; *ext != NULL; ext++)
-  {
-    GetFileTypeRegistry()->addType(MODEL_MAJOR, filetype_t("sprite", *ext));
-  }
+void init_filetypes(){
+	char **ext;
+	for ( ext = supportedmodelformats; *ext != NULL; ext++ )
+	{
+		GetFileTypeRegistry()->addType( MODEL_MAJOR, filetype_t( "sprite", *ext ) );
+	}
 }
 
-extern "C" const char* QERPlug_Init (void *hApp, void* pMainWidget)
-{
-  init_filetypes(); // see todo list above.
-  return (char *) PLUGIN_NAME;
+extern "C" const char* QERPlug_Init( void *hApp, void* pMainWidget ){
+	init_filetypes(); // see todo list above.
+	return (char *) PLUGIN_NAME;
 }
 
-extern "C" const char* QERPlug_GetName ()
-{
-  return (char *) PLUGIN_NAME;
+extern "C" const char* QERPlug_GetName(){
+	return (char *) PLUGIN_NAME;
 }
 
-extern "C" const char* QERPlug_GetCommandList ()
-{
-  return (char *) PLUGIN_COMMANDS;
+extern "C" const char* QERPlug_GetCommandList(){
+	return (char *) PLUGIN_COMMANDS;
 }
 
-extern "C" void QERPlug_Dispatch (const char *p, vec3_t vMin, vec3_t vMax, bool bSingleBrush)
-{
+extern "C" void QERPlug_Dispatch( const char *p, vec3_t vMin, vec3_t vMax, bool bSingleBrush ){
 	// NOTE: this never happens in a module
-  if(!strcmp(p, "About..."))
-		g_FuncTable.m_pfnMessageBox(NULL, PLUGIN_ABOUT, "About", MB_OK, NULL);
+	if ( !strcmp( p, "About..." ) ) {
+		g_FuncTable.m_pfnMessageBox( NULL, PLUGIN_ABOUT, "About", MB_OK, NULL );
+	}
 }
 
 // =============================================================================
@@ -212,68 +207,61 @@ extern "C" void QERPlug_Dispatch (const char *p, vec3_t vMin, vec3_t vMax, bool 
 
 CSynapseServer* g_pSynapseServer = NULL;
 CSynapseClientModel g_SynapseClient;
-    
+
 #if __GNUC__ >= 4
 #pragma GCC visibility push(default)
 #endif
-extern "C" CSynapseClient* SYNAPSE_DLL_EXPORT Synapse_EnumerateInterfaces( const char *version, CSynapseServer *pServer ) {
+extern "C" CSynapseClient * SYNAPSE_DLL_EXPORT Synapse_EnumerateInterfaces( const char *version, CSynapseServer *pServer ) {
 #if __GNUC__ >= 4
 #pragma GCC visibility pop
 #endif
-  if (strcmp(version, SYNAPSE_VERSION))
-  {
-    Syn_Printf("ERROR: synapse API version mismatch: should be '" SYNAPSE_VERSION "', got '%s'\n", version);
-    return NULL;
-  }
-  g_pSynapseServer = pServer;
-  g_pSynapseServer->IncRef();
-  Set_Syn_Printf(g_pSynapseServer->Get_Syn_Printf());
+	if ( strcmp( version, SYNAPSE_VERSION ) ) {
+		Syn_Printf( "ERROR: synapse API version mismatch: should be '" SYNAPSE_VERSION "', got '%s'\n", version );
+		return NULL;
+	}
+	g_pSynapseServer = pServer;
+	g_pSynapseServer->IncRef();
+	Set_Syn_Printf( g_pSynapseServer->Get_Syn_Printf() );
 
-  add_model_apis(g_SynapseClient); // see todo list above.
+	add_model_apis( g_SynapseClient ); // see todo list above.
 
-  g_SynapseClient.AddAPI( PLUGIN_MAJOR, "sprite", sizeof( _QERPluginTable ) );
-  g_SynapseClient.AddAPI( RADIANT_MAJOR, NULL, sizeof( g_FuncTable ), SYN_REQUIRE, &g_FuncTable );
-  g_SynapseClient.AddAPI( QGL_MAJOR, NULL, sizeof( g_QglTable ), SYN_REQUIRE, &g_QglTable );
-  g_SynapseClient.AddAPI( SHADERS_MAJOR, "*", sizeof( g_ShadersTable ), SYN_REQUIRE, &g_ShadersTable );
+	g_SynapseClient.AddAPI( PLUGIN_MAJOR, "sprite", sizeof( _QERPluginTable ) );
+	g_SynapseClient.AddAPI( RADIANT_MAJOR, NULL, sizeof( g_FuncTable ), SYN_REQUIRE, &g_FuncTable );
+	g_SynapseClient.AddAPI( QGL_MAJOR, NULL, sizeof( g_QglTable ), SYN_REQUIRE, &g_QglTable );
+	g_SynapseClient.AddAPI( SHADERS_MAJOR, "*", sizeof( g_ShadersTable ), SYN_REQUIRE, &g_ShadersTable );
 
-  return &g_SynapseClient;
+	return &g_SynapseClient;
 }
 
-bool CSynapseClientModel::RequestAPI(APIDescriptor_t *pAPI)
-{
-  if (!strcmp(pAPI->major_name, MODEL_MAJOR))
-  {
-    _QERPlugModelTable* pTable= static_cast<_QERPlugModelTable*>(pAPI->mpTable);
+bool CSynapseClientModel::RequestAPI( APIDescriptor_t *pAPI ){
+	if ( !strcmp( pAPI->major_name, MODEL_MAJOR ) ) {
+		_QERPlugModelTable* pTable = static_cast<_QERPlugModelTable*>( pAPI->mpTable );
 
-    if (model_is_supported(pAPI->minor_name))  // see todo list above.
-    {
-      pTable->m_pfnLoadModel = &LoadSpriteModel;
-      return true;
-    }
-  }
-  else if (!strcmp(pAPI->major_name, PLUGIN_MAJOR))
-  {
-    _QERPluginTable* pTable= static_cast<_QERPluginTable*>(pAPI->mpTable);
+		if ( model_is_supported( pAPI->minor_name ) ) { // see todo list above.
+			pTable->m_pfnLoadModel = &LoadSpriteModel;
+			return true;
+		}
+	}
+	else if ( !strcmp( pAPI->major_name, PLUGIN_MAJOR ) ) {
+		_QERPluginTable* pTable = static_cast<_QERPluginTable*>( pAPI->mpTable );
 
-    pTable->m_pfnQERPlug_Init = QERPlug_Init;
-    pTable->m_pfnQERPlug_GetName = QERPlug_GetName;
-    pTable->m_pfnQERPlug_GetCommandList = QERPlug_GetCommandList;
-    pTable->m_pfnQERPlug_Dispatch = QERPlug_Dispatch;
-    return true;
-  }
+		pTable->m_pfnQERPlug_Init = QERPlug_Init;
+		pTable->m_pfnQERPlug_GetName = QERPlug_GetName;
+		pTable->m_pfnQERPlug_GetCommandList = QERPlug_GetCommandList;
+		pTable->m_pfnQERPlug_Dispatch = QERPlug_Dispatch;
+		return true;
+	}
 
-  Syn_Printf("ERROR: RequestAPI( '%s' ) not found in '%s'\n", pAPI->major_name, GetInfo());
-  return false;
+	Syn_Printf( "ERROR: RequestAPI( '%s' ) not found in '%s'\n", pAPI->major_name, GetInfo() );
+	return false;
 }
 
 #include "version.h"
 
-const char* CSynapseClientModel::GetInfo()
-{
-  return "Sprite Model module built " __DATE__ " " RADIANT_VERSION;
+const char* CSynapseClientModel::GetInfo(){
+	return "Sprite Model module built " __DATE__ " " RADIANT_VERSION;
 }
 
-const char* CSynapseClientModel::GetName()
-{
-  return "sprite";
+const char* CSynapseClientModel::GetName(){
+	return "sprite";
 }

@@ -1,27 +1,27 @@
 /*
-BobToolz plugin for GtkRadiant
-Copyright (C) 2001 Gordon Biggans
+   BobToolz plugin for GtkRadiant
+   Copyright (C) 2001 Gordon Biggans
 
-This library is free software; you can redistribute it and/or
-modify it under the terms of the GNU Lesser General Public
-License as published by the Free Software Foundation; either
-version 2.1 of the License, or (at your option) any later version.
+   This library is free software; you can redistribute it and/or
+   modify it under the terms of the GNU Lesser General Public
+   License as published by the Free Software Foundation; either
+   version 2.1 of the License, or (at your option) any later version.
 
-This library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-Lesser General Public License for more details.
+   This library is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+   Lesser General Public License for more details.
 
-You should have received a copy of the GNU Lesser General Public
-License along with this library; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
+   You should have received a copy of the GNU Lesser General Public
+   License along with this library; if not, write to the Free Software
+   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
 
 // DTrainDrawer.h: interface for the DTrainDrawer class.
 //
 //////////////////////////////////////////////////////////////////////
 
-#if !defined(AFX_TRAINDRAWER_H__6E36062A_EF0B_11D4_ACF7_004095A18133__INCLUDED_)
+#if !defined( AFX_TRAINDRAWER_H__6E36062A_EF0B_11D4_ACF7_004095A18133__INCLUDED_ )
 #define AFX_TRAINDRAWER_H__6E36062A_EF0B_11D4_ACF7_004095A18133__INCLUDED_
 
 #include "DEntity.h"
@@ -54,29 +54,33 @@ class DTrainDrawer :
 	public IGL3DWindow
 {
 private:
-	list<splinePoint_t*> m_splineList;
-	list<controlPoint_t*> m_pointList;
-	int refCount;
+list<splinePoint_t*> m_splineList;
+list<controlPoint_t*> m_pointList;
+int refCount;
 
-	bool m_bHooked;
-	bool m_bDisplay;
+bool m_bHooked;
+bool m_bDisplay;
 public:
-	void UnRegister();
-	void Register();
-	
-	DTrainDrawer();
-	virtual ~DTrainDrawer(void);
+void UnRegister();
+void Register();
 
-	void Draw3D();
-	void Draw2D(VIEWTYPE vt);
-	void IncRef() { refCount++; }
-	void DecRef() { refCount--; if (refCount <= 0) delete this; }
-	void ClearSplines();
-	void ClearPoints();
-	void BuildPaths();
-	void AddControlPoint(const char* name, vec_t* origin);
-	splinePoint_t* AddSplinePoint(const char* name, const char* target, vec_t* origin);
-	controlPoint_t* FindControlPoint(const char* name);
+DTrainDrawer();
+virtual ~DTrainDrawer( void );
+
+void Draw3D();
+void Draw2D( VIEWTYPE vt );
+void IncRef() { refCount++; }
+void DecRef() {
+	refCount--; if ( refCount <= 0 ) {
+		delete this;
+	}
+}
+void ClearSplines();
+void ClearPoints();
+void BuildPaths();
+void AddControlPoint( const char* name, vec_t* origin );
+splinePoint_t* AddSplinePoint( const char* name, const char* target, vec_t* origin );
+controlPoint_t* FindControlPoint( const char* name );
 };
 
 #endif // !defined(AFX_TRAINDRAWER_H__6E36062A_EF0B_11D4_ACF7_004095A18133__INCLUDED_)

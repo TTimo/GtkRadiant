@@ -1,29 +1,28 @@
 /*
-Copyright (C) 1999-2007 id Software, Inc. and contributors.
-For a list of contributors, see the accompanying CONTRIBUTORS file.
+   Copyright (C) 1999-2007 id Software, Inc. and contributors.
+   For a list of contributors, see the accompanying CONTRIBUTORS file.
 
-This file is part of GtkRadiant.
+   This file is part of GtkRadiant.
 
-GtkRadiant is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
+   GtkRadiant is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 2 of the License, or
+   (at your option) any later version.
 
-GtkRadiant is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+   GtkRadiant is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
 
-You should have received a copy of the GNU General Public License
-along with GtkRadiant; if not, write to the Free Software
-Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-*/
+   You should have received a copy of the GNU General Public License
+   along with GtkRadiant; if not, write to the Free Software
+   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ */
 
 #include <assert.h>
 #include "q3data.h"
 
-polyset_t *Polyset_SplitSets( polyset_t *psets, int numpolysets, int *pNumNewPolysets, int maxTris )
-{
+polyset_t *Polyset_SplitSets( polyset_t *psets, int numpolysets, int *pNumNewPolysets, int maxTris ){
 	int p, np, op;
 	int numNewPolysets = 0;
 	int numSplitPolysets = 0;
@@ -35,8 +34,9 @@ polyset_t *Polyset_SplitSets( polyset_t *psets, int numpolysets, int *pNumNewPol
 		numNewPolysets += psets[p].numtriangles / maxTris + 1;
 	}
 
-	if ( numNewPolysets == numpolysets )
+	if ( numNewPolysets == numpolysets ) {
 		return psets;
+	}
 
 	printf( "Warning: creating %d polysets from input of %d polysets\n", numNewPolysets, numpolysets );
 
@@ -45,8 +45,7 @@ polyset_t *Polyset_SplitSets( polyset_t *psets, int numpolysets, int *pNumNewPol
 	for ( np = 0, op = 0; op < numpolysets; op++ )
 	{
 		numSplitPolysets = ( psets[op].numtriangles / ( maxTris + 1 ) ) + 1;
-		if (  numSplitPolysets == 1 )
-		{
+		if (  numSplitPolysets == 1 ) {
 			memcpy( &newpsets[np], &psets[op], sizeof( polyset_t ) );
 			np++;
 		}
@@ -61,10 +60,12 @@ polyset_t *Polyset_SplitSets( polyset_t *psets, int numpolysets, int *pNumNewPol
 
 				newpsets[np].triangles = psets[op].triangles + sumTriangles;
 
-				if ( sumTriangles + maxTris > psets[op].numtriangles )
+				if ( sumTriangles + maxTris > psets[op].numtriangles ) {
 					newpsets[np].numtriangles = psets[op].numtriangles - sumTriangles;
-				else
+				}
+				else{
 					newpsets[np].numtriangles = maxTris;
+				}
 
 				sumTriangles += newpsets[np].numtriangles;
 			}
@@ -76,33 +77,34 @@ polyset_t *Polyset_SplitSets( polyset_t *psets, int numpolysets, int *pNumNewPol
 	return newpsets;
 }
 
-polyset_t *Polyset_LoadSets( const char *file, int *numpolysets, int maxTrisPerSet )
-{
+polyset_t *Polyset_LoadSets( const char *file, int *numpolysets, int maxTrisPerSet ){
 	polyset_t *psets;
 	polyset_t *finalpsets;
 
 	//
 	// load the frame
 	//
-	if ( strstr( file, ".3DS" ) || strstr( file, ".3ds" ) )
+	if ( strstr( file, ".3DS" ) || strstr( file, ".3ds" ) ) {
 		_3DS_LoadPolysets( file, &psets, numpolysets, g_verbose );
-	else 
+	}
+	else{
 		Error( "TRI files no longer supported" );
+	}
 //		TRI_LoadPolysets( file, &psets, numpolysets );
 
 /*
-	//
-	// scale polysets
-	//
-	for ( i = 0; i < psets; i++ )
-	{
-		int j;
+    //
+    // scale polysets
+    //
+    for ( i = 0; i < psets; i++ )
+    {
+        int j;
 
-		for ( j = 0; j < psets[i].numtriangles; j++ )
-		{
-		}
-	}
-*/
+        for ( j = 0; j < psets[i].numtriangles; j++ )
+        {
+        }
+    }
+ */
 
 	//
 	// split polysets if necessary
@@ -112,8 +114,7 @@ polyset_t *Polyset_LoadSets( const char *file, int *numpolysets, int maxTrisPerS
 	return finalpsets;
 }
 
-polyset_t *Polyset_CollapseSets( polyset_t *psets, int numpolysets )
-{
+polyset_t *Polyset_CollapseSets( polyset_t *psets, int numpolysets ){
 	int p;
 	int sumtriangles = 0;
 
@@ -143,8 +144,7 @@ polyset_t *Polyset_CollapseSets( polyset_t *psets, int numpolysets )
 	return psets;
 }
 
-static float SnapFloat( float x )
-{
+static float SnapFloat( float x ){
 	int ix;
 
 	x *= 1.0f / MD3_XYZ_SCALE;
@@ -155,8 +155,7 @@ static float SnapFloat( float x )
 	return x;
 }
 
-void Polyset_SnapSets( polyset_t *psets, int numpolysets )
-{
+void Polyset_SnapSets( polyset_t *psets, int numpolysets ){
 	int p;
 
 	for ( p = 0; p < numpolysets; p++ )
@@ -177,8 +176,7 @@ void Polyset_SnapSets( polyset_t *psets, int numpolysets )
 	}
 }
 
-void Polyset_ComputeNormals( polyset_t *psets, int numpolysets )
-{
+void Polyset_ComputeNormals( polyset_t *psets, int numpolysets ){
 	int p;
 	int i, t;
 	int vertexIndex[MD3_MAX_TRIANGLES][3];
@@ -210,15 +208,13 @@ void Polyset_ComputeNormals( polyset_t *psets, int numpolysets )
 			{
 				for ( i = 0; i < numUniqueVertices; i++ )
 				{
-					if ( VectorCompare( psets[p].triangles[t].verts[j], verts[i] ) )
-					{
+					if ( VectorCompare( psets[p].triangles[t].verts[j], verts[i] ) ) {
 						break;
 					}
 				}
-				if ( i == numUniqueVertices )
-				{
+				if ( i == numUniqueVertices ) {
 					vertexIndex[t][j] = numUniqueVertices;
-					VectorCopy( (psets[p].triangles[t].verts[j]), (verts[numUniqueVertices]) );
+					VectorCopy( ( psets[p].triangles[t].verts[j] ), ( verts[numUniqueVertices] ) );
 					numUniqueVertices++;
 				}
 				else
@@ -236,7 +232,7 @@ void Polyset_ComputeNormals( polyset_t *psets, int numpolysets )
 			vec3_t side0, side1, facenormal;
 
 			VectorSubtract( psets[p].triangles[t].verts[0], psets[p].triangles[t].verts[1], side0 );
-			VectorSubtract( psets[p].triangles[t].verts[2], psets[p].triangles[t].verts[1], side1);
+			VectorSubtract( psets[p].triangles[t].verts[2], psets[p].triangles[t].verts[1], side1 );
 
 			CrossProduct( side0, side1, facenormal );
 			VectorNormalize( facenormal, faceNormals[t] );
@@ -251,8 +247,7 @@ void Polyset_ComputeNormals( polyset_t *psets, int numpolysets )
 			{
 				if ( vertexIndex[t][0] == i ||
 					 vertexIndex[t][1] == i ||
-					 vertexIndex[t][2] == i )
-				{
+					 vertexIndex[t][2] == i ) {
 					normals[i][0] += faceNormals[t][0];
 					normals[i][1] += faceNormals[t][1];
 					normals[i][2] += faceNormals[t][2];
@@ -270,4 +265,3 @@ void Polyset_ComputeNormals( polyset_t *psets, int numpolysets )
 		}
 	}
 }
-

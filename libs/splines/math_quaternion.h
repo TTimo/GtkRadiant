@@ -1,23 +1,23 @@
 /*
-Copyright (C) 1999-2007 id Software, Inc. and contributors.
-For a list of contributors, see the accompanying CONTRIBUTORS file.
+   Copyright (C) 1999-2007 id Software, Inc. and contributors.
+   For a list of contributors, see the accompanying CONTRIBUTORS file.
 
-This file is part of GtkRadiant.
+   This file is part of GtkRadiant.
 
-GtkRadiant is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
+   GtkRadiant is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 2 of the License, or
+   (at your option) any later version.
 
-GtkRadiant is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+   GtkRadiant is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
 
-You should have received a copy of the GNU General Public License
-along with GtkRadiant; if not, write to the Free Software
-Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-*/
+   You should have received a copy of the GNU General Public License
+   along with GtkRadiant; if not, write to the Free Software
+   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ */
 
 #ifndef __MATH_QUATERNION_H__
 #define __MATH_QUATERNION_H__
@@ -31,44 +31,44 @@ class mat3_t;
 
 class quat_t {
 public:
-	float			x;
-	float			y;
-	float			z;
-	float			w;
+float x;
+float y;
+float z;
+float w;
 
-					quat_t();
-					quat_t( float x, float y, float z, float w );
+quat_t();
+quat_t( float x, float y, float z, float w );
 
-	friend void		toQuat( idVec3_t &src, quat_t &dst );
-	friend void		toQuat( angles_t &src, quat_t &dst );
-	friend void		toQuat( mat3_t &src, quat_t &dst );
+friend void     toQuat( idVec3_t &src, quat_t &dst );
+friend void     toQuat( angles_t &src, quat_t &dst );
+friend void     toQuat( mat3_t &src, quat_t &dst );
 
-	float			*vec4( void );
-			
-	float			operator[]( int index ) const;
-	float			&operator[]( int index );
+float           *vec4( void );
 
-	void 			set( float x, float y, float z, float w );
+float operator[]( int index ) const;
+float           &operator[]( int index );
 
-	void			operator=( quat_t a );
+void            set( float x, float y, float z, float w );
 
-	friend quat_t	operator+( quat_t a, quat_t b );
-	quat_t			&operator+=( quat_t a );
+void operator=( quat_t a );
 
-	friend quat_t	operator-( quat_t a, quat_t b );
-	quat_t			&operator-=( quat_t a );
+friend quat_t operator+( quat_t a, quat_t b );
+quat_t          &operator+=( quat_t a );
 
-	friend quat_t	operator*( quat_t a, float b );
-	friend quat_t	operator*( float a, quat_t b );
-	quat_t			&operator*=( float a );
+friend quat_t operator-( quat_t a, quat_t b );
+quat_t          &operator-=( quat_t a );
 
-	friend int		operator==(	quat_t a, quat_t b );
-	friend int		operator!=(	quat_t a, quat_t b );
+friend quat_t operator*( quat_t a, float b );
+friend quat_t operator*( float a, quat_t b );
+quat_t          &operator*=( float a );
 
-	float			Length( void );
-	quat_t			&Normalize( void );
+friend int operator==( quat_t a, quat_t b );
+friend int operator!=( quat_t a, quat_t b );
 
-	quat_t			operator-();
+float           Length( void );
+quat_t          &Normalize( void );
+
+quat_t operator-();
 };
 
 inline quat_t::quat_t() {
@@ -162,7 +162,7 @@ inline int operator!=( quat_t a, quat_t b ) {
 
 inline float quat_t::Length( void ) {
 	float length;
-	
+
 	length = x * x + y * y + z * z + w * w;
 	return ( float )sqrt( length );
 }
@@ -179,7 +179,7 @@ inline quat_t& quat_t::Normalize( void ) {
 		z *= ilength;
 		w *= ilength;
 	}
-		
+
 	return *this;
 }
 

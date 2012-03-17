@@ -10,20 +10,20 @@ typedef void* LPVOID;
 typedef char* LPCSTR;
 typedef char* LPSTR;
 
-#define IsEqualGUID(a,b) (memcmp(&a,&b,sizeof(a)) == 0)
+#define IsEqualGUID( a,b ) ( memcmp( &a,&b,sizeof( a ) ) == 0 )
 
 #ifndef GUID_DEFINED
 #define GUID_DEFINED
 typedef struct _GUID
 {
-  unsigned long  Data1;
-  unsigned short Data2;
-  unsigned short Data3;
-  unsigned char  Data4[8];
+	unsigned long Data1;
+	unsigned short Data2;
+	unsigned short Data3;
+	unsigned char Data4[8];
 } GUID;
 #endif
- 
-#if defined(__cplusplus)
+
+#if defined( __cplusplus )
 #ifndef _REFGUID_DEFINED
 #define _REFGUID_DEFINED
 #define REFGUID const GUID &
@@ -61,6 +61,6 @@ typedef struct _GUID
 #define IDRETRY             4
 #define IDIGNORE            5
 #define IDYES               6
-#define IDNO                7 
+#define IDNO                7
 
 #endif

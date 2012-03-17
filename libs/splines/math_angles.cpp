@@ -1,23 +1,23 @@
 /*
-Copyright (C) 1999-2007 id Software, Inc. and contributors.
-For a list of contributors, see the accompanying CONTRIBUTORS file.
+   Copyright (C) 1999-2007 id Software, Inc. and contributors.
+   For a list of contributors, see the accompanying CONTRIBUTORS file.
 
-This file is part of GtkRadiant.
+   This file is part of GtkRadiant.
 
-GtkRadiant is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
+   GtkRadiant is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 2 of the License, or
+   (at your option) any later version.
 
-GtkRadiant is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+   GtkRadiant is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
 
-You should have received a copy of the GNU General Public License
-along with GtkRadiant; if not, write to the Free Software
-Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-*/
+   You should have received a copy of the GNU General Public License
+   along with GtkRadiant; if not, write to the Free Software
+   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ */
 
 #include "q_shared.h"
 #include <float.h>
@@ -25,16 +25,17 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 angles_t ang_zero( 0.0f, 0.0f, 0.0f );
 
 void toAngles( mat3_t &src, angles_t &dst ) {
-	double		theta;
-	double		cp;
-	double		sp;
+	double theta;
+	double cp;
+	double sp;
 
 	sp = src[ 0 ][ 2 ];
 
 	// cap off our sin value so that we don't get any NANs
 	if ( sp > 1.0 ) {
 		sp = 1.0;
-	} else if ( sp < -1.0 ) {
+	}
+	else if ( sp < -1.0 ) {
 		sp = -1.0;
 	}
 
@@ -42,13 +43,14 @@ void toAngles( mat3_t &src, angles_t &dst ) {
 	cp = cos( theta );
 
 	if ( cp > 8192 * FLT_EPSILON ) {
-		dst.pitch	= theta * 180 / M_PI;
-		dst.yaw		= atan2( src[ 0 ][ 1 ], src[ 0 ][ 0 ] ) * 180 / M_PI;
-		dst.roll	= atan2( src[ 1 ][ 2 ], src[ 2 ][ 2 ] ) * 180 / M_PI;
-	} else {
-		dst.pitch	= theta * 180 / M_PI;
-		dst.yaw		= -atan2( src[ 1 ][ 0 ], src[ 1 ][ 1 ] ) * 180 / M_PI;
-		dst.roll	= 0;
+		dst.pitch   = theta * 180 / M_PI;
+		dst.yaw     = atan2( src[ 0 ][ 1 ], src[ 0 ][ 0 ] ) * 180 / M_PI;
+		dst.roll    = atan2( src[ 1 ][ 2 ], src[ 2 ][ 2 ] ) * 180 / M_PI;
+	}
+	else {
+		dst.pitch   = theta * 180 / M_PI;
+		dst.yaw     = -atan2( src[ 1 ][ 0 ], src[ 1 ][ 1 ] ) * 180 / M_PI;
+		dst.roll    = 0;
 	}
 }
 
@@ -60,15 +62,15 @@ void toAngles( quat_t &src, angles_t &dst ) {
 }
 
 void toAngles( idVec3 &src, angles_t &dst ) {
-	dst.pitch	= src[ 0 ];
-	dst.yaw		= src[ 1 ];
-	dst.roll	= src[ 2 ];
+	dst.pitch   = src[ 0 ];
+	dst.yaw     = src[ 1 ];
+	dst.roll    = src[ 2 ];
 }
 
 void angles_t::toVectors( idVec3 *forward, idVec3 *right, idVec3 *up ) {
-	float			angle;
-	static float	sr, sp, sy, cr, cp, cy; // static to help MS compiler fp bugs
-	
+	float angle;
+	static float sr, sp, sy, cr, cp, cy;    // static to help MS compiler fp bugs
+
 	angle = yaw * ( M_PI * 2 / 360 );
 	sy = sin( angle );
 	cy = cos( angle );
@@ -95,9 +97,9 @@ void angles_t::toVectors( idVec3 *forward, idVec3 *right, idVec3 *up ) {
 }
 
 idVec3 angles_t::toForward( void ) {
-	float			angle;
-	static float	sp, sy, cp, cy; // static to help MS compiler fp bugs
-	
+	float angle;
+	static float sp, sy, cp, cy;    // static to help MS compiler fp bugs
+
 	angle = yaw * ( M_PI * 2 / 360 );
 	sy = sin( angle );
 	cy = cos( angle );
@@ -110,35 +112,35 @@ idVec3 angles_t::toForward( void ) {
 }
 
 /*
-=================
-Normalize360
+   =================
+   Normalize360
 
-returns angles normalized to the range [0 <= angle < 360]
-=================
-*/
+   returns angles normalized to the range [0 <= angle < 360]
+   =================
+ */
 angles_t& angles_t::Normalize360( void ) {
-	pitch	= (360.0 / 65536) * ( ( int )( pitch	* ( 65536 / 360.0 ) ) & 65535 );
-	yaw		= (360.0 / 65536) * ( ( int )( yaw		* ( 65536 / 360.0 ) ) & 65535 );
-	roll	= (360.0 / 65536) * ( ( int )( roll		* ( 65536 / 360.0 ) ) & 65535 );
+	pitch   = ( 360.0 / 65536 ) * ( ( int )( pitch    * ( 65536 / 360.0 ) ) & 65535 );
+	yaw     = ( 360.0 / 65536 ) * ( ( int )( yaw      * ( 65536 / 360.0 ) ) & 65535 );
+	roll    = ( 360.0 / 65536 ) * ( ( int )( roll     * ( 65536 / 360.0 ) ) & 65535 );
 
 	return *this;
 }
 
 
 /*
-=================
-Normalize180
+   =================
+   Normalize180
 
-returns angles normalized to the range [-180 < angle <= 180]
-=================
-*/
+   returns angles normalized to the range [-180 < angle <= 180]
+   =================
+ */
 angles_t& angles_t::Normalize180( void ) {
 	Normalize360();
 
 	if ( pitch > 180.0 ) {
 		pitch -= 360.0;
 	}
-	
+
 	if ( yaw > 180.0 ) {
 		yaw  -= 360.0;
 	}

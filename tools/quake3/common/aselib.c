@@ -1,23 +1,23 @@
 /*
-Copyright (C) 1999-2007 id Software, Inc. and contributors.
-For a list of contributors, see the accompanying CONTRIBUTORS file.
+   Copyright (C) 1999-2007 id Software, Inc. and contributors.
+   For a list of contributors, see the accompanying CONTRIBUTORS file.
 
-This file is part of GtkRadiant.
+   This file is part of GtkRadiant.
 
-GtkRadiant is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
+   GtkRadiant is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 2 of the License, or
+   (at your option) any later version.
 
-GtkRadiant is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+   GtkRadiant is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
 
-You should have received a copy of the GNU General Public License
-along with GtkRadiant; if not, write to the Free Software
-Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-*/
+   You should have received a copy of the GNU General Public License
+   along with GtkRadiant; if not, write to the Free Software
+   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ */
 
 
 #include "aselib.h"
@@ -27,10 +27,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <stdio.h>
 #include <stdlib.h>
 
-#define MAX_ASE_MATERIALS			32
-#define MAX_ASE_OBJECTS				64
-#define MAX_ASE_ANIMATIONS			32
-#define MAX_ASE_ANIMATION_FRAMES	512
+#define MAX_ASE_MATERIALS           32
+#define MAX_ASE_OBJECTS             64
+#define MAX_ASE_ANIMATIONS          32
+#define MAX_ASE_ANIMATION_FRAMES    512
 
 #define VERBOSE( x ) { if ( ase.verbose ) { Sys_Printf x ; } }
 
@@ -56,19 +56,19 @@ typedef struct
 
 	int timeValue;
 
-	aseVertex_t		*vertexes;
-	aseTVertex_t	*tvertexes;
-	aseFace_t		*faces, *tfaces;
+	aseVertex_t     *vertexes;
+	aseTVertex_t    *tvertexes;
+	aseFace_t       *faces, *tfaces;
 
 	int currentFace, currentVertex;
 } aseMesh_t;
 
 typedef struct
 {
-	int			numFrames;
-	aseMesh_t	frames[MAX_ASE_ANIMATION_FRAMES];
+	int numFrames;
+	aseMesh_t frames[MAX_ASE_ANIMATION_FRAMES];
 
-	int		   currentFrame;
+	int currentFrame;
 } aseMeshAnimation_t;
 
 typedef struct
@@ -87,23 +87,23 @@ typedef struct
 	int materialRef;
 	int numAnimations;
 
-	aseMeshAnimation_t	anim;
+	aseMeshAnimation_t anim;
 
 } aseGeomObject_t;
 
 typedef struct
 {
-	int				numMaterials;
-	aseMaterial_t	materials[MAX_ASE_MATERIALS];
+	int numMaterials;
+	aseMaterial_t materials[MAX_ASE_MATERIALS];
 	aseGeomObject_t objects[MAX_ASE_OBJECTS];
 
-	char	*buffer;
-	char	*curpos;
-	int		 len;
+	char    *buffer;
+	char    *curpos;
+	int len;
 
-	int			currentObject;
-	qboolean	verbose;
-	qboolean	grabAnims;
+	int currentObject;
+	qboolean verbose;
+	qboolean grabAnims;
 
 } ase_t;
 
@@ -114,18 +114,18 @@ static char gl_filename[1024];
 static void ASE_Process( void );
 static void ASE_FreeGeomObject( int ndx );
 
-#if defined (__linux__) || defined (__APPLE__)
+#if defined ( __linux__ ) || defined ( __APPLE__ )
 
-static char* strlwr (char* string)
-{
-  char *cp;
-  for (cp = string; *cp; ++cp)
-  {
-    if ('A' <= *cp && *cp <= 'Z')
-      *cp += 'a' - 'A';
-  }
+static char* strlwr( char* string ){
+	char *cp;
+	for ( cp = string; *cp; ++cp )
+	{
+		if ( 'A' <= *cp && *cp <= 'Z' ) {
+			*cp += 'a' - 'A';
+		}
+	}
 
-  return string;
+	return string;
 }
 
 #endif
@@ -133,12 +133,12 @@ static char* strlwr (char* string)
 /*
 ** ASE_Load
 */
-void ASE_Load( const char *filename, qboolean verbose, qboolean grabAnims )
-{
+void ASE_Load( const char *filename, qboolean verbose, qboolean grabAnims ){
 	FILE *fp = fopen( filename, "rb" );
 
-	if ( !fp )
+	if ( !fp ) {
 		Error( "File not found '%s'", filename );
+	}
 
 	memset( &ase, 0, sizeof( ase ) );
 
@@ -150,15 +150,14 @@ void ASE_Load( const char *filename, qboolean verbose, qboolean grabAnims )
 
 	Sys_Printf( "Processing '%s'\n", filename );
 
-	if ( fread( ase.buffer, ase.len, 1, fp ) != 1 )
-	{
+	if ( fread( ase.buffer, ase.len, 1, fp ) != 1 ) {
 		fclose( fp );
 		Error( "fread() != -1 for '%s'", filename );
 	}
 
 	fclose( fp );
 
-        strcpy(gl_filename, filename);
+	strcpy( gl_filename, filename );
 
 	ASE_Process();
 }
@@ -166,8 +165,7 @@ void ASE_Load( const char *filename, qboolean verbose, qboolean grabAnims )
 /*
 ** ASE_Free
 */
-void ASE_Free( void )
-{
+void ASE_Free( void ){
 	int i;
 
 	for ( i = 0; i < ase.currentObject; i++ )
@@ -179,20 +177,19 @@ void ASE_Free( void )
 /*
 ** ASE_GetNumSurfaces
 */
-int ASE_GetNumSurfaces( void )
-{
+int ASE_GetNumSurfaces( void ){
 	return ase.currentObject;
 }
 
 /*
 ** ASE_GetSurfaceName
 */
-const char *ASE_GetSurfaceName( int which )
-{
+const char *ASE_GetSurfaceName( int which ){
 	aseGeomObject_t *pObject = &ase.objects[which];
 
-	if ( !pObject->anim.numFrames )
+	if ( !pObject->anim.numFrames ) {
 		return 0;
+	}
 
 	return pObject->name;
 }
@@ -202,32 +199,34 @@ const char *ASE_GetSurfaceName( int which )
 **
 ** Returns an animation (sequence of polysets)
 */
-polyset_t *ASE_GetSurfaceAnimation( int which, int *pNumFrames, int skipFrameStart, int skipFrameEnd, int maxFrames )
-{
+polyset_t *ASE_GetSurfaceAnimation( int which, int *pNumFrames, int skipFrameStart, int skipFrameEnd, int maxFrames ){
 	aseGeomObject_t *pObject = &ase.objects[which];
 	polyset_t *psets;
 	int numFramesInAnimation;
 	int numFramesToKeep;
 	int i, f;
 
-	if ( !pObject->anim.numFrames )
+	if ( !pObject->anim.numFrames ) {
 		return 0;
+	}
 
-	if ( pObject->anim.numFrames > maxFrames && maxFrames != -1 )
-	{
+	if ( pObject->anim.numFrames > maxFrames && maxFrames != -1 ) {
 		numFramesInAnimation = maxFrames;
 	}
 	else
 	{
 		numFramesInAnimation = pObject->anim.numFrames;
-		if ( maxFrames != -1 )
+		if ( maxFrames != -1 ) {
 			Sys_Printf( "WARNING: ASE_GetSurfaceAnimation maxFrames > numFramesInAnimation\n" );
+		}
 	}
 
-	if ( skipFrameEnd != -1 )
+	if ( skipFrameEnd != -1 ) {
 		numFramesToKeep = numFramesInAnimation - ( skipFrameEnd - skipFrameStart + 1 );
-	else
+	}
+	else{
 		numFramesToKeep = numFramesInAnimation;
+	}
 
 	*pNumFrames = numFramesToKeep;
 
@@ -238,10 +237,10 @@ polyset_t *ASE_GetSurfaceAnimation( int which, int *pNumFrames, int skipFrameSta
 		int t;
 		aseMesh_t *pMesh = &pObject->anim.frames[i];
 
-		if ( skipFrameStart != -1 )
-		{
-			if ( i >= skipFrameStart && i <= skipFrameEnd )
+		if ( skipFrameStart != -1 ) {
+			if ( i >= skipFrameStart && i <= skipFrameEnd ) {
 				continue;
+			}
 		}
 
 		strcpy( psets[f].name, pObject->name );
@@ -260,8 +259,7 @@ polyset_t *ASE_GetSurfaceAnimation( int which, int *pNumFrames, int skipFrameSta
 				psets[f].triangles[t].verts[k][1] = pMesh->vertexes[pMesh->faces[t][k]].y;
 				psets[f].triangles[t].verts[k][2] = pMesh->vertexes[pMesh->faces[t][k]].z;
 
-				if ( pMesh->tvertexes && pMesh->tfaces )
-				{
+				if ( pMesh->tvertexes && pMesh->tfaces ) {
 					psets[f].triangles[t].texcoords[k][0] = pMesh->tvertexes[pMesh->tfaces[t][k]].s;
 					psets[f].triangles[t].texcoords[k][1] = pMesh->tvertexes[pMesh->tfaces[t][k]].t;
 				}
@@ -275,8 +273,7 @@ polyset_t *ASE_GetSurfaceAnimation( int which, int *pNumFrames, int skipFrameSta
 	return psets;
 }
 
-static void ASE_FreeGeomObject( int ndx )
-{
+static void ASE_FreeGeomObject( int ndx ){
 	aseGeomObject_t *pObject;
 	int i;
 
@@ -284,20 +281,16 @@ static void ASE_FreeGeomObject( int ndx )
 
 	for ( i = 0; i < pObject->anim.numFrames; i++ )
 	{
-		if ( pObject->anim.frames[i].vertexes )
-		{
+		if ( pObject->anim.frames[i].vertexes ) {
 			free( pObject->anim.frames[i].vertexes );
 		}
-		if ( pObject->anim.frames[i].tvertexes )
-		{
+		if ( pObject->anim.frames[i].tvertexes ) {
 			free( pObject->anim.frames[i].tvertexes );
 		}
-		if ( pObject->anim.frames[i].faces )
-		{
+		if ( pObject->anim.frames[i].faces ) {
 			free( pObject->anim.frames[i].faces );
 		}
-		if ( pObject->anim.frames[i].tfaces )
-		{
+		if ( pObject->anim.frames[i].tfaces ) {
 			free( pObject->anim.frames[i].tfaces );
 		}
 	}
@@ -305,20 +298,17 @@ static void ASE_FreeGeomObject( int ndx )
 	memset( pObject, 0, sizeof( *pObject ) );
 }
 
-static aseMesh_t *ASE_GetCurrentMesh( void )
-{
+static aseMesh_t *ASE_GetCurrentMesh( void ){
 	aseGeomObject_t *pObject;
 
-	if ( ase.currentObject >= MAX_ASE_OBJECTS )
-	{
+	if ( ase.currentObject >= MAX_ASE_OBJECTS ) {
 		Error( "Too many GEOMOBJECTs" );
 		return 0; // never called
 	}
 
 	pObject = &ase.objects[ase.currentObject];
 
-	if ( pObject->anim.currentFrame >= MAX_ASE_ANIMATION_FRAMES )
-	{
+	if ( pObject->anim.currentFrame >= MAX_ASE_ANIMATION_FRAMES ) {
 		Error( "Too many MESHes" );
 		return 0;
 	}
@@ -326,26 +316,27 @@ static aseMesh_t *ASE_GetCurrentMesh( void )
 	return &pObject->anim.frames[pObject->anim.currentFrame];
 }
 
-static int CharIsTokenDelimiter( int ch )
-{
-	if ( ch <= 32 )
+static int CharIsTokenDelimiter( int ch ){
+	if ( ch <= 32 ) {
 		return 1;
+	}
 	return 0;
 }
 
-static int ASE_GetToken( qboolean restOfLine )
-{
+static int ASE_GetToken( qboolean restOfLine ){
 	int i = 0;
 
-	if ( ase.buffer == 0 )
+	if ( ase.buffer == 0 ) {
 		return 0;
+	}
 
-	if ( ( ase.curpos - ase.buffer ) == ase.len )
+	if ( ( ase.curpos - ase.buffer ) == ase.len ) {
 		return 0;
+	}
 
 	// skip over crap
 	while ( ( ( ase.curpos - ase.buffer ) < ase.len ) &&
-		    ( *ase.curpos <= 32 ) )
+			( *ase.curpos <= 32 ) )
 	{
 		ase.curpos++;
 	}
@@ -357,10 +348,9 @@ static int ASE_GetToken( qboolean restOfLine )
 		ase.curpos++;
 		i++;
 
-		if ( ( CharIsTokenDelimiter( s_token[i-1] ) && !restOfLine ) ||
-			 ( ( s_token[i-1] == '\n' ) || ( s_token[i-1] == '\r' ) ) )
-		{
-			s_token[i-1] = 0;
+		if ( ( CharIsTokenDelimiter( s_token[i - 1] ) && !restOfLine ) ||
+			 ( ( s_token[i - 1] == '\n' ) || ( s_token[i - 1] == '\r' ) ) ) {
+			s_token[i - 1] = 0;
 			break;
 		}
 	}
@@ -370,120 +360,114 @@ static int ASE_GetToken( qboolean restOfLine )
 	return 1;
 }
 
-static void ASE_ParseBracedBlock( void (*parser)( const char *token ) )
-{
+static void ASE_ParseBracedBlock( void ( *parser )( const char *token ) ){
 	int indent = 0;
 
 	while ( ASE_GetToken( qfalse ) )
 	{
-		if ( !strcmp( s_token, "{" ) )
-		{
+		if ( !strcmp( s_token, "{" ) ) {
 			indent++;
 		}
-		else if ( !strcmp( s_token, "}" ) )
-		{
+		else if ( !strcmp( s_token, "}" ) ) {
 			--indent;
-			if ( indent == 0 )
+			if ( indent == 0 ) {
 				break;
-			else if ( indent < 0 )
+			}
+			else if ( indent < 0 ) {
 				Error( "Unexpected '}'" );
+			}
 		}
 		else
 		{
-			if ( parser )
+			if ( parser ) {
 				parser( s_token );
+			}
 		}
 	}
 }
 
-static void ASE_SkipEnclosingBraces( void )
-{
+static void ASE_SkipEnclosingBraces( void ){
 	int indent = 0;
 
 	while ( ASE_GetToken( qfalse ) )
 	{
-		if ( !strcmp( s_token, "{" ) )
-		{
+		if ( !strcmp( s_token, "{" ) ) {
 			indent++;
 		}
-		else if ( !strcmp( s_token, "}" ) )
-		{
+		else if ( !strcmp( s_token, "}" ) ) {
 			indent--;
-			if ( indent == 0 )
+			if ( indent == 0 ) {
 				break;
-			else if ( indent < 0 )
+			}
+			else if ( indent < 0 ) {
 				Error( "Unexpected '}'" );
+			}
 		}
 	}
 }
 
-static void ASE_SkipRestOfLine( void )
-{
+static void ASE_SkipRestOfLine( void ){
 	ASE_GetToken( qtrue );
 }
 
-static void ASE_KeyMAP_DIFFUSE( const char *token )
-{
+static void ASE_KeyMAP_DIFFUSE( const char *token ){
 	char fullpath[1024], bitmap[1024], modeldir[1024];
 	char filename[1024];
 	int i = 0, count;
 
-	strcpy(filename, gl_filename);
+	strcpy( filename, gl_filename );
 
-	if ( !strcmp( token, "*BITMAP" ) )
-	{
+	if ( !strcmp( token, "*BITMAP" ) ) {
 		ASE_GetToken( qfalse );
 
 		// the purpose of this whole chunk of code below is to extract the relative path
 		// from a full path in the ASE
 
 		strcpy( bitmap, s_token + 1 );
-		if ( strchr( bitmap, '"' ) )
+		if ( strchr( bitmap, '"' ) ) {
 			*strchr( bitmap, '"' ) = 0;
+		}
 
 		/* convert backslash to slash */
 		while ( bitmap[i] )
 		{
-			if ( bitmap[i] == '\\' )
+			if ( bitmap[i] == '\\' ) {
 				bitmap[i] = '/';
+			}
 			i++;
 		}
 
 		/* remove filename from path */
-		for( i=strlen(filename); i>0; i--)
+		for ( i = strlen( filename ); i > 0; i-- )
 		{
-			if(filename[i] == '/')
-			{
+			if ( filename[i] == '/' ) {
 				filename[i] = '\0';
 				break;
 			}
 		}
 
 		/* replaces a relative path with a full path */
-		if(bitmap[0] == '.' && bitmap[1] == '.' && bitmap[2] == '/')
-		{
-			while(bitmap[0] == '.' && bitmap[1] == '.' && bitmap[2] == '/')
+		if ( bitmap[0] == '.' && bitmap[1] == '.' && bitmap[2] == '/' ) {
+			while ( bitmap[0] == '.' && bitmap[1] == '.' && bitmap[2] == '/' )
 			{
 				/* remove last item from path */
-				for( i=strlen(filename); i>0; i--)
+				for ( i = strlen( filename ); i > 0; i-- )
 				{
-					if(filename[i] == '/')
-					{
+					if ( filename[i] == '/' ) {
 						filename[i] = '\0';
 						break;
 					}
 				}
-				strcpy(bitmap, &bitmap[3]);
+				strcpy( bitmap, &bitmap[3] );
 			}
-			strcat(filename, "/");
-			strcat(filename, bitmap);
-			strcpy(bitmap, filename);
+			strcat( filename, "/" );
+			strcat( filename, bitmap );
+			strcpy( bitmap, filename );
 		}
 
-		if ( strstr( bitmap, gamedir ) )
-		{
+		if ( strstr( bitmap, gamedir ) ) {
 			strcpy( ase.materials[ase.numMaterials].name, strstr( bitmap, gamedir ) + strlen( gamedir ) );
-			Sys_Printf("material name: \'%s\'\n", strstr( bitmap, gamedir ) + strlen( gamedir ) );
+			Sys_Printf( "material name: \'%s\'\n", strstr( bitmap, gamedir ) + strlen( gamedir ) );
 		}
 		else
 		{
@@ -496,10 +480,8 @@ static void ASE_KeyMAP_DIFFUSE( const char *token )
 	}
 }
 
-static void ASE_KeyMATERIAL( const char *token )
-{
-	if ( !strcmp( token, "*MAP_DIFFUSE" ) )
-	{
+static void ASE_KeyMATERIAL( const char *token ){
+	if ( !strcmp( token, "*MAP_DIFFUSE" ) ) {
 		ASE_ParseBracedBlock( ASE_KeyMAP_DIFFUSE );
 	}
 	else
@@ -507,33 +489,27 @@ static void ASE_KeyMATERIAL( const char *token )
 	}
 }
 
-static void ASE_KeyMATERIAL_LIST( const char *token )
-{
-	if ( !strcmp( token, "*MATERIAL_COUNT" ) )
-	{
+static void ASE_KeyMATERIAL_LIST( const char *token ){
+	if ( !strcmp( token, "*MATERIAL_COUNT" ) ) {
 		ASE_GetToken( qfalse );
 		VERBOSE( ( "..num materials: %s\n", s_token ) );
-		if ( atoi( s_token ) > MAX_ASE_MATERIALS )
-		{
+		if ( atoi( s_token ) > MAX_ASE_MATERIALS ) {
 			Error( "Too many materials!" );
 		}
 		ase.numMaterials = 0;
 	}
-	else if ( !strcmp( token, "*MATERIAL" ) )
-	{
+	else if ( !strcmp( token, "*MATERIAL" ) ) {
 		VERBOSE( ( "..material %d ", ase.numMaterials ) );
 		ASE_ParseBracedBlock( ASE_KeyMATERIAL );
 		ase.numMaterials++;
 	}
 }
 
-static void ASE_KeyMESH_VERTEX_LIST( const char *token )
-{
+static void ASE_KeyMESH_VERTEX_LIST( const char *token ){
 	aseMesh_t *pMesh = ASE_GetCurrentMesh();
 
-	if ( !strcmp( token, "*MESH_VERTEX" ) )
-	{
-		ASE_GetToken( qfalse );		// skip number
+	if ( !strcmp( token, "*MESH_VERTEX" ) ) {
+		ASE_GetToken( qfalse );     // skip number
 
 		ASE_GetToken( qfalse );
 		pMesh->vertexes[pMesh->currentVertex].y = atof( s_token );
@@ -546,8 +522,7 @@ static void ASE_KeyMESH_VERTEX_LIST( const char *token )
 
 		pMesh->currentVertex++;
 
-		if ( pMesh->currentVertex > pMesh->numVertexes )
-		{
+		if ( pMesh->currentVertex > pMesh->numVertexes ) {
 			Error( "pMesh->currentVertex >= pMesh->numVertexes" );
 		}
 	}
@@ -557,39 +532,37 @@ static void ASE_KeyMESH_VERTEX_LIST( const char *token )
 	}
 }
 
-static void ASE_KeyMESH_FACE_LIST( const char *token )
-{
+static void ASE_KeyMESH_FACE_LIST( const char *token ){
 	aseMesh_t *pMesh = ASE_GetCurrentMesh();
 
-	if ( !strcmp( token, "*MESH_FACE" ) )
-	{
-		ASE_GetToken( qfalse );	// skip face number
+	if ( !strcmp( token, "*MESH_FACE" ) ) {
+		ASE_GetToken( qfalse ); // skip face number
 
-		ASE_GetToken( qfalse );	// skip label
-		ASE_GetToken( qfalse );	// first vertex
+		ASE_GetToken( qfalse ); // skip label
+		ASE_GetToken( qfalse ); // first vertex
 		pMesh->faces[pMesh->currentFace][0] = atoi( s_token );
 
-		ASE_GetToken( qfalse );	// skip label
-		ASE_GetToken( qfalse );	// second vertex
+		ASE_GetToken( qfalse ); // skip label
+		ASE_GetToken( qfalse ); // second vertex
 		pMesh->faces[pMesh->currentFace][2] = atoi( s_token );
 
-		ASE_GetToken( qfalse );	// skip label
-		ASE_GetToken( qfalse );	// third vertex
+		ASE_GetToken( qfalse ); // skip label
+		ASE_GetToken( qfalse ); // third vertex
 		pMesh->faces[pMesh->currentFace][1] = atoi( s_token );
 
 		ASE_GetToken( qtrue );
 
 /*
-		if ( ( p = strstr( s_token, "*MESH_MTLID" ) ) != 0 )
-		{
-			p += strlen( "*MESH_MTLID" ) + 1;
-			mtlID = atoi( p );
-		}
-		else
-		{
-			Error( "No *MESH_MTLID found for face!" );
-		}
-*/
+        if ( ( p = strstr( s_token, "*MESH_MTLID" ) ) != 0 )
+        {
+            p += strlen( "*MESH_MTLID" ) + 1;
+            mtlID = atoi( p );
+        }
+        else
+        {
+            Error( "No *MESH_MTLID found for face!" );
+        }
+ */
 
 		pMesh->currentFace++;
 	}
@@ -599,12 +572,10 @@ static void ASE_KeyMESH_FACE_LIST( const char *token )
 	}
 }
 
-static void ASE_KeyTFACE_LIST( const char *token )
-{
+static void ASE_KeyTFACE_LIST( const char *token ){
 	aseMesh_t *pMesh = ASE_GetCurrentMesh();
 
-	if ( !strcmp( token, "*MESH_TFACE" ) )
-	{
+	if ( !strcmp( token, "*MESH_TFACE" ) ) {
 		int a, b, c;
 
 		ASE_GetToken( qfalse );
@@ -628,12 +599,10 @@ static void ASE_KeyTFACE_LIST( const char *token )
 	}
 }
 
-static void ASE_KeyMESH_TVERTLIST( const char *token )
-{
+static void ASE_KeyMESH_TVERTLIST( const char *token ){
 	aseMesh_t *pMesh = ASE_GetCurrentMesh();
 
-	if ( !strcmp( token, "*MESH_TVERT" ) )
-	{
+	if ( !strcmp( token, "*MESH_TVERT" ) ) {
 		char u[80], v[80], w[80];
 
 		ASE_GetToken( qfalse );
@@ -652,8 +621,7 @@ static void ASE_KeyMESH_TVERTLIST( const char *token )
 
 		pMesh->currentVertex++;
 
-		if ( pMesh->currentVertex > pMesh->numTVertexes )
-		{
+		if ( pMesh->currentVertex > pMesh->numTVertexes ) {
 			Error( "pMesh->currentVertex > pMesh->numTVertexes" );
 		}
 	}
@@ -663,89 +631,75 @@ static void ASE_KeyMESH_TVERTLIST( const char *token )
 	}
 }
 
-static void ASE_KeyMESH( const char *token )
-{
+static void ASE_KeyMESH( const char *token ){
 	aseMesh_t *pMesh = ASE_GetCurrentMesh();
 
-	if ( !strcmp( token, "*TIMEVALUE" ) )
-	{
+	if ( !strcmp( token, "*TIMEVALUE" ) ) {
 		ASE_GetToken( qfalse );
 
 		pMesh->timeValue = atoi( s_token );
 		VERBOSE( ( ".....timevalue: %d\n", pMesh->timeValue ) );
 	}
-	else if ( !strcmp( token, "*MESH_NUMVERTEX" ) )
-	{
+	else if ( !strcmp( token, "*MESH_NUMVERTEX" ) ) {
 		ASE_GetToken( qfalse );
 
 		pMesh->numVertexes = atoi( s_token );
 		VERBOSE( ( ".....TIMEVALUE: %d\n", pMesh->timeValue ) );
 		VERBOSE( ( ".....num vertexes: %d\n", pMesh->numVertexes ) );
 	}
-	else if ( !strcmp( token, "*MESH_NUMFACES" ) )
-	{
+	else if ( !strcmp( token, "*MESH_NUMFACES" ) ) {
 		ASE_GetToken( qfalse );
 
 		pMesh->numFaces = atoi( s_token );
 		VERBOSE( ( ".....num faces: %d\n", pMesh->numFaces ) );
 	}
-	else if ( !strcmp( token, "*MESH_NUMTVFACES" ) )
-	{
+	else if ( !strcmp( token, "*MESH_NUMTVFACES" ) ) {
 		ASE_GetToken( qfalse );
 
-		if ( atoi( s_token ) != pMesh->numFaces )
-		{
+		if ( atoi( s_token ) != pMesh->numFaces ) {
 			Error( "MESH_NUMTVFACES != MESH_NUMFACES" );
 		}
 	}
-	else if ( !strcmp( token, "*MESH_NUMTVERTEX" ) )
-	{
+	else if ( !strcmp( token, "*MESH_NUMTVERTEX" ) ) {
 		ASE_GetToken( qfalse );
 
 		pMesh->numTVertexes = atoi( s_token );
 		VERBOSE( ( ".....num tvertexes: %d\n", pMesh->numTVertexes ) );
 	}
-	else if ( !strcmp( token, "*MESH_VERTEX_LIST" ) )
-	{
+	else if ( !strcmp( token, "*MESH_VERTEX_LIST" ) ) {
 		pMesh->vertexes = calloc( sizeof( aseVertex_t ) * pMesh->numVertexes, 1 );
 		pMesh->currentVertex = 0;
 		VERBOSE( ( ".....parsing MESH_VERTEX_LIST\n" ) );
 		ASE_ParseBracedBlock( ASE_KeyMESH_VERTEX_LIST );
 	}
-	else if ( !strcmp( token, "*MESH_TVERTLIST" ) )
-	{
+	else if ( !strcmp( token, "*MESH_TVERTLIST" ) ) {
 		pMesh->currentVertex = 0;
 		pMesh->tvertexes = calloc( sizeof( aseTVertex_t ) * pMesh->numTVertexes, 1 );
 		VERBOSE( ( ".....parsing MESH_TVERTLIST\n" ) );
 		ASE_ParseBracedBlock( ASE_KeyMESH_TVERTLIST );
 	}
-	else if ( !strcmp( token, "*MESH_FACE_LIST" ) )
-	{
+	else if ( !strcmp( token, "*MESH_FACE_LIST" ) ) {
 		pMesh->faces = calloc( sizeof( aseFace_t ) * pMesh->numFaces, 1 );
 		pMesh->currentFace = 0;
 		VERBOSE( ( ".....parsing MESH_FACE_LIST\n" ) );
 		ASE_ParseBracedBlock( ASE_KeyMESH_FACE_LIST );
 	}
-	else if ( !strcmp( token, "*MESH_TFACELIST" ) )
-	{
+	else if ( !strcmp( token, "*MESH_TFACELIST" ) ) {
 		pMesh->tfaces = calloc( sizeof( aseFace_t ) * pMesh->numFaces, 1 );
 		pMesh->currentFace = 0;
 		VERBOSE( ( ".....parsing MESH_TFACE_LIST\n" ) );
 		ASE_ParseBracedBlock( ASE_KeyTFACE_LIST );
 	}
-	else if ( !strcmp( token, "*MESH_NORMALS" ) )
-	{
+	else if ( !strcmp( token, "*MESH_NORMALS" ) ) {
 		ASE_ParseBracedBlock( 0 );
 	}
 }
 
-static void ASE_KeyMESH_ANIMATION( const char *token )
-{
+static void ASE_KeyMESH_ANIMATION( const char *token ){
 	aseMesh_t *pMesh = ASE_GetCurrentMesh();
 
 	// loads a single animation frame
-	if ( !strcmp( token, "*MESH" ) )
-	{
+	if ( !strcmp( token, "*MESH" ) ) {
 		VERBOSE( ( "...found MESH\n" ) );
 		assert( pMesh->faces == 0 );
 		assert( pMesh->vertexes == 0 );
@@ -754,8 +708,7 @@ static void ASE_KeyMESH_ANIMATION( const char *token )
 
 		ASE_ParseBracedBlock( ASE_KeyMESH );
 
-		if ( ++ase.objects[ase.currentObject].anim.currentFrame == MAX_ASE_ANIMATION_FRAMES )
-		{
+		if ( ++ase.objects[ase.currentObject].anim.currentFrame == MAX_ASE_ANIMATION_FRAMES ) {
 			Error( "Too many animation frames" );
 		}
 	}
@@ -765,20 +718,18 @@ static void ASE_KeyMESH_ANIMATION( const char *token )
 	}
 }
 
-static void ASE_KeyGEOMOBJECT( const char *token )
-{
-	if ( !strcmp( token, "*NODE_NAME" ) )
-	{
+static void ASE_KeyGEOMOBJECT( const char *token ){
+	if ( !strcmp( token, "*NODE_NAME" ) ) {
 		char *name = ase.objects[ase.currentObject].name;
 
 		ASE_GetToken( qtrue );
 		VERBOSE( ( " %s\n", s_token ) );
 		strcpy( ase.objects[ase.currentObject].name, s_token + 1 );
-		if ( strchr( ase.objects[ase.currentObject].name, '"' ) )
+		if ( strchr( ase.objects[ase.currentObject].name, '"' ) ) {
 			*strchr( ase.objects[ase.currentObject].name, '"' ) = 0;
+		}
 
-		if ( strstr( name, "tag" ) == name )
-		{
+		if ( strstr( name, "tag" ) == name ) {
 			while ( strchr( name, '_' ) != strrchr( name, '_' ) )
 			{
 				*strrchr( name, '_' ) = 0;
@@ -789,59 +740,51 @@ static void ASE_KeyGEOMOBJECT( const char *token )
 			}
 		}
 	}
-	else if ( !strcmp( token, "*NODE_PARENT" ) )
-	{
+	else if ( !strcmp( token, "*NODE_PARENT" ) ) {
 		ASE_SkipRestOfLine();
 	}
 	// ignore unused data blocks
 	else if ( !strcmp( token, "*NODE_TM" ) ||
-		      !strcmp( token, "*TM_ANIMATION" ) )
-	{
+			  !strcmp( token, "*TM_ANIMATION" ) ) {
 		ASE_ParseBracedBlock( 0 );
 	}
 	// ignore regular meshes that aren't part of animation
-	else if ( !strcmp( token, "*MESH" ) && !ase.grabAnims )
-	{
+	else if ( !strcmp( token, "*MESH" ) && !ase.grabAnims ) {
 /*
-		if ( strstr( ase.objects[ase.currentObject].name, "tag_" ) == ase.objects[ase.currentObject].name )
-		{
-			s_forceStaticMesh = true;
-			ASE_ParseBracedBlock( ASE_KeyMESH );
-			s_forceStaticMesh = false;
-		}
-*/
+        if ( strstr( ase.objects[ase.currentObject].name, "tag_" ) == ase.objects[ase.currentObject].name )
+        {
+            s_forceStaticMesh = true;
+            ASE_ParseBracedBlock( ASE_KeyMESH );
+            s_forceStaticMesh = false;
+        }
+ */
 		ASE_ParseBracedBlock( ASE_KeyMESH );
-		if ( ++ase.objects[ase.currentObject].anim.currentFrame == MAX_ASE_ANIMATION_FRAMES )
-		{
+		if ( ++ase.objects[ase.currentObject].anim.currentFrame == MAX_ASE_ANIMATION_FRAMES ) {
 			Error( "Too many animation frames" );
 		}
 		ase.objects[ase.currentObject].anim.numFrames = ase.objects[ase.currentObject].anim.currentFrame;
 		ase.objects[ase.currentObject].numAnimations++;
 /*
-		// ignore meshes that aren't part of animations if this object isn't a
-		// a tag
-		else
-		{
-			ASE_ParseBracedBlock( 0 );
-		}
-*/
+        // ignore meshes that aren't part of animations if this object isn't a
+        // a tag
+        else
+        {
+            ASE_ParseBracedBlock( 0 );
+        }
+ */
 	}
 	// according to spec these are obsolete
-	else if ( !strcmp( token, "*MATERIAL_REF" ) )
-	{
+	else if ( !strcmp( token, "*MATERIAL_REF" ) ) {
 		ASE_GetToken( qfalse );
 
 		ase.objects[ase.currentObject].materialRef = atoi( s_token );
 	}
 	// loads a sequence of animation frames
-	else if ( !strcmp( token, "*MESH_ANIMATION" ) )
-	{
-		if ( ase.grabAnims )
-		{
+	else if ( !strcmp( token, "*MESH_ANIMATION" ) ) {
+		if ( ase.grabAnims ) {
 			VERBOSE( ( "..found MESH_ANIMATION\n" ) );
 
-			if ( ase.objects[ase.currentObject].numAnimations )
-			{
+			if ( ase.objects[ase.currentObject].numAnimations ) {
 				Error( "Multiple MESH_ANIMATIONS within a single GEOM_OBJECT" );
 			}
 			ASE_ParseBracedBlock( ASE_KeyMESH_ANIMATION );
@@ -855,19 +798,16 @@ static void ASE_KeyGEOMOBJECT( const char *token )
 	}
 	// skip unused info
 	else if ( !strcmp( token, "*PROP_MOTIONBLUR" ) ||
-		      !strcmp( token, "*PROP_CASTSHADOW" ) ||
-			  !strcmp( token, "*PROP_RECVSHADOW" ) )
-	{
+			  !strcmp( token, "*PROP_CASTSHADOW" ) ||
+			  !strcmp( token, "*PROP_RECVSHADOW" ) ) {
 		ASE_SkipRestOfLine();
 	}
 }
 
-static void ConcatenateObjects( aseGeomObject_t *pObjA, aseGeomObject_t *pObjB )
-{
+static void ConcatenateObjects( aseGeomObject_t *pObjA, aseGeomObject_t *pObjB ){
 }
 
-static void CollapseObjects( void )
-{
+static void CollapseObjects( void ){
 	int i;
 	int numObjects = ase.currentObject;
 
@@ -876,26 +816,21 @@ static void CollapseObjects( void )
 		int j;
 
 		// skip tags
-		if ( strstr( ase.objects[i].name, "tag" ) == ase.objects[i].name )
-		{
+		if ( strstr( ase.objects[i].name, "tag" ) == ase.objects[i].name ) {
 			continue;
 		}
 
-		if ( !ase.objects[i].numAnimations )
-		{
+		if ( !ase.objects[i].numAnimations ) {
 			continue;
 		}
 
 		for ( j = i + 1; j < numObjects; j++ )
 		{
-			if ( strstr( ase.objects[j].name, "tag" ) == ase.objects[j].name )
-			{
+			if ( strstr( ase.objects[j].name, "tag" ) == ase.objects[j].name ) {
 				continue;
 			}
-			if ( ase.objects[i].materialRef == ase.objects[j].materialRef )
-			{
-				if ( ase.objects[j].numAnimations )
-				{
+			if ( ase.objects[i].materialRef == ase.objects[j].materialRef ) {
+				if ( ase.objects[j].numAnimations ) {
 					ConcatenateObjects( &ase.objects[i], &ase.objects[j] );
 				}
 			}
@@ -906,60 +841,54 @@ static void CollapseObjects( void )
 /*
 ** ASE_Process
 */
-static void ASE_Process( void )
-{
+static void ASE_Process( void ){
 	while ( ASE_GetToken( qfalse ) )
 	{
 		if ( !strcmp( s_token, "*3DSMAX_ASCIIEXPORT" ) ||
-			 !strcmp( s_token, "*COMMENT" ) )
-		{
+			 !strcmp( s_token, "*COMMENT" ) ) {
 			ASE_SkipRestOfLine();
 		}
-		else if ( !strcmp( s_token, "*SCENE" ) )
+		else if ( !strcmp( s_token, "*SCENE" ) ) {
 			ASE_SkipEnclosingBraces();
-		else if ( !strcmp( s_token, "*MATERIAL_LIST" ) )
-		{
-			VERBOSE( ("MATERIAL_LIST\n") );
+		}
+		else if ( !strcmp( s_token, "*MATERIAL_LIST" ) ) {
+			VERBOSE( ( "MATERIAL_LIST\n" ) );
 
 			ASE_ParseBracedBlock( ASE_KeyMATERIAL_LIST );
 		}
-		else if ( !strcmp( s_token, "*GEOMOBJECT" ) )
-		{
-			VERBOSE( ("GEOMOBJECT" ) );
+		else if ( !strcmp( s_token, "*GEOMOBJECT" ) ) {
+			VERBOSE( ( "GEOMOBJECT" ) );
 
 			ASE_ParseBracedBlock( ASE_KeyGEOMOBJECT );
 
 			if ( strstr( ase.objects[ase.currentObject].name, "Bip" ) ||
-				 strstr( ase.objects[ase.currentObject].name, "ignore_" ) )
-			{
+				 strstr( ase.objects[ase.currentObject].name, "ignore_" ) ) {
 				ASE_FreeGeomObject( ase.currentObject );
 				VERBOSE( ( "(discarding BIP/ignore object)\n" ) );
 			}
 			else if ( ( strstr( ase.objects[ase.currentObject].name, "h_" ) != ase.objects[ase.currentObject].name ) &&
-				      ( strstr( ase.objects[ase.currentObject].name, "l_" ) != ase.objects[ase.currentObject].name ) &&
+					  ( strstr( ase.objects[ase.currentObject].name, "l_" ) != ase.objects[ase.currentObject].name ) &&
 					  ( strstr( ase.objects[ase.currentObject].name, "u_" ) != ase.objects[ase.currentObject].name ) &&
 					  ( strstr( ase.objects[ase.currentObject].name, "tag" ) != ase.objects[ase.currentObject].name ) &&
-					  ase.grabAnims )
-			{
+					  ase.grabAnims ) {
 				VERBOSE( ( "(ignoring improperly labeled object '%s')\n", ase.objects[ase.currentObject].name ) );
 				ASE_FreeGeomObject( ase.currentObject );
 			}
 			else
 			{
-				if ( ++ase.currentObject == MAX_ASE_OBJECTS )
-				{
+				if ( ++ase.currentObject == MAX_ASE_OBJECTS ) {
 					Error( "Too many GEOMOBJECTs" );
 				}
 			}
 		}
-		else if ( s_token[0] )
-		{
+		else if ( s_token[0] ) {
 			Sys_Printf( "Unknown token '%s'\n", s_token );
 		}
 	}
 
-	if ( !ase.currentObject )
+	if ( !ase.currentObject ) {
 		Error( "No animation data!" );
+	}
 
 	CollapseObjects();
 }

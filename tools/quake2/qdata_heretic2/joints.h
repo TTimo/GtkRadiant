@@ -1,23 +1,23 @@
 /*
-Copyright (C) 1999-2007 id Software, Inc. and contributors.
-For a list of contributors, see the accompanying CONTRIBUTORS file.
+   Copyright (C) 1999-2007 id Software, Inc. and contributors.
+   For a list of contributors, see the accompanying CONTRIBUTORS file.
 
-This file is part of GtkRadiant.
+   This file is part of GtkRadiant.
 
-GtkRadiant is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
+   GtkRadiant is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 2 of the License, or
+   (at your option) any later version.
 
-GtkRadiant is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+   GtkRadiant is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
 
-You should have received a copy of the GNU General Public License
-along with GtkRadiant; if not, write to the Free Software
-Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-*/
+   You should have received a copy of the GNU General Public License
+   along with GtkRadiant; if not, write to the Free Software
+   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ */
 
 #ifndef JOINTS_H
 #define JOINTS_H
@@ -45,7 +45,7 @@ typedef struct Placement_s
 typedef struct QDataJoint_s
 {
 	Placement_t placement;
-	vec3_t		rotation;
+	vec3_t rotation;
 } QDataJoint_t;
 #endif
 
@@ -73,8 +73,8 @@ typedef struct JointAngles2_s
 	int inUse;
 } JointAngles2_t;
 
-#define MAX_MODELJOINTS			256
-#define MAX_MODELJOINTNODES		255
+#define MAX_MODELJOINTS         256
+#define MAX_MODELJOINTNODES     255
 
 extern JointAngles_t jointAngles[MAX_MODELJOINTS];
 extern JointAngles2_t jointAngles2[MAX_MODELJOINTS];
@@ -105,40 +105,40 @@ enum {
 extern int numJointsForSkeleton[];
 extern char *RAVEN_SKEL_NAMES[];
 
-#define J_NEW_SKELETON		0x00001000
-#define J_YAW_CHANGED		0x00002000
-#define J_PITCH_CHANGED		0x00004000
-#define J_ROLL_CHANGED		0x00008000
-#define MAX_JOINTS			0x00000fff
+#define J_NEW_SKELETON      0x00001000
+#define J_YAW_CHANGED       0x00002000
+#define J_PITCH_CHANGED     0x00004000
+#define J_ROLL_CHANGED      0x00008000
+#define MAX_JOINTS          0x00000fff
 /*
-inline int GetFreeNode(ArrayedListNode_t *nodeArray, int max)
-{	// yeah, I know this is a sucky, inefficient way to do this, but I didn't feel like taking the time to write a real resource manager in C
-	int i;
+   inline int GetFreeNode(ArrayedListNode_t *nodeArray, int max)
+   {	// yeah, I know this is a sucky, inefficient way to do this, but I didn't feel like taking the time to write a real resource manager in C
+    int i;
 
-	for(i = 0; i < max; ++i)
-	{
-		if(!nodeArray[i].inUse)
-		{
-			nodeArray[i].inUse = 1;
-			return i;
-		}
-	}
+    for(i = 0; i < max; ++i)
+    {
+        if(!nodeArray[i].inUse)
+        {
+            nodeArray[i].inUse = 1;
+            return i;
+        }
+    }
 
-	assert(0);
-	return -1;
-}
+    assert(0);
+    return -1;
+   }
 
-inline void FreeNode(ArrayedListNode_t *nodeArray, int index)
-{
-	nodeArray[index].inUse = 0;
-}
-*/
-int CreateSkeleton(int structure);
-void CreateSkeletonAtIndex(int structure, int index);
-void FreeSkeleton(int structure, int index);
-void SetJointAngle(int jointIndex, int angleIndex, float angle);
-float ModifyJointAngle(int jointIndex, int angleIndex, float deltaAngle);
-int ZeroJointAngle(int jointIndex, int angleIndex, float angVel);
-int ApplyAngVelToJoint(int jointIndex, int angleIndex, float angVel, float destAng);
+   inline void FreeNode(ArrayedListNode_t *nodeArray, int index)
+   {
+    nodeArray[index].inUse = 0;
+   }
+ */
+int CreateSkeleton( int structure );
+void CreateSkeletonAtIndex( int structure, int index );
+void FreeSkeleton( int structure, int index );
+void SetJointAngle( int jointIndex, int angleIndex, float angle );
+float ModifyJointAngle( int jointIndex, int angleIndex, float deltaAngle );
+int ZeroJointAngle( int jointIndex, int angleIndex, float angVel );
+int ApplyAngVelToJoint( int jointIndex, int angleIndex, float angVel, float destAng );
 
 #endif

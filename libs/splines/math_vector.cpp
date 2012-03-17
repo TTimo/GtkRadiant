@@ -1,23 +1,23 @@
 /*
-Copyright (C) 1999-2007 id Software, Inc. and contributors.
-For a list of contributors, see the accompanying CONTRIBUTORS file.
+   Copyright (C) 1999-2007 id Software, Inc. and contributors.
+   For a list of contributors, see the accompanying CONTRIBUTORS file.
 
-This file is part of GtkRadiant.
+   This file is part of GtkRadiant.
 
-GtkRadiant is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
+   GtkRadiant is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 2 of the License, or
+   (at your option) any later version.
 
-GtkRadiant is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+   GtkRadiant is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
 
-You should have received a copy of the GNU General Public License
-along with GtkRadiant; if not, write to the Free Software
-Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-*/
+   You should have received a copy of the GNU General Public License
+   along with GtkRadiant; if not, write to the Free Software
+   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ */
 
 #include "math_vector.h"
 #include <assert.h>
@@ -29,20 +29,21 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <time.h>
 #include <ctype.h>
 
-#define M_PI		3.14159265358979323846	// matches value in gcc v2 math.h
+#define M_PI        3.14159265358979323846  // matches value in gcc v2 math.h
 
 #define LERP_DELTA 1e-6
 
 idVec3 vec_zero( 0.0f, 0.0f, 0.0f );
 
-Bounds	boundsZero;
+Bounds boundsZero;
 
 float idVec3::toYaw( void ) {
 	float yaw;
-	
+
 	if ( ( y == 0 ) && ( x == 0 ) ) {
 		yaw = 0;
-	} else {
+	}
+	else {
 		yaw = atan2( y, x ) * 180 / M_PI;
 		if ( yaw < 0 ) {
 			yaw += 360;
@@ -53,16 +54,18 @@ float idVec3::toYaw( void ) {
 }
 
 float idVec3::toPitch( void ) {
-	float	forward;
-	float	pitch;
-	
+	float forward;
+	float pitch;
+
 	if ( ( x == 0 ) && ( y == 0 ) ) {
 		if ( z > 0 ) {
 			pitch = 90;
-		} else {
+		}
+		else {
 			pitch = 270;
 		}
-	} else {
+	}
+	else {
 		forward = ( float )idSqrt( x * x + y * y );
 		pitch = atan2( z, forward ) * 180 / M_PI;
 		if ( pitch < 0 ) {
@@ -74,34 +77,34 @@ float idVec3::toPitch( void ) {
 }
 
 /*
-angles_t idVec3::toAngles( void ) {
-	float forward;
-	float yaw;
-	float pitch;
-	
-	if ( ( x == 0 ) && ( y == 0 ) ) {
-		yaw = 0;
-		if ( z > 0 ) {
-			pitch = 90;
-		} else {
-			pitch = 270;
-		}
-	} else {
-		yaw = atan2( y, x ) * 180 / M_PI;
-		if ( yaw < 0 ) {
-			yaw += 360;
-		}
+   angles_t idVec3::toAngles( void ) {
+    float forward;
+    float yaw;
+    float pitch;
 
-		forward = ( float )idSqrt( x * x + y * y );
-		pitch = atan2( z, forward ) * 180 / M_PI;
-		if ( pitch < 0 ) {
-			pitch += 360;
-		}
-	}
+    if ( ( x == 0 ) && ( y == 0 ) ) {
+        yaw = 0;
+        if ( z > 0 ) {
+            pitch = 90;
+        } else {
+            pitch = 270;
+        }
+    } else {
+        yaw = atan2( y, x ) * 180 / M_PI;
+        if ( yaw < 0 ) {
+            yaw += 360;
+        }
 
-	return angles_t( -pitch, yaw, 0 );
-}
-*/
+        forward = ( float )idSqrt( x * x + y * y );
+        pitch = atan2( z, forward ) * 180 / M_PI;
+        if ( pitch < 0 ) {
+            pitch += 360;
+        }
+    }
+
+    return angles_t( -pitch, yaw, 0 );
+   }
+ */
 
 idVec3 LerpVector( idVec3 &w1, idVec3 &w2, const float t ) {
 	float omega, cosom, sinom, scale0, scale1;
@@ -112,7 +115,8 @@ idVec3 LerpVector( idVec3 &w1, idVec3 &w2, const float t ) {
 		sinom = sin( omega );
 		scale0 = sin( ( 1.0 - t ) * omega ) / sinom;
 		scale1 = sin( t * omega ) / sinom;
-	} else {
+	}
+	else {
 		scale0 = 1.0 - t;
 		scale1 = t;
 	}
@@ -121,21 +125,21 @@ idVec3 LerpVector( idVec3 &w1, idVec3 &w2, const float t ) {
 }
 
 /*
-=============
-idVec3::string
+   =============
+   idVec3::string
 
-This is just a convenience function
-for printing vectors
-=============
-*/
+   This is just a convenience function
+   for printing vectors
+   =============
+ */
 char *idVec3::string( void ) {
-	static	int		index = 0;
-	static	char	str[ 8 ][ 36 ];
-	char	*s;
+	static int index = 0;
+	static char str[ 8 ][ 36 ];
+	char    *s;
 
 	// use an array so that multiple toString's won't collide
 	s = str[ index ];
-	index = (index + 1)&7;
+	index = ( index + 1 ) & 7;
 
 	sprintf( s, "%.2f %.2f %.2f", x, y, z );
 

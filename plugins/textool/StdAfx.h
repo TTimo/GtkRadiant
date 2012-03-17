@@ -1,23 +1,23 @@
 /*
-Copyright (C) 1999-2007 id Software, Inc. and contributors.
-For a list of contributors, see the accompanying CONTRIBUTORS file.
+   Copyright (C) 1999-2007 id Software, Inc. and contributors.
+   For a list of contributors, see the accompanying CONTRIBUTORS file.
 
-This file is part of GtkRadiant.
+   This file is part of GtkRadiant.
 
-GtkRadiant is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
+   GtkRadiant is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 2 of the License, or
+   (at your option) any later version.
 
-GtkRadiant is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+   GtkRadiant is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
 
-You should have received a copy of the GNU General Public License
-along with GtkRadiant; if not, write to the Free Software
-Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-*/
+   You should have received a copy of the GNU General Public License
+   along with GtkRadiant; if not, write to the Free Software
+   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ */
 
 // stdafx.h
 // precompiled headers
@@ -28,7 +28,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <stdio.h>
 #include <stdlib.h>
 
-#if defined(__linux__) || defined(__APPLE__)
+#if defined( __linux__ ) || defined( __APPLE__ )
 
 // Necessary for proper boolean type declaration
 #include "qertypes.h"
@@ -72,17 +72,17 @@ typedef char* LPCSTR;
 
 typedef struct tagRECT
 {
-    long    left;
-    long    top;
-    long    right;
-    long    bottom;
+	long left;
+	long top;
+	long right;
+	long bottom;
 } RECT, *PRECT, *LPRECT;
 
 #endif // __linux__
 
 // plugin
 // FIXME TTimo: drop this
-extern "C" void Sys_Printf (char *text, ...);
+extern "C" void Sys_Printf( char *text, ... );
 
 #include "synapse.h"
 #include "iplugin.h"
@@ -99,39 +99,43 @@ extern "C" void Sys_Printf (char *text, ...);
 // NOTE: I'm not too sure about the bool flags being any use.. they are supposed to tell if we handle the event or not
 class CWindowListener : public IWindowListener
 {
-  int refCount;
+int refCount;
 public:
-  // Increment the number of references to this object
-  void IncRef () { refCount++; }
-  // Decrement the reference count
-  void DecRef () { if ( --refCount <= 0 ) delete this; }
-  // IWindowListener ---------------------------------------
-  bool OnLButtonDown(guint32 nFlags, double x, double y);
-	bool OnMButtonDown(guint32 nFlags, double x, double y) { return false; }
-	bool OnRButtonDown(guint32 nFlags, double x, double y);
-  bool OnLButtonUp(guint32 nFlags, double x, double y);
-	bool OnMButtonUp(guint32 nFlags, double x, double y) { return false; }
-	bool OnRButtonUp(guint32 nFlags, double x, double y);
-  bool OnMouseMove(guint32 nFlags, double x, double y);
-  bool OnKeyPressed(char *s);
-  bool Paint();
-  void Close();
+// Increment the number of references to this object
+void IncRef() { refCount++; }
+// Decrement the reference count
+void DecRef() {
+	if ( --refCount <= 0 ) {
+		delete this;
+	}
+}
+// IWindowListener ---------------------------------------
+bool OnLButtonDown( guint32 nFlags, double x, double y );
+bool OnMButtonDown( guint32 nFlags, double x, double y ) { return false; }
+bool OnRButtonDown( guint32 nFlags, double x, double y );
+bool OnLButtonUp( guint32 nFlags, double x, double y );
+bool OnMButtonUp( guint32 nFlags, double x, double y ) { return false; }
+bool OnRButtonUp( guint32 nFlags, double x, double y );
+bool OnMouseMove( guint32 nFlags, double x, double y );
+bool OnKeyPressed( char *s );
+bool Paint();
+void Close();
 };
 
 #include "2DView.h"
 typedef struct
 {
-	float	data[MAX_POINTS_ON_WINDING][2];
+	float data[MAX_POINTS_ON_WINDING][2];
 } CtrlPts_t;
 #include "ControlPointsManager.h"
 
-extern _QERQglTable		        g_QglTable;
-extern _QERFuncTable_1			g_FuncTable;
+extern _QERQglTable g_QglTable;
+extern _QERFuncTable_1 g_FuncTable;
 // prefs globals
 // NOTE: these are used by the CControlPointsManager classes, not very C++ish
-extern bool						g_bPrefsUpdateCameraView;
-extern _QERSelectedFaceTable	g_SelectedFaceTable;
-extern _QERFaceData				g_CancelFaceData;
+extern bool g_bPrefsUpdateCameraView;
+extern _QERSelectedFaceTable g_SelectedFaceTable;
+extern _QERFaceData g_CancelFaceData;
 
 #define Sys_Printf g_FuncTable.m_pfnSysPrintf
 #define Sys_FPrintf g_FuncTable.m_pfnSysFPrintf
@@ -143,12 +147,12 @@ extern void Textool_Cancel();
 class CSynapseClientTexTool : public CSynapseClient
 {
 public:
-  // CSynapseClient API
-  bool RequestAPI(APIDescriptor_t *pAPI);
-  const char* GetInfo();
+// CSynapseClient API
+bool RequestAPI( APIDescriptor_t *pAPI );
+const char* GetInfo();
 
-  CSynapseClientTexTool() { }
-  virtual ~CSynapseClientTexTool() { }
+CSynapseClientTexTool() { }
+virtual ~CSynapseClientTexTool() { }
 };
 
 extern IWindow *g_pToolWnd;

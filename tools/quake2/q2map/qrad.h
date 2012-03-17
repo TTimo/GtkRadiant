@@ -1,31 +1,31 @@
 /*
-Copyright (C) 1999-2007 id Software, Inc. and contributors.
-For a list of contributors, see the accompanying CONTRIBUTORS file.
+   Copyright (C) 1999-2007 id Software, Inc. and contributors.
+   For a list of contributors, see the accompanying CONTRIBUTORS file.
 
-This file is part of GtkRadiant.
+   This file is part of GtkRadiant.
 
-GtkRadiant is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
+   GtkRadiant is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 2 of the License, or
+   (at your option) any later version.
 
-GtkRadiant is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+   GtkRadiant is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
 
-You should have received a copy of the GNU General Public License
-along with GtkRadiant; if not, write to the Free Software
-Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-*/
+   You should have received a copy of the GNU General Public License
+   along with GtkRadiant; if not, write to the Free Software
+   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ */
 /* Files:
 
-lightmap.c
-patches.c
-qrad.c
-trace.c
+   lightmap.c
+   patches.c
+   qrad.c
+   trace.c
 
-*/
+ */
 
 
 #include "cmdlib.h"
@@ -41,7 +41,7 @@ trace.c
 #endif
 
 #ifdef WIN32
-	#ifdef NDEBUG							// Don't show in a Release build
+	#ifdef NDEBUG                           // Don't show in a Release build
 		#pragma warning(disable : 4305)     // truncate from double to float
 		#pragma warning(disable : 4244)     // conversion from double to float
 		#pragma warning(disable : 4018)     // signed/unsigned mismatch
@@ -60,14 +60,14 @@ typedef enum
 typedef struct directlight_s
 {
 	struct directlight_s *next;
-	emittype_t	type;
+	emittype_t type;
 
-	float		intensity;
-	int			style;
-	vec3_t		origin;
-	vec3_t		color;
-	vec3_t		normal;		// for surfaces and spotlights
-	float		stopdot;		// for spotlights
+	float intensity;
+	int style;
+	vec3_t origin;
+	vec3_t color;
+	vec3_t normal;          // for surfaces and spotlights
+	float stopdot;              // for spotlights
 } directlight_t;
 
 
@@ -76,109 +76,109 @@ typedef struct directlight_s
 // reaches other patches
 typedef struct
 {
-	unsigned short	patch;
-	unsigned short	transfer;
+	unsigned short patch;
+	unsigned short transfer;
 } transfer_t;
 
 
-#define	MAX_PATCHES	65000			// larger will cause 32 bit overflows
+#define MAX_PATCHES 65000           // larger will cause 32 bit overflows
 
 typedef struct patch_s
 {
-	winding_t	*winding;
-	struct patch_s		*next;		// next in face
-	int			numtransfers;
-	transfer_t	*transfers;
+	winding_t   *winding;
+	struct patch_s      *next;      // next in face
+	int numtransfers;
+	transfer_t  *transfers;
 
-	int			cluster;			// for pvs checking
-	vec3_t		origin;
-	dplane_t	*plane;
+	int cluster;                    // for pvs checking
+	vec3_t origin;
+	dplane_t    *plane;
 
-	qboolean	sky;
+	qboolean sky;
 
-	vec3_t		totallight;			// accumulated by radiosity
-									// does NOT include light
-									// accounted for by direct lighting
-	float		area;
+	vec3_t totallight;              // accumulated by radiosity
+	                                // does NOT include light
+	                                // accounted for by direct lighting
+	float area;
 
 	// illuminance * reflectivity = radiosity
-	vec3_t		reflectivity;
-	vec3_t		baselight;			// emissivity only
+	vec3_t reflectivity;
+	vec3_t baselight;               // emissivity only
 
 	// each style 0 lightmap sample in the patch will be
 	// added up to get the average illuminance of the entire patch
-	vec3_t		samplelight;
-	int			samples;		// for averaging direct light
+	vec3_t samplelight;
+	int samples;                // for averaging direct light
 } patch_t;
 
-extern	patch_t		*face_patches[MAX_MAP_FACES];
-extern	entity_t	*face_entity[MAX_MAP_FACES];
-extern	vec3_t		face_offset[MAX_MAP_FACES];		// for rotating bmodels
-extern	patch_t		patches[MAX_PATCHES];
-extern	unsigned	num_patches;
+extern patch_t     *face_patches[MAX_MAP_FACES];
+extern entity_t    *face_entity[MAX_MAP_FACES];
+extern vec3_t face_offset[MAX_MAP_FACES];           // for rotating bmodels
+extern patch_t patches[MAX_PATCHES];
+extern unsigned num_patches;
 
-extern	int		leafparents[MAX_MAP_LEAFS];
-extern	int		nodeparents[MAX_MAP_NODES];
+extern int leafparents[MAX_MAP_LEAFS];
+extern int nodeparents[MAX_MAP_NODES];
 
-extern	float	lightscale;
-
-
-void MakeShadowSplits (void);
-
-//==============================================
+extern float lightscale;
 
 
-void BuildVisMatrix (void);
-qboolean CheckVisBit (unsigned p1, unsigned p2);
+void MakeShadowSplits( void );
 
 //==============================================
 
-extern	float ambient, maxlight;
 
-void LinkPlaneFaces (void);
+void BuildVisMatrix( void );
+qboolean CheckVisBit( unsigned p1, unsigned p2 );
 
-extern	qboolean	extrasamples;
+//==============================================
+
+extern float ambient, maxlight;
+
+void LinkPlaneFaces( void );
+
+extern qboolean extrasamples;
 extern int numbounce;
 
-extern	directlight_t	*directlights[MAX_MAP_LEAFS];
+extern directlight_t   *directlights[MAX_MAP_LEAFS];
 
-extern	byte	nodehit[MAX_MAP_NODES];
+extern byte nodehit[MAX_MAP_NODES];
 
-void BuildLightmaps (void);
+void BuildLightmaps( void );
 
-void BuildFacelights (int facenum);
+void BuildFacelights( int facenum );
 
-void FinalLightFace (int facenum);
+void FinalLightFace( int facenum );
 
-qboolean PvsForOrigin (vec3_t org, byte *pvs);
+qboolean PvsForOrigin( vec3_t org, byte *pvs );
 
-int TestLine_r (int node, vec3_t start, vec3_t stop);
+int TestLine_r( int node, vec3_t start, vec3_t stop );
 
-void CreateDirectLights (void);
+void CreateDirectLights( void );
 
-dleaf_t		*Rad_PointInLeaf (vec3_t point);
+dleaf_t     *Rad_PointInLeaf( vec3_t point );
 
 
-extern	dplane_t	backplanes[MAX_MAP_PLANES];
-extern	int			fakeplanes;					// created planes for origin offset 
+extern dplane_t backplanes[MAX_MAP_PLANES];
+extern int fakeplanes;                          // created planes for origin offset
 
-extern	float	subdiv;
+extern float subdiv;
 
-extern	float	direct_scale;
-extern	float	entity_scale;
+extern float direct_scale;
+extern float entity_scale;
 
-int	PointInLeafnum (vec3_t point);
-void MakeTnodes (dmodel_t *bm);
-void MakePatches (void);
-void SubdividePatches (void);
-void PairEdges (void);
-void (*CalcTextureReflectivity) (void);
-void CalcTextureReflectivity_Quake2(void);
-void CalcTextureReflectivity_Heretic2(void);
+int PointInLeafnum( vec3_t point );
+void MakeTnodes( dmodel_t *bm );
+void MakePatches( void );
+void SubdividePatches( void );
+void PairEdges( void );
+void ( *CalcTextureReflectivity )( void );
+void CalcTextureReflectivity_Quake2( void );
+void CalcTextureReflectivity_Heretic2( void );
 
 //=============================================================================
 
 // externs
 
-extern char	*mapname;
-extern char	game[64];
+extern char *mapname;
+extern char game[64];

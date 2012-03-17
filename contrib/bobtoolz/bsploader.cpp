@@ -3,94 +3,93 @@
 #include "bsploader.h"
 #include "../../libs/cmdlib.h"
 
-int			numnodes;
-int			numplanes;
-int			numleafs;
-int			numleafsurfaces;
-int			numVisBytes;
-int			numDrawVerts;
-int			numDrawSurfaces;
-int			numbrushes;
-int			numbrushsides;
-int			numleafbrushes;
+int numnodes;
+int numplanes;
+int numleafs;
+int numleafsurfaces;
+int numVisBytes;
+int numDrawVerts;
+int numDrawSurfaces;
+int numbrushes;
+int numbrushsides;
+int numleafbrushes;
 
-byte			    *visBytes =			  NULL;
-dnode_t			  *dnodes =			    NULL;
-dplane_t		  *dplanes =			  NULL;
-dleaf_t			  *dleafs =			    NULL;
-qdrawVert_t	  *drawVerts =		  NULL;
-dsurface_t	  *drawSurfaces =		NULL;
-int				    *dleafsurfaces =	NULL;
-dbrush_t		  *dbrushes =			  NULL;
-dbrushside_t	*dbrushsides =		NULL;
-int				    *dleafbrushes =		NULL;
+byte                *visBytes =           NULL;
+dnode_t           *dnodes =             NULL;
+dplane_t          *dplanes =              NULL;
+dleaf_t           *dleafs =             NULL;
+qdrawVert_t   *drawVerts =        NULL;
+dsurface_t    *drawSurfaces =       NULL;
+int                 *dleafsurfaces =    NULL;
+dbrush_t          *dbrushes =             NULL;
+dbrushside_t    *dbrushsides =      NULL;
+int                 *dleafbrushes =     NULL;
 
-#define BSP_IDENT	(('P'<<24)+('S'<<16)+('B'<<8)+'I')
-#define Q3_BSP_VERSION			46
-#define WOLF_BSP_VERSION			47
+#define BSP_IDENT   ( ( 'P' << 24 ) + ( 'S' << 16 ) + ( 'B' << 8 ) + 'I' )
+#define Q3_BSP_VERSION          46
+#define WOLF_BSP_VERSION            47
 
 /*
-================
-FileLength
-================
-*/
-int FileLength (FILE *f)
-{
-	int		pos;
-	int		end;
+   ================
+   FileLength
+   ================
+ */
+int FileLength( FILE *f ){
+	int pos;
+	int end;
 
-	pos = ftell (f);
-	fseek (f, 0, SEEK_END);
-	end = ftell (f);
-	fseek (f, pos, SEEK_SET);
+	pos = ftell( f );
+	fseek( f, 0, SEEK_END );
+	end = ftell( f );
+	fseek( f, pos, SEEK_SET );
 
 	return end;
 }
 
 /*
-==============
-LoadFile
-==============
-*/
-qboolean    LoadFile( const char *filename, byte **bufferptr)
-{
-	FILE	*f;
-	int		length;
+   ==============
+   LoadFile
+   ==============
+ */
+qboolean    LoadFile( const char *filename, byte **bufferptr ){
+	FILE    *f;
+	int length;
 	byte    *buffer;
 
-	f = fopen(filename, "rb");
-	if(!f)
+	f = fopen( filename, "rb" );
+	if ( !f ) {
 		return false;
+	}
 
-	length = FileLength (f);
-	buffer = new byte[length+1];
+	length = FileLength( f );
+	buffer = new byte[length + 1];
 	buffer[length] = 0;
-	fread(buffer, 1, length, f);
-	fclose (f);
+	fread( buffer, 1, length, f );
+	fclose( f );
 
 	*bufferptr = buffer;
 	return true;
 }
 
 /*int    LittleLong (int l)
-{
-	return l;
-}
+   {
+    return l;
+   }
 
-float	LittleFloat (float l)
-{
-	return l;
-}*/
+   float	LittleFloat (float l)
+   {
+    return l;
+   }*/
 
 /*
-=============
-SwapBlock
+   =============
+   SwapBlock
 
-If all values are 32 bits, this can be used to swap everything
-=============
-*/
+   If all values are 32 bits, this can be used to swap everything
+   =============
+ */
 void SwapBlock( int *block, int sizeOfBlock ) {
-	int		i;
+	int i;
 
 	sizeOfBlock >>= 2;
 	for ( i = 0 ; i < sizeOfBlock ; i++ ) {
@@ -99,16 +98,16 @@ void SwapBlock( int *block, int sizeOfBlock ) {
 }
 
 /*
-=============
-SwapBSPFile
+   =============
+   SwapBSPFile
 
-Byte swaps all data in a bsp file.
-=============
-*/
+   Byte swaps all data in a bsp file.
+   =============
+ */
 void SwapBSPFile( void ) {
-	int				i;
-	
-	// models	
+	int i;
+
+	// models
 //	SwapBlock( (int *)dmodels, nummodels * sizeof( dmodels[0] ) );
 
 	// shaders (don't swap the name)
@@ -119,7 +118,7 @@ void SwapBSPFile( void ) {
 
 	// planes
 	SwapBlock( (int *)dplanes, numplanes * sizeof( dplanes[0] ) );
-	
+
 	// nodes
 	SwapBlock( (int *)dnodes, numnodes * sizeof( dnodes[0] ) );
 
@@ -139,8 +138,8 @@ void SwapBSPFile( void ) {
 	SwapBlock( (int *)dbrushsides, numbrushsides * sizeof( dbrushsides[0] ) );
 
 	// vis
-	((int *)&visBytes)[0] = LittleLong( ((int *)&visBytes)[0] );
-	((int *)&visBytes)[1] = LittleLong( ((int *)&visBytes)[1] );
+	( (int *)&visBytes )[0] = LittleLong( ( (int *)&visBytes )[0] );
+	( (int *)&visBytes )[1] = LittleLong( ( (int *)&visBytes )[1] );
 
 	// drawverts (don't swap colors )
 	for ( i = 0 ; i < numDrawVerts ; i++ ) {
@@ -170,19 +169,20 @@ void SwapBSPFile( void ) {
 }
 
 /*
-=============
-CopyLump
-=============
-*/
-int CopyLump( dheader_t	*header, int lump, void **dest, int size ) {
-	int		length, ofs;
+   =============
+   CopyLump
+   =============
+ */
+int CopyLump( dheader_t *header, int lump, void **dest, int size ) {
+	int length, ofs;
 
 	length = header->lumps[lump].filelen;
 	ofs = header->lumps[lump].fileofs;
-	
-	if(length == 0)
+
+	if ( length == 0 ) {
 		return 0;
-	
+	}
+
 	*dest = new byte[length];
 	memcpy( *dest, (byte *)header + ofs, length );
 
@@ -190,69 +190,79 @@ int CopyLump( dheader_t	*header, int lump, void **dest, int size ) {
 }
 
 /*
-=============
-LoadBSPFile
-=============
-*/
-qboolean	LoadBSPFile( const char *filename ) {
-	dheader_t	*header;
+   =============
+   LoadBSPFile
+   =============
+ */
+qboolean    LoadBSPFile( const char *filename ) {
+	dheader_t   *header;
 
 	// load the file header
-	if(!LoadFile (filename, (byte **)&header))
+	if ( !LoadFile( filename, (byte **)&header ) ) {
 		return false;
+	}
 
 	// swap the header
-	SwapBlock( (int *)header, sizeof(*header) );
+	SwapBlock( (int *)header, sizeof( *header ) );
 
 	if ( header->ident != BSP_IDENT ) {
-		DoMessageBox( "Cant find a valid IBSP file", "Error", MB_OK);
+		DoMessageBox( "Cant find a valid IBSP file", "Error", MB_OK );
 		return false;
 	}
-	if ( (header->version != Q3_BSP_VERSION) &&
-																			(header->version != WOLF_BSP_VERSION) ) {
-		DoMessageBox( "File is incorrect version", "Error", MB_OK);
+	if ( ( header->version != Q3_BSP_VERSION ) &&
+		 ( header->version != WOLF_BSP_VERSION ) ) {
+		DoMessageBox( "File is incorrect version", "Error", MB_OK );
 		return false;
 	}
 
-	numbrushsides =		CopyLump( header, LUMP_BRUSHES,			(void**)&dbrushsides,	sizeof(dbrushside_t) );
-	numbrushes =		CopyLump( header, LUMP_BRUSHES,			(void**)&dbrushes,		sizeof(dbrush_t) );
-	numplanes =			CopyLump( header, LUMP_PLANES,			(void**)&dplanes,		sizeof(dplane_t) );
-	numleafs =			CopyLump( header, LUMP_LEAFS,			(void**)&dleafs,		sizeof(dleaf_t) );
-	numnodes =			CopyLump( header, LUMP_NODES,			(void**)&dnodes,		sizeof(dnode_t) );
-	numDrawVerts =		CopyLump( header, LUMP_DRAWVERTS,		(void**)&drawVerts,		sizeof(qdrawVert_t) );
-	numDrawSurfaces =	CopyLump( header, LUMP_SURFACES,		(void**)&drawSurfaces,	sizeof(dsurface_t) );
-	numleafsurfaces =	CopyLump( header, LUMP_LEAFSURFACES,	(void**)&dleafsurfaces, sizeof(int) );
-	numVisBytes =		CopyLump( header, LUMP_VISIBILITY,		(void**)&visBytes,		1 );
-	numleafbrushes =	CopyLump( header, LUMP_LEAFBRUSHES,		(void**)&dleafbrushes,	sizeof(int) );
+	numbrushsides =     CopyLump( header, LUMP_BRUSHES,         (void**)&dbrushsides,   sizeof( dbrushside_t ) );
+	numbrushes =        CopyLump( header, LUMP_BRUSHES,         (void**)&dbrushes,      sizeof( dbrush_t ) );
+	numplanes =         CopyLump( header, LUMP_PLANES,          (void**)&dplanes,       sizeof( dplane_t ) );
+	numleafs =          CopyLump( header, LUMP_LEAFS,           (void**)&dleafs,        sizeof( dleaf_t ) );
+	numnodes =          CopyLump( header, LUMP_NODES,           (void**)&dnodes,        sizeof( dnode_t ) );
+	numDrawVerts =      CopyLump( header, LUMP_DRAWVERTS,       (void**)&drawVerts,     sizeof( qdrawVert_t ) );
+	numDrawSurfaces =   CopyLump( header, LUMP_SURFACES,        (void**)&drawSurfaces,  sizeof( dsurface_t ) );
+	numleafsurfaces =   CopyLump( header, LUMP_LEAFSURFACES,    (void**)&dleafsurfaces, sizeof( int ) );
+	numVisBytes =       CopyLump( header, LUMP_VISIBILITY,      (void**)&visBytes,      1 );
+	numleafbrushes =    CopyLump( header, LUMP_LEAFBRUSHES,     (void**)&dleafbrushes,  sizeof( int ) );
 
-	delete header;		// everything has been copied out
-		
+	delete header;      // everything has been copied out
+
 	// swap everything
 	SwapBSPFile();
 
 	return true;
 }
 
-void FreeBSPData()
-{
-	if(visBytes)
+void FreeBSPData(){
+	if ( visBytes ) {
 		delete visBytes;
-	if(dnodes)
+	}
+	if ( dnodes ) {
 		delete dnodes;
-	if(dplanes)
+	}
+	if ( dplanes ) {
 		delete dplanes;
-	if(dleafs)
+	}
+	if ( dleafs ) {
 		delete dleafs;
-	if(drawVerts)
+	}
+	if ( drawVerts ) {
 		delete drawVerts;
-	if(drawSurfaces)
+	}
+	if ( drawSurfaces ) {
 		delete drawSurfaces;
-	if(dleafsurfaces)
+	}
+	if ( dleafsurfaces ) {
 		delete dleafsurfaces;
-	if(dleafbrushes)
+	}
+	if ( dleafbrushes ) {
 		delete dleafbrushes;
-	if(dbrushes)
+	}
+	if ( dbrushes ) {
 		delete dbrushes;
-	if(dbrushsides)
+	}
+	if ( dbrushsides ) {
 		delete dbrushsides;
+	}
 }

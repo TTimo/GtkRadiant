@@ -1,33 +1,33 @@
 /*
-Copyright (C) 1999-2007 id Software, Inc. and contributors.
-For a list of contributors, see the accompanying CONTRIBUTORS file.
+   Copyright (C) 1999-2007 id Software, Inc. and contributors.
+   For a list of contributors, see the accompanying CONTRIBUTORS file.
 
-This file is part of GtkRadiant.
+   This file is part of GtkRadiant.
 
-GtkRadiant is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
+   GtkRadiant is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 2 of the License, or
+   (at your option) any later version.
 
-GtkRadiant is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+   GtkRadiant is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
 
-You should have received a copy of the GNU General Public License
-along with GtkRadiant; if not, write to the Free Software
-Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-*/
+   You should have received a copy of the GNU General Public License
+   along with GtkRadiant; if not, write to the Free Software
+   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ */
 
 #include "q_shared.h"
 
 mat3_t mat3_default( idVec3( 1, 0, 0 ), idVec3( 0, 1, 0 ), idVec3( 0, 0, 1 ) );
 
 void toMatrix( quat_t const &src, mat3_t &dst ) {
-	float	wx, wy, wz;
-	float	xx, yy, yz;
-	float	xy, xz, zz;
-	float	x2, y2, z2;
+	float wx, wy, wz;
+	float xx, yy, yz;
+	float xy, xz, zz;
+	float x2, y2, z2;
 
 	x2 = src.x + src.x;
 	y2 = src.y + src.y;
@@ -59,9 +59,9 @@ void toMatrix( quat_t const &src, mat3_t &dst ) {
 }
 
 void toMatrix( angles_t const &src, mat3_t &dst ) {
-	float			angle;
-	static float	sr, sp, sy, cr, cp, cy; // static to help MS compiler fp bugs
-		
+	float angle;
+	static float sr, sp, sy, cr, cp, cy;    // static to help MS compiler fp bugs
+
 	angle = src.yaw * ( M_PI * 2.0f / 360.0f );
 	sy = sin( angle );
 	cy = cos( angle );
@@ -80,8 +80,8 @@ void toMatrix( angles_t const &src, mat3_t &dst ) {
 }
 
 void toMatrix( idVec3 const &src, mat3_t &dst ) {
-        angles_t sup = src;
-        toMatrix(sup, dst);
+	angles_t sup = src;
+	toMatrix( sup, dst );
 }
 
 void mat3_t::ProjectVector( const idVec3 &src, idVec3 &dst ) const {
@@ -95,27 +95,27 @@ void mat3_t::UnprojectVector( const idVec3 &src, idVec3 &dst ) const {
 }
 
 void mat3_t::Transpose( mat3_t &matrix ) {
-	int	i;
-	int	j;
-   
-	for( i = 0; i < 3; i++ ) {
-		for( j = 0; j < 3; j++ ) {
+	int i;
+	int j;
+
+	for ( i = 0; i < 3; i++ ) {
+		for ( j = 0; j < 3; j++ ) {
 			matrix[ i ][ j ] = mat[ j ][ i ];
-        }
+		}
 	}
 }
 
 void mat3_t::Transpose( void ) {
-	float	temp;
-	int		i;
-	int		j;
-   
-	for( i = 0; i < 3; i++ ) {
-		for( j = i + 1; j < 3; j++ ) {
+	float temp;
+	int i;
+	int j;
+
+	for ( i = 0; i < 3; i++ ) {
+		for ( j = i + 1; j < 3; j++ ) {
 			temp = mat[ i ][ j ];
 			mat[ i ][ j ] = mat[ j ][ i ];
 			mat[ j ][ i ] = temp;
-        }
+		}
 	}
 }
 

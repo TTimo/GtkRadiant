@@ -1,21 +1,21 @@
 /*
-BobToolz plugin for GtkRadiant
-Copyright (C) 2001 Gordon Biggans
+   BobToolz plugin for GtkRadiant
+   Copyright (C) 2001 Gordon Biggans
 
-This library is free software; you can redistribute it and/or
-modify it under the terms of the GNU Lesser General Public
-License as published by the Free Software Foundation; either
-version 2.1 of the License, or (at your option) any later version.
+   This library is free software; you can redistribute it and/or
+   modify it under the terms of the GNU Lesser General Public
+   License as published by the Free Software Foundation; either
+   version 2.1 of the License, or (at your option) any later version.
 
-This library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-Lesser General Public License for more details.
+   This library is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+   Lesser General Public License for more details.
 
-You should have received a copy of the GNU Lesser General Public
-License along with this library; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
+   You should have received a copy of the GNU Lesser General Public
+   License along with this library; if not, write to the Free Software
+   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
 
 #ifndef __STDAFX_BOBTOOLZ__
 #define __STDAFX_BOBTOOLZ__
@@ -35,7 +35,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "time.h"
 
-#if defined (__linux__) || defined (__APPLE__)
+#if defined ( __linux__ ) || defined ( __APPLE__ )
 
 // Necessary for proper boolean type declaration
 #include "qertypes.h"
@@ -45,7 +45,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 typedef void* HMODULE;
 typedef void* LPVOID;
 typedef char* LPCSTR;
-//typedef int 	bool;
+//typedef int   bool;
 
 #define MB_OK                       0x00000000L
 #define MB_OKCANCEL                 0x00000001L
@@ -89,17 +89,17 @@ typedef char* LPCSTR;
 #define GUID_DEFINED
 typedef struct _GUID
 {
-  unsigned long  Data1;
-  unsigned short Data2;
-  unsigned short Data3;
-  unsigned char  Data4[8];
+	unsigned long Data1;
+	unsigned short Data2;
+	unsigned short Data3;
+	unsigned char Data4[8];
 } GUID;
 
 #define stricmp strcasecmp
 
 #endif
 
-#if defined(__cplusplus)
+#if defined( __cplusplus )
 #ifndef _REFGUID_DEFINED
 #define _REFGUID_DEFINED
 #define REFGUID             const GUID &
@@ -108,10 +108,10 @@ typedef struct _GUID
 
 typedef struct tagRECT
 {
-    long    left;
-    long    top;
-    long    right;
-    long    bottom;
+	long left;
+	long top;
+	long right;
+	long bottom;
 } RECT, *PRECT, *LPRECT;
 
 typedef uint UINT;
@@ -139,17 +139,17 @@ typedef uint UINT;
 
 #include "mathlib.h"
 
-extern	_QERFuncTable_1			    g_FuncTable;
-extern  _QERAppDataTable			  g_AppDataTable;
-extern  _QERBrushTable				  g_BrushTable;
-extern	_QERSelectedFaceTable		g_SelectedFaceTable;
-extern	_QERShadersTable		    g_ShadersTable;
-extern	_QERQglTable				    g_QglTable;
-extern	_QERUITable					    g_MessageTable;
-extern	_QEREntityTable				  g_EntityTable;
+extern _QERFuncTable_1 g_FuncTable;
+extern _QERAppDataTable g_AppDataTable;
+extern _QERBrushTable g_BrushTable;
+extern _QERSelectedFaceTable g_SelectedFaceTable;
+extern _QERShadersTable g_ShadersTable;
+extern _QERQglTable g_QglTable;
+extern _QERUITable g_MessageTable;
+extern _QEREntityTable g_EntityTable;
 
 
-#define MAX_ROUND_ERROR	0.05
+#define MAX_ROUND_ERROR 0.05
 
 #include "gtkr_list.h"
 

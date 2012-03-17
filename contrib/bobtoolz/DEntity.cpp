@@ -1,21 +1,21 @@
 /*
-BobToolz plugin for GtkRadiant
-Copyright (C) 2001 Gordon Biggans
+   BobToolz plugin for GtkRadiant
+   Copyright (C) 2001 Gordon Biggans
 
-This library is free software; you can redistribute it and/or
-modify it under the terms of the GNU Lesser General Public
-License as published by the Free Software Foundation; either
-version 2.1 of the License, or (at your option) any later version.
+   This library is free software; you can redistribute it and/or
+   modify it under the terms of the GNU Lesser General Public
+   License as published by the Free Software Foundation; either
+   version 2.1 of the License, or (at your option) any later version.
 
-This library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-Lesser General Public License for more details.
+   This library is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+   Lesser General Public License for more details.
 
-You should have received a copy of the GNU Lesser General Public
-License along with this library; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
+   You should have received a copy of the GNU Lesser General Public
+   License along with this library; if not, write to the Free Software
+   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
 
 // DEntity.cpp: implementation of the DEntity class.
 //
@@ -57,15 +57,13 @@ const char* brushEntityList[] = {
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-DEntity::DEntity(char *classname, int ID)
-{
-	SetClassname(classname);
+DEntity::DEntity( char *classname, int ID ){
+	SetClassname( classname );
 	m_nID = ID;
 	QER_Entity = NULL;
 }
 
-DEntity::~DEntity()
-{
+DEntity::~DEntity(){
 	ClearPatches();
 	ClearBrushes();
 	ClearEPairs();
@@ -75,193 +73,186 @@ DEntity::~DEntity()
 // Implementation
 //////////////////////////////////////////////////////////////////////
 
-void DEntity::ClearBrushes()
-{
-	for(list<DBrush *>::const_iterator deadBrush=brushList.begin(); deadBrush!=brushList.end(); deadBrush++)
+void DEntity::ClearBrushes(){
+	for ( list<DBrush *>::const_iterator deadBrush = brushList.begin(); deadBrush != brushList.end(); deadBrush++ )
 	{
 		delete *deadBrush;
 	}
 	brushList.clear();
 }
 
-void DEntity::ClearPatches()
-{
-	for(list<DPatch *>::const_iterator deadPatch=patchList.begin(); deadPatch!=patchList.end(); deadPatch++)
+void DEntity::ClearPatches(){
+	for ( list<DPatch *>::const_iterator deadPatch = patchList.begin(); deadPatch != patchList.end(); deadPatch++ )
 	{
 		delete *deadPatch;
 	}
 	patchList.clear();
 }
 
-DPatch* DEntity::NewPatch()
-{
+DPatch* DEntity::NewPatch(){
 	DPatch* newPatch = new DPatch;
 
-	patchList.push_back(newPatch);
+	patchList.push_back( newPatch );
 
 	return newPatch;
 }
 
-DBrush* DEntity::NewBrush(int ID)
-{
-	DBrush* newBrush = new DBrush(ID);
+DBrush* DEntity::NewBrush( int ID ){
+	DBrush* newBrush = new DBrush( ID );
 
-	brushList.push_back(newBrush);
+	brushList.push_back( newBrush );
 
 	return newBrush;
 }
 
-char* getNextBracket(char* s)
-{
+char* getNextBracket( char* s ){
 	char* p = s;
-	while(*p)
+	while ( *p )
 	{
 		p++;
-		if(*p == '(')
+		if ( *p == '(' ) {
 			break;
+		}
 	}
 
 	return p;
 }
 
-bool DEntity::LoadFromPrt(char *filename)
-{
+bool DEntity::LoadFromPrt( char *filename ){
 	CPortals portals;
-	strcpy(portals.fn, filename);
+	strcpy( portals.fn, filename );
 	portals.Load();
 
-	if(portals.node_count == 0)
+	if ( portals.node_count == 0 ) {
 		return FALSE;
+	}
 
 	ClearBrushes();
 	ClearEPairs();
 
-  bool build = false;
-	for(unsigned int i = 0; i < portals.node_count; i++)
+	bool build = false;
+	for ( unsigned int i = 0; i < portals.node_count; i++ )
 	{
-    build = false;
+		build = false;
 		DBrush* brush = NewBrush();
 
-		for(unsigned int j = 0; j < portals.node[i].portal_count; j++)
+		for ( unsigned int j = 0; j < portals.node[i].portal_count; j++ )
 		{
-      for(unsigned int k = 0; k < portals.node[i].portal[j].point_count-2; k++)
-      {
-	      vec3_t v1, v2, normal, n;
-	      VectorSubtract(portals.node[i].portal[j].point[k+2].p, portals.node[i].portal[j].point[k+1].p, v1);
-	      VectorSubtract(portals.node[i].portal[j].point[k].p, portals.node[i].portal[j].point[k+1].p, v2);
-	      CrossProduct(v1, v2, n);
-        VectorNormalize(n, v2);
+			for ( unsigned int k = 0; k < portals.node[i].portal[j].point_count - 2; k++ )
+			{
+				vec3_t v1, v2, normal, n;
+				VectorSubtract( portals.node[i].portal[j].point[k + 2].p, portals.node[i].portal[j].point[k + 1].p, v1 );
+				VectorSubtract( portals.node[i].portal[j].point[k].p, portals.node[i].portal[j].point[k + 1].p, v2 );
+				CrossProduct( v1, v2, n );
+				VectorNormalize( n, v2 );
 
-        if(k == 0)
-        {
-          VectorCopy(v2, normal);
-        }
-        else
-        {
-          VectorSubtract(v2, normal, v1);
-          if(VectorLength(v1) > 0.01)
-          {
-            build = true;
-            break;
-          }
-        }
-      }
+				if ( k == 0 ) {
+					VectorCopy( v2, normal );
+				}
+				else
+				{
+					VectorSubtract( v2, normal, v1 );
+					if ( VectorLength( v1 ) > 0.01 ) {
+						build = true;
+						break;
+					}
+				}
+			}
 
-      if(!build)
-			  brush->AddFace(portals.node[i].portal[j].point[2].p, portals.node[i].portal[j].point[1].p, portals.node[i].portal[j].point[0].p, "textures/common/caulk", FALSE);
-      else
-			  brush->AddFace(portals.node[i].portal[j].point[0].p, portals.node[i].portal[j].point[1].p, portals.node[i].portal[j].point[2].p, "textures/common/caulk", FALSE);
+			if ( !build ) {
+				brush->AddFace( portals.node[i].portal[j].point[2].p, portals.node[i].portal[j].point[1].p, portals.node[i].portal[j].point[0].p, "textures/common/caulk", FALSE );
+			}
+			else{
+				brush->AddFace( portals.node[i].portal[j].point[0].p, portals.node[i].portal[j].point[1].p, portals.node[i].portal[j].point[2].p, "textures/common/caulk", FALSE );
+			}
 		}
-    if(build)
-      brush->BuildInRadiant(FALSE, NULL);
+		if ( build ) {
+			brush->BuildInRadiant( FALSE, NULL );
+		}
 	}
 
 	return TRUE;
 }
 
-DPlane* DEntity::AddFaceToBrush(vec3_t va, vec3_t vb, vec3_t vc, _QERFaceData* faceData, int ID)
-{
-	DBrush* buildBrush = GetBrushForID(ID);
-	return buildBrush->AddFace(va, vb, vc, faceData);
+DPlane* DEntity::AddFaceToBrush( vec3_t va, vec3_t vb, vec3_t vc, _QERFaceData* faceData, int ID ){
+	DBrush* buildBrush = GetBrushForID( ID );
+	return buildBrush->AddFace( va, vb, vc, faceData );
 	// slow, dont use much
 }
 
-DBrush* DEntity::GetBrushForID(int ID)
-{
+DBrush* DEntity::GetBrushForID( int ID ){
 	DBrush* buildBrush = NULL;
 
-	for(list<DBrush *>::const_iterator chkBrush=brushList.begin(); chkBrush!=brushList.end(); chkBrush++)
+	for ( list<DBrush *>::const_iterator chkBrush = brushList.begin(); chkBrush != brushList.end(); chkBrush++ )
 	{
-		if((*chkBrush)->m_nBrushID == ID)
-		{
-			buildBrush = (*chkBrush);
+		if ( ( *chkBrush )->m_nBrushID == ID ) {
+			buildBrush = ( *chkBrush );
 			break;
 		}
 	}
 
-	if(!buildBrush)
-		buildBrush = NewBrush(ID);
+	if ( !buildBrush ) {
+		buildBrush = NewBrush( ID );
+	}
 
 	return buildBrush;
 }
 
-void DEntity::LoadSelectedBrushes()
-{
+void DEntity::LoadSelectedBrushes(){
 	ClearBrushes();
 	ClearEPairs();
 
 	int count = g_FuncTable.m_pfnAllocateSelectedBrushHandles();
 
-	for(int i = 0; i < count; i++) {
-		brush_t *brush = (brush_t*)g_FuncTable.m_pfnGetSelectedBrushHandle(i);
+	for ( int i = 0; i < count; i++ ) {
+		brush_t *brush = (brush_t*)g_FuncTable.m_pfnGetSelectedBrushHandle( i );
 
-		if(brush->pPatch)
+		if ( brush->pPatch ) {
 			continue;
+		}
 
-		DBrush* loadBrush = NewBrush(i);
-		loadBrush->LoadFromBrush_t(brush, TRUE);
+		DBrush* loadBrush = NewBrush( i );
+		loadBrush->LoadFromBrush_t( brush, TRUE );
 	}
 
 	g_FuncTable.m_pfnReleaseSelectedBrushHandles();
 }
 
-void DEntity::LoadSelectedPatches()
-{
+void DEntity::LoadSelectedPatches(){
 	ClearPatches();
 	ClearEPairs();
 
-  int count = g_FuncTable.m_pfnAllocateSelectedPatchHandles();
+	int count = g_FuncTable.m_pfnAllocateSelectedPatchHandles();
 
-	for(int i = 0; i < count; i++)
+	for ( int i = 0; i < count; i++ )
 	{
-    //$ FIXME: m_pfnGetPatchHandle
-		patchMesh_t *pmesh = (patchMesh_t*)g_FuncTable.m_pfnGetPatchData(i);
+		//$ FIXME: m_pfnGetPatchHandle
+		patchMesh_t *pmesh = (patchMesh_t*)g_FuncTable.m_pfnGetPatchData( i );
 
 		DPatch* loadPatch = NewPatch();
-		loadPatch->LoadFromBrush_t(pmesh->pSymbiot);
+		loadPatch->LoadFromBrush_t( pmesh->pSymbiot );
 	}
 
-  g_FuncTable.m_pfnReleasePatchHandles();
+	g_FuncTable.m_pfnReleasePatchHandles();
 }
 
-bool* DEntity::BuildIntersectList()
-{
+bool* DEntity::BuildIntersectList(){
 	int max = GetIDMax();
-	if(max == 0)
+	if ( max == 0 ) {
 		return NULL;
+	}
 
 	bool* pbIntList = new bool[max];
-	memset(pbIntList, 0, sizeof(bool)*(max));
+	memset( pbIntList, 0, sizeof( bool ) * ( max ) );
 
-	for(list<DBrush *>::const_iterator pB1=brushList.begin(); pB1!=brushList.end(); pB1++)
+	for ( list<DBrush *>::const_iterator pB1 = brushList.begin(); pB1 != brushList.end(); pB1++ )
 	{
-		list<DBrush *>::const_iterator pB2=pB1;
-		for(pB2++; pB2!=brushList.end(); pB2++)
+		list<DBrush *>::const_iterator pB2 = pB1;
+		for ( pB2++; pB2 != brushList.end(); pB2++ )
 		{
-			if((*pB1)->IntersectsWith((*pB2)))
-			{
-				pbIntList[(*pB1)->m_nBrushID] = TRUE;
-				pbIntList[(*pB2)->m_nBrushID] = TRUE;
+			if ( ( *pB1 )->IntersectsWith( ( *pB2 ) ) ) {
+				pbIntList[( *pB1 )->m_nBrushID] = TRUE;
+				pbIntList[( *pB2 )->m_nBrushID] = TRUE;
 			}
 		}
 	}
@@ -269,24 +260,23 @@ bool* DEntity::BuildIntersectList()
 	return pbIntList;
 }
 
-bool* DEntity::BuildDuplicateList()
-{
+bool* DEntity::BuildDuplicateList(){
 	int max = GetIDMax();
-	if(max == 0)
+	if ( max == 0 ) {
 		return NULL;
+	}
 
 	bool* pbDupList = new bool[max];
-	memset(pbDupList, 0, sizeof(bool)*(max));
+	memset( pbDupList, 0, sizeof( bool ) * ( max ) );
 
-	for(list<DBrush *>::const_iterator pB1=brushList.begin(); pB1!=brushList.end(); pB1++)
+	for ( list<DBrush *>::const_iterator pB1 = brushList.begin(); pB1 != brushList.end(); pB1++ )
 	{
-		list<DBrush *>::const_iterator pB2=pB1;
-		for(pB2++; pB2!=brushList.end(); pB2++)
+		list<DBrush *>::const_iterator pB2 = pB1;
+		for ( pB2++; pB2 != brushList.end(); pB2++ )
 		{
-			if(**pB1 == *pB2)
-			{
-				pbDupList[(*pB1)->m_nBrushID] = TRUE;
-				pbDupList[(*pB2)->m_nBrushID] = TRUE;
+			if ( **pB1 == *pB2 ) {
+				pbDupList[( *pB1 )->m_nBrushID] = TRUE;
+				pbDupList[( *pB2 )->m_nBrushID] = TRUE;
 			}
 		}
 	}
@@ -294,75 +284,74 @@ bool* DEntity::BuildDuplicateList()
 	return pbDupList;
 }
 
-void DEntity::SelectBrushes(bool *selectList)
-{
-	if(selectList == NULL)
+void DEntity::SelectBrushes( bool *selectList ){
+	if ( selectList == NULL ) {
 		return;
+	}
 
 	g_FuncTable.m_pfnDeselectAllBrushes();
 
 	g_FuncTable.m_pfnAllocateActiveBrushHandles();
 
-	for(list<DBrush *>::const_iterator pBrush=brushList.begin(); pBrush!=brushList.end(); pBrush++)
+	for ( list<DBrush *>::const_iterator pBrush = brushList.begin(); pBrush != brushList.end(); pBrush++ )
 	{
-		if(selectList[(*pBrush)->m_nBrushID])
-			g_FuncTable.m_pfnSelectBrush((*pBrush)->QER_brush);
+		if ( selectList[( *pBrush )->m_nBrushID] ) {
+			g_FuncTable.m_pfnSelectBrush( ( *pBrush )->QER_brush );
+		}
 	}
 	g_FuncTable.m_pfnReleaseActiveBrushHandles();
 }
 
-bool DEntity::LoadFromEntity(int id, bool bLoadPatches) {
-	return LoadFromEntity((entity_t*)g_FuncTable.m_pfnGetEntityHandle(id), bLoadPatches);
+bool DEntity::LoadFromEntity( int id, bool bLoadPatches ) {
+	return LoadFromEntity( (entity_t*)g_FuncTable.m_pfnGetEntityHandle( id ), bLoadPatches );
 }
 
-bool DEntity::LoadFromEntity(entity_t* ent, bool bLoadPatches) {
+bool DEntity::LoadFromEntity( entity_t* ent, bool bLoadPatches ) {
 	ClearPatches();
 	ClearBrushes();
 	ClearEPairs();
 
 	QER_Entity = ent;
 
-	epair_t* epl = *g_EntityTable.m_pfnGetEntityKeyValList(QER_Entity);
-	LoadEPairList(epl);
+	epair_t* epl = *g_EntityTable.m_pfnGetEntityKeyValList( QER_Entity );
+	LoadEPairList( epl );
 
 	bool keep = FALSE;
 	int i;
-	for(i = 0; brushEntityList[i]; i++)
+	for ( i = 0; brushEntityList[i]; i++ )
 	{
-		if(!stricmp(brushEntityList[i], m_Classname))
-		{
+		if ( !stricmp( brushEntityList[i], m_Classname ) ) {
 			keep = TRUE;
 			break;
 		}
 	}
 
-	if(!keep)
+	if ( !keep ) {
 		return FALSE;
+	}
 
-	int count = g_FuncTable.m_pfnAllocateEntityBrushHandles(QER_Entity);
+	int count = g_FuncTable.m_pfnAllocateEntityBrushHandles( QER_Entity );
 
-	for(i = 0; i < count; i++)
+	for ( i = 0; i < count; i++ )
 	{
 
-		brush_t *brush = (brush_t*)g_FuncTable.m_pfnGetEntityBrushHandle(i);
+		brush_t *brush = (brush_t*)g_FuncTable.m_pfnGetEntityBrushHandle( i );
 
-    if(brush == NULL) {
-			DoMessageBox("GTKRadiant returned a NULL pointer, NOT a good sign", "WARNING!!!", MB_OK);
-      continue;
-    }
+		if ( brush == NULL ) {
+			DoMessageBox( "GTKRadiant returned a NULL pointer, NOT a good sign", "WARNING!!!", MB_OK );
+			continue;
+		}
 
-		if(brush->pPatch)
-		{
-			if(bLoadPatches)
-			{
+		if ( brush->pPatch ) {
+			if ( bLoadPatches ) {
 				DPatch* loadPatch = NewPatch();
-				loadPatch->LoadFromBrush_t(brush);
+				loadPatch->LoadFromBrush_t( brush );
 			}
 		}
 		else
 		{
-			DBrush* loadBrush = NewBrush(i);
-			loadBrush->LoadFromBrush_t(brush, TRUE);
+			DBrush* loadBrush = NewBrush( i );
+			loadBrush->LoadFromBrush_t( brush, TRUE );
 		}
 	}
 
@@ -371,64 +360,57 @@ bool DEntity::LoadFromEntity(entity_t* ent, bool bLoadPatches) {
 	return TRUE;
 }
 
-void DEntity::RemoveNonCheckBrushes(list<Str>* exclusionList, bool useDetail)
-{
-	list<DBrush *>::iterator chkBrush=brushList.begin();
+void DEntity::RemoveNonCheckBrushes( list<Str>* exclusionList, bool useDetail ){
+	list<DBrush *>::iterator chkBrush = brushList.begin();
 
-	while( chkBrush!=brushList.end() )
+	while ( chkBrush != brushList.end() )
 	{
-		if(!useDetail)
-		{
-			if((*chkBrush)->IsDetail())
-			{
+		if ( !useDetail ) {
+			if ( ( *chkBrush )->IsDetail() ) {
 				delete *chkBrush;
-				chkBrush = brushList.erase(chkBrush);
+				chkBrush = brushList.erase( chkBrush );
 				continue;
 			}
 		}
 
 		list<Str>::iterator eTexture;
 
-		for( eTexture=exclusionList->begin(); eTexture!=exclusionList->end(); eTexture++ )
+		for ( eTexture = exclusionList->begin(); eTexture != exclusionList->end(); eTexture++ )
 		{
-			if((*chkBrush)->HasTexture((*eTexture).GetBuffer()))
-			{
+			if ( ( *chkBrush )->HasTexture( ( *eTexture ).GetBuffer() ) ) {
 				delete *chkBrush;
-				chkBrush = brushList.erase(chkBrush);
+				chkBrush = brushList.erase( chkBrush );
 				break;
 			}
 		}
 
-		if( eTexture == exclusionList->end() )
+		if ( eTexture == exclusionList->end() ) {
 			chkBrush++;
+		}
 	}
 }
 
-void DEntity::ResetChecks(list<Str>* exclusionList)
-{
-	for(list<DBrush *>::const_iterator resetBrush=brushList.begin(); resetBrush!=brushList.end(); resetBrush++)
+void DEntity::ResetChecks( list<Str>* exclusionList ){
+	for ( list<DBrush *>::const_iterator resetBrush = brushList.begin(); resetBrush != brushList.end(); resetBrush++ )
 	{
-		(*resetBrush)->ResetChecks(exclusionList);
+		( *resetBrush )->ResetChecks( exclusionList );
 	}
 }
 
-int DEntity::FixBrushes(bool rebuild)
-{
+int DEntity::FixBrushes( bool rebuild ){
 	g_FuncTable.m_pfnAllocateActiveBrushHandles();
 
 	int cnt = 0;
 
-	for(list<DBrush *>::const_iterator fixBrush=brushList.begin(); fixBrush!=brushList.end(); fixBrush++)
+	for ( list<DBrush *>::const_iterator fixBrush = brushList.begin(); fixBrush != brushList.end(); fixBrush++ )
 	{
-		int count = (*fixBrush)->RemoveRedundantPlanes();
-		if(count)
-		{
+		int count = ( *fixBrush )->RemoveRedundantPlanes();
+		if ( count ) {
 			cnt += count;
-			if(rebuild)
-			{
-				g_FuncTable.m_pfnDeleteBrushHandle((*fixBrush)->QER_brush);
+			if ( rebuild ) {
+				g_FuncTable.m_pfnDeleteBrushHandle( ( *fixBrush )->QER_brush );
 
-				(*fixBrush)->BuildInRadiant(FALSE, NULL);
+				( *fixBrush )->BuildInRadiant( FALSE, NULL );
 			}
 		}
 	}
@@ -438,42 +420,40 @@ int DEntity::FixBrushes(bool rebuild)
 	return cnt;
 }
 
-void DEntity::BuildInRadiant(bool allowDestruction)
-{
-	bool makeEntity = strcmp(m_Classname, "worldspawn") ? true : false;
+void DEntity::BuildInRadiant( bool allowDestruction ){
+	bool makeEntity = strcmp( m_Classname, "worldspawn" ) ? true : false;
 
-	if(makeEntity)
-	{
+	if ( makeEntity ) {
 		entity_t* pE = (entity_t*)g_FuncTable.m_pfnCreateEntityHandle();
 
-		epair_t* pEpS = GetNextChainItem(NULL, "classname", m_Classname);
+		epair_t* pEpS = GetNextChainItem( NULL, "classname", m_Classname );
 
 		epair_t* pEp = pEpS;
 
-		for(list<DEPair* >::const_iterator buildEPair=epairList.begin(); buildEPair!=epairList.end(); buildEPair++)
+		for ( list<DEPair* >::const_iterator buildEPair = epairList.begin(); buildEPair != epairList.end(); buildEPair++ )
 		{
-			pEp = GetNextChainItem(pEp, (*buildEPair)->key, (*buildEPair)->value);
+			pEp = GetNextChainItem( pEp, ( *buildEPair )->key, ( *buildEPair )->value );
 		}
 
-		g_EntityTable.m_pfnSetEntityKeyValList(pE, pEpS);
+		g_EntityTable.m_pfnSetEntityKeyValList( pE, pEpS );
 
-		g_FuncTable.m_pfnCommitEntityHandleToMap(pE);
+		g_FuncTable.m_pfnCommitEntityHandleToMap( pE );
 
-		for(list<DBrush *>::const_iterator buildBrush=brushList.begin(); buildBrush!=brushList.end(); buildBrush++)
-			(*buildBrush)->BuildInRadiant(allowDestruction, NULL, pE);
+		for ( list<DBrush *>::const_iterator buildBrush = brushList.begin(); buildBrush != brushList.end(); buildBrush++ )
+			( *buildBrush )->BuildInRadiant( allowDestruction, NULL, pE );
 
-		for(list<DPatch *>::const_iterator buildPatch=patchList.begin(); buildPatch!=patchList.end(); buildPatch++)
-			(*buildPatch)->BuildInRadiant(pE);
+		for ( list<DPatch *>::const_iterator buildPatch = patchList.begin(); buildPatch != patchList.end(); buildPatch++ )
+			( *buildPatch )->BuildInRadiant( pE );
 
 		QER_Entity = pE;
 	}
 	else
 	{
-		for(list<DBrush *>::const_iterator buildBrush=brushList.begin(); buildBrush!=brushList.end(); buildBrush++)
-			(*buildBrush)->BuildInRadiant(allowDestruction, NULL);
+		for ( list<DBrush *>::const_iterator buildBrush = brushList.begin(); buildBrush != brushList.end(); buildBrush++ )
+			( *buildBrush )->BuildInRadiant( allowDestruction, NULL );
 
-		for(list<DPatch *>::const_iterator buildPatch=patchList.begin(); buildPatch!=patchList.end(); buildPatch++)
-			(*buildPatch)->BuildInRadiant();
+		for ( list<DPatch *>::const_iterator buildPatch = patchList.begin(); buildPatch != patchList.end(); buildPatch++ )
+			( *buildPatch )->BuildInRadiant();
 	}
 }
 
@@ -481,182 +461,175 @@ void DEntity::BuildInRadiant(bool allowDestruction)
 
 int DEntity::GetIDMax( void ) {
 	int max = -1;
-	for(list<DBrush *>::const_iterator cntBrush=brushList.begin(); cntBrush!=brushList.end(); cntBrush++) {
-		if((*cntBrush)->m_nBrushID > max)
-			max = (*cntBrush)->m_nBrushID;
+	for ( list<DBrush *>::const_iterator cntBrush = brushList.begin(); cntBrush != brushList.end(); cntBrush++ ) {
+		if ( ( *cntBrush )->m_nBrushID > max ) {
+			max = ( *cntBrush )->m_nBrushID;
+		}
 	}
-	return max+1;
+	return max + 1;
 }
 
 void DEntity::SetClassname( char *classname ) {
 	m_Classname = classname;
 }
 
-void DEntity::SaveToFile(FILE *pFile)
-{
-	fprintf(pFile, "{\n");
+void DEntity::SaveToFile( FILE *pFile ){
+	fprintf( pFile, "{\n" );
 
-	fprintf(pFile, "\"classname\" \"%s\"\n", (const char *)m_Classname);
+	fprintf( pFile, "\"classname\" \"%s\"\n", (const char *)m_Classname );
 
-	for(list<DEPair *>::const_iterator ep=epairList.begin(); ep!=epairList.end(); ep++)
+	for ( list<DEPair *>::const_iterator ep = epairList.begin(); ep != epairList.end(); ep++ )
 	{
-		fprintf(pFile, "\"%s\" \"%s\"\n", (const char *)(*ep)->key, (const char *)(*ep)->value);
+		fprintf( pFile, "\"%s\" \"%s\"\n", (const char *)( *ep )->key, (const char *)( *ep )->value );
 	}
 
-	for(list<DBrush *>::const_iterator bp=brushList.begin(); bp!=brushList.end(); bp++)
+	for ( list<DBrush *>::const_iterator bp = brushList.begin(); bp != brushList.end(); bp++ )
 	{
-		(*bp)->SaveToFile(pFile);
+		( *bp )->SaveToFile( pFile );
 	}
 
-	fprintf(pFile, "}\n");
+	fprintf( pFile, "}\n" );
 }
 
-void DEntity::ClearEPairs()
-{
-	for(list<DEPair *>::const_iterator deadEPair=epairList.begin(); deadEPair!=epairList.end(); deadEPair++)
+void DEntity::ClearEPairs(){
+	for ( list<DEPair *>::const_iterator deadEPair = epairList.begin(); deadEPair != epairList.end(); deadEPair++ )
 	{
-		delete (*deadEPair);
+		delete ( *deadEPair );
 	}
 	epairList.clear();
 }
 
-void DEntity::AddEPair(const char *key, const char *value) {
+void DEntity::AddEPair( const char *key, const char *value ) {
 	DEPair* newEPair;
 	newEPair = FindEPairByKey( key );
-	if(!newEPair) {
+	if ( !newEPair ) {
 		newEPair = new DEPair;
-		newEPair->Build(key, value);
-		epairList.push_back(newEPair);
-	} else {
-		newEPair->Build(key, value);
+		newEPair->Build( key, value );
+		epairList.push_back( newEPair );
+	}
+	else {
+		newEPair->Build( key, value );
 	}
 }
 
-void DEntity::LoadEPairList(epair_t *epl)
-{
+void DEntity::LoadEPairList( epair_t *epl ){
 	epair_t* ep = epl;
-	while(ep)
+	while ( ep )
 	{
-		if(!strcmp(ep->key, "classname"))
-			SetClassname(ep->value);
-		else
-			AddEPair(ep->key, ep->value);
+		if ( !strcmp( ep->key, "classname" ) ) {
+			SetClassname( ep->value );
+		}
+		else{
+			AddEPair( ep->key, ep->value );
+		}
 
 		ep = ep->next;
 	}
 }
 
-bool DEntity::ResetTextures(const char* textureName, float fScale[2],     float fShift[2],    int rotation, const char* newTextureName,
-                            int bResetTextureName,    int bResetScale[2], int bResetShift[2], int bResetRotation, bool rebuild)
-{
+bool DEntity::ResetTextures( const char* textureName, float fScale[2],     float fShift[2],    int rotation, const char* newTextureName,
+							 int bResetTextureName,    int bResetScale[2], int bResetShift[2], int bResetRotation, bool rebuild ){
 	g_FuncTable.m_pfnDeselectAllBrushes();
 
 	g_FuncTable.m_pfnAllocateActiveBrushHandles();
 
 	bool reset = FALSE;
 
-	for(list<DBrush *>::const_iterator resetBrush=brushList.begin(); resetBrush!=brushList.end(); resetBrush++)
+	for ( list<DBrush *>::const_iterator resetBrush = brushList.begin(); resetBrush != brushList.end(); resetBrush++ )
 	{
-		bool tmp = (*resetBrush)->ResetTextures(textureName,        fScale,       fShift,       rotation, newTextureName,
-                                            bResetTextureName,  bResetScale,  bResetShift,  bResetRotation);
+		bool tmp = ( *resetBrush )->ResetTextures( textureName,        fScale,       fShift,       rotation, newTextureName,
+												   bResetTextureName,  bResetScale,  bResetShift,  bResetRotation );
 
-		if(tmp)
-		{
+		if ( tmp ) {
 			reset = TRUE;
 
-			if(rebuild)
-			{
-        entity_t *pE = (*resetBrush)->QER_brush->owner;
-				g_FuncTable.m_pfnDeleteBrushHandle((*resetBrush)->QER_brush);
-        (*resetBrush)->BuildInRadiant(FALSE, NULL, pE->entityId == 0 ? NULL : pE);
+			if ( rebuild ) {
+				entity_t *pE = ( *resetBrush )->QER_brush->owner;
+				g_FuncTable.m_pfnDeleteBrushHandle( ( *resetBrush )->QER_brush );
+				( *resetBrush )->BuildInRadiant( FALSE, NULL, pE->entityId == 0 ? NULL : pE );
 
-        if( pE->entityId == 0 ? NULL : pE )
-        {
-        }
+				if ( pE->entityId == 0 ? NULL : pE ) {
+				}
 			}
 		}
 	}
 
-  if(bResetTextureName)
-  {
-	  for(list<DPatch *>::const_iterator resetPatch=patchList.begin(); resetPatch!=patchList.end(); resetPatch++)
-	  {
-		  bool tmp = (*resetPatch)->ResetTextures(textureName, newTextureName);
+	if ( bResetTextureName ) {
+		for ( list<DPatch *>::const_iterator resetPatch = patchList.begin(); resetPatch != patchList.end(); resetPatch++ )
+		{
+			bool tmp = ( *resetPatch )->ResetTextures( textureName, newTextureName );
 
-		  if(tmp)
-		  {
-			  reset = TRUE;
+			if ( tmp ) {
+				reset = TRUE;
 
-			  if(rebuild)
-			  {
-          entity_t *pE = (*resetPatch)->QER_brush->owner;
-				  g_FuncTable.m_pfnDeleteBrushHandle((*resetPatch)->QER_brush);
-          (*resetPatch)->BuildInRadiant(pE->entityId == 0 ? NULL : pE);
-			  }
-		  }
-	  }
-  }
+				if ( rebuild ) {
+					entity_t *pE = ( *resetPatch )->QER_brush->owner;
+					g_FuncTable.m_pfnDeleteBrushHandle( ( *resetPatch )->QER_brush );
+					( *resetPatch )->BuildInRadiant( pE->entityId == 0 ? NULL : pE );
+				}
+			}
+		}
+	}
 
 	g_FuncTable.m_pfnReleaseActiveBrushHandles();
 
 	return reset;
 }
 
-DEPair* DEntity::FindEPairByKey(const char* keyname)
-{
-	for(list<DEPair *>::const_iterator ep=epairList.begin(); ep!=epairList.end(); ep++)
+DEPair* DEntity::FindEPairByKey( const char* keyname ){
+	for ( list<DEPair *>::const_iterator ep = epairList.begin(); ep != epairList.end(); ep++ )
 	{
-		char* c = (*ep)->key;
-		if(!strcmp(c, keyname))
+		char* c = ( *ep )->key;
+		if ( !strcmp( c, keyname ) ) {
 			return *ep;
+		}
 	}
 	return NULL;
 }
 
-void DEntity::RemoveFromRadiant()
-{
+void DEntity::RemoveFromRadiant(){
 	g_EntityTable.m_pfnEntity_Free( (entity_t*)QER_Entity );
 
 	QER_Entity = NULL;
 }
 
-void DEntity::SpawnString(const char* key, const char* defaultstring, const char** out)
-{
-	DEPair* pEP = FindEPairByKey(key);
-	if(pEP) {
+void DEntity::SpawnString( const char* key, const char* defaultstring, const char** out ){
+	DEPair* pEP = FindEPairByKey( key );
+	if ( pEP ) {
 		*out = pEP->value;
-	} else {
+	}
+	else {
 		*out = defaultstring;
 	}
 }
 
-void DEntity::SpawnInt(const char* key, const char* defaultstring, int* out)
-{
-	DEPair* pEP = FindEPairByKey(key);
-	if(pEP) {
-		*out = atoi(pEP->value);
-	} else {
-		*out = atoi(defaultstring);
+void DEntity::SpawnInt( const char* key, const char* defaultstring, int* out ){
+	DEPair* pEP = FindEPairByKey( key );
+	if ( pEP ) {
+		*out = atoi( pEP->value );
+	}
+	else {
+		*out = atoi( defaultstring );
 	}
 }
 
-void DEntity::SpawnFloat(const char* key, const char* defaultstring, float* out)
-{
-	DEPair* pEP = FindEPairByKey(key);
-	if(pEP) {
+void DEntity::SpawnFloat( const char* key, const char* defaultstring, float* out ){
+	DEPair* pEP = FindEPairByKey( key );
+	if ( pEP ) {
 		*out = static_cast< float >( atof( pEP->value ) );
-	} else {
-		*out = static_cast< float >( atof(defaultstring) );
+	}
+	else {
+		*out = static_cast< float >( atof( defaultstring ) );
 	}
 }
 
-void DEntity::SpawnVector(const char* key, const char* defaultstring, vec_t* out)
-{
-	DEPair* pEP = FindEPairByKey(key);
-	if(pEP) {
-		sscanf(pEP->value, "%f %f %f", &out[0], &out[1], &out[2]);
-	} else {
-		sscanf(defaultstring, "%f %f %f", &out[0], &out[1], &out[2]);
+void DEntity::SpawnVector( const char* key, const char* defaultstring, vec_t* out ){
+	DEPair* pEP = FindEPairByKey( key );
+	if ( pEP ) {
+		sscanf( pEP->value, "%f %f %f", &out[0], &out[1], &out[2] );
+	}
+	else {
+		sscanf( defaultstring, "%f %f %f", &out[0], &out[1], &out[2] );
 	}
 }
 
@@ -665,9 +638,9 @@ int DEntity::GetBrushCount( void ) {
 }
 
 DBrush* DEntity::FindBrushByPointer( brush_t* brush ) {
-	for(list<DBrush *>::const_iterator listBrush = brushList.begin(); listBrush != brushList.end(); listBrush++) {
-		DBrush* pBrush = (*listBrush);
-		if(pBrush->QER_brush == brush) {
+	for ( list<DBrush *>::const_iterator listBrush = brushList.begin(); listBrush != brushList.end(); listBrush++ ) {
+		DBrush* pBrush = ( *listBrush );
+		if ( pBrush->QER_brush == brush ) {
 			return pBrush;
 		}
 	}

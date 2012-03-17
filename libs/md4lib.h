@@ -22,17 +22,17 @@ struct hash_method {
 	/* Number of bytes that must be allocated for result()'s digest */
 	unsigned int digest_size;
 
-	void (*init)(void *context);
-	void (*loop)(void *context, const void *data, size_t size);
-	void (*result)(void *context, unsigned char *digest_r);
+	void ( *init )( void *context );
+	void ( *loop )( void *context, const void *data, size_t size );
+	void ( *result )( void *context, unsigned char *digest_r );
 };
 
-const struct hash_method *hash_method_lookup(const char *name);
+const struct hash_method *hash_method_lookup( const char *name );
 
 /* NULL-terminated list of all hash methods */
 extern const struct hash_method *hash_methods[];
 
-#define	MD4_RESULTLEN (128/8)
+#define MD4_RESULTLEN ( 128 / 8 )
 
 struct md4_context {
 	uint_fast32_t lo, hi;
@@ -41,12 +41,12 @@ struct md4_context {
 	uint_fast32_t block[MD4_RESULTLEN];
 };
 
-void md4_init(struct md4_context *ctx);
-void md4_update(struct md4_context *ctx, const void *data, size_t size);
-void md4_final(struct md4_context *ctx, unsigned char result[MD4_RESULTLEN]);
+void md4_init( struct md4_context *ctx );
+void md4_update( struct md4_context *ctx, const void *data, size_t size );
+void md4_final( struct md4_context *ctx, unsigned char result[MD4_RESULTLEN] );
 
-void md4_get_digest(const void *data, size_t size,
-		    unsigned char result[MD4_RESULTLEN]);
+void md4_get_digest( const void *data, size_t size,
+					 unsigned char result[MD4_RESULTLEN] );
 
 extern const struct hash_method hash_method_md4;
 

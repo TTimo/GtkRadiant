@@ -1,23 +1,23 @@
 /*
-Copyright (C) 1999-2007 id Software, Inc. and contributors.
-For a list of contributors, see the accompanying CONTRIBUTORS file.
+   Copyright (C) 1999-2007 id Software, Inc. and contributors.
+   For a list of contributors, see the accompanying CONTRIBUTORS file.
 
-This file is part of GtkRadiant.
+   This file is part of GtkRadiant.
 
-GtkRadiant is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
+   GtkRadiant is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 2 of the License, or
+   (at your option) any later version.
 
-GtkRadiant is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+   GtkRadiant is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
 
-You should have received a copy of the GNU General Public License
-along with GtkRadiant; if not, write to the Free Software
-Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-*/
+   You should have received a copy of the GNU General Public License
+   along with GtkRadiant; if not, write to the Free Software
+   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ */
 
 #include <assert.h>
 #include "q3data.h"
@@ -25,145 +25,138 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 static int s_resample_width = 256;
 static int s_resample_height = 256;
 
-#define OUTPUT_TGAS			1
+#define OUTPUT_TGAS         1
 
-#define UNCOMPRESSED		0
-#define BTC_COMPRESSION		1
+#define UNCOMPRESSED        0
+#define BTC_COMPRESSION     1
 
 static int s_compression_method = BTC_COMPRESSION;
 
 static const char *CIN_EXTENSION = "cn2";
 static const int CIN_SIGNATURE = ( 'C' << 24 ) | ( 'I' << 16 ) | ( 'N' << 8 ) | ( '2' );
 
-static byte	*s_soundtrack;
-static char	s_base[32];
-static char	s_output_base[32];
+static byte *s_soundtrack;
+static char s_base[32];
+static char s_output_base[32];
 
 /*
-===============================================================================
+   ===============================================================================
 
-WAV loading
+   WAV loading
 
-===============================================================================
-*/
+   ===============================================================================
+ */
 
 typedef struct
 {
-	int			rate;
-	int			width;
-	int			channels;
-	int			loopstart;
-	int			samples;
-	int			dataofs;		// chunk starts this many bytes from file start
+	int rate;
+	int width;
+	int channels;
+	int loopstart;
+	int samples;
+	int dataofs;                // chunk starts this many bytes from file start
 } wavinfo_t;
 
 
-byte	*data_p;
-byte 	*iff_end;
-byte 	*last_chunk;
-byte 	*iff_data;
-int 	iff_chunk_len;
+byte    *data_p;
+byte    *iff_end;
+byte    *last_chunk;
+byte    *iff_data;
+int iff_chunk_len;
 
 
-static int			s_samplecounts[0x10000];
-static wavinfo_t	s_wavinfo;
+static int s_samplecounts[0x10000];
+static wavinfo_t s_wavinfo;
 
-short GetLittleShort(void)
-{
+short GetLittleShort( void ){
 	short val = 0;
 	val = *data_p;
-	val = val + (*(data_p+1)<<8);
+	val = val + ( *( data_p + 1 ) << 8 );
 	data_p += 2;
 	return val;
 }
 
-int GetLittleLong(void)
-{
+int GetLittleLong( void ){
 	int val = 0;
 	val = *data_p;
-	val = val + (*(data_p+1)<<8);
-	val = val + (*(data_p+2)<<16);
-	val = val + (*(data_p+3)<<24);
+	val = val + ( *( data_p + 1 ) << 8 );
+	val = val + ( *( data_p + 2 ) << 16 );
+	val = val + ( *( data_p + 3 ) << 24 );
 	data_p += 4;
 	return val;
 }
 
-void FindNextChunk(char *name)
-{
-	while (1)
+void FindNextChunk( char *name ){
+	while ( 1 )
 	{
-		data_p=last_chunk;
+		data_p = last_chunk;
 
-		if (data_p >= iff_end)
-		{	// didn't find the chunk
+		if ( data_p >= iff_end ) { // didn't find the chunk
 			data_p = NULL;
 			return;
 		}
-		
+
 		data_p += 4;
 		iff_chunk_len = GetLittleLong();
-		if (iff_chunk_len < 0)
-		{
+		if ( iff_chunk_len < 0 ) {
 			data_p = NULL;
 			return;
 		}
 //		if (iff_chunk_len > 1024*1024)
 //			Sys_Error ("FindNextChunk: %i length is past the 1 meg sanity limit", iff_chunk_len);
 		data_p -= 8;
-		last_chunk = data_p + 8 + ( (iff_chunk_len + 1) & ~1 );
-		if (!strncmp(data_p, name, 4))
+		last_chunk = data_p + 8 + ( ( iff_chunk_len + 1 ) & ~1 );
+		if ( !strncmp( data_p, name, 4 ) ) {
 			return;
+		}
 	}
 }
 
-void FindChunk(char *name)
-{
+void FindChunk( char *name ){
 	last_chunk = iff_data;
-	FindNextChunk (name);
+	FindNextChunk( name );
 }
 
 
-void DumpChunks(void)
-{
-	char	str[5];
-	
+void DumpChunks( void ){
+	char str[5];
+
 	str[4] = 0;
-	data_p=iff_data;
+	data_p = iff_data;
 	do
 	{
-		memcpy (str, data_p, 4);
+		memcpy( str, data_p, 4 );
 		data_p += 4;
 		iff_chunk_len = GetLittleLong();
-		printf ("0x%x : %s (%d)\n", (int)(data_p - 4), str, iff_chunk_len);
-		data_p += (iff_chunk_len + 1) & ~1;
-	} while (data_p < iff_end);
+		printf( "0x%x : %s (%d)\n", (int)( data_p - 4 ), str, iff_chunk_len );
+		data_p += ( iff_chunk_len + 1 ) & ~1;
+	} while ( data_p < iff_end );
 }
 
 /*
-============
-GetWavinfo
-============
-*/
-wavinfo_t GetWavinfo (char *name, byte *wav, int wavlength)
-{
-	wavinfo_t	info;
-	int     i;
-	int     format;
-	int		samples;
+   ============
+   GetWavinfo
+   ============
+ */
+wavinfo_t GetWavinfo( char *name, byte *wav, int wavlength ){
+	wavinfo_t info;
+	int i;
+	int format;
+	int samples;
 
-	memset (&info, 0, sizeof(info));
+	memset( &info, 0, sizeof( info ) );
 
-	if (!wav)
+	if ( !wav ) {
 		return info;
-		
+	}
+
 	iff_data = wav;
 	iff_end = wav + wavlength;
 
 // find "RIFF" chunk
-	FindChunk("RIFF");
-	if (!(data_p && !strncmp(data_p+8, "WAVE", 4)))
-	{
-		printf("Missing RIFF/WAVE chunks\n");
+	FindChunk( "RIFF" );
+	if ( !( data_p && !strncmp( data_p + 8, "WAVE", 4 ) ) ) {
+		printf( "Missing RIFF/WAVE chunks\n" );
 		return info;
 	}
 
@@ -171,66 +164,62 @@ wavinfo_t GetWavinfo (char *name, byte *wav, int wavlength)
 	iff_data = data_p + 12;
 // DumpChunks ();
 
-	FindChunk("fmt ");
-	if (!data_p)
-	{
-		printf("Missing fmt chunk\n");
+	FindChunk( "fmt " );
+	if ( !data_p ) {
+		printf( "Missing fmt chunk\n" );
 		return info;
 	}
 	data_p += 8;
 	format = GetLittleShort();
-	if (format != 1)
-	{
-		printf("Microsoft PCM format only\n");
+	if ( format != 1 ) {
+		printf( "Microsoft PCM format only\n" );
 		return info;
 	}
 
 	info.channels = GetLittleShort();
 	info.rate = GetLittleLong();
-	data_p += 4+2;
+	data_p += 4 + 2;
 	info.width = GetLittleShort() / 8;
 
 // get cue chunk
-	FindChunk("cue ");
-	if (data_p)
-	{
+	FindChunk( "cue " );
+	if ( data_p ) {
 		data_p += 32;
 		info.loopstart = GetLittleLong();
 //		Com_Printf("loopstart=%d\n", sfx->loopstart);
 
-	// if the next chunk is a LIST chunk, look for a cue length marker
-		FindNextChunk ("LIST");
-		if (data_p)
-		{
-			if (!strncmp (data_p + 28, "mark", 4))
-			{	// this is not a proper parse, but it works with cooledit...
+		// if the next chunk is a LIST chunk, look for a cue length marker
+		FindNextChunk( "LIST" );
+		if ( data_p ) {
+			if ( !strncmp( data_p + 28, "mark", 4 ) ) { // this is not a proper parse, but it works with cooledit...
 				data_p += 24;
-				i = GetLittleLong ();	// samples in loop
+				i = GetLittleLong();    // samples in loop
 				info.samples = info.loopstart + i;
 			}
 		}
 	}
-	else
+	else{
 		info.loopstart = -1;
+	}
 
 // find data chunk
-	FindChunk("data");
-	if (!data_p)
-	{
-		printf("Missing data chunk\n");
+	FindChunk( "data" );
+	if ( !data_p ) {
+		printf( "Missing data chunk\n" );
 		return info;
 	}
 
 	data_p += 4;
-	samples = GetLittleLong ();
+	samples = GetLittleLong();
 
-	if (info.samples)
-	{
-		if (samples < info.samples)
-			Error ("Sound %s has a bad loop length", name);
+	if ( info.samples ) {
+		if ( samples < info.samples ) {
+			Error( "Sound %s has a bad loop length", name );
+		}
 	}
-	else
+	else{
 		info.samples = samples;
+	}
 
 	info.dataofs = data_p - wav;
 
@@ -240,77 +229,77 @@ wavinfo_t GetWavinfo (char *name, byte *wav, int wavlength)
 //=====================================================================
 
 /*
-==============
-LoadSoundtrack
-==============
-*/
-void LoadSoundtrack (void)
-{
-	char	name[1024];
-	FILE	*f;
-	int		len;
-	int     i, val, j;
+   ==============
+   LoadSoundtrack
+   ==============
+ */
+void LoadSoundtrack( void ){
+	char name[1024];
+	FILE    *f;
+	int len;
+	int i, val, j;
 
 	s_soundtrack = NULL;
-	sprintf (name, "%svideo/%s/%s.wav", gamedir, s_base, s_base);
-	printf ("WAV: %s\n", name);
-	f = fopen (name, "rb");
-	if (!f)
-	{
-		printf ("no soundtrack for %s\n", s_base);
+	sprintf( name, "%svideo/%s/%s.wav", gamedir, s_base, s_base );
+	printf( "WAV: %s\n", name );
+	f = fopen( name, "rb" );
+	if ( !f ) {
+		printf( "no soundtrack for %s\n", s_base );
 		return;
 	}
-	len = Q_filelength(f);
-	s_soundtrack = malloc(len);
-	fread (s_soundtrack, 1, len, f);
-	fclose (f);
+	len = Q_filelength( f );
+	s_soundtrack = malloc( len );
+	fread( s_soundtrack, 1, len, f );
+	fclose( f );
 
-	s_wavinfo = GetWavinfo (name, s_soundtrack, len);
+	s_wavinfo = GetWavinfo( name, s_soundtrack, len );
 
 	// count samples for compression
-	memset (s_samplecounts, 0, sizeof(s_samplecounts));
+	memset( s_samplecounts, 0, sizeof( s_samplecounts ) );
 
-	j = s_wavinfo.samples/2;
-	for (i=0 ; i<j ; i++)
+	j = s_wavinfo.samples / 2;
+	for ( i = 0 ; i < j ; i++ )
 	{
-		val = ((unsigned short *)( s_soundtrack + s_wavinfo.dataofs))[i];
+		val = ( (unsigned short *)( s_soundtrack + s_wavinfo.dataofs ) )[i];
 		s_samplecounts[val]++;
 	}
 	val = 0;
-	for (i=0 ; i<0x10000 ; i++)
-		if (s_samplecounts[i])
+	for ( i = 0 ; i < 0x10000 ; i++ )
+		if ( s_samplecounts[i] ) {
 			val++;
+		}
 
-	printf ("%i unique sample values\n", val);
+	printf( "%i unique sample values\n", val );
 }
 
 /*
-==================
-WriteSound
-==================
-*/
-void WriteSound (FILE *output, int frame)
-{
-	int		start, end;
-	int		count;
-	int		empty = 0;
-	int		i;
-	int		sample;
-	int		width;
+   ==================
+   WriteSound
+   ==================
+ */
+void WriteSound( FILE *output, int frame ){
+	int start, end;
+	int count;
+	int empty = 0;
+	int i;
+	int sample;
+	int width;
 
 	width = s_wavinfo.width * s_wavinfo.channels;
 
-	start = frame*s_wavinfo.rate/14;
-	end = (frame+1)*s_wavinfo.rate/14;
+	start = frame * s_wavinfo.rate / 14;
+	end = ( frame + 1 ) * s_wavinfo.rate / 14;
 	count = end - start;
 
-	for (i=0 ; i<count ; i++)
+	for ( i = 0 ; i < count ; i++ )
 	{
-		sample = start+i;
-		if (sample > s_wavinfo.samples || !s_soundtrack)
-			fwrite (&empty, 1, width, output);
-		else
-			fwrite (s_soundtrack + s_wavinfo.dataofs + sample*width, 1, width,output);
+		sample = start + i;
+		if ( sample > s_wavinfo.samples || !s_soundtrack ) {
+			fwrite( &empty, 1, width, output );
+		}
+		else{
+			fwrite( s_soundtrack + s_wavinfo.dataofs + sample * width, 1, width,output );
+		}
 	}
 }
 
@@ -319,8 +308,7 @@ void WriteSound (FILE *output, int frame)
 static float s_resampleXRatio;
 static float s_resampleYRatio;
 
-static void BoxFilterHorizontalElements( unsigned char *dst, unsigned char *src, float s0, float s1 )
-{
+static void BoxFilterHorizontalElements( unsigned char *dst, unsigned char *src, float s0, float s1 ){
 	float w;
 	float rSum = 0, gSum = 0, bSum = 0;
 	float x = s0;
@@ -328,12 +316,10 @@ static void BoxFilterHorizontalElements( unsigned char *dst, unsigned char *src,
 
 	for ( x = s0; x < s1; x++, src += 4 )
 	{
-		if ( x == s0 )
-		{
+		if ( x == s0 ) {
 			w = ( int ) ( s0 + 1 ) - x;
 		}
-		else if ( x + 1 >= s1 )
-		{
+		else if ( x + 1 >= s1 ) {
 			w = s1 - ( int ) x;
 		}
 		else
@@ -358,9 +344,8 @@ static void BoxFilterHorizontalElements( unsigned char *dst, unsigned char *src,
 
 static void BoxFilterVerticalElements( unsigned char *dst, // destination of the filter process
 									   unsigned char *src, // source pixels
-									   int srcStep,		   // stride of the source pixels
-									   float s0, float s1 )
-{
+									   int srcStep,        // stride of the source pixels
+									   float s0, float s1 ){
 	float w;
 	float rSum = 0, gSum = 0, bSum = 0;
 	float y = s0;
@@ -368,12 +353,10 @@ static void BoxFilterVerticalElements( unsigned char *dst, // destination of the
 
 	for ( y = s0; y < ( int ) ( s1 + 1 ) ; y++, src += srcStep )
 	{
-		if ( y == s0 )
-		{
+		if ( y == s0 ) {
 			w = ( int ) ( s0 + 1 ) - y;
 		}
-		else if ( y + 1 >= s1 )
-		{
+		else if ( y + 1 >= s1 ) {
 			w = s1 - ( int ) y;
 		}
 		else
@@ -398,8 +381,7 @@ static void BoxFilterVerticalElements( unsigned char *dst, // destination of the
 
 }
 
-static void BoxFilterRow( unsigned char *dstStart, cblock_t *in, int dstRow, int rowWidth )
-{
+static void BoxFilterRow( unsigned char *dstStart, cblock_t *in, int dstRow, int rowWidth ){
 	int i;
 	unsigned char *indata = ( unsigned char * ) in->data;
 
@@ -410,12 +392,11 @@ static void BoxFilterRow( unsigned char *dstStart, cblock_t *in, int dstRow, int
 		float c0 = i * s_resampleXRatio;
 		float c1 = ( i + 1 ) * s_resampleXRatio;
 
-		BoxFilterHorizontalElements( &dstStart[i*4], &indata[( ( int ) c0 ) * 4], c0, c1 );
+		BoxFilterHorizontalElements( &dstStart[i * 4], &indata[( ( int ) c0 ) * 4], c0, c1 );
 	}
 }
 
-static void BoxFilterColumn( unsigned char *dstStart, unsigned char *srcStart, int dstCol, int dstRowWidth, int dstColHeight, int srcRowWidthInPels )
-{
+static void BoxFilterColumn( unsigned char *dstStart, unsigned char *srcStart, int dstCol, int dstRowWidth, int dstColHeight, int srcRowWidthInPels ){
 	float c0, c1;
 	int i;
 
@@ -424,23 +405,21 @@ static void BoxFilterColumn( unsigned char *dstStart, unsigned char *srcStart, i
 		c0 = i * s_resampleYRatio;
 		c1 = ( i + 1 ) * s_resampleYRatio;
 
-		BoxFilterVerticalElements( &dstStart[i*4*dstRowWidth], &srcStart[(int)c0*srcRowWidthInPels*4], srcRowWidthInPels*4, c0, c1 );
+		BoxFilterVerticalElements( &dstStart[i * 4 * dstRowWidth], &srcStart[(int)c0 * srcRowWidthInPels * 4], srcRowWidthInPels * 4, c0, c1 );
 	}
 }
 
-#define DROP_SAMPLE		0
-#define BOX_FILTER		1
+#define DROP_SAMPLE     0
+#define BOX_FILTER      1
 
-static void ResampleFrame( cblock_t *in, unsigned char *out, int method, int outWidth, int outHeight )
-{
+static void ResampleFrame( cblock_t *in, unsigned char *out, int method, int outWidth, int outHeight ){
 	int row, column;
 	unsigned char *indata = ( unsigned char * ) in->data;
 
 	s_resampleXRatio = in->width / ( float ) outWidth;
 	s_resampleYRatio = in->height / ( float ) outHeight;
 
-	if ( method == DROP_SAMPLE )
-	{
+	if ( method == DROP_SAMPLE ) {
 		for ( row = 0; row < outHeight; row++ )
 		{
 			int r = ( int ) ( row * s_resampleYRatio );
@@ -449,16 +428,15 @@ static void ResampleFrame( cblock_t *in, unsigned char *out, int method, int out
 			{
 				int c = ( int ) ( column * s_resampleXRatio );
 
-				out[(row*outWidth+column)*4+0] = indata[(r*in->width+c)*4+0];
-				out[(row*outWidth+column)*4+1] = indata[(r*in->width+c)*4+1];
-				out[(row*outWidth+column)*4+2] = indata[(r*in->width+c)*4+2];
-				out[(row*outWidth+column)*4+3] = 0xff;
+				out[( row * outWidth + column ) * 4 + 0] = indata[( r * in->width + c ) * 4 + 0];
+				out[( row * outWidth + column ) * 4 + 1] = indata[( r * in->width + c ) * 4 + 1];
+				out[( row * outWidth + column ) * 4 + 2] = indata[( r * in->width + c ) * 4 + 2];
+				out[( row * outWidth + column ) * 4 + 3] = 0xff;
 			}
 		}
 	}
-	else if ( method == BOX_FILTER )
-	{
-		unsigned char intermediate[1024*1024*4];
+	else if ( method == BOX_FILTER ) {
+		unsigned char intermediate[1024 * 1024 * 4];
 
 		assert( in->height <= 1024 );
 		assert( in->width <= 1024 );
@@ -468,7 +446,7 @@ static void ResampleFrame( cblock_t *in, unsigned char *out, int method, int out
 		//
 		for ( row = 0; row < in->height; row++ )
 		{
-			BoxFilterRow( &intermediate[row*4*outWidth], in, row, outWidth );
+			BoxFilterRow( &intermediate[row * 4 * outWidth], in, row, outWidth );
 		}
 
 		//
@@ -476,20 +454,18 @@ static void ResampleFrame( cblock_t *in, unsigned char *out, int method, int out
 		//
 		for ( column = 0; column < outWidth; column++ )
 		{
-			BoxFilterColumn( &out[column*4], &intermediate[column*4], column, outWidth, outHeight, s_resample_width );
+			BoxFilterColumn( &out[column * 4], &intermediate[column * 4], column, outWidth, outHeight, s_resample_width );
 		}
 	}
 }
 
-static float BTCDistanceSquared( float a[3], float b[3] )
-{
-	return ( b[0] - a[0] ) * ( b[0] - a[0] ) + 
+static float BTCDistanceSquared( float a[3], float b[3] ){
+	return ( b[0] - a[0] ) * ( b[0] - a[0] ) +
 		   ( b[1] - a[1] ) * ( b[1] - a[1] ) +
 		   ( b[2] - a[2] ) * ( b[2] - a[2] );
 }
 
-static void BTCFindEndpoints( float inBlock[4][4][3], unsigned int endPoints[2][2] )
-{
+static void BTCFindEndpoints( float inBlock[4][4][3], unsigned int endPoints[2][2] ){
 	float longestDistance = -1;
 
 	int bX, bY;
@@ -509,8 +485,7 @@ static void BTCFindEndpoints( float inBlock[4][4][3], unsigned int endPoints[2][
 			//
 			for ( cX = bX + 1; cX < 4; cX++ )
 			{
-				if ( ( d = BTCDistanceSquared( inBlock[bY][bX], inBlock[bY][cX] ) ) > longestDistance )
-				{
+				if ( ( d = BTCDistanceSquared( inBlock[bY][bX], inBlock[bY][cX] ) ) > longestDistance ) {
 					longestDistance = d;
 					endPoints[0][0] = bX;
 					endPoints[0][1] = bY;
@@ -522,12 +497,11 @@ static void BTCFindEndpoints( float inBlock[4][4][3], unsigned int endPoints[2][
 			//
 			// check remaining rows and columns
 			//
-			for ( cY = bY+1; cY < 4; cY++ )
+			for ( cY = bY + 1; cY < 4; cY++ )
 			{
 				for ( cX = 0; cX < 4; cX++ )
 				{
-					if ( ( d = BTCDistanceSquared( inBlock[bY][bX], inBlock[cY][cX] ) ) > longestDistance )
-					{
+					if ( ( d = BTCDistanceSquared( inBlock[bY][bX], inBlock[cY][cX] ) ) > longestDistance ) {
 						longestDistance = d;
 						endPoints[0][0] = bX;
 						endPoints[0][1] = bY;
@@ -540,8 +514,7 @@ static void BTCFindEndpoints( float inBlock[4][4][3], unsigned int endPoints[2][
 	}
 }
 
-static float BTCQuantizeBlock( float inBlock[4][4][3], unsigned long endPoints[2][2], int btcQuantizedBlock[4][4], float bestError )
-{
+static float BTCQuantizeBlock( float inBlock[4][4][3], unsigned long endPoints[2][2], int btcQuantizedBlock[4][4], float bestError ){
 	int i;
 	int blockY, blockX;
 	float dR, dG, dB;
@@ -592,8 +565,7 @@ static float BTCQuantizeBlock( float inBlock[4][4][3], unsigned long endPoints[2
 			{
 				float d;
 
-				if ( ( d = BTCDistanceSquared( inBlock[blockY][blockX], colorLine[i] ) ) < distance )
-				{
+				if ( ( d = BTCDistanceSquared( inBlock[blockY][blockX], colorLine[i] ) ) < distance ) {
 					distance = d;
 					shortest = i;
 				}
@@ -604,10 +576,10 @@ static float BTCQuantizeBlock( float inBlock[4][4][3], unsigned long endPoints[2
 			//
 			// if bestError is not -1 then that means this is a speculative quantization
 			//
-			if ( bestError != -1 )
-			{
-				if ( error > bestError )
+			if ( bestError != -1 ) {
+				if ( error > bestError ) {
 					return error;
+				}
 			}
 
 			btcQuantizedBlock[blockY][blockX] = shortest;
@@ -620,12 +592,11 @@ static float BTCQuantizeBlock( float inBlock[4][4][3], unsigned long endPoints[2
 /*
 ** float BTCCompressBlock
 */
-static float BTCCompressBlock( float inBlock[4][4][3], unsigned long out[2] )
-{
+static float BTCCompressBlock( float inBlock[4][4][3], unsigned long out[2] ){
 	int i;
-	int btcQuantizedBlock[4][4];	// values should be [0..3]
+	int btcQuantizedBlock[4][4];    // values should be [0..3]
 	unsigned long encodedEndPoints, encodedBitmap;
-	unsigned int endPoints[2][2];		// endPoints[0] = color start, endPoints[1] = color end
+	unsigned int endPoints[2][2];       // endPoints[0] = color start, endPoints[1] = color end
 	int blockY, blockX;
 	float error = 0;
 	float bestError = 10000000000;
@@ -633,7 +604,7 @@ static float BTCCompressBlock( float inBlock[4][4][3], unsigned long out[2] )
 
 #if 0
 	//
-	// find the "ideal" end points for the color vector 
+	// find the "ideal" end points for the color vector
 	//
 	BTCFindEndpoints( inBlock, endPoints );
 	error = BTCQuantizeBlock( inBlock, endPoints, btcQuantizedBlock );
@@ -649,8 +620,9 @@ static float BTCCompressBlock( float inBlock[4][4][3], unsigned long out[2] )
 			{
 				for ( x2 = 0; x2 < 4; x2++ )
 				{
-					if ( ( x2 == blockX ) && ( y2 == blockY ) )
+					if ( ( x2 == blockX ) && ( y2 == blockY ) ) {
 						continue;
+					}
 
 					endPoints[0][0] = blockX;
 					endPoints[0][1] = blockY;
@@ -659,8 +631,7 @@ static float BTCCompressBlock( float inBlock[4][4][3], unsigned long out[2] )
 
 					error = BTCQuantizeBlock( inBlock, endPoints, btcQuantizedBlock, -1 ); //bestError );
 
-					if ( error < bestError )
-					{
+					if ( error < bestError ) {
 						bestError = error;
 						memcpy( bestEndPoints, endPoints, sizeof( bestEndPoints ) );
 					}
@@ -694,24 +665,30 @@ static float BTCCompressBlock( float inBlock[4][4][3], unsigned long out[2] )
 		int iR, iG, iB;
 
 		iR = ( ( int ) inBlock[bestEndPoints[i][1]][bestEndPoints[i][0]][0] );
-		if ( iR > 255 ) 
+		if ( iR > 255 ) {
 			iR = 255;
-		else if ( iR < 0 ) 
+		}
+		else if ( iR < 0 ) {
 			iR = 0;
+		}
 		iR >>= 3;
 
 		iG = ( ( int ) inBlock[bestEndPoints[i][1]][bestEndPoints[i][0]][1] );
-		if ( iG > 255 )
+		if ( iG > 255 ) {
 			iG = 255;
-		else if ( iG < 0 )
+		}
+		else if ( iG < 0 ) {
 			iG = 0;
+		}
 		iG >>= 2;
 
 		iB = ( ( int ) inBlock[bestEndPoints[i][1]][bestEndPoints[i][0]][2] );
-		if ( iB > 255 )
+		if ( iB > 255 ) {
 			iB = 255;
-		else if ( iB < 0 )
+		}
+		else if ( iB < 0 ) {
 			iB = 0;
+		}
 		iB >>= 3;
 
 
@@ -719,7 +696,7 @@ static float BTCCompressBlock( float inBlock[4][4][3], unsigned long out[2] )
 	}
 
 	//
-	// store 
+	// store
 	//
 	out[0] = encodedBitmap;
 	out[1] = encodedEndPoints;
@@ -730,8 +707,7 @@ static float BTCCompressBlock( float inBlock[4][4][3], unsigned long out[2] )
 /*
 ** void BTCDecompressFrame
 */
-static void BTCDecompressFrame( unsigned long *src, unsigned char *dst )
-{
+static void BTCDecompressFrame( unsigned long *src, unsigned char *dst ){
 	int x, y;
 	int iR, iG, iB;
 	int dstX, dstY;
@@ -745,8 +721,8 @@ static void BTCDecompressFrame( unsigned long *src, unsigned char *dst )
 	{
 		for ( x = 0; x < s_resample_width / 4; x++ )
 		{
-			unsigned colorStartPacked = src[(y*s_resample_width/4 + x)*2 + 1] & 0xffff;
-			unsigned colorEndPacked = src[(y*s_resample_width/4 + x)*2 + 1] >> 16;
+			unsigned colorStartPacked = src[( y * s_resample_width / 4 + x ) * 2 + 1] & 0xffff;
+			unsigned colorEndPacked = src[( y * s_resample_width / 4 + x ) * 2 + 1] >> 16;
 
 			//
 			// grab the end points
@@ -780,12 +756,12 @@ static void BTCDecompressFrame( unsigned long *src, unsigned char *dst )
 			colorRampABGR[3][0] = iR;
 			colorRampABGR[3][1] = iG;
 			colorRampABGR[3][2] = iB;
-			
+
 			//
 			// compute this block's color ramp
 			// FIXME: This needs to be reversed on big-endian machines
 			//
-			
+
 			colorRampABGR[1][0] = colorStart[0] * 0.66f + colorEnd[0] * 0.33f;
 			colorRampABGR[1][1] = colorStart[1] * 0.66f + colorEnd[1] * 0.33f;
 			colorRampABGR[1][2] = colorStart[2] * 0.66f + colorEnd[2] * 0.33f;
@@ -800,13 +776,13 @@ static void BTCDecompressFrame( unsigned long *src, unsigned char *dst )
 			// to upper left pixels.  These 2-bit values are indexed into the block's
 			// computer color ramp.
 			//
-			encoded = src[(y*s_resample_width/4 + x)*2 + 0];
+			encoded = src[( y * s_resample_width / 4 + x ) * 2 + 0];
 
 			for ( dstY = 0; dstY < 4; dstY++ )
 			{
 				for ( dstX = 0; dstX < 4; dstX++ )
 				{
-					memcpy( &dst[(y*4+dstY)*s_resample_width*4+x*4*4+dstX*4], colorRampABGR[encoded&3], sizeof( colorRampABGR[0] ) );
+					memcpy( &dst[( y * 4 + dstY ) * s_resample_width * 4 + x * 4 * 4 + dstX * 4], colorRampABGR[encoded & 3], sizeof( colorRampABGR[0] ) );
 					encoded >>= 2;
 				}
 			}
@@ -823,14 +799,13 @@ static void BTCDecompressFrame( unsigned long *src, unsigned char *dst )
 ** that define the endpoints of a vector in color space that represent
 ** the two colors "farthest apart".
 */
-static float BTCCompressFrame( unsigned char *src, unsigned long *dst )
-{
+static float BTCCompressFrame( unsigned char *src, unsigned long *dst ){
 	int x, y;
 	int bX, bY;
 	float btcBlock[4][4][3];
 
 	float error = 0;
-	
+
 	for ( y = 0; y < s_resample_height / 4; y++ )
 	{
 		for ( x = 0; x < s_resample_width / 4; x++ )
@@ -842,13 +817,13 @@ static float BTCCompressFrame( unsigned char *src, unsigned long *dst )
 			{
 				for ( bX = 0; bX < 4; bX++ )
 				{
-					btcBlock[bY][bX][0] = src[(y*4+bY)*s_resample_width*4 + (x*4+bX)*4 + 0];
-					btcBlock[bY][bX][1] = src[(y*4+bY)*s_resample_width*4 + (x*4+bX)*4 + 1];
-					btcBlock[bY][bX][2] = src[(y*4+bY)*s_resample_width*4 + (x*4+bX)*4 + 2];
+					btcBlock[bY][bX][0] = src[( y * 4 + bY ) * s_resample_width * 4 + ( x * 4 + bX ) * 4 + 0];
+					btcBlock[bY][bX][1] = src[( y * 4 + bY ) * s_resample_width * 4 + ( x * 4 + bX ) * 4 + 1];
+					btcBlock[bY][bX][2] = src[( y * 4 + bY ) * s_resample_width * 4 + ( x * 4 + bX ) * 4 + 2];
 				}
 			}
 
-			error += BTCCompressBlock( btcBlock, &dst[(y*s_resample_width/4+x)*2] );
+			error += BTCCompressBlock( btcBlock, &dst[( y * s_resample_width / 4 + x ) * 2] );
 		}
 	}
 
@@ -856,53 +831,54 @@ static float BTCCompressFrame( unsigned char *src, unsigned long *dst )
 }
 
 /*
-===================
-LoadFrame
-===================
-*/
-cblock_t LoadFrame (char *base, int frame, int digits, byte **palette)
-{
-	int			ten3, ten2, ten1, ten0;
-	cblock_t	in;
-	int			width, height;
-	char		name[1024];
-	FILE		*f;
+   ===================
+   LoadFrame
+   ===================
+ */
+cblock_t LoadFrame( char *base, int frame, int digits, byte **palette ){
+	int ten3, ten2, ten1, ten0;
+	cblock_t in;
+	int width, height;
+	char name[1024];
+	FILE        *f;
 
 	in.data = NULL;
 	in.count = -1;
 
-	ten3 = frame/1000;
-	ten2 = (frame-ten3*1000)/100;
-	ten1 = (frame-ten3*1000-ten2*100)/10;
-	ten0 = frame%10;
+	ten3 = frame / 1000;
+	ten2 = ( frame - ten3 * 1000 ) / 100;
+	ten1 = ( frame - ten3 * 1000 - ten2 * 100 ) / 10;
+	ten0 = frame % 10;
 
-	if (digits == 4)
-		sprintf (name, "%svideo/%s/%s%i%i%i%i.tga", gamedir, base, base, ten3, ten2, ten1, ten0);
-	else
-		sprintf (name, "%svideo/%s/%s%i%i%i.tga", gamedir, base, base, ten2, ten1, ten0);
+	if ( digits == 4 ) {
+		sprintf( name, "%svideo/%s/%s%i%i%i%i.tga", gamedir, base, base, ten3, ten2, ten1, ten0 );
+	}
+	else{
+		sprintf( name, "%svideo/%s/%s%i%i%i.tga", gamedir, base, base, ten2, ten1, ten0 );
+	}
 
-	f = fopen(name, "rb");
-	if (!f)
-	{
+	f = fopen( name, "rb" );
+	if ( !f ) {
 		in.data = NULL;
 		return in;
 	}
-	fclose (f);
+	fclose( f );
 
-	printf ("%s", name);
+	printf( "%s", name );
 	LoadTGA( name, ( unsigned char ** ) &in.data, &width, &height );
-	if ( palette )
+	if ( palette ) {
 		*palette = 0;
+	}
 //	Load256Image (name, &in.data, palette, &width, &height);
-	in.count = width*height;
+	in.count = width * height;
 	in.width = width;
 	in.height = height;
 // FIXME: map 0 and 255!
 
 #if 0
 	// rle compress
-	rle = RLE(in);
-	free (in.data);
+	rle = RLE( in );
+	free( in.data );
 
 	return rle;
 #endif
@@ -911,34 +887,32 @@ cblock_t LoadFrame (char *base, int frame, int digits, byte **palette)
 }
 
 /*
-===============
-Cmd_Video
+   ===============
+   Cmd_Video
 
-video <directory> <framedigits>
-===============
-*/
-void Cmd_Video (void)
-{
+   video <directory> <framedigits>
+   ===============
+ */
+void Cmd_Video( void ){
 	float sumError = 0, error = 0, maxError = 0;
-	char	savename[1024];
-	char	name[1024];
-	FILE	*output;
-	int		startframe, frame;
-	int		width, height;
-	int		i;
-	int		digits;
-	int		minutes;
-	float	fseconds;
-	int		remSeconds;
-	cblock_t	in;
+	char savename[1024];
+	char name[1024];
+	FILE    *output;
+	int startframe, frame;
+	int width, height;
+	int i;
+	int digits;
+	int minutes;
+	float fseconds;
+	int remSeconds;
+	cblock_t in;
 	unsigned char *resampled;
 	unsigned long *compressed;
 	clock_t start, stop;
 
-	GetToken (qfalse);
-	strcpy (s_base, token);
-	if (g_release)
-	{
+	GetToken( qfalse );
+	strcpy( s_base, token );
+	if ( g_release ) {
 //		sprintf (savename, "video/%s.cin", token);
 //		ReleaseFile (savename);
 		return;
@@ -947,18 +921,16 @@ void Cmd_Video (void)
 	GetToken( qfalse );
 	strcpy( s_output_base, token );
 
-	GetToken (qfalse);
-	digits = atoi(token);
+	GetToken( qfalse );
+	digits = atoi( token );
 
 	GetToken( qfalse );
 
-	if ( !strcmp( token, "btc" ) )
-	{
+	if ( !strcmp( token, "btc" ) ) {
 		s_compression_method = BTC_COMPRESSION;
 		printf( "Compression: BTC\n" );
 	}
-	else if ( !strcmp( token, "uc" ) )
-	{
+	else if ( !strcmp( token, "uc" ) ) {
 		s_compression_method = UNCOMPRESSED;
 		printf( "Compression: none\n" );
 	}
@@ -980,61 +952,64 @@ void Cmd_Video (void)
 	printf( "Resample height: %d\n", s_resample_height );
 
 	// optionally skip frames
-	if (TokenAvailable ())
-	{
-		GetToken (qfalse);
-		startframe = atoi(token);
+	if ( TokenAvailable() ) {
+		GetToken( qfalse );
+		startframe = atoi( token );
 	}
-	else
-		startframe=0;
+	else{
+		startframe = 0;
+	}
 
-	sprintf (savename, "%svideo/%s.%s", writedir, s_output_base, CIN_EXTENSION );
+	sprintf( savename, "%svideo/%s.%s", writedir, s_output_base, CIN_EXTENSION );
 
 	// load the entire sound wav file if present
-	LoadSoundtrack ();
+	LoadSoundtrack();
 
-	if (digits == 4)
-		sprintf (name, "%svideo/%s/%s0000.tga", gamedir, s_base, s_base);
-	else
-		sprintf (name, "%svideo/%s/%s000.tga", gamedir, s_base, s_base);
+	if ( digits == 4 ) {
+		sprintf( name, "%svideo/%s/%s0000.tga", gamedir, s_base, s_base );
+	}
+	else{
+		sprintf( name, "%svideo/%s/%s000.tga", gamedir, s_base, s_base );
+	}
 
-	printf ("%s\n", name);
-	LoadTGA( name, NULL, &width, &height);
+	printf( "%s\n", name );
+	LoadTGA( name, NULL, &width, &height );
 
-	output = fopen (savename, "wb");
-	if (!output)
-		Error ("Can't open %s", savename);
+	output = fopen( savename, "wb" );
+	if ( !output ) {
+		Error( "Can't open %s", savename );
+	}
 
 	// write header info
 	i = LittleLong( CIN_SIGNATURE );
-	fwrite (&i, 4, 1, output );
-	i = LittleLong (s_resample_width);
-	fwrite (&i, 4, 1, output);
-	i = LittleLong (s_resample_height);
-	fwrite (&i, 4, 1, output);
-	i = LittleLong (s_wavinfo.rate);
-	fwrite (&i, 4, 1, output);
-	i = LittleLong (s_wavinfo.width);
-	fwrite (&i, 4, 1, output);
-	i = LittleLong (s_wavinfo.channels);
-	fwrite (&i, 4, 1, output);
-	i = LittleLong ( s_compression_method );
-	fwrite (&i, 4, 1, output );
+	fwrite( &i, 4, 1, output );
+	i = LittleLong( s_resample_width );
+	fwrite( &i, 4, 1, output );
+	i = LittleLong( s_resample_height );
+	fwrite( &i, 4, 1, output );
+	i = LittleLong( s_wavinfo.rate );
+	fwrite( &i, 4, 1, output );
+	i = LittleLong( s_wavinfo.width );
+	fwrite( &i, 4, 1, output );
+	i = LittleLong( s_wavinfo.channels );
+	fwrite( &i, 4, 1, output );
+	i = LittleLong( s_compression_method );
+	fwrite( &i, 4, 1, output );
 
 	start = clock();
 
 	// perform compression on a per frame basis
-	for ( frame=startframe ;  ; frame++)
+	for ( frame = startframe ;  ; frame++ )
 	{
-		printf ("%02d: ", frame);
-		in = LoadFrame (s_base, frame, digits, 0 );
-		if (!in.data)
+		printf( "%02d: ", frame );
+		in = LoadFrame( s_base, frame, digits, 0 );
+		if ( !in.data ) {
 			break;
+		}
 
 		ResampleFrame( &in, ( unsigned char * ) resampled, BOX_FILTER, s_resample_width, s_resample_height );
 
-		if ( s_compression_method == UNCOMPRESSED )
-		{
+		if ( s_compression_method == UNCOMPRESSED ) {
 			printf( "\n" );
 			fwrite( resampled, 1, sizeof( unsigned char ) * s_resample_width * s_resample_height * 4, output );
 
@@ -1043,26 +1018,26 @@ void Cmd_Video (void)
 				int x, y;
 				char buffer[1000];
 
-				for ( y = 0; y < s_resample_height/2; y++ )
+				for ( y = 0; y < s_resample_height / 2; y++ )
 				{
 					for ( x = 0; x < s_resample_width; x++ )
 					{
 						unsigned char tmp[4];
 
-						tmp[0] = resampled[(s_resample_height-1-y)*s_resample_width*4 + x*4 + 0];
-						tmp[1] = resampled[(s_resample_height-1-y)*s_resample_width*4 + x*4 + 1];
-						tmp[2] = resampled[(s_resample_height-1-y)*s_resample_width*4 + x*4 + 2];
-						tmp[3] = resampled[(s_resample_height-1-y)*s_resample_width*4 + x*4 + 3];
+						tmp[0] = resampled[( s_resample_height - 1 - y ) * s_resample_width * 4 + x * 4 + 0];
+						tmp[1] = resampled[( s_resample_height - 1 - y ) * s_resample_width * 4 + x * 4 + 1];
+						tmp[2] = resampled[( s_resample_height - 1 - y ) * s_resample_width * 4 + x * 4 + 2];
+						tmp[3] = resampled[( s_resample_height - 1 - y ) * s_resample_width * 4 + x * 4 + 3];
 
-						resampled[(s_resample_height-1-y)*s_resample_width*4 + x*4 + 0] = resampled[y*s_resample_width*4 + x*4 + 0];
-						resampled[(s_resample_height-1-y)*s_resample_width*4 + x*4 + 1] = resampled[y*s_resample_width*4 + x*4 + 1];
-						resampled[(s_resample_height-1-y)*s_resample_width*4 + x*4 + 2] = resampled[y*s_resample_width*4 + x*4 + 2];
-						resampled[(s_resample_height-1-y)*s_resample_width*4 + x*4 + 3] = resampled[y*s_resample_width*4 + x*4 + 3];
+						resampled[( s_resample_height - 1 - y ) * s_resample_width * 4 + x * 4 + 0] = resampled[y * s_resample_width * 4 + x * 4 + 0];
+						resampled[( s_resample_height - 1 - y ) * s_resample_width * 4 + x * 4 + 1] = resampled[y * s_resample_width * 4 + x * 4 + 1];
+						resampled[( s_resample_height - 1 - y ) * s_resample_width * 4 + x * 4 + 2] = resampled[y * s_resample_width * 4 + x * 4 + 2];
+						resampled[( s_resample_height - 1 - y ) * s_resample_width * 4 + x * 4 + 3] = resampled[y * s_resample_width * 4 + x * 4 + 3];
 
-						resampled[y*s_resample_width*4 + x*4 + 0] = tmp[0];
-						resampled[y*s_resample_width*4 + x*4 + 1] = tmp[1];
-						resampled[y*s_resample_width*4 + x*4 + 2] = tmp[2];
-						resampled[y*s_resample_width*4 + x*4 + 3] = tmp[3];
+						resampled[y * s_resample_width * 4 + x * 4 + 0] = tmp[0];
+						resampled[y * s_resample_width * 4 + x * 4 + 1] = tmp[1];
+						resampled[y * s_resample_width * 4 + x * 4 + 2] = tmp[2];
+						resampled[y * s_resample_width * 4 + x * 4 + 3] = tmp[3];
 					}
 				}
 
@@ -1071,14 +1046,14 @@ void Cmd_Video (void)
 			}
 #endif
 		}
-		else if ( s_compression_method == BTC_COMPRESSION )
-		{
+		else if ( s_compression_method == BTC_COMPRESSION ) {
 			error = BTCCompressFrame( resampled, compressed );
 
 			sumError += error;
 
-			if ( error > maxError ) 
+			if ( error > maxError ) {
 				maxError = error;
+			}
 
 			printf( " (error = %f)\n", error );
 			fwrite( compressed, 1, 2 * sizeof( long ) * ( s_resample_width / 4 ) * ( s_resample_height / 4 ), output );
@@ -1092,26 +1067,26 @@ void Cmd_Video (void)
 				uncompressed = malloc( sizeof( unsigned char ) * 4 * s_resample_width * s_resample_height );
 				BTCDecompressFrame( compressed, uncompressed );
 
-				for ( y = 0; y < s_resample_height/2; y++ )
+				for ( y = 0; y < s_resample_height / 2; y++ )
 				{
 					for ( x = 0; x < s_resample_width; x++ )
 					{
 						unsigned char tmp[4];
 
-						tmp[0] = uncompressed[(s_resample_height-1-y)*s_resample_width*4 + x*4 + 0];
-						tmp[1] = uncompressed[(s_resample_height-1-y)*s_resample_width*4 + x*4 + 1];
-						tmp[2] = uncompressed[(s_resample_height-1-y)*s_resample_width*4 + x*4 + 2];
-						tmp[3] = uncompressed[(s_resample_height-1-y)*s_resample_width*4 + x*4 + 3];
+						tmp[0] = uncompressed[( s_resample_height - 1 - y ) * s_resample_width * 4 + x * 4 + 0];
+						tmp[1] = uncompressed[( s_resample_height - 1 - y ) * s_resample_width * 4 + x * 4 + 1];
+						tmp[2] = uncompressed[( s_resample_height - 1 - y ) * s_resample_width * 4 + x * 4 + 2];
+						tmp[3] = uncompressed[( s_resample_height - 1 - y ) * s_resample_width * 4 + x * 4 + 3];
 
-						uncompressed[(s_resample_height-1-y)*s_resample_width*4 + x*4 + 0] = uncompressed[y*s_resample_width*4 + x*4 + 0];
-						uncompressed[(s_resample_height-1-y)*s_resample_width*4 + x*4 + 1] = uncompressed[y*s_resample_width*4 + x*4 + 1];
-						uncompressed[(s_resample_height-1-y)*s_resample_width*4 + x*4 + 2] = uncompressed[y*s_resample_width*4 + x*4 + 2];
-						uncompressed[(s_resample_height-1-y)*s_resample_width*4 + x*4 + 3] = uncompressed[y*s_resample_width*4 + x*4 + 3];
+						uncompressed[( s_resample_height - 1 - y ) * s_resample_width * 4 + x * 4 + 0] = uncompressed[y * s_resample_width * 4 + x * 4 + 0];
+						uncompressed[( s_resample_height - 1 - y ) * s_resample_width * 4 + x * 4 + 1] = uncompressed[y * s_resample_width * 4 + x * 4 + 1];
+						uncompressed[( s_resample_height - 1 - y ) * s_resample_width * 4 + x * 4 + 2] = uncompressed[y * s_resample_width * 4 + x * 4 + 2];
+						uncompressed[( s_resample_height - 1 - y ) * s_resample_width * 4 + x * 4 + 3] = uncompressed[y * s_resample_width * 4 + x * 4 + 3];
 
-						uncompressed[y*s_resample_width*4 + x*4 + 0] = tmp[0];
-						uncompressed[y*s_resample_width*4 + x*4 + 1] = tmp[1];
-						uncompressed[y*s_resample_width*4 + x*4 + 2] = tmp[2];
-						uncompressed[y*s_resample_width*4 + x*4 + 3] = tmp[3];
+						uncompressed[y * s_resample_width * 4 + x * 4 + 0] = tmp[0];
+						uncompressed[y * s_resample_width * 4 + x * 4 + 1] = tmp[1];
+						uncompressed[y * s_resample_width * 4 + x * 4 + 2] = tmp[2];
+						uncompressed[y * s_resample_width * 4 + x * 4 + 3] = tmp[3];
 					}
 				}
 
@@ -1126,27 +1101,26 @@ void Cmd_Video (void)
 
 		WriteSound( output, frame );
 
-		free (in.data);
+		free( in.data );
 	}
 	stop = clock();
 
-	printf ("\n");
+	printf( "\n" );
 
-	printf ("Total size: %i\n", ftell( output ) );
-	printf ("Average error: %f\n", sumError / ( frame - startframe ) );
-	printf ("Max error: %f\n", maxError );
+	printf( "Total size: %i\n", ftell( output ) );
+	printf( "Average error: %f\n", sumError / ( frame - startframe ) );
+	printf( "Max error: %f\n", maxError );
 
 	fseconds = ( stop - start ) / 1000.0f;
 	minutes = fseconds / 60;
 	remSeconds = fseconds - minutes * 60;
 
-	printf ("Total time: %d s (%d m %d s)\n", ( int ) fseconds, minutes, remSeconds );
-	printf ("Time/frame: %.2f seconds\n", fseconds / ( frame - startframe ) );
+	printf( "Total time: %d s (%d m %d s)\n", ( int ) fseconds, minutes, remSeconds );
+	printf( "Time/frame: %.2f seconds\n", fseconds / ( frame - startframe ) );
 
-	fclose (output);
+	fclose( output );
 
-	if ( s_soundtrack )
-	{
+	if ( s_soundtrack ) {
 		free( s_soundtrack );
 		s_soundtrack = 0;
 	}

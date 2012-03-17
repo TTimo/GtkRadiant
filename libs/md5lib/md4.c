@@ -23,16 +23,16 @@
 /*
  * The basic MD4 functions.
  */
-#define F(x, y, z)	((z) ^ ((x) & ((y) ^ (z))))
-#define G(x, y, z)	(((x) & (y)) | ((x) & (z)) | ((y) & (z)))
-#define H(x, y, z)	((x) ^ (y) ^ (z))
+#define F( x, y, z )  ( ( z ) ^ ( ( x ) & ( ( y ) ^ ( z ) ) ) )
+#define G( x, y, z )  ( ( ( x ) & ( y ) ) | ( ( x ) & ( z ) ) | ( ( y ) & ( z ) ) )
+#define H( x, y, z )  ( ( x ) ^ ( y ) ^ ( z ) )
 
 /*
  * The MD4 transformation for all four rounds.
  */
-#define STEP(f, a, b, c, d, x, s) \
-	(a) += f((b), (c), (d)) + (x);	 \
-	(a) = ((a) << (s)) | ((a) >> (32 - (s)))
+#define STEP( f, a, b, c, d, x, s )	\
+	( a ) += f( ( b ), ( c ), ( d ) ) + ( x );	 \
+	( a ) = ( ( a ) << ( s ) ) | ( ( a ) >> ( 32 - ( s ) ) )
 
 
 /*
@@ -43,28 +43,27 @@
  * memory accesses is just an optimization.  Nothing will break if it
  * doesn't work.
  */
-#if defined(__i386__) || defined(__x86_64__) || defined(__vax__)
-#define SET(n) \
-	(*(const uint_fast32_t *)&ptr[(n) * 4])
-#define GET(n) \
-	SET(n)
+#if defined( __i386__ ) || defined( __x86_64__ ) || defined( __vax__ )
+#define SET( n ) \
+	( *(const uint_fast32_t *)&ptr[( n ) * 4] )
+#define GET( n ) \
+	SET( n )
 #else
-#define SET(n) \
-	(ctx->block[(n)] = \
-	(uint_fast32_t)ptr[(n) * 4] | \
-	((uint_fast32_t)ptr[(n) * 4 + 1] << 8) | \
-	((uint_fast32_t)ptr[(n) * 4 + 2] << 16) | \
-	((uint_fast32_t)ptr[(n) * 4 + 3] << 24))
-#define GET(n) \
-	(ctx->block[(n)])
+#define SET( n ) \
+	( ctx->block[( n )] = \
+		  (uint_fast32_t)ptr[( n ) * 4] | \
+		  ( (uint_fast32_t)ptr[( n ) * 4 + 1] << 8 ) | \
+		  ( (uint_fast32_t)ptr[( n ) * 4 + 2] << 16 ) |	\
+		  ( (uint_fast32_t)ptr[( n ) * 4 + 3] << 24 ) )
+#define GET( n ) \
+	( ctx->block[( n )] )
 #endif
 
 /*
  * This processes one or more 64-byte data blocks, but does NOT update
  * the bit counters.  There're no alignment requirements.
  */
-static const void *body(struct md4_context *ctx, const void *data, size_t size)
-{
+static const void *body( struct md4_context *ctx, const void *data, size_t size ){
 	const unsigned char *ptr;
 	uint32_t a, b, c, d;
 	uint32_t saved_a, saved_b, saved_c, saved_d;
@@ -83,65 +82,65 @@ static const void *body(struct md4_context *ctx, const void *data, size_t size)
 		saved_d = d;
 
 /* Round 1 */
-		STEP(F, a, b, c, d, SET( 0),  3);
-		STEP(F, d, a, b, c, SET( 1),  7);
-		STEP(F, c, d, a, b, SET( 2), 11);
-		STEP(F, b, c, d, a, SET( 3), 19);
+		STEP( F, a, b, c, d, SET( 0 ),  3 );
+		STEP( F, d, a, b, c, SET( 1 ),  7 );
+		STEP( F, c, d, a, b, SET( 2 ), 11 );
+		STEP( F, b, c, d, a, SET( 3 ), 19 );
 
-		STEP(F, a, b, c, d, SET( 4),  3);
-		STEP(F, d, a, b, c, SET( 5),  7);
-		STEP(F, c, d, a, b, SET( 6), 11);
-		STEP(F, b, c, d, a, SET( 7), 19);
+		STEP( F, a, b, c, d, SET( 4 ),  3 );
+		STEP( F, d, a, b, c, SET( 5 ),  7 );
+		STEP( F, c, d, a, b, SET( 6 ), 11 );
+		STEP( F, b, c, d, a, SET( 7 ), 19 );
 
-		STEP(F, a, b, c, d, SET( 8),  3);
-		STEP(F, d, a, b, c, SET( 9),  7);
-		STEP(F, c, d, a, b, SET(10), 11);
-		STEP(F, b, c, d, a, SET(11), 19);
+		STEP( F, a, b, c, d, SET( 8 ),  3 );
+		STEP( F, d, a, b, c, SET( 9 ),  7 );
+		STEP( F, c, d, a, b, SET( 10 ), 11 );
+		STEP( F, b, c, d, a, SET( 11 ), 19 );
 
-		STEP(F, a, b, c, d, SET(12),  3);
-		STEP(F, d, a, b, c, SET(13),  7);
-		STEP(F, c, d, a, b, SET(14), 11);
-		STEP(F, b, c, d, a, SET(15), 19);
+		STEP( F, a, b, c, d, SET( 12 ),  3 );
+		STEP( F, d, a, b, c, SET( 13 ),  7 );
+		STEP( F, c, d, a, b, SET( 14 ), 11 );
+		STEP( F, b, c, d, a, SET( 15 ), 19 );
 /* Round 2 */
-		STEP(G, a, b, c, d, GET( 0) + 0x5A827999,  3);
-		STEP(G, d, a, b, c, GET( 4) + 0x5A827999,  5);
-		STEP(G, c, d, a, b, GET( 8) + 0x5A827999,  9);
-		STEP(G, b, c, d, a, GET(12) + 0x5A827999, 13);
+		STEP( G, a, b, c, d, GET( 0 ) + 0x5A827999,  3 );
+		STEP( G, d, a, b, c, GET( 4 ) + 0x5A827999,  5 );
+		STEP( G, c, d, a, b, GET( 8 ) + 0x5A827999,  9 );
+		STEP( G, b, c, d, a, GET( 12 ) + 0x5A827999, 13 );
 
-		STEP(G, a, b, c, d, GET( 1) + 0x5A827999,  3);
-		STEP(G, d, a, b, c, GET( 5) + 0x5A827999,  5);
-		STEP(G, c, d, a, b, GET( 9) + 0x5A827999,  9);
-		STEP(G, b, c, d, a, GET(13) + 0x5A827999, 13);
+		STEP( G, a, b, c, d, GET( 1 ) + 0x5A827999,  3 );
+		STEP( G, d, a, b, c, GET( 5 ) + 0x5A827999,  5 );
+		STEP( G, c, d, a, b, GET( 9 ) + 0x5A827999,  9 );
+		STEP( G, b, c, d, a, GET( 13 ) + 0x5A827999, 13 );
 
-		STEP(G, a, b, c, d, GET( 2) + 0x5A827999,  3);
-		STEP(G, d, a, b, c, GET( 6) + 0x5A827999,  5);
-		STEP(G, c, d, a, b, GET(10) + 0x5A827999,  9);
-		STEP(G, b, c, d, a, GET(14) + 0x5A827999, 13);
+		STEP( G, a, b, c, d, GET( 2 ) + 0x5A827999,  3 );
+		STEP( G, d, a, b, c, GET( 6 ) + 0x5A827999,  5 );
+		STEP( G, c, d, a, b, GET( 10 ) + 0x5A827999,  9 );
+		STEP( G, b, c, d, a, GET( 14 ) + 0x5A827999, 13 );
 
-		STEP(G, a, b, c, d, GET( 3) + 0x5A827999,  3);
-		STEP(G, d, a, b, c, GET( 7) + 0x5A827999,  5);
-		STEP(G, c, d, a, b, GET(11) + 0x5A827999,  9);
-		STEP(G, b, c, d, a, GET(15) + 0x5A827999, 13);
+		STEP( G, a, b, c, d, GET( 3 ) + 0x5A827999,  3 );
+		STEP( G, d, a, b, c, GET( 7 ) + 0x5A827999,  5 );
+		STEP( G, c, d, a, b, GET( 11 ) + 0x5A827999,  9 );
+		STEP( G, b, c, d, a, GET( 15 ) + 0x5A827999, 13 );
 /* Round 3 */
-		STEP(H, a, b, c, d, GET( 0) + 0x6ED9EBA1,  3);
-		STEP(H, d, a, b, c, GET( 8) + 0x6ED9EBA1,  9);
-		STEP(H, c, d, a, b, GET( 4) + 0x6ED9EBA1, 11);
-		STEP(H, b, c, d, a, GET(12) + 0x6ED9EBA1, 15);
+		STEP( H, a, b, c, d, GET( 0 ) + 0x6ED9EBA1,  3 );
+		STEP( H, d, a, b, c, GET( 8 ) + 0x6ED9EBA1,  9 );
+		STEP( H, c, d, a, b, GET( 4 ) + 0x6ED9EBA1, 11 );
+		STEP( H, b, c, d, a, GET( 12 ) + 0x6ED9EBA1, 15 );
 
-		STEP(H, a, b, c, d, GET( 2) + 0x6ED9EBA1,  3);
-		STEP(H, d, a, b, c, GET(10) + 0x6ED9EBA1,  9);
-		STEP(H, c, d, a, b, GET( 6) + 0x6ED9EBA1, 11);
-		STEP(H, b, c, d, a, GET(14) + 0x6ED9EBA1, 15);
+		STEP( H, a, b, c, d, GET( 2 ) + 0x6ED9EBA1,  3 );
+		STEP( H, d, a, b, c, GET( 10 ) + 0x6ED9EBA1,  9 );
+		STEP( H, c, d, a, b, GET( 6 ) + 0x6ED9EBA1, 11 );
+		STEP( H, b, c, d, a, GET( 14 ) + 0x6ED9EBA1, 15 );
 
-		STEP(H, a, b, c, d, GET( 1) + 0x6ED9EBA1,  3);
-		STEP(H, d, a, b, c, GET( 9) + 0x6ED9EBA1,  9);
-		STEP(H, c, d, a, b, GET( 5) + 0x6ED9EBA1, 11);
-		STEP(H, b, c, d, a, GET(13) + 0x6ED9EBA1, 15);
+		STEP( H, a, b, c, d, GET( 1 ) + 0x6ED9EBA1,  3 );
+		STEP( H, d, a, b, c, GET( 9 ) + 0x6ED9EBA1,  9 );
+		STEP( H, c, d, a, b, GET( 5 ) + 0x6ED9EBA1, 11 );
+		STEP( H, b, c, d, a, GET( 13 ) + 0x6ED9EBA1, 15 );
 
-		STEP(H, a, b, c, d, GET( 3) + 0x6ED9EBA1,  3);
-		STEP(H, d, a, b, c, GET(11) + 0x6ED9EBA1,  9);
-		STEP(H, c, d, a, b, GET( 7) + 0x6ED9EBA1, 11);
-		STEP(H, b, c, d, a, GET(15) + 0x6ED9EBA1, 15);
+		STEP( H, a, b, c, d, GET( 3 ) + 0x6ED9EBA1,  3 );
+		STEP( H, d, a, b, c, GET( 11 ) + 0x6ED9EBA1,  9 );
+		STEP( H, c, d, a, b, GET( 7 ) + 0x6ED9EBA1, 11 );
+		STEP( H, b, c, d, a, GET( 15 ) + 0x6ED9EBA1, 15 );
 
 		a += saved_a;
 		b += saved_b;
@@ -149,7 +148,7 @@ static const void *body(struct md4_context *ctx, const void *data, size_t size)
 		d += saved_d;
 
 		ptr += 64;
-	} while (size -= 64);
+	} while ( size -= 64 );
 
 	ctx->a = a;
 	ctx->b = b;
@@ -159,8 +158,7 @@ static const void *body(struct md4_context *ctx, const void *data, size_t size)
 	return ptr;
 }
 
-void md4_init(struct md4_context *ctx)
-{
+void md4_init( struct md4_context *ctx ){
 	ctx->a = 0x67452301;
 	ctx->b = 0xefcdab89;
 	ctx->c = 0x98badcfe;
@@ -170,43 +168,42 @@ void md4_init(struct md4_context *ctx)
 	ctx->hi = 0;
 }
 
-void md4_update(struct md4_context *ctx, const void *data, size_t size)
-{
+void md4_update( struct md4_context *ctx, const void *data, size_t size ){
 	/* @UNSAFE */
 	uint_fast32_t saved_lo;
 	unsigned long used, free;
 
 	saved_lo = ctx->lo;
-	if ((ctx->lo = (saved_lo + size) & 0x1fffffff) < saved_lo)
+	if ( ( ctx->lo = ( saved_lo + size ) & 0x1fffffff ) < saved_lo ) {
 		ctx->hi++;
+	}
 	ctx->hi += size >> 29;
 
 	used = saved_lo & 0x3f;
 
-	if (used) {
+	if ( used ) {
 		free = 64 - used;
 
-		if (size < free) {
-			memcpy(&ctx->buffer[used], data, size);
+		if ( size < free ) {
+			memcpy( &ctx->buffer[used], data, size );
 			return;
 		}
 
-		memcpy(&ctx->buffer[used], data, free);
+		memcpy( &ctx->buffer[used], data, free );
 		data = (const unsigned char *) data + free;
 		size -= free;
-		body(ctx, ctx->buffer, 64);
+		body( ctx, ctx->buffer, 64 );
 	}
 
-	if (size >= 64) {
-		data = body(ctx, data, size & ~(unsigned long)0x3f);
+	if ( size >= 64 ) {
+		data = body( ctx, data, size & ~(unsigned long)0x3f );
 		size &= 0x3f;
 	}
 
-	memcpy(ctx->buffer, data, size);
+	memcpy( ctx->buffer, data, size );
 }
 
-void md4_final(struct md4_context *ctx, unsigned char result[MD4_RESULTLEN])
-{
+void md4_final( struct md4_context *ctx, unsigned char result[MD4_RESULTLEN] ){
 	/* @UNSAFE */
 	unsigned long used, free;
 
@@ -216,14 +213,14 @@ void md4_final(struct md4_context *ctx, unsigned char result[MD4_RESULTLEN])
 
 	free = 64 - used;
 
-	if (free < 8) {
-		memset(&ctx->buffer[used], 0, free);
-		body(ctx, ctx->buffer, 64);
+	if ( free < 8 ) {
+		memset( &ctx->buffer[used], 0, free );
+		body( ctx, ctx->buffer, 64 );
 		used = 0;
 		free = 64;
 	}
 
-	memset(&ctx->buffer[used], 0, free - 8);
+	memset( &ctx->buffer[used], 0, free - 8 );
 
 	ctx->lo <<= 3;
 	ctx->buffer[56] = ctx->lo;
@@ -235,7 +232,7 @@ void md4_final(struct md4_context *ctx, unsigned char result[MD4_RESULTLEN])
 	ctx->buffer[62] = ctx->hi >> 16;
 	ctx->buffer[63] = ctx->hi >> 24;
 
-	body(ctx, ctx->buffer, 64);
+	body( ctx, ctx->buffer, 64 );
 
 	result[0] = ctx->a;
 	result[1] = ctx->a >> 8;
@@ -254,36 +251,32 @@ void md4_final(struct md4_context *ctx, unsigned char result[MD4_RESULTLEN])
 	result[14] = ctx->d >> 16;
 	result[15] = ctx->d >> 24;
 
-	memset(ctx, 0, sizeof(*ctx));
+	memset( ctx, 0, sizeof( *ctx ) );
 }
 
-void md4_get_digest(const void *data, size_t size,
-		    unsigned char result[MD4_RESULTLEN])
-{
+void md4_get_digest( const void *data, size_t size,
+					 unsigned char result[MD4_RESULTLEN] ){
 	struct md4_context ctx;
 
-	md4_init(&ctx);
-	md4_update(&ctx, data, size);
-	md4_final(&ctx, result);
+	md4_init( &ctx );
+	md4_update( &ctx, data, size );
+	md4_final( &ctx, result );
 }
 
-static void hash_method_init_md4(void *context)
-{
-	md4_init(context);
+static void hash_method_init_md4( void *context ){
+	md4_init( context );
 }
-static void hash_method_loop_md4(void *context, const void *data, size_t size)
-{
-	md4_update(context, data, size);
+static void hash_method_loop_md4( void *context, const void *data, size_t size ){
+	md4_update( context, data, size );
 }
 
-static void hash_method_result_md4(void *context, unsigned char *result_r)
-{
-	md4_final(context, result_r);
+static void hash_method_result_md4( void *context, unsigned char *result_r ){
+	md4_final( context, result_r );
 }
 
 const struct hash_method hash_method_md4 = {
 	"md4",
-	sizeof(struct md4_context),
+	sizeof( struct md4_context ),
 	MD4_RESULTLEN,
 
 	hash_method_init_md4,

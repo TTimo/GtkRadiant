@@ -1,1 +1,1 @@
-list<DWinding*> *BuildTrace(char* filename, vec3_t v_origin);
+list<DWinding*> *BuildTrace( char* filename, vec3_t v_origin );

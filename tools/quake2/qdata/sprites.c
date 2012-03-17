@@ -1,228 +1,227 @@
 /*
-Copyright (C) 1999-2007 id Software, Inc. and contributors.
-For a list of contributors, see the accompanying CONTRIBUTORS file.
+   Copyright (C) 1999-2007 id Software, Inc. and contributors.
+   For a list of contributors, see the accompanying CONTRIBUTORS file.
 
-This file is part of GtkRadiant.
+   This file is part of GtkRadiant.
 
-GtkRadiant is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
+   GtkRadiant is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 2 of the License, or
+   (at your option) any later version.
 
-GtkRadiant is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+   GtkRadiant is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
 
-You should have received a copy of the GNU General Public License
-along with GtkRadiant; if not, write to the Free Software
-Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-*/
+   You should have received a copy of the GNU General Public License
+   along with GtkRadiant; if not, write to the Free Software
+   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ */
 
 #include "qdata.h"
 #include "inout.h"
 
-#define MAX_SPRFRAMES			MAX_MD2SKINS
+#define MAX_SPRFRAMES           MAX_MD2SKINS
 
-dsprite_t		sprite;
-dsprframe_t		frames[MAX_SPRFRAMES];
+dsprite_t sprite;
+dsprframe_t frames[MAX_SPRFRAMES];
 
-byte			*byteimage, *lbmpalette;
-int				byteimagewidth, byteimageheight;
+byte            *byteimage, *lbmpalette;
+int byteimagewidth, byteimageheight;
 
-char			spritename[1024];
+char spritename[1024];
 
 
-void FinishSprite (void);
-void Cmd_Spritename (void);
+void FinishSprite( void );
+void Cmd_Spritename( void );
 
 
 
 /*
-==============
-FinishSprite	
-==============
-*/
-void FinishSprite (void)
-{
-	FILE	*spriteouthandle;
-	int			i, curframe;
-	dsprite_t	spritetemp;
-	char		savename[1024];
+   ==============
+   FinishSprite
+   ==============
+ */
+void FinishSprite( void ){
+	FILE    *spriteouthandle;
+	int i, curframe;
+	dsprite_t spritetemp;
+	char savename[1024];
 
-	if (sprite.numframes == 0)
+	if ( sprite.numframes == 0 ) {
 		return;
+	}
 
-	if (!strlen(spritename))
-		Error ("Didn't name sprite file");
-		
-	sprintf (savename, "%s%s.sp2", gamedir, spritename);
+	if ( !strlen( spritename ) ) {
+		Error( "Didn't name sprite file" );
+	}
 
-	if (g_release)
-	{
-		char	name[1024];
+	sprintf( savename, "%s%s.sp2", gamedir, spritename );
 
-		sprintf (name, "%s.sp2", spritename);
-		ReleaseFile (name);
-		spritename[0] = 0;		// clear for a new sprite
+	if ( g_release ) {
+		char name[1024];
+
+		sprintf( name, "%s.sp2", spritename );
+		ReleaseFile( name );
+		spritename[0] = 0;      // clear for a new sprite
 		sprite.numframes = 0;
 		return;
 	}
 
 
-	printf ("saving in %s\n", savename);
-	CreatePath (savename);
-	spriteouthandle = SafeOpenWrite (savename);
+	printf( "saving in %s\n", savename );
+	CreatePath( savename );
+	spriteouthandle = SafeOpenWrite( savename );
 
 
 //
 // write out the sprite header
 //
-	spritetemp.ident = LittleLong (IDSPRITEHEADER);
-	spritetemp.version = LittleLong (SPRITE_VERSION);
-	spritetemp.numframes = LittleLong (sprite.numframes);
+	spritetemp.ident = LittleLong( IDSPRITEHEADER );
+	spritetemp.version = LittleLong( SPRITE_VERSION );
+	spritetemp.numframes = LittleLong( sprite.numframes );
 
-	SafeWrite (spriteouthandle, &spritetemp, 12);
+	SafeWrite( spriteouthandle, &spritetemp, 12 );
 
 //
 // write out the frames
 //
 	curframe = 0;
 
-	for (i=0 ; i<sprite.numframes ; i++)
+	for ( i = 0 ; i < sprite.numframes ; i++ )
 	{
-		frames[i].width = LittleLong(frames[i].width);
-		frames[i].height = LittleLong(frames[i].height);
-		frames[i].origin_x = LittleLong(frames[i].origin_x);
-		frames[i].origin_y = LittleLong(frames[i].origin_y);
+		frames[i].width = LittleLong( frames[i].width );
+		frames[i].height = LittleLong( frames[i].height );
+		frames[i].origin_x = LittleLong( frames[i].origin_x );
+		frames[i].origin_y = LittleLong( frames[i].origin_y );
 	}
-	SafeWrite (spriteouthandle, frames, sizeof(frames[0])*sprite.numframes);
+	SafeWrite( spriteouthandle, frames, sizeof( frames[0] ) * sprite.numframes );
 
-	fclose (spriteouthandle);
-	
-	spritename[0] = 0;		// clear for a new sprite
+	fclose( spriteouthandle );
+
+	spritename[0] = 0;      // clear for a new sprite
 	sprite.numframes = 0;
 }
 
 
 /*
-===============
-Cmd_Load
-===============
-*/
-void Cmd_Load (void)
-{
-	char	*name;
+   ===============
+   Cmd_Load
+   ===============
+ */
+void Cmd_Load( void ){
+	char    *name;
 
-	GetToken (false);
+	GetToken( false );
 
-	if (g_release)
+	if ( g_release ) {
 		return;
+	}
 
-	name = ExpandPathAndArchive(token);
+	name = ExpandPathAndArchive( token );
 
 	// load the image
-	printf ("loading %s\n", name);
-	Load256Image (name, &byteimage, &lbmpalette, 
-		&byteimagewidth, &byteimageheight);
-	RemapZero (byteimage, lbmpalette, 
-		byteimagewidth, byteimageheight);
+	printf( "loading %s\n", name );
+	Load256Image( name, &byteimage, &lbmpalette,
+				  &byteimagewidth, &byteimageheight );
+	RemapZero( byteimage, lbmpalette,
+			   byteimagewidth, byteimageheight );
 }
 
 
 /*
-===============
-Cmd_SpriteFrame
-===============
-*/
-void Cmd_SpriteFrame (void)
-{
-	int             y,xl,yl,xh,yh,w,h;
-	dsprframe_t		*pframe;
-	int				ox, oy;
-	byte			*cropped;
-	char			savename[1024];
+   ===============
+   Cmd_SpriteFrame
+   ===============
+ */
+void Cmd_SpriteFrame( void ){
+	int y,xl,yl,xh,yh,w,h;
+	dsprframe_t     *pframe;
+	int ox, oy;
+	byte            *cropped;
+	char savename[1024];
 
-	GetToken (false);
-	xl = atoi (token);
-	GetToken (false);
-	yl = atoi (token);
-	GetToken (false);
-	w = atoi (token);
-	GetToken (false);
-	h = atoi (token);
+	GetToken( false );
+	xl = atoi( token );
+	GetToken( false );
+	yl = atoi( token );
+	GetToken( false );
+	w = atoi( token );
+	GetToken( false );
+	h = atoi( token );
 
 	// origin offset is optional
-	if (TokenAvailable ())
-	{
-		GetToken (false);
-		ox = atoi (token);
-		GetToken (false);
-		oy = atoi (token);		
+	if ( TokenAvailable() ) {
+		GetToken( false );
+		ox = atoi( token );
+		GetToken( false );
+		oy = atoi( token );
 	}
 	else
 	{
-		ox = w/2;
-		oy = h/2;
+		ox = w / 2;
+		oy = h / 2;
 	}
 
-	if ((xl & 0x07) || (yl & 0x07) || (w & 0x07) || (h & 0x07))
-		Error ("Sprite dimensions not multiples of 8\n");
+	if ( ( xl & 0x07 ) || ( yl & 0x07 ) || ( w & 0x07 ) || ( h & 0x07 ) ) {
+		Error( "Sprite dimensions not multiples of 8\n" );
+	}
 
-	if ((w > 256) || (h > 256))
-		Error ("Sprite has a dimension longer than 256");
+	if ( ( w > 256 ) || ( h > 256 ) ) {
+		Error( "Sprite has a dimension longer than 256" );
+	}
 
-	xh = xl+w;
-	yh = yl+h;
+	xh = xl + w;
+	yh = yl + h;
 
-	if (sprite.numframes >= MAX_SPRFRAMES)
-		Error ("Too many frames; increase MAX_SPRFRAMES\n");
+	if ( sprite.numframes >= MAX_SPRFRAMES ) {
+		Error( "Too many frames; increase MAX_SPRFRAMES\n" );
+	}
 
 	pframe = &frames[sprite.numframes];
 	pframe->width = w;
 	pframe->height = h;
 	pframe->origin_x = ox;
 	pframe->origin_y = oy;
-	sprintf (pframe->name, "%s_%i.pcx", spritename, sprite.numframes);
-	sprintf (savename, "%s%s_%i.pcx", gamedir, spritename, sprite.numframes);
+	sprintf( pframe->name, "%s_%i.pcx", spritename, sprite.numframes );
+	sprintf( savename, "%s%s_%i.pcx", gamedir, spritename, sprite.numframes );
 	sprite.numframes++;
 
-	if (g_release)
-	{
-		ReleaseFile (pframe->name);
+	if ( g_release ) {
+		ReleaseFile( pframe->name );
 		return;
 	}
 
 	// crop it to the proper size
-	cropped = malloc (w*h);
-	for (y=0 ; y<h ; y++)
+	cropped = malloc( w * h );
+	for ( y = 0 ; y < h ; y++ )
 	{
-		memcpy (cropped+y*w, byteimage+(y+yl)*byteimagewidth+xl, w);
+		memcpy( cropped + y * w, byteimage + ( y + yl ) * byteimagewidth + xl, w );
 	}
 
 	// save off the new image
-	printf ("saving %s\n", savename);
-	CreatePath (savename);
-	WritePCXfile (savename, cropped, w,	h, lbmpalette);
+	printf( "saving %s\n", savename );
+	CreatePath( savename );
+	WritePCXfile( savename, cropped, w, h, lbmpalette );
 
-	free (cropped);
+	free( cropped );
 }
 
 
 
 /*
-==============
-Cmd_SpriteName
-==============
-*/
-void Cmd_SpriteName (void)
-{
-	if (sprite.numframes)
-		FinishSprite ();
+   ==============
+   Cmd_SpriteName
+   ==============
+ */
+void Cmd_SpriteName( void ){
+	if ( sprite.numframes ) {
+		FinishSprite();
+	}
 
-	GetToken (false);
-	strcpy (spritename, token);
-	memset (&sprite, 0, sizeof(sprite));
-	memset (&frames, 0, sizeof(frames));
+	GetToken( false );
+	strcpy( spritename, token );
+	memset( &sprite, 0, sizeof( sprite ) );
+	memset( &frames, 0, sizeof( frames ) );
 }
-

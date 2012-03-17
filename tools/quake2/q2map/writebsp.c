@@ -1,60 +1,59 @@
 /*
-Copyright (C) 1999-2007 id Software, Inc. and contributors.
-For a list of contributors, see the accompanying CONTRIBUTORS file.
+   Copyright (C) 1999-2007 id Software, Inc. and contributors.
+   For a list of contributors, see the accompanying CONTRIBUTORS file.
 
-This file is part of GtkRadiant.
+   This file is part of GtkRadiant.
 
-GtkRadiant is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
+   GtkRadiant is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 2 of the License, or
+   (at your option) any later version.
 
-GtkRadiant is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+   GtkRadiant is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
 
-You should have received a copy of the GNU General Public License
-along with GtkRadiant; if not, write to the Free Software
-Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-*/
+   You should have received a copy of the GNU General Public License
+   along with GtkRadiant; if not, write to the Free Software
+   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ */
 #include "qbsp.h"
 
-int		c_nofaces;
-int		c_facenodes;
+int c_nofaces;
+int c_facenodes;
 
 
 /*
-=========================================================
+   =========================================================
 
-ONLY SAVE OUT PLANES THAT ARE ACTUALLY USED AS NODES
+   ONLY SAVE OUT PLANES THAT ARE ACTUALLY USED AS NODES
 
-=========================================================
-*/
+   =========================================================
+ */
 
-int		planeused[MAX_MAP_PLANES];
+int planeused[MAX_MAP_PLANES];
 
 /*
-============
-EmitPlanes
+   ============
+   EmitPlanes
 
-There is no oportunity to discard planes, because all of the original
-brushes will be saved in the map.
-============
-*/
-void EmitPlanes (void)
-{
-	int			i;
-	dplane_t	*dp;
-	plane_t		*mp;
-	int		planetranslate[MAX_MAP_PLANES];
+   There is no oportunity to discard planes, because all of the original
+   brushes will be saved in the map.
+   ============
+ */
+void EmitPlanes( void ){
+	int i;
+	dplane_t    *dp;
+	plane_t     *mp;
+	int planetranslate[MAX_MAP_PLANES];
 
 	mp = mapplanes;
-	for (i=0 ; i<nummapplanes ; i++, mp++)
+	for ( i = 0 ; i < nummapplanes ; i++, mp++ )
 	{
 		dp = &dplanes[numplanes];
 		planetranslate[i] = numplanes;
-		VectorCopy ( mp->normal, dp->normal);
+		VectorCopy( mp->normal, dp->normal );
 		dp->dist = mp->dist;
 		dp->type = mp->type;
 		numplanes++;
@@ -64,34 +63,35 @@ void EmitPlanes (void)
 
 //========================================================
 
-void EmitMarkFace (dleaf_t *leaf_p, face_t *f)
-{
-	int			i;
-	int			facenum;
+void EmitMarkFace( dleaf_t *leaf_p, face_t *f ){
+	int i;
+	int facenum;
 
-	while (f->merged)
+	while ( f->merged )
 		f = f->merged;
 
-	if (f->split[0])
-	{
-		EmitMarkFace (leaf_p, f->split[0]);
-		EmitMarkFace (leaf_p, f->split[1]);
+	if ( f->split[0] ) {
+		EmitMarkFace( leaf_p, f->split[0] );
+		EmitMarkFace( leaf_p, f->split[1] );
 		return;
 	}
 
 	facenum = f->outputnumber;
-	if (facenum == -1)
-		return;	// degenerate face
+	if ( facenum == -1 ) {
+		return; // degenerate face
 
-	if (facenum < 0 || facenum >= numfaces)
-		Error ("Bad leafface");
-	for (i=leaf_p->firstleafface ; i<numleaffaces ; i++)
-		if (dleaffaces[i] == facenum)
-			break;		// merged out face
-	if (i == numleaffaces)
-	{
-		if (numleaffaces >= MAX_MAP_LEAFFACES)
-			Error ("MAX_MAP_LEAFFACES");
+	}
+	if ( facenum < 0 || facenum >= numfaces ) {
+		Error( "Bad leafface" );
+	}
+	for ( i = leaf_p->firstleafface ; i < numleaffaces ; i++ )
+		if ( dleaffaces[i] == facenum ) {
+			break;
+		}               // merged out face
+	if ( i == numleaffaces ) {
+		if ( numleaffaces >= MAX_MAP_LEAFFACES ) {
+			Error( "MAX_MAP_LEAFFACES" );
+		}
 
 		dleaffaces[numleaffaces] =  facenum;
 		numleaffaces++;
@@ -101,23 +101,23 @@ void EmitMarkFace (dleaf_t *leaf_p, face_t *f)
 
 
 /*
-==================
-EmitLeaf
-==================
-*/
-void EmitLeaf (node_t *node)
-{
-	dleaf_t		*leaf_p;
-	portal_t	*p;
-	int			s;
-	face_t		*f;
-	bspbrush_t	*b;
-	int			i;
-	int			brushnum;
+   ==================
+   EmitLeaf
+   ==================
+ */
+void EmitLeaf( node_t *node ){
+	dleaf_t     *leaf_p;
+	portal_t    *p;
+	int s;
+	face_t      *f;
+	bspbrush_t  *b;
+	int i;
+	int brushnum;
 
 	// emit a leaf
-	if (numleafs >= MAX_MAP_LEAFS)
-		Error ("MAX_MAP_LEAFS");
+	if ( numleafs >= MAX_MAP_LEAFS ) {
+		Error( "MAX_MAP_LEAFS" );
+	}
 
 	leaf_p = &dleafs[numleafs];
 	numleafs++;
@@ -128,25 +128,26 @@ void EmitLeaf (node_t *node)
 
 	//
 	// write bounding box info
-	//	
-	VectorCopy ((short) node->mins, leaf_p->mins);
-	VectorCopy ((short) node->maxs, leaf_p->maxs);
-	
+	//
+	VectorCopy( (short) node->mins, leaf_p->mins );
+	VectorCopy( (short) node->maxs, leaf_p->maxs );
+
 	//
 	// write the leafbrushes
 	//
 	leaf_p->firstleafbrush = numleafbrushes;
-	for (b=node->brushlist ; b ; b=b->next)
+	for ( b = node->brushlist ; b ; b = b->next )
 	{
-		if (numleafbrushes >= MAX_MAP_LEAFBRUSHES)
-			Error ("MAX_MAP_LEAFBRUSHES");
+		if ( numleafbrushes >= MAX_MAP_LEAFBRUSHES ) {
+			Error( "MAX_MAP_LEAFBRUSHES" );
+		}
 
 		brushnum = b->original - mapbrushes;
-		for (i=leaf_p->firstleafbrush ; i<numleafbrushes ; i++)
-			if (dleafbrushes[i] == brushnum)
+		for ( i = leaf_p->firstleafbrush ; i < numleafbrushes ; i++ )
+			if ( dleafbrushes[i] == brushnum ) {
 				break;
-		if (i == numleafbrushes)
-		{
+			}
+		if ( i == numleafbrushes ) {
 			dleafbrushes[numleafbrushes] = brushnum;
 			numleafbrushes++;
 		}
@@ -156,132 +157,134 @@ void EmitLeaf (node_t *node)
 	//
 	// write the leaffaces
 	//
-	if (leaf_p->contents & CONTENTS_SOLID)
-		return;		// no leaffaces in solids
+	if ( leaf_p->contents & CONTENTS_SOLID ) {
+		return;     // no leaffaces in solids
 
+	}
 	leaf_p->firstleafface = numleaffaces;
 
-	for (p = node->portals ; p ; p = p->next[s])	
+	for ( p = node->portals ; p ; p = p->next[s] )
 	{
-		s = (p->nodes[1] == node);
+		s = ( p->nodes[1] == node );
 		f = p->face[s];
-		if (!f)
-			continue;	// not a visible portal
+		if ( !f ) {
+			continue;   // not a visible portal
 
-		EmitMarkFace (leaf_p, f);
+		}
+		EmitMarkFace( leaf_p, f );
 	}
-	
+
 	leaf_p->numleaffaces = numleaffaces - leaf_p->firstleafface;
 }
 
 
 /*
-==================
-EmitFace
-==================
-*/
-void EmitFace (face_t *f)
-{
-	dface_t	*df;
-	int		i;
-	int		e;
+   ==================
+   EmitFace
+   ==================
+ */
+void EmitFace( face_t *f ){
+	dface_t *df;
+	int i;
+	int e;
 
 	f->outputnumber = -1;
 
-	if (f->numpoints < 3)
-	{
-		return;		// degenerated
+	if ( f->numpoints < 3 ) {
+		return;     // degenerated
 	}
-	if (f->merged || f->split[0] || f->split[1])
-	{
-		return;		// not a final face
+	if ( f->merged || f->split[0] || f->split[1] ) {
+		return;     // not a final face
 	}
 
 	// save output number so leaffaces can use
 	f->outputnumber = numfaces;
 
-	if (numfaces >= MAX_MAP_FACES)
-		Error ("numfaces == MAX_MAP_FACES");
+	if ( numfaces >= MAX_MAP_FACES ) {
+		Error( "numfaces == MAX_MAP_FACES" );
+	}
 	df = &dfaces[numfaces];
 	numfaces++;
 
 	// planenum is used by qlight, but not quake
-	df->planenum = f->planenum & (~1);
+	df->planenum = f->planenum & ( ~1 );
 	df->side = f->planenum & 1;
 
 	df->firstedge = numsurfedges;
 	df->numedges = f->numpoints;
 	df->texinfo = f->texinfo;
-	for (i=0 ; i<f->numpoints ; i++)
+	for ( i = 0 ; i < f->numpoints ; i++ )
 	{
 //		e = GetEdge (f->pts[i], f->pts[(i+1)%f->numpoints], f);
-		e = GetEdge2 (f->vertexnums[i], f->vertexnums[(i+1)%f->numpoints], f);
-		if (numsurfedges >= MAX_MAP_SURFEDGES)
-			Error ("numsurfedges == MAX_MAP_SURFEDGES");
+		e = GetEdge2( f->vertexnums[i], f->vertexnums[( i + 1 ) % f->numpoints], f );
+		if ( numsurfedges >= MAX_MAP_SURFEDGES ) {
+			Error( "numsurfedges == MAX_MAP_SURFEDGES" );
+		}
 		dsurfedges[numsurfedges] = e;
 		numsurfedges++;
 	}
 }
 
 /*
-============
-EmitDrawingNode_r
-============
-*/
-int EmitDrawNode_r (node_t *node)
-{
-	dnode_t	*n;
-	face_t	*f;
-	int		i;
+   ============
+   EmitDrawingNode_r
+   ============
+ */
+int EmitDrawNode_r( node_t *node ){
+	dnode_t *n;
+	face_t  *f;
+	int i;
 
-	if (node->planenum == PLANENUM_LEAF)
-	{
-		EmitLeaf (node);
+	if ( node->planenum == PLANENUM_LEAF ) {
+		EmitLeaf( node );
 		return -numleafs;
 	}
 
-	// emit a node	
-	if (numnodes == MAX_MAP_NODES)
-		Error ("MAX_MAP_NODES");
+	// emit a node
+	if ( numnodes == MAX_MAP_NODES ) {
+		Error( "MAX_MAP_NODES" );
+	}
 	n = &dnodes[numnodes];
 	numnodes++;
 
-	VectorCopy ((short) node->mins, n->mins);
-	VectorCopy ((short) node->maxs, n->maxs);
+	VectorCopy( (short) node->mins, n->mins );
+	VectorCopy( (short) node->maxs, n->maxs );
 
 	planeused[node->planenum]++;
-	planeused[node->planenum^1]++;
+	planeused[node->planenum ^ 1]++;
 
-	if (node->planenum & 1)
-		Error ("WriteDrawNodes_r: odd planenum");
+	if ( node->planenum & 1 ) {
+		Error( "WriteDrawNodes_r: odd planenum" );
+	}
 	n->planenum = node->planenum;
 	n->firstface = numfaces;
 
-	if (!node->faces)
+	if ( !node->faces ) {
 		c_nofaces++;
-	else
+	}
+	else{
 		c_facenodes++;
+	}
 
-	for (f=node->faces ; f ; f=f->next)
-		EmitFace (f);
+	for ( f = node->faces ; f ; f = f->next )
+		EmitFace( f );
 
 	n->numfaces = numfaces - n->firstface;
 
 
 	//
 	// recursively output the other nodes
-	//	
-	for (i=0 ; i<2 ; i++)
+	//
+	for ( i = 0 ; i < 2 ; i++ )
 	{
-		if (node->children[i]->planenum == PLANENUM_LEAF)
-		{
-			n->children[i] = -(numleafs + 1);
-			EmitLeaf (node->children[i]);
+		if ( node->children[i]->planenum == PLANENUM_LEAF ) {
+			n->children[i] = -( numleafs + 1 );
+			EmitLeaf( node->children[i] );
 		}
 		else
 		{
-			n->children[i] = numnodes;	
-			EmitDrawNode_r (node->children[i]);
+			n->children[i] = numnodes;
+			EmitDrawNode_r( node->children[i] );
 		}
 	}
 
@@ -292,98 +295,97 @@ int EmitDrawNode_r (node_t *node)
 
 
 /*
-============
-WriteBSP
-============
-*/
-void WriteBSP (node_t *headnode)
-{
-	int		oldfaces;
+   ============
+   WriteBSP
+   ============
+ */
+void WriteBSP( node_t *headnode ){
+	int oldfaces;
 
 	c_nofaces = 0;
 	c_facenodes = 0;
 
-	Sys_FPrintf( SYS_VRB, "--- WriteBSP ---\n");
+	Sys_FPrintf( SYS_VRB, "--- WriteBSP ---\n" );
 
 	oldfaces = numfaces;
-	dmodels[nummodels].headnode = EmitDrawNode_r (headnode);
-	EmitAreaPortals (headnode);
+	dmodels[nummodels].headnode = EmitDrawNode_r( headnode );
+	EmitAreaPortals( headnode );
 
-	Sys_FPrintf( SYS_VRB, "%5i nodes with faces\n", c_facenodes);
-	Sys_FPrintf( SYS_VRB, "%5i nodes without faces\n", c_nofaces);
-	Sys_FPrintf( SYS_VRB, "%5i faces\n", numfaces-oldfaces);
+	Sys_FPrintf( SYS_VRB, "%5i nodes with faces\n", c_facenodes );
+	Sys_FPrintf( SYS_VRB, "%5i nodes without faces\n", c_nofaces );
+	Sys_FPrintf( SYS_VRB, "%5i faces\n", numfaces - oldfaces );
 }
 
 //===========================================================
 
 /*
-============
-SetModelNumbers
-============
-*/
-void SetModelNumbers (void)
-{
-	int		i;
-	int		models;
-	char	value[10];
+   ============
+   SetModelNumbers
+   ============
+ */
+void SetModelNumbers( void ){
+	int i;
+	int models;
+	char value[10];
 
 	models = 1;
-	for (i=1 ; i<num_entities ; i++)
+	for ( i = 1 ; i < num_entities ; i++ )
 	{
-		if (entities[i].numbrushes)
-		{
-			sprintf (value, "*%i", models);
+		if ( entities[i].numbrushes ) {
+			sprintf( value, "*%i", models );
 			models++;
-			SetKeyValue (&entities[i], "model", value);
+			SetKeyValue( &entities[i], "model", value );
 		}
 	}
 
 }
 
 /*
-============
-SetLightStyles
-============
-*/
-#define	MAX_SWITCHED_LIGHTS	32
-void SetLightStyles (void)
-{
-	int		stylenum;
-	char	*t;
-	entity_t	*e;
-	int		i, j;
-	char	value[10];
-	char	lighttargets[MAX_SWITCHED_LIGHTS][64];
+   ============
+   SetLightStyles
+   ============
+ */
+#define MAX_SWITCHED_LIGHTS 32
+void SetLightStyles( void ){
+	int stylenum;
+	char    *t;
+	entity_t    *e;
+	int i, j;
+	char value[10];
+	char lighttargets[MAX_SWITCHED_LIGHTS][64];
 
 
 	// any light that is controlled (has a targetname)
 	// must have a unique style number generated for it
 
 	stylenum = 0;
-	for (i=1 ; i<num_entities ; i++)
+	for ( i = 1 ; i < num_entities ; i++ )
 	{
 		e = &entities[i];
 
-		t = ValueForKey (e, "classname");
-		if (Q_strncasecmp (t, "light", 5))
+		t = ValueForKey( e, "classname" );
+		if ( Q_strncasecmp( t, "light", 5 ) ) {
 			continue;
-		t = ValueForKey (e, "targetname");
-		if (!t[0])
+		}
+		t = ValueForKey( e, "targetname" );
+		if ( !t[0] ) {
 			continue;
-		
+		}
+
 		// find this targetname
-		for (j=0 ; j<stylenum ; j++)
-			if (!strcmp (lighttargets[j], t))
+		for ( j = 0 ; j < stylenum ; j++ )
+			if ( !strcmp( lighttargets[j], t ) ) {
 				break;
-		if (j == stylenum)
-		{
-			if (stylenum == MAX_SWITCHED_LIGHTS)
-				Error ("stylenum == MAX_SWITCHED_LIGHTS");
-			strcpy (lighttargets[j], t);
+			}
+		if ( j == stylenum ) {
+			if ( stylenum == MAX_SWITCHED_LIGHTS ) {
+				Error( "stylenum == MAX_SWITCHED_LIGHTS" );
+			}
+			strcpy( lighttargets[j], t );
 			stylenum++;
 		}
-		sprintf (value, "%i", 32 + j);
-		SetKeyValue (e, "style", value);
+		sprintf( value, "%i", 32 + j );
+		SetKeyValue( e, "style", value );
 	}
 
 }
@@ -391,24 +393,23 @@ void SetLightStyles (void)
 //===========================================================
 
 /*
-============
-EmitBrushes
-============
-*/
-void EmitBrushes (void)
-{
-	int			i, j, bnum, s, x;
-	dbrush_t	*db;
-	mapbrush_t		*b;
-	dbrushside_t	*cp;
-	vec3_t		normal;
-	vec_t		dist;
-	int			planenum;
+   ============
+   EmitBrushes
+   ============
+ */
+void EmitBrushes( void ){
+	int i, j, bnum, s, x;
+	dbrush_t    *db;
+	mapbrush_t      *b;
+	dbrushside_t    *cp;
+	vec3_t normal;
+	vec_t dist;
+	int planenum;
 
 	numbrushsides = 0;
 	numbrushes = nummapbrushes;
 
-	for (bnum=0 ; bnum<nummapbrushes ; bnum++)
+	for ( bnum = 0 ; bnum < nummapbrushes ; bnum++ )
 	{
 		b = &mapbrushes[bnum];
 		db = &dbrushes[bnum];
@@ -416,10 +417,11 @@ void EmitBrushes (void)
 		db->contents = b->contents;
 		db->firstside = numbrushsides;
 		db->numsides = b->numsides;
-		for (j=0 ; j<b->numsides ; j++)
+		for ( j = 0 ; j < b->numsides ; j++ )
 		{
-			if (numbrushsides == MAX_MAP_BRUSHSIDES)
-				Error ("MAX_MAP_BRUSHSIDES");
+			if ( numbrushsides == MAX_MAP_BRUSHSIDES ) {
+				Error( "MAX_MAP_BRUSHSIDES" );
+			}
 			cp = &dbrushsides[numbrushsides];
 			numbrushsides++;
 			cp->planenum = b->original_sides[j].planenum;
@@ -427,28 +429,31 @@ void EmitBrushes (void)
 		}
 
 		// add any axis planes not contained in the brush to bevel off corners
-		for (x=0 ; x<3 ; x++)
-			for (s=-1 ; s<=1 ; s+=2)
+		for ( x = 0 ; x < 3 ; x++ )
+			for ( s = -1 ; s <= 1 ; s += 2 )
 			{
-			// add the plane
-				VectorCopy (vec3_origin, normal);
+				// add the plane
+				VectorCopy( vec3_origin, normal );
 				normal[x] = (float) s;
-				if (s == -1)
+				if ( s == -1 ) {
 					dist = -b->mins[x];
-				else
+				}
+				else{
 					dist = b->maxs[x];
-				planenum = FindFloatPlane (normal, dist);
-				for (i=0 ; i<b->numsides ; i++)
-					if (b->original_sides[i].planenum == planenum)
+				}
+				planenum = FindFloatPlane( normal, dist );
+				for ( i = 0 ; i < b->numsides ; i++ )
+					if ( b->original_sides[i].planenum == planenum ) {
 						break;
-				if (i == b->numsides)
-				{
-					if (numbrushsides >= MAX_MAP_BRUSHSIDES)
-						Error ("MAX_MAP_BRUSHSIDES");
+					}
+				if ( i == b->numsides ) {
+					if ( numbrushsides >= MAX_MAP_BRUSHSIDES ) {
+						Error( "MAX_MAP_BRUSHSIDES" );
+					}
 
 					dbrushsides[numbrushsides].planenum = planenum;
 					dbrushsides[numbrushsides].texinfo =
-						dbrushsides[numbrushsides-1].texinfo;
+						dbrushsides[numbrushsides - 1].texinfo;
 					numbrushsides++;
 					db->numsides++;
 				}
@@ -461,12 +466,11 @@ void EmitBrushes (void)
 //===========================================================
 
 /*
-==================
-BeginBSPFile
-==================
-*/
-void BeginBSPFile (void)
-{
+   ==================
+   BeginBSPFile
+   ==================
+ */
+void BeginBSPFile( void ){
 	// these values may actually be initialized
 	// if the file existed when loaded, so clear them explicitly
 	nummodels = 0;
@@ -491,57 +495,56 @@ void BeginBSPFile (void)
 
 
 /*
-============
-EndBSPFile
-============
-*/
-void EndBSPFile (void)
-{
-	char	path[1024];
+   ============
+   EndBSPFile
+   ============
+ */
+void EndBSPFile( void ){
+	char path[1024];
 
 #if 0
-	int		len;
-	byte	*buf;
+	int len;
+	byte    *buf;
 #endif
 
-	EmitBrushes ();
-	EmitPlanes ();
-	UnparseEntities ();
+	EmitBrushes();
+	EmitPlanes();
+	UnparseEntities();
 
 	// load the pop
 #if 0
-	sprintf (path, "%s/pics/pop.lmp", gamedir);
-	len = LoadFile (path, &buf);
-	memcpy (dpop, buf, sizeof(dpop));
-	free (buf);
+	sprintf( path, "%s/pics/pop.lmp", gamedir );
+	len = LoadFile( path, &buf );
+	memcpy( dpop, buf, sizeof( dpop ) );
+	free( buf );
 #endif
 
 	// write the map
-	sprintf (path, "%s.bsp", source);
-	Sys_Printf ("Writing %s\n", path);
-	WriteBSPFile (path);
+	sprintf( path, "%s.bsp", source );
+	Sys_Printf( "Writing %s\n", path );
+	WriteBSPFile( path );
 }
 
 
 /*
-==================
-BeginModel
-==================
-*/
-int	firstmodleaf;
-extern	int firstmodeledge;
-extern	int	firstmodelface;
-void BeginModel (void)
-{
-	dmodel_t	*mod;
-	int			start, end;
-	mapbrush_t	*b;
-	int			j;
-	entity_t	*e;
-	vec3_t		mins, maxs;
+   ==================
+   BeginModel
+   ==================
+ */
+int firstmodleaf;
+extern int firstmodeledge;
+extern int firstmodelface;
+void BeginModel( void ){
+	dmodel_t    *mod;
+	int start, end;
+	mapbrush_t  *b;
+	int j;
+	entity_t    *e;
+	vec3_t mins, maxs;
 
-	if (nummodels == MAX_MAP_MODELS)
-		Error ("MAX_MAP_MODELS");
+	if ( nummodels == MAX_MAP_MODELS ) {
+		Error( "MAX_MAP_MODELS" );
+	}
 	mod = &dmodels[nummodels];
 
 	mod->firstface = numfaces;
@@ -557,30 +560,30 @@ void BeginModel (void)
 
 	start = e->firstbrush;
 	end = start + e->numbrushes;
-	ClearBounds (mins, maxs);
+	ClearBounds( mins, maxs );
 
-	for (j=start ; j<end ; j++)
+	for ( j = start ; j < end ; j++ )
 	{
 		b = &mapbrushes[j];
-		if (!b->numsides)
-			continue;	// not a real brush (origin brush)
-		AddPointToBounds (b->mins, mins, maxs);
-		AddPointToBounds (b->maxs, mins, maxs);
+		if ( !b->numsides ) {
+			continue;   // not a real brush (origin brush)
+		}
+		AddPointToBounds( b->mins, mins, maxs );
+		AddPointToBounds( b->maxs, mins, maxs );
 	}
 
-	VectorCopy (mins, mod->mins);
-	VectorCopy (maxs, mod->maxs);
+	VectorCopy( mins, mod->mins );
+	VectorCopy( maxs, mod->maxs );
 }
 
 
 /*
-==================
-EndModel
-==================
-*/
-void EndModel (void)
-{
-	dmodel_t	*mod;
+   ==================
+   EndModel
+   ==================
+ */
+void EndModel( void ){
+	dmodel_t    *mod;
 
 	mod = &dmodels[nummodels];
 
@@ -588,4 +591,3 @@ void EndModel (void)
 
 	nummodels++;
 }
-

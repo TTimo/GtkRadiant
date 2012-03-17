@@ -1,23 +1,23 @@
 /*
-Copyright (C) 1999-2007 id Software, Inc. and contributors.
-For a list of contributors, see the accompanying CONTRIBUTORS file.
+   Copyright (C) 1999-2007 id Software, Inc. and contributors.
+   For a list of contributors, see the accompanying CONTRIBUTORS file.
 
-This file is part of GtkRadiant.
+   This file is part of GtkRadiant.
 
-GtkRadiant is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
+   GtkRadiant is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 2 of the License, or
+   (at your option) any later version.
 
-GtkRadiant is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+   GtkRadiant is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
 
-You should have received a copy of the GNU General Public License
-along with GtkRadiant; if not, write to the Free Software
-Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-*/
+   You should have received a copy of the GNU General Public License
+   along with GtkRadiant; if not, write to the Free Software
+   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ */
 // qrad.c
 
 #include "qrad.h"
@@ -26,244 +26,248 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 /*
 
-NOTES
------
+   NOTES
+   -----
 
-every surface must be divided into at least two patches each axis
+   every surface must be divided into at least two patches each axis
 
-*/
+ */
 
-patch_t		*face_patches[MAX_MAP_FACES];
-entity_t	*face_entity[MAX_MAP_FACES];
-patch_t		patches[MAX_PATCHES];
-unsigned	num_patches;
+patch_t     *face_patches[MAX_MAP_FACES];
+entity_t    *face_entity[MAX_MAP_FACES];
+patch_t patches[MAX_PATCHES];
+unsigned num_patches;
 
-vec3_t		radiosity[MAX_PATCHES];		// light leaving a patch
-vec3_t		illumination[MAX_PATCHES];	// light arriving at a patch
+vec3_t radiosity[MAX_PATCHES];          // light leaving a patch
+vec3_t illumination[MAX_PATCHES];       // light arriving at a patch
 
-vec3_t		face_offset[MAX_MAP_FACES];		// for rotating bmodels
-dplane_t	backplanes[MAX_MAP_PLANES];
+vec3_t face_offset[MAX_MAP_FACES];          // for rotating bmodels
+dplane_t backplanes[MAX_MAP_PLANES];
 
-char		inbase[32], outbase[32];
+char inbase[32], outbase[32];
 
-int			fakeplanes;					// created planes for origin offset 
+int fakeplanes;                         // created planes for origin offset
 
-int		numbounce = 8;
-qboolean	extrasamples;
+int numbounce = 8;
+qboolean extrasamples;
 
-float	subdiv = 64;
-qboolean	dumppatches;
+float subdiv = 64;
+qboolean dumppatches;
 
-void BuildLightmaps (void);
-int TestLine (vec3_t start, vec3_t stop);
+void BuildLightmaps( void );
+int TestLine( vec3_t start, vec3_t stop );
 
-int		junk;
+int junk;
 
-float	ambient = 0;
-float	maxlight = 196;
+float ambient = 0;
+float maxlight = 196;
 
-float	lightscale = 1.0;
+float lightscale = 1.0;
 
-qboolean	glview;
+qboolean glview;
 
-qboolean	nopvs;
+qboolean nopvs;
 
-char		source[1024];
+char source[1024];
 
-float	direct_scale =	0.4;
-float	entity_scale =	1.0;
-
-/*
-===================================================================
-
-MISC
-
-===================================================================
-*/
-
+float direct_scale =  0.4;
+float entity_scale =  1.0;
 
 /*
-=============
-MakeBackplanes
-=============
-*/
-void MakeBackplanes (void)
-{
-	int		i;
+   ===================================================================
 
-	for (i=0 ; i<numplanes ; i++)
+   MISC
+
+   ===================================================================
+ */
+
+
+/*
+   =============
+   MakeBackplanes
+   =============
+ */
+void MakeBackplanes( void ){
+	int i;
+
+	for ( i = 0 ; i < numplanes ; i++ )
 	{
 		backplanes[i].dist = -dplanes[i].dist;
-		VectorSubtract (vec3_origin, dplanes[i].normal, backplanes[i].normal);
+		VectorSubtract( vec3_origin, dplanes[i].normal, backplanes[i].normal );
 	}
 }
 
-int		leafparents[MAX_MAP_LEAFS];
-int		nodeparents[MAX_MAP_NODES];
+int leafparents[MAX_MAP_LEAFS];
+int nodeparents[MAX_MAP_NODES];
 
 /*
-=============
-MakeParents
-=============
-*/
-void MakeParents (int nodenum, int parent)
-{
-	int		i, j;
-	dnode_t	*node;
+   =============
+   MakeParents
+   =============
+ */
+void MakeParents( int nodenum, int parent ){
+	int i, j;
+	dnode_t *node;
 
 	nodeparents[nodenum] = parent;
 	node = &dnodes[nodenum];
 
-	for (i=0 ; i<2 ; i++)
+	for ( i = 0 ; i < 2 ; i++ )
 	{
 		j = node->children[i];
-		if (j < 0)
+		if ( j < 0 ) {
 			leafparents[-j - 1] = nodenum;
-		else
-			MakeParents (j, nodenum);
+		}
+		else{
+			MakeParents( j, nodenum );
+		}
 	}
 }
 
 
 /*
-===================================================================
+   ===================================================================
 
-TRANSFER SCALES
+   TRANSFER SCALES
 
-===================================================================
-*/
+   ===================================================================
+ */
 
-int	PointInLeafnum (vec3_t point)
-{
-	int		nodenum;
-	vec_t	dist;
-	dnode_t	*node;
-	dplane_t	*plane;
+int PointInLeafnum( vec3_t point ){
+	int nodenum;
+	vec_t dist;
+	dnode_t *node;
+	dplane_t    *plane;
 
 	nodenum = 0;
-	while (nodenum >= 0)
+	while ( nodenum >= 0 )
 	{
 		node = &dnodes[nodenum];
 		plane = &dplanes[node->planenum];
-		dist = DotProduct (point, plane->normal) - plane->dist;
-		if (dist > 0)
+		dist = DotProduct( point, plane->normal ) - plane->dist;
+		if ( dist > 0 ) {
 			nodenum = node->children[0];
-		else
+		}
+		else{
 			nodenum = node->children[1];
+		}
 	}
 
 	return -nodenum - 1;
 }
 
 
-dleaf_t		*Rad_PointInLeaf (vec3_t point)
-{
-	int		num;
+dleaf_t     *Rad_PointInLeaf( vec3_t point ){
+	int num;
 
-	num = PointInLeafnum (point);
+	num = PointInLeafnum( point );
 	return &dleafs[num];
 }
 
 
-qboolean PvsForOrigin (vec3_t org, byte *pvs)
-{
-	dleaf_t	*leaf;
+qboolean PvsForOrigin( vec3_t org, byte *pvs ){
+	dleaf_t *leaf;
 
-	if (!visdatasize)
-	{
-		memset (pvs, 255, (numleafs+7)/8 );
+	if ( !visdatasize ) {
+		memset( pvs, 255, ( numleafs + 7 ) / 8 );
 		return true;
 	}
 
-	leaf = Rad_PointInLeaf (org);
-	if (leaf->cluster == -1)
-		return false;		// in solid leaf
+	leaf = Rad_PointInLeaf( org );
+	if ( leaf->cluster == -1 ) {
+		return false;       // in solid leaf
 
-	DecompressVis (dvisdata + dvis->bitofs[leaf->cluster][DVIS_PVS], pvs);
+	}
+	DecompressVis( dvisdata + dvis->bitofs[leaf->cluster][DVIS_PVS], pvs );
 	return true;
 }
 
 
 /*
-=============
-MakeTransfers
+   =============
+   MakeTransfers
 
-=============
-*/
-int	total_transfer;
+   =============
+ */
+int total_transfer;
 
-void MakeTransfers (int i)
-{
-	int			j;
-	vec3_t		delta;
-	vec_t		dist, scale;
-	float		trans;
-	int			itrans;
-	patch_t		*patch, *patch2;
-	float		total;
-	dplane_t	plane;
-	vec3_t		origin;
-	float		transfers[MAX_PATCHES], *all_transfers;
-	int			s;
-	int			itotal;
-	byte		pvs[(MAX_MAP_LEAFS+7)/8];
-	int			cluster;
+void MakeTransfers( int i ){
+	int j;
+	vec3_t delta;
+	vec_t dist, scale;
+	float trans;
+	int itrans;
+	patch_t     *patch, *patch2;
+	float total;
+	dplane_t plane;
+	vec3_t origin;
+	float transfers[MAX_PATCHES], *all_transfers;
+	int s;
+	int itotal;
+	byte pvs[( MAX_MAP_LEAFS + 7 ) / 8];
+	int cluster;
 
 	patch = patches + i;
 	total = 0;
 
-	VectorCopy (patch->origin, origin);
+	VectorCopy( patch->origin, origin );
 	plane = *patch->plane;
 
-	if (!PvsForOrigin (patch->origin, pvs))
+	if ( !PvsForOrigin( patch->origin, pvs ) ) {
 		return;
+	}
 
 	// find out which patch2s will collect light
 	// from patch
 
 	all_transfers = transfers;
 	patch->numtransfers = 0;
-	for (j=0, patch2 = patches ; j<num_patches ; j++, patch2++)
+	for ( j = 0, patch2 = patches ; j < num_patches ; j++, patch2++ )
 	{
 		transfers[j] = 0;
 
-		if (j == i)
+		if ( j == i ) {
 			continue;
+		}
 
 		// check pvs bit
-		if (!nopvs)
-		{
+		if ( !nopvs ) {
 			cluster = patch2->cluster;
-			if (cluster == -1)
+			if ( cluster == -1 ) {
 				continue;
-			if ( ! ( pvs[cluster>>3] & (1<<(cluster&7)) ) )
-				continue;		// not in pvs
+			}
+			if ( !( pvs[cluster >> 3] & ( 1 << ( cluster & 7 ) ) ) ) {
+				continue;       // not in pvs
+			}
 		}
 
 		// calculate vector
-		VectorSubtract (patch2->origin, origin, delta);
-		dist = VectorNormalize (delta, delta);
-		if (!dist)
-			continue;	// should never happen
+		VectorSubtract( patch2->origin, origin, delta );
+		dist = VectorNormalize( delta, delta );
+		if ( !dist ) {
+			continue;   // should never happen
 
+		}
 		// reletive angles
-		scale = DotProduct (delta, plane.normal);
-		scale *= -DotProduct (delta, patch2->plane->normal);
-		if (scale <= 0)
+		scale = DotProduct( delta, plane.normal );
+		scale *= -DotProduct( delta, patch2->plane->normal );
+		if ( scale <= 0 ) {
 			continue;
+		}
 
 		// check exact tramsfer
-		if (TestLine_r (0, patch->origin, patch2->origin) )
+		if ( TestLine_r( 0, patch->origin, patch2->origin ) ) {
 			continue;
+		}
 
-		trans = scale * patch2->area / (dist*dist);
+		trans = scale * patch2->area / ( dist * dist );
 
-		if (trans < 0)
-			trans = 0;		// rounding errors...
+		if ( trans < 0 ) {
+			trans = 0;      // rounding errors...
 
+		}
 		transfers[j] = trans;
-		if (trans > 0)
-		{
+		if ( trans > 0 ) {
 			total += trans;
 			patch->numtransfers++;
 		}
@@ -274,16 +278,17 @@ void MakeTransfers (int i)
 	// because partial occlusion isn't accounted for, and nearby
 	// patches have underestimated form factors, it will usually
 	// be higher than PI
-	if (patch->numtransfers)
-	{
-		transfer_t	*t;
-		
-		if (patch->numtransfers < 0 || patch->numtransfers > MAX_PATCHES)
-			Error ("Weird numtransfers");
-		s = patch->numtransfers * sizeof(transfer_t);
-		patch->transfers = malloc (s);
-		if (!patch->transfers)
-			Error ("Memory allocation failure");
+	if ( patch->numtransfers ) {
+		transfer_t  *t;
+
+		if ( patch->numtransfers < 0 || patch->numtransfers > MAX_PATCHES ) {
+			Error( "Weird numtransfers" );
+		}
+		s = patch->numtransfers * sizeof( transfer_t );
+		patch->transfers = malloc( s );
+		if ( !patch->transfers ) {
+			Error( "Memory allocation failure" );
+		}
 
 		//
 		// normalize all transfers so all of the light
@@ -291,11 +296,12 @@ void MakeTransfers (int i)
 		//
 		t = patch->transfers;
 		itotal = 0;
-		for (j=0 ; j<num_patches ; j++)
+		for ( j = 0 ; j < num_patches ; j++ )
 		{
-			if (transfers[j] <= 0)
+			if ( transfers[j] <= 0 ) {
 				continue;
-			itrans = transfers[j]*0x10000 / total;
+			}
+			itrans = transfers[j] * 0x10000 / total;
 			itotal += itrans;
 			t->transfer = itrans;
 			t->patch = j;
@@ -309,17 +315,16 @@ void MakeTransfers (int i)
 
 
 /*
-=============
-FreeTransfers
-=============
-*/
-void FreeTransfers (void)
-{
-	int		i;
+   =============
+   FreeTransfers
+   =============
+ */
+void FreeTransfers( void ){
+	int i;
 
-	for (i=0 ; i<num_patches ; i++)
+	for ( i = 0 ; i < num_patches ; i++ )
 	{
-		free (patches[i].transfers);
+		free( patches[i].transfers );
 		patches[i].transfers = NULL;
 	}
 }
@@ -328,117 +333,115 @@ void FreeTransfers (void)
 //===================================================================
 
 /*
-=============
-WriteWorld
-=============
-*/
-void WriteWorld (char *name)
-{
-	int		i, j;
-	FILE		*out;
-	patch_t		*patch;
-	winding_t	*w;
+   =============
+   WriteWorld
+   =============
+ */
+void WriteWorld( char *name ){
+	int i, j;
+	FILE        *out;
+	patch_t     *patch;
+	winding_t   *w;
 
-	out = fopen (name, "w");
-	if (!out)
-		Error ("Couldn't open %s", name);
-
-	for (j=0, patch=patches ; j<num_patches ; j++, patch++)
-	{
-		w = patch->winding;
-		fprintf (out, "%i\n", w->numpoints);
-		for (i=0 ; i<w->numpoints ; i++)
-		{
-			fprintf (out, "%5.2f %5.2f %5.2f %5.3f %5.3f %5.3f\n",
-				w->p[i][0],
-				w->p[i][1],
-				w->p[i][2],
-				patch->totallight[0],
-				patch->totallight[1],
-				patch->totallight[2]);
-		}
-		fprintf (out, "\n");
+	out = fopen( name, "w" );
+	if ( !out ) {
+		Error( "Couldn't open %s", name );
 	}
 
-	fclose (out);
+	for ( j = 0, patch = patches ; j < num_patches ; j++, patch++ )
+	{
+		w = patch->winding;
+		fprintf( out, "%i\n", w->numpoints );
+		for ( i = 0 ; i < w->numpoints ; i++ )
+		{
+			fprintf( out, "%5.2f %5.2f %5.2f %5.3f %5.3f %5.3f\n",
+					 w->p[i][0],
+					 w->p[i][1],
+					 w->p[i][2],
+					 patch->totallight[0],
+					 patch->totallight[1],
+					 patch->totallight[2] );
+		}
+		fprintf( out, "\n" );
+	}
+
+	fclose( out );
 }
 
 /*
-=============
-WriteGlView
-=============
-*/
-void WriteGlView (void)
-{
-	char	name[1024];
-	FILE	*f;
-	int		i, j;
-	patch_t	*p;
-	winding_t	*w;
+   =============
+   WriteGlView
+   =============
+ */
+void WriteGlView( void ){
+	char name[1024];
+	FILE    *f;
+	int i, j;
+	patch_t *p;
+	winding_t   *w;
 
-	strcpy (name, source);
-	StripExtension (name);
-	strcat (name, ".glr");
+	strcpy( name, source );
+	StripExtension( name );
+	strcat( name, ".glr" );
 
-	f = fopen (name, "w");
-	if (!f)
-		Error ("Couldn't open %s", f);
+	f = fopen( name, "w" );
+	if ( !f ) {
+		Error( "Couldn't open %s", f );
+	}
 
-	for (j=0 ; j<num_patches ; j++)
+	for ( j = 0 ; j < num_patches ; j++ )
 	{
 		p = &patches[j];
 		w = p->winding;
-		fprintf (f, "%i\n", w->numpoints);
-		for (i=0 ; i<w->numpoints ; i++)
+		fprintf( f, "%i\n", w->numpoints );
+		for ( i = 0 ; i < w->numpoints ; i++ )
 		{
-			fprintf (f, "%5.2f %5.2f %5.2f %5.3f %5.3f %5.3f\n",
-				w->p[i][0],
-				w->p[i][1],
-				w->p[i][2],
-				p->totallight[0]/128,
-				p->totallight[1]/128,
-				p->totallight[2]/128);
+			fprintf( f, "%5.2f %5.2f %5.2f %5.3f %5.3f %5.3f\n",
+					 w->p[i][0],
+					 w->p[i][1],
+					 w->p[i][2],
+					 p->totallight[0] / 128,
+					 p->totallight[1] / 128,
+					 p->totallight[2] / 128 );
 		}
-		fprintf (f, "\n");
+		fprintf( f, "\n" );
 	}
 
-	fclose (f);
+	fclose( f );
 }
 
 
 //==============================================================
 
 /*
-=============
-CollectLight
-=============
-*/
-float CollectLight (void)
-{
-	int		i, j;
-	patch_t	*patch;
-	vec_t	total;
+   =============
+   CollectLight
+   =============
+ */
+float CollectLight( void ){
+	int i, j;
+	patch_t *patch;
+	vec_t total;
 
 	total = 0;
 
-	for (i=0, patch=patches ; i<num_patches ; i++, patch++)
+	for ( i = 0, patch = patches ; i < num_patches ; i++, patch++ )
 	{
 		// skys never collect light, it is just dropped
-		if (patch->sky)
-		{
-			VectorClear (radiosity[i]);
-			VectorClear (illumination[i]);
+		if ( patch->sky ) {
+			VectorClear( radiosity[i] );
+			VectorClear( illumination[i] );
 			continue;
 		}
 
-		for (j=0 ; j<3 ; j++)
+		for ( j = 0 ; j < 3 ; j++ )
 		{
 			patch->totallight[j] += illumination[i][j] / patch->area;
 			radiosity[i][j] = illumination[i][j] * patch->reflectivity[j];
 		}
 
 		total += radiosity[i][0] + radiosity[i][1] + radiosity[i][2];
-		VectorClear (illumination[i]);
+		VectorClear( illumination[i] );
 	}
 
 	return total;
@@ -446,70 +449,67 @@ float CollectLight (void)
 
 
 /*
-=============
-ShootLight
+   =============
+   ShootLight
 
-Send light out to other patches
-  Run multi-threaded
-=============
-*/
-void ShootLight (int patchnum)
-{
-	int			k, l;
-	transfer_t	*trans;
-	int			num;
-	patch_t		*patch;
-	vec3_t		send;
+   Send light out to other patches
+   Run multi-threaded
+   =============
+ */
+void ShootLight( int patchnum ){
+	int k, l;
+	transfer_t  *trans;
+	int num;
+	patch_t     *patch;
+	vec3_t send;
 
 	// this is the amount of light we are distributing
 	// prescale it so that multiplying by the 16 bit
 	// transfer values gives a proper output value
-	for (k=0 ; k<3 ; k++)
+	for ( k = 0 ; k < 3 ; k++ )
 		send[k] = radiosity[patchnum][k] / 0x10000;
 	patch = &patches[patchnum];
 
 	trans = patch->transfers;
 	num = patch->numtransfers;
 
-	for (k=0 ; k<num ; k++, trans++)
+	for ( k = 0 ; k < num ; k++, trans++ )
 	{
-		for (l=0 ; l<3 ; l++)
-			illumination[trans->patch][l] += send[l]*trans->transfer;
+		for ( l = 0 ; l < 3 ; l++ )
+			illumination[trans->patch][l] += send[l] * trans->transfer;
 	}
 }
 
 /*
-=============
-BounceLight
-=============
-*/
-void BounceLight (void)
-{
-	int		i, j;
-	float	added;
-	char	name[64];
-	patch_t	*p;
+   =============
+   BounceLight
+   =============
+ */
+void BounceLight( void ){
+	int i, j;
+	float added;
+	char name[64];
+	patch_t *p;
 
-	for (i=0 ; i<num_patches ; i++)
+	for ( i = 0 ; i < num_patches ; i++ )
 	{
 		p = &patches[i];
-		for (j=0 ; j<3 ; j++)
+		for ( j = 0 ; j < 3 ; j++ )
 		{
 //			p->totallight[j] = p->samplelight[j];
 			radiosity[i][j] = p->samplelight[j] * p->reflectivity[j] * p->area;
 		}
 	}
 
-	for (i=0 ; i<numbounce ; i++)
+	for ( i = 0 ; i < numbounce ; i++ )
 	{
-		RunThreadsOnIndividual (num_patches, false, ShootLight);
-		added = CollectLight ();
+		RunThreadsOnIndividual( num_patches, false, ShootLight );
+		added = CollectLight();
 
-		Sys_FPrintf( SYS_VRB, "bounce:%i added:%f\n", i, added);
-		if ( dumppatches && (i==0 || i == numbounce-1) )
-		{
-			sprintf (name, "bounce%i.txt", i);
-			WriteWorld (name);
+		Sys_FPrintf( SYS_VRB, "bounce:%i added:%f\n", i, added );
+		if ( dumppatches && ( i == 0 || i == numbounce - 1 ) ) {
+			sprintf( name, "bounce%i.txt", i );
+			WriteWorld( name );
 		}
 	}
 }
@@ -518,130 +518,131 @@ void BounceLight (void)
 
 //==============================================================
 
-void CheckPatches (void)
-{
-	int		i;
-	patch_t	*patch;
+void CheckPatches( void ){
+	int i;
+	patch_t *patch;
 
-	for (i=0 ; i<num_patches ; i++)
+	for ( i = 0 ; i < num_patches ; i++ )
 	{
 		patch = &patches[i];
-		if (patch->totallight[0] < 0 || patch->totallight[1] < 0 || patch->totallight[2] < 0)
-			Error ("negative patch totallight\n");
+		if ( patch->totallight[0] < 0 || patch->totallight[1] < 0 || patch->totallight[2] < 0 ) {
+			Error( "negative patch totallight\n" );
+		}
 	}
 }
 
 /*
-=============
-RadWorld
-=============
-*/
-void RadWorld (void)
-{
-	if (numnodes == 0 || numfaces == 0)
-		Error ("Empty map");
-	MakeBackplanes ();
-	MakeParents (0, -1);
-	MakeTnodes (&dmodels[0]);
+   =============
+   RadWorld
+   =============
+ */
+void RadWorld( void ){
+	if ( numnodes == 0 || numfaces == 0 ) {
+		Error( "Empty map" );
+	}
+	MakeBackplanes();
+	MakeParents( 0, -1 );
+	MakeTnodes( &dmodels[0] );
 
 	// turn each face into a single patch
-	MakePatches ();
+	MakePatches();
 
 	// subdivide patches to a maximum dimension
-	SubdividePatches ();
+	SubdividePatches();
 
 	// create directlights out of patches and lights
-	CreateDirectLights ();
+	CreateDirectLights();
 
 	// build initial facelights
-	RunThreadsOnIndividual (numfaces, true, BuildFacelights);
+	RunThreadsOnIndividual( numfaces, true, BuildFacelights );
 
-	if (numbounce > 0)
-	{
+	if ( numbounce > 0 ) {
 		// build transfer lists
-		RunThreadsOnIndividual (num_patches, true, MakeTransfers);
+		RunThreadsOnIndividual( num_patches, true, MakeTransfers );
 		Sys_FPrintf( SYS_VRB, "transfer lists: %5.1f megs\n"
-		, (float)total_transfer * sizeof(transfer_t) / (1024*1024));
+					 , (float)total_transfer * sizeof( transfer_t ) / ( 1024 * 1024 ) );
 
 		// spread light around
-		BounceLight ();
-		
-		FreeTransfers ();
+		BounceLight();
 
-		CheckPatches ();
+		FreeTransfers();
+
+		CheckPatches();
 	}
 
-	if (glview)
-		WriteGlView ();
+	if ( glview ) {
+		WriteGlView();
+	}
 
 	// blend bounced light into direct light and save
-	PairEdges ();
-	LinkPlaneFaces ();
+	PairEdges();
+	LinkPlaneFaces();
 
 	lightdatasize = 0;
-	RunThreadsOnIndividual (numfaces, true, FinalLightFace);
+	RunThreadsOnIndividual( numfaces, true, FinalLightFace );
 }
 
 
 /*
-========
-main
+   ========
+   main
 
-light modelfile
-========
-*/
-int RAD_Main ()
-{
-	double		start, end;
-	char		name[1024];
-	int		total_rad_time;
+   light modelfile
+   ========
+ */
+int RAD_Main(){
+	double start, end;
+	char name[1024];
+	int total_rad_time;
 
-	Sys_Printf ("\n----- RAD ----\n\n");
+	Sys_Printf( "\n----- RAD ----\n\n" );
 
-	if (maxlight > 255)
+	if ( maxlight > 255 ) {
 		maxlight = 255;
+	}
 
-	start = I_FloatTime ();
+	start = I_FloatTime();
 
-	if ( !strcmp( game, "heretic2" ) )
+	if ( !strcmp( game, "heretic2" ) ) {
 		CalcTextureReflectivity = &CalcTextureReflectivity_Heretic2;
-	else
+	}
+	else{
 		CalcTextureReflectivity = &CalcTextureReflectivity_Quake2;
-		
-	SetQdirFromPath (mapname);	
-	strcpy (source, ExpandArg(mapname));
-	StripExtension (source);
-	DefaultExtension (source, ".bsp");
+	}
+
+	SetQdirFromPath( mapname );
+	strcpy( source, ExpandArg( mapname ) );
+	StripExtension( source );
+	DefaultExtension( source, ".bsp" );
 
 //	ReadLightFile ();
 
-	sprintf (name, "%s%s", inbase, source);
-	Sys_Printf ("reading %s\n", name);
-	LoadBSPFile (name);
-	ParseEntities ();
-	(*CalcTextureReflectivity) ();
+	sprintf( name, "%s%s", inbase, source );
+	Sys_Printf( "reading %s\n", name );
+	LoadBSPFile( name );
+	ParseEntities();
+	( *CalcTextureReflectivity )( );
 
-	if (!visdatasize)
-	{
-		Sys_Printf ("No vis information, direct lighting only.\n");
+	if ( !visdatasize ) {
+		Sys_Printf( "No vis information, direct lighting only.\n" );
 		numbounce = 0;
 		ambient = 0.1;
 	}
 
-	RadWorld ();
+	RadWorld();
 
-	sprintf (name, "%s%s", outbase, source);
-	Sys_Printf ("writing %s\n", name);
-	WriteBSPFile (name);
+	sprintf( name, "%s%s", outbase, source );
+	Sys_Printf( "writing %s\n", name );
+	WriteBSPFile( name );
 
-	end = I_FloatTime ();
-	total_rad_time = (int) (end-start);
-	Sys_Printf("\nRAD Time: ");
-	if ( total_rad_time > 59 )
-		Sys_Printf("%d Minutes ", total_rad_time/60 );
-	Sys_Printf( "%d Seconds\n", total_rad_time%60 );
-	
-	
+	end = I_FloatTime();
+	total_rad_time = (int) ( end - start );
+	Sys_Printf( "\nRAD Time: " );
+	if ( total_rad_time > 59 ) {
+		Sys_Printf( "%d Minutes ", total_rad_time / 60 );
+	}
+	Sys_Printf( "%d Seconds\n", total_rad_time % 60 );
+
+
 	return 0;
 }
-

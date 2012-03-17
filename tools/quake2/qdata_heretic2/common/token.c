@@ -1,23 +1,23 @@
 /*
-Copyright (C) 1999-2007 id Software, Inc. and contributors.
-For a list of contributors, see the accompanying CONTRIBUTORS file.
+   Copyright (C) 1999-2007 id Software, Inc. and contributors.
+   For a list of contributors, see the accompanying CONTRIBUTORS file.
 
-This file is part of GtkRadiant.
+   This file is part of GtkRadiant.
 
-GtkRadiant is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
+   GtkRadiant is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 2 of the License, or
+   (at your option) any later version.
 
-GtkRadiant is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+   GtkRadiant is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
 
-You should have received a copy of the GNU General Public License
-along with GtkRadiant; if not, write to the Free Software
-Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-*/
+   You should have received a copy of the GNU General Public License
+   along with GtkRadiant; if not, write to the Free Software
+   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ */
 
 
 //**************************************************************************
@@ -50,12 +50,12 @@ typedef enum
 
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
 
-static void ProcessLetterToken(void);
-static void ProcessNumberToken(void);
-static void ProcessQuoteToken(void);
-static void ProcessSpecialToken(void);
-static qboolean CheckForKeyword(void);
-static void NextChr(void);
+static void ProcessLetterToken( void );
+static void ProcessNumberToken( void );
+static void ProcessQuoteToken( void );
+static void ProcessSpecialToken( void );
+static qboolean CheckForKeyword( void );
+static void NextChr( void );
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
@@ -86,48 +86,48 @@ static struct
 	tokenType_t token;
 } Keywords[] =
 {
-	"model",			TK_MODEL,
-	"mesh",				TK_MESH,
-	"vertices",			TK_VERTICES,
-	"edges",			TK_EDGES,
-	"position",			TK_POSITION,
-	"polygons",			TK_POLYGONS,
-	"nodes",			TK_NODES,
-	"rotation",			TK_ROTATION,
-	"scaling",			TK_SCALING,
-	"translation",		TK_TRANSLATION,
-	"vertex",			TK_VERTEX,
-	"HRCH",				TK_HRCH,
-	"Softimage",		TK_SOFTIMAGE,
-	"material",			TK_MATERIAL,
-	"spline",			TK_SPLINE,
+	"model",            TK_MODEL,
+	"mesh",             TK_MESH,
+	"vertices",         TK_VERTICES,
+	"edges",            TK_EDGES,
+	"position",         TK_POSITION,
+	"polygons",         TK_POLYGONS,
+	"nodes",            TK_NODES,
+	"rotation",         TK_ROTATION,
+	"scaling",          TK_SCALING,
+	"translation",      TK_TRANSLATION,
+	"vertex",           TK_VERTEX,
+	"HRCH",             TK_HRCH,
+	"Softimage",        TK_SOFTIMAGE,
+	"material",         TK_MATERIAL,
+	"spline",           TK_SPLINE,
 
-	"Named",			TK_C_NAMED,
-	"object",			TK_OBJECT,
-	"Tri",				TK_C_TRI,
-	"Vertices",			TK_C_VERTICES,
-	"Faces",			TK_C_FACES,
-	"Vertex",			TK_C_VERTEX,
-	"list",				TK_LIST,
-	"Face",				TK_C_FACE,
+	"Named",            TK_C_NAMED,
+	"object",           TK_OBJECT,
+	"Tri",              TK_C_TRI,
+	"Vertices",         TK_C_VERTICES,
+	"Faces",            TK_C_FACES,
+	"Vertex",           TK_C_VERTEX,
+	"list",             TK_LIST,
+	"Face",             TK_C_FACE,
 
-	"Hexen",			TK_C_HEXEN,
-	"Triangles",		TK_C_TRIANGLES,
-	"Version",			TK_C_VERSION,
-	"faces",			TK_FACES,
-	"face",				TK_FACE,
-	"origin",			TK_ORIGIN,
+	"Hexen",            TK_C_HEXEN,
+	"Triangles",        TK_C_TRIANGLES,
+	"Version",          TK_C_VERSION,
+	"faces",            TK_FACES,
+	"face",             TK_FACE,
+	"origin",           TK_ORIGIN,
 
-	"DK_clusters",		TK_CLUSTERS,
-	"DK_cluster_ncvs",	TK_NUM_CLUSTER_VERTICES,
-	"name",				TK_NAME,
-	"DK_cluster_name",	TK_CLUSTER_NAME,
-	"DK_cluster_state",	TK_CLUSTER_STATE,
+	"DK_clusters",      TK_CLUSTERS,
+	"DK_cluster_ncvs",  TK_NUM_CLUSTER_VERTICES,
+	"name",             TK_NAME,
+	"DK_cluster_name",  TK_CLUSTER_NAME,
+	"DK_cluster_state", TK_CLUSTER_STATE,
 
-	"actor_data",		TK_ACTOR_DATA,
-	"uvTexture",		TK_UVTEXTURE,
+	"actor_data",       TK_ACTOR_DATA,
+	"uvTexture",        TK_UVTEXTURE,
 
-	NULL,				-1
+	NULL,               -1
 };
 
 static char *TokenNames[] =
@@ -168,23 +168,22 @@ static char *TokenNames[] =
 //
 //==========================================================================
 
-void TK_Init(void)
-{
+void TK_Init( void ){
 	int i;
 
-	for(i = 0; i < 256; i++)
+	for ( i = 0; i < 256; i++ )
 	{
 		ASCIIToChrCode[i] = CHR_SPECIAL;
 	}
-	for(i = '0'; i <= '9'; i++)
+	for ( i = '0'; i <= '9'; i++ )
 	{
 		ASCIIToChrCode[i] = CHR_NUMBER;
 	}
-	for(i = 'A'; i <= 'Z'; i++)
+	for ( i = 'A'; i <= 'Z'; i++ )
 	{
 		ASCIIToChrCode[i] = CHR_LETTER;
 	}
-	for(i = 'a'; i <= 'z'; i++)
+	for ( i = 'a'; i <= 'z'; i++ )
 	{
 		ASCIIToChrCode[i] = CHR_LETTER;
 	}
@@ -202,15 +201,14 @@ void TK_Init(void)
 //
 //==========================================================================
 
-void TK_OpenSource(char *fileName)
-{
+void TK_OpenSource( char *fileName ){
 	int size;
 
 	TK_CloseSource();
-	size = LoadFile(fileName, (void **)&FileStart);
-	strcpy(tk_SourceName, fileName);
+	size = LoadFile( fileName, (void **)&FileStart );
+	strcpy( tk_SourceName, fileName );
 	SourceOpen = TRUE;
-	FileEnd = FileStart+size;
+	FileEnd = FileStart + size;
 	FilePtr = FileStart;
 	tk_Line = 1;
 	tk_Token = TK_NONE;
@@ -223,11 +221,9 @@ void TK_OpenSource(char *fileName)
 //
 //==========================================================================
 
-void TK_CloseSource(void)
-{
-	if(SourceOpen)
-	{
-		free(FileStart);
+void TK_CloseSource( void ){
+	if ( SourceOpen ) {
+		free( FileStart );
 		SourceOpen = FALSE;
 	}
 }
@@ -238,34 +234,32 @@ void TK_CloseSource(void)
 //
 //==========================================================================
 
-tokenType_t TK_Fetch(void)
-{
-	while(Chr == ASCII_SPACE)
+tokenType_t TK_Fetch( void ){
+	while ( Chr == ASCII_SPACE )
 	{
 		NextChr();
 	}
-	if(Chr == '-')
-	{
+	if ( Chr == '-' ) {
 		ProcessNumberToken();
 	}
-	else switch(ASCIIToChrCode[(byte)Chr])
-	{
-		case CHR_EOF:
-			tk_Token = TK_EOF;
-			break;
-		case CHR_LETTER:
-			ProcessLetterToken();
-			break;
-		case CHR_NUMBER:
-			ProcessNumberToken();
-			break;
-		case CHR_QUOTE:
-			ProcessQuoteToken();
-			break;
-		default:
-			ProcessSpecialToken();
-			break;
-	}
+	else{switch ( ASCIIToChrCode[(byte)Chr] )
+		 {
+		 case CHR_EOF:
+			 tk_Token = TK_EOF;
+			 break;
+		 case CHR_LETTER:
+			 ProcessLetterToken();
+			 break;
+		 case CHR_NUMBER:
+			 ProcessNumberToken();
+			 break;
+		 case CHR_QUOTE:
+			 ProcessQuoteToken();
+			 break;
+		 default:
+			 ProcessSpecialToken();
+			 break;
+		 }}
 	return tk_Token;
 }
 
@@ -275,80 +269,67 @@ tokenType_t TK_Fetch(void)
 //
 //==========================================================================
 
-void TK_Require(tokenType_t tokType)
-{
-	if(tokType == TK_FLOATNUMBER && tk_Token == TK_INTNUMBER)
-	{
+void TK_Require( tokenType_t tokType ){
+	if ( tokType == TK_FLOATNUMBER && tk_Token == TK_INTNUMBER ) {
 		tk_FloatNumber = (float)tk_IntNumber;
 		tk_Token = TK_FLOATNUMBER;
 		return;
 	}
-	if(tk_Token != tokType)
-	{
-		Error("File '%s', line %d:\nExpected '%s', found '%s'.\n",
-			tk_SourceName, tk_Line, TokenNames[tokType],
-			TokenNames[tk_Token]);
+	if ( tk_Token != tokType ) {
+		Error( "File '%s', line %d:\nExpected '%s', found '%s'.\n",
+			   tk_SourceName, tk_Line, TokenNames[tokType],
+			   TokenNames[tk_Token] );
 	}
 }
 
-void TK_FetchRequire(tokenType_t tokType)
-{
+void TK_FetchRequire( tokenType_t tokType ){
 	TK_Fetch();
-	TK_Require(tokType);
+	TK_Require( tokType );
 }
 
-tokenType_t TK_RequireFetch(tokenType_t tokType)
-{
-	TK_Require(tokType);
+tokenType_t TK_RequireFetch( tokenType_t tokType ){
+	TK_Require( tokType );
 	return TK_Fetch();
 }
 
-tokenType_t TK_FetchRequireFetch(tokenType_t tokType)
-{
+tokenType_t TK_FetchRequireFetch( tokenType_t tokType ){
 	TK_Fetch();
-	TK_Require(tokType);
+	TK_Require( tokType );
 	return TK_Fetch();
 }
 
-tokenType_t TK_Beyond(tokenType_t tokType)
-{
-	while(tk_Token != tokType)
+tokenType_t TK_Beyond( tokenType_t tokType ){
+	while ( tk_Token != tokType )
 	{
-		if(TK_Fetch() == TK_EOF)
-		{
-			Error("File '%s':\nCould not find token '%s'.\n",		// FIXME: TokenNames table not big enuff 
-				tk_SourceName, TokenNames[tokType]);
+		if ( TK_Fetch() == TK_EOF ) {
+			Error( "File '%s':\nCould not find token '%s'.\n",       // FIXME: TokenNames table not big enuff
+				   tk_SourceName, TokenNames[tokType] );
 		}
 	}
 	return TK_Fetch();
 }
 
-void TK_BeyondRequire(tokenType_t bTok, tokenType_t rTok)
-{
-	TK_Beyond(bTok);
-	TK_Require(rTok);
+void TK_BeyondRequire( tokenType_t bTok, tokenType_t rTok ){
+	TK_Beyond( bTok );
+	TK_Require( rTok );
 }
 
-tokenType_t TK_Search(tokenType_t tokType)
-{
-	while(tk_Token != tokType)
+tokenType_t TK_Search( tokenType_t tokType ){
+	while ( tk_Token != tokType )
 	{
-		if(TK_Fetch() == TK_EOF)
-		{
+		if ( TK_Fetch() == TK_EOF ) {
 			return TK_EOF;
 		}
 	}
 	return TK_Fetch();
 }
 
-tokenType_t TK_Get(tokenType_t tokType)
-{
-	while(tk_Token != tokType)
+tokenType_t TK_Get( tokenType_t tokType ){
+	while ( tk_Token != tokType )
 	{
-		if(TK_Fetch() == TK_EOF)
-		{
-			Error("File '%s':\nCould not find token '%s'.\n",
-				tk_SourceName, TokenNames[tokType]);
+		if ( TK_Fetch() == TK_EOF ) {
+			Error( "File '%s':\nCould not find token '%s'.\n",
+				   tk_SourceName, TokenNames[tokType] );
 		}
 	}
 	return tk_Token;
@@ -360,27 +341,24 @@ tokenType_t TK_Get(tokenType_t tokType)
 //
 //==========================================================================
 
-static void ProcessLetterToken(void)
-{
+static void ProcessLetterToken( void ){
 	int i;
 	char *text;
 
 	i = 0;
 	text = TokenStringBuffer;
-	while(ASCIIToChrCode[(byte)Chr] == CHR_LETTER
-		|| ASCIIToChrCode[(byte)Chr] == CHR_NUMBER)
+	while ( ASCIIToChrCode[(byte)Chr] == CHR_LETTER
+			|| ASCIIToChrCode[(byte)Chr] == CHR_NUMBER )
 	{
-		if(++i == MAX_IDENTIFIER_LENGTH)
-		{
-			Error("File '%s', line %d:\nIdentifier too long.\n",
-				tk_SourceName, tk_Line);
+		if ( ++i == MAX_IDENTIFIER_LENGTH ) {
+			Error( "File '%s', line %d:\nIdentifier too long.\n",
+				   tk_SourceName, tk_Line );
 		}
 		*text++ = Chr;
 		NextChr();
 	}
 	*text = 0;
-	if(CheckForKeyword() == FALSE)
-	{
+	if ( CheckForKeyword() == FALSE ) {
 		tk_Token = TK_IDENTIFIER;
 	}
 }
@@ -391,14 +369,12 @@ static void ProcessLetterToken(void)
 //
 //==========================================================================
 
-static qboolean CheckForKeyword(void)
-{
+static qboolean CheckForKeyword( void ){
 	int i;
 
-	for(i = 0; Keywords[i].name != NULL; i++)
+	for ( i = 0; Keywords[i].name != NULL; i++ )
 	{
-		if(strcmp(tk_String, Keywords[i].name) == 0)
-		{
+		if ( strcmp( tk_String, Keywords[i].name ) == 0 ) {
 			tk_Token = Keywords[i].token;
 			return TRUE;
 		}
@@ -412,36 +388,34 @@ static qboolean CheckForKeyword(void)
 //
 //==========================================================================
 
-static void ProcessNumberToken(void)
-{
+static void ProcessNumberToken( void ){
 	char *buffer;
 
 	buffer = TempBuffer;
 	*buffer++ = Chr;
 	NextChr();
-	while(ASCIIToChrCode[(byte)Chr] == CHR_NUMBER)
+	while ( ASCIIToChrCode[(byte)Chr] == CHR_NUMBER )
 	{
 		*buffer++ = Chr;
 		NextChr();
 	}
-	if(Chr == '.')
-	{ // Float
+	if ( Chr == '.' ) { // Float
 		*buffer++ = Chr;
 		NextChr(); // Skip period
-		while(ASCIIToChrCode[(byte)Chr] == CHR_NUMBER)
+		while ( ASCIIToChrCode[(byte)Chr] == CHR_NUMBER )
 		{
 			*buffer++ = Chr;
 			NextChr();
 		}
 		*buffer = 0;
-		tk_FloatNumber = (float)atof(TempBuffer);
+		tk_FloatNumber = (float)atof( TempBuffer );
 		tk_Token = TK_FLOATNUMBER;
 		return;
 	}
 
 	// Integer
 	*buffer = 0;
-	tk_IntNumber = atoi(TempBuffer);
+	tk_IntNumber = atoi( TempBuffer );
 	tk_Token = TK_INTNUMBER;
 }
 
@@ -451,25 +425,22 @@ static void ProcessNumberToken(void)
 //
 //==========================================================================
 
-static void ProcessQuoteToken(void)
-{
+static void ProcessQuoteToken( void ){
 	int i;
 	char *text;
 
 	i = 0;
 	text = TokenStringBuffer;
 	NextChr();
-	while(Chr != ASCII_QUOTE)
+	while ( Chr != ASCII_QUOTE )
 	{
-		if(Chr == EOF_CHARACTER)
-		{
-			Error("File '%s', line %d:\n<EOF> inside string.\n",
-				tk_SourceName, tk_Line);
+		if ( Chr == EOF_CHARACTER ) {
+			Error( "File '%s', line %d:\n<EOF> inside string.\n",
+				   tk_SourceName, tk_Line );
 		}
-		if(++i > MAX_QUOTED_LENGTH-1)
-		{
-			Error("File '%s', line %d:\nString literal too long.\n",
-				tk_SourceName, tk_Line);
+		if ( ++i > MAX_QUOTED_LENGTH - 1 ) {
+			Error( "File '%s', line %d:\nString literal too long.\n",
+				   tk_SourceName, tk_Line );
 		}
 		*text++ = Chr;
 		NextChr();
@@ -485,38 +456,37 @@ static void ProcessQuoteToken(void)
 //
 //==========================================================================
 
-static void ProcessSpecialToken(void)
-{
+static void ProcessSpecialToken( void ){
 	char c;
 
 	c = Chr;
 	NextChr();
-	switch(c)
+	switch ( c )
 	{
-		case '(':
-			tk_Token = TK_LPAREN;
-			break;
-		case ')':
-			tk_Token = TK_RPAREN;
-			break;
-		case '{':
-			tk_Token = TK_LBRACE;
-			break;
-		case '}':
-			tk_Token = TK_RBRACE;
-			break;
-		case '[':
-			tk_Token = TK_LBRACKET;
-			break;
-		case ']':
-			tk_Token = TK_RBRACKET;
-			break;
-		case ':':
-			tk_Token = TK_COLON;
-			break;
-		default:
-			tk_Token = TK_UNKNOWNCHAR;
-			break;
+	case '(':
+		tk_Token = TK_LPAREN;
+		break;
+	case ')':
+		tk_Token = TK_RPAREN;
+		break;
+	case '{':
+		tk_Token = TK_LBRACE;
+		break;
+	case '}':
+		tk_Token = TK_RBRACE;
+		break;
+	case '[':
+		tk_Token = TK_LBRACKET;
+		break;
+	case ']':
+		tk_Token = TK_RBRACKET;
+		break;
+	case ':':
+		tk_Token = TK_COLON;
+		break;
+	default:
+		tk_Token = TK_UNKNOWNCHAR;
+		break;
 	}
 }
 
@@ -526,23 +496,18 @@ static void ProcessSpecialToken(void)
 //
 //==========================================================================
 
-static void NextChr(void)
-{
-	if(FilePtr >= FileEnd)
-	{
+static void NextChr( void ){
+	if ( FilePtr >= FileEnd ) {
 		Chr = EOF_CHARACTER;
 		return;
 	}
-	if(IncLineNumber == TRUE)
-	{
+	if ( IncLineNumber == TRUE ) {
 		tk_Line++;
 		IncLineNumber = FALSE;
 	}
 	Chr = *FilePtr++;
-	if(Chr < ASCII_SPACE)
-	{
-		if(Chr == '\n')
-		{
+	if ( Chr < ASCII_SPACE ) {
+		if ( Chr == '\n' ) {
 			IncLineNumber = TRUE;
 		}
 		Chr = ASCII_SPACE;
