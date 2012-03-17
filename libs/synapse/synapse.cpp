@@ -65,7 +65,7 @@ void Syn_Printf( const char *text, ... ){
 		va_start( args, text );
 		vsnprintf( buf, BUFFER_SIZE, text, args );
 		buf[BUFFER_SIZE - 1] = 0;
-		printf( buf );
+		printf( "%s", buf );
 		va_end( args );
 	}
 }

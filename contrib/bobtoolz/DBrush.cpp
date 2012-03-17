@@ -694,7 +694,7 @@ void DBrush::SaveToFile( FILE *pFile ){
 				 ( *pp )->texInfo.m_fScale[0], ( *pp )->texInfo.m_fScale[0],
 				 ( *pp )->texInfo.m_fRotate );
 
-		fprintf( pFile, buffer );
+		fprintf( pFile, "%s", buffer );
 	}
 
 	fprintf( pFile, "}\n" );
