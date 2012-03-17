@@ -133,8 +133,6 @@ static void LoadIDSP( const char *name, byte ** pic, int *width, int *height ){
 	dspriteframetype_t  *pframetype;
 	int version;
 	int numframes;
-	int size;
-	spriteframetype_t frametype;
 	dspriteframe_t *spriteframe;
 
 	*pic = NULL;
@@ -201,7 +199,7 @@ static void LoadIDSP( const char *name, byte ** pic, int *width, int *height ){
 	*pic = bmpRGBA;
 
 #ifdef DEBUG
-	frametype = spriteframetype_t( LittleLong( pframetype->type ) );
+	spriteframetype_t frametype = spriteframetype_t( LittleLong( pframetype->type ) );
 	if ( frametype == SPR_SINGLE ) {
 		Sys_Printf( "Single Frame\n" );
 	}
