@@ -66,29 +66,23 @@ char *LokiGetHomeDir( void ){
 	#ifndef Q_UNIX
 	return NULL;
 	#else
+	static char	buf[ 4096 ];
+	struct passwd   pw, *pwp;
 	char            *home;
-	uid_t id;
-	struct passwd   *pwd;
 
 
 	/* get the home environment variable */
 	home = getenv( "HOME" );
-	if ( home == NULL ) {
-		/* do some more digging */
-		id = getuid();
-		setpwent();
-		while ( ( pwd = getpwent() ) != NULL )
-		{
-			if ( pwd->pw_uid == id ) {
-				home = pwd->pw_dir;
-				break;
-			}
-		}
-		endpwent();
+	if ( home ) {
+		return Q_strncpyz( buf, home, sizeof( buf ) );
 	}
 
-	/* return it */
-	return home;
+	/* look up home dir in password database */
+	if ( getpwuid_r( getuid(), &pw, buf, sizeof( buf ), &pwp ) == 0 ) {
+		return pw.pw_dir;
+	}
+
+	return NULL;
 	#endif
 }
 
