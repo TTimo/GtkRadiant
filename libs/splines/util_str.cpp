@@ -487,9 +487,6 @@ void TestStringClass
 	i = a.length();                 // i == 0
 	i = c.length();                 // i == 4
 
-	const char *s1 = a.c_str(); // s1 == "\0"
-	const char *s2 = c.c_str(); // s2 == "test\0"
-
 	t = new idStr();                        // t->len == 0, t->data == "\0"
 	delete t;                           // t == ?
 

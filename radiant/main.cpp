@@ -1145,7 +1145,7 @@ void RunBsp( char *command ){
 			Error( "Can't write to %s", batpath );
 		}
 		fprintf( hFile, "#!/bin/sh \n\n" );
-		fprintf( hFile, strSys.GetBuffer() );
+		fprintf( hFile, "%s", strSys.GetBuffer() );
 		fclose( hFile );
 		chmod( batpath, 0744 );
 #endif
@@ -1158,7 +1158,7 @@ void RunBsp( char *command ){
 		if ( !hFile ) {
 			Error( "Can't write to %s", batpath );
 		}
-		fprintf( hFile, strSys.GetBuffer() );
+		fprintf( hFile, "%s", strSys.GetBuffer() );
 		fclose( hFile );
 #endif
 

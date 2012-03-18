@@ -46,6 +46,38 @@ vec_t Random( void ){
 }
 
 
+char *Q_strncpyz( char *dst, const char *src, size_t len ) {
+	if ( len == 0 ) {
+		abort();
+	}
+
+	strncpy( dst, src, len );
+	dst[ len - 1 ] = '\0';
+	return dst;
+}
+
+
+char *Q_strcat( char *dst, size_t dlen, const char *src ) {
+	size_t n = strlen( dst  );
+
+	if ( n > dlen ) {
+		abort(); /* buffer overflow */
+	}
+
+	return Q_strncpyz( dst + n, src, dlen - n );
+}
+
+
+char *Q_strncat( char *dst, size_t dlen, const char *src, size_t slen ) {
+	size_t n = strlen( dst );
+
+	if ( n > dlen ) {
+		abort(); /* buffer overflow */
+	}
+
+	return Q_strncpyz( dst + n, src, MIN( slen, dlen - n ) );
+}
+
 
 /*
    ExitQ3Map()
