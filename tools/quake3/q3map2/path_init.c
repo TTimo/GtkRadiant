@@ -111,20 +111,16 @@ void LokiInitPaths( char *argv0 ){
 		home = ".";
 	}
 
+	path = getenv( "PATH" );
+
 	/* do some path divining */
 	strcpy( temp, argv0 );
 	if ( strrchr( temp, '/' ) ) {
 		argv0 = strrchr( argv0, '/' ) + 1;
 	}
-	else
-	{
-		/* get path environment variable */
-		path = getenv( "PATH" );
-
-		/* minor setup */
-		last[ 0 ] = path[ 0 ];
-		last[ 1 ] = '\0';
+	else if ( path ) {
 		found = qfalse;
+		last = path;
 
 		/* go through each : segment of path */
 		while ( last[ 0 ] != '\0' && found == qfalse )
