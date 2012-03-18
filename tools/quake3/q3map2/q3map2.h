@@ -83,6 +83,8 @@
 
 #include <stdlib.h>
 
+#define MIN(a, b) ((a) < (b) ? (a) : (b))
+#define MAX(a, b) ((a) > (b) ? (a) : (b))
 
 
 /* -------------------------------------------------------------------------------
@@ -1446,6 +1448,9 @@ surfaceInfo_t;
 
 /* main.c */
 vec_t                       Random( void );
+char                        *Q_strncpyz( char *dst, const char *src, size_t len );
+char                        *Q_strcat( char *dst, size_t dlen, const char *src );
+char                        *Q_strncat( char *dst, size_t dlen, const char *src, size_t slen );
 int                         BSPInfo( int count, char **fileNames );
 int                         ScaleBSPMain( int argc, char **argv );
 int                         ConvertMain( int argc, char **argv );
