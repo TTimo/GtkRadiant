@@ -43,6 +43,7 @@
 #include "libxml/tree.h"
 
 // utf8 conversion
+#include <glib.h>
 #include <glib/gconvert.h>
 #include <glib/gmem.h>
 
