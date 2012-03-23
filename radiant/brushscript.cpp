@@ -426,42 +426,28 @@ void Input( char*& pBuffer ){
 	const char *fields[5] = { "", "", "", "", "" };
 	float values[5];
 
-	for ( int n = 0; n < g_nVariableCount; n++ )
+	for ( int n = 0; n < 5 && n < g_nVariableCount; n++ )
 	{
 		if ( g_Variables[n].m_strInput.GetLength() > 0 ) {
 			bGo = true;
-			if ( n < 5 ) {
-				switch ( n )
-				{
-				case 0: fields[1] = g_Variables[n].m_strInput.GetBuffer(); break;
-				case 1: fields[2] = g_Variables[n].m_strInput.GetBuffer(); break;
-				case 2: fields[3] = g_Variables[n].m_strInput.GetBuffer(); break;
-				case 3: fields[4] = g_Variables[n].m_strInput.GetBuffer(); break;
-				case 4: fields[5] = g_Variables[n].m_strInput.GetBuffer(); break;
-				}
-			}
+			fields[n] = g_Variables[n].m_strInput.GetBuffer();
 		}
 	}
 
-	if ( bGo ) {
-		if ( DoBSInputDlg( fields, values ) == IDOK ) {
-			for ( int n = 0; n < g_nVariableCount; n++ )
-			{
-				if ( g_Variables[n].m_strInput.GetLength() > 0 ) {
-					if ( n < 5 ) {
-						switch ( n )
-						{
-						case 0: g_Variables[n].m_fValue = values[1]; break;
-						case 1: g_Variables[n].m_fValue = values[2]; break;
-						case 2: g_Variables[n].m_fValue = values[3]; break;
-						case 3: g_Variables[n].m_fValue = values[4]; break;
-						case 4: g_Variables[n].m_fValue = values[5]; break;
-						}
-					}
-				}
-			}
+	if ( !bGo ) {
+		return;
+	}
+
+	if ( DoBSInputDlg( fields, values ) != IDOK ) {
+		g_bKeepGoing = false;
+		return;
+	}
+
+	for ( int n = 0; n < 5 && n < g_nVariableCount; n++ )
+	{
+		if ( g_Variables[n].m_strInput.GetLength() > 0 ) {
+			g_Variables[n].m_fValue = values[n];
 		}
-		else{ g_bKeepGoing = false; }
 	}
 }
 

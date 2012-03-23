@@ -265,7 +265,7 @@ void FPrintf( int flag, char *buf ){
 	static qboolean bGotXML = qfalse;
 	char level[2];
 
-	printf( buf );
+	printf( "%s", buf );
 
 	// the following part is XML stuff only.. but maybe we don't want that message to go down the XML pipe?
 	if ( flag == SYS_NOXML ) {

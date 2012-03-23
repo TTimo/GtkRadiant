@@ -66,29 +66,23 @@ char *LokiGetHomeDir( void ){
 	#ifndef Q_UNIX
 	return NULL;
 	#else
+	static char	buf[ 4096 ];
+	struct passwd   pw, *pwp;
 	char            *home;
-	uid_t id;
-	struct passwd   *pwd;
 
 
 	/* get the home environment variable */
 	home = getenv( "HOME" );
-	if ( home == NULL ) {
-		/* do some more digging */
-		id = getuid();
-		setpwent();
-		while ( ( pwd = getpwent() ) != NULL )
-		{
-			if ( pwd->pw_uid == id ) {
-				home = pwd->pw_dir;
-				break;
-			}
-		}
-		endpwent();
+	if ( home ) {
+		return Q_strncpyz( buf, home, sizeof( buf ) );
 	}
 
-	/* return it */
-	return home;
+	/* look up home dir in password database */
+	if ( getpwuid_r( getuid(), &pw, buf, sizeof( buf ), &pwp ) == 0 ) {
+		return pw.pw_dir;
+	}
+
+	return NULL;
 	#endif
 }
 
@@ -117,20 +111,16 @@ void LokiInitPaths( char *argv0 ){
 		home = ".";
 	}
 
+	path = getenv( "PATH" );
+
 	/* do some path divining */
-	strcpy( temp, argv0 );
+	Q_strncpyz( temp, argv0, sizeof( temp ) );
 	if ( strrchr( temp, '/' ) ) {
 		argv0 = strrchr( argv0, '/' ) + 1;
 	}
-	else
-	{
-		/* get path environment variable */
-		path = getenv( "PATH" );
-
-		/* minor setup */
-		last[ 0 ] = path[ 0 ];
-		last[ 1 ] = '\0';
+	else if ( path ) {
 		found = qfalse;
+		last = path;
 
 		/* go through each : segment of path */
 		while ( last[ 0 ] != '\0' && found == qfalse )
@@ -146,17 +136,17 @@ void LokiInitPaths( char *argv0 ){
 
 			/* found home dir candidate */
 			if ( *path == '~' ) {
-				strcpy( temp, home );
+				Q_strncpyz( temp, home, sizeof( temp ) );
 				path++;
 			}
 
 			/* concatenate */
 			if ( last > ( path + 1 ) ) {
-				strncat( temp, path, ( last - path ) );
-				strcat( temp, "/" );
+				Q_strncat( temp, sizeof( temp ), path, ( last - path ) );
+				Q_strcat( temp, sizeof( temp ), "/" );
 			}
-			strcat( temp, "./" );
-			strcat( temp, argv0 );
+			Q_strcat( temp, sizeof( temp ), "./" );
+			Q_strcat( temp, sizeof( temp ), argv0 );
 
 			/* verify the path */
 			if ( access( temp, X_OK ) == 0 ) {

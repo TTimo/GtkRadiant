@@ -3179,7 +3179,7 @@ void SetupEnvelopes( qboolean forGrid, qboolean fastFlag ){
 	int i, x, y, z, x1, y1, z1;
 	light_t     *light, *light2, **owner;
 	bspLeaf_t   *leaf;
-	vec3_t origin, dir, mins, maxs, nullVector = { 0, 0, 0 };
+	vec3_t origin, dir, mins, maxs;
 	float radius, intensity;
 	light_t     *buckets[ 256 ];
 

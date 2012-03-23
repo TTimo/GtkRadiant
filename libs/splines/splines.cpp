@@ -393,7 +393,6 @@ void idSplineList::setSelectedPoint( idVec3 *p ) {
 
 const idVec3 *idSplineList::getPosition( long t ) {
 	static idVec3 interpolatedPos;
-	static long lastTime = -1;
 
 	int count = splineTime.Num();
 	if ( count == 0 ) {
@@ -644,7 +643,6 @@ bool idCameraDef::waitEvent( int index ) {
 
 void idCameraDef::buildCamera() {
 	int i;
-	int lastSwitch = 0;
 	idList<float> waits;
 	idList<int> targets;
 
@@ -653,7 +651,6 @@ void idCameraDef::buildCamera() {
 	// we have a base time layout for the path and the target path
 	// now we need to layer on any wait or speed changes
 	for ( i = 0; i < events.Num(); i++ ) {
-		idCameraEvent *ev = events[i];
 		events[i]->setTriggered( false );
 		switch ( events[i]->getType() ) {
 		case idCameraEvent::EVENT_TARGET: {
@@ -864,7 +861,8 @@ void idCameraDef::parse( const char *( *text )  ) {
 bool idCameraDef::load( const char *filename ) {
 	char *buf;
 	const char *buf_p;
-	int length = FS_ReadFile( filename, (void **)&buf );
+
+	FS_ReadFile( filename, (void **)&buf );
 	if ( !buf ) {
 		return false;
 	}
@@ -1363,7 +1361,6 @@ void idSplinePosition::write( fileHandle_t file, const char *p ) {
 }
 
 void idCameraDef::addTarget( const char *name, idCameraPosition::positionType type ) {
-	const char *text = ( name == NULL ) ? va( "target0%d", numTargets() + 1 ) : name;
 	idCameraPosition *pos = newFromType( type );
 	if ( pos ) {
 		pos->setName( name );

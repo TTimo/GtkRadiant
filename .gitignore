@@ -1,2 +1,7 @@
-
-# /
+/install/q3map2
+/install/radiant.bin
+/.sconsign.dblite
+/site.sconf
+/build
+*.pyc
+*.so
