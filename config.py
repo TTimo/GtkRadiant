@@ -3,7 +3,7 @@ import sys, traceback, platform, re, commands, platform, subprocess
 if __name__ != '__main__':
 	from SCons.Script import *
 
-import utils
+import utils, urllib2, zipfile, shutil
 
 # config = debug release
 # aliases are going to be very needed here
@@ -265,6 +265,18 @@ class Config:
 				svnurl = 'svn://svn.icculus.org/gtkradiant-gamepacks/%s/trunk' % pak
 				self.CheckoutOrUpdate( svnurl, os.path.join( path, 'installs', pak ) )
 
+	def CopyTree( self, src, dst):
+		for root, dirs, files in os.walk( src ):
+			target_dir = os.path.join( dst, root[root.find( '/' )+1:] )
+			print ( target_dir )
+			if ( not os.path.exists( target_dir ) ):
+				os.mkdir( target_dir )
+
+			for file in files:
+				shutil.copy( os.path.join( root, file ), os.path.join( target_dir, file ) )
+
+
+
 	def Setup( self ):
 		try:
 			self.setup_platforms.index( 'local' )
@@ -284,14 +296,26 @@ class Config:
 				'STLport-5.2.1-4.zip'
 				]:
 				if ( not os.path.exists( lib_archive ) ):
-					cmd = [ 'wget', '-N', 'http://icculus.org/gtkradiant/files/1.6.2/%s' % lib_archive ]
-					print( repr( cmd ) )
-					subprocess.check_call( cmd )
+					print( 'downloading %s' % lib_archive )
+					archive_web_request = urllib2.urlopen( 'http://icculus.org/gtkradiant/files/1.6.2/%s' % lib_archive )
+					archive_File = open( lib_archive, 'wb' )
+					while True:
+						data = archive_web_request.read( 1048576 ) #read 1mb at a time
+						if not data:
+							break
+						archive_File.write( data )
+
+					archive_web_request.close()
+					archive_File.close()
+
+					print( 'unpacking %s' % lib_archive )
 					lib_archive_path = os.path.abspath( lib_archive )
 					os.chdir( os.path.dirname( backup_cwd ) )
-					cmd = [ 'unzip', '-o', lib_archive_path ]
-					print( repr( cmd ) )
-					subprocess.check_call( cmd )
+
+					archive_Zip = zipfile.ZipFile( lib_archive_path, 'r' )
+					archive_Zip.extractall()
+					archive_Zip.close()
+
 					os.chdir( backup_cwd )
 
 			# copy all the dependent runtime data to the install directory
@@ -328,18 +352,15 @@ class Config:
 				'gtkglext-1.2.0/bin/libgtkglext-win32-1.0-0.dll',
 				'libxml2-2.7.3/bin/libxml2-2.dll'
 				]:
-				cmd = [ 'cp', '-v', os.path.join( srcdir, dll ), 'install' ]
-				print( repr( cmd ) )
-				subprocess.check_call( cmd )
+				shutil.copy( os.path.join( srcdir, dll ), 'install' )
+
 			for extra in [
 				'gtk-2.16.6/etc',
 				'gtk-2.16.6/share',
 				'gtkglext-1.2.0/share',
 				'libxml2-2.7.3/share'
 				]:
-				cmd = [ 'cp', '-r', '-v', os.path.join( srcdir, extra ), 'install' ]
-				print( repr( cmd ) )
-				subprocess.check_call( cmd )
+				self.CopyTree( os.path.join( srcdir, extra ), 'install' )
 
 # parse the config statement line to produce/update an existing config list
 # the configs expose a list of keywords and accepted values, which the engine parses out
