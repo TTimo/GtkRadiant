@@ -3408,6 +3408,9 @@ void CGameInstall::Run() {
 	// write out the game file
 	Str gameFilePath = g_strAppPath.GetBuffer();
 	gameFilePath += "games/";
+	if(CheckFile(gameFilePath) != PATH_DIRECTORY) {
+		radCreateDirectory(gameFilePath);
+	}
 	gameFilePath += m_strName.GetBuffer();
 	gameFilePath += ".game";
 	Sys_Printf( "game file: %s\n", gameFilePath.GetBuffer() );
@@ -3441,6 +3444,12 @@ void CGameInstall::Run() {
 		source += "/install/";
 		Str dest = m_strEngine.GetBuffer();
 		CopyTree( source.GetBuffer(), dest.GetBuffer() );
+		// Hardcoded fix for "missing" shaderlist in gamepack
+		dest += "/baseq3/scripts/shaderlist.txt";
+		if(CheckFile(dest.GetBuffer()) != PATH_FILE) {
+			source += "baseq3/scripts/default_shaderlist.txt";
+			radCopyFile(source.GetBuffer(),dest.GetBuffer());
+		}
 		fprintf( fg, "  basegame=\"baseq3\"\n" );
 		break;
 	}
