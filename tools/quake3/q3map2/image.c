@@ -123,11 +123,10 @@ void PNGReadData( png_struct *png, png_byte *buffer, png_size_t size ){
 static void LoadPNGBuffer( byte *buffer, int size, byte **pixels, int *width, int *height ){
 	png_struct  *png;
 	png_info    *info, *end;
-	pngBuffer_t pb;
+	pngBuffer_t     *pb = (pngBuffer_t*) png_get_io_ptr( png );
 	int i, bitDepth, colorType, channels;
 	png_uint_32 w, h;
 	byte        **rowPointers;
-
 
 	/* dummy check */
 	if ( buffer == NULL || size <= 0 || pixels == NULL || width == NULL || height == NULL ) {
@@ -167,14 +166,14 @@ static void LoadPNGBuffer( byte *buffer, int size, byte **pixels, int *width, in
 	}
 
 	/* set read callback */
-	pb.buffer = buffer;
-	pb.size = size;
-	pb.offset = 0;
+	pb->buffer = buffer;
+	pb->size = size;
+	pb->offset = 0;
 	png_set_read_fn( png, &pb, PNGReadData );
-	png->io_ptr = &pb; /* hack! */
+	//png->io_ptr = &pb; /* hack! */
 
 	/* set error longjmp */
-	if ( setjmp( png->jmpbuf ) ) {
+	if ( setjmp( png_jmpbuf(png) ) ) {
 		Sys_Printf( "WARNING: An error occurred reading PNG image\n" );
 		png_destroy_read_struct( &png, &info, &end );
 		return;
