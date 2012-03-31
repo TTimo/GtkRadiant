@@ -104,7 +104,7 @@ void user_warning_fn( png_structp png_ptr, png_const_charp warning_msg ){
 
 void user_error_fn( png_structp png_ptr, png_const_charp error_msg ){
 	g_FuncTable.m_pfnSysPrintf( "libpng error: %s\n", error_msg );
-	longjmp( png_ptr->jmpbuf, 0 );
+	longjmp( png_jmpbuf(png_ptr), 0 );
 }
 
 void user_read_data( png_structp png_ptr, png_bytep data, png_uint_32 length ){
@@ -153,9 +153,9 @@ void LoadImage( const char *filename, unsigned char **pic, int *width, int *heig
 	}
 
 	// configure the read function
-	png_set_read_fn( png_ptr, ( voidp ) & p_fbuffer, ( png_rw_ptr ) & user_read_data );
+	png_set_read_fn( png_ptr, ( void * ) & p_fbuffer, ( png_rw_ptr ) & user_read_data );
 
-	if ( setjmp( png_ptr->jmpbuf ) ) {
+	if ( setjmp( png_jmpbuf(png_ptr) ) ) {
 		png_destroy_read_struct( &png_ptr, &info_ptr,
 								 &end_info );
 		if ( *pic ) {
