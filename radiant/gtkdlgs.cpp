@@ -2499,6 +2499,7 @@ void DoThickenDlg(){
 
 static const int ABT_WIDGET_PADDING = 8;
 
+//! @note kaz 04/01/2012 - not in use
 void about_button_changelog( GtkWidget *widget, gpointer data ){
 	Str log;
 	log = g_strAppPath;
@@ -2506,6 +2507,7 @@ void about_button_changelog( GtkWidget *widget, gpointer data ){
 	OpenURL( log.GetBuffer() );
 }
 
+//! @note kaz 04/01/2012 - not in use
 void about_button_credits( GtkWidget *widget, gpointer data ){
 	Str cred;
 	cred = g_strAppPath;
@@ -2514,12 +2516,9 @@ void about_button_credits( GtkWidget *widget, gpointer data ){
 }
 
 void DoAbout(){
-	int loop = 1, ret = IDCANCEL;
+	int loop = TRUE, ret = IDCANCEL;
 
-	GtkWidget *main_vbox, *button_hbox, *gl_ext_hbox, *gl_ext_sc, *gl_ext_text;
-	GtkWidget *frame, *button, *table, *label, *image; 
-
-	// dialog
+	// create dialog window
 	GtkWidget *dlg = gtk_window_new( GTK_WINDOW_TOPLEVEL );
 	gtk_window_set_title( GTK_WINDOW( dlg ), _( "About GtkRadiant" ) );
 	gtk_window_set_resizable( GTK_WINDOW( dlg ), FALSE );  
@@ -2534,127 +2533,128 @@ void DoAbout(){
 	GtkWidget *outer_vbox = gtk_vbox_new( FALSE, 0 );
 	gtk_widget_show( outer_vbox );
 	gtk_container_add( GTK_CONTAINER( dlg ), outer_vbox );
-	gtk_container_set_border_width( GTK_CONTAINER( outer_vbox ), 0 );
+	gtk_container_set_border_width( GTK_CONTAINER( outer_vbox ), 0 ); 
 
 	// radiant logo
 	CString s = g_strBitmapsPath;
-	s += "logo.png";
-	image = gtk_image_new_from_file( s.GetBuffer() );
-	gtk_widget_show( image );
-	gtk_box_pack_start( GTK_BOX( outer_vbox ), image, FALSE, FALSE, 0 );
+	s += "logo.png"; 
+	GtkWidget *logo_image = gtk_image_new_from_file( s.GetBuffer() );
+	gtk_widget_show( logo_image );
+	gtk_box_pack_start( GTK_BOX( outer_vbox ), logo_image, FALSE, FALSE, 0 );
 
 	// all other widgets layout
-	main_vbox = gtk_vbox_new( FALSE, ABT_WIDGET_PADDING );
-	gtk_widget_show( main_vbox );
-	gtk_box_pack_start( GTK_BOX( outer_vbox ), main_vbox, FALSE, FALSE, 0 );
-	gtk_container_set_border_width( GTK_CONTAINER( main_vbox ), ABT_WIDGET_PADDING );
+	GtkWidget *inner_vbox = gtk_vbox_new( FALSE, ABT_WIDGET_PADDING );
+	gtk_widget_show( inner_vbox );
+	gtk_box_pack_start( GTK_BOX( outer_vbox ), inner_vbox, FALSE, FALSE, 0 );
+	gtk_container_set_border_width( GTK_CONTAINER( inner_vbox ), ABT_WIDGET_PADDING );
 
 	// informative text
 	GtkWidget *info_hbox = gtk_hbox_new( FALSE, 0 );
 	gtk_widget_show( info_hbox );
-	gtk_box_pack_start( GTK_BOX( main_vbox ), info_hbox, FALSE, FALSE, 0 );
+	gtk_box_pack_start( GTK_BOX( inner_vbox ), info_hbox, FALSE, FALSE, 0 );
 
-	label = gtk_label_new( "GtkRadiant " RADIANT_VERSION " - " __DATE__ "\n"
-						   RADIANT_ABOUTMSG "\n\n"
-						   "By http://icculus.org/gtkradiant/\n\n"
-						   "This product contains software technology from id Software, Inc.\n"
-						   "('id Technology'). id Technology 2000 id Software, Inc.\n\n"
-						   "GtkRadiant is unsupported, however you may report your\n"
-						   "problems at https://github.com/TTimo/GtkRadiant/issues" );
+	GtkWidget *info_label = gtk_label_new( 
+		"GtkRadiant " RADIANT_VERSION " - " __DATE__ "\n"
+		RADIANT_ABOUTMSG "\n\n"
+		"This product contains software technology from id Software, Inc.\n"
+		"('id Technology'). id Technology 2000 id Software, Inc.\n\n"
+		"Visit http://icculus.org/gtkradiant/ to view a full list of credits,\n"
+		"changelogs, and to report problems with this software." );
 
-	gtk_widget_show( label );
-	gtk_box_pack_start( GTK_BOX( info_hbox ), label, FALSE, FALSE, 0 );
-	gtk_label_set_justify( GTK_LABEL( label ), GTK_JUSTIFY_LEFT );
+	gtk_widget_show( info_label );
+	gtk_box_pack_start( GTK_BOX( info_hbox ), info_label, FALSE, FALSE, 0 );
+	gtk_label_set_justify( GTK_LABEL( info_label ), GTK_JUSTIFY_LEFT );
 
 	// OpenGL properties 
-	frame = gtk_frame_new( _( "OpenGL Properties" ) );
-	gtk_widget_show( frame );
-	gtk_box_pack_start( GTK_BOX( main_vbox ), frame, FALSE, FALSE, 0 );
+	GtkWidget *gl_prop_frame = gtk_frame_new( _( "OpenGL Properties" ) );
+	gtk_widget_show( gl_prop_frame );
+	gtk_box_pack_start( GTK_BOX( inner_vbox ), gl_prop_frame, FALSE, FALSE, 0 );
 
-	table = gtk_table_new( 3, 2, FALSE );
-	gtk_widget_show( table );
-	gtk_container_add( GTK_CONTAINER( frame ), table );
-	gtk_table_set_row_spacings( GTK_TABLE( table ), 4 );
-	gtk_table_set_col_spacings( GTK_TABLE( table ), 4 );
-	gtk_container_set_border_width( GTK_CONTAINER( table ), 4 );
+	GtkWidget *gl_prop_table = gtk_table_new( 3, 2, FALSE );
+	gtk_widget_show( gl_prop_table );
+	gtk_container_add( GTK_CONTAINER( gl_prop_frame ), gl_prop_table );
+	gtk_table_set_row_spacings( GTK_TABLE( gl_prop_table ), 4 );
+	gtk_table_set_col_spacings( GTK_TABLE( gl_prop_table ), 4 );
+	gtk_container_set_border_width( GTK_CONTAINER( gl_prop_table ), 4 );
 
-	label = gtk_label_new( _( "Vendor:" ) );
-	gtk_widget_show( label );
-	gtk_table_attach( GTK_TABLE( table ), label, 0, 1, 0, 1,
+	GtkWidget *vendor_label = gtk_label_new( _( "Vendor:" ) );
+	gtk_widget_show( vendor_label );
+	gtk_table_attach( GTK_TABLE( gl_prop_table ), vendor_label, 0, 1, 0, 1,
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
-	gtk_misc_set_alignment( GTK_MISC( label ), 0, 0.5 );
+	gtk_misc_set_alignment( GTK_MISC( vendor_label ), 0, 0.5 );
 
-	label = gtk_label_new( _( "Version:" ) );
-	gtk_widget_show( label );
-	gtk_table_attach( GTK_TABLE( table ), label, 0, 1, 1, 2,
+	GtkWidget *version_label = gtk_label_new( _( "Version:" ) );
+	gtk_widget_show( version_label );
+	gtk_table_attach( GTK_TABLE( gl_prop_table ), version_label, 0, 1, 1, 2,
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
-	gtk_misc_set_alignment( GTK_MISC( label ), 0, 0.5 );
+	gtk_misc_set_alignment( GTK_MISC( version_label ), 0, 0.5 );
 
-	label = gtk_label_new( _( "Renderer:" ) );
-	gtk_widget_show( label );
-	gtk_table_attach( GTK_TABLE( table ), label, 0, 1, 2, 3,
+	GtkWidget *renderer_label = gtk_label_new( _( "Renderer:" ) );
+	gtk_widget_show( renderer_label );
+	gtk_table_attach( GTK_TABLE( gl_prop_table ), renderer_label, 0, 1, 2, 3,
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
-	gtk_misc_set_alignment( GTK_MISC( label ), 0, 0.5 );
+	gtk_misc_set_alignment( GTK_MISC( renderer_label ), 0, 0.5 );
 
-	label = gtk_label_new( (char*)qglGetString( GL_VENDOR ) );
-	gtk_widget_show( label );
-	gtk_table_attach( GTK_TABLE( table ), label, 1, 2, 0, 1,
+	GtkWidget *gl_vendor_label = gtk_label_new( (char*)qglGetString( GL_VENDOR ) );
+	gtk_widget_show( gl_vendor_label );
+	gtk_table_attach( GTK_TABLE( gl_prop_table ), gl_vendor_label, 1, 2, 0, 1,
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
-	gtk_misc_set_alignment( GTK_MISC( label ), 0, 0.5 );
+	gtk_misc_set_alignment( GTK_MISC( gl_vendor_label ), 0, 0.5 );
 
-	label = gtk_label_new( (char*)qglGetString( GL_VERSION ) );
-	gtk_widget_show( label );
-	gtk_table_attach( GTK_TABLE( table ), label, 1, 2, 1, 2,
+	GtkWidget *gl_version_label = gtk_label_new( (char*)qglGetString( GL_VERSION ) );
+	gtk_widget_show( gl_version_label );
+	gtk_table_attach( GTK_TABLE( gl_prop_table ), gl_version_label, 1, 2, 1, 2,
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
-	gtk_misc_set_alignment( GTK_MISC( label ), 0, 0.5 );
+	gtk_misc_set_alignment( GTK_MISC( gl_version_label ), 0, 0.5 );
 
-	label = gtk_label_new( (char*)qglGetString( GL_RENDERER ) );
-	gtk_widget_show( label );
-	gtk_table_attach( GTK_TABLE( table ), label, 1, 2, 2, 3,
+	GtkWidget *gl_renderer_label = gtk_label_new( (char*)qglGetString( GL_RENDERER ) );
+	gtk_widget_show( gl_renderer_label );
+	gtk_table_attach( GTK_TABLE( gl_prop_table ), gl_renderer_label, 1, 2, 2, 3,
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
-	gtk_misc_set_alignment( GTK_MISC( label ), 0, 0.5 );
+	gtk_misc_set_alignment( GTK_MISC( gl_renderer_label ), 0, 0.5 );
 
 	// OpenGL extensions
-	frame = gtk_frame_new( _( "OpenGL Extensions" ) );
-	gtk_widget_show( frame );
-	gtk_box_pack_start( GTK_BOX( main_vbox ), frame, TRUE, TRUE, 0 );
+	GtkWidget *gl_ext_frame = gtk_frame_new( _( "OpenGL Extensions" ) );
+	gtk_widget_show( gl_ext_frame );
+	gtk_box_pack_start( GTK_BOX( inner_vbox ), gl_ext_frame, TRUE, TRUE, 0 );
 
-	gl_ext_hbox = gtk_hbox_new( FALSE, ABT_WIDGET_PADDING );
+	GtkWidget *gl_ext_hbox = gtk_hbox_new( FALSE, ABT_WIDGET_PADDING );
 	gtk_widget_show( gl_ext_hbox );
-	gtk_container_add( GTK_CONTAINER( frame ), gl_ext_hbox );
+	gtk_container_add( GTK_CONTAINER( gl_ext_frame ), gl_ext_hbox );
 	gtk_container_set_border_width( GTK_CONTAINER( gl_ext_hbox ), 4 );
 
-	gl_ext_sc = gtk_scrolled_window_new( NULL, NULL );
-	gtk_box_pack_start( GTK_BOX( gl_ext_hbox ), gl_ext_sc, TRUE, TRUE, 0 );
-	gtk_scrolled_window_set_policy( GTK_SCROLLED_WINDOW( gl_ext_sc ), GTK_POLICY_AUTOMATIC, GTK_POLICY_ALWAYS );
-	gtk_scrolled_window_set_shadow_type( GTK_SCROLLED_WINDOW( gl_ext_sc ), GTK_SHADOW_IN );
-	gtk_widget_show( gl_ext_sc );
+	GtkWidget *gl_ext_scroll = gtk_scrolled_window_new( NULL, NULL );
+	gtk_box_pack_start( GTK_BOX( gl_ext_hbox ), gl_ext_scroll, TRUE, TRUE, 0 );
+	gtk_scrolled_window_set_policy( GTK_SCROLLED_WINDOW( gl_ext_scroll ), GTK_POLICY_AUTOMATIC, GTK_POLICY_ALWAYS );
+	gtk_scrolled_window_set_shadow_type( GTK_SCROLLED_WINDOW( gl_ext_scroll ), GTK_SHADOW_IN );
+	gtk_widget_show( gl_ext_scroll );
 
-	gl_ext_text = gtk_text_view_new();
-	gtk_text_view_set_editable( GTK_TEXT_VIEW( gl_ext_text ), FALSE );
-	gtk_container_add( GTK_CONTAINER( gl_ext_sc ), gl_ext_text );
-	GtkTextBuffer* buffer = gtk_text_view_get_buffer( GTK_TEXT_VIEW( gl_ext_text ) );
+	GtkWidget *gl_ext_textview = gtk_text_view_new();
+	gtk_text_view_set_editable( GTK_TEXT_VIEW( gl_ext_textview ), FALSE );
+	gtk_container_add( GTK_CONTAINER( gl_ext_scroll ), gl_ext_textview );
+	GtkTextBuffer* buffer = gtk_text_view_get_buffer( GTK_TEXT_VIEW( gl_ext_textview ) );
 	gtk_text_buffer_set_text( buffer, (char *)qglGetString( GL_EXTENSIONS ), -1 );
-	gtk_text_view_set_wrap_mode( GTK_TEXT_VIEW( gl_ext_text ), GTK_WRAP_WORD );;
-	gtk_widget_show( gl_ext_text );
+	gtk_text_view_set_wrap_mode( GTK_TEXT_VIEW( gl_ext_textview ), GTK_WRAP_WORD );;
+	gtk_widget_show( gl_ext_textview );
 
 	// buttons
-	button_hbox = gtk_hbox_new( FALSE, 4 );
+	GtkWidget *button_hbox = gtk_hbox_new( FALSE, 4 );
 	gtk_widget_show( button_hbox );
-	gtk_box_pack_start( GTK_BOX( main_vbox ), button_hbox, FALSE, TRUE, 0 );
+	gtk_box_pack_start( GTK_BOX( inner_vbox ), button_hbox, FALSE, TRUE, 0 );
 
-	button = gtk_button_new_with_label( _( "OK" ) );
-	gtk_widget_show( button );
-	gtk_box_pack_end( GTK_BOX( button_hbox ), button, FALSE, FALSE, 0 );
-	gtk_signal_connect( GTK_OBJECT( button ), "clicked",
+	GtkWidget *ok_button = gtk_button_new_with_label( _( "OK" ) );
+	gtk_widget_show( ok_button );
+	gtk_box_pack_end( GTK_BOX( button_hbox ), ok_button, FALSE, FALSE, 0 );
+	gtk_signal_connect( GTK_OBJECT( ok_button ), "clicked",
 						GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( IDOK ) );
 
+	/*
 	button = gtk_button_new_with_label( _( "Credits" ) );
 	gtk_widget_show( button );
 	gtk_box_pack_end( GTK_BOX( button_hbox ), button, FALSE, FALSE, 0 );
@@ -2666,11 +2666,12 @@ void DoAbout(){
 	gtk_box_pack_end( GTK_BOX( button_hbox ), button, FALSE, FALSE, 0 );
 	gtk_signal_connect( GTK_OBJECT( button ), "clicked",
 						GTK_SIGNAL_FUNC( about_button_changelog ), NULL );
+	*/
 
 	gtk_grab_add( dlg );
 	gtk_widget_show( dlg );
 
-	while ( loop )
+	while( loop )
 		gtk_main_iteration();
 
 	gtk_grab_remove( dlg );
