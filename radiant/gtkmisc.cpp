@@ -1204,6 +1204,17 @@ const char* file_dialog( void *parent, gboolean open, const char* title, const c
 	CFileType typelist;
 	if ( pattern != NULL ) {
 		GetFileTypeRegistry()->getTypeList( pattern, &typelist );
+
+		// kaz - viewing all file types at once is really convenient for model selection
+		if ( !strcmp( "Open Model", title ) ) {
+			CString allTypesFilter;
+			for( int i = 0; i < typelist.GetNumTypes(); i++ ) {
+				allTypesFilter += typelist.GetTypeForIndex(i).pattern;
+				if ( i < typelist.GetNumTypes() - 1 )
+					allTypesFilter += ";";
+			}
+			typelist.addType(filetype_t("All supported types", allTypesFilter.GetBuffer()));
+		}
 	}
 
 #ifdef _WIN32
@@ -1223,6 +1234,12 @@ const char* file_dialog( void *parent, gboolean open, const char* title, const c
 		                      // "select the first filter as default".
 		if ( pattern ) {
 			ofn.lpstrFilter = typelist.m_strWin32Filters;
+			
+			// kaz - the "all supported types" will be at bottom of list
+			// ...idiomatically uncouth but not worth fixing
+			if ( !strcmp( "Open Model", title ) ) {
+				ofn.nFilterIndex = typelist.GetNumTypes();
+			}
 		}
 		else
 		{
@@ -1336,17 +1353,22 @@ const char* file_dialog( void *parent, gboolean open, const char* title, const c
 	// Setting the file chooser dialog to modal and centering it on the parent is done automatically.
 
 	if ( pattern != NULL ) {
+		GtkFileFilter *allTypesFilter = gtk_file_filter_new();
+		// http://www.gtkforums.com/viewtopic.php?p=6044
+		//gtk_file_filter_set_name( allTypesFilter, "All supported types" );
 		for ( int i = 0; i < typelist.GetNumTypes(); i++ ) {
 			GtkFileFilter *filter = gtk_file_filter_new();
 			type = typelist.GetTypeForIndex( i );
 			// We can use type.name here, or m_pstrGTKMasks[i], which includes the actual pattern.
 			gtk_file_filter_set_name( filter, typelist.m_pstrGTKMasks[i] );
 			gtk_file_filter_add_pattern( filter, type.pattern );
+			//gtk_file_filter_add_pattern( allTypesFilter, type.pattern );
 			// "Note that the chooser takes ownership of the filter, so
 			// you have to ref and sink it if you want to keep a reference."
 			// So I guess we won't need to garbage collect this.
 			gtk_file_chooser_add_filter( GTK_FILE_CHOOSER( file_sel ), filter );
 		}
+		//gtk_file_chooser_add_filter( GTK_FILE_CHOOSER( file_sel ), allTypesFilter );
 	}
 
 	if ( gtk_dialog_run( GTK_DIALOG( file_sel ) ) == GTK_RESPONSE_ACCEPT ) {
