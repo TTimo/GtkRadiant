@@ -2520,6 +2520,8 @@ void DoAbout(){
 
 	// create dialog window
 	GtkWidget *dlg = gtk_window_new( GTK_WINDOW_TOPLEVEL );
+	gtk_window_set_transient_for( GTK_WINDOW( dlg ), GTK_WINDOW( g_pParentWnd->m_pWidget ) );
+	gtk_window_set_position( GTK_WINDOW( dlg ), GTK_WIN_POS_CENTER_ON_PARENT );
 	gtk_window_set_title( GTK_WINDOW( dlg ), _( "About GtkRadiant" ) );
 	gtk_window_set_resizable( GTK_WINDOW( dlg ), FALSE );  
 	gtk_signal_connect( GTK_OBJECT( dlg ), "delete_event",
@@ -2668,6 +2670,7 @@ void DoAbout(){
 						GTK_SIGNAL_FUNC( about_button_changelog ), NULL );
 	*/
 
+	// show it
 	gtk_grab_add( dlg );
 	gtk_widget_show( dlg );
 
