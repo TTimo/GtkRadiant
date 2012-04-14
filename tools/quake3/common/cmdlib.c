@@ -255,20 +255,6 @@ char *ExpandPath( const char *path ){
 	return full;
 }
 
-char *ExpandPathAndArchive( const char *path ){
-	char    *expanded;
-	char archivename[1024];
-
-	expanded = ExpandPath( path );
-
-	if ( archive ) {
-		sprintf( archivename, "%s/%s", archivedir, path );
-		QCopyFile( expanded, archivename );
-	}
-	return expanded;
-}
-
-
 char *copystring( const char *s ){
 	char    *b;
 	b = safe_malloc( strlen( s ) + 1 );
