@@ -88,7 +88,6 @@ extern char    *moddirparam;
 void SetQdirFromPath( const char *path );
 char *ExpandArg( const char *path );    // from cmd line
 char *ExpandPath( const char *path );   // from scripts
-char *ExpandGamePath( const char *path );
 char *ExpandPathAndArchive( const char *path );
 void ExpandWildcards( int *argc, char ***argv );
 
