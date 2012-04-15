@@ -252,30 +252,6 @@ char *ExpandPath( const char *path ){
 	return full;
 }
 
-char *ExpandGamePath( const char *path ){
-	static char full[1024];
-	if ( path[0] == '/' || path[0] == '\\' || path[1] == ':' ) {
-		strcpy( full, path );
-		return full;
-	}
-	sprintf( full, "%s%s", gamedir, path );
-	return full;
-}
-
-char *ExpandPathAndArchive( const char *path ){
-	char    *expanded;
-	char archivename[1024];
-
-	expanded = ExpandPath( path );
-
-	if ( archive ) {
-		sprintf( archivename, "%s/%s", archivedir, path );
-		QCopyFile( expanded, archivename );
-	}
-	return expanded;
-}
-
-
 char *copystring( const char *s ){
 	char    *b;
 	b = safe_malloc( strlen( s ) + 1 );
