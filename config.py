@@ -33,7 +33,7 @@ class Config:
 		# platforms for which to assemble a setup
 		self.setup_platforms = [ 'local', 'x86', 'x64', 'win32' ]
 		# paks to assemble in the setup
-		self.setup_packs = [ 'Q3Pack', 'UrTPack', 'UFOAIPack', 'Q2WPack', 'ReactionPack' ]
+		self.setup_packs = [ 'Q3Pack', 'UrTPack', ] # 'UFOAIPack', 'Q2WPack', 'ReactionPack' ]
 
 	def __repr__( self ):
 		return 'config: target=%s config=%s' % ( self.target_selected, self.config_selected )
@@ -261,9 +261,8 @@ class Config:
 
 	def FetchGamePaks( self, path ):
 		for pak in self.setup_packs:
-			if ( pak == 'Q3Pack' or pak == 'UrTPack' or pak == 'UFOAIPack' or pak == 'Q2WPack' or pak == 'ReactionPack' ):
-				svnurl = 'svn://svn.icculus.org/gtkradiant-gamepacks/%s/trunk' % pak
-				self.CheckoutOrUpdate( svnurl, os.path.join( path, 'installs', pak ) )
+                        svnurl = 'svn://svn.icculus.org/gtkradiant-gamepacks/%s/trunk' % pak
+                        self.CheckoutOrUpdate( svnurl, os.path.join( path, 'installs', pak ) )
 
 	def CopyTree( self, src, dst):
 		for root, dirs, files in os.walk( src ):
