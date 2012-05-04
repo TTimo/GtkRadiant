@@ -3625,7 +3625,7 @@ const bool IsMap(const char* filename){
 }
 
 void MainFrame::CreateQEChildren(){
-	// load the project file, if it is a project project file. (Or at least no .map)
+	// load the project file, if it is a project file. (Or at least no .map)
 	if ( g_argc > 1 && !IsMap( g_argv[1] ) ) {
 		Sys_Printf( "loading project file from the command line: %s\n", g_argv[1] );
 		if ( !QE_LoadProject( g_argv[1] ) ) {
