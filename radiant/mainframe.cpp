@@ -3619,9 +3619,14 @@ void MainFrame::ShowMenuItemKeyBindings( GtkWidget* window ){
 	}
 }
 
+// Checks whether a given filename ends in .map
+const bool IsMap(const char* filename){
+	return strlen(filename) >= 4 && strcmp(filename + strlen(filename) - 4, ".map") == 0;
+}
+
 void MainFrame::CreateQEChildren(){
-	// load the project file
-	if ( g_argc > 1 ) {
+	// load the project file, if it is a project project file. (Or at least no .map)
+	if ( g_argc > 1 && !IsMap( g_argv[1] ) ) {
 		Sys_Printf( "loading project file from the command line: %s\n", g_argv[1] );
 		if ( !QE_LoadProject( g_argv[1] ) ) {
 			Error( "Unable to load project file %s\n", g_argv[1] );

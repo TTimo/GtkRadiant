@@ -908,4 +908,7 @@ int gdk_offset_y;
 // some C API to the mainframe functions
 void WINAPI QERApp_Sleep();
 
+// Checks whether a given filename ends in .map
+const bool IsMap(const char* filename);
+
 #endif // _MAINFRAME_H_

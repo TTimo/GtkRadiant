@@ -894,7 +894,11 @@ int main( int argc, char* argv[] ) {
 
 	g_pParentWnd = new MainFrame();
 
-	if ( g_PrefsDlg.m_bLoadLastMap && g_PrefsDlg.m_strLastMap.GetLength() > 0 ) {
+	// If the first parameter is a .map, load that.
+	if( g_argc > 1 && IsMap( g_argv[1] ) ){
+		Map_LoadFile( g_argv[1] );
+	}
+	else if ( g_PrefsDlg.m_bLoadLastMap && g_PrefsDlg.m_strLastMap.GetLength() > 0 ) {
 		Map_LoadFile( g_PrefsDlg.m_strLastMap.GetBuffer() );
 	}
 	else {
