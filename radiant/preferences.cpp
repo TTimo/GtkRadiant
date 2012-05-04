@@ -3411,8 +3411,40 @@ void CGameInstall::Run() {
 	if(CheckFile(gameFilePath) != PATH_DIRECTORY) {
 		radCreateDirectory(gameFilePath);
 	}
-	gameFilePath += m_strName.GetBuffer();
-	gameFilePath += ".game";
+
+	switch ( m_availGame[ m_nComboSelect ] ) {
+	case GAME_Q2:
+		gameFilePath += "q2.game";
+		break;
+	case GAME_Q3:
+		gameFilePath += "q3.game";
+		break;
+	case GAME_URT:
+		gameFilePath += "urt.game";
+		break;
+	case GAME_UFOAI:
+		gameFilePath += "ufoai.game";
+		break;
+	case GAME_Q2W:
+		gameFilePath += "q2w.game";
+		break;
+	case GAME_WARSOW:
+		gameFilePath += "warsow.game";
+		break;
+	case GAME_NEXUIZ:
+		gameFilePath += "nexuiz.game";
+		break;
+	case GAME_TREMULOUS:
+		gameFilePath += "tremulous.game";
+		break;
+	case GAME_JA:
+		gameFilePath += "ja.game";
+		break;
+	case GAME_REACTION:
+		gameFilePath += "reaction.game";
+		break;
+	}
+
 	Sys_Printf( "game file: %s\n", gameFilePath.GetBuffer() );
 
 	FILE * fg = fopen( gameFilePath.GetBuffer(), "w" );
