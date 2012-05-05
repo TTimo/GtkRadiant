@@ -494,7 +494,7 @@ void UpdateNvidiaAeroHack();
 
 void LoadPrefs();
 void SavePrefs();
-void LoadTexdefPref( texdef_t* pTexdef, char* pName );
+void LoadTexdefPref( texdef_t* pTexdef, const char* pName );
 
 PrefsDlg ();
 virtual ~PrefsDlg (){

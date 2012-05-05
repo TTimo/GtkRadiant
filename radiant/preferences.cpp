@@ -2701,7 +2701,7 @@ void PrefsDlg::BuildDialog(){
 
 // end new prefs dialog
 
-void PrefsDlg::LoadTexdefPref( texdef_t* pTexdef, char* pName ){
+void PrefsDlg::LoadTexdefPref( texdef_t* pTexdef, const char* pName ){
 	char buffer[256];
 
 	memset( pTexdef, 0, sizeof( texdef_t ) );
@@ -3412,7 +3412,7 @@ void CGameInstall::Run() {
 		radCreateDirectory(gameFilePath);
 	}
 
-	switch ( m_availGame[ m_nComboSelect ] ) {
+	switch ( m_availGames[ m_nComboSelect ] ) {
 	case GAME_Q2:
 		gameFilePath += "q2.game";
 		break;
