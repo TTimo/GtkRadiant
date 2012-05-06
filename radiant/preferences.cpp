@@ -3335,6 +3335,9 @@ void CGameInstall::BuildDialog() {
 		case GAME_REACTION:
 			gtk_combo_box_append_text( GTK_COMBO_BOX( combo ), _( "Reaction Quake 3" ) );
 			break;
+		case GAME_ET:
+			gtk_combo_box_append_text( GTK_COMBO_BOX( combo ), _( "Wolfenstein: Enemy Territory" ) );
+			break;
 		}
 		iGame++;
 	}
@@ -3442,6 +3445,9 @@ void CGameInstall::Run() {
 		break;
 	case GAME_REACTION:
 		gameFilePath += "reaction.game";
+		break;
+	case GAME_ET:
+		gameFilePath += "et.game";
 		break;
 	}
 
@@ -3584,6 +3590,29 @@ void CGameInstall::Run() {
 		// for a specific game.
 		break;
 	}
+	case GAME_ET: {
+#ifdef _WIN32
+		fprintf( fg, "  "ENGINE_ATTRIBUTE "=\"ET.exe\"\n");
+#elif __linux__
+		fprintf( fg, "  "ENGINE_ATTRIBUTE "=\"et\"\n" );
+#endif
+		fprintf( fg, "  "TOOLS_ATTRIBUTE "=\"%sinstalls/"ET_PACK "/game\"\n", g_strAppPath.GetBuffer() );
+		fprintf( fg, "  prefix=\".etwolf\"\n" );
+		Str source = g_strAppPath.GetBuffer();
+		source += "installs/";
+		source += ET_PACK;
+		source += "/install/";
+		Str dest = m_strEngine.GetBuffer();
+		CopyTree( source.GetBuffer(), dest.GetBuffer() );
+		// Hardcoded fix for "missing" shaderlist in gamepack
+		dest += "/etmain/scripts/shaderlist.txt";
+		if(CheckFile(dest.GetBuffer()) != PATH_FILE) {
+			source += "etmain/scripts/default_shaderlist.txt";
+			radCopyFile(source.GetBuffer(),dest.GetBuffer());
+		}
+		fprintf( fg, "  basegame=\"etmain\"\n" );
+		break;
+	}
 	}
 	fprintf( fg, "/>\n" );
 	fclose( fg );
@@ -3632,6 +3661,9 @@ void CGameInstall::ScanGames() {
 		}
 		if ( stricmp( dirname, REACTION_PACK ) == 0 ) {
 			m_availGames[ iGame++ ] = GAME_REACTION;
+		}
+		if ( stricmp( dirname, ET_PACK ) == 0 ) {
+			m_availGames[ iGame++ ] = GAME_ET;
 		}
 	}
 	Sys_Printf( "No installable games found in: %s\n",
