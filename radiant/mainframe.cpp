@@ -2021,8 +2021,10 @@ static void mainframe_unmap( GtkWidget *widget ){
 
 static GtkWidget* create_floating( MainFrame* mainframe ){
 	GtkWidget *wnd = gtk_window_new( GTK_WINDOW_TOPLEVEL );
-	//if (mainframe->CurrentStyle() != MainFrame::eFloating)
-	gtk_window_set_transient_for( GTK_WINDOW( wnd ), GTK_WINDOW( mainframe->m_pWidget ) );
+	//workaround for a bug with set_transient_for in GTK - resulting behaviour is not perfect but better than the bug.
+	//(see https://bugzilla.gnome.org/show_bug.cgi?id=658975 regarding the bug)
+	if (mainframe->CurrentStyle() != MainFrame::eFloating)
+		gtk_window_set_transient_for( GTK_WINDOW( wnd ), GTK_WINDOW( mainframe->m_pWidget ) );
 	gtk_widget_set_events( wnd, GDK_KEY_PRESS_MASK | GDK_KEY_RELEASE_MASK );
 	gtk_signal_connect( GTK_OBJECT( wnd ), "delete_event", GTK_SIGNAL_FUNC( widget_delete_hide ), NULL );
 	gtk_signal_connect( GTK_OBJECT( wnd ), "destroy", GTK_SIGNAL_FUNC( gtk_widget_destroy ), NULL );
