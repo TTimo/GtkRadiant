@@ -36,6 +36,7 @@
 
 #include "missing.h"
 #include "qsysprintf.h"
+#include "qe3.h"
 
 #if defined ( __linux__ ) || defined ( __APPLE__ )
 
@@ -47,7 +48,7 @@
 #include <stdlib.h>
 #include <dirent.h>
 
-bool radCopyFile( const char *lpExistingFileName, const char *lpNewFileName ){
+bool radCopyFile( const char *lpExistingFileName, const char *lpNewFileName, bool fatal_on_error ){
 	FILE *src, *dst;
 	void* buf;
 	int l;
@@ -59,12 +60,20 @@ bool radCopyFile( const char *lpExistingFileName, const char *lpNewFileName ){
 
 	src = fopen( realsrc, "rb" );
 	if ( !src ) {
-		return false;
+      if ( fatal_on_error ) {
+        Error( "Failed to open source for copy: %s\n", realsrc );
+      }
+      Sys_Printf( "Failed to open source for copy: %s\n", realsrc );      
+      return false;
 	}
 	dst = fopen( realdest, "wb" );
 	if ( !dst ) {
-		fclose( src );
-		return false;
+      if ( fatal_on_error ) {
+        Error( "Failed to open destination for copy: %s\n", realdest );
+      }
+      Sys_Printf( "Failed to open destination for copy: %s\n", realdest );
+      fclose( src );
+      return false;
 	}
 
 	fseek( src, 0, SEEK_END );
@@ -79,6 +88,12 @@ bool radCopyFile( const char *lpExistingFileName, const char *lpNewFileName ){
 			}
 		}
 	}
+	if ( !ret ) {
+      if ( fatal_on_error ) {
+        Error( "short read or short write while copying %s to %s\n", realsrc, realdest );
+      }
+      Sys_Printf( "short read or short write while copying %s to %s\n", realsrc, realdest );
+    }
 
 	g_free( buf );
 	fclose( src );
@@ -87,12 +102,15 @@ bool radCopyFile( const char *lpExistingFileName, const char *lpNewFileName ){
 	return ret;
 }
 
-bool radCreateDirectory( const char *directory ) {
-	if ( mkdir( directory, 0777 ) == -1 ) {
-		Sys_Printf( "mkdir %s failed\n", directory );
-		return false;
-	}
-	return true;
+bool radCreateDirectory( const char *directory, bool fatal_on_error ) {
+  if ( mkdir( directory, 0777 ) >= 0 ) {
+    return true;
+  }
+  if ( fatal_on_error ) {
+    Error( "mkdir %s failed - check your permissions", directory );
+  }
+  Sys_Printf( "mkdir %s failed - check your permissions\n", directory );
+  return false;
 }
 
 int GetFullPathName( const char *lpFileName, int nBufferLength, char *lpBuffer, char **lpFilePart ){
@@ -219,17 +237,31 @@ EPathCheck CheckFile( const char *path ) {
 	return PATH_FILE;
 }
 
-bool radCreateDirectory( const char *directory ) {
-	return ( CreateDirectory( directory, NULL ) != false );
+bool radCreateDirectory( const char *directory, bool fatal_on_error ) {
+  if ( CreateDirectory( directory, NULL ) ) {
+    return true;
+  }
+  if ( fatal_on_error ) {
+    Error( "mkdir %s failed - check your permissions", directory );
+  }
+  Sys_Printf( "mkdir %s failed - check your permissions\n", directory );
+  return false;
 }
 
-bool radCopyFile( const char *lpExistingFileName, const char *lpNewFileName ) {
-	return ( CopyFile( lpExistingFileName, lpNewFileName, FALSE ) != false );
+bool radCopyFile( const char *lpExistingFileName, const char *lpNewFileName, bool fatal_on_error ) {
+  if ( CopyFile( lpExistingFileName, lpNewFileName, FALSE ) ) {
+    return true;
+  }
+  if ( fatal_on_error ) {
+    Error( "copy %s %s failed - check your permissions", lpExistingFileName, lpNewFileName );
+  }
+  Sys_Printf( "copy %s %s failed - check your permissions\n", lpExistingFileName, lpNewFileName );
+  return false;
 }
 
 #endif
 
-bool CopyTree( const char *source, const char *dest ) {
+bool radCopyTree( const char *source, const char *dest, bool fatal_on_error ) {
 	Str srcEntry;
 	Str dstEntry;
 	const char      *dirname;
@@ -249,23 +281,28 @@ bool CopyTree( const char *source, const char *dest ) {
 		dstEntry += "/";
 		dstEntry += dirname;
 		switch ( CheckFile( srcEntry.GetBuffer() ) ) {
+        case PATH_FAIL: {
+          if ( fatal_on_error ) {
+            Error( "%s does not exist. check your permissions", srcEntry.GetBuffer() );
+          }
+        }
 		case PATH_DIRECTORY: {
 			if ( CheckFile( dstEntry.GetBuffer() ) == PATH_FAIL ) {
-				if ( !radCreateDirectory( dstEntry.GetBuffer() ) ) {
-					Sys_Printf( "create directory %s failed\n", dstEntry.GetBuffer() );
+              Sys_Printf( "Create directory %s\n", dstEntry.GetBuffer() );
+              if ( !radCreateDirectory( dstEntry.GetBuffer(), fatal_on_error ) ) {
 					return false;
 				}
 			}
 			bool ret;
-			ret = CopyTree( srcEntry.GetBuffer(), dstEntry.GetBuffer() );
+			ret = radCopyTree( srcEntry.GetBuffer(), dstEntry.GetBuffer(), fatal_on_error );
 			if ( !ret ) {
 				return false;
 			}
 			break;
 		}
 		case PATH_FILE: {
-			Sys_Printf( "copy %s -> %s\n", srcEntry.GetBuffer(), dstEntry.GetBuffer() );
-			bool ret = radCopyFile( srcEntry.GetBuffer(), dstEntry.GetBuffer() );
+			Sys_Printf( "Copy %s -> %s\n", srcEntry.GetBuffer(), dstEntry.GetBuffer() );
+			bool ret = radCopyFile( srcEntry.GetBuffer(), dstEntry.GetBuffer(), fatal_on_error );
 			if ( !ret ) {
 				return false;
 			}

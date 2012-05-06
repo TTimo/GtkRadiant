@@ -3411,8 +3411,8 @@ void CGameInstall::Run() {
 	// write out the game file
 	Str gameFilePath = g_strAppPath.GetBuffer();
 	gameFilePath += "games/";
-	if(CheckFile(gameFilePath) != PATH_DIRECTORY) {
-		radCreateDirectory(gameFilePath);
+	if ( CheckFile( gameFilePath ) != PATH_DIRECTORY ) {
+		radCreateDirectory( gameFilePath );
 	}
 
 	switch ( m_availGames[ m_nComboSelect ] ) {
@@ -3469,7 +3469,7 @@ void CGameInstall::Run() {
 		source += Q2_PACK;
 		source += "/install/";
 		Str dest = m_strEngine.GetBuffer();
-		CopyTree( source.GetBuffer(), dest.GetBuffer() );
+		radCopyTree( source.GetBuffer(), dest.GetBuffer() );
 		fprintf( fg, "  basegame=\"baseq2\"\n" );
 		break;
 	}
@@ -3481,7 +3481,7 @@ void CGameInstall::Run() {
 		source += Q3_PACK;
 		source += "/install/";
 		Str dest = m_strEngine.GetBuffer();
-		CopyTree( source.GetBuffer(), dest.GetBuffer() );
+		radCopyTree( source.GetBuffer(), dest.GetBuffer() );
 		// Hardcoded fix for "missing" shaderlist in gamepack
 		dest += "/baseq3/scripts/shaderlist.txt";
 		if(CheckFile(dest.GetBuffer()) != PATH_FILE) {
@@ -3499,7 +3499,7 @@ void CGameInstall::Run() {
 		source += URT_PACK;
 		source += "/install/";
 		Str dest = m_strEngine.GetBuffer();
-		CopyTree( source.GetBuffer(), dest.GetBuffer() );
+		radCopyTree( source.GetBuffer(), dest.GetBuffer() );
 		fprintf( fg, "  basegame=\"q3ut4\"\n" );
 		break;
 	}
@@ -3511,7 +3511,7 @@ void CGameInstall::Run() {
 		source += UFOAI_PACK;
 		source += "/install/";
 		Str dest = m_strEngine.GetBuffer();
-		CopyTree( source.GetBuffer(), dest.GetBuffer() );
+		radCopyTree( source.GetBuffer(), dest.GetBuffer() );
 		fprintf( fg, "  basegame=\"base\"\n" );
 		break;
 	}
@@ -3523,7 +3523,7 @@ void CGameInstall::Run() {
 		source += Q2W_PACK;
 		source += "/install/";
 		Str dest = m_strEngine.GetBuffer();
-		CopyTree( source.GetBuffer(), dest.GetBuffer() );
+		radCopyTree( source.GetBuffer(), dest.GetBuffer() );
 		fprintf( fg, "  basegame=\"default\"\n" );
 		break;
 	}
@@ -3535,7 +3535,7 @@ void CGameInstall::Run() {
 		source += WARSOW_PACK;
 		source += "/install/";
 		Str dest = m_strEngine.GetBuffer();
-		CopyTree( source.GetBuffer(), dest.GetBuffer() );
+		radCopyTree( source.GetBuffer(), dest.GetBuffer() );
 		fprintf( fg, "  basegame=\"basewsw\"\n" );
 		break;
 	}
@@ -3547,7 +3547,7 @@ void CGameInstall::Run() {
 		source += NEXUIZ_PACK;
 		source += "/install/";
 		Str dest = m_strEngine.GetBuffer();
-		CopyTree( source.GetBuffer(), dest.GetBuffer() );
+		radCopyTree( source.GetBuffer(), dest.GetBuffer() );
 		fprintf( fg, "  basegame=\"data\"\n" );
 		break;
 	}
@@ -3559,7 +3559,7 @@ void CGameInstall::Run() {
 		source += TREMULOUS_PACK;
 		source += "/install/";
 		Str dest = m_strEngine.GetBuffer();
-		CopyTree( source.GetBuffer(), dest.GetBuffer() );
+		radCopyTree( source.GetBuffer(), dest.GetBuffer() );
 		fprintf( fg, "  basegame=\"base\"\n" );
 		break;
 	}
@@ -3571,7 +3571,7 @@ void CGameInstall::Run() {
 		source += JA_PACK;
 		source += "/install/";
 		Str dest = m_strEngine.GetBuffer();
-		CopyTree( source.GetBuffer(), dest.GetBuffer() );
+		radCopyTree( source.GetBuffer(), dest.GetBuffer() );
 		fprintf( fg, "  basegame=\"base\"\n" );
 		break;
 	}
@@ -3583,7 +3583,7 @@ void CGameInstall::Run() {
 		source += REACTION_PACK;
 		source += "/install/";
 		Str dest = m_strEngine.GetBuffer();
-		CopyTree( source.GetBuffer(), dest.GetBuffer() );
+		radCopyTree( source.GetBuffer(), dest.GetBuffer() );
 		fprintf( fg, "  basegame=\"Boomstick\"\n" );
 		fprintf( fg, "  default_scale=\"0.5\"\n" ); // Superfluous because the default is already 0.5,
 		// but demonstrates how to set the default texture scale
@@ -3603,7 +3603,7 @@ void CGameInstall::Run() {
 		source += ET_PACK;
 		source += "/install/";
 		Str dest = m_strEngine.GetBuffer();
-		CopyTree( source.GetBuffer(), dest.GetBuffer() );
+		radCopyTree( source.GetBuffer(), dest.GetBuffer() );
 		// Hardcoded fix for "missing" shaderlist in gamepack
 		dest += "/etmain/scripts/shaderlist.txt";
 		if(CheckFile(dest.GetBuffer()) != PATH_FILE) {
