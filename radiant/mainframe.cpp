@@ -2021,8 +2021,10 @@ static void mainframe_unmap( GtkWidget *widget ){
 
 static GtkWidget* create_floating( MainFrame* mainframe ){
 	GtkWidget *wnd = gtk_window_new( GTK_WINDOW_TOPLEVEL );
-	//if (mainframe->CurrentStyle() != MainFrame::eFloating)
-	gtk_window_set_transient_for( GTK_WINDOW( wnd ), GTK_WINDOW( mainframe->m_pWidget ) );
+	//workaround for a bug with set_transient_for in GTK - resulting behaviour is not perfect but better than the bug.
+	//(see https://bugzilla.gnome.org/show_bug.cgi?id=658975 regarding the bug)
+	if (mainframe->CurrentStyle() != MainFrame::eFloating)
+		gtk_window_set_transient_for( GTK_WINDOW( wnd ), GTK_WINDOW( mainframe->m_pWidget ) );
 	gtk_widget_set_events( wnd, GDK_KEY_PRESS_MASK | GDK_KEY_RELEASE_MASK );
 	gtk_signal_connect( GTK_OBJECT( wnd ), "delete_event", GTK_SIGNAL_FUNC( widget_delete_hide ), NULL );
 	gtk_signal_connect( GTK_OBJECT( wnd ), "destroy", GTK_SIGNAL_FUNC( gtk_widget_destroy ), NULL );
@@ -3619,9 +3621,14 @@ void MainFrame::ShowMenuItemKeyBindings( GtkWidget* window ){
 	}
 }
 
+// Checks whether a given filename ends in .map
+const bool IsMap(const char* filename){
+	return strlen(filename) >= 4 && strcmp(filename + strlen(filename) - 4, ".map") == 0;
+}
+
 void MainFrame::CreateQEChildren(){
-	// load the project file
-	if ( g_argc > 1 ) {
+	// load the project file, if it is a project file. (Or at least no .map)
+	if ( g_argc > 1 && !IsMap( g_argv[1] ) ) {
 		Sys_Printf( "loading project file from the command line: %s\n", g_argv[1] );
 		if ( !QE_LoadProject( g_argv[1] ) ) {
 			Error( "Unable to load project file %s\n", g_argv[1] );

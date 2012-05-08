@@ -209,7 +209,7 @@ DIR             * findHandle;
 #endif
 };
 
-bool CopyTree( const char* source, const char* dest );
+bool radCopyTree( const char* source, const char* dest, bool fatal_on_error = true );
 
 typedef enum {
 	PATH_FAIL,      // stat call failed (does not exist is likely)
@@ -220,7 +220,7 @@ typedef enum {
 // check a path for existence, return directory / file
 EPathCheck CheckFile( const char *path );
 
-bool radCreateDirectory( const char *directory );
-bool radCopyFile( const char *lpExistingFileName, const char *lpNewFileName );
+bool radCreateDirectory( const char *directory, bool fatal_on_error = true );
+bool radCopyFile( const char *lpExistingFileName, const char *lpNewFileName, bool fatal_on_error = true );
 
 #endif // _MISSING_H_

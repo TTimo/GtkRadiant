@@ -1,0 +1,38 @@
+
+Texpaint works with three data types:
+
+Skin textures
+Model frames
+S/T mappings
+
+
+Skin textures can be either lbm or pcx files, and they will allways be
+saved out the same size as loaded in, even if it is larger than the
+active texture area.
+
+Model frames are alias .tri files.  Adding support for 3ds would not
+be difficult, but it is likely that there would be coordinate problems
+unless the entire model was done completely in 3ds.
+
+S/T mappings allow a skin to be mapped onto any model frame.  A mapping is
+generated from a base frame and a texture size.  If a coords.txt file is
+not present, texpaint will generate a default mapping that is compatable
+with the output of the old texmake.  New skin or remap to skin will
+generate a new coords.txt file.
+
+
+Usage
+-----
+A three button mouse is required.
+
+The left button paints with the current color in either the skin window
+or the camera window, or selects colors in the palette view.  Ctrl-left
+click picks up the color clicked on in any view, making it current.
+
+Right button dragging slides the object or skin around.  Ctrl-right drag
+to move in or out on the object.
+
+Middle button dragging rotates the object in the camera view.  Ctrl-middle
+drag to change the roll angle.
+
+

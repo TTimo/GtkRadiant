@@ -213,6 +213,7 @@ void Dump();
 #define TREMULOUS_PACK "TremulousPack"
 #define JA_PACK "JAPack"
 #define REACTION_PACK "ReactionPack"
+#define ET_PACK "ETPack"
 
 class CGameInstall : public Dialog {
 public:
@@ -236,6 +237,7 @@ enum gameType_e {
 	GAME_TREMULOUS,
 	GAME_JA,
 	GAME_REACTION,
+	GAME_ET,
 	GAME_COUNT
 };
 
@@ -494,7 +496,7 @@ void UpdateNvidiaAeroHack();
 
 void LoadPrefs();
 void SavePrefs();
-void LoadTexdefPref( texdef_t* pTexdef, char* pName );
+void LoadTexdefPref( texdef_t* pTexdef, const char* pName );
 
 PrefsDlg ();
 virtual ~PrefsDlg (){

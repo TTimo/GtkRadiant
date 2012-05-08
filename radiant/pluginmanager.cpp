@@ -2029,6 +2029,7 @@ bool CSynapseClientRadiant::RequestAPI( APIDescriptor_t *pAPI ){
 		pTable->m_pfnDeletePatch = &QERApp_DeletePatch;
 		pTable->m_pfnCreatePatchHandle = &QERApp_CreatePatchHandle;
 		pTable->m_pfnCommitPatchHandleToMap = &QERApp_CommitPatchHandleToMap;
+		pTable->m_pfnCommitPatchHandleToEntity = &QERApp_CommitPatchHandleToEntity;
 		pTable->m_pfnLoadImage = &QERApp_LoadImage;
 		pTable->m_pfnMessageBox = &gtk_MessageBox;
 		pTable->m_pfnFileDialog = &file_dialog;

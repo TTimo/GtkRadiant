@@ -48,12 +48,18 @@ void CPicoSurface::Draw( int state, IShader *pShader, int rflags ){
 
 	if ( !( rflags & ( DRAW_RF_SEL_OUTLINE | DRAW_RF_SEL_FILL | DRAW_RF_XY ) ) ) {
 		if ( state & DRAW_GL_TEXTURE_2D ) {
+			bool bTrans = ( pShader->getFlags() & QER_TRANS ) == QER_TRANS;
+			bool bDrawBlend = ( state & DRAW_GL_BLEND ) == DRAW_GL_BLEND;
+			//only draw transparent stuff when in transparent stuff pass and vice versa
+			if(bTrans != bDrawBlend) {
+				return;
+			}
 			g_QglTable.m_pfn_qglBindTexture( GL_TEXTURE_2D, pShader->getTexture()->texture_number );
 			if ( ( rflags & DRAW_RF_CAM ) && ( pShader->getFlags() & QER_ALPHAFUNC ) ) {
 				int nFunc = 0;
 				float fRef = 0.f;
 
-				g_QglTable.m_pfn_qglColor4f( 1.f, 1.f, 1.f, 1.f ); // identity
+				g_QglTable.m_pfn_qglColor4f( 1.f, 1.f, 1.f, pShader->getTrans() ); // transparency
 
 				g_QglTable.m_pfn_qglEnable( GL_ALPHA_TEST );
 

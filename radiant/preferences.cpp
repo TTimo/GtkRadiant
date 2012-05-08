@@ -2701,7 +2701,7 @@ void PrefsDlg::BuildDialog(){
 
 // end new prefs dialog
 
-void PrefsDlg::LoadTexdefPref( texdef_t* pTexdef, char* pName ){
+void PrefsDlg::LoadTexdefPref( texdef_t* pTexdef, const char* pName ){
 	char buffer[256];
 
 	memset( pTexdef, 0, sizeof( texdef_t ) );
@@ -3335,6 +3335,9 @@ void CGameInstall::BuildDialog() {
 		case GAME_REACTION:
 			gtk_combo_box_append_text( GTK_COMBO_BOX( combo ), _( "Reaction Quake 3" ) );
 			break;
+		case GAME_ET:
+			gtk_combo_box_append_text( GTK_COMBO_BOX( combo ), _( "Wolfenstein: Enemy Territory" ) );
+			break;
 		}
 		iGame++;
 	}
@@ -3408,11 +3411,46 @@ void CGameInstall::Run() {
 	// write out the game file
 	Str gameFilePath = g_strAppPath.GetBuffer();
 	gameFilePath += "games/";
-	if(CheckFile(gameFilePath) != PATH_DIRECTORY) {
-		radCreateDirectory(gameFilePath);
+	if ( CheckFile( gameFilePath ) != PATH_DIRECTORY ) {
+		radCreateDirectory( gameFilePath );
 	}
-	gameFilePath += m_strName.GetBuffer();
-	gameFilePath += ".game";
+
+	switch ( m_availGames[ m_nComboSelect ] ) {
+	case GAME_Q2:
+		gameFilePath += "q2.game";
+		break;
+	case GAME_Q3:
+		gameFilePath += "q3.game";
+		break;
+	case GAME_URT:
+		gameFilePath += "urt.game";
+		break;
+	case GAME_UFOAI:
+		gameFilePath += "ufoai.game";
+		break;
+	case GAME_Q2W:
+		gameFilePath += "q2w.game";
+		break;
+	case GAME_WARSOW:
+		gameFilePath += "warsow.game";
+		break;
+	case GAME_NEXUIZ:
+		gameFilePath += "nexuiz.game";
+		break;
+	case GAME_TREMULOUS:
+		gameFilePath += "tremulous.game";
+		break;
+	case GAME_JA:
+		gameFilePath += "ja.game";
+		break;
+	case GAME_REACTION:
+		gameFilePath += "reaction.game";
+		break;
+	case GAME_ET:
+		gameFilePath += "et.game";
+		break;
+	}
+
 	Sys_Printf( "game file: %s\n", gameFilePath.GetBuffer() );
 
 	FILE * fg = fopen( gameFilePath.GetBuffer(), "w" );
@@ -3431,7 +3469,7 @@ void CGameInstall::Run() {
 		source += Q2_PACK;
 		source += "/install/";
 		Str dest = m_strEngine.GetBuffer();
-		CopyTree( source.GetBuffer(), dest.GetBuffer() );
+		radCopyTree( source.GetBuffer(), dest.GetBuffer() );
 		fprintf( fg, "  basegame=\"baseq2\"\n" );
 		break;
 	}
@@ -3443,7 +3481,7 @@ void CGameInstall::Run() {
 		source += Q3_PACK;
 		source += "/install/";
 		Str dest = m_strEngine.GetBuffer();
-		CopyTree( source.GetBuffer(), dest.GetBuffer() );
+		radCopyTree( source.GetBuffer(), dest.GetBuffer() );
 		// Hardcoded fix for "missing" shaderlist in gamepack
 		dest += "/baseq3/scripts/shaderlist.txt";
 		if(CheckFile(dest.GetBuffer()) != PATH_FILE) {
@@ -3461,7 +3499,7 @@ void CGameInstall::Run() {
 		source += URT_PACK;
 		source += "/install/";
 		Str dest = m_strEngine.GetBuffer();
-		CopyTree( source.GetBuffer(), dest.GetBuffer() );
+		radCopyTree( source.GetBuffer(), dest.GetBuffer() );
 		fprintf( fg, "  basegame=\"q3ut4\"\n" );
 		break;
 	}
@@ -3473,7 +3511,7 @@ void CGameInstall::Run() {
 		source += UFOAI_PACK;
 		source += "/install/";
 		Str dest = m_strEngine.GetBuffer();
-		CopyTree( source.GetBuffer(), dest.GetBuffer() );
+		radCopyTree( source.GetBuffer(), dest.GetBuffer() );
 		fprintf( fg, "  basegame=\"base\"\n" );
 		break;
 	}
@@ -3485,7 +3523,7 @@ void CGameInstall::Run() {
 		source += Q2W_PACK;
 		source += "/install/";
 		Str dest = m_strEngine.GetBuffer();
-		CopyTree( source.GetBuffer(), dest.GetBuffer() );
+		radCopyTree( source.GetBuffer(), dest.GetBuffer() );
 		fprintf( fg, "  basegame=\"default\"\n" );
 		break;
 	}
@@ -3497,7 +3535,7 @@ void CGameInstall::Run() {
 		source += WARSOW_PACK;
 		source += "/install/";
 		Str dest = m_strEngine.GetBuffer();
-		CopyTree( source.GetBuffer(), dest.GetBuffer() );
+		radCopyTree( source.GetBuffer(), dest.GetBuffer() );
 		fprintf( fg, "  basegame=\"basewsw\"\n" );
 		break;
 	}
@@ -3509,7 +3547,7 @@ void CGameInstall::Run() {
 		source += NEXUIZ_PACK;
 		source += "/install/";
 		Str dest = m_strEngine.GetBuffer();
-		CopyTree( source.GetBuffer(), dest.GetBuffer() );
+		radCopyTree( source.GetBuffer(), dest.GetBuffer() );
 		fprintf( fg, "  basegame=\"data\"\n" );
 		break;
 	}
@@ -3521,7 +3559,7 @@ void CGameInstall::Run() {
 		source += TREMULOUS_PACK;
 		source += "/install/";
 		Str dest = m_strEngine.GetBuffer();
-		CopyTree( source.GetBuffer(), dest.GetBuffer() );
+		radCopyTree( source.GetBuffer(), dest.GetBuffer() );
 		fprintf( fg, "  basegame=\"base\"\n" );
 		break;
 	}
@@ -3533,7 +3571,7 @@ void CGameInstall::Run() {
 		source += JA_PACK;
 		source += "/install/";
 		Str dest = m_strEngine.GetBuffer();
-		CopyTree( source.GetBuffer(), dest.GetBuffer() );
+		radCopyTree( source.GetBuffer(), dest.GetBuffer() );
 		fprintf( fg, "  basegame=\"base\"\n" );
 		break;
 	}
@@ -3545,11 +3583,34 @@ void CGameInstall::Run() {
 		source += REACTION_PACK;
 		source += "/install/";
 		Str dest = m_strEngine.GetBuffer();
-		CopyTree( source.GetBuffer(), dest.GetBuffer() );
+		radCopyTree( source.GetBuffer(), dest.GetBuffer() );
 		fprintf( fg, "  basegame=\"Boomstick\"\n" );
 		fprintf( fg, "  default_scale=\"0.5\"\n" ); // Superfluous because the default is already 0.5,
 		// but demonstrates how to set the default texture scale
 		// for a specific game.
+		break;
+	}
+	case GAME_ET: {
+#ifdef _WIN32
+		fprintf( fg, "  "ENGINE_ATTRIBUTE "=\"ET.exe\"\n");
+#elif __linux__
+		fprintf( fg, "  "ENGINE_ATTRIBUTE "=\"et\"\n" );
+#endif
+		fprintf( fg, "  "TOOLS_ATTRIBUTE "=\"%sinstalls/"ET_PACK "/game\"\n", g_strAppPath.GetBuffer() );
+		fprintf( fg, "  prefix=\".etwolf\"\n" );
+		Str source = g_strAppPath.GetBuffer();
+		source += "installs/";
+		source += ET_PACK;
+		source += "/install/";
+		Str dest = m_strEngine.GetBuffer();
+		radCopyTree( source.GetBuffer(), dest.GetBuffer() );
+		// Hardcoded fix for "missing" shaderlist in gamepack
+		dest += "/etmain/scripts/shaderlist.txt";
+		if(CheckFile(dest.GetBuffer()) != PATH_FILE) {
+			source += "etmain/scripts/default_shaderlist.txt";
+			radCopyFile(source.GetBuffer(),dest.GetBuffer());
+		}
+		fprintf( fg, "  basegame=\"etmain\"\n" );
 		break;
 	}
 	}
@@ -3600,6 +3661,9 @@ void CGameInstall::ScanGames() {
 		}
 		if ( stricmp( dirname, REACTION_PACK ) == 0 ) {
 			m_availGames[ iGame++ ] = GAME_REACTION;
+		}
+		if ( stricmp( dirname, ET_PACK ) == 0 ) {
+			m_availGames[ iGame++ ] = GAME_ET;
 		}
 	}
 	Sys_Printf( "No installable games found in: %s\n",

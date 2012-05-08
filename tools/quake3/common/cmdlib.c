@@ -244,9 +244,6 @@ char *ExpandArg( const char *path ){
 
 char *ExpandPath( const char *path ){
 	static char full[1024];
-	if ( !qdir[0] ) {
-		Error( "ExpandPath called without qdir set" );
-	}
 	if ( path[0] == '/' || path[0] == '\\' || path[1] == ':' ) {
 		strcpy( full, path );
 		return full;
@@ -254,33 +251,6 @@ char *ExpandPath( const char *path ){
 	sprintf( full, "%s%s", qdir, path );
 	return full;
 }
-
-char *ExpandGamePath( const char *path ){
-	static char full[1024];
-	if ( !qdir[0] ) {
-		Error( "ExpandGamePath called without qdir set" );
-	}
-	if ( path[0] == '/' || path[0] == '\\' || path[1] == ':' ) {
-		strcpy( full, path );
-		return full;
-	}
-	sprintf( full, "%s%s", gamedir, path );
-	return full;
-}
-
-char *ExpandPathAndArchive( const char *path ){
-	char    *expanded;
-	char archivename[1024];
-
-	expanded = ExpandPath( path );
-
-	if ( archive ) {
-		sprintf( archivename, "%s/%s", archivedir, path );
-		QCopyFile( expanded, archivename );
-	}
-	return expanded;
-}
-
 
 char *copystring( const char *s ){
 	char    *b;
