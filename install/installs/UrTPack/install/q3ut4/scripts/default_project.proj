@@ -1,0 +1,63 @@
+<?xml version="1.0"?>
+<!DOCTYPE project SYSTEM "dtds/project.dtd">
+<!--
+project template
+the $* strings will be expanded following these rules:
+$TEMPLATEapppath: path to the Radiant .. C:\Program Files\Gtkradiant
+$TEMPLATEenginepath: path to the engine .. C:\quake3\ C:\Program Files\Quake III Arena\ /usr/local/games/quake3/
+$TEMPLATEtoolspath: path to the tools directory (enginepath)radiant
+  (NOTE: on win32 tools directory is usually where the editor is .. but it's not true on linux)
+$TEMPLATEuserhomepath: on linux, the directory with write permissions for saving maps etc.
+  on win32, == $TEMPLATEenginepath
+$TEMPLATEbasedir: base game dir
+
+Note : Default project settings are for single player... this can be changed throught the projects select in the File Menu
+
+-->
+<project>
+<key name="version" value="2"/>
+<key name="basepath" value="$TEMPLATEenginepath$TEMPLATEbasedir/"/>
+<key name="rshcmd" value=""/>
+<key name="remotebasepath" value="$TEMPLATEenginepath$TEMPLATEbasedir/"/>
+<key name="entitypath" value="$TEMPLATEtoolspath$TEMPLATEbasedir/scripts/entities.def"/>
+<key name="texturepath" value="$TEMPLATEenginepath$TEMPLATEbasedir/textures/"/>
+<key name="autosave" value="$TEMPLATEuserhomepath$TEMPLATEbasedir/maps/autosave.map"/>
+<key name="mapspath" value="$TEMPLATEuserhomepath$TEMPLATEbasedir/maps/"/>
+<key name="gamename" value="q3ut4"/>
+
+<key name="bsp_Q3Map2: (single) BSP -meta" value="! &quot;$TEMPLATEapppathq3map2&quot; -v # -game quake3 -fs_basepath &quot;$TEMPLATEenginepath&quot; -meta $"/>
+
+<key name="bsp_Q3Map2: (single) -vis" value="! &quot;$TEMPLATEapppathq3map2&quot; # -game quake3 -fs_basepath &quot;$TEMPLATEenginepath&quot; -vis $" />
+
+<key name="bsp_Q3Map2: (single test) -vis -fast" value="! &quot;$TEMPLATEapppathq3map2&quot; # -game quake3 -fs_basepath &quot;$TEMPLATEenginepath&quot; -vis -fast $" />
+
+<key name="bsp_Q3Map2: (single test) -light -faster" value="! &quot;$TEMPLATEapppathq3map2&quot; -v # -game quake3 -fs_basepath &quot;$TEMPLATEenginepath&quot; -light -faster $" />
+
+<key name="bsp_Q3Map2: (single test) -light -fast" value="! &quot;$TEMPLATEapppathq3map2&quot; -v # -game quake3 -fs_basepath &quot;$TEMPLATEenginepath&quot; -light -fast $" />
+
+<key name="bsp_Q3Map2: (single) -light -super 2" value="! &quot;$TEMPLATEapppathq3map2&quot; -v # -game quake3 -fs_basepath &quot;$TEMPLATEenginepath&quot; -light -super 2 $" />
+
+<key name="bsp_Q3Map2: (single) -light -fast -super 2" value="! &quot;$TEMPLATEapppathq3map2&quot; -v # -game quake3 -fs_basepath &quot;$TEMPLATEenginepath&quot; -light -fast -super 2 $" />
+
+<key name="bsp_Q3Map2: (single) -light -fast -super 2 -filter" value="! &quot;$TEMPLATEapppathq3map2&quot; -v # -game quake3 -fs_basepath &quot;$TEMPLATEenginepath&quot; -light -fast -super 2 -filter $" />
+
+<key name="bsp_Q3Map2: (single) -light -super 2 -filter -bounce 8" value="! &quot;$TEMPLATEapppathq3map2&quot; -v # -game quake3 -fs_basepath &quot;$TEMPLATEenginepath&quot; -light -super 2 -filter -bounce 8 $" />
+
+<key name="bsp_Q3Map2: (single) -light -super 2 -filter -bounce 1" value="! &quot;$TEMPLATEapppathq3map2&quot; -v # -game quake3 -fs_basepath &quot;$TEMPLATEenginepath&quot; -light -super 2 -filter -bounce 1 $" />
+
+<key name="bsp_Q3Map2: (single) -light -fast -super 2 -filter -bounce 8" value="! &quot;$TEMPLATEapppathq3map2&quot; -v # -game quake3 -fs_basepath &quot;$TEMPLATEenginepath&quot; -light -fast -super 2 -filter -bounce 8 $" />
+
+<key name="bsp_Q3Map2: (test) BSP -meta, -vis, -light -fast -filter" value="! &quot;$TEMPLATEapppathq3map2&quot; -v # -game quake3 -fs_basepath &quot;$TEMPLATEenginepath&quot; -meta $ &amp;&amp; ! &quot;$TEMPLATEapppathq3map2&quot; # -game quake3 -fs_basepath &quot;$TEMPLATEenginepath&quot; -vis -saveprt $ &amp;&amp; ! &quot;$TEMPLATEapppathq3map2&quot; -v # -game quake3 -fs_basepath &quot;$TEMPLATEenginepath&quot; -light -fast -filter $" />
+
+<key name="bsp_Q3Map2: (test) BSP -meta, -vis -fast, -light -fast -super 2 -filter" value="! &quot;$TEMPLATEapppathq3map2&quot; -v # -game quake3 -fs_basepath &quot;$TEMPLATEenginepath&quot; -meta $ &amp;&amp; ! &quot;$TEMPLATEapppathq3map2&quot; # -game quake3 -fs_basepath &quot;$TEMPLATEenginepath&quot; -vis -saveprt -fast $ &amp;&amp; ! &quot;$TEMPLATEapppathq3map2&quot; -v # -game quake3 -fs_basepath &quot;$TEMPLATEenginepath&quot; -light -fast -super 2 -filter $" />
+
+<key name="bsp_Q3Map2: (final) BSP -meta, -vis, -light -fast -filter -super 2" value="! &quot;$TEMPLATEapppathq3map2&quot; -v # -game quake3 -fs_basepath &quot;$TEMPLATEenginepath&quot; -meta $ &amp;&amp; ! &quot;$TEMPLATEapppathq3map2&quot; # -game quake3 -fs_basepath &quot;$TEMPLATEenginepath&quot; -vis -saveprt $ &amp;&amp; ! &quot;$TEMPLATEapppathq3map2&quot; -v # -game quake3 -fs_basepath &quot;$TEMPLATEenginepath&quot; -light -fast -filter -super 2 $" />
+
+<key name="bsp_Q3Map2: (final) BSP -meta, -vis, -light -fast -filter -super 2" value="! &quot;$TEMPLATEapppathq3map2&quot; -v # -game quake3 -fs_basepath &quot;$TEMPLATEenginepath&quot; -meta $ &amp;&amp; ! &quot;$TEMPLATEapppathq3map2&quot; # -game quake3 -fs_basepath &quot;$TEMPLATEenginepath&quot; -vis -saveprt $ &amp;&amp; ! &quot;$TEMPLATEapppathq3map2&quot; -v # -game quake3 -fs_basepath &quot;$TEMPLATEenginepath&quot; -light -fast -filter -super 2 $" />
+
+<key name="bsp_Q3Map2: (final) BSP -meta, -vis, -light -fast -filter -super 2 -bounce 8" value="! &quot;$TEMPLATEapppathq3map2&quot; -v # -game quake3 -fs_basepath &quot;$TEMPLATEenginepath&quot; -meta $ &amp;&amp; ! &quot;$TEMPLATEapppathq3map2&quot; # -game quake3 -fs_basepath &quot;$TEMPLATEenginepath&quot; -vis -saveprt $ &amp;&amp; ! &quot;$TEMPLATEapppathq3map2&quot; -v # -game quake3 -fs_basepath &quot;$TEMPLATEenginepath&quot; -light -fast -super 2 -filter -bounce 8 $" />
+
+<key name="bsp_Q3Map2: (simulate old style -light -extra) BSP -meta, -vis, -light -super 2" value="! &quot;$TEMPLATEapppathq3map2&quot; -v # -game quake3 -fs_basepath &quot;$TEMPLATEenginepath&quot; -meta $ &amp;&amp; ! &quot;$TEMPLATEapppathq3map2&quot; # -game quake3 -fs_basepath &quot;$TEMPLATEenginepath&quot; -vis -saveprt $ &amp;&amp; ! &quot;$TEMPLATEapppathq3map2&quot; -v # -game quake3 -fs_basepath &quot;$TEMPLATEenginepath&quot; -light -super 2 $" />
+
+<key name="bsp_AAS: compile AAS" value="! &quot;$TEMPLATEapppathbspc&quot; -optimize -threads 2 -forcesidesvisible -bsp2aas $" />
+</project>

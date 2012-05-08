@@ -1,0 +1,135 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+<meta name="ProgId" content="FrontPage.Editor.Document">
+<title>Suggested GenSurf settings</title>
+</head>
+
+<body background="../pics/background.jpg" text="#FFFFFF" link="#FFFFFF" vlink="#FFFFFF" alink="#FFFFFF">
+
+<b>
+<p align="center"><font size="5">Suggested GenSurf settings</font> (by Tab)</p>
+<div align="right">
+  <table border="1" cellspacing="1" width="100%" bordercolor="#808080" bgcolor="#000000" cellpadding="10">
+    <tr>
+      <td width="100%">
+
+<b>
+<p>The General TAB:</p>
+</b>
+<blockquote>
+  <blockquote>
+    <font FACE="Symbol">
+    <p>· </font>Select Quake 3 Arena under Game.</p>
+    <font FACE="Symbol">
+    <p>· </font>Select From Bitmap under Waveform. Of course, you may want to
+    play around with some of the other wave forms. But bitmaps give you the
+    greatest degree of control.</p>
+    <font FACE="Symbol">
+    <p>· </font>Orientation: as appropriate</p>
+    <font FACE="Symbol">
+    <p>· </font>If you don’t want GenSurf to add any “noise” or
+    randomization to the height of the mesh, set the Roughness to zero. The
+    preview window gives you a good representation of what roughness does to
+    your surface. The random seed changes the distribution of the noise. Adjust
+    both fields accordingly.</p>
+  </blockquote>
+</blockquote>
+<b>
+<p>The Extents TAB:</p>
+<p>Extents:</b> The extents of a map are the points on a map that define its
+lowermost t and leftmost corner and its uppermost and rightmost corner. They are
+given in terms of&nbsp; X, Y coordinates.</p>
+<blockquote>
+  <blockquote>
+    <font FACE="Symbol" SIZE="2">
+    <p>· </font>Under Extents, you should chose number values that are even
+    multiples of your number of Divisions so that the grid rectangles are all
+    the same size (this produces better texturing results). It also makes extra
+    work for the compiler. Furthermore, use the Extents to position the terrain
+    entity on the map (XY only). You will want to make sure that the terrain
+    locates exactly where you want it each time you revise it. Repositioning a
+    terrain file can be time consuming.</p>
+    <font FACE="Symbol" SIZE="2">
+    <p>· </font>Set your X and Y divisions to equal the number of rows and
+    columns of triangles you want. You may want to strongly consider playing
+    with the numbers so that your triangle sides end up be large powers of two
+    (64, 128, 256 units etc.).</p>
+    <font FACE="Symbol" SIZE="2">
+    <p>· </font>Do not check Use Bezier Patches.</p>
+    <font FACE="Symbol" SIZE="2">
+    <p>· </font>Do not Decimate (keep it set to 0%). The process that applies
+    textures to the surfaces and blends textures between vertexes works best if
+    the size of the triangles is consistent and constant.</p>
+  </blockquote>
+</blockquote>
+<b>
+<p>The Bitmap TAB:</p>
+<blockquote>
+  <blockquote>
+  </b><font FACE="Symbol" SIZE="2">
+  <p>· </font>Filename should point to the .bmp file you are using as a height
+  map. Reload will bring in any changes you have made to the art file without
+  having to restart the program.</p>
+  <font FACE="Symbol" SIZE="2">
+  <p>· </font>GenSurf assigns an integer value to each of 256 shades of gray.
+  The value is based on the position of the color in the palette. In a grayscale
+  palette, the values typically range from 0 (black) to 255 (white). Map Color 0
+  corresponds (usually) to the lowest point on the height map and Map Color 255
+  to the highest. If you set Map Color 0 to 0 and Map Color 255 to 2048, each
+  increase in color value adds 8 units to the height of the vertex. When you
+  increase the difference between to the two values, the height changes are
+  steeper. Decrease the difference and the height changes are more global. You
+  can control the “Z” location at which the terrain draws by adding any
+  extra height above (or below) zero to the height values for both numbers.</p>
+</blockquote>
+</blockquote>
+<b>
+<p>The Fix Points TAB:</p>
+</b>
+<p>The general recommendation for this TAB is to leave it alone. You should
+either modify the height map or directly manipulate vertexes inside the
+Q3Radiant editor.</p>
+<b>
+<p>Texture TAB:</p>
+<blockquote>
+  <blockquote>
+  </b><font FACE="Symbol" SIZE="2">
+  <p>· </font>Set the main texture to common/terrain. The “Steep” angle is
+  irrelevant for terrain texture mapping.</p>
+  <font FACE="Symbol" SIZE="2">
+  <p>· </font>Make sure that the Use detail brushes setting is checked.</p>
+</blockquote>
+</blockquote>
+<p>Once you’ve tweaked all your settings, do a Save as. If you make changes to
+the settings, consider saving again as a new file. It’s nice to have a back up
+if you screw things up.</p>
+<b>
+<p>GenSurf Tips</p>
+<blockquote>
+  <blockquote>
+  </b><font FACE="Symbol" SIZE="2">
+  <p>· </font>Setting extents to correspond exactly with the desired map
+  location is important. You want to be able to drop revised terrain into a map
+  without a lot of repositioning.</p>
+</blockquote>
+</blockquote>
+
+<p align="center"><a href="height_map_into_terrain_mesh.html">Back</a> - <a href="table_of_contents.html">Table
+of Contents</a> - <a href="manipulating_the_terrain_mesh.html">Manipulating the
+Terrain Mesh</a></p>
+
+<p>&nbsp;</td>
+</tr>
+</table>
+</div>
+</b>
+
+<p>&nbsp;</p>
+<p align="center">-11-</p>
+
+</body>
+
+</html>

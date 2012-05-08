@@ -1,0 +1,71 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+<meta name="ProgId" content="FrontPage.Editor.Document">
+<title>Mapping the Textures</title>
+</head>
+
+<body background="../pics/background.jpg" text="#FFFFFF" link="#FFFFFF" vlink="#FFFFFF" alink="#FFFFFF">
+
+<b><font SIZE="5">
+<p align="center">Mapping the Textures</p>
+<div align="right">
+  <table border="1" cellspacing="1" width="100%" bordercolor="#808080" bgcolor="#000000" cellpadding="10">
+    <tr>
+      <td width="100%"><font FACE="Times New Roman">
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; The key to making this stuff look good is the q3map routine that works with
+alphamap and the metashader (see below) to smoothly blends textures across the
+terrain entity.</p>
+</font><b><i><font SIZE="4">
+<p>Texturing Overview</p>
+</font></i></b><font FACE="Times New Roman">
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; As noted earlier, Q3Map assigns textures, or more correctly, shader
+manipulated textures, to each triangle used to create the terrain map. The
+shaders used are part of a group of shaders called a metashader. The metashader
+is the family name for the shader. Individidual shaders within it are identified
+by a suffix, either an underline character followed by a number, or an underline
+character followed by a string indicating a blend between two other shaders.</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Within the body of the metashader, there are two types of shaders used. The
+first, is the <b>root</b> shader. A root shader represents a terrain texture in
+its unblended state. The naming convention for a root shader is &lt;metashader&gt;_#.
+The second type is the <b>blended</b> shader. The blended shader creates a
+crossfade between two root shaders across the face of a single geometry
+triangle. The naming convention for a blended shader is &lt;metashader&gt;_#to#.
+The map maker does not need to make a blend between each root shader, but for a
+blend to occur, there must be a blend shader for the two root shaders.</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Q3map will map a shader (root or blended) once and only once across the face
+of the triangle. The shaders will not tile or repeat across the triangle face.</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; As noted earlier, the textures are planar mapped or projected on the surface
+of terrain texture. The angle of any individual triangle does not affect the
+angle or direction at which the texture lies on the brush surface. The angle,
+however, does affect the apparent stretching of the texture on the surface. The
+steeper the angle of the brush surface, the greater will be the stretch of the
+shader on that surface.</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Q3map looks at the pixel on the alphamap that corresponds to a given vertex.
+It uses the color of that pixel (or more correctly the identification number of
+the position that color occupies in the palette) to determine which root shader
+will be applied. That root shader is applied to triangles that have one vertex
+located at the given vertex. It then examines the alphamap color of the vertexes
+adjacent to the given vertex. If an adjacent vertex has the same color as the
+given vertex, the root shader is applied to the surface. If an adjacent vertex
+has a different alphamap color, the blended shader that crossfades between the
+two.</p>
+</font>
+
+<p align="center"><a href="clipping_the_terrain.html">Back</a> - <a href="table_of_contents.html">Table
+of Contents</a> - <a href="the_meta_shader.html">The Meta-Shader</a></p>
+
+        <p>&nbsp;</td>
+    </tr>
+  </table>
+</div>
+</font></b>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p align="center">-20-</p>
+
+</body>
+
+</html>

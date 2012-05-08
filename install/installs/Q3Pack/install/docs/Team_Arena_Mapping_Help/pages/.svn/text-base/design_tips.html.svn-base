@@ -1,0 +1,113 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+<meta name="ProgId" content="FrontPage.Editor.Document">
+<title>Design Tips and Suggestions</title>
+</head>
+
+<body bgcolor="#000000" text="#FFFFFF" link="#FFFFFF" vlink="#FFFFFF" alink="#FFFFFF">
+
+<b>
+<p align="center"><font SIZE="5">Design Tips and Suggestions</font></p>
+</b>
+<div align="right">
+  <table border="1" cellpadding="13" width="100%" bordercolor="#808080" bgcolor="#000000">
+    <tr>
+      <td width="100%"><font SIZE="2">&nbsp;</font>
+        <blockquote>
+          <blockquote>
+            <p><font size="3">· <font FACE="Times New Roman">The skull
+            generator in Harvester tosses skulls about it to a maximum distance
+            of 96 units. The id map designers usually allowed for a drop radius
+            of 104 to 128 units as a minimum. As a rule, the generator should
+            drop skulls only in a places accessible to the players. Skulls
+            should not drop out into death fog or the void.</font></font></p>
+            <p><font size="3">· <font FACE="Times New Roman">Where you place
+            the persistent team power-ups is really more a matter of personal
+            style than a fixed requirement. Generally speaking, we found having
+            all or most of them in easy view of the initial start positions was
+            a good thing. In some cases, we found that placing the scout in a
+            contested area made for interesting game challenges.</font></font></p>
+            <p><font size="3">· <font FACE="Times New Roman">It is not
+            necessary to put every team power-up on every map. If a team
+            power-up would be overpowering on a map, leave it out. If you study
+            the id team maps, you’ll note that not every map has every power
+            up. In a small map, the scout can be unreasonable. In a map where
+            the base is easily attacked and overwhelmed, the guard can unbalance
+            things. In a map where the base is easily defended by snipers, the
+            doubler is powerful.</font></font></p>
+            <p><font size="3">· <font FACE="Times New Roman">For One Flag CTF,
+            the flag should be placed in an area that is roughly equidistant
+            from both bases and can be easily reached by players from either
+            team.</font></font></p>
+            <p><font size="3">· <font FACE="Times New Roman">The same (as
+            above) is true for Harvester.</font></font></p>
+            <p><font size="3">· <font FACE="Times New Roman">You don’t have
+            to place the white flag and the Harvester skull generator in the
+            same place in the map.</font></font></p>
+            <p><font size="3">· <font FACE="Times New Roman">Don’t feel
+            obligated to put the CTF flag bases, the skull receptacles, and the
+            Overload skull obelisk in the exact same location in the bases. Just
+            remember to mark gametypes correctly.</font></font></p>
+            <p><font size="3">· <font FACE="Times New Roman">Don’t include a
+            kamikaze in a map where players are unlikely to ever see the full
+            effect of the explosion.</font></font></p>
+            <p><font size="3">· <font FACE="Times New Roman">The personal
+            teleporter entity takes the player to a deathmatch spawn. That’s
+            how we restricted where the player teleported to in some maps.</font></font></p>
+            <p><font size="3">· <font FACE="Times New Roman">When converting
+            Q3A CTF maps with small base areas around their flags will probably
+            need to have their bases enlarged to accommodate the Overload skull
+            obelisk.</font></font></p>
+            <p><font size="3">· <font FACE="Times New Roman">OVERLOAD: When
+            designing the base for the placement of the skull obelisk, don’t
+            make it easy for attackers to shoot the obelisk from protected
+            locations.</font></font></p>
+            <p><font size="3">· <font FACE="Times New Roman">FLOOR ARROWS: The
+            graphic arrows were added to map floors to help the players find
+            their ways through potentially confusing arenas and to give the
+            player a sense of how close to the flag room he or she might be. The
+            rule of thumb was that the greater the distance to the flag, the
+            more stripes or bars would follow the arrow. Exact style of arrow
+            use varied from mapper to mapper. Study the individual maps to
+            determine which works best for your own map. The floor arrows act
+            like decals (if you ever built plastic model kits, these are the
+            little graphic things that you soaked in water and then stuck on the
+            surfaces of the model). The images will appear to be a part of the
+            surface upon which they rest. For the arrows, you will want to build
+            them as nodraw brushes of the proper dimension with a surface raised
+            about 2 units above the floor or wall. For the arrow, use
+            missionpack/proto2/bluea_dcl for the blue arrows and missionpack/proto2/reda_dcl
+            for the red. You may have to scale and rotate the texture to get
+            what you want. For more than three trailing bars, add additional
+            decals and arrange to suit.</font></font></p>
+          </blockquote>
+        </blockquote>
+      </td>
+    </tr>
+  </table>
+</div>
+<div align="center">
+  <center>
+  <table border="0" cellpadding="0" cellspacing="0" background="../pics/MAINPOP.gif" width="256" height="256">
+    <tr>
+      <td width="100%">
+        <p align="center"><a href="ta_game_types.html">Back</a> <br>
+        <br>
+        <a href="table_of_contents.htm">
+        Table of Contents</a><br>
+        <br>
+        <a href="map_converters_checklist.html">
+        Map Converter's Checklist</a><br>
+        <br>
+        -9-</td>
+    </tr>
+  </table>
+  </center>
+</div>
+
+</body>
+
+</html>

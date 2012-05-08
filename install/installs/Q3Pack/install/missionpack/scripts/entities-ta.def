@@ -1,0 +1,374 @@
+//INSTRUCTIONS
+//This document contains the editor descriptions for all the new entities in
+//use in Quake III: Team Arena.
+//
+//=====================================================================
+/*QUAKED ammo_nails (.3 .3 1) (-16 -16 -16) (16 16 16) SUSPENDED
+Nailgun ammo. Gives the player 25 by default.
+-------- KEYS --------
+wait : value is the time in seconds before the item respawns after being picked up (default 40, -1 = never respawn).
+random : a random time variance in seconds is added or subtracted from "wait" delay (default 0 - see Notes).
+count: sets the amount of ammo given to the player when picked up (default 10).
+team : set this to team items. Teamed items will respawn randomly after team master is picked up (see Notes).
+target : picking up the item will trigger the entity this points to.
+targetname : a target_give entity can point to this for respawn freebies.
+notbot: (NEW KEY PROPERTY) when set to 1, a bot will never seek out this item.
+notfree : when set to 1, entity will not spawn in "Free for all" and "Tournament" modes.
+notteam : when set to 1, entity will not spawn in "Teamplay" and "CTF" modes.
+notsingle : when set to 1, entity will not spawn in Single Player mode (bot play mode).
+gametype : the valid values are ffa, tournament, single, team, ctf, oneflag, obelisk, harvester. Once a value for this key is set, it will ONLY appear in the listed gametype(s). Separate gametypes by commas.
+-------- SPAWNFLAGS --------
+SUSPENDED : item will spawn where it was placed in map and won't drop to the floor.
+-------- NOTES --------
+The amount of time it takes for an item in the team to respawn is determined by the "wait" value of the item that was picked up previously. So if one of the items in the team has it's "wait" key set to -1 (never respawn), the random respawning cycle of the teamed items will stop after that item is picked up.
+
+When the random key is set, its value is used to calculate a minimum and a maximum delay. The final time delay will be a random value anywhere between the minimum and maximum values: (min delay = wait - random) (max delay = wait + random).
+-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
+model="models/powerups/ammo/nailgunam.md3"*/
+
+//=====================================================================
+
+/*QUAKED ammo_mines (.3 .3 1) (-16 -16 -16) (16 16 16) SUSPENDED
+Prox Launcher ammo. Gives the player 5 by default.
+-------- KEYS --------
+wait : time in seconds before item respawns after being picked up (default 40, -1 = never respawn).
+random : random time variance in seconds added or subtracted from "wait" delay (default 0 - see Notes).
+count: sets the amount of ammo given to the player when picked up (default 10).
+team : set this to team items. Teamed items will respawn randomly after team master is picked up (see Notes). Any teamed item with the same value will be part of this team.
+target : picking up the item will trigger the entity this points to.
+targetname : a target_give entity can point to this for respawn freebies.
+notbot: (NEW KEY PROPERTY) when set to 1, a bot will never seek out this item.
+notfree : when set to 1, entity will not spawn in "Free for all" and "Tournament" modes.
+notteam : when set to 1, entity will not spawn in "Teamplay" and "CTF" modes.
+notsingle : when set to 1, entity will not spawn in Single Player mode (bot play mode).
+gametype : The valid values are ffa, tournament, single, team, ctf, oneflag, obelisk, harvester. Once a value for this key is set, it will ONLY appear in the listed gametype(s). Separate gametypes by commas.
+-------- SPAWNFLAGS --------
+SUSPENDED : item will spawn where it was placed in map and won't drop to the floor.
+-------- NOTES --------
+The amount of time it takes for an item in the team to respawn is determined by the "wait" value of the item that was picked up previously. So if one of the items in the team has it's "wait" key set to -1 (never respawn), the random respawning cycle of the teamed items will stop after that item is picked up.
+
+When the random key is set, its value is used to calculate a minimum and a maximum delay. The final time delay will be a random value anywhere between the minimum and maximum values: (min delay = wait - random) (max delay = wait + random).
+-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
+model="models/powerups/ammo/proxmineam.md3"*/
+
+//===========================================================================
+
+/*QUAKED ammo_belt (.3 .3 1) (-16 -16 -16) (16 16 16) SUSPENDED
+Chaingun ammo. Gives the player 100 by default.
+-------- KEYS --------
+wait : time in seconds before item respawns after being picked up (default 40, -1 = never respawn).
+random : random time variance in seconds added or subtracted from "wait" delay (default 0 - see Notes).
+count: sets the amount of ammo given to the player when picked up (default 10).
+team : set this to team items. Teamed items will respawn randomly after team master is picked up (see Notes).
+target : picking up the item will trigger the entity this points to.
+targetname : a target_give entity can point to this for respawn freebies.
+notbot: (NEW KEY PROPERTY) when set to 1, a bot will never seek out this item.
+notfree : when set to 1, entity will not spawn in "Free for all" and "Tournament" modes.
+notteam : when set to 1, entity will not spawn in "Teamplay" and "CTF" modes.
+notsingle : when set to 1, entity will not spawn in Single Player mode (bot play mode).
+gametype : The valid values are ffa, tournament, single, team, ctf, oneflag, obelisk, harvester. Once a value for this key is set, it will ONLY appear in the listed gametype(s). Separate gametypes by commas.
+-------- SPAWNFLAGS --------
+SUSPENDED : item will spawn where it was placed in map and won't drop to the floor.
+-------- NOTES --------
+The amount of time it takes for an item in the team to respawn is determined by the "wait" value of the item that was picked up previously. So if one of the items in the team has it's "wait" key set to -1 (never respawn), the random respawning cycle of the teamed items will stop after that item is picked up.
+
+When the random key is set, its value is used to calculate a minimum and a maximum delay. The final time delay will be a random value anywhere between the minimum and maximum values: (min delay = wait - random) (max delay = wait + random).
+-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
+model="models/powerups/ammo/chaingunam.md3"*/
+
+//===========================================================================
+
+HOLDABLE_* ENTITIES
+
+//===========================================================================
+
+/*QUAKED holdable_kamikaze (.3 .3 1) (-16 -16 -16) (16 16 16) SUSPENDED
+One use kamikaze item that can be picked up and used later. Does an initial wave of shock damage, knockback, then 200 damage to everything in a 256 radius. It kills the using player when used. Player can only carry one holdable item at a time.
+-------- KEYS --------
+wait : time in seconds before item respawns after being picked up (default 60, -1 = never respawn).
+random : random time variance in seconds added or subtracted from "wait" delay (default 0 - see Notes).
+team : set this to team items. Teamed items will respawn randomly after team master is picked up (see Notes).
+target : picking up the item will trigger the entity this points to.
+targetname : a target_give entity can point to this for respawn freebies.
+notbot: (NEW KEY PROPERTY) when set to 1, a bot will never seek out this item.
+notfree : when set to 1, entity will not spawn in "Free for all" and "Tournament" modes.
+notteam : when set to 1, entity will not spawn in "Teamplay" and "CTF" modes.
+notsingle : when set to 1, entity will not spawn in Single Player mode (bot play mode).
+gametype : The valid values are ffa, tournament, single, team, ctf, oneflag, obelisk, harvester. Once a value for this key is set, it will ONLY appear in the listed gametype(s). Separate gametypes by commas.
+-------- SPAWNFLAGS --------
+SUSPENDED : item will spawn where it was placed in map and won't drop to the floor.
+-------- NOTES --------
+The amount of time it takes for an item in the team to respawn is determined by the "wait" value of the item that was picked up previously. So if one of the items in the team has it's "wait" key set to -1 (never respawn), the random respawning cycle of the teamed items will stop after that item is picked up.
+
+When the random key is set, its value is used to calculate a minimum and a maximum delay. The final time delay will be a random value anywhere between the minimum and maximum values: (min delay = wait - random) (max delay = wait + random).
+-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
+model="models/powerups/kamikazi.md3"*/
+
+/*QUAKED holdable_invulnerability (.3 .3 1) (-16 -16 -16) (16 16 16) SUSPENDED
+Invulnerability. Creates an energy shield that protects the player against all weapons except proximity mines. Effect lasts XX seconds.
+-------- KEYS --------
+wait : time in seconds before item respawns after being picked up (default 60, -1 = never respawn).
+random : random time variance in seconds added or subtracted from "wait" delay (default 0 - see Notes).
+team : set this to team items. Teamed items will respawn randomly after team master is picked up (see Notes).
+target : picking up the item will trigger the entity this points to.
+targetname : a target_give entity can point to this for respawn freebies.
+notbot: (NEW KEY PROPERTY) when set to 1, a bot will never seek out this item.
+notfree : when set to 1, entity will not spawn in "Free for all" and "Tournament" modes.
+notteam : when set to 1, entity will not spawn in "Teamplay" and "CTF" modes.
+notsingle : when set to 1, entity will not spawn in Single Player mode (bot play mode).
+gametype : The valid values are ffa, tournament, single, team, ctf, oneflag, obelisk, harvester. Once a value for this key is set, it will ONLY appear in the listed gametype(s). Separate gametypes by commas.
+-------- SPAWNFLAGS --------
+SUSPENDED : item will spawn where it was placed in map and won't drop to the floor.
+-------- NOTES --------
+The amount of time it takes for an item in the team to respawn is determined by the "wait" value of the item that was picked up previously. So if one of the items in the team has it's "wait" key set to -1 (never respawn), the random respawning cycle of the teamed items will stop after that item is picked up.
+
+When the random key is set, its value is used to calculate a minimum and a maximum delay. The final time delay will be a random value anywhere between the minimum and maximum values: (min delay = wait - random) (max delay = wait + random).
+-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
+model="models/powerups/holdable/invulnerability.md3"*/
+
+//===========================================================================
+
+PERSISTANT POWERUPS (instant use, last until death)
+
+//===========================================================================
+
+/*QUAKED item_scout (0.3 0.3 1) (-16 -16 -16) (16 16 16) SUSPENDED REDTEAM BLUETEAM
+Scout power-up.  Player moves at 2/3 haste speed.  Increases rate of fire. Lasts until death.
+-------- KEYS --------
+wait : time in seconds before item respawns after being picked up (default 0, -1 = never respawn).
+random : random time variance in seconds added or subtracted from "wait" delay (default 0 - see Notes).
+count : time in seconds power-up will last when picked up (default 30).
+team : set this to team items. Teamed items will respawn randomly after team master is picked up (see Notes).
+target : picking up the item will trigger the entity this points to.
+targetname : a target_give entity can point to this for respawn freebies.
+notbot: (NEW KEY PROPERTY) when set to 1, a bot will never seek out this item.
+notfree : when set to 1, entity will not spawn in "Free for all" and "Tournament" modes.
+notteam : when set to 1, entity will not spawn in "Teamplay" and "CTF" modes.
+notsingle : when set to 1, entity will not spawn in Single Player mode (bot play mode).
+notfree : when set to 1, entity will not spawn in "Free for all" and "Tournament" modes.
+notteam : when set to 1, entity will not spawn in "Teamplay" and "CTF" modes.
+notsingle : when set to 1, entity will not spawn in Single Player mode (bot play mode).
+gametype : The valid values are ffa, tournament, single, team, ctf, oneflag, obelisk, harvester. Once a value for this key is set, it will ONLY appear in the listed gametype(s). Separate gametypes by commas.
+-------- SPAWNFLAGS --------
+SUSPENDED : item will spawn where it was placed in map and won't drop to the floor.
+REDTEAM: only player on the red team may pick up this item
+BLUETEAM: only player on the blue team may pick up this item
+-------- NOTES --------
+These team entities are intended to respawn instantly.  The amount of time it takes for an item in the team to respawn is determined by the "wait" value of the item that was picked up previously. So if one of the items in the team has it's "wait" key set to -1 (never respawn), the random respawning cycle of the teamed items will stop after that item is picked up.
+
+When the random key is set, its value is used to calculate a minimum and a maximum delay. The final time delay will be a random value anywhere between the minimum and maximum values: (min delay = wait - random) (max delay = wait + random).
+-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
+model="models/powerups/scout.md3"*/
+
+//===========================================================================
+
+/*QUAKED item_guard (0.3 0.3 1) (-16 -16 -16) (16 16 16) SUSPENDED REDTEAM BLUETEAM
+Guard power-up.  Gives player 200 regenerating health and 200 armor (without decay over time).  Lasts until death.
+-------- KEYS --------
+wait : time in seconds before item respawns after being picked up (default 0, -1 = never respawn).
+random : random time variance in seconds added or subtracted from "wait" delay (default 0 - see Notes).
+count : time in seconds power-up will last when picked up (default 30).
+team : set this to team items. Teamed items will respawn randomly after team master is picked up (see Notes).
+target : picking up the item will trigger the entity this points to.
+targetname : a target_give entity can point to this for respawn freebies.
+notbot: (NEW KEY PROPERTY) when set to 1, a bot will never seek out this item.
+notfree : when set to 1, entity will not spawn in "Free for all" and "Tournament" modes.
+notteam : when set to 1, entity will not spawn in "Teamplay" and "CTF" modes.
+notsingle : when set to 1, entity will not spawn in Single Player mode (bot play mode).
+gametype : The valid values are ffa, tournament, single, team, ctf, oneflag, obelisk, harvester. Once a value for this key is set, it will ONLY appear in the listed gametype(s). Separate gametypes by commas.
+-------- SPAWNFLAGS --------
+SUSPENDED : item will spawn where it was placed in map and won't drop to the floor.
+REDTEAM: only player on the red team may pick up this item
+BLUETEAM: only player on the blue team may pick up this item
+-------- NOTES --------
+These team entities are intended to respawn instantly. The amount of time it takes for an item in the team to respawn is determined by the "wait" value of the item that was picked up previously. So if one of the items in the team has it's "wait" key set to -1 (never respawn), the random respawning cycle of the teamed items will stop after that item is picked up.
+
+When the random key is set, its value is used to calculate a minimum and a maximum delay. The final time delay will be a random value anywhere between the minimum and maximum values: (min delay = wait - random) (max delay = wait + random).
+-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
+model="models/powerups/guard.md3"*/
+
+//===========================================================================
+
+/*QUAKED item_doubler (0.3 0.3 1) (-16 -16 -16) (16 16 16) SUSPENDED REDTEAM BLUETEAM
+Doubler power-up.  Doubles the damage of player's weapons.  Lasts until death.
+-------- KEYS --------
+wait : time in seconds before item respawns after being picked up (default 0, -1 = never respawn).
+random : random time variance in seconds added or subtracted from "wait" delay (default 0 - see Notes).
+count : time in seconds power-up will last when picked up (default 30).
+team : set this to team items. Teamed items will respawn randomly after team master is picked up (see Notes).
+target : picking up the item will trigger the entity this points to.
+targetname : a target_give entity can point to this for respawn freebies.
+notbot: (NEW KEY PROPERTY) when set to 1, a bot will never seek out this item.
+notfree : when set to 1, entity will not spawn in "Free for all" and "Tournament" modes.
+notteam : when set to 1, entity will not spawn in "Teamplay" and "CTF" modes.
+notsingle : when set to 1, entity will not spawn in Single Player mode (bot play mode).
+gametype : The valid values are ffa, tournament, single, team, ctf, oneflag, obelisk, harvester. Once a value for this key is set, it will ONLY appear in the listed gametype(s). Separate gametypes by commas.
+-------- SPAWNFLAGS --------
+SUSPENDED : item will spawn where it was placed in map and won't drop to the floor.
+REDTEAM: only player on the red team may pick up this item
+BLUETEAM: only player on the blue team may pick up this item
+-------- NOTES --------
+These team entities are intended to respawn instantly. The amount of time it takes for an item in the team to respawn is determined by the "wait" value of the item that was picked up previously. So if one of the items in the team has it's "wait" key set to -1 (never respawn), the random respawning cycle of the teamed items will stop after that item is picked up.
+
+When the random key is set, its value is used to calculate a minimum and a maximum delay. The final time delay will be a random value anywhere between the minimum and maximum values: (min delay = wait - random) (max delay = wait + random).
+-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
+model="models/powerups/doubler.md3"*/
+
+//===========================================================================
+
+/*QUAKED item_ammoregen (0.3 0.3 1) (-16 -16 -16) (16 16 16) SUSPENDED REDTEAM BLUETEAM
+Ammo Regen power-up. Slowly regenerates ammo count for all weapons currently possessed by the player.
+-------- KEYS --------
+gametype : the values for this key determine which gametype the entity appears in. They are tournament, ffa, single, teamdm, oneflag, obelisk, harvester
+wait : time in seconds before item respawns after being picked up (default 0, -1 = never respawn).
+random : random time variance in seconds added or subtracted from "wait" delay (default 0 - see Notes).
+team : set this to team items. Teamed items will respawn randomly after team master is picked up (see Notes).
+target : picking up the item will trigger the entity this points to.
+targetname : a target_give entity can point to this for respawn freebies.
+notbot: (NEW KEY PROPERTY) when set to 1, a bot will never seek out this item.
+notfree : when set to 1, entity will not spawn in "Free for all" and "Tournament" modes.
+notteam : when set to 1, entity will not spawn in "Teamplay" and "CTF" modes.
+notsingle : when set to 1, entity will not spawn in Single Player mode (bot play mode).
+gametype : The valid values are ffa, tournament, single, team, ctf, oneflag, obelisk, harvester. Once a value for this key is set, it will ONLY appear in the listed gametype(s). Separate gametypes by commas.
+-------- SPAWNFLAGS --------
+SUSPENDED : item will spawn where it was placed in map and won't drop to the floor.
+REDTEAM: only player on the red team may pick up this item
+BLUETEAM: only player on the blue team may pick up this item
+-------- NOTES --------
+These team entities are intended to respawn instantly. The amount of time it takes for an item in the team to respawn is determined by the "wait" value of the item that was picked up previously. So if one of the items in the team has it's "wait" key set to -1 (never respawn), the random respawning cycle of the teamed items will stop after that item is picked up.
+
+When the random key is set, its value is used to calculate a minimum and a maximum delay. The final time delay will be a random value anywhere between the minimum and maximum values: (min delay = wait - random) (max delay = wait + random).
+-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
+model="models/powerups/ammo.md3"*/
+
+//===========================================================================
+TEAM ARENA TEAMPLAY ENTITIES [NEW]
+
+//=============================================================================
+
+/*QUAKED team_CTF_neutralflag (1 .2 1) (-16 -16 -24) (16 16 32) SUSPENDED
+Neutral flag (One Flag CTF only).
+-------- KEYS --------
+angle : an angle facing needs to be set for this entity. This item has a specific facing.
+gametype : The valid values are ffa, tournament, single, team, ctf, oneflag, obelisk, harvester. Once a value for this key is set, it will ONLY appear in the listed gametype(s). Separate gametypes by commas.
+-------- SPAWNFLAGS --------
+SUSPENDED : item will spawn where it was placed in map and won't drop to the floor.
+-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
+model="models/flags/n_flag.md3"*/
+
+//=============================================================================
+
+/*QUAKED team_redobelisk (1 .2 0) (-16 -16 0) (16 16 88)
+Red team Obelisk. Used for Overload, CTF, Oneflag, and Harvester game types for various functions. Facing needs to be set.
+-------- KEYS --------
+angle : an angle facing needs to be set for this entity. This item has a specific facing.
+gametype : The valid values are ffa, tournament, single, team, ctf, oneflag, obelisk, harvester. Once a value for this key is set, it will ONLY appear in the listed gametype(s). Separate gametypes by commas.
+-------- NOTES --------
+Do not assign a gametype to this item unless the location of your CTF flags and your Overload obelisk will be different. It is used in all four team game types. The game will call for it as needed.
+-------- SPAWNFLAGS --------
+SUSPENDED : item will spawn where it was placed in map and won't drop to the floor.
+-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
+model="models/powerups/overload_base.md3"*/
+
+//=============================================================================
+
+/*QUAKED team_blueobelisk (0 .2 1) (-16 -16 0) (16 16 88)
+Blue team Obelisk. Used for Overload and Harvester game types. Facing needs to be set.
+-------- KEYS --------
+angle : an angle facing needs to be set for this entity. This item has a specific facing.
+gametype : The valid values are ffa, tournament, single, team, ctf, oneflag, obelisk, harvester. Once a value for this key is set, it will ONLY appear in the listed gametype(s). Separate gametypes by commas.
+-------- NOTES --------
+Do not assign a gametype to this item. It is used in all four team game types. the The game will call for it as needed.
+-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
+model="models/powerups/overload_base.md3"*/
+
+//=============================================================================
+
+/*QUAKED team_neutralobelisk (1 .2 1) (-16 -16 0) (16 16 88)
+Neutral Obelisk (Harvester only).
+-------- KEYS --------
+gametype : The valid values are ffa, tournament, single, team, ctf, oneflag, obelisk, harvester. Once a value for this key is set, it will ONLY appear in the listed gametype(s). Separate gametypes by commas.
+-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
+model="models/powerups/obelisk/obelisk.md3"*/
+
+ 
+
+//===========================================================================
+TEAM ARENA WEAPONS
+
+//===========================================================================
+
+/*QUAKED weapon_chaingun (0 0 1) (-16 -16 -16) (16 16 16) SUSPENDED
+Chaingun. A rapid fire instant hit weapon.
+-------- KEYS --------
+wait : time in seconds before item respawns after being picked up (default 5, -1 = never respawn).
+random : random time variance in seconds added or subtracted from "wait" delay (default 0 - see Notes).
+count: sets the amount of ammo given to the player when weapon is picked up (default 10).
+team : set this to team items. Teamed items will respawn randomly after team master is picked up (see Notes).
+target : picking up the item will trigger the entity this points to.
+targetname : a target_give entity can point to this for respawn freebies.
+notbot: (NEW KEY PROPERTY) when set to 1, a bot will never seek out this item.
+notfree : when set to 1, entity will not spawn in "Free for all" and "Tournament" modes.
+notteam : when set to 1, entity will not spawn in "Teamplay" and "CTF" modes.
+notsingle : when set to 1, entity will not spawn in Single Player mode (bot play mode).
+gametype : The valid values are ffa, tournament, single, team, ctf, oneflag, obelisk, harvester. Once a value for this key is set, it will ONLY appear in the listed gametype(s). Separate gametypes by commas.
+-------- SPAWNFLAGS --------
+SUSPENDED : item will spawn where it was placed in map and won't drop to the floor.
+-------- NOTES --------
+The amount of time it takes for an item in the team to respawn is determined by the "wait" value of the item that was picked up previously. So if one of the items in the team has it's "wait" key set to -1 (never respawn), the random respawning cycle of the teamed items will stop after that item is picked up.
+
+When the random key is set, its value is used to calculate a minimum and a maximum delay. The final time delay will be a random value anywhere between the minimum and maximum values: (min delay = wait - random) (max delay = wait + random).
+-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
+model="models/weapons/vulcan/vulcan.md3"*/
+
+//=============================================================================
+
+/*QUAKED weapon_nailgun (0 0 1) (-16 -16 -16) (16 16 16) SUSPENDED
+Nailgun.
+-------- KEYS --------
+wait : time in seconds before item respawns after being picked up (default 5, -1 = never respawn).
+random : random time variance in seconds added or subtracted from "wait" delay (default 0 - see Notes).
+count: sets the amount of ammo given to the player when weapon is picked up (default 10).
+team : set this to team items. Teamed items will respawn randomly after team master is picked up (see Notes).
+target : picking up the item will trigger the entity this points to.
+targetname : a target_give entity can point to this for respawn freebies.
+notbot: (NEW KEY PROPERTY) when set to 1, a bot will never seek out this item.
+notfree : when set to 1, entity will not spawn in "Free for all" and "Tournament" modes.
+notteam : when set to 1, entity will not spawn in "Teamplay" and "CTF" modes.
+notsingle : when set to 1, entity will not spawn in Single Player mode (bot play mode).
+-------- SPAWNFLAGS --------
+SUSPENDED : item will spawn where it was placed in map and won't drop to the floor.
+-------- NOTES --------
+The amount of time it takes for an item in the team to respawn is determined by the "wait" value of the item that was picked up previously. So if one of the items in the team has it's "wait" key set to -1 (never respawn), the random respawning cycle of the teamed items will stop after that item is picked up.
+
+When the random key is set, its value is used to calculate a minimum and a maximum delay. The final time delay will be a random value anywhere between the minimum and maximum values: (min delay = wait - random) (max delay = wait + random).
+-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
+model="models/weapons/nailgun/nailgun.md3"*/
+
+//===========================================================================
+
+/*QUAKED weapon_prox_launcher (0 0 1) (-16 -16 -16) (16 16 16) SUSPENDED
+Proximity Mine Launcher. Lobs a mine which checks for proximity of a player or a time out. In team play, the mines are differentiated by teams.
+-------- KEYS --------
+wait : time in seconds before item respawns after being picked up (default 5, -1 = never respawn).
+random : random time variance in seconds added or subtracted from "wait" delay (default 0 - see Notes).
+count: sets the amount of ammo given to the player when weapon is picked up (default 10).
+team : set this to team items. Teamed items will respawn randomly after team master is picked up (see Notes).
+target : picking up the item will trigger the entity this points to.
+targetname : a target_give entity can point to this for respawn freebies.
+notbot: (NEW KEY PROPERTY) when set to 1, a bot will never seek out this item.
+notfree : when set to 1, entity will not spawn in "Free for all" and "Tournament" modes.
+notteam : when set to 1, entity will not spawn in "Teamplay" and "CTF" modes.
+notsingle : when set to 1, entity will not spawn in Single Player mode (bot play mode).
+gametype : The valid values are ffa, tournament, single, team, ctf, oneflag, obelisk, harvester. Once a value for this key is set, it will ONLY appear in the listed gametype(s). Separate gametypes by commas.
+-------- SPAWNFLAGS --------
+SUSPENDED : item will spawn where it was placed in map and won't drop to the floor.
+-------- NOTES --------
+The amount of time it takes for an item in the team to respawn is determined by the "wait" value of the item that was picked up previously. So if one of the items in the team has it's "wait" key set to -1 (never respawn), the random respawning cycle of the teamed items will stop after that item is picked up.
+
+When the random key is set, its value is used to calculate a minimum and a maximum delay. The final time delay will be a random value anywhere between the minimum and maximum values: (min delay = wait - random) (max delay = wait + random).
+-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
+model="models/weapons/proxmine/proxmine.md3"*/
+
+
+

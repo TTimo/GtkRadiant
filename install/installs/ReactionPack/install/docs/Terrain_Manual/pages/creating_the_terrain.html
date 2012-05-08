@@ -1,0 +1,63 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+<meta name="ProgId" content="FrontPage.Editor.Document">
+<title>Creating the Terrain</title>
+</head>
+
+<body background="../pics/background.jpg" text="#FFFFFF" link="#FFFFFF" vlink="#FFFFFF" alink="#FFFFFF">
+
+<p align="center"><b><font size="5">Creating the Terrain “Mesh”</font></b></p>
+
+<font SIZE="4">
+<div align="right">
+  <table border="1" cellspacing="1" width="100%" bordercolor="#808080" bgcolor="#000000" cellpadding="10">
+    <tr>
+      <td width="100%"><font FACE="Times New Roman">
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Although it’s not necessarily the only way to develop a piece of terrain,
+thinking of it and creating it as “mesh” of triangular brushes may be the
+easiest way to work initially. The terrain sections for Quake III: Team Arena
+were built in this manner, though each designer went about it in slightly
+different ways.</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Our primary tool was a plugin for <a href="http://www.qeradiant.com/" target="_blank"> Q3Radiant</a> , created by David Hyde, called
+<a href="http://tarot.telefragged.com/gensurf/" target="_blank">GenSurf</a>. The tool was originally created for Quake 2 (and may have been around
+longer) and has been adapted for use with many of the game engines using Quake,
+Quake2 and Quake3 technology. The basic concept behind GenSurf is that it can
+create and export a group of brushes (or curve patches) to Q3Radiant that have
+the look of “natural” terrain about them. Within the plug-in, the mapmaker
+has control over the horizontal dimensions of the terrain entity, the steepness
+of the slopes it creates, and the number of columns and rows of triangles that
+it subdivides into.</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; The terrain can be generated from within the tool by using simple waveforms,
+more complex mathematical expressions, fractal calculations, or height maps. The
+last item, height maps, is in our opinion, the route to take for creating
+complex, visually interesting terrain layouts. A height map is a piece of art
+(we rendered them in grayscale) that GenSurf uses as a template for establishing
+the height of vertexes (the points where the corners of the terrain triangles
+meet). GenSurf interprets the color of the pixel (or more correctly the
+numerical color value of the pixel) that corresponds to the location of the
+vertex. Generally, the darker the gray value, the lower in height the vertex
+(256 unique height values corresponding to 256 pixel colors). GenSurf then uses
+the vertexes to define the extents of triangles and suddenly, one has a terrain
+surface. Of course, there are a few details of construction between start and
+finish …</p>
+</font>
+
+<p align="center"><a href="terrain_entity.html">Back</a> - <a href="table_of_contents.html">Table
+of Contents</a> - <a href="height_maps.html">Height Maps</a></p>
+
+        <p>&nbsp;</td>
+    </tr>
+  </table>
+</div>
+</font>
+
+<p align="center">&nbsp;</p>
+<p align="center">&nbsp;</p>
+<p align="center">-7-</p>
+
+</body>
+
+</html>

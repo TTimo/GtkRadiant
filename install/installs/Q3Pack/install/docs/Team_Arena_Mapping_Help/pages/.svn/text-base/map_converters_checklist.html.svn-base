@@ -1,0 +1,101 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+<meta name="ProgId" content="FrontPage.Editor.Document">
+<title>Design Tips and Suggestions</title>
+</head>
+
+<body bgcolor="#000000" text="#FFFFFF" link="#FFFFFF" vlink="#FFFFFF" alink="#FFFFFF">
+
+<b>
+<p align="center"><font SIZE="5">Map Converter’s Checklist</font></p>
+</b>
+<div align="right">
+  <table border="1" cellpadding="13" width="100%" bordercolor="#808080" bgcolor="#000000">
+    <tr>
+      <td width="100%"><font SIZE="2">&nbsp;</font>
+        <p><font size="3">The following is a list of things to look for, do, or
+        be aware of when converting a pre-existing CTF map to Q3:TA game types.</font></p>
+        <blockquote>
+          <blockquote>
+            <p><font size="3"><font FACE="Symbol">· </font>New file name. Don’t
+            overwrite your old CTF map.</font></p>
+            <p><font size="3"><font FACE="Symbol">· </font>If you want to
+            convert an existing Q3A CTF map to the team arena game types, it
+            would be good to make a clean break from Q3A. Give it a new file
+            name and even a new map name. We did the same for our original CTF
+            maps.</font></p>
+            <p><font size="3"><font FACE="Symbol">· </font>If you don’t
+            already have one, build a central “neutral” area in keeping with
+            the style of the rest of the map. This is an important play area,
+            perhaps even more so than the bases. Make the opportunities for
+            gameplay here just as exciting as the flag bases.</font></p>
+            <p><font size="3"><font FACE="Symbol">· </font>Fix-up Time. This is
+            your opportunity to fix all those things that players have been
+            telling you are wrong with your map (sticky spots, bad hallway
+            connections, misaligned textures, poor item placement). The id guys
+            did it, so can you. It’s also a good time to read or re-read the
+            Q3Radiant section on optimizing maps for bots (you may want to look
+            for the recent updates that accompany the bspc tool). Pay particular
+            attention to placement of clip brushes and cluster portals. If
+            players can’t reach an area of the map (such as sky above ceiling
+            grills, or beyond window bars, fill the unreachable space with clip
+            brush - just walling it off is often worse than doing nothing.</font></p>
+            <p><font size="3"><font FACE="Symbol">· </font>Add Team Power-ups
+            in or near bases.</font></p>
+            <p><font size="3"><font FACE="Symbol">· </font>Place .md3 powerup
+            pad bases beneath Power-ups</font></p>
+            <p><font size="3"><font FACE="Symbol">· </font>Remove “ow”
+            marks from floors that were used as weapon locators. Replace them
+            with the base floor for that texture. You may also be able to
+            simplify the geometry.</font></p>
+            <p><font size="3"><font FACE="Symbol">· </font>Place Weapon pad
+            markers (use the pfbs) beneath weapon spawns.</font></p>
+            <p><font size="3"><font FACE="Symbol">· </font>Consider adding new
+            weapon types or replacing existing ones with the new weapons. Don’t
+            just do it because they are new, though. Make sure the weapon is
+            appropriate to the map. If you don’t like a weapon or it’s
+            effect on play, don’t add it to your map.</font></p>
+            <p><font size="3"><font FACE="Symbol">· </font>Replace old Q3A CTF
+            banners with new Q3: TA banners. Use the banner prefabs (pfbs) for
+            ease of placement.</font></p>
+            <p><font size="3"><font FACE="Symbol">· </font>Consider adding team
+            logos as decals (see FLOOR ARROWS above) to other parts of the map,
+            like walls and floors.</font></p>
+            <p><font size="3"><font FACE="Symbol">· </font>Make sure that the
+            team logos on banners and floors; walls, etc. have the proper
+            facing. You should be able to properly read the word “red” or
+            “blue” on the placeholder logo.</font></p>
+            <p><font size="3"><font FACE="Symbol">· </font>Add in the flag
+            bases and obelisks. Follow directions noted above (page 9) to mark them for
+            gameplay types.</font></p>
+          </blockquote>
+        </blockquote>
+      </td>
+    </tr>
+  </table>
+</div>
+<div align="center">
+  <center>
+  <table border="0" cellpadding="0" cellspacing="0" background="../pics/MAINPOP.gif" width="256" height="256">
+    <tr>
+      <td width="100%">
+        <p align="center"><a href="design_tips.html">Back</a> <br>
+        <br>
+        <a href="table_of_contents.htm">
+        Table of Contents</a><br>
+        <br>
+        <a href="related_links.html">
+        Related Links</a><br>
+        <br>
+        -10-</td>
+    </tr>
+  </table>
+  </center>
+</div>
+
+</body>
+
+</html>

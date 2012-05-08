@@ -1,0 +1,192 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+<meta name="ProgId" content="FrontPage.Editor.Document">
+<title>The Meta</title>
+</head>
+
+<body background="../pics/background.jpg" text="#FFFFFF" link="#FFFFFF" vlink="#FFFFFF" alink="#FFFFFF">
+
+<b>
+<p align="center"><font size="5">The Meta-Shader</font></p>
+<div align="right">
+  <table border="1" cellspacing="1" width="100%" bordercolor="#808080" bgcolor="#000000" cellpadding="10">
+    <tr>
+      <td width="100%"><font FACE="Times New Roman">
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; The shader is the group or family of related shaders used to texture a
+terrain entity. The shader key/value pair in the entity identifies the
+metashader to be used. The suffix (either “_#” for a root shader or “#to#”
+for a blended shader.</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; For each root shader that you want to blend, you need a blend shader. Note
+that you only need to make the blend once. If you have mpterra2_0to2, you don’t
+need mpterra2_2to0.</p>
+<p>&nbsp;</p>
+</font><b><font SIZE="4">
+<p>Example Terrain Shader</p>
+</font></b><font FACE="Times New Roman">
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; This was the shader used to map textures on mpterra2 (hence the metashader
+name)</p>
+</font><font FACE="Courier New">
+<p><font size="2">//****************************************************<br>
+// *************************************************<br>
+// *<br>
+// * MPTerra2 terrain shaders<br>
+// *<br>
+// *************************************************<br>
+textures/terrain/mpterra2_0<br>
+{<br>
+surfaceparm nolightmap<br>
+q3map_novertexshadows<br>
+q3map_forcesunlight<br>
+{<br>
+map textures/stone/pjrock9b_2.tga<br>
+rgbGen vertex<br>
+tcmod scale 0.125 0.125<br>
+}<br>
+{<br>
+map textures/skies2/clouds.tga<br>
+blendfunc filter<br>
+detail<br>
+tcmod scale 0.01 0.01<br>
+tcMod scroll -0.05 0.05<br>
+tcmod transform 1 0 1 1 1 1<br>
+}<br>
+}<br>
+textures/terrain/mpterra2_1<br>
+{<br>
+surfaceparm nolightmap<br>
+q3map_novertexshadows<br>
+q3map_forcesunlight<br>
+{<br>
+map textures/stone/pjrock12b_2.tga<br>
+rgbGen vertex<br>
+tcmod scale 0.1 0.1<br>
+}<br>
+{<br>
+map textures/skies2/clouds.tga<br>
+blendfunc filter<br>
+detail<br>
+tcmod scale 0.01 0.01<br>
+tcMod scroll -0.05 0.05<br>
+tcmod transform 1 0 1 1 1 1<br>
+}<br>
+}<br>
+textures/terrain/mpterra2_2<br>
+{<br>
+surfaceparm nolightmap<br>
+q3map_novertexshadows<br>
+q3map_forcesunlight<br>
+{<br>
+map textures/stone/pjrock10b_2.tga<br>
+tcmod scale 0.05 0.05<br>
+rgbGen vertex<br>
+}<br>
+{<br>
+map textures/skies2/clouds.tga<br>
+blendfunc filter<br>
+detail<br>
+tcmod scale 0.01 0.01<br>
+tcMod scroll -0.05 0.05<br>
+tcmod transform 1 0 1 1 1 1<br>
+}<br>
+}<br>
+textures/terrain/mpterra2_0to1<br>
+{<br>
+surfaceparm nolightmap<br>
+q3map_novertexshadows<br>
+q3map_forcesunlight<br>
+{<br>
+map textures/stone/pjrock9b_2.tga<br>
+rgbGen vertex<br>
+alphaGen vertex<br>
+tcmod scale 0.125 0.125<br>
+}<br>
+{<br>
+map textures/stone/pjrock12b_2.tga<br>
+tcmod scale 0.1 0.1<br>
+rgbGen vertex<br>
+alphaGen vertex<br>
+blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA<br>
+}<br>
+{<br>
+map textures/skies2/clouds.tga<br>
+blendfunc filter<br>
+detail<br>
+tcmod scale 0.01 0.01<br>
+tcMod scroll -0.05 0.05<br>
+tcmod transform 1 0 1 1 1 1<br>
+}<br>
+}<br>
+textures/terrain/mpterra2_0to2<br>
+{<br>
+surfaceparm nolightmap<br>
+q3map_novertexshadows<br>
+q3map_forcesunlight<br>
+{<br>
+map textures/stone/pjrock9b_2.tga<br>
+rgbGen vertex<br>
+alphaGen vertex<br>
+tcmod scale 0.125 0.125<br>
+}<br>
+{<br>
+map textures/stone/pjrock10b_2.tga<br>
+rgbGen vertex<br>
+alphaGen vertex<br>
+tcmod scale 0.05 0.05<br>
+blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA<br>
+}<br>
+{<br>
+map textures/skies2/clouds.tga<br>
+blendfunc filter<br>
+detail<br>
+tcmod scale 0.01 0.01<br>
+tcMod scroll -0.05 0.05<br>
+tcmod transform 1 0 1 1 1 1<br>
+}<br>
+}<br>
+textures/terrain/mpterra2_1to2<br>
+{<br>
+surfaceparm nolightmap<br>
+q3map_novertexshadows<br>
+q3map_forcesunlight<br>
+{<br>
+map textures/stone/pjrock12b_2.tga<br>
+rgbGen vertex<br>
+alphaGen vertex<br>
+tcmod scale 0.1 0.1<br>
+}<br>
+{<br>
+map textures/stone/pjrock10b_2.tga<br>
+tcmod scale 0.05 0.05<br>
+rgbGen vertex<br>
+alphaGen vertex<br>
+blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA<br>
+}<br>
+{<br>
+map textures/skies2/clouds.tga<br>
+blendfunc filter<br>
+detail<br>
+tcmod scale 0.01 0.01<br>
+tcMod scroll -0.05 0.05<br>
+tcmod transform 1 0 1 1 1 1<br>
+}<br>
+}</font></p>
+</font>
+
+<p align="center"><a href="mapping_the_textures.html">Back</a> - <a href="table_of_contents.html">Table
+of Contents</a> - <a href="lighting_the_terrain.html">Lighting the Terrain</a></p>
+
+        <p>&nbsp;</td>
+    </tr>
+  </table>
+</div>
+</b>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p align="center">-21-</p>
+
+</body>
+
+</html>

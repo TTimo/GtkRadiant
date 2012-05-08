@@ -1,0 +1,361 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+<meta name="ProgId" content="FrontPage.Editor.Document">
+<title>New or Revised Q3map Shader Commands</title>
+</head>
+
+<body background="../pics/background.jpg" text="#FFFFFF" link="#FFFFFF" vlink="#FFFFFF" alink="#FFFFFF">
+
+<b><font FACE="Arial" SIZE="5">
+<p align="center">New or Revised Q3map Shader Commands</p>
+</font>
+<div align="right">
+  <table border="1" cellspacing="1" width="100%" bordercolor="#808080" bgcolor="#000000" cellpadding="10">
+    <tr>
+      <td width="100%">
+<p><font size="3">q3map command line switches:</font></p>
+<pre>
+q3map
+-----
+
+-threads <number>
+	Number of threads used to compile the map. For the fastest compile
+	times the number of threads is set to the number of system processors.
+-glview
+	Write a .gl file of the bsp tree for debugging.
+-v
+	Output verbose information.
+-draw
+	Enable realtime debug drawing output.
+-nowater
+	Water, slime and lava brushes are not compiled and won't show up when running the map in Quake.
+-noopt
+	unused.
+-nofill
+	unused.
+-nodetail
+	Detail brushes are not compiled and won't show up when running the map in Quake.
+-fulldetail
+	Detail brushes will be treated as normal brushes.
+-onlyents
+	Only change the entities in a .bsp using a .ent file.
+-onlytextures
+	Only change the textures in a .bsp file.
+-micro
+	unused.
+-nofog
+	Visible surfaces that cross fog boundaries will not be split along the bound.
+	This can cause visually incorrect fog in the map.
+-nosubdivide
+	Visible surfaces are not subdivided as required by shader tesselation.
+	The shader parameter "tesssize" sets the tesselation of a surface.
+-leaktest
+	Only test the map for leaks. If a leak is found the compilation is stopped.
+-verboseentities
+	Output verbose information about entity sub-models.
+-nocurves
+	Curves are not compiled and won't show up when running the map in Quake.
+-notjunc
+	T-junctions are not fixed. This can cause tiny slits where a surface meets halfway another surface.
+-expand
+	Expands all the brush planes and saves a new map out to allow visual inspection of the clipping bevels
+-tmpout
+	Output files to a folder called "tmp".
+-fakemap
+	Write out a fakemap.map This map will contain a worldspawn entity with all the world brushes.
+-samplesize <N>
+	Set the lightmap pixel size to NxN units. Default 16x16.
+-custinfoparms
+	Will enable custom surface flags (see below)
+
+q3map -vis
+----------
+
+-threads <number>
+	Number of threads used to compile the map. For the fastest compile
+	times the number of threads is set to the number of system processors.
+-fast
+	Only calculate a very loose visiblity list. It doesn't take much time to
+	calculate but a lot more polygons will be drawn by the Q3 engine than necesary.
+-merge
+	Merge bsp leaves before calculating the visibility list. This will speed up
+	the vis calculations but mostly more polygons will be drawn by the Q3 engine
+	than necesary.
+-nopassage
+	Disable the passage visibility algorithm. The passage vis is faster and a bit more
+	tight than the old algorithm.
+-level
+	unused.
+-v
+	Output verbose information.
+-nosort
+	Don't sort the portals on complexity. Sorting mostly speeds up visibility calculations
+	because more complex portals can use information from less complex portals.
+-saveprt
+	Don't delete the .prt file after creating the visibility list.
+-tmpin <path>
+	Input files will be read from a folder called "tmp".
+-tmpout <path>
+	Output files will be written to a folder called "tmp".
+
+
+q3map -light
+------------
+
+-threads <number>
+	Number of threads used to compile the map. For the fastest compile
+	times the number of threads is set to the number of system processors.
+-area <scale>
+	This scales the light intensity of area lights.
+-point <scale>
+	This scales the light intensity of point lights.
+-notrace
+	No light tracing is performed. As a result no shadows will be casted.
+-patchshadows
+	Enable patches casting shadows.
+-novertex
+	Don't calculate vertex lighting.
+-nogrid
+	Don't calculate light grid for dynamic model lighting.
+-extra
+	Take four samples per lightmap pixel and store the average light value of these
+	four samples for the actual lightmap pixel.
+	This super sampling is used for anti-aliasing.
+-extrawide
+	Just like -extra four samples per lightmap pixel are calculated. However the
+	average of 12 samples is stored per lightmap pixel.
+-samplesize <N>
+	Set the lightmap pixel size to NxN units. Default 16x16.
+-border
+	Create a debugging border around the lightmap.
+-v
+	Output verbose information.
+-nosurf
+	unused.
+-dump
+	unused.
+
+
+q3map -vlight
+-------------
+
+-threads <number>
+	Number of threads used to compile the map. For the fastest compile
+	times the number of threads is set to the number of system processors.
+-area <scale>
+	This scales the light intensity of area lights.
+-point <scale>
+	This scales the light intensity of point lights.
+-novertex
+	Don't calculate vertex lighting.
+-nogrid
+	Don't calculate light grid for dynamic model lighting.
+-nostitching
+	No polygon stitching before lighting.
+-noalphashading
+	Don't use alpha shading at all.
+-nocolorshading
+	Don't use colored alpha shading. The alpha channel will be used as if it were binary.
+	The light goes through or not and does not change color.
+-tracelight
+	Use the "-light" light algorithm for all surface unless a surface
+	uses a shader with the shader option "q3map_vlight".
+-samplesize <N>
+	Set the lightmap pixel size to NxN units. Default 16x16.
+-v
+	Output verbose information.
+</pre>
+<p><font size="3">The q3map options are a subset of the shader instructions that require
+recompiling of the map.</font></p>
+<p><font size="3">q3map_tracelight</font></p>
+<p><font size="3">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [<font color="#FFFF00">NEW</font>] Surfaces using a shader with this option will always be lit with the
+original &quot;-light&quot; light algorithm. Patches will not cast shadows on
+this surface unless the shader option q3map_patchshadows is used.</font></p>
+<p><font size="3">q3map_patchshadows</font></p>
+<p><font size="3">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [<font color="#FFFF00">NEW</font>] When this option is used in conjunction with the original (-light)
+lighting algorithm, surfaces with textures modified by this option will will
+show shadows cast by curve patches (under normal circumstances, curve patches do
+not cast shadows).</font></p>
+<p><font size="3">q3map_vertexshadows</font></p>
+<p><font size="3">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [<font color="#FFFF00">NEW</font>] By default, no shadows are cast on vertex-only lit surfaces (see
+surfaceparm pointlight). Also when running Quake III Arena in vertex&nbsp; lighting
+mode, no shadows are cast upon any surfaces (shadows are part of the light map).
+When using this shader option shadows *will* be cast on the surface when vertex
+lit. However sharp shadow edges won't be seen on the surface because light
+values are only calculated at the vertexes.</font></p>
+<p><font size="3">q3map_novertexshadows</font></p>
+<p><font size="3">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [<font color="#FFFF00">NEW</font>] Shaders used for misc_models and terrain can now use
+q3map_novertexshadows to disable shadows to be cast at the vertex lit surfaces.
+Shadows being cast at small misc_model objects often makes sense. However
+shadows on large vertex lit terrain surfaces often look bad. By default no
+shadows are cast at forced vertex list surfaces ( shaders with &quot;pointlight&quot;
+).</font></p>
+<p><font color="#FFFFFF" size="3">q3map_forcesunlight</font></p>
+<p><font color="#FFFFFF" size="3">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [</font><font color="#FFFF00" size="3">NEW</font><font color="#FFFFFF" size="3">] No sunlight is cast at vertex lit md3 models and terrain by default.
+Using this option sunlight (overbright bits created by q3map_sun option) will be
+cast on these surfaces.</font></p>
+<p><font size="3">q3map_vertexscale &lt;scale&gt;</font></p>
+<p><font size="3">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [<font color="#FFFF00">NEW</font>] The light value at the vertexes of a surface using a shader with this
+option is multiplied by the scale value. This is a way to lighten or darken a
+vertex light only surface in comparison to other, light-map lit surfaces around
+it.</font></p>
+<p><font size="3">q3map_notjunc</font></p>
+<p><font size="3">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [<font color="#FFFF00">NEW</font>] Surfaces modified by a shader with this option are not used for
+tjunction fixing.</font></p>
+<p><font size="3">q3map_vlight</font></p>
+<p><font size="3">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [<font color="#FFFF00">NEW</font>] Surfaces modified by a shader with this option will always be lit with
+the &quot;-vlight&quot; algorithm when q3map is used with the options &quot;-vlight
+-tracelight&quot;.</font></p>
+<p><font size="3">q3map_lightmapsamplesize &lt;S&gt;</font></p>
+<p><font size="3">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [<font color="#FFFF00">NEW</font>] Surfaces using a shader with this shader option will use lightmaps with
+pixel size SxS. This option can be used to produce high resolution shadows on
+certain surfaces or can be used to reduce the size of lightmap data where high
+resolution shadows are not required.</font></p>
+<p><font size="3">q3map_lightimage &lt;image&gt;</font></p>
+<p><font size="3">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Image to use for the light color of a surface light instead of the image(s)
+used by the shader. Color is averaged from the texture. Texture must be the same
+size as the base image map.</font></p>
+<p><font size="3">q3map_surfacelight &lt;value&gt;</font></p>
+<p><font size="3">Sets the amount of light this surface emits.</font></p>
+<p><font size="3">q3map_lightsubdivide &lt;value&gt;</font></p>
+<p><font size="3">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; A surface light is subdivided into a bunch of point lights for the actual
+lighting of the world. This parameter controls the space between those point
+lights. Default value is 120.</font></p>
+<p><font size="3">q3map_backsplash &lt;percent&gt; &lt;distance&gt;</font></p>
+<p><font size="3">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; A surface light is also lit by itself using back splash point lights with a
+lower intensity. The &lt;percent&gt; parameter specifies the intensity
+percentage they use from the q3map_surfacelight &lt;value&gt; parameter. The
+&lt;distance&gt; parameter controls the distance of these back splash lights
+from the surface. You can set the &lt;percent&gt; to zero or a negative value to
+disable the back splash lights.</font></p>
+<p><font size="3">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; q3map_globaltexture</font></p>
+<p><font size="3">When this option is set the texture is not aligned to the world.</font></p>
+<p><font size="3">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; q3map_backshader &lt;shader&gt;</font></p>
+<p><font size="3">&lt;shader&gt; is the path/name of the shader or texture to be used at the
+back side of the surface.</font></p>
+<p><font size="3">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; q3map_flare &lt;shader&gt;</font></p>
+<p><font size="3">Creates a flare using the specified &lt;shader&gt; at the center of the
+surface using a shader with this option.</font></p>
+<p><font size="3">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; light &lt;value&gt;</font></p>
+<p><font size="3">Old style flare specification always using the shader &quot;flareshader&quot;.
+The &lt;value&gt; parameter is unused.</font></p>
+<p><font size="3">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; q3map_sun &lt;red&gt; &lt;green&gt; &lt;blue&gt; &lt;intensity&gt;
+&lt;degrees&gt; &lt;elevation&gt;</font></p>
+<p><font size="3">Color will be normalized, so it doesn't matter what range you use. The
+intensity falls off with angle but not distance. A value of 100 is a fairly
+bright sun.</font></p>
+<p><font size="3">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; degree of 0 = from the east, 90 = north, etc.</font></p>
+<p><font size="3">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; elevation of 0 = sunrise/set, 90 = noon</font></p>
+<p><font size="3">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; surfaceparm pointlight</font></p>
+<p><font size="3">Surfaces using a shader with this parameter will always be vertex lit</font></p>
+<p><font size="3">This option can be used to reduce the lightmap data. Often used on surfaces</font></p>
+<p><font size="3">that don't need any shadows.</font></p>
+<p><font size="3">Surfaceparm dust</font></p>
+<p><font size="3">If a player lands (jumps onto) on a surfaces using a shader with this
+parameter, a put of dust will appear at the player’s feet. Note that the
+worldspawn entity of that map must have an enableDust key set to a value of 1.</font></p>
+
+<font FACE="Arial" SIZE="5"><b><font SIZE="4">
+<p>Custom surfaceparms</p>
+</font></b><font SIZE="2">
+<p>With the new q3map tool you can add custom surface parameters for mods
+without the need to recompile the q3map tool. These custom surfaceparms are
+stored in a file called ‘custinfoparms.txt’ in the folder scripts/. An
+example of this file with the new surfaceparm treacle and surfaceparm grass is
+shown below.</p>
+<p>// Custom Infoparms File<br>
+// Custom Contentsflags<br>
+{<br>
+treacle 0x4000<br>
+}<br>
+// Custom Surfaceflags<br>
+{<br>
+grass 0x80000<br>
+}</p>
+<p>&nbsp;</p>
+<b>
+<p>NOTE:</b> For linux users, when using the -custinfoparms parameter q3map
+first looks in your homedir, and only if it doesn't find a custinfoparms.txt
+there, it uses the one stored in the</p>
+<p>quake3 install dir (usually /usr/local/games).</p>
+<p>&nbsp;</p>
+</font><b>
+<p>Content Flags</p>
+</b><font SIZE="2">
+<p>Contents flags are flags similar to CONTENTS_FOG in the original Q3A. These
+flags define the contents of volumes inside the game (for instance lava, fog,
+water, etc.).</p>
+<p>If you look in the source file game/surfaceflags.h, it has defines for all
+contents flags. The define is split into a name and a hexadecimal value, for
+instance CONTENTS_PLAYERCLIP 0x10000. These hexadecimal values are powers of 2
+and can be ored together (binary) to form a bit mask. Up to 32 contents flags
+can be ored together this way.</p>
+<b>
+<p>Example</b>: creating a volume with treacle.</p>
+<p>The following outlines how a custom contents flag can be added and used in a
+mod. First open the ‘custinfoparms.txt’ file and add ‘treacle 0x4000’
+to the Custom Contentsflags section as shown in the example file above (0x4000
+is one of the unused values available for custom use). Next write a shader
+script which uses ‘surfaceparm treacle’. Apply this new shader to all sides
+of a brush in a test map. When you compile the map, add the -custinfoparms
+parameter to the command line following q3map.</p>
+<p>Next, add CONTENTS_TREACLE 0x4000 to the source file game/surfaceflags.h in
+your mod. Now you can call the point contents function. If the point is inside
+the brush with the shader using the ‘surfaceparm treacle’ then the point
+contents call will return a bit mask with CONTENTS_TREACLE set. This can for
+instance be used to slow down player movement when a player is inside such a
+brush.</p>
+<p>&nbsp;</p>
+</font><b>
+<p>Surface Flags</p>
+</b><font SIZE="2">
+<p>The surface flags are texture properties that often affect entities in
+contact with surfaces using such flags. The ‘surfaceparm metalsteps’
+parameter from Q3A is a good example.</p>
+<p>If you look in the source file game/surfaceflags.h, it has defines for all
+surface flags. The define is split into a name and a hexadecimal value, for
+instance SURF_NODAMAGE 0x1. These hexadecimal values are powers of 2 and can be
+ored together (binary) to form a bit mask. Up to 32 surface flags can be ored
+together this way.</p>
+<b>
+<p>Example</b>: Making ‘footsteps on grass’ sounds</p>
+<p>The following outlines how a custom surface flag can be added and used in a
+mod. First open up the ‘custinfoparms.txt’ file and add 'grass 0x80000' to
+the Custom Surfaceflags section as shown in the example file above (0x80000 is
+the first available unused value in surfaceflags.h for surface flags). Next
+write a shader script which uses a grass image and has 'surfaceparm grass’.
+Create a test map with the grass shader covering the ground surface. When you
+compile the map, add the -custinfoparms parameter to the command line following
+q3map.</p>
+<p>Next, add SURF_GRASS 0x80000 to the source file game/surfaceflags.h in your
+mod. Now you'll be able to execute a trace and the trace information will be
+returned in the trace_t structure. If the trace hits a surface with the grass
+surfaceparm then the SURF_GRASS flag will be set in trace_t-&gt;surfaceFlags.
+Such a trace can be used to trigger playing a sound of a person stepping on
+grass. For a reference example, see the existing metal steps in the game code.</p>
+<p>&nbsp;</p>
+</font>
+<p>&nbsp;</p>
+
+</font>
+
+<p align="center"><font face="Arial" size="3"><a href="glossary.html">Back</a> - <a href="table_of_contents.html">Table
+of Contents</a> - <a href="related_links.html"> Links</a></font></p>
+
+<font FACE="Arial" SIZE="5">
+
+      <p>&nbsp;</font></td>
+  </tr>
+</table>
+</div>
+</b>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p align="center">-27-</p>
+
+</body>
+
+</html>

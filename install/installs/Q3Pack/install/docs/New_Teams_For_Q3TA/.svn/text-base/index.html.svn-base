@@ -1,0 +1,1040 @@
+<html>
+<head>
+<meta http-equiv=Content-Type content="text/html; charset=iso-8859-1">
+<title>New Teams For Q3TA</title>
+<style>
+<!--
+.Section1
+	{page:Section1;}
+.normal {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 9pt;
+}
+.heading {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12pt;
+}
+-->
+</style>
+</head>
+<body bgcolor="#510000" text="#FDE4B3" link=white vlink="#FDE4B3" alink="#FFCC99" class="Normal" lang=EN-US>
+<div class=Section1>
+  <table border=0 cellspacing=0 cellpadding=0 width="95%">
+    <tr>
+      <td class="Normal">&nbsp;</td>
+      <td width=800 class="Normal"><p><b class="heading">New Teams for Team Arena (and other stories)</b><br>
+By Paul Jaquays Script files by various id design team members Bot Search Material by Jan Paul "MrElusive" van Waveren </p></td>
+      <td class="Normal">&nbsp;</td>
+    </tr>
+    <tr>
+      <td height="311" class="Normal">&nbsp;</td>
+      <td width=800 class="Normal"><p><b>Table of Contents</b><b><br>
+            <a href="#intro">Introduction</a><br>
+            <a href="#teampak">The Team Pak</a> <br>
+            <a href="#scripts">Scripts</a> <br>
+            <a href="#uiassets">User Interface Assets</a><br>
+            <a href="#logoicons">In Game Team Logo Icons </a><br>
+            <a href="#models">New Models for Team Skins</a> <br>
+            <a href="#appenda">Appendix A: The .Bot File</a><br>
+            <a href="#appendb">Appendix B: The .Team File </a><br>
+            <a href="#appendc">Appendix C: The Voice List </a><br>
+            <a href="#appendd">Appendix D: Model Sound List</a> <br>
+            <a href="#appende">Appendix E: .VC File Sample</a><br>
+            <a href="#appendf">Appendix F: Sample Team Arena Animation.Cfg File and New Animation Commands</a><br>
+            <a href="#appendg">Appendix G: Teamname.shader</a><br>
+            <a href="#appendh">Appendix H: Search Order for Model and Head model Assets </a><br>
+            <a href="#appendi">Appendix I: Expanded Team Skin Functionality for Q3A </a><br>
+            <a href="#appendj">Appendix J: Contents of the tm_kreechurs.pk3 </a><br>
+            <a href="#appendk">Appendix K: A Minimal Team</a><br>
+            <a href="#appendl">Appendix L: Contents of the TAhead_lily.pk3 </a></b></p>
+      </td>
+      <td class="Normal">&nbsp;</td>
+    </tr>
+    <tr>
+      <td class="Normal">&nbsp;</td>
+      <td width=800 class="Normal"><p><a name=intro></a><b class="heading">Introduction</b><br>
+          The original intent for Teams in Quake III: Team Arena was to allow the use and creation of new Teams. However, it was not until community modelers attempted to build new teams that we discovered that the hooks that we put in place for team creation did not work as intended. This point release contains the fixes and additions necessary to make new teams work.</p>
+        <p>This document presupposes that the person wanting to create a new team already knows the basics of creating, animating, and skinning new character models for Quake III Arena. There are numerous good tutorials on-line covering both the basics and the more in-depth skills needed to make models that work inside the game.</p>
+        <p><b>Special Thanks</b><br>
+  The content used to test and debug the team creation code is based on a test model provided and made "Team Arena compatible" by Bill and Mike Jukes, a.k.a. "The Brothers Grimm" and a re-skinning of the original Team Arena Callisto head model provided by artist Camilla "milla" Bennett. Also thanks to milla for providing the .html version of this document. Names of some of the files used in examples have been changed. Furthermore, thanks go to Graeme Devine, Robert Duffy, and MrElusive for putting up with semi-constant harassment to get the team content working for the point release.</p>
+        <p><b>Notices: </b><b><i>QUAKE III ARENA and QUAKE III: Team Arena are trademarks of id Software, Inc. This document is copyright 2000, 2001 by id Software, Inc. Id Software grants permission to redistribute and or redisplay this document in electronic form only. It may not be included as a part of any permanent media without first obtaining permission from id Software, inc. Permission is granted to use the contents of the scripts embedded in this document as a base for creating additional teams for Team Arena.<br clear=all style='page-break-before:always'>
+          </i></b></p>
+        <p><a href="#top"><b>TOP</b></a></p>
+        <p><a name=teampak></a><b class="heading">The Team Pak File</b> <br>
+It takes a surprisingly large amount of new content to create an entirely new team. Our test file contained 186 separate files (model included only one head). An additional head added another 16 files (we tested with only one extra head model). The content required covers every discipline of game creation . skin painting, scripting, modeling, and sound production. In fact, if the new team is to have new voice taunt sounds, it can easily exceed 10 megabytes in compressed form inside the pak file. Each of the files necessary to create a team is listed below in outline and will be discussed later in detail. The paths for these files begin in the missionpack directory. <a href="#appendj">Appendix J</a> contains the file list for the test team, <a href="#appendk">Appendix K</a> shows a team with the bare minimum of files needed to create a new team with a male and female uniform, and <a href="#appendl">Appendix L</a> contains the file list for the Callisto/Lily test head. </p>
+        <p><b>Naming Conventions</b> <br>
+When naming a pak file that contains the assets for a new team, preface the team name with the letters "tm_". This usage is for organizational purposes only. It is done to identify the pak as a team file. Example: tm_kreechurs.pk</p>
+        <p><b>Including What id Didn't Make</b> <br>
+You don't need to include any of the game content that id put in the original pak0.pk3 that shipped with Team Arena. The game should have no problem finding those assets if they are called for by the new team. Any new assets created for the team need to be in the pak file. Any assets created by other artists or authors for use with Team Arena need to be in the pak file. The team creator cannot assume that players will have those assets in their possession. When including assets created by others, including modified id game content, be sure to give notice of original authorship in the readme that accompanies the pakfile.</p>
+        <p><b>Teamname_readme.txt</b> <br>
+This text file tells all about the contents of your new team, including who made it, how they can reach the author, who else contributed to the project, what tools were used, how long it took, when it was released (copyright data goes here), where the ideas came from, and so on. Essentially, it should contain whatever the team creator wants to reveal about himself or herself and the process of making the team. Any resources that were created by others should be acknowledged here. If the team creator agrees to let others use the original contents of the pak file in other projects, it should be noted here also, along with any special terms or contact information. </p>
+        <p><b>NOTE:</b> The scripts used to create the various aspects of the new team are included throughout this document. Team creators have permission to copy the scripts in this document and paste them into new scripts for use in original teams. Details such as team name, character names, and bot names should be changed to fit the new team.</p>
+        <p><a href="#top"><b>TOP</b></a></p>
+        <p><a name=scripts></a><b class="heading">Scripts</b><br>
+          <i>Priority: Unless otherwise noted, all of the scripts listed below are required to be in the team pak file (see <a
+  href="#appendk">Appendix K: A Minimal Team</a>, for a detailed list of the contents required for a basic team using existing models). </i></p>
+        <p>These are the various scripts used to define the team and model characteristics.</p>
+        <p><b>Teamname.team</b><b> (in root directory) :</b> A text file that defines the components of the team. This file corresponds to the original team.txt file in pak0.pk3. It is required for all new teams. See <a href="#appendb">Appendix B</a> for details. </p>
+        <p><b>Teamname.bot</b><b> (scripts\) :</b> This file defines the resources used by the five bots that are used by the team in single player (model, head_model, and bot a.i.). It is required for all new teams. See <a
+  href="#appenda">Appendix A</a> for details. </p>
+        <p><b>Teamname.shader</b><b> (scripts\) :</b> Shader scripts for all shaders used to create the new_model and the five new_headmodels. This is required for the team icons to work properly in game. Other shader-modified textures may be included. <a
+  href="#appendg">See Appendix G</a> for the sample version of this shader. </p>
+        <p><b>Animation.cfg</b><b> (models\players\newmodel\) :</b> The animation configuration file. Team Arena models have a few a few more animation sequences than their Q3A counterparts, but the basics are the same. The contents of a sample Q3:TA animation.cfg are included at the end of this document. It's a script, but not one that's resident in the scripts file. This is only required if a new model is included in the pak. </p>
+        <p><b>New_model.voice</b><b> (scripts\) :</b> This is the script that assigns individual voice wav files to specific message or status commands. See Appendix C for a sample script and discussion of its use. Voice files are optional and only required if an entirely new set of voice wav files is to be included in the pak. Sound files are large and can add significantly to the size of the pakfile. If creating a human-based team, consider using the 8 voices that came with Team Arena to save file space.</p>
+        <p><b>New_headmodel_1.vc (scripts\) :</b> This file selects which .voice file is linked to a head file. Each head model in the pak needs one of these. A separate version of this file is required for each new headmodel included with the team. The name of the file is the same as the name of the bot that uses the headmodel. A sample .vc file is included in <a href="#appende">Appendix E</a>. </p>
+        <p><a href="#top"><b>TOP</b></a></p>
+        <p><a name=uiassets></a><b class="heading">User Interface Assets<br>
+</b><i>Priority: The tga files are required. The roq file is optional. The User Interface menus use these files to show the team logo icons and movies of the characters in actions.</i></p>
+        <p>Teamname, of course, refers to the name of the new team. </p>
+        <p><b>Teamname_name_alt.tga</b><b> (ui\assets\) : </b>This is a 256 x 128 pixel, 32 bit .tga file (with alpha channel) depicting the name of the team as a black and white (grayscale) art file. Teamname is the name of the new team, the rest of the filename is part of its format. The alpha channel should be the same as the image (not reversed).</p>
+        <p><b>Teamname_name.tga</b><b> (ui\assets\) : </b>This is a 256 x 128 pixel, 32 bit .tga file (with alpha channel) depicting the name of the team with a glow around it. It is a black and white art file (grayscale). The alpha channel should be the same as the image (not reversed).</p>
+        <p><b>Teamname.tga</b><b> (ui\assets\) :</b> This is a 128 x 128 pixel, 32 bit .tga file (with alpha channel) that depicts a black and white version of the team logo or symbol. The alpha channel should be the same as the image (not reversed).</p>
+        <p><b>Teamname_metal.tga</b><b> (ui\assets\) :</b> This is a 128 x 128 pixel, 32 bit .tga file (with alpha channel). If the team creator wants to keep the same style as the original game, this version of the team's logo is rendered to look like brushed metal, perhaps with a bluish cast. But in reality, it can be anything, any color. The alpha channel should be the same as the alpha channel in the Teamlogo.tga art.</p>
+        <p><b>Teamname.roq</b><b> (ui\assets\) : </b>The .roq movie displays in the center area of the player set up screen when the player selects one of the teams. Movie file sizes can be large, so the team creator may wish to take the overall size of the team pakfile into consideration before including a movie. Uncompressed, the team movies in Team Arena were over a megabyte each . and being compressed format files already; they don't get much smaller in the pakfile. The good news is that if no movie file is present, the game displays the teamname_metal.tga in the center area instead. It must be noted that team movie files will not be offered for viewing in the Cinematics menu option unless the teamname.roq file is also present in the video\ directory.</p>
+        <p><a href="#top"><b>TOP</b></a></p>
+        <p><a name=logoicons></a><b class="heading">In Game Team Logo Icons</b><br>
+          <i>Priority: Required</i></p>
+        <p>The team style game maps for Team Arena are usually set up to display the icons of the competing teams. The game uses a separate set of art files located in the team_icon directory off the root missionpack directory for the team icons displayed in game. For Team Arena, these art files were a single color, red or blue. But that need not be the case. If a game clan wanted to use a full color version of their clan symbol, it would work in game - though the team creator may want to consider tinting the art either bluish or reddish to better suit the color used in play (most team maps are likely to use the blue/red color theme as was done in the original game). </p>
+        <p>Also, take into consideration that the art will be transparent, with background textures (floors, walls, colored banners) showing through behind it. Simple, graphic treatments of logos will probably work the best in all cases.</p>
+        <p>Art files can be larger or smaller than those shown here. However, while having smaller files will save memory, image quality will suffer. If using larger art files, image quality may improve substantially but the memory usage will be substantial also. Whether increasing or reducing file size, remember to keep the file dimension proportional to the original.</p>
+        <p>The Teamname.shader references this art. Make sure that the file names in the shader match those of the artwork.</p>
+        <p><b>Teamname.tga</b><b> (team_icon\): </b>This is a 128 x 128 pixel art file, the exact same file as used in ui\assets\teamname.tga. It is a black and white 32 bit version of the team logo with the same art in the alpha channel.</p>
+        <p><b>Teamname_blue.tga</b><b> (team_icon\): </b>For Team Arena, we created solid color logos, but that need not be the case. This 32 bit 128 x 128 pixel art file can be full color. The alpha channel should be the same as the teamname.tga file. If you choose to make it solid blue, consider using the same color value as the original TA logos. The RGB formula for that blue is: 0 148 255.</p>
+        <p><b>Teamname_red.tga</b><b> (team_icon\): </b>Even though id chose to make our logo's single, solid colors, this 32 bit 128 x 128 pixel art file can be whatever color the team creator wishes. The alpha channel should be the same as the teamname.tga file. If you choose to make it solid red, consider using the same color value as the original TA logos. The RGB formula for that red is: 255 0 0.</p>
+        <p><a href="#top"><b>TOP</b></a></p>
+        <p><a name=models></a><b class="heading">New Models and Skins for Teams</b><br>
+The process by which body models are created is outside the scope of this document. While body model has a few more animations than the corresponding Quake III Arena model, the process of creation is quite similar . except for one very key element. The Team Arena model has no head. Head models for Team Arena teams are created and stored separately from the body. Where the pathname to a body model might be models\players\BoB, the path to the head models is different:</p>
+        <p><b>Example:</b> models\players\heads\Kreecha. </p>
+        <p><b>New Team Arena Models based on Q3A models</b> <br>
+For the Team Arena test model, the Brothers Grimm converted a character model that they had previously made for Quake III Arena. In order to keep the game from confusing two models with the same file name, the search code for models and skins was changed to allow extended search paths for models. In this case, we placed the Team Arena model in a "characters" directory nested within the "players" directory. The path to the new model read: models\players\characters\BoB\. The model directory contains the torso and legs models only, which are Upper.md3 and Lower.md3 respectively. There are no head models in that directory. Furthermore, include any art and skin files used for the default version of the model along with the animation.cfg. </p>
+        <p><b>NOTE: </b>When creating your models for export as .ASE files for use with the Q3data.exe, you must have a head on the model (e.g.; an h_head in the max file) for the converter to work. The converter looks for and expects to see an h_head for of the model. If the converter does not find the head during the conversion, the process will halt. After the conversion is complete just use the Upper and lower Md3 files for that character's directory. Place the head model in its own separate directory. </p>
+        <p><b>Icons for new models</b> <br>
+The Loading Screen for Team Arena uses the icons associated with a team member's body model, not the member's head model. Be certain to include an icon_default.tga file in new model's directory. This icon will be used on the map loading screen. It represents the Body model in use by a player . not the Head model. </p>
+        <p><b>New Team Skins</b><br>
+When creating a team, make a red and a blue version of the skin. Name the skins as noted below. Do not use the team or character name in the skin. That information is taken from the name of the directory in which it resides. </p>
+        <p>The team skins (red and blue) for a Team Arena model reside in a directory within the model directory (which contains the model md3 pieces). </p>
+        <p><b>Example:</b> models\players\characters\BoB\Kreechurs\. </p>
+        <p>The teamname directory (Kreechurs in this case) would contain the art files for the skin, and the .skin files that link art to model. </p>
+        <p>In simple form, the skin assets required to be in the teamname file are as follows: </p>
+        <p><b>TGA file names</b><br>
+Blue.tga //the body skin for the blue team version <br>
+Red.tga //the body skin for the red team version </p>
+        <p><b>Skin File Names</b><br>
+Lower_blue.skin //blue version of legs skin file <br>
+Upper_blue.skin //blue version of torso skin file<br>
+Lower_red.skin //red version of legs skin file <br>
+Upper_red.skin //red version of torso skin file <br>
+Lower_default.skin //default legs skin file (used by U.I.). Usually, this is the red skin. <br>
+Upper_default.skin //default torso skin file (used by U.I.). Usually, this is the red skin.</p>
+        <p><b>New Heads</b> <br>
+Each new player on a new team should either have a new head model or have a new skin for an existing Team Arena model. Each new head model and all its assets go into a directory named for it. In the case of new skins for pre-existing models, the new skin assets reside in a directory nested within the model's directory. </p>
+        <p><b>Example:</b> models\players\heads\callisto\lily is a new skin for the Callisto head. </p>
+        <p>Note that other assets, such as the .vc file for this head will also need to be nested in directories a layer deeper in their normal files. </p>
+        <p><b>Example:</b> scripts\callisto\lily.vc. </p>
+        <p>New head models need to have all the assets specific to the model (md3 files, skin files and art files) in the directory named for the model head. </p>
+        <p><b>No MD3 Models Required for New Skins on id Models</b> <br>
+New skins created for existing head models (id created or community created) do not require that the md3 models be in their directories. The assets specific to the new skin (skin art, skin file, icons) are placed in a directory. You do not need to redistribute md3 models for the heads that are a part of the original id game. </p>
+        <p><b>Using the Work of Others</b><br>
+If you are reskinning or simply using a head model previously created and distributed by a member of the community, make sure that the original creator has authorized such use (and remember to give credit where credit is due). When using community-created models, the team creator must plan to include that model and all its assets in the pakfile.</p>
+        <p><a href="#top"><b>TOP</b></a></p>
+        <p><a name=appenda></a><b class="heading">Appendix A: The .Bot File</b><b><br>
+Five Heads, Five Bots, Five Team Members</b> <br>
+<i>Priority: Required for each new team</i></p>
+        <p>A Team Arena team consists of five players. In the original game, the five players were drawn from a mix of 11 new player heads sitting atop two body models. New teams should also have five players each. However, five players on the new team should each have a unique head/skin combination. These can either be new models or new skins using the original Q3:TA models. </p>
+        <p>The .bot file (whose file name is the same as the name of the new team, e.g.; Kreechurs.bot or Scumsukkers.bot) is a text script whose ".txt" file extension has been renamed to ".bot." This file corresponds to the bots.txt file used in the original Team Arena game. <a href="#appenda">Appendix A</a> shows a sample bot file. </p>
+        <p><b>Name</b> = the name of the bot as it appears on the Start Server Menu. </p>
+        <p><b>Model</b> = the body model used by this bot. A team can use more than one body model. However, adding multiple body models can and will add significantly to the size of the team pak file and to memory usage in game. Limiting the number of body models used by a team is a good design practice. No more than two models per team should be the limit. </p>
+        <p><b>Headmodel</b> = *modelname. The headmodel is what makes the bot unique. It has links to the voice files and is used when creating name aliases for the bots to use in the single player game. The asterisk is a necessary part of the file name here.</p>
+        <p>The headmodel called Callisto/Lily is a new skin on the Callisto model mesh. The pathname is required for the model to work. </p>
+        <p><b>Aifile</b> = the bot ai used by the team member. The computer-controlled opponents in Team Arena used three individual ai files that define their general role in the game: defense (tad_c.c), offense (tao_c.c) and all-arounder (taa_c.c). New bots can use these same a.i. files or, if desired the team creator can make new ai files based on the Team Arena ai files. </p>
+        <p><b>Filename: Teamname.bot </b></p>
+        <pre>
+//bot file begins here
+{
+name           Kreecha
+model          BoB
+headmodel      *Kreecha
+aifile  bots/taa_c.c
+}
+
+{
+name           Callisto/Lily
+model          BoB
+headmodel      *Callisto/Lily
+aifile  bots/tad_c.c
+}
+
+{
+name           Infinite
+model          BoB
+headmodel      *Infinite
+aifile  bots/tad_c.c
+}
+
+{
+name           Prime
+model          BoB
+headmodel      *Prime
+aifile  bots/tao_c.c
+}
+
+{
+name           Vlad
+model          BoB
+headmodel      *Vlad
+aifile  bots/tao_c.c
+}
+//bot file ends here
+		</pre>
+        <p><a href="#top"><b>TOP</b></a></p>
+        <p><a name=appendb></a><b class="heading">Appendix B: The .TEAM File</b><br>
+          <i>Priority: Required for each new team.</i> </p>
+        <p>The team file is a text file that has had the file extension renamed from .txt to .team. </p>
+        <p>Kreechurs is a test Team Arena team created to test the team and head model code for point release v1.28. It uses the hypothetical "BoB" model to create a new team. </p>
+        <p>The team definition appears on a single line in the file: </p>
+        <p>"Team name" "asset path/name" "bot 1" "bot 2" "bot 3" "bot 4" "bot 5" </p>
+        <p>//Teams define the assets used by the team: team name, path to U.I. assets, player names <br>
+// Character definitions act as a link between head models used by a team and models that have the proper team skin assets. The Player Set Up User Interface primarily uses the character definitions. The first entry is the head model as defined in the .bot file. The second entry is body model used by that character. For everything to work out for the best, each character should have a unique model/skin combination that defines it. </p>
+        <p><b>Filename: Teamname.team</b></p>
+        <pre>
+// .team file begins here
+teams {
+  { &quot;Kreechurs&quot; &quot;ui/assets/kreechurs&quot;  &quot;BoB&quot; &quot;Lily&quot; &quot;Vlad&quot; &quot;Infinite&quot; &quot;Prime&quot;}
+}
+
+characters {
+{ &quot;Callisto/Lily&quot; &quot; BoB &quot; }
+{ &quot;Kreecha&quot;  &quot; BoB &quot; }
+{ &quot;Infinite&quot;  &quot; BoB &quot; }
+{ &quot;Prime&quot;  &quot; BoB &quot; }
+{ &quot;Vlad&quot; &quot; BoB &quot; }
+}
+
+// Aliases are the link between character name, headmodel, and bot A.I.
+
+aliases {
+        { &quot;Kreecha&quot;           &quot;BoB&quot;              &quot;a&quot;  }
+        { &quot;Lily&quot;        &quot;Callisto/Lily&quot; &quot;d&quot;   }
+            { &quot;Vlad&quot;           &quot;Vlad&quot;              &quot;o&quot;       }
+            { &quot;Infinite&quot;       &quot;Infinite&quot;           &quot;d&quot;      }
+            { &quot;Prime&quot;          &quot;Prime&quot;             &quot;o&quot;       }              
+}
+
+//.team file ends here
+</pre>
+        <p><a href="#top"><b>TOP</b></a></p>
+        <p><a name=appendc></a><b class="heading">Appendix C: The Voice List</b><br>
+          <i>Priority: Optional.</i></p>
+        <p>The voice file is a text file that has had the file extension renamed from .txt to .voice. Each unique set of voice recordings requires its own voice file. This file contains the code script that defines the voice and corresponding text messages used by the player models in game. Like the text chat messages that appeared in original Q3A, these messages are triggered by game conditions and statuses. </p>
+        <p>The file directory name for the voice does not have to be the same as a head or body model, though giving it a unique name that identifies it with the team is always a good idea. The specific file names for each voice message ARE VERY IMPORTANT, as the voice script that corresponds to the file directory for the voice calls them. Example: If the new voice is called "monster", then the directory would be called "monster" and the voice file would be called monster.voice. </p>
+        <p>If you create a new set of recorded voices for your team or for a new model, be certain to include at least one voice message for each category (defined by a name like "getflag" and follow by opening and closing brackets) on this list. It is not necessary to provide as many different messages as shown below. Example: Your character may not need more than one way to say "yes" or have as many kill insults. You can also rewrite the scripts. Your team need not say the same thing as the id teams said or use the same style of speaking. Just remember that the text portion of the message will display on screen, so having it match the audio is always a good thing. And remember that in game, shorter speeches are better and cheaper. </p>
+        <p>The file path is as follows: sound\voices\newmodel\soundname.wav </p>
+        <p>You may include additional voices but these are the ones currently the phrases accessed by the game. </p>
+        <p>As with any script, these are lines of game code. Take care to maintain the proper syntax, otherwise, you are likely to either disable the file or even crash the game. </p>
+        <p>To create new voice recordings use a sound editing program that can produce a .wav format file that conforms to the following: Mono 22k 16bit</p>
+        <p>(This is taken from the male5 voice file. Substitute the name of your model for male5 in the file pathnames). </p>
+        <p><b>Filename: Voicename.voice</b> </p>
+        <pre>
+//voice file starts here
+
+getflag
+{
+        sound/voices/male5/or_01.wav   &quot;Get the flag&quot;
+        sound/voices/male5/or_02.wav   &quot;Secure the flag&quot;
+}
+
+offense
+{
+        sound/voices/male5/or_03.wav   &quot;You're on offense&quot;
+}
+
+defend
+{
+        sound/voices/male5/or_04.wav   &quot;Stay Home&quot;
+        sound/voices/male5/or_05.wav   &quot;Guard the base&quot;
+        sound/voices/male5/or_07.wav   &quot;You're on defense&quot;
+}
+
+defendflag
+{
+        sound/voices/male5/or_06.wav   &quot;Guard our flag&quot;
+}
+
+patrol
+{
+        sound/voices/male5/or_08.wav   &quot;Patrol&quot;
+        sound/voices/male5/or_09.wav   &quot;Take point&quot;
+        sound/voices/male5/or_10.wav   &quot;Go on patrol&quot;
+}
+
+followme
+{
+        sound/voices/male5/or_11.wav   &quot;Follow me&quot;
+        sound/voices/male5/or_12.wav   &quot;Cover me&quot;
+        sound/voices/male5/or_13.wav   &quot;Watch my back&quot;
+}
+
+yes
+{
+        sound/voices/male5/re_01.wav   &quot;Yessir&quot;
+        sound/voices/male5/re_02.wav   &quot;Yes ma'am&quot;
+        sound/voices/male5/re_03.wav   &quot;Aye, aye, sir&quot;
+        sound/voices/male5/re_04.wav   &quot;Aye, aye, ma'am&quot;
+        sound/voices/male5/re_05.wav   &quot;Affirmative&quot;
+        sound/voices/male5/re_06.wav   &quot;Copy&quot;
+        sound/voices/male5/re_07.wav   &quot;Roger&quot;
+}
+
+no
+{
+        sound/voices/male5/re_08.wav   &quot;No sir&quot;
+        sound/voices/male5/re_09.wav   &quot;No ma'am&quot;
+        sound/voices/male5/re_10.wav   &quot;Negative&quot;
+        sound/voices/male5/re_11.wav   &quot;I'm busy&quot;
+}
+
+ihaveflag
+{
+        sound/voices/male5/gs_01.wav   &quot;I'm coming in hot!&quot;
+        sound/voices/male5/gs_02.wav   &quot;I've secured the flag!&quot;
+        sound/voices/male5/gs_03.wav   &quot;I've got the flag!&quot;
+        sound/voices/male5/gs_04.wav   &quot;Bringing home the bacon!&quot;
+}
+
+baseattack
+{
+        sound/voices/male5/gs_05.wav   &quot;We're taking enemy fire!&quot;
+        sound/voices/male5/gs_06.wav   &quot;Security breach!&quot;
+        sound/voices/male5/gs_07.wav   &quot;Our base is under attack.&quot;
+}
+
+enemyhasflag
+{
+        sound/voices/male5/gs_08.wav   &quot;Our flag is gone!&quot;
+        sound/voices/male5/gs_09.wav   &quot;They've got our flag!&quot;
+        sound/voices/male5/gs_10.wav   &quot;Enemy has secured our flag!&quot;
+}
+
+ongetflag
+{
+        sound/voices/male5/ps_03.wav   &quot;Getting the flag...&quot;
+}
+
+onoffense
+{
+        sound/voices/male5/ps_01.wav   &quot;I'm taking offense&quot;
+        sound/voices/male5/ps_02.wav   &quot;I'm going in...&quot;
+}
+
+ondefense
+{
+        sound/voices/male5/ps_04.wav   &quot;I'll stay home&quot;
+        sound/voices/male5/ps_05.wav   &quot;Securing base&quot;
+        sound/voices/male5/ps_06.wav   &quot;Guarding the base now&quot;
+}
+
+onpatrol
+{
+        sound/voices/male5/ps_07.wav   &quot;On patrol...&quot;
+        sound/voices/male5/ps_08.wav   &quot;Patroling...&quot;
+        sound/voices/male5/ps_09.wav   &quot;I'll take point&quot;
+}
+
+startleader
+{
+        sound/voices/male5/ps_10.wav   &quot;I'm the leader&quot;
+        sound/voices/male5/ps_11.wav   &quot;I'm in charge&quot;
+}
+
+stopleader
+{
+        sound/voices/male5/ps_12.wav   &quot;I don't want to lead&quot;
+        sound/voices/male5/ps_13.wav   &quot;Someone else lead&quot;
+        sound/voices/male5/ps_14.wav   &quot;I resign&quot;
+}
+
+kill_insult
+{
+        sound/voices/male5/tt_06.wav   &quot;Next time don't get up&quot;
+        sound/voices/male5/tt_05.wav   &quot;You're just a waste of space&quot;
+        sound/voices/male2/tt_07.wav   &quot;Are you blind?&quot;
+        sound/voices/male5/tt_13.wav   &quot;Duck next time&quot;
+        sound/voices/male5/tt_19.wav   &quot;Suh-weeet!&quot;
+        sound/voices/male5/tt_20.wav   &quot;Woo-Hoo!&quot;
+        sound/voices/male5/tt_22.wav   &quot;You just got schooled!&quot;
+//      sound/voices/male5/tt_16.wav   &quot;You talkin' ta ME?&quot;
+}
+
+taunt {
+        sound/voices/male5/tt_18.wav   &quot;How about some competition here?&quot;
+        sound/voices/male5/tt_01.wav   &quot;FRAGbait!&quot;    
+        sound/voices/male5/tt_11.wav   &quot;My momma shoots better!&quot;
+        sound/voices/male5/tt_14.wav   &quot;Try hitting that barn over there!&quot;
+        sound/voices/male5/tt_17.wav   &quot;Wanna BUY a shot?&quot;
+//      sound/voices/male5/tt_03.wav   &quot;Get a clue moron!&quot;
+//      sound/voices/male5/tt_09.wav   &quot;MORON!&quot;
+//      sound/voices/male5/tt_02.wav   &quot;You're such a Loser!&quot;
+//      sound/voices/male5/tt_08.wav   &quot;LOSER!&quot;
+//      sound/voices/male5/tt_10.wav   &quot;No-skill idiot!&quot;
+//      sound/voices/male5/tt_12.wav   &quot;Watched that all the way...&quot;
+}
+
+death_insult {
+        sound/voices/male5/tt_15.wav   &quot;Thank you sir.. may I have another!&quot;
+        sound/voices/male5/tt_23.wav   &quot;Bite me!&quot;
+        sound/voices/male5/tt_25.wav   &quot;Cheap shot!&quot;
+        sound/voices/male5/tt_26.wav   &quot;DOH&quot;
+        sound/voices/male5/tt_28.wav   &quot;Lucky shot!&quot;
+        sound/voices/male5/tt_29.wav   &quot;That's it!&quot;
+        sound/voices/male5/tt_30.wav   &quot;Ooh! That's it!&quot;
+//      sound/voices/male5/tt_35.wav   &quot;Hey, dumbass&quot;
+//      sound/voices/male5/tt_04.wav   &quot;What an ass!&quot;
+//      sound/voices/male5/tt_24.wav   &quot;Screw you!&quot;
+}
+
+kill_gauntlet {
+        sound/voices/male5/tt_21.wav   &quot;Eat gauntlet baby!&quot;
+}
+
+praise {
+        sound/voices/male5/tt_27.wav   &quot;Nice!&quot;
+}
+
+camp                   // command someone to camp
+{
+        sound/voices/male5/voc_01.wav  &quot;Camp this position.&quot;
+        sound/voices/male5/voc_02.wav  &quot;Camp here.&quot;
+
+}
+
+returnflag                     // return our flag  (CTF only)
+{
+        sound/voices/male5/voc_03.wav  &quot;Get our flag!&quot;
+        sound/voices/male5/voc_04.wav  &quot;Return our flag!&quot;
+        sound/voices/male5/voc_05.wav  &quot;Recover our flag!&quot;
+}
+
+whoisleader                    // who is the team leader
+{
+        sound/voices/male5/voc_06.wav  &quot;Who's our leader?&quot;
+        sound/voices/male5/voc_07.wav  &quot;Who's in charge?&quot;
+        sound/voices/male5/voc_08.wav  &quot;Who leads this team?&quot;
+}
+
+followflagcarrier              // follow the flag/skull carrier (CTF, Oneflag, Harvester)
+{
+        sound/voices/male5/voc_09.wav  &quot;Follow our carrier.&quot;
+        sound/voices/male5/voc_10.wav  &quot;Stay with the carrier.&quot;
+        sound/voices/male5/voc_11.wav  &quot;Protect the carrier.&quot;
+        sound/voices/male5/voc_12.wav  &quot;Cover the carrier.&quot;
+}
+
+inposition                     // I'm in position
+{
+        sound/voices/male5/voc_13.wav  &quot;I'm in place.&quot;
+        sound/voices/male5/voc_14.wav  &quot;I'm at my post.&quot;
+        sound/voices/male5/voc_15.wav  &quot;I am in position.&quot;
+        sound/voices/male5/voc_15a.wav &quot;I am in position&quot;
+}
+
+wantondefense          // I want to be on defense
+{
+        sound/voices/male5/voc_16.wav  &quot;Let me defend.&quot;
+        sound/voices/male5/voc_17.wav  &quot;I'd rather defend.&quot;
+}
+
+wantonoffense          // I want to be on offense
+{
+        sound/voices/male5/voc_18.wav  &quot;Let me go on offense.&quot;
+        sound/voices/male5/voc_19.wav  &quot;I'd rather go on offense.&quot;
+}
+
+wantonpatrol           // I want to go on patrol
+{
+        sound/voices/male5/voc_20.wav  &quot;Let me patrol.&quot;
+        sound/voices/male5/voc_21.wav  &quot;I'd rather patrol.&quot;
+}
+
+oncamp  //I'm Camping (status)
+{
+        sound/voices/male5/voc_22.wav  &quot;I'm camping here.&quot;
+}
+
+onfollow
+{
+        sound/voices/male5/voc_23.wav  &quot;I'm following.&quot;
+        sound/voices/male5/voc_24.wav  &quot;Following!&quot;
+}
+
+onfollowcarrier
+{
+        sound/voices/male5/voc_27.wav  &quot;Guarding the carrier.&quot;
+}
+
+onreturnflag
+{
+        sound/voices/male5/voc_28.wav  &quot;Getting our flag.&quot;
+}
+
+harvest //harvester game type only
+{
+        sound/voices/male5/voc_25.wav  &quot;Go collect skulls.&quot;
+        sound/voices/male5/voc_26.wav  &quot;Harvest some skulls.&quot;
+}
+// voice file ends here
+        </pre>
+        <p><a href="#top"><b>TOP</b></a><br>
+          <br>
+<a name=appendd></a><b class="heading">Appendix D: Model Sound List</b><br>
+<i>Priority: Only required if a new body model is included in the team pak file.</i> </p>
+        <p>The following game sounds are associated with the team model. Each of the sounds listed below is a separate file. They need to be located in a directory having the same name as the body model and be nested within the sounds directory. </p>
+        <p><b>Example: </b>sounds/newmodel/Death1.wav.</p>
+        <p>If new sound files are to be created, make sure that they conform to the following wav file format: Mono 22k 16bit. </p>
+        <p>Death1.wav <br>
+Death2.wav <br>
+Death3.wav <br>
+Drown.wav <br>
+Fall1.wav <br>
+Falling1.wav <br>
+Gasp.wav <br>
+Jump1.wav <br>
+Pain100_1.wav <br>
+Pain25_1.wav <br>
+Pain50_1.wav <br>
+Pain75_1.wav <br>
+Taunt.wav </p>
+        <p><a href="#top"><b>TOP</b></a></p>
+        <p><a name=appende></a><b class="heading">Appendix E: .VC File Sample</b><br>
+          <i>Priority: Required for each head model</i></p>
+        <p>The vc file is a text file script that has had the file extension renamed from .txt to .vc. The script is linked to a bot name. Bot names are defined in the .bot file included in the pak file. Each bot needs to have a .vc file. It's best, if at all possible, to have the model name (or model/skin combination) and the bot name be the same. The very brief contents are simply a path to a voice file. The selected voice file can be either one of the original Team Arena voices or an original voice included with the team. When creating the voice file for a re-skinned head model, be sure to include the head name in the path to the voice script. That script must also be nested a layer deeper in the directory, such as: scripts/callisto/lily.vc.</p>
+        <p>The contents of a sample .vc file are shown below.</p>
+        <pre>        //VC script begins here</pre>
+        <pre>scripts/newcharacter.voice</pre>
+        <pre>           //VC script ends here</pre>
+        <p><a href="#top"><b>TOP</b></a></p>
+        <p><a name=appendf></a><b class="heading">Appendix F: Sample Team Arena Animation.Cfg File and New Animation Commands</b><br>
+          <i>Priority: Required only if a new model is included.</i></p>
+        <p>The animation.cfg file is a text file that has had the file extension renamed from .txt to .cfg. This file goes in the directory with the body model components (model\players \new_model\ -- or -- model\players\characters\new_model\). The specifics of using or modifying the contents of this file are a part of the model making process and are mostly outside the focus of this document. </p>
+        <p>It is included in this document because the Team Arena animation configuration is different from the Quake 3 Arena Configuration. Furthermore it contains the "sex" key that determines the gender/sex of a character (as does the Q3A animation.cfg). This key/value pair determines which pronouns (masculine, feminine, or neuter) are used when the game generates messages about the player. </p>
+        <p>Additionally, two new animation commands (for both Q3A and Q3:TA) are shown here. These were done at the request of modelers doing non-traditional biped models. When put in the animation.cfg file, they literally stop the model from responding to the programmatic animations for those body parts. If you freeze the legs, the hips don't tilt during running animation. If the model's legs were too much outside of bipedal norms (as is the case for quadrupeds), the front or back legs would disappear into the ground as the leg models programmatically tilted around the model's pelvis. If you freeze the torso, you don't get waist twists or bends. Depending on what you are making, you may want to use one, but not the other. </p>
+        <p><b>Fixedlegs</b><b> : </b>put in the animation .cfg this command freezes programmatic rotation of the legs </p>
+        <p><b>Fixedtorso</b><b> :</b> when put in the animation .cfg this command freezes programmatic rotation of the torso </p>
+        <p>These commands are commented out in the sample below. </p>
+        <pre>
+		// animation.config file begins here
+        sex     m      // THIS VALUE  (m, f, n) DETERMINES GENDER OF MODEL
+        //fixedlegs  // PREVENTS PROGRAMMATIC ROTATION OF LEGS
+        //fixedtorso // PREVENTS PROGRAMMATIC ROTATION OF TORSO
+        headoffset -3 0 0
+        footsteps boot
+        
+        
+        
+        // first frame, num frames, looping frames, frames per second
+        0       30      0       20             // BOTH_DEATH1
+        29      1       0       20             // BOTH_DEAD1
+        30      30      0       20             // BOTH_DEATH2
+        59      1       0       20             // BOTH_DEAD2
+        60      30      0       20             // BOTH_DEATH3
+        89      1       0       20             // BOTH_DEAD3
+        
+        90      26      0       20             // TORSO_GESTURE
+        
+        116     6       0       15             // TORSO_ATTACK        (MUST NOT CHANGE -- hand animation is synced to this)
+        122     6       0       15             // TORSO_ATTACK2       (MUST NOT CHANGE -- hand animation is synced to this)
+        
+        128     5       0       20             // TORSO_DROP          (MUST NOT CHANGE -- hand animation is synced to this)
+        133     4       0       20             // TORSO_RAISE         (MUST NOT CHANGE -- hand animation is synced to this)
+        
+        137     1       0       15             // TORSO_STAND
+        138     1       0       15             // TORSO_STAND2
+        
+        199     8       8       20             // LEGS_WALKCR
+        207     12      12      20             // LEGS_WALK
+        219     10      10      20             // LEGS_RUN
+        229     10      10      20             // LEGS_BACK
+        239     10      10      15             // LEGS_SWIM
+        
+        249     7       0       15             // LEGS_JUMP
+        256     9       0       15             // LEGS_LAND
+        265     9       0       15             // LEGS_JUMPB
+        274     6       0       15             // LEGS_LANDB
+        280     15      15      15             // LEGS_IDLE
+        295     11      11      15             // LEGS_IDLECR
+        307     9       9       15             // LEGS_TURN
+        
+        139     10      0       15             // TORSO_GETFLAG    //TA Gesture
+        149     10      0       15             // TORSO_GUARDBASE   //TA Gesture
+        159     10      0       15             // TORSO_PATROL   //TA Gesture
+        169     10      0       15             // TORSO_FOLLOWME   //TA Gesture
+        179     10      0       15             // TORSO_AFFIRMATIVE   //TA Gesture
+        189     10      0       15             // TORSO_NEGATIVE   //TA Gesture
+        
+        // animation.config file ends here
+		</pre>
+        <p><a href="#top"><b>TOP</b></a></p>
+        <p><a name=appendg></a><b class="heading">Appendix G: Teamname.shader</b><br>
+          <i>Priority: Required for team icons to work in the game</i> </p>
+        <p>This is a text file script with the file extension renamed from .txt to ..shader. </p>
+        <pre>
+//Teamname.shader begins here
+team_icon/Kreechurs_red
+{              
+        cull none
+        surfaceparm nolightmap
+        surfaceparm trans
+        surfaceparm nomarks
+        {
+               map team_icon/Kreechurs_red.tga
+               blendFunc Add
+               rgbgen wave triangle 0.2 0.5 0 0.2           
+        }
+}
+
+team_icon/Kreechurs_blue
+{              
+        cull none
+        surfaceparm nolightmap
+        surfaceparm trans
+        surfaceparm nomarks
+        {
+               map team_icon/Kreechurs_blue.tga
+               blendFunc Add
+               rgbgen wave triangle 0.2 0.5 0 0.2       
+        }
+}
+//Teamname.shader ends here
+		</pre>
+        <p><a href="#top"><b>TOP</b></a></p>
+        <p><a name=appendh></a><b class="heading">Appendix H: Search Order for Model and Head model Assets</b> </p>
+        <p>The means by which headmodels are used and selected was unified as much as possible between Q3A and Q3:TA code. The byproduct of this change allows players some more choices when selecting head models. The following documents the new procedures. </p>
+        <p><b>Searching for Head skins</b> <br>
+The game uses the following paths and order of search when looking for headmodel assets. The asterisk (*) is only used for head models. When the asterisk is used, the game will try to load the head model from the models/players/heads folder first. After that, it looks deeper into the directories. </p>
+        <p><b>More Variety of Head Skins</b><br>
+If the team creator so chooses, different skins can be created for each team (note that id chose to use the same head skins for each team . but that doesn't have to be the case).</p>
+        <pre>
+===================================
+Q3A/TA NON-TEAMPLAY SEARCH ORDER
+===================================
+
+-------------------------------------------------
+headmodel = *callisto/lily
+
+models/players/heads/callisto/lily/head_default.skin
+models/players/heads/callisto/head_lily.skin
+
+-------------------------------------------------
+headmodel = callisto/lily
+
+models/players/callisto/lily/head_default.skin
+models/players/callisto/head_lily.skin
+models/players/heads/callisto/lily/head_default.skin
+models/players/heads/callisto/head_lily.skin
+
+============================
+Q3A TEAMPLAY SEARCH ORDER
+============================
+-------------------------------------------------
+Example:
+team_headmodel = *callisto/lily
+team = red
+models/players/heads/callisto/lily/head_red.skin
+models/players/heads/callisto/head_red.skin
+
+-------------------------------------------------
+Example:
+team_headmodel = callisto/lily
+team = red
+
+models/players/callisto/lily/head_red.skin
+models/players/callisto/head_red.skin
+models/players/heads/callisto/lily/head_red.skin
+models/players/heads/callisto/head_red.skin
+
+===========================
+TA TEAMPLAY SEARCH ORDER
+===========================
+Example:
+team_headmodel = *callisto/lily
+team = red
+teamName = Stroggs
+
+models/players/heads/callisto/lily/Stroggs/head_red.skin
+models/players/heads/callisto/Stroggs/head_red.skin
+models/players/heads/callisto/lily/head_red.skin
+models/players/heads/callisto/head_red.skin
+
+Example:
+team_headmodel = callisto/lily
+team = red
+teamName = Stroggs
+
+models/players/callisto/lily/Stroggs/head_red.skin
+models/players/callisto/Stroggs/head_red.skin
+models/players/callisto/lily/head_red.skin
+models/players/callisto/head_red.skin
+models/players/heads/callisto/lily/Stroggs/head_red.skin
+models/players/heads/callisto/Stroggs/head_red.skin
+models/players/heads/callisto/lily/head_red.skin
+models/players/heads/callisto/head_red.skin
+		</pre>
+        <p><b class="heading">Searching for Model Skins</b> <br>
+The following list shows the order in which the game searches for model skins. When creating new skins for Team Arena or Quake 3 Arena (or related mods of either), use the following directory arrangement. </p>
+		<pre>
+===================================
+Q3A/TA NON-TEAMPLAY SEARCH ORDER
+===================================
+-------------------------------------------------
+Example:
+model = hunter/harpy
+
+
+legs:
+        models/players/hunter/lower_harpy_default.skin
+        models/players/hunter/lower_harpy.skin
+        models/players/characters/james/lower_harpy_default.skin
+        models/players/characters/james/lower_harpy.skin
+torso:
+        models/players/hunter/upper_harpy_default.skin
+        models/players/hunter/upper_harpy.skin
+        models/players/characters/hunter/upper_harpy_default.skin
+        models/players/characters/hunter/upper_harpy.skin
+
+============================
+Q3A TEAMPLAY SEARCH ORDER
+============================
+
+-------------------------------------------------
+Example:
+team_model = hunter/harpy
+team = red
+
+legs:
+        models/players/hunter/lower_harpy_red.skin
+        models/players/hunter/lower_red.skin
+        models/players/characters/hunter/lower_harpy_red.skin
+        models/players/characters/hunter/lower_red.skin
+torso:
+        models/players/hunter/upper_harpy_red.skin
+        models/players/hunter/upper_red.skin
+        models/players/characters/hunter/upper_harpy_red.skin
+        models/players/characters/hunter/upper_red.skin
+
+
+===========================
+TA TEAMPLAY SEARCH ORDER
+===========================
+
+-------------------------------------------------
+Example:
+team_model = james/badass
+team = red
+teamName = Stroggs
+
+legs:
+        models/players/james/Stroggs/lower_badass_red.skin
+        models/players/james/Stroggs/lower_red.skin
+        models/players/james/lower_badass_red.skin
+        models/players/james/lower_red.skin
+        models/players/characters/james/Stroggs/lower_badass_red.skin
+        models/players/characters/james/Stroggs/lower_red.skin
+        models/players/characters/james/lower_badass_red.skin
+        models/players/characters/james/lower_red.skin
+torso:
+        models/players/james/Stroggs/upper_badass_red.skin
+        models/players/james/Stroggs/upper_red.skin
+        models/players/james/upper_badass_red.skin
+        models/players/james/upper_red.skin
+        models/players/characters/james/Stroggs/upper_badass_red.skin
+        models/players/characters/james/Stroggs/upper_red.skin
+        models/players/characters/james/upper_badass_red.skin
+        models/players/characters/james/upper_red.skin
+		</pre>
+        <p><a href="#top"><b>TOP</b></a></p>
+        <p><a name=appendi></a><b class="heading">Appendix I: Expanded Team Skin Functionality for Q3A</b> </p>
+        <p>Technically speaking, the following information has nothing to do with Team Arena teams, but this document is just as good a place for this information to reside as any. </p>
+        <p>At the request of several modelers who worked with the modeling and skin making forums and archives at <a
+  href="http://www.polycount.com" target="_blank">Polycount</a>, we changed the way that Quake III Arena (not just Team Arena) handles skin replacement in team games. Originally, if a skinner made a new skin for a Q3A model AND made team color versions of that skin, the game would not automatically use the team version. Instead, it would display the id default red or blue skin. To see a new team skin in the game, the skinner literally had to remove the default skins and replace them with the new versions. </p>
+        <p>With version 1.28 of the game code, we've been able to get that changed. The file format that we used is the one requested by the skinners themselves. However, because of the way searches for head skins now work, pre-existing Q3A files are not going to work correctly. They need to have one, renamed skin file added for the proper head skins to appear in the game. </p>
+        <p>When a properly set-up user-created skin for a model is accompanied by matching team color skins, the game will now use them instead of the default team skin for that model. </p>
+        <p>The example below shows the assets that must be in the pakfile for the Blue version of a skin named Hellion that uses the id-created Crash model. </p>
+        <pre>
+ Hellion_blue.tga                          models\players\crash\
+ Hellion_blue_f.tga                       models\players\crash\
+ Hellion_blue_t.tga                       models\players\crash\
+ Head_Hellion_blue.skin              models\players\crash\
+ Icon_Hellion_blue.tga                 models\players\crash\
+ Lower_Hellion_blue.skin            models\players\crash\
+ Upper_Hellion_blue.skin            models\players\crash\
+ Head_blue.skin                            models\players\crash\Hellion\
+        </pre>
+        <p>The last file is the key to making it work . a skin file with the same contents as Head_Hellion_blue.skin, only renamed Head_blue.skin and placed one layer deeper in the Hellion directory. Note that BOTH head_hellion_blue.skin in the crash directory and head_blue.skin in the crash/Hellion directory are necessary for the model to work properly. </p>
+        <p>To see a working example of a properly set up Q3A skin, look for Hades Orphan, the revised version (h20.pk3), by Camilla "milla" Bennett for the Crash model. </p>
+        <p><a href="#top"><b>TOP</b></a></p>
+        <p><a name=appendj></a><b class="heading">Appendix J: Contents of the tm_kreechurs.pk3</b> </p>
+        <p>The following list is taken directly from the contents of the pak file contain the BoB model and the Kreechurs team information. Use this as a reference when creating your own team pak files. </p>
+        <pre>
+tm_kreechurs.pk3
+Name    Modified       Size    Ratio   Packed  Path
+kreechurs.team  5/9/2001 12:01 PM      1,968   61%     770
+kreechurs_readme.txt   5/9/2001       3,162   59%     1,286   
+animation.cfg  5/161/2001 4:32 PM     1,173   59%     478         models\players\characters\BoB\
+default_flame1.jpg     513/2000 7:19 PM       5,972   10%     5,385        models\players\characters\BoB\
+default_flame2.jpg     51312000 7:19 PM       5,984   10%     5,359        models\players\characters\BoB\
+default_flame3.jpg     5/3/2000 7:20 PM       5,623   11%     5,014        models\players\characters\BoB\
+default_flame4.jpg     51312000 7:20 PM       5,284   12%     4,658        models\players\characters\BoB\
+default_flame5.jpg     513/2000 7:21 PM       5,231   10%     4,691         models\players\characters\BoB\
+default_flame6.jpg     5/3/2000 7:21 PM       5,318   11%     4,735         models\players\characters\BoB\
+qefault_flame7.jpg     5/3/2000 7:21 PM       5,807   11%     5,197         models\players\characters\BoB\
+default_flame8.jpg     5/3/2000 7:22 PM       6,114   10%     5,510         models\players\characters\BoB\
+default_flameball.jpg  5/3/2000 7:22 PM       3,010   26%     2,216         models\players\characters\BoB\
+defaultjets.tga        611412000 2:55 AM      49,196  37%     31,075         models\players\characters\BoB\
+icon_blue.tga  6/13/2000 8:15 PM      16,402  58%     6,845         models\players\characters\BoB\
+icon_red.tga   6/13/2000 8:15 PM      16,402  61%     6,327         models\players\characters\BoB\
+lower.md3      3/3/2001 12:11 PM      593,972        33%     398,956         models\players\characters\BoB\
+lower_1.md3    3/3/2001 12:11 PM      593,972 33%     398,956         models\players\characters\BoB\
+lower_2.md3    3/3/2001 12.11 PM      593,972        33%     398,956         models\players\characters\BoB\
+upper.md3      3/3/2001 12:11 PM      721,388        33%     483,599         models\players\characters\BoB\
+upper_1.md3    3/3/2001 12:11 PM      721,388        33%     483,599         models\players\characters\BoB\
+upper_2.md3    3/3/2001 12:11 PM      721,388        33%     483,599         models\players\characters\BoB\
+icon_default.tga       6/13/2000 8:15 PM      16,402  61%     6,328         models\players\ characters\BoB\
+blue.tga       10/23/2000 7: 17 PM    196,626        41%     115,756         models\players\characters\BoB\kreechurs\
+lower_blue.skin        4/6/2001 11 :20 AM     203     52%     98         models\players\characters\BoB\kreechurs\
+lower_default.skin     4/6/200 111:25AM       204     50%     102         models\players\characters\BoB\kreechurs\
+lower_red.skin  4/6/2001 11:20AM       204     50%     102         models\players\characters\BoB\kreechurs\
+red.tga        10/23/2000 7:17 PM     196,626        43%     111,607         models\players\characters\BoB\kreechurs\
+upper_blue.skin        41612001 11:20AM       281     58%     118         models\players\characters\BoB\kreechurs\
+upper_default.skin     416/2001 11:25AM       282     58%     119         models\players\characters\BoB\kreechurs\
+upper_red.skin  4/6/2001 11 :20 AM     282     58%     119         models\players\characters\BoB\kreechurs\
+blue_h.tga     6/14/2000 10:26 AM     196,652        56%     86,873         models\players\heads\Kreecha\
+default_fc.tga  5/29/2000 10:07 AM     3,090   90%     323         models\players\heads\Kreecha\
+default_visor.tga      10/23/2000 7:57 PM     196,626        96%     7,656         models\players\heads\Kreecha\
+Kreecha.md3    3/3/2001 12:12 PM      5,868   46%     3,171         models\players\heads\Kreecha\
+Kreecha_1.md3  3/3/2001 12:12 PM      5,868   46%     3,171         models\players\heads\Kreecha\
+Kreecha_2.md3  3/3/2001 12:12 PM      5,868   46%     3,171         models\players\heads\Kreecha\
+head_blue.skin  3/12/2001 4:58 PM      56      7%      52         models\players\heads\Kreecha\
+head_default.skin      3/1212001 4:57 PM      53      8%      49         models\players\heads\Kreecha\
+head_red.skin  3/12/2001 4:58 PM      55      7%      51         models\players\heads\Kreecha\
+icon_blue.tga  6/13/2000 8:15 PM      16,402  58%     6,846        models\players\heads\Kreecha\
+icon_default.tga       6/13/2000 8:15 PM      16,402  61%     6,328         models\players\heads\Kreecha\
+icon_red.tga   6/1312000 8.15 PM      16,402  61%     6,328         models\players\heads\Kreecha\
+red_h.tga      3112/2001 6:06 PM      196,626        66%     66,666         models\players\heads\Kreecha\
+BoB.shader     3/12/2001 5:49 PM      2,912   89%     308     scripts\
+kreechurs.bot  5/9/2001 11 :43 AM     405     70%     123     scripts\
+kreechurs.shader       4/6/2001 3:05 PM       500     67%     163     scripts\
+Kreecha.vc     5/2/2001 5:53 PM       21      0%      21      scripts\
+Infinite.vc    4/9/2001 11: 18 AM     24      0%      24      scripts\
+Prime.vc       4/9/2001 11: 18 AM     24      0%      24      scripts\
+Vader.vc       4/9/2001 11: 18 AM     24      0%      24      scripts\
+death1.wav     2/23/2000 9:20 AM      16,720  47%     8,900   sound\player\BoB\
+death2.wav     5/7/2000 5:46 PM       18,496  17%     15,356  sound\player\BoB\
+death3.wav     5/7/2000 5:46 PM       18,496  17%     15,356  sound\player\BoB\
+fall1.wav      5/9/2000 6:40 AM       13,944  62%     5,327   sound\player\BoB\
+falling1.wav   5/7/2000 5:22 PM       40,722  26%     30,585  sound\player\BoB\
+gasp.wav       5/7/2000 5:15 PM       55,230  4%      53,293  sound\player\BoB\
+jump1.wav      5/7/20009:26 PM 47,778   8%     44,070  sound\player\BoB\
+pain100_1.wav  5/7/20005:33PM 6,894    29%    4,880   sound\player\BoB\
+pain25_1.wav   5/7/20005:34 PM 9,832    26%    7,248   sound\player\BoB\
+pain50_1.wav   5/7/20005:33 PM 6,444    22%    5,007   sound\player\BoB\
+pain75_1.wav   5/7/20005:33 PM 9,512    26%    6,997   sound\player\BoB\
+taunt.wav      3/3/2001 12:17 PM      163,874  11%    146,434 sound\player\BoB\
+gs_01.wav      10/20/20005:05 PM      51,304   10%    46,296  sound\voices\BoB\
+gs_02.wav      10/20/20005:05 PM      69,704   10%    62,811  sound\voices\BoB\
+gs_03.wav      10/20/20005:05 PM      53,394   8%     49,195  sound\voices\BoB\
+gs_04.wav      10/20/20005:05 PM      48,802   3%     47,157  sound\voices\BoB\
+gs_05.wav      10/20/20005:05 PM      62,170   4%     59,614  sound\voices\BoB\
+gs_06.wav      10/20/2000 5:05 PM     53,622   5%     51,075  sound\voices\BoB\
+gs_07 .wav     10/20/2000 5:05 PM     67,756   10%    60,889  sound\voices\BoB\
+gs_08.wav      10/20/2000 5:05 PM     61,458   4%     59,265  sound\voices\BoB\
+gs_09.wav      10/20/2000 5:05 PM     60,042   6%     56,640  sound\voices\BoB\
+gs_10.wav      10/20/2000 5:05 PM     82,526   4%     79,337  sound\voices\BoB\
+or_01.wav      10/20/2000 5.05 PM     46,892   8%     42,990  sound\voices\BoB\
+or_02.wav      10/20/2000 5:05 PM     63,152   10%    56,946  sound\voices\BoB\
+or_03.wav      10/20/2000 5:05 PM     54,714   6%     51,246  sound\voices\BoB\
+or_04.wav      10/20/2000 5:05 PM     43,640   4%     41,815  sound\voices\BoB\
+or_05.wav      10/20/2000 5:05 PM     56,694   6%     53,172  sound\voices\BoB\
+or_06.wav      10/20/2000 5:05 PM     44,248   6%     41,468  sound\voices\BoB\
+or_07.wav      10/20/2000 5:05 PM     57,616   4%     55,043  sound\voices\BoB\
+or_08.wav      10/20/2000 5:05 PM     22,626   5%     21,538  sound\voices\BoB\
+or_09.wav      10/20/2000 5:05 PM     36,260   30%    25,528  sound\voices\BoB\
+or_10.wav      10/20/2000 5:05 PM     43,396   7%     40,432  sound\voices\BoB\
+or_11.wav      10/20/2000 5:05 PM     37,070   4%     35,592  sound\voices\BoB\
+or_12.wav      10/20/2000 5:05 PM     25,714   4%     24,796  sound\voices\BoB\
+ps_01.wav      10/20/2000 5:05 PM     58,040   4%     55,538  sound\voices\BoB\
+ps_02.wav      10/20/2000 5:05 PM     40,686   4%     39,161  sound\voices\BoB\
+ps_03.wav      10/20/2000 5:05 PM     44,870   5%     42,695  sound\voices\BoB\
+ps_04.wav      10/20/2000 5:05 PM     50,550   4%     48,465  sound\voices\BoB\
+ps_05.wav      10/20/2000 5:05 PM     64,256   9%     58,718  sound\voices\BoB\
+ps_06.wav      10/20/2000 5:05 PM     60,770   4%     58,385  sound\voices\BoB\
+ps_07.wav      10/20/2000 5:05 PM     41,604   3%     40,372  sound\voices\BoB\
+ps_08.wav      10/20/2000 5:05 PM     33,102   4%     31,860  sound\voices\BoB\
+ps_09.wav      10/20/2000 5:05 PM     43,578   14%    37,279  sound\voices\BoB\
+ps_1 0.wav     10/20/2000 5:05 PM     48,126   3%     46,467  sound\voices\BoB\
+ps_11.wav      10/20/2000 5:05 PM     52,114   7%     48,442  sound\voices\BoB\
+ps_12.wav      10/20/2000 5:05 PM     46,054   3%     44,632  sound\voices\BoB\
+ps_13.wav      10/20/2000 5:05 PM     52,026   4%     49,921  sound\voices\BoB\
+ps_14.wav      10/20/2000 5:05 PM     38,428   3%     37,165  sound\voices\BoB\
+re_01.wav      10/20/2000 5:05 PM     42,970   5%     40,707  sound\voices\BoB\
+re_02.wav      10/20/2000 5:05 PM     42,010   16%    35,118  sound\voices\BoB\
+re_03.wav      10/20/2000 5:05 PM     44,994   4%     43,387  sound\voices\BoB\
+re_04.wav      10/20/2000 5:05 PM     26,620   3%     25,824  sound\voices\BoB\
+re_05.wav      10/20/2000 5:05 PM     31,732   4%     30,549  sound\voices\BoB\
+re_06.wav      10/20/2000 5:05 PM     20,342   5%     19,287  sound\voices\BoB\
+re_07.wav      10/20/2000 5:05 PM     23,544   4%     22,526  sound\voices\BoB\
+re_08.wav      10/20/2000 5:05 PM     38,070   3%     36,822  sound\voices\BoB\
+re_09.wav      10/20/2000 5:05 PM     33,436   4%     32,041  sound\voices\BoB\
+re_10.wav      10/20/2000 5:05 PM     29,016   7%     26,898  sound\voices\BoB\
+re_11.wav      10/20/2000 5:05 PM     31,998   3%     30,885  sound\voices\BoB\
+tt_01.wav      10/20/2000 5:05 PM     56,240   7%     52,038  sound\voices\BoB\
+tt_02.wav      10/20/2000 5:05 PM     57,144   5%     54,206  sound\voices\BoB\
+tt_03.wav      10/20/2000 5:05 PM     68,484   9%     62,426  sound\voices\BoB\
+tt_04.wav      10/20/2000 5:05 PM     55,838   5%     52,785  sound\voices\BoB\
+tt_05.wav      10/20/2000 5:05 PM     75,106   6%     70,367  sound\voices\BoB\
+tt_06.wav      10/20/2000 5:05 PM     81,630   10%    73,342  sound\voices\BoB\
+tt_07.wav      10/20/2000 5:05 PM     60,354   5%     57,333  sound\voices\BoB\
+tt_08.wav      10/20/2000 5:05 PM     56,642   5%     53,981  sound\voices\BoB\
+tt_09.wav      10/20/2000 5:05 PM     49,216   3%     47,675  sound\voices\BoB\
+tt_10.wav      10/20/2000 5:05 PM     60,656   5%     57,563  sound\voices\BoB\
+tt_11.wav      10/20/2000 5:05 PM     75,106   5%     71,690  sound\voices\BoB\
+tt_12.wav      10/20/2000 5:05 PM     90,760   6%     84,879  sound\voices\BoB\
+tt_13.wav      10/20/2000 5:05 PM     52,628   8%     48,347  sound\voices\BoB\
+tt_14.wav      10/20/2000 5:05 PM     72,848   4%     70,004  sound\voices\BoB\
+tt_15.wav      10/20/2000 5:05 PM     109 184  12%    96,020  sound\voices\BoB\
+tt_16.wav      10/20/2000 5:05 PM     48,812   3%     47,245  sound\voices\BoB\
+tt_17.wav      10/20/2000 5:05 PM     64,506   10%    57,951  sound\voices\BoB\
+tt_18.wav      10/20/2000 5:05 PM     85,018   6%     79,532  sound\voices\BoB\
+tt_19.wav      10/20/2000 5:05 PM     72,978   17%    60,260  sound\voices\BoB\
+tt_20.wav      10/20/2000 5:05 PM     73,328   6%     68,967  sound\voices\BoB\
+tt_21.wav      10/20/2000 5:05 PM     79,434   7%     74, 101 sound\voices\BoB\
+tt_22.wav      10/20/2000 5:05 PM     74,636   4%     71,397  sound\voices\BoB\
+tt_23.wav      10/20/2000 5:05 PM     37,034   18%    30,448  sound\voices\BoB\
+tt_24.wav      10/20/2000 5:05 PM     43,316   5%     41,087  sound\voices\BoB\
+tt_25.wav      10/20/2000 5:05 PM     48,376   13%    42,005  sound\voices\BoB\
+tt_26.wav      10/20/2000 5:05 PM     35,464   8%     32,716  sound\voices\BoB\
+tt_27.wav      10/20/2000 5:05 PM     38,430   6%     35,995  sound\voices\BoB\
+tt_28.wav      10/20/2000 5:05 PM     40,698   13%    35,580  sound\voices\BoB\
+tt_29.wav      10/20/2000 5:05 PM     36,074   17%    29,767  sound\voices\BoB\
+tt_30.wav      10/20/2000 5:05 PM     83,012   5%     79,167  sound\voices\BoB\
+tt_31.wav      10/20/2000 5:05PM      55,530   14%    47,706  sound\voices\BoB\
+tt_32.wav      10/20/2000 5:05 PM     52,040   15%    44,369  sound\vojces\BoB\
+tt_33.wav      10/20/2000 5:05 PM     96,360   10%    86,316  sound\voices\BoB\
+tt_34.wav      10/20/2000 5:05 PM     100,896  5%     96,263  sound\voices\BoB\
+tt_35.wav      10/20/2000 5:05 PM     104,038  10%    93,172  sound\voices\BoB\
+tt_36.wav      10/20/2000 5:05 PM     34,940   4%     33,701  sound\voices\BoB\
+tt_37.wav      10/20/2000 5:05 PM     81,704   12%    71,904  sound\voices\BoB\
+tt_38.wav      10/20/2000 5:05 PM     58,670   19%    47,593  sound\voices\BoB\
+tt_39.wav      10/20/2000 5:05 PM     57,012   4%     54,683  sound\voices\BoB\
+tt_40.wav      10/20/2000 5:05 PM     94,790   5%     90,171  sound\voices\BoB\
+tt_41.wav      10/20/2000 5:05 PM     89,030   7%     82,981  sound\voices\BoB\
+tt_42.wav      10/20/2000 5:05 PM     76,556   14%    65,952  sound\voices\BoB\
+tt_43.wav      10/20/2000 5:05 PM     67,744   10%    60,694  sound\voices\BoB\
+tt_44.wav      10/20/2000 5:05 PM     44,188   20%    35,183  sound\voices\BoB\
+voc_01.wav     10/20/2000 5:05 PM     51,640   12%    45,423  sound\voices\BoB\
+voc_02.wav     10/20/2000 5:05 PM     37,916   12%    33,258  sound\voices\BoB\
+voc_03.wav     10/20/2000 5:05 PM     40,364   9%     36,548  sound\voices\BoB\
+voc_04.wav     10/20/2000 5:05 PM     60,412   4%     57,815  sound\voices\BoB\
+voc_05.wav     10/20/2000 5:05 PM     56,172   6%     52,986  sound\voices\BoB\
+voc_06.wav     10/20/2000 5:05 PM     41,284   3%     39,918  sound\voices\BoB\
+voc_07.wav     10/20/2000 5:05 PM     49,442   9%     45,003  sound\voices\BoB\
+voc_08.wav     10/20/2000 5:05 PM     61,656   5%     58,449  sound\voices\BoB\
+voc_09.wav     10/20/2000 5:05 PM     44,306   7%     41,295  sound\voices\BoB\
+voc_10.wav     10/20/2000 5:05 PM     58,298   9%     52,997  sound\voices\BoB\
+voc_11.wav     10/20/2000 5:05 PM     55,050   18%    45,254  sound\voices\BoB\
+voc_12.wav     10/20/2000 5:05 PM     40,614   9%     37,135  sound\voices\BoB\
+voc_13.wav     10/20/2000 5:05 PM     43,068   4%     41,307  sound\voices\BoB\
+voc_14.wav     10/20/2000 5:05 PM     45,512   9%     41,619  sound\voices\BoB\
+voc_15.wav     10/20/2000 5:05 PM     47,532   3%     45,886  sound\voices\BoB\
+voc_16.wav     10/20/2000 5:05 PM     40,756   3%     39,412  sound\voices\BoB\
+yoc_17.wav     10/20/2000 5:05 PM     52,070   7%     48,546  sound\voices\BoB\
+voc_18.wav     10/20/2000 5:05 PM     55,394   6%     51,854  sound\voices\BoB\
+voc_19.wav     10/20/2000 5:05 PM     74,718   8%     68,688  sound\voices\BoB\
+voc_20.wav     10/20/2000 5:05 PM     47,504   10%    42,821  sound\voices\BoB\
+voc_21.wav     10/20/2000 5:05 PM     52,034   7%     48,188  sound\voices\BoB\
+voc_22.wav     10/20/2000 5:05 PM     36,558   10%    32,925  sound\voices\BoB\
+voc_23.wav     10/20/2000 5:05 PM     35,880   4%     34,606  sound\voices\BoB\
+voc_24.wav     10/20/2000 5:05 PM     28,234   4%     27,227  sound\voices\BoB\
+voc_25.wav     10/20/2000 5:05 PM     50,004   14%    42,898  sound\voices\BoB\
+voc_26.wav     10/20/2000 5:05 PM     62,516   10%    56,117  sound\voices\BoB\
+voc_27.wav     10/23/2000 3:01 PM     49,444   5%     46,934  sound\voices\BoB\
+voc_28.wav     10/23/2000 3:05 PM     54,600   6%     51,556  sound\voices\BoB\
+Kreechurs.tga  4/6/2001 1 :08 PM      65,580   99%    873     team_icon\
+Kreechurs_blue.tga     4/6/2001 1 :09 PM      65,580   98%    1,030   team_icon\
+Kreechurs_red.tga      4/6/2001 1 :09 PM      65,580   98%    1,016   team_icon\
+Kreechurs.roq  5/09/2001 5:45 PM      1,078,120      9%      976,146 ui\assets\
+Kreechurs.tga  3/2/2001 11 :57 AM     65,580   99%    873     ui\assets\
+Kreechurs_metal.tga    3/2/2001 10:58 AM      65,580   74%    16,883  ui\assets\
+Kreechurs_name.tga     3/2/200111:16AM 131,116  91%    11,640  ui\assets\
+Kreechurs_name_alt.tga         3/2/200111:05AM 131,116  97%    3,870   ui\assets\
+
+188 file(s)            12,590,550      25%    9,496,872
+</pre>
+        <p><a href="#top"><b>TOP</b></a></p>
+        <p><a name=appendk></a><b class="heading">Appendix K: A Minimal Team</b></p>
+        <p>The following list is the minimum number of files needed to make a new team and assumes that the team creator is using both the Janet and James models (the models shipped with Quake III: Team Arena) and the pre-existing heads that work with those models. Note that no sound or voice files are necessary. No head files are necessary. When adding new heads, refer to the Kreecha head in Appendix J. When reskinning previously created heads, refer to the Callisto/Lily head in Appendix J. Use this list as a reference when creating your own team pak files. </p>
+        <pre>
+tm_kreechurs.pk3
+Name    Modified       Size    Ratio   Packed  Path
+kreechurs.team  5/9/2001 12:01 PM      1,968   61%     770
+kreechurs_readme.txt   5/9/2001       3,162   59%     1,286   
+blue.tga       10/23/2000 7: 17 PM    196,626        41%     115,756         models\players\James\kreechurs\
+lower_blue.skin        4/6/2001 11 :20 AM     203     52%     98         models\players\James\kreechurs\
+lower_default.skin     4/6/200 111:25AM       204     50%     102         models\players\James\kreechurs\
+lower_red.skin  4/6/2001 11:20AM       204     50%     102         models\players\James\kreechurs\
+red.tga        10/23/2000 7:17 PM     196,626        43%     111,607         models\players\James\kreechurs\
+upper_blue.skin        41612001 11:20AM       281     58%     118         models\players\James\kreechurs\
+upper_default.skin     416/2001 11:25AM       282     58%     119         models\players\James\kreechurs\
+upper_red.skin  4/6/2001 11 :20 AM     282     58%     119         models\players\James\kreechurs\
+blue.tga       10/23/2000 7: 17 PM    196,626        41%     115,756         models\players\Janet\kreechurs\
+lower_blue.skin        4/6/2001 11 :20 AM     203     52%     98         models\players\Janet\kreechurs\
+lower_default.skin     4/6/200 111:25AM       204     50%     102         models\players\Janet\kreechurs\
+lower_red.skin  4/6/2001 11:20AM       204     50%     102         models\players\Janet\kreechurs\
+red.tga        10/23/2000 7:17 PM     196,626        43%     111,607         models\players\Janet\kreechurs\
+upper_blue.skin        41612001 11:20AM       281     58%     118         models\players\Janet\kreechurs\
+upper_default.skin     416/2001 11:25AM       282     58%     119         models\players\Janet\kreechurs\
+upper_red.skin  4/6/2001 11 :20 AM     282     58%     119         models\players\Janet\kreechurs\
+kreechurs.bot  5/9/2001 11 :43 AM     405     70%     123     scripts\
+kreechurs.shader       4/6/2001 3:05 PM       500     67%     163     scripts\
+kreechurs.tga  4/6/2001 1 :08 PM      65,580   99%    873     team_icon\
+kreechurs_blue.tga     4/6/2001 1 :09 PM      65,580   98%    1,030   team_icon\
+kreechurs_red.tga      4/6/2001 1 :09 PM      65,580   98%    1,016   team_icon\
+kreechurs.tga  3/2/2001 11 :57 AM     65,580   99%    873     ui\assets\
+kreechurs_metal.tga    3/2/2001 10:58 AM      65,580   74%    16,883  ui\assets\
+kreechurs_name.tga     3/2/200111:16AM 131,116  91%    11,640  ui\assets\
+kreechurs_name_alt.tga         3/2/200111:05AM 131,116  97%    3,870   ui\assets\
+
+27 file(s)             1,354,162              271,112 
+</pre>
+        <p><a href="#top"><b>TOP</b></a></p>
+        <p><a name=appendl></a><b class="heading">Appendix L: Contents of the TAhead_lily.pk3</b> </p>
+        <p>The following list is taken directly from the contents of the pak file that contains the Lily head model that is a part of the Kreechurs team. Lily is based on the Callisto head model from the original TA game (blinking female head with red or blue hair cut in a pageboy style). Use this as a reference when creating your own pak files for new character heads. </p>
+        <pre>
+TAhead_lily.pk3
+
+Name    Modified       Size    Ratio   Packed  Path
+Lily.vc        5/112001 6:56 PM       23      0%      23      scripts\Callisto\
+red_Iily.shader        4/9/20011:18 PM        557     79%     117     scripts\
+lily .shader   4/9/2001 1: 19 PM      528     78%     114      scripts\
+blue_lily.shader       5/1/20015:50 PM        566     79%     119     scripts\
+Lily_redface2.tga      4/3/200111:41 PM       16,428  32%     11,092         models\players\heads\Callisto\Lily\
+Lily_redface.tga       4/3/2001 11 :40 PM     16,428  33%     11,062         models\players\heads\Callisto\Lily\
+Lily_red.tga   4/2/2001 2:14 PM       65,580  79%     13,873         models\players\heads\Callisto\Lily\
+Lily_blueface2.tga     4/3/2001 11 :42 PM     16,428  32%     11, 182         models\players\heads\Callisto\Lily\
+Lily_blueface.tga      4/3/200111:41 PM       16,428  32%     11,174         models\players\heads\Callisto\Lily\
+LJily_blu.tga  4/10/2001 12:55 AM     65,580  33%     43,929         models\players\heads\Callisto\Lily\
+icon_red.tga   3/27/20016:15 AM       12,306  30%     8,581         models\players\heads\Callisto\Lily\
+icon_default.tga       3/27/20016:15 AM       12,306  30%     8,595         models\players\heads\Callisto\Lily\
+icon_blue.tga  3/29/2001 10:20 PM     16,428  41%     9,707         models\players\heads\Callisto\Lily\
+head_red.skin  4/17/20014:35 PM       125     44%     70         models\players\heads\Callisto\Lily\
+head_default.skin      4/17/20014:35 PM       126     41%     74         models\players\heads\Callisto\Lily\
+head_blue.skin  4/17/20014:33 PM       126     44%     71         models\players\heads\Callisto\Lily\
+
+16 file(s)             239,963        46%     129,783
+        </pre>
+        
+      <p><a href="#top"><b>TOP</b></a></p></td>
+      <td class="Normal">&nbsp;</td>
+    </tr>
+  </table>
+</div>
+</body>
+</html>

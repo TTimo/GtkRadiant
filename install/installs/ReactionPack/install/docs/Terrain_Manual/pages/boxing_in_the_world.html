@@ -1,0 +1,48 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+<meta name="ProgId" content="FrontPage.Editor.Document">
+<title>Boxing in the World</title>
+</head>
+
+<body background="../pics/background.jpg" text="#FFFFFF" link="#FFFFFF" vlink="#FFFFFF" alink="#FFFFFF">
+
+<b>
+<p align="center"><font size="5">Boxing in the World</font></p>
+<div align="right">
+  <table border="1" cellspacing="1" width="100%" bordercolor="#808080" bgcolor="#000000" cellpadding="10">
+    <tr>
+      <td width="100%"><font FACE="Times New Roman">
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; It may not need mentioning here, but … the terrain entity needs to be
+contained inside a sealed world. For the terrain maps in Q3:TA, we built huge
+boxes. Any portion of the box that could be seen while playing the game, or
+flying around in spectator mode was covered in sky texture. Any portion of the
+box that could not be seen was made out of common/caulk. If mountains or canyon
+walls surround your map, plan to bring the caulk portion of the wall up as high
+as you can. This can reduce the number of triangles seen in the map. Generally
+speaking, you will see ALL the sky triangles inside the map at all times.</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Finally, and this is a part of vis blocking, but it should also be noted
+here. Don’t forget to place large caulk structures that rise up from the
+bottom of the world box to near the ground surfaces of terrain entity. If the
+ground level rises and falls substantially, these can be a part of the vis
+blocking process. Otherwise they serve to reduce the size of the map’s total
+volume (generally speaking … a good thing).</p>
+</font>
+
+<p align="center"><a href="terrain_mesh_into_terrain_entity.html">Back</a> - <a href="table_of_contents.html">Table
+of Contents</a> - <a href="entity_keys_and_values.html">Entity Keys and Values</a></p>
+
+        <p>&nbsp;</td>
+    </tr>
+  </table>
+</div>
+</b>
+<p align="center">&nbsp;</p>
+<p align="center">&nbsp;</p>
+<p align="center">-14-</p>
+
+</body>
+
+</html>

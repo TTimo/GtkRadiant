@@ -1,0 +1,65 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+<meta name="ProgId" content="FrontPage.Editor.Document">
+<title>The Terrain Texture</title>
+</head>
+
+<body background="../pics/background.jpg" text="#FFFFFF" link="#FFFFFF" vlink="#FFFFFF" alink="#FFFFFF">
+
+<b>
+<p align="center"><font size="5">The Terrain Texture</font></p>
+<div align="right">
+  <table border="1" cellspacing="1" width="100%" bordercolor="#808080" bgcolor="#000000" cellpadding="10">
+    <tr>
+      <td width="100%"><font FACE="Times New Roman">
+<p>In Q3:TA, there are two “terrain” textures in the common shader script.
+One handles all the uses of terrain where the designer does not want “dust”
+to rise up as the player jumps onto the terrain (common/terrain). The second
+(common/terrain2) has an enable_dust surface parameter. The terrain texture
+should be applied to all visible (in game) surfaces of the terrain entity.</p>
+<p>Q3map looks for the word “terrain” in the name of the shader when
+texturing terrain entities. If a shader is used without the word
+&quot;terrain&quot; in it, and it’s not marked as nodraw, q3map will still do
+a planar projection, but using that texture. It will not blend between textures,
+however. This can be used to create hard edge texture transitions, or in cases
+where you want to apply textures manually, and aren’t concerned about
+blending.</p>
+<p>If the terrain texture is applied to a non-terrain entity brush, the surface
+will not draw. The projected terrain surface textures only work on surfaces that
+are a part of entities with the proper terrain entity keys and values.</p>
+<p>Their scripts for terrain are as follows:</p>
+</font><font FACE="Courier New">
+<p><font size="2">textures/common/terrain<br>
+{<br>
+surfaceparm nodraw<br>
+surfaceparm nomarks<br>
+surfaceparm nolightmap<br>
+}<br>
+textures/common/terrain2<br>
+{<br>
+qer_editorimage textures/common/terrain.tga<br>
+surfaceparm dust<br>
+surfaceparm nodraw<br>
+surfaceparm nomarks<br>
+surfaceparm nolightmap<br>
+}</font></p>
+</font>
+
+<p align="center"><a href="creating_the_alphamap.html">Back</a> - <a href="table_of_contents.html">Table
+of Contents</a> - <a href="blocking_vis.html">Blocking Vis</a></p>
+
+        <p>&nbsp;</td>
+    </tr>
+  </table>
+</div>
+</b>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p align="center">-17-</p>
+
+</body>
+
+</html>

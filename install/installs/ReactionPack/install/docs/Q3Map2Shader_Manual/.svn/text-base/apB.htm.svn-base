@@ -1,0 +1,131 @@
+<HTML>
+<HEAD>
+<TITLE>Q3Map2 Shader Manual: Terrain</TITLE>
+<LINK REL="stylesheet" TYPE="text/css" HREF="scripts/styles.css">
+</HEAD>
+
+<BODY MARGINWIDTH="0" MARGINHEIGHT="0" LEFTMARGIN="0" TOPMARGIN="0" LINK="#28648C" VLINK="#28648C" ALINK="#28648C">
+<FONT FACE="verdana, helvetica, arial">
+
+<TABLE WIDTH="600" CELLSPACING="0" CELLPADDING="0" BORDER="0" ALIGN="center">
+<TR>
+	<TD VALIGN="top"><FONT SIZE="2">
+
+
+<!--// HEADER START //-->
+<BR><BR>
+<FONT SIZE="3"><B>Appendix B - Terrain</B></FONT><BR>
+<HR SIZE="1">
+<FONT SIZE="1">Q3Map2 Shader Manual</FONT><BR><BR><BR>
+<!--// HEADER END //-->
+
+
+Q3Map2 terrain has changed radically since <I>Quake III: Team Arena</I> first hit the shelves. Alphamapped terrain shaders are difficult to set up, limiting and lacks the ability for the mapper to fine tune the effect. The new terrain improvements in Q3Map2 have removed these difficulties, allowing the mapper to fully exploit terrain shaders for breathtaking outdoor scenes. This section will assume that you are already familiar with the method of setting up a standard alphamapped terrain as described in the <I>Terrain Construction for Quake 3 Engine Games</I> manual by Paul Jaquays, and will focus on the new enhanced features of Q3Map2 terrain.<BR><BR>
+
+
+<!--// TITLE START //-->
+<BR><A NAME="general"></A><TABLE><TR><TD><IMG SRC="images/q3logo.jpg"></TD>
+<TD><FONT SIZE="3"><B>General Changes</B></FONT></TD></TR></TABLE><BR>
+<!--// TITLE END //-->
+
+
+Q3Map2 terrain has changed dramatically in terms of not only visually, but also in terms of how it is processed by the compiler. To ensure compatibility, there needs to be a few changes. Foremost, make sure that all terrain shader files are listed in the shaderlist.txt file.<BR><BR>
+
+Before using Q3Map2 alphamapped terrain, it must be noted that terrain is now handled completely different than before. Q3Map2 no longer looks for the word <I>terrain</I> in the shader name to determine whether or not it is an indexed shader. Instead it looks for <A HREF="ch3.htm#indexed"><I>q3map_indexed</I></A> or <A HREF="ch3.htm#terrain"><I>q3map_terrain</I></A>. For this reason, the alphamap terrain shaders have been slightly modified. If using Q3Map2 alphamaps, make sure that your "textures/common/terrain" and "textures/common/terrain2" shaders have been updated to the following:<BR><BR>
+
+
+<!--// SCRIPT START //-->
+<PRE STYLE="margin-top: 0em"><FONT FACE="verdana, helvetica, arial" SIZE="1"><I>Script: "common" terrain shaders</I><HR SIZE="1">
+textures/common/terrain
+{
+	q3map_terrain
+	surfaceparm nodraw
+	surfaceparm nolightmap
+	surfaceparm nomarks
+}
+
+textures/common/terrain2
+{
+	q3map_terrain
+	qer_editorimage textures/common/terrain.tga
+	surfaceparm dust
+	surfaceparm nodraw
+	surfaceparm nomarks
+	surfaceparm nolightmap
+}
+<HR SIZE="1"></FONT></PRE>
+<!--// SCRIPT END //-->
+
+<BR>
+
+<B>Base Shader</B><BR>
+To simplify the terrain shader writing process, a <I>base shader</I> can be used as a template with subclassed shaders referencing it. This makes use of the <A HREF="ch3.htm#baseshader"><I>q3map_baseShader</I></A> directive. The base shader can consist of all q3map_* directives and must be processed before all other terrain shaders referencing it. The use of a base shader is recommend for all terrain shaders.<BR><BR>
+
+<B>tcMod Functions</B><BR>
+<A HREF="ch3.htm#tcmod"><I>q3map_tcMod</I></A> can be used on terrain shaders to minimize any obvious texture tiling, particularly <I>q3map_tcMod rotate</I>. In some situations <I>q3map_tcMod scale</I> or the stage driven <A HREF="ch6.htm#tcmod"><I>tcMod scale</I></A> may be used to scale the textures - though typically tcGen texture projection functions are usually the preferred method.<BR><BR>
+
+<B>tcGen Functions</B><BR>
+In most situations, terrain textures will need to be projected onto the terrain mesh. This is achieved by using either <A HREF="ch3.htm#tcgen"><I>q3map_tcGen</I></A> function or the stage specific <A HREF="ch6.htm#tcgen"><I>tcGen</I></A>. Any <I>tcGen</I> functions will overwrite any <I>tcMod scale</I> functions.<BR><BR>
+
+
+<!--// TITLE START //-->
+<BR><A NAME="lightmapped"></A><TABLE><TR><TD><IMG SRC="images/q3logo.jpg"></TD>
+<TD><FONT SIZE="3"><B>Lightmapped Terrain</B></FONT></TD></TR></TABLE><BR>
+<!--// TITLE END //-->
+
+
+The foremost improvement to Q3Map2 terrain is the ability to use lightmaps as a lighting system rather than basic vertex lighting. This allows terrain to not only cast detailed shadows onto itself, but also allows other map geometry to cast shadows onto the terrain as well. The additional rendering pass of the lightmap creates a slight performance hit as a price for the improved visuals. Several new q3map_* directives are typically used to tweak the terrain lightmap:<BR><BR>
+
+<B>q3map_nonPlanar</B><BR>
+Required on all terrain shaders, <A HREF="ch3.htm#nonplanar"><I>q3map_nonPlanar</I></A> allows shadows to be cast across non-planar edges. This fixes a problem where lightmapped terrain would not light properly across uneven surfaces.<BR><BR>
+
+<B>q3map_lightmapAxis</B><BR>
+Optionally used, <A HREF="ch3.htm#lightmapaxis"><I>q3map_lightmapAxis</I></A> can be used to specify the axis in which the lightmap is projected from. This is typically used on normal triangle-quad souped terrain and is set implicitly to "<I>q3map_lightmapAxis z</I>" with <A HREF="ch3.htm#terrain"><I>q3map_terrain</I></A>. It is not recommended for terrain with caves or undersides.<BR><BR>
+
+<B>q3map_shadeAngle</B><BR>
+Most terrain artists will choose to enable triangle edge shadow smoothing to reduce the appearance of sharp shadow edges across the terrain mesh. <A HREF="ch3.htm#shadeangle"><I>q3map_shadeAngle</I></A> specifies the triangle edge angle at which the light will be diffused. For best results, it is recommended that you start with low values and tweak the angle parameter in small increments until a satisfactory result is produced. Overly high values will wash out shadow details.<BR><BR>
+
+<B>q3map_lightmapMergable</B><BR>
+Setting <A HREF="ch3.htm#lightmapmergable"><I>q3map_lightmapMergable</I></A> merges all terrain into one seamless lightmap, reducing the appearance of artifacts spanning across separate lightmap images.<BR><BR>
+
+<B>q3map_lightmapSampleSize</B><BR>
+Lightmapped terrain can be very memory intensive as Q3Map2 has to typically generate a large amount of lightmap data. <A HREF="ch3.htm#lightmapsamplesize"><I>q3map_lightmapSampleSize</I></A> can be used to reduce the amount of lightmap memory used by limiting the resolution of the lightmap images. Similarly, it can also be used to increase the lightmap resolution at the cost of memory.<BR><BR>
+
+<B>q3map_lightmapSampleOffset</B><BR>
+If experiencing lightmap splotches over the surface of terrain lightmaps, <A HREF="ch3.htm#lightmapsampleoffset"><I>q3map_lightmapSampleOffset</I></A> can be used to fix this. For best results, start with small numbers (default 1.0) and slowly increase this value until the splotches disappear. Overly high values will cause unsatisfactory results.<BR><BR>
+
+
+<!--// TITLE START //-->
+<BR><A NAME="dotproduct"></A><TABLE><TR><TD><IMG SRC="images/q3logo.jpg"></TD>
+<TD><FONT SIZE="3"><B>AlphaMod Dotproduct Terrain</B></FONT></TD></TR></TABLE><BR>
+<!--// TITLE END //-->
+
+
+AlphaMod dotproduct terrain is a revolutionary way in which Q3Map2 terrain is blended. It removes the need for an alphamap and metashader and automatically determines the blending of terrain depending on the vertex normals of the terrain mesh. Equally important, this new system removes the need of a triangle-quad grid, allowing the designer to create a terrain mesh using any triangle shape or size.<BR><BR>
+
+
+<!--// TITLE START //-->
+<BR><A NAME="volume"></A><TABLE><TR><TD><IMG SRC="images/q3logo.jpg"></TD>
+<TD><FONT SIZE="3"><B>AlphaMod Volume Terrain</B></FONT></TD></TR></TABLE><BR>
+<!--// TITLE END //-->
+
+
+Following the automatic generation of dotproduct blending, alphaMod volume terrain blending was developed to give direct control of the alpha blending back to the designer. Using this system the designer can modify the exact location and amount of blending to occur, directly from within the editor.<BR><BR>
+
+
+
+
+
+<!--// FOOTER START //-->
+<BR><BR><HR SIZE="1"><CENTER><FONT SIZE="1">
+<A HREF="apA.htm">Previous</A> | <A HREF="contents.htm">Contents</A> | <A HREF="apC.htm">Next</A>
+</FONT><BR><BR><BR>
+<!--// FOOTER END //-->
+
+
+	</FONT></TD>
+</TR>
+</TABLE>
+</FONT>
+</BODY>
+</HTML>

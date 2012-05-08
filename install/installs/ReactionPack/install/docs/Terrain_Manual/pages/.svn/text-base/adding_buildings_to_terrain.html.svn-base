@@ -1,0 +1,85 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+<meta name="ProgId" content="FrontPage.Editor.Document">
+<title>Adding Buildings to Terrain</title>
+</head>
+
+<body background="../pics/background.jpg" text="#FFFFFF" link="#FFFFFF" vlink="#FFFFFF" alink="#FFFFFF">
+
+<b><font SIZE="5">
+<p align="center">Adding Buildings to Terrain</p>
+<div align="right">
+  <table border="1" cellspacing="1" width="100%" bordercolor="#808080" bgcolor="#000000" cellpadding="10">
+    <tr>
+      <td width="100%"><font FACE="Times New Roman">
+<p>This is really best addressed as a number of semi-related building tips:</p>
+<b>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Plan Ahead.</b> If you know you want buildings
+in your map, plan their locations from the first. Very complicated buildings
+(lots of geometry and surface detail) should be isolated away from long views.
+One reason for this is to control in view polygon counts. The second (and really
+obscure one) is to reduce the amount of z-compression that will affect the
+structures.</p>
+<b>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Build to Support Game play.</b> Each of the
+structures in the Q3:TA terrain maps was built to support a game play need.
+Quite often, less is better than more.</p>
+<b>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Build Simply.</b> Simple, uncomplicated
+architecture may be best. The more complicated you make your buildings, the less
+complicated the terrain around them can be. Depends on what you want to play up.
+The busy look of many Q3A maps doesn’t translate well to large terrain.
+Details are lost at great distances and only add to the triangle complexity of
+maps containing them.</p>
+<b>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Detail Content.</b> With few exceptions ALL
+the geometry inside the terrain map is detail content, not just the terrain
+entity. The walls forming the corridor in mpterra2 may be the only non-detail
+structures in that map. Making geometry into detail makes a map far easier and
+faster to compile. If you want to block vis inside your structures, create
+simple caulk structures … much the same way as described for vis blocking the
+terrain.</p>
+<b>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Z-Compression Problems.</b> Review the the map
+in 16 bit mode during development. This brings out z-fighting issues that occur
+at long distances. This z-fighting is created by detail brushes being compressed
+into each other (The Q3A engine does a significant amount of “z compression”
+as geometry becomes farther away from the viewer). This z-compression is far
+less apparent in 32 bit modes, but we have to remember that many people turn
+down graphic features in order to simply play Q3A on their systems (not just to
+get ridiculously high frame rates).</p>
+<b>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Fit Structures to the Terrain. </b>Don’t
+just set structures on terrain and expect them to look right. Make your
+buildings look like they belong where you put them. Accommodate the rise and
+fall of terrain in your floor plans … or “dig” into the terrain brushes to
+create basements, tunnels and whatever you need. You can also adjust the height
+map to better arrange the geometry around structures, or manually tweak the
+triangles once the structures are in place. History is full of examples of
+really interesting buildings that have been built to accommodate difficult
+terrain like hills, cliffs and mountains.</p>
+<p>&nbsp;</p>
+<blockquote>
+  <blockquote>
+  </font>
+  </blockquote>
+</blockquote>
+
+<p align="center"><a href="terrain_related_worldspawn_features.html">Back</a> - <a href="table_of_contents.html">Table
+of Contents</a> - <a href="adding_bots.html">Adding Bots</a></p>
+
+        <p>&nbsp;</td>
+    </tr>
+  </table>
+</div>
+</font></b>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p align="center">-24-</p>
+
+</body>
+
+</html>

@@ -1,0 +1,42 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+<meta name="ProgId" content="FrontPage.Editor.Document">
+<title>Manipulating the Terrain Mesh</title>
+</head>
+
+<body background="../pics/background.jpg" text="#FFFFFF" link="#FFFFFF" vlink="#FFFFFF" alink="#FFFFFF">
+
+<b>
+<p align="center"><font size="5">Manipulating the Terrain Mesh</font></p>
+<div align="right">
+  <table border="1" cellspacing="1" width="100%" bgcolor="#000000" cellpadding="10">
+    <tr>
+      <td width="100%"><font FACE="Times New Roman">
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Once the terrain mesh has been generated, it’s very likely that you will
+want to fine-tune the triangles inside the editor. Do this by pulling vertexes
+up and down along the Z axis. Once you start fine-tuning in this manner, the
+height map no longer exactly represents the map.</p>
+<b>
+<p align="center"><font color="#000000"><span style="background-color: #FF0000">WARNING:</span></font></b> <font color="#000000"><span style="background-color: #FFFF00"> If you revise and convert the height map, your manipulations
+here are lost.</span></font></p>
+</font>
+
+<p align="center"><a href="suggested_gensurf_settings.html">Back</a> - <a href="table_of_contents.html">Table
+of Contents</a> - <a href="terrain_mesh_into_terrain_entity.html">Terrain Mesh
+into Terrain Entity</a></p>
+
+        <p>&nbsp;</td>
+    </tr>
+  </table>
+</div>
+</b>
+<p align="center">&nbsp;</p>
+<p align="center">&nbsp;</p>
+<p align="center">-12-</p>
+
+</body>
+
+</html>

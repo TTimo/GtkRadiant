@@ -1,0 +1,14 @@
+A:link 		{ color: #28648C; text-decoration: none; }
+A:visited	{ color: #28648C; text-decoration: none; }
+A:hover		{ color: #28648C; text-decoration: underline; }
+A:active	{ color; #28648C; text-decoration: underline; }
+
+BODY {
+	scrollbar-face-color: #CCCCCC;
+	scrollbar-3dlight-color: #CCCCCC;
+	scrollbar-highlight-color: #EEEEEE;
+	scrollbar-shadow-color: #AAAAAA;
+	scrollbar-darkshadow-color: #CCCCCC;
+	scrollbar-track-color: #EEEEEE;
+	scrollbar-arrow-color: #FFFFFF;
+}

@@ -1,0 +1,73 @@
+search orders with different settings
+
+
+=====================
+NON-TEAMPLAY
+=====================
+
+-------------------------------------------------
+model = hunter/harpy
+
+
+legs:
+	models/players/hunter/lower_harpy_default.skin
+	models/players/hunter/lower_harpy.skin
+	models/players/characters/james/lower_harpy_default.skin
+	models/players/characters/james/lower_harpy.skin
+torso:
+	models/players/hunter/upper_harpy_default.skin
+	models/players/hunter/upper_harpy.skin
+	models/players/characters/hunter/upper_harpy_default.skin
+	models/players/characters/hunter/upper_harpy.skin
+
+
+=====================
+Q3 TEAMPLAY
+=====================
+
+-------------------------------------------------
+team_model = hunter/harpy
+team = red
+
+legs:
+	models/players/hunter/lower_harpy_red.skin
+	models/players/hunter/lower_red.skin
+	models/players/characters/hunter/lower_harpy_red.skin
+	models/players/characters/hunter/lower_red.skin
+torso:
+	models/players/hunter/upper_harpy_red.skin
+	models/players/hunter/upper_red.skin
+	models/players/characters/hunter/upper_harpy_red.skin
+	models/players/characters/hunter/upper_red.skin
+
+
+=====================
+TA TEAMPLAY
+=====================
+
+-------------------------------------------------
+team_model = james/badass
+team = red
+teamName = Stroggs
+
+legs:
+	models/players/james/Stroggs/lower_badass_red.skin
+	models/players/james/Stroggs/lower_red.skin
+	models/players/james/lower_badass_red.skin
+	models/players/james/lower_red.skin
+	models/players/characters/james/Stroggs/lower_badass_red.skin
+	models/players/characters/james/Stroggs/lower_red.skin
+	models/players/characters/james/lower_badass_red.skin
+	models/players/characters/james/lower_red.skin
+torso:
+	models/players/james/Stroggs/upper_badass_red.skin
+	models/players/james/Stroggs/upper_red.skin
+	models/players/james/upper_badass_red.skin
+	models/players/james/upper_red.skin
+	models/players/characters/james/Stroggs/upper_badass_red.skin
+	models/players/characters/james/Stroggs/upper_red.skin
+	models/players/characters/james/upper_badass_red.skin
+	models/players/characters/james/upper_red.skin
+
+
+

@@ -1,0 +1,505 @@
+<HTML>
+<HEAD>
+<TITLE>Q3Map2 Shader Manual: Stage Specific Shader Keywords</TITLE>
+<LINK REL="stylesheet" TYPE="text/css" HREF="scripts/styles.css">
+</HEAD>
+
+<BODY MARGINWIDTH="0" MARGINHEIGHT="0" LEFTMARGIN="0" TOPMARGIN="0" LINK="#28648C" VLINK="#28648C" ALINK="#28648C">
+<FONT FACE="verdana, helvetica, arial">
+
+<TABLE WIDTH="600" CELLSPACING="0" CELLPADDING="0" BORDER="0" ALIGN="center">
+<TR>
+	<TD VALIGN="top"><FONT SIZE="2">
+
+
+<!--// HEADER START //-->
+<BR><BR>
+<FONT SIZE="3"><B>6 - Stage Specific Shader Keywords</B></FONT><BR>
+<HR SIZE="1">
+<FONT SIZE="1">Q3Map2 Shader Manual</FONT><BR><BR><BR>
+<!--// HEADER END //-->
+
+Stage specifications only affect rendering. Changing any keywords or values within a stage will usually take effect as soon as a vid_restart is executed. Q3Map2 ignores stage specific keywords entirely.<BR><BR>
+
+A stage can specify a texture map, a color function, an alpha function, a texture coordinate function, a blend function, and a few other rasterization options.<BR><BR>
+
+
+<!--// TITLE START //-->
+<BR><A NAME="map"></A><TABLE><TR><TD><IMG SRC="images/q3logo.jpg"></TD>
+<TD><FONT SIZE="3"><B>Texture Map Specification</B></FONT></TD></TR></TABLE><BR>
+<!--// TITLE END //-->
+
+
+<B>map <I>texturename</I></B><BR>
+Specifies the source texture map (a 24 or 32-bit TGA file) used for this stage. The texture may or may not contain alpha channel information. The special keywords <I>$lightmap</I> and <I>$whiteimage</I> may be substituted in lieu of an actual texture map name. In those cases, the texture named in the first line of the shader becomes the texture that supplies the light mapping data for the process. The texture name should always end with the ".tga" suffix regardless of whether the source texture map is actually a .tga file or .jpg.<BR><BR>
+
+<BR><B>map $lightmap</B><BR>
+This is the overall lightmap for the game world. It is calculated during the Q3Map2 process. It is the initial color data found in the framebuffer. Note: due to the use of overbright bits in light calculation, the keyword <I>rgbGen identity</I> must accompany all <I>$lightmap</I> instructions.<BR><BR>
+
+<BR><B>map $whiteimage</B><BR>
+This is used for specular lighting on MD3 models. This is a white image generated internally by the game. This image can be used in lieu of $lightmap or an actual texture map if, for example, you wish for the vertex colors to come through unaltered.<BR><BR>
+
+<BR><B>clampMap <I>texturename</I></B><BR>
+Dictates that this stage should clamp texture coordinates instead of wrapping them. During a stretch function, the area, which the texture must cover during a wave cycle, enlarges and decreases. Instead of repeating a texture multiple times during enlargement (or seeing only a portion of the texture during shrinking) the texture dimensions increase or contract accordingly. This is only relevant when using something like <I>deformTexCoordParms</I> to stretch/compress texture coordinates for a specific special effect. Remember that the <I>Quake III Arena</I> engine normalizes all texture coordinates (regardless of actual texture size) into a scale of 0.0 to 1.0.<BR><BR>
+
+<B>Proper Alignment:</B> When using <I>clampTexCoords</I> make sure the texture is properly aligned on the brush. The <I>clampTexCoords</I> function keeps the image from tiling. However, the editor doesn't represent this properly and shows a tiled image. Therefore, what appears to be the correct position may be offset. This is very apparent on anything with a <I>tcMod rotate</I> and <I>clampTexCoords</I> function.<BR><BR>
+
+<B>//obsidian: Figure 2a & 2b??? Where???<BR>
+//obsidian: clampTexCoords???</B><BR><BR>
+
+<B>Avoiding Distortion:</B> When seen at a given distance (which can vary, depending on hardware and the size of the texture), the compression phase of a stretch function will cause a "cross"-like visual artifact to form on the modified texture due to the way that textures are reduced. This occurs because the texture undergoing modification lacks sufficient "empty space" around the displayed (non-black) part of the texture (see figure 2a). To compensate for this, make the non-zero portion of the texture substantially smaller (50% of maximum stretched size -- see figure 2b) than the dimensions of the texture. Then, write a scaling function (<I>tcMod scale</I>) into the appropriate shader phase, to enlarge the image to the desired proportion.<BR><BR>
+
+The shaders for the bouncy pads (in the sfx.shader file) show the stretch function in use, including the scaling of the stretched texture:<BR><BR>
+
+
+<!--// SCRIPT START //-->
+<PRE STYLE="margin-top: 0em"><FONT FACE="verdana, helvetica, arial" SIZE="1"><I>Script: Using clampMap to control a stretching texture</I><HR SIZE="1">
+textures/sfx/metalbridge06_bounce
+{
+	//q3map_surfacelight 2000
+	surfaceparm nodamage
+	q3map_lightimage textures/sfx/jumppadsmall.tga
+	q3map_surfacelight 400
+	{
+		map textures/sfx/metalbridge06_bounce.tga
+		rgbGen identity
+	}
+	{
+		map $lightmap
+		rgbGen identity
+		blendfunc gl_dst_color gl_zero
+	}
+	{
+		map textures/sfx/bouncepad01b_layer1.tga
+		blendfunc gl_one gl_one
+		rgbGen wave sin .5 .5 0 1.5
+	}
+	{
+		clampmap textures/sfx/jumppadsmall.tga
+		blendfunc gl_one gl_one
+		tcMod stretch sin 1.2 .8 0 1.5
+		rgbGen wave square .5 .5 .25 1.5
+	}
+	// END
+}
+<HR SIZE="1"></FONT></PRE>
+<!--// SCRIPT END //-->
+
+
+<BR><B>animMap <I>frequency texture1... texture8</I></B><BR>
+The surfaces in the game can be animated by displaying a sequence of 1 to 8 frames (separate texture maps). These animations are affected by other keyword effects in the same and later shader stages.<BR>
+
+<UL>
+<B><I>frequency</I></B> : The number of times that the animation cycle will repeat within a one second time period. The larger the value, the more repeats within a second. Animations that should last for more than a second need to be expressed as decimal values.<BR>
+<B><I>texture1</I></B>... <B><I>texture8</I></B> : the texture path/texture name for each animation frame must be explicitly listed. Up to eight frames (eight separate .tga files) can be used to make an animated sequence. Each frame is displayed for an equal subdivision of the frequency value.
+</UL>
+
+<B>Example:</B><BR>
+<I>animMap 0.25 textures/sfx/b_flame1.tga textures/sfx/b_flame2.tga textures/sfx/b_flame3.tga textures/sfx/b_flame4.tga</I> would be a 4 frame animated sequence, calling each frame in sequence over a cycle length of 4 seconds. Each frame would be displayed for 1 second before the next one is displayed. The cycle repeats after the last frame in sequence shown.<BR><BR>
+
+<B>Design Notes:</B><BR>
+To make a texture image appear for an unequal (longer) amount of time (compared to other frames), repeat that frame more than once in the sequence.<BR><BR>
+
+
+<!--// SCRIPT START //-->
+<PRE STYLE="margin-top: 0em"><FONT FACE="verdana, helvetica, arial" SIZE="1"><I>Script: Specifying an animMap</I><HR SIZE="1">
+textures/sfx/flameanim_blue
+{
+
+	//	***********************************************
+	//	*	Blue Flame				*
+	//	*	July 20, 1999 Surface Light 1800 		*
+	//	*	Please Comment Changes		*
+	//	***********************************************
+	qer_editorimage textures/sfx/b_flame7.tga
+	q3map_lightimage textures/sfx/b_flame7.tga
+	surfaceparm trans
+	surfaceparm nomarks
+	surfaceparm nolightmap
+	cull none
+	q3map_surfacelight 1800
+	// texture changed to blue flame.... PAJ
+	{
+		animMap 10 textures/sfx/b_flame1.tga textures/sfx/b_flame2.tga
+			textures/sfx/b_flame3.tga textures/sfx/b_flame4.tga
+			textures/sfx/b_flame5.tga textures/sfx/b_flame6.tga
+			textures/sfx/b_flame7.tga textures/sfx/b_flame8.tga
+		blendFunc GL_ONE GL_ONE
+		rgbGen wave inverseSawtooth 0 1 0 10
+	}
+	{
+		animMap 10 textures/sfx/b_flame2.tga textures/sfx/b_flame3.tga
+			textures/sfx/b_flame4.tga textures/sfx/b_flame5.tga
+			textures/sfx/b_flame6.tga textures/sfx/b_flame7.tga
+			textures/sfx/b_flame8.tga textures/sfx/b_flame1.tga
+		blendFunc GL_ONE GL_ONE
+		rgbGen wave sawtooth 0 1 0 10
+	}
+	{
+		map textures/sfx/b_flameball.tga
+		blendFunc GL_ONE GL_ONE
+		rgbGen wave sin .6 .2 0 .6
+	}
+}
+<HR SIZE="1"></FONT></PRE>
+<!--// SCRIPT END //-->
+
+<BR><B>videoMap <I>videoname</I></B><BR>
+Surfaces marked with a shader containing this directive in one of its stages will display an animated video playing in a continuous loop. The video clip must be in ROQ format and playing at 30 frames per second. The ROQ file is stored in the "video" directory within the main mod directory. A third-party program is required to convert other video formats to the ROQ format for use within <I>Quake III</I> engine games.<BR><BR>
+
+<!--// SCRIPT START //-->
+<PRE STYLE="margin-top: 0em"><FONT FACE="verdana, helvetica, arial" SIZE="1"><I>Script: Specifying a videoMap</I><HR SIZE="1">
+textures/obsidian_video/intro
+{
+	qer_editorImage textures/obsidian_video/qer_intro.tga
+	surfaceparm nolightmap
+	{
+		videoMap obsidian_intro.roq
+		rgbGen identity
+	}
+}
+<HR SIZE="1"></FONT></PRE>
+<!--// SCRIPT END //-->
+
+<BR><B>Historical Information:</B><BR>
+The ROQ format is a proprietary video format developed by Graeme Devine originally used for "<I>The 7th Guest</I>" for the purpose of being able to decompress quickly while maintaining high image quality. It was later adopted by <I>Id Software</I> for use in <I>Quake III Arena</I>.<BR><BR>
+
+
+<!--// TITLE START //-->
+<BR><A NAME="blendfunc"></A><TABLE><TR><TD><IMG SRC="images/q3logo.jpg"></TD>
+<TD><FONT SIZE="3"><B>blendFunc <I>func</I></B></FONT></TD></TR></TABLE><BR>
+<!--// TITLE END //-->
+
+
+Blend functions are the keyword commands that tell the <I>Quake III Arena</I> graphic engine's renderer how graphic layers are to be mixed together.<BR><BR>
+
+<BR><B>Simplified Blend Functions</B><BR>
+The most common blend functions are set up here as simple commands, and should be used unless you really know what you are doing.
+
+<UL>
+<B><I>add</I></B> : Shorthand command for <I>blendFunc gl_one gl_one</I>. Effects like fire and energy are additive.<BR><BR>
+<B><I>filter</I></B> : Shorthand command that can be substituted for either <I>blendFunc gl_dst_color gl_zero</I> or <I>blendFunc gl_zero gl_src_color</I>. A filter will always result in darker pixels than what is behind it, but it can also remove color selectively. Lightmaps are filters.<BR><BR>
+<B><I>blend</I></B> : Shorthand command for <I>blendFunc gl_src_alpha gl_one_minus_src_alpha</I>. This is conventional transparency, where part of the background is mixed with part of the texture.<BR><BR>
+</UL>
+
+<BR><B>Explicit Blend Functions</B><BR>
+Getting a handle on this concept is absolutely key to understanding all shader manipulation of graphics.<BR><BR>
+
+blendFunc or "Blend Function" is the equation at the core of processing shader graphics. The formula reads as follows:<BR><BR>
+
+<CENTER><B>[source * (srcBlend)] + [destination * (dstBlend)]</B></CENTER><BR>
+
+<B>Source</B> is usually the RGB color data in a texture TGA file (remember it's all numbers) modified by any <I>rgbGen</I> and <I>alphaGen</I>. In the shader, the source is generally identified by command <I><A HREF="ch6.htm#map">map</A></I>, followed by the name of the image.<BR><BR>
+
+<B>Destination</B> is the color data currently existing in the frame buffer.<BR><BR>
+
+Rather than think of the entire texture as a whole, it maybe easier to think of the number values that correspond to a single pixel, because that is essentially what the computer is processing... one pixel of the bitmap at a time.<BR><BR>
+
+The process for calculating the final look of a texture in place in the game world begins with the precalculated lightmap for the area where the texture will be located. This data is in the frame buffer. That is to say, it is the initial data in the <I>destination</I>. In an unmanipulated texture (i.e. one without a special shader script), color information from the texture is combined with the lightmap. In a shader-modified texture, the $lightmap stage must be present for the lightmap to be included in the calculation of the final texture appearance.<BR><BR>
+
+Each pass or "stage" of blending is combined (in a cumulative manner) with the color data passed onto it by the previous stage. How that data combines together depends on the values chosen for the <I>source blends</I> and <I>destination blends</I> at each stage. Remember it's numbers that are being mathematically combined together that are ultimately interpreted as colors.<BR><BR>
+
+A general rule is that any <I>source blend</I> other than <I>GL_ONE</I> (or <I>GL_SRC_ALPHA</I> where the alpha channel is entirely white) will cause the <I>source</I> to become darker.<BR><BR>
+
+<BR><B>Source Blend <I>srcBlend</I></B></BR>
+The following values are valid for the <I>source blend</I> part of the equation.
+
+<UL>
+<B>GL_ONE</B> This is the value 1. When multiplied by the <I>source</I>, the value stays the same. The value of the color information does not change.<BR>
+<B>GL_ZERO</B> This is the value 0. When multiplied by the <I>source</I>, all RGB data in the <I>source</I> becomes zero (essentially black).<BR>
+<B>GL_DST_COLOR</B> This is the value of color data currently in the <I>destination</I> (frame buffer). The value of that information depends on the information supplied by previous stages.<BR>
+<B>GL_ONE_MINUS_DST_COLOR</B> This is nearly the same as <I>GL_DST_COLOR</I> except that the value for each component color is inverted by subtracting it from one. (i.e. R = 1.0 - DST.R, G = 1.0 - DST.G, B = 1.0 - DST.B, etc.)<BR>
+<B>GL_SRC_ALPHA</B> The TGA file being used for the <I>source</I> data <U>must have an alpha channel</U> in addition to its RGB channels (for a total of four channels). The alpha channel is an 8-bit black and white only channel. An entirely white alpha channel will not darken the <I>source</I>.<BR>
+<B>GL_ONE_MINUS_SRC_ALPHA</B> This is the same as <I>GL_SRC_ALPHA</I> except that the value in the alpha channel is inverted by subtracting it from one. (i.e. A=1.0 - SRC.A)
+</UL>
+
+<BR><B>Destination Blend <I>dstBlend</I></B></BR>
+The following values are valid for the <I>destination blend</I> part of the equation.
+
+<UL>
+<B>GL_ONE</B> This is the value 1. When multiplied by the <I>destination</I>, the value stays the same the value of the color information does not change.<BR>
+<B>GL_ZERO</B> This is the value 0. When multiplied by the <I>destination</I>, all RGB data in the <I>destination</I> becomes zero (essentially black).<BR>
+<B>GL_SRC_COLOR</B> This is the value of color data currently in the <I>source</I> (which is the texture being manipulated here).<BR>
+<B>GL_ONE_MINUS_SRC_COLOR</B> This is the value of color data currently in <I>source</I>, but subtracted from one (i.e. inverted).<BR>
+<B>GL_SRC_ALPHA</B> The TGA file being used for the <I>source</I> data <U>must have an alpha channel</U> in addition to its RGB channels (four a total of four channels). The alpha channel is an 8-bit black and white only channel. An entirely white alpha channel will not darken the <I>source</I>.v
+<B>GL_ONE_MINUS_SRC_ALPHA</B> This is the same as <I>GL_SRC_ALPHA</I> except that the value in the alpha channel is inverted by subtracting it from one. (i.e. A=1.0 - SRC.A).
+</UL>
+
+<BR><B>Doing the Math: The Final Result</B><BR>
+The product of the <I>source</I> side of the equation is added to the product of the <I>destination</I> side of the equation. The sum is then placed into the frame buffer to become the </I>destination</I> information for the next stage. Ultimately, the equation creates a modified color value that is used by other functions to define what happens in the texture when it is displayed in the game world.<BR><BR>
+
+<BR><B>Default Blend Function</B></BR>
+If no <I>blendFunc</I> is specified then no blending will take place. A warning is generated if any stage after the first stage does not have a <I>blendFunc</I> specified.<BR><BR>
+
+<BR><B>Technical Information/Limitations Regarding Blend Modes:</B></BR>
+The Riva 128 graphics card supports ONLY the following blendmodes:<BR><BR>
+
+GL_ONE, GL_ONE<BR>
+GL_DST_COLOR, GL_ZERO<BR>
+GL_ZERO, GL_SRC_COLOR<BR>
+GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA<BR>
+GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA<BR><BR>
+
+Cards running in 16 bit color cannot use any GL_DST_ALPHA blends.<BR><BR>
+
+
+<!--// TITLE START //-->
+<BR><A NAME="rgbgen"></A><TABLE><TR><TD><IMG SRC="images/q3logo.jpg"></TD>
+<TD><FONT SIZE="3"><B>rgbGen <I>func</I></B></FONT></TD></TR></TABLE><BR>
+<!--// TITLE END //-->
+
+
+There are two color sources for any given shader, the texture file and the vertex colors. Output at any given time will be equal to TEXTURE multiplied by VERTEXCOLOR. Most of the time VERTEXCOLOR will default to white (which is a normalized value of 1.0), so output will be TEXTURE (this usually lands in the <I>Source</I> side of the shader equation). Sometimes you do the opposite and use TEXTURE = WHITE, but this is only commonly used when doing specular lighting on entities (i.e. shaders that level designers will probably never create.<BR><BR>
+
+The most common reason to use rgbGen is to pulsate something. This means that the VERTEXCOLOR will oscillate between two values, and that value will be multiplied (darkening) the texture.<BR><BR>
+
+If no rgbGen is specified, either "identityLighting" or "identity" will be selected, depending on which blend modes are used.<BR><BR>
+
+Valid <I>func</I> parameters are <I>identity</I>, <I>identityLighting</I>, <I>vertex</I>, <I>exactVertex</I>, <I>fromVertex (???)</I> <I>entity</I>, <I>oneMinusEntity</I>, <I>lightingDiffuse</I>, <I>noise (???)</I>, <I>wave</I> and <I>const</I>.<BR><BR>
+
+
+<BR><B>rgbGen <I>identityLighting</I></B><BR>
+Colors will be (1.0, 1.0, 1.0) if running without overbright bits (NT, Linux, windowed modes), or (0.5, 0.5, 0.5) if running with overbright. Overbright allows a greater color range at the expense of a loss of precision. Additive and blended stages will get this by default.<BR><BR>
+
+<BR><B>rgbGen <I>identity</I></B><BR>
+Colors are assumed to be all white (1.0, 1.0, 1.0). All filters stages (lightmaps, etc) will get this by default.<BR><BR>
+
+<BR><B>rgbGen <I>wave func base amplitude phase freq</I></B><BR>
+Colors are generated using the specified waveform. An affected texture with become darker and lighter, but will not change hue. Hue stays constant. Note that the RGB values for color will not go below 0 (black) or above 1 (white). Valid waveforms are sin, triangle, square, sawtooth and inversesawtooth (see <A HREF="ch1.htm#concepts">1.4.8 Waveform Functions</A>).<BR><BR>
+
+<BR><B>rgbGen <I>entity</I></B><BR>
+Colors are grabbed from the entity's modulate field. This is used for things like explosions.<BR><BR>
+
+<B>Design Notes:</B><BR>
+This keyword would probably not be used by a level designer.<BR><BR>
+
+<BR><B>rgbGen <I>oneMinusEntity</I></B><BR>
+Colors are grabbed from 1.0 minus the entity's modulate field.<BR><BR>
+
+<B>Design Note:</B><BR>
+This keyword would probably not be used by a level designer.<BR><BR>
+
+<BR><B>rgbGen <I>vertex</I></B><BR>
+Colors are filled in directly by the data from the map or model files.<BR><BR>
+
+Obsidian: exactVertex ignores overbrightbits. Generally brighter under default settings.<BR>
+rgbGen vertex + alphaGen const or rgbGen exactVertex to disable surfaces from being affected by alphaMod volumes.<BR><BR>
+
+<B>Design Note:</B><BR>
+<I>rgbGen vertex</I> should be used when you want the RGB values to be computed for a static model (i.e. mapobject) in the world using precomputed static lighting from Q3BSP. This would be used on things like the gargoyles, the portal frame, skulls, and other decorative models put into the <I>Quake III Arena</I> world.<BR><BR>
+
+<BR><B>rgbGen <I>oneMinusVertex</I></B><BR>
+As rgbGen vertex, but inverted.<BR><BR>
+
+<B>Design Note:</B><BR>
+This keyword would probably not be used by a level designer.<BR><BR>
+
+<BR><B>rgbGen <I>lightingDiffuse</I></B><BR>
+Colors are computed using a standard diffuse lighting equation. It uses the vertex normals to illuminate the object correctly.<BR><BR>
+
+<B>Design Notes:</B><BR>
+<I>rgbGen lightingDiffuse</I> is used when you want the RGB values to be computed for a dynamic model (i.e. non-map object) in the world using regular in-game lighting. For example, you would specify on shaders for items, characters, weapons, etc.<BR><BR>
+
+<BR><B>rgbGen <I>const</I> ( R G B )</B><BR>
+A constant vertex colour is assigned to the affected surface. This modifies the hue of the texture.<BR><BR>
+
+
+<!--// TITLE START //-->
+<BR><A NAME="alphagen"></A><TABLE><TR><TD><IMG SRC="images/q3logo.jpg"></TD>
+<TD><FONT SIZE="3"><B>alphaGen <I>func</I></B></FONT></TD></TR></TABLE><BR>
+<!--// TITLE END //-->
+
+
+The alpha channel can be specified like the RGB channels. If not specified, it defaults to 1.0. Valid <B><I>func</I></B> values are lightingSpecular, wave, entity, oneMinusEntity, vertex, oneMinusVertex, portal.<BR><BR>
+
+<B>//Obsidian: Describe each in more detail... like rgbGen above.</B><BR>
+
+<BR><B>alphaGen <I>portal</I></B><BR>
+This rendering stage keyword is used in conjunction with the surface parameter keyword <I>portal</I>. The function accomplishes the "fade" that causes the scene in the portal to fade from view. Specifically, it means "Generate alpha values based on the distance from the viewer to the portal." Use <I>alphaGen portal</I> on the last rendering pass.<BR><BR>
+
+<B>//Obsidian: needs formatting???</B><BR><BR>
+
+
+<!--// TITLE START //-->
+<BR><A NAME="tcgen"></A><TABLE><TR><TD><IMG SRC="images/q3logo.jpg"></TD>
+<TD><FONT SIZE="3"><B>tcGen <I>coordinateSource</I></B></FONT></TD></TR></TABLE><BR>
+<!--// TITLE END //-->
+
+
+Specifies how texture coordinates are generated and where they come from. Valid functions are <I>base</I>, <I>lightmap</I>, <I>environment</I> and <I>vector</I>.
+
+<UL>
+<B><I>base</I></B> : Base texture coordinates from the original art.<BR>
+<B><I>lightmap</I></B> : Lightmap texture coordinates.<BR>
+<B><I>environment</I></B> : Make this object environment mapped.<BR>
+<B><I>vector</I></B> : Projects a texture from a specified direction.<BR>
+</UL>
+
+<B>tcGen vector ( sx sy sz ) ( tx ty tz )</B><BR>
+New texture coordinate generation by world projection. This allows you to project a texture onto a surface in a fixed way, regardless of its orientation.<BR><BR>
+
+S coordinates correspond to the "x" coordinates on the texture itself.<BR>
+T coordinates correspond to the "y" coordinates on the texture itself.<BR><BR>
+
+The measurements are in game units.<BR><BR>
+
+Example: tcGen vector ( 0.01 0 0 ) ( 0 0.01 0 )<BR>
+This would project a texture with a repeat every 100 units across the X/Y plane. The value comes from dividing the game units from 1, in this case, 1/100.<BR><BR>
+
+
+<!--// TITLE START //-->
+<BR><A NAME="tcmod"></A><TABLE><TR><TD><IMG SRC="images/q3logo.jpg"></TD>
+<TD><FONT SIZE="3"><B>tcMod </I>func ---</I></B></FONT></TD></TR></TABLE><BR>
+<!--// TITLE END //-->
+
+
+Specifies how texture coordinates are modified after they are generated. The valid functions for tcMod are <I>rotate</I>, <I>scale</I>, <I>scroll</I>, <I>stretch</I>, <I>transform</I> and <I>turb</I>. <I>Transform</I> is a function generally reserved for use by programmers who suggest that designers leave it alone. When using multiple <I>tcMod</I> functions during a stage, place the <I>scroll</I> command last in order, because it performs a mod operation to save precision, and that can disturb other operations. Texture coordinates are modified in the order in which <I>tcMods</I> are specified. In otherwords, if you see:<BR><BR>
+
+tcMod scale 0.5 0.5<BR>
+tcMod scroll 1 1<BR><BR>
+
+then the texture coordinates will be scaled <I>then</I> scrolled.<BR><BR>
+
+<BR><B>tcMod <I>rotate degrees/sec</I></B><BR>
+This keyword causes the texture coordinates to rotate. The value is expressed in degrees rotated each second. A positive value means clockwise rotation. A negative value means counterclockwise rotation. For example "tcMod rotate 5" would rotate texture coordinates 5 degrees each second in a clockwise direction. The texture rotates around the center point of the texture map, so you are rotating a texture with a single repetition, be careful to center it on the brush (unless off-center rotation is desired).<BR><BR>
+
+<BR><B>tcMod <I>scale sScale tScale</I></B><BR>
+Resizes (enlarges or shrinks) the texture coordinates by multiplying them against the given factors of <I>sScale</I> and <I>tScale</I>. The values "s" and "t"conform to the "x" and "y" values (respectively) as they are found in the original texture TGA. The values for <I>sScale</I> and <I>tScale</I> are NOT normalized. This means that a value greater than 1.0 will increase the size of the texture. A positive value less than one will reduce the texture to a fraction of its size and cause it to repeat within the same area as the original texture (Note: see clampTexCoords for ways to control this).<BR><BR>
+
+<B>Example:</B> <I>tcMod scale 0.5 2</I> would cause the texture to repeat twice along its width, but expand to twice its height (in which case half of the texture would be seen in the same area as the original)<BR><BR>
+
+<BR><B>tcMod <I>scroll sSpeed tSpeed</I></B><BR>
+Scrolls the texture coordinates with the given speeds. The values "s" and "t" conform to the "x" and "y" values (respectively) as they are found in the original texture TGA. The scroll speed is measured in "textures" per second. A "texture" is the dimension of the texture being modified and includes any previous shader modifications to the original TGA). A negative s value would scroll the texture to the left. A negative t value would scroll the texture down.<BR><BR>
+
+<B>Example:</B> <I>tcMod scroll 0.5 -0.5</I> moves the texture down and right (relative to the TGA files original coordinates) at the rate of a half texture each second of travel.<BR><BR>
+
+This should be the LAST tcMod in a stage. Otherwise there may be a popping or snapping visual effect in some shaders.<BR><BR>
+
+<BR><B>tcMod <I>stretch func base amplitude phase frequency</I></B><BR>
+Stretches the texture coordinates with the given function. Stretching is defined as stretching the texture coordinate away from the center of the polygon and then compressing it towards the center of the polygon. (see <A HREF="ch1.htm#concepts">Chapter 1: Key Concepts</A> for waveform parameter definitions).<BR><BR>
+
+<BR><B>tcMod <I>transform m00 m01 m10 m11 t0 t1</I></B><BR>
+Transforms each texture coordinate as follows:<BR>
+
+S' = s * m00 + t * m10 + t0<BR>
+T' = s * m01 + t * m11 + t1<BR>
+
+This is for use by programmers.<BR><BR>
+
+
+<BR><B>tcMod <I>turb base amplitude phase freq</I></B><BR>
+Applies turbulence to the texture coordinate. Turbulence is a back and forth churning and swirling effect on the texture.<BR><BR>
+
+<B><I>base</I></B> : Currently undefined.<BR>
+<B><I>amplitude</I></B> : This is essentially the intensity of the disturbance or twisting and squiggling of the texture.<BR>
+<B><I>phase</I></B> : See the explanation for phase under the deformVertexes keyword.<BR>
+<B><I>freq</I></B> : Frequency. This value is expressed as repetitions or cycles of the wave per second. A value of one would cycle once per second. A value of 10 would cycle 10 times per second. A value of 0.1 would cycle once every 10 seconds.<BR><BR>
+
+
+<!--// TITLE START //-->
+<BR><A NAME="depthfunc"></A><TABLE><TR><TD><IMG SRC="images/q3logo.jpg"></TD>
+<TD><FONT SIZE="3"><B>depthFunc <I>func</I></B></FONT></TD></TR></TABLE><BR>
+<!--// TITLE END //-->
+
+
+This controls the depth comparison function used while rendering. The default is "lequal" (Less than or equal to) where any surface that is at the same depth or closer of an existing surface is drawn. This is used for textures with transparency or translucency. Under some circumstances you may wish to use "equal", e.g. for light-mapped grates that are alpha tested (it is also used for mirrors).<BR><BR>
+
+
+<!--// TITLE START //-->
+<BR><A NAME="depthwrite"></A><TABLE><TR><TD><IMG SRC="images/q3logo.jpg"></TD>
+<TD><FONT SIZE="3"><B>depthWrite</B></FONT></TD></TR></TABLE><BR>
+<!--// TITLE END //-->
+
+
+By default, writes to the depth buffer when depthFunc passes will happen for opaque surfaces and not for translucent surfaces. Blended surfaces can have the depth writes forced with this function.<BR><BR>
+
+
+<!--// TITLE START //-->
+<BR><A NAME="detail"></A><TABLE><TR><TD><IMG SRC="images/q3logo.jpg"></TD>
+<TD><FONT SIZE="3"><B>detail</B></FONT></TD></TR></TABLE><BR>
+<!--// TITLE END //-->
+
+
+This feature was not used in Quake III Arena maps, but still functions. Designates this stage as a detail texture stage, which means that if the c_var, r_detailtextures, is set to 0 then this stage will be ignored (detail will not be displayed). This keyword, by itself, does not affect rendering at all. If you do put in a detail texture, it has to conform to very specific rules. Specifically, the blendFunc:<BR><BR>
+
+<CENTER><B>blendFunc GL_DST_COLOR GL_SRC_COLOR</B></CENTER><BR>
+
+This is also the simple blend function: <I>blendFunc filter</I><BR><BR>
+
+And the average intensity of the detail texture itself must be around 127.<BR><BR>
+
+Detail is used to blend fine pixel detail back into a base texture whose scale has been increased significantly. When detail is written into a set of stage instructions, it allows the stage to be disabled by the c_var console command setting "r_detailtextures 0".<BR><BR>
+
+A texture whose scale has been increased beyond a 1:1 ratio tends not to have very high frequency content. In other words, one texel can cover a lot of real estate. Frequency is also known as "detail." Lack of detail can appear acceptable if the player never has the opportunity to see the texture at close range. But seen close up, such textures look glaringly wrong within the sharp detail of the Quake III Arena environment. A detail texture solves this problem by taking a noisy "detail" pattern (a tiling texture that appears to have a great deal of surface roughness) and applying it to the base texture at a very densely packed scale (that is, reduced from its normal size). This is done programmatically in the shader, and does not require modification of the base texture. Note that if the detail texture is the same size and scale as the base texture that you may as well just add the detail directly to the base texture. The theory is that the detail texture's scale will be so high compared to the base texture (e.g.; 9 detail texels fitting into 1 base texel) that it is literally impossible to fit that detail into the base texture directly.<BR><BR>
+
+For this to work, the rules are as follows:<BR>
+
+<UL>
+<LI>The lightmap must be rendered first. This is because the subsequent detail texture will be modifying the lightmap in the framebuffer directly.</LI>
+<LI>The base texture must be rendered next.</LI>
+<LI>The detail texture must be rendered last since it modifies the lightmap in the framebuffer. There is a bug in <I>Quake III</I> that disables all stages in a shader after a "detail" stage if r_detailTextures is set to 0.</LI>
+<LI>The detail texture MUST have a mean intensity around 127-129. If it does not then it will modify the displayed texture's perceived brightness in the world.</LI>
+<LI>The detail shader stage MUST have the "detail" keyword or it will not be disabled if the user uses the "r_detailtextures 0" setting.</LI>
+<LI>The detail stage MUST use "blendFunc GL_DST_COLOR GL_SRC_COLOR". Any other BlendFunc will cause mismatches in brightness between detail and non-detail views.</LI>
+<LI>The detail stage should scale its textures by some amount (usually between 3 and 12) using "tcMod scale" to control density. This roughly corresponds to coarseness. A very large number, such as 12, will give very fine detail, however that detail will disappear VERY quickly as the viewer moves away from the wall since it will be MIP mapped away. A very small number, e.g. 3, gives diminishing returns since not enough is brought in when the user gets very close. I'm currently using values between 6 and 9.5. You should use non-integral numbers as much as possible to avoid seeing repeating patterns.</LI>
+<LI>Detail textures add one pass of overdraw, so there is a definite performance hit.</LI>
+<LI>Detail textures can be shared, so designers may wish to define only a very small handful of detail textures for common surfaces such as rocks, etc.</LI>
+</UL>
+
+An example (non-existent) detail shader is as follows:<BR><BR>
+
+
+<!--// SCRIPT START //-->
+<PRE STYLE="margin-top: 0em"><FONT FACE="verdana, helvetica, arial" SIZE="1"><I>Script: Detail shaders</I><HR SIZE="1">
+textures/bwhtest/foo
+{
+	q3map_globalTexture	//may be required when using tcMod scale in later stages
+
+	// draw the lightmap first
+	{
+		map $lightmap
+		rgbGen identity
+	}
+
+	// draw the base texture
+	{
+		map textures/castle/blocks11b.tga
+		blendFunc filter
+	}
+
+	// highly compressed detail texture
+	{
+		map textures/details/detail01.tga
+		blendFunc GL_DST_COLOR GL_SRC_COLOR	//MUST BE USED
+		detail	//allows detail shaders to be disabled
+		tcMod scale 9.1 9.2
+	}
+}
+<HR SIZE="1"></FONT></PRE>
+<!--// SCRIPT END //-->
+
+
+<!--// TITLE START //-->
+<BR><A NAME="alphafunc"></A><TABLE><TR><TD><IMG SRC="images/q3logo.jpg"></TD>
+<TD><FONT SIZE="3"><B>alphaFunc <I>func</I></B></FONT></TD></TR></TABLE><BR>
+<!--// TITLE END //-->
+
+
+Determines the alpha test function used when rendering this map. Valid values are GT0, LT128, and GE128. These correspond to "GREATER THAN 0", "LESS THAN 128", and "GREATER THAN OR EQUAL TO 128". This function is used when determining if a pixel should be written to the framebuffer. For example, if GT0 is specified, the only the portions of the texture map with corresponding alpha values greater than zero will be written to the framebuffer. By default alpha testing is disabled.<BR><BR>
+
+Both alpha testing and normal alpha blending can be used to get textures that have see-through parts. The difference is that alphaFunc is an all-or-nothing test, while blending smoothly blends between opaque and translucent at pixel edges. Alpha test can also be used with <I>depthWrite</I>, allowing other effects to be conditionally layered on top of just the opaque pixels by setting <I>depthFunc</I> to equal.<BR><BR>
+
+
+<!--// FOOTER START //-->
+<BR><BR><HR SIZE="1"><CENTER><FONT SIZE="1">
+<A HREF="ch5.htm">Previous</A> | <A HREF="contents.htm">Contents</A> | <A HREF="ch7.htm">Next</A>
+</FONT><BR><BR><BR>
+<!--// FOOTER END //-->
+
+
+	</FONT></TD>
+</TR>
+</TABLE>
+</FONT>
+</BODY>
+</HTML>

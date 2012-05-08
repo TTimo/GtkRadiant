@@ -1,0 +1,1296 @@
+// Reaction entity definition file
+// Maintained by TTI: tti@rq3.com
+// Website: http://www.rq3.com
+
+//=============================================================================
+
+Q3MAP2
+
+//=============================================================================
+
+/*QUAKED _decal (0 .5 .8) ?
+This is not an entity as such, it never reaches the game. It is strictly an editor utility to project decals surfaces over world brushes
+-------- KEYS --------
+target : The name of the entity targetted at for projection.
+-------- NOTES --------
+Compiler-only entity that specifies a decal to be projected. Should contain 1 or more patch meshes (curves) and target an info_null entity. The distance between the center of the _decal entity and the target is the axis and distance of projection.*/
+
+//=============================================================================
+
+FUNC_* ENTITIES
+
+//=============================================================================
+
+/*QUAKED func_bobbing (0 .5 .8) ? X_AXIS Y_AXIS
+Solid entity that oscillates back and forth in a linear motion. By default, it will have an amount of displacement in either direction equal to the dimension of the brush in the axis in which it's bobbing. Entity bobs on the Z axis (up-down) by default. It can also emit sound if the "noise" key is set. Will crush the player when blocked.
+-------- KEYS --------
+speed : Amount of time in seconds for one complete oscillation cycle (default 4).
+height : sets the amount of travel of the oscillation movement (default 32). 
+phase : sets the start offset of the oscillation cycle. Values must be 0 < phase < 1. Any integer phase value is the same as no offset (default 0).
+noise : path/name of .wav file to play. Use looping sounds only (eg. sound/world/drone6.wav - See Notes).
+model2 : path/name of model to include (eg: models/mapobjects/jets/jets01.md3).
+origin : alternate method of setting XYZ origin of sound and .md3 model included with entity (See Notes).
+light : constantLight radius of .md3 model included with entity. Has no effect on the entity's brushes (default 0).
+color : constantLight color of .md3 model included with entity. Has no effect on the entity's brushes (default 1 1 1).
+notfree : when set to 1, entity will not spawn in "Free for all" and "Tournament" modes.
+notteam : when set to 1, entity will not spawn in "Teamplay" and "CTF" modes.
+notsingle : when set to 1, entity will not spawn in Single Player mode (bot play mode).
+-------- Q3MAP2 KEYS --------
+_targetname : Used to attach a misc_model entity to this entity.
+_lightmapscale : sets the sample size of the lightmap. A value of 1 (default) will create 16x16 pixel samples. A higher value generates smaller samples (for example a value of 2 will create 8x8 samples).
+_castshadows;_cs : Allows per-entity control over shadow casting. Defaults to 0 on entities, 1 on world. 0 = no shadow casting. 1 = cast shadows on world. > 1 = cast shadows on entities with _rs (or _receiveshadows) with the corresponding value, AND world. Negative values imply same, but DO NOT cast shadows on world.
+_receiveshadows;_rs : Allows per-entity control over shadow reception. Defaults to 1 on everything (world shadows). 0 = receives NO shadows. > 1 = receive shadows only from corresponding keyed entities (see above) and world. &lt; 1 = receive shadows ONLY from corresponding keyed entities.
+_celshader : Sets the cel shader used for this geometry. Note: omit the "textures/" prefix.
+-------- Q3MAP2 TERRAIN KEYS --------
+_indexmap;alphamap : Path/name for the art file used to guide the mapping of textures on the terrain surface.
+_layers;layers : Integer value is the number unique root shaders that will be use on the terrain.
+_shader;shader : Path to the metashader used to assign textures to the terrain entity. Note: Omit the "textures/" prefix.
+-------- SPAWNFLAGS --------
+X_AXIS : entity will bob along the X axis.
+Y_AXIS : entity will bob along the Y axis.
+-------- NOTES --------
+In order for the sound to be emitted from the entity, it is recommended to include a brush with an origin shader at its center, otherwise the sound will not follow the entity as it moves. Setting the origin key is simply an alternate method to using an origin brush. When using the model2 key, the origin point of the model will correspond to the origin point defined by either the origin brush or the origin coordinate value.*/
+
+//=============================================================================
+
+/*QUAKED func_breakable (0 .5 .8) ? CHIPPABLE UNBREAKABLE EXPLOSIVE NO_KICK
+Breakable object entity that breaks, chips or explodes when damaged.
+-------- KEYS --------
+health : determines the strength of the breakable entity (default 5).
+id : a unique identification. Each type of breakable in a given map needs to have a separate id. Valid values are 0 through 63.
+type : type of breakable. See notes below.
+type_id : alternate key indicating a breakable type defined in a different entity (another breakable or the worldspawn).
+amount : sets the number of fragments to generate when the entity breaks. 0 ~ 10 pieces; 1 ~ 25 pieces; 2 ~ 50 pieces; 3 ~ lots of pieces (default 0).
+force : sets the force at which the fragments scatter (default 7). Reasonable values are 2 to 12.
+lift : sets the magnitude of the additional vertical force of the fragments (default 5). Reasonable values are 0 to 20.
+damage : sets the amount of damage dealt to nearby players if the entity is made to be explosive. Default is grenade damage (default 170). 
+damage_radius : sets the maximum distance (in units) from the explosion players will take damage (default 340).
+target : all entities with a matching targetname will be triggered when the entity is broken or exploded (not chipped or damaged).
+pathtarget : will send a func_train to the path corner this key points to. Must be used in conjunction with the target key pointing to the targetname of the func_train.
+targetname : if set, activating an entity with a matching target key will make the entity explode.
+notfree : when set to 1, entity will not spawn in "Free for all" and "Tournament" modes.
+notteam : when set to 1, entity will not spawn in "Teamplay" and "CTF" modes.
+notsingle : when set to 1, entity will not spawn in Single Player mode (bot play mode).
+-------- SPAWNFLAGS --------
+CHIPPABLE : pieces will spawn when the entity is shot, but the entity will not be destroyed until the health of the entity is surpassed.
+UNBREAKABLE : entity will never break. To make the entity chip, but never break, check the first two spawnflags. To make the entity chip and eventually break, only set the first spawnflag.
+EXPLOSIVE : entity will explode.
+NO_KICK : players will not be able to kick the entity.
+-------- NOTES --------
+Breakables are defined in sets by the 'type' key (e.g. type : glass, type : wood). Each set of unique keys used in a map must be given a unique id number (0-63; max 64 per map; no default value). Two different breakable entities with the same keys should have the same id. If two different breakable entities differ in type, force or lift they require separate id numbers.
+Breakable types can also be defined in the worldspawn and used by their corresponding id's through the "type_id" key. See the worldspawn entity info for more details*/
+
+//=============================================================================
+
+/*QUAKED func_button (0 .5 .8) ?
+When a button is touched by a player, it moves in the direction set by the "angle" key, triggers all its targets, stays pressed by an amount of time set by the "wait" key, then returns to it's original position where it can be operated again.
+-------- KEYS --------
+angle : determines the direction in which the button will move (up = -1, down = -2).
+target : all entities with a matching targetname will be triggered.
+pathtarget : will send a func_train to the path corner this key points to. Must be used in conjunction with the target key pointing to the targetname of the func_train.
+targetShaderName: the original shader in a shader swap (see notes).
+targetShaderNewName: new shader in a shader swap (see notes). 
+targetname : if set, activating an entity with a matching target key will trigger the button.
+speed : speed of button's displacement (default 40).
+wait : number of seconds button stays pressed (default 1, -1 = return immediately).
+lip : lip remaining at end of move (default 4 units).
+health : if set to a non-zero value, the button must be damaged to operate. The actual value assigned to "health" is ignored.
+light : constantLight radius of .md3 model included with entity. Has no effect on the entity's brushes (default 0).
+color : constantLight color of .md3 model included with entity. Has no effect on the entity's brushes (default 1 1 1).
+model2 : path/name of model to include (eg: models/mapobjects/pipe/pipe02.md3).
+origin : alternate method of setting XYZ origin of .md3 model included with entity (See Notes).
+sound: path/name of .wav file to play (eg: sound/mapname/soundname.wav) (default sound/movers/button.wav).
+notfree : when set to 1, entity will not spawn in "Free for all" and "Tournament" modes.
+notteam : when set to 1, entity will not spawn in "Teamplay" and "CTF" modes.
+notsingle : when set to 1, entity will not spawn in Single Player mode (bot play mode).
+-------- Q3MAP2 KEYS --------
+_targetname : Used to attach a misc_model entity to this entity.
+_lightmapscale : sets the sample size of the lightmap. A value of 1 (default) will create 16x16 pixel samples. A higher value generates smaller samples (for example a value of 2 will create 8x8 samples).
+_castshadows;_cs : Allows per-entity control over shadow casting. Defaults to 0 on entities, 1 on world. 0 = no shadow casting. 1 = cast shadows on world. > 1 = cast shadows on entities with _rs (or _receiveshadows) with the corresponding value, AND world. Negative values imply same, but DO NOT cast shadows on world.
+_receiveshadows;_rs : Allows per-entity control over shadow reception. Defaults to 1 on everything (world shadows). 0 = receives NO shadows. > 1 = receive shadows only from corresponding keyed entities (see above) and world. &lt; 1 = receive shadows ONLY from corresponding keyed entities.
+_celshader : Sets the cel shader used for this geometry. Note: omit the "textures/" prefix.
+-------- Q3MAP2 TERRAIN KEYS --------
+_indexmap;alphamap : Path/name for the art file used to guide the mapping of textures on the terrain surface.
+_layers;layers : Integer value is the number unique root shaders that will be use on the terrain.
+_shader;shader : Path to the metashader used to assign textures to the terrain entity. Note: Omit the "textures/" prefix.
+-------- NOTES --------
+Setting the origin key is simply an alternate method to using an origin brush. When using the model2 key, the origin point of the model will correspond to the origin point defined by either the origin brush or the origin coordinate value.
+To initiate a shader swap, use the targetShaderName key with the original shader path as the argument. Note this is always the original shader, not the current shader. Use the targetShaderNewName key with the path to the replacement shader as the argument. The shader swap will affect every surface in the map that was originally showing the shader specified as the targetShaderName.*/
+
+//=============================================================================
+
+/*QUAKED func_door (0 .5 .8) ? START_OPEN CRUSHER AUTO_OPEN TOGGLE
+Normal sliding door entity. By default, the door will not activate when player walks close to it.
+-------- KEYS --------
+angle : determines the opening direction of door (up = -1, down = -2).
+speed : determines how fast the door moves (default 100).
+wait : number of seconds before door returns (default 2, -1 = return immediately).
+lip : lip remaining at end of move (default 8).
+target : all entities with a matching targetname will be triggered when the entity is activated from its starting position.
+pathtarget : will send a func_train to the path corner this key points to. Must be used in conjunction with the target key pointing to the targetname of the func_train.
+targetShaderName: the original shader in a shader swap (see notes).
+targetShaderNewName: new shader in a shader swap (see notes). 
+targetname : if set, another entity with a matching target key is required to activate the door.
+alias : alternate way to attach other entities to this one. Use this when targetname is reserved for other purposes.
+attachto : if set, this entity will be attached to another entity with a matching TARGET or ALIAS.
+health : if set to a non-zero value, the door must be damaged to operate. The actual value assigned to "health" is ignored.
+dmg : damage to inflict on player when he blocks operation of door (default 4). Door will reverse direction when blocked unless CRUSHER spawnflag is set.
+activatename : used in order to allow target_activate entities targeting this trigger to activate/deactivate it
+inactive : indicates that the door should start inactive. It can be activated by target_activate entities that have a "target" matching the "activatename" field of the entity
+soundinactive : sound to be played when trying to open the door while it is inactive
+targetinactive : target(s) to be fired when trying to open the door while it is inactive
+team: assign the same team name to multiple regular doors that should operate together. Do not team with a rotating door.
+light : constantLight radius of .md3 model included with entity. Has no effect on the entity's brushes (default 0).
+color : constantLight color of .md3 model included with entity. Has no effect on the entity's brushes (default 1 1 1).
+model2 : path/name of model to include (eg: models/mapobjects/pipe/pipe02.md3).
+origin : alternate method of setting XYZ origin of .md3 model included with entity (see notes).
+soundstart : path to sound file to play when door starts to open (eg: sound/mapname/soundname.wav) (default sound/movers/door_start.wav).
+soundstop : path to sound file to play when door comes to a stop (eg: sound/mapname/soundname.wav) (default sound/movers/door_stop.wav).
+soundmove : path to sound file to play when door is moving (eg: sound/mapname/soundname.wav) (default sound/misc/silence.wav).
+notfree : when set to 1, entity will not spawn in "Free for all" and "Tournament" modes.
+notteam : when set to 1, entity will not spawn in "Teamplay" and "CTF" modes.
+notsingle : when set to 1, entity will not spawn in Single Player mode (bot play mode).
+-------- SPAWNFLAGS --------
+START_OPEN : the door will spawn in the open state and operate in reverse.
+CRUSHER : door will not reverse direction when blocked and will keep damaging the player until he dies or gets out of the way.
+AUTO_OPEN : the door will open automatically when approached by a player; 'opendoor' will not be necessary.
+TOGGLE : wait in both the start and end states for a trigger event; the door will stay open until closed by another 'opendoor'.
+-------- Q3MAP2 KEYS --------
+_targetname : Used to attach a misc_model entity to this entity.
+_lightmapscale : sets the sample size of the lightmap. A value of 1 (default) will create 16x16 pixel samples. A higher value generates smaller samples (for example a value of 2 will create 8x8 samples).
+_castshadows;_cs : Allows per-entity control over shadow casting. Defaults to 0 on entities, 1 on world. 0 = no shadow casting. 1 = cast shadows on world. > 1 = cast shadows on entities with _rs (or _receiveshadows) with the corresponding value, AND world. Negative values imply same, but DO NOT cast shadows on world.
+_receiveshadows;_rs : Allows per-entity control over shadow reception. Defaults to 1 on everything (world shadows). 0 = receives NO shadows. > 1 = receive shadows only from corresponding keyed entities (see above) and world. &lt; 1 = receive shadows ONLY from corresponding keyed entities.
+_celshader : Sets the cel shader used for this geometry. Note: omit the "textures/" prefix.
+-------- Q3MAP2 TERRAIN KEYS --------
+_indexmap;alphamap : Path/name for the art file used to guide the mapping of textures on the terrain surface.
+_layers;layers : Integer value is the number unique root shaders that will be use on the terrain.
+_shader;shader : Path to the metashader used to assign textures to the terrain entity. Note: Omit the "textures/" prefix.
+-------- NOTES --------
+Setting the origin key is simply an alternate method to using an origin brush. When using the model2 key, the origin point of the model will correspond to the origin point defined by either the origin brush or the origin coordinate value.
+To initiate a shader swap, use the targetShaderName key with the original shader path as the argument. Note this is always the original shader, not the current shader. Use the targetShaderNewName key with the path to the replacement shader as the argument. The shader swap will affect every surface in the map that was originally showing the shader specified as the targetShaderName.*/
+
+//=============================================================================
+
+/*QUAKED func_door_rotating (0 .5 .8) ? START_OPEN CRUSHER AUTO_OPEN TOGGLE X_AXIS Y_AXIS LOOK OPEN_AWAY
+This is the rotating door entity. Just as the name suggests it's a door that rotates.
+-------- KEYS --------
+distance : determines how many degrees the door will open (default 90).
+speed : determines how fast the door will open (degrees/second) (default 90).
+wait : number of seconds before door returns (default 2, -1 = return immediately).
+reach : max distance the door can be opened from. Value has to be less than or equal to 100. Generally used only in special situations (e.g. lockers and cabinets).
+target : all entities with a matching targetname will be triggered when the entity is activated from its starting position.
+targetname : if set, another entity with a matching target key is required to activate the door.
+alias : alternate way to attach other entities to this one. Use this when targetname is reserved for other purposes.
+attachto : if set, this entity will be attached to another entity with a matching TARGET or ALIAS.
+pathtarget : will send a func_train to the path corner this key points to. Must be used in conjunction with the target key pointing to the targetname of the func_train.
+targetShaderName: the original shader in a shader swap (see notes).
+targetShaderNewName: new shader in a shader swap (see notes). 
+team: assign the same team name to multiple rotating doors that should operate together. Do not team with a regular door.
+soundstart : path to sound file to play when door starts to open (eg: sound/mapname/soundname.wav) (default sound/movers/rdoor_stop.wav).
+soundstop : path to sound file to play when door comes to a stop (eg: sound/mapname/soundname.wav) (default sound/misc/silence.wav).
+soundmove : path to sound file to play when door is moving (eg: sound/mapname/soundname.wav) (default sound/movers/rdoor_move.wav).
+health : if set to a non-zero value, the rotating door must be damaged to operate. The actual value assigned to "health" is ignored.
+activatename : used in order to allow target_activate entities targeting this trigger to activate/deactivate it
+inactive : indicates that the door should start inactive. It can be activated by target_activate entities that have a "target" matching the "activatename" field of the entity
+soundInactive : sound to be played when trying to open the door while it is inactive
+targetInactive : target(s) to be fired when trying to open the door while it is inactive
+light : constantLight color of .md3 model included with entity (default 0).
+color : constantLight color of .md3 model included with entity (defalt 1 1 1).
+model2: path/name of model to include.
+notfree : when set to 1, entity will not spawn in "Free for all" and "Tournament" modes.
+notteam : when set to 1, entity will not spawn in "Teamplay" and "CTF" modes.
+notsingle : when set to 1, entity will not spawn in Single Player mode (bot play mode).
+-------- Q3MAP2 KEYS --------
+_targetname : Used to attach a misc_model entity to this entity.
+_lightmapscale : sets the sample size of the lightmap. A value of 1 (default) will create 16x16 pixel samples. A higher value generates smaller samples (for example a value of 2 will create 8x8 samples).
+_castshadows;_cs : Allows per-entity control over shadow casting. Defaults to 0 on entities, 1 on world. 0 = no shadow casting. 1 = cast shadows on world. > 1 = cast shadows on entities with _rs (or _receiveshadows) with the corresponding value, AND world. Negative values imply same, but DO NOT cast shadows on world.
+_receiveshadows;_rs : Allows per-entity control over shadow reception. Defaults to 1 on everything (world shadows). 0 = receives NO shadows. > 1 = receive shadows only from corresponding keyed entities (see above) and world. &lt; 1 = receive shadows ONLY from corresponding keyed entities.
+_celshader : Sets the cel shader used for this geometry. Note: omit the "textures/" prefix.
+-------- Q3MAP2 TERRAIN KEYS --------
+_indexmap;alphamap : Path/name for the art file used to guide the mapping of textures on the terrain surface.
+_layers;layers : Integer value is the number unique root shaders that will be use on the terrain.
+_shader;shader : Path to the metashader used to assign textures to the terrain entity. Note: Omit the "textures/" prefix.
+-------- SPAWNFLAGS --------
+START_OPEN : the door will spawn in the open state and operate in reverse.
+CRUSHER : door will not reverse direction when blocked and will keep damaging the player until he dies or gets out of the way.
+AUTO_OPEN : the door will open automatically when approached by a player; 'opendoor' will not be necessary.
+TOGGLE : wait in both the start and end states for a trigger event; the door will stay open until closed by another 'opendoor'.
+X_AXIS : open on the X-axis instead of the Z-axis
+Y_AXIS : open on the Y-axis instead of the Z-axis
+LOOK : Door will only open if you look at it when pressing 'opendoor'.
+OPEN_AWAY : Door will always open away from the player.
+-------- NOTES --------
+You need to have an origin brush as part of this entity. The center of the origin brush will be the point around which the door rotates. It will rotate around the Z axis by default. You can check either the X_AXIS or Y_AXIS box to change that.
+To initiate a shader swap, use the targetShaderName key with the original shader path as the argument. Note this is always the original shader, not the current shader. Use the targetShaderNewName key with the path to the replacement shader as the argument. The shader swap will affect every surface in the map that was originally showing the shader specified as the targetShaderName.
+
+Target this entity with a misc_model to have the model attached to the entity (set the model's "target" key to the same value as this entity's "targetname").*/
+
+//=============================================================================
+
+/*QUAKED func_group (0 .5 .8) ?
+This is not an entity as such. It is strictly an editor utility to group world brushes and patches together for convenience (selecting, moving, copying, etc). You cannot group entities with this.
+-------- KEYS --------
+alphamap : this is the path/name for the art file used to guide the mapping of textures on the terrain surface.
+layers : this integer value is the number unique root shaders that will be use on the terrain.
+shader : this is the path to the metashader used to assign textures to the terrain entity.
+terrain : this is an on/off flag. When set to 1, the entity becomes a terrain entity.
+-------- Q3MAP2 KEYS --------
+_lightmapscale : sets the sample size of the lightmap. A value of 1 (default) will create 16x16 pixel samples. A higher value generates smaller samples (for example a value of 2 will create 8x8 samples).
+_castshadows;_cs : Allows per-entity control over shadow casting. Defaults to 0 on entities, 1 on world. 0 = no shadow casting. 1 = cast shadows on world. > 1 = cast shadows on entities with _rs (or _receiveshadows) with the corresponding value, AND world. Negative values imply same, but DO NOT cast shadows on world.
+_receiveshadows;_rs : Allows per-entity control over shadow reception. Defaults to 1 on everything (world shadows). 0 = receives NO shadows. > 1 = receive shadows only from corresponding keyed entities (see above) and world. &lt; 1 = receive shadows ONLY from corresponding keyed entities.
+_celshader : Sets the cel shader used for this geometry. Note: omit the "textures/" prefix.
+-------- Q3MAP2 TERRAIN KEYS --------
+_indexmap;alphamap : Path/name for the art file used to guide the mapping of textures on the terrain surface.
+_layers;layers : Integer value is the number unique root shaders that will be use on the terrain.
+_shader;shader : Path to the metashader used to assign textures to the terrain entity. Note: Omit the "textures/" prefix.
+-------- NOTES --------
+The TAB key can be used to flip through the component pieces of a selected func_group entity, isolating individual components. To make a func_group into a terrain entity, refer to the Terrain Construction documentation.*/
+
+//=============================================================================
+
+/*QUAKED func_pendulum (0 .5 .8) ?
+Solid entity that describes a pendulum back and forth rotation movement. Rotates on the X axis by default. Pendulum frequency is a physical constant based on the length of the beam and gravity. Blocking the pendulum pushes the player.
+-------- KEYS --------
+angle : angle offset of axis of rotation from default X axis (default 0).
+speed : angle of swing arc in either direction from initial position (default 30).
+phase : sets the start offset of the swinging cycle. Values must be 0 < phase < 1. Any integer phase value is the same as no offset (default 0).
+noise : path/name of .wav file to play. Use looping sounds only (eg. sound/world/drone6.wav).
+model2 : path/name of model to include (eg: models/mapobjects/jets/jets01.md3).
+origin : alternate method of setting XYZ origin of entity's rotation axis and .md3 model included with entity (default "0 0 0" - See Notes).
+light : constantLight radius of .md3 model included with entity. Has no effect on the entity's brushes (default 0).
+color : constantLight color of .md3 model included with entity. Has no effect on the entity's brushes (default 1 1 1).
+notfree : when set to 1, entity will not spawn in "Free for all" and "Tournament" modes.
+notteam : when set to 1, entity will not spawn in "Teamplay" and "CTF" modes.
+notsingle : when set to 1, entity will not spawn in Single Player mode (bot play mode).
+-------- Q3MAP2 KEYS --------
+_targetname : Used to attach a misc_model entity to this entity.
+_lightmapscale : sets the sample size of the lightmap. A value of 1 (default) will create 16x16 pixel samples. A higher value generates smaller samples (for example a value of 2 will create 8x8 samples).
+_castshadows;_cs : Allows per-entity control over shadow casting. Defaults to 0 on entities, 1 on world. 0 = no shadow casting. 1 = cast shadows on world. > 1 = cast shadows on entities with _rs (or _receiveshadows) with the corresponding value, AND world. Negative values imply same, but DO NOT cast shadows on world.
+_receiveshadows;_rs : Allows per-entity control over shadow reception. Defaults to 1 on everything (world shadows). 0 = receives NO shadows. > 1 = receive shadows only from corresponding keyed entities (see above) and world. &lt; 1 = receive shadows ONLY from corresponding keyed entities.
+_celshader : Sets the cel shader used for this geometry. Note: omit the "textures/" prefix.
+-------- Q3MAP2 TERRAIN KEYS --------
+_indexmap;alphamap : Path/name for the art file used to guide the mapping of textures on the terrain surface.
+_layers;layers : Integer value is the number unique root shaders that will be use on the terrain.
+_shader;shader : Path to the metashader used to assign textures to the terrain entity. Note: Omit the "textures/" prefix.
+-------- NOTES --------
+You need to have an origin brush as part of this entity. The center of that brush will be the point through which the rotation axis passes. Setting the origin key is simply an alternate method to using an origin brush. Pendulum will rotate along the X axis by default. Very crude operation: pendulum cannot rotate along Z axis, the speed of swing (frequency) is not adjustable. When using the model2 key, the origin point of the model will correspond to the origin point defined by either the origin brush or the origin coordinate value.*/
+
+//=============================================================================
+
+/*QUAKED func_plat (0 .5 .8) ?
+Rising platform the player can ride to reach higher places. Plats must always be drawn in the raised position, so they will operate and be lighted correctly but they spawn in the lowered position. The plat will stay in the raised position until the player steps off.
+-------- KEYS --------
+speed : determines how fast the plat moves (default 150).
+lip : lip remaining at end of move (default 16). Has no effect if "height" is set.
+height : if set, this will determine the total amount of vertical travel of the plat.
+dmg : damage to inflict on player when he blocks operation of plat (default 4). Plat will reverse direction when blocked.
+target : all entities with a matching targetname will be triggered.
+pathtarget : will send a func_train to the path corner this key points to. Must be used in conjunction with the target key pointing to the targetname of the func_train.
+targetname : if set, another entity with a matching target key will raise the plat each time it is activated. The plat raises and comes back down a second later if no player is on it.
+light : constantLight radius of .md3 model included with entity. Has no effect on the entity's brushes (default 0).
+color : constantLight color of .md3 model included with entity. Has no effect on the entity's brushes (default 1 1 1).
+model2 : path/name of model to include (eg: models/mapobjects/pipe/pipe02.md3).
+origin : alternate method of setting XYZ origin of .md3 model included with entity (See Notes).
+soundstart : path to sound file to play when door starts to open (eg: sound/mapname/soundname.wav) (default sound/movers/plat_start.wav).
+soundstop : path to sound file to play when door comes to a stop (eg: sound/mapname/soundname.wav) (default sound/movers/plat_stop.wav).
+soundmove : path to sound file to play when door is moving (eg: sound/mapname/soundname.wav) (default sound/movers/plat_move.wav).
+notfree : when set to 1, entity will not spawn in "Free for all" and "Tournament" modes.
+notteam : when set to 1, entity will not spawn in "Teamplay" and "CTF" modes.
+notsingle : when set to 1, entity will not spawn in Single Player mode (bot play mode).
+-------- Q3MAP2 KEYS --------
+_targetname : Used to attach a misc_model entity to this entity.
+_lightmapscale : sets the sample size of the lightmap. A value of 1 (default) will create 16x16 pixel samples. A higher value generates smaller samples (for example a value of 2 will create 8x8 samples).
+_castshadows;_cs : Allows per-entity control over shadow casting. Defaults to 0 on entities, 1 on world. 0 = no shadow casting. 1 = cast shadows on world. > 1 = cast shadows on entities with _rs (or _receiveshadows) with the corresponding value, AND world. Negative values imply same, but DO NOT cast shadows on world.
+_receiveshadows;_rs : Allows per-entity control over shadow reception. Defaults to 1 on everything (world shadows). 0 = receives NO shadows. > 1 = receive shadows only from corresponding keyed entities (see above) and world. &lt; 1 = receive shadows ONLY from corresponding keyed entities.
+_celshader : Sets the cel shader used for this geometry. Note: omit the "textures/" prefix.
+-------- Q3MAP2 TERRAIN KEYS --------
+_indexmap;alphamap : Path/name for the art file used to guide the mapping of textures on the terrain surface.
+_layers;layers : Integer value is the number unique root shaders that will be use on the terrain.
+_shader;shader : Path to the metashader used to assign textures to the terrain entity. Note: Omit the "textures/" prefix.
+-------- NOTES --------
+By default, the total amount of vertical travel of a platform is implicitly determined by the overall vertical size of the brushes of which it's made minus the lip value. But if the "height" key is used, then the total amount of vertical travel of the plat will be exactly that value regardless of the shape and size of the plat and regardless of the value of the "lip" key. Using the "height" key is the best method for any kind of platforms and the only possible one for thin plats which need to travel vertical distances many times their own thickness. Setting the origin key is simply an alternate method to using an origin brush. When using the model2 key, the origin point of the model will correspond to the origin point defined by either the origin brush or the origin coordinate value.
+
+There is a way to make plats play proper sounds. Just create a sound\movers\plats folder under baseq3 and put 2 sounds named pt1_strt.wav and pt1_end.wav in it. Those can be the renamed sounds from the Q2 plats or renamed copies of the sound\movers\doors sounds you can extract from your pak0.pk3 file or new custom sounds if you're up to it. Thanks to Fragzilla for the tip.*/
+
+//=============================================================================
+
+/*QUAKED func_pressure (0 .5 .8) ?
+Solid entity that spews steam, flames, or water when shot.
+-------- KEYS --------
+type : sets the appearance of the emission. Options are 'steam', 'air', or 'flame' (default steam).
+speed : the speed at which the substance shoots out (default 200).
+target : all entities with a matching targetname will be triggered.
+pathtarget : will send a func_train to the path corner this key points to. Must be used in conjunction with the target key pointing to the targetname of the func_train.
+-------- NOTES --------
+The location and direction of the emission is a function of how the entity is shot and can not be set by the mapper. In using a func_pressure to target something, have it go through an intermediary entity that has a wait key (like a func_button).*/
+
+//=============================================================================
+
+/*QUAKED func_rotating (0 .5 .8) ? - - X_AXIS Y_AXIS
+Solid entity that rotates continuously. Rotates on the Z axis by default and requires an origin brush. It will always start on in the game and is not targetable.
+-------- KEYS --------
+speed : determines how fast entity rotates (default 100).
+noise : path/name of .wav file to play. Use looping sounds only (eg. sound/world/drone6.wav).
+model2 : path/name of model to include (eg: models/mapobjects/bitch/fembotbig.md3).
+origin : alternate method of setting XYZ origin of entity's rotation axis and .md3 model included with entity (default "0 0 0" - See Notes).
+light : constantLight radius of .md3 model included with entity. Has no effect on the entity's brushes (default 0).
+color : constantLight color of .md3 model included with entity. Has no effect on the entity's brushes (default 1 1 1).
+notfree : when set to 1, entity will not spawn in "Free for all" and "Tournament" modes.
+notteam : when set to 1, entity will not spawn in "Teamplay" and "CTF" modes.
+notsingle : when set to 1, entity will not spawn in Single Player mode (bot play mode).
+-------- Q3MAP2 KEYS --------
+_targetname : Used to attach a misc_model entity to this entity.
+_lightmapscale : sets the sample size of the lightmap. A value of 1 (default) will create 16x16 pixel samples. A higher value generates smaller samples (for example a value of 2 will create 8x8 samples).
+_castshadows;_cs : Allows per-entity control over shadow casting. Defaults to 0 on entities, 1 on world. 0 = no shadow casting. 1 = cast shadows on world. > 1 = cast shadows on entities with _rs (or _receiveshadows) with the corresponding value, AND world. Negative values imply same, but DO NOT cast shadows on world.
+_receiveshadows;_rs : Allows per-entity control over shadow reception. Defaults to 1 on everything (world shadows). 0 = receives NO shadows. > 1 = receive shadows only from corresponding keyed entities (see above) and world. &lt; 1 = receive shadows ONLY from corresponding keyed entities.
+_celshader : Sets the cel shader used for this geometry. Note: omit the "textures/" prefix.
+-------- Q3MAP2 TERRAIN KEYS --------
+_indexmap;alphamap : Path/name for the art file used to guide the mapping of textures on the terrain surface.
+_layers;layers : Integer value is the number unique root shaders that will be use on the terrain.
+_shader;shader : Path to the metashader used to assign textures to the terrain entity. Note: Omit the "textures/" prefix.
+-------- SPAWNFLAGS --------
+X_AXIS : entity will rotate along the X axis.
+Y_AXIS : entity will rotate along the Y axis.
+-------- NOTES --------
+You need to have an origin brush as part of this entity. The center of that brush will be the point through which the rotation axis passes. Setting the origin key is simply an alternate method to using an origin brush. It will rotate along the Z axis by default. You can check either the X_AXIS or Y_AXIS box to change that. When using the model2 key, the origin point of the model will correspond to the origin point defined by either the origin brush or the origin coordinate value.*/
+
+//=============================================================================
+
+/*QUAKED func_static (0 .5 .8) ? START_OFF
+Static non-solid bspmodel. Can be used for conditional walls and models.
+-------- KEYS --------
+model2 : path/name of model to include (eg: models/mapobjects/mailbox/mailbox.md3).
+origin : alternate method of setting XYZ origin of .md3 model included with entity (See Notes).
+light : constantLight radius of .md3 model included with entity. Has no effect on the entity's brushes (default 0).
+color : constantLight color of .md3 model included with entity. Has no effect on the entity's brushes (default 1 1 1).
+targetname : if set, activating an entity with a matching target key can make entity disappear from the game (See Notes).
+notfree : when set to 1, entity will not spawn in "Free for all" and "Tournament" modes.
+notteam : when set to 1, entity will not spawn in "Teamplay" and "CTF" modes.
+notsingle : when set to 1, entity will not spawn in Single Player mode (bot play mode).
+-------- Q3MAP2 KEYS --------
+_targetname : Used to attach a misc_model entity to this entity.
+_lightmapscale : sets the sample size of the lightmap. A value of 1 (default) will create 16x16 pixel samples. A higher value generates smaller samples (for example a value of 2 will create 8x8 samples).
+_castshadows;_cs : Allows per-entity control over shadow casting. Defaults to 0 on entities, 1 on world. 0 = no shadow casting. 1 = cast shadows on world. > 1 = cast shadows on entities with _rs (or _receiveshadows) with the corresponding value, AND world. Negative values imply same, but DO NOT cast shadows on world.
+_receiveshadows;_rs : Allows per-entity control over shadow reception. Defaults to 1 on everything (world shadows). 0 = receives NO shadows. > 1 = receive shadows only from corresponding keyed entities (see above) and world. &lt; 1 = receive shadows ONLY from corresponding keyed entities.
+_celshader : Sets the cel shader used for this geometry. Note: omit the "textures/" prefix.
+-------- Q3MAP2 TERRAIN KEYS --------
+_indexmap;alphamap : Path/name for the art file used to guide the mapping of textures on the terrain surface.
+_layers;layers : Integer value is the number unique root shaders that will be use on the terrain.
+_shader;shader : Path to the metashader used to assign textures to the terrain entity. Note: Omit the "textures/" prefix.
+-------- SPAWNFLAGS --------
+START_OFF : entity will start in the off position. 
+-------- NOTES --------
+When using the model2 key, the origin point of the model will correspond to the origin point defined by either the origin brush or the origin coordinate value. If a model is included with a targeted func_static, the brush(es) of the entity will be removed from the game but the .md3 model won't: it will automatically be moved to the (0 0 0) world origin so you should NOT include an .md3 model to a targeted func_static.
+
+By default, when activated a visible func_static will be shown and an invisible one will be hidden. To alter this behaviour, you can use a "pathtarget" key for the entity that points to the func_static. Possible values are:
+- "on" - will always show the targeted entity
+- "off" - will always hide the targeted entity
+Any other value for "pathtarget" will make the func_train take the default action.
+
+Because the map has only a single bot navigation file, func_static's cannot be used to make significant changes in game play flow between differing game types.*/
+
+//=============================================================================
+
+/*QUAKED func_timer (0 .5 .8) (-8 -8 -8) (8 8 8) START_ON
+Time delay trigger that will continuously fire its targets after a preset time delay. The time delay can also be randomized. When triggered, the timer will toggle on/off.
+-------- KEYS --------
+wait : delay in seconds between each triggering of its targets (default 1).
+random : random time variance in seconds added or subtracted from "wait" delay (default 0 - see Notes).
+target : this points to the entities to trigger.
+pathtarget : will send a func_train to the path corner this key points to. Must be used in conjunction with the target key pointing to the targetname of the func_train.
+targetname : activating an entity with a matching target key will toggle the timer on/off.
+notfree : when set to 1, entity will not spawn in "Free for all" and "Tournament" modes.
+notteam : when set to 1, entity will not spawn in "Teamplay" and "CTF" modes.
+notsingle : when set to 1, entity will not spawn in Single Player mode (bot play mode).
+-------- SPAWNFLAGS --------
+START_ON : timer will start on in the game and continuously fire its targets.
+-------- NOTES --------
+When the random key is set, its value is used to calculate a minimum and a maximum delay. The final time delay will be a random value anywhere between the minimum and maximum values: (min delay = wait - random) (max delay = wait + random).*/
+
+//=============================================================================
+
+/*QUAKED func_train (0 .5 .8) ?
+Trains are moving solids that follow a string of path_corner entities. They require an origin brush (see Notes).
+-------- KEYS --------
+speed : speed of displacement of train (default 100 or overridden by speed value of path).
+target : this points to the first path_corner of the path which is also the spawn location of the train's origin.
+targetname : the name of the entity. This key must be set in order to make the entity behave like an elevator.
+alias : alternate way to attach other entities to this one. Use this when targetname is reserved for other purposes.
+attachto : if set, this entity will be attached to another entity with a matching TARGET or ALIAS.
+dmg : damage to inflict on player when he blocks operation of the train (default 2).
+model2 : path/name of model to include (eg: models/mapobjects/pipe/pipe02.md3).
+origin : alternate method of setting XYZ origin of the train's brush(es) and .md3 model included with entity (See Notes).
+light : constantLight radius of .md3 model included with entity. Has no effect on the entity's brushes (default 0).
+color : constantLight color of .md3 model included with entity. Has no effect on the entity's brushes (default 1 1 1).
+notfree : when set to 1, entity will not spawn in "Free for all" and "Tournament" modes.
+notteam : when set to 1, entity will not spawn in "Teamplay" and "CTF" modes.
+notsingle : when set to 1, entity will not spawn in Single Player mode (bot play mode).
+-------- Q3MAP2 KEYS --------
+_targetname : Used to attach a misc_model entity to this entity.
+_lightmapscale : sets the sample size of the lightmap. A value of 1 (default) will create 16x16 pixel samples. A higher value generates smaller samples (for example a value of 2 will create 8x8 samples).
+_castshadows;_cs : Allows per-entity control over shadow casting. Defaults to 0 on entities, 1 on world. 0 = no shadow casting. 1 = cast shadows on world. > 1 = cast shadows on entities with _rs (or _receiveshadows) with the corresponding value, AND world. Negative values imply same, but DO NOT cast shadows on world.
+_receiveshadows;_rs : Allows per-entity control over shadow reception. Defaults to 1 on everything (world shadows). 0 = receives NO shadows. > 1 = receive shadows only from corresponding keyed entities (see above) and world. &lt; 1 = receive shadows ONLY from corresponding keyed entities.
+_celshader : Sets the cel shader used for this geometry. Note: omit the "textures/" prefix.
+-------- Q3MAP2 TERRAIN KEYS --------
+_indexmap;alphamap : Path/name for the art file used to guide the mapping of textures on the terrain surface.
+_layers;layers : Integer value is the number unique root shaders that will be use on the terrain.
+_shader;shader : Path to the metashader used to assign textures to the terrain entity. Note: Omit the "textures/" prefix.
+-------- NOTES --------
+Trains will start on in the game unless the path_corner they start on has a wait of "-1".
+Setting the origin key is simply an alternate method to using an origin brush. When using the model2 key, the origin point of the model will correspond to the origin point defined by either the origin brush or the origin coordinate value.*/
+
+//=============================================================================
+
+INFO_* ENTITIES
+
+//=============================================================================
+
+/*QUAKED info_camp (0 .5 0) (-8 -8 -8) (8 8 8)
+This atttracts bots which have a camping preference in their AI characteristics. It should be placed at least 32 units away from any brush surface.
+-------- KEYS --------
+range : number of units that the bot can move away from camp entity while camping on it.
+weight : number that is compared against the weight assigned to all the other camp spots in the map to determine if a bot chooses to camp there. The value is normalized against all other weight values.
+-------- NOTES --------
+Examples of bots which have a high camping preference are: Razor, Tank Jr., Grunt, Patriot and Doom. Examples of bots which have a low camping preference are: Klesk, Mynx, Sarge, Keel and Xaero.*/
+
+//=============================================================================
+
+/*QUAKED info_notnull (0 .5 0) (-8 -8 -8) (8 8 8)
+Used as a positional target for entities that can use directional pointing. A target_position can be used instead of this but was kept in Q3A for legacy purposes.
+-------- KEYS --------
+targetname : must match the target key of entity that uses this for pointing.
+notfree : when set to 1, entity will not spawn in "Free for all" and "Tournament" modes.
+notteam : when set to 1, entity will not spawn in "Teamplay" and "CTF" modes.
+notsingle : when set to 1, entity will not spawn in Single Player mode (bot play mode).*/
+
+//=============================================================================
+
+/*QUAKED info_null (0 .5 0) (-8 -8 -8) (8 8 8)
+Used as a positional target for light entities to create a spotlight effect. A target_position can be used instead of this but was kept in Q3A for legacy purposes.
+-------- KEYS --------
+targetname : must match the target key of entity that uses this for pointing.
+notfree : when set to 1, entity will not spawn in "Free for all" and "Tournament" modes.
+notteam : when set to 1, entity will not spawn in "Teamplay" and "CTF" modes.
+notsingle : when set to 1, entity will not spawn in Single Player mode (bot play mode).*/
+
+//=============================================================================
+
+/*QUAKED info_player_deathmatch (1 0 0) (-16 -16 -24) (16 16 32) INITIAL
+Normal player spawning location for Q3A levels.
+-------- KEYS --------
+angle : direction in which player will look when spawning in the game. Does not apply to bots.
+target : this can point at a target_give entity for respawn freebies.
+nobots : when set to 1, bots will never use this spawn point to respawn in the game.
+nohumans : when set to 1, human players will never use this spawn point to respawn in the game.
+notfree : when set to 1, entity will not spawn in "Free for all" and "Tournament" modes.
+notteam : when set to 1, entity will not spawn in "Teamplay" and "CTF" modes.
+notsingle : when set to 1, entity will not spawn in Single Player mode (bot play mode).
+-------- SPAWNFLAGS --------
+INITIAL : makes the spawnpoint the initial place for the player to spawn at the beginning of the game.*/
+
+//=============================================================================
+
+/*QUAKED info_player_intermission (1 0 1) (-16 -16 -16) (16 16 16)
+Camera for the map intermission / scoreboard at the end of a map. 
+-------- KEYS --------
+angles: alternate "pitch, yaw, roll" angles method of aiming intermission camera (default 0 0 0).
+target : point this to an info_notnull or target_position entity to set the camera's pointing angles.
+-------- NOTES --------
+Can be aimed by setting the "angles" key or targeting an pointing to an aiming entity. Use only one per level.*/
+
+//=============================================================================
+
+/*QUAKED info_player_start (1 0 0) (-16 -16 -24) (16 16 32)
+Player spawn location. Works the same as info_player_deathmatch. Also acts as the starting location for Radiant sessions. Only one of these should be placed in each map.
+-------- KEYS --------
+angle : direction in which player will look when spawning in the game.
+target : this can point at a target_give entity for respawn freebies.*/
+
+//=============================================================================
+
+ITEM_* ENTITIES
+
+//=============================================================================
+
+/*QUAKED item_botroam (1 0.5 0) (-8 -8 -8) (8 8 8) SUSPENDED
+Game Function: An invisible entity which attracts a bot to it. Use to move bots to parts of a map that might otherwise not be used.
+-------- KEYS --------
+weight: non-zero floating point value, most often in the range 0 to 400. (Higher values are allowed but keep in mind that the bot should also be attracted to normal items.  Don't make the weight value too high.
+notfree : when set to 1, entity will not spawn in "Free for all" and "Tournament" modes.
+notteam : when set to 1, entity will not spawn in "Teamplay" and "CTF" modes.
+notsingle : when set to 1, entity will not spawn in Single Player mode (bot play mode).
+-------- SPAWNFLAGS --------
+SUSPENDED : item will spawn where it was placed in map and won't drop to the floor.
+-------- NOTES --------
+The item_botroam entity can be used when a bot does not roam the whole level or prefers to go to only specific areas. This (invisible) item can be placed in a map just like regular items. Nobody can actually pick up the item it's only used to attract bots to certain places of the map. The value is the weight of the roam_item is relative to the weight assigned other items in the map (each bot has its own weights). The bot character specific item weights are stored with the bot characters AI files ("botname"_i.c for items and "botname"_w.c for weapons) in the botfiles/bots/ sub-folder in the .pk3 file.*/
+
+//=============================================================================
+
+LIGHT_* ENTITIES
+
+//=============================================================================
+
+/*QUAKED light (.65 .65 1) (-8 -8 -8) (8 8 8) LINEAR NOANGLE NOGRIDLIGHT
+Non-displayed light entity.
+-------- KEYS --------
+light : value of light intensity (default 300).
+_color : weighted RGB value of light color (default white - 1 1 1).
+target : point this to an target_position, info_null or info_notnull to create a spotlight effect.
+radius : sets radius of light cone for spotlights (default 64). Light must target a pointing entity.
+-------- Q3MAP2 KEYS --------
+_sun : Set this key to 1 on a spotlight to make an infinite sun light.
+fade : Fades light attenuation. Only affects linear lights.
+scale : Scales light attentation, from SOF2/JK2. Scales the "light" value.
+-------- SPAWNFLAGS --------
+LINEAR : light falloff will be linear instead of inverse square of distance from source.
+NOANGLE : Ignore angle attenuation.
+NOGRIDLIGHT :Do not affect the lightgrid (dynamic entity lighting). Setting this spawnflag will disable this light entirely.*/
+
+//=============================================================================
+
+/*QUAKED lightJunior (0 0.7 0.3) (-6 -6 -6) (6 6 6) LINEAR NOANGLE NOGRIDLIGHT
+Non-displayed point light source THAT ONLY AFFECTS ENTITIES (lightgrid). The -pointscale and -scale arguments to Q3Map2 affect the brightness of these lights. The -skyscale argument affects brightness of entity sun lights.
+-------- KEYS --------
+light : value of light intensity (default 300).
+_color : weighted RGB value of light color (default white - 1 1 1).
+target : point this to an target_position, info_null or info_notnull to create a spotlight effect.
+radius : sets radius of light cone for spotlights (default 64). Light must target a pointing entity.
+-------- Q3MAP2 KEYS --------
+_sun : Set this key to 1 on a spotlight to make an infinite sun light.
+fade : Fades light attenuation. Only affects linear lights.
+scale : Scales light attentation, from SOF2/JK2. Scales the "light" value.
+-------- SPAWNFLAGS --------
+LINEAR : light falloff will be linear instead of inverse square of distance from source.
+NOANGLE : Ignore angle attenuation.
+NOGRIDLIGHT :Do not affect the lightgrid (dynamic entity lighting). Setting this spawnflag will disable this light entirely.*/
+
+//=============================================================================
+
+/*QUAKED light_d (0 .5 0) (-8 -8 -8) (8 8 8) ADDITIVE FLICKER PULSE
+Dynamic light entity. Not recommended. Use sparingly.
+-------- KEYS --------
+light : value of light intensity (default 300).
+_color : weighted RGB value of light color (default white - 1 1 1).
+-------- SPAWNFLAGS --------
+ADDITIVE : Use additive instead of multiplicative dynamic lighting.
+FLICKER : Intensity is slightly random.
+PULSE : Smooth sine function.*/
+
+//=============================================================================
+
+MISC_* ENTITIES
+
+//=============================================================================
+
+/*QUAKED misc_lens_flare (1 .5 .25) (-8 -8 -8) (8 8 8)
+Entity for a lens flare.
+-------- KEYS --------
+alphamax : normalized value that determines the variety of maximum opacity of each flare sprite.
+alphamin : normalized value that determines the variety of minimum opacity of each flare sprite.
+count : " number of flare sprites. If set to 0, only the sun sprite is displayed.
+sizemax : value that determines the variety of maximum size of each flare sprite.
+sizemin : value that determines the variety of minimum size of each flare sprite.
+sunalpha : normalized value that determines the opacity of the sun sprite.
+sunsize : value that determines the size of the sun sprite.
+target : point this to a target_position entity.*/
+
+//=============================================================================
+
+/*QUAKED misc_model (1 .5 .25) (-16 -16 -16) (16 16 16) SOLID LIGHTMAP
+Generic placeholder for inserting MD3 models in game. Requires compilation of map geometry to be added to level. If the map is compiled with Q3Map2, then ASE, 3DS, OBJ and other model formats are supported.
+-------- KEYS --------
+angle: direction in which model will be oriented.
+model : path/name of model to use (eg: models/mapobjects/teleporter/teleporter.md3).
+-------- Q3MAP2 KEYS --------
+angles : Individual control of PITCH, YAW, and ROLL (default 0 0 0).
+modelscale : Floating-point value used to scale a model up or down (default 1.0).
+modelscale_vec : Floating-point vector used to scale a model's axes individually (default 1.0 1.0 1.0).
+_remap : Used to remap textures/shaders in the model. To remap all shaders to a given shader, use "*;models/mymodel/mytexture". To remap a specific shader, use "models/mymodel/old;models/mymodel/new". If you need to remap more than one shader, use _remap01, _remap02, etc.
+target : Used to attach the misc_model to a brush entity, where its "targetname" key is the same value.
+_lightmapscale : Floating point value scaling the resolution of lightmaps on this model (if model is using lightmapped shaders) (default 1.0).
+_castshadows;_cs : Allows per-entity control over shadow casting. Defaults to 0 on entities, 1 on world. 0 = no shadow casting. 1 = cast shadows on world. > 1 = cast shadows on entities with _rs (or _receiveshadows) with the corresponding value, AND world. Negative values imply same, but DO NOT cast shadows on world.
+_receiveshadows;_rs : Allows per-entity control over shadow reception. Defaults to 1 on everything (world shadows). 0 = receives NO shadows. > 1 = receive shadows only from corresponding keyed entities (see above) and world. &lt; 1 = receive shadows ONLY from corresponding keyed entities.
+_celshader" : Sets the cel shader used for this geometry. Note: omit the "textures/" prefix.
+-------- SPAWNFLAGS --------
+SOLID : Assigns q3map_clipModel to any shaders used by the model.
+LIGHTMAP : Assigns q3map_forceMeta to any shaders used by the model.*/
+
+//=============================================================================
+
+/*QUAKED misc_portal_camera (1 .5 .25) (-8 -8 -8) (8 8 8) SLOWROTATE FASTROTATE NOROTATE
+Portal camera. This camera is used to project its view onto a portal surface in the level through the intermediary of a misc_portal_surface entity. Use the "angles" key or target a target_position or info_notnull entity to set the camera's pointing direction.
+-------- KEYS --------
+angles: this sets the pitch and yaw aiming angles of the portal camera (default 0 0). Use "roll" key to set roll angle.
+target : point this to a target_position entity to set the camera's pointing direction.
+targetname : a misc_portal_surface portal surface indicator must point to this. If this is one camera out of a sequence of camera angles, the targetname should be the target key of the misc_portal_surface appended with a #, where # is the order in which the cameras cycle (i.e. targetname1, targetname2, etc..).
+roll: roll angle of camera. A value of 0 is upside down and 180 is the same as the player's view.
+notfree : when set to 1, entity will not spawn in "Free for all" and "Tournament" modes.
+notteam : when set to 1, entity will not spawn in "Teamplay" and "CTF" modes.
+notsingle : when set to 1, entity will not spawn in Single Player mode (bot play mode).
+-------- SPAWNFLAGS --------
+SLOWROTATE : makes the portal camera rotate slowly along the roll axis.
+FASTROTATE : makes the portal camera rotate faster along the roll axis.
+NOROTATE : removes the rolling motion from the portal camera. 
+-------- NOTES --------
+Both the setting "angles" key or "targeting a target_position" methods can be used to aim the camera. However, the target_position method is simpler. In both cases, the "roll" key must be used to set the roll angle. If either the SLOWROTATE or FASTROTATE spawnflag is set, then the "roll" value is irrelevant.*/
+
+//=============================================================================
+
+/*QUAKED misc_portal_surface (1 .5 .25) (-8 -8 -8) (8 8 8) CYCLE
+Portal surface indicator. This will "lock on" the brush face closest to it and identify as a portal. The view displayed on the portal surface is the view of the misc_portal_camera(s) that this entity targets. Also used for mirrors (see Notes).
+-------- KEYS --------
+target : point this to a misc_portal_camera that "sees" the view you want to display on the portal. If using multiple cameras, the targetnames for the misc_portal_cameras will need to be this name plus #, where # is the order in which the cameras will be cycled.
+targetname : triggering this target will cycle through misc_portal_cameras if they are set to CYCLE (spawnflag 1).
+count : number of misc_portal_cameras to cycle through. Only used when CYCLE (spawnflag 1) is on. Minimum value is 2 (default 2).
+notfree : when set to 1, entity will not spawn in "Free for all" and "Tournament" modes.
+notteam : when set to 1, entity will not spawn in "Teamplay" and "CTF" modes.
+notsingle : when set to 1, entity will not spawn in Single Player mode (bot play mode).
+-------- SPAWNFLAGS --------
+CYCLE : indicates the surface will be used to cycle through multiple camera angles (generated by misc_portal_camera entities).
+-------- NOTES --------
+The entity must be no farther than 64 units away from the portal surface to lock onto it. To make a mirror, apply the common/mirror shader to the surface, place this entity near it but don't target a misc_portal_camera.*/
+
+//=============================================================================
+
+/*QUAKED misc_sky_portal (.1 .3 .8) (-8 -8 -8) (8 8 8)
+Entity for making sky portals. 
+-------- KEYS --------
+target : point this to a target_position entity that is in the "sky" room.
+targetname : a misc_sky_portal portal surface indicator must point to this.
+-------- NOTES --------
+Make the room that should be the sky.  Set "skyportalent" to 1 for ALL the entities inside that room.  Then add a target_position that will be the origin of the "camera." Then in the accessible parts of the level, add misc_sky_portal entities that target the target_position.  In order for the sky portal entities to be rendered properly, the player must have a misc_sky_portal entity in his PVS ALL THE TIME.  Also, replace all the sky surfaces with caulk (or anything that doesn't get drawn by the game) in order to be able to see the sky portal.*/
+
+//=============================================================================
+
+/*QUAKED misc_teleporter_dest (1 .5 .25) (-32 -32 -24) (32 32 -16)
+Teleport destination location point for trigger_teleporter entities.
+-------- KEYS --------
+angle : direction in which player will look when teleported.
+targetname : make the trigger_teleporter point to this.
+notfree : when set to 1, entity will not spawn in "Free for all" and "Tournament" modes.
+notteam : when set to 1, entity will not spawn in "Teamplay" and "CTF" modes.
+notsingle : when set to 1, entity will not spawn in Single Player mode (bot play mode).*/
+
+//=============================================================================
+
+PATH_* ENTITIES
+
+//=============================================================================
+
+/*QUAKED path_corner (.5 .3 0) (-8 -8 -8) (8 8 8) ROTATE
+Path corner entity that func_trains can be made to follow.
+-------- KEYS --------
+target : point to next path_corner in the path. Must be set for elevators as well.
+rotate: 3 values specifying the amount the func_train should rotate while moving from this path_corner to its target. Format is "pitch yaw roll"
+targetname : the name of the entity; the previous path_corner in the path points to this. If being used for an elevator, the pathtarget key of the entity triggering the move points to this key. 
+speed : speed of func_train while moving to the next path corner. This will override the speed value of the train.
+wait : number of seconds func_train will pause on path corner before moving to next path corner. Setting this key to -1 will make the train stop on the path corner (default 0).
+sound: path/name of .wav file to play (default silence).
+notfree : when set to 1, entity will not spawn in "Free for all" and "Tournament" modes.
+notteam : when set to 1, entity will not spawn in "Teamplay" and "CTF" modes.
+notsingle : when set to 1, entity will not spawn in Single Player mode (bot play mode).
+-------- SPAWNFLAGS --------
+ROTATE: if set, the train will also rotate while moving from this path_corner to its target. A "rotate" key must also be included
+-------- NOTES --------
+In order to turn a func_train into a working elevator, the path corners must have the wait key set to -1. To get the train to move again, use the pathtarget key from a separate triggering entity pointing to another path corner.*/
+
+//=============================================================================
+
+TARGET_* ENTITIES
+
+//=============================================================================
+
+/*QUAKED target_activate (.3 .3 .4) (-8 -8 -8) (8 8 8)
+Activates/deactivates other entities, like doors or triggers.
+-------- KEYS --------
+target : this must match the "activatename" field of the entities you want to activate/deactivate
+pathtarget : if set to "on", the entity will always activate its targets; if set to "off", it'll always deactivate them; if set to anything else, the entity will toggle its targets active/inactive.
+-------- NOTES --------
+If you want an entity to be inactive when the level is started set its "inactive" key to 1.*/
+
+//=============================================================================
+
+/*QUAKED target_delay (0 .7 .7) (-8 -8 -8) (8 8 8)
+Time delay trigger intermediary. Like a target_relay, this can only be fired by other triggers which will cause it in turn to fire its own targets.
+-------- KEYS --------
+targetname : activating trigger points to this.
+target : this points to entities to activate when this entity is triggered.
+pathtarget : will send a func_train to the path corner this key points to. Must be used in conjunction with the target key pointing to the targetname of the func_train.
+targetShaderName: the original shader in a shader swap (see notes).
+targetShaderNewName: new shader in a shader swap (see notes). 
+wait : delay in seconds from when this gets triggered to when it fires its own targets (default approx. 1).
+delay : same as wait? replaces it? WTF?...I'm confused now.
+random : random time variance in seconds added or subtracted from the delay (default 0 - see Notes).
+notfree : when set to 1, entity will not spawn in "Free for all" and "Tournament" modes.
+notteam : when set to 1, entity will not spawn in "Teamplay" and "CTF" modes.
+notsingle : when set to 1, entity will not spawn in Single Player mode (bot play mode).
+-------- NOTES --------
+When the random key is set, its value is used to calculate a minimum and a maximum delay. The final time delay will be a random value anywhere between the minimum and maximum values: (min delay = delay - random) (max delay = delay + random).
+To initiate a shader swap, use the targetShaderName key with the original shader path as the argument. Note this is always the original shader, not the current shader. Use the targetShaderNewName key with the path to the replacement shader as the argument. The shader swap will affect every surface in the map that was originally showing the shader specified as the targetShaderName.*/
+
+//=============================================================================
+
+/*QUAKED target_give (0 .5 0) (-8 -8 -8) (8 8 8)
+This is used to give ammo, weapons, health or items to the player who activates it.
+-------- KEYS --------
+target : this points to the item(s) to give when activated.
+targetname : activating trigger or spawn entity points to this.
+notfree : when set to 1, entity will not spawn in "Free for all" and "Tournament" modes.
+notteam : when set to 1, entity will not spawn in "Teamplay" and "CTF" modes.
+notsingle : when set to 1, entity will not spawn in Single Player mode (bot play mode).
+-------- NOTES --------
+There are 2 ways to use this entity.
+a) automatically give items to players when they spawn in the game: make a spawn location entity like info_player_deathmatch or CTF respawn points target this entity, then make it target the item(s) to give to the player upon respawn.
+b) give items to players during the game: make a trigger_multiple target this entity, then make it target the item(s) to give to the player when the trigger is touched.*/
+
+//=============================================================================
+
+/*QUAKED target_kill (0 .5 0) (-8 -8 -8) (8 8 8)
+This will kill the player who activates the trigger that fires this target.
+-------- KEYS --------
+targetname : the activating trigger points to this.
+notfree : when set to 1, entity will not spawn in "Free for all" and "Tournament" modes.
+notteam : when set to 1, entity will not spawn in "Teamplay" and "CTF" modes.
+notsingle : when set to 1, entity will not spawn in Single Player mode (bot play mode).*/
+
+//=============================================================================
+
+/*QUAKED target_location (0 .5 0) (-8 -8 -8) (8 8 8)
+Location marker used by bots and players for team orders and team chat in the course of Teamplay games. The closest target_location in sight is used for the location. If none is in sight, the closest in distance is used.
+-------- KEYS --------
+message :  name of the location (text string). Displayed in parentheses in front of all team chat and order messages.
+count : color of the location text displayed in parentheses during team chat. Set to 0-7 for color.
+   0 : white (default)
+   1 : red
+   2 : green
+   3 : yellow
+   4 : blue
+   5 : cyan
+   6 : magenta
+   7 : white
+notfree : when set to 1, entity will not spawn in "Free for all" and "Tournament" modes.
+notteam : when set to 1, entity will not spawn in "Teamplay" and "CTF" modes.
+notsingle : when set to 1, entity will not spawn in Single Player mode (bot play mode).*/
+
+//=============================================================================
+
+/*QUAKED target_position (0 .5 0) (-8 -8 -8) (8 8 8)
+Aiming target for entities like light, misc_portal_camera and trigger_push (jump pads) in particular.
+-------- KEYS --------
+targetname : the entity that requires an aiming direction points to this.
+portalspeed : when this key is used with a sky portal, these 3 values indicate how much the sky portal should move in the player's view. Default is "0 0 0" - static portals. A good value would be "0.025 0.025 0.025" (similar to kibuye) or "0.025 0.025 0" (the latter would disable vertical portal movement).
+notfree : when set to 1, entity will not spawn in "Free for all" and "Tournament" modes.
+notteam : when set to 1, entity will not spawn in "Teamplay" and "CTF" modes.
+notsingle : when set to 1, entity will not spawn in Single Player mode (bot play mode).
+-------- NOTES --------
+To make a jump pad, place this entity at the highest point of the jump and target it with a trigger_push entity.*/
+
+//=============================================================================
+
+/*QUAKED target_print (0 .5 0) (-8 -8 -8) (8 8 8) REDTEAM BLUETEAM PRIVATE
+This will print a message on the center of the screen when triggered. By default, all the clients will see the message.
+-------- KEYS --------
+message : text string to print on screen.
+targetname : the activating trigger points to this.
+notfree : when set to 1, entity will not spawn in "Free for all" and "Tournament" modes.
+notteam : when set to 1, entity will not spawn in "Teamplay" and "CTF" modes.
+notsingle : when set to 1, entity will not spawn in Single Player mode (bot play mode).
+-------- SPAWNFLAGS --------
+REDTEAM : only the red team players will see the message.
+BLUETEAM : only the blue team players will see the message.
+PRIVATE : only the player that activates the target will see the message.*/
+
+//=============================================================================
+
+/*QUAKED target_push (.5 .5 .5) (-8 -8 -8) (8 8 8) -
+This can be used to create jump pads and launch ramps. The direction of push can be set by the "angles" key or pointing to a target_position or info_notnull entity. Unlike trigger_push, this is NOT client side predicted and must be activated by a trigger.
+-------- KEYS --------
+angles: this sets the pitch and yaw aiming angles of push entity (default 0 0). The roll angle does not apply.
+speed : speed of push (default 1000). Has no effect if entity targets an aiming entity.
+targetname : the activating trigger points to this. Push originates from the location of the trigger.
+target : this points to the aiming entity to which the player will jump.
+sound: path/name of .wav file to play. Defaults to silence (sound/misc/silence.wav).
+notfree : when set to 1, entity will not spawn in "Free for all" and "Tournament" modes.
+notteam : when set to 1, entity will not spawn in "Teamplay" and "CTF" modes.
+notsingle : when set to 1, entity will not spawn in Single Player mode (bot play mode).
+-------- NOTES --------
+To make a jump pad or launch ramp, create a trigger_multiple where the jump must originate. Place the target_push directly above the trigger_multiple and place the target_position entity at the highest point of the jump. Target the trigger_multiple to the target_push and target the target_push to the target_position/info_notnull (or set the target_push's "angles" key). Note that the "angle" key also works.*/
+
+//=============================================================================
+
+/*QUAKED target_relay (0 .7 .7) (-8 -8 -8) (8 8 8) RED_ONLY BLUE_ONLY RANDOM
+This can only be activated by other triggers which will cause it in turn to activate its own targets.
+-------- KEYS --------
+targetname : activating trigger points to this.
+target : this points to entities to activate when this entity is triggered.
+pathtarget : will send a func_train to the path corner this key points to. Must be used in conjunction with the target key pointing to the targetname of the func_train.
+targetShaderName: the original shader in a shader swap (see notes).
+targetShaderNewName: new shader in a shader swap (see notes). 
+notfree : when set to 1, entity will not spawn in "Free for all" and "Tournament" modes.
+notteam : when set to 1, entity will not spawn in "Teamplay" and "CTF" modes.
+notsingle : when set to 1, entity will not spawn in Single Player mode (bot play mode).
+-------- SPAWNFLAGS --------
+RED_ONLY : only red team players can activate trigger.
+BLUE_ONLY : only red team players can activate trigger.
+RANDOM : one one of the targeted entities will be triggered at random.
+-------- NOTES --------
+To initiate a shader swap, use the targetShaderName key with the original shader path as the argument. Note this is always the original shader, not the current shader. Use the targetShaderNewName key with the path to the replacement shader as the argument. The shader swap will affect every surface in the map that was originally showing the shader specified as the targetShaderName.*/
+
+//=============================================================================
+
+/*QUAKED target_speaker (0 .7 .7) (-8 -8 -8) (8 8 8) LOOPED_ON LOOPED_OFF GLOBAL ACTIVATOR NOPVS
+Sound generating entity that plays .wav files. Normal non-looping sounds play each time the target_speaker is triggered. Looping sounds can be set to play by themselves (no activating trigger) or be toggled on/off by a trigger.
+-------- KEYS --------
+noise : path/name of .wav file to play (eg. sound/world/growl1.wav - see Notes).
+wait : delay in seconds between each time the sound is played ("random" key must be set - see Notes).
+random : random time variance in seconds added or subtracted from "wait" delay ("wait" key must be set - see Notes).
+targetname : the activating button or trigger points to this.
+notfree : when set to 1, entity will not spawn in "Free for all" and "Tournament" modes.
+notteam : when set to 1, entity will not spawn in "Teamplay" and "CTF" modes.
+notsingle : when set to 1, entity will not spawn in Single Player mode (bot play mode).
+-------- SPAWNFLAGS --------
+LOOPED_ON : sound will loop and initially start on in level (will toggle on/off when triggered).
+LOOPED_OFF : sound will loop and initially start off in level (will toggle on/off when triggered).
+GLOBAL : sound will play full volume throughout the level.
+ACTIVATOR : sound will play only for the player that activated the target.
+NOPVS : by default, looping sounds are only played while in the player's PVS. Checking this spawnflag will make the sound play no matter if it's in the PVS or not.
+-------- NOTES --------
+The path portion value of the "noise" key can be replaced by the implicit folder character "*" for triggered sounds that belong to a particular player model. For example, if you want to create a "bottomless pit" in which the player screams and dies when he falls into, you would place a trigger_multiple over the floor of the pit and target a target_speaker with it. Then, you would set the "noise" key to "*falling1.wav". The * character means the current player model's sound folder. So if your current player model is Visor, * = sound/player/visor, if your current player model is Sarge, * = sound/player/sarge, etc. This cool feature provides an excellent way to create "player-specific" triggered sounds in your levels.
+
+The combination of the "wait" and "random" keys can be used to play non-looping sounds without requiring an activating trigger but both keys must be used together. The value of the "random" key is used to calculate a minimum and a maximum delay. The final time delay will be a random value anywhere between the minimum and maximum values: (min delay = wait - random) (max delay = wait + random).*/
+
+//=============================================================================
+
+/*QUAKED target_teleporter (0 .5 0) (-8 -8 -8) (8 8 8)
+Activating this will teleport players to the location of the targeted misc_teleporter_dest entity. Unlike trigger_teleport, this entity must be activated by a trigger and does NOT allow client prediction of events.
+-------- KEYS --------
+targetname : activating trigger points to this.
+target : this must point to a misc_teleporter_dest entity.
+notfree : when set to 1, entity will not spawn in "Free for all" and "Tournament" modes.
+notteam : when set to 1, entity will not spawn in "Teamplay" and "CTF" modes.
+notsingle : when set to 1, entity will not spawn in Single Player mode (bot play mode).*/
+
+//=============================================================================
+
+TEAM_* ENTITIES
+
+//=============================================================================
+
+/*QUAKED team_CTF_blueflag (.15 .15 .15) (-16 -16 -16) (16 16 16)
+Black briefcase for CTB games.
+-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
+model="models/cases/b_case.md3"*/
+
+//=============================================================================
+
+/*QUAKED team_CTF_blueplayer (.15 .15 .15) (-16 -16 -24) (16 16 32)
+Initial Black team spawning position for CTB games. This is where players spawn when they join the Black team.
+-------- KEYS --------
+target : this can point at a target_give entity for respawn freebies.*/
+
+//=============================================================================
+
+/*QUAKED team_CTF_bluespawn (.15 .15 .15) (-16 -16 -24) (16 16 32)
+Black team respawning position for CTB games. This is where Black team players respawn after they get fragged.
+-------- KEYS --------
+target : this can point at a target_give entity for respawn freebies.*/
+
+//=============================================================================
+
+/*QUAKED team_CTF_redflag (.9 .9 .9) (-16 -16 -16) (16 16 16)
+Silver briefcase for CTB games.
+-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
+model="models/cases/s_case.md3"*/
+
+//=============================================================================
+
+/*QUAKED team_CTF_redplayer (.9 .9 .9) (-16 -16 -24) (16 16 32)
+Initial Silver team spawning position for CTB games. This is where players spawn when they join the Silver team.
+-------- KEYS --------
+target : this can point at a target_give entity for respawn freebies.*/
+
+//=============================================================================
+
+/*QUAKED team_CTF_redspawn (.9 .9 .9) (-16 -16 -24) (16 16 32)
+Silver team respawning position for CTB games. This is where Silver team players respawn after they get fragged.
+-------- KEYS --------
+target : this can point at a target_give entity for respawn freebies.*/
+
+//=============================================================================
+
+TRIGGER_* ENTITIES
+
+//=============================================================================
+
+/*QUAKED trigger_always (.5 .5 .5) (-8 -8 -8) (8 8 8)
+Automatic trigger. It will fire the entities it targets as soon as it spawns in the game.
+-------- KEYS --------
+target : this points to the entity to activate.
+pathtarget : will send a func_train to the path corner this key points to. Must be used in conjunction with the target key pointing to the targetname of the func_train.
+notfree : when set to 1, entity will not spawn in "Free for all" and "Tournament" modes.
+notteam : when set to 1, entity will not spawn in "Teamplay" and "CTF" modes.
+notsingle : when set to 1, entity will not spawn in Single Player mode (bot play mode).*/
+
+//=============================================================================
+
+/*QUAKED trigger_hurt (.5 .5 .5) ? START_OFF TOGGLE SILENT NO_PROTECTION SLOW
+Any player that touches this will be hurt by "dmg" points of damage once per server frame (very fast). A sizzling sound is also played while the player is being hurt.
+-------- KEYS --------
+dmg : number of points of damage inflicted to player per server frame (default 5 - integer values only).
+message : text string to print on screen. Default is "was in the wrong place".
+targetname : activating trigger points to this. If no targetname is set, the entity can not be toggled.
+notfree : when set to 1, entity will not spawn in "Free for all" and "Tournament" modes.
+notteam : when set to 1, entity will not spawn in "Teamplay" and "CTF" modes.
+notsingle : when set to 1, entity will not spawn in Single Player mode (bot play mode).
+-------- SPAWNFLAGS --------
+START_OFF : entity will start in the off position. Only useful with TOGGLE spawnflag.
+TOGGLE : wait in both the on and off states for a trigger event.
+SILENT : supresses the sizzling sound while player is being hurt.
+NO_PROTECTION : not used in Reaction.
+SLOW : changes the damage rate to once per second.
+-------- NOTES --------
+Triggering a trigger_hurt will have no effect if the TOGGLE spawnflag is not set.*/
+
+//=============================================================================
+
+/*QUAKED trigger_multiple (.5 .5 .5) ? OPEN_DOOR
+Variable size repeatable trigger. It will fire the entities it targets when touched by player. Can be made to operate like a trigger_once entity by setting the "wait" key to -1. It can also be activated by another trigger that targets it.
+-------- KEYS --------
+target : this points to the entity to activate.
+targetInactive : if the trigger_multiple is set to inactive state by a target_activate entity, it can be set to fire other target instead of doing nothing.
+pathtarget : will send a func_train to the path corner this key points to. Must be used in conjunction with the target key pointing to the targetname of the func_train.
+targetShaderName: the original shader in a shader swap (see notes).
+targetShaderNewName: new shader in a shader swap (see notes). 
+targetname : activating trigger points to this.
+activatename : used in order to allow target_activate entities targeting this trigger to activate/deactivate it
+inactive : indicates that the trigger should start inactive. It can be activated by target_activate entities that have a "target" matching the "activatename" field of the trigger
+wait : time in seconds until trigger becomes re-triggerable after it's been touched (default 0.2, -1 = trigger once).
+random : random time variance in seconds added or subtracted from "wait" delay (default 0 - see Notes).
+alias : alternate way to attach other entities to this one. Use this when targetname is reserved for other purposes.
+attachto : if set, this entity will be attached to another entity with a matching TARGET or ALIAS.
+notfree : when set to 1, entity will not spawn in "Free for all" and "Tournament" modes.
+notteam : when set to 1, entity will not spawn in "Teamplay" and "CTF" modes.
+notsingle : when set to 1, entity will not spawn in Single Player mode (bot play mode).
+-------- SPAWNFLAGS --------
+OPEN_DOOR : must be manually activated by pressing 'opendoor'.
+-------- NOTES --------
+To initiate a shader swap, use the targetShaderName key with the original shader path as the argument. Note this is always the original shader, not the current shader. Use the targetShaderNewName key with the path to the replacement shader as the argument. The shader swap will affect every surface in the map that was originally showing the shader specified as the targetShaderName.
+When the random key is set, its value is used to calculate a minimum and a maximum delay. The final time delay will be a random value anywhere between the minimum and maximum values: (min delay = wait - random) (max delay = wait + random).*/
+
+//=============================================================================
+
+/*QUAKED trigger_push (.5 .5 .5) BOT_ONLY
+This is used to create jump pads and launch ramps. It MUST point to a target_position or info_notnull entity to work. Unlike target_push, this is client side predicted.
+-------- KEYS --------
+target : this points to the target_position to which the player will jump.
+pathtarget : will send a func_train to the path corner this key points to. Must be used in conjunction with the target key pointing to the targetname of the func_train.
+sound: path/name of .wav file to play. Defaults to silence (sound/misc/silence.wav).
+notfree : when set to 1, entity will not spawn in "Free for all" and "Tournament" modes.
+notteam : when set to 1, entity will not spawn in "Teamplay" and "CTF" modes.
+notsingle : when set to 1, entity will not spawn in Single Player mode (bot play mode).
+-------- SPAWNFLAGS --------
+BOT_ONLY : only bots will use this entity.
+-------- NOTES --------
+To make a jump pad or launch ramp, place the target_position/info_notnull entity at the highest point of the jump and target it with this entity.*/
+
+//=============================================================================
+
+/*QUAKED trigger_teleport (.5 .5 .5) ?
+Touching this will teleport players to the location of the targeted misc_teleporter_dest entity. This entity allows client prediction of events.
+-------- KEYS --------
+target : this must point to a misc_teleporter_dest entity.
+pathtarget : will send a func_train to the path corner this key points to. Must be used in conjunction with the target key pointing to the targetname of the func_train.
+notfree : when set to 1, entity will not spawn in "Free for all" and "Tournament" modes.
+notteam : when set to 1, entity will not spawn in "Teamplay" and "CTF" modes.
+notsingle : when set to 1, entity will not spawn in Single Player mode (bot play mode).*/
+
+//=============================================================================
+
+WORLDSPAWN ENTITY
+
+//=============================================================================
+
+/*QUAKED worldspawn (0 0 0) ?
+Only used for the world.
+-------- KEYS --------
+message : text to print at user logon. Used for name of level.
+music : path/name of looping .wav file used for level's music (eg. music/sonic5.wav).
+ambient : adds a constant value to overall lighting. High values are not recommended. Ambient light will have a tendency to flatten out variations in light and shade.
+_color : RGB value for ambient light color.
+_rq3_fog_color : if set, the game will fill the screen with this color before drawing the actual scene. Useful for replacing the q3map2 foghulls
+vertexremapshader : sets a shader to be used in vertex light mode instead of a normal shader. Value : normal_shader;vertex_shader (note the semi-colon). As many shaders can be remapped as needed by using the key. However, if more than one shader is remapped in a map, each one must have a unique identifier … either a number or a letter after the Key word, as shown by “vertexremapshaderX”, where X is a number or any character set. Examples, vertexremapshader01, vertexremapshader02, vertexremapshaderA, vertexremapshaderB, etc.
+gravity : gravity of level (default is normal gravity: 800).
+gridsize : granularity of the lightgrid created by q3map. Value is three integers separated by spaces, representing number of units between grid points in X Y Z. Default gridsize value is 128 128 256. Use larger powers of 2 to reduce BSP size and compile time on very large maps.
+_blocksize : q3map always splits the BSP tree along the planes X=_blocksize*n and Y=_blocksize*n. Default _blocksize value is 1024. Increase the blocksize using larger powers of 2 to reduce compile times on very large maps with a low structural brush density.
+-------- Q3MAP2 KEYS --------
+_minlight : raises ambient light only where it's less than the minlight value (dark areas) and leaves the rest of your map alone.
+_minvertexlight : (see above)
+_mingridlight : Minimum lightgrid (dynamic entity lighting) levelwide.
+_keeplights : Keep light entities in the BSP. Normally stripped out by the BSP process and read from the .map file by the lighting phase.
+_noshadersun : shader suns still work, but this is a method to override/do_not_use shader suns, and only use entity suns. I.e., supresses q3map_sun in your sky shaders.
+_farplanedist : Limit on how many units the vis phase of compilation can see. Used in combination with level-wide fog, it can help reduce r_speeds on large, open maps.
+_foghull : Shader to use for "fog hull." Foghull shader should be a sky shader. Omit the "textures/" prefix.
+_lightmapscale : sets the sample size of the lightmap. A value of 1 (default) will create 16x16 pixel samples. A higher value generates smaller samples (for example a value of 2 will create 8x8 samples). Can be overridden in func_group (or other entities).
+_castshadows;_cs : Allows per-entity control over shadow casting. Defaults to 0 on entities, 1 on world. 0 = no shadow casting. 1 = cast shadows on world. > 1 = cast shadows on entities with _rs (or _receiveshadows) with the corresponding value, AND world. Negative values imply same, but DO NOT cast shadows on world.</integer>
+_receiveshadows;_rs : Allows per-entity control over shadow reception. Defaults to 1 on everything (world shadows). 0 = receives NO shadows. > 1 = receive shadows only from corresponding keyed entities (see above) and world. &lt; 1 = receive shadows ONLY from corresponding keyed entities.</integer>
+_celshader : Sets the cel shader used for this geometry. Note: omit the "textures/" prefix. Overridable in entities.
+-------- Q3MAP2 TERRAIN KEYS --------
+_indexmap;alphamap : Path/name for the art file used to guide the mapping of textures on the terrain surface.
+_layers;layers : Integer value is the number unique root shaders that will be use on the terrain.
+_shader;shader : Path to the metashader used to assign textures to the terrain entity. Note: Omit the "textures/" prefix.
+-------- RQ3 KEYS --------
+numbreakabletypes : the number of breakable types to be defined in the worldspawn (0 by default)
+b#i_type (where #i is a number between 0 and numbreakabletypes - 1, e.g. "b3_type". These are the id's of the breakable types) : breakable type #i (e.g. "glass", "wood_mahogany" etc.)
+b#i_force, b#i_lift : the same as the "force" and "lift" keys from func_breakables. These two are optional, unlike the "b#i_type" key. If the "b#i_type" key is ommitted, then the code will skip to the next breakable definition (if there is one).
+atmosphere : The supported atmospheric effects are 'rain' and 'snow'. The format string is something like: T=RAIN,B=5 10,C=0.5,G=0.5 2,BV=0,GV=0 100,W=1 2,D=300 
+
+The type must always come first (T=RAIN). The fields are as follows: 
+
+Key Default Description: 
+T RAIN Type of effect (supports 'rain' or 'snow') 
+B 5 10 Base times (X seconds, or between X and Y seconds) 
+C 1 1 Time to move from base to gust (X seconds, or between X and Y seconds) 
+G 0 2 Gust times (X seconds, or between X and Y seconds) 
+BV 0 100 Base vector (x and y units/sec). 
+GV 0 100 Gust vector (x and y units/sec). 
+W 1 2 Weight of drops (X, or from X to Y depending on base/gust position) 
+S 1 1 Water and Splash shader. This are two boolean values, the first enables impactshaders on water (0 = off, 1 = on), the second on land. 
+D 300 300 Number of drops (X, or from X to Y depending on base/gust position)*/ 
+
+//=============================================================================
+
+RQ3AMMO_* ENTITIES
+
+//=============================================================================
+
+/*QUAKED RQ3ammo_m4 (.3 .3 1) (-8 -8 -8) (8 8 8) SUSPENDED
+M4 ammo. Gives the player 1 clip by default.
+-------- KEYS --------
+wait : time in seconds before item respawns after being picked up (default 40, -1 = never respawn).
+random : random time variance in seconds added or subtracted from "wait" delay (default 0 - see Notes).
+team : set this to team items. Teamed items will respawn randomly after team master is picked up (see Notes).
+target : picking up the item will trigger the entity this points to.
+targetname : a target_give entity can point to this for respawn freebies.
+notbot : used to make an item invisible for bot attraction. 
+-------- SPAWNFLAGS --------
+SUSPENDED : item will spawn where it was placed in map and won't drop to the floor.
+-------- NOTES --------
+The amount of time it takes for an item in the team to respawn is determined by the "wait" value of the item that was picked up previously. So if one of the items in the team has it's "wait" key set to -1 (never respawn), the random respawning cycle of the teamed items will stop after that item is picked up.
+
+When the random key is set, its value is used to calculate a minimum and a maximum delay. The final time delay will be a random value anywhere between the minimum and maximum values: (min delay = wait - random) (max delay = wait + random).
+-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
+model="models/ammo/m4.md3"*/
+
+//=============================================================================
+
+/*QUAKED RQ3ammo_mk23 (.3 .3 1) (-8 -8 -8) (8 8 8) SUSPENDED
+MK23 pistol ammo. Gives the player 1 clip by default.
+-------- KEYS --------
+wait : time in seconds before item respawns after being picked up (default 40, -1 = never respawn).
+random : random time variance in seconds added or subtracted from "wait" delay (default 0 - see Notes).
+team : set this to team items. Teamed items will respawn randomly after team master is picked up (see Notes).
+target : picking up the item will trigger the entity this points to.
+targetname : a target_give entity can point to this for respawn freebies.
+notbot : used to make an item invisible for bot attraction.
+-------- SPAWNFLAGS --------
+SUSPENDED : item will spawn where it was placed in map and won't drop to the floor.
+-------- NOTES --------
+The amount of time it takes for an item in the team to respawn is determined by the "wait" value of the item that was picked up previously. So if one of the items in the team has it's "wait" key set to -1 (never respawn), the random respawning cycle of the teamed items will stop after that item is picked up.
+
+When the random key is set, its value is used to calculate a minimum and a maximum delay. The final time delay will be a random value anywhere between the minimum and maximum values: (min delay = wait - random) (max delay = wait + random).
+-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
+model="models/ammo/mk23.md3"*/
+
+//=============================================================================
+
+/*QUAKED RQ3ammo_mp5 (.3 .3 1) (-8 -8 -8) (8 8 8) SUSPENDED
+MP5 ammo. Gives the player 1 clip by default.
+-------- KEYS --------
+wait : time in seconds before item respawns after being picked up (default 40, -1 = never respawn).
+random : random time variance in seconds added or subtracted from "wait" delay (default 0 - see Notes).
+team : set this to team items. Teamed items will respawn randomly after team master is picked up (see Notes).
+target : picking up the item will trigger the entity this points to.
+targetname : a target_give entity can point to this for respawn freebies.
+notbot : used to make an item invisible for bot attraction.
+-------- SPAWNFLAGS --------
+SUSPENDED : item will spawn where it was placed in map and won't drop to the floor.
+-------- NOTES --------
+The amount of time it takes for an item in the team to respawn is determined by the "wait" value of the item that was picked up previously. So if one of the items in the team has it's "wait" key set to -1 (never respawn), the random respawning cycle of the teamed items will stop after that item is picked up.
+
+When the random key is set, its value is used to calculate a minimum and a maximum delay. The final time delay will be a random value anywhere between the minimum and maximum values: (min delay = wait - random) (max delay = wait + random).
+-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
+model="models/ammo/mp5.md3"*/
+
+//=============================================================================
+
+/*QUAKED RQ3ammo_shells (.3 .3 1) (-8 -4 -6) (8 12 10) SUSPENDED
+M3 & HC ammo. Gives the player 1 box of 7 shells by default.
+-------- KEYS --------
+wait : time in seconds before item respawns after being picked up (default 40, -1 = never respawn).
+random : random time variance in seconds added or subtracted from "wait" delay (default 0 - see Notes).
+team : set this to team items. Teamed items will respawn randomly after team master is picked up (see Notes).
+target : picking up the item will trigger the entity this points to.
+targetname : a target_give entity can point to this for respawn freebies.
+notbot : used to make an item invisible for bot attraction.
+-------- SPAWNFLAGS --------
+SUSPENDED : item will spawn where it was placed in map and won't drop to the floor.
+-------- NOTES --------
+The amount of time it takes for an item in the team to respawn is determined by the "wait" value of the item that was picked up previously. So if one of the items in the team has it's "wait" key set to -1 (never respawn), the random respawning cycle of the teamed items will stop after that item is picked up.
+
+When the random key is set, its value is used to calculate a minimum and a maximum delay. The final time delay will be a random value anywhere between the minimum and maximum values: (min delay = wait - random) (max delay = wait + random).
+-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
+model="models/ammo/m3.md3"*/
+
+//=============================================================================
+
+/*QUAKED RQ3ammo_ssg3000 (.3 .3 1) (-8 -8 -8) (8 8 8) SUSPENDED
+SSG3000 ammo. Gives the player 1 box of 6 rounds by default.
+-------- KEYS --------
+wait : time in seconds before item respawns after being picked up (default 40, -1 = never respawn).
+random : random time variance in seconds added or subtracted from "wait" delay (default 0 - see Notes).
+team : set this to team items. Teamed items will respawn randomly after team master is picked up (see Notes).
+target : picking up the item will trigger the entity this points to.
+targetname : a target_give entity can point to this for respawn freebies.
+notbot : used to make an item invisible for bot attraction.
+-------- SPAWNFLAGS --------
+SUSPENDED : item will spawn where it was placed in map and won't drop to the floor.
+-------- NOTES --------
+The amount of time it takes for an item in the team to respawn is determined by the "wait" value of the item that was picked up previously. So if one of the items in the team has it's "wait" key set to -1 (never respawn), the random respawning cycle of the teamed items will stop after that item is picked up.
+
+When the random key is set, its value is used to calculate a minimum and a maximum delay. The final time delay will be a random value anywhere between the minimum and maximum values: (min delay = wait - random) (max delay = wait + random).
+-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
+model="models/ammo/ssg3000.md3"*/
+
+//=============================================================================
+
+RQ3WEAPON_* ENTITIES
+
+//=============================================================================
+
+/*QUAKED RQ3weapon_grenade (1 0 .5) (-8 -8 -8) (8 8 8) SUSPENDED
+Grenade. Gives the player 1 by default.
+-------- KEYS --------
+wait : time in seconds before item respawns after being picked up (default 40, -1 = never respawn).
+random : random time variance in seconds added or subtracted from "wait" delay (default 0 - see Notes).
+team : set this to team items. Teamed items will respawn randomly after team master is picked up (see Notes).
+target : picking up the item will trigger the entity this points to.
+targetname : a target_give entity can point to this for respawn freebies.
+notbot : used to make an item invisible for bot attraction.
+-------- SPAWNFLAGS --------
+SUSPENDED : item will spawn where it was placed in map and won't drop to the floor.
+-------- NOTES --------
+The amount of time it takes for an item in the team to respawn is determined by the "wait" value of the item that was picked up previously. So if one of the items in the team has it's "wait" key set to -1 (never respawn), the random respawning cycle of the teamed items will stop after that item is picked up.
+
+When the random key is set, its value is used to calculate a minimum and a maximum delay. The final time delay will be a random value anywhere between the minimum and maximum values: (min delay = wait - random) (max delay = wait + random).
+-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
+model="models/weapons2/grenade/grenade.md3"*/
+
+//=============================================================================
+
+/*QUAKED RQ3weapon_handcannon (1 0 .5) (-6 -6 -6) (16 6 6) SUSPENDED
+Handcannon.
+-------- KEYS --------
+target : picking up the item will trigger the entity this points to.
+targetname : a target_give entity can point to this for respawn freebies.
+notbot : used to make an item invisible for bot attraction.
+-------- SPAWNFLAGS --------
+SUSPENDED : item will spawn where it was placed in map and won't drop to the floor.
+-------- NOTES --------
+
+-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
+model="models/weapons2/handcannon/handcannon.md3"*/
+
+//=============================================================================
+
+/*QUAKED RQ3weapon_knife (1 0 .5) (-6 -4 -4) (6 4 12) SUSPENDED
+Knife.
+-------- KEYS --------
+target : picking up the item will trigger the entity this points to.
+targetname : a target_give entity can point to this for respawn freebies.
+notbot : used to make an item invisible for bot attraction.
+-------- SPAWNFLAGS --------
+SUSPENDED : item will spawn where it was placed in map and won't drop to the floor.
+-------- NOTES --------
+
+-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
+model="models/weapons2/knife/knife.md3"*/
+
+//=============================================================================
+
+/*QUAKED RQ3weapon_m3 (1 0 .5) (-16 -8 -8) (28 8 4) SUSPENDED
+M3 Shotgun.
+-------- KEYS --------
+target : picking up the item will trigger the entity this points to.
+targetname : a target_give entity can point to this for respawn freebies.
+notbot : used to make an item invisible for bot attraction.
+-------- SPAWNFLAGS --------
+SUSPENDED : item will spawn where it was placed in map and won't drop to the floor.
+-------- NOTES --------
+
+-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
+model="models/weapons2/m3/m3.md3"*/
+
+//=============================================================================
+
+/*QUAKED RQ3weapon_m4 (1 0 .5) (-12 -8 -8) (20 8 8) SUSPENDED
+M4.
+-------- KEYS --------
+target : picking up the item will trigger the entity this points to.
+targetname : a target_give entity can point to this for respawn freebies.
+notbot : used to make an item invisible for bot attraction.
+-------- SPAWNFLAGS --------
+SUSPENDED : item will spawn where it was placed in map and won't drop to the floor.
+-------- NOTES --------
+
+-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
+model="models/weapons2/m4/m4.md3"*/
+
+//=============================================================================
+
+/*QUAKED RQ3weapon_mp5 (1 0 .5) (-16 -8 -8) (16 8 8) SUSPENDED
+MP5.
+-------- KEYS --------
+target : picking up the item will trigger the entity this points to.
+targetname : a target_give entity can point to this for respawn freebies.
+notbot : used to make an item invisible for bot attraction.
+-------- SPAWNFLAGS --------
+SUSPENDED : item will spawn where it was placed in map and won't drop to the floor.
+-------- NOTES --------
+
+-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
+model="models/weapons2/mp5/mp5.md3"*/
+
+//=============================================================================
+
+/*QUAKED RQ3weapon_pistol (1 0 .5) (-8 -4 -6) (8 4 6) SUSPENDED
+MK23 Pistol.
+-------- KEYS --------
+target : picking up the item will trigger the entity this points to.
+targetname : a target_give entity can point to this for respawn freebies.
+notbot : used to make an item invisible for bot attraction.
+-------- SPAWNFLAGS --------
+SUSPENDED : item will spawn where it was placed in map and won't drop to the floor.
+-------- NOTES --------
+
+-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
+model="models\weapons2\mk23\mk23.md3"*/
+
+//=============================================================================
+
+/*QUAKED RQ3weapon_ssg3000 (1 0 .5) (-16 -8 -6) (32 8 6) SUSPENDED
+SSG3000 Sniper Rifle.
+-------- KEYS --------
+target : picking up the item will trigger the entity this points to.
+targetname : a target_give entity can point to this for respawn freebies.
+notbot : used to make an item invisible for bot attraction.
+-------- SPAWNFLAGS --------
+SUSPENDED : item will spawn where it was placed in map and won't drop to the floor.
+-------- NOTES --------
+
+-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
+model="models/weapons2/ssg3000/ssg3000.md3"*/
+
+//=============================================================================
+
+//General Notes:
+//The alias, attachto, targetShaderName and targetShaderNewName keys work for every entity that has a target key. For the sake of brevity, these keys were only added to entities where these keys would be commonly used.

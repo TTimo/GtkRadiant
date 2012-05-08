@@ -1,0 +1,76 @@
+<html>
+<head>
+<title>Quake III Arena Shader Manual: Table of Contents</title>
+<link rel = "stylesheet" type = "text/css" href = "styles/q3rad.css">
+</head>
+<body>
+<div align = "center">
+<h1 class = "MsoTitle">Q3Radiant Shader Manual</h1>
+
+<h2>Revision #12</h2>
+
+<p style = "font-weight: bold">By Paul Jaquays and Brian Hook
+
+<p class = "heading">(with additional material by John Carmack, Christian Antkow, Kevin Cloud, &amp; Adrian Carmack)
+<p class = "heading">QERadiant.com thanks John Hutton for re-formating this manual into a more web friendly version</div>
+<hr>
+<h1>Table of Contents</h1>
+<a href = "ch01/pg1_1.htm">1 Preface: Making Your Own Shaders</a>
+<br><a href = "ch01/pg1_1.htm#intro">2 Introduction</a>
+<ul style = "margin-top: 0em"><a href = "ch01/pg1_1.htm#what">2.1 What is a Shader?</a>
+<br><a href = "ch01/pg1_1.htm#conventions">2.2 Shader Name & File Conventions</a>
+<br><a href = "ch01/pg1_1.htm#types">2.3 Shader Types</a>
+<br><a href = "ch01/pg1_1.htm#concepts">2.4 Key Concepts</a></ul>
+
+<a href = "ch02/pg2_1.htm">3 General Shader Keywords</a>
+<ul style = "margin-top: 0em"><a href = "ch02/pg2_1.htm#skyparms">3.1 skyParms <em>&lt;farbox&gt; &lt;cloudheight&gt; &lt;nearbox&gt;</em></a>
+<br><a href = "ch02/pg2_1.htm#cull">3.2 cull <em>&lt;side&gt;</em></a>
+<br><a href = "ch02/pg2_1.htm#deform">3.3 deformVertexes</a>
+<br><a href = "ch02/pg2_1.htm#fogparms">3.4 fogparms <em>&lt;red value&gt; &lt;green value&gt; &lt;bluevalue&gt; &lt;distance to Opaque&gt;</em></a>
+<br><a href = "ch02/pg2_1.htm#nopicmip">3.5 nopicmip</a>
+<br><a href = "ch02/pg2_1.htm#nomipmaps">3.6 nomipmaps</a>
+<br><a href = "ch02/pg2_1.htm#polygon">3.7 polygonOffset</a>
+<br><a href = "ch02/pg2_1.htm#portal">3.8 portal</a>
+<br><a href = "ch02/pg2_1.htm#sort">3.9 sort <em>&lt;value&gt;</em></a></ul>
+
+<a href = "ch03/pg3_1.htm">4 Q3MAP Specific Shader Keywords</a>
+<ul style = "margin-top: 0em"><a href = "ch03/pg3_1.htm#tessSize">4.1 tessSize <em>&lt;amount&gt;</em></a>
+<br><a href = "ch03/pg3_1.htm#backshader">4.2 q3map_backshader <em>&lt;shadername&gt;</em></a>
+<br><a href = "ch03/pg3_1.htm#globaltex">4.3 q3map_globaltexture</a>
+<br><a href = "ch03/pg3_1.htm#mapsun">4.4 q3map_sun <em>&lt;red&gt; &lt;green&gt; &lt;blue&gt; &lt;intensity&gt; &lt;degrees&gt; &lt;elevation&gt;</em></a>
+<br><a href = "ch03/pg3_1.htm#surflight">4.5 q3map_surfaceLight <em>&lt;light value&gt;</em></a>
+<br><a href = "ch03/pg3_1.htm#lightimg">4.6 q3map_lightimage <em>&lt;texturepath/texturename&gt;</em></a>
+<br><a href = "ch03/pg3_1.htm#lightsub">4.7 q3map_lightsubdivide <em>&lt;value&gt;</em></a>
+<br><a href = "ch03/pg3_1.htm#surfparm">4.8 surfaceparm <em>&lt;parm&gt;</em></a>
+</ul>
+
+<a href = "ch04/pg4_1.htm">5 Editor specific shader instructions</a>
+<ul style = "margin-top: 0em"><a href = "ch04/pg4_1.htm#edimg">5.1 qer_editorimage <em>&lt;texture path/texturename&gt;</em></a>
+<br><a href = "ch04/pg4_1.htm#nocarve">5.2 qer_nocarve</a>
+<br><a href = "ch04/pg4_1.htm#trans">5.3 qer_trans <em>&lt;value&gt;</em></a>
+</ul>
+
+<a href = "ch05/pg5_1.htm">6 Stage Specific Keywords</a>
+<ul style = "margin-top: 0em"><a href = "ch05/pg5_1.htm#texmap">6.1 Texture map specification</a>
+<br><a href = "ch05/pg5_1.htm#blend">6.2 Blend Functions</a>
+<br><a href = "ch05/pg5_1.htm#rgbgen">6.3 rgbGen <em>&lt;func&gt;</em></a>
+<br><a href = "ch05/pg5_1.htm#alphagen">6.4 AlphaGen <em>&lt;func&gt;</em></a>
+<br><a href = "ch05/pg5_1.htm#tcgen">6.5 tcGen <em>&lt;coordinate source&gt;</em></a>
+<br><a href = "ch05/pg5_1.htm#tcmod">6.6 tcMod <em>&lt;func&gt; &lt;&hellip;&gt;</em></a>
+<br><a href = "ch05/pg5_1.htm#depthfunc">6.7 depthFunc <em>&lt;func&gt;</em></a>
+<br><a href = "ch05/pg5_1.htm#depthwrite">6.8 depthWrite</a>
+<br><a href = "ch05/pg5_1.htm#detail">6.9 Detail</a>
+<br><a href = "ch05/pg5_1.htm#alphafunc">6.10 alphaFunc <em>&lt;func&gt;</em></a>
+</ul>
+
+<a href = "ch06/pg6_1.htm">7 Notes on Alpha Channels</a>
+<br><a href = "ch06/pg6_1.htm#trouble">8 Troubleshooting Shaders</a>
+<br><a href = "ch06/pg6_1.htm#newtex">9 Creating New Textures</a>
+<ul style = "margin-top: 0em"><a href = "ch06/pg6_1.htm#tools">9.1 Tools Needed</a>
+<br><a href = "ch06/pg6_1.htm#files">9.2 Setting up Files</a>
+<br><a href = "ch06/pg6_1.htm#rng">9.3 Rules and Guidelines</a>
+<br><a href = "ch06/pg6_1.htm#pk3">9.4 Making the .pk3 File</a>
+</ul>
+<br><a href = "appendix/appA.html">Appendix A: targetShaderName and targetNewShaderName</a>
+</body>
+</html>
