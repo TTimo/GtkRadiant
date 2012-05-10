@@ -1401,9 +1401,11 @@ qboolean ConfirmModified(){
 		return true;
 	}
 
-	if ( gtk_MessageBox( g_pParentWnd->m_pWidget, "This will lose changes to the map", "warning", MB_OKCANCEL ) == IDCANCEL ) {
+	if ( gtk_MessageBoxNew( g_pParentWnd->m_pWidget, "The current map has changed since it was last saved.\n"
+							"Would you like to save before continuing?", "Exit Radiant", MB_YESNOCANCEL | MB_ICONQUESTION ) == IDCANCEL ) {
 		return false;
 	}
+	
 	return true;
 }
 

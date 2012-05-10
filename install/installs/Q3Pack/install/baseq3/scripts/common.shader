@@ -1,4 +1,3 @@
-
 textures/common/areaportal
 {
 	qer_trans 0.50
@@ -14,7 +13,7 @@ textures/common/areaportal
 textures/common/caulk
 {
 	surfaceparm nodraw
-    surfaceparm nolightmap
+	surfaceparm nolightmap
 	surfaceparm nomarks
 }
 
@@ -62,7 +61,6 @@ textures/common/donotenter
 	surfaceparm donotenter
 }
 
-
 // never used
 //
 //textures/common/energypad
@@ -78,14 +76,14 @@ textures/common/donotenter
 //	}
 //}
 
-textures/common/full_clip // silly shader, use weapclip instead
+textures/common/full_clip	// silly shader, use weapclip instead
 {
 	qer_trans 0.40
 	surfaceparm nodraw
 	surfaceparm playerclip
 }
 
-textures/common/hint // should NOT use surfaceparm hint.. strange but true
+textures/common/hint		// should NOT use surfaceparm hint... strange but true
 {
 	qer_nocarve
 	qer_trans 0.30
@@ -97,15 +95,28 @@ textures/common/hint // should NOT use surfaceparm hint.. strange but true
 	surfaceparm hint	// ydnar: yes it should.
 }
 
-textures/common/invisible // solid, transparent polygons, casts shadows
+// Obsidian: Local hint works like normal hint but doesn't create portals beyond local structural brushes. Experimental, use with caution.
+textures/common/hintlocal
 {
-	surfaceparm nolightmap			
-        {
-                map textures/common/invisible.tga
-                alphaFunc GE128
+	qer_nocarve
+	qer_trans 0.30
+	qer_editorImage textures/common/hintlocal.tga
+	surfaceparm nodraw
+	surfaceparm nonsolid
+	surfaceparm structural
+	surfaceparm trans
+	surfaceparm noimpact
+}
+
+textures/common/invisible	// solid, transparent polygons, casts shadows
+{
+	surfaceparm nolightmap
+	{
+		map textures/common/invisible.tga
+		alphaFunc GE128
 		depthWrite
 		rgbGen vertex
-        }
+	}
 }
 
 textures/common/mirror1
@@ -113,15 +124,11 @@ textures/common/mirror1
 	qer_editorimage textures/common/mirror1.tga
 	surfaceparm nolightmap
 	portal
-  
 	{
 		map textures/common/mirror1.tga
 		blendfunc GL_ONE GL_ONE_MINUS_SRC_ALPHA
 		depthWrite
 	}
-       
-        
-
 }
 
 textures/common/mirror2
@@ -134,11 +141,10 @@ textures/common/mirror2
 		blendfunc GL_ONE GL_ONE_MINUS_SRC_ALPHA
 		depthWrite
 	}
-        {
-               map textures/sfx/mirror.tga
-	       blendFunc GL_ZERO GL_ONE_MINUS_SRC_COLOR
-        }
-
+	{
+		map textures/sfx/mirror.tga
+		blendFunc GL_ZERO GL_ONE_MINUS_SRC_COLOR
+	}
 }
 
 textures/common/missileclip
@@ -180,7 +186,6 @@ textures/common/nodrop
 	surfaceparm nodrop
 }
 
-
 textures/common/noimpact
 {
 	qer_editorimage textures/common/nolightmap.tga
@@ -212,7 +217,6 @@ textures/common/portal
 		tcMod turb 0 0.25 0 0.05
 		blendfunc GL_ONE GL_ONE_MINUS_SRC_ALPHA
 		depthWrite
-
 	}
 }
 
@@ -230,7 +234,7 @@ textures/common/terrain
 {
 	q3map_terrain
 	surfaceparm nodraw
-    surfaceparm nolightmap
+	surfaceparm nolightmap
 	surfaceparm nomarks
 }
 
@@ -268,7 +272,7 @@ textures/common/weapclip
 {
 	qer_trans 0.40
 	surfaceparm nodraw
-    	surfaceparm nolightmap
+	surfaceparm nolightmap
 	surfaceparm trans
 	surfaceparm nomarks
 }
@@ -298,14 +302,12 @@ textures/common/botclip
 	surfaceparm botclip
 }
 
-//
 // ydnar q3map lightgrid bounds
 //
 // the min/max bounds of brushes with this shader in a map
 // will define the bounds of the map's lightgrid (model lighting)
 // note: make it as small as possible around player space
 // to minimize bsp size and compile time
-//
 
 textures/common/lightgrid
 {
@@ -319,3 +321,142 @@ textures/common/lightgrid
 	surfaceparm lightgrid
 }
 
+
+
+
+//******************************************************************************
+// Obsidian 2007-08-24 (update 2010-12-03)
+// Q3Map2 "common" shaders
+//******************************************************************************
+
+
+// ydnar: antiportal works like hint, but supresses portals
+// add this to your common.shader file
+textures/common/antiportal
+{
+	qer_nocarve
+	qer_trans 0.30
+	surfaceparm nodraw
+	surfaceparm nonsolid
+	surfaceparm structural
+	surfaceparm trans
+	surfaceparm noimpact
+	surfaceparm antiportal
+}
+
+
+// ydnar: skip works like quake 2 hint: it doesn't generate bsp splits
+// use on sides of hint brushes where you don't want bsp splits or portals
+// add this to your common.shader file
+textures/common/skip
+{
+	qer_nocarve
+	qer_trans 0.30
+	surfaceparm nodraw
+	surfaceparm nonsolid
+	surfaceparm structural
+	surfaceparm trans
+	surfaceparm noimpact
+	surfaceparm skip
+}
+
+// Obsidian: same as skip but name changed to allow Radiant to filter both hint and skip
+textures/common/hintskip
+{
+	qer_nocarve
+	qer_trans 0.30
+	qer_editorImage textures/common/skip.tga
+	surfaceparm nodraw
+	surfaceparm nonsolid
+	surfaceparm structural
+	surfaceparm trans
+	surfaceparm noimpact
+	surfaceparm skip
+}
+
+
+// Obsidian: 2 usages for watercaulk depending on water brush complexity
+// SIMPLE WATER BRUSHES - use watercaulk on faces between water brushes
+// COMPLEX WATER BRUSHES - overlap complex water brushes with watercaulk.
+//		Water shader should be nodraw, nonsolid, trans, *sans-water*
+textures/common/watercaulk
+{
+	qer_trans 0.5
+	surfaceparm nodraw
+	surfaceparm nonsolid
+	surfaceparm trans
+	surfaceparm water
+}
+
+textures/common/slimecaulk
+{
+	qer_trans 0.5
+	surfaceparm nodraw
+	surfaceparm nonsolid
+	surfaceparm trans
+	surfaceparm slime
+}
+
+textures/common/lavacaulk
+{
+	qer_trans 0.5
+	surfaceparm nodraw
+	surfaceparm nonsolid
+	surfaceparm trans
+	surfaceparm lava
+}
+
+// alpha fade shaders
+// (c) 2004 randy reddig
+// http://www.shaderlab.com
+// distribution, in part or in whole, in any medium, permitted
+
+textures/common/alpha_100
+{
+	qer_trans 0.5
+	q3map_alphaMod volume
+	q3map_alphaMod scale 1.0
+	surfaceparm nodraw
+	surfaceparm nonsolid
+	surfaceparm trans
+}
+
+textures/common/alpha_75
+{
+	qer_trans 0.5
+	q3map_alphaMod volume
+	q3map_alphaMod scale 0.75
+	surfaceparm nodraw
+	surfaceparm nonsolid
+	surfaceparm trans
+}
+
+textures/common/alpha_50
+{
+	qer_trans 0.5
+	q3map_alphaMod volume
+	q3map_alphaMod scale 0.5
+	surfaceparm nodraw
+	surfaceparm nonsolid
+	surfaceparm trans
+}
+
+textures/common/alpha_25
+{
+	qer_trans 0.5
+	q3map_alphaMod volume
+	q3map_alphaMod scale 0.25
+	surfaceparm nodraw
+	surfaceparm nonsolid
+	surfaceparm trans
+}
+
+textures/common/alpha_0
+{
+	qer_trans 0.5
+	q3map_alphaMod volume
+	q3map_alphaMod scale 0
+	surfaceparm nodraw
+	surfaceparm nonsolid
+	surfaceparm trans
+}
