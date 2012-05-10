@@ -622,10 +622,7 @@ void AssignModel(){
 		gtk_entry_set_text( GTK_ENTRY( EntWidgets[EntValueField] ), str.GetBuffer() );
 		AddProp();
 		edit_entity->brushes.onext->bModelFailed = false;
-		return;
 	}
-	Undo_End();
-	g_pParentWnd->OnSelectionDelete();
 }
 
 /*
