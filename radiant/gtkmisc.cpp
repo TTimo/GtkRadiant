@@ -849,9 +849,15 @@ gint dialog_url_callback( GtkWidget *widget, GdkEvent* event, gpointer data ){
 	return TRUE;
 }
 
+static const int MSGBOX_PAD_MAJOR = 8;
+static const int MSGBOX_PAD_MINOR = 2;
+
+//! @note kaz 05/09/2012 I think we could use GtkMessageDialog, but this works too.
+//! @todo kaz 05/09/2012 Need to just replace the old fcn and make sure everything 
+//! that uses it still works...
 int WINAPI gtk_MessageBoxNew( void *parent, const char *message, 
-						    const char *caption, const guint32 flags, 
-							const char *URL ) {
+						      const char *caption, const guint32 flags, 
+							  const char *URL ) {
 
 	int loop = TRUE, ret = IDCANCEL;
 
@@ -863,7 +869,7 @@ int WINAPI gtk_MessageBoxNew( void *parent, const char *message,
 						GTK_SIGNAL_FUNC( gtk_widget_destroy ), NULL );
 	gtk_window_set_title( GTK_WINDOW( dlg ), caption );
 	gtk_window_set_policy( GTK_WINDOW( dlg ), FALSE, FALSE, TRUE );
-	gtk_container_border_width( GTK_CONTAINER( dlg ), 10 ); // TODO: magic number
+	gtk_container_border_width( GTK_CONTAINER( dlg ), MSGBOX_PAD_MAJOR );
 	g_object_set_data( G_OBJECT( dlg ), "loop", &loop );
 	g_object_set_data( G_OBJECT( dlg ), "ret", &ret );
 	gtk_widget_realize( dlg );
@@ -877,7 +883,7 @@ int WINAPI gtk_MessageBoxNew( void *parent, const char *message,
 	gtk_window_add_accel_group( GTK_WINDOW( dlg ), accel );
 
 	// begin layout
-	GtkWidget *outer_vbox = gtk_vbox_new( FALSE, 10 ); // TODO: magic number
+	GtkWidget *outer_vbox = gtk_vbox_new( FALSE, MSGBOX_PAD_MAJOR );
 	gtk_container_add( GTK_CONTAINER( dlg ), outer_vbox );
 	gtk_widget_show( outer_vbox );
 
@@ -911,34 +917,34 @@ int WINAPI gtk_MessageBoxNew( void *parent, const char *message,
 #endif
 	}
 
-	GtkWidget *icon_text_hbox = gtk_hbox_new( FALSE, 10 ); // TODO: magic number
-	gtk_box_pack_start( GTK_BOX( outer_vbox ), icon_text_hbox, FALSE, FALSE, 2 ); // TODO: magic number
+	GtkWidget *icon_text_hbox = gtk_hbox_new( FALSE, MSGBOX_PAD_MAJOR );
+	gtk_box_pack_start( GTK_BOX( outer_vbox ), icon_text_hbox, FALSE, FALSE, MSGBOX_PAD_MINOR );
 	gtk_widget_show( icon_text_hbox );
 
-	gtk_box_pack_start( GTK_BOX( icon_text_hbox ), dlg_icon, FALSE, FALSE, 2 ); // TODO: magic number
+	gtk_box_pack_start( GTK_BOX( icon_text_hbox ), dlg_icon, FALSE, FALSE, MSGBOX_PAD_MINOR );
 	gtk_widget_show( dlg_icon );
 
 	// add message
 	GtkWidget *dlg_msg = gtk_label_new( message );
-	gtk_box_pack_start( GTK_BOX( icon_text_hbox ), dlg_msg, FALSE, FALSE, 2 ); // TODO: magic number
+	gtk_box_pack_start( GTK_BOX( icon_text_hbox ), dlg_msg, FALSE, FALSE, MSGBOX_PAD_MINOR );
 	gtk_label_set_justify( GTK_LABEL( dlg_msg ), GTK_JUSTIFY_LEFT );
 	gtk_widget_show( dlg_msg );
 
 	// add buttons
 	GtkWidget *hsep = gtk_hseparator_new();
-	gtk_box_pack_start( GTK_BOX( outer_vbox ), hsep, FALSE, FALSE, 2 ); // TODO: magic number
+	gtk_box_pack_start( GTK_BOX( outer_vbox ), hsep, FALSE, FALSE, MSGBOX_PAD_MINOR );
 	gtk_widget_show( hsep );
 
-	GtkWidget *buttons_hbox = gtk_hbox_new( FALSE, 10 ); // TODO: magic number
-	gtk_box_pack_start( GTK_BOX( outer_vbox ), buttons_hbox, FALSE, FALSE, 2 ); // TODO: magic number
+	GtkWidget *buttons_hbox = gtk_hbox_new( FALSE, MSGBOX_PAD_MAJOR ); 
+	gtk_box_pack_start( GTK_BOX( outer_vbox ), buttons_hbox, FALSE, FALSE, MSGBOX_PAD_MINOR );
 	gtk_widget_show( buttons_hbox );
 
-	//! @note kaz 05/09/2012 only support commonly used icons, fill out others as needed
+	//! @note kaz 05/09/2012 only support commonly used types, fill out others as needed
 	switch( flags & MB_TYPEMASK ) {
 	case MB_OK:
 	default: {
 		GtkWidget *btn_ok = gtk_button_new_with_label( _( "Ok" ) );
-		gtk_box_pack_start( GTK_BOX( buttons_hbox ), btn_ok, TRUE, TRUE, 0 ); // TODO: magic number
+		gtk_box_pack_start( GTK_BOX( buttons_hbox ), btn_ok, TRUE, TRUE, 0 );
 		gtk_signal_connect( GTK_OBJECT( btn_ok ), "clicked",
 							GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( IDOK ) );
 		gtk_widget_add_accelerator( btn_ok, "clicked", accel, GDK_Escape, (GdkModifierType)0, (GtkAccelFlags)0 );
@@ -951,7 +957,7 @@ int WINAPI gtk_MessageBoxNew( void *parent, const char *message,
 	}
 	case MB_OKCANCEL: {
 		GtkWidget *btn_ok = gtk_button_new_with_label( _( "Ok" ) );
-		gtk_box_pack_start( GTK_BOX( buttons_hbox ), btn_ok, TRUE, TRUE, 0 ); // TODO: magic number
+		gtk_box_pack_start( GTK_BOX( buttons_hbox ), btn_ok, TRUE, TRUE, 0 ); 
 		gtk_signal_connect( GTK_OBJECT( btn_ok ), "clicked",
 							GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( IDOK ) );
 		gtk_widget_add_accelerator( btn_ok, "clicked", accel, GDK_Return, (GdkModifierType)0, (GtkAccelFlags)0 );
@@ -960,7 +966,7 @@ int WINAPI gtk_MessageBoxNew( void *parent, const char *message,
 		gtk_widget_show( btn_ok );
 
 		GtkWidget *btn_cancel = gtk_button_new_with_label( _( "Cancel" ) );
-		gtk_box_pack_start( GTK_BOX( buttons_hbox ), btn_cancel, TRUE, TRUE, 0 ); // TODO: magic number
+		gtk_box_pack_start( GTK_BOX( buttons_hbox ), btn_cancel, TRUE, TRUE, 0 );
 		gtk_signal_connect( GTK_OBJECT( btn_cancel ), "clicked",
 							GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( IDCANCEL ) );
 		gtk_widget_add_accelerator( btn_cancel, "clicked", accel, GDK_Escape, (GdkModifierType)0, (GtkAccelFlags)0 );
@@ -974,7 +980,7 @@ int WINAPI gtk_MessageBoxNew( void *parent, const char *message,
 	}
 	case MB_YESNOCANCEL: {
 		GtkWidget *btn_yes = gtk_button_new_with_label( _( "Yes" ) );
-		gtk_box_pack_start( GTK_BOX( buttons_hbox ), btn_yes, TRUE, TRUE, 0 ); // TODO: magic number
+		gtk_box_pack_start( GTK_BOX( buttons_hbox ), btn_yes, TRUE, TRUE, 0 ); 
 		gtk_signal_connect( GTK_OBJECT( btn_yes ), "clicked",
 							GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( IDYES ) );
 		GTK_WIDGET_SET_FLAGS( btn_yes, GTK_CAN_DEFAULT );
@@ -982,13 +988,13 @@ int WINAPI gtk_MessageBoxNew( void *parent, const char *message,
 		gtk_widget_show( btn_yes );
 
 		GtkWidget *btn_no = gtk_button_new_with_label( _( "No" ) );
-		gtk_box_pack_start( GTK_BOX( buttons_hbox ), btn_no, TRUE, TRUE, 0 ); // TODO: magic number
+		gtk_box_pack_start( GTK_BOX( buttons_hbox ), btn_no, TRUE, TRUE, 0 ); 
 		gtk_signal_connect( GTK_OBJECT( btn_no ), "clicked",
 							GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( IDNO ) );
 		gtk_widget_show( btn_no );
 
 		GtkWidget *btn_cancel = gtk_button_new_with_label( _( "Cancel" ) );
-		gtk_box_pack_start( GTK_BOX( buttons_hbox ), btn_cancel, TRUE, TRUE, 0 ); // TODO: magic number
+		gtk_box_pack_start( GTK_BOX( buttons_hbox ), btn_cancel, TRUE, TRUE, 0 );
 		gtk_signal_connect( GTK_OBJECT( btn_cancel ), "clicked",
 							GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( IDCANCEL ) );
 		gtk_widget_show( btn_cancel );
@@ -997,7 +1003,7 @@ int WINAPI gtk_MessageBoxNew( void *parent, const char *message,
 	}
 	case MB_YESNO: {
 		GtkWidget *btn_yes = gtk_button_new_with_label( _( "Yes" ) );
-		gtk_box_pack_start( GTK_BOX( buttons_hbox ), btn_yes, TRUE, TRUE, 0 ); // TODO: magic number
+		gtk_box_pack_start( GTK_BOX( buttons_hbox ), btn_yes, TRUE, TRUE, 0 ); 
 		gtk_signal_connect( GTK_OBJECT( btn_yes ), "clicked",
 							GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( IDYES ) );
 		GTK_WIDGET_SET_FLAGS( btn_yes, GTK_CAN_DEFAULT );
@@ -1005,7 +1011,7 @@ int WINAPI gtk_MessageBoxNew( void *parent, const char *message,
 		gtk_widget_show( btn_yes );
 
 		GtkWidget *btn_no = gtk_button_new_with_label( _( "No" ) );
-		gtk_box_pack_start( GTK_BOX( buttons_hbox ), btn_no, TRUE, TRUE, 0 ); // TODO: magic number
+		gtk_box_pack_start( GTK_BOX( buttons_hbox ), btn_no, TRUE, TRUE, 0 );
 		gtk_signal_connect( GTK_OBJECT( btn_no ), "clicked",
 							GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( IDNO ) );
 		gtk_widget_show( btn_no );
@@ -1024,10 +1030,10 @@ int WINAPI gtk_MessageBoxNew( void *parent, const char *message,
 #endif
 	}
 
-	// optionally add URL
+	// optionally add URL button
 	if( URL ) {
 		GtkWidget *btn_url = gtk_button_new_with_label( _( "Go to URL" ) );
-		gtk_box_pack_start( GTK_BOX( buttons_hbox ), btn_url, TRUE, TRUE, 0 ); // TODO: magic number
+		gtk_box_pack_start( GTK_BOX( buttons_hbox ), btn_url, TRUE, TRUE, 0 ); 
 		gtk_signal_connect( GTK_OBJECT( btn_url ), "clicked",
 							GTK_SIGNAL_FUNC( dialog_url_callback ), NULL );
 		g_object_set_data( G_OBJECT( btn_url ), "URL", (void *)URL );
