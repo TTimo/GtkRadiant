@@ -849,6 +849,19 @@ gint dialog_url_callback( GtkWidget *widget, GdkEvent* event, gpointer data ){
 	return TRUE;
 }
 
+static GtkWidget * gtk_AddDlgButton( GtkWidget *container, const char *label, 
+									 const int clickSignal, qboolean setGrabDefault ) {
+	GtkWidget *btn = gtk_button_new_with_label( _( label ) );
+	gtk_box_pack_start( GTK_BOX( container ), btn, TRUE, TRUE, 0 );
+	gtk_signal_connect( GTK_OBJECT( btn ), "clicked",
+						GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( clickSignal ) );
+	GTK_WIDGET_SET_FLAGS( btn, GTK_CAN_DEFAULT );
+	if( setGrabDefault ) gtk_widget_grab_default( btn );
+	gtk_widget_show( btn );
+
+	return btn;
+}
+
 static const int MSGBOX_PAD_MAJOR = 8;
 static const int MSGBOX_PAD_MINOR = 2;
 
@@ -943,34 +956,17 @@ int WINAPI gtk_MessageBoxNew( void *parent, const char *message,
 	switch( flags & MB_TYPEMASK ) {
 	case MB_OK:
 	default: {
-		GtkWidget *btn_ok = gtk_button_new_with_label( _( "Ok" ) );
-		gtk_box_pack_start( GTK_BOX( buttons_hbox ), btn_ok, TRUE, TRUE, 0 );
-		gtk_signal_connect( GTK_OBJECT( btn_ok ), "clicked",
-							GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( IDOK ) );
+		GtkWidget *btn_ok = gtk_AddDlgButton( buttons_hbox, "Ok", IDOK, TRUE );
 		gtk_widget_add_accelerator( btn_ok, "clicked", accel, GDK_Escape, (GdkModifierType)0, (GtkAccelFlags)0 );
 		gtk_widget_add_accelerator( btn_ok, "clicked", accel, GDK_Return, (GdkModifierType)0, (GtkAccelFlags)0 );
-		GTK_WIDGET_SET_FLAGS( btn_ok, GTK_CAN_DEFAULT );
-		gtk_widget_grab_default( btn_ok );
-		gtk_widget_show( btn_ok );
 		ret = IDOK;
 		break;
 	}
 	case MB_OKCANCEL: {
-		GtkWidget *btn_ok = gtk_button_new_with_label( _( "Ok" ) );
-		gtk_box_pack_start( GTK_BOX( buttons_hbox ), btn_ok, TRUE, TRUE, 0 ); 
-		gtk_signal_connect( GTK_OBJECT( btn_ok ), "clicked",
-							GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( IDOK ) );
+		GtkWidget *btn_ok = gtk_AddDlgButton( buttons_hbox, "Ok", IDOK, TRUE );
 		gtk_widget_add_accelerator( btn_ok, "clicked", accel, GDK_Return, (GdkModifierType)0, (GtkAccelFlags)0 );
-		GTK_WIDGET_SET_FLAGS( btn_ok, GTK_CAN_DEFAULT );
-		gtk_widget_grab_default( btn_ok );
-		gtk_widget_show( btn_ok );
-
-		GtkWidget *btn_cancel = gtk_button_new_with_label( _( "Cancel" ) );
-		gtk_box_pack_start( GTK_BOX( buttons_hbox ), btn_cancel, TRUE, TRUE, 0 );
-		gtk_signal_connect( GTK_OBJECT( btn_cancel ), "clicked",
-							GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( IDCANCEL ) );
+		GtkWidget *btn_cancel = gtk_AddDlgButton( buttons_hbox, "Cancel", IDCANCEL, FALSE );
 		gtk_widget_add_accelerator( btn_cancel, "clicked", accel, GDK_Escape, (GdkModifierType)0, (GtkAccelFlags)0 );
-		gtk_widget_show( btn_cancel );
 		ret = IDCANCEL;
 		break;
 	}
@@ -979,42 +975,15 @@ int WINAPI gtk_MessageBoxNew( void *parent, const char *message,
 		break;
 	}
 	case MB_YESNOCANCEL: {
-		GtkWidget *btn_yes = gtk_button_new_with_label( _( "Yes" ) );
-		gtk_box_pack_start( GTK_BOX( buttons_hbox ), btn_yes, TRUE, TRUE, 0 ); 
-		gtk_signal_connect( GTK_OBJECT( btn_yes ), "clicked",
-							GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( IDYES ) );
-		GTK_WIDGET_SET_FLAGS( btn_yes, GTK_CAN_DEFAULT );
-		gtk_widget_grab_default( btn_yes );
-		gtk_widget_show( btn_yes );
-
-		GtkWidget *btn_no = gtk_button_new_with_label( _( "No" ) );
-		gtk_box_pack_start( GTK_BOX( buttons_hbox ), btn_no, TRUE, TRUE, 0 ); 
-		gtk_signal_connect( GTK_OBJECT( btn_no ), "clicked",
-							GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( IDNO ) );
-		gtk_widget_show( btn_no );
-
-		GtkWidget *btn_cancel = gtk_button_new_with_label( _( "Cancel" ) );
-		gtk_box_pack_start( GTK_BOX( buttons_hbox ), btn_cancel, TRUE, TRUE, 0 );
-		gtk_signal_connect( GTK_OBJECT( btn_cancel ), "clicked",
-							GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( IDCANCEL ) );
-		gtk_widget_show( btn_cancel );
+		gtk_AddDlgButton( buttons_hbox, "Yes", IDYES, TRUE );
+		gtk_AddDlgButton( buttons_hbox, "No", IDNO, FALSE );
+		gtk_AddDlgButton( buttons_hbox, "Cancel", IDCANCEL, FALSE );
 		ret = IDCANCEL;
 		break;
 	}
 	case MB_YESNO: {
-		GtkWidget *btn_yes = gtk_button_new_with_label( _( "Yes" ) );
-		gtk_box_pack_start( GTK_BOX( buttons_hbox ), btn_yes, TRUE, TRUE, 0 ); 
-		gtk_signal_connect( GTK_OBJECT( btn_yes ), "clicked",
-							GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( IDYES ) );
-		GTK_WIDGET_SET_FLAGS( btn_yes, GTK_CAN_DEFAULT );
-		gtk_widget_grab_default( btn_yes );
-		gtk_widget_show( btn_yes );
-
-		GtkWidget *btn_no = gtk_button_new_with_label( _( "No" ) );
-		gtk_box_pack_start( GTK_BOX( buttons_hbox ), btn_no, TRUE, TRUE, 0 );
-		gtk_signal_connect( GTK_OBJECT( btn_no ), "clicked",
-							GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( IDNO ) );
-		gtk_widget_show( btn_no );
+		gtk_AddDlgButton( buttons_hbox, "Yes", IDYES, TRUE );
+		gtk_AddDlgButton( buttons_hbox, "No", IDNO, FALSE );
 		ret = IDNO;
 		break;
 	}
