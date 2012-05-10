@@ -849,6 +849,7 @@ gint dialog_url_callback( GtkWidget *widget, GdkEvent* event, gpointer data ){
 	return TRUE;
 }
 
+// helper fcn for gtk_MessageBox
 static GtkWidget * gtk_AddDlgButton( GtkWidget *container, const char *label, 
 									 const int clickSignal, qboolean setGrabDefault ) {
 	GtkWidget *btn = gtk_button_new_with_label( _( label ) );
@@ -856,7 +857,10 @@ static GtkWidget * gtk_AddDlgButton( GtkWidget *container, const char *label,
 	gtk_signal_connect( GTK_OBJECT( btn ), "clicked",
 						GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( clickSignal ) );
 	GTK_WIDGET_SET_FLAGS( btn, GTK_CAN_DEFAULT );
-	if( setGrabDefault ) gtk_widget_grab_default( btn );
+	
+	if( setGrabDefault ) 
+		gtk_widget_grab_default( btn );
+	
 	gtk_widget_show( btn );
 
 	return btn;
@@ -975,6 +979,7 @@ int WINAPI gtk_MessageBoxNew( void *parent, const char *message,
 		break;
 	}
 	case MB_YESNOCANCEL: {
+		//! @todo accelerators?
 		gtk_AddDlgButton( buttons_hbox, "Yes", IDYES, TRUE );
 		gtk_AddDlgButton( buttons_hbox, "No", IDNO, FALSE );
 		gtk_AddDlgButton( buttons_hbox, "Cancel", IDCANCEL, FALSE );
@@ -982,6 +987,7 @@ int WINAPI gtk_MessageBoxNew( void *parent, const char *message,
 		break;
 	}
 	case MB_YESNO: {
+		//! @todo accelerators?
 		gtk_AddDlgButton( buttons_hbox, "Yes", IDYES, TRUE );
 		gtk_AddDlgButton( buttons_hbox, "No", IDNO, FALSE );
 		ret = IDNO;
