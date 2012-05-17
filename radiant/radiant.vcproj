@@ -1,7 +1,7 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9,00"
+	Version="9.00"
 	Name="radiant"
 	ProjectGUID="{65D02375-63EE-4A8A-9F8E-504B1D5A1D02}"
 	Keyword="Win32Proj"
