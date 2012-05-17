@@ -52,6 +52,26 @@ int g_argc;
 char** g_argv;
 
 // =============================================================================
+// Windows WinMain() wrapper for main()
+// used in Release Builds to suppress the Console
+#if defined(_WIN32)
+
+#include <winbase.h>
+
+int main(int argc, char* argv[]);
+
+int CALLBACK WinMain(
+  __in  HINSTANCE hInstance,
+  __in  HINSTANCE hPrevInstance,
+  __in  LPSTR lpCmdLine,
+  __in  int nCmdShow
+){
+	return main(__argc, __argv);
+}
+
+#endif
+
+// =============================================================================
 // Splash screen
 
 // get rid of it when debugging
