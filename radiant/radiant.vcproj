@@ -1,7 +1,7 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9.00"
+	Version="9,00"
 	Name="radiant"
 	ProjectGUID="{65D02375-63EE-4A8A-9F8E-504B1D5A1D02}"
 	Keyword="Win32Proj"
@@ -135,7 +135,7 @@
 				AdditionalDependencies="Ws2_32.lib glib-2.0.lib gobject-2.0.lib intl.lib gtk-win32-2.0.lib gdk-win32-2.0.lib pango-1.0.lib pangoft2-1.0.lib gdkglext-win32-1.0.lib gtkglext-win32-1.0.lib libxml2.lib mathlib.lib synapse.lib l_net.lib cmdlib.lib"
 				AdditionalLibraryDirectories="&quot;$(SolutionDir)\..\gtk-2.16.6\lib&quot;;&quot;$(SolutionDir)\..\libxml2-2.7.3\lib&quot;;&quot;$(SolutionDir)\..\gtkglext-1.2.0\lib&quot;;&quot;$(SolutionDir)\build\$(ConfigurationName)\libs&quot;"
 				GenerateDebugInformation="true"
-				SubSystem="1"
+				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
 				TargetMachine="1"
