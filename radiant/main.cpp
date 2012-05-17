@@ -56,8 +56,6 @@ char** g_argv;
 // used in Release Builds to suppress the Console
 #if defined(_WIN32)
 
-// contains __getmainargs()
-//#include <internal.h>
 #include <winbase.h>
 
 int main(int argc, char* argv[]);
@@ -68,44 +66,7 @@ int CALLBACK WinMain(
   __in  LPSTR lpCmdLine,
   __in  int nCmdShow
 ){
-	if(false) {
-		// while this works, it's not exactly nice
-		__argc = 3;
-		// load msvcrt.dll - we need an internal function from it
-		HMODULE crtlib = LoadLibrary("msvcrt.dll");
-		if(crtlib == NULL) {
-			// do error handling here?
-			return 0;
-		}
-		
-		// retrieve pointer to function
-		struct fake_startupinfo {
-			int newmode;
-		};
-		typedef int(*GetMainArgsPtr)(int*, char***, char***, int, fake_startupinfo*);
-		GetMainArgsPtr __getmainargs = (GetMainArgsPtr) GetProcAddress(crtlib, "__getmainargs");
-		if(__getmainargs == NULL){
-			FreeLibrary(crtlib);
-			return 0;
-		}
-
-		fake_startupinfo startinfo;
-		startinfo.newmode = 0; //this sets _newmode - what does that do?
-		int argc;
-		char** argv;
-		char** envp;
-		int argret = __getmainargs(&argc, &argv, &envp, 0, &startinfo); //0: no wildcard expanding
-		FreeLibrary(crtlib);
-		if(argret < 0) {
-			// might want to handle this error here?
-			return 0;
-		}
-		return main(argc, argv);
-	}
-	else {
-		// This, on the other hand, seems very nice - but just like the first version I'm not sure it always works.
-		return main(__argc, __argv);
-	}
+	return main(__argc, __argv);
 }
 
 #endif
