@@ -76,6 +76,9 @@ GtkWidget* create_menu_in_menu_with_mnemonic( GtkWidget *menu, const gchar *mnem
    do various message boxes, IDOK .. IDNO
    URL adds an optional 'go to URL' button
  */
+int WINAPI gtk_MessageBoxNew( void *parent, const char *message, 
+						     const char *caption = "Radiant", const guint32 flags = MB_OK, 
+							 const char *URL = NULL );
 int WINAPI gtk_MessageBox( void *parent, const char* lpText, const char* lpCaption = "Radiant", guint32 uType = MB_OK, const char* URL = NULL );
 // NOTE: the returned filename is allocated with g_malloc and MUST be freed with g_free (both for win32 and Gtk dialogs)
 // GtkWidget *parent
