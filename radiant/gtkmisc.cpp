@@ -849,6 +849,188 @@ gint dialog_url_callback( GtkWidget *widget, GdkEvent* event, gpointer data ){
 	return TRUE;
 }
 
+// helper fcn for gtk_MessageBox
+static GtkWidget * gtk_AddDlgButton( GtkWidget *container, const char *label, 
+									 const int clickSignal, qboolean setGrabDefault ) {
+	GtkWidget *btn = gtk_button_new_with_label( _( label ) );
+	gtk_box_pack_start( GTK_BOX( container ), btn, TRUE, TRUE, 0 );
+	gtk_signal_connect( GTK_OBJECT( btn ), "clicked",
+						GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( clickSignal ) );
+	GTK_WIDGET_SET_FLAGS( btn, GTK_CAN_DEFAULT );
+	
+	if( setGrabDefault ) 
+		gtk_widget_grab_default( btn );
+	
+	gtk_widget_show( btn );
+
+	return btn;
+}
+
+static const int MSGBOX_PAD_MAJOR = 8;
+static const int MSGBOX_PAD_MINOR = 2;
+
+//! @note kaz 05/09/2012 I think we could use GtkMessageDialog, but this works too.
+//! @todo kaz 05/09/2012 Need to just replace the old fcn and make sure everything 
+//! that uses it still works...
+int WINAPI gtk_MessageBoxNew( void *parent, const char *message, 
+						      const char *caption, const guint32 flags, 
+							  const char *URL ) {
+
+	int loop = TRUE, ret = IDCANCEL;
+
+	// create dialog window
+	GtkWidget *dlg = gtk_window_new( GTK_WINDOW_TOPLEVEL );
+	gtk_signal_connect( GTK_OBJECT( dlg ), "delete_event",
+						GTK_SIGNAL_FUNC( dialog_delete_callback ), NULL );
+	gtk_signal_connect( GTK_OBJECT( dlg ), "destroy",
+						GTK_SIGNAL_FUNC( gtk_widget_destroy ), NULL );
+	gtk_window_set_title( GTK_WINDOW( dlg ), caption );
+	gtk_window_set_policy( GTK_WINDOW( dlg ), FALSE, FALSE, TRUE );
+	gtk_container_border_width( GTK_CONTAINER( dlg ), MSGBOX_PAD_MAJOR );
+	g_object_set_data( G_OBJECT( dlg ), "loop", &loop );
+	g_object_set_data( G_OBJECT( dlg ), "ret", &ret );
+	gtk_widget_realize( dlg );
+
+	if( parent ) {
+		gtk_window_set_transient_for( GTK_WINDOW( dlg ), GTK_WINDOW( parent ) );
+		gtk_window_set_position( GTK_WINDOW( dlg ), GTK_WIN_POS_CENTER_ON_PARENT );
+	}
+
+	GtkAccelGroup *accel = gtk_accel_group_new();
+	gtk_window_add_accel_group( GTK_WINDOW( dlg ), accel );
+
+	// begin layout
+	GtkWidget *outer_vbox = gtk_vbox_new( FALSE, MSGBOX_PAD_MAJOR );
+	gtk_container_add( GTK_CONTAINER( dlg ), outer_vbox );
+	gtk_widget_show( outer_vbox );
+
+	// add icon
+	GtkWidget *dlg_icon;
+
+	//! @note kaz 05/09/2012 only support commonly used icons, fill out others as needed
+	switch( flags & MB_ICONMASK ) {
+	case MB_ICONHAND: {
+		dlg_icon = gtk_image_new_from_stock( GTK_STOCK_DIALOG_ERROR, GTK_ICON_SIZE_DIALOG );
+		break;
+	}
+	case MB_ICONQUESTION: {
+		dlg_icon = gtk_image_new_from_stock( GTK_STOCK_DIALOG_QUESTION, GTK_ICON_SIZE_DIALOG );
+		break;
+	}
+	case MB_ICONEXCLAMATION: {
+		dlg_icon = gtk_image_new_from_stock( GTK_STOCK_DIALOG_WARNING, GTK_ICON_SIZE_DIALOG );
+		break;
+	}
+	case MB_ICONINFORMATION:
+	default: {
+		dlg_icon = gtk_image_new_from_stock( GTK_STOCK_DIALOG_INFO, GTK_ICON_SIZE_DIALOG );
+		break;
+	}
+#if(WINVER >= 0x0400)
+	case MB_USERICON: {
+		//dlg_icon = gtk_image_new_from_stock( ?????, GTK_ICON_SIZE_DIALOG );
+		break;
+	}
+#endif
+	}
+
+	GtkWidget *icon_text_hbox = gtk_hbox_new( FALSE, MSGBOX_PAD_MAJOR );
+	gtk_box_pack_start( GTK_BOX( outer_vbox ), icon_text_hbox, FALSE, FALSE, MSGBOX_PAD_MINOR );
+	gtk_widget_show( icon_text_hbox );
+
+	gtk_box_pack_start( GTK_BOX( icon_text_hbox ), dlg_icon, FALSE, FALSE, MSGBOX_PAD_MINOR );
+	gtk_widget_show( dlg_icon );
+
+	// add message
+	GtkWidget *dlg_msg = gtk_label_new( message );
+	gtk_box_pack_start( GTK_BOX( icon_text_hbox ), dlg_msg, FALSE, FALSE, MSGBOX_PAD_MINOR );
+	gtk_label_set_justify( GTK_LABEL( dlg_msg ), GTK_JUSTIFY_LEFT );
+	gtk_widget_show( dlg_msg );
+
+	// add buttons
+	GtkWidget *hsep = gtk_hseparator_new();
+	gtk_box_pack_start( GTK_BOX( outer_vbox ), hsep, FALSE, FALSE, MSGBOX_PAD_MINOR );
+	gtk_widget_show( hsep );
+
+	GtkWidget *buttons_hbox = gtk_hbox_new( FALSE, MSGBOX_PAD_MAJOR ); 
+	gtk_box_pack_start( GTK_BOX( outer_vbox ), buttons_hbox, FALSE, FALSE, MSGBOX_PAD_MINOR );
+	gtk_widget_show( buttons_hbox );
+
+	//! @note kaz 05/09/2012 only support commonly used types, fill out others as needed
+	switch( flags & MB_TYPEMASK ) {
+	case MB_OK:
+	default: {
+		GtkWidget *btn_ok = gtk_AddDlgButton( buttons_hbox, "Ok", IDOK, TRUE );
+		gtk_widget_add_accelerator( btn_ok, "clicked", accel, GDK_Escape, (GdkModifierType)0, (GtkAccelFlags)0 );
+		gtk_widget_add_accelerator( btn_ok, "clicked", accel, GDK_Return, (GdkModifierType)0, (GtkAccelFlags)0 );
+		ret = IDOK;
+		break;
+	}
+	case MB_OKCANCEL: {
+		GtkWidget *btn_ok = gtk_AddDlgButton( buttons_hbox, "Ok", IDOK, TRUE );
+		gtk_widget_add_accelerator( btn_ok, "clicked", accel, GDK_Return, (GdkModifierType)0, (GtkAccelFlags)0 );
+		GtkWidget *btn_cancel = gtk_AddDlgButton( buttons_hbox, "Cancel", IDCANCEL, FALSE );
+		gtk_widget_add_accelerator( btn_cancel, "clicked", accel, GDK_Escape, (GdkModifierType)0, (GtkAccelFlags)0 );
+		ret = IDCANCEL;
+		break;
+	}
+	case MB_ABORTRETRYIGNORE: {
+		//! @todo fill out
+		break;
+	}
+	case MB_YESNOCANCEL: {
+		//! @todo accelerators?
+		gtk_AddDlgButton( buttons_hbox, "Yes", IDYES, TRUE );
+		gtk_AddDlgButton( buttons_hbox, "No", IDNO, FALSE );
+		gtk_AddDlgButton( buttons_hbox, "Cancel", IDCANCEL, FALSE );
+		ret = IDCANCEL;
+		break;
+	}
+	case MB_YESNO: {
+		//! @todo accelerators?
+		gtk_AddDlgButton( buttons_hbox, "Yes", IDYES, TRUE );
+		gtk_AddDlgButton( buttons_hbox, "No", IDNO, FALSE );
+		ret = IDNO;
+		break;
+	}
+	case MB_RETRYCANCEL: {
+		//! @todo fill out
+		break;
+	}
+#if(WINVER >= 0x0500)
+	case MB_CANCELTRYCONTINUE: {
+		//! @todo fill out
+		break;
+	}
+#endif
+	}
+
+	// optionally add URL button
+	if( URL ) {
+		GtkWidget *btn_url = gtk_button_new_with_label( _( "Go to URL" ) );
+		gtk_box_pack_start( GTK_BOX( buttons_hbox ), btn_url, TRUE, TRUE, 0 ); 
+		gtk_signal_connect( GTK_OBJECT( btn_url ), "clicked",
+							GTK_SIGNAL_FUNC( dialog_url_callback ), NULL );
+		g_object_set_data( G_OBJECT( btn_url ), "URL", (void *)URL );
+		GTK_WIDGET_SET_FLAGS( btn_url, GTK_CAN_DEFAULT );
+		gtk_widget_grab_default( btn_url );
+		gtk_widget_show( btn_url );
+	}
+
+	// show it
+	gtk_widget_show( dlg );
+	gtk_grab_add( dlg );
+
+	while( loop )
+		gtk_main_iteration();
+
+	gtk_grab_remove( dlg );
+	gtk_widget_destroy( dlg );
+
+	return ret;
+}
+
+
 int WINAPI gtk_MessageBox( void *parent, const char* lpText, const char* lpCaption, guint32 uType, const char* URL ){
 	GtkWidget *window, *w, *vbox, *hbox;
 	GtkAccelGroup *accel;
@@ -1204,6 +1386,17 @@ const char* file_dialog( void *parent, gboolean open, const char* title, const c
 	CFileType typelist;
 	if ( pattern != NULL ) {
 		GetFileTypeRegistry()->getTypeList( pattern, &typelist );
+
+		// kaz - viewing all file types at once is really convenient for model selection
+		if ( !strcmp( "Open Model", title ) ) {
+			CString allTypesFilter;
+			for( int i = 0; i < typelist.GetNumTypes(); i++ ) {
+				allTypesFilter += typelist.GetTypeForIndex(i).pattern;
+				if ( i < typelist.GetNumTypes() - 1 )
+					allTypesFilter += ";";
+			}
+			typelist.addType(filetype_t("All supported types", allTypesFilter.GetBuffer()));
+		}
 	}
 
 #ifdef _WIN32
@@ -1223,6 +1416,12 @@ const char* file_dialog( void *parent, gboolean open, const char* title, const c
 		                      // "select the first filter as default".
 		if ( pattern ) {
 			ofn.lpstrFilter = typelist.m_strWin32Filters;
+			
+			// kaz - the "all supported types" will be at bottom of list
+			// ...idiomatically uncouth but not worth fixing
+			if ( !strcmp( "Open Model", title ) ) {
+				ofn.nFilterIndex = typelist.GetNumTypes();
+			}
 		}
 		else
 		{
@@ -1336,17 +1535,22 @@ const char* file_dialog( void *parent, gboolean open, const char* title, const c
 	// Setting the file chooser dialog to modal and centering it on the parent is done automatically.
 
 	if ( pattern != NULL ) {
+		GtkFileFilter *allTypesFilter = gtk_file_filter_new();
+		// http://www.gtkforums.com/viewtopic.php?p=6044
+		//gtk_file_filter_set_name( allTypesFilter, "All supported types" );
 		for ( int i = 0; i < typelist.GetNumTypes(); i++ ) {
 			GtkFileFilter *filter = gtk_file_filter_new();
 			type = typelist.GetTypeForIndex( i );
 			// We can use type.name here, or m_pstrGTKMasks[i], which includes the actual pattern.
 			gtk_file_filter_set_name( filter, typelist.m_pstrGTKMasks[i] );
 			gtk_file_filter_add_pattern( filter, type.pattern );
+			//gtk_file_filter_add_pattern( allTypesFilter, type.pattern );
 			// "Note that the chooser takes ownership of the filter, so
 			// you have to ref and sink it if you want to keep a reference."
 			// So I guess we won't need to garbage collect this.
 			gtk_file_chooser_add_filter( GTK_FILE_CHOOSER( file_sel ), filter );
 		}
+		//gtk_file_chooser_add_filter( GTK_FILE_CHOOSER( file_sel ), allTypesFilter );
 	}
 
 	if ( gtk_dialog_run( GTK_DIALOG( file_sel ) ) == GTK_RESPONSE_ACCEPT ) {

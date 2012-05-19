@@ -1396,15 +1396,31 @@ void MRU_Activate( int index ){
    ======================================================================
  */
 
-qboolean ConfirmModified(){
-	if ( !modified ) {
-		return true;
+qboolean ConfirmModified() {
+	if( !modified )
+		return TRUE;
+
+	int saveChoice = gtk_MessageBoxNew( g_pParentWnd->m_pWidget, 
+						"The current map has changed since it was last saved.\n"
+						"Would you like to save before continuing?", 
+						"Exit Radiant", 
+						MB_YESNOCANCEL | MB_ICONQUESTION );
+
+	switch( saveChoice ) {
+	case IDYES: {
+		g_pParentWnd->OnFileSave();
+		break;
+	}
+	case IDNO: {
+		return TRUE;
+	}
+	case IDCANCEL:
+	default: {
+		return FALSE;
+	}
 	}
 
-	if ( gtk_MessageBox( g_pParentWnd->m_pWidget, "This will lose changes to the map", "warning", MB_OKCANCEL ) == IDCANCEL ) {
-		return false;
-	}
-	return true;
+	return TRUE;
 }
 
 void ProjectDialog(){
