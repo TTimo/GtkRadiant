@@ -1,3 +1,0 @@
-*.dsp	-m 'COPY' -k 'b'
-*.dsw	-m 'COPY' -k 'b'
-*.scc	-m 'COPY' -k 'b'
