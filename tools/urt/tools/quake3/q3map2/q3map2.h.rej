@@ -1,0 +1,19 @@
+***************
+*** 35,42 ****
+  
+  
+  /* version */
+- #define Q3MAP_VERSION	"2.5.17"
+- #define Q3MAP_MOTD		"Last one turns the lights off"
+  
+  
+  
+--- 35,42 ----
+  
+  
+  /* version */
++ #define Q3MAP_VERSION	"2.5.17 base - FS_20g"
++ #define Q3MAP_MOTD		"Sorry, it doesn't match my furniture."
+  
+  
+  

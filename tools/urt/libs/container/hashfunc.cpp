@@ -1,0 +1,2 @@
+
+#include "hashfunc.h"
