@@ -42,7 +42,7 @@ void Undo_AddEntity( entity_t *entity );
 //end an entity after the operation is performed
 void Undo_EndEntity( entity_t *entity );
 //undo last operation (bSilent == true -> will not print the "undone blah blah message")
-void Undo_Undo( boolean bSilent = false );
+void Undo_Undo( qboolean bSilent = false );
 //redo last undone operation
 void Undo_Redo( void );
 //get the undo Id of the next undo (0 if none available)

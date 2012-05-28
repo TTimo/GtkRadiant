@@ -610,7 +610,7 @@ void Undo_End( void ){
    Undo_Undo
    =============
  */
-void Undo_Undo( boolean bSilent ){
+void Undo_Undo( qboolean bSilent ){
 	// spog - disable undo if undo levels = 0
 	if ( g_PrefsDlg.m_nUndoLevels == 0 ) {
 		Sys_Printf( "Undo_Undo: undo is disabled.\n" );

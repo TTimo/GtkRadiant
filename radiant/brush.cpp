@@ -929,7 +929,7 @@ void Brush_Build( brush_t *b, bool bSnap, bool bMarkMap, bool bConvert, bool bFi
    The incoming face is NOT left referenced.
    ==============
  */
-void Brush_SplitBrushByFace( brush_t *in, face_t *f, brush_t **front, brush_t **back, boolean bCaulk ){
+void Brush_SplitBrushByFace( brush_t *in, face_t *f, brush_t **front, brush_t **back, qboolean bCaulk ){
 	brush_t *b;
 	face_t  *nf;
 	vec3_t temp;

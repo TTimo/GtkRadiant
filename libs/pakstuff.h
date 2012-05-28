@@ -28,9 +28,7 @@
 #include <windows.h>
 #endif
 
-#ifndef __cplusplus
-typedef int bool; // leo
-#endif
+#include "bytebool.h"
 
 #ifdef __cplusplus
 extern "C"

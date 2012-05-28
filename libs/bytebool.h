@@ -13,6 +13,7 @@ typedef bool qboolean;
 #define qfalse false
 #else
 typedef enum { qfalse, qtrue } qboolean;
+typedef qboolean bool; // some code uses bool directly ..
 #endif
 
 typedef unsigned char byte;

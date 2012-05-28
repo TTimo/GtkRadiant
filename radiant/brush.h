@@ -47,7 +47,7 @@ void        Brush_ResetFaceOriginals( brush_t *b );
 face_t*     Brush_Ray( vec3_t origin, vec3_t dir, brush_t *b, float *dist, int nFlags = 0 );
 void        Brush_RemoveFromList( brush_t *b );
 // bCaulk means the faces created during the operation will be caulked, this is used in conjunction with g_PrefsDlg.m_bClipCaulk
-void        Brush_SplitBrushByFace( brush_t *in, face_t *f, brush_t **front, brush_t **back, boolean bCaulk = false );
+void        Brush_SplitBrushByFace( brush_t *in, face_t *f, brush_t **front, brush_t **back, qboolean bCaulk = false );
 void        Brush_SelectFaceForDragging( brush_t *b, face_t *f, qboolean shear );
 void        Brush_SetTexture( brush_t *b, texdef_t *texdef, brushprimit_texdef_t *brushprimit_texdef, bool bFitScale = false, IPluginTexdef* pPlugTexdef = (IPluginTexdef*)NULL );
 void        Brush_SideSelect( brush_t *b, vec3_t origin, vec3_t dir, qboolean shear );

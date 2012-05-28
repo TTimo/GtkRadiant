@@ -38,6 +38,8 @@
   #define PATH_MAX 260
 #endif
 
+#include "bytebool.h"
+
 // some easy portability crap
 #ifdef _WIN32
   #include <direct.h>
@@ -46,24 +48,6 @@
   #include <sys/stat.h>
   #define Q_mkdir( a,b ) mkdir( a,b )
 #endif
-
-#ifdef __cplusplus
-typedef bool qboolean;
-#endif
-
-// NOTE TTimo: is this worth anything?
-#ifndef __BYTEBOOL__
-#define __BYTEBOOL__
-
-#ifndef __cplusplus
-typedef enum {false, true} boolean;
-#else
-typedef unsigned char boolean;
-#endif
-
-typedef unsigned char byte;
-
-#endif // __BYTEBOOL__
 
 void    DefaultExtension( char *path, char *extension );
 void    DefaultPath( char *path, char *basepath );
