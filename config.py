@@ -164,8 +164,12 @@ class Config:
 				Export( 'project' )
 				lib_objects += SConscript( os.path.join( build_dir, 'SConscript.lib' ) )
 			Export( 'lib_objects' )
-			q3map2 = SConscript( os.path.join( build_dir, 'SConscript.q3map2' ) )
-			Default( InstallAs( os.path.join( self.install_directory, 'q3map2' ), q3map2 ) )
+
+#			q3map2 = SConscript( os.path.join( build_dir, 'SConscript.q3map2' ) )
+#			Default( InstallAs( os.path.join( self.install_directory, 'q3map2' ), q3map2 ) )
+
+			q3map2_urt = SConscript( os.path.join( build_dir, 'SConscript.q3map2.urt' ) )
+			Default( InstallAs( os.path.join( self.install_directory, 'q3map2.urt' ), q3map2_urt ) )
 
 
 	def emit( self ):
