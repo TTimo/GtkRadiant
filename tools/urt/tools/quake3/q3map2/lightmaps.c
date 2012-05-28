@@ -1,47 +1,47 @@
 /*
-This code is based on source provided under the terms of the Id Software 
-LIMITED USE SOFTWARE LICENSE AGREEMENT, a copy of which is included with the
-GtkRadiant sources (see LICENSE_ID). If you did not receive a copy of 
-LICENSE_ID, please contact Id Software immediately at info@idsoftware.com.
+   This code is based on source provided under the terms of the Id Software
+   LIMITED USE SOFTWARE LICENSE AGREEMENT, a copy of which is included with the
+   GtkRadiant sources (see LICENSE_ID). If you did not receive a copy of
+   LICENSE_ID, please contact Id Software immediately at info@idsoftware.com.
 
-All changes and additions to the original source which have been developed by
-other contributors (see CONTRIBUTORS) are provided under the terms of the
-license the contributors choose (see LICENSE), to the extent permitted by the
-LICENSE_ID. If you did not receive a copy of the contributor license,
-please contact the GtkRadiant maintainers at info@gtkradiant.com immediately.
+   All changes and additions to the original source which have been developed by
+   other contributors (see CONTRIBUTORS) are provided under the terms of the
+   license the contributors choose (see LICENSE), to the extent permitted by the
+   LICENSE_ID. If you did not receive a copy of the contributor license,
+   please contact the GtkRadiant maintainers at info@gtkradiant.com immediately.
 
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
-AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-DISCLAIMED. IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE FOR ANY
-DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
-(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
-ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-*/
+   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
+   AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+   IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+   DISCLAIMED. IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE FOR ANY
+   DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+   (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+   LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+   ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+   (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
 
 #include "qbsp.h"
 
 
 /*
 
-  Lightmap allocation has to be done after all flood filling and
-  visible surface determination.
+   Lightmap allocation has to be done after all flood filling and
+   visible surface determination.
 
-*/
+ */
 
-int					numSortShaders;
-mapDrawSurface_t	*surfsOnShader[ MAX_MAP_SHADERS ];
+int numSortShaders;
+mapDrawSurface_t    *surfsOnShader[ MAX_MAP_SHADERS ];
 
 
-int		allocated[ LIGHTMAP_WIDTH ];
+int allocated[ LIGHTMAP_WIDTH ];
 
-int		numLightmaps = 1;
-int		c_exactLightmap = 0;
-int		c_planarPatch = 0;
-int		c_nonplanarLightmap = 0;
+int numLightmaps = 1;
+int c_exactLightmap = 0;
+int c_planarPatch = 0;
+int c_nonplanarLightmap = 0;
 
 
 void PrepareNewLightmap( void ) {
@@ -50,41 +50,40 @@ void PrepareNewLightmap( void ) {
 }
 
 /*
-===============
-AllocLMBlock
+   ===============
+   AllocLMBlock
 
-returns a texture number and the position inside it
-===============
-*/
-qboolean AllocLMBlock (int w, int h, int *x, int *y)
-{
-	int		i, j;
-	int		best, best2;
+   returns a texture number and the position inside it
+   ===============
+ */
+qboolean AllocLMBlock( int w, int h, int *x, int *y ){
+	int i, j;
+	int best, best2;
 
 	best = LIGHTMAP_HEIGHT;
 
-	for ( i=0 ; i <= LIGHTMAP_WIDTH-w ; i++ ) {
+	for ( i = 0 ; i <= LIGHTMAP_WIDTH - w ; i++ ) {
 		best2 = 0;
 
-		for (j=0 ; j<w ; j++) {
-			if (allocated[i+j] >= best) {
+		for ( j = 0 ; j < w ; j++ ) {
+			if ( allocated[i + j] >= best ) {
 				break;
 			}
-			if (allocated[i+j] > best2) {
-				best2 = allocated[i+j];
+			if ( allocated[i + j] > best2 ) {
+				best2 = allocated[i + j];
 			}
 		}
-		if (j == w)	{	// this is a valid spot
+		if ( j == w ) {   // this is a valid spot
 			*x = i;
 			*y = best = best2;
 		}
 	}
 
-	if (best + h > LIGHTMAP_HEIGHT) {
+	if ( best + h > LIGHTMAP_HEIGHT ) {
 		return qfalse;
 	}
 
-	for (i=0 ; i<w ; i++) {
+	for ( i = 0 ; i < w ; i++ ) {
 		allocated[*x + i] = best + h;
 	}
 
@@ -93,21 +92,20 @@ qboolean AllocLMBlock (int w, int h, int *x, int *y)
 
 
 /*
-===================
-AllocateLightmapForPatch
-===================
-*/
+   ===================
+   AllocateLightmapForPatch
+   ===================
+ */
 //#define LIGHTMAP_PATCHSHIFT
 
-void AllocateLightmapForPatch( mapDrawSurface_t *ds )
-{
-	int			i, j, k;
-	drawVert_t	*verts;
-	int			w, h;
-	int			x, y;
-	float		s, t;
-	mesh_t		mesh, *subdividedMesh, *tempMesh, *newmesh;
-	int			widthtable[LIGHTMAP_WIDTH], heighttable[LIGHTMAP_HEIGHT], ssize;
+void AllocateLightmapForPatch( mapDrawSurface_t *ds ){
+	int i, j, k;
+	drawVert_t  *verts;
+	int w, h;
+	int x, y;
+	float s, t;
+	mesh_t mesh, *subdividedMesh, *tempMesh, *newmesh;
+	int widthtable[LIGHTMAP_WIDTH], heighttable[LIGHTMAP_HEIGHT], ssize;
 
 	verts = ds->verts;
 
@@ -118,16 +116,16 @@ void AllocateLightmapForPatch( mapDrawSurface_t *ds )
 
 	PutMeshOnCurve( *newmesh );
 	tempMesh = RemoveLinearMeshColumnsRows( newmesh );
-	FreeMesh(newmesh);
-	
+	FreeMesh( newmesh );
+
 	/* get sample size */
- 	ssize = ds->sampleSize;
-	
-	
+	ssize = ds->sampleSize;
+
+
 #ifdef LIGHTMAP_PATCHSHIFT
- 	subdividedMesh = SubdivideMeshQuads( tempMesh, ssize, LIGHTMAP_WIDTH-1, widthtable, heighttable );
+	subdividedMesh = SubdivideMeshQuads( tempMesh, ssize, LIGHTMAP_WIDTH - 1, widthtable, heighttable );
 #else
- 	subdividedMesh = SubdivideMeshQuads( tempMesh, ssize, LIGHTMAP_WIDTH, widthtable, heighttable );
+	subdividedMesh = SubdivideMeshQuads( tempMesh, ssize, LIGHTMAP_WIDTH, widthtable, heighttable );
 #endif
 
 	w = subdividedMesh->width;
@@ -138,17 +136,16 @@ void AllocateLightmapForPatch( mapDrawSurface_t *ds )
 	h++;
 #endif
 
-	FreeMesh(subdividedMesh);
+	FreeMesh( subdividedMesh );
 
 	// allocate the lightmap
 	c_exactLightmap += w * h;
 
 	if ( !AllocLMBlock( w, h, &x, &y ) ) {
 		PrepareNewLightmap();
-		if ( !AllocLMBlock( w, h, &x, &y ) )
-		{
-			Error("Entity %i, brush %i: Lightmap allocation failed", 
-				ds->mapBrush->entitynum, ds->mapBrush->brushnum );
+		if ( !AllocLMBlock( w, h, &x, &y ) ) {
+			Error( "Entity %i, brush %i: Lightmap allocation failed",
+				   ds->mapBrush->entitynum, ds->mapBrush->brushnum );
 		}
 	}
 
@@ -170,8 +167,9 @@ void AllocateLightmapForPatch( mapDrawSurface_t *ds )
 				break;
 			}
 		}
-		if (k >= w)
-			k = w-1;
+		if ( k >= w ) {
+			k = w - 1;
+		}
 		s = x + k;
 		for ( j = 0 ; j < ds->patchHeight ; j++ ) {
 			for ( k = 0 ; k < h ; k++ ) {
@@ -179,8 +177,9 @@ void AllocateLightmapForPatch( mapDrawSurface_t *ds )
 					break;
 				}
 			}
-			if (k >= h)
-				k = h-1;
+			if ( k >= h ) {
+				k = h - 1;
+			}
 			t = y + k;
 			verts[i + j * ds->patchWidth].lightmap[0] = ( s + 0.5 ) / LIGHTMAP_WIDTH;
 			verts[i + j * ds->patchWidth].lightmap[1] = ( t + 0.5 ) / LIGHTMAP_HEIGHT;
@@ -190,75 +189,73 @@ void AllocateLightmapForPatch( mapDrawSurface_t *ds )
 
 
 /*
-===================
-AllocateLightmapForSurface
-===================
-*/
+   ===================
+   AllocateLightmapForSurface
+   ===================
+ */
 
 //#define	LIGHTMAP_BLOCK	16
 
-void AllocateLightmapForSurface( mapDrawSurface_t *ds )
-{
-	vec3_t		mins, maxs, size, exactSize, delta;
-	int			i;
-	drawVert_t	*verts;
-	int			w, h;
- 	int			x, y, ssize;
-	int			axis;
-	vec3_t		vecs[ 2 ];
-	float		s, t;
-	vec3_t		origin;
-	vec4_t		plane;
-	float		d;
-	
-	
+void AllocateLightmapForSurface( mapDrawSurface_t *ds ){
+	vec3_t mins, maxs, size, exactSize, delta;
+	int i;
+	drawVert_t  *verts;
+	int w, h;
+	int x, y, ssize;
+	int axis;
+	vec3_t vecs[ 2 ];
+	float s, t;
+	vec3_t origin;
+	vec4_t plane;
+	float d;
+
+
 	/* debug code */
 	#if 0
-		if( ds->type == SURF_META && ds->planar == qfalse )
-			Sys_Printf( "NPMS: %3d vertexes, %s\n", ds->numVerts, ds->shaderInfo->shader );
-		else if( ds->type == SURF_META && ds->planar == qtrue )
-			Sys_Printf( "PMS:  %3d vertexes, %s\n", ds->numVerts, ds->shaderInfo->shader );
+	if ( ds->type == SURF_META && ds->planar == qfalse ) {
+		Sys_Printf( "NPMS: %3d vertexes, %s\n", ds->numVerts, ds->shaderInfo->shader );
+	}
+	else if ( ds->type == SURF_META && ds->planar == qtrue ) {
+		Sys_Printf( "PMS:  %3d vertexes, %s\n", ds->numVerts, ds->shaderInfo->shader );
+	}
 	#endif
-	
+
 	/* ydnar: handle planar patches */
-	if( noPatchFix == qtrue || (ds->type == SURF_PATCH && ds->planeNum < 0) )
-	{
+	if ( noPatchFix == qtrue || ( ds->type == SURF_PATCH && ds->planeNum < 0 ) ) {
 		AllocateLightmapForPatch( ds );
 		return;
 	}
-	
+
 	/* get sample size */
- 	ssize = ds->sampleSize;
-	
+	ssize = ds->sampleSize;
+
 	/* bound the surface */
 	ClearBounds( mins, maxs );
 	verts = ds->verts;
 	for ( i = 0 ; i < ds->numVerts ; i++ )
 		AddPointToBounds( verts[i].xyz, mins, maxs );
-	
+
 	/* round to the lightmap resolution */
-	for( i = 0; i < 3; i++ )
+	for ( i = 0; i < 3; i++ )
 	{
 		exactSize[i] = maxs[i] - mins[i];
- 		mins[i] = ssize * floor( mins[i] / ssize );
- 		maxs[i] = ssize * ceil( maxs[i] / ssize );
- 		size[i] = (maxs[i] - mins[i]) / ssize + 1;
+		mins[i] = ssize * floor( mins[i] / ssize );
+		maxs[i] = ssize * ceil( maxs[i] / ssize );
+		size[i] = ( maxs[i] - mins[i] ) / ssize + 1;
 	}
-	
+
 	/* ydnar: lightmap projection axis is already stored */
 	memset( vecs, 0, sizeof( vecs ) );
-	
+
 	/* classify the plane (x y or z major) (ydnar: biased to z axis projection) */
-	if( ds->lightmapAxis[ 2 ] >= ds->lightmapAxis[ 0 ] && ds->lightmapAxis[ 2 ] >= ds->lightmapAxis[ 1 ] )
-	{
+	if ( ds->lightmapAxis[ 2 ] >= ds->lightmapAxis[ 0 ] && ds->lightmapAxis[ 2 ] >= ds->lightmapAxis[ 1 ] ) {
 		w = size[ 0 ];
 		h = size[ 1 ];
 		axis = 2;
 		vecs[ 0 ][ 0 ] = 1.0 / ssize;
 		vecs[ 1 ][ 1 ] = 1.0 / ssize;
 	}
-	else if( ds->lightmapAxis[ 0 ] >= ds->lightmapAxis[ 1 ] && ds->lightmapAxis[ 0 ] >= ds->lightmapAxis[ 2 ] )
-	{
+	else if ( ds->lightmapAxis[ 0 ] >= ds->lightmapAxis[ 1 ] && ds->lightmapAxis[ 0 ] >= ds->lightmapAxis[ 2 ] ) {
 		w = size[ 1 ];
 		h = size[ 2 ];
 		axis = 0;
@@ -273,37 +270,35 @@ void AllocateLightmapForSurface( mapDrawSurface_t *ds )
 		vecs[ 0 ][ 0 ] = 1.0 / ssize;
 		vecs[ 1 ][ 2 ] = 1.0 / ssize;
 	}
-	
+
 	/* odd check, given projection is now precalculated */
-	if( ds->lightmapAxis[ axis ] == 0 )
+	if ( ds->lightmapAxis[ axis ] == 0 ) {
 		Error( "Chose a 0 valued axis" );
-	
+	}
+
 	/* clamp to lightmap texture resolution */
-	if( w > LIGHTMAP_WIDTH )
-	{
-		VectorScale ( vecs[0], (float) LIGHTMAP_WIDTH / w, vecs[0] );
+	if ( w > LIGHTMAP_WIDTH ) {
+		VectorScale( vecs[0], (float) LIGHTMAP_WIDTH / w, vecs[0] );
 		w = LIGHTMAP_WIDTH;
 	}
-	if( h > LIGHTMAP_HEIGHT )
-	{
-		VectorScale ( vecs[1], (float) LIGHTMAP_HEIGHT / h, vecs[1] );
+	if ( h > LIGHTMAP_HEIGHT ) {
+		VectorScale( vecs[1], (float) LIGHTMAP_HEIGHT / h, vecs[1] );
 		h = LIGHTMAP_HEIGHT;
 	}
-	
-	
+
+
 	/* ydnar */
-	if( ds->planar == qfalse )
+	if ( ds->planar == qfalse ) {
 		c_nonplanarLightmap += w * h;
+	}
 	c_exactLightmap += w * h;
-	
-	
-	if( !AllocLMBlock( w, h, &x, &y ) )
-	{
+
+
+	if ( !AllocLMBlock( w, h, &x, &y ) ) {
 		PrepareNewLightmap();
-		if ( !AllocLMBlock( w, h, &x, &y ) )
-		{
-			Error( "Entity %i, brush %i: Lightmap allocation failed", 
-				ds->mapBrush->entitynum, ds->mapBrush->brushnum );
+		if ( !AllocLMBlock( w, h, &x, &y ) ) {
+			Error( "Entity %i, brush %i: Lightmap allocation failed",
+				   ds->mapBrush->entitynum, ds->mapBrush->brushnum );
 		}
 	}
 
@@ -323,177 +318,182 @@ void AllocateLightmapForSurface( mapDrawSurface_t *ds )
 	}
 
 	/* calculate the world coordinates of the lightmap samples */
-	
+
 	/* construct a plane from the first vert and clear bounding box */
-	
+
 	/* project mins onto plane to get origin */
 	VectorCopy( ds->lightmapVecs[ 2 ], plane );
 	plane[ 3 ] = DotProduct( ds->verts[ 0 ].xyz, plane );
 	d = DotProduct( mins, plane ) - plane[ 3 ];
 	d /= plane[ axis ];
-	
+
 	//% d = DotProduct( mins, plane->normal ) - plane->dist;
 	//% d /= plane->normal[ axis ];
 	VectorCopy( mins, origin );
 	origin[ axis ] -= d;
 
 	/* project stepped lightmap blocks and subtract to get planevecs */
-	for( i = 0; i < 2; i++ )
+	for ( i = 0; i < 2; i++ )
 	{
-		vec3_t	normalized;
-		float	len;
+		vec3_t normalized;
+		float len;
 
 		len = VectorNormalize( vecs[i], normalized );
-		VectorScale( normalized, (1.0/len), vecs[i] );
+		VectorScale( normalized, ( 1.0 / len ), vecs[i] );
 		d = DotProduct( vecs[i], plane );
 		d /= plane[ axis ];
 		//%d = DotProduct( vecs[i], plane->normal );
 		//%d /= plane->normal[ axis ];
 		vecs[i][axis] -= d;
 	}
-	
+
 	/* store lightmap origin and vectors (fixme: make this work right) */
 	VectorCopy( origin, ds->lightmapOrigin );
 	//% VectorCopy( plane->normal, ds->lightmapVecs[ 2 ] );
-	
+
 	/* ydnar: lightmap vectors 0 and 1 are used for lod bounds, so don't overwrite */
-	if( ds->type == SURF_PATCH )
+	if ( ds->type == SURF_PATCH ) {
 		c_planarPatch++;
-	
+	}
+
 	/* store lightmap vectors */
 	VectorCopy( vecs[ 0 ], ds->lightmapVecs[ 0 ] );
 	VectorCopy( vecs[ 1 ], ds->lightmapVecs[ 1 ] );
-	
+
 	/* ydnar: print some stats */
 	//Sys_FPrintf( SYS_VRB, "Lightmap block %3d (%3d, %3d) (%3d x %3d) emitted\n", (numLightmaps - 1), x, y, w, h );
 }
 
 
 /*
-===================
-AllocateLightmaps
-===================
-*/
-void AllocateLightmaps( entity_t *e )
-{
-	int					i, j;
-	mapDrawSurface_t	*ds;
-	shaderInfo_t		*si;
-	
-	
+   ===================
+   AllocateLightmaps
+   ===================
+ */
+void AllocateLightmaps( entity_t *e ){
+	int i, j;
+	mapDrawSurface_t    *ds;
+	shaderInfo_t        *si;
+
+
 	/* note it */
 	Sys_FPrintf( SYS_VRB,"--- AllocateLightmaps ---\n" );
-	
-	
+
+
 	/* sort all surfaces by shader so common shaders will usually be in the same lightmap */
 	/* ydnar: this is done in two passes, because of an odd bug with lightmapped terrain */
 	numSortShaders = 0;
-	for( i = e->firstDrawSurf; i < numMapDrawSurfs; i++ )
+	for ( i = e->firstDrawSurf; i < numMapDrawSurfs; i++ )
 	{
 		/* get surface and early out if possible */
 		ds = &mapDrawSurfs[ i ];
 		si = ds->shaderInfo;
-		if( si->surfaceFlags & SURF_VERTEXLIT )
+		if ( si->surfaceFlags & SURF_VERTEXLIT ) {
 			continue;
-		if( ds->numVerts <= 0 )
+		}
+		if ( ds->numVerts <= 0 ) {
 			continue;
-		
+		}
+
 		/* ydnar: handle brush faces and patches first */
-		if( ds->type != SURF_FACE && ds->type != SURF_PATCH )
+		if ( ds->type != SURF_FACE && ds->type != SURF_PATCH ) {
 			continue;
-		
+		}
+
 		/* ydnar: this is unecessary because it should already be set */
 		//% VectorCopy( ds->plane.normal, ds->lightmapVecs[ 2 ] );
 
 		/* search for this shader */
-		for( j = 0 ; j < numSortShaders; j++ )
+		for ( j = 0 ; j < numSortShaders; j++ )
 		{
-			if( ds->shaderInfo == surfsOnShader[ j ]->shaderInfo )
-			{
+			if ( ds->shaderInfo == surfsOnShader[ j ]->shaderInfo ) {
 				ds->nextOnShader = surfsOnShader[ j ];
 				surfsOnShader[ j ] = ds;
 				break;
 			}
-		} 
-		
+		}
+
 		/* new shader */
-		if( j == numSortShaders )
-		{
-			if( numSortShaders >= MAX_MAP_SHADERS )
+		if ( j == numSortShaders ) {
+			if ( numSortShaders >= MAX_MAP_SHADERS ) {
 				Error( "MAX_MAP_SHADERS" );
+			}
 			surfsOnShader[ j ] = ds;
 			ds->nextOnShader = NULL;
 			numSortShaders++;
 		}
 	}
-	
+
 	/* second pass, to allocate lightmapped terrain last */
-	for( i = e->firstDrawSurf; i < numMapDrawSurfs; i++ )
+	for ( i = e->firstDrawSurf; i < numMapDrawSurfs; i++ )
 	{
 		/* get surface and early out if possible */
 		ds = &mapDrawSurfs[ i ];
 		si = ds->shaderInfo;
-		if( si->surfaceFlags & SURF_VERTEXLIT )
+		if ( si->surfaceFlags & SURF_VERTEXLIT ) {
 			continue;
-		if( ds->numVerts <= 0 )
+		}
+		if ( ds->numVerts <= 0 ) {
 			continue;
-		
+		}
+
 		/* ydnar: this only handles metasurfaces and terrain */
-		if( ds->type != SURF_TERRAIN && ds->type != SURF_META )
+		if ( ds->type != SURF_TERRAIN && ds->type != SURF_META ) {
 			continue;
-		
+		}
+
 		/* ydnar: a lightmap projection should be pre-stored for anything but excessively curved patches */
-		if( VectorLength( ds->lightmapAxis ) <= 0 )
+		if ( VectorLength( ds->lightmapAxis ) <= 0 ) {
 			continue;
-		
+		}
+
 		/* search for this shader */
-		for( j = 0; j < numSortShaders; j++ )
+		for ( j = 0; j < numSortShaders; j++ )
 		{
-			if( ds->shaderInfo == surfsOnShader[ j ]->shaderInfo )
-			{
+			if ( ds->shaderInfo == surfsOnShader[ j ]->shaderInfo ) {
 				ds->nextOnShader = surfsOnShader[ j ];
 				surfsOnShader[ j ] = ds;
 				break;
 			}
 		}
-		
+
 		/* new shader */
-		if( j == numSortShaders )
-		{
-			if( numSortShaders >= MAX_MAP_SHADERS )
+		if ( j == numSortShaders ) {
+			if ( numSortShaders >= MAX_MAP_SHADERS ) {
 				Error( "MAX_MAP_SHADERS" );
+			}
 			surfsOnShader[ j ] = ds;
 			ds->nextOnShader = NULL;
 			numSortShaders++;
 		}
 	}
-	
+
 	/* tot up shader count */
 	Sys_FPrintf( SYS_VRB, "%9d unique shaders\n", numSortShaders );
-	
+
 	/* for each shader, allocate lightmaps for each surface */
-	for( i = 0; i < numSortShaders; i++ )
+	for ( i = 0; i < numSortShaders; i++ )
 	{
 		si = surfsOnShader[ i ]->shaderInfo;
-		for( ds = surfsOnShader[ i ]; ds; ds = ds->nextOnShader )
+		for ( ds = surfsOnShader[ i ]; ds; ds = ds->nextOnShader )
 		{
 			/* ydnar: promoting pointlight above nolightmap */
-			if( si->surfaceFlags & SURF_POINTLIGHT )
+			if ( si->surfaceFlags & SURF_POINTLIGHT ) {
 				ds->lightmapNum = -3;
-			else if( si->surfaceFlags & SURF_NOLIGHTMAP )
+			}
+			else if ( si->surfaceFlags & SURF_NOLIGHTMAP ) {
 				ds->lightmapNum = -1;
-			else
+			}
+			else{
 				AllocateLightmapForSurface( ds );
+			}
 		}
 	}
-	
+
 	/* emit some statistics */
 	Sys_FPrintf( SYS_VRB, "%9d exact lightmap texels\n", c_exactLightmap );
 	Sys_FPrintf( SYS_VRB, "%9d block lightmap texels\n", numLightmaps * LIGHTMAP_WIDTH * LIGHTMAP_HEIGHT );
 	Sys_FPrintf( SYS_VRB, "%9d non-planar or terrain lightmap texels\n", c_nonplanarLightmap );
 	Sys_FPrintf( SYS_VRB, "%9d planar patch lightmaps\n", c_planarPatch );
-	Sys_FPrintf( SYS_VRB, "%9d lightmap textures, size: %d Kbytes\n", numLightmaps, (numLightmaps * LIGHTMAP_WIDTH * LIGHTMAP_HEIGHT * 3) / 1024 );
+	Sys_FPrintf( SYS_VRB, "%9d lightmap textures, size: %d Kbytes\n", numLightmaps, ( numLightmaps * LIGHTMAP_WIDTH * LIGHTMAP_HEIGHT * 3 ) / 1024 );
 }
-
-
-

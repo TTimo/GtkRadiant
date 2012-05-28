@@ -42,7 +42,7 @@
 
 
 
-#define BITS_IN_JSAMPLE  8	/* use 8 or 12 */
+#define BITS_IN_JSAMPLE  8  /* use 8 or 12 */
 
 
 
@@ -66,7 +66,7 @@
 
 
 
-#define MAX_COMPONENTS  10	/* maximum number of image components */
+#define MAX_COMPONENTS  10  /* maximum number of image components */
 
 
 
@@ -116,7 +116,7 @@
 
 typedef unsigned char JSAMPLE;
 
-#define GETJSAMPLE(value)  ((int) (value))
+#define GETJSAMPLE( value )  ( (int) ( value ) )
 
 
 
@@ -128,11 +128,11 @@ typedef char JSAMPLE;
 
 #ifdef CHAR_IS_UNSIGNED
 
-#define GETJSAMPLE(value)  ((int) (value))
+#define GETJSAMPLE( value )  ( (int) ( value ) )
 
 #else
 
-#define GETJSAMPLE(value)  ((int) (value) & 0xFF)
+#define GETJSAMPLE( value )  ( (int) ( value ) & 0xFF )
 
 #endif /* CHAR_IS_UNSIGNED */
 
@@ -142,9 +142,9 @@ typedef char JSAMPLE;
 
 
 
-#define MAXJSAMPLE	255
+#define MAXJSAMPLE  255
 
-#define CENTERJSAMPLE	128
+#define CENTERJSAMPLE   128
 
 
 
@@ -166,13 +166,13 @@ typedef char JSAMPLE;
 
 typedef short JSAMPLE;
 
-#define GETJSAMPLE(value)  ((int) (value))
+#define GETJSAMPLE( value )  ( (int) ( value ) )
 
 
 
-#define MAXJSAMPLE	4095
+#define MAXJSAMPLE  4095
 
-#define CENTERJSAMPLE	2048
+#define CENTERJSAMPLE   2048
 
 
 
@@ -218,7 +218,7 @@ typedef short JCOEF;
 
 typedef unsigned char JOCTET;
 
-#define GETJOCTET(value)  (value)
+#define GETJOCTET( value )  ( value )
 
 
 
@@ -230,11 +230,11 @@ typedef char JOCTET;
 
 #ifdef CHAR_IS_UNSIGNED
 
-#define GETJOCTET(value)  (value)
+#define GETJOCTET( value )  ( value )
 
 #else
 
-#define GETJOCTET(value)  ((value) & 0xFF)
+#define GETJOCTET( value )  ( ( value ) & 0xFF )
 
 #endif /* CHAR_IS_UNSIGNED */
 
@@ -304,7 +304,7 @@ typedef unsigned int UINT16;
 
 
 
-#ifndef XMD_H			/* X11/xmd.h correctly defines INT16 */
+#ifndef XMD_H           /* X11/xmd.h correctly defines INT16 */
 
 typedef short INT16;
 
@@ -360,13 +360,13 @@ typedef unsigned int JDIMENSION;
 
 
 
-#define METHODDEF static	/* a function called through method pointers */
+#define METHODDEF static    /* a function called through method pointers */
 
-#define LOCAL	  static	/* a function used only in its module */
+#define LOCAL     static    /* a function used only in its module */
 
-#define GLOBAL			/* a function referenced thru EXTERNs */
+#define GLOBAL          /* a function referenced thru EXTERNs */
 
-#define EXTERN	  extern	/* a reference to a GLOBAL function */
+#define EXTERN    extern    /* a reference to a GLOBAL function */
 
 
 
@@ -422,15 +422,15 @@ typedef unsigned int JDIMENSION;
 
 //#endif
 
-#ifndef FALSE			/* in case these macros already exist */
+#ifndef FALSE           /* in case these macros already exist */
 
-#define FALSE	0		/* values of boolean */
+#define FALSE   0       /* values of boolean */
 
 #endif
 
 #ifndef TRUE
 
-#define TRUE	1
+#define TRUE    1
 
 #endif
 
@@ -490,11 +490,11 @@ typedef unsigned int JDIMENSION;
 
 
 
-#undef DCT_ISLOW_SUPPORTED	/* slow but accurate integer algorithm */
+#undef DCT_ISLOW_SUPPORTED  /* slow but accurate integer algorithm */
 
-#undef DCT_IFAST_SUPPORTED	/* faster, less accurate integer method */
+#undef DCT_IFAST_SUPPORTED  /* faster, less accurate integer method */
 
-#define DCT_FLOAT_SUPPORTED	/* floating-point: accurate, fast on fast HW */
+#define DCT_FLOAT_SUPPORTED /* floating-point: accurate, fast on fast HW */
 
 
 
@@ -506,9 +506,9 @@ typedef unsigned int JDIMENSION;
 
 #define C_MULTISCAN_FILES_SUPPORTED /* Multiple-scan JPEG files? */
 
-#define C_PROGRESSIVE_SUPPORTED	    /* Progressive JPEG? (Requires MULTISCAN)*/
+#define C_PROGRESSIVE_SUPPORTED     /* Progressive JPEG? (Requires MULTISCAN)*/
 
-#define ENTROPY_OPT_SUPPORTED	    /* Optimization of entropy coding parms? */
+#define ENTROPY_OPT_SUPPORTED       /* Optimization of entropy coding parms? */
 
 /* Note: if you selected 12-bit data precision, it is dangerous to turn off
 
@@ -538,19 +538,19 @@ typedef unsigned int JDIMENSION;
 
 #undef D_MULTISCAN_FILES_SUPPORTED /* Multiple-scan JPEG files? */
 
-#undef D_PROGRESSIVE_SUPPORTED	    /* Progressive JPEG? (Requires MULTISCAN)*/
+#undef D_PROGRESSIVE_SUPPORTED      /* Progressive JPEG? (Requires MULTISCAN)*/
 
 #undef BLOCK_SMOOTHING_SUPPORTED   /* Block smoothing? (Progressive only) */
 
-#undef IDCT_SCALING_SUPPORTED	    /* Output rescaling via IDCT? */
+#undef IDCT_SCALING_SUPPORTED       /* Output rescaling via IDCT? */
 
 #undef  UPSAMPLE_SCALING_SUPPORTED  /* Output rescaling at upsample stage? */
 
 #undef UPSAMPLE_MERGING_SUPPORTED  /* Fast path for sloppy upsampling? */
 
-#undef QUANT_1PASS_SUPPORTED	    /* 1-pass color quantization? */
+#undef QUANT_1PASS_SUPPORTED        /* 1-pass color quantization? */
 
-#undef QUANT_2PASS_SUPPORTED	    /* 2-pass color quantization? */
+#undef QUANT_2PASS_SUPPORTED        /* 2-pass color quantization? */
 
 
 
@@ -590,15 +590,15 @@ typedef unsigned int JDIMENSION;
 
 
 
-#define RGB_RED		0	/* Offset of Red in an RGB scanline element */
+#define RGB_RED     0   /* Offset of Red in an RGB scanline element */
 
-#define RGB_GREEN	1	/* Offset of Green */
+#define RGB_GREEN   1   /* Offset of Green */
 
-#define RGB_BLUE	2	/* Offset of Blue */
+#define RGB_BLUE    2   /* Offset of Blue */
 
 // http://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=900
 // ydnar: setting this fucks jpeg loading in q3map2, disabling "fix" (3)
-#define RGB_PIXELSIZE	4	/* JSAMPLEs per RGB scanline element */
+#define RGB_PIXELSIZE   4   /* JSAMPLEs per RGB scanline element */
 
 
 
@@ -620,7 +620,7 @@ typedef unsigned int JDIMENSION;
 
 #ifndef INLINE
 
-#ifdef __GNUC__			/* for instance, GNU C knows about inline */
+#ifdef __GNUC__         /* for instance, GNU C knows about inline */
 
 #define INLINE __inline__
 
@@ -628,7 +628,7 @@ typedef unsigned int JDIMENSION;
 
 #ifndef INLINE
 
-#define INLINE			/* default is to define it as empty */
+#define INLINE          /* default is to define it as empty */
 
 #endif
 
@@ -650,7 +650,7 @@ typedef unsigned int JDIMENSION;
 
 #ifndef MULTIPLIER
 
-#define MULTIPLIER  int		/* type for fastest integer multiply */
+#define MULTIPLIER  int     /* type for fastest integer multiply */
 
 #endif
 

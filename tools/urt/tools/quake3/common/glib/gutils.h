@@ -21,7 +21,7 @@
  * Modified by the GLib Team and others 1997-2000.  See the AUTHORS
  * file for a list of people on the GLib Team.  See the ChangeLog
  * files for a list of changes.  These files are distributed with
- * GLib at ftp://ftp.gtk.org/pub/gtk/. 
+ * GLib at ftp://ftp.gtk.org/pub/gtk/.
  */
 
 #ifndef __G_UTILS_H__
@@ -56,13 +56,13 @@ G_BEGIN_DECLS
 /* Define G_VA_COPY() to do the right thing for copying va_list variables.
  * glibconfig.h may have already defined G_VA_COPY as va_copy or __va_copy.
  */
-#if !defined (G_VA_COPY)
-#  if defined (__GNUC__) && defined (__PPC__) && (defined (_CALL_SYSV) || defined (_WIN32))
-#    define G_VA_COPY(ap1, ap2)	  (*(ap1) = *(ap2))
-#  elif defined (G_VA_COPY_AS_ARRAY)
-#    define G_VA_COPY(ap1, ap2)	  g_memmove ((ap1), (ap2), sizeof (va_list))
+#if !defined ( G_VA_COPY )
+#  if defined ( __GNUC__ ) && defined ( __PPC__ ) && ( defined ( _CALL_SYSV ) || defined ( _WIN32 ) )
+#    define G_VA_COPY( ap1, ap2 )   ( *( ap1 ) = *( ap2 ) )
+#  elif defined ( G_VA_COPY_AS_ARRAY )
+#    define G_VA_COPY( ap1, ap2 )   g_memmove( ( ap1 ), ( ap2 ), sizeof( va_list ) )
 #  else /* va_list is a pointer */
-#    define G_VA_COPY(ap1, ap2)	  ((ap1) = (ap2))
+#    define G_VA_COPY( ap1, ap2 )   ( ( ap1 ) = ( ap2 ) )
 #  endif /* va_list is a pointer */
 #endif /* !G_VA_COPY */
 
@@ -84,14 +84,14 @@ G_BEGIN_DECLS
 #ifndef G_INLINE_FUNC
 #  define G_CAN_INLINE 1
 #endif
-#if defined (G_HAVE_INLINE) && defined (__GNUC__) && defined (__STRICT_ANSI__)
+#if defined ( G_HAVE_INLINE ) && defined ( __GNUC__ ) && defined ( __STRICT_ANSI__ )
 #  undef inline
 #  define inline __inline__
-#elif !defined (G_HAVE_INLINE)
+#elif !defined ( G_HAVE_INLINE )
 #  undef inline
-#  if defined (G_HAVE___INLINE__)
+#  if defined ( G_HAVE___INLINE__ )
 #    define inline __inline__
-#  elif defined (G_HAVE___INLINE)
+#  elif defined ( G_HAVE___INLINE )
 #    define inline __inline
 #  else /* !inline && !__inline__ && !__inline */
 #    define inline  /* don't inline, then */
@@ -101,9 +101,9 @@ G_BEGIN_DECLS
 #  endif
 #endif
 #ifndef G_INLINE_FUNC
-#  if defined (__GNUC__) && defined (__OPTIMIZE__)
+#  if defined ( __GNUC__ ) && defined ( __OPTIMIZE__ )
 #    define G_INLINE_FUNC extern inline
-#  elif defined (G_CAN_INLINE) && !defined (__GNUC__)
+#  elif defined ( G_CAN_INLINE ) && !defined ( __GNUC__ )
 #    define G_INLINE_FUNC static inline
 #  else /* can't inline */
 #    define G_INLINE_FUNC extern
@@ -113,43 +113,43 @@ G_BEGIN_DECLS
 
 /* Retrive static string info
  */
-G_CONST_RETURN gchar* g_get_user_name        (void);
-G_CONST_RETURN gchar* g_get_real_name        (void);
-G_CONST_RETURN gchar* g_get_home_dir         (void);
-G_CONST_RETURN gchar* g_get_tmp_dir          (void);
-gchar*                g_get_prgname          (void);
-void                  g_set_prgname          (const gchar *prgname);
-G_CONST_RETURN gchar* g_get_application_name (void);
-void                  g_set_application_name (const gchar *application_name);
+G_CONST_RETURN gchar* g_get_user_name( void );
+G_CONST_RETURN gchar* g_get_real_name( void );
+G_CONST_RETURN gchar* g_get_home_dir( void );
+G_CONST_RETURN gchar* g_get_tmp_dir( void );
+gchar*                g_get_prgname( void );
+void                  g_set_prgname( const gchar *prgname );
+G_CONST_RETURN gchar* g_get_application_name( void );
+void                  g_set_application_name( const gchar *application_name );
 
 
-typedef struct _GDebugKey	GDebugKey;
+typedef struct _GDebugKey GDebugKey;
 struct _GDebugKey
 {
-  gchar *key;
-  guint	 value;
+	gchar *key;
+	guint value;
 };
 
 /* Miscellaneous utility functions
  */
-guint                 g_parse_debug_string (const gchar     *string,
-					    const GDebugKey *keys,
-					    guint            nkeys);
+guint                 g_parse_debug_string( const gchar     *string,
+											const GDebugKey *keys,
+											guint nkeys );
 
-gint                  g_snprintf           (gchar       *string,
-					    gulong       n,
-					    gchar const *format,
-					    ...) G_GNUC_PRINTF (3, 4);
-gint                  g_vsnprintf          (gchar       *string,
-					    gulong       n,
-					    gchar const *format,
-					    va_list      args);
+gint                  g_snprintf( gchar       *string,
+								  gulong n,
+								  gchar const *format,
+								  ... ) G_GNUC_PRINTF( 3, 4 );
+gint                  g_vsnprintf( gchar       *string,
+								   gulong n,
+								   gchar const *format,
+								   va_list args );
 
 /* Check if a file name is an absolute path */
-gboolean              g_path_is_absolute   (const gchar *file_name);
+gboolean              g_path_is_absolute( const gchar *file_name );
 
 /* In case of absolute paths, skip the root part */
-G_CONST_RETURN gchar* g_path_skip_root     (const gchar *file_name);
+G_CONST_RETURN gchar* g_path_skip_root( const gchar *file_name );
 
 #ifndef G_DISABLE_DEPRECATED
 
@@ -157,36 +157,36 @@ G_CONST_RETURN gchar* g_path_skip_root     (const gchar *file_name);
  * major release of GLib. Use g_path_get_dirname/g_path_get_basename
  * instead. Whatch out! The string returned by g_path_get_basename
  * must be g_freed, while the string returned by g_basename must not.*/
-G_CONST_RETURN gchar* g_basename           (const gchar *file_name);
+G_CONST_RETURN gchar* g_basename( const gchar *file_name );
 #define g_dirname g_path_get_dirname
 
 #endif /* G_DISABLE_DEPRECATED */
 
 /* The returned strings are newly allocated with g_malloc() */
-gchar*                g_get_current_dir    (void);
-gchar*                g_path_get_basename  (const gchar *file_name);
-gchar*                g_path_get_dirname   (const gchar *file_name);
+gchar*                g_get_current_dir( void );
+gchar*                g_path_get_basename( const gchar *file_name );
+gchar*                g_path_get_dirname( const gchar *file_name );
 
 
 /* Set the pointer at the specified location to NULL */
-void                  g_nullify_pointer    (gpointer    *nullify_location);
+void                  g_nullify_pointer( gpointer    *nullify_location );
 
 /* return the environment string for the variable. The returned memory
  * must not be freed. */
-G_CONST_RETURN gchar* g_getenv             (const gchar *variable);
-gboolean              g_setenv             (const gchar *variable,
-					    const gchar *value,
-					    gboolean     overwrite);
-void                  g_unsetenv           (const gchar *variable);
+G_CONST_RETURN gchar* g_getenv( const gchar *variable );
+gboolean              g_setenv( const gchar *variable,
+								const gchar *value,
+								gboolean overwrite );
+void                  g_unsetenv( const gchar *variable );
 
 
 /* we try to provide a usefull equivalent for ATEXIT if it is
  * not defined, but use is actually abandoned. people should
  * use g_atexit() instead.
  */
-typedef	void		(*GVoidFunc)		(void);
+typedef void ( *GVoidFunc )( void );
 #ifndef ATEXIT
-# define ATEXIT(proc)	g_ATEXIT(proc)
+# define ATEXIT( proc )   g_ATEXIT( proc )
 #else
 # define G_NATIVE_ATEXIT
 #endif /* ATEXIT */
@@ -195,123 +195,118 @@ typedef	void		(*GVoidFunc)		(void);
  * (if there is any in the implementation) and doesn't encounter
  * missing include files.
  */
-void	g_atexit		(GVoidFunc    func);
+void    g_atexit( GVoidFunc func );
 
 /* Look for an executable in PATH, following execvp() rules */
-gchar*  g_find_program_in_path  (const gchar *program);
+gchar*  g_find_program_in_path( const gchar *program );
 
 /* Bit tests
  */
-G_INLINE_FUNC gint	g_bit_nth_lsf (gulong  mask,
-				       gint    nth_bit);
-G_INLINE_FUNC gint	g_bit_nth_msf (gulong  mask,
-				       gint    nth_bit);
-G_INLINE_FUNC guint	g_bit_storage (gulong  number);
+G_INLINE_FUNC gint  g_bit_nth_lsf( gulong mask,
+								   gint nth_bit );
+G_INLINE_FUNC gint  g_bit_nth_msf( gulong mask,
+								   gint nth_bit );
+G_INLINE_FUNC guint g_bit_storage( gulong number );
 
 /* Trash Stacks
  * elements need to be >= sizeof (gpointer)
  */
-typedef struct _GTrashStack     GTrashStack;
+typedef struct _GTrashStack GTrashStack;
 struct _GTrashStack
 {
-  GTrashStack *next;
+	GTrashStack *next;
 };
 
-G_INLINE_FUNC void	g_trash_stack_push	(GTrashStack **stack_p,
-						 gpointer      data_p);
-G_INLINE_FUNC gpointer	g_trash_stack_pop	(GTrashStack **stack_p);
-G_INLINE_FUNC gpointer	g_trash_stack_peek	(GTrashStack **stack_p);
-G_INLINE_FUNC guint	g_trash_stack_height	(GTrashStack **stack_p);
+G_INLINE_FUNC void  g_trash_stack_push( GTrashStack **stack_p,
+										gpointer data_p );
+G_INLINE_FUNC gpointer  g_trash_stack_pop( GTrashStack **stack_p );
+G_INLINE_FUNC gpointer  g_trash_stack_peek( GTrashStack **stack_p );
+G_INLINE_FUNC guint g_trash_stack_height( GTrashStack **stack_p );
 
 /* inline function implementations
  */
-#if defined (G_CAN_INLINE) || defined (__G_UTILS_C__)
+#if defined ( G_CAN_INLINE ) || defined ( __G_UTILS_C__ )
 G_INLINE_FUNC gint
-g_bit_nth_lsf (gulong mask,
-	       gint   nth_bit)
-{
-  do
-    {
-      nth_bit++;
-      if (mask & (1UL << nth_bit))
-	return nth_bit;
-    }
-  while (nth_bit < ((GLIB_SIZEOF_LONG * 8) - 1));
-  return -1;
+g_bit_nth_lsf( gulong mask,
+			   gint nth_bit ){
+	do
+	{
+		nth_bit++;
+		if ( mask & ( 1UL << nth_bit ) ) {
+			return nth_bit;
+		}
+	}
+	while ( nth_bit < ( ( GLIB_SIZEOF_LONG * 8 ) - 1 ) );
+	return -1;
 }
 G_INLINE_FUNC gint
-g_bit_nth_msf (gulong mask,
-	       gint   nth_bit)
-{
-  if (nth_bit < 0)
-    nth_bit = GLIB_SIZEOF_LONG * 8;
-  do
-    {
-      nth_bit--;
-      if (mask & (1UL << nth_bit))
-	return nth_bit;
-    }
-  while (nth_bit > 0);
-  return -1;
+g_bit_nth_msf( gulong mask,
+			   gint nth_bit ){
+	if ( nth_bit < 0 ) {
+		nth_bit = GLIB_SIZEOF_LONG * 8;
+	}
+	do
+	{
+		nth_bit--;
+		if ( mask & ( 1UL << nth_bit ) ) {
+			return nth_bit;
+		}
+	}
+	while ( nth_bit > 0 );
+	return -1;
 }
 G_INLINE_FUNC guint
-g_bit_storage (gulong number)
-{
-  register guint n_bits = 0;
-  
-  do
-    {
-      n_bits++;
-      number >>= 1;
-    }
-  while (number);
-  return n_bits;
+g_bit_storage( gulong number ){
+	register guint n_bits = 0;
+
+	do
+	{
+		n_bits++;
+		number >>= 1;
+	}
+	while ( number );
+	return n_bits;
 }
 G_INLINE_FUNC void
-g_trash_stack_push (GTrashStack **stack_p,
-		    gpointer      data_p)
-{
-  GTrashStack *data = (GTrashStack *) data_p;
+g_trash_stack_push( GTrashStack **stack_p,
+					gpointer data_p ){
+	GTrashStack *data = (GTrashStack *) data_p;
 
-  data->next = *stack_p;
-  *stack_p = data;
+	data->next = *stack_p;
+	*stack_p = data;
 }
 G_INLINE_FUNC gpointer
-g_trash_stack_pop (GTrashStack **stack_p)
-{
-  GTrashStack *data;
+g_trash_stack_pop( GTrashStack **stack_p ){
+	GTrashStack *data;
 
-  data = *stack_p;
-  if (data)
-    {
-      *stack_p = data->next;
-      /* NULLify private pointer here, most platforms store NULL as
-       * subsequent 0 bytes
-       */
-      data->next = NULL;
-    }
+	data = *stack_p;
+	if ( data ) {
+		*stack_p = data->next;
+		/* NULLify private pointer here, most platforms store NULL as
+		 * subsequent 0 bytes
+		 */
+		data->next = NULL;
+	}
 
-  return data;
+	return data;
 }
 G_INLINE_FUNC gpointer
-g_trash_stack_peek (GTrashStack **stack_p)
-{
-  GTrashStack *data;
+g_trash_stack_peek( GTrashStack **stack_p ){
+	GTrashStack *data;
 
-  data = *stack_p;
+	data = *stack_p;
 
-  return data;
+	return data;
 }
 G_INLINE_FUNC guint
-g_trash_stack_height (GTrashStack **stack_p)
-{
-  GTrashStack *data;
-  guint i = 0;
+g_trash_stack_height( GTrashStack **stack_p ){
+	GTrashStack *data;
+	guint i = 0;
 
-  for (data = *stack_p; data; data = data->next)
-    i++;
+	for ( data = *stack_p; data; data = data->next )
+		i++;
 
-  return i;
+	return i;
 }
 #endif  /* G_CAN_INLINE || __G_UTILS_C__ */
 
@@ -325,11 +320,11 @@ GLIB_VAR const guint glib_micro_version;
 GLIB_VAR const guint glib_interface_age;
 GLIB_VAR const guint glib_binary_age;
 
-#define GLIB_CHECK_VERSION(major,minor,micro)    \
-    (GLIB_MAJOR_VERSION > (major) || \
-     (GLIB_MAJOR_VERSION == (major) && GLIB_MINOR_VERSION > (minor)) || \
-     (GLIB_MAJOR_VERSION == (major) && GLIB_MINOR_VERSION == (minor) && \
-      GLIB_MICRO_VERSION >= (micro)))
+#define GLIB_CHECK_VERSION( major,minor,micro )	   \
+	( GLIB_MAJOR_VERSION > ( major ) ||	\
+	  ( GLIB_MAJOR_VERSION == ( major ) && GLIB_MINOR_VERSION > ( minor ) ) || \
+	  ( GLIB_MAJOR_VERSION == ( major ) && GLIB_MINOR_VERSION == ( minor ) && \
+		GLIB_MICRO_VERSION >= ( micro ) ) )
 
 G_END_DECLS
 
@@ -345,27 +340,27 @@ G_END_DECLS
  */
 
 #ifndef G_PLATFORM_WIN32
-# define G_WIN32_DLLMAIN_FOR_DLL_NAME(static, dll_name)
+# define G_WIN32_DLLMAIN_FOR_DLL_NAME( static, dll_name )
 #else
-# define G_WIN32_DLLMAIN_FOR_DLL_NAME(static, dll_name)			   \
-static char *dll_name;							   \
+# define G_WIN32_DLLMAIN_FOR_DLL_NAME( static, dll_name )			 \
+	static char *dll_name;							   \
 									   \
-BOOL WINAPI								   \
-DllMain (HINSTANCE hinstDLL,						   \
-	 DWORD     fdwReason,						   \
-	 LPVOID    lpvReserved)						   \
-{									   \
-  char bfr[1000];							   \
-  switch (fdwReason)							   \
-    {									   \
-    case DLL_PROCESS_ATTACH:						   \
-      GetModuleFileName ((HMODULE) hinstDLL, bfr, sizeof (bfr));	   \
-      dll_name = g_path_get_basename (bfr);				   \
-      break;								   \
-    }									   \
+	BOOL WINAPI								   \
+	DllMain( HINSTANCE hinstDLL,						   \
+			 DWORD fdwReason,						   \
+			 LPVOID lpvReserved )						 \
+	{									   \
+		char bfr[1000];								 \
+		switch ( fdwReason )							   \
+		{									   \
+		case DLL_PROCESS_ATTACH:						   \
+			GetModuleFileName( (HMODULE) hinstDLL, bfr, sizeof( bfr ) );	   \
+			dll_name = g_path_get_basename( bfr );				  \
+			break;									 \
+		}									   \
 									   \
-  return TRUE;								   \
-}
+		return TRUE;								 \
+	}
 #endif /* G_PLATFORM_WIN32 */
 
 #endif /* __G_UTILS_H__ */

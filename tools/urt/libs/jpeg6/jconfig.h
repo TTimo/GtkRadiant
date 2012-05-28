@@ -24,7 +24,7 @@
 
 #undef NEED_SYS_TYPES_H
 
-#undef NEED_FAR_POINTERS	/* Watcom uses flat 32-bit addressing */
+#undef NEED_FAR_POINTERS    /* Watcom uses flat 32-bit addressing */
 
 #undef NEED_SHORT_EXTERNAL_NAMES
 
@@ -54,29 +54,28 @@
 
 
 
-#define BMP_SUPPORTED		/* BMP image file format */
+#define BMP_SUPPORTED       /* BMP image file format */
 
-#define GIF_SUPPORTED		/* GIF image file format */
+#define GIF_SUPPORTED       /* GIF image file format */
 
-#define PPM_SUPPORTED		/* PBMPLUS PPM/PGM image file format */
+#define PPM_SUPPORTED       /* PBMPLUS PPM/PGM image file format */
 
-#undef RLE_SUPPORTED		/* Utah RLE image file format */
+#undef RLE_SUPPORTED        /* Utah RLE image file format */
 
-#define TARGA_SUPPORTED		/* Targa image file format */
+#define TARGA_SUPPORTED     /* Targa image file format */
 
 
 
-#undef TWO_FILE_COMMANDLINE	/* optional */
+#undef TWO_FILE_COMMANDLINE /* optional */
 
-#define USE_SETMODE		/* Needed to make one-file style work in Watcom */
+#define USE_SETMODE     /* Needed to make one-file style work in Watcom */
 
-#undef NEED_SIGNAL_CATCHER	/* Define this if you use jmemname.c */
+#undef NEED_SIGNAL_CATCHER  /* Define this if you use jmemname.c */
 
 #undef DONT_USE_B_MODE
 
-#undef PROGRESS_REPORT		/* optional */
+#undef PROGRESS_REPORT      /* optional */
 
 
 
 #endif /* JPEG_CJPEG_DJPEG */
-

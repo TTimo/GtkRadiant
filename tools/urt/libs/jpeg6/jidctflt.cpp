@@ -80,7 +80,7 @@
 
 #include "radiant_jpeglib.h"
 
-#include "jdct.h"		/* Private declarations for DCT subsystem */
+#include "jdct.h"       /* Private declarations for DCT subsystem */
 
 
 
@@ -100,7 +100,7 @@
 
 #if DCTSIZE != 8
 
-  Sorry, this code only copes with 8x8 DCTs. /* deliberate syntax err */
+Sorry, this code only copes with 8x8 DCTs.   /* deliberate syntax err */
 
 #endif
 
@@ -116,7 +116,7 @@
 
 
 
-#define DEQUANTIZE(coef,quantval)  (((FAST_FLOAT) (coef)) * (quantval))
+#define DEQUANTIZE( coef,quantval )  ( ( (FAST_FLOAT) ( coef ) ) * ( quantval ) )
 
 
 
@@ -132,351 +132,348 @@
 
 GLOBAL void
 
-jpeg_idct_float (j_decompress_ptr cinfo, jpeg_component_info * compptr,
+jpeg_idct_float( j_decompress_ptr cinfo, jpeg_component_info * compptr,
 
-		 JCOEFPTR coef_block,
+				 JCOEFPTR coef_block,
 
-		 JSAMPARRAY output_buf, JDIMENSION output_col)
+				 JSAMPARRAY output_buf, JDIMENSION output_col ){
 
-{
+	FAST_FLOAT tmp0, tmp1, tmp2, tmp3, tmp4, tmp5, tmp6, tmp7;
 
-  FAST_FLOAT tmp0, tmp1, tmp2, tmp3, tmp4, tmp5, tmp6, tmp7;
+	FAST_FLOAT tmp10, tmp11, tmp12, tmp13;
 
-  FAST_FLOAT tmp10, tmp11, tmp12, tmp13;
+	FAST_FLOAT z5, z10, z11, z12, z13;
 
-  FAST_FLOAT z5, z10, z11, z12, z13;
+	JCOEFPTR inptr;
 
-  JCOEFPTR inptr;
+	FLOAT_MULT_TYPE * quantptr;
 
-  FLOAT_MULT_TYPE * quantptr;
+	FAST_FLOAT * wsptr;
 
-  FAST_FLOAT * wsptr;
+	JSAMPROW outptr;
 
-  JSAMPROW outptr;
+	JSAMPLE *range_limit = IDCT_range_limit( cinfo );
 
-  JSAMPLE *range_limit = IDCT_range_limit(cinfo);
+	int ctr;
 
-  int ctr;
+	FAST_FLOAT workspace[DCTSIZE2]; /* buffers data between passes */
 
-  FAST_FLOAT workspace[DCTSIZE2]; /* buffers data between passes */
+	SHIFT_TEMPS
 
-  SHIFT_TEMPS
 
 
+	/* Pass 1: process columns from input, store into work array. */
 
-  /* Pass 1: process columns from input, store into work array. */
 
 
+		inptr = coef_block;
 
-  inptr = coef_block;
+	quantptr = (FLOAT_MULT_TYPE *) compptr->dct_table;
 
-  quantptr = (FLOAT_MULT_TYPE *) compptr->dct_table;
+	wsptr = workspace;
 
-  wsptr = workspace;
+	for ( ctr = DCTSIZE; ctr > 0; ctr-- ) {
 
-  for (ctr = DCTSIZE; ctr > 0; ctr--) {
+		/* Due to quantization, we will usually find that many of the input
 
-    /* Due to quantization, we will usually find that many of the input
+		 * coefficients are zero, especially the AC terms.  We can exploit this
 
-     * coefficients are zero, especially the AC terms.  We can exploit this
+		 * by short-circuiting the IDCT calculation for any column in which all
 
-     * by short-circuiting the IDCT calculation for any column in which all
+		 * the AC terms are zero.  In that case each output is equal to the
 
-     * the AC terms are zero.  In that case each output is equal to the
+		 * DC coefficient (with scale factor as needed).
 
-     * DC coefficient (with scale factor as needed).
+		 * With typical images and quantization tables, half or more of the
 
-     * With typical images and quantization tables, half or more of the
+		 * column DCT calculations can be simplified this way.
 
-     * column DCT calculations can be simplified this way.
+		 */
 
-     */
 
-    
 
-    if ((inptr[DCTSIZE*1] | inptr[DCTSIZE*2] | inptr[DCTSIZE*3] |
+		if ( ( inptr[DCTSIZE * 1] | inptr[DCTSIZE * 2] | inptr[DCTSIZE * 3] |
 
-	 inptr[DCTSIZE*4] | inptr[DCTSIZE*5] | inptr[DCTSIZE*6] |
+			   inptr[DCTSIZE * 4] | inptr[DCTSIZE * 5] | inptr[DCTSIZE * 6] |
 
-	 inptr[DCTSIZE*7]) == 0) {
+			   inptr[DCTSIZE * 7] ) == 0 ) {
 
-      /* AC terms all zero */
+			/* AC terms all zero */
 
-      FAST_FLOAT dcval = DEQUANTIZE(inptr[DCTSIZE*0], quantptr[DCTSIZE*0]);
+			FAST_FLOAT dcval = DEQUANTIZE( inptr[DCTSIZE * 0], quantptr[DCTSIZE * 0] );
 
-      
 
-      wsptr[DCTSIZE*0] = dcval;
 
-      wsptr[DCTSIZE*1] = dcval;
+			wsptr[DCTSIZE * 0] = dcval;
 
-      wsptr[DCTSIZE*2] = dcval;
+			wsptr[DCTSIZE * 1] = dcval;
 
-      wsptr[DCTSIZE*3] = dcval;
+			wsptr[DCTSIZE * 2] = dcval;
 
-      wsptr[DCTSIZE*4] = dcval;
+			wsptr[DCTSIZE * 3] = dcval;
 
-      wsptr[DCTSIZE*5] = dcval;
+			wsptr[DCTSIZE * 4] = dcval;
 
-      wsptr[DCTSIZE*6] = dcval;
+			wsptr[DCTSIZE * 5] = dcval;
 
-      wsptr[DCTSIZE*7] = dcval;
+			wsptr[DCTSIZE * 6] = dcval;
 
-      
+			wsptr[DCTSIZE * 7] = dcval;
 
-      inptr++;			/* advance pointers to next column */
 
-      quantptr++;
 
-      wsptr++;
+			inptr++;    /* advance pointers to next column */
 
-      continue;
+			quantptr++;
 
-    }
+			wsptr++;
 
-    
+			continue;
 
-    /* Even part */
+		}
 
 
 
-    tmp0 = DEQUANTIZE(inptr[DCTSIZE*0], quantptr[DCTSIZE*0]);
+		/* Even part */
 
-    tmp1 = DEQUANTIZE(inptr[DCTSIZE*2], quantptr[DCTSIZE*2]);
 
-    tmp2 = DEQUANTIZE(inptr[DCTSIZE*4], quantptr[DCTSIZE*4]);
 
-    tmp3 = DEQUANTIZE(inptr[DCTSIZE*6], quantptr[DCTSIZE*6]);
+		tmp0 = DEQUANTIZE( inptr[DCTSIZE * 0], quantptr[DCTSIZE * 0] );
 
+		tmp1 = DEQUANTIZE( inptr[DCTSIZE * 2], quantptr[DCTSIZE * 2] );
 
+		tmp2 = DEQUANTIZE( inptr[DCTSIZE * 4], quantptr[DCTSIZE * 4] );
 
-    tmp10 = tmp0 + tmp2;	/* phase 3 */
+		tmp3 = DEQUANTIZE( inptr[DCTSIZE * 6], quantptr[DCTSIZE * 6] );
 
-    tmp11 = tmp0 - tmp2;
 
 
+		tmp10 = tmp0 + tmp2; /* phase 3 */
 
-    tmp13 = tmp1 + tmp3;	/* phases 5-3 */
+		tmp11 = tmp0 - tmp2;
 
-    tmp12 = (tmp1 - tmp3) * ((FAST_FLOAT) 1.414213562) - tmp13; /* 2*c4 */
 
 
+		tmp13 = tmp1 + tmp3; /* phases 5-3 */
 
-    tmp0 = tmp10 + tmp13;	/* phase 2 */
+		tmp12 = ( tmp1 - tmp3 ) * ( (FAST_FLOAT) 1.414213562 ) - tmp13; /* 2*c4 */
 
-    tmp3 = tmp10 - tmp13;
 
-    tmp1 = tmp11 + tmp12;
 
-    tmp2 = tmp11 - tmp12;
+		tmp0 = tmp10 + tmp13; /* phase 2 */
 
-    
+		tmp3 = tmp10 - tmp13;
 
-    /* Odd part */
+		tmp1 = tmp11 + tmp12;
 
+		tmp2 = tmp11 - tmp12;
 
 
-    tmp4 = DEQUANTIZE(inptr[DCTSIZE*1], quantptr[DCTSIZE*1]);
 
-    tmp5 = DEQUANTIZE(inptr[DCTSIZE*3], quantptr[DCTSIZE*3]);
+		/* Odd part */
 
-    tmp6 = DEQUANTIZE(inptr[DCTSIZE*5], quantptr[DCTSIZE*5]);
 
-    tmp7 = DEQUANTIZE(inptr[DCTSIZE*7], quantptr[DCTSIZE*7]);
 
+		tmp4 = DEQUANTIZE( inptr[DCTSIZE * 1], quantptr[DCTSIZE * 1] );
 
+		tmp5 = DEQUANTIZE( inptr[DCTSIZE * 3], quantptr[DCTSIZE * 3] );
 
-    z13 = tmp6 + tmp5;		/* phase 6 */
+		tmp6 = DEQUANTIZE( inptr[DCTSIZE * 5], quantptr[DCTSIZE * 5] );
 
-    z10 = tmp6 - tmp5;
+		tmp7 = DEQUANTIZE( inptr[DCTSIZE * 7], quantptr[DCTSIZE * 7] );
 
-    z11 = tmp4 + tmp7;
 
-    z12 = tmp4 - tmp7;
 
+		z13 = tmp6 + tmp5;  /* phase 6 */
 
+		z10 = tmp6 - tmp5;
 
-    tmp7 = z11 + z13;		/* phase 5 */
+		z11 = tmp4 + tmp7;
 
-    tmp11 = (z11 - z13) * ((FAST_FLOAT) 1.414213562); /* 2*c4 */
+		z12 = tmp4 - tmp7;
 
 
 
-    z5 = (z10 + z12) * ((FAST_FLOAT) 1.847759065); /* 2*c2 */
+		tmp7 = z11 + z13;   /* phase 5 */
 
-    tmp10 = ((FAST_FLOAT) 1.082392200) * z12 - z5; /* 2*(c2-c6) */
+		tmp11 = ( z11 - z13 ) * ( (FAST_FLOAT) 1.414213562 ); /* 2*c4 */
 
-    tmp12 = ((FAST_FLOAT) -2.613125930) * z10 + z5; /* -2*(c2+c6) */
 
 
+		z5 = ( z10 + z12 ) * ( (FAST_FLOAT) 1.847759065 ); /* 2*c2 */
 
-    tmp6 = tmp12 - tmp7;	/* phase 2 */
+		tmp10 = ( (FAST_FLOAT) 1.082392200 ) * z12 - z5; /* 2*(c2-c6) */
 
-    tmp5 = tmp11 - tmp6;
+		tmp12 = ( (FAST_FLOAT) -2.613125930 ) * z10 + z5; /* -2*(c2+c6) */
 
-    tmp4 = tmp10 + tmp5;
 
 
+		tmp6 = tmp12 - tmp7; /* phase 2 */
 
-    wsptr[DCTSIZE*0] = tmp0 + tmp7;
+		tmp5 = tmp11 - tmp6;
 
-    wsptr[DCTSIZE*7] = tmp0 - tmp7;
+		tmp4 = tmp10 + tmp5;
 
-    wsptr[DCTSIZE*1] = tmp1 + tmp6;
 
-    wsptr[DCTSIZE*6] = tmp1 - tmp6;
 
-    wsptr[DCTSIZE*2] = tmp2 + tmp5;
+		wsptr[DCTSIZE * 0] = tmp0 + tmp7;
 
-    wsptr[DCTSIZE*5] = tmp2 - tmp5;
+		wsptr[DCTSIZE * 7] = tmp0 - tmp7;
 
-    wsptr[DCTSIZE*4] = tmp3 + tmp4;
+		wsptr[DCTSIZE * 1] = tmp1 + tmp6;
 
-    wsptr[DCTSIZE*3] = tmp3 - tmp4;
+		wsptr[DCTSIZE * 6] = tmp1 - tmp6;
 
+		wsptr[DCTSIZE * 2] = tmp2 + tmp5;
 
+		wsptr[DCTSIZE * 5] = tmp2 - tmp5;
 
-    inptr++;			/* advance pointers to next column */
+		wsptr[DCTSIZE * 4] = tmp3 + tmp4;
 
-    quantptr++;
+		wsptr[DCTSIZE * 3] = tmp3 - tmp4;
 
-    wsptr++;
 
-  }
 
-  
+		inptr++;        /* advance pointers to next column */
 
-  /* Pass 2: process rows from work array, store into output array. */
+		quantptr++;
 
-  /* Note that we must descale the results by a factor of 8 == 2**3. */
+		wsptr++;
 
+	}
 
 
-  wsptr = workspace;
 
-  for (ctr = 0; ctr < DCTSIZE; ctr++) {
+	/* Pass 2: process rows from work array, store into output array. */
 
-    outptr = output_buf[ctr] + output_col;
+	/* Note that we must descale the results by a factor of 8 == 2**3. */
 
-    /* Rows of zeroes can be exploited in the same way as we did with columns.
 
-     * However, the column calculation has created many nonzero AC terms, so
 
-     * the simplification applies less often (typically 5% to 10% of the time).
+	wsptr = workspace;
 
-     * And testing floats for zero is relatively expensive, so we don't bother.
+	for ( ctr = 0; ctr < DCTSIZE; ctr++ ) {
 
-     */
+		outptr = output_buf[ctr] + output_col;
 
-    
+		/* Rows of zeroes can be exploited in the same way as we did with columns.
 
-    /* Even part */
+		 * However, the column calculation has created many nonzero AC terms, so
 
+		 * the simplification applies less often (typically 5% to 10% of the time).
 
+		 * And testing floats for zero is relatively expensive, so we don't bother.
 
-    tmp10 = wsptr[0] + wsptr[4];
+		 */
 
-    tmp11 = wsptr[0] - wsptr[4];
 
 
+		/* Even part */
 
-    tmp13 = wsptr[2] + wsptr[6];
 
-    tmp12 = (wsptr[2] - wsptr[6]) * ((FAST_FLOAT) 1.414213562) - tmp13;
 
+		tmp10 = wsptr[0] + wsptr[4];
 
+		tmp11 = wsptr[0] - wsptr[4];
 
-    tmp0 = tmp10 + tmp13;
 
-    tmp3 = tmp10 - tmp13;
 
-    tmp1 = tmp11 + tmp12;
+		tmp13 = wsptr[2] + wsptr[6];
 
-    tmp2 = tmp11 - tmp12;
+		tmp12 = ( wsptr[2] - wsptr[6] ) * ( (FAST_FLOAT) 1.414213562 ) - tmp13;
 
 
 
-    /* Odd part */
+		tmp0 = tmp10 + tmp13;
 
+		tmp3 = tmp10 - tmp13;
 
+		tmp1 = tmp11 + tmp12;
 
-    z13 = wsptr[5] + wsptr[3];
+		tmp2 = tmp11 - tmp12;
 
-    z10 = wsptr[5] - wsptr[3];
 
-    z11 = wsptr[1] + wsptr[7];
 
-    z12 = wsptr[1] - wsptr[7];
+		/* Odd part */
 
 
 
-    tmp7 = z11 + z13;
+		z13 = wsptr[5] + wsptr[3];
 
-    tmp11 = (z11 - z13) * ((FAST_FLOAT) 1.414213562);
+		z10 = wsptr[5] - wsptr[3];
 
+		z11 = wsptr[1] + wsptr[7];
 
+		z12 = wsptr[1] - wsptr[7];
 
-    z5 = (z10 + z12) * ((FAST_FLOAT) 1.847759065); /* 2*c2 */
 
-    tmp10 = ((FAST_FLOAT) 1.082392200) * z12 - z5; /* 2*(c2-c6) */
 
-    tmp12 = ((FAST_FLOAT) -2.613125930) * z10 + z5; /* -2*(c2+c6) */
+		tmp7 = z11 + z13;
 
+		tmp11 = ( z11 - z13 ) * ( (FAST_FLOAT) 1.414213562 );
 
 
-    tmp6 = tmp12 - tmp7;
 
-    tmp5 = tmp11 - tmp6;
+		z5 = ( z10 + z12 ) * ( (FAST_FLOAT) 1.847759065 ); /* 2*c2 */
 
-    tmp4 = tmp10 + tmp5;
+		tmp10 = ( (FAST_FLOAT) 1.082392200 ) * z12 - z5; /* 2*(c2-c6) */
 
+		tmp12 = ( (FAST_FLOAT) -2.613125930 ) * z10 + z5; /* -2*(c2+c6) */
 
 
-    /* Final output stage: scale down by a factor of 8 and range-limit */
 
+		tmp6 = tmp12 - tmp7;
 
+		tmp5 = tmp11 - tmp6;
 
-    outptr[0] = range_limit[(int) DESCALE((INT32) (tmp0 + tmp7), 3)
+		tmp4 = tmp10 + tmp5;
 
-			    & RANGE_MASK];
 
-    outptr[7] = range_limit[(int) DESCALE((INT32) (tmp0 - tmp7), 3)
 
-			    & RANGE_MASK];
+		/* Final output stage: scale down by a factor of 8 and range-limit */
 
-    outptr[1] = range_limit[(int) DESCALE((INT32) (tmp1 + tmp6), 3)
 
-			    & RANGE_MASK];
 
-    outptr[6] = range_limit[(int) DESCALE((INT32) (tmp1 - tmp6), 3)
+		outptr[0] = range_limit[(int) DESCALE( (INT32) ( tmp0 + tmp7 ), 3 )
 
-			    & RANGE_MASK];
+								& RANGE_MASK];
 
-    outptr[2] = range_limit[(int) DESCALE((INT32) (tmp2 + tmp5), 3)
+		outptr[7] = range_limit[(int) DESCALE( (INT32) ( tmp0 - tmp7 ), 3 )
 
-			    & RANGE_MASK];
+								& RANGE_MASK];
 
-    outptr[5] = range_limit[(int) DESCALE((INT32) (tmp2 - tmp5), 3)
+		outptr[1] = range_limit[(int) DESCALE( (INT32) ( tmp1 + tmp6 ), 3 )
 
-			    & RANGE_MASK];
+								& RANGE_MASK];
 
-    outptr[4] = range_limit[(int) DESCALE((INT32) (tmp3 + tmp4), 3)
+		outptr[6] = range_limit[(int) DESCALE( (INT32) ( tmp1 - tmp6 ), 3 )
 
-			    & RANGE_MASK];
+								& RANGE_MASK];
 
-    outptr[3] = range_limit[(int) DESCALE((INT32) (tmp3 - tmp4), 3)
+		outptr[2] = range_limit[(int) DESCALE( (INT32) ( tmp2 + tmp5 ), 3 )
 
-			    & RANGE_MASK];
+								& RANGE_MASK];
 
-    
+		outptr[5] = range_limit[(int) DESCALE( (INT32) ( tmp2 - tmp5 ), 3 )
 
-    wsptr += DCTSIZE;		/* advance pointer to next row */
+								& RANGE_MASK];
 
-  }
+		outptr[4] = range_limit[(int) DESCALE( (INT32) ( tmp3 + tmp4 ), 3 )
+
+								& RANGE_MASK];
+
+		outptr[3] = range_limit[(int) DESCALE( (INT32) ( tmp3 - tmp4 ), 3 )
+
+								& RANGE_MASK];
+
+
+
+		wsptr += DCTSIZE;   /* advance pointer to next row */
+
+	}
 
 }
 
 
 
 #endif /* DCT_FLOAT_SUPPORTED */
-

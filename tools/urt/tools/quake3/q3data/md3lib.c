@@ -4,21 +4,20 @@
 #endif
 #include "md3lib.h"
 
-#if defined (__linux__) || defined (__APPLE__)
+#if defined ( __linux__ ) || defined ( __APPLE__ )
 #define filelength Q_filelength
 #endif
 
 /*
 ** MD3_ComputeTagFromTri
 */
-void MD3_ComputeTagFromTri( md3Tag_t *pTag, const float pTri[3][3] )
-{
-	float	len[3];
-	vec3_t	axes[3], sides[3];
-	int		longestSide, shortestSide, hypotSide;
-	int		origin;
-	int		j;
-	float	d;
+void MD3_ComputeTagFromTri( md3Tag_t *pTag, const float pTri[3][3] ){
+	float len[3];
+	vec3_t axes[3], sides[3];
+	int longestSide, shortestSide, hypotSide;
+	int origin;
+	int j;
+	float d;
 
 	memset( axes, 0, sizeof( axes ) );
 	memset( sides, 0, sizeof( sides ) );
@@ -28,24 +27,21 @@ void MD3_ComputeTagFromTri( md3Tag_t *pTag, const float pTri[3][3] )
 	//
 	for ( j = 0; j < 3; j++ )
 	{
-		sides[j][0] = pTri[(j+1)%3][0] - pTri[j][0];
-		sides[j][1] = pTri[(j+1)%3][1] - pTri[j][1];
-		sides[j][2] = pTri[(j+1)%3][2] - pTri[j][2];
+		sides[j][0] = pTri[( j + 1 ) % 3][0] - pTri[j][0];
+		sides[j][1] = pTri[( j + 1 ) % 3][1] - pTri[j][1];
+		sides[j][2] = pTri[( j + 1 ) % 3][2] - pTri[j][2];
 
 		len[j] = ( float ) sqrt( DotProduct( sides[j], sides[j] ) );
 	}
 
 #if 0
-	if ( len[0] > len[1] && len[0] > len[2] )
-	{
+	if ( len[0] > len[1] && len[0] > len[2] ) {
 		longestSide = 0; shortestSide = 1; origin = 2;
 	}
-	else if ( len[1] > len[0] && len[1] > len[2] )
-	{
+	else if ( len[1] > len[0] && len[1] > len[2] ) {
 		longestSide = 1; shortestSide = 2; origin = 0;
 	}
-	else if ( len[2] > len[0] && len[2] > len[1] )
-	{
+	else if ( len[2] > len[0] && len[2] > len[1] ) {
 		longestSide = 2; shortestSide = 0; origin = 1;
 	}
 	else
@@ -56,10 +52,12 @@ void MD3_ComputeTagFromTri( md3Tag_t *pTag, const float pTri[3][3] )
 	if ( len[0] > len[1] && len[0] > len[2] ) {
 		hypotSide = 0;
 		origin = 2;
-	} else if ( len[1] > len[0] && len[1] > len[2] ) {
+	}
+	else if ( len[1] > len[0] && len[1] > len[2] ) {
 		hypotSide = 1;
 		origin = 0;
-	} else if ( len[2] > len[0] && len[2] > len[1] ) {
+	}
+	else if ( len[2] > len[0] && len[2] > len[1] ) {
 		hypotSide = 2;
 		origin = 1;
 	}
@@ -67,18 +65,22 @@ void MD3_ComputeTagFromTri( md3Tag_t *pTag, const float pTri[3][3] )
 
 	if ( len[0] > len[1] && len[0] > len[2] ) {
 		longestSide = 0;
-	} else if ( len[1] > len[0] && len[1] > len[2] ) {
+	}
+	else if ( len[1] > len[0] && len[1] > len[2] ) {
 		longestSide = 1;
-	} else if ( len[2] > len[0] && len[2] > len[1] ) {
+	}
+	else if ( len[2] > len[0] && len[2] > len[1] ) {
 		longestSide = 2;
 	}
 	len[longestSide] = -1;
 
 	if ( len[0] > len[1] && len[0] > len[2] ) {
 		shortestSide = 0;
-	} else if ( len[1] > len[0] && len[1] > len[2] ) {
+	}
+	else if ( len[1] > len[0] && len[1] > len[2] ) {
 		shortestSide = 1;
-	} else if ( len[2] > len[0] && len[2] > len[1] ) {
+	}
+	else if ( len[2] > len[0] && len[2] > len[1] ) {
 		shortestSide = 2;
 	}
 	len[shortestSide] = -1;
@@ -108,12 +110,11 @@ void MD3_ComputeTagFromTri( md3Tag_t *pTag, const float pTri[3][3] )
 }
 
 /*
-==============
-MD3_Dump
-==============
-*/
-void MD3_Dump( const char *filename )
-{
+   ==============
+   MD3_Dump
+   ==============
+ */
+void MD3_Dump( const char *filename ){
 	md3Header_t header;
 	md3Tag_t *pTag;
 	md3Surface_t *pSurface;
@@ -123,8 +124,7 @@ void MD3_Dump( const char *filename )
 	long fileSize;
 	int i;
 
-	if ( ( fp = fopen( filename, "rb" ) ) == 0 )
-	{
+	if ( ( fp = fopen( filename, "rb" ) ) == 0 ) {
 		Error( "Unable to open '%s'\n", filename );
 	}
 
@@ -136,8 +136,7 @@ void MD3_Dump( const char *filename )
 	buffer = ( char * ) _buffer;
 	header = *( md3Header_t * ) _buffer;
 
-	if ( header.ident != MD3_IDENT )
-	{
+	if ( header.ident != MD3_IDENT ) {
 		Error( "Incorrect ident for '%s'\n", filename );
 	}
 
@@ -176,8 +175,7 @@ void MD3_Dump( const char *filename )
 		printf( "    num tris: %d\n", pSurface->numTriangles );
 		printf( "    num verts: %d\n", pSurface->numVerts );
 
-		if ( pSurface->numShaders > 0 )
-		{
+		if ( pSurface->numShaders > 0 ) {
 			printf( "    --- SHADERS ---\n" );
 
 			for ( j = 0; j < pSurface->numShaders; j++, pShader++ )
@@ -190,4 +188,3 @@ void MD3_Dump( const char *filename )
 
 	free( _buffer );
 }
-

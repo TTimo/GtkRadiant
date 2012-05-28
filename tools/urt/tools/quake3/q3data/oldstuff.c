@@ -6,13 +6,12 @@
 ** Given a triangle_t, find which indices match into the associated
 ** surface's base triangles.
 */
-static void ReindexTriangle( int surfno, triangle_t *pTri, int indices[3] )
-{
+static void ReindexTriangle( int surfno, triangle_t *pTri, int indices[3] ){
 	int t, i;
 	md3SurfaceData_t *pSurfData = &g_data.surfData[surfno];
 	int matches[3][3];
 	int numMatches = 0;
-		
+
 
 	indices[0] = -1;
 	indices[1] = -1;
@@ -28,102 +27,99 @@ static void ReindexTriangle( int surfno, triangle_t *pTri, int indices[3] )
 
 		for ( t = 0; t < pSurfData->header.numVerts; t++ )
 		{
-			if ( !VectorCompare( pTri->verts[i], pSurfData->baseVertexes[t].xyz ) )
+			if ( !VectorCompare( pTri->verts[i], pSurfData->baseVertexes[t].xyz ) ) {
 				continue;
+			}
 
-/*				 
-			if ( !VectorCompare( pTri->normals[i], pSurfData->baseVertexes[t].normal ) )
-				continue;
-			if ( pTri->texcoords[i][0] != pSurfData->baseVertexes[t].st[0] )
-				continue;
-			if ( pTri->texcoords[i][1] != pSurfData->baseVertexes[t].st[1] ) 
-				continue;
-*/
+/*
+            if ( !VectorCompare( pTri->normals[i], pSurfData->baseVertexes[t].normal ) )
+                continue;
+            if ( pTri->texcoords[i][0] != pSurfData->baseVertexes[t].st[0] )
+                continue;
+            if ( pTri->texcoords[i][1] != pSurfData->baseVertexes[t].st[1] )
+                continue;
+ */
 
 			matches[i][numMatches++] = t;
 		}
 
-		if ( indices[i] == -1 )
-		{
+		if ( indices[i] == -1 ) {
 //			Error( "Could not ReindexTriangle, vertex not found" );
 		}
 	}
 
 #if 0
-		for ( t = 0; t < psets[i].numtriangles; t++ )
+	for ( t = 0; t < psets[i].numtriangles; t++ )
+	{
+		int b;
+
+		bTri = &g_data.surfData[i].baseTriangles[t];
+
+		for ( j = 0 ; j < 3 ; j++ )
 		{
-			int b;
+			bVert = &bTri->v[j];
 
-			bTri = &g_data.surfData[i].baseTriangles[t];
-
-			for (j=0 ; j<3 ; j++)
+			// get the xyz index
+			for ( k = 0; k < g_data.surfData[i].header.numVerts; k++ )
 			{
-				bVert = &bTri->v[j];
-
-				// get the xyz index
-				for ( k = 0; k < g_data.surfData[i].header.numVerts; k++ )
-				{
-					if ( ( g_data.surfData[i].baseVertexes[k].st[0] == bVert->st[0] ) &&
-						 ( g_data.surfData[i].baseVertexes[k].st[1] == bVert->st[1] ) &&
-						 ( VectorCompare (bVert->xyz, g_data.surfData[i].baseVertexes[k].xyz) ) &&
-						 ( VectorCompare (bVert->normal, g_data.surfData[i].baseVertexes[k].normal) ) )
-					{
-						break;	// this vertex is already in the base vertex list
-					}
+				if ( ( g_data.surfData[i].baseVertexes[k].st[0] == bVert->st[0] ) &&
+					 ( g_data.surfData[i].baseVertexes[k].st[1] == bVert->st[1] ) &&
+					 ( VectorCompare( bVert->xyz, g_data.surfData[i].baseVertexes[k].xyz ) ) &&
+					 ( VectorCompare( bVert->normal, g_data.surfData[i].baseVertexes[k].normal ) ) ) {
+					break;      // this vertex is already in the base vertex list
 				}
-
-				if (k == g_data.surfData[i].header.numVerts)	{ // new index
-					g_data.surfData[i].baseVertexes[g_data.surfData[i].header.numVerts] = *bVert;
-					g_data.surfData[i].header.numVerts++;
-				}
-
-				bVert->index = k;
 			}
+
+			if ( k == g_data.surfData[i].header.numVerts ) {      // new index
+				g_data.surfData[i].baseVertexes[g_data.surfData[i].header.numVerts] = *bVert;
+				g_data.surfData[i].header.numVerts++;
+			}
+
+			bVert->index = k;
 		}
+	}
 #endif
 }
 
-const char	*FindFrameFile (const char *frame)
-{
-	int			time1;
-	char	file1[1024];
-	static char	retname[1024];
-	char	base[32];
-	char	suffix[32];
-	const char	*s;
+const char  *FindFrameFile( const char *frame ){
+	int time1;
+	char file1[1024];
+	static char retname[1024];
+	char base[32];
+	char suffix[32];
+	const char  *s;
 
-	if (strstr (frame, "."))
-		return frame;		// allready in dot format
+	if ( strstr( frame, "." ) ) {
+		return frame;       // allready in dot format
 
+	}
 	// split 'run1' into 'run' and '1'
-	s = frame + strlen(frame)-1;
+	s = frame + strlen( frame ) - 1;
 
-	while (s != frame && *s >= '0' && *s <= '9')
+	while ( s != frame && *s >= '0' && *s <= '9' )
 		s--;
 
-	strcpy (suffix, s+1);
-	strcpy (base, frame);
-	base[s-frame+1] = 0;
+	strcpy( suffix, s + 1 );
+	strcpy( base, frame );
+	base[s - frame + 1] = 0;
 
 	// check for 'run1.tri'
-	sprintf (file1, "%s/%s%s.tri", g_cddir, base, suffix);
-	time1 = FileTime (file1);
-	if (time1 != -1)
-	{
-		sprintf (retname, "%s%s.tri", base, suffix);
+	sprintf( file1, "%s/%s%s.tri", g_cddir, base, suffix );
+	time1 = FileTime( file1 );
+	if ( time1 != -1 ) {
+		sprintf( retname, "%s%s.tri", base, suffix );
 		return retname;
 	}
 
 	// check for 'run.1'
-	sprintf (file1, "%s/%s.%s",g_cddir, base, suffix);
-	time1 = FileTime (file1);
-	if (time1 != -1)
-	{
-		sprintf (retname, "%s.%s", base, suffix);
+	sprintf( file1, "%s/%s.%s",g_cddir, base, suffix );
+	time1 = FileTime( file1 );
+	if ( time1 != -1 ) {
+		sprintf( retname, "%s.%s", base, suffix );
 		return retname;
 	}
 
-	Error ("frame %s could not be found",frame);
+	Error( "frame %s could not be found",frame );
 	return NULL;
 }
 

@@ -12,8 +12,7 @@ static qboolean s_verbose;
 
 static char s_buffer[1000000];
 
-static int ReadString( FILE *fp, char *buffer )
-{
+static int ReadString( FILE *fp, char *buffer ){
 	int i = 0;
 	int bytesRead = 0;
 
@@ -27,17 +26,17 @@ static int ReadString( FILE *fp, char *buffer )
 	return bytesRead;
 }
 
-static int ReadChunkAndLength( FILE *fp, short *chunk, long *len )
-{
-	if ( fread( chunk, sizeof( short ), 1, fp ) != 1 )
+static int ReadChunkAndLength( FILE *fp, short *chunk, long *len ){
+	if ( fread( chunk, sizeof( short ), 1, fp ) != 1 ) {
 		return 0;
-	if ( fread( len, sizeof( long ), 1, fp ) != 1 )
+	}
+	if ( fread( len, sizeof( long ), 1, fp ) != 1 ) {
 		Error( "Unexpected EOF found" );
+	}
 	return 1;
 }
 
-static void LoadMapName( FILE *fp, char *buffer, int thisChunkLen )
-{
+static void LoadMapName( FILE *fp, char *buffer, int thisChunkLen ){
 	unsigned short chunkID;
 	long chunkLen;
 	long bytesRead = 0;
@@ -54,13 +53,13 @@ static void LoadMapName( FILE *fp, char *buffer, int thisChunkLen )
 			break;
 		}
 		bytesRead += chunkLen;
-		if ( bytesRead >= thisChunkLen )
+		if ( bytesRead >= thisChunkLen ) {
 			return;
+		}
 	}
 }
 
-static void LoadMaterialList( FILE *fp, long thisChunkLen, _3DSMaterial_t *pMat )
-{
+static void LoadMaterialList( FILE *fp, long thisChunkLen, _3DSMaterial_t *pMat ){
 	long chunkLen;
 	unsigned short chunkID;
 	long bytesRead = 0;
@@ -70,106 +69,118 @@ static void LoadMaterialList( FILE *fp, long thisChunkLen, _3DSMaterial_t *pMat 
 
 	memset( &mat, 0, sizeof( mat ) );
 
-	if ( s_verbose )
+	if ( s_verbose ) {
 		printf( "    >>> MATERIAL LIST\n" );
+	}
 
 	while ( ReadChunkAndLength( fp, &chunkID, &chunkLen ) )
 	{
 		switch ( chunkID )
 		{
-			case _3DS_CHUNK_MAT_NAME:
-				fread( mat.name, chunkLen - 6, 1, fp );
-				if ( s_verbose )
-					printf( "        found mat name '%s'\n", mat.name );
-				break;
-			case _3DS_CHUNK_TEXMAP:
-				LoadMapName( fp, mat.texture, chunkLen - 6 );
-				if ( s_verbose )
-					printf( "        found texture '%s'\n", mat.texture );
-				break;
-			case _3DS_CHUNK_SPECMAP:
-				LoadMapName( fp, mat.specular, chunkLen - 6 );
-				if ( s_verbose )
-					printf( "        found specular map '%s'\n", mat.specular );
-				break;
-			case _3DS_CHUNK_OPACMAP:
-				LoadMapName( fp, mat.opacity, chunkLen - 6 );
-				if ( s_verbose )
-					printf( "        found opacity map '%s'\n", mat.opacity );
-				break;
-			case _3DS_CHUNK_REFLMAP:
-				LoadMapName( fp, mat.reflection, chunkLen - 6 );
-				if ( s_verbose )
-					printf( "        found reflection map '%s'\n", mat.reflection );
-				break;
-			case _3DS_CHUNK_BUMPMAP:
-				LoadMapName( fp, mat.bump, chunkLen - 6 );
-				if ( s_verbose )
-					printf( "        found bump map '%s'\n", mat.bump );
-				break;
-			default:
-				fread( s_buffer, chunkLen - 6, 1, fp );
-				break;
+		case _3DS_CHUNK_MAT_NAME:
+			fread( mat.name, chunkLen - 6, 1, fp );
+			if ( s_verbose ) {
+				printf( "        found mat name '%s'\n", mat.name );
+			}
+			break;
+		case _3DS_CHUNK_TEXMAP:
+			LoadMapName( fp, mat.texture, chunkLen - 6 );
+			if ( s_verbose ) {
+				printf( "        found texture '%s'\n", mat.texture );
+			}
+			break;
+		case _3DS_CHUNK_SPECMAP:
+			LoadMapName( fp, mat.specular, chunkLen - 6 );
+			if ( s_verbose ) {
+				printf( "        found specular map '%s'\n", mat.specular );
+			}
+			break;
+		case _3DS_CHUNK_OPACMAP:
+			LoadMapName( fp, mat.opacity, chunkLen - 6 );
+			if ( s_verbose ) {
+				printf( "        found opacity map '%s'\n", mat.opacity );
+			}
+			break;
+		case _3DS_CHUNK_REFLMAP:
+			LoadMapName( fp, mat.reflection, chunkLen - 6 );
+			if ( s_verbose ) {
+				printf( "        found reflection map '%s'\n", mat.reflection );
+			}
+			break;
+		case _3DS_CHUNK_BUMPMAP:
+			LoadMapName( fp, mat.bump, chunkLen - 6 );
+			if ( s_verbose ) {
+				printf( "        found bump map '%s'\n", mat.bump );
+			}
+			break;
+		default:
+			fread( s_buffer, chunkLen - 6, 1, fp );
+			break;
 		}
 
 		bytesRead += chunkLen;
 
-		if ( bytesRead >= thisChunkLen )
+		if ( bytesRead >= thisChunkLen ) {
 			break;
+		}
 	}
 
 	Q_getwd( curdir );
 
-	if ( mat.texture[0] )
-	{
+	if ( mat.texture[0] ) {
 		sprintf( buffer, "%s%s", curdir, mat.texture );
-		if ( strstr( buffer, gamedir + 1 ) )
+		if ( strstr( buffer, gamedir + 1 ) ) {
 			strcpy( mat.texture, strstr( buffer, gamedir + 1 ) + strlen( gamedir ) - 1 );
-		else
+		}
+		else{
 			strcpy( mat.texture, buffer );
+		}
 	}
 
-	if ( mat.specular[0] )
-	{
+	if ( mat.specular[0] ) {
 		sprintf( buffer, "%s%s", curdir, mat.specular );
-		if ( strstr( buffer, gamedir + 1 ) )
+		if ( strstr( buffer, gamedir + 1 ) ) {
 			strcpy( mat.specular, strstr( buffer, gamedir + 1 ) + strlen( gamedir ) - 1 );
-		else
+		}
+		else{
 			strcpy( mat.specular, buffer );
+		}
 	}
 
-	if ( mat.bump[0] )
-	{
+	if ( mat.bump[0] ) {
 		sprintf( buffer, "%s%s", curdir, mat.bump );
-		if ( strstr( buffer, gamedir + 1 ) )
+		if ( strstr( buffer, gamedir + 1 ) ) {
 			strcpy( mat.bump, strstr( buffer, gamedir + 1 ) + strlen( gamedir ) - 1 );
-		else
+		}
+		else{
 			strcpy( mat.bump, buffer );
+		}
 	}
 
-	if ( mat.reflection[0] )
-	{
+	if ( mat.reflection[0] ) {
 		sprintf( buffer, "%s%s", curdir, mat.reflection );
-		if ( strstr( buffer, gamedir + 1 ) )
+		if ( strstr( buffer, gamedir + 1 ) ) {
 			strcpy( mat.reflection, strstr( buffer, gamedir + 1 ) + strlen( gamedir ) - 1 );
-		else
+		}
+		else{
 			strcpy( mat.reflection, buffer );
+		}
 	}
 
-	if ( mat.opacity[0] )
-	{
+	if ( mat.opacity[0] ) {
 		sprintf( buffer, "%s%s", curdir, mat.opacity );
-		if ( strstr( buffer, gamedir + 1 ) )
+		if ( strstr( buffer, gamedir + 1 ) ) {
 			strcpy( mat.opacity, strstr( buffer, gamedir + 1 ) + strlen( gamedir ) - 1 );
-		else
+		}
+		else{
 			strcpy( mat.opacity, buffer );
+		}
 	}
 
 	*pMat = mat;
 }
 
-static void LoadMeshMaterialGroup( FILE *fp, long thisChunkLen, _3DSMeshMaterialGroup_t *pMMG )
-{
+static void LoadMeshMaterialGroup( FILE *fp, long thisChunkLen, _3DSMeshMaterialGroup_t *pMMG ){
 	_3DSMeshMaterialGroup_t mmg;
 
 	memset( &mmg, 0, sizeof( mmg ) );
@@ -180,8 +191,7 @@ static void LoadMeshMaterialGroup( FILE *fp, long thisChunkLen, _3DSMeshMaterial
 	mmg.pFaces = malloc( sizeof( mmg.pFaces[0] ) * mmg.numFaces );
 	fread( mmg.pFaces, sizeof( mmg.pFaces[0] ), mmg.numFaces, fp );
 
-	if ( s_verbose )
-	{
+	if ( s_verbose ) {
 		printf( "    >>> MESH MATERIAL GROUP '%s' (%d faces)\n", mmg.name, mmg.numFaces );
 
 		{
@@ -197,8 +207,7 @@ static void LoadMeshMaterialGroup( FILE *fp, long thisChunkLen, _3DSMeshMaterial
 	*pMMG = mmg;
 }
 
-static void LoadNamedTriObject( FILE *fp, long thisChunkLen, _3DSTriObject_t *pTO )
-{
+static void LoadNamedTriObject( FILE *fp, long thisChunkLen, _3DSTriObject_t *pTO ){
 	long chunkLen;
 	unsigned short chunkID;
 	int i = 0;
@@ -209,8 +218,9 @@ static void LoadNamedTriObject( FILE *fp, long thisChunkLen, _3DSTriObject_t *pT
 
 	memset( &triObj, 0, sizeof( triObj ) );
 
-	if ( s_verbose )
+	if ( s_verbose ) {
 		printf( "        >>> NAMED TRI OBJECT\n" );
+	}
 
 	while ( ReadChunkAndLength( fp, &chunkID, &chunkLen ) )
 	{
@@ -229,8 +239,7 @@ static void LoadNamedTriObject( FILE *fp, long thisChunkLen, _3DSTriObject_t *pT
 			fread( triObj.pFaces, sizeof( triObj.pFaces[0] ), triObj.numFaces, fp );
 			bytesRead += sizeof( triObj.numFaces ) + triObj.numFaces * sizeof( triObj.pFaces[0] ) + 6;
 
-			if ( s_verbose )
-			{
+			if ( s_verbose ) {
 				printf( "            found face array with %d faces\n", triObj.numFaces );
 				for ( i = 0; i < triObj.numFaces; i++ )
 				{
@@ -259,8 +268,7 @@ static void LoadNamedTriObject( FILE *fp, long thisChunkLen, _3DSTriObject_t *pT
 				triObj.pPoints[i].z = z;
 			}
 
-			if ( s_verbose )
-			{
+			if ( s_verbose ) {
 				printf( "            found point array with %d points\n", triObj.numPoints );
 				for ( i = 0; i < triObj.numPoints; i++ )
 				{
@@ -274,8 +282,7 @@ static void LoadNamedTriObject( FILE *fp, long thisChunkLen, _3DSTriObject_t *pT
 			fread( triObj.pTexVerts, sizeof( triObj.pTexVerts[0] ), triObj.numTexVerts, fp );
 			bytesRead += sizeof( triObj.numTexVerts ) + sizeof( triObj.pTexVerts[0] ) * triObj.numTexVerts + 6;
 
-			if ( s_verbose )
-			{
+			if ( s_verbose ) {
 				printf( "            found tex vert array with %d tex verts\n", triObj.numTexVerts );
 				for ( i = 0; i < triObj.numTexVerts; i++ )
 				{
@@ -289,13 +296,13 @@ static void LoadNamedTriObject( FILE *fp, long thisChunkLen, _3DSTriObject_t *pT
 			break;
 		}
 
-		if ( bytesRead >= thisChunkLen )
+		if ( bytesRead >= thisChunkLen ) {
 			break;
+		}
 	}
 	*pTO = triObj;
 
-	if ( numMeshMaterialGroups == 0 )
-	{
+	if ( numMeshMaterialGroups == 0 ) {
 		numMeshMaterialGroups = 1;
 		strcpy( meshMaterialGroups[0].name, "(null)" );
 		if ( pTO->numTexVerts ) {
@@ -317,8 +324,7 @@ static void LoadNamedTriObject( FILE *fp, long thisChunkLen, _3DSTriObject_t *pT
 	assert( numMeshMaterialGroups <= 1 );
 }
 
-static void LoadNamedObject( FILE *fp, long thisChunkLen, _3DSNamedObject_t *pNO )
-{
+static void LoadNamedObject( FILE *fp, long thisChunkLen, _3DSNamedObject_t *pNO ){
 	long chunkLen;
 	unsigned short chunkID;
 	int i = 0;
@@ -331,8 +337,9 @@ static void LoadNamedObject( FILE *fp, long thisChunkLen, _3DSNamedObject_t *pNO
 
 	bytesRead += ReadString( fp, name );
 
-	if ( s_verbose )
+	if ( s_verbose ) {
 		printf( "    >>> NAMED OBJECT '%s'\n", name );
+	}
 
 	while ( ReadChunkAndLength( fp, &chunkID, &chunkLen ) )
 	{
@@ -349,8 +356,9 @@ static void LoadNamedObject( FILE *fp, long thisChunkLen, _3DSNamedObject_t *pNO
 
 		bytesRead += chunkLen;
 
-		if ( bytesRead >= thisChunkLen )
+		if ( bytesRead >= thisChunkLen ) {
 			break;
+		}
 	}
 
 	strcpy( pNO->name, name );
@@ -361,8 +369,7 @@ static void LoadNamedObject( FILE *fp, long thisChunkLen, _3DSNamedObject_t *pNO
 	assert( numTriObjects <= 1 );
 }
 
-static void LoadEditChunk( FILE *fp, long thisChunkLen, _3DSEditChunk_t *pEC )
-{
+static void LoadEditChunk( FILE *fp, long thisChunkLen, _3DSEditChunk_t *pEC ){
 	unsigned short chunkID;
 	long chunkLen;
 	long bytesRead = 0;
@@ -375,8 +382,9 @@ static void LoadEditChunk( FILE *fp, long thisChunkLen, _3DSEditChunk_t *pEC )
 
 	memset( &editChunk, 0, sizeof( editChunk ) );
 
-	if ( s_verbose )
+	if ( s_verbose ) {
 		printf( ">>> EDIT CHUNK\n" );
+	}
 
 	while ( ReadChunkAndLength( fp, &chunkID, &chunkLen ) )
 	{
@@ -388,8 +396,9 @@ static void LoadEditChunk( FILE *fp, long thisChunkLen, _3DSEditChunk_t *pEC )
 			break;
 		case _3DS_CHUNK_NAMED_OBJECT:
 			LoadNamedObject( fp, chunkLen - 6, &namedObjects[numNamedObjects] );
-			if ( namedObjects[numNamedObjects].numTriObjects != 0 )
+			if ( namedObjects[numNamedObjects].numTriObjects != 0 ) {
 				++numNamedObjects;
+			}
 			break;
 		case _3DS_CHUNK_MESH_VERSION:
 		default:
@@ -399,12 +408,12 @@ static void LoadEditChunk( FILE *fp, long thisChunkLen, _3DSEditChunk_t *pEC )
 
 		bytesRead += chunkLen;
 
-		if ( bytesRead >= thisChunkLen )
+		if ( bytesRead >= thisChunkLen ) {
 			break;
+		}
 	}
 
-	if ( numMaterials == 0 )
-	{
+	if ( numMaterials == 0 ) {
 		numMaterials = 1;
 		strcpy( mat[0].name, "(null)" );
 		printf( "Warning: no material definitions found\n" );
@@ -419,45 +428,47 @@ static void LoadEditChunk( FILE *fp, long thisChunkLen, _3DSEditChunk_t *pEC )
 	memcpy( pEC->pNamedObjects, namedObjects, numNamedObjects * sizeof( namedObjects[0] ) );
 }
 
-static void Load3DS( const char *filename, _3DS_t *p3DS, qboolean verbose )
-{
+static void Load3DS( const char *filename, _3DS_t *p3DS, qboolean verbose ){
 	FILE *fp;
 	unsigned short chunkID;
-	long  chunkLen;
+	long chunkLen;
 	_3DSEditChunk_t editChunk;
 
 	s_verbose = verbose;
 
-	if ( ( fp = fopen( filename, "rb" ) ) == 0 )
+	if ( ( fp = fopen( filename, "rb" ) ) == 0 ) {
 		Error( "Unable to open '%s'", filename );
+	}
 
 	// read magic number
 	if ( ( fread( &chunkID, sizeof( short ), 1, fp ) != 1 ) ||
-		 ( LittleShort( chunkID ) != _3DS_CHUNK_MAGIC ) )
-	{
+		 ( LittleShort( chunkID ) != _3DS_CHUNK_MAGIC ) ) {
 		Error( "Missing or incorrect magic number in '%s'", filename );
 	}
-	if ( fread( &chunkLen, sizeof( chunkLen ), 1, fp ) != 1 )
+	if ( fread( &chunkLen, sizeof( chunkLen ), 1, fp ) != 1 ) {
 		Error( "Unexpected EOF encountered in '%s'", filename );
+	}
 	// version number
-	if ( !ReadChunkAndLength( fp, &chunkID, &chunkLen ) )
+	if ( !ReadChunkAndLength( fp, &chunkID, &chunkLen ) ) {
 		Error( "Missing version number in '%s'", filename );
-	if ( fread( s_buffer, chunkLen - 6, 1, fp ) != 1 )
+	}
+	if ( fread( s_buffer, chunkLen - 6, 1, fp ) != 1 ) {
 		Error( "Unexpected EOF encountered in '%s'", filename );
+	}
 
 	while ( ReadChunkAndLength( fp, &chunkID, &chunkLen ) )
 	{
 		switch ( chunkID )
 		{
-			case _3DS_CHUNK_EDIT:
-				LoadEditChunk( fp, chunkLen - 6, &editChunk );
-				break;
-			case _3DS_CHUNK_KEYFRAME_DATA:
-				fread( s_buffer, chunkLen - 6, 1, fp );
-				break;
-			default:
-				fread( s_buffer, chunkLen - 6, 1, fp );
-				break;
+		case _3DS_CHUNK_EDIT:
+			LoadEditChunk( fp, chunkLen - 6, &editChunk );
+			break;
+		case _3DS_CHUNK_KEYFRAME_DATA:
+			fread( s_buffer, chunkLen - 6, 1, fp );
+			break;
+		default:
+			fread( s_buffer, chunkLen - 6, 1, fp );
+			break;
 		}
 	}
 
@@ -466,10 +477,9 @@ static void Load3DS( const char *filename, _3DS_t *p3DS, qboolean verbose )
 	p3DS->editChunk = editChunk;
 }
 
-static void ComputeNormals( _3DSTriObject_t *pTO, triangle_t *pTris )
-{
+static void ComputeNormals( _3DSTriObject_t *pTO, triangle_t *pTris ){
 	vec3_t faceNormals[POLYSET_MAXTRIANGLES];
-	vec3_t vertexNormals[POLYSET_MAXTRIANGLES*3];
+	vec3_t vertexNormals[POLYSET_MAXTRIANGLES * 3];
 	vec3_t side0, side1, facenormal;
 	int f, v;
 
@@ -497,8 +507,7 @@ static void ComputeNormals( _3DSTriObject_t *pTO, triangle_t *pTris )
 		{
 			if ( ( pTO->pFaces[f].a == v ) ||
 				 ( pTO->pFaces[f].b == v ) ||
-				 ( pTO->pFaces[f].c == v ) )
-			{
+				 ( pTO->pFaces[f].c == v ) ) {
 				vertexNormals[v][0] += faceNormals[f][0];
 				vertexNormals[v][1] += faceNormals[f][1];
 				vertexNormals[v][2] += faceNormals[f][2];
@@ -526,8 +535,7 @@ static void ComputeNormals( _3DSTriObject_t *pTO, triangle_t *pTris )
 /*
 ** void _3DS_LoadPolysets
 */
-void _3DS_LoadPolysets( const char *filename, polyset_t **ppPSET, int *numpsets, qboolean verbose )
-{
+void _3DS_LoadPolysets( const char *filename, polyset_t **ppPSET, int *numpsets, qboolean verbose ){
 	_3DS_t _3ds;
 	int numPolysets;
 	polyset_t *pPSET;
@@ -558,14 +566,17 @@ void _3DS_LoadPolysets( const char *filename, polyset_t **ppPSET, int *numpsets,
 		strcpy( pPSET[i].name, _3ds.editChunk.pNamedObjects[i].name );
 
 		strcpy( matnamebuf, filename );
-		if ( strrchr( matnamebuf, '/' ) )
-			*( strrchr( matnamebuf, '/' ) + 1 )= 0;
+		if ( strrchr( matnamebuf, '/' ) ) {
+			*( strrchr( matnamebuf, '/' ) + 1 ) = 0;
+		}
 		strcat( matnamebuf, pTO->pMeshMaterialGroups[0].name );
 
-		if ( strstr( matnamebuf, gamedir ) )
+		if ( strstr( matnamebuf, gamedir ) ) {
 			strcpy( pPSET[i].materialname, strstr( matnamebuf, gamedir ) + strlen( gamedir ) );
-		else
+		}
+		else{
 			strcpy( pPSET[i].materialname, pTO->pMeshMaterialGroups[0].name );
+		}
 
 		assert( pPSET[i].numtriangles < POLYSET_MAXTRIANGLES );
 
@@ -587,16 +598,15 @@ void _3DS_LoadPolysets( const char *filename, polyset_t **ppPSET, int *numpsets,
 			tri->verts[2][1] = pTO->pPoints[i2].y;
 			tri->verts[2][2] = pTO->pPoints[i2].z;
 /*
-			for ( k = 0; k < 3; k++ )
-			{
-				tri->colors[0][k] = 1;
-				tri->colors[1][k] = 1;
-				tri->colors[2][k] = 1;
-			}
-*/
+            for ( k = 0; k < 3; k++ )
+            {
+                tri->colors[0][k] = 1;
+                tri->colors[1][k] = 1;
+                tri->colors[2][k] = 1;
+            }
+ */
 
-			if ( pTO->pTexVerts )
-			{
+			if ( pTO->pTexVerts ) {
 				tri->texcoords[0][0] = pTO->pTexVerts[i0].s;
 				tri->texcoords[0][1] = 1.0f - pTO->pTexVerts[i0].t;
 				tri->texcoords[1][0] = pTO->pTexVerts[i1].s;
@@ -618,7 +628,7 @@ void _3DS_LoadPolysets( const char *filename, polyset_t **ppPSET, int *numpsets,
 	{
 		// unique vertices based solely on vertex position
 		ComputeNormals( &_3ds.editChunk.pNamedObjects[i].pTriObjects[0],
-						 pPSET[i].triangles );
+						pPSET[i].triangles );
 	}
 #endif
 

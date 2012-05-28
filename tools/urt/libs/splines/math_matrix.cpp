@@ -1,36 +1,36 @@
 /*
-This code is based on source provided under the terms of the Id Software 
-LIMITED USE SOFTWARE LICENSE AGREEMENT, a copy of which is included with the
-GtkRadiant sources (see LICENSE_ID). If you did not receive a copy of 
-LICENSE_ID, please contact Id Software immediately at info@idsoftware.com.
+   This code is based on source provided under the terms of the Id Software
+   LIMITED USE SOFTWARE LICENSE AGREEMENT, a copy of which is included with the
+   GtkRadiant sources (see LICENSE_ID). If you did not receive a copy of
+   LICENSE_ID, please contact Id Software immediately at info@idsoftware.com.
 
-All changes and additions to the original source which have been developed by
-other contributors (see CONTRIBUTORS) are provided under the terms of the
-license the contributors choose (see LICENSE), to the extent permitted by the
-LICENSE_ID. If you did not receive a copy of the contributor license,
-please contact the GtkRadiant maintainers at info@gtkradiant.com immediately.
+   All changes and additions to the original source which have been developed by
+   other contributors (see CONTRIBUTORS) are provided under the terms of the
+   license the contributors choose (see LICENSE), to the extent permitted by the
+   LICENSE_ID. If you did not receive a copy of the contributor license,
+   please contact the GtkRadiant maintainers at info@gtkradiant.com immediately.
 
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
-AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-DISCLAIMED. IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE FOR ANY
-DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
-(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
-ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-*/
+   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
+   AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+   IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+   DISCLAIMED. IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE FOR ANY
+   DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+   (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+   LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+   ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+   (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
 
 #include "q_shared.h"
 
 mat3_t mat3_default( idVec3( 1, 0, 0 ), idVec3( 0, 1, 0 ), idVec3( 0, 0, 1 ) );
 
 void toMatrix( quat_t const &src, mat3_t &dst ) {
-	float	wx, wy, wz;
-	float	xx, yy, yz;
-	float	xy, xz, zz;
-	float	x2, y2, z2;
+	float wx, wy, wz;
+	float xx, yy, yz;
+	float xy, xz, zz;
+	float x2, y2, z2;
 
 	x2 = src.x + src.x;
 	y2 = src.y + src.y;
@@ -62,9 +62,9 @@ void toMatrix( quat_t const &src, mat3_t &dst ) {
 }
 
 void toMatrix( angles_t const &src, mat3_t &dst ) {
-	float			angle;
-	static float	sr, sp, sy, cr, cp, cy; // static to help MS compiler fp bugs
-		
+	float angle;
+	static float sr, sp, sy, cr, cp, cy;    // static to help MS compiler fp bugs
+
 	angle = src.yaw * ( M_PI * 2.0f / 360.0f );
 	sy = sin( angle );
 	cy = cos( angle );
@@ -83,8 +83,8 @@ void toMatrix( angles_t const &src, mat3_t &dst ) {
 }
 
 void toMatrix( idVec3 const &src, mat3_t &dst ) {
-        angles_t sup = src;
-        toMatrix(sup, dst);
+	angles_t sup = src;
+	toMatrix( sup, dst );
 }
 
 void mat3_t::ProjectVector( const idVec3 &src, idVec3 &dst ) const {
@@ -98,27 +98,27 @@ void mat3_t::UnprojectVector( const idVec3 &src, idVec3 &dst ) const {
 }
 
 void mat3_t::Transpose( mat3_t &matrix ) {
-	int	i;
-	int	j;
-   
-	for( i = 0; i < 3; i++ ) {
-		for( j = 0; j < 3; j++ ) {
+	int i;
+	int j;
+
+	for ( i = 0; i < 3; i++ ) {
+		for ( j = 0; j < 3; j++ ) {
 			matrix[ i ][ j ] = mat[ j ][ i ];
-        }
+		}
 	}
 }
 
 void mat3_t::Transpose( void ) {
-	float	temp;
-	int		i;
-	int		j;
-   
-	for( i = 0; i < 3; i++ ) {
-		for( j = i + 1; j < 3; j++ ) {
+	float temp;
+	int i;
+	int j;
+
+	for ( i = 0; i < 3; i++ ) {
+		for ( j = i + 1; j < 3; j++ ) {
 			temp = mat[ i ][ j ];
 			mat[ i ][ j ] = mat[ j ][ i ];
 			mat[ j ][ i ] = temp;
-        }
+		}
 	}
 }
 

@@ -1,5 +1,5 @@
 
-#if !defined(INCLUDED_GENERIC_BITFIELD_H)
+#if !defined( INCLUDED_GENERIC_BITFIELD_H )
 #define INCLUDED_GENERIC_BITFIELD_H
 
 /// \file
@@ -15,99 +15,81 @@
 template<typename Enumeration>
 class BitFieldValue : public Enumeration
 {
-  unsigned m_value;
+unsigned m_value;
 protected:
-  explicit BitFieldValue(unsigned value) : m_value(value)
-  {
-  }
+explicit BitFieldValue( unsigned value ) : m_value( value ){
+}
 public:
-  BitFieldValue() : m_value(0)
-  {
-  }
-  explicit BitFieldValue(typename Enumeration::Value value) : m_value(1 << value)
-  {
-  }
-  unsigned get() const
-  {
-    return m_value;
-  }
+BitFieldValue() : m_value( 0 ){
+}
+explicit BitFieldValue( typename Enumeration::Value value ) : m_value( 1 << value ){
+}
+unsigned get() const {
+	return m_value;
+}
 };
 
 template<typename Enumeration>
 class BitFieldValueUnsafe : public BitFieldValue<Enumeration>
 {
 public:
-  explicit BitFieldValueUnsafe(unsigned value) : BitFieldValue<Enumeration>(value)
-  {
-  }
+explicit BitFieldValueUnsafe( unsigned value ) : BitFieldValue<Enumeration>( value ){
+}
 };
 
 template<typename Enumeration>
-inline bool operator==(BitFieldValue<Enumeration> self, BitFieldValue<Enumeration> other)
-{
-  return self.get() == other.get();
+inline bool operator==( BitFieldValue<Enumeration> self, BitFieldValue<Enumeration> other ){
+	return self.get() == other.get();
 }
 template<typename Enumeration>
-inline bool operator!=(BitFieldValue<Enumeration> self, BitFieldValue<Enumeration> other)
-{
-  return !operator==(self, other);
+inline bool operator!=( BitFieldValue<Enumeration> self, BitFieldValue<Enumeration> other ){
+	return !operator==( self, other );
 }
 
 template<typename Enumeration>
-inline BitFieldValue<Enumeration> operator|(BitFieldValue<Enumeration> self, BitFieldValue<Enumeration> other)
-{
-  return BitFieldValueUnsafe<Enumeration>(self.get() | other.get());
+inline BitFieldValue<Enumeration> operator|( BitFieldValue<Enumeration> self, BitFieldValue<Enumeration> other ){
+	return BitFieldValueUnsafe<Enumeration>( self.get() | other.get() );
 }
 template<typename Enumeration>
-inline BitFieldValue<Enumeration>& operator|=(BitFieldValue<Enumeration>& self, BitFieldValue<Enumeration> other)
-{
-  return self = self | other;
+inline BitFieldValue<Enumeration>& operator|=( BitFieldValue<Enumeration>& self, BitFieldValue<Enumeration> other ){
+	return self = self | other;
 }
 template<typename Enumeration>
-inline BitFieldValue<Enumeration> operator&(BitFieldValue<Enumeration> self, BitFieldValue<Enumeration> other)
-{
-  return BitFieldValueUnsafe<Enumeration>(self.get() & other.get());
+inline BitFieldValue<Enumeration> operator&( BitFieldValue<Enumeration> self, BitFieldValue<Enumeration> other ){
+	return BitFieldValueUnsafe<Enumeration>( self.get() & other.get() );
 }
 template<typename Enumeration>
-inline BitFieldValue<Enumeration>& operator&=(BitFieldValue<Enumeration>& self, BitFieldValue<Enumeration> other)
-{
-  return self = self & other;
+inline BitFieldValue<Enumeration>& operator&=( BitFieldValue<Enumeration>& self, BitFieldValue<Enumeration> other ){
+	return self = self & other;
 }
 template<typename Enumeration>
-inline BitFieldValue<Enumeration> operator~(BitFieldValue<Enumeration> self)
-{
-  return BitFieldValueUnsafe<Enumeration>(~self.get());
+inline BitFieldValue<Enumeration> operator~( BitFieldValue<Enumeration> self ){
+	return BitFieldValueUnsafe<Enumeration>( ~self.get() );
 }
 
 
 
-inline unsigned int bitfield_enable(unsigned int bitfield, unsigned int mask)
-{
-  return bitfield | mask;
+inline unsigned int bitfield_enable( unsigned int bitfield, unsigned int mask ){
+	return bitfield | mask;
 }
-inline unsigned int bitfield_disable(unsigned int bitfield, unsigned int mask)
-{
-  return bitfield & ~mask;
+inline unsigned int bitfield_disable( unsigned int bitfield, unsigned int mask ){
+	return bitfield & ~mask;
 }
-inline bool bitfield_enabled(unsigned int bitfield, unsigned int mask)
-{
-  return (bitfield & mask) != 0;
+inline bool bitfield_enabled( unsigned int bitfield, unsigned int mask ){
+	return ( bitfield & mask ) != 0;
 }
 
 template<typename Enumeration>
-inline BitFieldValue<Enumeration> bitfield_enable(BitFieldValue<Enumeration> bitfield, BitFieldValue<Enumeration> mask)
-{
-  return bitfield | mask;
+inline BitFieldValue<Enumeration> bitfield_enable( BitFieldValue<Enumeration> bitfield, BitFieldValue<Enumeration> mask ){
+	return bitfield | mask;
 }
 template<typename Enumeration>
-inline BitFieldValue<Enumeration> bitfield_disable(BitFieldValue<Enumeration> bitfield, BitFieldValue<Enumeration> mask)
-{
-  return bitfield & ~mask;
+inline BitFieldValue<Enumeration> bitfield_disable( BitFieldValue<Enumeration> bitfield, BitFieldValue<Enumeration> mask ){
+	return bitfield & ~mask;
 }
 template<typename Enumeration>
-inline bool bitfield_enabled(BitFieldValue<Enumeration> bitfield, BitFieldValue<Enumeration> mask)
-{
-  return (bitfield & mask).get() != 0;
+inline bool bitfield_enabled( BitFieldValue<Enumeration> bitfield, BitFieldValue<Enumeration> mask ){
+	return ( bitfield & mask ).get() != 0;
 }
 
 #endif

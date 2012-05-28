@@ -21,7 +21,7 @@
  * Modified by the GLib Team and others 1997-2000.  See the AUTHORS
  * file for a list of people on the GLib Team.  See the ChangeLog
  * files for a list of changes.  These files are distributed with
- * GLib at ftp://ftp.gtk.org/pub/gtk/. 
+ * GLib at ftp://ftp.gtk.org/pub/gtk/.
  */
 
 #ifndef __G_REL_H__
@@ -31,12 +31,12 @@
 
 G_BEGIN_DECLS
 
-typedef struct _GRelation       GRelation;
-typedef struct _GTuples         GTuples;
+typedef struct _GRelation GRelation;
+typedef struct _GTuples GTuples;
 
 struct _GTuples
 {
-  guint len;
+	guint len;
 };
 
 /* GRelation
@@ -62,33 +62,32 @@ struct _GTuples
  * g_relation_count() counts ...
  */
 
-GRelation* g_relation_new     (gint         fields);
-void       g_relation_destroy (GRelation   *relation);
-void       g_relation_index   (GRelation   *relation,
-                               gint         field,
-                               GHashFunc    hash_func,
-                               GEqualFunc   key_equal_func);
-void       g_relation_insert  (GRelation   *relation,
-                               ...);
-gint       g_relation_delete  (GRelation   *relation,
-                               gconstpointer  key,
-                               gint         field);
-GTuples*   g_relation_select  (GRelation   *relation,
-                               gconstpointer  key,
-                               gint         field);
-gint       g_relation_count   (GRelation   *relation,
-                               gconstpointer  key,
-                               gint         field);
-gboolean   g_relation_exists  (GRelation   *relation,
-                               ...);
-void       g_relation_print   (GRelation   *relation);
+GRelation* g_relation_new( gint fields );
+void       g_relation_destroy( GRelation   *relation );
+void       g_relation_index( GRelation   *relation,
+							 gint field,
+							 GHashFunc hash_func,
+							 GEqualFunc key_equal_func );
+void       g_relation_insert( GRelation   *relation,
+							  ... );
+gint       g_relation_delete( GRelation   *relation,
+							  gconstpointer key,
+							  gint field );
+GTuples*   g_relation_select( GRelation   *relation,
+							  gconstpointer key,
+							  gint field );
+gint       g_relation_count( GRelation   *relation,
+							 gconstpointer key,
+							 gint field );
+gboolean   g_relation_exists( GRelation   *relation,
+							  ... );
+void       g_relation_print( GRelation   *relation );
 
-void       g_tuples_destroy   (GTuples     *tuples);
-gpointer   g_tuples_index     (GTuples     *tuples,
-                               gint         index_,
-                               gint         field);
+void       g_tuples_destroy( GTuples     *tuples );
+gpointer   g_tuples_index( GTuples     *tuples,
+						   gint index_,
+						   gint field );
 
 G_END_DECLS
 
 #endif /* __G_REL_H__ */
-

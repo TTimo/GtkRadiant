@@ -1,33 +1,33 @@
 /* -------------------------------------------------------------------------------
 
-This code is based on source provided under the terms of the Id Software 
-LIMITED USE SOFTWARE LICENSE AGREEMENT, a copy of which is included with the
-GtkRadiant sources (see LICENSE_ID). If you did not receive a copy of 
-LICENSE_ID, please contact Id Software immediately at info@idsoftware.com.
+   This code is based on source provided under the terms of the Id Software
+   LIMITED USE SOFTWARE LICENSE AGREEMENT, a copy of which is included with the
+   GtkRadiant sources (see LICENSE_ID). If you did not receive a copy of
+   LICENSE_ID, please contact Id Software immediately at info@idsoftware.com.
 
-All changes and additions to the original source which have been developed by
-other contributors (see CONTRIBUTORS) are provided under the terms of the
-license the contributors choose (see LICENSE), to the extent permitted by the
-LICENSE_ID. If you did not receive a copy of the contributor license,
-please contact the GtkRadiant maintainers at info@gtkradiant.com immediately.
+   All changes and additions to the original source which have been developed by
+   other contributors (see CONTRIBUTORS) are provided under the terms of the
+   license the contributors choose (see LICENSE), to the extent permitted by the
+   LICENSE_ID. If you did not receive a copy of the contributor license,
+   please contact the GtkRadiant maintainers at info@gtkradiant.com immediately.
 
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
-AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-DISCLAIMED. IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE FOR ANY
-DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
-(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
-ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
+   AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+   IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+   DISCLAIMED. IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE FOR ANY
+   DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+   (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+   LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+   ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+   (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-----------------------------------------------------------------------------------
+   ----------------------------------------------------------------------------------
 
-This code has been altered significantly from its original form, to support
-several games based on the Quake III Arena engine, in the form of "Q3Map2."
+   This code has been altered significantly from its original form, to support
+   several games based on the Quake III Arena engine, in the form of "Q3Map2."
 
-------------------------------------------------------------------------------- */
+   ------------------------------------------------------------------------------- */
 
 
 
@@ -39,151 +39,151 @@ several games based on the Quake III Arena engine, in the form of "Q3Map2."
 
 /* -------------------------------------------------------------------------------
 
-content and surface flags
+   content and surface flags
 
-------------------------------------------------------------------------------- */
+   ------------------------------------------------------------------------------- */
 
 /* game flags */
-#define Q_CONT_SOLID				1			/* an eye is never valid in a solid */
-#define Q_CONT_LAVA					8
-#define Q_CONT_SLIME				16
-#define Q_CONT_WATER				32
-#define Q_CONT_FOG					64
+#define Q_CONT_SOLID                1           /* an eye is never valid in a solid */
+#define Q_CONT_LAVA                 8
+#define Q_CONT_SLIME                16
+#define Q_CONT_WATER                32
+#define Q_CONT_FOG                  64
 
-#define Q_CONT_AREAPORTAL			0x8000
+#define Q_CONT_AREAPORTAL           0x8000
 
-#define Q_CONT_PLAYERCLIP			0x10000
-#define Q_CONT_MONSTERCLIP			0x20000
-#define Q_CONT_TELEPORTER			0x40000
-#define Q_CONT_JUMPPAD				0x80000
-#define Q_CONT_CLUSTERPORTAL		0x100000
-#define Q_CONT_DONOTENTER			0x200000
-#define Q_CONT_BOTCLIP				0x400000
+#define Q_CONT_PLAYERCLIP           0x10000
+#define Q_CONT_MONSTERCLIP          0x20000
+#define Q_CONT_TELEPORTER           0x40000
+#define Q_CONT_JUMPPAD              0x80000
+#define Q_CONT_CLUSTERPORTAL        0x100000
+#define Q_CONT_DONOTENTER           0x200000
+#define Q_CONT_BOTCLIP              0x400000
 
-#define Q_CONT_ORIGIN				0x1000000	/* removed before bsping an entity */
+#define Q_CONT_ORIGIN               0x1000000   /* removed before bsping an entity */
 
-#define Q_CONT_BODY					0x2000000	/* should never be on a brush, only in game */
-#define Q_CONT_CORPSE				0x4000000
-#define Q_CONT_DETAIL				0x8000000	/* brushes not used for the bsp */
-#define Q_CONT_STRUCTURAL			0x10000000	/* brushes used for the bsp */
-#define Q_CONT_TRANSLUCENT			0x20000000	/* don't consume surface fragments inside */
-#define Q_CONT_TRIGGER				0x40000000
-#define Q_CONT_NODROP				0x80000000	/* don't leave bodies or items (death fog, lava) */
+#define Q_CONT_BODY                 0x2000000   /* should never be on a brush, only in game */
+#define Q_CONT_CORPSE               0x4000000
+#define Q_CONT_DETAIL               0x8000000   /* brushes not used for the bsp */
+#define Q_CONT_STRUCTURAL           0x10000000  /* brushes used for the bsp */
+#define Q_CONT_TRANSLUCENT          0x20000000  /* don't consume surface fragments inside */
+#define Q_CONT_TRIGGER              0x40000000
+#define Q_CONT_NODROP               0x80000000  /* don't leave bodies or items (death fog, lava) */
 
-#define Q_SURF_NODAMAGE				0x1			/* never give falling damage */
-#define Q_SURF_SLICK				0x2			/* effects game physics */
-#define Q_SURF_SKY					0x4			/* lighting from environment map */
-#define Q_SURF_LADDER				0x8
-#define Q_SURF_NOIMPACT				0x10		/* don't make missile explosions */
-#define Q_SURF_NOMARKS				0x20		/* don't leave missile marks */
-#define Q_SURF_FLESH				0x40		/* make flesh sounds and effects */
-#define Q_SURF_NODRAW				0x80		/* don't generate a drawsurface at all */
-#define Q_SURF_HINT					0x100		/* make a primary bsp splitter */
-#define Q_SURF_SKIP					0x200		/* completely ignore, allowing non-closed brushes */
-#define Q_SURF_NOLIGHTMAP			0x400		/* surface doesn't need a lightmap */
-#define Q_SURF_POINTLIGHT			0x800		/* generate lighting info at vertexes */
-#define Q_SURF_METALSTEPS			0x1000		/* clanking footsteps */
-#define Q_SURF_NOSTEPS				0x2000		/* no footstep sounds */
-#define Q_SURF_NONSOLID				0x4000		/* don't collide against curves with this set */
-#define Q_SURF_LIGHTFILTER			0x8000		/* act as a light filter during q3map -light */
-#define Q_SURF_ALPHASHADOW			0x10000		/* do per-pixel light shadow casting in q3map */
-#define Q_SURF_NODLIGHT				0x20000		/* don't dlight even if solid (solid lava, skies) */
-#define Q_SURF_DUST					0x40000		/* leave a dust trail when walking on this surface */
+#define Q_SURF_NODAMAGE             0x1         /* never give falling damage */
+#define Q_SURF_SLICK                0x2         /* effects game physics */
+#define Q_SURF_SKY                  0x4         /* lighting from environment map */
+#define Q_SURF_LADDER               0x8
+#define Q_SURF_NOIMPACT             0x10        /* don't make missile explosions */
+#define Q_SURF_NOMARKS              0x20        /* don't leave missile marks */
+#define Q_SURF_FLESH                0x40        /* make flesh sounds and effects */
+#define Q_SURF_NODRAW               0x80        /* don't generate a drawsurface at all */
+#define Q_SURF_HINT                 0x100       /* make a primary bsp splitter */
+#define Q_SURF_SKIP                 0x200       /* completely ignore, allowing non-closed brushes */
+#define Q_SURF_NOLIGHTMAP           0x400       /* surface doesn't need a lightmap */
+#define Q_SURF_POINTLIGHT           0x800       /* generate lighting info at vertexes */
+#define Q_SURF_METALSTEPS           0x1000      /* clanking footsteps */
+#define Q_SURF_NOSTEPS              0x2000      /* no footstep sounds */
+#define Q_SURF_NONSOLID             0x4000      /* don't collide against curves with this set */
+#define Q_SURF_LIGHTFILTER          0x8000      /* act as a light filter during q3map -light */
+#define Q_SURF_ALPHASHADOW          0x10000     /* do per-pixel light shadow casting in q3map */
+#define Q_SURF_NODLIGHT             0x20000     /* don't dlight even if solid (solid lava, skies) */
+#define Q_SURF_DUST                 0x40000     /* leave a dust trail when walking on this surface */
 
 /* ydnar flags */
-#define Q_SURF_VERTEXLIT			(Q_SURF_POINTLIGHT | Q_SURF_NOLIGHTMAP)
+#define Q_SURF_VERTEXLIT            ( Q_SURF_POINTLIGHT | Q_SURF_NOLIGHTMAP )
 
 
 
 /* -------------------------------------------------------------------------------
 
-game_t struct
+   game_t struct
 
-------------------------------------------------------------------------------- */
+   ------------------------------------------------------------------------------- */
 
 {
-	"quake3",			/* -game x */
-	"baseq3",			/* default base game data dir */
-	".q3a",				/* unix home sub-dir */
-	"quake",			/* magic path word */
-	"scripts",			/* shader directory */
-	64,					/* max lightmapped surface verts */
-	999,				/* max surface verts */
-	6000,				/* max surface indexes */
-	qfalse,				/* flares */
-	"flareshader",		/* default flare shader */
-	qfalse,				/* wolf lighting model? */
-	128,				/* lightmap width/height */
-	1.0f,				/* lightmap gamma */
-	1.0f,				/* lightmap exposure */
-	1.0f,				/* lightmap compensate */
-	"IBSP",				/* bsp file prefix */
-	46,					/* bsp file version */
-	qfalse,				/* cod-style lump len/ofs order */
-	LoadIBSPFile,		/* bsp load function */
-	WriteIBSPFile,		/* bsp write function */
+	"quake3",           /* -game x */
+	"baseq3",           /* default base game data dir */
+	".q3a",             /* unix home sub-dir */
+	"quake",            /* magic path word */
+	"scripts",          /* shader directory */
+	64,                 /* max lightmapped surface verts */
+	999,                /* max surface verts */
+	6000,               /* max surface indexes */
+	qfalse,             /* flares */
+	"flareshader",      /* default flare shader */
+	qfalse,             /* wolf lighting model? */
+	128,                /* lightmap width/height */
+	1.0f,               /* lightmap gamma */
+	1.0f,               /* lightmap exposure */
+	1.0f,               /* lightmap compensate */
+	"IBSP",             /* bsp file prefix */
+	46,                 /* bsp file version */
+	qfalse,             /* cod-style lump len/ofs order */
+	LoadIBSPFile,       /* bsp load function */
+	WriteIBSPFile,      /* bsp write function */
 
 	{
 		/* name				contentFlags				contentFlagsClear			surfaceFlags				surfaceFlagsClear			compileFlags				compileFlagsClear */
-		
+
 		/* default */
-		{ "default",		Q_CONT_SOLID,				-1,							0,							-1,							C_SOLID,					-1 },
-		
-		
+		{ "default",        Q_CONT_SOLID,               -1,                         0,                          -1,                         C_SOLID,                    -1 },
+
+
 		/* ydnar */
-		{ "lightgrid",		0,							0,							0,							0,							C_LIGHTGRID,				0 },
-		{ "antiportal",		0,							0,							0,							0,							C_ANTIPORTAL,				0 },
-		{ "skip",			0,							0,							0,							0,							C_SKIP,						0 },
-		
-		
+		{ "lightgrid",      0,                          0,                          0,                          0,                          C_LIGHTGRID,                0 },
+		{ "antiportal",     0,                          0,                          0,                          0,                          C_ANTIPORTAL,               0 },
+		{ "skip",           0,                          0,                          0,                          0,                          C_SKIP,                     0 },
+
+
 		/* compiler */
-		{ "origin",			Q_CONT_ORIGIN,				Q_CONT_SOLID,				0,							0,							C_ORIGIN | C_TRANSLUCENT,	C_SOLID },
-		{ "areaportal",		Q_CONT_AREAPORTAL,			Q_CONT_SOLID,				0,							0,							C_AREAPORTAL | C_TRANSLUCENT,	C_SOLID },
-		{ "trans",			Q_CONT_TRANSLUCENT,			0,							0,							0,							C_TRANSLUCENT,				0 },
-		{ "detail",			Q_CONT_DETAIL,				0,							0,							0,							C_DETAIL,					0 },
-		{ "structural",		Q_CONT_STRUCTURAL,			0,							0,							0,							C_STRUCTURAL,				0 },
-		{ "hint",			0,							0,							Q_SURF_HINT,				0,							C_HINT,						0 },
-		{ "nodraw",			0,							0,							Q_SURF_NODRAW,				0,							C_NODRAW,					0 },
-		
-		{ "alphashadow",	0,							0,							Q_SURF_ALPHASHADOW,			0,							C_ALPHASHADOW | C_TRANSLUCENT,	0 },
-		{ "lightfilter",	0,							0,							Q_SURF_LIGHTFILTER,			0,							C_LIGHTFILTER | C_TRANSLUCENT,	0 },
-		{ "nolightmap",		0,							0,							Q_SURF_VERTEXLIT,			0,							C_VERTEXLIT,				0 },
-		{ "pointlight",		0,							0,							Q_SURF_VERTEXLIT,			0,							C_VERTEXLIT,				0 },
-		
-		
+		{ "origin",         Q_CONT_ORIGIN,              Q_CONT_SOLID,               0,                          0,                          C_ORIGIN | C_TRANSLUCENT,   C_SOLID },
+		{ "areaportal",     Q_CONT_AREAPORTAL,          Q_CONT_SOLID,               0,                          0,                          C_AREAPORTAL | C_TRANSLUCENT,   C_SOLID },
+		{ "trans",          Q_CONT_TRANSLUCENT,         0,                          0,                          0,                          C_TRANSLUCENT,              0 },
+		{ "detail",         Q_CONT_DETAIL,              0,                          0,                          0,                          C_DETAIL,                   0 },
+		{ "structural",     Q_CONT_STRUCTURAL,          0,                          0,                          0,                          C_STRUCTURAL,               0 },
+		{ "hint",           0,                          0,                          Q_SURF_HINT,                0,                          C_HINT,                     0 },
+		{ "nodraw",         0,                          0,                          Q_SURF_NODRAW,              0,                          C_NODRAW,                   0 },
+
+		{ "alphashadow",    0,                          0,                          Q_SURF_ALPHASHADOW,         0,                          C_ALPHASHADOW | C_TRANSLUCENT,  0 },
+		{ "lightfilter",    0,                          0,                          Q_SURF_LIGHTFILTER,         0,                          C_LIGHTFILTER | C_TRANSLUCENT,  0 },
+		{ "nolightmap",     0,                          0,                          Q_SURF_VERTEXLIT,           0,                          C_VERTEXLIT,                0 },
+		{ "pointlight",     0,                          0,                          Q_SURF_VERTEXLIT,           0,                          C_VERTEXLIT,                0 },
+
+
 		/* game */
-		{ "nonsolid",		0,							Q_CONT_SOLID,				Q_SURF_NONSOLID,			0,							0,							C_SOLID },
-		
-		{ "trigger",		Q_CONT_TRIGGER,				Q_CONT_SOLID,				0,							0,							C_TRANSLUCENT,				C_SOLID },
-		
-		{ "water",			Q_CONT_WATER,				Q_CONT_SOLID,				0,							0,							C_LIQUID | C_TRANSLUCENT,	C_SOLID },
-		{ "slime",			Q_CONT_SLIME,				Q_CONT_SOLID,				0,							0,							C_LIQUID | C_TRANSLUCENT,	C_SOLID },
-		{ "lava",			Q_CONT_LAVA,				Q_CONT_SOLID,				0,							0,							C_LIQUID | C_TRANSLUCENT,	C_SOLID },
-		
-		{ "playerclip",		Q_CONT_PLAYERCLIP,			Q_CONT_SOLID,				0,							0,							C_DETAIL | C_TRANSLUCENT,	C_SOLID },
-		{ "monsterclip",	Q_CONT_MONSTERCLIP,			Q_CONT_SOLID,				0,							0,							C_DETAIL | C_TRANSLUCENT,	C_SOLID },
-		{ "nodrop",			Q_CONT_NODROP,				Q_CONT_SOLID,				0,							0,							C_TRANSLUCENT,				C_SOLID },
-		
-		{ "clusterportal",	Q_CONT_CLUSTERPORTAL,		Q_CONT_SOLID,				0,							0,							C_TRANSLUCENT,				C_SOLID },
-		{ "donotenter",		Q_CONT_DONOTENTER,			Q_CONT_SOLID,				0,							0,							C_TRANSLUCENT,				C_SOLID },
-		{ "botclip",		Q_CONT_BOTCLIP,				Q_CONT_SOLID,				0,							0,							C_TRANSLUCENT,				C_SOLID },
-		
-		{ "fog",			Q_CONT_FOG,					Q_CONT_SOLID,				0,							0,							C_FOG,						C_SOLID },
-		{ "sky",			0,							0,							Q_SURF_SKY,					0,							C_SKY,						0 },
-		
-		{ "slick",			0,							0,							Q_SURF_SLICK,				0,							0,							0 },
-		
-		{ "noimpact",		0,							0,							Q_SURF_NOIMPACT,			0,							0,							0 },
-		{ "nomarks",		0,							0,							Q_SURF_NOMARKS,				0,							C_NOMARKS,					0 },
-		{ "ladder",			0,							0,							Q_SURF_LADDER,				0,							0,							0 },
-		{ "nodamage",		0,							0,							Q_SURF_NODAMAGE,			0,							0,							0 },
-		{ "metalsteps",		0,							0,							Q_SURF_METALSTEPS,			0,							0,							0 },
-		{ "flesh",			0,							0,							Q_SURF_FLESH,				0,							0,							0 },
-		{ "nosteps",		0,							0,							Q_SURF_NOSTEPS,				0,							0,							0 },
-		{ "nodlight",		0,							0,							Q_SURF_NODLIGHT,			0,							0,							0 },
-		{ "dust",			0,							0,							Q_SURF_DUST,				0,							0,							0 },
-		
-		
+		{ "nonsolid",       0,                          Q_CONT_SOLID,               Q_SURF_NONSOLID,            0,                          0,                          C_SOLID },
+
+		{ "trigger",        Q_CONT_TRIGGER,             Q_CONT_SOLID,               0,                          0,                          C_TRANSLUCENT,              C_SOLID },
+
+		{ "water",          Q_CONT_WATER,               Q_CONT_SOLID,               0,                          0,                          C_LIQUID | C_TRANSLUCENT,   C_SOLID },
+		{ "slime",          Q_CONT_SLIME,               Q_CONT_SOLID,               0,                          0,                          C_LIQUID | C_TRANSLUCENT,   C_SOLID },
+		{ "lava",           Q_CONT_LAVA,                Q_CONT_SOLID,               0,                          0,                          C_LIQUID | C_TRANSLUCENT,   C_SOLID },
+
+		{ "playerclip",     Q_CONT_PLAYERCLIP,          Q_CONT_SOLID,               0,                          0,                          C_DETAIL | C_TRANSLUCENT,   C_SOLID },
+		{ "monsterclip",    Q_CONT_MONSTERCLIP,         Q_CONT_SOLID,               0,                          0,                          C_DETAIL | C_TRANSLUCENT,   C_SOLID },
+		{ "nodrop",         Q_CONT_NODROP,              Q_CONT_SOLID,               0,                          0,                          C_TRANSLUCENT,              C_SOLID },
+
+		{ "clusterportal",  Q_CONT_CLUSTERPORTAL,       Q_CONT_SOLID,               0,                          0,                          C_TRANSLUCENT,              C_SOLID },
+		{ "donotenter",     Q_CONT_DONOTENTER,          Q_CONT_SOLID,               0,                          0,                          C_TRANSLUCENT,              C_SOLID },
+		{ "botclip",        Q_CONT_BOTCLIP,             Q_CONT_SOLID,               0,                          0,                          C_TRANSLUCENT,              C_SOLID },
+
+		{ "fog",            Q_CONT_FOG,                 Q_CONT_SOLID,               0,                          0,                          C_FOG,                      C_SOLID },
+		{ "sky",            0,                          0,                          Q_SURF_SKY,                 0,                          C_SKY,                      0 },
+
+		{ "slick",          0,                          0,                          Q_SURF_SLICK,               0,                          0,                          0 },
+
+		{ "noimpact",       0,                          0,                          Q_SURF_NOIMPACT,            0,                          0,                          0 },
+		{ "nomarks",        0,                          0,                          Q_SURF_NOMARKS,             0,                          C_NOMARKS,                  0 },
+		{ "ladder",         0,                          0,                          Q_SURF_LADDER,              0,                          0,                          0 },
+		{ "nodamage",       0,                          0,                          Q_SURF_NODAMAGE,            0,                          0,                          0 },
+		{ "metalsteps",     0,                          0,                          Q_SURF_METALSTEPS,          0,                          0,                          0 },
+		{ "flesh",          0,                          0,                          Q_SURF_FLESH,               0,                          0,                          0 },
+		{ "nosteps",        0,                          0,                          Q_SURF_NOSTEPS,             0,                          0,                          0 },
+		{ "nodlight",       0,                          0,                          Q_SURF_NODLIGHT,            0,                          0,                          0 },
+		{ "dust",           0,                          0,                          Q_SURF_DUST,                0,                          0,                          0 },
+
+
 		/* null */
 		{ NULL, 0, 0, 0, 0, 0, 0 }
 	}
@@ -193,4 +193,3 @@ game_t struct
 
 /* end marker */
 #endif
-

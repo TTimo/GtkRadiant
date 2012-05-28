@@ -26,141 +26,138 @@ G_BEGIN_DECLS
 
 
 /* --- typedefs --- */
-typedef struct _GObjectNotifyContext          GObjectNotifyContext;
-typedef struct _GObjectNotifyQueue            GObjectNotifyQueue;
-typedef void (*GObjectNotifyQueueDispatcher) (GObject     *object,
-					      guint        n_pspecs,
-					      GParamSpec **pspecs);
+typedef struct _GObjectNotifyContext GObjectNotifyContext;
+typedef struct _GObjectNotifyQueue GObjectNotifyQueue;
+typedef void ( *GObjectNotifyQueueDispatcher )( GObject     *object,
+												guint n_pspecs,
+												GParamSpec **pspecs );
 
 
 /* --- structures --- */
 struct _GObjectNotifyContext
 {
-  GQuark                       quark_notify_queue;
-  GObjectNotifyQueueDispatcher dispatcher;
-  GTrashStack                 *_nqueue_trash; /* unused */
+	GQuark quark_notify_queue;
+	GObjectNotifyQueueDispatcher dispatcher;
+	GTrashStack                 *_nqueue_trash; /* unused */
 };
 struct _GObjectNotifyQueue
 {
-  GObjectNotifyContext *context;
-  GSList               *pspecs;
-  guint16               n_pspecs;
-  guint16               freeze_count;
-  /* currently, this structure abuses the GList allocation chain and thus
-   * must be <= sizeof (GList)
-   */
+	GObjectNotifyContext *context;
+	GSList               *pspecs;
+	guint16 n_pspecs;
+	guint16 freeze_count;
+	/* currently, this structure abuses the GList allocation chain and thus
+	 * must be <= sizeof (GList)
+	 */
 };
 
 
 /* --- functions --- */
 static void
-g_object_notify_queue_free (gpointer data)
-{
-  GObjectNotifyQueue *nqueue = data;
+g_object_notify_queue_free( gpointer data ){
+	GObjectNotifyQueue *nqueue = data;
 
-  g_slist_free (nqueue->pspecs);
-  g_list_free_1 ((void*) nqueue);
+	g_slist_free( nqueue->pspecs );
+	g_list_free_1( (void*) nqueue );
 }
 
 static inline GObjectNotifyQueue*
-g_object_notify_queue_freeze (GObject		   *object,
-			      GObjectNotifyContext *context)
-{
-  GObjectNotifyQueue *nqueue;
+g_object_notify_queue_freeze( GObject          *object,
+							  GObjectNotifyContext *context ){
+	GObjectNotifyQueue *nqueue;
 
-  nqueue = g_datalist_id_get_data (&object->qdata, context->quark_notify_queue);
-  if (!nqueue)
-    {
-      nqueue = (void*) g_list_alloc ();
-      memset (nqueue, 0, sizeof (*nqueue));
-      nqueue->context = context;
-      g_datalist_id_set_data_full (&object->qdata, context->quark_notify_queue,
-				   nqueue, g_object_notify_queue_free);
-    }
+	nqueue = g_datalist_id_get_data( &object->qdata, context->quark_notify_queue );
+	if ( !nqueue ) {
+		nqueue = (void*) g_list_alloc();
+		memset( nqueue, 0, sizeof( *nqueue ) );
+		nqueue->context = context;
+		g_datalist_id_set_data_full( &object->qdata, context->quark_notify_queue,
+									 nqueue, g_object_notify_queue_free );
+	}
 
-  g_return_val_if_fail (nqueue->freeze_count < 65535, nqueue);
-  nqueue->freeze_count++;
+	g_return_val_if_fail( nqueue->freeze_count < 65535, nqueue );
+	nqueue->freeze_count++;
 
-  return nqueue;
+	return nqueue;
 }
 
 static inline void
-g_object_notify_queue_thaw (GObject            *object,
-			    GObjectNotifyQueue *nqueue)
-{
-  GObjectNotifyContext *context = nqueue->context;
-  GParamSpec *pspecs_mem[16], **pspecs, **free_me = NULL;
-  GSList *slist;
-  guint n_pspecs = 0;
+g_object_notify_queue_thaw( GObject            *object,
+							GObjectNotifyQueue *nqueue ){
+	GObjectNotifyContext *context = nqueue->context;
+	GParamSpec *pspecs_mem[16], **pspecs, **free_me = NULL;
+	GSList *slist;
+	guint n_pspecs = 0;
 
-  g_return_if_fail (nqueue->freeze_count > 0);
+	g_return_if_fail( nqueue->freeze_count > 0 );
 
-  nqueue->freeze_count--;
-  if (nqueue->freeze_count)
-    return;
-  g_return_if_fail (object->ref_count > 0);
+	nqueue->freeze_count--;
+	if ( nqueue->freeze_count ) {
+		return;
+	}
+	g_return_if_fail( object->ref_count > 0 );
 
-  pspecs = nqueue->n_pspecs > 16 ? free_me = g_new (GParamSpec*, nqueue->n_pspecs) : pspecs_mem;
-  /* set first entry to NULL since it's checked unconditionally */
-  pspecs[0] = NULL;
-  for (slist = nqueue->pspecs; slist; slist = slist->next)
-    {
-      GParamSpec *pspec = slist->data;
-      gint i = 0;
+	pspecs = nqueue->n_pspecs > 16 ? free_me = g_new( GParamSpec *, nqueue->n_pspecs ) : pspecs_mem;
+	/* set first entry to NULL since it's checked unconditionally */
+	pspecs[0] = NULL;
+	for ( slist = nqueue->pspecs; slist; slist = slist->next )
+	{
+		GParamSpec *pspec = slist->data;
+		gint i = 0;
 
-      /* dedup, make pspecs in the list unique */
-    redo_dedup_check:
-      if (pspecs[i] == pspec)
-	continue;
-      if (++i < n_pspecs)
-	goto redo_dedup_check;
+		/* dedup, make pspecs in the list unique */
+redo_dedup_check:
+		if ( pspecs[i] == pspec ) {
+			continue;
+		}
+		if ( ++i < n_pspecs ) {
+			goto redo_dedup_check;
+		}
 
-      pspecs[n_pspecs++] = pspec;
-    }
-  g_datalist_id_set_data (&object->qdata, context->quark_notify_queue, NULL);
+		pspecs[n_pspecs++] = pspec;
+	}
+	g_datalist_id_set_data( &object->qdata, context->quark_notify_queue, NULL );
 
-  if (n_pspecs)
-    context->dispatcher (object, n_pspecs, pspecs);
-  g_free (free_me);
+	if ( n_pspecs ) {
+		context->dispatcher( object, n_pspecs, pspecs );
+	}
+	g_free( free_me );
 }
 
 static inline void
-g_object_notify_queue_clear (GObject            *object,
-			     GObjectNotifyQueue *nqueue)
-{
-  g_return_if_fail (nqueue->freeze_count > 0);
+g_object_notify_queue_clear( GObject            *object,
+							 GObjectNotifyQueue *nqueue ){
+	g_return_if_fail( nqueue->freeze_count > 0 );
 
-  g_slist_free (nqueue->pspecs);
-  nqueue->pspecs = NULL;
-  nqueue->n_pspecs = 0;
+	g_slist_free( nqueue->pspecs );
+	nqueue->pspecs = NULL;
+	nqueue->n_pspecs = 0;
 }
 
 static inline void
-g_object_notify_queue_add (GObject            *object,
-			   GObjectNotifyQueue *nqueue,
-			   GParamSpec	      *pspec)
-{
-  if (pspec->flags & G_PARAM_READABLE)
-    {
-      GParamSpec *redirect;
+g_object_notify_queue_add( GObject            *object,
+						   GObjectNotifyQueue *nqueue,
+						   GParamSpec         *pspec ){
+	if ( pspec->flags & G_PARAM_READABLE ) {
+		GParamSpec *redirect;
 
-      g_return_if_fail (nqueue->n_pspecs < 65535);
+		g_return_if_fail( nqueue->n_pspecs < 65535 );
 
-      redirect = g_param_spec_get_redirect_target (pspec);
-      if (redirect)
-	pspec = redirect;
-	    
-      /* we do the deduping in _thaw */
-      nqueue->pspecs = g_slist_prepend (nqueue->pspecs, pspec);
-      nqueue->n_pspecs++;
-    }
+		redirect = g_param_spec_get_redirect_target( pspec );
+		if ( redirect ) {
+			pspec = redirect;
+		}
+
+		/* we do the deduping in _thaw */
+		nqueue->pspecs = g_slist_prepend( nqueue->pspecs, pspec );
+		nqueue->n_pspecs++;
+	}
 }
 
 static inline GObjectNotifyQueue*
-g_object_notify_queue_from_object (GObject              *object,
-				   GObjectNotifyContext *context)
-{
-  return g_datalist_id_get_data (&object->qdata, context->quark_notify_queue);
+g_object_notify_queue_from_object( GObject              *object,
+								   GObjectNotifyContext *context ){
+	return g_datalist_id_get_data( &object->qdata, context->quark_notify_queue );
 }
 
 

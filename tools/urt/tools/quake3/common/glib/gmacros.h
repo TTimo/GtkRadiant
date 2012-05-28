@@ -21,11 +21,11 @@
  * Modified by the GLib Team and others 1997-2000.  See the AUTHORS
  * file for a list of people on the GLib Team.  See the ChangeLog
  * files for a list of changes.  These files are distributed with
- * GLib at ftp://ftp.gtk.org/pub/gtk/. 
+ * GLib at ftp://ftp.gtk.org/pub/gtk/.
  */
 
 /* This file must not include any other glib header file and must thus
- * not refer to variables from glibconfig.h 
+ * not refer to variables from glibconfig.h
  */
 
 #ifndef __G_MACROS_H__
@@ -37,9 +37,9 @@
 
 /* Here we provide G_GNUC_EXTENSION as an alias for __extension__,
  * where this is valid. This allows for warningless compilation of
- * "long long" types even in the presence of '-ansi -pedantic'. 
+ * "long long" types even in the presence of '-ansi -pedantic'.
  */
-#if     __GNUC__ > 2 || (__GNUC__ == 2 && __GNUC_MINOR__ >= 8)
+#if     __GNUC__ > 2 || ( __GNUC__ == 2 && __GNUC_MINOR__ >= 8 )
 #  define G_GNUC_EXTENSION __extension__
 #else
 #  define G_GNUC_EXTENSION
@@ -47,28 +47,28 @@
 
 /* Provide macros to feature the GCC function attribute.
  */
-#if    __GNUC__ > 2 || (__GNUC__ == 2 && __GNUC_MINOR__ >= 96)
-#define G_GNUC_PURE                            \
-  __attribute__((__pure__))
+#if    __GNUC__ > 2 || ( __GNUC__ == 2 && __GNUC_MINOR__ >= 96 )
+#define G_GNUC_PURE							   \
+	__attribute__( ( __pure__ ) )
 #else
 #define G_GNUC_PURE
 #endif
 
-#if     __GNUC__ > 2 || (__GNUC__ == 2 && __GNUC_MINOR__ > 4)
-#define G_GNUC_PRINTF( format_idx, arg_idx )    \
-  __attribute__((__format__ (__printf__, format_idx, arg_idx)))
-#define G_GNUC_SCANF( format_idx, arg_idx )     \
-  __attribute__((__format__ (__scanf__, format_idx, arg_idx)))
-#define G_GNUC_FORMAT( arg_idx )                \
-  __attribute__((__format_arg__ (arg_idx)))
-#define G_GNUC_NORETURN                         \
-  __attribute__((__noreturn__))
-#define G_GNUC_CONST                            \
-  __attribute__((__const__))
-#define G_GNUC_UNUSED                           \
-  __attribute__((__unused__))
+#if     __GNUC__ > 2 || ( __GNUC__ == 2 && __GNUC_MINOR__ > 4 )
+#define G_GNUC_PRINTF( format_idx, arg_idx )	\
+	__attribute__( ( __format__( __printf__, format_idx, arg_idx ) ) )
+#define G_GNUC_SCANF( format_idx, arg_idx )		\
+	__attribute__( ( __format__( __scanf__, format_idx, arg_idx ) ) )
+#define G_GNUC_FORMAT( arg_idx )				\
+	__attribute__( ( __format_arg__( arg_idx ) ) )
+#define G_GNUC_NORETURN							\
+	__attribute__( ( __noreturn__ ) )
+#define G_GNUC_CONST							\
+	__attribute__( ( __const__ ) )
+#define G_GNUC_UNUSED							\
+	__attribute__( ( __unused__ ) )
 #define G_GNUC_NO_INSTRUMENT			\
-  __attribute__((__no_instrument_function__))
+	__attribute__( ( __no_instrument_function__ ) )
 #else   /* !__GNUC__ */
 #define G_GNUC_PRINTF( format_idx, arg_idx )
 #define G_GNUC_SCANF( format_idx, arg_idx )
@@ -79,9 +79,9 @@
 #define G_GNUC_NO_INSTRUMENT
 #endif  /* !__GNUC__ */
 
-#if    __GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 1)
-#define G_GNUC_DEPRECATED                            \
-  __attribute__((__deprecated__))
+#if    __GNUC__ > 3 || ( __GNUC__ == 3 && __GNUC_MINOR__ >= 1 )
+#define G_GNUC_DEPRECATED							 \
+	__attribute__( ( __deprecated__ ) )
 #else
 #define G_GNUC_DEPRECATED
 #endif /* __GNUC__ */
@@ -90,7 +90,7 @@
  * macros, so we can refer to them as strings unconditionally.
  * usage not-recommended since gcc-3.0
  */
-#if defined (__GNUC__) && (__GNUC__ < 3)
+#if defined ( __GNUC__ ) && ( __GNUC__ < 3 )
 #define G_GNUC_FUNCTION         __FUNCTION__
 #define G_GNUC_PRETTY_FUNCTION  __PRETTY_FUNCTION__
 #else   /* !__GNUC__ */
@@ -98,23 +98,23 @@
 #define G_GNUC_PRETTY_FUNCTION  ""
 #endif  /* !__GNUC__ */
 
-#define G_STRINGIFY(macro_or_string)	G_STRINGIFY_ARG (macro_or_string)
-#define	G_STRINGIFY_ARG(contents)	#contents
+#define G_STRINGIFY( macro_or_string )    G_STRINGIFY_ARG( macro_or_string )
+#define G_STRINGIFY_ARG( contents )   # contents
 
 /* Provide a string identifying the current code position */
-#if defined(__GNUC__) && (__GNUC__ < 3) && !defined(__cplusplus)
-#  define G_STRLOC	__FILE__ ":" G_STRINGIFY (__LINE__) ":" __PRETTY_FUNCTION__ "()"
+#if defined( __GNUC__ ) && ( __GNUC__ < 3 ) && !defined( __cplusplus )
+#  define G_STRLOC  __FILE__ ":" G_STRINGIFY( __LINE__ ) ":" __PRETTY_FUNCTION__ "()"
 #else
-#  define G_STRLOC	__FILE__ ":" G_STRINGIFY (__LINE__)
+#  define G_STRLOC  __FILE__ ":" G_STRINGIFY( __LINE__ )
 #endif
 
 /* Provide a string identifying the current function, non-concatenatable */
-#if defined (__GNUC__)
-#  define G_STRFUNC     ((const char*) (__PRETTY_FUNCTION__))
-#elif defined (G_HAVE_ISO_VARARGS)
-#  define G_STRFUNC     ((const char*) (__func__))
+#if defined ( __GNUC__ )
+#  define G_STRFUNC     ( (const char*) ( __PRETTY_FUNCTION__ ) )
+#elif defined ( G_HAVE_ISO_VARARGS )
+#  define G_STRFUNC     ( (const char*) ( __func__ ) )
 #else
-#  define G_STRFUNC     ((const char*) ("???"))
+#  define G_STRFUNC     ( (const char*) ( "???" ) )
 #endif
 
 /* Guard C code in headers, while including them from C++ */
@@ -133,52 +133,52 @@
  */
 #ifndef NULL
 #  ifdef __cplusplus
-#    define NULL        (0L)
+#    define NULL        ( 0L )
 #  else /* !__cplusplus */
-#    define NULL        ((void*) 0)
+#    define NULL        ( (void*) 0 )
 #  endif /* !__cplusplus */
 #endif
 
-#ifndef	FALSE
-#define	FALSE	(0)
+#ifndef FALSE
+#define FALSE   ( 0 )
 #endif
 
-#ifndef	TRUE
-#define	TRUE	(!FALSE)
+#ifndef TRUE
+#define TRUE    ( !FALSE )
 #endif
 
-#undef	MAX
-#define MAX(a, b)  (((a) > (b)) ? (a) : (b))
+#undef  MAX
+#define MAX( a, b )  ( ( ( a ) > ( b ) ) ? ( a ) : ( b ) )
 
-#undef	MIN
-#define MIN(a, b)  (((a) < (b)) ? (a) : (b))
+#undef  MIN
+#define MIN( a, b )  ( ( ( a ) < ( b ) ) ? ( a ) : ( b ) )
 
-#undef	ABS
-#define ABS(a)	   (((a) < 0) ? -(a) : (a))
+#undef  ABS
+#define ABS( a )     ( ( ( a ) < 0 ) ? -( a ) : ( a ) )
 
-#undef	CLAMP
-#define CLAMP(x, low, high)  (((x) > (high)) ? (high) : (((x) < (low)) ? (low) : (x)))
+#undef  CLAMP
+#define CLAMP( x, low, high )  ( ( ( x ) > ( high ) ) ? ( high ) : ( ( ( x ) < ( low ) ) ? ( low ) : ( x ) ) )
 
 /* Count the number of elements in an array. The array must be defined
  * as such; using this with a dynamically allocated array will give
  * incorrect results.
  */
-#define G_N_ELEMENTS(arr)		(sizeof (arr) / sizeof ((arr)[0]))
+#define G_N_ELEMENTS( arr )       ( sizeof( arr ) / sizeof( ( arr )[0] ) )
 
 /* Macros by analogy to GINT_TO_POINTER, GPOINTER_TO_INT
  */
-#define GPOINTER_TO_SIZE(p)	((gsize) (p))
-#define GSIZE_TO_POINTER(s)	((gpointer) (gsize) (s))
+#define GPOINTER_TO_SIZE( p ) ( (gsize) ( p ) )
+#define GSIZE_TO_POINTER( s ) ( (gpointer) (gsize) ( s ) )
 
 /* Provide convenience macros for handling structure
  * fields through their offsets.
  */
-#define G_STRUCT_OFFSET(struct_type, member)	\
-    ((glong) ((guint8*) &((struct_type*) 0)->member))
-#define G_STRUCT_MEMBER_P(struct_p, struct_offset)   \
-    ((gpointer) ((guint8*) (struct_p) + (glong) (struct_offset)))
-#define G_STRUCT_MEMBER(member_type, struct_p, struct_offset)   \
-    (*(member_type*) G_STRUCT_MEMBER_P ((struct_p), (struct_offset)))
+#define G_STRUCT_OFFSET( struct_type, member )	  \
+	( (glong) ( (guint8*) &( (struct_type*) 0 )->member ) )
+#define G_STRUCT_MEMBER_P( struct_p, struct_offset )   \
+	( (gpointer) ( (guint8*) ( struct_p ) + (glong) ( struct_offset ) ) )
+#define G_STRUCT_MEMBER( member_type, struct_p, struct_offset )	  \
+	( *(member_type*) G_STRUCT_MEMBER_P( ( struct_p ), ( struct_offset ) ) )
 
 /* Provide simple macro statement wrappers (adapted from Perl):
  *  G_STMT_START { statements; } G_STMT_END;
@@ -189,17 +189,17 @@
  *  For SunOS they will be wrapped within `if (1)' and `else (void) 0',
  *  and otherwise within `do' and `while (0)'.
  */
-#if !(defined (G_STMT_START) && defined (G_STMT_END))
-#  if defined (__GNUC__) && !defined (__STRICT_ANSI__) && !defined (__cplusplus)
-#    define G_STMT_START	(void) __extension__ (
-#    define G_STMT_END		)
+#if !( defined ( G_STMT_START ) && defined ( G_STMT_END ) )
+#  if defined ( __GNUC__ ) && !defined ( __STRICT_ANSI__ ) && !defined ( __cplusplus )
+#    define G_STMT_START    (void) __extension__(
+#    define G_STMT_END      )
 #  else
-#    if (defined (sun) || defined (__sun__))
-#      define G_STMT_START	if (1)
-#      define G_STMT_END	else (void)0
+#    if ( defined ( sun ) || defined ( __sun__ ) )
+#      define G_STMT_START  if ( 1 )
+#      define G_STMT_END    else (void)0
 #    else
-#      define G_STMT_START	do
-#      define G_STMT_END	while (0)
+#      define G_STMT_START  do
+#      define G_STMT_END    while ( 0 )
 #    endif
 #  endif
 #endif
@@ -215,28 +215,28 @@
 #endif
 
 /*
- * The G_LIKELY and G_UNLIKELY macros let the programmer give hints to 
+ * The G_LIKELY and G_UNLIKELY macros let the programmer give hints to
  * the compiler about the expected result of an expression. Some compilers
  * can use this information for optimizations.
  *
  * The _G_BOOLEAN_EXPR macro is intended to trigger a gcc warning when
- * putting assignments in g_return_if_fail ().  
+ * putting assignments in g_return_if_fail ().
  */
-#if defined(__GNUC__) && (__GNUC__ > 2) && defined(__OPTIMIZE__)
-#define _G_BOOLEAN_EXPR(expr)                   \
- __extension__ ({                               \
-   int _g_boolean_var_;                         \
-   if (expr)                                    \
-      _g_boolean_var_ = 1;                      \
-   else                                         \
-      _g_boolean_var_ = 0;                      \
-   _g_boolean_var_;                             \
-})
-#define G_LIKELY(expr) (__builtin_expect (_G_BOOLEAN_EXPR(expr), 1))
-#define G_UNLIKELY(expr) (__builtin_expect (_G_BOOLEAN_EXPR(expr), 0))
+#if defined( __GNUC__ ) && ( __GNUC__ > 2 ) && defined( __OPTIMIZE__ )
+#define _G_BOOLEAN_EXPR( expr )					  \
+	__extension__( {							   \
+					   int _g_boolean_var_;							\
+					   if ( expr ) {									\
+						   _g_boolean_var_ = 1; }					   \
+					   else{										 \
+						   _g_boolean_var_ = 0; }					   \
+					   _g_boolean_var_;								\
+				   } )
+#define G_LIKELY( expr ) ( __builtin_expect( _G_BOOLEAN_EXPR( expr ), 1 ) )
+#define G_UNLIKELY( expr ) ( __builtin_expect( _G_BOOLEAN_EXPR( expr ), 0 ) )
 #else
-#define G_LIKELY(expr) (expr)
-#define G_UNLIKELY(expr) (expr)
+#define G_LIKELY( expr ) ( expr )
+#define G_UNLIKELY( expr ) ( expr )
 #endif
 
 #endif /* __G_MACROS_H__ */

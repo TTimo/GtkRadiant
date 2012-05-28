@@ -46,21 +46,21 @@
 
 const int jpeg_zigzag_order[DCTSIZE2] = {
 
-   0,  1,  5,  6, 14, 15, 27, 28,
+	0,  1,  5,  6, 14, 15, 27, 28,
 
-   2,  4,  7, 13, 16, 26, 29, 42,
+	2,  4,  7, 13, 16, 26, 29, 42,
 
-   3,  8, 12, 17, 25, 30, 41, 43,
+	3,  8, 12, 17, 25, 30, 41, 43,
 
-   9, 11, 18, 24, 31, 40, 44, 53,
+	9, 11, 18, 24, 31, 40, 44, 53,
 
-  10, 19, 23, 32, 39, 45, 52, 54,
+	10, 19, 23, 32, 39, 45, 52, 54,
 
-  20, 22, 33, 38, 46, 51, 55, 60,
+	20, 22, 33, 38, 46, 51, 55, 60,
 
-  21, 34, 37, 47, 50, 56, 59, 61,
+	21, 34, 37, 47, 50, 56, 59, 61,
 
-  35, 36, 48, 49, 57, 58, 62, 63
+	35, 36, 48, 49, 57, 58, 62, 63
 
 };
 
@@ -94,27 +94,27 @@ const int jpeg_zigzag_order[DCTSIZE2] = {
 
 
 
-const int jpeg_natural_order[DCTSIZE2+16] = {
+const int jpeg_natural_order[DCTSIZE2 + 16] = {
 
-  0,  1,  8, 16,  9,  2,  3, 10,
+	0,  1,  8, 16,  9,  2,  3, 10,
 
- 17, 24, 32, 25, 18, 11,  4,  5,
+	17, 24, 32, 25, 18, 11,  4,  5,
 
- 12, 19, 26, 33, 40, 48, 41, 34,
+	12, 19, 26, 33, 40, 48, 41, 34,
 
- 27, 20, 13,  6,  7, 14, 21, 28,
+	27, 20, 13,  6,  7, 14, 21, 28,
 
- 35, 42, 49, 56, 57, 50, 43, 36,
+	35, 42, 49, 56, 57, 50, 43, 36,
 
- 29, 22, 15, 23, 30, 37, 44, 51,
+	29, 22, 15, 23, 30, 37, 44, 51,
 
- 58, 59, 52, 45, 38, 31, 39, 46,
+	58, 59, 52, 45, 38, 31, 39, 46,
 
- 53, 60, 61, 54, 47, 55, 62, 63,
+	53, 60, 61, 54, 47, 55, 62, 63,
 
- 63, 63, 63, 63, 63, 63, 63, 63, /* extra entries for safety in decoder */
+	63, 63, 63, 63, 63, 63, 63, 63, /* extra entries for safety in decoder */
 
- 63, 63, 63, 63, 63, 63, 63, 63
+	63, 63, 63, 63, 63, 63, 63, 63
 
 };
 
@@ -132,15 +132,11 @@ const int jpeg_natural_order[DCTSIZE2+16] = {
 
 GLOBAL long
 
-jdiv_round_up (long a, long b)
-
+jdiv_round_up( long a, long b ){
 /* Compute a/b rounded up to next integer, ie, ceil(a/b) */
-
 /* Assumes a >= 0, b > 0 */
 
-{
-
-  return (a + b - 1L) / b;
+	return ( a + b - 1L ) / b;
 
 }
 
@@ -150,17 +146,13 @@ jdiv_round_up (long a, long b)
 
 GLOBAL long
 
-jround_up (long a, long b)
-
+jround_up( long a, long b ){
 /* Compute a rounded up to next multiple of b, ie, ceil(a/b)*b */
-
 /* Assumes a >= 0, b > 0 */
 
-{
+	a += b - 1L;
 
-  a += b - 1L;
-
-  return a - (a % b);
+	return a - ( a % b );
 
 }
 
@@ -186,19 +178,19 @@ jround_up (long a, long b)
 
 
 
-#ifndef NEED_FAR_POINTERS	/* normal case, same as regular macros */
+#ifndef NEED_FAR_POINTERS   /* normal case, same as regular macros */
 
-#define FMEMCOPY(dest,src,size)	MEMCOPY(dest,src,size)
+#define FMEMCOPY( dest,src,size ) MEMCOPY( dest,src,size )
 
-#define FMEMZERO(target,size)	MEMZERO(target,size)
+#define FMEMZERO( target,size )   MEMZERO( target,size )
 
-#else				/* 80x86 case, define if we can */
+#else               /* 80x86 case, define if we can */
 
 #ifdef USE_FMEM
 
-#define FMEMCOPY(dest,src,size)	_fmemcpy((void FAR *)(dest), (const void FAR *)(src), (size_t)(size))
+#define FMEMCOPY( dest,src,size ) _fmemcpy( (void FAR *)( dest ), (const void FAR *)( src ), (size_t)( size ) )
 
-#define FMEMZERO(target,size)	_fmemset((void FAR *)(target), 0, (size_t)(size))
+#define FMEMZERO( target,size )   _fmemset( (void FAR *)( target ), 0, (size_t)( size ) )
 
 #endif
 
@@ -210,12 +202,11 @@ jround_up (long a, long b)
 
 GLOBAL void
 
-jcopy_sample_rows (JSAMPARRAY input_array, int source_row,
+jcopy_sample_rows( JSAMPARRAY input_array, int source_row,
 
-		   JSAMPARRAY output_array, int dest_row,
+				   JSAMPARRAY output_array, int dest_row,
 
-		   int num_rows, JDIMENSION num_cols)
-
+				   int num_rows, JDIMENSION num_cols ){
 /* Copy some rows of samples from one place to another.
 
  * num_rows rows are copied from input_array[source_row++]
@@ -226,49 +217,47 @@ jcopy_sample_rows (JSAMPARRAY input_array, int source_row,
 
  */
 
-{
-
-  register JSAMPROW inptr, outptr;
+	register JSAMPROW inptr, outptr;
 
 #ifdef FMEMCOPY
 
-  register size_t count = (size_t) (num_cols * SIZEOF(JSAMPLE));
+	register size_t count = (size_t) ( num_cols * SIZEOF( JSAMPLE ) );
 
 #else
 
-  register JDIMENSION count;
+	register JDIMENSION count;
 
 #endif
 
-  register int row;
+	register int row;
 
 
 
-  input_array += source_row;
+	input_array += source_row;
 
-  output_array += dest_row;
+	output_array += dest_row;
 
 
 
-  for (row = num_rows; row > 0; row--) {
+	for ( row = num_rows; row > 0; row-- ) {
 
-    inptr = *input_array++;
+		inptr = *input_array++;
 
-    outptr = *output_array++;
+		outptr = *output_array++;
 
 #ifdef FMEMCOPY
 
-    FMEMCOPY(outptr, inptr, count);
+		FMEMCOPY( outptr, inptr, count );
 
 #else
 
-    for (count = num_cols; count > 0; count--)
+		for ( count = num_cols; count > 0; count-- )
 
-      *outptr++ = *inptr++;	/* needn't bother with GETJSAMPLE() here */
+			*outptr++ = *inptr++;  /* needn't bother with GETJSAMPLE() here */
 
 #endif
 
-  }
+	}
 
 }
 
@@ -278,35 +267,32 @@ jcopy_sample_rows (JSAMPARRAY input_array, int source_row,
 
 GLOBAL void
 
-jcopy_block_row (JBLOCKROW input_row, JBLOCKROW output_row,
+jcopy_block_row( JBLOCKROW input_row, JBLOCKROW output_row,
 
-		 JDIMENSION num_blocks)
-
+				 JDIMENSION num_blocks ){
 /* Copy a row of coefficient blocks from one place to another. */
 
-{
-
 #ifdef FMEMCOPY
 
-  FMEMCOPY(output_row, input_row, num_blocks * (DCTSIZE2 * SIZEOF(JCOEF)));
+	FMEMCOPY( output_row, input_row, num_blocks * ( DCTSIZE2 * SIZEOF( JCOEF ) ) );
 
 #else
 
-  register JCOEFPTR inptr, outptr;
+	register JCOEFPTR inptr, outptr;
 
-  register long count;
+	register long count;
 
 
 
-  inptr = (JCOEFPTR) input_row;
+	inptr = (JCOEFPTR) input_row;
 
-  outptr = (JCOEFPTR) output_row;
+	outptr = (JCOEFPTR) output_row;
 
-  for (count = (long) num_blocks * DCTSIZE2; count > 0; count--) {
+	for ( count = (long) num_blocks * DCTSIZE2; count > 0; count-- ) {
 
-    *outptr++ = *inptr++;
+		*outptr++ = *inptr++;
 
-  }
+	}
 
 #endif
 
@@ -318,33 +304,28 @@ jcopy_block_row (JBLOCKROW input_row, JBLOCKROW output_row,
 
 GLOBAL void
 
-jzero_far (void FAR * target, size_t bytestozero)
-
+jzero_far( void FAR * target, size_t bytestozero ){
 /* Zero out a chunk of FAR memory. */
-
 /* This might be sample-array data, block-array data, or alloc_large data. */
-
-{
 
 #ifdef FMEMZERO
 
-  FMEMZERO(target, bytestozero);
+	FMEMZERO( target, bytestozero );
 
 #else
 
-  register char FAR * ptr = (char FAR *) target;
+	register char FAR * ptr = (char FAR *) target;
 
-  register size_t count;
+	register size_t count;
 
 
 
-  for (count = bytestozero; count > 0; count--) {
+	for ( count = bytestozero; count > 0; count-- ) {
 
-    *ptr++ = 0;
+		*ptr++ = 0;
 
-  }
+	}
 
 #endif
 
 }
-

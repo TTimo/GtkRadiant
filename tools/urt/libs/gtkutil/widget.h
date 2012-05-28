@@ -1,5 +1,5 @@
 
-#if !defined(INCLUDED_GTKUTIL_WIDGET_H)
+#if !defined( INCLUDED_GTKUTIL_WIDGET_H )
 #define INCLUDED_GTKUTIL_WIDGET_H
 
 #include <list>
@@ -7,138 +7,118 @@
 #include "generic/callback.h"
 #include "warnings.h"
 
-inline void widget_set_visible(GtkWidget* widget, bool shown)
-{
-  if(shown)
-  {
-    gtk_widget_show(widget);
-  }
-  else
-  {
-    gtk_widget_hide(widget);
-  }
+inline void widget_set_visible( GtkWidget* widget, bool shown ){
+	if ( shown ) {
+		gtk_widget_show( widget );
+	}
+	else
+	{
+		gtk_widget_hide( widget );
+	}
 }
 
-inline bool widget_is_visible(GtkWidget* widget)
-{
-  return GTK_WIDGET_VISIBLE(widget) != FALSE;
+inline bool widget_is_visible( GtkWidget* widget ){
+	return GTK_WIDGET_VISIBLE( widget ) != FALSE;
 }
 
-inline void widget_toggle_visible(GtkWidget* widget)
-{
-  widget_set_visible(widget, !widget_is_visible(widget));
+inline void widget_toggle_visible( GtkWidget* widget ){
+	widget_set_visible( widget, !widget_is_visible( widget ) );
 }
 
 class ToggleItem
 {
-  BoolExportCallback m_exportCallback;
-  typedef std::list<BoolImportCallback> ImportCallbacks;
-  ImportCallbacks m_importCallbacks;
+BoolExportCallback m_exportCallback;
+typedef std::list<BoolImportCallback> ImportCallbacks;
+ImportCallbacks m_importCallbacks;
 public:
-  ToggleItem(const BoolExportCallback& exportCallback) : m_exportCallback(exportCallback)
-  {
-  }
+ToggleItem( const BoolExportCallback& exportCallback ) : m_exportCallback( exportCallback ){
+}
 
-  void update()
-  {
-    for(ImportCallbacks::iterator i = m_importCallbacks.begin(); i != m_importCallbacks.end(); ++i)
-    {
-      m_exportCallback(*i);
-    }
-  }
+void update(){
+	for ( ImportCallbacks::iterator i = m_importCallbacks.begin(); i != m_importCallbacks.end(); ++i )
+	{
+		m_exportCallback( *i );
+	}
+}
 
-  void addCallback(const BoolImportCallback& callback)
-  {
-    m_importCallbacks.push_back(callback);
-    m_exportCallback(callback);
-  }
-  typedef MemberCaller1<ToggleItem, const BoolImportCallback&, &ToggleItem::addCallback> AddCallbackCaller;
+void addCallback( const BoolImportCallback& callback ){
+	m_importCallbacks.push_back( callback );
+	m_exportCallback( callback );
+}
+typedef MemberCaller1<ToggleItem, const BoolImportCallback&, &ToggleItem::addCallback> AddCallbackCaller;
 };
 
 class ToggleShown
 {
-  bool m_shownDeferred;
+bool m_shownDeferred;
 
-  ToggleShown(const ToggleShown& other); // NOT COPYABLE
-  ToggleShown& operator=(const ToggleShown& other); // NOT ASSIGNABLE
+ToggleShown( const ToggleShown& other ); // NOT COPYABLE
+ToggleShown& operator=( const ToggleShown& other ); // NOT ASSIGNABLE
 
-  static gboolean notify_visible(GtkWidget* widget, gpointer dummy, ToggleShown* self)
-  {
-    self->update();
-    return FALSE;
-  }
-  static gboolean destroy(GtkWidget* widget, ToggleShown* self)
-  {
-    self->m_shownDeferred = GTK_WIDGET_VISIBLE(self->m_widget) != FALSE;
-    self->m_widget = 0;
-    return FALSE;
-  }
+static gboolean notify_visible( GtkWidget* widget, gpointer dummy, ToggleShown* self ){
+	self->update();
+	return FALSE;
+}
+static gboolean destroy( GtkWidget* widget, ToggleShown* self ){
+	self->m_shownDeferred = GTK_WIDGET_VISIBLE( self->m_widget ) != FALSE;
+	self->m_widget = 0;
+	return FALSE;
+}
 public:
-  GtkWidget* m_widget;
-  ToggleItem m_item;
+GtkWidget* m_widget;
+ToggleItem m_item;
 
-  ToggleShown(bool shown)
-    : m_shownDeferred(shown), m_widget(0), m_item(ActiveCaller(*this))
-  {
-  }
-  void update()
-  {
-    m_item.update();
-  }
-  bool active() const
-  {
-    if(m_widget == 0)
-    {
-      return m_shownDeferred;
-    }
-    else
-    {
-      return GTK_WIDGET_VISIBLE(m_widget) != FALSE;
-    }
-  }
-  void exportActive(const BoolImportCallback& importCallback)
-  {
-    importCallback(active());
-  }
-  typedef MemberCaller1<ToggleShown, const BoolImportCallback&, &ToggleShown::exportActive> ActiveCaller;
-  void set(bool shown)
-  {
-    if(m_widget == 0)
-    {
-      m_shownDeferred = shown;
-    }
-    else
-    {
-      widget_set_visible(m_widget, shown);
-    }
-  }
-  void toggle()
-  {
-    widget_toggle_visible(m_widget);
-  }
-  typedef MemberCaller<ToggleShown, &ToggleShown::toggle> ToggleCaller;
-  void connect(GtkWidget* widget)
-  {
-    m_widget = widget;
-    widget_set_visible(m_widget, m_shownDeferred);
-    g_signal_connect(G_OBJECT(m_widget), "notify::visible", G_CALLBACK(notify_visible), this);
-    g_signal_connect(G_OBJECT(m_widget), "destroy", G_CALLBACK(destroy), this);
-    update();
-  }
+ToggleShown( bool shown )
+	: m_shownDeferred( shown ), m_widget( 0 ), m_item( ActiveCaller( *this ) ){
+}
+void update(){
+	m_item.update();
+}
+bool active() const {
+	if ( m_widget == 0 ) {
+		return m_shownDeferred;
+	}
+	else
+	{
+		return GTK_WIDGET_VISIBLE( m_widget ) != FALSE;
+	}
+}
+void exportActive( const BoolImportCallback& importCallback ){
+	importCallback( active() );
+}
+typedef MemberCaller1<ToggleShown, const BoolImportCallback&, &ToggleShown::exportActive> ActiveCaller;
+void set( bool shown ){
+	if ( m_widget == 0 ) {
+		m_shownDeferred = shown;
+	}
+	else
+	{
+		widget_set_visible( m_widget, shown );
+	}
+}
+void toggle(){
+	widget_toggle_visible( m_widget );
+}
+typedef MemberCaller<ToggleShown, &ToggleShown::toggle> ToggleCaller;
+void connect( GtkWidget* widget ){
+	m_widget = widget;
+	widget_set_visible( m_widget, m_shownDeferred );
+	g_signal_connect( G_OBJECT( m_widget ), "notify::visible", G_CALLBACK( notify_visible ), this );
+	g_signal_connect( G_OBJECT( m_widget ), "destroy", G_CALLBACK( destroy ), this );
+	update();
+}
 };
 
 
-inline void widget_queue_draw(GtkWidget& widget)
-{
-  gtk_widget_queue_draw(&widget);
+inline void widget_queue_draw( GtkWidget& widget ){
+	gtk_widget_queue_draw( &widget );
 }
 typedef ReferenceCaller<GtkWidget, widget_queue_draw> WidgetQueueDrawCaller;
 
 
-inline void widget_make_default(GtkWidget* widget)
-{
-  GTK_WIDGET_SET_FLAGS(widget, GTK_CAN_DEFAULT);
-  gtk_widget_grab_default(widget);
+inline void widget_make_default( GtkWidget* widget ){
+	GTK_WIDGET_SET_FLAGS( widget, GTK_CAN_DEFAULT );
+	gtk_widget_grab_default( widget );
 }
 
 

@@ -44,21 +44,21 @@
 
 #ifdef NEED_SHORT_EXTERNAL_NAMES
 
-#define jpeg_get_small		jGetSmall
+#define jpeg_get_small      jGetSmall
 
-#define jpeg_free_small		jFreeSmall
+#define jpeg_free_small     jFreeSmall
 
-#define jpeg_get_large		jGetLarge
+#define jpeg_get_large      jGetLarge
 
-#define jpeg_free_large		jFreeLarge
+#define jpeg_free_large     jFreeLarge
 
-#define jpeg_mem_available	jMemAvail
+#define jpeg_mem_available  jMemAvail
 
-#define jpeg_open_backing_store	jOpenBackStore
+#define jpeg_open_backing_store jOpenBackStore
 
-#define jpeg_mem_init		jMemInit
+#define jpeg_mem_init       jMemInit
 
-#define jpeg_mem_term		jMemTerm
+#define jpeg_mem_term       jMemTerm
 
 #endif /* NEED_SHORT_EXTERNAL_NAMES */
 
@@ -88,11 +88,11 @@
 
 
 
-EXTERN void * jpeg_get_small JPP((j_common_ptr cinfo, size_t sizeofobject));
+EXTERN void * jpeg_get_small JPP( ( j_common_ptr cinfo, size_t sizeofobject ) );
 
-EXTERN void jpeg_free_small JPP((j_common_ptr cinfo, void * object,
+EXTERN void jpeg_free_small JPP( ( j_common_ptr cinfo, void * object,
 
-				 size_t sizeofobject));
+								   size_t sizeofobject ) );
 
 
 
@@ -114,11 +114,11 @@ EXTERN void jpeg_free_small JPP((j_common_ptr cinfo, void * object,
 
 
 
-EXTERN void FAR * jpeg_get_large JPP((j_common_ptr cinfo,size_t sizeofobject));
+EXTERN void FAR * jpeg_get_large JPP( ( j_common_ptr cinfo,size_t sizeofobject ) );
 
-EXTERN void jpeg_free_large JPP((j_common_ptr cinfo, void FAR * object,
+EXTERN void jpeg_free_large JPP( ( j_common_ptr cinfo, void FAR * object,
 
-				 size_t sizeofobject));
+								   size_t sizeofobject ) );
 
 
 
@@ -146,7 +146,7 @@ EXTERN void jpeg_free_large JPP((j_common_ptr cinfo, void FAR * object,
 
 
 
-#ifndef MAX_ALLOC_CHUNK		/* may be overridden in jconfig.h */
+#ifndef MAX_ALLOC_CHUNK     /* may be overridden in jconfig.h */
 
 #define MAX_ALLOC_CHUNK  1000000000L
 
@@ -198,13 +198,13 @@ EXTERN void jpeg_free_large JPP((j_common_ptr cinfo, void FAR * object,
 
 
 
-EXTERN long jpeg_mem_available JPP((j_common_ptr cinfo,
+EXTERN long jpeg_mem_available JPP( ( j_common_ptr cinfo,
 
-				    long min_bytes_needed,
+									  long min_bytes_needed,
 
-				    long max_bytes_needed,
+									  long max_bytes_needed,
 
-				    long already_allocated));
+									  long already_allocated ) );
 
 
 
@@ -224,27 +224,27 @@ EXTERN long jpeg_mem_available JPP((j_common_ptr cinfo,
 
 
 
-#define TEMP_NAME_LENGTH   64	/* max length of a temporary file's name */
+#define TEMP_NAME_LENGTH   64   /* max length of a temporary file's name */
 
 
 
-#ifdef USE_MSDOS_MEMMGR		/* DOS-specific junk */
+#ifdef USE_MSDOS_MEMMGR     /* DOS-specific junk */
 
 
 
-typedef unsigned short XMSH;	/* type of extended-memory handles */
+typedef unsigned short XMSH;    /* type of extended-memory handles */
 
-typedef unsigned short EMSH;	/* type of expanded-memory handles */
+typedef unsigned short EMSH;    /* type of expanded-memory handles */
 
 
 
 typedef union {
 
-  short file_handle;		/* DOS file handle if it's a temp file */
+	short file_handle;      /* DOS file handle if it's a temp file */
 
-  XMSH xms_handle;		/* handle if it's a chunk of XMS */
+	XMSH xms_handle;    /* handle if it's a chunk of XMS */
 
-  EMSH ems_handle;		/* handle if it's a chunk of EMS */
+	EMSH ems_handle;    /* handle if it's a chunk of EMS */
 
 } handle_union;
 
@@ -260,47 +260,47 @@ typedef struct backing_store_struct * backing_store_ptr;
 
 typedef struct backing_store_struct {
 
-  /* Methods for reading/writing/closing this backing-store object */
+	/* Methods for reading/writing/closing this backing-store object */
 
-  JMETHOD(void, read_backing_store, (j_common_ptr cinfo,
+	JMETHOD( void, read_backing_store, ( j_common_ptr cinfo,
 
-				     backing_store_ptr info,
+										 backing_store_ptr info,
 
-				     void FAR * buffer_address,
+										 void FAR * buffer_address,
 
-				     long file_offset, long byte_count));
+										 long file_offset, long byte_count ) );
 
-  JMETHOD(void, write_backing_store, (j_common_ptr cinfo,
+	JMETHOD( void, write_backing_store, ( j_common_ptr cinfo,
 
-				      backing_store_ptr info,
+										  backing_store_ptr info,
 
-				      void FAR * buffer_address,
+										  void FAR * buffer_address,
 
-				      long file_offset, long byte_count));
+										  long file_offset, long byte_count ) );
 
-  JMETHOD(void, close_backing_store, (j_common_ptr cinfo,
+	JMETHOD( void, close_backing_store, ( j_common_ptr cinfo,
 
-				      backing_store_ptr info));
+										  backing_store_ptr info ) );
 
 
 
-  /* Private fields for system-dependent backing-store management */
+	/* Private fields for system-dependent backing-store management */
 
 #ifdef USE_MSDOS_MEMMGR
 
-  /* For the MS-DOS manager (jmemdos.c), we need: */
+	/* For the MS-DOS manager (jmemdos.c), we need: */
 
-  handle_union handle;		/* reference to backing-store storage object */
+	handle_union handle;    /* reference to backing-store storage object */
 
-  char temp_name[TEMP_NAME_LENGTH]; /* name if it's a file */
+	char temp_name[TEMP_NAME_LENGTH]; /* name if it's a file */
 
 #else
 
-  /* For a typical implementation with temp files, we need: */
+	/* For a typical implementation with temp files, we need: */
 
-  FILE * temp_file;		/* stdio reference to temp file */
+	FILE * temp_file;   /* stdio reference to temp file */
 
-  char temp_name[TEMP_NAME_LENGTH]; /* name of temp file */
+	char temp_name[TEMP_NAME_LENGTH]; /* name of temp file */
 
 #endif
 
@@ -324,11 +324,11 @@ typedef struct backing_store_struct {
 
 
 
-EXTERN void jpeg_open_backing_store JPP((j_common_ptr cinfo,
+EXTERN void jpeg_open_backing_store JPP( ( j_common_ptr cinfo,
 
-					 backing_store_ptr info,
+										   backing_store_ptr info,
 
-					 long total_bytes_needed));
+										   long total_bytes_needed ) );
 
 
 
@@ -358,7 +358,6 @@ EXTERN void jpeg_open_backing_store JPP((j_common_ptr cinfo,
 
 
 
-EXTERN long jpeg_mem_init JPP((j_common_ptr cinfo));
+EXTERN long jpeg_mem_init JPP( (j_common_ptr cinfo) );
 
-EXTERN void jpeg_mem_term JPP((j_common_ptr cinfo));
-
+EXTERN void jpeg_mem_term JPP( (j_common_ptr cinfo) );

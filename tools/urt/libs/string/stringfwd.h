@@ -1,5 +1,5 @@
 
-#if !defined(INCLUDED_STRING_STRINGFWD_H)
+#if !defined( INCLUDED_STRING_STRINGFWD_H )
 #define INCLUDED_STRING_STRINGFWD_H
 
 // forward-declaration of CopiedString

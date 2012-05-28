@@ -21,7 +21,7 @@
  * Modified by the GLib Team and others 1997-2000.  See the AUTHORS
  * file for a list of people on the GLib Team.  See the ChangeLog
  * files for a list of changes.  These files are distributed with
- * GLib at ftp://ftp.gtk.org/pub/gtk/. 
+ * GLib at ftp://ftp.gtk.org/pub/gtk/.
  */
 
 #ifndef __G_WIN32_H__
@@ -61,15 +61,15 @@ typedef int pid_t;
  */
 
 /* pipe is not in OLDNAMES.LIB or -lmoldname-msvc. */
-#define pipe(phandles)	_pipe (phandles, 4096, _O_BINARY)
+#define pipe( phandles )  _pipe( phandles, 4096, _O_BINARY )
 
 /* For some POSIX functions that are not provided by the MS runtime,
  * we provide emulators in glib, which are prefixed with g_win32_.
  */
-#    define ftruncate(fd, size)	g_win32_ftruncate (fd, size)
+#    define ftruncate( fd, size ) g_win32_ftruncate( fd, size )
 
-gint		g_win32_ftruncate	(gint		 f,
-					 guint		 size);
+gint        g_win32_ftruncate( gint f,
+							   guint size );
 #endif /* G_OS_WIN32 */
 
 /* The MS setlocale uses locale names of the form "English_United
@@ -78,23 +78,23 @@ gint		g_win32_ftruncate	(gint		 f,
  * returns it as a string of the above form for use in forming file
  * names etc. The returned string should be deallocated with g_free().
  */
-gchar* 		g_win32_getlocale  (void);
+gchar*      g_win32_getlocale( void );
 
 /* Translate a Win32 error code (as returned by GetLastError()) into
  * the corresponding message. The returned string should be deallocated
  * with g_free().
  */
-gchar*          g_win32_error_message (gint error);
+gchar*          g_win32_error_message( gint error );
 
-gchar*          g_win32_get_package_installation_directory (gchar *package,
-							    gchar *dll_name);
+gchar*          g_win32_get_package_installation_directory( gchar *package,
+															gchar *dll_name );
 
-gchar*          g_win32_get_package_installation_subdirectory (gchar *package,
-							       gchar *dll_name,
-							       gchar *subdir);
+gchar*          g_win32_get_package_installation_subdirectory( gchar *package,
+															   gchar *dll_name,
+															   gchar *subdir );
 
 G_END_DECLS
 
-#endif	 /* G_PLATFORM_WIN32 */
+#endif   /* G_PLATFORM_WIN32 */
 
 #endif /* __G_WIN32_H__ */

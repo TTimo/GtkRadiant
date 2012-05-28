@@ -1,5 +1,5 @@
 
-#if !defined(INCLUDED_GENERIC_ENUMERATION_H)
+#if !defined( INCLUDED_GENERIC_ENUMERATION_H )
 #define INCLUDED_GENERIC_ENUMERATION_H
 
 /// \file
@@ -15,26 +15,22 @@
 template<typename Enumeration>
 class EnumeratedValue : public Enumeration
 {
-  typename Enumeration::Value m_value;
+typename Enumeration::Value m_value;
 public:
-  explicit EnumeratedValue(typename Enumeration::Value value) : m_value(value)
-  {
-  }
-  typename Enumeration::Value get() const
-  {
-    return m_value;
-  }
+explicit EnumeratedValue( typename Enumeration::Value value ) : m_value( value ){
+}
+typename Enumeration::Value get() const {
+	return m_value;
+}
 };
 
 template<typename Enumeration>
-inline bool operator==(EnumeratedValue<Enumeration> self, EnumeratedValue<Enumeration> other)
-{
-  return self.get() == other.get();
+inline bool operator==( EnumeratedValue<Enumeration> self, EnumeratedValue<Enumeration> other ){
+	return self.get() == other.get();
 }
 template<typename Enumeration>
-inline bool operator!=(EnumeratedValue<Enumeration> self, EnumeratedValue<Enumeration> other)
-{
-  return !operator==(self, other);
+inline bool operator!=( EnumeratedValue<Enumeration> self, EnumeratedValue<Enumeration> other ){
+	return !operator==( self, other );
 }
 
 #endif

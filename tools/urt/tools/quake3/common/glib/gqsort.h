@@ -1,4 +1,4 @@
- /* GLIB - Library of useful routines for C programming
+/* GLIB - Library of useful routines for C programming
  * Copyright (C) 1995-1997  Peter Mattis, Spencer Kimball and Josh MacDonald
  *
  * This library is free software; you can redistribute it and/or
@@ -21,7 +21,7 @@
  * Modified by the GLib Team and others 1997-2000.  See the AUTHORS
  * file for a list of people on the GLib Team.  See the ChangeLog
  * files for a list of changes.  These files are distributed with
- * GLib at ftp://ftp.gtk.org/pub/gtk/. 
+ * GLib at ftp://ftp.gtk.org/pub/gtk/.
  */
 
 
@@ -32,13 +32,12 @@
 
 G_BEGIN_DECLS
 
-void g_qsort_with_data (gconstpointer    pbase,
-			gint             total_elems,
-			gsize            size,
-			GCompareDataFunc compare_func,
-			gpointer         user_data);
+void g_qsort_with_data( gconstpointer pbase,
+						gint total_elems,
+						gsize size,
+						GCompareDataFunc compare_func,
+						gpointer user_data );
 
 G_END_DECLS
 
 #endif /* __G_QSORT_H__ */
-

@@ -21,7 +21,7 @@
  * Modified by the GLib Team and others 1997-2000.  See the AUTHORS
  * file for a list of people on the GLib Team.  See the ChangeLog
  * files for a list of changes.  These files are distributed with
- * GLib at ftp://ftp.gtk.org/pub/gtk/. 
+ * GLib at ftp://ftp.gtk.org/pub/gtk/.
  */
 
 #ifndef __GMODULE_H__
@@ -34,47 +34,47 @@ G_BEGIN_DECLS
 /* exporting and importing functions, this is special cased
  * to feature Windows dll stubs.
  */
-#define	G_MODULE_IMPORT		extern
+#define G_MODULE_IMPORT     extern
 #ifdef G_PLATFORM_WIN32
-#  define	G_MODULE_EXPORT		__declspec(dllexport)
+#  define   G_MODULE_EXPORT     __declspec( dllexport )
 #else /* !G_PLATFORM_WIN32 */
-#  define	G_MODULE_EXPORT
+#  define   G_MODULE_EXPORT
 #endif /* !G_PLATFORM_WIN32 */
 
 typedef enum
 {
-  G_MODULE_BIND_LAZY	= 1 << 0,
-  G_MODULE_BIND_LOCAL	= 1 << 1,
-  G_MODULE_BIND_MASK	= 0x03
+	G_MODULE_BIND_LAZY    = 1 << 0,
+	G_MODULE_BIND_LOCAL   = 1 << 1,
+	G_MODULE_BIND_MASK    = 0x03
 } GModuleFlags;
 
-typedef	struct _GModule			 GModule;
-typedef const gchar* (*GModuleCheckInit) (GModule	*module);
-typedef void	     (*GModuleUnload)	 (GModule	*module);
+typedef struct _GModule GModule;
+typedef const gchar* ( *GModuleCheckInit )( GModule   *module );
+typedef void ( *GModuleUnload )( GModule   *module );
 
 /* return TRUE if dynamic module loading is supported */
-gboolean	g_module_supported	   (void) G_GNUC_CONST;
+gboolean    g_module_supported( void ) G_GNUC_CONST;
 
 /* open a module `file_name' and return handle, which is NULL on error */
-GModule*              g_module_open          (const gchar  *file_name,
-					      GModuleFlags  flags);
+GModule*              g_module_open( const gchar  *file_name,
+									 GModuleFlags flags );
 
 /* close a previously opened module, returns TRUE on success */
-gboolean              g_module_close         (GModule      *module);
+gboolean              g_module_close( GModule      *module );
 
 /* make a module resident so g_module_close on it will be ignored */
-void                  g_module_make_resident (GModule      *module);
+void                  g_module_make_resident( GModule      *module );
 
 /* query the last module error as a string */
-G_CONST_RETURN gchar* g_module_error         (void);
+G_CONST_RETURN gchar* g_module_error( void );
 
 /* retrieve a symbol pointer from `module', returns TRUE on success */
-gboolean              g_module_symbol        (GModule      *module,
-					      const gchar  *symbol_name,
-					      gpointer     *symbol);
+gboolean              g_module_symbol( GModule      *module,
+									   const gchar  *symbol_name,
+									   gpointer     *symbol );
 
 /* retrieve the file name from an existing module */
-G_CONST_RETURN gchar* g_module_name          (GModule      *module);
+G_CONST_RETURN gchar* g_module_name( GModule      *module );
 
 /* Build the actual file name containing a module. `directory' is the
  * directory where the module file is supposed to be, or NULL or empty
@@ -87,8 +87,8 @@ G_CONST_RETURN gchar* g_module_name          (GModule      *module);
  *
  * No checks are made that the file exists, or is of correct type.
  */
-gchar*                g_module_build_path    (const gchar  *directory,
-					      const gchar  *module_name);
+gchar*                g_module_build_path( const gchar  *directory,
+										   const gchar  *module_name );
 
 
 G_END_DECLS

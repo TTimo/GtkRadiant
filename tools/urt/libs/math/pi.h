@@ -1,5 +1,5 @@
 
-#if !defined(INCLUDED_MATH_PI_H)
+#if !defined( INCLUDED_MATH_PI_H )
 #define INCLUDED_MATH_PI_H
 
 /// \file
@@ -13,13 +13,11 @@ const double c_inv_2pi = 1 / c_2pi;
 const double c_DEG2RADMULT = c_pi / 180.0;
 const double c_RAD2DEGMULT = 180.0 / c_pi;
 
-inline double radians_to_degrees(double radians)
-{
-  return radians * c_RAD2DEGMULT;
+inline double radians_to_degrees( double radians ){
+	return radians * c_RAD2DEGMULT;
 }
-inline double degrees_to_radians(double degrees)
-{
-  return degrees * c_DEG2RADMULT;
+inline double degrees_to_radians( double degrees ){
+	return degrees * c_DEG2RADMULT;
 }
 
 #endif

@@ -16,7 +16,7 @@
  * Free Software Foundation, Inc., 59 Temple Place, Suite 330,
  * Boston, MA 02111-1307, USA.
  */
-#if !defined (__GLIB_GOBJECT_H_INSIDE__) && !defined (GOBJECT_COMPILATION)
+#if !defined ( __GLIB_GOBJECT_H_INSIDE__ ) && !defined ( GOBJECT_COMPILATION )
 #error "Only <glib-object.h> can be included directly."
 #endif
 
@@ -27,14 +27,14 @@
 
 G_BEGIN_DECLS
 
-void g_source_set_closure (GSource  *source,
-			   GClosure *closure);
+void g_source_set_closure( GSource  *source,
+						   GClosure *closure );
 
-GType g_io_channel_get_type   (void);
-GType g_io_condition_get_type (void);
+GType g_io_channel_get_type( void );
+GType g_io_condition_get_type( void );
 
-#define G_TYPE_IO_CHANNEL (g_io_channel_get_type ())
-#define G_TYPE_IO_CONDITION (g_io_condition_get_type ())
+#define G_TYPE_IO_CHANNEL ( g_io_channel_get_type() )
+#define G_TYPE_IO_CONDITION ( g_io_condition_get_type() )
 
 G_END_DECLS
 

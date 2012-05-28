@@ -1,33 +1,33 @@
 /* -------------------------------------------------------------------------------
 
-This code is based on source provided under the terms of the Id Software 
-LIMITED USE SOFTWARE LICENSE AGREEMENT, a copy of which is included with the
-GtkRadiant sources (see LICENSE_ID). If you did not receive a copy of 
-LICENSE_ID, please contact Id Software immediately at info@idsoftware.com.
+   This code is based on source provided under the terms of the Id Software
+   LIMITED USE SOFTWARE LICENSE AGREEMENT, a copy of which is included with the
+   GtkRadiant sources (see LICENSE_ID). If you did not receive a copy of
+   LICENSE_ID, please contact Id Software immediately at info@idsoftware.com.
 
-All changes and additions to the original source which have been developed by
-other contributors (see CONTRIBUTORS) are provided under the terms of the
-license the contributors choose (see LICENSE), to the extent permitted by the
-LICENSE_ID. If you did not receive a copy of the contributor license,
-please contact the GtkRadiant maintainers at info@gtkradiant.com immediately.
+   All changes and additions to the original source which have been developed by
+   other contributors (see CONTRIBUTORS) are provided under the terms of the
+   license the contributors choose (see LICENSE), to the extent permitted by the
+   LICENSE_ID. If you did not receive a copy of the contributor license,
+   please contact the GtkRadiant maintainers at info@gtkradiant.com immediately.
 
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
-AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-DISCLAIMED. IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE FOR ANY
-DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
-(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
-ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
+   AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+   IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+   DISCLAIMED. IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE FOR ANY
+   DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+   (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+   LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+   ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+   (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-----------------------------------------------------------------------------------
+   ----------------------------------------------------------------------------------
 
-This code has been altered significantly from its original form, to support
-several games based on the Quake III Arena engine, in the form of "Q3Map2."
+   This code has been altered significantly from its original form, to support
+   several games based on the Quake III Arena engine, in the form of "Q3Map2."
 
-------------------------------------------------------------------------------- */
+   ------------------------------------------------------------------------------- */
 
 
 
@@ -42,21 +42,22 @@ several games based on the Quake III Arena engine, in the form of "Q3Map2."
 
 
 
-void RemovePortalFromNode (portal_t *portal, node_t *l);
+void RemovePortalFromNode( portal_t *portal, node_t *l );
 
-node_t *NodeForPoint (node_t *node, vec3_t origin)
-{
-	plane_t	*plane;
-	vec_t	d;
+node_t *NodeForPoint( node_t *node, vec3_t origin ){
+	plane_t *plane;
+	vec_t d;
 
-	while (node->planenum != PLANENUM_LEAF)
+	while ( node->planenum != PLANENUM_LEAF )
 	{
 		plane = &mapplanes[node->planenum];
-		d = DotProduct (origin, plane->normal) - plane->dist;
-		if (d >= 0)
+		d = DotProduct( origin, plane->normal ) - plane->dist;
+		if ( d >= 0 ) {
 			node = node->children[0];
-		else
+		}
+		else{
 			node = node->children[1];
+		}
 	}
 
 	return node;
@@ -65,98 +66,93 @@ node_t *NodeForPoint (node_t *node, vec3_t origin)
 
 
 /*
-=============
-FreeTreePortals_r
-=============
-*/
-void FreeTreePortals_r (node_t *node)
-{
-	portal_t	*p, *nextp;
-	int			s;
+   =============
+   FreeTreePortals_r
+   =============
+ */
+void FreeTreePortals_r( node_t *node ){
+	portal_t    *p, *nextp;
+	int s;
 
 	// free children
-	if (node->planenum != PLANENUM_LEAF)
-	{
-		FreeTreePortals_r (node->children[0]);
-		FreeTreePortals_r (node->children[1]);
+	if ( node->planenum != PLANENUM_LEAF ) {
+		FreeTreePortals_r( node->children[0] );
+		FreeTreePortals_r( node->children[1] );
 	}
 
 	// free portals
-	for (p=node->portals ; p ; p=nextp)
+	for ( p = node->portals ; p ; p = nextp )
 	{
-		s = (p->nodes[1] == node);
+		s = ( p->nodes[1] == node );
 		nextp = p->next[s];
 
-		RemovePortalFromNode (p, p->nodes[!s]);
-		FreePortal (p);
+		RemovePortalFromNode( p, p->nodes[!s] );
+		FreePortal( p );
 	}
 	node->portals = NULL;
 }
 
 /*
-=============
-FreeTree_r
-=============
-*/
-void FreeTree_r (node_t *node)
-{
+   =============
+   FreeTree_r
+   =============
+ */
+void FreeTree_r( node_t *node ){
 	// free children
-	if (node->planenum != PLANENUM_LEAF)
-	{
-		FreeTree_r (node->children[0]);
-		FreeTree_r (node->children[1]);
+	if ( node->planenum != PLANENUM_LEAF ) {
+		FreeTree_r( node->children[0] );
+		FreeTree_r( node->children[1] );
 	}
 
 	// free bspbrushes
-	FreeBrushList (node->brushlist);
+	FreeBrushList( node->brushlist );
 
 	// free the node
-	if (node->volume)
-		FreeBrush (node->volume);
+	if ( node->volume ) {
+		FreeBrush( node->volume );
+	}
 
-	free (node);
+	free( node );
 }
 
 
 /*
-=============
-FreeTree
-=============
-*/
-void FreeTree (tree_t *tree)
-{
-	FreeTreePortals_r (tree->headnode);
-	FreeTree_r (tree->headnode);
-	free (tree);
+   =============
+   FreeTree
+   =============
+ */
+void FreeTree( tree_t *tree ){
+	FreeTreePortals_r( tree->headnode );
+	FreeTree_r( tree->headnode );
+	free( tree );
 }
 
 //===============================================================
 
-void PrintTree_r (node_t *node, int depth)
-{
-	int		i;
-	plane_t	*plane;
-	brush_t	*bb;
+void PrintTree_r( node_t *node, int depth ){
+	int i;
+	plane_t *plane;
+	brush_t *bb;
 
-	for (i=0 ; i<depth ; i++)
-		Sys_Printf ("  ");
-	if (node->planenum == PLANENUM_LEAF)
-	{
-		if (!node->brushlist)
-			Sys_Printf ("NULL\n");
+	for ( i = 0 ; i < depth ; i++ )
+		Sys_Printf( "  " );
+	if ( node->planenum == PLANENUM_LEAF ) {
+		if ( !node->brushlist ) {
+			Sys_Printf( "NULL\n" );
+		}
 		else
 		{
-			for (bb=node->brushlist ; bb ; bb=bb->next)
-				Sys_Printf ("%d ", bb->original->brushNum);
-			Sys_Printf ("\n");
+			for ( bb = node->brushlist ; bb ; bb = bb->next )
+				Sys_Printf( "%d ", bb->original->brushNum );
+			Sys_Printf( "\n" );
 		}
 		return;
 	}
 
 	plane = &mapplanes[node->planenum];
-	Sys_Printf ("#%d (%5.2f %5.2f %5.2f):%5.2f\n", node->planenum,
-		plane->normal[0], plane->normal[1], plane->normal[2],
-		plane->dist);
-	PrintTree_r (node->children[0], depth+1);
-	PrintTree_r (node->children[1], depth+1);
+	Sys_Printf( "#%d (%5.2f %5.2f %5.2f):%5.2f\n", node->planenum,
+				plane->normal[0], plane->normal[1], plane->normal[2],
+				plane->dist );
+	PrintTree_r( node->children[0], depth + 1 );
+	PrintTree_r( node->children[1], depth + 1 );
 }

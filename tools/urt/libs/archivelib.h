@@ -1,5 +1,5 @@
 
-#if !defined (INCLUDED_ARCHIVELIB_H)
+#if !defined ( INCLUDED_ARCHIVELIB_H )
 #define INCLUDED_ARCHIVELIB_H
 
 #include "debugging/debugging.h"
@@ -15,41 +15,36 @@
 template<typename InputStreamType, int SIZE = 1024>
 class SingleByteInputStream
 {
-  typedef typename InputStreamType::byte_type byte_type;
-  enum { c_bufferSize = SIZE };
+typedef typename InputStreamType::byte_type byte_type;
+enum { c_bufferSize = SIZE };
 
-  InputStreamType& m_inputStream;
-  byte_type m_buffer[c_bufferSize];
-  byte_type* m_cur;
-  byte_type* m_end;
+InputStreamType& m_inputStream;
+byte_type m_buffer[c_bufferSize];
+byte_type* m_cur;
+byte_type* m_end;
 
 public:
 
-  SingleByteInputStream(InputStreamType& inputStream) : m_inputStream(inputStream), m_cur(m_buffer + c_bufferSize), m_end(m_cur)
-  {
-  }
-  bool readByte(byte_type& b)
-  {
-    if(m_cur == m_end)
-    {
-      if(m_end != m_buffer + c_bufferSize)
-      {
-        return false;
-      }
+SingleByteInputStream( InputStreamType& inputStream ) : m_inputStream( inputStream ), m_cur( m_buffer + c_bufferSize ), m_end( m_cur ){
+}
+bool readByte( byte_type& b ){
+	if ( m_cur == m_end ) {
+		if ( m_end != m_buffer + c_bufferSize ) {
+			return false;
+		}
 
-      m_end = m_buffer + m_inputStream.read(m_buffer, c_bufferSize);
-      m_cur = m_buffer;
+		m_end = m_buffer + m_inputStream.read( m_buffer, c_bufferSize );
+		m_cur = m_buffer;
 
-      if(m_end == m_buffer)
-      {
-        return false;
-      }
-    }
+		if ( m_end == m_buffer ) {
+			return false;
+		}
+	}
 
-    b = *m_cur++;
+	b = *m_cur++;
 
-    return true;
-  }
+	return true;
+}
 };
 
 /// \brief A binary-to-text wrapper around an InputStream.
@@ -57,180 +52,153 @@ public:
 template<typename BinaryInputStreamType>
 class BinaryToTextInputStream : public TextInputStream
 {
-  SingleByteInputStream<BinaryInputStreamType> m_inputStream;
+SingleByteInputStream<BinaryInputStreamType> m_inputStream;
 public:
-  BinaryToTextInputStream(BinaryInputStreamType& inputStream) : m_inputStream(inputStream)
-  {
-  }
-  std::size_t read(char* buffer, std::size_t length)
-  {
-    char* p = buffer;
-    for(;;)
-    {
-      if(length != 0 && m_inputStream.readByte(*reinterpret_cast<typename BinaryInputStreamType::byte_type*>(p)))
-      {
-        if(*p != '\r')
-        {
-          ++p;
-          --length;
-        }
-      }
-      else
-      {
-        return p - buffer;
-      }
-    }
-  }
+BinaryToTextInputStream( BinaryInputStreamType& inputStream ) : m_inputStream( inputStream ){
+}
+std::size_t read( char* buffer, std::size_t length ){
+	char* p = buffer;
+	for (;; )
+	{
+		if ( length != 0 && m_inputStream.readByte( *reinterpret_cast<typename BinaryInputStreamType::byte_type*>( p ) ) ) {
+			if ( *p != '\r' ) {
+				++p;
+				--length;
+			}
+		}
+		else
+		{
+			return p - buffer;
+		}
+	}
+}
 };
 
 /// \brief An ArchiveFile which is stored uncompressed as part of a larger archive file.
 class StoredArchiveFile : public ArchiveFile
 {
-  CopiedString m_name;
-  FileInputStream m_filestream;
-  SubFileInputStream m_substream;
-  FileInputStream::size_type m_size;
+CopiedString m_name;
+FileInputStream m_filestream;
+SubFileInputStream m_substream;
+FileInputStream::size_type m_size;
 public:
-  typedef FileInputStream::size_type size_type;
-  typedef FileInputStream::position_type position_type;
+typedef FileInputStream::size_type size_type;
+typedef FileInputStream::position_type position_type;
 
-  StoredArchiveFile(const char* name, const char* archiveName, position_type position, size_type stream_size, size_type file_size)
-    : m_name(name), m_filestream(archiveName), m_substream(m_filestream, position, stream_size), m_size(file_size)
-  {
-  }
+StoredArchiveFile( const char* name, const char* archiveName, position_type position, size_type stream_size, size_type file_size )
+	: m_name( name ), m_filestream( archiveName ), m_substream( m_filestream, position, stream_size ), m_size( file_size ){
+}
 
-  static StoredArchiveFile* create(const char* name, const char* archiveName, position_type position, size_type stream_size, size_type file_size)
-  {
-    return New<StoredArchiveFile>().scalar(name, archiveName, position, stream_size, file_size);
-  }
+static StoredArchiveFile* create( const char* name, const char* archiveName, position_type position, size_type stream_size, size_type file_size ){
+	return New<StoredArchiveFile>().scalar( name, archiveName, position, stream_size, file_size );
+}
 
-  void release()
-  {
-    Delete<StoredArchiveFile>().scalar(this);
-  }
-  size_type size() const
-  {
-    return m_size;
-  }
-  const char* getName() const
-  {
-    return m_name.c_str();
-  }
-  InputStream& getInputStream()
-  {
-    return m_substream;
-  }
+void release(){
+	Delete<StoredArchiveFile>().scalar( this );
+}
+size_type size() const {
+	return m_size;
+}
+const char* getName() const {
+	return m_name.c_str();
+}
+InputStream& getInputStream(){
+	return m_substream;
+}
 };
 
 /// \brief An ArchiveTextFile which is stored uncompressed as part of a larger archive file.
 class StoredArchiveTextFile : public ArchiveTextFile
 {
-  CopiedString m_name;
-  FileInputStream m_filestream;
-  SubFileInputStream m_substream;
-  BinaryToTextInputStream<SubFileInputStream> m_textStream;
+CopiedString m_name;
+FileInputStream m_filestream;
+SubFileInputStream m_substream;
+BinaryToTextInputStream<SubFileInputStream> m_textStream;
 public:
-  typedef FileInputStream::size_type size_type;
-  typedef FileInputStream::position_type position_type;
+typedef FileInputStream::size_type size_type;
+typedef FileInputStream::position_type position_type;
 
-  StoredArchiveTextFile(const char* name, const char* archiveName, position_type position, size_type stream_size)
-    : m_name(name), m_filestream(archiveName), m_substream(m_filestream, position, stream_size), m_textStream(m_substream)
-  {
-  }
+StoredArchiveTextFile( const char* name, const char* archiveName, position_type position, size_type stream_size )
+	: m_name( name ), m_filestream( archiveName ), m_substream( m_filestream, position, stream_size ), m_textStream( m_substream ){
+}
 
-  static StoredArchiveTextFile* create(const char* name, const char* archiveName, position_type position, size_type stream_size)
-  {
-    return New<StoredArchiveTextFile>().scalar(name, archiveName, position, stream_size);
-  }
+static StoredArchiveTextFile* create( const char* name, const char* archiveName, position_type position, size_type stream_size ){
+	return New<StoredArchiveTextFile>().scalar( name, archiveName, position, stream_size );
+}
 
-  void release()
-  {
-    Delete<StoredArchiveTextFile>().scalar(this);
-  }
-  const char* getName() const
-  {
-    return m_name.c_str();
-  }
-  TextInputStream& getInputStream()
-  {
-    return m_textStream;
-  }
+void release(){
+	Delete<StoredArchiveTextFile>().scalar( this );
+}
+const char* getName() const {
+	return m_name.c_str();
+}
+TextInputStream& getInputStream(){
+	return m_textStream;
+}
 };
 
 /// \brief An ArchiveFile which is stored as a single file on disk.
 class DirectoryArchiveFile : public ArchiveFile
 {
-  CopiedString m_name;
-  FileInputStream m_istream;
-  FileInputStream::size_type m_size;
+CopiedString m_name;
+FileInputStream m_istream;
+FileInputStream::size_type m_size;
 public:
-  typedef FileInputStream::size_type size_type;
+typedef FileInputStream::size_type size_type;
 
-  DirectoryArchiveFile(const char* name, const char* filename)
-    : m_name(name), m_istream(filename)
-  {
-    if(!failed())
-    {
-      m_istream.seek(0, FileInputStream::end);
-      m_size = m_istream.tell();
-      m_istream.seek(0);
-    }
-    else
-    {
-      m_size = 0;
-    }
-  }
-  bool failed() const
-  {
-    return m_istream.failed();
-  }
+DirectoryArchiveFile( const char* name, const char* filename )
+	: m_name( name ), m_istream( filename ){
+	if ( !failed() ) {
+		m_istream.seek( 0, FileInputStream::end );
+		m_size = m_istream.tell();
+		m_istream.seek( 0 );
+	}
+	else
+	{
+		m_size = 0;
+	}
+}
+bool failed() const {
+	return m_istream.failed();
+}
 
-  void release()
-  {
-    delete this;
-  }
-  size_type size() const
-  {
-    return m_size;
-  }
-  const char* getName() const
-  {
-    return m_name.c_str();
-  }
-  InputStream& getInputStream()
-  {
-    return m_istream;
-  }
+void release(){
+	delete this;
+}
+size_type size() const {
+	return m_size;
+}
+const char* getName() const {
+	return m_name.c_str();
+}
+InputStream& getInputStream(){
+	return m_istream;
+}
 };
 
 /// \brief An ArchiveTextFile which is stored as a single file on disk.
 class DirectoryArchiveTextFile : public ArchiveTextFile
 {
-  CopiedString m_name;
-  TextFileInputStream m_inputStream;
+CopiedString m_name;
+TextFileInputStream m_inputStream;
 public:
 
-  DirectoryArchiveTextFile(const char* name, const char* filename)
-    : m_name(name), m_inputStream(filename)
-  {
-  }
-  bool failed() const
-  {
-    return m_inputStream.failed();
-  }
+DirectoryArchiveTextFile( const char* name, const char* filename )
+	: m_name( name ), m_inputStream( filename ){
+}
+bool failed() const {
+	return m_inputStream.failed();
+}
 
-  void release()
-  {
-    delete this;
-  }
-  const char* getName() const
-  {
-    return m_name.c_str();
-  }
-  TextInputStream& getInputStream()
-  {
-    return m_inputStream;
-  }
+void release(){
+	delete this;
+}
+const char* getName() const {
+	return m_name.c_str();
+}
+TextInputStream& getInputStream(){
+	return m_inputStream;
+}
 };
 
 

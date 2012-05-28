@@ -25,29 +25,27 @@
 
 G_BEGIN_DECLS
 
-#define G_SHELL_ERROR g_shell_error_quark ()
+#define G_SHELL_ERROR g_shell_error_quark()
 
 typedef enum
 {
-  /* mismatched or otherwise mangled quoting */
-  G_SHELL_ERROR_BAD_QUOTING,
-  /* string to be parsed was empty */
-  G_SHELL_ERROR_EMPTY_STRING,
-  G_SHELL_ERROR_FAILED
+	/* mismatched or otherwise mangled quoting */
+	G_SHELL_ERROR_BAD_QUOTING,
+	/* string to be parsed was empty */
+	G_SHELL_ERROR_EMPTY_STRING,
+	G_SHELL_ERROR_FAILED
 } GShellError;
 
-GQuark g_shell_error_quark (void);
+GQuark g_shell_error_quark( void );
 
-gchar*   g_shell_quote      (const gchar   *unquoted_string);
-gchar*   g_shell_unquote    (const gchar   *quoted_string,
-                             GError       **error);
-gboolean g_shell_parse_argv (const gchar   *command_line,
-                             gint          *argcp,
-                             gchar       ***argvp,
-                             GError       **error);
+gchar*   g_shell_quote( const gchar   *unquoted_string );
+gchar*   g_shell_unquote( const gchar   *quoted_string,
+						  GError       **error );
+gboolean g_shell_parse_argv( const gchar   *command_line,
+							 gint          *argcp,
+							 gchar       ***argvp,
+							 GError       **error );
 
 G_END_DECLS
 
 #endif /* __G_SHELL_H__ */
-
-
