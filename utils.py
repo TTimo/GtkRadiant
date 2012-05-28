@@ -1,7 +1,7 @@
 # -*- mode: python -*-
-# QuakeZero build scripts
-# TTimo <ttimo@idsoftware.com>
-# http://scons.sourceforge.net
+# GtkRadiant build scripts
+# TTimo <ttimo@ttimo.net>
+# http://scons.org/
 
 import os, commands, platform, xml.sax, re, string, platform
 
