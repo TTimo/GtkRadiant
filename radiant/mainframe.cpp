@@ -29,8 +29,6 @@
 #ifdef _WIN32
 extern "C" {
 #include <gdk/gdkwin32.h>
-#define COMPILE_MULTIMON_STUBS
-#include <multimon.h>
 }
 #endif
 #include <gtk/gtk.h>
