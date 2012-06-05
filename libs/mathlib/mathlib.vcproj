@@ -147,10 +147,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\linear.c"
-				>
-			</File>
-			<File
 				RelativePath=".\m4x4.c"
 				>
 			</File>
