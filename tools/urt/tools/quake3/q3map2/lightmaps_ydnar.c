@@ -230,7 +230,7 @@ int ImportLightmapsMain( int argc, char **argv ){
 
 		/* parse file into an image */
 		pixels = NULL;
-		LoadTGABuffer( buffer, &pixels, &width, &height );
+		LoadTGABuffer( buffer, buffer + len, &pixels, &width, &height );
 		free( buffer );
 
 		/* sanity check it */

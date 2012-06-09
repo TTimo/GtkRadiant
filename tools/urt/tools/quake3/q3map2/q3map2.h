@@ -79,7 +79,6 @@
 #include "inout.h"
 #include "vfs.h"
 #include "png.h"
-#include "radiant_jpeglib.h"
 
 #include <stdlib.h>
 
