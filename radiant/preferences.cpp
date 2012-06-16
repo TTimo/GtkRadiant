@@ -3573,6 +3573,9 @@ void CGameInstall::Run() {
 		Str dest = m_strEngine.GetBuffer();
 		radCopyTree( source.GetBuffer(), dest.GetBuffer() );
 		fprintf( fg, "  basegame=\"base\"\n" );
+		fprintf( fg, "  shaderpath=\"shaders\"\n" );
+		fprintf( fg, "  default_scale=\"0.25\"\n" );
+		fprintf( fg, "  caulk_shader=\"textures/system/caulk\"\n" );
 		break;
 	}
 	case GAME_REACTION: {
