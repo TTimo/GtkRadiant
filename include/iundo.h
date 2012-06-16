@@ -41,7 +41,7 @@ typedef void ( *PFN_UNDOADDENTITY )( entity_t *entity );
 //end an entity after the operation is performed
 typedef void ( *PFN_UNDOENDENTITY )( entity_t *entity );
 //undo last operation (bSilent == true -> will not print the "undone blah blah message")
-typedef void ( *PFN_UNDO )( unsigned char bSilent );
+typedef void ( *PFN_UNDO )( qboolean bSilent );
 //redo last undone operation
 typedef void ( *PFN_REDO )( void );
 //get the undo Id of the next undo (0 if none available)
