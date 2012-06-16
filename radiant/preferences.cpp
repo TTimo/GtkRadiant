@@ -3571,13 +3571,13 @@ void CGameInstall::Run() {
 		source += JA_PACK;
 		source += "/install/";
 		Str dest = m_strEngine.GetBuffer();
+		radCopyTree( source.GetBuffer(), dest.GetBuffer() );
 		// Hardcoded fix for "missing" shaderlist in gamepack
-		dest += "/baseq3/shaders/shaderlist.txt";
+		dest += "/base/shaders/shaderlist.txt";
 		if(CheckFile(dest.GetBuffer()) != PATH_FILE) {
-			source += "baseq3/shaders/default_shaderlist.txt";
+			source += "base/scripts/default_shaderlist.txt";
 			radCopyFile(source.GetBuffer(),dest.GetBuffer());
 		}
-		radCopyTree( source.GetBuffer(), dest.GetBuffer() );
 		fprintf( fg, "  basegame=\"base\"\n" );
 		fprintf( fg, "  shaderpath=\"shaders\"\n" );
 		fprintf( fg, "  default_scale=\"0.25\"\n" );
