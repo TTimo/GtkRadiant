@@ -214,6 +214,7 @@ void Dump();
 #define JA_PACK "JAPack"
 #define REACTION_PACK "ReactionPack"
 #define ET_PACK "ETPack"
+#define QL_PACK "QLPack"
 
 class CGameInstall : public Dialog {
 public:
@@ -238,6 +239,7 @@ enum gameType_e {
 	GAME_JA,
 	GAME_REACTION,
 	GAME_ET,
+	GAME_QL,
 	GAME_COUNT
 };
 
