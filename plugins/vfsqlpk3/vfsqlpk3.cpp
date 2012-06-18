@@ -28,11 +28,13 @@
    SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-//
-// Quake Live Virtual FileSystem - reads files from different dirs and inside pak files
-//
-// QBall147
-//
+/*****************************************************************************
+ * name:		vfsqlpk3.cpp
+ *
+ * desc:		Quake Live Virtual FileSystem - reads files from different dirs and inside pak files 
+ *
+ * QBall147 - 18/06/2012
+ *****************************************************************************/
 
 #ifdef _WIN32
 #include <wtypes.h>

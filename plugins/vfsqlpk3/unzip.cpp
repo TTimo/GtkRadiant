@@ -6,11 +6,11 @@ See https://github.com/TTimo/GtkRadiant/issues/33
 
 
 /*****************************************************************************
- * name:		unzip.c
+ * name:		unzip.cpp
  *
- * desc:		IO on .zip files using portions of zlib 
+ * desc:		IO on (ql encoded) .zip files using portions of zlib 
  *
- *
+ * QBall147 - 18/06/2012
  *****************************************************************************/
 
 #include <stdlib.h>
@@ -1223,7 +1223,7 @@ void   zcfree  OF((voidp opaque, voidp ptr));
 static int unzlocal_getByte(FILE *fin,int *pi)
 {
     unsigned char c;
-	int err = fread(&c, 1, 1, fin);
+	int err = fread_ql(&c, 1, 1, fin);
     if (err==1)
     {
         *pi = (int)c;
@@ -1246,7 +1246,7 @@ static int unzlocal_getShort (FILE* fin, uLong *pX)
 {
 	short	v;
 
-	fread( &v, sizeof(v), 1, fin );
+	fread_ql( &v, sizeof(v), 1, fin );
 
 	*pX = __LittleShort( v);
 	return UNZ_OK;
@@ -1275,7 +1275,7 @@ static int unzlocal_getLong (FILE *fin, uLong *pX)
 {
 	int		v;
 
-	fread( &v, sizeof(v), 1, fin );
+	fread_ql( &v, sizeof(v), 1, fin );
 
 	*pX = __LittleLong( v);
 	return UNZ_OK;
