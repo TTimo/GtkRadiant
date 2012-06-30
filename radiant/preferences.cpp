@@ -3338,6 +3338,9 @@ void CGameInstall::BuildDialog() {
 		case GAME_ET:
 			gtk_combo_box_append_text( GTK_COMBO_BOX( combo ), _( "Wolfenstein: Enemy Territory" ) );
 			break;
+		case GAME_QL:
+			gtk_combo_box_append_text( GTK_COMBO_BOX( combo ), _( "Quake Live" ) );
+			break;
 		}
 		iGame++;
 	}
@@ -3448,6 +3451,9 @@ void CGameInstall::Run() {
 		break;
 	case GAME_ET:
 		gameFilePath += "et.game";
+		break;
+	case GAME_QL:
+		gameFilePath += "ql.game";
 		break;
 	}
 
@@ -3622,6 +3628,29 @@ void CGameInstall::Run() {
 		fprintf( fg, "  basegame=\"etmain\"\n" );
 		break;
 	}
+	case GAME_QL: {
+/*#ifdef _WIN32
+		fprintf( fg, "  "ENGINE_ATTRIBUTE "=\"ql.exe\"\n");
+#elif __linux__
+		fprintf( fg, "  "ENGINE_ATTRIBUTE "=\"ql\"\n" );
+#endif*/
+		fprintf( fg, "  "TOOLS_ATTRIBUTE "=\"%sinstalls/"QL_PACK "/game\"\n", g_strAppPath.GetBuffer() );
+		fprintf( fg, "  prefix=\".ql\"\n" );
+		Str source = g_strAppPath.GetBuffer();
+		source += "installs/";
+		source += QL_PACK;
+		source += "/install/";
+		Str dest = m_strEngine.GetBuffer();
+		radCopyTree( source.GetBuffer(), dest.GetBuffer() );
+		// Hardcoded fix for "missing" shaderlist in gamepack
+		dest += "/baseq3/scripts/shaderlist.txt";
+		if(CheckFile(dest.GetBuffer()) != PATH_FILE) {
+			source += "baseq3/scripts/default_shaderlist.txt";
+			radCopyFile(source.GetBuffer(),dest.GetBuffer());
+		}
+		fprintf( fg, "  basegame=\"baseq3\"\n" );
+		break;
+	}
 	}
 	fprintf( fg, "/>\n" );
 	fclose( fg );
@@ -3673,6 +3702,9 @@ void CGameInstall::ScanGames() {
 		}
 		if ( stricmp( dirname, ET_PACK ) == 0 ) {
 			m_availGames[ iGame++ ] = GAME_ET;
+		}
+		if ( stricmp( dirname, QL_PACK ) == 0 ) {
+			m_availGames[ iGame++ ] = GAME_QL;
 		}
 	}
 	Sys_Printf( "No installable games found in: %s\n",

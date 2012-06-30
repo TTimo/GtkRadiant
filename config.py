@@ -96,7 +96,8 @@ class Config:
 				VariantDir( build_dir, '.', duplicate = 0 )
 				shlib_objects_extra[libname] = SConscript( os.path.join( build_dir, 'SConscript.lib' ) )
 
-			for project in [ 'plugins/vfspk3/vfspk3.vcproj',
+			for project in [ 'plugins/vfsqlpk3/vfsqlpk3.vcproj',
+					 'plugins/vfspk3/vfspk3.vcproj',
 					 'plugins/vfspak/vfspak.vcproj',
 					 'plugins/vfswad/vfswad.vcproj',
 					 'plugins/eclassfgd/fgd.vcproj',
