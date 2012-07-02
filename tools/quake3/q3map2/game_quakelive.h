@@ -43,6 +43,18 @@
    ------------------------------------------------------------------------------- */
 
 
+   /* -------------------------------------------------------------------------------
+   
+   Additional surface flags for Quake Live
+   
+   ------------------------------------------------------------------------------- */
+
+#define Q_SURF_SNOWSTEPS 	0x80000 	// snow footsteps
+#define Q_SURF_WOODSTEPS 	0x100000 	// wood footsteps
+#define Q_SURF_DMGTHROUGH 	0x200000	// Missile dmg through surface(?)
+										// (This is not in use atm, will 
+										//  probably be re-purposed some day.)
+
 
 /* -------------------------------------------------------------------------------
 
@@ -126,6 +138,9 @@
 		{ "ladder",         0,                          0,                          Q_SURF_LADDER,              0,                          0,                          0 },
 		{ "nodamage",       0,                          0,                          Q_SURF_NODAMAGE,            0,                          0,                          0 },
 		{ "metalsteps",     0,                          0,                          Q_SURF_METALSTEPS,          0,                          0,                          0 },
+		{ "snowsteps",      0,                          0,                          Q_SURF_SNOWSTEPS,           0,                          0,                          0 },
+		{ "woodsteps",      0,                          0,                          Q_SURF_WOODSTEPS,           0,                          0,                          0 },
+		{ "dmgthrough",     0,                          0,                          Q_SURF_DMGTHROUGH,          0,                          0,                          0 },
 		{ "flesh",          0,                          0,                          Q_SURF_FLESH,               0,                          0,                          0 },
 		{ "nosteps",        0,                          0,                          Q_SURF_NOSTEPS,             0,                          0,                          0 },
 		{ "nodlight",       0,                          0,                          Q_SURF_NODLIGHT,            0,                          0,                          0 },
