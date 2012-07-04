@@ -49,6 +49,8 @@
 #include <stdio.h>
 
 // this is the version to expect from template projects
+// bump this to force a regeneration of the template menus
+// this is useful if you update/edit the BSP command lines for instance
 #define PROJECT_VERSION 2
 
 //#define MEM_DEBUG
