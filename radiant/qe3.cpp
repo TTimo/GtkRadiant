@@ -473,6 +473,50 @@ void ReplaceTemplates( char* w, const char* r ){
 }
 
 /*
+Load up a project file to get the current version
+ */
+int QE_GetTemplateVersionForProject( const char * projectfile ) {
+  xmlDocPtr doc;
+  xmlNodePtr node, project;
+  int ret;
+
+  Sys_Printf( "Scanning template version in %s\n", projectfile );
+  doc = ParseXMLFile( projectfile, true );
+  if ( doc == NULL ) {
+    Sys_FPrintf( SYS_ERR, "ERROR: XML parse failed %s\n", projectfile );
+    return 0;
+  }
+  node = doc->children;
+  while ( node != NULL && node->type != XML_DTD_NODE ) {
+    node = node->next;
+  }
+  if ( node == NULL || strcmp( (char*)node->name, "project" ) != 0 ) {
+    Sys_FPrintf( SYS_ERR, "ERROR: invalid file type %s\n", projectfile );
+    xmlFree( doc );
+    return 0;
+  }
+  while ( node->type != XML_ELEMENT_NODE ) {
+    node = node->next;
+  }
+  // <project>
+  project = node;
+
+  for ( node = project->children; node != NULL; node = node->next ) {
+    if ( node->type != XML_ELEMENT_NODE ) {
+      continue;
+    }
+    if ( strcmp( (char*)node->properties->children->content, "template_version" ) == 0 ) {
+      ret = atoi( (char*)node->properties->next->children->content );
+      xmlFreeDoc( doc );
+      return ret;
+    }
+  }
+  Sys_FPrintf( SYS_WRN, "Version key not found in %s\n", projectfile );
+  xmlFreeDoc( doc );
+  return 0;
+}
+
+/*
    ===========
    QE_LoadProject
    TODO TODO TODO (don't think this got fully merged in)

@@ -337,6 +337,8 @@ qboolean QE_KeyDown( int key, int nFlags = 0 );
 // does some sanity checks on the project entity, such as removing ending filename seperators from paths
 // (this usually gets propagated to the actual project file since most of the time we save right after calling the check)
 void     QE_CheckProjectEntity();
+// peek in a project file to retrieve the version key
+int		QE_GetTemplateVersionForProject( const char * projectfile );
 // this will load a new project entity in memory, and potentially process it from a template
 // NOTE TTimo calling QE_LoadProject won't take care of the various initialisation that are performed depending on the project settings
 //   you should then call QE_Init for that
