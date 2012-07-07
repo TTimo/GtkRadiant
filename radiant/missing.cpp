@@ -186,6 +186,7 @@ const char* FindFiles::NextFile() {
 }
 
 #else
+// WIN32
 
 FindFiles::FindFiles( const char *_directory ) {
 	char endChar;

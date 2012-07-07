@@ -519,13 +519,10 @@ int QE_GetTemplateVersionForProject( const char * projectfile ) {
 /*
    ===========
    QE_LoadProject
-   TODO TODO TODO (don't think this got fully merged in)
-   TTimo: added project file "version", version 2 adds '#' chars to the BSP command strings
-   version 3 was .. I don't remember .. version 4 adds q3map2 commands
-   TTimo: when QE_LoadProject is called, the prefs are updated with path to the latest project and saved on disk
+   NOTE: rather than bumping "version", consider bumping "template_version" (see above)
+   NOTE: when QE_LoadProject is called, the prefs are updated with path to the latest project and saved on disk
    ===========
  */
-/*\todo decide on a sensible location/name for project files.*/
 bool QE_LoadProject( const char *projectfile ){
 	char buf[1024];
 	xmlDocPtr doc;
