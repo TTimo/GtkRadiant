@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 10.00
-# Visual Studio 2008
+# Visual C++ Express 2008
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "radiant", "radiant\radiant.vcproj", "{65D02375-63EE-4A8A-9F8E-504B1D5A1D02}"
 	ProjectSection(ProjectDependencies) = postProject
 		{B957BA35-F807-4C84-85A2-C1F9AC56713B} = {B957BA35-F807-4C84-85A2-C1F9AC56713B}
@@ -186,6 +186,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "vfsqlpk3", "plugins\vfsqlpk
 		{E13CCFB0-A366-4EF3-A66F-C374B563E4DF} = {E13CCFB0-A366-4EF3-A66F-C374B563E4DF}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "q3map2", "tools\urt\tools\quake3\q3map2\q3map2.urt.vcproj", "{7AF7537E-94C3-4680-8F5E-C1CE30DC2041}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -348,6 +350,10 @@ Global
 		{9FD68F2C-B26A-461D-96E0-55AFC48AC9E0}.Debug|Win32.Build.0 = Debug|Win32
 		{9FD68F2C-B26A-461D-96E0-55AFC48AC9E0}.Release|Win32.ActiveCfg = Release|Win32
 		{9FD68F2C-B26A-461D-96E0-55AFC48AC9E0}.Release|Win32.Build.0 = Release|Win32
+		{7AF7537E-94C3-4680-8F5E-C1CE30DC2041}.Debug|Win32.ActiveCfg = Debug|Win32
+		{7AF7537E-94C3-4680-8F5E-C1CE30DC2041}.Debug|Win32.Build.0 = Debug|Win32
+		{7AF7537E-94C3-4680-8F5E-C1CE30DC2041}.Release|Win32.ActiveCfg = Release|Win32
+		{7AF7537E-94C3-4680-8F5E-C1CE30DC2041}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

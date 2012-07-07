@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8.00"
-	Name="q3map2"
+	Version="9.00"
+	Name="q3map2.urt"
 	ProjectGUID="{7AF7537E-94C3-4680-8F5E-C1CE30DC2041}"
 	RootNamespace="q3map2"
+	TargetFrameworkVersion="131072"
 	>
 	<Platforms>
 		<Platform
@@ -16,8 +17,8 @@
 	<Configurations>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory=".\Release"
-			IntermediateDirectory=".\Release"
+			OutputDirectory="$(SolutionDir)\install"
+			IntermediateDirectory="$(SolutionDir)\build\intermediate\$(ConfigurationName)\$(ProjectName)"
 			ConfigurationType="1"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC60.vsprops"
 			UseOfMFC="0"
@@ -45,7 +46,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				InlineFunctionExpansion="1"
-				AdditionalIncludeDirectories="H:\iourbanterror\q3map2\zlib\include\;..\..\..\include;..\common;..\..\..\libs;..\..\..\..\libxml2\include;..\q3map2;..\..\..\..\libpng;..\..\..\..\zlib;&quot;..\..\..\..\gtk2-win32\include\glib-2.0&quot;;&quot;..\..\..\..\gtk2-win32\lib\glib-2.0\include&quot;;&quot;c:\program files\subversion\mhash\lib&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)\include&quot;;&quot;$(SolutionDir)\tools\quake3\common&quot;;&quot;$(SolutionDir)\libs&quot;;&quot;$(SolutionDir)\..\gtk-2.16.6\include\glib-2.0&quot;;&quot;$(SolutionDir)\..\gtk-2.16.6\lib\glib-2.0\include&quot;;&quot;$(SolutionDir)\..\libxml2-2.7.3\include\libxml2&quot;;&quot;$(SolutionDir)\..\gtk-2.16.6\include\libpng14&quot;;&quot;$(SolutionDir)\..\gtk-2.16.6\include&quot;;&quot;$(SolutionDir)\..\jpeg-8c\include&quot;"
 				PreprocessorDefinitions="NDEBUG;WIN32;_CONSOLE"
 				StringPooling="true"
 				RuntimeLibrary="2"
@@ -72,16 +73,18 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="glib-2.0.lib wsock32.lib jpeg6.lib l_net.lib mathlib.lib md5lib.lib picomodel.lib ddslib.lib zdll.lib libpng13.lib libxml2.lib libmhash.lib"
-				OutputFile=".\Release/FS_q3map_Radbump_3.exe"
+				AdditionalDependencies="Ws2_32.lib glib-2.0.lib libpng.lib libxml2.lib libjpeg.lib md5lib.lib mathlib.lib picomodel.lib l_net.lib ddslib.lib quake3-common.lib"
+				OutputFile="$(OutDir)\$(ProjectName).exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="..\..\..\..\libpng\lib\;..\..\..\..\mhash\win32\libmhash\Release;..\..\..\..\zlib\lib\;..\..\..\libs\picomodel\Release;..\..\..\..\libxml2\win32\lib\;..\..\..\libs\ddslib\release;..\..\..\libs\md5lib\release;..\..\..\libs\mathlib\release;..\..\..\libs\pak\release;..\..\..\libs\jpeg6\release;..\..\..\libs\l_net\release;..\..\..\..\libxml2\win32\libxml2\release_so;&quot;..\..\..\..\gtk2-win32\lib\&quot;;..\common\glib\"
+				AdditionalLibraryDirectories="&quot;$(SolutionDir)\..\gtk-2.16.6\lib&quot;;&quot;$(SolutionDir)\..\libxml2-2.7.3\lib&quot;;&quot;$(SolutionDir)\..\jpeg-8c\lib&quot;;&quot;$(SolutionDir)\build\$(ConfigurationName)\libs&quot;"
 				ProgramDatabaseFile=".\Release/q3map2.pdb"
 				GenerateMapFile="true"
 				MapFileName=".\Release/q3map2.map"
 				SubSystem="1"
 				StackReserveSize="4194304"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -105,18 +108,14 @@
 				Name="VCAppVerifierTool"
 			/>
 			<Tool
-				Name="VCWebDeploymentTool"
-			/>
-			<Tool
 				Name="VCPostBuildEventTool"
-				Description="Python post build"
-				CommandLine="cd ..\..\.. &amp;&amp; run_python.bat win32_install.py release Q3Map2"
+				CommandLine=""
 			/>
 		</Configuration>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory=".\Debug"
-			IntermediateDirectory=".\Debug"
+			OutputDirectory="$(SolutionDir)\install"
+			IntermediateDirectory="$(SolutionDir)\build\intermediate\$(ConfigurationName)\$(ProjectName)"
 			ConfigurationType="1"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC60.vsprops"
 			UseOfMFC="0"
@@ -143,7 +142,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\..\include;..\common;..\..\..\libs;..\..\..\..\libxml2\include;..\..\..\..\libpng;H:\iourbanterror\q3map2\zlib\include;&quot;..\..\..\..\gtk2-win32\include\glib-2.0&quot;;&quot;..\..\..\..\gtk2-win32\lib\glib-2.0\include&quot;;&quot;c:\program files\subversion\mhash\lib&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)\include&quot;;&quot;$(SolutionDir)\tools\quake3\common&quot;;&quot;$(SolutionDir)\libs&quot;;&quot;$(SolutionDir)\..\gtk-2.16.6\include\glib-2.0&quot;;&quot;$(SolutionDir)\..\gtk-2.16.6\lib\glib-2.0\include&quot;;&quot;$(SolutionDir)\..\libxml2-2.7.3\include\libxml2&quot;;&quot;$(SolutionDir)\..\gtk-2.16.6\include\libpng14&quot;;&quot;$(SolutionDir)\..\gtk-2.16.6\include&quot;;&quot;$(SolutionDir)\..\jpeg-8c\include&quot;"
 				PreprocessorDefinitions="_DEBUG;WIN32;_CONSOLE"
 				MinimalRebuild="true"
 				RuntimeLibrary="3"
@@ -169,11 +168,11 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="glib-2.0.lib wsock32.lib jpeg6.lib l_net.lib mathlib.lib md5lib.lib zdll.lib libpng13.lib ddslib.lib libxml2.lib libmhash.lib picomodel.lib"
-				OutputFile="Debug/FS_q3map_Radbump_3.exe"
+				AdditionalDependencies="Ws2_32.lib glib-2.0.lib libpng.lib libxml2.lib libjpegd.lib md5lib.lib mathlib.lib picomodel.lib l_net.lib ddslib.lib quake3-common.lib"
+				OutputFile="$(OutDir)\$(ProjectName).exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="H:\iourbanterror\q3map2\GtkRadiant\libs\picomodel\Release;H:\iourbanterror\q3map2\mhash\win32\libmhash\Release\;H:\iourbanterror\q3map2\libxml2\win32\lib;H:\iourbanterror\q3map2\libpng\lib;..\..\..\libs\ddslib\Debug;..\..\..\libs\md5lib\Debug;..\..\..\libs\mathlib\Debug;..\..\..\libs\pak\Debug;..\..\..\libs\jpeg6\Debug;..\..\..\libs\l_net\Debug;..\..\..\..\libxml2\win32\libxml2\debug_so;..\..\..\..\lpng\projects\msvc\win32\libpng___Win32_Debug;..\..\..\libs\jpeg6\release;..\..\..\libs\l_net\release;..\..\..\..\libxml2\win32\libxml2\release_so;..\..\..\..\libpng\projects\msvc\libpng___Win32_Debug;..\..\..\..\libpng\projects\msvc\zlib___Win32_Debug;&quot;..\..\..\..\gtk2-win32\lib\&quot;;&quot;c:\program files\subversion\mhash\lib&quot;;..\common\glib\;H:\iourbanterror\q3map2\zlib\lib;&quot;c:\program files\subversion\libpng\lib&quot;;&quot;C:\Program Files\Subversion\libxml2\win32\lib&quot;;&quot;C:\Program Files\Subversion\mhash\win32\libmhash\Debug&quot;;&quot;C:\Program Files\Subversion\GtkRadiant\libs\picomodel\Debug&quot;"
+				AdditionalLibraryDirectories="&quot;$(SolutionDir)\..\gtk-2.16.6\lib&quot;;&quot;$(SolutionDir)\..\libxml2-2.7.3\lib&quot;;&quot;$(SolutionDir)\..\jpeg-8c\lib&quot;;&quot;$(SolutionDir)\build\$(ConfigurationName)\libs&quot;"
 				IgnoreDefaultLibraryNames="libcd,libcmtd"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile=".\Debug/FS_q3map2_1.pdb"
@@ -181,6 +180,8 @@
 				MapFileName=".\Debug/FS_q3map2_1.map"
 				SubSystem="1"
 				StackReserveSize="33554432"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -204,12 +205,8 @@
 				Name="VCAppVerifierTool"
 			/>
 			<Tool
-				Name="VCWebDeploymentTool"
-			/>
-			<Tool
 				Name="VCPostBuildEventTool"
-				Description="Python post build"
-				CommandLine="cd ..\..\.. &amp;&amp; run_python.bat win32_install.py Q3Map2"
+				CommandLine=""
 			/>
 		</Configuration>
 	</Configurations>
@@ -440,209 +437,6 @@
 					/>
 				</FileConfiguration>
 			</File>
-			<Filter
-				Name="common"
-				Filter=".c"
-				>
-				<File
-					RelativePath="..\common\cmdlib.c"
-					>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\common\imagelib.c"
-					>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\common\inout.c"
-					>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\common\mutex.c"
-					>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\common\polylib.c"
-					>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\common\scriplib.c"
-					>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\common\threads.c"
-					>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\common\unzip.c"
-					>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\common\vfs.c"
-					>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							AdditionalIncludeDirectories="..\..\..\..\src\glib"
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
-				</File>
-			</Filter>
 			<Filter
 				Name="bsp"
 				Filter=".c"
