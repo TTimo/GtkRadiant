@@ -2,7 +2,7 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9.00"
-	Name="q3map2.urt"
+	Name="q3map2_urt"
 	ProjectGUID="{7AF7537E-94C3-4680-8F5E-C1CE30DC2041}"
 	RootNamespace="q3map2"
 	TargetFrameworkVersion="131072"

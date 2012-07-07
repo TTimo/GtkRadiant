@@ -11,7 +11,7 @@ env = Environment()
 settings.SetupEnvironment( env, config['name'] )
 env.Prepend( CPPPATH = [ '#tools/quake3/common', ] )
 env.Append( LIBS = [ 'm', 'pthread', 'png', 'jpeg' ] )
-proj = utils.vcproj( os.path.join( GetLaunchDir(), 'tools/urt/tools/quake3/q3map2/q3map2.vcproj' ) )
+proj = utils.vcproj( os.path.join( GetLaunchDir(), 'tools/urt/tools/quake3/q3map2/q3map2_urt.vcproj' ) )
 objects = lib_objects
 
 def keep_file( n ):

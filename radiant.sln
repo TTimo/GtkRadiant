@@ -186,7 +186,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "vfsqlpk3", "plugins\vfsqlpk
 		{E13CCFB0-A366-4EF3-A66F-C374B563E4DF} = {E13CCFB0-A366-4EF3-A66F-C374B563E4DF}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "q3map2.urt", "tools\urt\tools\quake3\q3map2\q3map2.urt.vcproj", "{7AF7537E-94C3-4680-8F5E-C1CE30DC2041}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "q3map2_urt", "tools\urt\tools\quake3\q3map2\q3map2_urt.vcproj", "{7AF7537E-94C3-4680-8F5E-C1CE30DC2041}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -153,7 +153,7 @@ class Config:
 
 	def emit_q3map2( self, urt = False ):
                 if ( urt ):
-                        compiler_name = 'q3map2.urt'
+                        compiler_name = 'q3map2_urt'
                         sconscript_name = 'SConscript.q3map2.urt'
                 else:
                         compiler_name = 'q3map2'
