@@ -148,7 +148,6 @@ bool DoesFileExist( const char* pBuff, long& lSize ){
 	return false;
 }
 
-
 void Map_Snapshot(){
 	CString strMsg;
 
@@ -183,11 +182,22 @@ void Map_Snapshot(){
 		CString strNewPath;
 		strNewPath = strOrgPath;
 		strNewPath += strOrgFile;
+		
+		// QB - snapshots now follow the format: <mapname>.<snapnum>.<ext>
+		//      **NOTE** atm snapshots must end with a .map (or .xmap) ext (this is why they were broken)
+		CString strOldEXT = "map"; //default to .map
+		const char* type = strrchr( strOrgFile.GetBuffer(),'.' );
+		if ( type != NULL ) { strOldEXT = ++type; }; // get the ext for later.
+		StripExtension(strNewPath); // then strip it from the new path
+		//
+		
 		CString strFile;
 		while ( bGo )
 		{
 			char buf[PATH_MAX];
-			sprintf( buf, "%s.%i", strNewPath.GetBuffer(), nCount );
+			//sprintf( buf, "%s.%i", strNewPath.GetBuffer(), nCount );
+			// snapshot will now end with a known ext.
+			sprintf( buf, "%s.%i.%s", strNewPath.GetBuffer(), nCount, strOldEXT.GetBuffer() );
 			strFile = buf;
 			bGo = DoesFileExist( strFile, lSize );
 			nCount++;
