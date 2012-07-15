@@ -227,17 +227,15 @@ const char* FindFiles::NextFile() {
 	return findFileData.cFileName;
 }
 
-// NOTE: has a problem when trailing (back)slashes are present (different behavior than the nix implementation)
-// https://github.com/TTimo/GtkRadiant/issues/87
 EPathCheck CheckFile( const char *path ) {
-	struct _stat sbuf;
-	if ( _stat( path, &sbuf ) == -1 ) {
-		return PATH_FAIL;
-	}
-	if ( ( sbuf.st_mode & _S_IFDIR ) != 0 ) {
-		return PATH_DIRECTORY;
-	}
-	return PATH_FILE;
+  DWORD Attrib = GetFileAttributes( path );
+  if ( Attrib == INVALID_FILE_ATTRIBUTES ) {
+    return PATH_FAIL;
+  }
+  if ( Attrib & FILE_ATTRIBUTE_DIRECTORY ) {
+    return PATH_DIRECTORY;
+  }
+  return PATH_FILE;
 }
 
 bool radCreateDirectory( const char *directory, bool fatal_on_error ) {

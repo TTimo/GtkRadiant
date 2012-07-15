@@ -3413,15 +3413,11 @@ void CGameInstall::Run() {
 
 	// write out the game file
 	Str gameFilePath = g_strAppPath.GetBuffer();
-	gameFilePath += "games";
+	gameFilePath += "games/";
 	if ( CheckFile( gameFilePath ) != PATH_DIRECTORY ) {
 		radCreateDirectory( gameFilePath );
 	}
 	
-	// QB - Fix for when you have more than one game configured (before it just bombed out due to the dir already existing).
-	//      add the slash here instead of above else CheckFile() fails hard (on windows at least :/ )
-	gameFilePath += "/";
-
 	switch ( m_availGames[ m_nComboSelect ] ) {
 	case GAME_Q2:
 		gameFilePath += "q2.game";
