@@ -364,8 +364,11 @@ class Config:
         def FinishBuild( self, target, source, env ):
                 print( 'Lookup and bundle the PNG and JPEG libraries' )
                 # radiant.bin doesn't link to jpeg lib directly, grab that from a module
-                module_ldd = subprocess.check_output( 'ldd -r install/modules/image.so', shell = True )
-                print( module_ldd )
+                # Python 2.7 only!
+                #module_ldd = subprocess.check_output( 'ldd -r install/modules/image.so', shell = True )
+                p = subprocess.Popen( 'ldd -r install/modules/image.so', shell = True, stdout = subprocess.PIPE )
+                module_ldd = p.communicate()[0]
+#                print( module_ldd )
 
                 def find_library( output, libname ):
                         match = filter( lambda l : l.find( libname ) != -1, output.split( '\n' ) )[0]
