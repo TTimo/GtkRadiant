@@ -227,7 +227,17 @@ const char* FindFiles::NextFile() {
 	return findFileData.cFileName;
 }
 
-EPathCheck CheckFile( const char *path ) {
+EPathCheck CheckFile( const char *path ){
+#ifdef _WIN32
+	DWORD Attrib = GetFileAttributes( path );
+	if ( Attrib == INVALID_FILE_ATTRIBUTES ) {
+		return PATH_FAIL;
+	}
+	if ( Attrib & FILE_ATTRIBUTE_DIRECTORY ) {
+		return PATH_DIRECTORY;
+	}
+#else
+	// else linux/mac...
 	struct _stat sbuf;
 	if ( _stat( path, &sbuf ) == -1 ) {
 		return PATH_FAIL;
@@ -235,6 +245,7 @@ EPathCheck CheckFile( const char *path ) {
 	if ( ( sbuf.st_mode & _S_IFDIR ) != 0 ) {
 		return PATH_DIRECTORY;
 	}
+#endif
 	return PATH_FILE;
 }
 

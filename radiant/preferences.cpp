@@ -3410,18 +3410,14 @@ void CGameInstall::Run() {
 		return;
 	}
 	Sys_Printf( "combo: %d name: %s engine: %s mod: %s\n", m_nComboSelect, m_strName.GetBuffer(), m_strEngine.GetBuffer(), m_strMod.GetBuffer() );
-
+	
 	// write out the game file
 	Str gameFilePath = g_strAppPath.GetBuffer();
-	gameFilePath += "games";
-	if ( CheckFile( gameFilePath ) != PATH_DIRECTORY ) {
+	gameFilePath += "games/";
+	if ( CheckFile( gameFilePath.GetBuffer() ) != PATH_DIRECTORY ) {
 		radCreateDirectory( gameFilePath );
 	}
 	
-	// QB - Fix for when you have more than one game configured (before it just bombed out due to the dir already existing).
-	//      add the slash here instead of above else CheckFile() fails hard (on windows at least :/ )
-	gameFilePath += "/";
-
 	switch ( m_availGames[ m_nComboSelect ] ) {
 	case GAME_Q2:
 		gameFilePath += "q2.game";
