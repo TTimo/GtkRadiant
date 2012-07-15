@@ -3,7 +3,7 @@ import sys, traceback, platform, re, commands, platform, subprocess
 if __name__ != '__main__':
 	from SCons.Script import *
 
-import utils, urllib2, zipfile, shutil
+import utils, urllib2, zipfile, shutil, pprint, subprocess, re
 
 # config = debug release
 # aliases are going to be very needed here
@@ -185,6 +185,10 @@ class Config:
                 if 'setup' in self.target_selected:
                         self.Setup()
 
+                finish_command = Command( 'finish', [], self.FinishBuild )
+                Depends( finish_command, DEFAULT_TARGETS )
+                Default( finish_command )
+
 	def SetupEnvironment( self, env, config, useGtk = False, useGtkGL = False, useJPEG = False, useZ = False, usePNG = False ):
 		env['CC'] = self.cc
 		env['CXX'] = self.cxx
@@ -195,7 +199,6 @@ class Config:
 		xml2libs = commands.getoutput( 'xml2-config --libs' )
 		env.Append( LINKFLAGS = xml2libs.split( ' ' ) )
 		baseflags = [ '-pipe', '-Wall', '-fmessage-length=0', '-fvisibility=hidden', xml2.split( ' ' ) ]
-#		baseflags += [ '-m32' ]
 
 		if ( self.platform == 'Darwin' ):
 			env.Append( CPPPATH = [ '/Developer/SDKs/MacOSX10.4u.sdk/usr/X11R6/include' ] )
@@ -246,6 +249,9 @@ class Config:
 			env.Append( CFLAGS = [ '-O2', '-fno-strict-aliasing' ] )
 			env.Append( CXXFLAGS = [ '-O2', '-fno-strict-aliasing' ] )
 
+                # this lets us catch libjpg and libpng libraries that we put in the same directory as radiant.bin
+                env.Append( LINKFLAGS = '-Wl,-rpath,.' )
+
 	def CheckoutOrUpdate( self, svnurl, path ):
 		if ( os.path.exists( path ) ):
                         cmd = [ 'svn', 'update', path ]
@@ -269,8 +275,6 @@ class Config:
 
 			for file in files:
 				shutil.copy( os.path.join( root, file ), os.path.join( target_dir, file ) )
-
-
 
 	def Setup( self ):
 		try:
@@ -356,6 +360,24 @@ class Config:
 				'libxml2-2.7.3/share'
 				]:
 				self.CopyTree( os.path.join( srcdir, extra ), 'install' )
+
+        def FinishBuild( self, target, source, env ):
+                print( 'Lookup and bundle the PNG and JPEG libraries' )
+                # radiant.bin doesn't link to jpeg lib directly, grab that from a module
+                module_ldd = subprocess.check_output( 'ldd -r install/modules/image.so', shell = True )
+                print( module_ldd )
+
+                def find_library( output, libname ):
+                        match = filter( lambda l : l.find( libname ) != -1, output.split( '\n' ) )[0]
+                        return re.split( '.*=> (.*) .*', match )[1]
+
+                jpeg_path = find_library( module_ldd, 'libjpeg' )
+                print( 'JPEG library: %s' % repr( jpeg_path ) )
+                png_path = find_library( module_ldd, 'libpng' )
+                print( 'PNG  library: %s' % repr( png_path ) )
+
+                shutil.copy( jpeg_path, 'install' )
+                shutil.copy( png_path, 'install' )
 
 # parse the config statement line to produce/update an existing config list
 # the configs expose a list of keywords and accepted values, which the engine parses out
