@@ -1172,22 +1172,6 @@ int WINAPI gtk_MessageBox( void *parent, const char* lpText, const char* lpCapti
 
 // fenris #3078 WHENHELLISFROZENOVER
 
-static void file_sel_callback( GtkWidget *widget, gpointer data ){
-	GtkWidget *parent;
-	int *loop;
-	bool *success;
-
-	parent = gtk_widget_get_toplevel( widget );
-	loop = (int*)g_object_get_data( G_OBJECT( parent ), "loop" );
-	success = (bool*)g_object_get_data( G_OBJECT( parent ), "success" );
-
-	if ( GPOINTER_TO_INT( data ) == IDOK ) {
-		*success = true;
-	}
-
-	*loop = 0;
-}
-
 #ifdef _WIN32
 #include <commdlg.h>
 static OPENFILENAME ofn;       /* common dialog box structure   */
@@ -1638,40 +1622,27 @@ const char* file_dialog( void *parent, gboolean open, const char* title, const c
 char* WINAPI dir_dialog( void *parent, const char* title, const char* path ){
 	GtkWidget* file_sel;
 	char* filename = (char*)NULL;
-	int loop = 1;
-	bool success = false;
+	int ret;
 
-	file_sel = gtk_file_selection_new( title );
-	gtk_signal_connect( GTK_OBJECT( GTK_FILE_SELECTION( file_sel )->ok_button ), "clicked",
-						GTK_SIGNAL_FUNC( file_sel_callback ), GINT_TO_POINTER( IDOK ) );
-	gtk_signal_connect( GTK_OBJECT( GTK_FILE_SELECTION( file_sel )->cancel_button ), "clicked",
-						GTK_SIGNAL_FUNC( file_sel_callback ), GINT_TO_POINTER( IDCANCEL ) );
-	gtk_signal_connect( GTK_OBJECT( file_sel ), "delete_event",
-						GTK_SIGNAL_FUNC( dialog_delete_callback ), NULL );
-	gtk_file_selection_hide_fileop_buttons( GTK_FILE_SELECTION( file_sel ) );
-
-	if ( parent != NULL ) {
-		gtk_window_set_transient_for( GTK_WINDOW( file_sel ), GTK_WINDOW( parent ) );
-	}
-
-	gtk_widget_hide( GTK_FILE_SELECTION( file_sel )->file_list->parent );
-
-	g_object_set_data( G_OBJECT( file_sel ), "loop", &loop );
-	g_object_set_data( G_OBJECT( file_sel ), "success", &success );
+	file_sel = gtk_file_chooser_dialog_new( title, GTK_WINDOW( parent ),
+						GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER,
+						GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+						GTK_STOCK_OK, GTK_RESPONSE_ACCEPT,
+						NULL );
 
 	if ( path != NULL ) {
-		gtk_file_selection_set_filename( GTK_FILE_SELECTION( file_sel ), path );
+		gtk_file_chooser_set_current_folder( GTK_FILE_CHOOSER( file_sel ), path );
 	}
 
-	gtk_grab_add( file_sel );
-	gtk_widget_show( file_sel );
+	ret = gtk_dialog_run( GTK_DIALOG( file_sel ) );
 
-	while ( loop )
-		gtk_main_iteration();
+	if ( ret == GTK_RESPONSE_ACCEPT ) {
+		filename = g_strdup( gtk_file_chooser_get_filename( GTK_FILE_CHOOSER( file_sel ) ) );
+	}
+	else {
+		filename = NULL;
+	}
 
-	filename = g_strdup( gtk_file_selection_get_filename( GTK_FILE_SELECTION( file_sel ) ) );
-
-	gtk_grab_remove( file_sel );
 	gtk_widget_destroy( file_sel );
 
 	return filename;
