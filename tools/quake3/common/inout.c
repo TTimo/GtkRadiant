@@ -44,8 +44,6 @@
 
 // utf8 conversion
 #include <glib.h>
-#include <glib/gconvert.h>
-#include <glib/gmem.h>
 
 #ifdef WIN32
 HWND hwndOut = NULL;
