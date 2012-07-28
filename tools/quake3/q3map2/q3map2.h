@@ -39,6 +39,16 @@
 #define Q3MAP_MOTD      "Last one turns the lights off"
 
 
+/* -------------------------------------------------------------------------------
+   
+   QuakeLive stuff from unzip.c (q3-common)
+   
+   ------------------------------------------------------------------------------- */
+// used to tell unzip.c that you are opening ql pk3's   1 = quakelive  0 = everything else
+// **NOTE** - should be set as early as possible e.g before the first call to VFSInitDirectory()
+extern int unz_GAME_QL;
+
+
 
 /* -------------------------------------------------------------------------------
 

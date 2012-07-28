@@ -3635,7 +3635,7 @@ void CGameInstall::Run() {
 		fprintf( fg, "  "ENGINE_ATTRIBUTE "=\"ql\"\n" );
 #endif*/
 		fprintf( fg, "  "TOOLS_ATTRIBUTE "=\"%sinstalls/"QL_PACK "/game\"\n", g_strAppPath.GetBuffer() );
-		fprintf( fg, "  prefix=\".ql\"\n" );
+		fprintf( fg, "  prefix=\".q3a\"\n" );
 		Str source = g_strAppPath.GetBuffer();
 		source += "installs/";
 		source += QL_PACK;
