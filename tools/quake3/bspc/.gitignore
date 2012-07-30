@@ -1,0 +1,5 @@
+bspc_g
+bspc
+*.log
+*.o
+*.user

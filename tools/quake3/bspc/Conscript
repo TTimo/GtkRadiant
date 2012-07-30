@@ -1,0 +1,75 @@
+# bspc compile
+
+Import qw( BSPC_BASE_CFLAGS BUILD_DIR INSTALL_DIR CC CXX LINK );
+
+@BSPC_FILES = qw(
+	aas_areamerging.c
+	aas_cfg.c
+	aas_create.c
+	aas_edgemelting.c
+	aas_facemerging.c
+	aas_file.c
+	aas_gsubdiv.c
+	aas_map.c
+	aas_prunenodes.c
+	aas_store.c
+	be_aas_bspc.c
+	deps/botlib/be_aas_bspq3.c
+	deps/botlib/be_aas_cluster.c
+	deps/botlib/be_aas_move.c
+	deps/botlib/be_aas_optimize.c
+	deps/botlib/be_aas_reach.c
+	deps/botlib/be_aas_sample.c
+	brushbsp.c
+	bspc.c
+	deps/qcommon/cm_load.c
+	deps/qcommon/cm_patch.c
+	deps/qcommon/cm_test.c
+	deps/qcommon/cm_trace.c
+	csg.c
+	glfile.c
+	l_bsp_ent.c
+	l_bsp_hl.c
+	l_bsp_q1.c
+	l_bsp_q2.c
+	l_bsp_q3.c
+	l_bsp_sin.c
+	l_cmd.c
+	deps/botlib/l_libvar.c
+	l_log.c
+	l_math.c
+	l_mem.c
+	l_poly.c
+	deps/botlib/l_precomp.c
+	l_qfiles.c
+	deps/botlib/l_script.c
+	deps/botlib/l_struct.c
+	l_threads.c
+	l_utils.c
+	leakfile.c
+	map.c
+	map_hl.c
+	map_q1.c
+	map_q2.c
+	map_q3.c
+	map_sin.c
+	deps/qcommon/md4.c
+	nodraw.c
+	portals.c
+	textures.c
+	tree.c
+	deps/qcommon/unzip.c
+  );
+$BSPC_REF = \@BSPC_FILES;
+
+$env = new cons(
+  CC => $CC,
+  CXX => $CXX,
+  LINK => $LINK,
+  CFLAGS => $BSPC_BASE_CFLAGS,
+  LIBS => '-ldl -lm -lpthread'
+);
+
+Program $env 'bspc', @$BSPC_REF;
+# this should install to Q3 or something?
+Install $env $INSTALL_DIR, 'bspc';
