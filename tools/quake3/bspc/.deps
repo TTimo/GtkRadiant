@@ -1,0 +1,249 @@
+_files.o: _files.c
+aas_areamerging.o: aas_areamerging.c qbsp.h l_cmd.h l_math.h l_poly.h \
+ l_threads.h deps/botlib/l_script.h l_bsp_ent.h q2files.h l_mem.h \
+ l_utils.h l_log.h l_qfiles.h deps/qcommon/unzip.h deps/botlib/aasfile.h \
+ aas_create.h aas_store.h deps/botlib/be_aas.h deps/botlib/be_aas_def.h
+aas_cfg.o: aas_cfg.c qbsp.h l_cmd.h l_math.h l_poly.h l_threads.h \
+ deps/botlib/l_script.h l_bsp_ent.h q2files.h l_mem.h l_utils.h l_log.h \
+ l_qfiles.h deps/qcommon/unzip.h deps/botlib/aasfile.h aas_store.h \
+ deps/botlib/be_aas.h deps/botlib/be_aas_def.h aas_cfg.h \
+ deps/botlib/l_precomp.h deps/botlib/l_struct.h deps/botlib/l_libvar.h
+aas_create.o: aas_create.c qbsp.h l_cmd.h l_math.h l_poly.h l_threads.h \
+ deps/botlib/l_script.h l_bsp_ent.h q2files.h l_mem.h l_utils.h l_log.h \
+ l_qfiles.h deps/qcommon/unzip.h deps/botlib/aasfile.h aas_create.h \
+ aas_store.h deps/botlib/be_aas.h deps/botlib/be_aas_def.h aas_gsubdiv.h \
+ aas_facemerging.h aas_areamerging.h aas_edgemelting.h aas_prunenodes.h \
+ aas_cfg.h deps/qcommon/surfaceflags.h
+aas_edgemelting.o: aas_edgemelting.c qbsp.h l_cmd.h l_math.h l_poly.h \
+ l_threads.h deps/botlib/l_script.h l_bsp_ent.h q2files.h l_mem.h \
+ l_utils.h l_log.h l_qfiles.h deps/qcommon/unzip.h deps/botlib/aasfile.h \
+ aas_create.h
+aas_facemerging.o: aas_facemerging.c qbsp.h l_cmd.h l_math.h l_poly.h \
+ l_threads.h deps/botlib/l_script.h l_bsp_ent.h q2files.h l_mem.h \
+ l_utils.h l_log.h l_qfiles.h deps/qcommon/unzip.h deps/botlib/aasfile.h \
+ aas_create.h
+aas_file.o: aas_file.c qbsp.h l_cmd.h l_math.h l_poly.h l_threads.h \
+ deps/botlib/l_script.h l_bsp_ent.h q2files.h l_mem.h l_utils.h l_log.h \
+ l_qfiles.h deps/qcommon/unzip.h deps/botlib/aasfile.h aas_file.h \
+ aas_store.h deps/botlib/be_aas.h deps/botlib/be_aas_def.h aas_create.h
+aas_gsubdiv.o: aas_gsubdiv.c qbsp.h l_cmd.h l_math.h l_poly.h l_threads.h \
+ deps/botlib/l_script.h l_bsp_ent.h q2files.h l_mem.h l_utils.h l_log.h \
+ l_qfiles.h deps/qcommon/unzip.h deps/botlib/aasfile.h aas_create.h \
+ aas_store.h deps/botlib/be_aas.h deps/botlib/be_aas_def.h aas_cfg.h
+aas_map.o: aas_map.c qbsp.h l_cmd.h l_math.h l_poly.h l_threads.h \
+ deps/botlib/l_script.h l_bsp_ent.h q2files.h l_mem.h l_utils.h l_log.h \
+ l_qfiles.h deps/qcommon/unzip.h deps/botlib/aasfile.h aas_store.h \
+ deps/botlib/be_aas.h deps/botlib/be_aas_def.h aas_cfg.h \
+ deps/qcommon/surfaceflags.h
+aas_prunenodes.o: aas_prunenodes.c qbsp.h l_cmd.h l_math.h l_poly.h \
+ l_threads.h deps/botlib/l_script.h l_bsp_ent.h q2files.h l_mem.h \
+ l_utils.h l_log.h l_qfiles.h deps/qcommon/unzip.h deps/botlib/aasfile.h \
+ aas_create.h
+aas_store.o: aas_store.c qbsp.h l_cmd.h l_math.h l_poly.h l_threads.h \
+ deps/botlib/l_script.h l_bsp_ent.h q2files.h l_mem.h l_utils.h l_log.h \
+ l_qfiles.h deps/qcommon/unzip.h deps/botlib/aasfile.h aas_file.h \
+ aas_store.h deps/botlib/be_aas.h deps/botlib/be_aas_def.h aas_create.h \
+ aas_cfg.h
+be_aas_bspc.o: be_aas_bspc.c deps/qcommon/q_shared.h \
+ deps/qcommon/q_platform.h deps/qcommon/surfaceflags.h l_log.h l_qfiles.h \
+ deps/qcommon/unzip.h deps/botlib/l_memory.h deps/botlib/l_script.h \
+ deps/botlib/l_precomp.h deps/botlib/l_struct.h deps/botlib/aasfile.h \
+ deps/botlib/botlib.h deps/botlib/be_aas.h deps/botlib/be_aas_def.h \
+ deps/botlib/be_aas_main.h deps/botlib/be_aas_entity.h \
+ deps/botlib/be_aas_sample.h deps/botlib/be_aas_cluster.h \
+ deps/botlib/be_aas_reach.h deps/botlib/be_aas_route.h \
+ deps/botlib/be_aas_routealt.h deps/botlib/be_aas_debug.h \
+ deps/botlib/be_aas_file.h deps/botlib/be_aas_optimize.h \
+ deps/botlib/be_aas_bsp.h deps/botlib/be_aas_move.h \
+ deps/qcommon/cm_public.h deps/qcommon/qfiles.h
+be_aas_bspq3.o: deps/botlib/be_aas_bspq3.c deps/qcommon/q_shared.h \
+ deps/qcommon/q_platform.h deps/qcommon/surfaceflags.h \
+ deps/botlib/l_memory.h deps/botlib/l_script.h deps/botlib/l_precomp.h \
+ deps/botlib/l_struct.h deps/botlib/aasfile.h deps/botlib/botlib.h \
+ deps/botlib/be_aas.h deps/botlib/be_aas_funcs.h \
+ deps/botlib/be_aas_main.h deps/botlib/be_aas_entity.h \
+ deps/botlib/be_aas_sample.h deps/botlib/be_aas_cluster.h \
+ deps/botlib/be_aas_reach.h deps/botlib/be_aas_route.h \
+ deps/botlib/be_aas_routealt.h deps/botlib/be_aas_debug.h \
+ deps/botlib/be_aas_file.h deps/botlib/be_aas_optimize.h \
+ deps/botlib/be_aas_bsp.h deps/botlib/be_aas_move.h \
+ deps/botlib/be_aas_def.h
+be_aas_cluster.o: deps/botlib/be_aas_cluster.c deps/qcommon/q_shared.h \
+ deps/qcommon/q_platform.h deps/qcommon/surfaceflags.h \
+ deps/botlib/l_memory.h deps/botlib/l_script.h deps/botlib/l_precomp.h \
+ deps/botlib/l_struct.h deps/botlib/l_log.h deps/botlib/l_libvar.h \
+ deps/botlib/aasfile.h deps/botlib/botlib.h deps/botlib/be_aas.h \
+ deps/botlib/be_aas_funcs.h deps/botlib/be_aas_main.h \
+ deps/botlib/be_aas_entity.h deps/botlib/be_aas_sample.h \
+ deps/botlib/be_aas_cluster.h deps/botlib/be_aas_reach.h \
+ deps/botlib/be_aas_route.h deps/botlib/be_aas_routealt.h \
+ deps/botlib/be_aas_debug.h deps/botlib/be_aas_file.h \
+ deps/botlib/be_aas_optimize.h deps/botlib/be_aas_bsp.h \
+ deps/botlib/be_aas_move.h deps/botlib/be_aas_def.h
+be_aas_move.o: deps/botlib/be_aas_move.c deps/qcommon/q_shared.h \
+ deps/qcommon/q_platform.h deps/qcommon/surfaceflags.h \
+ deps/botlib/l_memory.h deps/botlib/l_script.h deps/botlib/l_precomp.h \
+ deps/botlib/l_struct.h deps/botlib/l_libvar.h deps/botlib/aasfile.h \
+ deps/botlib/botlib.h deps/botlib/be_aas.h deps/botlib/be_aas_funcs.h \
+ deps/botlib/be_aas_main.h deps/botlib/be_aas_entity.h \
+ deps/botlib/be_aas_sample.h deps/botlib/be_aas_cluster.h \
+ deps/botlib/be_aas_reach.h deps/botlib/be_aas_route.h \
+ deps/botlib/be_aas_routealt.h deps/botlib/be_aas_debug.h \
+ deps/botlib/be_aas_file.h deps/botlib/be_aas_optimize.h \
+ deps/botlib/be_aas_bsp.h deps/botlib/be_aas_move.h \
+ deps/botlib/be_aas_def.h
+be_aas_optimize.o: deps/botlib/be_aas_optimize.c deps/qcommon/q_shared.h \
+ deps/qcommon/q_platform.h deps/qcommon/surfaceflags.h \
+ deps/botlib/l_libvar.h deps/botlib/l_memory.h deps/botlib/l_script.h \
+ deps/botlib/l_precomp.h deps/botlib/l_struct.h deps/botlib/aasfile.h \
+ deps/botlib/botlib.h deps/botlib/be_aas.h deps/botlib/be_aas_funcs.h \
+ deps/botlib/be_aas_main.h deps/botlib/be_aas_entity.h \
+ deps/botlib/be_aas_sample.h deps/botlib/be_aas_cluster.h \
+ deps/botlib/be_aas_reach.h deps/botlib/be_aas_route.h \
+ deps/botlib/be_aas_routealt.h deps/botlib/be_aas_debug.h \
+ deps/botlib/be_aas_file.h deps/botlib/be_aas_optimize.h \
+ deps/botlib/be_aas_bsp.h deps/botlib/be_aas_move.h \
+ deps/botlib/be_interface.h deps/botlib/be_aas_def.h
+be_aas_reach.o: deps/botlib/be_aas_reach.c deps/qcommon/q_shared.h \
+ deps/qcommon/q_platform.h deps/qcommon/surfaceflags.h \
+ deps/botlib/l_log.h deps/botlib/l_memory.h deps/botlib/l_script.h \
+ deps/botlib/l_libvar.h deps/botlib/l_precomp.h deps/botlib/l_struct.h \
+ deps/botlib/aasfile.h deps/botlib/botlib.h deps/botlib/be_aas.h \
+ deps/botlib/be_aas_funcs.h deps/botlib/be_aas_main.h \
+ deps/botlib/be_aas_entity.h deps/botlib/be_aas_sample.h \
+ deps/botlib/be_aas_cluster.h deps/botlib/be_aas_reach.h \
+ deps/botlib/be_aas_route.h deps/botlib/be_aas_routealt.h \
+ deps/botlib/be_aas_debug.h deps/botlib/be_aas_file.h \
+ deps/botlib/be_aas_optimize.h deps/botlib/be_aas_bsp.h \
+ deps/botlib/be_aas_move.h deps/botlib/be_aas_def.h
+be_aas_sample.o: deps/botlib/be_aas_sample.c deps/qcommon/q_shared.h \
+ deps/qcommon/q_platform.h deps/qcommon/surfaceflags.h \
+ deps/botlib/l_memory.h deps/botlib/l_script.h deps/botlib/l_precomp.h \
+ deps/botlib/l_struct.h deps/botlib/aasfile.h deps/botlib/botlib.h \
+ deps/botlib/be_aas.h deps/botlib/be_interface.h \
+ deps/botlib/be_aas_funcs.h deps/botlib/be_aas_main.h \
+ deps/botlib/be_aas_entity.h deps/botlib/be_aas_sample.h \
+ deps/botlib/be_aas_cluster.h deps/botlib/be_aas_reach.h \
+ deps/botlib/be_aas_route.h deps/botlib/be_aas_routealt.h \
+ deps/botlib/be_aas_debug.h deps/botlib/be_aas_file.h \
+ deps/botlib/be_aas_optimize.h deps/botlib/be_aas_bsp.h \
+ deps/botlib/be_aas_move.h deps/botlib/be_aas_def.h
+brushbsp.o: brushbsp.c qbsp.h l_cmd.h l_math.h l_poly.h l_threads.h \
+ deps/botlib/l_script.h l_bsp_ent.h q2files.h l_mem.h l_utils.h l_log.h \
+ l_qfiles.h deps/qcommon/unzip.h deps/botlib/aasfile.h aas_store.h \
+ deps/botlib/be_aas.h deps/botlib/be_aas_def.h aas_cfg.h
+bspc.o: bspc.c qbsp.h l_cmd.h l_math.h l_poly.h l_threads.h \
+ deps/botlib/l_script.h l_bsp_ent.h q2files.h l_mem.h l_utils.h l_log.h \
+ l_qfiles.h deps/qcommon/unzip.h deps/botlib/aasfile.h \
+ deps/botlib/be_aas_cluster.h deps/botlib/be_aas_optimize.h aas_create.h \
+ aas_store.h deps/botlib/be_aas.h deps/botlib/be_aas_def.h aas_file.h \
+ aas_cfg.h be_aas_bspc.h
+cm_load.o: deps/qcommon/cm_load.c deps/qcommon/cm_local.h \
+ deps/qcommon/q_shared.h deps/qcommon/q_platform.h \
+ deps/qcommon/surfaceflags.h deps/qcommon/qcommon.h \
+ deps/qcommon/cm_public.h deps/qcommon/qfiles.h deps/qcommon/cm_polylib.h \
+ l_qfiles.h deps/qcommon/unzip.h
+cm_patch.o: deps/qcommon/cm_patch.c deps/qcommon/cm_local.h \
+ deps/qcommon/q_shared.h deps/qcommon/q_platform.h \
+ deps/qcommon/surfaceflags.h deps/qcommon/qcommon.h \
+ deps/qcommon/cm_public.h deps/qcommon/qfiles.h deps/qcommon/cm_polylib.h \
+ deps/qcommon/cm_patch.h
+cm_test.o: deps/qcommon/cm_test.c deps/qcommon/cm_local.h \
+ deps/qcommon/q_shared.h deps/qcommon/q_platform.h \
+ deps/qcommon/surfaceflags.h deps/qcommon/qcommon.h \
+ deps/qcommon/cm_public.h deps/qcommon/qfiles.h deps/qcommon/cm_polylib.h
+cm_trace.o: deps/qcommon/cm_trace.c deps/qcommon/cm_local.h \
+ deps/qcommon/q_shared.h deps/qcommon/q_platform.h \
+ deps/qcommon/surfaceflags.h deps/qcommon/qcommon.h \
+ deps/qcommon/cm_public.h deps/qcommon/qfiles.h deps/qcommon/cm_polylib.h
+csg.o: csg.c qbsp.h l_cmd.h l_math.h l_poly.h l_threads.h \
+ deps/botlib/l_script.h l_bsp_ent.h q2files.h l_mem.h l_utils.h l_log.h \
+ l_qfiles.h deps/qcommon/unzip.h
+glfile.o: glfile.c qbsp.h l_cmd.h l_math.h l_poly.h l_threads.h \
+ deps/botlib/l_script.h l_bsp_ent.h q2files.h l_mem.h l_utils.h l_log.h \
+ l_qfiles.h deps/qcommon/unzip.h
+l_bsp_ent.o: l_bsp_ent.c l_cmd.h l_math.h l_mem.h l_log.h \
+ deps/botlib/l_script.h l_bsp_ent.h
+l_bsp_hl.o: l_bsp_hl.c l_cmd.h l_math.h l_mem.h l_log.h \
+ deps/botlib/l_script.h l_bsp_hl.h l_bsp_ent.h
+l_bsp_q1.o: l_bsp_q1.c l_cmd.h l_math.h l_mem.h l_log.h \
+ deps/botlib/l_script.h l_bsp_q1.h l_bsp_ent.h
+l_bsp_q2.o: l_bsp_q2.c l_cmd.h l_math.h l_mem.h l_log.h l_poly.h \
+ deps/botlib/l_script.h q2files.h l_bsp_q2.h l_bsp_ent.h
+l_bsp_q3.o: l_bsp_q3.c l_cmd.h l_math.h l_mem.h l_log.h l_poly.h \
+ deps/botlib/l_script.h l_qfiles.h deps/qcommon/unzip.h l_bsp_q3.h \
+ q3files.h l_bsp_ent.h
+l_bsp_sin.o: l_bsp_sin.c l_cmd.h l_math.h l_mem.h l_log.h l_poly.h \
+ deps/botlib/l_script.h l_bsp_ent.h l_bsp_sin.h sinfiles.h
+l_cmd.o: l_cmd.c l_cmd.h l_log.h l_mem.h
+l_libvar.o: deps/botlib/l_libvar.c deps/qcommon/q_shared.h \
+ deps/qcommon/q_platform.h deps/qcommon/surfaceflags.h \
+ deps/botlib/l_memory.h deps/botlib/l_libvar.h
+l_log.o: l_log.c qbsp.h l_cmd.h l_math.h l_poly.h l_threads.h \
+ deps/botlib/l_script.h l_bsp_ent.h q2files.h l_mem.h l_utils.h l_log.h \
+ l_qfiles.h deps/qcommon/unzip.h
+l_math.o: l_math.c l_cmd.h l_math.h
+l_mem.o: l_mem.c qbsp.h l_cmd.h l_math.h l_poly.h l_threads.h \
+ deps/botlib/l_script.h l_bsp_ent.h q2files.h l_mem.h l_utils.h l_log.h \
+ l_qfiles.h deps/qcommon/unzip.h
+l_poly.o: l_poly.c l_cmd.h l_math.h l_poly.h l_log.h l_mem.h
+l_precomp.o: deps/botlib/l_precomp.c qbsp.h l_cmd.h l_math.h l_poly.h \
+ l_threads.h deps/botlib/l_script.h l_bsp_ent.h q2files.h l_mem.h \
+ l_utils.h l_log.h l_qfiles.h deps/qcommon/unzip.h deps/botlib/l_log.h \
+ l_mem.h deps/botlib/l_precomp.h
+l_qfiles.o: l_qfiles.c qbsp.h l_cmd.h l_math.h l_poly.h l_threads.h \
+ deps/botlib/l_script.h l_bsp_ent.h q2files.h l_mem.h l_utils.h l_log.h \
+ l_qfiles.h deps/qcommon/unzip.h
+l_script.o: deps/botlib/l_script.c qbsp.h l_cmd.h l_math.h l_poly.h \
+ l_threads.h deps/botlib/l_script.h l_bsp_ent.h q2files.h l_mem.h \
+ l_utils.h l_log.h l_qfiles.h deps/qcommon/unzip.h deps/botlib/l_log.h \
+ l_mem.h
+l_struct.o: deps/botlib/l_struct.c qbsp.h l_cmd.h l_math.h l_poly.h \
+ l_threads.h deps/botlib/l_script.h l_bsp_ent.h q2files.h l_mem.h \
+ l_utils.h l_log.h l_qfiles.h deps/qcommon/unzip.h deps/botlib/l_log.h \
+ l_mem.h deps/botlib/l_precomp.h deps/botlib/l_struct.h
+l_threads.o: l_threads.c l_cmd.h l_threads.h l_log.h l_mem.h
+l_utils.o: l_utils.c qbsp.h l_cmd.h l_math.h l_poly.h l_threads.h \
+ deps/botlib/l_script.h l_bsp_ent.h q2files.h l_mem.h l_utils.h l_log.h \
+ l_qfiles.h deps/qcommon/unzip.h
+leakfile.o: leakfile.c qbsp.h l_cmd.h l_math.h l_poly.h l_threads.h \
+ deps/botlib/l_script.h l_bsp_ent.h q2files.h l_mem.h l_utils.h l_log.h \
+ l_qfiles.h deps/qcommon/unzip.h
+map.o: map.c qbsp.h l_cmd.h l_math.h l_poly.h l_threads.h \
+ deps/botlib/l_script.h l_bsp_ent.h q2files.h l_mem.h l_utils.h l_log.h \
+ l_qfiles.h deps/qcommon/unzip.h l_bsp_hl.h l_bsp_q1.h l_bsp_q2.h \
+ l_bsp_q3.h q3files.h l_bsp_sin.h sinfiles.h deps/botlib/aasfile.h \
+ aas_store.h deps/botlib/be_aas.h deps/botlib/be_aas_def.h aas_cfg.h
+map_hl.o: map_hl.c qbsp.h l_cmd.h l_math.h l_poly.h l_threads.h \
+ deps/botlib/l_script.h l_bsp_ent.h q2files.h l_mem.h l_utils.h l_log.h \
+ l_qfiles.h deps/qcommon/unzip.h l_bsp_hl.h aas_map.h
+map_q1.o: map_q1.c qbsp.h l_cmd.h l_math.h l_poly.h l_threads.h \
+ deps/botlib/l_script.h l_bsp_ent.h q2files.h l_mem.h l_utils.h l_log.h \
+ l_qfiles.h deps/qcommon/unzip.h l_bsp_q1.h aas_map.h
+map_q2.o: map_q2.c qbsp.h l_cmd.h l_math.h l_poly.h l_threads.h \
+ deps/botlib/l_script.h l_bsp_ent.h q2files.h l_mem.h l_utils.h l_log.h \
+ l_qfiles.h deps/qcommon/unzip.h deps/botlib/aasfile.h aas_store.h \
+ deps/botlib/be_aas.h deps/botlib/be_aas_def.h aas_cfg.h aas_map.h \
+ l_bsp_q2.h
+map_q3.o: map_q3.c qbsp.h l_cmd.h l_math.h l_poly.h l_threads.h \
+ deps/botlib/l_script.h l_bsp_ent.h q2files.h l_mem.h l_utils.h l_log.h \
+ l_qfiles.h deps/qcommon/unzip.h deps/botlib/aasfile.h aas_store.h \
+ deps/botlib/be_aas.h deps/botlib/be_aas_def.h aas_cfg.h aas_map.h \
+ l_bsp_q3.h q3files.h deps/qcommon/cm_patch.h deps/qcommon/surfaceflags.h
+map_sin.o: map_sin.c qbsp.h l_cmd.h l_math.h l_poly.h l_threads.h \
+ deps/botlib/l_script.h l_bsp_ent.h q2files.h l_mem.h l_utils.h l_log.h \
+ l_qfiles.h deps/qcommon/unzip.h l_bsp_sin.h sinfiles.h aas_map.h
+md4.o: deps/qcommon/md4.c
+nodraw.o: nodraw.c qbsp.h l_cmd.h l_math.h l_poly.h l_threads.h \
+ deps/botlib/l_script.h l_bsp_ent.h q2files.h l_mem.h l_utils.h l_log.h \
+ l_qfiles.h deps/qcommon/unzip.h
+portals.o: portals.c qbsp.h l_cmd.h l_math.h l_poly.h l_threads.h \
+ deps/botlib/l_script.h l_bsp_ent.h q2files.h l_mem.h l_utils.h l_log.h \
+ l_qfiles.h deps/qcommon/unzip.h
+textures.o: textures.c qbsp.h l_cmd.h l_math.h l_poly.h l_threads.h \
+ deps/botlib/l_script.h l_bsp_ent.h q2files.h l_mem.h l_utils.h l_log.h \
+ l_qfiles.h deps/qcommon/unzip.h l_bsp_q2.h
+tree.o: tree.c qbsp.h l_cmd.h l_math.h l_poly.h l_threads.h \
+ deps/botlib/l_script.h l_bsp_ent.h q2files.h l_mem.h l_utils.h l_log.h \
+ l_qfiles.h deps/qcommon/unzip.h
+unzip.o: deps/qcommon/unzip.c deps/qcommon/unzip.h
