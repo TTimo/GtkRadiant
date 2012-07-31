@@ -404,7 +404,7 @@ typedef struct {
 		// little-endian "IBSP"
 
 #define BSP_VERSION			46
-
+#define BSP_VERSION_QL		47 // for quakelive :ss 
 
 // there shouldn't be any problem with increasing these values at the
 // expense of more memory allocation in the utilities

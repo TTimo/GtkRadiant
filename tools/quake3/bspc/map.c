@@ -1220,7 +1220,7 @@ int LoadMapFromBSP(struct quakefile_s *qf)
 		Q3_FreeMaxBSP();
 	} //end if
 	//Quake3 BSP file
-	if (idheader.ident == Q3_BSP_IDENT && idheader.version == Q3_BSP_VERSION)
+	else if (idheader.ident == Q3_BSP_IDENT && idheader.version == Q3_BSP_VERSION)
 	{
 		ResetMapLoading();
 		Q3_LoadMapFromBSP(qf);
