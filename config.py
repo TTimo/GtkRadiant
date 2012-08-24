@@ -33,7 +33,7 @@ class Config:
 		# platforms for which to assemble a setup
 		self.setup_platforms = [ 'local', 'x86', 'x64', 'win32' ]
 		# paks to assemble in the setup
-		self.setup_packs = [ 'Q3Pack', 'UrTPack', 'ETPack', 'QLPack' ] # 'UFOAIPack', 'Q2WPack', 'ReactionPack' ]
+		self.setup_packs = [ 'Q3Pack', 'UrTPack', 'ETPack', 'QLPack' ]
 
 	def __repr__( self ):
 		return 'config: target=%s config=%s' % ( self.target_selected, self.config_selected )
@@ -185,9 +185,10 @@ class Config:
                 if 'setup' in self.target_selected:
                         self.Setup()
 
-                finish_command = Command( 'finish', [], self.FinishBuild )
-                Depends( finish_command, DEFAULT_TARGETS )
-                Default( finish_command )
+		if ( self.platform != 'win32' ):
+                        finish_command = Command( 'finish', [], self.FinishBuild )
+                        Depends( finish_command, DEFAULT_TARGETS )
+                        Default( finish_command )
 
 	def SetupEnvironment( self, env, config, useGtk = False, useGtkGL = False, useJPEG = False, useZ = False, usePNG = False ):
 		env['CC'] = self.cc
