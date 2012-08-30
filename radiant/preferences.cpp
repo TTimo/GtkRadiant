@@ -3630,7 +3630,7 @@ void CGameInstall::Run() {
 	}
 	case GAME_QL: {
 		fprintf( fg, "  "TOOLS_ATTRIBUTE "=\"%sinstalls/"QL_PACK "/game\"\n", g_strAppPath.GetBuffer() );
-		fprintf( fg, "  prefix=\".quakelive\"\n" );
+		fprintf( fg, "  prefix=\".quakelive/quakelive/home\"\n" );
 		Str source = g_strAppPath.GetBuffer();
 		source += "installs/";
 		source += QL_PACK;
