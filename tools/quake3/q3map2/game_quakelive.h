@@ -65,7 +65,7 @@
 {
 	"quakelive",        /* -game x */
 	"baseq3",           /* default base game data dir */
-	".q3a",             /* unix home sub-dir */
+	".quakelive",             /* unix home sub-dir */
 	"quake",            /* magic path word */
 	"scripts",          /* shader directory */
 	64,                 /* max lightmapped surface verts */

@@ -3629,13 +3629,8 @@ void CGameInstall::Run() {
 		break;
 	}
 	case GAME_QL: {
-/*#ifdef _WIN32
-		fprintf( fg, "  "ENGINE_ATTRIBUTE "=\"ql.exe\"\n");
-#elif __linux__
-		fprintf( fg, "  "ENGINE_ATTRIBUTE "=\"ql\"\n" );
-#endif*/
 		fprintf( fg, "  "TOOLS_ATTRIBUTE "=\"%sinstalls/"QL_PACK "/game\"\n", g_strAppPath.GetBuffer() );
-		fprintf( fg, "  prefix=\".q3a\"\n" );
+		fprintf( fg, "  prefix=\".quakelive\"\n" );
 		Str source = g_strAppPath.GetBuffer();
 		source += "installs/";
 		source += QL_PACK;
