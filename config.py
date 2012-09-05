@@ -185,7 +185,7 @@ class Config:
                 if 'setup' in self.target_selected:
                         self.Setup()
 
-		if ( self.platform != 'win32' ):
+		if ( self.platform == 'Linux' ):
                         finish_command = Command( 'finish', [], self.FinishBuild )
                         Depends( finish_command, DEFAULT_TARGETS )
                         Default( finish_command )
