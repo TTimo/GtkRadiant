@@ -424,23 +424,83 @@ void CSynapseServer::PushRequired( CSynapseClient *pClient ){
 	}
 }
 
-bool CSynapseServer::MatchAPI( APIDescriptor_t *p1, APIDescriptor_t *p2 ){
-	return MatchAPI( p1->major_name, p1->minor_name, p2->major_name, p2->minor_name );
+int CSynapseServer::FindActiveMajorClient( const char * major, APIDescriptor_t ** ret ) const {
+    Syn_Printf( "checking if we have a single active client for major \"%s\"\n", major );
+    *ret = NULL;
+    list<CSynapseClientSlot>::const_iterator iClient;
+    for ( iClient = mClients.begin(); iClient != mClients.end(); iClient++ ) {
+        CSynapseClient *pClient = ( *iClient ).mpClient;
+        if ( !pClient->IsActive() ) {
+            continue;
+        }
+        APIDescriptor_t * found = pClient->FindProvidesMajor( major );
+        if ( found == NULL ) {
+            continue;
+        }
+        Syn_Printf( "  found in %s\n", pClient->GetInfo() );
+        if ( *ret != NULL ) {
+            return 2;
+        }
+        *ret = found;
+    }
+    if ( *ret == NULL ) {
+        return 0;
+    }
+    return 1;
 }
 
-bool CSynapseServer::MatchAPI( const char* major1, const char* minor1, const char* major2, const char* minor2 ){
-	if ( strcmp( major1, major2 ) ) {
-		return false;
+bool CSynapseServer::MatchAPI( APIDescriptor_t *p1, APIDescriptor_t *p2 ){
+	int ret = MatchAPI( p1->major_name, p1->minor_name, p2->major_name, p2->minor_name );
+    if ( ret == 2 ) {
+        // find out if we can resolve the minor "*" situation
+        APIDescriptor_t * any_minor_descriptor;
+        APIDescriptor_t * provider_descriptor;
+        if ( strcmp( p1->minor_name, "*" ) == 0 ) {
+            any_minor_descriptor = p1;
+            provider_descriptor = p2;
+        } else {
+            assert( strcmp( p2->minor_name, "*" ) == 0 );
+            any_minor_descriptor = p2;
+            provider_descriptor = p1;
+        }
+        assert( any_minor_descriptor->mType == SYN_REQUIRE );
+        assert( provider_descriptor->mType == SYN_PROVIDE );
+        APIDescriptor_t * search_major;
+        int search_ret = FindActiveMajorClient( provider_descriptor->major_name, &search_major );
+        if ( search_ret == 2 ) {
+            // FIXME: ERROR
+            Syn_Printf( "ERROR: Multiple modules active for major \"%s\": cannot resolve \"*\" for it\n", provider_descriptor->major_name );
+            return false;
+        }
+        if ( search_ret == 0 ) {
+            // can't resolve yet
+            return false;
+        }
+        if ( search_major != provider_descriptor ) {
+            // the provider_descriptor we were passed is likely not active yet, so just ignore
+            return false;
+        }
+        return true; // this is a go, we have a unique match!
+    }
+    return ( ret != 0 );
+}
+
+int CSynapseServer::MatchAPI( const char* major1, const char* minor1, const char* major2, const char* minor2 ){
+	if ( strcmp( major1, major2 ) != 0 ) {
+		return 0;
 	}
 	// either no minor at all for this API, or matching
-	if ( ( minor1 && minor2 ) && !strcmp( minor1, minor2 ) ) {
-		return true;
+	if ( ( minor1 != NULL && minor2 != NULL ) && strcmp( minor1, minor2 ) == 0 ) {
+		return 1;
 	}
-	// or one of the minors says "*" (knowing that the majors match already)
-	if ( ( minor1 && !strcmp( minor1, "*" ) ) || ( minor2 && !strcmp( minor2, "*" ) ) ) {
-		return true;
+	if ( ( minor1 != NULL && strcmp( minor1, "*" ) == 0 ) || ( minor2 != NULL && strcmp( minor2, "*" ) == 0 ) ) {
+        // one of the minors is "*", and the majors are matching
+        // there may be multiple SYN_PROVIDE for this major though, and we can't decide which with only this information
+        // e.g. "*" means "the one", not "any" (counter-intuitive, yeah)
+        // so let the caller know, maybe he'll figure it out
+		return 2;
 	}
-	return false;
+	return 0;
 }
 
 bool CSynapseServer::ResolveAPI( APIDescriptor_t* pAPI ){
@@ -469,9 +529,9 @@ bool CSynapseServer::ResolveAPI( APIDescriptor_t* pAPI ){
 							continue;
 						}
 						// this is an active client, we can request
-			#ifdef SYNAPSE_VERBOSE
+#ifdef SYNAPSE_VERBOSE
 						Syn_Printf( "RequestAPI '%s' '%s' from '%s' for API %p\n", pAPI->major_name, pAPI->minor_name, pScanClient->GetInfo(), pAPI );
-			#endif
+#endif
 						if ( !pScanClient->RequestAPI( pAPI ) ) {
 							// this should never happen, means we think this module provides the API, but it answers that it doesn't
 							Syn_Printf( "ERROR: RequestAPI failed\n" );
@@ -909,6 +969,18 @@ void CSynapseClient::AddManager( CSynapseAPIManager *pManager ){
 	else{
 		mManagersMatch.push_back( pManager );
 	}
+}
+
+APIDescriptor_t * CSynapseClient::FindProvidesMajor( const char * major ) const {
+	int i,max = GetAPICount();
+	for ( i = 0; i < max; i++ )
+	{
+		APIDescriptor_t *pAPI = GetAPIDescriptor( i );
+        if ( pAPI->mType == SYN_PROVIDE && strcmp( pAPI->major_name, major ) == 0 ) {
+            return pAPI;
+        }
+	}
+    return NULL;
 }
 
 CSynapseAPIManager::~CSynapseAPIManager(){

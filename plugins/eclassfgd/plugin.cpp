@@ -155,7 +155,7 @@ extern "C" CSynapseClient * SYNAPSE_DLL_EXPORT Synapse_EnumerateInterfaces( cons
 	g_SynapseClient.AddAPI( ECLASSMANAGER_MAJOR, NULL, sizeof( g_EClassManagerTable ), SYN_REQUIRE, &g_EClassManagerTable );
 
 	// Needs a 'default' option for this minor because we certainly don't load anything from wad files :)
-	g_SynapseClient.AddAPI( VFS_MAJOR, "wad", sizeof( g_FileSystemTable ), SYN_REQUIRE, &g_FileSystemTable );
+	g_SynapseClient.AddAPI( VFS_MAJOR, "*", sizeof( g_FileSystemTable ), SYN_REQUIRE, &g_FileSystemTable ); // wad, typically
 
 	return &g_SynapseClient;
 }

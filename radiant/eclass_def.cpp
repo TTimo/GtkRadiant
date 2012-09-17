@@ -62,7 +62,7 @@ void CSynapseBuiltinClientDef::EnumerateInterfaces( CSynapseServer *server ){
 	AddAPI( RADIANT_MAJOR, NULL, sizeof( g_FuncTable ), SYN_REQUIRE, &g_FuncTable );
 	AddAPI( ECLASSMANAGER_MAJOR, NULL, sizeof( g_EClassManagerTable ), SYN_REQUIRE, &g_EClassManagerTable );
 	// hardcode the minor for now, we can still add it to the synapse.config at some point
-	AddAPI( VFS_MAJOR, "pk3", sizeof( g_FileSystemTable_def ), SYN_REQUIRE, &g_FileSystemTable_def );
+	AddAPI( VFS_MAJOR, "*", sizeof( g_FileSystemTable_def ), SYN_REQUIRE, &g_FileSystemTable_def );
 
 	AddAPI( ECLASS_MAJOR, "def", sizeof( _EClassTable ) );
 }

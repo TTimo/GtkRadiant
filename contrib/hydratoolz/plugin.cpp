@@ -387,7 +387,7 @@ extern "C" CSynapseClient * SYNAPSE_DLL_EXPORT Synapse_EnumerateInterfaces( cons
 
 	g_SynapseClient.AddAPI( PLUGIN_MAJOR, "HydraToolz", sizeof( _QERPluginTable ) );
 	g_SynapseClient.AddAPI( RADIANT_MAJOR, NULL, sizeof( g_FuncTable ), SYN_REQUIRE, &g_FuncTable );
-	g_SynapseClient.AddAPI( VFS_MAJOR, "wad", sizeof( g_FileSystemTable ), SYN_REQUIRE, &g_FileSystemTable );
+	g_SynapseClient.AddAPI( VFS_MAJOR, "*", sizeof( g_FileSystemTable ), SYN_REQUIRE, &g_FileSystemTable ); // wad, typically
 	g_SynapseClient.AddAPI( ENTITY_MAJOR, NULL, sizeof( g_EntityTable ), SYN_REQUIRE, &g_EntityTable );
 	return &g_SynapseClient;
 }

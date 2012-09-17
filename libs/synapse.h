@@ -404,6 +404,11 @@ virtual bool OnActivate() { return true; }
    \return wether all APIs given were successfully found in the config
  */
 bool ConfigXML( CSynapseServer *pServer, const char *client_name, const XMLConfigEntry_t entries[] );
+
+/*!
+  search for a SYN_PROVIDE with that major in this client, return the index, or -1 if fail
+ */
+APIDescriptor_t * FindProvidesMajor( const char * major ) const;
 };
 
 /*!
@@ -607,8 +612,13 @@ virtual PFN_SYN_PRINTF_VA Get_Syn_Printf();
    the minors have to be both NULL, or equal, or one the minors be '*'
    NOTE: the '*' minor should ONLY be used on an API that will be unique. It is hackish and kinda dangerous
  */
-static bool MatchAPI( APIDescriptor_t *p1, APIDescriptor_t *p2 );
-static bool MatchAPI( const char* major1, const char* minor1, const char* major2, const char* minor2 );
+bool MatchAPI( APIDescriptor_t *p1, APIDescriptor_t *p2 );
+/*!
+  \return 0: not matching
+  \return 1: matching
+  \return 2: do extended checks for a minor of "*"
+ */
+static int MatchAPI( const char* major1, const char* minor1, const char* major2, const char* minor2 );
 
 #if defined( _WIN32 )
 /*!
@@ -655,6 +665,15 @@ bool GetConfigForAPI( const char *api, char **minor );
    returns the filename of the module that the passed on client exists in
  */
 const char *GetModuleFilename( CSynapseClient *pClient );
+
+/*!
+  look for a client that is active, and provides a specific major
+  \return 0: not found
+  \return 1: single found
+  \return 2: multiple found
+ */
+int FindActiveMajorClient( const char * major, APIDescriptor_t ** ret ) const;
+
 };
 
 #endif

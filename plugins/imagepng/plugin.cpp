@@ -63,7 +63,7 @@ extern "C" CSynapseClient * SYNAPSE_DLL_EXPORT Synapse_EnumerateInterfaces( cons
 
 	g_SynapseClient.AddAPI( IMAGE_MAJOR, "png", sizeof( _QERPlugImageTable ) );
 	g_SynapseClient.AddAPI( RADIANT_MAJOR, NULL, sizeof( _QERFuncTable_1 ), SYN_REQUIRE, &g_FuncTable );
-	g_SynapseClient.AddAPI( VFS_MAJOR, "pk3", sizeof( _QERFileSystemTable ), SYN_REQUIRE, &g_FileSystemTable );
+	g_SynapseClient.AddAPI( VFS_MAJOR, "*", sizeof( _QERFileSystemTable ), SYN_REQUIRE, &g_FileSystemTable );
 
 	return &g_SynapseClient;
 }

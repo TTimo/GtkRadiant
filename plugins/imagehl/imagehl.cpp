@@ -75,7 +75,7 @@ extern "C" CSynapseClient * SYNAPSE_DLL_EXPORT Synapse_EnumerateInterfaces( cons
 	g_SynapseClient.AddAPI( IMAGE_MAJOR, "spr", sizeof( _QERPlugImageTable ) );
 #endif
 	// this "wad" needs to be "*" for the VFS, we don't care what VFS we have, as long as we have one.
-	g_SynapseClient.AddAPI( VFS_MAJOR, "wad", sizeof( _QERFileSystemTable ), SYN_REQUIRE, &g_FileSystemTable );
+	g_SynapseClient.AddAPI( VFS_MAJOR, "*", sizeof( _QERFileSystemTable ), SYN_REQUIRE, &g_FileSystemTable ); // wad, typically
 	g_SynapseClient.AddAPI( RADIANT_MAJOR, NULL, sizeof( _QERFuncTable_1 ), SYN_REQUIRE, &g_FuncTable );
 
 	return &g_SynapseClient;
