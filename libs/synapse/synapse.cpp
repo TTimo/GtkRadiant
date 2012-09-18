@@ -816,11 +816,11 @@ CSynapseClient::~CSynapseClient(){
 	Shutdown();
 }
 
-int CSynapseClient::GetAPICount(){
+int CSynapseClient::GetAPICount() const {
 	return mAPIDescriptors.size();
 }
 
-APIDescriptor_t* CSynapseClient::GetAPIDescriptor( int i ){
+APIDescriptor_t* CSynapseClient::GetAPIDescriptor( int i ) const {
 	return mAPIDescriptors[i];
 }
 

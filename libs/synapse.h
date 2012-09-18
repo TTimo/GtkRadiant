@@ -307,8 +307,8 @@ public:
 CSynapseClient();
 virtual ~CSynapseClient();
 
-int GetAPICount();   ///< returns the number of APIs that this module provides
-APIDescriptor_t* GetAPIDescriptor( int ); ///< retrieve specific information about on of the APIs
+int GetAPICount() const;   ///< returns the number of APIs that this module provides
+APIDescriptor_t* GetAPIDescriptor( int ) const; ///< retrieve specific information about on of the APIs
 
 /*!
    Add the API to the CSynapseClient information
