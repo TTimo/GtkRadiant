@@ -75,7 +75,7 @@ def CheckUnresolved( source, target, env ):
 		return 1
 
 # http://aspn.activestate.com/ASPN/Cookbook/Python/Recipe/413486
-
+# OH_GOD, I used to think code like that was cool and useful
 def Enum(*names):
    ##assert names, "Empty enums are not supported" # <- Don't like empty enums? Uncomment!
 
