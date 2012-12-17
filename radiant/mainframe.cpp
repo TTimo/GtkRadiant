@@ -1812,15 +1812,15 @@ void MainFrame::create_main_toolbar( GtkWidget *window, GtkWidget *vbox ){
 									GTK_SIGNAL_FUNC( HandleCommand ), GINT_TO_POINTER( ID_SELECT_MOUSESCALE ) );
 	g_object_set_data( G_OBJECT( window ), "tb_select_mousescale", w );
 	w = gtk_toolbar_append_element( GTK_TOOLBAR( toolbar ), GTK_TOOLBAR_CHILD_TOGGLEBUTTON, NULL,
-									"", _( "Scale X" ), "", new_pixmap( window, "scalelockx.bmp" ),
+									"", _( "Disable Scaling Along X" ), "", new_pixmap( window, "scalelockx.bmp" ),
 									GTK_SIGNAL_FUNC( HandleCommand ), GINT_TO_POINTER( ID_SCALELOCKX ) );
 	g_object_set_data( G_OBJECT( window ), "tb_scalelockx", w );
 	w = gtk_toolbar_append_element( GTK_TOOLBAR( toolbar ), GTK_TOOLBAR_CHILD_TOGGLEBUTTON, NULL,
-									"", _( "Scale Y" ), "", new_pixmap( window, "scalelocky.bmp" ),
+									"", _( "Disable Scaling Along Y" ), "", new_pixmap( window, "scalelocky.bmp" ),
 									GTK_SIGNAL_FUNC( HandleCommand ), GINT_TO_POINTER( ID_SCALELOCKY ) );
 	g_object_set_data( G_OBJECT( window ), "tb_scalelocky", w );
 	w = gtk_toolbar_append_element( GTK_TOOLBAR( toolbar ), GTK_TOOLBAR_CHILD_TOGGLEBUTTON, NULL,
-									"", _( "Scale Z" ), "", new_pixmap( window, "scalelockz.bmp" ),
+									"", _( "Disable Scaling Along Z" ), "", new_pixmap( window, "scalelockz.bmp" ),
 									GTK_SIGNAL_FUNC( HandleCommand ), GINT_TO_POINTER( ID_SCALELOCKZ ) );
 	g_object_set_data( G_OBJECT( window ), "tb_scalelockz", w );
 
