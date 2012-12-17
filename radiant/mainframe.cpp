@@ -1812,15 +1812,15 @@ void MainFrame::create_main_toolbar( GtkWidget *window, GtkWidget *vbox ){
 									GTK_SIGNAL_FUNC( HandleCommand ), GINT_TO_POINTER( ID_SELECT_MOUSESCALE ) );
 	g_object_set_data( G_OBJECT( window ), "tb_select_mousescale", w );
 	w = gtk_toolbar_append_element( GTK_TOOLBAR( toolbar ), GTK_TOOLBAR_CHILD_TOGGLEBUTTON, NULL,
-									"", _( "Scale X" ), "", new_pixmap( window, "scalelockx.bmp" ),
+									"", _( "Disable Scaling Along X" ), "", new_pixmap( window, "scalelockx.bmp" ),
 									GTK_SIGNAL_FUNC( HandleCommand ), GINT_TO_POINTER( ID_SCALELOCKX ) );
 	g_object_set_data( G_OBJECT( window ), "tb_scalelockx", w );
 	w = gtk_toolbar_append_element( GTK_TOOLBAR( toolbar ), GTK_TOOLBAR_CHILD_TOGGLEBUTTON, NULL,
-									"", _( "Scale Y" ), "", new_pixmap( window, "scalelocky.bmp" ),
+									"", _( "Disable Scaling Along Y" ), "", new_pixmap( window, "scalelocky.bmp" ),
 									GTK_SIGNAL_FUNC( HandleCommand ), GINT_TO_POINTER( ID_SCALELOCKY ) );
 	g_object_set_data( G_OBJECT( window ), "tb_scalelocky", w );
 	w = gtk_toolbar_append_element( GTK_TOOLBAR( toolbar ), GTK_TOOLBAR_CHILD_TOGGLEBUTTON, NULL,
-									"", _( "Scale Z" ), "", new_pixmap( window, "scalelockz.bmp" ),
+									"", _( "Disable Scaling Along Z" ), "", new_pixmap( window, "scalelockz.bmp" ),
 									GTK_SIGNAL_FUNC( HandleCommand ), GINT_TO_POINTER( ID_SCALELOCKZ ) );
 	g_object_set_data( G_OBJECT( window ), "tb_scalelockz", w );
 
@@ -4559,45 +4559,51 @@ void MainFrame::OnEditSaveprefab(){
 	}
 }
 
-void MainFrame::OnPrefs(){
-	int nView = g_PrefsDlg.m_nView;
-	bool bToolbar = g_PrefsDlg.m_bWideToolbar;
-	bool bPluginToolbar = g_PrefsDlg.m_bPluginToolbar;
-	int nShader = g_PrefsDlg.m_nShader;
-	int nTextureQuality = g_PrefsDlg.m_nTextureQuality;
-//  int nLightRadiuses = g_PrefsDlg.m_nLightRadiuses;
-	g_PrefsDlg.LoadPrefs();
+void MainFrame::OnPrefs() {
+    int     nView               = g_PrefsDlg.m_nView;
+    int     nShader             = g_PrefsDlg.m_nShader;
+    int     nTextureQuality     = g_PrefsDlg.m_nTextureQuality;
+    bool    bToolbar            = g_PrefsDlg.m_bWideToolbar;
+    bool    bPluginToolbar      = g_PrefsDlg.m_bPluginToolbar;
+    bool    bDetachableMenus    = g_PrefsDlg.m_bDetachableMenus;
+    bool    bFloatingZ          = g_PrefsDlg.m_bFloatingZ;
 
-	if ( g_PrefsDlg.DoModal() == IDOK ) {
-		if ( ( g_PrefsDlg.m_nLatchedView != nView ) ||
-			 ( g_PrefsDlg.m_bLatchedDetachableMenus != g_PrefsDlg.m_bDetachableMenus ) ||
-			 ( g_PrefsDlg.m_bLatchedWideToolbar != bToolbar ) ||
-			 ( g_PrefsDlg.m_bLatchedPatchToolbar != bToolbar ) ||
-			 ( g_PrefsDlg.m_bLatchedPluginToolbar != bPluginToolbar ) ||
-			 ( g_PrefsDlg.m_nLatchedShader != nShader ) ||
-			 ( g_PrefsDlg.m_nLatchedTextureQuality != nTextureQuality )
-			 || ( g_PrefsDlg.m_bLatchedFloatingZ != g_PrefsDlg.m_bFloatingZ )
-			 ) {
-			gtk_MessageBox( m_pWidget, _( "You must restart Radiant for the changes to take effect." ) );
-		}
+    g_PrefsDlg.LoadPrefs();
 
-		// if the view mode was switched to floating, set the Z window on by default
-		// this was originally intended as a bug fix, but the fix is elsewhere .. anyway making sure we force Z on each time is good
-		// (and we simply hope there will be a SavePrefs before we die)
-		if ( ( g_PrefsDlg.m_nView != nView ) && ( (EViewStyle)g_PrefsDlg.m_nView == (EViewStyle)eFloating ) ) {
-			g_PrefsDlg.m_bZVis = true;
-		}
+    if(g_PrefsDlg.DoModal() == IDOK) {
+        if((g_PrefsDlg.m_nLatchedView               != nView            ) ||
+           (g_PrefsDlg.m_bLatchedDetachableMenus    != bDetachableMenus ) ||
+           (g_PrefsDlg.m_bLatchedWideToolbar        != bToolbar         ) ||
+           (g_PrefsDlg.m_bLatchedPatchToolbar       != bToolbar         ) ||
+           (g_PrefsDlg.m_bLatchedPluginToolbar      != bPluginToolbar   ) ||
+           (g_PrefsDlg.m_nLatchedShader             != nShader          ) ||
+           (g_PrefsDlg.m_nLatchedTextureQuality     != nTextureQuality  ) || 
+           (g_PrefsDlg.m_bLatchedFloatingZ          != bFloatingZ)) {
+            gtk_MessageBoxNew(m_pWidget, "You must restart Radiant for the "
+                              "changes to take effect.", "Restart Radiant", 
+                              MB_OK | MB_ICONINFORMATION);
+        }
 
-		if ( m_pTexWnd ) {
-			m_pTexWnd->UpdatePrefs();
-		}
+        // if the view mode was switched to floating, set the Z window on by 
+        // default. this was originally intended as a bug fix, but the fix is 
+        // elsewhere .. anyway making sure we force Z on each time is good
+        // (and we simply hope there will be a SavePrefs before we die)
+        if((g_PrefsDlg.m_nView != nView) && 
+           ((EViewStyle)g_PrefsDlg.m_nView == (EViewStyle)eFloating)) {
+            g_PrefsDlg.m_bZVis = true;
+        }
 
-		GtkWidget *item = GTK_WIDGET( g_object_get_data( G_OBJECT( m_pWidget ), "menu_snaptogrid" ) );
-		g_bIgnoreCommands++;
-		gtk_check_menu_item_set_active( GTK_CHECK_MENU_ITEM( item ),
-										( g_PrefsDlg.m_bSnap ) ? TRUE : FALSE );
-		g_bIgnoreCommands--;
-	}
+        if(m_pTexWnd) {
+            m_pTexWnd->UpdatePrefs();
+        }
+
+        GtkWidget *item = GTK_WIDGET(g_object_get_data(G_OBJECT(m_pWidget), 
+                                                       "menu_snaptogrid"));
+        g_bIgnoreCommands++;
+        gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(item),
+                                      (g_PrefsDlg.m_bSnap) ? TRUE : FALSE);
+        g_bIgnoreCommands--;
+    }
 }
 
 void MainFrame::OnTogglecamera(){

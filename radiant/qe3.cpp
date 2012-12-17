@@ -1453,8 +1453,7 @@ qboolean ConfirmModified() {
 
 	int saveChoice = gtk_MessageBoxNew( g_pParentWnd->m_pWidget, 
 						"The current map has changed since it was last saved.\n"
-						"Would you like to save before continuing?", 
-						"Exit Radiant", 
+						"Would you like to save before continuing?", "Radiant", 
 						MB_YESNOCANCEL | MB_ICONQUESTION );
 
 	switch( saveChoice ) {
