@@ -71,8 +71,9 @@ int CALLBACK WinMain(
 
 #endif
 
-// =============================================================================
-// Splash screen
+//============================================================================
+// Splash Screen
+//============================================================================
 
 // get rid of it when debugging
 #if defined ( _DEBUG )
@@ -81,7 +82,8 @@ int CALLBACK WinMain(
 
 static GtkWidget *splash_screen;
 
-// called based on a timer, or in particular cases when we don't want to keep it around
+// called based on a timer, or in particular cases when we don't want to 
+// keep it around
 gint try_destroy_splash( gpointer data ){
 	if ( splash_screen ) {
 		gtk_widget_destroy( splash_screen );
@@ -90,56 +92,23 @@ gint try_destroy_splash( gpointer data ){
 	return FALSE;
 }
 
-static void create_splash(){
-	GtkWidget *alert_frame, *alert_frame1, *pixmap;
+static void create_splash() {
+    splash_screen = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+    gtk_window_set_title(GTK_WINDOW(splash_screen), "Splash Screen");
+    gtk_container_set_border_width(GTK_CONTAINER(splash_screen), 0);
+    gtk_widget_set_size_request(splash_screen, 640, 384);
+    gtk_window_set_keep_above(GTK_WINDOW(splash_screen), TRUE);
+    gtk_window_set_decorated(GTK_WINDOW(splash_screen), FALSE);
+    gtk_window_set_position(GTK_WINDOW(splash_screen), GTK_WIN_POS_CENTER);
+    gtk_window_set_resizable(GTK_WINDOW(splash_screen), FALSE);
 
-	splash_screen = gtk_window_new( GTK_WINDOW_POPUP );
-	gtk_window_position( GTK_WINDOW( splash_screen ), GTK_WIN_POS_CENTER );
-	gtk_widget_realize( splash_screen );
+    CString str = g_strBitmapsPath;
+    str += "splash.png";
+    GtkWidget *image = gtk_image_new_from_file(str.GetBuffer());
+    gtk_container_add(GTK_CONTAINER(splash_screen), image);
+    gtk_widget_show_all(splash_screen);
 
-	alert_frame1 = gtk_frame_new( NULL );
-	gtk_widget_show( alert_frame1 );
-	gtk_container_add( GTK_CONTAINER( splash_screen ), alert_frame1 );
-	gtk_frame_set_shadow_type( GTK_FRAME( alert_frame1 ), GTK_SHADOW_OUT );
-
-	alert_frame = gtk_frame_new( NULL );
-	gtk_widget_show( alert_frame );
-
-	gtk_container_add( GTK_CONTAINER( alert_frame1 ), alert_frame );
-	gtk_frame_set_shadow_type( GTK_FRAME( alert_frame ), GTK_SHADOW_IN );
-	gtk_container_border_width( GTK_CONTAINER( alert_frame ), 3 );
-
-	pixmap = gtk_preview_new( GTK_PREVIEW_COLOR );
-	gtk_widget_show( pixmap );
-	gtk_container_add( GTK_CONTAINER( alert_frame ), pixmap );
-
-	CString str;
-	guint16 width, height;
-	unsigned char *buf;
-
-	str = g_strGameToolsPath;
-	str += "bitmaps/splash.bmp";
-
-	unsigned char* load_bitmap_file( const char* filename, guint16* width, guint16* height );
-	buf = load_bitmap_file( str.GetBuffer(), &width, &height );
-
-	if ( !buf ) {
-		str = g_strBitmapsPath;
-		str += "splash.bmp";
-
-		buf = load_bitmap_file( str.GetBuffer(), &width, &height );
-	}
-
-	if ( buf ) {
-		GtkPreview *preview = GTK_PREVIEW( pixmap );
-		gtk_preview_size( preview, width, height );
-		for ( int y = 0; y < height; y++ )
-			gtk_preview_draw_row( preview, buf + y * width * 3, 0, y, width );
-	}
-
-	gtk_widget_show_all( splash_screen );
-
-	while ( gtk_events_pending() )
+	while(gtk_events_pending())
 		gtk_main_iteration();
 }
 

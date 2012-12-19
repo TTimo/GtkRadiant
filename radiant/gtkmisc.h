@@ -61,6 +61,7 @@ gint widget_delete_hide( GtkWidget *widget );
 bool WINAPI load_plugin_bitmap( const char* filename, void **gdkpixmap, void **mask );
 void load_pixmap( const char* filename, GtkWidget* widget, GdkPixmap **gdkpixmap, GdkBitmap **mask );
 GtkWidget* new_pixmap( GtkWidget* widget, const char* filename );
+GtkWidget* new_image_icon(const char* filename);
 
 GtkWidget* menu_separator( GtkWidget *menu );
 GtkWidget* menu_tearoff( GtkWidget *menu );

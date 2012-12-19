@@ -726,6 +726,24 @@ GtkWidget* new_pixmap( GtkWidget* widget, const char* filename ){
 	return pixmap;
 }
 
+GtkWidget* new_image_icon(const char* filename) {
+    GError*     gErr;
+    GdkPixbuf*  iconPB;
+    
+    /*
+    iconPB = gdk_pixbuf_new_from_file(filename, &gErr);
+
+    if(iconPB)
+        return gtk_image_new_from_pixbuf(iconPB);
+    else
+        return NULL;
+        */
+
+    CString str = g_strBitmapsPath;
+    str += filename;
+    return gtk_image_new_from_file(str);
+}
+
 // =============================================================================
 // Menu stuff
 
