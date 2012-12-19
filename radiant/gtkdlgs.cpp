@@ -2962,25 +2962,25 @@ int DoCapDlg( int *type, bool *b_GroupResult ){
 	gtk_table_set_row_spacings( GTK_TABLE( table ), 5 );
 	gtk_table_set_col_spacings( GTK_TABLE( table ), 5 );
 
-	pixmap = new_pixmap( g_pParentWnd->m_pWidget, "cap_bevel.bmp" );
+	pixmap = new_image_icon("cap_bevel.png");
 	gtk_widget_show( pixmap );
 	gtk_table_attach( GTK_TABLE( table ), pixmap, 0, 1, 0, 1,
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
 
-	pixmap = new_pixmap( g_pParentWnd->m_pWidget, "cap_endcap.bmp" );
+	pixmap = new_image_icon("cap_endcap.png");
 	gtk_widget_show( pixmap );
 	gtk_table_attach( GTK_TABLE( table ), pixmap, 0, 1, 1, 2,
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
 
-	pixmap = new_pixmap( g_pParentWnd->m_pWidget, "cap_ibevel.bmp" );
+	pixmap = new_image_icon("cap_ibevel.png");
 	gtk_widget_show( pixmap );
 	gtk_table_attach( GTK_TABLE( table ), pixmap, 0, 1, 2, 3,
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
 
-	pixmap = new_pixmap( g_pParentWnd->m_pWidget, "cap_iendcap.bmp" );
+	pixmap = new_image_icon("cap_iendcap.png");
 	gtk_widget_show( pixmap );
 	gtk_table_attach( GTK_TABLE( table ), pixmap, 0, 1, 3, 4,
 					  (GtkAttachOptions) ( GTK_FILL ),

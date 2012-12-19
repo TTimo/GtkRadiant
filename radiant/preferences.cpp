@@ -2083,28 +2083,28 @@ void PrefsDlg::BuildDialog(){
 	gtk_table_set_col_spacings( GTK_TABLE( table ), 5 );
 
 	// view type 1
-	pixmap = new_pixmap( g_pParentWnd->m_pWidget, "window1.bmp" );
+	pixmap = new_image_icon("window1.png");
 	gtk_widget_show( pixmap );
 	gtk_table_attach( GTK_TABLE( table ), pixmap, 0, 1, 0, 1,
 					  (GtkAttachOptions) ( 0 ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
 
 	// view type 2
-	pixmap = new_pixmap( g_pParentWnd->m_pWidget, "window2.bmp" );
+	pixmap = new_image_icon("window2.png");
 	gtk_widget_show( pixmap );
 	gtk_table_attach( GTK_TABLE( table ), pixmap, 1, 2, 0, 1,
 					  (GtkAttachOptions) ( 0 ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
 
 	// view type 3
-	pixmap = new_pixmap( g_pParentWnd->m_pWidget, "window3.bmp" );
+	pixmap = new_image_icon("window3.png");
 	gtk_widget_show( pixmap );
 	gtk_table_attach( GTK_TABLE( table ), pixmap, 2, 3, 0, 1,
 					  (GtkAttachOptions) ( 0 ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
 
 	// view type 4
-	pixmap = new_pixmap( g_pParentWnd->m_pWidget, "window4.bmp" );
+	pixmap = new_image_icon("window4.png");
 	gtk_widget_show( pixmap );
 	gtk_table_attach( GTK_TABLE( table ), pixmap, 3, 4, 0, 1,
 					  (GtkAttachOptions) ( 0 ),
