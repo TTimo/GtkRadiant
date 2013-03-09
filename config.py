@@ -3,7 +3,7 @@ import sys, traceback, platform, re, commands, platform, subprocess
 if __name__ != '__main__':
 	from SCons.Script import *
 
-import utils, urllib2, zipfile, shutil, pprint, subprocess, re
+import utils, urllib2, zipfile, shutil, pprint, subprocess, re, os.path
 
 # config = debug release
 # aliases are going to be very needed here
@@ -220,34 +220,21 @@ class Config:
 		baseflags = [ '-pipe', '-Wall', '-fmessage-length=0', '-fvisibility=hidden', xml2.split( ' ' ) ]
 
 		if ( self.platform == 'Darwin' ):
-			env.Append( CPPPATH = [ '/Developer/SDKs/MacOSX10.4u.sdk/usr/X11R6/include' ] )
+			if ( os.path.isdir( '/Developer/SDKs/MacOSX10.4u.sdk/usr/X11R6/include' ) ):
+			    env.Append( CPPPATH = [ '/Developer/SDKs/MacOSX10.4u.sdk/usr/X11R6/include' ] )
+			else:
+			    env.ParseConfig( 'pkg-config x11 --cflags' )
+			env.ParseConfig( 'pkg-config glu --cflags --libs' )
+			env.ParseConfig( 'pkg-config zlib --cflags --libs' )
 
 		if ( useGtk ):
-			( ret, gtk2 ) = commands.getstatusoutput( 'pkg-config gtk+-2.0 --cflags' )
-			if ( ret != 0 ):
-				print 'pkg-config gtk+-2.0 failed'
-				assert( False )
-			baseflags += gtk2.split( ' ' )
-			gtk2libs = commands.getoutput( 'pkg-config gtk+-2.0 --libs' )
-			env.Append( LINKFLAGS = gtk2libs.split( ' ' ) )
+			env.ParseConfig( 'pkg-config gtk+-2.0 --cflags --libs' )
 		else:
 			# always setup at least glib
-			( ret, glib ) = commands.getstatusoutput( 'pkg-config glib-2.0 --cflags' )
-			if ( ret != 0 ):
-				print 'pkg-config glib-2.0 failed'
-				assert( False )
-			baseflags += glib.split( ' ' )
-			gliblibs = commands.getoutput( 'pkg-config glib-2.0 --libs' )
-			env.Append( LINKFLAGS = gliblibs.split( ' ' ) )
+			env.ParseConfig( 'pkg-config glib-2.0 --cflags --libs' )
 
 		if ( useGtkGL ):
-			( ret, gtkgl ) = commands.getstatusoutput( 'pkg-config gtkglext-1.0 --cflags' )
-			if ( ret != 0 ):
-				print 'pkg-config gtkglext-1.0 failed'
-				assert( False )
-			baseflags += gtkgl.split( ' ' )
-			gtkgllibs = commands.getoutput( 'pkg-config gtkglext-1.0 --libs' )
-			env.Append( LINKFLAGS = gtkgllibs.split( ' ' ) )
+			env.ParseConfig( 'pkg-config gtkglext-1.0 --cflags --libs' )
 		if ( useJPEG ):
 			env.Append( LIBS = 'jpeg' )
 		if ( usePNG ):
