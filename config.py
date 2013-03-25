@@ -6,16 +6,9 @@ if __name__ != '__main__':
 import utils, urllib2, zipfile, shutil, pprint, subprocess, re, os.path
 
 # config = debug release
-# aliases are going to be very needed here
-# we have dependency situations too
 # target =
 
 class Config:
-	# not used atm, but useful to keep a list in mind
-	# may use them eventually for the 'all' and other aliases expansions?
-	target_choices = utils.Enum( 'radiant', 'q3map2', 'q3data', 'setup' )
-	config_choices = utils.Enum( 'debug', 'release' )
-
 	# aliases
 	# 'all' -> for each choices
 	# 'gamecode' for the targets, 'game' 'cgame' 'ui'
@@ -32,8 +25,8 @@ class Config:
 
 		# platforms for which to assemble a setup
 		self.setup_platforms = [ 'local', 'x86', 'x64', 'win32' ]
-		# paks to assemble in the setup
-		self.setup_packs = [ 'Q3Pack', 'UrTPack', 'ETPack', 'QLPack' ]
+                # paks to assemble in the setup (only the Enemy Territory one by default)
+                self.setup_packs = [ 'ETPack' ] # [ 'Q3Pack', 'UrTPack', 'ETPack', 'QLPack' ]
 
 	def __repr__( self ):
 		return 'config: target=%s config=%s' % ( self.target_selected, self.config_selected )
@@ -219,29 +212,24 @@ class Config:
 		env.Append( LINKFLAGS = xml2libs.split( ' ' ) )
 		baseflags = [ '-pipe', '-Wall', '-fmessage-length=0', '-fvisibility=hidden', xml2.split( ' ' ) ]
 
-		if ( self.platform == 'Darwin' ):
-			if ( os.path.isdir( '/Developer/SDKs/MacOSX10.4u.sdk/usr/X11R6/include' ) ):
-			    env.Append( CPPPATH = [ '/Developer/SDKs/MacOSX10.4u.sdk/usr/X11R6/include' ] )
-			else:
-			    env.ParseConfig( 'pkg-config x11 --cflags' )
-			env.ParseConfig( 'pkg-config glu --cflags --libs' )
-			env.ParseConfig( 'pkg-config zlib --cflags --libs' )
-
 		if ( useGtk ):
-			env.ParseConfig( 'pkg-config gtk+-2.0 --cflags --libs' )
+                        env.ParseConfig( 'pkg-config gtk+-2.0 --cflags --libs' )
+                        env.ParseConfig( 'pkg-config x11 --cflags --libs' )
 		else:
 			# always setup at least glib
 			env.ParseConfig( 'pkg-config glib-2.0 --cflags --libs' )
 
 		if ( useGtkGL ):
+                        env.ParseConfig( 'pkg-config glu --cflags --libs' )
 			env.ParseConfig( 'pkg-config gtkglext-1.0 --cflags --libs' )
 		if ( useJPEG ):
 			env.Append( LIBS = 'jpeg' )
 		if ( usePNG ):
-			pnglibs = 'png z'
+                        pnglibs = 'png'
 			env.Append( LIBS = pnglibs.split( ' ' ) )
-		if ( useZ ):
-			env.Append( LIBS = 'z' )
+                        env.ParseConfig( 'pkg-config zlib --cflags --libs' )
+                if ( useZ ):
+                        env.ParseConfig( 'pkg-config zlib --cflags --libs' )
 
 		env.Append( CCFLAGS = baseflags )
 		env.Append( CXXFLAGS = baseflags + [ '-fpermissive', '-fvisibility-inlines-hidden' ] )
