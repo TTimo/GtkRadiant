@@ -13,7 +13,7 @@ import utils, urllib2, zipfile, shutil, pprint, subprocess, re
 class Config:
 	# not used atm, but useful to keep a list in mind
 	# may use them eventually for the 'all' and other aliases expansions?
-	target_choices = utils.Enum( 'radiant', 'q3map2', 'setup' )
+	target_choices = utils.Enum( 'radiant', 'q3map2', 'q3data', 'setup' )
 	config_choices = utils.Enum( 'debug', 'release' )
 
 	# aliases
@@ -22,7 +22,7 @@ class Config:
 
 	def __init__( self ):
 		# initialize defaults
-		self.target_selected = [ 'radiant', 'q3map2' ]
+		self.target_selected = [ 'radiant', 'q3map2', 'q3data', 'setup' ]
 		self.config_selected = [ 'release' ]
 		# those are global to each config
 		self.platform = platform.system()
@@ -175,6 +175,22 @@ class Config:
                         q3map2 = SConscript( os.path.join( build_dir, sconscript_name ) )
                         Default( InstallAs( os.path.join( self.install_directory, compiler_name ), q3map2 ) )
 
+        def emit_q3data( self ):
+                settings = self
+                for config_name in self.config_selected:
+                        config = {}
+                        config['name'] = config_name
+                        config['shared'] = False
+                        Export( 'utils', 'settings', 'config' )
+                        build_dir = os.path.join( 'build', config_name, 'q3data' )
+                        VariantDir( build_dir, '.', duplicate = 0 )
+                        lib_objects = []
+                        for project in [ 'libs/mathlib/mathlib.vcproj', 'libs/l_net/l_net.vcproj', 'libs/ddslib/ddslib.vcproj' ]:
+                                Export( 'project' )
+                                lib_objects += SConscript( os.path.join( build_dir, 'SConscript.lib' ) )
+                        Export( 'lib_objects' )
+                        q3data = SConscript( os.path.join( build_dir, 'SConscript.q3data' ) )
+                        Default( InstallAs( os.path.join( self.install_directory, 'q3data' ), q3data ) )
 
 	def emit( self ):
                 if 'radiant' in self.target_selected:
@@ -182,6 +198,8 @@ class Config:
                 if 'q3map2' in self.target_selected:
                         self.emit_q3map2( urt = False )
                         self.emit_q3map2( urt = True )
+                if 'q3data' in self.target_selected:
+                        self.emit_q3data()
                 if 'setup' in self.target_selected:
                         self.Setup()
 

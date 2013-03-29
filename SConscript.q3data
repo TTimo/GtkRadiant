@@ -1,0 +1,19 @@
+# -*- mode: python -*-
+# GtkRadiant build scripts
+# TTimo <ttimo@ttimo.net>
+# http://scons.org/
+
+import os
+
+Import( [ 'utils', 'config', 'settings', 'lib_objects' ] )
+
+env = Environment()
+settings.SetupEnvironment( env, config['name'] )
+env.Prepend( CPPPATH = [ '#tools/quake3/common' ] )
+env.Append( LIBS = [ 'm', 'pthread' ] )
+proj = utils.vcproj( os.path.join( GetLaunchDir(), 'tools/quake3/q3data/q3data.vcproj' ) )
+objects = lib_objects
+objects += [ os.path.join( 'tools/quake3/q3data', i ) for i in proj.getSourceFiles() ]
+q3data = env.Program( 'q3data', objects )
+
+Return( 'q3data' )

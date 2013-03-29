@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 10.00
-# Visual Studio 2008
+# Visual C++ Express 2008
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "radiant", "radiant\radiant.vcproj", "{65D02375-63EE-4A8A-9F8E-504B1D5A1D02}"
 	ProjectSection(ProjectDependencies) = postProject
 		{B957BA35-F807-4C84-85A2-C1F9AC56713B} = {B957BA35-F807-4C84-85A2-C1F9AC56713B}
@@ -188,7 +188,12 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "vfsqlpk3", "plugins\vfsqlpk
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "q3map2_urt", "tools\urt\tools\quake3\q3map2\q3map2_urt.vcproj", "{7AF7537E-94C3-4680-8F5E-C1CE30DC2041}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "bspc", "tools\quake3\bspc\bspc.vcproj", "{4E4EBC16-F345-4667-84E1-86633BAFDAE6}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "q3data", "tools\quake3\q3data\q3data.vcproj", "{8DFCF3C0-5EC6-4E28-9D38-23FBE5F214FB}"
+	ProjectSection(ProjectDependencies) = postProject
+		{B957BA35-F807-4C84-85A2-C1F9AC56713B} = {B957BA35-F807-4C84-85A2-C1F9AC56713B}
+		{B99A58B4-E5AB-42F6-A28F-D7ACB80E0B06} = {B99A58B4-E5AB-42F6-A28F-D7ACB80E0B06}
+		{14734EBB-B167-48D9-9B93-2277F645925F} = {14734EBB-B167-48D9-9B93-2277F645925F}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -356,10 +361,10 @@ Global
 		{7AF7537E-94C3-4680-8F5E-C1CE30DC2041}.Debug|Win32.Build.0 = Debug|Win32
 		{7AF7537E-94C3-4680-8F5E-C1CE30DC2041}.Release|Win32.ActiveCfg = Release|Win32
 		{7AF7537E-94C3-4680-8F5E-C1CE30DC2041}.Release|Win32.Build.0 = Release|Win32
-		{4E4EBC16-F345-4667-84E1-86633BAFDAE6}.Debug|Win32.ActiveCfg = Debug|Win32
-		{4E4EBC16-F345-4667-84E1-86633BAFDAE6}.Debug|Win32.Build.0 = Debug|Win32
-		{4E4EBC16-F345-4667-84E1-86633BAFDAE6}.Release|Win32.ActiveCfg = Release|Win32
-		{4E4EBC16-F345-4667-84E1-86633BAFDAE6}.Release|Win32.Build.0 = Release|Win32
+		{8DFCF3C0-5EC6-4E28-9D38-23FBE5F214FB}.Debug|Win32.ActiveCfg = Debug|Win32
+		{8DFCF3C0-5EC6-4E28-9D38-23FBE5F214FB}.Debug|Win32.Build.0 = Debug|Win32
+		{8DFCF3C0-5EC6-4E28-9D38-23FBE5F214FB}.Release|Win32.ActiveCfg = Release|Win32
+		{8DFCF3C0-5EC6-4E28-9D38-23FBE5F214FB}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
