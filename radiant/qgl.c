@@ -1681,7 +1681,6 @@ int QGL_Init( const char *dllname, const char* gluname ){
 	qglXWaitGL                   = safe_dlsym( g_hGLDLL, "glXWaitGL" );
 	qglXWaitX                    = safe_dlsym( g_hGLDLL, "glXWaitX" );
 	qglXUseXFont                 = safe_dlsym( g_hGLDLL, "glXUseXFont" );
-//  qglXGetProcAddressARB        = dlsym (g_hGLDLL, "glXGetProcAddressARB"); // Utah-GLX fix
 #endif
 
 	qglPointParameterfEXT = 0;
@@ -1690,7 +1689,6 @@ int QGL_Init( const char *dllname, const char* gluname ){
 	qglSelectTextureSGIS = 0;
 	qglMTexCoord2fSGIS = 0;
 
-	// texture compression
 	Sys_Printf( "Done.\n" );
 
 #ifdef ATIHACK_812

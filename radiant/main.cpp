@@ -502,7 +502,9 @@ int main( int argc, char* argv[] ) {
 #endif
 
 #ifdef __APPLE__
-	libgl = "/usr/X11R6/lib/libGL.1.dylib";
+	//	libgl = "/usr/X11R6/lib/libGL.dylib";
+	//	libgl = "/usr/X11/lib/libGL.dylib";
+	libgl = "/opt/local/lib/libGL.dylib";
 #endif
 
 #if defined ( __linux__ ) || defined ( __APPLE__ )
