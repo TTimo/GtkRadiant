@@ -1561,7 +1561,7 @@ void MainFrame::create_main_menu( GtkWidget *window, GtkWidget *vbox ){
 		menu_tearoff( menu );
 	}
 
-	item = create_menu_item_with_mnemonic( menu, _( "Manual" ),
+	item = create_menu_item_with_mnemonic( menu, _( "GtkRadiant Manual" ),
 										   GTK_SIGNAL_FUNC( HandleCommand ), ID_HELP );
 	gtk_widget_add_accelerator( item, "activate", accel, GDK_F1, (GdkModifierType)0, GTK_ACCEL_VISIBLE );
 
@@ -1572,11 +1572,11 @@ void MainFrame::create_main_menu( GtkWidget *window, GtkWidget *vbox ){
 	// TTimo: this is in global.xlink now
 	//create_menu_item_with_mnemonic (menu, "Links",
 	//                  GTK_SIGNAL_FUNC (HandleCommand), ID_HELP_LINKS);
-	create_menu_item_with_mnemonic( menu, _( "Bug report" ),
+	create_menu_item_with_mnemonic( menu, _( "Report a Bug" ),
 									GTK_SIGNAL_FUNC( HandleCommand ), ID_HELP_BUGREPORT );
-	create_menu_item_with_mnemonic( menu, _( "Shortcuts list" ),
+	create_menu_item_with_mnemonic( menu, _( "View Shortcuts" ),
 									GTK_SIGNAL_FUNC( HandleCommand ), ID_HELP_COMMANDLIST );
-	create_menu_item_with_mnemonic( menu, _( "_About" ),
+	create_menu_item_with_mnemonic( menu, _( "_About GtkRadiant" ),
 									GTK_SIGNAL_FUNC( HandleCommand ), ID_HELP_ABOUT );
 
 
@@ -6476,11 +6476,7 @@ void MainFrame::OnPluginsRefresh(){
 
 // open the Q3Rad manual
 void MainFrame::OnHelp(){
-	// at least on win32, g_strGameToolsPath + "Q3Rad_Manual/index.htm"
-	Str help;
-	help = g_strAppPath;
-	help += "Q3Rad_Manual/index.htm";
-	OpenURL( help.GetBuffer() );
+	OpenURL( "http://icculus.org/gtkradiant/documentation/q3radiant_manual/index.htm" );
 }
 
 // FIXME: we'll go towards a unified help thing soon
@@ -6492,7 +6488,7 @@ void MainFrame::OnHelpLinks(){
 }
 
 void MainFrame::OnHelpBugreport(){
-	OpenURL( "http://www.qeradiant.com/faq/fom-serve/cache/138.html" );
+	OpenURL( "https://github.com/TTimo/GtkRadiant/issues" );
 }
 
 void MainFrame::OnHelpCommandlist(){
