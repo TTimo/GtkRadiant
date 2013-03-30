@@ -7,7 +7,7 @@ import os
 
 Import( [ 'utils', 'config', 'settings', 'lib_objects' ] )
 
-env = Environment()
+env = Environment( ENV = os.environ )
 settings.SetupEnvironment( env, config['name'] )
 env.Prepend( CPPPATH = [ '#tools/quake3/common' ] )
 env.Append( LIBS = [ 'm', 'pthread', 'png', 'jpeg' ] )
