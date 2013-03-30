@@ -1707,26 +1707,20 @@ bool WINAPI color_dialog( void *parent, float *color, const char* title ){
 }
 
 void OpenURL( const char *url ){
-	// let's put a little comment
-	Sys_Printf( "OpenURL: %s\n", url );
-#ifdef __linux__
-	// \todo FIXME: the way we open URLs on *nix should be improved. A script is good (see how I do on RTCW)
-	char command[2 * PATH_MAX];
-	snprintf( command, sizeof( command ), "%s/openurl.sh \"%s\" &", g_strAppPath.GetBuffer(), url );
-	if ( system( command ) != 0 ) {
-		gtk_MessageBox( g_pParentWnd->m_pWidget, "Failed to launch Netscape!" );
-	}
-#endif
-#ifdef __APPLE__
-	char command[2 * PATH_MAX];
-	snprintf( command, sizeof( command ),
-			  "open \"%s\" &", url, url );
-	if ( system( command ) != 0 ) {
-		gtk_MessageBox( g_pParentWnd->m_pWidget, "Unable to launch browser!" );
-	}
-#endif
+    char command[2 * PATH_MAX];
+
+    Sys_Printf( "OpenURL: %s\n", url );
 #ifdef _WIN32
-	ShellExecute( (HWND)GDK_WINDOW_HWND( g_pParentWnd->m_pWidget->window ), "open", url, NULL, NULL, SW_SHOW );
+    ShellExecute( (HWND)GDK_WINDOW_HWND( g_pParentWnd->m_pWidget->window ), "open", url, NULL, NULL, SW_SHOW );
+#else
+#   ifdef __APPLE__
+        snprintf(command, sizeof(command), "open '%s' &", url);
+#   else
+        snprintf(command, sizeof(command), "xdg-open '%s' &", url);
+#   endif
+    if (system(command) != 0) {
+         gtk_MessageBox( g_pParentWnd->m_pWidget, "Failed to launch web browser!" );
+    }
 #endif
 }
 
