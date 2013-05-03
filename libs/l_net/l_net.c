@@ -51,7 +51,7 @@ void WinPrint( char *str, ... ){
 	vsprintf( text, str, argptr );
 	va_end( argptr );
 
-	printf( text );
+	printf("%s", text );
 }
 #else
 void WinPrint( char *str, ... ){
@@ -81,7 +81,7 @@ int Net_AddressCompare( address_t *addr1, address_t *addr2 ){
 #ifdef _WIN32
 	return stricmp( addr1->ip, addr2->ip );
 #endif
-#ifdef __linux__
+#if __linux__ || __APPLE__
 	return strcasecmp( addr1->ip, addr2->ip );
 #endif
 } //end of the function Net_AddressCompare

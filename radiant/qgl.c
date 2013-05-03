@@ -1118,10 +1118,10 @@ const GLubyte* WINAPI gluErrorString( GLenum errCode ){
 	for ( search = 0; glu_errlist[search].errstr; search++ )
 	{
 		if ( errCode == glu_errlist[search].errnum ) {
-			return (const char *)glu_errlist[search].errstr;
+			return (GLubyte *) glu_errlist[search].errstr;
 		}
 	} //end for
-	return "Unknown error";
+	return (GLubyte *) "Unknown error";
 }
 
 #ifdef ATIHACK_812

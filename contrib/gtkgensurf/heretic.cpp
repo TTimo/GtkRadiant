@@ -75,7 +75,7 @@ int GetDefSurfaceProps( char *Tex ){
 	      if (NULL != (fpak = fopen(pakfile[Game], "rb")))
 	      {
 	          sprintf(path,"textures/%s.m8",Tex);
-	          g_strdown(path);
+	          strlwr(path);
 	          num=fread(&pakheader,1,sizeof(pak_header_t),fpak);
 	          if((size_t)num < sizeof(pak_header_t))
 	          {
@@ -116,7 +116,7 @@ int GetDefSurfaceProps( char *Tex ){
 	      // Assume .map will be output to gamedir/maps, then back up
 	      // to the gamedir and append /textures. Ugly but it should work
 	      strcpy(path,gszMapFile);
-	      g_strdown(path);
+	      strlwr(path);
 	      p = strstr(path,"maps");
 	      if(!p) return 0;
 	      p[0] = '\0';

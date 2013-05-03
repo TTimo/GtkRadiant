@@ -226,5 +226,5 @@ void CPointfile::saxCharacters( message_info_t *ctx, const xmlChar *ch, int len 
 }
 
 char * CPointfile::getName(){
-	return "Map is leaked";
+	return const_cast<char*>("Map is leaked");
 }

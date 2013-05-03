@@ -743,17 +743,17 @@ void LoadImage( const char *name, byte ** pic, int *width, int *height ){
 		return;
 	}
 
-	if ( !g_strcasecmp( name + len - 4, ".tga" ) ) {
+	if ( !g_ascii_strcasecmp( name + len - 4, ".tga" ) ) {
 		LoadTGA( name, pic, width, height );
 	}
-	else if ( !g_strcasecmp( name + len - 4, ".pcx" ) ) {
+	else if ( !g_ascii_strcasecmp( name + len - 4, ".pcx" ) ) {
 		LoadPCX32( name, pic, width, height );
 	}
-	else if ( !g_strcasecmp( name + len - 4, ".bmp" ) ) {
+	else if ( !g_ascii_strcasecmp( name + len - 4, ".bmp" ) ) {
 		LoadBMP( name, pic, width, height );
 	}
 	/*
-	   else if (!g_strcasecmp (name + len - 4, ".jpg"))
+	   else if (!g_ascii_strcasecmp (name + len - 4, ".jpg"))
 	   {
 	   LoadJPG (name, pic, width, height);
 	   }

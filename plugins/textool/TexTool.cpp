@@ -828,7 +828,7 @@ extern "C" void QERPlug_Dispatch( const char* p, vec3_t vMin, vec3_t vMax, bool 
 		if ( !g_pToolWnd ) {
 			g_pToolWnd = g_UITable.m_pfnCreateGLWindow();
 			g_pToolWnd->setSizeParm( 300,300 );
-			g_pToolWnd->setName( "TexTool" );
+			g_pToolWnd->setName( const_cast<char*>("TexTool") );
 			// g_Listener is a static class, we need to bump the refCount to avoid premature release problems
 			g_Listen.IncRef();
 			// setListener will incRef on the listener too

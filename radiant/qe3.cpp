@@ -1083,7 +1083,7 @@ char    *argv[MAX_NUM_ARGVS];
  */
 void ParseCommandLine( char *lpCmdLine ){
 	argc = 1;
-	argv[0] = "programname";
+	argv[0] = const_cast<char*>("programname");
 
 	while ( *lpCmdLine && ( argc < MAX_NUM_ARGVS ) )
 	{
@@ -1741,7 +1741,7 @@ extern "C" void Sys_FPrintf_VA( int level, const char *text, va_list args ) {
 				tag = standard_tag;
 				break;
 			}
-			gtk_text_buffer_insert_with_tags( buffer, &iter, buf, length, tag, NULL );
+			gtk_text_buffer_insert_with_tags( buffer, &iter, buf, length, tag, (char *) NULL );
 
 			gtk_text_view_scroll_mark_onscreen( GTK_TEXT_VIEW( g_qeglobals_gui.d_edit ), end );
 

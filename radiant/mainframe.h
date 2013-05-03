@@ -44,11 +44,11 @@ const int RAD_PRESS   = 0x08;
 
 struct SCommandInfo
 {
-	char* m_strCommand;
+	const char* m_strCommand;
 	unsigned int m_nKey;
 	unsigned int m_nModifiers;
 	unsigned int m_nCommand;
-	char* m_strMenu;
+	const char* m_strMenu;
 };
 
 struct SKeyInfo

@@ -451,7 +451,7 @@ char *sgetS0( unsigned char **bp ){
 		return NULL;
 	}
 
-	len = strlen( buf ) + 1;
+	len = strlen( (char *) buf ) + 1;
 	if ( len == 1 ) {
 		flen += 2;
 		*bp += 2;

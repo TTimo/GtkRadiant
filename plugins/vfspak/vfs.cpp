@@ -164,7 +164,7 @@ static void vfsInitPakFile( const char *filename ){
 
 		// fix filename
 		vfsFixDOSName( file->entry.filename );
-		g_strdown( file->entry.filename );
+		strlwr( file->entry.filename );
 		//g_FuncTable.m_pfnSysPrintf("vfs file from pak: %s\n", file->entry.filename);
 	}
 }
@@ -183,7 +183,7 @@ static GSList* vfsGetListInternal( const char *dir, const char *ext, bool direct
 	dirname[0] = '\0';
 	if ( dir != NULL ) {
 		strcat( dirname, dir );
-		g_strdown( dirname );
+		strlwr( dirname );
 		vfsFixDOSName( dirname );
 		vfsAddSlash( dirname );
 		Sys_Printf( "vfs dirname_1: %s\n", dirname );
@@ -198,7 +198,7 @@ static GSList* vfsGetListInternal( const char *dir, const char *ext, bool direct
 	else{
 		extension[0] = '\0';
 	}
-	g_strdown( extension );
+	strlwr( extension );
 
 	for ( lst = g_pakFiles; lst != NULL; lst = g_slist_next( lst ) )
 	{
@@ -261,7 +261,7 @@ static GSList* vfsGetListInternal( const char *dir, const char *ext, bool direct
 	{
 		strcpy( dirname, g_strDirs[i] );
 		strcat( dirname, dir );
-		g_strdown( dirname );
+		strlwr( dirname );
 		vfsFixDOSName( dirname );
 		vfsAddSlash( dirname );
 
@@ -291,7 +291,7 @@ static GSList* vfsGetListInternal( const char *dir, const char *ext, bool direct
 
 				dirlist = g_strdup( name );
 
-				g_strdown( dirlist );
+				strlwr( dirlist );
 
 				char *ptr_ext = strrchr( dirlist, '.' );
 				if ( ext == NULL
@@ -473,7 +473,7 @@ int vfsGetFileCount( const char *filename, int flag ){
 
 	strcpy( fixed, filename );
 	vfsFixDOSName( fixed );
-	g_strdown( fixed );
+	strlwr( fixed );
 
 	for ( lst = g_pakFiles; lst != NULL; lst = g_slist_next( lst ) )
 	{
@@ -505,7 +505,7 @@ int vfsLoadFile( const char *filename, void **bufferptr, int index ){
 	*bufferptr = NULL;
 	strcpy( fixed, filename );
 	vfsFixDOSName( fixed );
-	g_strdown( fixed );
+	strlwr( fixed );
 
 	for ( i = 0; i < g_numDirs; i++ )
 	{
@@ -703,7 +703,7 @@ char* vfsGetFullPath( const char *in, int index, int flag ){
 
 		strcpy( fixed, in );
 		vfsFixDOSName( fixed );
-		g_strdown( fixed );
+		strlwr( fixed );
 
 		for ( lst = g_pakFiles; lst != NULL; lst = g_slist_next( lst ) )
 		{

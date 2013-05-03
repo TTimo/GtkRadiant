@@ -57,7 +57,7 @@ const char* brushEntityList[] = {
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-DEntity::DEntity( char *classname, int ID ){
+DEntity::DEntity( const char *classname, int ID ){
 	SetClassname( classname );
 	m_nID = ID;
 	QER_Entity = NULL;
@@ -469,7 +469,7 @@ int DEntity::GetIDMax( void ) {
 	return max + 1;
 }
 
-void DEntity::SetClassname( char *classname ) {
+void DEntity::SetClassname( const char *classname ) {
 	m_Classname = classname;
 }
 

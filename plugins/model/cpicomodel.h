@@ -47,7 +47,7 @@ CPicoModel( const Str& name );
 CPicoModel( const Str& name, const int frame );
 CPicoModel( const char *name, const int frame );
 ~CPicoModel();
-void CPicoModel::load( const char *name, const int frame );
+void load( const char *name, const int frame );
 
 void IncRef(){
 	++m_refcount;

@@ -41,7 +41,7 @@ entity_t* QER_Entity;
 int m_nID;
 
 //	Constrcution/Destruction
-DEntity( char* classname = "worldspawn", int ID = -1 );     // sets classname
+DEntity( const char* classname = "worldspawn", int ID = -1 );     // sets classname
 virtual ~DEntity();
 //	---------------------------------------------
 
@@ -55,7 +55,7 @@ DEPair* FindEPairByKey( const char* keyname );
 //	random functions........
 bool ResetTextures( const char* textureName, float fScale[2], float fShift[2], int rotation, const char* newTextureName, int bResetTextureName, int bResetScale[2], int bResetShift[2], int bResetRotation, bool rebuild );
 void SaveToFile( FILE* pFile );
-void SetClassname( char* classname );
+void SetClassname( const char* classname );
 int GetIDMax();
 
 void BuildInRadiant( bool allowDestruction );

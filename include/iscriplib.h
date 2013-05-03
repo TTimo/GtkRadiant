@@ -51,7 +51,7 @@ typedef qboolean ( *PFN_TOKENAVAILABLE )();
 typedef char*     ( *PFN_COM_PARSE )( char *data );
 typedef char*     ( *PFN_GET_COM_TOKEN )();
 // Hydra: added support for GetTokenExtra()
-typedef qboolean ( *PFN_GETTOKENEXTRA )( qboolean crossline,char *delimiters,qboolean keepdelimiter );
+typedef qboolean ( *PFN_GETTOKENEXTRA )( qboolean crossline,const char *delimiters,qboolean keepdelimiter );
 
 struct _QERScripLibTable
 {
