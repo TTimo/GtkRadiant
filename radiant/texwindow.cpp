@@ -611,7 +611,7 @@ void FillTextureMenu( GSList** pArray ){
 
 		ExtractFileName( (char*)l_shaderfiles->data, shaderfile );
 		StripExtension( shaderfile );
-		g_strdown( shaderfile );
+		strlwr( shaderfile );
 
 		for ( GSList *tmp = texdirs; tmp; tmp = g_slist_next( tmp ) )
 			if ( !strcasecmp( (char*)tmp->data, shaderfile ) ) {

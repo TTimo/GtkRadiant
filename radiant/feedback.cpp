@@ -321,7 +321,7 @@ void CDbgDlg::BuildDialog(){
 
 		{
 			GtkCellRenderer* renderer = gtk_cell_renderer_text_new();
-			GtkTreeViewColumn* column = gtk_tree_view_column_new_with_attributes( "", renderer, "text", 0, NULL );
+			GtkTreeViewColumn* column = gtk_tree_view_column_new_with_attributes( "", renderer, "text", 0, (char *) NULL );
 			gtk_tree_view_append_column( GTK_TREE_VIEW( view ), column );
 		}
 

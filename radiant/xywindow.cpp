@@ -437,7 +437,7 @@ void CreateEntityFromName( const char* name, const vec3_t origin ){
 	}
 }
 
-void CreateRightClickEntity( XYWnd* pWnd, int x, int y, char* pName ){
+void CreateRightClickEntity( XYWnd* pWnd, int x, int y, const char* pName ){
 	int height = pWnd->GetWidget()->allocation.height;
 	vec3_t point;
 	pWnd->SnapToPoint( x, height - 1 - y, point );
@@ -918,7 +918,7 @@ void XYWnd::SetPointMode( bool b ){
 void XYWnd::SetViewType( int n ){
 	m_nViewType = n;
 	if ( g_pParentWnd->CurrentStyle() == MainFrame::eFloating ) {
-		char* str = "YZ Side";
+		const char* str = "YZ Side";
 		if ( m_nViewType == XY ) {
 			str = "XY Top";
 		}

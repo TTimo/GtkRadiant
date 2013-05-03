@@ -3060,7 +3060,7 @@ void RefreshModelSkin( GSList **pModels, entitymodel_t *model ){
 #endif
 
 		// and also keeping it so we have an actual count of empty models
-		g_slist_append( *pModels, model );
+		*pModels = g_slist_append( *pModels, model );
 		return;
 	}
 	// do we have this model already?

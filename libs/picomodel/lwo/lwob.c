@@ -85,7 +85,7 @@ static int add_clip( char *s, lwClip **clist, int *nclips ){
 	( *nclips )++;
 	clip->index = *nclips;
 
-	lwListAdd( clist, clip );
+	lwListAdd( (void **) clist, clip );
 
 	return clip->index;
 }
@@ -132,7 +132,7 @@ static int add_tvel( float pos[], float vel[], lwEnvelope **elist, int *nenvs ){
 		env->behavior[ 0 ] = BEH_LINEAR;
 		env->behavior[ 1 ] = BEH_LINEAR;
 
-		lwListAdd( elist, env );
+		lwListAdd( (void **) elist, env );
 	}
 
 	*nenvs += 3;
@@ -340,43 +340,43 @@ lwSurface *lwGetSurface5( picoMemStream_t *fp, int cksize, lwObject *obj ){
 		case ID_BTEX:
 			s = getbytes( fp, sz );
 			tex = get_texture( s );
-			lwListAdd( &surf->bump.tex, tex );
+			lwListAdd( (void **) &surf->bump.tex, tex );
 			break;
 
 		case ID_CTEX:
 			s = getbytes( fp, sz );
 			tex = get_texture( s );
-			lwListAdd( &surf->color.tex, tex );
+			lwListAdd( (void **) &surf->color.tex, tex );
 			break;
 
 		case ID_DTEX:
 			s = getbytes( fp, sz );
 			tex = get_texture( s );
-			lwListAdd( &surf->diffuse.tex, tex );
+			lwListAdd( (void **) &surf->diffuse.tex, tex );
 			break;
 
 		case ID_LTEX:
 			s = getbytes( fp, sz );
 			tex = get_texture( s );
-			lwListAdd( &surf->luminosity.tex, tex );
+			lwListAdd( (void **) &surf->luminosity.tex, tex );
 			break;
 
 		case ID_RTEX:
 			s = getbytes( fp, sz );
 			tex = get_texture( s );
-			lwListAdd( &surf->reflection.val.tex, tex );
+			lwListAdd( (void **) &surf->reflection.val.tex, tex );
 			break;
 
 		case ID_STEX:
 			s = getbytes( fp, sz );
 			tex = get_texture( s );
-			lwListAdd( &surf->specularity.tex, tex );
+			lwListAdd( (void **) &surf->specularity.tex, tex );
 			break;
 
 		case ID_TTEX:
 			s = getbytes( fp, sz );
 			tex = get_texture( s );
-			lwListAdd( &surf->transparency.val.tex, tex );
+			lwListAdd( (void **) &surf->transparency.val.tex, tex );
 			break;
 
 		case ID_TFLG:
@@ -489,7 +489,7 @@ lwSurface *lwGetSurface5( picoMemStream_t *fp, int cksize, lwObject *obj ){
 				goto Fail;
 			}
 			shdr->name = getbytes( fp, sz );
-			lwListAdd( &surf->shader, shdr );
+			lwListAdd( (void **) &surf->shader, shdr );
 			surf->nshaders++;
 			break;
 
@@ -734,7 +734,7 @@ lwObject *lwGetObject5( char *filename, picoMemStream_t *fp, unsigned int *failI
 			if ( !node ) {
 				goto Fail;
 			}
-			lwListAdd( &object->surf, node );
+			lwListAdd( (void **) &object->surf, node );
 			object->nsurfs++;
 			break;
 

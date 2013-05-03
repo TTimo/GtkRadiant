@@ -42,8 +42,8 @@ int m_nNextEntity;
 DEntity* GetWorldSpawn();
 void ClearEntities();
 
-DEntity* DMap::GetEntityForID( int ID );
-DEntity* AddEntity( char* classname = "worldspawn", int ID = -1 );
+DEntity* GetEntityForID( int ID );
+DEntity* AddEntity( const char* classname = "worldspawn", int ID = -1 );
 
 list<DEntity*> entityList;
 

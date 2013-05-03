@@ -109,7 +109,7 @@ static void dialog_button_callback_settex( GtkWidget *widget, gpointer data ){
     Data validation Routines
    ---------------------------------*/
 
-bool ValidateTextFloat( const char* pData, char* error_title, float* value ){
+bool ValidateTextFloat( const char* pData, const char* error_title, float* value ){
 	if ( pData ) {
 		float testNum = (float)atof( pData );
 
@@ -128,7 +128,7 @@ bool ValidateTextFloat( const char* pData, char* error_title, float* value ){
 	return FALSE;
 }
 
-bool ValidateTextFloatRange( const char* pData, float min, float max, char* error_title, float* value ){
+bool ValidateTextFloatRange( const char* pData, float min, float max, const char* error_title, float* value ){
 	char error_buffer[256];
 	sprintf( error_buffer, "Please Enter A Floating Point Number Between %.3f and %.3f", min, max );
 
@@ -172,7 +172,7 @@ bool ValidateTextIntRange( const char* pData, int min, int max, const char* erro
 	return FALSE;
 }
 
-bool ValidateTextInt( const char* pData, char* error_title, int* value ){
+bool ValidateTextInt( const char* pData, const char* error_title, int* value ){
 	if ( pData ) {
 		int testNum = atoi( pData );
 
@@ -588,7 +588,7 @@ int DoBuildStairsBox( BuildStairsRS* rs ){
 
 	loop = 1;
 
-	char    *text = "Please set a value in the boxes below and press 'OK' to build the stairs";
+	const char    *text = "Please set a value in the boxes below and press 'OK' to build the stairs";
 
 	window = gtk_window_new( GTK_WINDOW_TOPLEVEL );
 

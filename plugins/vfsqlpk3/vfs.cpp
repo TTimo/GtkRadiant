@@ -144,7 +144,7 @@ static void vfsInitPakFile( const char *filename ){
 		g_pakFiles = g_slist_append( g_pakFiles, file );
 
 		vfsFixDOSName( filename_inzip );
-		g_strdown( filename_inzip );
+		strlwr( filename_inzip );
 
 		file->name = g_strdup( filename_inzip );
 		file->size = file_info.uncompressed_size;
@@ -173,7 +173,7 @@ static GSList* vfsGetListInternal( const char *refdir, const char *ext, bool dir
 
 	if ( refdir != NULL ) {
 		strcpy( dirname, refdir );
-		g_strdown( dirname );
+		strlwr( dirname );
 		vfsFixDOSName( dirname );
 		vfsAddSlash( dirname );
 	}
@@ -188,7 +188,7 @@ static GSList* vfsGetListInternal( const char *refdir, const char *ext, bool dir
 	else{
 		extension[0] = '\0';
 	}
-	g_strdown( extension );
+	strlwr( extension );
 
 	for ( lst = g_pakFiles; lst != NULL; lst = g_slist_next( lst ) )
 	{
@@ -278,7 +278,7 @@ static GSList* vfsGetListInternal( const char *refdir, const char *ext, bool dir
 
 				dirlist = g_strdup( name );
 
-				g_strdown( dirlist );
+				strlwr( dirlist );
 
 				char *ptr_ext = strrchr( dirlist, '.' );
 				if ( ext == NULL
@@ -534,7 +534,7 @@ int vfsGetFileCount( const char *filename, int flag ){
 
 	strcpy( fixed, filename );
 	vfsFixDOSName( fixed );
-	g_strdown( fixed );
+	strlwr( fixed );
 
 	if ( !flag || ( flag & VFS_SEARCH_PAK ) ) {
 		for ( lst = g_pakFiles; lst != NULL; lst = g_slist_next( lst ) )
@@ -598,7 +598,7 @@ int vfsLoadFile( const char *filename, void **bufferptr, int index ){
 	*bufferptr = NULL;
 	strcpy( fixed, filename );
 	vfsFixDOSName( fixed );
-	g_strdown( fixed );
+	strlwr( fixed );
 
 	for ( i = 0; i < g_numDirs; i++ )
 	{
@@ -788,7 +788,7 @@ char* vfsGetFullPath( const char *in, int index, int flag ){
 
 		strcpy( fixed, in );
 		vfsFixDOSName( fixed );
-		g_strdown( fixed );
+		strlwr( fixed );
 
 		for ( lst = g_pakFiles; lst != NULL; lst = g_slist_next( lst ) )
 		{

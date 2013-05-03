@@ -293,7 +293,7 @@ void MapBrushes(){
 
 	// if surftext2 is identical to surftext, there's no need to
 	// check surface angle
-	if ( !g_strcasecmp( surftext,surftext2 ) ) {
+	if ( !g_ascii_strcasecmp( surftext,surftext2 ) ) {
 		CheckAngle = FALSE;
 	}
 	else

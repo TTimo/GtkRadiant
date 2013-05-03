@@ -431,7 +431,7 @@ static picoModel_t *_md2_load( PM_PARAMS_LOAD ){
 	}
 
 	// set Skin Name
-	strncpy( skinname, ( bb + md2->ofsSkins ), MD2_MAX_SKINNAME );
+	strncpy( skinname, (char *) ( bb + md2->ofsSkins ), MD2_MAX_SKINNAME );
 
 	// Print out md2 values
 	_pico_printf( PICO_VERBOSE,"Skins: %d  Verts: %d  STs: %d  Triangles: %d  Frames: %d\nSkin Name \"%s\"\n", md2->numSkins, md2->numXYZ, md2->numST, md2->numTris, md2->numFrames, skinname );

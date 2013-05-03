@@ -30,7 +30,7 @@ void lwFreeLayer( lwLayer *layer ){
 		}
 		lwFreePoints( &layer->point );
 		lwFreePolygons( &layer->polygon );
-		lwListFree( layer->vmap, lwFreeVMap );
+		lwListFree( layer->vmap, (ListFreeFunc) lwFreeVMap );
 		_pico_free( layer );
 	}
 }
@@ -45,10 +45,10 @@ void lwFreeLayer( lwLayer *layer ){
 
 void lwFreeObject( lwObject *object ){
 	if ( object ) {
-		lwListFree( object->layer, lwFreeLayer );
-		lwListFree( object->env, lwFreeEnvelope );
-		lwListFree( object->clip, lwFreeClip );
-		lwListFree( object->surf, lwFreeSurface );
+		lwListFree( object->layer, (ListFreeFunc) lwFreeLayer );
+		lwListFree( object->env, (ListFreeFunc) lwFreeEnvelope );
+		lwListFree( object->clip, (ListFreeFunc) lwFreeClip );
+		lwListFree( object->surf, (ListFreeFunc) lwFreeSurface );
 		lwFreeTags( &object->taglist );
 		_pico_free( object );
 	}
@@ -154,7 +154,7 @@ lwObject *lwGetObject( char *filename, picoMemStream_t *fp, unsigned int *failID
 				if ( !layer ) {
 					goto Fail;
 				}
-				lwListAdd( &object->layer, layer );
+				lwListAdd( (void **) &object->layer, layer );
 			}
 			object->nlayers++;
 
@@ -199,7 +199,7 @@ lwObject *lwGetObject( char *filename, picoMemStream_t *fp, unsigned int *failID
 			if ( !node ) {
 				goto Fail;
 			}
-			lwListAdd( &layer->vmap, node );
+			lwListAdd( (void **) &layer->vmap, node );
 			layer->nvmaps++;
 			break;
 
@@ -234,7 +234,7 @@ lwObject *lwGetObject( char *filename, picoMemStream_t *fp, unsigned int *failID
 			if ( !node ) {
 				goto Fail;
 			}
-			lwListAdd( &object->env, node );
+			lwListAdd( (void **) &object->env, node );
 			object->nenvs++;
 			break;
 
@@ -243,7 +243,7 @@ lwObject *lwGetObject( char *filename, picoMemStream_t *fp, unsigned int *failID
 			if ( !node ) {
 				goto Fail;
 			}
-			lwListAdd( &object->clip, node );
+			lwListAdd( (void **) &object->clip, node );
 			object->nclips++;
 			break;
 
@@ -252,7 +252,7 @@ lwObject *lwGetObject( char *filename, picoMemStream_t *fp, unsigned int *failID
 			if ( !node ) {
 				goto Fail;
 			}
-			lwListAdd( &object->surf, node );
+			lwListAdd( (void **) &object->surf, node );
 			object->nsurfs++;
 			break;
 

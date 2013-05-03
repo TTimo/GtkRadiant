@@ -365,7 +365,7 @@ int WINS_Listen( int socket ){
 // Changes Globals:		-
 //===========================================================================
 int WINS_Accept( int socket, struct sockaddr_s *addr ){
-	int addrlen = sizeof( struct sockaddr_s );
+	socklen_t addrlen = sizeof( struct sockaddr_s );
 	int newsocket;
 	qboolean _true = 1;
 
@@ -494,7 +494,7 @@ int WINS_CheckNewConnections( void ){
 // Changes Globals:		-
 //===========================================================================
 int WINS_Read( int socket, byte *buf, int len, struct sockaddr_s *addr ){
-	int addrlen = sizeof( struct sockaddr_s );
+	socklen_t addrlen = sizeof( struct sockaddr_s );
 	int ret;
 
 	if ( addr ) {
@@ -659,7 +659,7 @@ int WINS_StringToAddr( char *string, struct sockaddr_s *addr ){
 // Changes Globals:		-
 //===========================================================================
 int WINS_GetSocketAddr( int socket, struct sockaddr_s *addr ){
-	int addrlen = sizeof( struct sockaddr_s );
+	socklen_t addrlen = sizeof( struct sockaddr_s );
 	unsigned int a;
 
 	memset( addr, 0, sizeof( struct sockaddr_s ) );

@@ -768,7 +768,7 @@ void MakeBrushes( int NumTris, NODE *Node, TRI *Tri,bool surf,
 
 	// if texture2 is identical to texture0, there's no need to
 	// check surface angle
-	if ( !g_strcasecmp( texture0,texture2 ) || !strlen( texture2 ) ) {
+	if ( !g_ascii_strcasecmp( texture0,texture2 ) || !strlen( texture2 ) ) {
 		CheckAngle = FALSE;
 	}
 	else
