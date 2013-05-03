@@ -117,7 +117,7 @@ bool GenSurfInit(){
     basepath = g_FuncTable.m_pfnReadProjectKey("basepath");
     if (basepath)
     {
-      Q_strlwr (basepath);
+      strlwr (basepath);
       if (strstr(basepath,"baseq3"))
         Game = QUAKE3;
       else if (strstr (basepath,"baseq2"))
