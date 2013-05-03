@@ -23,7 +23,7 @@ void lwFreeEnvelope( lwEnvelope *env ){
 			_pico_free( env->name );
 		}
 		lwListFree( env->key, _pico_free );
-		lwListFree( env->cfilter, lwFreePlugin );
+		lwListFree( env->cfilter, (ListFreeFunc) lwFreePlugin );
 		_pico_free( env );
 	}
 }
@@ -105,7 +105,7 @@ lwEnvelope *lwGetEnvelope( picoMemStream_t *fp, int cksize ){
 			}
 			key->time = getF4( fp );
 			key->value = getF4( fp );
-			lwListInsert( &env->key, key, compare_keys );
+			lwListInsert( (void **) &env->key, key, (ListCompareFunc) compare_keys );
 			env->nkeys++;
 			break;
 
@@ -148,7 +148,7 @@ lwEnvelope *lwGetEnvelope( picoMemStream_t *fp, int cksize ){
 			plug->flags = getU2( fp );
 			plug->data = getbytes( fp, sz - get_flen() );
 
-			lwListAdd( &env->cfilter, plug );
+			lwListAdd( (void **) &env->cfilter, plug );
 			env->ncfilters++;
 			break;
 

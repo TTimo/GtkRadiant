@@ -222,7 +222,7 @@ void loki_initpaths( char *argv0 ){
 
 	home = loki_gethomedir();
 	if ( home == NULL ) {
-		home = ".";
+		home = const_cast<char*>(".");
 	}
 
 	if ( *game_name == 0 ) { /* Game name defaults to argv[0] */
@@ -412,7 +412,8 @@ void error_redirect( const gchar *domain, GLogLevelFlags log_level, const gchar 
 #define LOCALEDIR "lang"
 
 int main( int argc, char* argv[] ) {
-	char *libgl, *ptr;
+	const char *libgl;
+	char *ptr;
 	int i, j, k;
 
 
@@ -1170,7 +1171,7 @@ void RunBsp( char *command ){
 			Error( "CreateProcess failed" );
 			break;
 		case 0:
-			execlp( batpath, batpath, NULL );
+			execlp( batpath, batpath, (char *) NULL );
 			printf( "execlp error !" );
 			_exit( 0 );
 			break;

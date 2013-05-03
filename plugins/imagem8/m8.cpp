@@ -54,7 +54,7 @@ void LoadM8( const char *name, unsigned char **pic, int *width, int *height ){
 			}
 		}
 		strcat( text_buf, ".m8" );
-		if ( length = vfsLoadFile( (char *) text_buf, (void **) &m8_file_buffer, 0 ) == (unsigned int) -1 ) {
+		if ( ( length = vfsLoadFile( (char *) text_buf, (void **) &m8_file_buffer, 0 ) ) == (unsigned int) -1 ) {
 			Sys_Printf( "Unable to open file %s\n",name );
 			return;
 		}

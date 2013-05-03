@@ -199,14 +199,19 @@ unsigned char *load_bitmap_file( const char* filename, guint16 *width, guint16 *
 
 	size_t rc;
 	rc = fread( &m1, 1, 1, fp );
-	m_bytesRead++;
-	if ( rc == -1 ) {
+	if ( rc != 1 ) {
 		fclose( fp );
 		return NULL;
 	}
+	m_bytesRead++;
 
 	rc = fread( &m2, 1, 1, fp );
+	if ( rc != 1) {
+		fclose( fp );
+		return NULL;
+	}
 	m_bytesRead++;
+
 	if ( ( m1 != 'B' ) || ( m2 != 'M' ) ) {
 		fclose( fp );
 		return NULL;
@@ -1518,14 +1523,14 @@ const char* file_dialog( void *parent, gboolean open, const char* title, const c
 											GTK_RESPONSE_CANCEL,
 											open ? GTK_STOCK_OPEN : GTK_STOCK_SAVE,
 											GTK_RESPONSE_ACCEPT,
-											NULL );
+											(char *) NULL );
 	gtk_file_chooser_set_current_folder( GTK_FILE_CHOOSER( file_sel ), new_path );
 	delete[] new_path;
 
 	// Setting the file chooser dialog to modal and centering it on the parent is done automatically.
 
 	if ( pattern != NULL ) {
-		GtkFileFilter *allTypesFilter = gtk_file_filter_new();
+		//GtkFileFilter *allTypesFilter = gtk_file_filter_new();
 		// http://www.gtkforums.com/viewtopic.php?p=6044
 		//gtk_file_filter_set_name( allTypesFilter, "All supported types" );
 		for ( int i = 0; i < typelist.GetNumTypes(); i++ ) {
@@ -1634,7 +1639,7 @@ char* WINAPI dir_dialog( void *parent, const char* title, const char* path ){
 						GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER,
 						GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 						GTK_STOCK_OK, GTK_RESPONSE_ACCEPT,
-						NULL );
+						(char *) NULL );
 
 	if ( path != NULL ) {
 		gtk_file_chooser_set_current_folder( GTK_FILE_CHOOSER( file_sel ), path );

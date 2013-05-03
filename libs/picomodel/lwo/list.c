@@ -18,13 +18,13 @@
    Free the items in a list.
    ====================================================================== */
 
-void lwListFree( void *list, void ( *freeNode )( void * ) ){
+void lwListFree( void *list, ListFreeFunc freefunc ){
 	lwNode *node, *next;
 
 	node = ( lwNode * ) list;
 	while ( node ) {
 		next = node->next;
-		freeNode( node );
+		freefunc( node );
 		node = next;
 	}
 }
@@ -61,7 +61,7 @@ void lwListAdd( void **list, void *node ){
    Insert a node into a list in sorted order.
    ====================================================================== */
 
-void lwListInsert( void **vlist, void *vitem, int ( *compare )( void *, void * ) ){
+void lwListInsert( void **vlist, void *vitem, ListCompareFunc compare ){
 	lwNode **list, *item, *node, *prev;
 
 	if ( !*vlist ) {

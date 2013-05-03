@@ -605,10 +605,11 @@ int lwValidateObject5( char *filename, picoMemStream_t *fp, unsigned int *failID
 
 /* list.c */
 
-void lwListFree( void *list, void ( *freeNode )( void * ) );
+typedef void (*ListFreeFunc)(void *);
+void lwListFree( void *list, ListFreeFunc freefunc );
 void lwListAdd( void **list, void *node );
-void lwListInsert( void **vlist, void *vitem,
-				   int ( *compare )( void *, void * ) );
+typedef int (*ListCompareFunc)(void *, void *);
+void lwListInsert( void **vlist, void *vitem, ListCompareFunc comparefunc );
 
 /* vecmath.c */
 

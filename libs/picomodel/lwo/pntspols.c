@@ -396,7 +396,7 @@ int lwResolvePolySurfaces( lwPolygonList *polygon, lwTagList *tlist,
 				return 0;
 			}
 			strcpy( s[ index ]->name, tlist->tag[ index ] );
-			lwListAdd( surf, s[ index ] );
+			lwListAdd( (void **) surf, s[ index ] );
 			*nsurfs = *nsurfs + 1;
 		}
 		polygon->pol[ i ].surf = s[ index ];

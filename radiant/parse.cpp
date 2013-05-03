@@ -27,7 +27,7 @@ char*     script_p;
 int scriptline;
 
 // Hydra: added support for GetTokenExtra()
-char *currentdelimiters;
+const char *currentdelimiters;
 qboolean script_keepdelimiter;
 
 void StartTokenParsing( char *data ){
@@ -179,9 +179,9 @@ void UngetToken( void ){
    GetToken(false);                   // contains "2"
    ==============
  */
-qboolean GetTokenExtra( qboolean crossline,char *delimiters, qboolean keepdelimiter ){
+qboolean GetTokenExtra( qboolean crossline,const char *delimiters, qboolean keepdelimiter ){
 	qboolean result;
-	char *olddelimiters = currentdelimiters; // store it
+	const char *olddelimiters = currentdelimiters; // store it
 
 	currentdelimiters = delimiters; // change the delimiters
 	script_keepdelimiter = keepdelimiter; // change the global flag

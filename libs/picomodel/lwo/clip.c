@@ -20,8 +20,8 @@
 
 void lwFreeClip( lwClip *clip ){
 	if ( clip ) {
-		lwListFree( (void*) clip->ifilter, lwFreePlugin );
-		lwListFree( (void*) clip->pfilter, lwFreePlugin );
+		lwListFree( (void*) clip->ifilter, (ListFreeFunc) lwFreePlugin );
+		lwListFree( (void*) clip->pfilter, (ListFreeFunc) lwFreePlugin );
 		_pico_free( clip );
 	}
 }
@@ -196,11 +196,11 @@ lwClip *lwGetClip( picoMemStream_t *fp, int cksize ){
 			filt->data = getbytes( fp, sz - rlen );
 
 			if ( id == ID_IFLT ) {
-				lwListAdd( &clip->ifilter, filt );
+				lwListAdd( (void **) &clip->ifilter, filt );
 				clip->nifilters++;
 			}
 			else {
-				lwListAdd( &clip->pfilter, filt );
+				lwListAdd( (void **) &clip->pfilter, filt );
 				clip->npfilters++;
 			}
 			break;

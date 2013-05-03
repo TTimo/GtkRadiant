@@ -586,19 +586,19 @@ void LoadImage( const char *name, byte ** pic, int *width, int *height ){
 	}
 
 #ifdef USE_HLW
-	if ( *pic == NULL && !g_strcasecmp( name + len - 4, ".hlw" ) ) {
+	if ( *pic == NULL && !g_ascii_strcasecmp( name + len - 4, ".hlw" ) ) {
 		LoadHLW( name, pic, width, height );
 	}
 #endif
 
 #ifdef USE_MIP
-	if ( *pic == NULL && !g_strcasecmp( name + len - 4, ".mip" ) ) {
+	if ( *pic == NULL && !g_ascii_strcasecmp( name + len - 4, ".mip" ) ) {
 		LoadMIP( name, pic, width, height );
 	}
 #endif
 
 #ifdef USE_IDSP
-	if ( *pic == NULL && !g_strcasecmp( name + len - 4, ".spr" ) ) {
+	if ( *pic == NULL && !g_ascii_strcasecmp( name + len - 4, ".spr" ) ) {
 		LoadIDSP( name, pic, width, height );
 	}
 #endif

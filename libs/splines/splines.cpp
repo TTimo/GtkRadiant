@@ -750,6 +750,8 @@ void idCameraDef::buildCamera() {
                 break;
  */
 		}
+		default:
+			break;
 		}
 	}
 

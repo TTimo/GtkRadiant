@@ -187,7 +187,7 @@ const char* CSynapseClientFGD::GetInfo(){
 #define CLASS_POINTCLASS  2
 #define CLASS_SOLIDCLASS  3
 
-char *classnames[] = {"NOT DEFINED","BaseClass","PointClass","SolidClass"};
+const char *classnames[] = {"NOT DEFINED","BaseClass","PointClass","SolidClass"};
 
 #define OPTION_NOOPTION   0
 #define OPTION_STRING     1
@@ -195,7 +195,7 @@ char *classnames[] = {"NOT DEFINED","BaseClass","PointClass","SolidClass"};
 #define OPTION_INTEGER    3
 #define OPTION_FLAGS      4
 
-char *optionnames[] = {"NOT DEFINED","String","Choices","Integer","Flags"};
+const char *optionnames[] = {"NOT DEFINED","String","Choices","Integer","Flags"};
 
 typedef struct choice_s {
 	int value;
@@ -244,7 +244,7 @@ char *strlower( char *start ){
 	return start;
 }
 
-char *addstr( char *dest,char *source ){
+char *addstr( char *dest,const char *source ){
 	if ( dest ) {
 		char *ptr;
 		int len = strlen( dest );

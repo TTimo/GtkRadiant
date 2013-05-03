@@ -697,7 +697,10 @@ void QDECL Com_sprintf( char *dest, int size, const char *fmt, ... ) {
 	va_start( argptr,fmt );
 	len = vsprintf( bigbuffer,fmt,argptr );
 	va_end( argptr );
-	if ( len >= sizeof( bigbuffer ) ) {
+	if ( len < 0 ) {
+		Com_Error( ERR_FATAL, "Com_sprintf: failed to write bigbuffer" );
+	}
+	if ( (unsigned) len >= sizeof( bigbuffer ) ) {
 		Com_Error( ERR_FATAL, "Com_sprintf: overflowed bigbuffer" );
 	}
 	if ( len >= size ) {
@@ -716,7 +719,7 @@ void QDECL Com_sprintf( char *dest, int size, const char *fmt, ... ) {
    FIXME: make this buffer size safe someday
    ============
  */
-char    * QDECL va( char *format, ... ) {
+char    * QDECL va( const char *format, ... ) {
 	va_list argptr;
 	static char string[2][32000];       // in case va is called by nested functions
 	static int index = 0;
@@ -758,7 +761,7 @@ char *Info_ValueForKey( const char *s, const char *key ) {
 	char    *o;
 
 	if ( !s || !key ) {
-		return "";
+		return const_cast<char*>("");
 	}
 
 	if ( strlen( s ) >= MAX_INFO_STRING ) {
@@ -775,7 +778,7 @@ char *Info_ValueForKey( const char *s, const char *key ) {
 		while ( *s != '\\' )
 		{
 			if ( !*s ) {
-				return "";
+				return const_cast<char*>("");
 			}
 			*o++ = *s++;
 		}
@@ -800,7 +803,7 @@ char *Info_ValueForKey( const char *s, const char *key ) {
 		s++;
 	}
 
-	return "";
+	return const_cast<char*>("");
 }
 
 

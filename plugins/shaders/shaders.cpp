@@ -240,7 +240,7 @@ char *ShaderNameLookup( patchMesh_t * patch ){
 		}
 	}
 	Sys_Printf( "ERROR: failed to lookup name in ShaderNameLookup??\n" );
-	return SHADER_NOT_FOUND;
+	return const_cast<char*>(SHADER_NOT_FOUND);
 }
 //++timo end clean
 

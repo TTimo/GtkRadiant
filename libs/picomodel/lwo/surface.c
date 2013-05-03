@@ -90,18 +90,18 @@ void lwFreeSurface( lwSurface *surf ){
 			_pico_free( surf->srcname );
 		}
 
-		lwListFree( surf->shader, lwFreePlugin );
+		lwListFree( surf->shader, (ListFreeFunc) lwFreePlugin );
 
-		lwListFree( surf->color.tex, lwFreeTexture );
-		lwListFree( surf->luminosity.tex, lwFreeTexture );
-		lwListFree( surf->diffuse.tex, lwFreeTexture );
-		lwListFree( surf->specularity.tex, lwFreeTexture );
-		lwListFree( surf->glossiness.tex, lwFreeTexture );
-		lwListFree( surf->reflection.val.tex, lwFreeTexture );
-		lwListFree( surf->transparency.val.tex, lwFreeTexture );
-		lwListFree( surf->eta.tex, lwFreeTexture );
-		lwListFree( surf->translucency.tex, lwFreeTexture );
-		lwListFree( surf->bump.tex, lwFreeTexture );
+		lwListFree( surf->color.tex, (ListFreeFunc) lwFreeTexture );
+		lwListFree( surf->luminosity.tex, (ListFreeFunc) lwFreeTexture );
+		lwListFree( surf->diffuse.tex, (ListFreeFunc) lwFreeTexture );
+		lwListFree( surf->specularity.tex, (ListFreeFunc) lwFreeTexture );
+		lwListFree( surf->glossiness.tex, (ListFreeFunc) lwFreeTexture );
+		lwListFree( surf->reflection.val.tex, (ListFreeFunc) lwFreeTexture );
+		lwListFree( surf->transparency.val.tex, (ListFreeFunc) lwFreeTexture );
+		lwListFree( surf->eta.tex, (ListFreeFunc) lwFreeTexture );
+		lwListFree( surf->translucency.tex, (ListFreeFunc) lwFreeTexture );
+		lwListFree( surf->bump.tex, (ListFreeFunc) lwFreeTexture );
 
 		_pico_free( surf );
 	}
@@ -814,7 +814,7 @@ static int add_texture( lwSurface *surf, lwTexture *tex ){
 	default:  return 0;
 	}
 
-	lwListInsert( list, tex, compare_textures );
+	lwListInsert( (void **) list, tex, (ListCompareFunc) compare_textures );
 	return 1;
 }
 
@@ -1054,7 +1054,7 @@ lwSurface *lwGetSurface( picoMemStream_t *fp, int cksize ){
 				if ( !shdr ) {
 					goto Fail;
 				}
-				lwListInsert( &surf->shader, shdr, compare_shaders );
+				lwListInsert( (void **) &surf->shader, shdr, (ListCompareFunc) compare_shaders );
 				++surf->nshaders;
 				set_flen( 4 + get_flen() );
 				break;

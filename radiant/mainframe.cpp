@@ -3060,6 +3060,7 @@ void RefreshModelSkin( GSList **pModels, entitymodel_t *model ){
 #endif
 
 		// and also keeping it so we have an actual count of empty models
+		// jdolan: FIXME uhm, shouldn't we track the return value from this append?
 		g_slist_append( *pModels, model );
 		return;
 	}

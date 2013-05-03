@@ -31,4 +31,4 @@ void        StartTokenParsing( char *data );
 qboolean  GetToken( qboolean crossline );
 void      UngetToken( void );
 qboolean  TokenAvailable( void );
-qboolean  GetTokenExtra( qboolean crossline,char *delimiters,qboolean keepdelimiter ); // Hydra: added support for GetTokenExtra()
+qboolean  GetTokenExtra( qboolean crossline,const char *delimiters,qboolean keepdelimiter ); // Hydra: added support for GetTokenExtra()

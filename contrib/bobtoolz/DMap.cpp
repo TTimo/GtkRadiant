@@ -38,7 +38,7 @@ DMap::~DMap(){
 	ClearEntities();
 }
 
-DEntity* DMap::AddEntity( char *classname, int ID ){
+DEntity* DMap::AddEntity( const char *classname, int ID ){
 	DEntity* newEntity;
 	if ( ID == -1 ) {
 		newEntity = new DEntity( classname, m_nNextEntity++ );
