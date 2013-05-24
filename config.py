@@ -290,7 +290,7 @@ class Config:
 				]:
 				if ( not os.path.exists( lib_archive ) ):
 					print( 'downloading %s' % lib_archive )
-					archive_web_request = urllib2.urlopen( 'http://icculus.org/gtkradiant/files/1.6.2/%s' % lib_archive )
+					archive_web_request = urllib2.urlopen( 'http://icculus.org/gtkradiant/downloads/1.6/dependencies/1.6.2/%s' % lib_archive )
 					archive_File = open( lib_archive, 'wb' )
 					while True:
 						data = archive_web_request.read( 1048576 ) #read 1mb at a time

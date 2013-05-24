@@ -1,0 +1,98 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="src">
+      <UniqueIdentifier>{45a489dc-80a3-491e-a850-2856a1c0d171}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="src\dialogs">
+      <UniqueIdentifier>{5639ce51-b6fa-4c6d-b083-7e0e7c5435b8}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="bobToolz-GTK.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="bsploader.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="cportals.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="DBobView.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="DBrush.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="DEntity.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="DEPair.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="DListener.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="DMap.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="DPatch.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="DPlane.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="DPoint.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="DShape.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="DTrainDrawer.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="DTreePlanter.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="DVisDrawer.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="DWinding.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="funchandlers-GTK.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="lists.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="misc.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="ScriptParser.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="shapes.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="StdAfx.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="visfind.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="dialogs\dialogs-gtk.cpp">
+      <Filter>src\dialogs</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="bobtoolz.def">
+      <Filter>src</Filter>
+    </None>
+    <None Include="ctftoolz.def">
+      <Filter>src</Filter>
+    </None>
+  </ItemGroup>
+</Project>

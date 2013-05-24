@@ -1,0 +1,41 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="src">
+      <UniqueIdentifier>{d4a9c379-4e75-46a8-a63d-dbf5d1b7a10c}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="cmdlib.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="imagelib.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="inout.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="jpeg.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="mutex.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="polylib.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="scriplib.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="threads.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="unzip.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="vfs.c">
+      <Filter>src</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
