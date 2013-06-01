@@ -94,7 +94,7 @@
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
       <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
-      <AdditionalIncludeDirectories>$(SolutionDir)\include;$(SolutionDir)\tools\quake3\common;$(SolutionDir)\libs;$(SolutionDir)\..\gtk-2.24.10\include\glib-2.0;$(SolutionDir)\..\gtk-2.24.10\lib\glib-2.0\include;$(SolutionDir)\..\libxml2-2.9.1\include;$(SolutionDir)\..\gtk-2.24.10\include\libpng14;$(SolutionDir)\..\gtk-2.24.10\include;$(SolutionDir)\..\jpeg-9;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\include;$(SolutionDir)\tools\quake3\common;$(SolutionDir)\libs;$(SolutionDir)\..\gtk-2.24.10\include\glib-2.0;$(SolutionDir)\..\gtk-2.24.10\include\gdk-pixbuf-2.0;$(SolutionDir)\..\gtk-2.24.10\lib\glib-2.0\include;$(SolutionDir)\..\libxml2-2.9.1\include;$(SolutionDir)\..\gtk-2.24.10\include\libpng14;$(SolutionDir)\..\gtk-2.24.10\include;$(SolutionDir)\..\jpeg-9;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>NDEBUG;WIN32;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
@@ -143,7 +143,7 @@
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
       <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
-      <AdditionalIncludeDirectories>$(SolutionDir)\include;$(SolutionDir)\tools\quake3\common;$(SolutionDir)\libs;$(SolutionDir)\..\gtk-2.24.10\include\glib-2.0;$(SolutionDir)\..\gtk-2.24.10\lib\glib-2.0\include;$(SolutionDir)\..\libxml2-2.9.1\include;$(SolutionDir)\..\gtk-2.24.10\include\libpng14;$(SolutionDir)\..\gtk-2.24.10\include;$(SolutionDir)\..\jpeg-9;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\include;$(SolutionDir)\tools\quake3\common;$(SolutionDir)\libs;$(SolutionDir)\..\gtk-2.24.10\include\glib-2.0;$(SolutionDir)\..\gtk-2.24.10\include\gdk-pixbuf-2.0;$(SolutionDir)\..\gtk-2.24.10\lib\glib-2.0\include;$(SolutionDir)\..\libxml2-2.9.1\include;$(SolutionDir)\..\gtk-2.24.10\include\libpng14;$(SolutionDir)\..\gtk-2.24.10\include;$(SolutionDir)\..\jpeg-9;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>NDEBUG;WIN32;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
@@ -191,7 +191,7 @@
     </Midl>
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(SolutionDir)\include;$(SolutionDir)\tools\quake3\common;$(SolutionDir)\libs;$(SolutionDir)\..\gtk-2.24.10\include\glib-2.0;$(SolutionDir)\..\gtk-2.24.10\lib\glib-2.0\include;$(SolutionDir)\..\libxml2-2.9.1\include;$(SolutionDir)\..\gtk-2.24.10\include\libpng14;$(SolutionDir)\..\gtk-2.24.10\include;$(SolutionDir)\..\jpeg-9;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\include;$(SolutionDir)\tools\quake3\common;$(SolutionDir)\libs;$(SolutionDir)\..\gtk-2.24.10\include\glib-2.0;$(SolutionDir)\..\gtk-2.24.10\include\gdk-pixbuf-2.0;$(SolutionDir)\..\gtk-2.24.10\lib\glib-2.0\include;$(SolutionDir)\..\libxml2-2.9.1\include;$(SolutionDir)\..\gtk-2.24.10\include\libpng14;$(SolutionDir)\..\gtk-2.24.10\include;$(SolutionDir)\..\jpeg-9;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_DEBUG;WIN32;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -240,7 +240,7 @@
     </Midl>
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(SolutionDir)\include;$(SolutionDir)\tools\quake3\common;$(SolutionDir)\libs;$(SolutionDir)\..\gtk-2.24.10\include\glib-2.0;$(SolutionDir)\..\gtk-2.24.10\lib\glib-2.0\include;$(SolutionDir)\..\libxml2-2.9.1\include;$(SolutionDir)\..\gtk-2.24.10\include\libpng14;$(SolutionDir)\..\gtk-2.24.10\include;$(SolutionDir)\..\jpeg-9;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\include;$(SolutionDir)\tools\quake3\common;$(SolutionDir)\libs;$(SolutionDir)\..\gtk-2.24.10\include\glib-2.0;$(SolutionDir)\..\gtk-2.24.10\include\gdk-pixbuf-2.0;$(SolutionDir)\..\gtk-2.24.10\lib\glib-2.0\include;$(SolutionDir)\..\libxml2-2.9.1\include;$(SolutionDir)\..\gtk-2.24.10\include\libpng14;$(SolutionDir)\..\gtk-2.24.10\include;$(SolutionDir)\..\jpeg-9;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_DEBUG;WIN32;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <PrecompiledHeaderOutputFile>.\Debug/q3map2.pch</PrecompiledHeaderOutputFile>
