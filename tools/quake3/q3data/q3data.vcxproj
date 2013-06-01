@@ -88,7 +88,7 @@
     </ClCompile>
     <Link>
       <AdditionalDependencies>Ws2_32.lib;glib-2.0.lib;libxml2.lib;l_net.lib;mathlib.lib;quake3-common.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)\..\gtk-2.24.10\lib;$(SolutionDir)\..\libxml2-2.9.1\lib;$(SolutionDir)\..\jpeg-9\Release;$(SolutionDir)\build\$(Configuration)\libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)\..\gtk-2.24.10\lib;$(SolutionDir)\..\libxml2-2.9.1\lib\$(Configuration)\$(Platform);$(SolutionDir)\..\jpeg-9\Release;$(SolutionDir)\build\$(Configuration)\libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <DataExecutionPrevention />
@@ -108,7 +108,7 @@
     </ClCompile>
     <Link>
       <AdditionalDependencies>Ws2_32.lib;glib-2.0.lib;libxml2.lib;l_net.lib;mathlib.lib;quake3-common.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)\..\gtk-2.24.10\lib;$(SolutionDir)\..\libxml2-2.9.1\lib;$(SolutionDir)\..\jpeg-9\Release;$(SolutionDir)\build\$(Configuration)\libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)\..\gtk-2.24.10\lib;$(SolutionDir)\..\libxml2-2.9.1\lib\$(Configuration)\$(Platform);$(SolutionDir)\..\jpeg-9\Release;$(SolutionDir)\build\$(Configuration)\libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <DataExecutionPrevention>
@@ -126,7 +126,7 @@
     </ClCompile>
     <Link>
       <AdditionalDependencies>Ws2_32.lib;glib-2.0.lib;libxml2.lib;l_net.lib;mathlib.lib;quake3-common.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)\..\gtk-2.24.10\lib;$(SolutionDir)\..\libxml2-2.9.1\lib;$(SolutionDir)\..\jpeg-9\Release;$(SolutionDir)\build\$(Configuration)\libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)\..\gtk-2.24.10\lib;$(SolutionDir)\..\libxml2-2.9.1\lib\$(Configuration)\$(Platform);$(SolutionDir)\..\jpeg-9\Release;$(SolutionDir)\build\$(Configuration)\libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -146,7 +146,7 @@
     </ClCompile>
     <Link>
       <AdditionalDependencies>Ws2_32.lib;glib-2.0.lib;libxml2.lib;l_net.lib;mathlib.lib;quake3-common.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)\..\gtk-2.24.10\lib;$(SolutionDir)\..\libxml2-2.9.1\lib;$(SolutionDir)\..\jpeg-9\Release;$(SolutionDir)\build\$(Configuration)\libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)\..\gtk-2.24.10\lib;$(SolutionDir)\..\libxml2-2.9.1\lib\$(Configuration)\$(Platform);$(SolutionDir)\..\jpeg-9\Release;$(SolutionDir)\build\$(Configuration)\libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>

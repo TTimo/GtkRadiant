@@ -116,7 +116,7 @@
       <AdditionalDependencies>Ws2_32.lib;glib-2.0.lib;libpng.lib;libxml2.lib;jpeg.lib;md5lib.lib;mathlib.lib;picomodel.lib;l_net.lib;ddslib.lib;quake3-common.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(ProjectName).exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>$(SolutionDir)\..\gtk-2.24.10\lib;$(SolutionDir)\..\libxml2-2.9.1\lib;$(SolutionDir)\..\jpeg-9\Release;$(SolutionDir)\build\$(Configuration)\libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)\..\gtk-2.24.10\lib;$(SolutionDir)\..\libxml2-2.9.1\lib\$(Configuration)\$(Platform);$(SolutionDir)\..\jpeg-9\Release;$(SolutionDir)\build\$(Configuration)\libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ProgramDatabaseFile>.\Release/q3map2.pdb</ProgramDatabaseFile>
       <GenerateMapFile>true</GenerateMapFile>
       <MapFileName>.\Release/q3map2.map</MapFileName>
@@ -165,7 +165,7 @@
       <AdditionalDependencies>Ws2_32.lib;glib-2.0.lib;libpng.lib;libxml2.lib;jpeg.lib;md5lib.lib;mathlib.lib;picomodel.lib;l_net.lib;ddslib.lib;quake3-common.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(ProjectName).exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>$(SolutionDir)\..\gtk-2.24.10\lib;$(SolutionDir)\..\libxml2-2.9.1\lib;$(SolutionDir)\..\jpeg-9\Release;$(SolutionDir)\build\$(Configuration)\libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)\..\gtk-2.24.10\lib;$(SolutionDir)\..\libxml2-2.9.1\lib\$(Configuration)\$(Platform);$(SolutionDir)\..\jpeg-9\Release;$(SolutionDir)\build\$(Configuration)\libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ProgramDatabaseFile>.\Release/q3map2.pdb</ProgramDatabaseFile>
       <GenerateMapFile>true</GenerateMapFile>
       <MapFileName>.\Release/q3map2.map</MapFileName>
@@ -212,7 +212,7 @@
       <AdditionalDependencies>Ws2_32.lib;glib-2.0.lib;libpng.lib;libxml2.lib;jpeg.lib;md5lib.lib;mathlib.lib;picomodel.lib;l_net.lib;ddslib.lib;quake3-common.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(ProjectName).exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>$(SolutionDir)\..\gtk-2.24.10\lib;$(SolutionDir)\..\libxml2-2.9.1\lib;$(SolutionDir)\..\jpeg-9\Release;$(SolutionDir)\build\$(Configuration)\libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)\..\gtk-2.24.10\lib;$(SolutionDir)\..\libxml2-2.9.1\lib\$(Configuration)\$(Platform);$(SolutionDir)\..\jpeg-9\Release;$(SolutionDir)\build\$(Configuration)\libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>libcd;libcmtd;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>.\Debug/FS_q3map2_1.pdb</ProgramDatabaseFile>
@@ -260,7 +260,7 @@
       <AdditionalDependencies>Ws2_32.lib;glib-2.0.lib;libpng.lib;libxml2.lib;jpeg.lib;md5lib.lib;mathlib.lib;picomodel.lib;l_net.lib;ddslib.lib;quake3-common.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(ProjectName).exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>$(SolutionDir)\..\gtk-2.24.10\lib;$(SolutionDir)\..\libxml2-2.9.1\lib;$(SolutionDir)\..\jpeg-9\Release;$(SolutionDir)\build\$(Configuration)\libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)\..\gtk-2.24.10\lib;$(SolutionDir)\..\libxml2-2.9.1\lib\$(Configuration)\$(Platform);$(SolutionDir)\..\jpeg-9\Release;$(SolutionDir)\build\$(Configuration)\libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>libcd;libcmtd;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>.\Debug/FS_q3map2_1.pdb</ProgramDatabaseFile>
