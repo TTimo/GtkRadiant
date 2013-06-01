@@ -5,8 +5,7 @@ if __name__ != '__main__':
 
 import utils, urllib2, zipfile, shutil, pprint, subprocess, re, os.path
 
-# config = debug release
-# target =
+GTK_PREFIX='gtk-2.24.10'
 
 class Config:
 	# aliases
@@ -282,11 +281,12 @@ class Config:
 		if ( self.platform == 'Windows' ):
 			backup_cwd = os.getcwd()
 			for lib_archive in [
-				'gtk+-bundle-2.16.6-20100912-3-win32.zip',
+# TODO: new files etc.
+#				'gtk+-bundle-2.16.6-20100912-3-win32.zip',
 				'gtkglext-1.2.0-3-win32.zip',
-				'libxml2-2.7.3-2-win32.zip',
-				'jpeg-8c-4-win32.zip',
-				'STLport-5.2.1-4.zip'
+#				'libxml2-2.7.3-2-win32.zip',
+#				'jpeg-8c-4-win32.zip',
+#				'STLport-5.2.1-4.zip'
 				]:
 				if ( not os.path.exists( lib_archive ) ):
 					print( 'downloading %s' % lib_archive )
@@ -314,44 +314,46 @@ class Config:
 			# copy all the dependent runtime data to the install directory
 			srcdir = os.path.dirname( backup_cwd )
 			for dll in [
-				'gtk-2.16.6/bin/freetype6.dll',
-				'gtk-2.16.6/bin/intl.dll',
-				'gtk-2.16.6/bin/libasprintf-0.dll',
-				'gtk-2.16.6/bin/libatk-1.0-0.dll',
-				'gtk-2.16.6/bin/libcairo-2.dll',
-				'gtk-2.16.6/bin/libexpat-1.dll',
-				'gtk-2.16.6/bin/libfontconfig-1.dll',
-				'gtk-2.16.6/bin/libgailutil-18.dll',
-				'gtk-2.16.6/bin/libgcc_s_dw2-1.dll',
-				'gtk-2.16.6/bin/libgdk-win32-2.0-0.dll',
-				'gtk-2.16.6/bin/libgdk_pixbuf-2.0-0.dll',
-				'gtk-2.16.6/bin/libgio-2.0-0.dll',
-				'gtk-2.16.6/bin/libglib-2.0-0.dll',
-				'gtk-2.16.6/bin/libgmodule-2.0-0.dll',
-				'gtk-2.16.6/bin/libgobject-2.0-0.dll',
-				'gtk-2.16.6/bin/libgthread-2.0-0.dll',
-				'gtk-2.16.6/bin/libgtk-win32-2.0-0.dll',
-				'gtk-2.16.6/bin/libpango-1.0-0.dll',
-				'gtk-2.16.6/bin/libpangocairo-1.0-0.dll',
-				'gtk-2.16.6/bin/libpangoft2-1.0-0.dll',
-				'gtk-2.16.6/bin/libpangowin32-1.0-0.dll',
-				'gtk-2.16.6/bin/libpng14-14.dll',
-				'gtk-2.16.6/bin/zlib1.dll',
-				'gtk-2.16.6/lib/GNU.Gettext.dll',
-				'gtk-2.16.6/lib/gtk-2.0/2.10.0/engines/libpixmap.dll',
-				'gtk-2.16.6/lib/gtk-2.0/2.10.0/engines/libwimp.dll',
-				'gtk-2.16.6/lib/gtk-2.0/modules/libgail.dll',
+				'%s/bin/freetype6.dll' % GTK_PREFIX,
+				'%s/bin/intl.dll' % GTK_PREFIX,
+				'%s/bin/libasprintf-0.dll' % GTK_PREFIX,
+				'%s/bin/libatk-1.0-0.dll' % GTK_PREFIX,
+				'%s/bin/libcairo-2.dll' % GTK_PREFIX,
+				'%s/bin/libexpat-1.dll' % GTK_PREFIX,
+				'%s/bin/libfontconfig-1.dll' % GTK_PREFIX,
+				'%s/bin/libgailutil-18.dll' % GTK_PREFIX,
+				'%s/bin/libgcc_s_dw2-1.dll' % GTK_PREFIX,
+				'%s/bin/libgdk-win32-2.0-0.dll' % GTK_PREFIX,
+				'%s/bin/libgdk_pixbuf-2.0-0.dll' % GTK_PREFIX,
+				'%s/bin/libgio-2.0-0.dll' % GTK_PREFIX,
+				'%s/bin/libglib-2.0-0.dll' % GTK_PREFIX,
+				'%s/bin/libgmodule-2.0-0.dll' % GTK_PREFIX,
+				'%s/bin/libgobject-2.0-0.dll' % GTK_PREFIX,
+				'%s/bin/libgthread-2.0-0.dll' % GTK_PREFIX,
+				'%s/bin/libgtk-win32-2.0-0.dll' % GTK_PREFIX,
+				'%s/bin/libpango-1.0-0.dll' % GTK_PREFIX,
+				'%s/bin/libpangocairo-1.0-0.dll' % GTK_PREFIX,
+				'%s/bin/libpangoft2-1.0-0.dll' % GTK_PREFIX,
+				'%s/bin/libpangowin32-1.0-0.dll' % GTK_PREFIX,
+				'%s/bin/libpng14-14.dll' % GTK_PREFIX,
+				'%s/bin/zlib1.dll' % GTK_PREFIX,
+				'%s/lib/GNU.Gettext.dll' % GTK_PREFIX,
+				'%s/lib/gtk-2.0/2.10.0/engines/libpixmap.dll' % GTK_PREFIX,
+				'%s/lib/gtk-2.0/2.10.0/engines/libwimp.dll' % GTK_PREFIX,
+				'%s/lib/gtk-2.0/modules/libgail.dll' % GTK_PREFIX,
 				'gtkglext-1.2.0/bin/libgdkglext-win32-1.0-0.dll',
 				'gtkglext-1.2.0/bin/libgtkglext-win32-1.0-0.dll',
-				'libxml2-2.7.3/bin/libxml2-2.dll'
+# going static
+#				'libxml2-2.7.3/bin/libxml2-2.dll'
 				]:
 				shutil.copy( os.path.join( srcdir, dll ), 'install' )
 
 			for extra in [
-				'gtk-2.16.6/etc',
-				'gtk-2.16.6/share',
+				'%s/etc' % GTK_PREFIX,
+				'%s/share' % GTK_PREFIX,
 				'gtkglext-1.2.0/share',
-				'libxml2-2.7.3/share'
+# TODO
+#				'libxml2-2.7.3/share'
 				]:
 				self.CopyTree( os.path.join( srcdir, extra ), 'install' )
 

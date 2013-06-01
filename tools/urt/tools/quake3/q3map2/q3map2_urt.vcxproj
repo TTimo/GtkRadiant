@@ -94,7 +94,7 @@
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
       <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
-      <AdditionalIncludeDirectories>$(SolutionDir)\include;$(SolutionDir)\tools\quake3\common;$(SolutionDir)\libs;$(SolutionDir)\..\gtk-2.16.6\include\glib-2.0;$(SolutionDir)\..\gtk-2.16.6\lib\glib-2.0\include;$(SolutionDir)\..\libxml2-2.7.3\include\libxml2;$(SolutionDir)\..\gtk-2.16.6\include\libpng14;$(SolutionDir)\..\gtk-2.16.6\include;$(SolutionDir)\..\jpeg-9;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\include;$(SolutionDir)\tools\quake3\common;$(SolutionDir)\libs;$(SolutionDir)\..\gtk-2.24.10\include\glib-2.0;$(SolutionDir)\..\gtk-2.24.10\lib\glib-2.0\include;$(SolutionDir)\..\libxml2-2.9.1\include;$(SolutionDir)\..\gtk-2.24.10\include\libpng14;$(SolutionDir)\..\gtk-2.24.10\include;$(SolutionDir)\..\jpeg-9;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>NDEBUG;WIN32;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
@@ -116,7 +116,7 @@
       <AdditionalDependencies>Ws2_32.lib;glib-2.0.lib;libpng.lib;libxml2.lib;jpeg.lib;md5lib.lib;mathlib.lib;picomodel.lib;l_net.lib;ddslib.lib;quake3-common.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(ProjectName).exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>$(SolutionDir)\..\gtk-2.16.6\lib;$(SolutionDir)\..\libxml2-2.7.3\lib;$(SolutionDir)\..\jpeg-9\Release;$(SolutionDir)\build\$(Configuration)\libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)\..\gtk-2.24.10\lib;$(SolutionDir)\..\libxml2-2.9.1\lib;$(SolutionDir)\..\jpeg-9\Release;$(SolutionDir)\build\$(Configuration)\libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ProgramDatabaseFile>.\Release/q3map2.pdb</ProgramDatabaseFile>
       <GenerateMapFile>true</GenerateMapFile>
       <MapFileName>.\Release/q3map2.map</MapFileName>
@@ -143,7 +143,7 @@
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
       <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
-      <AdditionalIncludeDirectories>$(SolutionDir)\include;$(SolutionDir)\tools\quake3\common;$(SolutionDir)\libs;$(SolutionDir)\..\gtk-2.16.6\include\glib-2.0;$(SolutionDir)\..\gtk-2.16.6\lib\glib-2.0\include;$(SolutionDir)\..\libxml2-2.7.3\include\libxml2;$(SolutionDir)\..\gtk-2.16.6\include\libpng14;$(SolutionDir)\..\gtk-2.16.6\include;$(SolutionDir)\..\jpeg-9;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\include;$(SolutionDir)\tools\quake3\common;$(SolutionDir)\libs;$(SolutionDir)\..\gtk-2.24.10\include\glib-2.0;$(SolutionDir)\..\gtk-2.24.10\lib\glib-2.0\include;$(SolutionDir)\..\libxml2-2.9.1\include;$(SolutionDir)\..\gtk-2.24.10\include\libpng14;$(SolutionDir)\..\gtk-2.24.10\include;$(SolutionDir)\..\jpeg-9;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>NDEBUG;WIN32;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
@@ -165,7 +165,7 @@
       <AdditionalDependencies>Ws2_32.lib;glib-2.0.lib;libpng.lib;libxml2.lib;jpeg.lib;md5lib.lib;mathlib.lib;picomodel.lib;l_net.lib;ddslib.lib;quake3-common.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(ProjectName).exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>$(SolutionDir)\..\gtk-2.16.6\lib;$(SolutionDir)\..\libxml2-2.7.3\lib;$(SolutionDir)\..\jpeg-9\Release;$(SolutionDir)\build\$(Configuration)\libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)\..\gtk-2.24.10\lib;$(SolutionDir)\..\libxml2-2.9.1\lib;$(SolutionDir)\..\jpeg-9\Release;$(SolutionDir)\build\$(Configuration)\libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ProgramDatabaseFile>.\Release/q3map2.pdb</ProgramDatabaseFile>
       <GenerateMapFile>true</GenerateMapFile>
       <MapFileName>.\Release/q3map2.map</MapFileName>
@@ -191,7 +191,7 @@
     </Midl>
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(SolutionDir)\include;$(SolutionDir)\tools\quake3\common;$(SolutionDir)\libs;$(SolutionDir)\..\gtk-2.16.6\include\glib-2.0;$(SolutionDir)\..\gtk-2.16.6\lib\glib-2.0\include;$(SolutionDir)\..\libxml2-2.7.3\include\libxml2;$(SolutionDir)\..\gtk-2.16.6\include\libpng14;$(SolutionDir)\..\gtk-2.16.6\include;$(SolutionDir)\..\jpeg-9;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\include;$(SolutionDir)\tools\quake3\common;$(SolutionDir)\libs;$(SolutionDir)\..\gtk-2.24.10\include\glib-2.0;$(SolutionDir)\..\gtk-2.24.10\lib\glib-2.0\include;$(SolutionDir)\..\libxml2-2.9.1\include;$(SolutionDir)\..\gtk-2.24.10\include\libpng14;$(SolutionDir)\..\gtk-2.24.10\include;$(SolutionDir)\..\jpeg-9;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_DEBUG;WIN32;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -212,7 +212,7 @@
       <AdditionalDependencies>Ws2_32.lib;glib-2.0.lib;libpng.lib;libxml2.lib;jpeg.lib;md5lib.lib;mathlib.lib;picomodel.lib;l_net.lib;ddslib.lib;quake3-common.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(ProjectName).exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>$(SolutionDir)\..\gtk-2.16.6\lib;$(SolutionDir)\..\libxml2-2.7.3\lib;$(SolutionDir)\..\jpeg-9\Release;$(SolutionDir)\build\$(Configuration)\libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)\..\gtk-2.24.10\lib;$(SolutionDir)\..\libxml2-2.9.1\lib;$(SolutionDir)\..\jpeg-9\Release;$(SolutionDir)\build\$(Configuration)\libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>libcd;libcmtd;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>.\Debug/FS_q3map2_1.pdb</ProgramDatabaseFile>
@@ -240,7 +240,7 @@
     </Midl>
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(SolutionDir)\include;$(SolutionDir)\tools\quake3\common;$(SolutionDir)\libs;$(SolutionDir)\..\gtk-2.16.6\include\glib-2.0;$(SolutionDir)\..\gtk-2.16.6\lib\glib-2.0\include;$(SolutionDir)\..\libxml2-2.7.3\include\libxml2;$(SolutionDir)\..\gtk-2.16.6\include\libpng14;$(SolutionDir)\..\gtk-2.16.6\include;$(SolutionDir)\..\jpeg-9;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\include;$(SolutionDir)\tools\quake3\common;$(SolutionDir)\libs;$(SolutionDir)\..\gtk-2.24.10\include\glib-2.0;$(SolutionDir)\..\gtk-2.24.10\lib\glib-2.0\include;$(SolutionDir)\..\libxml2-2.9.1\include;$(SolutionDir)\..\gtk-2.24.10\include\libpng14;$(SolutionDir)\..\gtk-2.24.10\include;$(SolutionDir)\..\jpeg-9;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_DEBUG;WIN32;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <PrecompiledHeaderOutputFile>.\Debug/q3map2.pch</PrecompiledHeaderOutputFile>
@@ -260,7 +260,7 @@
       <AdditionalDependencies>Ws2_32.lib;glib-2.0.lib;libpng.lib;libxml2.lib;jpeg.lib;md5lib.lib;mathlib.lib;picomodel.lib;l_net.lib;ddslib.lib;quake3-common.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(ProjectName).exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>$(SolutionDir)\..\gtk-2.16.6\lib;$(SolutionDir)\..\libxml2-2.7.3\lib;$(SolutionDir)\..\jpeg-9\Release;$(SolutionDir)\build\$(Configuration)\libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)\..\gtk-2.24.10\lib;$(SolutionDir)\..\libxml2-2.9.1\lib;$(SolutionDir)\..\jpeg-9\Release;$(SolutionDir)\build\$(Configuration)\libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>libcd;libcmtd;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>.\Debug/FS_q3map2_1.pdb</ProgramDatabaseFile>
