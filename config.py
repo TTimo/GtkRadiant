@@ -280,36 +280,36 @@ class Config:
 		# NOTE: unrelated to self.setup_platforms - grab support files and binaries and install them
 		if ( self.platform == 'Windows' ):
 			backup_cwd = os.getcwd()
-			for lib_archive in [
-# TODO: new files etc.
-#				'gtk+-bundle-2.16.6-20100912-3-win32.zip',
-				'gtkglext-1.2.0-3-win32.zip',
-#				'libxml2-2.7.3-2-win32.zip',
-#				'jpeg-8c-4-win32.zip',
-#				'STLport-5.2.1-4.zip'
-				]:
-				if ( not os.path.exists( lib_archive ) ):
-					print( 'downloading %s' % lib_archive )
-					archive_web_request = urllib2.urlopen( 'http://icculus.org/gtkradiant/downloads/1.6/dependencies/1.6.2/%s' % lib_archive )
-					archive_File = open( lib_archive, 'wb' )
-					while True:
-						data = archive_web_request.read( 1048576 ) #read 1mb at a time
-						if not data:
-							break
-						archive_File.write( data )
-
-					archive_web_request.close()
-					archive_File.close()
-
-					print( 'unpacking %s' % lib_archive )
-					lib_archive_path = os.path.abspath( lib_archive )
-					os.chdir( os.path.dirname( backup_cwd ) )
-
-					archive_Zip = zipfile.ZipFile( lib_archive_path, 'r' )
-					archive_Zip.extractall()
-					archive_Zip.close()
-
-					os.chdir( backup_cwd )
+#			for lib_archive in [
+## TODO: new files etc.
+##				'gtk+-bundle-2.16.6-20100912-3-win32.zip',
+#				'gtkglext-1.2.0-3-win32.zip',
+##				'libxml2-2.7.3-2-win32.zip',
+##				'jpeg-8c-4-win32.zip',
+##				'STLport-5.2.1-4.zip'
+#				]:
+#				if ( not os.path.exists( lib_archive ) ):
+#					print( 'downloading %s' % lib_archive )
+#					archive_web_request = urllib2.urlopen( 'http://icculus.org/gtkradiant/downloads/1.6/dependencies/1.6.2/%s' % lib_archive )
+#					archive_File = open( lib_archive, 'wb' )
+#					while True:
+#						data = archive_web_request.read( 1048576 ) # read 1mb at a time
+#						if not data:
+#							break
+#						archive_File.write( data )
+#
+#					archive_web_request.close()
+#					archive_File.close()
+#
+#					print( 'unpacking %s' % lib_archive )
+#					lib_archive_path = os.path.abspath( lib_archive )
+#					os.chdir( os.path.dirname( backup_cwd ) )
+#
+#					archive_Zip = zipfile.ZipFile( lib_archive_path, 'r' )
+#					archive_Zip.extractall()
+#					archive_Zip.close()
+#
+#					os.chdir( backup_cwd )
 
 			# copy all the dependent runtime data to the install directory
 			srcdir = os.path.dirname( backup_cwd )
