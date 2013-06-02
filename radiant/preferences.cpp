@@ -853,13 +853,15 @@ CGameDescription::CGameDescription( xmlDocPtr pDoc, const Str &GameFile ){
 	}
 
 #if defined ( __linux__ ) || defined ( __APPLE__ )
-	// *nix specific
 	prop = (char*)xmlGetProp( pNode, (const xmlChar *)"prefix" );
+#elif defined ( __WIN32 )
+	prop = (char*)xmlGetProp( pNode, (const xmlChar *)"prefix_win32" );
+#endif
 	if ( prop != NULL ) {
 		mUserPathPrefix = prop;
 		xmlFree( prop );
 	}
-#endif
+
 	mShaderPath = xmlGetProp( pNode, (const xmlChar *)"shaderpath" );
 	if ( !mShaderPath.GetLength() ) {
 		mShaderPath = "scripts/";
@@ -918,10 +920,8 @@ void CGameDescription::Dump(){
 	Sys_Printf( "engine path          : '%s'\n", mEnginePath.GetBuffer() );
 	Sys_Printf( "engine               : '%s'\n", mEngine.GetBuffer() );
 	Sys_Printf( "shaderlist           : '%s'\n", mShaderlist.GetBuffer() );
-	Sys_Printf( "caulk shader: '%s'\n", mCaulkShader.GetBuffer() );
-#if defined ( __linux__ ) || defined ( __APPLE__ )
+	Sys_Printf( "caulk shader         : '%s'\n", mCaulkShader.GetBuffer() );
 	Sys_Printf( "prefix               : '%s'\n", mUserPathPrefix.GetBuffer() );
-#endif
 	Sys_Printf( "default texture scale: %g\n", mTextureDefaultScale );
 	Sys_Printf( "single eclass load   : %s\n", mEClassSingleLoad ? "Yes" : "No" );
 	Sys_Printf( "patches supported    : %s\n", mNoPatch ? "No" : "Yes" );
@@ -1301,17 +1301,22 @@ void CGameDialog::Init(){
 
 	g_strGameToolsPath = g_pGameDescription->mGameToolsPath;
 
-	// NOTE TTimo: this is moved from QE_LoadProject in 1.2
-	// (probably broken)
-	// NOTE Hydra: was broken for win32, we don't use m_strHomeGame or m_strFSBasePath
+	// Add the per-user game path on all platforms
+	if (m_pCurrentGameDescription->mUserPathPrefix.GetLength()) {
 #if defined ( __linux__ ) || defined ( __APPLE__ )
-	g_qeglobals.m_strHomeGame = g_get_home_dir();
-	g_qeglobals.m_strHomeGame += "/";
-	g_qeglobals.m_strHomeGame += m_pCurrentGameDescription->mUserPathPrefix.GetBuffer();
-	g_qeglobals.m_strHomeGame += "/";
-#else
-	g_qeglobals.m_strHomeGame = g_pGameDescription->mEnginePath.GetBuffer();
+		g_qeglobals.m_strHomeGame = g_get_home_dir();
+		g_qeglobals.m_strHomeGame += "/";
+		g_qeglobals.m_strHomeGame += m_pCurrentGameDescription->mUserPathPrefix.GetBuffer();
+		g_qeglobals.m_strHomeGame += "/";
+#elif defined ( _WIN32 )
+		g_qeglobals.m_strHomeGame = g_get_home_dir();
+		g_qeglobals.m_strHomeGame += "\\My Games\\";
+		g_qeglobals.m_strHomeGame += m_pCurrentGameDescription->mUserPathPrefix.GetBuffer();
+		g_qeglobals.m_strHomeGame += "\\";
 #endif
+	} else {
+		g_qeglobals.m_strHomeGame = g_pGameDescription->mEnginePath.GetBuffer();
+	}
 
 	g_pGameDescription->Dump();
 }
