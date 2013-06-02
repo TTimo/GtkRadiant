@@ -3531,6 +3531,7 @@ void CGameInstall::Run() {
 	case GAME_Q2W: {
 		fprintf( fg, "  "TOOLS_ATTRIBUTE "=\"%sinstalls/Q2WPack/game\"\n", g_strAppPath.GetBuffer() );
 		fprintf( fg, "  prefix=\".quake2world\"\n" );
+		fprintf( fg, "  prefix_win32=\"Quake2World\"\n");
 		Str source = g_strAppPath.GetBuffer();
 		source += "installs/";
 		source += Q2W_PACK;
