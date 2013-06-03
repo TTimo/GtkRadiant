@@ -1,3 +1,4 @@
+/apple/target/*
 /install/q3map2
 /install/radiant.bin
 /.sconsign.dblite
@@ -6,3 +7,4 @@
 *.pyc
 *.so
 .settings
+.DS_Store
