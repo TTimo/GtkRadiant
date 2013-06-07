@@ -6,6 +6,7 @@ if __name__ != '__main__':
 import utils, urllib2, zipfile, shutil, pprint, subprocess, re, os.path
 
 GTK_PREFIX='gtk-2.24.10'
+GTK64_PREFIX='gtk-2.22.1_win64'
 
 class Config:
 	# aliases
@@ -313,49 +314,56 @@ class Config:
 
 			# copy all the dependent runtime data to the install directory
 			srcdir = os.path.dirname( backup_cwd )
-			for dll in [
-				'%s/bin/freetype6.dll' % GTK_PREFIX,
-				'%s/bin/intl.dll' % GTK_PREFIX,
-				'%s/bin/libasprintf-0.dll' % GTK_PREFIX,
-				'%s/bin/libatk-1.0-0.dll' % GTK_PREFIX,
-				'%s/bin/libcairo-2.dll' % GTK_PREFIX,
-				'%s/bin/libexpat-1.dll' % GTK_PREFIX,
-				'%s/bin/libfontconfig-1.dll' % GTK_PREFIX,
-				'%s/bin/libgailutil-18.dll' % GTK_PREFIX,
-				'%s/bin/libgcc_s_dw2-1.dll' % GTK_PREFIX,
-				'%s/bin/libgdk-win32-2.0-0.dll' % GTK_PREFIX,
-				'%s/bin/libgdk_pixbuf-2.0-0.dll' % GTK_PREFIX,
-				'%s/bin/libgio-2.0-0.dll' % GTK_PREFIX,
-				'%s/bin/libglib-2.0-0.dll' % GTK_PREFIX,
-				'%s/bin/libgmodule-2.0-0.dll' % GTK_PREFIX,
-				'%s/bin/libgobject-2.0-0.dll' % GTK_PREFIX,
-				'%s/bin/libgthread-2.0-0.dll' % GTK_PREFIX,
-				'%s/bin/libgtk-win32-2.0-0.dll' % GTK_PREFIX,
-				'%s/bin/libpango-1.0-0.dll' % GTK_PREFIX,
-				'%s/bin/libpangocairo-1.0-0.dll' % GTK_PREFIX,
-				'%s/bin/libpangoft2-1.0-0.dll' % GTK_PREFIX,
-				'%s/bin/libpangowin32-1.0-0.dll' % GTK_PREFIX,
-				'%s/bin/libpng14-14.dll' % GTK_PREFIX,
-				'%s/bin/zlib1.dll' % GTK_PREFIX,
-				'%s/lib/GNU.Gettext.dll' % GTK_PREFIX,
-				'%s/lib/gtk-2.0/2.10.0/engines/libpixmap.dll' % GTK_PREFIX,
-				'%s/lib/gtk-2.0/2.10.0/engines/libwimp.dll' % GTK_PREFIX,
-				'%s/lib/gtk-2.0/modules/libgail.dll' % GTK_PREFIX,
-				'gtkglext-1.2.0/bin/libgdkglext-win32-1.0-0.dll',
-				'gtkglext-1.2.0/bin/libgtkglext-win32-1.0-0.dll',
-# going static
-#				'libxml2-2.7.3/bin/libxml2-2.dll'
-				]:
-				shutil.copy( os.path.join( srcdir, dll ), 'install' )
+#			for dll in [
+#				'%s/bin/freetype6.dll' % GTK_PREFIX,
+#				'%s/bin/intl.dll' % GTK_PREFIX,
+#				'%s/bin/libasprintf-0.dll' % GTK_PREFIX,
+#				'%s/bin/libatk-1.0-0.dll' % GTK_PREFIX,
+#				'%s/bin/libcairo-2.dll' % GTK_PREFIX,
+#				'%s/bin/libexpat-1.dll' % GTK_PREFIX,
+#				'%s/bin/libfontconfig-1.dll' % GTK_PREFIX,
+#				'%s/bin/libgailutil-18.dll' % GTK_PREFIX,
+#				'%s/bin/libgcc_s_dw2-1.dll' % GTK_PREFIX,
+#				'%s/bin/libgdk-win32-2.0-0.dll' % GTK_PREFIX,
+#				'%s/bin/libgdk_pixbuf-2.0-0.dll' % GTK_PREFIX,
+#				'%s/bin/libgio-2.0-0.dll' % GTK_PREFIX,
+#				'%s/bin/libglib-2.0-0.dll' % GTK_PREFIX,
+#				'%s/bin/libgmodule-2.0-0.dll' % GTK_PREFIX,
+#				'%s/bin/libgobject-2.0-0.dll' % GTK_PREFIX,
+#				'%s/bin/libgthread-2.0-0.dll' % GTK_PREFIX,
+#				'%s/bin/libgtk-win32-2.0-0.dll' % GTK_PREFIX,
+#				'%s/bin/libpango-1.0-0.dll' % GTK_PREFIX,
+#				'%s/bin/libpangocairo-1.0-0.dll' % GTK_PREFIX,
+#				'%s/bin/libpangoft2-1.0-0.dll' % GTK_PREFIX,
+#				'%s/bin/libpangowin32-1.0-0.dll' % GTK_PREFIX,
+#				'%s/bin/libpng14-14.dll' % GTK_PREFIX,
+#				'%s/bin/zlib1.dll' % GTK_PREFIX,
+#				'%s/lib/GNU.Gettext.dll' % GTK_PREFIX,
+#				'%s/lib/gtk-2.0/2.10.0/engines/libpixmap.dll' % GTK_PREFIX,
+#				'%s/lib/gtk-2.0/2.10.0/engines/libwimp.dll' % GTK_PREFIX,
+#				'%s/lib/gtk-2.0/modules/libgail.dll' % GTK_PREFIX,
+#				'gtkglext-1.2.0/bin/libgdkglext-win32-1.0-0.dll',
+#				'gtkglext-1.2.0/bin/libgtkglext-win32-1.0-0.dll',
+## going static
+##				'libxml2-2.7.3/bin/libxml2-2.dll'
+#				]:
+#				shutil.copy( os.path.join( srcdir, dll ), 'install' )
+#
+#			for extra in [
+#				'%s/etc' % GTK_PREFIX,
+#				'%s/share' % GTK_PREFIX,
+#				'gtkglext-1.2.0/share',
+## TODO
+##				'libxml2-2.7.3/share'
+#				]:
+#				self.CopyTree( os.path.join( srcdir, extra ), 'install' )
 
-			for extra in [
-				'%s/etc' % GTK_PREFIX,
-				'%s/share' % GTK_PREFIX,
-				'gtkglext-1.2.0/share',
-# TODO
-#				'libxml2-2.7.3/share'
+			for x64_dll in [
+				'%s/bin/libpng14-14.dll' % GTK64_PREFIX,
+				'%s/bin/libglib-2.0-0.dll' % GTK64_PREFIX,
+				'%s/bin/libintl-8.dll' % GTK64_PREFIX,
 				]:
-				self.CopyTree( os.path.join( srcdir, extra ), 'install' )
+				shutil.copy( os.path.join( srcdir, x64_dll ), 'install/x64' )
 
         def FinishBuild( self, target, source, env ):
                 print( 'Lookup and bundle the PNG and JPEG libraries' )
