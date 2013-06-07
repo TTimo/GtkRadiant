@@ -97,6 +97,7 @@ CSynapseServer::CSynapseServer(){
 CSynapseServer::~CSynapseServer(){
 	if ( m_api_name ) {
 		xmlFree( m_api_name );
+                m_api_name = NULL;
 	}
 	if ( m_content ) {
 		g_free( m_content );
@@ -713,6 +714,7 @@ bool CSynapseServer::GetNextConfig( char **api_name, char **minor ){
 		if ( mpFocusedNode->type == XML_ELEMENT_NODE && !strcmp( (const char *)mpFocusedNode->name, "api" ) ) {
 			if ( m_api_name ) {
 				xmlFree( m_api_name );
+                                m_api_name = NULL;
 			}
 			m_api_name = xmlGetProp( mpFocusedNode, (const xmlChar *)"name" );
 			*api_name = (char *)m_api_name;
@@ -736,6 +738,7 @@ bool CSynapseServer::GetConfigForAPI( const char *api, char **minor ) {
 		if ( pNode->type == XML_ELEMENT_NODE && !strcmp( (const char *)pNode->name, "api" ) ) {
 			if ( m_api_name ) {
 				xmlFree( m_api_name );
+                                m_api_name = NULL;
 			}
 			m_api_name = xmlGetProp( pNode, (const xmlChar *)"name" );
 			if ( !strcmp( (const char *)m_api_name, api ) ) {
