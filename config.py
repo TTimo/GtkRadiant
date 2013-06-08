@@ -281,82 +281,77 @@ class Config:
 		# NOTE: unrelated to self.setup_platforms - grab support files and binaries and install them
 		if ( self.platform == 'Windows' ):
 			backup_cwd = os.getcwd()
-#			for lib_archive in [
-## TODO: new files etc.
-##				'gtk+-bundle-2.16.6-20100912-3-win32.zip',
-#				'gtkglext-1.2.0-3-win32.zip',
-##				'libxml2-2.7.3-2-win32.zip',
-##				'jpeg-8c-4-win32.zip',
-##				'STLport-5.2.1-4.zip'
-#				]:
-#				if ( not os.path.exists( lib_archive ) ):
-#					print( 'downloading %s' % lib_archive )
-#					archive_web_request = urllib2.urlopen( 'http://icculus.org/gtkradiant/downloads/1.6/dependencies/1.6.2/%s' % lib_archive )
-#					archive_File = open( lib_archive, 'wb' )
-#					while True:
-#						data = archive_web_request.read( 1048576 ) # read 1mb at a time
-#						if not data:
-#							break
-#						archive_File.write( data )
-#
-#					archive_web_request.close()
-#					archive_File.close()
-#
-#					print( 'unpacking %s' % lib_archive )
-#					lib_archive_path = os.path.abspath( lib_archive )
-#					os.chdir( os.path.dirname( backup_cwd ) )
-#
-#					archive_Zip = zipfile.ZipFile( lib_archive_path, 'r' )
-#					archive_Zip.extractall()
-#					archive_Zip.close()
-#
-#					os.chdir( backup_cwd )
+			for lib_archive in [
+				'STLport-5.2.1-GtkRadiant.zip',
+				'gtk-bundle-2.24.10-GtkRadiant.zip',
+				'gtk-bundle-2.22.1-win64-GtkRadiant.zip',
+				'jpeg-9-GtkRadiant.zip',
+				'libxml2-2.9.1-GtkRadiant.zip',
+				]:
+				if ( not os.path.exists( lib_archive ) ):
+					print( 'downloading %s' % lib_archive )
+					archive_web_request = urllib2.urlopen( 'https://www.dropbox.com/sh/y5rydj22e5ozpik/He0ghuwrgW/GtkRadiant-dependencies/%s' % lib_archive )
+					archive_File = open( lib_archive, 'wb' )
+					while True:
+						data = archive_web_request.read( 1048576 ) # read 1mb at a time
+						if not data:
+							break
+						archive_File.write( data )
+
+					archive_web_request.close()
+					archive_File.close()
+
+					print( 'unpacking %s' % lib_archive )
+					lib_archive_path = os.path.abspath( lib_archive )
+					os.chdir( os.path.dirname( backup_cwd ) )
+
+					archive_Zip = zipfile.ZipFile( lib_archive_path, 'r' )
+					archive_Zip.extractall()
+					archive_Zip.close()
+
+					os.chdir( backup_cwd )
 
 			# copy all the dependent runtime data to the install directory
 			srcdir = os.path.dirname( backup_cwd )
-#			for dll in [
-#				'%s/bin/freetype6.dll' % GTK_PREFIX,
-#				'%s/bin/intl.dll' % GTK_PREFIX,
-#				'%s/bin/libasprintf-0.dll' % GTK_PREFIX,
-#				'%s/bin/libatk-1.0-0.dll' % GTK_PREFIX,
-#				'%s/bin/libcairo-2.dll' % GTK_PREFIX,
-#				'%s/bin/libexpat-1.dll' % GTK_PREFIX,
-#				'%s/bin/libfontconfig-1.dll' % GTK_PREFIX,
-#				'%s/bin/libgailutil-18.dll' % GTK_PREFIX,
-#				'%s/bin/libgcc_s_dw2-1.dll' % GTK_PREFIX,
-#				'%s/bin/libgdk-win32-2.0-0.dll' % GTK_PREFIX,
-#				'%s/bin/libgdk_pixbuf-2.0-0.dll' % GTK_PREFIX,
-#				'%s/bin/libgio-2.0-0.dll' % GTK_PREFIX,
-#				'%s/bin/libglib-2.0-0.dll' % GTK_PREFIX,
-#				'%s/bin/libgmodule-2.0-0.dll' % GTK_PREFIX,
-#				'%s/bin/libgobject-2.0-0.dll' % GTK_PREFIX,
-#				'%s/bin/libgthread-2.0-0.dll' % GTK_PREFIX,
-#				'%s/bin/libgtk-win32-2.0-0.dll' % GTK_PREFIX,
-#				'%s/bin/libpango-1.0-0.dll' % GTK_PREFIX,
-#				'%s/bin/libpangocairo-1.0-0.dll' % GTK_PREFIX,
-#				'%s/bin/libpangoft2-1.0-0.dll' % GTK_PREFIX,
-#				'%s/bin/libpangowin32-1.0-0.dll' % GTK_PREFIX,
-#				'%s/bin/libpng14-14.dll' % GTK_PREFIX,
-#				'%s/bin/zlib1.dll' % GTK_PREFIX,
-#				'%s/lib/GNU.Gettext.dll' % GTK_PREFIX,
-#				'%s/lib/gtk-2.0/2.10.0/engines/libpixmap.dll' % GTK_PREFIX,
-#				'%s/lib/gtk-2.0/2.10.0/engines/libwimp.dll' % GTK_PREFIX,
-#				'%s/lib/gtk-2.0/modules/libgail.dll' % GTK_PREFIX,
-#				'gtkglext-1.2.0/bin/libgdkglext-win32-1.0-0.dll',
-#				'gtkglext-1.2.0/bin/libgtkglext-win32-1.0-0.dll',
-## going static
-##				'libxml2-2.7.3/bin/libxml2-2.dll'
-#				]:
-#				shutil.copy( os.path.join( srcdir, dll ), 'install' )
-#
-#			for extra in [
-#				'%s/etc' % GTK_PREFIX,
-#				'%s/share' % GTK_PREFIX,
-#				'gtkglext-1.2.0/share',
-## TODO
-##				'libxml2-2.7.3/share'
-#				]:
-#				self.CopyTree( os.path.join( srcdir, extra ), 'install' )
+			for dll in [
+				'%s/bin/freetype6.dll' % GTK_PREFIX,
+				'%s/bin/intl.dll' % GTK_PREFIX,
+				'%s/bin/libasprintf-0.dll' % GTK_PREFIX,
+				'%s/bin/libatk-1.0-0.dll' % GTK_PREFIX,
+				'%s/bin/libcairo-2.dll' % GTK_PREFIX,
+				'%s/bin/libexpat-1.dll' % GTK_PREFIX,
+				'%s/bin/libfontconfig-1.dll' % GTK_PREFIX,
+				'%s/bin/libgailutil-18.dll' % GTK_PREFIX,
+				'%s/bin/libgcc_s_dw2-1.dll' % GTK_PREFIX,
+				'%s/bin/libgdk-win32-2.0-0.dll' % GTK_PREFIX,
+				'%s/bin/libgdk_pixbuf-2.0-0.dll' % GTK_PREFIX,
+				'%s/bin/libgio-2.0-0.dll' % GTK_PREFIX,
+				'%s/bin/libglib-2.0-0.dll' % GTK_PREFIX,
+				'%s/bin/libgmodule-2.0-0.dll' % GTK_PREFIX,
+				'%s/bin/libgobject-2.0-0.dll' % GTK_PREFIX,
+				'%s/bin/libgthread-2.0-0.dll' % GTK_PREFIX,
+				'%s/bin/libgtk-win32-2.0-0.dll' % GTK_PREFIX,
+				'%s/bin/libpango-1.0-0.dll' % GTK_PREFIX,
+				'%s/bin/libpangocairo-1.0-0.dll' % GTK_PREFIX,
+				'%s/bin/libpangoft2-1.0-0.dll' % GTK_PREFIX,
+				'%s/bin/libpangowin32-1.0-0.dll' % GTK_PREFIX,
+				'%s/bin/libpng14-14.dll' % GTK_PREFIX,
+				'%s/bin/zlib1.dll' % GTK_PREFIX,
+				'%s/lib/GNU.Gettext.dll' % GTK_PREFIX,
+				'%s/lib/gtk-2.0/2.10.0/engines/libpixmap.dll' % GTK_PREFIX,
+				'%s/lib/gtk-2.0/2.10.0/engines/libwimp.dll' % GTK_PREFIX,
+				'%s/lib/gtk-2.0/modules/libgail.dll' % GTK_PREFIX,
+				'gtkglext-1.2.0/bin/libgdkglext-win32-1.0-0.dll',
+				'gtkglext-1.2.0/bin/libgtkglext-win32-1.0-0.dll',
+				]:
+				shutil.copy( os.path.join( srcdir, dll ), 'install' )
+
+			for extra in [
+				'%s/etc' % GTK_PREFIX,
+				'%s/share' % GTK_PREFIX,
+				'gtkglext-1.2.0/share',
+				]:
+				self.CopyTree( os.path.join( srcdir, extra ), 'install' )
 
 			for x64_dll in [
 				'%s/bin/libpng14-14.dll' % GTK64_PREFIX,
