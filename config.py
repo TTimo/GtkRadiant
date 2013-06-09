@@ -353,7 +353,11 @@ class Config:
 				'gtkglext-1.2.0/share',
 				]:
 				self.CopyTree( os.path.join( srcdir, extra ), 'install' )
-
+			
+			try:
+				os.mkdir( 'install/x64' )
+			except:
+				pass # assume 'already exists'
 			for x64_dll in [
 				'%s/bin/libpng14-14.dll' % GTK64_PREFIX,
 				'%s/bin/libglib-2.0-0.dll' % GTK64_PREFIX,
