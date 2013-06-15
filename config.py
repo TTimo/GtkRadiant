@@ -1,9 +1,10 @@
-import sys, traceback, platform, re, commands, platform, subprocess
+import sys, os, traceback, platform, re, commands, platform, subprocess
+import urllib2, zipfile, shutil, pprint
 
 if __name__ != '__main__':
 	from SCons.Script import *
 
-import utils, urllib2, zipfile, shutil, pprint, subprocess, re, os.path
+import utils
 
 GTK_PREFIX='gtk-2.24.10'
 GTK64_PREFIX='gtk-2.22.1_win64'
@@ -26,7 +27,7 @@ class Config:
 		# platforms for which to assemble a setup
 		self.setup_platforms = [ 'local', 'x86', 'x64', 'win32' ]
                 # paks to assemble in the setup
-                self.setup_packs = [ 'Q3Pack', 'UrTPack', 'ETPack', 'QLPack' ]
+                self.setup_packs = [ 'Q3Pack', 'UrTPack', 'ETPack', 'QLPack', 'Q2WPack' ]
 
 	def __repr__( self ):
 		return 'config: target=%s config=%s' % ( self.target_selected, self.config_selected )
@@ -254,11 +255,22 @@ class Config:
                 print( repr( cmd ) )
                 subprocess.check_call( cmd )
 
-
 	def FetchGamePaks( self, path ):
 		for pak in self.setup_packs:
+			if ( pak == 'Q2WPack' ):
+				continue
                         svnurl = 'svn://svn.icculus.org/gtkradiant-gamepacks/%s/trunk' % pak
                         self.CheckoutOrUpdate( svnurl, os.path.join( path, 'installs', pak ) )
+
+		if 'Q2WPack' in self.setup_packs:
+			if ( os.path.exists( 'quake2world' ) ):
+				subprocess.check_call( [ 'git', 'pull', ], cwd = 'quake2world' )
+			else:
+				cmd = [ 'git', 'clone', 'git://github.com/jdolan/quake2world.git' ]
+				subprocess.check_call( cmd )
+			# squash and sync..
+			shutil.rmtree( 'install/installs/Q2WPack/' )
+			shutil.copytree( 'quake2world/gtkradiant/Q2WPack/', 'install/installs/Q2WPack/' )
 
 	def CopyTree( self, src, dst):
 		for root, dirs, files in os.walk( src ):
