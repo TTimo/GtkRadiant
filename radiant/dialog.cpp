@@ -45,7 +45,7 @@ Dialog::Dialog (){
 	m_pDataList = (GSList*)NULL;
 	m_nReturn = IDCANCEL;
 	m_bNeedBuild = true;
-	m_nLoop = 0;
+	m_nLoop = false;
 }
 
 Dialog::~Dialog (){
@@ -265,7 +265,7 @@ void Dialog::UpdateData( bool retrieve ){
 }
 
 void Dialog::EndModal( int code ) {
-	m_nLoop = 0;
+	m_nLoop = false;
 	m_nReturn = code;
 }
 
@@ -278,7 +278,7 @@ int Dialog::DoModal(){
 	gtk_grab_add( m_pWidget );
 	gtk_widget_show( m_pWidget );
 
-	m_nLoop = 1;
+	m_nLoop = true;
 	while ( m_nLoop ) {
 		gtk_main_iteration();
 	}

@@ -443,6 +443,7 @@ void ReplaceTemplates( char* w, const char* r ){
 	const char *__TOOLSPATH = "TEMPLATEtoolspath";
 	const char *__BASEDIR = "TEMPLATEbasedir";
 	const char *__APPPATH = "TEMPLATEapppath";
+        const char *__Q3MAP2 = "TEMPLATEq3map2";
 
 	// iterate through string r
 	while ( *r != '\0' )
@@ -468,6 +469,15 @@ void ReplaceTemplates( char* w, const char* r ){
 			else if ( strncmp( r + 1, __APPPATH, strlen( __APPPATH ) ) == 0 ) {
 				r += strlen( __APPPATH ) + 1;
 				p = g_strAppPath.GetBuffer();
+			}
+			else if ( strncmp( r + 1, __Q3MAP2, strlen( __Q3MAP2 ) ) == 0 ) {
+				r += strlen( __Q3MAP2 ) + 1;                                 
+                                // see https://github.com/TTimo/GtkRadiant/issues/116
+                                if ( g_PrefsDlg.m_bx64q3map2 ) {
+				  p = "x64/q3map2";
+                                } else {
+                                  p = "q3map2";
+                                }
 			}
 			else
 			{

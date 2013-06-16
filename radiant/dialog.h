@@ -60,14 +60,13 @@ virtual void ShowDlg();
 virtual void HideDlg();
 void Create();
 void Destroy();
-GtkWidget* GetDlgWidget( const char* name )
-{ return GTK_WIDGET( g_object_get_data( G_OBJECT( m_pWidget ), name ) ); }
-GtkWidget* GetWidget()
-{ return m_pWidget; }
+GtkWidget* GetDlgWidget( const char* name ) { return GTK_WIDGET( g_object_get_data( G_OBJECT( m_pWidget ), name ) ); }
+GtkWidget* GetWidget() { return m_pWidget; }
+bool IsModal() { return m_nLoop; }
 
 protected:
 GtkWidget *m_pWidget;
-int m_nLoop;
+bool m_nLoop;
 int m_nReturn;
 
 void AddDialogData( GtkWidget *widget, void *buf, DLG_DATA_TYPE type )
