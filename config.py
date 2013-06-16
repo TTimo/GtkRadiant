@@ -269,7 +269,8 @@ class Config:
 				cmd = [ 'git', 'clone', 'git://github.com/jdolan/quake2world.git' ]
 				subprocess.check_call( cmd )
 			# squash and sync..
-			shutil.rmtree( 'install/installs/Q2WPack/' )
+			if ( os.path.exists( 'install/installs/Q2WPack' ) ):
+				shutil.rmtree( 'install/installs/Q2WPack/' )
 			shutil.copytree( 'quake2world/gtkradiant/Q2WPack/', 'install/installs/Q2WPack/' )
 
 	def CopyTree( self, src, dst):
