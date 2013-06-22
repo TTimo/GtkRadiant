@@ -854,12 +854,13 @@ CGameDescription::CGameDescription( xmlDocPtr pDoc, const Str &GameFile ){
 
 #if defined ( __linux__ ) || defined ( __APPLE__ )
 	prop = (char*)xmlGetProp( pNode, (const xmlChar *)"prefix" );
-#elif defined ( __WIN32 )
+#elif defined ( _WIN32 )
 	prop = (char*)xmlGetProp( pNode, (const xmlChar *)"prefix_win32" );
 #endif
 	if ( prop != NULL ) {
 		mUserPathPrefix = prop;
 		xmlFree( prop );
+                prop = NULL;
 	}
 
 	mShaderPath = xmlGetProp( pNode, (const xmlChar *)"shaderpath" );
@@ -877,6 +878,7 @@ CGameDescription::CGameDescription( xmlDocPtr pDoc, const Str &GameFile ){
 	if ( default_scale ) {
 		mTextureDefaultScale = atof( (const char *)default_scale );
 		xmlFree( default_scale );
+                default_scale = NULL;
 	}
 	else{
 		mTextureDefaultScale = 0.5f;
@@ -885,24 +887,24 @@ CGameDescription::CGameDescription( xmlDocPtr pDoc, const Str &GameFile ){
 	if ( eclass_singleload ) {
 		mEClassSingleLoad = true;
 		xmlFree( eclass_singleload );
-	}
-	else{
+                eclass_singleload = NULL;
+	} else {
 		mEClassSingleLoad = false;
 	}
 	xmlChar* no_patch = xmlGetProp( pNode, (const xmlChar *)"no_patch" );
 	if ( no_patch ) {
 		mNoPatch = true;
 		xmlFree( no_patch );
-	}
-	else{
+                no_patch = NULL;
+	} else {
 		mNoPatch = false;
 	}
 	xmlChar* caulk_shader = xmlGetProp( pNode, (const xmlChar *)"caulk_shader" );
 	if ( caulk_shader ) {
 		mCaulkShader = caulk_shader;
 		xmlFree( caulk_shader );
-	}
-	else{
+                caulk_shader = NULL;
+	} else {
 		mCaulkShader = "textures/common/caulk";
 	}
 }
