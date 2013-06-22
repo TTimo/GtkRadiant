@@ -693,9 +693,7 @@ int m_nTextureCompressionFormat;
 int m_nLightRadiuses;
 
 bool m_bQ3Map2Texturing;
-#ifdef _WIN32
 bool m_bx64q3map2;
-#endif
 
 #ifdef ATIHACK_812
 bool m_bGlATIHack;
