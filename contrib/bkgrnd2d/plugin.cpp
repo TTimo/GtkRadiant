@@ -171,8 +171,6 @@ extern "C" const char* QERPlug_Init( void *hApp, void* pMainWidget ){
 	InitBackgroundDialog();
 	render.Register();
 
-//TODO is it right ? is it wrong ? it works
-//TODO figure out supported image types
 	GetFileTypeRegistry()->addType( FILETYPE_KEY, filetype_t( "all files", "*.*" ) );
 	GetFileTypeRegistry()->addType( FILETYPE_KEY, filetype_t( "jpeg files", "*.jpg" ) );
 	GetFileTypeRegistry()->addType( FILETYPE_KEY, filetype_t( "targa files", "*.tga" ) );
