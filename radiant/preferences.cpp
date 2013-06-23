@@ -1304,7 +1304,7 @@ void CGameDialog::Init(){
 	g_strGameToolsPath = g_pGameDescription->mGameToolsPath;
 
 	// Add the per-user game path on all platforms
-	if (m_pCurrentGameDescription->mUserPathPrefix.GetLength()) {
+	if ( m_pCurrentGameDescription->mUserPathPrefix.GetLength() ) {
 #if defined ( __linux__ ) || defined ( __APPLE__ )
 		g_qeglobals.m_strHomeGame = g_get_home_dir();
 		g_qeglobals.m_strHomeGame += "/";
