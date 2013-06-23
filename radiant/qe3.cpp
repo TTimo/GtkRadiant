@@ -473,11 +473,15 @@ void ReplaceTemplates( char* w, const char* r ){
 			else if ( strncmp( r + 1, __Q3MAP2, strlen( __Q3MAP2 ) ) == 0 ) {
 				r += strlen( __Q3MAP2 ) + 1;                                 
                                 // see https://github.com/TTimo/GtkRadiant/issues/116
-                                if ( g_PrefsDlg.m_bx64q3map2 ) {
-				  p = "x64/q3map2";
-                                } else {
-                                  p = "q3map2";
-                                }
+                                #if defined ( _WIN32 )
+				  if ( g_PrefsDlg.m_bx64q3map2 ) {
+				    p = "x64/q3map2";
+                                  } else {
+                                    p = "q3map2";
+                                  }
+				#else
+				  p = "q3map2"; // on Linux/Apple all bins are in the same dir.
+				#endif
 			}
 			else
 			{
