@@ -24,6 +24,10 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#if defined( _WIN32 )
+  // required for static linking libxml on Windows
+  #define LIBXML_STATIC
+#endif
 #include "libxml/parser.h"
 
 #include "synapse.h"

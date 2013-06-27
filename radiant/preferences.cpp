@@ -148,6 +148,7 @@
 #define TEXTURECOMPRESSIONFORMAT_KEY "TextureCompressionFormat"
 #define LIGHTRADIUS_KEY "LightRadiuses"
 #define Q3MAP2TEX_KEY "Q3Map2Tex"
+#define X64Q3MAP2_KEY "x64Q3Map2"
 
 #ifdef ATIHACK_812
 #define ATIHACK_KEY "ATIHack"
@@ -661,6 +662,7 @@ PrefsDlg::PrefsDlg (){
 #endif
 	m_nLightRadiuses = 1;
 	m_bQ3Map2Texturing = TRUE;
+        m_bx64q3map2 = TRUE;
 #ifdef ATIHACK_812
 	m_bGlATIHack = FALSE;
 #endif
@@ -852,12 +854,13 @@ CGameDescription::CGameDescription( xmlDocPtr pDoc, const Str &GameFile ){
 
 #if defined ( __linux__ ) || defined ( __APPLE__ )
 	prop = (char*)xmlGetProp( pNode, (const xmlChar *)"prefix" );
-#elif defined ( __WIN32 )
+#elif defined ( _WIN32 )
 	prop = (char*)xmlGetProp( pNode, (const xmlChar *)"prefix_win32" );
 #endif
 	if ( prop != NULL ) {
 		mUserPathPrefix = prop;
 		xmlFree( prop );
+                prop = NULL;
 	}
 
 	mShaderPath = xmlGetProp( pNode, (const xmlChar *)"shaderpath" );
@@ -875,6 +878,7 @@ CGameDescription::CGameDescription( xmlDocPtr pDoc, const Str &GameFile ){
 	if ( default_scale ) {
 		mTextureDefaultScale = atof( (const char *)default_scale );
 		xmlFree( default_scale );
+                default_scale = NULL;
 	}
 	else{
 		mTextureDefaultScale = 0.5f;
@@ -883,24 +887,24 @@ CGameDescription::CGameDescription( xmlDocPtr pDoc, const Str &GameFile ){
 	if ( eclass_singleload ) {
 		mEClassSingleLoad = true;
 		xmlFree( eclass_singleload );
-	}
-	else{
+                eclass_singleload = NULL;
+	} else {
 		mEClassSingleLoad = false;
 	}
 	xmlChar* no_patch = xmlGetProp( pNode, (const xmlChar *)"no_patch" );
 	if ( no_patch ) {
 		mNoPatch = true;
 		xmlFree( no_patch );
-	}
-	else{
+                no_patch = NULL;
+	} else {
 		mNoPatch = false;
 	}
 	xmlChar* caulk_shader = xmlGetProp( pNode, (const xmlChar *)"caulk_shader" );
 	if ( caulk_shader ) {
 		mCaulkShader = caulk_shader;
 		xmlFree( caulk_shader );
-	}
-	else{
+                caulk_shader = NULL;
+	} else {
 		mCaulkShader = "textures/common/caulk";
 	}
 }
@@ -1300,7 +1304,7 @@ void CGameDialog::Init(){
 	g_strGameToolsPath = g_pGameDescription->mGameToolsPath;
 
 	// Add the per-user game path on all platforms
-	if (m_pCurrentGameDescription->mUserPathPrefix.GetLength()) {
+	if ( m_pCurrentGameDescription->mUserPathPrefix.GetLength() ) {
 #if defined ( __linux__ ) || defined ( __APPLE__ )
 		g_qeglobals.m_strHomeGame = g_get_home_dir();
 		g_qeglobals.m_strHomeGame += "/";
@@ -1516,6 +1520,17 @@ static void treeSelection( GtkTreeSelection* selection, gpointer data ){
 	}
 }
 
+static void OnX64Toggle( GtkWidget *widget, gpointer data ) {
+  Dialog * d = static_cast< Dialog * >( data );
+  if ( !d->IsModal() ) {
+    // calls to gtk_toggle_button_get_active trigger the "toggle" signal to fire .. so ignore unless we're in the modal dialog
+    return;
+  }
+  gtk_MessageBox( widget, _( "You must restart Radiant for the change to take effect." ) );
+  g_PrefsDlg.m_nLastProjectVer = -1;
+  g_PrefsDlg.m_strLastProject = "";
+}
+
 void PrefsDlg::BuildDialog(){
 	// Main Preferences dialog
 	GtkWidget *dialog, *mainvbox, *hbox, *sc_win, *preflabel;
@@ -1531,7 +1546,7 @@ void PrefsDlg::BuildDialog(){
 
 	dialog = m_pWidget;
 	gtk_window_set_title( GTK_WINDOW( dialog ), _( "GtkRadiant Preferences" ) );
-    gtk_window_set_transient_for( GTK_WINDOW( dialog ), GTK_WINDOW( g_pParentWnd->m_pWidget ) );
+	gtk_window_set_transient_for( GTK_WINDOW( dialog ), GTK_WINDOW( g_pParentWnd->m_pWidget ) );
 	gtk_window_set_position( GTK_WINDOW( dialog ), GTK_WIN_POS_CENTER_ON_PARENT );
 	gtk_widget_realize( dialog );
 
@@ -2698,12 +2713,20 @@ void PrefsDlg::BuildDialog(){
 	g_object_set_data( G_OBJECT( dialog ), "check_q3map2", check );
 	AddDialogData( check, &g_PrefsDlg.m_bQ3Map2Texturing, DLG_CHECK_BOOL );
 
+#ifdef _WIN32
+        // use 64 bit q3map2
+        check = gtk_check_button_new_with_label( _( "Use 64 bit q3map2" ) );
+        gtk_widget_show( check );
+        gtk_box_pack_start( GTK_BOX( vbox ), check, FALSE, FALSE, 0 );
+        g_object_set_data( G_OBJECT( dialog ), "check_x64_q3map2", check );
+        AddDialogData( check, &g_PrefsDlg.m_bx64q3map2, DLG_CHECK_BOOL );
+	g_signal_connect( GTK_OBJECT( check ), "toggled", GTK_SIGNAL_FUNC( OnX64Toggle ), this );
+#endif
+
 	// Add the page to the notebook
 	gtk_notebook_append_page( GTK_NOTEBOOK( notebook ), pageframe, preflabel );
 
 	gtk_notebook_set_page( GTK_NOTEBOOK( notebook ), PTAB_FRONT );
-
-	return;
 }
 
 // end new prefs dialog
@@ -3121,6 +3144,7 @@ void PrefsDlg::LoadPrefs(){
 	mLocalPrefs.GetPref( LIGHTRADIUS_KEY, &m_nLightRadiuses, TRUE );
 
 	mLocalPrefs.GetPref( Q3MAP2TEX_KEY, &m_bQ3Map2Texturing, TRUE );
+        mLocalPrefs.GetPref( X64Q3MAP2_KEY, &m_bx64q3map2, TRUE );
 
 #ifdef ATIHACK_812
 	mLocalPrefs.GetPref( ATIHACK_KEY, &m_bGlATIHack, FALSE );
@@ -3470,6 +3494,9 @@ void CGameInstall::Run() {
 	if ( fg == NULL ) {
 		Error( "Failed to open %s for writing\n", gameFilePath.GetBuffer() );
 	}
+        // Running Windows, crashing here?
+        // Make sure that libintl.h is not redefining fprintf to some broken BS!
+        // - TTimo
 	fprintf( fg, "<?xml version=\"1.0\" encoding=\"iso-8859-1\" standalone=\"yes\"?>\n<game\n" );
 	fprintf( fg, "  name=\"%s\"\n", m_strName.GetBuffer() );
 	fprintf( fg, "  "ENGINEPATH_ATTRIBUTE "=\"%s\"\n", m_strEngine.GetBuffer() );

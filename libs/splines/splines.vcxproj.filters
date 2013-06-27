@@ -1,0 +1,35 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="src">
+      <UniqueIdentifier>{377c74fa-c58a-42d1-9b33-a300bcc75733}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="math_angles.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="math_matrix.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="math_quaternion.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="math_vector.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="q_parse.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="q_shared.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="splines.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="util_str.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

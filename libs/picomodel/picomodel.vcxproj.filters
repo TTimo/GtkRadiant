@@ -1,0 +1,81 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="src">
+      <UniqueIdentifier>{f1f4d104-47cb-430f-b1aa-3195a7131254}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="src\lwo">
+      <UniqueIdentifier>{a48f01bc-4491-4018-8cd4-9dd72849ab6f}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="picointernal.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="picomodel.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="picomodules.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="pm_3ds.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="pm_ase.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="pm_fm.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="pm_lwo.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="pm_md2.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="pm_md3.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="pm_mdc.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="pm_ms3d.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="pm_obj.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="lwo\clip.c">
+      <Filter>src\lwo</Filter>
+    </ClCompile>
+    <ClCompile Include="lwo\envelope.c">
+      <Filter>src\lwo</Filter>
+    </ClCompile>
+    <ClCompile Include="lwo\list.c">
+      <Filter>src\lwo</Filter>
+    </ClCompile>
+    <ClCompile Include="lwo\lwio.c">
+      <Filter>src\lwo</Filter>
+    </ClCompile>
+    <ClCompile Include="lwo\lwo2.c">
+      <Filter>src\lwo</Filter>
+    </ClCompile>
+    <ClCompile Include="lwo\lwob.c">
+      <Filter>src\lwo</Filter>
+    </ClCompile>
+    <ClCompile Include="lwo\pntspols.c">
+      <Filter>src\lwo</Filter>
+    </ClCompile>
+    <ClCompile Include="lwo\surface.c">
+      <Filter>src\lwo</Filter>
+    </ClCompile>
+    <ClCompile Include="lwo\vecmath.c">
+      <Filter>src\lwo</Filter>
+    </ClCompile>
+    <ClCompile Include="lwo\vmap.c">
+      <Filter>src\lwo</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

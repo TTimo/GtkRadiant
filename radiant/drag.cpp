@@ -131,10 +131,12 @@ void Drag_Setup( int x, int y, int buttons,
 			Undo_AddBrushList( &selected_brushes );
 		}
 		return;
-	}
-	else
-	{
-		g_qeglobals.d_num_move_points = 0;
+	} else {
+          if ( g_qeglobals.d_select_mode == sel_vertex && ( buttons & MK_SHIFT ) != 0 ) {
+             Sys_Printf( "vertex mode: multi vertex select\n" );
+          } else {
+	    g_qeglobals.d_num_move_points = 0;
+          }
 	}
 
 	if ( g_qeglobals.d_select_mode == sel_areatall ) {
@@ -324,7 +326,7 @@ void Drag_Begin( int x, int y, int buttons,
 
 	// shift-LBUTTON = select entire brush
 	// shift-alt-LBUTTON = drill select
-	if ( buttons == ( MK_LBUTTON | MK_SHIFT ) && g_qeglobals.d_select_mode != sel_curvepoint ) {
+	if ( buttons == ( MK_LBUTTON | MK_SHIFT ) && g_qeglobals.d_select_mode != sel_curvepoint && g_qeglobals.d_select_mode != sel_vertex ) {
 		nFlag = altdown ? SF_CYCLE : 0;
 		if ( sf_camera ) {
 			nFlag |= SF_CAMERA;
@@ -529,7 +531,7 @@ void MoveSelection( vec3_t move ){
 	int i, success;
 	brush_t *b;
 	CString strStatus;
-	vec3_t vTemp, vTemp2, end;
+	vec3_t vTemp, vTemp2;
 
 	if ( !move[0] && !move[1] && !move[2] ) {
 		return;
@@ -614,27 +616,52 @@ void MoveSelection( vec3_t move ){
 	// but it touches the smallest amount of code this way
 	//
 	if ( g_qeglobals.d_num_move_points || g_qeglobals.d_select_mode == sel_vertex || g_qeglobals.d_select_mode == sel_area || g_qeglobals.d_select_mode == sel_areatall ) {
-		//area selection
+		// area selection
 		if ( g_qeglobals.d_select_mode == sel_area || g_qeglobals.d_select_mode == sel_areatall ) {
 			VectorAdd( g_qeglobals.d_vAreaBR, move, g_qeglobals.d_vAreaBR );
 			return;
 		}
-		//curve point selection
+		// curve point selection
 		if ( g_qeglobals.d_select_mode == sel_curvepoint ) {
 			Patch_UpdateSelected( move );
 			return;
 		}
-		//vertex selection
+		// vertex selection
 		if ( g_qeglobals.d_select_mode == sel_vertex && g_PrefsDlg.m_bVertexSplit ) {
 			if ( g_qeglobals.d_num_move_points ) {
-				success = true;
-				for ( b = selected_brushes.next; b != &selected_brushes; b = b->next )
-				{
-					success &= Brush_MoveVertex( b, g_qeglobals.d_move_points[0], move, end, true );
-				}
-				if ( success ) {
-					VectorCopy( end, g_qeglobals.d_move_points[0] );
-				}
+                            // Q: multiple brushes?
+                            // A: think terrain editing. select several brushes that have a vertex in common, drag .. will modify both brushes
+                            // Q: multiple vertices?
+                            // A: sure! not the same results as edge drags
+                            // Q: multiple vertices + multiple brushes?
+                            // A: oh yeah, that too .. /me kills level designer
+
+                            // Q: why does the code move the points after calling Brush_MoveVertex on everything?
+                            // A: because in case of multi brush the second brush will fail since the point will have already moved
+                            // NOTE: multi brush, multi vertex is iffy. at least it's not crashy.
+                            // was initially looping brushes before points, but looping points then all brushes seems to work better
+                            
+                            vec3_t ends[16];
+                            if ( g_qeglobals.d_num_move_points > 16 ) {
+                              Sys_Printf( "More than 16 vertexes select? Go home, you're drunk\n" );
+                              return;
+                            }
+
+  			    success = true;
+                            int brush_count = 0;
+                            for ( int i = 0; i < g_qeglobals.d_num_move_points; i++ ) {
+    			      for ( b = selected_brushes.next; b != &selected_brushes; b = b->next ) {
+				success &= Brush_MoveVertex( b, g_qeglobals.d_move_points[i], move, ends[i], true );
+                                if ( !success ) {
+                                  Sys_Printf( "Brush_MoveVertex brush %d vertex %d failed\n", brush_count, i );
+                                  return;
+                                }
+                                brush_count++;
+                              }
+			    }
+                            for ( int i = 0; i < g_qeglobals.d_num_move_points; i++ ) {
+          		      VectorCopy( ends[i], g_qeglobals.d_move_points[i] );
+                            }
 			}
 			return;
 		}

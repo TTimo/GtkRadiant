@@ -1,0 +1,238 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{65D02375-63EE-4A8A-9F8E-504B1D5A1D02}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <PlatformToolset>v110</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <PlatformToolset>v110</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <PlatformToolset>v110</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <PlatformToolset>v110</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>11.0.60315.1</_ProjectFileVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <OutDir>$(SolutionDir)\install\</OutDir>
+    <IntDir>$(SolutionDir)\build\intermediate\$(Configuration)\$(ProjectName)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <OutDir>$(SolutionDir)\install\</OutDir>
+    <IntDir>$(SolutionDir)\build\intermediate\$(Configuration)\$(ProjectName)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>$(SolutionDir)\include;$(SolutionDir)\libs;$(SolutionDir)\..\STLport-5.2.1\stlport;$(SolutionDir)\..\gtk-2.24.10\include\glib-2.0;$(SolutionDir)\..\gtk-2.24.10\include\gdk-pixbuf-2.0;$(SolutionDir)\..\gtk-2.24.10\lib\glib-2.0\include;$(SolutionDir)\..\gtk-2.24.10\include\gtk-2.0;$(SolutionDir)\..\gtk-2.24.10\include\cairo;$(SolutionDir)\..\gtk-2.24.10\include\pango-1.0;$(SolutionDir)\..\gtk-2.24.10\lib\gtk-2.0\include;$(SolutionDir)\..\gtk-2.24.10\include\atk-1.0;$(SolutionDir)\..\gtk-2.24.10\include;$(SolutionDir)\..\gtk-2.24.10\include\freetype2;$(SolutionDir)\..\gtkglext-1.2.0\include\gtkglext-1.0;$(SolutionDir)\..\gtkglext-1.2.0\lib\gtkglext-1.0\include;$(SolutionDir)\..\libxml2-2.9.1\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>true</MinimalRebuild>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <PrecompiledHeader />
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <DisableSpecificWarnings>4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+    </ClCompile>
+    <Link>
+      <AdditionalOptions>/STACK:8388608 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalDependencies>Ws2_32.lib;glib-2.0.lib;gobject-2.0.lib;intl.lib;gtk-win32-2.0.lib;gdk-win32-2.0.lib;pango-1.0.lib;pangoft2-1.0.lib;gdkglext-win32-1.0.lib;gtkglext-win32-1.0.lib;libxml2.lib;mathlib.lib;synapse.lib;l_net.lib;cmdlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)\..\gtk-2.24.10\lib;$(SolutionDir)\..\libxml2-2.9.1\lib\$(Configuration)\$(Platform);$(SolutionDir)\..\gtkglext-1.2.0\lib;$(SolutionDir)\build\$(Configuration)\libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Console</SubSystem>
+      <TargetMachine>MachineX86</TargetMachine>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>$(SolutionDir)\include;$(SolutionDir)\libs;$(SolutionDir)\..\STLport-5.2.1\stlport;$(SolutionDir)\..\gtk-2.24.10\include\glib-2.0;$(SolutionDir)\..\gtk-2.24.10\include\gdk-pixbuf-2.0;$(SolutionDir)\..\gtk-2.24.10\lib\glib-2.0\include;$(SolutionDir)\..\gtk-2.24.10\include\gtk-2.0;$(SolutionDir)\..\gtk-2.24.10\include\cairo;$(SolutionDir)\..\gtk-2.24.10\include\pango-1.0;$(SolutionDir)\..\gtk-2.24.10\lib\gtk-2.0\include;$(SolutionDir)\..\gtk-2.24.10\include\atk-1.0;$(SolutionDir)\..\gtk-2.24.10\include;$(SolutionDir)\..\gtk-2.24.10\include\freetype2;$(SolutionDir)\..\gtkglext-1.2.0\include\gtkglext-1.0;$(SolutionDir)\..\gtkglext-1.2.0\lib\gtkglext-1.0\include;$(SolutionDir)\..\libxml2-2.9.1\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <DisableSpecificWarnings>4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+    </ClCompile>
+    <Link>
+      <AdditionalOptions>/STACK:8388608 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalDependencies>Ws2_32.lib;glib-2.0.lib;gobject-2.0.lib;intl.lib;gtk-win32-2.0.lib;gdk-win32-2.0.lib;pango-1.0.lib;pangoft2-1.0.lib;gdkglext-win32-1.0.lib;gtkglext-win32-1.0.lib;libxml2.lib;mathlib.lib;synapse.lib;l_net.lib;cmdlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)\..\gtk-2.24.10\lib;$(SolutionDir)\..\libxml2-2.9.1\lib\$(Configuration)\$(Platform);$(SolutionDir)\..\gtkglext-1.2.0\lib;$(SolutionDir)\build\$(Configuration)\libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Console</SubSystem>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>$(SolutionDir)\include;$(SolutionDir)\libs;$(SolutionDir)\..\STLport-5.2.1\stlport;$(SolutionDir)\..\gtk-2.24.10\include\glib-2.0;$(SolutionDir)\..\gtk-2.24.10\include\gdk-pixbuf-2.0;$(SolutionDir)\..\gtk-2.24.10\lib\glib-2.0\include;$(SolutionDir)\..\gtk-2.24.10\include\gtk-2.0;$(SolutionDir)\..\gtk-2.24.10\include\cairo;$(SolutionDir)\..\gtk-2.24.10\include\pango-1.0;$(SolutionDir)\..\gtk-2.24.10\lib\gtk-2.0\include;$(SolutionDir)\..\gtk-2.24.10\include\atk-1.0;$(SolutionDir)\..\gtk-2.24.10\include;$(SolutionDir)\..\gtk-2.24.10\include\freetype2;$(SolutionDir)\..\gtkglext-1.2.0\include\gtkglext-1.0;$(SolutionDir)\..\gtkglext-1.2.0\lib\gtkglext-1.0\include;$(SolutionDir)\..\libxml2-2.9.1\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <PrecompiledHeader />
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <DisableSpecificWarnings>4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+    </ClCompile>
+    <Link>
+      <AdditionalOptions>/STACK:8388608 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalDependencies>Ws2_32.lib;glib-2.0.lib;gobject-2.0.lib;intl.lib;gtk-win32-2.0.lib;gdk-win32-2.0.lib;pango-1.0.lib;pangoft2-1.0.lib;gdkglext-win32-1.0.lib;gtkglext-win32-1.0.lib;libxml2.lib;mathlib.lib;synapse.lib;l_net.lib;cmdlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)\..\gtk-2.24.10\lib;$(SolutionDir)\..\libxml2-2.9.1\lib\$(Configuration)\$(Platform);$(SolutionDir)\..\gtkglext-1.2.0\lib;$(SolutionDir)\build\$(Configuration)\libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <OptimizeReferences>true</OptimizeReferences>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <TargetMachine>MachineX86</TargetMachine>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>$(SolutionDir)\include;$(SolutionDir)\libs;$(SolutionDir)\..\STLport-5.2.1\stlport;$(SolutionDir)\..\gtk-2.24.10\include\glib-2.0;$(SolutionDir)\..\gtk-2.24.10\include\gdk-pixbuf-2.0;$(SolutionDir)\..\gtk-2.24.10\lib\glib-2.0\include;$(SolutionDir)\..\gtk-2.24.10\include\gtk-2.0;$(SolutionDir)\..\gtk-2.24.10\include\cairo;$(SolutionDir)\..\gtk-2.24.10\include\pango-1.0;$(SolutionDir)\..\gtk-2.24.10\lib\gtk-2.0\include;$(SolutionDir)\..\gtk-2.24.10\include\atk-1.0;$(SolutionDir)\..\gtk-2.24.10\include;$(SolutionDir)\..\gtk-2.24.10\include\freetype2;$(SolutionDir)\..\gtkglext-1.2.0\include\gtkglext-1.0;$(SolutionDir)\..\gtkglext-1.2.0\lib\gtkglext-1.0\include;$(SolutionDir)\..\libxml2-2.9.1\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <DisableSpecificWarnings>4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+    </ClCompile>
+    <Link>
+      <AdditionalOptions>/STACK:8388608 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalDependencies>Ws2_32.lib;glib-2.0.lib;gobject-2.0.lib;intl.lib;gtk-win32-2.0.lib;gdk-win32-2.0.lib;pango-1.0.lib;pangoft2-1.0.lib;gdkglext-win32-1.0.lib;gtkglext-win32-1.0.lib;libxml2.lib;mathlib.lib;synapse.lib;l_net.lib;cmdlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)\..\gtk-2.24.10\lib;$(SolutionDir)\..\libxml2-2.9.1\lib\$(Configuration)\$(Platform);$(SolutionDir)\..\gtkglext-1.2.0\lib;$(SolutionDir)\build\$(Configuration)\libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <OptimizeReferences>true</OptimizeReferences>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="bp_dlg.cpp" />
+    <ClCompile Include="brush.cpp" />
+    <ClCompile Include="brush_primit.cpp" />
+    <ClCompile Include="brushscript.cpp" />
+    <ClCompile Include="camwindow.cpp" />
+    <ClCompile Include="csg.cpp" />
+    <ClCompile Include="dialog.cpp" />
+    <ClCompile Include="dialoginfo.cpp" />
+    <ClCompile Include="drag.cpp" />
+    <ClCompile Include="eclass.cpp" />
+    <ClCompile Include="eclass_def.cpp" />
+    <ClCompile Include="error.cpp" />
+    <ClCompile Include="feedback.cpp" />
+    <ClCompile Include="file.cpp" />
+    <ClCompile Include="filters.cpp" />
+    <ClCompile Include="findtexturedialog.cpp" />
+    <ClCompile Include="glinterface.cpp" />
+    <ClCompile Include="glwidget.cpp" />
+    <ClCompile Include="glwindow.cpp" />
+    <ClCompile Include="groupdialog.cpp" />
+    <ClCompile Include="gtkdlgs.cpp" />
+    <ClCompile Include="gtkmisc.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="mainframe.cpp" />
+    <ClCompile Include="map.cpp" />
+    <ClCompile Include="missing.cpp" />
+    <ClCompile Include="parse.cpp" />
+    <ClCompile Include="patchdialog.cpp" />
+    <ClCompile Include="pluginentities.cpp" />
+    <ClCompile Include="pluginmanager.cpp" />
+    <ClCompile Include="pmesh.cpp" />
+    <ClCompile Include="points.cpp" />
+    <ClCompile Include="preferences.cpp" />
+    <ClCompile Include="profile.cpp" />
+    <ClCompile Include="qe3.cpp" />
+    <ClCompile Include="qgl.c" />
+    <ClCompile Include="qgl_ext.cpp" />
+    <ClCompile Include="select.cpp" />
+    <ClCompile Include="selectedface.cpp" />
+    <ClCompile Include="stdafx.cpp" />
+    <ClCompile Include="surfacedialog.cpp" />
+    <ClCompile Include="surfaceplugin.cpp" />
+    <ClCompile Include="targetname.cpp" />
+    <ClCompile Include="texmanip.cpp" />
+    <ClCompile Include="texwindow.cpp" />
+    <ClCompile Include="ui.cpp" />
+    <ClCompile Include="undo.cpp" />
+    <ClCompile Include="vertsel.cpp" />
+    <ClCompile Include="watchbsp.cpp" />
+    <ClCompile Include="winding.cpp" />
+    <ClCompile Include="xywindow.cpp" />
+    <ClCompile Include="z.cpp" />
+    <ClCompile Include="zwindow.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="radiant.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="radiant.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\libs\cmdlib\cmdlib.vcxproj">
+      <Project>{0b522841-bdcc-493a-ba5c-604ae2cd5756}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+    <ProjectReference Include="..\libs\l_net\l_net.vcxproj">
+      <Project>{b957ba35-f807-4c84-85a2-c1f9ac56713b}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+    <ProjectReference Include="..\libs\mathlib\mathlib.vcxproj">
+      <Project>{14734ebb-b167-48d9-9b93-2277f645925f}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+    <ProjectReference Include="..\libs\synapse\synapse.vcxproj">
+      <Project>{e13ccfb0-a366-4ef3-a66f-c374b563e4df}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

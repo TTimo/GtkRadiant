@@ -175,9 +175,7 @@ Str mBaseGame;   ///< basegame directory
 Str mEnginePath;   ///< path to the engine
 Str mEngine;   ///< engine name
 Str mMultiplayerEngine;   ///< engine name
-#if defined ( __linux__ ) || defined ( __APPLE__ )
-Str mUserPathPrefix;   ///< prefix for ~/.q3a ~/.wolf init, only on *nix
-#endif
+Str mUserPathPrefix;   ///< prefix for ~/.q3a ~/.wolf init on *nix, or \My Document\My Games\ on Windows
 Str mShaderPath;   ///< the path in which to look for shaders
 Str mShaderlist;   ///< shaderlist file
 float mTextureDefaultScale;   ///< default scale (0.5 in q3, 1.0 in q1/q2, 0.25 in JK2 ..)
@@ -695,6 +693,9 @@ int m_nTextureCompressionFormat;
 int m_nLightRadiuses;
 
 bool m_bQ3Map2Texturing;
+#ifdef _WIN32
+bool m_bx64q3map2;
+#endif
 
 #ifdef ATIHACK_812
 bool m_bGlATIHack;

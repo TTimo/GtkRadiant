@@ -1712,7 +1712,9 @@ bool WINAPI color_dialog( void *parent, float *color, const char* title ){
 }
 
 void OpenURL( const char *url ){
+#ifndef _WIN32
     char command[2 * PATH_MAX];
+#endif
 
     Sys_Printf( "OpenURL: %s\n", url );
 #ifdef _WIN32

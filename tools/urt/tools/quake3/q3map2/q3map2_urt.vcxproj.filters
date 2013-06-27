@@ -1,0 +1,191 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="src">
+      <UniqueIdentifier>{d3426bdc-9c53-44e3-a942-d1e94728523f}</UniqueIdentifier>
+      <Extensions>c;cpp;cxx;cc;C</Extensions>
+    </Filter>
+    <Filter Include="src\bsp">
+      <UniqueIdentifier>{ff14b52d-032a-4c60-af12-ad82888f461c}</UniqueIdentifier>
+      <Extensions>.c</Extensions>
+    </Filter>
+    <Filter Include="src\light">
+      <UniqueIdentifier>{6f7d4439-c8a7-4abb-9f8a-9622fe879ac8}</UniqueIdentifier>
+      <Extensions>.c</Extensions>
+    </Filter>
+    <Filter Include="src\vis">
+      <UniqueIdentifier>{26589697-c21b-4f53-b665-139c472ab97b}</UniqueIdentifier>
+      <Extensions>.c</Extensions>
+    </Filter>
+    <Filter Include="src\convert">
+      <UniqueIdentifier>{5ac11920-08ee-464b-85b2-25e4dc68994d}</UniqueIdentifier>
+      <Extensions>.c</Extensions>
+    </Filter>
+    <Filter Include="include">
+      <UniqueIdentifier>{8011af7d-0061-4d71-bb18-94e57f152289}</UniqueIdentifier>
+      <Extensions>h</Extensions>
+    </Filter>
+    <Filter Include="doc">
+      <UniqueIdentifier>{3605638f-fb38-418c-b11a-646c1b373651}</UniqueIdentifier>
+      <Extensions>*.txt</Extensions>
+    </Filter>
+    <Filter Include="rc">
+      <UniqueIdentifier>{ee29c32a-6b94-457d-991f-fb1ffc8afb92}</UniqueIdentifier>
+      <Extensions>.rc;.ico</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="bspfile_abstract.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="bspfile_ibsp.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="bspfile_rbsp.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="image.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="main.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="mesh.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="model.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="path_init.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="shaders.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="surface_extra.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="brush.c">
+      <Filter>src\bsp</Filter>
+    </ClCompile>
+    <ClCompile Include="brush_primit.c">
+      <Filter>src\bsp</Filter>
+    </ClCompile>
+    <ClCompile Include="bsp.c">
+      <Filter>src\bsp</Filter>
+    </ClCompile>
+    <ClCompile Include="decals.c">
+      <Filter>src\bsp</Filter>
+    </ClCompile>
+    <ClCompile Include="facebsp.c">
+      <Filter>src\bsp</Filter>
+    </ClCompile>
+    <ClCompile Include="fog.c">
+      <Filter>src\bsp</Filter>
+    </ClCompile>
+    <ClCompile Include="leakfile.c">
+      <Filter>src\bsp</Filter>
+    </ClCompile>
+    <ClCompile Include="map.c">
+      <Filter>src\bsp</Filter>
+    </ClCompile>
+    <ClCompile Include="patch.c">
+      <Filter>src\bsp</Filter>
+    </ClCompile>
+    <ClCompile Include="portals.c">
+      <Filter>src\bsp</Filter>
+    </ClCompile>
+    <ClCompile Include="prtfile.c">
+      <Filter>src\bsp</Filter>
+    </ClCompile>
+    <ClCompile Include="surface.c">
+      <Filter>src\bsp</Filter>
+    </ClCompile>
+    <ClCompile Include="surface_foliage.c">
+      <Filter>src\bsp</Filter>
+    </ClCompile>
+    <ClCompile Include="surface_fur.c">
+      <Filter>src\bsp</Filter>
+    </ClCompile>
+    <ClCompile Include="surface_meta.c">
+      <Filter>src\bsp</Filter>
+    </ClCompile>
+    <ClCompile Include="tjunction.c">
+      <Filter>src\bsp</Filter>
+    </ClCompile>
+    <ClCompile Include="tree.c">
+      <Filter>src\bsp</Filter>
+    </ClCompile>
+    <ClCompile Include="writebsp.c">
+      <Filter>src\bsp</Filter>
+    </ClCompile>
+    <ClCompile Include="light.c">
+      <Filter>src\light</Filter>
+    </ClCompile>
+    <ClCompile Include="light_bounce.c">
+      <Filter>src\light</Filter>
+    </ClCompile>
+    <ClCompile Include="light_trace.c">
+      <Filter>src\light</Filter>
+    </ClCompile>
+    <ClCompile Include="light_ydnar.c">
+      <Filter>src\light</Filter>
+    </ClCompile>
+    <ClCompile Include="lightmaps_ydnar.c">
+      <Filter>src\light</Filter>
+    </ClCompile>
+    <ClCompile Include="vis.c">
+      <Filter>src\vis</Filter>
+    </ClCompile>
+    <ClCompile Include="visflow.c">
+      <Filter>src\vis</Filter>
+    </ClCompile>
+    <ClCompile Include="convert_ase.c">
+      <Filter>src\convert</Filter>
+    </ClCompile>
+    <ClCompile Include="convert_map.c">
+      <Filter>src\convert</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="game_ef.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="game_ja.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="game_jk2.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="game_quake3.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sof2.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="game_wolf.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="game_wolfet.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="q3map2.h">
+      <Filter>include</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="changelog.q3map2.txt">
+      <Filter>doc</Filter>
+    </Text>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="q3map2.ico">
+      <Filter>rc</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="q3map2.rc">
+      <Filter>rc</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+</Project>

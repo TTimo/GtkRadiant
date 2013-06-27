@@ -2741,7 +2741,7 @@ void DoCommandListDlg(){
 			int n;
 
 			for ( n = 0; n < g_nCommandCount; n++ )
-				cmds = g_slist_append( cmds, g_Commands[n].m_strCommand );
+				cmds = g_slist_append( cmds, (gpointer)g_Commands[n].m_strCommand );
 			cmds = g_slist_sort( cmds, ( gint ( * )( const void *, const void * ) )strcmp );
 
 			Sys_Printf( "Writing the command list to %s", path.GetBuffer() );

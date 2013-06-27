@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="src">
+      <UniqueIdentifier>{0fcbeeab-c74c-4d20-9ff4-20e78480c9ab}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="camera.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="dialogs.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="dialogs_common.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="funchandlers.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="listener.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="misc.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="camera.def">
+      <Filter>src</Filter>
+    </None>
+  </ItemGroup>
+</Project>

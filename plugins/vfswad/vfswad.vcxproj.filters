@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="src">
+      <UniqueIdentifier>{247309a7-a422-4567-bf6d-d5ea361eda62}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="unwad.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="vfs.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="vfswad.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="vfswad.def">
+      <Filter>src</Filter>
+    </None>
+  </ItemGroup>
+</Project>

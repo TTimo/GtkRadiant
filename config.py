@@ -1,12 +1,13 @@
-import sys, traceback, platform, re, commands, platform, subprocess
+import sys, os, traceback, platform, re, commands, platform, subprocess
+import urllib2, zipfile, shutil, pprint
 
 if __name__ != '__main__':
     from SCons.Script import *
 
-import utils, urllib2, zipfile, shutil, pprint, subprocess, re, os.path
+import utils
 
-# config = debug release
-# target =
+GTK_PREFIX='gtk-2.24.10'
+GTK64_PREFIX='gtk-2.22.1_win64'
 
 class Config:
     # aliases
@@ -25,9 +26,8 @@ class Config:
 
         # platforms for which to assemble a setup
         self.setup_platforms = [ 'local', 'x86', 'x64', 'win32' ]
-        
         # paks to assemble in the setup
-        self.setup_packs = [ 'Q3Pack', 'UrTPack', 'ETPack', 'QLPack' ]
+        self.setup_packs = [ 'Q3Pack', 'UrTPack', 'ETPack', 'QLPack', 'Q2WPack' ]
 
     def __repr__( self ):
         return 'config: target=%s config=%s' % ( self.target_selected, self.config_selected )
@@ -169,33 +169,33 @@ class Config:
             q3map2 = SConscript( os.path.join( build_dir, sconscript_name ) )
             Default( InstallAs( os.path.join( self.install_directory, compiler_name ), q3map2 ) )
 
-    def emit_q3data( self ):
-        settings = self
-        for config_name in self.config_selected:
-            config = {}
-            config['name'] = config_name
-            config['shared'] = False
-            Export( 'utils', 'settings', 'config' )
-            build_dir = os.path.join( 'build', config_name, 'q3data' )
-            VariantDir( build_dir, '.', duplicate = 0 )
-            lib_objects = []
-            for project in [ 'libs/mathlib/mathlib.vcproj', 'libs/l_net/l_net.vcproj', 'libs/ddslib/ddslib.vcproj' ]:
-                    Export( 'project' )
-                    lib_objects += SConscript( os.path.join( build_dir, 'SConscript.lib' ) )
-            Export( 'lib_objects' )
-            q3data = SConscript( os.path.join( build_dir, 'SConscript.q3data' ) )
-            Default( InstallAs( os.path.join( self.install_directory, 'q3data' ), q3data ) )
+        def emit_q3data( self ):
+                settings = self
+                for config_name in self.config_selected:
+                        config = {}
+                        config['name'] = config_name
+                        config['shared'] = False
+                        Export( 'utils', 'settings', 'config' )
+                        build_dir = os.path.join( 'build', config_name, 'q3data' )
+                        VariantDir( build_dir, '.', duplicate = 0 )
+                        lib_objects = []
+                        for project in [ 'libs/mathlib/mathlib.vcproj', 'libs/l_net/l_net.vcproj', 'libs/ddslib/ddslib.vcproj' ]:
+                                Export( 'project' )
+                                lib_objects += SConscript( os.path.join( build_dir, 'SConscript.lib' ) )
+                        Export( 'lib_objects' )
+                        q3data = SConscript( os.path.join( build_dir, 'SConscript.q3data' ) )
+                        Default( InstallAs( os.path.join( self.install_directory, 'q3data' ), q3data ) )
 
     def emit( self ):
         if 'radiant' in self.target_selected:
-            self.emit_radiant()
+                self.emit_radiant()
         if 'q3map2' in self.target_selected:
-            self.emit_q3map2( urt = False )
-            self.emit_q3map2( urt = True )
+                self.emit_q3map2( urt = False )
+                self.emit_q3map2( urt = True )
         if 'q3data' in self.target_selected:
-            self.emit_q3data()
+                self.emit_q3data()
         if 'setup' in self.target_selected:
-            self.Setup()
+                self.Setup()
 
         if ( self.platform == 'Linux' ):
             finish_command = Command( 'finish', [], self.FinishBuild )
@@ -246,7 +246,7 @@ class Config:
 
             # this lets us catch libjpg and libpng libraries that we put in the same directory as radiant.bin
             env.Append( LINKFLAGS = '-Wl,-rpath,.' )
-                
+            
         # On Mac, we pad headers so that we may rewrite them for packaging
         if ( self.platform == 'Darwin' ) :
             env.Append( LINKFLAGS = [ '-headerpad_max_install_names' ] )
@@ -259,11 +259,23 @@ class Config:
         print( repr( cmd ) )
         subprocess.check_call( cmd )
 
-
     def FetchGamePaks( self, path ):
         for pak in self.setup_packs:
+            if ( pak == 'Q2WPack' ):
+                continue
             svnurl = 'svn://svn.icculus.org/gtkradiant-gamepacks/%s/trunk' % pak
             self.CheckoutOrUpdate( svnurl, os.path.join( path, 'installs', pak ) )
+
+        if 'Q2WPack' in self.setup_packs:
+            if ( os.path.exists( 'quake2world' ) ):
+                subprocess.check_call( [ 'git', 'pull', ], cwd = 'quake2world' )
+            else:
+                cmd = [ 'git', 'clone', 'git://github.com/jdolan/quake2world.git' ]
+                subprocess.check_call( cmd )
+            # squash and sync..
+            if ( os.path.exists( 'install/installs/Q2WPack' ) ):
+                shutil.rmtree( 'install/installs/Q2WPack/' )
+            shutil.copytree( 'quake2world/support/gtkradiant/Q2WPack/', 'install/installs/Q2WPack/' )
 
     def CopyTree( self, src, dst):
         for root, dirs, files in os.walk( src ):
@@ -287,18 +299,19 @@ class Config:
         if ( self.platform == 'Windows' ):
             backup_cwd = os.getcwd()
             for lib_archive in [
-                'gtk+-bundle-2.16.6-20100912-3-win32.zip',
+                'STLport-5.2.1-GtkRadiant.zip',
+                'gtk-bundle-2.24.10-GtkRadiant.zip',
+                'gtk-bundle-2.22.1-win64-GtkRadiant.zip',
+                'jpeg-9-GtkRadiant.zip',
+                'libxml2-2.9.1-GtkRadiant.zip',
                 'gtkglext-1.2.0-3-win32.zip',
-                'libxml2-2.7.3-2-win32.zip',
-                'jpeg-8c-4-win32.zip',
-                'STLport-5.2.1-4.zip'
                 ]:
                 if ( not os.path.exists( lib_archive ) ):
                     print( 'downloading %s' % lib_archive )
-                    archive_web_request = urllib2.urlopen( 'http://icculus.org/gtkradiant/files/1.6.2/%s' % lib_archive )
+                    archive_web_request = urllib2.urlopen( 'http://gtkradiant.s3-website-us-east-1.amazonaws.com/%s' % lib_archive )
                     archive_File = open( lib_archive, 'wb' )
                     while True:
-                        data = archive_web_request.read( 1048576 ) #read 1mb at a time
+                        data = archive_web_request.read( 1048576 ) # read 1mb at a time
                         if not data:
                             break
                         archive_File.write( data )
@@ -319,67 +332,76 @@ class Config:
             # copy all the dependent runtime data to the install directory
             srcdir = os.path.dirname( backup_cwd )
             for dll in [
-                'gtk-2.16.6/bin/freetype6.dll',
-                'gtk-2.16.6/bin/intl.dll',
-                'gtk-2.16.6/bin/libasprintf-0.dll',
-                'gtk-2.16.6/bin/libatk-1.0-0.dll',
-                'gtk-2.16.6/bin/libcairo-2.dll',
-                'gtk-2.16.6/bin/libexpat-1.dll',
-                'gtk-2.16.6/bin/libfontconfig-1.dll',
-                'gtk-2.16.6/bin/libgailutil-18.dll',
-                'gtk-2.16.6/bin/libgcc_s_dw2-1.dll',
-                'gtk-2.16.6/bin/libgdk-win32-2.0-0.dll',
-                'gtk-2.16.6/bin/libgdk_pixbuf-2.0-0.dll',
-                'gtk-2.16.6/bin/libgio-2.0-0.dll',
-                'gtk-2.16.6/bin/libglib-2.0-0.dll',
-                'gtk-2.16.6/bin/libgmodule-2.0-0.dll',
-                'gtk-2.16.6/bin/libgobject-2.0-0.dll',
-                'gtk-2.16.6/bin/libgthread-2.0-0.dll',
-                'gtk-2.16.6/bin/libgtk-win32-2.0-0.dll',
-                'gtk-2.16.6/bin/libpango-1.0-0.dll',
-                'gtk-2.16.6/bin/libpangocairo-1.0-0.dll',
-                'gtk-2.16.6/bin/libpangoft2-1.0-0.dll',
-                'gtk-2.16.6/bin/libpangowin32-1.0-0.dll',
-                'gtk-2.16.6/bin/libpng14-14.dll',
-                'gtk-2.16.6/bin/zlib1.dll',
-                'gtk-2.16.6/lib/GNU.Gettext.dll',
-                'gtk-2.16.6/lib/gtk-2.0/2.10.0/engines/libpixmap.dll',
-                'gtk-2.16.6/lib/gtk-2.0/2.10.0/engines/libwimp.dll',
-                'gtk-2.16.6/lib/gtk-2.0/modules/libgail.dll',
+                '%s/bin/freetype6.dll' % GTK_PREFIX,
+                '%s/bin/intl.dll' % GTK_PREFIX,
+                '%s/bin/libasprintf-0.dll' % GTK_PREFIX,
+                '%s/bin/libatk-1.0-0.dll' % GTK_PREFIX,
+                '%s/bin/libcairo-2.dll' % GTK_PREFIX,
+                '%s/bin/libexpat-1.dll' % GTK_PREFIX,
+                '%s/bin/libfontconfig-1.dll' % GTK_PREFIX,
+                '%s/bin/libgailutil-18.dll' % GTK_PREFIX,
+                '%s/bin/libgcc_s_dw2-1.dll' % GTK_PREFIX,
+                '%s/bin/libgdk-win32-2.0-0.dll' % GTK_PREFIX,
+                '%s/bin/libgdk_pixbuf-2.0-0.dll' % GTK_PREFIX,
+                '%s/bin/libgio-2.0-0.dll' % GTK_PREFIX,
+                '%s/bin/libglib-2.0-0.dll' % GTK_PREFIX,
+                '%s/bin/libgmodule-2.0-0.dll' % GTK_PREFIX,
+                '%s/bin/libgobject-2.0-0.dll' % GTK_PREFIX,
+                '%s/bin/libgthread-2.0-0.dll' % GTK_PREFIX,
+                '%s/bin/libgtk-win32-2.0-0.dll' % GTK_PREFIX,
+                '%s/bin/libpango-1.0-0.dll' % GTK_PREFIX,
+                '%s/bin/libpangocairo-1.0-0.dll' % GTK_PREFIX,
+                '%s/bin/libpangoft2-1.0-0.dll' % GTK_PREFIX,
+                '%s/bin/libpangowin32-1.0-0.dll' % GTK_PREFIX,
+                '%s/bin/libpng14-14.dll' % GTK_PREFIX,
+                '%s/bin/zlib1.dll' % GTK_PREFIX,
+                '%s/lib/GNU.Gettext.dll' % GTK_PREFIX,
+                '%s/lib/gtk-2.0/2.10.0/engines/libpixmap.dll' % GTK_PREFIX,
+                '%s/lib/gtk-2.0/2.10.0/engines/libwimp.dll' % GTK_PREFIX,
+                '%s/lib/gtk-2.0/modules/libgail.dll' % GTK_PREFIX,
                 'gtkglext-1.2.0/bin/libgdkglext-win32-1.0-0.dll',
                 'gtkglext-1.2.0/bin/libgtkglext-win32-1.0-0.dll',
-                'libxml2-2.7.3/bin/libxml2-2.dll'
                 ]:
                 shutil.copy( os.path.join( srcdir, dll ), 'install' )
 
             for extra in [
-                'gtk-2.16.6/etc',
-                'gtk-2.16.6/share',
+                '%s/etc' % GTK_PREFIX,
+                '%s/share' % GTK_PREFIX,
                 'gtkglext-1.2.0/share',
-                'libxml2-2.7.3/share'
                 ]:
                 self.CopyTree( os.path.join( srcdir, extra ), 'install' )
+            
+            try:
+                os.mkdir( 'install/x64' )
+            except:
+                pass # assume 'already exists'
+            for x64_dll in [
+                '%s/bin/libpng14-14.dll' % GTK64_PREFIX,
+                '%s/bin/libglib-2.0-0.dll' % GTK64_PREFIX,
+                '%s/bin/libintl-8.dll' % GTK64_PREFIX,
+                ]:
+                shutil.copy( os.path.join( srcdir, x64_dll ), 'install/x64' )
 
         def FinishBuild( self, target, source, env ):
-                print( 'Lookup and bundle the PNG and JPEG libraries' )
-                # radiant.bin doesn't link to jpeg lib directly, grab that from a module
-                # Python 2.7 only!
-                #module_ldd = subprocess.check_output( 'ldd -r install/modules/image.so', shell = True )
-                p = subprocess.Popen( 'ldd -r install/modules/image.so', shell = True, stdout = subprocess.PIPE )
-                module_ldd = p.communicate()[0]
+            print( 'Lookup and bundle the PNG and JPEG libraries' )
+            # radiant.bin doesn't link to jpeg lib directly, grab that from a module
+            # Python 2.7 only!
+            #module_ldd = subprocess.check_output( 'ldd -r install/modules/image.so', shell = True )
+            p = subprocess.Popen( 'ldd -r install/modules/image.so', shell = True, stdout = subprocess.PIPE )
+            module_ldd = p.communicate()[0]
 #                print( module_ldd )
 
-                def find_library( output, libname ):
-                    match = filter( lambda l : l.find( libname ) != -1, output.split( '\n' ) )[0]
-                    return re.split( '.*=> (.*) .*', match )[1]
+            def find_library( output, libname ):
+                match = filter( lambda l : l.find( libname ) != -1, output.split( '\n' ) )[0]
+                return re.split( '.*=> (.*) .*', match )[1]
 
-                jpeg_path = find_library( module_ldd, 'libjpeg' )
-                print( 'JPEG library: %s' % repr( jpeg_path ) )
-                png_path = find_library( module_ldd, 'libpng' )
-                print( 'PNG  library: %s' % repr( png_path ) )
+            jpeg_path = find_library( module_ldd, 'libjpeg' )
+            print( 'JPEG library: %s' % repr( jpeg_path ) )
+            png_path = find_library( module_ldd, 'libpng' )
+            print( 'PNG  library: %s' % repr( png_path ) )
 
-                shutil.copy( jpeg_path, 'install' )
-                shutil.copy( png_path, 'install' )
+            shutil.copy( jpeg_path, 'install' )
+            shutil.copy( png_path, 'install' )
 
 # parse the config statement line to produce/update an existing config list
 # the configs expose a list of keywords and accepted values, which the engine parses out

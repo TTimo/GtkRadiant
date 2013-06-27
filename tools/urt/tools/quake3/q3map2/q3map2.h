@@ -59,6 +59,7 @@
 
 #ifdef WIN32
 	#include <windows.h>
+	#define _CRT_SECURE_NO_WARNINGS
 #endif
 
 
