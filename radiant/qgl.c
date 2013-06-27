@@ -1717,11 +1717,9 @@ int GL_ExtensionSupported( const char *extension ){
 	}
 
 	extensions = qglGetString( GL_EXTENSIONS );
-#ifndef __APPLE__
 	if ( !extensions ) {
 		return 0;
 	}
-#endif
 
 	// It takes a bit of care to be fool-proof about parsing the
 	// OpenGL extensions string. Don't be fooled by sub-strings, etc.
