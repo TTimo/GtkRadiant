@@ -9,15 +9,18 @@ echo
 
 set -x
 
-GTK_RUNTIME="${RADIANT_HOME}/Contents/Resources/gtk-runtime"
+resources="${RADIANT_HOME}/Contents/Resources"
 
-export GDK_PIXBUF_MODULE_FILE="${GTK_RUNTIME}/etc/gtk-2.0/gdk-pixbuf.loaders"
+export GDK_PIXBUF_MODULE_FILE="${resources}/etc/gtk-2.0/gdk-pixbuf.loaders"
 
-export GTK_DATA_PREFIX="${GTK_RUNTIME}"
-export GTK_EXE_PREFIX="${GTK_RUNTIME}"
-export GTK_PATH="${GTK_RUNTIME}"
+export GTK_DATA_PREFIX="${resources}"
+export GTK_EXE_PREFIX="${resources}"
+export GTK_PATH="${resources}"
 
-export PANGO_SYSCONFDIR="${GTK_RUNTIME}/etc"
-export PANGO_LIBDIR="${GTK_RUNTIME}/lib"
+export PANGO_SYSCONFDIR="${resources}/etc"
+export PANGO_LIBDIR="${resources}/lib"
 
-"${RADIANT_HOME}/Contents/MacOS/radiant.bin"
+cd "${resources}/install"
+./radiant.bin $@
+
+set +x
