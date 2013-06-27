@@ -7,7 +7,7 @@
         <key>CFBundleDisplayName</key>
         <string>GtkRadiant</string>
         <key>CFBundleExecutable</key>
-        <string>radiant.bin</string>
+        <string>radiant</string>
         <key>CFBundleIconFile</key>
         <string>radiant.icns</string>
         <key>CFBundleIdentifier</key>
