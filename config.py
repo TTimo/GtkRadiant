@@ -169,22 +169,22 @@ class Config:
             q3map2 = SConscript( os.path.join( build_dir, sconscript_name ) )
             Default( InstallAs( os.path.join( self.install_directory, compiler_name ), q3map2 ) )
 
-        def emit_q3data( self ):
-                settings = self
-                for config_name in self.config_selected:
-                        config = {}
-                        config['name'] = config_name
-                        config['shared'] = False
-                        Export( 'utils', 'settings', 'config' )
-                        build_dir = os.path.join( 'build', config_name, 'q3data' )
-                        VariantDir( build_dir, '.', duplicate = 0 )
-                        lib_objects = []
-                        for project in [ 'libs/mathlib/mathlib.vcproj', 'libs/l_net/l_net.vcproj', 'libs/ddslib/ddslib.vcproj' ]:
-                                Export( 'project' )
-                                lib_objects += SConscript( os.path.join( build_dir, 'SConscript.lib' ) )
-                        Export( 'lib_objects' )
-                        q3data = SConscript( os.path.join( build_dir, 'SConscript.q3data' ) )
-                        Default( InstallAs( os.path.join( self.install_directory, 'q3data' ), q3data ) )
+    def emit_q3data( self ):
+        settings = self
+        for config_name in self.config_selected:
+            config = {}
+            config['name'] = config_name
+            config['shared'] = False
+            Export( 'utils', 'settings', 'config' )
+            build_dir = os.path.join( 'build', config_name, 'q3data' )
+            VariantDir( build_dir, '.', duplicate = 0 )
+            lib_objects = []
+            for project in [ 'libs/mathlib/mathlib.vcproj', 'libs/l_net/l_net.vcproj', 'libs/ddslib/ddslib.vcproj' ]:
+                    Export( 'project' )
+                    lib_objects += SConscript( os.path.join( build_dir, 'SConscript.lib' ) )
+            Export( 'lib_objects' )
+            q3data = SConscript( os.path.join( build_dir, 'SConscript.q3data' ) )
+            Default( InstallAs( os.path.join( self.install_directory, 'q3data' ), q3data ) )
 
     def emit( self ):
         if 'radiant' in self.target_selected:

@@ -662,7 +662,9 @@ PrefsDlg::PrefsDlg (){
 #endif
 	m_nLightRadiuses = 1;
 	m_bQ3Map2Texturing = TRUE;
-        m_bx64q3map2 = TRUE;
+#ifdef _WIN32
+	m_bx64q3map2 = TRUE;
+#endif
 #ifdef ATIHACK_812
 	m_bGlATIHack = FALSE;
 #endif
@@ -3144,7 +3146,9 @@ void PrefsDlg::LoadPrefs(){
 	mLocalPrefs.GetPref( LIGHTRADIUS_KEY, &m_nLightRadiuses, TRUE );
 
 	mLocalPrefs.GetPref( Q3MAP2TEX_KEY, &m_bQ3Map2Texturing, TRUE );
-        mLocalPrefs.GetPref( X64Q3MAP2_KEY, &m_bx64q3map2, TRUE );
+#ifdef _WIN32
+	mLocalPrefs.GetPref( X64Q3MAP2_KEY, &m_bx64q3map2, TRUE );
+#endif
 
 #ifdef ATIHACK_812
 	mLocalPrefs.GetPref( ATIHACK_KEY, &m_bGlATIHack, FALSE );
