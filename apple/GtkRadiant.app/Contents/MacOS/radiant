@@ -21,6 +21,6 @@ export PANGO_SYSCONFDIR="${resources}/etc"
 export PANGO_LIBDIR="${resources}/lib"
 
 cd "${resources}/install"
-./radiant.bin $@
+./radiant.bin
 
 set +x
