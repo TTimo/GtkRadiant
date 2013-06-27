@@ -261,22 +261,9 @@ class Config:
 
     def FetchGamePaks( self, path ):
         for pak in self.setup_packs:
-            if ( pak == 'Q2WPack' ):
-                continue
             svnurl = 'svn://svn.icculus.org/gtkradiant-gamepacks/%s/trunk' % pak
             self.CheckoutOrUpdate( svnurl, os.path.join( path, 'installs', pak ) )
-
-        if 'Q2WPack' in self.setup_packs:
-            if ( os.path.exists( 'quake2world' ) ):
-                subprocess.check_call( [ 'git', 'pull', ], cwd = 'quake2world' )
-            else:
-                cmd = [ 'git', 'clone', 'git://github.com/jdolan/quake2world.git' ]
-                subprocess.check_call( cmd )
-            # squash and sync..
-            if ( os.path.exists( 'install/installs/Q2WPack' ) ):
-                shutil.rmtree( 'install/installs/Q2WPack/' )
-            shutil.copytree( 'quake2world/support/gtkradiant/Q2WPack/', 'install/installs/Q2WPack/' )
-
+        
     def CopyTree( self, src, dst):
         for root, dirs, files in os.walk( src ):
             target_dir = os.path.join( dst, root[root.find( '/' )+1:] )
