@@ -11,7 +11,13 @@ set -x
 
 resources="${RADIANT_HOME}/Contents/Resources"
 
+export GDK_GL_LIBGL_PATH="${resources}/lib/libGL.1.dylib"
+export GDK_GL_LIBGLU_PATH="${resources}/lib/libGLU.1.dylib"
+
+export GDK_PATH="${resources}"
 export GDK_PIXBUF_MODULE_FILE="${resources}/etc/gtk-2.0/gdk-pixbuf.loaders"
+
+export GOBJECT_PATH="${resources}"
 
 export GTK_DATA_PREFIX="${resources}"
 export GTK_EXE_PREFIX="${resources}"
@@ -21,6 +27,6 @@ export PANGO_SYSCONFDIR="${resources}/etc"
 export PANGO_LIBDIR="${resources}/lib"
 
 cd "${resources}/install"
-./radiant.bin
+./radiant.bin &
 
 set +x

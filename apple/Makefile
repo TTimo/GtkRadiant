@@ -12,62 +12,59 @@ VERSION = 1.6.4
 DMG = $(TARGET)/GtkRadiant-$(VERSION).dmg
 VOLUME_NAME = "GtkRadiant $(VERSION)"
 
-all: install gtk-runtime bundle
+all: install bundle
 
-pre-install:
+-pre-install:
 	install -d $(TARGET)
 	cp -r GtkRadiant.app $(TARGET)
 	find $(TARGET) -name .turd -delete
-
-install: pre-install
-	cp -r $(INSTALL) $(RESOURCES)
-	rm -rf `find $(INSTDIR)/installs -type d -name .svn`
-
-gtk-runtime:
+	
+-gtk-runtime-gdk-pixbuf-2.0:
+	cp -r /opt/local/lib/gdk-pixbuf-2.0 $(LIBDIR)
+	find $(LIBDIR)/gdk-pixbuf-2.0 -type f ! -name "*.so" -delete
+	
 	gdk-pixbuf-query-loaders | sed $(PREFIX_SED_EXPR) > \
 		$(CONFDIR)/gtk-2.0/gdk-pixbuf.loaders
-		
-	gtk-query-immodules-2.0 | sed $(PREFIX_SED_EXPR) > \
-		$(CONFDIR)/gtk-2.0/gtk.immodules
-		
+
+-gtk-runtime-pango:
+	cp -r /opt/local/lib/pango $(LIBDIR)
+	find $(LIBDIR)/pango -type f ! -name "*.so" -delete
+	
 	pango-querymodules | sed $(PREFIX_SED_EXPR) > \
 		$(CONFDIR)/pango/pango.modules
 	
-	cp -r /opt/local/lib/gdk-pixbuf-2.0 $(LIBDIR)
+-gtk-runtime: -gtk-runtime-gdk-pixbuf-2.0 -gtk-runtime-pango
 	cp -r /opt/local/lib/gtk-2.0 $(LIBDIR)
-	cp -r /opt/local/lib/pango $(LIBDIR)
-	
-	find $(LIBDIR)/gdk-pixbuf-2.0 -type f ! -name "*.so" -delete
 	find $(LIBDIR)/gtk-2.0 -type f ! -name "*.so" -delete	
-	find $(LIBDIR)/pango -type f ! -name "*.so" -delete
 	
 	rm -rf $(LIBDIR)/gtk-2.0/{includes,modules}
 	rm -rf $(LIBDIR)/gtk-2.0/*/printbackends
 	
-	dylibbundler -b \
-		`find $(LIBDIR)/gdk-pixbuf-2.0 -type f | xargs -I {} echo -x {}` \
-		`find $(LIBDIR)/gtk-2.0 -type f | xargs -I {} echo -x {}` \
-		`find $(LIBDIR)/pango -type f | xargs -I {} echo -x {}` \
-	-d $(LIBDIR) -of -p @executable_path/../lib
-	
 	cp -r /opt/local/share/themes/Default $(RESOURCES)/share
+	
+	gtk-query-immodules-2.0 | sed $(PREFIX_SED_EXPR) > \
+		$(CONFDIR)/gtk-2.0/gtk.immodules
+
+install: -pre-install -gtk-runtime
+	cp -r $(INSTALL) $(RESOURCES)
+	rm -rf `find $(INSTDIR)/installs -type d -name .svn`
 
 bundle:
+
+	# The Radiant plugins (modules) are a little funky
+	# Some of them are actually linked against the build directory
+	
+	ln -s ../build ./build
+	
 	dylibbundler -b \
 		-x $(INSTDIR)/radiant.bin \
 		-x $(INSTDIR)/q3map2 \
 		-x $(INSTDIR)/q3map2_urt \
 		-x $(INSTDIR)/q3data \
+		`find $(INSTDIR)/modules -name "*.so" | xargs -I {} echo -x {}` \
+		`find $(LIBDIR) -name "*.so" | xargs -I {} echo -x {}` \
 	-d $(LIBDIR) -of -p @executable_path/../lib
 
-	# The Radiant plugins (modules) are a little funky
-	# Some of them are actually linked against the build directory
-	ln -s ../build ./build
-	
-	dylibbundler -b \
-		`find $(INSTDIR)/modules -name "*.so" | xargs -I {} echo -x {}` \
-	-d $(LIBDIR) -of -p @executable_path/../lib
-	
 	rm -f build
 
 image:
