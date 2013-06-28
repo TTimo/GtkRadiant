@@ -11,6 +11,9 @@ set -x
 
 resources="${RADIANT_HOME}/Contents/Resources"
 
+export FONTCONFIG_PATH="${resources}/etc/fonts"
+export FC_DEBUG=1024
+
 export GDK_GL_LIBGL_PATH="${resources}/lib/libGL.1.dylib"
 export GDK_GL_LIBGLU_PATH="${resources}/lib/libGLU.1.dylib"
 

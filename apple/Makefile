@@ -68,8 +68,9 @@ bundle:
 	rm -f build
 
 image:
+	find $(TARGET) -name .DS_Store -delete
 	ln -f -s /Applications $(TARGET)/Applications
-	hdiutil create $(DMG) -srcfolder $(TARGET) -volname $(VOLUME_NAME)
+	hdiutil create -ov $(DMG) -srcfolder $(TARGET) -volname $(VOLUME_NAME)
 	rm $(TARGET)/Applications
 
 clean:
