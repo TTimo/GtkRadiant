@@ -463,19 +463,17 @@ int main( int argc, char* argv[] ) {
 	 */
 	putenv( "LC_NUMERIC=C" );
 
-#ifdef _WIN32
-	libgl = "opengl32.dll";
-#endif
-
-#if defined ( __linux__ )
-	libgl = "libGL.so.1";
-#endif
-
-#ifdef __APPLE__
-	//	libgl = "/usr/X11R6/lib/libGL.dylib";
-	//	libgl = "/usr/X11/lib/libGL.dylib";
-	libgl = "/opt/local/lib/libGL.dylib";
-#endif
+	// Use the same environment variable for resolving libGL as libgtkglext does.
+	libgl = getenv("GDK_GL_LIBGL_PATH");
+	if ( libgl == NULL ) {
+		#if defined ( _WIN32 )
+			libgl = "opengl32.dll";
+		#elif defined ( __linux__ )
+			libgl = "libGL.so.1";
+		#elif defined ( __APPLE__ )
+			libgl = "/opt/local/lib/libGL.dylib";
+		#endif
+	}
 
 #if defined ( __linux__ ) || defined ( __APPLE__ )
 	// Give away unnecessary root privileges.
