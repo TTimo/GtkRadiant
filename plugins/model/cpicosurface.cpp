@@ -33,6 +33,20 @@ CPicoSurface::CPicoSurface( picoSurface_t *pSurface ){
 	AccumulateBBox();
 
 	m_shader = QERApp_Shader_ForName( GetShaderName() );
+
+	// jdolan: If the shader fails to load, try skin.tga in the model's
+	// directory as a fall-back. This is a hack for malformed models.
+
+	if ( m_shader->IsDefault() ) {
+		gchar *dir = g_path_get_dirname( m_pSurface->model->name );
+		gchar *skin = g_strdup_printf( "%s/skin.tga", dir );
+
+		m_shader->DecRef();
+		m_shader = QERApp_Shader_ForName( skin );
+
+		g_free( skin );
+		g_free( dir );
+	}
 }
 
 CPicoSurface::~CPicoSurface(){
