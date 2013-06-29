@@ -3506,7 +3506,7 @@ void CGameInstall::Run() {
 	fprintf( fg, "  "ENGINEPATH_ATTRIBUTE "=\"%s\"\n", m_strEngine.GetBuffer() );
 	switch ( m_availGames[ m_nComboSelect ] ) {
 	case GAME_Q2: {
-		fprintf( fg, "  "TOOLS_ATTRIBUTE "=\"%sinstalls/Quake2Pack/game\"\n", g_strAppPath.GetBuffer() );
+		fprintf( fg, "  "TOOLS_ATTRIBUTE "=\"%sinstalls/Q2Pack/game\"\n", g_strAppPath.GetBuffer() );
 		fprintf( fg, "  prefix=\".quake2\"\n" );
 		Str source = g_strAppPath.GetBuffer();
 		source += "installs/";
