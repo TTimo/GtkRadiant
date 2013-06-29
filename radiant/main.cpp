@@ -499,10 +499,6 @@ int main( int argc, char* argv[] ) {
 	// TODO: Find a better place to call this.
 	gtk_glwidget_create_font();
 
-	if ( ( ptr = getenv( "Q3R_LIBGL" ) ) != NULL ) {
-		libgl = ptr;
-	}
-
 	for ( i = 1; i < argc; i++ )
 	{
 		char* param = argv[i];
@@ -510,12 +506,7 @@ int main( int argc, char* argv[] ) {
 		if ( param[0] == '-' && param[1] == '-' ) {
 			param += 2;
 
-			if ( ( strcmp( param, "libgl" ) == 0 ) && ( i != argc ) ) {
-				libgl = argv[i + 1];
-				argv[i] = argv[i + 1] = NULL;
-				i++;
-			}
-			else if ( strcmp( param, "builddefs" ) == 0 ) {
+			if ( strcmp( param, "builddefs" ) == 0 ) {
 				g_bBuildList = true;
 				argv[i] = NULL;
 			}
