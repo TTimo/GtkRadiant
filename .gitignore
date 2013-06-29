@@ -1,13 +1,14 @@
 /apple/target/*
+/build
 /install/games
 /install/installs
 /install/q3data
 /install/q3map2
 /install/q3map2_urt
 /install/radiant.bin
-/.sconsign.dblite
+/packs
 /site.sconf
-/build
+/.sconsign.dblite
 *.pyc
 *.so
 .settings
