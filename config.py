@@ -28,7 +28,7 @@ class Config:
         # platforms for which to assemble a setup
         self.setup_platforms = [ 'local', 'x86', 'x64', 'win32' ]
         # paks to assemble in the setup
-        self.setup_packs = [ 'Q3Pack', 'UrTPack', 'ETPack', 'QLPack', 'Q2Pack', 'Q2WPack' ]
+        self.setup_packs = [ 'Q3Pack', 'UrTPack', 'ETPack', 'QLPack', 'Q2Pack', 'Q2WPack', 'JAPack', 'STVEFPack' ]
 
     def __repr__( self ):
         return 'config: target=%s config=%s' % ( self.target_selected, self.config_selected )
@@ -389,6 +389,7 @@ class Config:
                 '%s/bin/libpng14-14.dll' % GTK64_PREFIX,
                 '%s/bin/libglib-2.0-0.dll' % GTK64_PREFIX,
                 '%s/bin/libintl-8.dll' % GTK64_PREFIX,
+                '%s/bin/zlib1.dll' % GTK64_PREFIX,
                 ]:
                 shutil.copy( os.path.join( srcdir, x64_dll ), 'install/x64' )
 
