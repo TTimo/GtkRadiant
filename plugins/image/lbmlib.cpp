@@ -743,6 +743,10 @@ void LoadImage( const char *name, byte ** pic, int *width, int *height ){
 		return;
 	}
 
+	if ( vfsGetFileCount( name, 0 ) == 0 ) {
+		return;
+	}
+
 	if ( !g_ascii_strcasecmp( name + len - 4, ".tga" ) ) {
 		LoadTGA( name, pic, width, height );
 	}
