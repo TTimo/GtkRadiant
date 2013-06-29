@@ -1,5 +1,6 @@
 # Makefile for GtkRadiant.app, requires http://macdylibbundler.sourceforge.net/
 
+BUILD = ../build
 INSTALL = ../install
 TARGET = target
 RESOURCES = $(TARGET)/GtkRadiant.app/Contents/Resources
@@ -54,7 +55,7 @@ bundle:
 	# The Radiant plugins (modules) are a little funky
 	# Some of them are actually linked against the build directory
 	
-	ln -s ../build ./build
+	test -L build || ln -s $(BUILD)
 	
 	dylibbundler -b \
 		-x $(INSTDIR)/radiant.bin \
