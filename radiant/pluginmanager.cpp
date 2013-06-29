@@ -75,6 +75,7 @@ filetype_t g_pattern_modelmd3( "md3 models", "*.md3" );
 filetype_t g_pattern_modelmdc( "mdc models", "*.mdc" );
 filetype_t g_pattern_modelmd2( "md2 models", "*.md2" );
 filetype_t g_pattern_modelmdl( "mdl models", "*.mdl" );
+filetype_t g_pattern_modelobj( "obj models", "*.obj" );
 filetype_t g_pattern_soundwav( "PCM sound files", "*.wav" );
 filetype_t g_pattern_ogg( "OGG sound files", "*.ogg" );
 filetype_t g_pattern_regq3( "quake3 region", "*.reg" );
