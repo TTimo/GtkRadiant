@@ -49,6 +49,7 @@ extern _QERFileSystemTable g_FileSystemTable;
 void LoadJPG( const char *filename, unsigned char **pic, int *width, int *height );
 
 #define Error g_FuncTable.m_pfnError
+#define vfsGetFileCount g_FileSystemTable.m_pfnGetFileCount
 #define vfsLoadFile g_FileSystemTable.m_pfnLoadFile
 #define vfsFreeFile g_FileSystemTable.m_pfnFreeFile
 
