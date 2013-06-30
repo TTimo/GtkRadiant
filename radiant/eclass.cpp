@@ -382,7 +382,8 @@ void Eclass_Init(){
 					if ( !strcmp( ValueForKey( g_qeglobals.d_project_entity, "gamemode" ), "sp" ) ) {
 						// SP mapping, ignore mp_*.def
 						char *name = (char *)pFile->data;
-						if ( name[0] == 'm' && name[1] == 'p' && name[2] == '_' ) {
+						if ( name[0] == 'm' && name[1] == 'p' && name[2] == '_' 
+							|| name[0] == 'h' && name[1] == 'm' && name[2] == '_' ) {
 							Sys_Printf( "Single Player mapping mode. Ignoring '%s'\n", name );
 							pFile = pFile->next;
 							continue;
@@ -392,7 +393,7 @@ void Eclass_Init(){
 					{
 						// HM mapping, ignore sp_*.def
 						char *name = (char *)pFile->data;
-						if ( name[0] == 'h' && name[1] == 'm' && name[2] == '_' ) {
+						if ( name[0] == 's' && name[1] == 'p' && name[2] == '_' ) {
 							Sys_Printf( "HoloMatch mapping mode. Ignoring '%s'\n", name );
 							pFile = pFile->next;
 							continue;
