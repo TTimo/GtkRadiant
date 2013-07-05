@@ -2110,12 +2110,13 @@ static void clipboard_clear( GtkClipboard *clipboard, gpointer user_data_or_owne
 }
 
 static void clipboard_received( GtkClipboard *clipboard, GtkSelectionData *data, gpointer user_data ){
-	g_Clipboard.SetLength( 0 );
+	//g_Clipboard.SetLength( 0 );
 
 	if ( data->length < 0 ) {
 		Sys_FPrintf( SYS_ERR, "Error retrieving selection\n" );
 	}
 	else if ( strcmp( gdk_atom_name( data->type ), clipboard_targets[0].target ) == 0 ) {
+		g_Clipboard.SetLength( 0 );
 		g_Clipboard.Write( data->data, data->length );
 	}
 
