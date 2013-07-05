@@ -1,0 +1,7 @@
+; ufoai.def : Declares the module parameters for the DLL.
+
+LIBRARY      "UFOAI"
+
+EXPORTS
+    ; Explicit exports can go here
+	Synapse_EnumerateInterfaces @1

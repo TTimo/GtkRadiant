@@ -113,6 +113,7 @@ class Config:
                      'plugins/mapxml/mapxml.vcproj',
                      'plugins/shaders/shaders.vcproj',
                      'plugins/surface/surface.vcproj',
+                     'plugins/surface_ufoai/surface_ufoai.vcproj',
                      'plugins/surface_quake2/surface_quake2.vcproj',
                      'plugins/surface_heretic2/surface_heretic2.vcproj',
                      'contrib/camera/camera.vcproj',
@@ -120,6 +121,7 @@ class Config:
                      'contrib/hydratoolz/hydratoolz.vcproj',
                      'contrib/bobtoolz/bobtoolz.vcproj',
                      'contrib/gtkgensurf/gtkgensurf.vcproj',
+                     'contrib/ufoai/ufoai.vcproj',
                      'contrib/bkgrnd2d/bkgrnd2d.vcproj'
                  ]:
                 ( libpath, libname ) = os.path.split( project )
