@@ -237,7 +237,8 @@ eclass_t *Eclass_InitFromText( char *text ){
 
 	// setup show flags
 	e->nShowFlags = 0;
-	if ( strcmpi( e->name, "light" ) == 0 || strcmpi( e->name, "dlight" ) == 0 || strcmpi( e->name, "lightjunior" ) == 0 ) {
+	if ( strcmpi( e->name, "light" ) == 0 || strcmpi( e->name, "dlight" ) == 0
+			|| strcmpi( e->name, "lightjunior" ) == 0 || strcmpi( e->name, "light_spot" ) == 0 ) {
 		e->nShowFlags |= ECLASS_LIGHT;
 	}
 
@@ -254,7 +255,6 @@ eclass_t *Eclass_InitFromText( char *text ){
 	if ( strcmpi( e->name, "misc_model" ) == 0 ) {
 		e->nShowFlags |= ECLASS_MISCMODEL;
 	}
-
 
 	return e;
 }
