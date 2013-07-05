@@ -3376,6 +3376,9 @@ void CGameInstall::BuildDialog() {
 		case GAME_QL:
 			gtk_combo_box_append_text( GTK_COMBO_BOX( combo ), _( "Quake Live" ) );
 			break;
+		case GAME_STVEF:
+			gtk_combo_box_append_text( GTK_COMBO_BOX( combo ), _( "Star Trek - Voyager: Elite Force" ) );
+			break;
 		}
 		iGame++;
 	}
@@ -3489,6 +3492,9 @@ void CGameInstall::Run() {
 		break;
 	case GAME_QL:
 		gameFilePath += "ql.game";
+		break;
+	case GAME_STVEF:
+		gameFilePath += "stvef.game";
 		break;
 	}
 
@@ -3685,6 +3691,27 @@ void CGameInstall::Run() {
 		fprintf( fg, "  basegame=\"baseq3\"\n" );
 		break;
 	}
+	case GAME_STVEF: {
+		fprintf( fg, "  "TOOLS_ATTRIBUTE "=\"%sinstalls/"STVEF_PACK "/game\"\n", g_strAppPath.GetBuffer() );
+		fprintf( fg, "  prefix=\".stvef\"\n" );
+		Str source = g_strAppPath.GetBuffer();
+		source += "installs/";
+		source += STVEF_PACK;
+		source += "/install/";
+		Str dest = m_strEngine.GetBuffer();
+		radCopyTree( source.GetBuffer(), dest.GetBuffer() );
+		// Hardcoded fix for "missing" shaderlist in gamepack
+		dest += "/base/scripts/shaderlist.txt";
+		if(CheckFile(dest.GetBuffer()) != PATH_FILE) {
+			source += "base/scripts/default_shaderlist.txt";
+			radCopyFile(source.GetBuffer(),dest.GetBuffer());
+		}
+		fprintf( fg, "  basegame=\"baseEF\"\n" );
+		fprintf( fg, "  shaderpath=\"scripts\"\n" );
+		fprintf( fg, "  default_scale=\"0.25\"\n" );
+		fprintf( fg, "  caulk_shader=\"textures/common/caulk\"\n" );
+		break;
+	}
 	}
 	fprintf( fg, "/>\n" );
 	fclose( fg );
@@ -3739,6 +3766,9 @@ void CGameInstall::ScanGames() {
 		}
 		if ( stricmp( dirname, QL_PACK ) == 0 ) {
 			m_availGames[ iGame++ ] = GAME_QL;
+		}
+		if ( stricmp( dirname, STVEF_PACK ) == 0 ) {
+			m_availGames[ iGame++ ] = GAME_STVEF;
 		}
 	}
 	Sys_Printf( "No installable games found in: %s\n",

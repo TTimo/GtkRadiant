@@ -213,6 +213,7 @@ void Dump();
 #define REACTION_PACK "ReactionPack"
 #define ET_PACK "ETPack"
 #define QL_PACK "QLPack"
+#define STVEF_PACK "STVEFPack"
 
 class CGameInstall : public Dialog {
 public:
@@ -238,6 +239,7 @@ enum gameType_e {
 	GAME_REACTION,
 	GAME_ET,
 	GAME_QL,
+	GAME_STVEF,
 	GAME_COUNT
 };
 
