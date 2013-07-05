@@ -594,7 +594,7 @@ bool CSynapseServer::DoResolve( CSynapseClient *pClient ){
 			// the stack didn't change last loop
 			iCurrent++;
 			if ( iCurrent == mStack.end() ) {
-				Syn_Printf( "ERROR: CSynapseServer::Resolve, failed to resolve\n" );
+				Syn_Printf( "ERROR: CSynapseServer::Resolve, failed to resolve config for %s\n", pClient->GetName() );
 				DumpStack();
 				return false;
 			}
@@ -658,7 +658,7 @@ void CSynapseServer::DumpStack(){
 	for ( iCurrent = mStack.begin(); iCurrent != mStack.end(); iCurrent++ )
 	{
 		APIDescriptor_t*pAPI = *iCurrent;
-		Syn_Printf( "interface %s %p '%s' '%s'\n", APITypeName[pAPI->mType], pAPI, pAPI->major_name, pAPI->minor_name );
+		Syn_Printf( " interface %s %p '%s' '%s'\n", APITypeName[pAPI->mType], pAPI, pAPI->major_name, pAPI->minor_name );
 	}
 }
 
