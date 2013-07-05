@@ -789,8 +789,7 @@ void CSynapseClient::Shutdown(){
 		APIDescriptor_t *pAPI = *iAPI;
 		if ( pAPI->mRefCount != 0 ) {
 			Syn_Printf( "WARNING: ~CSynapseClient '%s' has non-zero ref count for interface '%s' '%s'\n", GetInfo(), pAPI->major_name, pAPI->minor_name );
-		}
-		else{
+		} else {
 			delete pAPI;
 		}
 		*iAPI = NULL;
