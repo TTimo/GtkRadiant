@@ -1138,16 +1138,43 @@ static void switch_page( GtkNotebook *notebook, GtkNotebookPage *page, guint pag
 
 // NOTE: when a key is hit with group window focused, we catch in this handler but it gets propagated to mainframe too
 //   therefore the message will be intercepted and used as a ID_SELECTION_DESELECT
-static gint OnDialogKey( GtkWidget* widget, GdkEventKey* event, gpointer data ){
-	if ( ( event->keyval == GDK_Escape ) && ( g_pParentWnd->CurrentStyle() != MainFrame::eFloating ) ) {
-		// toggle off the group view (whatever part of it is currently displayed)
-		// this used to be done with a g_pParentWnd->OnViewEntity(); but it had bad consequences
-                gtk_widget_hide( widget );
-                // set the group notebook page back to 0, so that when we recall the texture view there is an expose event coming up
-       		gtk_notebook_set_current_page( GTK_NOTEBOOK( g_pGroupDlg->m_pNotebook ), 0 );
-		return TRUE;
-	}
-	return FALSE;
+static gint OnDialogKey( GtkWidget* widget, GdkEventKey* event, gpointer data ) {
+  // make the "ViewTextures" and "ViewEntityInfo" keys that normally bring this dialog up hide it as well - copypasta from mainframe_keypress
+  // NOTE: maybe we could also check the state of the notebook, see if those are actually displayed .. if they are not, then switch the notebook pages rather than hiding?
+  bool hide = false;
+  unsigned int code = gdk_keyval_to_upper( event->keyval );
+  for ( int i = 0; i < g_nCommandCount; i++ ) {
+    if ( g_Commands[i].m_nKey == code ) { // find a match?
+      // check modifiers
+      unsigned int nState = 0;
+      if ( Sys_AltDown() ) {
+        nState |= RAD_ALT;
+      }
+      if ( ( event->state & GDK_CONTROL_MASK ) != 0 ) {
+        nState |= RAD_CONTROL;
+      }
+      if ( ( event->state & GDK_SHIFT_MASK ) != 0 ) {
+        nState |= RAD_SHIFT;
+      }
+      if ( ( g_Commands[i].m_nModifiers & 0x7 ) == nState ) {
+        Sys_Printf( "Floating group dialog: %s\n", g_Commands[i].m_strCommand );
+        if ( g_Commands[i].m_nCommand == ID_VIEW_TEXTURE || g_Commands[i].m_nCommand == ID_VIEW_ENTITY ) {
+          hide = true;
+        }
+        break;
+      }
+    }
+  }
+
+  if ( g_pParentWnd->CurrentStyle() != MainFrame::eFloating && ( hide || event->keyval == GDK_Escape ) ) {
+    // toggle off the group view (whatever part of it is currently displayed)
+    // this used to be done with a g_pParentWnd->OnViewEntity(); but it had bad consequences
+    gtk_widget_hide( widget );
+    // set the group notebook page back to 0, so that when we recall the texture view there is an expose event coming up
+    gtk_notebook_set_current_page( GTK_NOTEBOOK( g_pGroupDlg->m_pNotebook ), 0 );
+    return TRUE;
+  }
+  return FALSE;
 }
 
 GroupDlg::GroupDlg (){
