@@ -31,72 +31,56 @@
 #ifndef _GLWINDOW_H_
 #define _GLWINDOW_H_
 
-class GLWindow
-{
+class GLWindow {
 public:
-GLWindow ( bool zbuffer );
-virtual ~GLWindow ();
+  GLWindow( bool zbuffer );
+  virtual ~GLWindow ();
 
-bool MakeCurrent();
-void SwapBuffers();
-void SetTimer( guint millisec );
-void KillTimer();
-bool HasTimer()
-{ return m_nTimer != 0; }
-void DestroyContext();
-void CreateContext();
+  bool MakeCurrent();
+  void SwapBuffers();
+  void SetTimer( guint millisec );
+  void KillTimer();
+  bool HasTimer() { return m_nTimer != 0; }
+  void DestroyContext();
+  void CreateContext();
 
-virtual void OnCreate() { }
-virtual void OnExpose() { }
+  virtual void OnCreate() { }
+  virtual void OnExpose() { }
 
-virtual void OnLButtonDown( guint32 flags, int x, int y ) { }
-virtual void OnRButtonDown( guint32 flags, int x, int y ) { }
-virtual void OnMButtonDown( guint32 flags, int x, int y ) { }
-virtual void OnLButtonUp( guint32 flags, int pointx, int pointy ) { }
-virtual void OnRButtonUp( guint32 flags, int pointx, int pointy ) { }
-virtual void OnMButtonUp( guint32 flags, int pointx, int pointy ) { }
-virtual void OnMouseMove( guint32 flags, int pointx, int pointy ) { }
+  virtual void OnLButtonDown( guint32 flags, int x, int y ) { }
+  virtual void OnRButtonDown( guint32 flags, int x, int y ) { }
+  virtual void OnMButtonDown( guint32 flags, int x, int y ) { }
+  virtual void OnLButtonUp( guint32 flags, int pointx, int pointy ) { }
+  virtual void OnRButtonUp( guint32 flags, int pointx, int pointy ) { }
+  virtual void OnMButtonUp( guint32 flags, int pointx, int pointy ) { }
+  virtual void OnMouseMove( guint32 flags, int pointx, int pointy ) { }
 
+  virtual void OnSize( int cx, int cy ) { }
+  virtual void OnTimer() { }
 
-virtual void OnSize( int cx, int cy ) { }
-virtual void OnTimer() { }
+  virtual void OnMouseWheel( bool bUp ) { }
 
-virtual void OnMouseWheel( bool bUp ) { }
+  void RedrawWindow() {	gtk_widget_queue_draw( m_pWidget ); }
 
-void RedrawWindow(){
-	gtk_widget_queue_draw( m_pWidget );
-}
+  void SetFocus() { /* gdk_window_raise (m_pWidget->window); */ }
 
-void SetFocus(){
-	/* gdk_window_raise (m_pWidget->window); */
-}
+  void SetCapture() { m_bMouseCapture = TRUE; }
+  void ReleaseCapture() { m_bMouseCapture = FALSE; }
 
-void SetCapture(){
-	m_bMouseCapture = TRUE;
-}
+  bool HasCapture() { return m_bMouseCapture; }
 
-void ReleaseCapture(){
-	m_bMouseCapture = FALSE;
-}
-
-bool HasCapture(){
-	return m_bMouseCapture;
-}
-
-GtkWidget* GetWidget(){
-	return m_pWidget;
-}
+  GtkWidget * GetWidget() { return m_pWidget; }
 
 // member variables
 public:
-GtkWidget* m_pParent;   // for floating windows only
+  GtkWidget* m_pParent;   // for floating windows only
 
 protected:
-bool m_bMouseCapture;
-GtkWidget* m_pWidget;
+  bool m_bMouseCapture;
+  GtkWidget* m_pWidget;
 
 private:
-guint m_nTimer;        // only one timer supported
+  guint m_nTimer;        // only one timer supported
 };
 
 #endif //_GLWINDOW_H_

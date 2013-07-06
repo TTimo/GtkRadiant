@@ -172,21 +172,6 @@ static gint timer( gpointer data ){
 	return TRUE;
 }
 
-//! GtkGLExt port.
-/*
-   static void create_context (GtkWidget *widget, gpointer data)
-   {
-   if (g_qeglobals_gui.d_glBase == NULL)
-    g_qeglobals_gui.d_glBase = widget;
-   }
-
-   static void destroy_context (GtkWidget *widget, gpointer data)
-   {
-   if (g_qeglobals_gui.d_glBase == widget)
-    g_qeglobals_gui.d_glBase = NULL;
-   }
- */
-
 #if GTK_CHECK_VERSION( 1,3,0 )
 static gint scroll_event( GtkWidget *widget,
 						  GdkEventScroll *event,
@@ -204,7 +189,7 @@ static gint scroll_event( GtkWidget *widget,
 //#define DBG_GLWINDOW
 #endif
 
-GLWindow::GLWindow ( bool zbuffer ){
+GLWindow::GLWindow( bool zbuffer ) {
 	m_nTimer = 0;
 	m_bMouseCapture = FALSE;
 	m_pParent = NULL;
@@ -216,12 +201,9 @@ GLWindow::GLWindow ( bool zbuffer ){
 	Sys_Printf( "GLWindow::GLWindow m_pWidget = %p\n", m_pWidget );
 #endif
 
-//! GtkGLExt port.
-//#if defined (__linux__) || defined (__APPLE__)
 	if ( g_qeglobals_gui.d_glBase == NULL ) {
 		g_qeglobals_gui.d_glBase = m_pWidget;
 	}
-//#endif
 
 #if GTK_CHECK_VERSION( 1,3,0 )
 	gtk_widget_set_events( m_pWidget, GDK_DESTROY | GDK_EXPOSURE_MASK |
@@ -238,9 +220,6 @@ GLWindow::GLWindow ( bool zbuffer ){
 	gtk_signal_connect( GTK_OBJECT( m_pWidget ), "button_press_event", GTK_SIGNAL_FUNC( button_press ), this );
 	gtk_signal_connect( GTK_OBJECT( m_pWidget ), "button_release_event",GTK_SIGNAL_FUNC( button_release ), this );
 	gtk_signal_connect( GTK_OBJECT( m_pWidget ), "size_allocate", GTK_SIGNAL_FUNC( resize ), this );
-//! GtkGLExt port.
-//  gtk_signal_connect (GTK_OBJECT (m_pWidget), "create_context", GTK_SIGNAL_FUNC (create_context), this);
-//  gtk_signal_connect (GTK_OBJECT (m_pWidget), "destroy_context", GTK_SIGNAL_FUNC (destroy_context), this);
 #if GTK_CHECK_VERSION( 1,3,0 )
 	gtk_signal_connect( GTK_OBJECT( m_pWidget ), "scroll_event", GTK_SIGNAL_FUNC( scroll_event ), this );
 #endif
