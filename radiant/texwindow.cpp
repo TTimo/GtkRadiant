@@ -1778,9 +1778,9 @@ void TexWnd::UpdatePrefs(){
 	RedrawWindow();
 }
 
-void TexWnd::FocusEdit(){
+void TexWnd::FocusEdit() {
 	if ( GTK_WIDGET_VISIBLE( m_pFilter ) ) {
-		gtk_window_set_focus( GTK_WINDOW( g_pParentWnd->m_pWidget ), m_pFilter );
+          gtk_window_set_focus( GTK_WINDOW( g_pParentWnd->m_pWidget ), m_pFilter );
 	}
 }
 

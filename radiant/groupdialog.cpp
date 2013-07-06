@@ -656,35 +656,36 @@ void SetInspectorMode( int iType ){
 		}
 	}
 
-	switch ( iType )
-	{
+	switch ( iType ) {
 	case W_ENTITY:
 		// entity is always first in the inspector
 		gtk_window_set_title( GTK_WINDOW( g_qeglobals_gui.d_entity ), "Entities" );
-		gtk_notebook_set_page( GTK_NOTEBOOK( g_pGroupDlg->m_pNotebook ), 0 );
+		gtk_notebook_set_current_page( GTK_NOTEBOOK( g_pGroupDlg->m_pNotebook ), 0 );
 		break;
 
 	case W_TEXTURE:
 		g_pParentWnd->GetTexWnd()->FocusEdit();
 		gtk_window_set_title( GTK_WINDOW( g_qeglobals_gui.d_entity ), "Textures" );
 		if ( g_pParentWnd->FloatingGroupDialog() ) {
-			gtk_notebook_set_page( GTK_NOTEBOOK( g_pGroupDlg->m_pNotebook ), 1 );
+                  // if the notebook page is already at 1, no expose event fires up on the embedded GLWindow, leading in the texture window not drawing
+                  // I did witness an expose event on the notebook widget though, but for some reason it's not traveling down..
+                  // so when hiding the group dialog, we are setting the page to 0, the page switch does an expose and triggers drawing.. (see OnDialogKey)
+                  gtk_notebook_set_current_page( GTK_NOTEBOOK( g_pGroupDlg->m_pNotebook ), 1 );
 		}
 		break;
 
 	case W_CONSOLE:
 		gtk_window_set_title( GTK_WINDOW( g_qeglobals_gui.d_entity ), "Console" );
 		if ( g_pParentWnd->FloatingGroupDialog() ) {
-			gtk_notebook_set_page( GTK_NOTEBOOK( g_pGroupDlg->m_pNotebook ), 2 );
+			gtk_notebook_set_current_page( GTK_NOTEBOOK( g_pGroupDlg->m_pNotebook ), 2 );
 		}
 		break;
 
 	case W_GROUP:
 		if ( g_pParentWnd->FloatingGroupDialog() ) {
-			gtk_notebook_set_page( GTK_NOTEBOOK( g_pGroupDlg->m_pNotebook ), 3 );
-		}
-		else{
-			gtk_notebook_set_page( GTK_NOTEBOOK( g_pGroupDlg->m_pNotebook ), 1 );
+			gtk_notebook_set_current_page( GTK_NOTEBOOK( g_pGroupDlg->m_pNotebook ), 3 );
+		} else {
+			gtk_notebook_set_current_page( GTK_NOTEBOOK( g_pGroupDlg->m_pNotebook ), 1 );
 		}
 		break;
 
@@ -1097,34 +1098,7 @@ static gint entityentry_keypress( GtkWidget* widget, GdkEventKey* event, gpointe
 
 	return FALSE;
 }
-/*
-   // add a new group, put all selected brushes into the group
-   static void groupdlg_add (GtkWidget *widget, gpointer data)
-   {
-   char* name = DoNameDlg ("New Group");
 
-   if (name != NULL)
-   {
-    // create a new group node
-    GtkCTreeNode *item;
-    item = gtk_ctree_insert_node (GTK_CTREE (g_wndGroup.m_pTree), g_pGroupDlg->m_hWorld, NULL, &name, 0,
-                  tree_pixmaps[IMG_GROUP], tree_masks[IMG_GROUP],
-                  tree_pixmaps[IMG_GROUP], tree_masks[IMG_GROUP], FALSE, TRUE);
-
-    // create a new group
-    group_t *g = Group_Alloc (name);
-    g->itemOwner = item;
-    g->next = g_pGroups;
-    g_pGroups = g;
-
-    // now add the selected brushes
-    // NOTE: it would be much faster to give the group_t for adding
-    // but Select_AddToGroup is the standard way for all other cases
-    Select_AddToGroup (name);
-    g_free (name);
-   }
-   }
- */
 static void switch_page( GtkNotebook *notebook, GtkNotebookPage *page, guint page_num, gpointer data ){
 	char *text;
 	gtk_label_get( GTK_LABEL( gtk_notebook_get_tab_label( notebook, gtk_notebook_get_nth_page( notebook, page_num ) ) ), &text );
@@ -1165,14 +1139,12 @@ static void switch_page( GtkNotebook *notebook, GtkNotebookPage *page, guint pag
 // NOTE: when a key is hit with group window focused, we catch in this handler but it gets propagated to mainframe too
 //   therefore the message will be intercepted and used as a ID_SELECTION_DESELECT
 static gint OnDialogKey( GtkWidget* widget, GdkEventKey* event, gpointer data ){
-#ifdef DBG_PI
-	Sys_Printf( "OnDialogKey\n" );
-#endif
 	if ( ( event->keyval == GDK_Escape ) && ( g_pParentWnd->CurrentStyle() != MainFrame::eFloating ) ) {
 		// toggle off the group view (whatever part of it is currently displayed)
 		// this used to be done with a g_pParentWnd->OnViewEntity(); but it had bad consequences
-		// http://fenris.lokigames.com/show_bug.cgi?id=2773
-		widget_delete_hide( g_qeglobals_gui.d_entity );
+                gtk_widget_hide( widget );
+                // set the group notebook page back to 0, so that when we recall the texture view there is an expose event coming up
+       		gtk_notebook_set_current_page( GTK_NOTEBOOK( g_pGroupDlg->m_pNotebook ), 0 );
 		return TRUE;
 	}
 	return FALSE;
@@ -1205,6 +1177,7 @@ void GroupDlg::Create(){
 	gtk_signal_connect( GTK_OBJECT( dlg ), "delete_event", GTK_SIGNAL_FUNC( widget_delete_hide ), NULL );
 	// catch 'Esc'
 	gtk_signal_connect( GTK_OBJECT( dlg ), "key_press_event", GTK_SIGNAL_FUNC( OnDialogKey ), NULL );
+
 	gtk_window_set_transient_for( GTK_WINDOW( dlg ), GTK_WINDOW( g_pParentWnd->m_pWidget ) );
 	g_qeglobals_gui.d_entity = dlg;
 
@@ -1316,33 +1289,21 @@ void GroupDlg::Create(){
 								GtkWidget *check = gtk_check_button_new_with_label( _( "!Easy" ) );
 								gtk_widget_show( check );
 								gtk_signal_connect( GTK_OBJECT( check ), "toggled", GTK_SIGNAL_FUNC( entity_check ), NULL );
-/*					gtk_table_attach (GTK_TABLE (table), check, 2, 3, 0, 1,
-                                        (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
-                                        (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), 0, 0);*/
 								EntWidgets[EntCheck17] = check;
 
 								check = gtk_check_button_new_with_label( _( "!Medium" ) );
 								gtk_widget_show( check );
 								gtk_signal_connect( GTK_OBJECT( check ), "toggled", GTK_SIGNAL_FUNC( entity_check ), NULL );
-/*					gtk_table_attach (GTK_TABLE (table), check, 2, 3, 1, 2,
-                                        (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
-                                        (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), 0, 0);*/
 								EntWidgets[EntCheck18] = check;
 
 								check = gtk_check_button_new_with_label( _( "!Hard" ) );
 								gtk_widget_show( check );
 								gtk_signal_connect( GTK_OBJECT( check ), "toggled", GTK_SIGNAL_FUNC( entity_check ), NULL );
-/*					gtk_table_attach (GTK_TABLE (table), check, 2, 3, 2, 3,
-                                        (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
-                                        (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), 0, 0);*/
 								EntWidgets[EntCheck19] = check;
 
 								check = gtk_check_button_new_with_label( _( "!DeathMatch" ) );
 								gtk_widget_show( check );
 								gtk_signal_connect( GTK_OBJECT( check ), "toggled", GTK_SIGNAL_FUNC( entity_check ), NULL );
-/*					gtk_table_attach (GTK_TABLE (table), check, 2, 3, 3, 4,
-                                        (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
-                                        (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), 0, 0);*/
 								EntWidgets[EntCheck20] = check;
 							}
 						}
@@ -1619,63 +1580,8 @@ void GroupDlg::Create(){
 			}
 		}
 
-
-		//++timo NOTE: this part for grouping code, don't remove! (we'll put it back in sometime soon)
-
-		/*
-		   vbox = gtk_vbox_new (FALSE, 5);
-		   gtk_widget_show (vbox);
-		   gtk_container_set_border_width (GTK_CONTAINER (vbox), 3);
-
-		   scr = gtk_scrolled_window_new (NULL, NULL);
-		   gtk_widget_show (scr);
-		   gtk_box_pack_start (GTK_BOX (vbox), scr, TRUE, TRUE, 0);
-		   gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scr), GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
-
-		   ctree = gtk_ctree_new (1, 0);
-		   gtk_widget_show (ctree);
-		   gtk_container_add (GTK_CONTAINER (scr), ctree);
-		   gtk_clist_column_titles_hide (GTK_CLIST (ctree));
-		   m_pTree = ctree;
-
-		   hbox = gtk_hbox_new (FALSE, 5);
-		   gtk_widget_show (hbox);
-		   gtk_box_pack_start (GTK_BOX (vbox), hbox, FALSE, TRUE, 0);
-
-		   button = gtk_button_new_with_label (_("Add..."));
-		   gtk_widget_show (button);
-		   gtk_signal_connect (GTK_OBJECT (button), "clicked", GTK_SIGNAL_FUNC (groupdlg_add), NULL);
-		   gtk_box_pack_start (GTK_BOX (hbox), button, FALSE, FALSE, 0);
-		   gtk_widget_set_usize (button, 60, -2);
-
-		   button = gtk_button_new_with_label (_("Edit..."));
-		   gtk_widget_show (button);
-		   gtk_box_pack_start (GTK_BOX (hbox), button, FALSE, FALSE, 0);
-		   gtk_widget_set_usize (button, 60, -2);
-
-		   button = gtk_button_new_with_label (_("Delete"));
-		   gtk_widget_show (button);
-		   gtk_box_pack_start (GTK_BOX (hbox), button, FALSE, FALSE, 0);
-		   gtk_widget_set_usize (button, 60, -2);
-
-		   label = gtk_label_new (_("Groups"));
-		   gtk_widget_show (label);
-		   gtk_notebook_append_page (GTK_NOTEBOOK (notebook), vbox, label);
-		 */
 		inspector_mode = W_ENTITY;
-		//  gtk_window_set_title (GTK_WINDOW (dlg), _("Entities"));
 		m_pWidget = dlg;
-		/*
-		   load_pixmap ("grouptree1.bmp", g_pParentWnd->m_pWidget, &tree_pixmaps[0], &tree_masks[0]);
-		   load_pixmap ("grouptree2.bmp", g_pParentWnd->m_pWidget, &tree_pixmaps[1], &tree_masks[1]);
-		   load_pixmap ("grouptree3.bmp", g_pParentWnd->m_pWidget, &tree_pixmaps[2], &tree_masks[2]);
-		   load_pixmap ("grouptree4.bmp", g_pParentWnd->m_pWidget, &tree_pixmaps[3], &tree_masks[3]);
-		   load_pixmap ("grouptree5.bmp", g_pParentWnd->m_pWidget, &tree_pixmaps[4], &tree_masks[4]);
-		   load_pixmap ("grouptree6.bmp", g_pParentWnd->m_pWidget, &tree_pixmaps[5], &tree_masks[5]);
-		   load_pixmap ("grouptree7.bmp", g_pParentWnd->m_pWidget, &tree_pixmaps[6], &tree_masks[6]);
-
-		   Group_Init();
-		 */
 		g_signal_connect( G_OBJECT( notebook ), "switch_page", G_CALLBACK( switch_page ), dlg );
 	}
 }
