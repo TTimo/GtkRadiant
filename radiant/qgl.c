@@ -1054,46 +1054,6 @@ void WINAPI gluPerspective2( GLdouble fovy, GLdouble aspect, GLdouble zNear, GLd
 	qglFrustum( -y * aspect, y * aspect, -y, y, zNear, zFar );
 }
 
-static void* WINAPI ResizeImage( GLubyte* old_image, int srcw, int srch, int destw, int desth ){
-	int i, j;
-	float sx, sy;
-	GLubyte* new_image = (GLubyte *)malloc( destw * desth * 4 * sizeof( GLubyte ) );
-	if ( new_image == NULL ) {
-		return NULL;
-	}
-
-	if ( destw > 1 ) {
-		sx = (GLfloat) ( srcw - 1 ) / (GLfloat) ( destw - 1 );
-	}
-	else{
-		sx = (GLfloat) ( srcw - 1 );
-	}
-	if ( desth > 1 ) {
-		sy = (GLfloat) ( srch - 1 ) / (GLfloat) ( desth - 1 );
-	}
-	else{
-		sy = (GLfloat) ( srch - 1 );
-	}
-
-	for ( i = 0; i < desth; i++ )
-	{
-		GLint ii = (GLint)( i * sy );
-		for ( j = 0; j < destw; j++ )
-		{
-			GLint jj = (GLint)( j * sx );
-			GLubyte *src = old_image + ( ii * srcw + jj ) * 4;
-			GLubyte *dst = new_image + ( i * destw + j ) * 4;
-
-			*dst++ = *src++;
-			*dst++ = *src++;
-			*dst++ = *src++;
-			*dst++ = *src++;
-		}
-	}
-
-	return new_image;
-}
-
 #define CEILING( A, B )  ( ( A ) % ( B ) == 0 ? ( A ) / ( B ) : ( A ) / (B)+1 )
 
 typedef struct glu_error_struct
