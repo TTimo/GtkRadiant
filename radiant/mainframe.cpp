@@ -2816,8 +2816,6 @@ void MainFrame::Create(){
 			}
 		}
 
-		//    g_qeglobals_gui.d_edit = NULL;
-
 		{
 			m_pTexWnd = new TexWnd();
 			GtkWidget* frame = create_framed_texwnd( m_pTexWnd );
@@ -2830,7 +2828,6 @@ void MainFrame::Create(){
 		}
 
 		m_pTexWnd->m_pParent = g_pGroupDlg->m_pWidget;
-//    gtk_widget_realize (m_pTexWnd->GetWidget ());
 		m_pZWnd = create_floating_zwnd( this );
 
 		while ( gtk_events_pending() )
@@ -2864,7 +2861,6 @@ void MainFrame::Create(){
 
 	g_pParentWnd->OnEntitiesSetViewAs( 0 );
 
-//  m_wndTextureBar.Create (vbox);
 	create_main_statusbar( window, vbox );
 
 	LoadCommandMap();
@@ -2887,9 +2883,6 @@ void MainFrame::Create(){
 	item = GTK_WIDGET( g_object_get_data( G_OBJECT( m_pWidget ), "menu_textures_shaderlistonly" ) );
 	gtk_check_menu_item_set_active( GTK_CHECK_MENU_ITEM( item ), g_PrefsDlg.m_bTexturesShaderlistOnly ? TRUE : FALSE );
 	g_bIgnoreCommands--;
-
-//  if (g_PrefsDlg.m_bTextureBar)
-//    gtk_widget_show (m_wndTextureBar.m_pWidget);
 
 	SetActiveXY( m_pXYWnd );
 

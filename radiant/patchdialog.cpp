@@ -75,9 +75,6 @@ static void OnSelchangeComboColRow( GtkWidget *widget, gpointer data ){
 	if ( !g_PatchDialog.m_bListenChanged ) {
 		return;
 	}
-#ifdef DBG_PI
-	Sys_Printf( "OnSelchangeComboColRow\n" );
-#endif
 	// retrieve the current m_nRow and m_nCol, other params are not relevant
 	// (NOTE: UpdateData has a mechanism to avoid inifinite looping)
 	g_PatchDialog.UpdateData( TRUE );
@@ -205,9 +202,6 @@ static void OnSpinChanged( GtkAdjustment *adj, gpointer data ){
 
 	adj->value = 0;
 
-#ifdef DBG_PI
-	Sys_Printf( "Patch_SetTextureInfo: %g %g %g %g %g\n", td.shift[0], td.shift[1],td.scale[0],td.scale[1],td.rotate );
-#endif
 	// will scale shift rotate the patch accordingly
 	Patch_SetTextureInfo( &td );
 	// update the point-by-point view
@@ -216,9 +210,6 @@ static void OnSpinChanged( GtkAdjustment *adj, gpointer data ){
 }
 
 static gint OnDialogKey( GtkWidget* widget, GdkEventKey* event, gpointer data ){
-#ifdef DBG_PI
-	Sys_Printf( "OnDialogKey\n" );
-#endif
 	if ( event->keyval == GDK_Return ) {
 		OnApply( NULL, NULL );
 		return TRUE;

@@ -24,10 +24,6 @@
 
 #include "dialog.h"
 
-#ifdef _DEBUG
-//#define DBG_PI
-#endif
-
 class PatchDialog : public Dialog
 {
 public:

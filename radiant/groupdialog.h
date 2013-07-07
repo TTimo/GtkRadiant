@@ -86,19 +86,17 @@ extern GtkWidget* EntWidgets[EntLast];
 class GroupDlg
 {
 public:
-GroupDlg ();
-void Create();
+  GroupDlg();
+  void Create();
 
-void Show()
-{ gtk_widget_show( m_pWidget ); };
-void Hide()
-{ gtk_widget_hide( m_pWidget ); };
+  void Show() { gtk_widget_show( m_pWidget ); }
+  void Hide() { gtk_widget_hide( m_pWidget ); }
 
 public:
-GtkWidget* m_pNotebook;
-GtkWidget* m_pWidget;
-GtkWidget* m_pTree;
-GtkCTreeNode* m_hWorld;   //leo: not used keeping because of the win32 version
+  GtkWidget* m_pNotebook;
+  GtkWidget* m_pWidget;
+  GtkWidget* m_pTree;
+  GtkCTreeNode* m_hWorld;   //leo: not used keeping because of the win32 version
 };
 
 extern GroupDlg *g_pGroupDlg;

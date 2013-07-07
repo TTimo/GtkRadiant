@@ -6,6 +6,7 @@
 /install/q3map2
 /install/q3map2_urt
 /install/radiant.bin
+/install/share
 /packs
 /site.sconf
 /.sconsign.dblite
@@ -13,3 +14,5 @@
 *.so
 .settings
 .DS_Store
+*.obj
+*.tlog

@@ -54,11 +54,6 @@ static unsigned tex_palette[256];
 
 #define FONT_HEIGHT 10
 
-//int		texture_mode = GL_NEAREST;
-//int		texture_mode = GL_NEAREST_MIPMAP_NEAREST;
-//int		texture_mode = GL_NEAREST_MIPMAP_LINEAR;
-//int		texture_mode = GL_LINEAR;
-//int		texture_mode = GL_LINEAR_MIPMAP_NEAREST;
 int texture_mode = GL_LINEAR_MIPMAP_LINEAR;
 
 int g_nTextureOffset = 0;
@@ -124,8 +119,7 @@ int GetTextureExtensionCount(){
 	// hardcoded hack for png support
 	if ( g_pGameDescription->mGameFile == "sof2.game" ) {
 		return 3;
-	}
-	else{
+	} else {
 		return 2;
 	}
 }
@@ -1667,8 +1661,7 @@ void TexWnd::OnCreate(){
 
 	if ( g_PrefsDlg.m_bTextureScrollbar ) {
 		gtk_widget_show( g_qeglobals_gui.d_texture_scroll );
-	}
-	else{
+	} else {
 		gtk_widget_hide( g_qeglobals_gui.d_texture_scroll );
 	}
 	m_bNeedRange = true;
@@ -1695,7 +1688,7 @@ void TexWnd::OnSize( int cx, int cy ){
 	m_bNeedRange = true;
 }
 
-void TexWnd::OnExpose(){
+void TexWnd::OnExpose() {
 	int nOld = g_qeglobals.d_texturewin.m_nTotalHeight;
 	if ( !MakeCurrent() ) {
 		Sys_Printf( "ERROR: glXMakeCurrent failed..\n " );
@@ -1785,9 +1778,9 @@ void TexWnd::UpdatePrefs(){
 	RedrawWindow();
 }
 
-void TexWnd::FocusEdit(){
+void TexWnd::FocusEdit() {
 	if ( GTK_WIDGET_VISIBLE( m_pFilter ) ) {
-		gtk_window_set_focus( GTK_WINDOW( g_pParentWnd->m_pWidget ), m_pFilter );
+          gtk_window_set_focus( GTK_WINDOW( g_pParentWnd->m_pWidget ), m_pFilter );
 	}
 }
 
