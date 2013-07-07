@@ -71,6 +71,13 @@ CString g_strPluginsDir;                ///< name of plugins directory, always s
 CString g_strModulesDir;                ///< name of modules directory, always sub-directory of toolspath
 
 /*!
+   Points to an optional directory where external (read: not local to the game
+   install) may reside. For example, on Linux, a game's executables might live
+   in /usr/local/bin. On Mac, they might be in /Applications/Game.app/Contents/MacOS.
+ */
+CString g_strExecutablesPath;
+
+/*!
    directory for temp files
    NOTE: on *nix this is were we check for .pid
  */

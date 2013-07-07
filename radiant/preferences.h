@@ -173,6 +173,7 @@ Str mGameName;   ///< name of the game used in dialogs
 Str mGameFile;   ///< the .game file that describes this game
 Str mBaseGame;   ///< basegame directory
 Str mEnginePath;   ///< path to the engine
+Str mExecutablesPath;   ///< path to external executables, e.g. /usr/local/bin
 Str mEngine;   ///< engine name
 Str mMultiplayerEngine;   ///< engine name
 Str mUserPathPrefix;   ///< prefix for ~/.q3a ~/.wolf init on *nix, or \My Document\My Games\ on Windows
@@ -201,6 +202,20 @@ void Dump();
    select games, copy editing assets and write out configuration files
  */
 
+#define Q3_GAME "q3.game"
+#define URT_GAME "urt.game"
+#define UFOAI_GAME "ufoai.game"
+#define Q2W_GAME "q2w.game"
+#define WARSOW_GAME "warsow.game"
+#define NEXUIZ_GAME "nexuiz.game"
+#define Q2_GAME "q2.game"
+#define TREMULOUS_GAME "tremulous.game"
+#define JA_GAME "ja.game"
+#define REACTION_GAME "reaction.game"
+#define ET_GAME "et.game"
+#define QL_GAME "ql.game"
+#define STVEF_GAME "stvef.game"
+
 #define Q3_PACK "Q3Pack"
 #define URT_PACK "UrTPack"
 #define UFOAI_PACK "UFOAIPack"
@@ -223,6 +238,7 @@ void Run();
 void BuildDialog();
 
 static void OnBtnBrowseEngine( GtkWidget *widget, gpointer data );
+static void OnBtnBrowseExecutables( GtkWidget *widget, gpointer data );
 static void OnGameSelectChanged( GtkWidget *widget, gpointer data );
 
 enum gameType_e {
@@ -247,6 +263,7 @@ protected:
 Str m_strName;
 Str m_strMod;
 Str m_strEngine;
+Str m_strExecutables;
 int m_nComboSelect;
 
 // maps from m_nComboSelect to the games
