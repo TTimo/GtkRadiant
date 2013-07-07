@@ -31,7 +31,7 @@ const char* ExtractFilename( const char* path );
 bool FileExists( const char *filename );
 int Q_stricmp( const char *s1, const char *s2 );
 
-typedef int fileHandle_t;
+typedef void * fileHandle_t;
 
 #define qfalse false
 #define qtrue true

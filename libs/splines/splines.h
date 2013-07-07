@@ -35,8 +35,6 @@
 #include "util_str.h"
 #include "math_vector.h"
 
-typedef int fileHandle_t;
-
 extern void glBox( idVec3 &color, idVec3 &point, float size );
 extern void glLabeledPoint( idVec3 &color, idVec3 &point, float size, const char *label );
 
