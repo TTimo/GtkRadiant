@@ -622,8 +622,8 @@ static struct memorypool splaynodes;
 /* Variables that maintain the bad triangle queues.  The tails are pointers  */
 /*   to the pointers that have to be filled in to enqueue an item.           */
 
-static struct badface *queuefront[64];
-static struct badface **queuetail[64];
+//static struct badface *queuefront[64];
+//static struct badface **queuetail[64];
 
 static REAL xmin, xmax, ymin, ymax;                              /* x and y bounds. */
 static REAL xminextreme;        /* Nonexistent x value used as a flag in sweepline. */
