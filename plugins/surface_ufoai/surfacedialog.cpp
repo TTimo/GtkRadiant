@@ -665,27 +665,20 @@ void FitAll(){
 GtkWidget* create_SurfaceInspector( void ){
 
 	GtkWidget *label;
-	GtkWidget *hseparator;
-	GtkWidget *eventbox;
 
-	GtkWidget *viewport8;
-	GtkWidget *viewport9;
-	GtkWidget *viewport2;
-	GtkWidget *viewport7;
-	GtkWidget *viewport5;
-	GtkWidget *viewport6;
 	GtkWidget *viewport10;
 
 	GtkWidget *table1;
-	GtkWidget *table4;
-	GtkWidget *table5;
-	GtkWidget *table7;
+	GtkWidget *table2;
+
+	GtkWidget *frame1;
+	GtkWidget *frame2;
 
 	GtkWidget *alignment1;
 	GtkWidget *alignment2;
 	GtkWidget *alignment3;
 
-	GtkWidget *vbox7;
+	GtkWidget *vbox1;
 
 	GtkWidget *hbox1;
 	GtkWidget *hbox2;
@@ -704,24 +697,13 @@ GtkWidget* create_SurfaceInspector( void ){
 
 	SetWinPos_from_Prefs( SurfaceInspector );
 
-	viewport8 = gtk_viewport_new( NULL, NULL );
-	gtk_widget_show( viewport8 );
-	gtk_container_add( GTK_CONTAINER( SurfaceInspector ), viewport8 );
-	gtk_viewport_set_shadow_type( GTK_VIEWPORT( viewport8 ), GTK_SHADOW_NONE );
+	vbox1 = gtk_vbox_new( FALSE, 5 );
+	gtk_widget_show( vbox1 );
+	gtk_container_add( GTK_CONTAINER( SurfaceInspector ), vbox1 );
 
-	vbox7 = gtk_vbox_new( FALSE, 0 );
-	gtk_widget_show( vbox7 );
-	gtk_container_add( GTK_CONTAINER( viewport8 ), vbox7 );
-
-	viewport9 = gtk_viewport_new( NULL, NULL );
-	gtk_widget_show( viewport9 );
-	gtk_box_pack_start( GTK_BOX( vbox7 ), viewport9, FALSE, FALSE, 0 );
-	gtk_container_set_border_width( GTK_CONTAINER( viewport9 ), 2 );
-	gtk_viewport_set_shadow_type( GTK_VIEWPORT( viewport9 ), GTK_SHADOW_ETCHED_IN );
-
-	hbox1 = gtk_hbox_new( FALSE, 0 );
+	hbox1 = gtk_hbox_new( FALSE, 5 );
 	gtk_widget_show( hbox1 );
-	gtk_container_add( GTK_CONTAINER( viewport9 ), hbox1 );
+	gtk_container_add( GTK_CONTAINER( vbox1 ), hbox1 );
 	gtk_container_set_border_width( GTK_CONTAINER( hbox1 ), 4 );
 
 	label = gtk_label_new( "Texture: " );
@@ -740,123 +722,14 @@ GtkWidget* create_SurfaceInspector( void ){
 	gtk_widget_show( texture_combo_entry );
 	gtk_entry_set_max_length( GTK_ENTRY( texture_combo_entry ), 128 );
 
-	viewport2 = gtk_viewport_new( NULL, NULL );
-	gtk_widget_show( viewport2 );
-	gtk_box_pack_start( GTK_BOX( vbox7 ), viewport2, FALSE, TRUE, 0 );
-	gtk_container_set_border_width( GTK_CONTAINER( viewport2 ), 2 );
-	gtk_viewport_set_shadow_type( GTK_VIEWPORT( viewport2 ), GTK_SHADOW_ETCHED_IN );
+	frame1 = gtk_frame_new( "Surface" );
+	gtk_container_add( GTK_CONTAINER( vbox1 ), frame1 );
+	gtk_widget_show( frame1 );
+	gtk_box_pack_start( GTK_BOX( vbox1 ), frame1, FALSE, TRUE, 0 );
 
 	table1 = gtk_table_new( 13, 4, FALSE );
 	gtk_widget_show( table1 );
-	gtk_container_add( GTK_CONTAINER( viewport2 ), table1 );
-
-	hseparator = gtk_hseparator_new();
-	gtk_widget_show( hseparator );
-	gtk_table_attach( GTK_TABLE( table1 ), hseparator, 1, 2, 1, 2,
-					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
-					  (GtkAttachOptions) ( GTK_FILL ), 0, 0 );
-
-	hseparator = gtk_hseparator_new();
-	gtk_widget_show( hseparator );
-	gtk_table_attach( GTK_TABLE( table1 ), hseparator, 2, 3, 1, 2,
-					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
-					  (GtkAttachOptions) ( GTK_FILL ), 0, 0 );
-
-	hseparator = gtk_hseparator_new();
-	gtk_widget_show( hseparator );
-	gtk_table_attach( GTK_TABLE( table1 ), hseparator, 3, 4, 1, 2,
-					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
-					  (GtkAttachOptions) ( GTK_FILL ), 0, 0 );
-
-	hseparator = gtk_hseparator_new();
-	gtk_widget_show( hseparator );
-	gtk_table_attach( GTK_TABLE( table1 ), hseparator, 1, 2, 3, 4,
-					  (GtkAttachOptions) ( GTK_FILL ),
-					  (GtkAttachOptions) ( GTK_FILL ), 0, 0 );
-
-	hseparator = gtk_hseparator_new();
-	gtk_widget_show( hseparator );
-	gtk_table_attach( GTK_TABLE( table1 ), hseparator, 2, 3, 3, 4,
-					  (GtkAttachOptions) ( GTK_FILL ),
-					  (GtkAttachOptions) ( GTK_FILL ), 0, 0 );
-
-	hseparator = gtk_hseparator_new();
-	gtk_widget_show( hseparator );
-	gtk_table_attach( GTK_TABLE( table1 ), hseparator, 3, 4, 3, 4,
-					  (GtkAttachOptions) ( GTK_FILL ),
-					  (GtkAttachOptions) ( GTK_FILL ), 0, 0 );
-
-	hseparator = gtk_hseparator_new();
-	gtk_widget_show( hseparator );
-	gtk_table_attach( GTK_TABLE( table1 ), hseparator, 1, 2, 5, 6,
-					  (GtkAttachOptions) ( GTK_FILL ),
-					  (GtkAttachOptions) ( GTK_FILL ), 0, 0 );
-
-	hseparator = gtk_hseparator_new();
-	gtk_widget_show( hseparator );
-	gtk_table_attach( GTK_TABLE( table1 ), hseparator, 2, 3, 5, 6,
-					  (GtkAttachOptions) ( GTK_FILL ),
-					  (GtkAttachOptions) ( GTK_FILL ), 0, 0 );
-
-	hseparator = gtk_hseparator_new();
-	gtk_widget_show( hseparator );
-	gtk_table_attach( GTK_TABLE( table1 ), hseparator, 3, 4, 5, 6,
-					  (GtkAttachOptions) ( GTK_FILL ),
-					  (GtkAttachOptions) ( GTK_FILL ), 0, 0 );
-
-	hseparator = gtk_hseparator_new();
-	gtk_widget_show( hseparator );
-	gtk_table_attach( GTK_TABLE( table1 ), hseparator, 1, 2, 7, 8,
-					  (GtkAttachOptions) ( GTK_FILL ),
-					  (GtkAttachOptions) ( GTK_FILL ), 0, 0 );
-
-	hseparator = gtk_hseparator_new();
-	gtk_widget_show( hseparator );
-	gtk_table_attach( GTK_TABLE( table1 ), hseparator, 2, 3, 7, 8,
-					  (GtkAttachOptions) ( GTK_FILL ),
-					  (GtkAttachOptions) ( GTK_FILL ), 0, 0 );
-
-	hseparator = gtk_hseparator_new();
-	gtk_widget_show( hseparator );
-	gtk_table_attach( GTK_TABLE( table1 ), hseparator, 3, 4, 7, 8,
-					  (GtkAttachOptions) ( GTK_FILL ),
-					  (GtkAttachOptions) ( GTK_FILL ), 0, 0 );
-
-	hseparator = gtk_hseparator_new();
-	gtk_widget_show( hseparator );
-	gtk_table_attach( GTK_TABLE( table1 ), hseparator, 1, 2, 9, 10,
-					  (GtkAttachOptions) ( GTK_FILL ),
-					  (GtkAttachOptions) ( GTK_FILL ), 0, 0 );
-
-	hseparator = gtk_hseparator_new();
-	gtk_widget_show( hseparator );
-	gtk_table_attach( GTK_TABLE( table1 ), hseparator, 2, 3, 9, 10,
-					  (GtkAttachOptions) ( GTK_FILL ),
-					  (GtkAttachOptions) ( GTK_FILL ), 0, 0 );
-
-	hseparator = gtk_hseparator_new();
-	gtk_widget_show( hseparator );
-	gtk_table_attach( GTK_TABLE( table1 ), hseparator, 3, 4, 9, 10,
-					  (GtkAttachOptions) ( GTK_FILL ),
-					  (GtkAttachOptions) ( GTK_FILL ), 0, 0 );
-
-	hseparator = gtk_hseparator_new();
-	gtk_widget_show( hseparator );
-	gtk_table_attach( GTK_TABLE( table1 ), hseparator, 1, 2, 11, 12,
-					  (GtkAttachOptions) ( GTK_FILL ),
-					  (GtkAttachOptions) ( GTK_FILL ), 0, 0 );
-
-	hseparator = gtk_hseparator_new();
-	gtk_widget_show( hseparator );
-	gtk_table_attach( GTK_TABLE( table1 ), hseparator, 2, 3, 11, 12,
-					  (GtkAttachOptions) ( GTK_FILL ),
-					  (GtkAttachOptions) ( GTK_FILL ), 0, 0 );
-
-	hseparator = gtk_hseparator_new();
-	gtk_widget_show( hseparator );
-	gtk_table_attach( GTK_TABLE( table1 ), hseparator, 3, 4, 11, 12,
-					  (GtkAttachOptions) ( GTK_FILL ),
-					  (GtkAttachOptions) ( GTK_FILL ), 0, 0 );
+	gtk_container_add( GTK_CONTAINER( frame1 ), table1 );
 
 	label = gtk_label_new( "Offset" );
 	gtk_widget_show( label );
@@ -870,128 +743,64 @@ GtkWidget* create_SurfaceInspector( void ){
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
 
-	eventbox = gtk_event_box_new();
-	gtk_widget_show( eventbox );
-	gtk_table_attach( GTK_TABLE( table1 ), eventbox, 3, 4, 12, 13,
-					  (GtkAttachOptions) ( GTK_FILL ),
-					  (GtkAttachOptions) ( GTK_FILL ), 0, 0 );
-
 	match_grid_button = gtk_button_new_with_mnemonic( "Match Grid" );
 	gtk_widget_show( match_grid_button );
-	gtk_container_add( GTK_CONTAINER( eventbox ), match_grid_button );
+	gtk_table_attach( GTK_TABLE( table1 ), match_grid_button, 3, 4, 12, 13,
+					  (GtkAttachOptions) ( GTK_FILL ),
+					  (GtkAttachOptions) ( 0 ), 0, 0 );
 
 	label = gtk_label_new( "Value" );
 	gtk_widget_show( label );
 	gtk_table_attach( GTK_TABLE( table1 ), label, 1, 2, 0, 1,
-					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
+					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
 	gtk_misc_set_alignment( GTK_MISC( label ), 0.5, 1 );
 
-	hseparator = gtk_hseparator_new();
-	gtk_widget_show( hseparator );
-	gtk_table_attach( GTK_TABLE( table1 ), hseparator, 0, 1, 3, 4,
-					  (GtkAttachOptions) ( GTK_SHRINK | GTK_FILL ),
-					  (GtkAttachOptions) ( GTK_FILL ), 0, 0 );
-
-	hseparator = gtk_hseparator_new();
-	gtk_widget_show( hseparator );
-	gtk_table_attach( GTK_TABLE( table1 ), hseparator, 0, 1, 5, 6,
-					  (GtkAttachOptions) ( GTK_FILL ),
-					  (GtkAttachOptions) ( GTK_FILL ), 0, 0 );
-
-	hseparator = gtk_hseparator_new();
-	gtk_widget_show( hseparator );
-	gtk_table_attach( GTK_TABLE( table1 ), hseparator, 0, 1, 7, 8,
-					  (GtkAttachOptions) ( GTK_FILL ),
-					  (GtkAttachOptions) ( GTK_FILL ), 0, 0 );
-
-	hseparator = gtk_hseparator_new();
-	gtk_widget_show( hseparator );
-	gtk_table_attach( GTK_TABLE( table1 ), hseparator, 0, 1, 9, 10,
-					  (GtkAttachOptions) ( GTK_FILL ),
-					  (GtkAttachOptions) ( GTK_FILL ), 0, 0 );
-
-	hseparator = gtk_hseparator_new();
-	gtk_widget_show( hseparator );
-	gtk_table_attach( GTK_TABLE( table1 ), hseparator, 0, 1, 11, 12,
-					  (GtkAttachOptions) ( GTK_FILL ),
-					  (GtkAttachOptions) ( GTK_FILL ), 0, 0 );
-
-	eventbox = gtk_event_box_new();
-	gtk_widget_show( eventbox );
-	gtk_table_attach( GTK_TABLE( table1 ), eventbox, 0, 1, 4, 5,
-					  (GtkAttachOptions) ( GTK_FILL ),
-					  (GtkAttachOptions) ( GTK_FILL ), 0, 0 );
-
 	label = gtk_label_new( "V Shift: " );
 	gtk_widget_show( label );
-	gtk_container_add( GTK_CONTAINER( eventbox ), label );
-	gtk_label_set_justify( GTK_LABEL( label ), GTK_JUSTIFY_LEFT );
-	gtk_misc_set_alignment( GTK_MISC( label ), 1, 0.5 );
-
-	eventbox = gtk_event_box_new();
-	gtk_widget_show( eventbox );
-	gtk_table_attach( GTK_TABLE( table1 ), eventbox, 0, 1, 6, 7,
+	gtk_table_attach( GTK_TABLE( table1 ), label, 0, 1, 4, 5,
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( GTK_FILL ), 0, 0 );
+	gtk_label_set_justify( GTK_LABEL( label ), GTK_JUSTIFY_LEFT );
+	gtk_misc_set_alignment( GTK_MISC( label ), 1, 0.5 );
 
 	label = gtk_label_new( " H Scale: " );
 	gtk_widget_show( label );
-	gtk_container_add( GTK_CONTAINER( eventbox ), label );
-	gtk_label_set_justify( GTK_LABEL( label ), GTK_JUSTIFY_LEFT );
-	gtk_misc_set_alignment( GTK_MISC( label ), 1, 0.5 );
-
-	eventbox = gtk_event_box_new();
-	gtk_widget_show( eventbox );
-	gtk_table_attach( GTK_TABLE( table1 ), eventbox, 0, 1, 8, 9,
+	gtk_table_attach( GTK_TABLE( table1 ), label, 0, 1, 6, 7,
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( GTK_FILL ), 0, 0 );
+	gtk_label_set_justify( GTK_LABEL( label ), GTK_JUSTIFY_LEFT );
+	gtk_misc_set_alignment( GTK_MISC( label ), 1, 0.5 );
 
 	label = gtk_label_new( "V Scale: " );
 	gtk_widget_show( label );
-	gtk_container_add( GTK_CONTAINER( eventbox ), label );
-	gtk_label_set_justify( GTK_LABEL( label ), GTK_JUSTIFY_LEFT );
-	gtk_misc_set_alignment( GTK_MISC( label ), 1, 0.5 );
-
-	eventbox = gtk_event_box_new();
-	gtk_widget_show( eventbox );
-	gtk_table_attach( GTK_TABLE( table1 ), eventbox, 0, 1, 10, 11,
+	gtk_table_attach( GTK_TABLE( table1 ), label, 0, 1, 8, 9,
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( GTK_FILL ), 0, 0 );
+	gtk_label_set_justify( GTK_LABEL( label ), GTK_JUSTIFY_LEFT );
+	gtk_misc_set_alignment( GTK_MISC( label ), 1, 0.5 );
 
 	label = gtk_label_new( "Rotate: " );
 	gtk_widget_show( label );
-	gtk_container_add( GTK_CONTAINER( eventbox ), label );
-	gtk_label_set_justify( GTK_LABEL( label ), GTK_JUSTIFY_LEFT );
-	gtk_misc_set_alignment( GTK_MISC( label ), 1, 0.5 );
-
-	eventbox = gtk_event_box_new();
-	gtk_widget_show( eventbox );
-	gtk_table_attach( GTK_TABLE( table1 ), eventbox, 0, 1, 2, 3,
+	gtk_table_attach( GTK_TABLE( table1 ), label, 0, 1, 10, 11,
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( GTK_FILL ), 0, 0 );
+	gtk_label_set_justify( GTK_LABEL( label ), GTK_JUSTIFY_LEFT );
+	gtk_misc_set_alignment( GTK_MISC( label ), 1, 0.5 );
 
 	label = gtk_label_new( "H Shift: " );
 	gtk_widget_show( label );
-	gtk_container_add( GTK_CONTAINER( eventbox ), label );
+	gtk_table_attach( GTK_TABLE( table1 ), label, 0, 1, 2, 3,
+					  (GtkAttachOptions) ( GTK_FILL ),
+					  (GtkAttachOptions) ( GTK_FILL ), 0, 0 );
 	gtk_label_set_justify( GTK_LABEL( label ), GTK_JUSTIFY_LEFT );
 	gtk_misc_set_alignment( GTK_MISC( label ), 1, 0.5 );
 
-	hseparator = gtk_hseparator_new();
-	gtk_widget_show( hseparator );
-	gtk_table_attach( GTK_TABLE( table1 ), hseparator, 0, 1, 1, 2,
-					  (GtkAttachOptions) ( GTK_FILL ),
-					  (GtkAttachOptions) ( GTK_FILL ), 0, 0 );
-
-	eventbox = gtk_event_box_new();
-	gtk_widget_show( eventbox );
-	gtk_table_attach( GTK_TABLE( table1 ), eventbox, 1, 2, 12, 13,
-					  (GtkAttachOptions) ( GTK_FILL ),
-					  (GtkAttachOptions) ( GTK_FILL ), 0, 0 );
-
-	lock_valuechange_togglebutton = gtk_toggle_button_new_with_mnemonic( "UNLOCK" );
+	lock_valuechange_togglebutton = gtk_toggle_button_new_with_mnemonic( "Unlock" );
 	gtk_widget_show( lock_valuechange_togglebutton );
-	gtk_container_add( GTK_CONTAINER( eventbox ), lock_valuechange_togglebutton );
+	gtk_table_attach( GTK_TABLE( table1 ), lock_valuechange_togglebutton, 1, 2, 12, 13,
+					  (GtkAttachOptions) ( GTK_FILL ),
+					  (GtkAttachOptions) ( 0 ), 0, 0 );
 
 	// Value Spins
 	hshift_value_spinbutton_adj = gtk_adjustment_new( 0.0, -8192.0, 8192.0, 2.0, 8.0, 8.0 );
@@ -1136,128 +945,75 @@ GtkWidget* create_SurfaceInspector( void ){
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
 	gtk_spin_button_set_update_policy( GTK_SPIN_BUTTON( rotate_step_spinbutton ), GTK_UPDATE_IF_VALID );
 
-	eventbox = gtk_event_box_new();
-	gtk_widget_show( eventbox );
-	gtk_table_attach( GTK_TABLE( table1 ), eventbox, 2, 3, 12, 13,
-					  (GtkAttachOptions) ( 0 ),
-					  (GtkAttachOptions) ( 0 ), 0, 0 );
+	frame2 = gtk_frame_new( "Tools" );
+	gtk_widget_show( frame2 );
+	gtk_container_add( GTK_CONTAINER( vbox1 ), frame2 );
 
-	eventbox = gtk_event_box_new();
-	gtk_widget_show( eventbox );
-	gtk_table_attach( GTK_TABLE( table1 ), eventbox, 0, 1, 12, 13,
-					  (GtkAttachOptions) ( 0 ),
-					  (GtkAttachOptions) ( 0 ), 0, 0 );
-
-	eventbox = gtk_event_box_new();
-	gtk_widget_show( eventbox );
-	gtk_table_attach( GTK_TABLE( table1 ), eventbox, 0, 1, 0, 1,
-					  (GtkAttachOptions) ( 0 ),
-					  (GtkAttachOptions) ( 0 ), 0, 0 );
-
-	viewport7 = gtk_viewport_new( NULL, NULL );
-	gtk_widget_show( viewport7 );
-	gtk_box_pack_start( GTK_BOX( vbox7 ), viewport7, FALSE, TRUE, 0 );
-	gtk_container_set_border_width( GTK_CONTAINER( viewport7 ), 2 );
-	gtk_viewport_set_shadow_type( GTK_VIEWPORT( viewport7 ), GTK_SHADOW_ETCHED_IN );
-
-	table4 = gtk_table_new( 4, 7, FALSE );
-	gtk_widget_show( table4 );
-	gtk_container_add( GTK_CONTAINER( viewport7 ), table4 );
-
-	viewport5 = gtk_viewport_new( NULL, NULL );
-	gtk_widget_show( viewport5 );
-	gtk_table_attach( GTK_TABLE( table4 ), viewport5, 1, 7, 0, 4,
-					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
-					  (GtkAttachOptions) ( 0 ), 0, 0 );
-	gtk_container_set_border_width( GTK_CONTAINER( viewport5 ), 6 );
-	gtk_viewport_set_shadow_type( GTK_VIEWPORT( viewport5 ), GTK_SHADOW_ETCHED_OUT );
-
-	table5 = gtk_table_new( 2, 3, FALSE );
-	gtk_widget_show( table5 );
-	gtk_container_add( GTK_CONTAINER( viewport5 ), table5 );
-	gtk_container_set_border_width( GTK_CONTAINER( table5 ), 5 );
-	gtk_table_set_col_spacings( GTK_TABLE( table5 ), 2 );
+	table2 = gtk_table_new( 2, 4, TRUE );
+	gtk_widget_show( table2 );
+	gtk_container_add( GTK_CONTAINER( frame2 ), table2 );
+	gtk_table_set_col_spacings( GTK_TABLE( table2 ), 2 );
 
 	label = gtk_label_new( "Height" );
 	gtk_widget_show( label );
-	gtk_table_attach( GTK_TABLE( table5 ), label, 2, 3, 0, 1,
+	gtk_table_attach( GTK_TABLE( table2 ), label, 3, 4, 0, 1,
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
-					  (GtkAttachOptions) ( GTK_FILL ), 0, 0 );
+					  (GtkAttachOptions) ( 0 ), 0, 0 );
 	gtk_label_set_justify( GTK_LABEL( label ), GTK_JUSTIFY_LEFT );
 	gtk_misc_set_alignment( GTK_MISC( label ), 0.5, 1 );
 
 	label = gtk_label_new( "Width" );
 	gtk_widget_show( label );
-	gtk_table_attach( GTK_TABLE( table5 ), label, 1, 2, 0, 1,
+	gtk_table_attach( GTK_TABLE( table2 ), label, 2, 3, 0, 1,
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
-					  (GtkAttachOptions) ( GTK_FILL ), 0, 0 );
+					  (GtkAttachOptions) ( 0 ), 0, 0 );
 	gtk_label_set_justify( GTK_LABEL( label ), GTK_JUSTIFY_LEFT );
 	gtk_misc_set_alignment( GTK_MISC( label ), 0.5, 1 );
 
-	fit_width_spinbutton_adj = gtk_adjustment_new( 1, 1, 32, 1, 10, 10 );
-	fit_width_spinbutton = gtk_spin_button_new( GTK_ADJUSTMENT( fit_width_spinbutton_adj ), 1, 0 );
-	gtk_widget_show( fit_width_spinbutton );
-	gtk_table_attach( GTK_TABLE( table5 ), fit_width_spinbutton, 1, 2, 1, 2,
+	label = gtk_label_new( "Brush" );
+	gtk_widget_show( label );
+	gtk_table_attach( GTK_TABLE( table2 ), label, 0, 2, 0, 1,
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
-					  (GtkAttachOptions) ( GTK_FILL ), 0, 0 );
-	gtk_spin_button_set_numeric( GTK_SPIN_BUTTON( fit_width_spinbutton ), TRUE );
-	gtk_spin_button_set_update_policy( GTK_SPIN_BUTTON( fit_width_spinbutton ), GTK_UPDATE_IF_VALID );
+					  (GtkAttachOptions) ( 0 ), 0, 0 );
+	gtk_label_set_justify( GTK_LABEL( label ), GTK_JUSTIFY_LEFT );
+	gtk_misc_set_alignment( GTK_MISC( label ), 0.5, 1 );
 
 	fit_height_spinbutton_adj = gtk_adjustment_new( 1, 1, 32, 1, 10, 10 );
 	fit_height_spinbutton = gtk_spin_button_new( GTK_ADJUSTMENT( fit_height_spinbutton_adj ), 1, 0 );
 	gtk_widget_show( fit_height_spinbutton );
-	gtk_table_attach( GTK_TABLE( table5 ), fit_height_spinbutton, 2, 3, 1, 2,
+	gtk_table_attach( GTK_TABLE( table2 ), fit_height_spinbutton, 3, 4, 1, 2,
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
-					  (GtkAttachOptions) ( GTK_FILL ), 3, 0 );
+					  (GtkAttachOptions) ( 0 ), 0, 0 );
 	gtk_spin_button_set_numeric( GTK_SPIN_BUTTON( fit_height_spinbutton ), TRUE );
 	gtk_spin_button_set_update_policy( GTK_SPIN_BUTTON( fit_height_spinbutton ), GTK_UPDATE_IF_VALID );
 
-	eventbox = gtk_event_box_new();
-	gtk_widget_show( eventbox );
-	gtk_table_attach( GTK_TABLE( table5 ), eventbox, 0, 1, 0, 1,
-					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
-					  (GtkAttachOptions) ( GTK_FILL ), 0, 0 );
-
-	eventbox = gtk_event_box_new();
-	gtk_widget_show( eventbox );
-	gtk_table_attach( GTK_TABLE( table5 ), eventbox, 0, 1, 1, 2,
-					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
-					  (GtkAttachOptions) ( GTK_FILL ), 4, 0 );
-
-	fit_button = gtk_button_new_with_mnemonic( "    Fit    " );
-	gtk_widget_show( fit_button );
-	gtk_container_add( GTK_CONTAINER( eventbox ), fit_button );
-
-	viewport6 = gtk_viewport_new( NULL, NULL );
-	gtk_widget_show( viewport6 );
-	gtk_table_attach( GTK_TABLE( table4 ), viewport6, 0, 1, 0, 4,
+	fit_width_spinbutton_adj = gtk_adjustment_new( 1, 1, 32, 1, 10, 10 );
+	fit_width_spinbutton = gtk_spin_button_new( GTK_ADJUSTMENT( fit_width_spinbutton_adj ), 1, 0 );
+	gtk_widget_show( fit_width_spinbutton );
+	gtk_table_attach( GTK_TABLE( table2 ), fit_width_spinbutton, 2, 3, 1, 2,
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
-	gtk_container_set_border_width( GTK_CONTAINER( viewport6 ), 4 );
-	gtk_viewport_set_shadow_type( GTK_VIEWPORT( viewport6 ), GTK_SHADOW_NONE );
+	gtk_spin_button_set_numeric( GTK_SPIN_BUTTON( fit_width_spinbutton ), TRUE );
+	gtk_spin_button_set_update_policy( GTK_SPIN_BUTTON( fit_width_spinbutton ), GTK_UPDATE_IF_VALID );
 
-	table7 = gtk_table_new( 2, 1, FALSE );
-	gtk_widget_show( table7 );
-	gtk_container_add( GTK_CONTAINER( viewport6 ), table7 );
-
-	eventbox = gtk_event_box_new();
-	gtk_widget_show( eventbox );
-	gtk_table_attach( GTK_TABLE( table7 ), eventbox, 0, 1, 0, 2,
+	fit_button = gtk_button_new_with_mnemonic( "Fit" );
+	gtk_widget_show( fit_button );
+	gtk_table_attach( GTK_TABLE( table2 ), fit_button, 1, 2, 1, 2,
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
-					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ), 0, 0 );
+					  (GtkAttachOptions) ( 0 ), 0, 0 );
 
 	axial_button = gtk_button_new_with_mnemonic( "Axial" );
 	gtk_widget_show( axial_button );
-	gtk_container_add( GTK_CONTAINER( eventbox ), axial_button );
-	gtk_widget_set_size_request( axial_button, 56, 29 );
-	gtk_container_set_border_width( GTK_CONTAINER( axial_button ), 4 );
+	gtk_table_attach( GTK_TABLE( table2 ), axial_button, 0, 1, 1, 2,
+					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
+					  (GtkAttachOptions) ( 0 ), 0, 0 );
 
 	// Fit in Flags sub-dialog
-	Create_UFOAIFlagsDialog( vbox7 );
+	Create_UFOAIFlagsDialog( vbox1 );
 
 	viewport10 = gtk_viewport_new( NULL, NULL );
 	gtk_widget_show( viewport10 );
-	gtk_box_pack_start( GTK_BOX( vbox7 ), viewport10, FALSE, TRUE, 0 );
+	gtk_box_pack_start( GTK_BOX( vbox1 ), viewport10, FALSE, TRUE, 0 );
 	gtk_container_set_border_width( GTK_CONTAINER( viewport10 ), 2 );
 	gtk_viewport_set_shadow_type( GTK_VIEWPORT( viewport10 ), GTK_SHADOW_ETCHED_IN );
 
@@ -1628,6 +1384,8 @@ static void on_lock_valuechange_togglebutton_toggled( GtkToggleButton *togglebut
 	gtk_widget_set_sensitive( GTK_WIDGET( hshift_value_spinbutton ), is_Locked );
 	gtk_widget_set_sensitive( GTK_WIDGET( vshift_value_spinbutton ), is_Locked );
 	gtk_widget_set_sensitive( GTK_WIDGET( rotate_value_spinbutton ), is_Locked );
+
+	gtk_button_set_label( GTK_BUTTON( togglebutton ), is_Locked ? "Lock" : "Unlock" );
 }
 
 
