@@ -28,42 +28,41 @@
 //#define DBG_SI 1
 #endif
 
-class SurfaceDlg : public Dialog
-{
-bool m_bPatchMode;
-// brush primitive fake shift scale rot coords
-float m_shift[2];
-float m_rotate;
-float m_scale[2];
+class SurfaceDlg : public Dialog {
+  bool m_bPatchMode;
+  // brush primitive fake shift scale rot coords
+  float m_shift[2];
+  float m_rotate;
+  float m_scale[2];
 
 public:
-SurfaceDlg ();
+  SurfaceDlg();
 
-virtual void ShowDlg();
-virtual void HideDlg();
-void SetTexMods();
-void GetTexMods();
+  virtual void ShowDlg();
+  virtual void HideDlg();
+  void SetTexMods();
+  void GetTexMods();
 
-void InitDefaultIncrement( texdef_t * );
+  void InitDefaultIncrement( texdef_t * );
 
-// Dialog Data
-int m_nHeight;
-int m_nWidth;
+  // Dialog Data
+  int m_nHeight;
+  int m_nWidth;
 
-// 0 is invalid, otherwise it's the Id of the last 'do' we are responsible for
-int m_nUndoId;
+  // 0 is invalid, otherwise it's the Id of the last 'do' we are responsible for
+  int m_nUndoId;
 
-// is the user editing the texture widget (that changes the behaviour of 'Enter' key from OnDone to OnApply
-// reset to false at each SetTexMods or when dealing with Enter key
-bool m_bEditingTextureWidget;
+  // is the user editing the texture widget (that changes the behaviour of 'Enter' key from OnDone to OnApply
+  // reset to false at each SetTexMods or when dealing with Enter key
+  bool m_bEditingTextureWidget;
 
 protected:
-void BuildDialog();
+  void BuildDialog();
 
 public:
-// called to perform a fitting from the outside (shortcut key)
-void FitAll();
-GtkWidget *GetWidget();    // { return m_pWidget; }
+  // called to perform a fitting from the outside (shortcut key)
+  void FitAll();
+  GtkWidget *GetWidget();
 };
 
 #endif // _SURFACEDIALOG_H_
