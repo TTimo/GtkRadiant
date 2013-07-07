@@ -671,10 +671,9 @@ void load_pixmap( const char* filename, GtkWidget* widget, GdkPixmap **gdkpixmap
 
 	bmp_to_pixmap( str.GetBuffer(), gdkpixmap, mask );
 	if ( *gdkpixmap == NULL ) {
-		printf( "gdkpixmap was null\n" );
-		gchar *dummy[] = { "1 1 1 1", "  c None", " " };
-		printf( "calling gdk_pixmap_create_from_xpm_d\n" );
-		*gdkpixmap = gdk_pixmap_create_from_xpm_d( gdk_get_default_root_window(), mask, NULL, dummy );
+		Sys_Printf( "Failed to load_pixmap %s, creating default pixmap\n", str.GetBuffer() );
+		const gchar *dummy[] = { "1 1 1 1", "  c None", " " };
+		*gdkpixmap = gdk_pixmap_create_from_xpm_d( gdk_get_default_root_window(), mask, NULL, (gchar **)dummy );
 	}
 }
 
