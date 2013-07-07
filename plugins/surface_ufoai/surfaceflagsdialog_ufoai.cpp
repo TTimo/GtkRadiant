@@ -167,20 +167,22 @@ void SetFlagButtons_UFOAI( texdef_to_face_t *texdef_face_list, bool b_isListEmpt
 	setup_buttons = FALSE;
 }
 
-void SetChangeInFlags_Face_UFOAI( texdef_to_face_t *texdef_face_list ){
-	texdef_to_face_t *temp_texdef_face_list;
-	texdef_t *tmp_texdef;
+void SetChangeInFlags_Face_UFOAI( texdef_to_face_t *faces ){
+	texdef_to_face_t *face;
+	texdef_t *tex;
 
-	for ( temp_texdef_face_list = texdef_face_list; temp_texdef_face_list; temp_texdef_face_list = temp_texdef_face_list->next )
+	for ( face = faces; face; face = face->next )
 	{
-		tmp_texdef = &temp_texdef_face_list->texdef;
-		tmp_texdef->flags = ( tmp_texdef->flags & ~surface_mask ) | working_surface_flags;
-		tmp_texdef->contents = ( tmp_texdef->contents & ~content_mask ) | working_content_flags;
-		tmp_texdef->value = working_value;
-		Sys_Printf( "content_flag: %d     content_mask: %d\n",working_content_flags,content_mask );
-		Sys_Printf( "content: %d\n",tmp_texdef->contents );
+		tex = &face->texdef;
+		tex->flags = ( tex->flags & ~surface_mask ) | working_surface_flags;
+		tex->contents = ( tex->contents & ~content_mask ) | working_content_flags;
+		tex->value = working_value;
+
+		Sys_Printf( "Surface: %d\tContents: %d\tValue: %d\n", tex->flags, tex->contents, tex->value );
 	}
 }
+
+extern void GetTexMods( bool b_SetUndoPoint );
 
 inline void change_surfaceflag( GtkWidget *togglebutton, int sur_flag, gboolean change_flag_to ){
 	if ( !setup_buttons ) { // If we're setting up the buttons, we really don't need to
@@ -197,6 +199,8 @@ inline void change_surfaceflag( GtkWidget *togglebutton, int sur_flag, gboolean 
 		else{
 			working_surface_flags &= ~sur_flag;
 		}
+
+		GetTexMods( false );
 	}
 }
 
@@ -206,8 +210,7 @@ inline void change_contentflag( GtkWidget *togglebutton, int content_flag, gbool
 		if ( gtk_toggle_button_get_inconsistent( GTK_TOGGLE_BUTTON( togglebutton ) ) ) {
 			clear_inconsistent( togglebutton );
 		}
-		//if (g_ptrSelectedFaces.GetSize() == 0)  // Only changing content flags on whole brushes, not faces.
-		//{
+
 		content_mask |= content_flag;
 
 		if ( change_flag_to ) {
@@ -216,8 +219,8 @@ inline void change_contentflag( GtkWidget *togglebutton, int content_flag, gbool
 		else{
 			working_content_flags &= ~content_flag;
 		}
-		//}
-		Sys_Printf( "content_flag: %d     content_mask: %d\n",content_flag,content_mask );
+
+		GetTexMods( false );
 	}
 }
 
