@@ -1810,7 +1810,7 @@ void XYWnd::DropClipPoint( guint32 nFlags, int pointx, int pointy ){
 		// g_pParentWnd->ActiveXY()->GetViewType()
 		// cf VIEWTYPE defintion: enum VIEWTYPE {YZ, XZ, XY};
 		int nViewType = g_pParentWnd->ActiveXY()->GetViewType();
-		int nDim = ( nViewType == YZ ) ? nDim = 0 : ( ( nViewType == XZ ) ? nDim = 1 : nDim = 2 );
+		int nDim = ( nViewType == YZ ) ? 0 : ( ( nViewType == XZ ) ?  1 : 2 );
 		//(*pPt)[nDim] = g_qeglobals.d_work_max[nDim];
 		vec3_t mid;
 		Select_GetMid( mid );
@@ -1834,7 +1834,7 @@ void XYWnd::DropPathPoint( guint32 nFlags, int pointx, int pointy ){
 		// g_pParentWnd->ActiveXY()->GetViewType()
 		// cf VIEWTYPE definition: enum VIEWTYPE {YZ, XZ, XY};
 		int nViewType = g_pParentWnd->ActiveXY()->GetViewType();
-		int nDim = ( nViewType == YZ ) ? nDim = 0 : ( ( nViewType == XZ ) ? nDim = 1 : nDim = 2 );
+		int nDim = ( nViewType == YZ ) ? 0 : ( ( nViewType == XZ ) ? 1 : 2 );
 		g_PathPoints[g_nPathCount].m_ptClip[nDim] = g_qeglobals.d_work_max[nDim];
 
 		g_nPathCount++;
