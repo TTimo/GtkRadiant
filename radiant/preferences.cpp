@@ -514,6 +514,8 @@ static void OnBtnBrowseEditor( GtkWidget *widget, gpointer data ){
 }
 #endif
 
+#define PREFERENCES_HAVE_PREFAB_PATH 0
+#if PREFERENCES_HAVE_PREFAB_PATH
 static void OnBtnBrowseprefab( GtkWidget *widget, gpointer data ){
 	PrefsDlg *dlg = (PrefsDlg*)data;
 	char *path = dlg->m_strPrefabPath;
@@ -532,6 +534,7 @@ static void OnBtnBrowseprefab( GtkWidget *widget, gpointer data ){
 		free( dir );
 	}
 }
+#endif
 
 static void OnBtnBrowseuserini( GtkWidget *widget, gpointer data ){
 	PrefsDlg *dlg = (PrefsDlg*)data;
@@ -2503,7 +2506,7 @@ void PrefsDlg::BuildDialog(){
 					  (GtkAttachOptions) ( 0 ), 1, 0 );
 	AddDialogData( entry, &m_strPrefabPath, DLG_ENTRY_TEXT );
 
-#if 0
+#if PREFERENCES_HAVE_PREFAB_PATH
 	// browse button
 	button = gtk_button_new_with_label( "..." );
 	gtk_widget_show( button );
