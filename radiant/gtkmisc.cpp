@@ -706,8 +706,8 @@ bool WINAPI load_plugin_bitmap( const char* filename, void **gdkpixmap, void **m
 			bmp_to_pixmap( str.GetBuffer(), (GdkPixmap **)gdkpixmap, (GdkBitmap **)mask );
 
 			if ( *gdkpixmap == NULL ) {
-				gchar *dummy[] = { "1 1 1 1", "  c None", " " };
-				*gdkpixmap = gdk_pixmap_create_from_xpm_d( gdk_get_default_root_window(), (GdkBitmap **)mask, NULL, dummy );
+				const gchar *dummy[] = { "1 1 1 1", "  c None", " " };
+				*gdkpixmap = gdk_pixmap_create_from_xpm_d( gdk_get_default_root_window(), (GdkBitmap **)mask, NULL, (gchar **)dummy );
 				return false;
 			}
 		}
