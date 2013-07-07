@@ -441,6 +441,7 @@ void ReplaceTemplates( char* w, const char* r ){
 	const char *__ENGINEPATH = "TEMPLATEenginepath";
 	const char *__USERHOMEPATH = "TEMPLATEuserhomepath";
 	const char *__TOOLSPATH = "TEMPLATEtoolspath";
+	const char *__EXECPATH = "TEMPLATEexecpath";
 	const char *__BASEDIR = "TEMPLATEbasedir";
 	const char *__APPPATH = "TEMPLATEapppath";
 	const char *__Q3MAP2 = "TEMPLATEq3map2";
@@ -465,6 +466,10 @@ void ReplaceTemplates( char* w, const char* r ){
 			else if ( strncmp( r + 1, __TOOLSPATH, strlen( __TOOLSPATH ) ) == 0 ) {
 				r += strlen( __TOOLSPATH ) + 1;
 				p = g_strGameToolsPath.GetBuffer();
+			}
+			else if ( strncmp( r + 1, __EXECPATH, strlen( __EXECPATH ) ) == 0 ) {
+				r += strlen( __EXECPATH ) + 1;
+				p = g_strExecutablesPath.GetBuffer();
 			}
 			else if ( strncmp( r + 1, __APPPATH, strlen( __APPPATH ) ) == 0 ) {
 				r += strlen( __APPPATH ) + 1;

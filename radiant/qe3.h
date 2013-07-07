@@ -770,6 +770,7 @@ extern CString g_strModulesDir;
 
 extern CGameDescription *g_pGameDescription;
 extern CString g_strGameToolsPath;
+extern CString g_strExecutablesPath;
 
 extern CString g_strTempPath;
 extern PrefsDlg& g_PrefsDlg;
