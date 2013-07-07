@@ -153,10 +153,10 @@ static const char *PLUGIN_COMMANDS = "About...";
 static const char *PLUGIN_ABOUT = "Sprite Model loading module v0.2 for GTKRadiant\n\n"
 								  "By Hydra!";
 
-char *supportedmodelformats[] = {"spr","bmp","tga","jpg","hlw",NULL}; // NULL is list delimiter
+const char *supportedmodelformats[] = {"spr","bmp","tga","jpg","hlw",NULL}; // NULL is list delimiter
 
 static void add_model_apis( CSynapseClient& client ){
-	char **ext;
+	const char **ext;
 	for ( ext = supportedmodelformats; *ext != NULL; ext++ )
 	{
 		client.AddAPI( MODEL_MAJOR, *ext, sizeof( _QERPlugModelTable ) );
@@ -164,7 +164,7 @@ static void add_model_apis( CSynapseClient& client ){
 }
 
 static bool model_is_supported( const char* extension ){
-	char **ext;
+	const char **ext;
 	for ( ext = supportedmodelformats; *ext != NULL; ext++ )
 	{
 		if ( stricmp( extension,*ext ) == 0 ) {
@@ -175,7 +175,7 @@ static bool model_is_supported( const char* extension ){
 }
 
 void init_filetypes(){
-	char **ext;
+	const char **ext;
 	for ( ext = supportedmodelformats; *ext != NULL; ext++ )
 	{
 		GetFileTypeRegistry()->addType( MODEL_MAJOR, filetype_t( "sprite", *ext ) );
