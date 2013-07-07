@@ -3631,6 +3631,7 @@ void CGameInstall::Run() {
 	case GAME_UFOAI: {
 		fprintf( fg, "  prefix=\".ufoai\"\n" );
 		fprintf( fg, "  basegame=\"base\"\n" );
+		fprintf( fg, "  no_patch=\"true\"\n" );
 		break;
 	}
 	case GAME_Q2W: {
