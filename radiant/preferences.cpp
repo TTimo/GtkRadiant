@@ -682,19 +682,25 @@ PrefsDlg::PrefsDlg (){
 
 #if defined( WIN32 )
 #define TOOLS_ATTRIBUTE "gametools_win32"
+#define EXECUTABLES_ATTRIBUTE "executables_win32"
 #define ENGINE_ATTRIBUTE "engine_win32"
 #define ENGINEPATH_ATTRIBUTE "enginepath_win32"
 #define MP_ENGINE_ATTRIBUTE "mp_engine_win32"
+#define PREFIX_ATTRIBUTE "prefix_win32"
 #elif defined( __linux__ ) || defined ( __FreeBSD__ )
 #define TOOLS_ATTRIBUTE "gametools_linux"
+#define EXECUTABLES_ATTRIBUTE "executables_linux"
 #define ENGINE_ATTRIBUTE "engine_linux"
 #define ENGINEPATH_ATTRIBUTE "enginepath_linux"
 #define MP_ENGINE_ATTRIBUTE "mp_engine_linux"
+#define PREFIX_ATTRIBUTE "prefix"
 #elif defined( __APPLE__ )
 #define TOOLS_ATTRIBUTE "gametools_macos"
+#define EXECUTABLES_ATTRIBUTE "executables_macos"
 #define ENGINE_ATTRIBUTE "engine_macos"
 #define ENGINEPATH_ATTRIBUTE "enginepath_macos"
 #define MP_ENGINE_ATTRIBUTE "mp_engine_macos"
+#define PREFIX_ATTRIBUTE "prefix"
 #else
 #error "unsupported platform"
 #endif
@@ -854,15 +860,23 @@ CGameDescription::CGameDescription( xmlDocPtr pDoc, const Str &GameFile ){
 		}
 	}
 
-#if defined ( __linux__ ) || defined ( __APPLE__ )
-	prop = (char*)xmlGetProp( pNode, (const xmlChar *)"prefix" );
-#elif defined ( _WIN32 )
-	prop = (char*)xmlGetProp( pNode, (const xmlChar *)"prefix_win32" );
-#endif
+	// Resolve the executables path for games which provide their binaries
+	// or map compiling tools in external locations.
+	prop = (char*)xmlGetProp( pNode, (const xmlChar *)EXECUTABLES_ATTRIBUTE );
+	if ( prop != NULL ) {
+		mExecutablesPath = prop;
+		xmlFree( prop );
+		prop = NULL;
+	} else {
+		mExecutablesPath = mEnginePath.GetBuffer();
+	}
+
+	// Resolve the per-user directory.
+	prop = (char*)xmlGetProp( pNode, (const xmlChar *)PREFIX_ATTRIBUTE );
 	if ( prop != NULL ) {
 		mUserPathPrefix = prop;
 		xmlFree( prop );
-                prop = NULL;
+		prop = NULL;
 	}
 
 	mShaderPath = xmlGetProp( pNode, (const xmlChar *)"shaderpath" );
@@ -922,6 +936,7 @@ void CGameDescription::Dump(){
 	Sys_Printf( "game path            : '%s'\n", mGameToolsPath.GetBuffer() );
 	Sys_Printf( "base game            : '%s'\n", mBaseGame.GetBuffer() );
 	Sys_Printf( "engine path          : '%s'\n", mEnginePath.GetBuffer() );
+	Sys_Printf( "executables path     : '%s'\n", mExecutablesPath.GetBuffer() );
 	Sys_Printf( "engine               : '%s'\n", mEngine.GetBuffer() );
 	Sys_Printf( "shaderlist           : '%s'\n", mShaderlist.GetBuffer() );
 	Sys_Printf( "caulk shader         : '%s'\n", mCaulkShader.GetBuffer() );
@@ -1032,18 +1047,18 @@ GtkWidget* CGameDialog::GetGlobalFrame(){
 		return mFrame;
 	}
 
-	mFrame = gtk_frame_new( NULL );
+	mFrame = gtk_frame_new( "Select a game" );
 	gtk_container_set_border_width( GTK_CONTAINER( mFrame ), 5 );
 	gtk_widget_show( mFrame );
 
-	vbox = gtk_vbox_new( FALSE, 6 );
+	vbox = gtk_vbox_new( FALSE, 5 );
 	gtk_widget_show( vbox );
 	gtk_container_add( GTK_CONTAINER( mFrame ), vbox );
 	gtk_container_set_border_width( GTK_CONTAINER( vbox ), 5 );
 
-	text = gtk_label_new( _( "Select the game:" ) );
+	/*text = gtk_label_new( _( "Select the game:" ) );
 	gtk_widget_show( text );
-	gtk_box_pack_start( GTK_BOX( vbox ), text, FALSE, FALSE, 0 );
+	gtk_box_pack_start( GTK_BOX( vbox ), text, FALSE, FALSE, 0 );*/
 
 	combo = gtk_combo_box_new_text();
 	gtk_widget_show( combo );
@@ -1123,9 +1138,10 @@ void CGameDialog::BuildDialog() {
 	GtkWidget *dlg, *vbox1, *button, *setup_button;
 
 	dlg = m_pWidget;
-	gtk_window_set_title( GTK_WINDOW( dlg ), _( "Select Game" ) );
+	gtk_window_set_title( GTK_WINDOW( dlg ), _( "Select a game" ) );
 
 	vbox1 = gtk_vbox_new( FALSE, 0 );
+	gtk_container_set_border_width( GTK_CONTAINER( vbox1 ), 5 );
 	gtk_widget_show( vbox1 );
 	gtk_container_add( GTK_CONTAINER( dlg ), vbox1 );
 
@@ -1148,7 +1164,7 @@ void CGameDialog::BuildDialog() {
 	gtk_box_pack_start( GTK_BOX( vbox1 ), button, FALSE, FALSE, 0 );
 	AddModalButton( button, IDCANCEL );
 
-	gtk_widget_set_usize( button, 60, -2 );
+	gtk_widget_set_size_request( dlg, 320, -1 );
 }
 
 void CGameDialog::UpdateGameCombo() {
@@ -1304,6 +1320,7 @@ void CGameDialog::Init(){
 	g_pGameDescription = m_pCurrentGameDescription;
 
 	g_strGameToolsPath = g_pGameDescription->mGameToolsPath;
+	g_strExecutablesPath = g_pGameDescription->mExecutablesPath;
 
 	// Add the per-user game path on all platforms
 	if ( m_pCurrentGameDescription->mUserPathPrefix.GetLength() ) {
@@ -1522,6 +1539,7 @@ static void treeSelection( GtkTreeSelection* selection, gpointer data ){
 	}
 }
 
+#ifdef _WIN32
 static void OnX64Toggle( GtkWidget *widget, gpointer data ) {
   Dialog * d = static_cast< Dialog * >( data );
   if ( !d->IsModal() ) {
@@ -1532,6 +1550,7 @@ static void OnX64Toggle( GtkWidget *widget, gpointer data ) {
   g_PrefsDlg.m_nLastProjectVer = -1;
   g_PrefsDlg.m_strLastProject = "";
 }
+#endif
 
 void PrefsDlg::BuildDialog(){
 	// Main Preferences dialog
@@ -1947,7 +1966,7 @@ void PrefsDlg::BuildDialog(){
 	pageframe = gtk_frame_new( _( "Textures" ) );
 	gtk_container_set_border_width( GTK_CONTAINER( pageframe ), 5 );
 	gtk_widget_show( pageframe );
-	vbox = gtk_vbox_new( FALSE, 6 );
+	vbox = gtk_vbox_new( FALSE, 5 );
 	gtk_widget_show( vbox );
 	gtk_container_set_border_width( GTK_CONTAINER( vbox ), 5 );
 	gtk_container_add( GTK_CONTAINER( pageframe ), vbox );
@@ -3309,6 +3328,21 @@ void CGameInstall::OnBtnBrowseEngine( GtkWidget *widget, gpointer data ) {
 	}
 }
 
+void CGameInstall::OnBtnBrowseExecutables( GtkWidget *widget, gpointer data ) {
+	Sys_Printf( "OnBtnBrowseExecutables\n" );
+
+	CGameInstall* i = static_cast<CGameInstall*>( data );
+	char *dir = dir_dialog( i->m_pWidget, _( "Select executables directory" ), NULL );
+
+	i->UpdateData( TRUE );
+
+	if ( dir != NULL ) {
+		i->m_strExecutables = dir;
+		i->UpdateData( FALSE );
+		g_free( dir );
+	}
+}
+
 void CGameInstall::OnGameSelectChanged( GtkWidget *widget, gpointer data ) {
 	Sys_Printf( "OnGameSelectChanged\n" );
 
@@ -3319,22 +3353,28 @@ void CGameInstall::OnGameSelectChanged( GtkWidget *widget, gpointer data ) {
 }
 
 void CGameInstall::BuildDialog() {
-	GtkWidget *dlg, *vbox1, *button, *text, *combo, *entry, *hbox;
+	GtkWidget *dlg, *vbox1, *frame, *vbox2, *button, *text, *combo, *entry, *hbox;
 
 	dlg = m_pWidget;
 	gtk_window_set_title( GTK_WINDOW( dlg ), _( "Configure games" ) );
 
-	vbox1 = gtk_vbox_new( FALSE, 0 );
+	vbox1 = gtk_vbox_new( FALSE, 5 );
+	gtk_container_set_border_width( GTK_CONTAINER( vbox1 ), 5 );
 	gtk_widget_show( vbox1 );
 	gtk_container_add( GTK_CONTAINER( dlg ), vbox1 );
 
-	text = gtk_label_new( _( "Select the game to configure" ) );
-	gtk_widget_show( text );
-	gtk_box_pack_start( GTK_BOX( vbox1 ), text, FALSE, FALSE, 0 );
+	frame = gtk_frame_new( "Configure a game" );
+	gtk_widget_show( frame );
+	gtk_container_add( GTK_CONTAINER( vbox1 ), frame );
+
+	vbox2 = gtk_vbox_new( FALSE, 5);
+	gtk_container_set_border_width( GTK_CONTAINER( vbox2 ), 5 );
+	gtk_widget_show( vbox2 );
+	gtk_container_add( GTK_CONTAINER( frame ), vbox2 );
 
 	combo = gtk_combo_box_new_text();
 	gtk_widget_show( combo );
-	gtk_box_pack_start( GTK_BOX( vbox1 ), combo, FALSE, FALSE, 0 );
+	gtk_box_pack_start( GTK_BOX( vbox2 ), combo, FALSE, FALSE, 0 );
 
 	//	GList *combo_list = NULL;
 	int iGame = 0;
@@ -3388,20 +3428,20 @@ void CGameInstall::BuildDialog() {
 
 	text = gtk_label_new( _( "Name:" ) );
 	gtk_widget_show( text );
-	gtk_box_pack_start( GTK_BOX( vbox1 ), text, FALSE, FALSE, 0 );
+	gtk_box_pack_start( GTK_BOX( vbox2 ), text, FALSE, FALSE, 0 );
 
 	entry = gtk_entry_new();
 	gtk_widget_show( entry );
-	gtk_box_pack_start( GTK_BOX( vbox1 ), entry, FALSE, FALSE, 0 );
+	gtk_box_pack_start( GTK_BOX( vbox2 ), entry, FALSE, FALSE, 0 );
 	AddDialogData( entry, &m_strName, DLG_ENTRY_TEXT );
 
 	text = gtk_label_new( _( "Engine directory:" ) );
 	gtk_widget_show( text );
-	gtk_box_pack_start( GTK_BOX( vbox1 ), text, FALSE, FALSE, 0 );
+	gtk_box_pack_start( GTK_BOX( vbox2 ), text, FALSE, FALSE, 0 );
 
-	hbox = gtk_hbox_new( FALSE, 0 );
+	hbox = gtk_hbox_new( FALSE, 5 );
 	gtk_widget_show( hbox );
-	gtk_box_pack_start( GTK_BOX( vbox1 ), hbox, FALSE, FALSE, 0 );
+	gtk_box_pack_start( GTK_BOX( vbox2 ), hbox, FALSE, FALSE, 0 );
 
 	entry = gtk_entry_new();
 	gtk_widget_show( entry );
@@ -3413,15 +3453,33 @@ void CGameInstall::BuildDialog() {
 	gtk_signal_connect( GTK_OBJECT( button ), "clicked", GTK_SIGNAL_FUNC( OnBtnBrowseEngine ), this );
 	gtk_box_pack_start( GTK_BOX( hbox ), button, FALSE, FALSE, 0 );
 
+	text = gtk_label_new( _( "Executables directory (optional):" ) );
+	gtk_widget_show( text );
+	gtk_box_pack_start( GTK_BOX( vbox2 ), text, FALSE, FALSE, 0 );
+
+	hbox = gtk_hbox_new( FALSE, 5 );
+	gtk_widget_show( hbox );
+	gtk_box_pack_start( GTK_BOX( vbox2 ), hbox, FALSE, FALSE, 0 );
+
+	entry = gtk_entry_new();
+	gtk_widget_show( entry );
+	gtk_box_pack_start( GTK_BOX( hbox ), entry, FALSE, FALSE, 0 );
+	AddDialogData( entry, &m_strExecutables, DLG_ENTRY_TEXT );
+
+	button = gtk_button_new_with_label( _( "..." ) );
+	gtk_widget_show( button );
+	gtk_signal_connect( GTK_OBJECT( button ), "clicked", GTK_SIGNAL_FUNC( OnBtnBrowseExecutables ), this );
+	gtk_box_pack_start( GTK_BOX( hbox ), button, FALSE, FALSE, 0 );
+
 	// this gets done in the project stuff atm
 #if 0
 	text = gtk_label_new( _( "Mod subdirectory:" ) );
 	gtk_widget_show( text );
-	gtk_box_pack_start( GTK_BOX( vbox1 ), text, FALSE, FALSE, 0 );
+	gtk_box_pack_start( GTK_BOX( vbox2 ), text, FALSE, FALSE, 0 );
 
 	entry = gtk_entry_new();
 	gtk_widget_show( entry );
-	gtk_box_pack_start( GTK_BOX( vbox1 ), entry, FALSE, FALSE, 0 );
+	gtk_box_pack_start( GTK_BOX( vbox2 ), entry, FALSE, FALSE, 0 );
 	AddDialogData( entry, &m_strMod, DLG_ENTRY_TEXT );
 #endif
 
@@ -3435,7 +3493,7 @@ void CGameInstall::BuildDialog() {
 	gtk_box_pack_start( GTK_BOX( vbox1 ), button, FALSE, FALSE, 0 );
 	AddModalButton( button, IDCANCEL );
 
-	gtk_widget_set_usize( button, 60, -2 );
+	gtk_widget_set_size_request( dlg, 320, -1);
 }
 
 void CGameInstall::Run() {
@@ -3449,205 +3507,169 @@ void CGameInstall::Run() {
 	}
 	Sys_Printf( "combo: %d name: %s engine: %s mod: %s\n", m_nComboSelect, m_strName.GetBuffer(), m_strEngine.GetBuffer(), m_strMod.GetBuffer() );
 
-	// write out the game file
-	Str gameFilePath = g_strAppPath.GetBuffer();
+	// Resolve the game pack and .game file
+	Str gamePack, gameFilePath = g_strAppPath.GetBuffer();
 	gameFilePath += "games/";
 	if ( CheckFile( gameFilePath ) != PATH_DIRECTORY ) {
 		radCreateDirectory( gameFilePath );
 	}
-	
+
 	switch ( m_availGames[ m_nComboSelect ] ) {
 	case GAME_Q2:
-		gameFilePath += "q2.game";
+		gamePack = Q2_PACK;
+		gameFilePath += Q2_GAME;
 		break;
 	case GAME_Q3:
-		gameFilePath += "q3.game";
+		gamePack = Q3_PACK;
+		gameFilePath += Q3_GAME;
 		break;
 	case GAME_URT:
-		gameFilePath += "urt.game";
+		gamePack = URT_PACK;
+		gameFilePath += URT_GAME;
 		break;
 	case GAME_UFOAI:
-		gameFilePath += "ufoai.game";
+		gamePack = UFOAI_PACK;
+		gameFilePath += UFOAI_GAME;
 		break;
 	case GAME_Q2W:
-		gameFilePath += "q2w.game";
+		gamePack = Q2W_PACK;
+		gameFilePath += Q2W_GAME;
 		break;
 	case GAME_WARSOW:
-		gameFilePath += "warsow.game";
+		gameFilePath += WARSOW_GAME;
+		gamePack = WARSOW_PACK;
 		break;
 	case GAME_NEXUIZ:
-		gameFilePath += "nexuiz.game";
+		gamePack = NEXUIZ_PACK;
+		gameFilePath += NEXUIZ_GAME;
 		break;
 	case GAME_TREMULOUS:
-		gameFilePath += "tremulous.game";
+		gamePack = TREMULOUS_PACK;
+		gameFilePath += TREMULOUS_GAME;
 		break;
 	case GAME_JA:
-		gameFilePath += "ja.game";
+		gamePack = JA_PACK;
+		gameFilePath += JA_GAME;
 		break;
 	case GAME_REACTION:
-		gameFilePath += "reaction.game";
+		gamePack = REACTION_PACK;
+		gameFilePath += REACTION_GAME;
 		break;
 	case GAME_ET:
-		gameFilePath += "et.game";
+		gamePack = ET_PACK;
+		gameFilePath += ET_GAME;
 		break;
 	case GAME_QL:
-		gameFilePath += "ql.game";
+		gamePack = QL_PACK;
+		gameFilePath += QL_GAME;
 		break;
 	case GAME_STVEF:
-		gameFilePath += "stvef.game";
+		gamePack = STVEF_PACK;
+		gameFilePath += STVEF_GAME;
 		break;
+	default:
+		Error( "Invalid game selected: %d", m_availGames[ m_nComboSelect ] );
 	}
 
-	Sys_Printf( "game file: %s\n", gameFilePath.GetBuffer() );
+	Str gameInstallPath = g_strAppPath.GetBuffer();
+	gameInstallPath += "installs/";
+	gameInstallPath += gamePack;
+	gameInstallPath += "/install/";
+	Sys_Printf( "Installing game pack from: %s\n", gameInstallPath.GetBuffer() );
+
+	// First copy the install directory into the game engine. We do this
+	// for all games, even if they don't provide an "install" folder.
+	radCopyTree( gameInstallPath.GetBuffer(), m_strEngine.GetBuffer() );
+
+	Sys_Printf( "Writing game file: %s\n", gameFilePath.GetBuffer() );
 
 	FILE * fg = fopen( gameFilePath.GetBuffer(), "w" );
 	if ( fg == NULL ) {
 		Error( "Failed to open %s for writing\n", gameFilePath.GetBuffer() );
 	}
-        // Running Windows, crashing here?
-        // Make sure that libintl.h is not redefining fprintf to some broken BS!
-        // - TTimo
+
+	// Running Windows, crashing here?
+	// Make sure that libintl.h is not redefining fprintf to some broken BS!
+	// - TTimo
 	fprintf( fg, "<?xml version=\"1.0\" encoding=\"iso-8859-1\" standalone=\"yes\"?>\n<game\n" );
 	fprintf( fg, "  name=\"%s\"\n", m_strName.GetBuffer() );
 	fprintf( fg, "  "ENGINEPATH_ATTRIBUTE "=\"%s\"\n", m_strEngine.GetBuffer() );
+	fprintf( fg, "  "TOOLS_ATTRIBUTE "=\"%sinstalls/%s/game\"\n", g_strAppPath.GetBuffer(), gamePack.GetBuffer() );
+
+	if ( m_strExecutables.GetLength() > 0 ) {
+		fprintf( fg, "  "EXECUTABLES_ATTRIBUTE "=\"%s\"\n", m_strExecutables.GetBuffer() );
+	}
+
 	switch ( m_availGames[ m_nComboSelect ] ) {
 	case GAME_Q2: {
-		fprintf( fg, "  "TOOLS_ATTRIBUTE "=\"%sinstalls/Q2Pack/game\"\n", g_strAppPath.GetBuffer() );
 		fprintf( fg, "  prefix=\".quake2\"\n" );
-		Str source = g_strAppPath.GetBuffer();
-		source += "installs/";
-		source += Q2_PACK;
-		source += "/install/";
-		Str dest = m_strEngine.GetBuffer();
-		radCopyTree( source.GetBuffer(), dest.GetBuffer() );
 		fprintf( fg, "  basegame=\"baseq2\"\n" );
 		break;
 	}
 	case GAME_Q3: {
-		fprintf( fg, "  "TOOLS_ATTRIBUTE "=\"%sinstalls/Q3Pack/game\"\n", g_strAppPath.GetBuffer() );
 		fprintf( fg, "  prefix=\".q3a\"\n" );
-		Str source = g_strAppPath.GetBuffer();
-		source += "installs/";
-		source += Q3_PACK;
-		source += "/install/";
-		Str dest = m_strEngine.GetBuffer();
-		radCopyTree( source.GetBuffer(), dest.GetBuffer() );
-		// Hardcoded fix for "missing" shaderlist in gamepack
-		dest += "/baseq3/scripts/shaderlist.txt";
-		if(CheckFile(dest.GetBuffer()) != PATH_FILE) {
-			source += "baseq3/scripts/default_shaderlist.txt";
-			radCopyFile(source.GetBuffer(),dest.GetBuffer());
-		}
 		fprintf( fg, "  basegame=\"baseq3\"\n" );
+		// Hardcoded fix for "missing" shaderlist in gamepack
+		Str dest = m_strEngine.GetBuffer();
+		dest += "/baseq3/scripts/shaderlist.txt";
+		if( CheckFile( dest.GetBuffer() ) != PATH_FILE ) {
+			Str source = gameInstallPath.GetBuffer();
+			source += "baseq3/scripts/default_shaderlist.txt";
+			radCopyFile( source.GetBuffer(), dest.GetBuffer() );
+		}
 		break;
 	}
 	case GAME_URT: {
-		fprintf( fg, "  "TOOLS_ATTRIBUTE "=\"%sinstalls/UrTPack/game\"\n", g_strAppPath.GetBuffer() );
 		fprintf( fg, "  prefix=\".q3a\"\n" );
-		Str source = g_strAppPath.GetBuffer();
-		source += "installs/";
-		source += URT_PACK;
-		source += "/install/";
-		Str dest = m_strEngine.GetBuffer();
-		radCopyTree( source.GetBuffer(), dest.GetBuffer() );
 		fprintf( fg, "  basegame=\"q3ut4\"\n" );
 		break;
 	}
 	case GAME_UFOAI: {
-		fprintf( fg, "  "TOOLS_ATTRIBUTE "=\"%sinstalls/UFOAIPack/game\"\n", g_strAppPath.GetBuffer() );
 		fprintf( fg, "  prefix=\".ufoai\"\n" );
-		Str source = g_strAppPath.GetBuffer();
-		source += "installs/";
-		source += UFOAI_PACK;
-		source += "/install/";
-		Str dest = m_strEngine.GetBuffer();
-		radCopyTree( source.GetBuffer(), dest.GetBuffer() );
 		fprintf( fg, "  basegame=\"base\"\n" );
 		break;
 	}
 	case GAME_Q2W: {
-		fprintf( fg, "  "TOOLS_ATTRIBUTE "=\"%sinstalls/Q2WPack/game\"\n", g_strAppPath.GetBuffer() );
 		fprintf( fg, "  prefix=\".quake2world\"\n" );
 		fprintf( fg, "  prefix_win32=\"Quake2World\"\n");
-		Str source = g_strAppPath.GetBuffer();
-		source += "installs/";
-		source += Q2W_PACK;
-		source += "/install/";
-		Str dest = m_strEngine.GetBuffer();
-		radCopyTree( source.GetBuffer(), dest.GetBuffer() );
 		fprintf( fg, "  basegame=\"default\"\n" );
 		break;
 	}
 	case GAME_WARSOW: {
-		fprintf( fg, "  "TOOLS_ATTRIBUTE "=\"%sinstalls/WarsowPack/game\"\n", g_strAppPath.GetBuffer() );
 		fprintf( fg, "  prefix=\".warsow\"\n" );
-		Str source = g_strAppPath.GetBuffer();
-		source += "installs/";
-		source += WARSOW_PACK;
-		source += "/install/";
-		Str dest = m_strEngine.GetBuffer();
-		radCopyTree( source.GetBuffer(), dest.GetBuffer() );
 		fprintf( fg, "  basegame=\"basewsw\"\n" );
 		break;
 	}
 	case GAME_NEXUIZ: {
-		fprintf( fg, "  "TOOLS_ATTRIBUTE "=\"%sinstalls/NexuizPack/game\"\n", g_strAppPath.GetBuffer() );
 		fprintf( fg, "  prefix=\".nexuiz\"\n" );
-		Str source = g_strAppPath.GetBuffer();
-		source += "installs/";
-		source += NEXUIZ_PACK;
-		source += "/install/";
-		Str dest = m_strEngine.GetBuffer();
-		radCopyTree( source.GetBuffer(), dest.GetBuffer() );
 		fprintf( fg, "  basegame=\"data\"\n" );
 		break;
 	}
 	case GAME_TREMULOUS: {
-		fprintf( fg, "  "TOOLS_ATTRIBUTE "=\"%sinstalls/TremulousPack/game\"\n", g_strAppPath.GetBuffer() );
 		fprintf( fg, "  prefix=\".tremulous\"\n" );
-		Str source = g_strAppPath.GetBuffer();
-		source += "installs/";
-		source += TREMULOUS_PACK;
-		source += "/install/";
-		Str dest = m_strEngine.GetBuffer();
-		radCopyTree( source.GetBuffer(), dest.GetBuffer() );
 		fprintf( fg, "  basegame=\"base\"\n" );
 		break;
 	}
 	case GAME_JA: {
-		fprintf( fg, "  "TOOLS_ATTRIBUTE "=\"%sinstalls/JAPack/game\"\n", g_strAppPath.GetBuffer() );
 		fprintf( fg, "  prefix=\".ja\"\n" );
-		Str source = g_strAppPath.GetBuffer();
-		source += "installs/";
-		source += JA_PACK;
-		source += "/install/";
-		Str dest = m_strEngine.GetBuffer();
-		radCopyTree( source.GetBuffer(), dest.GetBuffer() );
-		// Hardcoded fix for "missing" shaderlist in gamepack
-		dest += "/base/shaders/shaderlist.txt";
-		if(CheckFile(dest.GetBuffer()) != PATH_FILE) {
-			source += "base/scripts/default_shaderlist.txt";
-			radCopyFile(source.GetBuffer(),dest.GetBuffer());
-		}
 		fprintf( fg, "  basegame=\"base\"\n" );
 		fprintf( fg, "  shaderpath=\"shaders\"\n" );
 		fprintf( fg, "  default_scale=\"0.25\"\n" );
 		fprintf( fg, "  caulk_shader=\"textures/system/caulk\"\n" );
+		// Hardcoded fix for "missing" shaderlist in gamepack
+		Str dest = m_strEngine.GetBuffer();
+		dest += "/base/shaders/shaderlist.txt";
+		if( CheckFile( dest.GetBuffer() ) != PATH_FILE ) {
+			Str source = gameInstallPath.GetBuffer();
+			source += "base/scripts/default_shaderlist.txt";
+			radCopyFile( source.GetBuffer(), dest.GetBuffer() );
+		}
 		break;
 	}
 	case GAME_REACTION: {
-		fprintf( fg, "  "TOOLS_ATTRIBUTE "=\"%sinstalls/"REACTION_PACK "/game\"\n", g_strAppPath.GetBuffer() );
 		fprintf( fg, "  prefix=\".Reaction\"\n" );
-		Str source = g_strAppPath.GetBuffer();
-		source += "installs/";
-		source += REACTION_PACK;
-		source += "/install/";
-		Str dest = m_strEngine.GetBuffer();
-		radCopyTree( source.GetBuffer(), dest.GetBuffer() );
 		fprintf( fg, "  basegame=\"Boomstick\"\n" );
-		fprintf( fg, "  default_scale=\"0.5\"\n" ); // Superfluous because the default is already 0.5,
-		// but demonstrates how to set the default texture scale
-		// for a specific game.
+		fprintf( fg, "  default_scale=\"0.5\"\n" );
 		break;
 	}
 	case GAME_ET: {
@@ -3656,60 +3678,45 @@ void CGameInstall::Run() {
 #elif __linux__
 		fprintf( fg, "  "ENGINE_ATTRIBUTE "=\"et\"\n" );
 #endif
-		fprintf( fg, "  "TOOLS_ATTRIBUTE "=\"%sinstalls/"ET_PACK "/game\"\n", g_strAppPath.GetBuffer() );
 		fprintf( fg, "  prefix=\".etwolf\"\n" );
-		Str source = g_strAppPath.GetBuffer();
-		source += "installs/";
-		source += ET_PACK;
-		source += "/install/";
-		Str dest = m_strEngine.GetBuffer();
-		radCopyTree( source.GetBuffer(), dest.GetBuffer() );
-		// Hardcoded fix for "missing" shaderlist in gamepack
-		dest += "/etmain/scripts/shaderlist.txt";
-		if(CheckFile(dest.GetBuffer()) != PATH_FILE) {
-			source += "etmain/scripts/default_shaderlist.txt";
-			radCopyFile(source.GetBuffer(),dest.GetBuffer());
-		}
 		fprintf( fg, "  basegame=\"etmain\"\n" );
+		// Hardcoded fix for "missing" shaderlist in gamepack
+		Str dest = m_strEngine.GetBuffer();
+		dest += "/etmain/scripts/shaderlist.txt";
+		if( CheckFile( dest.GetBuffer() ) != PATH_FILE ) {
+			Str source = gameInstallPath.GetBuffer();
+			source += "etmain/scripts/default_shaderlist.txt";
+			radCopyFile( source.GetBuffer(), dest.GetBuffer() );
+		}
 		break;
 	}
 	case GAME_QL: {
-		fprintf( fg, "  "TOOLS_ATTRIBUTE "=\"%sinstalls/"QL_PACK "/game\"\n", g_strAppPath.GetBuffer() );
 		fprintf( fg, "  prefix=\".quakelive/quakelive/home\"\n" );
-		Str source = g_strAppPath.GetBuffer();
-		source += "installs/";
-		source += QL_PACK;
-		source += "/install/";
-		Str dest = m_strEngine.GetBuffer();
-		radCopyTree( source.GetBuffer(), dest.GetBuffer() );
-		// Hardcoded fix for "missing" shaderlist in gamepack
-		dest += "/baseq3/scripts/shaderlist.txt";
-		if(CheckFile(dest.GetBuffer()) != PATH_FILE) {
-			source += "baseq3/scripts/default_shaderlist.txt";
-			radCopyFile(source.GetBuffer(),dest.GetBuffer());
-		}
 		fprintf( fg, "  basegame=\"baseq3\"\n" );
+		// Hardcoded fix for "missing" shaderlist in gamepack
+		Str dest = m_strEngine.GetBuffer();
+		dest += "/baseq3/scripts/shaderlist.txt";
+		if ( CheckFile( dest.GetBuffer() ) != PATH_FILE ) {
+			Str source = gameInstallPath.GetBuffer();
+			source += "baseq3/scripts/default_shaderlist.txt";
+			radCopyFile( source.GetBuffer(), dest.GetBuffer() );
+		}
 		break;
 	}
 	case GAME_STVEF: {
-		fprintf( fg, "  "TOOLS_ATTRIBUTE "=\"%sinstalls/"STVEF_PACK "/game\"\n", g_strAppPath.GetBuffer() );
 		fprintf( fg, "  prefix=\".stvef\"\n" );
-		Str source = g_strAppPath.GetBuffer();
-		source += "installs/";
-		source += STVEF_PACK;
-		source += "/install/";
-		Str dest = m_strEngine.GetBuffer();
-		radCopyTree( source.GetBuffer(), dest.GetBuffer() );
-		// Hardcoded fix for "missing" shaderlist in gamepack
-		dest += "/base/scripts/shaderlist.txt";
-		if(CheckFile(dest.GetBuffer()) != PATH_FILE) {
-			source += "base/scripts/default_shaderlist.txt";
-			radCopyFile(source.GetBuffer(),dest.GetBuffer());
-		}
 		fprintf( fg, "  basegame=\"baseEF\"\n" );
 		fprintf( fg, "  shaderpath=\"scripts\"\n" );
 		fprintf( fg, "  default_scale=\"0.25\"\n" );
 		fprintf( fg, "  caulk_shader=\"textures/common/caulk\"\n" );
+		// Hardcoded fix for "missing" shaderlist in gamepack
+		Str dest = m_strEngine.GetBuffer();
+		dest += "/base/scripts/shaderlist.txt";
+		if( CheckFile( dest.GetBuffer() ) != PATH_FILE ) {
+			Str source = gameInstallPath.GetBuffer();
+			source += "base/scripts/default_shaderlist.txt";
+			radCopyFile( source.GetBuffer(), dest.GetBuffer() );
+		}
 		break;
 	}
 	}
