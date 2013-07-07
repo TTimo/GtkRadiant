@@ -67,7 +67,7 @@ static void OnTest( GtkWidget *widget, gpointer data ){
 		Sys_FPrintf( SYS_WRN, "Expected single face selection\n" );
 		return;
 	}
-	brush_t *b = reinterpret_cast<brush_t*>( g_ptrSelectedFaceBrushes.GetAt( 0 ) );
+	//brush_t *b = reinterpret_cast<brush_t*>( g_ptrSelectedFaceBrushes.GetAt( 0 ) );
 	face_t *selFace = reinterpret_cast<face_t*>( g_ptrSelectedFaces.GetAt( 0 ) );
 	// get the ST axis base for the face
 	vec3_t texS,texT;

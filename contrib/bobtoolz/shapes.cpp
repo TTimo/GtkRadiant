@@ -621,7 +621,7 @@ void MakeBevel( vec3_t vMin, vec3_t vMax ){
 	}
 
 
-	g_FuncTable.m_pfnCommitPatchHandleToMap( nIndex, pm, "textures/common/caulk" );
+	g_FuncTable.m_pfnCommitPatchHandleToMap( nIndex, pm, (char *)"textures/common/caulk" );
 }
 
 void BuildCornerStairs( vec3_t vMin, vec3_t vMax, int nSteps, const char* mainTexture, const char* riserTex ){

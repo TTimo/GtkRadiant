@@ -9,6 +9,9 @@
 #include "stdio.h"
 #include "qlvfs.h"
 
+static FILE *xored_open_files[MAX_FILE_HANDLES];
+static int xor_max_pos = 0;
+
 /* Luigi Auriemma's  quakelivedec.c */
 static unsigned char quakelive_xor[] =
             "\xcf\x8e\x8e\x4c\xd0\xd9\x30\xce\x07\x32\x27\x64\xed\x16\x06\x12"
