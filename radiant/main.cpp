@@ -92,6 +92,7 @@ gint try_destroy_splash( gpointer data ){
 	return FALSE;
 }
 
+#ifndef SKIP_SPLASH
 static void create_splash() {
     splash_screen = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     gtk_window_set_title(GTK_WINDOW(splash_screen), "Splash Screen");
@@ -111,6 +112,7 @@ static void create_splash() {
 	while(gtk_events_pending())
 		gtk_main_iteration();
 }
+#endif
 
 // =============================================================================
 // Loki stuff
@@ -413,9 +415,7 @@ void error_redirect( const gchar *domain, GLogLevelFlags log_level, const gchar 
 
 int main( int argc, char* argv[] ) {
 	const char *libgl;
-	char *ptr;
 	int i, j, k;
-
 
 	/*
 	   Rambetter on Sat Nov 13, 2010:
@@ -461,7 +461,7 @@ int main( int argc, char* argv[] ) {
 	   _after_ gtk_init(), I chose to fix this problem via environment variable.  I think it's cleaner
 	   that way.
 	 */
-	putenv( "LC_NUMERIC=C" );
+	putenv( (char *)"LC_NUMERIC=C" );
 
 	// Use the same environment variable for resolving libGL as libgtkglext does.
 	libgl = getenv("GDK_GL_LIBGL_PATH");
