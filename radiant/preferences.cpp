@@ -854,6 +854,7 @@ CGameDescription::CGameDescription( xmlDocPtr pDoc, const Str &GameFile ){
 		}
 	}
 
+	prop = NULL;
 #if defined ( __linux__ ) || defined ( __APPLE__ )
 	prop = (char*)xmlGetProp( pNode, (const xmlChar *)"prefix" );
 #elif defined ( _WIN32 )
@@ -3567,8 +3568,11 @@ void CGameInstall::Run() {
 	}
 	case GAME_Q2W: {
 		fprintf( fg, "  "TOOLS_ATTRIBUTE "=\"%sinstalls/Q2WPack/game\"\n", g_strAppPath.GetBuffer() );
+#if defined ( __linux__ ) || defined ( __APPLE__ )
 		fprintf( fg, "  prefix=\".quake2world\"\n" );
+#elif defined ( _WIN32 )
 		fprintf( fg, "  prefix_win32=\"Quake2World\"\n");
+#endif
 		Str source = g_strAppPath.GetBuffer();
 		source += "installs/";
 		source += Q2W_PACK;
