@@ -2499,10 +2499,16 @@ void MainFrame::Create(){
 	// not needed on win32, it's in the .rc
 #ifndef _WIN32
 	{
-		GdkPixmap *pixmap;
-		GdkBitmap *mask;
-		load_pixmap( "icon.bmp", window, &pixmap, &mask );
-		gdk_window_set_icon( window->window, NULL, pixmap, mask );
+		CString icon = g_strBitmapsPath;
+		icon += "icon.png";
+
+		GError *error = NULL;
+
+		gtk_window_set_icon_from_file( GTK_WINDOW( window ), icon.GetBuffer(), &error );
+		if ( error != NULL ) {
+			Sys_Printf( "Failed to load icon: %s\n", error->message );
+			g_error_free( error );
+		}
 	}
 #endif
 
