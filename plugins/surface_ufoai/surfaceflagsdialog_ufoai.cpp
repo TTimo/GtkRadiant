@@ -240,6 +240,7 @@ void on_content_button_toggled( GtkToggleButton *togglebutton, gpointer user_dat
 void on_value_entry_changed( GtkEditable *editable, gpointer user_data ){
 	if ( ( !setup_buttons ) ) { // If we're setting up the buttons, don't change value
 		working_value = atoi( gtk_entry_get_text( (GtkEntry*)editable ) );
+		GetTexMods( false );
 	}
 }
 
@@ -291,7 +292,6 @@ GtkWidget* Create_UFOAIFlagsDialog( GtkWidget* surfacedialog_widget ){
 	GtkWidget *table4;
 	GtkWidget *hbox2;
 	GtkWidget *hbox3;
-	GtkWidget *hseparator1;
 	GtkWidget *value_label;
 	GtkWidget *label5;
 	GtkWidget *table3;
@@ -314,12 +314,14 @@ GtkWidget* Create_UFOAIFlagsDialog( GtkWidget* surfacedialog_widget ){
 	gtk_notebook_set_show_tabs( GTK_NOTEBOOK( notebook1 ), TRUE );
 	gtk_container_set_border_width( GTK_CONTAINER( notebook1 ), 5 );
 
-	vbox2 = gtk_vbox_new( FALSE, 0 );
+	vbox2 = gtk_vbox_new( FALSE, 5 );
 	gtk_widget_show( vbox2 );
 	gtk_container_add( GTK_CONTAINER( notebook1 ), vbox2 );
 
-	table4 = gtk_table_new( 8, 4, FALSE );
+	table4 = gtk_table_new( 8, 4, TRUE );
 	gtk_widget_show( table4 );
+	gtk_table_set_col_spacings( GTK_TABLE( table4 ), 5 );
+	gtk_table_set_row_spacings( GTK_TABLE( table4 ), 5 );
 	gtk_box_pack_start( GTK_BOX( vbox2 ), table4, TRUE, TRUE, 0 );
 
 	y = -1;
@@ -337,13 +339,7 @@ GtkWidget* Create_UFOAIFlagsDialog( GtkWidget* surfacedialog_widget ){
 		gtk_table_attach( GTK_TABLE( table4 ), surface_buttons[i], 0 + x, 1 + x, ( 0 + y ), ( 1 + y ),
 						  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
 						  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ), 0, 0 );
-		gtk_container_set_border_width( GTK_CONTAINER( surface_buttons[i] ), UFOAI_FLAG_BUTTON_BORDER );
 	}
-
-	hseparator1 = gtk_hseparator_new();
-	gtk_widget_show( hseparator1 );
-	gtk_box_pack_start( GTK_BOX( vbox2 ), hseparator1, FALSE, FALSE, 0 );
-	gtk_widget_set_usize( hseparator1, -2, 5 );
 
 	hbox2 = gtk_hbox_new( FALSE, 0 );
 	gtk_widget_show( hbox2 );
@@ -380,8 +376,10 @@ GtkWidget* Create_UFOAIFlagsDialog( GtkWidget* surfacedialog_widget ){
 	gtk_widget_show( label5 );
 	gtk_notebook_set_tab_label( GTK_NOTEBOOK( notebook1 ), gtk_notebook_get_nth_page( GTK_NOTEBOOK( notebook1 ), 0 ), label5 );
 
-	table3 = gtk_table_new( 8, 4, FALSE );
+	table3 = gtk_table_new( 8, 4, TRUE );
 	gtk_widget_show( table3 );
+	gtk_table_set_col_spacings( GTK_TABLE( table3 ), 5 );
+	gtk_table_set_row_spacings( GTK_TABLE( table3 ), 5 );
 	gtk_container_add( GTK_CONTAINER( notebook1 ), table3 );
 
 	y = -1;
@@ -398,7 +396,6 @@ GtkWidget* Create_UFOAIFlagsDialog( GtkWidget* surfacedialog_widget ){
 		gtk_table_attach( GTK_TABLE( table3 ), content_buttons[i], 0 + x, 1 + x, ( 0 + y ), ( 1 + y ),
 						  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
 						  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ), 0, 0 );
-		gtk_container_set_border_width( GTK_CONTAINER( content_buttons[i] ), UFOAI_FLAG_BUTTON_BORDER );
 	}
 
 	label6 = gtk_label_new( "Content Flags" );
