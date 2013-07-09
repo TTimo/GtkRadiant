@@ -33,8 +33,6 @@
 
 #include "surfdlg_plugin.h"
 
-
-
 #ifdef _DEBUG
 //#define DBG_SI 1
 #endif

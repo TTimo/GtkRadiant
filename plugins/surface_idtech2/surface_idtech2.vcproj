@@ -181,7 +181,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\surfaceflagsdialog_idtech2.cpp"
+				RelativePath=".\surfaceflags.cpp"
 				>
 			</File>
 			<File

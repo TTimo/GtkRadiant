@@ -27,7 +27,8 @@
 #include <glib/gi18n.h>
 #include <gdk/gdkkeysyms.h>
 
-#include "surfdlg_plugin.h"
+#include "surfacedialog.h"
+#include "surfaceflags.h"
 
 #ifdef _DEBUG
 //#define DBG_SI 1
@@ -57,30 +58,12 @@ bool is_VScale_conflicting;
 bool is_Rotate_conflicting;
 bool is_TextureName_conflicting;
 
-void ShowDlg();
-void HideDlg();
-void SetTexMods();
-void GetTexMods( bool b_SetUndoPoint = FALSE );
-void BuildDialog();
-void FitAll();
-void InitDefaultIncrement( texdef_t * );
-void DoSnapTToGrid( float hscale, float vscale );
-// called to perform a fitting from the outside (shortcut key)
-void SurfaceDialogFitAll();
-
-// IDTECH2 Flags Functions
-void SetFlagButtons_IDTECH2( texdef_to_face_t *texdef_face_list,  bool b_isListEmpty );
-void SetChangeInFlags_Face_IDTECH2( texdef_to_face_t *texdef_face_list );
-GtkWidget* Create_IDTECH2FlagsDialog( GtkWidget* surfacedialog_widget );
-
-
 // Dialog Data
 int m_nHeight;
 int m_nWidth;
 
-// 0 is invalid, otherwise it's the Id of the last 'do' we are responsible for
+// 0 is invalid, otherwise it's the ID of the last 'do' we are responsible for
 int m_nUndoId;
-
 
 texturewin_t *texturewin;
 texdef_t *l_pIncrement;
@@ -110,7 +93,6 @@ GtkWidget *GetDlgWidget( const char* name )
 // Spins for FitTexture
 GtkWidget *spin_width;
 GtkWidget *spin_height;
-
 
 GtkWidget *texture_combo;
 GtkWidget *texture_combo_entry;
@@ -337,10 +319,10 @@ static void GetTexdefInfo_from_Radiant(){
 	IsFaceConflicting();
 	PopulateTextureComboList();
 	if ( texdef_face_list_empty() ) {
-		SetFlagButtons_IDTECH2( get_texdef_face_list(), TRUE );
+		set_surface_flags_button_state( get_texdef_face_list(), TRUE );
 	}
 	else{
-		SetFlagButtons_IDTECH2( get_texdef_face_list(), FALSE );
+		set_surface_flags_button_state( get_texdef_face_list(), FALSE );
 	}
 }
 
@@ -534,7 +516,7 @@ void GetTexMods( bool b_SetUndoPoint ){
 
 	if ( !texdef_face_list_empty() ) {
 		g_bListenUpdate = FALSE;
-		SetChangeInFlags_Face_IDTECH2( get_texdef_face_list() );
+		apply_surface_flags( get_texdef_face_list() );
 		SetTexdef_FaceList( get_texdef_face_list(), b_SetUndoPoint, FALSE );
 		g_bListenUpdate = TRUE;
 
@@ -806,7 +788,7 @@ GtkWidget* create_SurfaceInspector( void ){
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
 
 	// Add the SURF_ and CONTENTS_ flags frame
-	Create_IDTECH2FlagsDialog( vbox1 );
+	create_SurfaceFlagsFrame( vbox1 );
 
 	g_signal_connect( (gpointer) SurfaceInspector,
 					  "delete_event",

@@ -15,7 +15,7 @@
     <ClCompile Include="surfacedialog.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="surfaceflagsdialog_idtech2.cpp">
+    <ClCompile Include="surfaceflags.cpp">
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="surfdlg_plugin.cpp">

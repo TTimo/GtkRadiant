@@ -19,7 +19,13 @@
    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef _SURFACEFLAGSDIALOG_IDTECH2_H
-#define _SURFACEFLAGSDIALOG_IDTECH2_H
+#ifndef _SURFACEFLAGS_H
+#define _SURFACEFLAGS_H
 
-#endif // _SURFACEFLAGSDIALOG_IDTECH2_H
+#include "surfdlg_plugin.h"
+
+void set_surface_flags_button_state( texdef_to_face_t *texdef_face_list,  bool b_isListEmpty );
+void apply_surface_flags( texdef_to_face_t *texdef_face_list );
+GtkWidget* create_SurfaceFlagsFrame( GtkWidget* surfacedialog_widget );
+
+#endif // _SURFACEFLAGS_H

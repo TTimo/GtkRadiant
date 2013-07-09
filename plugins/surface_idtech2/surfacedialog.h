@@ -22,6 +22,18 @@
 #ifndef _SURFACEDIALOG_H_
 #define _SURFACEDIALOG_H_
 
+#include "surfdlg_plugin.h"
+
+void ShowDlg();
+void HideDlg();
+void SetTexMods();
+void GetTexMods( bool b_SetUndoPoint = FALSE );
+void BuildDialog();
+void FitAll();
+void InitDefaultIncrement( texdef_t * );
+void DoSnapTToGrid( float hscale, float vscale );
+// called to perform a fitting from the outside (shortcut key)
+void SurfaceDialogFitAll();
 void UpdateSurfaceDialog();
 void DoSurface();
 void ToggleSurface();

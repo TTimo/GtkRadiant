@@ -25,8 +25,8 @@
 #include <glib/gi18n.h>
 
 #include "surfdlg_plugin.h"
-
-#include "surfaceflagsdialog_idtech2.h"
+#include "surfacedialog.h"
+#include "surfaceflags.h"
 
 GtkWidget *notebook1;
 
@@ -80,7 +80,7 @@ void clear_all_buttons_and_values(){
 	gtk_entry_set_text( (GtkEntry *)value_entry, "" );
 }
 
-void SetFlagButtons_IDTECH2( texdef_to_face_t *texdef_face_list, bool b_isListEmpty ){
+void set_surface_flags_button_state( texdef_to_face_t *texdef_face_list, bool b_isListEmpty ){
 	int contents = 0;
 	int flags = 0;
 	int value = 0;
@@ -105,8 +105,10 @@ void SetFlagButtons_IDTECH2( texdef_to_face_t *texdef_face_list, bool b_isListEm
 		flags = tmp_texdef->flags;
 		value = tmp_texdef->value;
 
+#if _DEBUG
 		Sys_Printf( "Surface: %d\tContents: %d\tValue: %d\ttmp_texdef\n",tmp_texdef->flags,tmp_texdef->contents,tmp_texdef->value );
 		Sys_Printf( "Surface: %d\tContents: %d\tValue: %d\n",flags,contents,value );
+#endif
 
 		for ( temp_texdef_face_list = texdef_face_list->next; temp_texdef_face_list; temp_texdef_face_list = temp_texdef_face_list->next )
 		{
@@ -117,8 +119,10 @@ void SetFlagButtons_IDTECH2( texdef_to_face_t *texdef_face_list, bool b_isListEm
 				diff_value = TRUE;
 			}
 
+#if _DEBUG
 			Sys_Printf( "Surface: %d\tContents: %d\tValue: %d\ttmp_texdef\n",tmp_texdef->flags,tmp_texdef->contents,tmp_texdef->value );
 			Sys_Printf( "Surface: %d\tContents: %d\tValue: %d\n",flags,contents,value );
+#endif
 		}
 	}
 
@@ -167,7 +171,7 @@ void SetFlagButtons_IDTECH2( texdef_to_face_t *texdef_face_list, bool b_isListEm
 	setup_buttons = FALSE;
 }
 
-void SetChangeInFlags_Face_IDTECH2( texdef_to_face_t *faces ){
+void apply_surface_flags( texdef_to_face_t *faces ){
 	texdef_to_face_t *face;
 	texdef_t *tex;
 
@@ -181,8 +185,6 @@ void SetChangeInFlags_Face_IDTECH2( texdef_to_face_t *faces ){
 		Sys_Printf( "Surface: %d\tContents: %d\tValue: %d\n", tex->flags, tex->contents, tex->value );
 	}
 }
-
-extern void GetTexMods( bool b_SetUndoPoint );
 
 inline void change_surfaceflag( GtkWidget *togglebutton, int sur_flag, gboolean change_flag_to ){
 	if ( !setup_buttons ) { // If we're setting up the buttons, we really don't need to
@@ -283,7 +285,7 @@ void on_contentbutton_clicked( GtkButton *button, gpointer user_data ){
 
 #define IDTECH2_FLAG_BUTTON_BORDER 3
 
-GtkWidget* Create_IDTECH2FlagsDialog( GtkWidget* surfacedialog_widget ){
+GtkWidget* create_SurfaceFlagsFrame( GtkWidget* surfacedialog_widget ){
 	GtkWidget *frame1;
 	GtkWidget *vbox1;
 	GtkWidget *vbox2;

@@ -162,7 +162,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="surfacedialog.cpp" />
-    <ClCompile Include="surfaceflagsdialog_idtech2.cpp" />
+    <ClCompile Include="surfaceflags.cpp" />
     <ClCompile Include="surfdlg_plugin.cpp" />
   </ItemGroup>
   <ItemGroup>
