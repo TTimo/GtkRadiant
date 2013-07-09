@@ -25,8 +25,8 @@
 #include <glib/gi18n.h>
 
 #include "surfdlg_plugin.h"
-
-#include "surfaceflagsdialog_ufoai.h"
+#include "surfacedialog.h"
+#include "surfaceflags.h"
 
 GtkWidget *notebook1;
 
@@ -80,7 +80,7 @@ void clear_all_buttons_and_values(){
 	gtk_entry_set_text( (GtkEntry *)value_entry, "" );
 }
 
-void SetFlagButtons_UFOAI( texdef_to_face_t *texdef_face_list, bool b_isListEmpty ){
+void set_surface_flags_button_state( texdef_to_face_t *texdef_face_list, bool b_isListEmpty ){
 	int contents = 0;
 	int flags = 0;
 	int value = 0;
@@ -105,8 +105,10 @@ void SetFlagButtons_UFOAI( texdef_to_face_t *texdef_face_list, bool b_isListEmpt
 		flags = tmp_texdef->flags;
 		value = tmp_texdef->value;
 
+#if _DEBUG
 		Sys_Printf( "Surface: %d\tContents: %d\tValue: %d\ttmp_texdef\n",tmp_texdef->flags,tmp_texdef->contents,tmp_texdef->value );
 		Sys_Printf( "Surface: %d\tContents: %d\tValue: %d\n",flags,contents,value );
+#endif
 
 		for ( temp_texdef_face_list = texdef_face_list->next; temp_texdef_face_list; temp_texdef_face_list = temp_texdef_face_list->next )
 		{
@@ -117,8 +119,10 @@ void SetFlagButtons_UFOAI( texdef_to_face_t *texdef_face_list, bool b_isListEmpt
 				diff_value = TRUE;
 			}
 
+#if _DEBUG
 			Sys_Printf( "Surface: %d\tContents: %d\tValue: %d\ttmp_texdef\n",tmp_texdef->flags,tmp_texdef->contents,tmp_texdef->value );
 			Sys_Printf( "Surface: %d\tContents: %d\tValue: %d\n",flags,contents,value );
+#endif
 		}
 	}
 
@@ -167,18 +171,18 @@ void SetFlagButtons_UFOAI( texdef_to_face_t *texdef_face_list, bool b_isListEmpt
 	setup_buttons = FALSE;
 }
 
-void SetChangeInFlags_Face_UFOAI( texdef_to_face_t *texdef_face_list ){
-	texdef_to_face_t *temp_texdef_face_list;
-	texdef_t *tmp_texdef;
+void apply_surface_flags( texdef_to_face_t *faces ){
+	texdef_to_face_t *face;
+	texdef_t *tex;
 
-	for ( temp_texdef_face_list = texdef_face_list; temp_texdef_face_list; temp_texdef_face_list = temp_texdef_face_list->next )
+	for ( face = faces; face; face = face->next )
 	{
-		tmp_texdef = &temp_texdef_face_list->texdef;
-		tmp_texdef->flags = ( tmp_texdef->flags & ~surface_mask ) | working_surface_flags;
-		tmp_texdef->contents = ( tmp_texdef->contents & ~content_mask ) | working_content_flags;
-		tmp_texdef->value = working_value;
-		Sys_Printf( "content_flag: %d     content_mask: %d\n",working_content_flags,content_mask );
-		Sys_Printf( "content: %d\n",tmp_texdef->contents );
+		tex = &face->texdef;
+		tex->flags = ( tex->flags & ~surface_mask ) | working_surface_flags;
+		tex->contents = ( tex->contents & ~content_mask ) | working_content_flags;
+		tex->value = working_value;
+
+		Sys_Printf( "Surface: %d\tContents: %d\tValue: %d\n", tex->flags, tex->contents, tex->value );
 	}
 }
 
@@ -197,6 +201,8 @@ inline void change_surfaceflag( GtkWidget *togglebutton, int sur_flag, gboolean 
 		else{
 			working_surface_flags &= ~sur_flag;
 		}
+
+		GetTexMods( false );
 	}
 }
 
@@ -206,8 +212,7 @@ inline void change_contentflag( GtkWidget *togglebutton, int content_flag, gbool
 		if ( gtk_toggle_button_get_inconsistent( GTK_TOGGLE_BUTTON( togglebutton ) ) ) {
 			clear_inconsistent( togglebutton );
 		}
-		//if (g_ptrSelectedFaces.GetSize() == 0)  // Only changing content flags on whole brushes, not faces.
-		//{
+
 		content_mask |= content_flag;
 
 		if ( change_flag_to ) {
@@ -216,8 +221,8 @@ inline void change_contentflag( GtkWidget *togglebutton, int content_flag, gbool
 		else{
 			working_content_flags &= ~content_flag;
 		}
-		//}
-		Sys_Printf( "content_flag: %d     content_mask: %d\n",content_flag,content_mask );
+
+		GetTexMods( false );
 	}
 }
 
@@ -237,6 +242,7 @@ void on_content_button_toggled( GtkToggleButton *togglebutton, gpointer user_dat
 void on_value_entry_changed( GtkEditable *editable, gpointer user_data ){
 	if ( ( !setup_buttons ) ) { // If we're setting up the buttons, don't change value
 		working_value = atoi( gtk_entry_get_text( (GtkEntry*)editable ) );
+		GetTexMods( false );
 	}
 }
 
@@ -277,9 +283,9 @@ void on_contentbutton_clicked( GtkButton *button, gpointer user_data ){
 	gtk_notebook_set_page( GTK_NOTEBOOK( notebook1 ), 1 );
 }
 
-#define UFOAI_FLAG_BUTTON_BORDER 3
+#define IDTECH2_FLAG_BUTTON_BORDER 3
 
-GtkWidget* Create_UFOAIFlagsDialog( GtkWidget* surfacedialog_widget ){
+GtkWidget* create_SurfaceFlagsFrame( GtkWidget* surfacedialog_widget ){
 	GtkWidget *frame1;
 	GtkWidget *vbox1;
 	GtkWidget *vbox2;
@@ -288,7 +294,6 @@ GtkWidget* Create_UFOAIFlagsDialog( GtkWidget* surfacedialog_widget ){
 	GtkWidget *table4;
 	GtkWidget *hbox2;
 	GtkWidget *hbox3;
-	GtkWidget *hseparator1;
 	GtkWidget *value_label;
 	GtkWidget *label5;
 	GtkWidget *table3;
@@ -311,12 +316,14 @@ GtkWidget* Create_UFOAIFlagsDialog( GtkWidget* surfacedialog_widget ){
 	gtk_notebook_set_show_tabs( GTK_NOTEBOOK( notebook1 ), TRUE );
 	gtk_container_set_border_width( GTK_CONTAINER( notebook1 ), 5 );
 
-	vbox2 = gtk_vbox_new( FALSE, 0 );
+	vbox2 = gtk_vbox_new( FALSE, 5 );
 	gtk_widget_show( vbox2 );
 	gtk_container_add( GTK_CONTAINER( notebook1 ), vbox2 );
 
-	table4 = gtk_table_new( 8, 4, FALSE );
+	table4 = gtk_table_new( 8, 4, TRUE );
 	gtk_widget_show( table4 );
+	gtk_table_set_col_spacings( GTK_TABLE( table4 ), 5 );
+	gtk_table_set_row_spacings( GTK_TABLE( table4 ), 5 );
 	gtk_box_pack_start( GTK_BOX( vbox2 ), table4, TRUE, TRUE, 0 );
 
 	y = -1;
@@ -334,13 +341,7 @@ GtkWidget* Create_UFOAIFlagsDialog( GtkWidget* surfacedialog_widget ){
 		gtk_table_attach( GTK_TABLE( table4 ), surface_buttons[i], 0 + x, 1 + x, ( 0 + y ), ( 1 + y ),
 						  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
 						  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ), 0, 0 );
-		gtk_container_set_border_width( GTK_CONTAINER( surface_buttons[i] ), UFOAI_FLAG_BUTTON_BORDER );
 	}
-
-	hseparator1 = gtk_hseparator_new();
-	gtk_widget_show( hseparator1 );
-	gtk_box_pack_start( GTK_BOX( vbox2 ), hseparator1, FALSE, FALSE, 0 );
-	gtk_widget_set_usize( hseparator1, -2, 5 );
 
 	hbox2 = gtk_hbox_new( FALSE, 0 );
 	gtk_widget_show( hbox2 );
@@ -377,8 +378,10 @@ GtkWidget* Create_UFOAIFlagsDialog( GtkWidget* surfacedialog_widget ){
 	gtk_widget_show( label5 );
 	gtk_notebook_set_tab_label( GTK_NOTEBOOK( notebook1 ), gtk_notebook_get_nth_page( GTK_NOTEBOOK( notebook1 ), 0 ), label5 );
 
-	table3 = gtk_table_new( 8, 4, FALSE );
+	table3 = gtk_table_new( 8, 4, TRUE );
 	gtk_widget_show( table3 );
+	gtk_table_set_col_spacings( GTK_TABLE( table3 ), 5 );
+	gtk_table_set_row_spacings( GTK_TABLE( table3 ), 5 );
 	gtk_container_add( GTK_CONTAINER( notebook1 ), table3 );
 
 	y = -1;
@@ -395,7 +398,6 @@ GtkWidget* Create_UFOAIFlagsDialog( GtkWidget* surfacedialog_widget ){
 		gtk_table_attach( GTK_TABLE( table3 ), content_buttons[i], 0 + x, 1 + x, ( 0 + y ), ( 1 + y ),
 						  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
 						  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ), 0, 0 );
-		gtk_container_set_border_width( GTK_CONTAINER( content_buttons[i] ), UFOAI_FLAG_BUTTON_BORDER );
 	}
 
 	label6 = gtk_label_new( "Content Flags" );
