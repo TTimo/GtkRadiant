@@ -3608,6 +3608,8 @@ void CGameInstall::Run() {
 		fprintf( fg, "  prefix=\".quake2\"\n" );
 		fprintf( fg, "  basegame=\"baseq2\"\n" );
 		fprintf( fg, "  no_patch=\"true\"\n" );
+		fprintf( fg, "  default_scale=\"1.0\"\n" );
+
 		break;
 	}
 	case GAME_Q3: {
@@ -3639,6 +3641,7 @@ void CGameInstall::Run() {
 		fprintf( fg, "  prefix_win32=\"Quake2World\"\n");
 		fprintf( fg, "  basegame=\"default\"\n" );
 		fprintf( fg, "  no_patch=\"true\"\n" );
+		fprintf( fg, "  default_scale=\"0.25\"\n" );
 		break;
 	}
 	case GAME_WARSOW: {
