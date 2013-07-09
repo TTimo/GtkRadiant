@@ -76,12 +76,12 @@ extern "C" CSynapseClient * SYNAPSE_DLL_EXPORT Synapse_EnumerateInterfaces( cons
 	g_pSynapseServer->IncRef();
 	Set_Syn_Printf( g_pSynapseServer->Get_Syn_Printf() );
 
-	g_SynapseClient.AddAPI( SURFACEDIALOG_MAJOR, "ufoai", sizeof( _QERPlugSurfaceTable ) );
+	g_SynapseClient.AddAPI( SURFACEDIALOG_MAJOR, "idtech2", sizeof( _QERPlugSurfaceTable ) );
 	g_SynapseClient.AddAPI( RADIANT_MAJOR, NULL, sizeof( _QERFuncTable_1 ), SYN_REQUIRE, &g_FuncTable );
 	g_SynapseClient.AddAPI( UNDO_MAJOR, NULL, sizeof( _QERUndoTable ), SYN_REQUIRE, &g_UndoTable );
 	g_SynapseClient.AddAPI( APPSURFACEDIALOG_MAJOR, NULL, sizeof( _QERAppSurfaceTable ), SYN_REQUIRE, &g_AppSurfaceTable );
 	g_SynapseClient.AddAPI( SELECTEDFACE_MAJOR, NULL, sizeof( _QERSelectedFaceTable ), SYN_REQUIRE, &g_SelectedFaceTable );
-	g_SynapseClient.AddAPI( SHADERS_MAJOR, "ufoai", sizeof( _QERShadersTable ), SYN_REQUIRE, &g_ShadersTable );
+	g_SynapseClient.AddAPI( SHADERS_MAJOR, "idtech2", sizeof( _QERShadersTable ), SYN_REQUIRE, &g_ShadersTable );
 	g_SynapseClient.AddAPI( APPSHADERS_MAJOR, NULL, sizeof( _QERAppShadersTable ), SYN_REQUIRE, &g_AppShadersTable );
 	g_SynapseClient.AddAPI( DATA_MAJOR, NULL, sizeof( _QERAppDataTable ), SYN_REQUIRE, &g_AppDataTable );
 
@@ -91,7 +91,7 @@ extern "C" CSynapseClient * SYNAPSE_DLL_EXPORT Synapse_EnumerateInterfaces( cons
 bool CSynapseClient_SurfDLG::RequestAPI( APIDescriptor_t *pAPI ){
 	if ( !strcmp( pAPI->major_name, SURFACEDIALOG_MAJOR ) ) {
 		_QERPlugSurfaceTable* pSurfDialogTable = static_cast<_QERPlugSurfaceTable*>( pAPI->mpTable );
-		if ( !strcmp( pAPI->minor_name, "ufoai" ) ) {
+		if ( !strcmp( pAPI->minor_name, "idtech2" ) ) {
 			pSurfDialogTable->m_pfnToggleSurface = &ToggleSurface;
 			pSurfDialogTable->m_pfnDoSurface = &DoSurface;
 			pSurfDialogTable->m_pfnUpdateSurfaceDialog = &UpdateSurfaceDialog;
@@ -108,7 +108,7 @@ bool CSynapseClient_SurfDLG::RequestAPI( APIDescriptor_t *pAPI ){
 #include "version.h"
 
 const char* CSynapseClient_SurfDLG::GetInfo(){
-	return "Surface Dialog (UFO: Alien Invasion) module built " __DATE__ " " RADIANT_VERSION;
+	return "Surface Dialog (idTech2) module built " __DATE__ " " RADIANT_VERSION;
 }
 
 const char* CSynapseClient_SurfDLG::GetName(){

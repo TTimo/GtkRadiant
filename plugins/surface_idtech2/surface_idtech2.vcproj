@@ -2,7 +2,7 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9.00"
-	Name="surface_ufoai"
+	Name="surface_idtech2"
 	ProjectGUID="{F400371F-455F-4B6C-9F13-A2E57110E725}"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="0"
@@ -40,7 +40,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="&quot;$(SolutionDir)\libs&quot;;&quot;$(SolutionDir)\include&quot;;&quot;$(SolutionDir)\..\STLport-5.2.1\stlport&quot;;&quot;$(SolutionDir)\..\gtk-2.16.6\include\glib-2.0&quot;;&quot;$(SolutionDir)\..\gtk-2.16.6\lib\glib-2.0\include&quot;;&quot;$(SolutionDir)\..\gtk-2.16.6\include&quot;;&quot;$(SolutionDir)\..\gtk-2.16.6\include\gtk-2.0&quot;;&quot;$(SolutionDir)\..\gtk-2.16.6\lib\gtk-2.0\include&quot;;&quot;$(SolutionDir)\..\gtk-2.16.6\include\cairo&quot;;&quot;$(SolutionDir)\..\gtk-2.16.6\include\pango-1.0&quot;;&quot;$(SolutionDir)\..\gtk-2.16.6\include\atk-1.0&quot;;&quot;$(SolutionDir)\..\libxml2-2.7.3\include\libxml2&quot;"
-				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;SURFACE_UFOAI_EXPORTS;"
+				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;SURFACE_IDTECH2_EXPORTS;"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -63,7 +63,7 @@
 				AdditionalOptions="/STACK:8388608"
 				AdditionalDependencies="glib-2.0.lib gobject-2.0.lib intl.lib gtk-win32-2.0.lib libxml2.lib synapse.lib"
 				AdditionalLibraryDirectories="&quot;$(SolutionDir)\..\gtk-2.16.6\lib&quot;;&quot;$(SolutionDir)\..\libxml2-2.7.3\lib&quot;;&quot;$(SolutionDir)\build\$(ConfigurationName)\libs&quot;"
-				ModuleDefinitionFile="surface_ufoai.def"
+				ModuleDefinitionFile="surface_idtech2.def"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				TargetMachine="1"
@@ -114,7 +114,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="&quot;$(SolutionDir)\libs&quot;;&quot;$(SolutionDir)\include&quot;;&quot;$(SolutionDir)\..\STLport-5.2.1\stlport&quot;;&quot;$(SolutionDir)\..\gtk-2.16.6\include\glib-2.0&quot;;&quot;$(SolutionDir)\..\gtk-2.16.6\lib\glib-2.0\include&quot;;&quot;$(SolutionDir)\..\gtk-2.16.6\include&quot;;&quot;$(SolutionDir)\..\gtk-2.16.6\include\gtk-2.0&quot;;&quot;$(SolutionDir)\..\gtk-2.16.6\lib\gtk-2.0\include&quot;;&quot;$(SolutionDir)\..\gtk-2.16.6\include\cairo&quot;;&quot;$(SolutionDir)\..\gtk-2.16.6\include\pango-1.0&quot;;&quot;$(SolutionDir)\..\gtk-2.16.6\include\atk-1.0&quot;;&quot;$(SolutionDir)\..\libxml2-2.7.3\include\libxml2&quot;"
-				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;SURFACE_UFOAI_EXPORTS;"
+				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;SURFACE_IDTECH2_EXPORTS;"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
@@ -135,7 +135,7 @@
 				AdditionalOptions="/STACK:8388608"
 				AdditionalDependencies="glib-2.0.lib gobject-2.0.lib intl.lib gtk-win32-2.0.lib libxml2.lib synapse.lib"
 				AdditionalLibraryDirectories="&quot;$(SolutionDir)\..\gtk-2.16.6\lib&quot;;&quot;$(SolutionDir)\..\libxml2-2.7.3\lib&quot;;&quot;$(SolutionDir)\build\$(ConfigurationName)\libs&quot;"
-				ModuleDefinitionFile="surface_ufoai.def"
+				ModuleDefinitionFile="surface_idtech2.def"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				OptimizeReferences="2"
@@ -173,7 +173,7 @@
 			Filter="cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx"
 			>
 			<File
-				RelativePath=".\surface_ufoai.def"
+				RelativePath=".\surface_idtech2.def"
 				>
 			</File>
 			<File
@@ -181,7 +181,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\surfaceflagsdialog_ufoai.cpp"
+				RelativePath=".\surfaceflagsdialog_idtech2.cpp"
 				>
 			</File>
 			<File

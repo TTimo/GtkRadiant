@@ -59,7 +59,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "spritemodel", "plugins\spri
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "textool", "plugins\textool\textool.vcxproj", "{4F52DED4-285A-4E99-9C78-734D59E8ACD6}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "surface_ufoai", "plugins\surface_ufoai\surface_ufoai.vcxproj", "{F400371F-455F-4B6C-9F13-A2E57110E725}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "surface_idtech2", "plugins\surface_idtech2\surface_idtech2.vcxproj", "{F400371F-455F-4B6C-9F13-A2E57110E725}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "surface_quake2", "plugins\surface_quake2\surface_quake2.vcxproj", "{32AB82AA-C781-4E5E-83A0-A164D371306F}"
 EndProject
@@ -73,7 +73,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "bobtoolz", "contrib\bobtool
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "gtkgensurf", "contrib\gtkgensurf\gtkgensurf.vcxproj", "{E37A9846-84FC-48F8-9880-954C5D9F8ED0}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ufoai", "contrib\ufoai\ufoai.vcxproj", "{850DD97C-B457-497D-B5F5-DA1904FAC5F9}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "idtech2", "contrib\idtech2\idtech2.vcxproj", "{850DD97C-B457-497D-B5F5-DA1904FAC5F9}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "bkgrnd2d", "contrib\bkgrnd2d\bkgrnd2d.vcxproj", "{D43C13B9-35AC-4EC1-8A90-DF6D7132B9BD}"
 EndProject

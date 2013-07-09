@@ -72,7 +72,7 @@
     <ClCompile>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>$(SolutionDir)\libs;$(SolutionDir)\include;$(SolutionDir)\..\STLport-5.2.1\stlport;$(SolutionDir)\..\gtk-2.24.10\include\glib-2.0;$(SolutionDir)\..\gtk-2.24.10\include\gdk-pixbuf-2.0;$(SolutionDir)\..\gtk-2.24.10\lib\glib-2.0\include;$(SolutionDir)\..\gtk-2.24.10\include;$(SolutionDir)\..\gtk-2.24.10\include\gtk-2.0;$(SolutionDir)\..\gtk-2.24.10\lib\gtk-2.0\include;$(SolutionDir)\..\gtk-2.24.10\include\cairo;$(SolutionDir)\..\gtk-2.24.10\include\pango-1.0;$(SolutionDir)\..\gtk-2.24.10\include\atk-1.0;$(SolutionDir)\..\libxml2-2.9.1\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;SURFACE_UFOAI_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;SURFACE_IDTECH2_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -85,7 +85,7 @@
       <AdditionalOptions>/STACK:8388608 %(AdditionalOptions)</AdditionalOptions>
       <AdditionalDependencies>ws2_32.lib;glib-2.0.lib;gobject-2.0.lib;intl.lib;gtk-win32-2.0.lib;libxml2.lib;synapse.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)\..\gtk-2.24.10\lib;$(SolutionDir)\..\libxml2-2.9.1\lib\$(Configuration)\$(Platform);$(SolutionDir)\build\$(Configuration)\libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <ModuleDefinitionFile>surface_ufoai.def</ModuleDefinitionFile>
+      <ModuleDefinitionFile>surface_idtech2.def</ModuleDefinitionFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <TargetMachine>MachineX86</TargetMachine>
@@ -95,7 +95,7 @@
     <ClCompile>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>$(SolutionDir)\libs;$(SolutionDir)\include;$(SolutionDir)\..\STLport-5.2.1\stlport;$(SolutionDir)\..\gtk-2.24.10\include\glib-2.0;$(SolutionDir)\..\gtk-2.24.10\include\gdk-pixbuf-2.0;$(SolutionDir)\..\gtk-2.24.10\lib\glib-2.0\include;$(SolutionDir)\..\gtk-2.24.10\include;$(SolutionDir)\..\gtk-2.24.10\include\gtk-2.0;$(SolutionDir)\..\gtk-2.24.10\lib\gtk-2.0\include;$(SolutionDir)\..\gtk-2.24.10\include\cairo;$(SolutionDir)\..\gtk-2.24.10\include\pango-1.0;$(SolutionDir)\..\gtk-2.24.10\include\atk-1.0;$(SolutionDir)\..\libxml2-2.9.1\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;SURFACE_UFOAI_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;SURFACE_IDTECH2_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <PrecompiledHeader>
@@ -108,7 +108,7 @@
       <AdditionalOptions>/STACK:8388608 %(AdditionalOptions)</AdditionalOptions>
       <AdditionalDependencies>ws2_32.lib;glib-2.0.lib;gobject-2.0.lib;intl.lib;gtk-win32-2.0.lib;libxml2.lib;synapse.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)\..\gtk-2.24.10\lib;$(SolutionDir)\..\libxml2-2.9.1\lib\$(Configuration)\$(Platform);$(SolutionDir)\build\$(Configuration)\libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <ModuleDefinitionFile>surface_ufoai.def</ModuleDefinitionFile>
+      <ModuleDefinitionFile>surface_idtech2.def</ModuleDefinitionFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
     </Link>
@@ -116,7 +116,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
       <AdditionalIncludeDirectories>$(SolutionDir)\libs;$(SolutionDir)\include;$(SolutionDir)\..\STLport-5.2.1\stlport;$(SolutionDir)\..\gtk-2.24.10\include\glib-2.0;$(SolutionDir)\..\gtk-2.24.10\include\gdk-pixbuf-2.0;$(SolutionDir)\..\gtk-2.24.10\lib\glib-2.0\include;$(SolutionDir)\..\gtk-2.24.10\include;$(SolutionDir)\..\gtk-2.24.10\include\gtk-2.0;$(SolutionDir)\..\gtk-2.24.10\lib\gtk-2.0\include;$(SolutionDir)\..\gtk-2.24.10\include\cairo;$(SolutionDir)\..\gtk-2.24.10\include\pango-1.0;$(SolutionDir)\..\gtk-2.24.10\include\atk-1.0;$(SolutionDir)\..\libxml2-2.9.1\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;SURFACE_UFOAI_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;SURFACE_IDTECH2_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <PrecompiledHeader />
       <WarningLevel>Level3</WarningLevel>
@@ -127,7 +127,7 @@
       <AdditionalOptions>/STACK:8388608 %(AdditionalOptions)</AdditionalOptions>
       <AdditionalDependencies>ws2_32.lib;glib-2.0.lib;gobject-2.0.lib;intl.lib;gtk-win32-2.0.lib;libxml2.lib;synapse.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)\..\gtk-2.24.10\lib;$(SolutionDir)\..\libxml2-2.9.1\lib\$(Configuration)\$(Platform);$(SolutionDir)\build\$(Configuration)\libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <ModuleDefinitionFile>surface_ufoai.def</ModuleDefinitionFile>
+      <ModuleDefinitionFile>surface_idtech2.def</ModuleDefinitionFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
@@ -138,7 +138,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
       <AdditionalIncludeDirectories>$(SolutionDir)\libs;$(SolutionDir)\include;$(SolutionDir)\..\STLport-5.2.1\stlport;$(SolutionDir)\..\gtk-2.24.10\include\glib-2.0;$(SolutionDir)\..\gtk-2.24.10\include\gdk-pixbuf-2.0;$(SolutionDir)\..\gtk-2.24.10\lib\glib-2.0\include;$(SolutionDir)\..\gtk-2.24.10\include;$(SolutionDir)\..\gtk-2.24.10\include\gtk-2.0;$(SolutionDir)\..\gtk-2.24.10\lib\gtk-2.0\include;$(SolutionDir)\..\gtk-2.24.10\include\cairo;$(SolutionDir)\..\gtk-2.24.10\include\pango-1.0;$(SolutionDir)\..\gtk-2.24.10\include\atk-1.0;$(SolutionDir)\..\libxml2-2.9.1\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;SURFACE_UFOAI_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;SURFACE_IDTECH2_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <PrecompiledHeader>
       </PrecompiledHeader>
@@ -150,7 +150,7 @@
       <AdditionalOptions>/STACK:8388608 %(AdditionalOptions)</AdditionalOptions>
       <AdditionalDependencies>ws2_32.lib;glib-2.0.lib;gobject-2.0.lib;intl.lib;gtk-win32-2.0.lib;libxml2.lib;synapse.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)\..\gtk-2.24.10\lib;$(SolutionDir)\..\libxml2-2.9.1\lib\$(Configuration)\$(Platform);$(SolutionDir)\build\$(Configuration)\libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <ModuleDefinitionFile>surface_ufoai.def</ModuleDefinitionFile>
+      <ModuleDefinitionFile>surface_idtech2.def</ModuleDefinitionFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
@@ -158,11 +158,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <None Include="surface_ufoai.def" />
+    <None Include="surface_idtech2.def" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="surfacedialog.cpp" />
-    <ClCompile Include="surfaceflagsdialog_ufoai.cpp" />
+    <ClCompile Include="surfaceflagsdialog_idtech2.cpp" />
     <ClCompile Include="surfdlg_plugin.cpp" />
   </ItemGroup>
   <ItemGroup>

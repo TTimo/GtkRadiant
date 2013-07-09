@@ -23,18 +23,11 @@
 // Surface Dialog Module
 //
 
-//
-// Nurail: Implemented to Module from the main Radiant Surface Dialog code
-//
-
-
 #include <gtk/gtk.h>
 #include <glib/gi18n.h>
 #include <gdk/gdkkeysyms.h>
 
 #include "surfdlg_plugin.h"
-
-
 
 #ifdef _DEBUG
 //#define DBG_SI 1
@@ -75,10 +68,10 @@ void DoSnapTToGrid( float hscale, float vscale );
 // called to perform a fitting from the outside (shortcut key)
 void SurfaceDialogFitAll();
 
-// UFOAI Flags Functions
-void SetFlagButtons_UFOAI( texdef_to_face_t *texdef_face_list,  bool b_isListEmpty );
-void SetChangeInFlags_Face_UFOAI( texdef_to_face_t *texdef_face_list );
-GtkWidget* Create_UFOAIFlagsDialog( GtkWidget* surfacedialog_widget );
+// IDTECH2 Flags Functions
+void SetFlagButtons_IDTECH2( texdef_to_face_t *texdef_face_list,  bool b_isListEmpty );
+void SetChangeInFlags_Face_IDTECH2( texdef_to_face_t *texdef_face_list );
+GtkWidget* Create_IDTECH2FlagsDialog( GtkWidget* surfacedialog_widget );
 
 
 // Dialog Data
@@ -344,10 +337,10 @@ static void GetTexdefInfo_from_Radiant(){
 	IsFaceConflicting();
 	PopulateTextureComboList();
 	if ( texdef_face_list_empty() ) {
-		SetFlagButtons_UFOAI( get_texdef_face_list(), TRUE );
+		SetFlagButtons_IDTECH2( get_texdef_face_list(), TRUE );
 	}
 	else{
-		SetFlagButtons_UFOAI( get_texdef_face_list(), FALSE );
+		SetFlagButtons_IDTECH2( get_texdef_face_list(), FALSE );
 	}
 }
 
@@ -541,7 +534,7 @@ void GetTexMods( bool b_SetUndoPoint ){
 
 	if ( !texdef_face_list_empty() ) {
 		g_bListenUpdate = FALSE;
-		SetChangeInFlags_Face_UFOAI( get_texdef_face_list() );
+		SetChangeInFlags_Face_IDTECH2( get_texdef_face_list() );
 		SetTexdef_FaceList( get_texdef_face_list(), b_SetUndoPoint, FALSE );
 		g_bListenUpdate = TRUE;
 
@@ -813,7 +806,7 @@ GtkWidget* create_SurfaceInspector( void ){
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
 
 	// Add the SURF_ and CONTENTS_ flags frame
-	Create_UFOAIFlagsDialog( vbox1 );
+	Create_IDTECH2FlagsDialog( vbox1 );
 
 	g_signal_connect( (gpointer) SurfaceInspector,
 					  "delete_event",

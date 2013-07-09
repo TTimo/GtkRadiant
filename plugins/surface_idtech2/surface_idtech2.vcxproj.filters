@@ -7,7 +7,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <None Include="surface_ufoai.def">
+    <None Include="surface_idtech2.def">
       <Filter>src</Filter>
     </None>
   </ItemGroup>
@@ -15,7 +15,7 @@
     <ClCompile Include="surfacedialog.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="surfaceflagsdialog_ufoai.cpp">
+    <ClCompile Include="surfaceflagsdialog_idtech2.cpp">
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="surfdlg_plugin.cpp">

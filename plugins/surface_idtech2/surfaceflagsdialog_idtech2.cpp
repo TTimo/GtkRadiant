@@ -26,7 +26,7 @@
 
 #include "surfdlg_plugin.h"
 
-#include "surfaceflagsdialog_ufoai.h"
+#include "surfaceflagsdialog_idtech2.h"
 
 GtkWidget *notebook1;
 
@@ -80,7 +80,7 @@ void clear_all_buttons_and_values(){
 	gtk_entry_set_text( (GtkEntry *)value_entry, "" );
 }
 
-void SetFlagButtons_UFOAI( texdef_to_face_t *texdef_face_list, bool b_isListEmpty ){
+void SetFlagButtons_IDTECH2( texdef_to_face_t *texdef_face_list, bool b_isListEmpty ){
 	int contents = 0;
 	int flags = 0;
 	int value = 0;
@@ -167,7 +167,7 @@ void SetFlagButtons_UFOAI( texdef_to_face_t *texdef_face_list, bool b_isListEmpt
 	setup_buttons = FALSE;
 }
 
-void SetChangeInFlags_Face_UFOAI( texdef_to_face_t *faces ){
+void SetChangeInFlags_Face_IDTECH2( texdef_to_face_t *faces ){
 	texdef_to_face_t *face;
 	texdef_t *tex;
 
@@ -281,9 +281,9 @@ void on_contentbutton_clicked( GtkButton *button, gpointer user_data ){
 	gtk_notebook_set_page( GTK_NOTEBOOK( notebook1 ), 1 );
 }
 
-#define UFOAI_FLAG_BUTTON_BORDER 3
+#define IDTECH2_FLAG_BUTTON_BORDER 3
 
-GtkWidget* Create_UFOAIFlagsDialog( GtkWidget* surfacedialog_widget ){
+GtkWidget* Create_IDTECH2FlagsDialog( GtkWidget* surfacedialog_widget ){
 	GtkWidget *frame1;
 	GtkWidget *vbox1;
 	GtkWidget *vbox2;
