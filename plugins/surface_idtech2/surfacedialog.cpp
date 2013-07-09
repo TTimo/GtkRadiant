@@ -83,16 +83,10 @@ bool g_bListenUpdate = TRUE;
 GtkWidget* create_SurfaceInspector( void );
 GtkWidget *SurfaceInspector = NULL;
 
-GtkWidget *m_pWidget;
 GtkWidget *GetWidget() { return SurfaceInspector; }
 GtkWidget *Get_SI_Module_Widget() { return SurfaceInspector; }
-void SetWidget( GtkWidget *new_widget ) { m_pWidget = new_widget; }
-GtkWidget *GetDlgWidget( const char* name )
-{ return GTK_WIDGET( g_object_get_data( G_OBJECT( SurfaceInspector ), name ) ); }
-
-// Spins for FitTexture
-GtkWidget *spin_width;
-GtkWidget *spin_height;
+void SetWidget( GtkWidget *new_widget ) { }
+GtkWidget *GetDlgWidget( const char* name ) { return GTK_WIDGET( g_object_get_data( G_OBJECT( SurfaceInspector ), name ) ); }
 
 GtkWidget *texture_combo;
 GtkWidget *texture_combo_entry;
@@ -529,7 +523,6 @@ void GetTexMods( bool b_SetUndoPoint ){
 void FitAll(){
 	on_fit_button_clicked( NULL, NULL );
 }
-
 
 ////////////////////////////////////////////////////////////////////
 //
