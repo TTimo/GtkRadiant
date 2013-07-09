@@ -8,7 +8,9 @@ CONFDIR = $(RESOURCES)/etc
 DATADIR = $(RESOURCES)/share
 LIBDIR = $(RESOURCES)/lib
 INSTDIR = $(RESOURCES)/install
-PREFIX_SED_EXPR = 's:/opt/local:@executable_path/..:g'
+# makefiles are terrible
+PORT_PATH := $(shell which port | sed 's:/bin/port::')
+PREFIX_SED_EXPR = "s:$(PORT_PATH):@executable_path/..:g"
 VERSION = 1.6.4
 DMG = $(TARGET)/GtkRadiant-$(VERSION).dmg
 VOLUME_NAME = "GtkRadiant $(VERSION)"
@@ -21,27 +23,27 @@ all: install bundle
 	find $(TARGET) -name .turd -delete
 	
 -gtk-runtime-gdk-pixbuf-2.0:
-	cp -r /opt/local/lib/gdk-pixbuf-2.0 $(LIBDIR)
+	cp -r $(PORT_PATH)/lib/gdk-pixbuf-2.0 $(LIBDIR)
 	find $(LIBDIR)/gdk-pixbuf-2.0 -type f ! -name "*.so" -delete
 	
 	gdk-pixbuf-query-loaders | sed $(PREFIX_SED_EXPR) > \
 		$(CONFDIR)/gtk-2.0/gdk-pixbuf.loaders
 
 -gtk-runtime-pango:
-	cp -r /opt/local/lib/pango $(LIBDIR)
+	cp -r $(PORT_PATH)/lib/pango $(LIBDIR)
 	find $(LIBDIR)/pango -type f ! -name "*.so" -delete
 	
 	pango-querymodules | sed $(PREFIX_SED_EXPR) > \
 		$(CONFDIR)/pango/pango.modules
 	
 -gtk-runtime: -gtk-runtime-gdk-pixbuf-2.0 -gtk-runtime-pango
-	cp -r /opt/local/lib/gtk-2.0 $(LIBDIR)
+	cp -r $(PORT_PATH)/lib/gtk-2.0 $(LIBDIR)
 	find $(LIBDIR)/gtk-2.0 -type f ! -name "*.so" -delete	
 	
 	rm -rf $(LIBDIR)/gtk-2.0/{includes,modules}
 	rm -rf $(LIBDIR)/gtk-2.0/*/printbackends
 	
-	cp -r /opt/local/share/themes/Default $(RESOURCES)/share
+	cp -r $(PORT_PATH)/share/themes/Default $(RESOURCES)/share
 	
 	gtk-query-immodules-2.0 | sed $(PREFIX_SED_EXPR) > \
 		$(CONFDIR)/gtk-2.0/gtk.immodules
