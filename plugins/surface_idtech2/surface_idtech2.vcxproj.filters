@@ -2,12 +2,12 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="src">
-      <UniqueIdentifier>{019e22cb-7bf6-4cc9-9724-b123d36cea79}</UniqueIdentifier>
+      <UniqueIdentifier>{8d3e9596-a105-4ce1-8cfb-7b02c906b270}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <None Include="surface_quake2.def">
+    <None Include="surface_idtech2.def">
       <Filter>src</Filter>
     </None>
   </ItemGroup>
@@ -15,7 +15,7 @@
     <ClCompile Include="surfacedialog.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="surfaceflagsdialog_quake2.cpp">
+    <ClCompile Include="surfaceflags.cpp">
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="surfdlg_plugin.cpp">

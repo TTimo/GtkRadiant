@@ -81,7 +81,6 @@ extern _QERAppDataTable g_AppDataTable;
 #define Sys_FPrintf g_FuncTable.m_pfnSysFPrintf
 #define Sys_UpdateWindows g_FuncTable.m_pfnSysUpdateWindows
 
-
 #define Select_FitTexture g_AppSurfaceTable.m_pfnSelect_FitTexture
 #define Get_SI_Inc g_AppSurfaceTable.m_pfnQERApp_QeglobalsSavedinfo_SIInc
 #define GridSize g_AppSurfaceTable.m_pfnQeglobalsGetGridSize

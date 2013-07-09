@@ -59,11 +59,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "spritemodel", "plugins\spri
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "textool", "plugins\textool\textool.vcxproj", "{4F52DED4-285A-4E99-9C78-734D59E8ACD6}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "surface_ufoai", "plugins\surface_ufoai\surface_ufoai.vcxproj", "{F400371F-455F-4B6C-9F13-A2E57110E725}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "surface_quake2", "plugins\surface_quake2\surface_quake2.vcxproj", "{32AB82AA-C781-4E5E-83A0-A164D371306F}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "surface_heretic2", "plugins\surface_heretic2\surface_heretic2.vcxproj", "{12932084-E212-45AB-B3BE-A2A5AEEBA581}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "surface_idtech2", "plugins\surface_idtech2\surface_idtech2.vcxproj", "{F400371F-455F-4B6C-9F13-A2E57110E725}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "prtview", "contrib\prtview\prtview.vcxproj", "{AB6534A8-ED1B-46DC-84EA-8AA080C12F6A}"
 EndProject
