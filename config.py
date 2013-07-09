@@ -212,7 +212,7 @@ class Config:
             print 'xml2-config failed'
             assert( False )
         xml2libs = commands.getoutput( 'xml2-config --libs' )
-        env.Append( LINKFLAGS = xml2libs.split( ' ' ) )
+        env.ParseConfig( 'xml2-config --libs' )
         baseflags = [ '-pipe', '-Wall', '-fmessage-length=0', '-fvisibility=hidden', xml2.split( ' ' ) ]
 
         if ( useGtk ):
@@ -390,26 +390,28 @@ class Config:
                 ]:
                 shutil.copy( os.path.join( srcdir, x64_dll ), 'install/x64' )
 
-        def FinishBuild( self, target, source, env ):
-            print( 'Lookup and bundle the PNG and JPEG libraries' )
-            # radiant.bin doesn't link to jpeg lib directly, grab that from a module
-            # Python 2.7 only!
-            #module_ldd = subprocess.check_output( 'ldd -r install/modules/image.so', shell = True )
-            p = subprocess.Popen( 'ldd -r install/modules/image.so', shell = True, stdout = subprocess.PIPE )
-            module_ldd = p.communicate()[0]
+    def FinishBuild( self, target, source, env ):
+        print( 'Lookup and bundle the PNG and JPEG libraries' )
+        # radiant.bin doesn't link to jpeg lib directly, grab that from a module
+        # Python 2.7 only!
+        #module_ldd = subprocess.check_output( 'ldd -r install/modules/image.so', shell = True )
+        p = subprocess.Popen( 'ldd -r install/modules/image.so', shell = True, stdout = subprocess.PIPE )
+        module_ldd = p.communicate()[0]
 #                print( module_ldd )
 
-            def find_library( output, libname ):
-                match = filter( lambda l : l.find( libname ) != -1, output.split( '\n' ) )[0]
-                return re.split( '.*=> (.*) .*', match )[1]
+        def find_library( output, libname ):
+            print output
+            print libname
+            match = filter( lambda l : l.find( libname ) != -1, output.split( '\n' ) )[0]
+            return re.split( '.*=> (.*) .*', match )[1]
 
-            jpeg_path = find_library( module_ldd, 'libjpeg' )
-            print( 'JPEG library: %s' % repr( jpeg_path ) )
-            png_path = find_library( module_ldd, 'libpng' )
-            print( 'PNG  library: %s' % repr( png_path ) )
+        jpeg_path = find_library( module_ldd, 'libjpeg' )
+        print( 'JPEG library: %s' % repr( jpeg_path ) )
+        png_path = find_library( module_ldd, 'libpng' )
+        print( 'PNG  library: %s' % repr( png_path ) )
 
-            shutil.copy( jpeg_path, 'install' )
-            shutil.copy( png_path, 'install' )
+        shutil.copy( jpeg_path, 'install' )
+        shutil.copy( png_path, 'install' )
 
 # parse the config statement line to produce/update an existing config list
 # the configs expose a list of keywords and accepted values, which the engine parses out

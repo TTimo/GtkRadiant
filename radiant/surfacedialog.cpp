@@ -273,25 +273,23 @@ static void OnCancel( GtkWidget *widget, gpointer data ){
 	g_dlgSurface.HideDlg();
 }
 
-static gint OnDialogKey( GtkWidget* widget, GdkEventKey* event, gpointer data ){
-	if ( g_surfwin ) {
-		if ( event->keyval == GDK_Return ) {
-			if ( g_dlgSurface.m_bEditingTextureWidget ) {
-				OnApply( NULL, NULL );
-				g_dlgSurface.m_bEditingTextureWidget = false;
-			}
-			else
-			{
-				OnDone( NULL, NULL );
-			}
-			return TRUE;
-		}
-		if ( event->keyval == GDK_Escape ) {
-			OnCancel( NULL, NULL );
-			return TRUE;
-		}
-	}
-	return FALSE;
+static gint OnDialogKey( GtkWidget* widget, GdkEventKey* event, gpointer data ) {
+  if ( g_surfwin ) {
+    if ( event->keyval == GDK_Return ) {
+      if ( g_dlgSurface.m_bEditingTextureWidget ) {
+        OnApply( NULL, NULL );
+        g_dlgSurface.m_bEditingTextureWidget = false;
+      } else {
+        OnDone( NULL, NULL );
+      }
+      return TRUE;
+    }
+    if ( event->keyval == GDK_Escape ) {
+      OnCancel( NULL, NULL );
+      return TRUE;
+    }
+  }
+  return FALSE;
 }
 
 // the widget can be one of hshift, vshift, hscale, vscale, rotate
@@ -499,7 +497,7 @@ void SurfaceDlg::InitDefaultIncrement( texdef_t *tex ){
 	tex->rotate = 10;
 }
 
-void SurfaceDlg::BuildDialog(){
+void SurfaceDlg::BuildDialog() {
 	GtkWidget *dlg, *vbox, *hbox2, *frame, *table, *label;
 	GtkWidget *button, *entry, *spin;
 

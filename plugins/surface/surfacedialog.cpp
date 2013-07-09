@@ -34,7 +34,7 @@
 #include "surfdlg_plugin.h"
 
 #ifdef _DEBUG
-//#define DBG_SI 1
+//  #define DBG_SI 1
 #endif
 
 #include "gtkr_vector.h"
@@ -63,6 +63,7 @@ bool is_TextureName_conflicting;
 
 void ShowDlg();
 void HideDlg();
+void CancelDlg();
 void SetTexMods();
 void GetTexMods( bool b_SetUndoPoint = FALSE );
 void BuildDialog();
@@ -163,7 +164,6 @@ GtkWidget *axial_button;
 
 GtkWidget *done_button;
 GtkWidget *apply_button;
-GtkWidget *cancel_button;
 
 // Callbacks
 gboolean on_texture_combo_entry_key_press_event( GtkWidget *widget, GdkEventKey *event, gpointer user_data );
@@ -197,7 +197,6 @@ static void on_axial_button_clicked( GtkButton *button, gpointer user_data );
 
 static void on_done_button_clicked( GtkButton *button, gpointer user_data );
 static void on_apply_button_clicked( GtkButton *button, gpointer user_data );
-static void on_cancel_button_clicked( GtkButton *button, gpointer user_data );
 
 
 /*
@@ -397,6 +396,40 @@ static gint delete_event_callback( GtkWidget *widget, GdkEvent* event, gpointer 
 	return TRUE;
 }
 
+void DoDone() {
+  if ( !texdef_face_list_empty() ) {
+    GetTexMods( TRUE );
+  }
+  HideDlg();
+  Sys_UpdateWindows( W_ALL );
+}
+
+void DoApply() {
+  if ( !g_bListenChanged ) {
+    return;
+  }
+  if ( !texdef_face_list_empty() ) {
+    GetTexMods( TRUE );
+    Sys_UpdateWindows( W_CAMERA );
+    GetTexdefInfo_from_Radiant();
+    SetTexMods();
+  }
+}
+
+static gint surface_inspector_key_press_event( GtkWidget *widget, GdkEventKey* event, gpointer data ) {
+  // NOTE: catching the 'S' key to hide back the surface inspector has been suggested, but would have bad interactions with the texture typing box
+  // we could do it, but would have to add some focus management and edit logic to that texture name box
+  // we would also need to expose radiant's g_Commands to identify remapped command keys etc. (or do a first version with hardcoded 'S')
+  if ( event->keyval == GDK_Escape ) {
+    CancelDlg();
+    return TRUE;
+  } else if ( event->keyval == GDK_Return ) {
+    DoApply();
+    return TRUE;
+  }
+  return FALSE;
+}
+
 // make the shift increments match the grid settings
 // the objective being that the shift+arrows shortcuts move the texture by the corresponding grid size
 // this depends on a scale value if you have selected a particular texture on which you want it to work:
@@ -431,13 +464,14 @@ void UpdateSurfaceDialog(){
 		return;
 	}
 
-	if ( !SurfaceInspector ) {
+	if ( SurfaceInspector == NULL ) {
 		return;
 	}
 
 	// avoid long delays on slow computers
-	while ( gtk_events_pending() )
+	while ( gtk_events_pending() ) {
 		gtk_main_iteration();
+        }
 
 	if ( g_surfwin ) {
 #ifdef DBG_SI
@@ -451,28 +485,27 @@ void UpdateSurfaceDialog(){
 
 // DoSurface will always try to show the surface inspector
 // or update it because something new has been selected
-void DoSurface( void ){
+void DoSurface( void ) {
 #ifdef DBG_SI
-	Sys_Printf( "DoSurface\n" );
+  Sys_Printf( "DoSurface\n" );
 #endif
-	if ( !SurfaceInspector ) {
-		create_SurfaceInspector();
-	}
+  if ( !SurfaceInspector ) {
+    create_SurfaceInspector();
+  }
 
-	ShowDlg();
-	SetTexMods();
+  ShowDlg();
+  SetTexMods();
 }
 
-void ToggleSurface(){
+void ToggleSurface() {
 #ifdef DBG_SI
-	Sys_Printf( "ToggleSurface Module\n" );
+  Sys_Printf( "ToggleSurface Module\n" );
 #endif
-	if ( !g_surfwin ) {
-		DoSurface();
-	}
-	else{
-		on_cancel_button_clicked( NULL, NULL );
-	}
+  if ( !g_surfwin ) {
+    DoSurface();
+  } else {
+    CancelDlg();
+  }
 }
 
 // NOTE: will raise and show the Surface inspector and exec fit for patches and brushes
@@ -484,25 +517,38 @@ void SurfaceDlgFitAll(){
 // =============================================================================
 // SurfaceDialog class
 
-void ShowDlg(){
+void ShowDlg() {
+  if ( !SurfaceInspector ) {
+    create_SurfaceInspector();
+  } else {
+    gtk_widget_show( SurfaceInspector );
+  }
 
-	if ( !SurfaceInspector ) {
-		create_SurfaceInspector();
-	}
-	else{
-		gtk_widget_show( SurfaceInspector );
-	}
-
-	GetTexdefInfo_from_Radiant();
-	GetTexMods( TRUE ); // Set Initial Undo Point
-	g_surfwin = TRUE;
+  GetTexdefInfo_from_Radiant();
+  GetTexMods( TRUE ); // Set Initial Undo Point
+  g_surfwin = TRUE;
 }
 
-void HideDlg(){
-	g_surfwin = FALSE;
-	gtk_widget_hide( SurfaceInspector );
+void HideDlg() {
+  g_surfwin = FALSE;
+  gtk_widget_hide( SurfaceInspector );
 }
 
+void CancelDlg() {
+  texturewin = Texturewin();
+  texturewin->texdef = g_old_texdef;
+  // cancel the last do if we own it
+  if ( ( m_nUndoId == Undo_GetUndoId() ) && ( m_nUndoId != 0 ) ) {
+#ifdef DBG_SI
+    Sys_Printf( "CancelDlg calling Undo_Undo\n" );
+#endif
+    g_bListenUpdate = false;
+    Undo_Undo( TRUE );
+    g_bListenUpdate = true;
+    m_nUndoId = 0;
+  }
+  HideDlg();
+}
 
 // set default values for increments (shift scale and rot)
 // this is called by the prefs code if can't find the values
@@ -622,7 +668,7 @@ void SetTexMods(){
    Shows any changes to the main Radiant windows
    ===============
  */
-void GetTexMods( bool b_SetUndoPoint ){
+void GetTexMods( bool b_SetUndoPoint ) {
 
 #ifdef DBG_SI
 	Sys_Printf( "SurfaceDlg GetTexMods\n" );
@@ -662,27 +708,15 @@ GtkWidget* create_SurfaceInspector( void ){
 	GtkWidget *viewport7;
 	GtkWidget *viewport5;
 	GtkWidget *viewport6;
-	GtkWidget *viewport10;
 
 	GtkWidget *table1;
 	GtkWidget *table4;
 	GtkWidget *table5;
 	GtkWidget *table7;
 
-	GtkWidget *alignment1;
-	GtkWidget *alignment2;
-	GtkWidget *alignment3;
-
 	GtkWidget *vbox7;
 
 	GtkWidget *hbox1;
-	GtkWidget *hbox2;
-	GtkWidget *hbox3;
-	GtkWidget *hbox4;
-
-	GtkWidget *image1;
-	GtkWidget *image2;
-	GtkWidget *image3;
 
 	GtkWidget *hbuttonbox1;
 
@@ -1240,84 +1274,19 @@ GtkWidget* create_SurfaceInspector( void ){
 	gtk_widget_set_size_request( axial_button, 56, 29 );
 	gtk_container_set_border_width( GTK_CONTAINER( axial_button ), 4 );
 
-	viewport10 = gtk_viewport_new( NULL, NULL );
-	gtk_widget_show( viewport10 );
-	gtk_box_pack_start( GTK_BOX( vbox7 ), viewport10, FALSE, TRUE, 0 );
-	gtk_container_set_border_width( GTK_CONTAINER( viewport10 ), 2 );
-	gtk_viewport_set_shadow_type( GTK_VIEWPORT( viewport10 ), GTK_SHADOW_ETCHED_IN );
-
-	hbuttonbox1 = gtk_hbutton_box_new();
+	hbuttonbox1 = gtk_hbox_new( FALSE, 5 );
 	gtk_widget_show( hbuttonbox1 );
-	gtk_container_add( GTK_CONTAINER( viewport10 ), hbuttonbox1 );
-	gtk_container_set_border_width( GTK_CONTAINER( hbuttonbox1 ), 4 );
-	gtk_button_box_set_layout( GTK_BUTTON_BOX( hbuttonbox1 ), GTK_BUTTONBOX_SPREAD );
+	gtk_box_pack_start( GTK_BOX( vbox7 ), hbuttonbox1, TRUE, FALSE, 0 );
 
-	done_button = gtk_button_new();
-	gtk_widget_show( done_button );
-	gtk_container_add( GTK_CONTAINER( hbuttonbox1 ), done_button );
-	GTK_WIDGET_SET_FLAGS( done_button, GTK_CAN_DEFAULT );
-
-	alignment1 = gtk_alignment_new( 0.5, 0.5, 0, 0 );
-	gtk_widget_show( alignment1 );
-	gtk_container_add( GTK_CONTAINER( done_button ), alignment1 );
-
-	hbox2 = gtk_hbox_new( FALSE, 2 );
-	gtk_widget_show( hbox2 );
-	gtk_container_add( GTK_CONTAINER( alignment1 ), hbox2 );
-
-	image1 = gtk_image_new_from_stock( "gtk-yes", GTK_ICON_SIZE_BUTTON );
-	gtk_widget_show( image1 );
-	gtk_box_pack_start( GTK_BOX( hbox2 ), image1, FALSE, FALSE, 0 );
-
-	label = gtk_label_new_with_mnemonic( "Done" );
-	gtk_widget_show( label );
-	gtk_box_pack_start( GTK_BOX( hbox2 ), label, FALSE, FALSE, 0 );
-	gtk_label_set_justify( GTK_LABEL( label ), GTK_JUSTIFY_LEFT );
-
-	apply_button = gtk_button_new();
+	apply_button = gtk_button_new_with_label( "Apply" );
 	gtk_widget_show( apply_button );
-	gtk_container_add( GTK_CONTAINER( hbuttonbox1 ), apply_button );
-	GTK_WIDGET_SET_FLAGS( apply_button, GTK_CAN_DEFAULT );
+	gtk_box_pack_end( GTK_BOX( hbuttonbox1 ), apply_button, FALSE, FALSE, 0 );
+	gtk_widget_set_usize( apply_button, 60, -1 );
 
-	alignment3 = gtk_alignment_new( 0.5, 0.5, 0, 0 );
-	gtk_widget_show( alignment3 );
-	gtk_container_add( GTK_CONTAINER( apply_button ), alignment3 );
-
-	hbox4 = gtk_hbox_new( FALSE, 2 );
-	gtk_widget_show( hbox4 );
-	gtk_container_add( GTK_CONTAINER( alignment3 ), hbox4 );
-
-	image3 = gtk_image_new_from_stock( "gtk-apply", GTK_ICON_SIZE_BUTTON );
-	gtk_widget_show( image3 );
-	gtk_box_pack_start( GTK_BOX( hbox4 ), image3, FALSE, FALSE, 0 );
-
-	label = gtk_label_new_with_mnemonic( "Apply" );
-	gtk_widget_show( label );
-	gtk_box_pack_start( GTK_BOX( hbox4 ), label, FALSE, FALSE, 0 );
-	gtk_label_set_justify( GTK_LABEL( label ), GTK_JUSTIFY_LEFT );
-
-	cancel_button = gtk_button_new();
-	gtk_widget_show( cancel_button );
-	gtk_container_add( GTK_CONTAINER( hbuttonbox1 ), cancel_button );
-	GTK_WIDGET_SET_FLAGS( cancel_button, GTK_CAN_DEFAULT );
-
-	alignment2 = gtk_alignment_new( 0.5, 0.5, 0, 0 );
-	gtk_widget_show( alignment2 );
-	gtk_container_add( GTK_CONTAINER( cancel_button ), alignment2 );
-
-	hbox3 = gtk_hbox_new( FALSE, 2 );
-	gtk_widget_show( hbox3 );
-	gtk_container_add( GTK_CONTAINER( alignment2 ), hbox3 );
-
-	image2 = gtk_image_new_from_stock( "gtk-no", GTK_ICON_SIZE_BUTTON );
-	gtk_widget_show( image2 );
-	gtk_box_pack_start( GTK_BOX( hbox3 ), image2, FALSE, FALSE, 0 );
-
-	label = gtk_label_new_with_mnemonic( "Cancel" );
-	gtk_widget_show( label );
-	gtk_box_pack_start( GTK_BOX( hbox3 ), label, FALSE, FALSE, 0 );
-	gtk_label_set_justify( GTK_LABEL( label ), GTK_JUSTIFY_LEFT );
-
+        done_button = gtk_button_new_with_label( "Done" );
+	gtk_widget_show( done_button );
+	gtk_box_pack_end( GTK_BOX( hbuttonbox1 ), done_button, FALSE, FALSE, 0 );
+	gtk_widget_set_usize( done_button, 60, -1 );
 
 	g_signal_connect( (gpointer) SurfaceInspector,
 					  "delete_event",
@@ -1326,6 +1295,9 @@ GtkWidget* create_SurfaceInspector( void ){
 	g_signal_connect( (gpointer) SurfaceInspector, "destroy",
 					  G_CALLBACK( gtk_widget_destroy ),
 					  NULL );
+        g_signal_connect( (gpointer) SurfaceInspector, "key_press_event",
+            G_CALLBACK( surface_inspector_key_press_event ),
+            NULL );
 
 	g_signal_connect( (gpointer) texture_combo_entry, "key_press_event",
 					  G_CALLBACK( on_texture_combo_entry_key_press_event ),
@@ -1410,10 +1382,6 @@ GtkWidget* create_SurfaceInspector( void ){
 	g_signal_connect( (gpointer) apply_button, "clicked",
 					  G_CALLBACK( on_apply_button_clicked ),
 					  NULL );
-	g_signal_connect( (gpointer) cancel_button, "clicked",
-					  G_CALLBACK( on_cancel_button_clicked ),
-					  NULL );
-
 
 	return SurfaceInspector;
 }
@@ -1862,40 +1830,10 @@ static void on_axial_button_clicked( GtkButton *button, gpointer user_data ){
 	Sys_UpdateWindows( W_ALL );
 }
 
-
-// Action Buttons
-static void on_done_button_clicked( GtkButton *button, gpointer user_data ){
-	if ( !texdef_face_list_empty() ) {
-		GetTexMods( TRUE );
-	}
-	HideDlg();
-	Sys_UpdateWindows( W_ALL );
+static void on_done_button_clicked( GtkButton *button, gpointer user_data ) {
+  DoDone();
 }
 
-static void on_apply_button_clicked( GtkButton *button, gpointer user_data ){
-	if ( !g_bListenChanged ) {
-		return;
-	}
-	if ( !texdef_face_list_empty() ) {
-		GetTexMods( TRUE );
-		Sys_UpdateWindows( W_CAMERA );
-		GetTexdefInfo_from_Radiant();
-		SetTexMods();
-	}
-}
-
-static void on_cancel_button_clicked( GtkButton *button, gpointer user_data ){
-	texturewin = Texturewin();
-	texturewin->texdef = g_old_texdef;
-	// cancel the last do if we own it
-	if ( ( m_nUndoId == Undo_GetUndoId() ) && ( m_nUndoId != 0 ) ) {
-#ifdef DBG_SI
-		Sys_Printf( "OnCancel calling Undo_Undo\n" );
-#endif
-		g_bListenUpdate = false;
-		Undo_Undo( TRUE );
-		g_bListenUpdate = true;
-		m_nUndoId = 0;
-	}
-	HideDlg();
+static void on_apply_button_clicked( GtkButton *button, gpointer user_data ) {
+  DoApply();
 }

@@ -73,8 +73,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "bobtoolz", "contrib\bobtool
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "gtkgensurf", "contrib\gtkgensurf\gtkgensurf.vcxproj", "{E37A9846-84FC-48F8-9880-954C5D9F8ED0}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "idtech2", "contrib\idtech2\idtech2.vcxproj", "{850DD97C-B457-497D-B5F5-DA1904FAC5F9}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "bkgrnd2d", "contrib\bkgrnd2d\bkgrnd2d.vcxproj", "{D43C13B9-35AC-4EC1-8A90-DF6D7132B9BD}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "vfsqlpk3", "plugins\vfsqlpk3\vfsqlpk3.vcxproj", "{9FD68F2C-B26A-461D-96E0-55AFC48AC9E0}"
@@ -358,13 +356,6 @@ Global
 		{E37A9846-84FC-48F8-9880-954C5D9F8ED0}.Release|Win32.Build.0 = Release|Win32
 		{E37A9846-84FC-48F8-9880-954C5D9F8ED0}.Release|x64.ActiveCfg = Release|x64
 		{E37A9846-84FC-48F8-9880-954C5D9F8ED0}.Release|x64.Build.0 = Release|x64
-		{850DD97C-B457-497D-B5F5-DA1904FAC5F9}.Debug|Win32.ActiveCfg = Debug|Win32
-		{850DD97C-B457-497D-B5F5-DA1904FAC5F9}.Debug|Win32.Build.0 = Debug|Win32
-		{850DD97C-B457-497D-B5F5-DA1904FAC5F9}.Debug|x64.ActiveCfg = Debug|x64
-		{850DD97C-B457-497D-B5F5-DA1904FAC5F9}.Release|Win32.ActiveCfg = Release|Win32
-		{850DD97C-B457-497D-B5F5-DA1904FAC5F9}.Release|Win32.Build.0 = Release|Win32
-		{850DD97C-B457-497D-B5F5-DA1904FAC5F9}.Release|x64.ActiveCfg = Release|x64
-		{850DD97C-B457-497D-B5F5-DA1904FAC5F9}.Release|x64.Build.0 = Release|x64
 		{D43C13B9-35AC-4EC1-8A90-DF6D7132B9BD}.Debug|Win32.ActiveCfg = Debug|Win32
 		{D43C13B9-35AC-4EC1-8A90-DF6D7132B9BD}.Debug|Win32.Build.0 = Debug|Win32
 		{D43C13B9-35AC-4EC1-8A90-DF6D7132B9BD}.Debug|x64.ActiveCfg = Debug|x64
