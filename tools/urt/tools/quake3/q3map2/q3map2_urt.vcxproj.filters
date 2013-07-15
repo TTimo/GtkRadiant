@@ -65,6 +65,9 @@
     <ClCompile Include="surface_extra.c">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="exportents.c">
+      <Filter>src</Filter>
+    </ClCompile>
     <ClCompile Include="brush.c">
       <Filter>src\bsp</Filter>
     </ClCompile>

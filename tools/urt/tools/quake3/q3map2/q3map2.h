@@ -1749,6 +1749,11 @@ void                        StitchSurfaceLightmaps( void );
 void                        StoreSurfaceLightmaps( void );
 
 
+/* exportents.c */
+void                        ExportEntities( void );
+int                         ExportEntitiesMain( int argc, char **argv );
+
+
 /* image.c */
 void                        ImageFree( image_t *image );
 image_t                     *ImageFind( const char *filename );
