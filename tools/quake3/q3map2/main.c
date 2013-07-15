@@ -721,6 +721,11 @@ int main( int argc, char **argv ){
 		r = LightMain( argc, argv );
 	}
 
+	/* QBall: export entities */
+	else if ( !strcmp( argv[ 1 ], "-exportents" ) ) {
+		r = ExportEntitiesMain( argc - 1, argv + 1 );
+	}
+
 	/* ydnar: lightmap export */
 	else if ( !strcmp( argv[ 1 ], "-export" ) ) {
 		r = ExportLightmapsMain( argc - 1, argv + 1 );
