@@ -193,6 +193,7 @@
     <ClCompile Include="light_trace.c" />
     <ClCompile Include="light_ydnar.c" />
     <ClCompile Include="lightmaps_ydnar.c" />
+    <ClCompile Include="exportents.c" />
     <ClCompile Include="vis.c" />
     <ClCompile Include="visflow.c" />
     <ClCompile Include="convert_ase.c" />

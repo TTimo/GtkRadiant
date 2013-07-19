@@ -110,6 +110,9 @@
     <ClCompile Include="lightmaps_ydnar.c">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="exportents.c">
+      <Filter>src</Filter>
+    </ClCompile>
     <ClCompile Include="vis.c">
       <Filter>src</Filter>
     </ClCompile>
