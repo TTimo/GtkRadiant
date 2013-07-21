@@ -3720,10 +3720,10 @@ void CGameInstall::Run() {
 		fprintf( fg, "  caulk_shader=\"textures/common/caulk\"\n" );
 		// Hardcoded fix for "missing" shaderlist in gamepack
 		Str dest = m_strEngine.GetBuffer();
-		dest += "/base/scripts/shaderlist.txt";
+		dest += "/baseEF/scripts/shaderlist.txt";
 		if( CheckFile( dest.GetBuffer() ) != PATH_FILE ) {
 			Str source = gameInstallPath.GetBuffer();
-			source += "base/scripts/default_shaderlist.txt";
+			source += "baseEF/scripts/default_shaderlist.txt";
 			radCopyFile( source.GetBuffer(), dest.GetBuffer() );
 		}
 		break;
