@@ -2385,7 +2385,7 @@ void PrefsDlg::BuildDialog(){
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
 
 	// spinner (allows undo levels to be set to zero)
-	spin = gtk_spin_button_new( GTK_ADJUSTMENT( gtk_adjustment_new( 1, 0, 64, 1, 10, 10 ) ), 1, 0 );
+	spin = gtk_spin_button_new( GTK_ADJUSTMENT( gtk_adjustment_new( 1, 0, 64, 1, 10, 0 ) ), 1, 0 );
 	gtk_widget_show( spin );
 	gtk_table_attach( GTK_TABLE( table ), spin, 1, 2, 1, 2,
 					  (GtkAttachOptions) ( GTK_FILL ),
@@ -2456,7 +2456,7 @@ void PrefsDlg::BuildDialog(){
 	AddDialogData( check, &m_bAutoSave, DLG_CHECK_BOOL );
 
 	// spinner
-	spin = gtk_spin_button_new( GTK_ADJUSTMENT( gtk_adjustment_new( 1, 1, 60, 1, 10, 10 ) ), 1, 0 );
+	spin = gtk_spin_button_new( GTK_ADJUSTMENT( gtk_adjustment_new( 1, 1, 60, 1, 10, 0 ) ), 1, 0 );
 	gtk_widget_show( spin );
 	gtk_box_pack_start( GTK_BOX( hbox2 ), spin, FALSE, FALSE, 0 );
 	gtk_widget_set_usize( spin, 60, -2 );
