@@ -1596,7 +1596,21 @@ void XYWnd::NewBrushDrag( int x, int y ){
 		}
 	}
 
-	n = Brush_Create( mins, maxs, &g_qeglobals.d_texturewin.texdef );
+	// Caulk the new brush
+	if ( g_PrefsDlg.m_bCaulkNewBrushes == TRUE ) {
+		texdef_t tex;
+		IShader *shad = QERApp_Shader_ForName( "textures/common/caulk" );
+		
+		tex.SetName( shad->getName() );
+		tex.scale[0] = g_PrefsDlg.m_fDefTextureScale;
+		tex.scale[1] = g_PrefsDlg.m_fDefTextureScale;
+		tex.flags = shad->getFlags();
+
+		n = Brush_Create( mins, maxs, &tex );
+	} else {
+		n = Brush_Create( mins, maxs, &g_qeglobals.d_texturewin.texdef );
+	}
+
 	if ( !n ) {
 		return;
 	}

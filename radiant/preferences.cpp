@@ -131,6 +131,7 @@
 #define DOSLEEP_KEY             "SleepMode"
 #define SUBDIVISIONS_KEY        "Subdivisions"
 #define DEFAULTTEXURESCALE_KEY  "DefaultTextureScale"
+#define CAULKNEWBRUSHES_KEY     "CaulkNewBrushes"
 #define CLIPCAULK_KEY           "ClipCaulk"
 #define PATCHSHOWBOUNDS_KEY     "PatchShowBounds"
 #define NATIVEGUI_KEY           "NativeGUI"
@@ -2582,6 +2583,14 @@ void PrefsDlg::BuildDialog(){
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
 	AddDialogData( entry, &m_fDefTextureScale, DLG_ENTRY_FLOAT );
 
+
+	// caulk new brushes
+	check = gtk_check_button_new_with_label( _( "Always use caulk for new brushes" ) );
+	gtk_widget_show( check );
+	gtk_box_pack_start( GTK_BOX( vbox ), check, FALSE, FALSE, 0 );
+	g_object_set_data( G_OBJECT( dialog ), "check_caulkbrush", check );
+	AddDialogData( check, &m_bCaulkNewBrushes, DLG_CHECK_BOOL );
+	
 	// Add the page to the notebook
 	gtk_notebook_append_page( GTK_NOTEBOOK( notebook ), pageframe, preflabel );
 
@@ -3045,6 +3054,7 @@ void PrefsDlg::LoadPrefs(){
 	mLocalPrefs.GetPref( SELECTMODELS_KEY,       &m_bSelectModels,               TRUE );
 	mLocalPrefs.GetPref( SHADERLISTONLY_KEY,     &m_bTexturesShaderlistOnly,     FALSE );
 	mLocalPrefs.GetPref( DEFAULTTEXURESCALE_KEY, &m_fDefTextureScale,            g_pGameDescription->mTextureDefaultScale );
+	mLocalPrefs.GetPref( CAULKNEWBRUSHES_KEY, &m_bCaulkNewBrushes,               TRUE );
 	mLocalPrefs.GetPref( SUBDIVISIONS_KEY,       &m_nSubdivisions,               SUBDIVISIONS_DEF );
 	mLocalPrefs.GetPref( CLIPCAULK_KEY,          &m_bClipCaulk,                  FALSE );
 	mLocalPrefs.GetPref( SNAPTTOGRID_KEY,        &m_bSnapTToGrid,                FALSE );
