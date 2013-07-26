@@ -427,6 +427,8 @@ struct SKeyInfo
 #define ID_TEXTUREWINDOW_SCALEUP        40321
 #define ID_TEXTUREWINDOW_SCALEDOWN      40322
 
+#define ID_TOGGLE_DETAIL				40323
+
 class CSynapseClientRadiant : public CSynapseClient
 {
 public:
@@ -695,6 +697,7 @@ void OnHelp();
 void OnHelpLinks();
 void OnHelpBugreport();
 void OnViewClipper();
+void OnToggleDetail();
 void OnCameraAngledown();
 void OnCameraAngleup();
 void OnCameraBack( bool keydown );

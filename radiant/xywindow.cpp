@@ -1595,7 +1595,7 @@ void XYWnd::NewBrushDrag( int x, int y ){
 			maxs[i] = temp;
 		}
 	}
-
+	
 	// Caulk the new brush
 	if ( g_PrefsDlg.m_bCaulkNewBrushes == TRUE ) {
 		texdef_t tex;
@@ -1605,15 +1605,27 @@ void XYWnd::NewBrushDrag( int x, int y ){
 		tex.scale[0] = g_PrefsDlg.m_fDefTextureScale;
 		tex.scale[1] = g_PrefsDlg.m_fDefTextureScale;
 		tex.flags = shad->getFlags();
-
+		
 		n = Brush_Create( mins, maxs, &tex );
 	} else {
 		n = Brush_Create( mins, maxs, &g_qeglobals.d_texturewin.texdef );
 	}
-
+	
 	if ( !n ) {
 		return;
 	}
+
+	// structural or detail?
+	face_t *f;
+		
+	for ( f = n->brush_faces ; f ; f = f->next ) {
+		if ( g_qeglobals.m_bMakeDetail == TRUE ) {
+			f->texdef.contents |= CONTENTS_DETAIL;
+		} else {
+			f->texdef.contents &= ~CONTENTS_DETAIL;
+		}
+	}
+	//
 
 	vec3_t vSize;
 	VectorSubtract( maxs, mins, vSize );

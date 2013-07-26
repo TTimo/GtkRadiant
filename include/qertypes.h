@@ -874,6 +874,8 @@ typedef struct
 	// set to true after OpenGL has been initialized and extensions have been tested
 	bool m_bOpenGLReady;
 
+	// set this to true and any new brushes will be detail by default (else they are structural)
+	bool m_bMakeDetail;
 } QEGlobals_t;
 
 #endif // _QERTYPES_H_
