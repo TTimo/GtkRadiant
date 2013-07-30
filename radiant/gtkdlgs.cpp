@@ -1732,7 +1732,7 @@ void DoRotateDlg(){
 					  (GtkAttachOptions) ( 0 ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
 
-	adj = gtk_adjustment_new( 0, -359, 359, 1, 10, 10 );
+	adj = gtk_adjustment_new( 0, -359, 359, 1, 10, 0 );
 	x = gtk_spin_button_new( GTK_ADJUSTMENT( adj ), 1, 0 );
 	g_object_set_data( G_OBJECT( dlg ), "x", x );
 	gtk_widget_show( x );
@@ -1742,7 +1742,7 @@ void DoRotateDlg(){
 	gtk_widget_set_usize( x, 60, -2 );
 	gtk_spin_button_set_wrap( GTK_SPIN_BUTTON( x ), TRUE );
 
-	adj = gtk_adjustment_new( 0, -359, 359, 1, 10, 10 );
+	adj = gtk_adjustment_new( 0, -359, 359, 1, 10, 0 );
 	y = gtk_spin_button_new( GTK_ADJUSTMENT( adj ), 1, 0 );
 	g_object_set_data( G_OBJECT( dlg ), "y", y );
 	gtk_widget_show( y );
@@ -1751,7 +1751,7 @@ void DoRotateDlg(){
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
 	gtk_spin_button_set_wrap( GTK_SPIN_BUTTON( y ), TRUE );
 
-	adj = gtk_adjustment_new( 0, -359, 359, 1, 10, 10 );
+	adj = gtk_adjustment_new( 0, -359, 359, 1, 10, 0 );
 	z = gtk_spin_button_new( GTK_ADJUSTMENT( adj ), 1, 0 );
 	g_object_set_data( G_OBJECT( dlg ), "z", z );
 	gtk_widget_show( z );

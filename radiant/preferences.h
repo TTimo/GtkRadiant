@@ -641,6 +641,7 @@ bool m_bGLLighting;
 bool m_bTexturesShaderlistOnly;
 int m_nSubdivisions;
 float m_fDefTextureScale;
+bool m_bCaulkNewBrushes;
 bool m_bFloatingZ;
 bool m_bLatchedFloatingZ;
 // Gef: Kyro GL_POINT workaround

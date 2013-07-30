@@ -690,6 +690,7 @@ gint HandleCommand( GtkWidget *widget, gpointer data ){
 		  case ID_SELECT_SNAPTOGRID: g_pParentWnd->OnSnapToGrid(); break;
 		  case ID_SELECT_ALL: g_pParentWnd->OnSelectAll(); break;
 		  case ID_SELECTION_INVERT: g_pParentWnd->OnSelectionInvert(); break;
+		  case ID_TOGGLE_DETAIL: g_pParentWnd->OnToggleDetail(); break;
 		  }}
 
 	return TRUE;
@@ -1755,6 +1756,11 @@ void MainFrame::create_main_toolbar( GtkWidget *window, GtkWidget *vbox ){
 										GTK_SIGNAL_FUNC( HandleCommand ), GINT_TO_POINTER( ID_VIEW_CLIPPER ) );
 		g_object_set_data( G_OBJECT( window ), "tb_view_clipper", w );
 	}
+
+	w = gtk_toolbar_append_element( GTK_TOOLBAR( toolbar ), GTK_TOOLBAR_CHILD_TOGGLEBUTTON, NULL,
+										"", _( "Make Detail Brushes" ), "", new_image_icon("toggle_struct.png"),
+										GTK_SIGNAL_FUNC( HandleCommand ), GINT_TO_POINTER( ID_TOGGLE_DETAIL ) );
+		g_object_set_data( G_OBJECT( window ), "tb_toggle_detail", w );
 
 	gtk_toolbar_append_space( GTK_TOOLBAR( toolbar ) );
 
@@ -5452,6 +5458,31 @@ void MainFrame::OnClipSelected(){
 //    else if (g_bPatchBendMode)
 //      Patch_InsDelHandleENTER();
 	}
+}
+
+void MainFrame::OnToggleDetail(){
+	GtkWidget *w = GTK_WIDGET( g_object_get_data( G_OBJECT( m_pWidget ), "tb_toggle_detail" ) );
+	g_bIgnoreCommands++;
+	
+	if ( g_qeglobals.m_bMakeDetail == TRUE ) {
+		g_qeglobals.m_bMakeDetail = FALSE;
+		Sys_Printf( "Structural Brush mode activated\n" );
+
+		gtk_toggle_button_set_active( GTK_TOGGLE_BUTTON( w ), FALSE );
+		gtk_button_set_image( GTK_BUTTON( w ),new_image_icon( "toggle_struct.png" ) );
+		
+	}
+	else
+	{
+		g_qeglobals.m_bMakeDetail = TRUE;
+		Sys_Printf( "Detail Brush mode activated\n" );
+
+		gtk_toggle_button_set_active( GTK_TOGGLE_BUTTON( w ), TRUE );
+		gtk_button_set_image( GTK_BUTTON( w ), new_image_icon( "toggle_detail.png" ) );
+
+	}
+
+	g_bIgnoreCommands--;
 }
 
 void MainFrame::OnSplitSelected(){
