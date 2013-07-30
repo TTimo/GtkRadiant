@@ -1518,7 +1518,7 @@ GtkWidget* create_main_dialog(){
 	g_object_set_data( G_OBJECT( dlg ), "roughness", entry );
 	g_signal_connect( G_OBJECT( entry ), "focus_out_event", G_CALLBACK( doublevariable_entryfocusout ), &Roughness );
 
-	adj = gtk_adjustment_new( 1, 1, 32767, 1, 10, 10 );
+	adj = gtk_adjustment_new( 1, 1, 32767, 1, 10, 0 );
 	g_signal_connect( G_OBJECT( adj ), "value_changed", G_CALLBACK( general_random ), NULL );
 	spin = gtk_spin_button_new( GTK_ADJUSTMENT( adj ), 1, 0 );
 	gtk_widget_show( spin );
@@ -1652,7 +1652,7 @@ GtkWidget* create_main_dialog(){
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ), 0, 0 );
 	g_object_set_data( G_OBJECT( dlg ), "nv_text", label );
 
-	adj = gtk_adjustment_new( 8, 1, MAX_ROWS, 1, 10, 10 );
+	adj = gtk_adjustment_new( 8, 1, MAX_ROWS, 1, 10, 0 );
 	g_signal_connect( G_OBJECT( adj ), "value_changed", G_CALLBACK( extents_nhnv_spin ), &NH );
 	spin = gtk_spin_button_new( GTK_ADJUSTMENT( adj ), 1, 0 );
 	gtk_widget_show( spin );
@@ -1662,7 +1662,7 @@ GtkWidget* create_main_dialog(){
 	gtk_widget_set_usize( spin, 60, -2 );
 	g_object_set_data( G_OBJECT( dlg ), "nh", spin );
 
-	adj = gtk_adjustment_new( 8, 1, MAX_ROWS, 1, 10, 10 );
+	adj = gtk_adjustment_new( 8, 1, MAX_ROWS, 1, 10, 0 );
 	g_signal_connect( G_OBJECT( adj ), "value_changed", G_CALLBACK( extents_nhnv_spin ), &NV );
 	spin = gtk_spin_button_new( GTK_ADJUSTMENT( adj ), 1, 0 );
 	gtk_widget_show( spin );
@@ -1684,7 +1684,7 @@ GtkWidget* create_main_dialog(){
 	gtk_box_pack_start( GTK_BOX( vbox ), label, FALSE, TRUE, 0 );
 	gtk_object_set_data( GTK_OBJECT( dlg ), "snap_text", label );
 
-	adj = gtk_adjustment_new( 8, 0, 256, 1, 10, 10 );
+	adj = gtk_adjustment_new( 8, 0, 256, 1, 10, 0 );
 	g_signal_connect( G_OBJECT( adj ), "value_changed", G_CALLBACK( extents_snaptogrid_spin ), &SP );
 	spin = gtk_spin_button_new( GTK_ADJUSTMENT( adj ), 1, 0 );
 	gtk_widget_show( spin );
@@ -1701,7 +1701,7 @@ GtkWidget* create_main_dialog(){
 	gtk_widget_show( label );
 	gtk_box_pack_start( GTK_BOX( hbox2 ), label, FALSE, TRUE, 0 );
 
-	adj = gtk_adjustment_new( 0, 0, 110, 1, 10, 10 );
+	adj = gtk_adjustment_new( 0, 0, 110, 1, 10, 0 );
 	g_signal_connect( G_OBJECT( adj ), "value_changed", G_CALLBACK( extents_decimate ), NULL );
 	g_object_set_data( G_OBJECT( dlg ), "decimate_adj", adj );
 	scale = gtk_hscale_new( GTK_ADJUSTMENT( adj ) );
@@ -1944,7 +1944,7 @@ GtkWidget* create_main_dialog(){
 	gtk_misc_set_alignment( GTK_MISC( label ), 1, 0.5 );
 	g_object_set_data( G_OBJECT( dlg ), "fix_rate_text", label );
 
-	adj = gtk_adjustment_new( 0, -65536, 65536, 1, 16, 16 );
+	adj = gtk_adjustment_new( 0, -65536, 65536, 1, 16, 0 );
 	g_signal_connect( G_OBJECT( adj ), "value_changed", G_CALLBACK( fix_value_changed ), NULL );
 	spin = gtk_spin_button_new( GTK_ADJUSTMENT( adj ), 1, 0 );
 	gtk_widget_show( spin );
@@ -2061,7 +2061,7 @@ GtkWidget* create_main_dialog(){
 	gtk_widget_show( label );
 	gtk_box_pack_start( GTK_BOX( hbox2 ), label, FALSE, TRUE, 0 );
 
-	adj = gtk_adjustment_new( 60, 0, 90, 1, 10, 10 );
+	adj = gtk_adjustment_new( 60, 0, 90, 1, 10, 0 );
 	spin = gtk_spin_button_new( GTK_ADJUSTMENT( adj ), 1, 0 );
 	gtk_widget_show( spin );
 	gtk_box_pack_start( GTK_BOX( hbox2 ), spin, FALSE, TRUE, 0 );
