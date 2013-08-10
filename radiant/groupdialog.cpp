@@ -671,6 +671,8 @@ void SetInspectorMode( int iType ){
                   // I did witness an expose event on the notebook widget though, but for some reason it's not traveling down..
                   // so when hiding the group dialog, we are setting the page to 0, the page switch does an expose and triggers drawing.. (see OnDialogKey)
                   gtk_notebook_set_current_page( GTK_NOTEBOOK( g_pGroupDlg->m_pNotebook ), 1 );
+                  // FIXME: https://github.com/TTimo/GtkRadiant/issues/192
+//                  Sys_Printf( "show widget: set page to 1\n" );
 		}
 		break;
 
@@ -1142,6 +1144,8 @@ static gint OnDialogKey( GtkWidget* widget, GdkEventKey* event, gpointer data ) 
   // make the "ViewTextures" and "ViewEntityInfo" keys that normally bring this dialog up hide it as well - copypasta from mainframe_keypress
   // NOTE: maybe we could also check the state of the notebook, see if those are actually displayed .. if they are not, then switch the notebook pages rather than hiding?
   bool hide = false;
+  // Disable this, it makes the dialog hide whenever you type 'T' when editing entities etc. - Esc key is enough
+#if 0
   unsigned int code = gdk_keyval_to_upper( event->keyval );
   for ( int i = 0; i < g_nCommandCount; i++ ) {
     if ( g_Commands[i].m_nKey == code ) { // find a match?
@@ -1165,13 +1169,15 @@ static gint OnDialogKey( GtkWidget* widget, GdkEventKey* event, gpointer data ) 
       }
     }
   }
-
+#endif
   if ( g_pParentWnd->CurrentStyle() != MainFrame::eFloating && ( hide || event->keyval == GDK_Escape ) ) {
     // toggle off the group view (whatever part of it is currently displayed)
     // this used to be done with a g_pParentWnd->OnViewEntity(); but it had bad consequences
     gtk_widget_hide( widget );
     // set the group notebook page back to 0, so that when we recall the texture view there is an expose event coming up
     gtk_notebook_set_current_page( GTK_NOTEBOOK( g_pGroupDlg->m_pNotebook ), 0 );
+    // FIXME: https://github.com/TTimo/GtkRadiant/issues/192
+//    Sys_Printf( "hide widget and set page to 0\n" );
     return TRUE;
   }
   return FALSE;
