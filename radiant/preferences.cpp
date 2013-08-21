@@ -3432,6 +3432,9 @@ void CGameInstall::BuildDialog() {
 		case GAME_STVEF:
 			gtk_combo_box_append_text( GTK_COMBO_BOX( combo ), _( "Star Trek - Voyager: Elite Force" ) );
 			break;
+		case GAME_WOLF:
+			gtk_combo_box_append_text( GTK_COMBO_BOX( combo ), _( "Return To Castle Wolfenstein" ) );
+			break;
 		}
 		iGame++;
 	}
@@ -3579,6 +3582,10 @@ void CGameInstall::Run() {
 	case GAME_STVEF:
 		gamePack = STVEF_PACK;
 		gameFilePath += STVEF_GAME;
+		break;
+	case GAME_WOLF:
+		gamePack = WOLF_PACK;
+		gameFilePath += WOLF_GAME;
 		break;
 	default:
 		Error( "Invalid game selected: %d", m_availGames[ m_nComboSelect ] );
@@ -3738,6 +3745,19 @@ void CGameInstall::Run() {
 		}
 		break;
 	}
+	case GAME_WOLF: {
+		fprintf( fg, "  prefix=\".wolf\"\n" );
+		fprintf( fg, "  basegame=\"main\"\n" );
+		// Hardcoded fix for "missing" shaderlist in gamepack
+		Str dest = m_strEngine.GetBuffer();
+		dest += "/main/scripts/shaderlist.txt";
+		if( CheckFile( dest.GetBuffer() ) != PATH_FILE ) {
+			Str source = gameInstallPath.GetBuffer();
+			source += "main/scripts/default_shaderlist.txt";
+			radCopyFile( source.GetBuffer(), dest.GetBuffer() );
+		}
+		break;
+	}
 	}
 	fprintf( fg, "/>\n" );
 	fclose( fg );
@@ -3795,6 +3815,9 @@ void CGameInstall::ScanGames() {
 		}
 		if ( stricmp( dirname, STVEF_PACK ) == 0 ) {
 			m_availGames[ iGame++ ] = GAME_STVEF;
+		}
+		if ( stricmp( dirname, WOLF_PACK ) == 0) {
+			m_availGames[ iGame++ ] = GAME_WOLF;
 		}
 	}
 	Sys_Printf( "No installable games found in: %s\n",
