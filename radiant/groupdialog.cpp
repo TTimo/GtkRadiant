@@ -1138,6 +1138,13 @@ static void switch_page( GtkNotebook *notebook, GtkNotebookPage *page, guint pag
 // =============================================================================
 // GroupDlg class
 
+static gint OnDeleteHide( GtkWidget *widget ) {
+  gtk_widget_hide( widget );
+  // see OnDialogKey
+  gtk_notebook_set_current_page( GTK_NOTEBOOK( g_pGroupDlg->m_pNotebook ), 0 );
+  return TRUE;
+}
+
 // NOTE: when a key is hit with group window focused, we catch in this handler but it gets propagated to mainframe too
 //   therefore the message will be intercepted and used as a ID_SELECTION_DESELECT
 static gint OnDialogKey( GtkWidget* widget, GdkEventKey* event, gpointer data ) {
@@ -1207,7 +1214,7 @@ void GroupDlg::Create(){
 	load_window_pos( dlg, g_PrefsDlg.mWindowInfo.posEntityWnd );
 
 	gtk_window_set_title( GTK_WINDOW( dlg ), "Entities" );
-	gtk_signal_connect( GTK_OBJECT( dlg ), "delete_event", GTK_SIGNAL_FUNC( widget_delete_hide ), NULL );
+	gtk_signal_connect( GTK_OBJECT( dlg ), "delete_event", GTK_SIGNAL_FUNC( OnDeleteHide ), NULL );
 	// catch 'Esc'
 	gtk_signal_connect( GTK_OBJECT( dlg ), "key_press_event", GTK_SIGNAL_FUNC( OnDialogKey ), NULL );
 
