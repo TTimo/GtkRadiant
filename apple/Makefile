@@ -4,10 +4,10 @@ BUILD = ../build
 INSTALL = ../install
 TARGET = target
 RESOURCES = $(TARGET)/GtkRadiant.app/Contents/Resources
+BINDIR = $(RESOURCES)/install
 CONFDIR = $(RESOURCES)/etc
 DATADIR = $(RESOURCES)/share
 LIBDIR = $(RESOURCES)/lib
-INSTDIR = $(RESOURCES)/install
 PREFIX_SED_EXPR = 's:/opt/local:@executable_path/..:g'
 VERSION = 1.6.4
 DMG = $(TARGET)/GtkRadiant-$(VERSION).dmg
@@ -57,11 +57,11 @@ bundle:
 	test -L build || ln -s $(BUILD)
 	
 	dylibbundler -b \
-		-x $(INSTDIR)/radiant.bin \
-		-x $(INSTDIR)/q3map2 \
-		-x $(INSTDIR)/q3map2_urt \
-		-x $(INSTDIR)/q3data \
-		`find $(INSTDIR)/modules -name "*.so" | xargs -I {} echo -x {}` \
+		-x $(BINDIR)/radiant.bin \
+		-x $(BINDIR)/q3map2 \
+		-x $(BINDIR)/q3map2_urt \
+		-x $(BINDIR)/q3data \
+		`find $(BINDIR)/modules -name "*.so" | xargs -I {} echo -x {}` \
 		`find $(LIBDIR) -name "*.so" | xargs -I {} echo -x {}` \
 	-d $(LIBDIR) -of -p @executable_path/../lib
 
