@@ -24,7 +24,6 @@
 //
 
 #include <gtk/gtk.h>
-#include <glib/gi18n.h>
 #include <gdk/gdkkeysyms.h>
 
 #include "surfacedialog.h"
@@ -325,6 +324,14 @@ static gint delete_event_callback( GtkWidget *widget, GdkEvent* event, gpointer 
 	return TRUE;
 }
 
+static gint surface_inspector_key_press_event( GtkWidget *widget, GdkEventKey* event, gpointer data ) {
+	if ( event->keyval == GDK_Escape ) {
+		HideDlg();
+		return TRUE;
+	}
+	return FALSE;
+}
+
 // make the shift increments match the grid settings
 // the objective being that the shift+arrows shortcuts move the texture by the corresponding grid size
 // this depends on a scale value if you have selected a particular texture on which you want it to work:
@@ -416,8 +423,7 @@ void ShowDlg(){
 
 	if ( !SurfaceInspector ) {
 		create_SurfaceInspector();
-	}
-	else{
+	} else {
 		gtk_widget_show( SurfaceInspector );
 	}
 
@@ -434,7 +440,6 @@ void HideDlg(){
 
 	gtk_widget_hide( SurfaceInspector );
 }
-
 
 // set default values for increments (shift scale and rot)
 // this is called by the prefs code if can't find the values
@@ -789,6 +794,9 @@ GtkWidget* create_SurfaceInspector( void ){
 					  NULL );
 	g_signal_connect( (gpointer) SurfaceInspector, "destroy",
 					  G_CALLBACK( gtk_widget_destroy ),
+					  NULL );
+	g_signal_connect( (gpointer) SurfaceInspector, "key_press_event",
+					  G_CALLBACK( surface_inspector_key_press_event ),
 					  NULL );
 
 	g_signal_connect( (gpointer) texture_combo_entry, "key_press_event",

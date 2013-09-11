@@ -182,7 +182,9 @@ void apply_surface_flags( texdef_to_face_t *faces ){
 		tex->contents = ( tex->contents & ~content_mask ) | working_content_flags;
 		tex->value = working_value;
 
+#ifdef _DEBUG
 		Sys_Printf( "Surface: %d\tContents: %d\tValue: %d\n", tex->flags, tex->contents, tex->value );
+#endif
 	}
 }
 
@@ -334,7 +336,7 @@ GtkWidget* create_SurfaceFlagsFrame( GtkWidget* surfacedialog_widget ){
 		x = i % 4;
 		snprintf( buffer, sizeof( buffer ) - 1, "surf%i", i + 1 );
 		buttonLabel = g_FuncTable.m_pfnReadProjectKey( buffer );
-		Sys_Printf( "%s: %s\n", buffer, buttonLabel );
+		//Sys_Printf( "%s: %s\n", buffer, buttonLabel );
 		surface_buttons[i] = gtk_toggle_button_new_with_label( buttonLabel );
 		gtk_signal_connect( GTK_OBJECT( surface_buttons[i] ), "toggled", GTK_SIGNAL_FUNC( on_surface_button_toggled ), GINT_TO_POINTER( 1 << i ) );
 		gtk_widget_show( surface_buttons[i] );
