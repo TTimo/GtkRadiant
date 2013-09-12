@@ -1212,17 +1212,23 @@ bool Sys_AltDown(){
 
 	XQueryKeymap( GDK_DISPLAY(), keys );
 
-#if defined ( __APPLE__ )
-#define XK_Alt_L XK_Meta_L
-#define XK_Alt_R XK_Meta_R
-#endif
-
 	x = XKeysymToKeycode( GDK_DISPLAY(), XK_Alt_L );
 	if ( keys[x / 8] & ( 1 << ( x % 8 ) ) ) {
 		return true;
 	}
 
 	x = XKeysymToKeycode( GDK_DISPLAY(), XK_Alt_R );
+	if ( keys[x / 8] & ( 1 << ( x % 8 ) ) ) {
+		return true;
+	}
+
+	// For Apple, let users use their Command keys since Alt + X11 is hosed
+	x = XKeysymToKeycode( GDK_DISPLAY(), XK_Meta_L );
+	if ( keys[x / 8] & ( 1 << ( x % 8 ) ) ) {
+		return true;
+	}
+
+	x = XKeysymToKeycode( GDK_DISPLAY(), XK_Meta_R );
 	if ( keys[x / 8] & ( 1 << ( x % 8 ) ) ) {
 		return true;
 	}
