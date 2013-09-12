@@ -131,6 +131,7 @@
 #define DOSLEEP_KEY             "SleepMode"
 #define SUBDIVISIONS_KEY        "Subdivisions"
 #define DEFAULTTEXURESCALE_KEY  "DefaultTextureScale"
+#define CAULKNEWBRUSHES_KEY     "CaulkNewBrushes"
 #define CLIPCAULK_KEY           "ClipCaulk"
 #define PATCHSHOWBOUNDS_KEY     "PatchShowBounds"
 #define NATIVEGUI_KEY           "NativeGUI"
@@ -2385,7 +2386,7 @@ void PrefsDlg::BuildDialog(){
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
 
 	// spinner (allows undo levels to be set to zero)
-	spin = gtk_spin_button_new( GTK_ADJUSTMENT( gtk_adjustment_new( 1, 0, 64, 1, 10, 10 ) ), 1, 0 );
+	spin = gtk_spin_button_new( GTK_ADJUSTMENT( gtk_adjustment_new( 1, 0, 64, 1, 10, 0 ) ), 1, 0 );
 	gtk_widget_show( spin );
 	gtk_table_attach( GTK_TABLE( table ), spin, 1, 2, 1, 2,
 					  (GtkAttachOptions) ( GTK_FILL ),
@@ -2456,7 +2457,7 @@ void PrefsDlg::BuildDialog(){
 	AddDialogData( check, &m_bAutoSave, DLG_CHECK_BOOL );
 
 	// spinner
-	spin = gtk_spin_button_new( GTK_ADJUSTMENT( gtk_adjustment_new( 1, 1, 60, 1, 10, 10 ) ), 1, 0 );
+	spin = gtk_spin_button_new( GTK_ADJUSTMENT( gtk_adjustment_new( 1, 1, 60, 1, 10, 0 ) ), 1, 0 );
 	gtk_widget_show( spin );
 	gtk_box_pack_start( GTK_BOX( hbox2 ), spin, FALSE, FALSE, 0 );
 	gtk_widget_set_usize( spin, 60, -2 );
@@ -2582,6 +2583,14 @@ void PrefsDlg::BuildDialog(){
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
 	AddDialogData( entry, &m_fDefTextureScale, DLG_ENTRY_FLOAT );
 
+
+	// caulk new brushes
+	check = gtk_check_button_new_with_label( _( "Always use caulk for new brushes" ) );
+	gtk_widget_show( check );
+	gtk_box_pack_start( GTK_BOX( vbox ), check, FALSE, FALSE, 0 );
+	g_object_set_data( G_OBJECT( dialog ), "check_caulkbrush", check );
+	AddDialogData( check, &m_bCaulkNewBrushes, DLG_CHECK_BOOL );
+	
 	// Add the page to the notebook
 	gtk_notebook_append_page( GTK_NOTEBOOK( notebook ), pageframe, preflabel );
 
@@ -3045,6 +3054,7 @@ void PrefsDlg::LoadPrefs(){
 	mLocalPrefs.GetPref( SELECTMODELS_KEY,       &m_bSelectModels,               TRUE );
 	mLocalPrefs.GetPref( SHADERLISTONLY_KEY,     &m_bTexturesShaderlistOnly,     FALSE );
 	mLocalPrefs.GetPref( DEFAULTTEXURESCALE_KEY, &m_fDefTextureScale,            g_pGameDescription->mTextureDefaultScale );
+	mLocalPrefs.GetPref( CAULKNEWBRUSHES_KEY, &m_bCaulkNewBrushes,               TRUE );
 	mLocalPrefs.GetPref( SUBDIVISIONS_KEY,       &m_nSubdivisions,               SUBDIVISIONS_DEF );
 	mLocalPrefs.GetPref( CLIPCAULK_KEY,          &m_bClipCaulk,                  FALSE );
 	mLocalPrefs.GetPref( SNAPTTOGRID_KEY,        &m_bSnapTToGrid,                FALSE );
@@ -3422,6 +3432,9 @@ void CGameInstall::BuildDialog() {
 		case GAME_STVEF:
 			gtk_combo_box_append_text( GTK_COMBO_BOX( combo ), _( "Star Trek - Voyager: Elite Force" ) );
 			break;
+		case GAME_WOLF:
+			gtk_combo_box_append_text( GTK_COMBO_BOX( combo ), _( "Return To Castle Wolfenstein" ) );
+			break;
 		}
 		iGame++;
 	}
@@ -3569,6 +3582,10 @@ void CGameInstall::Run() {
 	case GAME_STVEF:
 		gamePack = STVEF_PACK;
 		gameFilePath += STVEF_GAME;
+		break;
+	case GAME_WOLF:
+		gamePack = WOLF_PACK;
+		gameFilePath += WOLF_GAME;
 		break;
 	default:
 		Error( "Invalid game selected: %d", m_availGames[ m_nComboSelect ] );
@@ -3720,10 +3737,23 @@ void CGameInstall::Run() {
 		fprintf( fg, "  caulk_shader=\"textures/common/caulk\"\n" );
 		// Hardcoded fix for "missing" shaderlist in gamepack
 		Str dest = m_strEngine.GetBuffer();
-		dest += "/base/scripts/shaderlist.txt";
+		dest += "/baseEF/scripts/shaderlist.txt";
 		if( CheckFile( dest.GetBuffer() ) != PATH_FILE ) {
 			Str source = gameInstallPath.GetBuffer();
-			source += "base/scripts/default_shaderlist.txt";
+			source += "baseEF/scripts/default_shaderlist.txt";
+			radCopyFile( source.GetBuffer(), dest.GetBuffer() );
+		}
+		break;
+	}
+	case GAME_WOLF: {
+		fprintf( fg, "  prefix=\".wolf\"\n" );
+		fprintf( fg, "  basegame=\"main\"\n" );
+		// Hardcoded fix for "missing" shaderlist in gamepack
+		Str dest = m_strEngine.GetBuffer();
+		dest += "/main/scripts/shaderlist.txt";
+		if( CheckFile( dest.GetBuffer() ) != PATH_FILE ) {
+			Str source = gameInstallPath.GetBuffer();
+			source += "main/scripts/default_shaderlist.txt";
 			radCopyFile( source.GetBuffer(), dest.GetBuffer() );
 		}
 		break;
@@ -3785,6 +3815,9 @@ void CGameInstall::ScanGames() {
 		}
 		if ( stricmp( dirname, STVEF_PACK ) == 0 ) {
 			m_availGames[ iGame++ ] = GAME_STVEF;
+		}
+		if ( stricmp( dirname, WOLF_PACK ) == 0) {
+			m_availGames[ iGame++ ] = GAME_WOLF;
 		}
 	}
 	Sys_Printf( "No installable games found in: %s\n",

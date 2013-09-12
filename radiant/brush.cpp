@@ -97,9 +97,9 @@ vec3_t baseaxis[18] =
 	{0,-1,0}, {1,0,0}, {0,0,-1}     // north wall
 };
 
-void TextureAxisFromPlane( plane_t *pln, vec3_t xv, vec3_t yv ){
+void TextureAxisFromPlane( plane_t *pln, vec3_t xv, vec3_t yv ) {
 	int bestaxis;
-	float dot,best;
+	float dot, best;
 	int i;
 
 	best = 0;
@@ -108,7 +108,8 @@ void TextureAxisFromPlane( plane_t *pln, vec3_t xv, vec3_t yv ){
 	for ( i = 0 ; i < 6 ; i++ )
 	{
 		dot = DotProduct( pln->normal, baseaxis[i * 3] );
-		if ( g_PrefsDlg.m_bQ3Map2Texturing && dot > best + 0.0001f || dot > best ) {
+                // see q3map2 source - added () for clarity
+		if ( ( g_PrefsDlg.m_bQ3Map2Texturing && dot > best + 0.0001f ) || dot > best ) {
 			best = dot;
 			bestaxis = i;
 		}

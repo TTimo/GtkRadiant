@@ -138,10 +138,9 @@ void load_window_pos( GtkWidget *wnd, window_position_t& pos ){
 #endif
 }
 
-gint widget_delete_hide( GtkWidget *widget ){
-	gtk_widget_hide( widget );
-
-	return TRUE;
+gint widget_delete_hide( GtkWidget *widget ) {
+  gtk_widget_hide( widget );
+  return TRUE;
 }
 
 

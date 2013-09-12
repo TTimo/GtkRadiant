@@ -509,7 +509,7 @@ void PatchDialog::BuildDialog(){
 	sprintf( buf, "%g", l_pPIIncrement->shift[0] );
 	gtk_entry_set_text( GTK_ENTRY( entry ), buf );
 
-	adj = gtk_adjustment_new( 0, -8192, 8192, 1, 1, 1 );
+	adj = gtk_adjustment_new( 0, -8192, 8192, 1, 1, 0 );
 	gtk_signal_connect( adj, "value_changed", GTK_SIGNAL_FUNC( OnSpinChanged ), entry );
 	g_object_set_data( G_OBJECT( m_pWidget ), "hshift_adj", adj );
 
@@ -529,7 +529,7 @@ void PatchDialog::BuildDialog(){
 	sprintf( buf, "%g", l_pPIIncrement->shift[1] );
 	gtk_entry_set_text( GTK_ENTRY( entry ), buf );
 
-	adj = gtk_adjustment_new( 0, -8192, 8192, 1, 1, 1 );
+	adj = gtk_adjustment_new( 0, -8192, 8192, 1, 1, 0 );
 	gtk_signal_connect( adj, "value_changed", GTK_SIGNAL_FUNC( OnSpinChanged ), entry );
 	g_object_set_data( G_OBJECT( m_pWidget ), "vshift_adj", adj );
 
@@ -549,7 +549,7 @@ void PatchDialog::BuildDialog(){
 	sprintf( buf, "%g", l_pPIIncrement->scale[0] );
 	gtk_entry_set_text( GTK_ENTRY( entry ), buf );
 
-	adj = gtk_adjustment_new( 0, -1000, 1000, 1, 1, 1 );
+	adj = gtk_adjustment_new( 0, -1000, 1000, 1, 1, 0 );
 	gtk_signal_connect( adj, "value_changed", GTK_SIGNAL_FUNC( OnSpinChanged ), entry );
 	g_object_set_data( G_OBJECT( m_pWidget ), "hscale_adj", adj );
 
@@ -569,7 +569,7 @@ void PatchDialog::BuildDialog(){
 	sprintf( buf, "%g", l_pPIIncrement->scale[1] );
 	gtk_entry_set_text( GTK_ENTRY( entry ), buf );
 
-	adj = gtk_adjustment_new( 0, -1000, 1000, 1, 1, 1 );
+	adj = gtk_adjustment_new( 0, -1000, 1000, 1, 1, 0 );
 	gtk_signal_connect( adj, "value_changed", GTK_SIGNAL_FUNC( OnSpinChanged ), entry );
 	g_object_set_data( G_OBJECT( m_pWidget ), "vscale_adj", adj );
 
@@ -589,7 +589,7 @@ void PatchDialog::BuildDialog(){
 	sprintf( buf, "%g", l_pPIIncrement->rotate );
 	gtk_entry_set_text( GTK_ENTRY( entry ), buf );
 
-	adj = gtk_adjustment_new( 0, -1000, 1000, 1, 1, 1 ); // NOTE: Arnout - this really should be 360 but can't change it anymore as it could break existing maps
+	adj = gtk_adjustment_new( 0, -1000, 1000, 1, 1, 0 ); // NOTE: Arnout - this really should be 360 but can't change it anymore as it could break existing maps
 	gtk_signal_connect( adj, "value_changed", GTK_SIGNAL_FUNC( OnSpinChanged ), entry );
 	g_object_set_data( G_OBJECT( m_pWidget ), "rotate_adj", adj );
 

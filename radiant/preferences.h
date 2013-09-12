@@ -215,6 +215,7 @@ void Dump();
 #define ET_GAME "et.game"
 #define QL_GAME "ql.game"
 #define STVEF_GAME "stvef.game"
+#define WOLF_GAME "wolf.game"
 
 #define Q3_PACK "Q3Pack"
 #define URT_PACK "UrTPack"
@@ -229,6 +230,7 @@ void Dump();
 #define ET_PACK "ETPack"
 #define QL_PACK "QLPack"
 #define STVEF_PACK "STVEFPack"
+#define WOLF_PACK "WolfPack"
 
 class CGameInstall : public Dialog {
 public:
@@ -256,6 +258,7 @@ enum gameType_e {
 	GAME_ET,
 	GAME_QL,
 	GAME_STVEF,
+	GAME_WOLF,
 	GAME_COUNT
 };
 
@@ -641,6 +644,7 @@ bool m_bGLLighting;
 bool m_bTexturesShaderlistOnly;
 int m_nSubdivisions;
 float m_fDefTextureScale;
+bool m_bCaulkNewBrushes;
 bool m_bFloatingZ;
 bool m_bLatchedFloatingZ;
 // Gef: Kyro GL_POINT workaround

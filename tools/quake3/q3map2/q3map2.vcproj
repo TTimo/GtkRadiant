@@ -303,6 +303,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\exportents.c"
+				>
+			</File>
+			<File
 				RelativePath=".\vis.c"
 				>
 			</File>

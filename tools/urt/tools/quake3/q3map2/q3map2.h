@@ -1749,6 +1749,11 @@ void                        StitchSurfaceLightmaps( void );
 void                        StoreSurfaceLightmaps( void );
 
 
+/* exportents.c */
+void                        ExportEntities( void );
+int                         ExportEntitiesMain( int argc, char **argv );
+
+
 /* image.c */
 void                        ImageFree( image_t *image );
 image_t                     *ImageFind( const char *filename );
@@ -1917,7 +1922,6 @@ Q_EXTERN int bevelSnap Q_ASSIGN( 0 );                               /* ydnar: be
 Q_EXTERN int texRange Q_ASSIGN( 0 );
 Q_EXTERN qboolean flat Q_ASSIGN( qfalse );
 Q_EXTERN qboolean meta Q_ASSIGN( qfalse );
-Q_EXTERN qboolean newbsp Q_ASSIGN( qfalse );
 Q_EXTERN qboolean patchMeta Q_ASSIGN( qfalse );
 Q_EXTERN qboolean emitFlares Q_ASSIGN( qfalse );
 Q_EXTERN qboolean debugSurfaces Q_ASSIGN( qfalse );

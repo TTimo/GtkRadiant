@@ -22,13 +22,12 @@ class Config:
         self.platform = platform.system()
         self.cc = 'gcc'
         self.cxx = 'g++'
-        self.packs_directory = 'packs'
         self.install_directory = 'install'
 
         # platforms for which to assemble a setup
         self.setup_platforms = [ 'local', 'x86', 'x64', 'win32' ]
         # paks to assemble in the setup
-        self.setup_packs = [ 'Q3Pack', 'UrTPack', 'ETPack', 'QLPack', 'Q2Pack', 'Q2WPack', 'JAPack', 'STVEFPack' ]
+        self.setup_packs = [ 'Q3Pack', 'UrTPack', 'ETPack', 'QLPack', 'Q2Pack', 'Q2WPack', 'JAPack', 'STVEFPack', 'WolfPack' ]
 
     def __repr__( self ):
         return 'config: target=%s config=%s' % ( self.target_selected, self.config_selected )
@@ -44,9 +43,6 @@ class Config:
 
     def _processCXX( self, ops ):
         self.cxx = ops
-        
-    def _processPacksDir(self, ops ):
-        self.packs_directory = os.path.normpath( os.path.expanduser( ops[0] ) )
 
     def _processInstallDir( self, ops ):
         self.install_directory = os.path.normpath( os.path.expanduser( ops[0] ) )
@@ -62,7 +58,6 @@ class Config:
         operators['config'] = self._processConfig
         operators['cc'] = self._processCC
         operators['cxx'] = self._processCXX
-        operators['packs_directory'] = self._processPacksDir
         operators['install_directory'] = self._processInstallDir
         operators['setup_platforms'] = self._processSetupPlatforms
         operators['setup_packs'] = self._processSetupPacks
@@ -253,36 +248,18 @@ class Config:
         if ( self.platform == 'Darwin' ) :
             env.Append( LINKFLAGS = [ '-headerpad_max_install_names' ] )
 
-    def SvnCheckoutOrUpdate( self, svn_url, working_copy ):
-        if ( os.path.exists( working_copy ) ):
-            cmd = [ 'svn', 'update', working_copy ]
+    def CheckoutOrUpdate( self, svnurl, path ):
+        if ( os.path.exists( path ) ):
+            cmd = [ 'svn', 'update', path ]
         else:
-            cmd = [ 'svn', 'checkout', svn_url, working_copy ]
+            cmd = [ 'svn', 'checkout', svnurl, path ]
         print( repr( cmd ) )
-        subprocess.check_call( cmd )
-        
-    def SvnExport( self, working_copy, dest ):
-        cmd = [ 'svn', 'export', '--force', working_copy, dest ]
-        print( repr( cmd ) )
-        
         subprocess.check_call( cmd )
 
-    def FetchGamePacks( self, packs_dir, install_dir ):
-        if ( not os.path.exists( packs_dir ) ):
-            os.mkdir( packs_dir )
-        
-        if ( not os.path.exists( install_dir ) ):
-            os.mkdir( install_dir )
-            
-        for pack in self.setup_packs:
-            svn_url = 'svn://svn.icculus.org/gtkradiant-gamepacks/%s/trunk' % pack
-            working_copy = os.path.join( packs_dir, pack)
-            
-            self.SvnCheckoutOrUpdate( svn_url, working_copy )
-            
-            dest_dir = os.path.join( install_dir, pack)
-            
-            self.SvnExport( working_copy, dest_dir )
+    def FetchGamePaks( self, path ):
+        for pak in self.setup_packs:
+            svnurl = 'svn://svn.icculus.org/gtkradiant-gamepacks/%s/trunk' % pak
+            self.CheckoutOrUpdate( svnurl, os.path.join( path, 'installs', pak ) )
         
     def CopyTree( self, src, dst):
         for root, dirs, files in os.walk( src ):
@@ -300,8 +277,8 @@ class Config:
         except:
             pass
         else:
-            # Fetch remote game packs and install them
-            self.FetchGamePacks( self.packs_directory, os.path.join( self.install_directory, 'installs' ) )
+            # special case, fetch external paks under the local install directory
+            self.FetchGamePaks( self.install_directory )
         # NOTE: unrelated to self.setup_platforms - grab support files and binaries and install them
         if ( self.platform == 'Windows' ):
             backup_cwd = os.getcwd()

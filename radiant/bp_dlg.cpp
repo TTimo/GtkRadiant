@@ -53,7 +53,6 @@ gint BP_dialog_delete_callback( GtkWidget *widget, GdkEvent* event, gpointer dat
 // ret: 0 = abort, 1 = load and convert, 2 = changed project settings, load and don't convert
 // the user might decide to switch the BP mode in project settings
 // status: 0 = loading regular, got conflict 1 = loading BP, got conflict
-// int WINAPI gtk_MessageBox (GtkWidget *parent, const char* lpText, const char* lpCaption, guint32 uType)
 int BP_MessageBox( int status ){
 	GtkWidget *window, *w, *vbox, *hbox;
 	GtkAccelGroup *accel;

@@ -751,10 +751,6 @@ int BSPMain( int argc, char **argv ){
 			Sys_Printf( "Creating meta surfaces from brush faces\n" );
 			meta = qtrue;
 		}
-		else if ( !strcmp( argv[ i ], "-newbsp" ) ) {
-			Sys_Printf( "Using New BSP Generation Method\n" );
-			newbsp = qtrue;
-		}
 		else if ( !strcmp( argv[ i ], "-patchmeta" ) ) {
 			Sys_Printf( "Creating meta surfaces from patches\n" );
 			patchMeta = qtrue;
