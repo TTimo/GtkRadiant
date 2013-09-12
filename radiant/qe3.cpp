@@ -1212,6 +1212,11 @@ bool Sys_AltDown(){
 
 	XQueryKeymap( GDK_DISPLAY(), keys );
 
+#if defined ( __APPLE__ )
+#define XK_Alt_L XK_Meta_L
+#define XK_Alt_R XK_Meta_R
+#endif
+
 	x = XKeysymToKeycode( GDK_DISPLAY(), XK_Alt_L );
 	if ( keys[x / 8] & ( 1 << ( x % 8 ) ) ) {
 		return true;
