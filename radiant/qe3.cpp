@@ -620,7 +620,7 @@ bool QE_LoadProject( const char *projectfile ){
 		str = g_pGameDescription->mBaseGame.GetBuffer();
 	}
 	g_qeglobals.m_strHomeMaps += str;
-	g_qeglobals.m_strHomeMaps += '/';
+	g_qeglobals.m_strHomeMaps += G_DIR_SEPARATOR;
 
 	// don't forget to create the dirs
 	Q_mkdir( g_qeglobals.m_strHomeGame.GetBuffer(), 0775 );
@@ -656,7 +656,7 @@ bool QE_LoadProject( const char *projectfile ){
 		// create the writable project file path
 		strcpy( buf, g_qeglobals.m_strHomeGame.GetBuffer() );
 		strcat( buf, g_pGameDescription->mBaseGame.GetBuffer() );
-		strcat( buf, "/scripts/" );
+		strcat( buf, G_DIR_SEPARATOR_S "scripts" G_DIR_SEPARATOR_S );
 		// while the filename is already in use, increment the number we add to the end
 		int counter = 0;
 		char pUser[PATH_MAX];
@@ -844,23 +844,22 @@ void QE_InitVFS( void ){
 	// if we have a mod dir
 	if ( *ValueForKey( g_qeglobals.d_project_entity, "gamename" ) != '\0' ) {
 
-#if defined ( __linux__ ) || defined ( __APPLE__ )
 		// ~/.<gameprefix>/<fs_game>
-		directory = g_qeglobals.m_strHomeGame.GetBuffer();
-		Q_mkdir( directory.GetBuffer(), 0775 );
-		directory += ValueForKey( g_qeglobals.d_project_entity, "gamename" );
-		Q_mkdir( directory.GetBuffer(), 0775 );
-		vfsInitDirectory( directory.GetBuffer() );
-		AddSlash( directory );
-		prefabs = directory;
-		// also create the maps dir, it will be used as prompt for load/save
-		directory += "/maps";
-		Q_mkdir( directory, 0775 );
-		// and the prefabs dir
-		prefabs += "/prefabs";
-		Q_mkdir( prefabs, 0775 );
-
-#endif
+		if ( g_qeglobals.m_strHomeGame.GetLength() ) {
+			directory = g_qeglobals.m_strHomeGame.GetBuffer();
+			Q_mkdir( directory.GetBuffer(), 0775 );
+			directory += ValueForKey( g_qeglobals.d_project_entity, "gamename" );
+			Q_mkdir( directory.GetBuffer(), 0775 );
+			vfsInitDirectory( directory.GetBuffer() );
+			AddSlash( directory );
+			prefabs = directory;
+			// also create the maps dir, it will be used as prompt for load/save
+			directory += "maps";
+			Q_mkdir( directory, 0775 );
+			// and the prefabs dir
+			prefabs += "prefabs";
+			Q_mkdir( prefabs, 0775 );
+		}
 
 		// <fs_basepath>/<fs_game>
 		directory = g_pGameDescription->mEnginePath;
@@ -870,19 +869,19 @@ void QE_InitVFS( void ){
 		AddSlash( directory );
 		prefabs = directory;
 		// also create the maps dir, it will be used as prompt for load/save
-		directory += "/maps";
+		directory += "maps";
 		Q_mkdir( directory.GetBuffer(), 0775 );
 		// and the prefabs dir
-		prefabs += "/prefabs";
+		prefabs += "prefabs";
 		Q_mkdir( prefabs, 0775 );
 	}
 
-#if defined ( __linux__ ) || defined ( __APPLE__ )
 	// ~/.<gameprefix>/<fs_main>
-	directory = g_qeglobals.m_strHomeGame.GetBuffer();
-	directory += g_pGameDescription->mBaseGame;
-	vfsInitDirectory( directory.GetBuffer() );
-#endif
+	if ( g_qeglobals.m_strHomeGame.GetLength() ) {
+		directory = g_qeglobals.m_strHomeGame.GetBuffer();
+		directory += g_pGameDescription->mBaseGame;
+		vfsInitDirectory( directory.GetBuffer() );
+	}
 
 	// <fs_basepath>/<fs_main>
 	directory = g_pGameDescription->mEnginePath;
@@ -1617,9 +1616,8 @@ void FillBSPMenu(){
 
 void AddSlash( CString& strPath ){
 	if ( strPath.GetLength() > 0 ) {
-		if ( ( strPath.GetAt( strPath.GetLength() - 1 ) != '/' ) &&
-			 ( strPath.GetAt( strPath.GetLength() - 1 ) != '\\' ) ) {
-			strPath += '/';
+		if ( !g_str_has_suffix( strPath.GetBuffer(), G_DIR_SEPARATOR_S ) ) {
+			strPath += G_DIR_SEPARATOR_S;
 		}
 	}
 }
