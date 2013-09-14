@@ -1054,6 +1054,7 @@ void SaveWithRegion( char *name ){
 	Map_SaveFile( name, region_active );
 }
 
+#if defined ( __linux__ ) || defined ( __APPLE__ )
 typedef struct {
 	pid_t pid;
 	int status;
@@ -1105,6 +1106,7 @@ static gboolean RunBsp_CaptureOutput(void *data) {
 
 	return false; // cancel the gtk_idle monitor
 }
+#endif
 
 void RunBsp( char *command ){
 	GPtrArray *sys;
