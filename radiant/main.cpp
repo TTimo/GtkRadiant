@@ -31,6 +31,7 @@
   #include <sys/wait.h>
   #include <signal.h>
   #include <sys/stat.h>
+  #include <fcntl.h>
 #endif
 
 #include <gtk/gtk.h>
@@ -932,9 +933,6 @@ void QE_ExpandBspString( char *bspaction, GPtrArray *out_array, char *mapname ){
 	strcpy( src, mapname );
 	strlwr( src );
 	in = strstr( src, "maps/" );
-	if ( !in ) {
-		in = strstr( src, "maps/" );
-	}
 	if ( in ) {
 		in += 5;
 		strcpy( base, in );
@@ -1056,6 +1054,58 @@ void SaveWithRegion( char *name ){
 	Map_SaveFile( name, region_active );
 }
 
+typedef struct {
+	pid_t pid;
+	int status;
+	int pipes[2];
+} bsp_child_process_t;
+
+/*
+ * @brief A gtk_idle monitor for redirecting stdout and stderr of the BSP
+ * compiler process to the Radiant console. This is used on UNIX platforms for
+ * older BSP tools that do not support the XML-based network monitoring found
+ * in watchbsp.cpp and feedback.cpp.
+ */
+static gboolean RunBsp_CaptureOutput(void *data) {
+	bsp_child_process_t *process = (bsp_child_process_t *) data;
+	pid_t pid;
+
+	// if waitpid returns 0, the child process is alive
+	if ( ( pid = waitpid( process->pid, &process->status, WNOHANG ) ) == 0 ) {
+		char text[1024];
+		ssize_t len;
+
+		if ( (len = read( process->pipes[0], text, sizeof( text ) ) ) > 0 ) {
+			GtkTextView *view = GTK_TEXT_VIEW( g_qeglobals_gui.d_edit );
+			GtkTextBuffer *buffer = gtk_text_view_get_buffer( view );
+
+			if ( buffer ) {
+				GtkTextIter iter;
+				gtk_text_buffer_get_end_iter( buffer, &iter );
+				gtk_text_buffer_insert( buffer, &iter, text, len );
+
+				gtk_text_buffer_get_end_iter( buffer, &iter );
+				gtk_text_view_scroll_to_iter( view, &iter , 0.0, false, 0.0, 0.0 );
+			}
+		}
+
+		return true; // retain the gtk_idle monitor
+	}
+
+	if ( pid == -1 ) {
+		Sys_Printf( "Failed to wait for %d: %s\n", process->pid, strerror( errno ) );
+	} else {
+		Sys_Printf( "Process %d terminated with status %d\n", process->pid, process->status );
+	}
+
+	close( process->pipes[0] );
+	close( process->pipes[1] );
+
+	free( process);
+
+	return false; // cancel the gtk_idle monitor
+}
+
 void RunBsp( char *command ){
 	GPtrArray *sys;
 	char batpath[BIG_PATH_MAX]; //% PATH_MAX
@@ -1124,7 +1174,6 @@ void RunBsp( char *command ){
 		// write qe3bsp.sh
 		sprintf( batpath, "%sqe3bsp.sh", temppath );
 		Sys_Printf( "Writing the compile script to '%s'\n", batpath );
-		Sys_Printf( "The build output will be saved in '%sjunk.txt'\n", temppath );
 		hFile = fopen( batpath, "w" );
 		if ( !hFile ) {
 			Error( "Can't write to %s", batpath );
@@ -1150,21 +1199,33 @@ void RunBsp( char *command ){
 		Pointfile_Delete();
 
 #if defined ( __linux__ ) || defined ( __APPLE__ )
+		bsp_child_process_t *process = ( bsp_child_process_t *) malloc( sizeof( bsp_child_process_t ) );
+		memset( process, 0, sizeof( *process ) );
 
-		pid_t pid;
+		pipe( process->pipes );
 
-		pid = fork();
-		switch ( pid )
+		fcntl( process->pipes[0], F_SETFL, O_NONBLOCK );
+		fcntl( process->pipes[1], F_SETFL, O_NONBLOCK );
+
+		process->pid = fork();
+		switch ( process->pid )
 		{
 		case -1:
 			Error( "CreateProcess failed" );
 			break;
 		case 0:
-			execlp( batpath, batpath, (char *) NULL );
-			printf( "execlp error !" );
-			_exit( 0 );
+			close( process->pipes[0] ); // close reading end in the child
+
+			dup2( process->pipes[1], 1 ); // send stdout to the pipe
+			dup2( process->pipes[1], 2 ); // send stderr to the pipe
+
+			execlp( batpath, batpath, (char *) NULL ); // execute the script
+
+			fprintf( stderr, "Failed to execute %s: %s", batpath, strerror( errno ) );
+			_exit( 1 );
 			break;
 		default:
+			g_idle_add( RunBsp_CaptureOutput, (void *) process );
 			break;
 		}
 #endif
