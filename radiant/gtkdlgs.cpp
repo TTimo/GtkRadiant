@@ -1182,7 +1182,7 @@ void DoProjectSettings(){
 			str = g_pGameDescription->mBaseGame.GetBuffer();
 		}
 		g_qeglobals.m_strHomeMaps += str;
-		g_qeglobals.m_strHomeMaps += '/';
+		g_qeglobals.m_strHomeMaps += G_DIR_SEPARATOR;
 
 		// RIANT
 		// SOF2 HACK
