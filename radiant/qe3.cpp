@@ -1774,7 +1774,7 @@ extern "C" void Sys_FPrintf_VA( int level, const char *text, va_list args ) {
 
 			gtk_text_view_scroll_mark_onscreen( GTK_TEXT_VIEW( g_qeglobals_gui.d_edit ), end );
 
-			// update console widget immediatly if we're doing something time-consuming
+			// update console widget immediately if we're doing something time-consuming
 			if ( !g_bScreenUpdates && GTK_WIDGET_REALIZED( g_qeglobals_gui.d_edit ) ) {
 				gtk_grab_add( g_qeglobals_gui.d_edit );
 
