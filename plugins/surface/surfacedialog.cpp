@@ -150,9 +150,6 @@ GtkWidget *fit_height_spinbutton;
 GtkWidget *fit_button;
 GtkWidget *axial_button;
 
-GtkWidget *done_button;
-GtkWidget *apply_button;
-
 // Callbacks
 gboolean on_texture_combo_entry_key_press_event( GtkWidget *widget, GdkEventKey *event, gpointer user_data );
 void on_texture_combo_entry_activate( GtkEntry *entry, gpointer user_data );
@@ -175,10 +172,6 @@ static void on_fit_width_spinbutton_value_changed( GtkSpinButton *spinbutton, gp
 static void on_fit_height_spinbutton_value_changed( GtkSpinButton *spinbutton, gpointer user_data );
 static void on_fit_button_clicked( GtkButton *button, gpointer user_data );
 static void on_axial_button_clicked( GtkButton *button, gpointer user_data );
-
-static void on_done_button_clicked( GtkButton *button, gpointer user_data );
-static void on_apply_button_clicked( GtkButton *button, gpointer user_data );
-
 
 /*
    ===================================================
@@ -370,43 +363,15 @@ static void GetTexdefInfo_from_Radiant(){
 	ZeroOffsetValues();
 }
 
-static gint delete_event_callback( GtkWidget *widget, GdkEvent* event, gpointer data ){
-	HideDlg();
-	return TRUE;
-}
-
-void DoDone() {
-  if ( !texdef_face_list_empty() ) {
-    GetTexMods( TRUE );
-  }
-  HideDlg();
-  Sys_UpdateWindows( W_ALL );
-}
-
-void DoApply() {
-  if ( !g_bListenChanged ) {
-    return;
-  }
+static gint apply_and_hide( GtkWidget *widget, GdkEvent *event, gpointer data ) {
   if ( !texdef_face_list_empty() ) {
     GetTexMods( TRUE );
     Sys_UpdateWindows( W_CAMERA );
     GetTexdefInfo_from_Radiant();
     SetTexMods();
   }
-}
-
-static gint surface_inspector_key_press_event( GtkWidget *widget, GdkEventKey* event, gpointer data ) {
-  // NOTE: catching the 'S' key to hide back the surface inspector has been suggested, but would have bad interactions with the texture typing box
-  // we could do it, but would have to add some focus management and edit logic to that texture name box
-  // we would also need to expose radiant's g_Commands to identify remapped command keys etc. (or do a first version with hardcoded 'S')
-  if ( event->keyval == GDK_Escape ) {
-    CancelDlg();
-    return TRUE;
-  } else if ( event->keyval == GDK_Return ) {
-    DoApply();
-    return TRUE;
-  }
-  return FALSE;
+  HideDlg();
+  return TRUE;
 }
 
 // make the shift increments match the grid settings
@@ -1160,25 +1125,16 @@ GtkWidget* create_SurfaceInspector( void ){
 	gtk_widget_show( hbuttonbox1 );
 	gtk_box_pack_start( GTK_BOX( vbox7 ), hbuttonbox1, TRUE, FALSE, 0 );
 
-	apply_button = gtk_button_new_with_label( "Apply" );
-	gtk_widget_show( apply_button );
-	gtk_box_pack_end( GTK_BOX( hbuttonbox1 ), apply_button, FALSE, FALSE, 0 );
-	gtk_widget_set_usize( apply_button, 60, -1 );
-
-        done_button = gtk_button_new_with_label( "Done" );
-	gtk_widget_show( done_button );
-	gtk_box_pack_end( GTK_BOX( hbuttonbox1 ), done_button, FALSE, FALSE, 0 );
-	gtk_widget_set_usize( done_button, 60, -1 );
-
-	g_signal_connect( (gpointer) SurfaceInspector,
+       	g_signal_connect( (gpointer) SurfaceInspector,
 					  "delete_event",
-					  G_CALLBACK( delete_event_callback ),
+					  G_CALLBACK( apply_and_hide ),
 					  NULL );
-	g_signal_connect( (gpointer) SurfaceInspector, "destroy",
+
+        g_signal_connect( (gpointer) SurfaceInspector, "destroy",
 					  G_CALLBACK( gtk_widget_destroy ),
 					  NULL );
         g_signal_connect( (gpointer) SurfaceInspector, "key_press_event",
-            G_CALLBACK( surface_inspector_key_press_event ),
+            G_CALLBACK( apply_and_hide ),
             NULL );
 
 	g_signal_connect( (gpointer) texture_combo_entry, "key_press_event",
@@ -1236,13 +1192,6 @@ GtkWidget* create_SurfaceInspector( void ){
 
 	g_signal_connect( (gpointer) axial_button, "clicked",
 					  G_CALLBACK( on_axial_button_clicked ),
-					  NULL );
-
-	g_signal_connect( (gpointer) done_button, "clicked",
-					  G_CALLBACK( on_done_button_clicked ),
-					  NULL );
-	g_signal_connect( (gpointer) apply_button, "clicked",
-					  G_CALLBACK( on_apply_button_clicked ),
 					  NULL );
 
 	return SurfaceInspector;
@@ -1542,12 +1491,4 @@ static void on_axial_button_clicked( GtkButton *button, gpointer user_data ){
 
 	SetTexdef_FaceList( get_texdef_face_list(), FALSE, TRUE );
 	Sys_UpdateWindows( W_ALL );
-}
-
-static void on_done_button_clicked( GtkButton *button, gpointer user_data ) {
-  DoDone();
-}
-
-static void on_apply_button_clicked( GtkButton *button, gpointer user_data ) {
-  DoApply();
 }
