@@ -234,16 +234,16 @@ void Dump();
 
 class CGameInstall : public Dialog {
 public:
-CGameInstall();
-void ScanGames();
-void Run();
-void BuildDialog();
+  CGameInstall();
+  void ScanGames();
+  void Run();
+  void BuildDialog();
 
-static void OnBtnBrowseEngine( GtkWidget *widget, gpointer data );
-static void OnBtnBrowseExecutables( GtkWidget *widget, gpointer data );
-static void OnGameSelectChanged( GtkWidget *widget, gpointer data );
+  static void OnBtnBrowseEngine( GtkWidget *widget, gpointer data );
+  static void OnBtnBrowseExecutables( GtkWidget *widget, gpointer data );
+  static void OnGameSelectChanged( GtkWidget *widget, gpointer data );
 
-enum gameType_e {
+  enum gameType_e {
 	GAME_NONE = 0,
 	GAME_Q3 = 1,
 	GAME_URT,
@@ -260,17 +260,19 @@ enum gameType_e {
 	GAME_STVEF,
 	GAME_WOLF,
 	GAME_COUNT
-};
+  };
 
 protected:
-Str m_strName;
-Str m_strMod;
-Str m_strEngine;
-Str m_strExecutables;
-int m_nComboSelect;
+  Str m_strName;
+  Str m_strMod;
+  Str m_strEngine;
+  Str m_strExecutables;
+  int m_nComboSelect;
 
-// maps from m_nComboSelect to the games
-int m_availGames[GAME_COUNT];
+  // maps from m_nComboSelect to the games
+  int m_availGames[GAME_COUNT];
+
+  GtkWidget * m_executablesVBox;
 };
 
 /*!

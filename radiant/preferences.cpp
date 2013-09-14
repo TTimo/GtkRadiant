@@ -3363,10 +3363,17 @@ void CGameInstall::OnGameSelectChanged( GtkWidget *widget, gpointer data ) {
 	i->UpdateData( TRUE );
 	i->m_strName = gtk_combo_box_get_active_text( GTK_COMBO_BOX( widget ) );
 	i->UpdateData( FALSE );
+
+        int game_id = i->m_availGames[ i->m_nComboSelect ];
+        if ( game_id == GAME_Q2 || game_id == GAME_Q2W ) {
+          gtk_widget_show( i->m_executablesVBox );
+        } else {
+          gtk_widget_hide( i->m_executablesVBox );
+        }
 }
 
 void CGameInstall::BuildDialog() {
-	GtkWidget *dlg, *vbox1, *frame, *vbox2, *button, *text, *combo, *entry, *hbox;
+	GtkWidget *dlg, *vbox1, *frame, *vbox2, *button, *text, *game_select_combo, *entry, *hbox;
 
 	dlg = m_pWidget;
 	gtk_window_set_title( GTK_WINDOW( dlg ), _( "Configure games" ) );
@@ -3385,62 +3392,60 @@ void CGameInstall::BuildDialog() {
 	gtk_widget_show( vbox2 );
 	gtk_container_add( GTK_CONTAINER( frame ), vbox2 );
 
-	combo = gtk_combo_box_new_text();
-	gtk_widget_show( combo );
-	gtk_box_pack_start( GTK_BOX( vbox2 ), combo, FALSE, FALSE, 0 );
+	game_select_combo = gtk_combo_box_new_text();
+	gtk_widget_show( game_select_combo );
+	gtk_box_pack_start( GTK_BOX( vbox2 ), game_select_combo, FALSE, FALSE, 0 );
 
-	//	GList *combo_list = NULL;
 	int iGame = 0;
 	while ( m_availGames[ iGame ] != GAME_NONE ) {
 		switch ( m_availGames[ iGame ] ) {
 		case GAME_Q2:
-			gtk_combo_box_append_text( GTK_COMBO_BOX( combo ), _( "Quake II" ) );
+			gtk_combo_box_append_text( GTK_COMBO_BOX( game_select_combo ), _( "Quake II" ) );
 			break;
 		case GAME_Q3:
-			gtk_combo_box_append_text( GTK_COMBO_BOX( combo ), _( "Quake III Arena and mods" ) );
+			gtk_combo_box_append_text( GTK_COMBO_BOX( game_select_combo ), _( "Quake III Arena and mods" ) );
 			break;
 		case GAME_URT:
-			gtk_combo_box_append_text( GTK_COMBO_BOX( combo ), _( "Urban Terror (standalone)" ) );
+			gtk_combo_box_append_text( GTK_COMBO_BOX( game_select_combo ), _( "Urban Terror (standalone)" ) );
 			break;
 		case GAME_UFOAI:
-			gtk_combo_box_append_text( GTK_COMBO_BOX( combo ), _( "UFO: Alien Invasion" ) );
+			gtk_combo_box_append_text( GTK_COMBO_BOX( game_select_combo ), _( "UFO: Alien Invasion" ) );
 			break;
 		case GAME_Q2W:
-			gtk_combo_box_append_text( GTK_COMBO_BOX( combo ), _( "Quake2World" ) );
+			gtk_combo_box_append_text( GTK_COMBO_BOX( game_select_combo ), _( "Quake2World" ) );
 			break;
 		case GAME_WARSOW:
-			gtk_combo_box_append_text( GTK_COMBO_BOX( combo ), _( "Warsow" ) );
+			gtk_combo_box_append_text( GTK_COMBO_BOX( game_select_combo ), _( "Warsow" ) );
 			break;
 		case GAME_NEXUIZ:
-			gtk_combo_box_append_text( GTK_COMBO_BOX( combo ), _( "Nexuiz" ) );
+			gtk_combo_box_append_text( GTK_COMBO_BOX( game_select_combo ), _( "Nexuiz" ) );
 			break;
 		case GAME_TREMULOUS:
-			gtk_combo_box_append_text( GTK_COMBO_BOX( combo ), _( "Tremulous" ) );
+			gtk_combo_box_append_text( GTK_COMBO_BOX( game_select_combo ), _( "Tremulous" ) );
 			break;
 		case GAME_JA:
-			gtk_combo_box_append_text( GTK_COMBO_BOX( combo ), _( "Jedi Academy and mods" ) );
+			gtk_combo_box_append_text( GTK_COMBO_BOX( game_select_combo ), _( "Jedi Academy and mods" ) );
 			break;
 		case GAME_REACTION:
-			gtk_combo_box_append_text( GTK_COMBO_BOX( combo ), _( "Reaction Quake 3" ) );
+			gtk_combo_box_append_text( GTK_COMBO_BOX( game_select_combo ), _( "Reaction Quake 3" ) );
 			break;
 		case GAME_ET:
-			gtk_combo_box_append_text( GTK_COMBO_BOX( combo ), _( "Wolfenstein: Enemy Territory" ) );
+			gtk_combo_box_append_text( GTK_COMBO_BOX( game_select_combo ), _( "Wolfenstein: Enemy Territory" ) );
 			break;
 		case GAME_QL:
-			gtk_combo_box_append_text( GTK_COMBO_BOX( combo ), _( "Quake Live" ) );
+			gtk_combo_box_append_text( GTK_COMBO_BOX( game_select_combo ), _( "Quake Live" ) );
 			break;
 		case GAME_STVEF:
-			gtk_combo_box_append_text( GTK_COMBO_BOX( combo ), _( "Star Trek - Voyager: Elite Force" ) );
+			gtk_combo_box_append_text( GTK_COMBO_BOX( game_select_combo ), _( "Star Trek - Voyager: Elite Force" ) );
 			break;
 		case GAME_WOLF:
-			gtk_combo_box_append_text( GTK_COMBO_BOX( combo ), _( "Return To Castle Wolfenstein" ) );
+			gtk_combo_box_append_text( GTK_COMBO_BOX( game_select_combo ), _( "Return To Castle Wolfenstein" ) );
 			break;
 		}
 		iGame++;
 	}
-	AddDialogData( combo, &m_nComboSelect, DLG_COMBO_BOX_INT );
-	gtk_signal_connect( GTK_OBJECT( combo ), "changed", G_CALLBACK( OnGameSelectChanged ), this );
-	gtk_combo_box_set_active( GTK_COMBO_BOX( combo ), 0 );  // NOTE: will trigger signal
+	AddDialogData( game_select_combo, &m_nComboSelect, DLG_COMBO_BOX_INT );
+	gtk_signal_connect( GTK_OBJECT( game_select_combo ), "changed", G_CALLBACK( OnGameSelectChanged ), this );
 
 	text = gtk_label_new( _( "Name:" ) );
 	gtk_widget_show( text );
@@ -3451,7 +3456,7 @@ void CGameInstall::BuildDialog() {
 	gtk_box_pack_start( GTK_BOX( vbox2 ), entry, FALSE, FALSE, 0 );
 	AddDialogData( entry, &m_strName, DLG_ENTRY_TEXT );
 
-	text = gtk_label_new( _( "Engine directory:" ) );
+	text = gtk_label_new( _( "Game directory:" ) );
 	gtk_widget_show( text );
 	gtk_box_pack_start( GTK_BOX( vbox2 ), text, FALSE, FALSE, 0 );
 
@@ -3469,13 +3474,17 @@ void CGameInstall::BuildDialog() {
 	gtk_signal_connect( GTK_OBJECT( button ), "clicked", GTK_SIGNAL_FUNC( OnBtnBrowseEngine ), this );
 	gtk_box_pack_start( GTK_BOX( hbox ), button, FALSE, FALSE, 0 );
 
-	text = gtk_label_new( _( "Executables directory (optional):" ) );
+        m_executablesVBox = gtk_vbox_new( TRUE, 0 );
+        gtk_widget_show( m_executablesVBox );
+        gtk_box_pack_start( GTK_BOX( vbox2 ), m_executablesVBox, FALSE, FALSE, 0 );
+
+	text = gtk_label_new( _( "Engine binaries directory:" ) );
 	gtk_widget_show( text );
-	gtk_box_pack_start( GTK_BOX( vbox2 ), text, FALSE, FALSE, 0 );
+	gtk_box_pack_start( GTK_BOX( m_executablesVBox ), text, FALSE, FALSE, 0 );
 
 	hbox = gtk_hbox_new( FALSE, 5 );
 	gtk_widget_show( hbox );
-	gtk_box_pack_start( GTK_BOX( vbox2 ), hbox, FALSE, FALSE, 0 );
+	gtk_box_pack_start( GTK_BOX( m_executablesVBox ), hbox, FALSE, FALSE, 0 );
 
 	entry = gtk_entry_new();
 	gtk_widget_show( entry );
@@ -3486,18 +3495,6 @@ void CGameInstall::BuildDialog() {
 	gtk_widget_show( button );
 	gtk_signal_connect( GTK_OBJECT( button ), "clicked", GTK_SIGNAL_FUNC( OnBtnBrowseExecutables ), this );
 	gtk_box_pack_start( GTK_BOX( hbox ), button, FALSE, FALSE, 0 );
-
-	// this gets done in the project stuff atm
-#if 0
-	text = gtk_label_new( _( "Mod subdirectory:" ) );
-	gtk_widget_show( text );
-	gtk_box_pack_start( GTK_BOX( vbox2 ), text, FALSE, FALSE, 0 );
-
-	entry = gtk_entry_new();
-	gtk_widget_show( entry );
-	gtk_box_pack_start( GTK_BOX( vbox2 ), entry, FALSE, FALSE, 0 );
-	AddDialogData( entry, &m_strMod, DLG_ENTRY_TEXT );
-#endif
 
 	button = gtk_button_new_with_label( _( "OK" ) );
 	gtk_widget_show( button );
@@ -3510,6 +3507,9 @@ void CGameInstall::BuildDialog() {
 	AddModalButton( button, IDCANCEL );
 
 	gtk_widget_set_size_request( dlg, 320, -1);
+
+        // triggers the callback - sets the game name, shows/hide extra settings depending on project
+	gtk_combo_box_set_active( GTK_COMBO_BOX( game_select_combo ), 0 );
 }
 
 void CGameInstall::Run() {
