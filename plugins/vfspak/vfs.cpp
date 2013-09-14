@@ -525,7 +525,7 @@ int vfsLoadFile( const char *filename, void **bufferptr, int index ){
 				len = ftell( f );
 				rewind( f );
 
-				*bufferptr = malloc( len + 1 );
+				*bufferptr = g_malloc( len + 1 );
 				if ( *bufferptr == NULL ) {
 					return -1;
 				}
@@ -554,7 +554,7 @@ int vfsLoadFile( const char *filename, void **bufferptr, int index ){
 		if ( count == index ) {
 			fseek( file->pak, file->entry.offset, SEEK_SET );
 
-			*bufferptr = malloc( file->entry.size + 1 );
+			*bufferptr = g_malloc( file->entry.size + 1 );
 			// we need to end the buffer with a 0
 			( (char*) ( *bufferptr ) )[file->entry.size] = 0;
 

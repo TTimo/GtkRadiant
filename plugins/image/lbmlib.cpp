@@ -317,7 +317,7 @@ static void LoadPCX( const char *filename, byte **pic, byte **palette, int *widt
 	}
 
 	if ( palette ) {
-		*palette = (byte *)malloc( 768 );
+		*palette = (byte *)g_malloc( 768 );
 		memcpy( *palette, (byte *)pcx + len - 768, 768 );
 	}
 
@@ -332,7 +332,7 @@ static void LoadPCX( const char *filename, byte **pic, byte **palette, int *widt
 		return;
 	}
 
-	out = (byte *)malloc( ( pcx->ymax + 1 ) * ( pcx->xmax + 1 ) );
+	out = (byte *)g_malloc( ( pcx->ymax + 1 ) * ( pcx->xmax + 1 ) );
 	if ( !out ) {
 		Error( "LoadPCX: couldn't allocate" );
 	}
@@ -369,7 +369,7 @@ static void LoadPCX( const char *filename, byte **pic, byte **palette, int *widt
 	if ( raw - (byte *) pcx > len ) {
 		Error( "PCX file %s was malformed", filename );
 	}
-	free( pcx );
+	g_free( pcx );
 }
 
 /*
