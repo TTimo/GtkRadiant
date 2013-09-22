@@ -757,15 +757,6 @@ CGameDescription::CGameDescription( xmlDocPtr pDoc, const Str &GameFile ){
 
 	mGameFile = GameFile;
 
-	prop = (char*)xmlGetProp( pNode, (xmlChar*)"quake2" );
-	if ( prop == NULL ) {
-		// default
-		quake2 = false;
-	} else {
-		quake2 = true;
-		xmlFree( prop );
-	}
-
 	// if this is set, the open maps dialoge will open the engine path not the
 	// home dir for map loading and saving
 	prop = (char*)xmlGetProp( pNode, (xmlChar*)"no_maps_in_home" );
@@ -3007,11 +2998,9 @@ void PrefsDlg::LoadPrefs(){
 
 		// Texture subset on by default (HL specific really, because of halflife.wad's size)
 		mLocalPrefs.GetPref( TEXTURE_KEY,            &m_bTextureWindow,              TRUE );
-	} else if ( g_pGameDescription->quake2 ) {
+	} else if ( g_pGameDescription->mGameFile == "q2.game" || g_pGameDescription->mGameFile == "q2w.game" ) {
 		// BSP monitoring is implemented in Quake2 and Heretic2 tools
-		mLocalPrefs.GetPref( WATCHBSP_KEY,           &m_bWatchBSP,                   TRUE );
-
-		// Texture subset on by default (HL specific really, because of halflife.wad's size)
+		mLocalPrefs.GetPref( WATCHBSP_KEY,           &m_bWatchBSP,                   FALSE );
 		mLocalPrefs.GetPref( TEXTURE_KEY,            &m_bTextureWindow,              TRUE );
 	} else {
 		mLocalPrefs.GetPref( WATCHBSP_KEY,           &m_bWatchBSP,                   TRUE );
