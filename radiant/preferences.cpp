@@ -215,7 +215,6 @@
 #define MOUSE_DEF 1
 #define WINDOW_DEF 0
 #define RUNQ2_DEF 0
-#define WATCHBSP_DEF 1
 #define TLOCK_DEF 1
 #define LOADLAST_DEF 1
 #define RUN_DEF 0
@@ -762,9 +761,7 @@ CGameDescription::CGameDescription( xmlDocPtr pDoc, const Str &GameFile ){
 	if ( prop == NULL ) {
 		// default
 		quake2 = false;
-	}
-	else
-	{
+	} else {
 		quake2 = true;
 		xmlFree( prop );
 	}
@@ -775,9 +772,7 @@ CGameDescription::CGameDescription( xmlDocPtr pDoc, const Str &GameFile ){
 	if ( prop == NULL ) {
 		// default
 		noMapsInHome = false;
-	}
-	else
-	{
+	} else {
 		noMapsInHome = true;
 		xmlFree( prop );
 	}
@@ -786,13 +781,10 @@ CGameDescription::CGameDescription( xmlDocPtr pDoc, const Str &GameFile ){
 	if ( prop == NULL ) {
 		// default
 		mBaseGame = "baseq3";
-	}
-	else
-	{
+	} else {
 		mBaseGame = prop;
 		xmlFree( prop );
 	}
-
 
 	prop = (char*)xmlGetProp( pNode, (const xmlChar*)ENGINE_ATTRIBUTE );
 	if ( prop == NULL ) {
@@ -803,9 +795,7 @@ CGameDescription::CGameDescription( xmlDocPtr pDoc, const Str &GameFile ){
 #elif __APPLE__
 		mEngine = "Quake3.app";
 #endif
-	}
-	else
-	{
+	} else {
 		mEngine = prop;
 		xmlFree( prop );
 	}
@@ -819,9 +809,7 @@ CGameDescription::CGameDescription( xmlDocPtr pDoc, const Str &GameFile ){
 #elif __APPLE__
 		mMultiplayerEngine = "Quake3.app";
 #endif
-	}
-	else
-	{
+	} else {
 		mMultiplayerEngine = prop;
 		xmlFree( prop );
 	}
@@ -887,9 +875,7 @@ CGameDescription::CGameDescription( xmlDocPtr pDoc, const Str &GameFile ){
 	if ( !mShaderPath.GetLength() ) {
 		mShaderPath = "scripts/";
 		mShaderlist = "scripts/shaderlist.txt";
-	}
-	else
-	{
+	} else {
 		AddSlash( mShaderPath );
 		mShaderlist = mShaderPath;
 		mShaderlist += "shaderlist.txt";
@@ -3015,24 +3001,20 @@ void PrefsDlg::LoadPrefs(){
 	// this will probably need to be 75 or 100 for Q1.
 	mLocalPrefs.GetPref( TEXTURESCALE_KEY,       &m_nTextureScale,               50 );
 
-	// FIXME: Hydra - actually, this stuff is Q1,Q2 and HL specific.
 	if ( ( g_pGameDescription->mGameFile == "hl.game" ) ) {
 		// No BSP monitoring in the default compiler tools for Half-life (yet)
 		mLocalPrefs.GetPref( WATCHBSP_KEY,           &m_bWatchBSP,                   FALSE );
 
 		// Texture subset on by default (HL specific really, because of halflife.wad's size)
 		mLocalPrefs.GetPref( TEXTURE_KEY,            &m_bTextureWindow,              TRUE );
-	}
-	else if ( g_pGameDescription->quake2 ) {
+	} else if ( g_pGameDescription->quake2 ) {
 		// BSP monitoring is implemented in Quake2 and Heretic2 tools
 		mLocalPrefs.GetPref( WATCHBSP_KEY,           &m_bWatchBSP,                   TRUE );
 
 		// Texture subset on by default (HL specific really, because of halflife.wad's size)
 		mLocalPrefs.GetPref( TEXTURE_KEY,            &m_bTextureWindow,              TRUE );
-	}
-	else
-	{
-		mLocalPrefs.GetPref( WATCHBSP_KEY,           &m_bWatchBSP,                   WATCHBSP_DEF );
+	} else {
+		mLocalPrefs.GetPref( WATCHBSP_KEY,           &m_bWatchBSP,                   TRUE );
 		mLocalPrefs.GetPref( TEXTURE_KEY,            &m_bTextureWindow,              FALSE );
 	}
 

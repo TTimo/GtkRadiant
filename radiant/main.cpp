@@ -974,7 +974,7 @@ void QE_ExpandBspString( char *bspaction, GPtrArray *out_array, char *mapname ){
 	QE_ConvertDOSToUnixName( src, src );
 
 	// initialise the first step
-	out = new char[BIG_PATH_MAX]; //% PATH_MAX
+	out = new char[BIG_PATH_MAX];
 	g_ptr_array_add( out_array, out );
 
 	in = ValueForKey( g_qeglobals.d_project_entity, bspaction );
@@ -1015,7 +1015,7 @@ void QE_ExpandBspString( char *bspaction, GPtrArray *out_array, char *mapname ){
 				// start a new step
 				*out = 0;
 				in = in + 2;
-				out = new char[BIG_PATH_MAX]; //% PATH_MAX
+				out = new char[BIG_PATH_MAX];
 				g_ptr_array_add( out_array, out );
 			}
 		}
@@ -1110,10 +1110,10 @@ static gboolean RunBsp_CaptureOutput(void *data) {
 
 void RunBsp( char *command ){
 	GPtrArray *sys;
-	char batpath[BIG_PATH_MAX]; //% PATH_MAX
-	char temppath[BIG_PATH_MAX]; //% PATH_MAX
-	char name[BIG_PATH_MAX];    //% PATH_MAX
-	char cWork[BIG_PATH_MAX];   //% PATH_MAX
+	char batpath[BIG_PATH_MAX];
+	char temppath[BIG_PATH_MAX];
+	char name[BIG_PATH_MAX];
+	char cWork[BIG_PATH_MAX];
 	FILE  *hFile;
 	unsigned int i;
 
@@ -1131,14 +1131,11 @@ void RunBsp( char *command ){
 		AddSlash( strPath );
 		strncpy( cWork, strPath, 1024 );
 		strcat( cWork, strFile );
-	}
-	else
-	{
+	} else {
 		strcpy( cWork, name );
 	}
 
 	// get the array ready
-	//++timo TODO: free the array, free the strings ourselves with delete[]
 	sys = g_ptr_array_new();
 
 	QE_ExpandBspString( command, sys, cWork );
@@ -1149,9 +1146,7 @@ void RunBsp( char *command ){
 		ExtractFileName( currentmap, bspname );
 		StripExtension( bspname );
 		g_pParentWnd->GetWatchBSP()->DoMonitoringLoop( sys, bspname );
-	}
-	else
-	{
+	} else {
 		// write all the steps in a single BAT / .sh file and run it, don't bother monitoring it
 		CString strSys;
 		for ( i = 0; i < sys->len; i++ )
@@ -1239,68 +1234,10 @@ void RunBsp( char *command ){
 		WinExec( batpath, SW_SHOWNORMAL );
 #endif
 	}
-#ifdef _DEBUG
-	// yeah, do it .. but not now right before 1.1-TA-beta release
-	Sys_Printf( "TODO: erase GPtrArray\n" );
-#endif
+        // free the strings and the array
+        for ( i = 0; i < sys->len; i++ ) {
+          delete[] (char *)g_ptr_array_index( sys, i );
+        }
+        g_ptr_array_free( sys, TRUE );
+        sys = NULL;
 }
-
-#if 0
-
-#ifdef _WIN32
-
-int WINAPI QEW_SetupPixelFormat( HDC hDC, qboolean zbuffer ){
-	static PIXELFORMATDESCRIPTOR pfd = {
-		sizeof( PIXELFORMATDESCRIPTOR ), // size of this pfd
-		1,                          // version number
-		PFD_DRAW_TO_WINDOW |        // support window
-		PFD_SUPPORT_OPENGL |        // support OpenGL
-		PFD_DOUBLEBUFFER,           // double buffered
-		PFD_TYPE_RGBA,              // RGBA type
-		24,                         // 24-bit color depth
-		0, 0, 0, 0, 0, 0,           // color bits ignored
-		0,                          // no alpha buffer
-		0,                          // shift bit ignored
-		0,                          // no accumulation buffer
-		0, 0, 0, 0,                 // accum bits ignored
-		32,                         // depth bits
-		0,                          // no stencil buffer
-		0,                          // no auxiliary buffer
-		PFD_MAIN_PLANE,             // main layer
-		0,                          // reserved
-		0, 0, 0                     // layer masks ignored
-	};                            //
-	int pixelformat = 0;
-
-	zbuffer = true;
-	if ( !zbuffer ) {
-		pfd.cDepthBits = 0;
-	}
-
-	if ( ( pixelformat = ChoosePixelFormat( hDC, &pfd ) ) == 0 ) {
-		LPVOID lpMsgBuf;
-		FormatMessage(
-			FORMAT_MESSAGE_ALLOCATE_BUFFER |
-			FORMAT_MESSAGE_FROM_SYSTEM |
-			FORMAT_MESSAGE_IGNORE_INSERTS,
-			NULL,
-			GetLastError(),
-			MAKELANGID( LANG_NEUTRAL, SUBLANG_DEFAULT ),    // Default language
-			(LPTSTR) &lpMsgBuf,
-			0,
-			NULL
-			);
-		Sys_FPrintf( SYS_WRN, "GetLastError: %s", lpMsgBuf );
-		Error( "ChoosePixelFormat failed" );
-	}
-
-	if ( !SetPixelFormat( hDC, pixelformat, &pfd ) ) {
-		Error( "SetPixelFormat failed" );
-	}
-
-	return pixelformat;
-}
-
-#endif
-
-#endif
