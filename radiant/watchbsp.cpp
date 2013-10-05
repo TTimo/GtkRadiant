@@ -478,11 +478,12 @@ void CWatchBSP::RoutineProcessing(){
 						FindReplace( cmd, "/", "\\" );
 #endif
 						Str cmdline;
-						if ( g_pGameDescription->quake2 ) {
+						if ( g_pGameDescription->idTech2 ) {
 							cmdline = "+exec radiant.cfg +map ";
 							cmdline += m_sBSPName;
 						}
 						else
+						// NOTE: idTech3 specific - there used to be some logic depending on engine breed here
 						{
 							cmdline = "+set sv_pure 0 ";
 							// TTimo: a check for vm_* but that's all fine

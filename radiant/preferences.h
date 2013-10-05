@@ -183,8 +183,8 @@ float mTextureDefaultScale;   ///< default scale (0.5 in q3, 1.0 in q1/q2, 0.25 
 bool mEClassSingleLoad;   ///< only load a single eclass definition file
 bool mNoPatch;   ///< this game doesn't support patch technology
 Str mCaulkShader;   ///< the shader to use for caulking
-bool quake2;   ///< set this to true to get quake2
 bool noMapsInHome;   ///< set this if you want to open the engine path/base dir/maps dir for map open/save dialoges */
+bool idTech2;  // set this to true for idTech2 games
 
 CGameDescription() { mpDoc = NULL; }
 /*!

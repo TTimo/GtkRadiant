@@ -1325,27 +1325,6 @@ void GroupDlg::Create(){
 								EntWidgets[EntCheck1 + i] = check;
 							}
 
-							if ( g_pGameDescription->quake2 ) {
-								GtkWidget *check = gtk_check_button_new_with_label( _( "!Easy" ) );
-								gtk_widget_show( check );
-								gtk_signal_connect( GTK_OBJECT( check ), "toggled", GTK_SIGNAL_FUNC( entity_check ), NULL );
-								EntWidgets[EntCheck17] = check;
-
-								check = gtk_check_button_new_with_label( _( "!Medium" ) );
-								gtk_widget_show( check );
-								gtk_signal_connect( GTK_OBJECT( check ), "toggled", GTK_SIGNAL_FUNC( entity_check ), NULL );
-								EntWidgets[EntCheck18] = check;
-
-								check = gtk_check_button_new_with_label( _( "!Hard" ) );
-								gtk_widget_show( check );
-								gtk_signal_connect( GTK_OBJECT( check ), "toggled", GTK_SIGNAL_FUNC( entity_check ), NULL );
-								EntWidgets[EntCheck19] = check;
-
-								check = gtk_check_button_new_with_label( _( "!DeathMatch" ) );
-								gtk_widget_show( check );
-								gtk_signal_connect( GTK_OBJECT( check ), "toggled", GTK_SIGNAL_FUNC( entity_check ), NULL );
-								EntWidgets[EntCheck20] = check;
-							}
 						}
 
 						{

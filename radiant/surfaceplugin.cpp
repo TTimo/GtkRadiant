@@ -175,14 +175,6 @@ void SetFaceTexdef_Q2( face_t *f, texdef_t *texdef, bool bFitScale ){
 
 void SI_SetTexdef_FaceList( texdef_to_face_t* texdef_face_list, bool b_SetUndoPoint, bool bFit_to_Scale ){
 	texdef_to_face_t* texdef_to_face;
-	bool b_isQuake2;
-
-	if ( g_pGameDescription->quake2 ) {
-		b_isQuake2 = true;
-	}
-	else{
-		b_isQuake2 = false;
-	}
 
 	if ( !texdef_face_list ) {
 		return;
@@ -194,13 +186,9 @@ void SI_SetTexdef_FaceList( texdef_to_face_t* texdef_face_list, bool b_SetUndoPo
 		}
 		else if ( ( selected_brushes.next != &selected_brushes ) || ( g_ptrSelectedFaces.GetSize() == 1 ) ) {
 			// Give something to undo to
-			for ( texdef_to_face = texdef_face_list; texdef_to_face; texdef_to_face = texdef_to_face->next )
-				if ( b_isQuake2 ) {
-					SetFaceTexdef_Q2( texdef_to_face->face, &texdef_to_face->orig_texdef, bFit_to_Scale );
-				}
-				else{
-					SetFaceTexdef( texdef_to_face->face, &texdef_to_face->orig_texdef, &texdef_to_face->orig_bp_texdef, bFit_to_Scale );
-				}
+			for ( texdef_to_face = texdef_face_list; texdef_to_face; texdef_to_face = texdef_to_face->next ) {
+			  SetFaceTexdef( texdef_to_face->face, &texdef_to_face->orig_texdef, &texdef_to_face->orig_bp_texdef, bFit_to_Scale );
+                        }
 
 			Undo_Start( "set facelist texdefs" );
 
@@ -211,15 +199,11 @@ void SI_SetTexdef_FaceList( texdef_to_face_t* texdef_face_list, bool b_SetUndoPo
 				Undo_AddBrush( texdef_face_list->brush );
 			}
 
-		}
+                }
 	}
 
 	for ( texdef_to_face = texdef_face_list; texdef_to_face; texdef_to_face = texdef_to_face->next )
 	{
-		if ( b_isQuake2 ) {
-			SetFaceTexdef_Q2( texdef_to_face->face, &texdef_to_face->texdef,  bFit_to_Scale );
-		}
-		else
 		{
 			brushprimit_texdef_t brushprimit_texdef;
 			FakeTexCoordsToTexMat( texdef_to_face->texdef.shift, texdef_to_face->texdef.rotate, texdef_to_face->texdef.scale, brushprimit_texdef.coords );
