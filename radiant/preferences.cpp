@@ -3023,13 +3023,6 @@ void PrefsDlg::LoadPrefs(){
 		// Texture subset on by default (HL specific really, because of halflife.wad's size)
 		mLocalPrefs.GetPref( TEXTURE_KEY,            &m_bTextureWindow,              TRUE );
 	}
-	else if ( g_pGameDescription->quake2 ) {
-		// BSP monitoring is implemented in Quake2 and Heretic2 tools
-		mLocalPrefs.GetPref( WATCHBSP_KEY,           &m_bWatchBSP,                   TRUE );
-
-		// Texture subset on by default (HL specific really, because of halflife.wad's size)
-		mLocalPrefs.GetPref( TEXTURE_KEY,            &m_bTextureWindow,              TRUE );
-	}
 	else
 	{
 		mLocalPrefs.GetPref( WATCHBSP_KEY,           &m_bWatchBSP,                   WATCHBSP_DEF );
@@ -3622,6 +3615,7 @@ void CGameInstall::Run() {
 
 	switch ( m_availGames[ m_nComboSelect ] ) {
 	case GAME_Q2: {
+		fprintf( fg, "  quake2=\"true\"\n" );
 		fprintf( fg, "  prefix=\".quake2\"\n" );
 		fprintf( fg, "  basegame=\"baseq2\"\n" );
 		fprintf( fg, "  no_patch=\"true\"\n" );
@@ -3654,8 +3648,23 @@ void CGameInstall::Run() {
 		break;
 	}
 	case GAME_Q2W: {
-		fprintf( fg, "  prefix=\".quake2world\"\n" );
-		fprintf( fg, "  prefix_win32=\"Quake2World\"\n");
+#ifdef __APPLE__
+		fprintf( fg, "  " ENGINE_ATTRIBUTE "=\"quake2world\"\n" );
+		fprintf( fg, "  " ENGINEPATH_ATTRIBUTE "=\"/Applications/Quake2World.app/Contents/Resources\"\n" );
+		fprintf( fg, "  " EXECUTABLES_ATTRIBUTE "=\"/Applications/Quake2World.app/Contents/MacOS\"\n" );
+		fprintf( fg, "  " PREFIX_ATTRIBUTE "=\".quake2world\"\n" );
+#elif __linux__
+		fprintf( fg, "  " ENGINE_ATTRIBUTE "=\"quake2world\"\n" );
+		fprintf( fg, "  " ENGINEPATH_ATTRIBUTE "=\"/usr/local/games/quake2world/share\"\n" );
+		fprintf( fg, "  " EXECUTABLES_ATTRIBUTE "=\"/usr/local/games/quake2world/bin\"\n" );
+		fprintf( fg, "  " PREFIX_ATTRIBUTE "=\".quake2world\"\n" );
+#elif _WIN32
+		fprintf( fg, "  " ENGINE_ATTRIBUTE "=\"quake2world.exe\"\n" );
+		fprintf( fg, "  " ENGINEPATH_ATTRIBUTE "=\"C:\\Program Files\\Quake2World\\share\"\n" );
+		fprintf( fg, "  " EXECUTABLES_ATTRIBUTE "=\"C:\\Program Files\\Quake2World\\bin\"\n" );
+		fprintf( fg, "  " PREFIX_ATTRIBUTE "=\"Quake2World\"\n" );
+#endif
+		fprintf( fg, "  quake2=\"true\"\n" );
 		fprintf( fg, "  basegame=\"default\"\n" );
 		fprintf( fg, "  no_patch=\"true\"\n" );
 		fprintf( fg, "  default_scale=\"0.25\"\n" );
