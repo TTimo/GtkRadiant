@@ -461,7 +461,7 @@ void CWatchBSP::RoutineProcessing(){
 						Sys_Printf( "Running engine...\n" );
 						Str cmd;
 						// build the command line
-						cmd = g_pGameDescription->mEnginePath.GetBuffer();
+						cmd = g_pGameDescription->mExecutablesPath.GetBuffer();
 						// this is game dependant
 						if ( !strcmp( ValueForKey( g_qeglobals.d_project_entity, "gamemode" ),"mp" ) ) {
 							// MP
@@ -479,7 +479,7 @@ void CWatchBSP::RoutineProcessing(){
 #endif
 						Str cmdline;
 						if ( g_pGameDescription->quake2 ) {
-							cmdline = ". +exec radiant.cfg +map ";
+							cmdline = "+exec radiant.cfg +map ";
 							cmdline += m_sBSPName;
 						}
 						else
