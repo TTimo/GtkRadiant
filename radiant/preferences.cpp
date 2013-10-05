@@ -757,6 +757,15 @@ CGameDescription::CGameDescription( xmlDocPtr pDoc, const Str &GameFile ){
 
 	mGameFile = GameFile;
 
+	prop = (char*)xmlGetProp( pNode, (xmlChar*)"idtech2" );
+	if ( prop == NULL ) {
+		// default
+		idTech2 = false;
+	} else {
+		idTech2 = true;
+		xmlFree( prop );
+	}
+
 	// if this is set, the open maps dialoge will open the engine path not the
 	// home dir for map loading and saving
 	prop = (char*)xmlGetProp( pNode, (xmlChar*)"no_maps_in_home" );
@@ -2998,10 +3007,6 @@ void PrefsDlg::LoadPrefs(){
 
 		// Texture subset on by default (HL specific really, because of halflife.wad's size)
 		mLocalPrefs.GetPref( TEXTURE_KEY,            &m_bTextureWindow,              TRUE );
-	} else if ( g_pGameDescription->mGameFile == "q2.game" || g_pGameDescription->mGameFile == "q2w.game" ) {
-		// BSP monitoring is implemented in Quake2 and Heretic2 tools
-		mLocalPrefs.GetPref( WATCHBSP_KEY,           &m_bWatchBSP,                   FALSE );
-		mLocalPrefs.GetPref( TEXTURE_KEY,            &m_bTextureWindow,              TRUE );
 	} else {
 		mLocalPrefs.GetPref( WATCHBSP_KEY,           &m_bWatchBSP,                   TRUE );
 		mLocalPrefs.GetPref( TEXTURE_KEY,            &m_bTextureWindow,              FALSE );
@@ -3593,6 +3598,7 @@ void CGameInstall::Run() {
 
 	switch ( m_availGames[ m_nComboSelect ] ) {
 	case GAME_Q2: {
+		fprintf( fg, "  idtech2=\"true\"\n" );
 		fprintf( fg, "  prefix=\".quake2\"\n" );
 		fprintf( fg, "  basegame=\"baseq2\"\n" );
 		fprintf( fg, "  no_patch=\"true\"\n" );
@@ -3625,8 +3631,14 @@ void CGameInstall::Run() {
 		break;
 	}
 	case GAME_Q2W: {
-		fprintf( fg, "  prefix=\".quake2world\"\n" );
-		fprintf( fg, "  prefix_win32=\"Quake2World\"\n");
+#if defined( __APPLE__ ) || defined( __linux__ )
+		fprintf( fg, "  " ENGINE_ATTRIBUTE "=\"quake2world\"\n" );
+		fprintf( fg, "  " PREFIX_ATTRIBUTE "=\".quake2world\"\n" );
+#elif _WIN32
+		fprintf( fg, "  " ENGINE_ATTRIBUTE "=\"quake2world.exe\"\n" );
+		fprintf( fg, "  " PREFIX_ATTRIBUTE "=\"Quake2World\"\n" );
+#endif
+		fprintf( fg, "  idtech2=\"true\"\n" );
 		fprintf( fg, "  basegame=\"default\"\n" );
 		fprintf( fg, "  no_patch=\"true\"\n" );
 		fprintf( fg, "  default_scale=\"0.25\"\n" );
