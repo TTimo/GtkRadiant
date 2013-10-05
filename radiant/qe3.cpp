@@ -436,7 +436,7 @@ xmlDocPtr ParseXMLFile( const char* filename, bool validate = false ){
 
 // copy a string r to a buffer w
 // replace $string as appropriate
-void ReplaceTemplates( char* w, const char* r ){
+static void ReplaceTemplates( char* w, const char* r ){
 	const char *p;
 	const char *__ENGINEPATH = "TEMPLATEenginepath";
 	const char *__USERHOMEPATH = "TEMPLATEuserhomepath";

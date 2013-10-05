@@ -50,6 +50,9 @@ typedef char* LPCSTR;
 
 #include "isurfaceplugin.h"
 
+#define SURFACEDIALOG_MINOR "idtech2"
+#define SHADERS_MINOR "idtech2"
+
 class SurfaceDialog : public IPluginTexdef
 {
 int refCount;

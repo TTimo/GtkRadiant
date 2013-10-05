@@ -461,7 +461,7 @@ void CWatchBSP::RoutineProcessing(){
 						Sys_Printf( "Running engine...\n" );
 						Str cmd;
 						// build the command line
-						cmd = g_pGameDescription->mEnginePath.GetBuffer();
+						cmd = g_pGameDescription->mExecutablesPath.GetBuffer();
 						// this is game dependant
 						if ( !strcmp( ValueForKey( g_qeglobals.d_project_entity, "gamemode" ),"mp" ) ) {
 							// MP
@@ -478,7 +478,12 @@ void CWatchBSP::RoutineProcessing(){
 						FindReplace( cmd, "/", "\\" );
 #endif
 						Str cmdline;
-                                                // NOTE: idTech3 specific - there used to be some logic depending on engine breed here
+						if ( g_pGameDescription->idTech2 ) {
+							cmdline = "+exec radiant.cfg +map ";
+							cmdline += m_sBSPName;
+						}
+						else
+						// NOTE: idTech3 specific - there used to be some logic depending on engine breed here
 						{
 							cmdline = "+set sv_pure 0 ";
 							// TTimo: a check for vm_* but that's all fine
