@@ -56,7 +56,7 @@ install: -pre-install -gtk-runtime
 	rm -rf `find $(INSTDIR)/installs -type d -name .svn`
 
 bundle:
-
+	
 	# The Radiant plugins (modules) are a little funky
 	# Some of them are actually linked against the build directory
 	
@@ -70,7 +70,7 @@ bundle:
 		`find $(BINDIR)/modules -name "*.so" | xargs -I {} echo -x {}` \
 		`find $(LIBDIR) -name "*.so" | xargs -I {} echo -x {}` \
 	-d $(LIBDIR) -of -p @executable_path/../lib
-
+	
 	rm -f build
 
 image:
