@@ -791,6 +791,7 @@ static void LoadShaderImages( shaderInfo_t *si ){
 		ColorNormalize( color, si->color );
 	}
 	VectorScale( color, ( 1.0f / count ), si->averageColor );
+	si->averageColor[ 3 ] = color[ 3 ] / count;
 }
 
 

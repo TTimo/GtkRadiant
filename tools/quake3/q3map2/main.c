@@ -279,7 +279,7 @@ int AnalyzeBSP( int argc, char **argv ){
 		lumpInt = LittleLong( (int) *( (int*) lump ) );
 		lumpFloat = LittleFloat( (float) *( (float*) lump ) );
 		memcpy( lumpString, (char*) lump, ( length < 1024 ? length : 1024 ) );
-		lumpString[ 1024 ] = '\0';
+		lumpString[ 1023 ] = '\0';
 
 		/* print basic lump info */
 		Sys_Printf( "Lump:          %d\n", i );
