@@ -520,7 +520,6 @@ void CWatchBSP::RoutineProcessing(){
 				// move to next step or finish
 				m_iCurrentStep++;
 				if ( m_iCurrentStep < m_pCmd->len ) {
-					printf("BEGIN AGAIN\n");
 					DoEBeginStep();
 					break;
 				}
