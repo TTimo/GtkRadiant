@@ -566,7 +566,11 @@ void CWatchBSP::DoMonitoringLoop( GPtrArray *pCmd, char *sBSPName ){
 		m_sBSPName = NULL;
 	}
 
-	m_pCmd = g_ptr_array_new_full( pCmd->len, g_free ) ;
+        // glib 2.30
+//	m_pCmd = g_ptr_array_new_full( pCmd->len, g_free );
+
+        m_pCmd = g_ptr_array_sized_new( pCmd->len );
+        g_ptr_array_set_free_func( m_pCmd, g_free );
 
 	for ( i = 0; i < pCmd->len; i++ ) {
 		g_ptr_array_add( m_pCmd, g_strdup( (char *) pCmd->pdata[i] ) );
