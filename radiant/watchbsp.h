@@ -61,6 +61,8 @@ char    *m_sBSPName;
 xmlParserInputBufferPtr m_xmlInputBuffer;
 xmlParserInputPtr m_xmlInput;
 xmlParserCtxtPtr m_xmlParserCtxt;
+// run the game engine after successful compile
+void RunQuake();
 // call this to switch the set listening mode
 bool SetupListening();
 // start a new EBeginStep
@@ -71,7 +73,7 @@ bool m_bNeedCtxtInit;
 message_info_s m_message_info;
 
 public:
-CWatchBSP() { m_bBSPPlugin = false; m_pListenSocket = NULL; m_pInSocket = NULL; m_eState = EIdle; m_pTimer = g_timer_new(); m_sBSPName = NULL; m_xmlInputBuffer = NULL; m_bNeedCtxtInit = true; }
+CWatchBSP() { m_bBSPPlugin = false; m_pListenSocket = NULL; m_pInSocket = NULL; m_eState = EIdle; m_pTimer = g_timer_new(); m_sBSPName = NULL; m_pCmd = NULL; m_iCurrentStep = 0; m_xmlInputBuffer = NULL; m_xmlParserCtxt = NULL; }
 virtual ~CWatchBSP();
 bool HasBSPPlugin() const
 { return m_bBSPPlugin; }

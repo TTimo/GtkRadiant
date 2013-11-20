@@ -152,7 +152,6 @@ static void saxEndElement( message_info_t *data, const xmlChar *name ) {
 #ifdef _DEBUG
 		Sys_Printf( "Received error msg .. shutting down..\n" );
 #endif
-		g_pParentWnd->GetWatchBSP()->Reset();
 		// tell there has been an error
 		if ( g_pParentWnd->GetWatchBSP()->HasBSPPlugin() ) {
 			g_BSPFrontendTable.m_pfnEndListen( 2 );
@@ -248,12 +247,91 @@ static xmlSAXHandler saxParser = {
 // ------------------------------------------------------------------------------------------------
 
 CWatchBSP::~CWatchBSP(){
+
 	Reset();
+
+	if ( m_pCmd ) {
+		g_ptr_array_free( m_pCmd, true );
+		m_pCmd = NULL;
+	}
+
 	if ( m_sBSPName ) {
-		delete[] m_sBSPName;
+		g_free( m_sBSPName );
 		m_sBSPName = NULL;
 	}
+
 	Net_Shutdown();
+}
+
+void CWatchBSP::RunQuake() {
+
+	// build the command line
+	Str cmd;
+
+	cmd = g_pGameDescription->mExecutablesPath.GetBuffer();
+	// this is game dependant
+	if ( !strcmp( ValueForKey( g_qeglobals.d_project_entity, "gamemode" ),"mp" ) ) {
+		// MP
+		cmd += g_pGameDescription->mMultiplayerEngine.GetBuffer();
+	}
+	else
+	{
+		// SP
+		cmd += g_pGameDescription->mEngine.GetBuffer();
+	}
+#ifdef _WIN32
+	// NOTE: we are using unix pathnames and CreateProcess doesn't like / in the program path
+	// FIXME: This isn't true anymore, doesn't it?
+	FindReplace( cmd, "/", "\\" );
+#endif
+	Str cmdline;
+	if ( g_pGameDescription->idTech2 ) {
+		cmdline = "+exec radiant.cfg +map ";
+		cmdline += m_sBSPName;
+	}
+	else
+	// NOTE: idTech3 specific - there used to be some logic depending on engine breed here
+	{
+		cmdline = "+set sv_pure 0 ";
+		// TTimo: a check for vm_* but that's all fine
+		//cmdline = "+set sv_pure 0 +set vm_ui 0 +set vm_cgame 0 +set vm_game 0 ";
+		if ( *ValueForKey( g_qeglobals.d_project_entity, "gamename" ) != '\0' ) {
+			cmdline += "+set fs_game ";
+			cmdline += ValueForKey( g_qeglobals.d_project_entity, "gamename" );
+			cmdline += " ";
+		}
+		//!\todo Read the start-map args from a config file.
+		if ( g_pGameDescription->mGameFile == "wolf.game" ) {
+			if ( !strcmp( ValueForKey( g_qeglobals.d_project_entity, "gamemode" ),"mp" ) ) {
+				// MP
+				cmdline += "+devmap ";
+				cmdline += m_sBSPName;
+			}
+			else
+			{
+				// SP
+				cmdline += "+set nextmap \"spdevmap ";
+				cmdline += m_sBSPName;
+				cmdline += "\"";
+			}
+		}
+		else
+		{
+			cmdline += "+devmap ";
+			cmdline += m_sBSPName;
+		}
+	}
+
+	Sys_Printf( "%s %s\n", cmd.GetBuffer(), cmdline.GetBuffer() );
+
+	// execute now
+	if ( !Q_Exec( cmd.GetBuffer(), (char *)cmdline.GetBuffer(), g_pGameDescription->mEnginePath.GetBuffer(), false ) ) {
+		CString msg;
+		msg = "Failed to execute the following command: ";
+		msg += cmd; msg += cmdline;
+		Sys_Printf( msg );
+		gtk_MessageBox( g_pParentWnd->m_pWidget,  msg, "BSP monitoring", MB_OK | MB_ICONERROR );
+	}
 }
 
 void CWatchBSP::Reset(){
@@ -269,6 +347,11 @@ void CWatchBSP::Reset(){
 		xmlFreeParserInputBuffer( m_xmlInputBuffer );
 		m_xmlInputBuffer = NULL;
 	}
+	if ( m_xmlParserCtxt ) {
+		xmlFreeParserCtxt( m_xmlParserCtxt );
+		m_xmlParserCtxt = NULL;
+	}
+
 	m_eState = EIdle;
 }
 
@@ -294,14 +377,21 @@ bool CWatchBSP::SetupListening(){
 }
 
 void CWatchBSP::DoEBeginStep() {
-	Reset();
+
 	if ( !SetupListening() ) {
 		CString msg;
 		msg = "Failed to get a listening socket on port 39000.\nTry running with BSP monitoring disabled if you can't fix this.\n";
 		Sys_Printf( msg );
 		gtk_MessageBox( g_pParentWnd->m_pWidget, msg, "BSP monitoring", MB_OK | MB_ICONERROR );
+		Reset();
 		return;
 	}
+
+	// re-initialise the debug window
+	if ( m_iCurrentStep == 0 ) {
+		g_DbgDlg.Init();
+	}
+
 	// set the timer for timeouts and step cancellation
 	g_timer_reset( m_pTimer );
 	g_timer_start( m_pTimer );
@@ -309,20 +399,19 @@ void CWatchBSP::DoEBeginStep() {
 	if ( !m_bBSPPlugin ) {
 		Sys_Printf( "=== running BSP command ===\n%s\n", g_ptr_array_index( m_pCmd, m_iCurrentStep ) );
 
-		if ( !Q_Exec( NULL, (char *)g_ptr_array_index( m_pCmd, m_iCurrentStep ), NULL, true ) ) {
+		if ( !Q_Exec( NULL, (char *) g_ptr_array_index( m_pCmd, m_iCurrentStep ), NULL, true ) ) {
 			CString msg;
 			msg = "Failed to execute the following command: ";
-			msg += (char *)g_ptr_array_index( m_pCmd, m_iCurrentStep );
+			msg += (char *) g_ptr_array_index( m_pCmd, m_iCurrentStep );
 			msg += "\nCheck that the file exists and that you don't run out of system resources.\n";
 			Sys_Printf( msg );
 			gtk_MessageBox( g_pParentWnd->m_pWidget,  msg, "BSP monitoring", MB_OK | MB_ICONERROR );
+			Reset();
 			return;
 		}
-		// re-initialise the debug window
-		if ( m_iCurrentStep == 0 ) {
-			g_DbgDlg.Init();
-		}
+
 	}
+
 	m_eState = EBeginStep;
 }
 
@@ -342,19 +431,20 @@ void CWatchBSP::RoutineProcessing(){
 	case EBeginStep:
 		// timeout: if we don't get an incoming connection fast enough, go back to idle
 		if ( g_timer_elapsed( m_pTimer, NULL ) > g_PrefsDlg.m_iTimeout ) {
-			gtk_MessageBox( g_pParentWnd->m_pWidget,  "The connection timed out, assuming the BSP process failed\nMake sure you are using a networked version of Q3Map?\nOtherwise you need to disable BSP Monitoring in prefs.", "BSP process monitoring", MB_OK );
+			gtk_MessageBox( g_pParentWnd->m_pWidget, "The connection timed out, assuming the BSP process failed\nMake sure you are using a networked version of Q3Map?\nOtherwise you need to disable BSP Monitoring in prefs.", "BSP process monitoring", MB_OK );
 			Reset();
 			if ( m_bBSPPlugin ) {
 				// status == 1 : didn't get the connection
 				g_BSPFrontendTable.m_pfnEndListen( 1 );
 			}
-			return;
+			break;
 		}
 #ifdef _DEBUG
 		// some debug checks
 		if ( !m_pListenSocket ) {
 			Sys_Printf( "ERROR: m_pListenSocket == NULL in CWatchBSP::RoutineProcessing EBeginStep state\n" );
-			return;
+			Reset();
+			break;
 		}
 #endif
 		// we are not connected yet, accept any incoming connection
@@ -364,16 +454,17 @@ void CWatchBSP::RoutineProcessing(){
 			// prepare the message info struct for diving in
 			memset( &m_message_info, 0, sizeof( message_info_s ) );
 			// a dumb flag to make sure we init the push parser context when first getting a msg
-			m_bNeedCtxtInit = true;
 			m_eState = EWatching;
 		}
 		break;
+
 	case EWatching:
 #ifdef _DEBUG
 		// some debug checks
 		if ( !m_pInSocket ) {
 			Sys_Printf( "ERROR: m_pInSocket == NULL in CWatchBSP::RoutineProcessing EWatching state\n" );
-			return;
+			Reset();
+			break;
 		}
 #endif
 		// select() will identify if the socket needs an update
@@ -390,32 +481,22 @@ void CWatchBSP::RoutineProcessing(){
 			Sys_Printf( "WARNING: SOCKET_ERROR in CWatchBSP::RoutineProcessing\n" );
 			Sys_Printf( "Terminating the connection.\n" );
 			Reset();
-			return;
+			break;
 		}
-#ifdef _DEBUG
-		if ( ret == -1 ) {
-			// we are non-blocking?? we should never get timeout errors
-			Sys_Printf( "WARNING: unexpected timeout expired in CWatchBSP::Processing\n" );
-			Sys_Printf( "Terminating the connection.\n" );
-			Reset();
-			return;
-		}
-#endif
 		if ( ret == 1 ) {
 			// the socket has been identified, there's something (message or disconnection)
 			// see if there's anything in input
 			ret = Net_Receive( m_pInSocket, &msg );
 			if ( ret > 0 ) {
 				//        unsigned int size = msg.size; //++timo just a check
-				strcpy( m_xmlBuf, NMSG_ReadString( &msg ) );
-				if ( m_bNeedCtxtInit ) {
-					m_xmlParserCtxt = NULL;
+				g_strlcpy( m_xmlBuf, NMSG_ReadString( &msg ), sizeof( m_xmlBuf) );
+				if ( m_xmlParserCtxt == NULL ) {
 					m_xmlParserCtxt = xmlCreatePushParserCtxt( &saxParser, &m_message_info, m_xmlBuf, strlen( m_xmlBuf ), NULL );
 					if ( m_xmlParserCtxt == NULL ) {
 						Sys_FPrintf( SYS_ERR, "Failed to create the XML parser (incoming stream began with: %s)\n", m_xmlBuf );
 						Reset();
+						break;
 					}
-					m_bNeedCtxtInit = false;
 				}
 				else
 				{
@@ -430,103 +511,29 @@ void CWatchBSP::RoutineProcessing(){
 				m_pInSocket = NULL;
 				Sys_Printf( "Connection closed.\n" );
 				if ( m_bBSPPlugin ) {
-					Reset();
 					// let the BSP plugin know that the job is done
 					g_BSPFrontendTable.m_pfnEndListen( 0 );
-					return;
 				}
+
+				Reset();
+
 				// move to next step or finish
 				m_iCurrentStep++;
 				if ( m_iCurrentStep < m_pCmd->len ) {
+					printf("BEGIN AGAIN\n");
 					DoEBeginStep();
+					break;
 				}
-				else
-				{
-					// release the GPtrArray and the strings
-					if ( m_pCmd != NULL ) {
-						for ( m_iCurrentStep = 0; m_iCurrentStep < m_pCmd->len; m_iCurrentStep++ )
-						{
-							delete[] (char *)g_ptr_array_index( m_pCmd, m_iCurrentStep );
-						}
-						g_ptr_array_free( m_pCmd, false );
-					}
-					m_pCmd = NULL;
-					// launch the engine .. OMG
-					if ( g_PrefsDlg.m_bRunQuake ) {
-						// do we enter sleep mode before?
-						if ( g_PrefsDlg.m_bDoSleep ) {
-							Sys_Printf( "Going into sleep mode..\n" );
-							g_pParentWnd->OnSleep();
-						}
-						Sys_Printf( "Running engine...\n" );
-						Str cmd;
-						// build the command line
-						cmd = g_pGameDescription->mExecutablesPath.GetBuffer();
-						// this is game dependant
-						if ( !strcmp( ValueForKey( g_qeglobals.d_project_entity, "gamemode" ),"mp" ) ) {
-							// MP
-							cmd += g_pGameDescription->mMultiplayerEngine.GetBuffer();
-						}
-						else
-						{
-							// SP
-							cmd += g_pGameDescription->mEngine.GetBuffer();
-						}
-#ifdef _WIN32
-						// NOTE: we are using unix pathnames and CreateProcess doesn't like / in the program path
-						// FIXME: This isn't true anymore, doesn't it?
-						FindReplace( cmd, "/", "\\" );
-#endif
-						Str cmdline;
-						if ( g_pGameDescription->idTech2 ) {
-							cmdline = "+exec radiant.cfg +map ";
-							cmdline += m_sBSPName;
-						}
-						else
-						// NOTE: idTech3 specific - there used to be some logic depending on engine breed here
-						{
-							cmdline = "+set sv_pure 0 ";
-							// TTimo: a check for vm_* but that's all fine
-							//cmdline = "+set sv_pure 0 +set vm_ui 0 +set vm_cgame 0 +set vm_game 0 ";
-							if ( *ValueForKey( g_qeglobals.d_project_entity, "gamename" ) != '\0' ) {
-								cmdline += "+set fs_game ";
-								cmdline += ValueForKey( g_qeglobals.d_project_entity, "gamename" );
-								cmdline += " ";
-							}
-							//!\todo Read the start-map args from a config file.
-							if ( g_pGameDescription->mGameFile == "wolf.game" ) {
-								if ( !strcmp( ValueForKey( g_qeglobals.d_project_entity, "gamemode" ),"mp" ) ) {
-									// MP
-									cmdline += "+devmap ";
-									cmdline += m_sBSPName;
-								}
-								else
-								{
-									// SP
-									cmdline += "+set nextmap \"spdevmap ";
-									cmdline += m_sBSPName;
-									cmdline += "\"";
-								}
-							}
-							else
-							{
-								cmdline += "+devmap ";
-								cmdline += m_sBSPName;
-							}
-						}
 
-						Sys_Printf( "%s %s\n", cmd.GetBuffer(), cmdline.GetBuffer() );
-
-						// execute now
-						if ( !Q_Exec( cmd.GetBuffer(), (char *)cmdline.GetBuffer(), g_pGameDescription->mEnginePath.GetBuffer(), false ) ) {
-							CString msg;
-							msg = "Failed to execute the following command: ";
-							msg += cmd; msg += cmdline;
-							Sys_Printf( msg );
-							gtk_MessageBox( g_pParentWnd->m_pWidget,  msg, "BSP monitoring", MB_OK | MB_ICONERROR );
-						}
+				// launch the engine .. OMG
+				if ( g_PrefsDlg.m_bRunQuake ) {
+					// do we enter sleep mode before?
+					if ( g_PrefsDlg.m_bDoSleep ) {
+						Sys_Printf( "Going into sleep mode..\n" );
+						g_pParentWnd->OnSleep();
 					}
-					Reset();
+					Sys_Printf( "Running engine...\n" );
+					RunQuake();
 				}
 			}
 		}
@@ -537,21 +544,39 @@ void CWatchBSP::RoutineProcessing(){
 }
 
 void CWatchBSP::DoMonitoringLoop( GPtrArray *pCmd, char *sBSPName ){
-	if ( m_sBSPName ) {
-		delete[] m_sBSPName;
-	}
-	m_sBSPName = sBSPName;
+	guint i;
+
 	if ( m_eState != EIdle ) {
 		Sys_Printf( "WatchBSP got a monitoring request while not idling...\n" );
 		// prompt the user, should we cancel the current process and go ahead?
 		if ( gtk_MessageBox( g_pParentWnd->m_pWidget,  "I am already monitoring a BSP process.\nDo you want me to override and start a new compilation?",
-							 "BSP process monitoring", MB_YESNO ) == IDYES ) {
-			// disconnect and set EIdle state
-			Reset();
+							 "BSP process monitoring", MB_YESNO ) == IDNO ) {
+			return;
 		}
 	}
-	m_pCmd = pCmd;
+
+	Reset();
+
+	if ( m_pCmd ) {
+		g_ptr_array_free( m_pCmd, true );
+		m_pCmd = NULL;
+	}
+
+	if ( m_sBSPName ) {
+		g_free( m_sBSPName );
+		m_sBSPName = NULL;
+	}
+
+	m_pCmd = g_ptr_array_new_full( pCmd->len, g_free ) ;
+
+	for ( i = 0; i < pCmd->len; i++ ) {
+		g_ptr_array_add( m_pCmd, g_strdup( (char *) pCmd->pdata[i] ) );
+	}
+
 	m_iCurrentStep = 0;
+
+	m_sBSPName = g_strdup(sBSPName);
+
 	DoEBeginStep();
 }
 
