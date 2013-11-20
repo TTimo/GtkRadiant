@@ -671,7 +671,7 @@ GtkWidget* create_SurfaceInspector( void ){
 	gtk_spin_button_set_update_policy( GTK_SPIN_BUTTON( vscale_value_spinbutton ), GTK_UPDATE_IF_VALID );
 
 	adjustment = gtk_adjustment_new( 0.0, -360.0, 360.0, 1.0, 10.0, 0.0 );
-	rotate_value_spinbutton = gtk_spin_button_new( GTK_ADJUSTMENT( adjustment ), 1, 0 );
+	rotate_value_spinbutton = gtk_spin_button_new( GTK_ADJUSTMENT( adjustment ), 1, 2 );
 	gtk_widget_show( rotate_value_spinbutton );
 	gtk_table_attach( GTK_TABLE( table1 ), rotate_value_spinbutton, 1, 2, 5, 6,
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
