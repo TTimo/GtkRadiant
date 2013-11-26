@@ -25,6 +25,9 @@
 // Leonardo Zide (leo@lokigames.com)
 //
 
+// FIXME: this code is mostly dead, or unused. the surface inspector logic is now in a plugin, either for idtech2 or idtech3
+// would be a good idea to try and remove this file entirely from the compile and see what happens
+
 #include <gdk/gdkkeysyms.h>
 #include "stdafx.h"
 #include "surfacedialog.h"

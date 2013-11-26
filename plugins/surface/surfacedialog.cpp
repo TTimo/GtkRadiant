@@ -251,36 +251,31 @@ void IsFaceConflicting(){
 
 	if ( is_HShift_conflicting ) {
 		gtk_entry_set_text( GTK_ENTRY( hshift_value_spinbutton ), "" );
-	}
-	else{
+	} else {
 		gtk_spin_button_set_value( GTK_SPIN_BUTTON( hshift_value_spinbutton ), texdef_SI_values.shift[0] );
 	}
 
 	if ( is_VShift_conflicting ) {
 		gtk_entry_set_text( GTK_ENTRY( vshift_value_spinbutton ), "" );
-	}
-	else{
+	} else {
 		gtk_spin_button_set_value( GTK_SPIN_BUTTON( vshift_value_spinbutton ), texdef_SI_values.shift[1] );
 	}
 
 	if ( is_HScale_conflicting ) {
 		gtk_entry_set_text( GTK_ENTRY( hscale_value_spinbutton ), "" );
-	}
-	else{
+	} else {
 		gtk_spin_button_set_value( GTK_SPIN_BUTTON( hscale_value_spinbutton ), texdef_SI_values.scale[0] );
 	}
 
 	if ( is_VScale_conflicting ) {
 		gtk_entry_set_text( GTK_ENTRY( vscale_value_spinbutton ), "" );
-	}
-	else{
+	} else {
 		gtk_spin_button_set_value( GTK_SPIN_BUTTON( vscale_value_spinbutton ), texdef_SI_values.scale[1] );
 	}
 
 	if ( is_Rotate_conflicting ) {
 		gtk_entry_set_text( GTK_ENTRY( rotate_value_spinbutton ), "" );
-	}
-	else{
+	} else {
 		gtk_spin_button_set_value( GTK_SPIN_BUTTON( rotate_value_spinbutton ), texdef_SI_values.rotate );
 	}
 
@@ -364,11 +359,6 @@ static void GetTexdefInfo_from_Radiant(){
 }
 
 static gint apply_and_hide( GtkWidget *widget, GdkEvent *event, gpointer data ) {
-  // we get all the key presses when the user is typing in the texture box - so make sure to not close then
-  if ( gtk_widget_is_focus( texture_combo_entry ) ) {
-      return FALSE;
-  }
-
   if ( !texdef_face_list_empty() ) {
     GetTexMods( TRUE );
     Sys_UpdateWindows( W_CAMERA );
@@ -377,6 +367,14 @@ static gint apply_and_hide( GtkWidget *widget, GdkEvent *event, gpointer data ) 
   }
   HideDlg();
   return TRUE;
+}
+
+// Listen for 'Esc' globally and apply+hide - that's all we can really do (same as closing the dialog)
+static gint surface_dialog_key_press( GtkWidget *widget, GdkEventKey *event, gpointer data ) {
+  if ( event->keyval != GDK_Escape ) {
+    return FALSE;
+  }
+  return apply_and_hide( widget, (GdkEvent*)event, data );
 }
 
 // make the shift increments match the grid settings
@@ -551,22 +549,32 @@ void SetTexMods(){
 	spin = GTK_SPIN_BUTTON( hshift_value_spinbutton );
 	adjust = gtk_spin_button_get_adjustment( GTK_SPIN_BUTTON( spin ) );
 	adjust->step_increment = l_pIncrement->shift[0];
+        spin = GTK_SPIN_BUTTON( hshift_step_spinbutton );
+        gtk_spin_button_set_value( spin, l_pIncrement->shift[0] );
 
 	spin = GTK_SPIN_BUTTON( vshift_value_spinbutton );
 	adjust = gtk_spin_button_get_adjustment( GTK_SPIN_BUTTON( spin ) );
 	adjust->step_increment = l_pIncrement->shift[1];
+        spin = GTK_SPIN_BUTTON( vshift_step_spinbutton );
+        gtk_spin_button_set_value( spin, l_pIncrement->shift[1] );
 
 	spin = GTK_SPIN_BUTTON( hscale_value_spinbutton );
 	adjust = gtk_spin_button_get_adjustment( GTK_SPIN_BUTTON( spin ) );
 	adjust->step_increment = l_pIncrement->scale[0];
+        spin = GTK_SPIN_BUTTON( hscale_step_spinbutton );
+        gtk_spin_button_set_value( spin, l_pIncrement->scale[0] );
 
 	spin = GTK_SPIN_BUTTON( vscale_value_spinbutton );
 	adjust = gtk_spin_button_get_adjustment( GTK_SPIN_BUTTON( spin ) );
 	adjust->step_increment = l_pIncrement->scale[1];
+        spin = GTK_SPIN_BUTTON( vscale_step_spinbutton );
+        gtk_spin_button_set_value( spin, l_pIncrement->scale[1] );
 
 	spin = GTK_SPIN_BUTTON( rotate_value_spinbutton );
 	adjust = gtk_spin_button_get_adjustment( GTK_SPIN_BUTTON( spin ) );
 	adjust->step_increment = l_pIncrement->rotate;
+        spin = GTK_SPIN_BUTTON( rotate_step_spinbutton );
+        gtk_spin_button_set_value( spin, l_pIncrement->rotate );
 
 	g_bListenChanged = true;
 
@@ -1130,6 +1138,7 @@ GtkWidget* create_SurfaceInspector( void ){
 	gtk_widget_show( hbuttonbox1 );
 	gtk_box_pack_start( GTK_BOX( vbox7 ), hbuttonbox1, TRUE, FALSE, 0 );
 
+        // closing the window (upper right window manager click)
        	g_signal_connect( (gpointer) SurfaceInspector,
 					  "delete_event",
 					  G_CALLBACK( apply_and_hide ),
@@ -1144,7 +1153,7 @@ GtkWidget* create_SurfaceInspector( void ){
 					  NULL );
 
         g_signal_connect( (gpointer) SurfaceInspector, "key_press_event",
-            G_CALLBACK( apply_and_hide ),
+            G_CALLBACK( surface_dialog_key_press ),
             NULL );
 
 	g_signal_connect( (gpointer) texture_combo_entry, "activate",
@@ -1250,15 +1259,13 @@ static void on_match_grid_button_clicked( GtkButton *button, gpointer user_data 
 
 	if ( !strcmp( gtk_entry_get_text( GTK_ENTRY( hscale_value_spinbutton ) ), "" ) ) {
 		hscale = 0.0;
-	}
-	else{
+	} else {
 		hscale = gtk_spin_button_get_value( GTK_SPIN_BUTTON( hscale_value_spinbutton ) );
 	}
 
 	if ( !strcmp( gtk_entry_get_text( GTK_ENTRY( vscale_value_spinbutton ) ), "" ) ) {
 		vscale = 0.0;
-	}
-	else{
+	} else {
 		vscale = gtk_spin_button_get_value( GTK_SPIN_BUTTON( vscale_value_spinbutton ) );
 	}
 	DoSnapTToGrid( hscale, vscale );
