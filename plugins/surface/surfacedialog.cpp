@@ -364,6 +364,11 @@ static void GetTexdefInfo_from_Radiant(){
 }
 
 static gint apply_and_hide( GtkWidget *widget, GdkEvent *event, gpointer data ) {
+  // we get all the key presses when the user is typing in the texture box - so make sure to not close then
+  if ( gtk_widget_is_focus( texture_combo_entry ) ) {
+      return FALSE;
+  }
+
   if ( !texdef_face_list_empty() ) {
     GetTexMods( TRUE );
     Sys_UpdateWindows( W_CAMERA );
@@ -1133,13 +1138,15 @@ GtkWidget* create_SurfaceInspector( void ){
         g_signal_connect( (gpointer) SurfaceInspector, "destroy",
 					  G_CALLBACK( gtk_widget_destroy ),
 					  NULL );
-        g_signal_connect( (gpointer) SurfaceInspector, "key_press_event",
-            G_CALLBACK( apply_and_hide ),
-            NULL );
 
 	g_signal_connect( (gpointer) texture_combo_entry, "key_press_event",
 					  G_CALLBACK( on_texture_combo_entry_key_press_event ),
 					  NULL );
+
+        g_signal_connect( (gpointer) SurfaceInspector, "key_press_event",
+            G_CALLBACK( apply_and_hide ),
+            NULL );
+
 	g_signal_connect( (gpointer) texture_combo_entry, "activate",
 					  G_CALLBACK( on_texture_combo_entry_activate ),
 					  NULL );
@@ -1199,8 +1206,7 @@ GtkWidget* create_SurfaceInspector( void ){
 
 
 // Texture Combo
-gboolean on_texture_combo_entry_key_press_event( GtkWidget *widget, GdkEventKey *event,
-												 gpointer user_data ){
+gboolean on_texture_combo_entry_key_press_event( GtkWidget *widget, GdkEventKey *event, gpointer user_data ){
 	// Have Tab activate selection as well as Return
 	if ( event->keyval == GDK_Tab ) {
 		g_signal_emit_by_name( texture_combo_entry, "activate" );
