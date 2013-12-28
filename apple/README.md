@@ -28,7 +28,9 @@ scons cc=gcc-mp-4.8 cxx=g++-mp-4.8
 - Run the build:
 
 (from the GtkRadiant/ directory)
-    ./install/radiant.bin
+```
+./install/radiant.bin
+```
 
 XQuartz note: on my configuration XQuartz doesn't automatically start for some reason. I have to open another terminal, and run the following command: `/Applications/Utilities/XQuartz.app/Contents/MacOS/X11.bin`, then start radiant. 
     
