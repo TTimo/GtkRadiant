@@ -13,24 +13,18 @@ Directions for OSX Mavericks 10.9 - your mileage may vary:
 
 - Install dependencies with MacPorts:
 
-[code]
-sudo port install dylibbundler gcc48 gtkglext scons
-[/code]
+    sudo port install dylibbundler gcc48 gtkglext scons
 
 - Get the GtkRadiant code and compile:
 
-[code]
-git clone https://github.com/TTimo/GtkRadiant.git
-cd GtkRadiant/
-scons cc=gcc-mp-4.8 cxx=g++-mp-4.8
-[/code]
+    git clone https://github.com/TTimo/GtkRadiant.git
+    cd GtkRadiant/
+    scons cc=gcc-mp-4.8 cxx=g++-mp-4.8
 
 - Run the build:
 
 (from the GtkRadiant/ directory)
-[code]
-./install/radiant.bin
-[/code]
+    ./install/radiant.bin
 
 XQuartz note: on my configuration XQuartz doesn't automatically start for some reason. I have to open another terminal, and run the following command: /Applications/Utilities/XQuartz.app/Contents/MacOS/X11.bin, then start radiant. 
     
