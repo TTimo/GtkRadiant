@@ -14,7 +14,7 @@ Directions for OSX Mavericks 10.9 - your mileage may vary:
 - Install dependencies with MacPorts:
 
 ```
-sudo port install dylibbundler gcc48 gtkglext scons
+sudo port install dylibbundler pkgconfig gtkglext scons
 ```
 
 - Get the GtkRadiant code and compile:
@@ -22,7 +22,7 @@ sudo port install dylibbundler gcc48 gtkglext scons
 ```
 git clone https://github.com/TTimo/GtkRadiant.git
 cd GtkRadiant/
-scons cc=gcc-mp-4.8 cxx=g++-mp-4.8
+scons
 ```
 
 - Run the build:

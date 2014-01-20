@@ -21,6 +21,7 @@
 #define __PRTVIEW_AFX_H__
 
 #include <gtk/gtk.h>
+#include <stdint.h>
 
 #if defined( __linux__ ) || defined( __APPLE__ )
 #include <GL/glx.h>
