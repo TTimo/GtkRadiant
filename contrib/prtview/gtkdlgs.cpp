@@ -36,7 +36,7 @@ static void dialog_button_callback( GtkWidget *widget, gpointer data ){
 	ret = (int*)g_object_get_data( G_OBJECT( parent ), "ret" );
 
 	*loop = 0;
-	*ret = (int)data;
+	*ret = (int)((intptr_t)data);
 }
 
 static gint dialog_delete_callback( GtkWidget *widget, GdkEvent* event, gpointer data ){
@@ -59,7 +59,7 @@ static void file_sel_callback( GtkWidget *widget, gpointer data ){
 	filename = (char**)g_object_get_data( G_OBJECT( parent ), "filename" );
 
 	*loop = 0;
-	if ( (int)data == IDOK ) {
+	if ( (int)((intptr_t)data) == IDOK ) {
 		*filename = g_strdup( gtk_file_selection_get_filename( GTK_FILE_SELECTION( parent ) ) );
 	}
 }
