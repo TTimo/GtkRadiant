@@ -3479,6 +3479,9 @@ void CGameInstall::BuildDialog() {
 		case GAME_WOLF:
 			gtk_combo_box_text_append_text( GTK_COMBO_BOX_TEXT( game_select_combo ), _( "Return To Castle Wolfenstein" ) );
 			break;
+		case GAME_UNVANQUISHED:
+			gtk_combo_box_text_append_text( GTK_COMBO_BOX_TEXT( game_select_combo ), _( "Unvanquished" ) );
+			break;
 		}
 		iGame++;
 	}
@@ -3644,6 +3647,10 @@ void CGameInstall::Run() {
 	case GAME_WOLF:
 		gamePack = WOLF_PACK;
 		gameFilePath += WOLF_GAME;
+		break;
+	case GAME_UNVANQUISHED:
+		gamePack = UNVANQUISHED_PACK;
+		gameFilePath += UNVANQUISHED_GAME;
 		break;
 	default:
 		Error( "Invalid game selected: %d", m_availGames[ m_nComboSelect ] );
@@ -3832,6 +3839,20 @@ void CGameInstall::Run() {
 		}
 		break;
 	}
+	case GAME_UNVANQUISHED: {
+		fprintf( fg, "  prefix=\".unvanquished\"\n" );
+		fprintf( fg, "  basegame=\"pkg\"\n" );
+
+		// Hardcoded fix for "missing" shaderlist in gamepack
+		Str dest = m_strEngine.GetBuffer();
+		dest += "/pkg/scripts/shaderlist.txt";
+		if( CheckFile( dest.GetBuffer() ) != PATH_FILE ) {
+			Str source = gameInstallPath.GetBuffer();
+			source += "pkg/scripts/default_shaderlist.txt";
+			radCopyFile( source.GetBuffer(), dest.GetBuffer() );
+		}
+		break;
+	}
 	}
 	fprintf( fg, "/>\n" );
 	fclose( fg );
@@ -3895,6 +3916,9 @@ void CGameInstall::ScanGames() {
 		}
 		if ( stricmp( dirname, Q1_PACK ) == 0 ) {
 			m_availGames[ iGame++ ] = GAME_Q1;
+		}
+		if ( stricmp( dirname, UNVANQUISHED_PACK ) == 0) {
+			m_availGames[ iGame++ ] = GAME_UNVANQUISHED;
 		}
 	}
 	Sys_Printf( "No installable games found in: %s\n",
