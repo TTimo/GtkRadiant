@@ -216,6 +216,7 @@ void Dump();
 #define QL_GAME "ql.game"
 #define STVEF_GAME "stvef.game"
 #define WOLF_GAME "wolf.game"
+#define UNVANQUISHED_GAME "unvanquished.game"
 
 #define Q3_PACK "Q3Pack"
 #define URT_PACK "UrTPack"
@@ -231,6 +232,7 @@ void Dump();
 #define QL_PACK "QLPack"
 #define STVEF_PACK "STVEFPack"
 #define WOLF_PACK "WolfPack"
+#define UNVANQUISHED_PACK "UnvanquishedPack"
 
 class CGameInstall : public Dialog {
 public:
@@ -259,6 +261,7 @@ public:
 	GAME_QL,
 	GAME_STVEF,
 	GAME_WOLF,
+        GAME_UNVANQUISHED,
 	GAME_COUNT
   };
 
