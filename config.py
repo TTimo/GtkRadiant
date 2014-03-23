@@ -27,7 +27,10 @@ class Config:
         # platforms for which to assemble a setup
         self.setup_platforms = [ 'local', 'x86', 'x64', 'win32' ]
         # paks to assemble in the setup
-        self.setup_packs = [ 'Q3Pack', 'UrTPack', 'ETPack', 'QLPack', 'Q2Pack', 'Q2WPack', 'JAPack', 'STVEFPack', 'WolfPack' ]
+        self.setup_packs = [
+            'Q3Pack', 'UrTPack', 'ETPack', 'QLPack', 'Q2Pack', 'Q2WPack',
+            'JAPack', 'STVEFPack', 'WolfPack', 'UnvanquishedPack'
+        ]
 
     def __repr__( self ):
         return 'config: target=%s config=%s' % ( self.target_selected, self.config_selected )
@@ -154,7 +157,7 @@ class Config:
             config = {}
             config['name'] = config_name
             config['shared'] = False
-            Export( 'utils', 'settings', 'config' )                        
+            Export( 'utils', 'settings', 'config' )
             build_dir = os.path.join( 'build', config_name, compiler_name )
             VariantDir( build_dir, '.', duplicate = 0 )
             lib_objects = []
@@ -243,7 +246,7 @@ class Config:
 
             # this lets us catch libjpg and libpng libraries that we put in the same directory as radiant.bin
             env.Append( LINKFLAGS = '-Wl,-rpath,.' )
-            
+
         # On Mac, we pad headers so that we may rewrite them for packaging
         if ( self.platform == 'Darwin' ) :
             env.Append( LINKFLAGS = [ '-headerpad_max_install_names' ] )
@@ -256,11 +259,25 @@ class Config:
         print( repr( cmd ) )
         subprocess.check_call( cmd )
 
+    def GitCheckoutOrUpdate( self, giturl, path ):
+        path = os.path.abspath( path )
+        if ( os.path.exists( path ) ):
+            cmd = [ 'git', '--work-tree', path, '--git-dir', os.path.join(path, '.git'), 'pull' ]
+        else:
+            cmd = [ 'git', 'clone', giturl, path ]
+        print( repr( cmd ) )
+        subprocess.check_call( cmd )
+
     def FetchGamePaks( self, path ):
         for pak in self.setup_packs:
-            svnurl = 'svn://svn.icculus.org/gtkradiant-gamepacks/%s/trunk' % pak
-            self.CheckoutOrUpdate( svnurl, os.path.join( path, 'installs', pak ) )
-        
+            pak_path = os.path.join( path, 'installs', pak )
+            if pak == 'UnvanquishedPack':
+                giturl = 'https://github.com/neumond/UnvanquishedPack.git'
+                self.GitCheckoutOrUpdate( giturl, pak_path )
+            else:
+                svnurl = 'svn://svn.icculus.org/gtkradiant-gamepacks/%s/trunk' % pak
+                self.CheckoutOrUpdate( svnurl, pak_path )
+
     def CopyTree( self, src, dst):
         for root, dirs, files in os.walk( src ):
             target_dir = os.path.join( dst, root[root.find( '/' )+1:] )
@@ -354,7 +371,7 @@ class Config:
                 'gtkglext-1.2.0/share',
                 ]:
                 self.CopyTree( os.path.join( srcdir, extra ), 'install' )
-            
+
             try:
                 os.mkdir( 'install/x64' )
             except:
