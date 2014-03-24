@@ -79,8 +79,8 @@ static void button_press( GtkWidget *widget, GdkEventButton *event, gpointer dat
 	case 2: flags |= MK_MBUTTON; break;
 	case 3: flags |= MK_RBUTTON; break;
 #if !GTK_CHECK_VERSION( 1,3,0 )
-	case 4: wnd->OnMouseWheel( true ); break;
-	case 5: wnd->OnMouseWheel( false ); break;
+	case 4: wnd->OnMouseWheel( true, (int)event->x, (int)event->y ); break;
+	case 5: wnd->OnMouseWheel( false, (int)event->x, (int)event->y ); break;
 #endif
 	}
 
@@ -177,7 +177,7 @@ static gint scroll_event( GtkWidget *widget,
 						  GdkEventScroll *event,
 						  gpointer data ){
 	GLWindow *wnd = (GLWindow*)data;
-	wnd->OnMouseWheel( ( event->direction == GDK_SCROLL_UP ) ? true : false );
+	wnd->OnMouseWheel( ( event->direction == GDK_SCROLL_UP ) ? true : false, (int)event->x, (int)event->y );
 	return TRUE;
 }
 #endif
