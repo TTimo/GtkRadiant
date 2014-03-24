@@ -1158,15 +1158,20 @@ void XYWnd::OnMouseMove( guint32 nFlags, int pointx, int pointy ){
 
 void XYWnd::OnMouseWheel( bool bUp, int pointx, int pointy ){
 	if ( bUp ) {
-                // improved zoom-in
-                // frame coverges to part of window where the cursor currently resides
-                float old_scale = m_fScale;
-		g_pParentWnd->OnViewZoomin();
-                float scale_diff = 1.0 / old_scale - 1.0 / m_fScale;
-                int nDim1 = ( m_nViewType == YZ ) ? 1 : 0;
-                int nDim2 = ( m_nViewType == XY ) ? 1 : 2;
-                m_vOrigin[nDim1] += scale_diff * (pointx - 0.5 * m_nWidth);
-                m_vOrigin[nDim2] -= scale_diff * (pointy - 0.5 * m_nHeight);
+                if ( g_PrefsDlg.m_bMousewheelZoom == TRUE ) {
+                        // improved zoom-in
+                        // frame coverges to part of window where the cursor currently resides
+                        float old_scale = m_fScale;
+                        g_pParentWnd->OnViewZoomin();
+                        float scale_diff = 1.0 / old_scale - 1.0 / m_fScale;
+                        int nDim1 = ( m_nViewType == YZ ) ? 1 : 0;
+                        int nDim2 = ( m_nViewType == XY ) ? 1 : 2;
+                        m_vOrigin[nDim1] += scale_diff * (pointx - 0.5 * m_nWidth);
+                        m_vOrigin[nDim2] -= scale_diff * (pointy - 0.5 * m_nHeight);
+                }
+                else{
+                        g_pParentWnd->OnViewZoomin();
+                }
 	}
 	else{
 		g_pParentWnd->OnViewZoomout();

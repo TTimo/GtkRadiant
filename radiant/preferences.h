@@ -619,6 +619,7 @@ bool m_bSnap;
 Str m_strUserPath;
 int m_nRotation;
 bool m_bChaseMouse;
+bool m_bMousewheelZoom;
 bool m_bTextureScrollbar;
 bool m_bDisplayLists;
 bool m_bAntialiasedPointsAndLines;    // Fishman - Add antialiazed points and lines support. 09/03/00
