@@ -778,3 +778,11 @@ char* vfsExtractRelativePath( const char *in ){
 	}
 	return ret;
 }
+
+void vfsInitMapDirectory( const char *path ){
+	// no action. only for pk3
+}
+
+void vfsCloseMapDirectory(){
+	// no action. only for pk3
+}

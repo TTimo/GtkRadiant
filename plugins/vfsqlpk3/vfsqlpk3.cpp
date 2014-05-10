@@ -89,6 +89,8 @@ bool CSynapseClientVFS::RequestAPI( APIDescriptor_t *pAPI ){
 		pTable->m_pfnExtractRelativePath = &vfsExtractRelativePath;
 		pTable->m_pfnGetFullPath = &vfsGetFullPath;
 		pTable->m_pfnBasePromptPath = &vfsBasePromptPath;
+		pTable->m_pfnInitMapDirectory = &vfsInitMapDirectory;
+		pTable->m_pfnCloseMapDirectory = &vfsCloseMapDirectory;
 		return true;
 	}
 

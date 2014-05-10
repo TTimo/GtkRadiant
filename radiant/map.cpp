@@ -190,6 +190,7 @@ void Map_Free( void ){
 		Entity_Free( world_entity );
 	}
 	world_entity = NULL;
+	vfsCloseMapDirectory();
 }
 
 entity_t *AngledEntity(){
@@ -526,6 +527,8 @@ void Map_Import( IDataStream *in, const char *type, bool bAddSelected ){
 void Map_LoadFile( const char *filename ){
 	clock_t start, finish;
 	double elapsed_time;
+	char mappath[1024];
+	char *pos;
 	start = clock();
 
 	Sys_BeginWait();
@@ -550,6 +553,15 @@ void Map_LoadFile( const char *filename ){
 	g_bCancel_Map_LoadFile = false;
 
 	strcpy( currentmap, filename );
+
+	/* Unvanquished game dir structure */
+	strcpy( mappath, filename );
+	pos = strstr( mappath, ".pk3dir/" );
+	if ( pos ) {
+		pos += 8;
+		*pos = '\0';
+		vfsInitMapDirectory( mappath );
+	}
 
 	g_bScreenUpdates = false; // leo: avoid redraws while loading the map (see fenris:1952)
 

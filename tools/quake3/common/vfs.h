@@ -34,6 +34,8 @@
 #define VFS_MAXDIRS 8
 
 void vfsInitDirectory( const char *path );
+void vfsInitMapDirectory( const char *path );
+void vfsCloseMapDirectory();
 void vfsShutdown();
 int vfsGetFileCount( const char *filename );
 int vfsLoadFile( const char *filename, void **buffer, int index );

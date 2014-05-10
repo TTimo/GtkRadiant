@@ -325,6 +325,7 @@ void AddGamePath( char *path ){
 void InitPaths( int *argc, char **argv ){
 	int i, j, k, len, len2;
 	char temp[ MAX_OS_PATH ];
+	char* pos;
 
 
 	/* note it */
@@ -460,6 +461,15 @@ void InitPaths( int *argc, char **argv ){
 			}
 			vfsInitDirectory( temp );
 		}
+	}
+
+	/* Unvanquished game dir structure */
+	strcpy( temp, ExpandArg( argv[ *argc - 1 ] ) );
+	pos = strstr( temp, ".pk3dir/" );
+	if ( pos ) {
+		pos += 8;
+		*pos = '\0';
+		vfsInitMapDirectory( temp );
 	}
 
 	/* done */

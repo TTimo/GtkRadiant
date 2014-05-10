@@ -81,6 +81,7 @@ static GSList* g_pakFiles;
 static char g_strDirs[VFS_MAXDIRS][PATH_MAX];
 static int g_numDirs;
 static bool g_bUsePak = true;
+static int g_pk3dirNumber = -1; // .pk3dir support for Unvanquished
 
 // =============================================================================
 // Static functions
@@ -481,6 +482,33 @@ void vfsInitDirectory( const char *path ){
 			g_FuncTable.m_pfnSysFPrintf( SYS_WRN, "vfs directory not found: %s\n", path );
 		}
 	}
+}
+
+// used for .pk3dir in Unvanquished
+void vfsInitMapDirectory( const char *path ){
+	if ( g_numDirs == ( VFS_MAXDIRS - 1 ) ) {
+		return;
+	}
+
+	if ( g_pk3dirNumber >= 0 ) {
+		vfsCloseMapDirectory();
+	}
+	strcpy( g_strDirs[g_numDirs], path );
+	vfsFixDOSName( g_strDirs[g_numDirs] );
+	vfsAddSlash( g_strDirs[g_numDirs] );
+	g_pk3dirNumber = g_numDirs;
+
+	g_numDirs++;
+}
+
+// used for .pk3dir in Unvanquished
+void vfsCloseMapDirectory(){
+	if ( g_pk3dirNumber < 0 ) return;
+	g_numDirs--;
+	if ( g_pk3dirNumber < g_numDirs ) {
+		strcpy( g_strDirs[g_pk3dirNumber], g_strDirs[g_numDirs]);
+	}
+	g_pk3dirNumber = -1;
 }
 
 // frees all memory that we allocated

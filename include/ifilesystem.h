@@ -98,6 +98,9 @@ typedef char* ( *PFN_VFSGETFULLPATH )( const char *in, int index, int flag );
    FIXME: I'm not sure this is used / relevant anymore
  */
 typedef const char* ( *PFN_VFSBASEPROMPTPATH )();
+// .pk3dir support for Unvanquished
+typedef void ( *PFN_VFSINITMAPDIRECTORY )( const char* name );
+typedef void ( *PFN_VFSCLOSEMAPDIRECTORY )();
 
 // VFS API
 struct _QERFileSystemTable
@@ -115,6 +118,8 @@ struct _QERFileSystemTable
 	PFN_VFSEXTRACTRELATIVEPATH m_pfnExtractRelativePath;
 	PFN_VFSGETFULLPATH m_pfnGetFullPath;
 	PFN_VFSBASEPROMPTPATH m_pfnBasePromptPath;
+	PFN_VFSINITMAPDIRECTORY m_pfnInitMapDirectory;
+	PFN_VFSCLOSEMAPDIRECTORY m_pfnCloseMapDirectory;
 };
 
 #ifdef USE_VFSTABLE_DEFINE
@@ -133,6 +138,8 @@ struct _QERFileSystemTable
 #define vfsExtractRelativePath __VFSTABLENAME.m_pfnExtractRelativePath
 #define vfsGetFullPath __VFSTABLENAME.m_pfnGetFullPath
 #define vfsBasePromptPath __VFSTABLENAME.m_pfnBasePromptPath
+#define vfsInitMapDirectory __VFSTABLENAME.m_pfnInitMapDirectory
+#define vfsCloseMapDirectory __VFSTABLENAME.m_pfnCloseMapDirectory
 #endif
 
 #endif // _IFILESYSTEM_H_

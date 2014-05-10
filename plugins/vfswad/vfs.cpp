@@ -745,3 +745,11 @@ const char* vfsBasePromptPath(){
 #endif
 	return path;
 }
+
+void vfsInitMapDirectory( const char *path ){
+	// no action. only for pk3
+}
+
+void vfsCloseMapDirectory(){
+	// no action. only for pk3
+}
