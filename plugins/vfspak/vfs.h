@@ -49,4 +49,7 @@ const char* vfsBasePromptPath();
 char* vfsExtractRelativePath( const char *in );
 char* vfsGetFullPath( const char*, int index = 0, int flag = 0 );
 
+void vfsInitMapDirectory( const char *path );
+void vfsCloseMapDirectory();
+
 #endif // _VFS_H_
