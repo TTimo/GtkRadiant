@@ -335,7 +335,11 @@ extern int unz_GAME_QL;
 #define MAX_MAP_PORTALS         0x20000
 #define MAX_MAP_LIGHTING        0x800000
 #define MAX_MAP_LIGHTGRID       0x100000    //%	0x800000 /* ydnar: set to points, not bytes */
-#define MAX_MAP_VISIBILITY      0x200000
+
+// some recent QL maps have started hitting the limit (old value was 0x200000). QBall
+// below has been 'borrowed' from the netradiant fork
+#define MAX_MAP_VISCLUSTERS     0x4000 // <= MAX_MAP_LEAFS
+#define MAX_MAP_VISIBILITY      ( VIS_HEADER_SIZE + MAX_MAP_VISCLUSTERS * ( ( ( MAX_MAP_VISCLUSTERS + 63 ) & ~63 ) >> 3 ) )
 
 #define MAX_MAP_DRAW_SURFS      0x20000
 #define MAX_MAP_DRAW_VERTS      0x100000
