@@ -2856,6 +2856,11 @@ void XYWnd::XY_Draw(){
 			qglColor3fv( g_qeglobals.d_savedinfo.colors[COLOR_BRUSHES] );
 		}
 
+		//Color detail brushes differently
+		if ( brush->brush_faces->texdef.contents & CONTENTS_DETAIL ) {
+			qglColor3fv( g_qeglobals.d_savedinfo.colors[COLOR_DETAIL] );
+		}
+
 #ifdef DBG_SCENEDUMP
 		if ( bDump ) {
 			Sys_FPrintf( SYS_WRN, "Active brush: %p ", brush );

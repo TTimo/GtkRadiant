@@ -105,6 +105,7 @@ struct SKeyInfo
 #define ID_COLORS_CLIPPER               32836
 #define ID_COLORS_GRIDBLOCK             32837
 #define ID_COLORS_VIEWNAME              32838
+#define ID_COLORS_DETAIL                37002
 #define ID_COLOR_SETORIGINAL            32839
 #define ID_COLOR_SETQER                 32840
 #define ID_COLOR_SETBLACK               32841
@@ -735,6 +736,7 @@ void OnColorsSelectedbrush3D();
 void OnColorsCameraBack();
 void OnColorsGridblock();
 void OnColorsViewname();
+void OnColorsDetail();
 void OnColorSetoriginal();
 void OnColorSetqer();
 void OnColorSetblack();

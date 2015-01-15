@@ -549,6 +549,7 @@ gint HandleCommand( GtkWidget *widget, gpointer data ){
 		  case ID_COLORS_SELECTEDBRUSH3D: g_pParentWnd->OnColorsSelectedbrush3D(); break;
 		  case ID_COLORS_CLIPPER: g_pParentWnd->OnColorsClipper(); break;
 		  case ID_COLORS_VIEWNAME: g_pParentWnd->OnColorsViewname(); break;
+		  case ID_COLORS_DETAIL: g_pParentWnd->OnColorsDetail(); break;
 		  case ID_MISC_GAMMA: g_pParentWnd->OnMiscGamma(); break;
 		  case ID_MISC_FINDBRUSH: g_pParentWnd->OnMiscFindbrush(); break;
 		  case ID_MISC_NEXTLEAKSPOT: g_pParentWnd->OnMiscNextleakspot(); break;
@@ -1418,6 +1419,8 @@ void MainFrame::create_main_menu( GtkWidget *window, GtkWidget *vbox ){
 									GTK_SIGNAL_FUNC( HandleCommand ), ID_COLORS_CLIPPER );
 	create_menu_item_with_mnemonic( menu_in_menu, _( "Active View name..." ),
 									GTK_SIGNAL_FUNC( HandleCommand ), ID_COLORS_VIEWNAME );
+	create_menu_item_with_mnemonic( menu_in_menu, _( "Detail brushes..." ),
+									GTK_SIGNAL_FUNC( HandleCommand ), ID_COLORS_DETAIL );
 
 	create_menu_item_with_mnemonic( menu, _( "_Gamma..." ),
 									GTK_SIGNAL_FUNC( HandleCommand ), ID_MISC_GAMMA );
@@ -5884,6 +5887,10 @@ void MainFrame::OnColorSetoriginal(){
 	g_qeglobals.d_savedinfo.colors[COLOR_SELBRUSHES3D][1] = 0.0f;
 	g_qeglobals.d_savedinfo.colors[COLOR_SELBRUSHES3D][2] = 0.0f;
 
+	g_qeglobals.d_savedinfo.colors[COLOR_DETAIL][0] = 0.0f;
+	g_qeglobals.d_savedinfo.colors[COLOR_DETAIL][1] = 0.0f;
+	g_qeglobals.d_savedinfo.colors[COLOR_DETAIL][2] = 0.0f;
+
 	g_PrefsDlg.SavePrefs();
 	Sys_UpdateWindows( W_ALL );
 }
@@ -6085,6 +6092,11 @@ void MainFrame::OnColorsClipper(){
 
 void MainFrame::OnColorsViewname(){
 	DoColor( COLOR_VIEWNAME );
+	Sys_UpdateWindows( W_ALL );
+}
+
+void MainFrame::OnColorsDetail(){
+	DoColor( COLOR_DETAIL );
 	Sys_UpdateWindows( W_ALL );
 }
 
