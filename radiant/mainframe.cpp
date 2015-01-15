@@ -1419,7 +1419,7 @@ void MainFrame::create_main_menu( GtkWidget *window, GtkWidget *vbox ){
 									GTK_SIGNAL_FUNC( HandleCommand ), ID_COLORS_CLIPPER );
 	create_menu_item_with_mnemonic( menu_in_menu, _( "Active View name..." ),
 									GTK_SIGNAL_FUNC( HandleCommand ), ID_COLORS_VIEWNAME );
-	create_menu_item_with_mnemonic( menu_in_menu, _( "Detail brushes..." ),
+	create_menu_item_with_mnemonic( menu_in_menu, _( "Detail Brush..." ),
 									GTK_SIGNAL_FUNC( HandleCommand ), ID_COLORS_DETAIL );
 
 	create_menu_item_with_mnemonic( menu, _( "_Gamma..." ),
