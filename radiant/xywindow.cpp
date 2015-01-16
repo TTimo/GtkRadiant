@@ -2852,7 +2852,7 @@ void XYWnd::XY_Draw(){
 			qglColor3fv( brush->owner->eclass->color );
 		}
 		else if ( brush->brush_faces->texdef.contents & CONTENTS_DETAIL )
-        {
+		{
 			qglColor3fv( g_qeglobals.d_savedinfo.colors[COLOR_DETAIL] );
 		}
 		else
