@@ -765,12 +765,22 @@ void Texture_ShowDirectory(){
 		strTemp = name;
 		strTemp.MakeLower();
 
+		// avoid effect textures for Q3 texture sets
 		if ( strTemp.Find( ".specular" ) >= 0 ||
 			 strTemp.Find( ".glow" ) >= 0 ||
 			 strTemp.Find( ".bump" ) >= 0 ||
 			 strTemp.Find( ".diffuse" ) >= 0 ||
 			 strTemp.Find( ".blend" ) >= 0 ||
 			 strTemp.Find( ".alpha" ) >= 0 ) {
+			continue;
+		}
+
+		// avoid glow, heightmap, normalmap and specular maps for Q4 texture sets
+		if ( g_str_has_suffix( name, "_g" ) ||
+				g_str_has_suffix( name, "_h" ) ||
+				g_str_has_suffix( name, "_local" ) ||
+				g_str_has_suffix( name, "_nm" ) ||
+				g_str_has_suffix( name, "_s" )) {
 			continue;
 		}
 
