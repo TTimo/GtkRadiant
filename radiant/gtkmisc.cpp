@@ -732,7 +732,7 @@ GtkWidget* new_pixmap( GtkWidget* widget, const char* filename ){
 GtkWidget* new_image_icon(const char* filename) {
     CString str = g_strBitmapsPath;
     str += filename;
-    return gtk_image_new_from_file(str);
+    return gtk_image_new_from_file( (const char *) str );
 }
 
 // =============================================================================

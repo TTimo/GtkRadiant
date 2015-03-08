@@ -3341,7 +3341,7 @@ void CGameInstall::OnGameSelectChanged( GtkWidget *widget, gpointer data ) {
 	i->UpdateData( FALSE );
 
         int game_id = i->m_availGames[ i->m_nComboSelect ];
-        if ( game_id == GAME_Q2 || game_id == GAME_Q2W ) {
+        if ( game_id == GAME_Q2 || game_id == GAME_QUETOO ) {
           gtk_widget_show( i->m_executablesVBox );
         } else {
           gtk_widget_hide( i->m_executablesVBox );
@@ -3387,8 +3387,8 @@ void CGameInstall::BuildDialog() {
 		case GAME_UFOAI:
 			gtk_combo_box_append_text( GTK_COMBO_BOX( game_select_combo ), _( "UFO: Alien Invasion" ) );
 			break;
-		case GAME_Q2W:
-			gtk_combo_box_append_text( GTK_COMBO_BOX( game_select_combo ), _( "Quake2World" ) );
+		case GAME_QUETOO:
+			gtk_combo_box_append_text( GTK_COMBO_BOX( game_select_combo ), _( "Quetoo" ) );
 			break;
 		case GAME_WARSOW:
 			gtk_combo_box_append_text( GTK_COMBO_BOX( game_select_combo ), _( "Warsow" ) );
@@ -3523,9 +3523,9 @@ void CGameInstall::Run() {
 		gamePack = UFOAI_PACK;
 		gameFilePath += UFOAI_GAME;
 		break;
-	case GAME_Q2W:
-		gamePack = Q2W_PACK;
-		gameFilePath += Q2W_GAME;
+	case GAME_QUETOO:
+		gamePack = QUETOO_PACK;
+		gameFilePath += QUETOO_GAME;
 		break;
 	case GAME_WARSOW:
 		gameFilePath += WARSOW_GAME;
@@ -3630,13 +3630,13 @@ void CGameInstall::Run() {
 		fprintf( fg, "  no_patch=\"true\"\n" );
 		break;
 	}
-	case GAME_Q2W: {
+	case GAME_QUETOO: {
 #if defined( __APPLE__ ) || defined( __linux__ )
-		fprintf( fg, "  " ENGINE_ATTRIBUTE "=\"quake2world\"\n" );
-		fprintf( fg, "  " PREFIX_ATTRIBUTE "=\".quake2world\"\n" );
+		fprintf( fg, "  " ENGINE_ATTRIBUTE "=\"quetoo\"\n" );
+		fprintf( fg, "  " PREFIX_ATTRIBUTE "=\".quetoo\"\n" );
 #elif _WIN32
-		fprintf( fg, "  " ENGINE_ATTRIBUTE "=\"quake2world.exe\"\n" );
-		fprintf( fg, "  " PREFIX_ATTRIBUTE "=\"Quake2World\"\n" );
+		fprintf( fg, "  " ENGINE_ATTRIBUTE "=\"quetoo.exe\"\n" );
+		fprintf( fg, "  " PREFIX_ATTRIBUTE "=\"Quetoo\"\n" );
 #endif
 		fprintf( fg, "  idtech2=\"true\"\n" );
 		fprintf( fg, "  basegame=\"default\"\n" );
@@ -3769,8 +3769,8 @@ void CGameInstall::ScanGames() {
 		if ( stricmp( dirname, UFOAI_PACK ) == 0 ) {
 			m_availGames[ iGame++ ] = GAME_UFOAI;
 		}
-		if ( stricmp( dirname, Q2W_PACK ) == 0 ) {
-			m_availGames[ iGame++ ] = GAME_Q2W;
+		if ( stricmp( dirname, QUETOO_PACK ) == 0 ) {
+			m_availGames[ iGame++ ] = GAME_QUETOO;
 		}
 		if ( stricmp( dirname, WARSOW_PACK ) == 0 ) {
 			m_availGames[ iGame++ ] = GAME_WARSOW;

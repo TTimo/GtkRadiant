@@ -205,7 +205,7 @@ void Dump();
 #define Q3_GAME "q3.game"
 #define URT_GAME "urt.game"
 #define UFOAI_GAME "ufoai.game"
-#define Q2W_GAME "q2w.game"
+#define QUETOO_GAME "quetoo.game"
 #define WARSOW_GAME "warsow.game"
 #define NEXUIZ_GAME "nexuiz.game"
 #define Q2_GAME "q2.game"
@@ -220,7 +220,7 @@ void Dump();
 #define Q3_PACK "Q3Pack"
 #define URT_PACK "UrTPack"
 #define UFOAI_PACK "UFOAIPack"
-#define Q2W_PACK "Q2WPack"
+#define QUETOO_PACK "QuetooPack"
 #define WARSOW_PACK "WarsowPack"
 #define NEXUIZ_PACK "NexuizPack"
 #define Q2_PACK "Q2Pack"
@@ -248,7 +248,7 @@ public:
 	GAME_Q3 = 1,
 	GAME_URT,
 	GAME_UFOAI,
-	GAME_Q2W,
+	GAME_QUETOO,
 	GAME_WARSOW,
 	GAME_NEXUIZ,
 	GAME_Q2,

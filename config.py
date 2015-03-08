@@ -27,7 +27,7 @@ class Config:
         # platforms for which to assemble a setup
         self.setup_platforms = [ 'local', 'x86', 'x64', 'win32' ]
         # paks to assemble in the setup
-        self.setup_packs = [ 'Q3Pack', 'UrTPack', 'ETPack', 'QLPack', 'Q2Pack', 'Q2WPack', 'JAPack', 'STVEFPack', 'WolfPack' ]
+        self.setup_packs = [ 'Q3Pack', 'UrTPack', 'ETPack', 'QLPack', 'Q2Pack', 'QuetooPack', 'JAPack', 'STVEFPack', 'WolfPack' ]
 
     def __repr__( self ):
         return 'config: target=%s config=%s' % ( self.target_selected, self.config_selected )
