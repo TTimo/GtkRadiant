@@ -102,6 +102,7 @@
 #define ROTATION_KEY            "Rotation"
 #define BUGGYICD_KEY            "BuggyICD"
 #define CHASEMOUSE_KEY          "ChaseMouse"
+#define MOUSEWHEELZOOM_KEY      "MousewheelZoom"
 #define ENTITYSHOW_KEY          "EntityShow"
 #define TEXTURESCALE_KEY        "TextureScale"
 #define TEXTURESCROLLBAR_KEY    "TextureScrollbar"
@@ -620,6 +621,7 @@ PrefsDlg::PrefsDlg (){
 	m_strUserPath = "";
 	m_nRotation = 0;
 	m_bChaseMouse = FALSE;
+        m_bMousewheelZoom = FALSE;
 	m_bTextureScrollbar = TRUE;
 	m_bDisplayLists = TRUE;
 	m_bAntialiasedPointsAndLines = FALSE; // Fishman - Add antialiazed points and lines support. 09/03/00
@@ -2271,6 +2273,12 @@ void PrefsDlg::BuildDialog(){
 	gtk_box_pack_start( GTK_BOX( vbox ), check, FALSE, FALSE, 0 );
 	AddDialogData( check, &m_bALTEdge, DLG_CHECK_BOOL );
 
+        // Imroved mouse wheel zoom in
+	check = gtk_check_button_new_with_label( _( "Improved mousewheel zoom-in" ) );
+	gtk_widget_show( check );
+	gtk_box_pack_start( GTK_BOX( vbox ), check, FALSE, FALSE, 0 );
+	AddDialogData( check, &m_bMousewheelZoom, DLG_CHECK_BOOL );
+
 	// Mouse wheel increments
 	// container
 	hbox2 = gtk_hbox_new( FALSE, 5 );
@@ -2996,6 +3004,7 @@ void PrefsDlg::LoadPrefs(){
 	mLocalPrefs.GetPref( USERINI_KEY,            &m_strUserPath,                 "" );
 	mLocalPrefs.GetPref( ROTATION_KEY,           &m_nRotation,                   45 );
 	mLocalPrefs.GetPref( CHASEMOUSE_KEY,         &m_bChaseMouse,                 TRUE );
+	mLocalPrefs.GetPref( MOUSEWHEELZOOM_KEY,     &m_bMousewheelZoom,             FALSE );
 	mLocalPrefs.GetPref( ENTITYSHOW_KEY,         &m_nEntityShowState,            ENTITY_SKINNED_BOXED );
 
 	// this will probably need to be 75 or 100 for Q1.

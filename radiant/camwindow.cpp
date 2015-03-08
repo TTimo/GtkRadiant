@@ -168,7 +168,7 @@ void CamWnd::OnMouseMove( guint32 flags, int pointx, int pointy ){
 	update_xor_rectangle( m_XORRectangle );
 }
 
-void CamWnd::OnMouseWheel( bool bUp ){
+void CamWnd::OnMouseWheel( bool bUp, int pointx, int pointy ){
 	if ( bUp ) {
 		VectorMA( m_Camera.origin, g_PrefsDlg.m_nMoveSpeed, m_Camera.forward, m_Camera.origin );
 	}

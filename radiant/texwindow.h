@@ -50,7 +50,7 @@ void OnMButtonUp( guint32 flags, int pointx, int pointy );
 void OnMouseMove( guint32 flags, int pointx, int pointy );
 void OnSize( int cx, int cy );
 
-void OnMouseWheel( bool bUp );
+void OnMouseWheel( bool bUp, int pointx, int pointy );
 
 public:
 void OnVScroll();

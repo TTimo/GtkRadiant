@@ -191,7 +191,7 @@ void OnLButtonUp( guint32 flags, int pointx, int pointy );
 void OnRButtonUp( guint32 flags, int pointx, int pointy );
 void OnMButtonUp( guint32 flags, int pointx, int pointy );
 void OnMouseMove( guint32 nFlags, int pointx, int pointy );
-void OnMouseWheel( bool bUp );
+void OnMouseWheel( bool bUp, int pointx, int pointy );
 void OnSize( int cx, int cy );
 void OnTimer();
 
