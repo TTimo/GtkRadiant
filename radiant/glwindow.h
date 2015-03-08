@@ -58,7 +58,7 @@ public:
   virtual void OnSize( int cx, int cy ) { }
   virtual void OnTimer() { }
 
-  virtual void OnMouseWheel( bool bUp ) { }
+  virtual void OnMouseWheel( bool bUp, int pointx, int pointy ) { }
 
   void RedrawWindow() {	gtk_widget_queue_draw( m_pWidget ); }
 

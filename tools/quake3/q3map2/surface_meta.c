@@ -740,7 +740,8 @@ static qboolean PointTriangleIntersect( vec3_t pt, vec4_t plane, vec3_t a, vec3_
 
 typedef struct edge_s
 {
-	vec3_t origin, edge;
+	vec3_t origin;
+	vec4_t edge;
 	vec_t length, kingpinLength;
 	int kingpin;
 	vec4_t plane;

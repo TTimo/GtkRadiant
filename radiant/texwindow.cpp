@@ -1794,7 +1794,7 @@ void TexWnd::FocusEdit() {
 	}
 }
 
-void TexWnd::OnMouseWheel( bool bUp ){
+void TexWnd::OnMouseWheel( bool bUp, int pointx, int pointy ){
 	if ( bUp ) {
 		if ( g_qeglobals.d_texturewin.originy < 0 ) {
 			g_qeglobals.d_texturewin.originy += g_PrefsDlg.m_nWheelInc;

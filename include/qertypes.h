@@ -68,7 +68,9 @@ typedef bool qboolean;
 #define COLOR_GRIDMINOR_ALT 13
 #define COLOR_GRIDMAJOR_ALT 14
 
-#define COLOR_LAST          15
+#define COLOR_DETAIL        15
+
+#define COLOR_LAST          16
 
 // ----------------------------
 
