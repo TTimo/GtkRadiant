@@ -1323,7 +1323,7 @@ void CGameDialog::Init(){
 		g_qeglobals.m_strHomeGame += "/";
 #elif defined ( _WIN32 )
 		g_qeglobals.m_strHomeGame = g_get_home_dir();
-		g_qeglobals.m_strHomeGame += "\\My Games\\";
+		g_qeglobals.m_strHomeGame += "\\My Documents\\My Games\\";
 		g_qeglobals.m_strHomeGame += m_pCurrentGameDescription->mUserPathPrefix.GetBuffer();
 		g_qeglobals.m_strHomeGame += "\\";
 #endif
