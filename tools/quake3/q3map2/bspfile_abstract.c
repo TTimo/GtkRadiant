@@ -68,6 +68,8 @@ void IncDrawVerts(){
 
 	}
 	else if ( numBSPDrawVerts > numBSPDrawVertsBuffer ) {
+		bspDrawVert_t *newBspDrawVerts;
+
 		numBSPDrawVertsBuffer *= 3; // multiply by 1.5
 		numBSPDrawVertsBuffer /= 2;
 
@@ -75,11 +77,14 @@ void IncDrawVerts(){
 			numBSPDrawVertsBuffer = MAX_MAP_DRAW_VERTS;
 		}
 
-		bspDrawVerts = realloc( bspDrawVerts, sizeof( bspDrawVert_t ) * numBSPDrawVertsBuffer );
+		newBspDrawVerts = realloc( bspDrawVerts, sizeof( bspDrawVert_t ) * numBSPDrawVertsBuffer );
 
-		if ( !bspDrawVerts ) {
+		if ( !newBspDrawVerts ) {
+			free (bspDrawVerts);
 			Error( "realloc() failed (IncDrawVerts)" );
 		}
+
+		bspDrawVerts = newBspDrawVerts;
 	}
 
 	memset( bspDrawVerts + ( numBSPDrawVerts - 1 ), 0, sizeof( bspDrawVert_t ) );

@@ -789,10 +789,12 @@ static void LoadShaderImages( shaderInfo_t *si ){
 	if ( VectorLength( si->color ) <= 0.0f ) {
 		ColorNormalize( color, si->color );
 		VectorScale( color, ( 1.0f / count ), si->averageColor );
+		si->averageColor[ 3 ] = color[ 3 ] / count;
 	}
 	else
 	{
 		VectorCopy( si->color, si->averageColor );
+		si->averageColor[ 3 ] = 1.0f;
 	}
 }
 

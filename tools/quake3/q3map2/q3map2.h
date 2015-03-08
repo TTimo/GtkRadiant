@@ -763,7 +763,7 @@ typedef struct shaderInfo_s
 	sun_t               *sun;                           /* ydnar */
 
 	vec3_t color;                                       /* normalized color */
-	vec3_t averageColor;
+	vec4_t averageColor;
 	byte lightStyle;
 
 	qb_t lmMergable;                                    /* ydnar */
