@@ -164,6 +164,7 @@ static void vfsInitPakFile( const char *filename ){
 
 	strcpy( wadname,wadnameptr );
 	wadname[strlen( wadname ) - 4] = 0; // ditch the .wad so everthing looks nice!
+	strlwr( wadname );
 
 	g_wadFiles = g_slist_append( g_wadFiles, wf ); // store the wadfile handle
 

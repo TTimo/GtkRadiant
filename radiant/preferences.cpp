@@ -3384,6 +3384,9 @@ void CGameInstall::BuildDialog() {
 	int iGame = 0;
 	while ( m_availGames[ iGame ] != GAME_NONE ) {
 		switch ( m_availGames[ iGame ] ) {
+		case GAME_Q1:
+			gtk_combo_box_append_text( GTK_COMBO_BOX( game_select_combo ), _( "Quake" ) );
+			break;
 		case GAME_Q2:
 			gtk_combo_box_append_text( GTK_COMBO_BOX( game_select_combo ), _( "Quake II" ) );
 			break;
@@ -3516,6 +3519,10 @@ void CGameInstall::Run() {
 	}
 
 	switch ( m_availGames[ m_nComboSelect ] ) {
+	case GAME_Q1:
+		gamePack = Q1_PACK;
+		gameFilePath += Q1_GAME;
+		break;
 	case GAME_Q2:
 		gamePack = Q2_PACK;
 		gameFilePath += Q2_GAME;
@@ -3606,6 +3613,15 @@ void CGameInstall::Run() {
 	}
 
 	switch ( m_availGames[ m_nComboSelect ] ) {
+	case GAME_Q1: {
+		fprintf( fg, "  idtech2=\"true\"\n" );
+		fprintf( fg, "  prefix=\".quake1\"\n" );
+		fprintf( fg, "  basegame=\"id1\"\n" );
+		fprintf( fg, "  no_patch=\"true\"\n" );
+		fprintf( fg, "  default_scale=\"1.0\"\n" );
+
+		break;
+	}
 	case GAME_Q2: {
 		fprintf( fg, "  idtech2=\"true\"\n" );
 		fprintf( fg, "  prefix=\".quake2\"\n" );
@@ -3810,6 +3826,9 @@ void CGameInstall::ScanGames() {
 		}
 		if ( stricmp( dirname, WOLF_PACK ) == 0) {
 			m_availGames[ iGame++ ] = GAME_WOLF;
+		}
+		if ( stricmp( dirname, Q1_PACK ) == 0 ) {
+			m_availGames[ iGame++ ] = GAME_Q1;
 		}
 	}
 	Sys_Printf( "No installable games found in: %s\n",
