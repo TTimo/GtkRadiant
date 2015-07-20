@@ -93,8 +93,21 @@ entity_t    *Entity_Clone( entity_t *e ){
 	n = Entity_Alloc();
 	n->eclass = e->eclass;
 
-	for ( ep = e->epairs ; ep ; ep = ep->next )
-		SetKeyValue( n, ep->key, ep->value );
+	for ( ep = e->epairs ; ep ; ep = ep->next ){
+		if ( !ep->key || !ep->key[0] ) {
+			Sys_FPrintf( SYS_ERR, "ERROR: Entity_Clone: NULL or zero-length key\n" );
+			return 0;
+		}
+
+		SetKeyValue( n->epairs, ep->key, ep->value );
+	}
+
+	for ( ep = n->epairs ; ep ; ep = ep->next ){
+		/*!
+		   \todo TODO broadcast this through a clean messaging API ;-)
+		 */
+		Entity_OnKeyValueChanged( n, ep->key, ep->value );
+	}
 
 	// copy some misc stuff as well
 	VectorCopy( e->origin, n->origin );
