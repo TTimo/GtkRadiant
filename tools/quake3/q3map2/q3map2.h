@@ -1497,6 +1497,8 @@ int                         BSPInfoMain( int argc, char **argv );
 /* bsp_scale.c */
 int                         ScaleBSPMain( int argc, char **argv );
 
+/* minimap.c */
+int							MiniMapBSPMain( int argc, char **argv );
 
 /* convert_bsp.c */
 int                         ConvertBSPMain( int argc, char **argv );
