@@ -65,8 +65,6 @@ void CPointfile::GenerateDisplayList(){
 	qglLineWidth( 1 );
 
 	qglEndList();
-
-	s_check_point = 0;
 }
 
 // old (but still relevant) pointfile code -------------------------------------
@@ -179,13 +177,34 @@ void WINAPI Pointfile_Check( void ){
 
 	g_free( text );
 
-	g_pointfile.GenerateDisplayList();
+	if ( g_PrefsDlg.m_bDisplayLists ) {
+		g_pointfile.GenerateDisplayList();
+	}
+	s_check_point = 0;
 
 	Sys_UpdateWindows( W_ALL );
 }
 
 void Pointfile_Draw( void ){
-	qglCallList( g_qeglobals.d_pointfile_display_list );
+	if ( g_PrefsDlg.m_bDisplayLists ) {
+		int i;
+
+		qglColor3f( 1, 0, 0 );
+		qglDisable( GL_TEXTURE_2D );
+		qglDisable( GL_TEXTURE_1D );
+		qglLineWidth( 4 );
+		qglBegin( GL_LINE_STRIP );
+		for ( i = 0; i < s_num_points; i++ )
+		{
+			if ( s_num_points < MAX_POINTFILE ) {
+				qglVertex3fv( s_pointvecs[i] );
+			}
+		}
+		qglEnd();
+		qglLineWidth( 1 );
+	} else {
+		qglCallList( g_qeglobals.d_pointfile_display_list );
+	}
 }
 
 void Pointfile_Clear( void ){
@@ -212,7 +231,10 @@ void CPointfile::saxStartElement( message_info_t *ctx, const xmlChar *name, cons
 void CPointfile::saxEndElement( message_info_t *ctx, const xmlChar *name ){
 	if ( strcmp( (char *)name, "polyline" ) == 0 ) {
 		// we are done
-		GenerateDisplayList();
+		if ( g_PrefsDlg.m_bDisplayLists ) {
+			GenerateDisplayList();
+		}
+		s_check_point = 0;
 		ctx->bGeometry = false;
 	}
 }
