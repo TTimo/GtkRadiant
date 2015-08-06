@@ -1507,6 +1507,7 @@ void MainFrame::create_main_menu( GtkWidget *window, GtkWidget *vbox ){
 		item = create_menu_item_with_mnemonic( menu, _( "Simple Patch Mesh..." ),
 											   GTK_SIGNAL_FUNC( HandleCommand ), ID_CURVE_SIMPLEPATCHMESH );
 		g_object_set_data( G_OBJECT( window ), "menu_simplepatchmesh", item );
+		create_menu_item_with_mnemonic( menu, _( "Patch Inspector" ), GTK_SIGNAL_FUNC( HandleCommand ), ID_PATCH_INSPECTOR );
 		menu_separator( menu );
 		menu_in_menu = create_menu_in_menu_with_mnemonic( menu, _( "Insert" ) );
 		create_menu_item_with_mnemonic( menu_in_menu, _( "Insert (2) Columns" ),
@@ -1605,7 +1606,6 @@ void MainFrame::create_main_menu( GtkWidget *window, GtkWidget *vbox ){
 	create_menu_item_with_mnemonic( menu, "BendMode", GTK_SIGNAL_FUNC( HandleCommand ), ID_PATCH_BEND );
 	create_menu_item_with_mnemonic( menu, "FitTexture", GTK_SIGNAL_FUNC( HandleCommand ), IDC_BTN_FACEFIT );
 	create_menu_item_with_mnemonic( menu, "ViewTextures", GTK_SIGNAL_FUNC( HandleCommand ), ID_VIEW_TEXTURE );
-	create_menu_item_with_mnemonic( menu, "PatchInspector", GTK_SIGNAL_FUNC( HandleCommand ), ID_PATCH_INSPECTOR );
 	create_menu_item_with_mnemonic( menu, "InvertCurveTextureX", GTK_SIGNAL_FUNC( HandleCommand ), ID_CURVE_NEGATIVETEXTUREY );
 	create_menu_item_with_mnemonic( menu, "InvertCurveTextureY", GTK_SIGNAL_FUNC( HandleCommand ), ID_CURVE_NEGATIVETEXTUREX );
 	create_menu_item_with_mnemonic( menu, "IncPatchColumn", GTK_SIGNAL_FUNC( HandleCommand ), ID_CURVE_INSERTCOLUMN );
