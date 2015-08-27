@@ -49,6 +49,11 @@
   #define Q_mkdir( a,b ) mkdir( a,b )
 #endif
 
+#if defined(_MSC_VER) && _MSC_VER<1900 && !(defined safe_malloc)
+void *safe_malloc( size_t size );
+void *safe_malloc_info( size_t size, char* info );
+#endif
+
 void    DefaultExtension( char *path, char *extension );
 void    DefaultPath( char *path, char *basepath );
 void    StripFilename( char *path );

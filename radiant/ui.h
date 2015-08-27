@@ -66,8 +66,8 @@ void DecRef(){
 }
 // IWindow --------------------------------------------
 // get pixel size
-int getHeight() { return m_pWnd->allocation.height; }
-int getWidth() { return m_pWnd->allocation.width; }
+int getHeight() { return gtk_widget_get_allocated_height(m_pWnd); }
+int getWidth() { return gtk_widget_get_allocated_width(m_pWnd); }
 // set pixel size and other parameters before showing it
 void setSizeParm( int width, int height ) { m_nWidthParam = width; m_nHeightParam = height; }
 // set the IWindowListener (implemented by the plugin using this window)

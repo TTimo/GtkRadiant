@@ -35,8 +35,6 @@
 #include "groupdialog.h"
 
 GtkWidget*  EntWidgets[EntLast];
-GtkListStore* g_entlist_store;
-GtkListStore* g_entprops_store;
 int inspector_mode;                     // W_TEXTURE, W_ENTITY, or W_CONSOLE
 qboolean multiple_entities;
 qboolean disable_spawn_get = false;
@@ -69,9 +67,13 @@ group_t *g_pGroups = NULL;
 static int spawnflag_count;
 // table: index, match spawnflag item to the spawnflag index (i.e. which bit)
 static int spawn_table[MAX_FLAGS];
+#if GTK_CHECK_VERSION( 3,12,0 )
+static GtkWidget *LayoutFlowBox;
+#else
 // we change the layout depending on how many spawn flags we need to display
 // the table is a 4x4 in which we need to put the comment box EntWidgets[EntComment] and the spawn flags..
 static GtkWidget *LayoutTable;
+#endif
 // 0: none of them are hooked
 // 1: only the text, 2: text and four checks, 3: text and 8 checks
 static int widget_state = 0;
@@ -90,7 +92,10 @@ static void entity_check( GtkWidget *widget, gpointer data );
  */
 
 void FillClassList(){
-	GtkListStore* store = g_entlist_store;
+	GtkListStore *store;
+	GtkTreeModel * model;
+	model = GTK_TREE_MODEL( gtk_tree_view_get_model( GTK_TREE_VIEW( EntWidgets[EntList] ) ) );
+	store = GTK_LIST_STORE( model );
 
 	gtk_list_store_clear( store );
 
@@ -109,7 +114,10 @@ void FillClassList(){
 //
 
 void SetKeyValuePairs( bool bClearMD3 ){
-	GtkListStore* store = g_entprops_store;
+	GtkListStore *store;
+	GtkTreeModel * model;
+	model = GTK_TREE_MODEL( gtk_tree_view_get_model( GTK_TREE_VIEW( EntWidgets[EntProps] ) ) );
+	store = GTK_LIST_STORE( model );
 
 	gtk_list_store_clear( store );
 
@@ -307,30 +315,37 @@ bool UpdateSel( int iIndex, eclass_t *pec ){
 	// NOTE: these boxes might not even be on display
 	for ( i = 0; i < last_count; i++ )
 	{
-		GtkWidget* widget = EntWidgets[EntCheck1 + i];
-		gtk_label_set_text( GTK_LABEL( GTK_BIN( widget )->child ), " " );
+		GtkWidget *widget = EntWidgets[EntCheck1 + i];
+
+		gtk_button_set_label( GTK_BUTTON( widget ), " " );
+
 		gtk_widget_hide( widget );
-		gtk_widget_ref( widget );
+		g_object_ref( widget );
+#if GTK_CHECK_VERSION( 3,12,0 )
+		gtk_container_remove( GTK_CONTAINER( LayoutFlowBox ), widget );
+#else
 		gtk_container_remove( GTK_CONTAINER( LayoutTable ), widget );
+#endif
 	}
 	last_count = spawnflag_count;
 
 	for ( i = 0 ; i < spawnflag_count ; i++ )
 	{
-		GtkWidget* widget = EntWidgets[EntCheck1 + i];
+		GtkWidget *widget = EntWidgets[EntCheck1 + i];
 		gtk_widget_show( widget );
 
 		Str str;
 		str = pec->flagnames[spawn_table[i]];
 		str.MakeLower();
 
-//    gtk_table_attach (GTK_TABLE (LayoutTable), widget, i%4, i%4+1, i/4, i/4+1,
-		gtk_table_attach( GTK_TABLE( LayoutTable ), widget, i % 4, i % 4 + 1, i / 4, i / 4 + 1,
-						  (GtkAttachOptions) ( GTK_FILL ),
-						  (GtkAttachOptions) ( GTK_FILL ), 0, 0 );
-		gtk_widget_unref( widget );
+#if GTK_CHECK_VERSION( 3,12,0 )
+		gtk_container_add( GTK_CONTAINER( LayoutFlowBox ), widget );
+#else
+		gtk_grid_attach( GTK_GRID( LayoutTable ), widget, i % 4, (int)( i / 4 ), 1, 1 );
+#endif
+		g_object_unref( widget );
 
-		gtk_label_set_text( GTK_LABEL( GTK_BIN( widget )->child ), str.GetBuffer() );
+		gtk_button_set_label( GTK_BUTTON( widget ), str.GetBuffer() );
 	}
 
 	SetSpawnFlags();
@@ -345,7 +360,7 @@ bool UpdateEntitySel( eclass_t *pec ){
 	Sys_FPrintf( SYS_WRN, "UpdateEntitySel\n" );
 #endif
 
-	GtkTreeModel* model = GTK_TREE_MODEL( g_entlist_store );
+	GtkTreeModel* model = GTK_TREE_MODEL( gtk_tree_view_get_model( GTK_TREE_VIEW( EntWidgets[EntList] ) ) );
 	GtkTreeIter iter;
 	unsigned int i = 0;
 	for ( gboolean good = gtk_tree_model_get_iter_first( model, &iter ); good != FALSE; good = gtk_tree_model_iter_next( model, &iter ) )
@@ -541,10 +556,10 @@ void ResetEntity(){
 	// refresh the dialog
 	SetKeyValuePairs();
 	for ( i = EntCheck1; i <= EntCheck16; i++ )
-		gtk_signal_handler_block_by_func( GTK_OBJECT( EntWidgets[i] ), GTK_SIGNAL_FUNC( entity_check ), NULL );
+		g_signal_handlers_block_by_func( EntWidgets[i], G_CALLBACK( entity_check ), NULL );
 	SetSpawnFlags();
 	for ( i = EntCheck1; i <= EntCheck16; i++ )
-		gtk_signal_handler_unblock_by_func( GTK_OBJECT( EntWidgets[i] ), GTK_SIGNAL_FUNC( entity_check ), NULL );
+		g_signal_handlers_unblock_by_func( EntWidgets[i], G_CALLBACK( entity_check ), NULL );
 }
 
 bool GetSelectAllCriteria( CString &strKey, CString &strVal ){
@@ -552,7 +567,7 @@ bool GetSelectAllCriteria( CString &strKey, CString &strVal ){
 	GtkTreeIter iter;
 	if ( gtk_tree_selection_get_selected( gtk_tree_view_get_selection( GTK_TREE_VIEW( EntWidgets[EntProps] ) ), &model, &iter )
 		 && ( inspector_mode == W_ENTITY )
-		 && GTK_WIDGET_VISIBLE( g_pGroupDlg->m_pWidget ) ) {
+		 && gtk_widget_get_visible( g_pGroupDlg->m_pWidget ) ) {
 		strKey = gtk_entry_get_text( GTK_ENTRY( EntWidgets[EntKeyField] ) );
 		strVal = gtk_entry_get_text( GTK_ENTRY( EntWidgets[EntValueField] ) );
 		return TRUE;
@@ -1003,7 +1018,7 @@ static gint eclasslist_button_press( GtkWidget *widget, GdkEventButton *event, g
 static gint eclasslist_keypress( GtkWidget* widget, GdkEventKey* event, gpointer data ){
 	unsigned int code = gdk_keyval_to_upper( event->keyval );
 
-	if ( event->keyval == GDK_Return ) {
+	if ( event->keyval == GDK_KEY_Return ) {
 		CreateEntity();
 		return TRUE;
 	}
@@ -1043,12 +1058,21 @@ static gint eclasslist_keypress( GtkWidget* widget, GdkEventKey* event, gpointer
 	return FALSE;
 }
 
-
 static void proplist_selection_changed( GtkTreeSelection* selection, gpointer data ){
 	// find out what type of entity we are trying to create
 	GtkTreeModel* model;
 	GtkTreeIter iter;
-	if ( gtk_tree_selection_get_selected( selection, &model, &iter ) == FALSE ) {
+	GtkWidget *dialog, *del_button;
+	gboolean selected;
+
+	dialog = GTK_WIDGET( data );
+	del_button = GTK_WIDGET( g_object_get_data( G_OBJECT( dialog ), "del_button" ) );
+
+	selected = gtk_tree_selection_get_selected( selection, &model, &iter );
+
+	gtk_widget_set_sensitive( del_button, selected );
+
+	if ( selected == FALSE ) {
 		return;
 	}
 
@@ -1061,6 +1085,10 @@ static void proplist_selection_changed( GtkTreeSelection* selection, gpointer da
 
 	g_free( key );
 	g_free( val );
+}
+static void proplist_view_realize( GtkWidget *widget, gpointer data )
+{
+	proplist_selection_changed( gtk_tree_view_get_selection( GTK_TREE_VIEW( widget ) ), data );
 }
 
 static void entity_check( GtkWidget *widget, gpointer data ){
@@ -1075,7 +1103,7 @@ static void entitylist_angle( GtkWidget *widget, gpointer data ){
 }
 
 static gint entityentry_keypress( GtkWidget* widget, GdkEventKey* event, gpointer data ){
-	if ( event->keyval == GDK_Tab ) {
+	if ( event->keyval == GDK_KEY_Tab ) {
 		if ( widget == EntWidgets[EntKeyField] ) {
 			//gtk_entry_set_text (GTK_ENTRY (EntWidgets[EntValueField]), "");
 			gtk_window_set_focus( GTK_WINDOW( g_pGroupDlg->m_pWidget ), EntWidgets[EntValueField] );
@@ -1086,7 +1114,7 @@ static gint entityentry_keypress( GtkWidget* widget, GdkEventKey* event, gpointe
 
 		return TRUE;
 	}
-	else if ( event->keyval == GDK_Return ) {
+	else if ( event->keyval == GDK_KEY_Return ) {
 		if ( widget == EntWidgets[EntKeyField] ) {
 			gtk_entry_set_text( GTK_ENTRY( EntWidgets[EntValueField] ), "" );
 			gtk_window_set_focus( GTK_WINDOW( g_pGroupDlg->m_pWidget ), EntWidgets[EntValueField] );
@@ -1101,9 +1129,9 @@ static gint entityentry_keypress( GtkWidget* widget, GdkEventKey* event, gpointe
 	return FALSE;
 }
 
-static void switch_page( GtkNotebook *notebook, GtkNotebookPage *page, guint page_num, gpointer data ){
-	char *text;
-	gtk_label_get( GTK_LABEL( gtk_notebook_get_tab_label( notebook, gtk_notebook_get_nth_page( notebook, page_num ) ) ), &text );
+static void switch_page( GtkNotebook *notebook, GtkWidget *page, guint page_num, gpointer data ){
+	const char *text;
+	text = gtk_label_get_text( GTK_LABEL( gtk_notebook_get_tab_label( notebook, gtk_notebook_get_nth_page( notebook, page_num ) ) ) );
 	gtk_window_set_title( GTK_WINDOW( data ), text );
 
 	gpointer item = g_object_get_data( G_OBJECT( g_pParentWnd->m_pWidget ), "menu_misc_selectentitycolor" );
@@ -1177,7 +1205,7 @@ static gint OnDialogKey( GtkWidget* widget, GdkEventKey* event, gpointer data ) 
     }
   }
 #endif
-  if ( g_pParentWnd->CurrentStyle() != MainFrame::eFloating && ( hide || event->keyval == GDK_Escape ) ) {
+  if ( g_pParentWnd->CurrentStyle() != MainFrame::eFloating && ( hide || event->keyval == GDK_KEY_Escape ) ) {
     // toggle off the group view (whatever part of it is currently displayed)
     // this used to be done with a g_pParentWnd->OnViewEntity(); but it had bad consequences
     gtk_widget_hide( widget );
@@ -1192,7 +1220,7 @@ static gint OnDialogKey( GtkWidget* widget, GdkEventKey* event, gpointer data ) 
 
 GroupDlg::GroupDlg (){
 	m_pWidget = NULL;
-	m_hWorld = NULL;
+//	m_hWorld = NULL;
 }
 
 #ifdef _WIN32
@@ -1200,77 +1228,91 @@ extern void PositionWindowOnPrimaryScreen( window_position_t& position );
 #endif
 
 void GroupDlg::Create(){
+	GtkWidget *dialog, *content_area;
+	GtkDialogFlags flags = GTK_DIALOG_DESTROY_WITH_PARENT;
+
 	if ( m_pWidget != NULL ) {
 		return;
 	}
 
-	GtkWidget* dlg = gtk_window_new( GTK_WINDOW_TOPLEVEL );
+	dialog = gtk_dialog_new_with_buttons( _( "Entities" ), NULL, flags, NULL );
+	g_signal_connect( G_OBJECT( dialog ), "delete_event", G_CALLBACK( OnDeleteHide ), NULL );
+
+	content_area = gtk_dialog_get_content_area( GTK_DIALOG( dialog ) );
 
 #ifdef _WIN32
 	if ( g_PrefsDlg.m_bStartOnPrimMon ) {
 		PositionWindowOnPrimaryScreen( g_PrefsDlg.mWindowInfo.posEntityWnd );
 	}
 #endif
-	load_window_pos( dlg, g_PrefsDlg.mWindowInfo.posEntityWnd );
+	load_window_pos( dialog, g_PrefsDlg.mWindowInfo.posEntityWnd );
 
-	gtk_window_set_title( GTK_WINDOW( dlg ), "Entities" );
-	gtk_signal_connect( GTK_OBJECT( dlg ), "delete_event", GTK_SIGNAL_FUNC( OnDeleteHide ), NULL );
 	// catch 'Esc'
-	gtk_signal_connect( GTK_OBJECT( dlg ), "key_press_event", GTK_SIGNAL_FUNC( OnDialogKey ), NULL );
+	g_signal_connect( dialog, "key_press_event", G_CALLBACK( OnDialogKey ), NULL );
 
-	gtk_window_set_transient_for( GTK_WINDOW( dlg ), GTK_WINDOW( g_pParentWnd->m_pWidget ) );
-	g_qeglobals_gui.d_entity = dlg;
+	gtk_window_set_transient_for( GTK_WINDOW( dialog ), GTK_WINDOW( g_pParentWnd->m_pWidget ) );
+	g_qeglobals_gui.d_entity = dialog;
 
 	{
 		GtkWidget* notebook = gtk_notebook_new();
-		gtk_widget_show( notebook );
-		gtk_container_add( GTK_CONTAINER( dlg ), notebook );
+		gtk_container_add( GTK_CONTAINER( content_area ), notebook );
 		gtk_notebook_set_tab_pos( GTK_NOTEBOOK( notebook ), GTK_POS_BOTTOM );
+		gtk_widget_show( notebook );
 		m_pNotebook = notebook;
 
 		{
-			GtkWidget* vbox = gtk_vbox_new( FALSE, 2 );
-			gtk_widget_show( vbox );
+			GtkWidget* vbox = gtk_box_new( GTK_ORIENTATION_VERTICAL, 2 );
 			gtk_container_set_border_width( GTK_CONTAINER( vbox ), 2 );
+			gtk_widget_show( vbox );
 
 			{
-				GtkWidget* label = gtk_label_new( "Entities" );
-				gtk_widget_show( label );
+				GtkWidget* label = gtk_label_new( _( "Entities" ) );
 				gtk_notebook_append_page( GTK_NOTEBOOK( notebook ), vbox, label );
+				gtk_widget_show( label );
 			}
 
 			{
-				GtkWidget* split1 = gtk_vpaned_new();
+				GtkWidget* split1 = gtk_paned_new( GTK_ORIENTATION_VERTICAL );
+#if GTK_CHECK_VERSION( 3,12,0 )
+				gtk_paned_set_wide_handle( GTK_PANED( split1 ), TRUE );
+#else
+				
+#endif
 				gtk_box_pack_start( GTK_BOX( vbox ), split1, TRUE, TRUE, 0 );
 				gtk_widget_show( split1 );
 
 				{
-					GtkWidget* split2 = gtk_vpaned_new();
-					gtk_paned_add1( GTK_PANED( split1 ), split2 );
+					GtkWidget* split2 = gtk_paned_new( GTK_ORIENTATION_VERTICAL );
+#if GTK_CHECK_VERSION(3,12,0)
+					gtk_paned_set_wide_handle( GTK_PANED( split2 ), TRUE );
+#else
+					
+#endif
+					gtk_paned_pack1( GTK_PANED( split1 ), split2, TRUE, TRUE );
 					gtk_widget_show( split2 );
 
-					g_object_set_data( G_OBJECT( dlg ), "split1", split1 );
-					g_object_set_data( G_OBJECT( dlg ), "split2", split2 );
+					g_object_set_data( G_OBJECT( dialog ), "split1", split1 );
+					g_object_set_data( G_OBJECT( dialog ), "split2", split2 );
 
 					{
-						GtkWidget* vbox2 = gtk_vbox_new( FALSE, 2 );
+						GtkWidget* vbox2 = gtk_box_new( GTK_ORIENTATION_VERTICAL, 2 );
+						gtk_paned_pack2( GTK_PANED( split1 ), vbox2, TRUE, TRUE );
 						gtk_widget_show( vbox2 );
-						gtk_paned_pack2( GTK_PANED( split1 ), vbox2, FALSE, FALSE );
 
 						{
 							GtkWidget* scr = gtk_scrolled_window_new( NULL, NULL );
-							gtk_widget_show( scr );
-							gtk_paned_add1( GTK_PANED( split2 ), scr );
+							gtk_paned_pack1( GTK_PANED( split2 ), scr, TRUE, TRUE );
 							gtk_scrolled_window_set_policy( GTK_SCROLLED_WINDOW( scr ), GTK_POLICY_NEVER, GTK_POLICY_ALWAYS );
 							gtk_scrolled_window_set_shadow_type( GTK_SCROLLED_WINDOW( scr ), GTK_SHADOW_IN );
+							gtk_widget_show( scr );
 
 							{
 								GtkListStore* store = gtk_list_store_new( 2, G_TYPE_STRING, G_TYPE_POINTER );
 
 								GtkWidget* view = gtk_tree_view_new_with_model( GTK_TREE_MODEL( store ) );
 								gtk_tree_view_set_headers_visible( GTK_TREE_VIEW( view ), FALSE );
-								g_signal_connect( G_OBJECT( view ), "button_press_event", G_CALLBACK( eclasslist_button_press ), NULL );
-								g_signal_connect( G_OBJECT( view ), "key_press_event", G_CALLBACK( eclasslist_keypress ), this );
+								g_signal_connect( view, "button_press_event", G_CALLBACK( eclasslist_button_press ), NULL );
+								g_signal_connect( view, "key_press_event", G_CALLBACK( eclasslist_keypress ), this );
 
 								{
 									GtkCellRenderer* renderer = gtk_cell_renderer_text_new();
@@ -1280,48 +1322,54 @@ void GroupDlg::Create(){
 
 								{
 									GtkTreeSelection* selection = gtk_tree_view_get_selection( GTK_TREE_VIEW( view ) );
-									g_signal_connect( G_OBJECT( selection ), "changed", G_CALLBACK( eclasslist_selection_changed ), dlg );
+									g_signal_connect( selection, "changed", G_CALLBACK( eclasslist_selection_changed ), dialog );
 								}
-
-								gtk_widget_show( view );
 
 								gtk_container_add( GTK_CONTAINER( scr ), view );
 
+								gtk_widget_show( view );
+
 								g_object_unref( G_OBJECT( store ) );
 								EntWidgets[EntList] = view;
-								g_entlist_store = store;
 							}
 						}
 
 						{
 							GtkWidget* scr = gtk_scrolled_window_new( NULL, NULL );
-							gtk_widget_show( scr );
-							gtk_paned_add2( GTK_PANED( split2 ), scr );
+							gtk_paned_pack2( GTK_PANED( split2 ), scr, TRUE, TRUE );
 							gtk_scrolled_window_set_policy( GTK_SCROLLED_WINDOW( scr ), GTK_POLICY_NEVER, GTK_POLICY_ALWAYS );
 							gtk_scrolled_window_set_shadow_type( GTK_SCROLLED_WINDOW( scr ), GTK_SHADOW_IN );
+							gtk_scrolled_window_set_min_content_height( GTK_SCROLLED_WINDOW( scr ), 20 );
+							gtk_widget_show( scr );
 
 							{
 								GtkWidget* text = gtk_text_view_new();
-								gtk_widget_set_size_request( text, 0, -1 ); // allow shrinking
 								gtk_text_view_set_wrap_mode( GTK_TEXT_VIEW( text ), GTK_WRAP_WORD );
 								gtk_text_view_set_editable( GTK_TEXT_VIEW( text ), FALSE );
-								gtk_widget_show( text );
 								gtk_container_add( GTK_CONTAINER( scr ), text );
+								gtk_widget_set_size_request( text, 0, -1 ); // allow shrinking
+								gtk_widget_show( text );
 								EntWidgets[EntComment] = text;
 							}
 						}
 
 						{
+#if GTK_CHECK_VERSION( 3,12,0 )
+							LayoutFlowBox = gtk_flow_box_new();
+							gtk_box_pack_start( GTK_BOX( vbox2 ), LayoutFlowBox, FALSE, FALSE, 0 );
+							gtk_flow_box_set_homogeneous( GTK_FLOW_BOX( LayoutFlowBox ), TRUE );
+							gtk_widget_show( LayoutFlowBox );
+#else
 							// Spawnflags (4 colums wide max, or window gets too wide.)
-							LayoutTable = gtk_table_new( 4, 4, FALSE );
+							LayoutTable = gtk_grid_new();
 							gtk_box_pack_start( GTK_BOX( vbox2 ), LayoutTable, FALSE, TRUE, 0 );
 							gtk_widget_show( LayoutTable );
-
+#endif
 							for ( int i = 0; i < MAX_FLAGS; i++ )
 							{
 								GtkWidget* check = gtk_check_button_new_with_label( "" );
-								gtk_widget_ref( check );
-								gtk_signal_connect( GTK_OBJECT( check ), "toggled", GTK_SIGNAL_FUNC( entity_check ), NULL );
+								g_object_ref( check );
+								g_signal_connect( check, "toggled", G_CALLBACK( entity_check ), NULL );
 								EntWidgets[EntCheck1 + i] = check;
 							}
 
@@ -1329,10 +1377,11 @@ void GroupDlg::Create(){
 
 						{
 							GtkWidget* scr = gtk_scrolled_window_new( NULL, NULL );
-							gtk_widget_show( scr );
 							gtk_box_pack_start( GTK_BOX( vbox2 ), scr, TRUE, TRUE, 0 );
 							gtk_scrolled_window_set_policy( GTK_SCROLLED_WINDOW( scr ), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC );
 							gtk_scrolled_window_set_shadow_type( GTK_SCROLLED_WINDOW( scr ), GTK_SHADOW_IN );
+							gtk_scrolled_window_set_min_content_height( GTK_SCROLLED_WINDOW( scr ), 20 );
+							gtk_widget_show( scr );
 
 							{
 								GtkListStore* store = gtk_list_store_new( 2, G_TYPE_STRING, G_TYPE_STRING );
@@ -1354,17 +1403,17 @@ void GroupDlg::Create(){
 
 								{
 									GtkTreeSelection* selection = gtk_tree_view_get_selection( GTK_TREE_VIEW( view ) );
-									g_signal_connect( G_OBJECT( selection ), "changed", G_CALLBACK( proplist_selection_changed ), dlg );
+									g_signal_connect( selection, "changed", G_CALLBACK( proplist_selection_changed ), dialog );
+									g_signal_connect( view, "realize", G_CALLBACK( proplist_view_realize ), dialog );
 								}
 
-								gtk_widget_show( view );
-
 								gtk_container_add( GTK_CONTAINER( scr ), view );
+
+								gtk_widget_show( view );
 
 								g_object_unref( G_OBJECT( store ) );
 
 								EntWidgets[EntProps] = view;
-								g_entprops_store = store;
 							}
 						}
 					}
@@ -1384,190 +1433,167 @@ void GroupDlg::Create(){
 			}
 
 			{
-				GtkWidget* table = gtk_table_new( 2, 2, FALSE );
-				gtk_widget_show( table );
+				GtkWidget* table = gtk_grid_new();
 				gtk_box_pack_start( GTK_BOX( vbox ), table, FALSE, TRUE, 0 );
-				gtk_table_set_row_spacings( GTK_TABLE( table ), 3 );
-				gtk_table_set_col_spacings( GTK_TABLE( table ), 5 );
+				gtk_grid_set_row_spacing( GTK_GRID( table ), 3 );
+				gtk_grid_set_column_spacing( GTK_GRID( table ), 5 );
+				gtk_widget_show( table );
 
 				{
 					GtkWidget* entry = gtk_entry_new();
+					gtk_grid_attach( GTK_GRID( table ), entry, 1, 0, 1, 1 );
+					gtk_widget_set_hexpand( entry, TRUE );
 					gtk_widget_show( entry );
-					gtk_table_attach( GTK_TABLE( table ), entry, 1, 2, 0, 1,
-									  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
-									  (GtkAttachOptions) ( 0 ), 0, 0 );
 					gtk_widget_set_events( entry, GDK_KEY_PRESS_MASK );
-					gtk_signal_connect( GTK_OBJECT( entry ), "key_press_event",
-										GTK_SIGNAL_FUNC( entityentry_keypress ), this );
+					g_signal_connect( entry, "key_press_event",	G_CALLBACK( entityentry_keypress ), this );
 					EntWidgets[EntKeyField] = entry;
 				}
 
 				{
 					GtkWidget* entry = gtk_entry_new();
+					gtk_grid_attach( GTK_GRID( table ), entry, 1, 1, 1, 1 );
+					gtk_widget_set_hexpand( entry, TRUE );
 					gtk_widget_show( entry );
-					gtk_table_attach( GTK_TABLE( table ), entry, 1, 2, 1, 2,
-									  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
-									  (GtkAttachOptions) ( 0 ), 0, 0 );
 					gtk_widget_set_events( entry, GDK_KEY_PRESS_MASK );
-					gtk_signal_connect( GTK_OBJECT( entry ), "key_press_event",
-										GTK_SIGNAL_FUNC( entityentry_keypress ), this );
+					g_signal_connect( entry, "key_press_event",	G_CALLBACK( entityentry_keypress ), this );
 					EntWidgets[EntValueField] = entry;
 				}
 
 				{
 					GtkWidget* label = gtk_label_new( _( "Value" ) );
+					gtk_grid_attach( GTK_GRID( table ), label, 0, 1, 1, 1 );
+					gtk_widget_set_halign( label, GTK_ALIGN_START );
 					gtk_widget_show( label );
-					gtk_table_attach( GTK_TABLE( table ), label, 0, 1, 1, 2,
-									  (GtkAttachOptions) ( GTK_FILL ),
-									  (GtkAttachOptions) ( 0 ), 0, 0 );
-					gtk_misc_set_alignment( GTK_MISC( label ), 0, 0.5 );
 				}
 
 				{
 					GtkWidget* label = gtk_label_new( _( "Key" ) );
+					gtk_grid_attach( GTK_GRID( table ), label, 0, 0, 1, 1 );
+					gtk_widget_set_halign( label, GTK_ALIGN_START );
 					gtk_widget_show( label );
-					gtk_table_attach( GTK_TABLE( table ), label, 0, 1, 0, 1,
-									  (GtkAttachOptions) ( GTK_FILL ),
-									  (GtkAttachOptions) ( 0 ), 0, 0 );
-					gtk_misc_set_alignment( GTK_MISC( label ), 0, 0.5 );
 				}
 			}
 
 			{
-				GtkWidget* hbox = gtk_hbox_new( FALSE, 5 );
-				gtk_widget_show( hbox );
+				GtkWidget* hbox = gtk_box_new( GTK_ORIENTATION_HORIZONTAL, 5 );
 				gtk_box_pack_start( GTK_BOX( vbox ), hbox, FALSE, TRUE, 0 );
+				gtk_widget_show( hbox );
 
 				{
-					GtkWidget* table = gtk_table_new( 3, 3, TRUE );
-					gtk_widget_show( table );
+					GtkWidget* table = gtk_grid_new();
 					gtk_box_pack_start( GTK_BOX( hbox ), table, FALSE, TRUE, 0 );
+					gtk_widget_show( table );
 
 					{
 						GtkWidget* button = gtk_button_new_with_label( _( "360" ) );
+						gtk_grid_attach( GTK_GRID( table ), button, 2, 1, 1, 1 );
 						gtk_widget_show( button );
-						gtk_signal_connect( GTK_OBJECT( button ), "clicked", GTK_SIGNAL_FUNC( entitylist_angle ), (void *)"360" );
-						gtk_table_attach( GTK_TABLE( table ), button, 2, 3, 1, 2,
-										  (GtkAttachOptions) ( GTK_FILL ),
-										  (GtkAttachOptions) ( GTK_FILL ), 0, 0 );
+						g_signal_connect( button, "clicked", G_CALLBACK( entitylist_angle ), (void *)"360" );
 					}
 
 					{
 						GtkWidget* button = gtk_button_new_with_label( _( "45" ) );
+						gtk_grid_attach( GTK_GRID( table ), button, 2, 0, 1, 1 );
 						gtk_widget_show( button );
-						gtk_signal_connect( GTK_OBJECT( button ), "clicked", GTK_SIGNAL_FUNC( entitylist_angle ), (void *)"45" );
-						gtk_table_attach( GTK_TABLE( table ), button, 2, 3, 0, 1,
-										  (GtkAttachOptions) ( GTK_FILL ),
-										  (GtkAttachOptions) ( GTK_FILL ), 0, 0 );
+						g_signal_connect( button, "clicked", G_CALLBACK( entitylist_angle ), (void *)"45" );
 					}
 
 					{
 						GtkWidget* button = gtk_button_new_with_label( _( "90" ) );
+						gtk_grid_attach( GTK_GRID( table ), button, 1, 0, 1, 1 );
 						gtk_widget_show( button );
-						gtk_signal_connect( GTK_OBJECT( button ), "clicked", GTK_SIGNAL_FUNC( entitylist_angle ), (void *)"90" );
-						gtk_table_attach( GTK_TABLE( table ), button, 1, 2, 0, 1,
-										  (GtkAttachOptions) ( GTK_FILL ),
-										  (GtkAttachOptions) ( GTK_FILL ), 0, 0 );
+						g_signal_connect( button, "clicked", G_CALLBACK( entitylist_angle ), (void *)"90" );
 					}
 
 
 					{
 						GtkWidget* button = gtk_button_new_with_label( _( "135" ) );
+						gtk_grid_attach( GTK_GRID( table ), button, 0, 0, 1, 1 );
 						gtk_widget_show( button );
-						gtk_signal_connect( GTK_OBJECT( button ), "clicked", GTK_SIGNAL_FUNC( entitylist_angle ), (void *)"135" );
-						gtk_table_attach( GTK_TABLE( table ), button, 0, 1, 0, 1,
-										  (GtkAttachOptions) ( GTK_FILL ),
-										  (GtkAttachOptions) ( GTK_FILL ), 0, 0 );
+						g_signal_connect( button, "clicked", G_CALLBACK( entitylist_angle ), (void *)"135" );
 					}
 
 					{
 						GtkWidget* button = gtk_button_new_with_label( _( "180" ) );
+						gtk_grid_attach( GTK_GRID( table ), button, 0, 1, 1, 1 );
 						gtk_widget_show( button );
-						gtk_signal_connect( GTK_OBJECT( button ), "clicked", GTK_SIGNAL_FUNC( entitylist_angle ), (void *)"180" );
-						gtk_table_attach( GTK_TABLE( table ), button, 0, 1, 1, 2,
-										  (GtkAttachOptions) ( GTK_FILL ),
-										  (GtkAttachOptions) ( GTK_FILL ), 0, 0 );
+						g_signal_connect( button, "clicked", G_CALLBACK( entitylist_angle ), (void *)"180" );
 					}
 
 					{
 						GtkWidget* button = gtk_button_new_with_label( _( "225" ) );
+						gtk_grid_attach( GTK_GRID( table ), button, 0, 2, 1, 1 );
 						gtk_widget_show( button );
-						gtk_signal_connect( GTK_OBJECT( button ), "clicked", GTK_SIGNAL_FUNC( entitylist_angle ), (void *)"225" );
-						gtk_table_attach( GTK_TABLE( table ), button, 0, 1, 2, 3,
-										  (GtkAttachOptions) ( GTK_FILL ),
-										  (GtkAttachOptions) ( GTK_FILL ), 0, 0 );
+						g_signal_connect( button, "clicked", G_CALLBACK( entitylist_angle ), (void *)"225" );
 					}
 
 					{
 						GtkWidget* button = gtk_button_new_with_label( _( "270" ) );
+						gtk_grid_attach( GTK_GRID( table ), button, 1, 2, 1, 1 );
 						gtk_widget_show( button );
-						gtk_signal_connect( GTK_OBJECT( button ), "clicked", GTK_SIGNAL_FUNC( entitylist_angle ), (void *)"270" );
-						gtk_table_attach( GTK_TABLE( table ), button, 1, 2, 2, 3,
-										  (GtkAttachOptions) ( GTK_FILL ),
-										  (GtkAttachOptions) ( GTK_FILL ), 0, 0 );
+						g_signal_connect( button, "clicked", G_CALLBACK( entitylist_angle ), (void *)"270" );
 					}
 
 					{
 						GtkWidget* button = gtk_button_new_with_label( _( "315" ) );
+						gtk_grid_attach( GTK_GRID( table ), button, 2, 2, 1, 1 );
 						gtk_widget_show( button );
-						gtk_signal_connect( GTK_OBJECT( button ), "clicked", GTK_SIGNAL_FUNC( entitylist_angle ), (void *)"315" );
-						gtk_table_attach( GTK_TABLE( table ), button, 2, 3, 2, 3,
-										  (GtkAttachOptions) ( GTK_FILL ),
-										  (GtkAttachOptions) ( GTK_FILL ), 0, 0 );
+						g_signal_connect( button, "clicked", G_CALLBACK( entitylist_angle ), (void *)"315" );
 					}
 				}
 
 				{
-					GtkWidget* vbox2 = gtk_vbox_new( FALSE, 0 );
-					gtk_widget_show( vbox2 );
+					GtkWidget* vbox2 = gtk_box_new( GTK_ORIENTATION_VERTICAL, 0 );
 					gtk_box_pack_start( GTK_BOX( hbox ), vbox2, TRUE, TRUE, 0 );
+					gtk_widget_show( vbox2 );
 
 					{
 						GtkWidget* button = gtk_button_new_with_label( _( "Reset" ) );
-						gtk_widget_show( button );
-						gtk_signal_connect( GTK_OBJECT( button ), "clicked", GTK_SIGNAL_FUNC( ResetEntity ), NULL );
 						gtk_box_pack_start( GTK_BOX( vbox2 ), button, FALSE, FALSE, 0 );
+						gtk_widget_show( button );
+						g_signal_connect( button, "clicked", G_CALLBACK( ResetEntity ), NULL );
 					}
 
 					{
 						GtkWidget* button = gtk_button_new_with_label( _( "Up" ) );
-						gtk_widget_show( button );
-						gtk_signal_connect( GTK_OBJECT( button ), "clicked", GTK_SIGNAL_FUNC( entitylist_angle ), (void *)"-1" );
 						gtk_box_pack_start( GTK_BOX( vbox2 ), button, FALSE, FALSE, 0 );
+						gtk_widget_show( button );
+						g_signal_connect( button, "clicked", G_CALLBACK( entitylist_angle ), (void *)"-1" );
 					}
 
 					{
 						GtkWidget* button = gtk_button_new_with_label( _( "Dn" ) );
-						gtk_widget_show( button );
-						gtk_signal_connect( GTK_OBJECT( button ), "clicked", GTK_SIGNAL_FUNC( entitylist_angle ), (void *)"-2" );
 						gtk_box_pack_start( GTK_BOX( vbox2 ), button, FALSE, FALSE, 0 );
+						gtk_widget_show( button );
+						g_signal_connect( button, "clicked", G_CALLBACK( entitylist_angle ), (void *)"-2" );
 					}
 				}
 
 				{
-					GtkWidget* vbox2 = gtk_vbox_new( FALSE, 0 );
-					gtk_widget_show( vbox2 );
+					GtkWidget* vbox2 = gtk_box_new( GTK_ORIENTATION_VERTICAL, 0 );
 					gtk_box_pack_start( GTK_BOX( hbox ), vbox2, TRUE, TRUE, 0 );
+					gtk_widget_show( vbox2 );
 
 					{
 						GtkWidget* button = gtk_button_new_with_label( _( "Del Key/Pair" ) );
-						gtk_widget_show( button );
-						gtk_signal_connect( GTK_OBJECT( button ), "clicked", GTK_SIGNAL_FUNC( DelProp ), NULL );
 						gtk_box_pack_start( GTK_BOX( vbox2 ), button, FALSE, FALSE, 0 );
+						gtk_widget_show( button );
+						g_signal_connect( button, "clicked", G_CALLBACK( DelProp ), NULL );
+						g_object_set_data( G_OBJECT( dialog ), "del_button", button );
 					}
 
 					{
 						GtkWidget* button = gtk_button_new_with_label( _( "Sound..." ) );
-						gtk_widget_show( button );
-						gtk_signal_connect( GTK_OBJECT( button ), "clicked", GTK_SIGNAL_FUNC( AssignSound ), NULL );
 						gtk_box_pack_start( GTK_BOX( vbox2 ), button, FALSE, FALSE, 0 );
+						gtk_widget_show( button );
+						g_signal_connect( button, "clicked", G_CALLBACK( AssignSound ), NULL );
 					}
 
 					{
 						GtkWidget* button = gtk_button_new_with_label( _( "Model..." ) );
-						gtk_widget_show( button );
-						gtk_signal_connect( GTK_OBJECT( button ), "clicked", GTK_SIGNAL_FUNC( AssignModel ), NULL );
 						gtk_box_pack_start( GTK_BOX( vbox2 ), button, FALSE, FALSE, 0 );
+						gtk_widget_show( button );
+						g_signal_connect( button, "clicked", G_CALLBACK( AssignModel ), NULL );
 					}
 				}
 			}
@@ -1578,8 +1604,8 @@ void GroupDlg::Create(){
 				GtkWidget* scr = gtk_scrolled_window_new( NULL, NULL );
 				gtk_scrolled_window_set_policy( GTK_SCROLLED_WINDOW( scr ), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC );
 				gtk_scrolled_window_set_shadow_type( GTK_SCROLLED_WINDOW( scr ), GTK_SHADOW_IN );
-				gtk_widget_show( scr );
 				gtk_container_set_border_width( GTK_CONTAINER( scr ), 3 );
+				gtk_widget_show( scr );
 
 				{
 					GtkWidget* text = gtk_text_view_new();
@@ -1600,7 +1626,7 @@ void GroupDlg::Create(){
 		}
 
 		inspector_mode = W_ENTITY;
-		m_pWidget = dlg;
-		g_signal_connect( G_OBJECT( notebook ), "switch_page", G_CALLBACK( switch_page ), dlg );
+		m_pWidget = dialog;
+		g_signal_connect( notebook, "switch_page", G_CALLBACK( switch_page ), dialog );
 	}
 }

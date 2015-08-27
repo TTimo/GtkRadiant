@@ -124,7 +124,6 @@ void Error( const char *error, ... ){
 
 	g_PrefsDlg.Destroy();
 	g_dlgSurface.Destroy();
-	g_dlgFind.Destroy();
 
 	// force close logging if necessary
 	g_PrefsDlg.mGamesDialog.m_bLogConsole = false;

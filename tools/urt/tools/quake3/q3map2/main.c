@@ -36,7 +36,7 @@
 /* dependencies */
 #include "q3map2.h"
 
-
+#include <stdlib.h>
 
 /*
    Random()

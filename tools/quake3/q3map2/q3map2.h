@@ -69,6 +69,9 @@ extern int unz_GAME_QL;
 
 #ifdef WIN32
 	#include <windows.h>
+	#ifndef MAX_OS_PATH
+		#define MAX_OS_PATH MAX_PATH
+	#endif
 #endif
 
 

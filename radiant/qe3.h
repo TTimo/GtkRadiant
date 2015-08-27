@@ -298,7 +298,7 @@ int DoCapDlg( int *type, bool *b_GroupResul );
 int DoBSInputDlg( const char *fields[5], float values[5] );
 int DoTextureLayout( float *fx, float *fy );
 char* DoNameDlg( const char* title );
-char* DoNewProjectDlg();
+char* DoNewProjectDlg( const char *path );
 /*
    text editor, open filename at given line
    opening at line works only for win32 / editpad and builtin Gtk editor
@@ -751,7 +751,6 @@ extern gint try_destroy_splash( gpointer );
 
 #include "mainframe.h"
 #include "preferences.h"
-#include "findtexturedialog.h"
 #include "surfacedialog.h"
 #include "patchdialog.h"
 
@@ -773,7 +772,6 @@ extern CString g_strExecutablesPath;
 
 extern CString g_strTempPath;
 extern PrefsDlg& g_PrefsDlg;
-extern FindTextureDialog& g_dlgFind;
 extern SurfaceDlg g_dlgSurface;
 extern PatchDialog g_PatchDialog;
 
@@ -822,6 +820,7 @@ extern void FindReplaceTextures( const char* pFind, const char* pReplace, bool b
    we dump those properties to the console when the project settings dialog shows up
  */
 extern void DoProjectSettings();
+extern void DoFindReplaceTexturesDialog();
 extern qboolean region_active;
 extern void Brush_Print( brush_t* b );
 extern void Texture_ShowStartupShaders();

@@ -892,9 +892,9 @@ int main( int argc, char* argv[] ) {
 	Texture_ShowStartupShaders();
 
 #ifndef SKIP_SPLASH
-	gdk_window_raise( splash_screen->window );
+	gdk_window_raise( gtk_widget_get_window( splash_screen ) );
 	gtk_window_set_transient_for( GTK_WINDOW( splash_screen ), GTK_WINDOW( g_pParentWnd->m_pWidget ) );
-	gtk_timeout_add( 1000, try_destroy_splash, NULL );
+	g_timeout_add( 1000, try_destroy_splash, NULL );
 #endif
 
 	g_pParentWnd->GetSynapseServer().DumpActiveClients();

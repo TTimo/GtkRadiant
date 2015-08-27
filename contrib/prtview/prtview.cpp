@@ -25,12 +25,12 @@
 #include <stdlib.h>
 
 #define Q3R_CMD_SPLITTER "-"
-#define Q3R_CMD_ABOUT "About Portal Viewer"
+#define Q3R_CMD_ABOUT "About Portal Viewer..."
 #define Q3R_CMD_LOAD "Load .prt file"
 #define Q3R_CMD_RELEASE "Unload .prt file"
 #define Q3R_CMD_SHOW_3D "Toggle portals (3D)"
 #define Q3R_CMD_SHOW_2D "Toggle portals (2D)"
-#define Q3R_CMD_OPTIONS "Configure Portal Viewer"
+#define Q3R_CMD_OPTIONS "Configure Portal Viewer..."
 
 static char INIfn[NAME_MAX];
 
@@ -81,7 +81,11 @@ void InitInstance(){
 	portals.show_2d = INIGetInt( RENDER_2D, FALSE ) ? true : false;
 	portals.aa_2d = INIGetInt( AA_2D, FALSE ) ? true : false;
 	portals.width_2d = (float)INIGetInt( WIDTH_2D, 10 );
-	portals.color_2d = (COLORREF)INIGetInt( COLOR_2D, RGB( 0, 0, 255 ) ) & 0xFFFFFF;
+	COLORREF color_2d = (COLORREF)INIGetInt( COLOR_2D, RGB( 0, 0, 255 ) ) & 0xFFFFFF;
+	portals.color_2d.red = GetRValue( color_2d );
+	portals.color_2d.green = GetGValue( color_2d );
+	portals.color_2d.blue = GetBValue( color_2d );
+	portals.color_2d.alpha = 1;
 
 	if ( portals.width_2d > 40.0f ) {
 		portals.width_2d = 40.0f;
@@ -98,8 +102,18 @@ void InitInstance(){
 	portals.lines = INIGetInt( LINE, TRUE );
 	portals.aa_3d = INIGetInt( AA_3D, FALSE ) ? true : false;
 	portals.width_3d = (float)INIGetInt( WIDTH_3D, 4 );
-	portals.color_3d = (COLORREF)INIGetInt( COLOR_3D, RGB( 255, 255, 0 ) ) & 0xFFFFFF;
-	portals.color_fog = (COLORREF)INIGetInt( COLOR_FOG, RGB( 127, 127, 127 ) ) & 0xFFFFFF;
+	COLORREF color_3d = (COLORREF)INIGetInt( COLOR_3D, RGB( 255, 255, 0 ) ) & 0xFFFFFF;
+	portals.color_3d.red = GetRValue( color_3d );
+	portals.color_3d.green = GetGValue( color_3d );
+	portals.color_3d.blue = GetBValue( color_3d );
+	portals.color_3d.alpha = 1;
+
+	COLORREF color_fog = (COLORREF)INIGetInt( COLOR_FOG, RGB( 127, 127, 127 ) ) & 0xFFFFFF;
+	portals.color_fog.red = GetRValue( color_fog );
+	portals.color_fog.green = GetGValue( color_fog );
+	portals.color_fog.blue = GetBValue( color_fog );
+	portals.color_fog.alpha = 1;
+
 	portals.trans_3d = (float)INIGetInt( TRANS_3D, 50 );
 	portals.clip = INIGetInt( CLIP, FALSE ) ? true : false;
 	portals.clip_range = (float)INIGetInt( CLIP_RANGE, 16 );
@@ -140,7 +154,8 @@ void InitInstance(){
 void SaveConfig(){
 	INISetInt( RENDER_2D, portals.show_2d, "Draw in 2D windows" );
 	INISetInt( WIDTH_2D, (int)portals.width_2d, "Width of lines in 2D windows (in units of 1/2)" );
-	INISetInt( COLOR_2D, (int)portals.color_2d, "Color of lines in 2D windows" );
+	COLORREF color_2d = RGB( portals.color_2d.red, portals.color_2d.green, portals.color_2d.blue );
+	INISetInt( COLOR_2D, (int)color_2d, "Color of lines in 2D windows" );
 	INISetInt( AA_2D, portals.aa_2d, "Draw lines in 2D window anti-aliased" );
 
 	INISetInt( ZBUFFER, portals.zbuffer, "ZBuffer level in 3D window" );
@@ -149,8 +164,10 @@ void SaveConfig(){
 	INISetInt( LINE, portals.polygons, "Render using lines in 3D window" );
 	INISetInt( RENDER_3D, portals.show_3d, "Draw in 3D windows" );
 	INISetInt( WIDTH_3D, (int)portals.width_3d, "Width of lines in 3D window (in units of 1/2)" );
-	INISetInt( COLOR_3D, (int)portals.color_3d, "Color of lines/polygons in 3D window" );
-	INISetInt( COLOR_FOG, (int)portals.color_fog, "Color of distant lines/polygons in 3D window" );
+	COLORREF color_3d = RGB( portals.color_3d.red, portals.color_3d.green, portals.color_3d.blue );
+	INISetInt( COLOR_3D, (int)color_3d, "Color of lines/polygons in 3D window" );
+	COLORREF color_fog = RGB( portals.color_fog.red, portals.color_fog.green, portals.color_fog.blue );
+	INISetInt( COLOR_FOG, (int)color_fog, "Color of distant lines/polygons in 3D window" );
 	INISetInt( AA_3D, portals.aa_3d, "Draw lines in 3D window anti-aliased" );
 	INISetInt( TRANS_3D, (int)portals.trans_3d, "Transparency in 3d view (0 = solid, 100 = invisible)" );
 	INISetInt( CLIP, portals.clip, "Cubic clipper active for portal viewer" );

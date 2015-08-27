@@ -60,10 +60,7 @@ static void motion( GtkWidget *widget, GdkEventMotion *event, gpointer data ){
 	pListen->OnMouseMove( event->state, event->x, event->y );
 }
 
-static gint expose( GtkWidget *widget, GdkEventExpose *event, gpointer data ){
-	if ( event->count > 0 ) {
-		return TRUE;
-	}
+static gboolean expose( GtkWidget *widget, cairo_t *cr, gpointer data ){
 
 	CGtkWindow *pWindow = static_cast<CGtkWindow *>( data );
 	pWindow->DoExpose();
@@ -78,7 +75,7 @@ static gint keypress( GtkWidget* widget, GdkEventKey* event, gpointer data ){
 	IWindowListener *pListen = static_cast<IWindowListener *>( data );
 	ret = pListen->OnKeyPressed( gdk_keyval_name( event->keyval ) );
 	if ( ret ) {
-		gtk_signal_emit_stop_by_name( GTK_OBJECT( widget ), "key_press_event" );
+		g_signal_stop_emission_by_name( widget, "key_press_event" );
 	}
 	return ret;
 }
@@ -133,17 +130,17 @@ bool CGtkWindow::Show(){
 						   GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK | GDK_POINTER_MOTION_MASK );
 
 	// Connect signal handlers
-	gtk_signal_connect( GTK_OBJECT( m_pGLWidget ), "expose_event", GTK_SIGNAL_FUNC( expose ), this );
-	gtk_signal_connect( GTK_OBJECT( m_pGLWidget ), "motion_notify_event",
-						GTK_SIGNAL_FUNC( motion ), m_pListen );
-	gtk_signal_connect( GTK_OBJECT( m_pGLWidget ), "button_press_event",
-						GTK_SIGNAL_FUNC( button_press ), m_pListen );
-	gtk_signal_connect( GTK_OBJECT( m_pGLWidget ), "button_release_event",
-						GTK_SIGNAL_FUNC( button_release ), m_pListen );
+	g_signal_connect( m_pGLWidget, "draw", G_CALLBACK( expose ), this );
+	g_signal_connect( m_pGLWidget, "motion_notify_event",
+						G_CALLBACK( motion ), m_pListen );
+	g_signal_connect( m_pGLWidget, "button_press_event",
+						G_CALLBACK( button_press ), m_pListen );
+	g_signal_connect( m_pGLWidget, "button_release_event",
+						G_CALLBACK( button_release ), m_pListen );
 
-	gtk_signal_connect( GTK_OBJECT( m_pWnd ), "delete_event", GTK_SIGNAL_FUNC( close_widget ), this );
-	gtk_signal_connect( GTK_OBJECT( m_pWnd ), "key_press_event",
-						GTK_SIGNAL_FUNC( keypress ), m_pListen );
+	g_signal_connect( m_pWnd, "delete_event", G_CALLBACK( close_widget ), this );
+	g_signal_connect( m_pWnd, "key_press_event",
+						G_CALLBACK( keypress ), m_pListen );
 
 	gtk_widget_show( m_pGLWidget );
 	gtk_container_add( GTK_CONTAINER( m_pWnd ), m_pGLWidget );
@@ -230,7 +227,7 @@ void DispatchRadiantMsg( int Msg ){
 }
 
 void CXYWndWrapper::SnapToGrid( int x1, int y1, vec3_t pt ){
-	int height = g_pParentWnd->ActiveXY()->GetWidget()->allocation.height;
+	int height = gtk_widget_get_allocated_height( g_pParentWnd->ActiveXY()->GetWidget() );
 	g_pParentWnd->ActiveXY()->SnapToPoint( x1, height - 1 - y1, pt );
 }
 

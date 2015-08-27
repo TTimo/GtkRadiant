@@ -117,14 +117,14 @@ static void OnSpinChanged( GtkAdjustment *adj, gpointer data ){
 	td.flags = 0;
 	td.value = 0;
 
-	if ( adj->value == 0 ) {
+	if ( gtk_adjustment_get_value( adj ) == 0 ) {
 		return;
 	}
 
 	if ( adj == g_object_get_data( G_OBJECT( g_PatchDialog.GetWidget() ), "hshift_adj" ) ) {
 		l_pPIIncrement->shift[0] = atof( gtk_entry_get_text( GTK_ENTRY( data ) ) );
 
-		if ( adj->value > 0 ) {
+		if ( gtk_adjustment_get_value( adj ) > 0 ) {
 			td.shift[0] = l_pPIIncrement->shift[0];
 		}
 		else{
@@ -134,7 +134,7 @@ static void OnSpinChanged( GtkAdjustment *adj, gpointer data ){
 	else if ( adj == g_object_get_data( G_OBJECT( g_PatchDialog.GetWidget() ), "vshift_adj" ) ) {
 		l_pPIIncrement->shift[1] = atof( gtk_entry_get_text( GTK_ENTRY( data ) ) );
 
-		if ( adj->value > 0 ) {
+		if ( gtk_adjustment_get_value( adj ) > 0 ) {
 			td.shift[1] = l_pPIIncrement->shift[1];
 		}
 		else{
@@ -147,7 +147,7 @@ static void OnSpinChanged( GtkAdjustment *adj, gpointer data ){
 			return;
 		}
 		// make sure scale factor is always >1 for increases and <1 for decreases
-		if ( adj->value > 0 ) {
+		if ( gtk_adjustment_get_value( adj ) > 0 ) {
 			if ( l_pPIIncrement->scale[0] < 1 ) {
 				td.scale[0] = l_pPIIncrement->scale[0];
 			}
@@ -171,7 +171,7 @@ static void OnSpinChanged( GtkAdjustment *adj, gpointer data ){
 			return;
 		}
 		// make sure scale factor is always >1 for increases and <1 for decreases
-		if ( adj->value > 0 ) {
+		if ( gtk_adjustment_get_value( adj ) > 0 ) {
 			if ( l_pPIIncrement->scale[1] < 1 ) {
 				td.scale[1] = l_pPIIncrement->scale[1];
 			}
@@ -192,7 +192,7 @@ static void OnSpinChanged( GtkAdjustment *adj, gpointer data ){
 	else if ( adj == g_object_get_data( G_OBJECT( g_PatchDialog.GetWidget() ), "rotate_adj" ) ) {
 		l_pPIIncrement->rotate = atof( gtk_entry_get_text( GTK_ENTRY( data ) ) );
 
-		if ( adj->value > 0 ) {
+		if ( gtk_adjustment_get_value( adj ) > 0 ) {
 			td.rotate = l_pPIIncrement->rotate;
 		}
 		else{
@@ -200,7 +200,7 @@ static void OnSpinChanged( GtkAdjustment *adj, gpointer data ){
 		}
 	}
 
-	adj->value = 0;
+	gtk_adjustment_set_value( adj, 0 );
 
 	// will scale shift rotate the patch accordingly
 	Patch_SetTextureInfo( &td );
@@ -210,11 +210,11 @@ static void OnSpinChanged( GtkAdjustment *adj, gpointer data ){
 }
 
 static gint OnDialogKey( GtkWidget* widget, GdkEventKey* event, gpointer data ){
-	if ( event->keyval == GDK_Return ) {
+	if ( event->keyval == GDK_KEY_Return ) {
 		OnApply( NULL, NULL );
 		return TRUE;
 	}
-	else if ( event->keyval == GDK_Escape ) {
+	else if ( event->keyval == GDK_KEY_Escape ) {
 		OnDone( NULL, NULL );
 		return TRUE;
 	}
@@ -290,7 +290,7 @@ void PatchDialog::ShowDlg(){
 void PatchDialog::BuildDialog(){
 	GtkWidget *dlg, *vbox, *vbox2, *hbox, *hbox2, *frame, *table, *label;
 	GtkWidget *button, *entry, *spin, *combo;
-	GtkObject *adj;
+	GtkAdjustment *adj;
 	char buf[32];
 
 	dlg = m_pWidget;
@@ -298,18 +298,18 @@ void PatchDialog::BuildDialog(){
 	load_window_pos( dlg, g_PrefsDlg.mWindowInfo.posPatchWnd );
 
 	gtk_window_set_title( GTK_WINDOW( dlg ), _( "Patch Properties" ) );
-	gtk_signal_connect( GTK_OBJECT( dlg ), "delete_event", GTK_SIGNAL_FUNC( OnDone ), NULL );
+	g_signal_connect( dlg, "delete_event", G_CALLBACK( OnDone ), NULL );
 	// catch 'Esc' and 'Enter'
-	gtk_signal_connect( GTK_OBJECT( dlg ), "key_press_event", GTK_SIGNAL_FUNC( OnDialogKey ), NULL );
+	g_signal_connect( dlg, "key_press_event", G_CALLBACK( OnDialogKey ), NULL );
 	gtk_window_set_transient_for( GTK_WINDOW( dlg ), GTK_WINDOW( g_pParentWnd->m_pWidget ) );
 
 
-	vbox = gtk_vbox_new( FALSE, 5 );
+	vbox = gtk_box_new( GTK_ORIENTATION_VERTICAL, 5 );
 	gtk_widget_show( vbox );
 	gtk_container_add( GTK_CONTAINER( dlg ), vbox );
 	gtk_container_set_border_width( GTK_CONTAINER( vbox ), 5 );
 
-	hbox = gtk_hbox_new( FALSE, 5 );
+	hbox = gtk_box_new( GTK_ORIENTATION_HORIZONTAL, 5 );
 	gtk_widget_show( hbox );
 	gtk_box_pack_start( GTK_BOX( vbox ), hbox, TRUE, TRUE, 0 );
 
@@ -317,138 +317,110 @@ void PatchDialog::BuildDialog(){
 	gtk_widget_show( frame );
 	gtk_box_pack_start( GTK_BOX( hbox ), frame, TRUE, TRUE, 0 );
 
-	vbox2 = gtk_vbox_new( FALSE, 5 );
+	vbox2 = gtk_box_new( GTK_ORIENTATION_VERTICAL, 5 );
 	gtk_widget_show( vbox2 );
 	gtk_container_add( GTK_CONTAINER( frame ), vbox2 );
 	gtk_container_set_border_width( GTK_CONTAINER( vbox2 ), 5 );
 
-	table = gtk_table_new( 2, 2, FALSE );
-	gtk_widget_show( table );
+	table = gtk_grid_new();
 	gtk_box_pack_start( GTK_BOX( vbox2 ), table, TRUE, TRUE, 0 );
-	gtk_table_set_row_spacings( GTK_TABLE( table ), 5 );
-	gtk_table_set_col_spacings( GTK_TABLE( table ), 5 );
+	gtk_grid_set_row_spacing( GTK_GRID( table ), 5 );
+	gtk_grid_set_column_spacing( GTK_GRID( table ), 5 );
+	gtk_widget_show( table );
 
 	label = gtk_label_new( _( "Row:" ) );
+	gtk_grid_attach( GTK_GRID( table ), label, 0, 0, 1, 1 );
 	gtk_widget_show( label );
-	gtk_table_attach( GTK_TABLE( table ), label, 0, 1, 0, 1,
-					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
-					  (GtkAttachOptions) ( 0 ), 0, 0 );
 
 	label = gtk_label_new( _( "Column:" ) );
+	gtk_grid_attach( GTK_GRID( table ), label, 1, 0, 1, 1 );
 	gtk_widget_show( label );
-	gtk_table_attach( GTK_TABLE( table ), label, 1, 2, 0, 1,
-					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
-					  (GtkAttachOptions) ( 0 ), 0, 0 );
 
-	combo = gtk_combo_new();
+	combo = gtk_combo_box_text_new();
+	gtk_grid_attach( GTK_GRID( table ), combo, 0, 1, 1, 1 );
 	gtk_widget_show( combo );
-	gtk_table_attach( GTK_TABLE( table ), combo, 0, 1, 1, 2,
-					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
-					  (GtkAttachOptions) ( 0 ), 0, 0 );
-	gtk_widget_set_usize( combo, 60, -1 );
-	gtk_entry_set_editable( GTK_ENTRY( GTK_COMBO( combo )->entry ), FALSE );
-	gtk_signal_connect( GTK_OBJECT( GTK_COMBO( combo )->entry ), "changed",
-						GTK_SIGNAL_FUNC( OnSelchangeComboColRow ), this );
-	AddDialogData( combo, &m_nRow, DLG_COMBO_INT );
+	g_signal_connect( GTK_COMBO_BOX( combo ), "changed",
+						G_CALLBACK( OnSelchangeComboColRow ), this );
+	AddDialogData( combo, &m_nRow, DLG_COMBO_BOX_INT );
 	m_pRowCombo = combo;
 
-	combo = gtk_combo_new();
+	combo = gtk_combo_box_text_new();
+	gtk_grid_attach( GTK_GRID( table ), combo, 1, 1, 1, 1 );
 	gtk_widget_show( combo );
-	gtk_table_attach( GTK_TABLE( table ), combo, 1, 2, 1, 2,
-					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
-					  (GtkAttachOptions) ( 0 ), 0, 0 );
-	gtk_widget_set_usize( combo, 60, -1 );
-	gtk_entry_set_editable( GTK_ENTRY( GTK_COMBO( combo )->entry ), FALSE );
-	gtk_signal_connect( GTK_OBJECT( GTK_COMBO( combo )->entry ), "changed",
-						GTK_SIGNAL_FUNC( OnSelchangeComboColRow ), this );
-	AddDialogData( combo, &m_nCol, DLG_COMBO_INT );
+	g_signal_connect( GTK_COMBO_BOX( combo ), "changed",
+						G_CALLBACK( OnSelchangeComboColRow ), this );
+	AddDialogData( combo, &m_nCol, DLG_COMBO_BOX_INT );
 	m_pColCombo = combo;
 
-	table = gtk_table_new( 5, 2, FALSE );
-	gtk_widget_show( table );
+	table = gtk_grid_new();
 	gtk_box_pack_start( GTK_BOX( vbox2 ), table, TRUE, TRUE, 0 );
-	gtk_table_set_row_spacings( GTK_TABLE( table ), 5 );
-	gtk_table_set_col_spacings( GTK_TABLE( table ), 5 );
+	gtk_grid_set_row_spacing( GTK_GRID( table ), 5 );
+	gtk_grid_set_column_spacing( GTK_GRID( table ), 5 );
+	gtk_widget_show( table );
 
 	label = gtk_label_new( _( "X:" ) );
+	gtk_grid_attach( GTK_GRID( table ), label, 0, 0, 1, 1 );
+	gtk_widget_set_tooltip_text( label, _( "X-Axis" ) );
 	gtk_widget_show( label );
-	gtk_table_attach( GTK_TABLE( table ), label, 0, 1, 0, 1,
-					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
-					  (GtkAttachOptions) ( 0 ), 0, 0 );
 
 	label = gtk_label_new( _( "Y:" ) );
+	gtk_grid_attach( GTK_GRID( table ), label, 0, 1, 1, 1 );
+	gtk_widget_set_tooltip_text( label, _( "Y-Axis" ) );
 	gtk_widget_show( label );
-	gtk_table_attach( GTK_TABLE( table ), label, 0, 1, 1, 2,
-					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
-					  (GtkAttachOptions) ( 0 ), 0, 0 );
 
 	label = gtk_label_new( _( "Z:" ) );
+	gtk_grid_attach( GTK_GRID( table ), label, 0, 2, 1, 1 );
+	gtk_widget_set_tooltip_text( label, _( "Z-Axis" ) );
 	gtk_widget_show( label );
-	gtk_table_attach( GTK_TABLE( table ), label, 0, 1, 2, 3,
-					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
-					  (GtkAttachOptions) ( 0 ), 0, 0 );
 
 	label = gtk_label_new( _( "S:" ) );
+	gtk_grid_attach( GTK_GRID( table ), label, 0, 3, 1, 1 );
+	gtk_widget_set_tooltip_text( label, _( "S-coordinates correspond to the \"x\" coordinates on the texture itself" ) );
 	gtk_widget_show( label );
-	gtk_table_attach( GTK_TABLE( table ), label, 0, 1, 3, 4,
-					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
-					  (GtkAttachOptions) ( 0 ), 0, 0 );
 
 	label = gtk_label_new( _( "T:" ) );
+	gtk_grid_attach( GTK_GRID( table ), label, 0, 4, 1, 1 );
+	gtk_widget_set_tooltip_text( label, _( "T-coordinates correspond to the \"y\" coordinates on the texture itself. The measurements are in game units." ) );
 	gtk_widget_show( label );
-	gtk_table_attach( GTK_TABLE( table ), label, 0, 1, 4, 5,
-					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
-					  (GtkAttachOptions) ( 0 ), 0, 0 );
 
 	entry = gtk_entry_new();
+	gtk_grid_attach( GTK_GRID( table ), entry, 1, 0, 1, 1 );
 	gtk_widget_show( entry );
-	gtk_table_attach( GTK_TABLE( table ), entry, 1, 2, 0, 1,
-					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
-					  (GtkAttachOptions) ( 0 ), 0, 0 );
 	AddDialogData( entry, &m_fX, DLG_ENTRY_FLOAT );
 
 	entry = gtk_entry_new();
+	gtk_grid_attach( GTK_GRID( table ), entry, 1, 1, 1, 1 );
 	gtk_widget_show( entry );
-	gtk_table_attach( GTK_TABLE( table ), entry, 1, 2, 1, 2,
-					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
-					  (GtkAttachOptions) ( 0 ), 0, 0 );
 	AddDialogData( entry, &m_fY, DLG_ENTRY_FLOAT );
 
 	entry = gtk_entry_new();
+	gtk_grid_attach( GTK_GRID( table ), entry, 1, 2, 1, 1 );
 	gtk_widget_show( entry );
-	gtk_table_attach( GTK_TABLE( table ), entry, 1, 2, 2, 3,
-					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
-					  (GtkAttachOptions) ( 0 ), 0, 0 );
 	AddDialogData( entry, &m_fZ, DLG_ENTRY_FLOAT );
 
 	entry = gtk_entry_new();
+	gtk_grid_attach( GTK_GRID( table ), entry, 1, 3, 1, 1 );
 	gtk_widget_show( entry );
-	gtk_table_attach( GTK_TABLE( table ), entry, 1, 2, 3, 4,
-					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
-					  (GtkAttachOptions) ( 0 ), 0, 0 );
 	AddDialogData( entry, &m_fS, DLG_ENTRY_FLOAT );
 
 	entry = gtk_entry_new();
+	gtk_grid_attach( GTK_GRID( table ), entry, 1, 4, 1, 1 );
 	gtk_widget_show( entry );
-	gtk_table_attach( GTK_TABLE( table ), entry, 1, 2, 4, 5,
-					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
-					  (GtkAttachOptions) ( 0 ), 0, 0 );
 	AddDialogData( entry, &m_fT, DLG_ENTRY_FLOAT );
 
 	frame = gtk_frame_new( _( "Texturing" ) );
 	gtk_widget_show( frame );
 	gtk_box_pack_start( GTK_BOX( hbox ), frame, TRUE, TRUE, 0 );
 
-	vbox2 = gtk_vbox_new( FALSE, 5 );
-	gtk_widget_show( vbox2 );
+	vbox2 = gtk_box_new( GTK_ORIENTATION_VERTICAL, 5 );
 	gtk_container_add( GTK_CONTAINER( frame ), vbox2 );
 	gtk_container_set_border_width( GTK_CONTAINER( vbox2 ), 5 );
+	gtk_widget_show( vbox2 );
 
 	label = gtk_label_new( _( "Name:" ) );
-	gtk_widget_show( label );
 	gtk_box_pack_start( GTK_BOX( vbox2 ), label, TRUE, TRUE, 0 );
-	gtk_label_set_justify( GTK_LABEL( label ), GTK_JUSTIFY_LEFT );
-	gtk_misc_set_alignment( GTK_MISC( label ), 0, 0.5 );
+	gtk_widget_set_halign( label, GTK_ALIGN_START );
+	gtk_widget_show( label );
 
 	entry = gtk_entry_new();
 //  gtk_entry_set_editable (GTK_ENTRY (entry), false);
@@ -456,53 +428,40 @@ void PatchDialog::BuildDialog(){
 	gtk_box_pack_start( GTK_BOX( vbox2 ), entry, TRUE, TRUE, 0 );
 	AddDialogData( entry, &m_strName, DLG_ENTRY_TEXT );
 
-	table = gtk_table_new( 5, 3, FALSE );
-	gtk_widget_show( table );
+	table = gtk_grid_new();
 	gtk_box_pack_start( GTK_BOX( vbox2 ), table, TRUE, TRUE, 0 );
-	gtk_table_set_row_spacings( GTK_TABLE( table ), 5 );
-	gtk_table_set_col_spacings( GTK_TABLE( table ), 5 );
+	gtk_grid_set_row_spacing( GTK_GRID( table ), 5 );
+	gtk_grid_set_column_spacing( GTK_GRID( table ), 5 );
+	gtk_widget_show( table );
 
 	label = gtk_label_new( _( "Horizontal Shift Step" ) );
+	gtk_grid_attach( GTK_GRID( table ), label, 2, 0, 1, 1 );
+	gtk_widget_set_halign( label, GTK_ALIGN_START );
 	gtk_widget_show( label );
-	gtk_table_attach( GTK_TABLE( table ), label, 2, 3, 0, 1,
-					  (GtkAttachOptions) ( GTK_FILL ),
-					  (GtkAttachOptions) ( 0 ), 0, 0 );
-	gtk_misc_set_alignment( GTK_MISC( label ), 0, 0.5 );
 
 	label = gtk_label_new( _( "Vertical Shift Step" ) );
+	gtk_grid_attach( GTK_GRID( table ), label, 2, 1, 1, 1 );
+	gtk_widget_set_halign( label, GTK_ALIGN_START );
 	gtk_widget_show( label );
-	gtk_table_attach( GTK_TABLE( table ), label, 2, 3, 1, 2,
-					  (GtkAttachOptions) ( GTK_FILL ),
-					  (GtkAttachOptions) ( 0 ), 0, 0 );
-	gtk_misc_set_alignment( GTK_MISC( label ), 0, 0.5 );
 
 	label = gtk_label_new( _( "Horizontal Stretch Step" ) );
+	gtk_grid_attach( GTK_GRID( table ), label, 2, 2, 1, 1 );
+	gtk_widget_set_halign( label, GTK_ALIGN_START );
 	gtk_widget_show( label );
-	gtk_table_attach( GTK_TABLE( table ), label, 2, 3, 2, 3,
-					  (GtkAttachOptions) ( GTK_FILL ),
-					  (GtkAttachOptions) ( 0 ), 0, 0 );
-	gtk_misc_set_alignment( GTK_MISC( label ), 0, 0.5 );
 
 	label = gtk_label_new( _( "Vertical Stretch Step" ) );
+	gtk_grid_attach( GTK_GRID( table ), label, 2, 3, 1, 1 );
+	gtk_widget_set_halign( label, GTK_ALIGN_START );
 	gtk_widget_show( label );
-	gtk_table_attach( GTK_TABLE( table ), label, 2, 3, 3, 4,
-					  (GtkAttachOptions) ( GTK_FILL ),
-					  (GtkAttachOptions) ( 0 ), 0, 0 );
-	gtk_misc_set_alignment( GTK_MISC( label ), 0, 0.5 );
 
 	label = gtk_label_new( _( "Rotate Step" ) );
+	gtk_grid_attach( GTK_GRID( table ), label, 2, 4, 1, 1 );
+	gtk_widget_set_halign( label, GTK_ALIGN_START );
 	gtk_widget_show( label );
-	gtk_table_attach( GTK_TABLE( table ), label, 2, 3, 4, 5,
-					  (GtkAttachOptions) ( GTK_FILL ),
-					  (GtkAttachOptions) ( 0 ), 0, 0 );
-	gtk_misc_set_alignment( GTK_MISC( label ), 0, 0.5 );
 
 	entry = gtk_entry_new();
+	gtk_grid_attach( GTK_GRID( table ), entry, 0, 0, 1, 1 );
 	gtk_widget_show( entry );
-	gtk_table_attach( GTK_TABLE( table ), entry, 0, 1, 0, 1,
-					  (GtkAttachOptions) ( GTK_FILL ),
-					  (GtkAttachOptions) ( 0 ), 0, 0 );
-	gtk_widget_set_usize( entry, 50, -2 );
 	g_object_set_data( G_OBJECT( m_pWidget ), "hshift_entry", entry );
 	// we fill in this data, if no patch is selected the widgets are unmodified when the inspector is raised
 	// so we need to have at least one initialisation somewhere
@@ -510,139 +469,117 @@ void PatchDialog::BuildDialog(){
 	gtk_entry_set_text( GTK_ENTRY( entry ), buf );
 
 	adj = gtk_adjustment_new( 0, -8192, 8192, 1, 1, 0 );
-	gtk_signal_connect( adj, "value_changed", GTK_SIGNAL_FUNC( OnSpinChanged ), entry );
+	g_signal_connect( adj, "value_changed", G_CALLBACK( OnSpinChanged ), entry );
 	g_object_set_data( G_OBJECT( m_pWidget ), "hshift_adj", adj );
 
 	spin = gtk_spin_button_new( GTK_ADJUSTMENT( adj ), 1, 0 );
+	gtk_spin_button_set_numeric( GTK_SPIN_BUTTON( spin ), TRUE );
+	gtk_grid_attach( GTK_GRID( table ), spin, 1, 0, 1, 1 );
 	gtk_widget_show( spin );
-	gtk_table_attach( GTK_TABLE( table ), spin, 1, 2, 0, 1,
-					  (GtkAttachOptions) ( 0 ),
-					  (GtkAttachOptions) ( 0 ), 0, 0 );
-	gtk_widget_set_usize( spin, 10, -2 );
 
 	entry = gtk_entry_new();
+	gtk_grid_attach( GTK_GRID( table ), entry, 0, 1, 1, 1 );
 	gtk_widget_show( entry );
-	gtk_table_attach( GTK_TABLE( table ), entry, 0, 1, 1, 2,
-					  (GtkAttachOptions) ( GTK_FILL ),
-					  (GtkAttachOptions) ( 0 ), 0, 0 );
-	gtk_widget_set_usize( entry, 50, -2 );
 	sprintf( buf, "%g", l_pPIIncrement->shift[1] );
 	gtk_entry_set_text( GTK_ENTRY( entry ), buf );
 
 	adj = gtk_adjustment_new( 0, -8192, 8192, 1, 1, 0 );
-	gtk_signal_connect( adj, "value_changed", GTK_SIGNAL_FUNC( OnSpinChanged ), entry );
+	g_signal_connect( adj, "value_changed", G_CALLBACK( OnSpinChanged ), entry );
 	g_object_set_data( G_OBJECT( m_pWidget ), "vshift_adj", adj );
 
 	spin = gtk_spin_button_new( GTK_ADJUSTMENT( adj ), 1, 0 );
+	gtk_spin_button_set_numeric( GTK_SPIN_BUTTON( spin ), TRUE );
+	gtk_grid_attach( GTK_GRID( table ), spin, 1, 1, 1, 1 );
 	gtk_widget_show( spin );
-	gtk_table_attach( GTK_TABLE( table ), spin, 1, 2, 1, 2,
-					  (GtkAttachOptions) ( 0 ),
-					  (GtkAttachOptions) ( 0 ), 0, 0 );
-	gtk_widget_set_usize( spin, 10, -2 );
 
 	entry = gtk_entry_new();
+	gtk_grid_attach( GTK_GRID( table ), entry, 0, 2, 1, 1 );
 	gtk_widget_show( entry );
-	gtk_table_attach( GTK_TABLE( table ), entry, 0, 1, 2, 3,
-					  (GtkAttachOptions) ( GTK_FILL ),
-					  (GtkAttachOptions) ( 0 ), 0, 0 );
-	gtk_widget_set_usize( entry, 50, -2 );
 	sprintf( buf, "%g", l_pPIIncrement->scale[0] );
 	gtk_entry_set_text( GTK_ENTRY( entry ), buf );
 
 	adj = gtk_adjustment_new( 0, -1000, 1000, 1, 1, 0 );
-	gtk_signal_connect( adj, "value_changed", GTK_SIGNAL_FUNC( OnSpinChanged ), entry );
+	g_signal_connect( adj, "value_changed", G_CALLBACK( OnSpinChanged ), entry );
 	g_object_set_data( G_OBJECT( m_pWidget ), "hscale_adj", adj );
 
 	spin = gtk_spin_button_new( GTK_ADJUSTMENT( adj ), 1, 0 );
+	gtk_spin_button_set_numeric( GTK_SPIN_BUTTON( spin ), TRUE );
+	gtk_grid_attach( GTK_GRID( table ), spin, 1, 2, 1, 1 );
 	gtk_widget_show( spin );
-	gtk_table_attach( GTK_TABLE( table ), spin, 1, 2, 2, 3,
-					  (GtkAttachOptions) ( 0 ),
-					  (GtkAttachOptions) ( 0 ), 0, 0 );
-	gtk_widget_set_usize( spin, 10, -2 );
 
 	entry = gtk_entry_new();
+	gtk_grid_attach( GTK_GRID( table ), entry, 0, 3, 1, 1 );
 	gtk_widget_show( entry );
-	gtk_table_attach( GTK_TABLE( table ), entry, 0, 1, 3, 4,
-					  (GtkAttachOptions) ( GTK_FILL ),
-					  (GtkAttachOptions) ( 0 ), 0, 0 );
-	gtk_widget_set_usize( entry, 50, -2 );
 	sprintf( buf, "%g", l_pPIIncrement->scale[1] );
 	gtk_entry_set_text( GTK_ENTRY( entry ), buf );
 
 	adj = gtk_adjustment_new( 0, -1000, 1000, 1, 1, 0 );
-	gtk_signal_connect( adj, "value_changed", GTK_SIGNAL_FUNC( OnSpinChanged ), entry );
+	g_signal_connect( adj, "value_changed", G_CALLBACK( OnSpinChanged ), entry );
 	g_object_set_data( G_OBJECT( m_pWidget ), "vscale_adj", adj );
 
 	spin = gtk_spin_button_new( GTK_ADJUSTMENT( adj ), 1, 0 );
+	gtk_spin_button_set_numeric( GTK_SPIN_BUTTON( spin ), TRUE );
+	gtk_grid_attach( GTK_GRID( table ), spin, 1, 3, 1, 1 );
 	gtk_widget_show( spin );
-	gtk_table_attach( GTK_TABLE( table ), spin, 1, 2, 3, 4,
-					  (GtkAttachOptions) ( 0 ),
-					  (GtkAttachOptions) ( 0 ), 0, 0 );
-	gtk_widget_set_usize( spin, 10, -2 );
 
 	entry = gtk_entry_new();
+	gtk_grid_attach( GTK_GRID( table ), entry, 0, 4, 1, 1 );
 	gtk_widget_show( entry );
-	gtk_table_attach( GTK_TABLE( table ), entry, 0, 1, 4, 5,
-					  (GtkAttachOptions) ( GTK_FILL ),
-					  (GtkAttachOptions) ( 0 ), 0, 0 );
-	gtk_widget_set_usize( entry, 50, -2 );
 	sprintf( buf, "%g", l_pPIIncrement->rotate );
 	gtk_entry_set_text( GTK_ENTRY( entry ), buf );
 
 	adj = gtk_adjustment_new( 0, -1000, 1000, 1, 1, 0 ); // NOTE: Arnout - this really should be 360 but can't change it anymore as it could break existing maps
-	gtk_signal_connect( adj, "value_changed", GTK_SIGNAL_FUNC( OnSpinChanged ), entry );
+	g_signal_connect( adj, "value_changed", G_CALLBACK( OnSpinChanged ), entry );
 	g_object_set_data( G_OBJECT( m_pWidget ), "rotate_adj", adj );
 
 	spin = gtk_spin_button_new( GTK_ADJUSTMENT( adj ), 1, 0 );
+	gtk_spin_button_set_numeric( GTK_SPIN_BUTTON( spin ), TRUE );
+	gtk_grid_attach( GTK_GRID( table ), spin, 1, 4, 1, 1 );
 	gtk_widget_show( spin );
-	gtk_table_attach( GTK_TABLE( table ), spin, 1, 2, 4, 5,
-					  (GtkAttachOptions) ( 0 ),
-					  (GtkAttachOptions) ( 0 ), 0, 0 );
-	gtk_widget_set_usize( spin, 10, -2 );
 
-	hbox2 = gtk_hbox_new( TRUE, 5 );
+	hbox2 = gtk_box_new( GTK_ORIENTATION_HORIZONTAL, 5 );
 	gtk_widget_show( hbox2 );
 	gtk_box_pack_start( GTK_BOX( vbox2 ), hbox2, TRUE, FALSE, 0 );
 
 	button = gtk_button_new_with_label( _( "CAP" ) );
 	gtk_widget_show( button );
 	gtk_box_pack_end( GTK_BOX( hbox2 ), button, TRUE, FALSE, 0 );
-	gtk_signal_connect( GTK_OBJECT( button ), "clicked", GTK_SIGNAL_FUNC( OnBtnPatchdetails ), NULL );
-	gtk_widget_set_usize( button, 60, -1 );
+	g_signal_connect( button, "clicked", G_CALLBACK( OnBtnPatchdetails ), NULL );
+	gtk_widget_set_size_request( button, 60, -1 );
 
 	button = gtk_button_new_with_label( _( "Set..." ) );
 	gtk_widget_show( button );
 	gtk_box_pack_end( GTK_BOX( hbox2 ), button, TRUE, FALSE, 0 );
-	gtk_signal_connect( GTK_OBJECT( button ), "clicked", GTK_SIGNAL_FUNC( OnBtnPatchreset ), NULL );
-	gtk_widget_set_usize( button, 60, -1 );
+	g_signal_connect( button, "clicked", G_CALLBACK( OnBtnPatchreset ), NULL );
+	gtk_widget_set_size_request( button, 60, -1 );
 
 	button = gtk_button_new_with_label( _( "Natural" ) );
 	gtk_widget_show( button );
 	gtk_box_pack_end( GTK_BOX( hbox2 ), button, TRUE, FALSE, 0 );
-	gtk_signal_connect( GTK_OBJECT( button ), "clicked", GTK_SIGNAL_FUNC( OnBtnPatchnatural ), NULL );
-	gtk_widget_set_usize( button, 60, -1 );
+	g_signal_connect( button, "clicked", G_CALLBACK( OnBtnPatchnatural ), NULL );
+	gtk_widget_set_size_request( button, 60, -1 );
 
 	button = gtk_button_new_with_label( _( "Fit" ) );
 	gtk_widget_show( button );
 	gtk_box_pack_end( GTK_BOX( hbox2 ), button, TRUE, FALSE, 0 );
-	gtk_signal_connect( GTK_OBJECT( button ), "clicked", GTK_SIGNAL_FUNC( OnBtnPatchfit ), NULL );
-	gtk_widget_set_usize( button, 60, -1 );
+	g_signal_connect( button, "clicked", G_CALLBACK( OnBtnPatchfit ), NULL );
+	gtk_widget_set_size_request( button, 60, -1 );
 
-	hbox = gtk_hbox_new( FALSE, 5 );
+	hbox = gtk_box_new( GTK_ORIENTATION_HORIZONTAL, 5 );
 	gtk_widget_show( hbox );
 	gtk_box_pack_start( GTK_BOX( vbox ), hbox, TRUE, FALSE, 0 );
 
 	button = gtk_button_new_with_label( _( "Done" ) );
 	gtk_widget_show( button );
 	gtk_box_pack_end( GTK_BOX( hbox ), button, FALSE, FALSE, 0 );
-	gtk_signal_connect( GTK_OBJECT( button ), "clicked", GTK_SIGNAL_FUNC( OnDone ), NULL );
-	gtk_widget_set_usize( button, 60, -1 );
+	g_signal_connect( button, "clicked", G_CALLBACK( OnDone ), NULL );
+	gtk_widget_set_size_request( button, 60, -1 );
 
 	button = gtk_button_new_with_label( _( "Apply" ) );
 	gtk_widget_show( button );
 	gtk_box_pack_end( GTK_BOX( hbox ), button, FALSE, FALSE, 0 );
-	gtk_signal_connect( GTK_OBJECT( button ), "clicked", GTK_SIGNAL_FUNC( OnApply ), NULL );
-	gtk_widget_set_usize( button, 60, -1 );
+	g_signal_connect( button, "clicked", G_CALLBACK( OnApply ), NULL );
+	gtk_widget_set_size_request( button, 60, -1 );
 }
 
 // sync the dialog our internal data structures
@@ -663,6 +600,7 @@ void PatchDialog::GetPatchInfo(){
 		m_strName = m_Patch->pShader->getName();
 
 		GList *combo_list = NULL;
+		GList *lst;
 		int i;
 
 		// fill in the numbers for Row / Col selection
@@ -670,8 +608,11 @@ void PatchDialog::GetPatchInfo(){
 
 		for ( i = 0; i < m_Patch->height; i++ )
 			combo_list = g_list_append( combo_list, g_strdup_printf( "%i", i ) );  // NOTE: leaving the g_strdup cause we free with g_free later on
-		gtk_combo_set_popdown_strings( GTK_COMBO( m_pRowCombo ), combo_list );
-		gtk_entry_set_text( GTK_ENTRY( GTK_COMBO( m_pRowCombo )->entry ), "0" );
+		for( lst = combo_list; lst != NULL; lst = g_list_next( lst ) )
+		{
+			gtk_combo_box_text_append( GTK_COMBO_BOX_TEXT( m_pRowCombo ), (const gchar *)lst->data, (const gchar *)lst->data );
+		}
+		gtk_combo_box_set_active_id( GTK_COMBO_BOX( GTK_COMBO_BOX_TEXT( m_pRowCombo ) ), "0" );
 
 		while ( combo_list )
 		{
@@ -681,8 +622,11 @@ void PatchDialog::GetPatchInfo(){
 
 		for ( i = 0; i < m_Patch->width; i++ )
 			combo_list = g_list_append( combo_list, g_strdup_printf( "%i", i ) );
-		gtk_combo_set_popdown_strings( GTK_COMBO( m_pColCombo ), combo_list );
-		gtk_entry_set_text( GTK_ENTRY( GTK_COMBO( m_pColCombo )->entry ), "0" );
+		for( lst = combo_list; lst != NULL; lst = g_list_next( lst ) )
+		{
+			gtk_combo_box_text_append( GTK_COMBO_BOX_TEXT( m_pColCombo ), (const gchar *)lst->data, (const gchar *)lst->data );
+		}
+		gtk_combo_box_set_active_id( GTK_COMBO_BOX( GTK_COMBO_BOX_TEXT( m_pColCombo ) ), "0" );
 
 		while ( combo_list )
 		{

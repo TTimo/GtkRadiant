@@ -21,6 +21,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "gensurf.h"
+#include <glib/gi18n.h>
 
 #undef ISOMETRIC
 
@@ -101,7 +102,7 @@ void ShowPreview(){
 }
 
 static void draw_preview(){
-	int width = g_pPreviewWidget->allocation.width, height = g_pPreviewWidget->allocation.height;
+	int width = gtk_widget_get_allocated_width( g_pPreviewWidget ), height = gtk_widget_get_allocated_height( g_pPreviewWidget );
 
 	g_GLTable.m_pfn_qglClearColor( 0, 0, 0, 1 );
 	g_GLTable.m_pfn_qglViewport( 0, 0, width, height );
@@ -162,10 +163,7 @@ static void draw_preview(){
 	}
 }
 
-static gint expose( GtkWidget *widget, GdkEventExpose *event, gpointer data ){
-	if ( event->count > 0 ) {
-		return TRUE;
-	}
+static gboolean expose( GtkWidget *widget, cairo_t *cr, gpointer data ){
 
 	if ( !g_UIGtkTable.m_pfn_glwidget_make_current( g_pPreviewWidget ) ) {
 		g_FuncTable.m_pfnSysPrintf( "GtkGenSurf: glMakeCurrent failed\n" );
@@ -181,7 +179,7 @@ static gint expose( GtkWidget *widget, GdkEventExpose *event, gpointer data ){
 }
 
 static void button_press( GtkWidget *widget, GdkEventButton *event, gpointer data ){
-	POINT pt = { (long)event->x, widget->allocation.height - (long)event->y };
+	POINT pt = { (long)event->x, gtk_widget_get_allocated_height( widget ) - (long)event->y };
 	bool Selected;
 	double x,y;
 	int i, j, k, ks;
@@ -290,7 +288,7 @@ static void button_press( GtkWidget *widget, GdkEventButton *event, gpointer dat
 }
 
 static void motion( GtkWidget *widget, GdkEventMotion *event, gpointer data ){
-	POINT pt = { (long)event->x, widget->allocation.height - (long)event->y };
+	POINT pt = { (long)event->x, gtk_widget_get_allocated_height( widget ) - (long)event->y };
 
 	if ( !VertexMode ) {
 		return;
@@ -307,9 +305,13 @@ static void motion( GtkWidget *widget, GdkEventMotion *event, gpointer data ){
 	g_GLTable.m_pfn_qglClear( GL_COLOR_BUFFER_BIT );
 
 	if ( PtInRect( &rcGrid,pt ) ) {
-		GdkCursor *cursor = gdk_cursor_new( GDK_CROSS );
-		gdk_window_set_cursor( g_pWndPreview->window, cursor );
-		gdk_cursor_unref( cursor );
+		GdkDisplay *display;
+		GdkCursor *cursor;
+
+		display = gdk_display_get_default();
+		cursor = gdk_cursor_new_for_display( display, GDK_CROSS );
+
+		gdk_window_set_cursor( gtk_widget_get_window( g_pWndPreview ), cursor );
 
 		char Text[32];
 		int x, y;
@@ -334,7 +336,7 @@ static void motion( GtkWidget *widget, GdkEventMotion *event, gpointer data ){
 	}
 	else
 	{
-		gdk_window_set_cursor( g_pWndPreview->window, NULL );
+		gdk_window_set_cursor( gtk_widget_get_window( g_pWndPreview ), NULL );
 	}
 
 	g_UIGtkTable.m_pfn_glwidget_swap_buffers( g_pPreviewWidget );
@@ -358,13 +360,13 @@ static gint doublevariable_spinfocusout( GtkWidget* widget, GdkEventFocus* event
 }
 
 static void preview_spin( GtkAdjustment *adj, double *data ){
-	*data = DegreesToRadians( adj->value );
+	*data = DegreesToRadians( gtk_adjustment_get_value( adj ) );
 	UpdatePreview( false );
 }
 
 void CreateViewWindow(){
 	GtkWidget *dlg, *vbox, *hbox, *label, *spin, *frame;
-	GtkObject *adj;
+	GtkAdjustment *adj;
 
 #ifndef ISOMETRIC
 	elevation = PI / 6.;
@@ -372,63 +374,69 @@ void CreateViewWindow(){
 #endif
 
 	g_pWndPreview = dlg = gtk_window_new( GTK_WINDOW_TOPLEVEL );
-	gtk_window_set_title( GTK_WINDOW( dlg ), "GtkGenSurf Preview" );
-	gtk_signal_connect( GTK_OBJECT( dlg ), "delete_event", GTK_SIGNAL_FUNC( preview_close ), NULL );
-	gtk_signal_connect( GTK_OBJECT( dlg ), "destroy", GTK_SIGNAL_FUNC( gtk_widget_destroy ), NULL );
+	gtk_window_set_title( GTK_WINDOW( dlg ), _( "GtkGenSurf Preview" ) );
+	g_signal_connect( dlg, "delete_event", G_CALLBACK( preview_close ), NULL );
+	g_signal_connect( dlg, "destroy", G_CALLBACK( gtk_widget_destroy ), NULL );
 	gtk_window_set_transient_for( GTK_WINDOW( dlg ), GTK_WINDOW( g_pWnd ) );
 	gtk_window_set_default_size( GTK_WINDOW( dlg ), 300, 400 );
 
-	vbox = gtk_vbox_new( FALSE, 5 );
-	gtk_widget_show( vbox );
+	vbox = gtk_box_new( GTK_ORIENTATION_VERTICAL, 5 );
 	gtk_container_add( GTK_CONTAINER( dlg ), vbox );
+	gtk_widget_show( vbox );
 
 #ifndef ISOMETRIC
-	hbox = gtk_hbox_new( TRUE, 5 );
-	gtk_widget_show( hbox );
+	hbox = gtk_box_new( GTK_ORIENTATION_HORIZONTAL, 5 );
 	gtk_box_pack_start( GTK_BOX( vbox ), hbox, FALSE, TRUE, 0 );
 	gtk_container_set_border_width( GTK_CONTAINER( hbox ), 3 );
+	gtk_widget_show( hbox );
 
 	label = gtk_label_new( "Elevation" );
-	gtk_widget_show( label );
-	gtk_misc_set_alignment( GTK_MISC( label ), 1, 0.5 );
+	g_object_set( label, "xalign", 1.0, NULL );
+	gtk_widget_set_halign( label, GTK_ALIGN_END );
 	gtk_box_pack_start( GTK_BOX( hbox ), label, FALSE, TRUE, 0 );
+	gtk_widget_show( label );
 
 	adj = gtk_adjustment_new( 30, -90, 90, 1, 10, 0 );
-	gtk_signal_connect( adj, "value_changed", GTK_SIGNAL_FUNC( preview_spin ), &elevation );
+	g_signal_connect( adj, "value_changed", G_CALLBACK( preview_spin ), &elevation );
 	spin = gtk_spin_button_new( GTK_ADJUSTMENT( adj ), 1, 0 );
-	gtk_widget_show( spin );
+	g_object_set( spin, "xalign", 1.0, NULL );
+	gtk_spin_button_set_numeric( GTK_SPIN_BUTTON( spin ), TRUE );
 	gtk_box_pack_start( GTK_BOX( hbox ), spin, FALSE, TRUE, 0 );
-	g_signal_connect( G_OBJECT( spin ), "focus_out_event", G_CALLBACK( doublevariable_spinfocusout ), &elevation );
+	gtk_widget_show( spin );
+	g_signal_connect( spin, "focus_out_event", G_CALLBACK( doublevariable_spinfocusout ), &elevation );
 
 	adj = gtk_adjustment_new( 30, 0, 359, 1, 10, 0 );
-	gtk_signal_connect( adj, "value_changed", GTK_SIGNAL_FUNC( preview_spin ), &azimuth );
+	g_signal_connect( adj, "value_changed", G_CALLBACK( preview_spin ), &azimuth );
 	spin = gtk_spin_button_new( GTK_ADJUSTMENT( adj ), 1, 0 );
-	gtk_widget_show( spin );
+	g_object_set( spin, "xalign", 1.0, NULL );
 	gtk_spin_button_set_wrap( GTK_SPIN_BUTTON( spin ), TRUE );
+	gtk_spin_button_set_numeric( GTK_SPIN_BUTTON( spin ), TRUE );
 	gtk_box_pack_end( GTK_BOX( hbox ), spin, FALSE, TRUE, 0 );
+	gtk_widget_show( spin );
 
 	label = gtk_label_new( "Azimuth" );
-	gtk_widget_show( label );
-	gtk_misc_set_alignment( GTK_MISC( label ), 1, 0.5 );
+	g_object_set( label, "xalign", 1.0, NULL );
+	gtk_widget_set_halign( label, GTK_ALIGN_END );
 	gtk_box_pack_end( GTK_BOX( hbox ), label, FALSE, TRUE, 0 );
-	g_signal_connect( G_OBJECT( spin ), "focus_out_event", G_CALLBACK( doublevariable_spinfocusout ), &azimuth );
+	gtk_widget_show( label );
+	g_signal_connect( spin, "focus_out_event", G_CALLBACK( doublevariable_spinfocusout ), &azimuth );
 #endif
 
 	frame = gtk_frame_new( NULL );
-	gtk_widget_show( frame );
 	gtk_frame_set_shadow_type( GTK_FRAME( frame ), GTK_SHADOW_IN );
 	gtk_box_pack_start( GTK_BOX( vbox ), frame, TRUE, TRUE, 0 );
+	gtk_widget_show( frame );
 
 	g_pPreviewWidget = g_UIGtkTable.m_pfn_glwidget_new( FALSE, NULL );
 
 	gtk_widget_set_events( g_pPreviewWidget, GDK_EXPOSURE_MASK | GDK_BUTTON_PRESS_MASK | GDK_POINTER_MOTION_MASK );
-	gtk_signal_connect( GTK_OBJECT( g_pPreviewWidget ), "expose_event", GTK_SIGNAL_FUNC( expose ), NULL );
-	gtk_signal_connect( GTK_OBJECT( g_pPreviewWidget ), "motion_notify_event", GTK_SIGNAL_FUNC( motion ), NULL );
-	gtk_signal_connect( GTK_OBJECT( g_pPreviewWidget ), "button_press_event",
-						GTK_SIGNAL_FUNC( button_press ), NULL );
+	g_signal_connect( g_pPreviewWidget, "draw", G_CALLBACK( expose ), NULL );
+	g_signal_connect( g_pPreviewWidget, "motion_notify_event", G_CALLBACK( motion ), NULL );
+	g_signal_connect( g_pPreviewWidget, "button_press_event",
+						G_CALLBACK( button_press ), NULL );
 
-	gtk_widget_show( g_pPreviewWidget );
 	gtk_container_add( GTK_CONTAINER( frame ), g_pPreviewWidget );
+	gtk_widget_show( g_pPreviewWidget );
 
 	if ( Preview ) {
 		gtk_widget_show( g_pWndPreview );

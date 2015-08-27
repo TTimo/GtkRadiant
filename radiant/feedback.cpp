@@ -328,14 +328,14 @@ void CDbgDlg::BuildDialog(){
 		{
 			GtkTreeSelection* selection = gtk_tree_view_get_selection( GTK_TREE_VIEW( view ) );
 			gtk_tree_selection_set_mode( selection, GTK_SELECTION_BROWSE );
-			g_signal_connect( G_OBJECT( selection ), "changed", G_CALLBACK( feedback_selection_changed ), NULL );
+			g_signal_connect( selection, "changed", G_CALLBACK( feedback_selection_changed ), NULL );
 		}
-
-		gtk_widget_show( view );
 
 		gtk_container_add( GTK_CONTAINER( scr ), view );
 
 		g_object_unref( G_OBJECT( store ) );
+
+		gtk_widget_show( view );
 
 		m_clist = store;
 	}

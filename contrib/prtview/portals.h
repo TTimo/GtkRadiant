@@ -20,6 +20,8 @@
 #ifndef _PORTALS_H_
 #define _PORTALS_H_
 
+#include <gdk/gdk.h>
+
 class CBspPoint {
 public:
 float p[3];
@@ -70,10 +72,10 @@ int lines;
 qboolean show_3d;
 qboolean aa_3d;
 qboolean fog;
-COLORREF color_3d;
+GdkRGBA color_3d;
 float width_3d;      // in 8'ths
 float fp_color_3d[4];
-COLORREF color_fog;
+GdkRGBA color_fog;
 float fp_color_fog[4];
 float trans_3d;
 float clip_range;
@@ -81,7 +83,7 @@ qboolean clip;
 
 qboolean show_2d;
 qboolean aa_2d;
-COLORREF color_2d;
+GdkRGBA color_2d;
 float width_2d;      // in 8'ths
 float fp_color_2d[4];
 

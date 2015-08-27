@@ -253,6 +253,7 @@ static void PopulateTextureComboList(){
 	texdef_to_face_t* temp_texdef_face_list;
 	char blank[1];
 	GList *items = NULL;
+	GList *lst;
 	int num_of_list_items = 0;
 
 	blank[0] = 0;
@@ -290,7 +291,10 @@ static void PopulateTextureComboList(){
 		strcpy( old_texture_entry, blank );
 	}
 
-	gtk_combo_set_popdown_strings( GTK_COMBO( texture_combo ), items );
+	for( lst = items; lst != NULL; lst = g_list_next( lst ) )
+	{
+		gtk_combo_box_text_append( GTK_COMBO_BOX_TEXT( texture_combo ), (const char *)lst->data, (const char *)lst->data );
+	}
 	g_list_free( items );
 
 }
@@ -325,7 +329,7 @@ static gint delete_event_callback( GtkWidget *widget, GdkEvent* event, gpointer 
 }
 
 static gint surface_inspector_key_press_event( GtkWidget *widget, GdkEventKey* event, gpointer data ) {
-	if ( event->keyval == GDK_Escape ) {
+	if ( event->keyval == GDK_KEY_Escape ) {
 		HideDlg();
 		return TRUE;
 	}
@@ -538,7 +542,7 @@ void FitAll(){
 GtkWidget* create_SurfaceInspector( void ){
 
 	GtkWidget *label;
-	GtkObject *adjustment;
+	GtkAdjustment *adjustment;
 
 	GtkWidget *table1;
 	GtkWidget *table2;
@@ -555,11 +559,11 @@ GtkWidget* create_SurfaceInspector( void ){
 
 	SetWinPos_from_Prefs( SurfaceInspector );
 
-	vbox1 = gtk_vbox_new( FALSE, 5 );
+	vbox1 = gtk_box_new( GTK_ORIENTATION_VERTICAL, 5 );
 	gtk_widget_show( vbox1 );
 	gtk_container_add( GTK_CONTAINER( SurfaceInspector ), vbox1 );
 
-	hbox1 = gtk_hbox_new( FALSE, 5 );
+	hbox1 = gtk_box_new( GTK_ORIENTATION_HORIZONTAL, 5 );
 	gtk_widget_show( hbox1 );
 	gtk_container_add( GTK_CONTAINER( vbox1 ), hbox1 );
 	gtk_container_set_border_width( GTK_CONTAINER( hbox1 ), 4 );
@@ -569,14 +573,14 @@ GtkWidget* create_SurfaceInspector( void ){
 	gtk_box_pack_start( GTK_BOX( hbox1 ), label, FALSE, FALSE, 0 );
 	gtk_misc_set_alignment( GTK_MISC( label ), 1, 0.5 );
 
-	texture_combo = gtk_combo_new();
-	g_object_set_data( G_OBJECT( GTK_COMBO( texture_combo )->popwin ),
+	texture_combo = gtk_combo_box_text_new();
+	g_object_set_data( G_OBJECT( gtk_combo_box_get_popup_accessible( GTK_COMBO_BOX( GTK_COMBO_BOX_TEXT(texture_combo ) ) ) ),
 					   "KeepMeAround", texture_combo );
-	gtk_combo_disable_activate( (GtkCombo*) texture_combo );
+	//gtk_combo_disable_activate( GTK_COMBO_BOX( GTK_COMBO_BOX_TEXT( texture_combo ) );
 	gtk_widget_show( texture_combo );
 	gtk_box_pack_start( GTK_BOX( hbox1 ), texture_combo, TRUE, TRUE, 0 );
 
-	texture_combo_entry = GTK_COMBO( texture_combo )->entry;
+	texture_combo_entry = gtk_bin_get_child( GTK_BIN( texture_combo ) );
 	gtk_widget_show( texture_combo_entry );
 	gtk_entry_set_max_length( GTK_ENTRY( texture_combo_entry ), 1024 );
 
@@ -864,7 +868,7 @@ GtkWidget* create_SurfaceInspector( void ){
 gboolean on_texture_combo_entry_key_press_event( GtkWidget *widget, GdkEventKey *event,
 												 gpointer user_data ){
 	// Have Tab activate selection as well as Return
-	if ( event->keyval == GDK_Tab ) {
+	if ( event->keyval == GDK_KEY_Tab ) {
 		g_signal_emit_by_name( texture_combo_entry, "activate" );
 	}
 
@@ -1035,7 +1039,7 @@ static void on_hshift_step_spinbutton_value_changed( GtkSpinButton *spinbutton, 
 
 	val = gtk_spin_button_get_value( GTK_SPIN_BUTTON( hshift_step_spinbutton ) ) ;
 	adjust = gtk_spin_button_get_adjustment( GTK_SPIN_BUTTON( hshift_value_spinbutton ) );
-	adjust->step_increment = val;
+	gtk_adjustment_set_step_increment( adjust, val );
 	l_pIncrement->shift[0] = val;
 }
 
@@ -1055,7 +1059,7 @@ static void on_vshift_step_spinbutton_value_changed( GtkSpinButton *spinbutton, 
 
 	val = gtk_spin_button_get_value( GTK_SPIN_BUTTON( vshift_step_spinbutton ) ) ;
 	adjust = gtk_spin_button_get_adjustment( GTK_SPIN_BUTTON( vshift_value_spinbutton ) );
-	adjust->step_increment = val;
+	gtk_adjustment_set_step_increment( adjust, val );
 	l_pIncrement->shift[1] = val;
 }
 
@@ -1075,7 +1079,7 @@ static void on_hscale_step_spinbutton_value_changed( GtkSpinButton *spinbutton, 
 
 	val = gtk_spin_button_get_value( GTK_SPIN_BUTTON( hscale_step_spinbutton ) ) ;
 	adjust = gtk_spin_button_get_adjustment( GTK_SPIN_BUTTON( hscale_value_spinbutton ) );
-	adjust->step_increment = val;
+	gtk_adjustment_set_step_increment( adjust, val );
 	l_pIncrement->scale[0] = val;
 }
 
@@ -1095,7 +1099,7 @@ static void on_vscale_step_spinbutton_value_changed( GtkSpinButton *spinbutton, 
 
 	val = gtk_spin_button_get_value( GTK_SPIN_BUTTON( vscale_step_spinbutton ) ) ;
 	adjust = gtk_spin_button_get_adjustment( GTK_SPIN_BUTTON( vscale_value_spinbutton ) );
-	adjust->step_increment = val;
+	gtk_adjustment_set_step_increment( adjust, val );
 	l_pIncrement->scale[1] = val;
 }
 
@@ -1115,7 +1119,7 @@ static void on_rotate_step_spinbutton_value_changed( GtkSpinButton *spinbutton, 
 
 	val = gtk_spin_button_get_value( GTK_SPIN_BUTTON( rotate_step_spinbutton ) ) ;
 	adjust = gtk_spin_button_get_adjustment( GTK_SPIN_BUTTON( rotate_value_spinbutton ) );
-	adjust->step_increment = val;
+	gtk_adjustment_set_step_increment( adjust, val );
 	l_pIncrement->rotate = val;
 }
 

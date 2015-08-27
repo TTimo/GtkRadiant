@@ -181,6 +181,9 @@ eclass_t *Eclass_InitFromText( char *text ){
 			text++;
 		}
 	}
+	else if ( Get_COM_Token()[0] == '?' ) {
+		 text = t;
+	}
 
 	// get the flags
 
@@ -278,7 +281,7 @@ void Eclass_ScanFile( char *filename ){
 	eclass_found = false;
 	for ( i = 0 ; i < size ; i++ )
 	{
-		if ( !strncmp( data + i, "/*QUAKED",8 ) ) {
+		if ( !strncmp( data + i, "/*QUAKED", 8 ) ) {
 			e = Eclass_InitFromText( data + i );
 			if ( e ) {
 				Eclass_InsertAlphabetized( e );

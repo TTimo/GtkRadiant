@@ -34,7 +34,7 @@
 
 #ifdef _WIN32
 //#include <gdk/win32/gdkwin32.h>
-#include <gdk/gdkwin32.h>
+#include <gdk/gdk.h>
 #endif
 #if defined ( __linux__ ) || defined ( __APPLE__ )
 #include <gdk/gdkx.h>
@@ -530,7 +530,7 @@ void BuildShaderList(){
 				}
 
 				if ( !found ) {
-					l_shaderfiles = g_slist_append( l_shaderfiles, strdup( dirstring ) );
+					l_shaderfiles = g_slist_append( l_shaderfiles, g_strdup( dirstring ) );
 					nLen++;
 				}
 			}
@@ -549,7 +549,7 @@ void ClearGSList( GSList* lst ){
 	GSList *p = lst;
 	while ( p )
 	{
-		free( p->data );
+		g_free( p->data );
 		p = g_slist_remove( p, p->data );
 	}
 }
@@ -565,13 +565,13 @@ void FillTextureMenu( GSList** pArray ){
 	// delete everything
 	menu = GTK_WIDGET( g_object_get_data( G_OBJECT( g_qeglobals_gui.d_main_window ), "menu_textures" ) );
 	sep = GTK_WIDGET( g_object_get_data( G_OBJECT( g_qeglobals_gui.d_main_window ), "menu_textures_separator" ) );
-	lst = g_list_find( gtk_container_children( GTK_CONTAINER( menu ) ), sep );
+	lst = g_list_find( gtk_container_get_children( GTK_CONTAINER( menu ) ), sep );
 	while ( lst->next )
 	{
 		// these delete functions are recursive, it's gonna free all submenus
 		gtk_widget_destroy( GTK_WIDGET( lst->next->data ) );
 		// lst is no longer relevant, need to get it again
-		lst = g_list_find( gtk_container_children( GTK_CONTAINER( menu ) ), sep );
+		lst = g_list_find( gtk_container_get_children( GTK_CONTAINER( menu ) ), sep );
 	}
 
 	texture_nummenus = 0;
@@ -589,7 +589,7 @@ void FillTextureMenu( GSList** pArray ){
 			// Hydra: erm, this didn't used to do anything except leak memory...
 			// For Halflife support this is required to work however.
 			// g_slist_append(texdirs, p->data);
-			texdirs = g_slist_append( texdirs, strdup( (char *)p->data ) );
+			texdirs = g_slist_append( texdirs, g_strdup( (char *)p->data ) );
 		}
 		vfsClearFileDirList( &texdirs_tmp );
 	}
@@ -614,10 +614,10 @@ void FillTextureMenu( GSList** pArray ){
 			}
 
 		if ( !found ) {
-			texdirs = g_slist_prepend( texdirs, strdup( shaderfile ) );
+			texdirs = g_slist_prepend( texdirs, g_strdup( shaderfile ) );
 		}
 
-		free( l_shaderfiles->data );
+		g_free( l_shaderfiles->data );
 		l_shaderfiles = g_slist_remove( l_shaderfiles, l_shaderfiles->data );
 	}
 
@@ -646,13 +646,13 @@ void FillTextureMenu( GSList** pArray ){
 					gtk_widget_show( item );
 					CheckMenuSplitting( pSubMenu );
 					gtk_container_add( GTK_CONTAINER( pSubMenu ), item );
-					gtk_signal_connect( GTK_OBJECT( item ), "activate", GTK_SIGNAL_FUNC( HandleCommand ),
+					g_signal_connect( item, "activate", G_CALLBACK( HandleCommand ),
 										GINT_TO_POINTER( CMD_TEXTUREWAD + texture_nummenus ) );
 
 					strcpy( texture_menunames[texture_nummenus], (char*)temp->data );
 					strcat( texture_menunames[texture_nummenus], "/" );
 					if ( pArray ) {
-						*pArray = g_slist_append( *pArray, strdup( (char*)temp->data ) );
+						*pArray = g_slist_append( *pArray, g_strdup( (char*)temp->data ) );
 					}
 					if ( ++texture_nummenus == MAX_TEXTUREDIRS ) {
 						Sys_Printf( "WARNING: max texture directories count has been reached!\n" );
@@ -683,13 +683,13 @@ void FillTextureMenu( GSList** pArray ){
 		gtk_widget_show( item );
 		CheckMenuSplitting( menu );
 		gtk_container_add( GTK_CONTAINER( menu ), item );
-		gtk_signal_connect( GTK_OBJECT( item ), "activate", GTK_SIGNAL_FUNC( HandleCommand ),
+		g_signal_connect( item, "activate", G_CALLBACK( HandleCommand ),
 							GINT_TO_POINTER( CMD_TEXTUREWAD + texture_nummenus ) );
 
 		strcpy( texture_menunames[texture_nummenus], (char*)temp->data );
 		strcat( texture_menunames[texture_nummenus], "/" );
 		if ( pArray ) {
-			*pArray = g_slist_append( *pArray, strdup( (char*)temp->data ) );
+			*pArray = g_slist_append( *pArray, g_strdup( (char*)temp->data ) );
 		}
 		if ( ++texture_nummenus == MAX_TEXTUREDIRS ) {
 			Sys_Printf( "WARNING: max texture directories count has been reached!\n" );
@@ -1192,11 +1192,6 @@ void WINAPI Texture_SetTexture( texdef_t *texdef, brushprimit_texdef_t *brushpri
 		g_qeglobals.d_texturewin.brushprimit_texdef = *brushprimit_texdef;
 	}
 
-	g_dlgFind.updateTextures( texdef->GetName() );
-	if ( !g_dlgFind.isOpen() && bSetSelection ) {
-		Select_SetTexture( texdef,brushprimit_texdef,bFitScale );
-	}
-
 	//plugins: send a message telling that the selected texture may have changed
 	DispatchRadiantMsg( RADIANT_TEXTURE );
 
@@ -1667,7 +1662,7 @@ void TexWnd::OnCreate(){
 	g_nTextureOffset = 0;
 
 	GtkAdjustment *vadjustment = gtk_range_get_adjustment( GTK_RANGE( g_qeglobals_gui.d_texture_scroll ) );
-	gtk_signal_connect( GTK_OBJECT( vadjustment ), "value_changed", GTK_SIGNAL_FUNC( vertical_scroll ), this );
+	g_signal_connect( vadjustment, "value_changed", G_CALLBACK( vertical_scroll ), this );
 
 	if ( g_PrefsDlg.m_bTextureScrollbar ) {
 		gtk_widget_show( g_qeglobals_gui.d_texture_scroll );
@@ -1676,7 +1671,7 @@ void TexWnd::OnCreate(){
 	}
 	m_bNeedRange = true;
 
-	gtk_signal_connect( GTK_OBJECT( m_pFilter ), "changed", GTK_SIGNAL_FUNC( filter_changed ), this );
+	g_signal_connect( m_pFilter, "changed", G_CALLBACK( filter_changed ), this );
 	if ( g_PrefsDlg.m_bTextureWindow ) {
 		gtk_widget_show( m_pFilter );
 	}
@@ -1707,21 +1702,21 @@ void TexWnd::OnExpose() {
 	else
 	{
 		QE_CheckOpenGLForErrors();
-		Texture_Draw( m_pWidget->allocation.width, m_pWidget->allocation.height - g_nTextureOffset );
+		Texture_Draw( gtk_widget_get_allocated_width( m_pWidget ), gtk_widget_get_allocated_height( m_pWidget ) - g_nTextureOffset );
 		QE_CheckOpenGLForErrors();
 		SwapBuffers();
 	}
 	if ( g_PrefsDlg.m_bTextureScrollbar && ( m_bNeedRange || g_qeglobals.d_texturewin.m_nTotalHeight != nOld ) ) {
 		GtkAdjustment *vadjustment = gtk_range_get_adjustment( GTK_RANGE( g_qeglobals_gui.d_texture_scroll ) );
 
-		vadjustment->value = -g_qeglobals.d_texturewin.originy;
-		vadjustment->page_size = m_pWidget->allocation.height;
-		vadjustment->page_increment = m_pWidget->allocation.height / 2;
-		vadjustment->step_increment = 20;
-		vadjustment->lower = 0;
-		vadjustment->upper = g_qeglobals.d_texturewin.m_nTotalHeight;
+		gtk_adjustment_set_value( vadjustment, -g_qeglobals.d_texturewin.originy );
+		gtk_adjustment_set_page_size( vadjustment, gtk_widget_get_allocated_height( m_pWidget ) );
+		gtk_adjustment_set_page_increment( vadjustment, gtk_widget_get_allocated_height( m_pWidget ) / 2 );
+		gtk_adjustment_set_step_increment( vadjustment, 20 );
+		gtk_adjustment_set_lower( vadjustment, 0 );
+		gtk_adjustment_set_upper( vadjustment, g_qeglobals.d_texturewin.m_nTotalHeight );
 
-		gtk_signal_emit_by_name( GTK_OBJECT( vadjustment ), "changed" );
+		g_signal_emit_by_name( vadjustment, "changed" );
 
 		m_bNeedRange = false;
 	}
@@ -1766,7 +1761,7 @@ void TexWnd::OnMouseMove( guint32 flags, int pointx, int pointy ){
 void TexWnd::OnVScroll(){
 	GtkAdjustment *vadjustment = gtk_range_get_adjustment( GTK_RANGE( g_qeglobals_gui.d_texture_scroll ) );
 
-	g_qeglobals.d_texturewin.originy = -(int)vadjustment->value;
+	g_qeglobals.d_texturewin.originy = -(int)gtk_adjustment_get_value( vadjustment );
 	RedrawWindow();
 }
 
@@ -1789,7 +1784,7 @@ void TexWnd::UpdatePrefs(){
 }
 
 void TexWnd::FocusEdit() {
-	if ( GTK_WIDGET_VISIBLE( m_pFilter ) ) {
+	if ( gtk_widget_get_visible( m_pFilter ) ) {
           gtk_window_set_focus( GTK_WINDOW( g_pParentWnd->m_pWidget ), m_pFilter );
 	}
 }
@@ -1847,8 +1842,8 @@ void TexWnd::DragDropTexture( guint32 flags, int pointx, int pointy ){
 	get_window_pos( widget, &x, &y );
 
 	if ( m_ptX < x || m_ptY < y ||
-		 m_ptX > x + widget->allocation.width ||
-		 m_ptY > y + widget->allocation.height ) {
+		 m_ptX > x + gtk_widget_get_allocated_width( widget ) ||
+		 m_ptY > y + gtk_widget_get_allocated_height( widget ) ) {
 		return;
 	}
 
@@ -1856,7 +1851,7 @@ void TexWnd::DragDropTexture( guint32 flags, int pointx, int pointy ){
 	m_ptXcheck = m_ptX;
 	m_ptYcheck = m_ptY;
 
-	if ( g_pParentWnd->GetCamWnd()->GetWidget()->window != gdk_window_at_pointer( &m_ptXcheck, &m_ptYcheck ) ) {
+	if ( gtk_widget_get_window( g_pParentWnd->GetCamWnd()->GetWidget() ) != gdk_window_at_pointer( &m_ptXcheck, &m_ptYcheck ) ) {
 		return;
 	}
 

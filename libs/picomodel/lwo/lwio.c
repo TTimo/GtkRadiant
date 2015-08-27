@@ -22,7 +22,9 @@
    read requests until flen is reset.
    ====================================================================== */
 
+#ifndef INT_MIN
 #define INT_MIN     ( -2147483647 - 1 ) /* minimum (signed) int value */
+#endif
 #define FLEN_ERROR INT_MIN
 
 static int flen;

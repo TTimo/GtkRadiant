@@ -152,7 +152,7 @@ void init_filetypes(){
 // plugin implementation
 
 static const char *PLUGIN_NAME = "Model loading module";
-static const char *PLUGIN_COMMANDS = "About;-;Flush & Reload Models;Flush & Reload Selected";
+static const char *PLUGIN_COMMANDS = "About...;-;Flush & Reload Models;Flush & Reload Selected";
 static const char *PLUGIN_ABOUT = "Model Module v1.0 for GtkRadiant\nby Arnout van Meer (rr2do2@splashdamage.com)\n\nBased on the MD3Model Module by SPoG\nPicoModel Library Copyright (c) 2002, Randy Reddig & seaw0lf\n\nSupported models:\n";
 
 extern "C" const char* QERPlug_Init( void *hApp, void* pMainWidget ){
@@ -175,7 +175,7 @@ extern "C" void QERPlug_Dispatch( const char *p, vec3_t vMin, vec3_t vMax, bool 
 	else if ( !strcmp( p, "Flush & Reload Models" ) ) {
 		DoFlushReloadAll();
 	}
-	else if ( !strcmp( p, "About" ) ) {
+	else if ( !strcmp( p, "About..." ) ) {
 		const picoModule_t** modules = PicoModuleList( NULL );
 		char about_buf[1024];
 		strncpy( about_buf, PLUGIN_ABOUT, sizeof( about_buf ) - 1 );
@@ -188,7 +188,7 @@ extern "C" void QERPlug_Dispatch( const char *p, vec3_t vMin, vec3_t vMax, bool 
 			strncat( about_buf, module->copyright, sizeof( about_buf ) - 1 );
 			strncat( about_buf, "\n", sizeof( about_buf ) - 1 );
 		}
-		g_FuncTable.m_pfnMessageBox( NULL, about_buf, "About", MB_OK, NULL );
+		g_FuncTable.m_pfnMessageBox( NULL, about_buf, "About...", MB_OK, NULL );
 	}
 }
 

@@ -1280,22 +1280,43 @@ void Sys_SetTitle( const char *text ){
 bool g_bWaitCursor = false;
 
 void WINAPI Sys_BeginWait( void ){
-	GdkCursor *cursor = gdk_cursor_new( GDK_WATCH );
-	gdk_window_set_cursor( g_pParentWnd->m_pWidget->window, cursor );
-	gdk_cursor_unref( cursor );
+	GdkWindow *parent;
+	GdkDisplay *display;
+	GdkCursor *cursor;
+
+	display = gdk_display_get_default();
+	cursor = gdk_cursor_new_for_display( display, GDK_WATCH );
+	
+	parent = gtk_widget_get_window( g_pParentWnd->m_pWidget );
+	gdk_window_set_cursor( parent, cursor );
+
 	g_bWaitCursor = true;
 }
 
 void WINAPI Sys_EndWait( void ){
-	GdkCursor *cursor = gdk_cursor_new( GDK_LEFT_PTR );
-	gdk_window_set_cursor( g_pParentWnd->m_pWidget->window, cursor );
-	gdk_cursor_unref( cursor );
+	GdkWindow *parent;
+	GdkDisplay *display;
+	GdkCursor *cursor;
+
+	display = gdk_display_get_default();
+	cursor = gdk_cursor_new_for_display( display, GDK_LEFT_PTR );
+
+	parent = gtk_widget_get_window( g_pParentWnd->m_pWidget );
+	gdk_window_set_cursor( parent, cursor );
+
 	g_bWaitCursor = false;
 }
 
 void Sys_GetCursorPos( int *x, int *y ){
 	// FIXME: not multihead safe
-	gdk_window_get_pointer( NULL, x, y, NULL );
+	GdkDeviceManager *device_manager;
+	GdkDevice *pointer;
+	GdkWindow *window;
+
+	window = gdk_screen_get_root_window( gdk_screen_get_default() );
+	device_manager = gdk_display_get_device_manager( gdk_window_get_display( window ) );
+	pointer = gdk_device_manager_get_client_pointer( device_manager );
+	gdk_window_get_device_position( window, pointer, x, y, NULL );
 }
 
 void Sys_SetCursorPos( int x, int y ){
@@ -1380,7 +1401,7 @@ static void MRU_SetText( int index, const char *filename ){
 	mnemonic[2] = '-';
 	mnemonic[3] = ' ';
 	buffer_write_escaped_mnemonic( mnemonic + 4, filename );
-	gtk_label_set_text_with_mnemonic( GTK_LABEL( GTK_BIN( MRU_items[index] )->child ), mnemonic );
+	gtk_menu_item_set_label( GTK_MENU_ITEM( MRU_items[index] ), mnemonic );
 }
 
 void MRU_Load(){
@@ -1457,7 +1478,7 @@ void MRU_Activate( int index ){
 			MRU_SetText( i, MRU_GetText( i + 1 ) );
 
 		if ( MRU_used == 0 ) {
-			gtk_label_set_text( GTK_LABEL( GTK_BIN( MRU_items[0] )->child ), "Recent Files" );
+			gtk_menu_item_set_label( GTK_MENU_ITEM( MRU_items[0] ), _( "Recent Files" ) );
 			gtk_widget_set_sensitive( MRU_items[0], FALSE );
 		}
 		else
@@ -1556,12 +1577,12 @@ void FillBSPMenu(){
 
 	menu = GTK_WIDGET( g_object_get_data( G_OBJECT( g_qeglobals_gui.d_main_window ), "menu_bsp" ) );
 
-	while ( ( lst = gtk_container_children( GTK_CONTAINER( menu ) ) ) != NULL )
+	while ( ( lst = gtk_container_get_children( GTK_CONTAINER( menu ) ) ) != NULL )
 		gtk_container_remove( GTK_CONTAINER( menu ), GTK_WIDGET( lst->data ) );
 
 	if ( g_PrefsDlg.m_bDetachableMenus ) {
 		item = gtk_tearoff_menu_item_new();
-		gtk_menu_append( GTK_MENU( menu ), item );
+		gtk_menu_shell_append( GTK_MENU_SHELL( menu ), item );
 		gtk_widget_set_sensitive( item, TRUE );
 		gtk_widget_show( item );
 	}
@@ -1578,8 +1599,9 @@ void FillBSPMenu(){
 		i = 0;
 
 		// first token is menu name
-		item = gtk_menu_get_attach_widget( GTK_MENU( menu ) );
-		gtk_label_set_text( GTK_LABEL( GTK_BIN( item )->child ), token );
+		lst = gtk_container_get_children( GTK_CONTAINER( menu ) );
+		if( g_list_first( lst ) )
+			gtk_label_set_text( GTK_LABEL( g_list_first( lst )->data ), token );
 
 		token = strtok( NULL, ",;" );
 		while ( token != NULL )
@@ -1588,8 +1610,8 @@ void FillBSPMenu(){
 			item = gtk_menu_item_new_with_label( token );
 			gtk_widget_show( item );
 			gtk_container_add( GTK_CONTAINER( menu ), item );
-			gtk_signal_connect( GTK_OBJECT( item ), "activate",
-								GTK_SIGNAL_FUNC( HandleCommand ), GINT_TO_POINTER( CMD_BSPCOMMAND + i ) );
+			g_signal_connect( item, "activate",
+								G_CALLBACK( HandleCommand ), GINT_TO_POINTER( CMD_BSPCOMMAND + i ) );
 			token = strtok( NULL, ",;" );
 			i++;
 		}
@@ -1604,8 +1626,8 @@ void FillBSPMenu(){
 				item = gtk_menu_item_new_with_label( ep->key + 4 );
 				gtk_widget_show( item );
 				gtk_container_add( GTK_CONTAINER( menu ), item );
-				gtk_signal_connect( GTK_OBJECT( item ), "activate",
-									GTK_SIGNAL_FUNC( HandleCommand ), GINT_TO_POINTER( CMD_BSPCOMMAND + i ) );
+				g_signal_connect( item, "activate",
+									G_CALLBACK( HandleCommand ), GINT_TO_POINTER( CMD_BSPCOMMAND + i ) );
 				i++;
 			}
 		}
@@ -1773,7 +1795,7 @@ extern "C" void Sys_FPrintf_VA( int level, const char *text, va_list args ) {
 			gtk_text_view_scroll_mark_onscreen( GTK_TEXT_VIEW( g_qeglobals_gui.d_edit ), end );
 
 			// update console widget immediately if we're doing something time-consuming
-			if ( !g_bScreenUpdates && GTK_WIDGET_REALIZED( g_qeglobals_gui.d_edit ) ) {
+			if ( !g_bScreenUpdates && gtk_widget_get_realized( g_qeglobals_gui.d_edit ) ) {
 				gtk_grab_add( g_qeglobals_gui.d_edit );
 
 				while ( gtk_events_pending() )

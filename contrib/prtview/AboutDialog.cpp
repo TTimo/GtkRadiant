@@ -21,6 +21,7 @@
 //
 
 #include "stdafx.h"
+#include <glib/gi18n.h>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -54,22 +55,19 @@ static gint dialog_delete_callback( GtkWidget *widget, GdkEvent* event, gpointer
 }
 
 void DoAboutDlg(){
-	GtkWidget *dlg, *hbox, *vbox, *button, *label;
-	int loop = 1, ret = IDCANCEL;
+	GtkWidget *dialog, *vbox, *label, *content_area;
+	gint response_id;
+	GtkDialogFlags flags = GTK_DIALOG_DESTROY_WITH_PARENT;
 
-	dlg = gtk_window_new( GTK_WINDOW_TOPLEVEL );
-	gtk_window_set_title( GTK_WINDOW( dlg ), "About Portal Viewer" );
-	gtk_signal_connect( GTK_OBJECT( dlg ), "delete_event",
-						GTK_SIGNAL_FUNC( dialog_delete_callback ), NULL );
-	gtk_signal_connect( GTK_OBJECT( dlg ), "destroy",
-						GTK_SIGNAL_FUNC( gtk_widget_destroy ), NULL );
-	g_object_set_data( G_OBJECT( dlg ), "loop", &loop );
-	g_object_set_data( G_OBJECT( dlg ), "ret", &ret );
+	dialog = gtk_dialog_new_with_buttons( _( "About Portal Viewer" ), NULL, flags, NULL );
+	gtk_dialog_add_button( GTK_DIALOG( dialog ), _( "OK" ), GTK_RESPONSE_OK );
 
-	hbox = gtk_hbox_new( FALSE, 10 );
-	gtk_widget_show( hbox );
-	gtk_container_add( GTK_CONTAINER( dlg ), hbox );
-	gtk_container_set_border_width( GTK_CONTAINER( hbox ), 10 );
+	content_area = gtk_dialog_get_content_area( GTK_DIALOG( dialog ) );
+
+	vbox = gtk_box_new( GTK_ORIENTATION_VERTICAL, 5 );
+	gtk_container_add( GTK_CONTAINER( content_area ), vbox );
+	gtk_container_set_border_width( GTK_CONTAINER( vbox ), 5 );
+	gtk_widget_show( vbox );
 
 	label = gtk_label_new( "Version 1.000\n\n"
 						   "Gtk port by Leonardo Zide\nleo@lokigames.com\n\n"
@@ -77,29 +75,17 @@ void DoAboutDlg(){
 						   "Built against GtkRadiant " RADIANT_VERSION "\n"
 						   __DATE__
 						   );
+	gtk_box_pack_start( GTK_BOX( vbox ), label, TRUE, TRUE, 0 );
+	gtk_widget_set_halign( label, GTK_ALIGN_START );
 	gtk_widget_show( label );
-	gtk_box_pack_start( GTK_BOX( hbox ), label, TRUE, TRUE, 0 );
-	gtk_label_set_justify( GTK_LABEL( label ), GTK_JUSTIFY_LEFT );
 
-	vbox = gtk_vbox_new( FALSE, 0 );
-	gtk_widget_show( vbox );
-	gtk_box_pack_start( GTK_BOX( hbox ), vbox, FALSE, FALSE, 0 );
 
-	button = gtk_button_new_with_label( "OK" );
-	gtk_widget_show( button );
-	gtk_box_pack_start( GTK_BOX( vbox ), button, FALSE, FALSE, 0 );
-	gtk_signal_connect( GTK_OBJECT( button ), "clicked",
-						GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( IDOK ) );
-	gtk_widget_set_usize( button, 60, -2 );
 
-	gtk_grab_add( dlg );
-	gtk_widget_show( dlg );
+	gtk_widget_show( dialog );
 
-	while ( loop )
-		gtk_main_iteration();
+	response_id = gtk_dialog_run( GTK_DIALOG( dialog ) );
 
-	gtk_grab_remove( dlg );
-	gtk_widget_destroy( dlg );
+	gtk_widget_destroy( dialog );
 }
 
 /////////////////////////////////////////////////////////////////////////////

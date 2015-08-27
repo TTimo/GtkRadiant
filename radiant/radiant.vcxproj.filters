@@ -1,184 +1,200 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="src">
-      <UniqueIdentifier>{f0f2d0cf-ba3a-423c-a33c-b149337e1ff7}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    <ClCompile Include="bp_dlg.cpp" />
+    <ClCompile Include="brush.cpp" />
+    <ClCompile Include="brush_primit.cpp" />
+    <ClCompile Include="brushscript.cpp" />
+    <ClCompile Include="camwindow.cpp" />
+    <ClCompile Include="csg.cpp" />
+    <ClCompile Include="dialog.cpp" />
+    <ClCompile Include="dialoginfo.cpp" />
+    <ClCompile Include="drag.cpp" />
+    <ClCompile Include="eclass.cpp" />
+    <ClCompile Include="eclass_def.cpp" />
+    <ClCompile Include="error.cpp" />
+    <ClCompile Include="feedback.cpp" />
+    <ClCompile Include="file.cpp" />
+    <ClCompile Include="filters.cpp" />
+    <ClCompile Include="findtexturedialog.cpp" />
+    <ClCompile Include="glinterface.cpp" />
+    <ClCompile Include="glwidget.cpp" />
+    <ClCompile Include="glwindow.cpp" />
+    <ClCompile Include="groupdialog.cpp" />
+    <ClCompile Include="gtkdlgs.cpp" />
+    <ClCompile Include="gtkmisc.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="mainframe.cpp" />
+    <ClCompile Include="map.cpp" />
+    <ClCompile Include="missing.cpp" />
+    <ClCompile Include="parse.cpp" />
+    <ClCompile Include="patchdialog.cpp" />
+    <ClCompile Include="pluginentities.cpp" />
+    <ClCompile Include="pluginmanager.cpp" />
+    <ClCompile Include="pmesh.cpp" />
+    <ClCompile Include="points.cpp" />
+    <ClCompile Include="preferences.cpp" />
+    <ClCompile Include="profile.cpp" />
+    <ClCompile Include="qe3.cpp" />
+    <ClCompile Include="qgl.c" />
+    <ClCompile Include="qgl_ext.cpp" />
+    <ClCompile Include="select.cpp" />
+    <ClCompile Include="selectedface.cpp" />
+    <ClCompile Include="stdafx.cpp" />
+    <ClCompile Include="surfacedialog.cpp" />
+    <ClCompile Include="surfaceplugin.cpp" />
+    <ClCompile Include="targetname.cpp" />
+    <ClCompile Include="texmanip.cpp" />
+    <ClCompile Include="texwindow.cpp" />
+    <ClCompile Include="ui.cpp" />
+    <ClCompile Include="undo.cpp" />
+    <ClCompile Include="vertsel.cpp" />
+    <ClCompile Include="watchbsp.cpp" />
+    <ClCompile Include="winding.cpp" />
+    <ClCompile Include="xywindow.cpp" />
+    <ClCompile Include="z.cpp" />
+    <ClCompile Include="zwindow.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="radiant.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="headers">
+      <UniqueIdentifier>{57e33e61-cde4-41a4-9658-70a29b81d45e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="rc">
-      <UniqueIdentifier>{85d38eb4-f668-43bb-b370-f6775daf4a27}</UniqueIdentifier>
-      <Extensions>rc;ico</Extensions>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="bp_dlg.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="brush.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="brush_primit.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="brushscript.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="camwindow.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="csg.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="dialog.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="dialoginfo.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="drag.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="eclass.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="eclass_def.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="error.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="feedback.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="file.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="filters.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="findtexturedialog.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="glinterface.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="glwidget.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="glwindow.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="groupdialog.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="gtkdlgs.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="gtkmisc.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="main.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="mainframe.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="map.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="missing.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="parse.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="patchdialog.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="pluginentities.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="pluginmanager.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="pmesh.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="points.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="preferences.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="profile.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="qe3.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="qgl.c">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="qgl_ext.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="select.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="selectedface.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="stdafx.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="surfacedialog.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="surfaceplugin.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="targetname.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="texmanip.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="texwindow.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="ui.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="undo.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="vertsel.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="watchbsp.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="winding.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="xywindow.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="z.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="zwindow.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="radiant.ico">
-      <Filter>rc</Filter>
-    </Image>
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="radiant.rc">
-      <Filter>rc</Filter>
-    </ResourceCompile>
+    <ClInclude Include="zwindow.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="brush.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="camera.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="camwindow.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="dialog.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="eclass_def.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="feedback.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="file.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="filters.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="findtexturedialog.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="glwidget.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="glwindow.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="groupdialog.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="gtkfilesel.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="gtkfilesel-darwin.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="gtkfilesel-linux.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="gtkmisc.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="mainframe.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="map.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="parse.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="patchdialog.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="plugin.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="pluginmanager.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="points.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="preferences.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="qe3.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="qedefs.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="qfiles.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="qgl.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="select.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="surfacedialog.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="surfaceplugin.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="texmanip.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="textures.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="texwindow.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="ui.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="undo.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="watchbsp.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="winding.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="xmlstuff.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="xywindow.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="z.h">
+      <Filter>headers</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

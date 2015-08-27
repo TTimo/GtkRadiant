@@ -27,6 +27,7 @@
 //
 
 #include "StdAfx.h"
+#include <glib/gi18n.h>
 
 static void dialog_button_callback( GtkWidget *widget, gpointer data ){
 	GtkWidget *parent;
@@ -51,111 +52,83 @@ static gint dialog_delete_callback( GtkWidget *widget, GdkEvent* event, gpointer
 }
 
 int DoMessageBox( const char* lpText, const char* lpCaption, guint32 uType ){
-	GtkWidget *window, *w, *vbox, *hbox;
-	int mode = ( uType & MB_TYPEMASK ), ret, loop = 1;
+	GtkWidget *dialog, *w, *vbox, *hbox, *content_area;
+	int mode, ret;
+	gint response_id;
+	GtkDialogFlags flags = GTK_DIALOG_DESTROY_WITH_PARENT;
 
-	window = gtk_window_new( GTK_WINDOW_TOPLEVEL );
-	gtk_signal_connect( GTK_OBJECT( window ), "delete_event",
-						GTK_SIGNAL_FUNC( dialog_delete_callback ), NULL );
-	gtk_signal_connect( GTK_OBJECT( window ), "destroy",
-						GTK_SIGNAL_FUNC( gtk_widget_destroy ), NULL );
-	gtk_window_set_title( GTK_WINDOW( window ), lpCaption );
-	gtk_container_border_width( GTK_CONTAINER( window ), 10 );
-	g_object_set_data( G_OBJECT( window ), "loop", &loop );
-	g_object_set_data( G_OBJECT( window ), "ret", &ret );
-	gtk_widget_realize( window );
+	dialog = gtk_dialog_new_with_buttons( lpCaption, NULL, flags, NULL );
 
-	vbox = gtk_vbox_new( FALSE, 10 );
-	gtk_container_add( GTK_CONTAINER( window ), vbox );
+	gtk_container_set_border_width( GTK_CONTAINER( dialog ), 10 );
+
+	content_area = gtk_dialog_get_content_area( GTK_DIALOG( dialog ) );
+
+	vbox = gtk_box_new( GTK_ORIENTATION_VERTICAL, 10 );
+	gtk_container_add( GTK_CONTAINER( content_area ), vbox );
 	gtk_widget_show( vbox );
 
 	w = gtk_label_new( lpText );
 	gtk_box_pack_start( GTK_BOX( vbox ), w, FALSE, FALSE, 2 );
-	gtk_label_set_justify( GTK_LABEL( w ), GTK_JUSTIFY_LEFT );
+	gtk_widget_set_halign( w, GTK_ALIGN_START );
 	gtk_widget_show( w );
 
-	w = gtk_hseparator_new();
+	w = gtk_separator_new( GTK_ORIENTATION_HORIZONTAL );
 	gtk_box_pack_start( GTK_BOX( vbox ), w, FALSE, FALSE, 2 );
 	gtk_widget_show( w );
 
-	hbox = gtk_hbox_new( FALSE, 10 );
+	hbox = gtk_box_new( GTK_ORIENTATION_HORIZONTAL, 10 );
 	gtk_box_pack_start( GTK_BOX( vbox ), hbox, FALSE, FALSE, 2 );
 	gtk_widget_show( hbox );
 
+	mode = ( uType & MB_TYPEMASK );
 	if ( mode == MB_OK ) {
-		w = gtk_button_new_with_label( "Ok" );
-		gtk_box_pack_start( GTK_BOX( hbox ), w, TRUE, TRUE, 0 );
-		gtk_signal_connect( GTK_OBJECT( w ), "clicked",
-							GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( IDOK ) );
-		GTK_WIDGET_SET_FLAGS( w, GTK_CAN_DEFAULT );
-		gtk_widget_grab_default( w );
-		gtk_widget_show( w );
+		w = gtk_dialog_add_button( GTK_DIALOG( dialog ), _( "OK" ), GTK_RESPONSE_OK );
+
 		ret = IDOK;
 	}
 	else if ( mode ==  MB_OKCANCEL ) {
-		w = gtk_button_new_with_label( "Ok" );
-		gtk_box_pack_start( GTK_BOX( hbox ), w, TRUE, TRUE, 0 );
-		gtk_signal_connect( GTK_OBJECT( w ), "clicked",
-							GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( IDOK ) );
-		GTK_WIDGET_SET_FLAGS( w, GTK_CAN_DEFAULT );
-		gtk_widget_grab_default( w );
-		gtk_widget_show( w );
+		w = gtk_dialog_add_button( GTK_DIALOG( dialog ), _( "OK" ), GTK_RESPONSE_OK );
+		w = gtk_dialog_add_button( GTK_DIALOG( dialog ), _( "Cancel" ), GTK_RESPONSE_CANCEL );
 
-		w = gtk_button_new_with_label( "Cancel" );
-		gtk_box_pack_start( GTK_BOX( hbox ), w, TRUE, TRUE, 0 );
-		gtk_signal_connect( GTK_OBJECT( w ), "clicked",
-							GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( IDCANCEL ) );
-		gtk_widget_show( w );
 		ret = IDCANCEL;
 	}
 	else if ( mode == MB_YESNOCANCEL ) {
-		w = gtk_button_new_with_label( "Yes" );
-		gtk_box_pack_start( GTK_BOX( hbox ), w, TRUE, TRUE, 0 );
-		gtk_signal_connect( GTK_OBJECT( w ), "clicked",
-							GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( IDYES ) );
-		GTK_WIDGET_SET_FLAGS( w, GTK_CAN_DEFAULT );
-		gtk_widget_grab_default( w );
-		gtk_widget_show( w );
+		w = gtk_dialog_add_button( GTK_DIALOG( dialog ), _( "Yes" ), GTK_RESPONSE_YES );
+		w = gtk_dialog_add_button( GTK_DIALOG( dialog ), _( "No" ), GTK_RESPONSE_NO );
+		w = gtk_dialog_add_button( GTK_DIALOG( dialog ), _( "Cancel" ), GTK_RESPONSE_CANCEL );
 
-		w = gtk_button_new_with_label( "No" );
-		gtk_box_pack_start( GTK_BOX( hbox ), w, TRUE, TRUE, 0 );
-		gtk_signal_connect( GTK_OBJECT( w ), "clicked",
-							GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( IDNO ) );
-		gtk_widget_show( w );
-
-		w = gtk_button_new_with_label( "Cancel" );
-		gtk_box_pack_start( GTK_BOX( hbox ), w, TRUE, TRUE, 0 );
-		gtk_signal_connect( GTK_OBJECT( w ), "clicked",
-							GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( IDCANCEL ) );
-		gtk_widget_show( w );
 		ret = IDCANCEL;
 	}
 	else /* if (mode == MB_YESNO) */
 	{
-		w = gtk_button_new_with_label( "Yes" );
-		gtk_box_pack_start( GTK_BOX( hbox ), w, TRUE, TRUE, 0 );
-		gtk_signal_connect( GTK_OBJECT( w ), "clicked",
-							GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( IDYES ) );
-		GTK_WIDGET_SET_FLAGS( w, GTK_CAN_DEFAULT );
-		gtk_widget_grab_default( w );
-		gtk_widget_show( w );
+		w = gtk_dialog_add_button( GTK_DIALOG( dialog ), _( "Yes" ), GTK_RESPONSE_YES );
+		w = gtk_dialog_add_button( GTK_DIALOG( dialog ), _( "No" ), GTK_RESPONSE_NO );
 
-		w = gtk_button_new_with_label( "No" );
-		gtk_box_pack_start( GTK_BOX( hbox ), w, TRUE, TRUE, 0 );
-		gtk_signal_connect( GTK_OBJECT( w ), "clicked",
-							GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( IDNO ) );
-		gtk_widget_show( w );
 		ret = IDNO;
 	}
 
-	gtk_widget_show( window );
-	gtk_grab_add( window );
+	gtk_widget_show( dialog );
 
-	while ( loop )
-		gtk_main_iteration();
+	response_id = gtk_dialog_run( GTK_DIALOG( dialog ) );
 
-	gtk_grab_remove( window );
-	gtk_widget_destroy( window );
+	switch( response_id )
+	{
+	case GTK_RESPONSE_OK:
+		ret = IDOK;
+		break;
+	case GTK_RESPONSE_CANCEL:
+		ret = IDCANCEL;
+		break;
+	case GTK_RESPONSE_YES:
+		ret = IDYES;
+		break;
+	case GTK_RESPONSE_NO:
+		ret = IDNO;
+		break;
+	}
+
+
+	gtk_widget_destroy( dialog );
 
 	return ret;
 }
@@ -578,7 +551,7 @@ static void motion( GtkWidget *widget, GdkEventMotion *event, gpointer data ){
 	}
 }
 
-static gint expose( GtkWidget *widget, GdkEventExpose *event, gpointer data ){
+static gint expose( GtkWidget *widget, cairo_t *cr, gpointer data ){
 	if ( event->count > 0 ) {
 		return TRUE;
 	}
@@ -588,8 +561,8 @@ static gint expose( GtkWidget *widget, GdkEventExpose *event, gpointer data ){
 	}
 
 	if ( g_bTexViewReady ) {
-		g_2DView.m_rect.bottom = widget->allocation.height;
-		g_2DView.m_rect.right = widget->allocation.width;
+		g_2DView.m_rect.bottom = gtk_widget_get_allocated_height( widget );
+		g_2DView.m_rect.right = gtk_widget_get_allocated_width( widget );
 
 		if ( !g_QglTable.m_pfn_glwidget_make_current( g_pToolWidget ) ) {
 			Sys_Printf( "TexTool: glMakeCurrent failed\n" );
@@ -607,7 +580,7 @@ static gint expose( GtkWidget *widget, GdkEventExpose *event, gpointer data ){
 static gint keypress( GtkWidget* widget, GdkEventKey* event, gpointer data ){
 	unsigned int code = gdk_keyval_to_upper( event->keyval );
 
-	if ( code == GDK_Escape ) {
+	if ( code == GDK_KEY_Escape ) {
 		gtk_widget_destroy( g_pToolWnd );
 		g_pToolWnd = NULL;
 		return TRUE;
@@ -618,7 +591,7 @@ static gint keypress( GtkWidget* widget, GdkEventKey* event, gpointer data ){
 			return FALSE;
 		}
 
-		if ( code == GDK_Return ) {
+		if ( code == GDK_KEY_Return ) {
 			Textool_Validate();
 			return FALSE;
 		}
@@ -641,17 +614,17 @@ static GtkWidget* CreateOpenGLWidget(){
 						   GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK | GDK_POINTER_MOTION_MASK );
 
 	// Connect signal handlers
-	gtk_signal_connect( GTK_OBJECT( g_pToolWidget ), "expose_event", GTK_SIGNAL_FUNC( expose ), NULL );
-	gtk_signal_connect( GTK_OBJECT( g_pToolWidget ), "motion_notify_event",
-						GTK_SIGNAL_FUNC( motion ), NULL );
-	gtk_signal_connect( GTK_OBJECT( g_pToolWidget ), "button_press_event",
-						GTK_SIGNAL_FUNC( button_press ), NULL );
-	gtk_signal_connect( GTK_OBJECT( g_pToolWidget ), "button_release_event",
-						GTK_SIGNAL_FUNC( button_release ), NULL );
+	g_signal_connect( g_pToolWidget, "draw", G_CALLBACK( expose ), NULL );
+	g_signal_connect( g_pToolWidget, "motion_notify_event",
+						G_CALLBACK( motion ), NULL );
+	g_signal_connect( g_pToolWidget, "button_press_event",
+						G_CALLBACK( button_press ), NULL );
+	g_signal_connect( g_pToolWidget, "button_release_event",
+						G_CALLBACK( button_release ), NULL );
 
-	gtk_signal_connect( GTK_OBJECT( g_pToolWnd ), "delete_event", GTK_SIGNAL_FUNC( close ), NULL );
-	gtk_signal_connect( GTK_OBJECT( g_pToolWnd ), "key_press_event",
-						GTK_SIGNAL_FUNC( keypress ), NULL );
+	g_signal_connect( g_pToolWnd, "delete_event", G_CALLBACK( close ), NULL );
+	g_signal_connect( g_pToolWnd, "key_press_event",
+						G_CALLBACK( keypress ), NULL );
 
 	return g_pToolWidget;
 }

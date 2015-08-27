@@ -484,6 +484,9 @@ void process_xlink( Str &FileName, const char *menu_name, const char *base_url, 
 
 void Create();
 void create_main_menu( GtkWidget *window, GtkWidget *vbox );
+GtkWidget * toolbar_append_item( GtkToolbar *toolbar, const gchar *text, const gchar *tooltip_text, const gchar *private_text, GtkWidget *icon, GCallback callback, gpointer data );
+GtkWidget * toolbar_append_space( GtkToolbar *toolbar );
+GtkWidget * MainFrame::toolbar_append_element( GtkToolbar *toolbar, short, const char*, const gchar *text, const gchar *tooltip_text, const gchar *private_text, GtkWidget *icon, GCallback callback, gpointer data );
 void create_main_toolbar( GtkWidget *window, GtkWidget *vbox );
 void create_plugin_toolbar( GtkWidget *window, GtkWidget *vbox );
 void create_main_statusbar( GtkWidget *window, GtkWidget *vbox );
@@ -873,7 +876,7 @@ void OnViewNearest( unsigned int nID );
 void OnTextureWad( unsigned int nID );
 void OnBspCommand( unsigned int nID );
 void OnGrid( unsigned int nID );
-void OnPlugIn( unsigned int nID, char *str );
+void OnPlugIn( unsigned int nID, const char *str );
 void OnFaceFit();
 void SetTextureScale( int id );
 void OnDontselectmodel();

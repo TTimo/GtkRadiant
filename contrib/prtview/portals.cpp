@@ -292,15 +292,15 @@ void CPortals::Load(){
 }
 
 void CPortals::FixColors(){
-	fp_color_2d[0] = (float)GetRValue( color_2d ) / 255.0f;
-	fp_color_2d[1] = (float)GetGValue( color_2d ) / 255.0f;
-	fp_color_2d[2] = (float)GetBValue( color_2d ) / 255.0f;
-	fp_color_2d[3] = 1.0f;
+	fp_color_2d[0] = color_2d.red;
+	fp_color_2d[1] = color_2d.green;
+	fp_color_2d[2] = color_2d.blue;
+	fp_color_2d[3] = color_2d.alpha;
 
-	fp_color_3d[0] = (float)GetRValue( color_3d ) / 255.0f;
-	fp_color_3d[1] = (float)GetGValue( color_3d ) / 255.0f;
-	fp_color_3d[2] = (float)GetBValue( color_3d ) / 255.0f;
-	fp_color_3d[3] = 1.0f;
+	fp_color_3d[0] = color_3d.red;
+	fp_color_3d[1] = color_3d.green;
+	fp_color_3d[2] = color_3d.blue;
+	fp_color_3d[3] = color_3d.alpha;
 
 	fp_color_fog[0] = 0.0f; //(float)GetRValue(color_fog) / 255.0f;
 	fp_color_fog[1] = 0.0f; //(float)GetGValue(color_fog) / 255.0f;

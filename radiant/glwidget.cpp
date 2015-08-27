@@ -72,7 +72,7 @@ GdkGLConfig* glconfig_new(){
 
 	for ( configs_iterator i = configs, end = configs + 2; i != end && glconfig == NULL; ++i )
 	{
-		glconfig = gdk_gl_config_new( *i );
+		glconfig = gdk_gl_config_new( *i, 2 );
 	}
 
 	if ( glconfig == NULL ) {
@@ -148,22 +148,29 @@ int config_rgba_depth[] = {
 	GDK_GL_ATTRIB_LIST_NONE,
 };
 
-const attribs_t configs_with_depth[] =
+struct attribslist_t
 {
-	config_rgba32_depth32,
-	config_rgba32_depth24,
-	config_rgba32_depth16,
-	config_rgba32_depth,
-	config_rgba_depth16,
-	config_rgba_depth,
+  int* attribs;
+  int count;
+};
+typedef const attribslist_t* attribslist_iterator;
+#define ATTR_ELEMENT( a ) { ( a ), G_N_ELEMENTS( a ) }
+
+const attribslist_t depth_configs[] = {
+	ATTR_ELEMENT( config_rgba32_depth32 ),
+	ATTR_ELEMENT( config_rgba32_depth24 ),
+	ATTR_ELEMENT( config_rgba32_depth16 ),
+	ATTR_ELEMENT( config_rgba32_depth ),
+	ATTR_ELEMENT( config_rgba_depth16 ),
+	ATTR_ELEMENT( config_rgba_depth ),
 };
 
 GdkGLConfig* glconfig_new_with_depth(){
 	GdkGLConfig* glconfig = NULL;
 
-	for ( configs_iterator i = configs_with_depth, end = configs_with_depth + 6; i != end && glconfig == NULL; ++i )
+	for ( attribslist_iterator i = depth_configs, end = depth_configs + G_N_ELEMENTS( depth_configs ); i != end && glconfig == NULL; ++i )
 	{
-		glconfig = gdk_gl_config_new( *i );
+		glconfig = gdk_gl_config_new( (*i).attribs, (*i).count );
 	}
 
 	if ( glconfig == NULL ) {
@@ -177,9 +184,12 @@ GtkWidget* WINAPI gtk_glwidget_new( gboolean zbuffer, GtkWidget* share ){
 	GtkWidget* drawing_area = gtk_drawing_area_new();
 	GdkGLConfig* glconfig = ( zbuffer ) ? glconfig_new_with_depth() : glconfig_new();
 	GdkGLContext* shared_context = ( share ) ? gtk_widget_get_gl_context( share ) : NULL;
+	gboolean result;
 
-	gtk_widget_set_gl_capability( drawing_area, glconfig, shared_context, TRUE, GDK_GL_RGBA_TYPE );
-
+	result = gtk_widget_set_gl_capability( drawing_area, glconfig, shared_context, TRUE, GDK_GL_RGBA_TYPE );
+	if( !result ){
+		Sys_Printf( "gtk_widget_set_gl_capability failed.\n" );
+	}
 	return drawing_area;
 }
 
@@ -197,7 +207,7 @@ void WINAPI gtk_glwidget_swap_buffers( GtkWidget *widget ){
 gboolean WINAPI gtk_glwidget_make_current( GtkWidget *widget ){
 	GdkGLContext *glcontext = gtk_widget_get_gl_context( widget );
 	GdkGLDrawable *gldrawable = gtk_widget_get_gl_drawable( widget );
-	return gdk_gl_drawable_gl_begin( gldrawable, glcontext );
+	return gdk_gl_context_make_current( glcontext, gldrawable, gldrawable );
 }
 
 

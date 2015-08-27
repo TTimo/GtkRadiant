@@ -52,8 +52,9 @@
 
 #endif
 
-
+#ifndef MAX_OS_PATH
 #define MAX_OS_PATH     4096
+#endif
 #define MEM_BLOCKSIZE 4096
 
 // the dec offsetof macro doesnt work very well...

@@ -28,56 +28,32 @@
 #include "stdafx.h"
 #include <glib/gi18n.h>
 
-void BP_dialog_button_callback( GtkWidget *widget, gpointer data ){
-	GtkWidget *parent;
-	int *loop, *ret;
-
-	parent = gtk_widget_get_toplevel( widget );
-	loop = (int*)g_object_get_data( G_OBJECT( parent ), "loop" );
-	ret = (int*)g_object_get_data( G_OBJECT( parent ), "ret" );
-
-	*loop = 0;
-	*ret = GPOINTER_TO_INT( data );
-}
-
-gint BP_dialog_delete_callback( GtkWidget *widget, GdkEvent* event, gpointer data ){
-	int *loop;
-
-	gtk_widget_hide( widget );
-	loop = (int*)g_object_get_data( G_OBJECT( widget ), "loop" );
-	*loop = 0;
-
-	return TRUE;
-}
 
 // ret: 0 = abort, 1 = load and convert, 2 = changed project settings, load and don't convert
 // the user might decide to switch the BP mode in project settings
 // status: 0 = loading regular, got conflict 1 = loading BP, got conflict
 int BP_MessageBox( int status ){
-	GtkWidget *window, *w, *vbox, *hbox;
+	GtkWidget *dialog, *w, *vbox, *hbox, *content_area;
 	GtkAccelGroup *accel;
-	int ret, loop = 1;
+	gint response_id;
+	GtkDialogFlags flags = GTK_DIALOG_DESTROY_WITH_PARENT;
 
-	window = gtk_window_new( GTK_WINDOW_TOPLEVEL );
-	gtk_signal_connect( GTK_OBJECT( window ), "delete_event",
-						GTK_SIGNAL_FUNC( BP_dialog_delete_callback ), NULL );
-	gtk_signal_connect( GTK_OBJECT( window ), "destroy",
-						GTK_SIGNAL_FUNC( gtk_widget_destroy ), NULL );
+	dialog = gtk_dialog_new_with_buttons( _( "Current map format is incompatible" ), GTK_WINDOW( g_pParentWnd->m_pWidget ), flags, NULL );
+	gtk_dialog_add_button( GTK_DIALOG( dialog ), _( "Convert" ), 1 );
+	gtk_dialog_add_button( GTK_DIALOG( dialog ), _( "Change default" ), 2 );
+	gtk_dialog_add_button( GTK_DIALOG( dialog ), _( "Abort load" ), 0 );
+	
+	content_area = gtk_dialog_get_content_area( GTK_DIALOG( dialog ) );
 
-	gtk_window_set_title( GTK_WINDOW( window ), _( "Current map format is incompatible" ) );
+	gtk_container_set_border_width( GTK_CONTAINER( dialog ), 10 );
 
-	gtk_container_border_width( GTK_CONTAINER( window ), 10 );
-	g_object_set_data( G_OBJECT( window ), "loop", &loop );
-	g_object_set_data( G_OBJECT( window ), "ret", &ret );
-	gtk_widget_realize( window );
-
-	gtk_window_set_transient_for( GTK_WINDOW( window ), GTK_WINDOW( g_pParentWnd->m_pWidget ) );
+	gtk_window_set_transient_for( GTK_WINDOW( dialog ), GTK_WINDOW( g_pParentWnd->m_pWidget ) );
 
 	accel = gtk_accel_group_new();
-	gtk_window_add_accel_group( GTK_WINDOW( window ), accel );
+	gtk_window_add_accel_group( GTK_WINDOW( dialog ), accel );
 
-	vbox = gtk_vbox_new( FALSE, 10 );
-	gtk_container_add( GTK_CONTAINER( window ), vbox );
+	vbox = gtk_box_new( GTK_ORIENTATION_VERTICAL, 10 );
+	gtk_container_add( GTK_CONTAINER( content_area ), vbox );
 	gtk_widget_show( vbox );
 
 	if ( status == 0 ) {
@@ -96,45 +72,23 @@ int BP_MessageBox( int status ){
 							  "in the same maps for a smooth transition." ) );
 	}
 	gtk_box_pack_start( GTK_BOX( vbox ), w, FALSE, FALSE, 2 );
-	gtk_label_set_justify( GTK_LABEL( w ), GTK_JUSTIFY_LEFT );
+	gtk_widget_set_halign( w, GTK_ALIGN_START );
 	gtk_widget_show( w );
 
-	w = gtk_hseparator_new();
+	w = gtk_separator_new( GTK_ORIENTATION_HORIZONTAL );
 	gtk_box_pack_start( GTK_BOX( vbox ), w, FALSE, FALSE, 2 );
 	gtk_widget_show( w );
 
-	hbox = gtk_hbox_new( FALSE, 10 );
+	hbox = gtk_box_new( GTK_ORIENTATION_HORIZONTAL, 10 );
 	gtk_box_pack_start( GTK_BOX( vbox ), hbox, FALSE, FALSE, 2 );
 	gtk_widget_show( hbox );
 
-	w = gtk_button_new_with_label( _( "Convert" ) );
-	gtk_box_pack_start( GTK_BOX( hbox ), w, TRUE, TRUE, 0 );
-	gtk_signal_connect( GTK_OBJECT( w ), "clicked",
-						GTK_SIGNAL_FUNC( BP_dialog_button_callback ), GINT_TO_POINTER( 1 ) );
-	GTK_WIDGET_SET_FLAGS( w, GTK_CAN_DEFAULT );
-	gtk_widget_grab_default( w );
-	gtk_widget_show( w );
 
-	w = gtk_button_new_with_label( _( "Change default" ) );
-	gtk_box_pack_start( GTK_BOX( hbox ), w, TRUE, TRUE, 0 );
-	gtk_signal_connect( GTK_OBJECT( w ), "clicked",
-						GTK_SIGNAL_FUNC( BP_dialog_button_callback ), GINT_TO_POINTER( 2 ) );
-	gtk_widget_show( w );
+	gtk_widget_show( dialog );
 
-	w = gtk_button_new_with_label( _( "Abort load" ) );
-	gtk_box_pack_start( GTK_BOX( hbox ), w, TRUE, TRUE, 0 );
-	gtk_signal_connect( GTK_OBJECT( w ), "clicked",
-						GTK_SIGNAL_FUNC( BP_dialog_button_callback ), GINT_TO_POINTER( 0 ) );
-	gtk_widget_show( w );
-	ret = 0; // abort
+	response_id = gtk_dialog_run( GTK_DIALOG( dialog ) );
 
-	gtk_widget_show( window );
-	gtk_grab_add( window );
-
-	while ( loop )
-		gtk_main_iteration();
-
-	if ( ret == 2 ) {
+	if( response_id == 2 ) {
 		// change project settings
 		if ( status == 0 ) {
 			g_qeglobals.m_bBrushPrimitMode = TRUE;
@@ -144,9 +98,11 @@ int BP_MessageBox( int status ){
 		}
 		SetKeyValue( g_qeglobals.d_project_entity, "brush_primit", ( g_qeglobals.m_bBrushPrimitMode ? "1" : "0" ) );
 	}
+	if( response_id < 0 )
+	{
+		response_id = 0; //default abort
+	}
+	gtk_widget_destroy( dialog );
 
-	gtk_grab_remove( window );
-	gtk_widget_destroy( window );
-
-	return ret;
+	return response_id;
 }

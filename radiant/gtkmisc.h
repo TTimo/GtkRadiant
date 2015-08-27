@@ -42,7 +42,7 @@ inline void get_window_pos( GtkWidget *wnd, int* x, int* y ){
 #else
 
 inline void get_window_pos( GtkWidget *wnd, int* x, int* y ){
-	gdk_window_get_root_origin( wnd->window, x, y );
+	gdk_window_get_root_origin( gtk_widget_get_parent_window( wnd ), x, y );
 }
 
 #endif
@@ -59,16 +59,17 @@ gint widget_delete_hide( GtkWidget *widget );
 
 // GdkPixmap **gdkpixmap, GdkBitmap **mask
 bool WINAPI load_plugin_bitmap( const char* filename, void **gdkpixmap, void **mask );
-void load_pixmap( const char* filename, GtkWidget* widget, GdkPixmap **gdkpixmap, GdkBitmap **mask );
+void load_pixmap( const char* filename, GtkWidget* widget, GtkWidget **gdkpixmap/*, GdkBitmap **mask*/ );
 GtkWidget* new_pixmap( GtkWidget* widget, const char* filename );
 GtkWidget* new_image_icon(const char* filename);
+GtkWidget* new_plugin_image_icon( const char* filename );
 
 GtkWidget* menu_separator( GtkWidget *menu );
 GtkWidget* menu_tearoff( GtkWidget *menu );
 GtkWidget* create_sub_menu_with_mnemonic( GtkWidget *bar, const gchar *mnemonic );
-GtkWidget* create_menu_item_with_mnemonic( GtkWidget *menu, const gchar *mnemonic, GtkSignalFunc func, int id );
-GtkWidget* create_check_menu_item_with_mnemonic( GtkWidget *menu, const gchar *mnemonic, GtkSignalFunc func, int id, gboolean active );
-GtkWidget* create_radio_menu_item_with_mnemonic( GtkWidget *menu, GtkWidget *last, const gchar *mnemonic, GtkSignalFunc func, int id, gboolean state );
+GtkWidget* create_menu_item_with_mnemonic( GtkWidget *menu, const gchar *mnemonic, GCallback func, int id );
+GtkWidget* create_check_menu_item_with_mnemonic( GtkWidget *menu, const gchar *mnemonic, GCallback func, int id, gboolean active );
+GtkWidget* create_radio_menu_item_with_mnemonic( GtkWidget *menu, GtkWidget *last, const gchar *mnemonic, GCallback func, int id, gboolean state );
 GtkWidget* create_menu_in_menu_with_mnemonic( GtkWidget *menu, const gchar *mnemonic );
 
 

@@ -116,17 +116,8 @@ unsigned int ToolbarButtonCount( void ) {
 
 // Load a xpm file and return a pixmap widget.
 GtkWidget* new_pixmap( char* filename ) {
-	GdkPixmap *gdkpixmap;
-	GdkBitmap *mask;
-	GtkWidget *pixmap;
 
-	g_FuncTable.m_pfnLoadBitmap( filename, (void **)&gdkpixmap, (void **)&mask );
-	pixmap = gtk_pixmap_new( gdkpixmap, mask );
-
-	gdk_pixmap_unref( gdkpixmap );
-	gdk_pixmap_unref( mask );
-
-	return pixmap;
+	return gtk_image_new_from_file( filename );
 }
 
 class CBobtoolzToolbarButton : public IToolbarButton

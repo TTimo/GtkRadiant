@@ -44,50 +44,19 @@ float h;
 class XORRectangle
 {
 public:
-XORRectangle( GtkWidget* widget )
-	: m_widget( widget ), m_gc( NULL )
-{}
-~XORRectangle(){
-	if ( initialised() ) {
-		gdk_gc_unref( m_gc );
-	}
-}
-void set( rectangle_t rectangle ){
-	lazy_init();
-	draw();
-	m_rectangle = rectangle;
-	draw();
-}
+XORRectangle( GtkWidget* widget );
+~XORRectangle();
+void set( rectangle_t rectangle );
+
 private:
-bool initialised() const {
-	return m_gc != NULL;
-}
-void lazy_init(){
-	if ( !initialised() ) {
-		m_gc = gdk_gc_new( m_widget->window );
-
-		GdkColor color = { 0, 0xffff, 0xffff, 0xffff, };
-		GdkColormap* colormap = gdk_window_get_colormap( m_widget->window );
-		gdk_colormap_alloc_color( colormap, &color, FALSE, TRUE );
-		gdk_gc_copy( m_gc, m_widget->style->white_gc );
-		gdk_gc_set_foreground( m_gc, &color );
-		gdk_gc_set_background( m_gc, &color );
-
-		gdk_gc_set_function( m_gc, GDK_XOR );
-	}
-}
-void draw() const {
-	const int x = (int)m_rectangle.x;
-	const int y = (int)m_rectangle.y;
-	const int w = (int)m_rectangle.w;
-	const int h = (int)m_rectangle.h;
-	gdk_draw_rectangle( m_widget->window, m_gc, TRUE, x, -( h ) - ( y - m_widget->allocation.height ), w, h );
-}
+bool initialised() const;
+void lazy_init();
+void draw() const;
 
 rectangle_t m_rectangle;
 
 GtkWidget* m_widget;
-GdkGC* m_gc;
+cairo_t *cr;
 };
 
 class CamWnd : public GLWindow

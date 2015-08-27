@@ -27,6 +27,7 @@
 
 #include "stdafx.h"
 #include <gtk/gtk.h>
+#include <glib/gi18n.h>
 //#include "qe3.h"
 
 GtkWidget *g_dlgInfo;
@@ -37,19 +38,18 @@ GtkWidget *s_pEdit;
 
 void ShowInfoDialog( const char* pText ){
 	if ( g_dlgInfo == NULL ) {
-		GtkWidget *dlg, *scr, *text;
+		GtkWidget *dialog, *scr, *text, *content_area;
+		GtkDialogFlags flags = GTK_DIALOG_DESTROY_WITH_PARENT;
 
-		g_dlgInfo = dlg = gtk_window_new( GTK_WINDOW_TOPLEVEL );
-		gtk_window_set_title( GTK_WINDOW( dlg ), "Information" );
-		gtk_signal_connect( GTK_OBJECT( dlg ), "delete_event",
-							GTK_SIGNAL_FUNC( gtk_widget_hide ), NULL );
-		gtk_signal_connect( GTK_OBJECT( dlg ), "destroy",
-							GTK_SIGNAL_FUNC( gtk_widget_destroy ), NULL );
-		gtk_window_set_default_size( GTK_WINDOW( dlg ), 300, 150 );
+		g_dlgInfo = dialog = gtk_dialog_new_with_buttons( _( "Information" ), NULL, flags, NULL );
+		g_signal_connect( G_OBJECT( dialog ), "delete_event", G_CALLBACK( gtk_widget_hide ), NULL );
+		gtk_window_set_default_size( GTK_WINDOW( dialog ), 300, 150 );
+
+		content_area = gtk_dialog_get_content_area( GTK_DIALOG( dialog ) );
 
 		scr = gtk_scrolled_window_new( NULL, NULL );
 		gtk_widget_show( scr );
-		gtk_container_add( GTK_CONTAINER( dlg ), scr );
+		gtk_container_add( GTK_CONTAINER( content_area ), scr );
 		gtk_scrolled_window_set_policy( GTK_SCROLLED_WINDOW( scr ), GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC );
 		gtk_container_set_border_width( GTK_CONTAINER( scr ), 5 );
 		gtk_scrolled_window_set_shadow_type( GTK_SCROLLED_WINDOW( scr ), GTK_SHADOW_IN );

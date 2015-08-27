@@ -255,7 +255,7 @@ static gint OnTextureKey( GtkWidget* widget, GdkEventKey* event, gpointer data )
 #ifdef DBG_SI
 	Sys_Printf( "OnTextureKey\n" );
 #endif
-	if ( event->keyval != GDK_Return ) {
+	if ( event->keyval != GDK_KEY_Return ) {
 		g_dlgSurface.m_bEditingTextureWidget = true;
 	}
 	return FALSE;
@@ -278,7 +278,7 @@ static void OnCancel( GtkWidget *widget, gpointer data ){
 
 static gint OnDialogKey( GtkWidget* widget, GdkEventKey* event, gpointer data ) {
   if ( g_surfwin ) {
-    if ( event->keyval == GDK_Return ) {
+    if ( event->keyval == GDK_KEY_Return ) {
       if ( g_dlgSurface.m_bEditingTextureWidget ) {
         OnApply( NULL, NULL );
         g_dlgSurface.m_bEditingTextureWidget = false;
@@ -287,7 +287,7 @@ static gint OnDialogKey( GtkWidget* widget, GdkEventKey* event, gpointer data ) 
       }
       return TRUE;
     }
-    if ( event->keyval == GDK_Escape ) {
+    if ( event->keyval == GDK_KEY_Escape ) {
       OnCancel( NULL, NULL );
       return TRUE;
     }
@@ -313,27 +313,27 @@ static void OnIncrementChanged( GtkWidget *widget, gpointer data ){
 	if ( widget == g_dlgSurface.GetDlgWidget( "hshift_inc" ) ) {
 		l_pIncrement->shift[0] = val;
 		adjust = gtk_spin_button_get_adjustment( GTK_SPIN_BUTTON( g_dlgSurface.GetDlgWidget( "hshift" ) ) );
-		adjust->step_increment = l_pIncrement->shift[0];
+		gtk_adjustment_set_step_increment( adjust, l_pIncrement->shift[0] );
 	}
 	else if ( widget == g_dlgSurface.GetDlgWidget( "vshift_inc" ) ) {
 		l_pIncrement->shift[1] = val;
 		adjust = gtk_spin_button_get_adjustment( GTK_SPIN_BUTTON( g_dlgSurface.GetDlgWidget( "vshift" ) ) );
-		adjust->step_increment = l_pIncrement->shift[1];
+		gtk_adjustment_set_step_increment( adjust, l_pIncrement->shift[1] );
 	}
 	else if ( widget == g_dlgSurface.GetDlgWidget( "hscale_inc" ) ) {
 		l_pIncrement->scale[0] = val;
 		adjust = gtk_spin_button_get_adjustment( GTK_SPIN_BUTTON( g_dlgSurface.GetDlgWidget( "hscale" ) ) );
-		adjust->step_increment = l_pIncrement->scale[0];
+		gtk_adjustment_set_step_increment( adjust, l_pIncrement->scale[0] );
 	}
 	else if ( widget == g_dlgSurface.GetDlgWidget( "vscale_inc" ) ) {
 		l_pIncrement->scale[1] = val;
 		adjust = gtk_spin_button_get_adjustment( GTK_SPIN_BUTTON( g_dlgSurface.GetDlgWidget( "vscale" ) ) );
-		adjust->step_increment = l_pIncrement->scale[1];
+		gtk_adjustment_set_step_increment( adjust, l_pIncrement->scale[1] );
 	}
 	else if ( widget == g_dlgSurface.GetDlgWidget( "rotate_inc" ) ) {
 		l_pIncrement->rotate = val;
 		adjust = gtk_spin_button_get_adjustment( GTK_SPIN_BUTTON( g_dlgSurface.GetDlgWidget( "rotate" ) ) );
-		adjust->step_increment = l_pIncrement->rotate;
+		gtk_adjustment_set_step_increment( adjust, l_pIncrement->rotate );
 	}
 }
 
@@ -372,8 +372,8 @@ void DoSnapTToGrid( float hscale, float vscale ){
 // increment * scale = gridsize
 static void OnBtnMatchGrid( GtkWidget *widget, gpointer data ){
 	float hscale, vscale;
-	hscale = gtk_spin_button_get_value_as_float( GTK_SPIN_BUTTON( g_dlgSurface.GetDlgWidget( "hscale" ) ) );
-	vscale = gtk_spin_button_get_value_as_float( GTK_SPIN_BUTTON( g_dlgSurface.GetDlgWidget( "vscale" ) ) );
+	hscale = gtk_spin_button_get_value( GTK_SPIN_BUTTON( g_dlgSurface.GetDlgWidget( "hscale" ) ) );
+	vscale = gtk_spin_button_get_value( GTK_SPIN_BUTTON( g_dlgSurface.GetDlgWidget( "vscale" ) ) );
 	if ( hscale == 0.0f || vscale == 0.0f ) {
 		Sys_Printf( "ERROR: unexpected scale == 0.0f\n" );
 		return;
@@ -511,16 +511,16 @@ void SurfaceDlg::BuildDialog() {
 	gtk_window_set_title( GTK_WINDOW( dlg ), _( "Surface inspector" ) );
 	//g_signal_connect (G_OBJECT (dlg), "delete_event", G_CALLBACK (OnCancel), NULL);
 	// we catch 'Enter' and interpret is as OnDone
-	gtk_signal_connect( GTK_OBJECT( dlg ), "key_press_event", GTK_SIGNAL_FUNC( OnDialogKey ), NULL );
+	g_signal_connect( dlg, "key_press_event", G_CALLBACK( OnDialogKey ), NULL );
 	gtk_window_set_transient_for( GTK_WINDOW( dlg ), GTK_WINDOW( g_pParentWnd->m_pWidget ) );
 
 	// replaced by only the vbox:
-	vbox = gtk_vbox_new( FALSE, 5 );
+	vbox = gtk_box_new( GTK_ORIENTATION_VERTICAL, 5 );
 	gtk_widget_show( vbox );
 	gtk_container_add( GTK_CONTAINER( dlg ), vbox );
 	gtk_container_set_border_width( GTK_CONTAINER( vbox ), 5 );
 
-	hbox2 = gtk_hbox_new( FALSE, 5 );
+	hbox2 = gtk_box_new( GTK_ORIENTATION_HORIZONTAL, 5 );
 	gtk_widget_show( hbox2 );
 	gtk_box_pack_start( GTK_BOX( vbox ), hbox2, FALSE, TRUE, 0 );
 
@@ -529,7 +529,7 @@ void SurfaceDlg::BuildDialog() {
 	gtk_box_pack_start( GTK_BOX( hbox2 ), label, FALSE, TRUE, 0 );
 
 	entry = gtk_entry_new();
-	gtk_signal_connect( GTK_OBJECT( entry ), "key_press_event", GTK_SIGNAL_FUNC( OnTextureKey ), NULL );
+	g_signal_connect( entry, "key_press_event", G_CALLBACK( OnTextureKey ), NULL );
 	gtk_widget_show( entry );
 	gtk_box_pack_start( GTK_BOX( hbox2 ), entry, TRUE, TRUE, 0 );
 	g_object_set_data( G_OBJECT( m_pWidget ), "texture", entry );
@@ -550,13 +550,13 @@ void SurfaceDlg::BuildDialog() {
 
 	spin = gtk_spin_button_new( GTK_ADJUSTMENT( gtk_adjustment_new( 0, -8192, 8192, 2, 8, 0 ) ), 0, 0 );
 	g_object_set_data( G_OBJECT( dlg ), "hshift", spin );
-	gtk_signal_connect( GTK_OBJECT( gtk_spin_button_get_adjustment( GTK_SPIN_BUTTON( spin ) ) ), "value_changed",
-						GTK_SIGNAL_FUNC( OnUpdate ), NULL );
+	g_signal_connect( gtk_spin_button_get_adjustment( GTK_SPIN_BUTTON( spin ) ), "value_changed",
+						G_CALLBACK( OnUpdate ), NULL );
 	gtk_widget_show( spin );
 	gtk_table_attach( GTK_TABLE( table ), spin, 1, 2, 0, 1,
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
-	gtk_widget_set_usize( spin, 60, -2 );
+	gtk_widget_set_size_request( spin, 60, -2 );
 
 	label = gtk_label_new( _( "Step" ) );
 	gtk_widget_show( label );
@@ -567,13 +567,13 @@ void SurfaceDlg::BuildDialog() {
 
 	entry = gtk_entry_new();
 	g_object_set_data( G_OBJECT( dlg ), "hshift_inc", entry );
-	gtk_signal_connect( GTK_OBJECT( entry ), "changed",
-						GTK_SIGNAL_FUNC( OnIncrementChanged ), NULL );
+	g_signal_connect( entry, "changed",
+						G_CALLBACK( OnIncrementChanged ), NULL );
 	gtk_widget_show( entry );
 	gtk_table_attach( GTK_TABLE( table ), entry, 3, 4, 0, 1,
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
-	gtk_widget_set_usize( entry, 50, -2 );
+	gtk_widget_set_size_request( entry, 50, -2 );
 
 	label = gtk_label_new( _( "Vertical shift" ) );
 	gtk_widget_show( label );
@@ -584,13 +584,13 @@ void SurfaceDlg::BuildDialog() {
 
 	spin = gtk_spin_button_new( GTK_ADJUSTMENT( gtk_adjustment_new( 0, -8192, 8192, 2, 8, 0 ) ), 0, 0 );
 	g_object_set_data( G_OBJECT( dlg ), "vshift", spin );
-	gtk_signal_connect( GTK_OBJECT( gtk_spin_button_get_adjustment( GTK_SPIN_BUTTON( spin ) ) ), "value_changed",
-						GTK_SIGNAL_FUNC( OnUpdate ), NULL );
+	g_signal_connect( gtk_spin_button_get_adjustment( GTK_SPIN_BUTTON( spin ) ), "value_changed",
+						G_CALLBACK( OnUpdate ), NULL );
 	gtk_widget_show( spin );
 	gtk_table_attach( GTK_TABLE( table ), spin, 1, 2, 1, 2,
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
-	gtk_widget_set_usize( spin, 60, -2 );
+	gtk_widget_set_size_request( spin, 60, -2 );
 
 	label = gtk_label_new( _( "Step" ) );
 	gtk_widget_show( label );
@@ -601,13 +601,13 @@ void SurfaceDlg::BuildDialog() {
 
 	entry = gtk_entry_new();
 	g_object_set_data( G_OBJECT( dlg ), "vshift_inc", entry );
-	gtk_signal_connect( GTK_OBJECT( entry ), "changed",
-						GTK_SIGNAL_FUNC( OnIncrementChanged ), NULL );
+	g_signal_connect( entry, "changed",
+						G_CALLBACK( OnIncrementChanged ), NULL );
 	gtk_widget_show( entry );
 	gtk_table_attach( GTK_TABLE( table ), entry, 3, 4, 1, 2,
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
-	gtk_widget_set_usize( entry, 50, -2 );
+	gtk_widget_set_size_request( entry, 50, -2 );
 
 	label = gtk_label_new( _( "Horizontal stretch" ) );
 	gtk_widget_show( label );
@@ -618,13 +618,13 @@ void SurfaceDlg::BuildDialog() {
 
 	spin = gtk_spin_button_new( GTK_ADJUSTMENT( gtk_adjustment_new( 0, -1000, 1000, 1, 10, 0 ) ), 0, 0 );
 	g_object_set_data( G_OBJECT( dlg ), "hscale", spin );
-	gtk_signal_connect( GTK_OBJECT( gtk_spin_button_get_adjustment( GTK_SPIN_BUTTON( spin ) ) ), "value_changed",
-						GTK_SIGNAL_FUNC( OnUpdate ), NULL );
+	g_signal_connect( gtk_spin_button_get_adjustment( GTK_SPIN_BUTTON( spin ) ), "value_changed",
+						G_CALLBACK( OnUpdate ), NULL );
 	gtk_widget_show( spin );
 	gtk_table_attach( GTK_TABLE( table ), spin, 1, 2, 2, 3,
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
-	gtk_widget_set_usize( spin, 60, -2 );
+	gtk_widget_set_size_request( spin, 60, -2 );
 
 	label = gtk_label_new( _( "Step" ) );
 	gtk_widget_show( label );
@@ -635,13 +635,13 @@ void SurfaceDlg::BuildDialog() {
 
 	entry = gtk_entry_new();
 	g_object_set_data( G_OBJECT( dlg ), "hscale_inc", entry );
-	gtk_signal_connect( GTK_OBJECT( entry ), "changed",
-						GTK_SIGNAL_FUNC( OnIncrementChanged ), NULL );
+	g_signal_connect( entry, "changed",
+						G_CALLBACK( OnIncrementChanged ), NULL );
 	gtk_widget_show( entry );
 	gtk_table_attach( GTK_TABLE( table ), entry, 3, 4, 2, 3,
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 2, 3 );
-	gtk_widget_set_usize( entry, 50, -2 );
+	gtk_widget_set_size_request( entry, 50, -2 );
 
 	label = gtk_label_new( _( "Vertical stretch" ) );
 	gtk_widget_show( label );
@@ -652,13 +652,13 @@ void SurfaceDlg::BuildDialog() {
 
 	spin = gtk_spin_button_new( GTK_ADJUSTMENT( gtk_adjustment_new( 0, -1000, 1000, 1, 10, 0 ) ), 0, 0 );
 	g_object_set_data( G_OBJECT( dlg ), "vscale", spin );
-	gtk_signal_connect( GTK_OBJECT( gtk_spin_button_get_adjustment( GTK_SPIN_BUTTON( spin ) ) ), "value_changed",
-						GTK_SIGNAL_FUNC( OnUpdate ), NULL );
+	g_signal_connect( gtk_spin_button_get_adjustment( GTK_SPIN_BUTTON( spin ) ), "value_changed",
+						G_CALLBACK( OnUpdate ), NULL );
 	gtk_widget_show( spin );
 	gtk_table_attach( GTK_TABLE( table ), spin, 1, 2, 3, 4,
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
-	gtk_widget_set_usize( spin, 60, -2 );
+	gtk_widget_set_size_request( spin, 60, -2 );
 
 	label = gtk_label_new( _( "Step" ) );
 	gtk_widget_show( label );
@@ -669,13 +669,13 @@ void SurfaceDlg::BuildDialog() {
 
 	entry = gtk_entry_new();
 	g_object_set_data( G_OBJECT( dlg ), "vscale_inc", entry );
-	gtk_signal_connect( GTK_OBJECT( entry ), "changed",
-						GTK_SIGNAL_FUNC( OnIncrementChanged ), NULL );
+	g_signal_connect( entry, "changed",
+						G_CALLBACK( OnIncrementChanged ), NULL );
 	gtk_widget_show( entry );
 	gtk_table_attach( GTK_TABLE( table ), entry, 3, 4, 3, 4,
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
-	gtk_widget_set_usize( entry, 50, -2 );
+	gtk_widget_set_size_request( entry, 50, -2 );
 
 	label = gtk_label_new( _( "Rotate" ) );
 	gtk_widget_show( label );
@@ -686,13 +686,13 @@ void SurfaceDlg::BuildDialog() {
 
 	spin = gtk_spin_button_new( GTK_ADJUSTMENT( gtk_adjustment_new( 0, -360, 360, 1, 10, 0 ) ), 1, 0 );
 	g_object_set_data( G_OBJECT( dlg ), "rotate", spin );
-	gtk_signal_connect( GTK_OBJECT( gtk_spin_button_get_adjustment( GTK_SPIN_BUTTON( spin ) ) ), "value_changed",
-						GTK_SIGNAL_FUNC( OnUpdate ), NULL );
+	g_signal_connect( gtk_spin_button_get_adjustment( GTK_SPIN_BUTTON( spin ) ), "value_changed",
+						G_CALLBACK( OnUpdate ), NULL );
 	gtk_widget_show( spin );
 	gtk_table_attach( GTK_TABLE( table ), spin, 1, 2, 4, 5,
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
-	gtk_widget_set_usize( spin, 60, -2 );
+	gtk_widget_set_size_request( spin, 60, -2 );
 	gtk_spin_button_set_wrap( GTK_SPIN_BUTTON( spin ), TRUE );
 
 	label = gtk_label_new( _( "Step" ) );
@@ -704,13 +704,13 @@ void SurfaceDlg::BuildDialog() {
 
 	entry = gtk_entry_new();
 	g_object_set_data( G_OBJECT( dlg ), "rotate_inc", entry );
-	gtk_signal_connect( GTK_OBJECT( entry ), "changed",
-						GTK_SIGNAL_FUNC( OnIncrementChanged ), NULL );
+	g_signal_connect( entry, "changed",
+						G_CALLBACK( OnIncrementChanged ), NULL );
 	gtk_widget_show( entry );
 	gtk_table_attach( GTK_TABLE( table ), entry, 3, 4, 4, 5,
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
-	gtk_widget_set_usize( entry, 50, -2 );
+	gtk_widget_set_size_request( entry, 50, -2 );
 
 	// match grid button
 	button = gtk_button_new_with_label( _( "Match Grid" ) );
@@ -718,8 +718,8 @@ void SurfaceDlg::BuildDialog() {
 	gtk_table_attach( GTK_TABLE( table ), button, 2, 4, 5, 6,
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
-	gtk_signal_connect( GTK_OBJECT( button ), "clicked",
-						GTK_SIGNAL_FUNC( OnBtnMatchGrid ), NULL );
+	g_signal_connect( button, "clicked",
+						G_CALLBACK( OnBtnMatchGrid ), NULL );
 
 	frame = gtk_frame_new( _( "Texturing" ) );
 	gtk_widget_show( frame );
@@ -761,61 +761,61 @@ void SurfaceDlg::BuildDialog() {
 	gtk_table_attach( GTK_TABLE( table ), button, 0, 1, 1, 2,
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
-	gtk_signal_connect( GTK_OBJECT( button ), "clicked",
-						GTK_SIGNAL_FUNC( OnBtnAxial ), NULL );
-	gtk_widget_set_usize( button, 60, -2 );
+	g_signal_connect( button, "clicked",
+						G_CALLBACK( OnBtnAxial ), NULL );
+	gtk_widget_set_size_request( button, 60, -2 );
 
 	button = gtk_button_new_with_label( _( "Fit" ) );
 	gtk_widget_show( button );
 	gtk_table_attach( GTK_TABLE( table ), button, 1, 2, 1, 2,
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
-	gtk_signal_connect( GTK_OBJECT( button ), "clicked",
-						GTK_SIGNAL_FUNC( OnBtnFaceFit ), NULL );
-	gtk_widget_set_usize( button, 60, -2 );
+	g_signal_connect( button, "clicked",
+						G_CALLBACK( OnBtnFaceFit ), NULL );
+	gtk_widget_set_size_request( button, 60, -2 );
 
 	button = gtk_button_new_with_label( _( "CAP" ) );
 	gtk_widget_show( button );
 	gtk_table_attach( GTK_TABLE( table ), button, 0, 1, 3, 4,
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
-	gtk_signal_connect( GTK_OBJECT( button ), "clicked",
-						GTK_SIGNAL_FUNC( OnBtnPatchdetails ), NULL );
-	gtk_widget_set_usize( button, 60, -2 );
+	g_signal_connect( button, "clicked",
+						G_CALLBACK( OnBtnPatchdetails ), NULL );
+	gtk_widget_set_size_request( button, 60, -2 );
 
 	button = gtk_button_new_with_label( _( "Set..." ) );
 	gtk_widget_show( button );
 	gtk_table_attach( GTK_TABLE( table ), button, 1, 2, 3, 4,
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
-	gtk_signal_connect( GTK_OBJECT( button ), "clicked",
-						GTK_SIGNAL_FUNC( OnBtnPatchreset ), NULL );
-	gtk_widget_set_usize( button, 60, -2 );
+	g_signal_connect( button, "clicked",
+						G_CALLBACK( OnBtnPatchreset ), NULL );
+	gtk_widget_set_size_request( button, 60, -2 );
 
 	button = gtk_button_new_with_label( _( "Natural" ) );
 	gtk_widget_show( button );
 	gtk_table_attach( GTK_TABLE( table ), button, 2, 3, 3, 4,
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
-	gtk_signal_connect( GTK_OBJECT( button ), "clicked",
-						GTK_SIGNAL_FUNC( OnBtnPatchnatural ), NULL );
-	gtk_widget_set_usize( button, 60, -2 );
+	g_signal_connect( button, "clicked",
+						G_CALLBACK( OnBtnPatchnatural ), NULL );
+	gtk_widget_set_size_request( button, 60, -2 );
 
 	button = gtk_button_new_with_label( _( "Fit" ) );
 	gtk_widget_show( button );
 	gtk_table_attach( GTK_TABLE( table ), button, 3, 4, 3, 4,
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
-	gtk_signal_connect( GTK_OBJECT( button ), "clicked",
-						GTK_SIGNAL_FUNC( OnBtnPatchFit ), NULL );
-	gtk_widget_set_usize( button, 60, -2 );
+	g_signal_connect( button, "clicked",
+						G_CALLBACK( OnBtnPatchFit ), NULL );
+	gtk_widget_set_size_request( button, 60, -2 );
 
 	spin = gtk_spin_button_new( GTK_ADJUSTMENT( gtk_adjustment_new( 1, 1, 32, 1, 10, 0 ) ), 1, 0 );
 	gtk_widget_show( spin );
 	gtk_table_attach( GTK_TABLE( table ), spin, 2, 3, 1, 2,
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
-	gtk_widget_set_usize( spin, 60, -2 );
+	gtk_widget_set_size_request( spin, 60, -2 );
 	AddDialogData( spin, &m_nWidth, DLG_SPIN_INT );
 
 	spin = gtk_spin_button_new( GTK_ADJUSTMENT( gtk_adjustment_new( 1, 1, 32, 1, 10, 0 ) ), 1, 0 );
@@ -823,33 +823,33 @@ void SurfaceDlg::BuildDialog() {
 	gtk_table_attach( GTK_TABLE( table ), spin, 3, 4, 1, 2,
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
-	gtk_widget_set_usize( spin, 60, -2 );
+	gtk_widget_set_size_request( spin, 60, -2 );
 	AddDialogData( spin, &m_nHeight, DLG_SPIN_INT );
 
-	hbox2 = gtk_hbox_new( FALSE, 5 );
+	hbox2 = gtk_box_new( GTK_ORIENTATION_HORIZONTAL, 5 );
 	gtk_widget_show( hbox2 );
 	gtk_box_pack_start( GTK_BOX( vbox ), hbox2, FALSE, TRUE, 0 );
 
 	button = gtk_button_new_with_label( _( "Done" ) );
 	gtk_widget_show( button );
 	gtk_box_pack_start( GTK_BOX( hbox2 ), button, FALSE, FALSE, 0 );
-	gtk_signal_connect( GTK_OBJECT( button ), "clicked",
-						GTK_SIGNAL_FUNC( OnDone ), NULL );
-	gtk_widget_set_usize( button, 60, -2 );
+	g_signal_connect( button, "clicked",
+						G_CALLBACK( OnDone ), NULL );
+	gtk_widget_set_size_request( button, 60, -2 );
 
 	button = gtk_button_new_with_label( _( "Apply" ) );
 	gtk_widget_show( button );
 	gtk_box_pack_start( GTK_BOX( hbox2 ), button, FALSE, FALSE, 0 );
-	gtk_signal_connect( GTK_OBJECT( button ), "clicked",
-						GTK_SIGNAL_FUNC( OnApply ), NULL );
-	gtk_widget_set_usize( button, 60, -2 );
+	g_signal_connect( button, "clicked",
+						G_CALLBACK( OnApply ), NULL );
+	gtk_widget_set_size_request( button, 60, -2 );
 
 	button = gtk_button_new_with_label( _( "Cancel" ) );
 	gtk_widget_show( button );
 	gtk_box_pack_start( GTK_BOX( hbox2 ), button, FALSE, FALSE, 0 );
-	gtk_signal_connect( GTK_OBJECT( button ), "clicked",
-						GTK_SIGNAL_FUNC( OnCancel ), NULL );
-	gtk_widget_set_usize( button, 60, -2 );
+	g_signal_connect( button, "clicked",
+						G_CALLBACK( OnCancel ), NULL );
+	gtk_widget_set_size_request( button, 60, -2 );
 
 	// that's a bit of trashy stuff from Textool-v2 branch
 #ifdef _DEBUG
@@ -857,9 +857,9 @@ void SurfaceDlg::BuildDialog() {
 	button = gtk_button_new_with_label( _( "Test" ) );
 	gtk_widget_show( button );
 	gtk_box_pack_start( GTK_BOX( hbox2 ), button, FALSE, FALSE, 0 );
-	gtk_signal_connect( GTK_OBJECT( button ), "clicked",
-						GTK_SIGNAL_FUNC( OnTest ), NULL );
-	gtk_widget_set_usize( button, 60, -2 );
+	g_signal_connect( button, "clicked",
+						G_CALLBACK( OnTest ), NULL );
+	gtk_widget_set_size_request( button, 60, -2 );
 #endif
 
 	// Initialize
@@ -928,10 +928,9 @@ void SurfaceDlg::SetTexMods(){
 		gtk_spin_button_set_value( spin, pt->shift[0] );
 	}
 	GtkAdjustment *adjust = gtk_spin_button_get_adjustment( GTK_SPIN_BUTTON( spin ) );
-	adjust->step_increment = l_pIncrement->shift[0];
+	gtk_adjustment_set_step_increment( adjust, l_pIncrement->shift[0] );
 	char buf[10]; // got into snprintf paranoia after BoundChecker detected a stack overrun
-#ifdef _WIN32
-	// TTimo: THIS IS UGLY
+#if defined(_MSC_VER) && _MSC_VER<1900 && !(defined snprintf)
 #define snprintf _snprintf
 #endif
 	snprintf( buf, 10, "%g", l_pIncrement->shift[0] );
@@ -946,7 +945,7 @@ void SurfaceDlg::SetTexMods(){
 		gtk_spin_button_set_value( spin, pt->shift[1] );
 	}
 	adjust = gtk_spin_button_get_adjustment( GTK_SPIN_BUTTON( spin ) );
-	adjust->step_increment = l_pIncrement->shift[1];
+	gtk_adjustment_set_step_increment( adjust, l_pIncrement->shift[1] );
 	snprintf( buf, 10, "%g", l_pIncrement->shift[1] );
 	gtk_entry_set_text( GTK_ENTRY( GetDlgWidget( "vshift_inc" ) ), buf );
 
@@ -955,7 +954,7 @@ void SurfaceDlg::SetTexMods(){
 	gtk_spin_button_set_value( spin, g_qeglobals.m_bBrushPrimitMode ? m_scale[0] : pt->scale[0] );
 
 	adjust = gtk_spin_button_get_adjustment( GTK_SPIN_BUTTON( spin ) );
-	adjust->step_increment = l_pIncrement->scale[0];
+	gtk_adjustment_set_step_increment( adjust, l_pIncrement->scale[0] );
 	snprintf( buf, 10, "%g", l_pIncrement->scale[0] );
 	gtk_entry_set_text( GTK_ENTRY( GetDlgWidget( "hscale_inc" ) ), buf );
 
@@ -964,7 +963,7 @@ void SurfaceDlg::SetTexMods(){
 	gtk_spin_button_set_value( spin, g_qeglobals.m_bBrushPrimitMode ? m_scale[1] : pt->scale[1] );
 
 	adjust = gtk_spin_button_get_adjustment( GTK_SPIN_BUTTON( spin ) );
-	adjust->step_increment = l_pIncrement->scale[1];
+	gtk_adjustment_set_step_increment( adjust, l_pIncrement->scale[1] );
 	snprintf( buf, 10, "%g", l_pIncrement->scale[1] );
 	gtk_entry_set_text( GTK_ENTRY( GetDlgWidget( "vscale_inc" ) ), buf );
 
@@ -974,7 +973,7 @@ void SurfaceDlg::SetTexMods(){
 	gtk_spin_button_set_value( spin, g_qeglobals.m_bBrushPrimitMode ? m_rotate : pt->rotate );
 
 	adjust = gtk_spin_button_get_adjustment( GTK_SPIN_BUTTON( spin ) );
-	adjust->step_increment = l_pIncrement->rotate;
+	gtk_adjustment_set_step_increment( adjust, l_pIncrement->rotate );
 	snprintf( buf, 10, "%g", l_pIncrement->rotate );
 	gtk_entry_set_text( GTK_ENTRY( GetDlgWidget( "rotate_inc" ) ), buf );
 
@@ -1042,15 +1041,15 @@ void SurfaceDlg::GetTexMods(){
 
 
 	( g_qeglobals.m_bBrushPrimitMode ? m_shift[0] : pt->shift[0] ) =
-		gtk_spin_button_get_value_as_float( GTK_SPIN_BUTTON( GetDlgWidget( "hshift" ) ) );
+		gtk_spin_button_get_value( GTK_SPIN_BUTTON( GetDlgWidget( "hshift" ) ) );
 	( g_qeglobals.m_bBrushPrimitMode ? m_shift[1] : pt->shift[1] ) =
-		gtk_spin_button_get_value_as_float( GTK_SPIN_BUTTON( GetDlgWidget( "vshift" ) ) );
+		gtk_spin_button_get_value( GTK_SPIN_BUTTON( GetDlgWidget( "vshift" ) ) );
 	( g_qeglobals.m_bBrushPrimitMode ? m_scale[0] : pt->scale[0] ) =
-		gtk_spin_button_get_value_as_float( GTK_SPIN_BUTTON( GetDlgWidget( "hscale" ) ) );
+		gtk_spin_button_get_value( GTK_SPIN_BUTTON( GetDlgWidget( "hscale" ) ) );
 	( g_qeglobals.m_bBrushPrimitMode ? m_scale[1] : pt->scale[1] ) =
-		gtk_spin_button_get_value_as_float( GTK_SPIN_BUTTON( GetDlgWidget( "vscale" ) ) );
+		gtk_spin_button_get_value( GTK_SPIN_BUTTON( GetDlgWidget( "vscale" ) ) );
 	( g_qeglobals.m_bBrushPrimitMode ? m_rotate : pt->rotate ) =
-		gtk_spin_button_get_value_as_float( GTK_SPIN_BUTTON( GetDlgWidget( "rotate" ) ) );
+		gtk_spin_button_get_value( GTK_SPIN_BUTTON( GetDlgWidget( "rotate" ) ) );
 
 	// a local copy of the texture matrix, given for a qtexture_t with width=2 height=2
 	brushprimit_texdef_t local_bp;

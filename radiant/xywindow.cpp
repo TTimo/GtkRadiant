@@ -438,7 +438,7 @@ void CreateEntityFromName( const char* name, const vec3_t origin ){
 }
 
 void CreateRightClickEntity( XYWnd* pWnd, int x, int y, const char* pName ){
-	int height = pWnd->GetWidget()->allocation.height;
+	int height = gtk_widget_get_allocated_height( pWnd->GetWidget() );
 	vec3_t point;
 	pWnd->SnapToPoint( x, height - 1 - y, point );
 
@@ -1142,14 +1142,16 @@ void XYWnd::OnMouseMove( guint32 nFlags, int pointx, int pointy ){
 
 	if ( ( nFlags & MK_RBUTTON ) == 0 ) {
 		if ( bCrossHair && !g_bWaitCursor ) {
+			GdkDisplay *display;
 			GdkCursor *cursor;
-			cursor = gdk_cursor_new( GDK_CROSSHAIR );
-			gdk_window_set_cursor( m_pWidget->window, cursor );
-			gdk_cursor_unref( cursor );
+
+			display = gdk_display_get_default();
+			cursor = gdk_cursor_new_for_display( display, GDK_CROSSHAIR );
+			gdk_window_set_cursor( gtk_widget_get_window( m_pWidget ), cursor );
 		}
 		else
 		{
-			gdk_window_set_cursor( m_pWidget->window, NULL );
+			gdk_window_set_cursor( gtk_widget_get_window( m_pWidget ), NULL );
 		}
 	}
 
@@ -1405,7 +1407,7 @@ void XYWnd::XY_MouseUp( int x, int y, int buttons ){
 	}
 	m_nButtonstate = 0;
 
-	gdk_window_set_cursor( m_pWidget->window, NULL );
+	gdk_window_set_cursor( gtk_widget_get_window( m_pWidget ), NULL );
 
 	update_xor_rectangle_xy( m_XORRectangle );
 }
@@ -1448,44 +1450,44 @@ void XYWnd::HandleDrop(){
 
 		menu_in_menu = create_menu_in_menu_with_mnemonic( menu, "Select" );
 		create_menu_item_with_mnemonic( menu_in_menu, "Select Complete Tall",
-										GTK_SIGNAL_FUNC( HandleCommand ), ID_SELECTION_SELECTCOMPLETETALL );
+										G_CALLBACK( HandleCommand ), ID_SELECTION_SELECTCOMPLETETALL );
 		create_menu_item_with_mnemonic( menu_in_menu, "Select Touching",
-										GTK_SIGNAL_FUNC( HandleCommand ), ID_SELECTION_SELECTTOUCHING );
+										G_CALLBACK( HandleCommand ), ID_SELECTION_SELECTTOUCHING );
 		create_menu_item_with_mnemonic( menu_in_menu, "Select Partial Tall",
-										GTK_SIGNAL_FUNC( HandleCommand ), ID_SELECTION_SELECTPARTIALTALL );
+										G_CALLBACK( HandleCommand ), ID_SELECTION_SELECTPARTIALTALL );
 		create_menu_item_with_mnemonic( menu_in_menu, "Select Inside",
-										GTK_SIGNAL_FUNC( HandleCommand ), ID_SELECTION_SELECTINSIDE );
+										G_CALLBACK( HandleCommand ), ID_SELECTION_SELECTINSIDE );
 		menu_separator( menu ); nID++;
 		// NOTE: temporary commented out until we put it back in for good (that is with actual features)
 		/*
 		   menu_in_menu = create_menu_in_menu_with_mnemonic (menu, "Group",);
 		   create_menu_item_with_mnemonic (menu_in_menu, "Add to...",
-		          GTK_SIGNAL_FUNC (HandleCommand), ID_DROP_GROUP_ADDTO);
+		          G_CALLBACK (HandleCommand), ID_DROP_GROUP_ADDTO);
 		   create_menu_item_with_mnemonic (menu_in_menu, "Remove",
-		          GTK_SIGNAL_FUNC (HandleCommand), ID_DROP_GROUP_REMOVE);
+		          G_CALLBACK (HandleCommand), ID_DROP_GROUP_REMOVE);
 		   create_menu_item_with_mnemonic (menu_in_menu, "Name...",
-		          GTK_SIGNAL_FUNC (HandleCommand), ID_DROP_GROUP_NAME);
+		          G_CALLBACK (HandleCommand), ID_DROP_GROUP_NAME);
 		   menu_separator (menu_in_menu); nID++;
 		   create_menu_item_with_mnemonic (menu_in_menu, "New Group...",
-		          GTK_SIGNAL_FUNC (HandleCommand), ID_DROP_GROUP_NEWGROUP);
+		          G_CALLBACK (HandleCommand), ID_DROP_GROUP_NEWGROUP);
 		 */
 		create_menu_item_with_mnemonic( menu, "Ungroup Entity",
-										GTK_SIGNAL_FUNC( HandleCommand ), ID_SELECTION_UNGROUPENTITY );
+										G_CALLBACK( HandleCommand ), ID_SELECTION_UNGROUPENTITY );
 
 		create_menu_item_with_mnemonic( menu, "Move into entity",
-										GTK_SIGNAL_FUNC( HandleCommand ), ID_SELECTION_MERGE );
+										G_CALLBACK( HandleCommand ), ID_SELECTION_MERGE );
 		create_menu_item_with_mnemonic( menu, "Move into worldspawn",
-										GTK_SIGNAL_FUNC( HandleCommand ), ID_SELECTION_SEPERATE );
+										G_CALLBACK( HandleCommand ), ID_SELECTION_SEPERATE );
 
 		create_menu_item_with_mnemonic( menu, "Make Detail",
-										GTK_SIGNAL_FUNC( HandleCommand ), ID_SELECTION_MAKE_DETAIL );
+										G_CALLBACK( HandleCommand ), ID_SELECTION_MAKE_DETAIL );
 		create_menu_item_with_mnemonic( menu, "Make Structural",
-										GTK_SIGNAL_FUNC( HandleCommand ), ID_SELECTION_MAKE_STRUCTURAL );
+										G_CALLBACK( HandleCommand ), ID_SELECTION_MAKE_STRUCTURAL );
 		menu_separator( menu ); nID++;
 
 		menu_in_menu = create_menu_in_menu_with_mnemonic( menu, "Smart Entities" );
 		create_menu_item_with_mnemonic( menu_in_menu, "Smart__Train",
-										GTK_SIGNAL_FUNC( HandleCommand ), nID++ );
+										G_CALLBACK( HandleCommand ), nID++ );
 		menu_separator( menu ); nID++;
 
 		submenu = NULL;
@@ -1505,11 +1507,12 @@ void XYWnd::HandleDrop(){
 				if ( strLeft == strActive ) { // this is a child
 					assert( submenu );
 					item = gtk_menu_item_new_with_label( strName );
-					gtk_signal_connect( GTK_OBJECT( item ), "activate", GTK_SIGNAL_FUNC( HandleCommand ),
+					g_signal_connect( item, "activate", G_CALLBACK( HandleCommand ),
+//					g_signal_connect( item, "activate", G_CALLBACK( HandleCommand ),
 										GINT_TO_POINTER( nID++ ) );
 					gtk_widget_show( item );
 					CheckMenuSplitting( submenu );
-					gtk_menu_append( GTK_MENU( submenu ), item );
+					gtk_menu_shell_append( GTK_MENU_SHELL( submenu ), item );
 				}
 				else
 				{
@@ -1518,7 +1521,7 @@ void XYWnd::HandleDrop(){
 						// we use submenu_root cause we may have been cascading submenu
 						item = gtk_menu_item_new_with_label( strActive );
 						gtk_widget_show( item );
-						gtk_menu_append( GTK_MENU( menu ), item );
+						gtk_menu_shell_append( GTK_MENU_SHELL( menu ), item );
 						gtk_menu_item_set_submenu( GTK_MENU_ITEM( item ), submenu_root );
 						g_ptrMenus.Add( submenu_root );
 						submenu = NULL;
@@ -1529,10 +1532,11 @@ void XYWnd::HandleDrop(){
 					submenu = gtk_menu_new();
 					submenu_root = submenu;
 					item = gtk_menu_item_new_with_label( strName );
-					gtk_signal_connect( GTK_OBJECT( item ), "activate", GTK_SIGNAL_FUNC( HandleCommand ),
+					g_signal_connect( item, "activate", G_CALLBACK( HandleCommand ),
+//					g_signal_connect( item, "activate", G_CALLBACK( HandleCommand ),
 										GINT_TO_POINTER( nID++ ) );
 					gtk_widget_show( item );
-					gtk_menu_append( GTK_MENU( submenu ), item );
+					gtk_menu_shell_append( GTK_MENU_SHELL( submenu ), item );
 				}
 			}
 			else
@@ -1542,7 +1546,7 @@ void XYWnd::HandleDrop(){
 					// we use submenu_root cause we may have been cascading submenu
 					item = gtk_menu_item_new_with_label( strActive );
 					gtk_widget_show( item );
-					gtk_menu_append( GTK_MENU( menu ), item );
+					gtk_menu_shell_append( GTK_MENU_SHELL( menu ), item );
 					gtk_menu_item_set_submenu( GTK_MENU_ITEM( item ), submenu_root );
 					g_ptrMenus.Add( submenu_root );
 					submenu = NULL;
@@ -1551,10 +1555,11 @@ void XYWnd::HandleDrop(){
 				strActive = "";
 
 				item = gtk_menu_item_new_with_label( strName );
-				gtk_signal_connect( GTK_OBJECT( item ), "activate", GTK_SIGNAL_FUNC( HandleCommand ),
+				g_signal_connect( item, "activate", G_CALLBACK( HandleCommand ),
+//				g_signal_connect( item, "activate", G_CALLBACK( HandleCommand ),
 									GINT_TO_POINTER( nID++ ) );
 				gtk_widget_show( item );
-				gtk_menu_append( GTK_MENU( menu ), item );
+				gtk_menu_shell_append( GTK_MENU_SHELL( menu ), item );
 			}
 		}
 	}
@@ -1756,19 +1761,13 @@ void XYWnd::XY_MouseMoved( int x, int y, int buttons ){
 
 			// create an empty cursor
 			if ( !g_bWaitCursor ) {
-				GdkPixmap *pixmap;
-				GdkBitmap *mask;
-				char buffer [( 32 * 32 ) / 8];
-				memset( buffer, 0, ( 32 * 32 ) / 8 );
-				GdkColor white = {0, 0xffff, 0xffff, 0xffff};
-				GdkColor black = {0, 0x0000, 0x0000, 0x0000};
-				pixmap = gdk_bitmap_create_from_data( NULL, buffer, 32, 32 );
-				mask   = gdk_bitmap_create_from_data( NULL, buffer, 32, 32 );
-				GdkCursor *cursor = gdk_cursor_new_from_pixmap( pixmap, mask, &white, &black, 1, 1 );
-				gdk_window_set_cursor( m_pWidget->window, cursor );
-				gdk_cursor_unref( cursor );
-				gdk_drawable_unref( pixmap );
-				gdk_drawable_unref( mask );
+				GdkDisplay *display;
+				GdkCursor *cursor;
+
+				display = gdk_display_get_default();
+				cursor = gdk_cursor_new_for_display( display, GDK_BLANK_CURSOR );
+
+				gdk_window_set_cursor( gtk_widget_get_window( m_pWidget ), cursor );
 			}
 
 			Sys_UpdateWindows( W_XY | W_XY_OVERLAY );
@@ -1798,19 +1797,19 @@ void XYWnd::XY_MouseMoved( int x, int y, int buttons ){
 void XYWnd::OriginalButtonDown( guint32 nFlags, int pointx, int pointy ){
 	SetFocus();
 	SetCapture();
-	XY_MouseDown( pointx, m_pWidget->allocation.height - 1 - pointy, nFlags );
+	XY_MouseDown( pointx, gtk_widget_get_allocated_height( m_pWidget ) - 1 - pointy, nFlags );
 	m_nScrollFlags = nFlags;
 }
 
 void XYWnd::OriginalButtonUp( guint32 nFlags, int pointx, int pointy ){
-	XY_MouseUp( pointx, m_pWidget->allocation.height - 1 - pointy, nFlags );
+	XY_MouseUp( pointx, gtk_widget_get_allocated_height( m_pWidget ) - 1 - pointy, nFlags );
 	ReleaseCapture();
 }
 
 void XYWnd::DropClipPoint( guint32 nFlags, int pointx, int pointy ){
 	if ( g_pMovingClip ) {
 		SetCapture();
-		SnapToPoint( pointx, m_pWidget->allocation.height - 1 - pointy, *g_pMovingClip );
+		SnapToPoint( pointx, gtk_widget_get_allocated_height( m_pWidget ) - 1 - pointy, *g_pMovingClip );
 	}
 	else
 	{
@@ -1843,7 +1842,7 @@ void XYWnd::DropClipPoint( guint32 nFlags, int pointx, int pointy ){
 			g_Clip1.m_ptScreenX = pointx;
 			g_Clip1.m_ptScreenY = pointy;
 		}
-		SnapToPoint( pointx, m_pWidget->allocation.height - 1 - pointy, *pPt );
+		SnapToPoint( pointx, gtk_widget_get_allocated_height( m_pWidget ) - 1 - pointy, *pPt );
 		// third coordinates for clip point: use d_work_max
 		// Arnout: changed to use center of selection for clipping, saves level designers moving points all over the map
 		// g_pParentWnd->ActiveXY()->GetViewType()
@@ -1861,14 +1860,14 @@ void XYWnd::DropClipPoint( guint32 nFlags, int pointx, int pointy ){
 void XYWnd::DropPathPoint( guint32 nFlags, int pointx, int pointy ){
 	if ( g_pMovingPath ) {
 		SetCapture();
-		SnapToPoint( pointx, m_pWidget->allocation.height - 1 - pointy, *g_pMovingPath );
+		SnapToPoint( pointx, gtk_widget_get_allocated_height( m_pWidget ) - 1 - pointy, *g_pMovingPath );
 	}
 	else
 	{
 		g_PathPoints[g_nPathCount].Set( true );
 		g_PathPoints[g_nPathCount].m_ptScreenX = pointx;
 		g_PathPoints[g_nPathCount].m_ptScreenY = pointy;
-		SnapToPoint( pointx, m_pWidget->allocation.height - 1 - pointy, g_PathPoints[g_nPathCount] );
+		SnapToPoint( pointx, gtk_widget_get_allocated_height( m_pWidget ) - 1 - pointy, g_PathPoints[g_nPathCount] );
 		// third coordinates for dropped point: use d_work_max
 		// g_pParentWnd->ActiveXY()->GetViewType()
 		// cf VIEWTYPE definition: enum VIEWTYPE {YZ, XZ, XY};
@@ -3158,7 +3157,7 @@ bool XYWnd::AreaSelectOK(){
 
 void XYWnd::OnCreate(){
 	if ( !MakeCurrent() ) {
-		Error( "glXMakeCurrent failed" );
+		Error( "xywindow: glXMakeCurrent failed" );
 	}
 
 	qglPolygonStipple( (unsigned char *)s_stipple );

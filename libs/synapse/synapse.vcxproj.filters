@@ -11,4 +11,7 @@
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\synapse.h" />
+  </ItemGroup>
 </Project>
