@@ -597,11 +597,7 @@ void load_pixmap( const char* filename, GtkWidget* widget, GtkWidget **gdkpixmap
 	*gdkpixmap = gtk_image_new_from_file( str.GetBuffer() );
 	if ( *gdkpixmap == NULL ) {
 		Sys_Printf( "Failed to load_pixmap %s, creating default pixmap\n", str.GetBuffer() );
-		const gchar *dummy[] = { "1 1 1 1", "  c None", " " };
-		GdkPixbuf *pixbuf;
-		pixbuf = gdk_pixbuf_new_from_xpm_data( dummy );
-		*gdkpixmap = gtk_image_new_from_pixbuf( pixbuf );
-		gdk_pixbuf_unref( pixbuf );
+		*gdkpixmap = gtk_image_new_from_pixbuf( NULL );
 	}
 }
 
@@ -634,11 +630,7 @@ bool WINAPI load_plugin_bitmap( const char* filename, void **gdkpixmap, void **m
 			bmp_to_pixmap( str.GetBuffer(), (GdkPixbuf **)gdkpixmap );
 
 			if ( *gdkpixmap == NULL ) {
-				const char *dummy[] = { "1 1 1 1", "  c None", " " };
-				GdkPixbuf *pixbuf;
-				pixbuf = gdk_pixbuf_new_from_xpm_data( dummy );
-				*gdkpixmap = gtk_image_new_from_pixbuf( pixbuf );
-				gdk_pixbuf_unref( pixbuf );
+				*gdkpixmap = gtk_image_new_from_pixbuf( NULL );
 				return false;
 			}
 		}
@@ -668,7 +660,7 @@ GtkWidget* new_image_icon( const char* filename ) {
 	icon = gtk_image_new_from_pixbuf( pixbuf );
 	gtk_widget_show( icon );
 	if( pixbuf ) {
-		gdk_pixbuf_unref( pixbuf );
+		g_object_unref( pixbuf );
 	}
     return icon;
 }
@@ -692,7 +684,7 @@ GtkWidget* new_plugin_image_icon( const char* filename ) {
 	icon = gtk_image_new_from_pixbuf( pixbuf );
 	gtk_widget_show( icon );
 	if( pixbuf ) {
-		gdk_pixbuf_unref( pixbuf );
+		g_object_unref( pixbuf );
 	}
     return icon;
 }
