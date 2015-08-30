@@ -2061,6 +2061,7 @@ bool CSynapseClientRadiant::RequestAPI( APIDescriptor_t *pAPI ){
 		pTable->m_pfnSetBuildWindingsNoTexBuild = &Brush_SetBuildWindingsNoTexBuild;
 		pTable->m_pfnPointFileClear = &Pointfile_Clear;
 		pTable->m_pfnCSG_MakeHollow = &CSG_MakeHollow;
+		pTable->m_pfnCSG_MakeHollowMode = &CSG_MakeHollowMode;
 		pTable->m_pfnRegionSpawnPoint = &Region_SpawnPoint;
 		pTable->m_pfnQGetTickCount = &QERApp_GetTickCount;
 		pTable->m_pfnGetModelCache = &GetModelCache;

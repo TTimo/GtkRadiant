@@ -564,6 +564,7 @@ typedef void ( *PFN_QERAPP_POINTFILECLEAR )();
 typedef void ( *PFN_QERAPP_SYSSETTITLE )( const char *text );
 
 typedef void ( *PFN_QERAPP_CSGMAKEHOLLOW )();
+typedef void ( *PFN_QERAPP_CSGMAKEHOLLOWMODE )( int mode );
 
 typedef void ( *PFN_QERAPP_REGIONSPAWNPOINT )( FILE *f );
 
@@ -740,6 +741,7 @@ struct _QERFuncTable_1
 
 	// FIXME TTimo prolly want to move that somewhere else
 	PFN_QERAPP_CSGMAKEHOLLOW m_pfnCSG_MakeHollow;
+	PFN_QERAPP_CSGMAKEHOLLOWMODE m_pfnCSG_MakeHollowMode;
 
 	PFN_QERAPP_REGIONSPAWNPOINT m_pfnRegionSpawnPoint;
 	PFN_QERAPP_GETTICKCOUNT m_pfnQGetTickCount;
@@ -761,6 +763,7 @@ struct _QERFuncTable_1
 #define __QERTABLENAME g_FuncTable
 #endif
 #define CSG_MakeHollow __QERTABLENAME.m_pfnCSG_MakeHollow
+#define CSG_MakeHollowMode __QERTABLENAME.m_pfnCSG_MakeHollowMode
 #define Sys_Beep __QERTABLENAME.m_pfnSysBeep
 #define Sys_Printf __QERTABLENAME.m_pfnSysPrintf
 #define Sys_FPrintf __QERTABLENAME.m_pfnSysFPrintf

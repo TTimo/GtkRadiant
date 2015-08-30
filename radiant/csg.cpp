@@ -39,7 +39,10 @@ void Brush_Scale( brush_t* b ){
 	}
 }
 
-void CSG_MakeHollow( void ){
+void CSG_MakeHollow(){
+	CSG_MakeHollowMode( CSG_HOLLOW_MODE_OVERLAP );
+}
+void CSG_MakeHollowMode( int mode ){
 	brush_t     *b, *front, *back, *next;
 	face_t      *f;
 	face_t split;
@@ -66,6 +69,9 @@ void CSG_MakeHollow( void ){
 				Brush_Free( back );
 			}
 			if ( front ) {
+				if( mode == CSG_HOLLOW_MODE_TOUCH ) {
+					Brush_Move( front, move, true );
+				}
 				Brush_AddToList( front, &selected_brushes );
 			}
 		}

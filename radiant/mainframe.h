@@ -267,6 +267,7 @@ struct SKeyInfo
 #define ID_SELECTION_SELECTCOMPLETETALL 40048
 #define ID_SELECTION_CSGSUBTRACT        40049
 #define ID_SELECTION_SELECTTOUCHING     40050
+#define ID_SELECTION_MAKEHOLLOW_TOUCH   40051
 #define ID_VIEW_NEAREST                 40052
 #define ID_VIEW_NEARESTMIPMAP           40053
 #define ID_VIEW_LINEAR                  40054
@@ -685,6 +686,7 @@ void OnSelectionDragvertecies();
 void OnSelectionMakeDetail();
 void OnSelectionMakeStructural();
 void OnSelectionMakehollow();
+void OnSelectionMakehollowTouch();
 void OnSelectionSelectcompletetall();
 void OnSelectionSelectinside();
 void OnSelectionSelectpartialtall();
