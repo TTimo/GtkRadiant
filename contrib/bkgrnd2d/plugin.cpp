@@ -103,28 +103,28 @@ struct toolbar_button_info_s
 struct toolbar_button_info_s toolbar_buttons[NUM_TOOLBAR_BUTTONS] =
 {
 	{
-		"bkgrnd2d_xy_toggle.bmp",
+		"bkgrnd2d_xy_toggle.png",
 		"xy background",
 		"Toggle xy background image",
 		DoBkgrndToggleXY,
 		IToolbarButton::eToggleButton
 	},
 	{
-		"bkgrnd2d_xz_toggle.bmp",
+		"bkgrnd2d_xz_toggle.png",
 		"xz background",
 		"Toggle xz background image",
 		DoBkgrndToggleXZ,
 		IToolbarButton::eToggleButton
 	},
 	{
-		"bkgrnd2d_yz_toggle.bmp",
+		"bkgrnd2d_yz_toggle.png",
 		"yz background",
 		"Toggle yz background image",
 		DoBkgrndToggleYZ,
 		IToolbarButton::eToggleButton
 	},
 	{
-		"bkgrnd2d_conf.bmp",
+		"bkgrnd2d_conf.png",
 		"Configure",
 		"Configure background images",
 		ShowBackgroundDialog,

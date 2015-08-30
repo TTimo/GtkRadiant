@@ -125,15 +125,15 @@ class CBobtoolzToolbarButton : public IToolbarButton
 public:
 virtual const char* getImage() const {
 	switch ( mIndex ) {
-	case 0: return "bobtoolz_cleanup.bmp";
-	case 1: return "bobtoolz_poly.bmp";
-	case 2: return "bobtoolz_caulk.bmp";
-	case 3: return "bobtoolz_treeplanter.bmp";
-	case 4: return "bobtoolz_trainpathplot.bmp";
-	case 5: return "bobtoolz_dropent.bmp";
-	case 6: return "bobtoolz_merge.bmp";
-	case 7: return "bobtoolz_split.bmp";
-	case 8: return "bobtoolz_turnedge.bmp";
+	case 0: return "bobtoolz_cleanup.png";
+	case 1: return "bobtoolz_poly.png";
+	case 2: return "bobtoolz_caulk.png";
+	case 3: return "bobtoolz_treeplanter.png";
+	case 4: return "bobtoolz_trainpathplot.png";
+	case 5: return "bobtoolz_dropent.png";
+	case 6: return "bobtoolz_merge.png";
+	case 7: return "bobtoolz_split.png";
+	case 8: return "bobtoolz_turnedge.png";
 	}
 	return NULL;
 }
