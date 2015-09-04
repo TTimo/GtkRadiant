@@ -935,7 +935,7 @@ GtkWidget *CreateCameraInspectorDialog( void ){
 	gtk_widget_show( hbox );
 
 	file_vbox = vbox = gtk_box_new( GTK_ORIENTATION_VERTICAL, 5 );
-	gtk_box_pack_start( GTK_BOX( file_n_buttons_hbox ), vbox, FALSE, FALSE, 0 );
+	gtk_box_pack_start( GTK_BOX( file_n_buttons_hbox ), vbox, TRUE, TRUE, 0 );
 	gtk_widget_show( vbox );
 
 	table = gtk_grid_new();
@@ -952,6 +952,7 @@ GtkWidget *CreateCameraInspectorDialog( void ){
 
 	g_pCamListCombo = gtk_combo_box_text_new_with_entry();
 	gtk_grid_attach( GTK_GRID( table ), g_pCamListCombo, 1, 0, 1, 1 );
+	gtk_widget_set_hexpand( g_pCamListCombo, TRUE );
 	gtk_widget_show( g_pCamListCombo );
 
 	w = gtk_label_new( _( "Name:" ) );
@@ -964,7 +965,8 @@ GtkWidget *CreateCameraInspectorDialog( void ){
 	gtk_widget_show( hbox );
 
 	g_pCamName = gtk_entry_new();
-	gtk_box_pack_start( GTK_BOX( hbox ), g_pCamName, FALSE, FALSE, 0 );
+	gtk_box_pack_start( GTK_BOX( hbox ), g_pCamName, TRUE, TRUE, 0 );
+	gtk_widget_set_hexpand( g_pCamName, TRUE );
 	gtk_widget_show( g_pCamName );
 
 	w = gtk_label_new( _( "Type:" ) );
@@ -1005,6 +1007,7 @@ GtkWidget *CreateCameraInspectorDialog( void ){
 
 	g_pPathListCombo = gtk_combo_box_text_new_with_entry();
 	gtk_box_pack_start( GTK_BOX( hbox ), g_pPathListCombo, TRUE, TRUE, 0 );
+	gtk_widget_set_hexpand( g_pPathListCombo, TRUE );
 	gtk_widget_show( g_pPathListCombo );
 
 	RefreshPathListCombo();
@@ -1019,7 +1022,7 @@ GtkWidget *CreateCameraInspectorDialog( void ){
 	gtk_widget_show( hbox );
 
 	g_pEditModeEditRadioButton = gtk_radio_button_new_with_label( g_pEditTypeRadio, _( "Edit Points" ) );
-	gtk_box_pack_start( GTK_BOX( hbox ), g_pEditModeEditRadioButton, FALSE, FALSE, 3 );
+	gtk_box_pack_start( GTK_BOX( hbox ), g_pEditModeEditRadioButton, FALSE, FALSE, 3 );	
 	gtk_widget_show( g_pEditModeEditRadioButton );
 	g_pEditTypeRadio = gtk_radio_button_get_group( GTK_RADIO_BUTTON( g_pEditModeEditRadioButton ) );
 
@@ -1164,13 +1167,14 @@ GtkWidget *CreateCameraInspectorDialog( void ){
 	// -------------------------- //
 
 	hbox = gtk_box_new( GTK_ORIENTATION_HORIZONTAL, 5 );
-	gtk_box_pack_start( GTK_BOX( vbox ), hbox, FALSE, FALSE, 0 );
+	gtk_box_pack_start( GTK_BOX( vbox ), hbox, TRUE, TRUE, 0 );
 	gtk_widget_show( hbox );
 
 	w = gtk_scrolled_window_new( NULL, NULL );
-	gtk_widget_set_size_request( w, 0, 150 );
 	gtk_scrolled_window_set_policy( GTK_SCROLLED_WINDOW( w ), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC );
 	gtk_box_pack_start( GTK_BOX( hbox ), w, TRUE, TRUE, 0 );
+	gtk_widget_set_hexpand( w, TRUE );
+	gtk_widget_set_vexpand( w, TRUE );
 	gtk_widget_show( w );
 
 

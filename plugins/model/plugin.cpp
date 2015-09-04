@@ -28,7 +28,7 @@ class CFlushReloadSelectedToolbarButton : public IToolbarButton
 {
 public:
 virtual const char* getImage() const {
-	return "model_reload_entity.bmp";
+	return "model_reload_entity.png";
 }
 virtual const char* getText() const {
 	return "Reload";

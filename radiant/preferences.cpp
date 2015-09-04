@@ -1160,6 +1160,8 @@ void CGameDialog::BuildDialog() {
 	gtk_widget_show( button );
 	AddModalButton( button, IDOK );
 
+	gtk_widget_grab_focus( button );
+
 	button = gtk_button_new_with_label( _( "Cancel" ) );
 	gtk_box_pack_start( GTK_BOX( hbox1 ), button, TRUE, TRUE, 0 );
 	gtk_widget_show( button );
