@@ -2373,7 +2373,11 @@ static void TextureListDialog_response( GtkWidget *widget, gint response_id, gpo
 	if ( gtk_tree_selection_get_selected( selection, &model, &iter ) ) {
 		GtkTreePath* path = gtk_tree_model_get_path( model, &iter );
 		if ( gtk_tree_path_get_depth( path ) == 1 ) {
-			Texture_ShowDirectory( gtk_tree_path_get_indices( path )[0] + CMD_TEXTUREWAD );
+			char* p;
+			gtk_tree_model_get( model, &iter, 0, &p, -1 );
+			
+			Texture_ShowDirectory_by_path( p );
+			g_free( p );
 		}
 		gtk_tree_path_free( path );
 	}
@@ -2428,7 +2432,7 @@ void DoTextureListDlg(){
 			// Initialize dialog
 			GtkTreeIter iter;
 			GSList *textures = (GSList*)NULL;
-			FillTextureMenu( &textures );
+			FillTextureList( &textures );
 			while ( textures != NULL )
 			{
 				gtk_list_store_append( store, &iter );

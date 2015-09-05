@@ -2360,6 +2360,98 @@ GtkWidget* create_framed_widget( GtkWidget* widget ){
 	return frame;
 }
 
+static void textdirlist_activate( GtkTreeView *tree_view )
+{
+	GtkTreeSelection* selection;
+
+	GtkTreeModel* model;
+	GtkTreeIter iter;
+
+	selection = gtk_tree_view_get_selection( GTK_TREE_VIEW( tree_view ) );
+
+	if ( gtk_tree_selection_get_selected( selection, &model, &iter ) ) {
+		GtkTreePath* path = gtk_tree_model_get_path( model, &iter );
+		if ( gtk_tree_path_get_depth( path ) == 1 ) {
+			char* p;
+			gtk_tree_model_get( model, &iter, 0, &p, -1 );
+			
+			Texture_ShowDirectory_by_path( p );
+			g_free( p );
+		}
+		gtk_tree_path_free( path );
+	}
+}
+
+static void textdirlist_row_activated( GtkTreeView *tree_view, GtkTreePath *path, GtkTreeViewColumn *column, gpointer user_data )
+{
+	textdirlist_activate( tree_view );
+}
+static void textdirlist_cursor_changed( GtkTreeView *tree_view, gpointer user_data )
+{
+	textdirlist_activate( tree_view );
+}
+
+GtkWidget* create_texdirlist_widget( void )
+{
+	GtkWidget *scr;
+	GtkWidget* view;
+
+	scr = gtk_scrolled_window_new( (GtkAdjustment*)NULL, (GtkAdjustment*)NULL );
+
+	gtk_scrolled_window_set_policy( GTK_SCROLLED_WINDOW( scr ), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC );
+	gtk_scrolled_window_set_shadow_type( GTK_SCROLLED_WINDOW( scr ), GTK_SHADOW_IN );
+	gtk_widget_set_vexpand( scr, TRUE );
+	gtk_widget_set_hexpand( scr, TRUE );	
+
+	{
+		GtkListStore* store = gtk_list_store_new( 1, G_TYPE_STRING );
+
+		view = gtk_tree_view_new_with_model( GTK_TREE_MODEL( store ) );
+		gtk_tree_view_set_headers_visible( GTK_TREE_VIEW( view ), FALSE );
+
+		{
+			GtkCellRenderer* renderer = gtk_cell_renderer_text_new();
+			GtkTreeViewColumn* column = gtk_tree_view_column_new_with_attributes( "Textures", renderer, "text", 0, (char *) NULL );
+			gtk_tree_view_append_column( GTK_TREE_VIEW( view ), column );
+		}
+
+		gtk_container_add( GTK_CONTAINER( scr ), view );
+
+		g_object_set_data( G_OBJECT( g_qeglobals_gui.d_main_window ), "dirlist_treeview" , view );
+
+		FillTextureDirListWidget();
+
+		g_object_unref( G_OBJECT( store ) );
+
+		gtk_tree_selection_set_mode( gtk_tree_view_get_selection( GTK_TREE_VIEW( view ) ), GTK_SELECTION_SINGLE );
+#if GTK_CHECK_VERSION( 3,12,0 )
+		gtk_tree_view_set_activate_on_single_click( GTK_TREE_VIEW( view ), TRUE );
+#else
+		g_signal_connect( view, "cursor-changed", G_CALLBACK( textdirlist_cursor_changed ), view );
+#endif
+		g_signal_connect( view, "row-activated", G_CALLBACK( textdirlist_row_activated ), view );
+
+		gtk_widget_set_vexpand( view, TRUE );
+		gtk_widget_set_hexpand( view, TRUE );
+		gtk_widget_show( view );
+
+	}
+
+	gtk_widget_show( scr );
+
+#if GTK_CHECK_VERSION( 3,12,0 )
+	todo; //set the scrolledwindow to the default size that doesn't require scrollbars
+#else
+	{
+		gint view_width;
+		//trying to set a nice initial size for the scrolledwindow
+		gtk_widget_get_preferred_width( view, NULL, &view_width );
+		gtk_widget_set_size_request( scr, view_width + 25, -1 );
+	}
+#endif
+	return scr;
+}
+
 gboolean entry_focus_in( GtkWidget *widget, GdkEventFocus *event, gpointer user_data ){
 	gtk_window_remove_accel_group( GTK_WINDOW( g_pParentWnd->m_pWidget ), global_accel );
 	return FALSE;
@@ -2623,7 +2715,16 @@ void MainFrame::Create(){
 						m_pTexWnd = new TexWnd();
 						{
 							GtkWidget* frame = create_framed_texwnd( m_pTexWnd );
-							gtk_paned_add2( GTK_PANED( vsplit2 ), frame );
+
+							GtkWidget* texDirList = create_texdirlist_widget();
+
+							GtkWidget* texSplit = gtk_paned_new( GTK_ORIENTATION_HORIZONTAL );
+
+							gtk_paned_add2( GTK_PANED( vsplit2 ), texSplit );
+							gtk_paned_add1( GTK_PANED( texSplit ), texDirList );
+							gtk_paned_add2( GTK_PANED( texSplit ), frame );
+
+							gtk_widget_show( texSplit );
 						}
 
 						// console
@@ -5829,6 +5930,7 @@ void MainFrame::OnTexturesShaderlistonly(){
 	gtk_check_menu_item_set_active( GTK_CHECK_MENU_ITEM( item ), g_PrefsDlg.m_bTexturesShaderlistOnly ? TRUE : FALSE );
 	g_bIgnoreCommands--;
 	FillTextureMenu();
+	FillTextureDirListWidget();
 }
 
 void MainFrame::OnTextureWad( unsigned int nID ){
