@@ -818,10 +818,10 @@ shaderInfo_t *GetIndexedShader( shaderInfo_t *parent, indexMap_t *im, int numPoi
 
 	/* make a shader name */
 	if ( minShaderIndex == maxShaderIndex ) {
-		sprintf( shader, "textures/%s_%d", im->shader, maxShaderIndex );
+		snprintf( shader, sizeof( shader ), "textures/%s_%d", im->shader, maxShaderIndex );
 	}
 	else{
-		sprintf( shader, "textures/%s_%dto%d", im->shader, minShaderIndex, maxShaderIndex );
+		snprintf( shader, sizeof( shader ), "textures/%s_%dto%d", im->shader, minShaderIndex, maxShaderIndex );
 	}
 
 	/* get the shader */
@@ -917,17 +917,17 @@ mapDrawSurface_t *DrawSurfaceForSide( entity_t *e, brush_t *b, side_t *s, windin
 	/* ydnar: sky hack/fix for GL_CLAMP borders on ati cards */
 	if ( skyFixHack && si->skyParmsImageBase[ 0 ] != '\0' ) {
 		//%	Sys_FPrintf( SYS_VRB, "Enabling sky hack for shader %s using env %s\n", si->shader, si->skyParmsImageBase );
-		sprintf( tempShader, "%s_lf", si->skyParmsImageBase );
+		snprintf( tempShader, sizeof( tempShader ), "%s_lf", si->skyParmsImageBase );
 		DrawSurfaceForShader( tempShader );
-		sprintf( tempShader, "%s_rt", si->skyParmsImageBase );
+		snprintf( tempShader, sizeof( tempShader ), "%s_rt", si->skyParmsImageBase );
 		DrawSurfaceForShader( tempShader );
-		sprintf( tempShader, "%s_ft", si->skyParmsImageBase );
+		snprintf( tempShader, sizeof( tempShader ), "%s_ft", si->skyParmsImageBase );
 		DrawSurfaceForShader( tempShader );
-		sprintf( tempShader, "%s_bk", si->skyParmsImageBase );
+		snprintf( tempShader, sizeof( tempShader ), "%s_bk", si->skyParmsImageBase );
 		DrawSurfaceForShader( tempShader );
-		sprintf( tempShader, "%s_up", si->skyParmsImageBase );
+		snprintf( tempShader, sizeof( tempShader ), "%s_up", si->skyParmsImageBase );
 		DrawSurfaceForShader( tempShader );
-		sprintf( tempShader, "%s_dn", si->skyParmsImageBase );
+		snprintf( tempShader, sizeof( tempShader ), "%s_dn", si->skyParmsImageBase );
 		DrawSurfaceForShader( tempShader );
 	}
 

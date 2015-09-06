@@ -683,9 +683,9 @@ void DBrush::SaveToFile( FILE *pFile ){
 
 	for ( list<DPlane *>::const_iterator pp = faceList.begin(); pp != faceList.end(); pp++ )
 	{
-		char buffer[512];
+		char buffer[720 + PATH_MAX];
 
-		sprintf( buffer, "( %.0f %.0f %.0f ) ( %.0f %.0f %.0f ) ( %.0f %.0f %.0f ) %s %.0f %.0f %f %f %.0f 0 0 0\n",
+		snprintf( buffer, sizeof( buffer ), "( %.0f %.0f %.0f ) ( %.0f %.0f %.0f ) ( %.0f %.0f %.0f ) %s %.0f %.0f %f %f %.0f 0 0 0\n",
 				 ( *pp )->points[0][0], ( *pp )->points[0][1], ( *pp )->points[0][2],
 				 ( *pp )->points[1][0], ( *pp )->points[1][1], ( *pp )->points[1][2],
 				 ( *pp )->points[2][0], ( *pp )->points[2][1], ( *pp )->points[2][2],

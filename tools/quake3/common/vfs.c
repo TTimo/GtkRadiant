@@ -201,7 +201,7 @@ void vfsInitDirectory( const char *path ){
 					}
 				}
 
-				sprintf( filename, "%s/%s", path, dirlist );
+				snprintf( filename, sizeof( filename ), "%s/%s", path, dirlist );
 				vfsInitPakFile( filename );
 
 				g_free( dirlist );

@@ -4763,7 +4763,7 @@ void CheckName( patchMesh_t *p, char *pname, size_t length ){
 	// some manage to get long filename textures (with spaces) in their maps
 	if ( strchr( p->pShader->getName(), ' ' ) ) {
 		char Msg1[1024];
-		sprintf( Msg1, "Can't save texture with spaces in name. Rename %s\nNOTE: This message may popup several times .. once for each buggy face detected.", p->pShader->getName() );
+		snprintf( Msg1, sizeof( Msg1 ), "Can't save texture with spaces in name. Rename %s\nNOTE: This message may popup several times .. once for each buggy face detected.", p->pShader->getName() );
 		Sys_Printf( "%s\n", Msg1 );
 		gtk_MessageBox( g_pParentWnd->m_pWidget, Msg1, "Error saving map", MB_OK );
 		Q_strncpyz( pname, SHADER_NOT_FOUND, length );

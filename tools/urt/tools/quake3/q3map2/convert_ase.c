@@ -248,10 +248,10 @@ static void ConvertShader( FILE *f, bspShader_t *shader, int shaderNum ){
 
 	/* set bitmap filename */
 	if ( si->shaderImage->filename[ 0 ] != '*' ) {
-		strcpy( filename, si->shaderImage->filename );
+		Q_strncpyz( filename, si->shaderImage->filename, sizeof( filename ) );
 	}
 	else{
-		sprintf( filename, "%s.tga", si->shader );
+		snprintf( filename, sizeof( filename ), "%s.tga", si->shader );
 	}
 	for ( c = filename; *c != '\0'; c++ )
 		if ( *c == '/' ) {
@@ -301,13 +301,13 @@ int ConvertBSPToASE( char *bspName ){
 	Sys_Printf( "--- Convert BSP to ASE ---\n" );
 
 	/* create the ase filename from the bsp name */
-	strcpy( name, bspName );
+	Q_strncpyz( name, bspName, sizeof( name ) );
 	StripExtension( name );
-	strcat( name, ".ase" );
+	strncat( name, ".ase", sizeof( name ) );
 	Sys_Printf( "writing %s\n", name );
 
 	ExtractFileBase( bspName, base );
-	strcat( base, ".bsp" );
+	strncat( base, ".bsp", sizeof( base ) );
 
 	/* open it */
 	f = fopen( name, "wb" );

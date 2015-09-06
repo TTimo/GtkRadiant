@@ -40,15 +40,15 @@ char *str_append_token( char *str1, const char *str2 ){
 	return str;
 }
 
-void str_from_float( char *buf, float f ){
+void str_from_float( char *buf, float f, size_t length ){
 	if ( f == (int)f ) {
-		sprintf( buf, "%i", (int)f );
+		snprintf( buf, length, "%i", (int)f );
 	}
-	else{ sprintf( buf, "%f", f ); }
+	else{ snprintf( buf, length, "%f", f ); }
 }
 
 void Patch_XMLWrite( patchMesh_t *pPatch, xmlNodePtr surface ){
-	char buf[16];
+	char buf[64];
 	char *str;
 	int i, j;
 	xmlNodePtr node;
@@ -62,15 +62,15 @@ void Patch_XMLWrite( patchMesh_t *pPatch, xmlNodePtr surface ){
 	{
 		for ( j = 0; j < pPatch->height; j++ )
 		{
-			str_from_float( buf, pPatch->ctrl[i][j].xyz[0] );
+			str_from_float( buf, pPatch->ctrl[i][j].xyz[0], sizeof( buf ) );
 			str = str_append_token( str, buf );
-			str_from_float( buf, pPatch->ctrl[i][j].xyz[1] );
+			str_from_float( buf, pPatch->ctrl[i][j].xyz[1], sizeof( buf ) );
 			str = str_append_token( str, buf );
-			str_from_float( buf, pPatch->ctrl[i][j].xyz[2] );
+			str_from_float( buf, pPatch->ctrl[i][j].xyz[2], sizeof( buf ) );
 			str = str_append_token( str, buf );
-			str_from_float( buf, pPatch->ctrl[i][j].st[0] );
+			str_from_float( buf, pPatch->ctrl[i][j].st[0], sizeof( buf ) );
 			str = str_append_token( str, buf );
-			str_from_float( buf, pPatch->ctrl[i][j].st[1] );
+			str_from_float( buf, pPatch->ctrl[i][j].st[1], sizeof( buf ) );
 			str = str_append_token( str, buf );
 		}
 	}
@@ -84,7 +84,7 @@ void Patch_XMLWrite( patchMesh_t *pPatch, xmlNodePtr surface ){
 }
 
 void Face_XMLWrite( face_t *face, xmlNodePtr surface, bool bAlternateTexdef = false ){
-	char buf[16];
+	char buf[64];
 	xmlNodePtr node;
 	int i, j;
 	char *str;
@@ -98,7 +98,7 @@ void Face_XMLWrite( face_t *face, xmlNodePtr surface, bool bAlternateTexdef = fa
 	{
 		for ( j = 0 ; j < 3 ; j++ )
 		{
-			str_from_float( buf, face->planepts[i][j] );
+			str_from_float( buf, face->planepts[i][j], sizeof( buf ) );
 			str = str_append_token( str, buf );
 		}
 	}
@@ -130,7 +130,7 @@ void Face_XMLWrite( face_t *face, xmlNodePtr surface, bool bAlternateTexdef = fa
 		{
 			for ( j = 0 ; j < 3 ; j++ )
 			{
-				str_from_float( buf, face->brushprimit_texdef.coords[i][j] );
+				str_from_float( buf, face->brushprimit_texdef.coords[i][j], sizeof( buf ) );
 				str = str_append_token( str, buf );
 			}
 		}

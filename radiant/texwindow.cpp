@@ -518,7 +518,7 @@ void BuildShaderList(){
 				bool found = false;
 
 				// each token should be a shader filename
-				sprintf( dirstring, "%s.shader", token );
+				snprintf( dirstring, sizeof( dirstring ), "%s.shader", token );
 
 				for ( tmp = l_shaderfiles; tmp != NULL; tmp = tmp->next )
 				{
@@ -884,7 +884,7 @@ void Texture_ShowDirectory(){
 
 	// need this function "GSList *lst SynapseServer::GetMinorList(char *major_name);"
 
-	sprintf( dirstring, "textures/%s", texture_directory );
+	snprintf( dirstring, sizeof( dirstring ), "textures/%s", texture_directory );
 	g_ImageManager.BeginExtensionsScan();
 	const char* ext;
 	while ( ( ext = g_ImageManager.GetNextExtension() ) != NULL )
@@ -894,7 +894,7 @@ void Texture_ShowDirectory(){
 
 	for ( temp = files; temp; temp = temp->next )
 	{
-		sprintf( name, "%s%s", texture_directory, (char*)temp->data );
+		snprintf( name, sizeof( name ), "%s%s", texture_directory, (char*)temp->data );
 
 		StripExtension( name );
 		strTemp = name;
@@ -927,7 +927,7 @@ void Texture_ShowDirectory(){
 
 		// build a texture name that fits the conventions for qtexture_t::name
 		char stdName[1024];
-		sprintf( stdName, "textures/%s", name );
+		snprintf( stdName, sizeof( stdName ), "textures/%s", name );
 		// check if this texture doesn't have a shader
 		if ( !QERApp_ActiveShader_ForTextureName( stdName ) ) {
 			QERApp_CreateShader_ForTextureName( stdName );
@@ -943,7 +943,7 @@ void Texture_ShowDirectory(){
 	// sort for displaying
 	QERApp_SortActiveShaders();
 
-	sprintf( name, "Textures: %s", texture_directory );
+	snprintf( name, sizeof( name ), "Textures: %s", texture_directory );
 	gtk_window_set_title( GTK_WINDOW( g_qeglobals_gui.d_entity ), name );
 
 	// select the first texture in the list
@@ -1158,7 +1158,7 @@ void Texture_ShowStartupShaders(){
 				bool found = false;
 
 				// each token should be a shader filename
-				sprintf( dirstring, "%s.shader", token );
+				snprintf( dirstring, sizeof( dirstring ), "%s.shader", token );
 
 				for ( tmp = shaderfiles; tmp != NULL; tmp = tmp->next )
 				{

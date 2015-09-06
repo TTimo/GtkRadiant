@@ -1550,7 +1550,7 @@ void CheckName( face_t *fa, char *pname, size_t length ){
 	if ( strchr( fa->texdef.GetName(), ' ' ) ) {
 		char Msg1[1024];
 
-		sprintf( Msg1, "Can't save texture with spaces in name. Rename %s\nNOTE: This message may popup several times .. once for each buggy face detected.", fa->texdef.GetName() );
+		snprintf( Msg1, sizeof( Msg1 ), "Can't save texture with spaces in name. Rename %s\nNOTE: This message may popup several times .. once for each buggy face detected.", fa->texdef.GetName() );
 
 		Sys_Printf( "%s\n", Msg1 );
 		gtk_MessageBox( g_pParentWnd->m_pWidget, Msg1, "Error saving map", MB_OK );
@@ -3401,7 +3401,7 @@ void Brush_Move( brush_t *b, const vec3_t move, bool bSnap ){
 	if ( b->owner->eclass->fixedsize ) {
 		char text[64];
 		VectorAdd( b->owner->origin, move, b->owner->origin );
-		sprintf( text, "%i %i %i",
+		snprintf( text, sizeof( text ), "%i %i %i",
 				 (int)b->owner->origin[0], (int)b->owner->origin[1], (int)b->owner->origin[2] );
 		SetKeyValue( b->owner, "origin", text );
 		//VectorAdd(b->maxs, b->mins, b->owner->origin);

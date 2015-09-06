@@ -71,7 +71,7 @@ const char *WINAPI QERApp_CleanTextureName( const char *name, bool bAddTexture =
 	}
 #endif
 
-	strcpy( stdName, name );
+	Q_strncpyz( stdName, name, sizeof( stdName ) );
 	g_FuncTable.m_pfnQE_ConvertDOSToUnixName( stdName, stdName );
 	if ( stdName[strlen( name ) - 4] == '.' ) {
 		// strip extension
@@ -80,8 +80,8 @@ const char *WINAPI QERApp_CleanTextureName( const char *name, bool bAddTexture =
 
 	if ( bAddTexture ) {
 		char aux[QER_MAX_NAMELEN];
-		sprintf( aux, "textures/%s", stdName );
-		strcpy( stdName, aux );
+		snprintf( aux, sizeof( aux ), "textures/%s", stdName );
+		Q_strncpyz( stdName, aux, sizeof( stdName ) );
 	}
 	return stdName;
 }

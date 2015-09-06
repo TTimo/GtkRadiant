@@ -53,7 +53,7 @@ int QERApp_EClassScanDir( const char *path, void* hPlug ){
 	if ( dir != NULL ) {
 		while ( ( dirlist = readdir( dir ) ) != NULL )
 		{
-			sprintf( filename, "%s/%s", filebase, dirlist->d_name );
+			snprintf( filename, sizeof( filename ), "%s/%s", filebase, dirlist->d_name );
 			Eclass_ScanFile( filename );
 
 			if ( eclass_found ) {

@@ -154,7 +154,7 @@ bool ValidateTextFloatRange( const char* pData, float min, float max, const char
 
 bool ValidateTextIntRange( const char* pData, int min, int max, const char* error_title, int* value ){
 	char error_buffer[256];
-	sprintf( error_buffer, "Please Enter An Integer Between %i and %i", min, max );
+	snprintf( error_buffer, sizeof( error_buffer ), "Please Enter An Integer Between %i and %i", min, max );
 
 	if ( pData ) {
 		int testNum = atoi( pData );

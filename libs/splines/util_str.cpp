@@ -260,7 +260,7 @@ idStr operator+
 	const idStr& a,
 	const float b
 ){
-	char text[ 20 ];
+	char text[ 64 ];
 
 	idStr result( a );
 
@@ -304,7 +304,7 @@ idStr& idStr::operator+=
 (
 	const float a
 ){
-	char text[ 20 ];
+	char text[ 64 ];
 
 	sprintf( text, "%f", a );
 	append( text );

@@ -100,7 +100,7 @@ void WINAPI QE_CheckOpenGLForErrors( void ){
 	int i = qglGetError();
 	if ( i != GL_NO_ERROR ) {
 		if ( i == GL_OUT_OF_MEMORY ) {
-			sprintf( strMsg, "OpenGL out of memory error %s\nDo you wish to save before exiting?", qgluErrorString( (GLenum)i ) );
+			snprintf( strMsg, sizeof( strMsg ), "OpenGL out of memory error %s\nDo you wish to save before exiting?", qgluErrorString( (GLenum)i ) );
 			if ( gtk_MessageBox( g_pParentWnd->m_pWidget, strMsg, "Radiant Error", MB_YESNO ) == IDYES ) {
 				Map_SaveFile( NULL, false );
 			}
@@ -126,7 +126,7 @@ char *ExpandReletivePath( char *p ){
 	}
 
 	base = ValueForKey( g_qeglobals.d_project_entity, "basepath" );
-	sprintf( temp, "%s/%s", base, p );
+	snprintf( temp, sizeof( temp ), "%s/%s", base, p );
 	return temp;
 }
 
@@ -197,7 +197,7 @@ void Map_Snapshot(){
 			char buf[PATH_MAX];
 			//sprintf( buf, "%s.%i", strNewPath.GetBuffer(), nCount );
 			// snapshot will now end with a known ext.
-			sprintf( buf, "%s.%i.%s", strNewPath.GetBuffer(), nCount, strOldEXT.GetBuffer() );
+			snprintf( buf, sizeof( buf ), "%s.%i.%s", strNewPath.GetBuffer(), nCount, strOldEXT.GetBuffer() );
 			strFile = buf;
 			bGo = DoesFileExist( strFile, lSize );
 			nCount++;
@@ -645,7 +645,7 @@ bool QE_LoadProject( const char *projectfile ){
 
 		if ( IntForKey( g_qeglobals.d_project_entity, "version" ) != PROJECT_VERSION ) {
 			char strMsg[2048];
-			sprintf( strMsg,
+			snprintf( strMsg, sizeof( strMsg ), 
 					 "The template project '%s' has version %d. The editor binary is configured for version %d.\n"
 					 "This indicates a problem in your setup.\n"
 					 "I will keep going with this project till you fix this",
@@ -662,7 +662,7 @@ bool QE_LoadProject( const char *projectfile ){
 		char pUser[PATH_MAX];
 		while ( 1 )
 		{
-			sprintf( pUser, "%suser%d." PROJECT_FILETYPE, buf, counter );
+			snprintf( pUser, sizeof( pUser ), "%suser%d." PROJECT_FILETYPE, buf, counter );
 			counter++;
 			if ( access( pUser, R_OK ) != 0 ) {
 				// this is the one
@@ -1266,7 +1266,7 @@ void Sys_MarkMapModified( void ){
 
 	if ( modified != 1 ) {
 		modified = true; // mark the map as changed
-		sprintf( title, "%s *", currentmap );
+		snprintf( title, sizeof( title ), "%s *", currentmap );
 
 		QE_ConvertDOSToUnixName( title, title );
 		Sys_SetTitle( title );

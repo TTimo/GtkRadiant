@@ -257,7 +257,7 @@ int EmitDrawNode_r( node_t *node ){
 void SetModelNumbers( void ){
 	int i;
 	int models;
-	char value[10];
+	char value[16];
 
 	models = 1;
 	for ( i = 1 ; i < numEntities ; i++ ) {
@@ -284,7 +284,7 @@ void SetLightStyles( void ){
 	const char  *t;
 	entity_t    *e;
 	epair_t     *ep, *next;
-	char value[ 10 ];
+	char value[ 16 ];
 	char lightTargets[ MAX_SWITCHED_LIGHTS ][ 64 ];
 	int lightStyles[ MAX_SWITCHED_LIGHTS ];
 
@@ -412,7 +412,7 @@ void EndBSPFile( void ){
 	WriteSurfaceExtraFile( source );
 
 	/* write the bsp */
-	sprintf( path, "%s.bsp", source );
+	snprintf( path, sizeof( path ), "%s.bsp", source );
 	Sys_Printf( "Writing %s\n", path );
 	WriteBSPFile( path );
 }

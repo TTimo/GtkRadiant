@@ -169,7 +169,7 @@ void CBackgroundDialogPage::Browse(){
 
 void CBackgroundDialogPage::SetPosLabel(){
 	char s[64];
-	snprintf( s, sizeof( s ) - 1, _( "Size/Position (%d,%d) (%d,%d)" ),(int)( m_pImage->m_xmin ),
+	snprintf( s, sizeof( s ), _( "Size/Position (%d,%d) (%d,%d)" ),(int)( m_pImage->m_xmin ),
 			  (int)( m_pImage->m_ymin ),(int)( m_pImage->m_xmax ),(int)( m_pImage->m_ymax ) );
 	gtk_label_set_text( GTK_LABEL( m_pPosLabel ),s );
 }

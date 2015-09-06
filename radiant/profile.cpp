@@ -192,7 +192,7 @@ bool WINAPI profile_save_int( const char *filename, const char *section, const c
 }
 
 bool WINAPI profile_save_float( const char *filename, const char *section, const char *key, float value ){
-	char buf[16];
+	char buf[64];
 	sprintf( buf, "%f", value );
 	return save_var( filename, section, key, buf );
 }
@@ -204,7 +204,7 @@ bool WINAPI profile_save_string( const char * filename, const char *section, con
 bool profile_save_buffer( const char * rc_path, const char *name, void *buffer, guint32 size ){
 	bool ret = false;
 	char filename[PATH_MAX];
-	sprintf( filename, "%s/%s.bin", rc_path, name );
+	snprintf( filename, sizeof( filename ), "%s/%s.bin", rc_path, name );
 	FILE *f;
 
 	f = fopen( filename, "wb" );
@@ -222,7 +222,7 @@ bool profile_save_buffer( const char * rc_path, const char *name, void *buffer, 
 
 bool profile_load_buffer( const char * rc_path, const char *name, void *buffer, guint32 *plSize ){
 	char filename[PATH_MAX];
-	sprintf( filename, "%s/%s.bin", rc_path, name );
+	snprintf( filename, sizeof( filename ), "%s/%s.bin", rc_path, name );
 	bool ret = false;
 	guint32 len;
 	FILE *f;

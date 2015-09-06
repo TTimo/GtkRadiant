@@ -192,8 +192,8 @@ int MapPatches(){
 			NH_patch -= 2;
 		NH_remain -= ( NH_patch - 1 );
 		if ( NH_remain < 0 ) {
-			sprintf( szOops,"Oops... screwed up with NH=%d",NH );
-			g_FuncTable.m_pfnMessageBox( NULL,szOops,"Uh oh", 0, NULL );
+			sprintf( szOops, "Oops... screwed up with NH=%d", NH );
+			g_FuncTable.m_pfnMessageBox( NULL, szOops, "Uh oh", 0, NULL );
 		}
 		NV_remain = NV + 1;
 		j0 = 0;
@@ -233,8 +233,8 @@ int MapPatches(){
 				NV_patch -= 2;
 			NV_remain -= ( NV_patch - 1 );
 			if ( NV_remain < 0 ) {
-				sprintf( szOops,"Oops... screwed up with NV=%d",NV );
-				g_FuncTable.m_pfnMessageBox( NULL,szOops,"Uh oh", 0, NULL );
+				sprintf( szOops, "Oops... screwed up with NV=%d", NV );
+				g_FuncTable.m_pfnMessageBox( NULL, szOops, "Uh oh", 0, NULL );
 			}
 
 			p.width  = NH_patch;

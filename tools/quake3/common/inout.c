@@ -150,7 +150,7 @@ void xml_Select( char *msg, int entitynum, int brushnum, qboolean bError ){
 	char level[2];
 
 	// now build a proper "select" XML node
-	sprintf( buf, "Entity %i, Brush %i: %s", entitynum, brushnum, msg );
+	snprintf( buf, sizeof( buf ), "Entity %i, Brush %i: %s", entitynum, brushnum, msg );
 	node = xmlNewNode( NULL, "select" );
 	xmlNodeSetContent( node, buf );
 	level[0] = (int)'0' + ( bError ? SYS_ERR : SYS_WRN )  ;
@@ -163,7 +163,7 @@ void xml_Select( char *msg, int entitynum, int brushnum, qboolean bError ){
 	xmlAddChild( node, select );
 	xml_SendNode( node );
 
-	sprintf( buf, "Entity %i, Brush %i: %s", entitynum, brushnum, msg );
+	snprintf( buf, sizeof( buf ), "Entity %i, Brush %i: %s", entitynum, brushnum, msg );
 	if ( bError ) {
 		Error( buf );
 	}
@@ -184,13 +184,13 @@ void xml_Point( char *msg, vec3_t pt ){
 	level[1] = 0;
 	xmlSetProp( node, "level", (char *)&level );
 	// a 'point' node
-	sprintf( buf, "%g %g %g", pt[0], pt[1], pt[2] );
+	snprintf( buf, sizeof( buf ), "%g %g %g", pt[0], pt[1], pt[2] );
 	point = xmlNewNode( NULL, "point" );
 	xmlNodeSetContent( point, buf );
 	xmlAddChild( node, point );
 	xml_SendNode( node );
 
-	sprintf( buf, "%s (%g %g %g)", msg, pt[0], pt[1], pt[2] );
+	snprintf( buf, sizeof( buf ), "%s (%g %g %g)", msg, pt[0], pt[1], pt[2] );
 	Error( buf );
 }
 
@@ -211,7 +211,7 @@ void xml_Winding( char *msg, vec3_t p[], int numpoints, qboolean die ){
 	sprintf( buf, "%i ", numpoints );
 	for ( i = 0; i < numpoints; i++ )
 	{
-		sprintf( smlbuf, "(%g %g %g)", p[i][0], p[i][1], p[i][2] );
+		snprintf( smlbuf, sizeof( smlbuf ), "(%g %g %g)", p[i][0], p[i][1], p[i][2] );
 		// don't overflow
 		if ( strlen( buf ) + strlen( smlbuf ) > WINDING_BUFSIZE ) {
 			break;
@@ -349,7 +349,7 @@ void Error( const char *error, ... ){
 	vsnprintf( tmp, sizeof( tmp ), error, argptr );
 	va_end( argptr );
 
-	sprintf( out_buffer, "************ ERROR ************\n%s\n", tmp );
+	snprintf( out_buffer, sizeof( out_buffer ), "************ ERROR ************\n%s\n", tmp );
 
 	FPrintf( SYS_ERR, out_buffer );
 

@@ -473,7 +473,7 @@ static void ASE_KeyMAP_DIFFUSE( const char *token ){
 		}
 		else
 		{
-			sprintf( ase.materials[ase.numMaterials].name, "(not converted: '%s')", bitmap );
+			snprintf( ase.materials[ase.numMaterials].name, sizeof( ase.materials[ase.numMaterials].name ), "(not converted: '%s')", bitmap );
 			Sys_Printf( "WARNING: illegal material name '%s'\n", bitmap );
 		}
 	}

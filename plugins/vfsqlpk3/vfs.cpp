@@ -267,7 +267,7 @@ static GSList* vfsGetListInternal( const char *refdir, const char *ext, bool dir
 					continue;
 				}
 
-				sprintf( filename, "%s%s", basedir, name );
+				snprintf( filename, sizeof( filename ), "%s%s", basedir, name );
 				stat( filename, &st );
 
 				if ( ( S_ISDIR( st.st_mode ) != 0 ) != directories ) {
@@ -470,7 +470,7 @@ void vfsInitDirectory( const char *path ){
 					break;
 				}
 
-				sprintf( filename, "%s/%s", path, name );
+				snprintf( filename, sizeof( filename ), "%s/%s", path, name );
 				vfsInitPakFile( filename );
 
 				g_free( name );

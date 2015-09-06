@@ -442,7 +442,7 @@ bool OpenBitmap(){
 		g_print( "failed to load file gbmp %s\n",gbmp.name );
 		char Text[256];
 
-		sprintf( Text, "Error opening %s", gbmp.name );
+		snprintf( Text, sizeof( Text ), "Error opening %s", gbmp.name );
 		g_FuncTable.m_pfnMessageBox( g_pWnd, Text, "Bitmap", MB_ICONEXCLAMATION, NULL );
 		strcpy( gbmp.name, "" );
 	}

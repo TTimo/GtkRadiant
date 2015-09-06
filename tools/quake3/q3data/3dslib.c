@@ -149,7 +149,7 @@ static void LoadMaterialList( FILE *fp, long thisChunkLen, _3DSMaterial_t *pMat 
 	Q_getwd( curdir );
 
 	if ( mat.texture[0] ) {
-		sprintf( buffer, "%s%s", curdir, mat.texture );
+		snprintf( buffer, sizeof( buffer ), "%s%s", curdir, mat.texture );
 		if ( strstr( buffer, gamedir + 1 ) ) {
 			strcpy( mat.texture, strstr( buffer, gamedir + 1 ) + strlen( gamedir ) - 1 );
 		}
@@ -159,7 +159,7 @@ static void LoadMaterialList( FILE *fp, long thisChunkLen, _3DSMaterial_t *pMat 
 	}
 
 	if ( mat.specular[0] ) {
-		sprintf( buffer, "%s%s", curdir, mat.specular );
+		snprintf( buffer, sizeof( buffer ), "%s%s", curdir, mat.specular );
 		if ( strstr( buffer, gamedir + 1 ) ) {
 			strcpy( mat.specular, strstr( buffer, gamedir + 1 ) + strlen( gamedir ) - 1 );
 		}
@@ -169,7 +169,7 @@ static void LoadMaterialList( FILE *fp, long thisChunkLen, _3DSMaterial_t *pMat 
 	}
 
 	if ( mat.bump[0] ) {
-		sprintf( buffer, "%s%s", curdir, mat.bump );
+		snprintf( buffer, sizeof( buffer ), "%s%s", curdir, mat.bump );
 		if ( strstr( buffer, gamedir + 1 ) ) {
 			strcpy( mat.bump, strstr( buffer, gamedir + 1 ) + strlen( gamedir ) - 1 );
 		}
@@ -179,7 +179,7 @@ static void LoadMaterialList( FILE *fp, long thisChunkLen, _3DSMaterial_t *pMat 
 	}
 
 	if ( mat.reflection[0] ) {
-		sprintf( buffer, "%s%s", curdir, mat.reflection );
+		snprintf( buffer, sizeof( buffer ), "%s%s", curdir, mat.reflection );
 		if ( strstr( buffer, gamedir + 1 ) ) {
 			strcpy( mat.reflection, strstr( buffer, gamedir + 1 ) + strlen( gamedir ) - 1 );
 		}
@@ -189,7 +189,7 @@ static void LoadMaterialList( FILE *fp, long thisChunkLen, _3DSMaterial_t *pMat 
 	}
 
 	if ( mat.opacity[0] ) {
-		sprintf( buffer, "%s%s", curdir, mat.opacity );
+		snprintf( buffer, sizeof( buffer ), "%s%s", curdir, mat.opacity );
 		if ( strstr( buffer, gamedir + 1 ) ) {
 			strcpy( mat.opacity, strstr( buffer, gamedir + 1 ) + strlen( gamedir ) - 1 );
 		}

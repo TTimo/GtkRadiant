@@ -291,7 +291,7 @@ void PatchDialog::BuildDialog(){
 	GtkWidget *dlg, *vbox, *vbox2, *hbox, *hbox2, *frame, *table, *label;
 	GtkWidget *button, *entry, *spin, *combo;
 	GtkAdjustment *adj;
-	char buf[32];
+	char buf[64];
 
 	dlg = m_pWidget;
 
@@ -465,7 +465,7 @@ void PatchDialog::BuildDialog(){
 	g_object_set_data( G_OBJECT( m_pWidget ), "hshift_entry", entry );
 	// we fill in this data, if no patch is selected the widgets are unmodified when the inspector is raised
 	// so we need to have at least one initialisation somewhere
-	sprintf( buf, "%g", l_pPIIncrement->shift[0] );
+	snprintf( buf, sizeof( buf ), "%g", l_pPIIncrement->shift[0] );
 	gtk_entry_set_text( GTK_ENTRY( entry ), buf );
 
 	adj = gtk_adjustment_new( 0, -8192, 8192, 1, 1, 0 );
@@ -480,7 +480,7 @@ void PatchDialog::BuildDialog(){
 	entry = gtk_entry_new();
 	gtk_grid_attach( GTK_GRID( table ), entry, 0, 1, 1, 1 );
 	gtk_widget_show( entry );
-	sprintf( buf, "%g", l_pPIIncrement->shift[1] );
+	snprintf( buf, sizeof( buf ), "%g", l_pPIIncrement->shift[1] );
 	gtk_entry_set_text( GTK_ENTRY( entry ), buf );
 
 	adj = gtk_adjustment_new( 0, -8192, 8192, 1, 1, 0 );
@@ -495,7 +495,7 @@ void PatchDialog::BuildDialog(){
 	entry = gtk_entry_new();
 	gtk_grid_attach( GTK_GRID( table ), entry, 0, 2, 1, 1 );
 	gtk_widget_show( entry );
-	sprintf( buf, "%g", l_pPIIncrement->scale[0] );
+	snprintf( buf, sizeof( buf ), "%g", l_pPIIncrement->scale[0] );
 	gtk_entry_set_text( GTK_ENTRY( entry ), buf );
 
 	adj = gtk_adjustment_new( 0, -1000, 1000, 1, 1, 0 );
@@ -510,7 +510,7 @@ void PatchDialog::BuildDialog(){
 	entry = gtk_entry_new();
 	gtk_grid_attach( GTK_GRID( table ), entry, 0, 3, 1, 1 );
 	gtk_widget_show( entry );
-	sprintf( buf, "%g", l_pPIIncrement->scale[1] );
+	snprintf( buf, sizeof( buf ), "%g", l_pPIIncrement->scale[1] );
 	gtk_entry_set_text( GTK_ENTRY( entry ), buf );
 
 	adj = gtk_adjustment_new( 0, -1000, 1000, 1, 1, 0 );
@@ -525,7 +525,7 @@ void PatchDialog::BuildDialog(){
 	entry = gtk_entry_new();
 	gtk_grid_attach( GTK_GRID( table ), entry, 0, 4, 1, 1 );
 	gtk_widget_show( entry );
-	sprintf( buf, "%g", l_pPIIncrement->rotate );
+	snprintf( buf, sizeof( buf ), "%g", l_pPIIncrement->rotate );
 	gtk_entry_set_text( GTK_ENTRY( entry ), buf );
 
 	adj = gtk_adjustment_new( 0, -1000, 1000, 1, 1, 0 ); // NOTE: Arnout - this really should be 360 but can't change it anymore as it could break existing maps

@@ -349,10 +349,10 @@ void INISetInt( const char *key, int val, const char *comment /* = NULL */ ){
 	char s[1000];
 
 	if ( comment ) {
-		sprintf( s, "%d        ; %s", val, comment );
+		snprintf( s, sizeof( s ), "%d        ; %s", val, comment );
 	}
 	else{
-		sprintf( s, "%d", val );
+		snprintf( s, sizeof( s ), "%d", val );
 	}
 #if defined( __linux__ ) || defined( __APPLE__ )
 	save_var( INIfn, CONFIG_SECTION, key, s );

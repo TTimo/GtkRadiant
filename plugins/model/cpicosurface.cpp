@@ -38,6 +38,8 @@ CPicoSurface::CPicoSurface( picoSurface_t *pSurface ){
 	// directory as a fall-back. This is a hack for malformed models.
 
 	if ( m_shader->IsDefault() ) {
+		Sys_Printf( "WARNING: Failed to load shader %s for %s\n", m_shader->getName(), m_pSurface->model->name );
+
 		gchar *dir = g_path_get_dirname( m_pSurface->model->name );
 		gchar *skin = g_strdup_printf( "%s/skin.tga", dir );
 

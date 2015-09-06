@@ -747,7 +747,7 @@ brush_t *FinishBrush( void ){
 	/* origin brushes are removed, but they set the rotation origin for the rest of the brushes in the entity.
 	   after the entire entity is parsed, the planenums and texinfos will be adjusted for the origin brush */
 	if ( buildBrush->compileFlags & C_ORIGIN ) {
-		char string[ 32 ];
+		char string[ 64 ];
 		vec3_t origin;
 
 		if ( numEntities == 1 ) {
@@ -1036,7 +1036,7 @@ static void ParseRawBrush( qboolean onlyLights ){
 		}
 
 		/* set default flags and values */
-		sprintf( shader, "textures/%s", name );
+		snprintf( shader, sizeof( shader ), "textures/%s", name );
 		if ( onlyLights ) {
 			si = &shaderInfo[ 0 ];
 		}
@@ -1697,7 +1697,7 @@ static qboolean ParseMapEntity( qboolean onlyLights ){
 		value = ValueForKey( &entities[ 0 ], "_celshader" );
 	}
 	if ( value[ 0 ] != '\0' ) {
-		sprintf( shader, "textures/%s", value );
+		snprintf( shader, sizeof( shader ), "textures/%s", value );
 		celShader = ShaderInfoForShader( shader );
 		Sys_Printf( "Entity %d (%s) has cel shader %s\n", mapEnt->mapEntityNum, classname, celShader->shader );
 	}

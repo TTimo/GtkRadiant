@@ -423,7 +423,7 @@ void SaveSetup( GtkWidget *parent ){
 													g_FuncTable.m_pfnProfileGetDirectory(), "gtkgensurf", NULL );
 
 	if ( name != NULL ) {
-		char key[32], text[32];
+		char key[32], text[128];
 		int i, j;
 
 		WriteIniFile( name );
@@ -437,8 +437,8 @@ void SaveSetup( GtkWidget *parent ){
 			for ( j = 0; j <= NV; j++ )
 			{
 				if ( xyz[i][j].fixed ) {
-					sprintf( key,"I%dJ%d",i,j );
-					sprintf( text,"%g %g %g", xyz[i][j].fixed_value, xyz[i][j].range, xyz[i][j].rate );
+					sprintf( key, "I%dJ%d", i, j );
+					snprintf( text, sizeof( text ), "%g %g %g", xyz[i][j].fixed_value, xyz[i][j].range, xyz[i][j].rate );
 					g_FuncTable.m_pfnProfileSaveString( name, "FixedPoints",key,text );
 				}
 			}

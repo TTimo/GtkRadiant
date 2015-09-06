@@ -851,10 +851,10 @@ cblock_t LoadFrame( char *base, int frame, int digits, byte **palette ){
 	ten0 = frame % 10;
 
 	if ( digits == 4 ) {
-		sprintf( name, "%svideo/%s/%s%i%i%i%i.tga", gamedir, base, base, ten3, ten2, ten1, ten0 );
+		snprintf( name, sizeof( name ), "%svideo/%s/%s%i%i%i%i.tga", gamedir, base, base, ten3, ten2, ten1, ten0 );
 	}
 	else{
-		sprintf( name, "%svideo/%s/%s%i%i%i.tga", gamedir, base, base, ten2, ten1, ten0 );
+		snprintf( name, sizeof( name ), "%svideo/%s/%s%i%i%i.tga", gamedir, base, base, ten2, ten1, ten0 );
 	}
 
 	f = fopen( name, "rb" );

@@ -86,7 +86,7 @@ void set_surface_flags_button_state( texdef_to_face_t *texdef_face_list, bool b_
 	int diff_contents = 0;
 	int diff_flags = 0;
 	gboolean diff_value = FALSE;
-	char tex_buff[11];
+	char tex_buff[16];
 	texdef_t* tmp_texdef;
 	texdef_to_face_t* temp_texdef_face_list;
 	int i;
@@ -301,7 +301,7 @@ GtkWidget* create_SurfaceFlagsFrame( GtkWidget* surfacedialog_widget ){
 	GtkWidget *label6;
 	int i, x, y;
 	const char *buttonLabel;
-	char buffer[8];
+	char buffer[16];
 
 	frame1 = gtk_frame_new( _( "Flags" ) );
 	gtk_widget_show( frame1 );
@@ -333,7 +333,7 @@ GtkWidget* create_SurfaceFlagsFrame( GtkWidget* surfacedialog_widget ){
 			y++;
 		}
 		x = i % 4;
-		snprintf( buffer, sizeof( buffer ) - 1, "surf%i", i + 1 );
+		snprintf( buffer, sizeof( buffer ), "surf%i", i + 1 );
 		buttonLabel = g_FuncTable.m_pfnReadProjectKey( buffer );
 		//Sys_Printf( "%s: %s\n", buffer, buttonLabel );
 		surface_buttons[i] = gtk_toggle_button_new_with_label( buttonLabel );
@@ -391,7 +391,7 @@ GtkWidget* create_SurfaceFlagsFrame( GtkWidget* surfacedialog_widget ){
 			y++;
 		}
 		x = i % 4;
-		snprintf( buffer, sizeof( buffer ) - 1, "cont%i", i + 1 );
+		snprintf( buffer, sizeof( buffer ), "cont%i", i + 1 );
 		buttonLabel = g_FuncTable.m_pfnReadProjectKey( buffer );
 		content_buttons[i] = gtk_toggle_button_new_with_label( buttonLabel );
 		g_signal_connect( content_buttons[i], "toggled", G_CALLBACK( on_content_button_toggled ), GINT_TO_POINTER( 1 << i ) );

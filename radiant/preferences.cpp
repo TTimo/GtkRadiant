@@ -307,7 +307,7 @@ void CXMLPropertyBag::GetPref( const char *name, int *pV, int V ){
 	}
 	else
 	{
-		char s[10];
+		char s[12];
 		sprintf( s, "%d", V );
 		pNode = xmlNewChild( mpDocNode, NULL, (xmlChar *)"epair", (xmlChar *)s );
 		xmlSetProp( pNode, (xmlChar *)"name", (xmlChar *)name );
@@ -347,7 +347,7 @@ void CXMLPropertyBag::GetPref( const char *name, float *pV, float V ){
 	}
 	else
 	{
-		char s[10];
+		char s[64];
 		sprintf( s, "%f", V );
 		pNode = xmlNewChild( mpDocNode, NULL, (xmlChar *)"epair", (xmlChar *)s );
 		xmlSetProp( pNode, (xmlChar *)"name", (xmlChar *)name );
@@ -364,7 +364,7 @@ void CXMLPropertyBag::GetPref( const char *name, float* pV, float* V ){
 	}
 	else
 	{
-		char s[128];
+		char s[256];
 		sprintf( s, "%f %f %f", V[0], V[1], V[2] );
 		pNode = xmlNewChild( mpDocNode, NULL, (xmlChar *)"epair", (xmlChar *)s );
 		xmlSetProp( pNode, (xmlChar *)"name", (xmlChar *)name );
@@ -401,7 +401,7 @@ void CXMLPropertyBag::UpdatePrefTree(){
 		CPrefAssignment *pPref = &( *iPref );
 		// look for the node
 		xmlNodePtr pNode;
-		char s[64];
+		char s[256];
 
 		pNode = EpairForName( pPref->mName.GetBuffer() );
 		// we never expect that the node could not be found, because this is supposed to happen
@@ -564,7 +564,7 @@ static void OnButtonClean( GtkWidget *widget, gpointer data ){
 		g_qeglobals.disable_ini = true;
 		remove( dlg->m_inipath->str );
 		char buf[PATH_MAX];
-		sprintf( buf, "%sSavedInfo.bin", dlg->m_rc_path->str );
+		snprintf( buf, sizeof( buf ), "%sSavedInfo.bin", dlg->m_rc_path->str );
 		remove( buf );
 		HandleCommand( NULL, GINT_TO_POINTER( ID_FILE_EXIT ) );
 		_exit( 0 );
@@ -2720,19 +2720,19 @@ void PrefsDlg::LoadTexdefPref( texdef_t* pTexdef, const char* pName ){
 
 	memset( pTexdef, 0, sizeof( texdef_t ) );
 
-	sprintf( buffer, "%s%s", pName, TD_SCALE1_KEY );
+	snprintf( buffer, sizeof( buffer ), "%s%s", pName, TD_SCALE1_KEY );
 	mLocalPrefs.GetPref( buffer, &pTexdef->scale[0],   0.5f );
 
-	sprintf( buffer, "%s%s", pName, TD_SCALE2_KEY );
+	snprintf( buffer, sizeof( buffer ), "%s%s", pName, TD_SCALE2_KEY );
 	mLocalPrefs.GetPref( buffer, &pTexdef->scale[1],   0.5f );
 
-	sprintf( buffer, "%s%s", pName, TD_SHIFT1_KEY );
+	snprintf( buffer, sizeof( buffer ), "%s%s", pName, TD_SHIFT1_KEY );
 	mLocalPrefs.GetPref( buffer, &pTexdef->shift[0],   8.f );
 
-	sprintf( buffer, "%s%s", pName, TD_SHIFT2_KEY );
+	snprintf( buffer, sizeof( buffer ), "%s%s", pName, TD_SHIFT2_KEY );
 	mLocalPrefs.GetPref( buffer, &pTexdef->shift[1],   8.f );
 
-	sprintf( buffer, "%s%s", pName, TD_ROTATE_KEY );
+	snprintf( buffer, sizeof( buffer ), "%s%s", pName, TD_ROTATE_KEY );
 	mLocalPrefs.GetPref( buffer, &pTexdef->rotate,     45 );
 }
 

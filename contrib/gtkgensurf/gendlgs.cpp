@@ -280,32 +280,32 @@ static void SetDlgValues( int tab ){
 		gtk_toggle_button_set_active( GTK_TOGGLE_BUTTON( wave_radios[WaveType] ), TRUE );
 		gtk_spin_button_set_value( GTK_SPIN_BUTTON( g_object_get_data( G_OBJECT( g_pWnd ), "random" ) ),
 								   RandomSeed );
-		sprintf( Text, RForm, WaveLength );
+		snprintf( Text, sizeof( Text ), RForm, WaveLength );
 		gtk_entry_set_text( GTK_ENTRY( g_object_get_data( G_OBJECT( g_pWnd ), "wavelength" ) ), Text );
-		sprintf( Text, RForm, Amplitude );
+		snprintf( Text, sizeof( Text ), RForm, Amplitude );
 		gtk_entry_set_text( GTK_ENTRY( g_object_get_data( G_OBJECT( g_pWnd ), "amplitude" ) ), Text );
-		sprintf( Text, RForm, Roughness );
+		snprintf( Text, sizeof( Text ), RForm, Roughness );
 		gtk_entry_set_text( GTK_ENTRY( g_object_get_data( G_OBJECT( g_pWnd ), "roughness" ) ), Text );
 		gtk_toggle_button_set_active( GTK_TOGGLE_BUTTON( g_object_get_data
 															 ( G_OBJECT( g_pWnd ), "main_antialiasing" ) ), Antialiasing );
 		break;
 
 	case EXTENTS_TAB:
-		sprintf( Text,RForm,Hll );
+		snprintf( Text, sizeof( Text ), RForm, Hll );
 		gtk_entry_set_text( GTK_ENTRY( g_object_get_data( G_OBJECT( g_pWnd ), "hmin" ) ), Text );
-		sprintf( Text,RForm,Vll );
+		snprintf( Text, sizeof( Text ), RForm, Vll );
 		gtk_entry_set_text( GTK_ENTRY( g_object_get_data( G_OBJECT( g_pWnd ), "vmin" ) ), Text );
-		sprintf( Text,RForm,Hur );
+		snprintf( Text, sizeof( Text ), RForm, Hur );
 		gtk_entry_set_text( GTK_ENTRY( g_object_get_data( G_OBJECT( g_pWnd ), "hmax" ) ), Text );
-		sprintf( Text,RForm,Vur );
+		snprintf( Text, sizeof( Text ), RForm, Vur );
 		gtk_entry_set_text( GTK_ENTRY( g_object_get_data( G_OBJECT( g_pWnd ), "vmax" ) ), Text );
-		sprintf( Text,RForm,Z00 );
+		snprintf( Text, sizeof( Text ), RForm, Z00 );
 		gtk_entry_set_text( GTK_ENTRY( g_object_get_data( G_OBJECT( g_pWnd ), "z00" ) ), Text );
-		sprintf( Text,RForm,Z01 );
+		snprintf( Text, sizeof( Text ), RForm, Z01 );
 		gtk_entry_set_text( GTK_ENTRY( g_object_get_data( G_OBJECT( g_pWnd ), "z01" ) ), Text );
-		sprintf( Text,RForm,Z10 );
+		snprintf( Text, sizeof( Text ), RForm, Z10 );
 		gtk_entry_set_text( GTK_ENTRY( g_object_get_data( G_OBJECT( g_pWnd ), "z10" ) ), Text );
-		sprintf( Text,RForm,Z11 );
+		snprintf( Text, sizeof( Text ), RForm, Z11 );
 		gtk_entry_set_text( GTK_ENTRY( g_object_get_data( G_OBJECT( g_pWnd ), "z11" ) ), Text );
 		gtk_spin_button_set_value( GTK_SPIN_BUTTON( g_object_get_data( G_OBJECT( g_pWnd ), "nh" ) ), NH );
 		gtk_spin_button_set_value( GTK_SPIN_BUTTON( g_object_get_data( G_OBJECT( g_pWnd ), "nv" ) ), NV );
@@ -385,9 +385,9 @@ static void SetDlgValues( int tab ){
 
 	case BITMAP_TAB:
 		gtk_entry_set_text( GTK_ENTRY( g_object_get_data( G_OBJECT( g_pWnd ), "bmp_file" ) ), gbmp.name );
-		sprintf( Text,"%g",gbmp.black_value );
+		snprintf( Text, sizeof( Text ), "%g", gbmp.black_value );
 		gtk_entry_set_text( GTK_ENTRY( g_object_get_data( G_OBJECT( g_pWnd ), "bmp_black" ) ), Text );
-		sprintf( Text,"%g",gbmp.white_value );
+		snprintf( Text, sizeof( Text ), "%g", gbmp.white_value );
 		gtk_entry_set_text( GTK_ENTRY( g_object_get_data( G_OBJECT( g_pWnd ), "bmp_white" ) ), Text );
 		break;
 
@@ -400,13 +400,13 @@ static void SetDlgValues( int tab ){
 		gtk_entry_set_text( GTK_ENTRY( g_object_get_data( G_OBJECT( g_pWnd ), "texture3" ) ), Texture[Game][2] );
 		gtk_spin_button_set_value( GTK_SPIN_BUTTON( g_object_get_data( G_OBJECT( g_pWnd ), "tex_slant" ) ),
 								   SlantAngle );
-		sprintf( Text,RForm,TexOffset[0] );
+		snprintf( Text, sizeof( Text ), RForm, TexOffset[0] );
 		gtk_entry_set_text( GTK_ENTRY( g_object_get_data( G_OBJECT( g_pWnd ), "texoffsetx" ) ), Text );
-		sprintf( Text,RForm,TexOffset[1] );
+		snprintf( Text, sizeof( Text ), RForm, TexOffset[1] );
 		gtk_entry_set_text( GTK_ENTRY( g_object_get_data( G_OBJECT( g_pWnd ), "texoffsety" ) ), Text );
-		sprintf( Text,RForm,TexScale[0] );
+		snprintf( Text, sizeof( Text ), RForm, TexScale[0] );
 		gtk_entry_set_text( GTK_ENTRY( g_object_get_data( G_OBJECT( g_pWnd ), "texscalex" ) ), Text );
-		sprintf( Text,RForm,TexScale[1] );
+		snprintf( Text, sizeof( Text ), RForm, TexScale[1] );
 		gtk_entry_set_text( GTK_ENTRY( g_object_get_data( G_OBJECT( g_pWnd ), "texscaley" ) ), Text );
 		CHECK_WIDGET( "detail", UseDetail );
 
@@ -726,14 +726,14 @@ static void main_go( GtkWidget *widget, gpointer data ){
 
 	ReadDlgValues( current_tab );
 	if ( NH < 1 || NH > MAX_ROWS ) {
-		sprintf( Text, "The number of divisions must be > 0 and no greater than %d.", MAX_ROWS );
+		sprintf( Text, _( "The number of divisions must be > 0 and no greater than %d." ), MAX_ROWS );
 		g_FuncTable.m_pfnMessageBox( g_pWnd, Text, "GenSurf", MB_ICONEXCLAMATION, NULL );
 		gtk_notebook_set_current_page( GTK_NOTEBOOK( notebook ), EXTENTS_TAB );
 		return;
 	}
 
 	if ( NV < 1 || NV > MAX_ROWS ) {
-		sprintf( Text, "The number of divisions must be > 0 and no greater than %d.", MAX_ROWS );
+		sprintf( Text, _( "The number of divisions must be > 0 and no greater than %d." ), MAX_ROWS );
 		g_FuncTable.m_pfnMessageBox( g_pWnd, Text, "GenSurf", MB_ICONEXCLAMATION, NULL );
 		gtk_notebook_set_current_page( GTK_NOTEBOOK( notebook ), EXTENTS_TAB );
 		return;
@@ -1005,7 +1005,7 @@ static void fix_freeall( GtkWidget *widget, gpointer data ){
 }
 
 void vertex_selected(){
-	char Text[32];
+	char Text[64];
 	int k;
 
 	SetupControls();
@@ -1031,9 +1031,9 @@ void vertex_selected(){
 	gtk_spin_button_set_value( GTK_SPIN_BUTTON( g_object_get_data( G_OBJECT( g_pWnd ), "fix_value" ) ),
 							   (int)xyz[Vertex[0].i][Vertex[0].j].fixed_value );
 
-	sprintf( Text,"%d",(int)xyz[Vertex[0].i][Vertex[0].j].range );
+	sprintf( Text, "%d", (int)xyz[Vertex[0].i][Vertex[0].j].range );
 	gtk_entry_set_text( GTK_ENTRY( g_object_get_data( G_OBJECT( g_pWnd ), "fix_range" ) ), Text );
-	sprintf( Text,"%.5g",xyz[Vertex[0].i][Vertex[0].j].rate );
+	snprintf( Text, sizeof( Text ), "%.5g", xyz[Vertex[0].i][Vertex[0].j].rate );
 	gtk_entry_set_text( GTK_ENTRY( g_object_get_data( G_OBJECT( g_pWnd ), "fix_rate" ) ), Text );
 
 	for ( k = 0; k < NumVerticesSelected; k++ )

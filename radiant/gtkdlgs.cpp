@@ -2739,7 +2739,7 @@ int DoBSInputDlg( const char *fields[5], float values[5] ){
 		gtk_box_pack_start( GTK_BOX( vbox ), entries[i], TRUE, TRUE, 0 );
 		gtk_widget_show( entries[i] );
 
-		char buf[32];
+		char buf[64];
 		sprintf( buf, "%f", values[i] );
 		gtk_entry_set_text( GTK_ENTRY( entries[i] ), buf );
 	}

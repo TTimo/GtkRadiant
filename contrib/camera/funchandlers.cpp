@@ -117,7 +117,7 @@ void DoLoadCamera(){
 				if ( !strcmp( fullpathtofile, checkCam->GetFileName() ) ) {
 					char error[PATH_MAX + 64];
 					FreeCam( cam );
-					sprintf( error, "Camera file \'%s\' is already loaded", fullpathtofile );
+					snprintf( error, sizeof( error ), "Camera file \'%s\' is already loaded", fullpathtofile );
 					g_FuncTable.m_pfnMessageBox( (GtkWidget *)g_pRadiantWnd, error, "Load error", MB_OK, NULL );
 					//g_free( filename );
 					return;
@@ -135,7 +135,7 @@ void DoLoadCamera(){
 			else {
 				char error[PATH_MAX + 64];
 				FreeCam( cam );
-				sprintf( error, "An error occured during the loading of \'%s\'", fullpathtofile );
+				snprintf( error, sizeof( error ), "An error occured during the loading of \'%s\'", fullpathtofile );
 				g_FuncTable.m_pfnMessageBox( (GtkWidget *)g_pRadiantWnd, error, "Load error", MB_OK, NULL );
 			}
 
@@ -191,7 +191,7 @@ void DoSaveCamera() {
 			}
 			else if ( !strcmp( fullpathtofile, checkCam->GetFileName() ) ) {
 				char error[PATH_MAX + 64];
-				sprintf( error, "Camera file \'%s\' is currently loaded by GtkRadiant.\nPlease select a different filename.", fullpathtofile );
+				snprintf( error, sizeof( error ), "Camera file \'%s\' is currently loaded by GtkRadiant.\nPlease select a different filename.", fullpathtofile );
 				g_FuncTable.m_pfnMessageBox( (GtkWidget *)g_pRadiantWnd, error, "Save error", MB_OK, NULL );
 				return;
 			}
@@ -213,14 +213,14 @@ void DoUnloadCamera() {
 
 	if ( !GetCurrentCam()->HasBeenSaved() ) {
 		char buf[PATH_MAX + 64];
-		sprintf( buf, "Do you want to save the changes for camera '%s'?", GetCurrentCam()->GetCam()->getName() );
+		snprintf( buf, sizeof( buf ), "Do you want to save the changes for camera '%s'?", GetCurrentCam()->GetCam()->getName() );
 		if ( g_FuncTable.m_pfnMessageBox( (GtkWidget *)g_pRadiantWnd, buf, "Warning", MB_YESNO, NULL ) == IDYES ) {
 			DoSaveCamera();
 		}
 	}
 	else if ( GetCurrentCam()->HasBeenSaved() == 2 ) {
 		char buf[PATH_MAX + 64];
-		sprintf( buf, "Do you want to save the changes made to camera file '%s'?", GetCurrentCam()->GetFileName() );
+		snprintf( buf, sizeof( buf ), "Do you want to save the changes made to camera file '%s'?", GetCurrentCam()->GetFileName() );
 		if ( g_FuncTable.m_pfnMessageBox( (GtkWidget *)g_pRadiantWnd, buf, "Warning", MB_YESNO, NULL ) == IDYES ) {
 			DoSaveCamera();
 		}

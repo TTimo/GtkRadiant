@@ -773,7 +773,7 @@ int main( int argc, char* argv[] ) {
 			// remove the game prefs files
 			remove( g_PrefsDlg.m_inipath->str );
 			char buf[PATH_MAX];
-			sprintf( buf, "%sSavedInfo.bin", g_PrefsDlg.m_rc_path->str );
+			snprintf( buf, sizeof( buf ), "%sSavedInfo.bin", g_PrefsDlg.m_rc_path->str );
 			remove( buf );
 			// remove the global pref too
 			g_PrefsDlg.mGamesDialog.Reset();
@@ -962,11 +962,11 @@ void QE_ExpandBspString( char *bspaction, GPtrArray *out_array, char *mapname ){
 	if ( g_pGameDescription->mGameFile != "hl.game" &&
 		 *ValueForKey( g_qeglobals.d_project_entity,"gamename" ) != '\0' ) {
 		// set with fs_game
-		sprintf( src, "-fs_game %s \"%s\"", ValueForKey( g_qeglobals.d_project_entity,"gamename" ), mapname );
+		snprintf( src, sizeof( src ), "-fs_game %s \"%s\"", ValueForKey( g_qeglobals.d_project_entity,"gamename" ), mapname );
 	}
 	else
 	{
-		sprintf( src, "\"%s\"", mapname );
+		snprintf( src, sizeof( src ), "\"%s\"", mapname );
 	}
 
 	rsh[0] = 0;
@@ -1169,7 +1169,7 @@ void RunBsp( char *command ){
 #if defined ( __linux__ ) || defined ( __APPLE__ )
 
 		// write qe3bsp.sh
-		sprintf( batpath, "%sqe3bsp.sh", temppath );
+		snprintf( batpath, sizeof( batpath ), "%sqe3bsp.sh", temppath );
 		Sys_Printf( "Writing the compile script to '%s'\n", batpath );
 		hFile = fopen( batpath, "w" );
 		if ( !hFile ) {
@@ -1182,7 +1182,7 @@ void RunBsp( char *command ){
 #endif
 
 #ifdef _WIN32
-		sprintf( batpath, "%sqe3bsp.bat", temppath );
+		snprintf( batpath, sizeof( batpath ), "%sqe3bsp.bat", temppath );
 		Sys_Printf( "Writing the compile script to '%s'\n", batpath );
 		Sys_Printf( "The build output will be saved in '%sjunk.txt'\n", temppath );
 		hFile = fopen( batpath, "w" );

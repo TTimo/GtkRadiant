@@ -118,7 +118,7 @@ void Dialog::AddModalButton( GtkWidget *widget, int ret ) {
 void Dialog::UpdateData( bool retrieve ){
 	DLG_DATA *data;
 	GSList *lst;
-	char buf[32];
+	char buf[64];
 
 	if ( retrieve ) {
 		for ( lst = m_pDataList; lst != NULL; lst = g_slist_next( lst ) )
@@ -224,7 +224,7 @@ void Dialog::UpdateData( bool retrieve ){
 				gtk_entry_set_text( GTK_ENTRY( data->object ), txt );
 			} break;
 			case DLG_ENTRY_FLOAT:
-				sprintf( buf, "%g", ( *(float*)data->buffer ) );
+				snprintf( buf, sizeof( buf ), "%g", ( *(float*)data->buffer ) );
 				gtk_entry_set_text( GTK_ENTRY( data->object ), buf );
 				break;
 			case DLG_ENTRY_INT:

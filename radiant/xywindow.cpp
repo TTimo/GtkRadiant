@@ -423,7 +423,7 @@ void CreateEntityFromName( const char* name, const vec3_t origin ){
 			//    prompt.GotoDlgCtrl( pWnd );
 			if ( DoLightIntensityDlg( &intensity ) == IDOK ) {
 				g_PrefsDlg.m_iLastLightIntensity = intensity;
-				char buf[10];
+				char buf[12];
 				sprintf( buf, "%d", intensity );
 				SetKeyValue( e, "light", buf );
 			}

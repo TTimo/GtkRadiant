@@ -1723,11 +1723,11 @@ void WriteRadbumpChunk(){
 	/* note it */
 	Sys_Printf( "--- WriteRadbumpChunk ---\n" );
 
-	strcpy( dirname, source );
+	Q_strncpyz( dirname, source, sizeof( dirname ) );
 	StripExtension( dirname );
 
 	//Check to see if the chunk exists
-	sprintf( filename, "%s.rad", dirname );
+	snprintf( filename, sizeof( filename ), "%s.rad", dirname );
 
 	file = fopen( filename, "wb" );
 
@@ -2484,10 +2484,10 @@ int LightMain( int argc, char **argv ){
 	/* clean up map name */
 	strcpy( source, ExpandArg( argv[ i ] ) );
 	StripExtension( source );
-	DefaultExtension( source, ".bsp" );
+	DefaultExtension( source, ".bsp", sizeof( source ) );
 	strcpy( mapSource, ExpandArg( argv[ i ] ) );
 	StripExtension( mapSource );
-	DefaultExtension( mapSource, ".map" );
+	DefaultExtension( mapSource, ".map", sizeof( mapSource ) );
 
 	/* ydnar: set default sample size */
 	SetDefaultSampleSize( sampleSize );

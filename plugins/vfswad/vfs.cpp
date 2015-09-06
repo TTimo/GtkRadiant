@@ -190,10 +190,10 @@ static void vfsInitPakFile( const char *filename ){
 
 		// texturenames in wad files don't have an extensions or paths, so we must add them!
 		if ( wf->lpLump->type == WAD2_TYPE_MIP ) {
-			sprintf( filename_inwadfixed,"textures/%s/%s.mip",wadname,filename_inwad );
+			snprintf( filename_inwadfixed, sizeof( filename_inwadfixed ), "textures/%s/%s.mip", wadname,filename_inwad );
 		}
 		else {
-			sprintf( filename_inwadfixed,"textures/%s/%s.hlw",wadname,filename_inwad );
+			snprintf( filename_inwadfixed, sizeof( filename_inwadfixed ), "textures/%s/%s.hlw", wadname,filename_inwad );
 		}
 
 		//g_FuncTable.m_pfnSysFPrintf(SYS_WRN, "  scanned %s\\%s\n", filename,filename_inwad);
@@ -389,7 +389,7 @@ void vfsInitDirectory( const char *path ){
 					continue;
 				}
 
-				sprintf( filename, "%s/%s", path, name );
+				snprintf( filename, sizeof( filename ), "%s/%s", path, name );
 				vfsInitPakFile( filename );
 			}
 			g_dir_close( dir );

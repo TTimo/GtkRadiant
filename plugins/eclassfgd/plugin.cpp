@@ -366,7 +366,7 @@ class_t *Find_Class( GSList *l,char *classname, class_t *ignore ){
    Note: this is somewhat recursive, as a class can require a class that requires a class and so on..
  */
 void EClass_ImportFromClass( eclass_t *e, GSList *l_classes, class_t *bc ){
-	char color[128];
+	char color[256];
 
 	// We allocate 16k here, but only the memory actually used is kept allocated.
 	// this is just used for building the final comments string.
@@ -596,12 +596,12 @@ void Create_EClasses( GSList *l_classes ){
 
 		if ( havespawnflags ) {
 			char spawnline[80];
-			e->comments = addstr( e->comments,"Spawnflags\n" );
+			e->comments = addstr( e->comments, "Spawnflags\n" );
 			for ( i = 0 ; i < MAX_FLAGS ; i++ )
 			{
 				if ( *e->flagnames[i] ) {
-					sprintf( spawnline,"  %d - %s\n", 1 << i, e->flagnames[i] );
-					e->comments = addstr( e->comments,spawnline );
+					snprintf( spawnline, sizeof( spawnline ), "  %d - %s\n", 1 << i, e->flagnames[i] );
+					e->comments = addstr( e->comments, spawnline );
 				}
 			}
 		}

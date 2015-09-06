@@ -124,7 +124,7 @@ void ExpandWildcards( int *argc, char ***argv ){
 
 		do
 		{
-			sprintf( filename, "%s%s", filebase, fileinfo.name );
+			snprintf( filename, sizeof( filename ), "%s%s", filebase, fileinfo.name );
 			ex_argv[ex_argc++] = copystring( filename );
 		} while ( _findnext( handle, &fileinfo ) != -1 );
 
@@ -248,7 +248,7 @@ char *ExpandPath( const char *path ){
 		Q_strncpyz( full, path, sizeof( full ) );
 		return full;
 	}
-	sprintf( full, "%s%s", qdir, path );
+	snprintf( full, sizeof( full ), "%s%s", qdir, path );
 	return full;
 }
 

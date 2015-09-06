@@ -6242,7 +6242,7 @@ void MainFrame::OnMiscSelectentitycolor(){
 		}
 
 		if ( inspector_mode == W_ENTITY && ( DoColor( COLOR_ENTITY ) ) ) {
-			char buffer[100];
+			char buffer[256];
 			sprintf( buffer, "%f %f %f", g_qeglobals.d_savedinfo.colors[COLOR_ENTITY][0],
 					 g_qeglobals.d_savedinfo.colors[COLOR_ENTITY][1],
 					 g_qeglobals.d_savedinfo.colors[COLOR_ENTITY][2] );

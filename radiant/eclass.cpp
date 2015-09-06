@@ -286,7 +286,7 @@ void EClass_InitForFileList( GSList *pFiles, _EClassTable *pTable ){
  */
 eclass_t * EClass_Create( const char *name, float col1, float col2, float col3, const vec3_t *mins, const vec3_t *maxs, const char *comments ){
 	eclass_t *e;
-	char color[128];
+	char color[256];
 
 	e = (eclass_t*)malloc( sizeof( *e ) );
 	memset( e, 0, sizeof( *e ) );

@@ -279,7 +279,7 @@ static GSList* vfsGetListInternal( const char *dir, const char *ext, bool direct
 					continue;
 				}
 
-				sprintf( filename, "%s%s", dirname, name );
+				snprintf( filename, sizeof( filename ), "%s%s", dirname, name );
 				stat( filename, &st );
 				Sys_Printf( "vfs FileName: %s\n", filename );
 

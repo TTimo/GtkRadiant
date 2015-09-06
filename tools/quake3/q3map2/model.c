@@ -701,7 +701,7 @@ void AddTriangleModels( entity_t *e ){
 			value = ValueForKey( &entities[ 0 ], "_celshader" );
 		}
 		if ( value[ 0 ] != '\0' ) {
-			sprintf( shader, "textures/%s", value );
+			snprintf( shader, sizeof( shader ), "textures/%s", value );
 			celShader = ShaderInfoForShader( shader );
 		}
 		else{

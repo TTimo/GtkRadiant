@@ -126,7 +126,7 @@ eclass_t *Eclass_InitFromText( char *text ){
 	int r, i;
 	char parms[256], *p;
 	eclass_t    *e;
-	char color[128];
+	char color[256];
 
 	e = (eclass_t*)malloc( sizeof( *e ) );
 	memset( e, 0, sizeof( *e ) );
