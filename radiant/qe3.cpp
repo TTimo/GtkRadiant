@@ -1768,13 +1768,13 @@ extern "C" void Sys_FPrintf_VA( int level, const char *text, va_list args ) {
 
 			static GtkTextMark* end = gtk_text_buffer_create_mark( buffer, "end", &iter, FALSE );
 
-			const GdkColor yellow = { 0, 0xb0ff, 0xb0ff, 0x0000 };
-			const GdkColor red = { 0, 0xffff, 0x0000, 0x0000 };
-			const GdkColor black = { 0, 0x0000, 0x0000, 0x0000 };
+			const GdkRGBA yellow = { 1, 1, 0, 1 };
+			const GdkRGBA red = { 1, 0, 0, 1 };
+			const GdkRGBA black = { 0, 0, 0, 1 };
 
-			static GtkTextTag* error_tag = gtk_text_buffer_create_tag( buffer, "red_foreground", "foreground-gdk", &red, NULL );
-			static GtkTextTag* warning_tag = gtk_text_buffer_create_tag( buffer, "yellow_foreground", "foreground-gdk", &yellow, NULL );
-			static GtkTextTag* standard_tag = gtk_text_buffer_create_tag( buffer, "black_foreground", "foreground-gdk", &black, NULL );
+			static GtkTextTag* error_tag = gtk_text_buffer_create_tag( buffer, "red_foreground", "foreground-rgba", &red, "foreground-set", TRUE, NULL );
+			static GtkTextTag* warning_tag = gtk_text_buffer_create_tag( buffer, "yellow_foreground", "foreground-rgba", &yellow, "foreground-set", TRUE, NULL );
+			static GtkTextTag* standard_tag = gtk_text_buffer_create_tag( buffer, "black_foreground", "foreground-rgba", &black, "foreground-set", TRUE, NULL );
 			GtkTextTag* tag;
 			switch ( level )
 			{
