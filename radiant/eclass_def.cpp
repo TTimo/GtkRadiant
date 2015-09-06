@@ -113,7 +113,7 @@ void setSpecialLoad( eclass_t *e, const char* pWhat, char*& p ){
 	if ( where ) {
 		int len = ( where - pText );
 		p = new char[len + 1];
-		Q_strncpyz( p, pText, len );
+		Q_strncpyz( p, pText, len + 1 );
 	}
 	else{
 		p = strdup( pText );
