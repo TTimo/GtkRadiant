@@ -400,7 +400,7 @@ static picoModel_t *_ase_load( PM_PARAMS_LOAD ){
 			continue;
 		}
 		/* remember node name */
-		if ( !_pico_stricmp( p->token,"*node_name" ) ) {
+		if ( !_pico_stricmp( p->token, "*node_name" ) ) {
 			/* read node name */
 			char *ptr = _pico_parse( p,0 );
 			if ( ptr == NULL ) {
@@ -408,10 +408,11 @@ static picoModel_t *_ase_load( PM_PARAMS_LOAD ){
 			}
 
 			/* remember node name */
-			strncpy( lastNodeName,ptr,sizeof( lastNodeName ) );
+			strncpy( lastNodeName, ptr, sizeof( lastNodeName ) - 1 );
+			lastNodeName[sizeof( lastNodeName ) - 1] = 0;
 		}
 		/* model mesh (originally contained within geomobject) */
-		else if ( !_pico_stricmp( p->token,"*mesh" ) ) {
+		else if ( !_pico_stricmp( p->token, "*mesh" ) ) {
 			/* finish existing surface */
 			//_ase_make_surface( model, &surface );
 			_ase_submit_triangles( surface, model,materials,faces );
@@ -796,12 +797,13 @@ static picoModel_t *_ase_load( PM_PARAMS_LOAD ){
 				}
 				/* parse material name */
 				else if ( !_pico_stricmp( p->token,"*material_name" ) ) {
-					char* name = _pico_parse( p,0 );
+					char* name = _pico_parse( p, 0 );
 					if ( name == NULL ) {
 						_ase_error_return( "Missing material name" );
 					}
 
-					strcpy( materialName, name );
+					strncpy( materialName, name, sizeof( materialName ) - 1 );
+					materialName[sizeof( materialName ) - 1] = 0;
 					/* skip rest and continue with next token */
 					_pico_parse_skip_rest( p );
 					continue;

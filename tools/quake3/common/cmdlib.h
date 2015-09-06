@@ -76,6 +76,12 @@ char *strlower( char *in );
 int Q_strncasecmp( const char *s1, const char *s2, int n );
 int Q_stricmp( const char *s1, const char *s2 );
 void Q_getwd( char *out );
+#define Q_strncpyz(_dst, _source, _len) do { strncpy((_dst), (_source), (_len) - 1); (_dst)[(_len) - 1] = 0; } while( 0 )
+
+#if defined(_MSC_VER) && _MSC_VER<1900 && !(defined snprintf)
+#define snprintf _snprintf
+#endif
+
 
 int Q_filelength( FILE *f );
 int FileTime( const char *path );

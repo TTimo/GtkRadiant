@@ -35,17 +35,17 @@ void LoadM8( const char *name, unsigned char **pic, int *width, int *height ){
 	unsigned char   *palette_ent, *buf_temp;
 	unsigned char       *buffer, *m8_file_buffer;
 
-	strcpy( text_buf, name );
+	Q_strncpyz( text_buf, name, sizeof( text_buf ) );
 	text_dot_pos = strchr( text_buf, '.' );
 	if ( text_dot_pos ) {
 		*text_dot_pos = 0;
 	}
 	// Fix for .pcx.m8 extention
-	strcat( text_buf, ".pcx.m8" );
+	strncat( text_buf, ".pcx.m8", sizeof( text_buf ) );
 
 	// open file
 	if ( ( length = vfsLoadFile( (char *) text_buf, (void **) &m8_file_buffer, 0 ) ) == (unsigned int) -1 ) {
-		strcpy( text_buf, name );
+		Q_strncpyz( text_buf, name, sizeof( text_buf ) );
 		for ( i = ( strlen( text_buf ) - 1 ); i > 0; i-- )
 		{
 			if ( text_buf[i] == '.' ) {
@@ -53,7 +53,7 @@ void LoadM8( const char *name, unsigned char **pic, int *width, int *height ){
 				break;
 			}
 		}
-		strcat( text_buf, ".m8" );
+		strncat( text_buf, ".m8", sizeof( text_buf ) );
 		if ( ( length = vfsLoadFile( (char *) text_buf, (void **) &m8_file_buffer, 0 ) ) == (unsigned int) -1 ) {
 			Sys_Printf( "Unable to open file %s\n",name );
 			return;

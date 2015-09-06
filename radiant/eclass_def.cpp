@@ -113,8 +113,7 @@ void setSpecialLoad( eclass_t *e, const char* pWhat, char*& p ){
 	if ( where ) {
 		int len = ( where - pText );
 		p = new char[len + 1];
-		strncpy( p,pText,len );
-		p[len] = 0; // just to make sure, as most implementations of strncpy don't null terminate
+		Q_strncpyz( p, pText, len );
 	}
 	else{
 		p = strdup( pText );
@@ -202,7 +201,12 @@ eclass_t *Eclass_InitFromText( char *text ){
 		if ( !p ) {
 			break;
 		}
-		strcpy( e->flagnames[i], Get_COM_Token() );
+		Q_strncpyz( e->flagnames[i], Get_COM_Token(), sizeof( e->flagnames[i] ) );
+
+		if( strlen( Get_COM_Token() ) > sizeof( e->flagnames[i] ) - 1 )
+		{
+			Syn_Printf( "Warning: spawnflag/parm/flagname too long for Eclass %s: %s\n", e->name, e->flagnames[i] );
+		}
 	}
 
 	// find the length until close comment

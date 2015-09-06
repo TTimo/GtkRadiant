@@ -584,19 +584,19 @@ void _3DS_LoadPolysets( const char *filename, polyset_t **ppPSET, int *numpsets,
 
 		pPSET[i].triangles = ptri;
 		pPSET[i].numtriangles = pTO->numFaces;
-		strcpy( pPSET[i].name, _3ds.editChunk.pNamedObjects[i].name );
+		Q_strncpyz( pPSET[i].name, _3ds.editChunk.pNamedObjects[i].name, sizeof( pPSET[i].name ) );
 
-		strcpy( matnamebuf, filename );
+		Q_strncpyz( matnamebuf, filename, sizeof( matnamebuf ) );
 		if ( strrchr( matnamebuf, '/' ) ) {
 			*( strrchr( matnamebuf, '/' ) + 1 ) = 0;
 		}
-		strcat( matnamebuf, pTO->pMeshMaterialGroups[0].name );
+		strncat( matnamebuf, pTO->pMeshMaterialGroups[0].name, sizeof( matnamebuf ) );
 
 		if ( strstr( matnamebuf, gamedir ) ) {
-			strcpy( pPSET[i].materialname, strstr( matnamebuf, gamedir ) + strlen( gamedir ) );
+			Q_strncpyz( pPSET[i].materialname, strstr( matnamebuf, gamedir ) + strlen( gamedir ), sizeof( pPSET[i].materialname ) );
 		}
 		else{
-			strcpy( pPSET[i].materialname, pTO->pMeshMaterialGroups[0].name );
+			Q_strncpyz( pPSET[i].materialname, pTO->pMeshMaterialGroups[0].name, sizeof( pPSET[i].materialname ) );
 		}
 
 		assert( pPSET[i].numtriangles < POLYSET_MAXTRIANGLES );

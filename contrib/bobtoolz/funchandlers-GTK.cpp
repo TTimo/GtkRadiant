@@ -55,13 +55,13 @@ DTreePlanter*   g_TreePlanter =     NULL;
 //========================//
 
 void LoadLists(){
-	char buffer[256];
+	char buffer[PATH_MAX];
 
 	if ( !el1Loaded ) {
-		el1Loaded = LoadExclusionList( GetFilename( buffer, "bt/bt-el1.txt" ), &exclusionList );
+		el1Loaded = LoadExclusionList( GetFilename( buffer, "bt/bt-el1.txt", sizeof( buffer ) ), &exclusionList );
 	}
 	if ( !el2Loaded ) {
-		el2Loaded = LoadExclusionList( GetFilename( buffer, "bt/bt-el2.txt" ), &exclusionList_Face );
+		el2Loaded = LoadExclusionList( GetFilename( buffer, "bt/bt-el2.txt", sizeof( buffer ) ), &exclusionList_Face );
 	}
 }
 

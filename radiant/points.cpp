@@ -72,9 +72,9 @@ void CPointfile::GenerateDisplayList(){
 void Pointfile_Delete( void ){
 	char name[1024];
 
-	strcpy( name, currentmap );
+	Q_strncpyz( name, currentmap, sizeof( name ) );
 	StripExtension( name );
-	strcat( name, ".lin" );
+	strncat( name, ".lin", sizeof( name ) );
 
 	remove( name );
 }
@@ -120,14 +120,14 @@ void Pointfile_Prev( void ){
 void WINAPI Pointfile_Check( void ){
 	char name[1024];
 	int size;
-	char    *data;
-	char  *text;
+	gchar *data;
+	gchar *text;
 	int line = 1;
 	vec3_t v;
 
-	strcpy( name, currentmap );
+	Q_strncpyz( name, currentmap, sizeof( name ) );
 	StripExtension( name );
-	strcat( name, ".lin" );
+	strncat( name, ".lin", sizeof( name ) );
 
 	size = vfsLoadFullPathFile( name, (void**)&data );
 	if ( size <= 0 ) {

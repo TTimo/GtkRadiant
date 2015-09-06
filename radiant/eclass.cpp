@@ -269,7 +269,7 @@ void EClass_InitForFileList( GSList *pFiles, _EClassTable *pTable ){
 		// this allows to override baseq3/scripts/entities.def for instance
 		char relPath[PATH_MAX];
 		strcpy( relPath, "scripts/" );
-		strcat( relPath, (char*)pFile->data );
+		strncat( relPath, (char*)pFile->data, sizeof( relPath ) );
 		if ( !vfsGetFullPath( relPath, 0, 0 ) ) {
 			Sys_FPrintf( SYS_ERR, "Failed to find the full path for '%s' in the VFS\n", relPath );
 		}
@@ -313,13 +313,13 @@ eclass_t * EClass_Create( const char *name, float col1, float col2, float col3, 
 		// b) no entity definition files were found
 		// c) no entity definition file contained an entry for worldspawn.
 
-		if ( stricmp( name,"worldspawn" ) != 0 ) {
+		if ( stricmp( name, "worldspawn" ) != 0 ) {
 			e->fixedsize = true;
 		}
 
 		// copy the sizes..
-		memcpy( e->mins,mins,sizeof( vec3_t ) );
-		memcpy( e->maxs,maxs,sizeof( vec3_t ) );
+		memcpy( e->mins, mins, sizeof( vec3_t ) );
+		memcpy( e->maxs, maxs, sizeof( vec3_t ) );
 	}
 
 	if ( comments ) {
@@ -404,7 +404,7 @@ void Eclass_Init(){
 				// this allows to override baseq3/scripts/entities.def for instance
 				char relPath[PATH_MAX];
 				strcpy( relPath, "scripts/" );
-				strcat( relPath, (char*)pFile->data );
+				strncat( relPath, (char*)pFile->data, sizeof( relPath ) );
 				char *fullpath = vfsGetFullPath( relPath, 0, 0 );
 				if ( !fullpath ) {
 					Sys_FPrintf( SYS_ERR, "Failed to find the full path for \"%s\" in the VFS\n", relPath );

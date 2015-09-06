@@ -310,61 +310,61 @@ void error_redirect( const gchar *domain, GLogLevelFlags log_level, const gchar 
 	}
 
 	if ( domain ) {
-		strcpy( buf, domain );
+		Q_strncpyz( buf, domain, sizeof( buf ) );
 	}
 	else{
-		strcpy( buf, "**" );
+		Q_strncpyz( buf, "**", sizeof( buf ) );
 	}
-	strcat( buf, "-" );
+	strncat( buf, "-", sizeof( buf ) );
 
 	switch ( log_level )
 	{
 	case G_LOG_LEVEL_ERROR:
 		if ( in_recursion ) {
-			strcat( buf, "ERROR (recursed) **: " );
+			strncat( buf, "ERROR (recursed) **: ", sizeof( buf ) );
 		}
 		else{
-			strcat( buf, "ERROR **: " );
+			strncat( buf, "ERROR **: ", sizeof( buf ) );
 		}
 		break;
 	case G_LOG_LEVEL_CRITICAL:
 		if ( in_recursion ) {
-			strcat( buf, "CRITICAL (recursed) **: " );
+			strncat( buf, "CRITICAL (recursed) **: ", sizeof( buf ) );
 		}
 		else{
-			strcat( buf, "CRITICAL **: " );
+			strncat( buf, "CRITICAL **: ", sizeof( buf ) );
 		}
 		break;
 	case G_LOG_LEVEL_WARNING:
 		if ( in_recursion ) {
-			strcat( buf, "WARNING (recursed) **: " );
+			strncat( buf, "WARNING (recursed) **: ", sizeof( buf ) );
 		}
 		else{
-			strcat( buf, "WARNING **: " );
+			strncat( buf, "WARNING **: ", sizeof( buf ) );
 		}
 		break;
 	case G_LOG_LEVEL_MESSAGE:
 		if ( in_recursion ) {
-			strcat( buf, "Message (recursed): " );
+			strncat( buf, "Message (recursed): ", sizeof( buf ) );
 		}
 		else{
-			strcat( buf, "Message: " );
+			strncat( buf, "Message: ", sizeof( buf ) );
 		}
 		break;
 	case G_LOG_LEVEL_INFO:
 		if ( in_recursion ) {
-			strcat( buf, "INFO (recursed): " );
+			strncat( buf, "INFO (recursed): ", sizeof( buf ) );
 		}
 		else{
-			strcat( buf, "INFO: " );
+			strncat( buf, "INFO: ", sizeof( buf ) );
 		}
 		break;
 	case G_LOG_LEVEL_DEBUG:
 		if ( in_recursion ) {
-			strcat( buf, "DEBUG (recursed): " );
+			strncat( buf, "DEBUG (recursed): ", sizeof( buf ) );
 		}
 		else{
-			strcat( buf, "DEBUG: " );
+			strncat( buf, "DEBUG: ", sizeof( buf ) );
 		}
 		break;
 	default:
@@ -372,10 +372,10 @@ void error_redirect( const gchar *domain, GLogLevelFlags log_level, const gchar 
 		 * try to make the best out of it.
 		 */
 		if ( in_recursion ) {
-			strcat( buf, "LOG (recursed:" );
+			strncat( buf, "LOG (recursed:", sizeof( buf ) );
 		}
 		else{
-			strcat( buf, "LOG (" );
+			strncat( buf, "LOG (", sizeof( buf ) );
 		}
 		if ( log_level ) {
 			gchar string[] = "0x00): ";
@@ -390,19 +390,19 @@ void error_redirect( const gchar *domain, GLogLevelFlags log_level, const gchar 
 				*p += 'A' - '9' - 1;
 			}
 
-			strcat( buf, string );
+			strncat( buf, string, sizeof( buf ) );
 		}
 		else{
-			strcat( buf, "): " );
+			strncat( buf, "): ", sizeof( buf ) );
 		}
 	}
 
-	strcat( buf, message );
+	strncat( buf, message, sizeof( buf ) );
 	if ( is_fatal ) {
-		strcat( buf, "\naborting...\n" );
+		strncat( buf, "\naborting...\n", sizeof( buf ) );
 	}
 	else{
-		strcat( buf, "\n" );
+		strncat( buf, "\n", sizeof( buf ) );
 	}
 
 	printf( "%s\n", buf );
@@ -930,12 +930,12 @@ void QE_ExpandBspString( char *bspaction, GPtrArray *out_array, char *mapname ){
 	char rsh[BIG_PATH_MAX];
 	char base[BIG_PATH_MAX];
 
-	strcpy( src, mapname );
+	Q_strncpyz( src, mapname, sizeof( src ) );
 	strlwr( src );
 	in = strstr( src, "maps/" );
 	if ( in ) {
 		in += 5;
-		strcpy( base, in );
+		Q_strncpyz( base, in, sizeof( base ) );
 		out = base;
 		while ( *out )
 		{
@@ -981,7 +981,7 @@ void QE_ExpandBspString( char *bspaction, GPtrArray *out_array, char *mapname ){
 	while ( *in )
 	{
 		if ( in[0] == '!' ) {
-			strcpy( out, rsh );
+			Q_strncpyz( out, rsh, sizeof( out ) );
 			out += strlen( rsh );
 			in++;
 			continue;
@@ -992,7 +992,7 @@ void QE_ExpandBspString( char *bspaction, GPtrArray *out_array, char *mapname ){
 			if ( g_PrefsDlg.m_bWatchBSP ) {
 				// -connect global option (the only global option so far anyway)
 				strcpy( tmp, " -connect 127.0.0.1:39000 " );
-				strcpy( out, tmp );
+				Q_strncpyz( out, tmp, sizeof( out ) );
 				out += strlen( tmp );
 			}
 			in++;
@@ -1000,7 +1000,7 @@ void QE_ExpandBspString( char *bspaction, GPtrArray *out_array, char *mapname ){
 		}
 		if ( in[0] == '$' ) {
 			// $ expansion
-			strcpy( out, src );
+			Q_strncpyz( out, src, sizeof( out ) );
 			out += strlen( src );
 			in++;
 			continue;
@@ -1040,15 +1040,15 @@ void FindReplace( CString& strContents, const char* pTag, const char* pValue ){
 }
 
 // save the map, deals with regioning
-void SaveWithRegion( char *name ){
-	strcpy( name, currentmap );
+void SaveWithRegion( char *name, size_t length ){
+	Q_strncpyz( name, currentmap, length );
 	if ( region_active ) {
 		// temporary cut the region to save regular map
 		region_active = false;
 		Map_SaveFile( name, false );
 		region_active = true;
 		StripExtension( name );
-		strcat( name, ".reg" );
+		strncat( name, ".reg", length );
 	}
 
 	Map_SaveFile( name, region_active );
@@ -1119,9 +1119,9 @@ void RunBsp( char *command ){
 
 	SetInspectorMode( W_CONSOLE );
 
-	strcpy( temppath, g_strTempPath.GetBuffer() );
+	Q_strncpyz( temppath, g_strTempPath.GetBuffer(), sizeof( temppath ) );
 
-	SaveWithRegion( name );
+	SaveWithRegion( name, sizeof( name ) );
 
 	const char *rsh = ValueForKey( g_qeglobals.d_project_entity, "rshcmd" );
 	if ( rsh == NULL ) {
@@ -1129,10 +1129,10 @@ void RunBsp( char *command ){
 
 		ExtractPath_and_Filename( name, strPath, strFile );
 		AddSlash( strPath );
-		strncpy( cWork, strPath, 1024 );
-		strcat( cWork, strFile );
+		Q_strncpyz( cWork, strPath, 1024 );
+		strncat( cWork, strFile, sizeof( cWork ) );
 	} else {
-		strcpy( cWork, name );
+		Q_strncpyz( cWork, name, sizeof( cWork ) );
 	}
 
 	// get the array ready

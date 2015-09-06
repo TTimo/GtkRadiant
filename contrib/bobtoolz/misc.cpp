@@ -140,7 +140,7 @@ void Sys_ERROR( const char* text, ... ){
 	char buf[32768];
 
 	va_start( argptr,text );
-	vsprintf( buf, text,argptr );
+	vsnprintf( buf, sizeof( buf ), text, argptr );
 	va_end( argptr );
 
 	Sys_Printf( "BobToolz::ERROR->%s", buf );
@@ -152,7 +152,7 @@ void Sys_ERROR( const char* text, ... ){
     char	buf[32768];
 
     va_start (argptr,text);
-    vsprintf (buf, text,argptr);
+    vsnprintf (buf, sizeof( buf ), text, argptr);
     va_end (argptr);
 
     g_FuncTable.m_pfnSysMsg ( buf );
@@ -248,19 +248,19 @@ bool Q_Exec( const char *pCmd, bool bCreateConsole ){
 #endif
 
 void StartBSP(){
-	char exename[256];
-	GetFilename( exename, "q3map" );
+	char exename[PATH_MAX];
+	GetFilename( exename, "q3map", sizeof( exename ) );
 	UnixToDosPath( exename ); // do we want this done in linux version?
 
 	char mapname[256];
 	const char *pn = g_FuncTable.m_pfnReadProjectKey( "mapspath" );
 
-	strcpy( mapname, pn );
-	strcat( mapname, "/ac_prt.map" );
+	Q_strncpyz( mapname, pn, sizeof( mapname ) );
+	strncat( mapname, "/ac_prt.map", sizeof( mapname ) );
 	UnixToDosPath( mapname );
 
 	char command[1024];
-	sprintf( command, "%s -nowater -fulldetail %s", exename, mapname );
+	snprintf( command, sizeof( command ), "%s -nowater -fulldetail %s", exename, mapname );
 
 	Q_Exec( command, TRUE );
 }
@@ -272,11 +272,11 @@ void BuildMiniPrt( list<Str>* exclusionList ){
 
 	DEntity world;
 
-	char buffer[128];
+	char buffer[PATH_MAX];
 	const char *pn = g_FuncTable.m_pfnReadProjectKey( "mapspath" );
 
-	strcpy( buffer, pn );
-	strcat( buffer, "/ac_prt.map" );
+	Q_strncpyz( buffer, pn, sizeof( buffer ) );
+	strncat( buffer, "/ac_prt.map", sizeof( buffer ) );
 	FILE* pFile = fopen( buffer, "w" );
 
 	// ahem, thx rr2

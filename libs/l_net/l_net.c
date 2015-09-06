@@ -48,7 +48,7 @@ void WinPrint( char *str, ... ){
 	char text[4096];
 
 	va_start( argptr,str );
-	vsprintf( text, str, argptr );
+	vsnprintf( text, sizeof( text ), str, argptr );
 	va_end( argptr );
 
 	printf("%s", text );

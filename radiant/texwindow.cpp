@@ -494,7 +494,7 @@ void BuildShaderList(){
 	}
 
 	if ( g_pGameDescription->mGameFile != "hl.game" ) {
-		strcpy( filename, g_pGameDescription->mShaderlist.GetBuffer() );
+		Q_strncpyz( filename, g_pGameDescription->mShaderlist.GetBuffer(), sizeof( filename ) );
 		count = vfsGetFileCount( filename, 0 );
 		if ( count == 0 ) {
 			Sys_FPrintf( SYS_ERR, "Couldn't find '%s'\n", g_pGameDescription->mShaderlist.GetBuffer() );
@@ -1135,7 +1135,7 @@ void Texture_ShowStartupShaders(){
 		int nLen;
 		GSList *shaderfiles = NULL;
 
-		strcpy( filename, g_pGameDescription->mShaderlist.GetBuffer() );
+		Q_strncpyz( filename, g_pGameDescription->mShaderlist.GetBuffer(), sizeof( filename ) );
 		count = vfsGetFileCount( filename, 0 );
 		if ( count == 0 ) {
 			Sys_FPrintf( SYS_ERR, "Couldn't find '%s'\n", g_pGameDescription->mShaderlist.GetBuffer() );
@@ -1171,7 +1171,7 @@ void Texture_ShowStartupShaders(){
 
 				if ( !found ) {
 					shaderfiles = g_slist_append( l_shaderfiles, strdup( dirstring ) );
-					strcpy( texture_directory, dirstring );
+					Q_strncpyz( texture_directory, dirstring, sizeof( texture_directory ) );
 					Texture_ShowDirectory();
 					nLen++;
 				}

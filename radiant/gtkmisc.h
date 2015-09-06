@@ -89,7 +89,7 @@ const gchar* file_dialog( void *parent, gboolean open, const char* title, const 
 /*!
    \fn dir_dialog, prompts for a directory
  */
-char* WINAPI dir_dialog( void *parent, const char* title = "Choose Directory", const char* path = (char*)NULL );
+gchar* WINAPI dir_dialog( void *parent, const char* title = "Choose Directory", const char* path = (char*)NULL );
 // GtkWidget *parent
 bool WINAPI color_dialog( void *parent, float *color, const char* title = "Choose Color" );
 

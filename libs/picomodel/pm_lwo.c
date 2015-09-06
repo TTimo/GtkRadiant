@@ -234,8 +234,9 @@ static picoModel_t *_lwo_load( PM_PARAMS_LOAD ){
 		}
 
 		/* detox and set shader name */
-		strncpy( name, surface->name, sizeof( name ) );
-		_pico_setfext( name, "" );
+		strncpy( name, surface->name, sizeof( name ) - 1 );
+		name[sizeof( name ) - 1] = 0;
+		_pico_setfext( name, "", sizeof( name ) );
 		_pico_unixify( name );
 		PicoSetShaderName( picoShader, name );
 

@@ -317,9 +317,9 @@ static void RefreshEventList( void ){
 		for ( i = 0; i < GetCurrentCam()->GetCam()->numEvents(); i++ ) {
 			char rowbuf[3][128], *row[3];
 			// FIXME: sort by time?
-			sprintf( rowbuf[0], "%li", GetCurrentCam()->GetCam()->getEvent( i )->getTime() );                 row[0] = rowbuf[0];
-			strncpy( rowbuf[1], GetCurrentCam()->GetCam()->getEvent( i )->typeStr(), sizeof( rowbuf[0] ) );     row[1] = rowbuf[1];
-			strncpy( rowbuf[2], GetCurrentCam()->GetCam()->getEvent( i )->getParam(), sizeof( rowbuf[1] ) );    row[2] = rowbuf[2];
+			snprintf( rowbuf[0], sizeof( rowbuf[0] ), "%li", GetCurrentCam()->GetCam()->getEvent( i )->getTime() );                 row[0] = rowbuf[0];
+			Q_strncpyz( rowbuf[1], GetCurrentCam()->GetCam()->getEvent( i )->typeStr(), sizeof( rowbuf[0] ) );     row[1] = rowbuf[1];
+			Q_strncpyz( rowbuf[2], GetCurrentCam()->GetCam()->getEvent( i )->getParam(), sizeof( rowbuf[1] ) );    row[2] = rowbuf[2];
 
 			gtk_list_store_append( store, &iter );
 			gtk_list_store_set( store, &iter, EVENT_TEXT_COLUMN, row, EVENT_INDEX_COLUMN, i, -1 );

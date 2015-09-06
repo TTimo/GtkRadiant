@@ -3577,7 +3577,7 @@ void MainFrame::LoadCommandMap(){
 		for ( int i = 0; i < g_nCommandCount; i++ )
 		{
 			char value[1024];
-			if ( read_var( strINI.GetBuffer(), "Commands", g_Commands[i].m_strCommand, value ) ) {
+			if ( read_var( strINI.GetBuffer(), "Commands", g_Commands[i].m_strCommand, value, sizeof( value ) ) ) {
 				if ( !bUserCmdList ) {
 					Sys_Printf( "Found user's shortcuts list at %s\n", strINI.GetBuffer() );
 					bUserCmdList = true;
@@ -3747,10 +3747,10 @@ void MainFrame::CreateQEChildren(){
 
         
         // check to see if the project template is versioned
-        strcpy( buf, g_pGameDescription->mEnginePath.GetBuffer() );
-        strcat( buf, g_pGameDescription->mBaseGame.GetBuffer() );
-        strcat( buf, "/scripts/" );
-        strcat( buf, PROJECT_TEMPLATE_NAME );
+        Q_strncpyz( buf, g_pGameDescription->mEnginePath.GetBuffer(), sizeof( buf ) );
+        strncat( buf, g_pGameDescription->mBaseGame.GetBuffer(), sizeof( buf ) );
+        strncat( buf, "/scripts/", sizeof( buf ) );
+        strncat( buf, PROJECT_TEMPLATE_NAME, sizeof( buf ) );
         templateVersion = QE_GetTemplateVersionForProject( buf );
 
 		r = g_PrefsDlg.m_strLastProject.GetBuffer();
@@ -3761,10 +3761,10 @@ void MainFrame::CreateQEChildren(){
 				// try default project location
 				bTriedTemplate = true;
 				// for all OSes, we look for the template in the base installation (no homepath here)
-				strcpy( buf, g_pGameDescription->mEnginePath.GetBuffer() );
-				strcat( buf, g_pGameDescription->mBaseGame.GetBuffer() );
-				strcat( buf, "/scripts/" );
-				strcat( buf, PROJECT_TEMPLATE_NAME );
+				Q_strncpyz( buf, g_pGameDescription->mEnginePath.GetBuffer(), sizeof( buf ) );
+				strncat( buf, g_pGameDescription->mBaseGame.GetBuffer(), sizeof( buf ) );
+				strncat( buf, "/scripts/", sizeof( buf ) );
+				strncat( buf, PROJECT_TEMPLATE_NAME, sizeof( buf ) );
 				r = buf;
 			}
 			else
@@ -4333,8 +4333,8 @@ void MainFrame::OnFileOpen(){
 	char buf[NAME_MAX];
 
 	if ( !g_pGameDescription->noMapsInHome ) {
-		strcpy( buf, g_qeglobals.m_strHomeMaps.GetBuffer() );
-		strcat( buf, "maps/" );
+		Q_strncpyz( buf, g_qeglobals.m_strHomeMaps.GetBuffer(), sizeof( buf ) );
+		strncat( buf, "maps/", sizeof( buf ) );
 	}
 	else {
 		buf[0] = '\0';
@@ -4343,7 +4343,7 @@ void MainFrame::OnFileOpen(){
 	str = file_dialog( m_pWidget, TRUE, _( "Open Map" ), buf, MAP_MAJOR, "maps/" );
 
 	if ( str != NULL ) {
-		strcpy( currentmap,str );
+		Q_strncpyz( currentmap, str, sizeof( currentmap ) );
 		MRU_AddFile( str );
 		Map_LoadFile( str );
 	}
@@ -4354,8 +4354,8 @@ void MainFrame::OnFileImportmap(){
 	char buf[NAME_MAX];
 
 	if ( !g_pGameDescription->noMapsInHome ) {
-		strcpy( buf, g_qeglobals.m_strHomeMaps.GetBuffer() );
-		strcat( buf, "maps/" );
+		Q_strncpyz( buf, g_qeglobals.m_strHomeMaps.GetBuffer(), sizeof( buf ) );
+		strncat( buf, "maps/", sizeof( buf ) );
 	}
 	else {
 		buf[0] = '\0';
@@ -4382,8 +4382,8 @@ void MainFrame::OnFileSaveas(){
 	char buf[NAME_MAX];
 
 	if ( !g_pGameDescription->noMapsInHome ) {
-		strcpy( buf, g_qeglobals.m_strHomeMaps.GetBuffer() );
-		strcat( buf, "maps/" );
+		Q_strncpyz( buf, g_qeglobals.m_strHomeMaps.GetBuffer(), sizeof( buf ) );
+		strncat( buf, "maps/", sizeof( buf ) );
 	}
 	else {
 		buf[0] = '\0';
@@ -4392,7 +4392,7 @@ void MainFrame::OnFileSaveas(){
 	str = file_dialog( g_pParentWnd->m_pWidget, FALSE, _( "Save Map" ), buf, MAP_MAJOR, "maps/" );
 
 	if ( str != NULL ) {
-		strcpy( currentmap, str );
+		Q_strncpyz( currentmap, str, sizeof( currentmap ) );
 		MRU_AddFile( str );
 		Map_SaveFile( str, false ); // ignore region
 	}
@@ -4403,8 +4403,8 @@ void MainFrame::OnFileExportmap(){
 	char buf[NAME_MAX];
 
 	if ( !g_pGameDescription->noMapsInHome ) {
-		strcpy( buf, g_qeglobals.m_strHomeMaps.GetBuffer() );
-		strcat( buf, "maps/" );
+		Q_strncpyz( buf, g_qeglobals.m_strHomeMaps.GetBuffer(), sizeof( buf ) );
+		strncat( buf, "maps/", sizeof( buf ) );
 	}
 	else {
 		buf[0] = '\0';
@@ -4422,8 +4422,8 @@ void MainFrame::OnFileSaveregion(){
 	char buf[NAME_MAX];
 
 	if ( !g_pGameDescription->noMapsInHome ) {
-		strcpy( buf, g_qeglobals.m_strHomeMaps.GetBuffer() );
-		strcat( buf, "maps/" );
+		Q_strncpyz( buf, g_qeglobals.m_strHomeMaps.GetBuffer(), sizeof( buf ) );
+		strncat( buf, "maps/", sizeof( buf ) );
 	}
 	else {
 		buf[0] = '\0';
@@ -5801,11 +5801,11 @@ void MainFrame::OnTexturesLoad(){
 	// FIXME
 	// check if that works with fs_game (I suspect some more design is needed)
 	// see how this is done in 1.2?
-	strcpy( def_path, g_pGameDescription->mEnginePath.GetBuffer() );
-	strcat( def_path, g_pGameDescription->mBaseGame.GetBuffer() );
-	strcat( def_path, "/" );
+	Q_strncpyz( def_path, g_pGameDescription->mEnginePath.GetBuffer(), sizeof( def_path ) );
+	strncat( def_path, g_pGameDescription->mBaseGame.GetBuffer(), sizeof( def_path ) );
+	strncat( def_path, "/", sizeof( def_path ) );
 
-	char *dir = dir_dialog( m_pWidget, _( "Load textures from path" ), def_path );
+	gchar *dir = dir_dialog( m_pWidget, _( "Load textures from path" ), def_path );
 
 	if ( dir != NULL ) {
 		// very uncertain task, let's hope the guy pointed to somewhere below the dir we gave him
@@ -5816,7 +5816,7 @@ void MainFrame::OnTexturesLoad(){
 		}
 		char *pouic = MAX( strrchr( dir, '/' ),strrchr( dir, '\\' ) );
 		if ( pouic ) {
-			strcpy( texture_directory, pouic + 1 );
+			Q_strncpyz( texture_directory, pouic + 1, 128 );
 			Sys_Printf( "Loading '%s'\n", texture_directory );
 			Texture_ShowDirectory();
 		}

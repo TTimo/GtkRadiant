@@ -85,11 +85,11 @@ static bool g_bUsePak = true;
 // =============================================================================
 // Static functions
 
-static void vfsAddSlash( char *str ){
+static void vfsAddSlash( char *str, size_t length ){
 	int n = strlen( str );
 	if ( n > 0 ) {
 		if ( str[n - 1] != '\\' && str[n - 1] != '/' ) {
-			strcat( str, "/" );
+			strncat( str, "/", length );
 		}
 	}
 }
@@ -172,10 +172,10 @@ static GSList* vfsGetListInternal( const char *refdir, const char *ext, bool dir
 	int i;
 
 	if ( refdir != NULL ) {
-		strcpy( dirname, refdir );
+		Q_strncpyz( dirname, refdir, sizeof( dirname ) );
 		strlwr( dirname );
 		vfsFixDOSName( dirname );
-		vfsAddSlash( dirname );
+		vfsAddSlash( dirname, sizeof( dirname ) );
 	}
 	else{
 		dirname[0] = '\0';
@@ -183,7 +183,7 @@ static GSList* vfsGetListInternal( const char *refdir, const char *ext, bool dir
 	dirlen = strlen( dirname );
 
 	if ( ext != NULL ) {
-		strcpy( extension, ext );
+		Q_strncpyz( extension, ext, sizeof( extension ) );
 	}
 	else{
 		extension[0] = '\0';
@@ -250,8 +250,8 @@ static GSList* vfsGetListInternal( const char *refdir, const char *ext, bool dir
 
 	for ( i = 0; i < g_numDirs; i++ )
 	{
-		strcpy( basedir, g_strDirs[i] );
-		strcat( basedir, dirname );
+		Q_strncpyz( basedir, g_strDirs[i], sizeof( basedir ) );
+		strncat( basedir, dirname, sizeof( basedir ) );
 
 		diskdir = g_dir_open( basedir, 0, NULL );
 
@@ -392,9 +392,9 @@ void vfsInitDirectory( const char *path ){
 		iGameMode = 0;
 	}
 
-	strcpy( g_strDirs[g_numDirs], path );
+	Q_strncpyz( g_strDirs[g_numDirs], path, sizeof( g_strDirs[g_numDirs] ) );
 	vfsFixDOSName( g_strDirs[g_numDirs] );
-	vfsAddSlash( g_strDirs[g_numDirs] );
+	vfsAddSlash( g_strDirs[g_numDirs], sizeof( g_strDirs[g_numDirs] ) );
 	g_numDirs++;
 
 	if ( g_bUsePak ) {
@@ -532,7 +532,7 @@ int vfsGetFileCount( const char *filename, int flag ){
 	char fixed[NAME_MAX], tmp[NAME_MAX];
 	GSList *lst;
 
-	strcpy( fixed, filename );
+	Q_strncpyz( fixed, filename, sizeof( fixed ) );
 	vfsFixDOSName( fixed );
 	strlwr( fixed );
 
@@ -550,8 +550,8 @@ int vfsGetFileCount( const char *filename, int flag ){
 	if ( !flag || ( flag & VFS_SEARCH_DIR ) ) {
 		for ( i = 0; i < g_numDirs; i++ )
 		{
-			strcpy( tmp, g_strDirs[i] );
-			strcat( tmp, fixed );
+			Q_strncpyz( tmp, g_strDirs[i], sizeof( tmp ) );
+			strncat( tmp, fixed, sizeof( tmp ) );
 			if ( access( tmp, R_OK ) == 0 ) {
 				count++;
 			}
@@ -596,14 +596,14 @@ int vfsLoadFile( const char *filename, void **bufferptr, int index ){
 	GSList *lst;
 
 	*bufferptr = NULL;
-	strcpy( fixed, filename );
+	Q_strncpyz( fixed, filename, sizeof( fixed ) );
 	vfsFixDOSName( fixed );
 	strlwr( fixed );
 
 	for ( i = 0; i < g_numDirs; i++ )
 	{
-		strcpy( tmp, g_strDirs[i] );
-		strcat( tmp, filename );
+		Q_strncpyz( tmp, g_strDirs[i], sizeof( tmp ) );
+		strncat( tmp, filename, sizeof( tmp ) );
 		if ( access( tmp, R_OK ) == 0 ) {
 			if ( count == index ) {
 				return vfsLoadFullPathFile( tmp,bufferptr );
@@ -682,11 +682,11 @@ char* vfsExtractRelativePath_short( const char *in, bool shorten ){
 	}
 	else
 	{
-		strcpy( l_in,in );
+		Q_strncpyz( l_in, in, sizeof( l_in ) );
 	}
 	vfsCleanFileName( l_in );
 #else
-	strcpy( l_in, in );
+	Q_strncpyz( l_in, in, sizeof( l_in ) );
 	vfsCleanFileName( l_in );
 #endif // ifdef WIN32
 
@@ -697,7 +697,7 @@ char* vfsExtractRelativePath_short( const char *in, bool shorten ){
 
 	for ( i = 0; i < g_numDirs; i++ )
 	{
-		strcpy( check,g_strDirs[i] );
+		Q_strncpyz( check, g_strDirs[i], sizeof( check ) );
 		vfsCleanFileName( check );
 #ifdef DBG_RLTPATH
 		Sys_Printf( "Matching against %s\n", check );
@@ -705,7 +705,7 @@ char* vfsExtractRelativePath_short( const char *in, bool shorten ){
 
 		// try to find a match
 		if ( strstr( l_in, check ) ) {
-			strcpy( out,l_in + strlen( check ) + 1 );
+			Q_strncpyz( out, l_in + strlen( check ) + 1, sizeof( out ) );
 			break;
 		}
 
@@ -745,7 +745,7 @@ char* vfsExtractRelativePath( const char *in ){
 				}
 			}
 			// this is the clean, not short version
-			strcpy( out, in );
+			Q_strncpyz( out, in, sizeof( out ) );
 			vfsCleanFileName( out );
 			for ( i = 0; i <= count; i++ )
 			{
@@ -786,7 +786,7 @@ char* vfsGetFullPath( const char *in, int index, int flag ){
 		char fixed[NAME_MAX];
 		GSList *lst;
 
-		strcpy( fixed, in );
+		Q_strncpyz( fixed, in, sizeof( fixed ) );
 		vfsFixDOSName( fixed );
 		strlwr( fixed );
 
@@ -801,7 +801,7 @@ char* vfsGetFullPath( const char *in, int index, int flag ){
 				lastptr = ptr + 1;
 
 			if ( strcmp( lastptr, fixed ) == 0 ) {
-				strncpy( out,file->name,PATH_MAX );
+				Q_strncpyz( out, file->name, sizeof( out ) );
 				return out;
 			}
 		}
@@ -811,11 +811,11 @@ char* vfsGetFullPath( const char *in, int index, int flag ){
 	if ( !flag || ( flag & VFS_SEARCH_DIR ) ) {
 		for ( i = 0; i < g_numDirs; i++ )
 		{
-			strcpy( tmp, g_strDirs[i] );
-			strcat( tmp, in );
+			Q_strncpyz( tmp, g_strDirs[i], sizeof( tmp ) );
+			strncat( tmp, in, sizeof( tmp ) );
 			if ( access( tmp, R_OK ) == 0 ) {
 				if ( count == index ) {
-					strcpy( out, tmp );
+					Q_strncpyz( out, tmp, sizeof( out ) );
 					return out;
 				}
 				count++;

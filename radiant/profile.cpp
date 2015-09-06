@@ -46,7 +46,7 @@
 // =============================================================================
 // Static functions
 
-bool read_var( const char *filename, const char *section, const char *key, char *value ){
+bool read_var( const char *filename, const char *section, const char *key, char *value, size_t length ){
 	char line[1024], *ptr;
 	FILE *rc;
 
@@ -83,7 +83,7 @@ bool read_var( const char *filename, const char *section, const char *key, char 
 					line[strlen( line ) - 1] = '\0';
 
 				if ( strcmp( line, key ) == 0 ) {
-					strcpy( value, ptr + 1 );
+					Q_strncpyz( value, ptr + 1, length );
 					fclose( rc );
 
 					if ( value[strlen( value ) - 1] == 10 || value[strlen( value ) - 1] == 13 || value[strlen( value ) - 1] == 32 ) {
@@ -254,7 +254,7 @@ bool profile_load_buffer( const char * rc_path, const char *name, void *buffer, 
 int WINAPI profile_load_int( const char *filename, const char *section, const char *key, int default_value ){
 	char value[1024];
 
-	if ( read_var( filename, section, key, value ) ) {
+	if ( read_var( filename, section, key, value, sizeof( value ) ) ) {
 		return atoi( value );
 	}
 	else{
@@ -265,7 +265,7 @@ int WINAPI profile_load_int( const char *filename, const char *section, const ch
 float WINAPI profile_load_float( const char *filename, const char *section, const char *key, float default_value ){
 	char value[1024];
 
-	if ( read_var( filename, section, key, value ) ) {
+	if ( read_var( filename, section, key, value, sizeof( value ) ) ) {
 		return atof( value );
 	}
 	else{
@@ -277,7 +277,7 @@ char* WINAPI profile_load_string( const char *filename, const char *section, con
 	static Str ret;
 	char value[1024];
 
-	if ( read_var( filename, section, key, value ) ) {
+	if ( read_var( filename, section, key, value, sizeof( value ) ) ) {
 		ret = value;
 	}
 	else{

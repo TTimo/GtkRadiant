@@ -1035,7 +1035,7 @@ void SurfaceDlg::GetTexMods(){
 	else
 	{
 		strcpy( buffer, "textures/" );
-		strcpy( buffer + 9, text );
+		Q_strncpyz( buffer + 9, text, sizeof( buffer ) - 9 );
 		pt->SetName( buffer );
 	}
 

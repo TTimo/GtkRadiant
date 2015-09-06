@@ -75,7 +75,7 @@ static void ProcessAdvertisements( void ) {
 			else {
 				if ( numBSPAds < MAX_MAP_ADVERTISEMENTS ) {
 					bspAds[numBSPAds].cellId = IntForKey( &entities[ i ], "cellId" );
-					strncpy( bspAds[numBSPAds].model, modelKey, sizeof( bspAds[numBSPAds].model ) );
+					Q_strncpyz( bspAds[numBSPAds].model, modelKey, sizeof( bspAds[numBSPAds].model ) );
 
 					modelKey++;
 					modelNum = atoi( modelKey );
@@ -681,7 +681,7 @@ int BSPMain( int argc, char **argv ){
 			onlyents = qtrue;
 		}
 		else if ( !strcmp( argv[ i ], "-tempname" ) ) {
-			strcpy( tempSource, argv[ ++i ] );
+			Q_strncpyz( tempSource, argv[ ++i ], sizeof( tempSource ) );
 		}
 		else if ( !strcmp( argv[ i ], "-tmpout" ) ) {
 			strcpy( outbase, "/tmp" );
@@ -857,7 +857,7 @@ int BSPMain( int argc, char **argv ){
 	}
 
 	/* copy source name */
-	strcpy( source, ExpandArg( argv[ i ] ) );
+	Q_strncpyz( source, ExpandArg( argv[ i ] ), sizeof( source ) );
 	StripExtension( source );
 
 	/* ydnar: set default sample size */
@@ -872,12 +872,12 @@ int BSPMain( int argc, char **argv ){
 	//%	remove( path );
 
 	/* expand mapname */
-	strcpy( name, ExpandArg( argv[ i ] ) );
+	Q_strncpyz( name, ExpandArg( argv[ i ] ), sizeof( name ) );
 	if ( strcmp( name + strlen( name ) - 4, ".reg" ) ) {
 		/* if we are doing a full map, delete the last saved region map */
 		sprintf( path, "%s.reg", source );
 		remove( path );
-		DefaultExtension( name, ".map" );   /* might be .reg */
+		DefaultExtension( name, ".map", sizeof( name ) );   /* might be .reg */
 	}
 
 	/* if onlyents, just grab the entites and resave */

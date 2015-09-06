@@ -421,18 +421,21 @@ static int GetMeshShader( T3dsLoaderPers *pers ){
 			char *name;
 
 			/* copy map name to local buffer */
-			strcpy( mapName,mapNamePtr );
+			strncpy( mapName, mapNamePtr, sizeof( mapName ) - 1 );
+			mapName[sizeof( mapName ) - 1] = 0;
 
 			/* extract file name */
 			name = _pico_nopath( mapName );
-			strncpy( temp, name, sizeof( temp ) );
+			strncpy( temp, name, sizeof( temp ) - 1 );
+			temp[sizeof( temp ) - 1] = 0;
 
 			/* remove file extension */
 			/* name = _pico_setfext( name,"" ); */
 
 			/* assign default name if no name available */
 			if ( strlen( temp ) < 1 ) {
-				strcpy( temp,pers->basename );
+				strncpy( temp, pers->basename, sizeof( temp ) - 1 );
+				temp[sizeof( temp ) - 1] = 0;
 			}
 
 			/* build shader name */
@@ -730,9 +733,9 @@ static picoModel_t *_3ds_load( PM_PARAMS_LOAD ){
 		return NULL;
 	}
 	/* get model's base name (eg. jeep from c:\models\jeep.3ds) */
-	memset( basename,0,sizeof( basename ) );
-	strncpy( basename,_pico_nopath( fileName ),sizeof( basename ) );
-	_pico_setfext( basename,"" );
+	strncpy( basename, _pico_nopath( fileName ), sizeof( basename ) - 1 );
+	basename[sizeof( basename ) - 1] = 0;
+	_pico_setfext( basename, "", sizeof( basename ) );
 
 	/* initialize persistant vars (formerly static) */
 	pers.model    =  model;

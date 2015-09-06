@@ -626,20 +626,20 @@ void UnparseEntities( void ) {
 			continue;   // ent got removed
 		}
 
-		strcat( end,"{\n" );
+		strncat( end, "{\n", sizeof( dentdata ) + dentdata - end );
 		end += 2;
 
 		for ( ep = entities[i].epairs ; ep ; ep = ep->next ) {
-			strcpy( key, ep->key );
+			Q_strncpyz( key, ep->key, sizeof( key ) );
 			StripTrailing( key );
-			strcpy( value, ep->value );
+			Q_strncpyz( value, ep->value, sizeof( value ) );
 			StripTrailing( value );
 
-			sprintf( line, "\"%s\" \"%s\"\n", key, value );
-			strcat( end, line );
+			snprintf( line, sizeof( line ), "\"%s\" \"%s\"\n", key, value );
+			strncat( end, line, sizeof( end ) );
 			end += strlen( line );
 		}
-		strcat( end,"}\n" );
+		strncat( end, "}\n", sizeof( dentdata ) + dentdata - end );
 		end += 2;
 
 		if ( end > buf + MAX_MAP_ENTSTRING ) {

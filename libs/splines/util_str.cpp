@@ -371,6 +371,7 @@ void idStr::EnsureDataWritable
 
 	EnsureAlloced( len + 1, false );
 	strncpy( m_data->data, olddata->data, len + 1 );
+	m_data->data[len] = 0;
 	m_data->len = len;
 
 	olddata->DelRef();
@@ -447,12 +448,13 @@ void idStr::snprintf
 	va_list argptr;
 
 	va_start( argptr,fmt );
-	len = vsprintf( buffer,fmt,argptr );
+	len = vsnprintf( buffer, sizeof( buffer ), fmt, argptr );
 	va_end( argptr );
 
 	assert( len < size );
 
 	strncpy( dst, buffer, size - 1 );
+	dst[size - 1] = NULL;
 }
 
 #ifdef _WIN32

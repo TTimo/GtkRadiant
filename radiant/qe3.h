@@ -276,7 +276,7 @@ int WINAPI profile_load_int( const char *filename, const char *section, const ch
 float WINAPI profile_load_float( const char *filename, const char *section, const char *key, float default_value );
 char* WINAPI profile_load_string( const char *filename, const char *section, const char *key, const char *default_value );
 // used in the command map code
-bool read_var( const char *filename, const char *section, const char *key, char *value );
+bool read_var( const char *filename, const char *section, const char *key, char *value, size_t length );
 
 //
 // entityw.c
@@ -796,7 +796,7 @@ extern void CheckBspProcess();
 extern void QE_CountBrushesAndUpdateStatusBar();
 extern void QE_CheckAutoSave();
 extern qtexture_t   *current_texture;
-extern void SaveWithRegion( char *name ); // save the current map, sets the map name in the name buffer (deals with regioning)
+extern void SaveWithRegion( char *name, size_t length ); // save the current map, sets the map name in the name buffer (deals with regioning)
 extern void RunBsp( char *command );
 extern void Map_Snapshot();
 extern void WXY_Print();

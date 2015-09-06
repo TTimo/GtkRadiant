@@ -63,7 +63,7 @@ static void file_sel_callback( GtkWidget *widget, gpointer data ){
 
 	*loop = 0;
 	if ( (intptr_t)data == IDOK ) {
-		*filename = g_strdup( gtk_file_chooser_get_filename( GTK_FILE_CHOOSER( parent ) ) );
+		*filename = gtk_file_chooser_get_filename( GTK_FILE_CHOOSER( parent ) );
 	}
 }
 
@@ -85,10 +85,10 @@ static void change_clicked( GtkWidget *widget, gpointer data ){
 		chooser = GTK_FILE_CHOOSER( file_sel );
 		filename = gtk_file_chooser_get_filename( chooser );
 
-		strcpy( portals.fn, filename );
+		Q_strncpyz( portals.fn, filename, sizeof( portals.fn ) );
 		gtk_entry_set_text( GTK_ENTRY( data ), filename );
 
-		g_free (filename);
+		g_free( filename );
 	}
 
 	gtk_widget_destroy( file_sel );
@@ -147,11 +147,11 @@ int DoLoadPortalFileDialog(){
 	gtk_widget_show( hbox );
 
 	char *fn = g_FuncTable.m_pfnGetMapName();
-	strcpy( portals.fn, fn );
+	Q_strncpyz( portals.fn, fn, sizeof( portals.fn ) );
 	fn = strrchr( portals.fn, '.' );
 	if ( fn != NULL ) {
 		*fn = '\0';
-		strcat( portals.fn, ".prt" );
+		strncat( portals.fn, ".prt", sizeof( portals.fn ) );
 	}
 
 	gtk_entry_set_text( GTK_ENTRY( entry ), portals.fn );

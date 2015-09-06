@@ -641,7 +641,7 @@ static picoModel_t *_obj_load( PM_PARAMS_LOAD ){
 				/* some obj exporters feel like they don't need to */
 				/* supply a group name. so we gotta handle it here */
 #if 1
-				strcpy( p->token,"default" );
+				strcpy( p->token, "default" );
 				groupName = p->token;
 #else
 				_obj_error_return( "Invalid or missing group name" );

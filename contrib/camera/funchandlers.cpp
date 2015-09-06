@@ -99,7 +99,7 @@ void DoLoadCamera(){
 		CAMERA_ExtractFilePath( firstCam->GetFileName(), basepath );
 	}
 	else{
-		strcpy( basepath, g_FuncTable.m_pfnGetGamePath() );
+		Q_strncpyz( basepath, g_FuncTable.m_pfnGetGamePath(), sizeof( basepath ) );
 	}
 
 	const gchar *filename = g_FuncTable.m_pfnFileDialog( (GtkWidget *)g_pRadiantWnd, TRUE, "Open Camera File", basepath, "camera", NULL );
@@ -158,7 +158,7 @@ void DoSaveCamera() {
 		CAMERA_ExtractFilePath( GetCurrentCam()->GetFileName(), basepath );
 	}
 	else{
-		strcpy( basepath, g_FuncTable.m_pfnGetGamePath() );
+		Q_strncpyz( basepath, g_FuncTable.m_pfnGetGamePath(), sizeof( basepath ) );
 	}
 
 	const gchar *filename = g_FuncTable.m_pfnFileDialog( (void *)g_pRadiantWnd, FALSE, "Save Camera File", basepath, "camera", NULL );
@@ -171,7 +171,7 @@ void DoSaveCamera() {
 		// File dialog from windows (and maybe the gtk one from radiant) doesn't handle default extensions properly.
 		// Add extension and check again if file exists
 		if ( strcmp( fullpathtofile + ( strlen( fullpathtofile ) - 7 ), ".camera" ) ) {
-			strcat( fullpathtofile, ".camera" );
+			strncat( fullpathtofile, ".camera", sizeof( fullpathtofile ) );
 
 			if ( FileExists( fullpathtofile ) ) {
 				if ( g_FuncTable.m_pfnMessageBox( (GtkWidget *)g_pRadiantWnd, "File already exists.\nOverwrite?", "Save Camera File", MB_YESNO, NULL ) == IDNO ) {

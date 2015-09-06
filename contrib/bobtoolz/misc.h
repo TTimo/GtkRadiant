@@ -37,7 +37,7 @@ entity_s* FindEntityFromTargetname( const char* targetname, int* entNum );
 
 char* UnixToDosPath( char* path );
 
-char* GetFilename( char* buffer, const char* filename );
+char* GetFilename( char* buffer, const char* filename, size_t length );
 char* GetGameFilename( char* buffer, const char* filename );
 
 float Determinant3x3( float a1, float a2, float a3,

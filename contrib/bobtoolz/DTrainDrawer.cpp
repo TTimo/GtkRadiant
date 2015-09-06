@@ -191,7 +191,7 @@ void DTrainDrawer::Draw2D( VIEWTYPE vt ) {
 
 void AddSplineControl( const char* control, splinePoint_t* pSP ) {
 	controlPoint_t cp;
-	strncpy( cp.strName, control, 64 );
+	Q_strncpyz( cp.strName, control, sizeof( cp.strName ) );
 
 	pSP->m_pointList.push_front( cp );
 }
@@ -324,7 +324,7 @@ void DTrainDrawer::BuildPaths() {
 void DTrainDrawer::AddControlPoint( const char* name, vec_t* origin ){
 	controlPoint_t* pCP = new controlPoint_t;
 
-	strncpy( pCP->strName, name, 64 );
+	Q_strncpyz( pCP->strName, name, sizeof( pCP->strName ) );
 	VectorCopy( origin, pCP->vOrigin );
 
 	m_pointList.push_back( pCP );
@@ -333,8 +333,8 @@ void DTrainDrawer::AddControlPoint( const char* name, vec_t* origin ){
 splinePoint_t* DTrainDrawer::AddSplinePoint( const char* name, const char* target, vec_t* origin ){
 	splinePoint_t* pSP = new splinePoint_t;
 
-	strncpy( pSP->point.strName, name,       64 );
-	strncpy( pSP->strTarget,     target,     64 );
+	Q_strncpyz( pSP->point.strName, name, sizeof( pSP->point.strName ) );
+	Q_strncpyz( pSP->strTarget, target, sizeof( pSP->strTarget ) );
 	VectorCopy( origin, pSP->point.vOrigin );
 	m_splineList.push_back( pSP );
 

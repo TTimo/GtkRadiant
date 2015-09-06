@@ -1023,7 +1023,7 @@ static void ParseShaderFile( const char *filename ){
 							GetTokenAppend( shaderText, qfalse );
 							if ( token[ 0 ] != '*' && token[ 0 ] != '$' ) {
 								strcpy( si->lightImagePath, token );
-								DefaultExtension( si->lightImagePath, ".tga" );
+								DefaultExtension( si->lightImagePath, ".tga", sizeof( si->lightImagePath ) );
 
 								/* debug code */
 								//%	Sys_FPrintf( SYS_VRB, "Deduced shader image: %s\n", si->lightImagePath );
@@ -1177,21 +1177,21 @@ static void ParseShaderFile( const char *filename ){
 			else if ( !Q_stricmp( token, "qer_editorImage" ) ) {
 				GetTokenAppend( shaderText, qfalse );
 				strcpy( si->editorImagePath, token );
-				DefaultExtension( si->editorImagePath, ".tga" );
+				DefaultExtension( si->editorImagePath, ".tga", sizeof( si->editorImagePath ) );
 			}
 
 			/* ydnar: q3map_normalimage <image> (bumpmapping normal map) */
 			else if ( !Q_stricmp( token, "q3map_normalImage" ) ) {
 				GetTokenAppend( shaderText, qfalse );
 				strcpy( si->normalImagePath, token );
-				DefaultExtension( si->normalImagePath, ".tga" );
+				DefaultExtension( si->normalImagePath, ".tga", sizeof( si->normalImagePath ) );
 			}
 
 			/* q3map_lightimage <image> */
 			else if ( !Q_stricmp( token, "q3map_lightImage" ) ) {
 				GetTokenAppend( shaderText, qfalse );
 				strcpy( si->lightImagePath, token );
-				DefaultExtension( si->lightImagePath, ".tga" );
+				DefaultExtension( si->lightImagePath, ".tga", sizeof( si->lightImagePath ) );
 			}
 
 			/* ydnar: skyparms <outer image> <cloud height> <inner image> */

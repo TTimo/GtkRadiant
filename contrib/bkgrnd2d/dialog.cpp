@@ -122,17 +122,17 @@ void CBackgroundDialogPage::Browse(){
 		return;
 	}
 
-	strcpy( browsedir,ct );
+	Q_strncpyz( browsedir, ct, sizeof( browsedir ) );
 	// make sure we have a trailing /
 	if ( browsedir[strlen( browsedir ) - 1] != '/' ) {
-		strcat( browsedir,"/" );
+		strncat( browsedir, "/", sizeof( browsedir ) );
 	}
 
 	//if we dont have a file yet, don't try to use it for default dir
 	if ( m_bValidFile ) {
 		// filename should always be a nice clean unix style relative path
 		ct = gtk_label_get_text( GTK_LABEL( m_pFileLabel ) );
-		strcat( browsedir,ct );
+		strncat( browsedir, ct, sizeof( browsedir ) );
 		Syn_Printf( MSG_PREFIX "full path: %s\n",browsedir );
 
 		// lop off the file part

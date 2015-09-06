@@ -523,7 +523,7 @@ static void OnBtnBrowseprefab( GtkWidget *widget, gpointer data ){
 	if ( strlen( path ) == 0 ) {
 		path = g_strGameToolsPath;
 	}
-	char *dir = dir_dialog( g_PrefsDlg.GetWidget(), _( "Set prefab path" ), path );
+	gchar *dir = dir_dialog( g_PrefsDlg.GetWidget(), _( "Set prefab path" ), path );
 	dlg->UpdateData( TRUE );
 
 	if ( dir != NULL ) {
@@ -729,9 +729,9 @@ CGameDescription::CGameDescription( xmlDocPtr pDoc, const Str &GameFile ){
 	{
 		char full[PATH_MAX];
 #ifdef _WIN32
-		_fullpath( full, prop, PATH_MAX );
+		_fullpath( full, prop, sizeof( full ) );
 #else
-		strncpy( full, prop, PATH_MAX );
+		Q_strncpyz( full, prop, sizeof( full ) );
 #endif
 		xmlFree( prop );
 		prop = NULL;
@@ -822,9 +822,9 @@ CGameDescription::CGameDescription( xmlDocPtr pDoc, const Str &GameFile ){
 		if ( prop != NULL ) {
 			char full[PATH_MAX];
 		#ifdef _WIN32
-			_fullpath( full, prop, PATH_MAX );
+			_fullpath( full, prop, sizeof( full ) );
 		#else
-			strncpy( full, prop, PATH_MAX );
+			Q_strncpyz( full, prop, sizeof( full ) );
 		#endif
 			xmlFree( prop );
 			prop = NULL;
@@ -844,7 +844,7 @@ CGameDescription::CGameDescription( xmlDocPtr pDoc, const Str &GameFile ){
 			// if engine path was not specified in the .game, it implies we can guess it from the gametools path
 			// on win32, and for most game package, the gametools are installed with the game
 			char aux_path[PATH_MAX]; // aux
-			strcpy( aux_path, mGameToolsPath.GetBuffer() );
+			Q_strncpyz( aux_path, mGameToolsPath.GetBuffer(), sizeof( aux_path ) );
 			if ( ( aux_path[ strlen( aux_path ) - 1 ] == '/' ) || ( aux_path[ strlen( aux_path ) - 1 ] == '\\' ) ) {
 				aux_path[strlen( aux_path ) - 1] = '\0'; // strip ending '/' if any
 			}
@@ -3272,7 +3272,7 @@ void CGameInstall::OnBtnBrowseEngine( GtkWidget *widget, gpointer data ) {
 	Sys_Printf( "OnBtnBrowseEngine\n" );
 
 	CGameInstall* i = static_cast<CGameInstall*>( data );
-	char *dir = dir_dialog( i->m_pWidget, _( "Select game directory" ), NULL );
+	gchar *dir = dir_dialog( i->m_pWidget, _( "Select game directory" ), NULL );
 
 	i->UpdateData( TRUE );
 
@@ -3287,7 +3287,7 @@ void CGameInstall::OnBtnBrowseExecutables( GtkWidget *widget, gpointer data ) {
 	Sys_Printf( "OnBtnBrowseExecutables\n" );
 
 	CGameInstall* i = static_cast<CGameInstall*>( data );
-	char *dir = dir_dialog( i->m_pWidget, _( "Select executables directory" ), NULL );
+	gchar *dir = dir_dialog( i->m_pWidget, _( "Select executables directory" ), NULL );
 
 	i->UpdateData( TRUE );
 

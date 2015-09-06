@@ -1536,13 +1536,13 @@ const char* Brush_GetKeyValue( brush_t *b, const char *pKey ){
    temporary stuff, detect potential problems when saving the texture name
    =================
  */
-void CheckName( face_t *fa, char *pname ){
+void CheckName( face_t *fa, char *pname, size_t length ){
 	if ( !strlen( fa->texdef.GetName() ) ) {
 #ifdef _DEBUG
 		Sys_Printf( "WARNING: unexpected texdef.name is empty in Brush.cpp CheckName\n" );
 #endif
 		fa->texdef.SetName( SHADER_NOT_FOUND );
-		strcpy( pname, SHADER_NOT_FOUND );
+		Q_strncpyz( pname, SHADER_NOT_FOUND, length );
 		return;
 	}
 
@@ -1554,7 +1554,7 @@ void CheckName( face_t *fa, char *pname ){
 
 		Sys_Printf( "%s\n", Msg1 );
 		gtk_MessageBox( g_pParentWnd->m_pWidget, Msg1, "Error saving map", MB_OK );
-		strcpy( pname, SHADER_NOT_FOUND );
+		Q_strncpyz( pname, SHADER_NOT_FOUND, length );
 		return;
 	}
 
@@ -1566,10 +1566,10 @@ void CheckName( face_t *fa, char *pname ){
 		gtk_MessageBox( g_pParentWnd->m_pWidget, text, "Error saving map", MB_OK );
 		// need to cleanup this dead face name or we may loop endlessly
 		fa->texdef.SetName( SHADER_NOT_FOUND );
-		strcpy( pname, SHADER_NOT_FOUND );
+		Q_strncpyz( pname, SHADER_NOT_FOUND, length );
 		return;
 	}
-	strcpy( pname, fa->texdef.GetName() + 9 ); // remove "textures/"
+	Q_strncpyz( pname, fa->texdef.GetName() + 9, length ); // remove "textures/"
 }
 
 /*

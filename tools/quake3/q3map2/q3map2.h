@@ -1461,7 +1461,10 @@ surfaceInfo_t;
 
 /* main.c */
 vec_t                       Random( void );
-char                        *Q_strncpyz( char *dst, const char *src, size_t len );
+#ifndef Q_strncpyz
+#define Q_strncpyz(_dst, _source, _len) do { strncpy((_dst), (_source), (_len) - 1); (_dst)[(_len) - 1] = 0; } while( 0 )
+#endif
+//char                        *Q_strncpyz( char *dst, const char *src, size_t len );
 char                        *Q_strcat( char *dst, size_t dlen, const char *src );
 char                        *Q_strncat( char *dst, size_t dlen, const char *src, size_t slen );
 int                         BSPInfo( int count, char **fileNames );

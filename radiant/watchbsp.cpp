@@ -191,7 +191,7 @@ static void saxWarning( void *ctx, const char *msg, ... ){
 	va_list args;
 
 	va_start( args, msg );
-	vsprintf( saxMsgBuffer, msg, args );
+	vsnprintf( saxMsgBuffer, sizeof( saxMsgBuffer ), msg, args );
 	va_end( args );
 	Sys_FPrintf( SYS_WRN, "XML warning: %s\n", saxMsgBuffer );
 }
@@ -201,7 +201,7 @@ static void saxError( void *ctx, const char *msg, ... ){
 	va_list args;
 
 	va_start( args, msg );
-	vsprintf( saxMsgBuffer, msg, args );
+	vsnprintf( saxMsgBuffer, sizeof( saxMsgBuffer ), msg, args );
 	va_end( args );
 	Sys_FPrintf( SYS_ERR, "XML error: %s\n", saxMsgBuffer );
 }
@@ -212,7 +212,7 @@ static void saxFatal( void *ctx, const char *msg, ... ){
 	va_list args;
 
 	va_start( args, msg );
-	vsprintf( buffer, msg, args );
+	vsnprintf( buffer, sizeof( buffer ), msg, args );
 	va_end( args );
 	Sys_FPrintf( SYS_ERR, "XML fatal error: %s\n", buffer );
 }

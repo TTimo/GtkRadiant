@@ -178,15 +178,15 @@ extern "C" void QERPlug_Dispatch( const char *p, vec3_t vMin, vec3_t vMax, bool 
 	else if ( !strcmp( p, "About..." ) ) {
 		const picoModule_t** modules = PicoModuleList( NULL );
 		char about_buf[1024];
-		strncpy( about_buf, PLUGIN_ABOUT, sizeof( about_buf ) - 1 );
+		Q_strncpyz( about_buf, PLUGIN_ABOUT, sizeof( about_buf ) );
 		while ( *modules != NULL ) {
 			const picoModule_t* module = *modules++;
-			strncat( about_buf, module->displayName, sizeof( about_buf ) - 1 );
-			strncat( about_buf, " (", sizeof( about_buf ) - 1 );
-			strncat( about_buf, module->defaultExts[0], sizeof( about_buf ) - 1 );
-			strncat( about_buf, ")\n\t", sizeof( about_buf ) - 1 );
-			strncat( about_buf, module->copyright, sizeof( about_buf ) - 1 );
-			strncat( about_buf, "\n", sizeof( about_buf ) - 1 );
+			strncat( about_buf, module->displayName, sizeof( about_buf ) );
+			strncat( about_buf, " (", sizeof( about_buf ) );
+			strncat( about_buf, module->defaultExts[0], sizeof( about_buf ) );
+			strncat( about_buf, ")\n\t", sizeof( about_buf ) );
+			strncat( about_buf, module->copyright, sizeof( about_buf ) );
+			strncat( about_buf, "\n", sizeof( about_buf ) );
 		}
 		g_FuncTable.m_pfnMessageBox( NULL, about_buf, "About...", MB_OK, NULL );
 	}

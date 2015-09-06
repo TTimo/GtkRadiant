@@ -436,7 +436,7 @@ void OnSelchangeComboWhatgame( GtkWidget *widget, gpointer data ){
 void ProjectSettings_dirbutton_clicked( GtkButton *button, gpointer user_data ){
 	GtkWidget *dialog, *entry;
 	const gchar *path;
-	char *dir;
+	gchar *dir;
 
 	dialog = GTK_WIDGET( user_data );
 	entry = GTK_WIDGET( g_object_get_data( G_OBJECT( dialog ), "base" ) );
@@ -1182,7 +1182,7 @@ void DoEntityList(){
 					gtk_tree_store_append( store, &parent, NULL );
 					gtk_tree_store_set( store, &parent, 0, pEntity->eclass->name, 1, NULL, -1 );
 
-					entry = (map_t*)malloc( sizeof( map_t ) );
+					entry = (map_t*)g_malloc( sizeof( map_t ) );
 					entitymap = g_slist_append( entitymap, entry );
 					entry->name = pEntity->eclass->name;
 					entry->node = parent;
@@ -1195,7 +1195,7 @@ void DoEntityList(){
 
 			while ( entitymap )
 			{
-				free( entitymap->data );
+				g_free( entitymap->data );
 				entitymap = g_slist_remove( entitymap, entitymap->data );
 			}
 		}

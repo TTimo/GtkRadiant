@@ -472,7 +472,7 @@ int Com_ParseInfos( const char *buf, int max, char infos[][MAX_INFO_STRING] ) {
 			if ( !token[0] ) {
 				token = "<NULL>";
 			}
-			Info_SetValueForKey( infos[count], key, token );
+			Info_SetValueForKey( infos[count], key, token, sizeof( infos[count] ) );
 		}
 		count++;
 	}
@@ -695,7 +695,7 @@ void QDECL Com_sprintf( char *dest, int size, const char *fmt, ... ) {
 	char bigbuffer[32000];      // big, but small enough to fit in PPC stack
 
 	va_start( argptr,fmt );
-	len = vsprintf( bigbuffer,fmt,argptr );
+	len = vsnprintf( bigbuffer, sizeof( bigbuffer ), fmt, argptr );
 	va_end( argptr );
 	if ( len < 0 ) {
 		Com_Error( ERR_FATAL, "Com_sprintf: failed to write bigbuffer" );
@@ -729,7 +729,7 @@ char    * QDECL va( const char *format, ... ) {
 	index++;
 
 	va_start( argptr, format );
-	vsprintf( buf, format,argptr );
+	vsnprintf( buf, sizeof( string[index & 1] ), format, argptr );
 	va_end( argptr );
 
 	return buf;
@@ -932,7 +932,7 @@ qboolean Info_Validate( const char *s ) {
    Changes or adds a key/value pair
    ==================
  */
-void Info_SetValueForKey( char *s, const char *key, const char *value ) {
+void Info_SetValueForKey( char *s, const char *key, const char *value, size_t length ) {
 	char newi[MAX_INFO_STRING];
 
 	if ( strlen( s ) >= MAX_INFO_STRING ) {
@@ -966,7 +966,7 @@ void Info_SetValueForKey( char *s, const char *key, const char *value ) {
 		return;
 	}
 
-	strcat( s, newi );
+	Q_strcat( s, length, newi );
 }
 
 //====================================================================

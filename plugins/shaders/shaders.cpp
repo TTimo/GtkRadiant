@@ -658,7 +658,7 @@ IShader *WINAPI QERApp_CreateShader_ForTextureName( const char *name ){
 	// Hydra: display an error message, so the user can quickly find a list of missing
 	// textures by looking at the console.
 	if ( !pShader->Activate() ) {
-		Sys_Printf( "WARNING: Activate shader failed for %s\n",pShader->getName() );
+		Sys_Printf( "WARNING: Activate shader failed for %s\n", pShader->getName() );
 	}
 	pShader->SetDisplayed( true );
 

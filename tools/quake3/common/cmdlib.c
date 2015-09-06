@@ -162,7 +162,7 @@ void SetQdirFromPath( const char *path ){
 
 	if ( !( path[0] == '/' || path[0] == '\\' || path[1] == ':' ) ) { // path is partial
 		Q_getwd( temp );
-		strcat( temp, path );
+		strncat( temp, path, sizeof( temp ) );
 		path = temp;
 	}
 
@@ -211,7 +211,7 @@ void SetQdirFromPath( const char *path ){
 					Sys_Printf( "gamedir: %s\n", gamedir );
 
 					if ( !writedir[0] ) {
-						strcpy( writedir, gamedir );
+						Q_strncpyz( writedir, gamedir, sizeof( writedir ) );
 					}
 					else if ( writedir[strlen( writedir ) - 1] != '/' ) {
 						writedir[strlen( writedir )] = '/';
@@ -234,10 +234,10 @@ char *ExpandArg( const char *path ){
 
 	if ( path[0] != '/' && path[0] != '\\' && path[1] != ':' ) {
 		Q_getwd( full );
-		strcat( full, path );
+		strncat( full, path, sizeof( full ) );
 	}
 	else{
-		strcpy( full, path );
+		Q_strncpyz( full, path, sizeof( full ) );
 	}
 	return full;
 }
@@ -245,7 +245,7 @@ char *ExpandArg( const char *path ){
 char *ExpandPath( const char *path ){
 	static char full[1024];
 	if ( path[0] == '/' || path[0] == '\\' || path[1] == ':' ) {
-		strcpy( full, path );
+		Q_strncpyz( full, path, sizeof( full ) );
 		return full;
 	}
 	sprintf( full, "%s%s", qdir, path );
@@ -294,11 +294,11 @@ void Q_getwd( char *out ){
 
 #ifdef WIN32
 	_getcwd( out, 256 );
-	strcat( out, "\\" );
+	strncat( out, "\\", sizeof( out ) );
 #else
 	// Gef: Changed from getwd() to getcwd() to avoid potential buffer overflow
 	getcwd( out, 256 );
-	strcat( out, "/" );
+	strncat( out, "/", sizeof( out ) );
 #endif
 	while ( out[i] != 0 )
 	{
@@ -698,7 +698,7 @@ void DefaultExtension( char *path, const char *extension ){
 		src--;
 	}
 
-	strcat( path, extension );
+	strncat( path, extension, sizeof( path ) );
 }
 
 
@@ -708,9 +708,9 @@ void DefaultPath( char *path, const char *basepath ){
 	if ( path[ 0 ] == '/' || path[ 0 ] == '\\' ) {
 		return;                   // absolute path location
 	}
-	strcpy( temp,path );
-	strcpy( path,basepath );
-	strcat( path,temp );
+	Q_strncpyz( temp, path, sizeof( temp ) );
+	Q_strncpyz( path, basepath, sizeof( path ) );
+	strncat( path, temp, sizeof( path ) );
 }
 
 
@@ -795,7 +795,7 @@ void ExtractFileExtension( const char *path, char *dest ){
 		return;
 	}
 
-	strcpy( dest,src );
+	Q_strncpyz( dest, src, sizeof( dest ) );
 }
 
 

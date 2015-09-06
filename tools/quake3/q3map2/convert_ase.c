@@ -248,7 +248,7 @@ static void ConvertShader( FILE *f, bspShader_t *shader, int shaderNum ){
 
 	/* set bitmap filename */
 	if ( si->shaderImage->filename[ 0 ] != '*' ) {
-		strcpy( filename, si->shaderImage->filename );
+		Q_strncpyz( filename, si->shaderImage->filename, sizeof( filename ) );
 	}
 	else{
 		sprintf( filename, "%s.tga", si->shader );

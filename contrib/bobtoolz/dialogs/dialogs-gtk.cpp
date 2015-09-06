@@ -829,8 +829,8 @@ int DoDoorsBox( DoorRS* rs ){
 	char buffer[256];
 	GList       *listMainTextures = NULL;
 	GList       *listTrimTextures = NULL;
-	LoadGList( GetFilename( buffer, "plugins/bt/door-tex.txt" ), &listMainTextures );
-	LoadGList( GetFilename( buffer, "plugins/bt/door-tex-trim.txt" ), &listTrimTextures );
+	LoadGList( GetFilename( buffer, "plugins/bt/door-tex.txt", sizeof( buffer ) ), &listMainTextures );
+	LoadGList( GetFilename( buffer, "plugins/bt/door-tex-trim.txt", sizeof( buffer ) ), &listTrimTextures );
 
 	vbox = gtk_box_new( GTK_ORIENTATION_VERTICAL, 10 );
 	gtk_container_add( GTK_CONTAINER( window ), vbox );

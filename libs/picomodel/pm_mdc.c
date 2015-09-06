@@ -644,7 +644,7 @@ static picoModel_t *_mdc_load( PM_PARAMS_LOAD ){
 
 		/* detox and set shader name */
 		shader = (mdcShader_t*) ( (picoByte_t*) surface + surface->ofsShaders );
-		_pico_setfext( shader->name, "" );
+		_pico_setfext( shader->name, "", sizeof( shader->name ) );
 		_pico_unixify( shader->name );
 		PicoSetShaderName( picoShader, shader->name );
 

@@ -212,11 +212,13 @@ picoModel_t *PicoLoadModel( char *fileName, int frameNum ){
 			/* apply model remappings from <model>.remap */
 			if ( strlen( modelFileName ) ) {
 				/* alloc copy of model file name */
-				remapFileName = _pico_alloc( strlen( modelFileName ) + 20 );
+				size_t length = strlen( modelFileName ) + 20;
+				remapFileName = _pico_alloc( length );
 				if ( remapFileName != NULL ) {
 					/* copy model file name and change extension */
-					strcpy( remapFileName, modelFileName );
-					_pico_setfext( remapFileName, "remap" );
+					strncpy( remapFileName, modelFileName, length );
+					remapFileName[length - 1] = 0;
+					_pico_setfext( remapFileName, "remap", length );
 
 					/* try to remap model; we don't handle the result */
 					PicoRemapModel( model, remapFileName );

@@ -216,7 +216,7 @@ void xml_Winding( char *msg, vec3_t p[], int numpoints, qboolean die ){
 		if ( strlen( buf ) + strlen( smlbuf ) > WINDING_BUFSIZE ) {
 			break;
 		}
-		strcat( buf, smlbuf );
+		strncat( buf, smlbuf, sizeof( buf ) );
 	}
 
 	winding = xmlNewNode( NULL, "winding" );
@@ -316,7 +316,7 @@ void Sys_FPrintf( int flag, const char *format, ... ){
 	}
 
 	va_start( argptr, format );
-	vsprintf( out_buffer, format, argptr );
+	vsnprintf( out_buffer, sizeof( out_buffer ), format, argptr );
 	va_end( argptr );
 
 	FPrintf( flag, out_buffer );
@@ -327,7 +327,7 @@ void Sys_Printf( const char *format, ... ){
 	va_list argptr;
 
 	va_start( argptr, format );
-	vsprintf( out_buffer, format, argptr );
+	vsnprintf( out_buffer, sizeof( out_buffer ), format, argptr );
 	va_end( argptr );
 
 	FPrintf( SYS_STD, out_buffer );
@@ -346,7 +346,7 @@ void Error( const char *error, ... ){
 	va_list argptr;
 
 	va_start( argptr,error );
-	vsprintf( tmp, error, argptr );
+	vsnprintf( tmp, sizeof( tmp ), error, argptr );
 	va_end( argptr );
 
 	sprintf( out_buffer, "************ ERROR ************\n%s\n", tmp );

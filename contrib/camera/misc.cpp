@@ -31,7 +31,7 @@ void Sys_ERROR( char* text, ... ){
 	char buf[32768];
 
 	va_start( argptr,text );
-	vsprintf( buf, text,argptr );
+	vsnprintf( buf, sizeof( buf ), text, argptr );
 	va_end( argptr );
 
 	Sys_Printf( "Camera::ERROR->%s", buf );
@@ -114,7 +114,7 @@ void CDECL Com_Error( int level, const char *error, ... ){
 	char buf[32768];
 
 	va_start( argptr,error );
-	vsprintf( buf, error,argptr );
+	vsnprintf( buf, sizeof( buf ), error, argptr );
 	va_end( argptr );
 
 	Sys_Printf( "Camera::ERROR->%s", buf );
@@ -125,7 +125,7 @@ void CDECL Com_Printf( const char* msg, ... ){
 	char buf[32768];
 
 	va_start( argptr,msg );
-	vsprintf( buf, msg,argptr );
+	vsnprintf( buf, sizeof( buf ), msg, argptr );
 	va_end( argptr );
 
 	Sys_Printf( "Camera::%s", buf );
@@ -137,7 +137,7 @@ void CDECL Com_DPrintf( const char* msg, ... ){
 	char buf[32768];
 
 	va_start( argptr,msg );
-	vsprintf( buf, msg,argptr );
+	vsnprintf( buf, sizeof( buf ), msg, argptr );
 	va_end( argptr );
 
 	Sys_Printf( "Camera::%s", buf );

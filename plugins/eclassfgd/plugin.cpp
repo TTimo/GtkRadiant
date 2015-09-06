@@ -244,13 +244,13 @@ char *strlower( char *start ){
 	return start;
 }
 
-char *addstr( char *dest,const char *source ){
+char *addstr( char *dest, const char *source ){
 	if ( dest ) {
 		char *ptr;
 		int len = strlen( dest );
 		ptr = (char *) malloc( len + strlen( source ) + 1 );
-		strcpy( ptr,dest );
-		strcpy( ptr + len,source );
+		strcpy( ptr, dest );
+		strcpy( ptr + len, source );
 		free( dest );
 		dest = ptr;
 	}
@@ -382,8 +382,8 @@ void EClass_ImportFromClass( eclass_t *e, GSList *l_classes, class_t *bc ){
 	//represent the final values.
 
 	if ( bc->description ) {
-		sprintf( newcomments,"%s\n",bc->description );
-		e->comments = addstr( e->comments,newcomments );
+		snprintf( newcomments, sizeof( newcomments ), "%s\n", bc->description );
+		e->comments = addstr( e->comments, newcomments );
 		newcomments[0] = 0; // so we don't add them twice.
 	}
 
@@ -420,8 +420,8 @@ void EClass_ImportFromClass( eclass_t *e, GSList *l_classes, class_t *bc ){
 	// SIZE
 	if ( bc->gotsize ) {
 		e->fixedsize = true;
-		memcpy( e->mins,bc->boundingbox[0],sizeof( vec3_t ) );
-		memcpy( e->maxs,bc->boundingbox[1],sizeof( vec3_t ) );
+		memcpy( e->mins, bc->boundingbox[0], sizeof( vec3_t ) );
+		memcpy( e->maxs, bc->boundingbox[1], sizeof( vec3_t ) );
 	}
 /*
    // Hydra: apparently, this would be bad.
@@ -449,7 +449,7 @@ void EClass_ImportFromClass( eclass_t *e, GSList *l_classes, class_t *bc ){
 
 	// COLOR
 	if ( bc->gotcolor ) {
-		memcpy( e->color,bc->color,sizeof( vec3_t ) );
+		memcpy( e->color, bc->color, sizeof( vec3_t ) );
 		sprintf( color, "(%f %f %f)", e->color[0], e->color[1], e->color[2] );
 		e->texdef.SetName( color );
 	}
@@ -463,18 +463,22 @@ void EClass_ImportFromClass( eclass_t *e, GSList *l_classes, class_t *bc ){
 			if ( opt->optiontype != OPTION_FLAGS ) {
 				// add some info to the comments.
 				if ( opt->optioninfo ) {
-					sprintf( newcomments + strlen( newcomments ),"%s '%s' %s%s\n",
-							 opt->epairname,
-							 opt->optioninfo ? opt->optioninfo : "",
-							 opt->optiondefault ? ", Default: " : "",
-							 opt->optiondefault ? opt->optiondefault : "" );
+					snprintf( newcomments + strlen( newcomments ), 
+						sizeof( newcomments ) - strlen( newcomments ),
+						"%s '%s' %s%s\n",
+						opt->epairname,
+						opt->optioninfo ? opt->optioninfo : "",
+						opt->optiondefault ? ", Default: " : "",
+						opt->optiondefault ? opt->optiondefault : "" );
 				}
 				else
 				{
-					sprintf( newcomments + strlen( newcomments ),"%s %s%s\n",
-							 opt->epairname,
-							 opt->optiondefault ? ", Default: " : "",
-							 opt->optiondefault ? opt->optiondefault : "" );
+					snprintf( newcomments + strlen( newcomments ),
+						sizeof( newcomments ) - strlen( newcomments ),
+						"%s %s%s\n",
+						opt->epairname,
+						opt->optiondefault ? ", Default: " : "",
+						opt->optiondefault ? opt->optiondefault : "" );
 				}
 			}
 
@@ -490,7 +494,7 @@ void EClass_ImportFromClass( eclass_t *e, GSList *l_classes, class_t *bc ){
 					int index = getindex( choice->value );
 					index--;
 					if ( index < MAX_FLAGS ) {
-						strcpy( e->flagnames[index],choice->name );
+						Q_strncpyz( e->flagnames[index], choice->name, sizeof( e->flagnames[index] ) );
 					}
 					else
 					{
@@ -499,11 +503,14 @@ void EClass_ImportFromClass( eclass_t *e, GSList *l_classes, class_t *bc ){
 				}
 				break;
 			case OPTION_CHOICES:
-				strcat( newcomments,"  Choices:\n" );
+				strncat( newcomments, "  Choices:\n", sizeof( newcomments ) );
 				for ( choicelst = opt->choices; choicelst != NULL; choicelst = choicelst->next )
 				{
 					choice_t *choice = (choice_t*) choicelst->data;
-					sprintf( newcomments + strlen( newcomments ),"  %5d - %s\n",choice->value,choice->name );
+					snprintf( newcomments + strlen( newcomments ), 
+						sizeof( newcomments ) - strlen( newcomments ), 
+						"  %5d - %s\n", 
+						choice->value,choice->name );
 				}
 				break;
 			}
@@ -547,7 +554,7 @@ void EClass_ImportFromClass( eclass_t *e, GSList *l_classes, class_t *bc ){
 
 	// COMMENTS
 	if ( newcomments[0] ) {
-		e->comments = addstr( e->comments,newcomments );
+		e->comments = addstr( e->comments, newcomments );
 	}
 }
 
@@ -649,7 +656,7 @@ void Eclass_ScanFile( char *filename ){
 			}
 		} while ( token[0] != '@' );
 
-		strcpy( temp,token + 1 ); // skip the @
+		Q_strncpyz( temp, token + 1, sizeof( temp ) );// skip the @
 
 		classtype = CLASS_NOCLASS;
 		if ( !stricmp( temp,"BaseClass" ) ) {
@@ -669,37 +676,37 @@ void Eclass_ScanFile( char *filename ){
 
 			while ( 1 )
 			{
-				GetTokenExtra( false,"(",false ); // option or =
-				strcpy( token_debug,token );
+				GetTokenExtra( false, "(", false ); // option or =
+				Q_strncpyz( token_debug, token, sizeof( token_debug ) );
 
-				if ( !strcmp( token,"=" ) ) {
+				if ( !strcmp( token, "=" ) ) {
 					UnGetToken();
 					break;
 				}
 				else
 				{
 					strlower( token );
-					if ( !strcmp( token,"base" ) ) {
-						GetTokenExtra( false,"(",true ); // (
+					if ( !strcmp( token, "base" ) ) {
+						GetTokenExtra( false, "(", true ); // (
 
-						if ( !strcmp( token,"(" ) ) {
-							while ( GetTokenExtra( false,",)",false ) ) // option) or option,
+						if ( !strcmp( token, "(" ) ) {
+							while ( GetTokenExtra( false, ",)", false ) ) // option) or option,
 							{
 								newclass->l_baselist = g_slist_append( newclass->l_baselist, strdup( token ) );
 
-								GetTokenExtra( false,",)",true ); // , or )
-								if ( !strcmp( token,")" ) ) {
+								GetTokenExtra( false, ",)", true ); // , or )
+								if ( !strcmp( token, ")" ) ) {
 									break;
 								}
 
 							}
 						}
 					}
-					else if ( !strcmp( token,"size" ) ) {
+					else if ( !strcmp( token, "size" ) ) {
 						// parse (w h d) or (x y z, x y z)
 
-						GetTokenExtra( false,"(",true ); // (
-						if ( !strcmp( token,"(" ) ) {
+						GetTokenExtra( false, "(", true ); // (
+						if ( !strcmp( token, "(" ) ) {
 							int sizedone = false;
 							float w,h,d;
 							GetToken( false );
@@ -707,7 +714,7 @@ void Eclass_ScanFile( char *filename ){
 							GetToken( false );
 							h = atof( token );
 							GetToken( false ); // number) or number ,
-							strcpy( temp,token );
+							Q_strncpyz( temp, token, sizeof( temp ) );
 							len = strlen( temp );
 							if ( temp[len - 1] == ')' ) {
 								sizedone = true;
@@ -743,16 +750,16 @@ void Eclass_ScanFile( char *filename ){
                   GetToken(false); // )
                 newclass->boundingbox[1][2] = atof(temp);
  */
-								GetTokenExtra( false,")",false ); // number
+								GetTokenExtra( false, ")", false ); // number
 								newclass->boundingbox[1][2] = atof( token );
 								newclass->gotsize = true;
-								GetTokenExtra( false,")",true ); // )
+								GetTokenExtra( false, ")", true ); // )
 							}
 						}
 					}
-					else if ( !strcmp( token,"color" ) ) {
-						GetTokenExtra( false,"(",true ); // (
-						if ( !strcmp( token,"(" ) ) {
+					else if ( !strcmp( token, "color" ) ) {
+						GetTokenExtra( false, "(", true ); // (
+						if ( !strcmp( token, "(" ) ) {
 							// get the color values (0-255) and normalize them if required.
 							GetToken( false );
 							newclass->color[0] = atof( token );
@@ -765,7 +772,7 @@ void Eclass_ScanFile( char *filename ){
 								newclass->color[1] /= 255;
 							}
 							GetToken( false );
-							strcpy( temp,token );
+							Q_strncpyz( temp, token, sizeof( temp ) );
 							len = strlen( temp );
 							if ( temp[len - 1] == ')' ) {
 								temp[len - 1] = 0;
@@ -777,22 +784,22 @@ void Eclass_ScanFile( char *filename ){
 							newclass->gotcolor = true;
 						}
 					}
-					else if ( !strcmp( token,"iconsprite" ) ) {
-						GetTokenExtra( false,"(",true ); // (
-						if ( !strcmp( token,"(" ) ) {
-							GetTokenExtra( false,")",false ); // filename)
+					else if ( !strcmp( token, "iconsprite" ) ) {
+						GetTokenExtra( false, "(", true ); // (
+						if ( !strcmp( token, "(" ) ) {
+							GetTokenExtra( false, ")", false ); // filename)
 							// the model plugins will handle sprites too.
 							// newclass->sprite = strdup(token);
 							newclass->model = strdup( token );
-							GetTokenExtra( false,")",true ); // )
+							GetTokenExtra( false, ")", true ); // )
 						}
 					}
-					else if ( !strcmp( token,"model" ) ) {
-						GetTokenExtra( false,"(",true ); // (
-						if ( !strcmp( token,"(" ) ) {
-							GetTokenExtra( false,")",false ); // filename)
+					else if ( !strcmp( token, "model" ) ) {
+						GetTokenExtra( false, "(", true ); // (
+						if ( !strcmp( token, "(" ) ) {
+							GetTokenExtra( false, ")", false ); // filename)
 							newclass->model = strdup( token );
-							GetTokenExtra( false,")",true ); // )
+							GetTokenExtra( false, ")", true ); // )
 						}
 					}
 					else
@@ -805,8 +812,8 @@ void Eclass_ScanFile( char *filename ){
 			}
 
 			GetToken( false ); // =
-			strcpy( token_debug,token );
-			if ( !strcmp( token,"=" ) ) {
+			Q_strncpyz( token_debug, token, sizeof( token_debug ) );
+			if ( !strcmp( token, "=" ) ) {
 				GetToken( false );
 				newclass->classname = strdup( token );
 			}
@@ -814,7 +821,7 @@ void Eclass_ScanFile( char *filename ){
 			// Get the description
 			if ( newclass->classtype != CLASS_BASECLASS ) {
 				GetToken( false );
-				if ( !strcmp( token,":" ) ) {
+				if ( !strcmp( token, ":" ) ) {
 					GetToken( false );
 					newclass->description = strdup( token );
 				}
@@ -840,7 +847,8 @@ void Eclass_ScanFile( char *filename ){
 						}
 						// parse the data and build the option_t
 
-						strcpy( temp,token );
+						Q_strncpyz( temp, token, sizeof( temp ) );
+
 						len = strlen( temp );
 						char *ptr = strchr( temp,'(' );
 
@@ -884,7 +892,7 @@ void Eclass_ScanFile( char *filename ){
 								break;
 							}
 							GetToken( false ); // :
-							strcpy( token_debug,token );
+							Q_strncpyz( token_debug, token, sizeof( token_debug ) );
 							if ( ( token[0] == ':' ) && ( strlen( token ) > 1 ) ) {
 								newoption->optioninfo = strdup( token + 1 );
 							}
@@ -909,18 +917,18 @@ void Eclass_ScanFile( char *filename ){
 							break;
 
 						case OPTION_CHOICES:
-							GetTokenExtra( false,":",true ); // : or :"something like this" (bah!)
-							strcpy( token_debug,token );
+							GetTokenExtra( false, ":", true ); // : or :"something like this" (bah!)
+							Q_strncpyz( token_debug, token, sizeof( token_debug ) );
 							if ( ( token[0] == ':' ) && ( strlen( token ) > 1 ) ) {
 								if ( token[1] == '\"' ) {
-									strcpy( temp,token + 2 );
+									Q_strncpyz( temp, token + 2, sizeof( temp ) );
 									while ( 1 )
 									{
 										if ( !GetToken( false ) ) {
 											break;
 										}
-										strcat( temp," " );
-										strcat( temp,token );
+										strncat( temp, " ", sizeof( temp ) );
+										strncat( temp, token, sizeof( temp ) );
 										len = strlen( temp );
 										if ( temp[len - 1] == '\"' ) {
 											temp[len - 1] = 0;
@@ -936,7 +944,7 @@ void Eclass_ScanFile( char *filename ){
 								newoption->optioninfo = strdup( token );
 							}
 							GetToken( false ); // : or =
-							strcpy( token_debug,token );
+							Q_strncpyz( token_debug, token, sizeof( token_debug ) );
 							if ( !strcmp( token,":" ) ) {
 								GetToken( false );
 								newoption->optiondefault = strdup( token );
@@ -948,13 +956,13 @@ void Eclass_ScanFile( char *filename ){
 						// And Follow on...
 						case OPTION_FLAGS:
 							GetToken( false ); // : or =
-							strcpy( token_debug,token );
+							Q_strncpyz( token_debug, token, sizeof( token_debug ) );
 							if ( strcmp( token,"=" ) ) { // missing ?
 								break;
 							}
 
 							GetToken( true ); // [
-							strcpy( token_debug,token );
+							Q_strncpyz( token_debug, token, sizeof( token_debug ) );
 							if ( strcmp( token,"[" ) ) { // missing ?
 								break;
 							}
@@ -962,13 +970,13 @@ void Eclass_ScanFile( char *filename ){
 							choice_t *newchoice;
 							while ( 1 )
 							{
-								GetTokenExtra( true,":",true ); // "]" or "number", or "number:"
-								strcpy( token_debug,token );
-								if ( !strcmp( token,"]" ) ) { // no more ?
+								GetTokenExtra( true, ":", true ); // "]" or "number", or "number:"
+								Q_strncpyz( token_debug, token, sizeof( token_debug ) );
+								if ( !strcmp( token, "]" ) ) { // no more ?
 									optioncomplete = true;
 									break;
 								}
-								strcpy( temp,token );
+								Q_strncpyz( temp, token, sizeof( temp ) );
 								len = strlen( temp );
 								if ( temp[len - 1] == ':' ) {
 									temp[len - 1] = 0;
@@ -976,7 +984,7 @@ void Eclass_ScanFile( char *filename ){
 								else
 								{
 									GetToken( false ); // :
-									if ( strcmp( token,":" ) ) { // missing ?
+									if ( strcmp( token, ":" ) ) { // missing ?
 										break;
 									}
 								}

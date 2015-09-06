@@ -46,7 +46,7 @@ vec_t Random( void ){
 }
 
 
-char *Q_strncpyz( char *dst, const char *src, size_t len ) {
+/*char *Q_strncpyz( char *dst, const char *src, size_t len ) {
 	if ( len == 0 ) {
 		abort();
 	}
@@ -54,7 +54,7 @@ char *Q_strncpyz( char *dst, const char *src, size_t len ) {
 	strncpy( dst, src, len );
 	dst[ len - 1 ] = '\0';
 	return dst;
-}
+}*/
 
 
 char *Q_strcat( char *dst, size_t dlen, const char *src ) {
@@ -64,7 +64,8 @@ char *Q_strcat( char *dst, size_t dlen, const char *src ) {
 		abort(); /* buffer overflow */
 	}
 
-	return Q_strncpyz( dst + n, src, dlen - n );
+	Q_strncpyz( dst + n, src, dlen - n );
+	return dst;
 }
 
 
@@ -75,7 +76,8 @@ char *Q_strncat( char *dst, size_t dlen, const char *src, size_t slen ) {
 		abort(); /* buffer overflow */
 	}
 
-	return Q_strncpyz( dst + n, src, MIN( slen, dlen - n ) );
+	Q_strncpyz( dst + n, src, MIN( slen, dlen - n ) );
+	return dst;
 }
 
 
@@ -132,7 +134,7 @@ int FixAAS( int argc, char **argv ){
 	/* do some path mangling */
 	strcpy( source, ExpandArg( argv[ argc - 1 ] ) );
 	StripExtension( source );
-	DefaultExtension( source, ".bsp" );
+	DefaultExtension( source, ".bsp", sizeof( source ) );
 
 	/* note it */
 	Sys_Printf( "--- FixAAS ---\n" );
@@ -364,11 +366,11 @@ int BSPInfo( int count, char **fileNames ){
 
 		/* mangle filename and get size */
 		strcpy( source, fileNames[ i ] );
-		ExtractFileExtension( source, ext );
+		ExtractFileExtension( source, ext, sizeof( ext ) );
 		if ( !Q_stricmp( ext, "map" ) ) {
 			StripExtension( source );
 		}
-		DefaultExtension( source, ".bsp" );
+		DefaultExtension( source, ".bsp", sizeof( source ) );
 		f = fopen( source, "rb" );
 		if ( f ) {
 			size = Q_filelength( f );
@@ -427,7 +429,7 @@ int ScaleBSPMain( int argc, char **argv ){
 	/* do some path mangling */
 	strcpy( source, ExpandArg( argv[ argc - 1 ] ) );
 	StripExtension( source );
-	DefaultExtension( source, ".bsp" );
+	DefaultExtension( source, ".bsp", sizeof( source ) );
 
 	/* load the bsp */
 	Sys_Printf( "Loading %s\n", source );
@@ -499,7 +501,7 @@ int ScaleBSPMain( int argc, char **argv ){
 	/* write the bsp */
 	UnparseEntities();
 	StripExtension( source );
-	DefaultExtension( source, "_s.bsp" );
+	DefaultExtension( source, "_s.bsp", sizeof( source ) );
 	Sys_Printf( "Writing %s\n", source );
 	WriteBSPFile( source );
 
@@ -555,7 +557,7 @@ int ConvertBSPMain( int argc, char **argv ){
 	/* clean up map name */
 	strcpy( source, ExpandArg( argv[ i ] ) );
 	StripExtension( source );
-	DefaultExtension( source, ".bsp" );
+	DefaultExtension( source, ".bsp", sizeof( source ) );
 
 	LoadShaderInfo();
 
@@ -576,7 +578,7 @@ int ConvertBSPMain( int argc, char **argv ){
 
 		/* write bsp */
 		StripExtension( source );
-		DefaultExtension( source, "_c.bsp" );
+		DefaultExtension( source, "_c.bsp", sizeof( source ) );
 		Sys_Printf( "Writing %s\n", source );
 		WriteBSPFile( source );
 

@@ -133,7 +133,7 @@ char *ExpandReletivePath( char *p ){
 char *copystring( char *s ){
 	char    *b;
 	b = (char*)malloc( strlen( s ) + 1 );
-	strcpy( b,s );
+	strcpy( b, s );
 	return b;
 }
 
@@ -282,7 +282,7 @@ int BuildShortPathName( const char* pPath, char* pBuffer, int nBufferLen ){
 	int nResult = GetFullPathName( pPath, nBufferLen, pBuffer, &pFile );
 	nResult = GetShortPathName( pPath, pBuffer, nBufferLen );
 	if ( nResult == 0 ) {
-		strcpy( pBuffer, pPath );               // Use long filename
+		Q_strncpyz( pBuffer, pPath, nBufferLen );               // Use long filename
 	}
 	return nResult;
 }
@@ -354,7 +354,7 @@ void HandleXMLError( void* ctxt, const char* text, ... ){
 	static char buf[32768];
 
 	va_start( argptr,text );
-	vsprintf( buf, text, argptr );
+	vsnprintf( buf, sizeof( buf ), text, argptr );
 	Sys_FPrintf( SYS_ERR, "XML %s\n", buf );
 	va_end( argptr );
 }
@@ -654,9 +654,9 @@ bool QE_LoadProject( const char *projectfile ){
 		}
 
 		// create the writable project file path
-		strcpy( buf, g_qeglobals.m_strHomeGame.GetBuffer() );
-		strcat( buf, g_pGameDescription->mBaseGame.GetBuffer() );
-		strcat( buf, G_DIR_SEPARATOR_S "scripts" G_DIR_SEPARATOR_S );
+		Q_strncpyz( buf, g_qeglobals.m_strHomeGame.GetBuffer(), sizeof( buf ) );
+		strncat( buf, g_pGameDescription->mBaseGame.GetBuffer(), sizeof( buf ) );
+		strncat( buf, G_DIR_SEPARATOR_S "scripts" G_DIR_SEPARATOR_S, sizeof( buf ) );
 		// while the filename is already in use, increment the number we add to the end
 		int counter = 0;
 		char pUser[PATH_MAX];
@@ -666,7 +666,7 @@ bool QE_LoadProject( const char *projectfile ){
 			counter++;
 			if ( access( pUser, R_OK ) != 0 ) {
 				// this is the one
-				strcpy( buf, pUser );
+				Q_strncpyz( buf, pUser, sizeof( buf ) );
 				break;
 			}
 		}
@@ -1393,7 +1393,7 @@ void buffer_write_escaped_mnemonic( char* buffer, const char* string ){
 }
 
 static void MRU_SetText( int index, const char *filename ){
-	strcpy( MRU_filenames[index], filename );
+	Q_strncpyz( MRU_filenames[index], filename, sizeof( MRU_filenames[index] ) );
 
 	char mnemonic[PATH_MAX * 2 + 4];
 	mnemonic[0] = '_';
@@ -1531,9 +1531,9 @@ void ProjectDialog(){
 	 * store it in buffer.
 	 */
 
-	strcpy( buffer, g_qeglobals.m_strHomeGame.GetBuffer() );
-	strcat( buffer, g_pGameDescription->mBaseGame.GetBuffer() );
-	strcat( buffer, "/scripts/" );
+	Q_strncpyz( buffer, g_qeglobals.m_strHomeGame.GetBuffer(), sizeof( buffer ) );
+	strncat( buffer, g_pGameDescription->mBaseGame.GetBuffer(), sizeof( buffer ) );
+	strncat( buffer, "/scripts/", sizeof( buffer ) );
 
 	// Display the Open dialog box
 	filename = file_dialog( NULL, TRUE, _( "Open File" ), buffer, "project" );
@@ -1590,7 +1590,7 @@ void FillBSPMenu(){
 	if ( g_qeglobals.bBSPFrontendPlugin ) {
 		CString str = g_BSPFrontendTable.m_pfnGetBSPMenu();
 		char cTemp[1024];
-		strcpy( cTemp, str );
+		Q_strncpyz( cTemp, str, sizeof( cTemp ) );
 		char* token = strtok( cTemp, ",;" );
 		if ( token && *token == ' ' ) {
 			while ( *token == ' ' )

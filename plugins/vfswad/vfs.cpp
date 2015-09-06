@@ -85,11 +85,11 @@ static int g_numDirs;
 // =============================================================================
 // Static functions
 
-static void vfsAddSlash( char *str ){
+static void vfsAddSlash( char *str, size_t length ){
 	int n = strlen( str );
 	if ( n > 0 ) {
 		if ( str[n - 1] != '\\' && str[n - 1] != '/' ) {
-			strcat( str, "/" );
+			strncat( str, "/", length );
 		}
 	}
 }
@@ -224,7 +224,7 @@ static GSList* vfsGetListInternal( const char *refdir, const char *ext, bool dir
 		strcpy( dirname, refdir );
 		strlwr( dirname );
 		vfsFixDOSName( dirname );
-		vfsAddSlash( dirname );
+		vfsAddSlash( dirname, sizeof( dirname ) );
 	}
 	else{
 		dirname[0] = '\0';
@@ -299,8 +299,8 @@ static GSList* vfsGetListInternal( const char *refdir, const char *ext, bool dir
 
 	for ( i = 0; i < g_numDirs; i++ )
 	{
-		strcpy( basedir, g_strDirs[i] );
-		strcat( basedir, dirname );
+		Q_strncpyz( basedir, g_strDirs[i], sizeof( basedir ) );
+		strncat( basedir, dirname, sizeof( basedir ) );
 
 		GDir* dir = g_dir_open( basedir, 0, NULL );
 
@@ -316,7 +316,7 @@ static GSList* vfsGetListInternal( const char *refdir, const char *ext, bool dir
 					continue;
 				}
 
-				sprintf( filename, "%s%s", basedir, name );
+				snprintf( filename, sizeof( filename ), "%s%s", basedir, name );
 				stat( filename, &st );
 
 				if ( ( S_ISDIR( st.st_mode ) != 0 ) != directories ) {
@@ -368,7 +368,7 @@ void vfsInitDirectory( const char *path ){
 
 	strcpy( g_strDirs[g_numDirs], path );
 	vfsFixDOSName( g_strDirs[g_numDirs] );
-	vfsAddSlash( g_strDirs[g_numDirs] );
+	vfsAddSlash( g_strDirs[g_numDirs], sizeof( g_strDirs[g_numDirs] ) );
 	g_numDirs++;
 
 //  if (g_PrefsDlg.m_bPAK)
@@ -468,8 +468,8 @@ int vfsGetFileCount( const char *filename, int flag ){
 	if ( !flag || ( flag & VFS_SEARCH_DIR ) ) {
 		for ( i = 0; i < g_numDirs; i++ )
 		{
-			strcpy( tmp, g_strDirs[i] );
-			strcat( tmp, fixed );
+			Q_strncpyz( tmp, g_strDirs[i], sizeof( tmp ) );
+			strncat( tmp, fixed, sizeof( tmp ) );
 			if ( access( tmp, R_OK ) == 0 ) {
 				count++;
 			}
@@ -520,8 +520,8 @@ int vfsLoadFile( const char *filename, void **bufferptr, int index ){
 
 	for ( i = 0; i < g_numDirs; i++ )
 	{
-		strcpy( tmp, g_strDirs[i] );
-		strcat( tmp, filename );
+		Q_strncpyz( tmp, g_strDirs[i], sizeof( tmp ) );
+		strncat( tmp, filename, sizeof( tmp ) );
 		if ( access( tmp, R_OK ) == 0 ) {
 			if ( count == index ) {
 				return vfsLoadFullPathFile( tmp,bufferptr );
@@ -709,7 +709,7 @@ char* vfsGetFullPath( const char *in, int index, int flag ){
 				lastptr = ptr + 1;
 
 			if ( strcmp( lastptr, fixed ) == 0 ) {
-				strncpy( out,file->name,PATH_MAX );
+				Q_strncpyz( out, file->name, sizeof( out ) );
 				return out;
 			}
 		}
@@ -719,8 +719,8 @@ char* vfsGetFullPath( const char *in, int index, int flag ){
 	if ( !flag || ( flag & VFS_SEARCH_DIR ) ) {
 		for ( i = 0; i < g_numDirs; i++ )
 		{
-			strcpy( tmp, g_strDirs[i] );
-			strcat( tmp, in );
+			Q_strncpyz( tmp, g_strDirs[i], sizeof( tmp ) );
+			strncat( tmp, in, sizeof( tmp ) );
 			if ( access( tmp, R_OK ) == 0 ) {
 				if ( count == index ) {
 					strcpy( out, tmp );

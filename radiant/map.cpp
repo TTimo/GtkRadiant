@@ -549,7 +549,7 @@ void Map_LoadFile( const char *filename ){
 	// used when conversion between standard map format and BP format is required and the user cancels the process
 	g_bCancel_Map_LoadFile = false;
 
-	strcpy( currentmap, filename );
+	Q_strncpyz( currentmap, filename, sizeof( currentmap ) );
 
 	g_bScreenUpdates = false; // leo: avoid redraws while loading the map (see fenris:1952)
 
@@ -778,9 +778,9 @@ void Map_SaveFile( const char *filename, qboolean use_region ){
 		char backup[1024];
 
 		// rename current to .bak
-		strcpy( backup, filename );
+		Q_strncpyz( backup, filename, sizeof( backup ) );
 		StripExtension( backup );
-		strcat( backup, ".bak" );
+		strncat( backup, ".bak", sizeof( backup ) );
 		unlink( backup );
 		rename( filename, backup );
 	}
@@ -1272,7 +1272,7 @@ void MemFile_fprintf( MemStream* pMemFile, const char* pText, ... ){
 	char Buffer[4096];
 	va_list args;
 	va_start( args,pText );
-	vsprintf( Buffer, pText, args );
+	vsnprintf( Buffer, sizeof( Buffer ), pText, args );
 	pMemFile->Write( Buffer, strlen( Buffer ) );
 }
 
