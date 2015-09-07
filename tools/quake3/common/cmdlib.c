@@ -292,7 +292,7 @@ double I_FloatTime( void ){
 void Q_getwd( char *out ){
 	int i = 0;
 
-#ifdef WIN32
+#ifdef _WIN32
 	_getcwd( out, 256 );
 	strncat( out, "\\", sizeof( out ) );
 #else
@@ -311,7 +311,7 @@ void Q_getwd( char *out ){
 
 
 void Q_mkdir( const char *path ){
-#ifdef WIN32
+#ifdef _WIN32
 	if ( _mkdir( path ) != -1 ) {
 		return;
 	}
@@ -682,7 +682,7 @@ void    SaveFile( const char *filename, const void *buffer, int count ){
 
 
 
-void DefaultExtension( char *path, const char *extension ){
+void DefaultExtension( char *path, const char *extension, size_t length ){
 	char    *src;
 //
 // if path doesnt have a .EXT, append extension
@@ -698,7 +698,7 @@ void DefaultExtension( char *path, const char *extension ){
 		src--;
 	}
 
-	strncat( path, extension, sizeof( path ) );
+	strncat( path, extension, length );
 }
 
 
@@ -780,7 +780,7 @@ void ExtractFileBase( const char *path, char *dest ){
 	*dest = 0;
 }
 
-void ExtractFileExtension( const char *path, char *dest ){
+void ExtractFileExtension( const char *path, char *dest, size_t length ){
 	const char    *src;
 
 	src = path + strlen( path ) - 1;
@@ -795,7 +795,7 @@ void ExtractFileExtension( const char *path, char *dest ){
 		return;
 	}
 
-	Q_strncpyz( dest, src, sizeof( dest ) );
+	Q_strncpyz( dest, src, length );
 }
 
 
@@ -1078,7 +1078,7 @@ void QCopyFile( const char *from, const char *to ){
 }
 
 void Sys_Sleep( int n ){
-#ifdef WIN32
+#ifdef _WIN32
 	Sleep( n );
 #endif
 #if defined ( __linux__ ) || defined ( __APPLE__ )

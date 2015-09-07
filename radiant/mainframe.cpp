@@ -2195,7 +2195,7 @@ void clipboard_paste(){
 }
 
 
-#elif defined( WIN32 )
+#elif defined( _WIN32 )
 
 void clipboard_copy(){
 	Clipboard_CopyMap();
@@ -3562,7 +3562,7 @@ void MainFrame::LoadCommandMap(){
 
 #if defined ( __linux__ ) || defined ( __APPLE__ )
 	strINI = g_PrefsDlg.m_rc_path->str;
-#elif defined( WIN32 )
+#elif defined( _WIN32 )
 	strINI = g_strGameToolsPath;
 #else
 #error "WTF are you compiling this on"

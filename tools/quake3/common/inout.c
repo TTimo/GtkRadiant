@@ -33,7 +33,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
-#ifdef WIN32
+#ifdef _WIN32
 #include <direct.h>
 #include <windows.h>
 #endif
@@ -49,7 +49,7 @@
 // utf8 conversion
 #include <glib.h>
 
-#ifdef WIN32
+#ifdef _WIN32
 HWND hwndOut = NULL;
 qboolean lookedForServer = qfalse;
 UINT wm_BroadcastCommand = -1;

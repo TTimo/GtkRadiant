@@ -114,14 +114,14 @@ int     TryLoadFile( const char *filename, void **bufferptr );
 void    SaveFile( const char *filename, const void *buffer, int count );
 qboolean    FileExists( const char *filename );
 
-void    DefaultExtension( char *path, const char *extension );
+void    DefaultExtension( char *path, const char *extension, size_t length );
 void    DefaultPath( char *path, const char *basepath );
 void    StripFilename( char *path );
 void    StripExtension( char *path );
 
 void    ExtractFilePath( const char *path, char *dest );
 void    ExtractFileBase( const char *path, char *dest );
-void    ExtractFileExtension( const char *path, char *dest );
+void    ExtractFileExtension( const char *path, char *dest, size_t length );
 
 int     ParseNum( const char *str );
 

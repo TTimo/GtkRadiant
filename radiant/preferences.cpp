@@ -501,7 +501,7 @@ qboolean CXMLPropertyBag::WriteXMLFile( const char* pFilename ){
 // =============================================================================
 // Widget callbacks for PrefsDlg
 
-#if !defined( WIN32 )
+#if !defined( _WIN32 )
 // browse for custom editor executable
 static void OnBtnBrowseEditor( GtkWidget *widget, gpointer data ){
 	PrefsDlg *dlg = (PrefsDlg*)data;
@@ -685,7 +685,7 @@ PrefsDlg::PrefsDlg (){
    =========================================================
  */
 
-#if defined( WIN32 )
+#if defined( _WIN32 )
 #define TOOLS_ATTRIBUTE "gametools_win32"
 #define EXECUTABLES_ATTRIBUTE "executables_win32"
 #define ENGINE_ATTRIBUTE "engine_win32"

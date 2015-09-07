@@ -135,6 +135,9 @@
     <ClCompile Include="unzip.c" />
     <ClCompile Include="vfs.c" />
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="cmdlib.h" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

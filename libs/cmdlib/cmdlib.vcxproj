@@ -122,6 +122,9 @@
   <ItemGroup>
     <ClCompile Include="cmdlib.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\cmdlib.h" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
