@@ -86,17 +86,17 @@ static int DoColor( GdkRGBA *color ){
 }
 
 static void Set2DText( GtkWidget* label ){
-	char s[40];
+	char s[64];
 
-	sprintf( s, "Line Width = %6.3f", portals.width_2d * 0.5f );
+	snprintf( s, sizeof( s ), "Line Width = %6.3f", portals.width_2d * 0.5f );
 
 	gtk_label_set_text( GTK_LABEL( label ), s );
 }
 
 static void Set3DText( GtkWidget* label ){
-	char s[40];
+	char s[64];
 
-	sprintf( s, "Line Width = %6.3f", portals.width_3d * 0.5f );
+	snprintf( s, sizeof( s ), "Line Width = %6.3f", portals.width_3d * 0.5f );
 
 	gtk_label_set_text( GTK_LABEL( label ), s );
 }
@@ -104,7 +104,7 @@ static void Set3DText( GtkWidget* label ){
 static void Set3DTransText( GtkWidget* label ){
 	char s[40];
 
-	sprintf( s, "Polygon transparency = %d%%", (int)portals.trans_3d );
+	snprintf( s, sizeof( s ), "Polygon transparency = %d%%", (int)portals.trans_3d );
 
 	gtk_label_set_text( GTK_LABEL( label ), s );
 }
@@ -112,7 +112,7 @@ static void Set3DTransText( GtkWidget* label ){
 static void SetClipText( GtkWidget* label ){
 	char s[40];
 
-	sprintf( s, "Cubic clip range = %d", (int)portals.clip_range * 64 );
+	snprintf( s, sizeof( s ), "Cubic clip range = %d", (int)portals.clip_range * 64 );
 
 	gtk_label_set_text( GTK_LABEL( label ), s );
 }

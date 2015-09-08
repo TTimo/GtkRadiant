@@ -367,7 +367,7 @@ bool DShape::BuildPit( vec3_t min, vec3_t max ){
 	int team = ( rand() % 10000 ) + 5000;
 
 // ************* SPEAKER ***************
-	sprintf( buffer, "t%i_1", team );
+	snprintf( buffer, sizeof( buffer ), "t%i_1", team );
 
 // trigger for speaker
 	vec3_t triggerVoiceBtm;
@@ -388,7 +388,7 @@ bool DShape::BuildPit( vec3_t min, vec3_t max ){
 	DEntity* targetVoice = m_Container.AddEntity( "target_speaker" );
 	targetVoice->AddEPair( "targetname", buffer );
 
-	sprintf( buffer, "%f %f %f", voiceOrigin[0], voiceOrigin[1], voiceOrigin[2] );
+	snprintf( buffer, sizeof( buffer ), "%f %f %f", voiceOrigin[0], voiceOrigin[1], voiceOrigin[2] );
 	targetVoice->AddEPair( "origin", buffer );
 	targetVoice->AddEPair( "spawnflags", "8" );
 	targetVoice->AddEPair( "noise", "*falling1.wav" );
@@ -397,7 +397,7 @@ bool DShape::BuildPit( vec3_t min, vec3_t max ){
 // *********** END SPEAKER *************
 
 // ********* POWERUP REMOVAL ***********
-	sprintf( buffer, "t%i_2", team );
+	snprintf( buffer, sizeof( buffer ), "t%i_2", team );
 
 // trigger for powerup removal
 	vec3_t triggerPwrRmvTop, triggerPwrRmvBtm;
@@ -420,7 +420,7 @@ bool DShape::BuildPit( vec3_t min, vec3_t max ){
 	DEntity* targetPwrRmv = m_Container.AddEntity( "target_remove_powerups" );
 	targetPwrRmv->AddEPair( "targetname", buffer );
 
-	sprintf( buffer, "%f %f %f", pwrRmvOrigin[0], pwrRmvOrigin[1], pwrRmvOrigin[2] );
+	snprintf( buffer, sizeof( buffer ), "%f %f %f", pwrRmvOrigin[0], pwrRmvOrigin[1], pwrRmvOrigin[2] );
 	targetPwrRmv->AddEPair( "origin", buffer );
 //--------------------
 

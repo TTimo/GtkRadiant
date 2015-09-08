@@ -41,13 +41,13 @@ static void DoNewCamera( idCameraPosition::positionType type ){
 
 	if ( cam ) {
 		char buf[128];
-		sprintf( buf, "camera%i", cam->GetCamNum() );
+		snprintf( buf, sizeof( buf ), "camera%i", cam->GetCamNum() );
 
 		cam->GetCam()->startNewCamera( type );
 		cam->GetCam()->setName( buf );
 		cam->GetCam()->buildCamera();
 
-		sprintf( buf, "Unsaved Camera %i", cam->GetCamNum() );
+		snprintf( buf, sizeof( buf ), "Unsaved Camera %i", cam->GetCamNum() );
 		cam->SetFileName( buf, false );
 
 		SetCurrentCam( cam );

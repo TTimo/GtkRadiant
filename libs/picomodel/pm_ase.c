@@ -408,8 +408,7 @@ static picoModel_t *_ase_load( PM_PARAMS_LOAD ){
 			}
 
 			/* remember node name */
-			strncpy( lastNodeName, ptr, sizeof( lastNodeName ) - 1 );
-			lastNodeName[sizeof( lastNodeName ) - 1] = 0;
+			Q_strncpyz( lastNodeName, ptr, sizeof( lastNodeName ) );
 		}
 		/* model mesh (originally contained within geomobject) */
 		else if ( !_pico_stricmp( p->token, "*mesh" ) ) {
@@ -802,7 +801,7 @@ static picoModel_t *_ase_load( PM_PARAMS_LOAD ){
 						_ase_error_return( "Missing material name" );
 					}
 
-					strncpy( materialName, name, sizeof( materialName ) - 1 );
+					Q_strncpyz( materialName, name, sizeof( materialName ) );
 					materialName[sizeof( materialName ) - 1] = 0;
 					/* skip rest and continue with next token */
 					_pico_parse_skip_rest( p );

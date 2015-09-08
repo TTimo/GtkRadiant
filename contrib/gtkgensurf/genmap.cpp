@@ -192,7 +192,7 @@ int MapPatches(){
 			NH_patch -= 2;
 		NH_remain -= ( NH_patch - 1 );
 		if ( NH_remain < 0 ) {
-			sprintf( szOops, "Oops... screwed up with NH=%d", NH );
+			snprintf( szOops, sizeof( szOops ), "Oops... screwed up with NH=%d", NH );
 			g_FuncTable.m_pfnMessageBox( NULL, szOops, "Uh oh", 0, NULL );
 		}
 		NV_remain = NV + 1;
@@ -233,7 +233,7 @@ int MapPatches(){
 				NV_patch -= 2;
 			NV_remain -= ( NV_patch - 1 );
 			if ( NV_remain < 0 ) {
-				sprintf( szOops, "Oops... screwed up with NV=%d", NV );
+				snprintf( szOops, sizeof( szOops ), "Oops... screwed up with NV=%d", NV );
 				g_FuncTable.m_pfnMessageBox( NULL, szOops, "Uh oh", 0, NULL );
 			}
 
@@ -287,9 +287,9 @@ void MapBrushes(){
 	BRUSH brush;
 	XYZ v[8];
 
-	strcpy( surftext,Texture[Game][0] );
-	strcpy( sidetext,( strlen( Texture[Game][1] ) ? Texture[Game][1] : Texture[Game][0] ) );
-	strcpy( surftext2,( strlen( Texture[Game][2] ) ? Texture[Game][2] : Texture[Game][0] ) );
+	Q_strncpyz( surftext, Texture[Game][0], sizeof( surftext ) );
+	Q_strncpyz( sidetext,( strlen( Texture[Game][1] ) ? Texture[Game][1] : Texture[Game][0] ), sizeof( sidetext ) );
+	Q_strncpyz( surftext2,( strlen( Texture[Game][2] ) ? Texture[Game][2] : Texture[Game][0] ), sizeof( surftext2 )  );
 
 	// if surftext2 is identical to surftext, there's no need to
 	// check surface angle
@@ -376,8 +376,8 @@ void MapBrushes(){
 			XYZtoV( &v[0],&brush.face[0].v[0] );
 			XYZtoV( &v[3],&brush.face[0].v[1] );
 			XYZtoV( &v[4],&brush.face[0].v[2] );
-			strcpy( brush.face[0].texture,
-					( strlen( Texture[Game][1] ) ? Texture[Game][1] : Texture[Game][0] ) );
+			Q_strncpyz( brush.face[0].texture,
+					( strlen( Texture[Game][1] ) ? Texture[Game][1] : Texture[Game][0] ), sizeof( brush.face[0].texture ) );
 			brush.face[0].Shift[0] = (float)TexOffset[0];
 			brush.face[0].Shift[1] = (float)TexOffset[1];
 			brush.face[0].Rotate   = 0.;
@@ -390,8 +390,8 @@ void MapBrushes(){
 			XYZtoV( &v[1],&brush.face[1].v[0] );
 			XYZtoV( &v[4],&brush.face[1].v[1] );
 			XYZtoV( &v[5],&brush.face[1].v[2] );
-			strcpy( brush.face[1].texture,
-					( strlen( Texture[Game][1] ) ? Texture[Game][1] : Texture[Game][0] ) );
+			Q_strncpyz( brush.face[1].texture,
+					( strlen( Texture[Game][1] ) ? Texture[Game][1] : Texture[Game][0] ), sizeof( brush.face[1].texture ) );
 			brush.face[1].Shift[0] = (float)TexOffset[0];
 			brush.face[1].Shift[1] = (float)TexOffset[1];
 			brush.face[1].Rotate   = 0.;
@@ -404,8 +404,8 @@ void MapBrushes(){
 			XYZtoV( &v[2],&brush.face[2].v[0] );
 			XYZtoV( &v[5],&brush.face[2].v[1] );
 			XYZtoV( &v[3],&brush.face[2].v[2] );
-			strcpy( brush.face[2].texture,
-					( strlen( Texture[Game][1] ) ? Texture[Game][1] : Texture[Game][0] ) );
+			Q_strncpyz( brush.face[2].texture,
+					( strlen( Texture[Game][1] ) ? Texture[Game][1] : Texture[Game][0] ), sizeof( brush.face[2].texture ) );
 			brush.face[2].Shift[0] = (float)TexOffset[0];
 			brush.face[2].Shift[1] = (float)TexOffset[1];
 			brush.face[2].Rotate   = 0.;
@@ -426,21 +426,21 @@ void MapBrushes(){
 				}
 				else
 				{
-					strcpy( surft,surftext );
+					Q_strncpyz( surft, surftext, sizeof( surft ) );
 					surf = surface[0];
 				}
 			}
 			else
 			{
-				strcpy( surft,surftext );
+				Q_strncpyz( surft, surftext, sizeof( surft ) );
 				surf = surface[0];
 			}
 
 			XYZtoV( &v[3],&brush.face[3].v[0] );
 			XYZtoV( &v[5],&brush.face[3].v[1] );
 			XYZtoV( &v[4],&brush.face[3].v[2] );
-			strcpy( brush.face[3].texture,
-					( Plane == PLANE_XZ0 || Plane == PLANE_XZ1 ? surft : sidetext ) );
+			Q_strncpyz( brush.face[3].texture,
+					( Plane == PLANE_XZ0 || Plane == PLANE_XZ1 ? surft : sidetext ), sizeof( brush.face[3].texture ) );
 			brush.face[3].Shift[0] = (float)TexOffset[0];
 			brush.face[3].Shift[1] = (float)TexOffset[1];
 			brush.face[3].Rotate   = 0.;
@@ -461,21 +461,21 @@ void MapBrushes(){
 				}
 				else
 				{
-					strcpy( surft,surftext );
+					Q_strncpyz( surft, surftext, sizeof( surft ) );
 					surf = surface[0];
 				}
 			}
 			else
 			{
-				strcpy( surft,surftext );
+				Q_strncpyz( surft, surftext, sizeof( surft ) );
 				surf = surface[0];
 			}
 
 			XYZtoV( &v[0],&brush.face[4].v[0] );
 			XYZtoV( &v[1],&brush.face[4].v[1] );
 			XYZtoV( &v[2],&brush.face[4].v[2] );
-			strcpy( brush.face[4].texture,
-					( Plane == PLANE_XZ0 || Plane == PLANE_XZ1 ? sidetext : surft ) );
+			Q_strncpyz( brush.face[4].texture,
+					( Plane == PLANE_XZ0 || Plane == PLANE_XZ1 ? sidetext : surft ), sizeof( brush.face[4].texture ) );
 			brush.face[4].Shift[0] = (float)TexOffset[0];
 			brush.face[4].Shift[1] = (float)TexOffset[1];
 			brush.face[4].Rotate   = 0.;
@@ -544,8 +544,8 @@ void MapBrushes(){
 			XYZtoV( &v[0],&brush.face[0].v[0] );
 			XYZtoV( &v[3],&brush.face[0].v[1] );
 			XYZtoV( &v[4],&brush.face[0].v[2] );
-			strcpy( brush.face[0].texture,
-					( strlen( Texture[Game][1] ) ? Texture[Game][1] : Texture[Game][0] ) );
+			Q_strncpyz( brush.face[0].texture,
+					( strlen( Texture[Game][1] ) ? Texture[Game][1] : Texture[Game][0] ), sizeof( brush.face[0].texture ) );
 			brush.face[0].Shift[0] = (float)TexOffset[0];
 			brush.face[0].Shift[1] = (float)TexOffset[1];
 			brush.face[0].Rotate   = 0.;
@@ -558,8 +558,8 @@ void MapBrushes(){
 			XYZtoV( &v[1],&brush.face[1].v[0] );
 			XYZtoV( &v[4],&brush.face[1].v[1] );
 			XYZtoV( &v[5],&brush.face[1].v[2] );
-			strcpy( brush.face[1].texture,
-					( strlen( Texture[Game][1] ) ? Texture[Game][1] : Texture[Game][0] ) );
+			Q_strncpyz( brush.face[1].texture,
+					( strlen( Texture[Game][1] ) ? Texture[Game][1] : Texture[Game][0] ), sizeof( brush.face[1].texture ) );
 			brush.face[1].Shift[0] = (float)TexOffset[0];
 			brush.face[1].Shift[1] = (float)TexOffset[1];
 			brush.face[1].Rotate   = 0.;
@@ -572,8 +572,8 @@ void MapBrushes(){
 			XYZtoV( &v[2],&brush.face[2].v[0] );
 			XYZtoV( &v[5],&brush.face[2].v[1] );
 			XYZtoV( &v[3],&brush.face[2].v[2] );
-			strcpy( brush.face[2].texture,
-					( strlen( Texture[Game][1] ) ? Texture[Game][1] : Texture[Game][0] ) );
+			Q_strncpyz( brush.face[2].texture,
+					( strlen( Texture[Game][1] ) ? Texture[Game][1] : Texture[Game][0] ), sizeof( brush.face[2].texture ) );
 			brush.face[2].Shift[0] = (float)TexOffset[0];
 			brush.face[2].Shift[1] = (float)TexOffset[1];
 			brush.face[2].Rotate   = 0.;
@@ -594,20 +594,20 @@ void MapBrushes(){
 				}
 				else
 				{
-					strcpy( surft,surftext );
+					Q_strncpyz( surft, surftext, sizeof( surft ) );
 					surf = surface[0];
 				}
 			}
 			else
 			{
-				strcpy( surft,surftext );
+				Q_strncpyz( surft, surftext, sizeof( surft ) );
 				surf = surface[0];
 			}
 			XYZtoV( &v[3],&brush.face[3].v[0] );
 			XYZtoV( &v[5],&brush.face[3].v[1] );
 			XYZtoV( &v[4],&brush.face[3].v[2] );
-			strcpy( brush.face[3].texture,
-					( Plane == PLANE_XZ0 || Plane == PLANE_XZ1 ? surft : sidetext ) );
+			Q_strncpyz( brush.face[3].texture,
+					( Plane == PLANE_XZ0 || Plane == PLANE_XZ1 ? surft : sidetext ), sizeof( brush.face[3].texture ) );
 			brush.face[3].Shift[0] = (float)TexOffset[0];
 			brush.face[3].Shift[1] = (float)TexOffset[1];
 			brush.face[3].Rotate   = 0.;
@@ -623,25 +623,25 @@ void MapBrushes(){
 				CrossProduct( t[0],t[1],SurfNormal );
 				VectorNormalize( SurfNormal,SurfNormal );
 				if ( DotProduct( SurfNormal,PlaneNormal ) < Steep ) {
-					strcpy( surft,surftext2 );
+					Q_strncpyz( surft, surftext2, sizeof( surft ) );
 					surf = surface[2];
 				}
 				else
 				{
-					strcpy( surft,surftext );
+					Q_strncpyz( surft, surftext, sizeof( surft ) );
 					surf = surface[0];
 				}
 			}
 			else
 			{
-				strcpy( surft,surftext );
+				Q_strncpyz( surft, surftext, sizeof( surft ) );
 				surf = surface[0];
 			}
 			XYZtoV( &v[0],&brush.face[4].v[0] );
 			XYZtoV( &v[1],&brush.face[4].v[1] );
 			XYZtoV( &v[2],&brush.face[4].v[2] );
-			strcpy( brush.face[4].texture,
-					( Plane == PLANE_XZ0 || Plane == PLANE_XZ1 ? sidetext : surft ) );
+			Q_strncpyz( brush.face[4].texture,
+					( Plane == PLANE_XZ0 || Plane == PLANE_XZ1 ? sidetext : surft ), sizeof( brush.face[4].texture ) );
 			brush.face[4].Shift[0] = (float)TexOffset[0];
 			brush.face[4].Shift[1] = (float)TexOffset[1];
 			brush.face[4].Rotate   = 0.;
@@ -806,7 +806,7 @@ void MapBrushes(){
 					XYZtoV( &v[0],&brush.face[0].v[0] );
 					XYZtoV( &v[1],&brush.face[0].v[1] );
 					XYZtoV( &v[2],&brush.face[0].v[2] );
-					strcpy( brush.face[0].texture,skip );
+					Q_strncpyz( brush.face[0].texture, skip, sizeof( brush.face[0].texture ) );
 					brush.face[0].Shift[0] = 0.;
 					brush.face[0].Shift[1] = 0.;
 					brush.face[0].Rotate   = 0.;
@@ -819,7 +819,7 @@ void MapBrushes(){
 					XYZtoV( &v[4],&brush.face[1].v[0] );
 					XYZtoV( &v[7],&brush.face[1].v[1] );
 					XYZtoV( &v[6],&brush.face[1].v[2] );
-					strcpy( brush.face[1].texture,skip );
+					Q_strncpyz( brush.face[1].texture, skip, sizeof( brush.face[1].texture ) );
 					brush.face[1].Shift[0] = 0.;
 					brush.face[1].Shift[1] = 0.;
 					brush.face[1].Rotate   = 0.;
@@ -832,7 +832,7 @@ void MapBrushes(){
 					XYZtoV( &v[0],&brush.face[2].v[0] );
 					XYZtoV( &v[4],&brush.face[2].v[1] );
 					XYZtoV( &v[5],&brush.face[2].v[2] );
-					strcpy( brush.face[2].texture,hint );
+					Q_strncpyz( brush.face[2].texture, hint, sizeof( brush.face[2].texture ) );
 					brush.face[2].Shift[0] = 0.;
 					brush.face[2].Shift[1] = 0.;
 					brush.face[2].Rotate   = 0.;
@@ -845,7 +845,7 @@ void MapBrushes(){
 					XYZtoV( &v[1],&brush.face[3].v[0] );
 					XYZtoV( &v[5],&brush.face[3].v[1] );
 					XYZtoV( &v[6],&brush.face[3].v[2] );
-					strcpy( brush.face[3].texture,hint );
+					Q_strncpyz( brush.face[3].texture, hint, sizeof( brush.face[3].texture ) );
 					brush.face[3].Shift[0] = 0.;
 					brush.face[3].Shift[1] = 0.;
 					brush.face[3].Rotate   = 0.;
@@ -858,7 +858,7 @@ void MapBrushes(){
 					XYZtoV( &v[2],&brush.face[4].v[0] );
 					XYZtoV( &v[6],&brush.face[4].v[1] );
 					XYZtoV( &v[7],&brush.face[4].v[2] );
-					strcpy( brush.face[4].texture,hint );
+					Q_strncpyz( brush.face[4].texture, hint, sizeof( brush.face[4].texture ) );
 					brush.face[4].Shift[0] = 0.;
 					brush.face[4].Shift[1] = 0.;
 					brush.face[4].Rotate   = 0.;
@@ -871,7 +871,7 @@ void MapBrushes(){
 					XYZtoV( &v[3],&brush.face[5].v[0] );
 					XYZtoV( &v[7],&brush.face[5].v[1] );
 					XYZtoV( &v[4],&brush.face[5].v[2] );
-					strcpy( brush.face[5].texture,hint );
+					Q_strncpyz( brush.face[5].texture, hint, sizeof( brush.face[5].texture ) );
 					brush.face[5].Shift[0] = 0.;
 					brush.face[5].Shift[1] = 0.;
 					brush.face[5].Rotate   = 0.;
@@ -892,7 +892,7 @@ void MapBrushes(){
 			brush.NumFaces = 5;
 			for ( i = 0; i < 6; i++ )
 			{
-				strcpy( brush.face[i].texture,hint );
+				Q_strncpyz( brush.face[i].texture, hint, sizeof( brush.face[i].texture ) );
 				brush.face[i].Shift[0] = 0.;
 				brush.face[i].Shift[1] = 0.;
 				brush.face[i].Rotate   = 0.;
@@ -2015,7 +2015,7 @@ void MakePatch( patchMesh_t *p ){
 	ret = g_FuncTable.m_pfnCreatePatchHandle();
 	// strcpy(shadername, "textures/");
 	// strcpy(shadername+9, Texture[Game][0]);
-	strcpy( shadername, Texture[Game][0] );
+	Q_strncpyz( shadername, Texture[Game][0], sizeof( shadername ) );
 	g_FuncTable.m_pfnCommitPatchHandleToMap( ret,p,shadername );
 	g_FuncTable.m_pfnReleasePatchHandles();
 }
@@ -2037,12 +2037,12 @@ void MakeBrush( BRUSH *brush ){
 	for ( i = 0; i < brush->NumFaces; i++ )
 	{
 		if ( !strncmp( brush->face[i].texture, "textures/", 9 ) ) {
-			strcpy( QERFaceData.m_TextureName,brush->face[i].texture );
+			Q_strncpyz( QERFaceData.m_TextureName, brush->face[i].texture, sizeof( QERFaceData.m_TextureName ) );
 		}
 		else
 		{
-			strcpy( QERFaceData.m_TextureName,"textures/" );
-			strcpy( QERFaceData.m_TextureName + 9,brush->face[i].texture );
+			strcpy( QERFaceData.m_TextureName, "textures/" );
+			Q_strncpyz( QERFaceData.m_TextureName + 9,brush->face[i].texture, sizeof( QERFaceData.m_TextureName ) - 9 );
 		}
 		QERFaceData.m_nContents = brush->face[i].Contents;
 		QERFaceData.m_nFlags    = brush->face[i].Surface;

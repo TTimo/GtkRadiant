@@ -65,10 +65,10 @@ void    DefaultExtension( char *path, char *extension, size_t length );
 void    DefaultPath( char *path, const char *basepath, size_t length );
 void    StripFilename( char *path );
 void    StripExtension( char *path );
-void    ExtractFilePath( const char *path, char *dest );
-void    ExtractFileName( const char *path, char *dest );
-void    ExtractFileBase( const char *path, char *dest );
-void    ExtractFileExtension( const char *path, char *dest, size_t length );
+void    ExtractFilePath( const char *path, char *dest, size_t size );
+void    ExtractFileName( const char *path, char *dest, size_t size );
+void    ExtractFileBase( const char *path, char *dest, size_t size );
+void    ExtractFileExtension( const char *path, char *dest, size_t size );
 /*!
    \brief create all directories leading to a file path. if you pass a directory, terminate it with a '/'
  */

@@ -322,14 +322,14 @@ static void motion( GtkWidget *widget, GdkEventMotion *event, gpointer data ){
 		{
 		case PLANE_XZ0:
 		case PLANE_XZ1:
-			sprintf( Text," x=%d, z=%d   ",(int)( floor( x - 0.5 ) + 1. ),(int)( floor( y - 0.5 ) + 1. ) );
+			snprintf( Text, sizeof( Text ), " x=%d, z=%d   ", (int)( floor( x - 0.5 ) + 1. ), (int)( floor( y - 0.5 ) + 1. ) );
 			break;
 		case PLANE_YZ0:
 		case PLANE_YZ1:
-			sprintf( Text," y=%d, z=%d   ",(int)( floor( x - 0.5 ) + 1. ),(int)( floor( y - 0.5 ) + 1. ) );
+			snprintf( Text, sizeof( Text ), " y=%d, z=%d   ", (int)( floor( x - 0.5 ) + 1. ), (int)( floor( y - 0.5 ) + 1. ) );
 			break;
 		default:
-			sprintf( Text," x=%d, y=%d   ",(int)( floor( x - 0.5 ) + 1. ),(int)( floor( y - 0.5 ) + 1. ) );
+			snprintf( Text, sizeof( Text ), " x=%d, y=%d   ", (int)( floor( x - 0.5 ) + 1. ), (int)( floor( y - 0.5 ) + 1. ) );
 		}
 
 		texfont_write( Text, rcCoord.left, rcCoord.top );

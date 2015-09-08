@@ -3958,7 +3958,7 @@ void MainFrame::UpdateWindows( int nBits ){
 #ifdef DBG_WINDOWPOS
 	static int bean_count = 0;
 	char bean_buf[100];
-	sprintf( bean_buf,"UpdateWindows %d",bean_count );
+	snprintf( bean_buf, sizeof( bean_buf ), "UpdateWindows %d", bean_count );
 	CheckWatchit( bean_buf );
 	bean_count++;
 #endif
@@ -3993,7 +3993,7 @@ void MainFrame::UpdateWindows( int nBits ){
 		}
 	}
 #ifdef DBG_WINDOWPOS
-	sprintf( bean_buf,"%d (end UpdateWidows)",bean_count );
+	snprintf( bean_buf, sizeof( bean_buf ), "%d (end UpdateWidows)", bean_count );
 	CheckWatchit( bean_buf );
 #endif
 }
@@ -4002,7 +4002,7 @@ void MainFrame::RoutineProcessing(){
 #ifdef DBG_WINDOWPOS
 	static int bean_count = 0;
 	char bean_buf[100];
-	sprintf( bean_buf,"RoutineProcessing %d",bean_count );
+	snprintf( bean_buf, sizeof( bean_buf ), "RoutineProcessing %d", bean_count );
 	CheckWatchit( bean_buf );
 	bean_count++;
 #endif
@@ -4079,7 +4079,7 @@ void MainFrame::RoutineProcessing(){
  */
 	}
 #ifdef DBG_WINDOWPOS
-	sprintf( bean_buf,"%d (end RoutineProcessing)",bean_count );
+	snprintf( bean_buf, sizeof( bean_buf ), "%d (end RoutineProcessing)", bean_count );
 	CheckWatchit( bean_buf );
 #endif
 }
@@ -6243,7 +6243,7 @@ void MainFrame::OnMiscSelectentitycolor(){
 
 		if ( inspector_mode == W_ENTITY && ( DoColor( COLOR_ENTITY ) ) ) {
 			char buffer[256];
-			sprintf( buffer, "%f %f %f", g_qeglobals.d_savedinfo.colors[COLOR_ENTITY][0],
+			snprintf( buffer, sizeof( buffer ), "%f %f %f", g_qeglobals.d_savedinfo.colors[COLOR_ENTITY][0],
 					 g_qeglobals.d_savedinfo.colors[COLOR_ENTITY][1],
 					 g_qeglobals.d_savedinfo.colors[COLOR_ENTITY][2] );
 

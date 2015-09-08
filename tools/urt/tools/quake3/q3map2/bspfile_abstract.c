@@ -608,26 +608,26 @@ void UnparseEntities( void ){
 		}
 
 		/* add beginning brace */
-		strcat( end, "{\n" );
+		strncat( end, "{\n", sizeof( bspEntData ) + bspEntData - end );
 		end += 2;
 
 		/* walk epair list */
 		for ( ep = entities[ i ].epairs; ep != NULL; ep = ep->next )
 		{
 			/* copy and clean */
-			strcpy( key, ep->key );
+			Q_strncpyz( key, ep->key, sizeof( key ) );
 			StripTrailing( key );
-			strcpy( value, ep->value );
+			Q_strncpyz( value, ep->value, sizeof( value ) );
 			StripTrailing( value );
 
 			/* add to buffer */
 			snprintf( line, sizeof( line ), "\"%s\" \"%s\"\n", key, value );
-			strcat( end, line );
+			strncat( end, line, sizeof( bspEntData ) + bspEntData - end );
 			end += strlen( line );
 		}
 
 		/* add trailing brace */
-		strcat( end,"}\n" );
+		strncat( end, "}\n", sizeof( bspEntData ) + bspEntData - end );
 		end += 2;
 
 		/* check for overflow */

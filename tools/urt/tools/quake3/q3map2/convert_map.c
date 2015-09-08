@@ -384,13 +384,13 @@ int ConvertBSPToMap( char *bspName ){
 	Sys_Printf( "--- Convert BSP to MAP ---\n" );
 
 	/* create the bsp filename from the bsp name */
-	strcpy( name, bspName );
+	Q_strncpyz( name, bspName, sizeof( name ) );
 	StripExtension( name );
-	strcat( name, "_converted.map" );
+	strncat( name, "_converted.map", sizeof( name ) );
 	Sys_Printf( "writing %s\n", name );
 
-	ExtractFileBase( bspName, base );
-	strcat( base, ".bsp" );
+	ExtractFileBase( bspName, base, sizeof( base ) );
+	strncat( base, ".bsp", sizeof( base ) );
 
 	/* open it */
 	f = fopen( name, "wb" );

@@ -142,7 +142,7 @@ void init_filetypes(){
 				char buf[16];
 				buf[0] = '*';
 				buf[1] = '.';
-				strcpy( buf + 2, *ext );
+				Q_strncpyz( buf + 2, *ext, sizeof( buf ) - 2 );
 				GetFileTypeRegistry()->addType( MODEL_MAJOR, filetype_t( module->displayName, buf ) );
 			}
 		}

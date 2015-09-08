@@ -193,7 +193,7 @@ static GSList* vfsGetListInternal( const char *dir, const char *ext, bool direct
 	dirlen = strlen( dirname );
 
 	if ( ext != NULL ) {
-		strcpy( extension, ext );
+		Q_strncpyz( extension, ext, sizeof( extension ) );
 	}
 	else{
 		extension[0] = '\0';
@@ -650,7 +650,7 @@ char* vfsExtractRelativePath_short( const char *in, bool shorten ){
 	}
 	vfsCleanFileName( l_in );
 #else
-	strcpy( l_in, in );
+	Q_strncpyz( l_in, in, sizeof( l_in ) );
 	vfsCleanFileName( l_in );
 #endif // ifdef WIN32
 

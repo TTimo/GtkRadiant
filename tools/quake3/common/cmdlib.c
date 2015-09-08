@@ -120,7 +120,7 @@ void ExpandWildcards( int *argc, char ***argv ){
 			return;
 		}
 
-		ExtractFilePath( path, filebase );
+		ExtractFilePath( path, filebase, sizeof( filebase ) );
 
 		do
 		{
@@ -747,8 +747,9 @@ void    StripExtension( char *path ){
  */
 // FIXME: should include the slash, otherwise
 // backing to an empty path will be wrong when appending a slash
-void ExtractFilePath( const char *path, char *dest ){
+void ExtractFilePath( const char *path, char *dest, size_t size ){
 	const char    *src;
+	size_t length;
 
 	src = path + strlen( path ) - 1;
 
@@ -758,13 +759,20 @@ void ExtractFilePath( const char *path, char *dest ){
 	while ( src != path && *( src - 1 ) != '\\' && *( src - 1 ) != '/' )
 		src--;
 
-	memcpy( dest, path, src - path );
-	dest[src - path] = 0;
+	length = src - path;
+	if( length + 1 > size )
+	{
+		length = size - 1;
+	}
+	memcpy( dest, path, length );
+	dest[length] = 0;
 }
 
-void ExtractFileBase( const char *path, char *dest ){
+void ExtractFileBase( const char *path, char *dest, size_t size ){
 	const char    *src;
 
+	if( size <= 0 )
+		return;
 	src = path + strlen( path ) - 1;
 
 //
@@ -775,12 +783,18 @@ void ExtractFileBase( const char *path, char *dest ){
 
 	while ( *src && *src != '.' )
 	{
+		if( size == 1 )
+		{
+			*dest = 0;
+			return;
+		}
 		*dest++ = *src++;
+		size--;
 	}
 	*dest = 0;
 }
 
-void ExtractFileExtension( const char *path, char *dest, size_t length ){
+void ExtractFileExtension( const char *path, char *dest, size_t size ){
 	const char    *src;
 
 	src = path + strlen( path ) - 1;
@@ -795,7 +809,7 @@ void ExtractFileExtension( const char *path, char *dest, size_t length ){
 		return;
 	}
 
-	Q_strncpyz( dest, src, length );
+	Q_strncpyz( dest, src, size );
 }
 
 

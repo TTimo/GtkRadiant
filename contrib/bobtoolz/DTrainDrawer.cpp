@@ -236,7 +236,7 @@ void DTrainDrawer::BuildPaths() {
 
 					for ( int j = 2;; j++ ) {
 						char buffer[32];
-						sprintf( buffer, "control%i", j );
+						snprintf( buffer, sizeof( buffer ), "control%i", j );
 
 						e.SpawnString( buffer, NULL, &control );
 						if ( !control ) {

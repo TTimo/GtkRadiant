@@ -157,7 +157,7 @@ int ExportLightmapsMain( int argc, char **argv ){
 	}
 
 	/* do some path mangling */
-	strcpy( source, ExpandArg( argv[ argc - 1 ] ) );
+	Q_strncpyz( source, ExpandArg( argv[ argc - 1 ] ), sizeof( source ) );
 	StripExtension( source );
 	DefaultExtension( source, ".bsp", sizeof( source ) );
 
@@ -2328,7 +2328,7 @@ void StoreSurfaceLightmaps( void ){
 	Sys_Printf( "--- StoreSurfaceLightmaps ---\n" );
 
 	/* setup */
-	strcpy( dirname, source );
+	Q_strncpyz( dirname, source, sizeof( dirname ) );
 	StripExtension( dirname );
 	memset( rgbGenValues, 0, sizeof( rgbGenValues ) );
 	memset( alphaGenValues, 0, sizeof( alphaGenValues ) );
@@ -2999,7 +2999,7 @@ void StoreSurfaceLightmaps( void ){
 
 
 			/* setup */
-			sprintf( styleStages, "\n\t// Q3Map2 custom lightstyle stage(s)\n" );
+			snprintf( styleStages, sizeof( styleStages ), "\n\t// Q3Map2 custom lightstyle stage(s)\n" );
 			dv = &bspDrawVerts[ ds->firstVert ];
 
 			/* depthFunc equal? */
@@ -3032,7 +3032,7 @@ void StoreSurfaceLightmaps( void ){
 
 				/* get rgbgen string */
 				if ( rgbGenValues[ style ] == NULL ) {
-					sprintf( key, "_style%drgbgen", style );
+					snprintf( key, sizeof( key ), "_style%drgbgen", style );
 					rgbGenValues[ style ] = (char*) ValueForKey( &entities[ 0 ], key );
 					if ( rgbGenValues[ style ][ 0 ] == '\0' ) {
 						rgbGenValues[ style ] = "wave noise 0.5 1 0 5.37";
@@ -3048,7 +3048,7 @@ void StoreSurfaceLightmaps( void ){
 
 				/* get alphagen string */
 				if ( alphaGenValues[ style ] == NULL ) {
-					sprintf( key, "_style%dalphagen", style );
+					snprintf( key, sizeof( key ), "_style%dalphagen", style );
 					alphaGenValues[ style ] = (char*) ValueForKey( &entities[ 0 ], key );
 				}
 				if ( alphaGenValues[ style ][ 0 ] != '\0' ) {

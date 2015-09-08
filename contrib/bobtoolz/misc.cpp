@@ -39,7 +39,7 @@ char g_CurrentTexture[256] = "";
 
 void ReadCurrentTexture(){
 	const char* textureName = g_FuncTable.m_pfnGetCurrentTexture();
-	strcpy( g_CurrentTexture, textureName );
+	Q_strncpyz( g_CurrentTexture, textureName, sizeof( g_CurrentTexture ) );
 }
 
 const char*  GetCurrentTexture(){
@@ -354,7 +354,7 @@ void FillDefaultTexture( _QERFaceData* faceData, vec3_t va, vec3_t vb, vec3_t vc
 	faceData->m_nFlags = 0;
 	faceData->m_nValue = 0;
 	if ( *texture ) {
-		strcpy( faceData->m_TextureName, texture );
+		Q_strncpyz( faceData->m_TextureName, texture, sizeof( faceData->m_TextureName ) );
 	}
 	else{
 		strcpy( faceData->m_TextureName, "textures/common/caulk" );

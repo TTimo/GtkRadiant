@@ -58,9 +58,9 @@ void ExportEntities( void ){
         Sys_FPrintf( SYS_VRB, "--- ExportEntities ---\n" );
 		
         /* do some path mangling */
-        strcpy( filename, source );
+        Q_strncpyz( filename, source, sizeof( filename ) );
         StripExtension( filename );
-        strcat( filename, ".ent" );
+        strncat( filename, ".ent", sizeof( filename ) );
 		
         /* sanity check */
         if ( bspEntData == NULL || bspEntDataSize == 0 ) {
@@ -96,7 +96,7 @@ int ExportEntitiesMain( int argc, char **argv ){
         }
 		
         /* do some path mangling */
-        strcpy( source, ExpandArg( argv[ argc - 1 ] ) );
+        Q_strncpyz( source, ExpandArg( argv[ argc - 1 ] ), sizeof( source ) );
         StripExtension( source );
         DefaultExtension( source, ".bsp", sizeof( source ) );
 		

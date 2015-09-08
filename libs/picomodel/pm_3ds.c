@@ -421,26 +421,23 @@ static int GetMeshShader( T3dsLoaderPers *pers ){
 			char *name;
 
 			/* copy map name to local buffer */
-			strncpy( mapName, mapNamePtr, sizeof( mapName ) - 1 );
-			mapName[sizeof( mapName ) - 1] = 0;
+			Q_strncpyz( mapName, mapNamePtr, sizeof( mapName ) );
 
 			/* extract file name */
 			name = _pico_nopath( mapName );
-			strncpy( temp, name, sizeof( temp ) - 1 );
-			temp[sizeof( temp ) - 1] = 0;
+			Q_strncpyz( temp, name, sizeof( temp ) );
 
 			/* remove file extension */
 			/* name = _pico_setfext( name,"" ); */
 
 			/* assign default name if no name available */
 			if ( strlen( temp ) < 1 ) {
-				strncpy( temp, pers->basename, sizeof( temp ) - 1 );
-				temp[sizeof( temp ) - 1] = 0;
+				Q_strncpyz( temp, pers->basename, sizeof( temp ) );
 			}
 
 			/* build shader name */
 			_pico_strlwr( temp ); /* gaynux update -sea */
-			sprintf( mapName,"models/mapobjects/%s/%s",pers->basename,temp );
+			snprintf( mapName, sizeof( mapName ), "models/mapobjects/%s/%s", pers->basename, temp );
 
 			/* set shader name */
 			/* PicoSetShaderName( shader,mapName ); */	/* ydnar: this will screw up the named shader */
@@ -733,8 +730,7 @@ static picoModel_t *_3ds_load( PM_PARAMS_LOAD ){
 		return NULL;
 	}
 	/* get model's base name (eg. jeep from c:\models\jeep.3ds) */
-	strncpy( basename, _pico_nopath( fileName ), sizeof( basename ) - 1 );
-	basename[sizeof( basename ) - 1] = 0;
+	Q_strncpyz( basename, _pico_nopath( fileName ), sizeof( basename ) );
 	_pico_setfext( basename, "", sizeof( basename ) );
 
 	/* initialize persistant vars (formerly static) */

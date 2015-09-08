@@ -74,7 +74,7 @@ static void SetCloneModelNumbers( void ){
 		}
 
 		/* add the model key */
-		sprintf( modelValue, "*%d", models );
+		snprintf( modelValue, sizeof( modelValue ), "*%d", models );
 		SetKeyValue( &entities[ i ], "model", modelValue );
 
 		/* increment model count */
@@ -121,7 +121,7 @@ static void SetCloneModelNumbers( void ){
 				models = atoi( &value2[ 1 ] );
 
 				/* add the model key */
-				sprintf( modelValue, "*%d", models );
+				snprintf( modelValue, sizeof( modelValue ), "*%d", models );
 				SetKeyValue( &entities[ i ], "model", modelValue );
 
 				/* nuke the brushes/patches for this entity (fixme: leak!) */
@@ -617,7 +617,7 @@ int BSPMain( int argc, char **argv ){
 			onlyents = qtrue;
 		}
 		else if ( !strcmp( argv[ i ], "-tempname" ) ) {
-			strcpy( tempSource, argv[ ++i ] );
+			Q_strncpyz( tempSource, argv[ ++i ], sizeof( tempSource ) );
 		}
 		else if ( !strcmp( argv[ i ], "-tmpout" ) ) {
 			strcpy( outbase, "/tmp" );

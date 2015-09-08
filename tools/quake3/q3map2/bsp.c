@@ -147,7 +147,7 @@ static void SetCloneModelNumbers( void ){
 		}
 
 		/* add the model key */
-		sprintf( modelValue, "*%d", models );
+		snprintf( modelValue, sizeof( modelValue ), "*%d", models );
 		SetKeyValue( &entities[ i ], "model", modelValue );
 
 		/* increment model count */
@@ -194,7 +194,7 @@ static void SetCloneModelNumbers( void ){
 				models = atoi( &value2[ 1 ] );
 
 				/* add the model key */
-				sprintf( modelValue, "*%d", models );
+				snprintf( modelValue, sizeof( modelValue ), "*%d", models );
 				SetKeyValue( &entities[ i ], "model", modelValue );
 
 				/* nuke the brushes/patches for this entity (fixme: leak!) */

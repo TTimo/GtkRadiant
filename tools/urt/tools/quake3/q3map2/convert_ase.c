@@ -56,7 +56,7 @@ static void ConvertSurface( FILE *f, bspModel_t *model, int modelNum, bspDrawSur
 	}
 
 	/* print object header for each dsurf */
-	sprintf( name, "mat%dmodel%dsurf%d", ds->shaderNum, modelNum, surfaceNum );
+	snprintf( name, sizeof( name ), "mat%dmodel%dsurf%d", ds->shaderNum, modelNum, surfaceNum );
 	fprintf( f, "*GEOMOBJECT\t{\r\n" );
 	fprintf( f, "\t*NODE_NAME\t\"%s\"\r\n", name );
 	fprintf( f, "\t*NODE_TM\t{\r\n" );
@@ -306,7 +306,7 @@ int ConvertBSPToASE( char *bspName ){
 	strncat( name, ".ase", sizeof( name ) );
 	Sys_Printf( "writing %s\n", name );
 
-	ExtractFileBase( bspName, base );
+	ExtractFileBase( bspName, base, sizeof( base ) );
 	strncat( base, ".bsp", sizeof( base ) );
 
 	/* open it */

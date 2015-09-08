@@ -2255,10 +2255,10 @@ int LightMain( int argc, char **argv ){
 	}
 
 	/* clean up map name */
-	strcpy( source, ExpandArg( argv[ i ] ) );
+	Q_strncpyz( source, ExpandArg( argv[ i ] ), sizeof( source ) );
 	StripExtension( source );
 	DefaultExtension( source, ".bsp", sizeof( source ) );
-	strcpy( mapSource, ExpandArg( argv[ i ] ) );
+	Q_strncpyz( mapSource, ExpandArg( argv[ i ] ), sizeof( mapSource ) );
 	StripExtension( mapSource );
 	DefaultExtension( mapSource, ".map", sizeof( mapSource ) );
 

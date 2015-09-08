@@ -132,7 +132,7 @@ int FixAAS( int argc, char **argv ){
 	}
 
 	/* do some path mangling */
-	strcpy( source, ExpandArg( argv[ argc - 1 ] ) );
+	Q_strncpyz( source, ExpandArg( argv[ argc - 1 ] ), sizeof( source ) );
 	StripExtension( source );
 	DefaultExtension( source, ".bsp", sizeof( source ) );
 
@@ -152,9 +152,9 @@ int FixAAS( int argc, char **argv ){
 	while ( *ext )
 	{
 		/* mangle name */
-		strcpy( aas, source );
+		Q_strncpyz( aas, source, sizeof( aas ) );
 		StripExtension( aas );
-		strcat( aas, *ext );
+		strncat( aas, *ext, sizeof( aas ) );
 		Sys_Printf( "Trying %s\n", aas );
 		ext++;
 
@@ -241,7 +241,7 @@ int AnalyzeBSP( int argc, char **argv ){
 	}
 
 	/* clean up map name */
-	strcpy( source, ExpandArg( argv[ i ] ) );
+	Q_strncpyz( source, ExpandArg( argv[ i ] ), sizeof( source ) );
 	Sys_Printf( "Loading %s\n", source );
 
 	/* load the file */
@@ -365,7 +365,7 @@ int BSPInfo( int count, char **fileNames ){
 		Sys_Printf( "---------------------------------\n" );
 
 		/* mangle filename and get size */
-		strcpy( source, fileNames[ i ] );
+		Q_strncpyz( source, fileNames[ i ], sizeof( source ) );
 		ExtractFileExtension( source, ext, sizeof( ext ) );
 		if ( !Q_stricmp( ext, "map" ) ) {
 			StripExtension( source );
@@ -427,7 +427,7 @@ int ScaleBSPMain( int argc, char **argv ){
 	}
 
 	/* do some path mangling */
-	strcpy( source, ExpandArg( argv[ argc - 1 ] ) );
+	Q_strncpyz( source, ExpandArg( argv[ argc - 1 ] ), sizeof( source ) );
 	StripExtension( source );
 	DefaultExtension( source, ".bsp", sizeof( source ) );
 
@@ -447,7 +447,7 @@ int ScaleBSPMain( int argc, char **argv ){
 		GetVectorForKey( &entities[ i ], "origin", vec );
 		if ( ( vec[ 0 ] + vec[ 1 ] + vec[ 2 ] ) ) {
 			VectorScale( vec, scale, vec );
-			sprintf( str, "%f %f %f", vec[ 0 ], vec[ 1 ], vec[ 2 ] );
+			snprintf( str, sizeof( str ), "%f %f %f", vec[ 0 ], vec[ 1 ], vec[ 2 ] );
 			SetKeyValue( &entities[ i ], "origin", str );
 		}
 
@@ -455,7 +455,7 @@ int ScaleBSPMain( int argc, char **argv ){
 		f = FloatForKey( &entities[ i ], "lip" );
 		if ( f ) {
 			f *= scale;
-			sprintf( str, "%f", f );
+			snprintf( str, sizeof( str ), "%f", f );
 			SetKeyValue( &entities[ i ], "lip", str );
 		}
 	}
@@ -495,7 +495,7 @@ int ScaleBSPMain( int argc, char **argv ){
 		VectorCopy( gridSize, vec );
 	}
 	VectorScale( vec, scale, vec );
-	sprintf( str, "%f %f %f", vec[ 0 ], vec[ 1 ], vec[ 2 ] );
+	snprintf( str, sizeof( str ), "%f %f %f", vec[ 0 ], vec[ 1 ], vec[ 2 ] );
 	SetKeyValue( &entities[ 0 ], "gridsize", str );
 
 	/* write the bsp */
@@ -555,7 +555,7 @@ int ConvertBSPMain( int argc, char **argv ){
 	}
 
 	/* clean up map name */
-	strcpy( source, ExpandArg( argv[ i ] ) );
+	Q_strncpyz( source, ExpandArg( argv[ i ] ), sizeof( source ) );
 	StripExtension( source );
 	DefaultExtension( source, ".bsp", sizeof( source ) );
 

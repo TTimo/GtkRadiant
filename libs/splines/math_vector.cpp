@@ -136,7 +136,7 @@ idVec3 LerpVector( idVec3 &w1, idVec3 &w2, const float t ) {
  */
 char *idVec3::string( void ) {
 	static int index = 0;
-	static char str[ 8 ][ 36 ];
+	static char str[ 8 ][ 256 ];
 	char    *s;
 
 	// use an array so that multiple toString's won't collide

@@ -216,8 +216,7 @@ picoModel_t *PicoLoadModel( char *fileName, int frameNum ){
 				remapFileName = _pico_alloc( length );
 				if ( remapFileName != NULL ) {
 					/* copy model file name and change extension */
-					strncpy( remapFileName, modelFileName, length );
-					remapFileName[length - 1] = 0;
+					Q_strncpyz( remapFileName, modelFileName, length );
 					_pico_setfext( remapFileName, "remap", length );
 
 					/* try to remap model; we don't handle the result */
@@ -511,7 +510,7 @@ picoSurface_t *PicoNewSurface( picoModel_t *model ){
 		surface->model = model;
 
 		/* set default name */
-		sprintf( surfaceName, "Unnamed_%d", model->numSurfaces );
+		snprintf( surfaceName, sizeof( surfaceName ), "Unnamed_%d", model->numSurfaces );
 		PicoSetSurfaceName( surface, surfaceName );
 	}
 

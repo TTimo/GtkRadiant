@@ -226,7 +226,7 @@ CPtrArray PatchShaders;
 void PushPatch( patchMesh_t * patch ){
 	patchEntry_t *pEntry = new patchEntry_s;
 	pEntry->p = patch;
-	strcpy( pEntry->name, patch->pShader->getName() );
+	Q_strncpyz( pEntry->name, patch->pShader->getName(), sizeof( pEntry->name ) );
 	PatchShaders.Add( pEntry );
 }
 
@@ -734,7 +734,7 @@ qtexture_t *WINAPI QERApp_Try_Texture_ForName( const char *name ){
 	}
 	g_free( pPixels );
 
-	strcpy( q->name, name );
+	Q_strncpyz( q->name, name, sizeof( q->name ) );
 	// only strip extension if extension there is!
 	if ( q->name[strlen( q->name ) - 4] == '.' ) {
 		q->name[strlen( q->name ) - 4] = '\0';
@@ -792,7 +792,7 @@ void CShader::CreateColor( const char *name ){
 	// copy this one
 	qtexture_t *q2 = new qtexture_t;
 	memcpy( q2, q1, sizeof( qtexture_t ) );
-	strcpy( q2->name, m_strTextureName.GetBuffer() );
+	Q_strncpyz( q2->name, m_strTextureName.GetBuffer(), sizeof( q2->name ) );
 	VectorCopy( m_vColor, q2->color );
 	m_pTexture = q2;
 }

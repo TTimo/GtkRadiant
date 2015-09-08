@@ -163,7 +163,7 @@ void set_surface_flags_button_state( texdef_to_face_t *texdef_face_list, bool b_
 	}
 	else {
 		working_value = value;
-		sprintf( tex_buff, "%d", value );
+		snprintf( tex_buff, sizeof( tex_buff ), "%d", value );
 		gtk_entry_set_text( (GtkEntry *)value_entry, tex_buff );
 	}
 

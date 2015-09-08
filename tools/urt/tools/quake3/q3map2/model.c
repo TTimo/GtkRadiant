@@ -331,13 +331,13 @@ void InsertModel( char *name, int frame, m4x4_t transform, remap_t *remap, shade
 
 		/* shader renaming for sof2 */
 		if ( renameModelShaders ) {
-			strcpy( shaderName, picoShaderName );
+			Q_strncpyz( shaderName, picoShaderName, sizeof( shaderName ) );
 			StripExtension( shaderName );
 			if ( spawnFlags & 1 ) {
-				strcat( shaderName, "_RMG_BSP" );
+				strncat( shaderName, "_RMG_BSP", sizeof(  shaderName ) );
 			}
 			else{
-				strcat( shaderName, "_BSP" );
+				strncat( shaderName, "_BSP", sizeof( shaderName ) );
 			}
 			si = ShaderInfoForShader( shaderName );
 		}
@@ -742,7 +742,7 @@ void AddTriangleModels( entity_t *e ){
 				remap2 = remap;
 				remap = safe_malloc( sizeof( *remap ) );
 				remap->next = remap2;
-				strcpy( remap->from, ep->value );
+				Q_strncpyz( remap->from, ep->value, sizeof( remap->from ) );
 
 				/* split the string */
 				split = strchr( remap->from, ';' );
@@ -755,7 +755,7 @@ void AddTriangleModels( entity_t *e ){
 
 				/* store the split */
 				*split = '\0';
-				strcpy( remap->to, ( split + 1 ) );
+				Q_strncpyz( remap->to, ( split + 1 ), sizeof( remap->to ) );
 
 				/* note it */
 				//%	Sys_FPrintf( SYS_VRB, "Remapping %s to %s\n", remap->from, remap->to );

@@ -395,8 +395,7 @@ int lwResolvePolySurfaces( lwPolygonList *polygon, lwTagList *tlist,
 			if ( !s[ index ]->name ) {
 				return 0;
 			}
-			strncpy( s[ index ]->name, tlist->tag[ index ], sizeof( s[ index ]->name ) - 1 );
-			s[ index ]->name[sizeof( s[ index ]->name ) - 1] = 0;
+			strcpy( s[ index ]->name, tlist->tag[ index ] );
 			lwListAdd( (void **) surf, s[ index ] );
 			*nsurfs = *nsurfs + 1;
 		}

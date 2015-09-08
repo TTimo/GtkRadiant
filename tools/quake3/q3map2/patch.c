@@ -236,7 +236,7 @@ void ParsePatch( qboolean onlyLights ){
 
 	/* get texture */
 	GetToken( qtrue );
-	strcpy( texture, token );
+	Q_strncpyz( texture, token, sizeof( texture ) );
 
 	Parse1DMatrix( 5, info );
 	m.width = info[0];

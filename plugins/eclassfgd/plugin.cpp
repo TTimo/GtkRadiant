@@ -450,7 +450,7 @@ void EClass_ImportFromClass( eclass_t *e, GSList *l_classes, class_t *bc ){
 	// COLOR
 	if ( bc->gotcolor ) {
 		memcpy( e->color, bc->color, sizeof( vec3_t ) );
-		sprintf( color, "(%f %f %f)", e->color[0], e->color[1], e->color[2] );
+		snprintf( color, sizeof( color ), "(%f %f %f)", e->color[0], e->color[1], e->color[2] );
 		e->texdef.SetName( color );
 	}
 
@@ -547,7 +547,7 @@ void EClass_ImportFromClass( eclass_t *e, GSList *l_classes, class_t *bc ){
 			e->color[1] = 0.5; // how about a nice bright pink, mmm, nice! :)
 			e->color[2] = 1;
 
-			sprintf( color, "(%f %f %f)", e->color[0], e->color[1], e->color[2] );
+			snprintf( color, sizeof( color ), "(%f %f %f)", e->color[0], e->color[1], e->color[2] );
 			e->texdef.SetName( color );
 		}
 	}
@@ -1069,21 +1069,21 @@ void Eclass_ScanFile( char *filename ){
 			Sys_Printf( "%s", (char *)tmp->data );
 		}
 		if ( tmpclass->gotsize ) {
-			sprintf( temp,"(%.0f %.0f %.0f) - (%.0f %.0f %.0f)",tmpclass->boundingbox[0][0],
+			snprintf( temp, sizeof( temp ),"(%.0f %.0f %.0f) - (%.0f %.0f %.0f)",tmpclass->boundingbox[0][0],
 					 tmpclass->boundingbox[0][1],
 					 tmpclass->boundingbox[0][2],
 					 tmpclass->boundingbox[1][0],
 					 tmpclass->boundingbox[1][1],
 					 tmpclass->boundingbox[1][2] );
 		}
-		else{ strcpy( temp,"No Size" ); }
+		else{ Q_strncpyz( temp, "No Size", sizeof( temp ) ); }
 		Sys_Printf( ") '%s' Size: %s",tmpclass->description ? tmpclass->description : "No description",temp );
 		if ( tmpclass->gotcolor ) {
-			sprintf( temp,"(%d %d %d)",tmpclass->color[0],
+			snprintf( temp, sizeof( temp ), "(%d %d %d)", tmpclass->color[0],
 					 tmpclass->color[1],
 					 tmpclass->color[2] );
 		}
-		else{ strcpy( temp,"No Color" ); }
+		else{ Q_strncpyz( temp, "No Color", sizeof( temp ) ); }
 		Sys_Printf( " Color: %s Options:\n",temp );
 		if ( !tmpclass->l_optionlist ) {
 			Sys_Printf( "  No Options\n" );

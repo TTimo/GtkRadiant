@@ -598,8 +598,9 @@ bool QE_LoadProject( const char *projectfile ){
 	int ver = IntForKey( g_qeglobals.d_project_entity, "version" );
 	if ( ver > PROJECT_VERSION ) {
 		char strMsg[1024];
-		sprintf( strMsg, "This is a version %d project file. This build only supports <=%d project files.\n"
-						 "Please choose another project file or upgrade your version of Radiant.", ver, PROJECT_VERSION );
+		snprintf( strMsg, sizeof( strMsg ),
+			"This is a version %d project file. This build only supports <=%d project files.\n"
+			"Please choose another project file or upgrade your version of Radiant.", ver, PROJECT_VERSION );
 		gtk_MessageBox( g_pParentWnd->m_pWidget, strMsg, "Can't load project file", MB_ICONERROR | MB_OK );
 		// set the project file to nothing so we are sure we'll ask next time?
 		g_PrefsDlg.m_strLastProject = "";
@@ -1358,7 +1359,7 @@ void Sys_UpdateStatusBar( void ){
 
 	char numbrushbuffer[100] = "";
 
-	sprintf( numbrushbuffer, "Brushes: %d Entities: %d", g_numbrushes, g_numentities );
+	snprintf( numbrushbuffer, sizeof( numbrushbuffer ), "Brushes: %d Entities: %d", g_numbrushes, g_numentities );
 	g_pParentWnd->SetStatusText( 2, numbrushbuffer );
 	//Sys_Status( numbrushbuffer, 2 );
 }
@@ -1397,7 +1398,7 @@ static void MRU_SetText( int index, const char *filename ){
 
 	char mnemonic[PATH_MAX * 2 + 4];
 	mnemonic[0] = '_';
-	sprintf( mnemonic + 1, "%d", index + 1 );
+	snprintf( mnemonic + 1, sizeof( mnemonic ) - 1, "%d", index + 1 );
 	mnemonic[2] = '-';
 	mnemonic[3] = ' ';
 	buffer_write_escaped_mnemonic( mnemonic + 4, filename );

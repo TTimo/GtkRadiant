@@ -187,13 +187,13 @@ static bool save_var( const char *filename, const char *section, const char *key
 
 bool WINAPI profile_save_int( const char *filename, const char *section, const char *key, int value ){
 	char buf[16];
-	sprintf( buf, "%d", value );
+	snprintf( buf, sizeof( buf ), "%d", value );
 	return save_var( filename, section, key, buf );
 }
 
 bool WINAPI profile_save_float( const char *filename, const char *section, const char *key, float value ){
 	char buf[64];
-	sprintf( buf, "%f", value );
+	snprintf( buf, sizeof( buf ), "%f", value );
 	return save_var( filename, section, key, buf );
 }
 

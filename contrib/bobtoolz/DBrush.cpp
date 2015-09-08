@@ -727,7 +727,7 @@ bool DBrush::ResetTextures( const char* textureName, float fScale[2],    float f
 		{
 			if ( !strcmp( ( *resetPlane )->texInfo.m_TextureName, textureName ) ) {
 				if ( bResetTextureName ) {
-					strcpy( ( *resetPlane )->texInfo.m_TextureName, newTextureName );
+					Q_strncpyz( ( *resetPlane )->texInfo.m_TextureName, newTextureName, sizeof( ( *resetPlane )->texInfo.m_TextureName ) );
 				}
 
 				if ( bResetScale[0] ) {
@@ -758,7 +758,7 @@ bool DBrush::ResetTextures( const char* textureName, float fScale[2],    float f
 		for ( list<DPlane *>::const_iterator resetPlane = faceList.begin(); resetPlane != faceList.end(); resetPlane++ )
 		{
 			if ( bResetTextureName ) {
-				strcpy( ( *resetPlane )->texInfo.m_TextureName, newTextureName );
+				Q_strncpyz( ( *resetPlane )->texInfo.m_TextureName, newTextureName, sizeof( ( *resetPlane )->texInfo.m_TextureName ) );
 			}
 
 			if ( bResetScale[0] ) {

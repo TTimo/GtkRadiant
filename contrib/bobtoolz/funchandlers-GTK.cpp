@@ -186,7 +186,7 @@ void DoResetTextures(){
 	else
 	{
 		texName = GetCurrentTexture();
-		strcpy( rs.textureName, GetCurrentTexture() );
+		Q_strncpyz( rs.textureName, GetCurrentTexture(), sizeof( rs.textureName ) );
 	}
 
 	int ret;
@@ -216,7 +216,7 @@ void DoResetTextures(){
 void DoBuildStairs( vec3_t vMin, vec3_t vMax ){
 	BuildStairsRS rs;
 
-	strcpy( rs.mainTexture, GetCurrentTexture() );
+	Q_strncpyz( rs.mainTexture, GetCurrentTexture(), sizeof( rs.mainTexture ) );
 
 	// ensure we have something selected
 	if ( g_FuncTable.m_pfnSelectedBrushCount() != 1 ) {
@@ -319,7 +319,7 @@ void DoBuildDoors( vec3_t vMin, vec3_t vMax ){
 	// cant release until we delete the brush, if we do...
 
 	DoorRS rs;
-	strcpy( rs.mainTexture, GetCurrentTexture() );
+	Q_strncpyz( rs.mainTexture, GetCurrentTexture(), sizeof( rs.mainTexture ) );
 
 	if ( DoDoorsBox( &rs ) == IDOK ) {
 		g_FuncTable.m_pfnDeleteBrushHandle( brush );
@@ -554,7 +554,7 @@ void DoVisAnalyse(){
 		return;
 	}
 
-	strcpy( filename, rad_filename );
+	Q_strncpyz( filename, rad_filename, sizeof( filename ) );
 
 	char* ext = strrchr( filename, '.' ) + 1;
 	strcpy( ext, "bsp" ); // rename the extension

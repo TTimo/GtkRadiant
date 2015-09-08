@@ -47,7 +47,7 @@ bool DTreePlanter::OnLButtonDown( guint32 nFlags, gdouble x, gdouble y ) {
 		char buffer[128];
 		DEntity e( m_entType );
 
-		sprintf( buffer, "%i %i %i", (int)vhit[0], (int)vhit[1], (int)vhit[2] );
+		snprintf( buffer, sizeof( buffer ), "%i %i %i", (int)vhit[0], (int)vhit[1], (int)vhit[2] );
 		e.AddEPair( "origin", buffer );
 
 		if ( m_autoLink ) {
@@ -56,7 +56,7 @@ bool DTreePlanter::OnLButtonDown( guint32 nFlags, gdouble x, gdouble y ) {
 
 			int entNum = -1, lastEntNum = -1, entpos;
 			for ( int i = 0; i < 256; i++ ) {
-				sprintf( buffer, m_linkName, i );
+				snprintf( buffer, sizeof( buffer ), m_linkName, i );
 				pThisEntity = FindEntityFromTargetname( buffer, &entNum );
 
 				if ( pThisEntity ) {
@@ -67,10 +67,10 @@ bool DTreePlanter::OnLButtonDown( guint32 nFlags, gdouble x, gdouble y ) {
 			}
 
 			if ( !pLastEntity ) {
-				sprintf( buffer, m_linkName, 0 );
+				snprintf( buffer, sizeof( buffer ), m_linkName, 0 );
 			}
 			else {
-				sprintf( buffer, m_linkName, entpos + 1 );
+				snprintf( buffer, sizeof( buffer ), m_linkName, entpos + 1 );
 			}
 
 			e.AddEPair( "targetname", buffer );
@@ -88,7 +88,7 @@ bool DTreePlanter::OnLButtonDown( guint32 nFlags, gdouble x, gdouble y ) {
 			int angleYaw = ( rand() % ( m_maxYaw - m_minYaw + 1 ) ) + m_minYaw;
 			int anglePitch = ( rand() % ( m_maxPitch - m_minPitch + 1 ) ) + m_minPitch;
 
-			sprintf( buffer, "%i %i 0", anglePitch, angleYaw );
+			snprintf( buffer, sizeof( buffer ), "%i %i 0", anglePitch, angleYaw );
 			e.AddEPair( "angles", buffer );
 		}
 
@@ -100,7 +100,7 @@ bool DTreePlanter::OnLButtonDown( guint32 nFlags, gdouble x, gdouble y ) {
 		if ( m_useScale ) {
 			float scale = ( ( ( rand() % 1000 ) * 0.001f ) * ( m_maxScale - m_minScale ) ) + m_minScale;
 
-			sprintf( buffer, "%f", scale );
+			snprintf( buffer, sizeof( buffer ), "%f", scale );
 			e.AddEPair( "modelscale", buffer );
 		}
 
@@ -205,7 +205,7 @@ void DTreePlanter::DropEntsToGround( void ) {
 		FindDropPoint( vec, out );
 
 		char buffer[256];
-		sprintf( buffer, "%f %f %f", out[0], out[1], out[2] );
+		snprintf( buffer, sizeof( buffer ), "%f %f %f", out[0], out[1], out[2] );
 		ent.AddEPair( "origin", buffer );
 		ent.RemoveFromRadiant();
 		ent.BuildInRadiant( FALSE );
@@ -221,17 +221,17 @@ void DTreePlanter::MakeChain( void ) {
 	for ( i = 0; i < m_linkNum; i++ ) {
 		DEntity e( "info_train_spline_main" );
 
-		sprintf( buffer, "%s_pt%i", m_linkName, i );
+		snprintf( buffer, sizeof( buffer ), "%s_pt%i", m_linkName, i );
 		e.AddEPair( "targetname", buffer );
 
-		sprintf( buffer, "0 %i 0", i * 64 );
+		snprintf( buffer, sizeof( buffer ), "0 %i 0", i * 64 );
 		e.AddEPair( "origin", buffer );
 
 		if ( i != m_linkNum - 1 ) {
-			sprintf( buffer, "%s_pt%i", m_linkName, i + 1 );
+			snprintf( buffer, sizeof( buffer ), "%s_pt%i", m_linkName, i + 1 );
 			e.AddEPair( "target", buffer );
 
-			sprintf( buffer, "%s_ctl%i", m_linkName, i );
+			snprintf( buffer, sizeof( buffer ), "%s_ctl%i", m_linkName, i );
 			e.AddEPair( "control", buffer );
 		}
 
@@ -241,10 +241,10 @@ void DTreePlanter::MakeChain( void ) {
 	for ( i = 0; i < m_linkNum - 1; i++ ) {
 		DEntity e( "info_train_spline_control" );
 
-		sprintf( buffer, "%s_ctl%i", m_linkName, i );
+		snprintf( buffer, sizeof( buffer ), "%s_ctl%i", m_linkName, i );
 		e.AddEPair( "targetname", buffer );
 
-		sprintf( buffer, "0 %i 0", ( i * 64 ) + 32 );
+		snprintf( buffer, sizeof( buffer ), "0 %i 0", ( i * 64 ) + 32 );
 		e.AddEPair( "origin", buffer );
 
 		e.BuildInRadiant( FALSE );

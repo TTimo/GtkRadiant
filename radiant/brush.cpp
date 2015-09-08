@@ -37,7 +37,7 @@ const char* Brush_Name( brush_t *b ){
 	static char cBuff[1024];
 	b->numberId = g_nBrushId++;
 	if ( g_qeglobals.m_bBrushPrimitMode ) {
-		sprintf( cBuff, "Brush %i", b->numberId );
+		snprintf( cBuff, sizeof( cBuff ), "Brush %i", b->numberId );
 		Brush_SetEpair( b, "Name", cBuff );
 	}
 	return cBuff;

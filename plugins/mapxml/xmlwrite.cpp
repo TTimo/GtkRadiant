@@ -77,9 +77,9 @@ void Patch_XMLWrite( patchMesh_t *pPatch, xmlNodePtr surface ){
 
 	node = xmlNewChild( surface, NULL, (xmlChar *)"matrix", (xmlChar *)str );
 	delete [] str;
-	sprintf( buf, "%i", pPatch->width );
+	snprintf( buf, sizeof( buf ), "%i", pPatch->width );
 	xmlSetProp( node, (xmlChar *)"width", (xmlChar *)buf );
-	sprintf( buf, "%i", pPatch->height );
+	snprintf( buf, sizeof( buf ), "%i", pPatch->height );
 	xmlSetProp( node, (xmlChar *)"height", (xmlChar *)buf );
 }
 
@@ -108,15 +108,15 @@ void Face_XMLWrite( face_t *face, xmlNodePtr surface, bool bAlternateTexdef = fa
 
 	if ( !bAlternateTexdef ) {
 		// write texdef
-		sprintf( buf, "%i", (int)face->texdef.shift[0] );
+		snprintf( buf, sizeof( buf ), "%i", (int)face->texdef.shift[0] );
 		str = str_append_token( NULL, buf );
-		sprintf( buf, "%i", (int)face->texdef.shift[1] );
+		snprintf( buf, sizeof( buf ), "%i", (int)face->texdef.shift[1] );
 		str = str_append_token( str, buf );
-		sprintf( buf, "%i", (int)face->texdef.rotate );
+		snprintf( buf, sizeof( buf ), "%i", (int)face->texdef.rotate );
 		str = str_append_token( str, buf );
-		sprintf( buf, "%f", face->texdef.scale[0] );
+		snprintf( buf, sizeof( buf ), "%f", face->texdef.scale[0] );
 		str = str_append_token( str, buf );
-		sprintf( buf, "%f", face->texdef.scale[1] );
+		snprintf( buf, sizeof( buf ), "%f", face->texdef.scale[1] );
 		str = str_append_token( str, buf );
 
 		node = xmlNewChild( surface, NULL, (xmlChar *)"texdef", (xmlChar *)str );
@@ -139,11 +139,11 @@ void Face_XMLWrite( face_t *face, xmlNodePtr surface, bool bAlternateTexdef = fa
 	}
 
 	// write flags
-	sprintf( buf, "%i", face->texdef.contents );
+	snprintf( buf, sizeof( buf ), "%i", face->texdef.contents );
 	str = str_append_token( NULL, buf );
-	sprintf( buf, "%i", face->texdef.flags );
+	snprintf( buf, sizeof( buf ), "%i", face->texdef.flags );
 	str = str_append_token( str, buf );
-	sprintf( buf, "%i", face->texdef.value );
+	snprintf( buf, sizeof( buf ), "%i", face->texdef.value );
 	str = str_append_token( str, buf );
 
 	node = xmlNewChild( surface, NULL, (xmlChar *)"flags", (xmlChar *)str );

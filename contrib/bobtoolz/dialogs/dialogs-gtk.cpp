@@ -132,7 +132,7 @@ bool ValidateTextFloat( const char* pData, const char* error_title, float* value
 
 bool ValidateTextFloatRange( const char* pData, float min, float max, const char* error_title, float* value ){
 	char error_buffer[256];
-	sprintf( error_buffer, "Please Enter A Floating Point Number Between %.3f and %.3f", min, max );
+	snprintf( error_buffer, sizeof( error_buffer ), "Please Enter A Floating Point Number Between %.3f and %.3f", min, max );
 
 	if ( pData ) {
 		float testNum = (float)atof( pData );
@@ -757,8 +757,8 @@ int DoBuildStairsBox( BuildStairsRS* rs ){
 		if ( ret == IDOK ) {
 			rs->bUseDetail = gtk_toggle_button_get_active( (GtkToggleButton*)checkUseDetail ) ? true : false;
 
-			strcpy( rs->riserTexture, gtk_entry_get_text( (GtkEntry*)textRiserTex ) );
-			strcpy( rs->mainTexture, gtk_entry_get_text( (GtkEntry*)textMainTex ) );
+			Q_strncpyz( rs->riserTexture, gtk_entry_get_text( (GtkEntry*)textRiserTex ), sizeof( rs->riserTexture ) );
+			Q_strncpyz( rs->mainTexture, gtk_entry_get_text( (GtkEntry*)textMainTex ), sizeof( rs->mainTexture ) );
 
 			if ( gtk_toggle_button_get_active( (GtkToggleButton*)radioNorth ) ) {
 				rs->direction = MOVE_NORTH;
@@ -1005,8 +1005,8 @@ int DoDoorsBox( DoorRS* rs ){
 	while ( loop )
 		gtk_main_iteration();
 
-	strcpy( rs->mainTexture, gtk_entry_get_text( GTK_ENTRY( textFrontBackTex ) ) );
-	strcpy( rs->trimTexture, gtk_entry_get_text( GTK_ENTRY( textTrimTex ) ) );
+	Q_strncpyz( rs->mainTexture, gtk_entry_get_text( GTK_ENTRY( textFrontBackTex ) ), sizeof( rs->mainTexture ) );
+	Q_strncpyz( rs->trimTexture, gtk_entry_get_text( GTK_ENTRY( textTrimTex ) ), sizeof( rs->trimTexture ) );
 
 	rs->bScaleMainH = gtk_toggle_button_get_active( GTK_TOGGLE_BUTTON( checkScaleMainH ) ) ? true : false;
 	rs->bScaleMainV = gtk_toggle_button_get_active( GTK_TOGGLE_BUTTON( checkScaleMainV ) ) ? true : false;
@@ -1574,8 +1574,8 @@ int DoResetTextureBox( ResetTextureRS* rs ){
 
 			rs->bResetTextureName = gtk_toggle_button_get_active( GTK_TOGGLE_BUTTON( dlgTexReset.cbTexChange ) );
 			if ( rs->bResetTextureName ) {
-				strcpy( rs->textureName,     gtk_entry_get_text( GTK_ENTRY( dlgTexReset.editTexOld ) ) );
-				strcpy( rs->newTextureName,  gtk_entry_get_text( GTK_ENTRY( dlgTexReset.editTexNew ) ) );
+				Q_strncpyz( rs->textureName,     gtk_entry_get_text( GTK_ENTRY( dlgTexReset.editTexOld ) ), sizeof( rs->textureName ) );
+				Q_strncpyz( rs->newTextureName,  gtk_entry_get_text( GTK_ENTRY( dlgTexReset.editTexNew ) ), sizeof( rs->newTextureName ) );
 			}
 		}
 	}

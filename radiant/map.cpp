@@ -830,7 +830,7 @@ void Map_New( void ){
 	Sys_Printf( "Map_New\n" );
 	Map_Free();
 
-	strcpy( currentmap, "unnamed.map" );
+	Q_strncpyz( currentmap, "unnamed.map", sizeof( currentmap ) );
 	Sys_SetTitle( currentmap );
 
 	world_entity = (entity_s*)qmalloc( sizeof( *world_entity ) );
@@ -932,9 +932,9 @@ void AddRegionBrushes( void ){
 	SetKeyValue( region_startpoint, "classname", "info_player_start" );
 	region_startpoint->eclass = Eclass_ForName( "info_player_start", false );
 	char sTmp[1024];
-	sprintf( sTmp, "%d %d %d", (int)vOrig[0], (int)vOrig[1], (int)vOrig[2] );
+	snprintf( sTmp, sizeof( sTmp ), "%d %d %d", (int)vOrig[0], (int)vOrig[1], (int)vOrig[2] );
 	SetKeyValue( region_startpoint, "origin", sTmp );
-	sprintf( sTmp, "%d", (int)g_pParentWnd->GetCamWnd()->Camera()->angles[YAW] );
+	snprintf( sTmp, sizeof( sTmp ), "%d", (int)g_pParentWnd->GetCamWnd()->Camera()->angles[YAW] );
 	SetKeyValue( region_startpoint, "angle", sTmp );
 	// empty array of children
 	region_startpoint->pData = new CPtrArray;

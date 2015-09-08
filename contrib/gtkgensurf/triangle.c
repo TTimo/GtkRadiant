@@ -313,6 +313,11 @@
 #include "triangle.h"
 #endif /* TRILIBRARY */
 
+#ifndef Q_strncpyz
+#define Q_strncpyz(_dst, _source, _len) do { strncpy((_dst), (_source), (_len) - 1); (_dst)[(_len) - 1] = 0; } while( 0 )
+#endif
+
+
 /* The following obscenity seems to be necessary to ensure that this program */
 /* will port to Dec Alphas running OSF/1, because their stdio.h file commits */
 /* the unpardonable sin of including stdlib.h.  Hence, malloc(), free(), and */
@@ -2857,8 +2862,7 @@ char **argv;
 		}
 #ifndef TRILIBRARY
 	} else {
-		strncpy( innodefilename, argv[i], FILENAMESIZE - 1 );
-		innodefilename[FILENAMESIZE - 1] = '\0';
+		Q_strncpyz( innodefilename, argv[i], FILENAMESIZE );
 	}
 #endif /* not TRILIBRARY */
 	}
@@ -2907,11 +2911,11 @@ char **argv;
 	}
 
 #ifndef TRILIBRARY
-	strcpy( inpolyfilename, innodefilename );
-	strcpy( inelefilename, innodefilename );
-	strcpy( areafilename, innodefilename );
+	Q_strncpyz( inpolyfilename, innodefilename, sizeof( inpolyfilename ) );
+	Q_strncpyz( inelefilename, innodefilename, sizeof( inelefilename ) );
+	Q_strncpyz( areafilename, innodefilename, sizeof( areafilename ) );
 	increment = 0;
-	strcpy( workstring, innodefilename );
+	Q_strncpyz( workstring, innodefilename, sizeof( workstring ) );
 	j = 1;
 	while ( workstring[j] != '\0' ) {
 		if ( ( workstring[j] == '.' ) && ( workstring[j + 1] != '\0' ) ) {
@@ -2933,64 +2937,64 @@ char **argv;
 		} while ( workstring[j] != '\0' );
 	}
 	if ( noiterationnum ) {
-		strcpy( outnodefilename, innodefilename );
-		strcpy( outelefilename, innodefilename );
-		strcpy( edgefilename, innodefilename );
-		strcpy( vnodefilename, innodefilename );
-		strcpy( vedgefilename, innodefilename );
-		strcpy( neighborfilename, innodefilename );
-		strcpy( offfilename, innodefilename );
-		strcat( outnodefilename, ".node" );
-		strcat( outelefilename, ".ele" );
-		strcat( edgefilename, ".edge" );
-		strcat( vnodefilename, ".v.node" );
-		strcat( vedgefilename, ".v.edge" );
-		strcat( neighborfilename, ".neigh" );
-		strcat( offfilename, ".off" );
+		Q_strncpyz( outnodefilename, innodefilename, sizeof( outnodefilename ) );
+		Q_strncpyz( outelefilename, innodefilename, sizeof( outelefilename ) );
+		Q_strncpyz( edgefilename, innodefilename, sizeof( edgefilename ) );
+		Q_strncpyz( vnodefilename, innodefilename, sizeof( vnodefilename ) );
+		Q_strncpyz( vedgefilename, innodefilename, sizeof( vedgefilename ) );
+		Q_strncpyz( neighborfilename, innodefilename, sizeof( neighborfilename ) );
+		Q_strncpyz( offfilename, innodefilename, sizeof( offfilename ) );
+		strncat( outnodefilename, ".node", sizeof( outnodefilename ) );
+		strncat( outelefilename, ".ele", sizeof( outelefilename ) );
+		strncat( edgefilename, ".edge", sizeof( edgefilename ) );
+		strncat( vnodefilename, ".v.node", sizeof( vnodefilename ) );
+		strncat( vedgefilename, ".v.edge", sizeof( vedgefilename ) );
+		strncat( neighborfilename, ".neigh", sizeof( neighborfilename ) );
+		strncat( offfilename, ".off", sizeof( offfilename ) );
 	}
 	else if ( increment == 0 ) {
-		strcpy( outnodefilename, innodefilename );
-		strcpy( outpolyfilename, innodefilename );
-		strcpy( outelefilename, innodefilename );
-		strcpy( edgefilename, innodefilename );
-		strcpy( vnodefilename, innodefilename );
-		strcpy( vedgefilename, innodefilename );
-		strcpy( neighborfilename, innodefilename );
-		strcpy( offfilename, innodefilename );
-		strcat( outnodefilename, ".1.node" );
-		strcat( outpolyfilename, ".1.poly" );
-		strcat( outelefilename, ".1.ele" );
-		strcat( edgefilename, ".1.edge" );
-		strcat( vnodefilename, ".1.v.node" );
-		strcat( vedgefilename, ".1.v.edge" );
-		strcat( neighborfilename, ".1.neigh" );
-		strcat( offfilename, ".1.off" );
+		Q_strncpyz( outnodefilename, innodefilename, sizeof( outnodefilename ) );
+		Q_strncpyz( outpolyfilename, innodefilename, sizeof( outpolyfilename ) );
+		Q_strncpyz( outelefilename, innodefilename, sizeof( outelefilename ) );
+		Q_strncpyz( edgefilename, innodefilename, sizeof( edgefilename ) );
+		Q_strncpyz( vnodefilename, innodefilename, sizeof( vnodefilename ) );
+		Q_strncpyz( vedgefilename, innodefilename, sizeof( vedgefilename ) );
+		Q_strncpyz( neighborfilename, innodefilename, sizeof( neighborfilename ) );
+		Q_strncpyz( offfilename, innodefilename, sizeof( offfilename ) );
+		strncat( outnodefilename, ".1.node", sizeof( outnodefilename ) );
+		strncat( outpolyfilename, ".1.poly", sizeof( outpolyfilename ) );
+		strncat( outelefilename, ".1.ele", sizeof( outelefilename ) );
+		strncat( edgefilename, ".1.edge", sizeof( edgefilename ) );
+		strncat( vnodefilename, ".1.v.node", sizeof( vnodefilename ) );
+		strncat( vedgefilename, ".1.v.edge", sizeof( vedgefilename ) );
+		strncat( neighborfilename, ".1.neigh", sizeof( neighborfilename ) );
+		strncat( offfilename, ".1.off", sizeof( offfilename ) );
 	}
 	else {
 		workstring[increment] = '%';
 		workstring[increment + 1] = 'd';
 		workstring[increment + 2] = '\0';
-		sprintf( outnodefilename, workstring, meshnumber + 1 );
-		strcpy( outpolyfilename, outnodefilename );
-		strcpy( outelefilename, outnodefilename );
-		strcpy( edgefilename, outnodefilename );
-		strcpy( vnodefilename, outnodefilename );
-		strcpy( vedgefilename, outnodefilename );
-		strcpy( neighborfilename, outnodefilename );
-		strcpy( offfilename, outnodefilename );
-		strcat( outnodefilename, ".node" );
-		strcat( outpolyfilename, ".poly" );
-		strcat( outelefilename, ".ele" );
-		strcat( edgefilename, ".edge" );
-		strcat( vnodefilename, ".v.node" );
-		strcat( vedgefilename, ".v.edge" );
-		strcat( neighborfilename, ".neigh" );
-		strcat( offfilename, ".off" );
+		snprintf( outnodefilename, sizeof( outnodefilename ), workstring, meshnumber + 1 );
+		Q_strncpyz( outpolyfilename, outnodefilename, sizeof( outpolyfilename ) );
+		Q_strncpyz( outelefilename, outnodefilename, sizeof( outelefilename ) );
+		Q_strncpyz( edgefilename, outnodefilename, sizeof( edgefilename ) );
+		Q_strncpyz( vnodefilename, outnodefilename, sizeof( vnodefilename ) );
+		Q_strncpyz( vedgefilename, outnodefilename, sizeof( vedgefilename ) );
+		Q_strncpyz( neighborfilename, outnodefilename, sizeof( neighborfilename ) );
+		Q_strncpyz( offfilename, outnodefilename, sizeof( offfilename ) );
+		strncat( outnodefilename, ".node", sizeof( outnodefilename ) );
+		strncat( outpolyfilename, ".poly", sizeof( outpolyfilename ) );
+		strncat( outelefilename, ".ele", sizeof( outelefilename ) );
+		strncat( edgefilename, ".edge", sizeof( edgefilename ) );
+		strncat( vnodefilename, ".v.node", sizeof( vnodefilename ) );
+		strncat( vedgefilename, ".v.edge", sizeof( vedgefilename ) );
+		strncat( neighborfilename, ".neigh", sizeof( neighborfilename ) );
+		strncat( offfilename, ".off", sizeof( offfilename ) );
 	}
-	strcat( innodefilename, ".node" );
-	strcat( inpolyfilename, ".poly" );
-	strcat( inelefilename, ".ele" );
-	strcat( areafilename, ".area" );
+	strncat( innodefilename, ".node", sizeof( innodefilename ) );
+	strncat( inpolyfilename, ".poly", sizeof( inpolyfilename ) );
+	strncat( inelefilename, ".ele", sizeof( inelefilename ) );
+	strncat( areafilename, ".area", sizeof( areafilename ) );
 #endif /* not TRILIBRARY */
 }
 
@@ -10046,7 +10050,7 @@ char *polyfilename;
 			printf( "Inserting segments into Delaunay triangulation.\n" );
 		}
 #ifdef TRILIBRARY
-		strcpy( polyfilename, "input" );
+		Q_strncpyz( polyfilename, "input", sizeof( polyfilename ) );
 		segments = numberofsegments;
 		segmentmarkers = segmentmarkerlist != (int *) NULL;
 		index = 0;

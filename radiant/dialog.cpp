@@ -228,7 +228,7 @@ void Dialog::UpdateData( bool retrieve ){
 				gtk_entry_set_text( GTK_ENTRY( data->object ), buf );
 				break;
 			case DLG_ENTRY_INT:
-				sprintf( buf, "%d", ( *(int*)data->buffer ) );
+				snprintf( buf, sizeof( buf ), "%d", ( *(int*)data->buffer ) );
 				gtk_entry_set_text( GTK_ENTRY( data->object ), buf );
 				break;
 			case DLG_SPIN_FLOAT:

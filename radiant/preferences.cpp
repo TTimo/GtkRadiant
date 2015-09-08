@@ -229,7 +229,7 @@ void WindowPosition_Parse( window_position_t& m_value, const CString& value ){
 
 void WindowPosition_Write( const window_position_t& m_value, CString& value ){
 	char buffer[64];
-	sprintf( buffer, "%d %d %d %d", m_value.x, m_value.y, m_value.w, m_value.h );
+	snprintf( buffer, sizeof( buffer ), "%d %d %d %d", m_value.x, m_value.y, m_value.w, m_value.h );
 	value = buffer;
 }
 
@@ -308,7 +308,7 @@ void CXMLPropertyBag::GetPref( const char *name, int *pV, int V ){
 	else
 	{
 		char s[12];
-		sprintf( s, "%d", V );
+		snprintf( s, sizeof( s ), "%d", V );
 		pNode = xmlNewChild( mpDocNode, NULL, (xmlChar *)"epair", (xmlChar *)s );
 		xmlSetProp( pNode, (xmlChar *)"name", (xmlChar *)name );
 		*pV = V;
@@ -348,7 +348,7 @@ void CXMLPropertyBag::GetPref( const char *name, float *pV, float V ){
 	else
 	{
 		char s[64];
-		sprintf( s, "%f", V );
+		snprintf( s, sizeof( s ), "%f", V );
 		pNode = xmlNewChild( mpDocNode, NULL, (xmlChar *)"epair", (xmlChar *)s );
 		xmlSetProp( pNode, (xmlChar *)"name", (xmlChar *)name );
 		*pV = V;
@@ -365,7 +365,7 @@ void CXMLPropertyBag::GetPref( const char *name, float* pV, float* V ){
 	else
 	{
 		char s[256];
-		sprintf( s, "%f %f %f", V[0], V[1], V[2] );
+		snprintf( s, sizeof( s ), "%f %f %f", V[0], V[1], V[2] );
 		pNode = xmlNewChild( mpDocNode, NULL, (xmlChar *)"epair", (xmlChar *)s );
 		xmlSetProp( pNode, (xmlChar *)"name", (xmlChar *)name );
 		pV[0] = V[0];
@@ -416,11 +416,11 @@ void CXMLPropertyBag::UpdatePrefTree(){
 			xmlNodeSetContent( pNode, (const xmlChar *)( (Str *)pPref->mVal )->GetBuffer() );
 			break;
 		case PREF_INT:
-			sprintf( s, "%d", *(int *)pPref->mVal );
+			snprintf( s, sizeof( s ), "%d", *(int *)pPref->mVal );
 			xmlNodeSetContent( pNode, (xmlChar *)s );
 			break;
 		case PREF_FLOAT:
-			sprintf( s, "%f", *(float *)pPref->mVal );
+			snprintf( s, sizeof( s ), "%f", *(float *)pPref->mVal );
 			xmlNodeSetContent( pNode, (xmlChar *)s );
 			break;
 		case PREF_BOOL:
@@ -430,7 +430,7 @@ void CXMLPropertyBag::UpdatePrefTree(){
 		case PREF_VEC3:
 		{
 			float* v = (float*)pPref->mVal;
-			sprintf( s, "%f %f %f", v[0], v[1], v[2] );
+			snprintf( s, sizeof( s ), "%f %f %f", v[0], v[1], v[2] );
 			xmlNodeSetContent( pNode, (xmlChar *)s );
 		}
 		break;
@@ -849,7 +849,7 @@ CGameDescription::CGameDescription( xmlDocPtr pDoc, const Str &GameFile ){
 				aux_path[strlen( aux_path ) - 1] = '\0'; // strip ending '/' if any
 			}
 			char up_path[PATH_MAX]; // up one level
-			ExtractFilePath( aux_path, up_path );
+			ExtractFilePath( aux_path, up_path, sizeof( up_path ) );
 			mEnginePath = up_path;
 		}
 	}
@@ -3044,7 +3044,7 @@ void PrefsDlg::LoadPrefs(){
 	for ( i = 0; i < 4; i++ )
 	{
 		char buf[64];
-		sprintf( buf, "%s%d", FILE_KEY, i );
+		snprintf( buf, sizeof( buf ), "%s%d", FILE_KEY, i );
 		mLocalPrefs.GetPref( buf,                  &m_strMRUFiles[i],              "" );
 	}
 
@@ -3087,7 +3087,7 @@ void PrefsDlg::LoadPrefs(){
 
 	for ( i = 0; i < 3; i++ ) {
 		char buf[64];
-		sprintf( buf, "%s%d", SI_AXISCOLORS_KEY, i );
+		snprintf( buf, sizeof( buf ), "%s%d", SI_AXISCOLORS_KEY, i );
 		mLocalPrefs.GetPref( buf,   g_qeglobals.d_savedinfo.AxisColors[i], vDefaultAxisColours[i] );
 	}
 
@@ -3111,7 +3111,7 @@ void PrefsDlg::LoadPrefs(){
 
 	for ( i = 0; i < COLOR_LAST; i++ ) {
 		char buf[64];
-		sprintf( buf, "%s%d", SI_COLORS_KEY, i );
+		snprintf( buf, sizeof( buf ), "%s%d", SI_COLORS_KEY, i );
 		mLocalPrefs.GetPref( buf,   g_qeglobals.d_savedinfo.colors[i], vDefaultColours[i] );
 	}
 

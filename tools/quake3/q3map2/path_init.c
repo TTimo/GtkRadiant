@@ -401,7 +401,7 @@ void InitPaths( int *argc, char **argv ){
 		for ( i = 0; i < *argc && numBasePaths == 0; i++ )
 		{
 			/* extract the arg */
-			strcpy( temp, argv[ i ] );
+			Q_strncpyz( temp, argv[ i ], sizeof( temp ) );
 			CleanPath( temp );
 			len = strlen( temp );
 			Sys_FPrintf( SYS_VRB, "Searching for \"%s\" in \"%s\" (%d)...\n", game->magic, temp, i );

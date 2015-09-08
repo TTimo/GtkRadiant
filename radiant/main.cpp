@@ -182,11 +182,11 @@ int loki_getmountpoint( const char *device, char *mntpt, int max_size ){
 		{
 			char *tmp, mntdev[1024];
 
-			strcpy( mntdev, mntent->mnt_fsname );
+			Q_strncpyz( mntdev, mntent->mnt_fsname, sizeof( mntdev ) );
 			if ( strcmp( mntent->mnt_type, "supermount" ) == 0 ) {
 				tmp = strstr( mntent->mnt_opts, "dev=" );
 				if ( tmp ) {
-					strcpy( mntdev, tmp + strlen( "dev=" ) );
+					Q_strcnpyz( mntdev, tmp + strlen( "dev=" ), sizeof( mntdev ) );
 					tmp = strchr( mntdev, ',' );
 					if ( tmp ) {
 						*tmp = '\0';
@@ -947,7 +947,7 @@ void QE_ExpandBspString( char *bspaction, GPtrArray *out_array, char *mapname ){
 	}
 	else
 	{
-		ExtractFileName( mapname, base );
+		ExtractFileName( mapname, base, sizeof( base ) );
 	}
 
 	// this important step alters the map name to add fs_game
@@ -1143,7 +1143,7 @@ void RunBsp( char *command ){
 	if ( g_PrefsDlg.m_bWatchBSP ) {
 		// grab the file name for engine running
 		char *bspname = new char[1024];
-		ExtractFileName( currentmap, bspname );
+		ExtractFileName( currentmap, bspname, sizeof( bspname ) );
 		StripExtension( bspname );
 		g_pParentWnd->GetWatchBSP()->DoMonitoringLoop( sys, bspname );
 	} else {

@@ -759,7 +759,7 @@ brush_t *FinishBrush( void ){
 		VectorAdd( buildBrush->mins, buildBrush->maxs, origin );
 		VectorScale( origin, 0.5, origin );
 
-		sprintf( string, "%i %i %i", (int) origin[ 0 ], (int) origin[ 1 ], (int) origin[ 2 ] );
+		snprintf( string, sizeof( string ), "%i %i %i", (int) origin[ 0 ], (int) origin[ 1 ], (int) origin[ 2 ] );
 		SetKeyValue( &entities[ numEntities - 1 ], "origin", string );
 
 		VectorCopy( origin, entities[ numEntities - 1 ].origin );
@@ -1019,7 +1019,7 @@ static void ParseRawBrush( qboolean onlyLights ){
 
 		/* read shader name */
 		GetToken( qfalse );
-		strcpy( name, token );
+		Q_strncpyz( name, token, sizeof( name ) );
 
 		/* bp */
 		if ( g_bBrushPrimit == BPRIMIT_OLDBRUSHES ) {
@@ -1489,8 +1489,8 @@ void LoadEntityIndexMap( entity_t *e ){
 	im->w = w;
 	im->h = h;
 	im->numLayers = numLayers;
-	strcpy( im->name, indexMapFilename );
-	strcpy( im->shader, shader );
+	Q_strncpyz( im->name, indexMapFilename, sizeof( im->name ) );
+	Q_strncpyz( im->shader, shader, sizeof( im->shader ) );
 	im->pixels = pixels;
 
 	/* get height offsets */
@@ -1500,7 +1500,7 @@ void LoadEntityIndexMap( entity_t *e ){
 	}
 	if ( value[ 0 ] != '\0' ) {
 		/* value is a space-seperated set of numbers */
-		strcpy( offset, value );
+		Q_strncpyz( offset, value, sizeof( offset ) );
 		search = offset;
 
 		/* get each value */

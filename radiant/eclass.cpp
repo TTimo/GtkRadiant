@@ -227,7 +227,7 @@ void Eclass_CreateSpriteModelPaths(){
 			{
 
 				// strip the path/ and the .extension.
-				ExtractFileBase( (char *)pFile->data,filename );
+				ExtractFileBase( (char *)pFile->data, filename, sizeof( filename ) );
 
 				// does the eclass name match the filename?
 				if ( stricmp( e->name,filename ) == 0 ) {
@@ -297,7 +297,7 @@ eclass_t * EClass_Create( const char *name, float col1, float col2, float col3, 
 	e->color[0] = col1;
 	e->color[1] = col2;
 	e->color[2] = col3;
-	sprintf( color, "(%f %f %f)", e->color[0], e->color[1], e->color[2] );
+	snprintf( color, sizeof( color ), "(%f %f %f)", e->color[0], e->color[1], e->color[2] );
 	e->texdef.SetName( color );
 
 	// supplied size ?

@@ -726,14 +726,14 @@ static void main_go( GtkWidget *widget, gpointer data ){
 
 	ReadDlgValues( current_tab );
 	if ( NH < 1 || NH > MAX_ROWS ) {
-		sprintf( Text, _( "The number of divisions must be > 0 and no greater than %d." ), MAX_ROWS );
+		snprintf( Text, sizeof( Text ), _( "The number of divisions must be > 0 and no greater than %d." ), MAX_ROWS );
 		g_FuncTable.m_pfnMessageBox( g_pWnd, Text, "GenSurf", MB_ICONEXCLAMATION, NULL );
 		gtk_notebook_set_current_page( GTK_NOTEBOOK( notebook ), EXTENTS_TAB );
 		return;
 	}
 
 	if ( NV < 1 || NV > MAX_ROWS ) {
-		sprintf( Text, _( "The number of divisions must be > 0 and no greater than %d." ), MAX_ROWS );
+		snprintf( Text, sizeof( Text ), _( "The number of divisions must be > 0 and no greater than %d." ), MAX_ROWS );
 		g_FuncTable.m_pfnMessageBox( g_pWnd, Text, "GenSurf", MB_ICONEXCLAMATION, NULL );
 		gtk_notebook_set_current_page( GTK_NOTEBOOK( notebook ), EXTENTS_TAB );
 		return;
@@ -882,9 +882,9 @@ static void extents_snaptogrid_spin( GtkAdjustment *adj, int *data ){
 static gint bitmap_file_entryfocusout( GtkWidget* widget, GdkEventFocus* event, gpointer data ){
 	char filename[NAME_MAX];
 
-	strcpy( filename, gtk_entry_get_text( GTK_ENTRY( widget ) ) );
+	Q_strncpyz( filename, gtk_entry_get_text( GTK_ENTRY( widget ) ), sizeof( filename ) );
 	if ( strcmp( filename,gbmp.name ) ) {
-		strcpy( gbmp.name,filename );
+		Q_strncpyz( gbmp.name, filename, sizeof( gbmp.name ) );
 		if ( strlen( gbmp.name ) ) {
 			OpenBitmap();
 		}
@@ -900,12 +900,12 @@ static void bitmap_browse( GtkWidget *widget, gpointer data ){
 	filename = g_FuncTable.m_pfnFileDialog( g_pWnd, TRUE, "Bitmap File", gbmp.defpath, "gtkgensurf", NULL );
 
 	if ( filename != NULL ) {
-		strcpy( gbmp.name, filename );
+		Q_strncpyz( gbmp.name, filename, sizeof( gbmp.name ) );
 
 		ptr = (char *) strrchr( filename, G_DIR_SEPARATOR );
 		if ( ptr != NULL ) {
 			*( ptr + 1 ) = '\0';
-			strcpy( gbmp.defpath, filename );
+			Q_strncpyz( gbmp.defpath, filename, sizeof( gbmp.defpath ) );
 		}
 
 		OpenBitmap();
@@ -914,7 +914,7 @@ static void bitmap_browse( GtkWidget *widget, gpointer data ){
 }
 
 static void bitmap_reload( GtkWidget *widget, gpointer data ){
-	strcpy( gbmp.name, gtk_entry_get_text( GTK_ENTRY( g_object_get_data( G_OBJECT( g_pWnd ), "bmp_file" ) ) ) );
+	Q_strncpyz( gbmp.name, gtk_entry_get_text( GTK_ENTRY( g_object_get_data( G_OBJECT( g_pWnd ), "bmp_file" ) ) ), sizeof( gbmp.name ) );
 	if ( strlen( gbmp.name ) ) {
 		OpenBitmap();
 		ENABLE_WIDGET( "go", ( gbmp.colors != NULL ? TRUE : FALSE ) );
@@ -935,7 +935,7 @@ static gint fix_value_entryfocusout( GtkWidget* widget, GdkEventFocus *event, gp
 		gdk_beep();
 		g_FuncTable.m_pfnMessageBox( g_pWnd, "The value must be between -65536 and 65536, inclusive.",
 									 "GenSurf", MB_OK | MB_ICONEXCLAMATION, NULL );
-		sprintf( Text, "%d", (int)xyz[Vertex[0].i][Vertex[0].j].fixed_value );
+		snprintf( Text, sizeof( Text ), "%d", (int)xyz[Vertex[0].i][Vertex[0].j].fixed_value );
 		gtk_entry_set_text( GTK_ENTRY( widget ), Text );
 		gtk_window_set_focus( GTK_WINDOW( gtk_widget_get_toplevel( widget ) ), widget );
 	}
@@ -1031,7 +1031,7 @@ void vertex_selected(){
 	gtk_spin_button_set_value( GTK_SPIN_BUTTON( g_object_get_data( G_OBJECT( g_pWnd ), "fix_value" ) ),
 							   (int)xyz[Vertex[0].i][Vertex[0].j].fixed_value );
 
-	sprintf( Text, "%d", (int)xyz[Vertex[0].i][Vertex[0].j].range );
+	snprintf( Text, sizeof( Text ), "%d", (int)xyz[Vertex[0].i][Vertex[0].j].range );
 	gtk_entry_set_text( GTK_ENTRY( g_object_get_data( G_OBJECT( g_pWnd ), "fix_range" ) ), Text );
 	snprintf( Text, sizeof( Text ), "%.5g", xyz[Vertex[0].i][Vertex[0].j].rate );
 	gtk_entry_set_text( GTK_ENTRY( g_object_get_data( G_OBJECT( g_pWnd ), "fix_rate" ) ), Text );
@@ -1070,7 +1070,7 @@ static void texture_terrainent( GtkToggleButton *check, gpointer data ){
 }
 
 static void texture_set( int index, const char* name ){
-	strcpy( Texture[Game][index], name );
+	Q_strncpyz( Texture[Game][index], name, sizeof( Texture[Game][index] ) );
 }
 
 static gint texture_entryfocusout( GtkWidget* widget, GdkEventFocus* event, gpointer data ){
@@ -2132,8 +2132,8 @@ qboolean CALLBACK AboutDlgProc( HWND hwnd, unsigned msg, UINT wparam, LONG lpara
 
 	switch ( msg ) {
 	case WM_INITDIALOG:
-		strcpy( szText,"About " );
-		strcat( szText,gszCaption );
+		Q_strncpyz( szText, "About ", sizeof( szText ) );
+		strncat( szText, gszCaption, sizeof( szText ) );
 		SetWindowText( hwnd,gszCaption );
 		SetDlgItemText( hwnd,DLG_ABOUT_APP,szText );
 		/*	Application icon: */
@@ -2217,7 +2217,7 @@ qboolean CALLBACK AboutDlgProc( HWND hwnd, unsigned msg, UINT wparam, LONG lpara
 void About(){
 	if ( DialogBox( ghInst,"About", ghwnd_main, (DLGPROC)AboutDlgProc ) < 0 ) {
 		char Text[256];
-		sprintf( Text,"In About(), GetLastError()=0x%08x",GetLastError() );
+		snprintf( Text, sizeof( Text ),"In About(), GetLastError()=0x%08x",GetLastError() );
 		MessageBox( ghwnd_main,Text,"GenSurf",MB_ICONEXCLAMATION );
 	}
 }

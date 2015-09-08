@@ -54,6 +54,12 @@ extern "C"
 
 #include "picomodel.h"
 
+#if defined(_MSC_VER) && _MSC_VER<1900 && !(defined snprintf)
+#define snprintf _snprintf
+#endif
+#ifndef Q_strncpyz
+#define Q_strncpyz(_dst, _source, _len) do { strncpy((_dst), (_source), (_len) - 1); (_dst)[(_len) - 1] = 0; } while( 0 )
+#endif
 
 /* os dependant replacements */
 #if WIN32 || _WIN32

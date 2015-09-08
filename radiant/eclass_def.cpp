@@ -144,7 +144,7 @@ eclass_t *Eclass_InitFromText( char *text ){
 	if ( r != 3 ) {
 		return e;
 	}
-	sprintf( color, "(%f %f %f)", e->color[0], e->color[1], e->color[2] );
+	snprintf( color, sizeof( color ), "(%f %f %f)", e->color[0], e->color[1], e->color[2] );
 	//strcpy (e->texdef.name, color);
 	e->texdef.SetName( color );
 

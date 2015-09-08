@@ -119,9 +119,9 @@ void    DefaultPath( char *path, const char *basepath );
 void    StripFilename( char *path );
 void    StripExtension( char *path );
 
-void    ExtractFilePath( const char *path, char *dest );
-void    ExtractFileBase( const char *path, char *dest );
-void    ExtractFileExtension( const char *path, char *dest, size_t length );
+void    ExtractFilePath( const char *path, char *dest, size_t size );
+void    ExtractFileBase( const char *path, char *dest, size_t size );
+void    ExtractFileExtension( const char *path, char *dest, size_t size );
 
 int     ParseNum( const char *str );
 

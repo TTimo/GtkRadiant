@@ -194,10 +194,10 @@ static gint ci_apply( GtkWidget *widget, gpointer data ){
 			GetCurrentCam()->GetCam()->buildCamera();
 		}
 
-		sprintf( buf, "%.2f", GetCurrentCam()->GetCam()->getBaseTime() );
+		snprintf( buf, sizeof( buf ), "%.2f", GetCurrentCam()->GetCam()->getBaseTime() );
 		gtk_entry_set_text( GTK_ENTRY( g_pSecondsEntry ), buf );
 
-		sprintf( buf, "%.2f", GetCurrentCam()->GetCam()->getTotalTime() );
+		snprintf( buf, sizeof( buf ), "%.2f", GetCurrentCam()->GetCam()->getTotalTime() );
 		gtk_label_set_text( g_pCurrentTime, "0.00" );
 		gtk_label_set_text( g_pTotalTime, buf );
 
@@ -326,7 +326,7 @@ static void RefreshEventList( void ){
 		}
 
 		// Total duration might have changed
-		sprintf( buf, "%.2f", GetCurrentCam()->GetCam()->getTotalTime() );
+		snprintf( buf, sizeof( buf ), "%.2f", GetCurrentCam()->GetCam()->getTotalTime() );
 		gtk_label_set_text( g_pCurrentTime, "0.00" );
 		gtk_label_set_text( g_pTotalTime, buf );
 
@@ -462,7 +462,7 @@ static void ci_add_target( GtkButton *button, gpointer data ){
 	gtk_box_pack_start( GTK_BOX( hbox ), name, TRUE, TRUE, 0 );
 	gtk_widget_show( name );
 
-	sprintf( buf, "target%i", GetCurrentCam()->GetCam()->numTargets() + 1 );
+	snprintf( buf, sizeof( buf ), "target%i", GetCurrentCam()->GetCam()->numTargets() + 1 );
 	gtk_entry_set_text( GTK_ENTRY( name ), buf );
 
 	// -------------------------- //
@@ -650,10 +650,10 @@ static gint ci_camlist_changed( GtkWidget *widget, gpointer data ){
 			gtk_label_set_text( g_pCamType, GetCurrentCam()->GetCam()->getPositionObj()->typeStr() );
 
 			// Set duration
-			sprintf( buf, "%.2f", GetCurrentCam()->GetCam()->getBaseTime() );
+			snprintf( buf, sizeof( buf ), "%.2f", GetCurrentCam()->GetCam()->getBaseTime() );
 			gtk_entry_set_text( GTK_ENTRY( g_pSecondsEntry ), buf );
 
-			sprintf( buf, "%.2f", GetCurrentCam()->GetCam()->getTotalTime() );
+			snprintf( buf, sizeof( buf ), "%.2f", GetCurrentCam()->GetCam()->getTotalTime() );
 			gtk_label_set_text( g_pCurrentTime, "0.00" );
 			gtk_label_set_text( g_pTotalTime, buf );
 
@@ -885,7 +885,7 @@ static gint ci_del( GtkWidget *widget, gpointer data ){
 static gint ci_timeline_changed( GtkAdjustment *adjustment ){
 	char buf[128];
 
-	sprintf( buf, "%.2f", gtk_adjustment_get_value( adjustment ) / 1000.f );
+	snprintf( buf, sizeof( buf ), "%.2f", gtk_adjustment_get_value( adjustment ) / 1000.f );
 	gtk_label_set_text( g_pCurrentTime, buf );
 
 	// FIXME: this will never work completely perfect. Startcamera calls buildcamera, which sets all events to 'nottriggered'.

@@ -78,7 +78,7 @@ int EmitShader( const char *shader, int *contentFlags, int *surfaceFlags ){
 		Error( "MAX_MAP_SHADERS" );
 	}
 	numBSPShaders++;
-	strcpy( bspShaders[ i ].shader, shader );
+	Q_strncpyz( bspShaders[ i ].shader, shader, sizeof( bspShaders[ i ].shader ) );
 	bspShaders[ i ].surfaceFlags = si->surfaceFlags;
 	bspShaders[ i ].contentFlags = si->contentFlags;
 
@@ -262,7 +262,7 @@ void SetModelNumbers( void ){
 	models = 1;
 	for ( i = 1 ; i < numEntities ; i++ ) {
 		if ( entities[i].brushes || entities[i].patches ) {
-			sprintf( value, "*%i", models );
+			snprintf( value, sizeof( value ), "*%i", models );
 			models++;
 			SetKeyValue( &entities[i], "model", value );
 		}
@@ -341,18 +341,18 @@ void SetLightStyles( void ){
 			if ( numStyles == MAX_SWITCHED_LIGHTS ) {
 				Error( "MAX_SWITCHED_LIGHTS (%d) exceeded, reduce the number of lights with targetnames", MAX_SWITCHED_LIGHTS );
 			}
-			strcpy( lightTargets[ j ], t );
+			Q_strncpyz( lightTargets[ j ], t, sizeof( lightTargets[ j ] ) );
 			lightStyles[ j ] = style;
 			numStyles++;
 		}
 
 		/* set explicit style */
-		sprintf( value, "%d", 32 + j );
+		snprintf( value, sizeof( value ), "%d", 32 + j );
 		SetKeyValue( e, "style", value );
 
 		/* set old style */
 		if ( style != LS_NORMAL ) {
-			sprintf( value, "%d", style );
+			snprintf( value, sizeof( value ), "%d", style );
 			SetKeyValue( e, "switch_style", value );
 		}
 	}
@@ -506,7 +506,7 @@ void EmitFogs( void ){
 	for ( i = 0; i < numMapFogs; i++ )
 	{
 		/* set shader */
-		strcpy( bspFogs[ i ].shader, mapFogs[ i ].si->shader );
+		Q_strncpyz( bspFogs[ i ].shader, mapFogs[ i ].si->shader, sizeof( bspFogs[ i ].shader ) );
 
 		/* global fog doesn't have an associated brush */
 		if ( mapFogs[ i ].brush == NULL ) {

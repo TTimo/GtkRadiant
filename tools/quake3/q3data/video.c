@@ -911,7 +911,7 @@ void Cmd_Video( void ){
 	clock_t start, stop;
 
 	GetToken( qfalse );
-	strcpy( s_base, token );
+	Q_strncpyz( s_base, token, sizeof( s_base ) );
 	if ( g_release ) {
 //		sprintf (savename, "video/%s.cin", token);
 //		ReleaseFile (savename);
@@ -919,7 +919,7 @@ void Cmd_Video( void ){
 	}
 
 	GetToken( qfalse );
-	strcpy( s_output_base, token );
+	Q_strncpyz( s_output_base, token, sizeof( s_output_base ) );
 
 	GetToken( qfalse );
 	digits = atoi( token );

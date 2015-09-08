@@ -202,7 +202,7 @@ void GetSpawnFlags( void ){
 	}
 	else
 	{
-		sprintf( sz, "%i", f );
+		snprintf( sz, sizeof( sz ), "%i", f );
 		if ( multiple_entities ) {
 			brush_t   *b;
 

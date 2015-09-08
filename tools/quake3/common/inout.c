@@ -72,7 +72,7 @@ xmlNodePtr xml_NodeForVec( vec3_t v ){
 	xmlNodePtr ret;
 	char buf[1024];
 
-	sprintf( buf, "%f %f %f", v[0], v[1], v[2] );
+	snprintf( buf, sizeof( buf ), "%f %f %f", v[0], v[1], v[2] );
 	ret = xmlNewNode( NULL, "point" );
 	xmlNodeSetContent( ret, buf );
 	return ret;
@@ -157,7 +157,7 @@ void xml_Select( char *msg, int entitynum, int brushnum, qboolean bError ){
 	level[1] = 0;
 	xmlSetProp( node, "level", (char *)&level );
 	// a 'select' information
-	sprintf( buf, "%i %i", entitynum, brushnum );
+	snprintf( buf, sizeof( buf ), "%i %i", entitynum, brushnum );
 	select = xmlNewNode( NULL, "brush" );
 	xmlNodeSetContent( select, buf );
 	xmlAddChild( node, select );
@@ -208,7 +208,7 @@ void xml_Winding( char *msg, vec3_t p[], int numpoints, qboolean die ){
 	level[1] = 0;
 	xmlSetProp( node, "level", (char *)&level );
 	// a 'winding' node
-	sprintf( buf, "%i ", numpoints );
+	snprintf( buf, sizeof( buf ), "%i ", numpoints );
 	for ( i = 0; i < numpoints; i++ )
 	{
 		snprintf( smlbuf, sizeof( smlbuf ), "(%g %g %g)", p[i][0], p[i][1], p[i][2] );
@@ -246,7 +246,7 @@ void Broadcast_Setup( const char *dest ){
 	brdcst_socket = Net_Connect( &address, 0 );
 	if ( brdcst_socket ) {
 		// send in a header
-		sprintf( sMsg, "<?xml version=\"1.0\"?><q3map_feedback version=\"" Q3MAP_STREAM_VERSION "\">" );
+		snprintf( sMsg, sizeof( sMsg ), "<?xml version=\"1.0\"?><q3map_feedback version=\"" Q3MAP_STREAM_VERSION "\">" );
 		NMSG_Clear( &msg );
 		NMSG_WriteString( &msg, sMsg );
 		Net_Send( brdcst_socket, &msg );

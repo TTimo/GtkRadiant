@@ -120,7 +120,7 @@ char* getNextBracket( char* s ){
 
 bool DEntity::LoadFromPrt( char *filename ){
 	CPortals portals;
-	strcpy( portals.fn, filename );
+	Q_strncpyz( portals.fn, filename, sizeof( portals.fn ) );
 	portals.Load();
 
 	if ( portals.node_count == 0 ) {

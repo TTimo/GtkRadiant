@@ -738,7 +738,7 @@ void FillTextureList( GSList** pArray )
 		char shaderfile[PATH_MAX];
 		gboolean found = FALSE;
 
-		ExtractFileName( (char*)l_shaderfiles->data, shaderfile );
+		ExtractFileName( (char*)l_shaderfiles->data, shaderfile, sizeof( shaderfile ) );
 		StripExtension( shaderfile );
 		strlwr( shaderfile );
 
@@ -966,7 +966,7 @@ void Texture_ShowDirectory(){
    ==============
  */
 void Texture_ShowDirectory( int menunum ){
-	strcpy( texture_directory, texture_menunames[menunum - CMD_TEXTUREWAD] );
+	Q_strncpyz( texture_directory, texture_menunames[menunum - CMD_TEXTUREWAD], sizeof( texture_directory ) );
 	Texture_ShowDirectory();
 }
 
@@ -1046,7 +1046,7 @@ void Texture_ShowAll(){
 	QERApp_ActiveShaders_SetDisplayed( true );
 	g_bShowAllShaders = true;
 	// put some information in the texture window title?
-	sprintf( name, "Textures: in use" );
+	snprintf( name, sizeof( name ), "Textures: in use" );
 	gtk_window_set_title( GTK_WINDOW( g_qeglobals_gui.d_entity ), name );
 	Sys_UpdateWindows( W_TEXTURE );
 }
@@ -1101,7 +1101,7 @@ void WINAPI Texture_ShowInuse( void ){
 	// we are no longer showing everything
 	g_bShowAllShaders = false;
 	// put some information in the texture window title?
-	sprintf( name, "Textures: in use" );
+	snprintf( name, sizeof( name ), "Textures: in use" );
 	gtk_window_set_title( GTK_WINDOW( g_qeglobals_gui.d_entity ), name );
 
 
