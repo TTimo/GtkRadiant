@@ -319,10 +319,20 @@ bool UpdateSel( int iIndex, eclass_t *pec ){
 
 		gtk_button_set_label( GTK_BUTTON( widget ), " " );
 
-		gtk_widget_hide( widget );
 		g_object_ref( widget );
+		gtk_widget_hide( widget );
 #if GTK_CHECK_VERSION( 3,12,0 )
-		gtk_container_remove( GTK_CONTAINER( LayoutFlowBox ), widget );
+		GtkWidget * parent = gtk_widget_get_parent( GTK_WIDGET( widget ) );
+		if( parent && GTK_IS_FLOW_BOX_CHILD( parent ) )
+		{
+			gtk_container_remove( GTK_CONTAINER( parent ), widget );
+			gtk_container_remove( GTK_CONTAINER( LayoutFlowBox ), parent );
+			g_object_unref( parent );
+		} else
+		if( parent && GTK_IS_FLOW_BOX( parent ) )
+		{
+			gtk_container_remove( GTK_CONTAINER( LayoutFlowBox ), widget );
+		}
 #else
 		gtk_container_remove( GTK_CONTAINER( LayoutTable ), widget );
 #endif
@@ -1257,6 +1267,8 @@ void GroupDlg::Create(){
 		GtkWidget* notebook = gtk_notebook_new();
 		gtk_container_add( GTK_CONTAINER( content_area ), notebook );
 		gtk_notebook_set_tab_pos( GTK_NOTEBOOK( notebook ), GTK_POS_BOTTOM );
+		gtk_widget_set_hexpand( GTK_WIDGET( notebook ), TRUE );
+		gtk_widget_set_vexpand( GTK_WIDGET( notebook ), TRUE );
 		gtk_widget_show( notebook );
 		m_pNotebook = notebook;
 
@@ -1273,24 +1285,12 @@ void GroupDlg::Create(){
 
 			{
 				GtkWidget* split1 = gtk_paned_new( GTK_ORIENTATION_VERTICAL );
-#if GTK_CHECK_VERSION( 3,12,0 )
-				todo; //do we want a wide handle?
-				gtk_paned_set_wide_handle( GTK_PANED( split1 ), TRUE );
-#else
-				
-#endif
 				gtk_box_pack_start( GTK_BOX( vbox ), split1, TRUE, TRUE, 0 );
 				gtk_widget_show( split1 );
 
 				{
 					GtkWidget* split2 = gtk_paned_new( GTK_ORIENTATION_VERTICAL );
-#if GTK_CHECK_VERSION(3,12,0)
-					todo; //do we want a wide handle?
-					gtk_paned_set_wide_handle( GTK_PANED( split2 ), TRUE );
-#else
-					
-#endif
-					gtk_paned_pack1( GTK_PANED( split1 ), split2, TRUE, TRUE );
+					gtk_paned_pack1( GTK_PANED( split1 ), split2, TRUE, FALSE );
 					gtk_widget_show( split2 );
 
 					g_object_set_data( G_OBJECT( dialog ), "split1", split1 );
@@ -1298,12 +1298,12 @@ void GroupDlg::Create(){
 
 					{
 						GtkWidget* vbox2 = gtk_box_new( GTK_ORIENTATION_VERTICAL, 2 );
-						gtk_paned_pack2( GTK_PANED( split1 ), vbox2, TRUE, TRUE );
+						gtk_paned_pack2( GTK_PANED( split1 ), vbox2, TRUE, FALSE );
 						gtk_widget_show( vbox2 );
 
 						{
 							GtkWidget* scr = gtk_scrolled_window_new( NULL, NULL );
-							gtk_paned_pack1( GTK_PANED( split2 ), scr, TRUE, TRUE );
+							gtk_paned_pack1( GTK_PANED( split2 ), scr, TRUE, FALSE );
 							gtk_scrolled_window_set_policy( GTK_SCROLLED_WINDOW( scr ), GTK_POLICY_NEVER, GTK_POLICY_ALWAYS );
 							gtk_scrolled_window_set_shadow_type( GTK_SCROLLED_WINDOW( scr ), GTK_SHADOW_IN );
 							gtk_widget_show( scr );
@@ -1329,6 +1329,24 @@ void GroupDlg::Create(){
 
 								gtk_container_add( GTK_CONTAINER( scr ), view );
 
+/*								{
+									GtkTreeViewColumn * column = gtk_tree_view_get_column( GTK_TREE_VIEW( view ), 0 );
+									if( column ) 
+									{
+										gint height = 0;
+										gtk_tree_view_column_cell_get_size( column, NULL, NULL, NULL, NULL, &height );
+										if( height > 0 ) 
+										{
+											//show at least 3 rows
+											gtk_widget_set_size_request( GTK_WIDGET( view ), -1, height * 3 );
+											gtk_widget_set_size_request( GTK_WIDGET( scr ), -1, height * 3 );
+											gtk_scrolled_window_set_min_content_height( GTK_SCROLLED_WINDOW( scr ), height * 3 );
+										}
+									}
+								}
+*/
+								gtk_widget_set_hexpand( GTK_WIDGET( view ), TRUE );
+								gtk_widget_set_vexpand( GTK_WIDGET( view ), TRUE );
 								gtk_widget_show( view );
 
 								g_object_unref( G_OBJECT( store ) );
@@ -1338,10 +1356,9 @@ void GroupDlg::Create(){
 
 						{
 							GtkWidget* scr = gtk_scrolled_window_new( NULL, NULL );
-							gtk_paned_pack2( GTK_PANED( split2 ), scr, TRUE, TRUE );
+							gtk_paned_pack2( GTK_PANED( split2 ), scr, TRUE, FALSE );
 							gtk_scrolled_window_set_policy( GTK_SCROLLED_WINDOW( scr ), GTK_POLICY_NEVER, GTK_POLICY_ALWAYS );
-							gtk_scrolled_window_set_shadow_type( GTK_SCROLLED_WINDOW( scr ), GTK_SHADOW_IN );
-							gtk_scrolled_window_set_min_content_height( GTK_SCROLLED_WINDOW( scr ), 20 );
+							gtk_scrolled_window_set_shadow_type( GTK_SCROLLED_WINDOW( scr ), GTK_SHADOW_IN );							
 							gtk_widget_show( scr );
 
 							{
@@ -1349,8 +1366,22 @@ void GroupDlg::Create(){
 								gtk_text_view_set_wrap_mode( GTK_TEXT_VIEW( text ), GTK_WRAP_WORD );
 								gtk_text_view_set_editable( GTK_TEXT_VIEW( text ), FALSE );
 								gtk_container_add( GTK_CONTAINER( scr ), text );
-								gtk_widget_set_size_request( text, 0, -1 ); // allow shrinking
+
+								{
+									PangoLayout * cell = gtk_widget_create_pango_layout( GTK_WIDGET( text ), "X" );
+									PangoRectangle rect;
+									rect.height = 0;
+									pango_layout_get_pixel_extents( cell, NULL, &rect );
+									g_object_unref( cell );
+									//show at least 1 rows of text
+									gtk_widget_set_size_request( GTK_WIDGET( text ), -1, rect.height * 1 );
+									gtk_widget_set_size_request( GTK_WIDGET( scr ), -1, rect.height * 1 );
+									gtk_scrolled_window_set_min_content_height( GTK_SCROLLED_WINDOW( scr ), rect.height * 1 );
+								}
+								gtk_widget_set_hexpand( GTK_WIDGET( text ), TRUE );
+								gtk_widget_set_vexpand( GTK_WIDGET( text ), TRUE );
 								gtk_widget_show( text );
+
 								EntWidgets[EntComment] = text;
 							}
 						}
@@ -1382,7 +1413,7 @@ void GroupDlg::Create(){
 							gtk_box_pack_start( GTK_BOX( vbox2 ), scr, TRUE, TRUE, 0 );
 							gtk_scrolled_window_set_policy( GTK_SCROLLED_WINDOW( scr ), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC );
 							gtk_scrolled_window_set_shadow_type( GTK_SCROLLED_WINDOW( scr ), GTK_SHADOW_IN );
-							gtk_scrolled_window_set_min_content_height( GTK_SCROLLED_WINDOW( scr ), 20 );
+							//gtk_scrolled_window_set_min_content_height( GTK_SCROLLED_WINDOW( scr ), 20 );
 							gtk_widget_show( scr );
 
 							{
@@ -1411,6 +1442,23 @@ void GroupDlg::Create(){
 
 								gtk_container_add( GTK_CONTAINER( scr ), view );
 
+								{
+									GtkTreeViewColumn * column = gtk_tree_view_get_column( GTK_TREE_VIEW( view ), 0 );
+									if( column ) 
+									{
+										gint height = 0;
+										gtk_tree_view_column_cell_get_size( column, NULL, NULL, NULL, NULL, &height );
+										if( height > 0 ) 
+										{
+											//show at least 3 rows
+											gtk_widget_set_size_request( GTK_WIDGET( view ), -1, height * 1 );
+											gtk_widget_set_size_request( GTK_WIDGET( scr ), -1, height * 1 );
+											gtk_scrolled_window_set_min_content_height( GTK_SCROLLED_WINDOW( scr ), height * 1 );
+										}
+									}
+								}
+								gtk_widget_set_hexpand( GTK_WIDGET( view ), TRUE );
+								gtk_widget_set_vexpand( GTK_WIDGET( view ), TRUE );
 								gtk_widget_show( view );
 
 								g_object_unref( G_OBJECT( store ) );

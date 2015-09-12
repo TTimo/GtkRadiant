@@ -2391,7 +2391,7 @@ static void textdirlist_cursor_changed( GtkTreeView *tree_view, gpointer user_da
 	textdirlist_activate( tree_view );
 }
 
-GtkWidget* create_texdirlist_widget( void )
+GtkWidget* create_texdirlist_widget( gint * position )
 {
 	GtkWidget *scr;
 	GtkWidget* view;
@@ -2439,16 +2439,10 @@ GtkWidget* create_texdirlist_widget( void )
 
 	gtk_widget_show( scr );
 
-#if GTK_CHECK_VERSION( 3,12,0 )
-	todo; //set the scrolledwindow to the default size that doesn't require scrollbars
-#else
+	if( position )
 	{
-		gint view_width;
-		//trying to set a nice initial size for the scrolledwindow
-		gtk_widget_get_preferred_width( view, NULL, &view_width );
-		gtk_widget_set_size_request( scr, view_width + 25, -1 );
+		gtk_widget_get_preferred_width( view, NULL, position );
 	}
-#endif
 	return scr;
 }
 
@@ -2688,7 +2682,7 @@ void MainFrame::Create(){
 						m_pCamWnd = new CamWnd();
 						{
 							GtkWidget* frame = create_framed_widget( m_pCamWnd->GetWidget() );
-							gtk_paned_add1( GTK_PANED( vsplit2 ), frame );
+							gtk_paned_pack1( GTK_PANED( vsplit2 ), frame, TRUE, TRUE );
 						}
 
 						// xy
@@ -2715,14 +2709,16 @@ void MainFrame::Create(){
 						m_pTexWnd = new TexWnd();
 						{
 							GtkWidget* frame = create_framed_texwnd( m_pTexWnd );
-
-							GtkWidget* texDirList = create_texdirlist_widget();
+							gint pos = 0;
+							GtkWidget* texDirList = create_texdirlist_widget( &pos );
 
 							GtkWidget* texSplit = gtk_paned_new( GTK_ORIENTATION_HORIZONTAL );
 
-							gtk_paned_add2( GTK_PANED( vsplit2 ), texSplit );
+							gtk_paned_pack2( GTK_PANED( vsplit2 ), texSplit, TRUE, FALSE );
 							gtk_paned_add1( GTK_PANED( texSplit ), texDirList );
 							gtk_paned_add2( GTK_PANED( texSplit ), frame );
+
+							gtk_paned_set_position( GTK_PANED( texSplit ), pos );
 
 							gtk_widget_show( texSplit );
 						}

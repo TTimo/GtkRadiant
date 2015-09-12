@@ -1773,9 +1773,12 @@ extern "C" void Sys_FPrintf_VA( int level, const char *text, va_list args ) {
 			const GdkRGBA red = { 1, 0, 0, 1 };
 			const GdkRGBA black = { 0, 0, 0, 1 };
 
-			static GtkTextTag* error_tag = gtk_text_buffer_create_tag( buffer, "red_foreground", "foreground-rgba", &red, "foreground-set", TRUE, NULL );
-			static GtkTextTag* warning_tag = gtk_text_buffer_create_tag( buffer, "yellow_foreground", "foreground-rgba", &yellow, "foreground-set", TRUE, NULL );
-			static GtkTextTag* standard_tag = gtk_text_buffer_create_tag( buffer, "black_foreground", "foreground-rgba", &black, "foreground-set", TRUE, NULL );
+//			static GtkTextTag* error_tag = gtk_text_buffer_create_tag( buffer, "red_foreground", "foreground-rgba", &red, "foreground-set", TRUE, NULL );
+//			static GtkTextTag* warning_tag = gtk_text_buffer_create_tag( buffer, "yellow_foreground", "foreground-rgba", &yellow, "foreground-set", TRUE, NULL );
+//			static GtkTextTag* standard_tag = gtk_text_buffer_create_tag( buffer, "black_foreground", "foreground-rgba", &black, "foreground-set", TRUE, NULL );
+			static GtkTextTag* error_tag = gtk_text_buffer_create_tag( buffer, "red_underline", "underline", PANGO_UNDERLINE_SINGLE, "underline-set", TRUE, "underline-rgba", &red, "underline-rgba-set", TRUE, NULL );
+			static GtkTextTag* warning_tag = gtk_text_buffer_create_tag( buffer, "yellow_underline", "underline", PANGO_UNDERLINE_SINGLE, "underline-set", TRUE, "underline-rgba", &yellow, "underline-rgba-set", TRUE, NULL );
+			static GtkTextTag* standard_tag = NULL;
 			GtkTextTag* tag;
 			switch ( level )
 			{

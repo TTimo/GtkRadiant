@@ -29,6 +29,8 @@
 #include "gtkmisc.h"
 #include "filters.h"
 
+#include <glib/gi18n.h>
+
 extern MainFrame* g_pParentWnd;
 
 int modified;   // for quit confirmation (0 = clean, 1 = unsaved,
@@ -770,7 +772,7 @@ void Map_SaveFile( const char *filename, qboolean use_region ){
 	clock_t start, finish;
 	double elapsed_time;
 	start = clock();
-	Sys_Printf( "Saving map to %s\n",filename );
+	Sys_Printf( _( "Saving map to %s\n" ), filename );
 
 	Pointfile_Clear();
 
@@ -785,12 +787,12 @@ void Map_SaveFile( const char *filename, qboolean use_region ){
 		rename( filename, backup );
 	}
 
-	Sys_Printf( "Map_SaveFile: %s\n", filename );
+	Sys_Printf( _( "Map_SaveFile: %s\n" ), filename );
 
 	// build the out data stream
 	FileStream file;
 	if ( !file.Open( filename,"w" ) ) {
-		Sys_FPrintf( SYS_ERR, "ERROR: couldn't open %s for write\n", filename );
+		Sys_FPrintf( SYS_ERR, _( "ERROR: couldn't open %s for write\n" ), filename );
 		return;
 	}
 
@@ -802,7 +804,7 @@ void Map_SaveFile( const char *filename, qboolean use_region ){
 	finish = clock();
 	elapsed_time = (double)( finish - start ) / CLOCKS_PER_SEC;
 
-	Sys_Printf( "Saved in %-.2f second(s).\n",elapsed_time );
+	Sys_Printf( _( "Saved in %-.2f second(s).\n" ), elapsed_time );
 	modified = false;
 
 	if ( !strstr( filename, "autosave" ) ) {
@@ -816,7 +818,7 @@ void Map_SaveFile( const char *filename, qboolean use_region ){
 
 		Sys_Beep();
 
-		Sys_Status( "Saved.", 0 );
+		Sys_Status( _( "Saved." ), 0 );
 	}
 }
 
@@ -827,7 +829,7 @@ void Map_SaveFile( const char *filename, qboolean use_region ){
    ===========
  */
 void Map_New( void ){
-	Sys_Printf( "Map_New\n" );
+	Sys_Printf( _( "New Map.\n" ) );
 	Map_Free();
 
 	Q_strncpyz( currentmap, "unnamed.map", sizeof( currentmap ) );

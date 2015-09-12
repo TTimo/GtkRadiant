@@ -476,6 +476,7 @@ void OnProjectViewSelChanged( GtkTreeSelection *treeselection, gpointer data )
 static void OnDoProjectSettings_realize( GtkWidget *widget, gpointer data )
 {
 	OnProjectViewSelChanged( gtk_tree_view_get_selection( GTK_TREE_VIEW( widget ) ), data );
+	OnSelchangeComboWhatgame( widget, data );
 }
 
 void DoProjectSettings(){
@@ -514,6 +515,7 @@ void DoProjectSettings(){
 	gtk_container_add( GTK_CONTAINER( frame ), table );
 	gtk_grid_set_row_spacing( GTK_GRID( table ), 5 );
 	gtk_grid_set_column_spacing( GTK_GRID( table ), 5 );
+	gtk_container_set_border_width( GTK_CONTAINER( table ), 5 );
 	gtk_widget_show( table );
 
 	label = gtk_label_new( _( "basepath" ) );
