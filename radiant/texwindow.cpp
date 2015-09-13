@@ -516,10 +516,23 @@ void BuildShaderList(){
 			{
 				GSList *tmp;
 				bool found = false;
+				char *colon;
 
-				// each token should be a shader filename
-				snprintf( dirstring, sizeof( dirstring ), "%s.shader", token );
-
+				//support for shaderlist.txt tags
+				colon = strstr( token, ":" );
+				if( colon )
+				{
+					char *name;
+					size_t length = colon - token;
+					name = (char*)malloc( length + 1 );
+					Q_strncpyz( name, token, length + 1 );
+					snprintf( dirstring, sizeof( dirstring ), "%s.shader%s", name, colon );
+					free( name );
+				} else 
+				{
+					// each token should be a shader filename
+					snprintf( dirstring, sizeof( dirstring ), "%s.shader", token );
+				}
 				for ( tmp = l_shaderfiles; tmp != NULL; tmp = tmp->next )
 				{
 					if ( !strcmp( dirstring, (char*)tmp->data ) ) {
@@ -736,11 +749,19 @@ void FillTextureList( GSList** pArray )
 	while ( l_shaderfiles != NULL )
 	{
 		char shaderfile[PATH_MAX];
+		char *colon;
 		gboolean found = FALSE;
 
 		ExtractFileName( (char*)l_shaderfiles->data, shaderfile, sizeof( shaderfile ) );
 		StripExtension( shaderfile );
 		strlwr( shaderfile );
+
+		//support for shaderlist.txt tags, forward
+		colon = strstr( (char*)l_shaderfiles->data, ":" );
+		if( colon )
+		{
+			strncat( shaderfile, colon, sizeof( shaderfile ) );
+		}
 
 		for ( GSList *tmp = texdirs; tmp; tmp = g_slist_next( tmp ) )
 			if ( !strcasecmp( (char*)tmp->data, shaderfile ) ) {
@@ -824,9 +845,17 @@ void FillTextureDirListWidget( void )
 	FillTextureList( &textures );
 	while ( textures != NULL )
 	{
-		gtk_list_store_append( store, &iter );
-		gtk_list_store_set( store, &iter, 0, (gchar*)textures->data, -1 );
+		char *colon, *line;
 
+		line = (char*)textures->data;
+		colon = strstr( line, ":" );
+
+		//support for shaderlist.txt tags
+		if( !( colon && strncmp( colon + 1, "hidden", 6 ) == 0 ) )
+		{
+			gtk_list_store_append( store, &iter );
+			gtk_list_store_set( store, &iter, 0, (gchar*)textures->data, -1 );
+		}
 		g_free( textures->data );
 		textures = g_slist_remove( textures, textures->data );
 	}
@@ -1704,8 +1733,23 @@ void PreloadShaders(){
 	Str shadername;
 	while ( lst )
 	{
+		char *colon, *line;
 		shadername = g_pGameDescription->mShaderPath;
-		shadername += (char*)lst->data;
+		line = (char*)lst->data;
+		colon = strstr( line, ":" );
+		if( colon )
+		{
+			//support for shaderlist.txt tags
+			char *name;
+			size_t length = colon - line;
+			name = (char*)malloc( length + 1 );
+			Q_strncpyz( name, line, length + 1 );
+			shadername += name;
+			free( name );
+		} else 
+		{
+			shadername += line;
+		}
 		QERApp_LoadShaderFile( shadername.GetBuffer() );
 		lst = lst->next;
 	}
