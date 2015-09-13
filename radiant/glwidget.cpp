@@ -260,7 +260,12 @@ void WINAPI gtk_glwidget_swap_buffers( GtkWidget *widget ){
 gboolean WINAPI gtk_glwidget_make_current( GtkWidget *widget ){
 	GdkGLContext *glcontext = gtk_widget_get_gl_context( widget );
 	GdkGLDrawable *gldrawable = gtk_widget_get_gl_drawable( widget );
+#if GTK_CHECK_VERSION( 3,16,0 )
+	//gtk 3.16 is claiming the function name gdk_gl_context_make_current
+	return gdk_glext_context_make_current( glcontext, gldrawable, gldrawable );
+#else
 	return gdk_gl_context_make_current( glcontext, gldrawable, gldrawable );
+#endif
 }
 
 
