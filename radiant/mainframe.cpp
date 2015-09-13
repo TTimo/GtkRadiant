@@ -5834,6 +5834,7 @@ void MainFrame::OnTexturesReloadshaders(){
 	Texture_SetTexture( &g_qeglobals.d_texturewin.texdef, &g_qeglobals.d_texturewin.brushprimit_texdef, false, NULL, false );
 	Sys_UpdateWindows( W_ALL );
 	Sys_EndWait();
+	FillTextureDirListWidget();
 }
 
 void MainFrame::OnTexturesShadersShow(){
@@ -5926,7 +5927,6 @@ void MainFrame::OnTexturesShaderlistonly(){
 	gtk_check_menu_item_set_active( GTK_CHECK_MENU_ITEM( item ), g_PrefsDlg.m_bTexturesShaderlistOnly ? TRUE : FALSE );
 	g_bIgnoreCommands--;
 	FillTextureMenu();
-	FillTextureDirListWidget();
 }
 
 void MainFrame::OnTextureWad( unsigned int nID ){
