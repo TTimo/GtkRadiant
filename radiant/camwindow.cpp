@@ -27,7 +27,9 @@
 
 #include "stdafx.h"
 #include <gtk/gtk.h>
+#ifdef USE_GTKGLAREA
 #include <epoxy/gl.h>
+#endif
 #include <GL/gl.h>
 
 extern void DrawPathLines();
