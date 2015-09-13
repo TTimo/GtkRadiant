@@ -47,6 +47,16 @@ static void realize( GtkWidget *widget, gpointer data ){
 	wnd->OnCreate();
 }
 
+static gboolean render( GtkGLArea *widget, GdkGLContext *context, gpointer data ){
+	GLWindow *wnd = (GLWindow*)data;
+
+	if ( !g_pParentWnd->IsSleeping() ) {
+		wnd->OnExpose();
+	}
+
+	return TRUE;
+}
+
 static gboolean expose( GtkWidget *widget, cairo_t *cr, gpointer data ){
 	GLWindow *wnd = (GLWindow*)data;
 
@@ -220,7 +230,7 @@ GLWindow::GLWindow( bool zbuffer ) {
 
 	// Connect signal handlers
 	g_signal_connect( m_pWidget, "realize", G_CALLBACK( realize ), this );
-	g_signal_connect( m_pWidget, "draw", G_CALLBACK( expose ), this );
+	g_signal_connect( m_pWidget, "render", G_CALLBACK( render ), this );
 	g_signal_connect( m_pWidget, "motion_notify_event", G_CALLBACK( motion ), this );
 	g_signal_connect( m_pWidget, "button_press_event", G_CALLBACK( button_press ), this );
 	g_signal_connect( m_pWidget, "button_release_event",G_CALLBACK( button_release ), this );

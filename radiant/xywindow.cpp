@@ -29,6 +29,9 @@
 #include <gtk/gtk.h>
 #include <glib/gi18n.h>
 #include <assert.h>
+#ifdef USE_GTKGLAREA
+#include <epoxy/gl.h>
+#endif
 #include <GL/gl.h>
 
 #ifdef _WIN32

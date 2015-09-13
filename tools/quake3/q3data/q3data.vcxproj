@@ -77,7 +77,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(SolutionDir)\include;$(SolutionDir)\libs;$(SolutionDir)\..\GtkRadiant-libs\jpeg-9a;$(SolutionDir)\..\GtkRadiant-libs\glib-2.34.3\lib\glib-2.0\include;$(SolutionDir)\..\GtkRadiant-libs\glib-2.34.3\include\glib-2.0;$(SolutionDir)\..\GtkRadiant-libs\gtk-3.6.4\include\gtk-3.0;$(SolutionDir)\..\GtkRadiant-libs\pango-1.30.1\include\pango-1.0;$(SolutionDir)\..\GtkRadiant-libs\cairo-1.10.2\include\cairo;$(SolutionDir)\..\GtkRadiant-libs\gdk-pixbuf-2.26.5\include\gdk-pixbuf-2.0;$(SolutionDir)\..\GtkRadiant-libs\atk-2.6.0\include\atk-1.0;$(SolutionDir)\..\GtkRadiant-libs\STLport-5.2.1\stlport;$(SolutionDir)\..\GtkRadiant-libs\gtkglext-1.3\include;$(SolutionDir)\..\GtkRadiant-libs\libxml2-2.9.2\include;$(SolutionDir)\..\GtkRadiant-libs\lpng1618;$(SolutionDir)\..\GtkRadiant-libs\libiconv-1.14\woe32dll\libiconv;$(SolutionDir)\..\GtkRadiant-libs\gettext-0.19.5.1\include;$(SolutionDir)\tools\quake\common;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\include;$(SolutionDir)\libs;$(SolutionDir)\..\GtkRadiant-libs\jpeg-9a;$(SolutionDir)\..\GtkRadiant-libs\vs10\Win32\include\glib-2.0;$(SolutionDir)\..\GtkRadiant-libs\vs10\Win32\lib\glib-2.0\include;$(SolutionDir)\..\GtkRadiant-libs\vs10\Win32\include\gtk-3.0;$(SolutionDir)\..\GtkRadiant-libs\vs10\Win32\include\pango-1.0;$(SolutionDir)\..\GtkRadiant-libs\vs10\Win32\include\cairo;$(SolutionDir)\..\GtkRadiant-libs\vs10\Win32\include\gdk-pixbuf-2.0;$(SolutionDir)\..\GtkRadiant-libs\vs10\Win32\include\atk-1.0;$(SolutionDir)\..\GtkRadiant-libs\STLport-5.2.1\stlport;$(SolutionDir)\..\GtkRadiant-libs\gtkglext-1.3\include;$(SolutionDir)\..\GtkRadiant-libs\vs10\Win32\libxml2-2.9.2\include;$(SolutionDir)\..\GtkRadiant-libs\lpng1618;$(SolutionDir)\..\GtkRadiant-libs\vs10\Win32\libiconv-1.14\woe32dll\libiconv;$(SolutionDir)\..\GtkRadiant-libs\gettext-0.19.5.1\include;$(SolutionDir)\tools\quake\common;%(AdditionalIncludeDirectories);$(SolutionDir)\..\GtkRadiant-libs\vs10\Win32\include</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions);_STLP_DONT_USE_EXCEPTIONS;_STLP_NO_NAMESPACES;_STLP_NO_IOSTREAMS;_WIN32;inline=__inline</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -88,7 +88,7 @@
     </ClCompile>
     <Link>
       <AdditionalDependencies>Ws2_32.lib;glib-2.0.lib;libxml2.lib;l_net.lib;mathlib.lib;quake3-common.lib;libiconv.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)\build\$(Configuration)\libs;$(SolutionDir)\..\GtkRadiant-libs\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)\build\$(Configuration)\libs;$(SolutionDir)\..\GtkRadiant-libs\vs10\Win32\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <DataExecutionPrevention />
@@ -117,7 +117,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
-      <AdditionalIncludeDirectories>$(SolutionDir)\tools\quake3\common;$(SolutionDir)\include;$(SolutionDir)\libs;$(SolutionDir)\..\GtkRadiant-libs\jpeg-9a;$(SolutionDir)\..\GtkRadiant-libs\glib-2.34.3\lib\glib-2.0\include;$(SolutionDir)\..\GtkRadiant-libs\glib-2.34.3\include\glib-2.0;$(SolutionDir)\..\GtkRadiant-libs\gtk-3.6.4\include\gtk-3.0;$(SolutionDir)\..\GtkRadiant-libs\pango-1.30.1\include\pango-1.0;$(SolutionDir)\..\GtkRadiant-libs\cairo-1.10.2\include\cairo;$(SolutionDir)\..\GtkRadiant-libs\gdk-pixbuf-2.26.5\include\gdk-pixbuf-2.0;$(SolutionDir)\..\GtkRadiant-libs\atk-2.6.0\include\atk-1.0;$(SolutionDir)\..\GtkRadiant-libs\STLport-5.2.1\stlport;$(SolutionDir)\..\GtkRadiant-libs\gtkglext-1.3\include;$(SolutionDir)\..\GtkRadiant-libs\libxml2-2.9.2\include;$(SolutionDir)\..\GtkRadiant-libs\lpng1618;$(SolutionDir)\..\GtkRadiant-libs\libiconv-1.14\woe32dll\libiconv;$(SolutionDir)\..\GtkRadiant-libs\gettext-0.19.5.1\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\tools\quake3\common;$(SolutionDir)\include;$(SolutionDir)\libs;$(SolutionDir)\..\GtkRadiant-libs\jpeg-9a;$(SolutionDir)\..\GtkRadiant-libs\vs10\Win32\include\glib-2.0;$(SolutionDir)\..\GtkRadiant-libs\vs10\Win32\lib\glib-2.0\include;$(SolutionDir)\..\GtkRadiant-libs\vs10\Win32\include\gtk-3.0;$(SolutionDir)\..\GtkRadiant-libs\vs10\Win32\include\pango-1.0;$(SolutionDir)\..\GtkRadiant-libs\vs10\Win32\include\cairo;$(SolutionDir)\..\GtkRadiant-libs\vs10\Win32\include\gdk-pixbuf-2.0;$(SolutionDir)\..\GtkRadiant-libs\vs10\Win32\include\atk-1.0;$(SolutionDir)\..\GtkRadiant-libs\STLport-5.2.1\stlport;$(SolutionDir)\..\GtkRadiant-libs\gtkglext-1.3\include;$(SolutionDir)\..\GtkRadiant-libs\vs10\Win32\libxml2-2.9.2\include;$(SolutionDir)\..\GtkRadiant-libs\lpng1618;$(SolutionDir)\..\GtkRadiant-libs\vs10\Win32\libiconv-1.14\woe32dll\libiconv;$(SolutionDir)\..\GtkRadiant-libs\gettext-0.19.5.1\include;%(AdditionalIncludeDirectories);$(SolutionDir)\..\GtkRadiant-libs\vs10\Win32\include;$(SolutionDir)\..\GtkRadiant-libs\libxml2-2.9.2\include</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>NDEBUG;_CRT_NONSTDC_NO_DEPRECATE;_CRT_SECURE_NO_WARNINGS;_STLP_DONT_USE_EXCEPTIONS;_STLP_NO_NAMESPACES;_STLP_NO_IOSTREAMS;_WIN32;inline=__inline;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
@@ -126,7 +126,7 @@
     </ClCompile>
     <Link>
       <AdditionalDependencies>Ws2_32.lib;glib-2.0.lib;libxml2.lib;l_net.lib;mathlib.lib;quake3-common.lib;libiconv.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)\build\$(Configuration)\libs;$(SolutionDir)\..\GtkRadiant-libs\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)\build\$(Configuration)\libs;$(SolutionDir)\..\GtkRadiant-libs\vs10\Win32\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>

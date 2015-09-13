@@ -31,6 +31,9 @@
 #include <wtypes.h>
 #endif
 
+#ifdef USE_GTKGLAREA
+#include <epoxy/gl.h>
+#endif
 #include <GL/gl.h>
 
 #include "str.h"

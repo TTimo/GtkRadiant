@@ -35,7 +35,10 @@
 #endif
 
 #include <gtk/gtk.h>
+#ifdef USE_GTKGLAREA
+#else //USE_GTKGLEXT
 #include <gtk/gtkgl.h>
+#endif
 #include <glib/gi18n.h>
 #include "stdafx.h"
 #include <assert.h>
@@ -494,8 +497,11 @@ int main( int argc, char* argv[] ) {
 //  gtk_disable_setlocale();
 
 	gtk_init( &argc, &argv );
+#ifdef USE_GTKGLAREA
+#else //USE_GTKGLEXT
 	gtk_gl_init( &argc, &argv );
 	gdk_gl_init( &argc, &argv );
+#endif
 
 	// TODO: Find a better place to call this.
 	gtk_glwidget_create_font();

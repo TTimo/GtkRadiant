@@ -32,12 +32,65 @@
 
 #include "stdafx.h"
 
-#include <gtk/gtkgl.h>
-
 #include <pango/pangoft2.h>
 
 #include "glwidget.h"
 #include "qgl.h"
+
+#ifdef USE_GTKGLAREA
+
+GtkWidget* WINAPI gtk_glwidget_new( gboolean zbuffer, GtkWidget* share ){
+	GtkWidget *gl_area = gtk_gl_area_new();
+
+	gtk_gl_area_set_has_depth_buffer( GTK_GL_AREA( gl_area ), zbuffer );
+	gtk_gl_area_set_has_alpha( GTK_GL_AREA( gl_area ), TRUE );
+	gtk_gl_area_set_required_version( GTK_GL_AREA( gl_area ), 1,0 );
+
+	gtk_widget_set_hexpand( gl_area, TRUE );
+	gtk_widget_set_vexpand( gl_area, TRUE );
+
+	g_object_set_data( G_OBJECT( gl_area ), "shared-context", share );
+
+	return gl_area;
+}
+
+void WINAPI gtk_glwidget_destroy_context( GtkWidget *widget ){
+}
+
+void WINAPI gtk_glwidget_create_context( GtkWidget *widget ){
+}
+void WINAPI gtk_glwidget_swap_buffers( GtkWidget *widget ){
+	GtkGLArea *gl_area = GTK_GL_AREA( widget );
+	GdkGLContext *context;
+	context = gtk_gl_area_get_context( gl_area );
+
+}
+
+gboolean WINAPI gtk_glwidget_make_current( GtkWidget *widget ){
+	GError *gerror = NULL;
+	GdkGLContext *context;
+	GdkGLContext *share_context;
+	GtkGLArea *gl_area = GTK_GL_AREA( widget );
+
+	share_context = GDK_GL_CONTEXT( g_object_get_data( G_OBJECT( gl_area ), "shared-context" ) );
+
+	context = gtk_gl_area_get_context( gl_area );
+	g_object_set_data( G_OBJECT( context ), "shared-context", share_context );
+
+	gtk_gl_area_make_current( gl_area );
+	gerror = gtk_gl_area_get_error( gl_area );
+	if( gerror )
+	{
+		Sys_Printf( "gtk_gl_area_make_current error: %s\n", gerror->message );
+		g_error_free( gerror );
+		return false;
+	}
+
+	return true;
+}
+#else //USE_GTKGLEXT
+
+#include <gtk/gtkgl.h>
 
 typedef int* attribs_t;
 typedef const attribs_t* configs_iterator;
@@ -210,6 +263,8 @@ gboolean WINAPI gtk_glwidget_make_current( GtkWidget *widget ){
 	return gdk_gl_context_make_current( glcontext, gldrawable, gldrawable );
 }
 
+
+#endif //USE_GTKGLAREA
 
 // Think about rewriting this font stuff to use OpenGL display lists and glBitmap().
 // Bit maps together with display lists may offer a performance increase, but

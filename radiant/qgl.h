@@ -28,6 +28,9 @@
 
 #define ATIHACK_812
 
+#ifdef USE_GTKGLAREA
+#include <epoxy/gl.h>
+#endif
 #include <GL/gl.h>
 
 #if defined ( __linux__ ) || defined ( __APPLE__ )

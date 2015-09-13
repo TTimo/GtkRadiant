@@ -688,6 +688,7 @@ GtkWidget* create_SurfaceInspector( void ){
 	gtk_widget_set_vexpand( table1, TRUE );
 	gtk_grid_set_column_spacing( GTK_GRID( table1 ), 5 );
 	gtk_container_add( GTK_CONTAINER( viewport2 ), table1 );
+	gtk_container_set_border_width( GTK_CONTAINER( table1 ), 5 );
 	gtk_widget_show( table1 );
 
 	label = gtk_label_new( _( "Value" ) );

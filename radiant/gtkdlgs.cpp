@@ -2103,12 +2103,12 @@ void DoAbout(){
 	CString s = g_strBitmapsPath;
 	s += "logo.png"; 
 	GtkWidget *logo_image = gtk_image_new_from_file( s.GetBuffer() );
-	gtk_box_pack_start( GTK_BOX( outer_vbox ), logo_image, FALSE, FALSE, 0 );
+	gtk_box_pack_start( GTK_BOX( outer_vbox ), logo_image, FALSE, TRUE, 0 );
 	gtk_widget_show( logo_image );
 
 	// all other widgets layout
 	GtkWidget *inner_vbox = gtk_box_new( GTK_ORIENTATION_VERTICAL, ABT_WIDGET_PADDING );
-	gtk_box_pack_start( GTK_BOX( outer_vbox ), inner_vbox, FALSE, FALSE, 0 );
+	gtk_box_pack_start( GTK_BOX( outer_vbox ), inner_vbox, TRUE, TRUE, 0 );
 	gtk_container_set_border_width( GTK_CONTAINER( inner_vbox ), ABT_WIDGET_PADDING );
 	gtk_widget_show( inner_vbox );
 
@@ -2130,7 +2130,7 @@ void DoAbout(){
 
 	// OpenGL properties 
 	GtkWidget *gl_prop_frame = gtk_frame_new( _( "OpenGL Properties" ) );
-	gtk_box_pack_start( GTK_BOX( inner_vbox ), gl_prop_frame, TRUE, TRUE, 0 );
+	gtk_box_pack_start( GTK_BOX( inner_vbox ), gl_prop_frame, FALSE, TRUE, 0 );
 	gtk_widget_set_hexpand( gl_prop_frame, TRUE );
 	gtk_widget_show( gl_prop_frame );
 
@@ -2179,17 +2179,15 @@ void DoAbout(){
 	GtkWidget *gl_ext_frame = gtk_frame_new( _( "OpenGL Extensions" ) );
 	gtk_box_pack_start( GTK_BOX( inner_vbox ), gl_ext_frame, TRUE, TRUE, 0 );
 	gtk_widget_set_hexpand( gl_ext_frame, TRUE );
+	gtk_widget_set_vexpand( gl_ext_frame, TRUE );
 	gtk_widget_show( gl_ext_frame );
 
-	GtkWidget *gl_ext_hbox = gtk_box_new( GTK_ORIENTATION_HORIZONTAL, ABT_WIDGET_PADDING );
-	gtk_container_add( GTK_CONTAINER( gl_ext_frame ), gl_ext_hbox );
-	gtk_container_set_border_width( GTK_CONTAINER( gl_ext_hbox ), 4 );	
-	gtk_widget_show( gl_ext_hbox );
-
 	GtkWidget *gl_ext_scroll = gtk_scrolled_window_new( NULL, NULL );
-	gtk_box_pack_start( GTK_BOX( gl_ext_hbox ), gl_ext_scroll, TRUE, TRUE, 0 );
+	gtk_container_add( GTK_CONTAINER( gl_ext_frame ), gl_ext_scroll );
 	gtk_scrolled_window_set_policy( GTK_SCROLLED_WINDOW( gl_ext_scroll ), GTK_POLICY_AUTOMATIC, GTK_POLICY_ALWAYS );
 	gtk_scrolled_window_set_shadow_type( GTK_SCROLLED_WINDOW( gl_ext_scroll ), GTK_SHADOW_IN );
+	gtk_widget_set_hexpand( gl_ext_scroll, TRUE );
+	gtk_widget_set_vexpand( gl_ext_scroll, TRUE );
 	gtk_widget_show( gl_ext_scroll );
 
 	GtkWidget *gl_ext_textview = gtk_text_view_new();
@@ -2197,8 +2195,22 @@ void DoAbout(){
 	gtk_container_add( GTK_CONTAINER( gl_ext_scroll ), gl_ext_textview );
 	GtkTextBuffer* buffer = gtk_text_view_get_buffer( GTK_TEXT_VIEW( gl_ext_textview ) );
 	gtk_text_buffer_set_text( buffer, (char *)qglGetString( GL_EXTENSIONS ), -1 );
-	gtk_text_view_set_wrap_mode( GTK_TEXT_VIEW( gl_ext_textview ), GTK_WRAP_WORD );;
+	gtk_text_view_set_wrap_mode( GTK_TEXT_VIEW( gl_ext_textview ), GTK_WRAP_WORD );
+	gtk_widget_set_hexpand( gl_ext_textview, TRUE );
+	gtk_widget_set_vexpand( gl_ext_textview, TRUE );
 	gtk_widget_show( gl_ext_textview );
+
+	{
+		PangoLayout * cell = gtk_widget_create_pango_layout( GTK_WIDGET( gl_ext_textview ), "X" );
+		PangoRectangle rect;
+		rect.height = 0;
+		pango_layout_get_pixel_extents( cell, NULL, &rect );
+		g_object_unref( cell );
+		//show at least 3 rows of text
+		gtk_widget_set_size_request( GTK_WIDGET( gl_ext_scroll ), -1, rect.height * 3 );
+		gtk_widget_set_size_request( GTK_WIDGET( gl_ext_textview ), -1, rect.height * 3 );
+		gtk_scrolled_window_set_min_content_height( GTK_SCROLLED_WINDOW( gl_ext_scroll ), rect.height * 3 );
+	}
 
 	// buttons
 	/*

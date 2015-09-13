@@ -2353,10 +2353,10 @@ void PositionWindowOnPrimaryScreen( window_position_t& position ){
 
 GtkWidget* create_framed_widget( GtkWidget* widget ){
 	GtkWidget* frame = gtk_frame_new( (char*)NULL );
-	gtk_widget_show( frame );
 	gtk_frame_set_shadow_type( GTK_FRAME( frame ), GTK_SHADOW_IN );
 	gtk_container_add( GTK_CONTAINER( frame ), widget );
 	gtk_widget_show( widget );
+	gtk_widget_show( frame );
 	return frame;
 }
 
