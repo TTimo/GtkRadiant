@@ -1173,7 +1173,7 @@ int QGL_Init( const char *dllname, const char* gluname ){
 #ifdef USE_GTKGLAREA
 #define GLSYM2FUNC(symbol) #symbol
 #else //if USE_GTKGLEXT
-#define GLSYM2FUNC(symbol) safe_dlsym( g_hGLDLL, "#symbol" );
+#define GLSYM2FUNC(symbol) safe_dlsym( g_hGLDLL, #symbol );
 
 #ifdef _WIN32
 	g_hGLDLL = LoadLibrary( dllname );
