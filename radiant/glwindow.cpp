@@ -230,7 +230,11 @@ GLWindow::GLWindow( bool zbuffer ) {
 
 	// Connect signal handlers
 	g_signal_connect( m_pWidget, "realize", G_CALLBACK( realize ), this );
+#ifdef USE_GTKGLAREA
 	g_signal_connect( m_pWidget, "render", G_CALLBACK( render ), this );
+#else //USE_GTKGLEXT
+	g_signal_connect( m_pWidget, "draw", G_CALLBACK( expose ), this );
+#endif
 	g_signal_connect( m_pWidget, "motion_notify_event", G_CALLBACK( motion ), this );
 	g_signal_connect( m_pWidget, "button_press_event", G_CALLBACK( button_press ), this );
 	g_signal_connect( m_pWidget, "button_release_event",G_CALLBACK( button_release ), this );
