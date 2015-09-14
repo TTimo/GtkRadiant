@@ -560,7 +560,7 @@ void CamWnd::ToggleFreeMove(){
 		SetFocus();
 		SetCapture();
 
-		display = gdk_display_get_default();
+		display = gdk_window_get_display( window );
 		cursor = gdk_cursor_new_for_display( display, GDK_BLANK_CURSOR );
 		gdk_window_set_cursor( window, cursor );
 
@@ -579,7 +579,13 @@ void CamWnd::ToggleFreeMove(){
 												| GDK_BUTTON_PRESS_MASK
 												| GDK_BUTTON_RELEASE_MASK );
 
-			gdk_pointer_grab( gtk_widget_get_window( widget ), TRUE, mask, gtk_widget_get_window( widget ), NULL, GDK_CURRENT_TIME );
+//			gdk_pointer_grab( gtk_widget_get_window( widget ), TRUE, mask, gtk_widget_get_window( widget ), NULL, GDK_CURRENT_TIME );
+			GdkDeviceManager *device_manager;
+			GdkDevice *pointer;
+
+			device_manager = gdk_display_get_device_manager( display );
+			pointer = gdk_device_manager_get_client_pointer( device_manager );
+			gdk_device_grab( pointer, window, GDK_OWNERSHIP_APPLICATION, TRUE, mask, cursor, GDK_CURRENT_TIME );
 		}
 	}
 	else

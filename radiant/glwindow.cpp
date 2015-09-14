@@ -76,10 +76,20 @@ static gboolean expose( GtkWidget *widget, cairo_t *cr, gpointer data ){
 static void button_press( GtkWidget *widget, GdkEventButton *event, gpointer data ){
 	GLWindow *wnd = (GLWindow*)data;
 	guint32 flags = 0;
+	GdkWindow *window;
+	GdkDisplay *display;
+	GdkDeviceManager *device_manager;
+	GdkDevice *pointer;
+	GdkCursor *cursor;
+	GdkEventMask mask = (GdkEventMask)( GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK | GDK_POINTER_MOTION_MASK );
 
-	gdk_pointer_grab( gtk_widget_get_window( widget ), FALSE,
-					  (GdkEventMask)( GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK | GDK_POINTER_MOTION_MASK ),
-					  NULL, NULL, GDK_CURRENT_TIME );
+	window = gtk_widget_get_window( widget );
+	display = gdk_window_get_display( window );
+	device_manager = gdk_display_get_device_manager( display );
+	pointer = gdk_device_manager_get_client_pointer( device_manager );
+	cursor = NULL;
+
+	gdk_device_grab( pointer, window, GDK_OWNERSHIP_APPLICATION, FALSE, mask, cursor, GDK_CURRENT_TIME );
 
 	gtk_window_set_focus( GTK_WINDOW( g_pParentWnd->m_pWidget ), widget );
 
