@@ -1471,6 +1471,8 @@ static GtkWidget * create_entity_menu_item( GtkWidget *submenu, CString strName 
 	gtk_container_add( GTK_CONTAINER( box ), label );
 	gtk_widget_show( label );
 
+	g_object_set_data( G_OBJECT( item ), "classname-label", label );
+
 	return item;
 }
 void XYWnd::HandleDrop(){

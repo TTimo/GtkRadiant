@@ -403,7 +403,14 @@ gint HandleCommand( GtkWidget *widget, gpointer data ){
 		const char *str;
 
 		if( GTK_IS_MENU_ITEM( widget ) ) {
-			str = gtk_menu_item_get_label( GTK_MENU_ITEM( widget ) );
+			GtkWidget *label = GTK_WIDGET( g_object_get_data( G_OBJECT( widget ), "classname-label" ) );
+			if( label )
+			{
+				str = gtk_label_get_text( GTK_LABEL( label ) );	
+			} else
+			{
+				str = gtk_menu_item_get_label( GTK_MENU_ITEM( widget ) );
+			}
 		} else if( GTK_IS_LABEL( widget ) ) {
 			str = gtk_label_get_text( GTK_LABEL( widget ) );
 		} else {
