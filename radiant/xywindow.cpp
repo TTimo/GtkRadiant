@@ -1440,6 +1440,39 @@ qboolean XYWnd::DragDelta( int x, int y, vec3_t move ){
 	return false;
 }
 
+static GtkWidget * create_entity_menu_item( GtkWidget *submenu, CString strName )
+{
+	GtkWidget *item, *box, *icon, *label;
+	CString filepath;
+	GdkPixbuf *pixbuf;
+
+	filepath = g_strGameToolsPath;
+	filepath += "entity_icons/";
+	filepath += strName;
+	filepath += ".png";
+
+	item = gtk_menu_item_new();
+
+	box = gtk_box_new( GTK_ORIENTATION_HORIZONTAL, 6 );
+	
+	gtk_container_add( GTK_CONTAINER( item ), box );
+	gtk_widget_show( box );
+
+	pixbuf = gdk_pixbuf_new_from_file( filepath, NULL );
+	if( pixbuf ) 
+	{
+		icon = gtk_image_new_from_pixbuf( pixbuf );
+		gtk_container_add( GTK_CONTAINER( box ), icon );
+		gtk_widget_show( icon );
+
+		g_object_unref( pixbuf );
+	}
+	label = gtk_label_new( strName );
+	gtk_container_add( GTK_CONTAINER( box ), label );
+	gtk_widget_show( label );
+
+	return item;
+}
 void XYWnd::HandleDrop(){
 	if ( g_PrefsDlg.m_bRightClick == false ) {
 		return;
@@ -1509,12 +1542,14 @@ void XYWnd::HandleDrop(){
 				CString strRight = strName.Right( strName.GetLength() - n_ - 1 );
 				if ( strLeft == strActive ) { // this is a child
 					assert( submenu );
-					item = gtk_menu_item_new_with_label( strName );
+					CheckMenuSplitting( submenu );
+					item = create_entity_menu_item( submenu, strName );
+
 					g_signal_connect( item, "activate", G_CALLBACK( HandleCommand ),
 //					g_signal_connect( item, "activate", G_CALLBACK( HandleCommand ),
 										GINT_TO_POINTER( nID++ ) );
+
 					gtk_widget_show( item );
-					CheckMenuSplitting( submenu );
 					gtk_menu_shell_append( GTK_MENU_SHELL( submenu ), item );
 				}
 				else
@@ -1534,7 +1569,8 @@ void XYWnd::HandleDrop(){
 
 					submenu = gtk_menu_new();
 					submenu_root = submenu;
-					item = gtk_menu_item_new_with_label( strName );
+					//item = gtk_menu_item_new_with_label( strName );
+					item = create_entity_menu_item( submenu, strName );
 					g_signal_connect( item, "activate", G_CALLBACK( HandleCommand ),
 //					g_signal_connect( item, "activate", G_CALLBACK( HandleCommand ),
 										GINT_TO_POINTER( nID++ ) );
@@ -1557,7 +1593,8 @@ void XYWnd::HandleDrop(){
 				}
 				strActive = "";
 
-				item = gtk_menu_item_new_with_label( strName );
+				//item = gtk_menu_item_new_with_label( strName );
+				item = create_entity_menu_item( menu, strName );
 				g_signal_connect( item, "activate", G_CALLBACK( HandleCommand ),
 //				g_signal_connect( item, "activate", G_CALLBACK( HandleCommand ),
 									GINT_TO_POINTER( nID++ ) );
