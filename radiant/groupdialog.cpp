@@ -650,6 +650,20 @@ void AssignModel(){
 	}
 }
 
+void cam2angles()
+{
+	Str value;
+	camera_t *cam;
+
+	cam = g_pParentWnd->GetCamWnd()->Camera();
+	//pitch yaw roll
+	value.Format( "%g %g %g", cam->angles[0], cam->angles[1], cam->angles[2] );
+
+	gtk_entry_set_text( GTK_ENTRY( EntWidgets[EntKeyField] ), "angles" );
+	gtk_entry_set_text( GTK_ENTRY( EntWidgets[EntValueField] ), value.GetBuffer() );
+	AddProp();
+}
+
 /*
    ==============
    SetInspectorMode
@@ -1598,13 +1612,6 @@ void GroupDlg::Create(){
 					gtk_widget_show( vbox2 );
 
 					{
-						GtkWidget* button = gtk_button_new_with_label( _( "Reset" ) );
-						gtk_box_pack_start( GTK_BOX( vbox2 ), button, FALSE, FALSE, 0 );
-						gtk_widget_show( button );
-						g_signal_connect( button, "clicked", G_CALLBACK( ResetEntity ), NULL );
-					}
-
-					{
 						GtkWidget* button = gtk_button_new_with_label( _( "Up" ) );
 						gtk_box_pack_start( GTK_BOX( vbox2 ), button, FALSE, FALSE, 0 );
 						gtk_widget_show( button );
@@ -1616,6 +1623,35 @@ void GroupDlg::Create(){
 						gtk_box_pack_start( GTK_BOX( vbox2 ), button, FALSE, FALSE, 0 );
 						gtk_widget_show( button );
 						g_signal_connect( button, "clicked", G_CALLBACK( entitylist_angle ), (void *)"-2" );
+					}
+
+					{
+						GtkWidget* button = gtk_button_new_with_label( _( "Cam to angles" ) );
+						gtk_box_pack_start( GTK_BOX( vbox2 ), button, FALSE, FALSE, 0 );
+						gtk_widget_show( button );
+						g_signal_connect( button, "clicked", G_CALLBACK( cam2angles ), NULL );
+						g_object_set_data( G_OBJECT( dialog ), "cam2angles_button", button );
+					}
+
+				}
+
+				{
+					GtkWidget* vbox2 = gtk_box_new( GTK_ORIENTATION_VERTICAL, 0 );
+					gtk_box_pack_start( GTK_BOX( hbox ), vbox2, TRUE, TRUE, 0 );
+					gtk_widget_show( vbox2 );
+
+					{
+						GtkWidget* button = gtk_button_new_with_label( _( "Sound..." ) );
+						gtk_box_pack_start( GTK_BOX( vbox2 ), button, FALSE, FALSE, 0 );
+						gtk_widget_show( button );
+						g_signal_connect( button, "clicked", G_CALLBACK( AssignSound ), NULL );
+					}
+
+					{
+						GtkWidget* button = gtk_button_new_with_label( _( "Model..." ) );
+						gtk_box_pack_start( GTK_BOX( vbox2 ), button, FALSE, FALSE, 0 );
+						gtk_widget_show( button );
+						g_signal_connect( button, "clicked", G_CALLBACK( AssignModel ), NULL );
 					}
 				}
 
@@ -1633,18 +1669,12 @@ void GroupDlg::Create(){
 					}
 
 					{
-						GtkWidget* button = gtk_button_new_with_label( _( "Sound..." ) );
+						GtkWidget* button = gtk_button_new_with_label( _( "Reset" ) );
 						gtk_box_pack_start( GTK_BOX( vbox2 ), button, FALSE, FALSE, 0 );
 						gtk_widget_show( button );
-						g_signal_connect( button, "clicked", G_CALLBACK( AssignSound ), NULL );
+						g_signal_connect( button, "clicked", G_CALLBACK( ResetEntity ), NULL );
 					}
 
-					{
-						GtkWidget* button = gtk_button_new_with_label( _( "Model..." ) );
-						gtk_box_pack_start( GTK_BOX( vbox2 ), button, FALSE, FALSE, 0 );
-						gtk_widget_show( button );
-						g_signal_connect( button, "clicked", G_CALLBACK( AssignModel ), NULL );
-					}
 				}
 			}
 		}
