@@ -38,7 +38,7 @@ CPicoSurface::CPicoSurface( picoSurface_t *pSurface ){
 	// directory as a fall-back. This is a hack for malformed models.
 
 	if ( m_shader->IsDefault() ) {
-		Sys_Printf( "WARNING: Failed to load shader %s for %s\n", m_shader->getName(), m_pSurface->model->name );
+		Sys_FPrintf( SYS_WRN, "WARNING: Failed to load shader %s for %s\n", m_shader->getName(), m_pSurface->model->name );
 
 		gchar *dir = g_path_get_dirname( m_pSurface->model->name );
 		gchar *skin = g_strdup_printf( "%s/skin.tga", dir );
@@ -146,7 +146,7 @@ void CPicoSurface::Draw( int state, IShader *pShader, int rflags ){
 		   g_QglTable.m_pfn_qglEnd();*/
 
 		break;
-	default:              Sys_Printf( "ERROR: Unsupported Pico Surface Type: %i", PicoGetSurfaceType( m_pSurface ) );
+	default:              Sys_FPrintf( SYS_ERR, "ERROR: Unsupported Pico Surface Type: %i", PicoGetSurfaceType( m_pSurface ) );
 		break;
 	}
 
@@ -205,7 +205,7 @@ bool CPicoSurface::TestRay( const ray_t *ray, vec_t *dist ) const {
 			}
 			break;
 		default:
-			Sys_Printf( "ERROR: Unsupported Pico Surface Type: %i", PicoGetSurfaceType( m_pSurface ) );
+			Sys_FPrintf( SYS_ERR, "ERROR: Unsupported Pico Surface Type: %i", PicoGetSurfaceType( m_pSurface ) );
 			break;
 		}
 	}

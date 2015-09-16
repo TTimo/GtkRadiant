@@ -277,7 +277,7 @@ int GetLumpElements( bspHeader_t *header, int lump, int size ){
 	/* check for odd size */
 	if ( header->lumps[ lump ].length % size ) {
 		if ( force ) {
-			Sys_Printf( "WARNING: GetLumpElements: odd lump size (%d) in lump %d\n", header->lumps[ lump ].length, lump );
+			Sys_FPrintf( SYS_WRN, "WARNING: GetLumpElements: odd lump size (%d) in lump %d\n", header->lumps[ lump ].length, lump );
 			return 0;
 		}
 		else{
@@ -321,7 +321,7 @@ int CopyLump( bspHeader_t *header, int lump, void *dest, int size ){
 	}
 	if ( length % size ) {
 		if ( force ) {
-			Sys_Printf( "WARNING: CopyLump: odd lump size (%d) in lump %d\n", length, lump );
+			Sys_FPrintf( SYS_WRN, "WARNING: CopyLump: odd lump size (%d) in lump %d\n", length, lump );
 			return 0;
 		}
 		else{

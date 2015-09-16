@@ -3209,7 +3209,7 @@ void XYWnd::OnCreate(){
 void XYWnd::OnExpose(){
 	bool bPaint = true;
 	if ( !MakeCurrent() ) {
-		Sys_Printf( "ERROR: glXMakeCurrent failed.. Error:%i\n",qglGetError() );
+		Sys_FPrintf( SYS_ERR, "ERROR: glXMakeCurrent failed.. Error:%i\n",qglGetError() );
 		Sys_Printf( "Please restart Radiant if the Map view is not working\n" );
 		bPaint = false;
 	}

@@ -203,7 +203,7 @@ void ClusterMerge( int leafnum ){
 	numvis = LeafVectorFromPortalVector( portalvector, uncompressed );
 
 //	if (uncompressed[leafnum>>3] & (1<<(leafnum&7)))
-//		Sys_Printf ("WARNING: Leaf portals saw into leaf\n");
+//		Sys_FPrintf( SYS_WRN, "WARNING: Leaf portals saw into leaf\n");
 
 //	uncompressed[leafnum>>3] |= (1<<(leafnum&7));
 
@@ -1113,7 +1113,7 @@ int VisMain( int argc, char **argv ){
 		}
 
 		else{
-			Sys_Printf( "WARNING: Unknown option \"%s\"\n", argv[ i ] );
+			Sys_FPrintf( SYS_WRN, "WARNING: Unknown option \"%s\"\n", argv[ i ] );
 		}
 	}
 

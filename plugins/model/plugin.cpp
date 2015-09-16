@@ -76,7 +76,7 @@ void PicoPrintFunc( int level, const char *str ){
 		break;
 
 	case PICO_WARNING:
-		Sys_Printf( "WARNING: %s\n", str );
+		Sys_FPrintf( SYS_WRN, "WARNING: %s\n", str );
 		break;
 
 	case PICO_ERROR:
@@ -84,7 +84,7 @@ void PicoPrintFunc( int level, const char *str ){
 		break;
 
 	case PICO_FATAL:
-		Sys_Printf( "ERROR: %s\n", str );
+		Sys_FPrintf( SYS_ERR, "ERROR: %s\n", str );
 		break;
 	}
 }

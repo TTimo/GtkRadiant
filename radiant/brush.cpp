@@ -341,7 +341,7 @@ void Face_TextureVectors( face_t *f, float STfromXYZ[2][4] ){
 #ifdef _DEBUG
 	// this code is not supposed to be used while in BP mode, warning here can help spot the problem
 	if ( g_qeglobals.m_bBrushPrimitMode && !g_qeglobals.bNeedConvert ) {
-		Sys_Printf( "Warning : illegal call of Face_TextureVectors in brush primitive mode\n" );
+		Sys_FPrintf( SYS_WRN, "Warning : illegal call of Face_TextureVectors in brush primitive mode\n" );
 	}
 #endif
 
@@ -867,7 +867,7 @@ void Brush_Build( brush_t *b, bool bSnap, bool bMarkMap, bool bConvert, bool bFi
 
 #ifdef _DEBUG
 	if ( !g_qeglobals.m_bBrushPrimitMode && bConvert ) {
-		Sys_Printf( "Warning : conversion from brush primitive to old brush format not implemented\n" );
+		Sys_FPrintf( SYS_WRN, "Warning : conversion from brush primitive to old brush format not implemented\n" );
 	}
 #endif
 
@@ -1539,7 +1539,7 @@ const char* Brush_GetKeyValue( brush_t *b, const char *pKey ){
 void CheckName( face_t *fa, char *pname, size_t length ){
 	if ( !strlen( fa->texdef.GetName() ) ) {
 #ifdef _DEBUG
-		Sys_Printf( "WARNING: unexpected texdef.name is empty in Brush.cpp CheckName\n" );
+		Sys_FPrintf( SYS_WRN, "WARNING: unexpected texdef.name is empty in Brush.cpp CheckName\n" );
 #endif
 		fa->texdef.SetName( SHADER_NOT_FOUND );
 		Q_strncpyz( pname, SHADER_NOT_FOUND, length );
@@ -1592,7 +1592,7 @@ brush_t *Brush_Create( vec3_t mins, vec3_t maxs, texdef_t *texdef ){
 	if ( g_qeglobals.m_bBrushPrimitMode ) {
 		// check texdef is empty .. if there are cases it's not we need to write some conversion code
 		if ( texdef->shift[0] != 0 || texdef->shift[1] != 0 || texdef->scale[0] != 0 || texdef->scale[1] != 0 || texdef->rotate != 0 ) {
-			Sys_Printf( "Warning : non-zero texdef detected in Brush_Create .. need brush primitive conversion\n" );
+			Sys_FPrintf( SYS_WRN, "Warning : non-zero texdef detected in Brush_Create .. need brush primitive conversion\n" );
 		}
 	}
 #endif

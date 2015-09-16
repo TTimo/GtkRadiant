@@ -671,7 +671,7 @@ void FillTextureMenu( GSList** pArray ){
 						*pArray = g_slist_append( *pArray, g_strdup( (char*)temp->data ) );
 					}
 					if ( ++texture_nummenus == MAX_TEXTUREDIRS ) {
-						Sys_Printf( "WARNING: max texture directories count has been reached!\n" );
+						Sys_FPrintf( SYS_WRN, "WARNING: max texture directories count has been reached!\n" );
 						// push submenu and get out
 						item = gtk_menu_item_new_with_label( dirRoot );
 						gtk_widget_show( item );
@@ -708,7 +708,7 @@ void FillTextureMenu( GSList** pArray ){
 			*pArray = g_slist_append( *pArray, g_strdup( (char*)temp->data ) );
 		}
 		if ( ++texture_nummenus == MAX_TEXTUREDIRS ) {
-			Sys_Printf( "WARNING: max texture directories count has been reached!\n" );
+			Sys_FPrintf( SYS_WRN, "WARNING: max texture directories count has been reached!\n" );
 			ClearGSList( texdirs );
 			return;
 		}
@@ -799,7 +799,7 @@ void FillTextureList( GSList** pArray )
 						*pArray = g_slist_append( *pArray, g_strdup( (char*)temp->data ) );
 					}
 					if ( ++texture_num == MAX_TEXTUREDIRS ) {
-						Sys_Printf( "WARNING: max texture directories count has been reached!\n" );
+						Sys_FPrintf( SYS_WRN, "WARNING: max texture directories count has been reached!\n" );
 						ClearGSList( texdirs );
 						return;
 					}
@@ -816,7 +816,7 @@ void FillTextureList( GSList** pArray )
 			*pArray = g_slist_append( *pArray, g_strdup( (char*)temp->data ) );
 		}
 		if ( ++texture_num == MAX_TEXTUREDIRS ) {
-			Sys_Printf( "WARNING: max texture directories count has been reached!\n" );
+			Sys_FPrintf( SYS_WRN, "WARNING: max texture directories count has been reached!\n" );
 			ClearGSList( texdirs );
 			return;
 		}
@@ -1069,7 +1069,7 @@ void Texture_ShowAll(){
 
 #ifdef _DEBUG
 	if ( g_bShowAllShaders ) {
-		Sys_Printf( "WARNING: already showing all shaders\n" );
+		Sys_FPrintf( SYS_WRN, "WARNING: already showing all shaders\n" );
 	}
 #endif
 	QERApp_ActiveShaders_SetDisplayed( true );
@@ -1250,14 +1250,14 @@ IShader* Texture_NextPos( int *x, int *y ){
 		nCurrentShader++;
 		pCurrentShader = QERApp_ActiveShader_ForIndex( nCurrentShader );
 		if ( pCurrentShader == NULL ) {
-			Sys_Printf( "ERROR: unexpected pCurrentShader == NULL in Texture_NextPos\n" );
+			Sys_FPrintf( SYS_ERR, "ERROR: unexpected pCurrentShader == NULL in Texture_NextPos\n" );
 			return NULL;
 		}
 		current_texture = pCurrentShader->getTexture();
 		q = current_texture;
 
 		if ( !q ) {
-			Sys_Printf( "WARNING: found an IShader without qtexture_t in Texture_NextPos\n" );
+			Sys_FPrintf( SYS_WRN, "WARNING: found an IShader without qtexture_t in Texture_NextPos\n" );
 			return NULL;
 		}
 
@@ -1444,7 +1444,7 @@ void SelectTexture( int mx, int my, bool bShift, bool bFitScale ){
 			 && my < y && y - my < nHeight + FONT_HEIGHT ) {
 			if ( bShift ) {
 				if ( pCurrentShader->IsDefault() ) {
-					Sys_Printf( "ERROR: %s is not a shader, it's a texture.\n", pCurrentShader->getName() );
+					Sys_FPrintf( SYS_ERR, "ERROR: %s is not a shader, it's a texture.\n", pCurrentShader->getName() );
 				}
 				else{
 					ViewShader( pCurrentShader->getShaderFileName(), pCurrentShader->getName() );
@@ -1480,7 +1480,7 @@ void SelectTexture( int mx, int my, bool bShift, bool bFitScale ){
 #ifdef _DEBUG
 				// this one is never supposed to be set as current one
 				if ( pAuxShader->IsColor() ) {
-					Sys_Printf( "ERROR: unexpected pCurrentShader->IsColor() in SelectTexture\n" );
+					Sys_FPrintf( SYS_ERR, "ERROR: unexpected pCurrentShader->IsColor() in SelectTexture\n" );
 				}
 #endif
 				// NOTE: IsColor is false, IsDefault the only remaining property
@@ -1875,7 +1875,7 @@ void TexWnd::OnSize( int cx, int cy ){
 void TexWnd::OnExpose() {
 	int nOld = g_qeglobals.d_texturewin.m_nTotalHeight;
 	if ( !MakeCurrent() ) {
-		Sys_Printf( "ERROR: glXMakeCurrent failed..\n " );
+		Sys_FPrintf( SYS_ERR, "ERROR: glXMakeCurrent failed..\n " );
 		Sys_Printf( "Please restart Radiant if the Texture view is not working\n" );
 	}
 	else

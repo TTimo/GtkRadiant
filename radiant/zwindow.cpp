@@ -90,7 +90,7 @@ void ZWnd::OnMouseMove( guint32 nFlags, int pointx, int pointy ){
 
 void ZWnd::OnExpose(){
 	if ( !MakeCurrent() ) {
-		Sys_Printf( "ERROR: wglMakeCurrent failed..\n " );
+		Sys_FPrintf( SYS_ERR, "ERROR: wglMakeCurrent failed..\n " );
 		Sys_Printf( "Please restart Radiant if the Z view is not working\n" );
 	}
 	else

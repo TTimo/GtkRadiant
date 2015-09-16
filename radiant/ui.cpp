@@ -167,7 +167,7 @@ void WINAPI QERApp_UnHookWindow( IWindowListener* pListen ){
 		}
 	}
 #ifdef _DEBUG
-	Sys_Printf( "WARNING: IWindowListener not found in QERApp_UnHookWindow\n" );
+	Sys_FPrintf( SYS_WRN, "WARNING: IWindowListener not found in QERApp_UnHookWindow\n" );
 #endif
 }
 
@@ -195,7 +195,7 @@ bool DispatchOnLButtonUp( guint32 nFlags, int x, int y ){
 void WINAPI QERApp_HookListener( IListener* pListen, int Msg ){
 #ifdef _DEBUG
 	if ( Msg >= RADIANT_MSGCOUNT ) {
-		Sys_Printf( "ERROR: bad index in QERApp_HookListener\n" );
+		Sys_FPrintf( SYS_ERR, "ERROR: bad index in QERApp_HookListener\n" );
 		return;
 	}
 #endif
@@ -218,7 +218,7 @@ int WINAPI QERApp_UnHookListener( IListener* pListen ){
 void DispatchRadiantMsg( int Msg ){
 #ifdef _DEBUG
 	if ( Msg >= RADIANT_MSGCOUNT ) {
-		Sys_Printf( "ERROR: bad index in DispatchRadiantMsg\n" );
+		Sys_FPrintf( SYS_ERR, "ERROR: bad index in DispatchRadiantMsg\n" );
 		return;
 	}
 #endif

@@ -81,7 +81,7 @@ gboolean WINAPI gtk_glwidget_make_current( GtkWidget *widget ){
 	gerror = gtk_gl_area_get_error( gl_area );
 	if( gerror )
 	{
-		Sys_Printf( "gtk_gl_area_make_current error: %s\n", gerror->message );
+		Sys_FPrintf( SYS_ERR, "ERROR: gtk_gl_area_make_current: %s\n", gerror->message );
 		g_error_free( gerror );
 		return false;
 	}

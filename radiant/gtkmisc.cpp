@@ -654,7 +654,7 @@ GtkWidget* new_image_icon( const char* filename ) {
 
 	pixbuf = gdk_pixbuf_new_from_file( str, &gerror );
 	if( pixbuf == NULL ) {
-		Sys_Printf( "Failed to load bitmap: %s, %s\n", str.GetBuffer(), gerror->message );
+		Sys_FPrintf( SYS_ERR, "ERROR: Failed to load bitmap: %s, %s\n", str.GetBuffer(), gerror->message );
 		g_error_free( gerror );
 	}
 	icon = gtk_image_new_from_pixbuf( pixbuf );
@@ -678,7 +678,7 @@ GtkWidget* new_plugin_image_icon( const char* filename ) {
 
 	pixbuf = gdk_pixbuf_new_from_file( str, &gerror );
 	if( pixbuf == NULL ) {
-		Sys_Printf( "Failed to load plugin bitmap: %s, %s\n", str.GetBuffer(), gerror->message );
+		Sys_FPrintf( SYS_ERR, "ERROR: Failed to load plugin bitmap: %s, %s\n", str.GetBuffer(), gerror->message );
 		g_error_free( gerror );
 	}
 	icon = gtk_image_new_from_pixbuf( pixbuf );

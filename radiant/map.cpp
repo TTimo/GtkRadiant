@@ -393,7 +393,7 @@ void Map_ImportEntities( CPtrArray *ents, bool bAddSelected = false ){
 					}
 				}
 				else{
-					Sys_Printf( "WARNING: no terrain shader found for brush\n" );
+					Sys_FPrintf( SYS_WRN, "WARNING: no terrain shader found for brush\n" );
 				}
 			}
 		}
@@ -1042,7 +1042,7 @@ void Map_RegionSelectedBrushes( void ){
 
 #ifdef _DEBUG
 	if ( filtered_brushes.next != &filtered_brushes ) {
-		Sys_Printf( "WARNING: filtered_brushes list may not be empty in Map_RegionSelectedBrushes\n" );
+		Sys_FPrintf( SYS_WRN, "WARNING: filtered_brushes list may not be empty in Map_RegionSelectedBrushes\n" );
 	}
 #endif
 

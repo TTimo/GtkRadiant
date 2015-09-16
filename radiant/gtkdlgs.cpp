@@ -1952,7 +1952,7 @@ static void ScaleDialog_response( GtkWidget *widget, gint response_id, gpointer 
 		Sys_UpdateWindows( W_ALL );
 	}
 	else{
-		Sys_Printf( "Warning.. Tried to scale by a zero value." );
+		Sys_FPrintf( SYS_WRN, "Warning.. Tried to scale by a zero value." );
 	}
 
 	if ( response_id == GTK_RESPONSE_OK )

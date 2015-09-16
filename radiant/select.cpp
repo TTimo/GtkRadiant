@@ -849,7 +849,7 @@ void ComputeAbsolute( face_t* f, vec3_t& p1, vec3_t& p2, vec3_t& p3 ){
 
 #ifdef _DEBUG
 	if ( g_qeglobals.m_bBrushPrimitMode ) {
-		Sys_Printf( "Warning : illegal call of ComputeAbsolute in brush primitive mode\n" );
+		Sys_FPrintf( SYS_WRN, "Warning : illegal call of ComputeAbsolute in brush primitive mode\n" );
 	}
 #endif
 
@@ -898,7 +898,7 @@ void AbsoluteToLocal( plane_t normal2, face_t* f, vec3_t& p1, vec3_t& p2, vec3_t
 
 #ifdef _DEBUG
 	if ( g_qeglobals.m_bBrushPrimitMode ) {
-		Sys_Printf( "Warning : illegal call of AbsoluteToLocal in brush primitive mode\n" );
+		Sys_FPrintf( SYS_WRN, "Warning : illegal call of AbsoluteToLocal in brush primitive mode\n" );
 	}
 #endif
 

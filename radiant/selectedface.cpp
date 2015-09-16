@@ -56,7 +56,7 @@ int WINAPI QERApp_GetFaceInfo( int iface, _QERFaceData *pFaceData, winding_t *pW
 		return 0;
 	}
 	if ( !g_qeglobals.m_bBrushPrimitMode ) {
-		Sys_Printf( "Warning: unexpected QERApp_GetFaceInfo out of brush primitive mode\n" );
+		Sys_FPrintf( SYS_WRN, "Warning: unexpected QERApp_GetFaceInfo out of brush primitive mode\n" );
 		return 0;
 	}
 	face_t *selFace = reinterpret_cast<face_t*>( g_ptrSelectedFaces.GetAt( iface ) );
@@ -77,7 +77,7 @@ int WINAPI QERApp_SetFaceInfo( int iface, _QERFaceData *pFaceData ){
 		return 0;
 	}
 	if ( !g_qeglobals.m_bBrushPrimitMode ) {
-		Sys_Printf( "Warning: unexpected QERApp_SetFaceInfo out of brush primitive mode\n" );
+		Sys_FPrintf( SYS_WRN, "Warning: unexpected QERApp_SetFaceInfo out of brush primitive mode\n" );
 		return 0;
 	}
 	face_t *selFace = reinterpret_cast<face_t*>( g_ptrSelectedFaces.GetAt( iface ) );

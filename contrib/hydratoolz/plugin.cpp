@@ -148,7 +148,7 @@ GSList *AddToWadList( GSList *wadlist, const char *shadername, const char *wad )
 		}
 		else
 		{
-			Sys_Printf( "HydraToolz: WARNING: Unknown wad file for shader %s\n",shadername );
+			Sys_FPrintf( SYS_WRN, "WARNING: Unknown wad file for shader %s\n",shadername );
 			return wadlist;
 		}
 
@@ -307,7 +307,7 @@ void UpdateWadKeyPair( void ){
 			}
 			else
 			{
-				Sys_Printf( "HydraToolz: WARNING: could not locate wad file %s\n",(char *)wadlist->data );
+				Sys_FPrintf( SYS_WRN, "WARNING: could not locate wad file %s\n",(char *)wadlist->data );
 				strncat( wads, (char *)wadlist->data, sizeof( wads ) );
 			}
 		}

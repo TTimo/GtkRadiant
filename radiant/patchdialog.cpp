@@ -674,7 +674,7 @@ void PatchDialog::GetPatchInfo(){
 
 	}
 	else{
-		Sys_Printf( "WARNING: no patch\n" );
+		Sys_FPrintf( SYS_WRN, "WARNING: no patch\n" );
 	}
 	// fill in our internal structs
 	m_nRow = 0; m_nCol = 0;

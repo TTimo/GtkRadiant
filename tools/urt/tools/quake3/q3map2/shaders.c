@@ -357,7 +357,7 @@ void WriteMapShaderFile( void ){
 	/* open shader file */
 	file = fopen( mapShaderFile, "w" );
 	if ( file == NULL ) {
-		Sys_Printf( "WARNING: Unable to open map shader file %s for writing\n", mapShaderFile );
+		Sys_FPrintf( SYS_WRN, "WARNING: Unable to open map shader file %s for writing\n", mapShaderFile );
 		return;
 	}
 
@@ -758,7 +758,7 @@ static void LoadShaderImages( shaderInfo_t *si ){
 		if ( si->shaderImage == NULL ) {
 			si->shaderImage = ImageLoad( DEFAULT_IMAGE );
 			if ( warnImage && strcmp( si->shader, "noshader" ) ) {
-				Sys_Printf( "WARNING: Couldn't find image for shader %s\n", si->shader );
+				Sys_FPrintf( SYS_WRN, "WARNING: Couldn't find image for shader %s\n", si->shader );
 			}
 		}
 
@@ -817,7 +817,7 @@ shaderInfo_t *ShaderInfoForShader( const char *shaderName ){
 
 	/* dummy check */
 	if ( shaderName == NULL || shaderName[ 0 ] == '\0' ) {
-		Sys_Printf( "WARNING: Null or empty shader name\n" );
+		Sys_FPrintf( SYS_WRN, "WARNING: Null or empty shader name\n" );
 		shaderName = "missing";
 	}
 
@@ -1050,7 +1050,7 @@ static void ParseShaderFile( const char *filename ){
 			else if ( !Q_stricmp( token, "surfaceparm" ) ) {
 				GetTokenAppend( shaderText, qfalse, sizeof( shaderText ) );
 				if ( ApplySurfaceParm( token, &si->contentFlags, &si->surfaceFlags, &si->compileFlags ) == qfalse ) {
-					Sys_Printf( "WARNING: Unknown surfaceparm: \"%s\"\n", token );
+					Sys_FPrintf( SYS_WRN, "WARNING: Unknown surfaceparm: \"%s\"\n", token );
 				}
 			}
 
@@ -1493,7 +1493,7 @@ static void ParseShaderFile( const char *filename ){
 					}
 					else
 					{
-						Sys_Printf( "WARNING: Unknown value for lightmap axis: %s\n", token );
+						Sys_FPrintf( SYS_WRN, "WARNING: Unknown value for lightmap axis: %s\n", token );
 						VectorClear( si->lightmapAxis );
 					}
 				}
@@ -1508,7 +1508,7 @@ static void ParseShaderFile( const char *filename ){
 					/* must be a power of 2 */
 					if ( ( ( si->lmCustomWidth - 1 ) & si->lmCustomWidth ) ||
 						 ( ( si->lmCustomHeight - 1 ) & si->lmCustomHeight ) ) {
-						Sys_Printf( "WARNING: Non power-of-two lightmap size specified (%d, %d)\n",
+						Sys_FPrintf( SYS_WRN, "WARNING: Non power-of-two lightmap size specified (%d, %d)\n",
 									si->lmCustomWidth, si->lmCustomHeight );
 						si->lmCustomWidth = lmCustomSize;
 						si->lmCustomHeight = lmCustomSize;
@@ -1643,7 +1643,7 @@ static void ParseShaderFile( const char *filename ){
 					}
 					else
 					{
-						Sys_Printf( "WARNING: Unknown q3map_tcGen method: %s\n", token );
+						Sys_FPrintf( SYS_WRN, "WARNING: Unknown q3map_tcGen method: %s\n", token );
 						VectorClear( si->vecs[ 0 ] );
 						VectorClear( si->vecs[ 1 ] );
 					}
@@ -1728,7 +1728,7 @@ static void ParseShaderFile( const char *filename ){
 
 					/* unknown */
 					else{
-						Sys_Printf( "WARNING: Unknown colorMod method: %s\n", token );
+						Sys_FPrintf( SYS_WRN, "WARNING: Unknown colorMod method: %s\n", token );
 					}
 				}
 
@@ -1766,7 +1766,7 @@ static void ParseShaderFile( const char *filename ){
 						TCModRotate( si->mod, a );
 					}
 					else{
-						Sys_Printf( "WARNING: Unknown q3map_tcMod method: %s\n", token );
+						Sys_FPrintf( SYS_WRN, "WARNING: Unknown q3map_tcMod method: %s\n", token );
 					}
 				}
 
@@ -1856,7 +1856,7 @@ static void ParseShaderFile( const char *filename ){
 					GetTokenAppend( shaderText, qfalse, sizeof( shaderText ) );
 					snprintf( temp, sizeof( temp ), "*mat_%s", token );
 					if ( ApplySurfaceParm( temp, &si->contentFlags, &si->surfaceFlags, &si->compileFlags ) == qfalse ) {
-						Sys_Printf( "WARNING: Unknown material \"%s\"\n", token );
+						Sys_FPrintf( SYS_WRN, "WARNING: Unknown material \"%s\"\n", token );
 					}
 				}
 
@@ -1879,7 +1879,7 @@ static void ParseShaderFile( const char *filename ){
 				{
 					Sys_FPrintf( SYS_VRB, "Attempting to match %s with a known surfaceparm\n", token );
 					if ( ApplySurfaceParm( &token[ 6 ], &si->contentFlags, &si->surfaceFlags, &si->compileFlags ) == qfalse ) {
-						Sys_Printf( "WARNING: Unknown q3map_* directive \"%s\"\n", token );
+						Sys_FPrintf( SYS_WRN, "WARNING: Unknown q3map_* directive \"%s\"\n", token );
 					}
 				}
 #endif
@@ -1942,7 +1942,7 @@ static void ParseCustomInfoParms( void ){
 
 	/* any content? */
 	if ( !parsedContent ) {
-		Sys_Printf( "WARNING: Couldn't find valid custom contentsflag section\n" );
+		Sys_FPrintf( SYS_WRN, "WARNING: Couldn't find valid custom contentsflag section\n" );
 		return;
 	}
 
@@ -1968,7 +1968,7 @@ static void ParseCustomInfoParms( void ){
 
 	/* any content? */
 	if ( !parsedContent ) {
-		Sys_Printf( "WARNING: Couldn't find valid custom surfaceflag section\n" );
+		Sys_FPrintf( SYS_WRN, "WARNING: Couldn't find valid custom surfaceflag section\n" );
 	}
 }
 

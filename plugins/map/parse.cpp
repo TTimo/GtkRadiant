@@ -338,7 +338,7 @@ void Face_Parse( face_t *face, bool bAlternateTexdef = false ){
 		else
 		{
 			// using the cache below means that this message is only ever printed out once!
-			Sys_Printf( "WARNING: could not find \"%s\" in any listed wad files, searching all wad files instead!\n",token );
+			Sys_FPrintf( SYS_WRN, "WARNING: could not find \"%s\" in any listed wad files, searching all wad files instead!\n",token );
 		}
 		// end of half-life specific bit.
 
@@ -390,7 +390,7 @@ void Face_Parse( face_t *face, bool bAlternateTexdef = false ){
 			}
 			else
 			{
-				Sys_Printf( "WARNING: could not find \"%s\" in the vfs search path\n",token );
+				Sys_FPrintf( SYS_WRN, "WARNING: could not find \"%s\" in the vfs search path\n",token );
 				str = new char[strlen( token ) + 10];
 				strcpy( str, "textures/" );
 				strcpy( str + 9, token );

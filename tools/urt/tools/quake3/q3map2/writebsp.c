@@ -165,7 +165,7 @@ void EmitLeaf( node_t *node ){
 	{
 		/* something is corrupting brushes */
 		if ( (int) b < 256 ) {
-			Sys_Printf( "WARNING: Node brush list corrupted (0x%08X)\n", b );
+			Sys_FPrintf( SYS_WRN, "WARNING: Node brush list corrupted (0x%08X)\n", b );
 			break;
 		}
 		//%	if( b->guard != 0xDEADBEEF )

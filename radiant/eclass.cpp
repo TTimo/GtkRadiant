@@ -445,7 +445,7 @@ eclass_t *Eclass_ForName( const char *name, qboolean has_brushes ){
 #ifdef _DEBUG
 	// grouping stuff, not an eclass
 	if ( strcmp( name, "group_info" ) == 0 ) {
-		Sys_Printf( "WARNING: unexpected group_info entity in Eclass_ForName\n" );
+		Sys_FPrintf( SYS_WRN, "WARNING: unexpected group_info entity in Eclass_ForName\n" );
 	}
 #endif
 

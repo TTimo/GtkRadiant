@@ -375,7 +375,7 @@ static void OnBtnMatchGrid( GtkWidget *widget, gpointer data ){
 	hscale = gtk_spin_button_get_value( GTK_SPIN_BUTTON( g_dlgSurface.GetDlgWidget( "hscale" ) ) );
 	vscale = gtk_spin_button_get_value( GTK_SPIN_BUTTON( g_dlgSurface.GetDlgWidget( "vscale" ) ) );
 	if ( hscale == 0.0f || vscale == 0.0f ) {
-		Sys_Printf( "ERROR: unexpected scale == 0.0f\n" );
+		Sys_FPrintf( SYS_ERR, "ERROR: unexpected scale == 0.0f\n" );
 		return;
 	}
 	DoSnapTToGrid( hscale, vscale );

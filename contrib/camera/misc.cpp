@@ -34,7 +34,7 @@ void Sys_ERROR( char* text, ... ){
 	vsnprintf( buf, sizeof( buf ), text, argptr );
 	va_end( argptr );
 
-	Sys_Printf( "Camera::ERROR->%s", buf );
+	Sys_FPrintf( SYS_ERR, "Camera::ERROR->%s", buf );
 }
 
 char* UnixToDosPath( char* path ){
@@ -117,7 +117,7 @@ void CDECL Com_Error( int level, const char *error, ... ){
 	vsnprintf( buf, sizeof( buf ), error, argptr );
 	va_end( argptr );
 
-	Sys_Printf( "Camera::ERROR->%s", buf );
+	Sys_FPrintf( SYS_ERR, "Camera::ERROR->%s", buf );
 }
 
 void CDECL Com_Printf( const char* msg, ... ){

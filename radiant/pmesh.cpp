@@ -1378,7 +1378,7 @@ brush_t* Patch_GenericMesh( int nWidth, int nHeight, int nOrientation, bool bDel
 	}
 
 	if ( !bOverride && !QE_SingleBrush() ) {
-		Sys_Printf( "Error: you must have a single brush selected\n" );
+		Sys_FPrintf( SYS_ERR, "ERROR: you must have a single brush selected\n" );
 		return NULL;
 	}
 
@@ -4956,7 +4956,7 @@ void Patch_ShiftTextureST( patchMesh_t *p, float fx, float fy ){
 #ifdef _DEBUG
 	// NOTE: when called by Patch_ShiftTexture this warning may be bogus
 	if ( ( ABS( fx ) >= 1 ) || ( ABS( fy ) >= 1 ) ) {
-		Sys_Printf( "WARNING: increments exceed 1 in Patch_ShiftTextureST\n" );
+		Sys_FPrintf( SYS_WRN, "WARNING: increments exceed 1 in Patch_ShiftTextureST\n" );
 	}
 #endif
 	for ( int w = 0; w < p->width; w++ )

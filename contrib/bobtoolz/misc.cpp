@@ -143,7 +143,7 @@ void Sys_ERROR( const char* text, ... ){
 	vsnprintf( buf, sizeof( buf ), text, argptr );
 	va_end( argptr );
 
-	Sys_Printf( "BobToolz::ERROR->%s", buf );
+	Sys_FPrintf( SYS_ERR, "BobToolz::ERROR->%s", buf );
 }
 
 /*void Sys_Printf (char *text, ...)
