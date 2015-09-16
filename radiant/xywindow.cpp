@@ -438,6 +438,23 @@ void CreateEntityFromName( const char* name, const vec3_t origin ){
 		SetInspectorMode( W_ENTITY );
 		AssignModel();
 	}
+
+	//setting default shader, ie "trigger_*" entities will get the shader "textures/common/trigger"
+	for( unsigned int i = 0; i < g_pGameDescription->mEntityDefaultShaderCount; i++ )
+	{
+		if( g_pattern_match_simple( g_pGameDescription->mEntityDefaultShader[i][0], name ) )
+		{
+			brush_s *b;
+			for( b = e->brushes.onext; b != &e->brushes; b = b->onext )
+			{
+				face_t *f;
+				for ( f = b->brush_faces ; f; f = f->next )
+				{
+					f->texdef.SetName( g_pGameDescription->mEntityDefaultShader[i][1] );
+				}
+			}
+		}
+	}
 }
 
 void CreateRightClickEntity( XYWnd* pWnd, int x, int y, const char* pName ){

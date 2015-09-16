@@ -917,6 +917,30 @@ CGameDescription::CGameDescription( xmlDocPtr pDoc, const Str &GameFile ){
 	} else {
 		mCaulkShader = "textures/common/caulk";
 	}
+
+	mEntityDefaultShaderCount = 0;
+	for( int i = 0; i < MAX_ENTITY_DEFAULT_SHADER; i++ )
+	{
+		Str PropName;
+		xmlChar *EntityShader;
+		xmlChar *EntityMatch;
+
+		PropName.Format( "EntityDefaultShaderMatch%u", i+1 );
+		EntityMatch = xmlGetProp( pNode, (const xmlChar *)PropName );
+		if( EntityMatch ) 
+		{
+			PropName.Format( "EntityDefaultShaderName%u", i+1 );
+			EntityShader = xmlGetProp( pNode, (const xmlChar *)PropName );
+			if( EntityShader )
+			{
+				mEntityDefaultShader[mEntityDefaultShaderCount][0] = EntityMatch;
+				mEntityDefaultShader[mEntityDefaultShaderCount][1] = EntityShader;
+				mEntityDefaultShaderCount++;
+				xmlFree( EntityShader );
+			}
+			xmlFree( EntityMatch );
+		}
+	}
 }
 
 void CGameDescription::Dump(){

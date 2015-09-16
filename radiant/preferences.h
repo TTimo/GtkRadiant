@@ -30,6 +30,7 @@
 #define NVIDIA_AERO_HACK
 #endif
 
+#define MAX_ENTITY_DEFAULT_SHADER 3
 #define MAX_TEXTURE_QUALITY 3
 
 enum PrefTypes_t
@@ -185,6 +186,8 @@ bool mNoPatch;   ///< this game doesn't support patch technology
 Str mCaulkShader;   ///< the shader to use for caulking
 bool noMapsInHome;   ///< set this if you want to open the engine path/base dir/maps dir for map open/save dialoges */
 bool idTech2;  // set this to true for idTech2 games
+Str mEntityDefaultShader[MAX_ENTITY_DEFAULT_SHADER][2]; //match and shadername, "trigger_*", "textures/trigger"
+unsigned int mEntityDefaultShaderCount;
 
 CGameDescription() { mpDoc = NULL; }
 /*!
