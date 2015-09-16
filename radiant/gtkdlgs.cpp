@@ -1074,6 +1074,47 @@ static void entitylist_select( GtkWidget *widget, gpointer data ){
 	}
 }
 
+static void entitylist_focus( GtkWidget *widget, gpointer data ){
+	GtkTreeView* view = GTK_TREE_VIEW( g_object_get_data( G_OBJECT( data ), "entities" ) );
+
+	GtkTreeSelection* selection = gtk_tree_view_get_selection( view );
+
+	GtkTreeModel* model;
+	GtkTreeIter selected;
+	if ( gtk_tree_selection_get_selected( selection, &model, &selected ) ) {
+		entity_t* pEntity;
+		gtk_tree_model_get( model, &selected, 1, &pEntity, -1 );
+
+		if ( pEntity ) {
+			for ( epair_t* pEpair = pEntity->epairs; pEpair; pEpair = pEpair->next )
+			{
+				brush_t *b;
+
+				b = pEntity->brushes.onext;
+				if( b )
+				{
+					int i;
+					for ( i = 0; i < 3; i++ )
+					{
+						if ( g_pParentWnd->GetXYWnd() ) {
+							g_pParentWnd->GetXYWnd()->GetOrigin()[i] = ( b->mins[i] + b->maxs[i] ) / 2;
+						}
+
+						if ( g_pParentWnd->GetXZWnd() ) {
+							g_pParentWnd->GetXZWnd()->GetOrigin()[i] = ( b->mins[i] + b->maxs[i] ) / 2;
+						}
+
+						if ( g_pParentWnd->GetYZWnd() ) {
+							g_pParentWnd->GetYZWnd()->GetOrigin()[i] = ( b->mins[i] + b->maxs[i] ) / 2;
+						}
+					}
+				}
+				Sys_UpdateWindows( W_ALL );
+			}
+		}
+	}
+}
+
 static gint entitylist_click( GtkWidget *widget, GdkEventButton *event, gpointer data ){
 	if ( event->type == GDK_2BUTTON_PRESS ) {
 		entitylist_select( NULL, data );
@@ -1272,6 +1313,13 @@ void DoEntityList(){
 	button = gtk_button_new_with_label( _( "Select" ) );
 	gtk_box_pack_start( GTK_BOX( hbox2 ), button, FALSE, FALSE, 0 );
 	g_signal_connect( button, "clicked", G_CALLBACK( entitylist_select ), dialog );
+	gtk_widget_set_hexpand( button, FALSE );
+	gtk_widget_set_vexpand( button, FALSE );
+	gtk_widget_show( button );
+
+	button = gtk_button_new_with_label( _( "Focus" ) );
+	gtk_box_pack_start( GTK_BOX( hbox2 ), button, FALSE, FALSE, 0 );
+	g_signal_connect( button, "clicked", G_CALLBACK( entitylist_focus ), dialog );
 	gtk_widget_set_hexpand( button, FALSE );
 	gtk_widget_set_vexpand( button, FALSE );
 	gtk_widget_show( button );
