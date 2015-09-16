@@ -30,6 +30,8 @@
 //static char THIS_FILE[] = __FILE__;
 #endif
 
+extern void *g_pMainWidget;
+
 static void dialog_button_callback( GtkWidget *widget, gpointer data ){
 	GtkWidget *parent;
 	int *loop, *ret;
@@ -103,6 +105,8 @@ int DoLoadPortalFileDialog(){
 	GtkDialogFlags flags = GTK_DIALOG_DESTROY_WITH_PARENT;
 
 	dialog = gtk_dialog_new_with_buttons( _( "Load .prt" ), NULL, flags, NULL );
+	gtk_window_set_transient_for( GTK_WINDOW( dialog ), GTK_WINDOW( g_pMainWidget ) );
+
 	ok_button = gtk_dialog_add_button( GTK_DIALOG( dialog ), _( "OK" ), GTK_RESPONSE_OK );
 	cancel_button = gtk_dialog_add_button( GTK_DIALOG( dialog ), _( "Cancel" ), GTK_RESPONSE_CANCEL );
 
@@ -158,7 +162,6 @@ int DoLoadPortalFileDialog(){
 	gtk_toggle_button_set_active( GTK_TOGGLE_BUTTON( check2d ), portals.show_2d );
 	gtk_toggle_button_set_active( GTK_TOGGLE_BUTTON( check3d ), portals.show_3d );
 
-	gtk_widget_show( dialog );
 
 	response_id = gtk_dialog_run( GTK_DIALOG( dialog ) );
 

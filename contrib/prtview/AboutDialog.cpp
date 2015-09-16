@@ -29,6 +29,8 @@
 //static char THIS_FILE[] = __FILE__;
 #endif
 
+extern void *g_pMainWidget;
+
 /////////////////////////////////////////////////////////////////////////////
 // CAboutDialog dialog
 
@@ -63,6 +65,7 @@ void DoAboutDlg(){
 	gtk_dialog_add_button( GTK_DIALOG( dialog ), _( "OK" ), GTK_RESPONSE_OK );
 
 	content_area = gtk_dialog_get_content_area( GTK_DIALOG( dialog ) );
+	gtk_window_set_transient_for( GTK_WINDOW( dialog ), GTK_WINDOW( g_pMainWidget ) );
 
 	vbox = gtk_box_new( GTK_ORIENTATION_VERTICAL, 5 );
 	gtk_container_add( GTK_CONTAINER( content_area ), vbox );
@@ -79,9 +82,6 @@ void DoAboutDlg(){
 	gtk_widget_set_halign( label, GTK_ALIGN_START );
 	gtk_widget_show( label );
 
-
-
-	gtk_widget_show( dialog );
 
 	response_id = gtk_dialog_run( GTK_DIALOG( dialog ) );
 

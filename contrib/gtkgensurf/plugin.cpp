@@ -30,7 +30,7 @@ bool g_bInitDone;
 #include "iplugin.h"
 
 const char* QERPlug_Init( void* hApp, void* pMainWidget ){
-	g_pRadiantWnd = (GtkWidget*)pMainWidget;
+	g_pMainWidget = (GtkWidget*)pMainWidget;
 
 	return "GenSurf for Q3Radiant";
 }
@@ -130,7 +130,7 @@ void QERPlug_Dispatch( const char *p, vec3_t vMin, vec3_t vMax, bool bSingleBrus
 		Generate = true;
 	}
 	else if ( !strcmp( p,"About..." ) ) {
-		About( g_pRadiantWnd );
+		About( g_pMainWidget );
 	}
 
 	if ( Generate ) {

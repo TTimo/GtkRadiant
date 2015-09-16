@@ -38,19 +38,18 @@ int BP_MessageBox( int status ){
 	gint response_id;
 	GtkDialogFlags flags = GTK_DIALOG_DESTROY_WITH_PARENT;
 
-	dialog = gtk_dialog_new_with_buttons( _( "Current map format is incompatible" ), GTK_WINDOW( g_pParentWnd->m_pWidget ), flags, NULL );
+	dialog = gtk_dialog_new_with_buttons( _( "Current map format is incompatible" ), NULL, flags, NULL );
+	gtk_window_set_transient_for( GTK_WINDOW( dialog ), GTK_WINDOW( g_pParentWnd->m_pWidget ) );
+	gtk_container_set_border_width( GTK_CONTAINER( dialog ), 10 );
+
+	accel = gtk_accel_group_new();
+	gtk_window_add_accel_group( GTK_WINDOW( dialog ), accel );
+
 	gtk_dialog_add_button( GTK_DIALOG( dialog ), _( "Convert" ), 1 );
 	gtk_dialog_add_button( GTK_DIALOG( dialog ), _( "Change default" ), 2 );
 	gtk_dialog_add_button( GTK_DIALOG( dialog ), _( "Abort load" ), 0 );
 	
 	content_area = gtk_dialog_get_content_area( GTK_DIALOG( dialog ) );
-
-	gtk_container_set_border_width( GTK_CONTAINER( dialog ), 10 );
-
-	gtk_window_set_transient_for( GTK_WINDOW( dialog ), GTK_WINDOW( g_pParentWnd->m_pWidget ) );
-
-	accel = gtk_accel_group_new();
-	gtk_window_add_accel_group( GTK_WINDOW( dialog ), accel );
 
 	vbox = gtk_box_new( GTK_ORIENTATION_VERTICAL, 10 );
 	gtk_container_add( GTK_CONTAINER( content_area ), vbox );
@@ -83,8 +82,6 @@ int BP_MessageBox( int status ){
 	gtk_box_pack_start( GTK_BOX( vbox ), hbox, FALSE, FALSE, 2 );
 	gtk_widget_show( hbox );
 
-
-	gtk_widget_show( dialog );
 
 	response_id = gtk_dialog_run( GTK_DIALOG( dialog ) );
 

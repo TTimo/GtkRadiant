@@ -927,6 +927,7 @@ int WINAPI gtk_MessageBoxNew( void *parent, const char *message,
 	case MB_OK:
 	default: {
 		GtkWidget *btn_ok = gtk_dialog_add_button( GTK_DIALOG( dialog ), _( "OK" ), GTK_RESPONSE_OK );
+		gtk_widget_set_can_default( btn_ok, TRUE );
 		gtk_widget_add_accelerator( btn_ok, "clicked", accel, GDK_KEY_Escape, (GdkModifierType)0, (GtkAccelFlags)0 );
 		gtk_widget_add_accelerator( btn_ok, "clicked", accel, GDK_KEY_Return, (GdkModifierType)0, (GtkAccelFlags)0 );
 		ret = IDOK;
@@ -981,8 +982,6 @@ int WINAPI gtk_MessageBoxNew( void *parent, const char *message,
 		gtk_widget_show( btn_url );
 	}
 
-	// show it
-	gtk_widget_show( dialog );
 
 	response_id = gtk_dialog_run( GTK_DIALOG( dialog ) );
 
@@ -1086,8 +1085,6 @@ int WINAPI gtk_MessageBox( void *parent, const char* lpText, const char* lpCapti
 		gtk_widget_show( w );
 	}
 
-
-	gtk_widget_show( dialog );
 
 	response_id = gtk_dialog_run( GTK_DIALOG( dialog ) );
 

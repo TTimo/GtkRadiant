@@ -37,7 +37,7 @@ static const char *PLUGIN_NAME = "ctfToolz";
 static const char *PLUGIN_COMMANDS = "About...,Colour Changer...,Swap Light Colours,Change Angles 180,Swap Spawn Points";
 
 // globals
-GtkWidget *g_pRadiantWnd = NULL;
+GtkWidget *g_pMainWidget = NULL;
 
 static const char *PLUGIN_ABOUT = "ctfToolz for GtkRadiant\n"
 								  "by djbob\n"

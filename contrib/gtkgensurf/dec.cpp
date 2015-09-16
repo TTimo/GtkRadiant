@@ -156,7 +156,7 @@ void MakeDecimatedMap( int *NumNodes, int *NumTris, NODE **pNode, TRI **pTri ){
 				   ghCursorCurrent = ghCursorDefault;
 				   SetCursor(ghCursorCurrent);
 				 */
-				g_FuncTable.m_pfnMessageBox( g_pRadiantWnd,
+				g_FuncTable.m_pfnMessageBox( g_pMainWidget,
 											 "Error: Couldn't find the triangle bounding a point.",
 											 "Decimation Error",MB_ICONEXCLAMATION, NULL );
 				return;
@@ -270,7 +270,7 @@ void MakeDecimatedMap( int *NumNodes, int *NumTris, NODE **pNode, TRI **pTri ){
 				   ghCursorCurrent = ghCursorDefault;
 				   SetCursor(ghCursorCurrent);
 				 */
-				g_FuncTable.m_pfnMessageBox( g_pRadiantWnd,
+				g_FuncTable.m_pfnMessageBox( g_pMainWidget,
 											 "Error: Couldn't find the triangle bounding a point.",
 											 "Decimation Error",MB_ICONEXCLAMATION, NULL );
 				return;

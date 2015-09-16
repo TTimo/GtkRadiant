@@ -72,7 +72,7 @@ int AddTerrainKey;             // ^Fishman - Add terrain key to func_group.
 int SP;             // ^Fishman - Snap to grid.
 
 GtkWidget *g_pWnd;        // ghwnd;
-GtkWidget *g_pRadiantWnd; // ghwnd_main;
+GtkWidget *g_pMainWidget = NULL; // ghwnd_main;
 /*HWND      ghwndAngles;
  */GtkWidget *g_pWndPreview;
 GtkWidget *g_pPreviewWidget;

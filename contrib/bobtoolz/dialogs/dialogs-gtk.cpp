@@ -44,6 +44,8 @@ typedef struct {
 
 dlg_texReset_t dlgTexReset;
 
+extern GtkWidget *g_pMainWidget;
+
 void Update_TextureReseter();
 
 static void dialog_button_callback_texreset_update( GtkWidget *widget, gpointer data ){
@@ -211,7 +213,8 @@ int DoMessageBox( const char* lpText, const char* lpCaption, guint32 uType ){
 	GtkDialogFlags flags = GTK_DIALOG_DESTROY_WITH_PARENT;
 
 	dialog = gtk_dialog_new_with_buttons( lpCaption, NULL, flags, NULL );	
-
+	gtk_window_set_transient_for( GTK_WINDOW( dialog ), GTK_WINDOW( g_pMainWidget ) );
+	gtk_window_set_position( GTK_WINDOW( dialog ), GTK_WIN_POS_CENTER );
 	gtk_container_set_border_width( GTK_CONTAINER( dialog ), 10 );
 
 	content_area = gtk_dialog_get_content_area( GTK_DIALOG( dialog ) );
@@ -256,8 +259,6 @@ int DoMessageBox( const char* lpText, const char* lpCaption, guint32 uType ){
 		ret = IDNO;
 	}
 
-	gtk_window_set_position( GTK_WINDOW( dialog ), GTK_WIN_POS_CENTER );
-	gtk_widget_show( dialog );
 
 	response_id = gtk_dialog_run( GTK_DIALOG( dialog ) );
 
@@ -387,7 +388,8 @@ int DoPolygonBox( PolygonRS* rs ){
 	GtkDialogFlags flags = GTK_DIALOG_DESTROY_WITH_PARENT;
 
 	dialog = gtk_dialog_new_with_buttons( _( "Polygon Builder" ), NULL, flags, NULL );	
-
+	gtk_window_set_transient_for( GTK_WINDOW( dialog ), GTK_WINDOW( g_pMainWidget ) );
+	gtk_window_set_position( GTK_WINDOW( dialog ),GTK_WIN_POS_CENTER );
 	gtk_container_set_border_width( GTK_CONTAINER( dialog ), 5 );
 
 	gtk_dialog_add_button( GTK_DIALOG( dialog ), _( "OK" ), GTK_RESPONSE_OK );
@@ -493,9 +495,6 @@ int DoPolygonBox( PolygonRS* rs ){
 	// ---- /hbox ----
 
 	// ---- /vbox ----
-
-	gtk_window_set_position( GTK_WINDOW( dialog ),GTK_WIN_POS_CENTER );
-	gtk_widget_show( dialog );
 
 
 	bool dialogError = TRUE;
@@ -1282,11 +1281,14 @@ int DoResetTextureBox( ResetTextureRS* rs ){
 	GtkDialogFlags flags = GTK_DIALOG_DESTROY_WITH_PARENT;
 
 	dialog = gtk_dialog_new_with_buttons( _( "Texture Reset" ), NULL, flags, NULL );
+	gtk_window_set_transient_for( GTK_WINDOW( dialog ), GTK_WINDOW( g_pMainWidget ) );
+	gtk_window_set_position( GTK_WINDOW( dialog ), GTK_WIN_POS_CENTER );
+	gtk_container_set_border_width( GTK_CONTAINER( dialog ), 5 );
+
 	gtk_dialog_add_button( GTK_DIALOG( dialog ), _( "Use Selected Brushes" ), GTK_RESPONSE_OK );
 	gtk_dialog_add_button( GTK_DIALOG( dialog ), _( "Use All Brushes" ), GTK_RESPONSE_YES );
 	gtk_dialog_add_button( GTK_DIALOG( dialog ), _( "Cancel" ), GTK_RESPONSE_CANCEL );
 
-	gtk_container_set_border_width( GTK_CONTAINER( dialog ), 5 );
 
 	content_area = gtk_dialog_get_content_area( GTK_DIALOG( dialog ) );
 
@@ -1522,9 +1524,6 @@ int DoResetTextureBox( ResetTextureRS* rs ){
 	g_object_set( vshift_label, "xalign", 0.0, NULL );
 	g_object_set( rvalue_label, "xalign", 0.0, NULL );
 
-	gtk_window_set_position( GTK_WINDOW( dialog ), GTK_WIN_POS_CENTER );
-
-	gtk_widget_show( dialog );
 
 	Update_TextureReseter();
 

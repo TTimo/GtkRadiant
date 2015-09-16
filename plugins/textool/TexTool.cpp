@@ -29,109 +29,7 @@
 #include "StdAfx.h"
 #include <glib/gi18n.h>
 
-static void dialog_button_callback( GtkWidget *widget, gpointer data ){
-	GtkWidget *parent;
-	int *loop, *ret;
 
-	parent = gtk_widget_get_toplevel( widget );
-	loop = (int*)g_object_get_data( G_OBJECT( parent ), "loop" );
-	ret = (int*)g_object_get_data( G_OBJECT( parent ), "ret" );
-
-	*loop = 0;
-	*ret = (intptr_t) data;
-}
-
-static gint dialog_delete_callback( GtkWidget *widget, GdkEvent* event, gpointer data ){
-	int *loop;
-
-	gtk_widget_hide( widget );
-	loop = (int*)g_object_get_data( G_OBJECT( widget ), "loop" );
-	*loop = 0;
-
-	return TRUE;
-}
-
-int DoMessageBox( const char* lpText, const char* lpCaption, guint32 uType ){
-	GtkWidget *dialog, *w, *vbox, *hbox, *content_area;
-	int mode, ret;
-	gint response_id;
-	GtkDialogFlags flags = GTK_DIALOG_DESTROY_WITH_PARENT;
-
-	dialog = gtk_dialog_new_with_buttons( lpCaption, NULL, flags, NULL );
-
-	gtk_container_set_border_width( GTK_CONTAINER( dialog ), 10 );
-
-	content_area = gtk_dialog_get_content_area( GTK_DIALOG( dialog ) );
-
-	vbox = gtk_box_new( GTK_ORIENTATION_VERTICAL, 10 );
-	gtk_container_add( GTK_CONTAINER( content_area ), vbox );
-	gtk_widget_show( vbox );
-
-	w = gtk_label_new( lpText );
-	gtk_box_pack_start( GTK_BOX( vbox ), w, FALSE, FALSE, 2 );
-	gtk_widget_set_halign( w, GTK_ALIGN_START );
-	gtk_widget_show( w );
-
-	w = gtk_separator_new( GTK_ORIENTATION_HORIZONTAL );
-	gtk_box_pack_start( GTK_BOX( vbox ), w, FALSE, FALSE, 2 );
-	gtk_widget_show( w );
-
-	hbox = gtk_box_new( GTK_ORIENTATION_HORIZONTAL, 10 );
-	gtk_box_pack_start( GTK_BOX( vbox ), hbox, FALSE, FALSE, 2 );
-	gtk_widget_show( hbox );
-
-	mode = ( uType & MB_TYPEMASK );
-	if ( mode == MB_OK ) {
-		w = gtk_dialog_add_button( GTK_DIALOG( dialog ), _( "OK" ), GTK_RESPONSE_OK );
-
-		ret = IDOK;
-	}
-	else if ( mode ==  MB_OKCANCEL ) {
-		w = gtk_dialog_add_button( GTK_DIALOG( dialog ), _( "OK" ), GTK_RESPONSE_OK );
-		w = gtk_dialog_add_button( GTK_DIALOG( dialog ), _( "Cancel" ), GTK_RESPONSE_CANCEL );
-
-		ret = IDCANCEL;
-	}
-	else if ( mode == MB_YESNOCANCEL ) {
-		w = gtk_dialog_add_button( GTK_DIALOG( dialog ), _( "Yes" ), GTK_RESPONSE_YES );
-		w = gtk_dialog_add_button( GTK_DIALOG( dialog ), _( "No" ), GTK_RESPONSE_NO );
-		w = gtk_dialog_add_button( GTK_DIALOG( dialog ), _( "Cancel" ), GTK_RESPONSE_CANCEL );
-
-		ret = IDCANCEL;
-	}
-	else /* if (mode == MB_YESNO) */
-	{
-		w = gtk_dialog_add_button( GTK_DIALOG( dialog ), _( "Yes" ), GTK_RESPONSE_YES );
-		w = gtk_dialog_add_button( GTK_DIALOG( dialog ), _( "No" ), GTK_RESPONSE_NO );
-
-		ret = IDNO;
-	}
-
-	gtk_widget_show( dialog );
-
-	response_id = gtk_dialog_run( GTK_DIALOG( dialog ) );
-
-	switch( response_id )
-	{
-	case GTK_RESPONSE_OK:
-		ret = IDOK;
-		break;
-	case GTK_RESPONSE_CANCEL:
-		ret = IDCANCEL;
-		break;
-	case GTK_RESPONSE_YES:
-		ret = IDYES;
-		break;
-	case GTK_RESPONSE_NO:
-		ret = IDNO;
-		break;
-	}
-
-
-	gtk_widget_destroy( dialog );
-
-	return ret;
-}
 
 // Radiant function table
 _QERFuncTable_1 g_FuncTable;
@@ -206,6 +104,109 @@ bool g_bClosing = false;
 const char *PLUGIN_ABOUT = "Texture Tools for Radiant\n\n"
 						   "Gtk port by Leonardo Zide (leo@lokigames.com)\n"
 						   "Original version by Timothee \"TTimo\" Besset (timo@qeradiant.com)";
+
+static void dialog_button_callback( GtkWidget *widget, gpointer data ){
+	GtkWidget *parent;
+	int *loop, *ret;
+
+	parent = gtk_widget_get_toplevel( widget );
+	loop = (int*)g_object_get_data( G_OBJECT( parent ), "loop" );
+	ret = (int*)g_object_get_data( G_OBJECT( parent ), "ret" );
+
+	*loop = 0;
+	*ret = (intptr_t) data;
+}
+
+static gint dialog_delete_callback( GtkWidget *widget, GdkEvent* event, gpointer data ){
+	int *loop;
+
+	gtk_widget_hide( widget );
+	loop = (int*)g_object_get_data( G_OBJECT( widget ), "loop" );
+	*loop = 0;
+
+	return TRUE;
+}
+
+int DoMessageBox( const char* lpText, const char* lpCaption, guint32 uType ){
+	GtkWidget *dialog, *w, *vbox, *hbox, *content_area;
+	int mode, ret;
+	gint response_id;
+	GtkDialogFlags flags = GTK_DIALOG_DESTROY_WITH_PARENT;
+
+	dialog = gtk_dialog_new_with_buttons( lpCaption, NULL, flags, NULL );
+	gtk_window_set_transient_for( GTK_WINDOW( dialog ), GTK_WINDOW( g_pMainWnd ) );
+	gtk_container_set_border_width( GTK_CONTAINER( dialog ), 10 );
+
+	content_area = gtk_dialog_get_content_area( GTK_DIALOG( dialog ) );
+
+	vbox = gtk_box_new( GTK_ORIENTATION_VERTICAL, 10 );
+	gtk_container_add( GTK_CONTAINER( content_area ), vbox );
+	gtk_widget_show( vbox );
+
+	w = gtk_label_new( lpText );
+	gtk_box_pack_start( GTK_BOX( vbox ), w, FALSE, FALSE, 2 );
+	gtk_widget_set_halign( w, GTK_ALIGN_START );
+	gtk_widget_show( w );
+
+	w = gtk_separator_new( GTK_ORIENTATION_HORIZONTAL );
+	gtk_box_pack_start( GTK_BOX( vbox ), w, FALSE, FALSE, 2 );
+	gtk_widget_show( w );
+
+	hbox = gtk_box_new( GTK_ORIENTATION_HORIZONTAL, 10 );
+	gtk_box_pack_start( GTK_BOX( vbox ), hbox, FALSE, FALSE, 2 );
+	gtk_widget_show( hbox );
+
+	mode = ( uType & MB_TYPEMASK );
+	if ( mode == MB_OK ) {
+		w = gtk_dialog_add_button( GTK_DIALOG( dialog ), _( "OK" ), GTK_RESPONSE_OK );
+
+		ret = IDOK;
+	}
+	else if ( mode ==  MB_OKCANCEL ) {
+		w = gtk_dialog_add_button( GTK_DIALOG( dialog ), _( "OK" ), GTK_RESPONSE_OK );
+		w = gtk_dialog_add_button( GTK_DIALOG( dialog ), _( "Cancel" ), GTK_RESPONSE_CANCEL );
+
+		ret = IDCANCEL;
+	}
+	else if ( mode == MB_YESNOCANCEL ) {
+		w = gtk_dialog_add_button( GTK_DIALOG( dialog ), _( "Yes" ), GTK_RESPONSE_YES );
+		w = gtk_dialog_add_button( GTK_DIALOG( dialog ), _( "No" ), GTK_RESPONSE_NO );
+		w = gtk_dialog_add_button( GTK_DIALOG( dialog ), _( "Cancel" ), GTK_RESPONSE_CANCEL );
+
+		ret = IDCANCEL;
+	}
+	else /* if (mode == MB_YESNO) */
+	{
+		w = gtk_dialog_add_button( GTK_DIALOG( dialog ), _( "Yes" ), GTK_RESPONSE_YES );
+		w = gtk_dialog_add_button( GTK_DIALOG( dialog ), _( "No" ), GTK_RESPONSE_NO );
+
+		ret = IDNO;
+	}
+
+
+	response_id = gtk_dialog_run( GTK_DIALOG( dialog ) );
+
+	switch( response_id )
+	{
+	case GTK_RESPONSE_OK:
+		ret = IDOK;
+		break;
+	case GTK_RESPONSE_CANCEL:
+		ret = IDCANCEL;
+		break;
+	case GTK_RESPONSE_YES:
+		ret = IDYES;
+		break;
+	case GTK_RESPONSE_NO:
+		ret = IDNO;
+		break;
+	}
+
+
+	gtk_widget_destroy( dialog );
+
+	return ret;
+}
 
 extern "C" void* WINAPI QERPlug_GetFuncTable(){
 	return &g_FuncTable;

@@ -43,6 +43,9 @@
 static GtkWidget *pDialogWnd;
 static GtkWidget *pNotebook;
 
+extern void *g_pMainWidget;
+
+
 class CBackgroundDialogPage
 {
 private:

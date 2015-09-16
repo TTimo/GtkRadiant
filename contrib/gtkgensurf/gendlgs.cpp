@@ -1362,7 +1362,7 @@ GtkWidget* create_main_dialog(){
 	gtk_window_set_title( GTK_WINDOW( dlg ), gszCaption );
 	g_signal_connect( dlg, "delete_event", G_CALLBACK( main_close ), NULL );
 	//  g_signal_connect (G_OBJECT (dlg), "destroy", G_CALLBACK (gtk_widget_destroy), NULL);
-	gtk_window_set_transient_for( GTK_WINDOW( dlg ), GTK_WINDOW( g_pRadiantWnd ) );
+	gtk_window_set_transient_for( GTK_WINDOW( dlg ), GTK_WINDOW( g_pMainWidget ) );
 
 	hbox = gtk_box_new( GTK_ORIENTATION_HORIZONTAL, 5 );
 	gtk_container_add( GTK_CONTAINER( dlg ), hbox );

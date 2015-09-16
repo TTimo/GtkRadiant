@@ -22,6 +22,8 @@
 
 #include "plugin.h"
 
+static void *g_pMainWidget = NULL;
+
 // toolbar implementation
 
 class CFlushReloadSelectedToolbarButton : public IToolbarButton
@@ -156,6 +158,7 @@ static const char *PLUGIN_COMMANDS = "About...;-;Flush & Reload Models;Flush & R
 static const char *PLUGIN_ABOUT = "Model Module v1.0 for GtkRadiant\nby Arnout van Meer (rr2do2@splashdamage.com)\n\nBased on the MD3Model Module by SPoG\nPicoModel Library Copyright (c) 2002, Randy Reddig & seaw0lf\n\nSupported models:\n";
 
 extern "C" const char* QERPlug_Init( void *hApp, void* pMainWidget ){
+	g_pMainWidget = pMainWidget;
 	init_filetypes();
 	return (char *) PLUGIN_NAME;
 }
@@ -188,7 +191,7 @@ extern "C" void QERPlug_Dispatch( const char *p, vec3_t vMin, vec3_t vMax, bool 
 			strncat( about_buf, module->copyright, sizeof( about_buf ) );
 			strncat( about_buf, "\n", sizeof( about_buf ) );
 		}
-		g_FuncTable.m_pfnMessageBox( NULL, about_buf, "About...", MB_OK, NULL );
+		g_FuncTable.m_pfnMessageBox( g_pMainWidget, about_buf, "About...", MB_OK, NULL );
 	}
 }
 

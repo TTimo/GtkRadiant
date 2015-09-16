@@ -289,9 +289,11 @@ void PatchDialog::ShowDlg(){
 
 void PatchDialog::BuildDialog(){
 	GtkWidget *dlg, *vbox, *vbox2, *hbox, *hbox2, *frame, *table, *label;
-	GtkWidget *button, *entry, *spin, *combo;
+	GtkWidget *button, *entry, *spin, *combo, *row_label, *col_label;
 	GtkAdjustment *adj;
 	char buf[64];
+	GList *lst, *cells;
+	GtkSizeGroup *size_group;
 
 	dlg = m_pWidget;
 
@@ -328,13 +330,20 @@ void PatchDialog::BuildDialog(){
 	gtk_grid_set_column_spacing( GTK_GRID( table ), 5 );
 	gtk_widget_show( table );
 
-	label = gtk_label_new( _( "Row:" ) );
+	row_label = label = gtk_label_new( _( "Row:" ) );	
 	gtk_grid_attach( GTK_GRID( table ), label, 0, 0, 1, 1 );
+	gtk_widget_set_halign( label, GTK_ALIGN_START );
 	gtk_widget_show( label );
 
-	label = gtk_label_new( _( "Column:" ) );
+	col_label = label = gtk_label_new( _( "Column:" ) );
 	gtk_grid_attach( GTK_GRID( table ), label, 1, 0, 1, 1 );
+	gtk_widget_set_halign( label, GTK_ALIGN_START );
 	gtk_widget_show( label );
+
+	size_group = gtk_size_group_new( GTK_SIZE_GROUP_BOTH );
+	gtk_size_group_add_widget( size_group, row_label );
+	gtk_size_group_add_widget( size_group, col_label );
+	g_object_unref( size_group );
 
 	combo = gtk_combo_box_text_new();
 	gtk_grid_attach( GTK_GRID( table ), combo, 0, 1, 1, 1 );
@@ -343,6 +352,12 @@ void PatchDialog::BuildDialog(){
 						G_CALLBACK( OnSelchangeComboColRow ), this );
 	AddDialogData( combo, &m_nRow, DLG_COMBO_BOX_INT );
 	m_pRowCombo = combo;
+	cells = gtk_cell_layout_get_cells( GTK_CELL_LAYOUT( combo ) );
+	for( lst = cells; lst != NULL; lst = g_list_next( lst ) )
+	{
+		g_object_set( lst->data, "xalign", 1.0, NULL );
+	}
+	g_list_free( cells );
 
 	combo = gtk_combo_box_text_new();
 	gtk_grid_attach( GTK_GRID( table ), combo, 1, 1, 1, 1 );
@@ -351,6 +366,12 @@ void PatchDialog::BuildDialog(){
 						G_CALLBACK( OnSelchangeComboColRow ), this );
 	AddDialogData( combo, &m_nCol, DLG_COMBO_BOX_INT );
 	m_pColCombo = combo;
+	cells = gtk_cell_layout_get_cells( GTK_CELL_LAYOUT( combo ) );
+	for( lst = cells; lst != NULL; lst = g_list_next( lst ) )
+	{
+		g_object_set( lst->data, "xalign", 1.0, NULL );
+	}
+	g_list_free( cells );
 
 	table = gtk_grid_new();
 	gtk_box_pack_start( GTK_BOX( vbox2 ), table, TRUE, TRUE, 0 );
@@ -386,26 +407,31 @@ void PatchDialog::BuildDialog(){
 	entry = gtk_entry_new();
 	gtk_grid_attach( GTK_GRID( table ), entry, 1, 0, 1, 1 );
 	gtk_widget_show( entry );
+	g_object_set( entry, "xalign", 1.0, NULL );
 	AddDialogData( entry, &m_fX, DLG_ENTRY_FLOAT );
 
 	entry = gtk_entry_new();
 	gtk_grid_attach( GTK_GRID( table ), entry, 1, 1, 1, 1 );
 	gtk_widget_show( entry );
+	g_object_set( entry, "xalign", 1.0, NULL );
 	AddDialogData( entry, &m_fY, DLG_ENTRY_FLOAT );
 
 	entry = gtk_entry_new();
 	gtk_grid_attach( GTK_GRID( table ), entry, 1, 2, 1, 1 );
 	gtk_widget_show( entry );
+	g_object_set( entry, "xalign", 1.0, NULL );
 	AddDialogData( entry, &m_fZ, DLG_ENTRY_FLOAT );
 
 	entry = gtk_entry_new();
 	gtk_grid_attach( GTK_GRID( table ), entry, 1, 3, 1, 1 );
 	gtk_widget_show( entry );
+	g_object_set( entry, "xalign", 1.0, NULL );
 	AddDialogData( entry, &m_fS, DLG_ENTRY_FLOAT );
 
 	entry = gtk_entry_new();
 	gtk_grid_attach( GTK_GRID( table ), entry, 1, 4, 1, 1 );
 	gtk_widget_show( entry );
+	g_object_set( entry, "xalign", 1.0, NULL );
 	AddDialogData( entry, &m_fT, DLG_ENTRY_FLOAT );
 
 	frame = gtk_frame_new( _( "Texturing" ) );
@@ -462,6 +488,7 @@ void PatchDialog::BuildDialog(){
 	entry = gtk_entry_new();
 	gtk_grid_attach( GTK_GRID( table ), entry, 0, 0, 1, 1 );
 	gtk_widget_show( entry );
+	g_object_set( entry, "xalign", 1.0, NULL );
 	g_object_set_data( G_OBJECT( m_pWidget ), "hshift_entry", entry );
 	// we fill in this data, if no patch is selected the widgets are unmodified when the inspector is raised
 	// so we need to have at least one initialisation somewhere
@@ -476,10 +503,12 @@ void PatchDialog::BuildDialog(){
 	gtk_spin_button_set_numeric( GTK_SPIN_BUTTON( spin ), TRUE );
 	gtk_grid_attach( GTK_GRID( table ), spin, 1, 0, 1, 1 );
 	gtk_widget_show( spin );
+	g_object_set( spin, "xalign", 1.0, NULL );
 
 	entry = gtk_entry_new();
 	gtk_grid_attach( GTK_GRID( table ), entry, 0, 1, 1, 1 );
 	gtk_widget_show( entry );
+	g_object_set( entry, "xalign", 1.0, NULL );
 	snprintf( buf, sizeof( buf ), "%g", l_pPIIncrement->shift[1] );
 	gtk_entry_set_text( GTK_ENTRY( entry ), buf );
 
@@ -491,10 +520,12 @@ void PatchDialog::BuildDialog(){
 	gtk_spin_button_set_numeric( GTK_SPIN_BUTTON( spin ), TRUE );
 	gtk_grid_attach( GTK_GRID( table ), spin, 1, 1, 1, 1 );
 	gtk_widget_show( spin );
+	g_object_set( spin, "xalign", 1.0, NULL );
 
 	entry = gtk_entry_new();
 	gtk_grid_attach( GTK_GRID( table ), entry, 0, 2, 1, 1 );
 	gtk_widget_show( entry );
+	g_object_set( entry, "xalign", 1.0, NULL );
 	snprintf( buf, sizeof( buf ), "%g", l_pPIIncrement->scale[0] );
 	gtk_entry_set_text( GTK_ENTRY( entry ), buf );
 
@@ -506,10 +537,12 @@ void PatchDialog::BuildDialog(){
 	gtk_spin_button_set_numeric( GTK_SPIN_BUTTON( spin ), TRUE );
 	gtk_grid_attach( GTK_GRID( table ), spin, 1, 2, 1, 1 );
 	gtk_widget_show( spin );
+	g_object_set( spin, "xalign", 1.0, NULL );
 
 	entry = gtk_entry_new();
 	gtk_grid_attach( GTK_GRID( table ), entry, 0, 3, 1, 1 );
 	gtk_widget_show( entry );
+	g_object_set( entry, "xalign", 1.0, NULL );
 	snprintf( buf, sizeof( buf ), "%g", l_pPIIncrement->scale[1] );
 	gtk_entry_set_text( GTK_ENTRY( entry ), buf );
 
@@ -521,10 +554,12 @@ void PatchDialog::BuildDialog(){
 	gtk_spin_button_set_numeric( GTK_SPIN_BUTTON( spin ), TRUE );
 	gtk_grid_attach( GTK_GRID( table ), spin, 1, 3, 1, 1 );
 	gtk_widget_show( spin );
+	g_object_set( spin, "xalign", 1.0, NULL );
 
 	entry = gtk_entry_new();
 	gtk_grid_attach( GTK_GRID( table ), entry, 0, 4, 1, 1 );
 	gtk_widget_show( entry );
+	g_object_set( entry, "xalign", 1.0, NULL );
 	snprintf( buf, sizeof( buf ), "%g", l_pPIIncrement->rotate );
 	gtk_entry_set_text( GTK_ENTRY( entry ), buf );
 
@@ -536,6 +571,7 @@ void PatchDialog::BuildDialog(){
 	gtk_spin_button_set_numeric( GTK_SPIN_BUTTON( spin ), TRUE );
 	gtk_grid_attach( GTK_GRID( table ), spin, 1, 4, 1, 1 );
 	gtk_widget_show( spin );
+	g_object_set( spin, "xalign", 1.0, NULL );
 
 	hbox2 = gtk_box_new( GTK_ORIENTATION_HORIZONTAL, 5 );
 	gtk_widget_show( hbox2 );

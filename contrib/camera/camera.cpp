@@ -39,7 +39,7 @@ static const char *PLUGIN_NAME = "Camera";
 static const char *PLUGIN_COMMANDS = "About...,-,Load Camera...,-,Preview Camera,-,Camera Inspector...,-,New Spline Camera,New Interpolated Camera,New Fixed Camera";
 
 // globals
-GtkWidget *g_pRadiantWnd = NULL;
+GtkWidget *g_pMainWidget = NULL;
 GtkWidget *g_pCameraInspectorWnd = NULL;
 CCamera   *firstCam = NULL;       // double linked list
 CCamera   *firstFreeCam = NULL;   // single linked list
@@ -59,7 +59,7 @@ static const char *PLUGIN_ABOUT = "Camera v1.0 for GtkRadiant\n"
 #include "iplugin.h"
 
 const char* QERPlug_Init( void* hApp, void* pMainWidget ){
-	g_pRadiantWnd = (GtkWidget*)pMainWidget;
+	g_pMainWidget = (GtkWidget*)pMainWidget;
 
 	// initialize cams
 	for ( int i = 0; i < MAX_CAMERAS; i++ ) {
@@ -117,7 +117,7 @@ void QERPlug_Dispatch( const char* p, float* vMin, float* vMax, bool bSingleBrus
 		DoLoadCamera();
 	}
 	else if ( !strcmp( p, "About..." ) ) {
-		g_FuncTable.m_pfnMessageBox( (GtkWidget *)g_pRadiantWnd, PLUGIN_ABOUT, "About", MB_OK, NULL );
+		g_FuncTable.m_pfnMessageBox( (GtkWidget *)g_pMainWidget, PLUGIN_ABOUT, "About", MB_OK, NULL );
 	}
 }
 

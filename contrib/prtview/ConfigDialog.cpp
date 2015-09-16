@@ -30,6 +30,8 @@
 #endif
 #include <glib/gi18n.h>
 
+extern void *g_pMainWidget;
+
 /////////////////////////////////////////////////////////////////////////////
 // CConfigDialog dialog
 
@@ -271,6 +273,7 @@ void DoConfigDialog(){
 	GtkDialogFlags flags = GTK_DIALOG_DESTROY_WITH_PARENT;
 
 	dialog = gtk_dialog_new_with_buttons( _( "Portal Viewer Configuration" ), NULL, flags, NULL );
+	gtk_window_set_transient_for( GTK_WINDOW( dialog ), GTK_WINDOW( g_pMainWidget ) );
 	gtk_dialog_add_button( GTK_DIALOG( dialog ), _( "OK" ), GTK_RESPONSE_OK );
 
 	content_area = gtk_dialog_get_content_area( GTK_DIALOG( dialog ) );
@@ -474,7 +477,6 @@ void DoConfigDialog(){
 	Set3DTransText( translabel );
 	SetClipText( cliplabel );
 
-	gtk_widget_show( dialog );
 
 	response_id = gtk_dialog_run( GTK_DIALOG( dialog ) );
 

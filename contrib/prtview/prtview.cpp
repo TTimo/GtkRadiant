@@ -55,6 +55,8 @@ static char INIfn[NAME_MAX];
 #define CLIP_RANGE "ClipRange"
 #define CLIP "Clip"
 
+void *g_pMainWidget = NULL;
+
 void InitInstance(){
 #ifdef _WIN32
 	char fn[_MAX_PATH];
@@ -383,6 +385,7 @@ extern "C" LPVOID WINAPI QERPlug_GetFuncTable(){
 
 //extern "C" LPCSTR WINAPI QERPlug_Init (HMODULE hApp, GtkWidget* hwndMain)
 extern "C" const char* QERPlug_Init( void *hApp, void* pMainWidget ){
+	g_pMainWidget = pMainWidget;
 	// Setup defaults & load config
 	InitInstance();
 

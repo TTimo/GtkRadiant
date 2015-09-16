@@ -47,6 +47,8 @@
 #include <shellapi.h>
 #endif
 
+static GtkWidget *EntityList_dialog = NULL;
+
 // =============================================================================
 // Color selection dialog
 
@@ -120,10 +122,10 @@ static void DoProjectAddEdit( bool edit, GtkWidget *parent ){
 	else{
 		dialog = gtk_dialog_new_with_buttons( _( "Add Command" ), NULL, flags, NULL );
 	}
+	gtk_window_set_transient_for( GTK_WINDOW( dialog ), GTK_WINDOW( parent ) );
+
 	gtk_dialog_add_button( GTK_DIALOG( dialog ), _( "OK" ), GTK_RESPONSE_OK );
 	gtk_dialog_add_button( GTK_DIALOG( dialog ), _( "Cancel" ), GTK_RESPONSE_CANCEL );
-
-	load_window_pos( dialog, g_PrefsDlg.mWindowInfo.posMapInfoWnd );
 
 	content_area = gtk_dialog_get_content_area( GTK_DIALOG( dialog ) );
 
@@ -175,8 +177,6 @@ static void DoProjectAddEdit( bool edit, GtkWidget *parent ){
 		}
 	}
 
-
-	gtk_widget_show( dialog );
 
 	response_id = gtk_dialog_run( GTK_DIALOG( dialog ) );
 
@@ -421,6 +421,10 @@ void OnSelchangeComboWhatgame( GtkWidget *widget, gpointer data ){
 			if( gameList[x].custom ){
 				gtk_widget_hide( fs_game_label );
 				gtk_widget_show( fs_game_entry );
+				if( gtk_widget_is_visible( fs_game_entry ) )
+				{
+					gtk_widget_grab_focus( fs_game_entry );
+				}
 			} 
 			else
 			{
@@ -475,7 +479,10 @@ void OnProjectViewSelChanged( GtkTreeSelection *treeselection, gpointer data )
 }
 static void OnDoProjectSettings_realize( GtkWidget *widget, gpointer data )
 {
-	OnProjectViewSelChanged( gtk_tree_view_get_selection( GTK_TREE_VIEW( widget ) ), data );
+	GtkWidget *view;
+
+	view = GTK_WIDGET( g_object_get_data( G_OBJECT( widget ), "view" ) );
+	OnProjectViewSelChanged( gtk_tree_view_get_selection( GTK_TREE_VIEW( view ) ), data );
 	OnSelchangeComboWhatgame( widget, data );
 }
 
@@ -493,10 +500,10 @@ void DoProjectSettings(){
 	GtkDialogFlags flags = GTK_DIALOG_DESTROY_WITH_PARENT;
 
 	dialog = gtk_dialog_new_with_buttons( _( "Project Settings" ), NULL, flags, NULL );
+	gtk_window_set_transient_for( GTK_WINDOW( dialog ), GTK_WINDOW( g_pParentWnd->m_pWidget ) );
+
 	gtk_dialog_add_button( GTK_DIALOG( dialog ), _( "OK" ), GTK_RESPONSE_OK );
 	gtk_dialog_add_button( GTK_DIALOG( dialog ), _( "Cancel" ), GTK_RESPONSE_CANCEL );
-
-	gtk_window_set_default_size( GTK_WINDOW( dialog ), 550, 400 );
 
 	content_area = gtk_dialog_get_content_area( GTK_DIALOG( dialog ) );
 
@@ -723,9 +730,6 @@ void DoProjectSettings(){
 	UpdateBSPCommandList( dialog );
 	gtk_toggle_button_set_active( GTK_TOGGLE_BUTTON( brush ), ( g_qeglobals.m_bBrushPrimitMode ) ? TRUE : FALSE );
 
-	OnProjectViewSelChanged( selection, dialog );
-
-	gtk_widget_show( dialog );
 
 	g_pGameDescription->Dump();
 
@@ -853,7 +857,7 @@ void DoProjectSettings(){
 
 void DoMapInfo(){
 	static GtkWidget *dialog;
-	GtkWidget *vbox, *table, *label, *scr;
+	GtkWidget *vbox, *table, *label, *scr, *button;
 	GtkWidget *brushes_label, *entities_label, *net_label, *content_area;
 	gint response_id;
 	GtkDialogFlags flags = GTK_DIALOG_DESTROY_WITH_PARENT;
@@ -863,9 +867,11 @@ void DoMapInfo(){
 	}
 
 	dialog = gtk_dialog_new_with_buttons( _( "Map Info" ), NULL, flags, NULL );
-	gtk_dialog_add_button( GTK_DIALOG( dialog ), _( "OK" ), GTK_RESPONSE_OK );
-
+	gtk_window_set_transient_for( GTK_WINDOW( dialog ), GTK_WINDOW( g_pParentWnd->m_pWidget ) );
 	load_window_pos( dialog, g_PrefsDlg.mWindowInfo.posMapInfoWnd );
+
+	button = gtk_dialog_add_button( GTK_DIALOG( dialog ), _( "OK" ), GTK_RESPONSE_OK );
+	gtk_widget_grab_focus( button );
 
 	content_area = gtk_dialog_get_content_area( GTK_DIALOG( dialog ) );
 
@@ -931,8 +937,6 @@ void DoMapInfo(){
 
 	{
 		GtkWidget* view = gtk_tree_view_new_with_model( GTK_TREE_MODEL( store ) );
-		gtk_widget_set_hexpand( view, TRUE );
-		gtk_widget_set_vexpand( view, TRUE );
 		gtk_tree_view_set_headers_clickable( GTK_TREE_VIEW( view ), TRUE );
 
 		{
@@ -952,8 +956,12 @@ void DoMapInfo(){
 
 		gtk_container_add( GTK_CONTAINER( scr ), view );
 
-		g_object_unref( G_OBJECT( store ) );
+		gtk_widget_set_hexpand( view, TRUE );
+		gtk_widget_set_vexpand( view, TRUE );
+		gtk_widget_set_can_default( view, FALSE );
 		gtk_widget_show( view );
+
+		g_object_unref( G_OBJECT( store ) );
 
 		GtkTreeViewColumn * column = gtk_tree_view_get_column( GTK_TREE_VIEW( view ), 0 );
 		if( column ) {
@@ -965,6 +973,7 @@ void DoMapInfo(){
 				//gtk_widget_set_size_request( view, -1, height * 6 );
 			}
 		}
+
 	}
 
 	// Initialize fields
@@ -1031,7 +1040,10 @@ void DoMapInfo(){
 	snprintf( tmp, sizeof( tmp ), "%d", Net );
 	gtk_label_set_text( GTK_LABEL( net_label ), tmp );
 
+
 	response_id = gtk_dialog_run( GTK_DIALOG( dialog ) );
+
+	save_window_pos( dialog, g_PrefsDlg.mWindowInfo.posMapInfoWnd );
 
 	gtk_widget_destroy( dialog );
 	dialog = NULL;
@@ -1092,22 +1104,31 @@ static void entitylist_selection_changed( GtkTreeSelection* selection, gpointer 
 	}
 }
 
+static void EnitityList_response( GtkDialog *dialog, gint response_id, gpointer user_data )
+{
+	save_window_pos( GTK_WIDGET( dialog ), g_PrefsDlg.mWindowInfo.posEntityInfoWnd );
+
+	gtk_widget_destroy( GTK_WIDGET( dialog ) );
+
+	EntityList_dialog = NULL;
+}
 void DoEntityList(){
-	static GtkWidget *dialog;
-	GtkWidget *vbox, *vbox2, *hbox, *hbox2, *button, *scr, *content_area;
-	gint response_id;
+	GtkWidget *dialog, *vbox, *vbox2, *hbox, *hbox2, *button, *scr, *content_area;
+	
 	GtkDialogFlags flags = GTK_DIALOG_DESTROY_WITH_PARENT;
 
-	if ( dialog != NULL ) {
+	if ( EntityList_dialog != NULL ) {
 		return;
 	}
 
-	dialog = gtk_dialog_new_with_buttons( _( "Entities" ), NULL, flags, NULL );
-	gtk_dialog_add_button( GTK_DIALOG( dialog ), _( "OK" ), GTK_RESPONSE_OK );
+	EntityList_dialog = dialog = gtk_dialog_new_with_buttons( _( "Entity Info" ), GTK_WINDOW( g_pParentWnd->m_pWidget ), flags, NULL );
+	gtk_window_set_transient_for( GTK_WINDOW( dialog ), GTK_WINDOW( g_pParentWnd->m_pWidget ) );
+	load_window_pos( dialog, g_PrefsDlg.mWindowInfo.posEntityInfoWnd );
+
+	button = gtk_dialog_add_button( GTK_DIALOG( dialog ), _( "OK" ), GTK_RESPONSE_OK );
+	gtk_widget_grab_default( button );
 
 	content_area = gtk_dialog_get_content_area( GTK_DIALOG( dialog ) );
-
-	load_window_pos( dialog, g_PrefsDlg.mWindowInfo.posEntityInfoWnd );
 
 	hbox = gtk_box_new( GTK_ORIENTATION_HORIZONTAL, 5 );
 	gtk_container_add( GTK_CONTAINER( content_area ), hbox );
@@ -1256,15 +1277,9 @@ void DoEntityList(){
 	gtk_widget_show( button );
 
 
+	g_signal_connect( dialog, "response", G_CALLBACK( EnitityList_response ), dialog );
+
 	gtk_widget_show( dialog );
-
-	response_id = gtk_dialog_run( GTK_DIALOG( dialog ) );
-
-	save_window_pos( dialog, g_PrefsDlg.mWindowInfo.posMapInfoWnd );
-
-	gtk_widget_destroy( dialog );
-
-	dialog = NULL;
 }
 
 // =============================================================================
@@ -1317,6 +1332,8 @@ void DoRotateDlg(){
 	GtkDialogFlags flags = GTK_DIALOG_DESTROY_WITH_PARENT;
 
 	dialog = gtk_dialog_new_with_buttons( _( "Arbitrary rotation" ), NULL, flags, NULL );
+	gtk_window_set_transient_for( GTK_WINDOW( dialog ), GTK_WINDOW( g_pParentWnd->m_pWidget ) );
+
 	gtk_dialog_add_button( GTK_DIALOG( dialog ), _( "OK" ), GTK_RESPONSE_OK );
 	gtk_dialog_add_button( GTK_DIALOG( dialog ), _( "Cancel" ), GTK_RESPONSE_CANCEL );
 	gtk_dialog_add_button( GTK_DIALOG( dialog ), _( "Apply" ), GTK_RESPONSE_APPLY );
@@ -1414,6 +1431,8 @@ void DoGamma(){
 	GtkDialogFlags flags = GTK_DIALOG_DESTROY_WITH_PARENT;
 
 	dialog = gtk_dialog_new_with_buttons( _( "Gamma" ), NULL, flags, NULL );
+	gtk_window_set_transient_for( GTK_WINDOW( dialog ), GTK_WINDOW( g_pParentWnd->m_pWidget ) );
+
 	gtk_dialog_add_button( GTK_DIALOG( dialog ), _( "OK" ), GTK_RESPONSE_OK );
 	gtk_dialog_add_button( GTK_DIALOG( dialog ), _( "Cancel" ), GTK_RESPONSE_CANCEL );
 
@@ -1445,8 +1464,6 @@ void DoGamma(){
 
 	// Initialize dialog
 	gtk_spin_button_set_value( GTK_SPIN_BUTTON( spin ), g_qeglobals.d_savedinfo.fGamma );
-
-	gtk_widget_show( dialog );
 
 	response_id = gtk_dialog_run( GTK_DIALOG( dialog ) );
 
@@ -1634,6 +1651,8 @@ void DoFind(){
 	GtkDialogFlags flags = GTK_DIALOG_DESTROY_WITH_PARENT;
 
 	dialog = gtk_dialog_new_with_buttons( _( "Find Brush" ), NULL, flags, NULL );
+	gtk_window_set_transient_for( GTK_WINDOW( dialog ), GTK_WINDOW( g_pParentWnd->m_pWidget ) );
+
 	gtk_dialog_add_button( GTK_DIALOG( dialog ), _( "OK" ), GTK_RESPONSE_OK );
 	gtk_dialog_add_button( GTK_DIALOG( dialog ), _( "Cancel" ), GTK_RESPONSE_CANCEL );
 
@@ -1701,6 +1720,8 @@ void DoSides( bool bCone, bool bSphere, bool bTorus ){
 	GtkDialogFlags flags = GTK_DIALOG_DESTROY_WITH_PARENT;
 
 	dialog = gtk_dialog_new_with_buttons( _( "Arbitrary sides" ), NULL, flags, NULL );
+	gtk_window_set_transient_for( GTK_WINDOW( dialog ), GTK_WINDOW( g_pParentWnd->m_pWidget ) );
+
 	gtk_dialog_add_button( GTK_DIALOG( dialog ), _( "OK" ), GTK_RESPONSE_OK );
 	gtk_dialog_add_button( GTK_DIALOG( dialog ), _( "Cancel" ), GTK_RESPONSE_CANCEL );
 
@@ -1729,8 +1750,6 @@ void DoSides( bool bCone, bool bSphere, bool bTorus ){
 	gtk_widget_set_hexpand( spin, TRUE );
 	gtk_widget_show( spin );
 	g_object_set( spin, "xalign", 1.0, NULL );
-
-	gtk_widget_show( dialog );
 
 	response_id = gtk_dialog_run( GTK_DIALOG( dialog ) );
 
@@ -1764,6 +1783,8 @@ void DoNewPatchDlg(){
 	GtkDialogFlags flags = GTK_DIALOG_DESTROY_WITH_PARENT;
 
 	dialog = gtk_dialog_new_with_buttons( _( "Patch density" ), NULL, flags, NULL );
+	gtk_window_set_transient_for( GTK_WINDOW( dialog ), GTK_WINDOW( g_pParentWnd->m_pWidget ) );
+
 	gtk_dialog_add_button( GTK_DIALOG( dialog ), _( "OK" ), GTK_RESPONSE_OK );
 	gtk_dialog_add_button( GTK_DIALOG( dialog ), _( "Cancel" ), GTK_RESPONSE_CANCEL );
 
@@ -1836,8 +1857,6 @@ void DoNewPatchDlg(){
 	// Initialize dialog
 	g_list_free( combo_list );
 
-	gtk_widget_show( dialog );
-
 	response_id = gtk_dialog_run( GTK_DIALOG( dialog ) );
 
 	if( response_id == GTK_RESPONSE_OK ) 
@@ -1900,6 +1919,8 @@ void DoScaleDlg(){
 	GtkDialogFlags flags = GTK_DIALOG_DESTROY_WITH_PARENT;
 
 	dialog = gtk_dialog_new_with_buttons( _( "Scale" ), NULL, flags, NULL );
+	gtk_window_set_transient_for( GTK_WINDOW( dialog ), GTK_WINDOW( g_pParentWnd->m_pWidget ) );
+
 	gtk_dialog_add_button( GTK_DIALOG( dialog ), _( "OK" ), GTK_RESPONSE_OK );
 	gtk_dialog_add_button( GTK_DIALOG( dialog ), _( "Cancel" ), GTK_RESPONSE_CANCEL );
 	gtk_dialog_add_button( GTK_DIALOG( dialog ), _( "Apply" ), GTK_RESPONSE_APPLY );
@@ -1984,6 +2005,8 @@ void DoThickenDlg(){
 	static qboolean bGroupResult = true;
 
 	dialog = gtk_dialog_new_with_buttons( _( "Thicken Patch" ), NULL, flags, NULL );
+	gtk_window_set_transient_for( GTK_WINDOW( dialog ), GTK_WINDOW( g_pParentWnd->m_pWidget ) );
+
 	gtk_dialog_add_button( GTK_DIALOG( dialog ), _( "OK" ), GTK_RESPONSE_OK );
 	gtk_dialog_add_button( GTK_DIALOG( dialog ), _( "Cancel" ), GTK_RESPONSE_CANCEL );
 
@@ -2035,7 +2058,6 @@ void DoThickenDlg(){
 	gtk_toggle_button_set_active( GTK_TOGGLE_BUTTON( seams ), TRUE );
 	gtk_spin_button_set_value( GTK_SPIN_BUTTON( amount ), 8 );
 
-	gtk_widget_show( dialog );
 
 	response_id = gtk_dialog_run( GTK_DIALOG( dialog ) );
 
@@ -2079,17 +2101,18 @@ void about_button_credits( GtkWidget *widget, gpointer data ){
 }
 
 void DoAbout(){
-	GtkWidget *dialog, *content_area;
+	GtkWidget *dialog, *content_area, *button;
 	gint response_id;
 	GtkDialogFlags flags = GTK_DIALOG_DESTROY_WITH_PARENT;
 
 	// create dialog window
 	dialog = gtk_dialog_new_with_buttons( _( "About GtkRadiant" ), GTK_WINDOW( g_pParentWnd->m_pWidget ), flags, NULL );
-	gtk_dialog_add_button( GTK_DIALOG( dialog ), _( "OK" ), GTK_RESPONSE_OK );
-
 	gtk_window_set_transient_for( GTK_WINDOW( dialog ), GTK_WINDOW( g_pParentWnd->m_pWidget ) );
 	gtk_window_set_position( GTK_WINDOW( dialog ), GTK_WIN_POS_CENTER_ON_PARENT );
 	gtk_window_set_resizable( GTK_WINDOW( dialog ), FALSE );  
+
+	button = gtk_dialog_add_button( GTK_DIALOG( dialog ), _( "OK" ), GTK_RESPONSE_OK );
+	gtk_widget_grab_focus( button );
 
 	content_area = gtk_dialog_get_content_area( GTK_DIALOG( dialog ) );
 
@@ -2227,9 +2250,6 @@ void DoAbout(){
 						G_CALLBACK( about_button_changelog ), NULL );
 	*/
 
-	// show it
-	gtk_widget_show( dialog );
-
 	response_id = gtk_dialog_run( GTK_DIALOG( dialog ) );
 
 	gtk_widget_destroy( dialog );
@@ -2239,16 +2259,17 @@ void DoAbout(){
 // Command List dialog
 
 void DoCommandListDlg(){
-	GtkWidget *dialog, *vbox1, *scr, *content_area;
+	GtkWidget *dialog, *vbox1, *scr, *content_area, *button;
 	gint response_id;
 	GtkDialogFlags flags = GTK_DIALOG_DESTROY_WITH_PARENT;
 
-	dialog = gtk_dialog_new_with_buttons( _( "Shortcut List" ), GTK_WINDOW( g_pParentWnd->m_pWidget ), flags, NULL );
-	gtk_dialog_add_button( GTK_DIALOG( dialog ), _( "OK" ), GTK_RESPONSE_OK );
-
+	dialog = gtk_dialog_new_with_buttons( _( "Shortcut List" ), NULL, flags, NULL );
     gtk_window_set_transient_for( GTK_WINDOW( dialog ), GTK_WINDOW( g_pParentWnd->m_pWidget ) );
 	gtk_window_set_position( GTK_WINDOW( dialog ), GTK_WIN_POS_CENTER_ON_PARENT );
 	gtk_window_set_default_size( GTK_WINDOW( dialog ), 400, 400 );
+
+	button = gtk_dialog_add_button( GTK_DIALOG( dialog ), _( "OK" ), GTK_RESPONSE_OK );
+	gtk_widget_grab_focus( button );
 
 	content_area = gtk_dialog_get_content_area( GTK_DIALOG( dialog ) );
 
@@ -2269,7 +2290,8 @@ void DoCommandListDlg(){
 		GtkListStore* store = gtk_list_store_new( 2, G_TYPE_STRING, G_TYPE_STRING );
 
 		GtkWidget* view = gtk_tree_view_new_with_model( GTK_TREE_MODEL( store ) );
-//		gtk_tree_selection_set_mode( gtk_tree_view_get_selection( GTK_TREE_VIEW( view ) ), GTK_SELECTION_NONE );
+		gtk_tree_selection_set_mode( gtk_tree_view_get_selection( GTK_TREE_VIEW( view ) ), GTK_SELECTION_SINGLE );
+		
 		{
 			GtkCellRenderer* renderer = gtk_cell_renderer_text_new();
 			GtkTreeViewColumn* column = gtk_tree_view_column_new_with_attributes( _( "Command" ), renderer, "text", 0, (char *) NULL );
@@ -2281,9 +2303,6 @@ void DoCommandListDlg(){
 			GtkTreeViewColumn* column = gtk_tree_view_column_new_with_attributes( _( "Key" ), renderer, "text", 1, (char *) NULL );
 			gtk_tree_view_append_column( GTK_TREE_VIEW( view ), column );
 		}
-
-		gtk_container_add( GTK_CONTAINER( scr ), view );
-		gtk_widget_show( view );
 
 		{
 			// Initialize dialog
@@ -2352,11 +2371,13 @@ void DoCommandListDlg(){
 			}
 		}
 
+		gtk_container_add( GTK_CONTAINER( scr ), view );
+		gtk_widget_set_can_default( view, FALSE );
+		gtk_widget_show( view );
+
 		g_object_unref( G_OBJECT( store ) );
 	}
 
-
-	gtk_widget_show( dialog );
 
 	response_id = gtk_dialog_run( GTK_DIALOG( dialog ) );
 
@@ -2406,6 +2427,8 @@ void DoTextureListDlg(){
 	GtkDialogFlags flags = GTK_DIALOG_DESTROY_WITH_PARENT;
 
 	dialog = gtk_dialog_new_with_buttons( _( "Textures" ), NULL, flags, NULL );
+	gtk_window_set_transient_for( GTK_WINDOW( dialog ), GTK_WINDOW( g_pParentWnd->m_pWidget ) );
+
 	gtk_dialog_add_button( GTK_DIALOG( dialog ), _( "Load" ), GTK_RESPONSE_OK );
 	gtk_dialog_add_button( GTK_DIALOG( dialog ), _( "Cancel" ), GTK_RESPONSE_CANCEL );
 
@@ -2480,6 +2503,8 @@ int DoCapDlg( int *type, bool *b_GroupResult ){
 	GtkDialogFlags flags = GTK_DIALOG_DESTROY_WITH_PARENT;
 
 	dialog = gtk_dialog_new_with_buttons( _( "Cap" ), NULL, flags, NULL );
+	gtk_window_set_transient_for( GTK_WINDOW( dialog ), GTK_WINDOW( g_pParentWnd->m_pWidget ) );
+
 	gtk_dialog_add_button( GTK_DIALOG( dialog ), _( "OK" ), GTK_RESPONSE_OK );
 	gtk_dialog_add_button( GTK_DIALOG( dialog ), _( "Cancel" ), GTK_RESPONSE_CANCEL );
 
@@ -2543,7 +2568,6 @@ int DoCapDlg( int *type, bool *b_GroupResult ){
 	// Initialize dialog
 	gtk_toggle_button_set_active( GTK_TOGGLE_BUTTON( bevel ), TRUE );
 
-	gtk_widget_show( dialog );
 
 	response_id = gtk_dialog_run( GTK_DIALOG( dialog ) );
 
@@ -2586,6 +2610,8 @@ void DoScriptsDlg(){
 	GtkDialogFlags flags = GTK_DIALOG_DESTROY_WITH_PARENT;
 
 	dialog = gtk_dialog_new_with_buttons( _( "Available Scripts - Not Implemented Yet" ), NULL, flags, NULL );
+	gtk_window_set_transient_for( GTK_WINDOW( dialog ), GTK_WINDOW( g_pParentWnd->m_pWidget ) );
+
 //	gtk_dialog_add_button( GTK_DIALOG( dialog ), _( "OK" ), GTK_RESPONSE_OK );
 //	gtk_dialog_add_button( GTK_DIALOG( dialog ), _( "Cancel" ), GTK_RESPONSE_CANCEL );
 	gtk_dialog_add_button( GTK_DIALOG( dialog ), _( "Close" ), GTK_RESPONSE_CANCEL );
@@ -2696,7 +2722,6 @@ void DoScriptsDlg(){
 	gtk_size_group_add_widget( button_group, edit_button );
 	g_object_unref( button_group );
 
-	gtk_widget_show( dialog );
 
 	response_id = gtk_dialog_run( GTK_DIALOG( dialog ) );
 
@@ -2728,6 +2753,8 @@ int DoBSInputDlg( const char *fields[5], float values[5] ){
 	GtkDialogFlags flags = GTK_DIALOG_DESTROY_WITH_PARENT;
 
 	dialog = gtk_dialog_new_with_buttons( _( "BrushScript Input" ), NULL, flags, NULL );
+	gtk_window_set_transient_for( GTK_WINDOW( dialog ), GTK_WINDOW( g_pParentWnd->m_pWidget ) );
+
 	gtk_dialog_add_button( GTK_DIALOG( dialog ), _( "OK" ), GTK_RESPONSE_OK );
 	gtk_dialog_add_button( GTK_DIALOG( dialog ), _( "Cancel" ), GTK_RESPONSE_CANCEL );
 
@@ -2758,7 +2785,6 @@ int DoBSInputDlg( const char *fields[5], float values[5] ){
 		gtk_entry_set_text( GTK_ENTRY( entries[i] ), buf );
 	}
 
-	gtk_widget_show( dialog );
 
 	response_id = gtk_dialog_run( GTK_DIALOG( dialog ) );
 
@@ -2797,6 +2823,8 @@ int DoTextureLayout( float *fx, float *fy ){
 	GtkDialogFlags flags = GTK_DIALOG_DESTROY_WITH_PARENT;
 
 	dialog = gtk_dialog_new_with_buttons( _( "Patch texture layout" ), NULL, flags, NULL );
+	gtk_window_set_transient_for( GTK_WINDOW( dialog ), GTK_WINDOW( g_pParentWnd->m_pWidget ) );
+
 	gtk_dialog_add_button( GTK_DIALOG( dialog ), _( "OK" ), GTK_RESPONSE_OK );
 	gtk_dialog_add_button( GTK_DIALOG( dialog ), _( "Cancel" ), GTK_RESPONSE_CANCEL );
 
@@ -2848,7 +2876,6 @@ int DoTextureLayout( float *fx, float *fy ){
 	gtk_entry_set_text( GTK_ENTRY( x ), _( "4.0" ) );
 	gtk_entry_set_text( GTK_ENTRY( y ), _( "4.0" ) );
 
-	gtk_widget_show( dialog );
 
 	response_id = gtk_dialog_run( GTK_DIALOG( dialog ) );
 
@@ -2965,6 +2992,8 @@ char* DoNewProjectDlg( const char *path ){
 //  }
 
 	dialog = gtk_dialog_new_with_buttons( _( "New Project" ), NULL, flags, NULL );
+	gtk_window_set_transient_for( GTK_WINDOW( dialog ), GTK_WINDOW( g_pParentWnd->m_pWidget ) );
+
 	gtk_dialog_add_button( GTK_DIALOG( dialog ), _( "OK" ), GTK_RESPONSE_OK );
 	gtk_dialog_add_button( GTK_DIALOG( dialog ), _( "Cancel" ), GTK_RESPONSE_CANCEL );
 
@@ -3012,7 +3041,6 @@ char* DoNewProjectDlg( const char *path ){
 
 	g_signal_connect( entry, "changed", G_CALLBACK( DoNewProjectDlg_changed ), pathlabel );
 
-	gtk_widget_show( dialog );
 
 	response_id = gtk_dialog_run( GTK_DIALOG( dialog ) );
 
@@ -3342,6 +3370,7 @@ int DoLightIntensityDlg( int *intensity ){
 	GtkDialogFlags flags = GTK_DIALOG_DESTROY_WITH_PARENT;
 
 	dialog = gtk_dialog_new_with_buttons( _( "Light intensity" ), NULL, flags, NULL );	
+	gtk_window_set_transient_for( GTK_WINDOW( dialog ), GTK_WINDOW( g_pParentWnd->m_pWidget ) );
 
 	GtkAccelGroup *accel_group = gtk_accel_group_new();
 	gtk_window_add_accel_group( GTK_WINDOW( dialog ), accel_group );
@@ -3380,7 +3409,6 @@ int DoLightIntensityDlg( int *intensity ){
 
 	gtk_spin_button_set_value( GTK_SPIN_BUTTON( spinbutton ), *intensity );
 
-	gtk_widget_show( dialog );
 
 	response_id = gtk_dialog_run( GTK_DIALOG( dialog ) );
 
@@ -3454,6 +3482,7 @@ void DoFindReplaceTexturesDialog()
 	GtkDialogFlags flags = GTK_DIALOG_DESTROY_WITH_PARENT;
 
 	dialog = gtk_dialog_new_with_buttons( _( "Find / Replace Texture(s)" ), NULL, flags, NULL );
+	gtk_window_set_transient_for( GTK_WINDOW( dialog ), GTK_WINDOW( g_pParentWnd->m_pWidget ) );
 
 	GtkAccelGroup *accel_group = gtk_accel_group_new();
 	gtk_window_add_accel_group( GTK_WINDOW( dialog ), accel_group );

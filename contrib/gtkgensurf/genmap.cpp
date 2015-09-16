@@ -2027,7 +2027,7 @@ void MakeBrush( BRUSH *brush ){
 	_QERFaceData QERFaceData;
 
 	if ( g_FuncTable.m_pfnCreateBrushHandle == NULL ) {
-		g_FuncTable.m_pfnMessageBox( g_pRadiantWnd,"m_pfnCreateBrushHandle==NULL","Aw damn",0, NULL );
+		g_FuncTable.m_pfnMessageBox( g_pMainWidget,"m_pfnCreateBrushHandle==NULL","Aw damn",0, NULL );
 		return;
 	}
 	vp = ( g_FuncTable.m_pfnCreateBrushHandle )();

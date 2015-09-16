@@ -81,6 +81,7 @@ static gint ci_new( GtkWidget *widget, gpointer data ){
 	gtk_dialog_add_button( GTK_DIALOG( dialog ), _( "Cancel" ), GTK_RESPONSE_CANCEL );
 
 	gtk_window_set_transient_for( GTK_WINDOW( dialog ), GTK_WINDOW( g_pCameraInspectorWnd ) );
+	gtk_window_set_position( GTK_WINDOW( dialog ), GTK_WIN_POS_CENTER );
 
 	content_area = gtk_dialog_get_content_area( GTK_DIALOG( dialog ) );
 
@@ -128,9 +129,6 @@ static gint ci_new( GtkWidget *widget, gpointer data ){
 	gtk_widget_show( w );
 
 	// -------------------------- //
-
-	gtk_window_set_position( GTK_WINDOW( dialog ), GTK_WIN_POS_CENTER );
-	gtk_widget_show( dialog );
 
 	response_id = gtk_dialog_run( GTK_DIALOG( dialog ) );
 
@@ -346,10 +344,12 @@ static void ci_rename( GtkButton *button, gpointer data ){
 	}
 
 	dialog = gtk_dialog_new_with_buttons( _( "Rename Path" ), GTK_WINDOW( g_pCameraInspectorWnd ), flags, NULL );
+	gtk_window_set_transient_for( GTK_WINDOW( dialog ), GTK_WINDOW( g_pCameraInspectorWnd ) );
+	gtk_window_set_position( GTK_WINDOW( dialog ), GTK_WIN_POS_CENTER );
+
 	gtk_dialog_add_button( GTK_DIALOG( dialog ), _( "OK" ), GTK_RESPONSE_OK );
 	gtk_dialog_add_button( GTK_DIALOG( dialog ), _( "Cancel" ), GTK_RESPONSE_CANCEL );
 
-	gtk_window_set_transient_for( GTK_WINDOW( dialog ), GTK_WINDOW( g_pCameraInspectorWnd ) );
 
 	content_area = gtk_dialog_get_content_area( GTK_DIALOG( dialog ) );
 
@@ -386,8 +386,6 @@ static void ci_rename( GtkButton *button, gpointer data ){
 
 	// -------------------------- //
 
-	gtk_window_set_position( GTK_WINDOW( dialog ), GTK_WIN_POS_CENTER );
-	gtk_widget_show( dialog );
 
 	bool dialogError = TRUE;
 	while ( dialogError ) 
@@ -436,10 +434,12 @@ static void ci_add_target( GtkButton *button, gpointer data ){
 	}
 
 	dialog = gtk_dialog_new_with_buttons( _( "Add Target" ), GTK_WINDOW( g_pCameraInspectorWnd ), flags, NULL );
+	gtk_window_set_transient_for( GTK_WINDOW( dialog ), GTK_WINDOW( g_pCameraInspectorWnd ) );
+	gtk_window_set_position( GTK_WINDOW( dialog ),GTK_WIN_POS_CENTER );
+
 	gtk_dialog_add_button( GTK_DIALOG( dialog ), _( "OK" ), GTK_RESPONSE_OK );
 	gtk_dialog_add_button( GTK_DIALOG( dialog ), _( "Cancel" ), GTK_RESPONSE_CANCEL );
 
-	gtk_window_set_transient_for( GTK_WINDOW( dialog ), GTK_WINDOW( g_pCameraInspectorWnd ) );
 
 	content_area = gtk_dialog_get_content_area( GTK_DIALOG( dialog ) );
 
@@ -504,9 +504,6 @@ static void ci_add_target( GtkButton *button, gpointer data ){
 	gtk_widget_show( w );
 
 	// -------------------------- //
-
-	gtk_window_set_position( GTK_WINDOW( dialog ),GTK_WIN_POS_CENTER );
-	gtk_widget_show( dialog );
 
 
 	bool dialogError = TRUE;
@@ -760,12 +757,13 @@ static void ci_add( GtkButton *button, gpointer data )
 	}
 
 	dialog = gtk_dialog_new_with_buttons( _( "Add Event" ), GTK_WINDOW( g_pCameraInspectorWnd ), flags, NULL );
+	gtk_window_set_transient_for( GTK_WINDOW( dialog ), GTK_WINDOW( g_pCameraInspectorWnd ) );
+	gtk_window_set_position( GTK_WINDOW( dialog ), GTK_WIN_POS_CENTER );
+
 	gtk_dialog_add_button( GTK_DIALOG( dialog ), _( "OK" ), GTK_RESPONSE_OK );
 	gtk_dialog_add_button( GTK_DIALOG( dialog ), _( "Cancel" ), GTK_RESPONSE_CANCEL );
 
 	content_area = gtk_dialog_get_content_area( GTK_DIALOG( dialog ) );
-
-	gtk_window_set_transient_for( GTK_WINDOW( dialog ), GTK_WINDOW( g_pCameraInspectorWnd ) );
 
 	// fill the window
 	vbox = gtk_box_new( GTK_ORIENTATION_VERTICAL, 5 );
@@ -821,9 +819,6 @@ static void ci_add( GtkButton *button, gpointer data )
 
 	// -------------------------- //
 
-
-	gtk_window_set_position( GTK_WINDOW( dialog ), GTK_WIN_POS_CENTER );
-	gtk_widget_show( dialog );
 
 	bool dialogError = TRUE;
 	while ( dialogError ) 
@@ -914,7 +909,7 @@ GtkWidget *CreateCameraInspectorDialog( void ){
 	GtkTreeViewColumn *column;
 	GtkDialogFlags flags = GTK_DIALOG_DESTROY_WITH_PARENT;
 
-	dialog = gtk_dialog_new_with_buttons( _( "Camera Inspector" ), GTK_WINDOW( g_pRadiantWnd ), flags, NULL );
+	dialog = gtk_dialog_new_with_buttons( _( "Camera Inspector" ), GTK_WINDOW( g_pMainWidget ), flags, NULL );
 	w = gtk_dialog_add_button( GTK_DIALOG( dialog ), _( "OK" ), GTK_RESPONSE_OK );
 	g_signal_connect( w, "clicked", G_CALLBACK( ci_close ), NULL );
 
@@ -922,7 +917,7 @@ GtkWidget *CreateCameraInspectorDialog( void ){
 	g_signal_connect( dialog, "delete_event", G_CALLBACK( ci_close ), NULL );
 	g_signal_connect( dialog, "draw", G_CALLBACK( ci_expose ), NULL );
 	//  g_signal_connect( GTK_OBJECT (window), "destroy", G_CALLBACK( gtk_widget_destroy ), NULL );
-	gtk_window_set_transient_for( GTK_WINDOW( dialog ), GTK_WINDOW( g_pRadiantWnd ) );
+	gtk_window_set_transient_for( GTK_WINDOW( dialog ), GTK_WINDOW( g_pMainWidget ) );
 
 	content_area = gtk_dialog_get_content_area( GTK_DIALOG( dialog ) );
 

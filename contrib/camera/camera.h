@@ -152,7 +152,7 @@ void SetCurrentCam( CCamera *cam );
 CCamera *GetCurrentCam();
 
 // globals
-extern GtkWidget *g_pRadiantWnd;
+extern GtkWidget *g_pMainWidget;
 extern GtkWidget *g_pCameraInspectorWnd;
 extern CCamera *firstCam;
 extern bool g_bEditOn;
