@@ -450,9 +450,10 @@ void CreateEntityFromName( const char* name, const vec3_t origin ){
 				face_t *f;
 				for ( f = b->brush_faces ; f; f = f->next )
 				{
-					f->texdef.SetName( g_pGameDescription->mEntityDefaultShader[i][1] );
+					Face_SetShader( f, g_pGameDescription->mEntityDefaultShader[i][1] );
 				}
 			}
+			break;
 		}
 	}
 }
