@@ -1356,6 +1356,10 @@ void WINAPI Texture_SetTexture( texdef_t *texdef, brushprimit_texdef_t *brushpri
 		g_qeglobals.d_texturewin.brushprimit_texdef = *brushprimit_texdef;
 	}
 
+	if( bSetSelection ) 
+	{
+		Select_SetTexture( texdef, brushprimit_texdef, bFitScale );
+	}
 	//plugins: send a message telling that the selected texture may have changed
 	DispatchRadiantMsg( RADIANT_TEXTURE );
 
