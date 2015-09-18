@@ -701,27 +701,23 @@ GtkWidget* create_SurfaceInspector( void ){
 	gtk_grid_attach( GTK_GRID( table1 ), label, 2, 0, 1, 1 );
 	gtk_widget_show( label );
 
-	label = gtk_label_new( _( "H Shift: " ) );
+	label = gtk_label_new( _( "Horizontal Shift: " ) );
 	gtk_grid_attach( GTK_GRID( table1 ), label, 0, 1, 1, 1 );
-	gtk_widget_set_tooltip_text( label, _( "Horizontal Shift" ) );
 	gtk_widget_set_halign( label, GTK_ALIGN_START );
 	gtk_widget_show( label );
 
-	label = gtk_label_new( _( "V Shift: " ) );
+	label = gtk_label_new( _( "Vertical Shift: " ) );
 	gtk_grid_attach( GTK_GRID( table1 ), label, 0, 2, 1, 1 );
-	gtk_widget_set_tooltip_text( label, _( "Vertical Shift" ) );
 	gtk_widget_set_halign( label, GTK_ALIGN_START );
 	gtk_widget_show( label );
 
-	label = gtk_label_new( _( "H Scale: " ) );
+	label = gtk_label_new( _( "Horizontal Scale: " ) );
 	gtk_grid_attach( GTK_GRID( table1 ), label, 0, 3, 1, 1 );
-	gtk_widget_set_tooltip_text( label, _( "Horizontal Scale" ) );
 	gtk_widget_set_halign( label, GTK_ALIGN_START );
 	gtk_widget_show( label );
 
-	label = gtk_label_new( _( "V Scale: " ) );
+	label = gtk_label_new( _( "Vertical Scale: " ) );
 	gtk_grid_attach( GTK_GRID( table1 ), label, 0, 4, 1, 1 );
-	gtk_widget_set_tooltip_text( label, _( "Vertical Scale" ) );
 	gtk_widget_set_halign( label, GTK_ALIGN_START );
 	gtk_widget_show( label );
 

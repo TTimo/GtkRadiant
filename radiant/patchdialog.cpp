@@ -122,7 +122,7 @@ static void OnSpinChanged( GtkAdjustment *adj, gpointer data ){
 	}
 
 	if ( adj == g_object_get_data( G_OBJECT( g_PatchDialog.GetWidget() ), "hshift_adj" ) ) {
-		l_pPIIncrement->shift[0] = atof( gtk_entry_get_text( GTK_ENTRY( data ) ) );
+		l_pPIIncrement->shift[0] = gtk_spin_button_get_value( GTK_SPIN_BUTTON( data ) );
 
 		if ( gtk_adjustment_get_value( adj ) > 0 ) {
 			td.shift[0] = l_pPIIncrement->shift[0];
@@ -132,7 +132,7 @@ static void OnSpinChanged( GtkAdjustment *adj, gpointer data ){
 		}
 	}
 	else if ( adj == g_object_get_data( G_OBJECT( g_PatchDialog.GetWidget() ), "vshift_adj" ) ) {
-		l_pPIIncrement->shift[1] = atof( gtk_entry_get_text( GTK_ENTRY( data ) ) );
+		l_pPIIncrement->shift[1] = gtk_spin_button_get_value( GTK_SPIN_BUTTON( data ) );
 
 		if ( gtk_adjustment_get_value( adj ) > 0 ) {
 			td.shift[1] = l_pPIIncrement->shift[1];
@@ -142,7 +142,7 @@ static void OnSpinChanged( GtkAdjustment *adj, gpointer data ){
 		}
 	}
 	else if ( adj == g_object_get_data( G_OBJECT( g_PatchDialog.GetWidget() ), "hscale_adj" ) ) {
-		l_pPIIncrement->scale[0] = atof( gtk_entry_get_text( GTK_ENTRY( data ) ) );
+		l_pPIIncrement->scale[0] = gtk_spin_button_get_value( GTK_SPIN_BUTTON( data ) );
 		if ( l_pPIIncrement->scale[0] == 0.0f ) {
 			return;
 		}
@@ -166,7 +166,7 @@ static void OnSpinChanged( GtkAdjustment *adj, gpointer data ){
 		}
 	}
 	else if ( adj == g_object_get_data( G_OBJECT( g_PatchDialog.GetWidget() ), "vscale_adj" ) ) {
-		l_pPIIncrement->scale[1] = atof( gtk_entry_get_text( GTK_ENTRY( data ) ) );
+		l_pPIIncrement->scale[1] = gtk_spin_button_get_value( GTK_SPIN_BUTTON( data ) );
 		if ( l_pPIIncrement->scale[1] == 0.0f ) {
 			return;
 		}
@@ -190,7 +190,7 @@ static void OnSpinChanged( GtkAdjustment *adj, gpointer data ){
 		}
 	}
 	else if ( adj == g_object_get_data( G_OBJECT( g_PatchDialog.GetWidget() ), "rotate_adj" ) ) {
-		l_pPIIncrement->rotate = atof( gtk_entry_get_text( GTK_ENTRY( data ) ) );
+		l_pPIIncrement->rotate = gtk_spin_button_get_value( GTK_SPIN_BUTTON( data ) );
 
 		if ( gtk_adjustment_get_value( adj ) > 0 ) {
 			td.rotate = l_pPIIncrement->rotate;
@@ -291,9 +291,9 @@ void PatchDialog::BuildDialog(){
 	GtkWidget *dlg, *vbox, *vbox2, *hbox, *hbox2, *frame, *table, *label;
 	GtkWidget *button, *entry, *spin, *combo, *row_label, *col_label;
 	GtkAdjustment *adj;
-	char buf[64];
 	GList *lst, *cells;
 	GtkSizeGroup *size_group;
+	GtkWidget *cap_button, *set_button, *nat_button, *fit_button;
 
 	dlg = m_pWidget;
 
@@ -404,35 +404,55 @@ void PatchDialog::BuildDialog(){
 	gtk_widget_set_tooltip_text( label, _( "T-coordinates correspond to the \"y\" coordinates on the texture itself. The measurements are in game units." ) );
 	gtk_widget_show( label );
 
-	entry = gtk_entry_new();
-	gtk_grid_attach( GTK_GRID( table ), entry, 1, 0, 1, 1 );
-	gtk_widget_show( entry );
-	g_object_set( entry, "xalign", 1.0, NULL );
-	AddDialogData( entry, &m_fX, DLG_ENTRY_FLOAT );
+	adj = gtk_adjustment_new( 0, -INT_MAX, INT_MAX, 1, 10, 0 );
+	spin = gtk_spin_button_new( GTK_ADJUSTMENT( adj ), 1, 4 );
+	gtk_grid_attach( GTK_GRID( table ), spin, 1, 0, 1, 1 );
+	gtk_spin_button_set_wrap( GTK_SPIN_BUTTON( spin ), TRUE );
+	gtk_spin_button_set_numeric( GTK_SPIN_BUTTON( spin ), TRUE );
+	gtk_widget_set_hexpand( spin, TRUE );
+	gtk_widget_show( spin );
+	g_object_set( spin, "xalign", 1.0, NULL );
+	AddDialogData( spin, &m_fX, DLG_SPIN_FLOAT );
 
-	entry = gtk_entry_new();
-	gtk_grid_attach( GTK_GRID( table ), entry, 1, 1, 1, 1 );
-	gtk_widget_show( entry );
-	g_object_set( entry, "xalign", 1.0, NULL );
-	AddDialogData( entry, &m_fY, DLG_ENTRY_FLOAT );
+	adj = gtk_adjustment_new( 0, -INT_MAX, INT_MAX, 1, 10, 0 );
+	spin = gtk_spin_button_new( GTK_ADJUSTMENT( adj ), 1, 4 );
+	gtk_grid_attach( GTK_GRID( table ), spin, 1, 1, 1, 1 );
+	gtk_spin_button_set_wrap( GTK_SPIN_BUTTON( spin ), TRUE );
+	gtk_spin_button_set_numeric( GTK_SPIN_BUTTON( spin ), TRUE );
+	gtk_widget_set_hexpand( spin, TRUE );
+	gtk_widget_show( spin );
+	g_object_set( spin, "xalign", 1.0, NULL );
+	AddDialogData( spin, &m_fY, DLG_SPIN_FLOAT );
 
-	entry = gtk_entry_new();
-	gtk_grid_attach( GTK_GRID( table ), entry, 1, 2, 1, 1 );
-	gtk_widget_show( entry );
-	g_object_set( entry, "xalign", 1.0, NULL );
-	AddDialogData( entry, &m_fZ, DLG_ENTRY_FLOAT );
+	adj = gtk_adjustment_new( 0, -INT_MAX, INT_MAX, 1, 10, 0 );
+	spin = gtk_spin_button_new( GTK_ADJUSTMENT( adj ), 1, 4 );
+	gtk_grid_attach( GTK_GRID( table ), spin, 1, 2, 1, 1 );
+	gtk_spin_button_set_wrap( GTK_SPIN_BUTTON( spin ), TRUE );
+	gtk_spin_button_set_numeric( GTK_SPIN_BUTTON( spin ), TRUE );
+	gtk_widget_set_hexpand( spin, TRUE );
+	gtk_widget_show( spin );
+	g_object_set( spin, "xalign", 1.0, NULL );
+	AddDialogData( spin, &m_fZ, DLG_SPIN_FLOAT );
 
-	entry = gtk_entry_new();
-	gtk_grid_attach( GTK_GRID( table ), entry, 1, 3, 1, 1 );
-	gtk_widget_show( entry );
-	g_object_set( entry, "xalign", 1.0, NULL );
-	AddDialogData( entry, &m_fS, DLG_ENTRY_FLOAT );
+	adj = gtk_adjustment_new( 0, -INT_MAX, INT_MAX, 1, 10, 0 );
+	spin = gtk_spin_button_new( GTK_ADJUSTMENT( adj ), 1, 4 );
+	gtk_grid_attach( GTK_GRID( table ), spin, 1, 3, 1, 1 );
+	gtk_spin_button_set_wrap( GTK_SPIN_BUTTON( spin ), TRUE );
+	gtk_spin_button_set_numeric( GTK_SPIN_BUTTON( spin ), TRUE );
+	gtk_widget_set_hexpand( spin, TRUE );
+	gtk_widget_show( spin );
+	g_object_set( spin, "xalign", 1.0, NULL );
+	AddDialogData( spin, &m_fS, DLG_SPIN_FLOAT );
 
-	entry = gtk_entry_new();
-	gtk_grid_attach( GTK_GRID( table ), entry, 1, 4, 1, 1 );
-	gtk_widget_show( entry );
-	g_object_set( entry, "xalign", 1.0, NULL );
-	AddDialogData( entry, &m_fT, DLG_ENTRY_FLOAT );
+	adj = gtk_adjustment_new( 0, -INT_MAX, INT_MAX, 1, 10, 0 );
+	spin = gtk_spin_button_new( GTK_ADJUSTMENT( adj ), 1, 4 );
+	gtk_grid_attach( GTK_GRID( table ), spin, 1, 4, 1, 1 );
+	gtk_spin_button_set_wrap( GTK_SPIN_BUTTON( spin ), TRUE );
+	gtk_spin_button_set_numeric( GTK_SPIN_BUTTON( spin ), TRUE );
+	gtk_widget_set_hexpand( spin, TRUE );
+	gtk_widget_show( spin );
+	g_object_set( spin, "xalign", 1.0, NULL );
+	AddDialogData( spin, &m_fT, DLG_SPIN_FLOAT );
 
 	frame = gtk_frame_new( _( "Texturing" ) );
 	gtk_widget_show( frame );
@@ -449,7 +469,7 @@ void PatchDialog::BuildDialog(){
 	gtk_widget_show( label );
 
 	entry = gtk_entry_new();
-//  gtk_entry_set_editable (GTK_ENTRY (entry), false);
+	gtk_editable_set_editable( GTK_EDITABLE( entry ), FALSE );
 	gtk_widget_show( entry );
 	gtk_box_pack_start( GTK_BOX( vbox2 ), entry, TRUE, TRUE, 0 );
 	AddDialogData( entry, &m_strName, DLG_ENTRY_TEXT );
@@ -460,116 +480,145 @@ void PatchDialog::BuildDialog(){
 	gtk_grid_set_column_spacing( GTK_GRID( table ), 5 );
 	gtk_widget_show( table );
 
-	label = gtk_label_new( _( "Horizontal Shift Step" ) );
+	label = gtk_label_new( _( "Value" ) );
+	gtk_grid_attach( GTK_GRID( table ), label, 1, 0, 1, 1 );
+	gtk_widget_set_halign( label, GTK_ALIGN_START );
+	gtk_widget_show( label );
+
+	label = gtk_label_new( _( "Step" ) );
 	gtk_grid_attach( GTK_GRID( table ), label, 2, 0, 1, 1 );
 	gtk_widget_set_halign( label, GTK_ALIGN_START );
 	gtk_widget_show( label );
 
-	label = gtk_label_new( _( "Vertical Shift Step" ) );
-	gtk_grid_attach( GTK_GRID( table ), label, 2, 1, 1, 1 );
+	label = gtk_label_new( _( "Horizontal Shift:" ) );
+	gtk_grid_attach( GTK_GRID( table ), label, 0, 1, 1, 1 );
 	gtk_widget_set_halign( label, GTK_ALIGN_START );
 	gtk_widget_show( label );
 
-	label = gtk_label_new( _( "Horizontal Stretch Step" ) );
-	gtk_grid_attach( GTK_GRID( table ), label, 2, 2, 1, 1 );
+	label = gtk_label_new( _( "Vertical Shift:" ) );
+	gtk_grid_attach( GTK_GRID( table ), label, 0, 2, 1, 1 );
 	gtk_widget_set_halign( label, GTK_ALIGN_START );
 	gtk_widget_show( label );
 
-	label = gtk_label_new( _( "Vertical Stretch Step" ) );
-	gtk_grid_attach( GTK_GRID( table ), label, 2, 3, 1, 1 );
+	label = gtk_label_new( _( "Horizontal Stretch:" ) );
+	gtk_grid_attach( GTK_GRID( table ), label, 0, 3, 1, 1 );
 	gtk_widget_set_halign( label, GTK_ALIGN_START );
 	gtk_widget_show( label );
 
-	label = gtk_label_new( _( "Rotate Step" ) );
-	gtk_grid_attach( GTK_GRID( table ), label, 2, 4, 1, 1 );
+	label = gtk_label_new( _( "Vertical Stretch:" ) );
+	gtk_grid_attach( GTK_GRID( table ), label, 0, 4, 1, 1 );
 	gtk_widget_set_halign( label, GTK_ALIGN_START );
 	gtk_widget_show( label );
 
-	entry = gtk_entry_new();
-	gtk_grid_attach( GTK_GRID( table ), entry, 0, 0, 1, 1 );
-	gtk_widget_show( entry );
-	g_object_set( entry, "xalign", 1.0, NULL );
-	g_object_set_data( G_OBJECT( m_pWidget ), "hshift_entry", entry );
+	label = gtk_label_new( _( "Rotate:" ) );
+	gtk_grid_attach( GTK_GRID( table ), label, 0, 5, 1, 1 );
+	gtk_widget_set_halign( label, GTK_ALIGN_START );
+	gtk_widget_show( label );
+
+	adj = gtk_adjustment_new( 0, -INT_MAX, INT_MAX, 1, 10, 0 );
+	spin = gtk_spin_button_new( GTK_ADJUSTMENT( adj ), 1, 4 );
+	gtk_grid_attach( GTK_GRID( table ), spin, 2, 1, 1, 1 );
+	gtk_spin_button_set_wrap( GTK_SPIN_BUTTON( spin ), FALSE );
+	gtk_spin_button_set_numeric( GTK_SPIN_BUTTON( spin ), TRUE );
+	gtk_widget_set_hexpand( spin, TRUE );
+	gtk_widget_show( spin );
+	g_object_set( spin, "xalign", 1.0, NULL );
 	// we fill in this data, if no patch is selected the widgets are unmodified when the inspector is raised
 	// so we need to have at least one initialisation somewhere
-	snprintf( buf, sizeof( buf ), "%g", l_pPIIncrement->shift[0] );
-	gtk_entry_set_text( GTK_ENTRY( entry ), buf );
+	gtk_spin_button_set_value( GTK_SPIN_BUTTON( spin ), l_pPIIncrement->shift[0] );
 
 	adj = gtk_adjustment_new( 0, -8192, 8192, 1, 1, 0 );
-	g_signal_connect( adj, "value_changed", G_CALLBACK( OnSpinChanged ), entry );
+	g_signal_connect( adj, "value_changed", G_CALLBACK( OnSpinChanged ), spin );
 	g_object_set_data( G_OBJECT( m_pWidget ), "hshift_adj", adj );
 
 	spin = gtk_spin_button_new( GTK_ADJUSTMENT( adj ), 1, 0 );
 	gtk_spin_button_set_numeric( GTK_SPIN_BUTTON( spin ), TRUE );
-	gtk_grid_attach( GTK_GRID( table ), spin, 1, 0, 1, 1 );
+	gtk_grid_attach( GTK_GRID( table ), spin, 1, 1, 1, 1 );
+	gtk_widget_set_hexpand( spin, TRUE );
 	gtk_widget_show( spin );
 	g_object_set( spin, "xalign", 1.0, NULL );
 
-	entry = gtk_entry_new();
-	gtk_grid_attach( GTK_GRID( table ), entry, 0, 1, 1, 1 );
-	gtk_widget_show( entry );
-	g_object_set( entry, "xalign", 1.0, NULL );
-	snprintf( buf, sizeof( buf ), "%g", l_pPIIncrement->shift[1] );
-	gtk_entry_set_text( GTK_ENTRY( entry ), buf );
+	adj = gtk_adjustment_new( 0, -INT_MAX, INT_MAX, 1, 10, 0 );
+	spin = gtk_spin_button_new( GTK_ADJUSTMENT( adj ), 1, 4 );
+	gtk_grid_attach( GTK_GRID( table ), spin, 2, 2, 1, 1 );
+	gtk_spin_button_set_wrap( GTK_SPIN_BUTTON( spin ), FALSE );
+	gtk_spin_button_set_numeric( GTK_SPIN_BUTTON( spin ), TRUE );
+	gtk_widget_set_hexpand( spin, TRUE );
+	gtk_widget_show( spin );
+	g_object_set( spin, "xalign", 1.0, NULL );
+	gtk_spin_button_set_value( GTK_SPIN_BUTTON( spin ), l_pPIIncrement->shift[1] );
 
 	adj = gtk_adjustment_new( 0, -8192, 8192, 1, 1, 0 );
-	g_signal_connect( adj, "value_changed", G_CALLBACK( OnSpinChanged ), entry );
+	g_signal_connect( adj, "value_changed", G_CALLBACK( OnSpinChanged ), spin );
 	g_object_set_data( G_OBJECT( m_pWidget ), "vshift_adj", adj );
 
 	spin = gtk_spin_button_new( GTK_ADJUSTMENT( adj ), 1, 0 );
 	gtk_spin_button_set_numeric( GTK_SPIN_BUTTON( spin ), TRUE );
-	gtk_grid_attach( GTK_GRID( table ), spin, 1, 1, 1, 1 );
+	gtk_grid_attach( GTK_GRID( table ), spin, 1, 2, 1, 1 );
+	gtk_widget_set_hexpand( spin, TRUE );
 	gtk_widget_show( spin );
 	g_object_set( spin, "xalign", 1.0, NULL );
 
-	entry = gtk_entry_new();
-	gtk_grid_attach( GTK_GRID( table ), entry, 0, 2, 1, 1 );
-	gtk_widget_show( entry );
-	g_object_set( entry, "xalign", 1.0, NULL );
-	snprintf( buf, sizeof( buf ), "%g", l_pPIIncrement->scale[0] );
-	gtk_entry_set_text( GTK_ENTRY( entry ), buf );
+	adj = gtk_adjustment_new( 0, -INT_MAX, INT_MAX, 1, 10, 0 );
+	spin = gtk_spin_button_new( GTK_ADJUSTMENT( adj ), 1, 4 );
+	gtk_grid_attach( GTK_GRID( table ), spin, 2, 3, 1, 1 );
+	gtk_spin_button_set_wrap( GTK_SPIN_BUTTON( spin ), FALSE );
+	gtk_spin_button_set_numeric( GTK_SPIN_BUTTON( spin ), TRUE );
+	gtk_widget_set_hexpand( spin, TRUE );
+	gtk_widget_show( spin );
+	g_object_set( spin, "xalign", 1.0, NULL );
+	gtk_spin_button_set_value( GTK_SPIN_BUTTON( spin ), l_pPIIncrement->scale[0] );
 
 	adj = gtk_adjustment_new( 0, -1000, 1000, 1, 1, 0 );
-	g_signal_connect( adj, "value_changed", G_CALLBACK( OnSpinChanged ), entry );
+	g_signal_connect( adj, "value_changed", G_CALLBACK( OnSpinChanged ), spin );
 	g_object_set_data( G_OBJECT( m_pWidget ), "hscale_adj", adj );
 
 	spin = gtk_spin_button_new( GTK_ADJUSTMENT( adj ), 1, 0 );
 	gtk_spin_button_set_numeric( GTK_SPIN_BUTTON( spin ), TRUE );
-	gtk_grid_attach( GTK_GRID( table ), spin, 1, 2, 1, 1 );
+	gtk_grid_attach( GTK_GRID( table ), spin, 1, 3, 1, 1 );
+	gtk_widget_set_hexpand( spin, TRUE );
 	gtk_widget_show( spin );
 	g_object_set( spin, "xalign", 1.0, NULL );
 
-	entry = gtk_entry_new();
-	gtk_grid_attach( GTK_GRID( table ), entry, 0, 3, 1, 1 );
-	gtk_widget_show( entry );
-	g_object_set( entry, "xalign", 1.0, NULL );
-	snprintf( buf, sizeof( buf ), "%g", l_pPIIncrement->scale[1] );
-	gtk_entry_set_text( GTK_ENTRY( entry ), buf );
+	adj = gtk_adjustment_new( 0, -INT_MAX, INT_MAX, 1, 10, 0 );
+	spin = gtk_spin_button_new( GTK_ADJUSTMENT( adj ), 1, 4 );
+	gtk_grid_attach( GTK_GRID( table ), spin, 2, 4, 1, 1 );
+	gtk_spin_button_set_wrap( GTK_SPIN_BUTTON( spin ), FALSE );
+	gtk_spin_button_set_numeric( GTK_SPIN_BUTTON( spin ), TRUE );
+	gtk_widget_set_hexpand( spin, TRUE );
+	gtk_widget_show( spin );
+	g_object_set( spin, "xalign", 1.0, NULL );
+	gtk_spin_button_set_value( GTK_SPIN_BUTTON( spin ), l_pPIIncrement->scale[1] );
 
 	adj = gtk_adjustment_new( 0, -1000, 1000, 1, 1, 0 );
-	g_signal_connect( adj, "value_changed", G_CALLBACK( OnSpinChanged ), entry );
+	g_signal_connect( adj, "value_changed", G_CALLBACK( OnSpinChanged ), spin );
 	g_object_set_data( G_OBJECT( m_pWidget ), "vscale_adj", adj );
 
 	spin = gtk_spin_button_new( GTK_ADJUSTMENT( adj ), 1, 0 );
 	gtk_spin_button_set_numeric( GTK_SPIN_BUTTON( spin ), TRUE );
-	gtk_grid_attach( GTK_GRID( table ), spin, 1, 3, 1, 1 );
+	gtk_grid_attach( GTK_GRID( table ), spin, 1, 4, 1, 1 );
+	gtk_widget_set_hexpand( spin, TRUE );
 	gtk_widget_show( spin );
 	g_object_set( spin, "xalign", 1.0, NULL );
 
-	entry = gtk_entry_new();
-	gtk_grid_attach( GTK_GRID( table ), entry, 0, 4, 1, 1 );
-	gtk_widget_show( entry );
-	g_object_set( entry, "xalign", 1.0, NULL );
-	snprintf( buf, sizeof( buf ), "%g", l_pPIIncrement->rotate );
-	gtk_entry_set_text( GTK_ENTRY( entry ), buf );
+	adj = gtk_adjustment_new( 0, -360, 360, 1, 10, 0 );
+	spin = gtk_spin_button_new( GTK_ADJUSTMENT( adj ), 1, 4 );
+	gtk_grid_attach( GTK_GRID( table ), spin, 2, 5, 1, 1 );
+	gtk_spin_button_set_wrap( GTK_SPIN_BUTTON( spin ), TRUE );
+	gtk_spin_button_set_numeric( GTK_SPIN_BUTTON( spin ), TRUE );
+	gtk_widget_set_hexpand( spin, TRUE );
+	gtk_widget_show( spin );
+	g_object_set( spin, "xalign", 1.0, NULL );
+	gtk_spin_button_set_value( GTK_SPIN_BUTTON( spin ),  l_pPIIncrement->rotate );
 
 	adj = gtk_adjustment_new( 0, -1000, 1000, 1, 1, 0 ); // NOTE: Arnout - this really should be 360 but can't change it anymore as it could break existing maps
-	g_signal_connect( adj, "value_changed", G_CALLBACK( OnSpinChanged ), entry );
+	g_signal_connect( adj, "value_changed", G_CALLBACK( OnSpinChanged ), spin );
 	g_object_set_data( G_OBJECT( m_pWidget ), "rotate_adj", adj );
 
 	spin = gtk_spin_button_new( GTK_ADJUSTMENT( adj ), 1, 0 );
 	gtk_spin_button_set_numeric( GTK_SPIN_BUTTON( spin ), TRUE );
-	gtk_grid_attach( GTK_GRID( table ), spin, 1, 4, 1, 1 );
+	gtk_grid_attach( GTK_GRID( table ), spin, 1, 5, 1, 1 );
+	gtk_widget_set_hexpand( spin, TRUE );
 	gtk_widget_show( spin );
 	g_object_set( spin, "xalign", 1.0, NULL );
 
@@ -577,29 +626,34 @@ void PatchDialog::BuildDialog(){
 	gtk_widget_show( hbox2 );
 	gtk_box_pack_start( GTK_BOX( vbox2 ), hbox2, TRUE, FALSE, 0 );
 
-	button = gtk_button_new_with_label( _( "CAP" ) );
+	cap_button = button = gtk_button_new_with_label( _( "CAP" ) );
 	gtk_widget_show( button );
 	gtk_box_pack_end( GTK_BOX( hbox2 ), button, TRUE, FALSE, 0 );
 	g_signal_connect( button, "clicked", G_CALLBACK( OnBtnPatchdetails ), NULL );
-	gtk_widget_set_size_request( button, 60, -1 );
 
-	button = gtk_button_new_with_label( _( "Set..." ) );
+	set_button = button = gtk_button_new_with_label( _( "Set..." ) );
 	gtk_widget_show( button );
 	gtk_box_pack_end( GTK_BOX( hbox2 ), button, TRUE, FALSE, 0 );
 	g_signal_connect( button, "clicked", G_CALLBACK( OnBtnPatchreset ), NULL );
-	gtk_widget_set_size_request( button, 60, -1 );
 
-	button = gtk_button_new_with_label( _( "Natural" ) );
+	nat_button = button = gtk_button_new_with_label( _( "Natural" ) );
 	gtk_widget_show( button );
 	gtk_box_pack_end( GTK_BOX( hbox2 ), button, TRUE, FALSE, 0 );
 	g_signal_connect( button, "clicked", G_CALLBACK( OnBtnPatchnatural ), NULL );
 	gtk_widget_set_size_request( button, 60, -1 );
 
-	button = gtk_button_new_with_label( _( "Fit" ) );
+	fit_button = button = gtk_button_new_with_label( _( "Fit" ) );
 	gtk_widget_show( button );
 	gtk_box_pack_end( GTK_BOX( hbox2 ), button, TRUE, FALSE, 0 );
 	g_signal_connect( button, "clicked", G_CALLBACK( OnBtnPatchfit ), NULL );
 	gtk_widget_set_size_request( button, 60, -1 );
+
+	size_group = gtk_size_group_new( GTK_SIZE_GROUP_BOTH );
+	gtk_size_group_add_widget( size_group, cap_button );
+	gtk_size_group_add_widget( size_group, set_button );
+	gtk_size_group_add_widget( size_group, nat_button );
+	gtk_size_group_add_widget( size_group, fit_button );
+	g_object_unref( size_group );
 
 	hbox = gtk_box_new( GTK_ORIENTATION_HORIZONTAL, 5 );
 	gtk_widget_show( hbox );
