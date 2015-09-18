@@ -3325,7 +3325,7 @@ void DoTextEditor( const char* filename, int cursorpos ){
 #ifdef _WIN32
 	if ( g_PrefsDlg.m_bUseWin32Editor ) {
 		HINSTANCE result;
-		Sys_Printf( "opening file '%s'.\n", filename );
+		Sys_Printf( "Opening file '%s'.\n", filename );
 		result = ShellExecute( (HWND)GDK_WINDOW_HWND( gtk_widget_get_window( g_pParentWnd->m_pWidget ) ), "open", filename, NULL, NULL, SW_SHOW );
 		if( (int)result <= 32 ) {
 			const char *errstr;
@@ -3339,8 +3339,22 @@ void DoTextEditor( const char* filename, int cursorpos ){
 					errstr = _( "The specified file was not found." );
 					break;
 				case SE_ERR_NOASSOC: 
+				{
+					SHELLEXECUTEINFO sei = {0};
+					sei.cbSize = sizeof( sei );
+					sei.nShow = SW_SHOWNORMAL;
+					sei.lpFile = TEXT( filename );
+					sei.fMask = SEE_MASK_CLASSNAME;
+					sei.lpVerb = TEXT( "open" );
+					sei.lpClass = TEXT( ".txt" );
+
+					if( ShellExecuteEx( &sei ) )
+					{
+						return;
+					}
 					errstr = _( "There is no application associated with the given file name extension." );
 					break;
+				}
 				case ERROR_PATH_NOT_FOUND:
 				//case SE_ERR_PNF:
 					errstr = _( "The specified path was not found." );
@@ -3349,7 +3363,7 @@ void DoTextEditor( const char* filename, int cursorpos ){
 					errstr = "";
 					break;
 			}
-			Sys_Printf( "Failed to open file '%s'. %s\n", filename, errstr );
+			Sys_FPrintf( SYS_WRN, "Failed to open file '%s'. %s\n", filename, errstr );
 		}
 		return;
 	}
