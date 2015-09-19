@@ -508,7 +508,7 @@ void SurfaceDlg::BuildDialog() {
 
 	load_window_pos( dlg, g_PrefsDlg.mWindowInfo.posSurfaceWnd );
 
-	gtk_window_set_title( GTK_WINDOW( dlg ), _( "Surface inspector" ) );
+	gtk_window_set_title( GTK_WINDOW( dlg ), _( "Surface Inspector" ) );
 	//g_signal_connect (G_OBJECT (dlg), "delete_event", G_CALLBACK (OnCancel), NULL);
 	// we catch 'Enter' and interpret is as OnDone
 	g_signal_connect( dlg, "key_press_event", G_CALLBACK( OnDialogKey ), NULL );
