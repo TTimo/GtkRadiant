@@ -70,10 +70,6 @@
 //   if you #include glib *after* STL, you get those errors .. better be safe then
 #include <glib.h>
 
-#if defined( _WIN32 )
-  // required for static linking libxml on Windows
-  #define LIBXML_STATIC
-#endif
 #include "libxml/parser.h"
 
 #include "irefcount.h"

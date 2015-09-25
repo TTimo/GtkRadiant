@@ -23,10 +23,6 @@
 #define __INOUT__
 
 // inout is the only stuff relying on xml, include the headers there
-#if defined( _WIN32 )
-  // required for static linking libxml on Windows
-  #define LIBXML_STATIC
-#endif
 #include "libxml/tree.h"
 #include "mathlib.h"
 

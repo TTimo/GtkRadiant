@@ -37,10 +37,6 @@
 #ifndef __XMLSTUFF__
 #define __XMLSTUFF__
 
-#if defined( _WIN32 )
-  // required for static linking libxml on Windows
-  #define LIBXML_STATIC
-#endif
 #include "libxml/parser.h"
 
 struct message_info_s;

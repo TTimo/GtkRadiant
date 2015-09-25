@@ -28,10 +28,6 @@
 #ifndef __Q3MAP_FEEDBACK__
 #define __Q3MAP_FEEDBACK__
 
-#if defined( _WIN32 )
-  // required for static linking libxml on Windows
-  #define LIBXML_STATIC
-#endif
 #include "libxml/parser.h"
 
 // a select message with a brush/entity select information

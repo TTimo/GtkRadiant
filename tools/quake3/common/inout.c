@@ -40,10 +40,6 @@
 
 // network broadcasting
 #include "l_net/l_net.h"
-#if defined( _WIN32 )
-  // required for static linking libxml on Windows
-  #define LIBXML_STATIC
-#endif
 #include "libxml/tree.h"
 
 // utf8 conversion
