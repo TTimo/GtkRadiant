@@ -367,7 +367,7 @@ void Drag_Begin( int x, int y, int buttons,
 
 	// ctrl-shift LBUTTON = select single face
 	if ( sf_camera && buttons == ( MK_LBUTTON | MK_CONTROL | MK_SHIFT ) && g_qeglobals.d_select_mode != sel_curvepoint ) {
-		if ( Sys_AltDown() ) {
+		if ( !Sys_AltDown() ) {
 			brush_t *b;
 			for ( b = selected_brushes.next ; b != &selected_brushes ; b = b->next )
 			{
