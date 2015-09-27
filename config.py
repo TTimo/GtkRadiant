@@ -260,11 +260,13 @@ class Config:
         for pak in self.setup_packs:
             svnurl = 'svn://svn.icculus.org/gtkradiant-gamepacks/%s/trunk' % pak
             self.CheckoutOrUpdate( svnurl, os.path.join( path, 'installs', pak ) )
-        
-    def CopyTree( self, src, dst):
+
+    # shutil.copytree function only works against directories that don't exist
+    # this will work against directories that exist and 'refresh'
+    def CopyTree( self, src, dst ):
         for root, dirs, files in os.walk( src ):
-            target_dir = os.path.join( dst, root[root.find( '/' )+1:] )
-            print ( target_dir )
+            target_dir = os.path.join( dst, root[len(src)+1:] )
+            print( target_dir )
             if ( not os.path.exists( target_dir ) ):
                 os.mkdir( target_dir )
 
@@ -283,16 +285,18 @@ class Config:
         if ( self.platform == 'Windows' ):
             backup_cwd = os.getcwd()
             for lib_archive in [
-                'STLport-5.2.1-GtkRadiant.zip',
-                'gtk-bundle-2.24.10-GtkRadiant.zip',
-                'gtk-bundle-2.22.1-win64-GtkRadiant.zip',
-                'jpeg-9-GtkRadiant.zip',
-                'libxml2-2.9.1-GtkRadiant.zip',
-                'gtkglext-1.2.0-3-win32.zip',
+#                'STLport-5.2.1-GtkRadiant.zip',
+#                'gtk-bundle-2.24.10-GtkRadiant.zip',
+#                'gtk-bundle-2.22.1-win64-GtkRadiant.zip',
+#                'jpeg-9-GtkRadiant.zip',
+#                'libxml2-2.9.1-GtkRadiant.zip',
+#                'gtkglext-1.2.0-3-win32.zip',
+                    'GtkRadiant-libs-vs10.zip'
                 ]:
                 if ( not os.path.exists( lib_archive ) ):
                     print( 'downloading %s' % lib_archive )
-                    archive_web_request = urllib2.urlopen( 'http://gtkradiant.s3-website-us-east-1.amazonaws.com/%s' % lib_archive )
+#                    archive_web_request = urllib2.urlopen( 'http://gtkradiant.s3-website-us-east-1.amazonaws.com/%s' % lib_archive )
+                    archive_web_request = urllib2.urlopen( 'http://ws.q3df.org/files/%s' % lib_archive )
                     archive_File = open( lib_archive, 'wb' )
                     while True:
                         data = archive_web_request.read( 1048576 ) # read 1mb at a time
@@ -315,57 +319,68 @@ class Config:
 
             # copy all the dependent runtime data to the install directory
             srcdir = os.path.dirname( backup_cwd )
-            for dll in [
-                '%s/bin/freetype6.dll' % GTK_PREFIX,
-                '%s/bin/intl.dll' % GTK_PREFIX,
-                '%s/bin/libasprintf-0.dll' % GTK_PREFIX,
-                '%s/bin/libatk-1.0-0.dll' % GTK_PREFIX,
-                '%s/bin/libcairo-2.dll' % GTK_PREFIX,
-                '%s/bin/libexpat-1.dll' % GTK_PREFIX,
-                '%s/bin/libfontconfig-1.dll' % GTK_PREFIX,
-                '%s/bin/libgailutil-18.dll' % GTK_PREFIX,
-                '%s/bin/libgcc_s_dw2-1.dll' % GTK_PREFIX,
-                '%s/bin/libgdk-win32-2.0-0.dll' % GTK_PREFIX,
-                '%s/bin/libgdk_pixbuf-2.0-0.dll' % GTK_PREFIX,
-                '%s/bin/libgio-2.0-0.dll' % GTK_PREFIX,
-                '%s/bin/libglib-2.0-0.dll' % GTK_PREFIX,
-                '%s/bin/libgmodule-2.0-0.dll' % GTK_PREFIX,
-                '%s/bin/libgobject-2.0-0.dll' % GTK_PREFIX,
-                '%s/bin/libgthread-2.0-0.dll' % GTK_PREFIX,
-                '%s/bin/libgtk-win32-2.0-0.dll' % GTK_PREFIX,
-                '%s/bin/libpango-1.0-0.dll' % GTK_PREFIX,
-                '%s/bin/libpangocairo-1.0-0.dll' % GTK_PREFIX,
-                '%s/bin/libpangoft2-1.0-0.dll' % GTK_PREFIX,
-                '%s/bin/libpangowin32-1.0-0.dll' % GTK_PREFIX,
-                '%s/bin/libpng14-14.dll' % GTK_PREFIX,
-                '%s/bin/zlib1.dll' % GTK_PREFIX,
-                '%s/lib/GNU.Gettext.dll' % GTK_PREFIX,
-                '%s/lib/gtk-2.0/2.10.0/engines/libpixmap.dll' % GTK_PREFIX,
-                '%s/lib/gtk-2.0/2.10.0/engines/libwimp.dll' % GTK_PREFIX,
-                '%s/lib/gtk-2.0/modules/libgail.dll' % GTK_PREFIX,
-                'gtkglext-1.2.0/bin/libgdkglext-win32-1.0-0.dll',
-                'gtkglext-1.2.0/bin/libgtkglext-win32-1.0-0.dll',
-                ]:
-                shutil.copy( os.path.join( srcdir, dll ), 'install' )
 
-            for extra in [
-                '%s/etc' % GTK_PREFIX,
-                '%s/share' % GTK_PREFIX,
-                'gtkglext-1.2.0/share',
-                ]:
-                self.CopyTree( os.path.join( srcdir, extra ), 'install' )
-            
-            try:
-                os.mkdir( 'install/x64' )
-            except:
-                pass # assume 'already exists'
-            for x64_dll in [
-                '%s/bin/libpng14-14.dll' % GTK64_PREFIX,
-                '%s/bin/libglib-2.0-0.dll' % GTK64_PREFIX,
-                '%s/bin/libintl-8.dll' % GTK64_PREFIX,
-                '%s/bin/zlib1.dll' % GTK64_PREFIX,
-                ]:
-                shutil.copy( os.path.join( srcdir, x64_dll ), 'install/x64' )
+            self.CopyTree( os.path.join( srcdir, 'GtkRadiant-libs/vs10/Win32/etc' ), 'install/etc' )
+            self.CopyTree( os.path.join( srcdir, 'GtkRadiant-libs/vs10/Win32/share' ), 'install/share' )
+
+            for fn in os.listdir( os.path.join( srcdir, 'GtkRadiant-libs/vs10/Win32/bin' ) ):
+                if ( fn.find('.dll') != len(fn) - 4 ):
+                    continue
+                print( fn )
+                shutil.copy( os.path.join( srcdir, 'GtkRadiant-libs/vs10/Win32/bin', fn ), 'install' )
+                        
+#            for dll in [
+#                '%s/bin/freetype6.dll' % GTK_PREFIX,
+#                '%s/bin/intl.dll' % GTK_PREFIX,
+#                '%s/bin/libasprintf-0.dll' % GTK_PREFIX,
+#                '%s/bin/libatk-1.0-0.dll' % GTK_PREFIX,
+#                '%s/bin/libcairo-2.dll' % GTK_PREFIX,
+#                '%s/bin/libexpat-1.dll' % GTK_PREFIX,
+#                '%s/bin/libfontconfig-1.dll' % GTK_PREFIX,
+#                '%s/bin/libgailutil-18.dll' % GTK_PREFIX,
+#                '%s/bin/libgcc_s_dw2-1.dll' % GTK_PREFIX,
+#                '%s/bin/libgdk-win32-2.0-0.dll' % GTK_PREFIX,
+#                '%s/bin/libgdk_pixbuf-2.0-0.dll' % GTK_PREFIX,
+#                '%s/bin/libgio-2.0-0.dll' % GTK_PREFIX,
+#                '%s/bin/libglib-2.0-0.dll' % GTK_PREFIX,
+#                '%s/bin/libgmodule-2.0-0.dll' % GTK_PREFIX,
+#                '%s/bin/libgobject-2.0-0.dll' % GTK_PREFIX,
+#                '%s/bin/libgthread-2.0-0.dll' % GTK_PREFIX,
+#                '%s/bin/libgtk-win32-2.0-0.dll' % GTK_PREFIX,
+#                '%s/bin/libpango-1.0-0.dll' % GTK_PREFIX,
+#                '%s/bin/libpangocairo-1.0-0.dll' % GTK_PREFIX,
+#                '%s/bin/libpangoft2-1.0-0.dll' % GTK_PREFIX,
+#                '%s/bin/libpangowin32-1.0-0.dll' % GTK_PREFIX,
+#                '%s/bin/libpng14-14.dll' % GTK_PREFIX,
+#                '%s/bin/zlib1.dll' % GTK_PREFIX,
+#                '%s/lib/GNU.Gettext.dll' % GTK_PREFIX,
+#                '%s/lib/gtk-2.0/2.10.0/engines/libpixmap.dll' % GTK_PREFIX,
+#                '%s/lib/gtk-2.0/2.10.0/engines/libwimp.dll' % GTK_PREFIX,
+#                '%s/lib/gtk-2.0/modules/libgail.dll' % GTK_PREFIX,
+#                'gtkglext-1.2.0/bin/libgdkglext-win32-1.0-0.dll',
+#                'gtkglext-1.2.0/bin/libgtkglext-win32-1.0-0.dll',
+#                ]:
+#                shutil.copy( os.path.join( srcdir, dll ), 'install' )
+
+#            for extra in [
+#                '%s/etc' % GTK_PREFIX,
+#                '%s/share' % GTK_PREFIX,
+#                'gtkglext-1.2.0/share',
+#                ]:
+#                self.CopyTree( os.path.join( srcdir, extra ), 'install' )
+
+            # FIXME: will need these for the 64 bit version of the tools
+#            try:
+#                os.mkdir( 'install/x64' )
+#            except:
+#                pass # assume 'already exists'
+#            for x64_dll in [
+#                '%s/bin/libpng14-14.dll' % GTK64_PREFIX,
+#                '%s/bin/libglib-2.0-0.dll' % GTK64_PREFIX,
+#                '%s/bin/libintl-8.dll' % GTK64_PREFIX,
+#                '%s/bin/zlib1.dll' % GTK64_PREFIX,
+#                ]:
+#                shutil.copy( os.path.join( srcdir, x64_dll ), 'install/x64' )
 
     def FinishBuild( self, target, source, env ):
         print( 'Lookup and bundle the PNG and JPEG libraries' )
