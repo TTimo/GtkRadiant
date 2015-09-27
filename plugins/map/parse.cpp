@@ -28,6 +28,7 @@
 //
 
 #include "plugin.h"
+#include <assert.h>
 
 // cmdlib
 extern void ExtractFileName( const char *path, char *dest, size_t size );
@@ -202,7 +203,7 @@ void Patch_Parse( patchMesh_t *pPatch ){
 	GetToken( true );
 	str = new char[strlen( token ) + 10];
 	strcpy( str, "textures/" );
-	Q_strncpyz( str + 9, token, sizeof( str ) - 9 );
+	Q_strncpyz( str + 9, token, strlen( token ) + 10 - 9 );
 	pPatch->pShader = QERApp_Shader_ForName( str );
 	pPatch->d_texture = pPatch->pShader->getTexture();
 	delete [] str;
