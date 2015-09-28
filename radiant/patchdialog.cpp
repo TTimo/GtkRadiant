@@ -711,10 +711,11 @@ void PatchDialog::GetPatchInfo(){
 
 		m_bListenChanged = true;
 
-		gtk_widget_set_sensitive( GTK_WIDGET( m_pWidget ), TRUE );
+		//should use gtk_dialog_get_content_area instead of gtk_bin_get_child but m_pWidget is not a gtkdialog yet
+		gtk_widget_set_sensitive( GTK_WIDGET( gtk_bin_get_child( GTK_BIN( m_pWidget ) ) ), TRUE );
 	}
 	else{
-		gtk_widget_set_sensitive( GTK_WIDGET( m_pWidget ), FALSE );
+		gtk_widget_set_sensitive( GTK_WIDGET( gtk_bin_get_child( GTK_BIN( m_pWidget ) ) ), FALSE );
 
 		Sys_FPrintf( SYS_WRN, "WARNING: No patch selected.\n" );
 	}
