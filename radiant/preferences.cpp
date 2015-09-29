@@ -105,6 +105,9 @@
 #define CHASEMOUSE_KEY          "ChaseMouse"
 #define MOUSEWHEELZOOM_KEY      "MousewheelZoom"
 #define ENTITYSHOW_KEY          "EntityShow"
+#define FIXEDTEXSIZE_KEY        "UseFixedTextureSize"
+#define FIXEDTEXSIZEWIDTH_KEY   "FixedTextureSizeWidth"
+#define FIXEDTEXSIZEHEIGHT_KEY  "FixedTextureSizeHeight"
 #define TEXTURESCALE_KEY        "TextureScale"
 #define TEXTURESCROLLBAR_KEY    "TextureScrollbar"
 #define DISPLAYLISTS_KEY        "UseDisplayLists"
@@ -635,6 +638,9 @@ PrefsDlg::PrefsDlg (){
 	m_bSelectCurves = TRUE;
 	m_bSelectModels = TRUE;
 	m_nEntityShowState = ENTITY_SKINNED_BOXED;
+	m_bFixedTextureSize = TRUE;
+	m_nFixedTextureSizeWidth = 64;
+	m_nFixedTextureSizeHeight = 64;
 	m_nTextureScale = 2;
 	m_bSwitchClip = FALSE;
 	m_bSelectWholeEntities = TRUE;
@@ -1581,6 +1587,7 @@ void PrefsDlg::BuildDialog(){
 	// Main Preferences dialog
 	GtkWidget *dialog, *mainvbox, *hbox, *sc_win, *preflabel;
 	GtkWidget *startup_label, *tcomp_label, *startup_combo, *tcomp_combo;
+	GtkWidget *ftw_label, *fth_label;
 	// Widgets on notebook pages
 	GtkWidget *check, *label, *scale, *hbox2, *combo,
 	*table, *spin,  *entry, *pixmap,
@@ -2119,6 +2126,43 @@ void PrefsDlg::BuildDialog(){
 	AddDialogData( combo, &m_nLatchedShader, DLG_COMBO_BOX_INT );
 	g_list_free( combo_list );
 	
+	check = gtk_check_button_new_with_label( _( "Use Fixed Texture Size" ) );
+	gtk_box_pack_start( GTK_BOX( vbox ), check, FALSE, FALSE, 0 );
+	gtk_widget_show( check );
+	AddDialogData( check, &m_bFixedTextureSize, DLG_CHECK_BOOL );
+
+	hbox2 = gtk_box_new( GTK_ORIENTATION_HORIZONTAL, 5 );
+	gtk_box_pack_start( GTK_BOX( vbox ), hbox2, FALSE, FALSE, 0 );
+	gtk_widget_show( hbox2 );
+
+	ftw_label = label = gtk_label_new( _( "Fixed Texture Wdith" ) );
+	gtk_box_pack_start( GTK_BOX( hbox2 ), label, FALSE, FALSE, 0 );
+	gtk_widget_set_halign( label, GTK_ALIGN_START );
+	gtk_widget_show( label );
+
+	spin = gtk_spin_button_new( GTK_ADJUSTMENT( gtk_adjustment_new( 1, 1, 1024, 1, 10, 0 ) ), 1, 0 );
+	gtk_spin_button_set_numeric( GTK_SPIN_BUTTON( spin ), TRUE );
+	g_object_set( spin, "xalign", 1.0, NULL );
+	gtk_box_pack_start( GTK_BOX( hbox2 ), spin, FALSE, FALSE, 0 );
+	gtk_widget_show( spin );
+	AddDialogData( spin, &m_nFixedTextureSizeWidth, DLG_SPIN_INT );
+
+	hbox2 = gtk_box_new( GTK_ORIENTATION_HORIZONTAL, 5 );
+	gtk_box_pack_start( GTK_BOX( vbox ), hbox2, FALSE, FALSE, 0 );
+	gtk_widget_show( hbox2 );
+
+	fth_label = label = gtk_label_new( _( "Fixed Texture Height" ) );
+	gtk_box_pack_start( GTK_BOX( hbox2 ), label, FALSE, FALSE, 0 );
+	gtk_widget_set_halign( label, GTK_ALIGN_START );
+	gtk_widget_show( label );
+
+	spin = gtk_spin_button_new( GTK_ADJUSTMENT( gtk_adjustment_new( 1, 1, 1024, 1, 10, 0 ) ), 1, 0 );
+	gtk_spin_button_set_numeric( GTK_SPIN_BUTTON( spin ), TRUE );
+	g_object_set( spin, "xalign", 1.0, NULL );
+	gtk_box_pack_start( GTK_BOX( hbox2 ), spin, FALSE, FALSE, 0 );
+	gtk_widget_show( spin );
+	AddDialogData( spin, &m_nFixedTextureSizeHeight, DLG_SPIN_INT );
+
 	size_group = gtk_size_group_new( GTK_SIZE_GROUP_HORIZONTAL );
 	gtk_size_group_add_widget( size_group, tcomp_label );
 	gtk_size_group_add_widget( size_group, startup_label );
@@ -2127,6 +2171,11 @@ void PrefsDlg::BuildDialog(){
 	size_group = gtk_size_group_new( GTK_SIZE_GROUP_HORIZONTAL );
 	gtk_size_group_add_widget( size_group, tcomp_combo );
 	gtk_size_group_add_widget( size_group, startup_combo );
+	g_object_unref( size_group );
+
+	size_group = gtk_size_group_new( GTK_SIZE_GROUP_HORIZONTAL );
+	gtk_size_group_add_widget( size_group, ftw_label );
+	gtk_size_group_add_widget( size_group, fth_label );
 	g_object_unref( size_group );
 
 	// Add the page to the notebook
@@ -3017,6 +3066,10 @@ void PrefsDlg::LoadPrefs(){
 	m_nShader = m_nLatchedShader;
 
 	
+	mLocalPrefs.GetPref( FIXEDTEXSIZE_KEY,       &m_bFixedTextureSize,          FALSE );
+	mLocalPrefs.GetPref( FIXEDTEXSIZEWIDTH_KEY,  &m_nFixedTextureSizeWidth,     64 );
+	mLocalPrefs.GetPref( FIXEDTEXSIZEHEIGHT_KEY, &m_nFixedTextureSizeHeight,    64 );
+
 	mLocalPrefs.GetPref( SHOWTEXDIRLIST_KEY,            &m_bShowTexDirList,                    TRUE );
 
 	mLocalPrefs.GetPref( NOCLAMP_KEY,            &m_bNoClamp,                    FALSE );

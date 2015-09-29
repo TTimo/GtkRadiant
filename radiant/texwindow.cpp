@@ -1613,9 +1613,14 @@ void Texture_Draw( int width, int height ){
 			break;
 		}
 
-		nWidth = (int)( q->width * ( (float)g_PrefsDlg.m_nTextureScale / 100 ) );
-		nHeight = (int)( q->height * ( (float)g_PrefsDlg.m_nTextureScale / 100 ) );
-
+		if( g_PrefsDlg.m_bFixedTextureSize && g_PrefsDlg.m_nFixedTextureSizeWidth > 0 && g_PrefsDlg.m_nFixedTextureSizeHeight > 0 )
+		{
+			nWidth = g_PrefsDlg.m_nFixedTextureSizeWidth;
+			nHeight = g_PrefsDlg.m_nFixedTextureSizeHeight;
+		} else {
+			nWidth = (int)( q->width * ( (float)g_PrefsDlg.m_nTextureScale / 100 ) );
+			nHeight = (int)( q->height * ( (float)g_PrefsDlg.m_nTextureScale / 100 ) );
+		}
 		if ( y != last_y ) {
 			last_y = y;
 			last_height = 0;
