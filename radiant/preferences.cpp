@@ -119,6 +119,7 @@
 #define SHADERTEST_KEY          "ShaderTest"
 #define GLLIGHTING_KEY          "UseGLLighting"
 #define LOADSHADERS_KEY         "LoadShaders"
+#define SHOWTEXDIRLIST_KEY		"ShowTextureDirectoryList"
 #define NOSTIPPLE_KEY           "NoStipple"
 #define UNDOLEVELS_KEY          "UndoLevels"
 #define VERTEXMODE_KEY          "VertexSplit"
@@ -1695,6 +1696,11 @@ void PrefsDlg::BuildDialog(){
 					gtk_tree_store_append( store, &tab, &group );
 					gtk_tree_store_set( store, &tab, 0, _( "Texture Settings" ), 1, (gpointer)PTAB_TEXTURE, -1 );
 				}
+				{
+					GtkTreeIter tab;
+					gtk_tree_store_append( store, &tab, &group );
+					gtk_tree_store_set( store, &tab, 0, _( "Texture Directory List" ), 1, (gpointer)PTAB_TEXTURE_DIR, -1 );
+				}
 			}
 
 			{
@@ -2125,6 +2131,28 @@ void PrefsDlg::BuildDialog(){
 
 	// Add the page to the notebook
 	gtk_notebook_append_page( GTK_NOTEBOOK( notebook ), pageframe, preflabel );
+
+
+	/******** Texture dir list group *********/
+	preflabel = gtk_label_new( _( "Texture directory list" ) );
+	gtk_widget_show( preflabel );
+	pageframe = gtk_frame_new( _( "Texture directory list" ) );
+	gtk_container_set_border_width( GTK_CONTAINER( pageframe ), 5 );
+	gtk_widget_show( pageframe );
+	vbox = gtk_box_new( GTK_ORIENTATION_VERTICAL, 5 );
+	gtk_container_set_border_width( GTK_CONTAINER( vbox ), 5 );
+	gtk_container_add( GTK_CONTAINER( pageframe ), vbox );
+	gtk_widget_show( vbox );
+
+	check = gtk_check_button_new_with_label( _( "Show Texture Directory List" ) );
+	gtk_box_pack_start( GTK_BOX( vbox ), check, FALSE, FALSE, 0 );
+	gtk_widget_show( check );
+	AddDialogData( check, &m_bShowTexDirList, DLG_CHECK_BOOL );
+
+
+	// Add the page to the notebook
+	gtk_notebook_append_page( GTK_NOTEBOOK( notebook ), pageframe, preflabel );
+
 
 	/******** Layout group *********/
 	preflabel = gtk_label_new( _( "Layout" ) );
@@ -2987,6 +3015,9 @@ void PrefsDlg::LoadPrefs(){
 
 	mLocalPrefs.GetPref( LOADSHADERS_KEY,        &m_nLatchedShader,                     0 );
 	m_nShader = m_nLatchedShader;
+
+	
+	mLocalPrefs.GetPref( SHOWTEXDIRLIST_KEY,            &m_bShowTexDirList,                    TRUE );
 
 	mLocalPrefs.GetPref( NOCLAMP_KEY,            &m_bNoClamp,                    FALSE );
 	mLocalPrefs.GetPref( SNAP_KEY,               &m_bSnap,                       TRUE );
