@@ -724,7 +724,7 @@ CGameDescription::CGameDescription( xmlDocPtr pDoc, const Str &GameFile ){
 	// on win32, game tools path can now be specified relative to the exe's cwd
 	prop = (char*)xmlGetProp( pNode, (xmlChar*)TOOLS_ATTRIBUTE );
 	if ( prop == NULL ) {
-		Error( "Didn't find '"TOOLS_ATTRIBUTE "' node in the game description file '%s'\n", pDoc->URL );
+		Error( "Didn't find '" TOOLS_ATTRIBUTE "' node in the game description file '%s'\n", pDoc->URL );
 	}
 	{
 		char full[PATH_MAX];
@@ -3605,11 +3605,11 @@ void CGameInstall::Run() {
 	// - TTimo
 	fprintf( fg, "<?xml version=\"1.0\" encoding=\"iso-8859-1\" standalone=\"yes\"?>\n<game\n" );
 	fprintf( fg, "  name=\"%s\"\n", m_strName.GetBuffer() );
-	fprintf( fg, "  "ENGINEPATH_ATTRIBUTE "=\"%s\"\n", m_strEngine.GetBuffer() );
-	fprintf( fg, "  "TOOLS_ATTRIBUTE "=\"%sinstalls/%s/game\"\n", g_strAppPath.GetBuffer(), gamePack.GetBuffer() );
+	fprintf( fg, "  " ENGINEPATH_ATTRIBUTE "=\"%s\"\n", m_strEngine.GetBuffer() );
+	fprintf( fg, "  " TOOLS_ATTRIBUTE "=\"%sinstalls/%s/game\"\n", g_strAppPath.GetBuffer(), gamePack.GetBuffer() );
 
 	if ( m_strExecutables.GetLength() > 0 ) {
-		fprintf( fg, "  "EXECUTABLES_ATTRIBUTE "=\"%s\"\n", m_strExecutables.GetBuffer() );
+		fprintf( fg, "  " EXECUTABLES_ATTRIBUTE "=\"%s\"\n", m_strExecutables.GetBuffer() );
 	}
 
 	switch ( m_availGames[ m_nComboSelect ] ) {
@@ -3708,9 +3708,9 @@ void CGameInstall::Run() {
 	}
 	case GAME_ET: {
 #ifdef _WIN32
-		fprintf( fg, "  "ENGINE_ATTRIBUTE "=\"ET.exe\"\n");
+		fprintf( fg, "  " ENGINE_ATTRIBUTE "=\"ET.exe\"\n");
 #elif __linux__
-		fprintf( fg, "  "ENGINE_ATTRIBUTE "=\"et\"\n" );
+		fprintf( fg, "  " ENGINE_ATTRIBUTE "=\"et\"\n" );
 #endif
 		fprintf( fg, "  prefix=\".etwolf\"\n" );
 		fprintf( fg, "  basegame=\"etmain\"\n" );
