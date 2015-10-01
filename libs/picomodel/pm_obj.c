@@ -49,7 +49,6 @@
  * - '_obj_load' code crashes in a weird way after
  *   '_obj_mtl_load' for a few .mtl files
  * - process 'mtllib' rather than using <model>.mtl
- * - handle 'usemtl' statements
  */
 /* uncomment when debugging this module */
 /* #define DEBUG_PM_OBJ */
@@ -858,6 +857,22 @@ static picoModel_t *_obj_load( PM_PARAMS_LOAD ){
 				}
 				/* increase vertex count */
 				curVertex += max;
+			}
+
+		}
+		else if ( !_pico_stricmp( p->token, "usemtl" ) ) {
+			char *materialName;
+			materialName = _pico_parse( p, 0 );
+			if( materialName || strlen( materialName ) ) {
+				picoShader_t *shader;
+				shader = PicoFindShader( model, materialName, 0 );
+				if( !shader ) {
+					shader = PicoNewShader( model );
+					PicoSetShaderName( shader, materialName );
+				}
+				if( shader && curSurface ) {
+					PicoSetSurfaceShader( curSurface, shader );
+				}
 			}
 		}
 		/* skip unparsed rest of line and continue */
