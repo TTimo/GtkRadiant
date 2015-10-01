@@ -159,9 +159,8 @@ eclass_t *Eclass_InitFromText( char *text ){
 	text++;
 
 	// get the size
-	t = COM_Parse( text );
+	text = COM_Parse( text );
 	if ( Get_COM_Token()[0] == '(' ) { // parse the size as two vectors
-                text = t;
 		e->fixedsize = true;
 		r = sscanf( text,"%f %f %f) (%f %f %f)", &e->mins[0], &e->mins[1], &e->mins[2],
 					&e->maxs[0], &e->maxs[1], &e->maxs[2] );
