@@ -307,27 +307,29 @@ void PatchDialog::BuildDialog(){
 
 
 	vbox = gtk_box_new( GTK_ORIENTATION_VERTICAL, 5 );
-	gtk_widget_show( vbox );
 	gtk_container_add( GTK_CONTAINER( dlg ), vbox );
 	gtk_container_set_border_width( GTK_CONTAINER( vbox ), 5 );
+	gtk_widget_show( vbox );
 
 	hbox = gtk_box_new( GTK_ORIENTATION_HORIZONTAL, 5 );
-	gtk_widget_show( hbox );
 	gtk_box_pack_start( GTK_BOX( vbox ), hbox, TRUE, TRUE, 0 );
+	gtk_widget_show( hbox );
 
 	frame = gtk_frame_new( _( "Details" ) );
-	gtk_widget_show( frame );
 	gtk_box_pack_start( GTK_BOX( hbox ), frame, TRUE, TRUE, 0 );
+	gtk_widget_show( frame );
 
 	vbox2 = gtk_box_new( GTK_ORIENTATION_VERTICAL, 5 );
-	gtk_widget_show( vbox2 );
 	gtk_container_add( GTK_CONTAINER( frame ), vbox2 );
 	gtk_container_set_border_width( GTK_CONTAINER( vbox2 ), 5 );
+	gtk_widget_set_vexpand( vbox2, FALSE );
+	gtk_widget_show( vbox2 );
 
 	table = gtk_grid_new();
-	gtk_box_pack_start( GTK_BOX( vbox2 ), table, TRUE, TRUE, 0 );
+	gtk_box_pack_start( GTK_BOX( vbox2 ), table, FALSE, TRUE, 0 );
 	gtk_grid_set_row_spacing( GTK_GRID( table ), 5 );
 	gtk_grid_set_column_spacing( GTK_GRID( table ), 5 );
+	gtk_widget_set_hexpand( table, TRUE );
 	gtk_widget_show( table );
 
 	row_label = label = gtk_label_new( _( "Row:" ) );	
@@ -382,26 +384,31 @@ void PatchDialog::BuildDialog(){
 	label = gtk_label_new( _( "X:" ) );
 	gtk_grid_attach( GTK_GRID( table ), label, 0, 0, 1, 1 );
 	gtk_widget_set_tooltip_text( label, _( "X-Axis" ) );
+	gtk_widget_set_halign( label, GTK_ALIGN_START );
 	gtk_widget_show( label );
 
 	label = gtk_label_new( _( "Y:" ) );
 	gtk_grid_attach( GTK_GRID( table ), label, 0, 1, 1, 1 );
 	gtk_widget_set_tooltip_text( label, _( "Y-Axis" ) );
+	gtk_widget_set_halign( label, GTK_ALIGN_START );
 	gtk_widget_show( label );
 
 	label = gtk_label_new( _( "Z:" ) );
 	gtk_grid_attach( GTK_GRID( table ), label, 0, 2, 1, 1 );
 	gtk_widget_set_tooltip_text( label, _( "Z-Axis" ) );
+	gtk_widget_set_halign( label, GTK_ALIGN_START );
 	gtk_widget_show( label );
 
 	label = gtk_label_new( _( "S:" ) );
 	gtk_grid_attach( GTK_GRID( table ), label, 0, 3, 1, 1 );
 	gtk_widget_set_tooltip_text( label, _( "S-coordinates correspond to the \"x\" coordinates on the texture itself" ) );
+	gtk_widget_set_halign( label, GTK_ALIGN_START );
 	gtk_widget_show( label );
 
 	label = gtk_label_new( _( "T:" ) );
 	gtk_grid_attach( GTK_GRID( table ), label, 0, 4, 1, 1 );
 	gtk_widget_set_tooltip_text( label, _( "T-coordinates correspond to the \"y\" coordinates on the texture itself. The measurements are in game units." ) );
+	gtk_widget_set_halign( label, GTK_ALIGN_START );
 	gtk_widget_show( label );
 
 	adj = gtk_adjustment_new( 0, -INT_MAX, INT_MAX, 1, 10, 0 );
@@ -455,29 +462,32 @@ void PatchDialog::BuildDialog(){
 	AddDialogData( spin, &m_fT, DLG_SPIN_FLOAT );
 
 	frame = gtk_frame_new( _( "Texturing" ) );
-	gtk_widget_show( frame );
 	gtk_box_pack_start( GTK_BOX( hbox ), frame, TRUE, TRUE, 0 );
+	gtk_widget_show( frame );
 
 	vbox2 = gtk_box_new( GTK_ORIENTATION_VERTICAL, 5 );
 	gtk_container_add( GTK_CONTAINER( frame ), vbox2 );
 	gtk_container_set_border_width( GTK_CONTAINER( vbox2 ), 5 );
+	gtk_widget_set_vexpand( vbox2, FALSE );
 	gtk_widget_show( vbox2 );
 
 	label = gtk_label_new( _( "Name:" ) );
-	gtk_box_pack_start( GTK_BOX( vbox2 ), label, TRUE, TRUE, 0 );
+	gtk_box_pack_start( GTK_BOX( vbox2 ), label, FALSE, TRUE, 0 );
 	gtk_widget_set_halign( label, GTK_ALIGN_START );
 	gtk_widget_show( label );
 
 	entry = gtk_entry_new();
 	gtk_editable_set_editable( GTK_EDITABLE( entry ), FALSE );
 	gtk_widget_show( entry );
-	gtk_box_pack_start( GTK_BOX( vbox2 ), entry, TRUE, TRUE, 0 );
+	gtk_box_pack_start( GTK_BOX( vbox2 ), entry, FALSE, TRUE, 0 );
+	gtk_widget_set_hexpand( entry, TRUE );
 	AddDialogData( entry, &m_strName, DLG_ENTRY_TEXT );
 
 	table = gtk_grid_new();
-	gtk_box_pack_start( GTK_BOX( vbox2 ), table, TRUE, TRUE, 0 );
+	gtk_box_pack_start( GTK_BOX( vbox2 ), table, FALSE, TRUE, 0 );
 	gtk_grid_set_row_spacing( GTK_GRID( table ), 5 );
 	gtk_grid_set_column_spacing( GTK_GRID( table ), 5 );
+	gtk_widget_set_hexpand( table, TRUE );
 	gtk_widget_show( table );
 
 	label = gtk_label_new( _( "Value" ) );
@@ -623,27 +633,28 @@ void PatchDialog::BuildDialog(){
 	g_object_set( spin, "xalign", 1.0, NULL );
 
 	hbox2 = gtk_box_new( GTK_ORIENTATION_HORIZONTAL, 5 );
+	gtk_box_pack_start( GTK_BOX( vbox2 ), hbox2, FALSE, FALSE, 0 );
+	gtk_widget_set_hexpand( hbox2, TRUE );
 	gtk_widget_show( hbox2 );
-	gtk_box_pack_start( GTK_BOX( vbox2 ), hbox2, TRUE, FALSE, 0 );
 
 	cap_button = button = gtk_button_new_with_label( _( "CAP" ) );
-	gtk_widget_show( button );
 	gtk_box_pack_end( GTK_BOX( hbox2 ), button, TRUE, FALSE, 0 );
+	gtk_widget_show( button );
 	g_signal_connect( button, "clicked", G_CALLBACK( OnBtnPatchdetails ), NULL );
 
 	set_button = button = gtk_button_new_with_label( _( "Set..." ) );
-	gtk_widget_show( button );
 	gtk_box_pack_end( GTK_BOX( hbox2 ), button, TRUE, FALSE, 0 );
+	gtk_widget_show( button );
 	g_signal_connect( button, "clicked", G_CALLBACK( OnBtnPatchreset ), NULL );
 
 	nat_button = button = gtk_button_new_with_label( _( "Natural" ) );
-	gtk_widget_show( button );
 	gtk_box_pack_end( GTK_BOX( hbox2 ), button, TRUE, FALSE, 0 );
+	gtk_widget_show( button );
 	g_signal_connect( button, "clicked", G_CALLBACK( OnBtnPatchnatural ), NULL );
 
 	fit_button = button = gtk_button_new_with_label( _( "Fit" ) );
-	gtk_widget_show( button );
 	gtk_box_pack_end( GTK_BOX( hbox2 ), button, TRUE, FALSE, 0 );
+	gtk_widget_show( button );
 	g_signal_connect( button, "clicked", G_CALLBACK( OnBtnPatchfit ), NULL );
 
 	size_group = gtk_size_group_new( GTK_SIZE_GROUP_BOTH );
@@ -654,20 +665,20 @@ void PatchDialog::BuildDialog(){
 	g_object_unref( size_group );
 
 	hbox = gtk_box_new( GTK_ORIENTATION_HORIZONTAL, 5 );
+	gtk_box_pack_start( GTK_BOX( vbox ), hbox, FALSE, FALSE, 0 );
+	gtk_widget_set_hexpand( hbox, TRUE );
+	gtk_widget_set_vexpand( hbox, FALSE );
 	gtk_widget_show( hbox );
-	gtk_box_pack_start( GTK_BOX( vbox ), hbox, TRUE, FALSE, 0 );
 
 	button = gtk_button_new_with_label( _( "Done" ) );
-	gtk_widget_show( button );
 	gtk_box_pack_end( GTK_BOX( hbox ), button, FALSE, FALSE, 0 );
+	gtk_widget_show( button );
 	g_signal_connect( button, "clicked", G_CALLBACK( OnDone ), NULL );
-	gtk_widget_set_size_request( button, 60, -1 );
 
 	button = gtk_button_new_with_label( _( "Apply" ) );
-	gtk_widget_show( button );
 	gtk_box_pack_end( GTK_BOX( hbox ), button, FALSE, FALSE, 0 );
+	gtk_widget_show( button );
 	g_signal_connect( button, "clicked", G_CALLBACK( OnApply ), NULL );
-	gtk_widget_set_size_request( button, 60, -1 );
 }
 
 // sync the dialog our internal data structures
