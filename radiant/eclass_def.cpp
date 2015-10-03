@@ -181,6 +181,9 @@ eclass_t *Eclass_InitFromText( char *text ){
 			text++;
 		}
 	}
+	else if ( Get_COM_Token()[0] == '?' ) {
+		 text = t;
+	}
 
 	// get the flags
 
