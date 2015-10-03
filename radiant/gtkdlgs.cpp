@@ -2912,11 +2912,11 @@ int DoTextureLayout( float *fx, float *fy ){
 	gtk_widget_show( label );
 
 	x = gtk_entry_new();
-	gtk_grid_attach( GTK_GRID( table ), label, 1, 0, 1, 1 );
+	gtk_grid_attach( GTK_GRID( table ), x, 1, 0, 1, 1 );
 	gtk_widget_show( x );
 
 	y = gtk_entry_new();
-	gtk_grid_attach( GTK_GRID( table ), label, 1, 1, 1, 1 );
+	gtk_grid_attach( GTK_GRID( table ), y, 1, 1, 1, 1 );
 	gtk_widget_show( y );
 
 

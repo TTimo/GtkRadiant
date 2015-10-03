@@ -981,14 +981,14 @@ void QE_ExpandBspString( char *bspaction, GPtrArray *out_array, char *mapname ){
 
 	// initialise the first step
 	out = new char[BIG_PATH_MAX];
+	*out = 0;
 	g_ptr_array_add( out_array, out );
 
 	in = ValueForKey( g_qeglobals.d_project_entity, bspaction );
 	while ( *in )
 	{
 		if ( in[0] == '!' ) {
-			Q_strncpyz( out, rsh, sizeof( out ) );
-			out += strlen( rsh );
+			strncat( out, rsh, BIG_PATH_MAX );
 			in++;
 			continue;
 		}
@@ -998,36 +998,39 @@ void QE_ExpandBspString( char *bspaction, GPtrArray *out_array, char *mapname ){
 			if ( g_PrefsDlg.m_bWatchBSP ) {
 				// -connect global option (the only global option so far anyway)
 				strcpy( tmp, " -connect 127.0.0.1:39000 " );
-				Q_strncpyz( out, tmp, sizeof( out ) );
-				out += strlen( tmp );
+				strncat( out, tmp, BIG_PATH_MAX );
 			}
 			in++;
 			continue;
 		}
 		if ( in[0] == '$' ) {
 			// $ expansion
-			Q_strncpyz( out, src, sizeof( out ) );
-			out += strlen( src );
+			strncat( out, src, BIG_PATH_MAX );
 			in++;
 			continue;
 		}
 		if ( in[0] == '@' ) {
-			*out++ = '"';
+			strncat( out, "\"", BIG_PATH_MAX );
 			in++;
 			continue;
 		}
 		if ( in[0] == '&' ) {
 			if ( in[1] == '&' ) {
 				// start a new step
-				*out = 0;
 				in = in + 2;
 				out = new char[BIG_PATH_MAX];
+				*out = 0;
 				g_ptr_array_add( out_array, out );
 			}
 		}
-		*out++ = *in++;
+		size_t len = strlen( out );
+		if( ( len + 1 ) < BIG_PATH_MAX )
+		{
+			out[len++] = *in;
+			out[len] = '\0';
+		}
+		in++;
 	}
-	*out = 0;
 }
 
 void FindReplace( CString& strContents, const char* pTag, const char* pValue ){
@@ -1149,7 +1152,7 @@ void RunBsp( char *command ){
 	if ( g_PrefsDlg.m_bWatchBSP ) {
 		// grab the file name for engine running
 		char *bspname = new char[1024];
-		ExtractFileName( currentmap, bspname, sizeof( bspname ) );
+		ExtractFileName( currentmap, bspname, 1024 );
 		StripExtension( bspname );
 		g_pParentWnd->GetWatchBSP()->DoMonitoringLoop( sys, bspname );
 	} else {

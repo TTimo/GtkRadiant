@@ -2717,18 +2717,24 @@ void MainFrame::Create(){
 						m_pTexWnd = new TexWnd();
 						{
 							GtkWidget* frame = create_framed_texwnd( m_pTexWnd );
-							gint pos = 0;
-							GtkWidget* texDirList = create_texdirlist_widget( &pos );
+							if( g_PrefsDlg.m_bShowTexDirList )
+							{
+								gint pos = 0;
+								GtkWidget* texDirList = create_texdirlist_widget( &pos );
 
-							GtkWidget* texSplit = gtk_paned_new( GTK_ORIENTATION_HORIZONTAL );
+								GtkWidget* texSplit = gtk_paned_new( GTK_ORIENTATION_HORIZONTAL );
 
-							gtk_paned_pack2( GTK_PANED( vsplit2 ), texSplit, TRUE, FALSE );
-							gtk_paned_add1( GTK_PANED( texSplit ), texDirList );
-							gtk_paned_add2( GTK_PANED( texSplit ), frame );
+								gtk_paned_pack2( GTK_PANED( vsplit2 ), texSplit, TRUE, FALSE );
+								gtk_paned_add1( GTK_PANED( texSplit ), texDirList );
+								gtk_paned_add2( GTK_PANED( texSplit ), frame );
 
-							gtk_paned_set_position( GTK_PANED( texSplit ), pos );
+								gtk_paned_set_position( GTK_PANED( texSplit ), pos );
 
-							gtk_widget_show( texSplit );
+								gtk_widget_show( texSplit );
+							} else
+							{
+								gtk_paned_pack2( GTK_PANED( vsplit2 ), frame, TRUE, TRUE );
+							}
 						}
 
 						// console
@@ -4681,6 +4687,7 @@ void MainFrame::OnPrefs() {
     bool    bPluginToolbar      = g_PrefsDlg.m_bPluginToolbar;
     bool    bDetachableMenus    = g_PrefsDlg.m_bDetachableMenus;
     bool    bFloatingZ          = g_PrefsDlg.m_bFloatingZ;
+	bool    bShowTexDirList     = g_PrefsDlg.m_bShowTexDirList;
 
     g_PrefsDlg.LoadPrefs();
 
@@ -4692,7 +4699,8 @@ void MainFrame::OnPrefs() {
            (g_PrefsDlg.m_bLatchedPluginToolbar      != bPluginToolbar   ) ||
            (g_PrefsDlg.m_nLatchedShader             != nShader          ) ||
            (g_PrefsDlg.m_nLatchedTextureQuality     != nTextureQuality  ) || 
-           (g_PrefsDlg.m_bLatchedFloatingZ          != bFloatingZ)) {
+           (g_PrefsDlg.m_bLatchedFloatingZ          != bFloatingZ       ) ||
+		   (g_PrefsDlg.m_bShowTexDirList            != bShowTexDirList)) {
             gtk_MessageBoxNew(m_pWidget, "You must restart Radiant for the "
                               "changes to take effect.", "Restart Radiant", 
                               MB_OK | MB_ICONINFORMATION);

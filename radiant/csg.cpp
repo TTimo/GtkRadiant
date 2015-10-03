@@ -62,17 +62,20 @@ void CSG_MakeHollowMode( int mode ){
 			split = *f;
 			VectorScale( f->plane.normal, g_qeglobals.d_gridsize, move );
 			for ( i = 0 ; i < 3 ; i++ )
-				VectorSubtract( split.planepts[i], move, split.planepts[i] );
-
+				if( mode == CSG_HOLLOW_MODE_TOUCH ) {
+					VectorAdd( f->planepts[i], move, f->planepts[i] );
+				} else {
+					VectorSubtract( split.planepts[i], move, split.planepts[i] );
+				}
 			Brush_SplitBrushByFace( b, &split, &front, &back );
 			if ( back ) {
 				Brush_Free( back );
 			}
 			if ( front ) {
-				if( mode == CSG_HOLLOW_MODE_TOUCH ) {
-					Brush_Move( front, move, true );
-				}
 				Brush_AddToList( front, &selected_brushes );
+			}
+			if( mode == CSG_HOLLOW_MODE_TOUCH ) {
+				*f = split;
 			}
 		}
 		Brush_Free( b );
