@@ -1178,24 +1178,24 @@ void XYWnd::OnMouseMove( guint32 nFlags, int pointx, int pointy ){
 	update_xor_rectangle_xy( m_XORRectangle );
 }
 
-void XYWnd::OnMouseWheel( bool bUp, int pointx, int pointy ){
+void XYWnd::OnMouseWheel( bool bUp, int pointx, int pointy ) {
 	if ( bUp ) {
-                if ( g_PrefsDlg.m_bMousewheelZoom == TRUE ) {
-                        // improved zoom-in
-                        // frame coverges to part of window where the cursor currently resides
-                        float old_scale = m_fScale;
-                        g_pParentWnd->OnViewZoomin();
-                        float scale_diff = 1.0 / old_scale - 1.0 / m_fScale;
-                        int nDim1 = ( m_nViewType == YZ ) ? 1 : 0;
-                        int nDim2 = ( m_nViewType == XY ) ? 1 : 2;
-                        m_vOrigin[nDim1] += scale_diff * (pointx - 0.5 * m_nWidth);
-                        m_vOrigin[nDim2] -= scale_diff * (pointy - 0.5 * m_nHeight);
-                }
-                else{
-                        g_pParentWnd->OnViewZoomin();
-                }
+		if ( g_PrefsDlg.m_bMousewheelZoom == TRUE ) {
+			// improved zoom-in
+			// frame coverges to part of window where the cursor currently resides
+			float old_scale = m_fScale;
+			g_pParentWnd->OnViewZoomin();
+			float scale_diff = 1.0 / old_scale - 1.0 / m_fScale;
+			int nDim1 = ( m_nViewType == YZ ) ? 1 : 0;
+			int nDim2 = ( m_nViewType == XY ) ? 1 : 2;
+			m_vOrigin[nDim1] += scale_diff * (pointx - 0.5 * m_nWidth);
+			m_vOrigin[nDim2] -= scale_diff * (pointy - 0.5 * m_nHeight);
+		}
+		else {
+				g_pParentWnd->OnViewZoomin();
+		}
 	}
-	else{
+	else {
 		g_pParentWnd->OnViewZoomout();
 	}
 
@@ -1480,16 +1480,16 @@ void XYWnd::HandleDrop(){
 		menu_separator( menu ); nID++;
 		// NOTE: temporary commented out until we put it back in for good (that is with actual features)
 		/*
-		   menu_in_menu = create_menu_in_menu_with_mnemonic (menu, "Group",);
-		   create_menu_item_with_mnemonic (menu_in_menu, "Add to...",
-		          GTK_SIGNAL_FUNC (HandleCommand), ID_DROP_GROUP_ADDTO);
-		   create_menu_item_with_mnemonic (menu_in_menu, "Remove",
-		          GTK_SIGNAL_FUNC (HandleCommand), ID_DROP_GROUP_REMOVE);
-		   create_menu_item_with_mnemonic (menu_in_menu, "Name...",
-		          GTK_SIGNAL_FUNC (HandleCommand), ID_DROP_GROUP_NAME);
-		   menu_separator (menu_in_menu); nID++;
-		   create_menu_item_with_mnemonic (menu_in_menu, "New Group...",
-		          GTK_SIGNAL_FUNC (HandleCommand), ID_DROP_GROUP_NEWGROUP);
+		menu_in_menu = create_menu_in_menu_with_mnemonic (menu, "Group",);
+		create_menu_item_with_mnemonic (menu_in_menu, "Add to...",
+			GTK_SIGNAL_FUNC (HandleCommand), ID_DROP_GROUP_ADDTO);
+		create_menu_item_with_mnemonic (menu_in_menu, "Remove",
+			GTK_SIGNAL_FUNC (HandleCommand), ID_DROP_GROUP_REMOVE);
+		create_menu_item_with_mnemonic (menu_in_menu, "Name...",
+			GTK_SIGNAL_FUNC (HandleCommand), ID_DROP_GROUP_NAME);
+		menu_separator (menu_in_menu); nID++;
+		create_menu_item_with_mnemonic (menu_in_menu, "New Group...",
+			GTK_SIGNAL_FUNC (HandleCommand), ID_DROP_GROUP_NEWGROUP);
 		 */
 		create_menu_item_with_mnemonic( menu, "Ungroup Entity",
 										GTK_SIGNAL_FUNC( HandleCommand ), ID_SELECTION_UNGROUPENTITY );
@@ -2135,16 +2135,15 @@ void XYWnd::XY_DrawGrid(){
 	int step, stepx, stepy, colour;
 	step = stepx = stepy = MAX( 64, (int)g_qeglobals.d_gridsize );
 
-	/*
-	   int stepSize = (int)(8 / m_fScale);
-	   if (stepSize > step)
-	   {
-	   int i;
-	   for (i = 1; i < stepSize; i <<= 1)
-	    ;
-	   step = i;
-	   }
-	 */
+/*
+	int stepSize = (int)(8 / m_fScale);
+	if (stepSize > step)
+	{
+		int i;
+		for (i = 1; i < stepSize; i <<= 1);
+		step = i;
+	}
+*/
 
 	//Sys_Printf("scale: %f\n", m_fScale);
 	//Sys_Printf("step before: %i\n", step);
@@ -2272,8 +2271,9 @@ void XYWnd::XY_DrawGrid(){
 		// Pixels between left of label and
 		//   - left of grid view window (for horizontal grid line label) or
 		//   - drawn vertical grid line (for vertical grid line label).
-		const int pixelsLeftCushion = 2; // IMPORTANT!  Must be at least 1 otherwise labels might not be drawn
-		                                 // because the origin of the text might be off screen due to rounding.
+		// IMPORTANT! Must be at least 1 otherwise labels might not be drawn,
+		// because the origin of the text might be off screen due to rounding
+		const int pixelsLeftCushion = 2;										 
 
 		// Pixels between baseline of horizontal grid line label and drawn horizontal grid line.
 		const int pixelsButtomCushion = 2;
@@ -2595,8 +2595,8 @@ void XYWnd::DrawZIcon( void ){
 // can be greatly simplified but per usual i am in a hurry
 // which is not an excuse, just a fact
 void XYWnd::PaintSizeInfo( int nDim1, int nDim2, vec3_t vMinBounds, vec3_t vMaxBounds ){
-	const char* g_pDimStrings[] = {"x:%.f", "y:%.f", "z:%.f"};
-	const char* g_pOrgStrings[] = {"(x:%.f  y:%.f)", "(x:%.f  z:%.f)", "(y:%.f  z:%.f)"};
+	const char* g_pDimStrings[] = {"x: %.f", "y: %.f", "z: %.f"};
+	const char* g_pOrgStrings[] = {"(x: %.f,  y: %.f)", "(x: %.f,  z: %.f)", "(y: %.f,  z: %.f)"};
 
 	CString g_strDim;
 
@@ -2631,7 +2631,7 @@ void XYWnd::PaintSizeInfo( int nDim1, int nDim2, vec3_t vMinBounds, vec3_t vMaxB
 
 		qglEnd();
 
-		qglRasterPos3f( Betwixt( vMinBounds[nDim1], vMaxBounds[nDim1] ),  vMinBounds[nDim2] - 20.0  / m_fScale, 0.0f );
+		qglRasterPos3f( Betwixt( vMinBounds[nDim1], vMaxBounds[nDim1] ),  vMinBounds[nDim2] - 25.0  / m_fScale, 0.0f );
 		g_strDim.Format( g_pDimStrings[nDim1], vSize[nDim1] );
 		gtk_glwidget_print_string( (char *) g_strDim.GetBuffer() );
 
