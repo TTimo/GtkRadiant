@@ -39,6 +39,7 @@
 #endif
 
 #include <stdio.h>
+#include <errno.h>
 #include "vfspk3.h"
 #include "vfs.h"
 
