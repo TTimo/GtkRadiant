@@ -250,6 +250,12 @@ eclass_t *Eclass_InitFromText( char *text ){
 		  ) {
 		e->nShowFlags |= ECLASS_ANGLE;
 	}
+	for ( i = 0 ; i < MAX_FLAGS ; i++ )
+	{
+		if ( e->flagnames[i] && e->flagnames[i][0] != 0 && strcmpi( e->flagnames[i], "angle" ) && e->fixedsize ) {
+			e->nShowFlags |= ECLASS_ANGLE;
+		}
+	}
 	if ( strcmpi( e->name, "path" ) == 0 ) {
 		e->nShowFlags |= ECLASS_PATH;
 	}
