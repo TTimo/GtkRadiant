@@ -20,7 +20,7 @@
  */
 
 //
-// Main Window for Q3Radiant
+// Main Window for GtkRadiant
 //
 // Leonardo Zide (leo@lokigames.com)
 //
@@ -44,7 +44,7 @@ extern "C" {
 #include "patchdialog.h"
 #include "filters.h"
 
-// use this to verbose what happens with the beyboard
+// use this to verbose what happens with the keyboard
 #ifdef _DEBUG
 //  #define DBG_KBD
 #endif
@@ -162,15 +162,25 @@ SCommandInfo g_Commands[] =
 	{"CameraStrafeRight", GDK_period, 0, ID_CAMERA_STRAFERIGHT, "menu_camera_straferight"},
 	{"CameraStrafeLeft", GDK_comma, 0, ID_CAMERA_STRAFELEFT, "menu_camera_strafeleft"},
 	{"ToggleGrid", '0', 0, ID_GRID_TOGGLE, "menu_grid_toggle"},
+    {"ToggleGrid", GDK_KP_0, 0, ID_GRID_TOGGLE, "menu_grid_toggle"},
 	{"SetGrid1", '1', 0, ID_GRID_1, "menu_grid_1"},
+    {"SetGrid1", GDK_KP_1, 0, ID_GRID_1, "menu_grid_1"},
 	{"SetGrid2", '2', 0, ID_GRID_2, "menu_grid_2"},
+    {"SetGrid2", GDK_KP_2, 0, ID_GRID_2, "menu_grid_2"},
 	{"SetGrid4", '3', 0, ID_GRID_4, "menu_grid_4"},
+    {"SetGrid4", GDK_KP_3, 0, ID_GRID_4, "menu_grid_4"},
 	{"SetGrid8", '4', 0, ID_GRID_8, "menu_grid_8"},
+    {"SetGrid8", GDK_KP_4, 0, ID_GRID_8, "menu_grid_8"},
 	{"SetGrid16", '5', 0, ID_GRID_16, "menu_grid_16"},
+    {"SetGrid16", GDK_KP_5, 0, ID_GRID_16, "menu_grid_16"},
 	{"SetGrid32", '6', 0, ID_GRID_32, "menu_grid_32"},
+    {"SetGrid32", GDK_KP_6, 0, ID_GRID_32, "menu_grid_32"},
 	{"SetGrid64", '7', 0, ID_GRID_64, "menu_grid_64"},
+    {"SetGrid64", GDK_KP_7, 0, ID_GRID_64, "menu_grid_64"},
 	{"SetGrid128", '8', 0, ID_GRID_128, "menu_grid_128"},
+    {"SetGrid128", GDK_KP_8, 0, ID_GRID_128, "menu_grid_128"},
 	{"SetGrid256", '9', 0, ID_GRID_256, "menu_grid_256"},
+    {"SetGrid256", GDK_KP_9, 0, ID_GRID_256, "menu_grid_256"},
 	{"DragEdges", 'E', 0, ID_SELECTION_DRAGEDGES, "menu_selection_dragedges"},
 	{"DragVertices", 'V', 0, ID_SELECTION_DRAGVERTECIES, "menu_selection_dragvertecies"},
 	{"ViewEntityInfo", 'N', 0, ID_VIEW_ENTITY, "menu_view_entity"},
