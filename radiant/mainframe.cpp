@@ -2779,7 +2779,7 @@ void MainFrame::Create(){
 	else if ( CurrentStyle() == eFloating ) {
 		{
 			GtkWidget* wnd = create_floating( this );
-			gtk_window_set_title( GTK_WINDOW( wnd ), "Camera" );
+			gtk_window_set_title( GTK_WINDOW( wnd ), _( "Camera" ) );
 
 #ifdef _WIN32
 			if ( g_PrefsDlg.m_bStartOnPrimMon ) {
@@ -2805,7 +2805,7 @@ void MainFrame::Create(){
 
 			{
 				GtkWidget* wnd = create_floating( this );
-				gtk_window_set_title( GTK_WINDOW( wnd ), "XY View" );
+				gtk_window_set_title( GTK_WINDOW( wnd ), _( "XY View" ) );
 
 #ifdef _WIN32
 				if ( g_PrefsDlg.m_bStartOnPrimMon ) {
@@ -2830,7 +2830,7 @@ void MainFrame::Create(){
 		else
 		{
 			GtkWidget* wnd = create_floating( this );
-			gtk_window_set_title( GTK_WINDOW( wnd ), "XY View" );
+			gtk_window_set_title( GTK_WINDOW( wnd ), _( "XY View" ) );
 
 #ifdef _WIN32
 			if ( g_PrefsDlg.m_bStartOnPrimMon ) {
@@ -3001,18 +3001,21 @@ void MainFrame::Create(){
 
 		{
 			gint max_position;
-			g_object_get( m_pSplits[0], "max-position", &max_position, NULL );
+			//g_object_get( m_pSplits[0], "max-position", &max_position, NULL );
+			max_position = gtk_widget_get_allocated_width( m_pSplits[0] );
 			int x = max_position / 2 - gutter;
 			gtk_paned_set_position( GTK_PANED( m_pSplits[0] ), x );
 		}
 
 		{
 			gint max_position;
-			g_object_get( m_pSplits[0], "max-position", &max_position, NULL );
+			//g_object_get( m_pSplits[0], "max-position", &max_position, NULL );
+			max_position = gtk_widget_get_allocated_height( m_pSplits[0] );
 			int y = max_position / 2 - gutter;
 			gtk_paned_set_position( GTK_PANED( m_pSplits[1] ), y );
 			gtk_paned_set_position( GTK_PANED( m_pSplits[2] ), y );
 		}
+
 	}
 
 	if ( g_PrefsDlg.mWindowInfo.nState & GDK_WINDOW_STATE_MAXIMIZED ) {

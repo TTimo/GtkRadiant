@@ -910,7 +910,7 @@ int WINAPI gtk_MessageBoxNew( void *parent, const char *message,
 	// add message
 	GtkWidget *dlg_msg = gtk_label_new( message );
 	gtk_box_pack_start( GTK_BOX( icon_text_hbox ), dlg_msg, FALSE, FALSE, MSGBOX_PAD_MINOR );
-	gtk_label_set_justify( GTK_LABEL( dlg_msg ), GTK_JUSTIFY_LEFT );
+	gtk_widget_set_halign( dlg_msg, GTK_ALIGN_START );
 	gtk_widget_show( dlg_msg );
 
 	// add buttons
