@@ -360,6 +360,7 @@ static const char *model_classnames[] =
 {
 	"misc_model",
 	"misc_model_static",
+	"misc_model_breakable",
 	"misc_gamemodel",
 	"model_static",
 };
