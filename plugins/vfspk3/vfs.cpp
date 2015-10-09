@@ -114,9 +114,10 @@ static void vfsInitPakFile( const char *filename ){
 	guint32 i;
 	int err;
 
+	errno = 0;
 	uf = unzOpen( filename );
 	if ( uf == NULL ) {
-		g_FuncTable.m_pfnSysFPrintf( SYS_WRN, "  failed to init pak file %s\n", filename );
+		g_FuncTable.m_pfnSysFPrintf( SYS_WRN, "  failed to init pak file %s. %s\n", filename, ( errno !=0 ? strerror( errno ): "" ) );
 		return;
 	}
 	g_FuncTable.m_pfnSysPrintf( "  pak file: %s\n", filename );
