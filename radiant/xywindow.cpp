@@ -2667,7 +2667,7 @@ void XYWnd::PaintSizeInfo( int nDim1, int nDim2, vec3_t vMinBounds, vec3_t vMaxB
 
 		qglEnd();
 
-		qglRasterPos3f( Betwixt( vMinBounds[nDim1], vMaxBounds[nDim1] ), 0, vMinBounds[nDim2] - 20.0  / m_fScale );
+		qglRasterPos3f( Betwixt( vMinBounds[nDim1], vMaxBounds[nDim1] ), 0, vMinBounds[nDim2] - 25.0  / m_fScale );
 		g_strDim.Format( g_pDimStrings[nDim1], vSize[nDim1] );
 		gtk_glwidget_print_string( (char *) g_strDim.GetBuffer() );
 
@@ -2704,7 +2704,7 @@ void XYWnd::PaintSizeInfo( int nDim1, int nDim2, vec3_t vMinBounds, vec3_t vMaxB
 
 		qglEnd();
 
-		qglRasterPos3f( 0, Betwixt( vMinBounds[nDim1], vMaxBounds[nDim1] ),  vMinBounds[nDim2] - 20.0  / m_fScale );
+		qglRasterPos3f( 0, Betwixt( vMinBounds[nDim1], vMaxBounds[nDim1] ),  vMinBounds[nDim2] - 25.0  / m_fScale );
 		g_strDim.Format( g_pDimStrings[nDim1], vSize[nDim1] );
 		gtk_glwidget_print_string( (char *) g_strDim.GetBuffer() );
 
