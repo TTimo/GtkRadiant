@@ -2924,9 +2924,26 @@ void MainFrame::Create(){
 			GtkWidget* frame = create_framed_texwnd( m_pTexWnd );
 			m_pTexWnd->m_pParent = g_pGroupDlg->m_pWidget;
 
+			GtkWidget* w = gtk_label_new( _( "Textures" ) );
+			gtk_widget_show( w );
+
+			if( g_PrefsDlg.m_bShowTexDirList )
 			{
-				GtkWidget* w = gtk_label_new( _( "Textures" ) );
-				gtk_widget_show( w );
+				gint pos = 0;
+				GtkWidget* texDirList = create_texdirlist_widget( &pos );
+
+				GtkWidget* texSplit = gtk_paned_new( GTK_ORIENTATION_HORIZONTAL );
+
+				gtk_paned_add1( GTK_PANED( texSplit ), texDirList );
+				gtk_paned_add2( GTK_PANED( texSplit ), frame );
+
+				gtk_paned_set_position( GTK_PANED( texSplit ), pos );
+
+				gtk_widget_show( texSplit );
+
+				gtk_notebook_insert_page( GTK_NOTEBOOK( g_pGroupDlg->m_pNotebook ), texSplit, w, 1 );
+			} else
+			{
 				gtk_notebook_insert_page( GTK_NOTEBOOK( g_pGroupDlg->m_pNotebook ), frame, w, 1 );
 			}
 		}
@@ -2987,9 +3004,26 @@ void MainFrame::Create(){
 			m_pTexWnd = new TexWnd();
 			GtkWidget* frame = create_framed_texwnd( m_pTexWnd );
 
+			GtkWidget* w = gtk_label_new( _( "Textures" ) );
+			gtk_widget_show( w );
+
+			if( g_PrefsDlg.m_bShowTexDirList )
 			{
-				GtkWidget* w = gtk_label_new( _( "Textures" ) );
-				gtk_widget_show( w );
+				gint pos = 0;
+				GtkWidget* texDirList = create_texdirlist_widget( &pos );
+
+				GtkWidget* texSplit = gtk_paned_new( GTK_ORIENTATION_HORIZONTAL );
+
+				gtk_paned_add1( GTK_PANED( texSplit ), texDirList );
+				gtk_paned_add2( GTK_PANED( texSplit ), frame );
+
+				gtk_paned_set_position( GTK_PANED( texSplit ), pos );
+
+				gtk_widget_show( texSplit );
+
+				gtk_notebook_insert_page( GTK_NOTEBOOK( g_pGroupDlg->m_pNotebook ), texSplit, w, 1 );
+			} else
+			{
 				gtk_notebook_insert_page( GTK_NOTEBOOK( g_pGroupDlg->m_pNotebook ), frame, w, 1 );
 			}
 		}
