@@ -3487,6 +3487,41 @@ int DoLightIntensityDlg( int *intensity ){
 	return ret;
 }
 
+static void limitHistory( GtkWidget *combo, gint max_count )
+{
+	GtkTreeModel *model;
+	gint length;
+
+	if( max_count <= 0 )
+		return;
+
+	model = gtk_combo_box_get_model( GTK_COMBO_BOX( combo ) );
+	if( !model )
+		return;
+
+	length = gtk_tree_model_iter_n_children( model, NULL );
+	if( length > max_count )
+	{
+		int i;
+		gint count = length - max_count;
+
+		for( i = 0; i < count; i++ )
+		{
+			gtk_combo_box_text_remove( GTK_COMBO_BOX_TEXT( combo ), 0 );
+		}
+	}
+}
+static void AddToFindHistory( GtkWidget *combo, const gchar *strFind )
+{
+	gtk_combo_box_text_append( GTK_COMBO_BOX_TEXT( combo ), strFind, strFind );
+	limitHistory( combo, 20 );
+}
+static void AddToReplaceHistory( GtkWidget *combo, const gchar *strReplace )
+{
+	gtk_combo_box_text_append( GTK_COMBO_BOX_TEXT( combo ), strReplace, strReplace );
+	limitHistory( combo, 20 );
+}
+
 static void OnReplace_clicked( GtkButton *button, gpointer data )
 {
 	gboolean bSelectedOnly, bForce;
@@ -3511,6 +3546,9 @@ static void OnReplace_clicked( GtkButton *button, gpointer data )
 	strReplace = gtk_entry_get_text( GTK_ENTRY( entry ) );
 
 	FindReplaceTextures( strFind, strReplace, bSelectedOnly, bForce, FALSE );
+
+	AddToFindHistory( find_combo, strFind );
+	AddToReplaceHistory( replace_combo, strReplace );
 }
 static void OnFind_clicked( GtkButton *button, gpointer data )
 {
@@ -3533,13 +3571,72 @@ static void OnFind_clicked( GtkButton *button, gpointer data )
 	strReplace = gtk_entry_get_text( GTK_ENTRY( entry ) );
 	
 	FindReplaceTextures( strFind, strReplace, bSelectedOnly, FALSE, TRUE );
+
+	AddToFindHistory( find_combo, strFind );
+}
+
+static void findpopup_selected( GtkWidget *widget, gpointer data )
+{
+	const gchar *str;
+	GtkWidget *label;
+
+	GtkWidget *texlabel = GTK_WIDGET( g_object_get_data( G_OBJECT( widget ), "texture-label" ) );
+	if( texlabel )
+	{
+		label = texlabel;
+	} else 
+	{
+		label = gtk_bin_get_child( GTK_BIN( widget ) );
+	}
+	str = gtk_label_get_text( GTK_LABEL( label ) );
+	gtk_entry_set_text( GTK_ENTRY( data ), str );
+}
+
+static void findbutton_clicked( GtkWidget *widget, gpointer data )
+{
+	GtkWidget *menu, *item;
+	menu = gtk_menu_new();
+
+	for ( int i = 0; i < QERApp_GetActiveShaderCount(); i++ )
+	{
+		IShader *pShader = QERApp_ActiveShader_ForIndex( i );
+
+		if( strcmp( g_qeglobals.d_texturewin.texdef.GetName(), pShader->getName() ) == 0 )
+		{
+			GtkWidget *label, *box;
+
+			item = gtk_menu_item_new();
+
+			box = gtk_box_new( GTK_ORIENTATION_HORIZONTAL, 6 );
+			gtk_container_add( GTK_CONTAINER( item ), box );
+			gtk_widget_show( box );
+
+			label = gtk_label_new( pShader->getName() );
+			gtk_container_add( GTK_CONTAINER( box ), label );
+			gtk_widget_show( label );
+			g_object_set_data( G_OBJECT( item ), "texture-label", label );
+
+			label = gtk_label_new( _( "!" ) );
+			gtk_container_add( GTK_CONTAINER( box ), label );
+			gtk_widget_show( label );
+
+		} else 
+		{
+			item = gtk_menu_item_new_with_label( pShader->getName() );
+		}
+		gtk_menu_shell_append( GTK_MENU_SHELL( menu ), item );
+		gtk_widget_show( item );
+		g_signal_connect( item, "activate", G_CALLBACK( findpopup_selected ), data );
+	}
+
+	gtk_menu_popup( GTK_MENU( menu ), NULL, widget, NULL, NULL, 1, GDK_CURRENT_TIME );
 }
 
 void DoFindReplaceTexturesDialog()
 {
 	GtkWidget *dialog, *content_area, *combo, *hbox;
 	GtkWidget *vbox, *table, *label, *button, *find_button, *replace_button;
-	GtkWidget *find_combo, *replace_combo, *check;
+	GtkWidget *find_combo, *replace_combo, *check, *entry;
 	GtkSizeGroup *button_group;
 	GtkDialogFlags flags = GTK_DIALOG_DESTROY_WITH_PARENT;
 
@@ -3570,16 +3667,22 @@ void DoFindReplaceTexturesDialog()
 	gtk_widget_set_halign( label, GTK_ALIGN_START );
 	gtk_widget_show( label );
 
-	label = gtk_label_new( "Replace:" );
-	gtk_grid_attach( GTK_GRID( table ), label, 0, 1, 1, 1 );
-	gtk_widget_set_halign( label, GTK_ALIGN_START );
-	gtk_widget_show( label );
-
 	find_combo = combo = gtk_combo_box_text_new_with_entry();
 	gtk_grid_attach( GTK_GRID( table ), combo, 1, 0, 1, 1 );
 	gtk_widget_set_hexpand( combo, TRUE );
 	gtk_widget_show( combo );
 	g_object_set_data( G_OBJECT( dialog ), "find_combo", find_combo );
+
+	button = gtk_button_new_with_label( "..." );
+	gtk_grid_attach( GTK_GRID( table ), button, 2, 0, 1, 1 );
+	gtk_widget_show( button );
+	entry = gtk_bin_get_child( GTK_BIN( find_combo ) );
+	g_signal_connect( button, "clicked", G_CALLBACK( findbutton_clicked ), entry );
+
+	label = gtk_label_new( "Replace:" );
+	gtk_grid_attach( GTK_GRID( table ), label, 0, 1, 1, 1 );
+	gtk_widget_set_halign( label, GTK_ALIGN_START );
+	gtk_widget_show( label );
 
 	replace_combo = combo = gtk_combo_box_text_new_with_entry();
 	gtk_grid_attach( GTK_GRID( table ), combo, 1, 1, 1, 1 );
@@ -3587,6 +3690,11 @@ void DoFindReplaceTexturesDialog()
 	gtk_widget_show( combo );
 	g_object_set_data( G_OBJECT( dialog ), "replace_combo", replace_combo );
 
+	button = gtk_button_new_with_label( "..." );
+	gtk_grid_attach( GTK_GRID( table ), button, 2, 1, 1, 1 );
+	gtk_widget_show( button );
+	entry = gtk_bin_get_child( GTK_BIN( replace_combo ) );
+	g_signal_connect( button, "clicked", G_CALLBACK( findbutton_clicked ), entry );
 
 	check = gtk_check_button_new_with_label( "Use selected brushes only" );
 	gtk_box_pack_start( GTK_BOX( vbox ), check, TRUE, TRUE, 0 );
