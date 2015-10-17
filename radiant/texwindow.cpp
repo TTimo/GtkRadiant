@@ -1481,8 +1481,9 @@ void SelectTexture( int mx, int my, bool bShift, bool bFitScale ){
 		if ( !q ) {
 			break;
 		}
-		int nWidth = (int)( q->width * ( (float)g_PrefsDlg.m_nTextureScale / 100 ) );
-		int nHeight = (int)( q->height * ( (float)g_PrefsDlg.m_nTextureScale / 100 ) );
+		int nWidth;
+		int nHeight;
+		Texture_GetPosSize( q, nWidth, nHeight );
 		if ( mx > x && mx - x < nWidth
 			 && my < y && y - my < nHeight + FONT_HEIGHT ) {
 			if ( bShift ) {
