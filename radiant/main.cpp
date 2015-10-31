@@ -421,6 +421,10 @@ int main( int argc, char* argv[] ) {
 	const char *libgl;
 	int i, j, k;
 
+#if defined( _WIN32 ) && defined( _MSC_VER )
+	//increase the max open files to its maximum for the C run-time of MSVC
+	_setmaxstdio( 2048 );
+#endif
 	/*
 	   Rambetter on Sat Nov 13, 2010:
 

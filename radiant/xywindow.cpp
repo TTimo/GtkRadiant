@@ -359,6 +359,29 @@ void DrawPathLines( void ){
 
 extern void AssignModel();
 
+static const char *model_classnames[] =
+{
+	"misc_model",
+	"misc_model_static",
+	"misc_model_breakable",
+	"misc_gamemodel",
+	"model_static",
+};
+
+static const size_t model_classnames_count = sizeof( model_classnames ) / sizeof( *model_classnames );
+
+qboolean IsModelEntity( const char *name )
+{
+	for ( size_t i = 0; i < model_classnames_count; i++ )
+	{
+		if ( stricmp( name, model_classnames[i] ) == 0 )
+		{
+			return qtrue;
+		}
+	}
+	return qfalse;
+}
+
 void CreateEntityFromName( const char* name, const vec3_t origin ){
 	entity_t *e;
 	brush_t* b;
@@ -434,7 +457,7 @@ void CreateEntityFromName( const char* name, const vec3_t origin ){
 	}
 	Select_Brush( e->brushes.onext );
 
-	if ( ( stricmp( name, "misc_model" ) == 0 ) || ( stricmp( name, "misc_gamemodel" ) == 0 ) || ( strcmpi( name, "model_static" ) == 0 ) ) {
+	if ( IsModelEntity( name ) == qtrue ) {
 		SetInspectorMode( W_ENTITY );
 		AssignModel();
 	}
@@ -1179,24 +1202,24 @@ void XYWnd::OnMouseMove( guint32 nFlags, int pointx, int pointy ){
 	update_xor_rectangle_xy( m_XORRectangle );
 }
 
-void XYWnd::OnMouseWheel( bool bUp, int pointx, int pointy ){
+void XYWnd::OnMouseWheel( bool bUp, int pointx, int pointy ) {
 	if ( bUp ) {
-                if ( g_PrefsDlg.m_bMousewheelZoom == TRUE ) {
-                        // improved zoom-in
-                        // frame coverges to part of window where the cursor currently resides
-                        float old_scale = m_fScale;
-                        g_pParentWnd->OnViewZoomin();
-                        float scale_diff = 1.0 / old_scale - 1.0 / m_fScale;
-                        int nDim1 = ( m_nViewType == YZ ) ? 1 : 0;
-                        int nDim2 = ( m_nViewType == XY ) ? 1 : 2;
-                        m_vOrigin[nDim1] += scale_diff * (pointx - 0.5 * m_nWidth);
-                        m_vOrigin[nDim2] -= scale_diff * (pointy - 0.5 * m_nHeight);
-                }
-                else{
-                        g_pParentWnd->OnViewZoomin();
-                }
+		if ( g_PrefsDlg.m_bMousewheelZoom == TRUE ) {
+			// improved zoom-in
+			// frame coverges to part of window where the cursor currently resides
+			float old_scale = m_fScale;
+			g_pParentWnd->OnViewZoomin();
+			float scale_diff = 1.0 / old_scale - 1.0 / m_fScale;
+			int nDim1 = ( m_nViewType == YZ ) ? 1 : 0;
+			int nDim2 = ( m_nViewType == XY ) ? 1 : 2;
+			m_vOrigin[nDim1] += scale_diff * (pointx - 0.5 * m_nWidth);
+			m_vOrigin[nDim2] -= scale_diff * (pointy - 0.5 * m_nHeight);
+		}
+		else {
+				g_pParentWnd->OnViewZoomin();
+		}
 	}
-	else{
+	else {
 		g_pParentWnd->OnViewZoomout();
 	}
 
@@ -1516,16 +1539,16 @@ void XYWnd::HandleDrop(){
 		menu_separator( menu ); nID++;
 		// NOTE: temporary commented out until we put it back in for good (that is with actual features)
 		/*
-		   menu_in_menu = create_menu_in_menu_with_mnemonic (menu, "Group",);
-		   create_menu_item_with_mnemonic (menu_in_menu, "Add to...",
-		          G_CALLBACK (HandleCommand), ID_DROP_GROUP_ADDTO);
-		   create_menu_item_with_mnemonic (menu_in_menu, "Remove",
-		          G_CALLBACK (HandleCommand), ID_DROP_GROUP_REMOVE);
-		   create_menu_item_with_mnemonic (menu_in_menu, "Name...",
-		          G_CALLBACK (HandleCommand), ID_DROP_GROUP_NAME);
-		   menu_separator (menu_in_menu); nID++;
-		   create_menu_item_with_mnemonic (menu_in_menu, "New Group...",
-		          G_CALLBACK (HandleCommand), ID_DROP_GROUP_NEWGROUP);
+			menu_in_menu = create_menu_in_menu_with_mnemonic (menu, "Group",);
+			create_menu_item_with_mnemonic (menu_in_menu, "Add to...",
+				G_CALLBACK (HandleCommand), ID_DROP_GROUP_ADDTO);
+			create_menu_item_with_mnemonic (menu_in_menu, "Remove",
+				G_CALLBACK (HandleCommand), ID_DROP_GROUP_REMOVE);
+			create_menu_item_with_mnemonic (menu_in_menu, "Name...",
+				G_CALLBACK (HandleCommand), ID_DROP_GROUP_NAME);
+			menu_separator (menu_in_menu); nID++;
+			create_menu_item_with_mnemonic (menu_in_menu, "New Group...",
+				G_CALLBACK (HandleCommand), ID_DROP_GROUP_NEWGROUP);
 		 */
 		create_menu_item_with_mnemonic( menu, "Ungroup Entity",
 										G_CALLBACK( HandleCommand ), ID_SELECTION_UNGROUPENTITY );
@@ -2172,16 +2195,15 @@ void XYWnd::XY_DrawGrid(){
 	int step, stepx, stepy, colour;
 	step = stepx = stepy = MAX( 64, (int)g_qeglobals.d_gridsize );
 
-	/*
-	   int stepSize = (int)(8 / m_fScale);
-	   if (stepSize > step)
-	   {
-	   int i;
-	   for (i = 1; i < stepSize; i <<= 1)
-	    ;
-	   step = i;
-	   }
-	 */
+/*
+	int stepSize = (int)(8 / m_fScale);
+	if (stepSize > step)
+	{
+		int i;
+		for (i = 1; i < stepSize; i <<= 1);
+		step = i;
+	}
+*/
 
 	//Sys_Printf("scale: %f\n", m_fScale);
 	//Sys_Printf("step before: %i\n", step);
@@ -2309,8 +2331,9 @@ void XYWnd::XY_DrawGrid(){
 		// Pixels between left of label and
 		//   - left of grid view window (for horizontal grid line label) or
 		//   - drawn vertical grid line (for vertical grid line label).
-		const int pixelsLeftCushion = 2; // IMPORTANT!  Must be at least 1 otherwise labels might not be drawn
-		                                 // because the origin of the text might be off screen due to rounding.
+		// IMPORTANT! Must be at least 1 otherwise labels might not be drawn,
+		// because the origin of the text might be off screen due to rounding
+		const int pixelsLeftCushion = 2;										 
 
 		// Pixels between baseline of horizontal grid line label and drawn horizontal grid line.
 		const int pixelsButtomCushion = 2;
@@ -2338,9 +2361,9 @@ void XYWnd::XY_DrawGrid(){
 			qglColor3fv( g_qeglobals.d_savedinfo.colors[COLOR_VIEWNAME] );
 		}
 
-		// we do this part (the old way) only if show_axis is disabled
+		// We do this part (the old way) only if show_axis is disabled
 		if ( !g_qeglobals.d_savedinfo.show_axis ) {
-			qglRasterPos2f( m_vOrigin[nDim1] - w + 35 / m_fScale, m_vOrigin[nDim2] + h - 20 / m_fScale );
+			qglRasterPos2f( m_vOrigin[nDim1] - w + 35 / m_fScale, m_vOrigin[nDim2] + h - 30 / m_fScale );
 
 			char cView[20];
 			if ( m_nViewType == XY ) {
@@ -2350,7 +2373,7 @@ void XYWnd::XY_DrawGrid(){
 			if ( m_nViewType == XZ ) {
 				strcpy( cView, "XZ Front" );
 			}
-			else{
+			else {
 				strcpy( cView, "YZ Side" );
 			}
 
@@ -2359,9 +2382,10 @@ void XYWnd::XY_DrawGrid(){
 	}
 
 	if ( g_qeglobals.d_savedinfo.show_axis ) {
-		// draw two lines with corresponding axis colors to highlight current view
-		// horizontal line: nDim1 color
+		// Draw two lines with corresponding axis colors to highlight current view
+		// Horizontal line: nDim1 color
 		qglLineWidth( 2 );
+		
 		qglBegin( GL_LINES );
 		qglColor3fv( g_qeglobals.d_savedinfo.AxisColors[nDim1] );
 		qglVertex2f( m_vOrigin[nDim1] - w + 40 / m_fScale, m_vOrigin[nDim2] + h - 45 / m_fScale );
@@ -2374,17 +2398,20 @@ void XYWnd::XY_DrawGrid(){
 		qglVertex2f( 0, 0 );
 		qglVertex2f( 0, 32 / m_fScale );
 		qglEnd();
+		
 		qglLineWidth( 1 );
-		// now print axis symbols
+
+		// Now print axis symbols
 		qglColor3fv( g_qeglobals.d_savedinfo.AxisColors[nDim1] );
-		qglRasterPos2f( m_vOrigin[nDim1] - w + 55 / m_fScale, m_vOrigin[nDim2] + h - 55 / m_fScale );
+		qglRasterPos2f( m_vOrigin[nDim1] - w + 57 / m_fScale, m_vOrigin[nDim2] + h - 60 / m_fScale );
 		gtk_glwidget_print_char( g_AxisName[nDim1] );
-		qglRasterPos2f( 28 / m_fScale, -10 / m_fScale );
+		qglRasterPos2f( 25 / m_fScale, -15 / m_fScale );
 		gtk_glwidget_print_char( g_AxisName[nDim1] );
+
 		qglColor3fv( g_qeglobals.d_savedinfo.AxisColors[nDim2] );
-		qglRasterPos2f( m_vOrigin[nDim1] - w + 25 / m_fScale, m_vOrigin[nDim2] + h - 30 / m_fScale );
+		qglRasterPos2f( m_vOrigin[nDim1] - w + 30 / m_fScale, m_vOrigin[nDim2] + h - 30 / m_fScale );
 		gtk_glwidget_print_char( g_AxisName[nDim2] );
-		qglRasterPos2f( -10 / m_fScale, 28 / m_fScale );
+		qglRasterPos2f( -10 / m_fScale, 20 / m_fScale );
 		gtk_glwidget_print_char( g_AxisName[nDim2] );
 
 	}
@@ -2632,8 +2659,8 @@ void XYWnd::DrawZIcon( void ){
 // can be greatly simplified but per usual i am in a hurry
 // which is not an excuse, just a fact
 void XYWnd::PaintSizeInfo( int nDim1, int nDim2, vec3_t vMinBounds, vec3_t vMaxBounds ){
-	const char* g_pDimStrings[] = {"x:%.f", "y:%.f", "z:%.f"};
-	const char* g_pOrgStrings[] = {"(x:%.f  y:%.f)", "(x:%.f  z:%.f)", "(y:%.f  z:%.f)"};
+	const char* g_pDimStrings[] = {"x: %.f", "y: %.f", "z: %.f"};
+	const char* g_pOrgStrings[] = {"(x: %.f,  y: %.f)", "(x: %.f,  z: %.f)", "(y: %.f,  z: %.f)"};
 
 	CString g_strDim;
 
@@ -2668,7 +2695,7 @@ void XYWnd::PaintSizeInfo( int nDim1, int nDim2, vec3_t vMinBounds, vec3_t vMaxB
 
 		qglEnd();
 
-		qglRasterPos3f( Betwixt( vMinBounds[nDim1], vMaxBounds[nDim1] ),  vMinBounds[nDim2] - 20.0  / m_fScale, 0.0f );
+		qglRasterPos3f( Betwixt( vMinBounds[nDim1], vMaxBounds[nDim1] ),  vMinBounds[nDim2] - 25.0  / m_fScale, 0.0f );
 		g_strDim.Format( g_pDimStrings[nDim1], vSize[nDim1] );
 		gtk_glwidget_print_string( (char *) g_strDim.GetBuffer() );
 
