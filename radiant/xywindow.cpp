@@ -2302,9 +2302,9 @@ void XYWnd::XY_DrawGrid(){
 			qglColor3fv( g_qeglobals.d_savedinfo.colors[COLOR_VIEWNAME] );
 		}
 
-		// we do this part (the old way) only if show_axis is disabled
+		// We do this part (the old way) only if show_axis is disabled
 		if ( !g_qeglobals.d_savedinfo.show_axis ) {
-			qglRasterPos2f( m_vOrigin[nDim1] - w + 35 / m_fScale, m_vOrigin[nDim2] + h - 20 / m_fScale );
+			qglRasterPos2f( m_vOrigin[nDim1] - w + 35 / m_fScale, m_vOrigin[nDim2] + h - 30 / m_fScale );
 
 			char cView[20];
 			if ( m_nViewType == XY ) {
@@ -2314,7 +2314,7 @@ void XYWnd::XY_DrawGrid(){
 			if ( m_nViewType == XZ ) {
 				strcpy( cView, "XZ Front" );
 			}
-			else{
+			else {
 				strcpy( cView, "YZ Side" );
 			}
 
@@ -2323,9 +2323,10 @@ void XYWnd::XY_DrawGrid(){
 	}
 
 	if ( g_qeglobals.d_savedinfo.show_axis ) {
-		// draw two lines with corresponding axis colors to highlight current view
-		// horizontal line: nDim1 color
+		// Draw two lines with corresponding axis colors to highlight current view
+		// Horizontal line: nDim1 color
 		qglLineWidth( 2 );
+		
 		qglBegin( GL_LINES );
 		qglColor3fv( g_qeglobals.d_savedinfo.AxisColors[nDim1] );
 		qglVertex2f( m_vOrigin[nDim1] - w + 40 / m_fScale, m_vOrigin[nDim2] + h - 45 / m_fScale );
@@ -2338,15 +2339,18 @@ void XYWnd::XY_DrawGrid(){
 		qglVertex2f( 0, 0 );
 		qglVertex2f( 0, 32 / m_fScale );
 		qglEnd();
+		
 		qglLineWidth( 1 );
-		// now print axis symbols
+
+		// Now print axis symbols
 		qglColor3fv( g_qeglobals.d_savedinfo.AxisColors[nDim1] );
-		qglRasterPos2f( m_vOrigin[nDim1] - w + 55 / m_fScale, m_vOrigin[nDim2] + h - 55 / m_fScale );
+		qglRasterPos2f( m_vOrigin[nDim1] - w + 57 / m_fScale, m_vOrigin[nDim2] + h - 60 / m_fScale );
 		gtk_glwidget_print_char( g_AxisName[nDim1] );
 		qglRasterPos2f( 28 / m_fScale, -10 / m_fScale );
 		gtk_glwidget_print_char( g_AxisName[nDim1] );
+
 		qglColor3fv( g_qeglobals.d_savedinfo.AxisColors[nDim2] );
-		qglRasterPos2f( m_vOrigin[nDim1] - w + 25 / m_fScale, m_vOrigin[nDim2] + h - 30 / m_fScale );
+		qglRasterPos2f( m_vOrigin[nDim1] - w + 30 / m_fScale, m_vOrigin[nDim2] + h - 30 / m_fScale );
 		gtk_glwidget_print_char( g_AxisName[nDim2] );
 		qglRasterPos2f( -10 / m_fScale, 28 / m_fScale );
 		gtk_glwidget_print_char( g_AxisName[nDim2] );
@@ -2668,7 +2672,7 @@ void XYWnd::PaintSizeInfo( int nDim1, int nDim2, vec3_t vMinBounds, vec3_t vMaxB
 
 		qglEnd();
 
-		qglRasterPos3f( Betwixt( vMinBounds[nDim1], vMaxBounds[nDim1] ), 0, vMinBounds[nDim2] - 25.0  / m_fScale );
+		qglRasterPos3f( Betwixt( vMinBounds[nDim1], vMaxBounds[nDim1] ), 0, vMinBounds[nDim2] - 20.0  / m_fScale );
 		g_strDim.Format( g_pDimStrings[nDim1], vSize[nDim1] );
 		gtk_glwidget_print_string( (char *) g_strDim.GetBuffer() );
 
@@ -2705,7 +2709,7 @@ void XYWnd::PaintSizeInfo( int nDim1, int nDim2, vec3_t vMinBounds, vec3_t vMaxB
 
 		qglEnd();
 
-		qglRasterPos3f( 0, Betwixt( vMinBounds[nDim1], vMaxBounds[nDim1] ),  vMinBounds[nDim2] - 25.0  / m_fScale );
+		qglRasterPos3f( 0, Betwixt( vMinBounds[nDim1], vMaxBounds[nDim1] ),  vMinBounds[nDim2] - 20.0  / m_fScale );
 		g_strDim.Format( g_pDimStrings[nDim1], vSize[nDim1] );
 		gtk_glwidget_print_string( (char *) g_strDim.GetBuffer() );
 
