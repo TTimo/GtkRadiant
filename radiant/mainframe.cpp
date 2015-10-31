@@ -2495,6 +2495,7 @@ void MainFrame::Create(){
 	MRU_Load();
 	create_main_toolbar( window, vbox );
 	create_plugin_toolbar( window,vbox );
+	create_main_statusbar( window, vbox );
 
 	m_nCurrentStyle = g_PrefsDlg.m_nView;
 
@@ -2608,7 +2609,7 @@ void MainFrame::Create(){
 			}
 		}
 
-		gtk_paned_set_position( GTK_PANED( m_pSplits[0] ), g_PrefsDlg.mWindowInfo.nXYHeight + 28 );
+		gtk_paned_set_position( GTK_PANED( m_pSplits[0] ), g_PrefsDlg.mWindowInfo.nXYHeight );
 
 		if ( CurrentStyle() == eRegular ) {
 			gtk_paned_set_position( GTK_PANED( m_pSplits[2] ), g_PrefsDlg.mWindowInfo.nZWidth );
@@ -2875,8 +2876,6 @@ void MainFrame::Create(){
 	Texture_SetMode( g_qeglobals.d_savedinfo.iTexMenu );
 
 	g_pParentWnd->OnEntitiesSetViewAs( 0 );
-
-	create_main_statusbar( window, vbox );
 
 	LoadCommandMap();
 	ShowMenuItemKeyBindings( window );
