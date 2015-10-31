@@ -1837,7 +1837,7 @@ void PrefsDlg::BuildDialog(){
 	gtk_box_pack_start( GTK_BOX( hbox2 ), label, FALSE, FALSE, 0 );
 
 	// adjustment
-	adj = gtk_adjustment_new( 100, 50, 300, 1, 10, 10 );
+	adj = gtk_adjustment_new( 100, 1, 300, 1, 10, 10 );
 	AddDialogData( adj, &m_nMoveSpeed, DLG_ADJ_INT );
 
 	// scale

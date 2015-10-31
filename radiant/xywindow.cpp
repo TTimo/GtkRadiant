@@ -356,6 +356,29 @@ void DrawPathLines( void ){
 
 extern void AssignModel();
 
+static const char *model_classnames[] =
+{
+	"misc_model",
+	"misc_model_static",
+	"misc_model_breakable",
+	"misc_gamemodel",
+	"model_static",
+};
+
+static const size_t model_classnames_count = sizeof( model_classnames ) / sizeof( *model_classnames );
+
+qboolean IsModelEntity( const char *name )
+{
+	for ( size_t i = 0; i < model_classnames_count; i++ )
+	{
+		if ( stricmp( name, model_classnames[i] ) == 0 )
+		{
+			return qtrue;
+		}
+	}
+	return qfalse;
+}
+
 void CreateEntityFromName( const char* name, const vec3_t origin ){
 	entity_t *e;
 	brush_t* b;
@@ -431,7 +454,7 @@ void CreateEntityFromName( const char* name, const vec3_t origin ){
 	}
 	Select_Brush( e->brushes.onext );
 
-	if ( ( stricmp( name, "misc_model" ) == 0 ) || ( stricmp( name, "misc_gamemodel" ) == 0 ) || ( strcmpi( name, "model_static" ) == 0 ) ) {
+	if ( IsModelEntity( name ) == qtrue ) {
 		SetInspectorMode( W_ENTITY );
 		AssignModel();
 	}
