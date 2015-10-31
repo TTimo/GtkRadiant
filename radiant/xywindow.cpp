@@ -2346,13 +2346,13 @@ void XYWnd::XY_DrawGrid(){
 		qglColor3fv( g_qeglobals.d_savedinfo.AxisColors[nDim1] );
 		qglRasterPos2f( m_vOrigin[nDim1] - w + 57 / m_fScale, m_vOrigin[nDim2] + h - 60 / m_fScale );
 		gtk_glwidget_print_char( g_AxisName[nDim1] );
-		qglRasterPos2f( 28 / m_fScale, -10 / m_fScale );
+		qglRasterPos2f( 25 / m_fScale, -15 / m_fScale );
 		gtk_glwidget_print_char( g_AxisName[nDim1] );
 
 		qglColor3fv( g_qeglobals.d_savedinfo.AxisColors[nDim2] );
 		qglRasterPos2f( m_vOrigin[nDim1] - w + 30 / m_fScale, m_vOrigin[nDim2] + h - 30 / m_fScale );
 		gtk_glwidget_print_char( g_AxisName[nDim2] );
-		qglRasterPos2f( -10 / m_fScale, 28 / m_fScale );
+		qglRasterPos2f( -10 / m_fScale, 20 / m_fScale );
 		gtk_glwidget_print_char( g_AxisName[nDim2] );
 
 	}
