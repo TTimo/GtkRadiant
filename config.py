@@ -283,10 +283,9 @@ class Config:
         if ( self.platform == 'Windows' ):
             backup_cwd = os.getcwd()
             for lib_archive in [
-                'STLport-5.2.1-GtkRadiant.zip',
                 'gtk-bundle-2.24.10-GtkRadiant.zip',
                 'gtk-bundle-2.22.1-win64-GtkRadiant.zip',
-                'jpeg-9-GtkRadiant.zip',
+                'jpeg-9-MSVC2014-GtkRadiant.zip',
                 'libxml2-2.9.2-GtkRadiant.zip',
                 'gtkglext-1.2.0-3-win32.zip',
                 ]:
