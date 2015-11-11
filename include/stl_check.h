@@ -24,6 +24,8 @@
    this allows to catch some weird errors early at compile time
  */
 
+#define Q_NO_STLPORT
+
 #ifdef Q_NO_STLPORT
 
 // not using STLPort (gcc 3.x build)
