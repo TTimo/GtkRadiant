@@ -45,6 +45,7 @@ void DecRef() {
 
 //IRender
 void Draw( int state, int rflags ) const;
+const bool IsModelNotNull() const { return true; }
 const aabb_t *GetAABB() const { return &m_BBox; }
 
 //ISelect

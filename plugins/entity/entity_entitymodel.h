@@ -40,6 +40,7 @@ void DecRef() {
 
 // IRender
 void Draw( int state, int rflags ) const;
+const bool IsModelNotNull() const { return m_model && m_model->pRender; }
 const aabb_t *GetAABB() const { return &m_BBox; }
 
 // ISelect
@@ -105,6 +106,7 @@ void DecRef() {
 
 // IRender
 void Draw( int state, int rflags ) const;
+const bool IsModelNotNull() const { return m_model && m_model->pRender; }
 const aabb_t *GetAABB() const { return &m_BBox; }
 
 // ISelect

@@ -2223,7 +2223,8 @@ face_t *Brush_Ray( vec3_t origin, vec3_t dir, brush_t *b, float *dist, int nFlag
 	if ( b->owner->eclass->fixedsize
 		 && b->owner->model.pSelect
 		 && !( !IsBrushSelected( b ) && ( g_PrefsDlg.m_nEntityShowState & ENTITY_SELECTED_ONLY ) )
-		 && g_PrefsDlg.m_nEntityShowState != ENTITY_BOX ) {
+		 && g_PrefsDlg.m_nEntityShowState != ENTITY_BOX
+		 && b->owner->model.pRender->IsModelNotNull()) {
 		ray_t ray_local;
 		vec_t dist_local = FLT_MAX;
 		ray_construct_for_vec3( &ray_local, origin, dir );
