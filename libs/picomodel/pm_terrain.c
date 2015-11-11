@@ -303,7 +303,7 @@ static int _terrain_canload( PM_PARAMS_CANLOAD ) {
 
 
 	/* keep the friggin compiler happy */
-	*fileName = *fileName;
+	/**fileName = *fileName*/;
 
 	/* create pico parser */
 	p = _pico_new_parser( (picoByte_t*) buffer, bufSize );
@@ -356,7 +356,7 @@ static picoModel_t *_terrain_load( PM_PARAMS_LOAD ) {
 
 
 	/* keep the friggin compiler happy */
-	*fileName = *fileName;
+	/**fileName = *fileName*/;
 
 	/* create pico parser */
 	p = _pico_new_parser( (picoByte_t*) buffer, bufSize );

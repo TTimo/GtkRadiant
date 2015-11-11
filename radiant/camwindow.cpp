@@ -922,12 +922,24 @@ void CamWnd::Cam_DrawBrush( brush_t *b, int mode ){
 				if ( !( nGLState & DRAW_GL_TEXTURE_2D ) ) {
 					qglColor4fv( material );
 				}
-				else{ qglColor4fv( identity ); }
+				else { 
+					qglColor4fv( identity );
+				}
+
 				if ( nGLState & DRAW_GL_LIGHTING ) {
 					qglShadeModel( GL_SMOOTH );
 				}
 
-				b->owner->model.pRender->Draw( nGLState, DRAW_RF_CAM );
+				// Check model validity
+				// If the model is NULL or invalid, draw a box instead
+				bool isModelValid = b->owner->model.pRender->IsModelNotNull();
+				if ( isModelValid ) {
+					b->owner->model.pRender->Draw( nGLState, DRAW_RF_CAM );
+				}
+				else {
+					qglColor4fv( material );
+					aabb_draw( b->owner->model.pRender->GetAABB(), DRAW_GL_WIRE );
+				}
 			}
 			break;
 		case DRAW_WIRE:
@@ -949,8 +961,8 @@ void CamWnd::Cam_DrawBrush( brush_t *b, int mode ){
 				aabb_draw( b->owner->model.pRender->GetAABB(), DRAW_GL_WIRE );
 			}
 /*
-      if(!(nModelMode & ENTITY_BOXED) && b->owner->eclass->nShowFlags & ECLASS_MISCMODEL)
-              DrawModelOrigin(b);
+			if(!(nModelMode & ENTITY_BOXED) && b->owner->eclass->nShowFlags & ECLASS_MISCMODEL)
+				DrawModelOrigin(b);
  */
 		}
 	}

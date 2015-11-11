@@ -26,7 +26,6 @@
 #include "filters.h"
 
 extern MainFrame* g_pParentWnd;
-extern void MemFile_fprintf( MemStream* pMemFile, const char* pText, ... );
 
 // globals
 
@@ -130,7 +129,6 @@ float lightaxis[3] = {0.6f, 0.8f, 1.0f};
    improve recognition
    ================
  */
-extern float ShadeForNormal( vec3_t normal );
 
 float SetShadeForPlane( plane_t *p ){
 	//return ShadeForNormal(p->normal);
@@ -2223,7 +2221,8 @@ face_t *Brush_Ray( vec3_t origin, vec3_t dir, brush_t *b, float *dist, int nFlag
 	if ( b->owner->eclass->fixedsize
 		 && b->owner->model.pSelect
 		 && !( !IsBrushSelected( b ) && ( g_PrefsDlg.m_nEntityShowState & ENTITY_SELECTED_ONLY ) )
-		 && g_PrefsDlg.m_nEntityShowState != ENTITY_BOX ) {
+		 && g_PrefsDlg.m_nEntityShowState != ENTITY_BOX
+		 && b->owner->model.pRender->IsModelNotNull() ) {
 		ray_t ray_local;
 		vec_t dist_local = FLT_MAX;
 		ray_construct_for_vec3( &ray_local, origin, dir );
@@ -2260,8 +2259,7 @@ face_t *Brush_Ray( vec3_t origin, vec3_t dir, brush_t *b, float *dist, int nFlag
 			for ( i = 0 ; i < 3 ; i++ )
 				p1[i] = p1[i] + frac * ( p2[i] - p1[i] );
 		}
-		else
-		{
+		else {
 			for ( i = 0 ; i < 3 ; i++ )
 				p2[i] = p1[i] + frac * ( p2[i] - p1[i] );
 		}
@@ -2292,7 +2290,7 @@ face_t *Brush_Ray( vec3_t origin, vec3_t dir, brush_t *b, float *dist, int nFlag
 	// see Brush_Draw
 
 	// do some last minute filtering
-	if ( firstface && nFlags & SF_CAMERA ) {
+	if ( firstface && ( nFlags & SF_CAMERA ) ) {
 		if ( g_qeglobals.d_savedinfo.exclude & EXCLUDE_CAULK ) {
 			if ( strstr( firstface->texdef.GetName(), "caulk" ) ) {
 				*dist = 0;
@@ -2641,8 +2639,9 @@ void Brush_SelectFaceForDragging( brush_t *b, face_t *f, qboolean shear ){
 		// leave it alone
 		//
 		if ( i != w->numpoints ) {
-			if ( i == 0 ) { // see if the first clockwise point was the
-				           // last point on the winding
+			// see if the first clockwise point was the
+			// last point on the winding
+			if ( i == 0 ) {
 				d = DotProduct( w->points[w->numpoints - 1]
 								, f->plane.normal ) - f->plane.dist;
 				if ( d > -ON_EPSILON && d < ON_EPSILON ) {
@@ -3060,7 +3059,7 @@ void Brush_FaceDraw( face_t *face, int nGLState ){
 	if ( w == NULL ) {
 		return;
 	}
-	if ( nGLState & DRAW_GL_LIGHTING && g_PrefsDlg.m_bGLLighting ) {
+	if ( ( nGLState & DRAW_GL_LIGHTING ) && g_PrefsDlg.m_bGLLighting ) {
 		qglNormal3fv( face->plane.normal );
 	}
 	/*
@@ -3137,7 +3136,7 @@ void Brush_Draw( brush_t *b ){
 		if ( bTrans && !( nGLState & DRAW_GL_BLEND ) ) {
 			continue;
 		}
-		if ( !bTrans && nGLState & DRAW_GL_BLEND ) {
+		if ( !bTrans && ( nGLState & DRAW_GL_BLEND ) ) {
 			continue;
 		}
 
@@ -3163,17 +3162,17 @@ void Brush_Draw( brush_t *b ){
 			}
 		}
 
-		if ( nGLState & DRAW_GL_TEXTURE_2D && face->d_texture->name[0] == '(' ) {
+		if ( ( nGLState & DRAW_GL_TEXTURE_2D ) && face->d_texture->name[0] == '(' ) {
 			prev = NULL;
 			qglDisable( GL_TEXTURE_2D );
 		}
-		else if ( nGLState & DRAW_GL_TEXTURE_2D && ( nDrawMode == cd_texture || nDrawMode == cd_light ) && face->d_texture != prev ) {
+		else if ( ( nGLState & DRAW_GL_TEXTURE_2D ) && ( nDrawMode == cd_texture || nDrawMode == cd_light ) && face->d_texture != prev ) {
 			// set the texture for this face
 			prev = face->d_texture;
 			qglBindTexture( GL_TEXTURE_2D, face->d_texture->texture_number );
 		}
 
-		if ( nGLState & DRAW_GL_LIGHTING && !g_PrefsDlg.m_bGLLighting ) {
+		if ( ( nGLState & DRAW_GL_LIGHTING ) && !g_PrefsDlg.m_bGLLighting ) {
 			if ( !b->owner->eclass->fixedsize ) {
 				material[3] = transVal;
 			}

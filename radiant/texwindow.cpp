@@ -50,7 +50,6 @@
 #include "texmanip.h"
 
 #define TYP_MIPTEX  68
-static unsigned tex_palette[256];
 
 #define FONT_HEIGHT 10
 
@@ -180,14 +179,6 @@ void Texture_InitPalette( byte *pal ){
 		g = gammatable[pal[1]];
 		b = gammatable[pal[2]];
 		pal += 3;
-
-		//v = (r<<24) + (g<<16) + (b<<8) + 255;
-		//v = BigLong (v);
-
-		//tex_palette[i] = v;
-		tex_palette[i * 3 + 0] = r;
-		tex_palette[i * 3 + 1] = g;
-		tex_palette[i * 3 + 2] = b;
 	}
 }
 
@@ -780,7 +771,11 @@ void Texture_ShowDirectory(){
 				g_str_has_suffix( name, "_h" ) ||
 				g_str_has_suffix( name, "_local" ) ||
 				g_str_has_suffix( name, "_nm" ) ||
-				g_str_has_suffix( name, "_s" )) {
+				g_str_has_suffix( name, "_s" ) ||
+				g_str_has_suffix( name, "_bump" ) ||
+				g_str_has_suffix( name, "_gloss" ) ||
+				g_str_has_suffix( name, "_luma" ) ||
+				g_str_has_suffix( name, "_norm" ) ) {
 			continue;
 		}
 
