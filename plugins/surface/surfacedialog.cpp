@@ -627,21 +627,17 @@ GtkWidget* create_SurfaceInspector( void ){
 
 	GtkWidget *label;
 
-	GtkWidget *viewport9;
-	GtkWidget *viewport2;
-	GtkWidget *viewport4;
-	GtkWidget *viewport7;
-	GtkWidget *viewport5;
+	GtkWidget *viewport;
 
-	GtkWidget *table1;
+	GtkWidget *table1, *table3;
 	GtkWidget *table4;
 	GtkWidget *table5;
 
-	GtkWidget *vbox7;
+	GtkWidget *content_area;
 
-	GtkWidget *hbox1, *hbox2;
+	GtkWidget *hbox1, *hbox2, *hbox3;
 
-	GtkSizeGroup *button_group;
+	GtkSizeGroup *size_group;
 
 	SurfaceInspector = gtk_window_new( GTK_WINDOW_TOPLEVEL );
 	gtk_container_set_border_width( GTK_CONTAINER( SurfaceInspector ), 4 );
@@ -649,20 +645,22 @@ GtkWidget* create_SurfaceInspector( void ){
 
 	SetWinPos_from_Prefs( SurfaceInspector );
 
-	vbox7 = gtk_box_new( GTK_ORIENTATION_VERTICAL, 0 );
-	gtk_container_add( GTK_CONTAINER( SurfaceInspector ), vbox7 );
-	gtk_widget_show( vbox7 );
+	content_area = gtk_box_new( GTK_ORIENTATION_VERTICAL, 0 );
+	gtk_container_add( GTK_CONTAINER( SurfaceInspector ), content_area );
+	gtk_widget_show( content_area );
 
-	viewport9 = gtk_frame_new( NULL );
-	gtk_box_pack_start( GTK_BOX( vbox7 ), viewport9, FALSE, FALSE, 0 );
-	gtk_container_set_border_width( GTK_CONTAINER( viewport9 ), 2 );
-	gtk_frame_set_shadow_type( GTK_FRAME( viewport9 ), GTK_SHADOW_ETCHED_IN );
-	gtk_widget_show( viewport9 );
+	viewport = gtk_frame_new( NULL );
+	gtk_frame_set_shadow_type( GTK_FRAME( viewport ), GTK_SHADOW_ETCHED_IN );
+	gtk_box_pack_start( GTK_BOX( content_area ), viewport, FALSE, FALSE, 0 );
+	gtk_container_set_border_width( GTK_CONTAINER( viewport ), 2 );
+	gtk_widget_set_hexpand( viewport, TRUE );
+	gtk_widget_set_vexpand( viewport, FALSE );
+	gtk_widget_show( viewport );
 
 	hbox1 = gtk_box_new( GTK_ORIENTATION_HORIZONTAL, 0 );
-	gtk_widget_show( hbox1 );
-	gtk_container_add( GTK_CONTAINER( viewport9 ), hbox1 );
+	gtk_container_add( GTK_CONTAINER( viewport ), hbox1 );
 	gtk_container_set_border_width( GTK_CONTAINER( hbox1 ), 4 );
+	gtk_widget_show( hbox1 );
 
 	label = gtk_label_new( _( "Texture: " ) );
 	gtk_box_pack_start( GTK_BOX( hbox1 ), label, FALSE, FALSE, 0 );
@@ -677,18 +675,21 @@ GtkWidget* create_SurfaceInspector( void ){
 	gtk_entry_set_max_length( GTK_ENTRY( texture_combo_entry ), 128 );
 	gtk_widget_show( texture_combo_entry );
 
-	viewport2 = gtk_frame_new( NULL );
-	gtk_box_pack_start( GTK_BOX( vbox7 ), viewport2, TRUE, TRUE, 0 );
-	gtk_container_set_border_width( GTK_CONTAINER( viewport2 ), 2 );
-	gtk_frame_set_shadow_type( GTK_FRAME( viewport2 ), GTK_SHADOW_ETCHED_IN );
-	gtk_widget_show( viewport2 );
+	viewport = gtk_frame_new( NULL );
+	gtk_frame_set_shadow_type( GTK_FRAME( viewport ), GTK_SHADOW_ETCHED_IN );
+	gtk_box_pack_start( GTK_BOX( content_area ), viewport, FALSE, TRUE, 0 );
+	gtk_container_set_border_width( GTK_CONTAINER( viewport ), 2 );
+	gtk_widget_set_hexpand( viewport, TRUE );
+	gtk_widget_set_vexpand( viewport, TRUE );
+	gtk_widget_show( viewport );
 
 	table1 = gtk_grid_new();
 	gtk_widget_set_hexpand( table1, TRUE );
 	gtk_widget_set_vexpand( table1, TRUE );
 	gtk_grid_set_column_spacing( GTK_GRID( table1 ), 5 );
-	gtk_container_add( GTK_CONTAINER( viewport2 ), table1 );
+	gtk_container_add( GTK_CONTAINER( viewport ), table1 );
 	gtk_container_set_border_width( GTK_CONTAINER( table1 ), 5 );
+	gtk_widget_set_hexpand( GTK_WIDGET( table1 ), TRUE );
 	gtk_widget_show( table1 );
 
 	label = gtk_label_new( _( "Value" ) );
@@ -734,50 +735,50 @@ GtkWidget* create_SurfaceInspector( void ){
 	// Value Spins
 	hshift_value_spinbutton_adj = gtk_adjustment_new( 0.0, -8192.0, 8192.0, 2.0, 8.0, 0.0 );
 	hshift_value_spinbutton = gtk_spin_button_new( GTK_ADJUSTMENT( hshift_value_spinbutton_adj ), 1, 2 );
-	gtk_widget_set_hexpand( hshift_value_spinbutton, TRUE );
 	gtk_grid_attach( GTK_GRID( table1 ), hshift_value_spinbutton, 1, 1, 1, 1 );
 	gtk_spin_button_set_update_policy( GTK_SPIN_BUTTON( hshift_value_spinbutton ), GTK_UPDATE_IF_VALID );
 	gtk_spin_button_set_wrap( GTK_SPIN_BUTTON( hshift_value_spinbutton ), TRUE );
+	gtk_widget_set_hexpand( hshift_value_spinbutton, TRUE );
 	gtk_widget_set_sensitive( GTK_WIDGET( hshift_value_spinbutton ), TRUE );
 	gtk_widget_show( hshift_value_spinbutton );
 	g_object_set( hshift_value_spinbutton, "xalign", 1.0, NULL );
 
 	vshift_value_spinbutton_adj = gtk_adjustment_new( 0.0, -8192.0, 8192.0, 2.0, 8.0, 0.0 );
 	vshift_value_spinbutton = gtk_spin_button_new( GTK_ADJUSTMENT( vshift_value_spinbutton_adj ), 1, 2 );
-	gtk_widget_set_hexpand( vshift_value_spinbutton, TRUE );
 	gtk_grid_attach( GTK_GRID( table1 ), vshift_value_spinbutton, 1, 2, 1, 1 );
 	gtk_spin_button_set_update_policy( GTK_SPIN_BUTTON( vshift_value_spinbutton ), GTK_UPDATE_IF_VALID );
 	gtk_spin_button_set_wrap( GTK_SPIN_BUTTON( vshift_value_spinbutton ), TRUE );
+	gtk_widget_set_hexpand( vshift_value_spinbutton, TRUE );
 	gtk_widget_set_sensitive( GTK_WIDGET( vshift_value_spinbutton ), TRUE );
 	gtk_widget_show( vshift_value_spinbutton );
 	g_object_set( vshift_value_spinbutton, "xalign", 1.0, NULL );
 
 	hscale_value_spinbutton_adj = gtk_adjustment_new( 0.0, -1024.0, 1024.0, 1.0, 4.0, 0.0 );
 	hscale_value_spinbutton = gtk_spin_button_new( GTK_ADJUSTMENT( hscale_value_spinbutton_adj ), 1, 4 );
-	gtk_widget_set_hexpand( hscale_value_spinbutton, TRUE );
 	gtk_grid_attach( GTK_GRID( table1 ), hscale_value_spinbutton, 1, 3, 1, 1 );
 	gtk_spin_button_set_update_policy( GTK_SPIN_BUTTON( hscale_value_spinbutton ), GTK_UPDATE_IF_VALID );
 	gtk_spin_button_set_wrap( GTK_SPIN_BUTTON( hscale_value_spinbutton ), TRUE );
+	gtk_widget_set_hexpand( hscale_value_spinbutton, TRUE );
 	gtk_widget_set_sensitive( GTK_WIDGET( hscale_value_spinbutton ), TRUE );
 	gtk_widget_show( hscale_value_spinbutton );
 	g_object_set( hscale_value_spinbutton, "xalign", 1.0, NULL );
 
 	vscale_value_spinbutton_adj = gtk_adjustment_new( 0.0, -1024.0, 1024.0, 1.0, 4.0, 0.0 );
 	vscale_value_spinbutton = gtk_spin_button_new( GTK_ADJUSTMENT( vscale_value_spinbutton_adj ), 1, 4 );
-	gtk_widget_set_hexpand( vscale_value_spinbutton, TRUE );
 	gtk_grid_attach( GTK_GRID( table1 ), vscale_value_spinbutton, 1, 4, 1, 1 );
 	gtk_spin_button_set_update_policy( GTK_SPIN_BUTTON( vscale_value_spinbutton ), GTK_UPDATE_IF_VALID );
 	gtk_spin_button_set_wrap( GTK_SPIN_BUTTON( vscale_value_spinbutton ), TRUE );
+	gtk_widget_set_hexpand( vscale_value_spinbutton, TRUE );
 	gtk_widget_set_sensitive( GTK_WIDGET( vscale_value_spinbutton ), TRUE );
 	gtk_widget_show( vscale_value_spinbutton );
 	g_object_set( vscale_value_spinbutton, "xalign", 1.0, NULL );
 
 	rotate_value_spinbutton_adj = gtk_adjustment_new( 0.0, -360.0, 360.0, 1.0, 10.0, 0.0 );
 	rotate_value_spinbutton = gtk_spin_button_new( GTK_ADJUSTMENT( rotate_value_spinbutton_adj ), 1, 4 );
-	gtk_widget_set_hexpand( rotate_value_spinbutton, TRUE );
 	gtk_grid_attach( GTK_GRID( table1 ), rotate_value_spinbutton, 1, 5, 1, 1 );
 	gtk_spin_button_set_update_policy( GTK_SPIN_BUTTON( rotate_value_spinbutton ), GTK_UPDATE_IF_VALID );
 	gtk_spin_button_set_wrap( GTK_SPIN_BUTTON( rotate_value_spinbutton ), TRUE );
+	gtk_widget_set_hexpand( rotate_value_spinbutton, TRUE );
 	gtk_widget_set_sensitive( GTK_WIDGET( rotate_value_spinbutton ), TRUE );
 	gtk_widget_show( rotate_value_spinbutton );
 	g_object_set( rotate_value_spinbutton, "xalign", 1.0, NULL );
@@ -785,125 +786,166 @@ GtkWidget* create_SurfaceInspector( void ){
 	// Step Spins
 	hshift_step_spinbutton_adj = gtk_adjustment_new( 0.0, -8192.0, 8192.0, 2.0, 8.0, 0.0 );
 	hshift_step_spinbutton = gtk_spin_button_new( GTK_ADJUSTMENT( hshift_step_spinbutton_adj ), 1, 2 );
-	gtk_widget_set_hexpand( hshift_step_spinbutton, TRUE );
 	gtk_grid_attach( GTK_GRID( table1 ), hshift_step_spinbutton, 2, 1, 1, 1 );
 	gtk_spin_button_set_update_policy( GTK_SPIN_BUTTON( hshift_step_spinbutton ), GTK_UPDATE_IF_VALID );
+	gtk_widget_set_hexpand( hshift_step_spinbutton, TRUE );
 	gtk_widget_show( hshift_step_spinbutton );
 	g_object_set( hshift_step_spinbutton, "xalign", 1.0, NULL );
 
 	vshift_step_spinbutton_adj = gtk_adjustment_new( 0.0, -8192.0, 8192.0, 2.0, 8.0, 0.0 );
 	vshift_step_spinbutton = gtk_spin_button_new( GTK_ADJUSTMENT( vshift_step_spinbutton_adj ), 1, 2 );
-	gtk_widget_set_hexpand( vshift_step_spinbutton, TRUE );
 	gtk_grid_attach( GTK_GRID( table1 ), vshift_step_spinbutton, 2, 2, 1, 1 );
 	gtk_spin_button_set_update_policy( GTK_SPIN_BUTTON( vshift_step_spinbutton ), GTK_UPDATE_IF_VALID );
+	gtk_widget_set_hexpand( vshift_step_spinbutton, TRUE );
 	gtk_widget_show( vshift_step_spinbutton );
 	g_object_set( vshift_step_spinbutton, "xalign", 1.0, NULL );
 
 	hscale_step_spinbutton_adj = gtk_adjustment_new( 0.0, -1024.0, 1024.0, 1.0, 4.0, 0.0 );
 	hscale_step_spinbutton = gtk_spin_button_new( GTK_ADJUSTMENT( hscale_step_spinbutton_adj ), 1, 4 );
-	gtk_widget_set_hexpand( hscale_step_spinbutton, TRUE );
 	gtk_grid_attach( GTK_GRID( table1 ), hscale_step_spinbutton, 2, 3, 1, 1 );
 	gtk_spin_button_set_update_policy( GTK_SPIN_BUTTON( hscale_step_spinbutton ), GTK_UPDATE_IF_VALID );
+	gtk_widget_set_hexpand( hscale_step_spinbutton, TRUE );
 	gtk_widget_show( hscale_step_spinbutton );
 	g_object_set( hscale_step_spinbutton, "xalign", 1.0, NULL );
 
 	vscale_step_spinbutton_adj = gtk_adjustment_new( 0.0, -1024.0, 1024.0, 1.0, 4.0, 0.0 );
 	vscale_step_spinbutton = gtk_spin_button_new( GTK_ADJUSTMENT( vscale_step_spinbutton_adj ), 1, 4 );
-	gtk_widget_set_hexpand( vscale_step_spinbutton, TRUE );
 	gtk_grid_attach( GTK_GRID( table1 ), vscale_step_spinbutton, 2, 4, 1, 1 );	
 	gtk_spin_button_set_update_policy( GTK_SPIN_BUTTON( vscale_step_spinbutton ), GTK_UPDATE_IF_VALID );
+	gtk_widget_set_hexpand( vscale_step_spinbutton, TRUE );
 	gtk_widget_show( vscale_step_spinbutton );
 	g_object_set( vscale_step_spinbutton, "xalign", 1.0, NULL );
 
 	rotate_step_spinbutton_adj = gtk_adjustment_new( 0.0, -360.0, 360.0, 1.0, 10.0, 0.0 );
 	rotate_step_spinbutton = gtk_spin_button_new( GTK_ADJUSTMENT( rotate_step_spinbutton_adj ), 1, 4 );
-	gtk_widget_set_hexpand( rotate_step_spinbutton, TRUE );
 	gtk_grid_attach( GTK_GRID( table1 ), rotate_step_spinbutton, 2, 5, 1, 1 );	
 	gtk_spin_button_set_update_policy( GTK_SPIN_BUTTON( rotate_step_spinbutton ), GTK_UPDATE_IF_VALID );
+	gtk_widget_set_hexpand( rotate_step_spinbutton, TRUE );
 	gtk_widget_show( rotate_step_spinbutton );
 	g_object_set( rotate_step_spinbutton, "xalign", 1.0, NULL );
 
 
-	viewport7 = gtk_frame_new( NULL );
-	gtk_box_pack_start( GTK_BOX( vbox7 ), viewport7, TRUE, TRUE, 0 );
-	gtk_container_set_border_width( GTK_CONTAINER( viewport7 ), 2 );
-	gtk_frame_set_shadow_type( GTK_FRAME( viewport7 ), GTK_SHADOW_ETCHED_IN );
-	gtk_widget_show( viewport7 );
+	viewport = gtk_frame_new( NULL );
+	gtk_frame_set_shadow_type( GTK_FRAME( viewport ), GTK_SHADOW_ETCHED_IN );
+	gtk_box_pack_start( GTK_BOX( content_area ), viewport, FALSE, TRUE, 0 );
+	gtk_container_set_border_width( GTK_CONTAINER( viewport ), 2 );
+	gtk_widget_set_hexpand( viewport, TRUE );
+	gtk_widget_set_vexpand( viewport, FALSE );
+	gtk_widget_show( viewport );
 
 	hbox2 = gtk_box_new( GTK_ORIENTATION_HORIZONTAL, 0 );
-	gtk_container_add( GTK_CONTAINER( viewport7 ), hbox2 );
+	gtk_container_add( GTK_CONTAINER( viewport ), hbox2 );
 	gtk_container_set_border_width( GTK_CONTAINER( hbox2 ), 4 );
+	gtk_widget_set_hexpand( hbox2, TRUE );
+	gtk_widget_set_vexpand( hbox2, FALSE );
 	gtk_widget_show( hbox2 );
 	
-	viewport4 = gtk_frame_new( NULL ); //only need this for layout
-	gtk_container_add( GTK_CONTAINER( hbox2 ), viewport4 );
-	gtk_container_set_border_width( GTK_CONTAINER( viewport4 ), 6 );
-	gtk_frame_set_shadow_type( GTK_FRAME( viewport4 ), GTK_SHADOW_NONE );
-	gtk_widget_show( viewport4 );
+	viewport = gtk_frame_new( NULL ); //only need this for layout
+	gtk_frame_set_shadow_type( GTK_FRAME( viewport ), GTK_SHADOW_NONE );
+	gtk_container_add( GTK_CONTAINER( hbox2 ), viewport );
+	gtk_container_set_border_width( GTK_CONTAINER( viewport ), 6 );
+	gtk_widget_set_hexpand( viewport, TRUE );
+	gtk_widget_set_vexpand( viewport, FALSE );
+	gtk_widget_show( viewport );
 
 	table4 = gtk_grid_new(); //only need this for layout
-	gtk_container_add( GTK_CONTAINER( viewport4 ), table4 );
-	gtk_container_set_border_width( GTK_CONTAINER( table4 ), 5 );
+	gtk_grid_set_row_homogeneous( GTK_GRID( table4 ), TRUE );
 	gtk_grid_set_column_spacing( GTK_GRID( table4 ), 2 );
+	gtk_container_add( GTK_CONTAINER( viewport ), table4 );
+	gtk_container_set_border_width( GTK_CONTAINER( table4 ), 5 );
+	gtk_widget_set_hexpand( table4, TRUE );
 	gtk_widget_show( table4 );
 
 	label = gtk_label_new( "" ); //only need this for layout
-	gtk_widget_set_halign( label, GTK_ALIGN_START );
 	gtk_grid_attach( GTK_GRID( table4 ), label, 0, 0, 1, 1 );
+	gtk_widget_set_halign( label, GTK_ALIGN_START );
 	gtk_widget_show( label );
 
 	axial_button = gtk_button_new_with_mnemonic( _( "Axial" ) );
 	gtk_grid_attach( GTK_GRID( table4 ), axial_button, 0, 1, 1, 1 );
+	gtk_widget_set_hexpand( axial_button, TRUE );
 	gtk_widget_show( axial_button );
 
-	viewport5 = gtk_frame_new( NULL );
-	gtk_box_pack_start( GTK_BOX( hbox2 ), viewport5, FALSE, FALSE, 0 );
-	gtk_container_set_border_width( GTK_CONTAINER( viewport5 ), 6 );
-	gtk_frame_set_shadow_type( GTK_FRAME( viewport5 ), GTK_SHADOW_ETCHED_OUT );
-	gtk_widget_show( viewport5 );
+	viewport = gtk_frame_new( NULL );
+	gtk_frame_set_shadow_type( GTK_FRAME( viewport ), GTK_SHADOW_ETCHED_OUT );
+	gtk_box_pack_start( GTK_BOX( hbox2 ), viewport, FALSE, TRUE, 0 );
+	gtk_container_set_border_width( GTK_CONTAINER( viewport ), 6 );
+	gtk_widget_set_hexpand( viewport, TRUE );
+	gtk_widget_set_vexpand( viewport, FALSE );
+	gtk_widget_show( viewport );
 
-	table5 = gtk_grid_new();
-	gtk_container_add( GTK_CONTAINER( viewport5 ), table5 );
-	gtk_container_set_border_width( GTK_CONTAINER( table5 ), 5 );
-	gtk_grid_set_column_spacing( GTK_GRID( table5 ), 2 );
-	gtk_widget_show( table5 );
+	hbox3 = gtk_box_new( GTK_ORIENTATION_HORIZONTAL, 0 );
+	gtk_container_add( GTK_CONTAINER( viewport ), hbox3 );
+	gtk_widget_set_hexpand( hbox3, TRUE );
+	gtk_widget_set_vexpand( hbox3, FALSE );
+	gtk_widget_show( hbox3 );
 
-	label = gtk_label_new( _( "Height" ) );
+	table3 = gtk_grid_new(); //only need this for layout
+	gtk_grid_set_row_homogeneous( GTK_GRID( table3 ), TRUE );
+	gtk_grid_set_column_spacing( GTK_GRID( table3 ), 2 );
+	gtk_container_add( GTK_CONTAINER( hbox3 ), table3 );
+	gtk_container_set_border_width( GTK_CONTAINER( table3 ), 5 );
+	gtk_widget_set_hexpand( table3, TRUE );
+	gtk_widget_show( table3 );
+
+	label = gtk_label_new( "" ); //only need this for layout
+	gtk_grid_attach( GTK_GRID( table3 ), label, 0, 0, 1, 1 );
 	gtk_widget_set_halign( label, GTK_ALIGN_START );
-	gtk_grid_attach( GTK_GRID( table5 ), label, 1, 0, 1, 1 );
-	gtk_widget_show( label );
-
-	label = gtk_label_new( _( "Width" ) );
-	gtk_widget_set_halign( label, GTK_ALIGN_START );
-	gtk_grid_attach( GTK_GRID( table5 ), label, 2, 0, 1, 1 );
 	gtk_widget_show( label );
 
 	fit_button = gtk_button_new_with_mnemonic( _( "Fit" ) );
-	gtk_grid_attach( GTK_GRID( table5 ), fit_button, 0, 1, 1, 1 );
+	gtk_grid_attach( GTK_GRID( table3 ), fit_button, 0, 1, 2, 1 );
+	gtk_widget_set_hexpand( fit_button, TRUE );
 	gtk_widget_show( fit_button );
+
+	table5 = gtk_grid_new();
+	gtk_grid_set_column_spacing( GTK_GRID( table5 ), 2 );
+	gtk_grid_set_row_homogeneous( GTK_GRID( table5 ), TRUE );
+	gtk_box_pack_start( GTK_BOX( hbox3 ), table5, FALSE, TRUE, 0 );
+	gtk_container_set_border_width( GTK_CONTAINER( table5 ), 5 );
+	gtk_widget_set_hexpand( table5, TRUE );
+	gtk_widget_show( table5 );
+
+	label = gtk_label_new( _( "Height" ) );
+	gtk_grid_attach( GTK_GRID( table5 ), label, 1, 0, 1, 1 );
+	gtk_widget_set_halign( label, GTK_ALIGN_START );	
+	gtk_widget_show( label );
+
+	label = gtk_label_new( _( "Width" ) );
+	gtk_grid_attach( GTK_GRID( table5 ), label, 0, 0, 1, 1 );
+	gtk_widget_set_halign( label, GTK_ALIGN_START );	
+	gtk_widget_show( label );
 
 	fit_width_spinbutton_adj = gtk_adjustment_new( 1, 1, 32, 1, 10, 0 );
 	fit_width_spinbutton = gtk_spin_button_new( GTK_ADJUSTMENT( fit_width_spinbutton_adj ), 1, 0 );
-	gtk_grid_attach( GTK_GRID( table5 ), fit_width_spinbutton, 1, 1, 1, 1 );
+	gtk_grid_attach( GTK_GRID( table5 ), fit_width_spinbutton, 0, 1, 1, 1 );
 	gtk_spin_button_set_numeric( GTK_SPIN_BUTTON( fit_width_spinbutton ), TRUE );
 	gtk_spin_button_set_update_policy( GTK_SPIN_BUTTON( fit_width_spinbutton ), GTK_UPDATE_IF_VALID );
+	gtk_widget_set_hexpand( fit_width_spinbutton, TRUE );
 	gtk_widget_show( fit_width_spinbutton );
 	g_object_set( fit_width_spinbutton, "xalign", 1.0, NULL );
 
 	fit_height_spinbutton_adj = gtk_adjustment_new( 1, 1, 32, 1, 10, 0 );
 	fit_height_spinbutton = gtk_spin_button_new( GTK_ADJUSTMENT( fit_height_spinbutton_adj ), 1, 0 );
-	gtk_grid_attach( GTK_GRID( table5 ), fit_height_spinbutton, 2, 1, 1, 1 );
+	gtk_grid_attach( GTK_GRID( table5 ), fit_height_spinbutton, 1, 1, 1, 1 );
 	gtk_spin_button_set_numeric( GTK_SPIN_BUTTON( fit_height_spinbutton ), TRUE );
 	gtk_spin_button_set_update_policy( GTK_SPIN_BUTTON( fit_height_spinbutton ), GTK_UPDATE_IF_VALID );
+	gtk_widget_set_hexpand( fit_height_spinbutton, TRUE );
 	gtk_widget_show( fit_height_spinbutton );
 	g_object_set( fit_height_spinbutton, "xalign", 1.0, NULL );
 
 
-	button_group = gtk_size_group_new( GTK_SIZE_GROUP_BOTH );
-	gtk_size_group_add_widget( button_group, axial_button );
-	gtk_size_group_add_widget( button_group, fit_button );
-	g_object_unref( button_group );
+	size_group = gtk_size_group_new( GTK_SIZE_GROUP_BOTH );
+	gtk_size_group_add_widget( size_group, axial_button );
+	gtk_size_group_add_widget( size_group, fit_button );
+	g_object_unref( size_group );
 
+	size_group = gtk_size_group_new( GTK_SIZE_GROUP_BOTH );
+	gtk_size_group_add_widget( size_group, table3 );
+	gtk_size_group_add_widget( size_group, table4 );
+	g_object_unref( size_group );
+
+	
 
         // closing the window (upper right window manager click)
 	g_signal_connect( (gpointer) SurfaceInspector,

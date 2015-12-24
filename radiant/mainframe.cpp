@@ -2717,18 +2717,24 @@ void MainFrame::Create(){
 						m_pTexWnd = new TexWnd();
 						{
 							GtkWidget* frame = create_framed_texwnd( m_pTexWnd );
-							gint pos = 0;
-							GtkWidget* texDirList = create_texdirlist_widget( &pos );
+							if( g_PrefsDlg.m_bShowTexDirList )
+							{
+								gint pos = 0;
+								GtkWidget* texDirList = create_texdirlist_widget( &pos );
 
-							GtkWidget* texSplit = gtk_paned_new( GTK_ORIENTATION_HORIZONTAL );
+								GtkWidget* texSplit = gtk_paned_new( GTK_ORIENTATION_HORIZONTAL );
 
-							gtk_paned_pack2( GTK_PANED( vsplit2 ), texSplit, TRUE, FALSE );
-							gtk_paned_add1( GTK_PANED( texSplit ), texDirList );
-							gtk_paned_add2( GTK_PANED( texSplit ), frame );
+								gtk_paned_pack2( GTK_PANED( vsplit2 ), texSplit, TRUE, FALSE );
+								gtk_paned_add1( GTK_PANED( texSplit ), texDirList );
+								gtk_paned_add2( GTK_PANED( texSplit ), frame );
 
-							gtk_paned_set_position( GTK_PANED( texSplit ), pos );
+								gtk_paned_set_position( GTK_PANED( texSplit ), pos );
 
-							gtk_widget_show( texSplit );
+								gtk_widget_show( texSplit );
+							} else
+							{
+								gtk_paned_pack2( GTK_PANED( vsplit2 ), frame, TRUE, TRUE );
+							}
 						}
 
 						// console
@@ -2774,7 +2780,7 @@ void MainFrame::Create(){
 	else if ( CurrentStyle() == eFloating ) {
 		{
 			GtkWidget* wnd = create_floating( this );
-			gtk_window_set_title( GTK_WINDOW( wnd ), "Camera" );
+			gtk_window_set_title( GTK_WINDOW( wnd ), _( "Camera" ) );
 
 #ifdef _WIN32
 			if ( g_PrefsDlg.m_bStartOnPrimMon ) {
@@ -2800,7 +2806,7 @@ void MainFrame::Create(){
 
 			{
 				GtkWidget* wnd = create_floating( this );
-				gtk_window_set_title( GTK_WINDOW( wnd ), "XY View" );
+				gtk_window_set_title( GTK_WINDOW( wnd ), _( "XY View" ) );
 
 #ifdef _WIN32
 				if ( g_PrefsDlg.m_bStartOnPrimMon ) {
@@ -2825,7 +2831,7 @@ void MainFrame::Create(){
 		else
 		{
 			GtkWidget* wnd = create_floating( this );
-			gtk_window_set_title( GTK_WINDOW( wnd ), "XY View" );
+			gtk_window_set_title( GTK_WINDOW( wnd ), _( "XY View" ) );
 
 #ifdef _WIN32
 			if ( g_PrefsDlg.m_bStartOnPrimMon ) {
@@ -2918,9 +2924,26 @@ void MainFrame::Create(){
 			GtkWidget* frame = create_framed_texwnd( m_pTexWnd );
 			m_pTexWnd->m_pParent = g_pGroupDlg->m_pWidget;
 
+			GtkWidget* w = gtk_label_new( _( "Textures" ) );
+			gtk_widget_show( w );
+
+			if( g_PrefsDlg.m_bShowTexDirList )
 			{
-				GtkWidget* w = gtk_label_new( _( "Textures" ) );
-				gtk_widget_show( w );
+				gint pos = 0;
+				GtkWidget* texDirList = create_texdirlist_widget( &pos );
+
+				GtkWidget* texSplit = gtk_paned_new( GTK_ORIENTATION_HORIZONTAL );
+
+				gtk_paned_add1( GTK_PANED( texSplit ), texDirList );
+				gtk_paned_add2( GTK_PANED( texSplit ), frame );
+
+				gtk_paned_set_position( GTK_PANED( texSplit ), pos );
+
+				gtk_widget_show( texSplit );
+
+				gtk_notebook_insert_page( GTK_NOTEBOOK( g_pGroupDlg->m_pNotebook ), texSplit, w, 1 );
+			} else
+			{
 				gtk_notebook_insert_page( GTK_NOTEBOOK( g_pGroupDlg->m_pNotebook ), frame, w, 1 );
 			}
 		}
@@ -2981,9 +3004,26 @@ void MainFrame::Create(){
 			m_pTexWnd = new TexWnd();
 			GtkWidget* frame = create_framed_texwnd( m_pTexWnd );
 
+			GtkWidget* w = gtk_label_new( _( "Textures" ) );
+			gtk_widget_show( w );
+
+			if( g_PrefsDlg.m_bShowTexDirList )
 			{
-				GtkWidget* w = gtk_label_new( _( "Textures" ) );
-				gtk_widget_show( w );
+				gint pos = 0;
+				GtkWidget* texDirList = create_texdirlist_widget( &pos );
+
+				GtkWidget* texSplit = gtk_paned_new( GTK_ORIENTATION_HORIZONTAL );
+
+				gtk_paned_add1( GTK_PANED( texSplit ), texDirList );
+				gtk_paned_add2( GTK_PANED( texSplit ), frame );
+
+				gtk_paned_set_position( GTK_PANED( texSplit ), pos );
+
+				gtk_widget_show( texSplit );
+
+				gtk_notebook_insert_page( GTK_NOTEBOOK( g_pGroupDlg->m_pNotebook ), texSplit, w, 1 );
+			} else
+			{
 				gtk_notebook_insert_page( GTK_NOTEBOOK( g_pGroupDlg->m_pNotebook ), frame, w, 1 );
 			}
 		}
@@ -2996,18 +3036,21 @@ void MainFrame::Create(){
 
 		{
 			gint max_position;
-			g_object_get( m_pSplits[0], "max-position", &max_position, NULL );
+			//g_object_get( m_pSplits[0], "max-position", &max_position, NULL );
+			max_position = gtk_widget_get_allocated_width( m_pSplits[0] );
 			int x = max_position / 2 - gutter;
 			gtk_paned_set_position( GTK_PANED( m_pSplits[0] ), x );
 		}
 
 		{
 			gint max_position;
-			g_object_get( m_pSplits[0], "max-position", &max_position, NULL );
+			//g_object_get( m_pSplits[0], "max-position", &max_position, NULL );
+			max_position = gtk_widget_get_allocated_height( m_pSplits[0] );
 			int y = max_position / 2 - gutter;
 			gtk_paned_set_position( GTK_PANED( m_pSplits[1] ), y );
 			gtk_paned_set_position( GTK_PANED( m_pSplits[2] ), y );
 		}
+
 	}
 
 	if ( g_PrefsDlg.mWindowInfo.nState & GDK_WINDOW_STATE_MAXIMIZED ) {
@@ -4681,6 +4724,7 @@ void MainFrame::OnPrefs() {
     bool    bPluginToolbar      = g_PrefsDlg.m_bPluginToolbar;
     bool    bDetachableMenus    = g_PrefsDlg.m_bDetachableMenus;
     bool    bFloatingZ          = g_PrefsDlg.m_bFloatingZ;
+	bool    bShowTexDirList     = g_PrefsDlg.m_bShowTexDirList;
 
     g_PrefsDlg.LoadPrefs();
 
@@ -4692,7 +4736,8 @@ void MainFrame::OnPrefs() {
            (g_PrefsDlg.m_bLatchedPluginToolbar      != bPluginToolbar   ) ||
            (g_PrefsDlg.m_nLatchedShader             != nShader          ) ||
            (g_PrefsDlg.m_nLatchedTextureQuality     != nTextureQuality  ) || 
-           (g_PrefsDlg.m_bLatchedFloatingZ          != bFloatingZ)) {
+           (g_PrefsDlg.m_bLatchedFloatingZ          != bFloatingZ       ) ||
+		   (g_PrefsDlg.m_bShowTexDirList            != bShowTexDirList)) {
             gtk_MessageBoxNew(m_pWidget, "You must restart Radiant for the "
                               "changes to take effect.", "Restart Radiant", 
                               MB_OK | MB_ICONINFORMATION);

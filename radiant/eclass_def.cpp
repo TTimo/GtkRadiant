@@ -120,6 +120,8 @@ void setSpecialLoad( eclass_t *e, const char* pWhat, char*& p ){
 	}
 }
 
+qboolean IsModelEntity( const char *name );
+
 eclass_t *Eclass_InitFromText( char *text ){
 	char    *t;
 	int len;
@@ -260,7 +262,7 @@ eclass_t *Eclass_InitFromText( char *text ){
 	if ( strcmpi( e->name, "path" ) == 0 ) {
 		e->nShowFlags |= ECLASS_PATH;
 	}
-	if ( strcmpi( e->name, "misc_model" ) == 0 ) {
+	if ( IsModelEntity( e->name ) == qtrue ) {
 		e->nShowFlags |= ECLASS_MISCMODEL;
 	}
 
