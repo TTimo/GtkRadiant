@@ -286,7 +286,7 @@ class Config:
                 'gtk-bundle-2.24.10-GtkRadiant.zip',
                 'gtk-bundle-2.22.1-win64-GtkRadiant.zip',
                 'jpeg-9-MSVC2014-GtkRadiant.zip',
-                'libxml2-2.9.2-GtkRadiant.zip',
+                'libxml2-2.9.2-GtkRadiant-2.zip',
                 'gtkglext-1.2.0-3-win32.zip',
                 ]:
                 if ( not os.path.exists( lib_archive ) ):
