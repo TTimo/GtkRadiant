@@ -395,6 +395,10 @@ class Config:
 
         jpeg_path = find_library( module_ldd, 'libjpeg' )
         print( 'JPEG library: %s' % repr( jpeg_path ) )
+
+        p = subprocess.Popen( 'ldd -r install/modules/imagepng.so', shell = True, stdout = subprocess.PIPE )
+        module_ldd = p.communicate()[0]
+        
         png_path = find_library( module_ldd, 'libpng' )
         print( 'PNG  library: %s' % repr( png_path ) )
 
