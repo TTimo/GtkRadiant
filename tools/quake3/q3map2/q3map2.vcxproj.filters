@@ -122,6 +122,9 @@
     <ClCompile Include="convert_ase.c">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="convert_bsp.c">
+      <Filter>src</Filter>
+    </ClCompile>
     <ClCompile Include="convert_map.c">
       <Filter>src</Filter>
     </ClCompile>

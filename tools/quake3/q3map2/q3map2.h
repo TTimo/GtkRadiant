@@ -1479,6 +1479,11 @@ void                        InitPaths( int *argc, char **argv );
 int                         BSPMain( int argc, char **argv );
 
 
+/* convert_bsp.c */
+int                         ScaleBSPMain( int argc, char **argv );
+int                         ConvertBSPMain( int argc, char **argv );
+
+
 /* convert_map.c */
 int                         ConvertBSPToMap( char *bspName );
 

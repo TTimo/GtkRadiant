@@ -198,6 +198,7 @@
     <ClCompile Include="vis.c" />
     <ClCompile Include="visflow.c" />
     <ClCompile Include="convert_ase.c" />
+    <ClCompile Include="convert_bsp.c" />
     <ClCompile Include="convert_map.c" />
   </ItemGroup>
   <ItemGroup>

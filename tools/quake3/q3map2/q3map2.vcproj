@@ -319,6 +319,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\convert_bsp.c"
+				>
+			</File>
+			<File
 				RelativePath=".\convert_map.c"
 				>
 			</File>
