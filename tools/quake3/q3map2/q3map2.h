@@ -1471,6 +1471,10 @@ game_t                      *GetGame( char *arg );
 void                        InitPaths( int *argc, char **argv );
 
 
+/* fixaas.c */
+int                         FixAASMain( int argc, char **argv );
+
+
 /* bsp.c */
 int                         BSPMain( int argc, char **argv );
 

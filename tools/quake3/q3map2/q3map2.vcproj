@@ -243,6 +243,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\fixaas.c"
+				>
+			</File>
+			<File
 				RelativePath=".\fog.c"
 				>
 			</File>
