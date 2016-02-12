@@ -223,6 +223,18 @@
 				>
 			</File>
 			<File
+				RelativePath=".\bsp_analyze.c"
+				>
+			</File>
+			<File
+				RelativePath=".\bsp_scale.c"
+				>
+			</File>
+			<File
+				RelativePath=".\bsp_info.c"
+				>
+			</File>
+			<File
 				RelativePath=".\decals.c"
 				>
 			</File>

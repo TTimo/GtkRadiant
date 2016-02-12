@@ -50,6 +50,15 @@
     <ClCompile Include="bsp.c">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="bsp_analyze.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="bsp_scale.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="bsp_info.c">
+      <Filter>src</Filter>
+    </ClCompile>
     <ClCompile Include="decals.c">
       <Filter>src</Filter>
     </ClCompile>

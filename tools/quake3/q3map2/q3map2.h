@@ -1465,10 +1465,6 @@ vec_t                       Random( void );
 char                        *Q_strncpyz( char *dst, const char *src, size_t len );
 char                        *Q_strcat( char *dst, size_t dlen, const char *src );
 char                        *Q_strncat( char *dst, size_t dlen, const char *src, size_t slen );
-int                         BSPInfo( int count, char **fileNames );
-int                         ScaleBSPMain( int argc, char **argv );
-int                         ConvertMain( int argc, char **argv );
-
 
 /* path_init.c */
 game_t                      *GetGame( char *arg );
@@ -1479,8 +1475,19 @@ void                        InitPaths( int *argc, char **argv );
 int                         BSPMain( int argc, char **argv );
 
 
-/* convert_bsp.c */
+/* bsp_analyze.c */
+int                         AnalyzeBSPMain( int argc, char **argv );
+
+
+/* bsp_info.c */
+int                         BSPInfoMain( int argc, char **argv );
+
+
+/* bsp_scale.c */
 int                         ScaleBSPMain( int argc, char **argv );
+
+
+/* convert_bsp.c */
 int                         ConvertBSPMain( int argc, char **argv );
 
 

@@ -278,12 +278,12 @@ int main( int argc, char **argv ){
 
 	/* analyze */
 	else if ( !strcmp( argv[ 1 ], "-analyze" ) ) {
-		r = AnalyzeBSP( argc - 1, argv + 1 );
+		r = AnalyzeBSPMain( argc - 1, argv + 1 );
 	}
 
 	/* info */
 	else if ( !strcmp( argv[ 1 ], "-info" ) ) {
-		r = BSPInfo( argc - 2, argv + 2 );
+		r = BSPInfoMain( argc - 2, argv + 2 );
 	}
 
 	/* vis */
