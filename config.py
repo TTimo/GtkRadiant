@@ -286,7 +286,7 @@ class Config:
                 'gtk-bundle-2.24.10-GtkRadiant.zip',
                 'gtk-bundle-2.22.1-win64-GtkRadiant.zip',
                 'jpeg-9-MSVC2014-GtkRadiant.zip',
-                'libxml2-2.9.2-GtkRadiant.zip',
+                'libxml2-2.9.2-GtkRadiant-2.zip',
                 'gtkglext-1.2.0-3-win32.zip',
                 ]:
                 if ( not os.path.exists( lib_archive ) ):
@@ -366,6 +366,18 @@ class Config:
                 ]:
                 shutil.copy( os.path.join( srcdir, x64_dll ), 'install/x64' )
 
+            self.CloneBSPC()
+
+    def CloneBSPC( self ):
+        if ( os.path.exists( 'bspc' ) ):
+            cmd = [ 'git', 'pull' ]
+            print( repr( cmd ) )
+            subprocess.check_call( cmd, cwd = 'bspc' )
+        else:
+            cmd = [ 'git', 'clone', 'https://github.com/TTimo/bspc.git' ]
+            print( repr( cmd ) )
+            subprocess.check_call( cmd )
+
     def FinishBuild( self, target, source, env ):
         print( 'Lookup and bundle the PNG and JPEG libraries' )
         # radiant.bin doesn't link to jpeg lib directly, grab that from a module
@@ -383,6 +395,10 @@ class Config:
 
         jpeg_path = find_library( module_ldd, 'libjpeg' )
         print( 'JPEG library: %s' % repr( jpeg_path ) )
+
+        p = subprocess.Popen( 'ldd -r install/modules/imagepng.so', shell = True, stdout = subprocess.PIPE )
+        module_ldd = p.communicate()[0]
+        
         png_path = find_library( module_ldd, 'libpng' )
         print( 'PNG  library: %s' % repr( png_path ) )
 

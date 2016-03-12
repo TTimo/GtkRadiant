@@ -139,10 +139,7 @@ bfilter_t *FilterAddBase( bfilter_t *pFilter ){
 	pFilter = FilterAddImpl( pFilter,1,0,"areaportal",EXCLUDE_AREAPORTALS,true );
 	pFilter = FilterAddImpl( pFilter,2,QER_TRANS,NULL,EXCLUDE_TRANSLUCENT,true );
 	pFilter = FilterAddImpl( pFilter,3,0,"trigger",EXCLUDE_TRIGGERS,true );
-	pFilter = FilterAddImpl( pFilter,3,0,"misc_model",EXCLUDE_MODELS,true );
-	pFilter = FilterAddImpl( pFilter,3,0,"misc_gamemodel",EXCLUDE_MODELS,true );
-	pFilter = FilterAddImpl( pFilter,3,0,"misc_model_static",EXCLUDE_MODELS,true );
-	pFilter = FilterAddImpl( pFilter,3,0,"model_static",EXCLUDE_MODELS,true );
+	pFilter = FilterAddImpl( pFilter,4,ECLASS_MISCMODEL,NULL,EXCLUDE_MODELS,true );
 	pFilter = FilterAddImpl( pFilter,4,ECLASS_LIGHT,NULL,EXCLUDE_LIGHTS,true );
 	pFilter = FilterAddImpl( pFilter,4,ECLASS_PATH,NULL,EXCLUDE_PATHS,true );
 	pFilter = FilterAddImpl( pFilter,1,0,"lightgrid",EXCLUDE_LIGHTGRID,true );
