@@ -932,9 +932,9 @@ void CamWnd::Cam_DrawBrush( brush_t *b, int mode ){
 
 				// Check model validity
 				// If the model is NULL or invalid, draw a box instead
-				bool temp = b->owner->model.pRender->IsModelNotNull();
-				if ( temp ) {
-					b->owner->model.pRender->Draw(nGLState, DRAW_RF_CAM);
+				bool isModelValid = b->owner->model.pRender->IsModelNotNull();
+				if ( isModelValid ) {
+					b->owner->model.pRender->Draw( nGLState, DRAW_RF_CAM );
 				}
 				else {
 					qglColor4fv( material );
@@ -961,8 +961,8 @@ void CamWnd::Cam_DrawBrush( brush_t *b, int mode ){
 				aabb_draw( b->owner->model.pRender->GetAABB(), DRAW_GL_WIRE );
 			}
 /*
-      if(!(nModelMode & ENTITY_BOXED) && b->owner->eclass->nShowFlags & ECLASS_MISCMODEL)
-              DrawModelOrigin(b);
+			if(!(nModelMode & ENTITY_BOXED) && b->owner->eclass->nShowFlags & ECLASS_MISCMODEL)
+				DrawModelOrigin(b);
  */
 		}
 	}
