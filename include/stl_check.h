@@ -24,7 +24,10 @@
    this allows to catch some weird errors early at compile time
  */
 
+// TODO: finish complete cleanup and removal of STLPort usage traces
+#ifndef Q_NO_STLPORT
 #define Q_NO_STLPORT
+#endif
 
 #ifdef Q_NO_STLPORT
 
