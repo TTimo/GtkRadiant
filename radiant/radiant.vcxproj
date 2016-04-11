@@ -83,7 +83,7 @@
     </ClCompile>
     <Link>
       <AdditionalOptions>/STACK:8388608 %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>Ws2_32.lib;glib-2.0.lib;gobject-2.0.lib;intl.lib;gtk-win32-2.0.lib;gdk-win32-2.0.lib;pango-1.0.lib;pangoft2-1.0.lib;gdkglext-win32-1.0.lib;gtkglext-win32-1.0.lib;libxml2.lib;mathlib.lib;synapse.lib;l_net.lib;cmdlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Ws2_32.lib;glib-2.0.lib;gobject-2.0.lib;intl.lib;gtk-win32-2.0.lib;gdk-win32-2.0.lib;pango-1.0.lib;pangoft2-1.0.lib;gdkglext-win32-1.0.lib;gtkglext-win32-1.0.lib;libxml2.lib;mathlib.lib;synapse.lib;l_net.lib;cmdlib.lib;Dbghelp.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)\..\gtk-2.24.10\lib;$(SolutionDir)\..\libxml2-2.9.1\lib\$(Configuration)\$(Platform);$(SolutionDir)\..\gtkglext-1.2.0\lib;$(SolutionDir)\build\$(Configuration)\libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
@@ -105,7 +105,7 @@
     </ClCompile>
     <Link>
       <AdditionalOptions>/STACK:8388608 %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>Ws2_32.lib;glib-2.0.lib;gobject-2.0.lib;intl.lib;gtk-win32-2.0.lib;gdk-win32-2.0.lib;pango-1.0.lib;pangoft2-1.0.lib;gdkglext-win32-1.0.lib;gtkglext-win32-1.0.lib;libxml2.lib;mathlib.lib;synapse.lib;l_net.lib;cmdlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Ws2_32.lib;glib-2.0.lib;gobject-2.0.lib;intl.lib;gtk-win32-2.0.lib;gdk-win32-2.0.lib;pango-1.0.lib;pangoft2-1.0.lib;gdkglext-win32-1.0.lib;gtkglext-win32-1.0.lib;libxml2.lib;mathlib.lib;synapse.lib;l_net.lib;cmdlib.lib;Dbghelp.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)\..\gtk-2.24.10\lib;$(SolutionDir)\..\libxml2-2.9.1\lib\$(Configuration)\$(Platform);$(SolutionDir)\..\gtkglext-1.2.0\lib;$(SolutionDir)\build\$(Configuration)\libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
