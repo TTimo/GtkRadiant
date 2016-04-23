@@ -414,7 +414,7 @@ void error_redirect( const gchar *domain, GLogLevelFlags log_level, const gchar 
 #define GETTEXT_PACKAGE "radiant"
 #define LOCALEDIR "lang"
 
-int main( int argc, char* argv[] ) {
+int mainRadiant( int argc, char* argv[] ) {
 	const char *libgl;
 	int i, j, k;
 
@@ -921,6 +921,76 @@ int main( int argc, char* argv[] ) {
 	_exit( 0 );
 #endif
 	return 0;
+}
+
+
+#if defined( _WIN32 ) && defined( _MSC_VER )
+#include <dbghelp.h>
+#include <shellapi.h>
+#include <shlobj.h>
+#include <strsafe.h> //StringCchPrintf
+
+int GenerateDump( EXCEPTION_POINTERS* pExceptionPointers ) {
+	BOOL bMiniDumpSuccessful;
+    char szPath[MAX_PATH]; 
+    char szFileName[MAX_PATH]; 
+    char szAppName[] = "GTKRadiant";
+    char* szVersion = RADIANT_VERSION;
+    DWORD dwBufferSize = MAX_PATH;
+    HANDLE hDumpFile;
+    SYSTEMTIME stLocalTime;
+    MINIDUMP_EXCEPTION_INFORMATION ExpParam;
+
+    GetLocalTime( &stLocalTime );
+    GetTempPath( dwBufferSize, szPath );
+
+    StringCchPrintf( szFileName, MAX_PATH, "%s%s", szPath, szAppName );
+    CreateDirectory( szFileName, NULL );
+
+    StringCchPrintf( szFileName, MAX_PATH, "%s%s\\%s-%s-%04d%02d%02d-%02d%02d%02d.dmp", 
+               szPath, szAppName, szAppName, szVersion, 
+               stLocalTime.wYear, stLocalTime.wMonth, stLocalTime.wDay, 
+               stLocalTime.wHour, stLocalTime.wMinute, stLocalTime.wSecond );
+    hDumpFile = CreateFile(szFileName, GENERIC_READ|GENERIC_WRITE, 
+                FILE_SHARE_WRITE|FILE_SHARE_READ, 0, CREATE_ALWAYS, 0, 0);
+
+    ExpParam.ThreadId = GetCurrentThreadId();
+    ExpParam.ExceptionPointers = pExceptionPointers;
+    ExpParam.ClientPointers = TRUE;
+
+    bMiniDumpSuccessful = MiniDumpWriteDump(GetCurrentProcess(), GetCurrentProcessId(), 
+                    hDumpFile, MiniDumpWithDataSegs, &ExpParam, NULL, NULL);
+
+    return EXCEPTION_EXECUTE_HANDLER;
+}
+#endif
+
+int main( int argc, char* argv[] ) {
+
+#if defined( _WIN32 ) && defined( _MSC_VER )
+	__try {
+		return mainRadiant( argc, argv );
+	} __except( GenerateDump( GetExceptionInformation() ) ) {
+
+		char szPath[MAX_PATH]; 
+		char szText[MAX_PATH]; 
+		char szFileName[MAX_PATH]; 
+		char szAppName[] = "GTKRadiant";
+		SYSTEMTIME stLocalTime;
+		DWORD dwBufferSize = MAX_PATH;
+
+	    GetLocalTime( &stLocalTime );
+	    GetTempPath( dwBufferSize, szPath );
+
+	    StringCchPrintf( szFileName, MAX_PATH, "%s%s", szPath, szAppName );
+
+		StringCchPrintf( szText, MAX_PATH, _("Application crashed!\nCreated a dump file in: \n%s"), szFileName );
+
+		MessageBox( NULL, szText, NULL, MB_ICONERROR );
+	}
+#else
+	return mainRadiant( argc, argv );
+#endif
 }
 
 // ydnar: quick and dirty fix, just make the buffer bigger
