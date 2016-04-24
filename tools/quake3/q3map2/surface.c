@@ -1148,7 +1148,7 @@ mapDrawSurface_t *DrawSurfaceForMesh( entity_t *e, parseMesh_t *p, mesh_t *mesh 
 
 	/* spew forth errors */
 	if ( VectorLength( plane ) < 0.001f ) {
-		Sys_Printf( "BOGUS " );
+		Sys_Printf( "DrawSurfaceForMesh: bogus plane\n" );
 	}
 
 	/* test each vert */
