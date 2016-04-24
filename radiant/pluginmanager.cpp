@@ -236,55 +236,57 @@ int refcount;
    times an ID is being referenced, and destroys any instance that is no longer in use */
 class CModelManager : public IModelCache
 {
-public:
-CModelManager(){
-	m_ptrs = g_ptr_array_new();
-}
-virtual ~CModelManager(){
-	g_ptr_array_free( m_ptrs, FALSE );
-}
-
-virtual void DeleteByID( const char *id, const char* version ){
-	unsigned int i;
-	CModelWrapper *elem;
-	for ( i = 0; i < m_ptrs->len; i++ )
-	{
-		elem = (CModelWrapper*)m_ptrs->pdata[i];
-		if ( strcmp( elem->m_version.c_str(), version ) == 0
-			 && strcmp( elem->m_id.c_str(), id ) == 0
-			 && --elem->refcount == 0 ) {
-			g_ptr_array_remove_index_fast( m_ptrs, i );
-			delete elem;
-			return;
-		}
+	public:
+	CModelManager(){
+		m_ptrs = g_ptr_array_new();
 	}
-}
+	virtual ~CModelManager(){
+		g_ptr_array_free( m_ptrs, FALSE );
+	}
 
-virtual entity_interfaces_t *GetByID( const char *id, const char* version ){
-	unsigned int i;
-	CModelWrapper *elem;
-	for ( i = 0; i < m_ptrs->len; i++ )
-	{
-		elem = (CModelWrapper*)m_ptrs->pdata[i];
-		if ( strcmp( elem->m_version.c_str(), version ) == 0
-			 && strcmp( elem->m_id.c_str(), id ) == 0 ) {
-			elem->refcount++;
-			return &elem->m_model;
+	virtual void DeleteByID( const char *id, const char* version ){
+		unsigned int i;
+		CModelWrapper *elem;
+		for ( i = 0; i < m_ptrs->len; i++ )
+		{
+			elem = (CModelWrapper*)m_ptrs->pdata[i];
+			if (strcmp(elem->m_version.c_str(), version) == 0
+				&& strcmp(elem->m_id.c_str(), id) == 0) {
+				elem->refcount--;
+				if (elem->refcount == 0) {
+					g_ptr_array_remove_index_fast(m_ptrs, i);
+					delete elem;
+				}
+				return;
+			}
 		}
 	}
 
-	elem = new CModelWrapper( id, version );
-	g_ptr_array_add( m_ptrs, elem );
+	virtual entity_interfaces_t *GetByID( const char *id, const char* version ){
+		unsigned int i;
+		CModelWrapper *elem;
+		for ( i = 0; i < m_ptrs->len; i++ )
+		{
+			elem = (CModelWrapper*)m_ptrs->pdata[i];
+			if ( strcmp( elem->m_version.c_str(), version ) == 0
+				 && strcmp( elem->m_id.c_str(), id ) == 0 ) {
+				elem->refcount++;
+				return &elem->m_model;
+			}
+		}
 
-	return &elem->m_model;
-}
+		elem = new CModelWrapper( id, version );
+		g_ptr_array_add( m_ptrs, elem );
 
-virtual void RefreshAll(){
-	for ( unsigned int i = 0; i < m_ptrs->len; ++i )
-		( (CModelWrapper*)m_ptrs->pdata[i] )->Refresh();
-}
-private:
-GPtrArray *m_ptrs;   // array of CModelWrapper*
+		return &elem->m_model;
+	}
+
+	virtual void RefreshAll(){
+		for ( unsigned int i = 0; i < m_ptrs->len; ++i )
+			( (CModelWrapper*)m_ptrs->pdata[i] )->Refresh();
+	}
+	private:
+	GPtrArray *m_ptrs;   // array of CModelWrapper*
 };
 
 CModelManager g_model_cache;
