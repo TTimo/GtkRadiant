@@ -8,7 +8,7 @@ BINDIR = $(RESOURCES)/install
 CONFDIR = $(RESOURCES)/etc
 DATADIR = $(RESOURCES)/share
 LIBDIR = $(RESOURCES)/lib
-VERSION = 1.6.4
+VERSION = 1.6.5
 DMG = $(TARGET)/GtkRadiant-$(VERSION).dmg
 VOLUME_NAME = "GtkRadiant $(VERSION)"
 
@@ -31,15 +31,8 @@ all: install bundle
 	
 	gdk-pixbuf-query-loaders | sed $(PREFIX_SED_EXPR) > \
 		$(CONFDIR)/gtk-2.0/gdk-pixbuf.loaders
-
--gtk-runtime-pango:
-	cp -r $(MACPORTS_PREFIX)/lib/pango $(LIBDIR)
-	find $(LIBDIR)/pango -type f ! -name "*.so" -delete
 	
-	pango-querymodules | sed $(PREFIX_SED_EXPR) > \
-		$(CONFDIR)/pango/pango.modules
-	
--gtk-runtime: -gtk-runtime-gdk-pixbuf-2.0 -gtk-runtime-pango
+-gtk-runtime: -gtk-runtime-gdk-pixbuf-2.0
 	cp -r $(MACPORTS_PREFIX)/lib/gtk-2.0 $(LIBDIR)
 	find $(LIBDIR)/gtk-2.0 -type f ! -name "*.so" -delete	
 	
