@@ -115,7 +115,7 @@ static void SetCloneModelNumbers( void ){
 				/* get the model num */
 				value3 = ValueForKey( &entities[ j ], "model" );
 				if ( value3[ 0 ] == '\0' ) {
-					Sys_Printf( "WARNING: Cloned entity %s referenced entity without model\n", value2 );
+					Sys_FPrintf( SYS_WRN, "WARNING: Cloned entity %s referenced entity without model\n", value2 );
 					continue;
 				}
 				models = atoi( &value2[ 1 ] );
@@ -783,7 +783,7 @@ int BSPMain( int argc, char **argv ){
 			Sys_Printf( "-bsp argument unnecessary\n" );
 		}
 		else{
-			Sys_Printf( "WARNING: Unknown option \"%s\"\n", argv[ i ] );
+			Sys_FPrintf( SYS_WRN, "WARNING: Unknown option \"%s\"\n", argv[ i ] );
 		}
 	}
 

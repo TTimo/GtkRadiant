@@ -83,7 +83,7 @@ int DBrush::BuildPoints(){
 					int pos = PointPosition( pnt );
 
 					if ( pos == POINT_IN_BRUSH ) { // ???? shouldn't happen here
-						Sys_Printf( "ERROR:: Build Brush Points: Point IN brush!!!\n" );
+						Sys_FPrintf( SYS_ERR, "ERROR:: Build Brush Points: Point IN brush!!!\n" );
 					}
 					else if ( pos == POINT_ON_BRUSH ) { // normal point
 						if ( !HasPoint( pnt ) ) {

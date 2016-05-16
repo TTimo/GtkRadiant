@@ -697,13 +697,13 @@ int main( int argc, char* argv[] ) {
 			chomp++;
 		buf[chomp] = '\0';
 		if ( strcmp( buf, RADIANT_MAJOR_VERSION ) ) {
-			Sys_Printf( "ERROR: file RADIANT_MAJOR doesn't match ('%s')\n", buf );
+			Sys_FPrintf( SYS_ERR, "ERROR: file RADIANT_MAJOR doesn't match ('%s')\n", buf );
 			bVerIsGood = false;
 		}
 	}
 	else
 	{
-		Sys_Printf( "ERROR: can't find RADIANT_MAJOR in '%s'\n", ver_file_name.GetBuffer() );
+		Sys_FPrintf( SYS_ERR, "ERROR: can't find RADIANT_MAJOR in '%s'\n", ver_file_name.GetBuffer() );
 		bVerIsGood = false;
 	}
 	ver_file_name = g_strAppPath;
@@ -719,13 +719,13 @@ int main( int argc, char* argv[] ) {
 			chomp++;
 		buf[chomp] = '\0';
 		if ( strcmp( buf, RADIANT_MINOR_VERSION ) ) {
-			Sys_Printf( "ERROR: file RADIANT_MINOR doesn't match ('%s')\n", buf );
+			Sys_FPrintf( SYS_ERR, "ERROR: file RADIANT_MINOR doesn't match ('%s')\n", buf );
 			bVerIsGood = false;
 		}
 	}
 	else
 	{
-		Sys_Printf( "ERROR: can't find RADIANT_MINOR in '%s'\n", ver_file_name.GetBuffer() );
+		Sys_FPrintf( SYS_ERR, "ERROR: can't find RADIANT_MINOR in '%s'\n", ver_file_name.GetBuffer() );
 		bVerIsGood = false;
 	}
 	if ( !bVerIsGood ) {
@@ -1098,7 +1098,7 @@ static gboolean RunBsp_CaptureOutput(void *data) {
 	}
 
 	if ( pid == -1 ) {
-		Sys_Printf( "Failed to wait for %d: %s\n", process->pid, strerror( errno ) );
+		Sys_FPrintf( SYS_ERR, "ERROR: Failed to wait for %d: %s\n", process->pid, strerror( errno ) );
 	} else {
 		Sys_Printf( "Process %d terminated with status %d\n", process->pid, process->status );
 	}
