@@ -41,7 +41,7 @@ void QERApp_GetTwoSelectedPatch( patchMesh_t **p1, patchMesh_t **p2 ){
 		}
 	}
 #ifdef _DEBUG
-	Sys_Printf( "WARNING: QERApp_GetTwoSelectedPatch failed (did not find two patches)\n" );
+	Sys_FPrintf( SYS_WRN, "WARNING: QERApp_GetTwoSelectedPatch failed (did not find two patches)\n" );
 #endif
 	return;
 }

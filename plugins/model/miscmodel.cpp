@@ -317,7 +317,7 @@ void CEntityMiscModel::UpdateCachedData(){
 	m4x4_pivoted_transform_by_vec3( m_transform, m_translate, m_euler, m_scale, m_pivot );
 	memcpy( m_inverse_transform, m_transform, sizeof( m4x4_t ) );
 	if ( m4x4_invert( m_inverse_transform ) == 1 ) {
-		Sys_Printf( "ERROR: Singular Matrix, cannot invert" );
+		Sys_FPrintf( SYS_ERR, "ERROR: Singular Matrix, cannot invert" );
 	}
 
 	aabb_clear( &aabb_temp );

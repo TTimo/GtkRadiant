@@ -127,7 +127,7 @@ void ExportLightmaps( void ){
 
 	/* sanity check */
 	if ( bspLightBytes == NULL ) {
-		Sys_Printf( "WARNING: No BSP lightmap data\n" );
+		Sys_FPrintf( SYS_WRN, "WARNING: No BSP lightmap data\n" );
 		return;
 	}
 
@@ -226,7 +226,7 @@ int ImportLightmapsMain( int argc, char **argv ){
 		buffer = NULL;
 		len = vfsLoadFile( filename, (void*) &buffer, -1 );
 		if ( len < 0 ) {
-			Sys_Printf( "WARNING: Unable to load image %s\n", filename );
+			Sys_FPrintf( SYS_WRN, "WARNING: Unable to load image %s\n", filename );
 			continue;
 		}
 
@@ -237,11 +237,11 @@ int ImportLightmapsMain( int argc, char **argv ){
 
 		/* sanity check it */
 		if ( pixels == NULL ) {
-			Sys_Printf( "WARNING: Unable to load image %s\n", filename );
+			Sys_FPrintf( SYS_WRN, "WARNING: Unable to load image %s\n", filename );
 			continue;
 		}
 		if ( width != game->lightmapSize || height != game->lightmapSize ) {
-			Sys_Printf( "WARNING: Image %s is not the right size (%d, %d) != (%d, %d)\n",
+			Sys_FPrintf( SYS_WRN, "WARNING: Image %s is not the right size (%d, %d) != (%d, %d)\n",
 						filename, width, height, game->lightmapSize, game->lightmapSize );
 		}
 
@@ -734,7 +734,7 @@ qboolean AddSurfaceToRawLightmap( int num, rawLightmap_t *lm ){
 
 	/* check for bogus axis */
 	if ( faxis[ axisNum ] == 0.0f ) {
-		Sys_Printf( "WARNING: ProjectSurfaceLightmap: Chose a 0 valued axis\n" );
+		Sys_FPrintf( SYS_WRN, "WARNING: ProjectSurfaceLightmap: Chose a 0 valued axis\n" );
 		lm->w = lm->h = 0;
 		return qfalse;
 	}
@@ -946,7 +946,7 @@ void SetupSurfaceLightmaps( void ){
 		superSample = 1;
 	}
 	else if ( superSample > 8 ) {
-		Sys_Printf( "WARNING: Insane supersampling amount (%d) detected.\n", superSample );
+		Sys_FPrintf( SYS_WRN, "WARNING: Insane supersampling amount (%d) detected.\n", superSample );
 		superSample = 8;
 	}
 
