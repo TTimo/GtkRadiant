@@ -53,6 +53,7 @@ extern _QERBrushTable g_BrushTable;
 #define vfsLoadFile g_VFSTable.m_pfnLoadFile
 #define vfsFreeFile g_VFSTable.m_pfnFreeFile
 #define Sys_Printf g_FuncTable.m_pfnSysPrintf
+#define Sys_FPrintf g_FuncTable.m_pfnSysFPrintf
 
 class CSynapseClientShaders : public CSynapseClient
 {
