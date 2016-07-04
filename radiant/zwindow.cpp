@@ -88,6 +88,15 @@ void ZWnd::OnMouseMove( guint32 nFlags, int pointx, int pointy ){
 	Z_MouseMoved( pointx, m_pWidget->allocation.height - 1 - pointy, nFlags );
 }
 
+void ZWnd::OnMouseWheel(bool bUp, int pointx, int pointy) {
+	if (bUp)
+		z.scale *= 2;
+	else
+		z.scale /= 2;
+	//Sys_Printf("ZWnd::OnMouseWheel> bUp=%d pointx=%d pointy=%d z.scale=%f\n", bUp, pointx, pointy, z.scale);
+	Sys_UpdateWindows(W_Z);
+}
+
 void ZWnd::OnExpose(){
 	if ( !MakeCurrent() ) {
 		Sys_FPrintf( SYS_ERR, "ERROR: wglMakeCurrent failed..\n " );
