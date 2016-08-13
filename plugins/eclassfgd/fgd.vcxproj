@@ -21,23 +21,24 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{04213509-5ED3-4C74-B8A2-480BE6F48363}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
-    <PlatformToolset>v110_xp</PlatformToolset>
+    <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
-    <PlatformToolset>v110_xp</PlatformToolset>
+    <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
-    <PlatformToolset>v110_xp</PlatformToolset>
+    <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
-    <PlatformToolset>v110_xp</PlatformToolset>
+    <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -71,7 +72,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(SolutionDir)\libs;$(SolutionDir)\include;$(SolutionDir)\..\STLport-5.2.1\stlport;$(SolutionDir)\..\gtk-2.24.10\include\glib-2.0;$(SolutionDir)\..\gtk-2.24.10\include\gdk-pixbuf-2.0;$(SolutionDir)\..\gtk-2.24.10\lib\glib-2.0\include;$(SolutionDir)\..\libxml2-2.9.1\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\libs;$(SolutionDir)\include;$(SolutionDir)\..\STLport-5.2.1\stlport;$(SolutionDir)\..\gtk-2.24.10\include\glib-2.0;$(SolutionDir)\..\gtk-2.24.10\include\gdk-pixbuf-2.0;$(SolutionDir)\..\gtk-2.24.10\lib\glib-2.0\include;$(SolutionDir)\..\libxml2-2.9.2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;FGD_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -83,8 +84,8 @@
     </ClCompile>
     <Link>
       <AdditionalOptions>/STACK:8388608 %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>ws2_32.lib;glib-2.0.lib;libxml2.lib;synapse.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)\..\gtk-2.24.10\lib;$(SolutionDir)\..\libxml2-2.9.1\lib\$(Configuration)\$(Platform);$(SolutionDir)\build\$(Configuration)\libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>ws2_32.lib;glib-2.0.lib;libxml2_a.lib;synapse.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)\..\gtk-2.24.10\lib;$(SolutionDir)\..\libxml2-2.9.2/win32/bin.msvc;$(SolutionDir)\build\$(Configuration)\libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ModuleDefinitionFile>fgd.def</ModuleDefinitionFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
@@ -94,7 +95,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(SolutionDir)\libs;$(SolutionDir)\include;$(SolutionDir)\..\STLport-5.2.1\stlport;$(SolutionDir)\..\gtk-2.24.10\include\glib-2.0;$(SolutionDir)\..\gtk-2.24.10\include\gdk-pixbuf-2.0;$(SolutionDir)\..\gtk-2.24.10\lib\glib-2.0\include;$(SolutionDir)\..\libxml2-2.9.1\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\libs;$(SolutionDir)\include;$(SolutionDir)\..\STLport-5.2.1\stlport;$(SolutionDir)\..\gtk-2.24.10\include\glib-2.0;$(SolutionDir)\..\gtk-2.24.10\include\gdk-pixbuf-2.0;$(SolutionDir)\..\gtk-2.24.10\lib\glib-2.0\include;$(SolutionDir)\..\libxml2-2.9.2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;FGD_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -106,8 +107,8 @@
     </ClCompile>
     <Link>
       <AdditionalOptions>/STACK:8388608 %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>ws2_32.lib;glib-2.0.lib;libxml2.lib;synapse.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)\..\gtk-2.24.10\lib;$(SolutionDir)\..\libxml2-2.9.1\lib\$(Configuration)\$(Platform);$(SolutionDir)\build\$(Configuration)\libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>ws2_32.lib;glib-2.0.lib;libxml2_a.lib;synapse.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)\..\gtk-2.24.10\lib;$(SolutionDir)\..\libxml2-2.9.2/win32/bin.msvc;$(SolutionDir)\build\$(Configuration)\libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ModuleDefinitionFile>fgd.def</ModuleDefinitionFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
@@ -115,7 +116,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
-      <AdditionalIncludeDirectories>$(SolutionDir)\libs;$(SolutionDir)\include;$(SolutionDir)\..\STLport-5.2.1\stlport;$(SolutionDir)\..\gtk-2.24.10\include\glib-2.0;$(SolutionDir)\..\gtk-2.24.10\include\gdk-pixbuf-2.0;$(SolutionDir)\..\gtk-2.24.10\lib\glib-2.0\include;$(SolutionDir)\..\libxml2-2.9.1\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\libs;$(SolutionDir)\include;$(SolutionDir)\..\STLport-5.2.1\stlport;$(SolutionDir)\..\gtk-2.24.10\include\glib-2.0;$(SolutionDir)\..\gtk-2.24.10\include\gdk-pixbuf-2.0;$(SolutionDir)\..\gtk-2.24.10\lib\glib-2.0\include;$(SolutionDir)\..\libxml2-2.9.2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;FGD_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <PrecompiledHeader />
@@ -125,8 +126,8 @@
     </ClCompile>
     <Link>
       <AdditionalOptions>/STACK:8388608 %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>ws2_32.lib;glib-2.0.lib;libxml2.lib;synapse.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)\..\gtk-2.24.10\lib;$(SolutionDir)\..\libxml2-2.9.1\lib\$(Configuration)\$(Platform);$(SolutionDir)\build\$(Configuration)\libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>ws2_32.lib;glib-2.0.lib;libxml2_a.lib;synapse.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)\..\gtk-2.24.10\lib;$(SolutionDir)\..\libxml2-2.9.2/win32/bin.msvc;$(SolutionDir)\build\$(Configuration)\libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ModuleDefinitionFile>fgd.def</ModuleDefinitionFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
@@ -137,7 +138,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>$(SolutionDir)\libs;$(SolutionDir)\include;$(SolutionDir)\..\STLport-5.2.1\stlport;$(SolutionDir)\..\gtk-2.24.10\include\glib-2.0;$(SolutionDir)\..\gtk-2.24.10\include\gdk-pixbuf-2.0;$(SolutionDir)\..\gtk-2.24.10\lib\glib-2.0\include;$(SolutionDir)\..\libxml2-2.9.1\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\libs;$(SolutionDir)\include;$(SolutionDir)\..\STLport-5.2.1\stlport;$(SolutionDir)\..\gtk-2.24.10\include\glib-2.0;$(SolutionDir)\..\gtk-2.24.10\include\gdk-pixbuf-2.0;$(SolutionDir)\..\gtk-2.24.10\lib\glib-2.0\include;$(SolutionDir)\..\libxml2-2.9.2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;FGD_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <PrecompiledHeader>
@@ -148,8 +149,8 @@
     </ClCompile>
     <Link>
       <AdditionalOptions>/STACK:8388608 %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>ws2_32.lib;glib-2.0.lib;libxml2.lib;synapse.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)\..\gtk-2.24.10\lib;$(SolutionDir)\..\libxml2-2.9.1\lib\$(Configuration)\$(Platform);$(SolutionDir)\build\$(Configuration)\libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>ws2_32.lib;glib-2.0.lib;libxml2_a.lib;synapse.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)\..\gtk-2.24.10\lib;$(SolutionDir)\..\libxml2-2.9.2/win32/bin.msvc;$(SolutionDir)\build\$(Configuration)\libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ModuleDefinitionFile>fgd.def</ModuleDefinitionFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>

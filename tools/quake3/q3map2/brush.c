@@ -93,12 +93,7 @@ brush_t *AllocBrush( int numSides ){
 	brush_t     *bb;
 	size_t c;
 
-
-	/* allocate and clear */
-	if ( numSides <= 0 ) {
-		Error( "AllocBrush called with numsides = %d", numSides );
-	}
-	c = (size_t)&( ( (brush_t*) 0 )->sides[ numSides ] );
+	c = sizeof(*bb) + (numSides > 6 ? sizeof(side_t)*(numSides - 6) : 0);
 	bb = safe_malloc( c );
 	memset( bb, 0, c );
 	if ( numthreads == 1 ) {

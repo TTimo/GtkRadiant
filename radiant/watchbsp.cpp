@@ -150,7 +150,7 @@ static void saxEndElement( message_info_t *data, const xmlChar *name ) {
 	}
 	if ( data->recurse == data->stop_depth ) {
 #ifdef _DEBUG
-		Sys_Printf( "Received error msg .. shutting down..\n" );
+		Sys_FPrintf( SYS_ERR, "ERROR: Received error msg .. shutting down..\n" );
 #endif
 		// tell there has been an error
 		if ( g_pParentWnd->GetWatchBSP()->HasBSPPlugin() ) {
@@ -358,7 +358,7 @@ void CWatchBSP::Reset(){
 bool CWatchBSP::SetupListening(){
 #ifdef _DEBUG
 	if ( m_pListenSocket ) {
-		Sys_Printf( "ERROR: m_pListenSocket != NULL in CWatchBSP::SetupListening\n" );
+		Sys_FPrintf( SYS_ERR, "ERROR: m_pListenSocket != NULL in CWatchBSP::SetupListening\n" );
 		return false;
 	}
 #endif
@@ -442,7 +442,7 @@ void CWatchBSP::RoutineProcessing(){
 #ifdef _DEBUG
 		// some debug checks
 		if ( !m_pListenSocket ) {
-			Sys_Printf( "ERROR: m_pListenSocket == NULL in CWatchBSP::RoutineProcessing EBeginStep state\n" );
+			Sys_FPrintf( SYS_ERR, "ERROR: m_pListenSocket == NULL in CWatchBSP::RoutineProcessing EBeginStep state\n" );
 			Reset();
 			break;
 		}
@@ -462,7 +462,7 @@ void CWatchBSP::RoutineProcessing(){
 #ifdef _DEBUG
 		// some debug checks
 		if ( !m_pInSocket ) {
-			Sys_Printf( "ERROR: m_pInSocket == NULL in CWatchBSP::RoutineProcessing EWatching state\n" );
+			Sys_FPrintf( SYS_ERR, "ERROR: m_pInSocket == NULL in CWatchBSP::RoutineProcessing EWatching state\n" );
 			Reset();
 			break;
 		}
@@ -478,7 +478,7 @@ void CWatchBSP::RoutineProcessing(){
 		// (no use on windows)
 		ret = select( m_pInSocket->socket + 1, &readfds, NULL, NULL, &tout );
 		if ( ret == SOCKET_ERROR ) {
-			Sys_Printf( "WARNING: SOCKET_ERROR in CWatchBSP::RoutineProcessing\n" );
+			Sys_FPrintf( SYS_WRN, "WARNING: SOCKET_ERROR in CWatchBSP::RoutineProcessing\n" );
 			Sys_Printf( "Terminating the connection.\n" );
 			Reset();
 			break;

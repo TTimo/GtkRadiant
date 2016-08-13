@@ -21,23 +21,24 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{CD40B764-1D47-4FAE-8C6A-EF036E478D65}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
-    <PlatformToolset>v110_xp</PlatformToolset>
+    <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
-    <PlatformToolset>v110_xp</PlatformToolset>
+    <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
-    <PlatformToolset>v110_xp</PlatformToolset>
+    <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
-    <PlatformToolset>v110_xp</PlatformToolset>
+    <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -77,7 +78,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(SolutionDir)\include;$(SolutionDir)\tools\quake3\common;$(SolutionDir)\libs;$(SolutionDir)\..\gtk-2.24.10\include\glib-2.0;$(SolutionDir)\..\gtk-2.24.10\include\gdk-pixbuf-2.0;$(SolutionDir)\..\gtk-2.24.10\lib\glib-2.0\include;$(SolutionDir)\..\libxml2-2.9.1\include;$(SolutionDir)\..\gtk-2.24.10\include\libpng14;$(SolutionDir)\..\gtk-2.24.10\include;$(SolutionDir)\..\jpeg-9;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\include;$(SolutionDir)\tools\quake3\common;$(SolutionDir)\libs;$(SolutionDir)\..\gtk-2.24.10\include\glib-2.0;$(SolutionDir)\..\gtk-2.24.10\include\gdk-pixbuf-2.0;$(SolutionDir)\..\gtk-2.24.10\lib\glib-2.0\include;$(SolutionDir)\..\libxml2-2.9.2\include;$(SolutionDir)\..\gtk-2.24.10\include\libpng14;$(SolutionDir)\..\gtk-2.24.10\include;$(SolutionDir)\..\jpeg-9;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -89,8 +90,8 @@
     </ClCompile>
     <Link>
       <AdditionalOptions>/STACK:8388608 %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>Ws2_32.lib;glib-2.0.lib;libpng.lib;libxml2.lib;jpeg.lib;md5lib.lib;mathlib.lib;picomodel.lib;l_net.lib;ddslib.lib;quake3-common.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)\..\gtk-2.24.10\lib;$(SolutionDir)\..\libxml2-2.9.1\lib\$(Configuration)\$(Platform);$(SolutionDir)\..\jpeg-9\Release;$(SolutionDir)\build\$(Configuration)\libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>Ws2_32.lib;glib-2.0.lib;libpng.lib;libxml2_a.lib;jpeg.lib;md5lib.lib;mathlib.lib;picomodel.lib;l_net.lib;ddslib.lib;quake3-common.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)\..\gtk-2.24.10\lib;$(SolutionDir)\..\libxml2-2.9.2/win32/bin.msvc;$(SolutionDir)\..\jpeg-9\Release;$(SolutionDir)\build\$(Configuration)\libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
       <TargetMachine>MachineX86</TargetMachine>
@@ -99,7 +100,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(SolutionDir)\include;$(SolutionDir)\tools\quake3\common;$(SolutionDir)\libs;$(SolutionDir)\..\gtk-2.22.1_win64\include\glib-2.0;$(SolutionDir)\..\gtk-2.22.1_win64\lib\glib-2.0\include;$(SolutionDir)\..\libxml2-2.9.1\include;$(SolutionDir)\..\gtk-2.22.1_win64\include\libpng14;$(SolutionDir)\..\gtk-2.22.1_win64\include;$(SolutionDir)\..\jpeg-9;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\include;$(SolutionDir)\tools\quake3\common;$(SolutionDir)\libs;$(SolutionDir)\..\gtk-2.22.1_win64\include\glib-2.0;$(SolutionDir)\..\gtk-2.22.1_win64\lib\glib-2.0\include;$(SolutionDir)\..\libxml2-2.9.2\include;$(SolutionDir)\..\gtk-2.22.1_win64\include\libpng14;$(SolutionDir)\..\gtk-2.22.1_win64\include;$(SolutionDir)\..\jpeg-9;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -111,15 +112,15 @@
     </ClCompile>
     <Link>
       <AdditionalOptions>/STACK:8388608 %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>Ws2_32.lib;glib-2.0.lib;libpng.lib;libxml2.lib;jpeg.lib;md5lib.lib;mathlib.lib;picomodel.lib;l_net.lib;ddslib.lib;quake3-common.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)\..\gtk-2.22.1_win64\lib;$(SolutionDir)\..\libxml2-2.9.1\lib\$(Configuration)\$(Platform);$(SolutionDir)\..\jpeg-9\x64\Release;$(SolutionDir)\build\$(Configuration)\$(Platform)\libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>Ws2_32.lib;glib-2.0.lib;libpng.lib;libxml2_a.lib;jpeg.lib;md5lib.lib;mathlib.lib;picomodel.lib;l_net.lib;ddslib.lib;quake3-common.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)\..\gtk-2.22.1_win64\lib;$(SolutionDir)\..\libxml2-2.9.2/win32/bin.msvc/x64;$(SolutionDir)\..\jpeg-9\x64\Release;$(SolutionDir)\build\$(Configuration)\$(Platform)\libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
-      <AdditionalIncludeDirectories>$(SolutionDir)\include;$(SolutionDir)\tools\quake3\common;$(SolutionDir)\libs;$(SolutionDir)\..\gtk-2.24.10\include\glib-2.0;$(SolutionDir)\..\gtk-2.24.10\include\gdk-pixbuf-2.0;$(SolutionDir)\..\gtk-2.24.10\lib\glib-2.0\include;$(SolutionDir)\..\libxml2-2.9.1\include;$(SolutionDir)\..\gtk-2.24.10\include\libpng14;$(SolutionDir)\..\gtk-2.24.10\include;$(SolutionDir)\..\jpeg-9;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\include;$(SolutionDir)\tools\quake3\common;$(SolutionDir)\libs;$(SolutionDir)\..\gtk-2.24.10\include\glib-2.0;$(SolutionDir)\..\gtk-2.24.10\include\gdk-pixbuf-2.0;$(SolutionDir)\..\gtk-2.24.10\lib\glib-2.0\include;$(SolutionDir)\..\libxml2-2.9.2\include;$(SolutionDir)\..\gtk-2.24.10\include\libpng14;$(SolutionDir)\..\gtk-2.24.10\include;$(SolutionDir)\..\jpeg-9;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <PrecompiledHeader />
@@ -129,8 +130,8 @@
     </ClCompile>
     <Link>
       <AdditionalOptions>/STACK:8388608 %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>Ws2_32.lib;glib-2.0.lib;libpng.lib;libxml2.lib;jpeg.lib;md5lib.lib;mathlib.lib;picomodel.lib;l_net.lib;ddslib.lib;quake3-common.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)\..\gtk-2.24.10\lib;$(SolutionDir)\..\libxml2-2.9.1\lib\$(Configuration)\$(Platform);$(SolutionDir)\..\jpeg-9\Release;$(SolutionDir)\build\$(Configuration)\libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>Ws2_32.lib;glib-2.0.lib;libpng.lib;libxml2_a.lib;jpeg.lib;md5lib.lib;mathlib.lib;picomodel.lib;l_net.lib;ddslib.lib;quake3-common.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)\..\gtk-2.24.10\lib;$(SolutionDir)\..\libxml2-2.9.2/win32/bin.msvc;$(SolutionDir)\..\jpeg-9\Release;$(SolutionDir)\build\$(Configuration)\libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
@@ -140,7 +141,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>$(SolutionDir)\include;$(SolutionDir)\tools\quake3\common;$(SolutionDir)\libs;$(SolutionDir)\..\gtk-2.22.1_win64\include\glib-2.0;$(SolutionDir)\..\gtk-2.22.1_win64\lib\glib-2.0\include;$(SolutionDir)\..\libxml2-2.9.1\include;$(SolutionDir)\..\gtk-2.22.1_win64\include\libpng14;$(SolutionDir)\..\gtk-2.22.1_win64\include;$(SolutionDir)\..\jpeg-9;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\include;$(SolutionDir)\tools\quake3\common;$(SolutionDir)\libs;$(SolutionDir)\..\gtk-2.22.1_win64\include\glib-2.0;$(SolutionDir)\..\gtk-2.22.1_win64\lib\glib-2.0\include;$(SolutionDir)\..\libxml2-2.9.2\include;$(SolutionDir)\..\gtk-2.22.1_win64\include\libpng14;$(SolutionDir)\..\gtk-2.22.1_win64\include;$(SolutionDir)\..\jpeg-9;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <PrecompiledHeader>
@@ -151,8 +152,8 @@
     </ClCompile>
     <Link>
       <AdditionalOptions>/STACK:8388608 %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>Ws2_32.lib;glib-2.0.lib;libpng.lib;libxml2.lib;jpeg.lib;md5lib.lib;mathlib.lib;picomodel.lib;l_net.lib;ddslib.lib;quake3-common.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)\..\gtk-2.22.1_win64\lib;$(SolutionDir)\..\libxml2-2.9.1\lib\$(Configuration)\$(Platform);$(SolutionDir)\..\jpeg-9\x64\Release;$(SolutionDir)\build\$(Configuration)\$(Platform)\libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>Ws2_32.lib;glib-2.0.lib;libpng.lib;libxml2_a.lib;jpeg.lib;md5lib.lib;mathlib.lib;picomodel.lib;l_net.lib;ddslib.lib;quake3-common.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)\..\gtk-2.22.1_win64\lib;$(SolutionDir)\..\libxml2-2.9.2/win32/bin.msvc/x64;$(SolutionDir)\..\jpeg-9\x64\Release;$(SolutionDir)\build\$(Configuration)\$(Platform)\libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
@@ -173,8 +174,12 @@
     <ClCompile Include="brush.c" />
     <ClCompile Include="brush_primit.c" />
     <ClCompile Include="bsp.c" />
+    <ClCompile Include="bsp_analyze.c" />
+    <ClCompile Include="bsp_scale.c" />
+    <ClCompile Include="bsp_info.c" />
     <ClCompile Include="decals.c" />
     <ClCompile Include="facebsp.c" />
+    <ClCompile Include="fixaas.c" />
     <ClCompile Include="fog.c" />
     <ClCompile Include="leakfile.c" />
     <ClCompile Include="map.c" />
@@ -197,6 +202,7 @@
     <ClCompile Include="vis.c" />
     <ClCompile Include="visflow.c" />
     <ClCompile Include="convert_ase.c" />
+    <ClCompile Include="convert_bsp.c" />
     <ClCompile Include="convert_map.c" />
   </ItemGroup>
   <ItemGroup>

@@ -166,7 +166,7 @@ void CPortals::Load(){
 	in = fopen( fn, "rt" );
 
 	if ( in == NULL ) {
-		Sys_Printf( "  ERROR - could not open file.\n" );
+		Sys_FPrintf( SYS_ERR, "ERROR - could not open file.\n" );
 
 		return;
 	}
@@ -174,7 +174,7 @@ void CPortals::Load(){
 	if ( !fgets( buf, LINE_BUF, in ) ) {
 		fclose( in );
 
-		Sys_Printf( "  ERROR - File ended prematurely.\n" );
+		Sys_FPrintf( SYS_ERR, "ERROR - File ended prematurely.\n" );
 
 		return;
 	}
@@ -182,7 +182,7 @@ void CPortals::Load(){
 	if ( strncmp( "PRT1", buf, 4 ) != 0 ) {
 		fclose( in );
 
-		Sys_Printf( "  ERROR - File header indicates wrong file type (should be \"PRT1\").\n" );
+		Sys_FPrintf( SYS_ERR, "ERROR - File header indicates wrong file type (should be \"PRT1\").\n" );
 
 		return;
 	}
@@ -190,7 +190,7 @@ void CPortals::Load(){
 	if ( !fgets( buf, LINE_BUF, in ) ) {
 		fclose( in );
 
-		Sys_Printf( "  ERROR - File ended prematurely.\n" );
+		Sys_FPrintf( SYS_ERR, "ERROR - File ended prematurely.\n" );
 
 		return;
 	}
@@ -203,7 +203,7 @@ void CPortals::Load(){
 
         node_count = 0;
 
-        Sys_Printf("  ERROR - Extreme number of nodes, aborting.\n");
+        Sys_FPrintf( SYS_ERR, "ERROR - Extreme number of nodes, aborting.\n");
 
         return;
     }
@@ -214,7 +214,7 @@ void CPortals::Load(){
 
 		node_count = 0;
 
-		Sys_Printf( "  ERROR - File ended prematurely.\n" );
+		Sys_FPrintf( SYS_ERR, "ERROR - File ended prematurely.\n" );
 
 		return;
 	}
@@ -227,7 +227,7 @@ void CPortals::Load(){
 		portal_count = 0;
 		node_count = 0;
 
-		Sys_Printf( "  ERROR - Extreme number of portals, aborting.\n" );
+		Sys_FPrintf( SYS_ERR, "ERROR - Extreme number of portals, aborting.\n" );
 
 		return;
 	}
@@ -238,7 +238,7 @@ void CPortals::Load(){
 		portal_count = 0;
 		node_count = 0;
 
-		Sys_Printf( "  ERROR - number of portals equals 0, aborting.\n" );
+		Sys_FPrintf( SYS_ERR, "ERROR - number of portals equals 0, aborting.\n" );
 
 		return;
 	}
@@ -260,7 +260,7 @@ void CPortals::Load(){
 
 			Purge();
 
-			Sys_Printf( "  ERROR - Could not find information for portal number %d of %d.\n", n + 1, portal_count );
+			Sys_FPrintf( SYS_ERR, "ERROR - Could not find information for portal number %d of %d.\n", n + 1, portal_count );
 
 			return;
 		}
@@ -278,7 +278,7 @@ void CPortals::Load(){
 
 			Purge();
 
-			Sys_Printf( "  ERROR - Information for portal number %d of %d is not formatted correctly.\n", n + 1, portal_count );
+			Sys_FPrintf( SYS_ERR, "ERROR - Information for portal number %d of %d is not formatted correctly.\n", n + 1, portal_count );
 
 			return;
 		}

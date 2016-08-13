@@ -335,7 +335,11 @@ extern int unz_GAME_QL;
 #define MAX_MAP_PORTALS         0x20000
 #define MAX_MAP_LIGHTING        0x800000
 #define MAX_MAP_LIGHTGRID       0x100000    //%	0x800000 /* ydnar: set to points, not bytes */
-#define MAX_MAP_VISIBILITY      0x200000
+
+// some recent QL maps have started hitting the limit (old value was 0x200000). QBall
+// below has been 'borrowed' from the netradiant fork
+#define MAX_MAP_VISCLUSTERS     0x4000 // <= MAX_MAP_LEAFS
+#define MAX_MAP_VISIBILITY      ( VIS_HEADER_SIZE + MAX_MAP_VISCLUSTERS * ( ( ( MAX_MAP_VISCLUSTERS + 63 ) & ~63 ) >> 3 ) )
 
 #define MAX_MAP_DRAW_SURFS      0x20000
 #define MAX_MAP_DRAW_VERTS      0x100000
@@ -1461,18 +1465,34 @@ vec_t                       Random( void );
 char                        *Q_strncpyz( char *dst, const char *src, size_t len );
 char                        *Q_strcat( char *dst, size_t dlen, const char *src );
 char                        *Q_strncat( char *dst, size_t dlen, const char *src, size_t slen );
-int                         BSPInfo( int count, char **fileNames );
-int                         ScaleBSPMain( int argc, char **argv );
-int                         ConvertMain( int argc, char **argv );
-
 
 /* path_init.c */
 game_t                      *GetGame( char *arg );
 void                        InitPaths( int *argc, char **argv );
 
 
+/* fixaas.c */
+int                         FixAASMain( int argc, char **argv );
+
+
 /* bsp.c */
 int                         BSPMain( int argc, char **argv );
+
+
+/* bsp_analyze.c */
+int                         AnalyzeBSPMain( int argc, char **argv );
+
+
+/* bsp_info.c */
+int                         BSPInfoMain( int argc, char **argv );
+
+
+/* bsp_scale.c */
+int                         ScaleBSPMain( int argc, char **argv );
+
+
+/* convert_bsp.c */
+int                         ConvertBSPMain( int argc, char **argv );
 
 
 /* convert_map.c */

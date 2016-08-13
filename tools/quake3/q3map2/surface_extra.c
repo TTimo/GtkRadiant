@@ -340,7 +340,7 @@ void LoadSurfaceExtraFile( const char *path ){
 	Sys_Printf( "Loading %s\n", srfPath );
 	size = LoadFile( srfPath, (void**) &buffer );
 	if ( size <= 0 ) {
-		Sys_Printf( "WARNING: Unable to find surface file %s, using defaults.\n", srfPath );
+		Sys_FPrintf( SYS_WRN, "WARNING: Unable to find surface file %s, using defaults.\n", srfPath );
 		return;
 	}
 

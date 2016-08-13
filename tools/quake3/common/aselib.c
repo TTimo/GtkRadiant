@@ -217,7 +217,7 @@ polyset_t *ASE_GetSurfaceAnimation( int which, int *pNumFrames, int skipFrameSta
 	{
 		numFramesInAnimation = pObject->anim.numFrames;
 		if ( maxFrames != -1 ) {
-			Sys_Printf( "WARNING: ASE_GetSurfaceAnimation maxFrames > numFramesInAnimation\n" );
+			Sys_FPrintf( SYS_WRN, "WARNING: ASE_GetSurfaceAnimation maxFrames > numFramesInAnimation\n" );
 		}
 	}
 

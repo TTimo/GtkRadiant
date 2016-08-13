@@ -103,11 +103,11 @@ void FaceToBrushPrimitFace( face_t *f ){
     strcpy(f->brushprimit_texdef.name,f->texdef.name); */
 #ifdef DBG_BP
 	if ( f->plane.normal[0] == 0.0f && f->plane.normal[1] == 0.0f && f->plane.normal[2] == 0.0f ) {
-		Sys_Printf( "Warning : f->plane.normal is (0,0,0) in FaceToBrushPrimitFace\n" );
+		Sys_FPrintf( SYS_WRN, "Warning : f->plane.normal is (0,0,0) in FaceToBrushPrimitFace\n" );
 	}
 	// check d_texture
 	if ( !f->d_texture ) {
-		Sys_Printf( "Warning : f.d_texture is NULL in FaceToBrushPrimitFace\n" );
+		Sys_FPrintf( SYS_WRN, "Warning : f.d_texture is NULL in FaceToBrushPrimitFace\n" );
 		return;
 	}
 #endif
@@ -162,10 +162,10 @@ void EmitBrushPrimitTextureCoordinates( face_t * f, winding_t * w ){
 			vec_t T = f->brushprimit_texdef.coords[1][0] * x + f->brushprimit_texdef.coords[1][1] * y + f->brushprimit_texdef.coords[1][2];
 			if ( fabs( S - w->points[i][3] ) > 1e-2 || fabs( T - w->points[i][4] ) > 1e-2 ) {
 				if ( fabs( S - w->points[i][3] ) > 1e-4 || fabs( T - w->points[i][4] ) > 1e-4 ) {
-					Sys_Printf( "Warning : precision loss in brush -> brush primitive texture computation\n" );
+					Sys_FPrintf( SYS_WRN, "Warning : precision loss in brush -> brush primitive texture computation\n" );
 				}
 				else{
-					Sys_Printf( "Warning : brush -> brush primitive texture computation bug detected\n" );
+					Sys_FPrintf( SYS_WRN, "Warning : brush -> brush primitive texture computation bug detected\n" );
 				}
 			}
 		}
@@ -181,14 +181,14 @@ void TexMatToFakeTexCoords( vec_t texMat[2][3], float shift[2], float *rot, floa
 #ifdef DBG_BP
 	// check this matrix is orthogonal
 	if ( fabs( texMat[0][0] * 1.0L * texMat[0][1] + texMat[1][0] * 1.0L * texMat[1][1] ) > ZERO_EPSILON ) {
-		Sys_Printf( "Warning : non orthogonal texture matrix in TexMatToFakeTexCoords\n" );
+		Sys_FPrintf( SYS_WRN, "Warning : non orthogonal texture matrix in TexMatToFakeTexCoords\n" );
 	}
 #endif
 	scale[0] = sqrt( texMat[0][0] * 1.0L * texMat[0][0] + texMat[1][0] * 1.0L * texMat[1][0] );
 	scale[1] = sqrt( texMat[0][1] * 1.0L * texMat[0][1] + texMat[1][1] * 1.0L * texMat[1][1] );
 #ifdef DBG_BP
 	if ( scale[0] < ZERO_EPSILON || scale[1] < ZERO_EPSILON ) {
-		Sys_Printf( "Warning : unexpected scale==0 in TexMatToFakeTexCoords\n" );
+		Sys_FPrintf( SYS_WRN, "Warning : unexpected scale==0 in TexMatToFakeTexCoords\n" );
 	}
 #endif
 	// compute rotate value
@@ -196,7 +196,7 @@ void TexMatToFakeTexCoords( vec_t texMat[2][3], float shift[2], float *rot, floa
 #ifdef DBG_BP
 		// check brushprimit_texdef[1][0] is not zero
 		if ( fabs( texMat[1][0] ) < ZERO_EPSILON ) {
-			Sys_Printf( "Warning : unexpected texdef[1][0]==0 in TexMatToFakeTexCoords\n" );
+			Sys_FPrintf( SYS_WRN, "Warning : unexpected texdef[1][0]==0 in TexMatToFakeTexCoords\n" );
 		}
 #endif
 		// rotate is +-90

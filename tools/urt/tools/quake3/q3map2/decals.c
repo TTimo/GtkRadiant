@@ -337,7 +337,7 @@ static int MakeDecalProjector( shaderInfo_t *si, vec4_t projection, float distan
 
 	/* limit check */
 	if ( numProjectors >= MAX_PROJECTORS ) {
-		Sys_Printf( "WARNING: MAX_PROJECTORS (%d) exceeded, no more decal projectors available.\n", MAX_PROJECTORS );
+		Sys_FPrintf( SYS_WRN, "WARNING: MAX_PROJECTORS (%d) exceeded, no more decal projectors available.\n", MAX_PROJECTORS );
 		return -2;
 	}
 
@@ -431,7 +431,7 @@ void ProcessDecals( void ){
 
 		/* any patches? */
 		if ( e->patches == NULL ) {
-			Sys_Printf( "WARNING: Decal entity without any patch meshes, ignoring.\n" );
+			Sys_FPrintf( SYS_WRN, "WARNING: Decal entity without any patch meshes, ignoring.\n" );
 			e->epairs = NULL;   /* fixme: leak! */
 			continue;
 		}
@@ -442,7 +442,7 @@ void ProcessDecals( void ){
 
 		/* no target? */
 		if ( e2 == NULL ) {
-			Sys_Printf( "WARNING: Decal entity without a valid target, ignoring.\n" );
+			Sys_FPrintf( SYS_WRN, "WARNING: Decal entity without a valid target, ignoring.\n" );
 			continue;
 		}
 

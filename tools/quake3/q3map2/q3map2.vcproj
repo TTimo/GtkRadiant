@@ -223,11 +223,27 @@
 				>
 			</File>
 			<File
+				RelativePath=".\bsp_analyze.c"
+				>
+			</File>
+			<File
+				RelativePath=".\bsp_scale.c"
+				>
+			</File>
+			<File
+				RelativePath=".\bsp_info.c"
+				>
+			</File>
+			<File
 				RelativePath=".\decals.c"
 				>
 			</File>
 			<File
 				RelativePath=".\facebsp.c"
+				>
+			</File>
+			<File
+				RelativePath=".\fixaas.c"
 				>
 			</File>
 			<File
@@ -316,6 +332,10 @@
 			</File>
 			<File
 				RelativePath=".\convert_ase.c"
+				>
+			</File>
+			<File
+				RelativePath=".\convert_bsp.c"
 				>
 			</File>
 			<File

@@ -188,7 +188,7 @@ void CShaderArray::operator =( const class CShaderArray & src ){
 
 #ifdef _DEBUG
 	if ( CPtrArray::GetSize() != 0 ) {
-		Sys_Printf( "WARNING: CShaderArray::operator = expects an empty array\n" );
+		Sys_FPrintf( SYS_WRN, "WARNING: CShaderArray::operator = expects an empty array\n" );
 	}
 #endif
 	Copy( src );
@@ -239,7 +239,7 @@ char *ShaderNameLookup( patchMesh_t * patch ){
 			return static_cast < patchEntry_t * >( PatchShaders.GetAt( i ) )->name;
 		}
 	}
-	Sys_Printf( "ERROR: failed to lookup name in ShaderNameLookup??\n" );
+	Sys_FPrintf( SYS_ERR, "ERROR: failed to lookup name in ShaderNameLookup??\n" );
 	return const_cast<char*>(SHADER_NOT_FOUND);
 }
 //++timo end clean
@@ -420,7 +420,7 @@ int WINAPI QERApp_LoadShadersFromDir( const char *path ){
 			// check we activated the right shader
 			// NOTE: if there was something else loaded, the size of g_Shaders may have changed and strange behaviours are to be expected
 			if ( pFoo != pShader ) {
-				Sys_Printf( "WARNING: unexpected pFoo != pShader in QERApp_LoadShadersFromDir\n" );
+				Sys_FPrintf( SYS_WRN, "WARNING: unexpected pFoo != pShader in QERApp_LoadShadersFromDir\n" );
 			}
 #else
 			pFoo = NULL; // leo: shut up the compiler
@@ -606,7 +606,7 @@ void WINAPI QERApp_LoadShaderFile( const char *filename ){
 				//++timo NOTE: this may a bit slow, we may need to use a map instead of a dumb list
 				if ( g_Shaders.Shader_ForName( pShader->getName() ) != NULL ) {
 #ifdef _DEBUG
-					Sys_Printf( "WARNING: shader %s is already in memory, definition in %s ignored.\n",
+					Sys_FPrintf( SYS_WRN, "WARNING: shader %s is already in memory, definition in %s ignored.\n",
 								pShader->getName(), filename );
 #endif
 					delete pShader;
@@ -620,7 +620,7 @@ void WINAPI QERApp_LoadShaderFile( const char *filename ){
 			}
 			else
 			{
-				Sys_Printf( "Error parsing shader %s\n", pShader->getName() );
+				Sys_FPrintf( SYS_ERR, "ERROR: parsing shader %s\n", pShader->getName() );
 				delete pShader;
 			}
 		}
@@ -628,7 +628,7 @@ void WINAPI QERApp_LoadShaderFile( const char *filename ){
 	}
 	else
 	{
-		Sys_Printf( "Unable to read shaderfile %s\n", filename );
+		Sys_FPrintf( SYS_ERR, "ERROR: Unable to read shaderfile %s\n", filename );
 	}
 }
 
@@ -658,7 +658,7 @@ IShader *WINAPI QERApp_CreateShader_ForTextureName( const char *name ){
 	// Hydra: display an error message, so the user can quickly find a list of missing
 	// textures by looking at the console.
 	if ( !pShader->Activate() ) {
-		Sys_Printf( "WARNING: Activate shader failed for %s\n",pShader->getName() );
+		Sys_FPrintf( SYS_WRN, "WARNING: Activate shader failed for %s\n", pShader->getName() );
 	}
 	pShader->SetDisplayed( true );
 
@@ -706,7 +706,7 @@ qtexture_t *WINAPI QERApp_Try_Texture_ForName( const char *name ){
 	for ( q = g_qeglobals.d_qtextures; q; q = q->next )
 	{
 		if ( !strcmp( stdName, q->name ) ) {
-			Sys_Printf( "ERROR: %s is not in texture map, but was found in texture list\n" );
+			Sys_FPrintf( SYS_ERR, "ERROR: %s is not in texture map, but was found in texture list\n" );
 			return q;
 		}
 	}
@@ -837,7 +837,7 @@ void WINAPI QERApp_ReloadShaderFile( const char *name ){
 	// check the shader name is a reletive path
 	// I hacked together a few quick tests to make sure :-)
 	if ( strstr( name, ":\\" ) || !strstr( name, "scripts" ) ) {
-		Sys_Printf( "WARNING: is %s a reletive path to a shader file? (QERApp_ReloadShaderFile\n" );
+		Sys_FPrintf( SYS_WRN, "WARNING: is %s a reletive path to a shader file? (QERApp_ReloadShaderFile\n" );
 	}
 #endif
 
