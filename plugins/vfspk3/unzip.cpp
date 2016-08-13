@@ -1177,8 +1177,8 @@ extern const char *z_errmsg[10]; /* indexed by 2-zlib_error */
 
 
 typedef uLong (*check_func) OF((uLong check, const Byte *buf, uInt len));
-voidp zcalloc OF((voidp opaque, unsigned items, unsigned size));
-void   zcfree  OF((voidp opaque, voidp ptr));
+static voidp zcalloc OF((voidp opaque, unsigned items, unsigned size));
+static void  zcfree  OF((voidp opaque, voidp ptr));
 
 #define ZALLOC(strm, items, size) \
            (*((strm)->zalloc))((strm)->opaque, (items), (size))
