@@ -46,7 +46,7 @@ all: install bundle
 
 install: -pre-install -gtk-runtime
 	cp -r $(INSTALL) $(RESOURCES)
-	rm -rf `find $(INSTDIR)/installs -type d -name .svn`
+	rm -rf `find $(INSTALL)/installs -type d -name .svn`
 
 bundle:
 	
