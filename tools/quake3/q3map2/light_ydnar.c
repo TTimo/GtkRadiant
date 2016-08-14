@@ -2033,7 +2033,7 @@ void IlluminateRawLightmap( int rawLightmapNum ){
 			}
 
 			/* set luxel filter radius */
-			luxelFilterRadius = superSample * filterRadius / lm->sampleSize;
+			luxelFilterRadius = lm->sampleSize != 0 ? superSample * filterRadius / lm->sampleSize : 0;
 			if ( luxelFilterRadius == 0 && ( filterRadius > 0.0f || filter ) ) {
 				luxelFilterRadius = 1;
 			}
