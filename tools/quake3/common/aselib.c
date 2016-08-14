@@ -411,9 +411,9 @@ static void ASE_SkipRestOfLine( void ){
 }
 
 static void ASE_KeyMAP_DIFFUSE( const char *token ){
-	char fullpath[1024], bitmap[1024], modeldir[1024];
+	char bitmap[1024];
 	char filename[1024];
-	int i = 0, count;
+	int i = 0;
 
 	strcpy( filename, gl_filename );
 
