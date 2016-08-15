@@ -54,6 +54,12 @@ extern "C"
 
 #include "picomodel.h"
 
+#if defined(_MSC_VER) && _MSC_VER<1900 && !(defined snprintf)
+#define snprintf _snprintf
+#endif
+#ifndef Q_strncpyz
+#define Q_strncpyz(_dst, _source, _len) do { strncpy((_dst), (_source), (_len) - 1); if ((_len) > 0) (_dst)[(_len) - 1] = 0; } while( 0 )
+#endif
 
 /* os dependant replacements */
 #if WIN32 || _WIN32
@@ -132,7 +138,7 @@ char            *_pico_stristr( char *str, const char *substr );
 void            _pico_unixify( char *path );
 int             _pico_nofname( const char *path, char *dest, int destSize );
 char            *_pico_nopath( const char *path );
-char            *_pico_setfext( char *path, const char *ext );
+char            *_pico_setfext( char *path, const char *ext, size_t length );
 int             _pico_getline( char *buf, int bufsize, char *dest, int destsize );
 char            *_pico_strlwr( char *str );
 

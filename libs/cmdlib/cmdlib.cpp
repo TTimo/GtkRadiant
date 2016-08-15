@@ -51,14 +51,14 @@ bool Q_Exec( const char *cmd, char *cmdline, const char *execdir, bool bCreateCo
 	case 0:
 		// always concat the command on linux
 		if ( cmd ) {
-			strcpy( fullcmd, cmd );
+			Q_strncpyz( fullcmd, cmd, sizeof( fullcmd ) );
 		}
 		else{
 			fullcmd[0] = '\0';
 		}
 		if ( cmdline ) {
-			strcat( fullcmd, " " );
-			strcat( fullcmd, cmdline );
+			strncat( fullcmd, " ", sizeof( fullcmd ) );
+			strncat( fullcmd, cmdline, sizeof( fullcmd ) );
 		}
 		pCmd = fullcmd;
 		while ( *pCmd == ' ' )
@@ -159,7 +159,7 @@ int Q_filelength( FILE *f ){
 	return end;
 }
 
-void DefaultExtension( char *path, char *extension ){
+void DefaultExtension( char *path, char *extension, size_t length ){
 	char    *src;
 //
 // if path doesn't have a .EXT, append extension
@@ -175,18 +175,18 @@ void DefaultExtension( char *path, char *extension ){
 		src--;
 	}
 
-	strcat( path, extension );
+	strncat( path, extension, length );
 }
 
-void DefaultPath( char *path, char *basepath ){
-	char temp[128];
+void DefaultPath( char *path, const char *basepath, size_t length ){
+	char temp[PATH_MAX];
 
 	if ( path[0] == PATHSEPERATOR ) {
 		return;               // absolute path location
 	}
-	strcpy( temp,path );
-	strcpy( path,basepath );
-	strcat( path,temp );
+	Q_strncpyz( temp, path, sizeof( temp ) );
+	Q_strncpyz( path, basepath, length );
+	strncat( path, temp, length );
 }
 
 
@@ -221,8 +221,9 @@ void    StripExtension( char *path ){
    Extract file parts
    ====================
  */
-void ExtractFilePath( const char *path, char *dest ){
+void ExtractFilePath( const char *path, char *dest, size_t size ){
 	const char *src;
+	size_t length;
 
 	src = path + strlen( path ) - 1;
 
@@ -232,13 +233,20 @@ void ExtractFilePath( const char *path, char *dest ){
 	while ( src != path && *( src - 1 ) != '/' && *( src - 1 ) != '\\' )
 		src--;
 
-	memcpy( dest, path, src - path );
-	dest[src - path] = 0;
+	length = src - path;
+	if( length + 1 > size )
+	{
+		length = size - 1;
+	}
+	memcpy( dest, path, length );
+	dest[length] = 0;
 }
 
-void ExtractFileName( const char *path, char *dest ){
+void ExtractFileName( const char *path, char *dest, size_t size ){
 	const char *src;
 
+	if( size <= 0 )
+		return;
 	src = path + strlen( path ) - 1;
 
 //
@@ -250,7 +258,13 @@ void ExtractFileName( const char *path, char *dest ){
 
 	while ( *src )
 	{
+		if( size == 1 )
+		{
+			*dest = 0;
+			return;
+		}
 		*dest++ = *src++;
+		size--;
 	}
 	*dest = 0;
 }
@@ -278,14 +292,18 @@ inline unsigned int filename_get_base_length( const char* filename ){
 	return ( last_period != NULL ) ? last_period - filename : strlen( filename );
 }
 
-void ExtractFileBase( const char *path, char *dest ){
+void ExtractFileBase( const char *path, char *dest, size_t size ){
 	const char* filename = path_get_filename_start( path );
 	unsigned int length = filename_get_base_length( filename );
+	if( length > size )
+	{
+		length = size - 1;
+	}
 	strncpy( dest, filename, length );
 	dest[length] = '\0';
 }
 
-void ExtractFileExtension( const char *path, char *dest ){
+void ExtractFileExtension( const char *path, char *dest, size_t size ){
 	const char *src;
 
 	src = path + strlen( path ) - 1;
@@ -300,7 +318,7 @@ void ExtractFileExtension( const char *path, char *dest ){
 		return;
 	}
 
-	strcpy( dest,src );
+	Q_strncpyz( dest, src, size );
 }
 
 
@@ -338,7 +356,7 @@ void CreateDirectoryPath( const char *path ) {
 	char *src;
 	char back;
 
-	ExtractFilePath( path, base );
+	ExtractFilePath( path, base, sizeof( base ) );
 
 	src = base + 1;
 	while ( 1 ) {

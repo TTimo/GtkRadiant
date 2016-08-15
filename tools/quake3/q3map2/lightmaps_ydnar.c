@@ -122,7 +122,7 @@ void ExportLightmaps( void ){
 	Sys_FPrintf( SYS_VRB, "--- ExportLightmaps ---\n" );
 
 	/* do some path mangling */
-	strcpy( dirname, source );
+	Q_strncpyz( dirname, source, sizeof( dirname ) );
 	StripExtension( dirname );
 
 	/* sanity check */
@@ -138,7 +138,7 @@ void ExportLightmaps( void ){
 	for ( i = 0, lightmap = bspLightBytes; lightmap < ( bspLightBytes + numBSPLightBytes ); i++, lightmap += ( game->lightmapSize * game->lightmapSize * 3 ) )
 	{
 		/* write a tga image out */
-		sprintf( filename, "%s/lightmap_%04d.tga", dirname, i );
+		snprintf( filename, sizeof( filename ), "%s/lightmap_%04d.tga", dirname, i );
 		Sys_Printf( "Writing %s\n", filename );
 		WriteTGA24( filename, lightmap, game->lightmapSize, game->lightmapSize, qfalse );
 	}
@@ -159,9 +159,9 @@ int ExportLightmapsMain( int argc, char **argv ){
 	}
 
 	/* do some path mangling */
-	strcpy( source, ExpandArg( argv[ argc - 1 ] ) );
+	Q_strncpyz( source, ExpandArg( argv[ argc - 1 ] ), sizeof( source ) );
 	StripExtension( source );
-	DefaultExtension( source, ".bsp" );
+	DefaultExtension( source, ".bsp", sizeof( source ) );
 
 	/* load the bsp */
 	Sys_Printf( "Loading %s\n", source );
@@ -194,9 +194,9 @@ int ImportLightmapsMain( int argc, char **argv ){
 	}
 
 	/* do some path mangling */
-	strcpy( source, ExpandArg( argv[ argc - 1 ] ) );
+	Q_strncpyz( source, ExpandArg( argv[ argc - 1 ] ), sizeof( source ) );
 	StripExtension( source );
-	DefaultExtension( source, ".bsp" );
+	DefaultExtension( source, ".bsp", sizeof( source ) );
 
 	/* load the bsp */
 	Sys_Printf( "Loading %s\n", source );
@@ -206,7 +206,7 @@ int ImportLightmapsMain( int argc, char **argv ){
 	Sys_FPrintf( SYS_VRB, "--- ImportLightmaps ---\n" );
 
 	/* do some path mangling */
-	strcpy( dirname, source );
+	Q_strncpyz( dirname, source, sizeof( dirname ) );
 	StripExtension( dirname );
 
 	/* sanity check */
@@ -221,7 +221,7 @@ int ImportLightmapsMain( int argc, char **argv ){
 	for ( i = 0, lightmap = bspLightBytes; lightmap < ( bspLightBytes + numBSPLightBytes ); i++, lightmap += ( game->lightmapSize * game->lightmapSize * 3 ) )
 	{
 		/* read a tga image */
-		sprintf( filename, "%s/lightmap_%04d.tga", dirname, i );
+		snprintf( filename, sizeof( filename ), "%s/lightmap_%04d.tga", dirname, i );
 		Sys_Printf( "Loading %s\n", filename );
 		buffer = NULL;
 		len = vfsLoadFile( filename, (void*) &buffer, -1 );
@@ -2333,7 +2333,7 @@ void StoreSurfaceLightmaps( void ){
 	Sys_Printf( "--- StoreSurfaceLightmaps ---\n" );
 
 	/* setup */
-	strcpy( dirname, source );
+	Q_strncpyz( dirname, source, sizeof( dirname ) );
 	StripExtension( dirname );
 	memset( rgbGenValues, 0, sizeof( rgbGenValues ) );
 	memset( alphaGenValues, 0, sizeof( alphaGenValues ) );
@@ -2869,14 +2869,14 @@ void StoreSurfaceLightmaps( void ){
 			olm->extLightmapNum = numExtLightmaps;
 
 			/* write lightmap */
-			sprintf( filename, "%s/" EXTERNAL_LIGHTMAP, dirname, numExtLightmaps );
+			snprintf( filename, sizeof( filename ), "%s/" EXTERNAL_LIGHTMAP, dirname, numExtLightmaps );
 			Sys_FPrintf( SYS_VRB, "\nwriting %s", filename );
 			WriteTGA24( filename, olm->bspLightBytes, olm->customWidth, olm->customHeight, qtrue );
 			numExtLightmaps++;
 
 			/* write deluxemap */
 			if ( deluxemap ) {
-				sprintf( filename, "%s/" EXTERNAL_LIGHTMAP, dirname, numExtLightmaps );
+				snprintf( filename, sizeof( filename ), "%s/" EXTERNAL_LIGHTMAP, dirname, numExtLightmaps );
 				Sys_FPrintf( SYS_VRB, "\nwriting %s", filename );
 				WriteTGA24( filename, olm->bspDirBytes, olm->customWidth, olm->customHeight, qtrue );
 				numExtLightmaps++;
@@ -2896,7 +2896,7 @@ void StoreSurfaceLightmaps( void ){
 	for ( i = numExtLightmaps; i; i++ )
 	{
 		/* determine if file exists */
-		sprintf( filename, "%s/" EXTERNAL_LIGHTMAP, dirname, i );
+		snprintf( filename, sizeof( filename ), "%s/" EXTERNAL_LIGHTMAP, dirname, i );
 		if ( !FileExists( filename ) ) {
 			break;
 		}
@@ -3042,11 +3042,11 @@ void StoreSurfaceLightmaps( void ){
 		/* surfaces with styled lightmaps and a style marker get a custom generated shader (fixme: make this work with external lightmaps) */
 		if ( olm != NULL && lm != NULL && lm->styles[ 1 ] != LS_NONE && game->load != LoadRBSPFile ) { //%	info->si->styleMarker > 0 )
 			qboolean dfEqual;
-			char key[ 32 ], styleStage[ 512 ], styleStages[ 4096 ], rgbGen[ 128 ], alphaGen[ 128 ];
+			char key[ 32 ], styleStage[ 512 ], styleStages[ 4096 ], rgbGen[ 256 ], alphaGen[ 256 ];
 
 
 			/* setup */
-			sprintf( styleStages, "\n\t// Q3Map2 custom lightstyle stage(s)\n" );
+			snprintf( styleStages, sizeof( styleStages ), "\n\t// Q3Map2 custom lightstyle stage(s)\n" );
 			dv = &bspDrawVerts[ ds->firstVert ];
 
 			/* depthFunc equal? */
@@ -3071,15 +3071,15 @@ void StoreSurfaceLightmaps( void ){
 
 				/* lightmap name */
 				if ( lm->outLightmapNums[ lightmapNum ] == lm->outLightmapNums[ 0 ] ) {
-					strcpy( lightmapName, "$lightmap" );
+					Q_strncpyz( lightmapName, "$lightmap", sizeof( lightmapName ) );
 				}
 				else{
-					sprintf( lightmapName, "maps/%s/" EXTERNAL_LIGHTMAP, mapName, olm->extLightmapNum );
+					snprintf( lightmapName, sizeof( lightmapName ), "maps/%s/" EXTERNAL_LIGHTMAP, mapName, olm->extLightmapNum );
 				}
 
 				/* get rgbgen string */
 				if ( rgbGenValues[ style ] == NULL ) {
-					sprintf( key, "_style%drgbgen", style );
+					snprintf( key, sizeof( key ), "_style%drgbgen", style );
 					rgbGenValues[ style ] = (char*) ValueForKey( &entities[ 0 ], key );
 					if ( rgbGenValues[ style ][ 0 ] == '\0' ) {
 						rgbGenValues[ style ] = "wave noise 0.5 1 0 5.37";
@@ -3087,7 +3087,7 @@ void StoreSurfaceLightmaps( void ){
 				}
 				rgbGen[ 0 ] = '\0';
 				if ( rgbGenValues[ style ][ 0 ] != '\0' ) {
-					sprintf( rgbGen, "\t\trgbGen %s // style %d\n", rgbGenValues[ style ], style );
+					snprintf( rgbGen, sizeof( rgbGen ), "\t\trgbGen %s // style %d\n", rgbGenValues[ style ], style );
 				}
 				else{
 					rgbGen[ 0 ] = '\0';
@@ -3095,11 +3095,11 @@ void StoreSurfaceLightmaps( void ){
 
 				/* get alphagen string */
 				if ( alphaGenValues[ style ] == NULL ) {
-					sprintf( key, "_style%dalphagen", style );
+					snprintf( key, sizeof( key ), "_style%dalphagen", style );
 					alphaGenValues[ style ] = (char*) ValueForKey( &entities[ 0 ], key );
 				}
 				if ( alphaGenValues[ style ][ 0 ] != '\0' ) {
-					sprintf( alphaGen, "\t\talphaGen %s // style %d\n", alphaGenValues[ style ], style );
+					snprintf( alphaGen, sizeof( alphaGen ), "\t\talphaGen %s // style %d\n", alphaGenValues[ style ], style );
 				}
 				else{
 					alphaGen[ 0 ] = '\0';
@@ -3111,7 +3111,8 @@ void StoreSurfaceLightmaps( void ){
 
 				/* create additional stage */
 				if ( lmx == 0.0f && lmy == 0.0f ) {
-					sprintf( styleStage,    "\t{\n"
+					snprintf( styleStage, sizeof( styleStage ),
+											"\t{\n"
 											"\t\tmap %s\n"                                      /* lightmap */
 											"\t\tblendFunc GL_SRC_ALPHA GL_ONE\n"
 											"%s"                                                /* depthFunc equal */
@@ -3126,7 +3127,8 @@ void StoreSurfaceLightmaps( void ){
 				}
 				else
 				{
-					sprintf( styleStage,    "\t{\n"
+					snprintf( styleStage, sizeof( styleStage ),
+											"\t{\n"
 											"\t\tmap %s\n"                                      /* lightmap */
 											"\t\tblendFunc GL_SRC_ALPHA GL_ONE\n"
 											"%s"                                                /* depthFunc equal */
@@ -3144,7 +3146,7 @@ void StoreSurfaceLightmaps( void ){
 				}
 
 				/* concatenate */
-				strcat( styleStages, styleStage );
+				strncat( styleStages, styleStage, sizeof( styleStages ) );
 			}
 
 			/* create custom shader */
@@ -3171,7 +3173,7 @@ void StoreSurfaceLightmaps( void ){
 			olm = &outLightmaps[ lm->outLightmapNums[ 0 ] ];
 
 			/* do some name mangling */
-			sprintf( lightmapName, "maps/%s/" EXTERNAL_LIGHTMAP, mapName, olm->extLightmapNum );
+			snprintf( lightmapName, sizeof( lightmapName ), "maps/%s/" EXTERNAL_LIGHTMAP, mapName, olm->extLightmapNum );
 
 			/* create custom shader */
 			csi = CustomShader( info->si, "$lightmap", lightmapName );

@@ -823,7 +823,7 @@ void LoadBMP( const char *filename, byte **pic, byte **palette, int *width, int 
 void Load256Image( const char *name, byte **pixels, byte **palette, int *width, int *height ){
 	char ext[128];
 
-	ExtractFileExtension( name, ext );
+	ExtractFileExtension( name, ext, sizeof( ext ) );
 	if ( !Q_stricmp( ext, "lbm" ) ) {
 		LoadLBM( name, pixels, palette );
 		if ( width ) {
@@ -856,7 +856,7 @@ void Save256Image( const char *name, byte *pixels, byte *palette,
 				   int width, int height ){
 	char ext[128];
 
-	ExtractFileExtension( name, ext );
+	ExtractFileExtension( name, ext, sizeof( ext ) );
 	if ( !Q_stricmp( ext, "lbm" ) ) {
 		WriteLBMfile( name, pixels, width, height, palette );
 	}
@@ -1193,7 +1193,7 @@ void Load32BitImage( const char *name, unsigned **pixels,  int *width, int *heig
 	int i;
 	int v;
 
-	ExtractFileExtension( name, ext );
+	ExtractFileExtension( name, ext, sizeof( ext ) );
 	if ( !Q_stricmp( ext, "tga" ) ) {
 		LoadTGA( name, (byte **)pixels, width, height );
 	}

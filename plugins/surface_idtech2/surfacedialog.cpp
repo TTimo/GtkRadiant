@@ -161,7 +161,7 @@ void IsFaceConflicting(){
 
 	tmp_texdef = &get_texdef_face_list()->texdef;
 
-	strcpy( texture_name, tmp_texdef->GetName() );
+	Q_strncpyz( texture_name, tmp_texdef->GetName(), sizeof( texture_name ) );
 
 	texdef_SI_values.shift[0] = tmp_texdef->shift[0];
 	texdef_SI_values.shift[1] = tmp_texdef->shift[1];
@@ -260,14 +260,14 @@ static void PopulateTextureComboList(){
 	if ( texdef_face_list_empty() ) {
 		items = g_list_append( items, (gpointer) blank );
 		// For Texture Entry, activate only on entry change
-		strcpy( old_texture_entry, blank );
+		Q_strncpyz( old_texture_entry, blank, sizeof( old_texture_entry ) );
 	}
 	else if ( !is_TextureName_conflicting ) {
 		temp_texdef_face_list = get_texdef_face_list();
 		tmp_texdef = (texdef_t *) &get_texdef_face_list()->texdef;
 		items = g_list_append( items, (gpointer) tmp_texdef->GetName() );
 		// For Texture Entry, activate only on entry change
-		strcpy( old_texture_entry, tmp_texdef->GetName() );
+		Q_strncpyz( old_texture_entry, tmp_texdef->GetName(), sizeof( old_texture_entry ) );
 	}
 	else
 	{
@@ -287,7 +287,7 @@ static void PopulateTextureComboList(){
 		// If this isn't added last (to the top of the list), g_list_find freaks.
 		items = g_list_prepend( items, (gpointer) blank );
 		// For Texture Entry, activate only on entry change
-		strcpy( old_texture_entry, blank );
+		Q_strncpyz( old_texture_entry, blank, sizeof( old_texture_entry ) );
 	}
 
 	gtk_combo_set_popdown_strings( GTK_COMBO( texture_combo ), items );
@@ -879,7 +879,7 @@ void on_texture_combo_entry_activate( GtkEntry *entry, gpointer user_data ){
 
 	if ( !texdef_face_list_empty() && g_bListenChanged ) {
 		// activate only on entry change
-		strcpy( text, gtk_entry_get_text( entry ) );
+		Q_strncpyz( text, gtk_entry_get_text( entry ), sizeof( text ) );
 		if ( strcmp( old_texture_entry, text ) ) {
 			// Check for spaces in shader name
 			if ( text[0] <= ' ' || strchr( text, ' ' ) ) {
@@ -891,7 +891,7 @@ void on_texture_combo_entry_activate( GtkEntry *entry, gpointer user_data ){
 				{
 					tmp_texdef = (texdef_t *) &temp_texdef_face_list->texdef;
 					tmp_orig_texdef = (texdef_t *) &temp_texdef_face_list->orig_texdef;
-					strcpy( old_texture_entry, text );
+					Q_strncpyz( old_texture_entry, text, sizeof( old_texture_entry ) );
 					tmp_texdef->SetName( text );
 				}
 				GetTexMods();

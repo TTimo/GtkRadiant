@@ -30,7 +30,7 @@
 #include "plugin.h"
 
 // cmdlib
-extern void ExtractFileName( const char *path, char *dest );
+extern void ExtractFileName( const char *path, char *dest, size_t size );
 
 extern int g_MapVersion;
 int abortcode; // see imap.h for values.
@@ -65,7 +65,7 @@ void BuildWadList( char *wadstr ){
 
 	g_WadList = NULL;
 
-	strcpy( wads,wadstr );
+	Q_strncpyz( wads, wadstr, sizeof( wads ) );
 	QE_ConvertDOSToUnixName( wads,wads );
 
 	// ok, we got the list of ; delimited wads, now split it into a GSList that contains
@@ -81,7 +81,7 @@ void BuildWadList( char *wadstr ){
 
 		}
 		if ( strchr( p1,'/' ) || strchr( p1,'\\' ) ) {
-			ExtractFileName( p1,cleanwadname );
+			ExtractFileName( p1, cleanwadname, sizeof( cleanwadname ) );
 
 			trim( cleanwadname );
 
@@ -202,7 +202,7 @@ void Patch_Parse( patchMesh_t *pPatch ){
 	GetToken( true );
 	str = new char[strlen( token ) + 10];
 	strcpy( str, "textures/" );
-	strcpy( str + 9, token );
+	Q_strncpyz( str + 9, token, strlen( token ) + 10 - 9 );
 	pPatch->pShader = QERApp_Shader_ForName( str );
 	pPatch->d_texture = pPatch->pShader->getTexture();
 	delete [] str;
@@ -568,7 +568,7 @@ void Entity_Parse( entity_t *pEntity ){
 		}
 		else {
 
-			strcpy( temptoken, token );
+			Q_strncpyz( temptoken, token, sizeof( temptoken ) );
 			GetToken( false );
 
 			SetKeyValue( pEntity, temptoken, token );

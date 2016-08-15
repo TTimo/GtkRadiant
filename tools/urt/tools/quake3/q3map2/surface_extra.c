@@ -227,9 +227,9 @@ void WriteSurfaceExtraFile( const char *path ){
 	Sys_Printf( "--- WriteSurfaceExtraFile ---\n" );
 
 	/* open the file */
-	strcpy( srfPath, path );
+	Q_strncpyz( srfPath, path, sizeof( srfPath ) );
 	StripExtension( srfPath );
-	strcat( srfPath, ".srf" );
+	strncat( srfPath, ".srf", sizeof( srfPath ) );
 	Sys_Printf( "Writing %s\n", srfPath );
 	sf = fopen( srfPath, "w" );
 	if ( sf == NULL ) {
@@ -334,9 +334,9 @@ void LoadSurfaceExtraFile( const char *path ){
 	}
 
 	/* load the file */
-	strcpy( srfPath, path );
+	Q_strncpyz( srfPath, path, sizeof( srfPath ) );
 	StripExtension( srfPath );
-	strcat( srfPath, ".srf" );
+	strncat( srfPath, ".srf", sizeof( srfPath ) );
 	Sys_Printf( "Loading %s\n", srfPath );
 	size = LoadFile( srfPath, (void**) &buffer );
 	if ( size <= 0 ) {

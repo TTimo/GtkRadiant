@@ -430,7 +430,7 @@ void CreateEntityFromName( const char* name, const vec3_t origin ){
 			if ( DoLightIntensityDlg( &intensity ) == IDOK ) {
 				g_PrefsDlg.m_iLastLightIntensity = intensity;
 				char buf[30];
-				sprintf( buf, "255 255 255 %d", intensity );
+				snprintf( buf, sizeof( buf ), "255 255 255 %d", intensity );
 				SetKeyValue( e, "_light", buf );
 			}
 		}
@@ -446,8 +446,8 @@ void CreateEntityFromName( const char* name, const vec3_t origin ){
 			//    prompt.GotoDlgCtrl( pWnd );
 			if ( DoLightIntensityDlg( &intensity ) == IDOK ) {
 				g_PrefsDlg.m_iLastLightIntensity = intensity;
-				char buf[10];
-				sprintf( buf, "%d", intensity );
+				char buf[12];
+				snprintf( buf, sizeof( buf ), "%d", intensity );
 				SetKeyValue( e, "light", buf );
 			}
 		}
@@ -2287,14 +2287,14 @@ void XYWnd::XY_DrawGrid(){
 		// This renders the numbers along varying X on top of the grid view (labels vertical grid lines).
 		for ( x = xb - ( (int) xb ) % stepx; x <= xe; x += stepx ) {
 			qglRasterPos2f( x + leftCushion, yPosLabelsTop );
-			sprintf( text, "%i", (int) x );
+			snprintf( text, sizeof( text ), "%i", (int) x );
 			gtk_glwidget_print_string( text );
 		}
 
 		// This renders the numbers along varying Y on the left of the grid view (labels horizontal grid lines).
 		for ( y = yb - ( (int) yb ) % stepy; y <= ye; y += stepy ) {
 			qglRasterPos2f( xPosLabelsLeft, y + bottomOffset );
-			sprintf( text, "%i", (int) y );
+			snprintf( text, sizeof( text ), "%i", (int) y );
 			gtk_glwidget_print_string( text );
 		}
 
@@ -2460,7 +2460,7 @@ void XYWnd::XY_DrawBlockGrid(){
 			for ( y = yb ; y < ye ; y += g_qeglobals.blockSize )
 			{
 				qglRasterPos2f( x + ( g_qeglobals.blockSize / 2 ), y + ( g_qeglobals.blockSize / 2 ) );
-				sprintf( text, "%i,%i",(int)floor( x / g_qeglobals.blockSize ), (int)floor( y / g_qeglobals.blockSize ) );
+				snprintf( text, sizeof( text ), "%i,%i",(int)floor( x / g_qeglobals.blockSize ), (int)floor( y / g_qeglobals.blockSize ) );
 				gtk_glwidget_print_string( text );
 			}
 	}

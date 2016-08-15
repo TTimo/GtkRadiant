@@ -45,16 +45,16 @@ void Error( const char *error, ... ){
 	char text[4096];
 
 	va_start( argptr,error );
-	vsprintf( text, error,argptr );
+	vsnprintf( text, sizeof( text ), error, argptr );
 	va_end( argptr );
 
-	strcat( text, "\n" );
+	strncat( text, "\n", sizeof( text ) );
 
 #if defined ( __linux__ ) || defined ( __APPLE__ )
 	if ( errno != 0 ) {
-		strcat( text, "errno: " );
-		strcat( text, strerror( errno ) );
-		strcat( text, "\n" );
+		strncat( text, "errno: ", sizeof( text ) );
+		strncat( text, strerror( errno ), sizeof( text ) );
+		strncat( text, "\n", sizeof( text ) );
 	}
 #endif
 
@@ -72,7 +72,7 @@ void Error( const char *error, ... ){
 			0,
 			NULL
 			);
-		strcat( text, "GetLastError: " );
+		strncat( text, "GetLastError: ", sizeof( text ) );
 		/*
 		   Gtk will only crunch 0<=char<=127
 		   this is a bit hackish, but I didn't find useful functions in win32 API for this
@@ -90,7 +90,7 @@ void Error( const char *error, ... ){
 			}
 			next = CharNext( scan );
 		} while ( next != scan );
-		strcat( text, "\n" );
+		strncat( text, "\n", sizeof( text ) );
 		LocalFree( lpMsgBuf );
 	}
 #endif
@@ -103,14 +103,14 @@ void Error( const char *error, ... ){
 		GLenum iGLError = qglGetError();
 		if ( iGLError != GL_NO_ERROR ) {
 			// use our own gluErrorString
-			strcat( text, "qgluErrorString: " );
-			strcat( text, (char*)qgluErrorString( iGLError ) );
-			strcat( text, "\n" );
+			strncat( text, "qgluErrorString: ", sizeof( text ) );
+			strncat( text, (char*)qgluErrorString( iGLError ), sizeof( text ) );
+			strncat( text, "\n", sizeof( text ) );
 		}
 	}
 
-	strcat( text, "An unrecoverable error has occured.\n"
-				  "Would you like to edit Preferences before exiting Radiant?" );
+	strncat( text, "An unrecoverable error has occured.\n"
+				  "Would you like to edit Preferences before exiting Radiant?", sizeof( text ) );
 
 	Sys_Printf( text );
 
@@ -138,7 +138,7 @@ void WINAPI Error( char *error, ... ){
 	char text[1024];
 
 	va_start( argptr,error );
-	vsprintf( text, error,argptr );
+	vsnprintf( text, sizeof( text ), error, argptr );
 	va_end( argptr );
 
 	Error( (const char *)text );

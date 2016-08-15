@@ -100,15 +100,15 @@ char GameName[NUMGAMES][16] = {"Quake2", "Half-Life", "SiN", "Heretic2", "Kingpi
 
 
 bool GenSurfInit(){
-	strcpy( gszVersion, "1.05" );
-	strcpy( gszCaption, "GtkGenSurf" );
+	Q_strncpyz( gszVersion, "1.05", sizeof( gszVersion ) );
+	Q_strncpyz( gszCaption, "GtkGenSurf", sizeof( gszCaption ) );
 	if ( strlen( gszVersion ) ) {
-		strcat( gszCaption, " v" );
-		strcat( gszCaption, gszVersion );
+		strncat( gszCaption, " v", sizeof( gszCaption ) );
+		strncat( gszCaption, gszVersion, sizeof( gszCaption ) );
 	}
 
-	strcpy( gszIni, g_FuncTable.m_pfnProfileGetDirectory() );
-	strcat( gszIni, "gensurf.ini" );
+	Q_strncpyz( gszIni, g_FuncTable.m_pfnProfileGetDirectory(), sizeof( gszIni ) );
+	strncat( gszIni, "gensurf.ini", sizeof( gszIni ) );
 
 /*if (g_FuncTable.m_pfnReadProjectKey != NULL)
    {
@@ -273,9 +273,9 @@ void ReadIniFile( const char *file ){
 	for ( i = 0; i < NUMGAMES; i++ )
 	{
 		//    strcpy (gszOutputDir[i], g_FuncTable.m_pfnProfileLoadString (file, GameName[i],"OutputDir",""));
-		strcpy( Texture[i][0], g_FuncTable.m_pfnProfileLoadString( file, GameName[i], "Texture", "" ) );
-		strcpy( Texture[i][1], g_FuncTable.m_pfnProfileLoadString( file, GameName[i], "Texture2", "" ) );
-		strcpy( Texture[i][2], g_FuncTable.m_pfnProfileLoadString( file, GameName[i], "Texture3", "" ) );
+		Q_strncpyz( Texture[i][0], g_FuncTable.m_pfnProfileLoadString( file, GameName[i], "Texture", "" ), sizeof( Texture[i][0] ) );
+		Q_strncpyz( Texture[i][1], g_FuncTable.m_pfnProfileLoadString( file, GameName[i], "Texture2", "" ), sizeof( Texture[i][1] ) );
+		Q_strncpyz( Texture[i][2], g_FuncTable.m_pfnProfileLoadString( file, GameName[i], "Texture3", "" ), sizeof( Texture[i][2] ) );
 		//    strcpy (gszTextureDir[i], g_FuncTable.m_pfnProfileLoadString (file, GameName[i],"TextureDir",""));
 		//    UsePak[i] = GetPrivateProfileInt(GameName[i],"UsePak",0);
 		//    strcpy (pakfile[i], g_FuncTable.m_pfnProfileLoadString (file, GameName[i],"PakFile",""));
@@ -312,7 +312,7 @@ void ReadIniFile( const char *file ){
 	if ( !strlen( Texture[QUAKE3][1] ) ) {
 		strcpy( Texture[QUAKE3][1],   "textures/common/caulk" );
 	}
-	strcpy( gbmp.name, g_FuncTable.m_pfnProfileLoadString( file, "Bitmap","Filename","" ) );
+	Q_strncpyz( gbmp.name, g_FuncTable.m_pfnProfileLoadString( file, "Bitmap","Filename","" ), sizeof( gbmp.name ) );
 
 
 	gbmp.colors = NULL;
@@ -320,7 +320,7 @@ void ReadIniFile( const char *file ){
 		OpenBitmap();
 	}
 
-	strcpy( gbmp.defpath, g_FuncTable.m_pfnProfileLoadString( file, "Bitmap","DefaultPath","" ) );
+	Q_strncpyz( gbmp.defpath, g_FuncTable.m_pfnProfileLoadString( file, "Bitmap","DefaultPath","" ), sizeof( gbmp.defpath ) );
 
 	Text = g_FuncTable.m_pfnProfileLoadString( file, "Bitmap","BlackValue","" );
 	if ( strlen( Text ) ) {
@@ -353,7 +353,7 @@ char *va( const char *format, ... ){
 	static char string[1024];
 
 	va_start( argptr, format );
-	vsprintf( string, format,argptr );
+	vsnprintf( string, sizeof( string ), format, argptr );
 	va_end( argptr );
 
 	return string;
@@ -423,22 +423,22 @@ void SaveSetup( GtkWidget *parent ){
 													g_FuncTable.m_pfnProfileGetDirectory(), "gtkgensurf", NULL );
 
 	if ( name != NULL ) {
-		char key[32], text[32];
+		char key[32], text[128];
 		int i, j;
 
 		WriteIniFile( name );
 		g_FuncTable.m_pfnProfileSaveString( name, OPTS_SECTION,"MapFile",gszMapFile );
-		sprintf( text,"0x%04x",FileAppend );
+		snprintf( text, sizeof( text ), "0x%04x", FileAppend );
 		g_FuncTable.m_pfnProfileSaveString( name, OPTS_SECTION,"Append",text );
-		sprintf( text,"0x%04x",Decimate );
+		snprintf( text, sizeof( text ), "0x%04x", Decimate );
 		g_FuncTable.m_pfnProfileSaveString( name, OPTS_SECTION,"Decimate",text );
 		for ( i = 0; i <= NH; i++ )
 		{
 			for ( j = 0; j <= NV; j++ )
 			{
 				if ( xyz[i][j].fixed ) {
-					sprintf( key,"I%dJ%d",i,j );
-					sprintf( text,"%g %g %g", xyz[i][j].fixed_value, xyz[i][j].range, xyz[i][j].rate );
+					snprintf( key, sizeof( key ), "I%dJ%d", i, j );
+					snprintf( text, sizeof( text ), "%g %g %g", xyz[i][j].fixed_value, xyz[i][j].range, xyz[i][j].rate );
 					g_FuncTable.m_pfnProfileSaveString( name, "FixedPoints",key,text );
 				}
 			}
@@ -469,7 +469,7 @@ void OpenSetup( GtkWidget *parent, int UseDefaults ){
 		{
 			for ( j = 0; j <= NV; j++ )
 			{
-				sprintf( key,"I%dJ%d",i,j );
+				snprintf( key, sizeof( key ), "I%dJ%d", i, j );
 				text = g_FuncTable.m_pfnProfileLoadString( name, "FixedPoints", key, "" );
 				if ( strlen( text ) ) {
 					xyz[i][j].fixed = 1;

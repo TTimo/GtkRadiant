@@ -236,7 +236,7 @@ void ParsePatch( qboolean onlyLights ){
 
 	/* get texture */
 	GetToken( qtrue );
-	strcpy( texture, token );
+	Q_strncpyz( texture, token, sizeof( texture ) );
 
 	Parse1DMatrix( 5, info );
 	m.width = info[0];
@@ -355,7 +355,7 @@ void ParsePatch( qboolean onlyLights ){
 	pm->brushNum = entitySourceBrushes;
 
 	/* set shader */
-	sprintf( shader, "textures/%s", texture );
+	snprintf( shader, sizeof( shader ), "textures/%s", texture );
 	pm->shaderInfo = ShaderInfoForShader( shader );
 
 	/* set mesh */

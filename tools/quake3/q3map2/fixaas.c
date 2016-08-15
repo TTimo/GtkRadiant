@@ -79,7 +79,7 @@ int FixAASMain( int argc, char **argv ){
 	/* do some path mangling */
 	strcpy( source, ExpandArg( argv[ argc - 1 ] ) );
 	StripExtension( source );
-	DefaultExtension( source, ".bsp" );
+	DefaultExtension( source, ".bsp", sizeof( source ) );
 
 	/* note it */
 	Sys_Printf( "--- FixAAS ---\n" );

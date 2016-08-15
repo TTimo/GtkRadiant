@@ -683,9 +683,9 @@ void DBrush::SaveToFile( FILE *pFile ){
 
 	for ( list<DPlane *>::const_iterator pp = faceList.begin(); pp != faceList.end(); pp++ )
 	{
-		char buffer[512];
+		char buffer[720 + PATH_MAX];
 
-		sprintf( buffer, "( %.0f %.0f %.0f ) ( %.0f %.0f %.0f ) ( %.0f %.0f %.0f ) %s %.0f %.0f %f %f %.0f 0 0 0\n",
+		snprintf( buffer, sizeof( buffer ), "( %.0f %.0f %.0f ) ( %.0f %.0f %.0f ) ( %.0f %.0f %.0f ) %s %.0f %.0f %f %f %.0f 0 0 0\n",
 				 ( *pp )->points[0][0], ( *pp )->points[0][1], ( *pp )->points[0][2],
 				 ( *pp )->points[1][0], ( *pp )->points[1][1], ( *pp )->points[1][2],
 				 ( *pp )->points[2][0], ( *pp )->points[2][1], ( *pp )->points[2][2],
@@ -727,7 +727,7 @@ bool DBrush::ResetTextures( const char* textureName, float fScale[2],    float f
 		{
 			if ( !strcmp( ( *resetPlane )->texInfo.m_TextureName, textureName ) ) {
 				if ( bResetTextureName ) {
-					strcpy( ( *resetPlane )->texInfo.m_TextureName, newTextureName );
+					Q_strncpyz( ( *resetPlane )->texInfo.m_TextureName, newTextureName, sizeof( ( *resetPlane )->texInfo.m_TextureName ) );
 				}
 
 				if ( bResetScale[0] ) {
@@ -758,7 +758,7 @@ bool DBrush::ResetTextures( const char* textureName, float fScale[2],    float f
 		for ( list<DPlane *>::const_iterator resetPlane = faceList.begin(); resetPlane != faceList.end(); resetPlane++ )
 		{
 			if ( bResetTextureName ) {
-				strcpy( ( *resetPlane )->texInfo.m_TextureName, newTextureName );
+				Q_strncpyz( ( *resetPlane )->texInfo.m_TextureName, newTextureName, sizeof( ( *resetPlane )->texInfo.m_TextureName ) );
 			}
 
 			if ( bResetScale[0] ) {

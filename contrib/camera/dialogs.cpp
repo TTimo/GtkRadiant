@@ -220,10 +220,10 @@ static gint ci_apply( GtkWidget *widget, gpointer data ){
 			GetCurrentCam()->GetCam()->buildCamera();
 		}
 
-		sprintf( buf, "%.2f", GetCurrentCam()->GetCam()->getBaseTime() );
+		snprintf( buf, sizeof( buf ), "%.2f", GetCurrentCam()->GetCam()->getBaseTime() );
 		gtk_entry_set_text( GTK_ENTRY( g_pSecondsEntry ), buf );
 
-		sprintf( buf, "%.2f", GetCurrentCam()->GetCam()->getTotalTime() );
+		snprintf( buf, sizeof( buf ), "%.2f", GetCurrentCam()->GetCam()->getTotalTime() );
 		gtk_label_set_text( g_pCurrentTime, "0.00" );
 		gtk_label_set_text( g_pTotalTime, buf );
 
@@ -336,14 +336,14 @@ static void RefreshEventList( void ){
 		for ( i = 0; i < GetCurrentCam()->GetCam()->numEvents(); i++ ) {
 			char rowbuf[3][128], *row[3];
 			// FIXME: sort by time?
-			sprintf( rowbuf[0], "%li", GetCurrentCam()->GetCam()->getEvent( i )->getTime() );                 row[0] = rowbuf[0];
-			strncpy( rowbuf[1], GetCurrentCam()->GetCam()->getEvent( i )->typeStr(), sizeof( rowbuf[0] ) );     row[1] = rowbuf[1];
-			strncpy( rowbuf[2], GetCurrentCam()->GetCam()->getEvent( i )->getParam(), sizeof( rowbuf[1] ) );    row[2] = rowbuf[2];
+			snprintf( rowbuf[0], sizeof( rowbuf[0] ), "%li", GetCurrentCam()->GetCam()->getEvent( i )->getTime() );                 row[0] = rowbuf[0];
+			Q_strncpyz( rowbuf[1], GetCurrentCam()->GetCam()->getEvent( i )->typeStr(), sizeof( rowbuf[0] ) );     row[1] = rowbuf[1];
+			Q_strncpyz( rowbuf[2], GetCurrentCam()->GetCam()->getEvent( i )->getParam(), sizeof( rowbuf[1] ) );    row[2] = rowbuf[2];
 			gtk_clist_append( GTK_CLIST( g_pEventsList ), row );
 		}
 
 		// Total duration might have changed
-		sprintf( buf, "%.2f", GetCurrentCam()->GetCam()->getTotalTime() );
+		snprintf( buf, sizeof( buf ), "%.2f", GetCurrentCam()->GetCam()->getTotalTime() );
 		gtk_label_set_text( g_pCurrentTime, "0.00" );
 		gtk_label_set_text( g_pTotalTime, buf );
 
@@ -511,7 +511,7 @@ static gint ci_add_target( GtkWidget *widget, gpointer data ){
 	gtk_box_pack_start( GTK_BOX( hbox ), name, TRUE, TRUE, 0 );
 	gtk_widget_show( name );
 
-	sprintf( buf, "target%i", GetCurrentCam()->GetCam()->numTargets() + 1 );
+	snprintf( buf, sizeof( buf ), "target%i", GetCurrentCam()->GetCam()->numTargets() + 1 );
 	gtk_entry_set_text( GTK_ENTRY( name ), buf );
 
 	// -------------------------- //
@@ -721,10 +721,10 @@ static gint ci_camlist_changed( GtkWidget *widget, gpointer data ){
 			gtk_label_set_text( g_pCamType, GetCurrentCam()->GetCam()->getPositionObj()->typeStr() );
 
 			// Set duration
-			sprintf( buf, "%.2f", GetCurrentCam()->GetCam()->getBaseTime() );
+			snprintf( buf, sizeof( buf ), "%.2f", GetCurrentCam()->GetCam()->getBaseTime() );
 			gtk_entry_set_text( GTK_ENTRY( g_pSecondsEntry ), buf );
 
-			sprintf( buf, "%.2f", GetCurrentCam()->GetCam()->getTotalTime() );
+			snprintf( buf, sizeof( buf ), "%.2f", GetCurrentCam()->GetCam()->getTotalTime() );
 			gtk_label_set_text( g_pCurrentTime, "0.00" );
 			gtk_label_set_text( g_pTotalTime, buf );
 

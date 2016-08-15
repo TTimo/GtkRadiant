@@ -27,7 +27,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
-#ifdef WIN32
+#ifdef _WIN32
 #include <direct.h>
 #include <windows.h>
 #endif
@@ -342,7 +342,7 @@ double I_FloatTime( void ){
 void Q_getwd( char *out ){
 	int i = 0;
 
-#ifdef WIN32
+#ifdef _WIN32
 	_getcwd( out, 256 );
 	strcat( out, "\\" );
 #else
@@ -361,7 +361,7 @@ void Q_getwd( char *out ){
 
 
 void Q_mkdir( const char *path ){
-#ifdef WIN32
+#ifdef _WIN32
 	if ( _mkdir( path ) != -1 ) {
 		return;
 	}
@@ -1189,7 +1189,7 @@ void QCopyFile( const char *from, const char *to ){
 }
 
 void Sys_Sleep( int n ){
-#ifdef WIN32
+#ifdef _WIN32
 	Sleep( n );
 #endif
 #if defined ( __linux__ ) || defined ( __APPLE__ )

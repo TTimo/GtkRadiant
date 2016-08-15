@@ -36,11 +36,11 @@
 #include "lbmlib.h"
 #include "inout.h"
 
-#ifdef WIN32
+#ifdef _WIN32
 #include <windows.h>
 #endif
 
-#ifdef WIN32
+#ifdef _WIN32
 	#ifdef NDEBUG                           // Don't show in a Release build
 		#pragma warning(disable : 4305)     // truncate from double to float
 		#pragma warning(disable : 4244)     // conversion from double to float

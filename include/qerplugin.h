@@ -33,6 +33,12 @@
 
 #include <stdio.h>
 #include <string.h>
+#if defined(_MSC_VER) && _MSC_VER<1900 && !(defined snprintf)
+#define snprintf _snprintf
+#endif
+#ifndef Q_strncpyz
+#define Q_strncpyz(_dst, _source, _len) do { strncpy((_dst), (_source), (_len) - 1); (_dst)[(_len) - 1] = 0; } while( 0 )
+#endif
 // TTimo
 // ideally the plugin API would be UI toolkit independent, but removing the dependency with GLib seems tricky right now..
 #include <glib.h>

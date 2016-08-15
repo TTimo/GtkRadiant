@@ -83,7 +83,7 @@ void            PlaceMenuMRUItem(LPMRUMENU lpMruMenu,HMENU hMenu,UINT uiItem);
 
 BOOL            SaveMruInIni   (LPMRUMENU lpMruMenu,LPSTR lpszSection,LPSTR lpszFile);
 BOOL            LoadMruInIni   (LPMRUMENU lpMruMenu,LPSTR lpszSection,LPSTR lpszFile);
-#ifdef WIN32
+#ifdef _WIN32
 BOOL            SaveMruInReg   (LPMRUMENU lpMruMenu,LPSTR lpszKey);
 BOOL            LoadMruInReg   (LPMRUMENU lpMruMenu,LPSTR lpszKey);
 

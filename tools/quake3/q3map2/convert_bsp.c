@@ -79,7 +79,7 @@ int ConvertBSPMain( int argc, char **argv ){
 	/* clean up map name */
 	strcpy( source, ExpandArg( argv[ i ] ) );
 	StripExtension( source );
-	DefaultExtension( source, ".bsp" );
+	DefaultExtension( source, ".bsp", sizeof( source ) );
 
 	LoadShaderInfo();
 
@@ -100,7 +100,7 @@ int ConvertBSPMain( int argc, char **argv ){
 
 		/* write bsp */
 		StripExtension( source );
-		DefaultExtension( source, "_c.bsp" );
+		DefaultExtension( source, "_c.bsp", sizeof( source ) );
 		Sys_Printf( "Writing %s\n", source );
 		WriteBSPFile( source );
 

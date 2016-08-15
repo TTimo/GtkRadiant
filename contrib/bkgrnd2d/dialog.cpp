@@ -36,8 +36,7 @@
 // spaces to make label nice and big
 #define NO_FILE_MSG "        (no file loaded)        "
 
-#ifdef _WIN32
-// TTimo: THIS IS UGLY
+#if defined(_MSC_VER) && _MSC_VER<1900 && !(defined snprintf)
 #define snprintf _snprintf
 #endif
 
@@ -124,17 +123,17 @@ void CBackgroundDialogPage::Browse(){
 		return;
 	}
 
-	strcpy( browsedir,ct );
+	Q_strncpyz( browsedir, ct, sizeof( browsedir ) );
 	// make sure we have a trailing /
 	if ( browsedir[strlen( browsedir ) - 1] != '/' ) {
-		strcat( browsedir,"/" );
+		strncat( browsedir, "/", sizeof( browsedir ) );
 	}
 
 	//if we dont have a file yet, don't try to use it for default dir
 	if ( m_bValidFile ) {
 		// filename should always be a nice clean unix style relative path
 		ct = gtk_label_get_text( GTK_LABEL( m_pFileLabel ) );
-		strcat( browsedir,ct );
+		strncat( browsedir, ct, sizeof( browsedir ) );
 		Syn_Printf( MSG_PREFIX "full path: %s\n",browsedir );
 
 		// lop off the file part
@@ -171,7 +170,7 @@ void CBackgroundDialogPage::Browse(){
 
 void CBackgroundDialogPage::SetPosLabel(){
 	char s[64];
-	snprintf( s, sizeof( s ) - 1, _( "Size/Position (%d,%d) (%d,%d)" ),(int)( m_pImage->m_xmin ),
+	snprintf( s, sizeof( s ), _( "Size/Position (%d,%d) (%d,%d)" ),(int)( m_pImage->m_xmin ),
 			  (int)( m_pImage->m_ymin ),(int)( m_pImage->m_xmax ),(int)( m_pImage->m_ymax ) );
 	gtk_label_set_text( GTK_LABEL( m_pPosLabel ),s );
 }

@@ -505,7 +505,7 @@ WORD i;
   return TRUE;
 }
 
-#ifdef WIN32
+#ifdef _WIN32
 
 BOOL IsWin395OrHigher(void)
 {

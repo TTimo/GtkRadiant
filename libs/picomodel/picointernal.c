@@ -263,7 +263,7 @@ void _pico_printf( int level, const char *format, ... ){
 
 	/* format string */
 	va_start( argptr,format );
-	vsprintf( str,format,argptr );
+	vsnprintf( str, sizeof( str ), format, argptr );
 	va_end( argptr );
 
 	/* remove linefeeds */
@@ -629,7 +629,7 @@ char *_pico_nopath( const char *path ){
  *  or filepath's filename portion. the given 'path' *is*
  *  altered. leave 'ext' empty to remove extension. -sea
  */
-char *_pico_setfext( char *path, const char *ext ){
+char *_pico_setfext( char *path, const char *ext, size_t length ){
 	char *src;
 	int remfext = 0;
 
@@ -660,7 +660,7 @@ char *_pico_setfext( char *path, const char *ext ){
 			break;
 		}
 	}
-	strcat( path,ext );
+	strncat( path, ext, length );
 	return path;
 }
 

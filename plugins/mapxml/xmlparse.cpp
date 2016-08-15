@@ -218,7 +218,7 @@ void HandleXMLError( void* ctxt, const char* text, ... ){
 	static char buf[32768];
 
 	va_start( argptr,text );
-	vsprintf( buf, text, argptr );
+	vsnprintf( buf, sizeof( buf ), text, argptr );
 	Sys_FPrintf( SYS_ERR, "XML %s\n", buf );
 	va_end( argptr );
 }

@@ -1393,7 +1393,7 @@ void DoMapInfo(){
 	{
 		entry = (map_t*)entitymap->data;
 		char tmp[16];
-		sprintf( tmp, "%d", entry->count );
+		snprintf( tmp, sizeof( tmp ), "%d", entry->count );
 		GtkTreeIter iter;
 		gtk_list_store_append( GTK_LIST_STORE( store ), &iter );
 		gtk_list_store_set( GTK_LIST_STORE( store ), &iter, 0, entry->name, 1, tmp, -1 );
@@ -1404,11 +1404,11 @@ void DoMapInfo(){
 	g_object_unref( G_OBJECT( store ) );
 
 	char tmp[16];
-	sprintf( tmp, "%d", TotalBrushes );
+	snprintf( tmp, sizeof( tmp ), "%d", TotalBrushes );
 	gtk_entry_set_text( GTK_ENTRY( brushes_entry ), tmp );
-	sprintf( tmp, "%d", TotalEntities );
+	snprintf( tmp, sizeof( tmp ), "%d", TotalEntities );
 	gtk_entry_set_text( GTK_ENTRY( entities_entry ), tmp );
-	sprintf( tmp, "%d", Net );
+	snprintf( tmp, sizeof( tmp ), "%d", Net );
 	gtk_entry_set_text( GTK_ENTRY( net_entry ), tmp );
 
 	gtk_grab_add( dlg );
@@ -3264,8 +3264,8 @@ int DoBSInputDlg( const char *fields[5], float values[5] ){
 		gtk_widget_show( entries[i] );
 		gtk_box_pack_start( GTK_BOX( vbox ), entries[i], TRUE, TRUE, 0 );
 
-		char buf[32];
-		sprintf( buf, "%f", values[i] );
+		char buf[64];
+		snprintf( buf, sizeof( buf ), "%f", values[i] );
 		gtk_entry_set_text( GTK_ENTRY( entries[i] ), buf );
 	}
 

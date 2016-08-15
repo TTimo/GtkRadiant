@@ -851,10 +851,10 @@ cblock_t LoadFrame( char *base, int frame, int digits, byte **palette ){
 	ten0 = frame % 10;
 
 	if ( digits == 4 ) {
-		sprintf( name, "%svideo/%s/%s%i%i%i%i.tga", gamedir, base, base, ten3, ten2, ten1, ten0 );
+		snprintf( name, sizeof( name ), "%svideo/%s/%s%i%i%i%i.tga", gamedir, base, base, ten3, ten2, ten1, ten0 );
 	}
 	else{
-		sprintf( name, "%svideo/%s/%s%i%i%i.tga", gamedir, base, base, ten2, ten1, ten0 );
+		snprintf( name, sizeof( name ), "%svideo/%s/%s%i%i%i.tga", gamedir, base, base, ten2, ten1, ten0 );
 	}
 
 	f = fopen( name, "rb" );
@@ -911,7 +911,7 @@ void Cmd_Video( void ){
 	clock_t start, stop;
 
 	GetToken( qfalse );
-	strcpy( s_base, token );
+	Q_strncpyz( s_base, token, sizeof( s_base ) );
 	if ( g_release ) {
 //		sprintf (savename, "video/%s.cin", token);
 //		ReleaseFile (savename);
@@ -919,7 +919,7 @@ void Cmd_Video( void ){
 	}
 
 	GetToken( qfalse );
-	strcpy( s_output_base, token );
+	Q_strncpyz( s_output_base, token, sizeof( s_output_base ) );
 
 	GetToken( qfalse );
 	digits = atoi( token );

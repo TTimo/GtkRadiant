@@ -574,7 +574,7 @@ void BuildDoorsX2( vec3_t min, vec3_t max,
 	srand( (unsigned)time( NULL ) );
 
 	char teamname[256];
-	sprintf( teamname, "t%i", rand() );
+	snprintf( teamname, sizeof( teamname ), "t%i", rand() );
 	/*epair_t* epDoor13 = */ GetNextChainItem( epDoor12, "team", teamname );
 	/*epair_t* epDoor23 = */ GetNextChainItem( epDoor22, "team", teamname );
 

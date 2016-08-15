@@ -1527,7 +1527,7 @@ void SetupGrid( void ){
 	int i, j;
 	vec3_t maxs, oldGridSize;
 	const char  *value;
-	char temp[ 64 ];
+	char temp[ 256 ];
 
 
 	/* don't do this if not grid lighting */
@@ -1573,7 +1573,7 @@ void SetupGrid( void ){
 
 	/* different? */
 	if ( !VectorCompare( gridSize, oldGridSize ) ) {
-		sprintf( temp, "%.0f %.0f %.0f", gridSize[ 0 ], gridSize[ 1 ], gridSize[ 2 ] );
+		snprintf( temp, sizeof( temp ), "%.0f %.0f %.0f", gridSize[ 0 ], gridSize[ 1 ], gridSize[ 2 ] );
 		SetKeyValue( &entities[ 0 ], "gridsize", (const char*) temp );
 		Sys_FPrintf( SYS_VRB, "Storing adjusted grid size\n" );
 	}
@@ -2255,12 +2255,12 @@ int LightMain( int argc, char **argv ){
 	}
 
 	/* clean up map name */
-	strcpy( source, ExpandArg( argv[ i ] ) );
+	Q_strncpyz( source, ExpandArg( argv[ i ] ), sizeof( source ) );
 	StripExtension( source );
-	DefaultExtension( source, ".bsp" );
-	strcpy( mapSource, ExpandArg( argv[ i ] ) );
+	DefaultExtension( source, ".bsp", sizeof( source ) );
+	Q_strncpyz( mapSource, ExpandArg( argv[ i ] ), sizeof( mapSource ) );
 	StripExtension( mapSource );
-	DefaultExtension( mapSource, ".map" );
+	DefaultExtension( mapSource, ".map", sizeof( mapSource ) );
 
 	/* ydnar: set default sample size */
 	SetDefaultSampleSize( sampleSize );

@@ -56,7 +56,7 @@ static void ConvertSurface( FILE *f, bspModel_t *model, int modelNum, bspDrawSur
 	}
 
 	/* print object header for each dsurf */
-	sprintf( name, "mat%dmodel%dsurf%d", ds->shaderNum, modelNum, surfaceNum );
+	snprintf( name, sizeof( name ), "mat%dmodel%dsurf%d", ds->shaderNum, modelNum, surfaceNum );
 	fprintf( f, "*GEOMOBJECT\t{\r\n" );
 	fprintf( f, "\t*NODE_NAME\t\"%s\"\r\n", name );
 	fprintf( f, "\t*NODE_TM\t{\r\n" );
@@ -248,10 +248,10 @@ static void ConvertShader( FILE *f, bspShader_t *shader, int shaderNum ){
 
 	/* set bitmap filename */
 	if ( si->shaderImage->filename[ 0 ] != '*' ) {
-		strcpy( filename, si->shaderImage->filename );
+		Q_strncpyz( filename, si->shaderImage->filename, sizeof( filename ) );
 	}
 	else{
-		sprintf( filename, "%s.tga", si->shader );
+		snprintf( filename, sizeof( filename ), "%s.tga", si->shader );
 	}
 	for ( c = filename; *c != '\0'; c++ )
 		if ( *c == '/' ) {
@@ -301,13 +301,13 @@ int ConvertBSPToASE( char *bspName ){
 	Sys_Printf( "--- Convert BSP to ASE ---\n" );
 
 	/* create the ase filename from the bsp name */
-	strcpy( name, bspName );
+	Q_strncpyz( name, bspName, sizeof( name ) );
 	StripExtension( name );
-	strcat( name, ".ase" );
+	strncat( name, ".ase", sizeof( name ) );
 	Sys_Printf( "writing %s\n", name );
 
-	ExtractFileBase( bspName, base );
-	strcat( base, ".bsp" );
+	ExtractFileBase( bspName, base, sizeof( base ) );
+	strncat( base, ".bsp", sizeof( base ) );
 
 	/* open it */
 	f = fopen( name, "wb" );

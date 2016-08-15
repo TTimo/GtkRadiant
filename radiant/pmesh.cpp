@@ -4755,7 +4755,7 @@ void Patch_AdjustSelected( bool bInsert, bool bColumn, bool bFlag ){
    strategies that call here too much are known to be slow
    patch 84 to bug 253 adds an additionnal check for textures/
  */
-void CheckName( patchMesh_t *p, char *pname ){
+void CheckName( patchMesh_t *p, char *pname, size_t length ){
 	if ( strncmp( p->pShader->getName(), "textures/", 9 ) != 0 ) {
 		p->pShader = QERApp_Shader_ForName( SHADER_NOT_FOUND );
 	}
@@ -4763,15 +4763,15 @@ void CheckName( patchMesh_t *p, char *pname ){
 	// some manage to get long filename textures (with spaces) in their maps
 	if ( strchr( p->pShader->getName(), ' ' ) ) {
 		char Msg1[1024];
-		sprintf( Msg1, "Can't save texture with spaces in name. Rename %s\nNOTE: This message may popup several times .. once for each buggy face detected.", p->pShader->getName() );
+		snprintf( Msg1, sizeof( Msg1 ), "Can't save texture with spaces in name. Rename %s\nNOTE: This message may popup several times .. once for each buggy face detected.", p->pShader->getName() );
 		Sys_Printf( "%s\n", Msg1 );
 		gtk_MessageBox( g_pParentWnd->m_pWidget, Msg1, "Error saving map", MB_OK );
-		strcpy( pname, SHADER_NOT_FOUND );
+		Q_strncpyz( pname, SHADER_NOT_FOUND, length );
 		p->pShader = QERApp_Shader_ForName( SHADER_NOT_FOUND );
 		p->d_texture = p->pShader->getTexture();
 		return;
 	}
-	strcpy( pname, p->pShader->getName() + 9 ); // remove "textures/"
+	Q_strncpyz( pname, p->pShader->getName() + 9, length ); // remove "textures/"
 }
 
 /*
@@ -4784,7 +4784,7 @@ void Patch_Write( patchMesh_t *p, MemStream *file ){
 
 	MemFile_fprintf( file, " {\n  patchDef2\n  {\n" );
 
-	CheckName( p, pname );
+	CheckName( p, pname, sizeof( pname ) );
 	MemFile_fprintf( file, "   %s\n", pname );
 	MemFile_fprintf( file, "   ( %i %i %i %i %i ) \n", p->width, p->height, p->contents, p->flags, p->value );
 
@@ -4823,7 +4823,7 @@ void Patch_Write( patchMesh_t *p, FILE *file ){
 
 	fprintf( file, " {\n  patchDef2\n  {\n" );
 	{
-		CheckName( p, pname );
+		CheckName( p, pname, sizeof( pname ) );
 		fprintf( file, "   %s\n", pname );
 		fprintf( file, "   ( %i %i %i %i %i ) \n", p->width, p->height, p->contents, p->flags, p->value );
 	}

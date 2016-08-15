@@ -747,7 +747,7 @@ brush_t *FinishBrush( void ){
 	/* origin brushes are removed, but they set the rotation origin for the rest of the brushes in the entity.
 	   after the entire entity is parsed, the planenums and texinfos will be adjusted for the origin brush */
 	if ( buildBrush->compileFlags & C_ORIGIN ) {
-		char string[ 32 ];
+		char string[ 64 ];
 		vec3_t origin;
 
 		if ( numEntities == 1 ) {
@@ -759,7 +759,7 @@ brush_t *FinishBrush( void ){
 		VectorAdd( buildBrush->mins, buildBrush->maxs, origin );
 		VectorScale( origin, 0.5, origin );
 
-		sprintf( string, "%i %i %i", (int) origin[ 0 ], (int) origin[ 1 ], (int) origin[ 2 ] );
+		snprintf( string, sizeof( string ), "%i %i %i", (int) origin[ 0 ], (int) origin[ 1 ], (int) origin[ 2 ] );
 		SetKeyValue( &entities[ numEntities - 1 ], "origin", string );
 
 		VectorCopy( origin, entities[ numEntities - 1 ].origin );
@@ -1019,7 +1019,7 @@ static void ParseRawBrush( qboolean onlyLights ){
 
 		/* read shader name */
 		GetToken( qfalse );
-		strcpy( name, token );
+		Q_strncpyz( name, token, sizeof( name ) );
 
 		/* bp */
 		if ( g_bBrushPrimit == BPRIMIT_OLDBRUSHES ) {
@@ -1036,7 +1036,7 @@ static void ParseRawBrush( qboolean onlyLights ){
 		}
 
 		/* set default flags and values */
-		sprintf( shader, "textures/%s", name );
+		snprintf( shader, sizeof( shader ), "textures/%s", name );
 		if ( onlyLights ) {
 			si = &shaderInfo[ 0 ];
 		}
@@ -1426,7 +1426,7 @@ void LoadEntityIndexMap( entity_t *e ){
 	Sys_FPrintf( SYS_VRB, "Entity %d (%s) has shader index map \"%s\"\n",  mapEnt->mapEntityNum, ValueForKey( e, "classname" ), indexMapFilename );
 
 	/* get index map file extension */
-	ExtractFileExtension( indexMapFilename, ext );
+	ExtractFileExtension( indexMapFilename, ext, sizeof( ext ) );
 
 	/* handle tga image */
 	if ( !Q_stricmp( ext, "tga" ) ) {
@@ -1489,8 +1489,8 @@ void LoadEntityIndexMap( entity_t *e ){
 	im->w = w;
 	im->h = h;
 	im->numLayers = numLayers;
-	strcpy( im->name, indexMapFilename );
-	strcpy( im->shader, shader );
+	Q_strncpyz( im->name, indexMapFilename, sizeof( im->name ) );
+	Q_strncpyz( im->shader, shader, sizeof( im->shader ) );
 	im->pixels = pixels;
 
 	/* get height offsets */
@@ -1500,7 +1500,7 @@ void LoadEntityIndexMap( entity_t *e ){
 	}
 	if ( value[ 0 ] != '\0' ) {
 		/* value is a space-seperated set of numbers */
-		strcpy( offset, value );
+		Q_strncpyz( offset, value, sizeof( offset ) );
 		search = offset;
 
 		/* get each value */
@@ -1697,7 +1697,7 @@ static qboolean ParseMapEntity( qboolean onlyLights ){
 		value = ValueForKey( &entities[ 0 ], "_celshader" );
 	}
 	if ( value[ 0 ] != '\0' ) {
-		sprintf( shader, "textures/%s", value );
+		snprintf( shader, sizeof( shader ), "textures/%s", value );
 		celShader = ShaderInfoForShader( shader );
 		Sys_Printf( "Entity %d (%s) has cel shader %s\n", mapEnt->mapEntityNum, classname, celShader->shader );
 	}

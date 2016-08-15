@@ -287,11 +287,11 @@ const char* CSynapseClientBobtoolz::GetInfo(){
 	return "bobToolz module built " __DATE__ " " RADIANT_VERSION;
 }
 
-char* GetFilename( char* buffer, const char* filename ) {
-	strcpy( buffer, g_pSynapseServer->GetModuleFilename( &g_SynapseClient ) );
+char* GetFilename( char* buffer, const char* filename, size_t length ) {
+	Q_strncpyz( buffer, g_pSynapseServer->GetModuleFilename( &g_SynapseClient ), length );
 	StripFilename( buffer );
-	strcat( buffer, "/" );
-	strcat( buffer, filename );
+	strncat( buffer, "/", length );
+	strncat( buffer, filename, length );
 	buffer = UnixToDosPath( buffer );
 	return buffer;
 }

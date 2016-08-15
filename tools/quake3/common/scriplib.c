@@ -63,7 +63,7 @@ void AddScriptToStack( const char *filename, int index ){
 	if ( script == &scriptstack[MAX_INCLUDES] ) {
 		Error( "script file exceeded MAX_INCLUDES" );
 	}
-	strcpy( script->filename, ExpandPath( filename ) );
+	Q_strncpyz( script->filename, ExpandPath( filename ), sizeof( script->filename ) );
 
 	size = vfsLoadFile( script->filename, (void **)&script->buffer, index );
 
@@ -111,7 +111,7 @@ void ParseFromMemory( char *buffer, int size ){
 	if ( script == &scriptstack[MAX_INCLUDES] ) {
 		Error( "script file exceeded MAX_INCLUDES" );
 	}
-	strcpy( script->filename, "memory buffer" );
+	Q_strncpyz( script->filename, "memory buffer", sizeof( script->filename ) );
 
 	script->buffer = buffer;
 	script->line = 1;

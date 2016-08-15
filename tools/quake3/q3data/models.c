@@ -641,7 +641,7 @@ static void BuildBaseFrame( const char *filename, ObjectAnimationFrame_t *pOAF )
 									  pOAF->surfaces[i]->numtriangles,
 									  g_data.surfData[i].baseTriangles );
 
-		strcpy( g_data.surfData[i].header.name, pOAF->surfaces[i]->name );
+		Q_strncpyz( g_data.surfData[i].header.name, pOAF->surfaces[i]->name, sizeof( g_data.surfData[i].header.name ) );
 
 		g_data.surfData[i].header.numTriangles = pOAF->surfaces[i]->numtriangles;
 		g_data.surfData[i].header.numVerts = 0;
@@ -662,7 +662,7 @@ static void BuildBaseFrame( const char *filename, ObjectAnimationFrame_t *pOAF )
 
         strcpy( shaderName, pOAF->surfaces[i]->materialname );
  */
-		strcpy( g_data.surfData[i].shaders[g_data.surfData[i].header.numShaders].name, pOAF->surfaces[i]->materialname );
+		Q_strncpyz( g_data.surfData[i].shaders[g_data.surfData[i].header.numShaders].name, pOAF->surfaces[i]->materialname, sizeof( g_data.surfData[i].shaders[g_data.surfData[i].header.numShaders].name ) );
 
 		g_data.surfData[i].header.numShaders++;
 	}

@@ -1015,8 +1015,8 @@ void MakeBrushes( int NumTris, NODE *Node, TRI *Tri,bool surf,
 
 		for ( j = 0; j < 5; j++ )
 		{
-			strcpy( brush.face[j].texture,
-					( strlen( texture1 ) ? texture1 : texture0 ) );
+			Q_strncpyz( brush.face[j].texture,
+					( strlen( texture1 ) ? texture1 : texture0 ), sizeof( brush.face[j].texture ) );
 			brush.face[j].Shift[0] = (float)TexOffset[0];
 			brush.face[j].Shift[1] = (float)TexOffset[1];
 			brush.face[j].Rotate   = 0.;
@@ -1038,14 +1038,14 @@ void MakeBrushes( int NumTris, NODE *Node, TRI *Tri,bool surf,
 			CrossProduct( t[0],t[1],SurfNormal );
 			VectorNormalize( SurfNormal,SurfNormal );
 			if ( DotProduct( SurfNormal,PlaneNormal ) < Steep ) {
-				strcpy( brush.face[0].texture,texture2 );
+				Q_strncpyz( brush.face[0].texture, texture2, sizeof( brush.face[0].texture ) );
 			}
 			else{
-				strcpy( brush.face[0].texture,texture0 );
+				Q_strncpyz( brush.face[0].texture, texture0, sizeof( brush.face[0].texture ) );
 			}
 		}
 		else{
-			strcpy( brush.face[0].texture,texture0 );
+			Q_strncpyz( brush.face[0].texture, texture0, sizeof( brush.face[0].texture ) );
 		}
 
 		if ( surf ) {
@@ -1364,7 +1364,7 @@ void MapOut( int NumNodes,int NumTris, NODE *Node, TRI *Tri ){
 						} // switch (Plane)
 						for ( face = 0; face < 6; face++ )
 						{
-							strcpy( brush.face[face].texture,( face <= 1 ? skip : hint ) );
+							Q_strncpyz( brush.face[face].texture,( face <= 1 ? skip : hint ), sizeof( brush.face[face].texture ) );
 							brush.face[face].Shift[0] = 0;
 							brush.face[face].Shift[1] = 0;
 							brush.face[face].Rotate   = 0.;

@@ -33,7 +33,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
-#ifdef WIN32
+#ifdef _WIN32
 #include <direct.h>
 #include <windows.h>
 #endif
@@ -49,7 +49,7 @@
 // utf8 conversion
 #include <glib.h>
 
-#ifdef WIN32
+#ifdef _WIN32
 HWND hwndOut = NULL;
 qboolean lookedForServer = qfalse;
 UINT wm_BroadcastCommand = -1;
@@ -72,7 +72,7 @@ xmlNodePtr xml_NodeForVec( vec3_t v ){
 	xmlNodePtr ret;
 	char buf[1024];
 
-	sprintf( buf, "%f %f %f", v[0], v[1], v[2] );
+	snprintf( buf, sizeof( buf ), "%f %f %f", v[0], v[1], v[2] );
 	ret = xmlNewNode( NULL, "point" );
 	xmlNodeSetContent( ret, buf );
 	return ret;
@@ -150,20 +150,20 @@ void xml_Select( char *msg, int entitynum, int brushnum, qboolean bError ){
 	char level[2];
 
 	// now build a proper "select" XML node
-	sprintf( buf, "Entity %i, Brush %i: %s", entitynum, brushnum, msg );
+	snprintf( buf, sizeof( buf ), "Entity %i, Brush %i: %s", entitynum, brushnum, msg );
 	node = xmlNewNode( NULL, "select" );
 	xmlNodeSetContent( node, buf );
 	level[0] = (int)'0' + ( bError ? SYS_ERR : SYS_WRN )  ;
 	level[1] = 0;
 	xmlSetProp( node, "level", (char *)&level );
 	// a 'select' information
-	sprintf( buf, "%i %i", entitynum, brushnum );
+	snprintf( buf, sizeof( buf ), "%i %i", entitynum, brushnum );
 	select = xmlNewNode( NULL, "brush" );
 	xmlNodeSetContent( select, buf );
 	xmlAddChild( node, select );
 	xml_SendNode( node );
 
-	sprintf( buf, "Entity %i, Brush %i: %s", entitynum, brushnum, msg );
+	snprintf( buf, sizeof( buf ), "Entity %i, Brush %i: %s", entitynum, brushnum, msg );
 	if ( bError ) {
 		Error( buf );
 	}
@@ -184,13 +184,13 @@ void xml_Point( char *msg, vec3_t pt ){
 	level[1] = 0;
 	xmlSetProp( node, "level", (char *)&level );
 	// a 'point' node
-	sprintf( buf, "%g %g %g", pt[0], pt[1], pt[2] );
+	snprintf( buf, sizeof( buf ), "%g %g %g", pt[0], pt[1], pt[2] );
 	point = xmlNewNode( NULL, "point" );
 	xmlNodeSetContent( point, buf );
 	xmlAddChild( node, point );
 	xml_SendNode( node );
 
-	sprintf( buf, "%s (%g %g %g)", msg, pt[0], pt[1], pt[2] );
+	snprintf( buf, sizeof( buf ), "%s (%g %g %g)", msg, pt[0], pt[1], pt[2] );
 	Error( buf );
 }
 
@@ -208,15 +208,15 @@ void xml_Winding( char *msg, vec3_t p[], int numpoints, qboolean die ){
 	level[1] = 0;
 	xmlSetProp( node, "level", (char *)&level );
 	// a 'winding' node
-	sprintf( buf, "%i ", numpoints );
+	snprintf( buf, sizeof( buf ), "%i ", numpoints );
 	for ( i = 0; i < numpoints; i++ )
 	{
-		sprintf( smlbuf, "(%g %g %g)", p[i][0], p[i][1], p[i][2] );
+		snprintf( smlbuf, sizeof( smlbuf ), "(%g %g %g)", p[i][0], p[i][1], p[i][2] );
 		// don't overflow
 		if ( strlen( buf ) + strlen( smlbuf ) > WINDING_BUFSIZE ) {
 			break;
 		}
-		strcat( buf, smlbuf );
+		strncat( buf, smlbuf, sizeof( buf ) );
 	}
 
 	winding = xmlNewNode( NULL, "winding" );
@@ -246,7 +246,7 @@ void Broadcast_Setup( const char *dest ){
 	brdcst_socket = Net_Connect( &address, 0 );
 	if ( brdcst_socket ) {
 		// send in a header
-		sprintf( sMsg, "<?xml version=\"1.0\"?><q3map_feedback version=\"" Q3MAP_STREAM_VERSION "\">" );
+		snprintf( sMsg, sizeof( sMsg ), "<?xml version=\"1.0\"?><q3map_feedback version=\"" Q3MAP_STREAM_VERSION "\">" );
 		NMSG_Clear( &msg );
 		NMSG_WriteString( &msg, sMsg );
 		Net_Send( brdcst_socket, &msg );
@@ -316,7 +316,7 @@ void Sys_FPrintf( int flag, const char *format, ... ){
 	}
 
 	va_start( argptr, format );
-	vsprintf( out_buffer, format, argptr );
+	vsnprintf( out_buffer, sizeof( out_buffer ), format, argptr );
 	va_end( argptr );
 
 	FPrintf( flag, out_buffer );
@@ -327,7 +327,7 @@ void Sys_Printf( const char *format, ... ){
 	va_list argptr;
 
 	va_start( argptr, format );
-	vsprintf( out_buffer, format, argptr );
+	vsnprintf( out_buffer, sizeof( out_buffer ), format, argptr );
 	va_end( argptr );
 
 	FPrintf( SYS_STD, out_buffer );
@@ -346,10 +346,10 @@ void Error( const char *error, ... ){
 	va_list argptr;
 
 	va_start( argptr,error );
-	vsprintf( tmp, error, argptr );
+	vsnprintf( tmp, sizeof( tmp ), error, argptr );
 	va_end( argptr );
 
-	sprintf( out_buffer, "************ ERROR ************\n%s\n", tmp );
+	snprintf( out_buffer, sizeof( out_buffer ), "************ ERROR ************\n%s\n", tmp );
 
 	FPrintf( SYS_ERR, out_buffer );
 

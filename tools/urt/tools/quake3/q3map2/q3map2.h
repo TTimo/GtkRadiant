@@ -57,9 +57,11 @@
 	#include <limits.h>
 #endif
 
-#ifdef WIN32
+#ifdef _WIN32
 	#include <windows.h>
-	#define _CRT_SECURE_NO_WARNINGS
+	#ifndef MAX_OS_PATH
+		#define MAX_OS_PATH MAX_PATH
+	#endif
 #endif
 
 
@@ -99,7 +101,7 @@
 #endif
 
 #if 1
-	#ifdef WIN32
+	#ifdef _WIN32
 		#define Q_stricmp           stricmp
 		#define Q_strncasecmp       strnicmp
 	#else

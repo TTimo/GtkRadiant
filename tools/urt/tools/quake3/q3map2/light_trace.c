@@ -1371,9 +1371,9 @@ void SetupTraceNodes( void ){
 
 
 		/* open the file */
-		strcpy( filename, source );
+		Q_strncpyz( filename, source, sizeof( filename ) );
 		StripExtension( filename );
-		strcat( filename, ".lin" );
+		strncat( filename, ".lin", sizeof( filename ) );
 		Sys_Printf( "Opening light trace file %s...\n", filename );
 		file = fopen( filename, "w" );
 		if ( file == NULL ) {

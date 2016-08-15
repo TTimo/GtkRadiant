@@ -118,7 +118,7 @@ void LokiInitPaths( char *argv0 ){
 	}
 
 	/* do some path divining */
-	strcpy( temp, argv0 );
+	Q_strncpyz( temp, argv0, sizeof( temp ) );
 	if ( strrchr( temp, '/' ) ) {
 		argv0 = strrchr( argv0, '/' ) + 1;
 	}
@@ -146,17 +146,17 @@ void LokiInitPaths( char *argv0 ){
 
 			/* found home dir candidate */
 			if ( *path == '~' ) {
-				strcpy( temp, home );
+				Q_strncpyz( temp, home, sizeof( temp ) );
 				path++;
 			}
 
 			/* concatenate */
 			if ( last > ( path + 1 ) ) {
 				strncat( temp, path, ( last - path ) );
-				strcat( temp, "/" );
+				strncat( temp, "/", sizeof( temp ) );
 			}
-			strcat( temp, "./" );
-			strcat( temp, argv0 );
+			strncat( temp, "./", sizeof( temp ) );
+			strncat( temp, argv0, sizeof( temp ) );
 
 			/* verify the path */
 			if ( access( temp, X_OK ) == 0 ) {
@@ -281,11 +281,11 @@ void AddHomeBasePath( char *path ){
 		basePaths[ i + 1 ] = basePaths[ i ];
 
 	/* concatenate home dir and path */
-	sprintf( temp, "%s/%s", homePath, path );
+	snprintf( temp, sizeof( temp ), "%s/%s", homePath, path );
 
 	/* add it to the list */
 	basePaths[ 0 ] = safe_malloc( strlen( temp ) + 1 );
-	strcpy( basePaths[ 0 ], temp );
+	Q_strncpyz( basePaths[ 0 ], temp, sizeof( basePaths ) );
 	CleanPath( basePaths[ 0 ] );
 	numBasePaths++;
 	#endif
@@ -399,7 +399,7 @@ void InitPaths( int *argc, char **argv ){
 		for ( i = 0; i < *argc && numBasePaths == 0; i++ )
 		{
 			/* extract the arg */
-			strcpy( temp, argv[ i ] );
+			Q_strncpyz( temp, argv[ i ], sizeof( temp ) );
 			CleanPath( temp );
 			len = strlen( temp );
 			Sys_FPrintf( SYS_VRB, "Searching for \"%s\" in \"%s\" (%d)...\n", game->magic, temp, i );
@@ -449,7 +449,7 @@ void InitPaths( int *argc, char **argv ){
 		for ( i = 0; i < numBasePaths; i++ )
 		{
 			/* create a full path and initialize it */
-			sprintf( temp, "%s/%s/", basePaths[ i ], gamePaths[ j ] );
+			snprintf( temp, sizeof( temp ), "%s/%s/", basePaths[ i ], gamePaths[ j ] );
 			vfsInitDirectory( temp );
 		}
 	}

@@ -313,8 +313,8 @@ bool DBobView::CalculateTrajectory( vec3_t start, vec3_t apex, float multiplier,
 }
 
 void DBobView::Begin( const char* trigger, const char *target, float multiplier, int points, float varGravity, bool bNoUpdate, bool bShowExtra ){
-	strcpy( entTrigger, trigger );
-	strcpy( entTarget, target );
+	Q_strncpyz( entTrigger, trigger, sizeof( entTrigger ) );
+	Q_strncpyz( entTarget, target, sizeof( entTarget ) );
 
 	fMultiplier = multiplier;
 	fVarGravity = varGravity;

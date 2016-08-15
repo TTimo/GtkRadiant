@@ -55,13 +55,13 @@ DTreePlanter*   g_TreePlanter =     NULL;
 //========================//
 
 void LoadLists(){
-	char buffer[256];
+	char buffer[PATH_MAX];
 
 	if ( !el1Loaded ) {
-		el1Loaded = LoadExclusionList( GetFilename( buffer, "bt/bt-el1.txt" ), &exclusionList );
+		el1Loaded = LoadExclusionList( GetFilename( buffer, "bt/bt-el1.txt", sizeof( buffer ) ), &exclusionList );
 	}
 	if ( !el2Loaded ) {
-		el2Loaded = LoadExclusionList( GetFilename( buffer, "bt/bt-el2.txt" ), &exclusionList_Face );
+		el2Loaded = LoadExclusionList( GetFilename( buffer, "bt/bt-el2.txt", sizeof( buffer ) ), &exclusionList_Face );
 	}
 }
 
@@ -186,7 +186,7 @@ void DoResetTextures(){
 	else
 	{
 		texName = GetCurrentTexture();
-		strcpy( rs.textureName, GetCurrentTexture() );
+		Q_strncpyz( rs.textureName, GetCurrentTexture(), sizeof( rs.textureName ) );
 	}
 
 	int ret;
@@ -216,7 +216,7 @@ void DoResetTextures(){
 void DoBuildStairs( vec3_t vMin, vec3_t vMax ){
 	BuildStairsRS rs;
 
-	strcpy( rs.mainTexture, GetCurrentTexture() );
+	Q_strncpyz( rs.mainTexture, GetCurrentTexture(), sizeof( rs.mainTexture ) );
 
 	// ensure we have something selected
 	if ( g_FuncTable.m_pfnSelectedBrushCount() != 1 ) {
@@ -319,7 +319,7 @@ void DoBuildDoors( vec3_t vMin, vec3_t vMax ){
 	// cant release until we delete the brush, if we do...
 
 	DoorRS rs;
-	strcpy( rs.mainTexture, GetCurrentTexture() );
+	Q_strncpyz( rs.mainTexture, GetCurrentTexture(), sizeof( rs.mainTexture ) );
 
 	if ( DoDoorsBox( &rs ) == IDOK ) {
 		g_FuncTable.m_pfnDeleteBrushHandle( brush );
@@ -554,7 +554,7 @@ void DoVisAnalyse(){
 		return;
 	}
 
-	strcpy( filename, rad_filename );
+	Q_strncpyz( filename, rad_filename, sizeof( filename ) );
 
 	char* ext = strrchr( filename, '.' ) + 1;
 	strcpy( ext, "bsp" ); // rename the extension

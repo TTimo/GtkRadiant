@@ -19,7 +19,7 @@
    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifdef WIN32
+#ifdef _WIN32
 #include <io.h>
 #endif
 #include "q3data.h"
@@ -334,7 +334,7 @@ void PackDirectory_r( char *dir ){
 #else
 
 #include <sys/types.h>
-#ifndef WIN32
+#ifndef _WIN32
 #include <sys/dir.h>
 #else
 #include <sys/dirent.h>
@@ -650,7 +650,7 @@ int main( int argc, char **argv ){
 		printf( "--------------- %s ---------------\n", argv[i] );
 		// load the script
 		strcpy( path, argv[i] );
-		DefaultExtension( path, ".qdt" );
+		DefaultExtension( path, ".qdt", sizeof( path ) );
 		if ( !gamedir[0] ) {
 			SetQdirFromPath( path );
 		}

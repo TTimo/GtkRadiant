@@ -146,7 +146,7 @@ GSList *AddToWadList( GSList *wadlist, const char *shadername, const char *wad )
 		}
 		else
 		{
-			Sys_Printf( "HydraToolz: WARNING: Unknown wad file for shader %s\n",shadername );
+			Sys_FPrintf( SYS_WRN, "HydraToolz: WARNING: Unknown wad file for shader %s\n",shadername );
 			return wadlist;
 		}
 
@@ -199,7 +199,7 @@ void UpdateWadKeyPair( void ){
 	for ( pEpair = pEntity->epairs; pEpair != NULL; pEpair = pEpair->next )
 	{
 		if ( stricmp( pEpair->key,"wad" ) == 0 ) {
-			strcpy( wads,pEpair->value );
+			Q_strncpyz( wads, pEpair->value, sizeof( wads ) );
 			HYDRA_ConvertDOSToUnixName( wads,wads );
 
 			Sys_Printf( "HydraToolz: Current wad key is \"%s\"!\n",wads );
@@ -295,18 +295,18 @@ void UpdateWadKeyPair( void ){
 		else
 		{
 			if ( wads[0] ) {
-				strcat( wads,";" );
+				strncat( wads, ";", sizeof( wads ) );
 			}
 
 			actualwad = vfsGetFullPath( (char *)wadlist->data, 0, 0 );
 
 			if ( actualwad ) {
-				strcat( wads, actualwad );
+				strncat( wads, actualwad, sizeof( wads ) );
 			}
 			else
 			{
 				Sys_FPrintf( SYS_WRN, "WARNING: could not locate wad file %s\n",(char *)wadlist->data );
-				strcat( wads, (char *)wadlist->data );
+				strncat( wads, (char *)wadlist->data, sizeof( wads ) );
 			}
 		}
 

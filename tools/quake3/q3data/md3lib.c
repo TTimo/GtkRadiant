@@ -20,7 +20,7 @@
  */
 
 #include <assert.h>
-#ifdef WIN32
+#ifdef _WIN32
 #include <io.h>
 #endif
 #include "md3lib.h"

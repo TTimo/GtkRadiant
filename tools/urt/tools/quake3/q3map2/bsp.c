@@ -54,7 +54,7 @@
 static void SetCloneModelNumbers( void ){
 	int i, j;
 	int models;
-	char modelValue[ 10 ];
+	char modelValue[ 16 ];
 	const char  *value, *value2, *value3;
 
 
@@ -74,7 +74,7 @@ static void SetCloneModelNumbers( void ){
 		}
 
 		/* add the model key */
-		sprintf( modelValue, "*%d", models );
+		snprintf( modelValue, sizeof( modelValue ), "*%d", models );
 		SetKeyValue( &entities[ i ], "model", modelValue );
 
 		/* increment model count */
@@ -121,7 +121,7 @@ static void SetCloneModelNumbers( void ){
 				models = atoi( &value2[ 1 ] );
 
 				/* add the model key */
-				sprintf( modelValue, "*%d", models );
+				snprintf( modelValue, sizeof( modelValue ), "*%d", models );
 				SetKeyValue( &entities[ i ], "model", modelValue );
 
 				/* nuke the brushes/patches for this entity (fixme: leak!) */
@@ -352,7 +352,7 @@ void ProcessWorldModel( void ){
 	/* ydnar: fog hull */
 	value = ValueForKey( &entities[ 0 ], "_foghull" );
 	if ( value[ 0 ] != '\0' ) {
-		sprintf( shader, "textures/%s", value );
+		snprintf( shader, sizeof( shader ), "textures/%s", value );
 		MakeFogHullSurfs( e, tree, shader );
 	}
 
@@ -566,7 +566,7 @@ void OnlyEnts( void ){
 	/* note it */
 	Sys_Printf( "--- OnlyEnts ---\n" );
 
-	sprintf( out, "%s.bsp", source );
+	snprintf( out, sizeof( out ), "%s.bsp", source );
 	LoadBSPFile( out );
 	numEntities = 0;
 
@@ -617,7 +617,7 @@ int BSPMain( int argc, char **argv ){
 			onlyents = qtrue;
 		}
 		else if ( !strcmp( argv[ i ], "-tempname" ) ) {
-			strcpy( tempSource, argv[ ++i ] );
+			Q_strncpyz( tempSource, argv[ ++i ], sizeof( tempSource ) );
 		}
 		else if ( !strcmp( argv[ i ], "-tmpout" ) ) {
 			strcpy( outbase, "/tmp" );
@@ -793,27 +793,27 @@ int BSPMain( int argc, char **argv ){
 	}
 
 	/* copy source name */
-	strcpy( source, ExpandArg( argv[ i ] ) );
+	Q_strncpyz( source, ExpandArg( argv[ i ] ), sizeof( source ) );
 	StripExtension( source );
 
 	/* ydnar: set default sample size */
 	SetDefaultSampleSize( sampleSize );
 
 	/* delete portal, line and surface files */
-	sprintf( path, "%s.prt", source );
+	snprintf( path, sizeof( path ), "%s.prt", source );
 	remove( path );
-	sprintf( path, "%s.lin", source );
+	snprintf( path, sizeof( path ), "%s.lin", source );
 	remove( path );
 	//%	sprintf( path, "%s.srf", source );	/* ydnar */
 	//%	remove( path );
 
 	/* expand mapname */
-	strcpy( name, ExpandArg( argv[ i ] ) );
+	Q_strncpyz( name, ExpandArg( argv[ i ] ), sizeof( name ) );
 	if ( strcmp( name + strlen( name ) - 4, ".reg" ) ) {
 		/* if we are doing a full map, delete the last saved region map */
-		sprintf( path, "%s.reg", source );
+		snprintf( path, sizeof( path ), "%s.reg", source );
 		remove( path );
-		DefaultExtension( name, ".map" );   /* might be .reg */
+		DefaultExtension( name, ".map", sizeof( name ) );   /* might be .reg */
 	}
 
 	/* if onlyents, just grab the entites and resave */

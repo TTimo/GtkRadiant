@@ -51,7 +51,7 @@ int vfsLoadFullPathFile( const char *filename, void **buffer );
 // on win32, will build the short path name
 // directories will be cleaned, no ending filename seperator
 // we modify the entry directly, the size of the string can only go down
-void vfsCleanFileName( char * );
+void vfsCleanFileName( char *, size_t );
 // these return a static char*, doesn't need to be freed or anything
 // get the base path to use when raising file dialogs
 // we manually add "maps/" or "sounds/" or "mapobjects/models/" etc.

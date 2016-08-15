@@ -495,7 +495,11 @@ CPluginSlot::~CPluginSlot(){
 void CPluginSlot::Init(){
 	CString str =   mpTable->m_pfnQERPlug_GetCommandList();
 	char cTemp[1024];
-	strcpy( cTemp, str );
+	Q_strncpyz( cTemp, str, sizeof( cTemp ) );
+	if( str.GetLength() > sizeof( cTemp ) - 1 )
+	{
+		Sys_FPrintf( SYS_WRN, "WARNING: Temporary buffer is too small in CPluginSlot::Init\n" );
+	}
 	char* token = strtok( cTemp, ",;" );
 	if ( token && *token == ' ' ) {
 		while ( *token == ' ' )
@@ -1090,7 +1094,7 @@ _QERFaceData* WINAPI QERApp_GetFaceData( void* pv, int nFaceIndex ){
 					face.m_fShift[0] = f->texdef.shift[0];
 					face.m_fShift[1] = f->texdef.shift[1];
 				}
-				strcpy( face.m_TextureName, f->texdef.GetName() );
+				Q_strncpyz( face.m_TextureName, f->texdef.GetName(), sizeof( face.m_TextureName ) );
 				VectorCopy( f->planepts[0], face.m_v1 );
 				VectorCopy( f->planepts[1], face.m_v2 );
 				VectorCopy( f->planepts[2], face.m_v3 );
@@ -1298,7 +1302,7 @@ char* WINAPI QERApp_GetTexture( int nIndex ){
 			break;
 		}
 		if ( n == nIndex ) {
-			strcpy( name, pShader->getName() );
+			Q_strncpyz( name, pShader->getName(), sizeof( name ) );
 			return name;
 		}
 		n++;
@@ -1308,7 +1312,7 @@ char* WINAPI QERApp_GetTexture( int nIndex ){
 
 char* WINAPI QERApp_GetCurrentTexture(){
 	static char current_tex[1024];
-	strcpy( current_tex,g_qeglobals.d_texturewin.texdef.GetName() );
+	Q_strncpyz( current_tex, g_qeglobals.d_texturewin.texdef.GetName(), sizeof( current_tex ) );
 	return current_tex;
 }
 
@@ -1518,7 +1522,7 @@ int QERApp_ScriptLine(){
 // we save the map and return the name .. either .map or .reg to support region compiling
 char* QERApp_GetMapName(){
 	static char name[PATH_MAX];
-	SaveWithRegion( name );
+	SaveWithRegion( name, sizeof( name ) );
 	return name;
 }
 

@@ -48,7 +48,7 @@ DPatch::~DPatch(){
 }
 
 void DPatch::SetTexture( const char *textureName ){
-	strcpy( texture, textureName );
+	Q_strncpyz( texture, textureName, sizeof( texture ) );
 }
 
 void CopyDrawVert( const drawVert_t* in, drawVert_t* out ){
@@ -124,7 +124,7 @@ void DPatch::RemoveFromRadiant(){
 
 bool DPatch::ResetTextures( const char *oldTextureName, const char *newTextureName ){
 	if ( !oldTextureName || !strcmp( texture, oldTextureName ) ) {
-		strcpy( texture, newTextureName );
+		Q_strncpyz( texture, newTextureName, sizeof( texture ) );
 		return TRUE;
 	}
 

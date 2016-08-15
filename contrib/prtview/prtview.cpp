@@ -55,6 +55,8 @@ static char INIfn[NAME_MAX];
 #define CLIP_RANGE "ClipRange"
 #define CLIP "Clip"
 
+void *g_pMainWidget = NULL;
+
 void InitInstance(){
 #ifdef _WIN32
 	char fn[_MAX_PATH];
@@ -67,15 +69,15 @@ void InitInstance(){
 
 	_splitpath( fn, fn_drive, fn_dir, fn_name, fn_ext );
 
-	strcpy( INIfn, fn_drive );
-	strcat( INIfn, fn_dir );
-	strcat( INIfn, fn_name );
-	strcat( INIfn, ".ini" );
+	Q_strncpyz( INIfn, fn_drive, sizeof( INIfn ) );
+	strncat( INIfn, fn_dir, sizeof( INIfn ) );
+	strncat( INIfn, fn_name, sizeof( INIfn ) );
+	strncat( INIfn, ".ini", sizeof( INIfn ) );
 #else // if def __linux__
-	strcpy( INIfn, g_get_home_dir() );
-	strcat( INIfn, "/.radiant/" );
-	strcat( INIfn, RADIANT_VERSION );
-	strcat( INIfn, "/prtview.ini" );
+	Q_strncpyz( INIfn, g_get_home_dir(), sizeof( INIfn ) );
+	strncat( INIfn, "/.radiant/", sizeof( INIfn ) );
+	strncat( INIfn, RADIANT_VERSION, sizeof( INIfn ) );
+	strncat( INIfn, "/prtview.ini", sizeof( INIfn ) );
 #endif
 
 	portals.show_2d = INIGetInt( RENDER_2D, FALSE ) ? true : false;
@@ -166,7 +168,7 @@ _QERQglTable g_QglTable;
 
 #if defined( __linux__ ) || defined( __APPLE__ )
 
-static bool read_var( const char *filename, const char *section, const char *key, char *value ){
+static bool read_var( const char *filename, const char *section, const char *key, char *value, size_t length ){
 	char line[1024], *ptr;
 	FILE *rc;
 
@@ -199,7 +201,7 @@ static bool read_var( const char *filename, const char *section, const char *key
 				*ptr = '\0';
 
 				if ( strcmp( line, key ) == 0 ) {
-					strcpy( value, ptr + 1 );
+					Q_strncpyz( value, ptr + 1, length );
 					fclose( rc );
 
 					while ( value[strlen( value ) - 1] == 10 ||
@@ -317,7 +319,7 @@ int INIGetInt( const char *key, int def ){
 #if defined( __linux__ ) || defined( __APPLE__ )
 	char value[1024];
 
-	if ( read_var( INIfn, CONFIG_SECTION, key, value ) ) {
+	if ( read_var( INIfn, CONFIG_SECTION, key, value, sizeof( value ) ) ) {
 		return atoi( value );
 	}
 	else{
@@ -332,10 +334,10 @@ void INISetInt( const char *key, int val, const char *comment /* = NULL */ ){
 	char s[1000];
 
 	if ( comment ) {
-		sprintf( s, "%d        ; %s", val, comment );
+		snprintf( s, sizeof( s ), "%d        ; %s", val, comment );
 	}
 	else{
-		sprintf( s, "%d", val );
+		snprintf( s, sizeof( s ), "%d", val );
 	}
 #if defined( __linux__ ) || defined( __APPLE__ )
 	save_var( INIfn, CONFIG_SECTION, key, s );
@@ -387,7 +389,7 @@ extern "C" const char* QERPlug_GetCommandList(){
    char buf[32768];
 
    va_start (argptr,text);
-   vsprintf (buf, text, argptr);
+   vsnprintf (buf, sizeof( buf ), text, argptr);
    va_end (argptr);
 
    g_FuncTable.m_pfnSysMsg (buf);

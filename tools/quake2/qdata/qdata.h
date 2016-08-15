@@ -34,7 +34,7 @@
 #include "l3dslib.h"
 #include "bspfile.h"
 
-#ifdef WIN32
+#ifdef _WIN32
 	#ifdef NDEBUG                           // Don't show in a Release build
 		#pragma warning(disable : 4305)     // truncate from double to float
 		#pragma warning(disable : 4244)     // conversion from double to float

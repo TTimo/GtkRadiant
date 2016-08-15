@@ -60,7 +60,7 @@ int WINAPI QERApp_GetFaceInfo( int iface, _QERFaceData *pFaceData, winding_t *pW
 		return 0;
 	}
 	face_t *selFace = reinterpret_cast<face_t*>( g_ptrSelectedFaces.GetAt( iface ) );
-	strcpy( pFaceData->m_TextureName, selFace->texdef.GetName() );
+	Q_strncpyz( pFaceData->m_TextureName, selFace->texdef.GetName(), sizeof( pFaceData->m_TextureName ) );
 	VectorCopy( selFace->planepts[0], pFaceData->m_v1 );
 	VectorCopy( selFace->planepts[1], pFaceData->m_v2 );
 	VectorCopy( selFace->planepts[2], pFaceData->m_v3 );

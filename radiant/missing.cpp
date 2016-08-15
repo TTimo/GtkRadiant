@@ -115,7 +115,7 @@ bool radCreateDirectory( const char *directory, bool fatal_on_error ) {
 
 int GetFullPathName( const char *lpFileName, int nBufferLength, char *lpBuffer, char **lpFilePart ){
 	if ( lpFileName[0] == '/' ) {
-		strcpy( lpBuffer, lpFileName );
+		Q_strncpyz( lpBuffer, lpFileName, nBufferLength );
 		*lpFilePart = strrchr( lpBuffer, '/' );
 		return strlen( lpBuffer );
 	}
@@ -124,9 +124,9 @@ int GetFullPathName( const char *lpFileName, int nBufferLength, char *lpBuffer, 
 		return 0;
 	}
 
-	strcat( lpBuffer, "/" );
+	strncat( lpBuffer, "/", nBufferLength );
 	*lpFilePart = lpBuffer + strlen( lpBuffer );
-	strcat( lpBuffer, lpFileName );
+	strncat( lpBuffer, lpFileName, nBufferLength );
 
 	char *scr = lpBuffer, *dst = lpBuffer;
 	for ( int i = 0; ( i < nBufferLength ) && ( *scr != 0 ); i++ )

@@ -229,7 +229,7 @@ void MemStream::printf( const char* s, ... ){
 
 	char buffer[4096];
 	va_start( args, s );
-	vsprintf( buffer, s, args );
+	vsnprintf( buffer, sizeof( buffer ), s, args );
 	va_end( args );
 	Write( buffer, strlen( buffer ) );
 }

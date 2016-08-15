@@ -1675,7 +1675,7 @@ void SetupGrid( void ){
 
 	/* different? */
 	if ( !VectorCompare( gridSize, oldGridSize ) ) {
-		sprintf( temp, "%.0f %.0f %.0f", gridSize[ 0 ], gridSize[ 1 ], gridSize[ 2 ] );
+		snprintf( temp, sizeof( temp ), "%.0f %.0f %.0f", gridSize[ 0 ], gridSize[ 1 ], gridSize[ 2 ] );
 		SetKeyValue( &entities[ 0 ], "gridsize", (const char*) temp );
 		Sys_FPrintf( SYS_VRB, "Storing adjusted grid size\n" );
 	}
@@ -1723,11 +1723,11 @@ void WriteRadbumpChunk(){
 	/* note it */
 	Sys_Printf( "--- WriteRadbumpChunk ---\n" );
 
-	strcpy( dirname, source );
+	Q_strncpyz( dirname, source, sizeof( dirname ) );
 	StripExtension( dirname );
 
 	//Check to see if the chunk exists
-	sprintf( filename, "%s.rad", dirname );
+	snprintf( filename, sizeof( filename ), "%s.rad", dirname );
 
 	file = fopen( filename, "wb" );
 
@@ -2482,12 +2482,12 @@ int LightMain( int argc, char **argv ){
 	}
 
 	/* clean up map name */
-	strcpy( source, ExpandArg( argv[ i ] ) );
+	Q_strncpyz( source, ExpandArg( argv[ i ] ), sizeof( source ) );
 	StripExtension( source );
-	DefaultExtension( source, ".bsp" );
-	strcpy( mapSource, ExpandArg( argv[ i ] ) );
+	DefaultExtension( source, ".bsp", sizeof( source ) );
+	Q_strncpyz( mapSource, ExpandArg( argv[ i ] ), sizeof( mapSource ) );
 	StripExtension( mapSource );
-	DefaultExtension( mapSource, ".map" );
+	DefaultExtension( mapSource, ".map", sizeof( mapSource ) );
 
 	/* ydnar: set default sample size */
 	SetDefaultSampleSize( sampleSize );

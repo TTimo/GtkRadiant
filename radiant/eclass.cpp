@@ -227,7 +227,7 @@ void Eclass_CreateSpriteModelPaths(){
 			{
 
 				// strip the path/ and the .extension.
-				ExtractFileBase( (char *)pFile->data,filename );
+				ExtractFileBase( (char *)pFile->data, filename, sizeof( filename ) );
 
 				// does the eclass name match the filename?
 				if ( stricmp( e->name,filename ) == 0 ) {
@@ -269,7 +269,7 @@ void EClass_InitForFileList( GSList *pFiles, _EClassTable *pTable ){
 		// this allows to override baseq3/scripts/entities.def for instance
 		char relPath[PATH_MAX];
 		strcpy( relPath, "scripts/" );
-		strcat( relPath, (char*)pFile->data );
+		strncat( relPath, (char*)pFile->data, sizeof( relPath ) );
 		if ( !vfsGetFullPath( relPath, 0, 0 ) ) {
 			Sys_FPrintf( SYS_ERR, "Failed to find the full path for '%s' in the VFS\n", relPath );
 		}
@@ -286,7 +286,7 @@ void EClass_InitForFileList( GSList *pFiles, _EClassTable *pTable ){
  */
 eclass_t * EClass_Create( const char *name, float col1, float col2, float col3, const vec3_t *mins, const vec3_t *maxs, const char *comments ){
 	eclass_t *e;
-	char color[128];
+	char color[256];
 
 	e = (eclass_t*)malloc( sizeof( *e ) );
 	memset( e, 0, sizeof( *e ) );
@@ -297,7 +297,7 @@ eclass_t * EClass_Create( const char *name, float col1, float col2, float col3, 
 	e->color[0] = col1;
 	e->color[1] = col2;
 	e->color[2] = col3;
-	sprintf( color, "(%f %f %f)", e->color[0], e->color[1], e->color[2] );
+	snprintf( color, sizeof( color ), "(%f %f %f)", e->color[0], e->color[1], e->color[2] );
 	e->texdef.SetName( color );
 
 	// supplied size ?
@@ -313,13 +313,13 @@ eclass_t * EClass_Create( const char *name, float col1, float col2, float col3, 
 		// b) no entity definition files were found
 		// c) no entity definition file contained an entry for worldspawn.
 
-		if ( stricmp( name,"worldspawn" ) != 0 ) {
+		if ( stricmp( name, "worldspawn" ) != 0 ) {
 			e->fixedsize = true;
 		}
 
 		// copy the sizes..
-		memcpy( e->mins,mins,sizeof( vec3_t ) );
-		memcpy( e->maxs,maxs,sizeof( vec3_t ) );
+		memcpy( e->mins, mins, sizeof( vec3_t ) );
+		memcpy( e->maxs, maxs, sizeof( vec3_t ) );
 	}
 
 	if ( comments ) {
@@ -404,7 +404,7 @@ void Eclass_Init(){
 				// this allows to override baseq3/scripts/entities.def for instance
 				char relPath[PATH_MAX];
 				strcpy( relPath, "scripts/" );
-				strcat( relPath, (char*)pFile->data );
+				strncat( relPath, (char*)pFile->data, sizeof( relPath ) );
 				char *fullpath = vfsGetFullPath( relPath, 0, 0 );
 				if ( !fullpath ) {
 					Sys_FPrintf( SYS_ERR, "Failed to find the full path for \"%s\" in the VFS\n", relPath );

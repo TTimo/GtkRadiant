@@ -52,6 +52,15 @@
 #define strcasecmp strcmpi
 #endif
 
+#if defined(_MSC_VER) && _MSC_VER<1900 && !(defined snprintf)
+#define snprintf _snprintf
+#endif
+
+#ifndef Q_strncpyz
+#define Q_strncpyz(_dst, _source, _len) do { strncpy((_dst), (_source), (_len) - 1); if ((_len) > 0) (_dst)[(_len) - 1] = 0; } while( 0 )
+#endif
+
+
 // NOTE TTimo __StrDup was initially implemented in pakstuff.cpp
 //   causing a bunch of issues for broader targets that use Str.h (such as plugins and modules)
 //   Q_StrDup should be used now, using a #define __StrDup for easy transition

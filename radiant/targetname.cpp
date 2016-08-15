@@ -47,7 +47,7 @@ void Entity_Connect( entity_t *e1, entity_t *e2 ){
 			}
 		}
 	}
-	sprintf( newtarget, "t%i", maxtarget + 1 );
+	snprintf( newtarget, sizeof( newtarget ), "t%i", maxtarget + 1 );
 
 #ifdef _DEBUG
 	Sys_Printf( "Connecting entities with new target/targetname: %s\n", newtarget );

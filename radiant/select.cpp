@@ -755,7 +755,7 @@ void Select_ApplyMatrix( bool bSnap, bool bRotation, int nAxis, float fDeg ){ //
 
 			// update the origin key
 			char text[64];
-			sprintf( text, "%i %i %i",
+			snprintf( text, sizeof( text ), "%i %i %i",
 					 (int)b->owner->origin[0], (int)b->owner->origin[1], (int)b->owner->origin[2] );
 			SetKeyValue( b->owner, "origin", text );
 

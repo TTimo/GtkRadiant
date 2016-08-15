@@ -67,8 +67,11 @@ extern int unz_GAME_QL;
 	#include <limits.h>
 #endif
 
-#ifdef WIN32
+#ifdef _WIN32
 	#include <windows.h>
+	#ifndef MAX_OS_PATH
+		#define MAX_OS_PATH MAX_PATH
+	#endif
 #endif
 
 
@@ -111,7 +114,7 @@ extern int unz_GAME_QL;
 #endif
 
 #if 1
-	#ifdef WIN32
+	#ifdef _WIN32
 		#define Q_stricmp           stricmp
 		#define Q_strncasecmp       strnicmp
 	#else
@@ -1462,7 +1465,10 @@ surfaceInfo_t;
 
 /* main.c */
 vec_t                       Random( void );
-char                        *Q_strncpyz( char *dst, const char *src, size_t len );
+#ifndef Q_strncpyz
+#define Q_strncpyz(_dst, _source, _len) do { strncpy((_dst), (_source), (_len) - 1); if ((_len) > 0) (_dst)[(_len) - 1] = 0; } while( 0 )
+#endif
+//char                        *Q_strncpyz( char *dst, const char *src, size_t len );
 char                        *Q_strcat( char *dst, size_t dlen, const char *src );
 char                        *Q_strncat( char *dst, size_t dlen, const char *src, size_t slen );
 

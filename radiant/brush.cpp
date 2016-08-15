@@ -37,7 +37,7 @@ const char* Brush_Name( brush_t *b ){
 	static char cBuff[1024];
 	b->numberId = g_nBrushId++;
 	if ( g_qeglobals.m_bBrushPrimitMode ) {
-		sprintf( cBuff, "Brush %i", b->numberId );
+		snprintf( cBuff, sizeof( cBuff ), "Brush %i", b->numberId );
 		Brush_SetEpair( b, "Name", cBuff );
 	}
 	return cBuff;
@@ -1536,13 +1536,13 @@ const char* Brush_GetKeyValue( brush_t *b, const char *pKey ){
    temporary stuff, detect potential problems when saving the texture name
    =================
  */
-void CheckName( face_t *fa, char *pname ){
+void CheckName( face_t *fa, char *pname, size_t length ){
 	if ( !strlen( fa->texdef.GetName() ) ) {
 #ifdef _DEBUG
 		Sys_FPrintf( SYS_WRN, "WARNING: unexpected texdef.name is empty in Brush.cpp CheckName\n" );
 #endif
 		fa->texdef.SetName( SHADER_NOT_FOUND );
-		strcpy( pname, SHADER_NOT_FOUND );
+		Q_strncpyz( pname, SHADER_NOT_FOUND, length );
 		return;
 	}
 
@@ -1550,11 +1550,11 @@ void CheckName( face_t *fa, char *pname ){
 	if ( strchr( fa->texdef.GetName(), ' ' ) ) {
 		char Msg1[1024];
 
-		sprintf( Msg1, "Can't save texture with spaces in name. Rename %s\nNOTE: This message may popup several times .. once for each buggy face detected.", fa->texdef.GetName() );
+		snprintf( Msg1, sizeof( Msg1 ), "Can't save texture with spaces in name. Rename %s\nNOTE: This message may popup several times .. once for each buggy face detected.", fa->texdef.GetName() );
 
 		Sys_Printf( "%s\n", Msg1 );
 		gtk_MessageBox( g_pParentWnd->m_pWidget, Msg1, "Error saving map", MB_OK );
-		strcpy( pname, SHADER_NOT_FOUND );
+		Q_strncpyz( pname, SHADER_NOT_FOUND, length );
 		return;
 	}
 
@@ -1566,10 +1566,10 @@ void CheckName( face_t *fa, char *pname ){
 		gtk_MessageBox( g_pParentWnd->m_pWidget, text, "Error saving map", MB_OK );
 		// need to cleanup this dead face name or we may loop endlessly
 		fa->texdef.SetName( SHADER_NOT_FOUND );
-		strcpy( pname, SHADER_NOT_FOUND );
+		Q_strncpyz( pname, SHADER_NOT_FOUND, length );
 		return;
 	}
-	strcpy( pname, fa->texdef.GetName() + 9 ); // remove "textures/"
+	Q_strncpyz( pname, fa->texdef.GetName() + 9, length ); // remove "textures/"
 }
 
 /*
@@ -3401,7 +3401,7 @@ void Brush_Move( brush_t *b, const vec3_t move, bool bSnap ){
 	if ( b->owner->eclass->fixedsize ) {
 		char text[64];
 		VectorAdd( b->owner->origin, move, b->owner->origin );
-		sprintf( text, "%i %i %i",
+		snprintf( text, sizeof( text ), "%i %i %i",
 				 (int)b->owner->origin[0], (int)b->owner->origin[1], (int)b->owner->origin[2] );
 		SetKeyValue( b->owner, "origin", text );
 		//VectorAdd(b->maxs, b->mins, b->owner->origin);

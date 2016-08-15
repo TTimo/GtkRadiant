@@ -194,7 +194,7 @@ void GetSpawnFlags( void ){
 	}
 	else
 	{
-		sprintf( sz, "%i", f );
+		snprintf( sz, sizeof( sz ), "%i", f );
 		if ( multiple_entities ) {
 			brush_t   *b;
 
@@ -564,13 +564,13 @@ bool GetSelectAllCriteria( CString &strKey, CString &strVal ){
 void AssignSound(){
 	char buffer[NAME_MAX];
 
-	strcpy( buffer, g_qeglobals.m_strHomeMaps.GetBuffer() );
-	strcat( buffer, "sound/" );
+	Q_strncpyz( buffer, g_qeglobals.m_strHomeMaps.GetBuffer(), sizeof( buffer ) );
+	strncat( buffer, "sound/", sizeof( buffer ) );
 
 	if ( access( buffer, R_OK ) != 0 ) {
 		// just go to fsmain
-		strcpy( buffer, g_qeglobals.m_strHomeMaps.GetBuffer() );
-		strcat( buffer, "/" );
+		Q_strncpyz( buffer, g_qeglobals.m_strHomeMaps.GetBuffer(), sizeof( buffer ) );
+		strncat( buffer, "/", sizeof( buffer ) );
 	}
 
 	const char *filename = file_dialog( g_pGroupDlg->m_pWidget, TRUE, _( "Open Wav File" ), buffer, "sound" );
@@ -595,13 +595,13 @@ void AssignSound(){
 void AssignModel(){
 	char buffer[NAME_MAX];
 
-	strcpy( buffer, g_qeglobals.m_strHomeMaps.GetBuffer() );
-	strcat( buffer, "models/" );
+	Q_strncpyz( buffer, g_qeglobals.m_strHomeMaps.GetBuffer(), sizeof( buffer ) );
+	strncat( buffer, "models/", sizeof( buffer ) );
 
 	if ( access( buffer, R_OK ) != 0 ) {
 		// just go to fsmain
-		strcpy( buffer, g_qeglobals.m_strHomeMaps.GetBuffer() );
-		strcat( buffer, "/" );
+		Q_strncpyz( buffer, g_qeglobals.m_strHomeMaps.GetBuffer(), sizeof( buffer ) );
+		strncat( buffer, "/", sizeof( buffer ) );
 	}
 
 	const char *filename = file_dialog( g_pGroupDlg->m_pWidget, TRUE, _( "Open Model" ), buffer, MODEL_MAJOR );

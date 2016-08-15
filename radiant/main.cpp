@@ -182,11 +182,11 @@ int loki_getmountpoint( const char *device, char *mntpt, int max_size ){
 		{
 			char *tmp, mntdev[1024];
 
-			strcpy( mntdev, mntent->mnt_fsname );
+			Q_strncpyz( mntdev, mntent->mnt_fsname, sizeof( mntdev ) );
 			if ( strcmp( mntent->mnt_type, "supermount" ) == 0 ) {
 				tmp = strstr( mntent->mnt_opts, "dev=" );
 				if ( tmp ) {
-					strcpy( mntdev, tmp + strlen( "dev=" ) );
+					Q_strcnpyz( mntdev, tmp + strlen( "dev=" ), sizeof( mntdev ) );
 					tmp = strchr( mntdev, ',' );
 					if ( tmp ) {
 						*tmp = '\0';
@@ -310,61 +310,61 @@ void error_redirect( const gchar *domain, GLogLevelFlags log_level, const gchar 
 	}
 
 	if ( domain ) {
-		strcpy( buf, domain );
+		Q_strncpyz( buf, domain, sizeof( buf ) );
 	}
 	else{
-		strcpy( buf, "**" );
+		Q_strncpyz( buf, "**", sizeof( buf ) );
 	}
-	strcat( buf, "-" );
+	strncat( buf, "-", sizeof( buf ) );
 
 	switch ( log_level )
 	{
 	case G_LOG_LEVEL_ERROR:
 		if ( in_recursion ) {
-			strcat( buf, "ERROR (recursed) **: " );
+			strncat( buf, "ERROR (recursed) **: ", sizeof( buf ) );
 		}
 		else{
-			strcat( buf, "ERROR **: " );
+			strncat( buf, "ERROR **: ", sizeof( buf ) );
 		}
 		break;
 	case G_LOG_LEVEL_CRITICAL:
 		if ( in_recursion ) {
-			strcat( buf, "CRITICAL (recursed) **: " );
+			strncat( buf, "CRITICAL (recursed) **: ", sizeof( buf ) );
 		}
 		else{
-			strcat( buf, "CRITICAL **: " );
+			strncat( buf, "CRITICAL **: ", sizeof( buf ) );
 		}
 		break;
 	case G_LOG_LEVEL_WARNING:
 		if ( in_recursion ) {
-			strcat( buf, "WARNING (recursed) **: " );
+			strncat( buf, "WARNING (recursed) **: ", sizeof( buf ) );
 		}
 		else{
-			strcat( buf, "WARNING **: " );
+			strncat( buf, "WARNING **: ", sizeof( buf ) );
 		}
 		break;
 	case G_LOG_LEVEL_MESSAGE:
 		if ( in_recursion ) {
-			strcat( buf, "Message (recursed): " );
+			strncat( buf, "Message (recursed): ", sizeof( buf ) );
 		}
 		else{
-			strcat( buf, "Message: " );
+			strncat( buf, "Message: ", sizeof( buf ) );
 		}
 		break;
 	case G_LOG_LEVEL_INFO:
 		if ( in_recursion ) {
-			strcat( buf, "INFO (recursed): " );
+			strncat( buf, "INFO (recursed): ", sizeof( buf ) );
 		}
 		else{
-			strcat( buf, "INFO: " );
+			strncat( buf, "INFO: ", sizeof( buf ) );
 		}
 		break;
 	case G_LOG_LEVEL_DEBUG:
 		if ( in_recursion ) {
-			strcat( buf, "DEBUG (recursed): " );
+			strncat( buf, "DEBUG (recursed): ", sizeof( buf ) );
 		}
 		else{
-			strcat( buf, "DEBUG: " );
+			strncat( buf, "DEBUG: ", sizeof( buf ) );
 		}
 		break;
 	default:
@@ -372,10 +372,10 @@ void error_redirect( const gchar *domain, GLogLevelFlags log_level, const gchar 
 		 * try to make the best out of it.
 		 */
 		if ( in_recursion ) {
-			strcat( buf, "LOG (recursed:" );
+			strncat( buf, "LOG (recursed:", sizeof( buf ) );
 		}
 		else{
-			strcat( buf, "LOG (" );
+			strncat( buf, "LOG (", sizeof( buf ) );
 		}
 		if ( log_level ) {
 			gchar string[] = "0x00): ";
@@ -390,19 +390,19 @@ void error_redirect( const gchar *domain, GLogLevelFlags log_level, const gchar 
 				*p += 'A' - '9' - 1;
 			}
 
-			strcat( buf, string );
+			strncat( buf, string, sizeof( buf ) );
 		}
 		else{
-			strcat( buf, "): " );
+			strncat( buf, "): ", sizeof( buf ) );
 		}
 	}
 
-	strcat( buf, message );
+	strncat( buf, message, sizeof( buf ) );
 	if ( is_fatal ) {
-		strcat( buf, "\naborting...\n" );
+		strncat( buf, "\naborting...\n", sizeof( buf ) );
 	}
 	else{
-		strcat( buf, "\n" );
+		strncat( buf, "\n", sizeof( buf ) );
 	}
 
 	printf( "%s\n", buf );
@@ -777,7 +777,7 @@ int mainRadiant( int argc, char* argv[] ) {
 			// remove the game prefs files
 			remove( g_PrefsDlg.m_inipath->str );
 			char buf[PATH_MAX];
-			sprintf( buf, "%sSavedInfo.bin", g_PrefsDlg.m_rc_path->str );
+			snprintf( buf, sizeof( buf ), "%sSavedInfo.bin", g_PrefsDlg.m_rc_path->str );
 			remove( buf );
 			// remove the global pref too
 			g_PrefsDlg.mGamesDialog.Reset();
@@ -1004,12 +1004,12 @@ void QE_ExpandBspString( char *bspaction, GPtrArray *out_array, char *mapname ){
 	char rsh[BIG_PATH_MAX];
 	char base[BIG_PATH_MAX];
 
-	strcpy( src, mapname );
+	Q_strncpyz( src, mapname, sizeof( src ) );
 	strlwr( src );
 	in = strstr( src, "maps/" );
 	if ( in ) {
 		in += 5;
-		strcpy( base, in );
+		Q_strncpyz( base, in, sizeof( base ) );
 		out = base;
 		while ( *out )
 		{
@@ -1021,7 +1021,7 @@ void QE_ExpandBspString( char *bspaction, GPtrArray *out_array, char *mapname ){
 	}
 	else
 	{
-		ExtractFileName( mapname, base );
+		ExtractFileName( mapname, base, sizeof( base ) );
 	}
 
 	// this important step alters the map name to add fs_game
@@ -1036,11 +1036,11 @@ void QE_ExpandBspString( char *bspaction, GPtrArray *out_array, char *mapname ){
 	if ( g_pGameDescription->mGameFile != "hl.game" &&
 		 *ValueForKey( g_qeglobals.d_project_entity,"gamename" ) != '\0' ) {
 		// set with fs_game
-		sprintf( src, "-fs_game %s \"%s\"", ValueForKey( g_qeglobals.d_project_entity,"gamename" ), mapname );
+		snprintf( src, sizeof( src ), "-fs_game %s \"%s\"", ValueForKey( g_qeglobals.d_project_entity,"gamename" ), mapname );
 	}
 	else
 	{
-		sprintf( src, "\"%s\"", mapname );
+		snprintf( src, sizeof( src ), "\"%s\"", mapname );
 	}
 
 	rsh[0] = 0;
@@ -1049,14 +1049,14 @@ void QE_ExpandBspString( char *bspaction, GPtrArray *out_array, char *mapname ){
 
 	// initialise the first step
 	out = new char[BIG_PATH_MAX];
+	*out = 0;
 	g_ptr_array_add( out_array, out );
 
 	in = ValueForKey( g_qeglobals.d_project_entity, bspaction );
 	while ( *in )
 	{
 		if ( in[0] == '!' ) {
-			strcpy( out, rsh );
-			out += strlen( rsh );
+			strncat( out, rsh, BIG_PATH_MAX );
 			in++;
 			continue;
 		}
@@ -1066,36 +1066,39 @@ void QE_ExpandBspString( char *bspaction, GPtrArray *out_array, char *mapname ){
 			if ( g_PrefsDlg.m_bWatchBSP ) {
 				// -connect global option (the only global option so far anyway)
 				strcpy( tmp, " -connect 127.0.0.1:39000 " );
-				strcpy( out, tmp );
-				out += strlen( tmp );
+				strncat( out, tmp, BIG_PATH_MAX );
 			}
 			in++;
 			continue;
 		}
 		if ( in[0] == '$' ) {
 			// $ expansion
-			strcpy( out, src );
-			out += strlen( src );
+			strncat( out, src, BIG_PATH_MAX );
 			in++;
 			continue;
 		}
 		if ( in[0] == '@' ) {
-			*out++ = '"';
+			strncat( out, "\"", BIG_PATH_MAX );
 			in++;
 			continue;
 		}
 		if ( in[0] == '&' ) {
 			if ( in[1] == '&' ) {
 				// start a new step
-				*out = 0;
 				in = in + 2;
 				out = new char[BIG_PATH_MAX];
+				*out = 0;
 				g_ptr_array_add( out_array, out );
 			}
 		}
-		*out++ = *in++;
+		size_t len = strlen( out );
+		if( ( len + 1 ) < BIG_PATH_MAX )
+		{
+			out[len++] = *in;
+			out[len] = '\0';
+		}
+		in++;
 	}
-	*out = 0;
 }
 
 void FindReplace( CString& strContents, const char* pTag, const char* pValue ){
@@ -1114,15 +1117,15 @@ void FindReplace( CString& strContents, const char* pTag, const char* pValue ){
 }
 
 // save the map, deals with regioning
-void SaveWithRegion( char *name ){
-	strcpy( name, currentmap );
+void SaveWithRegion( char *name, size_t length ){
+	Q_strncpyz( name, currentmap, length );
 	if ( region_active ) {
 		// temporary cut the region to save regular map
 		region_active = false;
 		Map_SaveFile( name, false );
 		region_active = true;
 		StripExtension( name );
-		strcat( name, ".reg" );
+		strncat( name, ".reg", length );
 	}
 
 	Map_SaveFile( name, region_active );
@@ -1193,9 +1196,9 @@ void RunBsp( char *command ){
 
 	SetInspectorMode( W_CONSOLE );
 
-	strcpy( temppath, g_strTempPath.GetBuffer() );
+	Q_strncpyz( temppath, g_strTempPath.GetBuffer(), sizeof( temppath ) );
 
-	SaveWithRegion( name );
+	SaveWithRegion( name, sizeof( name ) );
 
 	const char *rsh = ValueForKey( g_qeglobals.d_project_entity, "rshcmd" );
 	if ( rsh == NULL ) {
@@ -1203,10 +1206,10 @@ void RunBsp( char *command ){
 
 		ExtractPath_and_Filename( name, strPath, strFile );
 		AddSlash( strPath );
-		strncpy( cWork, strPath, 1024 );
-		strcat( cWork, strFile );
+		Q_strncpyz( cWork, strPath, 1024 );
+		strncat( cWork, strFile, sizeof( cWork ) );
 	} else {
-		strcpy( cWork, name );
+		Q_strncpyz( cWork, name, sizeof( cWork ) );
 	}
 
 	// get the array ready
@@ -1217,7 +1220,7 @@ void RunBsp( char *command ){
 	if ( g_PrefsDlg.m_bWatchBSP ) {
 		// grab the file name for engine running
 		char *bspname = new char[1024];
-		ExtractFileName( currentmap, bspname );
+		ExtractFileName( currentmap, bspname, 1024 );
 		StripExtension( bspname );
 		g_pParentWnd->GetWatchBSP()->DoMonitoringLoop( sys, bspname );
 	} else {
@@ -1243,7 +1246,7 @@ void RunBsp( char *command ){
 #if defined ( __linux__ ) || defined ( __APPLE__ )
 
 		// write qe3bsp.sh
-		sprintf( batpath, "%sqe3bsp.sh", temppath );
+		snprintf( batpath, sizeof( batpath ), "%sqe3bsp.sh", temppath );
 		Sys_Printf( "Writing the compile script to '%s'\n", batpath );
 		hFile = fopen( batpath, "w" );
 		if ( !hFile ) {
@@ -1255,8 +1258,8 @@ void RunBsp( char *command ){
 		chmod( batpath, 0744 );
 #endif
 
-#ifdef _WIN32
-		sprintf( batpath, "%sqe3bsp.bat", temppath );
+#if defined( _WIN32 )  || defined( __CYGWIN__ )
+		snprintf( batpath, sizeof( batpath ), "%sqe3bsp.bat", temppath );
 		Sys_Printf( "Writing the compile script to '%s'\n", batpath );
 		Sys_Printf( "The build output will be saved in '%sjunk.txt'\n", temppath );
 		hFile = fopen( batpath, "w" );

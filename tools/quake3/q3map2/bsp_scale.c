@@ -62,7 +62,7 @@ int ScaleBSPMain( int argc, char **argv ){
 	/* do some path mangling */
 	strcpy( source, ExpandArg( argv[ argc - 1 ] ) );
 	StripExtension( source );
-	DefaultExtension( source, ".bsp" );
+	DefaultExtension( source, ".bsp", sizeof( source ) );
 
 	/* load the bsp */
 	Sys_Printf( "Loading %s\n", source );
@@ -134,7 +134,7 @@ int ScaleBSPMain( int argc, char **argv ){
 	/* write the bsp */
 	UnparseEntities();
 	StripExtension( source );
-	DefaultExtension( source, "_s.bsp" );
+	DefaultExtension( source, "_s.bsp", sizeof( source ) );
 	Sys_Printf( "Writing %s\n", source );
 	WriteBSPFile( source );
 

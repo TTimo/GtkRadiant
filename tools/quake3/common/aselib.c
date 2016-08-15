@@ -157,7 +157,7 @@ void ASE_Load( const char *filename, qboolean verbose, qboolean grabAnims ){
 
 	fclose( fp );
 
-	strcpy( gl_filename, filename );
+	Q_strncpyz( gl_filename, filename, sizeof( gl_filename ) );
 
 	ASE_Process();
 }
@@ -243,8 +243,8 @@ polyset_t *ASE_GetSurfaceAnimation( int which, int *pNumFrames, int skipFrameSta
 			}
 		}
 
-		strcpy( psets[f].name, pObject->name );
-		strcpy( psets[f].materialname, ase.materials[pObject->materialRef].name );
+		Q_strncpyz( psets[f].name, pObject->name, sizeof( psets[f].name ) );
+		Q_strncpyz( psets[f].materialname, ase.materials[pObject->materialRef].name, sizeof( psets[f].materialname ) );
 
 		psets[f].triangles = calloc( sizeof( triangle_t ) * pObject->anim.frames[i].numFaces, 1 );
 		psets[f].numtriangles = pObject->anim.frames[i].numFaces;
@@ -415,7 +415,7 @@ static void ASE_KeyMAP_DIFFUSE( const char *token ){
 	char filename[1024];
 	int i = 0, count;
 
-	strcpy( filename, gl_filename );
+	Q_strncpyz( filename, gl_filename, sizeof( filename ) );
 
 	if ( !strcmp( token, "*BITMAP" ) ) {
 		ASE_GetToken( qfalse );
@@ -423,7 +423,7 @@ static void ASE_KeyMAP_DIFFUSE( const char *token ){
 		// the purpose of this whole chunk of code below is to extract the relative path
 		// from a full path in the ASE
 
-		strcpy( bitmap, s_token + 1 );
+		Q_strncpyz( bitmap, s_token + 1, sizeof( bitmap ) );
 		if ( strchr( bitmap, '"' ) ) {
 			*strchr( bitmap, '"' ) = 0;
 		}
@@ -458,20 +458,22 @@ static void ASE_KeyMAP_DIFFUSE( const char *token ){
 						break;
 					}
 				}
-				strcpy( bitmap, &bitmap[3] );
+				Q_strncpyz( bitmap, &bitmap[3], sizeof( bitmap ) );
 			}
-			strcat( filename, "/" );
-			strcat( filename, bitmap );
-			strcpy( bitmap, filename );
+			strncat( filename, "/", sizeof( filename ) );
+			strncat( filename, bitmap, sizeof( filename ) );
+			Q_strncpyz( bitmap, filename, sizeof( bitmap ) );
 		}
 
 		if ( strstr( bitmap, gamedir ) ) {
-			strcpy( ase.materials[ase.numMaterials].name, strstr( bitmap, gamedir ) + strlen( gamedir ) );
+			Q_strncpyz( ase.materials[ase.numMaterials].name, 
+				strstr( bitmap, gamedir ) + strlen( gamedir ),
+				sizeof( ase.materials[ase.numMaterials].name ));
 			Sys_Printf( "material name: \'%s\'\n", strstr( bitmap, gamedir ) + strlen( gamedir ) );
 		}
 		else
 		{
-			sprintf( ase.materials[ase.numMaterials].name, "(not converted: '%s')", bitmap );
+			snprintf( ase.materials[ase.numMaterials].name, sizeof( ase.materials[ase.numMaterials].name ), "(not converted: '%s')", bitmap );
 			Sys_Printf( "WARNING: illegal material name '%s'\n", bitmap );
 		}
 	}
@@ -608,13 +610,13 @@ static void ASE_KeyMESH_TVERTLIST( const char *token ){
 		ASE_GetToken( qfalse );
 
 		ASE_GetToken( qfalse );
-		strcpy( u, s_token );
+		Q_strncpyz( u, s_token, sizeof( u ) );
 
 		ASE_GetToken( qfalse );
-		strcpy( v, s_token );
+		Q_strncpyz( v, s_token, sizeof( v ) );
 
 		ASE_GetToken( qfalse );
-		strcpy( w, s_token );
+		Q_strncpyz( w, s_token, sizeof( w ) );
 
 		pMesh->tvertexes[pMesh->currentVertex].s = atof( u );
 		pMesh->tvertexes[pMesh->currentVertex].t = 1.0f - atof( v );
@@ -724,7 +726,7 @@ static void ASE_KeyGEOMOBJECT( const char *token ){
 
 		ASE_GetToken( qtrue );
 		VERBOSE( ( " %s\n", s_token ) );
-		strcpy( ase.objects[ase.currentObject].name, s_token + 1 );
+		Q_strncpyz( ase.objects[ase.currentObject].name, s_token + 1, sizeof( ase.objects[ase.currentObject].name ) );
 		if ( strchr( ase.objects[ase.currentObject].name, '"' ) ) {
 			*strchr( ase.objects[ase.currentObject].name, '"' ) = 0;
 		}

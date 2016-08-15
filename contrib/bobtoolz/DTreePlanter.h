@@ -66,7 +66,7 @@ DTreePlanter() {
 	m_world.LoadSelectedBrushes();
 
 	char buffer[256];
-	GetFilename( buffer, "bt/tp_ent.txt" );
+	GetFilename( buffer, "bt/tp_ent.txt", sizeof( buffer ) );
 
 	FILE* file = fopen( buffer, "rb" );
 	if ( file ) {

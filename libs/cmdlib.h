@@ -49,14 +49,26 @@
   #define Q_mkdir( a,b ) mkdir( a,b )
 #endif
 
-void    DefaultExtension( char *path, char *extension );
-void    DefaultPath( char *path, char *basepath );
+#if defined(_MSC_VER) && _MSC_VER<1900 && !(defined safe_malloc)
+void *safe_malloc( size_t size );
+void *safe_malloc_info( size_t size, char* info );
+#endif
+
+#if defined(_MSC_VER) && _MSC_VER<1900 && !(defined snprintf)
+#define snprintf _snprintf
+#endif
+#ifndef Q_strncpyz
+#define Q_strncpyz(_dst, _source, _len) do { strncpy((_dst), (_source), (_len) - 1); if ((_len) > 0) (_dst)[(_len) - 1] = 0; } while( 0 )
+#endif
+
+void    DefaultExtension( char *path, char *extension, size_t length );
+void    DefaultPath( char *path, const char *basepath, size_t length );
 void    StripFilename( char *path );
 void    StripExtension( char *path );
-void    ExtractFilePath( const char *path, char *dest );
-void    ExtractFileName( const char *path, char *dest );
-void    ExtractFileBase( const char *path, char *dest );
-void    ExtractFileExtension( const char *path, char *dest );
+void    ExtractFilePath( const char *path, char *dest, size_t size );
+void    ExtractFileName( const char *path, char *dest, size_t size );
+void    ExtractFileBase( const char *path, char *dest, size_t size );
+void    ExtractFileExtension( const char *path, char *dest, size_t size );
 /*!
    \brief create all directories leading to a file path. if you pass a directory, terminate it with a '/'
  */

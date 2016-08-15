@@ -36,7 +36,7 @@
 /* dependencies */
 #include "q3map2.h"
 
-
+#include <stdlib.h>
 
 /*
    Random()
@@ -129,7 +129,7 @@ int AnalyzeBSP( int argc, char **argv ){
 	}
 
 	/* clean up map name */
-	strcpy( source, ExpandArg( argv[ i ] ) );
+	Q_strncpyz( source, ExpandArg( argv[ i ] ), sizeof( source ) );
 	Sys_Printf( "Loading %s\n", source );
 
 	/* load the file */
@@ -253,12 +253,12 @@ int BSPInfo( int count, char **fileNames ){
 		Sys_Printf( "---------------------------------\n" );
 
 		/* mangle filename and get size */
-		strcpy( source, fileNames[ i ] );
-		ExtractFileExtension( source, ext );
+		Q_strncpyz( source, fileNames[ i ], sizeof( source ) );
+		ExtractFileExtension( source, ext, sizeof( ext ) );
 		if ( !Q_stricmp( ext, "map" ) ) {
 			StripExtension( source );
 		}
-		DefaultExtension( source, ".bsp" );
+		DefaultExtension( source, ".bsp", sizeof( source ) );
 		f = fopen( source, "rb" );
 		if ( f ) {
 			size = Q_filelength( f );
@@ -315,9 +315,9 @@ int ScaleBSPMain( int argc, char **argv ){
 	}
 
 	/* do some path mangling */
-	strcpy( source, ExpandArg( argv[ argc - 1 ] ) );
+	Q_strncpyz( source, ExpandArg( argv[ argc - 1 ] ), sizeof( source ) );
 	StripExtension( source );
-	DefaultExtension( source, ".bsp" );
+	DefaultExtension( source, ".bsp", sizeof( source ) );
 
 	/* load the bsp */
 	Sys_Printf( "Loading %s\n", source );
@@ -335,7 +335,7 @@ int ScaleBSPMain( int argc, char **argv ){
 		GetVectorForKey( &entities[ i ], "origin", vec );
 		if ( ( vec[ 0 ] + vec[ 1 ] + vec[ 2 ] ) ) {
 			VectorScale( vec, scale, vec );
-			sprintf( str, "%f %f %f", vec[ 0 ], vec[ 1 ], vec[ 2 ] );
+			snprintf( str, sizeof( str ), "%f %f %f", vec[ 0 ], vec[ 1 ], vec[ 2 ] );
 			SetKeyValue( &entities[ i ], "origin", str );
 		}
 
@@ -343,7 +343,7 @@ int ScaleBSPMain( int argc, char **argv ){
 		f = FloatForKey( &entities[ i ], "lip" );
 		if ( f ) {
 			f *= scale;
-			sprintf( str, "%f", f );
+			snprintf( str, sizeof( str ), "%f", f );
 			SetKeyValue( &entities[ i ], "lip", str );
 		}
 	}
@@ -383,13 +383,13 @@ int ScaleBSPMain( int argc, char **argv ){
 		VectorCopy( gridSize, vec );
 	}
 	VectorScale( vec, scale, vec );
-	sprintf( str, "%f %f %f", vec[ 0 ], vec[ 1 ], vec[ 2 ] );
+	snprintf( str, sizeof( str ), "%f %f %f", vec[ 0 ], vec[ 1 ], vec[ 2 ] );
 	SetKeyValue( &entities[ 0 ], "gridsize", str );
 
 	/* write the bsp */
 	UnparseEntities();
 	StripExtension( source );
-	DefaultExtension( source, "_s.bsp" );
+	DefaultExtension( source, "_s.bsp", sizeof( source ) );
 	Sys_Printf( "Writing %s\n", source );
 	WriteBSPFile( source );
 
@@ -443,9 +443,9 @@ int ConvertBSPMain( int argc, char **argv ){
 	}
 
 	/* clean up map name */
-	strcpy( source, ExpandArg( argv[ i ] ) );
+	Q_strncpyz( source, ExpandArg( argv[ i ] ), sizeof( source ) );
 	StripExtension( source );
-	DefaultExtension( source, ".bsp" );
+	DefaultExtension( source, ".bsp", sizeof( source ) );
 
 	LoadShaderInfo();
 
@@ -466,7 +466,7 @@ int ConvertBSPMain( int argc, char **argv ){
 
 		/* write bsp */
 		StripExtension( source );
-		DefaultExtension( source, "_c.bsp" );
+		DefaultExtension( source, "_c.bsp", sizeof( source ) );
 		Sys_Printf( "Writing %s\n", source );
 		WriteBSPFile( source );
 

@@ -46,7 +46,7 @@ vec_t Random( void ){
 }
 
 
-char *Q_strncpyz( char *dst, const char *src, size_t len ) {
+/*char *Q_strncpyz( char *dst, const char *src, size_t len ) {
 	if ( len == 0 ) {
 		abort();
 	}
@@ -54,7 +54,7 @@ char *Q_strncpyz( char *dst, const char *src, size_t len ) {
 	strncpy( dst, src, len );
 	dst[ len - 1 ] = '\0';
 	return dst;
-}
+}*/
 
 
 char *Q_strcat( char *dst, size_t dlen, const char *src ) {
@@ -64,7 +64,8 @@ char *Q_strcat( char *dst, size_t dlen, const char *src ) {
 		abort(); /* buffer overflow */
 	}
 
-	return Q_strncpyz( dst + n, src, dlen - n );
+	Q_strncpyz( dst + n, src, dlen - n );
+	return dst;
 }
 
 
@@ -75,7 +76,8 @@ char *Q_strncat( char *dst, size_t dlen, const char *src, size_t slen ) {
 		abort(); /* buffer overflow */
 	}
 
-	return Q_strncpyz( dst + n, src, MIN( slen, dlen - n ) );
+	Q_strncpyz( dst + n, src, MIN( slen, dlen - n ) );
+	return dst;
 }
 
 

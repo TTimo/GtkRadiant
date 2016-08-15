@@ -33,7 +33,7 @@
 #endif
 //#include "qe3.h"
 
-int QERApp_EClassScanDir( char *path, void* hPlug ){
+int QERApp_EClassScanDir( const char *path, void* hPlug ){
 	char temp[NAME_MAX];
 	char filebase[NAME_MAX];
 	char filename[NAME_MAX];
@@ -43,7 +43,7 @@ int QERApp_EClassScanDir( char *path, void* hPlug ){
 	struct dirent *dirlist;
 
 	QE_ConvertDOSToUnixName( temp, path );
-	strcpy( filebase, path );
+	Q_strncpyz( filebase, path, sizeof( filebase ) );
 	s = filebase + strlen( filebase ) - 1;
 	while ( *s != '\\' && *s != '/' && s != filebase )
 		s--;
@@ -53,7 +53,7 @@ int QERApp_EClassScanDir( char *path, void* hPlug ){
 	if ( dir != NULL ) {
 		while ( ( dirlist = readdir( dir ) ) != NULL )
 		{
-			sprintf( filename, "%s/%s", filebase, dirlist->d_name );
+			snprintf( filename, sizeof( filename ), "%s/%s", filebase, dirlist->d_name );
 			Eclass_ScanFile( filename );
 
 			if ( eclass_found ) {

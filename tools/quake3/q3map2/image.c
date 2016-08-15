@@ -310,7 +310,7 @@ image_t *ImageFind( const char *filename ){
 	}
 
 	/* strip file extension off name */
-	strcpy( name, filename );
+	Q_strncpyz( name, filename, sizeof( name ) );
 	StripExtension( name );
 
 	/* search list */
@@ -349,7 +349,7 @@ image_t *ImageLoad( const char *filename ){
 	}
 
 	/* strip file extension off name */
-	strcpy( name, filename );
+	Q_strncpyz( name, filename, sizeof( name ) );
 	StripExtension( name );
 
 	/* try to find existing image */
@@ -380,7 +380,7 @@ image_t *ImageLoad( const char *filename ){
 
 	/* attempt to load tga */
 	StripExtension( name );
-	strcat( name, ".tga" );
+	strncat( name, ".tga", sizeof( name ) );
 	size = vfsLoadFile( (const char*) name, (void**) &buffer, 0 );
 	if ( size > 0 ) {
 		LoadTGABuffer( buffer, buffer + size, &image->pixels, &image->width, &image->height );
@@ -389,7 +389,7 @@ image_t *ImageLoad( const char *filename ){
 	{
 		/* attempt to load png */
 		StripExtension( name );
-		strcat( name, ".png" );
+		strncat( name, ".png", sizeof( name ) );
 		size = vfsLoadFile( (const char*) name, (void**) &buffer, 0 );
 		if ( size > 0 ) {
 			LoadPNGBuffer( buffer, size, &image->pixels, &image->width, &image->height );
@@ -398,7 +398,7 @@ image_t *ImageLoad( const char *filename ){
 		{
 			/* attempt to load jpg */
 			StripExtension( name );
-			strcat( name, ".jpg" );
+			strncat( name, ".jpg", sizeof( name ) );
 			size = vfsLoadFile( (const char*) name, (void**) &buffer, 0 );
 			if ( size > 0 ) {
 				if ( LoadJPGBuff( buffer, size, &image->pixels, &image->width, &image->height ) == -1 && image->pixels != NULL ) {
@@ -409,7 +409,7 @@ image_t *ImageLoad( const char *filename ){
 			{
 				/* attempt to load dds */
 				StripExtension( name );
-				strcat( name, ".dds" );
+				strncat( name, ".dds", sizeof( name ) );
 				size = vfsLoadFile( (const char*) name, (void**) &buffer, 0 );
 				if ( size > 0 ) {
 					LoadDDSBuffer( buffer, size, &image->pixels, &image->width, &image->height );
@@ -422,7 +422,7 @@ image_t *ImageLoad( const char *filename ){
 						Sys_Printf( "pf = %d\n", pf );
 						if ( image->width > 0 ) {
 							StripExtension( name );
-							strcat( name, "_converted.tga" );
+							strncat( name, "_converted.tga", sizeof( name ) );
 							WriteTGA( "C:\\games\\quake3\\baseq3\\textures\\rad\\dds_converted.tga", image->pixels, image->width, image->height );
 						}
 					}

@@ -1493,11 +1493,11 @@ const char* file_dialog( void *parent, gboolean open, const char* title, const c
 
 	// we expect an actual path below, if the path is NULL we might crash
 	if ( !path || path[0] == '\0' ) {
-		strcpy( buf, g_pGameDescription->mEnginePath.GetBuffer() );
-		strcat( buf, g_pGameDescription->mBaseGame.GetBuffer() );
-		strcat( buf, "/" );
+		Q_strncpyz( buf, g_pGameDescription->mEnginePath.GetBuffer(), sizeof( buf ) );
+		strncat( buf, g_pGameDescription->mBaseGame.GetBuffer(), sizeof( buf ) );
+		strncat( buf, "/", sizeof( buf ) );
 		if ( baseSubDir ) {
-			strcat( buf, baseSubDir );
+			strncat( buf, baseSubDir, sizeof( buf ) );
 		}
 		path = buf;
 	}
@@ -1547,7 +1547,9 @@ const char* file_dialog( void *parent, gboolean open, const char* title, const c
 	}
 
 	if ( gtk_dialog_run( GTK_DIALOG( file_sel ) ) == GTK_RESPONSE_ACCEPT ) {
-		strcpy( szFile, gtk_file_chooser_get_filename( GTK_FILE_CHOOSER( file_sel ) ) );
+		gchar * filename = gtk_file_chooser_get_filename( GTK_FILE_CHOOSER( file_sel ) );
+		Q_strncpyz( szFile, filename, sizeof( szFile ) );
+		g_free( filename );
 	}
 	else {
 		szFile[0] = '\0';

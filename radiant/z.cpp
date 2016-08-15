@@ -254,7 +254,7 @@ void Z_DrawGrid( void ){
 		for ( zz = zb ; zz < ze ; zz += step )
 		{
 			qglRasterPos2f( -w + ( 1 / z.scale ), zz );
-			sprintf( text, "%i",(int)zz );
+			snprintf( text, sizeof( text ), "%i",(int)zz );
 			gtk_glwidget_print_string( text );
 		}
 	}

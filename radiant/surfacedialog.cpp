@@ -929,12 +929,8 @@ void SurfaceDlg::SetTexMods(){
 	}
 	GtkAdjustment *adjust = gtk_spin_button_get_adjustment( GTK_SPIN_BUTTON( spin ) );
 	adjust->step_increment = l_pIncrement->shift[0];
-	char buf[10]; // got into snprintf paranoia after BoundChecker detected a stack overrun
-#ifdef _WIN32
-	// TTimo: THIS IS UGLY
-#define snprintf _snprintf
-#endif
-	snprintf( buf, 10, "%g", l_pIncrement->shift[0] );
+	char buf[64]; // got into snprintf paranoia after BoundChecker detected a stack overrun
+	snprintf( buf, sizeof( buf ), "%g", l_pIncrement->shift[0] );
 	gtk_entry_set_text( GTK_ENTRY( GetDlgWidget( "hshift_inc" ) ), buf );
 
 	spin = GTK_SPIN_BUTTON( GetDlgWidget( "vshift" ) );
@@ -947,7 +943,7 @@ void SurfaceDlg::SetTexMods(){
 	}
 	adjust = gtk_spin_button_get_adjustment( GTK_SPIN_BUTTON( spin ) );
 	adjust->step_increment = l_pIncrement->shift[1];
-	snprintf( buf, 10, "%g", l_pIncrement->shift[1] );
+	snprintf( buf, sizeof( buf ), "%g", l_pIncrement->shift[1] );
 	gtk_entry_set_text( GTK_ENTRY( GetDlgWidget( "vshift_inc" ) ), buf );
 
 	spin = GTK_SPIN_BUTTON( GetDlgWidget( "hscale" ) );
@@ -956,7 +952,7 @@ void SurfaceDlg::SetTexMods(){
 
 	adjust = gtk_spin_button_get_adjustment( GTK_SPIN_BUTTON( spin ) );
 	adjust->step_increment = l_pIncrement->scale[0];
-	snprintf( buf, 10, "%g", l_pIncrement->scale[0] );
+	snprintf( buf, sizeof( buf ), "%g", l_pIncrement->scale[0] );
 	gtk_entry_set_text( GTK_ENTRY( GetDlgWidget( "hscale_inc" ) ), buf );
 
 	spin = GTK_SPIN_BUTTON( GetDlgWidget( "vscale" ) );
@@ -965,7 +961,7 @@ void SurfaceDlg::SetTexMods(){
 
 	adjust = gtk_spin_button_get_adjustment( GTK_SPIN_BUTTON( spin ) );
 	adjust->step_increment = l_pIncrement->scale[1];
-	snprintf( buf, 10, "%g", l_pIncrement->scale[1] );
+	snprintf( buf, sizeof( buf ), "%g", l_pIncrement->scale[1] );
 	gtk_entry_set_text( GTK_ENTRY( GetDlgWidget( "vscale_inc" ) ), buf );
 
 	//++timo compute BProtate as int ..
@@ -975,7 +971,7 @@ void SurfaceDlg::SetTexMods(){
 
 	adjust = gtk_spin_button_get_adjustment( GTK_SPIN_BUTTON( spin ) );
 	adjust->step_increment = l_pIncrement->rotate;
-	snprintf( buf, 10, "%g", l_pIncrement->rotate );
+	snprintf( buf, sizeof( buf ), "%g", l_pIncrement->rotate );
 	gtk_entry_set_text( GTK_ENTRY( GetDlgWidget( "rotate_inc" ) ), buf );
 
 	g_bListenChanged = true;
@@ -1036,7 +1032,7 @@ void SurfaceDlg::GetTexMods(){
 	else
 	{
 		strcpy( buffer, "textures/" );
-		strcpy( buffer + 9, text );
+		Q_strncpyz( buffer + 9, text, sizeof( buffer ) - 9 );
 		pt->SetName( buffer );
 	}
 

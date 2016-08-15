@@ -151,7 +151,7 @@ void TRI_LoadPolysets( const char *filename, polyset_t **ppPSET, int *numpsets )
 				} while ( name[i] != '\0' );
 
 				if ( i != 0 ) {
-					strncpy( pPSET[pset].name, name, sizeof( pPSET[pset].name ) - 1 );
+					Q_strncpyz( pPSET[pset].name, name, sizeof( pPSET[pset].name ) );
 				}
 				else{
 					strcpy( pPSET[pset].name, "(unnamed)" );
@@ -202,7 +202,7 @@ void TRI_LoadPolysets( const char *filename, polyset_t **ppPSET, int *numpsets )
 				} while ( name[i] != '\0' );
 
 				if ( i != 0 ) {
-					strncpy( pPSET[pset].name, name, sizeof( pPSET[pset].name ) - 1 );
+					Q_strncpyz( pPSET[pset].name, name, sizeof( pPSET[pset].name ) );
 				}
 				else{
 					strcpy( pPSET[pset].name, "(unnamed)" );

@@ -159,11 +159,11 @@ int DoLoadPortalFileDialog(){
 	gtk_widget_set_usize( button, 60, -2 );
 
 	char *fn = g_FuncTable.m_pfnGetMapName();
-	strcpy( portals.fn, fn );
+	Q_strncpyz( portals.fn, fn, sizeof( portals.fn ) );
 	fn = strrchr( portals.fn, '.' );
 	if ( fn != NULL ) {
 		*fn = '\0';
-		strcat( portals.fn, ".prt" );
+		strncat( portals.fn, ".prt", sizeof( portals.fn ) );
 	}
 
 	gtk_entry_set_text( GTK_ENTRY( entry ), portals.fn );

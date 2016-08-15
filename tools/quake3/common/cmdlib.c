@@ -120,11 +120,11 @@ void ExpandWildcards( int *argc, char ***argv ){
 			return;
 		}
 
-		ExtractFilePath( path, filebase );
+		ExtractFilePath( path, filebase, sizeof( filebase ) );
 
 		do
 		{
-			sprintf( filename, "%s%s", filebase, fileinfo.name );
+			snprintf( filename, sizeof( filename ), "%s%s", filebase, fileinfo.name );
 			ex_argv[ex_argc++] = copystring( filename );
 		} while ( _findnext( handle, &fileinfo ) != -1 );
 
@@ -162,7 +162,7 @@ void SetQdirFromPath( const char *path ){
 
 	if ( !( path[0] == '/' || path[0] == '\\' || path[1] == ':' ) ) { // path is partial
 		Q_getwd( temp );
-		strcat( temp, path );
+		strncat( temp, path, sizeof( temp ) );
 		path = temp;
 	}
 
@@ -211,7 +211,7 @@ void SetQdirFromPath( const char *path ){
 					Sys_Printf( "gamedir: %s\n", gamedir );
 
 					if ( !writedir[0] ) {
-						strcpy( writedir, gamedir );
+						Q_strncpyz( writedir, gamedir, sizeof( writedir ) );
 					}
 					else if ( writedir[strlen( writedir ) - 1] != '/' ) {
 						writedir[strlen( writedir )] = '/';
@@ -234,10 +234,10 @@ char *ExpandArg( const char *path ){
 
 	if ( path[0] != '/' && path[0] != '\\' && path[1] != ':' ) {
 		Q_getwd( full );
-		strcat( full, path );
+		strncat( full, path, sizeof( full ) );
 	}
 	else{
-		strcpy( full, path );
+		Q_strncpyz( full, path, sizeof( full ) );
 	}
 	return full;
 }
@@ -245,10 +245,10 @@ char *ExpandArg( const char *path ){
 char *ExpandPath( const char *path ){
 	static char full[1024];
 	if ( path[0] == '/' || path[0] == '\\' || path[1] == ':' ) {
-		strcpy( full, path );
+		Q_strncpyz( full, path, sizeof( full ) );
 		return full;
 	}
-	sprintf( full, "%s%s", qdir, path );
+	snprintf( full, sizeof( full ), "%s%s", qdir, path );
 	return full;
 }
 
@@ -292,13 +292,13 @@ double I_FloatTime( void ){
 void Q_getwd( char *out ){
 	int i = 0;
 
-#ifdef WIN32
+#ifdef _WIN32
 	_getcwd( out, 256 );
-	strcat( out, "\\" );
+	strncat( out, "\\", sizeof( out ) );
 #else
 	// Gef: Changed from getwd() to getcwd() to avoid potential buffer overflow
 	getcwd( out, 256 );
-	strcat( out, "/" );
+	strncat( out, "/", sizeof( out ) );
 #endif
 	while ( out[i] != 0 )
 	{
@@ -311,7 +311,7 @@ void Q_getwd( char *out ){
 
 
 void Q_mkdir( const char *path ){
-#ifdef WIN32
+#ifdef _WIN32
 	if ( _mkdir( path ) != -1 ) {
 		return;
 	}
@@ -682,7 +682,7 @@ void    SaveFile( const char *filename, const void *buffer, int count ){
 
 
 
-void DefaultExtension( char *path, const char *extension ){
+void DefaultExtension( char *path, const char *extension, size_t length ){
 	char    *src;
 //
 // if path doesnt have a .EXT, append extension
@@ -698,7 +698,7 @@ void DefaultExtension( char *path, const char *extension ){
 		src--;
 	}
 
-	strcat( path, extension );
+	strncat( path, extension, length );
 }
 
 
@@ -708,9 +708,9 @@ void DefaultPath( char *path, const char *basepath ){
 	if ( path[ 0 ] == '/' || path[ 0 ] == '\\' ) {
 		return;                   // absolute path location
 	}
-	strcpy( temp,path );
-	strcpy( path,basepath );
-	strcat( path,temp );
+	Q_strncpyz( temp, path, sizeof( temp ) );
+	Q_strncpyz( path, basepath, sizeof( path ) );
+	strncat( path, temp, sizeof( path ) );
 }
 
 
@@ -747,8 +747,9 @@ void    StripExtension( char *path ){
  */
 // FIXME: should include the slash, otherwise
 // backing to an empty path will be wrong when appending a slash
-void ExtractFilePath( const char *path, char *dest ){
+void ExtractFilePath( const char *path, char *dest, size_t size ){
 	const char    *src;
+	size_t length;
 
 	src = path + strlen( path ) - 1;
 
@@ -758,13 +759,20 @@ void ExtractFilePath( const char *path, char *dest ){
 	while ( src != path && *( src - 1 ) != '\\' && *( src - 1 ) != '/' )
 		src--;
 
-	memcpy( dest, path, src - path );
-	dest[src - path] = 0;
+	length = src - path;
+	if( length + 1 > size )
+	{
+		length = size - 1;
+	}
+	memcpy( dest, path, length );
+	dest[length] = 0;
 }
 
-void ExtractFileBase( const char *path, char *dest ){
+void ExtractFileBase( const char *path, char *dest, size_t size ){
 	const char    *src;
 
+	if( size <= 0 )
+		return;
 	src = path + strlen( path ) - 1;
 
 //
@@ -775,12 +783,18 @@ void ExtractFileBase( const char *path, char *dest ){
 
 	while ( *src && *src != '.' )
 	{
+		if( size == 1 )
+		{
+			*dest = 0;
+			return;
+		}
 		*dest++ = *src++;
+		size--;
 	}
 	*dest = 0;
 }
 
-void ExtractFileExtension( const char *path, char *dest ){
+void ExtractFileExtension( const char *path, char *dest, size_t size ){
 	const char    *src;
 
 	src = path + strlen( path ) - 1;
@@ -795,7 +809,7 @@ void ExtractFileExtension( const char *path, char *dest ){
 		return;
 	}
 
-	strcpy( dest,src );
+	Q_strncpyz( dest, src, size );
 }
 
 
@@ -1078,7 +1092,7 @@ void QCopyFile( const char *from, const char *to ){
 }
 
 void Sys_Sleep( int n ){
-#ifdef WIN32
+#ifdef _WIN32
 	Sleep( n );
 #endif
 #if defined ( __linux__ ) || defined ( __APPLE__ )

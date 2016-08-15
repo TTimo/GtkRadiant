@@ -61,11 +61,11 @@ int BSPInfoMain( int count, char **fileNames ){
 
 		/* mangle filename and get size */
 		strcpy( source, fileNames[ i ] );
-		ExtractFileExtension( source, ext );
+		ExtractFileExtension( source, ext, sizeof( source ) );
 		if ( !Q_stricmp( ext, "map" ) ) {
 			StripExtension( source );
 		}
-		DefaultExtension( source, ".bsp" );
+		DefaultExtension( source, ".bsp", sizeof( source ) );
 		f = fopen( source, "rb" );
 		if ( f ) {
 			size = Q_filelength( f );

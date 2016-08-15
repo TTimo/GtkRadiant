@@ -33,7 +33,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
-#ifdef WIN32
+#ifdef _WIN32
 #include <direct.h>
 #include <windows.h>
 #endif
@@ -46,7 +46,7 @@
 #endif
 #include "libxml/tree.h"
 
-#ifdef WIN32
+#ifdef _WIN32
 HWND hwndOut = NULL;
 qboolean lookedForServer = false;
 UINT wm_BroadcastCommand = -1;

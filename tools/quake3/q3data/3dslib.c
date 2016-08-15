@@ -149,52 +149,52 @@ static void LoadMaterialList( FILE *fp, long thisChunkLen, _3DSMaterial_t *pMat 
 	Q_getwd( curdir );
 
 	if ( mat.texture[0] ) {
-		sprintf( buffer, "%s%s", curdir, mat.texture );
+		snprintf( buffer, sizeof( buffer ), "%s%s", curdir, mat.texture );
 		if ( strstr( buffer, gamedir + 1 ) ) {
-			strcpy( mat.texture, strstr( buffer, gamedir + 1 ) + strlen( gamedir ) - 1 );
+			Q_strncpyz( mat.texture, strstr( buffer, gamedir + 1 ) + strlen( gamedir ) - 1, sizeof( mat.texture ) );
 		}
 		else{
-			strcpy( mat.texture, buffer );
+			Q_strncpyz( mat.texture, buffer, sizeof( mat.texture ) );
 		}
 	}
 
 	if ( mat.specular[0] ) {
-		sprintf( buffer, "%s%s", curdir, mat.specular );
+		snprintf( buffer, sizeof( buffer ), "%s%s", curdir, mat.specular );
 		if ( strstr( buffer, gamedir + 1 ) ) {
-			strcpy( mat.specular, strstr( buffer, gamedir + 1 ) + strlen( gamedir ) - 1 );
+			Q_strncpyz( mat.specular, strstr( buffer, gamedir + 1 ) + strlen( gamedir ) - 1, sizeof( mat.specular ) );
 		}
 		else{
-			strcpy( mat.specular, buffer );
+			Q_strncpyz( mat.specular, buffer, sizeof( mat.specular ) );
 		}
 	}
 
 	if ( mat.bump[0] ) {
-		sprintf( buffer, "%s%s", curdir, mat.bump );
+		snprintf( buffer, sizeof( buffer ), "%s%s", curdir, mat.bump );
 		if ( strstr( buffer, gamedir + 1 ) ) {
-			strcpy( mat.bump, strstr( buffer, gamedir + 1 ) + strlen( gamedir ) - 1 );
+			Q_strncpyz( mat.bump, strstr( buffer, gamedir + 1 ) + strlen( gamedir ) - 1, sizeof( mat.bump ) );
 		}
 		else{
-			strcpy( mat.bump, buffer );
+			Q_strncpyz( mat.bump, buffer, sizeof( mat.bump ) );
 		}
 	}
 
 	if ( mat.reflection[0] ) {
-		sprintf( buffer, "%s%s", curdir, mat.reflection );
+		snprintf( buffer, sizeof( buffer ), "%s%s", curdir, mat.reflection );
 		if ( strstr( buffer, gamedir + 1 ) ) {
-			strcpy( mat.reflection, strstr( buffer, gamedir + 1 ) + strlen( gamedir ) - 1 );
+			Q_strncpyz( mat.reflection, strstr( buffer, gamedir + 1 ) + strlen( gamedir ) - 1, sizeof( mat.reflection ) );
 		}
 		else{
-			strcpy( mat.reflection, buffer );
+			Q_strncpyz( mat.reflection, buffer, sizeof( mat.reflection ) );
 		}
 	}
 
 	if ( mat.opacity[0] ) {
-		sprintf( buffer, "%s%s", curdir, mat.opacity );
+		snprintf( buffer, sizeof( buffer ), "%s%s", curdir, mat.opacity );
 		if ( strstr( buffer, gamedir + 1 ) ) {
-			strcpy( mat.opacity, strstr( buffer, gamedir + 1 ) + strlen( gamedir ) - 1 );
+			Q_strncpyz( mat.opacity, strstr( buffer, gamedir + 1 ) + strlen( gamedir ) - 1, sizeof( mat.opacity ) );
 		}
 		else{
-			strcpy( mat.opacity, buffer );
+			Q_strncpyz( mat.opacity, buffer, sizeof( mat.opacity ) );
 		}
 	}
 
@@ -382,7 +382,7 @@ static void LoadNamedObject( FILE *fp, long thisChunkLen, _3DSNamedObject_t *pNO
 		}
 	}
 
-	strcpy( pNO->name, name );
+	Q_strncpyz( pNO->name, name, sizeof( pNO->name ) );
 	pNO->pTriObjects = malloc( sizeof( _3DSTriObject_t ) * numTriObjects );
 	memcpy( pNO->pTriObjects, triObj, sizeof( triObj[0] ) * numTriObjects );
 	pNO->numTriObjects = numTriObjects;
@@ -584,19 +584,19 @@ void _3DS_LoadPolysets( const char *filename, polyset_t **ppPSET, int *numpsets,
 
 		pPSET[i].triangles = ptri;
 		pPSET[i].numtriangles = pTO->numFaces;
-		strcpy( pPSET[i].name, _3ds.editChunk.pNamedObjects[i].name );
+		Q_strncpyz( pPSET[i].name, _3ds.editChunk.pNamedObjects[i].name, sizeof( pPSET[i].name ) );
 
-		strcpy( matnamebuf, filename );
+		Q_strncpyz( matnamebuf, filename, sizeof( matnamebuf ) );
 		if ( strrchr( matnamebuf, '/' ) ) {
 			*( strrchr( matnamebuf, '/' ) + 1 ) = 0;
 		}
-		strcat( matnamebuf, pTO->pMeshMaterialGroups[0].name );
+		strncat( matnamebuf, pTO->pMeshMaterialGroups[0].name, sizeof( matnamebuf ) );
 
 		if ( strstr( matnamebuf, gamedir ) ) {
-			strcpy( pPSET[i].materialname, strstr( matnamebuf, gamedir ) + strlen( gamedir ) );
+			Q_strncpyz( pPSET[i].materialname, strstr( matnamebuf, gamedir ) + strlen( gamedir ), sizeof( pPSET[i].materialname ) );
 		}
 		else{
-			strcpy( pPSET[i].materialname, pTO->pMeshMaterialGroups[0].name );
+			Q_strncpyz( pPSET[i].materialname, pTO->pMeshMaterialGroups[0].name, sizeof( pPSET[i].materialname ) );
 		}
 
 		assert( pPSET[i].numtriangles < POLYSET_MAXTRIANGLES );

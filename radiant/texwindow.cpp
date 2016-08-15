@@ -494,7 +494,7 @@ void BuildShaderList(){
 	}
 
 	if ( g_pGameDescription->mGameFile != "hl.game" ) {
-		strcpy( filename, g_pGameDescription->mShaderlist.GetBuffer() );
+		Q_strncpyz( filename, g_pGameDescription->mShaderlist.GetBuffer(), sizeof( filename ) );
 		count = vfsGetFileCount( filename, 0 );
 		if ( count == 0 ) {
 			Sys_FPrintf( SYS_ERR, "Couldn't find '%s'\n", g_pGameDescription->mShaderlist.GetBuffer() );
@@ -603,7 +603,7 @@ void FillTextureMenu( GSList** pArray ){
 		char shaderfile[PATH_MAX];
 		gboolean found = FALSE;
 
-		ExtractFileName( (char*)l_shaderfiles->data, shaderfile );
+		ExtractFileName( (char*)l_shaderfiles->data, shaderfile, sizeof( shaderfile ) );
 		StripExtension( shaderfile );
 		strlwr( shaderfile );
 
@@ -749,7 +749,7 @@ void Texture_ShowDirectory(){
 
 	// need this function "GSList *lst SynapseServer::GetMinorList(char *major_name);"
 
-	sprintf( dirstring, "textures/%s", texture_directory );
+	snprintf( dirstring, sizeof( dirstring ), "textures/%s", texture_directory );
 	g_ImageManager.BeginExtensionsScan();
 	const char* ext;
 	while ( ( ext = g_ImageManager.GetNextExtension() ) != NULL )
@@ -759,7 +759,7 @@ void Texture_ShowDirectory(){
 
 	for ( temp = files; temp; temp = temp->next )
 	{
-		sprintf( name, "%s%s", texture_directory, (char*)temp->data );
+		snprintf( name, sizeof( name ), "%s%s", texture_directory, (char*)temp->data );
 
 		StripExtension( name );
 		strTemp = name;
@@ -792,7 +792,7 @@ void Texture_ShowDirectory(){
 
 		// build a texture name that fits the conventions for qtexture_t::name
 		char stdName[1024];
-		sprintf( stdName, "textures/%s", name );
+		snprintf( stdName, sizeof( stdName ), "textures/%s", name );
 		// check if this texture doesn't have a shader
 		if ( !QERApp_ActiveShader_ForTextureName( stdName ) ) {
 			QERApp_CreateShader_ForTextureName( stdName );
@@ -808,7 +808,7 @@ void Texture_ShowDirectory(){
 	// sort for displaying
 	QERApp_SortActiveShaders();
 
-	sprintf( name, "Textures: %s", texture_directory );
+	snprintf( name, sizeof( name ), "Textures: %s", texture_directory );
 	gtk_window_set_title( GTK_WINDOW( g_qeglobals_gui.d_entity ), name );
 
 	// select the first texture in the list
@@ -831,7 +831,7 @@ void Texture_ShowDirectory(){
    ==============
  */
 void Texture_ShowDirectory( int menunum ){
-	strcpy( texture_directory, texture_menunames[menunum - CMD_TEXTUREWAD] );
+	Q_strncpyz( texture_directory, texture_menunames[menunum - CMD_TEXTUREWAD], sizeof( texture_directory ) );
 	Texture_ShowDirectory();
 }
 
@@ -911,7 +911,7 @@ void Texture_ShowAll(){
 	QERApp_ActiveShaders_SetDisplayed( true );
 	g_bShowAllShaders = true;
 	// put some information in the texture window title?
-	sprintf( name, "Textures: in use" );
+	snprintf( name, sizeof( name ), "Textures: in use" );
 	gtk_window_set_title( GTK_WINDOW( g_qeglobals_gui.d_entity ), name );
 	Sys_UpdateWindows( W_TEXTURE );
 }
@@ -966,7 +966,7 @@ void WINAPI Texture_ShowInuse( void ){
 	// we are no longer showing everything
 	g_bShowAllShaders = false;
 	// put some information in the texture window title?
-	sprintf( name, "Textures: in use" );
+	snprintf( name, sizeof( name ), "Textures: in use" );
 	gtk_window_set_title( GTK_WINDOW( g_qeglobals_gui.d_entity ), name );
 
 
@@ -1000,7 +1000,7 @@ void Texture_ShowStartupShaders(){
 		int nLen;
 		GSList *shaderfiles = NULL;
 
-		strcpy( filename, g_pGameDescription->mShaderlist.GetBuffer() );
+		Q_strncpyz( filename, g_pGameDescription->mShaderlist.GetBuffer(), sizeof( filename ) );
 		count = vfsGetFileCount( filename, 0 );
 		if ( count == 0 ) {
 			Sys_FPrintf( SYS_ERR, "Couldn't find '%s'\n", g_pGameDescription->mShaderlist.GetBuffer() );
@@ -1023,7 +1023,7 @@ void Texture_ShowStartupShaders(){
 				bool found = false;
 
 				// each token should be a shader filename
-				sprintf( dirstring, "%s.shader", token );
+				snprintf( dirstring, sizeof( dirstring ), "%s.shader", token );
 
 				for ( tmp = shaderfiles; tmp != NULL; tmp = tmp->next )
 				{
@@ -1036,7 +1036,7 @@ void Texture_ShowStartupShaders(){
 
 				if ( !found ) {
 					shaderfiles = g_slist_append( l_shaderfiles, strdup( dirstring ) );
-					strcpy( texture_directory, dirstring );
+					Q_strncpyz( texture_directory, dirstring, sizeof( texture_directory ) );
 					Texture_ShowDirectory();
 					nLen++;
 				}

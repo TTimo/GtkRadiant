@@ -113,8 +113,7 @@ void setSpecialLoad( eclass_t *e, const char* pWhat, char*& p ){
 	if ( where ) {
 		int len = ( where - pText );
 		p = new char[len + 1];
-		strncpy( p,pText,len );
-		p[len] = 0; // just to make sure, as most implementations of strncpy don't null terminate
+		Q_strncpyz( p, pText, len + 1 );
 	}
 	else{
 		p = strdup( pText );
@@ -129,7 +128,7 @@ eclass_t *Eclass_InitFromText( char *text ){
 	int r, i;
 	char parms[256], *p;
 	eclass_t    *e;
-	char color[128];
+	char color[256];
 
 	e = (eclass_t*)malloc( sizeof( *e ) );
 	memset( e, 0, sizeof( *e ) );
@@ -147,7 +146,7 @@ eclass_t *Eclass_InitFromText( char *text ){
 	if ( r != 3 ) {
 		return e;
 	}
-	sprintf( color, "(%f %f %f)", e->color[0], e->color[1], e->color[2] );
+	snprintf( color, sizeof( color ), "(%f %f %f)", e->color[0], e->color[1], e->color[2] );
 	//strcpy (e->texdef.name, color);
 	e->texdef.SetName( color );
 
@@ -204,7 +203,12 @@ eclass_t *Eclass_InitFromText( char *text ){
 		if ( !p ) {
 			break;
 		}
-		strcpy( e->flagnames[i], Get_COM_Token() );
+		Q_strncpyz( e->flagnames[i], Get_COM_Token(), sizeof( e->flagnames[i] ) );
+
+		if( strlen( Get_COM_Token() ) > sizeof( e->flagnames[i] ) - 1 )
+		{
+			Syn_Printf( "Warning: spawnflag/parm/flagname too long for Eclass %s: %s\n", e->name, e->flagnames[i] );
+		}
 	}
 
 	// find the length until close comment
@@ -289,7 +293,7 @@ void Eclass_ScanFile( char *filename ){
 	eclass_found = false;
 	for ( i = 0 ; i < size ; i++ )
 	{
-		if ( !strncmp( data + i, "/*QUAKED",8 ) ) {
+		if ( !strncmp( data + i, "/*QUAKED", 8 ) ) {
 			e = Eclass_InitFromText( data + i );
 			if ( e ) {
 				Eclass_InsertAlphabetized( e );

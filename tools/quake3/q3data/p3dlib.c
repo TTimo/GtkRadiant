@@ -21,7 +21,7 @@
 
 #include "p3dlib.h"
 
-#ifdef WIN32
+#ifdef _WIN32
 #include <io.h>
 #endif
 #include <stdlib.h>

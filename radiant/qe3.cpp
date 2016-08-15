@@ -100,7 +100,7 @@ void WINAPI QE_CheckOpenGLForErrors( void ){
 	int i = qglGetError();
 	if ( i != GL_NO_ERROR ) {
 		if ( i == GL_OUT_OF_MEMORY ) {
-			sprintf( strMsg, "OpenGL out of memory error %s\nDo you wish to save before exiting?", qgluErrorString( (GLenum)i ) );
+			snprintf( strMsg, sizeof( strMsg ), "OpenGL out of memory error %s\nDo you wish to save before exiting?", qgluErrorString( (GLenum)i ) );
 			if ( gtk_MessageBox( g_pParentWnd->m_pWidget, strMsg, "Radiant Error", MB_YESNO ) == IDYES ) {
 				Map_SaveFile( NULL, false );
 			}
@@ -126,14 +126,14 @@ char *ExpandReletivePath( char *p ){
 	}
 
 	base = ValueForKey( g_qeglobals.d_project_entity, "basepath" );
-	sprintf( temp, "%s/%s", base, p );
+	snprintf( temp, sizeof( temp ), "%s/%s", base, p );
 	return temp;
 }
 
 char *copystring( char *s ){
 	char    *b;
 	b = (char*)malloc( strlen( s ) + 1 );
-	strcpy( b,s );
+	strcpy( b, s );
 	return b;
 }
 
@@ -197,7 +197,7 @@ void Map_Snapshot(){
 			char buf[PATH_MAX];
 			//sprintf( buf, "%s.%i", strNewPath.GetBuffer(), nCount );
 			// snapshot will now end with a known ext.
-			sprintf( buf, "%s.%i.%s", strNewPath.GetBuffer(), nCount, strOldEXT.GetBuffer() );
+			snprintf( buf, sizeof( buf ), "%s.%i.%s", strNewPath.GetBuffer(), nCount, strOldEXT.GetBuffer() );
 			strFile = buf;
 			bGo = DoesFileExist( strFile, lSize );
 			nCount++;
@@ -282,7 +282,7 @@ int BuildShortPathName( const char* pPath, char* pBuffer, int nBufferLen ){
 	int nResult = GetFullPathName( pPath, nBufferLen, pBuffer, &pFile );
 	nResult = GetShortPathName( pPath, pBuffer, nBufferLen );
 	if ( nResult == 0 ) {
-		strcpy( pBuffer, pPath );               // Use long filename
+		Q_strncpyz( pBuffer, pPath, nBufferLen );               // Use long filename
 	}
 	return nResult;
 }
@@ -354,7 +354,7 @@ void HandleXMLError( void* ctxt, const char* text, ... ){
 	static char buf[32768];
 
 	va_start( argptr,text );
-	vsprintf( buf, text, argptr );
+	vsnprintf( buf, sizeof( buf ), text, argptr );
 	Sys_FPrintf( SYS_ERR, "XML %s\n", buf );
 	va_end( argptr );
 }
@@ -598,8 +598,9 @@ bool QE_LoadProject( const char *projectfile ){
 	int ver = IntForKey( g_qeglobals.d_project_entity, "version" );
 	if ( ver > PROJECT_VERSION ) {
 		char strMsg[1024];
-		sprintf( strMsg, "This is a version %d project file. This build only supports <=%d project files.\n"
-						 "Please choose another project file or upgrade your version of Radiant.", ver, PROJECT_VERSION );
+		snprintf( strMsg, sizeof( strMsg ),
+			"This is a version %d project file. This build only supports <=%d project files.\n"
+			"Please choose another project file or upgrade your version of Radiant.", ver, PROJECT_VERSION );
 		gtk_MessageBox( g_pParentWnd->m_pWidget, strMsg, "Can't load project file", MB_ICONERROR | MB_OK );
 		// set the project file to nothing so we are sure we'll ask next time?
 		g_PrefsDlg.m_strLastProject = "";
@@ -645,7 +646,7 @@ bool QE_LoadProject( const char *projectfile ){
 
 		if ( IntForKey( g_qeglobals.d_project_entity, "version" ) != PROJECT_VERSION ) {
 			char strMsg[2048];
-			sprintf( strMsg,
+			snprintf( strMsg, sizeof( strMsg ), 
 					 "The template project '%s' has version %d. The editor binary is configured for version %d.\n"
 					 "This indicates a problem in your setup.\n"
 					 "I will keep going with this project till you fix this",
@@ -654,19 +655,19 @@ bool QE_LoadProject( const char *projectfile ){
 		}
 
 		// create the writable project file path
-		strcpy( buf, g_qeglobals.m_strHomeGame.GetBuffer() );
-		strcat( buf, g_pGameDescription->mBaseGame.GetBuffer() );
-		strcat( buf, G_DIR_SEPARATOR_S "scripts" G_DIR_SEPARATOR_S );
+		Q_strncpyz( buf, g_qeglobals.m_strHomeGame.GetBuffer(), sizeof( buf ) );
+		strncat( buf, g_pGameDescription->mBaseGame.GetBuffer(), sizeof( buf ) );
+		strncat( buf, G_DIR_SEPARATOR_S "scripts" G_DIR_SEPARATOR_S, sizeof( buf ) );
 		// while the filename is already in use, increment the number we add to the end
 		int counter = 0;
 		char pUser[PATH_MAX];
 		while ( 1 )
 		{
-			sprintf( pUser, "%suser%d." PROJECT_FILETYPE, buf, counter );
+			snprintf( pUser, sizeof( pUser ), "%suser%d." PROJECT_FILETYPE, buf, counter );
 			counter++;
 			if ( access( pUser, R_OK ) != 0 ) {
 				// this is the one
-				strcpy( buf, pUser );
+				Q_strncpyz( buf, pUser, sizeof( buf ) );
 				break;
 			}
 		}
@@ -1266,7 +1267,7 @@ void Sys_MarkMapModified( void ){
 
 	if ( modified != 1 ) {
 		modified = true; // mark the map as changed
-		sprintf( title, "%s *", currentmap );
+		snprintf( title, sizeof( title ), "%s *", currentmap );
 
 		QE_ConvertDOSToUnixName( title, title );
 		Sys_SetTitle( title );
@@ -1337,7 +1338,7 @@ void Sys_UpdateStatusBar( void ){
 
 	char numbrushbuffer[100] = "";
 
-	sprintf( numbrushbuffer, "Brushes: %d Entities: %d", g_numbrushes, g_numentities );
+	snprintf( numbrushbuffer, sizeof( numbrushbuffer ), "Brushes: %d Entities: %d", g_numbrushes, g_numentities );
 	g_pParentWnd->SetStatusText( 2, numbrushbuffer );
 	//Sys_Status( numbrushbuffer, 2 );
 }
@@ -1372,11 +1373,11 @@ void buffer_write_escaped_mnemonic( char* buffer, const char* string ){
 }
 
 static void MRU_SetText( int index, const char *filename ){
-	strcpy( MRU_filenames[index], filename );
+	Q_strncpyz( MRU_filenames[index], filename, sizeof( MRU_filenames[index] ) );
 
 	char mnemonic[PATH_MAX * 2 + 4];
 	mnemonic[0] = '_';
-	sprintf( mnemonic + 1, "%d", index + 1 );
+	snprintf( mnemonic + 1, sizeof( mnemonic ) - 1, "%d", index + 1 );
 	mnemonic[2] = '-';
 	mnemonic[3] = ' ';
 	buffer_write_escaped_mnemonic( mnemonic + 4, filename );
@@ -1510,9 +1511,9 @@ void ProjectDialog(){
 	 * store it in buffer.
 	 */
 
-	strcpy( buffer, g_qeglobals.m_strHomeGame.GetBuffer() );
-	strcat( buffer, g_pGameDescription->mBaseGame.GetBuffer() );
-	strcat( buffer, "/scripts/" );
+	Q_strncpyz( buffer, g_qeglobals.m_strHomeGame.GetBuffer(), sizeof( buffer ) );
+	strncat( buffer, g_pGameDescription->mBaseGame.GetBuffer(), sizeof( buffer ) );
+	strncat( buffer, "/scripts/", sizeof( buffer ) );
 
 	// Display the Open dialog box
 	filename = file_dialog( NULL, TRUE, _( "Open File" ), buffer, "project" );
@@ -1569,7 +1570,7 @@ void FillBSPMenu(){
 	if ( g_qeglobals.bBSPFrontendPlugin ) {
 		CString str = g_BSPFrontendTable.m_pfnGetBSPMenu();
 		char cTemp[1024];
-		strcpy( cTemp, str );
+		Q_strncpyz( cTemp, str, sizeof( cTemp ) );
 		char* token = strtok( cTemp, ",;" );
 		if ( token && *token == ' ' ) {
 			while ( *token == ' ' )

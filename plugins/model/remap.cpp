@@ -164,7 +164,7 @@ void add_remap( const char *remap ){
 	else {
 		pRemap = new remap_t;
 
-		strncpy( pRemap->m_remapbuff, remap, sizeof( pRemap->m_remapbuff ) );
+		Q_strncpyz( pRemap->m_remapbuff, remap, sizeof( pRemap->m_remapbuff ) );
 
 		pRemap->m_remapbuff[ch - remap] = '\0';
 

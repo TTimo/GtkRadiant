@@ -2174,7 +2174,7 @@ void clipboard_paste(){
 }
 
 
-#elif defined( WIN32 )
+#elif defined( _WIN32 )
 
 void clipboard_copy(){
 	Clipboard_CopyMap();
@@ -3435,7 +3435,7 @@ void MainFrame::LoadCommandMap(){
 
 #if defined ( __linux__ ) || defined ( __APPLE__ )
 	strINI = g_PrefsDlg.m_rc_path->str;
-#elif defined( WIN32 )
+#elif defined( _WIN32 ) || defined( __CYGWIN__ )
 	strINI = g_strGameToolsPath;
 #else
 #error "WTF are you compiling this on"
@@ -3450,7 +3450,7 @@ void MainFrame::LoadCommandMap(){
 		for ( int i = 0; i < g_nCommandCount; i++ )
 		{
 			char value[1024];
-			if ( read_var( strINI.GetBuffer(), "Commands", g_Commands[i].m_strCommand, value ) ) {
+			if ( read_var( strINI.GetBuffer(), "Commands", g_Commands[i].m_strCommand, value, sizeof( value ) ) ) {
 				if ( !bUserCmdList ) {
 					Sys_Printf( "Found user's shortcuts list at %s\n", strINI.GetBuffer() );
 					bUserCmdList = true;
@@ -3683,10 +3683,10 @@ void MainFrame::CreateQEChildren(){
 
         
         // check to see if the project template is versioned
-        strcpy( buf, g_pGameDescription->mEnginePath.GetBuffer() );
-        strcat( buf, g_pGameDescription->mBaseGame.GetBuffer() );
-        strcat( buf, "/scripts/" );
-        strcat( buf, PROJECT_TEMPLATE_NAME );
+        Q_strncpyz( buf, g_pGameDescription->mEnginePath.GetBuffer(), sizeof( buf ) );
+        strncat( buf, g_pGameDescription->mBaseGame.GetBuffer(), sizeof( buf ) );
+        strncat( buf, "/scripts/", sizeof( buf ) );
+        strncat( buf, PROJECT_TEMPLATE_NAME, sizeof( buf ) );
         templateVersion = QE_GetTemplateVersionForProject( buf );
 
 		r = g_PrefsDlg.m_strLastProject.GetBuffer();
@@ -3697,10 +3697,10 @@ void MainFrame::CreateQEChildren(){
 				// try default project location
 				bTriedTemplate = true;
 				// for all OSes, we look for the template in the base installation (no homepath here)
-				strcpy( buf, g_pGameDescription->mEnginePath.GetBuffer() );
-				strcat( buf, g_pGameDescription->mBaseGame.GetBuffer() );
-				strcat( buf, "/scripts/" );
-				strcat( buf, PROJECT_TEMPLATE_NAME );
+				Q_strncpyz( buf, g_pGameDescription->mEnginePath.GetBuffer(), sizeof( buf ) );
+				strncat( buf, g_pGameDescription->mBaseGame.GetBuffer(), sizeof( buf ) );
+				strncat( buf, "/scripts/", sizeof( buf ) );
+				strncat( buf, PROJECT_TEMPLATE_NAME, sizeof( buf ) );
 				r = buf;
 			}
 			else
@@ -3888,7 +3888,7 @@ void MainFrame::UpdateWindows( int nBits ){
 #ifdef DBG_WINDOWPOS
 	static int bean_count = 0;
 	char bean_buf[100];
-	sprintf( bean_buf,"UpdateWindows %d",bean_count );
+	snprintf( bean_buf, sizeof( bean_buf ), "UpdateWindows %d", bean_count );
 	CheckWatchit( bean_buf );
 	bean_count++;
 #endif
@@ -3923,7 +3923,7 @@ void MainFrame::UpdateWindows( int nBits ){
 		}
 	}
 #ifdef DBG_WINDOWPOS
-	sprintf( bean_buf,"%d (end UpdateWidows)",bean_count );
+	snprintf( bean_buf, sizeof( bean_buf ), "%d (end UpdateWidows)", bean_count );
 	CheckWatchit( bean_buf );
 #endif
 }
@@ -3932,7 +3932,7 @@ void MainFrame::RoutineProcessing(){
 #ifdef DBG_WINDOWPOS
 	static int bean_count = 0;
 	char bean_buf[100];
-	sprintf( bean_buf,"RoutineProcessing %d",bean_count );
+	snprintf( bean_buf, sizeof( bean_buf ), "RoutineProcessing %d", bean_count );
 	CheckWatchit( bean_buf );
 	bean_count++;
 #endif
@@ -4009,7 +4009,7 @@ void MainFrame::RoutineProcessing(){
  */
 	}
 #ifdef DBG_WINDOWPOS
-	sprintf( bean_buf,"%d (end RoutineProcessing)",bean_count );
+	snprintf( bean_buf, sizeof( bean_buf ), "%d (end RoutineProcessing)", bean_count );
 	CheckWatchit( bean_buf );
 #endif
 }
@@ -4258,8 +4258,8 @@ void MainFrame::OnFileOpen(){
 	char buf[NAME_MAX];
 
 	if ( !g_pGameDescription->noMapsInHome ) {
-		strcpy( buf, g_qeglobals.m_strHomeMaps.GetBuffer() );
-		strcat( buf, "maps/" );
+		Q_strncpyz( buf, g_qeglobals.m_strHomeMaps.GetBuffer(), sizeof( buf ) );
+		strncat( buf, "maps/", sizeof( buf ) );
 	}
 	else {
 		buf[0] = '\0';
@@ -4268,7 +4268,7 @@ void MainFrame::OnFileOpen(){
 	str = file_dialog( m_pWidget, TRUE, _( "Open Map" ), buf, MAP_MAJOR, "maps/" );
 
 	if ( str != NULL ) {
-		strcpy( currentmap,str );
+		Q_strncpyz( currentmap, str, sizeof( currentmap ) );
 		MRU_AddFile( str );
 		Map_LoadFile( str );
 	}
@@ -4279,8 +4279,8 @@ void MainFrame::OnFileImportmap(){
 	char buf[NAME_MAX];
 
 	if ( !g_pGameDescription->noMapsInHome ) {
-		strcpy( buf, g_qeglobals.m_strHomeMaps.GetBuffer() );
-		strcat( buf, "maps/" );
+		Q_strncpyz( buf, g_qeglobals.m_strHomeMaps.GetBuffer(), sizeof( buf ) );
+		strncat( buf, "maps/", sizeof( buf ) );
 	}
 	else {
 		buf[0] = '\0';
@@ -4307,8 +4307,8 @@ void MainFrame::OnFileSaveas(){
 	char buf[NAME_MAX];
 
 	if ( !g_pGameDescription->noMapsInHome ) {
-		strcpy( buf, g_qeglobals.m_strHomeMaps.GetBuffer() );
-		strcat( buf, "maps/" );
+		Q_strncpyz( buf, g_qeglobals.m_strHomeMaps.GetBuffer(), sizeof( buf ) );
+		strncat( buf, "maps/", sizeof( buf ) );
 	}
 	else {
 		buf[0] = '\0';
@@ -4317,7 +4317,7 @@ void MainFrame::OnFileSaveas(){
 	str = file_dialog( g_pParentWnd->m_pWidget, FALSE, _( "Save Map" ), buf, MAP_MAJOR, "maps/" );
 
 	if ( str != NULL ) {
-		strcpy( currentmap, str );
+		Q_strncpyz( currentmap, str, sizeof( currentmap ) );
 		MRU_AddFile( str );
 		Map_SaveFile( str, false ); // ignore region
 	}
@@ -4328,8 +4328,8 @@ void MainFrame::OnFileExportmap(){
 	char buf[NAME_MAX];
 
 	if ( !g_pGameDescription->noMapsInHome ) {
-		strcpy( buf, g_qeglobals.m_strHomeMaps.GetBuffer() );
-		strcat( buf, "maps/" );
+		Q_strncpyz( buf, g_qeglobals.m_strHomeMaps.GetBuffer(), sizeof( buf ) );
+		strncat( buf, "maps/", sizeof( buf ) );
 	}
 	else {
 		buf[0] = '\0';
@@ -4347,8 +4347,8 @@ void MainFrame::OnFileSaveregion(){
 	char buf[NAME_MAX];
 
 	if ( !g_pGameDescription->noMapsInHome ) {
-		strcpy( buf, g_qeglobals.m_strHomeMaps.GetBuffer() );
-		strcat( buf, "maps/" );
+		Q_strncpyz( buf, g_qeglobals.m_strHomeMaps.GetBuffer(), sizeof( buf ) );
+		strncat( buf, "maps/", sizeof( buf ) );
 	}
 	else {
 		buf[0] = '\0';
@@ -5716,9 +5716,9 @@ void MainFrame::OnTexturesLoad(){
 	// FIXME
 	// check if that works with fs_game (I suspect some more design is needed)
 	// see how this is done in 1.2?
-	strcpy( def_path, g_pGameDescription->mEnginePath.GetBuffer() );
-	strcat( def_path, g_pGameDescription->mBaseGame.GetBuffer() );
-	strcat( def_path, "/" );
+	Q_strncpyz( def_path, g_pGameDescription->mEnginePath.GetBuffer(), sizeof( def_path ) );
+	strncat( def_path, g_pGameDescription->mBaseGame.GetBuffer(), sizeof( def_path ) );
+	strncat( def_path, "/", sizeof( def_path ) );
 
 	char *dir = dir_dialog( m_pWidget, _( "Load textures from path" ), def_path );
 
@@ -5731,7 +5731,7 @@ void MainFrame::OnTexturesLoad(){
 		}
 		char *pouic = MAX( strrchr( dir, '/' ),strrchr( dir, '\\' ) );
 		if ( pouic ) {
-			strcpy( texture_directory, pouic + 1 );
+			Q_strncpyz( texture_directory, pouic + 1, 128 );
 			Sys_Printf( "Loading '%s'\n", texture_directory );
 			Texture_ShowDirectory();
 		}
@@ -6156,8 +6156,8 @@ void MainFrame::OnMiscSelectentitycolor(){
 		}
 
 		if ( inspector_mode == W_ENTITY && ( DoColor( COLOR_ENTITY ) ) ) {
-			char buffer[100];
-			sprintf( buffer, "%f %f %f", g_qeglobals.d_savedinfo.colors[COLOR_ENTITY][0],
+			char buffer[256];
+			snprintf( buffer, sizeof( buffer ), "%f %f %f", g_qeglobals.d_savedinfo.colors[COLOR_ENTITY][0],
 					 g_qeglobals.d_savedinfo.colors[COLOR_ENTITY][1],
 					 g_qeglobals.d_savedinfo.colors[COLOR_ENTITY][2] );
 

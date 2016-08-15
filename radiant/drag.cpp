@@ -282,14 +282,14 @@ void UpdateTarget( vec3_t origin, vec3_t dir ){
 		i = IntForKey( pe, "target" );
 		if ( i <= 0 ) {
 			i = GetUniqueTargetId( 1 );
-			sprintf( sz, "%d", i );
+			snprintf( sz, sizeof( sz ), "%d", i );
 
 			SetKeyValue( pe, "target", sz );
 		}
 
 		// set the target # into our src
 
-		sprintf( sz, "%d", i );
+		snprintf( sz, sizeof( sz ), "%d", i );
 		SetKeyValue( peLink, "targetname", sz );
 
 		Sys_UpdateWindows( W_ENTITY );

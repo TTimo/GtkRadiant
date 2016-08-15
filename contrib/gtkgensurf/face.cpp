@@ -359,7 +359,7 @@ void UseFaceBounds(){
 			BestDot  = Dot;
 			BestFace = i;
 			if ( strlen( QERFaceData->m_TextureName ) ) {
-				strcpy( Texture[Game][0],QERFaceData->m_TextureName );
+				Q_strncpyz( Texture[Game][0], QERFaceData->m_TextureName, sizeof( Texture[Game][0] ) );
 			}
 		}
 	}
@@ -370,8 +370,8 @@ void UseFaceBounds(){
 		}
 		QERFaceData = g_FuncTable.m_pfnGetFaceData( vp,i );
 		if ( strlen( QERFaceData->m_TextureName ) ) {
-			if ( strcmp( Texture[Game][0],QERFaceData->m_TextureName ) ) {
-				strcpy( Texture[Game][1],QERFaceData->m_TextureName );
+			if ( strcmp( Texture[Game][0], QERFaceData->m_TextureName ) ) {
+				Q_strncpyz( Texture[Game][1], QERFaceData->m_TextureName, sizeof( Texture[Game][1] ) );
 			}
 		}
 	}

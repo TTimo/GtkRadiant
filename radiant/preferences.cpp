@@ -229,7 +229,7 @@ void WindowPosition_Parse( window_position_t& m_value, const CString& value ){
 
 void WindowPosition_Write( const window_position_t& m_value, CString& value ){
 	char buffer[64];
-	sprintf( buffer, "%d %d %d %d", m_value.x, m_value.y, m_value.w, m_value.h );
+	snprintf( buffer, sizeof( buffer ), "%d %d %d %d", m_value.x, m_value.y, m_value.w, m_value.h );
 	value = buffer;
 }
 
@@ -307,8 +307,8 @@ void CXMLPropertyBag::GetPref( const char *name, int *pV, int V ){
 	}
 	else
 	{
-		char s[10];
-		sprintf( s, "%d", V );
+		char s[12];
+		snprintf( s, sizeof( s ), "%d", V );
 		pNode = xmlNewChild( mpDocNode, NULL, (xmlChar *)"epair", (xmlChar *)s );
 		xmlSetProp( pNode, (xmlChar *)"name", (xmlChar *)name );
 		*pV = V;
@@ -347,8 +347,8 @@ void CXMLPropertyBag::GetPref( const char *name, float *pV, float V ){
 	}
 	else
 	{
-		char s[10];
-		sprintf( s, "%f", V );
+		char s[64];
+		snprintf( s, sizeof( s ), "%f", V );
 		pNode = xmlNewChild( mpDocNode, NULL, (xmlChar *)"epair", (xmlChar *)s );
 		xmlSetProp( pNode, (xmlChar *)"name", (xmlChar *)name );
 		*pV = V;
@@ -364,8 +364,8 @@ void CXMLPropertyBag::GetPref( const char *name, float* pV, float* V ){
 	}
 	else
 	{
-		char s[128];
-		sprintf( s, "%f %f %f", V[0], V[1], V[2] );
+		char s[256];
+		snprintf( s, sizeof( s ), "%f %f %f", V[0], V[1], V[2] );
 		pNode = xmlNewChild( mpDocNode, NULL, (xmlChar *)"epair", (xmlChar *)s );
 		xmlSetProp( pNode, (xmlChar *)"name", (xmlChar *)name );
 		pV[0] = V[0];
@@ -401,7 +401,7 @@ void CXMLPropertyBag::UpdatePrefTree(){
 		CPrefAssignment *pPref = &( *iPref );
 		// look for the node
 		xmlNodePtr pNode;
-		char s[64];
+		char s[256];
 
 		pNode = EpairForName( pPref->mName.GetBuffer() );
 		// we never expect that the node could not be found, because this is supposed to happen
@@ -416,11 +416,11 @@ void CXMLPropertyBag::UpdatePrefTree(){
 			xmlNodeSetContent( pNode, (const xmlChar *)( (Str *)pPref->mVal )->GetBuffer() );
 			break;
 		case PREF_INT:
-			sprintf( s, "%d", *(int *)pPref->mVal );
+			snprintf( s, sizeof( s ), "%d", *(int *)pPref->mVal );
 			xmlNodeSetContent( pNode, (xmlChar *)s );
 			break;
 		case PREF_FLOAT:
-			sprintf( s, "%f", *(float *)pPref->mVal );
+			snprintf( s, sizeof( s ), "%f", *(float *)pPref->mVal );
 			xmlNodeSetContent( pNode, (xmlChar *)s );
 			break;
 		case PREF_BOOL:
@@ -430,7 +430,7 @@ void CXMLPropertyBag::UpdatePrefTree(){
 		case PREF_VEC3:
 		{
 			float* v = (float*)pPref->mVal;
-			sprintf( s, "%f %f %f", v[0], v[1], v[2] );
+			snprintf( s, sizeof( s ), "%f %f %f", v[0], v[1], v[2] );
 			xmlNodeSetContent( pNode, (xmlChar *)s );
 		}
 		break;
@@ -501,7 +501,7 @@ qboolean CXMLPropertyBag::WriteXMLFile( const char* pFilename ){
 // =============================================================================
 // Widget callbacks for PrefsDlg
 
-#if !defined( WIN32 )
+#if !defined( _WIN32 )
 // browse for custom editor executable
 static void OnBtnBrowseEditor( GtkWidget *widget, gpointer data ){
 	PrefsDlg *dlg = (PrefsDlg*)data;
@@ -523,7 +523,7 @@ static void OnBtnBrowseprefab( GtkWidget *widget, gpointer data ){
 	if ( strlen( path ) == 0 ) {
 		path = g_strGameToolsPath;
 	}
-	char *dir = dir_dialog( g_PrefsDlg.GetWidget(), _( "Set prefab path" ), path );
+	gchar *dir = dir_dialog( g_PrefsDlg.GetWidget(), _( "Set prefab path" ), path );
 	dlg->UpdateData( TRUE );
 
 	if ( dir != NULL ) {
@@ -564,7 +564,7 @@ static void OnButtonClean( GtkWidget *widget, gpointer data ){
 		g_qeglobals.disable_ini = true;
 		remove( dlg->m_inipath->str );
 		char buf[PATH_MAX];
-		sprintf( buf, "%sSavedInfo.bin", dlg->m_rc_path->str );
+		snprintf( buf, sizeof( buf ), "%sSavedInfo.bin", dlg->m_rc_path->str );
 		remove( buf );
 		HandleCommand( NULL, GINT_TO_POINTER( ID_FILE_EXIT ) );
 		_exit( 0 );
@@ -729,9 +729,9 @@ CGameDescription::CGameDescription( xmlDocPtr pDoc, const Str &GameFile ){
 	{
 		char full[PATH_MAX];
 #ifdef _WIN32
-		_fullpath( full, prop, PATH_MAX );
+		_fullpath( full, prop, sizeof( full ) );
 #else
-		strncpy( full, prop, PATH_MAX );
+		Q_strncpyz( full, prop, sizeof( full ) );
 #endif
 		xmlFree( prop );
 		prop = NULL;
@@ -822,9 +822,9 @@ CGameDescription::CGameDescription( xmlDocPtr pDoc, const Str &GameFile ){
 		if ( prop != NULL ) {
 			char full[PATH_MAX];
 		#ifdef _WIN32
-			_fullpath( full, prop, PATH_MAX );
+			_fullpath( full, prop, sizeof( full ) );
 		#else
-			strncpy( full, prop, PATH_MAX );
+			Q_strncpyz( full, prop, sizeof( full ) );
 		#endif
 			xmlFree( prop );
 			prop = NULL;
@@ -844,12 +844,12 @@ CGameDescription::CGameDescription( xmlDocPtr pDoc, const Str &GameFile ){
 			// if engine path was not specified in the .game, it implies we can guess it from the gametools path
 			// on win32, and for most game package, the gametools are installed with the game
 			char aux_path[PATH_MAX]; // aux
-			strcpy( aux_path, mGameToolsPath.GetBuffer() );
+			Q_strncpyz( aux_path, mGameToolsPath.GetBuffer(), sizeof( aux_path ) );
 			if ( ( aux_path[ strlen( aux_path ) - 1 ] == '/' ) || ( aux_path[ strlen( aux_path ) - 1 ] == '\\' ) ) {
 				aux_path[strlen( aux_path ) - 1] = '\0'; // strip ending '/' if any
 			}
 			char up_path[PATH_MAX]; // up one level
-			ExtractFilePath( aux_path, up_path );
+			ExtractFilePath( aux_path, up_path, sizeof( up_path ) );
 			mEnginePath = up_path;
 		}
 	}
@@ -3087,7 +3087,7 @@ void PrefsDlg::LoadPrefs(){
 	for ( i = 0; i < 4; i++ )
 	{
 		char buf[64];
-		sprintf( buf, "%s%d", FILE_KEY, i );
+		snprintf( buf, sizeof( buf ), "%s%d", FILE_KEY, i );
 		mLocalPrefs.GetPref( buf,                  &m_strMRUFiles[i],              "" );
 	}
 
@@ -3130,7 +3130,7 @@ void PrefsDlg::LoadPrefs(){
 
 	for ( i = 0; i < 3; i++ ) {
 		char buf[64];
-		sprintf( buf, "%s%d", SI_AXISCOLORS_KEY, i );
+		snprintf( buf, sizeof( buf ), "%s%d", SI_AXISCOLORS_KEY, i );
 		mLocalPrefs.GetPref( buf,   g_qeglobals.d_savedinfo.AxisColors[i], vDefaultAxisColours[i] );
 	}
 
@@ -3154,7 +3154,7 @@ void PrefsDlg::LoadPrefs(){
 
 	for ( i = 0; i < COLOR_LAST; i++ ) {
 		char buf[64];
-		sprintf( buf, "%s%d", SI_COLORS_KEY, i );
+		snprintf( buf, sizeof( buf ), "%s%d", SI_COLORS_KEY, i );
 		mLocalPrefs.GetPref( buf,   g_qeglobals.d_savedinfo.colors[i], vDefaultColours[i] );
 	}
 
