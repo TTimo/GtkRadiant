@@ -1463,7 +1463,7 @@ static int unzlocal_getShort (FILE* fin, uLong *pX)
 {
 	short	v;
 
-	if ( unz_GAME_QL == 1 ) {
+	if (unz_GAME_QL == 1) {
 		fread_ql( &v, sizeof(v), 1, fin );
 	} else {
 		fread( &v, sizeof(v), 1, fin );
@@ -1495,7 +1495,7 @@ static int unzlocal_getLong (FILE *fin, uLong *pX)
 {
 	int		v;
 
-	if ( unz_GAME_QL == 1 ) {
+	if (unz_GAME_QL == 1) {
 		fread_ql( &v, sizeof(v), 1, fin );
 	} else {
 		fread( &v, sizeof(v), 1, fin );
@@ -1631,7 +1631,7 @@ static uLong unzlocal_SearchCentralDir(FILE *fin)
 		if (fseek(fin,uReadPos,SEEK_SET)!=0)
 			break;
 		
-		if ( unz_GAME_QL == 1 ) {
+		if (unz_GAME_QL == 1) {
 			gametype = fread_ql(buf,(uInt)uReadSize,1,fin);
 		} else {
 			gametype = fread(buf,(uInt)uReadSize,1,fin);
@@ -1697,7 +1697,7 @@ extern unzFile unzOpen (const char* path)
 
 	int err=UNZ_OK;
 	
-	if ( unz_GAME_QL == 1 ) {
+	if (unz_GAME_QL == 1) {
 		fin=fopen_ql(path,"rb");
 	} else {
 		fin=fopen(path,"rb");
@@ -1756,7 +1756,7 @@ extern unzFile unzOpen (const char* path)
 
 	if (err!=UNZ_OK)
 	{
-		if ( unz_GAME_QL == 1 ) {
+		if (unz_GAME_QL == 1) {
 			fclose_ql(fin);
 		} else {
 			fclose(fin);
@@ -1793,7 +1793,7 @@ extern int unzClose (unzFile file)
     if (s->pfile_in_zip_read!=NULL)
         unzCloseCurrentFile(file);
 
-	if ( unz_GAME_QL == 1 ) {
+	if (unz_GAME_QL == 1) {
 		fclose_ql(s->file);
 	} else {
 		fclose(s->file);
@@ -1856,19 +1856,24 @@ static int unzlocal_GetCurrentFileInfoInternal (unzFile file,
 	uLong uMagic;
 	long lSeek=0;
 
-	if (file==NULL)
+	if (file == NULL) {
 		return UNZ_PARAMERROR;
-	s=(unz_s*)file;
-	if (fseek(s->file,s->pos_in_central_dir+s->byte_before_the_zipfile,SEEK_SET)!=0)
-		err=UNZ_ERRNO;
+	}
 
+	s = (unz_s*)file;
+
+	if (fseek(s->file, s->pos_in_central_dir + s->byte_before_the_zipfile, SEEK_SET) != 0) {
+		err=UNZ_ERRNO;
+	}
 
 	/* we check the magic */
-	if (err==UNZ_OK)
-		if (unzlocal_getLong(s->file,&uMagic) != UNZ_OK)
-			err=UNZ_ERRNO;
-		else if (uMagic!=0x02014b50)
-			err=UNZ_BADZIPFILE;
+	if (err == UNZ_OK) {
+		if (unzlocal_getLong(s->file,&uMagic) != UNZ_OK) {
+			err = UNZ_ERRNO;
+		} else if (uMagic != 0x02014b50) {
+			err = UNZ_BADZIPFILE;
+		}
+	}
 
 	if (unzlocal_getShort(s->file,&file_info.version) != UNZ_OK)
 		err=UNZ_ERRNO;
@@ -1917,98 +1922,102 @@ static int unzlocal_GetCurrentFileInfoInternal (unzFile file,
 	if (unzlocal_getLong(s->file,&file_info_internal.offset_curfile) != UNZ_OK)
 		err=UNZ_ERRNO;
 
-	lSeek+=file_info.size_filename;
-	if ((err==UNZ_OK) && (szFileName!=NULL))
-	{
+	lSeek += file_info.size_filename;
+
+	if ((err == UNZ_OK) && (szFileName != NULL)) {
 		uLong uSizeRead ;
-		if (file_info.size_filename<fileNameBufferSize)
-		{
+		if (file_info.size_filename<fileNameBufferSize) {
 			*(szFileName+file_info.size_filename)='\0';
 			uSizeRead = file_info.size_filename;
-		}
-		else
+		} else {
 			uSizeRead = fileNameBufferSize;
+		}
 
 		if ((file_info.size_filename>0) && (fileNameBufferSize>0)) {
 			size_t gametype;
-			if ( unz_GAME_QL == 1 ) {
-				gametype = fread_ql(szFileName,(uInt)uSizeRead,1,s->file);
+			if (unz_GAME_QL == 1) {
+				gametype = fread_ql(szFileName, (uInt)uSizeRead, 1, s->file);
 			} else {
-				gametype = fread(szFileName,(uInt)uSizeRead,1,s->file);
+				gametype = fread(szFileName, (uInt)uSizeRead, 1, s->file);
 			}
 
-			if (gametype!=1)
-				err=UNZ_ERRNO;
+			if (gametype != 1) {
+				err = UNZ_ERRNO;
+			}
 		}
 		lSeek -= uSizeRead;
 	}
 
-	
-	if ((err==UNZ_OK) && (extraField!=NULL))
-	{
+	if ((err == UNZ_OK) && (extraField != NULL)) {
 		uLong uSizeRead ;
-		if (file_info.size_file_extra<extraFieldBufferSize)
+		if (file_info.size_file_extra < extraFieldBufferSize) {
 			uSizeRead = file_info.size_file_extra;
-		else
+		} else {
 			uSizeRead = extraFieldBufferSize;
+		}
 
-		if (lSeek!=0)
-			if (fseek(s->file,lSeek,SEEK_CUR)==0)
+		if (lSeek != 0) {
+			if (fseek(s->file, lSeek, SEEK_CUR) == 0) {
 				lSeek=0;
-			else
-				err=UNZ_ERRNO;
-		if ((file_info.size_file_extra>0) && (extraFieldBufferSize>0)) {
-			size_t gametype;
-			if ( unz_GAME_QL == 1 ) {
-				gametype = fread_ql(extraField,(uInt)uSizeRead,1,s->file);
 			} else {
-				gametype = fread(extraField,(uInt)uSizeRead,1,s->file);
-			}
-			if (gametype!=1)
 				err=UNZ_ERRNO;
+			}
+		}
+		if ((file_info.size_file_extra > 0) && (extraFieldBufferSize > 0)) {
+			size_t gametype;
+			if (unz_GAME_QL == 1) {
+				gametype = fread_ql(extraField, (uInt)uSizeRead, 1, s->file);
+			} else {
+				gametype = fread(extraField, (uInt)uSizeRead, 1, s->file);
+			}
+			if (gametype != 1) {
+				err=UNZ_ERRNO;
+			}
 		}
 		lSeek += file_info.size_file_extra - uSizeRead;
+	} else {
+		lSeek += file_info.size_file_extra;
 	}
-	else
-		lSeek+=file_info.size_file_extra; 
-
 	
-	if ((err==UNZ_OK) && (szComment!=NULL))
-	{
+	if ((err == UNZ_OK) && (szComment != NULL)) {
 		uLong uSizeRead ;
-		if (file_info.size_file_comment<commentBufferSize)
-		{
-			*(szComment+file_info.size_file_comment)='\0';
+		if (file_info.size_file_comment < commentBufferSize) {
+			*(szComment+file_info.size_file_comment) = '\0';
 			uSizeRead = file_info.size_file_comment;
-		}
-		else
+		} else {
 			uSizeRead = commentBufferSize;
+		}
 
-		if (lSeek!=0)
-			if (fseek(s->file,lSeek,SEEK_CUR)==0)
+		if (lSeek != 0) {
+			if (fseek(s->file, lSeek, SEEK_CUR) ==0 ) {
 				lSeek=0;
-			else
+			} else {
 				err=UNZ_ERRNO;
+			}
+		}
 		if ((file_info.size_file_comment>0) && (commentBufferSize>0)) {
 			size_t gametype;
-			if ( unz_GAME_QL == 1 ) {
-				gametype = fread_ql(szComment,(uInt)uSizeRead,1,s->file);
+			if (unz_GAME_QL == 1) {
+				gametype = fread_ql(szComment, (uInt)uSizeRead, 1, s->file);
 			} else {
-				gametype = fread(szComment,(uInt)uSizeRead,1,s->file);
+				gametype = fread(szComment, (uInt)uSizeRead, 1, s->file);
 			}
-			if (gametype!=1)
+			if (gametype!=1) {
 				err=UNZ_ERRNO;
+			}
 		}
-		lSeek+=file_info.size_file_comment - uSizeRead;
-	}
-	else
+		lSeek += file_info.size_file_comment - uSizeRead;
+	} else {
 		lSeek+=file_info.size_file_comment;
+	}
 
-	if ((err==UNZ_OK) && (pfile_info!=NULL))
+	if ((err==UNZ_OK) && (pfile_info!=NULL)) {
 		*pfile_info=file_info;
+	}
 
-	if ((err==UNZ_OK) && (pfile_info_internal!=NULL))
+	if ((err==UNZ_OK) && (pfile_info_internal!=NULL)) {
 		*pfile_info_internal=file_info_internal;
+	}
 
 	return err;
 }
@@ -2152,16 +2161,18 @@ static int unzlocal_CheckCurrentFileCoherencyHeader (unz_s* s, uInt* piSizeVar,
 	*poffset_local_extrafield = 0;
 	*psize_local_extrafield = 0;
 
-	if (fseek(s->file,s->cur_file_info_internal.offset_curfile +
-								s->byte_before_the_zipfile,SEEK_SET)!=0)
+	if (fseek(s->file, s->cur_file_info_internal.offset_curfile +
+								s->byte_before_the_zipfile, SEEK_SET) != 0) {
 		return UNZ_ERRNO;
+	}
 
-
-	if (err==UNZ_OK)
-		if (unzlocal_getLong(s->file,&uMagic) != UNZ_OK)
+	if (err == UNZ_OK) {
+		if (unzlocal_getLong(s->file, &uMagic) != UNZ_OK) {
 			err=UNZ_ERRNO;
-		else if (uMagic!=0x04034b50)
+		} else if (uMagic!=0x04034b50) {
 			err=UNZ_BADZIPFILE;
+		}
+	}
 
 	if (unzlocal_getShort(s->file,&uData) != UNZ_OK)
 		err=UNZ_ERRNO;
@@ -2210,7 +2221,7 @@ static int unzlocal_CheckCurrentFileCoherencyHeader (unz_s* s, uInt* piSizeVar,
 
 	*piSizeVar += (uInt)size_filename;
 
-	if (unzlocal_getShort(s->file,&size_extra_field) != UNZ_OK)
+	if (unzlocal_getShort(s->file, &size_extra_field) != UNZ_OK)
 		err=UNZ_ERRNO;
 	*poffset_local_extrafield= s->cur_file_info_internal.offset_curfile +
 									SIZEZIPLOCALHEADER + size_filename;
@@ -2327,43 +2338,43 @@ extern int unzOpenCurrentFile (unzFile file)
 */
 extern int unzReadCurrentFile  (unzFile file, void *buf, unsigned len)
 {
-	int err=UNZ_OK;
+	int err = UNZ_OK;
 	uInt iRead = 0;
 	unz_s* s;
 	file_in_zip_read_info_s* pfile_in_zip_read_info;
-	if (file==NULL)
+	if (file == NULL)
 		return UNZ_PARAMERROR;
-	s=(unz_s*)file;
-    pfile_in_zip_read_info=s->pfile_in_zip_read;
+	s = (unz_s*)file;
+    pfile_in_zip_read_info = s->pfile_in_zip_read;
 
-	if (pfile_in_zip_read_info==NULL)
+	if (pfile_in_zip_read_info == NULL)
 		return UNZ_PARAMERROR;
 
 
-	if ((pfile_in_zip_read_info->read_buffer == NULL))
+	if (pfile_in_zip_read_info->read_buffer == NULL)
 		return UNZ_END_OF_LIST_OF_FILE;
-	if (len==0)
+	if (len == 0)
 		return 0;
 
 	pfile_in_zip_read_info->stream.next_out = (Byte*)buf;
 
 	pfile_in_zip_read_info->stream.avail_out = (uInt)len;
 	
-	if (len>pfile_in_zip_read_info->rest_read_uncompressed)
+	if (len > pfile_in_zip_read_info->rest_read_uncompressed)
 		pfile_in_zip_read_info->stream.avail_out = 
 		  (uInt)pfile_in_zip_read_info->rest_read_uncompressed;
 
-	while (pfile_in_zip_read_info->stream.avail_out>0)
-	{
-		if ((pfile_in_zip_read_info->stream.avail_in==0) &&
-            (pfile_in_zip_read_info->rest_read_compressed>0))
-		{
+	while (pfile_in_zip_read_info->stream.avail_out > 0) {
+		if ((pfile_in_zip_read_info->stream.avail_in == 0) &&
+            (pfile_in_zip_read_info->rest_read_compressed > 0)) {
+
 			uInt uReadThis = UNZ_BUFSIZE;
 			size_t gametype;
 			if (pfile_in_zip_read_info->rest_read_compressed<uReadThis) {
 				uReadThis = (uInt)pfile_in_zip_read_info->rest_read_compressed; }
 			if (uReadThis == 0) {
-				return UNZ_EOF; }
+				return UNZ_EOF;
+			}
 			if (s->cur_file_info.compressed_size == pfile_in_zip_read_info->rest_read_compressed) {
 				if (fseek(pfile_in_zip_read_info->file,
 						  pfile_in_zip_read_info->pos_in_zipfile + 
@@ -2372,15 +2383,16 @@ extern int unzReadCurrentFile  (unzFile file, void *buf, unsigned len)
 				}
 			}
 			
-			if ( unz_GAME_QL == 1 ) {
+			if (unz_GAME_QL == 1) {
 				gametype = fread_ql(pfile_in_zip_read_info->read_buffer,uReadThis,1,
 									pfile_in_zip_read_info->file);
 			} else {
 				gametype = fread(pfile_in_zip_read_info->read_buffer,uReadThis,1,
 									pfile_in_zip_read_info->file);
 			}
-			if (gametype!=1)
+			if (gametype!=1) {
 				return UNZ_ERRNO;
+			}
 			pfile_in_zip_read_info->pos_in_zipfile += uReadThis;
 
 			pfile_in_zip_read_info->rest_read_compressed-=uReadThis;
@@ -2390,8 +2402,7 @@ extern int unzReadCurrentFile  (unzFile file, void *buf, unsigned len)
 			pfile_in_zip_read_info->stream.avail_in = (uInt)uReadThis;
 		}
 
-		if (pfile_in_zip_read_info->compression_method==0)
-		{
+		if (pfile_in_zip_read_info->compression_method==0) {
 			uInt uDoCopy,i ;
 			if (pfile_in_zip_read_info->stream.avail_out < 
                             pfile_in_zip_read_info->stream.avail_in)
@@ -2399,9 +2410,9 @@ extern int unzReadCurrentFile  (unzFile file, void *buf, unsigned len)
 			else
 				uDoCopy = pfile_in_zip_read_info->stream.avail_in ;
 				
-			for (i=0;i<uDoCopy;i++)
-				*(pfile_in_zip_read_info->stream.next_out+i) =
-                        *(pfile_in_zip_read_info->stream.next_in+i);
+			for (i = 0; i < uDoCopy; i++)
+				*(pfile_in_zip_read_info->stream.next_out + i) =
+                        *(pfile_in_zip_read_info->stream.next_in + i);
 					
 			pfile_in_zip_read_info->crc32 = crc32(pfile_in_zip_read_info->crc32,
 								pfile_in_zip_read_info->stream.next_out,
@@ -2413,9 +2424,7 @@ extern int unzReadCurrentFile  (unzFile file, void *buf, unsigned len)
 			pfile_in_zip_read_info->stream.next_in += uDoCopy;
             pfile_in_zip_read_info->stream.total_out += uDoCopy;
 			iRead += uDoCopy;
-		}
-		else
-		{
+		} else {
 			uLong uTotalOutBefore,uTotalOutAfter;
 			const Byte *bufBefore;
 			uLong uOutThis;
@@ -2436,22 +2445,20 @@ extern int unzReadCurrentFile  (unzFile file, void *buf, unsigned len)
 			uOutThis = uTotalOutAfter-uTotalOutBefore;
 			
 			pfile_in_zip_read_info->crc32 = 
-                crc32(pfile_in_zip_read_info->crc32,bufBefore,
-                        (uInt)(uOutThis));
+                crc32(pfile_in_zip_read_info->crc32, bufBefore, (uInt)(uOutThis));
 
-			pfile_in_zip_read_info->rest_read_uncompressed -=
-                uOutThis;
+			pfile_in_zip_read_info->rest_read_uncompressed -= uOutThis;
 
 			iRead += (uInt)(uTotalOutAfter - uTotalOutBefore);
             
-			if (err==Z_STREAM_END)
-				return (iRead==0) ? UNZ_EOF : iRead;
-			if (err!=Z_OK) 
+			if (err == Z_STREAM_END)
+				return (iRead == 0) ? UNZ_EOF : iRead;
+			if (err != Z_OK) 
 				break;
 		}
 	}
 
-	if (err==Z_OK)
+	if (err == Z_OK)
 		return iRead;
 	return err;
 }
