@@ -518,7 +518,7 @@ qboolean AddPatchToRawLightmap( int num, rawLightmap_t *lm ){
 	length = 0;
 	for ( x = 0; x < ( mesh->width - 1 ); x++ )
 		length += widthTable[ x ];
-	lm->w = ceil( length / lm->sampleSize ) + 1;
+	lm->w = lm->sampleSize != 0 ? ceil( length / lm->sampleSize ) + 1 : 0;
 	if ( lm->w < ds->patchWidth ) {
 		lm->w = ds->patchWidth;
 	}
@@ -531,7 +531,7 @@ qboolean AddPatchToRawLightmap( int num, rawLightmap_t *lm ){
 	length = 0;
 	for ( y = 0; y < ( mesh->height - 1 ); y++ )
 		length += heightTable[ y ];
-	lm->h = ceil( length / lm->sampleSize ) + 1;
+	lm->h = lm->sampleSize != 0 ? ceil( length / lm->sampleSize ) + 1 : 0;
 	if ( lm->h < ds->patchHeight ) {
 		lm->h = ds->patchHeight;
 	}
