@@ -622,7 +622,7 @@ typedef struct foliage_s
 	struct foliage_s    *next;
 	char model[ MAX_QPATH ];
 	float scale, density, odds;
-	qboolean inverseAlpha;
+	int inverseAlpha;
 }
 foliage_t;
 
