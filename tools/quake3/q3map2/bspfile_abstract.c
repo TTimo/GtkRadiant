@@ -113,7 +113,7 @@ void SetDrawSurfacesBuffer(){
 
 	bspDrawSurfaces = safe_malloc_info( sizeof( bspDrawSurface_t ) * numBSPDrawSurfacesBuffer, "IncDrawSurfaces" );
 
-	memset( bspDrawSurfaces, 0, MAX_MAP_DRAW_SURFS * sizeof( bspDrawVert_t ) );
+	memset( bspDrawSurfaces, 0, MAX_MAP_DRAW_SURFS * sizeof( bspDrawSurface_t ) );
 }
 
 void SetDrawSurfaces( int n ){
@@ -126,7 +126,7 @@ void SetDrawSurfaces( int n ){
 
 	bspDrawSurfaces = safe_malloc_info( sizeof( bspDrawSurface_t ) * numBSPDrawSurfacesBuffer, "IncDrawSurfaces" );
 
-	memset( bspDrawSurfaces, 0, n * sizeof( bspDrawVert_t ) );
+	memset( bspDrawSurfaces, 0, n * sizeof( bspDrawSurface_t ) );
 }
 
 void BSPFilesCleanup(){
