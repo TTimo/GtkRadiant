@@ -119,9 +119,7 @@ int vfsBuildShortPathName( const char* pPath, char* pBuffer, int nBufferLen ){
 		strcpy( pBuffer, pPath );               // Use long filename
 	}
 	return nResult;
-#endif
-
-#if defined ( __linux__ ) || defined ( __APPLE__ )
+#elif defined ( __linux__ ) || defined ( __APPLE__ )
 
 	// remove /../ from directories
 	const char *scr = pPath; char *dst = pBuffer;
@@ -142,6 +140,8 @@ int vfsBuildShortPathName( const char* pPath, char* pBuffer, int nBufferLen ){
 	*dst = 0;
 
 	return strlen( pBuffer );
+#else
+#error "unsupported platform"
 #endif
 }
 
