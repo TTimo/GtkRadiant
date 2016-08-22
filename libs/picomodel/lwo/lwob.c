@@ -244,6 +244,8 @@ lwSurface *lwGetSurface5( picoMemStream_t *fp, int cksize, lwObject *obj ){
 		goto Fail;
 	}
 
+	shdr = NULL;
+
 	/* process subchunks as they're encountered */
 
 	while ( 1 ) {
@@ -494,6 +496,9 @@ lwSurface *lwGetSurface5( picoMemStream_t *fp, int cksize, lwObject *obj ){
 			break;
 
 		case ID_SDAT:
+			if ( !shdr ) {
+				goto Fail;
+			}
 			shdr->data = getbytes( fp, sz );
 			break;
 
