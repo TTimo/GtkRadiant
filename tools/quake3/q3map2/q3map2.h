@@ -1892,6 +1892,8 @@ Q_EXTERN game_t games[]
 	,
 								#include "game_wolfet.h" /* most be after game_wolf.h as they share defines! */
 	,
+								#include "game_etl.h" /* must be after game_wolfet.h as they share defines! */
+	,
 								#include "game_etut.h"
 	,
 								#include "game_ef.h"
