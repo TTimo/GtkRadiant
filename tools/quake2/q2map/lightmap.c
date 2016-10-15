@@ -874,7 +874,7 @@ void CreateDirectLights( void ){
 			if ( target[0] ) { // point towards target
 				e2 = FindTargetEntity( target );
 				if ( !e2 ) {
-					Sys_Printf( "WARNING: light at (%i %i %i) has missing target\n",
+					Sys_FPrintf( SYS_WRN, "WARNING: light at (%i %i %i) has missing target\n",
 								(int)dl->origin[0], (int)dl->origin[1], (int)dl->origin[2] );
 				}
 				else
