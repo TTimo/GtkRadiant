@@ -174,8 +174,12 @@
     <ClCompile Include="brush.c" />
     <ClCompile Include="brush_primit.c" />
     <ClCompile Include="bsp.c" />
+    <ClCompile Include="bsp_analyze.c" />
+    <ClCompile Include="bsp_scale.c" />
+    <ClCompile Include="bsp_info.c" />
     <ClCompile Include="decals.c" />
     <ClCompile Include="facebsp.c" />
+    <ClCompile Include="fixaas.c" />
     <ClCompile Include="fog.c" />
     <ClCompile Include="leakfile.c" />
     <ClCompile Include="map.c" />
@@ -198,6 +202,7 @@
     <ClCompile Include="vis.c" />
     <ClCompile Include="visflow.c" />
     <ClCompile Include="convert_ase.c" />
+    <ClCompile Include="convert_bsp.c" />
     <ClCompile Include="convert_map.c" />
   </ItemGroup>
   <ItemGroup>
