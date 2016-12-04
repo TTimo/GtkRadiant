@@ -262,6 +262,19 @@ void _pico_printf( int level, const char *format, ... ){
 	_pico_ptr_print( level,str );
 }
 
+/* _pico_first_token:
+* trims everything after the first whitespace-delimited token
+*/
+
+void _pico_first_token(char *str)
+{
+	if (!str || !*str)
+		return;
+	while (*str && !isspace(*str))
+		*str++;
+	*str = '\0';
+}
+
 /* _pico_strltrim:
  *   left trims the given string -sea
  */

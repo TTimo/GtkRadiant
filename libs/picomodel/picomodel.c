@@ -784,7 +784,7 @@ void PicoSetModelName( picoModel_t *model, char *name ){
 		_pico_free( model->name );
 	}
 
-	model->name = _pico_clone_alloc( name/*,-1*/ );
+	model->name = _pico_clone_alloc( name );
 }
 
 
@@ -797,7 +797,7 @@ void PicoSetModelFileName( picoModel_t *model, char *fileName ){
 		_pico_free( model->fileName );
 	}
 
-	model->fileName = _pico_clone_alloc( fileName/*,-1*/ );
+	model->fileName = _pico_clone_alloc( fileName );
 }
 
 
@@ -837,7 +837,7 @@ void PicoSetShaderName( picoShader_t *shader, char *name ){
 		_pico_free( shader->name );
 	}
 
-	shader->name = _pico_clone_alloc( name/*,-1*/ );
+	shader->name = _pico_clone_alloc( name );
 }
 
 
@@ -850,7 +850,7 @@ void PicoSetShaderMapName( picoShader_t *shader, char *mapName ){
 		_pico_free( shader->mapName );
 	}
 
-	shader->mapName = _pico_clone_alloc( mapName/*,-1*/ );
+	shader->mapName = _pico_clone_alloc( mapName );
 }
 
 
@@ -951,7 +951,7 @@ void PicoSetSurfaceName( picoSurface_t *surface, char *name ){
 		_pico_free( surface->name );
 	}
 
-	surface->name = _pico_clone_alloc( name/*,-1*/ );
+	surface->name = _pico_clone_alloc( name );
 }
 
 
@@ -2177,7 +2177,7 @@ int PicoRemapModel( picoModel_t *model, char *remapFile ){
 				if ( !strlen( p->token ) ) {
 					continue;
 				}
-				materialName = _pico_clone_alloc( p->token/*,-1*/ );
+				materialName = _pico_clone_alloc( p->token );
 				if ( materialName == NULL ) {
 					_prm_error_return;
 				}
@@ -2235,7 +2235,7 @@ int PicoRemapModel( picoModel_t *model, char *remapFile ){
 			}
 
 			/* temporary copy of material name */
-			tempMaterialName = _pico_clone_alloc( p->token/*,-1*/ );
+			tempMaterialName = _pico_clone_alloc( p->token );
 			if ( tempMaterialName == NULL ) {
 				_prm_error_return;
 			}
