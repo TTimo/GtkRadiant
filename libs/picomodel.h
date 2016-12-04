@@ -105,6 +105,7 @@ struct picoSurface_s
 	int numVertexes, maxVertexes;
 	picoVec3_t                  *xyz;
 	picoVec3_t                  *normal;
+	picoIndex_t					*smoothingGroup;
 
 	int numSTArrays, maxSTArrays;
 	picoVec2_t                  **st;
@@ -215,6 +216,9 @@ void                        PicoSetPrintFunc( void ( *func )( int, const char* )
 const picoModule_t          **PicoModuleList( int *numModules );
 
 picoModel_t                 *PicoLoadModel( char *name, int frameNum );
+
+typedef size_t(*PicoInputStreamReadFunc)(void* inputStream, unsigned char* buffer, size_t length);
+picoModel_t* PicoModuleLoadModelStream(const picoModule_t* module, void* inputStream, PicoInputStreamReadFunc inputStreamRead, size_t streamLength, int frameNum);
 
 
 /* model functions */

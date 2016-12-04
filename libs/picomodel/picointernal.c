@@ -161,35 +161,22 @@ void *_pico_realloc( void **ptr, size_t oldSize, size_t newSize ){
  *  as custom clone size (the string is cropped to fit into mem
  *  if needed). -sea
  */
-char *_pico_clone_alloc( char *str, int size ){
-	char  *cloned;
-	size_t cloneSize;
+char *_pico_clone_alloc(const char *str)
+{
+	char* cloned;
 
 	/* sanity check */
-	if ( str == NULL ) {
+	if (str == NULL)
 		return NULL;
-	}
-
-	/* set real size of cloned string */
-	cloneSize = ( size < 0 ) ? strlen( str ) : size;
 
 	/* allocate memory */
-	cloned = _pico_alloc( cloneSize + 1 ); /* bugfix! */
-	if ( cloned == NULL ) {
+	cloned = _pico_alloc(strlen(str) + 1);
+	if (cloned == NULL)
 		return NULL;
-	}
-
-	/* zero out memory allocated by cloned string */
-	memset( cloned,0,cloneSize );
 
 	/* copy input string to cloned string */
-	if ( cloneSize < strlen( str ) ) {
-		memcpy( cloned,str,cloneSize );
-		cloned[ cloneSize ] = '\0';
-	}
-	else {
-		strcpy( cloned,str );
-	}
+	strcpy(cloned, str);
+
 	/* return ptr to cloned string */
 	return cloned;
 }

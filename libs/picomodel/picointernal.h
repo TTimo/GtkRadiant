@@ -116,7 +116,7 @@ extern void ( *_pico_ptr_print )( int, const char* );
 void            *_pico_alloc( size_t size );
 void            *_pico_calloc( size_t num, size_t size );
 void            *_pico_realloc( void **ptr, size_t oldSize, size_t newSize );
-char            *_pico_clone_alloc( char *str, int size );
+char            *_pico_clone_alloc( char *str/*, int size*/ );
 void            _pico_free( void *ptr );
 
 /* files */
