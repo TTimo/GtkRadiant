@@ -305,6 +305,125 @@ picoSurface_t* PicoModelFindOrAddSurface( picoModel_t *model, picoShader_t* shad
    indexes 6 7 8 = color indexes (new)
  */
 
+#if 0
+typedef picoIndex_t* picoIndexIter_t;
+
+typedef struct aseUniqueIndices_s aseUniqueIndices_t;
+struct aseUniqueIndices_s
+{
+	picoIndex_t* data;
+	picoIndex_t* last;
+
+	aseFace_t* faces;
+};
+
+size_t aseUniqueIndices_size( aseUniqueIndices_t* self ) {
+	return self->last - self->data;
+}
+
+void aseUniqueIndices_reserve( aseUniqueIndices_t* self, picoIndex_t size ) {
+	self->data = self->last = (picoIndex_t*)_pico_calloc( size, sizeof( picoIndex_t ) );
+}
+
+void aseUniqueIndices_clear( aseUniqueIndices_t* self ) {
+	_pico_free( self->data );
+}
+
+void aseUniqueIndices_pushBack( aseUniqueIndices_t* self, picoIndex_t index ) {
+	*self->last++ = index;
+}
+
+picoIndex_t aseFaces_getVertexIndex( aseFace_t* faces, picoIndex_t index ) {
+	return faces[index / 3].indices[index % 3];
+}
+
+picoIndex_t aseFaces_getTexCoordIndex( aseFace_t* faces, picoIndex_t index ) {
+	return faces[index / 3].indices[( index % 3 ) + 3];
+}
+
+picoIndex_t aseFaces_getColorIndex( aseFace_t* faces, picoIndex_t index ) {
+	return faces[index / 3].indices[( index % 3 ) + 6];
+}
+
+int aseUniqueIndex_equal( aseFace_t* faces, picoIndex_t index, picoIndex_t other ) {
+	return aseFaces_getVertexIndex( faces, index ) == aseFaces_getVertexIndex( faces, other )
+		   && aseFaces_getTexCoordIndex( faces, index ) == aseFaces_getTexCoordIndex( faces, other )
+		   && aseFaces_getColorIndex( faces, index ) == aseFaces_getColorIndex( faces, other );
+}
+
+picoIndex_t aseUniqueIndices_insertUniqueVertex( aseUniqueIndices_t* self, picoIndex_t index ) {
+	picoIndexIter_t i = self->data;
+	for (; i != self->last; ++i )
+	{
+		picoIndex_t other = (picoIndex_t)( i - self->data );
+		if ( aseUniqueIndex_equal( self->faces, index, other ) ) {
+			return other;
+		}
+	}
+
+	aseUniqueIndices_pushBack( self, index );
+	return (picoIndex_t)( aseUniqueIndices_size( self ) - 1 );
+}
+
+static void _ase_submit_triangles_unshared( picoModel_t* model, aseMaterial_t* materials, aseVertex_t* vertices, aseTexCoord_t* texcoords, aseColor_t* colors, aseFace_t* faces, int numFaces, int meshHasNormals ) {
+	aseFacesIter_t i = faces, end = faces + numFaces;
+
+	aseUniqueIndices_t indices;
+	aseUniqueIndices_t remap;
+	aseUniqueIndices_reserve( &indices, numFaces * 3 );
+	aseUniqueIndices_reserve( &remap, numFaces * 3 );
+	indices.faces = faces;
+
+	for (; i != end; ++i )
+	{
+		/* look up the shader for the material/submaterial pair */
+		aseSubMaterial_t* subMtl = _ase_get_submaterial_or_default( materials, ( *i ).materialId, ( *i ).subMaterialId );
+		if ( subMtl == NULL ) {
+			return;
+		}
+
+		{
+			picoSurface_t* surface = PicoModelFindOrAddSurface( model, subMtl->shader );
+			int j;
+			/* we pull the data from the vertex, color and texcoord arrays using the face index data */
+			for ( j = 0 ; j < 3 ; j++ )
+			{
+				picoIndex_t index = (picoIndex_t)( ( ( i - faces ) * 3 ) + j );
+				picoIndex_t size = (picoIndex_t)aseUniqueIndices_size( &indices );
+				picoIndex_t unique = aseUniqueIndices_insertUniqueVertex( &indices, index );
+
+				picoIndex_t numVertexes = PicoGetSurfaceNumVertexes( surface );
+				picoIndex_t numIndexes = PicoGetSurfaceNumIndexes( surface );
+
+				aseUniqueIndices_pushBack( &remap, numIndexes );
+
+				PicoSetSurfaceIndex( surface, numIndexes, remap.data[unique] );
+
+				if ( unique == size ) {
+					PicoSetSurfaceXYZ( surface, numVertexes, vertices[( *i ).indices[j]].xyz );
+					PicoSetSurfaceNormal( surface, numVertexes, vertices[( *i ).indices[j]].normal );
+					PicoSetSurfaceST( surface, 0, numVertexes, texcoords[( *i ).indices[j + 3]].texcoord );
+
+					if ( ( *i ).indices[j + 6] >= 0 ) {
+						PicoSetSurfaceColor( surface, 0, numVertexes, colors[( *i ).indices[j + 6]].color );
+					}
+					else
+					{
+						PicoSetSurfaceColor( surface, 0, numVertexes, white );
+					}
+
+					PicoSetSurfaceSmoothingGroup( surface, numVertexes, ( vertices[( *i ).indices[j]].id * ( 1 << 16 ) ) + ( *i ).smoothingGroup );
+				}
+			}
+		}
+	}
+
+	aseUniqueIndices_clear( &indices );
+	aseUniqueIndices_clear( &remap );
+}
+
+#endif
+
 static void _ase_submit_triangles( picoModel_t* model, aseMaterial_t* materials, aseVertex_t* vertices, aseTexCoord_t* texcoords, aseColor_t* colors, aseFace_t* faces, int numFaces ){
 	aseFacesIter_t i = faces, end = faces + numFaces;
 	for (; i != end; ++i )

@@ -251,8 +251,7 @@ picoModel_t *PicoLoadModel( char *fileName, int frameNum ){
 	FIXME: From 1.5; Unused yet
 */
 
-picoModel_t	*PicoModuleLoadModelStream( const picoModule_t* module, void* inputStream, PicoInputStreamReadFunc inputStreamRead, size_t streamLength, int frameNum )
-{
+picoModel_t	*PicoModuleLoadModelStream( const picoModule_t* module, void* inputStream, PicoInputStreamReadFunc inputStreamRead, size_t streamLength, int frameNum ) {
 	picoModel_t			*model;
 	picoByte_t			*buffer;
 	int					bufSize;
@@ -260,14 +259,12 @@ picoModel_t	*PicoModuleLoadModelStream( const picoModule_t* module, void* inputS
 	/* init */
 	model = NULL;
 
-	if ( inputStream == NULL )
-	{
+	if ( inputStream == NULL ) {
 		_pico_printf( PICO_ERROR, "PicoLoadModel: invalid input stream (inputStream == NULL)" );
 		return NULL;
 	}
 
-	if ( inputStreamRead == NULL )
-	{
+	if ( inputStreamRead == NULL ) {
 		_pico_printf( PICO_ERROR, "PicoLoadModel: invalid input stream (inputStreamRead == NULL) ");
 		return NULL;
 	}
@@ -328,7 +325,6 @@ picoModel_t *PicoNewModel( void ){
 }
 
 
-
 /*
    PicoFreeModel()
    frees a model and all associated data
@@ -364,7 +360,6 @@ void PicoFreeModel( picoModel_t *model ){
 	/* free the model */
 	_pico_free( model );
 }
-
 
 
 /*
@@ -421,7 +416,6 @@ int PicoAdjustModel( picoModel_t *model, int numShaders, int numSurfaces ){
 }
 
 
-
 /* ----------------------------------------------------------------------------
    shaders
    ---------------------------------------------------------------------------- */
@@ -433,7 +427,6 @@ int PicoAdjustModel( picoModel_t *model, int numShaders, int numSurfaces ){
 
 picoShader_t *PicoNewShader( picoModel_t *model ){
 	picoShader_t    *shader;
-
 
 	/* allocate and clear */
 	shader = _pico_alloc( sizeof( picoShader_t ) );
@@ -467,7 +460,6 @@ picoShader_t *PicoNewShader( picoModel_t *model ){
 }
 
 
-
 /*
    PicoFreeShader()
    frees a shader and all associated data -sea
@@ -490,7 +482,6 @@ void PicoFreeShader( picoShader_t *shader ){
 	/* free the shader */
 	_pico_free( shader );
 }
-
 
 
 /*
@@ -529,7 +520,6 @@ picoShader_t *PicoFindShader( picoModel_t *model, char *name, int caseSensitive 
 	/* named shader not found */
 	return NULL;
 }
-
 
 
 /* ----------------------------------------------------------------------------
@@ -574,14 +564,12 @@ picoSurface_t *PicoNewSurface( picoModel_t *model ){
 }
 
 
-
 /*
    PicoFreeSurface()
    frees a surface and all associated data
  */
 void PicoFreeSurface( picoSurface_t *surface ){
 	int i;
-
 
 	/* dummy check */
 	if ( surface == NULL ) {
@@ -612,7 +600,6 @@ void PicoFreeSurface( picoSurface_t *surface ){
 }
 
 
-
 /*
    PicoAdjustSurface()
    adjusts a surface's memory allocations to handle the requested sizes.
@@ -621,7 +608,6 @@ void PicoFreeSurface( picoSurface_t *surface ){
 
 int PicoAdjustSurface( picoSurface_t *surface, int numVertexes, int numSTArrays, int numColorArrays, int numIndexes, int numFaceNormals ){
 	int i;
-
 
 	/* dummy check */
 	if ( surface == NULL ) {
@@ -2168,7 +2154,6 @@ int PicoRemapModel( picoModel_t *model, char *remapFile ){
 			{
 				picoShader_t    *shader;
 				char            *materialName;
-
 
 				/* get material name */
 				if ( _pico_parse( p, 1 ) == NULL ) {
