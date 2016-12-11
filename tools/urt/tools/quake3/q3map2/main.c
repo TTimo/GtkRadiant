@@ -601,7 +601,7 @@ int main( int argc, char **argv ){
 
 	/* vlight */
 	else if ( !strcmp( argv[ 1 ], "-vlight" ) ) {
-		Sys_Printf( "WARNING: VLight is no longer supported, defaulting to -light -fast instead\n\n" );
+		Sys_FPrintf( SYS_WRN, "WARNING: VLight is no longer supported, defaulting to -light -fast instead\n\n" );
 		argv[ 1 ] = "-fast";    /* eek a hack */
 		r = LightMain( argc, argv );
 	}

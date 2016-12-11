@@ -227,7 +227,7 @@ void Undo_GeneralStart( const char *operation ){
 
 	if ( g_lastundo ) {
 		if ( !g_lastundo->done ) {
-			Sys_Printf( "Undo_Start: WARNING last undo not finished.\n" );
+			Sys_FPrintf( SYS_WRN, "WARNING last undo not finished.\n" );
 		}
 	}
 
@@ -363,7 +363,7 @@ void Undo_AddBrush( brush_t *pBrush ){
 		return;
 	}
 	if ( g_lastundo->entitylist.next != &g_lastundo->entitylist ) {
-		Sys_Printf( "Undo_AddBrushList: WARNING adding brushes after entity.\n" );
+		Sys_FPrintf( SYS_WRN, "WARNING adding brushes after entity.\n" );
 	}
 	//if the brush is already in the undo
 	if ( Undo_BrushInUndo( g_lastundo, pBrush ) ) {
@@ -406,7 +406,7 @@ void Undo_AddBrushList( brush_t *brushlist ){
 		return;
 	}
 	if ( g_lastundo->entitylist.next != &g_lastundo->entitylist ) {
-		Sys_Printf( "Undo_AddBrushList: WARNING adding brushes after entity.\n" );
+		Sys_FPrintf( SYS_WRN, "WARNING adding brushes after entity.\n" );
 	}
 	//copy the brushes to the undo
 	for ( pBrush = brushlist->next ; pBrush != NULL && pBrush != brushlist; pBrush = pBrush->next )
@@ -626,7 +626,7 @@ void Undo_Undo( qboolean bSilent ){
 		return;
 	}
 	if ( !g_lastundo->done ) {
-		Sys_Printf( "Undo_Undo: WARNING: last undo not yet finished!\n" );
+		Sys_FPrintf( SYS_WRN, "WARNING: last undo not yet finished!\n" );
 	}
 	// get the last undo
 	undo = g_lastundo;
@@ -801,7 +801,7 @@ void Undo_Redo( void ){
 	}
 	if ( g_lastundo ) {
 		if ( !g_lastundo->done ) {
-			Sys_Printf( "WARNING: last undo not finished.\n" );
+			Sys_FPrintf( SYS_WRN, "WARNING: last undo not finished.\n" );
 		}
 	}
 	// get the last redo

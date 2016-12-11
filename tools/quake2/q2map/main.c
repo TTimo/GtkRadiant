@@ -649,7 +649,7 @@ int main( int argc, char **argv ){
 	Sys_Printf( "Game: %s\n", game );
 
 	if ( !do_info && !do_bsp && !do_vis && !do_rad ) {
-		Sys_Printf( "ERROR: -bsp, -vis, -light, nor -info specified.\nWhat to you want me to do?\n\n" );
+		Sys_FPrintf( SYS_ERR, "ERROR: -bsp, -vis, -light, nor -info specified.\nWhat to you want me to do?\n\n" );
 	}
 	else
 	{

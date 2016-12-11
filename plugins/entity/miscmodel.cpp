@@ -20,6 +20,7 @@
  */
 
 #include <stdlib.h>
+#include <assert.h>
 
 #include "entity_entitymodel.h"
 #include "entity.h"
@@ -62,7 +63,7 @@ void CEntityMiscModel::Draw( int state, int rflags ) const {
 
 	// draw children
 	if ( m_model && m_model->pRender ) {
-		m_model->pRender->Draw( state, rflags );
+		m_model->pRender->Draw(state, rflags);
 	}
 
 	g_QglTable.m_pfn_qglPopMatrix();
@@ -201,9 +202,11 @@ void CEntityMiscModel::SetName( const char *name ){
 		return;
 	}
 
-	if ( m_cachereq.GetBuffer()[0] != ':'
+	if ( m_oldcachereq.GetBuffer()[0] != ':'
 		 && m_version.c_str()[0] != '\0' ) {
-		GetModelCache()->DeleteByID( m_cachereq.GetBuffer(), m_version.c_str() );
+		GetModelCache()->DeleteByID( m_oldcachereq.GetBuffer(), m_version.c_str() );
+	} else {
+		assert(m_model == NULL);
 	}
 
 	m_model = NULL;

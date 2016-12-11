@@ -326,7 +326,7 @@ epair_t** Entity_GetKeyValList( entity_t *e ){
 
 void Entity_SetKeyValList( entity_t *e, epair_t* ep ){
 	if ( e->epairs ) {
-		Sys_Printf( "Warning : pe->epairs != NULL in Entity_SetKeyValList, will not set\n" );
+		Sys_FPrintf( SYS_WRN, "Warning : pe->epairs != NULL in Entity_SetKeyValList, will not set\n" );
 	}
 	else {
 		e->epairs = ep;

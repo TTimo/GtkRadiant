@@ -105,6 +105,7 @@ struct picoSurface_s
 	int numVertexes, maxVertexes;
 	picoVec3_t                  *xyz;
 	picoVec3_t                  *normal;
+	picoIndex_t					*smoothingGroup;
 
 	int numSTArrays, maxSTArrays;
 	picoVec2_t                  **st;
@@ -215,6 +216,9 @@ void                        PicoSetPrintFunc( void ( *func )( int, const char* )
 const picoModule_t          **PicoModuleList( int *numModules );
 
 picoModel_t                 *PicoLoadModel( char *name, int frameNum );
+
+typedef size_t(*PicoInputStreamReadFunc)(void* inputStream, unsigned char* buffer, size_t length);
+picoModel_t* PicoModuleLoadModelStream(const picoModule_t* module, void* inputStream, PicoInputStreamReadFunc inputStreamRead, size_t streamLength, int frameNum);
 
 
 /* model functions */
@@ -330,12 +334,12 @@ picoVertexCombinationHash_t *PicoFindVertexCombinationInHashTable( picoVertexCom
 picoVertexCombinationHash_t *PicoAddVertexCombinationToHashTable( picoVertexCombinationHash_t **hashTable, picoVec3_t xyz, picoVec3_t normal, picoVec3_t st, picoColor_t color, picoIndex_t index );
 
 /* specialized functions */
-int                         PicoFindSurfaceVertexNum( picoSurface_t *surface, picoVec3_t xyz, picoVec3_t normal, int numSTs, picoVec2_t *st, int numColors, picoColor_t *color );
+int                         PicoFindSurfaceVertexNum( picoSurface_t *surface, picoVec3_t xyz, picoVec3_t normal, int numSTs, picoVec2_t *st, int numColors, picoColor_t *color, picoIndex_t smoothingGroup );
 void                        PicoFixSurfaceNormals( picoSurface_t *surface );
 int                         PicoRemapModel( picoModel_t *model, char *remapFile );
 
 
-void PicoAddTriangleToModel( picoModel_t *model, picoVec3_t** xyz, picoVec3_t** normals, int numSTs, picoVec2_t **st, int numColors, picoColor_t **colors, picoShader_t* shader );
+void PicoAddTriangleToModel( picoModel_t *model, picoVec3_t** xyz, picoVec3_t** normals, int numSTs, picoVec2_t **st, int numColors, picoColor_t **colors, picoShader_t* shader, picoIndex_t* smoothingGroup );
 
 /* end marker */
 #ifdef __cplusplus

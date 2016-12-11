@@ -414,7 +414,7 @@ void error_redirect( const gchar *domain, GLogLevelFlags log_level, const gchar 
 #define GETTEXT_PACKAGE "radiant"
 #define LOCALEDIR "lang"
 
-int main( int argc, char* argv[] ) {
+int mainRadiant( int argc, char* argv[] ) {
 	const char *libgl;
 	int i, j, k;
 
@@ -697,13 +697,13 @@ int main( int argc, char* argv[] ) {
 			chomp++;
 		buf[chomp] = '\0';
 		if ( strcmp( buf, RADIANT_MAJOR_VERSION ) ) {
-			Sys_Printf( "ERROR: file RADIANT_MAJOR doesn't match ('%s')\n", buf );
+			Sys_FPrintf( SYS_ERR, "ERROR: file RADIANT_MAJOR doesn't match ('%s')\n", buf );
 			bVerIsGood = false;
 		}
 	}
 	else
 	{
-		Sys_Printf( "ERROR: can't find RADIANT_MAJOR in '%s'\n", ver_file_name.GetBuffer() );
+		Sys_FPrintf( SYS_ERR, "ERROR: can't find RADIANT_MAJOR in '%s'\n", ver_file_name.GetBuffer() );
 		bVerIsGood = false;
 	}
 	ver_file_name = g_strAppPath;
@@ -719,13 +719,13 @@ int main( int argc, char* argv[] ) {
 			chomp++;
 		buf[chomp] = '\0';
 		if ( strcmp( buf, RADIANT_MINOR_VERSION ) ) {
-			Sys_Printf( "ERROR: file RADIANT_MINOR doesn't match ('%s')\n", buf );
+			Sys_FPrintf( SYS_ERR, "ERROR: file RADIANT_MINOR doesn't match ('%s')\n", buf );
 			bVerIsGood = false;
 		}
 	}
 	else
 	{
-		Sys_Printf( "ERROR: can't find RADIANT_MINOR in '%s'\n", ver_file_name.GetBuffer() );
+		Sys_FPrintf( SYS_ERR, "ERROR: can't find RADIANT_MINOR in '%s'\n", ver_file_name.GetBuffer() );
 		bVerIsGood = false;
 	}
 	if ( !bVerIsGood ) {
@@ -923,6 +923,76 @@ int main( int argc, char* argv[] ) {
 	return 0;
 }
 
+
+#if defined( _WIN32 ) && defined( _MSC_VER )
+#include <dbghelp.h>
+#include <shellapi.h>
+#include <shlobj.h>
+#include <strsafe.h> //StringCchPrintf
+
+int GenerateDump( EXCEPTION_POINTERS* pExceptionPointers ) {
+	BOOL bMiniDumpSuccessful;
+    char szPath[MAX_PATH]; 
+    char szFileName[MAX_PATH]; 
+    char szAppName[] = "GTKRadiant";
+    char* szVersion = RADIANT_VERSION;
+    DWORD dwBufferSize = MAX_PATH;
+    HANDLE hDumpFile;
+    SYSTEMTIME stLocalTime;
+    MINIDUMP_EXCEPTION_INFORMATION ExpParam;
+
+    GetLocalTime( &stLocalTime );
+    GetTempPath( dwBufferSize, szPath );
+
+    StringCchPrintf( szFileName, MAX_PATH, "%s%s", szPath, szAppName );
+    CreateDirectory( szFileName, NULL );
+
+    StringCchPrintf( szFileName, MAX_PATH, "%s%s\\%s-%s-%04d%02d%02d-%02d%02d%02d.dmp", 
+               szPath, szAppName, szAppName, szVersion, 
+               stLocalTime.wYear, stLocalTime.wMonth, stLocalTime.wDay, 
+               stLocalTime.wHour, stLocalTime.wMinute, stLocalTime.wSecond );
+    hDumpFile = CreateFile(szFileName, GENERIC_READ|GENERIC_WRITE, 
+                FILE_SHARE_WRITE|FILE_SHARE_READ, 0, CREATE_ALWAYS, 0, 0);
+
+    ExpParam.ThreadId = GetCurrentThreadId();
+    ExpParam.ExceptionPointers = pExceptionPointers;
+    ExpParam.ClientPointers = TRUE;
+
+    bMiniDumpSuccessful = MiniDumpWriteDump(GetCurrentProcess(), GetCurrentProcessId(), 
+                    hDumpFile, MiniDumpWithDataSegs, &ExpParam, NULL, NULL);
+
+    return EXCEPTION_EXECUTE_HANDLER;
+}
+#endif
+
+int main( int argc, char* argv[] ) {
+
+#if defined( _WIN32 ) && defined( _MSC_VER )
+	__try {
+		return mainRadiant( argc, argv );
+	} __except( GenerateDump( GetExceptionInformation() ) ) {
+
+		char szPath[MAX_PATH]; 
+		char szText[MAX_PATH]; 
+		char szFileName[MAX_PATH]; 
+		char szAppName[] = "GTKRadiant";
+		SYSTEMTIME stLocalTime;
+		DWORD dwBufferSize = MAX_PATH;
+
+	    GetLocalTime( &stLocalTime );
+	    GetTempPath( dwBufferSize, szPath );
+
+	    StringCchPrintf( szFileName, MAX_PATH, "%s%s", szPath, szAppName );
+
+		StringCchPrintf( szText, MAX_PATH, _("Application crashed!\nCreated a dump file in: \n%s"), szFileName );
+
+		MessageBox( NULL, szText, NULL, MB_ICONERROR );
+	}
+#else
+	return mainRadiant( argc, argv );
+#endif
+}
+
 // ydnar: quick and dirty fix, just make the buffer bigger
 #define BIG_PATH_MAX    4096
 
@@ -1098,7 +1168,7 @@ static gboolean RunBsp_CaptureOutput(void *data) {
 	}
 
 	if ( pid == -1 ) {
-		Sys_Printf( "Failed to wait for %d: %s\n", process->pid, strerror( errno ) );
+		Sys_FPrintf( SYS_ERR, "ERROR: Failed to wait for %d: %s\n", process->pid, strerror( errno ) );
 	} else {
 		Sys_Printf( "Process %d terminated with status %d\n", process->pid, process->status );
 	}

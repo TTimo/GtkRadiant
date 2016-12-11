@@ -148,14 +148,14 @@ static void LoadIDSP( const char *name, byte ** pic, int *width, int *height ){
 	header = (dspriteheader_t *)buffer;
 
 	if ( header->ident != IDSPRITEHEADER ) {
-		Sys_Printf( "WARNING: %s has wrong header\n" );
+		Sys_FPrintf( SYS_WRN, "WARNING: %s has wrong header\n" );
 		vfsFreeFile( buffer );
 		return;
 	}
 
 	version = header->version;
 	if ( version != 1 && version != 2 ) {
-		Sys_Printf( "WARNING: %s has wrong version number "
+		Sys_FPrintf( SYS_WRN, "WARNING: %s has wrong version number "
 					"(%i should be 1 or 2)\n", name, version );
 		vfsFreeFile( buffer );
 		return;
@@ -180,7 +180,7 @@ static void LoadIDSP( const char *name, byte ** pic, int *width, int *height ){
 		break;
 	}
 	if ( numframes > 1 ) {
-		Sys_Printf( "WARNING: %s has multiple frames, only the first frame will be used.\n", name );
+		Sys_FPrintf( SYS_WRN, "WARNING: %s has multiple frames, only the first frame will be used.\n", name );
 	}
 
 	// palette = buffer+mipdatasize+2;

@@ -241,7 +241,7 @@ static int _obj_mtl_load( picoModel_t *model ){
 		return 0; \
 	}
 	/* alloc copy of model file name */
-	fileName = _pico_clone_alloc( model->fileName,-1 );
+	fileName = _pico_clone_alloc( model->fileName );
 	if ( fileName == NULL ) {
 		return 0;
 	}

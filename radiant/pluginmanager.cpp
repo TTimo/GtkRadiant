@@ -236,55 +236,57 @@ int refcount;
    times an ID is being referenced, and destroys any instance that is no longer in use */
 class CModelManager : public IModelCache
 {
-public:
-CModelManager(){
-	m_ptrs = g_ptr_array_new();
-}
-virtual ~CModelManager(){
-	g_ptr_array_free( m_ptrs, FALSE );
-}
-
-virtual void DeleteByID( const char *id, const char* version ){
-	unsigned int i;
-	CModelWrapper *elem;
-	for ( i = 0; i < m_ptrs->len; i++ )
-	{
-		elem = (CModelWrapper*)m_ptrs->pdata[i];
-		if ( strcmp( elem->m_version.c_str(), version ) == 0
-			 && strcmp( elem->m_id.c_str(), id ) == 0
-			 && --elem->refcount == 0 ) {
-			g_ptr_array_remove_index_fast( m_ptrs, i );
-			delete elem;
-			return;
-		}
+	public:
+	CModelManager(){
+		m_ptrs = g_ptr_array_new();
 	}
-}
+	virtual ~CModelManager(){
+		g_ptr_array_free( m_ptrs, FALSE );
+	}
 
-virtual entity_interfaces_t *GetByID( const char *id, const char* version ){
-	unsigned int i;
-	CModelWrapper *elem;
-	for ( i = 0; i < m_ptrs->len; i++ )
-	{
-		elem = (CModelWrapper*)m_ptrs->pdata[i];
-		if ( strcmp( elem->m_version.c_str(), version ) == 0
-			 && strcmp( elem->m_id.c_str(), id ) == 0 ) {
-			elem->refcount++;
-			return &elem->m_model;
+	virtual void DeleteByID( const char *id, const char* version ){
+		unsigned int i;
+		CModelWrapper *elem;
+		for ( i = 0; i < m_ptrs->len; i++ )
+		{
+			elem = (CModelWrapper*)m_ptrs->pdata[i];
+			if (strcmp(elem->m_version.c_str(), version) == 0
+				&& strcmp(elem->m_id.c_str(), id) == 0) {
+				elem->refcount--;
+				if (elem->refcount == 0) {
+					g_ptr_array_remove_index_fast(m_ptrs, i);
+					delete elem;
+				}
+				return;
+			}
 		}
 	}
 
-	elem = new CModelWrapper( id, version );
-	g_ptr_array_add( m_ptrs, elem );
+	virtual entity_interfaces_t *GetByID( const char *id, const char* version ){
+		unsigned int i;
+		CModelWrapper *elem;
+		for ( i = 0; i < m_ptrs->len; i++ )
+		{
+			elem = (CModelWrapper*)m_ptrs->pdata[i];
+			if ( strcmp( elem->m_version.c_str(), version ) == 0
+				 && strcmp( elem->m_id.c_str(), id ) == 0 ) {
+				elem->refcount++;
+				return &elem->m_model;
+			}
+		}
 
-	return &elem->m_model;
-}
+		elem = new CModelWrapper( id, version );
+		g_ptr_array_add( m_ptrs, elem );
 
-virtual void RefreshAll(){
-	for ( unsigned int i = 0; i < m_ptrs->len; ++i )
-		( (CModelWrapper*)m_ptrs->pdata[i] )->Refresh();
-}
-private:
-GPtrArray *m_ptrs;   // array of CModelWrapper*
+		return &elem->m_model;
+	}
+
+	virtual void RefreshAll(){
+		for ( unsigned int i = 0; i < m_ptrs->len; ++i )
+			( (CModelWrapper*)m_ptrs->pdata[i] )->Refresh();
+	}
+	private:
+	GPtrArray *m_ptrs;   // array of CModelWrapper*
 };
 
 CModelManager g_model_cache;
@@ -719,7 +721,7 @@ void CPlugInManager::Cleanup(){
 	//++timo FIXME: for now I leave a leak warning, we'd need a table to keep track of commited patches
 #ifdef _DEBUG
 	if ( m_PluginPatches.GetSize() != 0 ) {
-		Sys_Printf( "WARNING: m_PluginPatches.GetSize() != 0 in CPlugInManager::Cleanup, possible leak\n" );
+		Sys_FPrintf( SYS_WRN, "WARNING: m_PluginPatches.GetSize() != 0 in CPlugInManager::Cleanup, possible leak\n" );
 	}
 #endif
 
@@ -859,7 +861,7 @@ patchMesh_t* CPlugInManager::FindPatchHandle( int index ){
 			return pb->pPatch;
 		}
 #ifdef _DEBUG
-		Sys_Printf( "WARNING: out of bounds in CPlugInManager::FindPatchHandle\n" );
+		Sys_FPrintf( SYS_WRN, "WARNING: out of bounds in CPlugInManager::FindPatchHandle\n" );
 #endif
 		break;
 	case EAllocatedPatches:
@@ -868,7 +870,7 @@ patchMesh_t* CPlugInManager::FindPatchHandle( int index ){
 			return pPatch;
 		}
 #ifdef _DEBUG
-		Sys_Printf( "WARNING: out of bounds in CPlugInManager::FindPatchHandle\n" );
+		Sys_FPrintf( SYS_WRN, "WARNING: out of bounds in CPlugInManager::FindPatchHandle\n" );
 #endif
 		break;
 	}
@@ -1066,7 +1068,7 @@ _QERFaceData* WINAPI QERApp_GetFaceData( void* pv, int nFaceIndex ){
 
 #ifdef _DEBUG
 			if ( !pBrush->brush_faces ) {
-				Sys_Printf( "Warning : pBrush->brush_faces is NULL in QERApp_GetFaceData\n" );
+				Sys_FPrintf( SYS_WRN, "Warning : pBrush->brush_faces is NULL in QERApp_GetFaceData\n" );
 				return NULL;
 			}
 #endif
@@ -1500,7 +1502,7 @@ qtexture_t* WINAPI QERApp_Texture_ForName( const char *name ){
 	gtk_glwidget_make_current( g_qeglobals_gui.d_glBase );
 
 	//++timo debugging
-	Sys_Printf( "WARNING: QERApp_Texture_ForName ... don't call that!!\n" );
+	Sys_FPrintf( SYS_WRN, "WARNING: QERApp_Texture_ForName ... don't call that!!\n" );
 	qtexture_t* qtex = QERApp_Texture_ForName2( name );
 	return qtex;
 }
@@ -1547,7 +1549,7 @@ void CPlugInManager::CommitEntityHandleToMap( void* vpEntity ){
 			// fixedsize
 			if ( e->fixedsize ) {
 				if ( pe->brushes.onext != &pe->brushes ) {
-					Sys_Printf( "Warning : Fixed size entity with brushes in CPlugInManager::CommitEntityHandleToMap\n" );
+					Sys_FPrintf( SYS_WRN, "Warning : Fixed size entity with brushes in CPlugInManager::CommitEntityHandleToMap\n" );
 				}
 				// create a custom brush
 				VectorAdd( e->mins, pe->origin, mins );
@@ -1590,7 +1592,7 @@ void CPlugInManager::CommitEntityHandleToMap( void* vpEntity ){
 			else
 			{ // brush entity
 				if ( pe->brushes.next == &pe->brushes ) {
-					Sys_Printf( "Warning: Brush entity with no brushes in CPlugInManager::CommitEntityHandleToMap\n" );
+					Sys_FPrintf( SYS_WRN, "Warning: Brush entity with no brushes in CPlugInManager::CommitEntityHandleToMap\n" );
 				}
 			}
 
@@ -1636,7 +1638,7 @@ void CPlugInManager::CommitEntityHandleToMap( void* vpEntity ){
 						world_entity = pe;
 					}
 					else{
-						Sys_Printf( "Warning : unexpected world_entity == NULL in CommitEntityHandleToMap\n" );
+						Sys_FPrintf( SYS_WRN, "Warning : unexpected world_entity == NULL in CommitEntityHandleToMap\n" );
 					}
 				}
 			}
@@ -1673,7 +1675,7 @@ patchMesh_t* QERApp_GetSelectedPatch(){
 		}
 	}
 #ifdef _DEBUG
-	Sys_Printf( "WARNING: QERApp_GetSelectedPatchTexdef called with no patch selected\n" );
+	Sys_FPrintf( SYS_WRN, "WARNING: QERApp_GetSelectedPatchTexdef called with no patch selected\n" );
 #endif
 	return NULL;
 }
@@ -1765,7 +1767,7 @@ void WINAPI QERApp_DeletePatch( int index ){
 		}
 	}
 #ifdef _DEBUG
-	Sys_Printf( "Warning: QERApp_DeletePatch: FindPatchHandle failed\n" );
+	Sys_FPrintf( SYS_WRN, "Warning: QERApp_DeletePatch: FindPatchHandle failed\n" );
 #endif
 }
 

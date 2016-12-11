@@ -52,7 +52,7 @@
 #define MDC_DIST_SCALE      0.05f
 
 /* mdc decoding normal table */
-double mdcNormals[ 256 ][ 3 ] =
+const double mdcNormals[ 256 ][ 3 ] =
 {
 	{ 1.000000, 0.000000, 0.000000 },
 	{ 0.980785, 0.195090, 0.000000 },

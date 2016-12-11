@@ -1634,7 +1634,7 @@ void CamWnd::Cam_Draw(){
 
 void CamWnd::OnExpose(){
 	if ( !MakeCurrent() ) {
-		Sys_Printf( "ERROR: glXMakeCurrent failed..\n " );
+		Sys_FPrintf( SYS_ERR, "ERROR: glXMakeCurrent failed..\n " );
 		Sys_Printf( "Please restart Radiant if the camera view is not working\n" );
 	}
 	else
