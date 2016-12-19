@@ -1293,7 +1293,7 @@ tree_t *BrushBSP( bspbrush_t *brushlist, vec3_t mins, vec3_t maxs ){
 
 		volume = BrushVolume( b );
 		if ( volume < microvolume ) {
-			Sys_Printf( "WARNING: entity %i, brush %i: microbrush\n",
+			Sys_FPrintf( SYS_WRN, "WARNING: entity %i, brush %i: microbrush\n",
 						b->original->entitynum, b->original->brushnum );
 		}
 

@@ -63,9 +63,9 @@ void ExportEntities( void ){
         strcat( filename, ".ent" );
 		
         /* sanity check */
-        if ( bspEntData == NULL || bspEntDataSize == 0 ) {
-                Sys_Printf( "WARNING: No BSP entity data. aborting...\n" );
-                return;
+        if ( bspEntDataSize == 0 ) {
+			Sys_FPrintf( SYS_WRN, "WARNING: No BSP entity data. aborting...\n" );
+			return;
         }
 		
         /* write it */

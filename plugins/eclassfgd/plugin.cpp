@@ -402,12 +402,12 @@ void EClass_ImportFromClass( eclass_t *e, GSList *l_classes, class_t *bc ){
 
 			// make sure we don't request ourself!
 			if ( rbc == bc ) {
-				Sys_Printf( "WARNING: baseclass '%s' tried to request itself!\n", bclst->data );
+				Sys_FPrintf( SYS_WRN, "WARNING: baseclass '%s' tried to request itself!\n", bclst->data );
 			}
 			else
 			{
 				if ( !rbc ) {
-					Sys_Printf( "WARNING: could not find the requested baseclass '%s' when building '%s'\n", requestedclass,bc->classname );
+					Sys_FPrintf( SYS_WRN, "WARNING: could not find the requested baseclass '%s' when building '%s'\n", requestedclass,bc->classname );
 				}
 				else
 				{
@@ -494,7 +494,7 @@ void EClass_ImportFromClass( eclass_t *e, GSList *l_classes, class_t *bc ){
 					}
 					else
 					{
-						Sys_Printf( "WARNING: baseclass '%s' has a spawnflag out of range, ignored!\n", bc->classname );
+						Sys_FPrintf( SYS_WRN, "WARNING: baseclass '%s' has a spawnflag out of range, ignored!\n", bc->classname );
 					}
 				}
 				break;
@@ -1015,7 +1015,7 @@ void Eclass_ScanFile( char *filename ){
 						}
 						else
 						{
-							Sys_Printf( "%WARNING: Parse error occured in '%s - %s'\n",classnames[newclass->classtype],newclass->classname );
+							Sys_FPrintf( SYS_WRN, "WARNING: Parse error occured in '%s - %s'\n",classnames[newclass->classtype],newclass->classname );
 							Free_Option( newoption );
 						}
 

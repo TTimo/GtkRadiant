@@ -2536,7 +2536,7 @@ void MainFrame::Create(){
 
 		gtk_window_set_icon_from_file( GTK_WINDOW( window ), icon.GetBuffer(), &error );
 		if ( error != NULL ) {
-			Sys_Printf( "Failed to load icon: %s\n", error->message );
+			Sys_FPrintf( SYS_ERR, "ERROR: Failed to load icon: %s\n", error->message );
 			g_error_free( error );
 		}
 	}
@@ -3203,7 +3203,7 @@ void MainFrame::OnSleep(){
         {
    #ifdef DBG_SLEEP
           if (ent->md3Class)
-            Sys_Printf("WARNING: unexpected ent->md3Class!=NULL with ent->eclass->model!=NULL\n");
+            Sys_FPrintf(SYS_WRN, "WARNING: unexpected ent->md3Class!=NULL with ent->eclass->model!=NULL\n");
    #endif
           entitymodel_t *model;
           for (model = ent->eclass->model; model; model=model->pNext)
@@ -3216,7 +3216,7 @@ void MainFrame::OnSleep(){
         }
    #ifdef DBG_SLEEP
         else
-          Sys_Printf("WARNING: entity %p %s with fixedsize and no model no md3Class\n", ent, ent->eclass->name);
+          Sys_FPrintf(SYS_WRN, "WARNING: entity %p %s with fixedsize and no model no md3Class\n", ent, ent->eclass->name);
    #endif
       }
     }
@@ -3497,7 +3497,7 @@ void MainFrame::LoadCommandMap(){
 						}
 					}
 					if ( j == g_nKeyCount ) {
-						Sys_Printf( "WARNING: failed to parse user command %s\n", value );
+						Sys_FPrintf( SYS_WRN, "WARNING: failed to parse user command %s\n", value );
 						continue;
 					}
 				}

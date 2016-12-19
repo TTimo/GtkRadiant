@@ -426,7 +426,7 @@ void CreateEntityLights( void ){
 			/* get target */
 			e2 = FindTargetEntity( target );
 			if ( e2 == NULL ) {
-				Sys_Printf( "WARNING: light at (%i %i %i) has missing target\n",
+				Sys_FPrintf( SYS_WRN, "WARNING: light at (%i %i %i) has missing target\n",
 							(int) light->origin[ 0 ], (int) light->origin[ 1 ], (int) light->origin[ 2 ] );
 			}
 			else
@@ -1996,7 +1996,7 @@ int LightMain( int argc, char **argv ){
 
 			/* must be a power of 2 and greater than 2 */
 			if ( ( ( lmCustomSize - 1 ) & lmCustomSize ) || lmCustomSize < 2 ) {
-				Sys_Printf( "WARNING: Lightmap size must be a power of 2, greater or equal to 2 pixels.\n" );
+				Sys_FPrintf( SYS_WRN, "WARNING: Lightmap size must be a power of 2, greater or equal to 2 pixels.\n" );
 				lmCustomSize = game->lightmapSize;
 			}
 			i++;
@@ -2249,7 +2249,7 @@ int LightMain( int argc, char **argv ){
 
 		/* unhandled args */
 		else{
-			Sys_Printf( "WARNING: Unknown argument \"%s\"\n", argv[ i ] );
+			Sys_FPrintf( SYS_WRN, "WARNING: Unknown argument \"%s\"\n", argv[ i ] );
 		}
 
 	}

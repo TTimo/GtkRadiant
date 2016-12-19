@@ -305,7 +305,7 @@ void UpdateWadKeyPair( void ){
 			}
 			else
 			{
-				Sys_Printf( "HydraToolz: WARNING: could not locate wad file %s\n",(char *)wadlist->data );
+				Sys_FPrintf( SYS_WRN, "WARNING: could not locate wad file %s\n",(char *)wadlist->data );
 				strcat( wads, (char *)wadlist->data );
 			}
 		}

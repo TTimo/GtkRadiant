@@ -1399,13 +1399,13 @@ void LoadEntityIndexMap( entity_t *e ){
 		value = ValueForKey( e, "layers" );
 	}
 	if ( value[ 0 ] == '\0' ) {
-		Sys_Printf( "WARNING: Entity with index/alpha map \"%s\" has missing \"_layers\" or \"layers\" key\n", indexMapFilename );
+		Sys_FPrintf( SYS_WRN, "WARNING: Entity with index/alpha map \"%s\" has missing \"_layers\" or \"layers\" key\n", indexMapFilename );
 		Sys_Printf( "Entity will not be textured properly. Check your keys/values.\n" );
 		return;
 	}
 	numLayers = atoi( value );
 	if ( numLayers < 1 ) {
-		Sys_Printf( "WARNING: Entity with index/alpha map \"%s\" has < 1 layer (%d)\n", indexMapFilename, numLayers );
+		Sys_FPrintf( SYS_WRN, "WARNING: Entity with index/alpha map \"%s\" has < 1 layer (%d)\n", indexMapFilename, numLayers );
 		Sys_Printf( "Entity will not be textured properly. Check your keys/values.\n" );
 		return;
 	}
@@ -1416,7 +1416,7 @@ void LoadEntityIndexMap( entity_t *e ){
 		value = ValueForKey( e, "shader" );
 	}
 	if ( value[ 0 ] == '\0' ) {
-		Sys_Printf( "WARNING: Entity with index/alpha map \"%s\" has missing \"_shader\" or \"shader\" key\n", indexMapFilename );
+		Sys_FPrintf( SYS_WRN, "WARNING: Entity with index/alpha map \"%s\" has missing \"_shader\" or \"shader\" key\n", indexMapFilename );
 		Sys_Printf( "Entity will not be textured properly. Check your keys/values.\n" );
 		return;
 	}
@@ -1475,7 +1475,7 @@ void LoadEntityIndexMap( entity_t *e ){
 
 	/* the index map must be at least 2x2 pixels */
 	if ( w < 2 || h < 2 ) {
-		Sys_Printf( "WARNING: Entity with index/alpha map \"%s\" is smaller than 2x2 pixels\n", indexMapFilename );
+		Sys_FPrintf( SYS_WRN, "WARNING: Entity with index/alpha map \"%s\" is smaller than 2x2 pixels\n", indexMapFilename );
 		Sys_Printf( "Entity will not be textured properly. Check your keys/values.\n" );
 		free( pixels );
 		return;
@@ -1555,7 +1555,7 @@ static qboolean ParseMapEntity( qboolean onlyLights ){
 
 	/* conformance check */
 	if ( strcmp( token, "{" ) ) {
-		Sys_Printf( "WARNING: ParseEntity: { not found, found %s on line %d - last entity was at: <%4.2f, %4.2f, %4.2f>...\n"
+		Sys_FPrintf( SYS_WRN, "WARNING: ParseEntity: { not found, found %s on line %d - last entity was at: <%4.2f, %4.2f, %4.2f>...\n"
 					"Continuing to process map, but resulting BSP may be invalid.\n",
 					token, scriptline, entities[ numEntities ].origin[ 0 ], entities[ numEntities ].origin[ 1 ], entities[ numEntities ].origin[ 2 ] );
 		return qfalse;
@@ -1581,7 +1581,7 @@ static qboolean ParseMapEntity( qboolean onlyLights ){
 	{
 		/* get initial token */
 		if ( !GetToken( qtrue ) ) {
-			Sys_Printf( "WARNING: ParseEntity: EOF without closing brace\n"
+			Sys_FPrintf( SYS_WRN, "WARNING: ParseEntity: EOF without closing brace\n"
 						"Continuing to process map, but resulting BSP may be invalid.\n" );
 			return qfalse;
 		}
@@ -1603,7 +1603,7 @@ static qboolean ParseMapEntity( qboolean onlyLights ){
 			}
 			else if ( !strcmp( token, "terrainDef" ) ) {
 				//% ParseTerrain();
-				Sys_Printf( "WARNING: Terrain entity parsing not supported in this build.\n" ); /* ydnar */
+				Sys_FPrintf( SYS_WRN, "WARNING: Terrain entity parsing not supported in this build.\n" ); /* ydnar */
 			}
 			else if ( !strcmp( token, "brushDef" ) ) {
 				if ( g_bBrushPrimit == BPRIMIT_OLDBRUSHES ) {
@@ -1814,7 +1814,7 @@ void LoadMapFile( char *filename, qboolean onlyLights ){
 		/* get brush counts */
 		numMapBrushes = CountBrushList( entities[ 0 ].brushes );
 		if ( (float) c_detail / (float) numMapBrushes < 0.10f && numMapBrushes > 500 ) {
-			Sys_Printf( "WARNING: Over 90 percent structural map detected. Compile time may be adversely affected.\n" );
+			Sys_FPrintf( SYS_WRN, "WARNING: Over 90 percent structural map detected. Compile time may be adversely affected.\n" );
 		}
 
 		/* emit some statistics */

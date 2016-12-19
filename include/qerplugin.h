@@ -137,16 +137,6 @@ struct _QERModelLoad
 
 //=========================================
 // plugin functions
-#if 0
-// NOTE TTimo: hack to make old plugin tech and new plugin tech live together
-#ifndef _IPLUGIN_H_
-// toolkit-independant interface, cast hwndMain to GtkWidget*
-typedef const char* ( WINAPI * PFN_QERPLUG_INIT )( void* hApp, void* hwndMain );
-typedef const char* ( WINAPI * PFN_QERPLUG_GETNAME )();
-typedef const char* ( WINAPI * PFN_QERPLUG_GETCOMMANDLIST )();
-typedef void ( WINAPI * PFN_QERPLUG_DISPATCH )( const char* p, vec3_t vMin, vec3_t vMax, bool bSingleBrush );
-#endif
-#endif
 
 typedef char* ( WINAPI * PFN_QERPLUG_GETFUNCTABLE )();
 
@@ -274,115 +264,6 @@ typedef char* ( WINAPI * PFN_QERAPP_PROFILE_LOADSTR )( const char *filename, con
 //
 // To use the active or selected brush lists, you must first allocate them (which returns a count) and then
 // release them when you are finish manipulating brushes in one of those lists.
-
-//++timo NOTE : the #defines here are never used, but can help finding where things are done in the editor
-#if 0
-// brush manipulation routines
-#define QERAPP_CREATEBRUSH "QERApp_CreateBrush"
-#define QERAPP_CREATEBRUSHHANDLE "QERApp_CreateBrushHandle"
-#define QERAPP_DELETEBRUSHHANDLE "QERApp_DeleteBrushHandle"
-#define QERAPP_COMMITBRUSHHANDLETOMAP "QERApp_CommitBrushHandleToMap"
-//++timo not implemented .. remove
-// #define QERAPP_BINDHANDLESTOENTITY "QERApp_BindHandlesToEntity"
-#define QERAPP_ADDFACE "QERApp_AddFace"
-#define QERAPP_ADDFACEDATA "QERApp_AddFaceData"
-#define QERAPP_GETFACECOUNT "QERApp_GetFaceCount"
-#define QERAPP_GETFACEDATA "QERApp_GetFaceData"
-#define QERAPP_SETFACEDATA "QERApp_SetFaceData"
-#define QERAPP_DELETEFACE "QERApp_DeleteFace"
-#define QERAPP_TEXTUREBRUSH "QERApp_TextureBrush"
-#define QERAPP_BUILDBRUSH "QERApp_BuildBrush"                   // PGM
-#define QERAPP_SELECTEDBRUSHCOUNT "QERApp_SelectedBrushCount"
-#define QERAPP_ALLOCATESELECTEDBRUSHHANDLES "QERApp_AllocateSelectedBrushHandles"
-#define QERAPP_RELEASESELECTEDBRUSHHANDLES "QERApp_ReleaseSelectedBrushHandles"
-#define QERAPP_GETSELECTEDBRUSHHANDLE "QERApp_GetSelectedBrushHandle"
-#define QERAPP_ACTIVEBRUSHCOUNT "QERApp_ActiveBrushCount"
-#define QERAPP_ALLOCATEACTIVEBRUSHHANDLES "QERApp_AllocateActiveBrushHandles"
-#define QERAPP_RELEASEACTIVEBRUSHHANDLES "QERApp_ReleaseActiveBrushHandles"
-#define QERAPP_GETACTIVEBRUSHHANDLE "QERApp_GetActiveBrushHandle"
-
-// texture stuff
-#define QERAPP_TEXTURECOUNT "QERApp_TextureCount"
-#define QERAPP_GETTEXTURE "QERApp_GetTexture"
-#define QERAPP_GETCURRENTTEXTURE "QERApp_GetCurrentTexture"
-#define QERAPP_SETCURRENTTEXTURE "QERApp_SetCurrentTexture"
-
-// selection
-#define QERAPP_DELETESELECTION "QERApp_DeleteSelection"
-#define QERAPP_SELECTBRUSH "QERApp_SelectBrush"                 // PGM
-#define QERAPP_DESELECTBRUSH "QERApp_DeselectBrush"             // PGM
-#define QERAPP_DESELECTALLBRUSHES "QERApp_DeselectAllBrushes"   // PGM
-
-// data gathering
-#define QERAPP_GETPOINTS "QERApp_GetPoints"
-#define QERAPP_SELECTBRUSHES "QERApp_GetBrushes"
-
-// entity class stuff
-// the entity handling is very basic for 1.0
-#define QERAPP_GETECLASSCOUNT "QERApp_GetEClassCount"
-#define QERAPP_GETECLASS "QERApp_GetEClass"
-
-// misc
-#define QERAPP_SYSMSG "QERApp_SysMsg"
-#define QERAPP_INFOMSG "QERApp_InfoMsg"
-#define QERAPP_HIDEINFOMSG "QERApp_HideInfoMsg"
-#define QERAPP_RESET_PLUGINS "QERApp_ResetPlugins"
-
-// texture loading
-#define QERAPP_LOADTEXTURERGBA "QERApp_LoadTextureRGBA"
-
-// FIXME: the following are not implemented yet
-// hook registrations
-#define QERAPP_REGISTER_MAPLOADFUNC "QERApp_Register_MapLoadFunc"
-#define QERAPP_REGISTER_MAPSAVEFUNC "QERApp_Register_MapSaveFunc"
-
-// FIXME: the following are not implemented yet
-#define QERAPP_REGISTER_PROJECTLOADFUNC "QERApp_Register_ProjectLoadFunc"
-#define QERAPP_REGISTER_MOUSEHANDLER "QERApp_Register_MouseHandler"
-#define QERAPP_REGISTER_KEYHANDLER "QERApp_Register_KeyHandler"
-
-// FIXME: new primtives do not work in v1.00
-// primitives are new types of things in the map
-// for instance, the Q3 curves could have been done as
-// primitives instead of being built in
-// it will be a plugins responsibility to hook the map load and save funcs to load
-// and/or save any additional data (like new primitives of some type)
-// the editor will call each registered renderer during the rendering process to repaint
-// any primitives the plugin owns
-// each primitive object has a temporary sibling brush that lives in the map
-// FIXME: go backwards on this a bit.. orient it more towards the temp brush mode as it will be cleaner
-// basically a plugin will hook the map load and save and will add the primitives to the map.. this will
-// produce a temporary 'primitive' brush and the appropriate renderer will be called as well as the
-// edit handler (for edge drags, sizes, rotates, etc.. ) and the vertex maker will be called when vertex
-// mode is attemped on the brush.. there will need to be a GetPrimitiveBounds callback in the edit handler
-// so the brush can resize appropriately as needed.. this might be the plugins responsibility to set the
-// sibling brushes size.. it will then be the plugins responsibility to hook map save to save the primitives
-// as the editor will discard any temp primitive brushes.. (there probably needs to be some kind of sanity check
-// here as far as keeping the brushes and the plugin in sync.. i suppose the edit handler can deal with all of that
-// crap but it looks like a nice place for a mess)
-#define QERAPP_REGISTER_PRIMITIVE "QERApp_Register_Primitive"
-#define QERAPP_REGISTER_RENDERER "QERApp_Register_Renderer"
-#define QERAPP_REGISTER_EDITHANDLER "QERApp_Register_EditHandler"
-#define QERAPP_REGISTER_VERTEXMAKER "QERApp_Register_VertexMaker"
-#define QERAPP_ADDPRIMITIVE "QERApp_AddPrimitive"
-
-// v1.70
-#define QERAPP_GETENTITYCOUNT "QERApp_GetEntityCount"
-#define QERAPP_GETENTITYHANDLE "QERApp_GetEntityHandle"
-//++timo not implemented for the moment
-// #define QERAPP_GETENTITYINFO "QERApp_GetEntityInfo"
-//++timo does the keyval need some more funcs to add/remove ?
-// get the pointer and do the changes yourself
-#define QERAPP_ALLOCATEEPAIR "QERApp_AllocateEpair"
-#define QERAPP_ALLOCATEENTITYBRUSHHANDLES "QERApp_AllocateEntityBrushHandles"
-#define QERAPP_RELEASEENTITYBRUSHHANDLES "QERApp_ReleaseEntityBrushHandles"
-#define QERAPP_GETENTITYBRUSHHANDLE "QERApp_GetEntityBrushHandle"
-#define QERAPP_CREATEENTITYHANDLE "QERApp_CreateEntityHandle"
-#define QERAPP_COMMITBRUSHHANDLETOENTITY "QERApp_CommitBrushHandleToEntity"
-#define QERAPP_COMMITENTITYHANDLETOMAP "QERApp_CommitEntityHandleToMap"
-#define QERAPP_SETSCREENUPDATE "QERApp_SetScreenUpdate"
-#define QERAPP_BUILDBRUSH2 "QERApp_BuildBrush2"
-#endif
 
 // v1.80
 #define QERAPP_GETDISPATCHPARAMS "QERApp_GetDispatchParams"

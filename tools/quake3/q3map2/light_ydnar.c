@@ -1613,7 +1613,7 @@ static qboolean SubmapRawLuxel( rawLightmap_t *lm, int x, int y, float bx, float
 		//%	normal2 = SUPER_NORMAL( x, y );
 	}
 	else{
-		Sys_Printf( "WARNING: Spurious lightmap S vector\n" );
+		Sys_FPrintf( SYS_WRN, "WARNING: Spurious lightmap S vector\n" );
 	}
 
 	VectorSubtract( origin2, origin, originVecs[ 0 ] );
@@ -1637,7 +1637,7 @@ static qboolean SubmapRawLuxel( rawLightmap_t *lm, int x, int y, float bx, float
 		//%	normal2 = SUPER_NORMAL( x, y );
 	}
 	else{
-		Sys_Printf( "WARNING: Spurious lightmap T vector\n" );
+		Sys_FPrintf( SYS_WRN, "WARNING: Spurious lightmap T vector\n" );
 	}
 
 	VectorSubtract( origin2, origin, originVecs[ 1 ] );
@@ -1966,7 +1966,7 @@ void IlluminateRawLightmap( int rawLightmapNum ){
 
 			/* max of MAX_LIGHTMAPS (4) styles allowed to hit a surface/lightmap */
 			if ( lightmapNum >= MAX_LIGHTMAPS ) {
-				Sys_Printf( "WARNING: Hit per-surface style limit (%d)\n", MAX_LIGHTMAPS );
+				Sys_FPrintf( SYS_WRN, "WARNING: Hit per-surface style limit (%d)\n", MAX_LIGHTMAPS );
 				continue;
 			}
 
@@ -2033,7 +2033,7 @@ void IlluminateRawLightmap( int rawLightmapNum ){
 			}
 
 			/* set luxel filter radius */
-			luxelFilterRadius = superSample * filterRadius / lm->sampleSize;
+			luxelFilterRadius = lm->sampleSize != 0 ? superSample * filterRadius / lm->sampleSize : 0;
 			if ( luxelFilterRadius == 0 && ( filterRadius > 0.0f || filter ) ) {
 				luxelFilterRadius = 1;
 			}
@@ -3366,7 +3366,7 @@ void SetupEnvelopes( qboolean forGrid, qboolean fastFlag ){
 					for ( i = 0; i < 3; i++ )
 					{
 						if ( mins[ i ] > light->origin[ i ] || maxs[ i ] < light->origin[ i ] ) {
-							//% Sys_Printf( "WARNING: Light PVS bounds (%.0f, %.0f, %.0f) -> (%.0f, %.0f, %.0f)\ndo not encompass light %d (%f, %f, %f)\n",
+							//% Sys_FPrintf( SYS_WRN, "WARNING: Light PVS bounds (%.0f, %.0f, %.0f) -> (%.0f, %.0f, %.0f)\ndo not encompass light %d (%f, %f, %f)\n",
 							//%     mins[ 0 ], mins[ 1 ], mins[ 2 ],
 							//%     maxs[ 0 ], maxs[ 1 ], maxs[ 2 ],
 							//%     numLights, light->origin[ 0 ], light->origin[ 1 ], light->origin[ 2 ] );
