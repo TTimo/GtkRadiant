@@ -267,7 +267,7 @@ void                        PicoSetSurfaceIndex( picoSurface_t *surface, int num
 void                        PicoSetSurfaceIndexes( picoSurface_t *surface, int num, picoIndex_t *index, int count );
 void                        PicoSetFaceNormal( picoSurface_t *surface, int num, picoVec3_t normal );
 void                        PicoSetSurfaceSpecial( picoSurface_t *surface, int num, int special );
-void						PicoSetSurfaceSmoothingGroup( picoSurface_t *surface, int num, picoIndex_t smoothingGroup );
+void                        PicoSetSurfaceSmoothingGroup( picoSurface_t *surface, int num, picoIndex_t smoothingGroup );
 
 
 /* getter functions */
