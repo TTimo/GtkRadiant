@@ -272,7 +272,7 @@ void _pico_first_token( char *str ) {
 		return;
 	}
 	while (*str && !isspace(*str))
-		*str++;
+		str++;
 	*str = '\0';
 }
 
