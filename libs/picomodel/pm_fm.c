@@ -350,7 +350,7 @@ static picoModel_t *_fm_load( PM_PARAMS_LOAD ){
 		texCoord->t = _pico_little_short( texCoord[i].t );
 	}
 	// set Skin Name
-	strncpy( skinname, (char *) fm.fm_skin, FM_SKINPATHSIZE );
+	strncpy( skinname, (unsigned char *) fm.fm_skin, FM_SKINPATHSIZE );
 
 #ifdef FM_VERBOSE_DBG
 	// Print out md2 values

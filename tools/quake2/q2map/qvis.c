@@ -209,7 +209,7 @@ void ClusterMerge( int leafnum ){
 	numvis = LeafVectorFromPortalVector( portalvector, uncompressed );
 
 	if ( uncompressed[leafnum >> 3] & ( 1 << ( leafnum & 7 ) ) ) {
-		Sys_Printf( "WARNING: Leaf portals saw into leaf\n" );
+		Sys_FPrintf( SYS_WRN, "WARNING: Leaf portals saw into leaf\n" );
 	}
 
 	uncompressed[leafnum >> 3] |= ( 1 << ( leafnum & 7 ) );
