@@ -780,7 +780,11 @@ void Texture_ShowDirectory(){
 				g_str_has_suffix( name, "_h" ) ||
 				g_str_has_suffix( name, "_local" ) ||
 				g_str_has_suffix( name, "_nm" ) ||
-				g_str_has_suffix( name, "_s" )) {
+				g_str_has_suffix( name, "_s" ) ||
+				g_str_has_suffix( name, "_bump" ) ||
+				g_str_has_suffix( name, "_gloss" ) ||
+				g_str_has_suffix( name, "_luma" ) ||
+				g_str_has_suffix( name, "_norm" ) ) {
 			continue;
 		}
 

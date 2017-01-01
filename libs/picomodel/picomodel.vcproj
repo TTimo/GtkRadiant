@@ -192,6 +192,10 @@
 				RelativePath=".\pm_obj.c"
 				>
 			</File>
+			<File
+				RelativePath=".\pm_terrain.c"
+				>
+			</File>
 			<Filter
 				Name="lwo"
 				Filter="cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx"
