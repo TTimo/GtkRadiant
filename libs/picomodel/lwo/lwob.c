@@ -8,6 +8,8 @@
    Ernie Wright  17 Sep 00
    ====================================================================== */
 
+#include <assert.h>
+
 #include "../picointernal.h"
 #include "lwo2.h"
 
@@ -391,7 +393,8 @@ lwSurface *lwGetSurface5( picoMemStream_t *fp, int cksize, lwObject *obj ){
 			else if ( flags & 2 ) {
 				tex->axis = 1;
 			}
-			else if ( flags & 4 ) {
+			else {
+				assert( flags & 4 );
 				tex->axis = 2;
 			}
 			
