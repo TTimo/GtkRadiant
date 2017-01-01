@@ -50,7 +50,7 @@
 #include "texmanip.h"
 
 #define TYP_MIPTEX  68
-static unsigned tex_palette[256];
+static unsigned tex_palette[256 * 3];
 
 #define FONT_HEIGHT 10
 
