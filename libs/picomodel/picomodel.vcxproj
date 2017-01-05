@@ -147,6 +147,7 @@
     <ClCompile Include="lwo\surface.c" />
     <ClCompile Include="lwo\vecmath.c" />
     <ClCompile Include="lwo\vmap.c" />
+    <ClCompile Include="pm_terrain.c" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
