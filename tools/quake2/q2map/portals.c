@@ -554,13 +554,13 @@ void MakeTreePortals_r( node_t *node ){
 
 	CalcNodeBounds( node );
 	if ( node->mins[0] >= node->maxs[0] ) {
-		Sys_Printf( "WARNING: node without a volume\n" );
+		Sys_FPrintf( SYS_WRN, "WARNING: node without a volume\n" );
 	}
 
 	for ( i = 0 ; i < 3 ; i++ )
 	{
 		if ( node->mins[i] < -8000 || node->maxs[i] > 8000 ) {
-			Sys_Printf( "WARNING: node with unbounded volume\n" );
+			Sys_FPrintf( SYS_WRN, "WARNING: node with unbounded volume\n" );
 			break;
 		}
 	}
@@ -756,7 +756,7 @@ void FloodAreas_r( node_t *node ){
 
 		// note the current area as bounding the portal
 		if ( e->portalareas[1] ) {
-			Sys_Printf( "WARNING: areaportal entity %i touches > 2 areas\n", b->original->entitynum );
+			Sys_FPrintf( SYS_WRN, "WARNING: areaportal entity %i touches > 2 areas\n", b->original->entitynum );
 			return;
 		}
 		if ( e->portalareas[0] ) {
@@ -854,7 +854,7 @@ void SetAreaPortalAreas_r( node_t *node ){
 		e = &entities[b->original->entitynum];
 		node->area = e->portalareas[0];
 		if ( !e->portalareas[1] ) {
-			Sys_Printf( "WARNING: areaportal entity %i doesn't touch two areas\n", b->original->entitynum );
+			Sys_FPrintf( SYS_WRN, "WARNING: areaportal entity %i doesn't touch two areas\n", b->original->entitynum );
 			return;
 		}
 	}

@@ -1,0 +1,3 @@
+[submodule "bspc"]
+	path = bspc
+	url = git@github.com:TTimo/bspc.git

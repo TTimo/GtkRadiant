@@ -5,7 +5,7 @@
 
 import os, commands, platform, xml.sax, re, string, platform
 
-class vcproj( xml.sax.handler.ContentHandler ):
+class vcxproj( xml.sax.handler.ContentHandler ):
 	def __init__( self, filepath ):
 		self.source_files = []
 		self.misc_files = []
@@ -29,8 +29,9 @@ class vcproj( xml.sax.handler.ContentHandler ):
 		return ( match, nomatch )
 
 	def startElement( self, name, attrs ):
-		if ( name == 'File' ):
-			self._files.append( attrs.getValue('RelativePath') )
+		if ( name == 'ClCompile' ):
+                        if ( attrs.has_key('Include') ):
+			        self._files.append( attrs.getValue('Include') )
 
 	def endDocument( self ):
 		# split into source and headers, remap path seperator to the platform

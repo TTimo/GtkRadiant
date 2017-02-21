@@ -8,6 +8,8 @@
    Ernie Wright  17 Sep 00
    ====================================================================== */
 
+#include <assert.h>
+
 #include "../picointernal.h"
 #include "lwo2.h"
 
@@ -244,6 +246,8 @@ lwSurface *lwGetSurface5( picoMemStream_t *fp, int cksize, lwObject *obj ){
 		goto Fail;
 	}
 
+	shdr = NULL;
+
 	/* process subchunks as they're encountered */
 
 	while ( 1 ) {
@@ -382,16 +386,18 @@ lwSurface *lwGetSurface5( picoMemStream_t *fp, int cksize, lwObject *obj ){
 		case ID_TFLG:
 			flags = getU2( fp );
 
+			//only one of the three axis bits should be set
 			if ( flags & 1 ) {
-				i = 0;
+				tex->axis = 0;
 			}
-			if ( flags & 2 ) {
-				i = 1;
+			else if ( flags & 2 ) {
+				tex->axis = 1;
 			}
-			if ( flags & 4 ) {
-				i = 2;
+			else {
+				assert( flags & 4 );
+				tex->axis = 2;
 			}
-			tex->axis = i;
+			
 			if ( tex->type == ID_IMAP ) {
 				tex->param.imap.axis = i;
 			}
@@ -494,6 +500,9 @@ lwSurface *lwGetSurface5( picoMemStream_t *fp, int cksize, lwObject *obj ){
 			break;
 
 		case ID_SDAT:
+			if ( !shdr ) {
+				goto Fail;
+			}
 			shdr->data = getbytes( fp, sz );
 			break;
 
