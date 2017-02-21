@@ -209,6 +209,7 @@ static const int font_height = 10;
 static int font_ascent = -1;
 static int font_descent = -1;
 static int y_offset_bitmap_render_pango_units = -1;
+static PangoFontMap *font_map = NULL;
 static PangoContext *ft2_context = NULL;
 static int _debug_font_created = 0;
 
@@ -247,8 +248,9 @@ void gtk_glwidget_create_font(){
 	}
 	_debug_font_created = 1;
 
-	// This call is deprecated so we'll have to fix it sometime.
-	ft2_context = pango_ft2_get_context( 72, 72 );
+	font_map = pango_ft2_font_map_new();
+	pango_ft2_font_map_set_resolution( PANGO_FT2_FONT_MAP( font_map ), 72, 72 );
+	ft2_context = pango_font_map_create_context( PANGO_FONT_MAP( font_map ));
 
 	font_desc = pango_font_description_from_string( font_string );
 	pango_font_description_set_size( font_desc, font_height * PANGO_SCALE );
@@ -286,6 +288,7 @@ void gtk_glwidget_destroy_font(){
 	font_descent = -1;
 	y_offset_bitmap_render_pango_units = -1;
 	g_object_unref( G_OBJECT( ft2_context ) );
+	g_object_unref( G_OBJECT( font_map ) );
 	_debug_font_created = 0;
 }
 
