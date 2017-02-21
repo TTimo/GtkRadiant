@@ -151,7 +151,6 @@ picoModel_t *PicoModuleLoadModel( const picoModule_t* pm, char* fileName, picoBy
 		/* use loader provided by module to read the model data */
 		picoModel_t* model = pm->load( fileName, frameNum, buffer, bufSize );
 		if ( model == NULL ) {
-			_pico_free_file( buffer );
 			return NULL;
 		}
 
