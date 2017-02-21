@@ -18,7 +18,7 @@ useZ = True
 usePNG = True
 
 settings.SetupEnvironment( env, config['name'], useGtk = useGtk, useJPEG = useJPEG, useZ = useZ, usePNG = usePNG )
-proj = utils.vcproj( os.path.join( GetLaunchDir(), project ) )
+proj = utils.vcxproj( os.path.join( GetLaunchDir(), project ) )
 
 # some filtering. may need to improve that
 add_sources = []

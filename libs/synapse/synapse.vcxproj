@@ -123,6 +123,9 @@
   <ItemGroup>
     <ClCompile Include="synapse.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\synapse.h" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

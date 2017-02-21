@@ -653,7 +653,7 @@ int GetEdge2( int v1, int v2,  face_t *f ){
 			}
 	#if 0
 			if ( v1 == edge->v[0] && v2 == edge->v[1] ) {
-				Sys_Printf( "WARNING: multiple forward edge\n" );
+				Sys_FPrintf( SYS_WRN, "WARNING: multiple forward edge\n" );
 				return i;
 			}
 	#endif

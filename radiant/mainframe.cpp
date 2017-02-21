@@ -7172,6 +7172,7 @@ void MainFrame::OnGridPrev(){
 		case  64: item = GTK_WIDGET( g_object_get_data( G_OBJECT( m_pWidget ), "menu_grid_64" ) ); break;
 		case 128: item = GTK_WIDGET( g_object_get_data( G_OBJECT( m_pWidget ), "menu_grid_128" ) ); break;
 		case 256: item = GTK_WIDGET( g_object_get_data( G_OBJECT( m_pWidget ), "menu_grid_256" ) ); break;
+		default: return;
 		}
 
 	}

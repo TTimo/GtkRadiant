@@ -778,7 +778,7 @@ int BSPMain( int argc, char **argv ){
 		else if ( !strcmp( argv[ i ], "-np" ) ) {
 			npDegrees = atof( argv[ i + 1 ] );
 			if ( npDegrees < 0.0f ) {
-				shadeAngleDegrees = 0.0f;
+				npDegrees = 0.0f;
 			}
 			else if ( npDegrees > 0.0f ) {
 				Sys_Printf( "Forcing nonplanar surfaces with a breaking angle of %f degrees\n", npDegrees );
