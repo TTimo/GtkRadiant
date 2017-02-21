@@ -115,9 +115,9 @@ extern _QERPlugMapTable g_MapTable;
 //++timo for BP conversion escaping FIXME: remove when mixing two formats!
 extern bool g_bCancel_Map_LoadFile;
 // used to be #defines, multiple engine support suggests we should go towards dynamic
-extern int g_MaxWorldCoord;
-extern int g_MinWorldCoord;
-extern int g_MaxBrushSize;
+extern vec_t g_MaxWorldCoord;
+extern vec_t g_MinWorldCoord;
+extern vec_t g_MaxBrushSize;
 /*
    // set to true when we are parsing a terrain entity
    extern bool g_bParseTerrain;
