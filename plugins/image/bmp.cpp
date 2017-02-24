@@ -161,6 +161,7 @@ void LoadBMP( char *filename, bitmap_t *bit ){
 	{
 		Error( "Only 8BPP and 24BPP supported" );
 		//Error("BPP %d not supported.", info.biBitCount);
+		return;
 	}
 
 	// if this is an eight bit image load palette
@@ -268,6 +269,7 @@ void WriteBMP( char *filename, bitmap_t *bit ){
 	{
 		Error( "Only 8BPP and 24BPP supported" );
 		//Error("BPP %d not supported.", bit->bpp);
+		return;
 	}
 
 
@@ -346,6 +348,7 @@ void NewBMP( int width, int height, int bpp, bitmap_t *bit ){
 	else
 	{
 		Error( "NewBMP: 8 or 24 bit only." );
+		return;
 	}
 
 	bit->bpp    = bpp;
