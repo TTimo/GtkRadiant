@@ -60,6 +60,9 @@ qboolean CBspPortal::Build( char *def ){
 
 	if ( portals.hint_flags ) {
 		res_cnt = sscanf( def, "%u %d %d %d", &point_count, &dummy1, &dummy2, (int *)&hint );
+		if ( res_cnt < 4 ) {
+			return FALSE;
+		}
 	}
 	else
 	{
@@ -67,7 +70,7 @@ qboolean CBspPortal::Build( char *def ){
 		hint = FALSE;
 	}
 
-	if ( point_count < 3 || ( portals.hint_flags && res_cnt < 4 ) ) {
+	if ( point_count < 3 ) {
 		return FALSE;
 	}
 
