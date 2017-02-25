@@ -625,6 +625,20 @@ void AssignModel(){
 	}
 }
 
+void cam2angles()
+{
+	Str value;
+	camera_t *cam;
+
+	cam = g_pParentWnd->GetCamWnd()->Camera();
+	//pitch yaw roll
+	value.Format( "%g %g %g", cam->angles[0], cam->angles[1], cam->angles[2] );
+
+	gtk_entry_set_text( GTK_ENTRY( EntWidgets[EntKeyField] ), "angles" );
+	gtk_entry_set_text( GTK_ENTRY( EntWidgets[EntValueField] ), value.GetBuffer() );
+	AddProp();
+}
+
 /*
    ==============
    SetInspectorMode
@@ -1567,6 +1581,19 @@ void GroupDlg::Create(){
 						GtkWidget* button = gtk_button_new_with_label( _( "Model..." ) );
 						gtk_widget_show( button );
 						gtk_signal_connect( GTK_OBJECT( button ), "clicked", GTK_SIGNAL_FUNC( AssignModel ), NULL );
+						gtk_box_pack_start( GTK_BOX( vbox2 ), button, FALSE, FALSE, 0 );
+					}
+				}
+
+				{
+					GtkWidget* vbox2 = gtk_vbox_new( FALSE, 0 );
+					gtk_widget_show( vbox2 );
+					gtk_box_pack_start( GTK_BOX( hbox ), vbox2, TRUE, TRUE, 0 );
+
+					{
+						GtkWidget* button = gtk_button_new_with_label( _( "Cam to angles" ) );
+						gtk_widget_show( button );
+						gtk_signal_connect( GTK_OBJECT( button ), "clicked", GTK_SIGNAL_FUNC( cam2angles ), NULL );
 						gtk_box_pack_start( GTK_BOX( vbox2 ), button, FALSE, FALSE, 0 );
 					}
 				}
