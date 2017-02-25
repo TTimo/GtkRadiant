@@ -34,13 +34,13 @@
    glib for Str.h (Str class)
 
    this is a utility library, it provides typical synapse client and server
-   could be split into two independant libraries actually, the server part and the client part
+   could be split into two independent libraries actually, the server part and the client part
    (that's just a matter of reducing binary size)
  */
 
 // compile time settings
 #ifdef _DEBUG
-  #define SYNAPSE_VERBOSE // be verbosive about the loading process
+  #define SYNAPSE_VERBOSE // be verbose about the loading process
 #endif
 
 // ydnar: required for os x
@@ -166,11 +166,11 @@ typedef struct XMLConfigEntry_s {
 /*!
    \class CSynapseAPIManager
    derive from this class if you want to manage several APIs through the same object
-   (typically, loading plugins, or an unknown number of APIs that match some criterions)
+   (typically, loading plugins, or an unknown number of APIs that match some criteria)
    this class has some pure virtual members that need to be implemented by the childs
 
    we deal with two types of API managers:
-   - the 'loose' ones have a matching pattern and load everything that matches criterions
+   - the 'loose' ones have a matching pattern and load everything that matches criteria
    typically used for plugins
    - the 'list' ones have a fixed list of things they require. They are used to provide
    easy access to multiple interfaces
@@ -550,7 +550,7 @@ void TryPushStack( APIDescriptor_t * );
    (i.e. it was not used at all during startup, or we have properly done a 'release' already)
    we scan the mStack for the SYN_REQUIRE that this client owns, and remove them
    \param iSlot is an mClients iterator, invalid when the function returns as the item will have been removed from the list
-   \return the iterator afer erase call so that the caller iteration can continue
+   \return the iterator after erase call so that the caller iteration can continue
  */
 list<CSynapseClientSlot>::iterator ShutdownClient( list<CSynapseClientSlot>::iterator iSlot );
 
@@ -587,7 +587,7 @@ void EnumerateBuiltinModule( CSynapseBuiltinClient * );
    \brief resolve the function table loading for this client
    if the client is not listed in the known slots yet, it will be added
    wraps around internal DoResolve implementation to unload the unused modules
-   \return wether the resolution has been successful
+   \return whether the resolution has been successful
  */
 bool Resolve( CSynapseClient *pClient );
 
