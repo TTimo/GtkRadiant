@@ -1294,20 +1294,25 @@ void WINAPI Sys_EndWait( void ){
 }
 
 void Sys_GetCursorPos( int *x, int *y ){
-	// FIXME: not multihead safe
+#ifdef _WIN32
+	POINT p;
+	if ( !GetCursorPos( &p ) ) {
+		Sys_Printf( "GetCursorPos failed: GetLastError()=0x%08x", GetLastError() );
+		return;
+	}
+	*x = p.x;
+	*y = p.y;
+#else
 	gdk_window_get_pointer( NULL, x, y, NULL );
+#endif
 }
 
 void Sys_SetCursorPos( int x, int y ){
-	// NOTE: coordinates are in GDK space, not OS space
 #ifdef _WIN32
-	int sys_x = x - g_pParentWnd->GetGDKOffsetX();
-	int sys_y = y - g_pParentWnd->GetGDKOffsetY();
-
-	SetCursorPos( sys_x, sys_y );
-#endif
-
-#if defined ( __linux__ ) || defined ( __APPLE__ )
+	if ( !SetCursorPos( x, y ) ) {
+		Sys_Printf( "SetCursorPos failed: GetLastError()=0x%08x", GetLastError() );
+	}
+#else
 	XWarpPointer( GDK_DISPLAY(), None, GDK_ROOT_WINDOW(), 0, 0, 0, 0, x, y );
 #endif
 }

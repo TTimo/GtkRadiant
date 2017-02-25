@@ -2466,6 +2466,7 @@ void MainFrame::Create(){
 		gdk_offset_y = MAX( gdk_offset_y, -monitorInfo.win_monitors[monitorInfo.i_win_mon].y );
 	}
 
+	// We do not use these offsets anymore. This could all probably be trashed. I doubt the multi monitor does anything useful/works either.
 	Sys_Printf( "GDK's coordinate system is offset by %d over the x-axis and %d over the y-axis from Windows' coordinate system.\n", gdk_offset_x, gdk_offset_y );
 
 	if ( g_PrefsDlg.m_bStartOnPrimMon ) {
