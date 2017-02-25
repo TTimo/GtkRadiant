@@ -153,7 +153,7 @@ void ExtractFileName( const char *path, char *dest ){
 //
 // back up until a \ or the start
 //
-	while ( src != path && *( src - 1 ) != '/'
+	while ( src > path && *( src - 1 ) != '/'
 			&& *( src - 1 ) != '\\' )
 		src--;
 
