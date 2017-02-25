@@ -145,13 +145,36 @@ int vfsBuildShortPathName( const char* pPath, char* pBuffer, int nBufferLen ){
 #endif
 }
 
+void ExtractFileName( const char *path, char *dest ){
+	const char *src;
+
+	src = path + strlen( path ) - 1;
+
+//
+// back up until a \ or the start
+//
+	while ( src != path && *( src - 1 ) != '/'
+			&& *( src - 1 ) != '\\' )
+		src--;
+
+	while ( *src )
+	{
+		*dest++ = *src++;
+	}
+	*dest = 0;
+}
+
 static void vfsInitPakFile( const char *filename ){
 	wadFile_t *wf;
 	unsigned int i;
 	int err;
-	char *wadnameptr;
 	char wadname[NAME_MAX];
+	char *ext;
 
+	if ( !filename || strlen( filename ) <= 0 ) {
+		g_FuncTable.m_pfnSysFPrintf( SYS_WRN, "  missing wad filename\n" );
+		return;
+	}
 	wf = wadOpen( filename );
 	if ( wf == NULL ) {
 		g_FuncTable.m_pfnSysFPrintf( SYS_WRN, "  failed to init wad file %s\n", filename );
@@ -159,12 +182,13 @@ static void vfsInitPakFile( const char *filename ){
 	}
 	g_FuncTable.m_pfnSysPrintf( "  wad file: %s\n", filename );
 
-	for ( i = strlen( filename ) - 1 ; i >= 0 && filename[i] != '\\' && filename[i] != '/' ; i-- )
-		wadnameptr = (char *)filename + i;
-
-	strcpy( wadname,wadnameptr );
-	wadname[strlen( wadname ) - 4] = 0; // ditch the .wad so everthing looks nice!
+	ExtractFileName( filename, wadname );
 	strlwr( wadname );
+
+	ext = strrchr( wadname, '.' );
+	if ( ext && strcmp( ext, ".wad" ) == 0 ) {
+		*ext = 0; // ditch the .wad so everthing looks nice!
+	}
 
 	g_wadFiles = g_slist_append( g_wadFiles, wf ); // store the wadfile handle
 
