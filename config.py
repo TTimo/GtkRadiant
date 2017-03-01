@@ -261,15 +261,18 @@ class Config:
             svnurl = 'svn://svn.icculus.org/gtkradiant-gamepacks/%s/trunk' % pak
             self.CheckoutOrUpdate( svnurl, os.path.join( path, 'installs', pak ) )
         
-    def CopyTree( self, src, dst):
-        for root, dirs, files in os.walk( src ):
-            target_dir = os.path.join( dst, root[root.find( '/' )+1:] )
-            print ( target_dir )
-            if ( not os.path.exists( target_dir ) ):
-                os.mkdir( target_dir )
-
-            for file in files:
-                shutil.copy( os.path.join( root, file ), os.path.join( target_dir, file ) )
+    def CopyTree( self, src, dst ):
+        names = os.listdir( src )
+	
+        if ( not os.path.exists( dst ) ):
+            os.makedirs( dst )
+        for name in names:
+            srcname = os.path.join( src, name )
+            dstname = os.path.join( dst, name )
+            if os.path.isdir( srcname ):
+                self.CopyTree( srcname, dstname )
+            else:
+                shutil.copy2( srcname, dstname )
 
     def Setup( self ):
         try:
@@ -352,7 +355,7 @@ class Config:
                 '%s/share' % GTK_PREFIX,
                 'gtkglext-1.2.0/share',
                 ]:
-                self.CopyTree( os.path.join( srcdir, extra ), 'install' )
+                self.CopyTree( os.path.join( srcdir, extra ), os.path.join( 'install', extra[extra.rfind( '/' )+1:] ) )
             
             try:
                 os.mkdir( 'install/x64' )
