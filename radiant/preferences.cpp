@@ -1142,16 +1142,16 @@ void CGameDialog::BuildDialog() {
 	gtk_container_add( GTK_CONTAINER( vbox1 ), GetGlobalFrame() );
 	mTopBox = vbox1;
 
-	setup_button = gtk_button_new_with_label( _( "Configure editor for another game" ) );
-	gtk_widget_show( setup_button );
-	gtk_box_pack_start( GTK_BOX( vbox1 ), setup_button, FALSE, FALSE, 0 );
-	gtk_signal_connect( GTK_OBJECT( setup_button ), "clicked",
-						GTK_SIGNAL_FUNC( SInstallCallback ), this );
-
 	button = gtk_button_new_with_label( _( "Start editor on selected game" ) );
 	gtk_widget_show( button );
 	gtk_box_pack_start( GTK_BOX( vbox1 ), button, FALSE, FALSE, 0 );
 	AddModalButton( button, IDOK );
+
+	setup_button = gtk_button_new_with_label( _( "Configure editor for another game" ) );
+	gtk_widget_show( setup_button );
+	gtk_box_pack_start( GTK_BOX( vbox1 ), setup_button, FALSE, FALSE, 0 );
+	gtk_signal_connect( GTK_OBJECT( setup_button ), "clicked",
+		GTK_SIGNAL_FUNC( SInstallCallback ), this );
 
 	button = gtk_button_new_with_label( _( "Exit" ) );
 	gtk_widget_show( button );
