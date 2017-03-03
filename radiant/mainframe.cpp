@@ -509,6 +509,7 @@ gint HandleCommand( GtkWidget *widget, gpointer data ){
 		  case ID_SELECTION_ARBITRARYROTATION: g_pParentWnd->OnSelectionArbitraryrotation(); break;
 		  case ID_SELECT_SCALE: g_pParentWnd->OnSelectScale(); break;
 		  case ID_SELECTION_MAKEHOLLOW: g_pParentWnd->OnSelectionMakehollow(); break;
+		  case ID_SELECTION_MAKEHOLLOW_TOUCH: g_pParentWnd->OnSelectionMakehollowTouch(); break;
 		  case ID_SELECTION_CSGSUBTRACT: g_pParentWnd->OnSelectionCsgsubtract(); break;
 		  case ID_SELECTION_CSGMERGE: g_pParentWnd->OnSelectionCsgmerge(); break;
 		  case ID_SELECTION_NOOUTLINE: g_pParentWnd->OnSelectionNoOutline(); break;
@@ -1209,8 +1210,10 @@ void MainFrame::create_main_menu( GtkWidget *window, GtkWidget *vbox ){
 	menu_separator( menu );
 	create_menu_item_with_mnemonic( menu, _( "Scale..." ), GTK_SIGNAL_FUNC( HandleCommand ), ID_SELECT_SCALE );
 	menu_in_menu = create_menu_in_menu_with_mnemonic( menu, _( "CSG" ) );
-	create_menu_item_with_mnemonic( menu_in_menu, _( "Make _Hollow" ),
+	create_menu_item_with_mnemonic( menu_in_menu, _( "Make _Hollow Overlap" ),
 									GTK_SIGNAL_FUNC( HandleCommand ), ID_SELECTION_MAKEHOLLOW );
+	create_menu_item_with_mnemonic( menu_in_menu, _( "Make _Hollow Touch" ),
+									G_CALLBACK( HandleCommand ), ID_SELECTION_MAKEHOLLOW_TOUCH );
 	create_menu_item_with_mnemonic( menu_in_menu, _( "CSG _Subtract" ),
 									GTK_SIGNAL_FUNC( HandleCommand ), ID_SELECTION_CSGSUBTRACT );
 	create_menu_item_with_mnemonic( menu_in_menu, _( "CSG _Merge" ),
@@ -1768,10 +1771,14 @@ void MainFrame::create_main_toolbar( GtkWidget *window, GtkWidget *vbox ){
 		g_object_set_data( G_OBJECT( window ), "tb_selection_csgmerge", w );
 	}
 
-	w = gtk_toolbar_append_item( GTK_TOOLBAR( toolbar ), "", _( "Hollow" ), "",
+	w = gtk_toolbar_append_item( GTK_TOOLBAR( toolbar ), "", _( "Hollow Overlap" ), "",
 								 new_image_icon("selection_makehollow.png"),
 								 GTK_SIGNAL_FUNC( HandleCommand ), GINT_TO_POINTER( ID_SELECTION_MAKEHOLLOW ) );
 	g_object_set_data( G_OBJECT( window ), "tb_selection_makehollow", w );
+	w = gtk_toolbar_append_item( GTK_TOOLBAR( toolbar ), "", _( "Hollow Touch" ), "",
+								 new_image_icon("selection_makehollow.png"),
+								 G_CALLBACK( HandleCommand ), GINT_TO_POINTER( ID_SELECTION_MAKEHOLLOW_TOUCH ) );
+	g_object_set_data( G_OBJECT( window ), "tb_selection_makehollow_touch", w );
 
 	if ( g_PrefsDlg.m_bWideToolbar ) {
 		w = gtk_toolbar_append_element( GTK_TOOLBAR( toolbar ), GTK_TOOLBAR_CHILD_TOGGLEBUTTON, NULL,
@@ -5377,6 +5384,16 @@ void MainFrame::OnSelectionMakehollow(){
 	Undo_Start( "hollow" );
 	Undo_AddBrushList( &selected_brushes );
 	CSG_MakeHollow();
+	Undo_EndBrushList( &selected_brushes );
+	Undo_End();
+}
+
+void MainFrame::OnSelectionMakehollowTouch(){
+	//if (ActiveXY())
+	//	ActiveXY()->UndoCopy();
+	Undo_Start( "hollow" );
+	Undo_AddBrushList( &selected_brushes );
+	CSG_MakeHollowMode( CSG_HOLLOW_MODE_TOUCH );
 	Undo_EndBrushList( &selected_brushes );
 	Undo_End();
 }

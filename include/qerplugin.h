@@ -445,6 +445,7 @@ typedef void ( *PFN_QERAPP_POINTFILECLEAR )();
 typedef void ( *PFN_QERAPP_SYSSETTITLE )( const char *text );
 
 typedef void ( *PFN_QERAPP_CSGMAKEHOLLOW )();
+typedef void ( *PFN_QERAPP_CSGMAKEHOLLOWMODE )( int mode );
 
 typedef void ( *PFN_QERAPP_REGIONSPAWNPOINT )( FILE *f );
 
@@ -490,13 +491,6 @@ typedef bfilter_t* ( *PFN_QERPLUG_FILTERADD )( int type, int bmask, const char *
 
 typedef void ( *PFN_QERPLUG_FILTERACTIVATE )( void );
 
-// FIXME:
-// add map format extensions
-// add texture format handlers
-// add surface dialog handler
-// add model handler/displayer
-
-// v1 func table
 // Plugins need to declare one of these and implement the getfunctable as described above
 struct _QERFuncTable_1
 {
@@ -530,7 +524,6 @@ struct _QERFuncTable_1
 	PFN_QERAPP_RELEASEACTIVEBRUSHHANDLES m_pfnReleaseActiveBrushHandles;
 	PFN_QERAPP_GETACTIVEBRUSHHANDLE m_pfnGetActiveBrushHandle;
 
-	//++timo this would need to be removed and replaced by the IShaders interface
 	PFN_QERAPP_TEXTURECOUNT m_pfnTextureCount;
 	PFN_QERAPP_GETTEXTURE m_pfnGetTexture;
 	PFN_QERAPP_GETCURRENTTEXTURE m_pfnGetCurrentTexture;
@@ -616,11 +609,10 @@ struct _QERFuncTable_1
 	PFN_QERAPP_MAPSTARTPOSITION m_pfnMapStartPosition;
 	PFN_QERAPP_MAPREGIONOFF m_pfnMapRegionOff;
 	PFN_QERAPP_SETBUILDWINDINGSNOTEXBUILD m_pfnSetBuildWindingsNoTexBuild;
-//  PFN_QERAPP_SAVEASDIALOG m_pfnSaveAsDialog;
 	PFN_QERAPP_POINTFILECLEAR m_pfnPointFileClear;
 
-	// FIXME TTimo prolly want to move that somewhere else
 	PFN_QERAPP_CSGMAKEHOLLOW m_pfnCSG_MakeHollow;
+	PFN_QERAPP_CSGMAKEHOLLOWMODE m_pfnCSG_MakeHollowMode;
 
 	PFN_QERAPP_REGIONSPAWNPOINT m_pfnRegionSpawnPoint;
 	PFN_QERAPP_GETTICKCOUNT m_pfnQGetTickCount;
@@ -642,6 +634,7 @@ struct _QERFuncTable_1
 #define __QERTABLENAME g_FuncTable
 #endif
 #define CSG_MakeHollow __QERTABLENAME.m_pfnCSG_MakeHollow
+#define CSG_MakeHollowMode __QERTABLENAME.m_pfnCSG_MakeHollowMode
 #define Sys_Beep __QERTABLENAME.m_pfnSysBeep
 #define Sys_Printf __QERTABLENAME.m_pfnSysPrintf
 #define Sys_FPrintf __QERTABLENAME.m_pfnSysFPrintf
