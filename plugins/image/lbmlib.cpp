@@ -464,9 +464,10 @@ void LoadTGA( const char *name, byte ** pic, int *width, int *height ){
 
 	bool bAlphaOK = false;
 
-	if ( targa_header.image_type != 2 && targa_header.image_type != 10 && targa_header.image_type != 3 ) {
+	if ( targa_header.image_type != 2 && targa_header.image_type != 10
+		 && targa_header.image_type != 3 && targa_header.image_type != 11 ) {
 		Sys_Printf( "LoadTGA: TGA type %d not supported\n", targa_header.image_type );
-		Sys_Printf( "LoadTGA: Only type 2 (RGB), 3 (gray), and 10 (RGB) TGA images supported\n" );
+		Sys_Printf( "LoadTGA: Only type 2 (RGB), 3 (gray), 10 (RGB), and 11 (gray) TGA images supported\n" );
 		return;
 	}
 
@@ -475,9 +476,11 @@ void LoadTGA( const char *name, byte ** pic, int *width, int *height ){
 		return;
 	}
 
-	if ( ( targa_header.pixel_size != 32 && targa_header.pixel_size != 24 )
-		 && targa_header.image_type != 3 ) {
-		Sys_Printf( "LoadTGA: Only 32 or 24 bit images supported (no colormaps)\n" );
+	if ( ( ( targa_header.image_type == 2 || targa_header.image_type == 10 ) &&
+	         targa_header.pixel_size != 32 && targa_header.pixel_size != 24 ) ||
+	     ( ( targa_header.image_type == 3 || targa_header.image_type == 11 ) &&
+	         targa_header.pixel_size != 8 ) ) {
+		Sys_Printf( "LoadTGA: Only 32, 24 or 8 bit images supported (no colormaps)\n" );
 		return;
 	}
 
@@ -570,7 +573,8 @@ void LoadTGA( const char *name, byte ** pic, int *width, int *height ){
 			}
 		}
 	}
-	else if ( targa_header.image_type == 10 ) { // Runlength encoded RGB images
+	else if ( targa_header.image_type == 10 || targa_header.image_type == 11 ) {
+		// Runlength encoded RGB or gray scale images
 		unsigned char red, green, blue, alphabyte, packetHeader, packetSize, j;
 
 		red = 0;
@@ -588,6 +592,12 @@ void LoadTGA( const char *name, byte ** pic, int *width, int *height ){
 				if ( packetHeader & 0x80 ) { // run-length packet
 					switch ( targa_header.pixel_size )
 					{
+					case 8:
+						blue = *buf_p++;
+						green = blue;
+						red = blue;
+						alphabyte = 255;
+						break;
 					case 24:
 						blue = *buf_p++;
 						green = *buf_p++;
@@ -638,6 +648,15 @@ void LoadTGA( const char *name, byte ** pic, int *width, int *height ){
 					{
 						switch ( targa_header.pixel_size )
 						{
+						case 8:
+							blue = *buf_p++;
+							green = blue;
+							red = blue;
+							*pixbuf++ = red;
+							*pixbuf++ = green;
+							*pixbuf++ = blue;
+							*pixbuf++ = 255;
+							break;
 						case 24:
 							blue = *buf_p++;
 							green = *buf_p++;
