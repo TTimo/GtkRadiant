@@ -1013,8 +1013,13 @@ void CGameDialog::DoGameDialog() {
 		m_bDoGameInstall = false;
 
 		if ( DoModal() == IDCANCEL ) {
-			Error( "game selection dialog canceled, cannot continue" );
-			return;
+			if ( gtk_MessageBox( NULL, _( "Would you like to edit Preferences before exiting Radiant?" ), _( "Question" ), MB_YESNO ) == IDYES ) {
+				Sys_Printf( "Doing prefs..\n" );
+				g_PrefsDlg.Init();
+				g_PrefsDlg.LoadPrefs();
+				g_PrefsDlg.DoModal();
+			}
+			exit( 0 );
 		}
 
 		if ( m_bDoGameInstall ) {
@@ -1559,7 +1564,8 @@ void PrefsDlg::BuildDialog(){
 
 	dialog = m_pWidget;
 	gtk_window_set_title( GTK_WINDOW( dialog ), _( "GtkRadiant Preferences" ) );
-	gtk_window_set_transient_for( GTK_WINDOW( dialog ), GTK_WINDOW( g_pParentWnd->m_pWidget ) );
+	if( g_pParentWnd )
+		gtk_window_set_transient_for( GTK_WINDOW( dialog ), GTK_WINDOW( g_pParentWnd->m_pWidget ) );
 	gtk_window_set_position( GTK_WINDOW( dialog ), GTK_WIN_POS_CENTER_ON_PARENT );
 	gtk_widget_realize( dialog );
 
