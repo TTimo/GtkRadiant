@@ -1008,12 +1008,14 @@ void CGameDialog::DoGameInstall() {
 
 void CGameDialog::DoGameDialog() {
 	// allow looping the game selection dialog with calls to the game configure dialog in between
+	// NOTE: This is *very early* in the process lifetime, we can't call Error() for instance
 	while ( m_bDoGameInstall ) {
 
 		m_bDoGameInstall = false;
 
 		if ( DoModal() == IDCANCEL ) {
-			Error( "game selection dialog canceled, cannot continue" );
+			gtk_MessageBox( NULL, _( "Run again once you have decided which game you are interested in :-)" ), _( "Message" ), MB_OK );
+			exit( 0 );
 			return;
 		}
 
@@ -1065,7 +1067,7 @@ GtkWidget* CGameDialog::GetGlobalFrame(){
 	gtk_box_pack_start( GTK_BOX( vbox ), check, FALSE, FALSE, 0 );
 	AddDialogData( check, &m_bAutoLoadGame, DLG_CHECK_BOOL );
 
-	text = gtk_label_new( _( "(this frame is available in the prefs menu if you set auto-select)" ) );
+	text = gtk_label_new( _( "(use preferences to undo this)" ) );
 	gtk_widget_show( text );
 	gtk_box_pack_start( GTK_BOX( vbox ), text, FALSE, FALSE, 0 );
 
@@ -1140,18 +1142,18 @@ void CGameDialog::BuildDialog() {
 	gtk_container_add( GTK_CONTAINER( vbox1 ), GetGlobalFrame() );
 	mTopBox = vbox1;
 
-	setup_button = gtk_button_new_with_label( _( "Configure more games" ) );
+	setup_button = gtk_button_new_with_label( _( "Configure editor for another game" ) );
 	gtk_widget_show( setup_button );
 	gtk_box_pack_start( GTK_BOX( vbox1 ), setup_button, FALSE, FALSE, 0 );
 	gtk_signal_connect( GTK_OBJECT( setup_button ), "clicked",
 						GTK_SIGNAL_FUNC( SInstallCallback ), this );
 
-	button = gtk_button_new_with_label( _( "OK" ) );
+	button = gtk_button_new_with_label( _( "Start editor on selected game" ) );
 	gtk_widget_show( button );
 	gtk_box_pack_start( GTK_BOX( vbox1 ), button, FALSE, FALSE, 0 );
 	AddModalButton( button, IDOK );
 
-	button = gtk_button_new_with_label( _( "Cancel" ) );
+	button = gtk_button_new_with_label( _( "Exit" ) );
 	gtk_widget_show( button );
 	gtk_box_pack_start( GTK_BOX( vbox1 ), button, FALSE, FALSE, 0 );
 	AddModalButton( button, IDCANCEL );
