@@ -889,7 +889,7 @@ int WINAPI gtk_MessageBoxNew( void *parent, const char *message,
 
 	// create dialog window
 	GtkWidget *dlg = gtk_window_new( GTK_WINDOW_TOPLEVEL );
-	gtk_signal_connect( GTK_OBJECT( dlg ), "delete_event",
+	gtk_signal_connect( GTK_OBJECT( dlg ), "delete-event",
 						GTK_SIGNAL_FUNC( dialog_delete_callback ), NULL );
 	gtk_signal_connect( GTK_OBJECT( dlg ), "destroy",
 						GTK_SIGNAL_FUNC( gtk_widget_destroy ), NULL );
@@ -1046,7 +1046,7 @@ int WINAPI gtk_MessageBox( void *parent, const char* lpText, const char* lpCapti
 	int mode = ( uType & MB_TYPEMASK ), ret, loop = 1;
 
 	window = gtk_window_new( GTK_WINDOW_TOPLEVEL );
-	gtk_signal_connect( GTK_OBJECT( window ), "delete_event",
+	gtk_signal_connect( GTK_OBJECT( window ), "delete-event",
 						GTK_SIGNAL_FUNC( dialog_delete_callback ), NULL );
 	gtk_signal_connect( GTK_OBJECT( window ), "destroy",
 						GTK_SIGNAL_FUNC( gtk_widget_destroy ), NULL );
@@ -1668,7 +1668,7 @@ bool WINAPI color_dialog( void *parent, float *color, const char* title ){
 
 	dlg = gtk_color_selection_dialog_new( title );
 	gtk_color_selection_set_color( GTK_COLOR_SELECTION( GTK_COLOR_SELECTION_DIALOG( dlg )->colorsel ), clr );
-	gtk_signal_connect( GTK_OBJECT( dlg ), "delete_event",
+	gtk_signal_connect( GTK_OBJECT( dlg ), "delete-event",
 						GTK_SIGNAL_FUNC( dialog_delete_callback ), NULL );
 	gtk_signal_connect( GTK_OBJECT( dlg ), "destroy",
 						GTK_SIGNAL_FUNC( gtk_widget_destroy ), NULL );

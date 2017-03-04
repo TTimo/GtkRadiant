@@ -59,7 +59,7 @@ int BP_MessageBox( int status ){
 	int ret, loop = 1;
 
 	window = gtk_window_new( GTK_WINDOW_TOPLEVEL );
-	gtk_signal_connect( GTK_OBJECT( window ), "delete_event",
+	gtk_signal_connect( GTK_OBJECT( window ), "delete-event",
 						GTK_SIGNAL_FUNC( BP_dialog_delete_callback ), NULL );
 	gtk_signal_connect( GTK_OBJECT( window ), "destroy",
 						GTK_SIGNAL_FUNC( gtk_widget_destroy ), NULL );

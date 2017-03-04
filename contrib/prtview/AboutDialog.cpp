@@ -59,7 +59,7 @@ void DoAboutDlg(){
 
 	dlg = gtk_window_new( GTK_WINDOW_TOPLEVEL );
 	gtk_window_set_title( GTK_WINDOW( dlg ), "About Portal Viewer" );
-	gtk_signal_connect( GTK_OBJECT( dlg ), "delete_event",
+	gtk_signal_connect( GTK_OBJECT( dlg ), "delete-event",
 						GTK_SIGNAL_FUNC( dialog_delete_callback ), NULL );
 	gtk_signal_connect( GTK_OBJECT( dlg ), "destroy",
 						GTK_SIGNAL_FUNC( gtk_widget_destroy ), NULL );

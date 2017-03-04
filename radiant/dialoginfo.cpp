@@ -41,7 +41,7 @@ void ShowInfoDialog( const char* pText ){
 
 		g_dlgInfo = dlg = gtk_window_new( GTK_WINDOW_TOPLEVEL );
 		gtk_window_set_title( GTK_WINDOW( dlg ), "Information" );
-		gtk_signal_connect( GTK_OBJECT( dlg ), "delete_event",
+		gtk_signal_connect( GTK_OBJECT( dlg ), "delete-event",
 							GTK_SIGNAL_FUNC( gtk_widget_hide ), NULL );
 		gtk_signal_connect( GTK_OBJECT( dlg ), "destroy",
 							GTK_SIGNAL_FUNC( gtk_widget_destroy ), NULL );

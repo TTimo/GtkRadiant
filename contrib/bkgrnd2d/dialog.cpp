@@ -325,11 +325,11 @@ void InitBackgroundDialog(){
 	                                          //										  GTK_STOCK_CLOSE,
 	                                          //										  GTK_RESPONSE_CLOSE,
 											  NULL );
-	gtk_signal_connect( GTK_OBJECT( pDialogWnd ), "delete_event",
+	gtk_signal_connect( GTK_OBJECT( pDialogWnd ), "delete-event",
 						GTK_SIGNAL_FUNC( close_callback ), NULL );
 	gtk_signal_connect( GTK_OBJECT( pDialogWnd ), "response",
 						GTK_SIGNAL_FUNC( response_callback ), NULL );
-//  gtk_signal_connect( GTK_OBJECT (pDialogWnd), "expose_event", GTK_SIGNAL_FUNC( ci_expose ), NULL );
+//  gtk_signal_connect( GTK_OBJECT (pDialogWnd), "expose-event", GTK_SIGNAL_FUNC( ci_expose ), NULL );
 
 	pTooltips = gtk_tooltips_new();
 

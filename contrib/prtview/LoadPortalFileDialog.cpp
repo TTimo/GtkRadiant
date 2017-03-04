@@ -75,7 +75,7 @@ static void change_clicked( GtkWidget *widget, gpointer data ){
 						GTK_SIGNAL_FUNC( file_sel_callback ), GINT_TO_POINTER( IDOK ) );
 	gtk_signal_connect( GTK_OBJECT( GTK_FILE_SELECTION( file_sel )->cancel_button ), "clicked",
 						GTK_SIGNAL_FUNC( file_sel_callback ), GINT_TO_POINTER( IDCANCEL ) );
-	gtk_signal_connect( GTK_OBJECT( file_sel ), "delete_event",
+	gtk_signal_connect( GTK_OBJECT( file_sel ), "delete-event",
 						GTK_SIGNAL_FUNC( dialog_delete_callback ), NULL );
 	gtk_file_selection_hide_fileop_buttons( GTK_FILE_SELECTION( file_sel ) );
 
@@ -105,7 +105,7 @@ int DoLoadPortalFileDialog(){
 
 	dlg = gtk_window_new( GTK_WINDOW_TOPLEVEL );
 	gtk_window_set_title( GTK_WINDOW( dlg ), "Load .prt" );
-	gtk_signal_connect( GTK_OBJECT( dlg ), "delete_event",
+	gtk_signal_connect( GTK_OBJECT( dlg ), "delete-event",
 						GTK_SIGNAL_FUNC( dialog_delete_callback ), NULL );
 	gtk_signal_connect( GTK_OBJECT( dlg ), "destroy",
 						GTK_SIGNAL_FUNC( gtk_widget_destroy ), NULL );

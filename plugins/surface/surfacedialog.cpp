@@ -95,7 +95,7 @@ texdef_t g_old_texdef;
 
 // when TRUE, this thing means the surface inspector is currently being displayed
 bool g_surfwin = FALSE;
-// turn on/off processing of the "changed" "value_changed" messages
+// turn on/off processing of the "changed" "value-changed" messages
 // (need to turn off when we are feeding data in)
 bool g_bListenChanged = true;
 // turn on/off listening of the update messages
@@ -1140,7 +1140,7 @@ GtkWidget* create_SurfaceInspector( void ){
 
         // closing the window (upper right window manager click)
        	g_signal_connect( (gpointer) SurfaceInspector,
-					  "delete_event",
+					  "delete-event",
 					  G_CALLBACK( apply_and_hide ),
 					  NULL );
 
@@ -1148,11 +1148,11 @@ GtkWidget* create_SurfaceInspector( void ){
 					  G_CALLBACK( gtk_widget_destroy ),
 					  NULL );
 
-	g_signal_connect( (gpointer) texture_combo_entry, "key_press_event",
+	g_signal_connect( (gpointer) texture_combo_entry, "key-press-event",
 					  G_CALLBACK( on_texture_combo_entry_key_press_event ),
 					  NULL );
 
-        g_signal_connect( (gpointer) SurfaceInspector, "key_press_event",
+        g_signal_connect( (gpointer) SurfaceInspector, "key-press-event",
             G_CALLBACK( surface_dialog_key_press ),
             NULL );
 
@@ -1160,35 +1160,35 @@ GtkWidget* create_SurfaceInspector( void ){
 					  G_CALLBACK( on_texture_combo_entry_activate ),
 					  NULL );
 
-	g_signal_connect( (gpointer) hshift_value_spinbutton, "value_changed",
+	g_signal_connect( (gpointer) hshift_value_spinbutton, "value-changed",
 					  G_CALLBACK( on_hshift_value_spinbutton_value_changed ),
 					  NULL );
-	g_signal_connect( (gpointer) vshift_value_spinbutton, "value_changed",
+	g_signal_connect( (gpointer) vshift_value_spinbutton, "value-changed",
 					  G_CALLBACK( on_vshift_value_spinbutton_value_changed ),
 					  NULL );
-	g_signal_connect( (gpointer) hscale_value_spinbutton, "value_changed",
+	g_signal_connect( (gpointer) hscale_value_spinbutton, "value-changed",
 					  G_CALLBACK( on_hscale_value_spinbutton_value_changed ),
 					  NULL );
-	g_signal_connect( (gpointer) vscale_value_spinbutton, "value_changed",
+	g_signal_connect( (gpointer) vscale_value_spinbutton, "value-changed",
 					  G_CALLBACK( on_vscale_value_spinbutton_value_changed ),
 					  NULL );
-	g_signal_connect( (gpointer) rotate_value_spinbutton, "value_changed",
+	g_signal_connect( (gpointer) rotate_value_spinbutton, "value-changed",
 					  G_CALLBACK( on_rotate_value_spinbutton_value_changed ),
 					  NULL );
 
-	g_signal_connect( (gpointer) hshift_step_spinbutton, "value_changed",
+	g_signal_connect( (gpointer) hshift_step_spinbutton, "value-changed",
 					  G_CALLBACK( on_hshift_step_spinbutton_value_changed ),
 					  NULL );
-	g_signal_connect( (gpointer) vshift_step_spinbutton, "value_changed",
+	g_signal_connect( (gpointer) vshift_step_spinbutton, "value-changed",
 					  G_CALLBACK( on_vshift_step_spinbutton_value_changed ),
 					  NULL );
-	g_signal_connect( (gpointer) hscale_step_spinbutton, "value_changed",
+	g_signal_connect( (gpointer) hscale_step_spinbutton, "value-changed",
 					  G_CALLBACK( on_hscale_step_spinbutton_value_changed ),
 					  NULL );
-	g_signal_connect( (gpointer) vscale_step_spinbutton, "value_changed",
+	g_signal_connect( (gpointer) vscale_step_spinbutton, "value-changed",
 					  G_CALLBACK( on_vscale_step_spinbutton_value_changed ),
 					  NULL );
-	g_signal_connect( (gpointer) rotate_step_spinbutton, "value_changed",
+	g_signal_connect( (gpointer) rotate_step_spinbutton, "value-changed",
 					  G_CALLBACK( on_rotate_step_spinbutton_value_changed ),
 					  NULL );
 
@@ -1196,10 +1196,10 @@ GtkWidget* create_SurfaceInspector( void ){
 					  G_CALLBACK( on_match_grid_button_clicked ),
 					  NULL );
 
-	g_signal_connect( (gpointer) fit_width_spinbutton, "value_changed",
+	g_signal_connect( (gpointer) fit_width_spinbutton, "value-changed",
 					  G_CALLBACK( on_fit_width_spinbutton_value_changed ),
 					  NULL );
-	g_signal_connect( (gpointer) fit_height_spinbutton, "value_changed",
+	g_signal_connect( (gpointer) fit_height_spinbutton, "value-changed",
 					  G_CALLBACK( on_fit_height_spinbutton_value_changed ),
 					  NULL );
 	g_signal_connect( (gpointer) fit_button, "clicked",
