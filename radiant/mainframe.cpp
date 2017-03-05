@@ -2059,6 +2059,13 @@ static void mainframe_unmap( GtkWidget *widget ){
 		CHECK_MINIMIZE( g_pGroupDlg->m_pWidget );
 	}
 }
+static gboolean mainframe_state( GtkWidget *widget, GdkEventWindowState *e, gpointer user_data ){
+
+	if( e->changed_mask & GDK_WINDOW_STATE_ICONIFIED && !( e->new_window_state & GDK_WINDOW_STATE_ICONIFIED ) ) {
+		mainframe_map( widget );
+	}
+	return FALSE;
+}
 
 static GtkWidget* create_floating( MainFrame* mainframe ){
 	GtkWidget *wnd = gtk_window_new( GTK_WINDOW_TOPLEVEL );
@@ -2448,6 +2455,8 @@ void MainFrame::Create(){
 						GTK_SIGNAL_FUNC( mainframe_map ), this );
 	gtk_signal_connect( GTK_OBJECT( window ), "unmap_event",
 						GTK_SIGNAL_FUNC( mainframe_unmap ), this );
+	gtk_signal_connect( GTK_OBJECT( window ), "window-state-event",
+						GTK_SIGNAL_FUNC( mainframe_state ), this );
 
 	g_qeglobals_gui.d_main_window = window;
 
@@ -3031,31 +3040,7 @@ static void Sys_Iconify( GtkWidget *w ){
 		return;
 	}
 
-#if defined ( __linux__ ) || defined ( __APPLE__ )
-	Sys_FPrintf( SYS_WRN, "FIXME: Sys_Iconify\n" );
-#if 0
-	XWindowAttributes xattr;
-	GdkWindowPrivate *Private;
-
-	Private = (GdkWindowPrivate*)w->window;
-	g_object_set_data( G_OBJECT( w ), "was_mapped", GINT_TO_POINTER( 0 ) );
-
-	if ( !Private->destroyed ) {
-		xattr.map_state = IsUnmapped;
-		XGetWindowAttributes( Private->xdisplay, Private->xwindow, &xattr );
-
-		if ( xattr.map_state != IsUnmapped ) {
-			g_object_set_data( G_OBJECT( w ), "was_mapped", GINT_TO_POINTER( 1 ) );
-		}
-
-		XIconifyWindow( Private->xdisplay, Private->xwindow, 0 );
-	}
-#endif
-#endif
-
-#ifdef _WIN32
-	ShowWindow( (HWND)GDK_WINDOW_HWND( w->window ), SW_MINIMIZE );
-#endif
+	gtk_window_iconify( GTK_WINDOW( w ) );
 }
 
 static void Sys_Restore( GtkWidget *w ){
