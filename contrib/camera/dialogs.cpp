@@ -73,7 +73,7 @@ static gint ci_new( GtkWidget *widget, gpointer data ){
 	// create the window
 	window = gtk_window_new( GTK_WINDOW_TOPLEVEL );
 	gtk_window_set_title( GTK_WINDOW( window ), "New Camera" );
-	gtk_signal_connect( GTK_OBJECT( window ), "delete_event", GTK_SIGNAL_FUNC( dialog_delete_callback ), NULL );
+	gtk_signal_connect( GTK_OBJECT( window ), "delete-event", GTK_SIGNAL_FUNC( dialog_delete_callback ), NULL );
 	gtk_signal_connect( GTK_OBJECT( window ), "destroy", GTK_SIGNAL_FUNC( gtk_widget_destroy ), NULL );
 	gtk_window_set_transient_for( GTK_WINDOW( window ), GTK_WINDOW( g_pCameraInspectorWnd ) );
 
@@ -365,7 +365,7 @@ static gint ci_rename( GtkWidget *widget, gpointer data ){
 	// create the window
 	window = gtk_window_new( GTK_WINDOW_TOPLEVEL );
 	gtk_window_set_title( GTK_WINDOW( window ), "Rename Path" );
-	gtk_signal_connect( GTK_OBJECT( window ), "delete_event", GTK_SIGNAL_FUNC( dialog_delete_callback ), NULL );
+	gtk_signal_connect( GTK_OBJECT( window ), "delete-event", GTK_SIGNAL_FUNC( dialog_delete_callback ), NULL );
 	gtk_signal_connect( GTK_OBJECT( window ), "destroy", GTK_SIGNAL_FUNC( gtk_widget_destroy ), NULL );
 	gtk_window_set_transient_for( GTK_WINDOW( window ), GTK_WINDOW( g_pCameraInspectorWnd ) );
 
@@ -483,7 +483,7 @@ static gint ci_add_target( GtkWidget *widget, gpointer data ){
 	// create the window
 	window = gtk_window_new( GTK_WINDOW_TOPLEVEL );
 	gtk_window_set_title( GTK_WINDOW( window ), "Add Target" );
-	gtk_signal_connect( GTK_OBJECT( window ), "delete_event", GTK_SIGNAL_FUNC( dialog_delete_callback ), NULL );
+	gtk_signal_connect( GTK_OBJECT( window ), "delete-event", GTK_SIGNAL_FUNC( dialog_delete_callback ), NULL );
 	gtk_signal_connect( GTK_OBJECT( window ), "destroy", GTK_SIGNAL_FUNC( gtk_widget_destroy ), NULL );
 	gtk_window_set_transient_for( GTK_WINDOW( window ), GTK_WINDOW( g_pCameraInspectorWnd ) );
 
@@ -830,7 +830,7 @@ static gint ci_add( GtkWidget *widget, gpointer data ){
 	// create the window
 	window = gtk_window_new( GTK_WINDOW_TOPLEVEL );
 	gtk_window_set_title( GTK_WINDOW( window ), _( "Add Event" ) );
-	gtk_signal_connect( GTK_OBJECT( window ), "delete_event", GTK_SIGNAL_FUNC( dialog_delete_callback ), NULL );
+	gtk_signal_connect( GTK_OBJECT( window ), "delete-event", GTK_SIGNAL_FUNC( dialog_delete_callback ), NULL );
 	gtk_signal_connect( GTK_OBJECT( window ), "destroy", GTK_SIGNAL_FUNC( gtk_widget_destroy ), NULL );
 	gtk_window_set_transient_for( GTK_WINDOW( window ), GTK_WINDOW( g_pCameraInspectorWnd ) );
 
@@ -996,8 +996,8 @@ GtkWidget *CreateCameraInspectorDialog( void ){
 	// create the window
 	window = gtk_window_new( GTK_WINDOW_TOPLEVEL );
 	gtk_window_set_title( GTK_WINDOW( window ), _( "Camera Inspector" ) );
-	gtk_signal_connect( GTK_OBJECT( window ), "delete_event", GTK_SIGNAL_FUNC( ci_close ), NULL );
-	gtk_signal_connect( GTK_OBJECT( window ), "expose_event", GTK_SIGNAL_FUNC( ci_expose ), NULL );
+	gtk_signal_connect( GTK_OBJECT( window ), "delete-event", GTK_SIGNAL_FUNC( ci_close ), NULL );
+	gtk_signal_connect( GTK_OBJECT( window ), "expose-event", GTK_SIGNAL_FUNC( ci_expose ), NULL );
 	//  gtk_signal_connect( GTK_OBJECT (window), "destroy", GTK_SIGNAL_FUNC( gtk_widget_destroy ), NULL );
 	gtk_window_set_transient_for( GTK_WINDOW( window ), GTK_WINDOW( g_pRadiantWnd ) );
 
@@ -1219,7 +1219,7 @@ GtkWidget *CreateCameraInspectorDialog( void ){
 	gtk_widget_show( hbox );
 
 	g_pTimeLine = GTK_ADJUSTMENT( gtk_adjustment_new( 0, 0, 30000, 100, 250, 0 ) );
-	gtk_signal_connect( GTK_OBJECT( g_pTimeLine ), "value_changed", GTK_SIGNAL_FUNC( ci_timeline_changed ), NULL );
+	gtk_signal_connect( GTK_OBJECT( g_pTimeLine ), "value-changed", GTK_SIGNAL_FUNC( ci_timeline_changed ), NULL );
 	w = gtk_hscale_new( g_pTimeLine );
 	gtk_box_pack_start( GTK_BOX( hbox ), w, TRUE, TRUE, 0 );
 	gtk_widget_show( w );

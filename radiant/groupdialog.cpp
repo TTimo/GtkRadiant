@@ -1228,9 +1228,9 @@ void GroupDlg::Create(){
 	load_window_pos( dlg, g_PrefsDlg.mWindowInfo.posEntityWnd );
 
 	gtk_window_set_title( GTK_WINDOW( dlg ), "Entities" );
-	gtk_signal_connect( GTK_OBJECT( dlg ), "delete_event", GTK_SIGNAL_FUNC( OnDeleteHide ), NULL );
+	gtk_signal_connect( GTK_OBJECT( dlg ), "delete-event", GTK_SIGNAL_FUNC( OnDeleteHide ), NULL );
 	// catch 'Esc'
-	gtk_signal_connect( GTK_OBJECT( dlg ), "key_press_event", GTK_SIGNAL_FUNC( OnDialogKey ), NULL );
+	gtk_signal_connect( GTK_OBJECT( dlg ), "key-press-event", GTK_SIGNAL_FUNC( OnDialogKey ), NULL );
 
 	gtk_window_set_transient_for( GTK_WINDOW( dlg ), GTK_WINDOW( g_pParentWnd->m_pWidget ) );
 	g_qeglobals_gui.d_entity = dlg;
@@ -1283,8 +1283,8 @@ void GroupDlg::Create(){
 
 								GtkWidget* view = gtk_tree_view_new_with_model( GTK_TREE_MODEL( store ) );
 								gtk_tree_view_set_headers_visible( GTK_TREE_VIEW( view ), FALSE );
-								g_signal_connect( G_OBJECT( view ), "button_press_event", G_CALLBACK( eclasslist_button_press ), NULL );
-								g_signal_connect( G_OBJECT( view ), "key_press_event", G_CALLBACK( eclasslist_keypress ), this );
+								g_signal_connect( G_OBJECT( view ), "button-press-event", G_CALLBACK( eclasslist_button_press ), NULL );
+								g_signal_connect( G_OBJECT( view ), "key-press-event", G_CALLBACK( eclasslist_keypress ), this );
 
 								{
 									GtkCellRenderer* renderer = gtk_cell_renderer_text_new();
@@ -1411,7 +1411,7 @@ void GroupDlg::Create(){
 									  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
 									  (GtkAttachOptions) ( 0 ), 0, 0 );
 					gtk_widget_set_events( entry, GDK_KEY_PRESS_MASK );
-					gtk_signal_connect( GTK_OBJECT( entry ), "key_press_event",
+					gtk_signal_connect( GTK_OBJECT( entry ), "key-press-event",
 										GTK_SIGNAL_FUNC( entityentry_keypress ), this );
 					EntWidgets[EntKeyField] = entry;
 				}
@@ -1423,7 +1423,7 @@ void GroupDlg::Create(){
 									  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
 									  (GtkAttachOptions) ( 0 ), 0, 0 );
 					gtk_widget_set_events( entry, GDK_KEY_PRESS_MASK );
-					gtk_signal_connect( GTK_OBJECT( entry ), "key_press_event",
+					gtk_signal_connect( GTK_OBJECT( entry ), "key-press-event",
 										GTK_SIGNAL_FUNC( entityentry_keypress ), this );
 					EntWidgets[EntValueField] = entry;
 				}
@@ -1628,6 +1628,6 @@ void GroupDlg::Create(){
 
 		inspector_mode = W_ENTITY;
 		m_pWidget = dlg;
-		g_signal_connect( G_OBJECT( notebook ), "switch_page", G_CALLBACK( switch_page ), dlg );
+		g_signal_connect( G_OBJECT( notebook ), "switch-page", G_CALLBACK( switch_page ), dlg );
 	}
 }

@@ -74,7 +74,7 @@ static void change_clicked( GtkWidget *widget, gpointer data ){
 						GTK_SIGNAL_FUNC( file_sel_callback ), GINT_TO_POINTER( IDOK ) );
 	gtk_signal_connect( GTK_OBJECT( GTK_FILE_SELECTION( file_sel )->cancel_button ), "clicked",
 						GTK_SIGNAL_FUNC( file_sel_callback ), GINT_TO_POINTER( IDCANCEL ) );
-	gtk_signal_connect( GTK_OBJECT( file_sel ), "delete_event",
+	gtk_signal_connect( GTK_OBJECT( file_sel ), "delete-event",
 						GTK_SIGNAL_FUNC( dialog_delete_callback ), NULL );
 	gtk_file_selection_hide_fileop_buttons( GTK_FILE_SELECTION( file_sel ) );
 
@@ -107,7 +107,7 @@ int DoLoadPortalFileDialog(){
 
 	dlg = gtk_window_new( GTK_WINDOW_TOPLEVEL );
 	gtk_window_set_title( GTK_WINDOW( dlg ), "Load .prt" );
-	gtk_signal_connect( GTK_OBJECT( dlg ), "delete_event",
+	gtk_signal_connect( GTK_OBJECT( dlg ), "delete-event",
 						GTK_SIGNAL_FUNC( dialog_delete_callback ), NULL );
 	gtk_signal_connect( GTK_OBJECT( dlg ), "destroy",
 						GTK_SIGNAL_FUNC( gtk_widget_destroy ), NULL );
@@ -200,7 +200,7 @@ void DoAboutDlg(){
 
 	dlg = gtk_window_new( GTK_WINDOW_TOPLEVEL );
 	gtk_window_set_title( GTK_WINDOW( dlg ), "About Portal Viewer" );
-	gtk_signal_connect( GTK_OBJECT( dlg ), "delete_event",
+	gtk_signal_connect( GTK_OBJECT( dlg ), "delete-event",
 						GTK_SIGNAL_FUNC( dialog_delete_callback ), NULL );
 	gtk_signal_connect( GTK_OBJECT( dlg ), "destroy",
 						GTK_SIGNAL_FUNC( gtk_widget_destroy ), NULL );
@@ -254,7 +254,7 @@ static int DoColor( COLORREF *c ){
 
 	dlg = gtk_color_selection_dialog_new( "Choose Color" );
 	gtk_color_selection_set_color( GTK_COLOR_SELECTION( GTK_COLOR_SELECTION_DIALOG( dlg )->colorsel ), clr );
-	gtk_signal_connect( GTK_OBJECT( dlg ), "delete_event",
+	gtk_signal_connect( GTK_OBJECT( dlg ), "delete-event",
 						GTK_SIGNAL_FUNC( dialog_delete_callback ), NULL );
 	gtk_signal_connect( GTK_OBJECT( dlg ), "destroy",
 						GTK_SIGNAL_FUNC( gtk_widget_destroy ), NULL );
@@ -465,7 +465,7 @@ void DoConfigDialog(){
 
 	dlg = gtk_window_new( GTK_WINDOW_TOPLEVEL );
 	gtk_window_set_title( GTK_WINDOW( dlg ), _( "Portal Viewer Configuration" ) );
-	gtk_signal_connect( GTK_OBJECT( dlg ), "delete_event",
+	gtk_signal_connect( GTK_OBJECT( dlg ), "delete-event",
 						GTK_SIGNAL_FUNC( dialog_delete_callback ), NULL );
 	gtk_signal_connect( GTK_OBJECT( dlg ), "destroy",
 						GTK_SIGNAL_FUNC( gtk_widget_destroy ), NULL );
@@ -499,7 +499,7 @@ void DoConfigDialog(){
 	lw3label = gtk_label_new( "" );
 	gtk_widget_show( lw3label );
 	gtk_box_pack_start( GTK_BOX( hbox ), lw3label, FALSE, TRUE, 0 );
-	gtk_signal_connect( adj, "value_changed", GTK_SIGNAL_FUNC( OnScroll3d ), lw3label );
+	gtk_signal_connect( adj, "value-changed", GTK_SIGNAL_FUNC( OnScroll3d ), lw3label );
 
 	table = gtk_table_new( 2, 4, FALSE );
 	gtk_widget_show( table );
@@ -595,7 +595,7 @@ void DoConfigDialog(){
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
 	gtk_misc_set_alignment( GTK_MISC( translabel ), 0.0, 0.0 );
-	gtk_signal_connect( adj, "value_changed", GTK_SIGNAL_FUNC( OnScrollTrans ), translabel );
+	gtk_signal_connect( adj, "value-changed", GTK_SIGNAL_FUNC( OnScrollTrans ), translabel );
 
 	adj = gtk_adjustment_new( portals.clip_range, 1, 128, 1, 1, 1 );
 	clipslider = gtk_hscale_new( GTK_ADJUSTMENT( adj ) );
@@ -611,7 +611,7 @@ void DoConfigDialog(){
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
 	gtk_misc_set_alignment( GTK_MISC( cliplabel ), 0.0, 0.0 );
-	gtk_signal_connect( adj, "value_changed", GTK_SIGNAL_FUNC( OnScrollClip ), cliplabel );
+	gtk_signal_connect( adj, "value-changed", GTK_SIGNAL_FUNC( OnScrollClip ), cliplabel );
 
 	hbox = gtk_hbox_new( TRUE, 5 );
 	gtk_widget_show( hbox );
@@ -649,7 +649,7 @@ void DoConfigDialog(){
 	lw2label = gtk_label_new( "" );
 	gtk_widget_show( lw2label );
 	gtk_box_pack_start( GTK_BOX( hbox ), lw2label, FALSE, TRUE, 0 );
-	gtk_signal_connect( adj, "value_changed", GTK_SIGNAL_FUNC( OnScroll2d ), lw2label );
+	gtk_signal_connect( adj, "value-changed", GTK_SIGNAL_FUNC( OnScroll2d ), lw2label );
 
 	hbox = gtk_hbox_new( FALSE, 5 );
 	gtk_widget_show( hbox );

@@ -514,7 +514,7 @@ void CamWnd::ToggleFreeMove(){
 		// RR2DO2: FIXME why does this only work the 2nd and
 		// further times the event is called? (floating windows
 		// mode seems to work fine though...)
-		m_FocusOutHandler_id = gtk_signal_connect( GTK_OBJECT( widget ), "focus_out_event",
+		m_FocusOutHandler_id = gtk_signal_connect( GTK_OBJECT( widget ), "focus-out-event",
 												   GTK_SIGNAL_FUNC( camwindow_focusout ), g_pParentWnd );
 
 		{

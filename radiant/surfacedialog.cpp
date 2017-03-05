@@ -51,7 +51,7 @@ texdef_t g_old_texdef;
 // when != NULL, this thing means the surface inspector is currently being displayed
 // NOTE a boolean flag would have been more explicit, this is totally so ugly
 GtkWidget*  g_surfwin = NULL;
-// turn on/off processing of the "changed" "value_changed" messages
+// turn on/off processing of the "changed" "value-changed" messages
 // (need to turn off when we are feeding data in)
 bool g_bListenChanged = true;
 // the struct used to store the increments (saved in registry)
@@ -509,9 +509,9 @@ void SurfaceDlg::BuildDialog() {
 	load_window_pos( dlg, g_PrefsDlg.mWindowInfo.posSurfaceWnd );
 
 	gtk_window_set_title( GTK_WINDOW( dlg ), _( "Surface inspector" ) );
-	//g_signal_connect (G_OBJECT (dlg), "delete_event", G_CALLBACK (OnCancel), NULL);
+	//g_signal_connect (G_OBJECT (dlg), "delete-event", G_CALLBACK (OnCancel), NULL);
 	// we catch 'Enter' and interpret is as OnDone
-	gtk_signal_connect( GTK_OBJECT( dlg ), "key_press_event", GTK_SIGNAL_FUNC( OnDialogKey ), NULL );
+	gtk_signal_connect( GTK_OBJECT( dlg ), "key-press-event", GTK_SIGNAL_FUNC( OnDialogKey ), NULL );
 	gtk_window_set_transient_for( GTK_WINDOW( dlg ), GTK_WINDOW( g_pParentWnd->m_pWidget ) );
 
 	// replaced by only the vbox:
@@ -529,7 +529,7 @@ void SurfaceDlg::BuildDialog() {
 	gtk_box_pack_start( GTK_BOX( hbox2 ), label, FALSE, TRUE, 0 );
 
 	entry = gtk_entry_new();
-	gtk_signal_connect( GTK_OBJECT( entry ), "key_press_event", GTK_SIGNAL_FUNC( OnTextureKey ), NULL );
+	gtk_signal_connect( GTK_OBJECT( entry ), "key-press-event", GTK_SIGNAL_FUNC( OnTextureKey ), NULL );
 	gtk_widget_show( entry );
 	gtk_box_pack_start( GTK_BOX( hbox2 ), entry, TRUE, TRUE, 0 );
 	g_object_set_data( G_OBJECT( m_pWidget ), "texture", entry );
@@ -550,7 +550,7 @@ void SurfaceDlg::BuildDialog() {
 
 	spin = gtk_spin_button_new( GTK_ADJUSTMENT( gtk_adjustment_new( 0, -8192, 8192, 2, 8, 0 ) ), 0, 0 );
 	g_object_set_data( G_OBJECT( dlg ), "hshift", spin );
-	gtk_signal_connect( GTK_OBJECT( gtk_spin_button_get_adjustment( GTK_SPIN_BUTTON( spin ) ) ), "value_changed",
+	gtk_signal_connect( GTK_OBJECT( gtk_spin_button_get_adjustment( GTK_SPIN_BUTTON( spin ) ) ), "value-changed",
 						GTK_SIGNAL_FUNC( OnUpdate ), NULL );
 	gtk_widget_show( spin );
 	gtk_table_attach( GTK_TABLE( table ), spin, 1, 2, 0, 1,
@@ -584,7 +584,7 @@ void SurfaceDlg::BuildDialog() {
 
 	spin = gtk_spin_button_new( GTK_ADJUSTMENT( gtk_adjustment_new( 0, -8192, 8192, 2, 8, 0 ) ), 0, 0 );
 	g_object_set_data( G_OBJECT( dlg ), "vshift", spin );
-	gtk_signal_connect( GTK_OBJECT( gtk_spin_button_get_adjustment( GTK_SPIN_BUTTON( spin ) ) ), "value_changed",
+	gtk_signal_connect( GTK_OBJECT( gtk_spin_button_get_adjustment( GTK_SPIN_BUTTON( spin ) ) ), "value-changed",
 						GTK_SIGNAL_FUNC( OnUpdate ), NULL );
 	gtk_widget_show( spin );
 	gtk_table_attach( GTK_TABLE( table ), spin, 1, 2, 1, 2,
@@ -618,7 +618,7 @@ void SurfaceDlg::BuildDialog() {
 
 	spin = gtk_spin_button_new( GTK_ADJUSTMENT( gtk_adjustment_new( 0, -1000, 1000, 1, 10, 0 ) ), 0, 0 );
 	g_object_set_data( G_OBJECT( dlg ), "hscale", spin );
-	gtk_signal_connect( GTK_OBJECT( gtk_spin_button_get_adjustment( GTK_SPIN_BUTTON( spin ) ) ), "value_changed",
+	gtk_signal_connect( GTK_OBJECT( gtk_spin_button_get_adjustment( GTK_SPIN_BUTTON( spin ) ) ), "value-changed",
 						GTK_SIGNAL_FUNC( OnUpdate ), NULL );
 	gtk_widget_show( spin );
 	gtk_table_attach( GTK_TABLE( table ), spin, 1, 2, 2, 3,
@@ -652,7 +652,7 @@ void SurfaceDlg::BuildDialog() {
 
 	spin = gtk_spin_button_new( GTK_ADJUSTMENT( gtk_adjustment_new( 0, -1000, 1000, 1, 10, 0 ) ), 0, 0 );
 	g_object_set_data( G_OBJECT( dlg ), "vscale", spin );
-	gtk_signal_connect( GTK_OBJECT( gtk_spin_button_get_adjustment( GTK_SPIN_BUTTON( spin ) ) ), "value_changed",
+	gtk_signal_connect( GTK_OBJECT( gtk_spin_button_get_adjustment( GTK_SPIN_BUTTON( spin ) ) ), "value-changed",
 						GTK_SIGNAL_FUNC( OnUpdate ), NULL );
 	gtk_widget_show( spin );
 	gtk_table_attach( GTK_TABLE( table ), spin, 1, 2, 3, 4,
@@ -686,7 +686,7 @@ void SurfaceDlg::BuildDialog() {
 
 	spin = gtk_spin_button_new( GTK_ADJUSTMENT( gtk_adjustment_new( 0, -360, 360, 1, 10, 0 ) ), 1, 0 );
 	g_object_set_data( G_OBJECT( dlg ), "rotate", spin );
-	gtk_signal_connect( GTK_OBJECT( gtk_spin_button_get_adjustment( GTK_SPIN_BUTTON( spin ) ) ), "value_changed",
+	gtk_signal_connect( GTK_OBJECT( gtk_spin_button_get_adjustment( GTK_SPIN_BUTTON( spin ) ) ), "value-changed",
 						GTK_SIGNAL_FUNC( OnUpdate ), NULL );
 	gtk_widget_show( spin );
 	gtk_table_attach( GTK_TABLE( table ), spin, 1, 2, 4, 5,

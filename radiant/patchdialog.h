@@ -69,7 +69,7 @@ GtkWidget *GetWidget() { return m_pWidget; }
 // 0 is invalid, otherwise it's the Id of the last 'do' we are responsible for
 //  int m_nUndoId;
 
-// turn on/off processing of the "changed" "value_changed" messages
+// turn on/off processing of the "changed" "value-changed" messages
 // (need to turn off when we are feeding data in)
 // NOTE: much more simple than blocking signals
 bool m_bListenChanged;

@@ -215,13 +215,13 @@ GLWindow::GLWindow( bool zbuffer ) {
 
 	// Connect signal handlers
 	gtk_signal_connect( GTK_OBJECT( m_pWidget ), "realize", GTK_SIGNAL_FUNC( realize ), this );
-	gtk_signal_connect( GTK_OBJECT( m_pWidget ), "expose_event", GTK_SIGNAL_FUNC( expose ), this );
-	gtk_signal_connect( GTK_OBJECT( m_pWidget ), "motion_notify_event", GTK_SIGNAL_FUNC( motion ), this );
-	gtk_signal_connect( GTK_OBJECT( m_pWidget ), "button_press_event", GTK_SIGNAL_FUNC( button_press ), this );
-	gtk_signal_connect( GTK_OBJECT( m_pWidget ), "button_release_event",GTK_SIGNAL_FUNC( button_release ), this );
-	gtk_signal_connect( GTK_OBJECT( m_pWidget ), "size_allocate", GTK_SIGNAL_FUNC( resize ), this );
+	gtk_signal_connect( GTK_OBJECT( m_pWidget ), "expose-event", GTK_SIGNAL_FUNC( expose ), this );
+	gtk_signal_connect( GTK_OBJECT( m_pWidget ), "motion-notify-event", GTK_SIGNAL_FUNC( motion ), this );
+	gtk_signal_connect( GTK_OBJECT( m_pWidget ), "button-press-event", GTK_SIGNAL_FUNC( button_press ), this );
+	gtk_signal_connect( GTK_OBJECT( m_pWidget ), "button-release-event",GTK_SIGNAL_FUNC( button_release ), this );
+	gtk_signal_connect( GTK_OBJECT( m_pWidget ), "size-allocate", GTK_SIGNAL_FUNC( resize ), this );
 #if GTK_CHECK_VERSION( 1,3,0 )
-	gtk_signal_connect( GTK_OBJECT( m_pWidget ), "scroll_event", GTK_SIGNAL_FUNC( scroll_event ), this );
+	gtk_signal_connect( GTK_OBJECT( m_pWidget ), "scroll-event", GTK_SIGNAL_FUNC( scroll_event ), this );
 #endif
 }
 

@@ -737,9 +737,9 @@ gtk_file_selection_init( GtkFileSelection *filesel ){
 	gtk_widget_show( label );
 
 	filesel->selection_entry = gtk_entry_new();
-	gtk_signal_connect( GTK_OBJECT( filesel->selection_entry ), "key_press_event",
+	gtk_signal_connect( GTK_OBJECT( filesel->selection_entry ), "key-press-event",
 						(GtkSignalFunc) gtk_file_selection_key_press, filesel );
-	gtk_signal_connect_object( GTK_OBJECT( filesel->selection_entry ), "focus_in_event",
+	gtk_signal_connect_object( GTK_OBJECT( filesel->selection_entry ), "focus-in-event",
 							   (GtkSignalFunc) gtk_widget_grab_default,
 							   GTK_OBJECT( filesel->ok_button ) );
 	gtk_signal_connect_object( GTK_OBJECT( filesel->selection_entry ), "activate",
@@ -1375,7 +1375,7 @@ gtk_file_selection_key_press( GtkWidget   *widget,
 
 		g_free( text );
 
-		gtk_signal_emit_stop_by_name( GTK_OBJECT( widget ), "key_press_event" );
+		gtk_signal_emit_stop_by_name( GTK_OBJECT( widget ), "key-press-event" );
 
 		return TRUE;
 	}
@@ -1585,7 +1585,7 @@ gtk_file_selection_history_combo_callback( GtkWidget *widget, GdkEventKey *event
 		strcat( path,"/" );
 		gtk_file_selection_populate( fs,path,TRUE );
 		g_free( path );
-		gtk_signal_emit_stop_by_name( GTK_OBJECT( widget ), "key_press_event" );
+		gtk_signal_emit_stop_by_name( GTK_OBJECT( widget ), "key-press-event" );
 		return TRUE;
 	}
 	else
