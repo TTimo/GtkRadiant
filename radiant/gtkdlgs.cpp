@@ -1687,6 +1687,11 @@ static void rotatedlg_apply( GtkWidget *widget, gpointer data ){
 	gtk_spin_button_set_value( GTK_SPIN_BUTTON( spin ), 0.0f );
 }
 
+static void rotatedialog_value_changed( GtkWidget *widget, gpointer data ){
+	GtkWidget *dialog = (GtkWidget *)data;
+	rotatedlg_apply( dialog, dialog );
+}
+
 void DoRotateDlg(){
 	GtkWidget *dlg, *hbox, *vbox, *table, *label, *button;
 	GtkWidget *x, *y, *z;
@@ -1741,6 +1746,7 @@ void DoRotateDlg(){
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
 	gtk_widget_set_usize( x, 60, -2 );
 	gtk_spin_button_set_wrap( GTK_SPIN_BUTTON( x ), TRUE );
+	g_signal_connect( x, "value-changed", G_CALLBACK( rotatedialog_value_changed ), dlg );
 
 	adj = gtk_adjustment_new( 0, -359, 359, 1, 10, 0 );
 	y = gtk_spin_button_new( GTK_ADJUSTMENT( adj ), 1, 0 );
@@ -1750,6 +1756,7 @@ void DoRotateDlg(){
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
 	gtk_spin_button_set_wrap( GTK_SPIN_BUTTON( y ), TRUE );
+	g_signal_connect( y, "value-changed", G_CALLBACK( rotatedialog_value_changed ), dlg );
 
 	adj = gtk_adjustment_new( 0, -359, 359, 1, 10, 0 );
 	z = gtk_spin_button_new( GTK_ADJUSTMENT( adj ), 1, 0 );
@@ -1759,6 +1766,7 @@ void DoRotateDlg(){
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
 	gtk_spin_button_set_wrap( GTK_SPIN_BUTTON( z ), TRUE );
+	g_signal_connect( z, "value-changed", G_CALLBACK( rotatedialog_value_changed ), dlg );
 
 	vbox = gtk_vbox_new( FALSE, 5 );
 	gtk_widget_show( vbox );
