@@ -1951,9 +1951,40 @@ void DoNewPatchDlg(){
 // =============================================================================
 // New Patch dialog
 
+static void scaledlg_apply( GtkWidget *widget, gpointer data ){
+	float sx, sy, sz;
+	GtkWidget *x, *y, *z;
+
+	x = GTK_WIDGET( g_object_get_data( G_OBJECT( data ), "x" ) );
+	y = GTK_WIDGET( g_object_get_data( G_OBJECT( data ), "y" ) );
+	z = GTK_WIDGET( g_object_get_data( G_OBJECT( data ), "z" ) );
+
+	sx = gtk_spin_button_get_value_as_float( GTK_SPIN_BUTTON( x ) );
+	sy = gtk_spin_button_get_value_as_float( GTK_SPIN_BUTTON( y ) );
+	sz = gtk_spin_button_get_value_as_float( GTK_SPIN_BUTTON( z ) );
+
+	gtk_spin_button_set_value( GTK_SPIN_BUTTON( x ), 1.0f );
+	gtk_spin_button_set_value( GTK_SPIN_BUTTON( y ), 1.0f );
+	gtk_spin_button_set_value( GTK_SPIN_BUTTON( z ), 1.0f );
+
+	if ( sx > 0 && sy > 0 && sz > 0 ) {
+		Select_Scale( sx, sy, sz );
+		Sys_UpdateWindows( W_ALL );
+	}
+	else{
+		Sys_Printf( _( "Warning.. Tried to scale by a zero value.\n" ) );
+	}
+}
+
+static void scaledlg_activate( GtkWidget *widget, gpointer data ){
+	GtkWidget *dialog = (GtkWidget *)data;
+	scaledlg_apply( dialog, dialog );
+}
+
 void DoScaleDlg(){
 	GtkWidget *dlg, *hbox, *table, *vbox, *label, *button;
 	GtkWidget *x, *y, *z;
+	GtkObject *adj;
 	int loop = 1, ret = IDCANCEL;
 
 	dlg = gtk_window_new( GTK_WINDOW_TOPLEVEL );
@@ -1997,23 +2028,41 @@ void DoScaleDlg(){
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
 	gtk_misc_set_alignment( GTK_MISC( label ), 0, 0.5 );
 
-	x = gtk_entry_new();
+	adj = gtk_adjustment_new( 1.0, 0, 100, 0.1, 1, 0 );
+	x = gtk_spin_button_new( GTK_ADJUSTMENT( adj ), 0.1, 1 );
+	gtk_spin_button_set_wrap( GTK_SPIN_BUTTON( x ), TRUE );
+	gtk_spin_button_set_numeric( GTK_SPIN_BUTTON( x ), TRUE );
 	gtk_widget_show( x );
 	gtk_table_attach( GTK_TABLE( table ), x, 1, 2, 0, 1,
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
+	g_object_set_data( G_OBJECT( dlg ), "x", x );
+	g_signal_connect_after( x, "activate", G_CALLBACK( scaledlg_activate ), dlg );
+	g_object_set( x, "xalign", 1.0, NULL ); //right align numbers
 
-	y = gtk_entry_new();
+	adj = gtk_adjustment_new( 1.0, 0, 100, 0.1, 1, 0 );
+	y = gtk_spin_button_new( GTK_ADJUSTMENT( adj ), 0.1, 1 );
+	gtk_spin_button_set_wrap( GTK_SPIN_BUTTON( y ), TRUE );
+	gtk_spin_button_set_numeric( GTK_SPIN_BUTTON( y ), TRUE );
 	gtk_widget_show( y );
 	gtk_table_attach( GTK_TABLE( table ), y, 1, 2, 1, 2,
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
+	g_object_set_data( G_OBJECT( dlg ), "y", y );
+	g_signal_connect_after( y, "activate", G_CALLBACK( scaledlg_activate ), dlg );
+	g_object_set( y, "xalign", 1.0, NULL ); //right align numbers
 
-	z = gtk_entry_new();
+	adj = gtk_adjustment_new( 1.0, 0, 100, 0.1, 1, 0 );
+	z = gtk_spin_button_new( GTK_ADJUSTMENT( adj ), 0.1, 1 );
+	gtk_spin_button_set_wrap( GTK_SPIN_BUTTON( z ), TRUE );
+	gtk_spin_button_set_numeric( GTK_SPIN_BUTTON( z ), TRUE );
 	gtk_widget_show( z );
 	gtk_table_attach( GTK_TABLE( table ), z, 1, 2, 2, 3,
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
+	g_object_set_data( G_OBJECT( dlg ), "z", z );
+	g_signal_connect_after( z, "activate", G_CALLBACK( scaledlg_activate ), dlg );
+	g_object_set( z, "xalign", 1.0, NULL ); //right align numbers
 
 	vbox = gtk_vbox_new( FALSE, 5 );
 	gtk_widget_show( vbox );
@@ -2032,10 +2081,11 @@ void DoScaleDlg(){
 	gtk_signal_connect( GTK_OBJECT( button ), "clicked",
 						GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( IDCANCEL ) );
 
-	// Initialize dialog
-	gtk_entry_set_text( GTK_ENTRY( x ), _( "1.0" ) );
-	gtk_entry_set_text( GTK_ENTRY( y ), _( "1.0" ) );
-	gtk_entry_set_text( GTK_ENTRY( z ), _( "1.0" ) );
+	button = gtk_button_new_with_label( _( "Apply" ) );
+	gtk_widget_show( button );
+	gtk_box_pack_start( GTK_BOX( vbox ), button, FALSE, FALSE, 0 );
+	gtk_signal_connect( GTK_OBJECT( button ), "clicked",
+						GTK_SIGNAL_FUNC( scaledlg_apply ), dlg );
 
 	gtk_grab_add( dlg );
 	gtk_widget_show( dlg );
@@ -2044,18 +2094,7 @@ void DoScaleDlg(){
 		gtk_main_iteration();
 
 	if ( ret == IDOK ) {
-		float sx, sy, sz;
-		sx = atof( gtk_entry_get_text( GTK_ENTRY( x ) ) );
-		sy = atof( gtk_entry_get_text( GTK_ENTRY( y ) ) );
-		sz = atof( gtk_entry_get_text( GTK_ENTRY( z ) ) );
-
-		if ( sx > 0 && sy > 0 && sz > 0 ) {
-			Select_Scale( sx, sy, sz );
-			Sys_UpdateWindows( W_ALL );
-		}
-		else{
-			Sys_Printf( "Warning.. Tried to scale by a zero value." );
-		}
+		scaledlg_apply( dlg, dlg );
 	}
 
 	gtk_grab_remove( dlg );
