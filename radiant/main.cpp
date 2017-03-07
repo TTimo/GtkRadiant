@@ -924,7 +924,7 @@ int mainRadiant( int argc, char* argv[] ) {
 }
 
 
-#if defined( _WIN32 ) && defined( _MSC_VER )
+#if defined( _WIN32 ) && defined( _MSC_VER ) && !defined( _DEBUG )
 #include <dbghelp.h>
 #include <shellapi.h>
 #include <shlobj.h>
@@ -967,7 +967,7 @@ int GenerateDump( EXCEPTION_POINTERS* pExceptionPointers ) {
 
 int main( int argc, char* argv[] ) {
 
-#if defined( _WIN32 ) && defined( _MSC_VER )
+#if defined( _WIN32 ) && defined( _MSC_VER ) && !defined( _DEBUG )
 	__try {
 		return mainRadiant( argc, argv );
 	} __except( GenerateDump( GetExceptionInformation() ) ) {
