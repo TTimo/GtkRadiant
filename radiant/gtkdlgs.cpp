@@ -1354,6 +1354,11 @@ static void rotatedlg_apply( GtkWidget *widget, gpointer data ){
 	gtk_spin_button_set_value( GTK_SPIN_BUTTON( spin ), 0.0f );
 }
 
+static void rotatedialog_activate( GtkWidget *widget, gpointer data ){
+	GtkWidget *dialog = (GtkWidget *)data;
+	rotatedlg_apply( dialog, dialog );
+}
+
 void DoRotateDlg(){
 	GtkWidget *dlg, *hbox, *vbox, *table, *label, *button;
 	GtkWidget *x, *y, *z;
@@ -1401,6 +1406,7 @@ void DoRotateDlg(){
 
 	adj = gtk_adjustment_new( 0, -359, 359, 1, 10, 0 );
 	x = gtk_spin_button_new( GTK_ADJUSTMENT( adj ), 1, 0 );
+	gtk_spin_button_set_numeric( GTK_SPIN_BUTTON( x ), TRUE );
 	g_object_set_data( G_OBJECT( dlg ), "x", x );
 	gtk_widget_show( x );
 	gtk_table_attach( GTK_TABLE( table ), x, 1, 2, 0, 1,
@@ -1408,24 +1414,32 @@ void DoRotateDlg(){
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
 	gtk_widget_set_usize( x, 60, -2 );
 	gtk_spin_button_set_wrap( GTK_SPIN_BUTTON( x ), TRUE );
+	g_signal_connect_after( x, "activate", G_CALLBACK( rotatedialog_activate ), dlg );
+	g_object_set( x, "xalign", 1.0, NULL ); //right align numbers
 
 	adj = gtk_adjustment_new( 0, -359, 359, 1, 10, 0 );
 	y = gtk_spin_button_new( GTK_ADJUSTMENT( adj ), 1, 0 );
+	gtk_spin_button_set_numeric( GTK_SPIN_BUTTON( y ), TRUE );
 	g_object_set_data( G_OBJECT( dlg ), "y", y );
 	gtk_widget_show( y );
 	gtk_table_attach( GTK_TABLE( table ), y, 1, 2, 1, 2,
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
 	gtk_spin_button_set_wrap( GTK_SPIN_BUTTON( y ), TRUE );
+	g_signal_connect_after( y, "activate", G_CALLBACK( rotatedialog_activate ), dlg );
+	g_object_set( y, "xalign", 1.0, NULL ); //right align numbers
 
 	adj = gtk_adjustment_new( 0, -359, 359, 1, 10, 0 );
 	z = gtk_spin_button_new( GTK_ADJUSTMENT( adj ), 1, 0 );
+	gtk_spin_button_set_numeric( GTK_SPIN_BUTTON( z ), TRUE );
 	g_object_set_data( G_OBJECT( dlg ), "z", z );
 	gtk_widget_show( z );
 	gtk_table_attach( GTK_TABLE( table ), z, 1, 2, 2, 3,
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
 	gtk_spin_button_set_wrap( GTK_SPIN_BUTTON( z ), TRUE );
+	g_signal_connect_after( z, "activate", G_CALLBACK( rotatedialog_activate ), dlg );
+	g_object_set( z, "xalign", 1.0, NULL ); //right align numbers
 
 	vbox = gtk_vbox_new( FALSE, 5 );
 	gtk_widget_show( vbox );
