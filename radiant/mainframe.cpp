@@ -297,6 +297,7 @@ SCommandInfo g_Commands[] =
 	{"LoadPointfile", 'L', RAD_SHIFT, ID_FILE_POINTFILE, "menu_load_pointfile"},
 	{"TextureWindowScaledown", GDK_Insert, RAD_ALT, ID_TEXTUREWINDOW_SCALEDOWN, "menu_texturewindow_scaledown"},
 	{"TextureWindowScaleup", GDK_Delete, RAD_ALT, ID_TEXTUREWINDOW_SCALEUP, "menu_texturewindow_scaleup"},
+	{"Help", GDK_KEY_F1, 0, ID_HELP, "menu_help"},
 };
 
 int g_nCommandCount = sizeof( g_Commands ) / sizeof( SCommandInfo );
@@ -1595,7 +1596,8 @@ void MainFrame::create_main_menu( GtkWidget *window, GtkWidget *vbox ){
 
 	item = create_menu_item_with_mnemonic( menu, _( "GtkRadiant Manual" ),
 										   GTK_SIGNAL_FUNC( HandleCommand ), ID_HELP );
-	gtk_widget_add_accelerator( item, "activate", accel, GDK_F1, (GdkModifierType)0, GTK_ACCEL_VISIBLE );
+	// does not work, using g_Commands for the key binding
+	//gtk_widget_add_accelerator( item, "activate", accel, GDK_F1, (GdkModifierType)0, GTK_ACCEL_VISIBLE );
 
 	// this creates all the per-game drop downs for the game pack helps
 	// it will take care of hooking the Sys_OpenURL calls etc.
