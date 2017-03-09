@@ -64,6 +64,7 @@
 #define VERTEX_KEY              "NewVertex"
 #define AUTOSAVE_KEY            "Autosave"
 #define AUTOSAVETIME_KEY        "AutosaveMinutes"
+#define SAVEBEEP_KEY            "SaveBeep"
 #define PAK_KEY                 "UsePAK"
 #define NEWAPPLY_KEY            "ApplyDismissesSurface"
 #define HACK_KEY                "Gatewayescapehack"
@@ -587,6 +588,7 @@ PrefsDlg::PrefsDlg (){
 	m_bSetGame = FALSE;
 	m_bAutoSave = TRUE;
 	m_nAutoSave = 5;
+	m_bSaveBeep = TRUE;
 	m_bLoadLastMap = FALSE;
 	m_bTextureWindow = FALSE;
 	m_bSnapShots = FALSE;
@@ -2464,6 +2466,11 @@ void PrefsDlg::BuildDialog(){
 	gtk_widget_show( label );
 	gtk_box_pack_start( GTK_BOX( hbox2 ), label, FALSE, FALSE, 0 );
 
+	check = gtk_check_button_new_with_label( _( "Beep on save" ) );
+	gtk_box_pack_start( GTK_BOX( vbox ), check, FALSE, FALSE, 0 );
+	gtk_widget_show( check );
+	AddDialogData( check, &m_bSaveBeep, DLG_CHECK_BOOL );
+
 	// Add the page to the notebook
 	gtk_notebook_append_page( GTK_NOTEBOOK( notebook ), pageframe, preflabel );
 
@@ -2951,6 +2958,7 @@ void PrefsDlg::LoadPrefs(){
 	mLocalPrefs.GetPref( TINYBRUSH_KEY,          &m_bCleanTiny,          FALSE );
 	mLocalPrefs.GetPref( TINYSIZE_KEY,           &m_fTinySize,           0.5f );
 	mLocalPrefs.GetPref( AUTOSAVETIME_KEY,       &m_nAutoSave,           5 );
+	mLocalPrefs.GetPref( SAVEBEEP_KEY,           &m_bSaveBeep,           TRUE );
 	mLocalPrefs.GetPref( SNAPSHOT_KEY,           &m_bSnapShots,          FALSE );
 	mLocalPrefs.GetPref( MOVESPEED_KEY,          &m_nMoveSpeed,          100 );
 	mLocalPrefs.GetPref( ANGLESPEED_KEY,         &m_nAngleSpeed,         3 );
