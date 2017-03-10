@@ -107,17 +107,17 @@ static gint ci_new( GtkWidget *widget, gpointer data ){
 	fixed = gtk_radio_button_new_with_label( targetTypeRadio, "Fixed" );
 	gtk_box_pack_start( GTK_BOX( vbox2 ), fixed, FALSE, FALSE, 3 );
 	gtk_widget_show( fixed );
-	targetTypeRadio = gtk_radio_button_group( GTK_RADIO_BUTTON( fixed ) );
+	targetTypeRadio = gtk_radio_button_get_group( GTK_RADIO_BUTTON( fixed ) );
 
 	interpolated = gtk_radio_button_new_with_label( targetTypeRadio, "Interpolated" );
 	gtk_box_pack_start( GTK_BOX( vbox2 ), interpolated, FALSE, FALSE, 3 );
 	gtk_widget_show( interpolated );
-	targetTypeRadio = gtk_radio_button_group( GTK_RADIO_BUTTON( interpolated ) );
+	targetTypeRadio = gtk_radio_button_get_group( GTK_RADIO_BUTTON( interpolated ) );
 
 	spline = gtk_radio_button_new_with_label( targetTypeRadio, "Spline" );
 	gtk_box_pack_start( GTK_BOX( vbox2 ), spline, FALSE, FALSE, 3 );
 	gtk_widget_show( spline );
-	targetTypeRadio = gtk_radio_button_group( GTK_RADIO_BUTTON( spline ) );
+	targetTypeRadio = gtk_radio_button_get_group( GTK_RADIO_BUTTON( spline ) );
 
 	// -------------------------- //
 
@@ -228,7 +228,7 @@ static gint ci_apply( GtkWidget *widget, gpointer data ){
 		gtk_label_set_text( g_pTotalTime, buf );
 
 		gtk_adjustment_set_value( g_pTimeLine, 0.f );
-		g_pTimeLine->upper = GetCurrentCam()->GetCam()->getTotalTime() * 1000;
+		gtk_adjustment_set_upper( g_pTimeLine, GetCurrentCam()->GetCam()->getTotalTime() * 1000 );
 
 		GetCurrentCam()->HasBeenModified();
 	}
@@ -348,7 +348,7 @@ static void RefreshEventList( void ){
 		gtk_label_set_text( g_pTotalTime, buf );
 
 		gtk_adjustment_set_value( g_pTimeLine, 0.f );
-		g_pTimeLine->upper = ( GetCurrentCam()->GetCam()->getTotalTime() * 1000 );
+		gtk_adjustment_set_upper( g_pTimeLine, ( GetCurrentCam()->GetCam()->getTotalTime() * 1000 ) );
 	}
 
 	gtk_clist_thaw( GTK_CLIST( g_pEventsList ) );
@@ -534,17 +534,17 @@ static gint ci_add_target( GtkWidget *widget, gpointer data ){
 	fixed = gtk_radio_button_new_with_label( targetTypeRadio, _( "Fixed" ) );
 	gtk_box_pack_start( GTK_BOX( vbox2 ), fixed, FALSE, FALSE, 3 );
 	gtk_widget_show( fixed );
-	targetTypeRadio = gtk_radio_button_group( GTK_RADIO_BUTTON( fixed ) );
+	targetTypeRadio = gtk_radio_button_get_group( GTK_RADIO_BUTTON( fixed ) );
 
 	interpolated = gtk_radio_button_new_with_label( targetTypeRadio, _( "Interpolated" ) );
 	gtk_box_pack_start( GTK_BOX( vbox2 ), interpolated, FALSE, FALSE, 3 );
 	gtk_widget_show( interpolated );
-	targetTypeRadio = gtk_radio_button_group( GTK_RADIO_BUTTON( interpolated ) );
+	targetTypeRadio = gtk_radio_button_get_group( GTK_RADIO_BUTTON( interpolated ) );
 
 	spline = gtk_radio_button_new_with_label( targetTypeRadio, _( "Spline" ) );
 	gtk_box_pack_start( GTK_BOX( vbox2 ), spline, FALSE, FALSE, 3 );
 	gtk_widget_show( spline );
-	targetTypeRadio = gtk_radio_button_group( GTK_RADIO_BUTTON( spline ) );
+	targetTypeRadio = gtk_radio_button_get_group( GTK_RADIO_BUTTON( spline ) );
 
 	// -------------------------- //
 
@@ -729,7 +729,7 @@ static gint ci_camlist_changed( GtkWidget *widget, gpointer data ){
 			gtk_label_set_text( g_pTotalTime, buf );
 
 			gtk_adjustment_set_value( g_pTimeLine, 0.f );
-			g_pTimeLine->upper = GetCurrentCam()->GetCam()->getTotalTime() * 1000;
+			gtk_adjustment_set_upper( g_pTimeLine, GetCurrentCam()->GetCam()->getTotalTime() * 1000 );
 		}
 		else {
 			// Set Name
@@ -745,7 +745,7 @@ static gint ci_camlist_changed( GtkWidget *widget, gpointer data ){
 			gtk_label_set_text( g_pTotalTime, "30.00" );
 
 			gtk_adjustment_set_value( g_pTimeLine, 0.f );
-			g_pTimeLine->upper = 30000;
+			gtk_adjustment_set_upper( g_pTimeLine, 30000 );
 		}
 
 		// Refresh event list
@@ -865,7 +865,7 @@ static gint ci_add( GtkWidget *widget, gpointer data ){
 		eventWidget[i] = gtk_radio_button_new_with_label( eventTypeRadio, camEventStr[i] );
 		gtk_box_pack_start( GTK_BOX( vbox2 ), eventWidget[i], FALSE, FALSE, 3 );
 		gtk_widget_show( eventWidget[i] );
-		eventTypeRadio = gtk_radio_button_group( GTK_RADIO_BUTTON( eventWidget[i] ) );
+		eventTypeRadio = gtk_radio_button_get_group( GTK_RADIO_BUTTON( eventWidget[i] ) );
 		if ( camEventFlags[i][1] == false ) {
 			gtk_widget_set_sensitive( eventWidget[i], FALSE );
 		}
@@ -939,7 +939,7 @@ static gint ci_add( GtkWidget *widget, gpointer data ){
 				}
 
 				// Add the event
-				GetCurrentCam()->GetCam()->addEvent( static_cast<idCameraEvent::eventType>( type ), str, (long)( g_pTimeLine->value ) );
+				GetCurrentCam()->GetCam()->addEvent( static_cast<idCameraEvent::eventType>( type ), str, (long)( gtk_adjustment_get_value( g_pTimeLine ) ) );
 
 				// Refresh event list
 				RefreshEventList();
@@ -970,7 +970,7 @@ static gint ci_del( GtkWidget *widget, gpointer data ){
 static gint ci_timeline_changed( GtkAdjustment *adjustment ){
 	char buf[128];
 
-	sprintf( buf, "%.2f", adjustment->value / 1000.f );
+	sprintf( buf, "%.2f", gtk_adjustment_get_value( adjustment ) / 1000.f );
 	gtk_label_set_text( g_pCurrentTime, buf );
 
 	// FIXME: this will never work completely perfect. Startcamera calls buildcamera, which sets all events to 'nottriggered'.
@@ -982,7 +982,7 @@ static gint ci_timeline_changed( GtkAdjustment *adjustment ){
 
 		GetCurrentCam()->GetCam()->startCamera( 0 );
 
-		GetCurrentCam()->GetCam()->getCameraInfo( (long)( adjustment->value ), &origin[0], &dir[0], &fov );
+		GetCurrentCam()->GetCam()->getCameraInfo( (long)( gtk_adjustment_get_value( adjustment ) ), &origin[0], &dir[0], &fov );
 		VectorSet( angles, asin( dir[2] ) * 180 / 3.14159, atan2( dir[1], dir[0] ) * 180 / 3.14159, 0 );
 		g_CameraTable.m_pfnSetCamera( origin, angles );
 	}
@@ -1108,14 +1108,14 @@ GtkWidget *CreateCameraInspectorDialog( void ){
 	g_pEditModeEditRadioButton = gtk_radio_button_new_with_label( g_pEditTypeRadio, _( "Edit Points" ) );
 	gtk_box_pack_start( GTK_BOX( hbox ), g_pEditModeEditRadioButton, FALSE, FALSE, 3 );
 	gtk_widget_show( g_pEditModeEditRadioButton );
-	g_pEditTypeRadio = gtk_radio_button_group( GTK_RADIO_BUTTON( g_pEditModeEditRadioButton ) );
+	g_pEditTypeRadio = gtk_radio_button_get_group( GTK_RADIO_BUTTON( g_pEditModeEditRadioButton ) );
 
 	gtk_signal_connect( GTK_OBJECT( g_pEditModeEditRadioButton ), "clicked", GTK_SIGNAL_FUNC( ci_editmode_edit ), NULL );
 
 	g_pEditModeAddRadioButton = gtk_radio_button_new_with_label( g_pEditTypeRadio, _( "Add Points" ) );
 	gtk_box_pack_start( GTK_BOX( hbox ), g_pEditModeAddRadioButton, FALSE, FALSE, 3 );
 	gtk_widget_show( g_pEditModeAddRadioButton );
-	g_pEditTypeRadio = gtk_radio_button_group( GTK_RADIO_BUTTON( g_pEditModeAddRadioButton ) );
+	g_pEditTypeRadio = gtk_radio_button_get_group( GTK_RADIO_BUTTON( g_pEditModeAddRadioButton ) );
 
 	gtk_signal_connect( GTK_OBJECT( g_pEditModeAddRadioButton ), "clicked", GTK_SIGNAL_FUNC( ci_editmode_add ), NULL );
 
@@ -1186,6 +1186,7 @@ GtkWidget *CreateCameraInspectorDialog( void ){
 
 	g_pSecondsEntry = gtk_entry_new();
 	gtk_box_pack_start( GTK_BOX( hbox ), g_pSecondsEntry, FALSE, FALSE, 0 );
+	g_object_set( g_pSecondsEntry, "xalign", 1.0, NULL );
 	gtk_widget_show( g_pSecondsEntry );
 
 	// -------------------------- //

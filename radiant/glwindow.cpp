@@ -195,7 +195,7 @@ GLWindow::GLWindow( bool zbuffer ) {
 	m_pParent = NULL;
 
 	m_pWidget = gtk_glwidget_new( zbuffer, g_qeglobals_gui.d_glBase );
-	GTK_WIDGET_SET_FLAGS( m_pWidget, GTK_CAN_FOCUS );
+	gtk_widget_set_can_focus( m_pWidget, TRUE );
 
 #ifdef DBG_GLWINDOW
 	Sys_Printf( "GLWindow::GLWindow m_pWidget = %p\n", m_pWidget );

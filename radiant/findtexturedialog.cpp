@@ -57,9 +57,9 @@ static void OnClose( GtkWidget *widget, gpointer data ){
 }
 
 static void popup_selected( GtkWidget *widget, gpointer data ){
-	gchar *str;
+	const gchar *str;
 
-	gtk_label_get( GTK_LABEL( GTK_BIN( widget )->child ), &str );
+	str = gtk_label_get_text( GTK_LABEL( widget ) );
 	gtk_entry_set_text( GTK_ENTRY( data ), str );
 }
 

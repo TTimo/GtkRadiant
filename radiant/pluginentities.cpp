@@ -33,7 +33,7 @@
 #endif
 //#include "qe3.h"
 
-int QERApp_EClassScanDir( char *path, void* hPlug ){
+int QERApp_EClassScanDir( const char *path, void* hPlug ){
 	char temp[NAME_MAX];
 	char filebase[NAME_MAX];
 	char filename[NAME_MAX];

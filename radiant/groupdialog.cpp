@@ -1116,8 +1116,8 @@ static gint entityentry_keypress( GtkWidget* widget, GdkEventKey* event, gpointe
 }
 
 static void switch_page( GtkNotebook *notebook, GtkNotebookPage *page, guint page_num, gpointer data ){
-	char *text;
-	gtk_label_get( GTK_LABEL( gtk_notebook_get_tab_label( notebook, gtk_notebook_get_nth_page( notebook, page_num ) ) ), &text );
+	const gchar *text;
+	text = gtk_label_get_text( GTK_LABEL( gtk_notebook_get_tab_label( notebook, gtk_notebook_get_nth_page( notebook, page_num ) ) ) );
 	gtk_window_set_title( GTK_WINDOW( data ), text );
 
 	gpointer item = g_object_get_data( G_OBJECT( g_pParentWnd->m_pWidget ), "menu_misc_selectentitycolor" );
