@@ -2529,7 +2529,7 @@ void PrefsDlg::BuildDialog(){
 	AddDialogData( entry, &m_strUserPath, DLG_ENTRY_TEXT );
 
 	// user ini browse button
-	button = gtk_button_new_with_label( "..." );
+	button = gtk_button_new_with_label( _( "..." ) );
 	gtk_widget_show( button );
 	gtk_signal_connect( GTK_OBJECT( button ), "clicked", GTK_SIGNAL_FUNC( OnBtnBrowseuserini ), this );
 	gtk_table_attach( GTK_TABLE( table ), button, 2, 3, 1, 2,

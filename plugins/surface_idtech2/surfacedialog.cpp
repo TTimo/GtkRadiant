@@ -25,6 +25,7 @@
 
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h>
+#include <glib/gi18n.h>
 
 #include "surfacedialog.h"
 #include "surfaceflags.h"
@@ -564,7 +565,7 @@ GtkWidget* create_SurfaceInspector( void ){
 	gtk_container_add( GTK_CONTAINER( vbox1 ), hbox1 );
 	gtk_container_set_border_width( GTK_CONTAINER( hbox1 ), 4 );
 
-	label = gtk_label_new( "Texture: " );
+	label = gtk_label_new( _( "Texture: " ) );
 	gtk_widget_show( label );
 	gtk_box_pack_start( GTK_BOX( hbox1 ), label, FALSE, FALSE, 0 );
 	gtk_misc_set_alignment( GTK_MISC( label ), 1, 0.5 );
@@ -580,7 +581,7 @@ GtkWidget* create_SurfaceInspector( void ){
 	gtk_widget_show( texture_combo_entry );
 	gtk_entry_set_max_length( GTK_ENTRY( texture_combo_entry ), 1024 );
 
-	frame1 = gtk_frame_new( "Surface" );
+	frame1 = gtk_frame_new( _( "Surface" ) );
 	gtk_widget_show( frame1 );
 	gtk_container_add( GTK_CONTAINER( vbox1 ), frame1 );
 
@@ -591,44 +592,44 @@ GtkWidget* create_SurfaceInspector( void ){
 	gtk_container_set_border_width( GTK_CONTAINER( table1 ), 5 );
 	gtk_container_add( GTK_CONTAINER( frame1 ), table1 );
 
-	label = gtk_label_new( "Step" );
+	label = gtk_label_new( _( "Step" ) );
 	gtk_widget_show( label );
 	gtk_table_attach( GTK_TABLE( table1 ), label, 2, 3, 0, 1,
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
 
-	label = gtk_label_new( "Value" );
+	label = gtk_label_new( _( "Value" ) );
 	gtk_widget_show( label );
 	gtk_table_attach( GTK_TABLE( table1 ), label, 1, 2, 0, 1,
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
 	gtk_misc_set_alignment( GTK_MISC( label ), 0.5, 1 );
 
-	label = gtk_label_new( "Horizontal shift: " );
+	label = gtk_label_new( _( "Horizontal shift: " ) );
 	gtk_widget_show( label );
 	gtk_table_attach( GTK_TABLE( table1 ), label, 0, 1, 1, 2,
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( GTK_FILL ), 0, 0 );
 
-	label = gtk_label_new( "Vertical shift: " );
+	label = gtk_label_new( _( "Vertical shift: " ) );
 	gtk_widget_show( label );
 	gtk_table_attach( GTK_TABLE( table1 ), label, 0, 1, 2, 3,
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( GTK_FILL ), 0, 0 );
 
-	label = gtk_label_new( "Horizontal scale: " );
+	label = gtk_label_new( _( "Horizontal scale: " ) );
 	gtk_widget_show( label );
 	gtk_table_attach( GTK_TABLE( table1 ), label, 0, 1, 3, 4,
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( GTK_FILL ), 0, 0 );
 
-	label = gtk_label_new( "Vertical scale: " );
+	label = gtk_label_new( _( "Vertical scale: " ) );
 	gtk_widget_show( label );
 	gtk_table_attach( GTK_TABLE( table1 ), label, 0, 1, 4, 5,
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( GTK_FILL ), 0, 0 );
 
-	label = gtk_label_new( "Rotate: " );
+	label = gtk_label_new( _( "Rotate: " ) );
 	gtk_widget_show( label );
 	gtk_table_attach( GTK_TABLE( table1 ), label, 0, 1, 5, 6,
 					  (GtkAttachOptions) ( GTK_FILL ),
@@ -737,19 +738,19 @@ GtkWidget* create_SurfaceInspector( void ){
 	gtk_container_set_border_width( GTK_CONTAINER( table2 ), 5 );
 	gtk_container_add( GTK_CONTAINER( frame2 ), table2 );
 
-	label = gtk_label_new( "Height" );
+	label = gtk_label_new( _( "Height" ) );
 	gtk_widget_show( label );
 	gtk_table_attach( GTK_TABLE( table2 ), label, 3, 4, 0, 1,
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
 
-	label = gtk_label_new( "Width" );
+	label = gtk_label_new( _( "Width" ) );
 	gtk_widget_show( label );
 	gtk_table_attach( GTK_TABLE( table2 ), label, 2, 3, 0, 1,
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
 
-	label = gtk_label_new( "Brush" );
+	label = gtk_label_new( _( "Brush" ) );
 	gtk_widget_show( label );
 	gtk_table_attach( GTK_TABLE( table2 ), label, 0, 2, 0, 1,
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),

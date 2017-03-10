@@ -2650,7 +2650,7 @@ void MainFrame::Create(){
 	else if ( CurrentStyle() == eFloating ) {
 		{
 			GtkWidget* wnd = create_floating( this );
-			gtk_window_set_title( GTK_WINDOW( wnd ), "Camera" );
+			gtk_window_set_title( GTK_WINDOW( wnd ), _( "Camera" ) );
 
 #ifdef _WIN32
 			if ( g_PrefsDlg.m_bStartOnPrimMon ) {
@@ -2676,7 +2676,7 @@ void MainFrame::Create(){
 
 			{
 				GtkWidget* wnd = create_floating( this );
-				gtk_window_set_title( GTK_WINDOW( wnd ), "XY View" );
+				gtk_window_set_title( GTK_WINDOW( wnd ), _( "XY View" ) );
 
 #ifdef _WIN32
 				if ( g_PrefsDlg.m_bStartOnPrimMon ) {
@@ -2701,7 +2701,7 @@ void MainFrame::Create(){
 		else
 		{
 			GtkWidget* wnd = create_floating( this );
-			gtk_window_set_title( GTK_WINDOW( wnd ), "XY View" );
+			gtk_window_set_title( GTK_WINDOW( wnd ), _( "XY View" ) );
 
 #ifdef _WIN32
 			if ( g_PrefsDlg.m_bStartOnPrimMon ) {
