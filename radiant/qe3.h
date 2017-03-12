@@ -222,7 +222,10 @@ void Drag_MouseUp( int nButtons = 0 );
 //
 // csg.c
 //
+#define CSG_HOLLOW_MODE_OVERLAP (0)
+#define CSG_HOLLOW_MODE_TOUCH (1)
 void CSG_MakeHollow( void );
+void CSG_MakeHollowMode( int mode );
 void CSG_Subtract( void );
 void CSG_Merge( void );
 

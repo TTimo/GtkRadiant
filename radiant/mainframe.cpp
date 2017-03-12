@@ -297,6 +297,7 @@ SCommandInfo g_Commands[] =
 	{"LoadPointfile", 'L', RAD_SHIFT, ID_FILE_POINTFILE, "menu_load_pointfile"},
 	{"TextureWindowScaledown", GDK_Insert, RAD_ALT, ID_TEXTUREWINDOW_SCALEDOWN, "menu_texturewindow_scaledown"},
 	{"TextureWindowScaleup", GDK_Delete, RAD_ALT, ID_TEXTUREWINDOW_SCALEUP, "menu_texturewindow_scaleup"},
+	{"Help", GDK_KEY_F1, 0, ID_HELP, "menu_help"},
 };
 
 int g_nCommandCount = sizeof( g_Commands ) / sizeof( SCommandInfo );
@@ -509,6 +510,7 @@ gint HandleCommand( GtkWidget *widget, gpointer data ){
 		  case ID_SELECTION_ARBITRARYROTATION: g_pParentWnd->OnSelectionArbitraryrotation(); break;
 		  case ID_SELECT_SCALE: g_pParentWnd->OnSelectScale(); break;
 		  case ID_SELECTION_MAKEHOLLOW: g_pParentWnd->OnSelectionMakehollow(); break;
+		  case ID_SELECTION_MAKEHOLLOW_TOUCH: g_pParentWnd->OnSelectionMakehollowTouch(); break;
 		  case ID_SELECTION_CSGSUBTRACT: g_pParentWnd->OnSelectionCsgsubtract(); break;
 		  case ID_SELECTION_CSGMERGE: g_pParentWnd->OnSelectionCsgmerge(); break;
 		  case ID_SELECTION_NOOUTLINE: g_pParentWnd->OnSelectionNoOutline(); break;
@@ -806,7 +808,7 @@ static gint mainframe_keypress( GtkWidget* widget, GdkEventKey* event, gpointer 
 			}
 			if ( ( g_Commands[i].m_nModifiers & 0x7 ) == nState ) {
 				HandleCommand( NULL, GINT_TO_POINTER( g_Commands[i].m_nCommand ) );
-				gtk_signal_emit_stop_by_name( GTK_OBJECT( widget ), "key_press_event" );
+				gtk_signal_emit_stop_by_name( GTK_OBJECT( widget ), "key-press-event" );
 				return FALSE;
 			}
 		}
@@ -837,7 +839,7 @@ static gint mainframe_keyrelease( GtkWidget* widget, GdkEventKey* event, gpointe
 				case ID_CAMERA_STRAFERIGHT:
 				{
 					HandleKeyUp( NULL, GINT_TO_POINTER( g_Commands[i].m_nCommand ) );
-					gtk_signal_emit_stop_by_name( GTK_OBJECT( widget ), "key_release_event" );
+					gtk_signal_emit_stop_by_name( GTK_OBJECT( widget ), "key-release-event" );
 				}
 
 				}
@@ -1209,8 +1211,10 @@ void MainFrame::create_main_menu( GtkWidget *window, GtkWidget *vbox ){
 	menu_separator( menu );
 	create_menu_item_with_mnemonic( menu, _( "Scale..." ), GTK_SIGNAL_FUNC( HandleCommand ), ID_SELECT_SCALE );
 	menu_in_menu = create_menu_in_menu_with_mnemonic( menu, _( "CSG" ) );
-	create_menu_item_with_mnemonic( menu_in_menu, _( "Make _Hollow" ),
+	create_menu_item_with_mnemonic( menu_in_menu, _( "Make _Hollow Overlap" ),
 									GTK_SIGNAL_FUNC( HandleCommand ), ID_SELECTION_MAKEHOLLOW );
+	create_menu_item_with_mnemonic( menu_in_menu, _( "Make _Hollow Touch" ),
+									G_CALLBACK( HandleCommand ), ID_SELECTION_MAKEHOLLOW_TOUCH );
 	create_menu_item_with_mnemonic( menu_in_menu, _( "CSG _Subtract" ),
 									GTK_SIGNAL_FUNC( HandleCommand ), ID_SELECTION_CSGSUBTRACT );
 	create_menu_item_with_mnemonic( menu_in_menu, _( "CSG _Merge" ),
@@ -1595,7 +1599,8 @@ void MainFrame::create_main_menu( GtkWidget *window, GtkWidget *vbox ){
 
 	item = create_menu_item_with_mnemonic( menu, _( "GtkRadiant Manual" ),
 										   GTK_SIGNAL_FUNC( HandleCommand ), ID_HELP );
-	gtk_widget_add_accelerator( item, "activate", accel, GDK_F1, (GdkModifierType)0, GTK_ACCEL_VISIBLE );
+	// does not work, using g_Commands for the key binding
+	//gtk_widget_add_accelerator( item, "activate", accel, GDK_F1, (GdkModifierType)0, GTK_ACCEL_VISIBLE );
 
 	// this creates all the per-game drop downs for the game pack helps
 	// it will take care of hooking the Sys_OpenURL calls etc.
@@ -1768,10 +1773,14 @@ void MainFrame::create_main_toolbar( GtkWidget *window, GtkWidget *vbox ){
 		g_object_set_data( G_OBJECT( window ), "tb_selection_csgmerge", w );
 	}
 
-	w = gtk_toolbar_append_item( GTK_TOOLBAR( toolbar ), "", _( "Hollow" ), "",
+	w = gtk_toolbar_append_item( GTK_TOOLBAR( toolbar ), "", _( "Hollow Overlap" ), "",
 								 new_image_icon("selection_makehollow.png"),
 								 GTK_SIGNAL_FUNC( HandleCommand ), GINT_TO_POINTER( ID_SELECTION_MAKEHOLLOW ) );
 	g_object_set_data( G_OBJECT( window ), "tb_selection_makehollow", w );
+	w = gtk_toolbar_append_item( GTK_TOOLBAR( toolbar ), "", _( "Hollow Touch" ), "",
+								 new_image_icon("selection_makehollow.png"),
+								 G_CALLBACK( HandleCommand ), GINT_TO_POINTER( ID_SELECTION_MAKEHOLLOW_TOUCH ) );
+	g_object_set_data( G_OBJECT( window ), "tb_selection_makehollow_touch", w );
 
 	if ( g_PrefsDlg.m_bWideToolbar ) {
 		w = gtk_toolbar_append_element( GTK_TOOLBAR( toolbar ), GTK_TOOLBAR_CHILD_TOGGLEBUTTON, NULL,
@@ -2052,6 +2061,13 @@ static void mainframe_unmap( GtkWidget *widget ){
 		CHECK_MINIMIZE( g_pGroupDlg->m_pWidget );
 	}
 }
+static gboolean mainframe_state( GtkWidget *widget, GdkEventWindowState *e, gpointer user_data ){
+
+	if( e->changed_mask & GDK_WINDOW_STATE_ICONIFIED && !( e->new_window_state & GDK_WINDOW_STATE_ICONIFIED ) ) {
+		mainframe_map( widget );
+	}
+	return FALSE;
+}
 
 static GtkWidget* create_floating( MainFrame* mainframe ){
 	GtkWidget *wnd = gtk_window_new( GTK_WINDOW_TOPLEVEL );
@@ -2060,13 +2076,13 @@ static GtkWidget* create_floating( MainFrame* mainframe ){
 	if (mainframe->CurrentStyle() != MainFrame::eFloating)
 		gtk_window_set_transient_for( GTK_WINDOW( wnd ), GTK_WINDOW( mainframe->m_pWidget ) );
 	gtk_widget_set_events( wnd, GDK_KEY_PRESS_MASK | GDK_KEY_RELEASE_MASK );
-	gtk_signal_connect( GTK_OBJECT( wnd ), "delete_event", GTK_SIGNAL_FUNC( widget_delete_hide ), NULL );
+	gtk_signal_connect( GTK_OBJECT( wnd ), "delete-event", GTK_SIGNAL_FUNC( widget_delete_hide ), NULL );
 	gtk_signal_connect( GTK_OBJECT( wnd ), "destroy", GTK_SIGNAL_FUNC( gtk_widget_destroy ), NULL );
-	gtk_signal_connect( GTK_OBJECT( wnd ), "key_press_event",
+	gtk_signal_connect( GTK_OBJECT( wnd ), "key-press-event",
 						GTK_SIGNAL_FUNC( mainframe_keypress ), mainframe );
-	gtk_signal_connect( GTK_OBJECT( wnd ), "key_release_event",
+	gtk_signal_connect( GTK_OBJECT( wnd ), "key-release-event",
 						GTK_SIGNAL_FUNC( mainframe_keyrelease ), mainframe );
-	gtk_signal_connect( GTK_OBJECT( wnd ), "map_event",
+	gtk_signal_connect( GTK_OBJECT( wnd ), "map-event",
 						GTK_SIGNAL_FUNC( mainframe_map ), mainframe );
 
 	gtk_window_set_default_size( GTK_WINDOW( wnd ), 100, 100 );
@@ -2370,8 +2386,8 @@ GtkWidget* create_framed_texwnd( TexWnd* texwnd ){
 	w = gtk_entry_new();
 	gtk_box_pack_start( GTK_BOX( texbox ), w, FALSE, FALSE, 0 );
 	texwnd->m_pFilter = w;
-	g_signal_connect( G_OBJECT( w ), "focus_in_event", G_CALLBACK( entry_focus_in ), NULL );
-	g_signal_connect( G_OBJECT( w ), "focus_out_event", G_CALLBACK( entry_focus_out ), NULL );
+	g_signal_connect( G_OBJECT( w ), "focus-in-event", G_CALLBACK( entry_focus_in ), NULL );
+	g_signal_connect( G_OBJECT( w ), "focus-out-event", G_CALLBACK( entry_focus_out ), NULL );
 
 	w = texwnd->GetWidget();
 	gtk_box_pack_start( GTK_BOX( texbox ), w, TRUE, TRUE, 0 );
@@ -2429,18 +2445,20 @@ void MainFrame::Create(){
 	GtkWidget* window = gtk_window_new( GTK_WINDOW_TOPLEVEL );
 	m_pWidget = window;
 	gtk_widget_set_events( window, GDK_KEY_PRESS_MASK | GDK_KEY_RELEASE_MASK );
-	gtk_signal_connect( GTK_OBJECT( window ), "delete_event",
+	gtk_signal_connect( GTK_OBJECT( window ), "delete-event",
 						GTK_SIGNAL_FUNC( mainframe_delete ), this );
 	gtk_signal_connect( GTK_OBJECT( window ), "destroy",
 						GTK_SIGNAL_FUNC( mainframe_destroy ), this );
-	gtk_signal_connect( GTK_OBJECT( window ), "key_press_event",
+	gtk_signal_connect( GTK_OBJECT( window ), "key-press-event",
 						GTK_SIGNAL_FUNC( mainframe_keypress ), this );
-	gtk_signal_connect( GTK_OBJECT( window ), "key_release_event",
+	gtk_signal_connect( GTK_OBJECT( window ), "key-release-event",
 						GTK_SIGNAL_FUNC( mainframe_keyrelease ), this );
-	gtk_signal_connect( GTK_OBJECT( window ), "map_event",
+	gtk_signal_connect( GTK_OBJECT( window ), "map-event",
 						GTK_SIGNAL_FUNC( mainframe_map ), this );
-	gtk_signal_connect( GTK_OBJECT( window ), "unmap_event",
+	gtk_signal_connect( GTK_OBJECT( window ), "unmap-event",
 						GTK_SIGNAL_FUNC( mainframe_unmap ), this );
+	gtk_signal_connect( GTK_OBJECT( window ), "window-state-event",
+						GTK_SIGNAL_FUNC( mainframe_state ), this );
 
 	g_qeglobals_gui.d_main_window = window;
 
@@ -3024,31 +3042,7 @@ static void Sys_Iconify( GtkWidget *w ){
 		return;
 	}
 
-#if defined ( __linux__ ) || defined ( __APPLE__ )
-	Sys_FPrintf( SYS_WRN, "FIXME: Sys_Iconify\n" );
-#if 0
-	XWindowAttributes xattr;
-	GdkWindowPrivate *Private;
-
-	Private = (GdkWindowPrivate*)w->window;
-	g_object_set_data( G_OBJECT( w ), "was_mapped", GINT_TO_POINTER( 0 ) );
-
-	if ( !Private->destroyed ) {
-		xattr.map_state = IsUnmapped;
-		XGetWindowAttributes( Private->xdisplay, Private->xwindow, &xattr );
-
-		if ( xattr.map_state != IsUnmapped ) {
-			g_object_set_data( G_OBJECT( w ), "was_mapped", GINT_TO_POINTER( 1 ) );
-		}
-
-		XIconifyWindow( Private->xdisplay, Private->xwindow, 0 );
-	}
-#endif
-#endif
-
-#ifdef _WIN32
-	ShowWindow( (HWND)GDK_WINDOW_HWND( w->window ), SW_MINIMIZE );
-#endif
+	gtk_window_iconify( GTK_WINDOW( w ) );
 }
 
 static void Sys_Restore( GtkWidget *w ){
@@ -3274,7 +3268,7 @@ void MainFrame::OnDelete(){
 		save_window_pos( m_pZWnd->m_pParent, g_PrefsDlg.mWindowInfo.posZWnd );
 	}
 	else{
-		g_PrefsDlg.mWindowInfo.nZFloatWidth = GTK_PANED( m_pSplits[0] )->child1_size;
+		g_PrefsDlg.mWindowInfo.nZFloatWidth = gtk_paned_get_position( GTK_PANED( m_pSplits[0] ) );
 	}
 
 	if ( CurrentStyle() == eFloating ) {
@@ -3311,9 +3305,9 @@ void MainFrame::OnDestroy(){
 		gpointer w;
 
 		w = g_object_get_data( G_OBJECT( g_pGroupDlg->m_pWidget ), "split1" );
-		g_PrefsDlg.mWindowInfo.nEntitySplit1 = GTK_PANED( w )->child1_size;
+		g_PrefsDlg.mWindowInfo.nEntitySplit1 = gtk_paned_get_position( GTK_PANED( w ) );
 		w = g_object_get_data( G_OBJECT( g_pGroupDlg->m_pWidget ), "split2" );
-		g_PrefsDlg.mWindowInfo.nEntitySplit2 = GTK_PANED( w )->child1_size;
+		g_PrefsDlg.mWindowInfo.nEntitySplit2 = gtk_paned_get_position( GTK_PANED( w ) );
 
 		if ( !FloatingGroupDialog() ) {
 			GtkWidget *vsplit, *hsplit, *vsplit2, *hsplit2;
@@ -3323,17 +3317,17 @@ void MainFrame::OnDestroy(){
 			hsplit = m_pSplits[2];
 			hsplit2 = m_pSplits[3];
 
-			g_PrefsDlg.mWindowInfo.nXYHeight  = GTK_PANED( vsplit )->child1_size;
-			g_PrefsDlg.mWindowInfo.nXYWidth   = GTK_PANED( hsplit2 )->child1_size;
+			g_PrefsDlg.mWindowInfo.nXYHeight  = gtk_paned_get_position( GTK_PANED( vsplit ) );
+			g_PrefsDlg.mWindowInfo.nXYWidth   = gtk_paned_get_position( GTK_PANED( hsplit2 ) );
 
 			if ( CurrentStyle() == eRegular ) {
-				g_PrefsDlg.mWindowInfo.nZWidth = GTK_PANED( hsplit )->child1_size;
+				g_PrefsDlg.mWindowInfo.nZWidth = gtk_paned_get_position( GTK_PANED( hsplit ) );
 			}
 			else{
-				g_PrefsDlg.mWindowInfo.nCamWidth = GTK_PANED( hsplit )->child1_size;
+				g_PrefsDlg.mWindowInfo.nCamWidth = gtk_paned_get_position( GTK_PANED( hsplit ) );
 			}
 
-			g_PrefsDlg.mWindowInfo.nCamHeight = GTK_PANED( vsplit2 )->child1_size;
+			g_PrefsDlg.mWindowInfo.nCamHeight = gtk_paned_get_position( GTK_PANED( vsplit2 ) );
 		}
 		else
 		{
@@ -5377,6 +5371,16 @@ void MainFrame::OnSelectionMakehollow(){
 	Undo_Start( "hollow" );
 	Undo_AddBrushList( &selected_brushes );
 	CSG_MakeHollow();
+	Undo_EndBrushList( &selected_brushes );
+	Undo_End();
+}
+
+void MainFrame::OnSelectionMakehollowTouch(){
+	//if (ActiveXY())
+	//	ActiveXY()->UndoCopy();
+	Undo_Start( "hollow" );
+	Undo_AddBrushList( &selected_brushes );
+	CSG_MakeHollowMode( CSG_HOLLOW_MODE_TOUCH );
 	Undo_EndBrushList( &selected_brushes );
 	Undo_End();
 }

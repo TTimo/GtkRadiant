@@ -51,7 +51,7 @@ texdef_t g_old_texdef;
 // when != NULL, this thing means the surface inspector is currently being displayed
 // NOTE a boolean flag would have been more explicit, this is totally so ugly
 GtkWidget*  g_surfwin = NULL;
-// turn on/off processing of the "changed" "value_changed" messages
+// turn on/off processing of the "changed" "value-changed" messages
 // (need to turn off when we are feeding data in)
 bool g_bListenChanged = true;
 // the struct used to store the increments (saved in registry)
@@ -313,27 +313,27 @@ static void OnIncrementChanged( GtkWidget *widget, gpointer data ){
 	if ( widget == g_dlgSurface.GetDlgWidget( "hshift_inc" ) ) {
 		l_pIncrement->shift[0] = val;
 		adjust = gtk_spin_button_get_adjustment( GTK_SPIN_BUTTON( g_dlgSurface.GetDlgWidget( "hshift" ) ) );
-		adjust->step_increment = l_pIncrement->shift[0];
+		gtk_adjustment_set_step_increment( adjust, l_pIncrement->shift[0] );
 	}
 	else if ( widget == g_dlgSurface.GetDlgWidget( "vshift_inc" ) ) {
 		l_pIncrement->shift[1] = val;
 		adjust = gtk_spin_button_get_adjustment( GTK_SPIN_BUTTON( g_dlgSurface.GetDlgWidget( "vshift" ) ) );
-		adjust->step_increment = l_pIncrement->shift[1];
+		gtk_adjustment_set_step_increment( adjust, l_pIncrement->shift[1] );
 	}
 	else if ( widget == g_dlgSurface.GetDlgWidget( "hscale_inc" ) ) {
 		l_pIncrement->scale[0] = val;
 		adjust = gtk_spin_button_get_adjustment( GTK_SPIN_BUTTON( g_dlgSurface.GetDlgWidget( "hscale" ) ) );
-		adjust->step_increment = l_pIncrement->scale[0];
+		gtk_adjustment_set_step_increment( adjust, l_pIncrement->scale[0] );
 	}
 	else if ( widget == g_dlgSurface.GetDlgWidget( "vscale_inc" ) ) {
 		l_pIncrement->scale[1] = val;
 		adjust = gtk_spin_button_get_adjustment( GTK_SPIN_BUTTON( g_dlgSurface.GetDlgWidget( "vscale" ) ) );
-		adjust->step_increment = l_pIncrement->scale[1];
+		gtk_adjustment_set_step_increment( adjust, l_pIncrement->scale[1] );
 	}
 	else if ( widget == g_dlgSurface.GetDlgWidget( "rotate_inc" ) ) {
 		l_pIncrement->rotate = val;
 		adjust = gtk_spin_button_get_adjustment( GTK_SPIN_BUTTON( g_dlgSurface.GetDlgWidget( "rotate" ) ) );
-		adjust->step_increment = l_pIncrement->rotate;
+		gtk_adjustment_set_step_increment( adjust, l_pIncrement->rotate );
 	}
 }
 
@@ -509,9 +509,9 @@ void SurfaceDlg::BuildDialog() {
 	load_window_pos( dlg, g_PrefsDlg.mWindowInfo.posSurfaceWnd );
 
 	gtk_window_set_title( GTK_WINDOW( dlg ), _( "Surface inspector" ) );
-	//g_signal_connect (G_OBJECT (dlg), "delete_event", G_CALLBACK (OnCancel), NULL);
+	//g_signal_connect (G_OBJECT (dlg), "delete-event", G_CALLBACK (OnCancel), NULL);
 	// we catch 'Enter' and interpret is as OnDone
-	gtk_signal_connect( GTK_OBJECT( dlg ), "key_press_event", GTK_SIGNAL_FUNC( OnDialogKey ), NULL );
+	gtk_signal_connect( GTK_OBJECT( dlg ), "key-press-event", GTK_SIGNAL_FUNC( OnDialogKey ), NULL );
 	gtk_window_set_transient_for( GTK_WINDOW( dlg ), GTK_WINDOW( g_pParentWnd->m_pWidget ) );
 
 	// replaced by only the vbox:
@@ -529,7 +529,7 @@ void SurfaceDlg::BuildDialog() {
 	gtk_box_pack_start( GTK_BOX( hbox2 ), label, FALSE, TRUE, 0 );
 
 	entry = gtk_entry_new();
-	gtk_signal_connect( GTK_OBJECT( entry ), "key_press_event", GTK_SIGNAL_FUNC( OnTextureKey ), NULL );
+	gtk_signal_connect( GTK_OBJECT( entry ), "key-press-event", GTK_SIGNAL_FUNC( OnTextureKey ), NULL );
 	gtk_widget_show( entry );
 	gtk_box_pack_start( GTK_BOX( hbox2 ), entry, TRUE, TRUE, 0 );
 	g_object_set_data( G_OBJECT( m_pWidget ), "texture", entry );
@@ -550,7 +550,7 @@ void SurfaceDlg::BuildDialog() {
 
 	spin = gtk_spin_button_new( GTK_ADJUSTMENT( gtk_adjustment_new( 0, -8192, 8192, 2, 8, 0 ) ), 0, 0 );
 	g_object_set_data( G_OBJECT( dlg ), "hshift", spin );
-	gtk_signal_connect( GTK_OBJECT( gtk_spin_button_get_adjustment( GTK_SPIN_BUTTON( spin ) ) ), "value_changed",
+	gtk_signal_connect( GTK_OBJECT( gtk_spin_button_get_adjustment( GTK_SPIN_BUTTON( spin ) ) ), "value-changed",
 						GTK_SIGNAL_FUNC( OnUpdate ), NULL );
 	gtk_widget_show( spin );
 	gtk_table_attach( GTK_TABLE( table ), spin, 1, 2, 0, 1,
@@ -584,7 +584,7 @@ void SurfaceDlg::BuildDialog() {
 
 	spin = gtk_spin_button_new( GTK_ADJUSTMENT( gtk_adjustment_new( 0, -8192, 8192, 2, 8, 0 ) ), 0, 0 );
 	g_object_set_data( G_OBJECT( dlg ), "vshift", spin );
-	gtk_signal_connect( GTK_OBJECT( gtk_spin_button_get_adjustment( GTK_SPIN_BUTTON( spin ) ) ), "value_changed",
+	gtk_signal_connect( GTK_OBJECT( gtk_spin_button_get_adjustment( GTK_SPIN_BUTTON( spin ) ) ), "value-changed",
 						GTK_SIGNAL_FUNC( OnUpdate ), NULL );
 	gtk_widget_show( spin );
 	gtk_table_attach( GTK_TABLE( table ), spin, 1, 2, 1, 2,
@@ -618,7 +618,7 @@ void SurfaceDlg::BuildDialog() {
 
 	spin = gtk_spin_button_new( GTK_ADJUSTMENT( gtk_adjustment_new( 0, -1000, 1000, 1, 10, 0 ) ), 0, 0 );
 	g_object_set_data( G_OBJECT( dlg ), "hscale", spin );
-	gtk_signal_connect( GTK_OBJECT( gtk_spin_button_get_adjustment( GTK_SPIN_BUTTON( spin ) ) ), "value_changed",
+	gtk_signal_connect( GTK_OBJECT( gtk_spin_button_get_adjustment( GTK_SPIN_BUTTON( spin ) ) ), "value-changed",
 						GTK_SIGNAL_FUNC( OnUpdate ), NULL );
 	gtk_widget_show( spin );
 	gtk_table_attach( GTK_TABLE( table ), spin, 1, 2, 2, 3,
@@ -652,7 +652,7 @@ void SurfaceDlg::BuildDialog() {
 
 	spin = gtk_spin_button_new( GTK_ADJUSTMENT( gtk_adjustment_new( 0, -1000, 1000, 1, 10, 0 ) ), 0, 0 );
 	g_object_set_data( G_OBJECT( dlg ), "vscale", spin );
-	gtk_signal_connect( GTK_OBJECT( gtk_spin_button_get_adjustment( GTK_SPIN_BUTTON( spin ) ) ), "value_changed",
+	gtk_signal_connect( GTK_OBJECT( gtk_spin_button_get_adjustment( GTK_SPIN_BUTTON( spin ) ) ), "value-changed",
 						GTK_SIGNAL_FUNC( OnUpdate ), NULL );
 	gtk_widget_show( spin );
 	gtk_table_attach( GTK_TABLE( table ), spin, 1, 2, 3, 4,
@@ -686,7 +686,7 @@ void SurfaceDlg::BuildDialog() {
 
 	spin = gtk_spin_button_new( GTK_ADJUSTMENT( gtk_adjustment_new( 0, -360, 360, 1, 10, 0 ) ), 1, 0 );
 	g_object_set_data( G_OBJECT( dlg ), "rotate", spin );
-	gtk_signal_connect( GTK_OBJECT( gtk_spin_button_get_adjustment( GTK_SPIN_BUTTON( spin ) ) ), "value_changed",
+	gtk_signal_connect( GTK_OBJECT( gtk_spin_button_get_adjustment( GTK_SPIN_BUTTON( spin ) ) ), "value-changed",
 						GTK_SIGNAL_FUNC( OnUpdate ), NULL );
 	gtk_widget_show( spin );
 	gtk_table_attach( GTK_TABLE( table ), spin, 1, 2, 4, 5,
@@ -928,13 +928,13 @@ void SurfaceDlg::SetTexMods(){
 		gtk_spin_button_set_value( spin, pt->shift[0] );
 	}
 	GtkAdjustment *adjust = gtk_spin_button_get_adjustment( GTK_SPIN_BUTTON( spin ) );
-	adjust->step_increment = l_pIncrement->shift[0];
+	gtk_adjustment_set_step_increment( adjust, l_pIncrement->shift[0] );
 	char buf[10]; // got into snprintf paranoia after BoundChecker detected a stack overrun
 #ifdef _WIN32
 	// TTimo: THIS IS UGLY
 #define snprintf _snprintf
 #endif
-	snprintf( buf, 10, "%g", l_pIncrement->shift[0] );
+	snprintf( buf, sizeof( buf ), "%g", l_pIncrement->shift[0] );
 	gtk_entry_set_text( GTK_ENTRY( GetDlgWidget( "hshift_inc" ) ), buf );
 
 	spin = GTK_SPIN_BUTTON( GetDlgWidget( "vshift" ) );
@@ -946,8 +946,8 @@ void SurfaceDlg::SetTexMods(){
 		gtk_spin_button_set_value( spin, pt->shift[1] );
 	}
 	adjust = gtk_spin_button_get_adjustment( GTK_SPIN_BUTTON( spin ) );
-	adjust->step_increment = l_pIncrement->shift[1];
-	snprintf( buf, 10, "%g", l_pIncrement->shift[1] );
+	gtk_adjustment_set_step_increment( adjust, l_pIncrement->shift[1] );
+	snprintf( buf, sizeof( buf ), "%g", l_pIncrement->shift[1] );
 	gtk_entry_set_text( GTK_ENTRY( GetDlgWidget( "vshift_inc" ) ), buf );
 
 	spin = GTK_SPIN_BUTTON( GetDlgWidget( "hscale" ) );
@@ -955,8 +955,8 @@ void SurfaceDlg::SetTexMods(){
 	gtk_spin_button_set_value( spin, g_qeglobals.m_bBrushPrimitMode ? m_scale[0] : pt->scale[0] );
 
 	adjust = gtk_spin_button_get_adjustment( GTK_SPIN_BUTTON( spin ) );
-	adjust->step_increment = l_pIncrement->scale[0];
-	snprintf( buf, 10, "%g", l_pIncrement->scale[0] );
+	gtk_adjustment_set_step_increment( adjust, l_pIncrement->scale[0] );
+	snprintf( buf, sizeof( buf ), "%g", l_pIncrement->scale[0] );
 	gtk_entry_set_text( GTK_ENTRY( GetDlgWidget( "hscale_inc" ) ), buf );
 
 	spin = GTK_SPIN_BUTTON( GetDlgWidget( "vscale" ) );
@@ -964,8 +964,8 @@ void SurfaceDlg::SetTexMods(){
 	gtk_spin_button_set_value( spin, g_qeglobals.m_bBrushPrimitMode ? m_scale[1] : pt->scale[1] );
 
 	adjust = gtk_spin_button_get_adjustment( GTK_SPIN_BUTTON( spin ) );
-	adjust->step_increment = l_pIncrement->scale[1];
-	snprintf( buf, 10, "%g", l_pIncrement->scale[1] );
+	gtk_adjustment_set_step_increment( adjust, l_pIncrement->scale[1] );
+	snprintf( buf, sizeof( buf ), "%g", l_pIncrement->scale[1] );
 	gtk_entry_set_text( GTK_ENTRY( GetDlgWidget( "vscale_inc" ) ), buf );
 
 	//++timo compute BProtate as int ..
@@ -974,8 +974,8 @@ void SurfaceDlg::SetTexMods(){
 	gtk_spin_button_set_value( spin, g_qeglobals.m_bBrushPrimitMode ? m_rotate : pt->rotate );
 
 	adjust = gtk_spin_button_get_adjustment( GTK_SPIN_BUTTON( spin ) );
-	adjust->step_increment = l_pIncrement->rotate;
-	snprintf( buf, 10, "%g", l_pIncrement->rotate );
+	gtk_adjustment_set_step_increment( adjust, l_pIncrement->rotate );
+	snprintf( buf, sizeof( buf ), "%g", l_pIncrement->rotate );
 	gtk_entry_set_text( GTK_ENTRY( GetDlgWidget( "rotate_inc" ) ), buf );
 
 	g_bListenChanged = true;
@@ -1042,15 +1042,15 @@ void SurfaceDlg::GetTexMods(){
 
 
 	( g_qeglobals.m_bBrushPrimitMode ? m_shift[0] : pt->shift[0] ) =
-		gtk_spin_button_get_value_as_float( GTK_SPIN_BUTTON( GetDlgWidget( "hshift" ) ) );
+		gtk_spin_button_get_value( GTK_SPIN_BUTTON( GetDlgWidget( "hshift" ) ) );
 	( g_qeglobals.m_bBrushPrimitMode ? m_shift[1] : pt->shift[1] ) =
-		gtk_spin_button_get_value_as_float( GTK_SPIN_BUTTON( GetDlgWidget( "vshift" ) ) );
+		gtk_spin_button_get_value( GTK_SPIN_BUTTON( GetDlgWidget( "vshift" ) ) );
 	( g_qeglobals.m_bBrushPrimitMode ? m_scale[0] : pt->scale[0] ) =
-		gtk_spin_button_get_value_as_float( GTK_SPIN_BUTTON( GetDlgWidget( "hscale" ) ) );
+		gtk_spin_button_get_value( GTK_SPIN_BUTTON( GetDlgWidget( "hscale" ) ) );
 	( g_qeglobals.m_bBrushPrimitMode ? m_scale[1] : pt->scale[1] ) =
-		gtk_spin_button_get_value_as_float( GTK_SPIN_BUTTON( GetDlgWidget( "vscale" ) ) );
+		gtk_spin_button_get_value( GTK_SPIN_BUTTON( GetDlgWidget( "vscale" ) ) );
 	( g_qeglobals.m_bBrushPrimitMode ? m_rotate : pt->rotate ) =
-		gtk_spin_button_get_value_as_float( GTK_SPIN_BUTTON( GetDlgWidget( "rotate" ) ) );
+		gtk_spin_button_get_value( GTK_SPIN_BUTTON( GetDlgWidget( "rotate" ) ) );
 
 	// a local copy of the texture matrix, given for a qtexture_t with width=2 height=2
 	brushprimit_texdef_t local_bp;

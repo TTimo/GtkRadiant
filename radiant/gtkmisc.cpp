@@ -801,10 +801,10 @@ GtkWidget* create_radio_menu_item_with_mnemonic( GtkWidget *menu, GtkWidget *las
 	GSList *group = (GSList*)NULL;
 
 	if ( last != NULL ) {
-		group = gtk_radio_menu_item_group( GTK_RADIO_MENU_ITEM( last ) );
+		group = gtk_radio_menu_item_get_group( GTK_RADIO_MENU_ITEM( last ) );
 	}
 	item = gtk_radio_menu_item_new_with_mnemonic( group, mnemonic );
-	gtk_check_menu_item_set_state( GTK_CHECK_MENU_ITEM( item ), state );
+	gtk_check_menu_item_set_active( GTK_CHECK_MENU_ITEM( item ), state );
 
 	gtk_widget_show( item );
 	gtk_container_add( GTK_CONTAINER( menu ), item );
@@ -865,7 +865,7 @@ static GtkWidget * gtk_AddDlgButton( GtkWidget *container, const char *label,
 	gtk_box_pack_start( GTK_BOX( container ), btn, TRUE, TRUE, 0 );
 	gtk_signal_connect( GTK_OBJECT( btn ), "clicked",
 						GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( clickSignal ) );
-	GTK_WIDGET_SET_FLAGS( btn, GTK_CAN_DEFAULT );
+	gtk_widget_set_can_default( btn, TRUE );
 	
 	if( setGrabDefault ) 
 		gtk_widget_grab_default( btn );
@@ -889,7 +889,7 @@ int WINAPI gtk_MessageBoxNew( void *parent, const char *message,
 
 	// create dialog window
 	GtkWidget *dlg = gtk_window_new( GTK_WINDOW_TOPLEVEL );
-	gtk_signal_connect( GTK_OBJECT( dlg ), "delete_event",
+	gtk_signal_connect( GTK_OBJECT( dlg ), "delete-event",
 						GTK_SIGNAL_FUNC( dialog_delete_callback ), NULL );
 	gtk_signal_connect( GTK_OBJECT( dlg ), "destroy",
 						GTK_SIGNAL_FUNC( gtk_widget_destroy ), NULL );
@@ -1046,7 +1046,7 @@ int WINAPI gtk_MessageBox( void *parent, const char* lpText, const char* lpCapti
 	int mode = ( uType & MB_TYPEMASK ), ret, loop = 1;
 
 	window = gtk_window_new( GTK_WINDOW_TOPLEVEL );
-	gtk_signal_connect( GTK_OBJECT( window ), "delete_event",
+	gtk_signal_connect( GTK_OBJECT( window ), "delete-event",
 						GTK_SIGNAL_FUNC( dialog_delete_callback ), NULL );
 	gtk_signal_connect( GTK_OBJECT( window ), "destroy",
 						GTK_SIGNAL_FUNC( gtk_widget_destroy ), NULL );
@@ -1668,7 +1668,7 @@ bool WINAPI color_dialog( void *parent, float *color, const char* title ){
 
 	dlg = gtk_color_selection_dialog_new( title );
 	gtk_color_selection_set_color( GTK_COLOR_SELECTION( GTK_COLOR_SELECTION_DIALOG( dlg )->colorsel ), clr );
-	gtk_signal_connect( GTK_OBJECT( dlg ), "delete_event",
+	gtk_signal_connect( GTK_OBJECT( dlg ), "delete-event",
 						GTK_SIGNAL_FUNC( dialog_delete_callback ), NULL );
 	gtk_signal_connect( GTK_OBJECT( dlg ), "destroy",
 						GTK_SIGNAL_FUNC( gtk_widget_destroy ), NULL );

@@ -1294,27 +1294,12 @@ void WINAPI Sys_EndWait( void ){
 }
 
 void Sys_GetCursorPos( int *x, int *y ){
-#ifdef _WIN32
-	POINT p;
-	if ( !GetCursorPos( &p ) ) {
-		Sys_Printf( "GetCursorPos failed: GetLastError()=0x%08x", GetLastError() );
-		return;
-	}
-	*x = p.x;
-	*y = p.y;
-#else
-	gdk_window_get_pointer( NULL, x, y, NULL );
-#endif
+	gdk_display_get_pointer( gdk_display_get_default(), 0, x, y, 0 );
 }
 
 void Sys_SetCursorPos( int x, int y ){
-#ifdef _WIN32
-	if ( !SetCursorPos( x, y ) ) {
-		Sys_Printf( "SetCursorPos failed: GetLastError()=0x%08x", GetLastError() );
-	}
-#else
-	XWarpPointer( GDK_DISPLAY(), None, GDK_ROOT_WINDOW(), 0, 0, 0, 0, x, y );
-#endif
+	GdkDisplay *display = gdk_display_get_default();
+	gdk_display_warp_pointer( display, gdk_display_get_default_screen( display ), x, y );
 }
 
 void Sys_Beep( void ){

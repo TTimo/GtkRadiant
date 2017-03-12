@@ -231,13 +231,13 @@ inline void change_contentflag( GtkWidget *togglebutton, int content_flag, gbool
 // Surface Flags Callbacks
 void on_surface_button_toggled( GtkToggleButton *togglebutton, gpointer user_data ){
 	int flag = GPOINTER_TO_INT( user_data );
-	change_surfaceflag( GTK_WIDGET( togglebutton ), flag, ( GTK_TOGGLE_BUTTON( togglebutton )->active ) );
+	change_surfaceflag( GTK_WIDGET( togglebutton ), flag, gtk_toggle_button_get_active( GTK_TOGGLE_BUTTON( togglebutton ) ) );
 }
 
 // Content Flags Callbacks
 void on_content_button_toggled( GtkToggleButton *togglebutton, gpointer user_data ){
 	int flag = GPOINTER_TO_INT( user_data );
-	change_contentflag( GTK_WIDGET( togglebutton ), flag, ( GTK_TOGGLE_BUTTON( togglebutton )->active ) );
+	change_contentflag( GTK_WIDGET( togglebutton ), flag, gtk_toggle_button_get_active( GTK_TOGGLE_BUTTON( togglebutton ) ) );
 }
 
 // Value Entry Callback
@@ -272,17 +272,17 @@ void on_value_entry_insert_text( GtkEditable *editable, gchar *new_text, gint ne
 											GTK_SIGNAL_FUNC( on_value_entry_insert_text ),
 											user_data );
 	}
-	gtk_signal_emit_stop_by_name( GTK_OBJECT( editable ), "insert_text" );
+	gtk_signal_emit_stop_by_name( GTK_OBJECT( editable ), "insert-text" );
 
 	g_free( result );
 }
 
 void on_surfacebutton_clicked( GtkButton *button, gpointer user_data ){
-	gtk_notebook_set_page( GTK_NOTEBOOK( notebook1 ), 0 );
+	gtk_notebook_set_current_page( GTK_NOTEBOOK( notebook1 ), 0 );
 }
 
 void on_contentbutton_clicked( GtkButton *button, gpointer user_data ){
-	gtk_notebook_set_page( GTK_NOTEBOOK( notebook1 ), 1 );
+	gtk_notebook_set_current_page( GTK_NOTEBOOK( notebook1 ), 1 );
 }
 
 #define IDTECH2_FLAG_BUTTON_BORDER 3
@@ -365,7 +365,7 @@ GtkWidget* create_SurfaceFlagsFrame( GtkWidget* surfacedialog_widget ){
 	gtk_signal_connect( GTK_OBJECT( value_entry ), "changed",
 						GTK_SIGNAL_FUNC( on_value_entry_changed ),
 						NULL );
-	gtk_signal_connect( GTK_OBJECT( value_entry ), "insert_text",
+	gtk_signal_connect( GTK_OBJECT( value_entry ), "insert-text",
 						GTK_SIGNAL_FUNC( on_value_entry_insert_text ),
 						NULL );
 	gtk_entry_set_max_length( (GtkEntry *)value_entry, 11 );

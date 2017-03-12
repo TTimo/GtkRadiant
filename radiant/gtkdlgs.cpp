@@ -120,7 +120,7 @@ static void DoProjectAddEdit( bool edit, GtkWidget *parent ){
 	else{
 		gtk_window_set_title( GTK_WINDOW( dlg ), _( "Add Command" ) );
 	}
-	gtk_signal_connect( GTK_OBJECT( dlg ), "delete_event",
+	gtk_signal_connect( GTK_OBJECT( dlg ), "delete-event",
 						GTK_SIGNAL_FUNC( dialog_delete_callback ), NULL );
 	gtk_signal_connect( GTK_OBJECT( dlg ), "destroy",
 						GTK_SIGNAL_FUNC( gtk_widget_destroy ), NULL );
@@ -332,144 +332,149 @@ static const char* sSOF2ModComboItem = "Custom Sof2 modification";
 static const char* sSOF2SPCombo = "Single Player mapping mode";
 static const char* sSOF2MPCombo = "Multiplayer mapping mode";
 
-static GtkWidget* game_select; // GTK_COMBO
-static GtkEntry* fsgame_entry;
+struct gamemode_s {
+	const char *gameFile;
+	const char *name;
+	const char *mode;
+	qboolean base; //default mode
+};
+typedef struct gamemode_s gamemode_t;
 
-gint OnSelchangeComboWhatgame( GtkWidget *widget, GdkEvent* event, gpointer data ){
-	const char *dir = gtk_entry_get_text( GTK_ENTRY( GTK_COMBO( game_select )->entry ) );
-	// HACK: Wolf
-	if ( g_pGameDescription->mGameFile == "wolf.game" ) {
-		if ( !strcmp( dir,sWolfComboItem ) ) {
-			// disable the fs_game text entry
-			gtk_entry_set_text( fsgame_entry, "" );
-			gtk_widget_set_sensitive( GTK_WIDGET( fsgame_entry ), false );
-		}
-		else
-		{
-			gtk_entry_set_text( fsgame_entry, "" );
-			gtk_widget_set_sensitive( GTK_WIDGET( fsgame_entry ), true );
-		}
+gamemode_t gameModeList[] = {
+	{ "wolf.game", sWolfSPCombo, "sp", qtrue },
+	{ "wolf.game", sWolfMPCombo, "mp", qfalse },
 
-	}
-	// HACK: ET
-	else if ( g_pGameDescription->mGameFile == "et.game" ) {
-		if ( !strcmp( dir,sETComboItem ) ) {
-			// disable the fs_game text entry
-			gtk_entry_set_text( fsgame_entry, "" );
-			gtk_widget_set_sensitive( GTK_WIDGET( fsgame_entry ), false );
-		}
-		else
-		{
-			gtk_entry_set_text( fsgame_entry, "" );
-			gtk_widget_set_sensitive( GTK_WIDGET( fsgame_entry ), true );
-		}
+	{ "jk2.game", sJK2SPCombo, "sp", qtrue },
+	{ "jk2.game", sJK2MPCombo, "mp", qfalse },
 
-	}
-	else if ( g_pGameDescription->mGameFile == "hl.game" ) {
-		if ( !strcmp( dir,sHLComboItem ) ) {
-			// disable the fs_game text entry
-			gtk_entry_set_text( fsgame_entry, "" );
-			gtk_widget_set_sensitive( GTK_WIDGET( fsgame_entry ), false );
-		}
-		else
-		{
-			gtk_entry_set_text( fsgame_entry, "" );
-			gtk_widget_set_sensitive( GTK_WIDGET( fsgame_entry ), true );
-		}
+	{ "ja.game", sJASPCombo, "sp", qtrue },
+	{ "ja.game", sJAMPCombo, "mp", qfalse },
 
-	}
-	// RIANT
-	// HACK: JK2
-	else if ( g_pGameDescription->mGameFile == "jk2.game" ) {
-		if ( !strcmp( dir,sJK2ComboItem ) ) {
-			// disable the fs_game text entry
-			gtk_entry_set_text( fsgame_entry, "" );
-			gtk_widget_set_sensitive( GTK_WIDGET( fsgame_entry ), false );
-		}
-		else
-		{
-			gtk_entry_set_text( fsgame_entry, "" );
-			gtk_widget_set_sensitive( GTK_WIDGET( fsgame_entry ), true );
-		}
-	}
-	// TTimo
-	// HACK: JA
-	else if ( g_pGameDescription->mGameFile == "ja.game" ) {
-		if ( !strcmp( dir,sJAComboItem ) ) {
-			// disable the fs_game text entry
-			gtk_entry_set_text( fsgame_entry, "" );
-			gtk_widget_set_sensitive( GTK_WIDGET( fsgame_entry ), false );
-		}
-		else
-		{
-			gtk_entry_set_text( fsgame_entry, "" );
-			gtk_widget_set_sensitive( GTK_WIDGET( fsgame_entry ), true );
-		}
-	}
-	// RIANT
-	// HACK: STVEF
-	else if ( g_pGameDescription->mGameFile == "stvef.game" ) {
-		if ( !strcmp( dir,sSTVEFComboItem ) ) {
-			// disable the fs_game text entry
-			gtk_entry_set_text( fsgame_entry, "" );
-			gtk_widget_set_sensitive( GTK_WIDGET( fsgame_entry ), false );
-		}
-		else
-		{
-			gtk_entry_set_text( fsgame_entry, "" );
-			gtk_widget_set_sensitive( GTK_WIDGET( fsgame_entry ), true );
-		}
-	}
-	// RIANT
-	// HACK: SOF2
-	else if ( g_pGameDescription->mGameFile == "sof2.game" ) {
-		if ( !strcmp( dir,sSOF2ComboItem ) ) {
-			// disable the fs_game text entry
-			gtk_entry_set_text( fsgame_entry, "" );
-			gtk_widget_set_sensitive( GTK_WIDGET( fsgame_entry ), false );
-		}
-		else
-		{
-			gtk_entry_set_text( fsgame_entry, "" );
-			gtk_widget_set_sensitive( GTK_WIDGET( fsgame_entry ), true );
-		}
-	}
-	// QUAKE 3
-	else
+	{ "stvef.game", sSTVEFSPCombo, "sp", qtrue },
+	{ "stvef.game", sSTVEFMPCombo, "mp", qfalse },
+
+	{ "sof2.game", sSOF2SPCombo, "sp", qtrue },
+	{ "sof2.game", sSOF2MPCombo, "mp", qfalse },
+
+};
+
+struct game_s {
+	const char *gameFile;
+	const char *name;
+	const char *fs_game; //filesystem gamename
+	qboolean base; //default basegame, ie baseq3
+	qboolean custom; //ie Custom Quake III modification
+};
+typedef struct game_s game_t;
+
+game_t gameList[] = {
+	{ "q3.game", sQ3ComboItem, "baseq3", qtrue, qfalse },
+	{ "q3.game", sTAComboItem, "missionpack", qfalse, qfalse },
+	{ "q3.game", "Defrag", "defrag", qfalse, qfalse },
+	{ "q3.game", sModComboItem, "", qfalse, qtrue },
+
+	{ "wolf.game", sWolfComboItem, "main", qtrue, qfalse },
+	{ "wolf.game", sWolfModComboItem, "", qfalse, qfalse },
+
+	{ "hl.game", sHLComboItem, "valve", qtrue, qfalse },
+	{ "hl.game", sHLModComboItem, "", qfalse, qtrue },
+	
+	{ "et.game", sETComboItem, "etmain", qtrue, qfalse },
+	{ "et.game", sETModComboItem, "", qfalse, qtrue },
+
+	{ "jk2.game", sJK2ComboItem, "base", qtrue, qfalse },
+	{ "jk2.game", sJK2ModComboItem, "", qfalse, qtrue },
+
+	{ "ja.game", sJAComboItem, "base", qtrue, qfalse },
+	{ "ja.game", sJAModComboItem, "", qfalse, qtrue },
+
+	{ "stvef.game", sSTVEFComboItem, "baseEf", qtrue, qfalse },
+	{ "stvef.game", sSTVEFModComboItem, "", qfalse, qtrue },
+
+	{ "sof2.game", sSOF2ComboItem, "base", qtrue, qfalse },
+	{ "sof2.game", sSOF2ModComboItem, "", qfalse, qtrue },
+
+};
+
+GList *newMappingModesListForGameFile( Str & mGameFile ){
+	GList *mode_list;
+	size_t x;
+
+	mode_list = NULL;
+	for( x = 0; x < G_N_ELEMENTS( gameModeList ); x++ )
 	{
-		if ( !strcmp( dir,sQ3ComboItem ) ) {
-			// disable the fs_game text entry
-			gtk_entry_set_text( fsgame_entry, "" );
-			gtk_widget_set_sensitive( GTK_WIDGET( fsgame_entry ), false );
+		if( strcmp( mGameFile.GetBuffer(), gameModeList[x].gameFile ) == 0 ) {
+			mode_list = g_list_append( mode_list, &gameModeList[x] );
 		}
-		else if ( !strcmp( dir,sTAComboItem ) ) {
-			gtk_entry_set_text( fsgame_entry, "missionpack" );
-			gtk_widget_set_sensitive( GTK_WIDGET( fsgame_entry ), false );
+	}
+	return mode_list;
+}
+
+GList *newModListForGameFile( Str & mGameFile ){
+	GList *mod_list;
+	size_t x;
+
+	mod_list = NULL;
+	for( x = 0; x < G_N_ELEMENTS( gameList ); x++ )
+	{
+		if( strcmp( mGameFile.GetBuffer(), gameList[x].gameFile ) == 0 ) {
+			mod_list = g_list_append( mod_list, &gameList[x] );
 		}
-		else
-		{
-			gtk_entry_set_text( fsgame_entry, "" );
-			gtk_widget_set_sensitive( GTK_WIDGET( fsgame_entry ), true );
+	}
+	return mod_list;
+}
+
+void OnSelchangeComboWhatgame( GtkWidget *widget, gpointer data ){
+	GtkWidget *fs_game_entry;
+	GtkWidget* game_select;
+	size_t x;
+	const gchar *name;
+
+	game_select = GTK_WIDGET( g_object_get_data( G_OBJECT( data ), "game_select" ) );
+	name = gtk_entry_get_text( GTK_ENTRY( GTK_COMBO( game_select )->entry ) );
+
+	if( !name ) {
+		return;
+	}
+	fs_game_entry = GTK_WIDGET( g_object_get_data( G_OBJECT( data ), "fs_game_entry" ) );
+
+	for( x = 0; x < G_N_ELEMENTS( gameList ); x++ )
+	{
+		if( strcmp( g_pGameDescription->mGameFile.GetBuffer(), gameList[x].gameFile ) == 0 
+			&& strcmp( name, gameList[x].name ) == 0 ) {
+
+			if( gameList[x].custom ) {
+				gtk_entry_set_text( GTK_ENTRY( fs_game_entry ), gameList[x].fs_game );
+				gtk_widget_set_sensitive( GTK_WIDGET( fs_game_entry ), true );
+				gtk_widget_grab_focus( GTK_WIDGET( fs_game_entry ) );
+			} else {
+				gtk_entry_set_text( GTK_ENTRY( fs_game_entry ), gameList[x].fs_game );
+				gtk_widget_set_sensitive( GTK_WIDGET( fs_game_entry ), false );
+			}
+			break;
 		}
 	}
 
-	return TRUE;
 }
 
 void DoProjectSettings(){
 	GtkWidget *project;
 	GtkWidget *frame, *label, *vbox, *table1, *table2, *button;
 	GtkWidget *brush;
-	GtkWidget *scr;
-	GtkWidget *base, *game;
-	GtkWidget *gamemode_combo;
+	GtkWidget *scr, *entry;
+	GtkWidget *base, *game_select;
+	GtkWidget *gamemode_combo, *fs_game_entry;
+	GList *mod_list, *gamemode_list;
+	GList *lst;
 	GList *combo_list = (GList*)NULL;
+	const char *fs_game;
+	qboolean isBasegame;
 
 	int loop = 1, ret = IDCANCEL;
 
 	project = gtk_window_new( GTK_WINDOW_TOPLEVEL );
 	gtk_window_set_title( GTK_WINDOW( project ), _( "Project Settings" ) );
-	gtk_signal_connect( GTK_OBJECT( project ), "delete_event",
+	gtk_signal_connect( GTK_OBJECT( project ), "delete-event",
 						GTK_SIGNAL_FUNC( dialog_delete_callback ), NULL );
 	gtk_signal_connect( GTK_OBJECT( project ), "destroy",
 						GTK_SIGNAL_FUNC( gtk_widget_destroy ), NULL );
@@ -585,150 +590,95 @@ void DoProjectSettings(){
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
 					  (GtkAttachOptions) ( GTK_FILL ), 0, 0 );
 
-	// HACK: hardcoded game stuff
-	if ( g_pGameDescription->mGameFile == "wolf.game" ||
-		 g_pGameDescription->mGameFile == "et.game" ||
-		 g_pGameDescription->mGameFile == "jk2.game" ||
-		 g_pGameDescription->mGameFile == "stvef.game" ||
-		 g_pGameDescription->mGameFile == "sof2.game" ||
-		 g_pGameDescription->mGameFile == "ja.game" ) {
-		table2 = gtk_table_new( 9, 2, FALSE );
-	}
-	else
-	{
-		table2 = gtk_table_new( 8, 2, FALSE );
-	}
+	table2 = gtk_table_new( 9, 2, FALSE );
 	gtk_widget_show( table2 );
 	gtk_container_add( GTK_CONTAINER( frame ), table2 );
 	gtk_container_set_border_width( GTK_CONTAINER( table2 ), 5 );
 	gtk_table_set_row_spacings( GTK_TABLE( table2 ), 5 );
 	gtk_table_set_col_spacings( GTK_TABLE( table2 ), 5 );
 
-	/*
-	   fill in the game selection combo
-	   HACK: hardcoded Q3/Wolf/HL switch
-	   \todo that stuff would be faster to write with implementation of property bags and associated code to edit
-	 */
-	if ( g_pGameDescription->mGameFile == "wolf.game" ) {
-		combo_list = g_list_append( combo_list, (void *)sWolfComboItem );
-		combo_list = g_list_append( combo_list, (void *)sWolfModComboItem );
-	}
-	else if ( g_pGameDescription->mGameFile == "et.game" ) {
-		combo_list = g_list_append( combo_list, (void *)sETComboItem );
-		combo_list = g_list_append( combo_list, (void *)sETModComboItem );
-	}
-	else if ( g_pGameDescription->mGameFile == "hl.game" ) {
-		combo_list = g_list_append( combo_list, (void *)sHLComboItem );
-		combo_list = g_list_append( combo_list, (void *)sHLModComboItem );
-	}
-	// RIANT
-	// JK2 HACK
-	else if ( g_pGameDescription->mGameFile == "jk2.game" ) {
-		combo_list = g_list_append( combo_list, (void *)sJK2ComboItem );
-		combo_list = g_list_append( combo_list, (void *)sJK2ModComboItem );
-	}
-	// TTimo
-	// JA HACK
-	else if ( g_pGameDescription->mGameFile == "ja.game" ) {
-		combo_list = g_list_append( combo_list, (void *)sJAComboItem );
-		combo_list = g_list_append( combo_list, (void *)sJAModComboItem );
-	}
-	// RIANT
-	// STVEF HACK
-	else if ( g_pGameDescription->mGameFile == "stvef.game" ) {
-		combo_list = g_list_append( combo_list, (void *)sSTVEFComboItem );
-		combo_list = g_list_append( combo_list, (void *)sSTVEFModComboItem );
-	}
-	// RIANT
-	// SOF2 HACK A LA JK2 A LA WOLF
-	else if ( g_pGameDescription->mGameFile == "sof2.game" ) {
-		combo_list = g_list_append( combo_list, (void *)sSOF2ComboItem );
-		combo_list = g_list_append( combo_list, (void *)sSOF2ModComboItem );
-	}
-	else
-	{
-		// Q3 or default
-		combo_list = g_list_append( combo_list, (void *)sQ3ComboItem );
-		combo_list = g_list_append( combo_list, (void *)sTAComboItem );
-		combo_list = g_list_append( combo_list, (void *)sModComboItem );
-	}
-
+	mod_list = newModListForGameFile( g_pGameDescription->mGameFile );
 	game_select = gtk_combo_new();
+	for( lst = mod_list; lst != NULL; lst = g_list_next( lst ) )
+	{
+		const game_t *game_x = (const game_t *)lst->data;
+		if( strcmp( g_pGameDescription->mGameFile.GetBuffer(), game_x->gameFile ) == 0 ) {
+			combo_list = g_list_append( combo_list, (void *)game_x->name );
+		}
+	}
 	gtk_combo_set_popdown_strings( GTK_COMBO( game_select ), combo_list );
+	g_list_free( combo_list );
+
 	gtk_widget_show( game_select );
 	gtk_table_attach( GTK_TABLE( table2 ), game_select, 1, 2, 6, 7,
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
 
 	gtk_signal_connect( GTK_OBJECT( GTK_COMBO( game_select )->entry ), "changed",
-						GTK_SIGNAL_FUNC( OnSelchangeComboWhatgame ), NULL );
-
-	g_list_free( combo_list );
+						GTK_SIGNAL_FUNC( OnSelchangeComboWhatgame ), project );
+	g_object_set_data( G_OBJECT( project ), "game_select", game_select );
 	gtk_entry_set_editable( GTK_ENTRY( GTK_COMBO( game_select )->entry ), FALSE );
 
-	game = gtk_entry_new();
-	fsgame_entry = GTK_ENTRY( game );
-	gtk_widget_show( game );
-	gtk_table_attach( GTK_TABLE( table2 ), game, 1, 2, 7, 8,
+	fs_game_entry = entry = gtk_entry_new();
+	gtk_widget_set_sensitive( GTK_WIDGET( fs_game_entry ), false );
+	gtk_widget_show( entry );
+	gtk_table_attach( GTK_TABLE( table2 ), entry, 1, 2, 7, 8,
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
+	g_object_set_data( G_OBJECT( project ), "fs_game_entry", entry );
 
-	/*
-	   wolf specific: select MP or SP mode
-	 */
-	if ( g_pGameDescription->mGameFile == "wolf.game" ) {
-		combo_list = NULL;
-		combo_list = g_list_append( combo_list, (void *)sWolfSPCombo );
-		combo_list = g_list_append( combo_list, (void *)sWolfMPCombo );
-
-		gamemode_combo = gtk_combo_new();
-		gtk_combo_set_popdown_strings( GTK_COMBO( gamemode_combo ), combo_list );
-		gtk_widget_show( gamemode_combo );
-		gtk_table_attach( GTK_TABLE( table2 ), gamemode_combo, 1, 2, 8, 9,
-						  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
-						  (GtkAttachOptions) ( 0 ), 0, 0 );
-
-		g_list_free( combo_list );
-		combo_list = NULL;
-
-		label = gtk_label_new( _( "Mapping mode" ) );
-		gtk_widget_show( label );
-		gtk_table_attach( GTK_TABLE( table2 ), label, 0, 1, 8, 9,
-						  (GtkAttachOptions) ( GTK_FILL ),
-						  (GtkAttachOptions) ( 0 ), 0, 0 );
-		gtk_misc_set_alignment( GTK_MISC( label ), 1, 0.5 );
+	fs_game = ValueForKey( g_qeglobals.d_project_entity, "gamename" );
+	isBasegame = qtrue;
+	if( fs_game && strlen( fs_game ) > 0 ) {
+		for( lst = mod_list; lst != NULL; lst = g_list_next( lst ) )
+		{
+			const game_t *game_x = (const game_t *)lst->data;
+			if( strcmp( g_pGameDescription->mGameFile.GetBuffer(), game_x->gameFile ) == 0 && strcmp( game_x->fs_game, fs_game ) == 0 ) {
+				gtk_entry_set_text( GTK_ENTRY( GTK_COMBO( game_select )->entry ), game_x->name );
+				isBasegame = qfalse;
+				break;
+			}
+		}
+		if( isBasegame ) {
+			for( lst = mod_list; lst != NULL; lst = g_list_next( lst ) )
+			{
+				const game_t *game_x = (const game_t *)lst->data;
+				if( strcmp( g_pGameDescription->mGameFile.GetBuffer(), game_x->gameFile ) == 0 && game_x->custom ) {
+					gtk_entry_set_text( GTK_ENTRY( GTK_COMBO( game_select )->entry ), game_x->name );
+					gtk_widget_set_sensitive( GTK_WIDGET( fs_game_entry ), true );
+					isBasegame = qfalse;
+					break;
+				}
+			}
+		}
 	}
-
-	// RIANT
-	// JK2 HACK
-	if ( g_pGameDescription->mGameFile == "jk2.game" ) {
-		combo_list = NULL;
-		combo_list = g_list_append( combo_list, (void *)sJK2SPCombo );
-		combo_list = g_list_append( combo_list, (void *)sJK2MPCombo );
-
-		gamemode_combo = gtk_combo_new();
-		gtk_combo_set_popdown_strings( GTK_COMBO( gamemode_combo ), combo_list );
-		gtk_widget_show( gamemode_combo );
-		gtk_table_attach( GTK_TABLE( table2 ), gamemode_combo, 1, 2, 8, 9,
-						  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
-						  (GtkAttachOptions) ( 0 ), 0, 0 );
-
-		g_list_free( combo_list );
-		combo_list = NULL;
-
-		label = gtk_label_new( _( "Mapping mode" ) );
-		gtk_widget_show( label );
-		gtk_table_attach( GTK_TABLE( table2 ), label, 0, 1, 8, 9,
-						  (GtkAttachOptions) ( GTK_FILL ),
-						  (GtkAttachOptions) ( 0 ), 0, 0 );
-		gtk_misc_set_alignment( GTK_MISC( label ), 1, 0.5 );
+	if( isBasegame ) {
+		for( lst = mod_list; lst != NULL; lst = g_list_next( lst ) )
+		{
+			const game_t *game_x = (const game_t *)lst->data;
+			if( strcmp( g_pGameDescription->mGameFile.GetBuffer(), game_x->gameFile ) == 0 && game_x->base ) {
+				gtk_entry_set_text( GTK_ENTRY( GTK_COMBO( game_select )->entry ), game_x->name );
+				fs_game = game_x->fs_game;
+				break;
+			}
+		}
 	}
-	// TTimo
-	// JA HACK
-	if ( g_pGameDescription->mGameFile == "ja.game" ) {
+	gtk_entry_set_text( GTK_ENTRY( fs_game_entry ), fs_game );
+
+	gamemode_list = newMappingModesListForGameFile( g_pGameDescription->mGameFile );
+	if( gamemode_list ) {
+		const char *gamemode;
+		qboolean isBasemode;
+
 		combo_list = NULL;
-		combo_list = g_list_append( combo_list, (void *)sJASPCombo );
-		combo_list = g_list_append( combo_list, (void *)sJAMPCombo );
+
+		for( lst = gamemode_list; lst != NULL; lst = g_list_next( lst ) )
+		{
+			const gamemode_t *gamemode_x = (const gamemode_t *)lst->data;
+			if( strcmp( g_pGameDescription->mGameFile.GetBuffer(), gamemode_x->gameFile ) == 0 ) {
+				combo_list = g_list_append( combo_list, (void *)gamemode_x->name );
+			}
+		}
 
 		gamemode_combo = gtk_combo_new();
 		gtk_combo_set_popdown_strings( GTK_COMBO( gamemode_combo ), combo_list );
@@ -746,54 +696,28 @@ void DoProjectSettings(){
 						  (GtkAttachOptions) ( GTK_FILL ),
 						  (GtkAttachOptions) ( 0 ), 0, 0 );
 		gtk_misc_set_alignment( GTK_MISC( label ), 1, 0.5 );
-	}
-	// RIANT
-	// STVEF HACK
-	if ( g_pGameDescription->mGameFile == "stvef.game" ) {
-		combo_list = NULL;
-		combo_list = g_list_append( combo_list, (void *)sSTVEFSPCombo );
-		combo_list = g_list_append( combo_list, (void *)sSTVEFMPCombo );
 
-		gamemode_combo = gtk_combo_new();
-		gtk_combo_set_popdown_strings( GTK_COMBO( gamemode_combo ), combo_list );
-		gtk_widget_show( gamemode_combo );
-		gtk_table_attach( GTK_TABLE( table2 ), gamemode_combo, 1, 2, 8, 9,
-						  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
-						  (GtkAttachOptions) ( 0 ), 0, 0 );
-
-		g_list_free( combo_list );
-		combo_list = NULL;
-
-		label = gtk_label_new( _( "Mapping mode" ) );
-		gtk_widget_show( label );
-		gtk_table_attach( GTK_TABLE( table2 ), label, 0, 1, 8, 9,
-						  (GtkAttachOptions) ( GTK_FILL ),
-						  (GtkAttachOptions) ( 0 ), 0, 0 );
-		gtk_misc_set_alignment( GTK_MISC( label ), 1, 0.5 );
-	}
-	// RIANT
-	// SOF2 HACK
-	if ( g_pGameDescription->mGameFile == "sof2.game" ) {
-		combo_list = NULL;
-		combo_list = g_list_append( combo_list, (void *)sSOF2SPCombo );
-		combo_list = g_list_append( combo_list, (void *)sSOF2MPCombo );
-
-		gamemode_combo = gtk_combo_new();
-		gtk_combo_set_popdown_strings( GTK_COMBO( gamemode_combo ), combo_list );
-		gtk_widget_show( gamemode_combo );
-		gtk_table_attach( GTK_TABLE( table2 ), gamemode_combo, 1, 2, 8, 9,
-						  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
-						  (GtkAttachOptions) ( 0 ), 0, 0 );
-
-		g_list_free( combo_list );
-		combo_list = NULL;
-
-		label = gtk_label_new( _( "Mapping mode" ) );
-		gtk_widget_show( label );
-		gtk_table_attach( GTK_TABLE( table2 ), label, 0, 1, 8, 9,
-						  (GtkAttachOptions) ( GTK_FILL ),
-						  (GtkAttachOptions) ( 0 ), 0, 0 );
-		gtk_misc_set_alignment( GTK_MISC( label ), 1, 0.5 );
+		gamemode = ValueForKey( g_qeglobals.d_project_entity, "gamemode" );
+		isBasemode = qtrue;
+		for( lst = gamemode_list; lst != NULL; lst = g_list_next( lst ) )
+		{
+			const gamemode_t *gamemode_x = (const gamemode_t *)lst->data;
+			if( strcmp( g_pGameDescription->mGameFile.GetBuffer(), gamemode_x->gameFile ) == 0 && strcmp( gamemode_x->mode, gamemode ) == 0 ) {
+				gtk_entry_set_text( GTK_ENTRY( GTK_COMBO( gamemode_combo )->entry ), gamemode_x->name );		
+				isBasemode = qfalse;
+				break;
+			}
+		}
+		if( isBasemode ) {
+			for( lst = gamemode_list; lst != NULL; lst = g_list_next( lst ) )
+			{
+				const gamemode_t *gamemode_x = (const gamemode_t *)lst->data;
+				if( strcmp( g_pGameDescription->mGameFile.GetBuffer(), gamemode_x->gameFile ) == 0 && gamemode_x->base ) {
+					gtk_entry_set_text( GTK_ENTRY( GTK_COMBO( gamemode_combo )->entry ), gamemode_x->name );		
+					break;
+				}
+			}
+		}
 	}
 
 	/*
@@ -835,207 +759,6 @@ void DoProjectSettings(){
 	UpdateBSPCommandList( project );
 	gtk_toggle_button_set_active( GTK_TOGGLE_BUTTON( brush ), ( g_qeglobals.m_bBrushPrimitMode ) ? TRUE : FALSE );
 
-	// initialise the fs_game selection from the project settings into the dialog
-	const char *dir = ValueForKey( g_qeglobals.d_project_entity, "gamename" );
-	// HACK: hardcoded wolf stuff
-	if ( g_pGameDescription->mGameFile == "wolf.game" ) {
-		if ( ( strlen( dir ) == 0 ) || !stricmp( dir,"main" ) ) {
-			// no fs_game set, we are running stock Quake III Arena editing
-			gtk_entry_set_text( GTK_ENTRY( GTK_COMBO( game_select )->entry ), sWolfComboItem );
-			gtk_entry_set_text( GTK_ENTRY( game ), "" );
-			gtk_widget_set_sensitive( game, false );
-		}
-		else
-		{
-			// this is a custom mod
-			gtk_entry_set_text( GTK_ENTRY( GTK_COMBO( game_select )->entry ), sWolfModComboItem );
-			gtk_entry_set_text( GTK_ENTRY( game ), dir );
-			gtk_widget_set_sensitive( game, true );
-		}
-	}
-	// HACK: hardcoded et stuff
-	if ( g_pGameDescription->mGameFile == "et.game" ) {
-		if ( ( strlen( dir ) == 0 ) || !stricmp( dir,"etmain" ) ) {
-			// no fs_game set, we are running stock Quake III Arena editing
-			gtk_entry_set_text( GTK_ENTRY( GTK_COMBO( game_select )->entry ), sETComboItem );
-			gtk_entry_set_text( GTK_ENTRY( game ), "" );
-			gtk_widget_set_sensitive( game, false );
-		}
-		else
-		{
-			// this is a custom mod
-			gtk_entry_set_text( GTK_ENTRY( GTK_COMBO( game_select )->entry ), sETModComboItem );
-			gtk_entry_set_text( GTK_ENTRY( game ), dir );
-			gtk_widget_set_sensitive( game, true );
-		}
-	}
-	// HACK: hardcoded half-life stuff
-	else if ( g_pGameDescription->mGameFile == "hl.game" ) {
-		if ( ( strlen( dir ) == 0 ) || !stricmp( dir,"valve" ) ) {
-			gtk_entry_set_text( GTK_ENTRY( GTK_COMBO( game_select )->entry ), sHLComboItem );
-			gtk_entry_set_text( GTK_ENTRY( game ), "" );
-			gtk_widget_set_sensitive( game, false );
-		}
-		else
-		{
-			// this is a custom mod
-			gtk_entry_set_text( GTK_ENTRY( GTK_COMBO( game_select )->entry ), sHLModComboItem );
-			gtk_entry_set_text( GTK_ENTRY( game ), dir );
-			gtk_widget_set_sensitive( game, true );
-		}
-	}
-	// RIANT
-	// JK2 HACK
-	else if ( g_pGameDescription->mGameFile == "jk2.game" ) {
-		if ( ( strlen( dir ) == 0 ) || !stricmp( dir,"base" ) ) {
-			// no fs_game set, we are running stock Quake III Arena editing
-			gtk_entry_set_text( GTK_ENTRY( GTK_COMBO( game_select )->entry ), sJK2ComboItem );
-			gtk_entry_set_text( GTK_ENTRY( game ), "" );
-			gtk_widget_set_sensitive( game, false );
-		}
-		else
-		{
-			// this is a custom mod
-			gtk_entry_set_text( GTK_ENTRY( GTK_COMBO( game_select )->entry ), sJK2ModComboItem );
-			gtk_entry_set_text( GTK_ENTRY( game ), dir );
-			gtk_widget_set_sensitive( game, true );
-		}
-	}
-	// TTimo
-	// JA HACK
-	else if ( g_pGameDescription->mGameFile == "ja.game" ) {
-		if ( ( strlen( dir ) == 0 ) || !stricmp( dir,"base" ) ) {
-			// no fs_game set, we are running stock editing
-			gtk_entry_set_text( GTK_ENTRY( GTK_COMBO( game_select )->entry ), sJAComboItem );
-			gtk_entry_set_text( GTK_ENTRY( game ), "" );
-			gtk_widget_set_sensitive( game, false );
-		}
-		else
-		{
-			// this is a custom mod
-			gtk_entry_set_text( GTK_ENTRY( GTK_COMBO( game_select )->entry ), sJAModComboItem );
-			gtk_entry_set_text( GTK_ENTRY( game ), dir );
-			gtk_widget_set_sensitive( game, true );
-		}
-	}
-	// RIANT
-	// STVEF2 HACK
-	else if ( g_pGameDescription->mGameFile == "stvef.game" ) {
-		if ( ( strlen( dir ) == 0 ) || !stricmp( dir,"baseEf" ) ) {
-			// no fs_game set, we are running stock Quake III Arena editing
-			gtk_entry_set_text( GTK_ENTRY( GTK_COMBO( game_select )->entry ), sSTVEFComboItem );
-			gtk_entry_set_text( GTK_ENTRY( game ), "" );
-			gtk_widget_set_sensitive( game, false );
-		}
-		else
-		{
-			// this is a custom mod
-			gtk_entry_set_text( GTK_ENTRY( GTK_COMBO( game_select )->entry ), sSTVEFModComboItem );
-			gtk_entry_set_text( GTK_ENTRY( game ), dir );
-			gtk_widget_set_sensitive( game, true );
-		}
-	}
-	// RIANT
-	// SOF2 HACK
-	else if ( g_pGameDescription->mGameFile == "sof2.game" ) {
-		if ( ( strlen( dir ) == 0 ) || !stricmp( dir,"base" ) ) {
-			// no fs_game set, we are running stock Quake III Arena editing
-			gtk_entry_set_text( GTK_ENTRY( GTK_COMBO( game_select )->entry ), sSOF2ComboItem );
-			gtk_entry_set_text( GTK_ENTRY( game ), "" );
-			gtk_widget_set_sensitive( game, false );
-		}
-		else
-		{
-			// this is a custom mod
-			gtk_entry_set_text( GTK_ENTRY( GTK_COMBO( game_select )->entry ), sSOF2ModComboItem );
-			gtk_entry_set_text( GTK_ENTRY( game ), dir );
-			gtk_widget_set_sensitive( game, true );
-		}
-	}
-	else
-	{
-		if ( ( strlen( dir ) == 0 ) || !strcmp( dir,"baseq3" ) ) {
-			// no fs_game set, we are running stock Quake III Arena editing
-			gtk_entry_set_text( GTK_ENTRY( GTK_COMBO( game_select )->entry ), sQ3ComboItem );
-			gtk_entry_set_text( GTK_ENTRY( game ), "" );
-			gtk_widget_set_sensitive( game, false );
-		}
-		else if ( !strcmp( dir,"missionpack" ) ) {
-			gtk_entry_set_text( GTK_ENTRY( GTK_COMBO( game_select )->entry ), sTAComboItem );
-			gtk_entry_set_text( GTK_ENTRY( game ), "missionpack" );
-			gtk_widget_set_sensitive( game, false );
-		}
-		else
-		{
-			// this is a custom mod
-			gtk_entry_set_text( GTK_ENTRY( GTK_COMBO( game_select )->entry ), sModComboItem );
-			gtk_entry_set_text( GTK_ENTRY( game ), dir );
-			gtk_widget_set_sensitive( game, true );
-		}
-	}
-
-	// HACK: hardcoded wolf stuff
-	if ( g_pGameDescription->mGameFile == "wolf.game" ) {
-		const char *gamemode = ValueForKey( g_qeglobals.d_project_entity, "gamemode" );
-		if ( ( strlen( gamemode ) == 0 ) || !strcmp( gamemode,"sp" ) ) {
-			// nothing set yet, or single player
-			gtk_entry_set_text( GTK_ENTRY( GTK_COMBO( gamemode_combo )->entry ), sWolfSPCombo );
-		}
-		else
-		{
-			gtk_entry_set_text( GTK_ENTRY( GTK_COMBO( gamemode_combo )->entry ), sWolfMPCombo );
-		}
-	}
-
-	// JK2 HACK
-	else if ( g_pGameDescription->mGameFile == "jk2.game" ) {
-		const char *gamemode = ValueForKey( g_qeglobals.d_project_entity, "gamemode" );
-		if ( ( strlen( gamemode ) == 0 ) || !strcmp( gamemode,"sp" ) ) {
-			// nothing set yet, or single player
-			gtk_entry_set_text( GTK_ENTRY( GTK_COMBO( gamemode_combo )->entry ), sJK2SPCombo );
-		}
-		else
-		{
-			gtk_entry_set_text( GTK_ENTRY( GTK_COMBO( gamemode_combo )->entry ), sJK2MPCombo );
-		}
-	}
-	// JA HACK
-	else if ( g_pGameDescription->mGameFile == "ja.game" ) {
-		const char *gamemode = ValueForKey( g_qeglobals.d_project_entity, "gamemode" );
-		if ( ( strlen( gamemode ) == 0 ) || !strcmp( gamemode,"sp" ) ) {
-			// nothing set yet, or single player
-			gtk_entry_set_text( GTK_ENTRY( GTK_COMBO( gamemode_combo )->entry ), sJASPCombo );
-		}
-		else
-		{
-			gtk_entry_set_text( GTK_ENTRY( GTK_COMBO( gamemode_combo )->entry ), sJAMPCombo );
-		}
-	}
-	// STVEF HACK
-	else if ( g_pGameDescription->mGameFile == "stvef.game" ) {
-		const char *gamemode = ValueForKey( g_qeglobals.d_project_entity, "gamemode" );
-		if ( ( strlen( gamemode ) == 0 ) || !strcmp( gamemode,"sp" ) ) {
-			// nothing set yet, or single player
-			gtk_entry_set_text( GTK_ENTRY( GTK_COMBO( gamemode_combo )->entry ), sSTVEFSPCombo );
-		}
-		else
-		{
-			gtk_entry_set_text( GTK_ENTRY( GTK_COMBO( gamemode_combo )->entry ), sSTVEFMPCombo );
-		}
-	}
-	// SOF2 HACK
-	else if ( g_pGameDescription->mGameFile == "sof2.game" ) {
-		const char *gamemode = ValueForKey( g_qeglobals.d_project_entity, "gamemode" );
-		if ( ( strlen( gamemode ) == 0 ) || !strcmp( gamemode,"sp" ) ) {
-			// nothing set yet, or single player
-			gtk_entry_set_text( GTK_ENTRY( GTK_COMBO( gamemode_combo )->entry ), sSOF2SPCombo );
-		}
-		else
-		{
-			gtk_entry_set_text( GTK_ENTRY( GTK_COMBO( gamemode_combo )->entry ), sSOF2MPCombo );
-		}
-	}
-
 	gtk_grab_add( project );
 	gtk_widget_show( project );
 
@@ -1048,6 +771,7 @@ void DoProjectSettings(){
 		char buf[1024];
 		const char *r;
 		char *w;
+		const char *custom_fs_game, *selected_game, *new_fs_game;
 
 		// convert path to unix format
 		for ( r = gtk_entry_get_text( GTK_ENTRY( base ) ), w = buf; *r != '\0'; r++, w++ )
@@ -1060,119 +784,73 @@ void DoProjectSettings(){
 		*w = '\0';
 		SetKeyValue( g_qeglobals.d_project_entity, "basepath", buf );
 
-		dir = gtk_entry_get_text( GTK_ENTRY( game ) );
-		// Hack: hard coded wolf stuff
-		if ( g_pGameDescription->mGameFile == "wolf.game" ) {
-			if ( !strlen( dir ) || !stricmp( dir,"main" ) ) {
-				DeleteKey( g_qeglobals.d_project_entity, "gamename" );
-			}
-			else
+		selected_game = gtk_entry_get_text( GTK_ENTRY( GTK_COMBO( game_select )->entry ) );
+		custom_fs_game = gtk_entry_get_text( GTK_ENTRY( fs_game_entry ) );
+
+		isBasegame = qfalse;
+		new_fs_game = NULL;
+
+		if( !selected_game ) {
+			isBasegame = qtrue; //should never happen that none is selected
+		} else {
+			for( lst = mod_list; lst != NULL; lst = g_list_next( lst ) )
 			{
-				SetKeyValue( g_qeglobals.d_project_entity, "gamename", dir );
+				const game_t *game_x = (const game_t *)lst->data;
+				if( strcmp( g_pGameDescription->mGameFile.GetBuffer(), game_x->gameFile ) == 0 && strcmp( game_x->name, selected_game ) == 0 ) {
+					if( game_x->base ) {
+						isBasegame = qtrue;
+					} else if( game_x->custom ) {
+						if( !custom_fs_game || strlen( custom_fs_game ) == 0 ) {
+							isBasegame = qtrue;
+						} else {
+							new_fs_game = custom_fs_game;
+						}
+					} else {
+						new_fs_game = game_x->fs_game;
+					}
+				}
 			}
 		}
-		// Hack: hard coded ET stuff
-		else if ( g_pGameDescription->mGameFile == "et.game" ) {
-			if ( !strlen( dir ) || !stricmp( dir,"etmain" ) ) {
-				DeleteKey( g_qeglobals.d_project_entity, "gamename" );
-			}
-			else
-			{
-				SetKeyValue( g_qeglobals.d_project_entity, "gamename", dir );
-			}
+		if( new_fs_game == NULL ) {
+			isBasegame = qtrue;
 		}
-		// Hack: hard coded Half-life stuff
-		else if ( g_pGameDescription->mGameFile == "hl.game" ) {
-			if ( !strlen( dir ) || !stricmp( dir,"valve" ) ) {
-				DeleteKey( g_qeglobals.d_project_entity, "gamename" );
-			}
-			else
-			{
-				SetKeyValue( g_qeglobals.d_project_entity, "gamename", dir );
-			}
-		}
-		else if ( g_pGameDescription->mGameFile == "jk2.game" || g_pGameDescription->mGameFile == "ja.game" ) {
-			if ( !strlen( dir ) || !stricmp( dir,"base" ) ) {
-				DeleteKey( g_qeglobals.d_project_entity, "gamename" );
-			}
-			else
-			{
-				SetKeyValue( g_qeglobals.d_project_entity, "gamename", dir );
-			}
-		}
-		// RIANT
-		// STVEF HACK
-		else if ( g_pGameDescription->mGameFile == "stvef.game" ) {
-			if ( !strlen( dir ) || !stricmp( dir,"baseEf" ) ) {
-				DeleteKey( g_qeglobals.d_project_entity, "gamename" );
-			}
-			else
-			{
-				SetKeyValue( g_qeglobals.d_project_entity, "gamename", dir );
-			}
-		}
-		else
-		{
-			if ( !strlen( dir ) || !strcmp( dir,"baseq3" ) ) {
-				DeleteKey( g_qeglobals.d_project_entity, "gamename" );
-			}
-			else
-			{
-				SetKeyValue( g_qeglobals.d_project_entity, "gamename", dir );
-			}
+		if( isBasegame ) {
+			DeleteKey( g_qeglobals.d_project_entity, "gamename" );
+		} else {
+			SetKeyValue( g_qeglobals.d_project_entity, "gamename", new_fs_game );
 		}
 
-		// HACK: hardcoded wolf stuff
-		if ( g_pGameDescription->mGameFile == "wolf.game" ) {
-			// read from gamemode_combo
-			const char *gamemode = gtk_entry_get_text( GTK_ENTRY( GTK_COMBO( gamemode_combo )->entry ) );
-			if ( !strlen( gamemode ) || !strcmp( gamemode, sWolfSPCombo ) ) {
-				SetKeyValue( g_qeglobals.d_project_entity, "gamemode", "sp" );
-			}
-			else
-			{
-				SetKeyValue( g_qeglobals.d_project_entity, "gamemode", "mp" );
-			}
-		}
+		if( gamemode_list ) {
+			const char *selected_mode;
+			const char *new_mode;
+			
+			selected_mode = gtk_entry_get_text( GTK_ENTRY( GTK_COMBO( gamemode_combo )->entry ) );
+			new_mode = NULL;
 
-		// RIANT
-		// JK2 HACK
-		if ( g_pGameDescription->mGameFile == "jk2.game" ) {
-			// read from gamemode_combo
-			const char *gamemode = gtk_entry_get_text( GTK_ENTRY( GTK_COMBO( gamemode_combo )->entry ) );
-			if ( !strlen( gamemode ) || !strcmp( gamemode, sJK2SPCombo ) ) {
-				SetKeyValue( g_qeglobals.d_project_entity, "gamemode", "sp" );
+			if( !selected_mode ) {
+				new_mode = NULL;
+			} else {
+				for( lst = gamemode_list; lst != NULL; lst = g_list_next( lst ) )
+				{
+					const gamemode_t *gamemode_x = (const gamemode_t *)lst->data;
+					if( strcmp( g_pGameDescription->mGameFile.GetBuffer(), gamemode_x->gameFile ) == 0 && strcmp( gamemode_x->mode, selected_mode ) == 0 ) {
+						new_mode = selected_mode;
+						break;
+					}
+				}
 			}
-			else
-			{
-				SetKeyValue( g_qeglobals.d_project_entity, "gamemode", "mp" );
+			if( !new_mode ) {
+				for( lst = gamemode_list; lst != NULL; lst = g_list_next( lst ) )
+				{
+					const gamemode_t *gamemode_x = (const gamemode_t *)lst->data;
+					if( strcmp( g_pGameDescription->mGameFile.GetBuffer(), gamemode_x->gameFile ) == 0 ) {
+						new_mode = gamemode_x->mode;
+						break;
+					}
+				}
 			}
-		}
-		// TTimo
-		// JA HACK
-		if ( g_pGameDescription->mGameFile == "ja.game" ) {
-			// read from gamemode_combo
-			const char *gamemode = gtk_entry_get_text( GTK_ENTRY( GTK_COMBO( gamemode_combo )->entry ) );
-			if ( !strlen( gamemode ) || !strcmp( gamemode, sJASPCombo ) ) {
-				SetKeyValue( g_qeglobals.d_project_entity, "gamemode", "sp" );
-			}
-			else
-			{
-				SetKeyValue( g_qeglobals.d_project_entity, "gamemode", "mp" );
-			}
-		}
-
-		// RIANT
-		// STVEF HACK
-		if ( g_pGameDescription->mGameFile == "stvef.game" ) {
-			// read from gamemode_combo
-			const char *gamemode = gtk_entry_get_text( GTK_ENTRY( GTK_COMBO( gamemode_combo )->entry ) );
-			if ( !strlen( gamemode ) || !strcmp( gamemode, sSTVEFSPCombo ) ) {
-				SetKeyValue( g_qeglobals.d_project_entity, "gamemode", "sp" );
-			}
-			else
-			{
-				SetKeyValue( g_qeglobals.d_project_entity, "gamemode", "mp" );
+			if( new_mode ) {
+				SetKeyValue( g_qeglobals.d_project_entity, "gamemode", new_mode );
 			}
 		}
 
@@ -1183,20 +861,6 @@ void DoProjectSettings(){
 		}
 		g_qeglobals.m_strHomeMaps += str;
 		g_qeglobals.m_strHomeMaps += G_DIR_SEPARATOR;
-
-		// RIANT
-		// SOF2 HACK
-		if ( g_pGameDescription->mGameFile == "sof2.game" ) {
-			// read from gamemode_combo
-			const char *gamemode = gtk_entry_get_text( GTK_ENTRY( GTK_COMBO( gamemode_combo )->entry ) );
-			if ( !strlen( gamemode ) || !strcmp( gamemode, sSOF2SPCombo ) ) {
-				SetKeyValue( g_qeglobals.d_project_entity, "gamemode", "sp" );
-			}
-			else
-			{
-				SetKeyValue( g_qeglobals.d_project_entity, "gamemode", "mp" );
-			}
-		}
 
 		if ( gtk_toggle_button_get_active( GTK_TOGGLE_BUTTON( brush ) ) ) {
 			g_qeglobals.m_bBrushPrimitMode = TRUE;
@@ -1209,6 +873,9 @@ void DoProjectSettings(){
 
 		QE_SaveProject( g_PrefsDlg.m_strLastProject.GetBuffer() );
 	}
+
+	g_list_free( mod_list );
+	g_list_free( gamemode_list );
 
 	gtk_grab_remove( project );
 	gtk_widget_destroy( project );
@@ -1232,7 +899,7 @@ void DoMapInfo(){
 	load_window_pos( dlg, g_PrefsDlg.mWindowInfo.posMapInfoWnd );
 
 	gtk_window_set_title( GTK_WINDOW( dlg ), _( "Map Info" ) );
-	gtk_signal_connect( GTK_OBJECT( dlg ), "delete_event",
+	gtk_signal_connect( GTK_OBJECT( dlg ), "delete-event",
 						GTK_SIGNAL_FUNC( dialog_delete_callback ), NULL );
 	gtk_signal_connect( GTK_OBJECT( dlg ), "destroy",
 						GTK_SIGNAL_FUNC( gtk_widget_destroy ), NULL );
@@ -1494,7 +1161,7 @@ void DoEntityList(){
 	load_window_pos( dlg, g_PrefsDlg.mWindowInfo.posEntityInfoWnd );
 
 	gtk_window_set_title( GTK_WINDOW( dlg ), _( "Entities" ) );
-	gtk_signal_connect( GTK_OBJECT( dlg ), "delete_event",
+	gtk_signal_connect( GTK_OBJECT( dlg ), "delete-event",
 						GTK_SIGNAL_FUNC( dialog_delete_callback ), NULL );
 	gtk_signal_connect( GTK_OBJECT( dlg ), "destroy",
 						GTK_SIGNAL_FUNC( gtk_widget_destroy ), NULL );
@@ -1516,7 +1183,7 @@ void DoEntityList(){
 		GtkTreeStore* store = gtk_tree_store_new( 2, G_TYPE_STRING, G_TYPE_POINTER );
 
 		GtkWidget* view = gtk_tree_view_new_with_model( GTK_TREE_MODEL( store ) );
-		g_signal_connect( G_OBJECT( view ), "button_press_event", G_CALLBACK( entitylist_click ), dlg );
+		g_signal_connect( G_OBJECT( view ), "button-press-event", G_CALLBACK( entitylist_click ), dlg );
 		gtk_tree_view_set_headers_visible( GTK_TREE_VIEW( view ), FALSE );
 
 		{
@@ -1687,6 +1354,11 @@ static void rotatedlg_apply( GtkWidget *widget, gpointer data ){
 	gtk_spin_button_set_value( GTK_SPIN_BUTTON( spin ), 0.0f );
 }
 
+static void rotatedialog_activate( GtkWidget *widget, gpointer data ){
+	GtkWidget *dialog = (GtkWidget *)data;
+	rotatedlg_apply( dialog, dialog );
+}
+
 void DoRotateDlg(){
 	GtkWidget *dlg, *hbox, *vbox, *table, *label, *button;
 	GtkWidget *x, *y, *z;
@@ -1695,7 +1367,7 @@ void DoRotateDlg(){
 
 	dlg = gtk_window_new( GTK_WINDOW_TOPLEVEL );
 	gtk_window_set_title( GTK_WINDOW( dlg ), _( "Arbitrary rotation" ) );
-	gtk_signal_connect( GTK_OBJECT( dlg ), "delete_event",
+	gtk_signal_connect( GTK_OBJECT( dlg ), "delete-event",
 						GTK_SIGNAL_FUNC( dialog_delete_callback ), NULL );
 	gtk_signal_connect( GTK_OBJECT( dlg ), "destroy",
 						GTK_SIGNAL_FUNC( gtk_widget_destroy ), NULL );
@@ -1734,6 +1406,7 @@ void DoRotateDlg(){
 
 	adj = gtk_adjustment_new( 0, -359, 359, 1, 10, 0 );
 	x = gtk_spin_button_new( GTK_ADJUSTMENT( adj ), 1, 0 );
+	gtk_spin_button_set_numeric( GTK_SPIN_BUTTON( x ), TRUE );
 	g_object_set_data( G_OBJECT( dlg ), "x", x );
 	gtk_widget_show( x );
 	gtk_table_attach( GTK_TABLE( table ), x, 1, 2, 0, 1,
@@ -1741,24 +1414,32 @@ void DoRotateDlg(){
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
 	gtk_widget_set_usize( x, 60, -2 );
 	gtk_spin_button_set_wrap( GTK_SPIN_BUTTON( x ), TRUE );
+	g_signal_connect_after( x, "activate", G_CALLBACK( rotatedialog_activate ), dlg );
+	g_object_set( x, "xalign", 1.0, NULL ); //right align numbers
 
 	adj = gtk_adjustment_new( 0, -359, 359, 1, 10, 0 );
 	y = gtk_spin_button_new( GTK_ADJUSTMENT( adj ), 1, 0 );
+	gtk_spin_button_set_numeric( GTK_SPIN_BUTTON( y ), TRUE );
 	g_object_set_data( G_OBJECT( dlg ), "y", y );
 	gtk_widget_show( y );
 	gtk_table_attach( GTK_TABLE( table ), y, 1, 2, 1, 2,
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
 	gtk_spin_button_set_wrap( GTK_SPIN_BUTTON( y ), TRUE );
+	g_signal_connect_after( y, "activate", G_CALLBACK( rotatedialog_activate ), dlg );
+	g_object_set( y, "xalign", 1.0, NULL ); //right align numbers
 
 	adj = gtk_adjustment_new( 0, -359, 359, 1, 10, 0 );
 	z = gtk_spin_button_new( GTK_ADJUSTMENT( adj ), 1, 0 );
+	gtk_spin_button_set_numeric( GTK_SPIN_BUTTON( z ), TRUE );
 	g_object_set_data( G_OBJECT( dlg ), "z", z );
 	gtk_widget_show( z );
 	gtk_table_attach( GTK_TABLE( table ), z, 1, 2, 2, 3,
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
 	gtk_spin_button_set_wrap( GTK_SPIN_BUTTON( z ), TRUE );
+	g_signal_connect_after( z, "activate", G_CALLBACK( rotatedialog_activate ), dlg );
+	g_object_set( z, "xalign", 1.0, NULL ); //right align numbers
 
 	vbox = gtk_vbox_new( FALSE, 5 );
 	gtk_widget_show( vbox );
@@ -1806,7 +1487,7 @@ void DoGamma(){
 
 	dlg = gtk_window_new( GTK_WINDOW_TOPLEVEL );
 	gtk_window_set_title( GTK_WINDOW( dlg ), _( "Gamma" ) );
-	gtk_signal_connect( GTK_OBJECT( dlg ), "delete_event",
+	gtk_signal_connect( GTK_OBJECT( dlg ), "delete-event",
 						GTK_SIGNAL_FUNC( dialog_delete_callback ), NULL );
 	gtk_signal_connect( GTK_OBJECT( dlg ), "destroy",
 						GTK_SIGNAL_FUNC( gtk_widget_destroy ), NULL );
@@ -2017,7 +1698,7 @@ void DoFind(){
 
 	dlg = gtk_window_new( GTK_WINDOW_TOPLEVEL );
 	gtk_window_set_title( GTK_WINDOW( dlg ), _( "Find Brush" ) );
-	gtk_signal_connect( GTK_OBJECT( dlg ), "delete_event",
+	gtk_signal_connect( GTK_OBJECT( dlg ), "delete-event",
 						GTK_SIGNAL_FUNC( dialog_delete_callback ), NULL );
 	gtk_signal_connect( GTK_OBJECT( dlg ), "destroy",
 						GTK_SIGNAL_FUNC( gtk_widget_destroy ), NULL );
@@ -2111,7 +1792,7 @@ void DoSides( bool bCone, bool bSphere, bool bTorus ){
 
 	dlg = gtk_window_new( GTK_WINDOW_TOPLEVEL );
 	gtk_window_set_title( GTK_WINDOW( dlg ), _( "Arbitrary sides" ) );
-	gtk_signal_connect( GTK_OBJECT( dlg ), "delete_event",
+	gtk_signal_connect( GTK_OBJECT( dlg ), "delete-event",
 						GTK_SIGNAL_FUNC( dialog_delete_callback ), NULL );
 	gtk_signal_connect( GTK_OBJECT( dlg ), "destroy",
 						GTK_SIGNAL_FUNC( gtk_widget_destroy ), NULL );
@@ -2183,7 +1864,7 @@ void DoNewPatchDlg(){
 
 	dlg = gtk_window_new( GTK_WINDOW_TOPLEVEL );
 	gtk_window_set_title( GTK_WINDOW( dlg ), _( "Patch density" ) );
-	gtk_signal_connect( GTK_OBJECT( dlg ), "delete_event",
+	gtk_signal_connect( GTK_OBJECT( dlg ), "delete-event",
 						GTK_SIGNAL_FUNC( dialog_delete_callback ), NULL );
 	gtk_signal_connect( GTK_OBJECT( dlg ), "destroy",
 						GTK_SIGNAL_FUNC( gtk_widget_destroy ), NULL );
@@ -2284,14 +1965,45 @@ void DoNewPatchDlg(){
 // =============================================================================
 // New Patch dialog
 
+static void scaledlg_apply( GtkWidget *widget, gpointer data ){
+	float sx, sy, sz;
+	GtkWidget *x, *y, *z;
+
+	x = GTK_WIDGET( g_object_get_data( G_OBJECT( data ), "x" ) );
+	y = GTK_WIDGET( g_object_get_data( G_OBJECT( data ), "y" ) );
+	z = GTK_WIDGET( g_object_get_data( G_OBJECT( data ), "z" ) );
+
+	sx = gtk_spin_button_get_value_as_float( GTK_SPIN_BUTTON( x ) );
+	sy = gtk_spin_button_get_value_as_float( GTK_SPIN_BUTTON( y ) );
+	sz = gtk_spin_button_get_value_as_float( GTK_SPIN_BUTTON( z ) );
+
+	gtk_spin_button_set_value( GTK_SPIN_BUTTON( x ), 1.0f );
+	gtk_spin_button_set_value( GTK_SPIN_BUTTON( y ), 1.0f );
+	gtk_spin_button_set_value( GTK_SPIN_BUTTON( z ), 1.0f );
+
+	if ( sx > 0 && sy > 0 && sz > 0 ) {
+		Select_Scale( sx, sy, sz );
+		Sys_UpdateWindows( W_ALL );
+	}
+	else{
+		Sys_Printf( _( "Warning.. Tried to scale by a zero value.\n" ) );
+	}
+}
+
+static void scaledlg_activate( GtkWidget *widget, gpointer data ){
+	GtkWidget *dialog = (GtkWidget *)data;
+	scaledlg_apply( dialog, dialog );
+}
+
 void DoScaleDlg(){
 	GtkWidget *dlg, *hbox, *table, *vbox, *label, *button;
 	GtkWidget *x, *y, *z;
+	GtkObject *adj;
 	int loop = 1, ret = IDCANCEL;
 
 	dlg = gtk_window_new( GTK_WINDOW_TOPLEVEL );
 	gtk_window_set_title( GTK_WINDOW( dlg ), _( "Scale" ) );
-	gtk_signal_connect( GTK_OBJECT( dlg ), "delete_event",
+	gtk_signal_connect( GTK_OBJECT( dlg ), "delete-event",
 						GTK_SIGNAL_FUNC( dialog_delete_callback ), NULL );
 	gtk_signal_connect( GTK_OBJECT( dlg ), "destroy",
 						GTK_SIGNAL_FUNC( gtk_widget_destroy ), NULL );
@@ -2330,23 +2042,41 @@ void DoScaleDlg(){
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
 	gtk_misc_set_alignment( GTK_MISC( label ), 0, 0.5 );
 
-	x = gtk_entry_new();
+	adj = gtk_adjustment_new( 1.0, 0, 100, 0.1, 1, 0 );
+	x = gtk_spin_button_new( GTK_ADJUSTMENT( adj ), 0.1, 1 );
+	gtk_spin_button_set_wrap( GTK_SPIN_BUTTON( x ), TRUE );
+	gtk_spin_button_set_numeric( GTK_SPIN_BUTTON( x ), TRUE );
 	gtk_widget_show( x );
 	gtk_table_attach( GTK_TABLE( table ), x, 1, 2, 0, 1,
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
+	g_object_set_data( G_OBJECT( dlg ), "x", x );
+	g_signal_connect_after( x, "activate", G_CALLBACK( scaledlg_activate ), dlg );
+	g_object_set( x, "xalign", 1.0, NULL ); //right align numbers
 
-	y = gtk_entry_new();
+	adj = gtk_adjustment_new( 1.0, 0, 100, 0.1, 1, 0 );
+	y = gtk_spin_button_new( GTK_ADJUSTMENT( adj ), 0.1, 1 );
+	gtk_spin_button_set_wrap( GTK_SPIN_BUTTON( y ), TRUE );
+	gtk_spin_button_set_numeric( GTK_SPIN_BUTTON( y ), TRUE );
 	gtk_widget_show( y );
 	gtk_table_attach( GTK_TABLE( table ), y, 1, 2, 1, 2,
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
+	g_object_set_data( G_OBJECT( dlg ), "y", y );
+	g_signal_connect_after( y, "activate", G_CALLBACK( scaledlg_activate ), dlg );
+	g_object_set( y, "xalign", 1.0, NULL ); //right align numbers
 
-	z = gtk_entry_new();
+	adj = gtk_adjustment_new( 1.0, 0, 100, 0.1, 1, 0 );
+	z = gtk_spin_button_new( GTK_ADJUSTMENT( adj ), 0.1, 1 );
+	gtk_spin_button_set_wrap( GTK_SPIN_BUTTON( z ), TRUE );
+	gtk_spin_button_set_numeric( GTK_SPIN_BUTTON( z ), TRUE );
 	gtk_widget_show( z );
 	gtk_table_attach( GTK_TABLE( table ), z, 1, 2, 2, 3,
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
+	g_object_set_data( G_OBJECT( dlg ), "z", z );
+	g_signal_connect_after( z, "activate", G_CALLBACK( scaledlg_activate ), dlg );
+	g_object_set( z, "xalign", 1.0, NULL ); //right align numbers
 
 	vbox = gtk_vbox_new( FALSE, 5 );
 	gtk_widget_show( vbox );
@@ -2365,10 +2095,11 @@ void DoScaleDlg(){
 	gtk_signal_connect( GTK_OBJECT( button ), "clicked",
 						GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( IDCANCEL ) );
 
-	// Initialize dialog
-	gtk_entry_set_text( GTK_ENTRY( x ), _( "1.0" ) );
-	gtk_entry_set_text( GTK_ENTRY( y ), _( "1.0" ) );
-	gtk_entry_set_text( GTK_ENTRY( z ), _( "1.0" ) );
+	button = gtk_button_new_with_label( _( "Apply" ) );
+	gtk_widget_show( button );
+	gtk_box_pack_start( GTK_BOX( vbox ), button, FALSE, FALSE, 0 );
+	gtk_signal_connect( GTK_OBJECT( button ), "clicked",
+						GTK_SIGNAL_FUNC( scaledlg_apply ), dlg );
 
 	gtk_grab_add( dlg );
 	gtk_widget_show( dlg );
@@ -2377,18 +2108,7 @@ void DoScaleDlg(){
 		gtk_main_iteration();
 
 	if ( ret == IDOK ) {
-		float sx, sy, sz;
-		sx = atof( gtk_entry_get_text( GTK_ENTRY( x ) ) );
-		sy = atof( gtk_entry_get_text( GTK_ENTRY( y ) ) );
-		sz = atof( gtk_entry_get_text( GTK_ENTRY( z ) ) );
-
-		if ( sx > 0 && sy > 0 && sz > 0 ) {
-			Select_Scale( sx, sy, sz );
-			Sys_UpdateWindows( W_ALL );
-		}
-		else{
-			Sys_Printf( "Warning.. Tried to scale by a zero value." );
-		}
+		scaledlg_apply( dlg, dlg );
 	}
 
 	gtk_grab_remove( dlg );
@@ -2406,7 +2126,7 @@ void DoThickenDlg(){
 
 	dlg = gtk_window_new( GTK_WINDOW_TOPLEVEL );
 	gtk_window_set_title( GTK_WINDOW( dlg ), _( "Thicken Patch" ) );
-	gtk_signal_connect( GTK_OBJECT( dlg ), "delete_event",
+	gtk_signal_connect( GTK_OBJECT( dlg ), "delete-event",
 						GTK_SIGNAL_FUNC( dialog_delete_callback ), NULL );
 	gtk_signal_connect( GTK_OBJECT( dlg ), "destroy",
 						GTK_SIGNAL_FUNC( gtk_widget_destroy ), NULL );
@@ -2524,7 +2244,7 @@ void DoAbout(){
 	gtk_window_set_position( GTK_WINDOW( dlg ), GTK_WIN_POS_CENTER_ON_PARENT );
 	gtk_window_set_title( GTK_WINDOW( dlg ), _( "About GtkRadiant" ) );
 	gtk_window_set_resizable( GTK_WINDOW( dlg ), FALSE );  
-	gtk_signal_connect( GTK_OBJECT( dlg ), "delete_event",
+	gtk_signal_connect( GTK_OBJECT( dlg ), "delete-event",
 						GTK_SIGNAL_FUNC( dialog_delete_callback ), NULL );
 	gtk_signal_connect( GTK_OBJECT( dlg ), "destroy",
 						GTK_SIGNAL_FUNC( gtk_widget_destroy ), NULL );
@@ -2692,7 +2412,7 @@ void DoCommandListDlg(){
     gtk_window_set_transient_for( GTK_WINDOW( dlg ), GTK_WINDOW( g_pParentWnd->m_pWidget ) );
 	gtk_window_set_position( GTK_WINDOW( dlg ), GTK_WIN_POS_CENTER_ON_PARENT );
 	gtk_window_set_title( GTK_WINDOW( dlg ), _( "Shortcut List" ) );
-	gtk_signal_connect( GTK_OBJECT( dlg ), "delete_event",
+	gtk_signal_connect( GTK_OBJECT( dlg ), "delete-event",
 						GTK_SIGNAL_FUNC( dialog_delete_callback ), NULL );
 	gtk_signal_connect( GTK_OBJECT( dlg ), "destroy",
 						GTK_SIGNAL_FUNC( gtk_widget_destroy ), NULL );
@@ -2831,7 +2551,7 @@ void DoTextureListDlg(){
 
 	dlg = gtk_window_new( GTK_WINDOW_TOPLEVEL );
 	gtk_window_set_title( GTK_WINDOW( dlg ), _( "Textures" ) );
-	gtk_signal_connect( GTK_OBJECT( dlg ), "delete_event",
+	gtk_signal_connect( GTK_OBJECT( dlg ), "delete-event",
 						GTK_SIGNAL_FUNC( dialog_delete_callback ), NULL );
 	gtk_signal_connect( GTK_OBJECT( dlg ), "destroy",
 						GTK_SIGNAL_FUNC( gtk_widget_destroy ), NULL );
@@ -2941,7 +2661,7 @@ int DoCapDlg( int *type, bool *b_GroupResult ){
 
 	dlg = gtk_window_new( GTK_WINDOW_TOPLEVEL );
 	gtk_window_set_title( GTK_WINDOW( dlg ), _( "Cap" ) );
-	gtk_signal_connect( GTK_OBJECT( dlg ), "delete_event",
+	gtk_signal_connect( GTK_OBJECT( dlg ), "delete-event",
 						GTK_SIGNAL_FUNC( dialog_delete_callback ), NULL );
 	gtk_signal_connect( GTK_OBJECT( dlg ), "destroy",
 						GTK_SIGNAL_FUNC( gtk_widget_destroy ), NULL );
@@ -3084,7 +2804,7 @@ void DoScriptsDlg(){
 
 	dlg = gtk_window_new( GTK_WINDOW_TOPLEVEL );
 	gtk_window_set_title( GTK_WINDOW( dlg ), _( "Available Scripts - Not Implemented Yet" ) );
-	gtk_signal_connect( GTK_OBJECT( dlg ), "delete_event",
+	gtk_signal_connect( GTK_OBJECT( dlg ), "delete-event",
 						GTK_SIGNAL_FUNC( dialog_delete_callback ), NULL );
 	gtk_signal_connect( GTK_OBJECT( dlg ), "destroy",
 						GTK_SIGNAL_FUNC( gtk_widget_destroy ), NULL );
@@ -3231,7 +2951,7 @@ int DoBSInputDlg( const char *fields[5], float values[5] ){
 
 	dlg = gtk_window_new( GTK_WINDOW_TOPLEVEL );
 	gtk_window_set_title( GTK_WINDOW( dlg ), _( "BrushScript Input" ) );
-	gtk_signal_connect( GTK_OBJECT( dlg ), "delete_event",
+	gtk_signal_connect( GTK_OBJECT( dlg ), "delete-event",
 						GTK_SIGNAL_FUNC( dialog_delete_callback ), NULL );
 	gtk_signal_connect( GTK_OBJECT( dlg ), "destroy",
 						GTK_SIGNAL_FUNC( gtk_widget_destroy ), NULL );
@@ -3318,7 +3038,7 @@ int DoTextureLayout( float *fx, float *fy ){
 
 	dlg = gtk_window_new( GTK_WINDOW_TOPLEVEL );
 	gtk_window_set_title( GTK_WINDOW( dlg ), _( "Patch texture layout" ) );
-	gtk_signal_connect( GTK_OBJECT( dlg ), "delete_event",
+	gtk_signal_connect( GTK_OBJECT( dlg ), "delete-event",
 						GTK_SIGNAL_FUNC( dialog_delete_callback ), NULL );
 	gtk_signal_connect( GTK_OBJECT( dlg ), "destroy",
 						GTK_SIGNAL_FUNC( gtk_widget_destroy ), NULL );
@@ -3423,7 +3143,7 @@ char* DoNameDlg( const char* title ){
 
 	dlg = gtk_window_new( GTK_WINDOW_TOPLEVEL );
 	gtk_window_set_title( GTK_WINDOW( dlg ), title );
-	gtk_signal_connect( GTK_OBJECT( dlg ), "delete_event",
+	gtk_signal_connect( GTK_OBJECT( dlg ), "delete-event",
 						GTK_SIGNAL_FUNC( dialog_delete_callback ), NULL );
 	gtk_signal_connect( GTK_OBJECT( dlg ), "destroy",
 						GTK_SIGNAL_FUNC( gtk_widget_destroy ), NULL );
@@ -3501,7 +3221,7 @@ char* DoNewProjectDlg(){
 
 	dlg = gtk_window_new( GTK_WINDOW_TOPLEVEL );
 	gtk_window_set_title( GTK_WINDOW( dlg ), _( "New Project" ) );
-	gtk_signal_connect( GTK_OBJECT( dlg ), "delete_event",
+	gtk_signal_connect( GTK_OBJECT( dlg ), "delete-event",
 						GTK_SIGNAL_FUNC( dialog_delete_callback ), NULL );
 	gtk_signal_connect( GTK_OBJECT( dlg ), "destroy",
 						GTK_SIGNAL_FUNC( gtk_widget_destroy ), NULL );
@@ -3685,7 +3405,7 @@ static void CreateGtkTextEditor(){
 
 	dlg = gtk_window_new( GTK_WINDOW_TOPLEVEL );
 
-	gtk_signal_connect( GTK_OBJECT( dlg ), "delete_event",
+	gtk_signal_connect( GTK_OBJECT( dlg ), "delete-event",
 						GTK_SIGNAL_FUNC( editor_delete ), NULL );
 	gtk_window_set_default_size( GTK_WINDOW( dlg ), 600, 300 );
 
@@ -3899,7 +3619,7 @@ int DoLightIntensityDlg( int *intensity ){
 
 	dlg = gtk_window_new( GTK_WINDOW_TOPLEVEL );
 	gtk_window_set_title( GTK_WINDOW( dlg ), _( "Light intensity" ) );
-	gtk_signal_connect( GTK_OBJECT( dlg ), "delete_event",
+	gtk_signal_connect( GTK_OBJECT( dlg ), "delete-event",
 						GTK_SIGNAL_FUNC( dialog_delete_callback ), NULL );
 	gtk_signal_connect( GTK_OBJECT( dlg ), "destroy",
 						GTK_SIGNAL_FUNC( gtk_widget_destroy ), NULL );

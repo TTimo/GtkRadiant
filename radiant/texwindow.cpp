@@ -1662,7 +1662,7 @@ void TexWnd::OnCreate(){
 	g_nTextureOffset = 0;
 
 	GtkAdjustment *vadjustment = gtk_range_get_adjustment( GTK_RANGE( g_qeglobals_gui.d_texture_scroll ) );
-	gtk_signal_connect( GTK_OBJECT( vadjustment ), "value_changed", GTK_SIGNAL_FUNC( vertical_scroll ), this );
+	gtk_signal_connect( GTK_OBJECT( vadjustment ), "value-changed", GTK_SIGNAL_FUNC( vertical_scroll ), this );
 
 	if ( g_PrefsDlg.m_bTextureScrollbar ) {
 		gtk_widget_show( g_qeglobals_gui.d_texture_scroll );
@@ -1709,12 +1709,12 @@ void TexWnd::OnExpose() {
 	if ( g_PrefsDlg.m_bTextureScrollbar && ( m_bNeedRange || g_qeglobals.d_texturewin.m_nTotalHeight != nOld ) ) {
 		GtkAdjustment *vadjustment = gtk_range_get_adjustment( GTK_RANGE( g_qeglobals_gui.d_texture_scroll ) );
 
-		vadjustment->value = -g_qeglobals.d_texturewin.originy;
-		vadjustment->page_size = m_pWidget->allocation.height;
-		vadjustment->page_increment = m_pWidget->allocation.height / 2;
-		vadjustment->step_increment = 20;
-		vadjustment->lower = 0;
-		vadjustment->upper = g_qeglobals.d_texturewin.m_nTotalHeight;
+		gtk_adjustment_set_value( vadjustment, -g_qeglobals.d_texturewin.originy );
+		gtk_adjustment_set_page_size( vadjustment, m_pWidget->allocation.height );
+		gtk_adjustment_set_page_increment( vadjustment, m_pWidget->allocation.height / 2 );
+		gtk_adjustment_set_step_increment( vadjustment, 20 );
+		gtk_adjustment_set_lower( vadjustment, 0 );
+		gtk_adjustment_set_upper( vadjustment, g_qeglobals.d_texturewin.m_nTotalHeight );
 
 		gtk_signal_emit_by_name( GTK_OBJECT( vadjustment ), "changed" );
 
@@ -1761,7 +1761,7 @@ void TexWnd::OnMouseMove( guint32 flags, int pointx, int pointy ){
 void TexWnd::OnVScroll(){
 	GtkAdjustment *vadjustment = gtk_range_get_adjustment( GTK_RANGE( g_qeglobals_gui.d_texture_scroll ) );
 
-	g_qeglobals.d_texturewin.originy = -(int)vadjustment->value;
+	g_qeglobals.d_texturewin.originy = -(int)gtk_adjustment_get_value( vadjustment );
 	RedrawWindow();
 }
 

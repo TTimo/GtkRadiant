@@ -57,9 +57,9 @@ static void OnClose( GtkWidget *widget, gpointer data ){
 }
 
 static void popup_selected( GtkWidget *widget, gpointer data ){
-	gchar *str;
+	const gchar *str;
 
-	gtk_label_get( GTK_LABEL( GTK_BIN( widget )->child ), &str );
+	str = gtk_label_get_text( GTK_LABEL( widget ) );
 	gtk_entry_set_text( GTK_ENTRY( data ), str );
 }
 
@@ -146,7 +146,7 @@ void FindTextureDialog::BuildDialog(){
 	gtk_table_attach( GTK_TABLE( table ), entry, 1, 2, 0, 1,
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
-	gtk_signal_connect( GTK_OBJECT( entry ), "focus_in_event",
+	gtk_signal_connect( GTK_OBJECT( entry ), "focus-in-event",
 						GTK_SIGNAL_FUNC( find_focus_in ), NULL );
 	AddDialogData( entry, &m_strFind, DLG_ENTRY_TEXT );
 
@@ -167,7 +167,7 @@ void FindTextureDialog::BuildDialog(){
 	gtk_table_attach( GTK_TABLE( table ), entry, 1, 2, 1, 2,
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
-	gtk_signal_connect( GTK_OBJECT( entry ), "focus_in_event",
+	gtk_signal_connect( GTK_OBJECT( entry ), "focus-in-event",
 						GTK_SIGNAL_FUNC( replace_focus_in ), NULL );
 	AddDialogData( entry, &m_strReplace, DLG_ENTRY_TEXT );
 

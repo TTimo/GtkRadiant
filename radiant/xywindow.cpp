@@ -3185,7 +3185,7 @@ bool XYWnd::AreaSelectOK(){
 
 void XYWnd::OnCreate(){
 	if ( !MakeCurrent() ) {
-		Error( "glXMakeCurrent failed" );
+		Error( "xywindow: glXMakeCurrent failed" );
 	}
 
 	qglPolygonStipple( (unsigned char *)s_stipple );

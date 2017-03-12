@@ -589,6 +589,7 @@ bool m_bInternalBSP;
 bool m_bRightClick;
 bool m_bSetGame;
 bool m_bAutoSave;
+bool m_bSaveBeep;
 bool m_bLoadLastMap;
 bool m_bTextureWindow;
 bool m_bSnapShots;

@@ -55,7 +55,7 @@ int DoMessageBox( const char* lpText, const char* lpCaption, guint32 uType ){
 	int mode = ( uType & MB_TYPEMASK ), ret, loop = 1;
 
 	window = gtk_window_new( GTK_WINDOW_TOPLEVEL );
-	gtk_signal_connect( GTK_OBJECT( window ), "delete_event",
+	gtk_signal_connect( GTK_OBJECT( window ), "delete-event",
 						GTK_SIGNAL_FUNC( dialog_delete_callback ), NULL );
 	gtk_signal_connect( GTK_OBJECT( window ), "destroy",
 						GTK_SIGNAL_FUNC( gtk_widget_destroy ), NULL );
@@ -641,16 +641,16 @@ static GtkWidget* CreateOpenGLWidget(){
 						   GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK | GDK_POINTER_MOTION_MASK );
 
 	// Connect signal handlers
-	gtk_signal_connect( GTK_OBJECT( g_pToolWidget ), "expose_event", GTK_SIGNAL_FUNC( expose ), NULL );
-	gtk_signal_connect( GTK_OBJECT( g_pToolWidget ), "motion_notify_event",
+	gtk_signal_connect( GTK_OBJECT( g_pToolWidget ), "expose-event", GTK_SIGNAL_FUNC( expose ), NULL );
+	gtk_signal_connect( GTK_OBJECT( g_pToolWidget ), "motion-notify-event",
 						GTK_SIGNAL_FUNC( motion ), NULL );
-	gtk_signal_connect( GTK_OBJECT( g_pToolWidget ), "button_press_event",
+	gtk_signal_connect( GTK_OBJECT( g_pToolWidget ), "button-press-event",
 						GTK_SIGNAL_FUNC( button_press ), NULL );
-	gtk_signal_connect( GTK_OBJECT( g_pToolWidget ), "button_release_event",
+	gtk_signal_connect( GTK_OBJECT( g_pToolWidget ), "button-release-event",
 						GTK_SIGNAL_FUNC( button_release ), NULL );
 
-	gtk_signal_connect( GTK_OBJECT( g_pToolWnd ), "delete_event", GTK_SIGNAL_FUNC( close ), NULL );
-	gtk_signal_connect( GTK_OBJECT( g_pToolWnd ), "key_press_event",
+	gtk_signal_connect( GTK_OBJECT( g_pToolWnd ), "delete-event", GTK_SIGNAL_FUNC( close ), NULL );
+	gtk_signal_connect( GTK_OBJECT( g_pToolWnd ), "key-press-event",
 						GTK_SIGNAL_FUNC( keypress ), NULL );
 
 	return g_pToolWidget;

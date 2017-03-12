@@ -263,6 +263,7 @@ struct SKeyInfo
 #define ID_REGION_SETXY                 40044
 #define ID_REGION_SETBRUSH              40045
 #define ID_SELECTION_MAKEHOLLOW         40046
+#define ID_SELECTION_MAKEHOLLOW_TOUCH   40051
 #define ID_SELECTION_SELECTPARTIALTALL  40047
 #define ID_SELECTION_SELECTCOMPLETETALL 40048
 #define ID_SELECTION_CSGSUBTRACT        40049
@@ -682,6 +683,7 @@ void OnSelectionDragvertecies();
 void OnSelectionMakeDetail();
 void OnSelectionMakeStructural();
 void OnSelectionMakehollow();
+void OnSelectionMakehollowTouch();
 void OnSelectionSelectcompletetall();
 void OnSelectionSelectinside();
 void OnSelectionSelectpartialtall();

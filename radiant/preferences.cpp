@@ -64,6 +64,7 @@
 #define VERTEX_KEY              "NewVertex"
 #define AUTOSAVE_KEY            "Autosave"
 #define AUTOSAVETIME_KEY        "AutosaveMinutes"
+#define SAVEBEEP_KEY            "SaveBeep"
 #define PAK_KEY                 "UsePAK"
 #define NEWAPPLY_KEY            "ApplyDismissesSurface"
 #define HACK_KEY                "Gatewayescapehack"
@@ -587,6 +588,7 @@ PrefsDlg::PrefsDlg (){
 	m_bSetGame = FALSE;
 	m_bAutoSave = TRUE;
 	m_nAutoSave = 5;
+	m_bSaveBeep = TRUE;
 	m_bLoadLastMap = FALSE;
 	m_bTextureWindow = FALSE;
 	m_bSnapShots = FALSE;
@@ -1008,12 +1010,14 @@ void CGameDialog::DoGameInstall() {
 
 void CGameDialog::DoGameDialog() {
 	// allow looping the game selection dialog with calls to the game configure dialog in between
+	// NOTE: This is *very early* in the process lifetime, we can't call Error() for instance
 	while ( m_bDoGameInstall ) {
 
 		m_bDoGameInstall = false;
 
 		if ( DoModal() == IDCANCEL ) {
-			Error( "game selection dialog canceled, cannot continue" );
+			gtk_MessageBox( NULL, _( "Run again once you have decided which game you are interested in :-)" ), _( "Message" ), MB_OK );
+			exit( 0 );
 			return;
 		}
 
@@ -1065,7 +1069,7 @@ GtkWidget* CGameDialog::GetGlobalFrame(){
 	gtk_box_pack_start( GTK_BOX( vbox ), check, FALSE, FALSE, 0 );
 	AddDialogData( check, &m_bAutoLoadGame, DLG_CHECK_BOOL );
 
-	text = gtk_label_new( _( "(this frame is available in the prefs menu if you set auto-select)" ) );
+	text = gtk_label_new( _( "(use preferences to undo this)" ) );
 	gtk_widget_show( text );
 	gtk_box_pack_start( GTK_BOX( vbox ), text, FALSE, FALSE, 0 );
 
@@ -1140,18 +1144,18 @@ void CGameDialog::BuildDialog() {
 	gtk_container_add( GTK_CONTAINER( vbox1 ), GetGlobalFrame() );
 	mTopBox = vbox1;
 
-	setup_button = gtk_button_new_with_label( _( "Configure more games" ) );
-	gtk_widget_show( setup_button );
-	gtk_box_pack_start( GTK_BOX( vbox1 ), setup_button, FALSE, FALSE, 0 );
-	gtk_signal_connect( GTK_OBJECT( setup_button ), "clicked",
-						GTK_SIGNAL_FUNC( SInstallCallback ), this );
-
-	button = gtk_button_new_with_label( _( "OK" ) );
+	button = gtk_button_new_with_label( _( "Start editor on selected game" ) );
 	gtk_widget_show( button );
 	gtk_box_pack_start( GTK_BOX( vbox1 ), button, FALSE, FALSE, 0 );
 	AddModalButton( button, IDOK );
 
-	button = gtk_button_new_with_label( _( "Cancel" ) );
+	setup_button = gtk_button_new_with_label( _( "Configure editor for another game" ) );
+	gtk_widget_show( setup_button );
+	gtk_box_pack_start( GTK_BOX( vbox1 ), setup_button, FALSE, FALSE, 0 );
+	gtk_signal_connect( GTK_OBJECT( setup_button ), "clicked",
+		GTK_SIGNAL_FUNC( SInstallCallback ), this );
+
+	button = gtk_button_new_with_label( _( "Exit" ) );
 	gtk_widget_show( button );
 	gtk_box_pack_start( GTK_BOX( vbox1 ), button, FALSE, FALSE, 0 );
 	AddModalButton( button, IDCANCEL );
@@ -2462,6 +2466,11 @@ void PrefsDlg::BuildDialog(){
 	gtk_widget_show( label );
 	gtk_box_pack_start( GTK_BOX( hbox2 ), label, FALSE, FALSE, 0 );
 
+	check = gtk_check_button_new_with_label( _( "Beep on save" ) );
+	gtk_box_pack_start( GTK_BOX( vbox ), check, FALSE, FALSE, 0 );
+	gtk_widget_show( check );
+	AddDialogData( check, &m_bSaveBeep, DLG_CHECK_BOOL );
+
 	// Add the page to the notebook
 	gtk_notebook_append_page( GTK_NOTEBOOK( notebook ), pageframe, preflabel );
 
@@ -2753,7 +2762,7 @@ void PrefsDlg::BuildDialog(){
 	// Add the page to the notebook
 	gtk_notebook_append_page( GTK_NOTEBOOK( notebook ), pageframe, preflabel );
 
-	gtk_notebook_set_page( GTK_NOTEBOOK( notebook ), PTAB_FRONT );
+	gtk_notebook_set_current_page( GTK_NOTEBOOK( notebook ), PTAB_FRONT );
 }
 
 // end new prefs dialog
@@ -2949,6 +2958,7 @@ void PrefsDlg::LoadPrefs(){
 	mLocalPrefs.GetPref( TINYBRUSH_KEY,          &m_bCleanTiny,          FALSE );
 	mLocalPrefs.GetPref( TINYSIZE_KEY,           &m_fTinySize,           0.5f );
 	mLocalPrefs.GetPref( AUTOSAVETIME_KEY,       &m_nAutoSave,           5 );
+	mLocalPrefs.GetPref( SAVEBEEP_KEY,           &m_bSaveBeep,           TRUE );
 	mLocalPrefs.GetPref( SNAPSHOT_KEY,           &m_bSnapShots,          FALSE );
 	mLocalPrefs.GetPref( MOVESPEED_KEY,          &m_nMoveSpeed,          100 );
 	mLocalPrefs.GetPref( ANGLESPEED_KEY,         &m_nAngleSpeed,         3 );
