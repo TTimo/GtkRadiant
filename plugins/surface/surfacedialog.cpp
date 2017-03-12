@@ -30,6 +30,7 @@
 
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h>
+#include <glib/gi18n.h>
 
 #include "surfdlg_plugin.h"
 
@@ -667,7 +668,7 @@ GtkWidget* create_SurfaceInspector( void ){
 	gtk_container_add( GTK_CONTAINER( viewport9 ), hbox1 );
 	gtk_container_set_border_width( GTK_CONTAINER( hbox1 ), 4 );
 
-	label = gtk_label_new( "Texture: " );
+	label = gtk_label_new( _( "Texture: " ) );
 	gtk_widget_show( label );
 	gtk_box_pack_start( GTK_BOX( hbox1 ), label, FALSE, FALSE, 0 );
 	gtk_misc_set_alignment( GTK_MISC( label ), 1, 0.5 );
@@ -801,7 +802,7 @@ GtkWidget* create_SurfaceInspector( void ){
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( GTK_FILL ), 0, 0 );
 
-	label = gtk_label_new( "Step" );
+	label = gtk_label_new( _( "Step" ) );
 	gtk_widget_show( label );
 	gtk_table_attach( GTK_TABLE( table1 ), label, 3, 4, 0, 1,
 					  (GtkAttachOptions) ( GTK_FILL ),
@@ -817,7 +818,7 @@ GtkWidget* create_SurfaceInspector( void ){
 	gtk_widget_show( match_grid_button );
 	gtk_container_add( GTK_CONTAINER( eventbox ), match_grid_button );
 
-	label = gtk_label_new( "Value" );
+	label = gtk_label_new( _( "Value" ) );
 	gtk_widget_show( label );
 	gtk_table_attach( GTK_TABLE( table1 ), label, 1, 2, 0, 1,
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
@@ -860,7 +861,7 @@ GtkWidget* create_SurfaceInspector( void ){
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( GTK_FILL ), 0, 0 );
 
-	label = gtk_label_new( "V Shift: " );
+	label = gtk_label_new( _( "Vertical Shift: " ) );
 	gtk_widget_show( label );
 	gtk_container_add( GTK_CONTAINER( eventbox ), label );
 	gtk_label_set_justify( GTK_LABEL( label ), GTK_JUSTIFY_LEFT );
@@ -872,7 +873,7 @@ GtkWidget* create_SurfaceInspector( void ){
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( GTK_FILL ), 0, 0 );
 
-	label = gtk_label_new( " H Scale: " );
+	label = gtk_label_new( _( "Horizontal Scale: " ) );
 	gtk_widget_show( label );
 	gtk_container_add( GTK_CONTAINER( eventbox ), label );
 	gtk_label_set_justify( GTK_LABEL( label ), GTK_JUSTIFY_LEFT );
@@ -884,7 +885,7 @@ GtkWidget* create_SurfaceInspector( void ){
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( GTK_FILL ), 0, 0 );
 
-	label = gtk_label_new( "V Scale: " );
+	label = gtk_label_new( _( "Vertical Scale: " ) );
 	gtk_widget_show( label );
 	gtk_container_add( GTK_CONTAINER( eventbox ), label );
 	gtk_label_set_justify( GTK_LABEL( label ), GTK_JUSTIFY_LEFT );
@@ -896,7 +897,7 @@ GtkWidget* create_SurfaceInspector( void ){
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( GTK_FILL ), 0, 0 );
 
-	label = gtk_label_new( "Rotate: " );
+	label = gtk_label_new( _( "Rotate: " ) );
 	gtk_widget_show( label );
 	gtk_container_add( GTK_CONTAINER( eventbox ), label );
 	gtk_label_set_justify( GTK_LABEL( label ), GTK_JUSTIFY_LEFT );
@@ -908,7 +909,7 @@ GtkWidget* create_SurfaceInspector( void ){
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( GTK_FILL ), 0, 0 );
 
-	label = gtk_label_new( "H Shift: " );
+	label = gtk_label_new( "Horizontal Shift: " );
 	gtk_widget_show( label );
 	gtk_container_add( GTK_CONTAINER( eventbox ), label );
 	gtk_label_set_justify( GTK_LABEL( label ), GTK_JUSTIFY_LEFT );
@@ -1070,7 +1071,7 @@ GtkWidget* create_SurfaceInspector( void ){
 	gtk_container_set_border_width( GTK_CONTAINER( table5 ), 5 );
 	gtk_table_set_col_spacings( GTK_TABLE( table5 ), 2 );
 
-	label = gtk_label_new( "Height" );
+	label = gtk_label_new( _( "Height" ) );
 	gtk_widget_show( label );
 	gtk_table_attach( GTK_TABLE( table5 ), label, 2, 3, 0, 1,
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
@@ -1078,7 +1079,7 @@ GtkWidget* create_SurfaceInspector( void ){
 	gtk_label_set_justify( GTK_LABEL( label ), GTK_JUSTIFY_LEFT );
 	gtk_misc_set_alignment( GTK_MISC( label ), 0.5, 1 );
 
-	label = gtk_label_new( "Width" );
+	label = gtk_label_new( _( "Width" ) );
 	gtk_widget_show( label );
 	gtk_table_attach( GTK_TABLE( table5 ), label, 1, 2, 0, 1,
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
@@ -1118,7 +1119,7 @@ GtkWidget* create_SurfaceInspector( void ){
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
 					  (GtkAttachOptions) ( GTK_FILL ), 4, 0 );
 
-	fit_button = gtk_button_new_with_mnemonic( "    Fit    " );
+	fit_button = gtk_button_new_with_mnemonic( _( "Fit" ) );
 	gtk_widget_show( fit_button );
 	gtk_container_add( GTK_CONTAINER( eventbox ), fit_button );
 
@@ -1140,7 +1141,7 @@ GtkWidget* create_SurfaceInspector( void ){
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ), 0, 0 );
 
-	axial_button = gtk_button_new_with_mnemonic( "Axial" );
+	axial_button = gtk_button_new_with_mnemonic( _( "Axial" ) );
 	gtk_widget_show( axial_button );
 	gtk_container_add( GTK_CONTAINER( eventbox ), axial_button );
 	gtk_widget_set_size_request( axial_button, 56, 29 );

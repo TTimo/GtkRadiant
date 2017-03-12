@@ -131,7 +131,7 @@ static gint ci_new( GtkWidget *widget, gpointer data ){
 	gtk_box_pack_start( GTK_BOX( vbox ), hbox, FALSE, FALSE, 0 );
 	gtk_widget_show( hbox );
 
-	w = gtk_button_new_with_label( "Ok" );
+	w = gtk_button_new_with_label( _( "Ok" ) );
 	gtk_box_pack_start( GTK_BOX( hbox ), w, TRUE, TRUE, 0 );
 	gtk_signal_connect( GTK_OBJECT( w ), "clicked", GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( IDOK ) );
 	gtk_widget_show( w );
@@ -139,7 +139,7 @@ static gint ci_new( GtkWidget *widget, gpointer data ){
 	GTK_WIDGET_SET_FLAGS( w, GTK_CAN_DEFAULT );
 	gtk_widget_grab_default( w );
 
-	w = gtk_button_new_with_label( "Cancel" );
+	w = gtk_button_new_with_label( _( "Cancel" ) );
 	gtk_box_pack_start( GTK_BOX( hbox ), w, TRUE, TRUE, 0 );
 	gtk_signal_connect( GTK_OBJECT( w ), "clicked", GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( IDCANCEL ) );
 	gtk_widget_show( w );
@@ -385,7 +385,7 @@ static gint ci_rename( GtkWidget *widget, gpointer data ){
 	gtk_box_pack_start( GTK_BOX( vbox ), hbox, FALSE, FALSE, 0 );
 	gtk_widget_show( hbox );
 
-	w = gtk_label_new( "Name:" );
+	w = gtk_label_new( _( "Name:" ) );
 	gtk_box_pack_start( GTK_BOX( hbox ), w, FALSE, FALSE, 0 );
 	gtk_widget_show( w );
 
@@ -412,7 +412,7 @@ static gint ci_rename( GtkWidget *widget, gpointer data ){
 	gtk_box_pack_start( GTK_BOX( vbox ), hbox, FALSE, FALSE, 0 );
 	gtk_widget_show( hbox );
 
-	w = gtk_button_new_with_label( "Ok" );
+	w = gtk_button_new_with_label( _( "Ok" ) );
 	gtk_box_pack_start( GTK_BOX( hbox ), w, TRUE, TRUE, 0 );
 	gtk_signal_connect( GTK_OBJECT( w ), "clicked", GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( IDOK ) );
 	gtk_widget_show( w );
@@ -420,7 +420,7 @@ static gint ci_rename( GtkWidget *widget, gpointer data ){
 	GTK_WIDGET_SET_FLAGS( w, GTK_CAN_DEFAULT );
 	gtk_widget_grab_default( w );
 
-	w = gtk_button_new_with_label( "Cancel" );
+	w = gtk_button_new_with_label( _( "Cancel" ) );
 	gtk_box_pack_start( GTK_BOX( hbox ), w, TRUE, TRUE, 0 );
 	gtk_signal_connect( GTK_OBJECT( w ), "clicked", GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( IDCANCEL ) );
 	gtk_widget_show( w );
@@ -503,7 +503,7 @@ static gint ci_add_target( GtkWidget *widget, gpointer data ){
 	gtk_box_pack_start( GTK_BOX( vbox ), hbox, FALSE, FALSE, 0 );
 	gtk_widget_show( hbox );
 
-	w = gtk_label_new( "Name:" );
+	w = gtk_label_new( _( "Name:" ) );
 	gtk_box_pack_start( GTK_BOX( hbox ), w, FALSE, FALSE, 0 );
 	gtk_widget_show( w );
 
