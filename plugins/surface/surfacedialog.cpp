@@ -1502,6 +1502,8 @@ static void on_axial_button_clicked( GtkButton *button, gpointer user_data ){
 		}
 	}
 
-	SetTexdef_FaceList( get_texdef_face_list(), FALSE, TRUE );
+	if ( !texdef_face_list_empty() ) {
+		SetTexdef_FaceList( get_texdef_face_list(), FALSE, TRUE );
+	}
 	Sys_UpdateWindows( W_ALL );
 }
