@@ -3268,7 +3268,7 @@ void MainFrame::OnDelete(){
 		save_window_pos( m_pZWnd->m_pParent, g_PrefsDlg.mWindowInfo.posZWnd );
 	}
 	else{
-		g_PrefsDlg.mWindowInfo.nZFloatWidth = GTK_PANED( m_pSplits[0] )->child1_size;
+		g_PrefsDlg.mWindowInfo.nZFloatWidth = gtk_paned_get_position( GTK_PANED( m_pSplits[0] ) );
 	}
 
 	if ( CurrentStyle() == eFloating ) {
@@ -3305,9 +3305,9 @@ void MainFrame::OnDestroy(){
 		gpointer w;
 
 		w = g_object_get_data( G_OBJECT( g_pGroupDlg->m_pWidget ), "split1" );
-		g_PrefsDlg.mWindowInfo.nEntitySplit1 = GTK_PANED( w )->child1_size;
+		g_PrefsDlg.mWindowInfo.nEntitySplit1 = gtk_paned_get_position( GTK_PANED( w ) );
 		w = g_object_get_data( G_OBJECT( g_pGroupDlg->m_pWidget ), "split2" );
-		g_PrefsDlg.mWindowInfo.nEntitySplit2 = GTK_PANED( w )->child1_size;
+		g_PrefsDlg.mWindowInfo.nEntitySplit2 = gtk_paned_get_position( GTK_PANED( w ) );
 
 		if ( !FloatingGroupDialog() ) {
 			GtkWidget *vsplit, *hsplit, *vsplit2, *hsplit2;
@@ -3317,17 +3317,17 @@ void MainFrame::OnDestroy(){
 			hsplit = m_pSplits[2];
 			hsplit2 = m_pSplits[3];
 
-			g_PrefsDlg.mWindowInfo.nXYHeight  = GTK_PANED( vsplit )->child1_size;
-			g_PrefsDlg.mWindowInfo.nXYWidth   = GTK_PANED( hsplit2 )->child1_size;
+			g_PrefsDlg.mWindowInfo.nXYHeight  = gtk_paned_get_position( GTK_PANED( vsplit ) );
+			g_PrefsDlg.mWindowInfo.nXYWidth   = gtk_paned_get_position( GTK_PANED( hsplit2 ) );
 
 			if ( CurrentStyle() == eRegular ) {
-				g_PrefsDlg.mWindowInfo.nZWidth = GTK_PANED( hsplit )->child1_size;
+				g_PrefsDlg.mWindowInfo.nZWidth = gtk_paned_get_position( GTK_PANED( hsplit ) );
 			}
 			else{
-				g_PrefsDlg.mWindowInfo.nCamWidth = GTK_PANED( hsplit )->child1_size;
+				g_PrefsDlg.mWindowInfo.nCamWidth = gtk_paned_get_position( GTK_PANED( hsplit ) );
 			}
 
-			g_PrefsDlg.mWindowInfo.nCamHeight = GTK_PANED( vsplit2 )->child1_size;
+			g_PrefsDlg.mWindowInfo.nCamHeight = gtk_paned_get_position( GTK_PANED( vsplit2 ) );
 		}
 		else
 		{

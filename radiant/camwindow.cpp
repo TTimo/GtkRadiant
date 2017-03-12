@@ -57,7 +57,7 @@ CamWnd::~CamWnd (){
 
 void CamWnd::OnCreate(){
 	if ( !MakeCurrent() ) {
-		Error( "glMakeCurrent failed" );
+		Error( "camwindow: glMakeCurrent failed" );
 	}
 
 	// report OpenGL information

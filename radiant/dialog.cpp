@@ -133,7 +133,7 @@ void Dialog::UpdateData( bool retrieve ){
 				break;
 			case DLG_RADIO_INT:
 			{
-				GSList *radio = gtk_radio_button_group( GTK_RADIO_BUTTON( data->object ) );
+				GSList *radio = gtk_radio_button_get_group( GTK_RADIO_BUTTON( data->object ) );
 				*(int*)data->buffer = g_slist_length( radio ) - 1;
 				for (; radio; radio = g_slist_next( radio ) )
 					if ( gtk_toggle_button_get_active( GTK_TOGGLE_BUTTON( radio->data ) ) ) {
@@ -158,13 +158,13 @@ void Dialog::UpdateData( bool retrieve ){
 				*(int*)data->buffer = atoi( gtk_entry_get_text( GTK_ENTRY( data->object ) ) );
 				break;
 			case DLG_SPIN_FLOAT:
-				*(float*)data->buffer = gtk_spin_button_get_value_as_float( GTK_SPIN_BUTTON( data->object ) );
+				*(float*)data->buffer = gtk_spin_button_get_value( GTK_SPIN_BUTTON( data->object ) );
 				break;
 			case DLG_SPIN_INT:
 				*(int*)data->buffer = gtk_spin_button_get_value_as_int( GTK_SPIN_BUTTON( data->object ) );
 				break;
 			case DLG_ADJ_INT:
-				*(int*)data->buffer = (int) GTK_ADJUSTMENT( data->object )->value;
+				*(int*)data->buffer = (int) gtk_adjustment_get_value( GTK_ADJUSTMENT( data->object ) );
 				break;
 			case DLG_COMBO_INT:
 			{
@@ -178,7 +178,7 @@ void Dialog::UpdateData( bool retrieve ){
 
 				for ( i = 0; lst != NULL; lst = g_list_next( lst ) )
 				{
-					gtk_label_get( GTK_LABEL( GTK_BIN( lst->data )->child ), &label );
+					label = gtk_label_get_text( GTK_LABEL( lst->data ) );
 
 					if ( strcmp( label, entry ) == 0 ) {
 						*(int*)data->buffer = i;
@@ -209,7 +209,7 @@ void Dialog::UpdateData( bool retrieve ){
 				break;
 			case DLG_RADIO_INT:
 			{
-				GSList *radio = gtk_radio_button_group( GTK_RADIO_BUTTON( data->object ) );
+				GSList *radio = gtk_radio_button_get_group( GTK_RADIO_BUTTON( data->object ) );
 				gpointer btn =  g_slist_nth_data( radio, g_slist_length( radio ) - ( *(int*)data->buffer ) - 1 );
 				gtk_toggle_button_set_active( GTK_TOGGLE_BUTTON( btn ), TRUE );
 			} break;
@@ -244,7 +244,7 @@ void Dialog::UpdateData( bool retrieve ){
 				if ( *(int*)data->buffer != -1 ) {
 					lst = g_list_nth( lst, *(int*)data->buffer );
 					if ( lst != NULL ) {
-						gtk_label_get( GTK_LABEL( GTK_BIN( lst->data )->child ), &entry );
+						entry = gtk_label_get_text( GTK_LABEL( lst->data ) );
 					}
 				}
 				if ( entry ) {

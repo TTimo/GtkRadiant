@@ -2762,7 +2762,7 @@ void PrefsDlg::BuildDialog(){
 	// Add the page to the notebook
 	gtk_notebook_append_page( GTK_NOTEBOOK( notebook ), pageframe, preflabel );
 
-	gtk_notebook_set_page( GTK_NOTEBOOK( notebook ), PTAB_FRONT );
+	gtk_notebook_set_current_page( GTK_NOTEBOOK( notebook ), PTAB_FRONT );
 }
 
 // end new prefs dialog
