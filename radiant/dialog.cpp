@@ -168,19 +168,19 @@ void Dialog::UpdateData( bool retrieve ){
 				break;
 			case DLG_COMBO_INT:
 			{
-				GList *lst = GTK_LIST( GTK_COMBO( data->object )->list )->children;
-				char *label;
-				const char *entry;
+				GList *lst = gtk_container_get_children( GTK_CONTAINER( GTK_COMBO( data->object )->list ) );
+				const char *labeltext;
+				const char *entrytext;
 				int i;
 
 				*(int*)data->buffer = -1;
-				entry = gtk_entry_get_text( GTK_ENTRY( GTK_COMBO( data->object )->entry ) );
+				entrytext = gtk_entry_get_text( GTK_ENTRY( GTK_COMBO( data->object )->entry ) );
 
 				for ( i = 0; lst != NULL; lst = g_list_next( lst ) )
 				{
-					label = gtk_label_get_text( GTK_LABEL( lst->data ) );
+					labeltext = gtk_label_get_text( GTK_LABEL( gtk_bin_get_child( GTK_BIN( lst->data ) ) ) );
 
-					if ( strcmp( label, entry ) == 0 ) {
+					if ( strcmp( labeltext, entrytext ) == 0 ) {
 						*(int*)data->buffer = i;
 						break;
 					}
@@ -238,20 +238,21 @@ void Dialog::UpdateData( bool retrieve ){
 				gtk_adjustment_set_value( GTK_ADJUSTMENT( data->object ), ( *(int*)data->buffer ) );
 				break;
 			case DLG_COMBO_INT: {
-				GList *lst = GTK_LIST( GTK_COMBO( data->object )->list )->children;
-				char *entry = NULL;
+				GList *lst = gtk_container_get_children( GTK_CONTAINER( GTK_COMBO( data->object )->list ) );
+				const char *text = NULL;
+				GtkEntry *entry = GTK_ENTRY( GTK_COMBO( data->object )->entry );
 
 				if ( *(int*)data->buffer != -1 ) {
 					lst = g_list_nth( lst, *(int*)data->buffer );
 					if ( lst != NULL ) {
-						entry = gtk_label_get_text( GTK_LABEL( lst->data ) );
+						text = gtk_label_get_text( GTK_LABEL( gtk_bin_get_child( GTK_BIN( lst->data ) ) ) );
 					}
 				}
-				if ( entry ) {
-					gtk_entry_set_text( GTK_ENTRY( GTK_COMBO( data->object )->entry ), entry );
+				if ( text ) {
+					gtk_entry_set_text( entry, text );
 				}
 				else{
-					gtk_entry_set_text( GTK_ENTRY( GTK_COMBO( data->object )->entry ), "" );
+					gtk_entry_set_text( entry, "" );
 				}
 			}
 			break;
