@@ -4098,10 +4098,7 @@ void toolbar_insert( GtkWidget *toolbar, const char* image, const char* text, co
 	GdkPixmap *gdkpixmap;
 	GdkBitmap *mask;
 
-	load_plugin_bitmap( image, (void **)&gdkpixmap, (void **)&mask );
-	pixmap = gtk_pixmap_new( gdkpixmap, mask );
-	gdk_pixmap_unref( gdkpixmap );
-	gdk_pixmap_unref( mask );
+	pixmap = new_plugin_image_icon( image );
 	w = gtk_toolbar_append_element( GTK_TOOLBAR( toolbar ), gtktoolbarchildtype_for_toolbarbuttontype( type ), NULL, text, tooltip, "", GTK_WIDGET( pixmap ), handler, data );
 }
 

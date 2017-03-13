@@ -580,104 +580,36 @@ unsigned char *load_bitmap_file( const char* filename, guint16 *width, guint16 *
 	return imagebits;
 }
 
-void bmp_to_pixmap( const char* filename, GdkPixmap **pixmap, GdkBitmap **mask ){
-	guint16 width, height;
-	unsigned char *buf;
-	GdkWindow *window = gdk_get_default_root_window();
-	GdkColormap *colormap;
-	GdkGC* gc = gdk_gc_new( window );
-	int i, j;
-	bool hasMask = false;
+void bmp_to_pixmap( const char* filename, GdkPixbuf **pixmap ){
+	GError *gerror = NULL;
 
-	*pixmap = *mask = NULL;
-	buf = load_bitmap_file( filename, &width, &height );
-	if ( !buf ) {
-		return;
+	*pixmap = gdk_pixbuf_new_from_file( filename, &gerror );
+	if ( *pixmap == NULL ) {
+//		Sys_FPrintf( SYS_ERR, "ERROR: Failed to load bmp %s: %s, creating default pixmap.\n", filename, gerror->message );
+		g_error_free( gerror );
 	}
-
-	colormap = gdk_drawable_get_colormap( window );
-	*pixmap = gdk_pixmap_new( window, width, height, -1 );
-
-	typedef struct
-	{
-		GdkColor c;
-		unsigned char *p;
-	} PAL;
-
-	for ( i = 0; i < height; i++ )
-	{
-		for ( j = 0; j < width; j++ )
-		{
-			unsigned char *p = &buf[( i * width + j ) * 3];
-			PAL pe;
-
-			pe.c.red = (gushort)( p[0] * 0xFF );
-			pe.c.green = (gushort)( p[1] * 0xFF );
-			pe.c.blue = (gushort)( p[2] * 0xFF );
-			gdk_colormap_alloc_color( colormap, &pe.c, FALSE, TRUE );
-			gdk_gc_set_foreground( gc, &pe.c );
-			gdk_draw_point( *pixmap, gc, j, i );
-
-			if ( p[0] == 0xFF && p[1] == 0x00 && p[2] == 0xFF ) {
-				hasMask = true;
-			}
-		}
-	}
-
-	gdk_gc_unref( gc );
-	*mask = gdk_pixmap_new( window, width, height, 1 );
-	gc = gdk_gc_new( *mask );
-	if ( hasMask ) {
-		for ( i = 0; i < height; i++ )
-		{
-			for ( j = 0; j < width; j++ )
-			{
-				GdkColor mask_pattern;
-
-				// pink is transparent
-				if ( ( buf[( i * width + j ) * 3] == 0xff ) &&
-					 ( buf[( i * width + j ) * 3 + 1] == 0x00 ) &&
-					 ( buf[( i * width + j ) * 3 + 2] == 0xff ) ) {
-					mask_pattern.pixel = 0;
-				}
-				else{
-					mask_pattern.pixel = 1;
-				}
-
-				gdk_gc_set_foreground( gc, &mask_pattern );
-				// possible Win32 Gtk bug here
-				//gdk_draw_point (*mask, gc, j, i);
-				gdk_draw_line( *mask, gc, j, i, j + 1, i );
-			}
-		}
-	}
-	else
-	{
-		GdkColor mask_pattern;
-		mask_pattern.pixel = 1;
-		gdk_gc_set_foreground( gc, &mask_pattern );
-		gdk_draw_rectangle( *mask, gc, 1, 0, 0, width, height );
-	}
-	gdk_gc_unref( gc );
-	free( buf );
 }
 
-void load_pixmap( const char* filename, GtkWidget* widget, GdkPixmap **gdkpixmap, GdkBitmap **mask ){
+void load_pixmap( const char* filename, GtkWidget **widget, GdkPixbuf **pixmap ){
 	CString str;
+	GError *gerror = NULL;
 
 	str = g_strBitmapsPath;
 	str += filename;
 
-	bmp_to_pixmap( str.GetBuffer(), gdkpixmap, mask );
-	if ( *gdkpixmap == NULL ) {
-		Sys_Printf( "Failed to load_pixmap %s, creating default pixmap\n", str.GetBuffer() );
-		const gchar *dummy[] = { "1 1 1 1", "  c None", " " };
-		*gdkpixmap = gdk_pixmap_create_from_xpm_d( gdk_get_default_root_window(), mask, NULL, (gchar **)dummy );
+	*pixmap = gdk_pixbuf_new_from_file( str.GetBuffer(), &gerror );
+	if ( *pixmap == NULL ) {
+		Sys_FPrintf( SYS_ERR, "ERROR: Failed to load_pixmap %s: %s, creating default pixmap.\n", str.GetBuffer(), gerror->message );
+		g_error_free( gerror );
+	}
+	*widget = gtk_image_new_from_pixbuf( *pixmap );
+	gtk_widget_show( *widget );
+	if ( *pixmap ) {
+		g_object_unref( *pixmap );
 	}
 }
 
 // this is the same as above but used by the plugins
-// GdkPixmap **gdkpixmap, GdkBitmap **mask
 bool WINAPI load_plugin_bitmap( const char* filename, void **gdkpixmap, void **mask ){
 	CString str;
 
@@ -685,7 +617,7 @@ bool WINAPI load_plugin_bitmap( const char* filename, void **gdkpixmap, void **m
 	str += g_strPluginsDir;
 	str += "bitmaps/";
 	str += filename;
-	bmp_to_pixmap( str.GetBuffer(), (GdkPixmap **)gdkpixmap, (GdkBitmap **)mask );
+	bmp_to_pixmap( str.GetBuffer(), (GdkPixbuf **)gdkpixmap );
 
 	if ( *gdkpixmap == NULL ) {
 		// look in the core plugins
@@ -693,7 +625,7 @@ bool WINAPI load_plugin_bitmap( const char* filename, void **gdkpixmap, void **m
 		str += g_strPluginsDir;
 		str += "bitmaps/";
 		str += filename;
-		bmp_to_pixmap( str.GetBuffer(), (GdkPixmap **)gdkpixmap, (GdkBitmap **)mask );
+		bmp_to_pixmap( str.GetBuffer(), (GdkPixbuf **)gdkpixmap );
 
 		if ( *gdkpixmap == NULL ) {
 
@@ -702,11 +634,11 @@ bool WINAPI load_plugin_bitmap( const char* filename, void **gdkpixmap, void **m
 			str += g_strModulesDir;
 			str += "bitmaps/";
 			str += filename;
-			bmp_to_pixmap( str.GetBuffer(), (GdkPixmap **)gdkpixmap, (GdkBitmap **)mask );
+			bmp_to_pixmap( str.GetBuffer(), (GdkPixbuf **)gdkpixmap );
 
 			if ( *gdkpixmap == NULL ) {
-				const gchar *dummy[] = { "1 1 1 1", "  c None", " " };
-				*gdkpixmap = gdk_pixmap_create_from_xpm_d( gdk_get_default_root_window(), (GdkBitmap **)mask, NULL, (gchar **)dummy );
+				Sys_FPrintf( SYS_ERR, "ERROR: Failed to load bitmap %s, creating default.\n", filename );
+				*gdkpixmap = NULL;
 				return false;
 			}
 		}
@@ -714,25 +646,61 @@ bool WINAPI load_plugin_bitmap( const char* filename, void **gdkpixmap, void **m
 	return true;
 }
 
-// Load a xpm file and return a pixmap widget.
 GtkWidget* new_pixmap( GtkWidget* widget, const char* filename ){
-	GdkPixmap *gdkpixmap;
-	GdkBitmap *mask;
-	GtkWidget *pixmap;
-
-	load_pixmap( filename, widget, &gdkpixmap, &mask );
-	pixmap = gtk_pixmap_new( gdkpixmap, mask );
-
-	gdk_drawable_unref( gdkpixmap );
-	gdk_drawable_unref( mask );
-
-	return pixmap;
+	return gtk_image_new_from_file( filename );
 }
 
-GtkWidget* new_image_icon(const char* filename) {
-    CString str = g_strBitmapsPath;
-    str += filename;
-    return gtk_image_new_from_file( (const char *) str );
+GtkWidget* new_image_icon( const char* filename ) {
+	CString str;
+	GdkPixbuf *pixbuf;
+	GtkWidget *icon;
+	GError *gerror = NULL;
+
+	str = g_strBitmapsPath;
+	str += filename;
+
+	pixbuf = gdk_pixbuf_new_from_file( str.GetBuffer(), &gerror );
+	if( pixbuf == NULL ) {
+		Sys_FPrintf( SYS_ERR, "ERROR: Failed to load bitmap: %s, %s\n", str.GetBuffer(), gerror->message );
+		g_error_free( gerror );
+	}
+	icon = gtk_image_new_from_pixbuf( pixbuf );
+	gtk_widget_show( icon );
+	if( pixbuf ) {
+		g_object_unref( pixbuf );
+	}
+	return icon;
+}
+
+GtkWidget* new_plugin_image_icon( const char* filename ) {
+	CString str;
+	GdkPixbuf *pixbuf;
+	GtkWidget *icon;
+	GError *gerror = NULL;
+
+	str = g_strAppPath;
+	str += g_strModulesDir;
+	str += "bitmaps/";
+	str += filename;
+
+	pixbuf = gdk_pixbuf_new_from_file( str.GetBuffer(), &gerror );
+	if( pixbuf == NULL ) {
+		Sys_FPrintf( SYS_ERR, "ERROR: Failed to load plugin bitmap: %s, %s\n", str.GetBuffer(), gerror->message );
+		g_error_free( gerror );
+	}
+	//manually add transparency to bmp files
+	if( strlen( filename ) > 4 && strcmp( filename + strlen( filename ) - 4, ".bmp" ) == 0 && pixbuf && !gdk_pixbuf_get_has_alpha( pixbuf ) ) {
+		GdkPixbuf *apixbuf;
+		apixbuf = gdk_pixbuf_add_alpha( pixbuf, TRUE, 255, 0, 255 );
+		g_object_unref( pixbuf );
+		pixbuf = apixbuf;
+	}
+	icon = gtk_image_new_from_pixbuf( pixbuf );
+	gtk_widget_show( icon );
+	if( pixbuf ) {
+		g_object_unref( pixbuf );
+	}
+	return icon;
 }
 
 // =============================================================================
