@@ -308,7 +308,7 @@ static void motion( GtkWidget *widget, GdkEventMotion *event, gpointer data ){
 
 	if ( PtInRect( &rcGrid,pt ) ) {
 		GdkCursor *cursor = gdk_cursor_new( GDK_CROSS );
-		gdk_window_set_cursor( g_pWndPreview->window, cursor );
+		gdk_window_set_cursor( gtk_widget_get_window( g_pWndPreview ), cursor );
 		gdk_cursor_unref( cursor );
 
 		char Text[32];
@@ -334,7 +334,7 @@ static void motion( GtkWidget *widget, GdkEventMotion *event, gpointer data ){
 	}
 	else
 	{
-		gdk_window_set_cursor( g_pWndPreview->window, NULL );
+		gdk_window_set_cursor( gtk_widget_get_window( g_pWndPreview ), NULL );
 	}
 
 	g_UIGtkTable.m_pfn_glwidget_swap_buffers( g_pPreviewWidget );
@@ -358,7 +358,7 @@ static gint doublevariable_spinfocusout( GtkWidget* widget, GdkEventFocus* event
 }
 
 static void preview_spin( GtkAdjustment *adj, double *data ){
-	*data = DegreesToRadians( adj->value );
+	*data = DegreesToRadians( gtk_adjustment_get_value( adj ) );
 	UpdatePreview( false );
 }
 
@@ -373,8 +373,8 @@ void CreateViewWindow(){
 
 	g_pWndPreview = dlg = gtk_window_new( GTK_WINDOW_TOPLEVEL );
 	gtk_window_set_title( GTK_WINDOW( dlg ), "GtkGenSurf Preview" );
-	gtk_signal_connect( GTK_OBJECT( dlg ), "delete-event", GTK_SIGNAL_FUNC( preview_close ), NULL );
-	gtk_signal_connect( GTK_OBJECT( dlg ), "destroy", GTK_SIGNAL_FUNC( gtk_widget_destroy ), NULL );
+	g_signal_connect( G_OBJECT( dlg ), "delete-event", G_CALLBACK( preview_close ), NULL );
+	g_signal_connect( G_OBJECT( dlg ), "destroy", G_CALLBACK( gtk_widget_destroy ), NULL );
 	gtk_window_set_transient_for( GTK_WINDOW( dlg ), GTK_WINDOW( g_pWnd ) );
 	gtk_window_set_default_size( GTK_WINDOW( dlg ), 300, 400 );
 
@@ -394,14 +394,14 @@ void CreateViewWindow(){
 	gtk_box_pack_start( GTK_BOX( hbox ), label, FALSE, TRUE, 0 );
 
 	adj = gtk_adjustment_new( 30, -90, 90, 1, 10, 0 );
-	gtk_signal_connect( adj, "value-changed", GTK_SIGNAL_FUNC( preview_spin ), &elevation );
+	g_signal_connect( adj, "value-changed", G_CALLBACK( preview_spin ), &elevation );
 	spin = gtk_spin_button_new( GTK_ADJUSTMENT( adj ), 1, 0 );
 	gtk_widget_show( spin );
 	gtk_box_pack_start( GTK_BOX( hbox ), spin, FALSE, TRUE, 0 );
 	g_signal_connect( G_OBJECT( spin ), "focus-out-event", G_CALLBACK( doublevariable_spinfocusout ), &elevation );
 
 	adj = gtk_adjustment_new( 30, 0, 359, 1, 10, 0 );
-	gtk_signal_connect( adj, "value-changed", GTK_SIGNAL_FUNC( preview_spin ), &azimuth );
+	g_signal_connect( adj, "value-changed", G_CALLBACK( preview_spin ), &azimuth );
 	spin = gtk_spin_button_new( GTK_ADJUSTMENT( adj ), 1, 0 );
 	gtk_widget_show( spin );
 	gtk_spin_button_set_wrap( GTK_SPIN_BUTTON( spin ), TRUE );
@@ -422,10 +422,10 @@ void CreateViewWindow(){
 	g_pPreviewWidget = g_UIGtkTable.m_pfn_glwidget_new( FALSE, NULL );
 
 	gtk_widget_set_events( g_pPreviewWidget, GDK_EXPOSURE_MASK | GDK_BUTTON_PRESS_MASK | GDK_POINTER_MOTION_MASK );
-	gtk_signal_connect( GTK_OBJECT( g_pPreviewWidget ), "expose-event", GTK_SIGNAL_FUNC( expose ), NULL );
-	gtk_signal_connect( GTK_OBJECT( g_pPreviewWidget ), "motion-notify-event", GTK_SIGNAL_FUNC( motion ), NULL );
-	gtk_signal_connect( GTK_OBJECT( g_pPreviewWidget ), "button-press-event",
-						GTK_SIGNAL_FUNC( button_press ), NULL );
+	g_signal_connect( G_OBJECT( g_pPreviewWidget ), "expose-event", G_CALLBACK( expose ), NULL );
+	g_signal_connect( G_OBJECT( g_pPreviewWidget ), "motion-notify-event", G_CALLBACK( motion ), NULL );
+	g_signal_connect( G_OBJECT( g_pPreviewWidget ), "button-press-event",
+						G_CALLBACK( button_press ), NULL );
 
 	gtk_widget_show( g_pPreviewWidget );
 	gtk_container_add( GTK_CONTAINER( frame ), g_pPreviewWidget );

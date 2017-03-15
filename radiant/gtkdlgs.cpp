@@ -120,10 +120,10 @@ static void DoProjectAddEdit( bool edit, GtkWidget *parent ){
 	else{
 		gtk_window_set_title( GTK_WINDOW( dlg ), _( "Add Command" ) );
 	}
-	gtk_signal_connect( GTK_OBJECT( dlg ), "delete-event",
-						GTK_SIGNAL_FUNC( dialog_delete_callback ), NULL );
-	gtk_signal_connect( GTK_OBJECT( dlg ), "destroy",
-						GTK_SIGNAL_FUNC( gtk_widget_destroy ), NULL );
+	g_signal_connect( G_OBJECT( dlg ), "delete-event",
+						G_CALLBACK( dialog_delete_callback ), NULL );
+	g_signal_connect( G_OBJECT( dlg ), "destroy",
+						G_CALLBACK( gtk_widget_destroy ), NULL );
 	g_object_set_data( G_OBJECT( dlg ), "loop", &loop );
 	g_object_set_data( G_OBJECT( dlg ), "ret", &ret );
 
@@ -175,15 +175,15 @@ static void DoProjectAddEdit( bool edit, GtkWidget *parent ){
 	button = gtk_button_new_with_label( _( "OK" ) );
 	gtk_widget_show( button );
 	gtk_box_pack_start( GTK_BOX( hbox ), button, FALSE, FALSE, 0 );
-	gtk_signal_connect( GTK_OBJECT( button ), "clicked",
-						GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( IDOK ) );
+	g_signal_connect( G_OBJECT( button ), "clicked",
+						G_CALLBACK( dialog_button_callback ), GINT_TO_POINTER( IDOK ) );
 	gtk_widget_set_usize( button, 60, -2 );
 
 	button = gtk_button_new_with_label( _( "Cancel" ) );
 	gtk_widget_show( button );
 	gtk_box_pack_start( GTK_BOX( hbox ), button, FALSE, FALSE, 0 );
-	gtk_signal_connect( GTK_OBJECT( button ), "clicked",
-						GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( IDCANCEL ) );
+	g_signal_connect( G_OBJECT( button ), "clicked",
+						G_CALLBACK( dialog_button_callback ), GINT_TO_POINTER( IDCANCEL ) );
 	gtk_widget_set_usize( button, 60, -2 );
 
 	if ( edit ) {
@@ -474,10 +474,10 @@ void DoProjectSettings(){
 
 	project = gtk_window_new( GTK_WINDOW_TOPLEVEL );
 	gtk_window_set_title( GTK_WINDOW( project ), _( "Project Settings" ) );
-	gtk_signal_connect( GTK_OBJECT( project ), "delete-event",
-						GTK_SIGNAL_FUNC( dialog_delete_callback ), NULL );
-	gtk_signal_connect( GTK_OBJECT( project ), "destroy",
-						GTK_SIGNAL_FUNC( gtk_widget_destroy ), NULL );
+	g_signal_connect( G_OBJECT( project ), "delete-event",
+						G_CALLBACK( dialog_delete_callback ), NULL );
+	g_signal_connect( G_OBJECT( project ), "destroy",
+						G_CALLBACK( gtk_widget_destroy ), NULL );
 	g_object_set_data( G_OBJECT( project ), "loop", &loop );
 	g_object_set_data( G_OBJECT( project ), "ret", &ret );
 	gtk_window_set_default_size( GTK_WINDOW( project ), 550, 400 );
@@ -498,15 +498,15 @@ void DoProjectSettings(){
 	button = gtk_button_new_with_label( _( "OK" ) );
 	gtk_widget_show( button );
 	gtk_box_pack_start( GTK_BOX( vbox ), button, FALSE, FALSE, 0 );
-	gtk_signal_connect( GTK_OBJECT( button ), "clicked",
-						GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( IDOK ) );
+	g_signal_connect( G_OBJECT( button ), "clicked",
+						G_CALLBACK( dialog_button_callback ), GINT_TO_POINTER( IDOK ) );
 	gtk_widget_set_usize( button, 60, -2 );
 
 	button = gtk_button_new_with_label( _( "Cancel" ) );
 	gtk_widget_show( button );
 	gtk_box_pack_start( GTK_BOX( vbox ), button, FALSE, FALSE, 0 );
-	gtk_signal_connect( GTK_OBJECT( button ), "clicked",
-						GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( IDCANCEL ) );
+	g_signal_connect( G_OBJECT( button ), "clicked",
+						G_CALLBACK( dialog_button_callback ), GINT_TO_POINTER( IDCANCEL ) );
 	gtk_widget_set_usize( button, 60, -2 );
 
 	vbox = gtk_vbox_new( FALSE, 5 );
@@ -518,22 +518,22 @@ void DoProjectSettings(){
 	button = gtk_button_new_with_label( _( "Add..." ) );
 	gtk_widget_show( button );
 	gtk_box_pack_start( GTK_BOX( vbox ), button, FALSE, FALSE, 0 );
-	gtk_signal_connect( GTK_OBJECT( button ), "clicked",
-						GTK_SIGNAL_FUNC( project_add ), project );
+	g_signal_connect( G_OBJECT( button ), "clicked",
+						G_CALLBACK( project_add ), project );
 	gtk_widget_set_usize( button, 60, -2 );
 
 	button = gtk_button_new_with_label( _( "Change..." ) );
 	gtk_widget_show( button );
 	gtk_box_pack_start( GTK_BOX( vbox ), button, FALSE, FALSE, 0 );
-	gtk_signal_connect( GTK_OBJECT( button ), "clicked",
-						GTK_SIGNAL_FUNC( project_change ), project );
+	g_signal_connect( G_OBJECT( button ), "clicked",
+						G_CALLBACK( project_change ), project );
 	gtk_widget_set_usize( button, 60, -2 );
 
 	button = gtk_button_new_with_label( _( "Remove" ) );
 	gtk_widget_show( button );
 	gtk_box_pack_start( GTK_BOX( vbox ), button, FALSE, FALSE, 0 );
-	gtk_signal_connect( GTK_OBJECT( button ), "clicked",
-						GTK_SIGNAL_FUNC( project_remove ), project );
+	g_signal_connect( G_OBJECT( button ), "clicked",
+						G_CALLBACK( project_remove ), project );
 	gtk_widget_set_usize( button, 60, -2 );
 
 	frame = gtk_frame_new( _( "Misc settings" ) );
@@ -614,8 +614,8 @@ void DoProjectSettings(){
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
 
-	gtk_signal_connect( GTK_OBJECT( GTK_COMBO( game_select )->entry ), "changed",
-						GTK_SIGNAL_FUNC( OnSelchangeComboWhatgame ), project );
+	g_signal_connect( G_OBJECT( GTK_COMBO( game_select )->entry ), "changed",
+						G_CALLBACK( OnSelchangeComboWhatgame ), project );
 	g_object_set_data( G_OBJECT( project ), "game_select", game_select );
 	gtk_entry_set_editable( GTK_ENTRY( GTK_COMBO( game_select )->entry ), FALSE );
 
@@ -899,10 +899,10 @@ void DoMapInfo(){
 	load_window_pos( dlg, g_PrefsDlg.mWindowInfo.posMapInfoWnd );
 
 	gtk_window_set_title( GTK_WINDOW( dlg ), _( "Map Info" ) );
-	gtk_signal_connect( GTK_OBJECT( dlg ), "delete-event",
-						GTK_SIGNAL_FUNC( dialog_delete_callback ), NULL );
-	gtk_signal_connect( GTK_OBJECT( dlg ), "destroy",
-						GTK_SIGNAL_FUNC( gtk_widget_destroy ), NULL );
+	g_signal_connect( G_OBJECT( dlg ), "delete-event",
+						G_CALLBACK( dialog_delete_callback ), NULL );
+	g_signal_connect( G_OBJECT( dlg ), "destroy",
+						G_CALLBACK( gtk_widget_destroy ), NULL );
 	g_object_set_data( G_OBJECT( dlg ), "loop", &loop );
 	g_object_set_data( G_OBJECT( dlg ), "ret", &ret );
 
@@ -970,8 +970,8 @@ void DoMapInfo(){
 	button = gtk_button_new_with_label( _( "Close" ) );;
 	gtk_widget_show( button );
 	gtk_box_pack_start( GTK_BOX( vbox2 ), button, FALSE, FALSE, 0 );
-	gtk_signal_connect( GTK_OBJECT( button ), "clicked",
-						GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( IDOK ) );
+	g_signal_connect( G_OBJECT( button ), "clicked",
+						G_CALLBACK( dialog_button_callback ), GINT_TO_POINTER( IDOK ) );
 	gtk_widget_set_usize( button, 60, -2 );
 
 	label = gtk_label_new( _( "Entity breakdown" ) );
@@ -1161,10 +1161,10 @@ void DoEntityList(){
 	load_window_pos( dlg, g_PrefsDlg.mWindowInfo.posEntityInfoWnd );
 
 	gtk_window_set_title( GTK_WINDOW( dlg ), _( "Entities" ) );
-	gtk_signal_connect( GTK_OBJECT( dlg ), "delete-event",
-						GTK_SIGNAL_FUNC( dialog_delete_callback ), NULL );
-	gtk_signal_connect( GTK_OBJECT( dlg ), "destroy",
-						GTK_SIGNAL_FUNC( gtk_widget_destroy ), NULL );
+	g_signal_connect( G_OBJECT( dlg ), "delete-event",
+						G_CALLBACK( dialog_delete_callback ), NULL );
+	g_signal_connect( G_OBJECT( dlg ), "destroy",
+						G_CALLBACK( gtk_widget_destroy ), NULL );
 	g_object_set_data( G_OBJECT( dlg ), "loop", &loop );
 	g_object_set_data( G_OBJECT( dlg ), "ret", &ret );
 
@@ -1300,15 +1300,15 @@ void DoEntityList(){
 	button = gtk_button_new_with_label( _( "Select" ) );
 	gtk_widget_show( button );
 	gtk_box_pack_start( GTK_BOX( hbox2 ), button, FALSE, FALSE, 0 );
-	gtk_signal_connect( GTK_OBJECT( button ), "clicked",
-						GTK_SIGNAL_FUNC( entitylist_select ), dlg );
+	g_signal_connect( G_OBJECT( button ), "clicked",
+						G_CALLBACK( entitylist_select ), dlg );
 	gtk_widget_set_usize( button, 60, -2 );
 
 	button = gtk_button_new_with_label( _( "Close" ) );;
 	gtk_widget_show( button );
 	gtk_box_pack_end( GTK_BOX( hbox2 ), button, FALSE, FALSE, 0 );
-	gtk_signal_connect( GTK_OBJECT( button ), "clicked",
-						GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( IDOK ) );
+	g_signal_connect( G_OBJECT( button ), "clicked",
+						G_CALLBACK( dialog_button_callback ), GINT_TO_POINTER( IDOK ) );
 	gtk_widget_set_usize( button, 60, -2 );
 
 	gtk_grab_add( dlg );
@@ -1333,21 +1333,21 @@ static void rotatedlg_apply( GtkWidget *widget, gpointer data ){
 	float f;
 
 	spin = GTK_SPIN_BUTTON( g_object_get_data( G_OBJECT( data ), "x" ) );
-	f = gtk_spin_button_get_value_as_float( spin );
+	f = gtk_spin_button_get_value( spin );
 	if ( f != 0.0 ) {
 		Select_RotateAxis( 0,f );
 	}
 	gtk_spin_button_set_value( GTK_SPIN_BUTTON( spin ), 0.0f ); // reset to 0 on Apply
 
 	spin = GTK_SPIN_BUTTON( g_object_get_data( G_OBJECT( data ), "y" ) );
-	f = gtk_spin_button_get_value_as_float( spin );
+	f = gtk_spin_button_get_value( spin );
 	if ( f != 0.0 ) {
 		Select_RotateAxis( 1,f );
 	}
 	gtk_spin_button_set_value( GTK_SPIN_BUTTON( spin ), 0.0f );
 
 	spin = GTK_SPIN_BUTTON( g_object_get_data( G_OBJECT( data ), "z" ) );
-	f = gtk_spin_button_get_value_as_float( spin );
+	f = gtk_spin_button_get_value( spin );
 	if ( f != 0.0 ) {
 		Select_RotateAxis( 2,f );
 	}
@@ -1367,10 +1367,10 @@ void DoRotateDlg(){
 
 	dlg = gtk_window_new( GTK_WINDOW_TOPLEVEL );
 	gtk_window_set_title( GTK_WINDOW( dlg ), _( "Arbitrary rotation" ) );
-	gtk_signal_connect( GTK_OBJECT( dlg ), "delete-event",
-						GTK_SIGNAL_FUNC( dialog_delete_callback ), NULL );
-	gtk_signal_connect( GTK_OBJECT( dlg ), "destroy",
-						GTK_SIGNAL_FUNC( gtk_widget_destroy ), NULL );
+	g_signal_connect( G_OBJECT( dlg ), "delete-event",
+						G_CALLBACK( dialog_delete_callback ), NULL );
+	g_signal_connect( G_OBJECT( dlg ), "destroy",
+						G_CALLBACK( gtk_widget_destroy ), NULL );
 	g_object_set_data( G_OBJECT( dlg ), "loop", &loop );
 	g_object_set_data( G_OBJECT( dlg ), "ret", &ret );
 
@@ -1385,19 +1385,19 @@ void DoRotateDlg(){
 	gtk_table_set_row_spacings( GTK_TABLE( table ), 5 );
 	gtk_table_set_col_spacings( GTK_TABLE( table ), 5 );
 
-	label = gtk_label_new( _( "  X  " ) );
+	label = gtk_label_new( _( "X" ) );
 	gtk_widget_show( label );
 	gtk_table_attach( GTK_TABLE( table ), label, 0, 1, 0, 1,
 					  (GtkAttachOptions) ( 0 ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
 
-	label = gtk_label_new( _( "  Y  " ) );
+	label = gtk_label_new( _( "Y" ) );
 	gtk_widget_show( label );
 	gtk_table_attach( GTK_TABLE( table ), label, 0, 1, 1, 2,
 					  (GtkAttachOptions) ( 0 ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
 
-	label = gtk_label_new( _( "  Z  " ) );
+	label = gtk_label_new( _( "Z" ) );
 
 	gtk_widget_show( label );
 	gtk_table_attach( GTK_TABLE( table ), label, 0, 1, 2, 3,
@@ -1448,21 +1448,21 @@ void DoRotateDlg(){
 	button = gtk_button_new_with_label( _( "OK" ) );
 	gtk_widget_show( button );
 	gtk_box_pack_start( GTK_BOX( vbox ), button, FALSE, FALSE, 0 );
-	gtk_signal_connect( GTK_OBJECT( button ), "clicked",
-						GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( IDOK ) );
+	g_signal_connect( G_OBJECT( button ), "clicked",
+						G_CALLBACK( dialog_button_callback ), GINT_TO_POINTER( IDOK ) );
 	gtk_widget_set_usize( button, 60, -2 );
 
 	button = gtk_button_new_with_label( _( "Cancel" ) );;
 	gtk_widget_show( button );
 	gtk_box_pack_start( GTK_BOX( vbox ), button, FALSE, FALSE, 0 );
-	gtk_signal_connect( GTK_OBJECT( button ), "clicked",
-						GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( IDCANCEL ) );
+	g_signal_connect( G_OBJECT( button ), "clicked",
+						G_CALLBACK( dialog_button_callback ), GINT_TO_POINTER( IDCANCEL ) );
 
 	button = gtk_button_new_with_label( _( "Apply" ) );
 	gtk_widget_show( button );
 	gtk_box_pack_start( GTK_BOX( vbox ), button, FALSE, FALSE, 0 );
-	gtk_signal_connect( GTK_OBJECT( button ), "clicked",
-						GTK_SIGNAL_FUNC( rotatedlg_apply ), dlg );
+	g_signal_connect( G_OBJECT( button ), "clicked",
+						G_CALLBACK( rotatedlg_apply ), dlg );
 
 	gtk_grab_add( dlg );
 	gtk_widget_show( dlg );
@@ -1487,10 +1487,10 @@ void DoGamma(){
 
 	dlg = gtk_window_new( GTK_WINDOW_TOPLEVEL );
 	gtk_window_set_title( GTK_WINDOW( dlg ), _( "Gamma" ) );
-	gtk_signal_connect( GTK_OBJECT( dlg ), "delete-event",
-						GTK_SIGNAL_FUNC( dialog_delete_callback ), NULL );
-	gtk_signal_connect( GTK_OBJECT( dlg ), "destroy",
-						GTK_SIGNAL_FUNC( gtk_widget_destroy ), NULL );
+	g_signal_connect( G_OBJECT( dlg ), "delete-event",
+						G_CALLBACK( dialog_delete_callback ), NULL );
+	g_signal_connect( G_OBJECT( dlg ), "destroy",
+						G_CALLBACK( gtk_widget_destroy ), NULL );
 	g_object_set_data( G_OBJECT( dlg ), "loop", &loop );
 	g_object_set_data( G_OBJECT( dlg ), "ret", &ret );
 
@@ -1522,15 +1522,15 @@ void DoGamma(){
 	button = gtk_button_new_with_label( _( "OK" ) );
 	gtk_widget_show( button );
 	gtk_box_pack_start( GTK_BOX( vbox ), button, FALSE, FALSE, 0 );
-	gtk_signal_connect( GTK_OBJECT( button ), "clicked",
-						GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( IDOK ) );
+	g_signal_connect( G_OBJECT( button ), "clicked",
+						G_CALLBACK( dialog_button_callback ), GINT_TO_POINTER( IDOK ) );
 	gtk_widget_set_usize( button, 60, -2 );
 
 	button = gtk_button_new_with_label( _( "Cancel" ) );;
 	gtk_widget_show( button );
 	gtk_box_pack_start( GTK_BOX( vbox ), button, FALSE, FALSE, 0 );
-	gtk_signal_connect( GTK_OBJECT( button ), "clicked",
-						GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( IDCANCEL ) );
+	g_signal_connect( G_OBJECT( button ), "clicked",
+						G_CALLBACK( dialog_button_callback ), GINT_TO_POINTER( IDCANCEL ) );
 
 	// Initialize dialog
 	char buf[16];
@@ -1698,10 +1698,10 @@ void DoFind(){
 
 	dlg = gtk_window_new( GTK_WINDOW_TOPLEVEL );
 	gtk_window_set_title( GTK_WINDOW( dlg ), _( "Find Brush" ) );
-	gtk_signal_connect( GTK_OBJECT( dlg ), "delete-event",
-						GTK_SIGNAL_FUNC( dialog_delete_callback ), NULL );
-	gtk_signal_connect( GTK_OBJECT( dlg ), "destroy",
-						GTK_SIGNAL_FUNC( gtk_widget_destroy ), NULL );
+	g_signal_connect( G_OBJECT( dlg ), "delete-event",
+						G_CALLBACK( dialog_delete_callback ), NULL );
+	g_signal_connect( G_OBJECT( dlg ), "destroy",
+						G_CALLBACK( gtk_widget_destroy ), NULL );
 	g_object_set_data( G_OBJECT( dlg ), "loop", &loop );
 	g_object_set_data( G_OBJECT( dlg ), "ret", &ret );
 
@@ -1747,15 +1747,15 @@ void DoFind(){
 	button = gtk_button_new_with_label( _( "OK" ) );
 	gtk_widget_show( button );
 	gtk_box_pack_start( GTK_BOX( hbox ), button, FALSE, FALSE, 0 );
-	gtk_signal_connect( GTK_OBJECT( button ), "clicked",
-						GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( IDOK ) );
+	g_signal_connect( G_OBJECT( button ), "clicked",
+						G_CALLBACK( dialog_button_callback ), GINT_TO_POINTER( IDOK ) );
 	gtk_widget_set_usize( button, 60, -2 );
 
 	button = gtk_button_new_with_label( _( "Cancel" ) );;
 	gtk_widget_show( button );
 	gtk_box_pack_start( GTK_BOX( hbox ), button, FALSE, FALSE, 0 );
-	gtk_signal_connect( GTK_OBJECT( button ), "clicked",
-						GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( IDCANCEL ) );
+	g_signal_connect( G_OBJECT( button ), "clicked",
+						G_CALLBACK( dialog_button_callback ), GINT_TO_POINTER( IDCANCEL ) );
 
 	// Initialize dialog
 	char buf[16];
@@ -1792,10 +1792,10 @@ void DoSides( bool bCone, bool bSphere, bool bTorus ){
 
 	dlg = gtk_window_new( GTK_WINDOW_TOPLEVEL );
 	gtk_window_set_title( GTK_WINDOW( dlg ), _( "Arbitrary sides" ) );
-	gtk_signal_connect( GTK_OBJECT( dlg ), "delete-event",
-						GTK_SIGNAL_FUNC( dialog_delete_callback ), NULL );
-	gtk_signal_connect( GTK_OBJECT( dlg ), "destroy",
-						GTK_SIGNAL_FUNC( gtk_widget_destroy ), NULL );
+	g_signal_connect( G_OBJECT( dlg ), "delete-event",
+						G_CALLBACK( dialog_delete_callback ), NULL );
+	g_signal_connect( G_OBJECT( dlg ), "destroy",
+						G_CALLBACK( gtk_widget_destroy ), NULL );
 	g_object_set_data( G_OBJECT( dlg ), "loop", &loop );
 	g_object_set_data( G_OBJECT( dlg ), "ret", &ret );
 
@@ -1819,15 +1819,15 @@ void DoSides( bool bCone, bool bSphere, bool bTorus ){
 	button = gtk_button_new_with_label( _( "OK" ) );
 	gtk_widget_show( button );
 	gtk_box_pack_start( GTK_BOX( vbox ), button, FALSE, FALSE, 0 );
-	gtk_signal_connect( GTK_OBJECT( button ), "clicked",
-						GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( IDOK ) );
+	g_signal_connect( G_OBJECT( button ), "clicked",
+						G_CALLBACK( dialog_button_callback ), GINT_TO_POINTER( IDOK ) );
 	gtk_widget_set_usize( button, 60, -2 );
 
 	button = gtk_button_new_with_label( _( "Cancel" ) );;
 	gtk_widget_show( button );
 	gtk_box_pack_start( GTK_BOX( vbox ), button, FALSE, FALSE, 0 );
-	gtk_signal_connect( GTK_OBJECT( button ), "clicked",
-						GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( IDCANCEL ) );
+	g_signal_connect( G_OBJECT( button ), "clicked",
+						G_CALLBACK( dialog_button_callback ), GINT_TO_POINTER( IDCANCEL ) );
 
 	gtk_grab_add( dlg );
 	gtk_widget_show( dlg );
@@ -1864,10 +1864,10 @@ void DoNewPatchDlg(){
 
 	dlg = gtk_window_new( GTK_WINDOW_TOPLEVEL );
 	gtk_window_set_title( GTK_WINDOW( dlg ), _( "Patch density" ) );
-	gtk_signal_connect( GTK_OBJECT( dlg ), "delete-event",
-						GTK_SIGNAL_FUNC( dialog_delete_callback ), NULL );
-	gtk_signal_connect( GTK_OBJECT( dlg ), "destroy",
-						GTK_SIGNAL_FUNC( gtk_widget_destroy ), NULL );
+	g_signal_connect( G_OBJECT( dlg ), "delete-event",
+						G_CALLBACK( dialog_delete_callback ), NULL );
+	g_signal_connect( G_OBJECT( dlg ), "destroy",
+						G_CALLBACK( gtk_widget_destroy ), NULL );
 	g_object_set_data( G_OBJECT( dlg ), "loop", &loop );
 	g_object_set_data( G_OBJECT( dlg ), "ret", &ret );
 
@@ -1927,15 +1927,15 @@ void DoNewPatchDlg(){
 	button = gtk_button_new_with_label( _( "OK" ) );
 	gtk_widget_show( button );
 	gtk_box_pack_start( GTK_BOX( vbox ), button, FALSE, FALSE, 0 );
-	gtk_signal_connect( GTK_OBJECT( button ), "clicked",
-						GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( IDOK ) );
+	g_signal_connect( G_OBJECT( button ), "clicked",
+						G_CALLBACK( dialog_button_callback ), GINT_TO_POINTER( IDOK ) );
 	gtk_widget_set_usize( button, 60, -2 );
 
 	button = gtk_button_new_with_label( _( "Cancel" ) );;
 	gtk_widget_show( button );
 	gtk_box_pack_start( GTK_BOX( vbox ), button, FALSE, FALSE, 0 );
-	gtk_signal_connect( GTK_OBJECT( button ), "clicked",
-						GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( IDCANCEL ) );
+	g_signal_connect( G_OBJECT( button ), "clicked",
+						G_CALLBACK( dialog_button_callback ), GINT_TO_POINTER( IDCANCEL ) );
 
 	// Initialize dialog
 	g_list_free( combo_list );
@@ -1973,9 +1973,9 @@ static void scaledlg_apply( GtkWidget *widget, gpointer data ){
 	y = GTK_WIDGET( g_object_get_data( G_OBJECT( data ), "y" ) );
 	z = GTK_WIDGET( g_object_get_data( G_OBJECT( data ), "z" ) );
 
-	sx = gtk_spin_button_get_value_as_float( GTK_SPIN_BUTTON( x ) );
-	sy = gtk_spin_button_get_value_as_float( GTK_SPIN_BUTTON( y ) );
-	sz = gtk_spin_button_get_value_as_float( GTK_SPIN_BUTTON( z ) );
+	sx = gtk_spin_button_get_value( GTK_SPIN_BUTTON( x ) );
+	sy = gtk_spin_button_get_value( GTK_SPIN_BUTTON( y ) );
+	sz = gtk_spin_button_get_value( GTK_SPIN_BUTTON( z ) );
 
 	gtk_spin_button_set_value( GTK_SPIN_BUTTON( x ), 1.0f );
 	gtk_spin_button_set_value( GTK_SPIN_BUTTON( y ), 1.0f );
@@ -1986,7 +1986,7 @@ static void scaledlg_apply( GtkWidget *widget, gpointer data ){
 		Sys_UpdateWindows( W_ALL );
 	}
 	else{
-		Sys_Printf( _( "Warning.. Tried to scale by a zero value.\n" ) );
+		Sys_FPrintf( SYS_WRN, _( "Warning.. Tried to scale by a zero value." ) );
 	}
 }
 
@@ -2003,10 +2003,10 @@ void DoScaleDlg(){
 
 	dlg = gtk_window_new( GTK_WINDOW_TOPLEVEL );
 	gtk_window_set_title( GTK_WINDOW( dlg ), _( "Scale" ) );
-	gtk_signal_connect( GTK_OBJECT( dlg ), "delete-event",
-						GTK_SIGNAL_FUNC( dialog_delete_callback ), NULL );
-	gtk_signal_connect( GTK_OBJECT( dlg ), "destroy",
-						GTK_SIGNAL_FUNC( gtk_widget_destroy ), NULL );
+	g_signal_connect( G_OBJECT( dlg ), "delete-event",
+						G_CALLBACK( dialog_delete_callback ), NULL );
+	g_signal_connect( G_OBJECT( dlg ), "destroy",
+						G_CALLBACK( gtk_widget_destroy ), NULL );
 	g_object_set_data( G_OBJECT( dlg ), "loop", &loop );
 	g_object_set_data( G_OBJECT( dlg ), "ret", &ret );
 
@@ -2085,21 +2085,21 @@ void DoScaleDlg(){
 	button = gtk_button_new_with_label( _( "OK" ) );
 	gtk_widget_show( button );
 	gtk_box_pack_start( GTK_BOX( vbox ), button, FALSE, FALSE, 0 );
-	gtk_signal_connect( GTK_OBJECT( button ), "clicked",
-						GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( IDOK ) );
+	g_signal_connect( G_OBJECT( button ), "clicked",
+						G_CALLBACK( dialog_button_callback ), GINT_TO_POINTER( IDOK ) );
 	gtk_widget_set_usize( button, 60, -2 );
 
 	button = gtk_button_new_with_label( _( "Cancel" ) );;
 	gtk_widget_show( button );
 	gtk_box_pack_start( GTK_BOX( vbox ), button, FALSE, FALSE, 0 );
-	gtk_signal_connect( GTK_OBJECT( button ), "clicked",
-						GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( IDCANCEL ) );
+	g_signal_connect( G_OBJECT( button ), "clicked",
+						G_CALLBACK( dialog_button_callback ), GINT_TO_POINTER( IDCANCEL ) );
 
 	button = gtk_button_new_with_label( _( "Apply" ) );
 	gtk_widget_show( button );
 	gtk_box_pack_start( GTK_BOX( vbox ), button, FALSE, FALSE, 0 );
-	gtk_signal_connect( GTK_OBJECT( button ), "clicked",
-						GTK_SIGNAL_FUNC( scaledlg_apply ), dlg );
+	g_signal_connect( G_OBJECT( button ), "clicked",
+						G_CALLBACK( scaledlg_apply ), dlg );
 
 	gtk_grab_add( dlg );
 	gtk_widget_show( dlg );
@@ -2126,10 +2126,10 @@ void DoThickenDlg(){
 
 	dlg = gtk_window_new( GTK_WINDOW_TOPLEVEL );
 	gtk_window_set_title( GTK_WINDOW( dlg ), _( "Thicken Patch" ) );
-	gtk_signal_connect( GTK_OBJECT( dlg ), "delete-event",
-						GTK_SIGNAL_FUNC( dialog_delete_callback ), NULL );
-	gtk_signal_connect( GTK_OBJECT( dlg ), "destroy",
-						GTK_SIGNAL_FUNC( gtk_widget_destroy ), NULL );
+	g_signal_connect( G_OBJECT( dlg ), "delete-event",
+						G_CALLBACK( dialog_delete_callback ), NULL );
+	g_signal_connect( G_OBJECT( dlg ), "destroy",
+						G_CALLBACK( gtk_widget_destroy ), NULL );
 	g_object_set_data( G_OBJECT( dlg ), "loop", &loop );
 	g_object_set_data( G_OBJECT( dlg ), "ret", &ret );
 
@@ -2155,15 +2155,15 @@ void DoThickenDlg(){
 	button = gtk_button_new_with_label( _( "OK" ) );
 	gtk_widget_show( button );
 	gtk_box_pack_start( GTK_BOX( vbox2 ), button, FALSE, FALSE, 0 );
-	gtk_signal_connect( GTK_OBJECT( button ), "clicked",
-						GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( IDOK ) );
+	g_signal_connect( G_OBJECT( button ), "clicked",
+						G_CALLBACK( dialog_button_callback ), GINT_TO_POINTER( IDOK ) );
 	gtk_widget_set_usize( button, 60, -2 );
 
 	button = gtk_button_new_with_label( _( "Cancel" ) );;
 	gtk_widget_show( button );
 	gtk_box_pack_start( GTK_BOX( vbox2 ), button, FALSE, FALSE, 0 );
-	gtk_signal_connect( GTK_OBJECT( button ), "clicked",
-						GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( IDCANCEL ) );
+	g_signal_connect( G_OBJECT( button ), "clicked",
+						G_CALLBACK( dialog_button_callback ), GINT_TO_POINTER( IDCANCEL ) );
 
 	hbox = gtk_hbox_new( FALSE, 5 );
 	gtk_widget_show( hbox );
@@ -2244,10 +2244,10 @@ void DoAbout(){
 	gtk_window_set_position( GTK_WINDOW( dlg ), GTK_WIN_POS_CENTER_ON_PARENT );
 	gtk_window_set_title( GTK_WINDOW( dlg ), _( "About GtkRadiant" ) );
 	gtk_window_set_resizable( GTK_WINDOW( dlg ), FALSE );  
-	gtk_signal_connect( GTK_OBJECT( dlg ), "delete-event",
-						GTK_SIGNAL_FUNC( dialog_delete_callback ), NULL );
-	gtk_signal_connect( GTK_OBJECT( dlg ), "destroy",
-						GTK_SIGNAL_FUNC( gtk_widget_destroy ), NULL );
+	g_signal_connect( G_OBJECT( dlg ), "delete-event",
+						G_CALLBACK( dialog_delete_callback ), NULL );
+	g_signal_connect( G_OBJECT( dlg ), "destroy",
+						G_CALLBACK( gtk_widget_destroy ), NULL );
 	g_object_set_data( G_OBJECT( dlg ), "loop", &loop );
 	g_object_set_data( G_OBJECT( dlg ), "ret", &ret );
 
@@ -2373,21 +2373,21 @@ void DoAbout(){
 	GtkWidget *ok_button = gtk_button_new_with_label( _( "OK" ) );
 	gtk_widget_show( ok_button );
 	gtk_box_pack_end( GTK_BOX( button_hbox ), ok_button, FALSE, FALSE, 0 );
-	gtk_signal_connect( GTK_OBJECT( ok_button ), "clicked",
-						GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( IDOK ) );
+	g_signal_connect( G_OBJECT( ok_button ), "clicked",
+						G_CALLBACK( dialog_button_callback ), GINT_TO_POINTER( IDOK ) );
 
 	/*
 	button = gtk_button_new_with_label( _( "Credits" ) );
 	gtk_widget_show( button );
 	gtk_box_pack_end( GTK_BOX( button_hbox ), button, FALSE, FALSE, 0 );
-	gtk_signal_connect( GTK_OBJECT( button ), "clicked",
-						GTK_SIGNAL_FUNC( about_button_credits ), NULL );
+	g_signal_connect( G_OBJECT( button ), "clicked",
+						G_CALLBACK( about_button_credits ), NULL );
 
 	button = gtk_button_new_with_label( _( "Changelog" ) );
 	gtk_widget_show( button );
 	gtk_box_pack_end( GTK_BOX( button_hbox ), button, FALSE, FALSE, 0 );
-	gtk_signal_connect( GTK_OBJECT( button ), "clicked",
-						GTK_SIGNAL_FUNC( about_button_changelog ), NULL );
+	g_signal_connect( G_OBJECT( button ), "clicked",
+						G_CALLBACK( about_button_changelog ), NULL );
 	*/
 
 	// show it
@@ -2412,10 +2412,10 @@ void DoCommandListDlg(){
     gtk_window_set_transient_for( GTK_WINDOW( dlg ), GTK_WINDOW( g_pParentWnd->m_pWidget ) );
 	gtk_window_set_position( GTK_WINDOW( dlg ), GTK_WIN_POS_CENTER_ON_PARENT );
 	gtk_window_set_title( GTK_WINDOW( dlg ), _( "Shortcut List" ) );
-	gtk_signal_connect( GTK_OBJECT( dlg ), "delete-event",
-						GTK_SIGNAL_FUNC( dialog_delete_callback ), NULL );
-	gtk_signal_connect( GTK_OBJECT( dlg ), "destroy",
-						GTK_SIGNAL_FUNC( gtk_widget_destroy ), NULL );
+	g_signal_connect( G_OBJECT( dlg ), "delete-event",
+						G_CALLBACK( dialog_delete_callback ), NULL );
+	g_signal_connect( G_OBJECT( dlg ), "destroy",
+						G_CALLBACK( gtk_widget_destroy ), NULL );
 	g_object_set_data( G_OBJECT( dlg ), "loop", &loop );
 	g_object_set_data( G_OBJECT( dlg ), "ret", &ret );
 	gtk_window_set_default_size( GTK_WINDOW( dlg ), 400, 400 );
@@ -2528,8 +2528,8 @@ void DoCommandListDlg(){
 	button = gtk_button_new_with_label( _( "Close" ) );;
 	gtk_widget_show( button );
 	gtk_box_pack_end( GTK_BOX( vbox ), button, FALSE, FALSE, 0 );
-	gtk_signal_connect( GTK_OBJECT( button ), "clicked",
-						GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( IDOK ) );
+	g_signal_connect( G_OBJECT( button ), "clicked",
+						G_CALLBACK( dialog_button_callback ), GINT_TO_POINTER( IDOK ) );
 	gtk_widget_set_usize( button, 60, -2 );
 
 	gtk_grab_add( dlg );
@@ -2551,10 +2551,10 @@ void DoTextureListDlg(){
 
 	dlg = gtk_window_new( GTK_WINDOW_TOPLEVEL );
 	gtk_window_set_title( GTK_WINDOW( dlg ), _( "Textures" ) );
-	gtk_signal_connect( GTK_OBJECT( dlg ), "delete-event",
-						GTK_SIGNAL_FUNC( dialog_delete_callback ), NULL );
-	gtk_signal_connect( GTK_OBJECT( dlg ), "destroy",
-						GTK_SIGNAL_FUNC( gtk_widget_destroy ), NULL );
+	g_signal_connect( G_OBJECT( dlg ), "delete-event",
+						G_CALLBACK( dialog_delete_callback ), NULL );
+	g_signal_connect( G_OBJECT( dlg ), "destroy",
+						G_CALLBACK( gtk_widget_destroy ), NULL );
 	g_object_set_data( G_OBJECT( dlg ), "loop", &loop );
 	g_object_set_data( G_OBJECT( dlg ), "ret", &ret );
 	gtk_window_set_default_size( GTK_WINDOW( dlg ), 400, 400 );
@@ -2615,15 +2615,15 @@ void DoTextureListDlg(){
 	button = gtk_button_new_with_label( _( "Load" ) );;
 	gtk_widget_show( button );
 	gtk_box_pack_start( GTK_BOX( vbox ), button, FALSE, FALSE, 0 );
-	gtk_signal_connect( GTK_OBJECT( button ), "clicked",
-						GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( IDOK ) );
+	g_signal_connect( G_OBJECT( button ), "clicked",
+						G_CALLBACK( dialog_button_callback ), GINT_TO_POINTER( IDOK ) );
 	gtk_widget_set_usize( button, 60, -2 );
 
 	button = gtk_button_new_with_label( _( "Close" ) );;
 	gtk_widget_show( button );
 	gtk_box_pack_start( GTK_BOX( vbox ), button, FALSE, FALSE, 0 );
-	gtk_signal_connect( GTK_OBJECT( button ), "clicked",
-						GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( IDCANCEL ) );
+	g_signal_connect( G_OBJECT( button ), "clicked",
+						G_CALLBACK( dialog_button_callback ), GINT_TO_POINTER( IDCANCEL ) );
 	gtk_widget_set_usize( button, 60, -2 );
 
 	gtk_grab_add( dlg );
@@ -2661,10 +2661,10 @@ int DoCapDlg( int *type, bool *b_GroupResult ){
 
 	dlg = gtk_window_new( GTK_WINDOW_TOPLEVEL );
 	gtk_window_set_title( GTK_WINDOW( dlg ), _( "Cap" ) );
-	gtk_signal_connect( GTK_OBJECT( dlg ), "delete-event",
-						GTK_SIGNAL_FUNC( dialog_delete_callback ), NULL );
-	gtk_signal_connect( GTK_OBJECT( dlg ), "destroy",
-						GTK_SIGNAL_FUNC( gtk_widget_destroy ), NULL );
+	g_signal_connect( G_OBJECT( dlg ), "delete-event",
+						G_CALLBACK( dialog_delete_callback ), NULL );
+	g_signal_connect( G_OBJECT( dlg ), "destroy",
+						G_CALLBACK( gtk_widget_destroy ), NULL );
 	g_object_set_data( G_OBJECT( dlg ), "loop", &loop );
 	g_object_set_data( G_OBJECT( dlg ), "ret", &ret );
 
@@ -2713,28 +2713,28 @@ int DoCapDlg( int *type, bool *b_GroupResult ){
 	gtk_table_attach( GTK_TABLE( table ), bevel, 1, 2, 0, 1,
 					  (GtkAttachOptions) ( GTK_FILL | GTK_EXPAND ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
-	group = gtk_radio_button_group( GTK_RADIO_BUTTON( bevel ) );
+	group = gtk_radio_button_get_group( GTK_RADIO_BUTTON( bevel ) );
 
 	endcap = gtk_radio_button_new_with_label( group, _( "Endcap" ) );
 	gtk_widget_show( endcap );
 	gtk_table_attach( GTK_TABLE( table ), endcap, 1, 2, 1, 2,
 					  (GtkAttachOptions) ( GTK_FILL | GTK_EXPAND ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
-	group = gtk_radio_button_group( GTK_RADIO_BUTTON( endcap ) );
+	group = gtk_radio_button_get_group( GTK_RADIO_BUTTON( endcap ) );
 
 	ibevel = gtk_radio_button_new_with_label( group, _( "Inverted Bevel" ) );
 	gtk_widget_show( ibevel );
 	gtk_table_attach( GTK_TABLE( table ), ibevel, 1, 2, 2, 3,
 					  (GtkAttachOptions) ( GTK_FILL | GTK_EXPAND ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
-	group = gtk_radio_button_group( GTK_RADIO_BUTTON( ibevel ) );
+	group = gtk_radio_button_get_group( GTK_RADIO_BUTTON( ibevel ) );
 
 	iendcap = gtk_radio_button_new_with_label( group, _( "Inverted Endcap" ) );
 	gtk_widget_show( iendcap );
 	gtk_table_attach( GTK_TABLE( table ), iendcap, 1, 2, 3, 4,
 					  (GtkAttachOptions) ( GTK_FILL | GTK_EXPAND ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
-	group = gtk_radio_button_group( GTK_RADIO_BUTTON( iendcap ) );
+	group = gtk_radio_button_get_group( GTK_RADIO_BUTTON( iendcap ) );
 
 	// Gef: added radio toggle for func_grouping capped patches
 	group_toggle = gtk_check_button_new_with_label( _( "Result to func_group" ) );
@@ -2748,15 +2748,15 @@ int DoCapDlg( int *type, bool *b_GroupResult ){
 	button = gtk_button_new_with_label( _( "OK" ) );
 	gtk_widget_show( button );
 	gtk_box_pack_start( GTK_BOX( vbox ), button, FALSE, FALSE, 0 );
-	gtk_signal_connect( GTK_OBJECT( button ), "clicked",
-						GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( IDOK ) );
+	g_signal_connect( G_OBJECT( button ), "clicked",
+						G_CALLBACK( dialog_button_callback ), GINT_TO_POINTER( IDOK ) );
 	gtk_widget_set_usize( button, 60, -2 );
 
 	button = gtk_button_new_with_label( _( "Cancel" ) );
 	gtk_widget_show( button );
 	gtk_box_pack_start( GTK_BOX( vbox ), button, FALSE, FALSE, 0 );
-	gtk_signal_connect( GTK_OBJECT( button ), "clicked",
-						GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( IDCANCEL ) );
+	g_signal_connect( G_OBJECT( button ), "clicked",
+						G_CALLBACK( dialog_button_callback ), GINT_TO_POINTER( IDCANCEL ) );
 	gtk_widget_set_usize( button, 60, -2 );
 
 	// Gef: Set the state of the func_group toggle
@@ -2804,10 +2804,10 @@ void DoScriptsDlg(){
 
 	dlg = gtk_window_new( GTK_WINDOW_TOPLEVEL );
 	gtk_window_set_title( GTK_WINDOW( dlg ), _( "Available Scripts - Not Implemented Yet" ) );
-	gtk_signal_connect( GTK_OBJECT( dlg ), "delete-event",
-						GTK_SIGNAL_FUNC( dialog_delete_callback ), NULL );
-	gtk_signal_connect( GTK_OBJECT( dlg ), "destroy",
-						GTK_SIGNAL_FUNC( gtk_widget_destroy ), NULL );
+	g_signal_connect( G_OBJECT( dlg ), "delete-event",
+						G_CALLBACK( dialog_delete_callback ), NULL );
+	g_signal_connect( G_OBJECT( dlg ), "destroy",
+						G_CALLBACK( gtk_widget_destroy ), NULL );
 	g_object_set_data( G_OBJECT( dlg ), "loop", &loop );
 	g_object_set_data( G_OBJECT( dlg ), "ret", &ret );
 
@@ -2895,8 +2895,8 @@ void DoScriptsDlg(){
 	button = gtk_button_new_with_label( _( "Run" ) );
 	gtk_widget_show( button );
 	gtk_box_pack_start( GTK_BOX( vbox2 ), button, FALSE, FALSE, 0 );
-	gtk_signal_connect( GTK_OBJECT( button ), "clicked",
-						GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( IDOK ) );
+	g_signal_connect( G_OBJECT( button ), "clicked",
+						G_CALLBACK( dialog_button_callback ), GINT_TO_POINTER( IDOK ) );
 	gtk_widget_set_usize( button, 60, -2 );
 
 	button = gtk_button_new_with_label( _( "New..." ) );
@@ -2914,8 +2914,8 @@ void DoScriptsDlg(){
 	button = gtk_button_new_with_label( _( "Close" ) );
 	gtk_widget_show( button );
 	gtk_box_pack_end( GTK_BOX( vbox2 ), button, FALSE, FALSE, 0 );
-	gtk_signal_connect( GTK_OBJECT( button ), "clicked",
-						GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( IDCANCEL ) );
+	g_signal_connect( G_OBJECT( button ), "clicked",
+						G_CALLBACK( dialog_button_callback ), GINT_TO_POINTER( IDCANCEL ) );
 	gtk_widget_set_usize( button, 60, -2 );
 
 	gtk_grab_add( dlg );
@@ -2951,10 +2951,10 @@ int DoBSInputDlg( const char *fields[5], float values[5] ){
 
 	dlg = gtk_window_new( GTK_WINDOW_TOPLEVEL );
 	gtk_window_set_title( GTK_WINDOW( dlg ), _( "BrushScript Input" ) );
-	gtk_signal_connect( GTK_OBJECT( dlg ), "delete-event",
-						GTK_SIGNAL_FUNC( dialog_delete_callback ), NULL );
-	gtk_signal_connect( GTK_OBJECT( dlg ), "destroy",
-						GTK_SIGNAL_FUNC( gtk_widget_destroy ), NULL );
+	g_signal_connect( G_OBJECT( dlg ), "delete-event",
+						G_CALLBACK( dialog_delete_callback ), NULL );
+	g_signal_connect( G_OBJECT( dlg ), "destroy",
+						G_CALLBACK( gtk_widget_destroy ), NULL );
 	g_object_set_data( G_OBJECT( dlg ), "loop", &loop );
 	g_object_set_data( G_OBJECT( dlg ), "ret", &ret );
 
@@ -2996,15 +2996,15 @@ int DoBSInputDlg( const char *fields[5], float values[5] ){
 	button = gtk_button_new_with_label( _( "OK" ) );
 	gtk_widget_show( button );
 	gtk_box_pack_start( GTK_BOX( vbox ), button, FALSE, FALSE, 0 );
-	gtk_signal_connect( GTK_OBJECT( button ), "clicked",
-						GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( IDOK ) );
+	g_signal_connect( G_OBJECT( button ), "clicked",
+						G_CALLBACK( dialog_button_callback ), GINT_TO_POINTER( IDOK ) );
 	gtk_widget_set_usize( button, 60, -2 );
 
 	button = gtk_button_new_with_label( _( "Cancel" ) );
 	gtk_widget_show( button );
 	gtk_box_pack_start( GTK_BOX( vbox ), button, FALSE, FALSE, 0 );
-	gtk_signal_connect( GTK_OBJECT( button ), "clicked",
-						GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( IDCANCEL ) );
+	g_signal_connect( G_OBJECT( button ), "clicked",
+						G_CALLBACK( dialog_button_callback ), GINT_TO_POINTER( IDCANCEL ) );
 	gtk_widget_set_usize( button, 60, -2 );
 
 	gtk_grab_add( dlg );
@@ -3038,10 +3038,10 @@ int DoTextureLayout( float *fx, float *fy ){
 
 	dlg = gtk_window_new( GTK_WINDOW_TOPLEVEL );
 	gtk_window_set_title( GTK_WINDOW( dlg ), _( "Patch texture layout" ) );
-	gtk_signal_connect( GTK_OBJECT( dlg ), "delete-event",
-						GTK_SIGNAL_FUNC( dialog_delete_callback ), NULL );
-	gtk_signal_connect( GTK_OBJECT( dlg ), "destroy",
-						GTK_SIGNAL_FUNC( gtk_widget_destroy ), NULL );
+	g_signal_connect( G_OBJECT( dlg ), "delete-event",
+						G_CALLBACK( dialog_delete_callback ), NULL );
+	g_signal_connect( G_OBJECT( dlg ), "destroy",
+						G_CALLBACK( gtk_widget_destroy ), NULL );
 	g_object_set_data( G_OBJECT( dlg ), "loop", &loop );
 	g_object_set_data( G_OBJECT( dlg ), "ret", &ret );
 
@@ -3101,15 +3101,15 @@ int DoTextureLayout( float *fx, float *fy ){
 	button = gtk_button_new_with_label( _( "OK" ) );
 	gtk_widget_show( button );
 	gtk_box_pack_start( GTK_BOX( vbox ), button, FALSE, FALSE, 0 );
-	gtk_signal_connect( GTK_OBJECT( button ), "clicked",
-						GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( IDOK ) );
+	g_signal_connect( G_OBJECT( button ), "clicked",
+						G_CALLBACK( dialog_button_callback ), GINT_TO_POINTER( IDOK ) );
 	gtk_widget_set_usize( button, 60, -2 );
 
 	button = gtk_button_new_with_label( _( "Cancel" ) );
 	gtk_widget_show( button );
 	gtk_box_pack_start( GTK_BOX( vbox ), button, FALSE, FALSE, 0 );
-	gtk_signal_connect( GTK_OBJECT( button ), "clicked",
-						GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( IDCANCEL ) );
+	g_signal_connect( G_OBJECT( button ), "clicked",
+						G_CALLBACK( dialog_button_callback ), GINT_TO_POINTER( IDCANCEL ) );
 	gtk_widget_set_usize( button, 60, -2 );
 
 	// Initialize
@@ -3143,10 +3143,10 @@ char* DoNameDlg( const char* title ){
 
 	dlg = gtk_window_new( GTK_WINDOW_TOPLEVEL );
 	gtk_window_set_title( GTK_WINDOW( dlg ), title );
-	gtk_signal_connect( GTK_OBJECT( dlg ), "delete-event",
-						GTK_SIGNAL_FUNC( dialog_delete_callback ), NULL );
-	gtk_signal_connect( GTK_OBJECT( dlg ), "destroy",
-						GTK_SIGNAL_FUNC( gtk_widget_destroy ), NULL );
+	g_signal_connect( G_OBJECT( dlg ), "delete-event",
+						G_CALLBACK( dialog_delete_callback ), NULL );
+	g_signal_connect( G_OBJECT( dlg ), "destroy",
+						G_CALLBACK( gtk_widget_destroy ), NULL );
 	g_object_set_data( G_OBJECT( dlg ), "loop", &loop );
 	g_object_set_data( G_OBJECT( dlg ), "ret", &ret );
 
@@ -3170,15 +3170,15 @@ char* DoNameDlg( const char* title ){
 	button = gtk_button_new_with_label( _( "OK" ) );
 	gtk_widget_show( button );
 	gtk_box_pack_start( GTK_BOX( vbox ), button, FALSE, FALSE, 0 );
-	gtk_signal_connect( GTK_OBJECT( button ), "clicked",
-						GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( IDOK ) );
+	g_signal_connect( G_OBJECT( button ), "clicked",
+						G_CALLBACK( dialog_button_callback ), GINT_TO_POINTER( IDOK ) );
 	gtk_widget_set_usize( button, 60, -2 );
 
 	button = gtk_button_new_with_label( _( "Cancel" ) );
 	gtk_widget_show( button );
 	gtk_box_pack_start( GTK_BOX( vbox ), button, FALSE, FALSE, 0 );
-	gtk_signal_connect( GTK_OBJECT( button ), "clicked",
-						GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( IDCANCEL ) );
+	g_signal_connect( G_OBJECT( button ), "clicked",
+						G_CALLBACK( dialog_button_callback ), GINT_TO_POINTER( IDCANCEL ) );
 	gtk_widget_set_usize( button, 60, -2 );
 
 	gtk_grab_add( dlg );
@@ -3221,10 +3221,10 @@ char* DoNewProjectDlg(){
 
 	dlg = gtk_window_new( GTK_WINDOW_TOPLEVEL );
 	gtk_window_set_title( GTK_WINDOW( dlg ), _( "New Project" ) );
-	gtk_signal_connect( GTK_OBJECT( dlg ), "delete-event",
-						GTK_SIGNAL_FUNC( dialog_delete_callback ), NULL );
-	gtk_signal_connect( GTK_OBJECT( dlg ), "destroy",
-						GTK_SIGNAL_FUNC( gtk_widget_destroy ), NULL );
+	g_signal_connect( G_OBJECT( dlg ), "delete-event",
+						G_CALLBACK( dialog_delete_callback ), NULL );
+	g_signal_connect( G_OBJECT( dlg ), "destroy",
+						G_CALLBACK( gtk_widget_destroy ), NULL );
 	g_object_set_data( G_OBJECT( dlg ), "loop", &loop );
 	g_object_set_data( G_OBJECT( dlg ), "ret", &ret );
 
@@ -3265,15 +3265,15 @@ char* DoNewProjectDlg(){
 	button = gtk_button_new_with_label( _( "OK" ) );
 	gtk_widget_show( button );
 	gtk_box_pack_start( GTK_BOX( vbox ), button, FALSE, FALSE, 0 );
-	gtk_signal_connect( GTK_OBJECT( button ), "clicked",
-						GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( IDOK ) );
+	g_signal_connect( G_OBJECT( button ), "clicked",
+						G_CALLBACK( dialog_button_callback ), GINT_TO_POINTER( IDOK ) );
 	gtk_widget_set_usize( button, 60, -2 );
 
 	button = gtk_button_new_with_label( _( "Cancel" ) );
 	gtk_widget_show( button );
 	gtk_box_pack_start( GTK_BOX( vbox ), button, FALSE, FALSE, 0 );
-	gtk_signal_connect( GTK_OBJECT( button ), "clicked",
-						GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( IDCANCEL ) );
+	g_signal_connect( G_OBJECT( button ), "clicked",
+						G_CALLBACK( dialog_button_callback ), GINT_TO_POINTER( IDCANCEL ) );
 	gtk_widget_set_usize( button, 60, -2 );
 
 	gtk_grab_add( dlg );
@@ -3405,8 +3405,8 @@ static void CreateGtkTextEditor(){
 
 	dlg = gtk_window_new( GTK_WINDOW_TOPLEVEL );
 
-	gtk_signal_connect( GTK_OBJECT( dlg ), "delete-event",
-						GTK_SIGNAL_FUNC( editor_delete ), NULL );
+	g_signal_connect( G_OBJECT( dlg ), "delete-event",
+						G_CALLBACK( editor_delete ), NULL );
 	gtk_window_set_default_size( GTK_WINDOW( dlg ), 600, 300 );
 
 	vbox = gtk_vbox_new( FALSE, 5 );
@@ -3433,15 +3433,15 @@ static void CreateGtkTextEditor(){
 	button = gtk_button_new_with_label( _( "Close" ) );
 	gtk_widget_show( button );
 	gtk_box_pack_end( GTK_BOX( hbox ), button, FALSE, FALSE, 0 );
-	gtk_signal_connect( GTK_OBJECT( button ), "clicked",
-						GTK_SIGNAL_FUNC( editor_close ), dlg );
+	g_signal_connect( G_OBJECT( button ), "clicked",
+						G_CALLBACK( editor_close ), dlg );
 	gtk_widget_set_usize( button, 60, -2 );
 
 	button = gtk_button_new_with_label( _( "Save" ) );
 	gtk_widget_show( button );
 	gtk_box_pack_end( GTK_BOX( hbox ), button, FALSE, FALSE, 0 );
-	gtk_signal_connect( GTK_OBJECT( button ), "clicked",
-						GTK_SIGNAL_FUNC( editor_save ), dlg );
+	g_signal_connect( G_OBJECT( button ), "clicked",
+						G_CALLBACK( editor_save ), dlg );
 	gtk_widget_set_usize( button, 60, -2 );
 
 	text_editor = dlg;
@@ -3515,7 +3515,7 @@ void DoTextEditor( const char* filename, int cursorpos ){
 	if ( g_PrefsDlg.m_bUseWin32Editor ) {
 		HINSTANCE result;
 		Sys_Printf( "Opening file '%s'.\n", filename );
-		result = ShellExecute( (HWND)GDK_WINDOW_HWND( g_pParentWnd->m_pWidget->window ), "open", filename, NULL, NULL, SW_SHOW );
+		result = ShellExecute( (HWND)GDK_WINDOW_HWND( gtk_widget_get_window( g_pParentWnd->m_pWidget ) ), "open", filename, NULL, NULL, SW_SHOW );
 		if( (int)result <= 32 ) {
 			const char *errstr;
 			switch( (int)result ) {
@@ -3619,10 +3619,10 @@ int DoLightIntensityDlg( int *intensity ){
 
 	dlg = gtk_window_new( GTK_WINDOW_TOPLEVEL );
 	gtk_window_set_title( GTK_WINDOW( dlg ), _( "Light intensity" ) );
-	gtk_signal_connect( GTK_OBJECT( dlg ), "delete-event",
-						GTK_SIGNAL_FUNC( dialog_delete_callback ), NULL );
-	gtk_signal_connect( GTK_OBJECT( dlg ), "destroy",
-						GTK_SIGNAL_FUNC( gtk_widget_destroy ), NULL );
+	g_signal_connect( G_OBJECT( dlg ), "delete-event",
+						G_CALLBACK( dialog_delete_callback ), NULL );
+	g_signal_connect( G_OBJECT( dlg ), "destroy",
+						G_CALLBACK( gtk_widget_destroy ), NULL );
 	g_object_set_data( G_OBJECT( dlg ), "loop", &loop );
 	g_object_set_data( G_OBJECT( dlg ), "ret", &ret );
 
@@ -3653,8 +3653,8 @@ int DoLightIntensityDlg( int *intensity ){
 	button = gtk_button_new_with_label( _( "OK" ) );
 	gtk_widget_show( button );
 	gtk_box_pack_start( GTK_BOX( vbox ), button, FALSE, FALSE, 0 );
-	gtk_signal_connect( GTK_OBJECT( button ), "clicked",
-						GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( IDOK ) );
+	g_signal_connect( G_OBJECT( button ), "clicked",
+						G_CALLBACK( dialog_button_callback ), GINT_TO_POINTER( IDOK ) );
 	gtk_widget_add_accelerator( button, "clicked", accel_group,
 								GDK_Return, (GdkModifierType)0, GTK_ACCEL_VISIBLE );
 	gtk_widget_set_usize( button, 60, -2 );
@@ -3662,8 +3662,8 @@ int DoLightIntensityDlg( int *intensity ){
 	button = gtk_button_new_with_label( _( "Cancel" ) );
 	gtk_widget_show( button );
 	gtk_box_pack_start( GTK_BOX( vbox ), button, FALSE, FALSE, 0 );
-	gtk_signal_connect( GTK_OBJECT( button ), "clicked",
-						GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( IDCANCEL ) );
+	g_signal_connect( G_OBJECT( button ), "clicked",
+						G_CALLBACK( dialog_button_callback ), GINT_TO_POINTER( IDCANCEL ) );
 	gtk_widget_add_accelerator( button, "clicked", accel_group,
 								GDK_Escape, (GdkModifierType)0, GTK_ACCEL_VISIBLE );
 	gtk_widget_set_usize( button, 60, -2 );

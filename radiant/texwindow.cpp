@@ -637,7 +637,7 @@ void FillTextureMenu( GSList** pArray ){
 					gtk_widget_show( item );
 					CheckMenuSplitting( pSubMenu );
 					gtk_container_add( GTK_CONTAINER( pSubMenu ), item );
-					gtk_signal_connect( GTK_OBJECT( item ), "activate", GTK_SIGNAL_FUNC( HandleCommand ),
+					g_signal_connect( G_OBJECT( item ), "activate", G_CALLBACK( HandleCommand ),
 										GINT_TO_POINTER( CMD_TEXTUREWAD + texture_nummenus ) );
 
 					strcpy( texture_menunames[texture_nummenus], (char*)temp->data );
@@ -674,7 +674,7 @@ void FillTextureMenu( GSList** pArray ){
 		gtk_widget_show( item );
 		CheckMenuSplitting( menu );
 		gtk_container_add( GTK_CONTAINER( menu ), item );
-		gtk_signal_connect( GTK_OBJECT( item ), "activate", GTK_SIGNAL_FUNC( HandleCommand ),
+		g_signal_connect( G_OBJECT( item ), "activate", G_CALLBACK( HandleCommand ),
 							GINT_TO_POINTER( CMD_TEXTUREWAD + texture_nummenus ) );
 
 		strcpy( texture_menunames[texture_nummenus], (char*)temp->data );
@@ -1662,7 +1662,7 @@ void TexWnd::OnCreate(){
 	g_nTextureOffset = 0;
 
 	GtkAdjustment *vadjustment = gtk_range_get_adjustment( GTK_RANGE( g_qeglobals_gui.d_texture_scroll ) );
-	gtk_signal_connect( GTK_OBJECT( vadjustment ), "value-changed", GTK_SIGNAL_FUNC( vertical_scroll ), this );
+	g_signal_connect( G_OBJECT( vadjustment ), "value-changed", G_CALLBACK( vertical_scroll ), this );
 
 	if ( g_PrefsDlg.m_bTextureScrollbar ) {
 		gtk_widget_show( g_qeglobals_gui.d_texture_scroll );
@@ -1671,7 +1671,7 @@ void TexWnd::OnCreate(){
 	}
 	m_bNeedRange = true;
 
-	gtk_signal_connect( GTK_OBJECT( m_pFilter ), "changed", GTK_SIGNAL_FUNC( filter_changed ), this );
+	g_signal_connect( G_OBJECT( m_pFilter ), "changed", G_CALLBACK( filter_changed ), this );
 	if ( g_PrefsDlg.m_bTextureWindow ) {
 		gtk_widget_show( m_pFilter );
 	}
@@ -1716,7 +1716,7 @@ void TexWnd::OnExpose() {
 		gtk_adjustment_set_lower( vadjustment, 0 );
 		gtk_adjustment_set_upper( vadjustment, g_qeglobals.d_texturewin.m_nTotalHeight );
 
-		gtk_signal_emit_by_name( GTK_OBJECT( vadjustment ), "changed" );
+		g_signal_emit_by_name( G_OBJECT( vadjustment ), "changed" );
 
 		m_bNeedRange = false;
 	}
@@ -1784,7 +1784,7 @@ void TexWnd::UpdatePrefs(){
 }
 
 void TexWnd::FocusEdit() {
-	if ( GTK_WIDGET_VISIBLE( m_pFilter ) ) {
+	if ( gtk_widget_get_visible( m_pFilter ) ) {
           gtk_window_set_focus( GTK_WINDOW( g_pParentWnd->m_pWidget ), m_pFilter );
 	}
 }
@@ -1851,7 +1851,7 @@ void TexWnd::DragDropTexture( guint32 flags, int pointx, int pointy ){
 	m_ptXcheck = m_ptX;
 	m_ptYcheck = m_ptY;
 
-	if ( g_pParentWnd->GetCamWnd()->GetWidget()->window != gdk_window_at_pointer( &m_ptXcheck, &m_ptYcheck ) ) {
+	if ( gtk_widget_get_window( g_pParentWnd->GetCamWnd()->GetWidget() ) != gdk_window_at_pointer( &m_ptXcheck, &m_ptYcheck ) ) {
 		return;
 	}
 

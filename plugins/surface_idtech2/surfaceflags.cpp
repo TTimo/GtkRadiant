@@ -243,7 +243,7 @@ void on_content_button_toggled( GtkToggleButton *togglebutton, gpointer user_dat
 // Value Entry Callback
 void on_value_entry_changed( GtkEditable *editable, gpointer user_data ){
 	if ( ( !setup_buttons ) ) { // If we're setting up the buttons, don't change value
-		working_value = atoi( gtk_entry_get_text( (GtkEntry*)editable ) );
+		working_value = atoi( gtk_entry_get_text( GTK_ENTRY( editable ) ) );
 		GetTexMods( false );
 	}
 }
@@ -264,15 +264,15 @@ void on_value_entry_insert_text( GtkEditable *editable, gchar *new_text, gint ne
 	}
 
 	if ( count > 0 ) {
-		gtk_signal_handler_block_by_func( GTK_OBJECT( editable ),
-										  GTK_SIGNAL_FUNC( on_value_entry_insert_text ),
+		g_signal_handlers_block_by_func( G_OBJECT( editable ),
+										  (gpointer)G_CALLBACK( on_value_entry_insert_text ),
 										  user_data );
 		gtk_editable_insert_text( editable, result, count, position );
-		gtk_signal_handler_unblock_by_func( GTK_OBJECT( editable ),
-											GTK_SIGNAL_FUNC( on_value_entry_insert_text ),
+		g_signal_handlers_unblock_by_func( G_OBJECT( editable ),
+											(gpointer)G_CALLBACK( on_value_entry_insert_text ),
 											user_data );
 	}
-	gtk_signal_emit_stop_by_name( GTK_OBJECT( editable ), "insert-text" );
+	g_signal_stop_emission_by_name( G_OBJECT( editable ), "insert-text" );
 
 	g_free( result );
 }
@@ -338,7 +338,7 @@ GtkWidget* create_SurfaceFlagsFrame( GtkWidget* surfacedialog_widget ){
 		buttonLabel = g_FuncTable.m_pfnReadProjectKey( buffer );
 		//Sys_Printf( "%s: %s\n", buffer, buttonLabel );
 		surface_buttons[i] = gtk_toggle_button_new_with_label( buttonLabel );
-		gtk_signal_connect( GTK_OBJECT( surface_buttons[i] ), "toggled", GTK_SIGNAL_FUNC( on_surface_button_toggled ), GINT_TO_POINTER( 1 << i ) );
+		g_signal_connect( G_OBJECT( surface_buttons[i] ), "toggled", G_CALLBACK( on_surface_button_toggled ), GINT_TO_POINTER( 1 << i ) );
 		gtk_widget_show( surface_buttons[i] );
 		gtk_table_attach( GTK_TABLE( table4 ), surface_buttons[i], 0 + x, 1 + x, ( 0 + y ), ( 1 + y ),
 						  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
@@ -362,11 +362,11 @@ GtkWidget* create_SurfaceFlagsFrame( GtkWidget* surfacedialog_widget ){
 	gtk_box_pack_start( GTK_BOX( hbox3 ), value_label, FALSE, FALSE, 0 );
 
 	value_entry = gtk_entry_new();
-	gtk_signal_connect( GTK_OBJECT( value_entry ), "changed",
-						GTK_SIGNAL_FUNC( on_value_entry_changed ),
+	g_signal_connect( G_OBJECT( value_entry ), "changed",
+						G_CALLBACK( on_value_entry_changed ),
 						NULL );
-	gtk_signal_connect( GTK_OBJECT( value_entry ), "insert-text",
-						GTK_SIGNAL_FUNC( on_value_entry_insert_text ),
+	g_signal_connect( G_OBJECT( value_entry ), "insert-text",
+						G_CALLBACK( on_value_entry_insert_text ),
 						NULL );
 	gtk_entry_set_max_length( (GtkEntry *)value_entry, 11 );
 	gtk_widget_show( value_entry );
@@ -395,7 +395,7 @@ GtkWidget* create_SurfaceFlagsFrame( GtkWidget* surfacedialog_widget ){
 		snprintf( buffer, sizeof( buffer ) - 1, "cont%i", i + 1 );
 		buttonLabel = g_FuncTable.m_pfnReadProjectKey( buffer );
 		content_buttons[i] = gtk_toggle_button_new_with_label( buttonLabel );
-		gtk_signal_connect( GTK_OBJECT( content_buttons[i] ), "toggled", GTK_SIGNAL_FUNC( on_content_button_toggled ), GINT_TO_POINTER( 1 << i ) );
+		g_signal_connect( G_OBJECT( content_buttons[i] ), "toggled", G_CALLBACK( on_content_button_toggled ), GINT_TO_POINTER( 1 << i ) );
 		gtk_widget_show( content_buttons[i] );
 		gtk_table_attach( GTK_TABLE( table3 ), content_buttons[i], 0 + x, 1 + x, ( 0 + y ), ( 1 + y ),
 						  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),

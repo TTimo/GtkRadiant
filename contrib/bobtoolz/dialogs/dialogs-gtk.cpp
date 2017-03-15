@@ -54,23 +54,23 @@ void Update_TextureReseter(){
 	gboolean check;
 
 	check = gtk_toggle_button_get_active( GTK_TOGGLE_BUTTON( dlgTexReset.cbTexChange ) );
-	gtk_entry_set_editable( GTK_ENTRY( dlgTexReset.editTexNew ), check );
-	gtk_entry_set_editable( GTK_ENTRY( dlgTexReset.editTexOld ), check );
+	gtk_editable_set_editable( GTK_EDITABLE( dlgTexReset.editTexNew ), check );
+	gtk_editable_set_editable( GTK_EDITABLE( dlgTexReset.editTexOld ), check );
 
 	check = gtk_toggle_button_get_active( GTK_TOGGLE_BUTTON( dlgTexReset.cbScaleHor ) );
-	gtk_entry_set_editable( GTK_ENTRY( dlgTexReset.editScaleHor ), check );
+	gtk_editable_set_editable( GTK_EDITABLE( dlgTexReset.editScaleHor ), check );
 
 	check = gtk_toggle_button_get_active( GTK_TOGGLE_BUTTON( dlgTexReset.cbScaleVert ) );
-	gtk_entry_set_editable( GTK_ENTRY( dlgTexReset.editScaleVert ), check );
+	gtk_editable_set_editable( GTK_EDITABLE( dlgTexReset.editScaleVert ), check );
 
 	check = gtk_toggle_button_get_active( GTK_TOGGLE_BUTTON( dlgTexReset.cbShiftHor ) );
-	gtk_entry_set_editable( GTK_ENTRY( dlgTexReset.editShiftHor ), check );
+	gtk_editable_set_editable( GTK_EDITABLE( dlgTexReset.editShiftHor ), check );
 
 	check = gtk_toggle_button_get_active( GTK_TOGGLE_BUTTON( dlgTexReset.cbShiftVert ) );
-	gtk_entry_set_editable( GTK_ENTRY( dlgTexReset.editShiftVert ), check );
+	gtk_editable_set_editable( GTK_EDITABLE( dlgTexReset.editShiftVert ), check );
 
 	check = gtk_toggle_button_get_active( GTK_TOGGLE_BUTTON( dlgTexReset.cbRotation ) );
-	gtk_entry_set_editable( GTK_ENTRY( dlgTexReset.editRotation ), check );
+	gtk_editable_set_editable( GTK_EDITABLE( dlgTexReset.editRotation ), check );
 }
 
 static void dialog_button_callback( GtkWidget *widget, gpointer data ){
@@ -207,12 +207,12 @@ int DoMessageBox( const char* lpText, const char* lpCaption, guint32 uType ){
 	int mode = ( uType & MB_TYPEMASK ), ret, loop = 1;
 
 	window = gtk_window_new( GTK_WINDOW_TOPLEVEL );
-	gtk_signal_connect( GTK_OBJECT( window ), "delete-event",
-						GTK_SIGNAL_FUNC( dialog_delete_callback ), NULL );
-	gtk_signal_connect( GTK_OBJECT( window ), "destroy",
-						GTK_SIGNAL_FUNC( gtk_widget_destroy ), NULL );
+	g_signal_connect( G_OBJECT( window ), "delete-event",
+						G_CALLBACK( dialog_delete_callback ), NULL );
+	g_signal_connect( G_OBJECT( window ), "destroy",
+						G_CALLBACK( gtk_widget_destroy ), NULL );
 	gtk_window_set_title( GTK_WINDOW( window ), lpCaption );
-	gtk_container_border_width( GTK_CONTAINER( window ), 10 );
+	gtk_container_set_border_width( GTK_CONTAINER( window ), 10 );
 	g_object_set_data( G_OBJECT( window ), "loop", &loop );
 	g_object_set_data( G_OBJECT( window ), "ret", &ret );
 	gtk_widget_realize( window );
@@ -237,9 +237,9 @@ int DoMessageBox( const char* lpText, const char* lpCaption, guint32 uType ){
 	if ( mode == MB_OK ) {
 		w = gtk_button_new_with_label( "Ok" );
 		gtk_box_pack_start( GTK_BOX( hbox ), w, TRUE, TRUE, 0 );
-		gtk_signal_connect( GTK_OBJECT( w ), "clicked",
-							GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( IDOK ) );
-		GTK_WIDGET_SET_FLAGS( w, GTK_CAN_DEFAULT );
+		g_signal_connect( G_OBJECT( w ), "clicked",
+							G_CALLBACK( dialog_button_callback ), GINT_TO_POINTER( IDOK ) );
+		gtk_widget_set_can_default( w, TRUE );
 		gtk_widget_grab_default( w );
 		gtk_widget_show( w );
 		ret = IDOK;
@@ -247,38 +247,38 @@ int DoMessageBox( const char* lpText, const char* lpCaption, guint32 uType ){
 	else if ( mode ==  MB_OKCANCEL ) {
 		w = gtk_button_new_with_label( "Ok" );
 		gtk_box_pack_start( GTK_BOX( hbox ), w, TRUE, TRUE, 0 );
-		gtk_signal_connect( GTK_OBJECT( w ), "clicked",
-							GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( IDOK ) );
-		GTK_WIDGET_SET_FLAGS( w, GTK_CAN_DEFAULT );
+		g_signal_connect( G_OBJECT( w ), "clicked",
+							G_CALLBACK( dialog_button_callback ), GINT_TO_POINTER( IDOK ) );
+		gtk_widget_set_can_default( w, TRUE );
 		gtk_widget_grab_default( w );
 		gtk_widget_show( w );
 
 		w = gtk_button_new_with_label( "Cancel" );
 		gtk_box_pack_start( GTK_BOX( hbox ), w, TRUE, TRUE, 0 );
-		gtk_signal_connect( GTK_OBJECT( w ), "clicked",
-							GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( IDCANCEL ) );
+		g_signal_connect( G_OBJECT( w ), "clicked",
+							G_CALLBACK( dialog_button_callback ), GINT_TO_POINTER( IDCANCEL ) );
 		gtk_widget_show( w );
 		ret = IDCANCEL;
 	}
 	else if ( mode == MB_YESNOCANCEL ) {
 		w = gtk_button_new_with_label( "Yes" );
 		gtk_box_pack_start( GTK_BOX( hbox ), w, TRUE, TRUE, 0 );
-		gtk_signal_connect( GTK_OBJECT( w ), "clicked",
-							GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( IDYES ) );
-		GTK_WIDGET_SET_FLAGS( w, GTK_CAN_DEFAULT );
+		g_signal_connect( G_OBJECT( w ), "clicked",
+							G_CALLBACK( dialog_button_callback ), GINT_TO_POINTER( IDYES ) );
+		gtk_widget_set_can_default( w, TRUE );
 		gtk_widget_grab_default( w );
 		gtk_widget_show( w );
 
 		w = gtk_button_new_with_label( "No" );
 		gtk_box_pack_start( GTK_BOX( hbox ), w, TRUE, TRUE, 0 );
-		gtk_signal_connect( GTK_OBJECT( w ), "clicked",
-							GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( IDNO ) );
+		g_signal_connect( G_OBJECT( w ), "clicked",
+							G_CALLBACK( dialog_button_callback ), GINT_TO_POINTER( IDNO ) );
 		gtk_widget_show( w );
 
 		w = gtk_button_new_with_label( "Cancel" );
 		gtk_box_pack_start( GTK_BOX( hbox ), w, TRUE, TRUE, 0 );
-		gtk_signal_connect( GTK_OBJECT( w ), "clicked",
-							GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( IDCANCEL ) );
+		g_signal_connect( G_OBJECT( w ), "clicked",
+							G_CALLBACK( dialog_button_callback ), GINT_TO_POINTER( IDCANCEL ) );
 		gtk_widget_show( w );
 		ret = IDCANCEL;
 	}
@@ -286,16 +286,16 @@ int DoMessageBox( const char* lpText, const char* lpCaption, guint32 uType ){
 	{
 		w = gtk_button_new_with_label( "Yes" );
 		gtk_box_pack_start( GTK_BOX( hbox ), w, TRUE, TRUE, 0 );
-		gtk_signal_connect( GTK_OBJECT( w ), "clicked",
-							GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( IDYES ) );
-		GTK_WIDGET_SET_FLAGS( w, GTK_CAN_DEFAULT );
+		g_signal_connect( G_OBJECT( w ), "clicked",
+							G_CALLBACK( dialog_button_callback ), GINT_TO_POINTER( IDYES ) );
+		gtk_widget_set_can_default( w, TRUE );
 		gtk_widget_grab_default( w );
 		gtk_widget_show( w );
 
 		w = gtk_button_new_with_label( "No" );
 		gtk_box_pack_start( GTK_BOX( hbox ), w, TRUE, TRUE, 0 );
-		gtk_signal_connect( GTK_OBJECT( w ), "clicked",
-							GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( IDNO ) );
+		g_signal_connect( G_OBJECT( w ), "clicked",
+							G_CALLBACK( dialog_button_callback ), GINT_TO_POINTER( IDNO ) );
 		gtk_widget_show( w );
 		ret = IDNO;
 	}
@@ -321,11 +321,11 @@ int DoIntersectBox( IntersectRS* rs ){
 
 	window = gtk_window_new( GTK_WINDOW_TOPLEVEL );
 
-	gtk_signal_connect( GTK_OBJECT( window ), "delete-event", GTK_SIGNAL_FUNC( dialog_delete_callback ), NULL );
-	gtk_signal_connect( GTK_OBJECT( window ), "destroy", GTK_SIGNAL_FUNC( gtk_widget_destroy ), NULL );
+	g_signal_connect( G_OBJECT( window ), "delete-event", G_CALLBACK( dialog_delete_callback ), NULL );
+	g_signal_connect( G_OBJECT( window ), "destroy", G_CALLBACK( gtk_widget_destroy ), NULL );
 
 	gtk_window_set_title( GTK_WINDOW( window ), "Intersect" );
-	gtk_container_border_width( GTK_CONTAINER( window ), 10 );
+	gtk_container_set_border_width( GTK_CONTAINER( window ), 10 );
 
 	g_object_set_data( G_OBJECT( window ), "loop", &loop );
 	g_object_set_data( G_OBJECT( window ), "ret", &ret );
@@ -344,7 +344,7 @@ int DoIntersectBox( IntersectRS* rs ){
 	gtk_box_pack_start( GTK_BOX( vbox ), radio1, FALSE, FALSE, 2 );
 	gtk_widget_show( radio1 );
 
-	radio2 = gtk_radio_button_new_with_label( ( (GtkRadioButton*)radio1 )->group, "Use Selected Brushes" );
+	radio2 = gtk_radio_button_new_with_label( gtk_radio_button_get_group( GTK_RADIO_BUTTON( radio1 ) ), "Use Selected Brushes" );
 	gtk_box_pack_start( GTK_BOX( vbox ), radio2, FALSE, FALSE, 2 );
 	gtk_widget_show( radio2 );
 
@@ -368,15 +368,15 @@ int DoIntersectBox( IntersectRS* rs ){
 
 	w = gtk_button_new_with_label( "Ok" );
 	gtk_box_pack_start( GTK_BOX( hbox ), w, TRUE, TRUE, 0 );
-	gtk_signal_connect( GTK_OBJECT( w ), "clicked", GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( IDOK ) );
+	g_signal_connect( G_OBJECT( w ), "clicked", G_CALLBACK( dialog_button_callback ), GINT_TO_POINTER( IDOK ) );
 
-	GTK_WIDGET_SET_FLAGS( w, GTK_CAN_DEFAULT );
+	gtk_widget_set_can_default( w, TRUE );
 	gtk_widget_grab_default( w );
 	gtk_widget_show( w );
 
 	w = gtk_button_new_with_label( "Cancel" );
 	gtk_box_pack_start( GTK_BOX( hbox ), w, TRUE, TRUE, 0 );
-	gtk_signal_connect( GTK_OBJECT( w ), "clicked", GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( IDCANCEL ) );
+	g_signal_connect( G_OBJECT( w ), "clicked", G_CALLBACK( dialog_button_callback ), GINT_TO_POINTER( IDCANCEL ) );
 	gtk_widget_show( w );
 	ret = IDCANCEL;
 
@@ -417,11 +417,11 @@ int DoPolygonBox( PolygonRS* rs ){
 
 	window = gtk_window_new( GTK_WINDOW_TOPLEVEL );
 
-	gtk_signal_connect( GTK_OBJECT( window ), "delete-event", GTK_SIGNAL_FUNC( dialog_delete_callback ), NULL );
-	gtk_signal_connect( GTK_OBJECT( window ), "destroy", GTK_SIGNAL_FUNC( gtk_widget_destroy ), NULL );
+	g_signal_connect( G_OBJECT( window ), "delete-event", G_CALLBACK( dialog_delete_callback ), NULL );
+	g_signal_connect( G_OBJECT( window ), "destroy", G_CALLBACK( gtk_widget_destroy ), NULL );
 
 	gtk_window_set_title( GTK_WINDOW( window ), "Polygon Builder" );
-	gtk_container_border_width( GTK_CONTAINER( window ), 10 );
+	gtk_container_set_border_width( GTK_CONTAINER( window ), 10 );
 
 	g_object_set_data( G_OBJECT( window ), "loop", &loop );
 	g_object_set_data( G_OBJECT( window ), "ret", &ret );
@@ -455,8 +455,10 @@ int DoPolygonBox( PolygonRS* rs ){
 
 	// ---- hbox2 ----
 
-	text1 = gtk_entry_new_with_max_length( 256 );
-	gtk_entry_set_text( (GtkEntry*)text1, "3" );
+	text1 = gtk_entry_new();
+	g_object_set( text1, "xalign", 1.0, NULL );
+	gtk_entry_set_max_length( GTK_ENTRY( text1 ), 256 );
+	gtk_entry_set_text( GTK_ENTRY( text1 ), "3" );
 	gtk_box_pack_start( GTK_BOX( hbox2 ), text1, FALSE, FALSE, 2 );
 	gtk_widget_show( text1 );
 
@@ -473,8 +475,10 @@ int DoPolygonBox( PolygonRS* rs ){
 
 	// ---- hbox2 ----
 
-	text2 = gtk_entry_new_with_max_length( 256 );
-	gtk_entry_set_text( (GtkEntry*)text2, "8" );
+	text2 = gtk_entry_new();
+	g_object_set( text2, "xalign", 1.0, NULL );
+	gtk_entry_set_max_length( GTK_ENTRY( text2 ), 256 );
+	gtk_entry_set_text( GTK_ENTRY( text2 ), "8" );
 	gtk_box_pack_start( GTK_BOX( hbox2 ), text2, FALSE, FALSE, 2 );
 	gtk_widget_show( text2 );
 
@@ -521,15 +525,15 @@ int DoPolygonBox( PolygonRS* rs ){
 
 	w = gtk_button_new_with_label( "Ok" );
 	gtk_box_pack_start( GTK_BOX( hbox ), w, TRUE, TRUE, 0 );
-	gtk_signal_connect( GTK_OBJECT( w ), "clicked", GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( IDOK ) );
+	g_signal_connect( G_OBJECT( w ), "clicked", G_CALLBACK( dialog_button_callback ), GINT_TO_POINTER( IDOK ) );
 
-	GTK_WIDGET_SET_FLAGS( w, GTK_CAN_DEFAULT );
+	gtk_widget_set_can_default( w, TRUE );
 	gtk_widget_grab_default( w );
 	gtk_widget_show( w );
 
 	w = gtk_button_new_with_label( "Cancel" );
 	gtk_box_pack_start( GTK_BOX( hbox ), w, TRUE, TRUE, 0 );
-	gtk_signal_connect( GTK_OBJECT( w ), "clicked", GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( IDCANCEL ) );
+	g_signal_connect( G_OBJECT( w ), "clicked", G_CALLBACK( dialog_button_callback ), GINT_TO_POINTER( IDCANCEL ) );
 	gtk_widget_show( w );
 	ret = IDCANCEL;
 
@@ -555,12 +559,12 @@ int DoPolygonBox( PolygonRS* rs ){
 			rs->bInverse = gtk_toggle_button_get_active( (GtkToggleButton*)check2 ) ? true : false;
 			rs->bAlignTop = gtk_toggle_button_get_active( (GtkToggleButton*)check3 ) ? true : false;
 
-			if ( !ValidateTextIntRange( gtk_entry_get_text( (GtkEntry*)text1 ), 3, 32, "Number Of Sides", &rs->nSides ) ) {
+			if ( !ValidateTextIntRange( gtk_entry_get_text( GTK_ENTRY( text1 ) ), 3, 32, "Number Of Sides", &rs->nSides ) ) {
 				dialogError = TRUE;
 			}
 
 			if ( rs->bUseBorder ) {
-				if ( !ValidateTextIntRange( gtk_entry_get_text( (GtkEntry*)text2 ), 8, 256, "Border Width", &rs->nBorderWidth ) ) {
+				if ( !ValidateTextIntRange( gtk_entry_get_text( GTK_ENTRY( text2 ) ), 8, 256, "Border Width", &rs->nBorderWidth ) ) {
 					dialogError = TRUE;
 				}
 			}
@@ -592,12 +596,12 @@ int DoBuildStairsBox( BuildStairsRS* rs ){
 
 	window = gtk_window_new( GTK_WINDOW_TOPLEVEL );
 
-	gtk_signal_connect( GTK_OBJECT( window ), "delete-event", GTK_SIGNAL_FUNC( dialog_delete_callback ), NULL );
-	gtk_signal_connect( GTK_OBJECT( window ), "destroy", GTK_SIGNAL_FUNC( gtk_widget_destroy ), NULL );
+	g_signal_connect( G_OBJECT( window ), "delete-event", G_CALLBACK( dialog_delete_callback ), NULL );
+	g_signal_connect( G_OBJECT( window ), "destroy", G_CALLBACK( gtk_widget_destroy ), NULL );
 
 	gtk_window_set_title( GTK_WINDOW( window ), "Stair Builder" );
 
-	gtk_container_border_width( GTK_CONTAINER( window ), 10 );
+	gtk_container_set_border_width( GTK_CONTAINER( window ), 10 );
 
 	g_object_set_data( G_OBJECT( window ), "loop", &loop );
 	g_object_set_data( G_OBJECT( window ), "ret", &ret );
@@ -629,7 +633,8 @@ int DoBuildStairsBox( BuildStairsRS* rs ){
 	gtk_box_pack_start( GTK_BOX( vbox ), hbox, FALSE, FALSE, 0 );
 	gtk_widget_show( hbox );
 
-	textStairHeight = gtk_entry_new_with_max_length( 256 );
+	textStairHeight = gtk_entry_new();
+	gtk_entry_set_max_length( GTK_ENTRY( textStairHeight ), 256 );
 	gtk_box_pack_start( GTK_BOX( hbox ), textStairHeight, FALSE, FALSE, 1 );
 	gtk_widget_show( textStairHeight );
 
@@ -663,19 +668,19 @@ int DoBuildStairsBox( BuildStairsRS* rs ){
 	gtk_box_pack_start( GTK_BOX( hbox ), radioNorth, FALSE, FALSE, 3 );
 	gtk_widget_show( radioNorth );
 
-	radioDirection = gtk_radio_button_group( GTK_RADIO_BUTTON( radioNorth ) );
+	radioDirection = gtk_radio_button_get_group( GTK_RADIO_BUTTON( radioNorth ) );
 
 	radioSouth = gtk_radio_button_new_with_label( radioDirection, "South" );
 	gtk_box_pack_start( GTK_BOX( hbox ), radioSouth, FALSE, FALSE, 2 );
 	gtk_widget_show( radioSouth );
 
-	radioDirection = gtk_radio_button_group( GTK_RADIO_BUTTON( radioSouth ) );
+	radioDirection = gtk_radio_button_get_group( GTK_RADIO_BUTTON( radioSouth ) );
 
 	radioEast = gtk_radio_button_new_with_label( radioDirection, "East" );
 	gtk_box_pack_start( GTK_BOX( hbox ), radioEast, FALSE, FALSE, 1 );
 	gtk_widget_show( radioEast );
 
-	radioDirection = gtk_radio_button_group( GTK_RADIO_BUTTON( radioEast ) );
+	radioDirection = gtk_radio_button_get_group( GTK_RADIO_BUTTON( radioEast ) );
 
 	radioWest = gtk_radio_button_new_with_label( radioDirection, "West" );
 	gtk_box_pack_start( GTK_BOX( hbox ), radioWest, FALSE, FALSE, 0 );
@@ -701,13 +706,13 @@ int DoBuildStairsBox( BuildStairsRS* rs ){
 	gtk_box_pack_start( GTK_BOX( hbox ), radioOldStyle, FALSE, FALSE, 0 );
 	gtk_widget_show( radioOldStyle );
 
-	radioStyle = gtk_radio_button_group( GTK_RADIO_BUTTON( radioOldStyle ) );
+	radioStyle = gtk_radio_button_get_group( GTK_RADIO_BUTTON( radioOldStyle ) );
 
 	radioBobStyle = gtk_radio_button_new_with_label( radioStyle, "Bob's Style" );
 	gtk_box_pack_start( GTK_BOX( hbox ), radioBobStyle, FALSE, FALSE, 0 );
 	gtk_widget_show( radioBobStyle );
 
-	radioStyle = gtk_radio_button_group( GTK_RADIO_BUTTON( radioBobStyle ) );
+	radioStyle = gtk_radio_button_get_group( GTK_RADIO_BUTTON( radioBobStyle ) );
 
 	radioCornerStyle = gtk_radio_button_new_with_label( radioStyle, "Corner Style" );
 	gtk_box_pack_start( GTK_BOX( hbox ), radioCornerStyle, FALSE, FALSE, 0 );
@@ -730,7 +735,8 @@ int DoBuildStairsBox( BuildStairsRS* rs ){
 	gtk_box_pack_start( GTK_BOX( vbox ), hbox, FALSE, FALSE, 0 );
 	gtk_widget_show( hbox );
 
-	textMainTex = gtk_entry_new_with_max_length( 512 );
+	textMainTex = gtk_entry_new();
+	gtk_entry_set_max_length( GTK_ENTRY( textMainTex ), 512 );
 	gtk_entry_set_text( GTK_ENTRY( textMainTex ), rs->mainTexture );
 	gtk_box_pack_start( GTK_BOX( hbox ), textMainTex, FALSE, FALSE, 0 );
 	gtk_widget_show( textMainTex );
@@ -745,7 +751,8 @@ int DoBuildStairsBox( BuildStairsRS* rs ){
 	gtk_box_pack_start( GTK_BOX( vbox ), hbox, FALSE, FALSE, 0 );
 	gtk_widget_show( hbox );
 
-	textRiserTex = gtk_entry_new_with_max_length( 512 );
+	textRiserTex = gtk_entry_new();
+	gtk_entry_set_max_length( GTK_ENTRY( textRiserTex ), 512 );
 	gtk_box_pack_start( GTK_BOX( hbox ), textRiserTex, FALSE, FALSE, 0 );
 	gtk_widget_show( textRiserTex );
 
@@ -764,14 +771,14 @@ int DoBuildStairsBox( BuildStairsRS* rs ){
 
 	w = gtk_button_new_with_label( "OK" );
 	gtk_box_pack_start( GTK_BOX( hbox ), w, TRUE, TRUE, 0 );
-	gtk_signal_connect( GTK_OBJECT( w ), "clicked", GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( IDOK ) );
-	GTK_WIDGET_SET_FLAGS( w, GTK_CAN_DEFAULT );
+	g_signal_connect( G_OBJECT( w ), "clicked", G_CALLBACK( dialog_button_callback ), GINT_TO_POINTER( IDOK ) );
+	gtk_widget_set_can_default( w, TRUE );
 	gtk_widget_grab_default( w );
 	gtk_widget_show( w );
 
 	w = gtk_button_new_with_label( "Cancel" );
 	gtk_box_pack_start( GTK_BOX( hbox ), w, TRUE, TRUE, 0 );
-	gtk_signal_connect( GTK_OBJECT( w ), "clicked", GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( IDCANCEL ) );
+	g_signal_connect( G_OBJECT( w ), "clicked", G_CALLBACK( dialog_button_callback ), GINT_TO_POINTER( IDCANCEL ) );
 	gtk_widget_show( w );
 
 	ret = IDCANCEL;
@@ -793,8 +800,8 @@ int DoBuildStairsBox( BuildStairsRS* rs ){
 		if ( ret == IDOK ) {
 			rs->bUseDetail = gtk_toggle_button_get_active( (GtkToggleButton*)checkUseDetail ) ? true : false;
 
-			strcpy( rs->riserTexture, gtk_entry_get_text( (GtkEntry*)textRiserTex ) );
-			strcpy( rs->mainTexture, gtk_entry_get_text( (GtkEntry*)textMainTex ) );
+			strcpy( rs->riserTexture, gtk_entry_get_text( GTK_ENTRY( textRiserTex ) ) );
+			strcpy( rs->mainTexture, gtk_entry_get_text( GTK_ENTRY( textMainTex ) ) );
 
 			if ( gtk_toggle_button_get_active( (GtkToggleButton*)radioNorth ) ) {
 				rs->direction = MOVE_NORTH;
@@ -809,7 +816,7 @@ int DoBuildStairsBox( BuildStairsRS* rs ){
 				rs->direction = MOVE_WEST;
 			}
 
-			if ( !ValidateTextInt( gtk_entry_get_text( (GtkEntry*)textStairHeight ), "Stair Height", &rs->stairHeight ) ) {
+			if ( !ValidateTextInt( gtk_entry_get_text( GTK_ENTRY( textStairHeight ) ), "Stair Height", &rs->stairHeight ) ) {
 				dialogError = TRUE;
 			}
 
@@ -849,12 +856,12 @@ int DoDoorsBox( DoorRS* rs ){
 
 	window = gtk_window_new( GTK_WINDOW_TOPLEVEL );
 
-	gtk_signal_connect( GTK_OBJECT( window ), "delete-event", GTK_SIGNAL_FUNC( dialog_delete_callback ), NULL );
-	gtk_signal_connect( GTK_OBJECT( window ), "destroy", GTK_SIGNAL_FUNC( gtk_widget_destroy ), NULL );
+	g_signal_connect( G_OBJECT( window ), "delete-event", G_CALLBACK( dialog_delete_callback ), NULL );
+	g_signal_connect( G_OBJECT( window ), "destroy", G_CALLBACK( gtk_widget_destroy ), NULL );
 
 	gtk_window_set_title( GTK_WINDOW( window ), "Door Builder" );
 
-	gtk_container_border_width( GTK_CONTAINER( window ), 10 );
+	gtk_container_set_border_width( GTK_CONTAINER( window ), 10 );
 
 	g_object_set_data( G_OBJECT( window ), "loop", &loop );
 	g_object_set_data( G_OBJECT( window ), "ret", &ret );
@@ -877,7 +884,8 @@ int DoDoorsBox( DoorRS* rs ){
 	gtk_box_pack_start( GTK_BOX( vbox ), hbox, FALSE, FALSE, 0 );
 	gtk_widget_show( hbox );
 
-	textFrontBackTex = gtk_entry_new_with_max_length( 512 );
+	textFrontBackTex = gtk_entry_new();
+	gtk_entry_set_max_length( GTK_ENTRY( textFrontBackTex ), 512 );
 	gtk_entry_set_text( GTK_ENTRY( textFrontBackTex ), rs->mainTexture );
 	gtk_box_pack_start( GTK_BOX( hbox ), textFrontBackTex, FALSE, FALSE, 0 );
 	gtk_widget_show( textFrontBackTex );
@@ -892,7 +900,8 @@ int DoDoorsBox( DoorRS* rs ){
 	gtk_box_pack_start( GTK_BOX( vbox ), hbox, FALSE, FALSE, 0 );
 	gtk_widget_show( hbox );
 
-	textTrimTex = gtk_entry_new_with_max_length( 512 );
+	textTrimTex = gtk_entry_new();
+	gtk_entry_set_max_length( GTK_ENTRY( textTrimTex ), 512 );
 	gtk_box_pack_start( GTK_BOX( hbox ), textTrimTex, FALSE, FALSE, 0 );
 	gtk_widget_show( textTrimTex );
 
@@ -951,7 +960,7 @@ int DoDoorsBox( DoorRS* rs ){
 	tw1.two = comboMain;
 
 	buttonSetMain = gtk_button_new_with_label( "Set As Main Texture" );
-	gtk_signal_connect( GTK_OBJECT( buttonSetMain ), "clicked", GTK_SIGNAL_FUNC( dialog_button_callback_settex ), &tw1 );
+	g_signal_connect( G_OBJECT( buttonSetMain ), "clicked", G_CALLBACK( dialog_button_callback_settex ), &tw1 );
 	gtk_box_pack_start( GTK_BOX( hbox ), buttonSetMain, FALSE, FALSE, 0 );
 	gtk_widget_show( buttonSetMain );
 
@@ -971,7 +980,7 @@ int DoDoorsBox( DoorRS* rs ){
 	tw2.two = comboTrim;
 
 	buttonSetTrim = gtk_button_new_with_label( "Set As Trim Texture" );
-	gtk_signal_connect( GTK_OBJECT( buttonSetTrim ), "clicked", GTK_SIGNAL_FUNC( dialog_button_callback_settex ), &tw2 );
+	g_signal_connect( G_OBJECT( buttonSetTrim ), "clicked", G_CALLBACK( dialog_button_callback_settex ), &tw2 );
 	gtk_box_pack_start( GTK_BOX( hbox ), buttonSetTrim, FALSE, FALSE, 0 );
 	gtk_widget_show( buttonSetTrim );
 
@@ -990,7 +999,7 @@ int DoDoorsBox( DoorRS* rs ){
 	gtk_box_pack_start( GTK_BOX( hbox ), radioNS, FALSE, FALSE, 0 );
 	gtk_widget_show( radioNS );
 
-	radioOrientation = gtk_radio_button_group( GTK_RADIO_BUTTON( radioNS ) );
+	radioOrientation = gtk_radio_button_get_group( GTK_RADIO_BUTTON( radioNS ) );
 
 	radioEW = gtk_radio_button_new_with_label( radioOrientation, "East - West" );
 	gtk_box_pack_start( GTK_BOX( hbox ), radioEW, FALSE, FALSE, 0 );
@@ -1010,14 +1019,14 @@ int DoDoorsBox( DoorRS* rs ){
 
 	w = gtk_button_new_with_label( "OK" );
 	gtk_box_pack_start( GTK_BOX( hbox ), w, TRUE, TRUE, 0 );
-	gtk_signal_connect( GTK_OBJECT( w ), "clicked", GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( IDOK ) );
-	GTK_WIDGET_SET_FLAGS( w, GTK_CAN_DEFAULT );
+	g_signal_connect( G_OBJECT( w ), "clicked", G_CALLBACK( dialog_button_callback ), GINT_TO_POINTER( IDOK ) );
+	gtk_widget_set_can_default( w, TRUE );
 	gtk_widget_grab_default( w );
 	gtk_widget_show( w );
 
 	w = gtk_button_new_with_label( "Cancel" );
 	gtk_box_pack_start( GTK_BOX( hbox ), w, TRUE, TRUE, 0 );
-	gtk_signal_connect( GTK_OBJECT( w ), "clicked", GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( IDCANCEL ) );
+	g_signal_connect( G_OBJECT( w ), "clicked", G_CALLBACK( dialog_button_callback ), GINT_TO_POINTER( IDCANCEL ) );
 	gtk_widget_show( w );
 	ret = IDCANCEL;
 
@@ -1063,11 +1072,11 @@ int DoPathPlotterBox( PathPlotterRS* rs ){
 
 	window = gtk_window_new( GTK_WINDOW_TOPLEVEL );
 
-	gtk_signal_connect( GTK_OBJECT( window ), "delete-event", GTK_SIGNAL_FUNC( dialog_delete_callback ), NULL );
-	gtk_signal_connect( GTK_OBJECT( window ), "destroy", GTK_SIGNAL_FUNC( gtk_widget_destroy ), NULL );
+	g_signal_connect( G_OBJECT( window ), "delete-event", G_CALLBACK( dialog_delete_callback ), NULL );
+	g_signal_connect( G_OBJECT( window ), "destroy", G_CALLBACK( gtk_widget_destroy ), NULL );
 
 	gtk_window_set_title( GTK_WINDOW( window ), "Texture Reset" );
-	gtk_container_border_width( GTK_CONTAINER( window ), 10 );
+	gtk_container_set_border_width( GTK_CONTAINER( window ), 10 );
 
 	g_object_set_data( G_OBJECT( window ), "loop", &loop );
 	g_object_set_data( G_OBJECT( window ), "ret", &ret );
@@ -1088,8 +1097,9 @@ int DoPathPlotterBox( PathPlotterRS* rs ){
 
 	// ---- hbox ----
 
-	text1 = gtk_entry_new_with_max_length( 256 );
-	gtk_entry_set_text( (GtkEntry*)text1, "25" );
+	text1 = gtk_entry_new();
+	gtk_entry_set_max_length( GTK_ENTRY( text1 ), 256 );
+	gtk_entry_set_text( GTK_ENTRY( text1 ), "25" );
 	gtk_box_pack_start( GTK_BOX( hbox ), text1, FALSE, FALSE, 2 );
 	gtk_widget_show( text1 );
 
@@ -1106,8 +1116,9 @@ int DoPathPlotterBox( PathPlotterRS* rs ){
 
 	// ---- hbox ----
 
-	text2 = gtk_entry_new_with_max_length( 256 );
-	gtk_entry_set_text( (GtkEntry*)text2, "3" );
+	text2 = gtk_entry_new();
+	gtk_entry_set_max_length( GTK_ENTRY( text2 ), 256 );
+	gtk_entry_set_text( GTK_ENTRY( text2 ), "3" );
 	gtk_box_pack_start( GTK_BOX( hbox ), text2, FALSE, FALSE, 2 );
 	gtk_widget_show( text2 );
 
@@ -1129,8 +1140,9 @@ int DoPathPlotterBox( PathPlotterRS* rs ){
 
 	// ---- hbox ----
 
-	text3 = gtk_entry_new_with_max_length( 256 );
-	gtk_entry_set_text( (GtkEntry*)text3, "-800" );
+	text3 = gtk_entry_new();
+	gtk_entry_set_max_length( GTK_ENTRY( text3 ), 256 );
+	gtk_entry_set_text( GTK_ENTRY( text3 ), "-800" );
 	gtk_box_pack_start( GTK_BOX( hbox ), text3, FALSE, FALSE, 2 );
 	gtk_widget_show( text3 );
 
@@ -1170,20 +1182,20 @@ int DoPathPlotterBox( PathPlotterRS* rs ){
 
 	w = gtk_button_new_with_label( "Enable" );
 	gtk_box_pack_start( GTK_BOX( hbox ), w, TRUE, TRUE, 0 );
-	gtk_signal_connect( GTK_OBJECT( w ), "clicked", GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( IDYES ) );
+	g_signal_connect( G_OBJECT( w ), "clicked", G_CALLBACK( dialog_button_callback ), GINT_TO_POINTER( IDYES ) );
 	gtk_widget_show( w );
 
-	GTK_WIDGET_SET_FLAGS( w, GTK_CAN_DEFAULT );
+	gtk_widget_set_can_default( w, TRUE );
 	gtk_widget_grab_default( w );
 
 	w = gtk_button_new_with_label( "Disable" );
 	gtk_box_pack_start( GTK_BOX( hbox ), w, TRUE, TRUE, 0 );
-	gtk_signal_connect( GTK_OBJECT( w ), "clicked", GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( IDNO ) );
+	g_signal_connect( G_OBJECT( w ), "clicked", G_CALLBACK( dialog_button_callback ), GINT_TO_POINTER( IDNO ) );
 	gtk_widget_show( w );
 
 	w = gtk_button_new_with_label( "Cancel" );
 	gtk_box_pack_start( GTK_BOX( hbox ), w, TRUE, TRUE, 0 );
-	gtk_signal_connect( GTK_OBJECT( w ), "clicked", GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( IDCANCEL ) );
+	g_signal_connect( G_OBJECT( w ), "clicked", G_CALLBACK( dialog_button_callback ), GINT_TO_POINTER( IDCANCEL ) );
 	gtk_widget_show( w );
 
 	ret = IDCANCEL;
@@ -1233,11 +1245,11 @@ int DoCTFColourChangeBox(){
 
 	window = gtk_window_new( GTK_WINDOW_TOPLEVEL );
 
-	gtk_signal_connect( GTK_OBJECT( window ), "delete-event", GTK_SIGNAL_FUNC( dialog_delete_callback ), NULL );
-	gtk_signal_connect( GTK_OBJECT( window ), "destroy", GTK_SIGNAL_FUNC( gtk_widget_destroy ), NULL );
+	g_signal_connect( G_OBJECT( window ), "delete-event", G_CALLBACK( dialog_delete_callback ), NULL );
+	g_signal_connect( G_OBJECT( window ), "destroy", G_CALLBACK( gtk_widget_destroy ), NULL );
 
 	gtk_window_set_title( GTK_WINDOW( window ), "CTF Colour Changer" );
-	gtk_container_border_width( GTK_CONTAINER( window ), 10 );
+	gtk_container_set_border_width( GTK_CONTAINER( window ), 10 );
 
 	g_object_set_data( G_OBJECT( window ), "loop", &loop );
 	g_object_set_data( G_OBJECT( window ), "ret", &ret );
@@ -1260,20 +1272,20 @@ int DoCTFColourChangeBox(){
 
 	w = gtk_button_new_with_label( "Red->Blue" );
 	gtk_box_pack_start( GTK_BOX( hbox ), w, TRUE, TRUE, 0 );
-	gtk_signal_connect( GTK_OBJECT( w ), "clicked", GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( IDOK ) );
+	g_signal_connect( G_OBJECT( w ), "clicked", G_CALLBACK( dialog_button_callback ), GINT_TO_POINTER( IDOK ) );
 
-	GTK_WIDGET_SET_FLAGS( w, GTK_CAN_DEFAULT );
+	gtk_widget_set_can_default( w, TRUE );
 	gtk_widget_grab_default( w );
 	gtk_widget_show( w );
 
 	w = gtk_button_new_with_label( "Blue->Red" );
 	gtk_box_pack_start( GTK_BOX( hbox ), w, TRUE, TRUE, 0 );
-	gtk_signal_connect( GTK_OBJECT( w ), "clicked", GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( IDYES ) );
+	g_signal_connect( G_OBJECT( w ), "clicked", G_CALLBACK( dialog_button_callback ), GINT_TO_POINTER( IDYES ) );
 	gtk_widget_show( w );
 
 	w = gtk_button_new_with_label( "Cancel" );
 	gtk_box_pack_start( GTK_BOX( hbox ), w, TRUE, TRUE, 0 );
-	gtk_signal_connect( GTK_OBJECT( w ), "clicked", GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( IDCANCEL ) );
+	g_signal_connect( G_OBJECT( w ), "clicked", G_CALLBACK( dialog_button_callback ), GINT_TO_POINTER( IDCANCEL ) );
 	gtk_widget_show( w );
 	ret = IDCANCEL;
 
@@ -1303,11 +1315,11 @@ int DoResetTextureBox( ResetTextureRS* rs ){
 
 	window = gtk_window_new( GTK_WINDOW_TOPLEVEL );
 
-	gtk_signal_connect( GTK_OBJECT( window ), "delete-event", GTK_SIGNAL_FUNC( dialog_delete_callback ), NULL );
-	gtk_signal_connect( GTK_OBJECT( window ), "destroy", GTK_SIGNAL_FUNC( gtk_widget_destroy ), NULL );
+	g_signal_connect( G_OBJECT( window ), "delete-event", G_CALLBACK( dialog_delete_callback ), NULL );
+	g_signal_connect( G_OBJECT( window ), "destroy", G_CALLBACK( gtk_widget_destroy ), NULL );
 
 	gtk_window_set_title( GTK_WINDOW( window ), "Texture Reset" );
-	gtk_container_border_width( GTK_CONTAINER( window ), 10 );
+	gtk_container_set_border_width( GTK_CONTAINER( window ), 10 );
 
 	g_object_set_data( G_OBJECT( window ), "loop", &loop );
 	g_object_set_data( G_OBJECT( window ), "ret", &ret );
@@ -1352,7 +1364,7 @@ int DoResetTextureBox( ResetTextureRS* rs ){
 	// ---- frame ----
 
 	dlgTexReset.cbTexChange = gtk_check_button_new_with_label( "Enabled" );
-	gtk_signal_connect( GTK_OBJECT( dlgTexReset.cbTexChange ), "toggled", GTK_SIGNAL_FUNC( dialog_button_callback_texreset_update ), NULL );
+	g_signal_connect( G_OBJECT( dlgTexReset.cbTexChange ), "toggled", G_CALLBACK( dialog_button_callback_texreset_update ), NULL );
 	gtk_widget_show( dlgTexReset.cbTexChange );
 	gtk_table_attach( GTK_TABLE( table ), dlgTexReset.cbTexChange, 0, 1, 0, 1,
 					  (GtkAttachOptions) ( GTK_FILL ),
@@ -1364,7 +1376,8 @@ int DoResetTextureBox( ResetTextureRS* rs ){
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
 	gtk_widget_show( w );
 
-	dlgTexReset.editTexOld = gtk_entry_new_with_max_length( 256 );
+	dlgTexReset.editTexOld = gtk_entry_new();
+	gtk_entry_set_max_length( GTK_ENTRY( dlgTexReset.editTexOld ), 256 );
 	gtk_entry_set_text( GTK_ENTRY( dlgTexReset.editTexOld ), rs->textureName );
 	gtk_table_attach( GTK_TABLE( table ), dlgTexReset.editTexOld, 2, 3, 0, 1,
 					  (GtkAttachOptions) ( GTK_FILL ),
@@ -1377,7 +1390,8 @@ int DoResetTextureBox( ResetTextureRS* rs ){
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
 	gtk_widget_show( w );
 
-	dlgTexReset.editTexNew = gtk_entry_new_with_max_length( 256 );
+	dlgTexReset.editTexNew = gtk_entry_new();
+	gtk_entry_set_max_length( GTK_ENTRY( dlgTexReset.editTexNew ), 256 );
 	gtk_entry_set_text( GTK_ENTRY( dlgTexReset.editTexNew ), rs->textureName );
 	gtk_table_attach( GTK_TABLE( table ), dlgTexReset.editTexNew, 2, 3, 1, 2,
 					  (GtkAttachOptions) ( GTK_FILL ),
@@ -1400,7 +1414,7 @@ int DoResetTextureBox( ResetTextureRS* rs ){
 	// ---- frame ----
 
 	dlgTexReset.cbScaleHor = gtk_check_button_new_with_label( "Enabled" );
-	gtk_signal_connect( GTK_OBJECT( dlgTexReset.cbScaleHor ), "toggled", GTK_SIGNAL_FUNC( dialog_button_callback_texreset_update ), NULL );
+	g_signal_connect( G_OBJECT( dlgTexReset.cbScaleHor ), "toggled", G_CALLBACK( dialog_button_callback_texreset_update ), NULL );
 	gtk_widget_show( dlgTexReset.cbScaleHor );
 	gtk_table_attach( GTK_TABLE( table ), dlgTexReset.cbScaleHor, 0, 1, 0, 1,
 					  (GtkAttachOptions) ( GTK_FILL ),
@@ -1412,7 +1426,8 @@ int DoResetTextureBox( ResetTextureRS* rs ){
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
 	gtk_widget_show( w );
 
-	dlgTexReset.editScaleHor = gtk_entry_new_with_max_length( 256 );
+	dlgTexReset.editScaleHor = gtk_entry_new();
+	gtk_entry_set_max_length( GTK_ENTRY( dlgTexReset.editScaleHor ), 256 );
 	gtk_entry_set_text( GTK_ENTRY( dlgTexReset.editScaleHor ), "0.5" );
 	gtk_table_attach( GTK_TABLE( table ), dlgTexReset.editScaleHor, 2, 3, 0, 1,
 					  (GtkAttachOptions) ( GTK_FILL ),
@@ -1421,7 +1436,7 @@ int DoResetTextureBox( ResetTextureRS* rs ){
 
 
 	dlgTexReset.cbScaleVert = gtk_check_button_new_with_label( "Enabled" );
-	gtk_signal_connect( GTK_OBJECT( dlgTexReset.cbScaleVert ), "toggled", GTK_SIGNAL_FUNC( dialog_button_callback_texreset_update ), NULL );
+	g_signal_connect( G_OBJECT( dlgTexReset.cbScaleVert ), "toggled", G_CALLBACK( dialog_button_callback_texreset_update ), NULL );
 	gtk_widget_show( dlgTexReset.cbScaleVert );
 	gtk_table_attach( GTK_TABLE( table ), dlgTexReset.cbScaleVert, 0, 1, 1, 2,
 					  (GtkAttachOptions) ( GTK_FILL ),
@@ -1433,7 +1448,8 @@ int DoResetTextureBox( ResetTextureRS* rs ){
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
 	gtk_widget_show( w );
 
-	dlgTexReset.editScaleVert = gtk_entry_new_with_max_length( 256 );
+	dlgTexReset.editScaleVert = gtk_entry_new();
+	gtk_entry_set_max_length( GTK_ENTRY( dlgTexReset.editScaleVert ), 256 );
 	gtk_entry_set_text( GTK_ENTRY( dlgTexReset.editScaleVert ), "0.5" );
 	gtk_table_attach( GTK_TABLE( table ), dlgTexReset.editScaleVert, 2, 3, 1, 2,
 					  (GtkAttachOptions) ( GTK_FILL ),
@@ -1456,7 +1472,7 @@ int DoResetTextureBox( ResetTextureRS* rs ){
 	// ---- frame ----
 
 	dlgTexReset.cbShiftHor = gtk_check_button_new_with_label( "Enabled" );
-	gtk_signal_connect( GTK_OBJECT( dlgTexReset.cbShiftHor ), "toggled", GTK_SIGNAL_FUNC( dialog_button_callback_texreset_update ), NULL );
+	g_signal_connect( G_OBJECT( dlgTexReset.cbShiftHor ), "toggled", G_CALLBACK( dialog_button_callback_texreset_update ), NULL );
 	gtk_widget_show( dlgTexReset.cbShiftHor );
 	gtk_table_attach( GTK_TABLE( table ), dlgTexReset.cbShiftHor, 0, 1, 0, 1,
 					  (GtkAttachOptions) ( GTK_FILL ),
@@ -1468,7 +1484,8 @@ int DoResetTextureBox( ResetTextureRS* rs ){
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
 	gtk_widget_show( w );
 
-	dlgTexReset.editShiftHor = gtk_entry_new_with_max_length( 256 );
+	dlgTexReset.editShiftHor = gtk_entry_new();
+	gtk_entry_set_max_length( GTK_ENTRY( dlgTexReset.editShiftHor ), 256 );
 	gtk_entry_set_text( GTK_ENTRY( dlgTexReset.editShiftHor ), "0" );
 	gtk_table_attach( GTK_TABLE( table ), dlgTexReset.editShiftHor, 2, 3, 0, 1,
 					  (GtkAttachOptions) ( GTK_FILL ),
@@ -1477,7 +1494,7 @@ int DoResetTextureBox( ResetTextureRS* rs ){
 
 
 	dlgTexReset.cbShiftVert = gtk_check_button_new_with_label( "Enabled" );
-	gtk_signal_connect( GTK_OBJECT( dlgTexReset.cbShiftVert ), "toggled", GTK_SIGNAL_FUNC( dialog_button_callback_texreset_update ), NULL );
+	g_signal_connect( G_OBJECT( dlgTexReset.cbShiftVert ), "toggled", G_CALLBACK( dialog_button_callback_texreset_update ), NULL );
 	gtk_widget_show( dlgTexReset.cbShiftVert );
 	gtk_table_attach( GTK_TABLE( table ), dlgTexReset.cbShiftVert, 0, 1, 1, 2,
 					  (GtkAttachOptions) ( GTK_FILL ),
@@ -1489,7 +1506,8 @@ int DoResetTextureBox( ResetTextureRS* rs ){
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
 	gtk_widget_show( w );
 
-	dlgTexReset.editShiftVert = gtk_entry_new_with_max_length( 256 );
+	dlgTexReset.editShiftVert = gtk_entry_new();
+	gtk_entry_set_max_length( GTK_ENTRY( dlgTexReset.editShiftVert ), 256 );
 	gtk_entry_set_text( GTK_ENTRY( dlgTexReset.editShiftVert ), "0" );
 	gtk_table_attach( GTK_TABLE( table ), dlgTexReset.editShiftVert, 2, 3, 1, 2,
 					  (GtkAttachOptions) ( GTK_FILL ),
@@ -1523,7 +1541,8 @@ int DoResetTextureBox( ResetTextureRS* rs ){
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
 	gtk_widget_show( w );
 
-	dlgTexReset.editRotation = gtk_entry_new_with_max_length( 256 );
+	dlgTexReset.editRotation = gtk_entry_new();
+	gtk_entry_set_max_length( GTK_ENTRY( dlgTexReset.editRotation ), 256 );
 	gtk_entry_set_text( GTK_ENTRY( dlgTexReset.editRotation ), "0" );
 	gtk_table_attach( GTK_TABLE( table ), dlgTexReset.editRotation, 2, 3, 0, 1,
 					  (GtkAttachOptions) ( GTK_FILL ),
@@ -1540,20 +1559,20 @@ int DoResetTextureBox( ResetTextureRS* rs ){
 
 	w = gtk_button_new_with_label( "Use Selected Brushes" );
 	gtk_box_pack_start( GTK_BOX( hbox ), w, TRUE, TRUE, 0 );
-	gtk_signal_connect( GTK_OBJECT( w ), "clicked", GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( IDOK ) );
+	g_signal_connect( G_OBJECT( w ), "clicked", G_CALLBACK( dialog_button_callback ), GINT_TO_POINTER( IDOK ) );
 
-	GTK_WIDGET_SET_FLAGS( w, GTK_CAN_DEFAULT );
+	gtk_widget_set_can_default( w, TRUE );
 	gtk_widget_grab_default( w );
 	gtk_widget_show( w );
 
 	w = gtk_button_new_with_label( "Use All Brushes" );
 	gtk_box_pack_start( GTK_BOX( hbox ), w, TRUE, TRUE, 0 );
-	gtk_signal_connect( GTK_OBJECT( w ), "clicked", GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( IDYES ) );
+	g_signal_connect( G_OBJECT( w ), "clicked", G_CALLBACK( dialog_button_callback ), GINT_TO_POINTER( IDYES ) );
 	gtk_widget_show( w );
 
 	w = gtk_button_new_with_label( "Cancel" );
 	gtk_box_pack_start( GTK_BOX( hbox ), w, TRUE, TRUE, 0 );
-	gtk_signal_connect( GTK_OBJECT( w ), "clicked", GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( IDCANCEL ) );
+	g_signal_connect( G_OBJECT( w ), "clicked", G_CALLBACK( dialog_button_callback ), GINT_TO_POINTER( IDCANCEL ) );
 	gtk_widget_show( w );
 	ret = IDCANCEL;
 
@@ -1577,42 +1596,42 @@ int DoResetTextureBox( ResetTextureRS* rs ){
 		dialogError = FALSE;
 
 		if ( ret != IDCANCEL ) {
-			rs->bResetRotation =  gtk_toggle_button_get_active( GTK_TOGGLE_BUTTON( dlgTexReset.cbRotation ) );
+			rs->bResetRotation = gtk_toggle_button_get_active( GTK_TOGGLE_BUTTON( dlgTexReset.cbRotation ) );
 			if ( rs->bResetRotation ) {
 				if ( !ValidateTextInt( gtk_entry_get_text( GTK_ENTRY( dlgTexReset.editRotation ) ), "Rotation", &rs->rotation ) ) {
 					dialogError = TRUE;
 				}
 			}
 
-			rs->bResetScale[0] =  gtk_toggle_button_get_active( GTK_TOGGLE_BUTTON( dlgTexReset.cbScaleHor ) );
+			rs->bResetScale[0] = gtk_toggle_button_get_active( GTK_TOGGLE_BUTTON( dlgTexReset.cbScaleHor ) );
 			if ( rs->bResetScale[0] ) {
 				if ( !ValidateTextFloat( gtk_entry_get_text( GTK_ENTRY( dlgTexReset.editScaleHor ) ), "Horizontal Scale", &rs->fScale[0] ) ) {
 					dialogError = TRUE;
 				}
 			}
 
-			rs->bResetScale[1] =  gtk_toggle_button_get_active( GTK_TOGGLE_BUTTON( dlgTexReset.cbScaleVert ) );
+			rs->bResetScale[1] = gtk_toggle_button_get_active( GTK_TOGGLE_BUTTON( dlgTexReset.cbScaleVert ) );
 			if ( rs->bResetScale[1] ) {
 				if ( !ValidateTextFloat( gtk_entry_get_text( GTK_ENTRY( dlgTexReset.editScaleVert ) ), "Vertical Scale", &rs->fScale[1] ) ) {
 					dialogError = TRUE;
 				}
 			}
 
-			rs->bResetShift[0] =  gtk_toggle_button_get_active( GTK_TOGGLE_BUTTON( dlgTexReset.cbShiftHor ) );
+			rs->bResetShift[0] = gtk_toggle_button_get_active( GTK_TOGGLE_BUTTON( dlgTexReset.cbShiftHor ) );
 			if ( rs->bResetShift[0] ) {
 				if ( !ValidateTextFloat( gtk_entry_get_text( GTK_ENTRY( dlgTexReset.editShiftHor ) ), "Horizontal Shift", &rs->fShift[0] ) ) {
 					dialogError = TRUE;
 				}
 			}
 
-			rs->bResetShift[1] =  gtk_toggle_button_get_active( GTK_TOGGLE_BUTTON( dlgTexReset.cbShiftVert ) );
+			rs->bResetShift[1] = gtk_toggle_button_get_active( GTK_TOGGLE_BUTTON( dlgTexReset.cbShiftVert ) );
 			if ( rs->bResetShift[1] ) {
 				if ( !ValidateTextFloat( gtk_entry_get_text( GTK_ENTRY( dlgTexReset.editShiftVert ) ), "Vertical Shift", &rs->fShift[1] ) ) {
 					dialogError = TRUE;
 				}
 			}
 
-			rs->bResetTextureName =  gtk_toggle_button_get_active( GTK_TOGGLE_BUTTON( dlgTexReset.cbTexChange ) );
+			rs->bResetTextureName = gtk_toggle_button_get_active( GTK_TOGGLE_BUTTON( dlgTexReset.cbTexChange ) );
 			if ( rs->bResetTextureName ) {
 				strcpy( rs->textureName,     gtk_entry_get_text( GTK_ENTRY( dlgTexReset.editTexOld ) ) );
 				strcpy( rs->newTextureName,  gtk_entry_get_text( GTK_ENTRY( dlgTexReset.editTexNew ) ) );
@@ -1640,14 +1659,14 @@ int DoTrainThingBox( TrainThingRS* rs ){
 
 	window = gtk_window_new( GTK_WINDOW_TOPLEVEL );
 
-	gtk_signal_connect( GTK_OBJECT( window ), "delete-event", GTK_SIGNAL_FUNC( dialog_delete_callback ), NULL );
-	gtk_signal_connect( GTK_OBJECT( window ), "destroy", GTK_SIGNAL_FUNC( gtk_widget_destroy ), NULL );
+	g_signal_connect( G_OBJECT( window ), "delete-event", G_CALLBACK( dialog_delete_callback ), NULL );
+	g_signal_connect( G_OBJECT( window ), "destroy", G_CALLBACK( gtk_widget_destroy ), NULL );
 
 	gtk_window_set_title( GTK_WINDOW( window ), "Train Thing" );
-	gtk_container_border_width( GTK_CONTAINER( window ), 10 );
+	gtk_container_set_border_width( GTK_CONTAINER( window ), 10 );
 
-	gtk_object_set_data( GTK_OBJECT( window ), "loop", &loop );
-	gtk_object_set_data( GTK_OBJECT( window ), "ret", &ret );
+	g_object_set_data( G_OBJECT( window ), "loop", &loop );
+	g_object_set_data( G_OBJECT( window ), "ret", &ret );
 
 	gtk_widget_realize( window );
 
@@ -1682,7 +1701,8 @@ int DoTrainThingBox( TrainThingRS* rs ){
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
 	gtk_widget_show( w );
 
-	radiusX = gtk_entry_new_with_max_length( 256 );
+	radiusX = gtk_entry_new();
+	gtk_entry_set_max_length( GTK_ENTRY( radiusX ), 256 );
 	gtk_entry_set_text( GTK_ENTRY( radiusX ), "100" );
 	gtk_table_attach( GTK_TABLE( table ), radiusX, 1, 2, 0, 1,
 					  (GtkAttachOptions) ( GTK_FILL ),
@@ -1697,7 +1717,8 @@ int DoTrainThingBox( TrainThingRS* rs ){
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
 	gtk_widget_show( w );
 
-	radiusY = gtk_entry_new_with_max_length( 256 );
+	radiusY = gtk_entry_new();
+	gtk_entry_set_max_length( GTK_ENTRY( radiusY ), 256 );
 	gtk_entry_set_text( GTK_ENTRY( radiusY ), "100" );
 	gtk_table_attach( GTK_TABLE( table ), radiusY, 1, 2, 1, 2,
 					  (GtkAttachOptions) ( GTK_FILL ),
@@ -1725,7 +1746,8 @@ int DoTrainThingBox( TrainThingRS* rs ){
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
 	gtk_widget_show( w );
 
-	angleStart = gtk_entry_new_with_max_length( 256 );
+	angleStart = gtk_entry_new();
+	gtk_entry_set_max_length( GTK_ENTRY( angleStart ), 256 );
 	gtk_entry_set_text( GTK_ENTRY( angleStart ), "0" );
 	gtk_table_attach( GTK_TABLE( table ), angleStart, 1, 2, 0, 1,
 					  (GtkAttachOptions) ( GTK_FILL ),
@@ -1740,7 +1762,8 @@ int DoTrainThingBox( TrainThingRS* rs ){
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
 	gtk_widget_show( w );
 
-	angleEnd = gtk_entry_new_with_max_length( 256 );
+	angleEnd = gtk_entry_new();
+	gtk_entry_set_max_length( GTK_ENTRY( angleEnd ), 256 );
 	gtk_entry_set_text( GTK_ENTRY( angleEnd ), "90" );
 	gtk_table_attach( GTK_TABLE( table ), angleEnd, 1, 2, 1, 2,
 					  (GtkAttachOptions) ( GTK_FILL ),
@@ -1767,7 +1790,8 @@ int DoTrainThingBox( TrainThingRS* rs ){
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
 	gtk_widget_show( w );
 
-	heightStart = gtk_entry_new_with_max_length( 256 );
+	heightStart = gtk_entry_new();
+	gtk_entry_set_max_length( GTK_ENTRY( heightStart ), 256 );
 	gtk_entry_set_text( GTK_ENTRY( heightStart ), "0" );
 	gtk_table_attach( GTK_TABLE( table ), heightStart, 1, 2, 0, 1,
 					  (GtkAttachOptions) ( GTK_FILL ),
@@ -1782,7 +1806,8 @@ int DoTrainThingBox( TrainThingRS* rs ){
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
 	gtk_widget_show( w );
 
-	heightEnd = gtk_entry_new_with_max_length( 256 );
+	heightEnd = gtk_entry_new();
+	gtk_entry_set_max_length( GTK_ENTRY( heightEnd ), 256 );
 	gtk_entry_set_text( GTK_ENTRY( heightEnd ), "0" );
 	gtk_table_attach( GTK_TABLE( table ), heightEnd, 1, 2, 1, 2,
 					  (GtkAttachOptions) ( GTK_FILL ),
@@ -1810,7 +1835,8 @@ int DoTrainThingBox( TrainThingRS* rs ){
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
 	gtk_widget_show( w );
 
-	numPoints = gtk_entry_new_with_max_length( 256 );
+	numPoints = gtk_entry_new();
+	gtk_entry_set_max_length( GTK_ENTRY( numPoints ), 256 );
 	gtk_entry_set_text( GTK_ENTRY( numPoints ), "0" );
 	gtk_table_attach( GTK_TABLE( table ), numPoints, 1, 2, 0, 1,
 					  (GtkAttachOptions) ( GTK_FILL ),
@@ -1826,15 +1852,15 @@ int DoTrainThingBox( TrainThingRS* rs ){
 
 	w = gtk_button_new_with_label( "Ok" );
 	gtk_box_pack_start( GTK_BOX( hbox ), w, TRUE, TRUE, 0 );
-	gtk_signal_connect( GTK_OBJECT( w ), "clicked", GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( IDOK ) );
+	g_signal_connect( G_OBJECT( w ), "clicked", G_CALLBACK( dialog_button_callback ), GINT_TO_POINTER( IDOK ) );
 
-	GTK_WIDGET_SET_FLAGS( w, GTK_CAN_DEFAULT );
+	gtk_widget_set_can_default( w, TRUE );
 	gtk_widget_grab_default( w );
 	gtk_widget_show( w );
 
 	w = gtk_button_new_with_label( "Cancel" );
 	gtk_box_pack_start( GTK_BOX( hbox ), w, TRUE, TRUE, 0 );
-	gtk_signal_connect( GTK_OBJECT( w ), "clicked", GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( IDCANCEL ) );
+	g_signal_connect( G_OBJECT( w ), "clicked", G_CALLBACK( dialog_button_callback ), GINT_TO_POINTER( IDCANCEL ) );
 	gtk_widget_show( w );
 	ret = IDCANCEL;
 

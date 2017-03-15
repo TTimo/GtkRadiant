@@ -177,9 +177,12 @@ GtkWidget* WINAPI gtk_glwidget_new( gboolean zbuffer, GtkWidget* share ){
 	GtkWidget* drawing_area = gtk_drawing_area_new();
 	GdkGLConfig* glconfig = ( zbuffer ) ? glconfig_new_with_depth() : glconfig_new();
 	GdkGLContext* shared_context = ( share ) ? gtk_widget_get_gl_context( share ) : NULL;
+	gboolean result;
 
-	gtk_widget_set_gl_capability( drawing_area, glconfig, shared_context, TRUE, GDK_GL_RGBA_TYPE );
-
+	result = gtk_widget_set_gl_capability( drawing_area, glconfig, shared_context, TRUE, GDK_GL_RGBA_TYPE );
+	if( !result ){
+		Sys_Printf( "gtk_widget_set_gl_capability failed.\n" );
+	}
 	return drawing_area;
 }
 

@@ -59,14 +59,14 @@ int BP_MessageBox( int status ){
 	int ret, loop = 1;
 
 	window = gtk_window_new( GTK_WINDOW_TOPLEVEL );
-	gtk_signal_connect( GTK_OBJECT( window ), "delete-event",
-						GTK_SIGNAL_FUNC( BP_dialog_delete_callback ), NULL );
-	gtk_signal_connect( GTK_OBJECT( window ), "destroy",
-						GTK_SIGNAL_FUNC( gtk_widget_destroy ), NULL );
+	g_signal_connect( G_OBJECT( window ), "delete-event",
+						G_CALLBACK( BP_dialog_delete_callback ), NULL );
+	g_signal_connect( G_OBJECT( window ), "destroy",
+						G_CALLBACK( gtk_widget_destroy ), NULL );
 
 	gtk_window_set_title( GTK_WINDOW( window ), _( "Current map format is incompatible" ) );
 
-	gtk_container_border_width( GTK_CONTAINER( window ), 10 );
+	gtk_container_set_border_width( GTK_CONTAINER( window ), 10 );
 	g_object_set_data( G_OBJECT( window ), "loop", &loop );
 	g_object_set_data( G_OBJECT( window ), "ret", &ret );
 	gtk_widget_realize( window );
@@ -109,22 +109,22 @@ int BP_MessageBox( int status ){
 
 	w = gtk_button_new_with_label( _( "Convert" ) );
 	gtk_box_pack_start( GTK_BOX( hbox ), w, TRUE, TRUE, 0 );
-	gtk_signal_connect( GTK_OBJECT( w ), "clicked",
-						GTK_SIGNAL_FUNC( BP_dialog_button_callback ), GINT_TO_POINTER( 1 ) );
+	g_signal_connect( G_OBJECT( w ), "clicked",
+						G_CALLBACK( BP_dialog_button_callback ), GINT_TO_POINTER( 1 ) );
 	GTK_WIDGET_SET_FLAGS( w, GTK_CAN_DEFAULT );
 	gtk_widget_grab_default( w );
 	gtk_widget_show( w );
 
 	w = gtk_button_new_with_label( _( "Change default" ) );
 	gtk_box_pack_start( GTK_BOX( hbox ), w, TRUE, TRUE, 0 );
-	gtk_signal_connect( GTK_OBJECT( w ), "clicked",
-						GTK_SIGNAL_FUNC( BP_dialog_button_callback ), GINT_TO_POINTER( 2 ) );
+	g_signal_connect( G_OBJECT( w ), "clicked",
+						G_CALLBACK( BP_dialog_button_callback ), GINT_TO_POINTER( 2 ) );
 	gtk_widget_show( w );
 
 	w = gtk_button_new_with_label( _( "Abort load" ) );
 	gtk_box_pack_start( GTK_BOX( hbox ), w, TRUE, TRUE, 0 );
-	gtk_signal_connect( GTK_OBJECT( w ), "clicked",
-						GTK_SIGNAL_FUNC( BP_dialog_button_callback ), GINT_TO_POINTER( 0 ) );
+	g_signal_connect( G_OBJECT( w ), "clicked",
+						G_CALLBACK( BP_dialog_button_callback ), GINT_TO_POINTER( 0 ) );
 	gtk_widget_show( w );
 	ret = 0; // abort
 

@@ -1281,14 +1281,14 @@ bool g_bWaitCursor = false;
 
 void WINAPI Sys_BeginWait( void ){
 	GdkCursor *cursor = gdk_cursor_new( GDK_WATCH );
-	gdk_window_set_cursor( g_pParentWnd->m_pWidget->window, cursor );
+	gdk_window_set_cursor( gtk_widget_get_window( g_pParentWnd->m_pWidget ), cursor );
 	gdk_cursor_unref( cursor );
 	g_bWaitCursor = true;
 }
 
 void WINAPI Sys_EndWait( void ){
 	GdkCursor *cursor = gdk_cursor_new( GDK_LEFT_PTR );
-	gdk_window_set_cursor( g_pParentWnd->m_pWidget->window, cursor );
+	gdk_window_set_cursor( gtk_widget_get_window( g_pParentWnd->m_pWidget ), cursor );
 	gdk_cursor_unref( cursor );
 	g_bWaitCursor = false;
 }
@@ -1578,8 +1578,8 @@ void FillBSPMenu(){
 			item = gtk_menu_item_new_with_label( token );
 			gtk_widget_show( item );
 			gtk_container_add( GTK_CONTAINER( menu ), item );
-			gtk_signal_connect( GTK_OBJECT( item ), "activate",
-								GTK_SIGNAL_FUNC( HandleCommand ), GINT_TO_POINTER( CMD_BSPCOMMAND + i ) );
+			g_signal_connect( G_OBJECT( item ), "activate",
+								G_CALLBACK( HandleCommand ), GINT_TO_POINTER( CMD_BSPCOMMAND + i ) );
 			token = strtok( NULL, ",;" );
 			i++;
 		}
@@ -1594,8 +1594,8 @@ void FillBSPMenu(){
 				item = gtk_menu_item_new_with_label( ep->key + 4 );
 				gtk_widget_show( item );
 				gtk_container_add( GTK_CONTAINER( menu ), item );
-				gtk_signal_connect( GTK_OBJECT( item ), "activate",
-									GTK_SIGNAL_FUNC( HandleCommand ), GINT_TO_POINTER( CMD_BSPCOMMAND + i ) );
+				g_signal_connect( G_OBJECT( item ), "activate",
+									G_CALLBACK( HandleCommand ), GINT_TO_POINTER( CMD_BSPCOMMAND + i ) );
 				i++;
 			}
 		}
@@ -1763,7 +1763,7 @@ extern "C" void Sys_FPrintf_VA( int level, const char *text, va_list args ) {
 			gtk_text_view_scroll_mark_onscreen( GTK_TEXT_VIEW( g_qeglobals_gui.d_edit ), end );
 
 			// update console widget immediately if we're doing something time-consuming
-			if ( !g_bScreenUpdates && GTK_WIDGET_REALIZED( g_qeglobals_gui.d_edit ) ) {
+			if ( !g_bScreenUpdates && gtk_widget_get_realized( g_qeglobals_gui.d_edit ) ) {
 				gtk_grab_add( g_qeglobals_gui.d_edit );
 
 				while ( gtk_events_pending() )
