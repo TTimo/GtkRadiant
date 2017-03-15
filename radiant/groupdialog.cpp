@@ -541,10 +541,10 @@ void ResetEntity(){
 	// refresh the dialog
 	SetKeyValuePairs();
 	for ( i = EntCheck1; i <= EntCheck16; i++ )
-		gtk_signal_handler_block_by_func( GTK_OBJECT( EntWidgets[i] ), GTK_SIGNAL_FUNC( entity_check ), NULL );
+		g_signal_handlers_block_by_func( G_OBJECT( EntWidgets[i] ), (gpointer)G_CALLBACK( entity_check ), NULL );
 	SetSpawnFlags();
 	for ( i = EntCheck1; i <= EntCheck16; i++ )
-		gtk_signal_handler_unblock_by_func( GTK_OBJECT( EntWidgets[i] ), GTK_SIGNAL_FUNC( entity_check ), NULL );
+		g_signal_handlers_unblock_by_func( G_OBJECT( EntWidgets[i] ), (gpointer)G_CALLBACK( entity_check ), NULL );
 }
 
 bool GetSelectAllCriteria( CString &strKey, CString &strVal ){
@@ -552,7 +552,7 @@ bool GetSelectAllCriteria( CString &strKey, CString &strVal ){
 	GtkTreeIter iter;
 	if ( gtk_tree_selection_get_selected( gtk_tree_view_get_selection( GTK_TREE_VIEW( EntWidgets[EntProps] ) ), &model, &iter )
 		 && ( inspector_mode == W_ENTITY )
-		 && GTK_WIDGET_VISIBLE( g_pGroupDlg->m_pWidget ) ) {
+		 && gtk_widget_get_visible( g_pGroupDlg->m_pWidget ) ) {
 		strKey = gtk_entry_get_text( GTK_ENTRY( EntWidgets[EntKeyField] ) );
 		strVal = gtk_entry_get_text( GTK_ENTRY( EntWidgets[EntValueField] ) );
 		return TRUE;
@@ -1017,7 +1017,7 @@ static gint eclasslist_button_press( GtkWidget *widget, GdkEventButton *event, g
 static gint eclasslist_keypress( GtkWidget* widget, GdkEventKey* event, gpointer data ){
 	unsigned int code = gdk_keyval_to_upper( event->keyval );
 
-	if ( event->keyval == GDK_Return ) {
+	if ( event->keyval == GDK_KEY_Return ) {
 		CreateEntity();
 		return TRUE;
 	}
@@ -1089,7 +1089,7 @@ static void entitylist_angle( GtkWidget *widget, gpointer data ){
 }
 
 static gint entityentry_keypress( GtkWidget* widget, GdkEventKey* event, gpointer data ){
-	if ( event->keyval == GDK_Tab ) {
+	if ( event->keyval == GDK_KEY_Tab ) {
 		if ( widget == EntWidgets[EntKeyField] ) {
 			//gtk_entry_set_text (GTK_ENTRY (EntWidgets[EntValueField]), "");
 			gtk_window_set_focus( GTK_WINDOW( g_pGroupDlg->m_pWidget ), EntWidgets[EntValueField] );
@@ -1100,7 +1100,7 @@ static gint entityentry_keypress( GtkWidget* widget, GdkEventKey* event, gpointe
 
 		return TRUE;
 	}
-	else if ( event->keyval == GDK_Return ) {
+	else if ( event->keyval == GDK_KEY_Return ) {
 		if ( widget == EntWidgets[EntKeyField] ) {
 			gtk_entry_set_text( GTK_ENTRY( EntWidgets[EntValueField] ), "" );
 			gtk_window_set_focus( GTK_WINDOW( g_pGroupDlg->m_pWidget ), EntWidgets[EntValueField] );
@@ -1115,7 +1115,7 @@ static gint entityentry_keypress( GtkWidget* widget, GdkEventKey* event, gpointe
 	return FALSE;
 }
 
-static void switch_page( GtkNotebook *notebook, GtkNotebookPage *page, guint page_num, gpointer data ){
+static void switch_page( GtkNotebook *notebook, GtkWidget *page, guint page_num, gpointer data ){
 	const gchar *text;
 	text = gtk_label_get_text( GTK_LABEL( gtk_notebook_get_tab_label( notebook, gtk_notebook_get_nth_page( notebook, page_num ) ) ) );
 	gtk_window_set_title( GTK_WINDOW( data ), text );
@@ -1191,7 +1191,7 @@ static gint OnDialogKey( GtkWidget* widget, GdkEventKey* event, gpointer data ) 
     }
   }
 #endif
-  if ( g_pParentWnd->CurrentStyle() != MainFrame::eFloating && ( hide || event->keyval == GDK_Escape ) ) {
+  if ( g_pParentWnd->CurrentStyle() != MainFrame::eFloating && ( hide || event->keyval == GDK_KEY_Escape ) ) {
     // toggle off the group view (whatever part of it is currently displayed)
     // this used to be done with a g_pParentWnd->OnViewEntity(); but it had bad consequences
     gtk_widget_hide( widget );
@@ -1228,9 +1228,9 @@ void GroupDlg::Create(){
 	load_window_pos( dlg, g_PrefsDlg.mWindowInfo.posEntityWnd );
 
 	gtk_window_set_title( GTK_WINDOW( dlg ), "Entities" );
-	gtk_signal_connect( GTK_OBJECT( dlg ), "delete-event", GTK_SIGNAL_FUNC( OnDeleteHide ), NULL );
+	g_signal_connect( G_OBJECT( dlg ), "delete-event", G_CALLBACK( OnDeleteHide ), NULL );
 	// catch 'Esc'
-	gtk_signal_connect( GTK_OBJECT( dlg ), "key-press-event", GTK_SIGNAL_FUNC( OnDialogKey ), NULL );
+	g_signal_connect( G_OBJECT( dlg ), "key-press-event", G_CALLBACK( OnDialogKey ), NULL );
 
 	gtk_window_set_transient_for( GTK_WINDOW( dlg ), GTK_WINDOW( g_pParentWnd->m_pWidget ) );
 	g_qeglobals_gui.d_entity = dlg;
@@ -1335,7 +1335,7 @@ void GroupDlg::Create(){
 							{
 								GtkWidget* check = gtk_check_button_new_with_label( "" );
 								gtk_widget_ref( check );
-								gtk_signal_connect( GTK_OBJECT( check ), "toggled", GTK_SIGNAL_FUNC( entity_check ), NULL );
+								g_signal_connect( G_OBJECT( check ), "toggled", G_CALLBACK( entity_check ), NULL );
 								EntWidgets[EntCheck1 + i] = check;
 							}
 
@@ -1411,8 +1411,8 @@ void GroupDlg::Create(){
 									  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
 									  (GtkAttachOptions) ( 0 ), 0, 0 );
 					gtk_widget_set_events( entry, GDK_KEY_PRESS_MASK );
-					gtk_signal_connect( GTK_OBJECT( entry ), "key-press-event",
-										GTK_SIGNAL_FUNC( entityentry_keypress ), this );
+					g_signal_connect( G_OBJECT( entry ), "key-press-event",
+										G_CALLBACK( entityentry_keypress ), this );
 					EntWidgets[EntKeyField] = entry;
 				}
 
@@ -1423,8 +1423,8 @@ void GroupDlg::Create(){
 									  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
 									  (GtkAttachOptions) ( 0 ), 0, 0 );
 					gtk_widget_set_events( entry, GDK_KEY_PRESS_MASK );
-					gtk_signal_connect( GTK_OBJECT( entry ), "key-press-event",
-										GTK_SIGNAL_FUNC( entityentry_keypress ), this );
+					g_signal_connect( G_OBJECT( entry ), "key-press-event",
+										G_CALLBACK( entityentry_keypress ), this );
 					EntWidgets[EntValueField] = entry;
 				}
 
@@ -1460,7 +1460,7 @@ void GroupDlg::Create(){
 					{
 						GtkWidget* button = gtk_button_new_with_label( _( "360" ) );
 						gtk_widget_show( button );
-						gtk_signal_connect( GTK_OBJECT( button ), "clicked", GTK_SIGNAL_FUNC( entitylist_angle ), (void *)"360" );
+						g_signal_connect( G_OBJECT( button ), "clicked", G_CALLBACK( entitylist_angle ), (void *)"360" );
 						gtk_table_attach( GTK_TABLE( table ), button, 2, 3, 1, 2,
 										  (GtkAttachOptions) ( GTK_FILL ),
 										  (GtkAttachOptions) ( GTK_FILL ), 0, 0 );
@@ -1469,7 +1469,7 @@ void GroupDlg::Create(){
 					{
 						GtkWidget* button = gtk_button_new_with_label( _( "45" ) );
 						gtk_widget_show( button );
-						gtk_signal_connect( GTK_OBJECT( button ), "clicked", GTK_SIGNAL_FUNC( entitylist_angle ), (void *)"45" );
+						g_signal_connect( G_OBJECT( button ), "clicked", G_CALLBACK( entitylist_angle ), (void *)"45" );
 						gtk_table_attach( GTK_TABLE( table ), button, 2, 3, 0, 1,
 										  (GtkAttachOptions) ( GTK_FILL ),
 										  (GtkAttachOptions) ( GTK_FILL ), 0, 0 );
@@ -1478,7 +1478,7 @@ void GroupDlg::Create(){
 					{
 						GtkWidget* button = gtk_button_new_with_label( _( "90" ) );
 						gtk_widget_show( button );
-						gtk_signal_connect( GTK_OBJECT( button ), "clicked", GTK_SIGNAL_FUNC( entitylist_angle ), (void *)"90" );
+						g_signal_connect( G_OBJECT( button ), "clicked", G_CALLBACK( entitylist_angle ), (void *)"90" );
 						gtk_table_attach( GTK_TABLE( table ), button, 1, 2, 0, 1,
 										  (GtkAttachOptions) ( GTK_FILL ),
 										  (GtkAttachOptions) ( GTK_FILL ), 0, 0 );
@@ -1488,7 +1488,7 @@ void GroupDlg::Create(){
 					{
 						GtkWidget* button = gtk_button_new_with_label( _( "135" ) );
 						gtk_widget_show( button );
-						gtk_signal_connect( GTK_OBJECT( button ), "clicked", GTK_SIGNAL_FUNC( entitylist_angle ), (void *)"135" );
+						g_signal_connect( G_OBJECT( button ), "clicked", G_CALLBACK( entitylist_angle ), (void *)"135" );
 						gtk_table_attach( GTK_TABLE( table ), button, 0, 1, 0, 1,
 										  (GtkAttachOptions) ( GTK_FILL ),
 										  (GtkAttachOptions) ( GTK_FILL ), 0, 0 );
@@ -1497,7 +1497,7 @@ void GroupDlg::Create(){
 					{
 						GtkWidget* button = gtk_button_new_with_label( _( "180" ) );
 						gtk_widget_show( button );
-						gtk_signal_connect( GTK_OBJECT( button ), "clicked", GTK_SIGNAL_FUNC( entitylist_angle ), (void *)"180" );
+						g_signal_connect( G_OBJECT( button ), "clicked", G_CALLBACK( entitylist_angle ), (void *)"180" );
 						gtk_table_attach( GTK_TABLE( table ), button, 0, 1, 1, 2,
 										  (GtkAttachOptions) ( GTK_FILL ),
 										  (GtkAttachOptions) ( GTK_FILL ), 0, 0 );
@@ -1506,7 +1506,7 @@ void GroupDlg::Create(){
 					{
 						GtkWidget* button = gtk_button_new_with_label( _( "225" ) );
 						gtk_widget_show( button );
-						gtk_signal_connect( GTK_OBJECT( button ), "clicked", GTK_SIGNAL_FUNC( entitylist_angle ), (void *)"225" );
+						g_signal_connect( G_OBJECT( button ), "clicked", G_CALLBACK( entitylist_angle ), (void *)"225" );
 						gtk_table_attach( GTK_TABLE( table ), button, 0, 1, 2, 3,
 										  (GtkAttachOptions) ( GTK_FILL ),
 										  (GtkAttachOptions) ( GTK_FILL ), 0, 0 );
@@ -1515,7 +1515,7 @@ void GroupDlg::Create(){
 					{
 						GtkWidget* button = gtk_button_new_with_label( _( "270" ) );
 						gtk_widget_show( button );
-						gtk_signal_connect( GTK_OBJECT( button ), "clicked", GTK_SIGNAL_FUNC( entitylist_angle ), (void *)"270" );
+						g_signal_connect( G_OBJECT( button ), "clicked", G_CALLBACK( entitylist_angle ), (void *)"270" );
 						gtk_table_attach( GTK_TABLE( table ), button, 1, 2, 2, 3,
 										  (GtkAttachOptions) ( GTK_FILL ),
 										  (GtkAttachOptions) ( GTK_FILL ), 0, 0 );
@@ -1524,7 +1524,7 @@ void GroupDlg::Create(){
 					{
 						GtkWidget* button = gtk_button_new_with_label( _( "315" ) );
 						gtk_widget_show( button );
-						gtk_signal_connect( GTK_OBJECT( button ), "clicked", GTK_SIGNAL_FUNC( entitylist_angle ), (void *)"315" );
+						g_signal_connect( G_OBJECT( button ), "clicked", G_CALLBACK( entitylist_angle ), (void *)"315" );
 						gtk_table_attach( GTK_TABLE( table ), button, 2, 3, 2, 3,
 										  (GtkAttachOptions) ( GTK_FILL ),
 										  (GtkAttachOptions) ( GTK_FILL ), 0, 0 );
@@ -1539,21 +1539,21 @@ void GroupDlg::Create(){
 					{
 						GtkWidget* button = gtk_button_new_with_label( _( "Reset" ) );
 						gtk_widget_show( button );
-						gtk_signal_connect( GTK_OBJECT( button ), "clicked", GTK_SIGNAL_FUNC( ResetEntity ), NULL );
+						g_signal_connect( G_OBJECT( button ), "clicked", G_CALLBACK( ResetEntity ), NULL );
 						gtk_box_pack_start( GTK_BOX( vbox2 ), button, FALSE, FALSE, 0 );
 					}
 
 					{
 						GtkWidget* button = gtk_button_new_with_label( _( "Up" ) );
 						gtk_widget_show( button );
-						gtk_signal_connect( GTK_OBJECT( button ), "clicked", GTK_SIGNAL_FUNC( entitylist_angle ), (void *)"-1" );
+						g_signal_connect( G_OBJECT( button ), "clicked", G_CALLBACK( entitylist_angle ), (void *)"-1" );
 						gtk_box_pack_start( GTK_BOX( vbox2 ), button, FALSE, FALSE, 0 );
 					}
 
 					{
 						GtkWidget* button = gtk_button_new_with_label( _( "Dn" ) );
 						gtk_widget_show( button );
-						gtk_signal_connect( GTK_OBJECT( button ), "clicked", GTK_SIGNAL_FUNC( entitylist_angle ), (void *)"-2" );
+						g_signal_connect( G_OBJECT( button ), "clicked", G_CALLBACK( entitylist_angle ), (void *)"-2" );
 						gtk_box_pack_start( GTK_BOX( vbox2 ), button, FALSE, FALSE, 0 );
 					}
 				}
@@ -1566,21 +1566,21 @@ void GroupDlg::Create(){
 					{
 						GtkWidget* button = gtk_button_new_with_label( _( "Del Key/Pair" ) );
 						gtk_widget_show( button );
-						gtk_signal_connect( GTK_OBJECT( button ), "clicked", GTK_SIGNAL_FUNC( DelProp ), NULL );
+						g_signal_connect( G_OBJECT( button ), "clicked", G_CALLBACK( DelProp ), NULL );
 						gtk_box_pack_start( GTK_BOX( vbox2 ), button, FALSE, FALSE, 0 );
 					}
 
 					{
 						GtkWidget* button = gtk_button_new_with_label( _( "Sound..." ) );
 						gtk_widget_show( button );
-						gtk_signal_connect( GTK_OBJECT( button ), "clicked", GTK_SIGNAL_FUNC( AssignSound ), NULL );
+						g_signal_connect( G_OBJECT( button ), "clicked", G_CALLBACK( AssignSound ), NULL );
 						gtk_box_pack_start( GTK_BOX( vbox2 ), button, FALSE, FALSE, 0 );
 					}
 
 					{
 						GtkWidget* button = gtk_button_new_with_label( _( "Model..." ) );
 						gtk_widget_show( button );
-						gtk_signal_connect( GTK_OBJECT( button ), "clicked", GTK_SIGNAL_FUNC( AssignModel ), NULL );
+						g_signal_connect( G_OBJECT( button ), "clicked", G_CALLBACK( AssignModel ), NULL );
 						gtk_box_pack_start( GTK_BOX( vbox2 ), button, FALSE, FALSE, 0 );
 					}
 				}
@@ -1593,7 +1593,7 @@ void GroupDlg::Create(){
 					{
 						GtkWidget* button = gtk_button_new_with_label( _( "Cam to angles" ) );
 						gtk_widget_show( button );
-						gtk_signal_connect( GTK_OBJECT( button ), "clicked", GTK_SIGNAL_FUNC( cam2angles ), NULL );
+						g_signal_connect( G_OBJECT( button ), "clicked", G_CALLBACK( cam2angles ), NULL );
 						gtk_box_pack_start( GTK_BOX( vbox2 ), button, FALSE, FALSE, 0 );
 					}
 				}

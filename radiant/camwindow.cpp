@@ -339,7 +339,7 @@ void CamWnd::Cam_MouseControl( float dtime ){
 		dx = m_ptLastCamCursorX - m_ptCursorX;
 		dy = m_ptLastCamCursorY - m_ptCursorY;
 
-		gdk_window_get_origin( m_pWidget->window, &x, &y );
+		gdk_window_get_origin( gtk_widget_get_window( m_pWidget ), &x, &y );
 
 		m_ptLastCamCursorX = x + ( m_Camera.width / 2 );
 		m_ptLastCamCursorY = y + ( m_Camera.height / 2 );
@@ -481,12 +481,12 @@ void CamWnd::ToggleFreeMove(){
 
 	if ( g_pParentWnd->CurrentStyle() == MainFrame::eFloating ) {
 		widget = g_pParentWnd->GetCamWnd()->m_pParent;
-		window = widget->window;
+		window = gtk_widget_get_window( widget );
 	}
 	else
 	{
 		widget = g_pParentWnd->m_pWidget;
-		window = widget->window;
+		window = gtk_widget_get_window( widget );
 	}
 
 	if ( m_bFreeMove ) {
@@ -514,8 +514,8 @@ void CamWnd::ToggleFreeMove(){
 		// RR2DO2: FIXME why does this only work the 2nd and
 		// further times the event is called? (floating windows
 		// mode seems to work fine though...)
-		m_FocusOutHandler_id = gtk_signal_connect( GTK_OBJECT( widget ), "focus-out-event",
-												   GTK_SIGNAL_FUNC( camwindow_focusout ), g_pParentWnd );
+		m_FocusOutHandler_id = g_signal_connect( G_OBJECT( widget ), "focus-out-event",
+												   G_CALLBACK( camwindow_focusout ), g_pParentWnd );
 
 		{
 			GdkEventMask mask = (GdkEventMask)( GDK_POINTER_MOTION_MASK
@@ -527,14 +527,14 @@ void CamWnd::ToggleFreeMove(){
 												| GDK_BUTTON_PRESS_MASK
 												| GDK_BUTTON_RELEASE_MASK );
 
-			gdk_pointer_grab( widget->window, TRUE, mask, widget->window, NULL, GDK_CURRENT_TIME );
+			gdk_pointer_grab( gtk_widget_get_window( widget ), TRUE, mask, gtk_widget_get_window( widget ), NULL, GDK_CURRENT_TIME );
 		}
 	}
 	else
 	{
 		gdk_pointer_ungrab( GDK_CURRENT_TIME );
 
-		gtk_signal_disconnect( GTK_OBJECT( widget ), m_FocusOutHandler_id );
+		g_signal_handler_disconnect( G_OBJECT( widget ), m_FocusOutHandler_id );
 
 		GdkCursor *cursor = gdk_cursor_new( GDK_LEFT_PTR );
 		gdk_window_set_cursor( window, cursor );

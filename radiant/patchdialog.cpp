@@ -117,14 +117,14 @@ static void OnSpinChanged( GtkAdjustment *adj, gpointer data ){
 	td.flags = 0;
 	td.value = 0;
 
-	if ( adj->value == 0 ) {
+	if ( gtk_adjustment_get_value( adj ) == 0 ) {
 		return;
 	}
 
 	if ( adj == g_object_get_data( G_OBJECT( g_PatchDialog.GetWidget() ), "hshift_adj" ) ) {
 		l_pPIIncrement->shift[0] = atof( gtk_entry_get_text( GTK_ENTRY( data ) ) );
 
-		if ( adj->value > 0 ) {
+		if ( gtk_adjustment_get_value( adj ) > 0 ) {
 			td.shift[0] = l_pPIIncrement->shift[0];
 		}
 		else{
@@ -134,7 +134,7 @@ static void OnSpinChanged( GtkAdjustment *adj, gpointer data ){
 	else if ( adj == g_object_get_data( G_OBJECT( g_PatchDialog.GetWidget() ), "vshift_adj" ) ) {
 		l_pPIIncrement->shift[1] = atof( gtk_entry_get_text( GTK_ENTRY( data ) ) );
 
-		if ( adj->value > 0 ) {
+		if ( gtk_adjustment_get_value( adj ) > 0 ) {
 			td.shift[1] = l_pPIIncrement->shift[1];
 		}
 		else{
@@ -147,7 +147,7 @@ static void OnSpinChanged( GtkAdjustment *adj, gpointer data ){
 			return;
 		}
 		// make sure scale factor is always >1 for increases and <1 for decreases
-		if ( adj->value > 0 ) {
+		if ( gtk_adjustment_get_value( adj ) > 0 ) {
 			if ( l_pPIIncrement->scale[0] < 1 ) {
 				td.scale[0] = l_pPIIncrement->scale[0];
 			}
@@ -171,7 +171,7 @@ static void OnSpinChanged( GtkAdjustment *adj, gpointer data ){
 			return;
 		}
 		// make sure scale factor is always >1 for increases and <1 for decreases
-		if ( adj->value > 0 ) {
+		if ( gtk_adjustment_get_value( adj ) > 0 ) {
 			if ( l_pPIIncrement->scale[1] < 1 ) {
 				td.scale[1] = l_pPIIncrement->scale[1];
 			}
@@ -192,7 +192,7 @@ static void OnSpinChanged( GtkAdjustment *adj, gpointer data ){
 	else if ( adj == g_object_get_data( G_OBJECT( g_PatchDialog.GetWidget() ), "rotate_adj" ) ) {
 		l_pPIIncrement->rotate = atof( gtk_entry_get_text( GTK_ENTRY( data ) ) );
 
-		if ( adj->value > 0 ) {
+		if ( gtk_adjustment_get_value( adj ) > 0 ) {
 			td.rotate = l_pPIIncrement->rotate;
 		}
 		else{
@@ -200,7 +200,7 @@ static void OnSpinChanged( GtkAdjustment *adj, gpointer data ){
 		}
 	}
 
-	adj->value = 0;
+	gtk_adjustment_set_value( adj, 0 );
 
 	// will scale shift rotate the patch accordingly
 	Patch_SetTextureInfo( &td );
@@ -210,11 +210,11 @@ static void OnSpinChanged( GtkAdjustment *adj, gpointer data ){
 }
 
 static gint OnDialogKey( GtkWidget* widget, GdkEventKey* event, gpointer data ){
-	if ( event->keyval == GDK_Return ) {
+	if ( event->keyval == GDK_KEY_Return ) {
 		OnApply( NULL, NULL );
 		return TRUE;
 	}
-	else if ( event->keyval == GDK_Escape ) {
+	else if ( event->keyval == GDK_KEY_Escape ) {
 		OnDone( NULL, NULL );
 		return TRUE;
 	}
@@ -298,9 +298,9 @@ void PatchDialog::BuildDialog(){
 	load_window_pos( dlg, g_PrefsDlg.mWindowInfo.posPatchWnd );
 
 	gtk_window_set_title( GTK_WINDOW( dlg ), _( "Patch Properties" ) );
-	gtk_signal_connect( GTK_OBJECT( dlg ), "delete-event", GTK_SIGNAL_FUNC( OnDone ), NULL );
+	g_signal_connect( G_OBJECT( dlg ), "delete-event", G_CALLBACK( OnDone ), NULL );
 	// catch 'Esc' and 'Enter'
-	gtk_signal_connect( GTK_OBJECT( dlg ), "key-press-event", GTK_SIGNAL_FUNC( OnDialogKey ), NULL );
+	g_signal_connect( G_OBJECT( dlg ), "key-press-event", G_CALLBACK( OnDialogKey ), NULL );
 	gtk_window_set_transient_for( GTK_WINDOW( dlg ), GTK_WINDOW( g_pParentWnd->m_pWidget ) );
 
 
@@ -347,8 +347,8 @@ void PatchDialog::BuildDialog(){
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
 	gtk_widget_set_usize( combo, 60, -1 );
 	gtk_entry_set_editable( GTK_ENTRY( GTK_COMBO( combo )->entry ), FALSE );
-	gtk_signal_connect( GTK_OBJECT( GTK_COMBO( combo )->entry ), "changed",
-						GTK_SIGNAL_FUNC( OnSelchangeComboColRow ), this );
+	g_signal_connect( G_OBJECT( GTK_COMBO( combo )->entry ), "changed",
+						G_CALLBACK( OnSelchangeComboColRow ), this );
 	AddDialogData( combo, &m_nRow, DLG_COMBO_INT );
 	m_pRowCombo = combo;
 
@@ -359,8 +359,8 @@ void PatchDialog::BuildDialog(){
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
 	gtk_widget_set_usize( combo, 60, -1 );
 	gtk_entry_set_editable( GTK_ENTRY( GTK_COMBO( combo )->entry ), FALSE );
-	gtk_signal_connect( GTK_OBJECT( GTK_COMBO( combo )->entry ), "changed",
-						GTK_SIGNAL_FUNC( OnSelchangeComboColRow ), this );
+	g_signal_connect( G_OBJECT( GTK_COMBO( combo )->entry ), "changed",
+						G_CALLBACK( OnSelchangeComboColRow ), this );
 	AddDialogData( combo, &m_nCol, DLG_COMBO_INT );
 	m_pColCombo = combo;
 
@@ -510,7 +510,7 @@ void PatchDialog::BuildDialog(){
 	gtk_entry_set_text( GTK_ENTRY( entry ), buf );
 
 	adj = gtk_adjustment_new( 0, -8192, 8192, 1, 1, 0 );
-	gtk_signal_connect( adj, "value-changed", GTK_SIGNAL_FUNC( OnSpinChanged ), entry );
+	g_signal_connect( adj, "value-changed", G_CALLBACK( OnSpinChanged ), entry );
 	g_object_set_data( G_OBJECT( m_pWidget ), "hshift_adj", adj );
 
 	spin = gtk_spin_button_new( GTK_ADJUSTMENT( adj ), 1, 0 );
@@ -530,7 +530,7 @@ void PatchDialog::BuildDialog(){
 	gtk_entry_set_text( GTK_ENTRY( entry ), buf );
 
 	adj = gtk_adjustment_new( 0, -8192, 8192, 1, 1, 0 );
-	gtk_signal_connect( adj, "value-changed", GTK_SIGNAL_FUNC( OnSpinChanged ), entry );
+	g_signal_connect( adj, "value-changed", G_CALLBACK( OnSpinChanged ), entry );
 	g_object_set_data( G_OBJECT( m_pWidget ), "vshift_adj", adj );
 
 	spin = gtk_spin_button_new( GTK_ADJUSTMENT( adj ), 1, 0 );
@@ -550,7 +550,7 @@ void PatchDialog::BuildDialog(){
 	gtk_entry_set_text( GTK_ENTRY( entry ), buf );
 
 	adj = gtk_adjustment_new( 0, -1000, 1000, 1, 1, 0 );
-	gtk_signal_connect( adj, "value-changed", GTK_SIGNAL_FUNC( OnSpinChanged ), entry );
+	g_signal_connect( adj, "value-changed", G_CALLBACK( OnSpinChanged ), entry );
 	g_object_set_data( G_OBJECT( m_pWidget ), "hscale_adj", adj );
 
 	spin = gtk_spin_button_new( GTK_ADJUSTMENT( adj ), 1, 0 );
@@ -570,7 +570,7 @@ void PatchDialog::BuildDialog(){
 	gtk_entry_set_text( GTK_ENTRY( entry ), buf );
 
 	adj = gtk_adjustment_new( 0, -1000, 1000, 1, 1, 0 );
-	gtk_signal_connect( adj, "value-changed", GTK_SIGNAL_FUNC( OnSpinChanged ), entry );
+	g_signal_connect( adj, "value-changed", G_CALLBACK( OnSpinChanged ), entry );
 	g_object_set_data( G_OBJECT( m_pWidget ), "vscale_adj", adj );
 
 	spin = gtk_spin_button_new( GTK_ADJUSTMENT( adj ), 1, 0 );
@@ -590,7 +590,7 @@ void PatchDialog::BuildDialog(){
 	gtk_entry_set_text( GTK_ENTRY( entry ), buf );
 
 	adj = gtk_adjustment_new( 0, -1000, 1000, 1, 1, 0 ); // NOTE: Arnout - this really should be 360 but can't change it anymore as it could break existing maps
-	gtk_signal_connect( adj, "value-changed", GTK_SIGNAL_FUNC( OnSpinChanged ), entry );
+	g_signal_connect( adj, "value-changed", G_CALLBACK( OnSpinChanged ), entry );
 	g_object_set_data( G_OBJECT( m_pWidget ), "rotate_adj", adj );
 
 	spin = gtk_spin_button_new( GTK_ADJUSTMENT( adj ), 1, 0 );
@@ -607,25 +607,25 @@ void PatchDialog::BuildDialog(){
 	button = gtk_button_new_with_label( _( "CAP" ) );
 	gtk_widget_show( button );
 	gtk_box_pack_end( GTK_BOX( hbox2 ), button, TRUE, FALSE, 0 );
-	gtk_signal_connect( GTK_OBJECT( button ), "clicked", GTK_SIGNAL_FUNC( OnBtnPatchdetails ), NULL );
+	g_signal_connect( G_OBJECT( button ), "clicked", G_CALLBACK( OnBtnPatchdetails ), NULL );
 	gtk_widget_set_usize( button, 60, -1 );
 
 	button = gtk_button_new_with_label( _( "Set..." ) );
 	gtk_widget_show( button );
 	gtk_box_pack_end( GTK_BOX( hbox2 ), button, TRUE, FALSE, 0 );
-	gtk_signal_connect( GTK_OBJECT( button ), "clicked", GTK_SIGNAL_FUNC( OnBtnPatchreset ), NULL );
+	g_signal_connect( G_OBJECT( button ), "clicked", G_CALLBACK( OnBtnPatchreset ), NULL );
 	gtk_widget_set_usize( button, 60, -1 );
 
 	button = gtk_button_new_with_label( _( "Natural" ) );
 	gtk_widget_show( button );
 	gtk_box_pack_end( GTK_BOX( hbox2 ), button, TRUE, FALSE, 0 );
-	gtk_signal_connect( GTK_OBJECT( button ), "clicked", GTK_SIGNAL_FUNC( OnBtnPatchnatural ), NULL );
+	g_signal_connect( G_OBJECT( button ), "clicked", G_CALLBACK( OnBtnPatchnatural ), NULL );
 	gtk_widget_set_usize( button, 60, -1 );
 
 	button = gtk_button_new_with_label( _( "Fit" ) );
 	gtk_widget_show( button );
 	gtk_box_pack_end( GTK_BOX( hbox2 ), button, TRUE, FALSE, 0 );
-	gtk_signal_connect( GTK_OBJECT( button ), "clicked", GTK_SIGNAL_FUNC( OnBtnPatchfit ), NULL );
+	g_signal_connect( G_OBJECT( button ), "clicked", G_CALLBACK( OnBtnPatchfit ), NULL );
 	gtk_widget_set_usize( button, 60, -1 );
 
 	hbox = gtk_hbox_new( FALSE, 5 );
@@ -635,13 +635,13 @@ void PatchDialog::BuildDialog(){
 	button = gtk_button_new_with_label( _( "Done" ) );
 	gtk_widget_show( button );
 	gtk_box_pack_end( GTK_BOX( hbox ), button, FALSE, FALSE, 0 );
-	gtk_signal_connect( GTK_OBJECT( button ), "clicked", GTK_SIGNAL_FUNC( OnDone ), NULL );
+	g_signal_connect( G_OBJECT( button ), "clicked", G_CALLBACK( OnDone ), NULL );
 	gtk_widget_set_usize( button, 60, -1 );
 
 	button = gtk_button_new_with_label( _( "Apply" ) );
 	gtk_widget_show( button );
 	gtk_box_pack_end( GTK_BOX( hbox ), button, FALSE, FALSE, 0 );
-	gtk_signal_connect( GTK_OBJECT( button ), "clicked", GTK_SIGNAL_FUNC( OnApply ), NULL );
+	g_signal_connect( G_OBJECT( button ), "clicked", G_CALLBACK( OnApply ), NULL );
 	gtk_widget_set_usize( button, 60, -1 );
 }
 

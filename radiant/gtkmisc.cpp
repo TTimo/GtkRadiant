@@ -64,7 +64,7 @@
 //   it's also very poorly done, the save calls are a bit randomly disctributed in the OnDestroy
 
 void save_window_pos( GtkWidget *wnd, window_position_t& pos ){
-	if ( ( wnd == NULL ) || ( wnd->window == NULL ) ) {
+	if ( ( wnd == NULL ) || ( gtk_widget_get_window( wnd ) == NULL ) ) {
 		return;
 	}
 
@@ -83,7 +83,7 @@ void win32_get_window_pos( GtkWidget *widget, gint *x, gint *y ){
 	if ( g_PrefsDlg.m_bStartOnPrimMon ) {
 		RECT rc;
 		POINT point;
-		HWND xwnd = (HWND)GDK_WINDOW_HWND( widget->window );
+		HWND xwnd = (HWND)GDK_WINDOW_HWND( gtk_widget_get_window( widget ) );
 		const GdkRectangle primaryMonitorRect = g_pParentWnd->GetPrimaryMonitorRect();
 
 		GetClientRect( xwnd,&rc );
@@ -101,7 +101,7 @@ void win32_get_window_pos( GtkWidget *widget, gint *x, gint *y ){
 	}
 	else {
 		// this is the same as the unix version of get_window_pos
-		gdk_window_get_root_origin( widget->window, x, y );
+		gdk_window_get_root_origin( gtk_widget_get_window( widget ), x, y );
 	}
 #ifdef DBG_WINDOWPOS
 	Sys_Printf( "win32_get_window_pos %p %d,%d\n",widget,*x,*y );
@@ -744,13 +744,13 @@ GtkWidget* create_menu_item_with_mnemonic( GtkWidget *menu, const gchar *mnemoni
 
 	gtk_widget_show( item );
 	gtk_container_add( GTK_CONTAINER( menu ), item );
-	gtk_signal_connect( GTK_OBJECT( item ), "activate", GTK_SIGNAL_FUNC( func ), GINT_TO_POINTER( id ) );
+	g_signal_connect( G_OBJECT( item ), "activate", G_CALLBACK( func ), GINT_TO_POINTER( id ) );
 
 	AddMenuItem( item, id );
 	return item;
 }
 
-GtkWidget* create_check_menu_item_with_mnemonic( GtkWidget *menu, const gchar *mnemonic, GtkSignalFunc func, int id, gboolean active ){
+GtkWidget* create_check_menu_item_with_mnemonic( GtkWidget *menu, const gchar *mnemonic, GCallback func, int id, gboolean active ){
 	GtkWidget *item;
 
 	item = gtk_check_menu_item_new_with_mnemonic( mnemonic );
@@ -758,13 +758,13 @@ GtkWidget* create_check_menu_item_with_mnemonic( GtkWidget *menu, const gchar *m
 	gtk_check_menu_item_set_active( GTK_CHECK_MENU_ITEM( item ), active );
 	gtk_widget_show( item );
 	gtk_container_add( GTK_CONTAINER( menu ), item );
-	gtk_signal_connect( GTK_OBJECT( item ), "activate", GTK_SIGNAL_FUNC( func ), GINT_TO_POINTER( id ) );
+	g_signal_connect( G_OBJECT( item ), "activate", func, GINT_TO_POINTER( id ) );
 
 	AddMenuItem( item, id );
 	return item;
 }
 
-GtkWidget* create_radio_menu_item_with_mnemonic( GtkWidget *menu, GtkWidget *last, const gchar *mnemonic, GtkSignalFunc func, int id, gboolean state ){
+GtkWidget* create_radio_menu_item_with_mnemonic( GtkWidget *menu, GtkWidget *last, const gchar *mnemonic, GCallback func, int id, gboolean state ){
 	GtkWidget *item;
 	GSList *group = (GSList*)NULL;
 
@@ -776,7 +776,7 @@ GtkWidget* create_radio_menu_item_with_mnemonic( GtkWidget *menu, GtkWidget *las
 
 	gtk_widget_show( item );
 	gtk_container_add( GTK_CONTAINER( menu ), item );
-	gtk_signal_connect( GTK_OBJECT( item ), "activate", GTK_SIGNAL_FUNC( func ), GINT_TO_POINTER( id ) );
+	g_signal_connect( G_OBJECT( item ), "activate", func, GINT_TO_POINTER( id ) );
 
 	AddMenuItem( item, id );
 	return item;
@@ -831,8 +831,8 @@ static GtkWidget * gtk_AddDlgButton( GtkWidget *container, const char *label,
 									 const int clickSignal, qboolean setGrabDefault ) {
 	GtkWidget *btn = gtk_button_new_with_label( _( label ) );
 	gtk_box_pack_start( GTK_BOX( container ), btn, TRUE, TRUE, 0 );
-	gtk_signal_connect( GTK_OBJECT( btn ), "clicked",
-						GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( clickSignal ) );
+	g_signal_connect( G_OBJECT( btn ), "clicked",
+						G_CALLBACK( dialog_button_callback ), GINT_TO_POINTER( clickSignal ) );
 	gtk_widget_set_can_default( btn, TRUE );
 	
 	if( setGrabDefault ) 
@@ -857,13 +857,13 @@ int WINAPI gtk_MessageBoxNew( void *parent, const char *message,
 
 	// create dialog window
 	GtkWidget *dlg = gtk_window_new( GTK_WINDOW_TOPLEVEL );
-	gtk_signal_connect( GTK_OBJECT( dlg ), "delete-event",
-						GTK_SIGNAL_FUNC( dialog_delete_callback ), NULL );
-	gtk_signal_connect( GTK_OBJECT( dlg ), "destroy",
-						GTK_SIGNAL_FUNC( gtk_widget_destroy ), NULL );
+	g_signal_connect( G_OBJECT( dlg ), "delete-event",
+						G_CALLBACK( dialog_delete_callback ), NULL );
+	g_signal_connect( G_OBJECT( dlg ), "destroy",
+						G_CALLBACK( gtk_widget_destroy ), NULL );
 	gtk_window_set_title( GTK_WINDOW( dlg ), caption );
 	gtk_window_set_policy( GTK_WINDOW( dlg ), FALSE, FALSE, TRUE );
-	gtk_container_border_width( GTK_CONTAINER( dlg ), MSGBOX_PAD_MAJOR );
+	gtk_container_set_border_width( GTK_CONTAINER( dlg ), MSGBOX_PAD_MAJOR );
 	g_object_set_data( G_OBJECT( dlg ), "loop", &loop );
 	g_object_set_data( G_OBJECT( dlg ), "ret", &ret );
 	gtk_widget_realize( dlg );
@@ -937,17 +937,17 @@ int WINAPI gtk_MessageBoxNew( void *parent, const char *message,
 	switch( flags & MB_TYPEMASK ) {
 	case MB_OK:
 	default: {
-		GtkWidget *btn_ok = gtk_AddDlgButton( buttons_hbox, "Ok", IDOK, TRUE );
-		gtk_widget_add_accelerator( btn_ok, "clicked", accel, GDK_Escape, (GdkModifierType)0, (GtkAccelFlags)0 );
-		gtk_widget_add_accelerator( btn_ok, "clicked", accel, GDK_Return, (GdkModifierType)0, (GtkAccelFlags)0 );
+		GtkWidget *btn_ok = gtk_AddDlgButton( buttons_hbox, _( "Ok" ), IDOK, TRUE );
+		gtk_widget_add_accelerator( btn_ok, "clicked", accel, GDK_KEY_Escape, (GdkModifierType)0, (GtkAccelFlags)0 );
+		gtk_widget_add_accelerator( btn_ok, "clicked", accel, GDK_KEY_Return, (GdkModifierType)0, (GtkAccelFlags)0 );
 		ret = IDOK;
 		break;
 	}
 	case MB_OKCANCEL: {
-		GtkWidget *btn_ok = gtk_AddDlgButton( buttons_hbox, "Ok", IDOK, TRUE );
-		gtk_widget_add_accelerator( btn_ok, "clicked", accel, GDK_Return, (GdkModifierType)0, (GtkAccelFlags)0 );
-		GtkWidget *btn_cancel = gtk_AddDlgButton( buttons_hbox, "Cancel", IDCANCEL, FALSE );
-		gtk_widget_add_accelerator( btn_cancel, "clicked", accel, GDK_Escape, (GdkModifierType)0, (GtkAccelFlags)0 );
+		GtkWidget *btn_ok = gtk_AddDlgButton( buttons_hbox, _( "Ok" ), IDOK, TRUE );
+		gtk_widget_add_accelerator( btn_ok, "clicked", accel, GDK_KEY_Return, (GdkModifierType)0, (GtkAccelFlags)0 );
+		GtkWidget *btn_cancel = gtk_AddDlgButton( buttons_hbox, _( "Cancel" ), IDCANCEL, FALSE );
+		gtk_widget_add_accelerator( btn_cancel, "clicked", accel, GDK_KEY_Escape, (GdkModifierType)0, (GtkAccelFlags)0 );
 		ret = IDCANCEL;
 		break;
 	}
@@ -957,16 +957,16 @@ int WINAPI gtk_MessageBoxNew( void *parent, const char *message,
 	}
 	case MB_YESNOCANCEL: {
 		//! @todo accelerators?
-		gtk_AddDlgButton( buttons_hbox, "Yes", IDYES, TRUE );
-		gtk_AddDlgButton( buttons_hbox, "No", IDNO, FALSE );
-		gtk_AddDlgButton( buttons_hbox, "Cancel", IDCANCEL, FALSE );
+		gtk_AddDlgButton( buttons_hbox, _( "Yes" ), IDYES, TRUE );
+		gtk_AddDlgButton( buttons_hbox, _( "No" ), IDNO, FALSE );
+		gtk_AddDlgButton( buttons_hbox, _( "Cancel" ), IDCANCEL, FALSE );
 		ret = IDCANCEL;
 		break;
 	}
 	case MB_YESNO: {
 		//! @todo accelerators?
-		gtk_AddDlgButton( buttons_hbox, "Yes", IDYES, TRUE );
-		gtk_AddDlgButton( buttons_hbox, "No", IDNO, FALSE );
+		gtk_AddDlgButton( buttons_hbox, _( "Yes" ), IDYES, TRUE );
+		gtk_AddDlgButton( buttons_hbox, _( "No" ), IDNO, FALSE );
 		ret = IDNO;
 		break;
 	}
@@ -986,10 +986,10 @@ int WINAPI gtk_MessageBoxNew( void *parent, const char *message,
 	if( URL ) {
 		GtkWidget *btn_url = gtk_button_new_with_label( _( "Go to URL" ) );
 		gtk_box_pack_start( GTK_BOX( buttons_hbox ), btn_url, TRUE, TRUE, 0 ); 
-		gtk_signal_connect( GTK_OBJECT( btn_url ), "clicked",
-							GTK_SIGNAL_FUNC( dialog_url_callback ), NULL );
+		g_signal_connect( G_OBJECT( btn_url ), "clicked",
+							G_CALLBACK( dialog_url_callback ), NULL );
 		g_object_set_data( G_OBJECT( btn_url ), "URL", (void *)URL );
-		GTK_WIDGET_SET_FLAGS( btn_url, GTK_CAN_DEFAULT );
+		gtk_widget_set_can_default( btn_url, TRUE );
 		gtk_widget_grab_default( btn_url );
 		gtk_widget_show( btn_url );
 	}
@@ -1014,12 +1014,12 @@ int WINAPI gtk_MessageBox( void *parent, const char* lpText, const char* lpCapti
 	int mode = ( uType & MB_TYPEMASK ), ret, loop = 1;
 
 	window = gtk_window_new( GTK_WINDOW_TOPLEVEL );
-	gtk_signal_connect( GTK_OBJECT( window ), "delete-event",
-						GTK_SIGNAL_FUNC( dialog_delete_callback ), NULL );
-	gtk_signal_connect( GTK_OBJECT( window ), "destroy",
-						GTK_SIGNAL_FUNC( gtk_widget_destroy ), NULL );
+	g_signal_connect( G_OBJECT( window ), "delete-event",
+						G_CALLBACK( dialog_delete_callback ), NULL );
+	g_signal_connect( G_OBJECT( window ), "destroy",
+						G_CALLBACK( gtk_widget_destroy ), NULL );
 	gtk_window_set_title( GTK_WINDOW( window ), lpCaption );
-	gtk_container_border_width( GTK_CONTAINER( window ), 10 );
+	gtk_container_set_border_width( GTK_CONTAINER( window ), 10 );
 	g_object_set_data( G_OBJECT( window ), "loop", &loop );
 	g_object_set_data( G_OBJECT( window ), "ret", &ret );
 	gtk_widget_realize( window );
@@ -1053,11 +1053,11 @@ int WINAPI gtk_MessageBox( void *parent, const char* lpText, const char* lpCapti
 	if ( mode == MB_OK ) {
 		w = gtk_button_new_with_label( _( "Ok" ) );
 		gtk_box_pack_start( GTK_BOX( hbox ), w, TRUE, TRUE, 0 );
-		gtk_signal_connect( GTK_OBJECT( w ), "clicked",
-							GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( IDOK ) );
+		g_signal_connect( G_OBJECT( w ), "clicked",
+							G_CALLBACK( dialog_button_callback ), GINT_TO_POINTER( IDOK ) );
 		gtk_widget_add_accelerator( w, "clicked", accel, GDK_Escape, (GdkModifierType)0, (GtkAccelFlags)0 );
 		gtk_widget_add_accelerator( w, "clicked", accel, GDK_Return, (GdkModifierType)0, (GtkAccelFlags)0 );
-		GTK_WIDGET_SET_FLAGS( w, GTK_CAN_DEFAULT );
+		gtk_widget_set_can_default( w, TRUE );
 		gtk_widget_grab_default( w );
 		gtk_widget_show( w );
 		ret = IDOK;
@@ -1065,17 +1065,17 @@ int WINAPI gtk_MessageBox( void *parent, const char* lpText, const char* lpCapti
 	else if ( mode ==  MB_OKCANCEL ) {
 		w = gtk_button_new_with_label( _( "Ok" ) );
 		gtk_box_pack_start( GTK_BOX( hbox ), w, TRUE, TRUE, 0 );
-		gtk_signal_connect( GTK_OBJECT( w ), "clicked",
-							GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( IDOK ) );
+		g_signal_connect( G_OBJECT( w ), "clicked",
+							G_CALLBACK( dialog_button_callback ), GINT_TO_POINTER( IDOK ) );
 		gtk_widget_add_accelerator( w, "clicked", accel, GDK_Return, (GdkModifierType)0, (GtkAccelFlags)0 );
-		GTK_WIDGET_SET_FLAGS( w, GTK_CAN_DEFAULT );
+		gtk_widget_set_can_default( w, TRUE );
 		gtk_widget_grab_default( w );
 		gtk_widget_show( w );
 
 		w = gtk_button_new_with_label( _( "Cancel" ) );
 		gtk_box_pack_start( GTK_BOX( hbox ), w, TRUE, TRUE, 0 );
-		gtk_signal_connect( GTK_OBJECT( w ), "clicked",
-							GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( IDCANCEL ) );
+		g_signal_connect( G_OBJECT( w ), "clicked",
+							G_CALLBACK( dialog_button_callback ), GINT_TO_POINTER( IDCANCEL ) );
 		gtk_widget_add_accelerator( w, "clicked", accel, GDK_Escape, (GdkModifierType)0, (GtkAccelFlags)0 );
 		gtk_widget_show( w );
 		ret = IDCANCEL;
@@ -1083,22 +1083,22 @@ int WINAPI gtk_MessageBox( void *parent, const char* lpText, const char* lpCapti
 	else if ( mode == MB_YESNOCANCEL ) {
 		w = gtk_button_new_with_label( _( "Yes" ) );
 		gtk_box_pack_start( GTK_BOX( hbox ), w, TRUE, TRUE, 0 );
-		gtk_signal_connect( GTK_OBJECT( w ), "clicked",
-							GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( IDYES ) );
-		GTK_WIDGET_SET_FLAGS( w, GTK_CAN_DEFAULT );
+		g_signal_connect( G_OBJECT( w ), "clicked",
+							G_CALLBACK( dialog_button_callback ), GINT_TO_POINTER( IDYES ) );
+		gtk_widget_set_can_default( w, TRUE );
 		gtk_widget_grab_default( w );
 		gtk_widget_show( w );
 
 		w = gtk_button_new_with_label( _( "No" ) );
 		gtk_box_pack_start( GTK_BOX( hbox ), w, TRUE, TRUE, 0 );
-		gtk_signal_connect( GTK_OBJECT( w ), "clicked",
-							GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( IDNO ) );
+		g_signal_connect( G_OBJECT( w ), "clicked",
+							G_CALLBACK( dialog_button_callback ), GINT_TO_POINTER( IDNO ) );
 		gtk_widget_show( w );
 
 		w = gtk_button_new_with_label( _( "Cancel" ) );
 		gtk_box_pack_start( GTK_BOX( hbox ), w, TRUE, TRUE, 0 );
-		gtk_signal_connect( GTK_OBJECT( w ), "clicked",
-							GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( IDCANCEL ) );
+		g_signal_connect( G_OBJECT( w ), "clicked",
+							G_CALLBACK( dialog_button_callback ), GINT_TO_POINTER( IDCANCEL ) );
 		gtk_widget_show( w );
 		ret = IDCANCEL;
 	}
@@ -1106,16 +1106,16 @@ int WINAPI gtk_MessageBox( void *parent, const char* lpText, const char* lpCapti
 	{
 		w = gtk_button_new_with_label( _( "Yes" ) );
 		gtk_box_pack_start( GTK_BOX( hbox ), w, TRUE, TRUE, 0 );
-		gtk_signal_connect( GTK_OBJECT( w ), "clicked",
-							GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( IDYES ) );
-		GTK_WIDGET_SET_FLAGS( w, GTK_CAN_DEFAULT );
+		g_signal_connect( G_OBJECT( w ), "clicked",
+							G_CALLBACK( dialog_button_callback ), GINT_TO_POINTER( IDYES ) );
+		gtk_widget_set_can_default( w, TRUE );
 		gtk_widget_grab_default( w );
 		gtk_widget_show( w );
 
 		w = gtk_button_new_with_label( _( "No" ) );
 		gtk_box_pack_start( GTK_BOX( hbox ), w, TRUE, TRUE, 0 );
-		gtk_signal_connect( GTK_OBJECT( w ), "clicked",
-							GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( IDNO ) );
+		g_signal_connect( G_OBJECT( w ), "clicked",
+							G_CALLBACK( dialog_button_callback ), GINT_TO_POINTER( IDNO ) );
 		gtk_widget_show( w );
 		ret = IDNO;
 	}
@@ -1123,10 +1123,10 @@ int WINAPI gtk_MessageBox( void *parent, const char* lpText, const char* lpCapti
 	if ( URL ) {
 		w = gtk_button_new_with_label( _( "Go to URL" ) );
 		gtk_box_pack_start( GTK_BOX( hbox ), w, TRUE, TRUE, 0 );
-		gtk_signal_connect( GTK_OBJECT( w ), "clicked",
-							GTK_SIGNAL_FUNC( dialog_url_callback ), NULL );
+		g_signal_connect( G_OBJECT( w ), "clicked",
+							G_CALLBACK( dialog_url_callback ), NULL );
 		g_object_set_data( G_OBJECT( w ), "URL", (void *)URL );
-		GTK_WIDGET_SET_FLAGS( w, GTK_CAN_DEFAULT );
+		gtk_widget_set_can_default( w, TRUE );
 		gtk_widget_grab_default( w );
 		gtk_widget_show( w );
 	}
@@ -1372,7 +1372,7 @@ const char* file_dialog( void *parent, gboolean open, const char* title, const c
 		// See http://msdn.microsoft.com/en-us/library/ms646839%28v=vs.85%29.aspx .
 		memset( &ofn, 0, sizeof( ofn ) );
 		ofn.lStructSize = sizeof( ofn );
-		ofn.hwndOwner = (HWND)GDK_WINDOW_HWND( g_pParentWnd->m_pWidget->window );
+		ofn.hwndOwner = (HWND)GDK_WINDOW_HWND( gtk_widget_get_window( g_pParentWnd->m_pWidget ) );
 		ofn.nFilterIndex = 1; // The index is 1-based, not 0-based.  This basically says,
 		                      // "select the first filter as default".
 		if ( pattern ) {
@@ -1636,14 +1636,14 @@ bool WINAPI color_dialog( void *parent, float *color, const char* title ){
 
 	dlg = gtk_color_selection_dialog_new( title );
 	gtk_color_selection_set_color( GTK_COLOR_SELECTION( GTK_COLOR_SELECTION_DIALOG( dlg )->colorsel ), clr );
-	gtk_signal_connect( GTK_OBJECT( dlg ), "delete-event",
-						GTK_SIGNAL_FUNC( dialog_delete_callback ), NULL );
-	gtk_signal_connect( GTK_OBJECT( dlg ), "destroy",
-						GTK_SIGNAL_FUNC( gtk_widget_destroy ), NULL );
-	gtk_signal_connect( GTK_OBJECT( GTK_COLOR_SELECTION_DIALOG( dlg )->ok_button ), "clicked",
-						GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( IDOK ) );
-	gtk_signal_connect( GTK_OBJECT( GTK_COLOR_SELECTION_DIALOG( dlg )->cancel_button ), "clicked",
-						GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( IDCANCEL ) );
+	g_signal_connect( G_OBJECT( dlg ), "delete-event",
+						G_CALLBACK( dialog_delete_callback ), NULL );
+	g_signal_connect( G_OBJECT( dlg ), "destroy",
+						G_CALLBACK( gtk_widget_destroy ), NULL );
+	g_signal_connect( G_OBJECT( GTK_COLOR_SELECTION_DIALOG( dlg )->ok_button ), "clicked",
+						G_CALLBACK( dialog_button_callback ), GINT_TO_POINTER( IDOK ) );
+	g_signal_connect( G_OBJECT( GTK_COLOR_SELECTION_DIALOG( dlg )->cancel_button ), "clicked",
+						G_CALLBACK( dialog_button_callback ), GINT_TO_POINTER( IDCANCEL ) );
 	g_object_set_data( G_OBJECT( dlg ), "loop", &loop );
 	g_object_set_data( G_OBJECT( dlg ), "ret", &ret );
 
@@ -1684,7 +1684,7 @@ void OpenURL( const char *url ){
 
     Sys_Printf( "OpenURL: %s\n", url );
 #ifdef _WIN32
-    ShellExecute( (HWND)GDK_WINDOW_HWND( g_pParentWnd->m_pWidget->window ), "open", url, NULL, NULL, SW_SHOW );
+    ShellExecute( (HWND)GDK_WINDOW_HWND( gtk_widget_get_window( g_pParentWnd->m_pWidget ) ), "open", url, NULL, NULL, SW_SHOW );
 #else
 #   ifdef __APPLE__
         snprintf(command, sizeof(command), "open '%s' &", url);
@@ -1712,7 +1712,7 @@ void CheckMenuSplitting( GtkWidget *&menu ){
 		// move the last 2 items to a submenu (3 because of win32)
 		for ( int i = 0; i < 3; i++ )
 		{
-			item = GTK_WIDGET( g_list_last( gtk_container_children( GTK_CONTAINER( menu ) ) )->data );
+			item = GTK_WIDGET( g_list_last( gtk_container_get_children( GTK_CONTAINER( menu ) ) )->data );
 			gtk_widget_ref( item );
 			gtk_container_remove( GTK_CONTAINER( menu ), item );
 			gtk_menu_append( GTK_MENU( menu2 ), item );

@@ -71,12 +71,12 @@ static void change_clicked( GtkWidget *widget, gpointer data ){
 	int loop = 1;
 
 	file_sel = gtk_file_selection_new( "Locate portal (.prt) file" );
-	gtk_signal_connect( GTK_OBJECT( GTK_FILE_SELECTION( file_sel )->ok_button ), "clicked",
-						GTK_SIGNAL_FUNC( file_sel_callback ), GINT_TO_POINTER( IDOK ) );
-	gtk_signal_connect( GTK_OBJECT( GTK_FILE_SELECTION( file_sel )->cancel_button ), "clicked",
-						GTK_SIGNAL_FUNC( file_sel_callback ), GINT_TO_POINTER( IDCANCEL ) );
-	gtk_signal_connect( GTK_OBJECT( file_sel ), "delete-event",
-						GTK_SIGNAL_FUNC( dialog_delete_callback ), NULL );
+	g_signal_connect( G_OBJECT( GTK_FILE_SELECTION( file_sel )->ok_button ), "clicked",
+						G_CALLBACK( file_sel_callback ), GINT_TO_POINTER( IDOK ) );
+	g_signal_connect( G_OBJECT( GTK_FILE_SELECTION( file_sel )->cancel_button ), "clicked",
+						G_CALLBACK( file_sel_callback ), GINT_TO_POINTER( IDCANCEL ) );
+	g_signal_connect( G_OBJECT( file_sel ), "delete-event",
+						G_CALLBACK( dialog_delete_callback ), NULL );
 	gtk_file_selection_hide_fileop_buttons( GTK_FILE_SELECTION( file_sel ) );
 
 	g_object_set_data( G_OBJECT( file_sel ), "loop", &loop );
@@ -105,10 +105,10 @@ int DoLoadPortalFileDialog(){
 
 	dlg = gtk_window_new( GTK_WINDOW_TOPLEVEL );
 	gtk_window_set_title( GTK_WINDOW( dlg ), "Load .prt" );
-	gtk_signal_connect( GTK_OBJECT( dlg ), "delete-event",
-						GTK_SIGNAL_FUNC( dialog_delete_callback ), NULL );
-	gtk_signal_connect( GTK_OBJECT( dlg ), "destroy",
-						GTK_SIGNAL_FUNC( gtk_widget_destroy ), NULL );
+	g_signal_connect( G_OBJECT( dlg ), "delete-event",
+						G_CALLBACK( dialog_delete_callback ), NULL );
+	g_signal_connect( G_OBJECT( dlg ), "destroy",
+						G_CALLBACK( gtk_widget_destroy ), NULL );
 	g_object_set_data( G_OBJECT( dlg ), "loop", &loop );
 	g_object_set_data( G_OBJECT( dlg ), "ret", &ret );
 
@@ -137,7 +137,7 @@ int DoLoadPortalFileDialog(){
 	button = gtk_button_new_with_label( "Change" );
 	gtk_widget_show( button );
 	gtk_box_pack_end( GTK_BOX( hbox ), button, FALSE, FALSE, 0 );
-	gtk_signal_connect( GTK_OBJECT( button ), "clicked", GTK_SIGNAL_FUNC( change_clicked ), entry );
+	g_signal_connect( G_OBJECT( button ), "clicked", G_CALLBACK( change_clicked ), entry );
 	gtk_widget_set_usize( button, 60, -2 );
 
 	hbox = gtk_hbox_new( FALSE, 5 );
@@ -147,15 +147,15 @@ int DoLoadPortalFileDialog(){
 	button = gtk_button_new_with_label( "Cancel" );
 	gtk_widget_show( button );
 	gtk_box_pack_end( GTK_BOX( hbox ), button, FALSE, FALSE, 0 );
-	gtk_signal_connect( GTK_OBJECT( button ), "clicked",
-						GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( IDCANCEL ) );
+	g_signal_connect( G_OBJECT( button ), "clicked",
+						G_CALLBACK( dialog_button_callback ), GINT_TO_POINTER( IDCANCEL ) );
 	gtk_widget_set_usize( button, 60, -2 );
 
 	button = gtk_button_new_with_label( "OK" );
 	gtk_widget_show( button );
 	gtk_box_pack_end( GTK_BOX( hbox ), button, FALSE, FALSE, 0 );
-	gtk_signal_connect( GTK_OBJECT( button ), "clicked",
-						GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( IDOK ) );
+	g_signal_connect( G_OBJECT( button ), "clicked",
+						G_CALLBACK( dialog_button_callback ), GINT_TO_POINTER( IDOK ) );
 	gtk_widget_set_usize( button, 60, -2 );
 
 	char *fn = g_FuncTable.m_pfnGetMapName();

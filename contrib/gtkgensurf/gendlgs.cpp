@@ -1404,7 +1404,7 @@ GtkWidget* create_main_dialog(){
 		radio = gtk_radio_button_new_with_label( group, games[i] );
 		gtk_widget_show( radio );
 		gtk_box_pack_start( GTK_BOX( vbox ), radio, TRUE, TRUE, 0 );
-		group = gtk_radio_button_group( GTK_RADIO_BUTTON( radio ) );
+		group = gtk_radio_button_get_group( GTK_RADIO_BUTTON( radio ) );
 		game_radios[i] = radio;
 		g_signal_connect( G_OBJECT( radio ), "toggled", G_CALLBACK( general_game ), GINT_TO_POINTER( i ) );
 	}
@@ -1425,7 +1425,7 @@ GtkWidget* create_main_dialog(){
 		radio = gtk_radio_button_new_with_label( group, waveforms[i] );
 		gtk_widget_show( radio );
 		gtk_box_pack_start( GTK_BOX( vbox ), radio, TRUE, TRUE, 0 );
-		group = gtk_radio_button_group( GTK_RADIO_BUTTON( radio ) );
+		group = gtk_radio_button_get_group( GTK_RADIO_BUTTON( radio ) );
 		wave_radios[i] = radio;
 		g_signal_connect( G_OBJECT( radio ), "toggled", G_CALLBACK( general_wave ), GINT_TO_POINTER( i ) );
 	}
@@ -1446,7 +1446,7 @@ GtkWidget* create_main_dialog(){
 		radio = gtk_radio_button_new_with_label( group, orientations[i] );
 		gtk_widget_show( radio );
 		gtk_box_pack_start( GTK_BOX( vbox ), radio, TRUE, TRUE, 0 );
-		group = gtk_radio_button_group( GTK_RADIO_BUTTON( radio ) );
+		group = gtk_radio_button_get_group( GTK_RADIO_BUTTON( radio ) );
 		plane_radios[i] = radio;
 		g_signal_connect( G_OBJECT( radio ), "toggled", G_CALLBACK( general_plane ), GINT_TO_POINTER( i ) );
 	}
@@ -1682,7 +1682,7 @@ GtkWidget* create_main_dialog(){
 	label = gtk_label_new( _( "Snap to grid:" ) );
 	gtk_widget_show( label );
 	gtk_box_pack_start( GTK_BOX( vbox ), label, FALSE, TRUE, 0 );
-	gtk_object_set_data( GTK_OBJECT( dlg ), "snap_text", label );
+	g_object_set_data( G_OBJECT( dlg ), "snap_text", label );
 
 	adj = gtk_adjustment_new( 8, 0, 256, 1, 10, 0 );
 	g_signal_connect( G_OBJECT( adj ), "value-changed", G_CALLBACK( extents_snaptogrid_spin ), &SP );

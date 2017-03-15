@@ -409,7 +409,7 @@ void WriteIniFile( const char *file ){
 }
 
 void UpdatePreview( bool DataChange ){
-	if ( g_pWndPreview && GTK_WIDGET_VISIBLE( g_pWndPreview ) ) {
+	if ( g_pWndPreview && gtk_widget_get_visible( g_pWndPreview ) ) {
 		if ( DataChange ) {
 			GenerateXYZ();
 		}

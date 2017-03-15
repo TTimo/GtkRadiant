@@ -72,7 +72,7 @@ static void find_clicked( GtkWidget *widget, gpointer data ){
 		IShader *pShader = QERApp_ActiveShader_ForIndex( i );
 
 		item = gtk_menu_item_new_with_label( pShader->getName() );
-		gtk_signal_connect( GTK_OBJECT( item ), "activate", GTK_SIGNAL_FUNC( popup_selected ), data );
+		g_signal_connect( G_OBJECT( item ), "activate", G_CALLBACK( popup_selected ), data );
 		gtk_widget_show( item );
 		gtk_menu_append( GTK_MENU( menu ), item );
 	}
@@ -146,8 +146,8 @@ void FindTextureDialog::BuildDialog(){
 	gtk_table_attach( GTK_TABLE( table ), entry, 1, 2, 0, 1,
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
-	gtk_signal_connect( GTK_OBJECT( entry ), "focus-in-event",
-						GTK_SIGNAL_FUNC( find_focus_in ), NULL );
+	g_signal_connect( G_OBJECT( entry ), "focus-in-event",
+						G_CALLBACK( find_focus_in ), NULL );
 	AddDialogData( entry, &m_strFind, DLG_ENTRY_TEXT );
 
 	button = gtk_button_new();
@@ -155,8 +155,8 @@ void FindTextureDialog::BuildDialog(){
 	gtk_table_attach( GTK_TABLE( table ), button, 2, 3, 0, 1,
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( GTK_FILL ), 0, 0 );
-	gtk_signal_connect( GTK_OBJECT( button ), "clicked",
-						GTK_SIGNAL_FUNC( find_clicked ), entry );
+	g_signal_connect( G_OBJECT( button ), "clicked",
+						G_CALLBACK( find_clicked ), entry );
 
 	arrow = gtk_arrow_new( GTK_ARROW_DOWN, GTK_SHADOW_OUT );
 	gtk_widget_show( arrow );
@@ -167,8 +167,8 @@ void FindTextureDialog::BuildDialog(){
 	gtk_table_attach( GTK_TABLE( table ), entry, 1, 2, 1, 2,
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
-	gtk_signal_connect( GTK_OBJECT( entry ), "focus-in-event",
-						GTK_SIGNAL_FUNC( replace_focus_in ), NULL );
+	g_signal_connect( G_OBJECT( entry ), "focus-in-event",
+						G_CALLBACK( replace_focus_in ), NULL );
 	AddDialogData( entry, &m_strReplace, DLG_ENTRY_TEXT );
 
 	button = gtk_button_new();
@@ -176,8 +176,8 @@ void FindTextureDialog::BuildDialog(){
 	gtk_table_attach( GTK_TABLE( table ), button, 2, 3, 1, 2,
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( GTK_FILL ), 0, 0 );
-	gtk_signal_connect( GTK_OBJECT( button ), "clicked",
-						GTK_SIGNAL_FUNC( find_clicked ), entry );
+	g_signal_connect( G_OBJECT( button ), "clicked",
+						G_CALLBACK( find_clicked ), entry );
 
 	arrow = gtk_arrow_new( GTK_ARROW_DOWN, GTK_SHADOW_OUT );
 	gtk_widget_show( arrow );
@@ -205,29 +205,29 @@ void FindTextureDialog::BuildDialog(){
 	button = gtk_button_new_with_label( _( "Find" ) );
 	gtk_widget_show( button );
 	gtk_box_pack_start( GTK_BOX( vbox ), button, FALSE, FALSE, 0 );
-	gtk_signal_connect( GTK_OBJECT( button ), "clicked",
-						GTK_SIGNAL_FUNC( OnFind ), NULL );
+	g_signal_connect( G_OBJECT( button ), "clicked",
+						G_CALLBACK( OnFind ), NULL );
 	gtk_widget_set_usize( button, 60, -2 );
 
 	button = gtk_button_new_with_label( _( "OK" ) );
 	gtk_widget_show( button );
 	gtk_box_pack_start( GTK_BOX( vbox ), button, FALSE, FALSE, 0 );
-	gtk_signal_connect( GTK_OBJECT( button ), "clicked",
-						GTK_SIGNAL_FUNC( OnOK ), NULL );
+	g_signal_connect( G_OBJECT( button ), "clicked",
+						G_CALLBACK( OnOK ), NULL );
 	gtk_widget_set_usize( button, 60, -2 );
 
 	button = gtk_button_new_with_label( _( "Apply" ) );
 	gtk_widget_show( button );
 	gtk_box_pack_start( GTK_BOX( vbox ), button, FALSE, FALSE, 0 );
-	gtk_signal_connect( GTK_OBJECT( button ), "clicked",
-						GTK_SIGNAL_FUNC( OnApply ), NULL );
+	g_signal_connect( G_OBJECT( button ), "clicked",
+						G_CALLBACK( OnApply ), NULL );
 	gtk_widget_set_usize( button, 60, -2 );
 
 	button = gtk_button_new_with_label( _( "Close" ) );
 	gtk_widget_show( button );
 	gtk_box_pack_start( GTK_BOX( vbox ), button, FALSE, FALSE, 0 );
-	gtk_signal_connect( GTK_OBJECT( button ), "clicked",
-						GTK_SIGNAL_FUNC( OnClose ), NULL );
+	g_signal_connect( G_OBJECT( button ), "clicked",
+						G_CALLBACK( OnClose ), NULL );
 	gtk_widget_set_usize( button, 60, -2 );
 
 	gtk_widget_show( dlg );
@@ -246,7 +246,7 @@ void FindTextureDialog::updateTextures( const char *p ){
 }
 
 bool FindTextureDialog::isOpen(){
-	return ( g_dlgFind.m_pWidget == NULL || GTK_WIDGET_VISIBLE( g_dlgFind.m_pWidget ) == FALSE ) ? false : true;
+	return ( g_dlgFind.m_pWidget == NULL || gtk_widget_get_visible( g_dlgFind.m_pWidget ) == FALSE ) ? false : true;
 }
 
 void FindTextureDialog::setFindStr( const char * p ){

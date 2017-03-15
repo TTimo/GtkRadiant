@@ -42,10 +42,10 @@ void ShowInfoDialog( const char* pText ){
 
 		g_dlgInfo = dlg = gtk_window_new( GTK_WINDOW_TOPLEVEL );
 		gtk_window_set_title( GTK_WINDOW( dlg ), _( "Information" ) );
-		gtk_signal_connect( GTK_OBJECT( dlg ), "delete-event",
-							GTK_SIGNAL_FUNC( gtk_widget_hide ), NULL );
-		gtk_signal_connect( GTK_OBJECT( dlg ), "destroy",
-							GTK_SIGNAL_FUNC( gtk_widget_destroy ), NULL );
+		g_signal_connect( G_OBJECT( dlg ), "delete-event",
+							G_CALLBACK( gtk_widget_hide ), NULL );
+		g_signal_connect( G_OBJECT( dlg ), "destroy",
+							G_CALLBACK( gtk_widget_destroy ), NULL );
 		gtk_window_set_default_size( GTK_WINDOW( dlg ), 300, 150 );
 
 		scr = gtk_scrolled_window_new( NULL, NULL );

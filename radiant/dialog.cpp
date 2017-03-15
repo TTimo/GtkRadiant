@@ -81,10 +81,10 @@ static gint delete_event_callback( GtkWidget *widget, GdkEvent* event, gpointer 
 void Dialog::Create(){
 	if ( m_bNeedBuild ) {
 		m_pWidget = gtk_window_new( GTK_WINDOW_TOPLEVEL );
-		gtk_signal_connect( GTK_OBJECT( m_pWidget ), "delete-event",
-							GTK_SIGNAL_FUNC( delete_event_callback ), this );
-		gtk_signal_connect( GTK_OBJECT( m_pWidget ), "destroy",
-							GTK_SIGNAL_FUNC( gtk_widget_destroy ), NULL );
+		g_signal_connect( G_OBJECT( m_pWidget ), "delete-event",
+							G_CALLBACK( delete_event_callback ), this );
+		g_signal_connect( G_OBJECT( m_pWidget ), "destroy",
+							G_CALLBACK( gtk_widget_destroy ), NULL );
 		g_object_set_data( G_OBJECT( m_pWidget ), "loop", &m_nLoop );
 		g_object_set_data( G_OBJECT( m_pWidget ), "ret", &m_nReturn );
 
@@ -112,8 +112,8 @@ void Dialog::AddDialogData( GtkObject *object, void *buf, DLG_DATA_TYPE type ){
 }
 
 void Dialog::AddModalButton( GtkWidget *widget, int ret ) {
-	gtk_signal_connect( GTK_OBJECT( widget ), "clicked",
-						GTK_SIGNAL_FUNC( dialog_button_callback ), GINT_TO_POINTER( ret ) );
+	g_signal_connect( G_OBJECT( widget ), "clicked", 
+						G_CALLBACK( dialog_button_callback ), GINT_TO_POINTER( ret ) );
 }
 
 void Dialog::UpdateData( bool retrieve ){
