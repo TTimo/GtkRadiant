@@ -732,19 +732,19 @@ void SurfaceDlg::BuildDialog() {
 	gtk_table_set_col_spacings( GTK_TABLE( table ), 5 );
 	gtk_container_set_border_width( GTK_CONTAINER( table ), 5 );
 
-	label = gtk_label_new( "Brush" );
+	label = gtk_label_new( _( "Brush" ) );
 	gtk_widget_show( label );
 	gtk_table_attach( GTK_TABLE( table ), label, 0, 1, 0, 1,
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
 
-	label = gtk_label_new( "Patch" );
+	label = gtk_label_new( _( "Patch" ) );
 	gtk_widget_show( label );
 	gtk_table_attach( GTK_TABLE( table ), label, 0, 1, 2, 3,
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
 
-	label = gtk_label_new( "Width" );
+	label = gtk_label_new( _( "Width" ) );
 	gtk_widget_show( label );
 	gtk_table_attach( GTK_TABLE( table ), label, 2, 3, 0, 1,
 					  (GtkAttachOptions) ( GTK_FILL ),

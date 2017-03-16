@@ -109,7 +109,7 @@ void FindTextureDialog::BuildDialog(){
 	GtkWidget *button, *check, *entry, *arrow;
 
 	dlg = m_pWidget;
-	gtk_window_set_title( GTK_WINDOW( dlg ), "Find / Replace Texture(s)" );
+	gtk_window_set_title( GTK_WINDOW( dlg ), _( "Find / Replace Texture(s)" ) );
 	gtk_window_set_transient_for( GTK_WINDOW( dlg ), GTK_WINDOW( g_pParentWnd->m_pWidget ) );
 
 	hbox = gtk_hbox_new( FALSE, 5 );
@@ -127,14 +127,14 @@ void FindTextureDialog::BuildDialog(){
 	gtk_table_set_row_spacings( GTK_TABLE( table ), 5 );
 	gtk_table_set_col_spacings( GTK_TABLE( table ), 5 );
 
-	label = gtk_label_new( "Find:" );
+	label = gtk_label_new( _( "Find:" ) );
 	gtk_widget_show( label );
 	gtk_table_attach( GTK_TABLE( table ), label, 0, 1, 0, 1,
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
 	gtk_misc_set_alignment( GTK_MISC( label ), 0, 0.5 );
 
-	label = gtk_label_new( "Replace:" );
+	label = gtk_label_new( _( "Replace:" ) );
 	gtk_widget_show( label );
 	gtk_table_attach( GTK_TABLE( table ), label, 0, 1, 1, 2,
 					  (GtkAttachOptions) ( GTK_FILL ),
@@ -183,17 +183,17 @@ void FindTextureDialog::BuildDialog(){
 	gtk_widget_show( arrow );
 	gtk_container_add( GTK_CONTAINER( button ), arrow );
 
-	check = gtk_check_button_new_with_label( "Use selected brushes only" );
+	check = gtk_check_button_new_with_label( _( "Use selected brushes only" ) );
 	gtk_widget_show( check );
 	gtk_box_pack_start( GTK_BOX( vbox ), check, TRUE, TRUE, 0 );
 	AddDialogData( check, &m_bSelectedOnly, DLG_CHECK_BOOL );
 
-	check = gtk_check_button_new_with_label( "Replace everywhere (selected/active), don't test against Find" );
+	check = gtk_check_button_new_with_label( _( "Replace everywhere (selected/active), don't test against Find" ) );
 	gtk_widget_show( check );
 	gtk_box_pack_start( GTK_BOX( vbox ), check, TRUE, TRUE, 0 );
 	AddDialogData( check, &m_bForce, DLG_CHECK_BOOL );
 
-	check = gtk_check_button_new_with_label( "Live updates from Texture/Camera windows" );
+	check = gtk_check_button_new_with_label( _( "Live updates from Texture/Camera windows" ) );
 	gtk_widget_show( check );
 	gtk_box_pack_start( GTK_BOX( vbox ), check, TRUE, TRUE, 0 );
 	AddDialogData( check, &m_bLive, DLG_CHECK_BOOL );

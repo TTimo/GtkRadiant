@@ -58,7 +58,7 @@ void DoAboutDlg(){
 	int loop = 1, ret = IDCANCEL;
 
 	dlg = gtk_window_new( GTK_WINDOW_TOPLEVEL );
-	gtk_window_set_title( GTK_WINDOW( dlg ), "About Portal Viewer" );
+	gtk_window_set_title( GTK_WINDOW( dlg ), _( "About Portal Viewer" ) );
 	g_signal_connect( G_OBJECT( dlg ), "delete-event",
 						G_CALLBACK( dialog_delete_callback ), NULL );
 	g_signal_connect( G_OBJECT( dlg ), "destroy",
@@ -85,7 +85,7 @@ void DoAboutDlg(){
 	gtk_widget_show( vbox );
 	gtk_box_pack_start( GTK_BOX( hbox ), vbox, FALSE, FALSE, 0 );
 
-	button = gtk_button_new_with_label( "OK" );
+	button = gtk_button_new_with_label( _( "OK" ) );
 	gtk_widget_show( button );
 	gtk_box_pack_start( GTK_BOX( vbox ), button, FALSE, FALSE, 0 );
 	g_signal_connect( G_OBJECT( button ), "clicked",

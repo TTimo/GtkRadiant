@@ -313,13 +313,13 @@ eclass_t * EClass_Create( const char *name, float col1, float col2, float col3, 
 		// b) no entity definition files were found
 		// c) no entity definition file contained an entry for worldspawn.
 
-		if ( stricmp( name,"worldspawn" ) != 0 ) {
+		if ( stricmp( name, "worldspawn" ) != 0 ) {
 			e->fixedsize = true;
 		}
 
 		// copy the sizes..
-		memcpy( e->mins,mins,sizeof( vec3_t ) );
-		memcpy( e->maxs,maxs,sizeof( vec3_t ) );
+		memcpy( e->mins, mins, sizeof( vec3_t ) );
+		memcpy( e->maxs, maxs, sizeof( vec3_t ) );
 	}
 
 	if ( comments ) {

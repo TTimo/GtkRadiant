@@ -383,7 +383,7 @@ void CreateEntityFromName( const char* name, const vec3_t origin ){
 	entity_t *e;
 	brush_t* b;
 	if ( stricmp( name, "worldspawn" ) == 0 ) {
-		gtk_MessageBox( g_pParentWnd->m_pWidget, "Can't create an entity with worldspawn.", "info", 0 );
+		gtk_MessageBox( g_pParentWnd->m_pWidget, _( "Can't create an entity with worldspawn." ), "info", 0 );
 		return;
 	}
 

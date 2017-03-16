@@ -70,7 +70,7 @@ static void change_clicked( GtkWidget *widget, gpointer data ){
 	char* filename = NULL;
 	int loop = 1;
 
-	file_sel = gtk_file_selection_new( "Locate portal (.prt) file" );
+	file_sel = gtk_file_selection_new( _( "Locate portal (.prt) file" ) );
 	g_signal_connect( G_OBJECT( GTK_FILE_SELECTION( file_sel )->ok_button ), "clicked",
 						G_CALLBACK( file_sel_callback ), GINT_TO_POINTER( IDOK ) );
 	g_signal_connect( G_OBJECT( GTK_FILE_SELECTION( file_sel )->cancel_button ), "clicked",
@@ -104,7 +104,7 @@ int DoLoadPortalFileDialog(){
 	int loop = 1, ret = IDCANCEL;
 
 	dlg = gtk_window_new( GTK_WINDOW_TOPLEVEL );
-	gtk_window_set_title( GTK_WINDOW( dlg ), "Load .prt" );
+	gtk_window_set_title( GTK_WINDOW( dlg ), _( "Load .prt" ) );
 	g_signal_connect( G_OBJECT( dlg ), "delete-event",
 						G_CALLBACK( dialog_delete_callback ), NULL );
 	g_signal_connect( G_OBJECT( dlg ), "destroy",
@@ -126,15 +126,15 @@ int DoLoadPortalFileDialog(){
 	gtk_widget_show( hbox );
 	gtk_box_pack_start( GTK_BOX( vbox ), hbox, FALSE, FALSE, 0 );
 
-	check3d = gtk_check_button_new_with_label( "Show 3D" );
+	check3d = gtk_check_button_new_with_label( _( "Show 3D" ) );
 	gtk_widget_show( check3d );
 	gtk_box_pack_start( GTK_BOX( hbox ), check3d, FALSE, FALSE, 0 );
 
-	check2d = gtk_check_button_new_with_label( "Show 2D" );
+	check2d = gtk_check_button_new_with_label( _( "Show 2D" ) );
 	gtk_widget_show( check2d );
 	gtk_box_pack_start( GTK_BOX( hbox ), check2d, FALSE, FALSE, 0 );
 
-	button = gtk_button_new_with_label( "Change" );
+	button = gtk_button_new_with_label( _( "Change" ) );
 	gtk_widget_show( button );
 	gtk_box_pack_end( GTK_BOX( hbox ), button, FALSE, FALSE, 0 );
 	g_signal_connect( G_OBJECT( button ), "clicked", G_CALLBACK( change_clicked ), entry );
@@ -144,14 +144,14 @@ int DoLoadPortalFileDialog(){
 	gtk_widget_show( hbox );
 	gtk_box_pack_start( GTK_BOX( vbox ), hbox, FALSE, FALSE, 0 );
 
-	button = gtk_button_new_with_label( "Cancel" );
+	button = gtk_button_new_with_label( _( "Cancel" ) );
 	gtk_widget_show( button );
 	gtk_box_pack_end( GTK_BOX( hbox ), button, FALSE, FALSE, 0 );
 	g_signal_connect( G_OBJECT( button ), "clicked",
 						G_CALLBACK( dialog_button_callback ), GINT_TO_POINTER( IDCANCEL ) );
 	gtk_widget_set_usize( button, 60, -2 );
 
-	button = gtk_button_new_with_label( "OK" );
+	button = gtk_button_new_with_label( _( "OK" ) );
 	gtk_widget_show( button );
 	gtk_box_pack_end( GTK_BOX( hbox ), button, FALSE, FALSE, 0 );
 	g_signal_connect( G_OBJECT( button ), "clicked",

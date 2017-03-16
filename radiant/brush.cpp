@@ -21,6 +21,7 @@
 
 #include "stdafx.h"
 #include <assert.h>
+#include <glib/gi18n.h>
 #include "winding.h"
 #include <limits.h>
 #include "filters.h"
@@ -1551,7 +1552,7 @@ void CheckName( face_t *fa, char *pname ){
 		sprintf( Msg1, "Can't save texture with spaces in name. Rename %s\nNOTE: This message may popup several times .. once for each buggy face detected.", fa->texdef.GetName() );
 
 		Sys_Printf( "%s\n", Msg1 );
-		gtk_MessageBox( g_pParentWnd->m_pWidget, Msg1, "Error saving map", MB_OK );
+		gtk_MessageBox( g_pParentWnd->m_pWidget, Msg1, _( "Error saving map" ), MB_OK );
 		strcpy( pname, SHADER_NOT_FOUND );
 		return;
 	}
@@ -1561,7 +1562,7 @@ void CheckName( face_t *fa, char *pname ){
 	if ( fa->texdef.GetName()[0] == '(' ) {
 		const char *text = "Bug #103494 detected, dropping texture. Please report to timo@qeradiant.com if you have a way to reproduce!\nNOTE: this message may popup several times .. once for each buggy face detected.";
 		Sys_Printf( "%s\n", text );
-		gtk_MessageBox( g_pParentWnd->m_pWidget, text, "Error saving map", MB_OK );
+		gtk_MessageBox( g_pParentWnd->m_pWidget, text, _( "Error saving map" ), MB_OK );
 		// need to cleanup this dead face name or we may loop endlessly
 		fa->texdef.SetName( SHADER_NOT_FOUND );
 		strcpy( pname, SHADER_NOT_FOUND );

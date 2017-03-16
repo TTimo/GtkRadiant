@@ -644,7 +644,7 @@ GtkWidget* create_SurfaceInspector( void ){
 
 	SurfaceInspector = gtk_window_new( GTK_WINDOW_TOPLEVEL );
 	gtk_container_set_border_width( GTK_CONTAINER( SurfaceInspector ), 4 );
-	gtk_window_set_title( GTK_WINDOW( SurfaceInspector ), "Surface Inspector" );
+	gtk_window_set_title( GTK_WINDOW( SurfaceInspector ), _( "Surface Inspector" ) );
 
 	SetWinPos_from_Prefs( SurfaceInspector );
 
@@ -814,7 +814,7 @@ GtkWidget* create_SurfaceInspector( void ){
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( GTK_FILL ), 0, 0 );
 
-	match_grid_button = gtk_button_new_with_mnemonic( "Match Grid" );
+	match_grid_button = gtk_button_new_with_mnemonic( _( "Match Grid" ) );
 	gtk_widget_show( match_grid_button );
 	gtk_container_add( GTK_CONTAINER( eventbox ), match_grid_button );
 
@@ -909,7 +909,7 @@ GtkWidget* create_SurfaceInspector( void ){
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( GTK_FILL ), 0, 0 );
 
-	label = gtk_label_new( "Horizontal Shift: " );
+	label = gtk_label_new( _( "Horizontal Shift: " ) );
 	gtk_widget_show( label );
 	gtk_container_add( GTK_CONTAINER( eventbox ), label );
 	gtk_label_set_justify( GTK_LABEL( label ), GTK_JUSTIFY_LEFT );

@@ -372,7 +372,7 @@ void CreateViewWindow(){
 #endif
 
 	g_pWndPreview = dlg = gtk_window_new( GTK_WINDOW_TOPLEVEL );
-	gtk_window_set_title( GTK_WINDOW( dlg ), "GtkGenSurf Preview" );
+	gtk_window_set_title( GTK_WINDOW( dlg ), _( "GtkGenSurf Preview" ) );
 	g_signal_connect( G_OBJECT( dlg ), "delete-event", G_CALLBACK( preview_close ), NULL );
 	g_signal_connect( G_OBJECT( dlg ), "destroy", G_CALLBACK( gtk_widget_destroy ), NULL );
 	gtk_window_set_transient_for( GTK_WINDOW( dlg ), GTK_WINDOW( g_pWnd ) );
@@ -388,7 +388,7 @@ void CreateViewWindow(){
 	gtk_box_pack_start( GTK_BOX( vbox ), hbox, FALSE, TRUE, 0 );
 	gtk_container_set_border_width( GTK_CONTAINER( hbox ), 3 );
 
-	label = gtk_label_new( "Elevation" );
+	label = gtk_label_new( _( "Elevation" ) );
 	gtk_widget_show( label );
 	gtk_misc_set_alignment( GTK_MISC( label ), 1, 0.5 );
 	gtk_box_pack_start( GTK_BOX( hbox ), label, FALSE, TRUE, 0 );
@@ -407,7 +407,7 @@ void CreateViewWindow(){
 	gtk_spin_button_set_wrap( GTK_SPIN_BUTTON( spin ), TRUE );
 	gtk_box_pack_end( GTK_BOX( hbox ), spin, FALSE, TRUE, 0 );
 
-	label = gtk_label_new( "Azimuth" );
+	label = gtk_label_new( _( "Azimuth" ) );
 	gtk_widget_show( label );
 	gtk_misc_set_alignment( GTK_MISC( label ), 1, 0.5 );
 	gtk_box_pack_end( GTK_BOX( hbox ), label, FALSE, TRUE, 0 );

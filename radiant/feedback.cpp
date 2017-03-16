@@ -30,6 +30,7 @@
 #include "feedback.h"
 #include "glib.h"
 #include <assert.h>
+#include <glib/gi18n.h>
 
 CDbgDlg g_DbgDlg;
 
@@ -305,7 +306,7 @@ void CDbgDlg::Push( ISAXHandler *pHandler ) {
 }
 
 void CDbgDlg::BuildDialog(){
-	gtk_window_set_title( GTK_WINDOW( m_pWidget ), "Q3Map debug window" );
+	gtk_window_set_title( GTK_WINDOW( m_pWidget ), _( "Q3Map debug window" ) );
 
 	GtkWidget* scr = gtk_scrolled_window_new( NULL, NULL );
 	gtk_widget_show( scr );

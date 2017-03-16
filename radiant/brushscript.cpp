@@ -27,6 +27,8 @@
    should we cleanup and remove it for good
  */
 
+#include <glib/gi18n.h>
+
 #include "stdafx.h"
 #include "gtkmisc.h"
 
@@ -89,7 +91,7 @@ void AddVariable( const char* pName, float fValue, const char* pInput = NULL ){
 		g_nVariableCount++;
 	}
 	else{
-		gtk_MessageBox( g_pParentWnd->m_pWidget, "Maximum script variable limit reached!" );
+		gtk_MessageBox( g_pParentWnd->m_pWidget, _( "Maximum script variable limit reached!" ) );
 	}
 }
 
@@ -130,7 +132,7 @@ void AddVectorVariable( const char* pName, const char* pInput = NULL ){
 		g_nVecVariableCount++;
 	}
 	else{
-		gtk_MessageBox( g_pParentWnd->m_pWidget, "Maximum script variable limit reached!" );
+		gtk_MessageBox( g_pParentWnd->m_pWidget, _( "Maximum script variable limit reached!" ) );
 	}
 }
 
@@ -521,7 +523,7 @@ void LoopRun( char*& pBuffer ){
 
 void ConfirmMessage( char*& pBuffer ){
 	CString strParam = GetParam( pBuffer );
-	if ( gtk_MessageBox( g_pParentWnd->m_pWidget, strParam, "Script Info", MB_OKCANCEL ) == IDCANCEL ) {
+	if ( gtk_MessageBox( g_pParentWnd->m_pWidget, strParam, _( "Script Info" ), MB_OKCANCEL ) == IDCANCEL ) {
 		g_bKeepGoing = false;
 	}
 }

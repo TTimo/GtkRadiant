@@ -374,7 +374,7 @@ void CreateEntity( void ){
 
 	// check to make sure we have a brush
 	if ( selected_brushes.next == &selected_brushes ) {
-		gtk_MessageBox( g_pParentWnd->m_pWidget, "You must have a selected brush to create an entity", "info" );
+		gtk_MessageBox( g_pParentWnd->m_pWidget, _( "You must have a selected brush to create an entity" ), _( "info" ) );
 		return;
 	}
 
@@ -382,7 +382,7 @@ void CreateEntity( void ){
 	GtkTreeModel* model;
 	GtkTreeIter iter;
 	if ( gtk_tree_selection_get_selected( gtk_tree_view_get_selection( view ), &model, &iter ) == FALSE ) {
-		gtk_MessageBox( g_pParentWnd->m_pWidget, "You must have a selected class to create an entity", "info" );
+		gtk_MessageBox( g_pParentWnd->m_pWidget, _( "You must have a selected class to create an entity" ), _( "info" ) );
 		return;
 	}
 
@@ -422,14 +422,14 @@ void AddProp(){
 
 	// TTimo: if you change the classname to worldspawn you won't merge back in the structural brushes but create a parasite entity
 	if ( !strcmp( key, "classname" ) && !strcmp( value, "worldspawn" ) ) {
-		gtk_MessageBox( g_pParentWnd->m_pWidget,  "Cannot change \"classname\" key back to worldspawn.", NULL, MB_OK );
+		gtk_MessageBox( g_pParentWnd->m_pWidget,  _( "Cannot change \"classname\" key back to worldspawn." ), NULL, MB_OK );
 		return;
 	}
 
 
 	// RR2DO2: we don't want spaces in entity keys
 	if ( strstr( key, " " ) ) {
-		gtk_MessageBox( g_pParentWnd->m_pWidget, "No spaces are allowed in entity keys.", NULL, MB_OK );
+		gtk_MessageBox( g_pParentWnd->m_pWidget, _( "No spaces are allowed in entity keys." ), NULL, MB_OK );
 		return;
 	}
 
@@ -646,7 +646,7 @@ void cam2angles()
  */
 void SetInspectorMode( int iType ){
 	if ( iType == W_GROUP ) {
-		gtk_MessageBox( g_pParentWnd->m_pWidget, "Brush grouping is not functional yet", NULL, MB_OK | MB_ICONWARNING );
+		gtk_MessageBox( g_pParentWnd->m_pWidget, _( "Brush grouping is not functional yet" ), NULL, MB_OK | MB_ICONWARNING );
 	}
 
 	if ( !g_pParentWnd->FloatingGroupDialog() &&
@@ -673,13 +673,13 @@ void SetInspectorMode( int iType ){
 	switch ( iType ) {
 	case W_ENTITY:
 		// entity is always first in the inspector
-		gtk_window_set_title( GTK_WINDOW( g_qeglobals_gui.d_entity ), "Entities" );
+		gtk_window_set_title( GTK_WINDOW( g_qeglobals_gui.d_entity ), _( "Entities" ) );
 		gtk_notebook_set_current_page( GTK_NOTEBOOK( g_pGroupDlg->m_pNotebook ), 0 );
 		break;
 
 	case W_TEXTURE:
 		g_pParentWnd->GetTexWnd()->FocusEdit();
-		gtk_window_set_title( GTK_WINDOW( g_qeglobals_gui.d_entity ), "Textures" );
+		gtk_window_set_title( GTK_WINDOW( g_qeglobals_gui.d_entity ), _( "Textures" ) );
 		if ( g_pParentWnd->FloatingGroupDialog() ) {
                   // if the notebook page is already at 1, no expose event fires up on the embedded GLWindow, leading in the texture window not drawing
                   // I did witness an expose event on the notebook widget though, but for some reason it's not traveling down..
@@ -691,7 +691,7 @@ void SetInspectorMode( int iType ){
 		break;
 
 	case W_CONSOLE:
-		gtk_window_set_title( GTK_WINDOW( g_qeglobals_gui.d_entity ), "Console" );
+		gtk_window_set_title( GTK_WINDOW( g_qeglobals_gui.d_entity ), _( "Console" ) );
 		if ( g_pParentWnd->FloatingGroupDialog() ) {
 			gtk_notebook_set_current_page( GTK_NOTEBOOK( g_pGroupDlg->m_pNotebook ), 2 );
 		}
@@ -1227,7 +1227,7 @@ void GroupDlg::Create(){
 #endif
 	load_window_pos( dlg, g_PrefsDlg.mWindowInfo.posEntityWnd );
 
-	gtk_window_set_title( GTK_WINDOW( dlg ), "Entities" );
+	gtk_window_set_title( GTK_WINDOW( dlg ), _( "Entities" ) );
 	g_signal_connect( G_OBJECT( dlg ), "delete-event", G_CALLBACK( OnDeleteHide ), NULL );
 	// catch 'Esc'
 	g_signal_connect( G_OBJECT( dlg ), "key-press-event", G_CALLBACK( OnDialogKey ), NULL );
@@ -1248,7 +1248,7 @@ void GroupDlg::Create(){
 			gtk_container_set_border_width( GTK_CONTAINER( vbox ), 2 );
 
 			{
-				GtkWidget* label = gtk_label_new( "Entities" );
+				GtkWidget* label = gtk_label_new( _( "Entities" ) );
 				gtk_widget_show( label );
 				gtk_notebook_append_page( GTK_NOTEBOOK( notebook ), vbox, label );
 			}

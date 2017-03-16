@@ -357,7 +357,7 @@ GtkWidget* create_SurfaceFlagsFrame( GtkWidget* surfacedialog_widget ){
 	gtk_widget_show( vbox4 );
 	gtk_box_pack_start( GTK_BOX( hbox3 ), vbox4, TRUE, TRUE, 0 );
 
-	value_label = gtk_label_new( " Value: " );
+	value_label = gtk_label_new( _( "Value: " ) );
 	gtk_widget_show( value_label );
 	gtk_box_pack_start( GTK_BOX( hbox3 ), value_label, FALSE, FALSE, 0 );
 
@@ -376,7 +376,7 @@ GtkWidget* create_SurfaceFlagsFrame( GtkWidget* surfacedialog_widget ){
 	gtk_widget_show( vbox3 );
 	gtk_box_pack_start( GTK_BOX( hbox3 ), vbox3, TRUE, TRUE, 0 );
 
-	label5 = gtk_label_new( "Surface Flags" );
+	label5 = gtk_label_new( _( "Surface Flags" ) );
 	gtk_widget_show( label5 );
 	gtk_notebook_set_tab_label( GTK_NOTEBOOK( notebook1 ), gtk_notebook_get_nth_page( GTK_NOTEBOOK( notebook1 ), 0 ), label5 );
 
@@ -402,7 +402,7 @@ GtkWidget* create_SurfaceFlagsFrame( GtkWidget* surfacedialog_widget ){
 						  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ), 0, 0 );
 	}
 
-	label6 = gtk_label_new( "Content Flags" );
+	label6 = gtk_label_new( _( "Content Flags" ) );
 	gtk_widget_show( label6 );
 	gtk_notebook_set_tab_label( GTK_NOTEBOOK( notebook1 ), gtk_notebook_get_nth_page( GTK_NOTEBOOK( notebook1 ), 1 ), label6 );
 

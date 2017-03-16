@@ -23,7 +23,6 @@
 #include <string.h>
 #include <math.h>
 #include "gensurf.h"
-#include <glib/gi18n.h>
 
 #define GENERAL_TAB   0
 #define EXTENTS_TAB   1
@@ -124,7 +123,7 @@ static void SetupControls(){
 		if ( Game == QUAKE3 && UsePatches != 0 ) {
 			ENABLE_WIDGET( "decimate", FALSE );
 		}
-		gtk_label_set_text( GTK_LABEL( g_object_get_data( G_OBJECT( g_pWnd ), "snap_text" ) ), "Snap to grid:" ); // ^Fishman - Snap to grid.
+		gtk_label_set_text( GTK_LABEL( g_object_get_data( G_OBJECT( g_pWnd ), "snap_text" ) ), _( "Snap to grid:" ) ); // ^Fishman - Snap to grid.
 		break;
 
 	case BITMAP_TAB:
@@ -138,8 +137,8 @@ static void SetupControls(){
 			ENABLE_WIDGET( "bmp_text3", FALSE );
 			ENABLE_WIDGET( "bmp_reload", FALSE );
 			gtk_label_set_text( GTK_LABEL( g_object_get_data( G_OBJECT( g_pWnd ), "bmp_note" ) ),
-								"These options are disabled unless \"From Bitmap\"\n"
-								"is selected as the Waveform on the General tab." );
+								_( "These options are disabled unless \"From Bitmap\"\n"
+								"is selected as the Waveform on the General tab." ) );
 		}
 		else
 		{
@@ -152,9 +151,9 @@ static void SetupControls(){
 			ENABLE_WIDGET( "bmp_text3", TRUE );
 			ENABLE_WIDGET( "bmp_reload", strlen( gbmp.name ) != 0 );
 			gtk_label_set_text( GTK_LABEL( g_object_get_data( G_OBJECT( g_pWnd ), "bmp_note" ) ),
-								"GenSurf works only with 8-bit bitmaps. Color indices are\n"
+								_( "GenSurf works only with 8-bit bitmaps. Color indices are\n"
 								"mapped to values for each vertex. Generally, gray scale\n"
-								"images are stored with black as color 0, white as color 255." );
+								"images are stored with black as color 0, white as color 255." ) );
 		}
 		break;
 
@@ -228,29 +227,29 @@ static void SetupControls(){
 	{
 	case PLANE_XZ0:
 	case PLANE_XZ1:
-		gtk_label_set_text( GTK_LABEL( g_object_get_data( G_OBJECT( g_pWnd ), "hmin_text" ) ), "X:" );
-		gtk_label_set_text( GTK_LABEL( g_object_get_data( G_OBJECT( g_pWnd ), "hmax_text" ) ), "X:" );
-		gtk_label_set_text( GTK_LABEL( g_object_get_data( G_OBJECT( g_pWnd ), "vmin_text" ) ), "Z:" );
-		gtk_label_set_text( GTK_LABEL( g_object_get_data( G_OBJECT( g_pWnd ), "vmax_text" ) ), "Z:" );
-		gtk_label_set_text( GTK_LABEL( g_object_get_data( G_OBJECT( g_pWnd ), "nh_text" ) ), "X:" );
-		gtk_label_set_text( GTK_LABEL( g_object_get_data( G_OBJECT( g_pWnd ), "nv_text" ) ), "Z:" );
+		gtk_label_set_text( GTK_LABEL( g_object_get_data( G_OBJECT( g_pWnd ), "hmin_text" ) ), _( "X:" ) );
+		gtk_label_set_text( GTK_LABEL( g_object_get_data( G_OBJECT( g_pWnd ), "hmax_text" ) ), _( "X:" ) );
+		gtk_label_set_text( GTK_LABEL( g_object_get_data( G_OBJECT( g_pWnd ), "vmin_text" ) ), _( "Z:" ) );
+		gtk_label_set_text( GTK_LABEL( g_object_get_data( G_OBJECT( g_pWnd ), "vmax_text" ) ), _( "Z:" ) );
+		gtk_label_set_text( GTK_LABEL( g_object_get_data( G_OBJECT( g_pWnd ), "nh_text" ) ), _( "X:" ) );
+		gtk_label_set_text( GTK_LABEL( g_object_get_data( G_OBJECT( g_pWnd ), "nv_text" ) ), _( "Z:" ) );
 		break;
 	case PLANE_YZ0:
 	case PLANE_YZ1:
-		gtk_label_set_text( GTK_LABEL( g_object_get_data( G_OBJECT( g_pWnd ), "hmin_text" ) ), "Y:" );
-		gtk_label_set_text( GTK_LABEL( g_object_get_data( G_OBJECT( g_pWnd ), "hmax_text" ) ), "Y:" );
-		gtk_label_set_text( GTK_LABEL( g_object_get_data( G_OBJECT( g_pWnd ), "vmin_text" ) ), "Z:" );
-		gtk_label_set_text( GTK_LABEL( g_object_get_data( G_OBJECT( g_pWnd ), "vmax_text" ) ), "Z:" );
-		gtk_label_set_text( GTK_LABEL( g_object_get_data( G_OBJECT( g_pWnd ), "nh_text" ) ), "Y:" );
-		gtk_label_set_text( GTK_LABEL( g_object_get_data( G_OBJECT( g_pWnd ), "nv_text" ) ), "Z:" );
+		gtk_label_set_text( GTK_LABEL( g_object_get_data( G_OBJECT( g_pWnd ), "hmin_text" ) ), _( "Y:" ) );
+		gtk_label_set_text( GTK_LABEL( g_object_get_data( G_OBJECT( g_pWnd ), "hmax_text" ) ), _( "Y:" ) );
+		gtk_label_set_text( GTK_LABEL( g_object_get_data( G_OBJECT( g_pWnd ), "vmin_text" ) ), _( "Z:" ) );
+		gtk_label_set_text( GTK_LABEL( g_object_get_data( G_OBJECT( g_pWnd ), "vmax_text" ) ), _( "Z:" ) );
+		gtk_label_set_text( GTK_LABEL( g_object_get_data( G_OBJECT( g_pWnd ), "nh_text" ) ), _( "Y:" ) );
+		gtk_label_set_text( GTK_LABEL( g_object_get_data( G_OBJECT( g_pWnd ), "nv_text" ) ), _( "Z:" ) );
 		break;
 	default:
-		gtk_label_set_text( GTK_LABEL( g_object_get_data( G_OBJECT( g_pWnd ), "hmin_text" ) ), "X:" );
-		gtk_label_set_text( GTK_LABEL( g_object_get_data( G_OBJECT( g_pWnd ), "hmax_text" ) ), "X:" );
-		gtk_label_set_text( GTK_LABEL( g_object_get_data( G_OBJECT( g_pWnd ), "vmin_text" ) ), "Y:" );
-		gtk_label_set_text( GTK_LABEL( g_object_get_data( G_OBJECT( g_pWnd ), "vmax_text" ) ), "Y:" );
-		gtk_label_set_text( GTK_LABEL( g_object_get_data( G_OBJECT( g_pWnd ), "nh_text" ) ), "X:" );
-		gtk_label_set_text( GTK_LABEL( g_object_get_data( G_OBJECT( g_pWnd ), "nv_text" ) ), "Y:" );
+		gtk_label_set_text( GTK_LABEL( g_object_get_data( G_OBJECT( g_pWnd ), "hmin_text" ) ), _( "X:" ) );
+		gtk_label_set_text( GTK_LABEL( g_object_get_data( G_OBJECT( g_pWnd ), "hmax_text" ) ), _( "X:" ) );
+		gtk_label_set_text( GTK_LABEL( g_object_get_data( G_OBJECT( g_pWnd ), "vmin_text" ) ), _( "Y:" ) );
+		gtk_label_set_text( GTK_LABEL( g_object_get_data( G_OBJECT( g_pWnd ), "vmax_text" ) ), _( "Y:" ) );
+		gtk_label_set_text( GTK_LABEL( g_object_get_data( G_OBJECT( g_pWnd ), "nh_text" ) ), _( "X:" ) );
+		gtk_label_set_text( GTK_LABEL( g_object_get_data( G_OBJECT( g_pWnd ), "nv_text" ) ), _( "Y:" ) );
 		break;
 	}
 }
@@ -727,37 +726,37 @@ static void main_go( GtkWidget *widget, gpointer data ){
 
 	ReadDlgValues( current_tab );
 	if ( NH < 1 || NH > MAX_ROWS ) {
-		sprintf( Text, "The number of divisions must be > 0 and no greater than %d.", MAX_ROWS );
-		g_FuncTable.m_pfnMessageBox( g_pWnd, Text, "GenSurf", MB_ICONEXCLAMATION, NULL );
+		sprintf( Text, _( "The number of divisions must be > 0 and no greater than %d." ), MAX_ROWS );
+		g_FuncTable.m_pfnMessageBox( g_pWnd, Text, _( "GenSurf" ), MB_ICONEXCLAMATION, NULL );
 		gtk_notebook_set_page( GTK_NOTEBOOK( notebook ), EXTENTS_TAB );
 		return;
 	}
 
 	if ( NV < 1 || NV > MAX_ROWS ) {
-		sprintf( Text, "The number of divisions must be > 0 and no greater than %d.", MAX_ROWS );
-		g_FuncTable.m_pfnMessageBox( g_pWnd, Text, "GenSurf", MB_ICONEXCLAMATION, NULL );
+		sprintf( Text, _( "The number of divisions must be > 0 and no greater than %d." ), MAX_ROWS );
+		g_FuncTable.m_pfnMessageBox( g_pWnd, Text, _( "GenSurf" ), MB_ICONEXCLAMATION, NULL );
 		gtk_notebook_set_page( GTK_NOTEBOOK( notebook ), EXTENTS_TAB );
 		return;
 	}
 
 	if ( Hll >= Hur ) {
-		g_FuncTable.m_pfnMessageBox( g_pWnd, "The \"lower-left\" values must be less than "
+		g_FuncTable.m_pfnMessageBox( g_pWnd, _( "The \"lower-left\" values must be less than "
 											 "the corresponding \"upper-right\" values in "
-											 "the \"Extent\" box.","GenSurf", MB_OK | MB_ICONEXCLAMATION, NULL );
+											 "the \"Extent\" box." ), _( "GenSurf" ), MB_OK | MB_ICONEXCLAMATION, NULL );
 		gtk_notebook_set_page( GTK_NOTEBOOK( notebook ), EXTENTS_TAB );
 		return;
 	}
 
 	if ( Vll >= Vur ) {
-		g_FuncTable.m_pfnMessageBox( g_pWnd,"The \"lower-left\" values must be less than "
+		g_FuncTable.m_pfnMessageBox( g_pWnd, _( "The \"lower-left\" values must be less than "
 											"the corresponding \"upper-right\" values in "
-											"the \"Extent\" box.","GenSurf", MB_OK | MB_ICONEXCLAMATION, NULL );
+											"the \"Extent\" box." ), _( "GenSurf" ), MB_OK | MB_ICONEXCLAMATION, NULL );
 		gtk_notebook_set_page( GTK_NOTEBOOK( notebook ), EXTENTS_TAB );
 		return;
 	}
 
 	if ( !strlen( Texture[Game][0] ) ) {
-		g_FuncTable.m_pfnMessageBox( g_pWnd, "You must supply a texture name.", "GenSurf", MB_ICONEXCLAMATION, NULL );
+		g_FuncTable.m_pfnMessageBox( g_pWnd, _( "You must supply a texture name." ), _( "GenSurf" ), MB_ICONEXCLAMATION, NULL );
 		gtk_notebook_set_page( GTK_NOTEBOOK( notebook ), EXTENTS_TAB );
 		return;
 	}
@@ -898,7 +897,7 @@ static void bitmap_browse( GtkWidget *widget, gpointer data ){
 	const char *filename;
 	char *ptr;
 
-	filename = g_FuncTable.m_pfnFileDialog( g_pWnd, TRUE, "Bitmap File", gbmp.defpath, "gtkgensurf", NULL );
+	filename = g_FuncTable.m_pfnFileDialog( g_pWnd, TRUE, _( "Bitmap File" ), gbmp.defpath, "gtkgensurf", NULL );
 
 	if ( filename != NULL ) {
 		strcpy( gbmp.name, filename );
@@ -934,8 +933,8 @@ static gint fix_value_entryfocusout( GtkWidget* widget, GdkEventFocus *event, gp
 
 	if ( i < -65536 || i > 65536 ) {
 		gdk_beep();
-		g_FuncTable.m_pfnMessageBox( g_pWnd, "The value must be between -65536 and 65536, inclusive.",
-									 "GenSurf", MB_OK | MB_ICONEXCLAMATION, NULL );
+		g_FuncTable.m_pfnMessageBox( g_pWnd, _( "The value must be between -65536 and 65536, inclusive." ),
+									 _( "GenSurf" ), MB_OK | MB_ICONEXCLAMATION, NULL );
 		sprintf( Text, "%d", (int)xyz[Vertex[0].i][Vertex[0].j].fixed_value );
 		gtk_entry_set_text( GTK_ENTRY( widget ), Text );
 		gtk_window_set_focus( GTK_WINDOW( gtk_widget_get_toplevel( widget ) ), widget );
@@ -1105,242 +1104,242 @@ void create_tooltips(){
 	// Main
 	gtk_tooltips_set_tip( GTK_TOOLTIPS( tooltips ),
 						  GTK_WIDGET( g_object_get_data( G_OBJECT( g_pWnd ), "go" ) ),
-						  "Accept all input and generate a surface in Q3Radiant",
+						  _( "Accept all input and generate a surface in Q3Radiant" ),
 						  "" );
 	gtk_tooltips_set_tip( GTK_TOOLTIPS( tooltips ),
 						  GTK_WIDGET( g_object_get_data( G_OBJECT( g_pWnd ), "open" ) ),
-						  "Open a previously saved GenSurf settings file.",
+						  _( "Open a previously saved GenSurf settings file." ),
 						  "" );
 	gtk_tooltips_set_tip( GTK_TOOLTIPS( tooltips ),
 						  GTK_WIDGET( g_object_get_data( G_OBJECT( g_pWnd ), "save" ) ),
-						  "Save all settings to a file.",
+						  _( "Save all settings to a file." ),
 						  "" );
 	gtk_tooltips_set_tip( GTK_TOOLTIPS( tooltips ),
 						  GTK_WIDGET( g_object_get_data( G_OBJECT( g_pWnd ), "defaults" ) ),
-						  "Restore default values from DEFAULTS.SRF. If this file does not exist, GenSurf "
+						  _( "Restore default values from DEFAULTS.SRF. If this file does not exist, GenSurf "
 						  "initializes all input parameters to reasonable values. You can create your own "
 						  "default surface by setting all parameters to your liking, then saving a settings "
-						  "file as DEFAULTS.SRF with the Save As button.",
+						  "file as DEFAULTS.SRF with the Save As button." ),
 						  "" );
 
 	gtk_tooltips_set_tip( GTK_TOOLTIPS( tooltips ),
 						  GTK_WIDGET( g_object_get_data( G_OBJECT( g_pWnd ), "main_preview" ) ),
-						  "View a wire-frame representation of the surface",
+						  _( "View a wire-frame representation of the surface" ),
 						  "" );
 
 	gtk_tooltips_set_tip( GTK_TOOLTIPS( tooltips ),
 						  GTK_WIDGET( g_object_get_data( G_OBJECT( g_pWnd ), "main_antialiasing" ) ),
-						  "The lines in the preview window are antialiased for better quality",
+						  _( "The lines in the preview window are antialiased for better quality" ),
 						  "" );
 
 	// General tab
 	gtk_tooltips_set_tip( GTK_TOOLTIPS( tooltips ),
 						  GTK_WIDGET( wave_radios[0] ),
-						  "Builds a surface with alternating hills and valleys. Uses the general form Z=cos(X) "
-						  "x sin(Y)",
+						  _( "Builds a surface with alternating hills and valleys. Uses the general form Z=cos(X) "
+						  "x sin(Y)" ),
 						  "" );
 	gtk_tooltips_set_tip( GTK_TOOLTIPS( tooltips ),
 						  GTK_WIDGET( wave_radios[1] ),
-						  "Builds a surface with ridges parallel to the vertical axis.",
+						  _( "Builds a surface with ridges parallel to the vertical axis." ),
 						  "" );
 	gtk_tooltips_set_tip( GTK_TOOLTIPS( tooltips ),
 						  GTK_WIDGET( wave_radios[2] ),
-						  "Builds a surface with ridges parallel to the horizontal axis.",
+						  _( "Builds a surface with ridges parallel to the horizontal axis." ),
 						  "" );
 	gtk_tooltips_set_tip( GTK_TOOLTIPS( tooltips ),
 						  GTK_WIDGET( wave_radios[3] ),
-						  "Builds a map from a bitmap image representing a contour plot. Click the \"Bitmap\" "
+						  _( "Builds a map from a bitmap image representing a contour plot. Click the \"Bitmap\" "
 						  "tab to select the image. GenSurf only supports 256-color (8 bit) "
 						  "bitmaps. GenSurf will work with any 256-color bitmap, but gray scale bitmaps are a bit "
-						  "more intuitive.",
+						  "more intuitive." ),
 						  "" );
 	gtk_tooltips_set_tip( GTK_TOOLTIPS( tooltips ),
 						  GTK_WIDGET( wave_radios[4] ),
-						  "Builds a random surface using the Plasma Cloud technique. Variance is controlled "
+						  _( "Builds a random surface using the Plasma Cloud technique. Variance is controlled "
 						  "by the Roughness input. To build a surface with completely random values not "
-						  "dependent on neighboring vertices, use one of the other waveforms with 0 amplitude.",
+						  "dependent on neighboring vertices, use one of the other waveforms with 0 amplitude." ),
 						  "" );
 	gtk_tooltips_set_tip( GTK_TOOLTIPS( tooltips ),
 						  GTK_WIDGET( g_object_get_data( G_OBJECT( g_pWnd ), "wavelength" ) ),
-						  "Enter the wavelength (distance between crests). NOTE: Wavelengths equal to the grid "
+						  _( "Enter the wavelength (distance between crests). NOTE: Wavelengths equal to the grid "
 						  "size or 2 times the grid size will result in 0 amplitudes. For best results, the "
 						  "wavelength value should be at least 4 times the grid size (extents divided by the "
-						  "number of divisions",
+						  "number of divisions" ),
 						  "" );
 	gtk_tooltips_set_tip( GTK_TOOLTIPS( tooltips ),
 						  GTK_WIDGET( g_object_get_data( G_OBJECT( g_pWnd ), "amplitude" ) ),
-						  "Enter the height of hills/ridges.",
+						  _( "Enter the height of hills/ridges." ),
 						  "" );
 	gtk_tooltips_set_tip( GTK_TOOLTIPS( tooltips ),
 						  GTK_WIDGET( g_object_get_data( G_OBJECT( g_pWnd ), "roughness" ) ),
-						  "Enter the roughness value (noise) for the surface. For fractal surfaces, this value "
-						  "is used as a variance in the fractal calculations.",
+						  _( "Enter the roughness value (noise) for the surface. For fractal surfaces, this value "
+						  "is used as a variance in the fractal calculations." ),
 						  "" );
 	gtk_tooltips_set_tip( GTK_TOOLTIPS( tooltips ),
 						  GTK_WIDGET( g_object_get_data( G_OBJECT( g_pWnd ), "random" ) ),
-						  "Seed value for the pseudo-random number generator.",
+						  _( "Seed value for the pseudo-random number generator." ),
 						  "" );
 	// Extents tab
 	gtk_tooltips_set_tip( GTK_TOOLTIPS( tooltips ),
 						  GTK_WIDGET( g_object_get_data( G_OBJECT( g_pWnd ), "hmin" ) ),
-						  "Minimum horizontal coordinate of the surface, i.e. X for a surface parallel to "
+						  _( "Minimum horizontal coordinate of the surface, i.e. X for a surface parallel to "
 						  "the XY or XZ planes, Y for a surface parallel to the YZ plane. For best results, "
 						  "the extents (maximum-minimum values) in a given direction should be evenly "
-						  "divisible by the number of divisions in that direction.",
+						  "divisible by the number of divisions in that direction." ),
 						  "" );
 	gtk_tooltips_set_tip( GTK_TOOLTIPS( tooltips ),
 						  GTK_WIDGET( g_object_get_data( G_OBJECT( g_pWnd ), "hmax" ) ),
-						  "Maximum horizontal coordinate of the surface, i.e. X for a surface parallel to "
+						  _( "Maximum horizontal coordinate of the surface, i.e. X for a surface parallel to "
 						  "the XY or XZ planes, Y for a surface parallel to the YZ plane. For best results, "
 						  "the extents (maximum-minimum values) in a given direction should be evenly "
-						  "divisible by the number of divisions in that direction.",
+						  "divisible by the number of divisions in that direction." ),
 						  "" );
 	gtk_tooltips_set_tip( GTK_TOOLTIPS( tooltips ),
 						  GTK_WIDGET( g_object_get_data( G_OBJECT( g_pWnd ), "vmin" ) ),
-						  "Minimum vertical coordinate of the surface, i.e. Y for a surface parallel to "
+						  _( "Minimum vertical coordinate of the surface, i.e. Y for a surface parallel to "
 						  "the XY plane, Z for a surface parallel to the XZ or YZ planes. For best results, "
 						  "the extents (maximum-minimum values) in a given direction should be evenly "
-						  "divisible by the number of divisions in that direction.",
+						  "divisible by the number of divisions in that direction." ),
 						  "" );
 	gtk_tooltips_set_tip( GTK_TOOLTIPS( tooltips ),
 						  GTK_WIDGET( g_object_get_data( G_OBJECT( g_pWnd ), "vmax" ) ),
-						  "Maximum vertical coordinate of the surface, i.e. Y for a surface parallel to "
+						  _( "Maximum vertical coordinate of the surface, i.e. Y for a surface parallel to "
 						  "the XY plane, Z for a surface parallel to the XZ or YZ planes. For best results, "
 						  "the extents (maximum-minimum values) in a given direction should be evenly "
-						  "divisible by the number of divisions in that direction.",
+						  "divisible by the number of divisions in that direction." ),
 						  "" );
 	gtk_tooltips_set_tip( GTK_TOOLTIPS( tooltips ),
 						  GTK_WIDGET( g_object_get_data( G_OBJECT( g_pWnd ), "nh" ) ),
-						  "Number of divisions in the horizontal direction. For best results, the extents "
+						  _( "Number of divisions in the horizontal direction. For best results, the extents "
 						  "in a given direction should be evenly divisible by the number of divisions in "
-						  "that direction.",
+						  "that direction." ),
 						  "" );
 	gtk_tooltips_set_tip( GTK_TOOLTIPS( tooltips ),
 						  GTK_WIDGET( g_object_get_data( G_OBJECT( g_pWnd ), "nv" ) ),
-						  "Number of divisions in the vertical direction. For best results, the extents "
+						  _( "Number of divisions in the vertical direction. For best results, the extents "
 						  "in a given direction should be evenly divisible by the number of divisions in "
-						  "that direction.",
+						  "that direction." ),
 						  "" );
 	gtk_tooltips_set_tip( GTK_TOOLTIPS( tooltips ),
 						  GTK_WIDGET( g_object_get_data( G_OBJECT( g_pWnd ), "use_patches" ) ),
-						  "Produce one or more curved patches in the shape of your selected surface rather "
+						  _( "Produce one or more curved patches in the shape of your selected surface rather "
 						  "than producing solid brushes. Depending on the size of your surface (and the "
 						  "user's graphic detail settings, which you cannot control), curved surfaces will "
 						  "be represented in the game by a very large number of polygons. Read the warnings "
-						  "concerning curved surfaces on the GenSurf web page before using this feature.",
+						  "concerning curved surfaces on the GenSurf web page before using this feature." ),
 						  "" );
 	gtk_tooltips_set_tip( GTK_TOOLTIPS( tooltips ),
 						  GTK_WIDGET( g_object_get_data( G_OBJECT( g_pWnd ), "decimate" ) ),
-						  "Use the slider to control the number of vertices discarded by GenSurf. For many "
+						  _( "Use the slider to control the number of vertices discarded by GenSurf. For many "
 						  "surfaces, you can produce roughly the same shape surface with a high decimation "
 						  "value. This will generally result in a map with lower polygon counts (and better "
 						  "in-game performance). However, this feature should NOT be used for large terrain "
-						  "surfaces in Q3",
+						  "surfaces in Q3" ),
 						  "" );
 	gtk_tooltips_set_tip( GTK_TOOLTIPS( tooltips ),
 						  GTK_WIDGET( g_object_get_data( G_OBJECT( g_pWnd ), "z00" ) ),
-						  "Enter the height of the surface at the lower left corner. This value will likely "
-						  "be modified unless \"Linear Borders\" is checked.",
+						  _( "Enter the height of the surface at the lower left corner. This value will likely "
+						  "be modified unless \"Linear Borders\" is checked." ),
 						  "" );
 	gtk_tooltips_set_tip( GTK_TOOLTIPS( tooltips ),
 						  GTK_WIDGET( g_object_get_data( G_OBJECT( g_pWnd ), "z01" ) ),
-						  "Enter the height of the surface at the upper left corner. This value will likely "
-						  "be modified unless \"Linear Borders\" is checked.",
+						  _( "Enter the height of the surface at the upper left corner. This value will likely "
+						  "be modified unless \"Linear Borders\" is checked." ),
 						  "" );
 	gtk_tooltips_set_tip( GTK_TOOLTIPS( tooltips ),
 						  GTK_WIDGET( g_object_get_data( G_OBJECT( g_pWnd ), "z10" ) ),
-						  "Enter the height of the surface at the lower right corner. This value will likely "
-						  "be modified unless \"Linear Borders\" is checked.",
+						  _( "Enter the height of the surface at the lower right corner. This value will likely "
+						  "be modified unless \"Linear Borders\" is checked." ),
 						  "" );
 	gtk_tooltips_set_tip( GTK_TOOLTIPS( tooltips ),
 						  GTK_WIDGET( g_object_get_data( G_OBJECT( g_pWnd ), "z11" ) ),
-						  "Enter the height of the surface at the upper right corner. This value will likely "
-						  "be modified unless \"Linear Borders\" is checked.",
+						  _( "Enter the height of the surface at the upper right corner. This value will likely "
+						  "be modified unless \"Linear Borders\" is checked." ),
 						  "" );
 	gtk_tooltips_set_tip( GTK_TOOLTIPS( tooltips ),
 						  GTK_WIDGET( g_object_get_data( G_OBJECT( g_pWnd ), "linearborder" ) ),
-						  "Restrict the edges of the surface to a straight line. This will help match up "
-						  "brush edges if you drop this surface into another map.",
+						  _( "Restrict the edges of the surface to a straight line. This will help match up "
+						  "brush edges if you drop this surface into another map." ),
 						  "" );
 	// Bitmap tab
 	gtk_tooltips_set_tip( GTK_TOOLTIPS( tooltips ),
 						  GTK_WIDGET( g_object_get_data( G_OBJECT( g_pWnd ), "bmp_file" ) ),
-						  "Type the name of an 8-bit bitmap image file, or click Browse to select an image "
-						  "from a list of those available on your system.",
+						  _( "Type the name of an 8-bit bitmap image file, or click Browse to select an image "
+						  "from a list of those available on your system." ),
 						  "" );
 	gtk_tooltips_set_tip( GTK_TOOLTIPS( tooltips ),
 						  GTK_WIDGET( g_object_get_data( G_OBJECT( g_pWnd ), "bmp_file_browse" ) ),
-						  "Select a bitmap image file from a list of those available on your system.",
+						  _( "Select a bitmap image file from a list of those available on your system." ),
 						  "" );
 	gtk_tooltips_set_tip( GTK_TOOLTIPS( tooltips ),
 						  GTK_WIDGET( g_object_get_data( G_OBJECT( g_pWnd ), "bmp_reload" ) ),
-						  "Reload the selected bitmap file after making changes in an external image editor.",
+						  _( "Reload the selected bitmap file after making changes in an external image editor." ),
 						  "" );
 	gtk_tooltips_set_tip( GTK_TOOLTIPS( tooltips ),
 						  GTK_WIDGET( g_object_get_data( G_OBJECT( g_pWnd ), "bmp_black" ) ),
-						  "Enter the value corresponding to color index 0 in the bitmap file. For gray scale "
-						  "images, color 0 is normally black.",
+						  _( "Enter the value corresponding to color index 0 in the bitmap file. For gray scale "
+						  "images, color 0 is normally black." ),
 						  "" );
 	gtk_tooltips_set_tip( GTK_TOOLTIPS( tooltips ),
 						  GTK_WIDGET( g_object_get_data( G_OBJECT( g_pWnd ), "bmp_white" ) ),
-						  "Enter the value corresponding to color index 255 in the bitmap file. For gray scale "
-						  "images, color 255 is normally white.",
+						  _( "Enter the value corresponding to color index 255 in the bitmap file. For gray scale "
+						  "images, color 255 is normally white." ),
 						  "" );
 	// Fixpoints tab
 	gtk_tooltips_set_tip( GTK_TOOLTIPS( tooltips ),
 						  GTK_WIDGET( g_object_get_data( G_OBJECT( g_pWnd ), "fix_value" ) ),
-						  "Enter a value for the selected vertex. This value will not be adjusted when applying "
+						  _( "Enter a value for the selected vertex. This value will not be adjusted when applying "
 						  "a waveform or roughness to the surface. Unlock this vertex (so that it will be "
 						  "adjusted normally) by clicking \"Free\". This vertex will influence vertices within "
-						  "the \"Range affected\" of this vertex.",
+						  "the \"Range affected\" of this vertex." ),
 						  "" );
 	gtk_tooltips_set_tip( GTK_TOOLTIPS( tooltips ),
 						  GTK_WIDGET( g_object_get_data( G_OBJECT( g_pWnd ), "fix_range" ) ),
-						  "Enter the range away from the selected vertex that other vertices will be affected. "
+						  _( "Enter the range away from the selected vertex that other vertices will be affected. "
 						  "Use 0 if you don't want other vertices to be influenced by the currently selected "
 						  "one. Note: this box is disabled if you've chosen the fractal generator, as it uses "
-						  "a completely different method for determining values.",
+						  "a completely different method for determining values." ),
 						  "" );
 	gtk_tooltips_set_tip( GTK_TOOLTIPS( tooltips ),
 						  GTK_WIDGET( g_object_get_data( G_OBJECT( g_pWnd ), "fix_rate" ) ),
-						  "Enter a rate of change for the surface affected by the fixed value. 0 gives a smooth "
+						  _( "Enter a rate of change for the surface affected by the fixed value. 0 gives a smooth "
 						  "sinusoidal curve, values less than 0 give progressively sharper spikes, and values "
 						  "greater than 0 take on a square shape. Values less than -30 or greater than 30 are "
 						  "set to -30 and 30, respectively. Note that this entry will have no effect unless "
-						  "you also specify a \"range affected\".",
+						  "you also specify a \"range affected\"." ),
 						  "" );
 	gtk_tooltips_set_tip( GTK_TOOLTIPS( tooltips ),
 						  GTK_WIDGET( g_object_get_data( G_OBJECT( g_pWnd ), "fix_free" ) ),
-						  "Click this to free (unlock the value of) the currently selected vertex.",
+						  _( "Click this to free (unlock the value of) the currently selected vertex." ),
 						  "" );
 	gtk_tooltips_set_tip( GTK_TOOLTIPS( tooltips ),
 						  GTK_WIDGET( g_object_get_data( G_OBJECT( g_pWnd ), "fix_freeall" ) ),
-						  "Click this to free (unlock the values of) all vertices.",
+						  _( "Click this to free (unlock the values of) all vertices." ),
 						  "" );
 	// Texture tab
 	gtk_tooltips_set_tip( GTK_TOOLTIPS( tooltips ),
 						  GTK_WIDGET( g_object_get_data( G_OBJECT( g_pWnd ), "texture1" ) ),
-						  "Enter the name of the texture or shader used for the surface faces.",
+						  _( "Enter the name of the texture or shader used for the surface faces." ),
 						  "" );
 	gtk_tooltips_set_tip( GTK_TOOLTIPS( tooltips ),
 						  GTK_WIDGET( g_object_get_data( G_OBJECT( g_pWnd ), "texture2" ) ),
-						  "Enter the name of the texture or shader used for faces other than the surface. Under "
-						  "normal circumstances this should be \"common/caulk\"",
+						  _( "Enter the name of the texture or shader used for faces other than the surface. Under "
+						  "normal circumstances this should be \"common/caulk\"" ),
 						  "" );
 	gtk_tooltips_set_tip( GTK_TOOLTIPS( tooltips ),
 						  GTK_WIDGET( g_object_get_data( G_OBJECT( g_pWnd ), "texture3" ) ),
-						  "Enter the name of the texture or shader used for \"steep\" surface faces, where \"steep\" "
+						  _( "Enter the name of the texture or shader used for \"steep\" surface faces, where \"steep\" "
 						  "is the angle specified below. If this entry is left blank or if the \"steep\" angle is 0, "
-						  "all surface faces will use the texture specified by \"Surface\".",
+						  "all surface faces will use the texture specified by \"Surface\"." ),
 						  "" );
 
 	gtk_tooltips_set_tip( GTK_TOOLTIPS( tooltips ),
 						  GTK_WIDGET( g_object_get_data( G_OBJECT( g_pWnd ), "detail" ) ),
-						  "Check this box to use the detail content property on the generated brushes. Compile "
+						  _( "Check this box to use the detail content property on the generated brushes. Compile "
 						  "times will be considerably shorter if the detail property is used, though the surface "
 						  "will not block visibility at all. If you use the detail property, you should make sure "
 						  "that \"common/caulk\" is used for the non-surface faces, or the polygon count will be "
-						  "much higher than necessary.",
+						  "much higher than necessary." ),
 						  "" );
 }
 
@@ -1672,7 +1671,7 @@ GtkWidget* create_main_dialog(){
 	gtk_widget_set_usize( spin, 60, -2 );
 	g_object_set_data( G_OBJECT( dlg ), "nv", spin );
 
-	check = gtk_check_button_new_with_label( "Use Bezier patches" );
+	check = gtk_check_button_new_with_label( _( "Use Bezier patches" ) );
 	gtk_widget_show( check );
 	gtk_box_pack_start( GTK_BOX( vbox ), check, FALSE, TRUE, 0 );
 	g_object_set_data( G_OBJECT( dlg ), "use_patches", check );
@@ -1782,7 +1781,7 @@ GtkWidget* create_main_dialog(){
 	g_object_set_data( G_OBJECT( dlg ), "z10", entry );
 	g_signal_connect( G_OBJECT( entry ), "focus-out-event", G_CALLBACK( doublevariable_entryfocusout ), &Z10 );
 
-	check = gtk_check_button_new_with_label( "Linear borders" );
+	check = gtk_check_button_new_with_label( _( "Linear borders" ) );
 	gtk_widget_show( check );
 	gtk_table_attach( GTK_TABLE( table ), check, 0, 4, 2, 3,
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
@@ -2153,7 +2152,7 @@ GtkWidget* create_main_dialog(){
 	gtk_widget_show( label );
 	gtk_box_pack_start( GTK_BOX( vbox ), label, FALSE, TRUE, 0 );
 
-	button = gtk_button_new_with_label( "Open..." );
+	button = gtk_button_new_with_label( _( "Open..." ) );
 	gtk_widget_show( button );
 	gtk_box_pack_start( GTK_BOX( vbox ), button, FALSE, TRUE, 0 );
 	g_object_set_data( G_OBJECT( dlg ), "open", button );

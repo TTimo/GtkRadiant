@@ -20,6 +20,7 @@
 #ifndef __PRTVIEW_AFX_H__
 #define __PRTVIEW_AFX_H__
 
+#include <glib/gi18n.h>
 #include <gtk/gtk.h>
 #include <stdint.h>
 

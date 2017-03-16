@@ -1825,7 +1825,7 @@ void MainFrame::create_main_toolbar( GtkWidget *window, GtkWidget *vbox ){
 										"", _( "Camera preview" ), "", new_image_icon("view_cameratoggle.png"),
 										G_CALLBACK( HandleCommand ), GINT_TO_POINTER( ID_VIEW_CAMERATOGGLE ) );
 		g_object_set_data( G_OBJECT( window ), "tb_view_cameratoggle", w );
-		w = gtk_toolbar_append_item( GTK_TOOLBAR( toolbar ), "", "Update Camera", "",
+		w = gtk_toolbar_append_item( GTK_TOOLBAR( toolbar ), "", _( "Update Camera" ), "",
 									 new_image_icon("view_cameraupdate.png"), G_CALLBACK( HandleCommand ),
 									 GINT_TO_POINTER( ID_VIEW_CAMERAUPDATE ) );
 		g_object_set_data( G_OBJECT( window ), "tb_view_cameraupdate", w );
@@ -2400,7 +2400,7 @@ static ZWnd *create_floating_zwnd( MainFrame *mainframe ){
 	ZWnd *pZWnd = new ZWnd();
 	GtkWidget* wnd = create_floating( mainframe );
 
-	gtk_window_set_title( GTK_WINDOW( wnd ), "Z" );
+	gtk_window_set_title( GTK_WINDOW( wnd ), _( "Z" ) );
 
 	pZWnd->m_pParent = wnd;
 
@@ -4606,8 +4606,8 @@ void MainFrame::OnPrefs() {
            (g_PrefsDlg.m_nLatchedShader             != nShader          ) ||
            (g_PrefsDlg.m_nLatchedTextureQuality     != nTextureQuality  ) || 
            (g_PrefsDlg.m_bLatchedFloatingZ          != bFloatingZ)) {
-            gtk_MessageBoxNew(m_pWidget, "You must restart Radiant for the "
-                              "changes to take effect.", "Restart Radiant", 
+            gtk_MessageBoxNew(m_pWidget, _( "You must restart Radiant for the "
+                              "changes to take effect." ), _( "Restart Radiant" ), 
                               MB_OK | MB_ICONINFORMATION);
         }
 
