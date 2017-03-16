@@ -1560,8 +1560,8 @@ const char* file_dialog( void *parent, gboolean open, const char* title, const c
 			else {
 				// type will be empty if for example there were no filters for pattern,
 				// or if some other UI inconsistencies happen.
-				if ( gtk_MessageBox( parent, "No file extension specified in file to be saved.\nAttempt to save anyways?",
-									 "GtkRadiant", MB_YESNO ) == IDNO ) {
+				if ( gtk_MessageBox( parent, _( "No file extension specified in file to be saved.\nAttempt to save anyways?" ),
+									 _( "GtkRadiant" ), MB_YESNO ) == IDNO ) {
 					return NULL;
 				}
 			}
@@ -1576,8 +1576,8 @@ const char* file_dialog( void *parent, gboolean open, const char* title, const c
 				}
 			}
 			if ( !knownExtension ) {
-				if ( gtk_MessageBox( parent, "Unknown file extension for this save operation.\nAttempt to save anyways?",
-									 "GtkRadiant", MB_YESNO ) == IDNO ) {
+				if ( gtk_MessageBox( parent, _( "Unknown file extension for this save operation.\nAttempt to save anyways?" ),
+									 _( "GtkRadiant" ), MB_YESNO ) == IDNO ) {
 					return NULL;
 				}
 			}
@@ -1587,7 +1587,7 @@ const char* file_dialog( void *parent, gboolean open, const char* title, const c
 	// prompt to overwrite existing files
 	if ( !open ) {
 		if ( access( szFile, R_OK ) == 0 ) {
-			if ( gtk_MessageBox( parent, "File already exists.\nOverwrite?", "GtkRadiant", MB_YESNO ) == IDNO ) {
+			if ( gtk_MessageBox( parent, _( "File already exists.\nOverwrite?" ), _( "GtkRadiant" ), MB_YESNO ) == IDNO ) {
 				return NULL;
 			}
 		}
@@ -1692,7 +1692,7 @@ void OpenURL( const char *url ){
         snprintf(command, sizeof(command), "xdg-open '%s' &", url);
 #   endif
     if (system(command) != 0) {
-         gtk_MessageBox( g_pParentWnd->m_pWidget, "Failed to launch web browser!" );
+         gtk_MessageBox( g_pParentWnd->m_pWidget, _( "Failed to launch web browser!" ) );
     }
 #endif
 }

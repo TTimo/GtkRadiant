@@ -552,7 +552,7 @@ GtkWidget* create_SurfaceInspector( void ){
 
 	SurfaceInspector = gtk_window_new( GTK_WINDOW_TOPLEVEL );
 	gtk_container_set_border_width( GTK_CONTAINER( SurfaceInspector ), 4 );
-	gtk_window_set_title( GTK_WINDOW( SurfaceInspector ), "Surface Inspector" );
+	gtk_window_set_title( GTK_WINDOW( SurfaceInspector ), _( "Surface Inspector" ) );
 
 	SetWinPos_from_Prefs( SurfaceInspector );
 
@@ -731,13 +731,13 @@ GtkWidget* create_SurfaceInspector( void ){
 	gtk_spin_button_set_update_policy( GTK_SPIN_BUTTON( rotate_step_spinbutton ), GTK_UPDATE_IF_VALID );
 	g_object_set( rotate_step_spinbutton, "xalign", 1.0, NULL );
 
-	match_grid_button = gtk_button_new_with_mnemonic( "Match Grid" );
+	match_grid_button = gtk_button_new_with_mnemonic( _( "Match Grid" ) );
 	gtk_widget_show( match_grid_button );
 	gtk_table_attach( GTK_TABLE( table1 ), match_grid_button, 2, 3, 6, 7,
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
 
-	frame2 = gtk_frame_new( "Tools" );
+	frame2 = gtk_frame_new( _( "Tools" ) );
 	gtk_widget_show( frame2 );
 	gtk_container_add( GTK_CONTAINER( vbox1 ), frame2 );
 
@@ -786,13 +786,13 @@ GtkWidget* create_SurfaceInspector( void ){
 	gtk_spin_button_set_update_policy( GTK_SPIN_BUTTON( fit_width_spinbutton ), GTK_UPDATE_IF_VALID );
 	g_object_set( fit_width_spinbutton, "xalign", 1.0, NULL );
 
-	fit_button = gtk_button_new_with_mnemonic( "Fit" );
+	fit_button = gtk_button_new_with_mnemonic( _( "Fit" ) );
 	gtk_widget_show( fit_button );
 	gtk_table_attach( GTK_TABLE( table2 ), fit_button, 1, 2, 1, 2,
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
 
-	axial_button = gtk_button_new_with_mnemonic( "Axial" );
+	axial_button = gtk_button_new_with_mnemonic( _( "Axial" ) );
 	gtk_widget_show( axial_button );
 	gtk_table_attach( GTK_TABLE( table2 ), axial_button, 0, 1, 1, 2,
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),

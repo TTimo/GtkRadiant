@@ -23,6 +23,7 @@
 // precompiled headers
 
 // standard headers
+#include <glib/gi18n.h>
 #include <gdk/gdkkeysyms.h>
 #include <gtk/gtk.h>
 #include <stdio.h>

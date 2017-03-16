@@ -2512,7 +2512,7 @@ void PrefsDlg::BuildDialog(){
 
 #if PREFERENCES_HAVE_PREFAB_PATH
 	// browse button
-	button = gtk_button_new_with_label( "..." );
+	button = gtk_button_new_with_label( _( "..." ) );
 	gtk_widget_show( button );
 	g_signal_connect( G_OBJECT( button ), "clicked", G_CALLBACK( OnBtnBrowseprefab ), this );
 	gtk_table_attach( GTK_TABLE( table ), button, 2, 3, 0, 1,
@@ -3378,7 +3378,7 @@ void CGameInstall::BuildDialog() {
 	gtk_widget_show( vbox1 );
 	gtk_container_add( GTK_CONTAINER( dlg ), vbox1 );
 
-	frame = gtk_frame_new( "Configure a game" );
+	frame = gtk_frame_new( _( "Configure a game" ) );
 	gtk_widget_show( frame );
 	gtk_container_add( GTK_CONTAINER( vbox1 ), frame );
 

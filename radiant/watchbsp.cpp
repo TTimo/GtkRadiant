@@ -51,6 +51,7 @@
 #endif
 
 #include <assert.h>
+#include <glib/gi18n.h>
 
 // Static functions for the SAX callbacks -------------------------------------------------------
 
@@ -330,7 +331,7 @@ void CWatchBSP::RunQuake() {
 		msg = "Failed to execute the following command: ";
 		msg += cmd; msg += cmdline;
 		Sys_Printf( msg );
-		gtk_MessageBox( g_pParentWnd->m_pWidget,  msg, "BSP monitoring", MB_OK | MB_ICONERROR );
+		gtk_MessageBox( g_pParentWnd->m_pWidget,  msg, _( "BSP monitoring" ), MB_OK | MB_ICONERROR );
 	}
 }
 
@@ -380,9 +381,9 @@ void CWatchBSP::DoEBeginStep() {
 
 	if ( !SetupListening() ) {
 		CString msg;
-		msg = "Failed to get a listening socket on port 39000.\nTry running with BSP monitoring disabled if you can't fix this.\n";
+		msg = _( "Failed to get a listening socket on port 39000.\nTry running with BSP monitoring disabled if you can't fix this.\n" );
 		Sys_Printf( msg );
-		gtk_MessageBox( g_pParentWnd->m_pWidget, msg, "BSP monitoring", MB_OK | MB_ICONERROR );
+		gtk_MessageBox( g_pParentWnd->m_pWidget, msg, _( "BSP monitoring" ), MB_OK | MB_ICONERROR );
 		Reset();
 		return;
 	}
@@ -401,11 +402,11 @@ void CWatchBSP::DoEBeginStep() {
 
 		if ( !Q_Exec( NULL, (char *) g_ptr_array_index( m_pCmd, m_iCurrentStep ), NULL, true ) ) {
 			CString msg;
-			msg = "Failed to execute the following command: ";
+			msg = _( "Failed to execute the following command: " );
 			msg += (char *) g_ptr_array_index( m_pCmd, m_iCurrentStep );
-			msg += "\nCheck that the file exists and that you don't run out of system resources.\n";
+			msg += _( "\nCheck that the file exists and that you don't run out of system resources.\n" );
 			Sys_Printf( msg );
-			gtk_MessageBox( g_pParentWnd->m_pWidget,  msg, "BSP monitoring", MB_OK | MB_ICONERROR );
+			gtk_MessageBox( g_pParentWnd->m_pWidget,  msg, _( "BSP monitoring" ), MB_OK | MB_ICONERROR );
 			Reset();
 			return;
 		}
@@ -431,7 +432,7 @@ void CWatchBSP::RoutineProcessing(){
 	case EBeginStep:
 		// timeout: if we don't get an incoming connection fast enough, go back to idle
 		if ( g_timer_elapsed( m_pTimer, NULL ) > g_PrefsDlg.m_iTimeout ) {
-			gtk_MessageBox( g_pParentWnd->m_pWidget, "The connection timed out, assuming the BSP process failed\nMake sure you are using a networked version of Q3Map?\nOtherwise you need to disable BSP Monitoring in prefs.", "BSP process monitoring", MB_OK );
+			gtk_MessageBox( g_pParentWnd->m_pWidget, _( "The connection timed out, assuming the BSP process failed\nMake sure you are using a networked version of Q3Map?\nOtherwise you need to disable BSP Monitoring in prefs." ), _( "BSP process monitoring" ), MB_OK );
 			Reset();
 			if ( m_bBSPPlugin ) {
 				// status == 1 : didn't get the connection
@@ -548,8 +549,8 @@ void CWatchBSP::DoMonitoringLoop( GPtrArray *pCmd, char *sBSPName ){
 	if ( m_eState != EIdle ) {
 		Sys_Printf( "WatchBSP got a monitoring request while not idling...\n" );
 		// prompt the user, should we cancel the current process and go ahead?
-		if ( gtk_MessageBox( g_pParentWnd->m_pWidget,  "I am already monitoring a BSP process.\nDo you want me to override and start a new compilation?",
-							 "BSP process monitoring", MB_YESNO ) == IDNO ) {
+		if ( gtk_MessageBox( g_pParentWnd->m_pWidget,  _( "I am already monitoring a BSP process.\nDo you want me to override and start a new compilation?" ),
+							 _( "BSP process monitoring" ), MB_YESNO ) == IDNO ) {
 			return;
 		}
 	}

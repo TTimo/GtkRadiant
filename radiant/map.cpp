@@ -20,6 +20,7 @@
  */
 
 #include "stdafx.h"
+#include <glib/gi18n.h>
 #include <string.h>
 #if defined ( __linux__ ) || defined ( __APPLE__ )
 #include <unistd.h>
@@ -155,7 +156,7 @@ void Map_Free( void ){
 	g_bRestoreBetween = false;
 	if ( selected_brushes.next &&
 		 ( selected_brushes.next != &selected_brushes ) ) {
-		if ( gtk_MessageBox( g_pParentWnd->m_pWidget, "Copy selection?", " ", MB_YESNO ) == IDYES ) {
+		if ( gtk_MessageBox( g_pParentWnd->m_pWidget, _( "Copy selection?" ), " ", MB_YESNO ) == IDYES ) {
 			Map_SaveBetween();
 		}
 	}

@@ -100,8 +100,8 @@ void WINAPI QE_CheckOpenGLForErrors( void ){
 	int i = qglGetError();
 	if ( i != GL_NO_ERROR ) {
 		if ( i == GL_OUT_OF_MEMORY ) {
-			sprintf( strMsg, "OpenGL out of memory error %s\nDo you wish to save before exiting?", qgluErrorString( (GLenum)i ) );
-			if ( gtk_MessageBox( g_pParentWnd->m_pWidget, strMsg, "Radiant Error", MB_YESNO ) == IDYES ) {
+			sprintf( strMsg, _( "OpenGL out of memory error %s\nDo you wish to save before exiting?" ), qgluErrorString( (GLenum)i ) );
+			if ( gtk_MessageBox( g_pParentWnd->m_pWidget, strMsg, _( "Radiant Error" ), MB_YESNO ) == IDYES ) {
 				Map_SaveFile( NULL, false );
 			}
 			_exit( 1 );
@@ -598,9 +598,9 @@ bool QE_LoadProject( const char *projectfile ){
 	int ver = IntForKey( g_qeglobals.d_project_entity, "version" );
 	if ( ver > PROJECT_VERSION ) {
 		char strMsg[1024];
-		sprintf( strMsg, "This is a version %d project file. This build only supports <=%d project files.\n"
-						 "Please choose another project file or upgrade your version of Radiant.", ver, PROJECT_VERSION );
-		gtk_MessageBox( g_pParentWnd->m_pWidget, strMsg, "Can't load project file", MB_ICONERROR | MB_OK );
+		sprintf( strMsg, _( "This is a version %d project file. This build only supports <=%d project files.\n"
+						 "Please choose another project file or upgrade your version of Radiant." ), ver, PROJECT_VERSION );
+		gtk_MessageBox( g_pParentWnd->m_pWidget, strMsg, _( "Can't load project file" ), MB_ICONERROR | MB_OK );
 		// set the project file to nothing so we are sure we'll ask next time?
 		g_PrefsDlg.m_strLastProject = "";
 		g_PrefsDlg.SavePrefs();
@@ -646,11 +646,11 @@ bool QE_LoadProject( const char *projectfile ){
 		if ( IntForKey( g_qeglobals.d_project_entity, "version" ) != PROJECT_VERSION ) {
 			char strMsg[2048];
 			sprintf( strMsg,
-					 "The template project '%s' has version %d. The editor binary is configured for version %d.\n"
+					_( "The template project '%s' has version %d. The editor binary is configured for version %d.\n"
 					 "This indicates a problem in your setup.\n"
-					 "I will keep going with this project till you fix this",
+					 "I will keep going with this project till you fix this" ),
 					 projectfile, IntForKey( g_qeglobals.d_project_entity, "version" ), PROJECT_VERSION );
-			gtk_MessageBox( g_pParentWnd->m_pWidget, strMsg, "Can't load project file", MB_ICONERROR | MB_OK );
+			gtk_MessageBox( g_pParentWnd->m_pWidget, strMsg, _( "Can't load project file" ), MB_ICONERROR | MB_OK );
 		}
 
 		// create the writable project file path
@@ -1447,7 +1447,7 @@ void MRU_Activate( int index ){
 			MRU_SetText( i, MRU_GetText( i + 1 ) );
 
 		if ( MRU_used == 0 ) {
-			gtk_label_set_text( GTK_LABEL( GTK_BIN( MRU_items[0] )->child ), "Recent Files" );
+			gtk_label_set_text( GTK_LABEL( GTK_BIN( MRU_items[0] )->child ), _( "Recent Files" ) );
 			gtk_widget_set_sensitive( MRU_items[0], FALSE );
 		}
 		else
@@ -1681,8 +1681,8 @@ void Sys_LogFile( void ){
 			Sys_Printf( RADIANT_ABOUTMSG "\n" );
 		}
 		else{
-			gtk_MessageBox( NULL, "Failed to create log file, check write permissions in Radiant directory.\n",
-							"Console logging", MB_OK );
+			gtk_MessageBox( NULL, _( "Failed to create log file, check write permissions in Radiant directory.\n" ),
+							_( "Console logging" ), MB_OK );
 		}
 	}
 	else if ( !g_PrefsDlg.mGamesDialog.m_bLogConsole && g_qeglobals.hLogFile ) {

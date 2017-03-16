@@ -26,6 +26,8 @@
 #include <unistd.h>
 #endif
 
+#include <glib/gi18n.h>
+
 /*
    =================
    Error
@@ -109,12 +111,12 @@ void Error( const char *error, ... ){
 		}
 	}
 
-	strcat( text, "An unrecoverable error has occured.\n"
-				  "Would you like to edit Preferences before exiting Radiant?" );
+	strcat( text, _( "An unrecoverable error has occured.\n"
+				  "Would you like to edit Preferences before exiting Radiant?" ) );
 
 	Sys_Printf( text );
 
-	if ( gtk_MessageBox( NULL, text, "Error", MB_YESNO ) == IDYES ) {
+	if ( gtk_MessageBox( NULL, text, _( "Error" ), MB_YESNO ) == IDYES ) {
 		Sys_Printf( "Doing prefs..\n" );
 		g_PrefsDlg.LoadPrefs();
 		g_PrefsDlg.DoModal();

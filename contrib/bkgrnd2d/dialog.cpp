@@ -219,19 +219,19 @@ CBackgroundDialogPage::CBackgroundDialogPage( VIEWTYPE vt ){
 
 	gtk_widget_show( m_pFileLabel );
 
-	w = gtk_button_new_with_label( "Browse..." );
+	w = gtk_button_new_with_label( _( "Browse..." ) );
 	g_signal_connect( G_OBJECT( w ), "clicked", G_CALLBACK( browse_callback ),
 					  ( gpointer ) this );
 	gtk_box_pack_start( GTK_BOX( hbox ),w, FALSE, FALSE, 5 );
-	gtk_tooltips_set_tip( pTooltips, w, "Select a file", NULL );
+	gtk_tooltips_set_tip( pTooltips, w, _( "Select a file" ), NULL );
 	gtk_widget_show( w );
 
-	w = gtk_button_new_with_label( "Reload" );
+	w = gtk_button_new_with_label( _( "Reload" ) );
 	g_signal_connect( G_OBJECT( w ), "clicked", G_CALLBACK( reload_callback ),
 					  ( gpointer ) this );
 	// TODO disable until we have file
 	// gtk_widget_set_sensitive(w,FALSE);
-	gtk_tooltips_set_tip( pTooltips, w, "Reload current file", NULL );
+	gtk_tooltips_set_tip( pTooltips, w, _( "Reload current file" ), NULL );
 	gtk_box_pack_start( GTK_BOX( hbox ),w, FALSE, FALSE, 5 );
 	gtk_widget_show( w );
 

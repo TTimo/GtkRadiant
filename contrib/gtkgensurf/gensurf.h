@@ -20,6 +20,7 @@
 #ifndef _GENSURF_H_
 #define _GENSURF_H_
 
+#include <glib/gi18n.h>
 #include <gtk/gtk.h>
 
 #include "qerplugin.h"

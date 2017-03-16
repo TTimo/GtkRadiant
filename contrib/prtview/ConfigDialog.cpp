@@ -67,7 +67,7 @@ static int DoColor( COLORREF *c ){
 	clr[1] = ( (double)GetGValue( *c ) ) / 255.0;
 	clr[2] = ( (double)GetBValue( *c ) ) / 255.0;
 
-	dlg = gtk_color_selection_dialog_new( "Choose Color" );
+	dlg = gtk_color_selection_dialog_new( _( "Choose Color" ) );
 	gtk_color_selection_set_color( GTK_COLOR_SELECTION( GTK_COLOR_SELECTION_DIALOG( dlg )->colorsel ), clr );
 	g_signal_connect( G_OBJECT( dlg ), "delete-event",
 						G_CALLBACK( dialog_delete_callback ), NULL );
@@ -336,7 +336,7 @@ void DoConfigDialog(){
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
 	g_signal_connect( G_OBJECT( button ), "clicked", G_CALLBACK( OnColorFog ), NULL );
 
-	aa3check = gtk_check_button_new_with_label( "Anti-Alias (May not work on some video cards)" );
+	aa3check = gtk_check_button_new_with_label( _( "Anti-Alias (May not work on some video cards)" ) );
 	gtk_widget_show( aa3check );
 	gtk_table_attach( GTK_TABLE( table ), aa3check, 1, 4, 0, 1,
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),

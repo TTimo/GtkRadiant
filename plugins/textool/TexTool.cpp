@@ -83,7 +83,7 @@ int DoMessageBox( const char* lpText, const char* lpCaption, guint32 uType ){
 	gtk_widget_show( hbox );
 
 	if ( mode == MB_OK ) {
-		w = gtk_button_new_with_label( "Ok" );
+		w = gtk_button_new_with_label( _( "Ok" ) );
 		gtk_box_pack_start( GTK_BOX( hbox ), w, TRUE, TRUE, 0 );
 		g_signal_connect( G_OBJECT( w ), "clicked",
 							G_CALLBACK( dialog_button_callback ), GINT_TO_POINTER( IDOK ) );
@@ -93,7 +93,7 @@ int DoMessageBox( const char* lpText, const char* lpCaption, guint32 uType ){
 		ret = IDOK;
 	}
 	else if ( mode ==  MB_OKCANCEL ) {
-		w = gtk_button_new_with_label( "Ok" );
+		w = gtk_button_new_with_label( _( "Ok" ) );
 		gtk_box_pack_start( GTK_BOX( hbox ), w, TRUE, TRUE, 0 );
 		g_signal_connect( G_OBJECT( w ), "clicked",
 							G_CALLBACK( dialog_button_callback ), GINT_TO_POINTER( IDOK ) );
@@ -101,7 +101,7 @@ int DoMessageBox( const char* lpText, const char* lpCaption, guint32 uType ){
 		gtk_widget_grab_default( w );
 		gtk_widget_show( w );
 
-		w = gtk_button_new_with_label( "Cancel" );
+		w = gtk_button_new_with_label( _( "Cancel" ) );
 		gtk_box_pack_start( GTK_BOX( hbox ), w, TRUE, TRUE, 0 );
 		g_signal_connect( G_OBJECT( w ), "clicked",
 							G_CALLBACK( dialog_button_callback ), GINT_TO_POINTER( IDCANCEL ) );
@@ -109,7 +109,7 @@ int DoMessageBox( const char* lpText, const char* lpCaption, guint32 uType ){
 		ret = IDCANCEL;
 	}
 	else if ( mode == MB_YESNOCANCEL ) {
-		w = gtk_button_new_with_label( "Yes" );
+		w = gtk_button_new_with_label( _( "Yes" ) );
 		gtk_box_pack_start( GTK_BOX( hbox ), w, TRUE, TRUE, 0 );
 		g_signal_connect( G_OBJECT( w ), "clicked",
 							G_CALLBACK( dialog_button_callback ), GINT_TO_POINTER( IDYES ) );
@@ -117,13 +117,13 @@ int DoMessageBox( const char* lpText, const char* lpCaption, guint32 uType ){
 		gtk_widget_grab_default( w );
 		gtk_widget_show( w );
 
-		w = gtk_button_new_with_label( "No" );
+		w = gtk_button_new_with_label( _( "No" ) );
 		gtk_box_pack_start( GTK_BOX( hbox ), w, TRUE, TRUE, 0 );
 		g_signal_connect( G_OBJECT( w ), "clicked",
 							G_CALLBACK( dialog_button_callback ), GINT_TO_POINTER( IDNO ) );
 		gtk_widget_show( w );
 
-		w = gtk_button_new_with_label( "Cancel" );
+		w = gtk_button_new_with_label( _( "Cancel" ) );
 		gtk_box_pack_start( GTK_BOX( hbox ), w, TRUE, TRUE, 0 );
 		g_signal_connect( G_OBJECT( w ), "clicked",
 							G_CALLBACK( dialog_button_callback ), GINT_TO_POINTER( IDCANCEL ) );
@@ -132,7 +132,7 @@ int DoMessageBox( const char* lpText, const char* lpCaption, guint32 uType ){
 	}
 	else /* if (mode == MB_YESNO) */
 	{
-		w = gtk_button_new_with_label( "Yes" );
+		w = gtk_button_new_with_label( _( "Yes" ) );
 		gtk_box_pack_start( GTK_BOX( hbox ), w, TRUE, TRUE, 0 );
 		g_signal_connect( G_OBJECT( w ), "clicked",
 							G_CALLBACK( dialog_button_callback ), GINT_TO_POINTER( IDYES ) );
@@ -140,7 +140,7 @@ int DoMessageBox( const char* lpText, const char* lpCaption, guint32 uType ){
 		gtk_widget_grab_default( w );
 		gtk_widget_show( w );
 
-		w = gtk_button_new_with_label( "No" );
+		w = gtk_button_new_with_label( _( "No" ) );
 		gtk_box_pack_start( GTK_BOX( hbox ), w, TRUE, TRUE, 0 );
 		g_signal_connect( G_OBJECT( w ), "clicked",
 							G_CALLBACK( dialog_button_callback ), GINT_TO_POINTER( IDNO ) );
