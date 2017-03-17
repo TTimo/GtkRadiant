@@ -1458,6 +1458,58 @@ qboolean XYWnd::DragDelta( int x, int y, vec3_t move ){
 	return false;
 }
 
+static GtkWidget * create_entity_menu_item( GtkWidget *submenu, CString strName )
+{
+	GtkWidget *item, *box, *icon, *label;
+	CString filepath;
+	GdkPixbuf *pixbuf;
+
+	filepath = g_pGameDescription->mEnginePath;
+	filepath += g_pGameDescription->mBaseGame;
+	filepath += "/icons/entity_icons/";
+	filepath += strName;
+	filepath += ".png";
+
+	item = gtk_menu_item_new();
+
+	box = gtk_hbox_new( FALSE, 6 );
+	
+	gtk_container_add( GTK_CONTAINER( item ), box );
+	gtk_widget_show( box );
+
+	pixbuf = gdk_pixbuf_new_from_file( filepath, NULL );
+	if( !pixbuf ) {
+		filepath = g_strGameToolsPath;
+		filepath += "entity_icons/";
+		filepath += g_pGameDescription->mBaseGame;
+		filepath += "/";
+		filepath += strName;
+		filepath += ".png";
+		pixbuf = gdk_pixbuf_new_from_file( filepath, NULL );
+		if( !pixbuf ) {
+			filepath = g_strGameToolsPath;
+			filepath += "entity_icons/";
+			filepath += strName;
+			filepath += ".png";
+			pixbuf = gdk_pixbuf_new_from_file( filepath, NULL );
+		}
+	}
+	if( pixbuf ) {
+		icon = gtk_image_new_from_pixbuf( pixbuf );
+		gtk_box_pack_start( GTK_BOX( box ), icon, FALSE, FALSE, 0 );
+		gtk_widget_show( icon );
+
+		g_object_unref( pixbuf );
+	}
+	label = gtk_label_new( strName );
+	gtk_box_pack_start( GTK_BOX( box ), label, TRUE, TRUE, 0 );
+	gtk_misc_set_alignment( GTK_MISC( label ), 0.0f, 0.5f );
+	gtk_widget_show( label );
+
+	g_object_set_data( G_OBJECT( item ), "classname-label", label );
+
+	return item;
+}
 void XYWnd::HandleDrop(){
 	if ( g_PrefsDlg.m_bRightClick == false ) {
 		return;
@@ -1527,12 +1579,14 @@ void XYWnd::HandleDrop(){
 				CString strRight = strName.Right( strName.GetLength() - n_ - 1 );
 				if ( strLeft == strActive ) { // this is a child
 					assert( submenu );
-					item = gtk_menu_item_new_with_label( strName );
+					CheckMenuSplitting( submenu );
+					item = create_entity_menu_item( submenu, strName );
+
 					g_signal_connect( G_OBJECT( item ), "activate", G_CALLBACK( HandleCommand ),
 										GINT_TO_POINTER( nID++ ) );
+
 					gtk_widget_show( item );
-					CheckMenuSplitting( submenu );
-					gtk_menu_append( GTK_MENU( submenu ), item );
+					gtk_menu_shell_append( GTK_MENU_SHELL( submenu ), item );
 				}
 				else
 				{
@@ -1541,7 +1595,7 @@ void XYWnd::HandleDrop(){
 						// we use submenu_root cause we may have been cascading submenu
 						item = gtk_menu_item_new_with_label( strActive );
 						gtk_widget_show( item );
-						gtk_menu_append( GTK_MENU( menu ), item );
+						gtk_menu_shell_append( GTK_MENU_SHELL( menu ), item );
 						gtk_menu_item_set_submenu( GTK_MENU_ITEM( item ), submenu_root );
 						g_ptrMenus.Add( submenu_root );
 						submenu = NULL;
@@ -1551,11 +1605,11 @@ void XYWnd::HandleDrop(){
 
 					submenu = gtk_menu_new();
 					submenu_root = submenu;
-					item = gtk_menu_item_new_with_label( strName );
+					item = create_entity_menu_item( submenu, strName );
 					g_signal_connect( G_OBJECT( item ), "activate", G_CALLBACK( HandleCommand ),
 										GINT_TO_POINTER( nID++ ) );
 					gtk_widget_show( item );
-					gtk_menu_append( GTK_MENU( submenu ), item );
+					gtk_menu_shell_append( GTK_MENU_SHELL( submenu ), item );
 				}
 			}
 			else
@@ -1565,7 +1619,7 @@ void XYWnd::HandleDrop(){
 					// we use submenu_root cause we may have been cascading submenu
 					item = gtk_menu_item_new_with_label( strActive );
 					gtk_widget_show( item );
-					gtk_menu_append( GTK_MENU( menu ), item );
+					gtk_menu_shell_append( GTK_MENU_SHELL( menu ), item );
 					gtk_menu_item_set_submenu( GTK_MENU_ITEM( item ), submenu_root );
 					g_ptrMenus.Add( submenu_root );
 					submenu = NULL;
@@ -1573,11 +1627,11 @@ void XYWnd::HandleDrop(){
 				}
 				strActive = "";
 
-				item = gtk_menu_item_new_with_label( strName );
+				item = create_entity_menu_item( menu, strName );
 				g_signal_connect( G_OBJECT( item ), "activate", G_CALLBACK( HandleCommand ),
 									GINT_TO_POINTER( nID++ ) );
 				gtk_widget_show( item );
-				gtk_menu_append( GTK_MENU( menu ), item );
+				gtk_menu_shell_append( GTK_MENU_SHELL( menu ), item );
 			}
 		}
 	}

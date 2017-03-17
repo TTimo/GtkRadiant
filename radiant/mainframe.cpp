@@ -421,8 +421,22 @@ gint HandleCommand( GtkWidget *widget, gpointer data ){
 		g_pParentWnd->OnPlugIn( id, str );
 	}
 	else if ( id >= ID_ENTITY_START && id <= ID_ENTITY_END ) {
-		char *str;
-		gtk_label_get( GTK_LABEL( GTK_BIN( widget )->child ), &str );
+		const char *str;
+
+		if( GTK_IS_MENU_ITEM( widget ) ) {
+			GtkWidget *label = GTK_WIDGET( g_object_get_data( G_OBJECT( widget ), "classname-label" ) );
+			if( label )
+			{
+				str = gtk_label_get_text( GTK_LABEL( label ) );	
+			} else
+			{
+				str = gtk_menu_item_get_label( GTK_MENU_ITEM( widget ) );
+			}
+		} else if( GTK_IS_LABEL( widget ) ) {
+			str = gtk_label_get_text( GTK_LABEL( widget ) );
+		} else {
+			str = gtk_label_get_text( GTK_LABEL( gtk_bin_get_child( GTK_BIN( widget ) ) ) );
+		}
 		g_pParentWnd->ActiveXY()->OnEntityCreate( str );
 	}
 	else{ switch ( id )
