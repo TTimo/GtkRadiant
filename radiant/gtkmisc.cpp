@@ -866,7 +866,6 @@ int WINAPI gtk_MessageBoxNew( void *parent, const char *message,
 	gtk_container_set_border_width( GTK_CONTAINER( dlg ), MSGBOX_PAD_MAJOR );
 	g_object_set_data( G_OBJECT( dlg ), "loop", &loop );
 	g_object_set_data( G_OBJECT( dlg ), "ret", &ret );
-	gtk_widget_realize( dlg );
 
 	if( parent ) {
 		gtk_window_set_transient_for( GTK_WINDOW( dlg ), GTK_WINDOW( parent ) );
@@ -1022,7 +1021,6 @@ int WINAPI gtk_MessageBox( void *parent, const char* lpText, const char* lpCapti
 	gtk_container_set_border_width( GTK_CONTAINER( window ), 10 );
 	g_object_set_data( G_OBJECT( window ), "loop", &loop );
 	g_object_set_data( G_OBJECT( window ), "ret", &ret );
-	gtk_widget_realize( window );
 
 	gtk_window_set_policy( GTK_WINDOW( window ),FALSE,FALSE,TRUE );
 
