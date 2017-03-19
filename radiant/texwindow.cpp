@@ -646,7 +646,7 @@ void FillTextureMenu( GSList** pArray ){
 						*pArray = g_slist_append( *pArray, strdup( (char*)temp->data ) );
 					}
 					if ( ++texture_nummenus == MAX_TEXTUREDIRS ) {
-						Sys_Printf( "WARNING: max texture directories count has been reached!\n" );
+						Sys_FPrintf( SYS_WRN, "WARNING: max texture directories count has been reached!\n" );
 						// push submenu and get out
 						item = gtk_menu_item_new_with_label( dirRoot );
 						gtk_widget_show( item );
@@ -683,7 +683,7 @@ void FillTextureMenu( GSList** pArray ){
 			*pArray = g_slist_append( *pArray, strdup( (char*)temp->data ) );
 		}
 		if ( ++texture_nummenus == MAX_TEXTUREDIRS ) {
-			Sys_Printf( "WARNING: max texture directories count has been reached!\n" );
+			Sys_FPrintf( SYS_WRN, "WARNING: max texture directories count has been reached!\n" );
 			ClearGSList( texdirs );
 			return;
 		}
@@ -900,7 +900,7 @@ void Texture_ShowAll(){
 
 #ifdef _DEBUG
 	if ( g_bShowAllShaders ) {
-		Sys_Printf( "WARNING: already showing all shaders\n" );
+		Sys_FPrintf( SYS_WRN, "WARNING: already showing all shaders\n" );
 	}
 #endif
 	QERApp_ActiveShaders_SetDisplayed( true );
@@ -1088,7 +1088,7 @@ IShader* Texture_NextPos( int *x, int *y ){
 		q = current_texture;
 
 		if ( !q ) {
-			Sys_Printf( "WARNING: found an IShader without qtexture_t in Texture_NextPos\n" );
+			Sys_FPrintf( SYS_WRN, "WARNING: found an IShader without qtexture_t in Texture_NextPos\n" );
 			return NULL;
 		}
 
