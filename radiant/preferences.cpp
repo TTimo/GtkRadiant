@@ -1086,7 +1086,7 @@ GtkWidget* CGameDialog::GetGlobalFrame(){
 	AddDialogData( check, &m_bLogConsole, DLG_CHECK_BOOL );
 
 	// incref it so we can pass it around
-	gtk_widget_ref( GTK_WIDGET( mFrame ) );
+	g_object_ref( GTK_WIDGET( mFrame ) );
 
 	return mFrame;
 }
@@ -1341,7 +1341,7 @@ void CGameDialog::Init(){
 CGameDialog::~CGameDialog(){
 	if ( mFrame ) {
 		// NOTE I'm not too sure how reliable this is
-		gtk_widget_unref( GTK_WIDGET( mFrame ) );
+		g_object_unref( GTK_WIDGET( mFrame ) );
 	}
 	// free all the game descriptions
 	list<CGameDescription *>::iterator iGame;

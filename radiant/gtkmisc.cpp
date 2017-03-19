@@ -1713,10 +1713,10 @@ void CheckMenuSplitting( GtkWidget *&menu ){
 		for ( int i = 0; i < 3; i++ )
 		{
 			item = GTK_WIDGET( g_list_last( gtk_container_get_children( GTK_CONTAINER( menu ) ) )->data );
-			gtk_widget_ref( item );
+			g_object_ref( item );
 			gtk_container_remove( GTK_CONTAINER( menu ), item );
 			gtk_menu_append( GTK_MENU( menu2 ), item );
-			gtk_widget_unref( item );
+			g_object_unref( item );
 		}
 
 		item = gtk_menu_item_new_with_label( "--------" );

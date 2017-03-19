@@ -310,7 +310,7 @@ bool UpdateSel( int iIndex, eclass_t *pec ){
 		GtkWidget* widget = EntWidgets[EntCheck1 + i];
 		gtk_label_set_text( GTK_LABEL( GTK_BIN( widget )->child ), " " );
 		gtk_widget_hide( widget );
-		gtk_widget_ref( widget );
+		g_object_ref( widget );
 		gtk_container_remove( GTK_CONTAINER( LayoutTable ), widget );
 	}
 	last_count = spawnflag_count;
@@ -328,7 +328,7 @@ bool UpdateSel( int iIndex, eclass_t *pec ){
 		gtk_table_attach( GTK_TABLE( LayoutTable ), widget, i % 4, i % 4 + 1, i / 4, i / 4 + 1,
 						  (GtkAttachOptions) ( GTK_FILL ),
 						  (GtkAttachOptions) ( GTK_FILL ), 0, 0 );
-		gtk_widget_unref( widget );
+		g_object_unref( widget );
 
 		gtk_label_set_text( GTK_LABEL( GTK_BIN( widget )->child ), str.GetBuffer() );
 	}
@@ -1334,7 +1334,7 @@ void GroupDlg::Create(){
 							for ( int i = 0; i < MAX_FLAGS; i++ )
 							{
 								GtkWidget* check = gtk_check_button_new_with_label( "" );
-								gtk_widget_ref( check );
+								g_object_ref( check );
 								g_signal_connect( G_OBJECT( check ), "toggled", G_CALLBACK( entity_check ), NULL );
 								EntWidgets[EntCheck1 + i] = check;
 							}
