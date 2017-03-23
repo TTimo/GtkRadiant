@@ -33,7 +33,7 @@
 
 typedef struct
 {
-	GtkObject     *object;
+	GObject     *object;
 	void          *buffer;
 	DLG_DATA_TYPE type;
 } DLG_DATA;
@@ -100,7 +100,7 @@ void Dialog::Destroy(){
 	}
 }
 
-void Dialog::AddDialogData( GtkObject *object, void *buf, DLG_DATA_TYPE type ){
+void Dialog::AddDialogData( GObject *object, void *buf, DLG_DATA_TYPE type ){
 	DLG_DATA *data;
 
 	data = (DLG_DATA*)qmalloc( sizeof( DLG_DATA ) );

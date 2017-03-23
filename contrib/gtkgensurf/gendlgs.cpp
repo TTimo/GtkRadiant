@@ -42,7 +42,6 @@ static GtkWidget *plane_radios[6];
 static guint current_tab;
 static int OldPreview;
 static int WasDetail;
-static GtkTooltips *tooltips;
 static int FirstPassComplete = 0;
 
 void About( GtkWidget *parent ){
@@ -357,11 +356,11 @@ static void SetDlgValues( int tab ){
 
 			gpointer spin = g_object_get_data( G_OBJECT( g_pWnd ), "nh" );
 			GtkAdjustment *adj = gtk_spin_button_get_adjustment( GTK_SPIN_BUTTON( spin ) );
-			adj->lower = 2;
+			gtk_adjustment_set_lower( adj, 2 );
 			gtk_adjustment_changed( adj );
 			spin = g_object_get_data( G_OBJECT( g_pWnd ), "nv" );
 			adj = gtk_spin_button_get_adjustment( GTK_SPIN_BUTTON( spin ) );
-			adj->lower = 2;
+			gtk_adjustment_set_lower( adj, 2 );
 			gtk_adjustment_changed( adj );
 		}
 		else
@@ -370,11 +369,11 @@ static void SetDlgValues( int tab ){
 
 			gpointer spin = g_object_get_data( G_OBJECT( g_pWnd ), "nh" );
 			GtkAdjustment *adj = gtk_spin_button_get_adjustment( GTK_SPIN_BUTTON( spin ) );
-			adj->lower = 1;
+			gtk_adjustment_set_lower( adj, 1 );
 			gtk_adjustment_changed( adj );
 			spin = g_object_get_data( G_OBJECT( g_pWnd ), "nv" );
 			adj = gtk_spin_button_get_adjustment( GTK_SPIN_BUTTON( spin ) );
-			adj->lower = 1;
+			gtk_adjustment_set_lower( adj, 1 );
 			gtk_adjustment_changed( adj );
 		}
 
@@ -728,14 +727,14 @@ static void main_go( GtkWidget *widget, gpointer data ){
 	if ( NH < 1 || NH > MAX_ROWS ) {
 		sprintf( Text, _( "The number of divisions must be > 0 and no greater than %d." ), MAX_ROWS );
 		g_FuncTable.m_pfnMessageBox( g_pWnd, Text, _( "GenSurf" ), MB_ICONEXCLAMATION, NULL );
-		gtk_notebook_set_page( GTK_NOTEBOOK( notebook ), EXTENTS_TAB );
+		gtk_notebook_set_current_page( GTK_NOTEBOOK( notebook ), EXTENTS_TAB );
 		return;
 	}
 
 	if ( NV < 1 || NV > MAX_ROWS ) {
 		sprintf( Text, _( "The number of divisions must be > 0 and no greater than %d." ), MAX_ROWS );
 		g_FuncTable.m_pfnMessageBox( g_pWnd, Text, _( "GenSurf" ), MB_ICONEXCLAMATION, NULL );
-		gtk_notebook_set_page( GTK_NOTEBOOK( notebook ), EXTENTS_TAB );
+		gtk_notebook_set_current_page( GTK_NOTEBOOK( notebook ), EXTENTS_TAB );
 		return;
 	}
 
@@ -743,7 +742,7 @@ static void main_go( GtkWidget *widget, gpointer data ){
 		g_FuncTable.m_pfnMessageBox( g_pWnd, _( "The \"lower-left\" values must be less than "
 											 "the corresponding \"upper-right\" values in "
 											 "the \"Extent\" box." ), _( "GenSurf" ), MB_OK | MB_ICONEXCLAMATION, NULL );
-		gtk_notebook_set_page( GTK_NOTEBOOK( notebook ), EXTENTS_TAB );
+		gtk_notebook_set_current_page( GTK_NOTEBOOK( notebook ), EXTENTS_TAB );
 		return;
 	}
 
@@ -751,13 +750,13 @@ static void main_go( GtkWidget *widget, gpointer data ){
 		g_FuncTable.m_pfnMessageBox( g_pWnd, _( "The \"lower-left\" values must be less than "
 											"the corresponding \"upper-right\" values in "
 											"the \"Extent\" box." ), _( "GenSurf" ), MB_OK | MB_ICONEXCLAMATION, NULL );
-		gtk_notebook_set_page( GTK_NOTEBOOK( notebook ), EXTENTS_TAB );
+		gtk_notebook_set_current_page( GTK_NOTEBOOK( notebook ), EXTENTS_TAB );
 		return;
 	}
 
 	if ( !strlen( Texture[Game][0] ) ) {
 		g_FuncTable.m_pfnMessageBox( g_pWnd, _( "You must supply a texture name." ), _( "GenSurf" ), MB_ICONEXCLAMATION, NULL );
-		gtk_notebook_set_page( GTK_NOTEBOOK( notebook ), EXTENTS_TAB );
+		gtk_notebook_set_current_page( GTK_NOTEBOOK( notebook ), EXTENTS_TAB );
 		return;
 	}
 
@@ -806,7 +805,7 @@ static void general_wave( GtkToggleButton *widget, gpointer data ){
 }
 
 static void general_random( GtkAdjustment *adj, gpointer data ){
-	int nPos = (int)adj->value;
+	int nPos = (int)gtk_adjustment_get_value( adj );
 
 	if ( RandomSeed != nPos ) {
 		RandomSeed = nPos;
@@ -834,7 +833,7 @@ static void extents_use_patches( GtkToggleButton *check, gpointer data ){
 }
 
 static void extents_nhnv_spin( GtkAdjustment *adj, int *data ){
-	int nPos = (int)adj->value;
+	int nPos = (int)gtk_adjustment_get_value( adj );
 
 	if ( *data != nPos ) {
 		if ( Game == QUAKE3 && UsePatches && ( nPos % 2 ) ) {
@@ -854,7 +853,7 @@ static void extents_nhnv_spin( GtkAdjustment *adj, int *data ){
 }
 
 static void extents_decimate( GtkAdjustment *adj, gpointer data ){
-	int nPos = (int)adj->value;
+	int nPos = (int)gtk_adjustment_get_value( adj );
 
 	Decimate = nPos;
 	UpdatePreview( true );
@@ -863,7 +862,7 @@ static void extents_decimate( GtkAdjustment *adj, gpointer data ){
 // Hydra : snap to grid begin
 /*static void extents_snaptogrid (GtkAdjustment *adj, gpointer data)
    {
-   int nPos = (int)adj->value;
+   int nPos = (int)gtk_adjustment_get_value( adj );
 
    SnapToGrid = nPos;
    UpdatePreview (true);
@@ -871,7 +870,7 @@ static void extents_decimate( GtkAdjustment *adj, gpointer data ){
 
 // ^Fishman - Modified version of Hydra's snap to grid code.
 static void extents_snaptogrid_spin( GtkAdjustment *adj, int *data ){
-	int nPos = (int)adj->value;
+	int nPos = (int)gtk_adjustment_get_value( adj );
 	SnapToGrid = nPos;
 	UpdatePreview( true );
 }
@@ -951,7 +950,7 @@ static gint fix_value_entryfocusout( GtkWidget* widget, GdkEventFocus *event, gp
 }
 
 static void fix_value_changed( GtkAdjustment *adj, gpointer data ){
-	int k, i = (int)adj->value;
+	int k, i = (int)gtk_adjustment_get_value( adj );
 
 	if ( xyz[Vertex[0].i][Vertex[0].j].fixed_value != i ) {
 		for ( k = 0; k < NumVerticesSelected; k++ )
@@ -1099,248 +1098,247 @@ static gint doublevariable_entryfocusout( GtkWidget* widget, GdkEventFocus* even
 // create tooltips
 
 void create_tooltips(){
-	tooltips = gtk_tooltips_new();
 
 	// Main
-	gtk_tooltips_set_tip( GTK_TOOLTIPS( tooltips ),
+	gtk_widget_set_tooltip_text( 
 						  GTK_WIDGET( g_object_get_data( G_OBJECT( g_pWnd ), "go" ) ),
-						  _( "Accept all input and generate a surface in Q3Radiant" ),
-						  "" );
-	gtk_tooltips_set_tip( GTK_TOOLTIPS( tooltips ),
+						  _( "Accept all input and generate a surface in Q3Radiant" )
+						  );
+	gtk_widget_set_tooltip_text( 
 						  GTK_WIDGET( g_object_get_data( G_OBJECT( g_pWnd ), "open" ) ),
-						  _( "Open a previously saved GenSurf settings file." ),
-						  "" );
-	gtk_tooltips_set_tip( GTK_TOOLTIPS( tooltips ),
+						  _( "Open a previously saved GenSurf settings file." )
+						  );
+	gtk_widget_set_tooltip_text( 
 						  GTK_WIDGET( g_object_get_data( G_OBJECT( g_pWnd ), "save" ) ),
-						  _( "Save all settings to a file." ),
-						  "" );
-	gtk_tooltips_set_tip( GTK_TOOLTIPS( tooltips ),
+						  _( "Save all settings to a file." )
+						  );
+	gtk_widget_set_tooltip_text( 
 						  GTK_WIDGET( g_object_get_data( G_OBJECT( g_pWnd ), "defaults" ) ),
 						  _( "Restore default values from DEFAULTS.SRF. If this file does not exist, GenSurf "
 						  "initializes all input parameters to reasonable values. You can create your own "
 						  "default surface by setting all parameters to your liking, then saving a settings "
-						  "file as DEFAULTS.SRF with the Save As button." ),
-						  "" );
+						  "file as DEFAULTS.SRF with the Save As button." )
+						  );
 
-	gtk_tooltips_set_tip( GTK_TOOLTIPS( tooltips ),
+	gtk_widget_set_tooltip_text( 
 						  GTK_WIDGET( g_object_get_data( G_OBJECT( g_pWnd ), "main_preview" ) ),
-						  _( "View a wire-frame representation of the surface" ),
-						  "" );
+						  _( "View a wire-frame representation of the surface" )
+						  );
 
-	gtk_tooltips_set_tip( GTK_TOOLTIPS( tooltips ),
+	gtk_widget_set_tooltip_text( 
 						  GTK_WIDGET( g_object_get_data( G_OBJECT( g_pWnd ), "main_antialiasing" ) ),
-						  _( "The lines in the preview window are antialiased for better quality" ),
-						  "" );
+						  _( "The lines in the preview window are antialiased for better quality" )
+						  );
 
 	// General tab
-	gtk_tooltips_set_tip( GTK_TOOLTIPS( tooltips ),
+	gtk_widget_set_tooltip_text( 
 						  GTK_WIDGET( wave_radios[0] ),
 						  _( "Builds a surface with alternating hills and valleys. Uses the general form Z=cos(X) "
-						  "x sin(Y)" ),
-						  "" );
-	gtk_tooltips_set_tip( GTK_TOOLTIPS( tooltips ),
+						  "x sin(Y)" )
+						  );
+	gtk_widget_set_tooltip_text( 
 						  GTK_WIDGET( wave_radios[1] ),
-						  _( "Builds a surface with ridges parallel to the vertical axis." ),
-						  "" );
-	gtk_tooltips_set_tip( GTK_TOOLTIPS( tooltips ),
+						  _( "Builds a surface with ridges parallel to the vertical axis." )
+						  );
+	gtk_widget_set_tooltip_text( 
 						  GTK_WIDGET( wave_radios[2] ),
-						  _( "Builds a surface with ridges parallel to the horizontal axis." ),
-						  "" );
-	gtk_tooltips_set_tip( GTK_TOOLTIPS( tooltips ),
+						  _( "Builds a surface with ridges parallel to the horizontal axis." )
+						  );
+	gtk_widget_set_tooltip_text( 
 						  GTK_WIDGET( wave_radios[3] ),
 						  _( "Builds a map from a bitmap image representing a contour plot. Click the \"Bitmap\" "
 						  "tab to select the image. GenSurf only supports 256-color (8 bit) "
 						  "bitmaps. GenSurf will work with any 256-color bitmap, but gray scale bitmaps are a bit "
-						  "more intuitive." ),
-						  "" );
-	gtk_tooltips_set_tip( GTK_TOOLTIPS( tooltips ),
+						  "more intuitive." )
+						  );
+	gtk_widget_set_tooltip_text( 
 						  GTK_WIDGET( wave_radios[4] ),
 						  _( "Builds a random surface using the Plasma Cloud technique. Variance is controlled "
 						  "by the Roughness input. To build a surface with completely random values not "
-						  "dependent on neighboring vertices, use one of the other waveforms with 0 amplitude." ),
-						  "" );
-	gtk_tooltips_set_tip( GTK_TOOLTIPS( tooltips ),
+						  "dependent on neighboring vertices, use one of the other waveforms with 0 amplitude." )
+						  );
+	gtk_widget_set_tooltip_text( 
 						  GTK_WIDGET( g_object_get_data( G_OBJECT( g_pWnd ), "wavelength" ) ),
 						  _( "Enter the wavelength (distance between crests). NOTE: Wavelengths equal to the grid "
 						  "size or 2 times the grid size will result in 0 amplitudes. For best results, the "
 						  "wavelength value should be at least 4 times the grid size (extents divided by the "
-						  "number of divisions" ),
-						  "" );
-	gtk_tooltips_set_tip( GTK_TOOLTIPS( tooltips ),
+						  "number of divisions" )
+						  );
+	gtk_widget_set_tooltip_text( 
 						  GTK_WIDGET( g_object_get_data( G_OBJECT( g_pWnd ), "amplitude" ) ),
-						  _( "Enter the height of hills/ridges." ),
-						  "" );
-	gtk_tooltips_set_tip( GTK_TOOLTIPS( tooltips ),
+						  _( "Enter the height of hills/ridges." )
+						  );
+	gtk_widget_set_tooltip_text( 
 						  GTK_WIDGET( g_object_get_data( G_OBJECT( g_pWnd ), "roughness" ) ),
 						  _( "Enter the roughness value (noise) for the surface. For fractal surfaces, this value "
-						  "is used as a variance in the fractal calculations." ),
-						  "" );
-	gtk_tooltips_set_tip( GTK_TOOLTIPS( tooltips ),
+						  "is used as a variance in the fractal calculations." )
+						  );
+	gtk_widget_set_tooltip_text( 
 						  GTK_WIDGET( g_object_get_data( G_OBJECT( g_pWnd ), "random" ) ),
-						  _( "Seed value for the pseudo-random number generator." ),
-						  "" );
+						  _( "Seed value for the pseudo-random number generator." )
+						  );
 	// Extents tab
-	gtk_tooltips_set_tip( GTK_TOOLTIPS( tooltips ),
+	gtk_widget_set_tooltip_text( 
 						  GTK_WIDGET( g_object_get_data( G_OBJECT( g_pWnd ), "hmin" ) ),
 						  _( "Minimum horizontal coordinate of the surface, i.e. X for a surface parallel to "
 						  "the XY or XZ planes, Y for a surface parallel to the YZ plane. For best results, "
 						  "the extents (maximum-minimum values) in a given direction should be evenly "
-						  "divisible by the number of divisions in that direction." ),
-						  "" );
-	gtk_tooltips_set_tip( GTK_TOOLTIPS( tooltips ),
+						  "divisible by the number of divisions in that direction." )
+						  );
+	gtk_widget_set_tooltip_text( 
 						  GTK_WIDGET( g_object_get_data( G_OBJECT( g_pWnd ), "hmax" ) ),
 						  _( "Maximum horizontal coordinate of the surface, i.e. X for a surface parallel to "
 						  "the XY or XZ planes, Y for a surface parallel to the YZ plane. For best results, "
 						  "the extents (maximum-minimum values) in a given direction should be evenly "
-						  "divisible by the number of divisions in that direction." ),
-						  "" );
-	gtk_tooltips_set_tip( GTK_TOOLTIPS( tooltips ),
+						  "divisible by the number of divisions in that direction." )
+						  );
+	gtk_widget_set_tooltip_text( 
 						  GTK_WIDGET( g_object_get_data( G_OBJECT( g_pWnd ), "vmin" ) ),
 						  _( "Minimum vertical coordinate of the surface, i.e. Y for a surface parallel to "
 						  "the XY plane, Z for a surface parallel to the XZ or YZ planes. For best results, "
 						  "the extents (maximum-minimum values) in a given direction should be evenly "
-						  "divisible by the number of divisions in that direction." ),
-						  "" );
-	gtk_tooltips_set_tip( GTK_TOOLTIPS( tooltips ),
+						  "divisible by the number of divisions in that direction." )
+						  );
+	gtk_widget_set_tooltip_text( 
 						  GTK_WIDGET( g_object_get_data( G_OBJECT( g_pWnd ), "vmax" ) ),
 						  _( "Maximum vertical coordinate of the surface, i.e. Y for a surface parallel to "
 						  "the XY plane, Z for a surface parallel to the XZ or YZ planes. For best results, "
 						  "the extents (maximum-minimum values) in a given direction should be evenly "
-						  "divisible by the number of divisions in that direction." ),
-						  "" );
-	gtk_tooltips_set_tip( GTK_TOOLTIPS( tooltips ),
+						  "divisible by the number of divisions in that direction." )
+						  );
+	gtk_widget_set_tooltip_text( 
 						  GTK_WIDGET( g_object_get_data( G_OBJECT( g_pWnd ), "nh" ) ),
 						  _( "Number of divisions in the horizontal direction. For best results, the extents "
 						  "in a given direction should be evenly divisible by the number of divisions in "
-						  "that direction." ),
-						  "" );
-	gtk_tooltips_set_tip( GTK_TOOLTIPS( tooltips ),
+						  "that direction." )
+						  );
+	gtk_widget_set_tooltip_text( 
 						  GTK_WIDGET( g_object_get_data( G_OBJECT( g_pWnd ), "nv" ) ),
 						  _( "Number of divisions in the vertical direction. For best results, the extents "
 						  "in a given direction should be evenly divisible by the number of divisions in "
-						  "that direction." ),
-						  "" );
-	gtk_tooltips_set_tip( GTK_TOOLTIPS( tooltips ),
+						  "that direction." )
+						  );
+	gtk_widget_set_tooltip_text( 
 						  GTK_WIDGET( g_object_get_data( G_OBJECT( g_pWnd ), "use_patches" ) ),
 						  _( "Produce one or more curved patches in the shape of your selected surface rather "
 						  "than producing solid brushes. Depending on the size of your surface (and the "
 						  "user's graphic detail settings, which you cannot control), curved surfaces will "
 						  "be represented in the game by a very large number of polygons. Read the warnings "
-						  "concerning curved surfaces on the GenSurf web page before using this feature." ),
-						  "" );
-	gtk_tooltips_set_tip( GTK_TOOLTIPS( tooltips ),
+						  "concerning curved surfaces on the GenSurf web page before using this feature." )
+						  );
+	gtk_widget_set_tooltip_text( 
 						  GTK_WIDGET( g_object_get_data( G_OBJECT( g_pWnd ), "decimate" ) ),
 						  _( "Use the slider to control the number of vertices discarded by GenSurf. For many "
 						  "surfaces, you can produce roughly the same shape surface with a high decimation "
 						  "value. This will generally result in a map with lower polygon counts (and better "
 						  "in-game performance). However, this feature should NOT be used for large terrain "
-						  "surfaces in Q3" ),
-						  "" );
-	gtk_tooltips_set_tip( GTK_TOOLTIPS( tooltips ),
+						  "surfaces in Q3" )
+						  );
+	gtk_widget_set_tooltip_text( 
 						  GTK_WIDGET( g_object_get_data( G_OBJECT( g_pWnd ), "z00" ) ),
 						  _( "Enter the height of the surface at the lower left corner. This value will likely "
-						  "be modified unless \"Linear Borders\" is checked." ),
-						  "" );
-	gtk_tooltips_set_tip( GTK_TOOLTIPS( tooltips ),
+						  "be modified unless \"Linear Borders\" is checked." )
+						  );
+	gtk_widget_set_tooltip_text( 
 						  GTK_WIDGET( g_object_get_data( G_OBJECT( g_pWnd ), "z01" ) ),
 						  _( "Enter the height of the surface at the upper left corner. This value will likely "
-						  "be modified unless \"Linear Borders\" is checked." ),
-						  "" );
-	gtk_tooltips_set_tip( GTK_TOOLTIPS( tooltips ),
+						  "be modified unless \"Linear Borders\" is checked." )
+						  );
+	gtk_widget_set_tooltip_text( 
 						  GTK_WIDGET( g_object_get_data( G_OBJECT( g_pWnd ), "z10" ) ),
 						  _( "Enter the height of the surface at the lower right corner. This value will likely "
-						  "be modified unless \"Linear Borders\" is checked." ),
-						  "" );
-	gtk_tooltips_set_tip( GTK_TOOLTIPS( tooltips ),
+						  "be modified unless \"Linear Borders\" is checked." )
+						  );
+	gtk_widget_set_tooltip_text( 
 						  GTK_WIDGET( g_object_get_data( G_OBJECT( g_pWnd ), "z11" ) ),
 						  _( "Enter the height of the surface at the upper right corner. This value will likely "
-						  "be modified unless \"Linear Borders\" is checked." ),
-						  "" );
-	gtk_tooltips_set_tip( GTK_TOOLTIPS( tooltips ),
+						  "be modified unless \"Linear Borders\" is checked." )
+						  );
+	gtk_widget_set_tooltip_text( 
 						  GTK_WIDGET( g_object_get_data( G_OBJECT( g_pWnd ), "linearborder" ) ),
 						  _( "Restrict the edges of the surface to a straight line. This will help match up "
-						  "brush edges if you drop this surface into another map." ),
-						  "" );
+						  "brush edges if you drop this surface into another map." )
+						  );
 	// Bitmap tab
-	gtk_tooltips_set_tip( GTK_TOOLTIPS( tooltips ),
+	gtk_widget_set_tooltip_text( 
 						  GTK_WIDGET( g_object_get_data( G_OBJECT( g_pWnd ), "bmp_file" ) ),
 						  _( "Type the name of an 8-bit bitmap image file, or click Browse to select an image "
-						  "from a list of those available on your system." ),
-						  "" );
-	gtk_tooltips_set_tip( GTK_TOOLTIPS( tooltips ),
+						  "from a list of those available on your system." )
+						  );
+	gtk_widget_set_tooltip_text( 
 						  GTK_WIDGET( g_object_get_data( G_OBJECT( g_pWnd ), "bmp_file_browse" ) ),
-						  _( "Select a bitmap image file from a list of those available on your system." ),
-						  "" );
-	gtk_tooltips_set_tip( GTK_TOOLTIPS( tooltips ),
+						  _( "Select a bitmap image file from a list of those available on your system." )
+						  );
+	gtk_widget_set_tooltip_text( 
 						  GTK_WIDGET( g_object_get_data( G_OBJECT( g_pWnd ), "bmp_reload" ) ),
-						  _( "Reload the selected bitmap file after making changes in an external image editor." ),
-						  "" );
-	gtk_tooltips_set_tip( GTK_TOOLTIPS( tooltips ),
+						  _( "Reload the selected bitmap file after making changes in an external image editor." )
+						  );
+	gtk_widget_set_tooltip_text( 
 						  GTK_WIDGET( g_object_get_data( G_OBJECT( g_pWnd ), "bmp_black" ) ),
 						  _( "Enter the value corresponding to color index 0 in the bitmap file. For gray scale "
-						  "images, color 0 is normally black." ),
-						  "" );
-	gtk_tooltips_set_tip( GTK_TOOLTIPS( tooltips ),
+						  "images, color 0 is normally black." )
+						  );
+	gtk_widget_set_tooltip_text( 
 						  GTK_WIDGET( g_object_get_data( G_OBJECT( g_pWnd ), "bmp_white" ) ),
 						  _( "Enter the value corresponding to color index 255 in the bitmap file. For gray scale "
-						  "images, color 255 is normally white." ),
-						  "" );
+						  "images, color 255 is normally white." )
+						  );
 	// Fixpoints tab
-	gtk_tooltips_set_tip( GTK_TOOLTIPS( tooltips ),
+	gtk_widget_set_tooltip_text( 
 						  GTK_WIDGET( g_object_get_data( G_OBJECT( g_pWnd ), "fix_value" ) ),
 						  _( "Enter a value for the selected vertex. This value will not be adjusted when applying "
 						  "a waveform or roughness to the surface. Unlock this vertex (so that it will be "
 						  "adjusted normally) by clicking \"Free\". This vertex will influence vertices within "
-						  "the \"Range affected\" of this vertex." ),
-						  "" );
-	gtk_tooltips_set_tip( GTK_TOOLTIPS( tooltips ),
+						  "the \"Range affected\" of this vertex." )
+						  );
+	gtk_widget_set_tooltip_text( 
 						  GTK_WIDGET( g_object_get_data( G_OBJECT( g_pWnd ), "fix_range" ) ),
 						  _( "Enter the range away from the selected vertex that other vertices will be affected. "
 						  "Use 0 if you don't want other vertices to be influenced by the currently selected "
 						  "one. Note: this box is disabled if you've chosen the fractal generator, as it uses "
-						  "a completely different method for determining values." ),
-						  "" );
-	gtk_tooltips_set_tip( GTK_TOOLTIPS( tooltips ),
+						  "a completely different method for determining values." )
+						  );
+	gtk_widget_set_tooltip_text( 
 						  GTK_WIDGET( g_object_get_data( G_OBJECT( g_pWnd ), "fix_rate" ) ),
 						  _( "Enter a rate of change for the surface affected by the fixed value. 0 gives a smooth "
 						  "sinusoidal curve, values less than 0 give progressively sharper spikes, and values "
 						  "greater than 0 take on a square shape. Values less than -30 or greater than 30 are "
 						  "set to -30 and 30, respectively. Note that this entry will have no effect unless "
-						  "you also specify a \"range affected\"." ),
-						  "" );
-	gtk_tooltips_set_tip( GTK_TOOLTIPS( tooltips ),
+						  "you also specify a \"range affected\"." )
+						  );
+	gtk_widget_set_tooltip_text( 
 						  GTK_WIDGET( g_object_get_data( G_OBJECT( g_pWnd ), "fix_free" ) ),
-						  _( "Click this to free (unlock the value of) the currently selected vertex." ),
-						  "" );
-	gtk_tooltips_set_tip( GTK_TOOLTIPS( tooltips ),
+						  _( "Click this to free (unlock the value of) the currently selected vertex." )
+						  );
+	gtk_widget_set_tooltip_text( 
 						  GTK_WIDGET( g_object_get_data( G_OBJECT( g_pWnd ), "fix_freeall" ) ),
-						  _( "Click this to free (unlock the values of) all vertices." ),
-						  "" );
+						  _( "Click this to free (unlock the values of) all vertices." )
+						  );
 	// Texture tab
-	gtk_tooltips_set_tip( GTK_TOOLTIPS( tooltips ),
+	gtk_widget_set_tooltip_text( 
 						  GTK_WIDGET( g_object_get_data( G_OBJECT( g_pWnd ), "texture1" ) ),
-						  _( "Enter the name of the texture or shader used for the surface faces." ),
-						  "" );
-	gtk_tooltips_set_tip( GTK_TOOLTIPS( tooltips ),
+						  _( "Enter the name of the texture or shader used for the surface faces." )
+						  );
+	gtk_widget_set_tooltip_text( 
 						  GTK_WIDGET( g_object_get_data( G_OBJECT( g_pWnd ), "texture2" ) ),
 						  _( "Enter the name of the texture or shader used for faces other than the surface. Under "
-						  "normal circumstances this should be \"common/caulk\"" ),
-						  "" );
-	gtk_tooltips_set_tip( GTK_TOOLTIPS( tooltips ),
+						  "normal circumstances this should be \"common/caulk\"" )
+						  );
+	gtk_widget_set_tooltip_text( 
 						  GTK_WIDGET( g_object_get_data( G_OBJECT( g_pWnd ), "texture3" ) ),
 						  _( "Enter the name of the texture or shader used for \"steep\" surface faces, where \"steep\" "
 						  "is the angle specified below. If this entry is left blank or if the \"steep\" angle is 0, "
-						  "all surface faces will use the texture specified by \"Surface\"." ),
-						  "" );
+						  "all surface faces will use the texture specified by \"Surface\"." )
+						  );
 
-	gtk_tooltips_set_tip( GTK_TOOLTIPS( tooltips ),
+	gtk_widget_set_tooltip_text( 
 						  GTK_WIDGET( g_object_get_data( G_OBJECT( g_pWnd ), "detail" ) ),
 						  _( "Check this box to use the detail content property on the generated brushes. Compile "
 						  "times will be considerably shorter if the detail property is used, though the surface "
 						  "will not block visibility at all. If you use the detail property, you should make sure "
 						  "that \"common/caulk\" is used for the non-surface faces, or the polygon count will be "
-						  "much higher than necessary." ),
-						  "" );
+						  "much higher than necessary." )
+						  );
 }
 
 // =============================================================================
@@ -1348,9 +1346,10 @@ void create_tooltips(){
 
 GtkWidget* create_main_dialog(){
 	GtkWidget *dlg, *vbox, *hbox, *hbox2, *button, *notebook, *frame, *table, *table2;
-	GtkWidget *check, *spin, *radio, *label, *entry, *scale;
-	GtkObject *adj;
+	GtkWidget *check, *spin, *radio, *label, *entry, *scale, *offset_label, *scale_label;
+	GtkAdjustment *adj;
 	GSList *group;
+	GtkSizeGroup *size_group;
 	int i;
 	const char *games[] = { "Quake 2", "Half-Life", "SiN", "Heretic 2", "Kingpin", "Genesis3D", "Quake 3 Arena" };
 	const char *waveforms[] = { "Alternating hill/valley", "Cylindrical left-to-right", "Cylindrical top-to-bottom",
@@ -1365,373 +1364,377 @@ GtkWidget* create_main_dialog(){
 	gtk_window_set_transient_for( GTK_WINDOW( dlg ), GTK_WINDOW( g_pRadiantWnd ) );
 
 	hbox = gtk_hbox_new( FALSE, 5 );
-	gtk_widget_show( hbox );
 	gtk_container_add( GTK_CONTAINER( dlg ), hbox );
 	gtk_container_set_border_width( GTK_CONTAINER( hbox ), 5 );
+	gtk_widget_show( hbox );
 
 	notebook = gtk_notebook_new();
-	gtk_widget_show( notebook );
 	gtk_box_pack_start( GTK_BOX( hbox ), notebook, TRUE, TRUE, 0 );
 	g_signal_connect( G_OBJECT( notebook ), "switch-page",
 					  G_CALLBACK( switch_page ), NULL );
 	gtk_notebook_set_tab_pos( GTK_NOTEBOOK( notebook ), GTK_POS_TOP );
 	g_object_set_data( G_OBJECT( dlg ), "notebook", notebook );
+	gtk_widget_show( notebook );
 
 	table = gtk_table_new( 2, 2, FALSE );
-	gtk_widget_show( table );
 	gtk_container_set_border_width( GTK_CONTAINER( table ), 5 );
 	gtk_table_set_row_spacings( GTK_TABLE( table ), 5 );
 	gtk_table_set_col_spacings( GTK_TABLE( table ), 5 );
+	gtk_widget_show( table );
 
 	label = gtk_label_new( _( "General" ) );
-	gtk_widget_show( label );
 	gtk_notebook_append_page( GTK_NOTEBOOK( notebook ), table, label );
+	gtk_widget_show( label );
 
 	frame = gtk_frame_new( _( "Game" ) );
-	gtk_widget_show( frame );
 	gtk_table_attach( GTK_TABLE( table ), frame, 0, 1, 0, 1,
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ), 0, 0 );
+	gtk_widget_show( frame );
 
 	vbox = gtk_vbox_new( TRUE, 5 );
-	gtk_widget_show( vbox );
 	gtk_container_add( GTK_CONTAINER( frame ), vbox );
 	gtk_container_set_border_width( GTK_CONTAINER( vbox ), 5 );
+	gtk_widget_show( vbox );
 
 	for ( i = 0, group = NULL; i < NUMGAMES; i++ )
 	{
 		radio = gtk_radio_button_new_with_label( group, games[i] );
-		gtk_widget_show( radio );
 		gtk_box_pack_start( GTK_BOX( vbox ), radio, TRUE, TRUE, 0 );
+		gtk_widget_show( radio );
 		group = gtk_radio_button_get_group( GTK_RADIO_BUTTON( radio ) );
 		game_radios[i] = radio;
 		g_signal_connect( G_OBJECT( radio ), "toggled", G_CALLBACK( general_game ), GINT_TO_POINTER( i ) );
 	}
 
 	frame = gtk_frame_new( _( "Waveform" ) );
-	gtk_widget_show( frame );
 	gtk_table_attach( GTK_TABLE( table ), frame, 1, 2, 0, 1,
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ), 0, 0 );
+	gtk_widget_show( frame );
 
 	vbox = gtk_vbox_new( TRUE, 5 );
-	gtk_widget_show( vbox );
 	gtk_container_add( GTK_CONTAINER( frame ), vbox );
 	gtk_container_set_border_width( GTK_CONTAINER( vbox ), 5 );
+	gtk_widget_show( vbox );
 
 	for ( i = 0, group = NULL; i < 5; i++ )
 	{
 		radio = gtk_radio_button_new_with_label( group, waveforms[i] );
-		gtk_widget_show( radio );
 		gtk_box_pack_start( GTK_BOX( vbox ), radio, TRUE, TRUE, 0 );
+		gtk_widget_show( radio );
 		group = gtk_radio_button_get_group( GTK_RADIO_BUTTON( radio ) );
 		wave_radios[i] = radio;
 		g_signal_connect( G_OBJECT( radio ), "toggled", G_CALLBACK( general_wave ), GINT_TO_POINTER( i ) );
 	}
 
 	frame = gtk_frame_new( _( "Orientation" ) );
-	gtk_widget_show( frame );
 	gtk_table_attach( GTK_TABLE( table ), frame, 0, 1, 1, 2,
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ), 0, 0 );
+	gtk_widget_show( frame );
 
 	vbox = gtk_vbox_new( TRUE, 5 );
-	gtk_widget_show( vbox );
 	gtk_container_add( GTK_CONTAINER( frame ), vbox );
 	gtk_container_set_border_width( GTK_CONTAINER( vbox ), 5 );
+	gtk_widget_show( vbox );
 
 	for ( i = 0, group = NULL; i < 6; i++ )
 	{
 		radio = gtk_radio_button_new_with_label( group, orientations[i] );
-		gtk_widget_show( radio );
 		gtk_box_pack_start( GTK_BOX( vbox ), radio, TRUE, TRUE, 0 );
+		gtk_widget_show( radio );
 		group = gtk_radio_button_get_group( GTK_RADIO_BUTTON( radio ) );
 		plane_radios[i] = radio;
 		g_signal_connect( G_OBJECT( radio ), "toggled", G_CALLBACK( general_plane ), GINT_TO_POINTER( i ) );
 	}
 
 	table2 = gtk_table_new( 4, 2, FALSE );
-	gtk_widget_show( table2 );
 	gtk_table_set_row_spacings( GTK_TABLE( table2 ), 5 );
 	gtk_table_set_col_spacings( GTK_TABLE( table2 ), 5 );
 	gtk_table_attach( GTK_TABLE( table ), table2, 1, 2, 1, 2,
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ), 0, 0 );
+	gtk_widget_show( table2 );
 
 	label = gtk_label_new( _( "Wavelength:" ) );
-	gtk_widget_show( label );
 	gtk_table_attach( GTK_TABLE( table2 ), label, 0, 1, 0, 1,
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ), 0, 0 );
 	gtk_misc_set_alignment( GTK_MISC( label ), 1, 0.5 );
 	gtk_label_set_justify( GTK_LABEL( label ), GTK_JUSTIFY_RIGHT );
+	gtk_widget_show( label );
 
 	label = gtk_label_new( _( "Max. amplitude:" ) );
-	gtk_widget_show( label );
 	gtk_table_attach( GTK_TABLE( table2 ), label, 0, 1, 1, 2,
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ), 0, 0 );
 	gtk_misc_set_alignment( GTK_MISC( label ), 1, 0.5 );
 	gtk_label_set_justify( GTK_LABEL( label ), GTK_JUSTIFY_RIGHT );
+	gtk_widget_show( label );
 
 	label = gtk_label_new( _( "Roughness:" ) );
-	gtk_widget_show( label );
 	gtk_table_attach( GTK_TABLE( table2 ), label, 0, 1, 2, 3,
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ), 0, 0 );
 	gtk_misc_set_alignment( GTK_MISC( label ), 1, 0.5 );
 	gtk_label_set_justify( GTK_LABEL( label ), GTK_JUSTIFY_RIGHT );
+	gtk_widget_show( label );
 
 	label = gtk_label_new( _( "Random seed:" ) );
-	gtk_widget_show( label );
 	gtk_table_attach( GTK_TABLE( table2 ), label, 0, 1, 3, 4,
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ), 0, 0 );
 	gtk_misc_set_alignment( GTK_MISC( label ), 1, 0.5 );
 	gtk_label_set_justify( GTK_LABEL( label ), GTK_JUSTIFY_RIGHT );
+	gtk_widget_show( label );
 
 	entry = gtk_entry_new();
-	gtk_widget_show( entry );
 	gtk_table_attach( GTK_TABLE( table2 ), entry, 1, 2, 0, 1,
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ), 0, 0 );
-	gtk_widget_set_usize( entry, 50, -2 );
+	g_object_set( entry, "xalign", 1.0, NULL );
+	gtk_widget_show( entry );
 	g_object_set_data( G_OBJECT( dlg ), "wavelength", entry );
 	g_signal_connect( G_OBJECT( entry ), "focus-out-event", G_CALLBACK( doublevariable_entryfocusout ), &WaveLength );
 
 	entry = gtk_entry_new();
-	gtk_widget_show( entry );
 	gtk_table_attach( GTK_TABLE( table2 ), entry, 1, 2, 1, 2,
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ), 0, 0 );
-	gtk_widget_set_usize( entry, 50, -2 );
+	g_object_set( entry, "xalign", 1.0, NULL );
+	gtk_widget_show( entry );
 	g_object_set_data( G_OBJECT( dlg ), "amplitude", entry );
 	g_signal_connect( G_OBJECT( entry ), "focus-out-event", G_CALLBACK( doublevariable_entryfocusout ), &Amplitude );
 
 	entry = gtk_entry_new();
-	gtk_widget_show( entry );
 	gtk_table_attach( GTK_TABLE( table2 ), entry, 1, 2, 2, 3,
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ), 0, 0 );
-	gtk_widget_set_usize( entry, 50, -2 );
+	g_object_set( entry, "xalign", 1.0, NULL );
+	gtk_widget_show( entry );
 	g_object_set_data( G_OBJECT( dlg ), "roughness", entry );
 	g_signal_connect( G_OBJECT( entry ), "focus-out-event", G_CALLBACK( doublevariable_entryfocusout ), &Roughness );
 
-	adj = gtk_adjustment_new( 1, 1, 32767, 1, 10, 0 );
+	adj = GTK_ADJUSTMENT( gtk_adjustment_new( 1, 1, 32767, 1, 10, 0 ) );
 	g_signal_connect( G_OBJECT( adj ), "value-changed", G_CALLBACK( general_random ), NULL );
 	spin = gtk_spin_button_new( GTK_ADJUSTMENT( adj ), 1, 0 );
-	gtk_widget_show( spin );
 	gtk_table_attach( GTK_TABLE( table2 ), spin, 1, 2, 3, 4,
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ), 0, 0 );
-	gtk_widget_set_usize( spin, 60, -2 );
+	g_object_set( spin, "xalign", 1.0, NULL );
+	gtk_widget_show( spin );
 	g_object_set_data( G_OBJECT( dlg ), "random", spin );
 
 	vbox = gtk_vbox_new( FALSE, 5 );
-	gtk_widget_show( vbox );
 	gtk_container_set_border_width( GTK_CONTAINER( vbox ), 5 );
+	gtk_widget_show( vbox );
 
 	label = gtk_label_new( _( "Extents" ) );
-	gtk_widget_show( label );
 	gtk_notebook_append_page( GTK_NOTEBOOK( notebook ), vbox, label );
+	gtk_widget_show( label );
 
 	hbox2 = gtk_hbox_new( FALSE, 5 );
-	gtk_widget_show( hbox2 );
 	gtk_box_pack_start( GTK_BOX( vbox ), hbox2, FALSE, TRUE, 0 );
+	gtk_widget_show( hbox2 );
 
 	frame = gtk_frame_new( _( "Extents" ) );
-	gtk_widget_show( frame );
 	gtk_box_pack_start( GTK_BOX( hbox2 ), frame, TRUE, TRUE, 0 );
+	gtk_widget_show( frame );
 
 	table = gtk_table_new( 3, 4, FALSE );
-	gtk_widget_show( table );
 	gtk_container_set_border_width( GTK_CONTAINER( table ), 5 );
 	gtk_container_add( GTK_CONTAINER( frame ), table );
 	gtk_table_set_row_spacings( GTK_TABLE( table ), 5 );
 	gtk_table_set_col_spacings( GTK_TABLE( table ), 5 );
+	gtk_widget_show( table );
 
 	label = gtk_label_new( _( "X:" ) );
-	gtk_widget_show( label );
 	gtk_table_attach( GTK_TABLE( table ), label, 0, 1, 1, 2,
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( GTK_FILL ), 0, 0 );
 	g_object_set_data( G_OBJECT( dlg ), "hmin_text", label );
+	gtk_widget_show( label );
 
 	label = gtk_label_new( _( "X:" ) );
-	gtk_widget_show( label );
 	gtk_table_attach( GTK_TABLE( table ), label, 2, 3, 1, 2,
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( GTK_FILL ), 0, 0 );
 	g_object_set_data( G_OBJECT( dlg ), "hmax_text", label );
+	gtk_widget_show( label );
 
 	label = gtk_label_new( _( "Y:" ) );
-	gtk_widget_show( label );
 	gtk_table_attach( GTK_TABLE( table ), label, 0, 1, 2, 3,
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( GTK_FILL ), 0, 0 );
+	gtk_widget_show( label );
 	g_object_set_data( G_OBJECT( dlg ), "vmin_text", label );
 
 	label = gtk_label_new( _( "Y:" ) );
-	gtk_widget_show( label );
 	gtk_table_attach( GTK_TABLE( table ), label, 2, 3, 2, 3,
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( GTK_FILL ), 0, 0 );
+	gtk_widget_show( label );
 	g_object_set_data( G_OBJECT( dlg ), "vmax_text", label );
 
 	label = gtk_label_new( _( "Lower-left" ) );
-	gtk_widget_show( label );
 	gtk_table_attach( GTK_TABLE( table ), label, 1, 2, 0, 1,
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( GTK_FILL ), 0, 0 );
+	gtk_widget_show( label );
 
 	label = gtk_label_new( _( "Upper-right" ) );
-	gtk_widget_show( label );
 	gtk_table_attach( GTK_TABLE( table ), label, 3, 4, 0, 1,
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( GTK_FILL ), 0, 0 );
+	gtk_widget_show( label );
 
 	entry = gtk_entry_new();
-	gtk_widget_show( entry );
 	gtk_table_attach( GTK_TABLE( table ), entry, 1, 2, 1, 2,
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ), 0, 0 );
-	gtk_widget_set_usize( entry, 50, -2 );
+	g_object_set( entry, "xalign", 1.0, NULL );
+	gtk_widget_show( entry );
 	g_object_set_data( G_OBJECT( dlg ), "hmin", entry );
 	g_signal_connect( G_OBJECT( entry ), "focus-out-event", G_CALLBACK( doublevariable_entryfocusout ), &Hll );
 
 	entry = gtk_entry_new();
-	gtk_widget_show( entry );
 	gtk_table_attach( GTK_TABLE( table ), entry, 3, 4, 1, 2,
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ), 0, 0 );
-	gtk_widget_set_usize( entry, 50, -2 );
+	g_object_set( entry, "xalign", 1.0, NULL );
+	gtk_widget_show( entry );
 	g_object_set_data( G_OBJECT( dlg ), "hmax", entry );
 	g_signal_connect( G_OBJECT( entry ), "focus-out-event", G_CALLBACK( doublevariable_entryfocusout ), &Hur );
 
 	entry = gtk_entry_new();
-	gtk_widget_show( entry );
 	gtk_table_attach( GTK_TABLE( table ), entry, 1, 2, 2, 3,
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ), 0, 0 );
-	gtk_widget_set_usize( entry, 50, -2 );
+	g_object_set( entry, "xalign", 1.0, NULL );
+	gtk_widget_show( entry );
 	g_object_set_data( G_OBJECT( dlg ), "vmin", entry );
 	g_signal_connect( G_OBJECT( entry ), "focus-out-event", G_CALLBACK( doublevariable_entryfocusout ), &Vll );
 
 	entry = gtk_entry_new();
-	gtk_widget_show( entry );
 	gtk_table_attach( GTK_TABLE( table ), entry, 3, 4, 2, 3,
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ), 0, 0 );
-	gtk_widget_set_usize( entry, 50, -2 );
+	g_object_set( entry, "xalign", 1.0, NULL );
+	gtk_widget_show( entry );
 	g_object_set_data( G_OBJECT( dlg ), "vmax", entry );
 	g_signal_connect( G_OBJECT( entry ), "focus-out-event", G_CALLBACK( doublevariable_entryfocusout ), &Vur );
 
 	frame = gtk_frame_new( _( "Divisions" ) );
-	gtk_widget_show( frame );
 	gtk_box_pack_start( GTK_BOX( hbox2 ), frame, TRUE, TRUE, 0 );
+	gtk_widget_show( frame );
 
 	table = gtk_table_new( 2, 2, FALSE );
-	gtk_widget_show( table );
 	gtk_container_set_border_width( GTK_CONTAINER( table ), 5 );
 	gtk_container_add( GTK_CONTAINER( frame ), table );
 	gtk_table_set_row_spacings( GTK_TABLE( table ), 5 );
 	gtk_table_set_col_spacings( GTK_TABLE( table ), 5 );
+	gtk_widget_show( table );
 
 	label = gtk_label_new( _( "X:" ) );
-	gtk_widget_show( label );
 	gtk_table_attach( GTK_TABLE( table ), label, 0, 1, 0, 1,
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ), 0, 0 );
+	gtk_widget_show( label );
 	g_object_set_data( G_OBJECT( dlg ), "nh_text", label );
 
 	label = gtk_label_new( _( "Y:" ) );
-	gtk_widget_show( label );
 	gtk_table_attach( GTK_TABLE( table ), label, 0, 1, 1, 2,
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ), 0, 0 );
+	gtk_widget_show( label );
 	g_object_set_data( G_OBJECT( dlg ), "nv_text", label );
 
-	adj = gtk_adjustment_new( 8, 1, MAX_ROWS, 1, 10, 0 );
+	adj = GTK_ADJUSTMENT( gtk_adjustment_new( 8, 1, MAX_ROWS, 1, 10, 0 ) );
 	g_signal_connect( G_OBJECT( adj ), "value-changed", G_CALLBACK( extents_nhnv_spin ), &NH );
 	spin = gtk_spin_button_new( GTK_ADJUSTMENT( adj ), 1, 0 );
-	gtk_widget_show( spin );
+	gtk_spin_button_set_numeric( GTK_SPIN_BUTTON( spin ), TRUE );
 	gtk_table_attach( GTK_TABLE( table ), spin, 1, 2, 0, 1,
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ), 0, 0 );
-	gtk_widget_set_usize( spin, 60, -2 );
+	g_object_set( spin, "xalign", 1.0, NULL );
+	gtk_widget_show( spin );
 	g_object_set_data( G_OBJECT( dlg ), "nh", spin );
 
-	adj = gtk_adjustment_new( 8, 1, MAX_ROWS, 1, 10, 0 );
+	adj = GTK_ADJUSTMENT( gtk_adjustment_new( 8, 1, MAX_ROWS, 1, 10, 0 ) );
 	g_signal_connect( G_OBJECT( adj ), "value-changed", G_CALLBACK( extents_nhnv_spin ), &NV );
 	spin = gtk_spin_button_new( GTK_ADJUSTMENT( adj ), 1, 0 );
-	gtk_widget_show( spin );
+	gtk_spin_button_set_numeric( GTK_SPIN_BUTTON( spin ), TRUE );
 	gtk_table_attach( GTK_TABLE( table ), spin, 1, 2, 1, 2,
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ), 0, 0 );
-	gtk_widget_set_usize( spin, 60, -2 );
+	g_object_set( spin, "xalign", 1.0, NULL );
+	gtk_widget_show( spin );
 	g_object_set_data( G_OBJECT( dlg ), "nv", spin );
 
 	check = gtk_check_button_new_with_label( _( "Use Bezier patches" ) );
-	gtk_widget_show( check );
 	gtk_box_pack_start( GTK_BOX( vbox ), check, FALSE, TRUE, 0 );
+	gtk_widget_show( check );
 	g_object_set_data( G_OBJECT( dlg ), "use_patches", check );
 	g_signal_connect( G_OBJECT( check ), "toggled", G_CALLBACK( extents_use_patches ), NULL );
 
 	// ^Fishman - Snap to grid, replaced scroll bar with a texbox.
 	label = gtk_label_new( _( "Snap to grid:" ) );
-	gtk_widget_show( label );
 	gtk_box_pack_start( GTK_BOX( vbox ), label, FALSE, TRUE, 0 );
+	gtk_widget_show( label );
 	g_object_set_data( G_OBJECT( dlg ), "snap_text", label );
 
-	adj = gtk_adjustment_new( 8, 0, 256, 1, 10, 0 );
+	adj = GTK_ADJUSTMENT( gtk_adjustment_new( 8, 0, 256, 1, 10, 0 ) );
 	g_signal_connect( G_OBJECT( adj ), "value-changed", G_CALLBACK( extents_snaptogrid_spin ), &SP );
 	spin = gtk_spin_button_new( GTK_ADJUSTMENT( adj ), 1, 0 );
-	gtk_widget_show( spin );
+	gtk_spin_button_set_numeric( GTK_SPIN_BUTTON( spin ), TRUE );
 	gtk_box_pack_start( GTK_BOX( vbox ), spin, FALSE, TRUE, 0 );
-	gtk_widget_set_usize( spin, 60, -2 );
+	g_object_set( spin, "xalign", 1.0, NULL );
+	gtk_widget_show( spin );
 	g_object_set_data( G_OBJECT( dlg ), "sp", spin );
 	// ^Fishman - End of Snap to grid code.
 
 	hbox2 = gtk_hbox_new( FALSE, 5 );
-	gtk_widget_show( hbox2 );
 	gtk_box_pack_start( GTK_BOX( vbox ), hbox2, FALSE, TRUE, 10 );
+	gtk_widget_show( hbox2 );
 
 	label = gtk_label_new( _( "Decimate:" ) );
-	gtk_widget_show( label );
 	gtk_box_pack_start( GTK_BOX( hbox2 ), label, FALSE, TRUE, 0 );
+	gtk_widget_show( label );
 
-	adj = gtk_adjustment_new( 0, 0, 110, 1, 10, 0 );
+	adj = GTK_ADJUSTMENT( gtk_adjustment_new( 0, 0, 110, 1, 10, 0 ) );
 	g_signal_connect( G_OBJECT( adj ), "value-changed", G_CALLBACK( extents_decimate ), NULL );
 	g_object_set_data( G_OBJECT( dlg ), "decimate_adj", adj );
 	scale = gtk_hscale_new( GTK_ADJUSTMENT( adj ) );
-	gtk_widget_show( scale );
 	gtk_box_pack_start( GTK_BOX( hbox2 ), scale, TRUE, TRUE, 0 );
 	gtk_scale_set_value_pos( GTK_SCALE( scale ), GTK_POS_RIGHT );
 	gtk_scale_set_digits( GTK_SCALE( scale ), 0 );
+	gtk_widget_show( scale );
 	g_object_set_data( G_OBJECT( dlg ), "decimate", scale );
 
 	frame = gtk_frame_new( _( "Corner values" ) );
-	gtk_widget_show( frame );
 	gtk_box_pack_start( GTK_BOX( vbox ), frame, FALSE, TRUE, 0 );
+	gtk_widget_show( frame );
 
 	table = gtk_table_new( 3, 4, FALSE );
-	gtk_widget_show( table );
+
 	gtk_container_set_border_width( GTK_CONTAINER( table ), 5 );
 	gtk_container_add( GTK_CONTAINER( frame ), table );
 	gtk_table_set_row_spacings( GTK_TABLE( table ), 5 );
 	gtk_table_set_col_spacings( GTK_TABLE( table ), 5 );
+	gtk_widget_show( table );
 
 	label = gtk_label_new( _( "Upper-left:" ) );
-	gtk_widget_show( label );
 	gtk_table_attach( GTK_TABLE( table ), label, 0, 1, 0, 1,
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( GTK_FILL ), 0, 0 );
+	gtk_widget_show( label );
 
 	label = gtk_label_new( _( "Lower-left:" ) );
-	gtk_widget_show( label );
 	gtk_table_attach( GTK_TABLE( table ), label, 0, 1, 1, 2,
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( GTK_FILL ), 0, 0 );
+	gtk_widget_show( label );
 
 	label = gtk_label_new( _( "Upper-right:" ) );
 	gtk_widget_show( label );
@@ -1740,168 +1743,166 @@ GtkWidget* create_main_dialog(){
 					  (GtkAttachOptions) ( GTK_FILL ), 0, 0 );
 
 	label = gtk_label_new( _( "Lower-right:" ) );
-	gtk_widget_show( label );
 	gtk_table_attach( GTK_TABLE( table ), label, 2, 3, 1, 2,
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( GTK_FILL ), 0, 0 );
+	gtk_widget_show( label );
 
 	entry = gtk_entry_new();
-	gtk_widget_show( entry );
 	gtk_table_attach( GTK_TABLE( table ), entry, 1, 2, 0, 1,
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ), 0, 0 );
-	gtk_widget_set_usize( entry, 50, -2 );
+	g_object_set( entry, "xalign", 1.0, NULL );
+	gtk_widget_show( entry );
 	g_object_set_data( G_OBJECT( dlg ), "z01", entry );
 	g_signal_connect( G_OBJECT( entry ), "focus-out-event", G_CALLBACK( doublevariable_entryfocusout ), &Z01 );
 
 	entry = gtk_entry_new();
-	gtk_widget_show( entry );
 	gtk_table_attach( GTK_TABLE( table ), entry, 1, 2, 1, 2,
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ), 0, 0 );
-	gtk_widget_set_usize( entry, 50, -2 );
+	g_object_set( entry, "xalign", 1.0, NULL );
+	gtk_widget_show( entry );
 	g_object_set_data( G_OBJECT( dlg ), "z00", entry );
 	g_signal_connect( G_OBJECT( entry ), "focus-out-event", G_CALLBACK( doublevariable_entryfocusout ), &Z00 );
 
 	entry = gtk_entry_new();
-	gtk_widget_show( entry );
 	gtk_table_attach( GTK_TABLE( table ), entry, 3, 4, 0, 1,
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ), 0, 0 );
-	gtk_widget_set_usize( entry, 50, -2 );
+	g_object_set( entry, "xalign", 1.0, NULL );
+	gtk_widget_show( entry );
 	g_object_set_data( G_OBJECT( dlg ), "z11", entry );
 	g_signal_connect( G_OBJECT( entry ), "focus-out-event", G_CALLBACK( doublevariable_entryfocusout ), &Z11 );
 
 	entry = gtk_entry_new();
-	gtk_widget_show( entry );
 	gtk_table_attach( GTK_TABLE( table ), entry, 3, 4, 1, 2,
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ), 0, 0 );
-	gtk_widget_set_usize( entry, 50, -2 );
+	g_object_set( entry, "xalign", 1.0, NULL );
+	gtk_widget_show( entry );
 	g_object_set_data( G_OBJECT( dlg ), "z10", entry );
 	g_signal_connect( G_OBJECT( entry ), "focus-out-event", G_CALLBACK( doublevariable_entryfocusout ), &Z10 );
 
 	check = gtk_check_button_new_with_label( _( "Linear borders" ) );
-	gtk_widget_show( check );
 	gtk_table_attach( GTK_TABLE( table ), check, 0, 4, 2, 3,
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ), 0, 0 );
+	gtk_widget_show( check );
 	g_object_set_data( G_OBJECT( dlg ), "linearborder", check );
 	g_signal_connect( G_OBJECT( check ), "toggled", G_CALLBACK( extents_linearborder ), NULL );
 
 	vbox = gtk_vbox_new( FALSE, 10 );
-	gtk_widget_show( vbox );
 	gtk_container_set_border_width( GTK_CONTAINER( vbox ), 5 );
+	gtk_widget_show( vbox );
 
 	label = gtk_label_new( _( "Bitmap" ) );
-	gtk_widget_show( label );
 	gtk_notebook_append_page( GTK_NOTEBOOK( notebook ), vbox, label );
+	gtk_widget_show( label );
 
 	label = gtk_label_new( "" );
-	gtk_widget_show( label );
 	gtk_box_pack_start( GTK_BOX( vbox ), label, FALSE, TRUE, 0 );
+	gtk_widget_show( label );
 	g_object_set_data( G_OBJECT( dlg ), "bmp_note", label );
 
 	table = gtk_table_new( 2, 2, FALSE );
-	gtk_widget_show( table );
 	gtk_container_set_border_width( GTK_CONTAINER( table ), 5 );
 	gtk_box_pack_start( GTK_BOX( vbox ), table, FALSE, TRUE, 0 );
 	gtk_table_set_row_spacings( GTK_TABLE( table ), 5 );
 	gtk_table_set_col_spacings( GTK_TABLE( table ), 5 );
+	gtk_widget_show( table );
 
 	label = gtk_label_new( _( "Filename:" ) );
-	gtk_widget_show( label );
 	gtk_table_attach( GTK_TABLE( table ), label, 0, 1, 0, 1,
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( GTK_FILL ), 0, 0 );
+	gtk_widget_show( label );
 	g_object_set_data( G_OBJECT( dlg ), "bmp_text1", label );
 
 	entry = gtk_entry_new();
-	gtk_widget_show( entry );
 	gtk_table_attach( GTK_TABLE( table ), entry, 1, 2, 0, 1,
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
 					  (GtkAttachOptions) ( GTK_FILL ), 0, 0 );
+	gtk_widget_show( entry );
 	g_object_set_data( G_OBJECT( dlg ), "bmp_file", entry );
 	g_signal_connect( G_OBJECT( entry ), "focus-out-event", G_CALLBACK( bitmap_file_entryfocusout ), NULL );
 
 	hbox2 = gtk_hbox_new( TRUE, 5 );
-	gtk_widget_show( hbox2 );
 	gtk_table_attach( GTK_TABLE( table ), hbox2, 1, 2, 1, 2,
 					  (GtkAttachOptions) ( 0 ),
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ), 0, 0 );
+	gtk_widget_show( hbox2 );
 
 	button = gtk_button_new_with_label( _( "Browse..." ) );
-	gtk_widget_show( button );
 	gtk_box_pack_start( GTK_BOX( hbox2 ), button, FALSE, FALSE, 0 );
-	gtk_widget_set_usize( button, 60, -2 );
+	gtk_widget_show( button );
 	g_object_set_data( G_OBJECT( dlg ), "bmp_file_browse", button );
 	g_signal_connect( G_OBJECT( button ), "clicked", G_CALLBACK( bitmap_browse ), NULL );
 
 	button = gtk_button_new_with_label( _( "Reload" ) );
-	gtk_widget_show( button );
 	gtk_box_pack_start( GTK_BOX( hbox2 ), button, FALSE, FALSE, 0 );
-	gtk_widget_set_usize( button, 60, -2 );
+	gtk_widget_show( button );
 	g_object_set_data( G_OBJECT( dlg ), "bmp_reload", button );
 	g_signal_connect( G_OBJECT( button ), "clicked", G_CALLBACK( bitmap_reload ), NULL );
 
 	table = gtk_table_new( 2, 2, TRUE );
-	gtk_widget_show( table );
 	gtk_container_set_border_width( GTK_CONTAINER( table ), 5 );
 	gtk_box_pack_start( GTK_BOX( vbox ), table, FALSE, TRUE, 0 );
 	gtk_table_set_row_spacings( GTK_TABLE( table ), 5 );
 	gtk_table_set_col_spacings( GTK_TABLE( table ), 5 );
+	gtk_widget_show( table );
 
 	label = gtk_label_new( _( "Map color 0 to:" ) );
-	gtk_widget_show( label );
 	gtk_table_attach( GTK_TABLE( table ), label, 0, 1, 0, 1,
 					  (GtkAttachOptions) ( GTK_FILL | GTK_EXPAND ),
 					  (GtkAttachOptions) ( GTK_FILL ), 0, 0 );
-	g_object_set_data( G_OBJECT( dlg ), "bmp_text2", label );
 	gtk_misc_set_alignment( GTK_MISC( label ), 1, 0.5 );
 	gtk_label_set_justify( GTK_LABEL( label ), GTK_JUSTIFY_RIGHT );
+	gtk_widget_show( label );
+	g_object_set_data( G_OBJECT( dlg ), "bmp_text2", label );
 
 	label = gtk_label_new( _( "Map color 255 to:" ) );
-	gtk_widget_show( label );
 	gtk_table_attach( GTK_TABLE( table ), label, 0, 1, 1, 2,
 					  (GtkAttachOptions) ( GTK_FILL | GTK_EXPAND ),
 					  (GtkAttachOptions) ( GTK_FILL ), 0, 0 );
 	g_object_set_data( G_OBJECT( dlg ), "bmp_text3", label );
 	gtk_misc_set_alignment( GTK_MISC( label ), 1, 0.5 );
 	gtk_label_set_justify( GTK_LABEL( label ), GTK_JUSTIFY_RIGHT );
+	gtk_widget_show( label );
 
 	hbox2 = gtk_hbox_new( FALSE, 5 );
-	gtk_widget_show( hbox2 );
 	gtk_table_attach( GTK_TABLE( table ), hbox2, 1, 2, 0, 1,
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ), 0, 0 );
+	gtk_widget_show( hbox2 );
 
 	entry = gtk_entry_new();
-	gtk_widget_show( entry );
 	gtk_box_pack_start( GTK_BOX( hbox2 ), entry, FALSE, FALSE, 0 );
-	gtk_widget_set_usize( entry, 50, -2 );
+	g_object_set( entry, "xalign", 1.0, NULL );
+	gtk_widget_show( entry );
 	g_object_set_data( G_OBJECT( dlg ), "bmp_black", entry );
 	g_signal_connect( G_OBJECT( entry ), "focus-out-event", G_CALLBACK( doublevariable_entryfocusout ), &gbmp.black_value );
 
 	hbox2 = gtk_hbox_new( FALSE, 5 );
-	gtk_widget_show( hbox2 );
 	gtk_table_attach( GTK_TABLE( table ), hbox2, 1, 2, 1, 2,
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ), 0, 0 );
+	gtk_widget_show( hbox2 );
 
 	entry = gtk_entry_new();
-	gtk_widget_show( entry );
 	gtk_box_pack_start( GTK_BOX( hbox2 ), entry, FALSE, FALSE, 0 );
-	gtk_widget_set_usize( entry, 50, -2 );
+	g_object_set( entry, "xalign", 1.0, NULL );
+	gtk_widget_show( entry );
 	g_object_set_data( G_OBJECT( dlg ), "bmp_white", entry );
 	g_signal_connect( G_OBJECT( entry ), "focus-out-event", G_CALLBACK( doublevariable_entryfocusout ), &gbmp.white_value );
 
 	vbox = gtk_vbox_new( FALSE, 10 );
-	gtk_widget_show( vbox );
 	gtk_container_set_border_width( GTK_CONTAINER( vbox ), 5 );
+	gtk_widget_show( vbox );
 
 	label = gtk_label_new( _( "Fix Points" ) );
-	gtk_widget_show( label );
 	gtk_notebook_append_page( GTK_NOTEBOOK( notebook ), vbox, label );
+	gtk_widget_show( label );
 
 	label = gtk_label_new( _( "Click on a vertex in the lower half of the preview window,\n"
 							  "then use the arrow keys or text box to assign a value.\n"
@@ -1909,282 +1910,284 @@ GtkWidget* create_main_dialog(){
 							  "selection. Use Shift+Click to select a range of vertices.\n\n"
 							  "Click \"Free\" to unlock a vertex. Vertices within \"Range\n"
 							  "affected\" will be influenced by this vertex." ) );
-	gtk_widget_show( label );
 	gtk_box_pack_start( GTK_BOX( vbox ), label, FALSE, TRUE, 0 );
+	gtk_widget_show( label );
 
 	table = gtk_table_new( 3, 3, FALSE );
-	gtk_widget_show( table );
 	gtk_container_set_border_width( GTK_CONTAINER( table ), 5 );
 	gtk_box_pack_start( GTK_BOX( vbox ), table, FALSE, TRUE, 0 );
 	gtk_table_set_row_spacings( GTK_TABLE( table ), 5 );
 	gtk_table_set_col_spacings( GTK_TABLE( table ), 5 );
+	gtk_widget_show( table );
 
 	label = gtk_label_new( _( "Value:" ) );
-	gtk_widget_show( label );
 	gtk_table_attach( GTK_TABLE( table ), label, 0, 1, 0, 1,
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( GTK_FILL ), 0, 0 );
 	gtk_misc_set_alignment( GTK_MISC( label ), 1, 0.5 );
+	gtk_widget_show( label );
 	g_object_set_data( G_OBJECT( dlg ), "fix_value_text", label );
 
 	label = gtk_label_new( _( "Range affected:" ) );
-	gtk_widget_show( label );
 	gtk_table_attach( GTK_TABLE( table ), label, 0, 1, 1, 2,
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( GTK_FILL ), 0, 0 );
 	gtk_misc_set_alignment( GTK_MISC( label ), 1, 0.5 );
+	gtk_widget_show( label );
 	g_object_set_data( G_OBJECT( dlg ), "fix_range_text", label );
 
 	label = gtk_label_new( _( "Rate of change:" ) );
-	gtk_widget_show( label );
 	gtk_table_attach( GTK_TABLE( table ), label, 0, 1, 2, 3,
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( GTK_FILL ), 0, 0 );
 	gtk_misc_set_alignment( GTK_MISC( label ), 1, 0.5 );
+	gtk_widget_show( label );
 	g_object_set_data( G_OBJECT( dlg ), "fix_rate_text", label );
 
-	adj = gtk_adjustment_new( 0, -65536, 65536, 1, 16, 0 );
+	adj = GTK_ADJUSTMENT( gtk_adjustment_new( 0, -65536, 65536, 1, 16, 0 ) );
 	g_signal_connect( G_OBJECT( adj ), "value-changed", G_CALLBACK( fix_value_changed ), NULL );
 	spin = gtk_spin_button_new( GTK_ADJUSTMENT( adj ), 1, 0 );
-	gtk_widget_show( spin );
 	gtk_table_attach( GTK_TABLE( table ), spin, 1, 2, 0, 1,
 					  (GtkAttachOptions) ( GTK_EXPAND ),
 					  (GtkAttachOptions) ( GTK_EXPAND ), 0, 0 );
-	gtk_widget_set_usize( spin, 60, -2 );
+	g_object_set( spin, "xalign", 1.0, NULL );
+	gtk_widget_show( spin );
 	g_object_set_data( G_OBJECT( dlg ), "fix_value", spin );
 	g_signal_connect( G_OBJECT( spin ), "focus-out-event", G_CALLBACK( fix_value_entryfocusout ), NULL );
 
 	entry = gtk_entry_new();
-	gtk_widget_show( entry );
 	gtk_table_attach( GTK_TABLE( table ), entry, 1, 2, 1, 2,
 					  (GtkAttachOptions) ( GTK_EXPAND ),
 					  (GtkAttachOptions) ( GTK_FILL ), 0, 0 );
-	gtk_widget_set_usize( entry, 60, -2 );
+	g_object_set( entry, "xalign", 1.0, NULL );
+	gtk_widget_show( entry );
 	g_object_set_data( G_OBJECT( dlg ), "fix_range", entry );
 	g_signal_connect( G_OBJECT( entry ), "focus-out-event", G_CALLBACK( fix_range_entryfocusout ), NULL );
 
 	entry = gtk_entry_new();
-	gtk_widget_show( entry );
 	gtk_table_attach( GTK_TABLE( table ), entry, 1, 2, 2, 3,
 					  (GtkAttachOptions) ( GTK_EXPAND ),
 					  (GtkAttachOptions) ( GTK_FILL ), 0, 0 );
-	gtk_widget_set_usize( entry, 60, -2 );
+	g_object_set( entry, "xalign", 1.0, NULL );
+	gtk_widget_show( entry );
 	g_object_set_data( G_OBJECT( dlg ), "fix_rate", entry );
 	g_signal_connect( G_OBJECT( entry ), "focus-out-event", G_CALLBACK( fix_rate_entryfocusout ), NULL );
 
 	button = gtk_button_new_with_label( _( "Free" ) );
-	gtk_widget_show( button );
 	gtk_table_attach( GTK_TABLE( table ), button, 2, 3, 0, 1,
 					  (GtkAttachOptions) ( GTK_EXPAND ),
 					  (GtkAttachOptions) ( GTK_FILL ), 0, 0 );
-	gtk_widget_set_usize( button, 60, -2 );
+	gtk_widget_show( button );
 	g_object_set_data( G_OBJECT( dlg ), "fix_free", button );
 	g_signal_connect( G_OBJECT( button ), "clicked", G_CALLBACK( fix_free ), NULL );
 
 	button = gtk_button_new_with_label( _( "Free All" ) );
-	gtk_widget_show( button );
 	gtk_table_attach( GTK_TABLE( table ), button, 2, 3, 1, 2,
 					  (GtkAttachOptions) ( GTK_EXPAND ),
 					  (GtkAttachOptions) ( GTK_FILL ), 0, 0 );
-	gtk_widget_set_usize( button, 60, -2 );
+	gtk_widget_show( button );
 	g_object_set_data( G_OBJECT( dlg ), "fix_freeall", button );
 	g_signal_connect( G_OBJECT( button ), "clicked", G_CALLBACK( fix_freeall ), NULL );
 
 	vbox = gtk_vbox_new( FALSE, 10 );
-	gtk_widget_show( vbox );
 	gtk_container_set_border_width( GTK_CONTAINER( vbox ), 5 );
+	gtk_widget_show( vbox );
 
 	label = gtk_label_new( _( "Texture" ) );
-	gtk_widget_show( label );
 	gtk_notebook_append_page( GTK_NOTEBOOK( notebook ), vbox, label );
+	gtk_widget_show( label );
 
 	// ^Fishman - Modified to add more labels and textboxes.
 	table = gtk_table_new( 5, 2, FALSE );
-	gtk_widget_show( table );
 	gtk_box_pack_start( GTK_BOX( vbox ), table, FALSE, TRUE, 0 );
 	gtk_table_set_row_spacings( GTK_TABLE( table ), 5 );
 	gtk_table_set_col_spacings( GTK_TABLE( table ), 5 );
+	gtk_widget_show( table );
 
 	label = gtk_label_new( _( "Surface:" ) );
-	gtk_widget_show( label );
 	gtk_table_attach( GTK_TABLE( table ), label, 0, 1, 0, 1,
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( GTK_FILL ), 0, 0 );
 	gtk_misc_set_alignment( GTK_MISC( label ), 1, 0.5 );
+	gtk_widget_show( label );
 
 	label = gtk_label_new( _( "Other:" ) );
-	gtk_widget_show( label );
 	gtk_table_attach( GTK_TABLE( table ), label, 0, 1, 1, 2,
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( GTK_FILL ), 0, 0 );
 	gtk_misc_set_alignment( GTK_MISC( label ), 1, 0.5 );
+	gtk_widget_show( label );
 
 	label = gtk_label_new( _( "Steep:" ) );
-	gtk_widget_show( label );
 	gtk_table_attach( GTK_TABLE( table ), label, 0, 1, 2, 3,
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( GTK_FILL ), 0, 0 );
 	gtk_misc_set_alignment( GTK_MISC( label ), 1, 0.5 );
+	gtk_widget_show( label );
 
 	entry = gtk_entry_new();
-	gtk_widget_show( entry );
 	gtk_table_attach( GTK_TABLE( table ), entry, 1, 2, 0, 1,
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
 					  (GtkAttachOptions) ( GTK_FILL ), 0, 0 );
-	gtk_widget_set_usize( entry, 60, -2 );
+	gtk_widget_show( entry );
 	g_object_set_data( G_OBJECT( dlg ), "texture1", entry );
 	g_signal_connect( G_OBJECT( entry ), "focus-out-event", G_CALLBACK( texture_entryfocusout ), GINT_TO_POINTER( 0 ) );
 
 	entry = gtk_entry_new();
-	gtk_widget_show( entry );
 	gtk_table_attach( GTK_TABLE( table ), entry, 1, 2, 1, 2,
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
 					  (GtkAttachOptions) ( GTK_FILL ), 0, 0 );
-	gtk_widget_set_usize( entry, 60, -2 );
+	gtk_widget_show( entry );
 	g_object_set_data( G_OBJECT( dlg ), "texture2", entry );
 	g_signal_connect( G_OBJECT( entry ), "focus-out-event", G_CALLBACK( texture_entryfocusout ), GINT_TO_POINTER( 1 ) );
 
 	entry = gtk_entry_new();
-	gtk_widget_show( entry );
 	gtk_table_attach( GTK_TABLE( table ), entry, 1, 2, 2, 3,
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
 					  (GtkAttachOptions) ( GTK_FILL ), 0, 0 );
-	gtk_widget_set_usize( entry, 60, -2 );
+	gtk_widget_show( entry );
 	g_object_set_data( G_OBJECT( dlg ), "texture3", entry );
 
 	hbox2 = gtk_hbox_new( FALSE, 5 );
-	gtk_widget_show( hbox2 );
 	gtk_box_pack_start( GTK_BOX( vbox ), hbox2, FALSE, TRUE, 0 );
+	gtk_widget_show( hbox2 );
 
 	label = gtk_label_new( _( "\"Steep\" angle:" ) );
-	gtk_widget_show( label );
 	gtk_box_pack_start( GTK_BOX( hbox2 ), label, FALSE, TRUE, 0 );
+	gtk_widget_show( label );
 
-	adj = gtk_adjustment_new( 60, 0, 90, 1, 10, 0 );
+	adj = GTK_ADJUSTMENT( gtk_adjustment_new( 60, 0, 90, 1, 10, 0 ) );
 	spin = gtk_spin_button_new( GTK_ADJUSTMENT( adj ), 1, 0 );
-	gtk_widget_show( spin );
+	gtk_spin_button_set_numeric( GTK_SPIN_BUTTON( spin ), TRUE );
 	gtk_box_pack_start( GTK_BOX( hbox2 ), spin, FALSE, TRUE, 0 );
+	g_object_set( spin, "xalign", 1.0, NULL );
+	gtk_widget_show( spin );
 	g_object_set_data( G_OBJECT( dlg ), "tex_slant", spin );
 
 	table = gtk_table_new( 2, 4, TRUE );
-	gtk_widget_show( table );
 	gtk_box_pack_start( GTK_BOX( vbox ), table, FALSE, TRUE, 0 );
 	gtk_table_set_row_spacings( GTK_TABLE( table ), 5 );
 	gtk_table_set_col_spacings( GTK_TABLE( table ), 5 );
+	gtk_widget_show( table );
 
-	label = gtk_label_new( _( "Offset <h,v>" ) );
-	gtk_widget_show( label );
+	offset_label = label = gtk_label_new( _( "Offset <h,v>" ) );
 	gtk_table_attach( GTK_TABLE( table ), label, 0, 2, 0, 1,
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( GTK_FILL ), 0, 0 );
-
-	label = gtk_label_new( _( "Scale <h,v>" ) );
 	gtk_widget_show( label );
+
+	scale_label = label = gtk_label_new( _( "Scale <h,v>" ) );
 	gtk_table_attach( GTK_TABLE( table ), label, 2, 4, 0, 1,
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( GTK_FILL ), 0, 0 );
+	gtk_widget_show( label );
 
 	entry = gtk_entry_new();
-	gtk_widget_show( entry );
 	gtk_table_attach( GTK_TABLE( table ), entry, 0, 1, 1, 2,
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
 					  (GtkAttachOptions) ( GTK_FILL ), 0, 0 );
-	gtk_widget_set_usize( entry, 60, -2 );
+	g_object_set( entry, "xalign", 1.0, NULL );
+	gtk_widget_show( entry );
 	g_object_set_data( G_OBJECT( dlg ), "texoffsetx", entry );
 
 	entry = gtk_entry_new();
-	gtk_widget_show( entry );
 	gtk_table_attach( GTK_TABLE( table ), entry, 1, 2, 1, 2,
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
 					  (GtkAttachOptions) ( GTK_FILL ), 0, 0 );
-	gtk_widget_set_usize( entry, 60, -2 );
+	g_object_set( entry, "xalign", 1.0, NULL );
+	gtk_widget_show( entry );
 	g_object_set_data( G_OBJECT( dlg ), "texoffsety", entry );
 
 	entry = gtk_entry_new();
-	gtk_widget_show( entry );
 	gtk_table_attach( GTK_TABLE( table ), entry, 2, 3, 1, 2,
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
 					  (GtkAttachOptions) ( GTK_FILL ), 0, 0 );
-	gtk_widget_set_usize( entry, 60, -2 );
+	g_object_set( entry, "xalign", 1.0, NULL );
+	gtk_widget_show( entry );
 	g_object_set_data( G_OBJECT( dlg ), "texscalex", entry );
 
 	entry = gtk_entry_new();
-	gtk_widget_show( entry );
 	gtk_table_attach( GTK_TABLE( table ), entry, 3, 4, 1, 2,
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
 					  (GtkAttachOptions) ( GTK_FILL ), 0, 0 );
-	gtk_widget_set_usize( entry, 60, -2 );
+	g_object_set( entry, "xalign", 1.0, NULL );
+	gtk_widget_show( entry );
 	g_object_set_data( G_OBJECT( dlg ), "texscaley", entry );
 
 
+	size_group = gtk_size_group_new( GTK_SIZE_GROUP_BOTH );
+	gtk_size_group_add_widget( size_group, offset_label );
+	gtk_size_group_add_widget( size_group, scale_label );
+	g_object_unref( size_group );
+
 
 	check = gtk_check_button_new_with_label( _( "Use detail brushes" ) );
-	gtk_widget_show( check );
 	gtk_box_pack_start( GTK_BOX( vbox ), check, FALSE, TRUE, 0 );
+	gtk_widget_show( check );
 	g_object_set_data( G_OBJECT( dlg ), "detail", check );
 	g_signal_connect( G_OBJECT( check ), "toggled", G_CALLBACK( texture_detail ), NULL );
 
 	check = gtk_check_button_new_with_label( _( "Detail hint brushes" ) );
-	gtk_widget_show( check );
 	gtk_box_pack_start( GTK_BOX( vbox ), check, FALSE, TRUE, 0 );
+	gtk_widget_show( check );
 	g_object_set_data( G_OBJECT( dlg ), "hint", check );
 	g_signal_connect( G_OBJECT( check ), "toggled", G_CALLBACK( texture_hint ), NULL );
 
 	// ^Fishman - Add terrain key to func_group.
 	check = gtk_check_button_new_with_label( _( "Add terrain key" ) );
-	gtk_widget_show( check );
 	gtk_box_pack_start( GTK_BOX( vbox ), check, FALSE, TRUE, 0 );
+	gtk_widget_show( check );
 	g_object_set_data( G_OBJECT( dlg ), "terrain_ent", check );
 	g_signal_connect( G_OBJECT( check ), "toggled", G_CALLBACK( texture_terrainent ), NULL );
 
 	vbox = gtk_vbox_new( FALSE, 5 );
-	gtk_widget_show( vbox );
 	gtk_box_pack_start( GTK_BOX( hbox ), vbox, FALSE, TRUE, 0 );
+	gtk_widget_show( vbox );
 
 	button = gtk_button_new_with_label( _( "OK" ) );
-	gtk_widget_show( button );
 	gtk_box_pack_start( GTK_BOX( vbox ), button, FALSE, TRUE, 0 );
-	gtk_widget_set_usize( button, 60, -2 );
+	gtk_widget_show( button );
 	g_object_set_data( G_OBJECT( dlg ), "go", button );
 	g_signal_connect( G_OBJECT( button ), "clicked", G_CALLBACK( main_go ), NULL );
 
 	label = gtk_label_new( _( "Settings:" ) );
-	gtk_widget_show( label );
 	gtk_box_pack_start( GTK_BOX( vbox ), label, FALSE, TRUE, 0 );
+	gtk_widget_show( label );
 
 	button = gtk_button_new_with_label( _( "Open..." ) );
-	gtk_widget_show( button );
 	gtk_box_pack_start( GTK_BOX( vbox ), button, FALSE, TRUE, 0 );
+	gtk_widget_show( button );
 	g_object_set_data( G_OBJECT( dlg ), "open", button );
 	g_signal_connect( G_OBJECT( button ), "clicked", G_CALLBACK( main_open ), NULL );
 
 	button = gtk_button_new_with_label( _( "Save as..." ) );
-	gtk_widget_show( button );
 	gtk_box_pack_start( GTK_BOX( vbox ), button, FALSE, TRUE, 0 );
+	gtk_widget_show( button );
 	g_object_set_data( G_OBJECT( dlg ), "save", button );
 	g_signal_connect( G_OBJECT( button ), "clicked", G_CALLBACK( main_save ), NULL );
 
 	button = gtk_button_new_with_label( _( "Defaults" ) );
-	gtk_widget_show( button );
 	gtk_box_pack_start( GTK_BOX( vbox ), button, FALSE, TRUE, 0 );
+	gtk_widget_show( button );
 	g_object_set_data( G_OBJECT( dlg ), "defaults", button );
 	g_signal_connect( G_OBJECT( button ), "clicked", G_CALLBACK( main_defaults ), NULL );
 
 	button = gtk_button_new_with_label( _( "About..." ) );
-	gtk_widget_show( button );
 	gtk_box_pack_start( GTK_BOX( vbox ), button, FALSE, TRUE, 0 );
+	gtk_widget_show( button );
 	g_signal_connect( G_OBJECT( button ), "clicked", G_CALLBACK( main_about ), NULL );
 
+
 	check = gtk_check_button_new_with_label( _( "Preview" ) );
-	gtk_widget_show( check );
 	gtk_box_pack_start( GTK_BOX( vbox ), check, FALSE, TRUE, 0 );
+	gtk_widget_show( check );
 	g_signal_connect( G_OBJECT( check ), "toggled", G_CALLBACK( main_preview ), NULL );
 	g_object_set_data( G_OBJECT( dlg ), "main_preview", check );
 
 	// ^Fishman - Antializing for the preview window.
 	check = gtk_check_button_new_with_label( _( "Antialised lines" ) );
-	gtk_widget_show( check );
 	gtk_box_pack_start( GTK_BOX( vbox ), check, FALSE, TRUE, 0 );
+	gtk_widget_show( check );
 	g_object_set_data( G_OBJECT( dlg ), "main_antialiasing", check );
 	g_signal_connect( G_OBJECT( check ), "toggled", G_CALLBACK( main_antialiasing ), NULL );
 

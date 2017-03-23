@@ -20,8 +20,8 @@
 #ifndef _GTKDLGS_H_
 #define _GTKDLGS_H_
 
-int DoLoadPortalFileDialog();
-void DoAboutDlg();
-void DoConfigDialog();
+int DoLoadPortalFileDialog( GtkWidget *parent );
+void DoAboutDlg( GtkWidget *parent );
+void DoConfigDialog( GtkWidget *parent );
 
 #endif // _GTKDLGS_H_
