@@ -48,6 +48,7 @@
 #include "str.h"
 #include "missing.h"
 #include "texmanip.h"
+#include "gtkcompat.h"
 
 #define TYP_MIPTEX  68
 
@@ -1702,7 +1703,7 @@ void TexWnd::OnExpose() {
 	else
 	{
 		QE_CheckOpenGLForErrors();
-		Texture_Draw( m_pWidget->allocation.width, m_pWidget->allocation.height - g_nTextureOffset );
+		Texture_Draw( gtk_widget_get_allocated_width( m_pWidget ), gtk_widget_get_allocated_height( m_pWidget ) - g_nTextureOffset );
 		QE_CheckOpenGLForErrors();
 		SwapBuffers();
 	}
@@ -1710,8 +1711,8 @@ void TexWnd::OnExpose() {
 		GtkAdjustment *vadjustment = gtk_range_get_adjustment( GTK_RANGE( g_qeglobals_gui.d_texture_scroll ) );
 
 		gtk_adjustment_set_value( vadjustment, -g_qeglobals.d_texturewin.originy );
-		gtk_adjustment_set_page_size( vadjustment, m_pWidget->allocation.height );
-		gtk_adjustment_set_page_increment( vadjustment, m_pWidget->allocation.height / 2 );
+		gtk_adjustment_set_page_size( vadjustment, gtk_widget_get_allocated_height( m_pWidget ) );
+		gtk_adjustment_set_page_increment( vadjustment, gtk_widget_get_allocated_height( m_pWidget ) / 2 );
 		gtk_adjustment_set_step_increment( vadjustment, 20 );
 		gtk_adjustment_set_lower( vadjustment, 0 );
 		gtk_adjustment_set_upper( vadjustment, g_qeglobals.d_texturewin.m_nTotalHeight );
@@ -1842,8 +1843,8 @@ void TexWnd::DragDropTexture( guint32 flags, int pointx, int pointy ){
 	get_window_pos( widget, &x, &y );
 
 	if ( m_ptX < x || m_ptY < y ||
-		 m_ptX > x + widget->allocation.width ||
-		 m_ptY > y + widget->allocation.height ) {
+		 m_ptX > x + gtk_widget_get_allocated_width( widget ) ||
+		 m_ptY > y + gtk_widget_get_allocated_height( widget ) ) {
 		return;
 	}
 

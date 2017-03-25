@@ -39,6 +39,7 @@ extern "C" {
 #if defined ( __linux__ ) || defined ( __APPLE__ )
   #include <unistd.h>
 #endif
+#include "gtkcompat.h"
 #include "gtkmisc.h"
 #include "groupdialog.h"
 #include "patchdialog.h"
@@ -2274,9 +2275,9 @@ GtkWidget *watchit = NULL;
 
 void CheckWatchit( char *msg ){
 	static int width = 0;
-	if ( ( watchit != NULL ) && ( watchit->allocation.width != width ) ) {
-		Sys_Printf( "CheckWatchit %s: %d\n", msg, watchit->allocation.width );
-		width = watchit->allocation.width;
+	if ( ( watchit != NULL ) && ( gtk_widget_get_allocated_width( watchit ) != width ) ) {
+		Sys_Printf( "CheckWatchit %s: %d\n", msg, gtk_widget_get_allocated_width( watchit ) );
+		width = gtk_widget_get_allocated_width( watchit );
 	}
 }
 #endif

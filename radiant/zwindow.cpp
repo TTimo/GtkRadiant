@@ -27,6 +27,7 @@
 
 #include "stdafx.h"
 #include "zwindow.h"
+#include "gtkcompat.h"
 
 // =============================================================================
 // ZWnd class
@@ -49,43 +50,43 @@ void ZWnd::OnCreate(){
 void ZWnd::OnLButtonDown( guint32 nFlags, int pointx, int pointy ){
 	SetFocus();
 	SetCapture();
-	Z_MouseDown( pointx, m_pWidget->allocation.height - 1 - pointy, nFlags );
+	Z_MouseDown( pointx, gtk_widget_get_allocated_height( m_pWidget ) - 1 - pointy, nFlags );
 }
 
 void ZWnd::OnMButtonDown( guint32 nFlags, int pointx, int pointy ){
 	SetFocus();
 	SetCapture();
-	Z_MouseDown( pointx, m_pWidget->allocation.height - 1 - pointy, nFlags );
+	Z_MouseDown( pointx, gtk_widget_get_allocated_height( m_pWidget ) - 1 - pointy, nFlags );
 }
 
 void ZWnd::OnRButtonDown( guint32 nFlags, int pointx, int pointy ){
 	SetFocus();
 	SetCapture();
-	Z_MouseDown( pointx, m_pWidget->allocation.height - 1 - pointy, nFlags );
+	Z_MouseDown( pointx, gtk_widget_get_allocated_height( m_pWidget ) - 1 - pointy, nFlags );
 }
 
 void ZWnd::OnLButtonUp( guint32 nFlags, int pointx, int pointy ){
-	Z_MouseUp( pointx, m_pWidget->allocation.height - 1 - pointy, nFlags );
+	Z_MouseUp( pointx, gtk_widget_get_allocated_height( m_pWidget ) - 1 - pointy, nFlags );
 	ReleaseCapture();
 }
 
 void ZWnd::OnMButtonUp( guint32 nFlags, int pointx, int pointy ){
-	Z_MouseUp( pointx, m_pWidget->allocation.height - 1 - pointy, nFlags );
+	Z_MouseUp( pointx, gtk_widget_get_allocated_height( m_pWidget ) - 1 - pointy, nFlags );
 	ReleaseCapture();
 }
 
 void ZWnd::OnRButtonUp( guint32 nFlags, int pointx, int pointy ){
-	Z_MouseUp( pointx, m_pWidget->allocation.height - 1 - pointy, nFlags );
+	Z_MouseUp( pointx, gtk_widget_get_allocated_height( m_pWidget ) - 1 - pointy, nFlags );
 	ReleaseCapture();
 }
 
 void ZWnd::OnMouseMove( guint32 nFlags, int pointx, int pointy ){
-	float fz = z.origin[2] + ( ( m_pWidget->allocation.height - 1 - pointy ) - ( z.height / 2 ) ) / z.scale;
+	float fz = z.origin[2] + ( ( gtk_widget_get_allocated_height( m_pWidget ) - 1 - pointy ) - ( z.height / 2 ) ) / z.scale;
 	fz = floor( fz / g_qeglobals.d_gridsize + 0.5 ) * g_qeglobals.d_gridsize;
 	CString strStatus;
 	strStatus.Format( "Z:: %.1f", fz );
 	g_pParentWnd->SetStatusText( 1, strStatus );
-	Z_MouseMoved( pointx, m_pWidget->allocation.height - 1 - pointy, nFlags );
+	Z_MouseMoved( pointx, gtk_widget_get_allocated_height( m_pWidget ) - 1 - pointy, nFlags );
 }
 
 void ZWnd::OnExpose(){

@@ -40,6 +40,7 @@
 #endif
 
 #include <gtk/gtk.h>
+#include "gtkcompat.h"
 
 #ifdef _WIN32
 #include <gdk/gdkwin32.h>
@@ -70,8 +71,8 @@ void save_window_pos( GtkWidget *wnd, window_position_t& pos ){
 
 	get_window_pos( wnd, &pos.x, &pos.y );
 
-	pos.w = wnd->allocation.width;
-	pos.h = wnd->allocation.height;
+	pos.w = gtk_widget_get_allocated_width( wnd );
+	pos.h = gtk_widget_get_allocated_height( wnd );
 
 #ifdef DBG_WINDOWPOS
 	//Sys_Printf("save_window_pos 'Window %s'\n",buf);
@@ -94,9 +95,9 @@ void win32_get_window_pos( GtkWidget *widget, gint *x, gint *y ){
 		*x = point.x;
 		*y = point.y;
 
-		*x = max( *x,-widget->allocation.width + 10 );
+		*x = max( *x,-gtk_widget_get_allocated_width( widget ) + 10 );
 		*x = min( *x,primaryMonitorRect.width - 10 );
-		*y = max( *y,-widget->allocation.height + 10 );
+		*y = max( *y,-gtk_widget_get_allocated_height( widget ) + 10 );
 		*y = min( *y,primaryMonitorRect.height - 10 );
 	}
 	else {
