@@ -557,6 +557,7 @@ void SurfaceDlg::BuildDialog() {
 	gtk_table_attach( GTK_TABLE( table ), spin, 1, 2, 0, 1,
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
+	gtk_spin_button_set_numeric( GTK_SPIN_BUTTON( spin ), TRUE );
 	gtk_widget_show( spin );
 
 	label = gtk_label_new( _( "Step" ) );
@@ -589,6 +590,7 @@ void SurfaceDlg::BuildDialog() {
 	gtk_table_attach( GTK_TABLE( table ), spin, 1, 2, 1, 2,
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
+	gtk_spin_button_set_numeric( GTK_SPIN_BUTTON( spin ), TRUE );
 	gtk_widget_show( spin );
 
 	label = gtk_label_new( _( "Step" ) );
@@ -621,6 +623,7 @@ void SurfaceDlg::BuildDialog() {
 	gtk_table_attach( GTK_TABLE( table ), spin, 1, 2, 2, 3,
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
+	gtk_spin_button_set_numeric( GTK_SPIN_BUTTON( spin ), TRUE );
 	gtk_widget_show( spin );
 
 	label = gtk_label_new( _( "Step" ) );
@@ -653,6 +656,7 @@ void SurfaceDlg::BuildDialog() {
 	gtk_table_attach( GTK_TABLE( table ), spin, 1, 2, 3, 4,
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
+	gtk_spin_button_set_numeric( GTK_SPIN_BUTTON( spin ), TRUE );
 	gtk_widget_show( spin );
 
 	label = gtk_label_new( _( "Step" ) );
@@ -686,6 +690,7 @@ void SurfaceDlg::BuildDialog() {
 	gtk_table_attach( GTK_TABLE( table ), spin, 1, 2, 4, 5,
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
+	gtk_spin_button_set_numeric( GTK_SPIN_BUTTON( spin ), TRUE );
 	gtk_widget_show( spin );
 
 	label = gtk_label_new( _( "Step" ) );
@@ -812,6 +817,7 @@ void SurfaceDlg::BuildDialog() {
 	gtk_table_attach( GTK_TABLE( table ), spin, 2, 3, 1, 2,
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
+	gtk_spin_button_set_numeric( GTK_SPIN_BUTTON( spin ), TRUE );
 	gtk_widget_show( spin );
 	AddDialogData( spin, &m_nWidth, DLG_SPIN_INT );
 
@@ -819,6 +825,7 @@ void SurfaceDlg::BuildDialog() {
 	gtk_table_attach( GTK_TABLE( table ), spin, 3, 4, 1, 2,
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
+	gtk_spin_button_set_numeric( GTK_SPIN_BUTTON( spin ), TRUE );
 	gtk_widget_show( spin );
 	AddDialogData( spin, &m_nHeight, DLG_SPIN_INT );
 

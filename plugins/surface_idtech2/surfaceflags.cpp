@@ -372,7 +372,7 @@ GtkWidget* create_SurfaceFlagsFrame( GtkWidget* surfacedialog_widget ){
 						NULL );
 	gtk_entry_set_max_length( (GtkEntry *)value_entry, 11 );
 	gtk_box_pack_start( GTK_BOX( hbox3 ), value_entry, TRUE, TRUE, 0 );
-	g_object_set( value_entry, "xalign", 1.0, NULL );
+	gtk_entry_set_alignment( GTK_ENTRY( value_entry ), 1.0 ); //right
 	gtk_widget_show( value_entry );
 
 	vbox3 = gtk_vbox_new( FALSE, 0 );

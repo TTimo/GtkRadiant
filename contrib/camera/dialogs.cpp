@@ -1072,7 +1072,7 @@ GtkWidget *CreateCameraInspectorDialog( void ){
 
 	g_pSecondsEntry = gtk_entry_new();
 	gtk_box_pack_start( GTK_BOX( hbox ), g_pSecondsEntry, FALSE, FALSE, 0 );
-	g_object_set( g_pSecondsEntry, "xalign", 1.0, NULL );
+	gtk_entry_set_alignment( GTK_ENTRY( g_pSecondsEntry ), 1.0 ); //right
 	gtk_widget_show( g_pSecondsEntry );
 
 	// -------------------------- //

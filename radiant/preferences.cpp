@@ -2300,7 +2300,7 @@ void PrefsDlg::BuildDialog(){
 
 	// entry
 	entry = gtk_entry_new();
-	g_object_set( entry, "xalign", 1.0, NULL );
+	gtk_entry_set_alignment( GTK_ENTRY( entry ), 1.0 ); //right
 	gtk_box_pack_start( GTK_BOX( hbox2 ), entry, FALSE, FALSE, 0 );
 	gtk_widget_show( entry );
 	AddDialogData( entry, &m_nWheelInc, DLG_ENTRY_INT );
@@ -2372,7 +2372,7 @@ void PrefsDlg::BuildDialog(){
 
 	// entry
 	entry = gtk_entry_new();
-	g_object_set( entry, "xalign", 1.0, NULL );
+	gtk_entry_set_alignment( GTK_ENTRY( entry ), 1.0 ); //right
 	gtk_table_attach( GTK_TABLE( table ), entry, 1, 2, 0, 1,
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
@@ -2391,7 +2391,7 @@ void PrefsDlg::BuildDialog(){
 	// spinner (allows undo levels to be set to zero)
 	spin = gtk_spin_button_new( GTK_ADJUSTMENT( gtk_adjustment_new( 1, 0, 64, 1, 10, 0 ) ), 1, 0 );
 	gtk_spin_button_set_numeric( GTK_SPIN_BUTTON( spin ), TRUE );
-	g_object_set( spin, "xalign", 1.0, NULL );
+	gtk_entry_set_alignment( GTK_ENTRY( spin ), 1.0 ); //right
 	gtk_table_attach( GTK_TABLE( table ), spin, 1, 2, 1, 2,
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
@@ -2409,7 +2409,7 @@ void PrefsDlg::BuildDialog(){
 
 	// entry (spinner perhaps? [2-16])
 	entry = gtk_entry_new();
-	g_object_set( entry, "xalign", 1.0, NULL );
+	gtk_entry_set_alignment( GTK_ENTRY( entry ), 1.0 ); //right
 	gtk_table_attach( GTK_TABLE( table ), entry, 1, 2, 2, 3,
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
@@ -2464,7 +2464,7 @@ void PrefsDlg::BuildDialog(){
 	// spinner
 	spin = gtk_spin_button_new( GTK_ADJUSTMENT( gtk_adjustment_new( 1, 1, 60, 1, 10, 0 ) ), 1, 0 );
 	gtk_spin_button_set_numeric( GTK_SPIN_BUTTON( spin ), TRUE );
-	g_object_set( spin, "xalign", 1.0, NULL );
+	gtk_entry_set_alignment( GTK_ENTRY( spin ), 1.0 ); //right
 	gtk_box_pack_start( GTK_BOX( hbox2 ), spin, FALSE, FALSE, 0 );
 	gtk_widget_show( spin );
 	AddDialogData( spin, &m_nAutoSave, DLG_SPIN_INT );
@@ -2589,7 +2589,7 @@ void PrefsDlg::BuildDialog(){
 
 	// scale entry
 	entry = gtk_entry_new();
-	g_object_set( entry, "xalign", 1.0, NULL );
+	gtk_entry_set_alignment( GTK_ENTRY( entry ), 1.0 ); //right
 	gtk_table_attach( GTK_TABLE( table ), entry, 1, 2, 0, 1,
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );

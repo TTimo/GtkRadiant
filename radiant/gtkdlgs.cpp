@@ -1355,7 +1355,7 @@ void DoRotateDlg(){
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
 	gtk_spin_button_set_wrap( GTK_SPIN_BUTTON( x ), TRUE );
 	gtk_spin_button_set_numeric( GTK_SPIN_BUTTON( x ), TRUE );
-	g_object_set( x, "xalign", 1.0, NULL ); //right align numbers
+	gtk_entry_set_alignment( GTK_ENTRY( x ), 1.0 ); //right align numbers
 	gtk_widget_show( x );
 	g_object_set_data( G_OBJECT( dialog ), "x", x );
 	g_signal_connect_after( x, "activate", G_CALLBACK( rotatedialog_activate ), dialog );
@@ -1367,7 +1367,7 @@ void DoRotateDlg(){
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
 	gtk_spin_button_set_wrap( GTK_SPIN_BUTTON( y ), TRUE );
 	gtk_spin_button_set_numeric( GTK_SPIN_BUTTON( y ), TRUE );
-	g_object_set( y, "xalign", 1.0, NULL ); //right align numbers
+	gtk_entry_set_alignment( GTK_ENTRY( y ), 1.0 ); //right align numbers
 	gtk_widget_show( y );
 	g_signal_connect_after( y, "activate", G_CALLBACK( rotatedialog_activate ), dialog );
 	g_object_set_data( G_OBJECT( dialog ), "y", y );
@@ -1380,7 +1380,7 @@ void DoRotateDlg(){
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
 	gtk_spin_button_set_wrap( GTK_SPIN_BUTTON( z ), TRUE );
 	gtk_spin_button_set_numeric( GTK_SPIN_BUTTON( z ), TRUE );
-	g_object_set( z, "xalign", 1.0, NULL ); //right align numbers
+	gtk_entry_set_alignment( GTK_ENTRY( z ), 1.0 ); //right align numbers
 	gtk_widget_show( z );
 	g_signal_connect_after( z, "activate", G_CALLBACK( rotatedialog_activate ), dialog );
 	g_object_set_data( G_OBJECT( dialog ), "z", z );
@@ -1429,7 +1429,7 @@ void DoGamma(){
 	gtk_box_pack_start( GTK_BOX( vbox ), spin, TRUE, TRUE, 0 );
 	gtk_spin_button_set_wrap( GTK_SPIN_BUTTON( spin ), FALSE );
 	gtk_spin_button_set_numeric( GTK_SPIN_BUTTON( spin ), TRUE );
-	g_object_set( spin, "xalign", 1.0, NULL );
+	gtk_entry_set_alignment( GTK_ENTRY( spin ), 1.0 ); //right
 	gtk_widget_show( spin );
 
 	// Initialize dialog
@@ -1652,7 +1652,7 @@ void DoFind(){
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
 	gtk_spin_button_set_wrap( GTK_SPIN_BUTTON( spin ), FALSE );
 	gtk_spin_button_set_numeric( GTK_SPIN_BUTTON( spin ), TRUE );
-	g_object_set( spin, "xalign", 1.0, NULL ); //right align numbers
+	gtk_entry_set_alignment( GTK_ENTRY( spin ), 1.0 ); //right align numbers
 	gtk_widget_show( spin );
 	g_object_set_data( G_OBJECT( dialog ), "entity-spin", spin );
 
@@ -1663,7 +1663,7 @@ void DoFind(){
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
 	gtk_spin_button_set_wrap( GTK_SPIN_BUTTON( spin ), FALSE );
 	gtk_spin_button_set_numeric( GTK_SPIN_BUTTON( spin ), TRUE );
-	g_object_set( spin, "xalign", 1.0, NULL ); //right align numbers
+	gtk_entry_set_alignment( GTK_ENTRY( spin ), 1.0 ); //right align numbers
 	gtk_widget_show( spin );
 	g_object_set_data( G_OBJECT( dialog ), "brush-spin", spin );
 
@@ -1709,7 +1709,7 @@ void DoSides( bool bCone, bool bSphere, bool bTorus ){
 	gtk_box_pack_start( GTK_BOX( hbox ), spin, TRUE, TRUE, 0 );
 	gtk_spin_button_set_wrap( GTK_SPIN_BUTTON( spin ), TRUE );
 	gtk_spin_button_set_numeric( GTK_SPIN_BUTTON( spin ), TRUE );
-	g_object_set( spin, "xalign", 1.0, NULL );
+	gtk_entry_set_alignment( GTK_ENTRY( spin ), 1.0 ); //right
 	gtk_widget_show( spin );
 
 	response_id = gtk_dialog_run( GTK_DIALOG( dialog ) );
@@ -1933,7 +1933,7 @@ void DoScaleDlg(){
 	gtk_table_attach( GTK_TABLE( table ), x, 1, 2, 0, 1,
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
-	g_object_set( x, "xalign", 1.0, NULL ); //right align numbers
+	gtk_entry_set_alignment( GTK_ENTRY( x ), 1.0 ); //right align numbers
 	gtk_widget_show( x );
 	g_object_set_data( G_OBJECT( dialog ), "x", x );
 	g_signal_connect_after( x, "activate", G_CALLBACK( scaledlg_activate ), dialog );
@@ -1945,7 +1945,7 @@ void DoScaleDlg(){
 	gtk_table_attach( GTK_TABLE( table ), y, 1, 2, 1, 2,
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
-	g_object_set( y, "xalign", 1.0, NULL ); //right align numbers
+	gtk_entry_set_alignment( GTK_ENTRY( y ), 1.0 ); //right align numbers
 	gtk_widget_show( y );
 	g_object_set_data( G_OBJECT( dialog ), "y", y );
 	g_signal_connect_after( y, "activate", G_CALLBACK( scaledlg_activate ), dialog );
@@ -1958,7 +1958,7 @@ void DoScaleDlg(){
 	gtk_table_attach( GTK_TABLE( table ), z, 1, 2, 2, 3,
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
-	g_object_set( z, "xalign", 1.0, NULL ); //right align numbers
+	gtk_entry_set_alignment( GTK_ENTRY( z ), 1.0 ); //right align numbers
 	gtk_widget_show( z );
 	g_object_set_data( G_OBJECT( dialog ), "z", z );
 	g_signal_connect_after( z, "activate", G_CALLBACK( scaledlg_activate ), dialog );
@@ -2015,7 +2015,7 @@ void DoThickenDlg(){
 	gtk_box_pack_start( GTK_BOX( hbox ), amount, FALSE, FALSE, 0 );
 	gtk_spin_button_set_wrap( GTK_SPIN_BUTTON( spin ), FALSE );
 	gtk_spin_button_set_numeric( GTK_SPIN_BUTTON( spin ), TRUE );
-	g_object_set( spin, "xalign", 1.0, NULL );
+	gtk_entry_set_alignment( GTK_ENTRY( spin ), 1.0 ); //right
 	gtk_widget_show( spin );
 
 	seams = gtk_check_button_new_with_label( _( "Seams" ) );
@@ -3388,8 +3388,8 @@ int DoLightIntensityDlg( int *intensity ){
 	gtk_box_pack_start( GTK_BOX( hbox ), spinbutton, TRUE, TRUE, 0 );
 	gtk_spin_button_set_wrap( GTK_SPIN_BUTTON( spinbutton ), FALSE );
 	gtk_spin_button_set_numeric( GTK_SPIN_BUTTON( spinbutton ), TRUE );
+	gtk_entry_set_alignment( GTK_ENTRY( spinbutton ), 1.0 ); //right
 	gtk_widget_show( spinbutton );
-	g_object_set( spinbutton, "xalign", 1.0, NULL );
 
 	gtk_spin_button_set_value( GTK_SPIN_BUTTON( spinbutton ), *intensity );
 

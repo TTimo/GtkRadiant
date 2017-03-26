@@ -423,7 +423,7 @@ int DoPolygonBox( PolygonRS* rs ){
 	// ---- hbox2 ----
 
 	text1 = gtk_entry_new();
-	g_object_set( text1, "xalign", 1.0, NULL );
+	gtk_entry_set_alignment( GTK_ENTRY( text1 ), 1.0 ); //right
 	gtk_entry_set_max_length( GTK_ENTRY( text1 ), 256 );
 	gtk_entry_set_text( GTK_ENTRY( text1 ), "3" );
 	gtk_box_pack_start( GTK_BOX( hbox2 ), text1, FALSE, FALSE, 2 );
@@ -444,7 +444,7 @@ int DoPolygonBox( PolygonRS* rs ){
 	// ---- hbox2 ----
 
 	text2 = gtk_entry_new();
-	g_object_set( text2, "xalign", 1.0, NULL );
+	gtk_entry_set_alignment( GTK_ENTRY( text2 ), 1.0 ); //right
 	gtk_entry_set_max_length( GTK_ENTRY( text2 ), 256 );
 	gtk_entry_set_text( GTK_ENTRY( text2 ), "8" );
 	gtk_box_pack_start( GTK_BOX( hbox2 ), text2, FALSE, FALSE, 2 );
