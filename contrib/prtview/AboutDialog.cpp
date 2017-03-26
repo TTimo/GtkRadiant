@@ -31,45 +31,20 @@
 /////////////////////////////////////////////////////////////////////////////
 // CAboutDialog dialog
 
-static void dialog_button_callback( GtkWidget *widget, gpointer data ){
-	GtkWidget *parent;
-	int *loop, *ret;
+void DoAboutDlg( GtkWidget *parent ){
+	GtkWidget *dialog, *vbox, *label, *content_area;
+	GtkDialogFlags flags = GTK_DIALOG_DESTROY_WITH_PARENT;
 
-	parent = gtk_widget_get_toplevel( widget );
-	loop = (int*)g_object_get_data( G_OBJECT( parent ), "loop" );
-	ret = (int*)g_object_get_data( G_OBJECT( parent ), "ret" );
+	dialog = gtk_dialog_new_with_buttons( _( "About Portal Viewer" ), NULL, flags, NULL );
+	gtk_dialog_add_button( GTK_DIALOG( dialog ), _( "OK" ), GTK_RESPONSE_OK );
 
-	*loop = 0;
-	*ret = (int)((intptr_t)data);
-}
+	content_area = gtk_dialog_get_content_area( GTK_DIALOG( dialog ) );
+	gtk_window_set_transient_for( GTK_WINDOW( dialog ), GTK_WINDOW( parent) );
 
-static gint dialog_delete_callback( GtkWidget *widget, GdkEvent* event, gpointer data ){
-	int *loop;
-
-	gtk_widget_hide( widget );
-	loop = (int*)g_object_get_data( G_OBJECT( widget ), "loop" );
-	*loop = 0;
-
-	return TRUE;
-}
-
-void DoAboutDlg(){
-	GtkWidget *dlg, *hbox, *vbox, *button, *label;
-	int loop = 1, ret = IDCANCEL;
-
-	dlg = gtk_window_new( GTK_WINDOW_TOPLEVEL );
-	gtk_window_set_title( GTK_WINDOW( dlg ), _( "About Portal Viewer" ) );
-	g_signal_connect( G_OBJECT( dlg ), "delete-event",
-						G_CALLBACK( dialog_delete_callback ), NULL );
-	g_signal_connect( G_OBJECT( dlg ), "destroy",
-						G_CALLBACK( gtk_widget_destroy ), NULL );
-	g_object_set_data( G_OBJECT( dlg ), "loop", &loop );
-	g_object_set_data( G_OBJECT( dlg ), "ret", &ret );
-
-	hbox = gtk_hbox_new( FALSE, 10 );
-	gtk_widget_show( hbox );
-	gtk_container_add( GTK_CONTAINER( dlg ), hbox );
-	gtk_container_set_border_width( GTK_CONTAINER( hbox ), 10 );
+	vbox = gtk_vbox_new( TRUE, 5 );
+	gtk_container_add( GTK_CONTAINER( content_area ), vbox );
+	gtk_container_set_border_width( GTK_CONTAINER( vbox ), 5 );
+	gtk_widget_show( vbox );
 
 	label = gtk_label_new( "Version 1.000\n\n"
 						   "Gtk port by Leonardo Zide\nleo@lokigames.com\n\n"
@@ -77,29 +52,14 @@ void DoAboutDlg(){
 						   "Built against GtkRadiant " RADIANT_VERSION "\n"
 						   __DATE__
 						   );
-	gtk_widget_show( label );
-	gtk_box_pack_start( GTK_BOX( hbox ), label, TRUE, TRUE, 0 );
+	gtk_box_pack_start( GTK_BOX( vbox ), label, TRUE, TRUE, 0 );
 	gtk_label_set_justify( GTK_LABEL( label ), GTK_JUSTIFY_LEFT );
+	gtk_widget_show( label );
 
-	vbox = gtk_vbox_new( FALSE, 0 );
-	gtk_widget_show( vbox );
-	gtk_box_pack_start( GTK_BOX( hbox ), vbox, FALSE, FALSE, 0 );
 
-	button = gtk_button_new_with_label( _( "OK" ) );
-	gtk_widget_show( button );
-	gtk_box_pack_start( GTK_BOX( vbox ), button, FALSE, FALSE, 0 );
-	g_signal_connect( G_OBJECT( button ), "clicked",
-						G_CALLBACK( dialog_button_callback ), GINT_TO_POINTER( IDOK ) );
-	gtk_widget_set_usize( button, 60, -2 );
+	gtk_dialog_run( GTK_DIALOG( dialog ) );
 
-	gtk_grab_add( dlg );
-	gtk_widget_show( dlg );
-
-	while ( loop )
-		gtk_main_iteration();
-
-	gtk_grab_remove( dlg );
-	gtk_widget_destroy( dlg );
+	gtk_widget_destroy( dialog );
 }
 
 /////////////////////////////////////////////////////////////////////////////

@@ -74,7 +74,7 @@ static void find_clicked( GtkWidget *widget, gpointer data ){
 		item = gtk_menu_item_new_with_label( pShader->getName() );
 		g_signal_connect( G_OBJECT( item ), "activate", G_CALLBACK( popup_selected ), data );
 		gtk_widget_show( item );
-		gtk_menu_append( GTK_MENU( menu ), item );
+		gtk_menu_shell_append( GTK_MENU_SHELL( menu ), item );
 	}
 
 	gtk_menu_popup( GTK_MENU( menu ), NULL, NULL, NULL, NULL, 1, GDK_CURRENT_TIME );
@@ -113,118 +113,116 @@ void FindTextureDialog::BuildDialog(){
 	gtk_window_set_transient_for( GTK_WINDOW( dlg ), GTK_WINDOW( g_pParentWnd->m_pWidget ) );
 
 	hbox = gtk_hbox_new( FALSE, 5 );
-	gtk_widget_show( hbox );
 	gtk_container_add( GTK_CONTAINER( dlg ), hbox );
 	gtk_container_set_border_width( GTK_CONTAINER( hbox ), 5 );
+	gtk_widget_show( hbox );
 
 	vbox = gtk_vbox_new( FALSE, 5 );
+	gtk_box_pack_start( GTK_BOX( hbox ), vbox, TRUE, TRUE, 5 );
 	gtk_widget_show( vbox );
-	gtk_box_pack_start( GTK_BOX( hbox ), vbox, TRUE, TRUE, 0 );
 
 	table = gtk_table_new( 2, 3, FALSE );
-	gtk_widget_show( table );
 	gtk_box_pack_start( GTK_BOX( vbox ), table, TRUE, TRUE, 0 );
 	gtk_table_set_row_spacings( GTK_TABLE( table ), 5 );
 	gtk_table_set_col_spacings( GTK_TABLE( table ), 5 );
+	gtk_widget_show( table );
 
 	label = gtk_label_new( _( "Find:" ) );
-	gtk_widget_show( label );
 	gtk_table_attach( GTK_TABLE( table ), label, 0, 1, 0, 1,
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
 	gtk_misc_set_alignment( GTK_MISC( label ), 0, 0.5 );
+	gtk_widget_show( label );
 
 	label = gtk_label_new( _( "Replace:" ) );
-	gtk_widget_show( label );
 	gtk_table_attach( GTK_TABLE( table ), label, 0, 1, 1, 2,
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
 	gtk_misc_set_alignment( GTK_MISC( label ), 0, 0.5 );
+	gtk_widget_show( label );
 
 	entry = gtk_entry_new();
-	gtk_widget_show( entry );
 	gtk_table_attach( GTK_TABLE( table ), entry, 1, 2, 0, 1,
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
+	gtk_widget_show( entry );
 	g_signal_connect( G_OBJECT( entry ), "focus-in-event",
 						G_CALLBACK( find_focus_in ), NULL );
 	AddDialogData( entry, &m_strFind, DLG_ENTRY_TEXT );
 
 	button = gtk_button_new();
-	gtk_widget_show( button );
 	gtk_table_attach( GTK_TABLE( table ), button, 2, 3, 0, 1,
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( GTK_FILL ), 0, 0 );
+	gtk_widget_show( button );
 	g_signal_connect( G_OBJECT( button ), "clicked",
 						G_CALLBACK( find_clicked ), entry );
 
 	arrow = gtk_arrow_new( GTK_ARROW_DOWN, GTK_SHADOW_OUT );
-	gtk_widget_show( arrow );
 	gtk_container_add( GTK_CONTAINER( button ), arrow );
+	gtk_widget_show( arrow );
 
 	entry = gtk_entry_new();
-	gtk_widget_show( entry );
 	gtk_table_attach( GTK_TABLE( table ), entry, 1, 2, 1, 2,
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
+	gtk_widget_show( entry );
 	g_signal_connect( G_OBJECT( entry ), "focus-in-event",
 						G_CALLBACK( replace_focus_in ), NULL );
 	AddDialogData( entry, &m_strReplace, DLG_ENTRY_TEXT );
 
 	button = gtk_button_new();
-	gtk_widget_show( button );
 	gtk_table_attach( GTK_TABLE( table ), button, 2, 3, 1, 2,
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( GTK_FILL ), 0, 0 );
+	gtk_widget_show( button );
 	g_signal_connect( G_OBJECT( button ), "clicked",
 						G_CALLBACK( find_clicked ), entry );
 
 	arrow = gtk_arrow_new( GTK_ARROW_DOWN, GTK_SHADOW_OUT );
-	gtk_widget_show( arrow );
 	gtk_container_add( GTK_CONTAINER( button ), arrow );
+	gtk_widget_show( arrow );
 
 	check = gtk_check_button_new_with_label( _( "Use selected brushes only" ) );
-	gtk_widget_show( check );
 	gtk_box_pack_start( GTK_BOX( vbox ), check, TRUE, TRUE, 0 );
+	gtk_widget_show( check );
 	AddDialogData( check, &m_bSelectedOnly, DLG_CHECK_BOOL );
 
 	check = gtk_check_button_new_with_label( _( "Replace everywhere (selected/active), don't test against Find" ) );
-	gtk_widget_show( check );
 	gtk_box_pack_start( GTK_BOX( vbox ), check, TRUE, TRUE, 0 );
+	gtk_widget_show( check );
 	AddDialogData( check, &m_bForce, DLG_CHECK_BOOL );
 
 	check = gtk_check_button_new_with_label( _( "Live updates from Texture/Camera windows" ) );
-	gtk_widget_show( check );
 	gtk_box_pack_start( GTK_BOX( vbox ), check, TRUE, TRUE, 0 );
+	gtk_widget_show( check );
 	AddDialogData( check, &m_bLive, DLG_CHECK_BOOL );
 
 	vbox = gtk_vbox_new( FALSE, 5 );
-	gtk_widget_show( vbox );
 	gtk_box_pack_start( GTK_BOX( hbox ), vbox, TRUE, TRUE, 0 );
+	gtk_widget_show( vbox );
 
 	button = gtk_button_new_with_label( _( "Find" ) );
-	gtk_widget_show( button );
 	gtk_box_pack_start( GTK_BOX( vbox ), button, FALSE, FALSE, 0 );
 	g_signal_connect( G_OBJECT( button ), "clicked",
 						G_CALLBACK( OnFind ), NULL );
 	gtk_widget_set_usize( button, 60, -2 );
+	gtk_widget_show( button );
 
 	button = gtk_button_new_with_label( _( "OK" ) );
-	gtk_widget_show( button );
 	gtk_box_pack_start( GTK_BOX( vbox ), button, FALSE, FALSE, 0 );
 	g_signal_connect( G_OBJECT( button ), "clicked",
 						G_CALLBACK( OnOK ), NULL );
 	gtk_widget_set_usize( button, 60, -2 );
+	gtk_widget_show( button );
 
 	button = gtk_button_new_with_label( _( "Apply" ) );
-	gtk_widget_show( button );
 	gtk_box_pack_start( GTK_BOX( vbox ), button, FALSE, FALSE, 0 );
 	g_signal_connect( G_OBJECT( button ), "clicked",
 						G_CALLBACK( OnApply ), NULL );
 	gtk_widget_set_usize( button, 60, -2 );
 
 	button = gtk_button_new_with_label( _( "Close" ) );
-	gtk_widget_show( button );
 	gtk_box_pack_start( GTK_BOX( vbox ), button, FALSE, FALSE, 0 );
 	g_signal_connect( G_OBJECT( button ), "clicked",
 						G_CALLBACK( OnClose ), NULL );

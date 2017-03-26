@@ -70,8 +70,8 @@ bool m_nLoop;
 int m_nReturn;
 
 void AddDialogData( GtkWidget *widget, void *buf, DLG_DATA_TYPE type )
-{ AddDialogData( GTK_OBJECT( widget ), buf, type ); };
-void AddDialogData( GtkObject *object, void *buf, DLG_DATA_TYPE type );
+{ AddDialogData( G_OBJECT( widget ), buf, type ); };
+void AddDialogData( GObject *object, void *buf, DLG_DATA_TYPE type );
 /*!
    used in overloaded BuildDialog implementations to configure modal behaviour easily
  */

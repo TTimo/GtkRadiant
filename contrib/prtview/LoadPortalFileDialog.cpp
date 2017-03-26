@@ -28,135 +28,87 @@
 //static char THIS_FILE[] = __FILE__;
 #endif
 
-static void dialog_button_callback( GtkWidget *widget, gpointer data ){
-	GtkWidget *parent;
-	int *loop, *ret;
 
-	parent = gtk_widget_get_toplevel( widget );
-	loop = (int*)g_object_get_data( G_OBJECT( parent ), "loop" );
-	ret = (int*)g_object_get_data( G_OBJECT( parent ), "ret" );
 
-	*loop = 0;
-	*ret = (intptr_t)data;
-}
-
-static gint dialog_delete_callback( GtkWidget *widget, GdkEvent* event, gpointer data ){
-	int *loop;
-
-	gtk_widget_hide( widget );
-	loop = (int*)g_object_get_data( G_OBJECT( widget ), "loop" );
-	*loop = 0;
-
-	return TRUE;
-}
-
-static void file_sel_callback( GtkWidget *widget, gpointer data ){
-	GtkWidget *parent;
-	int *loop;
-	char **filename;
-
-	parent = gtk_widget_get_toplevel( widget );
-	loop = (int*)g_object_get_data( G_OBJECT( parent ), "loop" );
-	filename = (char**)g_object_get_data( G_OBJECT( parent ), "filename" );
-
-	*loop = 0;
-	if ( (intptr_t)data == IDOK ) {
-		*filename = g_strdup( gtk_file_selection_get_filename( GTK_FILE_SELECTION( parent ) ) );
-	}
-}
 
 static void change_clicked( GtkWidget *widget, gpointer data ){
-	GtkWidget* file_sel;
-	char* filename = NULL;
-	int loop = 1;
+	GtkWidget *file_sel, *parent;
+	gint response_id;
+	GtkFileChooserAction action = GTK_FILE_CHOOSER_ACTION_OPEN;
 
-	file_sel = gtk_file_selection_new( _( "Locate portal (.prt) file" ) );
-	g_signal_connect( G_OBJECT( GTK_FILE_SELECTION( file_sel )->ok_button ), "clicked",
-						G_CALLBACK( file_sel_callback ), GINT_TO_POINTER( IDOK ) );
-	g_signal_connect( G_OBJECT( GTK_FILE_SELECTION( file_sel )->cancel_button ), "clicked",
-						G_CALLBACK( file_sel_callback ), GINT_TO_POINTER( IDCANCEL ) );
-	g_signal_connect( G_OBJECT( file_sel ), "delete-event",
-						G_CALLBACK( dialog_delete_callback ), NULL );
-	gtk_file_selection_hide_fileop_buttons( GTK_FILE_SELECTION( file_sel ) );
+	parent = GTK_WIDGET( data );
+	file_sel = gtk_file_chooser_dialog_new( _( "Locate portal (.prt) file" ), NULL, action, NULL, NULL );
+	gtk_window_set_transient_for( GTK_WINDOW( file_sel ), GTK_WINDOW( parent ) );
+	gtk_dialog_add_button( GTK_DIALOG( file_sel ), _( "_Open" ), GTK_RESPONSE_ACCEPT );
+	gtk_dialog_add_button( GTK_DIALOG( file_sel ), _( "_Cancel" ), GTK_RESPONSE_CANCEL );
 
-	g_object_set_data( G_OBJECT( file_sel ), "loop", &loop );
-	g_object_set_data( G_OBJECT( file_sel ), "filename", &filename );
-	gtk_file_selection_set_filename( GTK_FILE_SELECTION( file_sel ), portals.fn );
+	response_id = gtk_dialog_run( GTK_DIALOG( file_sel ) );
+	if( response_id == GTK_RESPONSE_ACCEPT )
+	{
+		gchar *filename;
+		GtkFileChooser *chooser;
 
-	gtk_grab_add( file_sel );
-	gtk_widget_show( file_sel );
+		chooser = GTK_FILE_CHOOSER( file_sel );
+		filename = gtk_file_chooser_get_filename( chooser );
 
-	while ( loop )
-		gtk_main_iteration();
-
-	gtk_grab_remove( file_sel );
-	gtk_widget_destroy( file_sel );
-
-	if ( filename != NULL ) {
-		strcpy( portals.fn, filename );
-		gtk_entry_set_text( GTK_ENTRY( data ), filename );
-		g_free( filename );
+		if ( filename != NULL ) {
+			strcpy( portals.fn, filename );
+			gtk_entry_set_text( GTK_ENTRY( data ), filename );
+			g_free( filename );
+		}
 	}
+
+	gtk_widget_destroy( file_sel );
 }
 
-int DoLoadPortalFileDialog(){
-	GtkWidget *dlg, *vbox, *hbox, *button, *entry, *check2d, *check3d;
-	int loop = 1, ret = IDCANCEL;
+int DoLoadPortalFileDialog( GtkWidget *parent ){
+	GtkWidget *dialog, *vbox, *hbox, *button, *entry, *check2d, *check3d;
+	GtkWidget *content_area, *ok_button, *cancel_button, *change_button;
+	gint response_id;
+	int ret;
+	GtkSizeGroup *size_group;
+	GtkDialogFlags flags = GTK_DIALOG_DESTROY_WITH_PARENT;
 
-	dlg = gtk_window_new( GTK_WINDOW_TOPLEVEL );
-	gtk_window_set_title( GTK_WINDOW( dlg ), _( "Load .prt" ) );
-	g_signal_connect( G_OBJECT( dlg ), "delete-event",
-						G_CALLBACK( dialog_delete_callback ), NULL );
-	g_signal_connect( G_OBJECT( dlg ), "destroy",
-						G_CALLBACK( gtk_widget_destroy ), NULL );
-	g_object_set_data( G_OBJECT( dlg ), "loop", &loop );
-	g_object_set_data( G_OBJECT( dlg ), "ret", &ret );
+	dialog = gtk_dialog_new_with_buttons( _( "Load .prt" ), NULL, flags, NULL );
+	gtk_window_set_transient_for( GTK_WINDOW( dialog ), GTK_WINDOW( parent ) );
+
+	ok_button = gtk_dialog_add_button( GTK_DIALOG( dialog ), _( "OK" ), GTK_RESPONSE_OK );
+	cancel_button = gtk_dialog_add_button( GTK_DIALOG( dialog ), _( "Cancel" ), GTK_RESPONSE_CANCEL );
+
+	content_area = gtk_dialog_get_content_area( GTK_DIALOG( dialog ) );
 
 	vbox = gtk_vbox_new( FALSE, 5 );
-	gtk_widget_show( vbox );
-	gtk_container_add( GTK_CONTAINER( dlg ), vbox );
+	gtk_container_add( GTK_CONTAINER( content_area ), vbox );
 	gtk_container_set_border_width( GTK_CONTAINER( vbox ), 5 );
+	gtk_widget_show( vbox );
 
 	entry = gtk_entry_new();
-	gtk_widget_show( entry );
-	gtk_entry_set_editable( GTK_ENTRY( entry ), FALSE );
+	gtk_editable_set_editable( GTK_EDITABLE( entry ), FALSE );
 	gtk_box_pack_start( GTK_BOX( vbox ), entry, FALSE, FALSE, 0 );
+	gtk_widget_show( entry );
 
 	hbox = gtk_hbox_new( FALSE, 5 );
-	gtk_widget_show( hbox );
 	gtk_box_pack_start( GTK_BOX( vbox ), hbox, FALSE, FALSE, 0 );
+	gtk_widget_show( hbox );
 
 	check3d = gtk_check_button_new_with_label( _( "Show 3D" ) );
-	gtk_widget_show( check3d );
 	gtk_box_pack_start( GTK_BOX( hbox ), check3d, FALSE, FALSE, 0 );
+	gtk_widget_show( check3d );
 
 	check2d = gtk_check_button_new_with_label( _( "Show 2D" ) );
-	gtk_widget_show( check2d );
 	gtk_box_pack_start( GTK_BOX( hbox ), check2d, FALSE, FALSE, 0 );
+	gtk_widget_show( check2d );
 
-	button = gtk_button_new_with_label( _( "Change" ) );
-	gtk_widget_show( button );
+	change_button = button = gtk_button_new_with_label( _( "Change" ) );
 	gtk_box_pack_end( GTK_BOX( hbox ), button, FALSE, FALSE, 0 );
-	g_signal_connect( G_OBJECT( button ), "clicked", G_CALLBACK( change_clicked ), entry );
-	gtk_widget_set_usize( button, 60, -2 );
-
-	hbox = gtk_hbox_new( FALSE, 5 );
-	gtk_widget_show( hbox );
-	gtk_box_pack_start( GTK_BOX( vbox ), hbox, FALSE, FALSE, 0 );
-
-	button = gtk_button_new_with_label( _( "Cancel" ) );
+	g_signal_connect( G_OBJECT( button ), "clicked", G_CALLBACK( change_clicked ), parent );
 	gtk_widget_show( button );
-	gtk_box_pack_end( GTK_BOX( hbox ), button, FALSE, FALSE, 0 );
-	g_signal_connect( G_OBJECT( button ), "clicked",
-						G_CALLBACK( dialog_button_callback ), GINT_TO_POINTER( IDCANCEL ) );
-	gtk_widget_set_usize( button, 60, -2 );
 
-	button = gtk_button_new_with_label( _( "OK" ) );
-	gtk_widget_show( button );
-	gtk_box_pack_end( GTK_BOX( hbox ), button, FALSE, FALSE, 0 );
-	g_signal_connect( G_OBJECT( button ), "clicked",
-						G_CALLBACK( dialog_button_callback ), GINT_TO_POINTER( IDOK ) );
-	gtk_widget_set_usize( button, 60, -2 );
+	size_group = gtk_size_group_new( GTK_SIZE_GROUP_BOTH );
+	gtk_size_group_add_widget( size_group, ok_button );
+	gtk_size_group_add_widget( size_group, cancel_button );
+	gtk_size_group_add_widget( size_group, change_button );
+	g_object_unref( size_group );
 
 	char *fn = g_FuncTable.m_pfnGetMapName();
 	strcpy( portals.fn, fn );
@@ -170,21 +122,22 @@ int DoLoadPortalFileDialog(){
 	gtk_toggle_button_set_active( GTK_TOGGLE_BUTTON( check2d ), portals.show_2d );
 	gtk_toggle_button_set_active( GTK_TOGGLE_BUTTON( check3d ), portals.show_3d );
 
-	gtk_grab_add( dlg );
-	gtk_widget_show( dlg );
 
-	while ( loop )
-		gtk_main_iteration();
+	response_id = gtk_dialog_run( GTK_DIALOG( dialog ) );
 
-	if ( ret == IDOK ) {
+	if( response_id == GTK_RESPONSE_OK ) {
+
 		portals.Purge();
 
 		portals.show_3d = gtk_toggle_button_get_active( GTK_TOGGLE_BUTTON( check3d ) ) ? true : false;
 		portals.show_2d = gtk_toggle_button_get_active( GTK_TOGGLE_BUTTON( check2d ) ) ? true : false;
+
+		ret = IDOK;
+	} else {
+		ret = IDCANCEL;
 	}
 
-	gtk_grab_remove( dlg );
-	gtk_widget_destroy( dlg );
+	gtk_widget_destroy( dialog );
 
 	return ret;
 }

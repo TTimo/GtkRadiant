@@ -67,7 +67,7 @@ _QEREntityTable g_EntityTable;
 _QERAppDataTable g_DataTable;
 
 // for the file load dialog
-void *g_pMainWidget;
+void *g_pMainWidget = NULL;
 
 // =============================================================================
 // plugin implementation
@@ -188,7 +188,7 @@ extern "C" const char* QERPlug_GetCommandList(){
 extern "C" void QERPlug_Dispatch( const char *p, vec3_t vMin, vec3_t vMax, bool bSingleBrush ){
 	Sys_Printf( MSG_PREFIX "Command \"%s\"\n",p );
 	if ( !strcmp( p, CMD_ABOUT ) ) {
-		g_FuncTable.m_pfnMessageBox( NULL, PLUGIN_ABOUT, "About", MB_OK, NULL );
+		g_FuncTable.m_pfnMessageBox( g_pMainWidget, PLUGIN_ABOUT, "About", MB_OK, NULL );
 	}
 	else if ( !strcmp( p,CMD_CONFIG ) ) {
 		ShowBackgroundDialog();

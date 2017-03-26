@@ -104,7 +104,7 @@ extern "C" void QERPlug_Dispatch( const char *p, vec3_t vMin, vec3_t vMax, bool 
 		DoVisAnalyse();
 	}
 	else if ( !stricmp( p, "about..." ) ) {
-		DoMessageBox( PLUGIN_ABOUT, "About", IDOK );
+		DoMessageBox( PLUGIN_ABOUT, "About", MB_OK );
 	}
 }
 

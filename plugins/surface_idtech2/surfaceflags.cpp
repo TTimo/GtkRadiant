@@ -305,28 +305,29 @@ GtkWidget* create_SurfaceFlagsFrame( GtkWidget* surfacedialog_widget ){
 	char buffer[8];
 
 	frame1 = gtk_frame_new( _( "Flags" ) );
-	gtk_widget_show( frame1 );
 	gtk_container_add( GTK_CONTAINER( surfacedialog_widget ), frame1 );
+	gtk_widget_show( frame1 );
 
 	vbox1 = gtk_vbox_new( FALSE, 0 );
-	gtk_widget_show( vbox1 );
 	gtk_container_add( GTK_CONTAINER( frame1 ), vbox1 );
+	gtk_widget_show( vbox1 );
 
 	notebook1 = gtk_notebook_new();
-	gtk_widget_show( notebook1 );
 	gtk_box_pack_start( GTK_BOX( vbox1 ), notebook1, TRUE, TRUE, 0 );
 	gtk_notebook_set_show_tabs( GTK_NOTEBOOK( notebook1 ), TRUE );
 	gtk_container_set_border_width( GTK_CONTAINER( notebook1 ), 5 );
+	gtk_widget_show( notebook1 );
 
 	vbox2 = gtk_vbox_new( FALSE, 5 );
-	gtk_widget_show( vbox2 );
 	gtk_container_add( GTK_CONTAINER( notebook1 ), vbox2 );
+	gtk_widget_show( vbox2 );
 
 	table4 = gtk_table_new( 8, 4, TRUE );
-	gtk_widget_show( table4 );
 	gtk_table_set_col_spacings( GTK_TABLE( table4 ), 5 );
 	gtk_table_set_row_spacings( GTK_TABLE( table4 ), 5 );
 	gtk_box_pack_start( GTK_BOX( vbox2 ), table4, TRUE, TRUE, 0 );
+	gtk_container_set_border_width( GTK_CONTAINER( table4 ), 5 );
+	gtk_widget_show( table4 );
 
 	y = -1;
 	for ( i = 0; i < MAX_BUTTONS; i++ ) {
@@ -339,27 +340,28 @@ GtkWidget* create_SurfaceFlagsFrame( GtkWidget* surfacedialog_widget ){
 		//Sys_Printf( "%s: %s\n", buffer, buttonLabel );
 		surface_buttons[i] = gtk_toggle_button_new_with_label( buttonLabel );
 		g_signal_connect( G_OBJECT( surface_buttons[i] ), "toggled", G_CALLBACK( on_surface_button_toggled ), GINT_TO_POINTER( 1 << i ) );
-		gtk_widget_show( surface_buttons[i] );
 		gtk_table_attach( GTK_TABLE( table4 ), surface_buttons[i], 0 + x, 1 + x, ( 0 + y ), ( 1 + y ),
 						  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
 						  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ), 0, 0 );
+		gtk_widget_show( surface_buttons[i] );
 	}
 
 	hbox2 = gtk_hbox_new( FALSE, 0 );
-	gtk_widget_show( hbox2 );
 	gtk_box_pack_start( GTK_BOX( vbox2 ), hbox2, FALSE, FALSE, 0 );
+	gtk_container_set_border_width( GTK_CONTAINER( hbox2 ), 4 );
+	gtk_widget_show( hbox2 );
 
 	hbox3 = gtk_hbox_new( FALSE, 0 );
-	gtk_widget_show( hbox3 );
 	gtk_box_pack_start( GTK_BOX( hbox2 ), hbox3, TRUE, TRUE, 0 );
+	gtk_widget_show( hbox3 );
 
 	vbox4 = gtk_vbox_new( FALSE, 0 );
-	gtk_widget_show( vbox4 );
 	gtk_box_pack_start( GTK_BOX( hbox3 ), vbox4, TRUE, TRUE, 0 );
+	gtk_widget_show( vbox4 );
 
 	value_label = gtk_label_new( _( "Value: " ) );
-	gtk_widget_show( value_label );
 	gtk_box_pack_start( GTK_BOX( hbox3 ), value_label, FALSE, FALSE, 0 );
+	gtk_widget_show( value_label );
 
 	value_entry = gtk_entry_new();
 	g_signal_connect( G_OBJECT( value_entry ), "changed",
@@ -369,22 +371,24 @@ GtkWidget* create_SurfaceFlagsFrame( GtkWidget* surfacedialog_widget ){
 						G_CALLBACK( on_value_entry_insert_text ),
 						NULL );
 	gtk_entry_set_max_length( (GtkEntry *)value_entry, 11 );
-	gtk_widget_show( value_entry );
 	gtk_box_pack_start( GTK_BOX( hbox3 ), value_entry, TRUE, TRUE, 0 );
+	gtk_entry_set_alignment( GTK_ENTRY( value_entry ), 1.0 ); //right
+	gtk_widget_show( value_entry );
 
 	vbox3 = gtk_vbox_new( FALSE, 0 );
-	gtk_widget_show( vbox3 );
 	gtk_box_pack_start( GTK_BOX( hbox3 ), vbox3, TRUE, TRUE, 0 );
+	gtk_widget_show( vbox3 );
 
 	label5 = gtk_label_new( _( "Surface Flags" ) );
-	gtk_widget_show( label5 );
 	gtk_notebook_set_tab_label( GTK_NOTEBOOK( notebook1 ), gtk_notebook_get_nth_page( GTK_NOTEBOOK( notebook1 ), 0 ), label5 );
+	gtk_widget_show( label5 );
 
 	table3 = gtk_table_new( 8, 4, TRUE );
-	gtk_widget_show( table3 );
 	gtk_table_set_col_spacings( GTK_TABLE( table3 ), 5 );
 	gtk_table_set_row_spacings( GTK_TABLE( table3 ), 5 );
 	gtk_container_add( GTK_CONTAINER( notebook1 ), table3 );
+	gtk_container_set_border_width( GTK_CONTAINER( table3 ), 5 );
+	gtk_widget_show( table3 );
 
 	y = -1;
 	for ( i = 0; i < MAX_BUTTONS; i++ ) {
@@ -396,10 +400,10 @@ GtkWidget* create_SurfaceFlagsFrame( GtkWidget* surfacedialog_widget ){
 		buttonLabel = g_FuncTable.m_pfnReadProjectKey( buffer );
 		content_buttons[i] = gtk_toggle_button_new_with_label( buttonLabel );
 		g_signal_connect( G_OBJECT( content_buttons[i] ), "toggled", G_CALLBACK( on_content_button_toggled ), GINT_TO_POINTER( 1 << i ) );
-		gtk_widget_show( content_buttons[i] );
 		gtk_table_attach( GTK_TABLE( table3 ), content_buttons[i], 0 + x, 1 + x, ( 0 + y ), ( 1 + y ),
 						  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
 						  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ), 0, 0 );
+		gtk_widget_show( content_buttons[i] );
 	}
 
 	label6 = gtk_label_new( _( "Content Flags" ) );

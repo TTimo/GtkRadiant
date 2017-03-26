@@ -25,12 +25,12 @@
 #include <stdlib.h>
 
 #define Q3R_CMD_SPLITTER "-"
-#define Q3R_CMD_ABOUT "About Portal Viewer"
+#define Q3R_CMD_ABOUT "About Portal Viewer..."
 #define Q3R_CMD_LOAD "Load .prt file"
 #define Q3R_CMD_RELEASE "Unload .prt file"
 #define Q3R_CMD_SHOW_3D "Toggle portals (3D)"
 #define Q3R_CMD_SHOW_2D "Toggle portals (2D)"
-#define Q3R_CMD_OPTIONS "Configure Portal Viewer"
+#define Q3R_CMD_OPTIONS "Configure Portal Viewer..."
 
 static char INIfn[NAME_MAX];
 
@@ -54,6 +54,8 @@ static char INIfn[NAME_MAX];
 #define TRANS_3D "Transparency"
 #define CLIP_RANGE "ClipRange"
 #define CLIP "Clip"
+
+void *g_pMainWidget = NULL;
 
 void InitInstance(){
 #ifdef _WIN32
@@ -366,6 +368,7 @@ extern "C" LPVOID WINAPI QERPlug_GetFuncTable(){
 
 //extern "C" LPCSTR WINAPI QERPlug_Init (HMODULE hApp, GtkWidget* hwndMain)
 extern "C" const char* QERPlug_Init( void *hApp, void* pMainWidget ){
+	g_pMainWidget = pMainWidget;
 	// Setup defaults & load config
 	InitInstance();
 
@@ -410,13 +413,13 @@ extern "C" void QERPlug_Dispatch( const char* p, vec3_t vMin, vec3_t vMax, bool 
 	Sys_Printf( MSG_PREFIX "Command \"%s\"\n",p );
 
 	if ( !strcmp( p,Q3R_CMD_ABOUT ) ) {
-		DoAboutDlg();
+		DoAboutDlg( GTK_WIDGET( g_pMainWidget ) );
 	}
 	else if ( !strcmp( p,Q3R_CMD_LOAD ) ) {
 		CheckInterfaces();
 
 		if ( interfaces_started ) {
-			if ( DoLoadPortalFileDialog() == IDOK ) {
+			if ( DoLoadPortalFileDialog( GTK_WIDGET( g_pMainWidget ) ) == IDOK ) {
 				portals.Load();
 				g_FuncTable.m_pfnSysUpdateWindows( UPDATE_ALL );
 			}
@@ -466,7 +469,7 @@ extern "C" void QERPlug_Dispatch( const char* p, vec3_t vMin, vec3_t vMax, bool 
 		}
 	}
 	else if ( !strcmp( p,Q3R_CMD_OPTIONS ) ) {
-		DoConfigDialog();
+		DoConfigDialog( GTK_WIDGET( g_pMainWidget ) );
 		SaveConfig();
 
 		if ( interfaces_started ) {

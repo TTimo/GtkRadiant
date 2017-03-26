@@ -364,7 +364,7 @@ static void preview_spin( GtkAdjustment *adj, double *data ){
 
 void CreateViewWindow(){
 	GtkWidget *dlg, *vbox, *hbox, *label, *spin, *frame;
-	GtkObject *adj;
+	GtkAdjustment *adj;
 
 #ifndef ISOMETRIC
 	elevation = PI / 6.;
@@ -379,45 +379,51 @@ void CreateViewWindow(){
 	gtk_window_set_default_size( GTK_WINDOW( dlg ), 300, 400 );
 
 	vbox = gtk_vbox_new( FALSE, 5 );
-	gtk_widget_show( vbox );
 	gtk_container_add( GTK_CONTAINER( dlg ), vbox );
+	gtk_widget_show( vbox );
 
 #ifndef ISOMETRIC
 	hbox = gtk_hbox_new( TRUE, 5 );
-	gtk_widget_show( hbox );
 	gtk_box_pack_start( GTK_BOX( vbox ), hbox, FALSE, TRUE, 0 );
 	gtk_container_set_border_width( GTK_CONTAINER( hbox ), 3 );
+	gtk_widget_show( hbox );
 
 	label = gtk_label_new( _( "Elevation" ) );
-	gtk_widget_show( label );
+	g_object_set( label, "xalign", 1.0, NULL );
 	gtk_misc_set_alignment( GTK_MISC( label ), 1, 0.5 );
 	gtk_box_pack_start( GTK_BOX( hbox ), label, FALSE, TRUE, 0 );
+	gtk_widget_show( label );
 
-	adj = gtk_adjustment_new( 30, -90, 90, 1, 10, 0 );
+	adj = GTK_ADJUSTMENT( gtk_adjustment_new( 30, -90, 90, 1, 10, 0 ) );
 	g_signal_connect( adj, "value-changed", G_CALLBACK( preview_spin ), &elevation );
 	spin = gtk_spin_button_new( GTK_ADJUSTMENT( adj ), 1, 0 );
-	gtk_widget_show( spin );
+	gtk_entry_set_alignment( GTK_ENTRY( spin ), 1.0 ); //right
+	gtk_spin_button_set_numeric( GTK_SPIN_BUTTON( spin ), TRUE );
 	gtk_box_pack_start( GTK_BOX( hbox ), spin, FALSE, TRUE, 0 );
+	gtk_widget_show( spin );
 	g_signal_connect( G_OBJECT( spin ), "focus-out-event", G_CALLBACK( doublevariable_spinfocusout ), &elevation );
 
-	adj = gtk_adjustment_new( 30, 0, 359, 1, 10, 0 );
+	adj = GTK_ADJUSTMENT( gtk_adjustment_new( 30, 0, 359, 1, 10, 0 ) );
 	g_signal_connect( adj, "value-changed", G_CALLBACK( preview_spin ), &azimuth );
 	spin = gtk_spin_button_new( GTK_ADJUSTMENT( adj ), 1, 0 );
-	gtk_widget_show( spin );
+	gtk_entry_set_alignment( GTK_ENTRY( spin ), 1.0 ); //right
 	gtk_spin_button_set_wrap( GTK_SPIN_BUTTON( spin ), TRUE );
+	gtk_spin_button_set_numeric( GTK_SPIN_BUTTON( spin ), TRUE );
 	gtk_box_pack_end( GTK_BOX( hbox ), spin, FALSE, TRUE, 0 );
+	gtk_widget_show( spin );
 
 	label = gtk_label_new( _( "Azimuth" ) );
-	gtk_widget_show( label );
 	gtk_misc_set_alignment( GTK_MISC( label ), 1, 0.5 );
 	gtk_box_pack_end( GTK_BOX( hbox ), label, FALSE, TRUE, 0 );
+	gtk_widget_show( label );
 	g_signal_connect( G_OBJECT( spin ), "focus-out-event", G_CALLBACK( doublevariable_spinfocusout ), &azimuth );
+
 #endif
 
 	frame = gtk_frame_new( NULL );
-	gtk_widget_show( frame );
 	gtk_frame_set_shadow_type( GTK_FRAME( frame ), GTK_SHADOW_IN );
 	gtk_box_pack_start( GTK_BOX( vbox ), frame, TRUE, TRUE, 0 );
+	gtk_widget_show( frame );
 
 	g_pPreviewWidget = g_UIGtkTable.m_pfn_glwidget_new( FALSE, NULL );
 
@@ -427,8 +433,8 @@ void CreateViewWindow(){
 	g_signal_connect( G_OBJECT( g_pPreviewWidget ), "button-press-event",
 						G_CALLBACK( button_press ), NULL );
 
-	gtk_widget_show( g_pPreviewWidget );
 	gtk_container_add( GTK_CONTAINER( frame ), g_pPreviewWidget );
+	gtk_widget_show( g_pPreviewWidget );
 
 	if ( Preview ) {
 		gtk_widget_show( g_pWndPreview );

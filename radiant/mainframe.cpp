@@ -1706,12 +1706,11 @@ void MainFrame::create_main_toolbar( GtkWidget *window, GtkWidget *vbox ){
 	g_object_set_data( G_OBJECT( window ), "tb_handle_box", handle_box );
 
 	toolbar = gtk_toolbar_new();
-	gtk_toolbar_set_orientation( GTK_TOOLBAR( toolbar ), GTK_ORIENTATION_HORIZONTAL );
+	gtk_orientable_set_orientation( GTK_ORIENTABLE( toolbar ), GTK_ORIENTATION_HORIZONTAL );
 	gtk_toolbar_set_style( GTK_TOOLBAR( toolbar ), GTK_TOOLBAR_ICONS );
 	//  gtk_toolbar_set_style (GTK_TOOLBAR (toolbar), user_rc.toolbar_style);
 	gtk_container_add( GTK_CONTAINER( handle_box ), toolbar );
 
-	gtk_widget_show( toolbar );
 
 	w = gtk_toolbar_append_item( GTK_TOOLBAR( toolbar ), _( "Open" ), _( "Open an existing map" ), "",
 								 new_image_icon("file_open.png"), G_CALLBACK( HandleCommand ),
@@ -1958,6 +1957,8 @@ void MainFrame::create_main_toolbar( GtkWidget *window, GtkWidget *vbox ){
 
 	m_bCamPreview = true;
 	g_nScaleHow = ( SCALE_X | SCALE_Y | SCALE_Z );
+
+	gtk_widget_show( toolbar );
 }
 
 void MainFrame::create_plugin_toolbar( GtkWidget *window, GtkWidget *vbox ){
@@ -1971,7 +1972,7 @@ void MainFrame::create_plugin_toolbar( GtkWidget *window, GtkWidget *vbox ){
 	g_object_set_data( G_OBJECT( window ), "tb_handle_box", handle_box );
 
 	toolbar = gtk_toolbar_new();
-	gtk_toolbar_set_orientation( GTK_TOOLBAR( toolbar ), GTK_ORIENTATION_HORIZONTAL );
+	gtk_orientable_set_orientation( GTK_ORIENTABLE( toolbar ), GTK_ORIENTATION_HORIZONTAL );
 	gtk_toolbar_set_style( GTK_TOOLBAR( toolbar ), GTK_TOOLBAR_ICONS );
 	//  gtk_toolbar_set_style (GTK_TOOLBAR (toolbar), user_rc.toolbar_style);
 	gtk_container_add( GTK_CONTAINER( handle_box ), toolbar );
@@ -1985,15 +1986,15 @@ void MainFrame::create_main_statusbar( GtkWidget *window, GtkWidget *vbox ){
 	GtkWidget *label;
 
 	hbox = gtk_hbox_new( FALSE, 0 );
-	gtk_widget_show( hbox );
-	gtk_widget_set_usize( hbox, -1, 24 );
+	gtk_widget_set_size_request( hbox, -1, 24 );
 	gtk_container_set_border_width( GTK_CONTAINER( hbox ), 1 );
 	gtk_box_pack_end( GTK_BOX( vbox ), hbox, FALSE, TRUE, 2 );
+	gtk_widget_show( hbox );
 
 	frame = gtk_frame_new( (char*)NULL );
-	gtk_widget_show( frame );
 	gtk_box_pack_start( GTK_BOX( hbox ), frame, TRUE, TRUE, 0 );
 	gtk_frame_set_shadow_type( GTK_FRAME( frame ), GTK_SHADOW_IN );
+	gtk_widget_show( frame );
 
 	hbox1 = gtk_hbox_new( FALSE, 0 );
 	gtk_container_add( GTK_CONTAINER( frame ), hbox1 );
@@ -2001,22 +2002,22 @@ void MainFrame::create_main_statusbar( GtkWidget *window, GtkWidget *vbox ){
 	gtk_widget_show( hbox1 );
 
 	label = gtk_label_new( _( " Label " ) );
-	gtk_widget_show( label );
 	gtk_box_pack_start( GTK_BOX( hbox1 ), label, FALSE, TRUE, 0 );
 	gtk_label_set_justify( GTK_LABEL( label ), GTK_JUSTIFY_LEFT );
 	gtk_misc_set_padding( GTK_MISC( label ), 3, 0 );
+	gtk_widget_show( label );
 	m_pStatusLabel[0] = label;
 
 	for ( int i = 1; i < 6; i++ )
 	{
 		frame = gtk_frame_new( (char*)NULL );
-		gtk_widget_show( frame );
 		gtk_box_pack_start( GTK_BOX( hbox ), frame, FALSE, TRUE, 0 );
 		gtk_frame_set_shadow_type( GTK_FRAME( frame ), GTK_SHADOW_IN );
+		gtk_widget_show( frame );
 
 		label = gtk_label_new( _( " Label " ) );
-		gtk_widget_show( label );
 		gtk_container_add( GTK_CONTAINER( frame ), label );
+		gtk_widget_show( label );
 		m_pStatusLabel[i] = label;
 	}
 }
@@ -2114,7 +2115,7 @@ void console_populate_popup( GtkTextView* textview, GtkMenu* menu, gpointer user
 	GtkWidget* item = gtk_menu_item_new_with_label( _( "Clear" ) );
 	g_signal_connect( G_OBJECT( item ), "activate", G_CALLBACK( Sys_ClearPrintf ), NULL );
 	gtk_widget_show( item );
-	gtk_menu_append( GTK_MENU( menu ), item );
+	gtk_menu_shell_append( GTK_MENU_SHELL( menu ), item );
 }
 
 void console_construct( GtkWidget* textview ){
@@ -2362,10 +2363,10 @@ void PositionWindowOnPrimaryScreen( window_position_t& position ){
 
 GtkWidget* create_framed_widget( GtkWidget* widget ){
 	GtkWidget* frame = gtk_frame_new( (char*)NULL );
-	gtk_widget_show( frame );
 	gtk_frame_set_shadow_type( GTK_FRAME( frame ), GTK_SHADOW_IN );
 	gtk_container_add( GTK_CONTAINER( frame ), widget );
 	gtk_widget_show( widget );
+	gtk_widget_show( frame );
 	return frame;
 }
 
