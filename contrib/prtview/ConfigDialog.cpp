@@ -400,7 +400,7 @@ void DoConfigDialog( GtkWidget *parent ){
 	gtk_table_attach( GTK_TABLE( table ), translabel, 1, 2, 0, 1,
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
-	gtk_misc_set_alignment( GTK_MISC( translabel ), 0.0, 0.0 );
+	gtk_misc_set_alignment( GTK_MISC( translabel ), 0.0, 0.5 );
 	gtk_widget_show( translabel );
 	g_signal_connect( adj, "value-changed", G_CALLBACK( OnScrollTrans ), translabel );
 
@@ -416,7 +416,7 @@ void DoConfigDialog( GtkWidget *parent ){
 	gtk_table_attach( GTK_TABLE( table ), cliplabel, 1, 2, 1, 2,
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
-	gtk_misc_set_alignment( GTK_MISC( cliplabel ), 0.0, 0.0 );
+	gtk_misc_set_alignment( GTK_MISC( cliplabel ), 0.0, 0.5 );
 	gtk_widget_show( cliplabel );
 	g_signal_connect( adj, "value-changed", G_CALLBACK( OnScrollClip ), cliplabel );
 

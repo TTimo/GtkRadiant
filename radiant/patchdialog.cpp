@@ -333,12 +333,14 @@ void PatchDialog::BuildDialog(){
 	gtk_table_attach( GTK_TABLE( table ), label, 0, 1, 0, 1,
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
+	gtk_misc_set_alignment( GTK_MISC( label ), 0.0, 0.5 );
 	gtk_widget_show( label );
 
 	col_label = label = gtk_label_new( _( "Column:" ) );
 	gtk_table_attach( GTK_TABLE( table ), label, 1, 2, 0, 1,
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
+	gtk_misc_set_alignment( GTK_MISC( label ), 0.0, 0.5 );
 	gtk_widget_show( label );
 
 	size_group = gtk_size_group_new( GTK_SIZE_GROUP_BOTH );
@@ -382,6 +384,7 @@ void PatchDialog::BuildDialog(){
 	gtk_table_attach( GTK_TABLE( table ), label, 0, 1, 0, 1,
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
+	gtk_misc_set_alignment( GTK_MISC( label ), 0.0, 0.5 );
 	gtk_widget_set_tooltip_text( label, _( "X-Axis" ) );
 	gtk_widget_show( label );
 
@@ -389,6 +392,7 @@ void PatchDialog::BuildDialog(){
 	gtk_table_attach( GTK_TABLE( table ), label, 0, 1, 1, 2,
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
+	gtk_misc_set_alignment( GTK_MISC( label ), 0.0, 0.5 );
 	gtk_widget_set_tooltip_text( label, _( "Y-Axis" ) );
 	gtk_widget_show( label );
 
@@ -396,6 +400,7 @@ void PatchDialog::BuildDialog(){
 	gtk_table_attach( GTK_TABLE( table ), label, 0, 1, 2, 3,
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
+	gtk_misc_set_alignment( GTK_MISC( label ), 0.0, 0.5 );
 	gtk_widget_set_tooltip_text( label, _( "Z-Axis" ) );
 	gtk_widget_show( label );
 
@@ -403,6 +408,7 @@ void PatchDialog::BuildDialog(){
 	gtk_table_attach( GTK_TABLE( table ), label, 0, 1, 3, 4,
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
+	gtk_misc_set_alignment( GTK_MISC( label ), 0.0, 0.5 );
 	gtk_widget_set_tooltip_text( label, _( "S-coordinates correspond to the \"x\" coordinates on the texture itself" ) );
 	gtk_widget_show( label );
 
@@ -410,6 +416,7 @@ void PatchDialog::BuildDialog(){
 	gtk_table_attach( GTK_TABLE( table ), label, 0, 1, 4, 5,
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
+	gtk_misc_set_alignment( GTK_MISC( label ), 0.0, 0.5 );
 	gtk_widget_set_tooltip_text( label, _( "T-coordinates correspond to the \"y\" coordinates on the texture itself. The measurements are in game units." ) );
 	gtk_widget_show( label );
 
@@ -479,8 +486,7 @@ void PatchDialog::BuildDialog(){
 
 	label = gtk_label_new( _( "Name:" ) );
 	gtk_box_pack_start( GTK_BOX( vbox2 ), label, TRUE, TRUE, 0 );
-	gtk_label_set_justify( GTK_LABEL( label ), GTK_JUSTIFY_LEFT );
-	gtk_misc_set_alignment( GTK_MISC( label ), 0, 0.5 );
+	gtk_misc_set_alignment( GTK_MISC( label ), 0.0, 0.5 );
 	gtk_widget_show( label );
 
 	entry = gtk_entry_new();
@@ -499,35 +505,35 @@ void PatchDialog::BuildDialog(){
 	gtk_table_attach( GTK_TABLE( table ), label, 2, 3, 0, 1,
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
-	gtk_misc_set_alignment( GTK_MISC( label ), 0, 0.5 );
+	gtk_misc_set_alignment( GTK_MISC( label ), 0.0, 0.5 );
 	gtk_widget_show( label );
 
 	label = gtk_label_new( _( "Vertical Shift Step" ) );
 	gtk_table_attach( GTK_TABLE( table ), label, 2, 3, 1, 2,
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
-	gtk_misc_set_alignment( GTK_MISC( label ), 0, 0.5 );
+	gtk_misc_set_alignment( GTK_MISC( label ), 0.0, 0.5 );
 	gtk_widget_show( label );
 
 	label = gtk_label_new( _( "Horizontal Stretch Step" ) );
 	gtk_table_attach( GTK_TABLE( table ), label, 2, 3, 2, 3,
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
-	gtk_misc_set_alignment( GTK_MISC( label ), 0, 0.5 );
+	gtk_misc_set_alignment( GTK_MISC( label ), 0.0, 0.5 );
 	gtk_widget_show( label );
 
 	label = gtk_label_new( _( "Vertical Stretch Step" ) );
 	gtk_table_attach( GTK_TABLE( table ), label, 2, 3, 3, 4,
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
-	gtk_misc_set_alignment( GTK_MISC( label ), 0, 0.5 );
+	gtk_misc_set_alignment( GTK_MISC( label ), 0.0, 0.5 );
 	gtk_widget_show( label );
 
 	label = gtk_label_new( _( "Rotate Step" ) );
 	gtk_table_attach( GTK_TABLE( table ), label, 2, 3, 4, 5,
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
-	gtk_misc_set_alignment( GTK_MISC( label ), 0, 0.5 );
+	gtk_misc_set_alignment( GTK_MISC( label ), 0.0, 0.5 );
 	gtk_widget_show( label );
 
 	adj = GTK_ADJUSTMENT( gtk_adjustment_new( 0, -INT_MAX, INT_MAX, 1, 10, 0 ) );

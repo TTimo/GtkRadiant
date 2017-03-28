@@ -2003,8 +2003,7 @@ void MainFrame::create_main_statusbar( GtkWidget *window, GtkWidget *vbox ){
 
 	label = gtk_label_new( _( " Label " ) );
 	gtk_box_pack_start( GTK_BOX( hbox1 ), label, FALSE, TRUE, 0 );
-	gtk_label_set_justify( GTK_LABEL( label ), GTK_JUSTIFY_LEFT );
-	gtk_misc_set_padding( GTK_MISC( label ), 3, 0 );
+	gtk_misc_set_alignment( GTK_MISC( label ), 0.0, 0.5 );
 	gtk_widget_show( label );
 	m_pStatusLabel[0] = label;
 
@@ -2017,6 +2016,7 @@ void MainFrame::create_main_statusbar( GtkWidget *window, GtkWidget *vbox ){
 
 		label = gtk_label_new( _( " Label " ) );
 		gtk_container_add( GTK_CONTAINER( frame ), label );
+		gtk_misc_set_padding( GTK_MISC( label ), 3, 0 );
 		gtk_widget_show( label );
 		m_pStatusLabel[i] = label;
 	}

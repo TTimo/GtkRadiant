@@ -361,6 +361,7 @@ GtkWidget* create_SurfaceFlagsFrame( GtkWidget* surfacedialog_widget ){
 
 	value_label = gtk_label_new( _( "Value: " ) );
 	gtk_box_pack_start( GTK_BOX( hbox3 ), value_label, FALSE, FALSE, 0 );
+	gtk_misc_set_alignment( GTK_MISC( value_label ), 0.0, 0.5 );
 	gtk_widget_show( value_label );
 
 	value_entry = gtk_entry_new();
