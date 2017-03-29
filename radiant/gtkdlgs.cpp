@@ -1107,7 +1107,7 @@ void DoEntityList(){
 		return;
 	}
 
-	EntityList_dialog = dialog = gtk_dialog_new_with_buttons( _( "Entity Info" ), GTK_WINDOW( g_pParentWnd->m_pWidget ), flags, NULL );
+	EntityList_dialog = dialog = gtk_dialog_new_with_buttons( _( "Entity Info" ), NULL, flags, NULL );
 	gtk_window_set_transient_for( GTK_WINDOW( dialog ), GTK_WINDOW( g_pParentWnd->m_pWidget ) );
 	load_window_pos( dialog, g_PrefsDlg.mWindowInfo.posEntityInfoWnd );
 
@@ -1242,14 +1242,14 @@ void DoEntityList(){
 	}
 
 	hbox2 = gtk_hbox_new( FALSE, 5 );
-	gtk_box_pack_start( GTK_BOX( vbox ), hbox2, TRUE, TRUE, 0 );
+	gtk_box_pack_start( GTK_BOX( vbox ), hbox2, FALSE, FALSE, 0 );
 	gtk_widget_show( hbox2 );
 
 	button = gtk_button_new_with_label( _( "Select" ) );
 	gtk_box_pack_start( GTK_BOX( hbox2 ), button, FALSE, FALSE, 0 );
 	g_signal_connect( G_OBJECT( button ), "clicked",
 						G_CALLBACK( entitylist_select ), dialog );
-	gtk_widget_set_size_request( button, 60, -2 );
+
 	gtk_widget_show( button );
 
 
