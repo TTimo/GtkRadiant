@@ -34,6 +34,9 @@
 
 #include "synapse.h"
 
+void *g_pMainWidget;
+const char* QERPlug_Init( void* hApp, void *pWidget );
+
 class CSynapseClient_SurfDLG : public CSynapseClient
 {
 public:
@@ -117,4 +120,11 @@ const char* CSynapseClient_SurfDLG::GetName(){
 
 bool CSynapseClient_SurfDLG::OnActivate(){
 	return true;
+}
+
+const char* QERPlug_Init( void* hApp, void *pWidget ){
+
+	g_pMainWidget = pWidget;
+
+	return "Quake3 Surface Dialog for Radiant";
 }
