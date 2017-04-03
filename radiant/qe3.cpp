@@ -1370,7 +1370,7 @@ static void MRU_SetText( int index, const char *filename ){
 	mnemonic[2] = '-';
 	mnemonic[3] = ' ';
 	buffer_write_escaped_mnemonic( mnemonic + 4, filename );
-	gtk_label_set_text_with_mnemonic( GTK_LABEL( GTK_BIN( MRU_items[index] )->child ), mnemonic );
+	gtk_menu_item_set_label( GTK_MENU_ITEM( MRU_items[index] ), mnemonic );
 }
 
 void MRU_Load(){
@@ -1447,7 +1447,7 @@ void MRU_Activate( int index ){
 			MRU_SetText( i, MRU_GetText( i + 1 ) );
 
 		if ( MRU_used == 0 ) {
-			gtk_label_set_text( GTK_LABEL( GTK_BIN( MRU_items[0] )->child ), _( "Recent Files" ) );
+			gtk_menu_item_set_label( GTK_MENU_ITEM( MRU_items[0] ), _( "Recent Files" ) );
 			gtk_widget_set_sensitive( MRU_items[0], FALSE );
 		}
 		else
@@ -1541,17 +1541,23 @@ char *bsp_commands[256];
 void FillBSPMenu(){
 	GtkWidget *item, *menu; // menu points to a GtkMenu (not an item)
 	epair_t *ep;
-	GList *lst;
+	GList *children, *lst;
 	int i;
 
 	menu = GTK_WIDGET( g_object_get_data( G_OBJECT( g_qeglobals_gui.d_main_window ), "menu_bsp" ) );
 
-	while ( ( lst = gtk_container_children( GTK_CONTAINER( menu ) ) ) != NULL )
-		gtk_container_remove( GTK_CONTAINER( menu ), GTK_WIDGET( lst->data ) );
+	children = gtk_container_get_children( GTK_CONTAINER( menu ) );
+	if( children ) {
+		for ( lst = children; lst != NULL; lst = g_list_next( lst ) )
+		{
+			gtk_container_remove( GTK_CONTAINER( menu ), GTK_WIDGET( lst->data ) );
+		}
+		g_list_free( children );
+	}
 
 	if ( g_PrefsDlg.m_bDetachableMenus ) {
 		item = gtk_tearoff_menu_item_new();
-		gtk_menu_append( GTK_MENU( menu ), item );
+		gtk_menu_shell_append( GTK_MENU_SHELL( menu ), item );
 		gtk_widget_set_sensitive( item, TRUE );
 		gtk_widget_show( item );
 	}
@@ -1568,9 +1574,12 @@ void FillBSPMenu(){
 		i = 0;
 
 		// first token is menu name
-		item = gtk_menu_get_attach_widget( GTK_MENU( menu ) );
-		gtk_label_set_text( GTK_LABEL( GTK_BIN( item )->child ), token );
-
+		children = gtk_container_get_children( GTK_CONTAINER( menu ) );
+		if( children ) {
+			if( g_list_first( children ) )
+				gtk_label_set_text( GTK_LABEL( g_list_first( children )->data ), token );
+			g_list_free( children );
+		}
 		token = strtok( NULL, ",;" );
 		while ( token != NULL )
 		{

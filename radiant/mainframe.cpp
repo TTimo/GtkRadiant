@@ -4033,18 +4033,23 @@ void MainFrame::DoWatchBSP(){
 
 void MainFrame::CleanPlugInMenu(){
 	GtkWidget *menu, *sep;
-	GList *lst;
+	GList *children, *seplst, *lst;
 
 	// delete everything after the separator
 	menu = GTK_WIDGET( g_object_get_data( G_OBJECT( m_pWidget ), "menu_plugin" ) );
 	sep = GTK_WIDGET( g_object_get_data( G_OBJECT( m_pWidget ), "menu_plugin_separator" ) );
 	m_nNextPlugInID = ID_PLUGIN_START;
 
-	lst = g_list_find( gtk_container_get_children( GTK_CONTAINER( menu ) ), sep );
-	while ( lst->next )
-	{
-		gtk_container_remove( GTK_CONTAINER( menu ), GTK_WIDGET( lst->next->data ) );
-		lst = g_list_find( gtk_container_get_children( GTK_CONTAINER( menu ) ), sep );
+	children = gtk_container_get_children( GTK_CONTAINER( menu ) );
+	if( children ) {
+		seplst = g_list_find( children, sep );
+		if( seplst ) {
+			for ( lst = g_list_next( seplst ); lst != NULL; lst = g_list_next( lst ) )
+			{
+				gtk_container_remove( GTK_CONTAINER( menu ), GTK_WIDGET( lst->data ) );
+			}
+		}
+		g_list_free( children );
 	}
 }
 
@@ -4102,13 +4107,13 @@ inline GtkToolbarChildType gtktoolbarchildtype_for_toolbarbuttontype( IToolbarBu
 	return (GtkToolbarChildType)0;
 }
 
-void toolbar_insert( GtkWidget *toolbar, const char* image, const char* text, const char* tooltip, IToolbarButton::EType type, GtkSignalFunc handler, gpointer data ){
+void toolbar_insert( GtkWidget *toolbar, const char* image, const char* text, const char* tooltip, IToolbarButton::EType type, GCallback callback, gpointer data ){
 	GtkWidget *w, *pixmap;
 	GdkPixmap *gdkpixmap;
 	GdkBitmap *mask;
 
 	pixmap = new_plugin_image_icon( image );
-	w = gtk_toolbar_append_element( GTK_TOOLBAR( toolbar ), gtktoolbarchildtype_for_toolbarbuttontype( type ), NULL, text, tooltip, "", GTK_WIDGET( pixmap ), handler, data );
+	w = gtk_toolbar_append_element( GTK_TOOLBAR( toolbar ), gtktoolbarchildtype_for_toolbarbuttontype( type ), NULL, text, tooltip, "", GTK_WIDGET( pixmap ), callback, data );
 }
 
 void SignalToolbarButton( GtkWidget *widget, gpointer data ){

@@ -1249,7 +1249,7 @@ void DoEntityList(){
 	gtk_box_pack_start( GTK_BOX( hbox2 ), button, FALSE, FALSE, 0 );
 	g_signal_connect( G_OBJECT( button ), "clicked",
 						G_CALLBACK( entitylist_select ), dialog );
-	gtk_widget_set_size_request( button, 60, -2 );
+	gtk_widget_set_size_request( button, 60, -1 );
 	gtk_widget_show( button );
 
 
