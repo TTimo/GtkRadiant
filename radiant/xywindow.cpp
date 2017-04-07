@@ -1165,10 +1165,15 @@ void XYWnd::OnMouseMove( guint32 nFlags, int pointx, int pointy ){
 
 	if ( ( nFlags & MK_RBUTTON ) == 0 ) {
 		if ( bCrossHair && !g_bWaitCursor ) {
+			GdkWindow *window;
+			GdkDisplay *display;
 			GdkCursor *cursor;
-			cursor = gdk_cursor_new( GDK_CROSSHAIR );
-			gdk_window_set_cursor( gtk_widget_get_window( m_pWidget ), cursor );
-			gdk_cursor_unref( cursor );
+
+			window = gtk_widget_get_window( m_pWidget );
+			display = gdk_window_get_display( window );
+			cursor = gdk_cursor_new_for_display( display, GDK_CROSSHAIR );
+			gdk_window_set_cursor( window, cursor );
+			g_object_unref( cursor );
 		}
 		else
 		{
@@ -1833,19 +1838,16 @@ void XYWnd::XY_MouseMoved( int x, int y, int buttons ){
 
 			// create an empty cursor
 			if ( !g_bWaitCursor ) {
-				GdkPixmap *pixmap;
-				GdkBitmap *mask;
-				char buffer [( 32 * 32 ) / 8];
-				memset( buffer, 0, ( 32 * 32 ) / 8 );
-				GdkColor white = {0, 0xffff, 0xffff, 0xffff};
-				GdkColor black = {0, 0x0000, 0x0000, 0x0000};
-				pixmap = gdk_bitmap_create_from_data( NULL, buffer, 32, 32 );
-				mask   = gdk_bitmap_create_from_data( NULL, buffer, 32, 32 );
-				GdkCursor *cursor = gdk_cursor_new_from_pixmap( pixmap, mask, &white, &black, 1, 1 );
-				gdk_window_set_cursor( gtk_widget_get_window( m_pWidget ), cursor );
-				gdk_cursor_unref( cursor );
-				gdk_drawable_unref( pixmap );
-				gdk_drawable_unref( mask );
+				GdkWindow *window;
+				GdkDisplay *display;
+				GdkCursor *cursor;
+
+				window = gtk_widget_get_window( m_pWidget );
+				display = gdk_window_get_display( window );
+				cursor = gdk_cursor_new_for_display( display, GDK_BLANK_CURSOR );
+
+				gdk_window_set_cursor( window, cursor );
+				g_object_unref( cursor );
 			}
 
 			Sys_UpdateWindows( W_XY | W_XY_OVERLAY );

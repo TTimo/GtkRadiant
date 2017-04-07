@@ -1280,16 +1280,32 @@ void Sys_SetTitle( const char *text ){
 bool g_bWaitCursor = false;
 
 void WINAPI Sys_BeginWait( void ){
-	GdkCursor *cursor = gdk_cursor_new( GDK_WATCH );
-	gdk_window_set_cursor( gtk_widget_get_window( g_pParentWnd->m_pWidget ), cursor );
-	gdk_cursor_unref( cursor );
+	GdkWindow *window;
+	GdkDisplay *display;
+	GdkCursor *cursor;
+
+	window = gtk_widget_get_window( g_pParentWnd->m_pWidget );
+	display = gdk_window_get_display( window );
+	cursor = gdk_cursor_new_for_display( display, GDK_WATCH );
+	
+	gdk_window_set_cursor( window, cursor );
+	g_object_unref( cursor );
+
 	g_bWaitCursor = true;
 }
 
 void WINAPI Sys_EndWait( void ){
-	GdkCursor *cursor = gdk_cursor_new( GDK_LEFT_PTR );
-	gdk_window_set_cursor( gtk_widget_get_window( g_pParentWnd->m_pWidget ), cursor );
-	gdk_cursor_unref( cursor );
+	GdkWindow *window;
+	GdkDisplay *display;
+	GdkCursor *cursor;
+
+	window = gtk_widget_get_window( g_pParentWnd->m_pWidget );
+	display = gdk_window_get_display( window );
+	cursor = gdk_cursor_new_for_display( display, GDK_LEFT_PTR );
+
+	gdk_window_set_cursor( window, cursor );
+	g_object_unref( cursor );
+
 	g_bWaitCursor = false;
 }
 
