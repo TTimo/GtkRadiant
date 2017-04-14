@@ -2063,7 +2063,7 @@ void about_button_changelog( GtkWidget *widget, gpointer data ){
 	Str log;
 	log = g_strAppPath;
 	log += "changelog.txt";
-	OpenURL( log.GetBuffer() );
+	OpenURL( widget, log.GetBuffer() );
 }
 
 //! @note kaz 04/01/2012 - not in use
@@ -2071,7 +2071,7 @@ void about_button_credits( GtkWidget *widget, gpointer data ){
 	Str cred;
 	cred = g_strAppPath;
 	cred += "credits.html";
-	OpenURL( cred.GetBuffer() );
+	OpenURL( widget, cred.GetBuffer() );
 }
 
 void DoAbout(){

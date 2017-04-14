@@ -878,7 +878,7 @@ void AddMenuItem( GtkWidget* item, unsigned int id ){
 }
 
 void MainFrame::handle_help_command( int id ){
-	OpenURL( mHelpURLs[id]->GetBuffer() );
+	OpenURL( m_pWidget, mHelpURLs[id]->GetBuffer() );
 }
 
 /*!
@@ -4482,7 +4482,7 @@ void MainFrame::OnFileCheckUpdate(){
 #endif
 	URL += "&Version_dlup=" RADIANT_VERSION;
 	g_PrefsDlg.mGamesDialog.AddPacksURL( URL );
-	OpenURL( URL.GetBuffer() );
+	OpenURL( m_pWidget, URL.GetBuffer() );
 }
 
 void MainFrame::OnEditUndo(){
@@ -6562,7 +6562,7 @@ void MainFrame::OnPluginsRefresh(){
 
 // open the Q3Rad manual
 void MainFrame::OnHelp(){
-	OpenURL( "http://icculus.org/gtkradiant/documentation/q3radiant_manual/index.htm" );
+	OpenURL( m_pWidget, "http://icculus.org/gtkradiant/documentation/q3radiant_manual/index.htm" );
 }
 
 // FIXME: we'll go towards a unified help thing soon
@@ -6570,11 +6570,11 @@ void MainFrame::OnHelpLinks(){
 	Str link;
 	link = g_strAppPath;
 	link += "links.htm";
-	OpenURL( link.GetBuffer() );
+	OpenURL( m_pWidget, link.GetBuffer() );
 }
 
 void MainFrame::OnHelpBugreport(){
-	OpenURL( "https://github.com/TTimo/GtkRadiant/issues" );
+	OpenURL( m_pWidget, "https://github.com/TTimo/GtkRadiant/issues" );
 }
 
 void MainFrame::OnHelpCommandlist(){

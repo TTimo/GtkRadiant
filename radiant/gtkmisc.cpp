@@ -827,7 +827,7 @@ gint dialog_delete_callback( GtkWidget *widget, GdkEvent* event, gpointer data )
 }
 
 gint dialog_url_callback( GtkWidget *widget, GdkEvent* event, gpointer data ){
-	OpenURL( (const char *)g_object_get_data( G_OBJECT( widget ), "URL" ) );
+	OpenURL( widget, (const char *)g_object_get_data( G_OBJECT( widget ), "URL" ) );
 
 	return TRUE;
 }
@@ -1659,14 +1659,30 @@ bool WINAPI color_dialog( void *parent, float *color, const char* title ){
 	return false;
 }
 
-void OpenURL( const char *url ){
+void OpenURL( GtkWidget *parent, const char *url ){
 #ifndef _WIN32
     char command[2 * PATH_MAX];
 #endif
+    GError *gerror = NULL;
+    gboolean result;
 
     Sys_Printf( "OpenURL: %s\n", url );
+
+#if GTK_CHECK_VERSION( 2, 14, 0 )
+#   if GTK_CHECK_VERSION( 3, 22, 0 )
+    result = gtk_show_uri_on_window( GTK_WINDOW( parent ), url, GDK_CURRENT_TIME, &gerror );
+#   else
+    result = gtk_show_uri( gtk_window_get_screen( GTK_WINDOW( parent ) ), url, GDK_CURRENT_TIME, &gerror );
+#   endif
+    if ( result ) {
+        return;
+    }
+    Sys_Printf( "Could not open URL: %s\n", gerror->message );
+    g_error_free( gerror );
+#endif
+
 #ifdef _WIN32
-    ShellExecute( (HWND)GDK_WINDOW_HWND( gtk_widget_get_window( g_pParentWnd->m_pWidget ) ), "open", url, NULL, NULL, SW_SHOW );
+    ShellExecute( (HWND)GDK_WINDOW_HWND( gtk_widget_get_window( parent ) ), "open", url, NULL, NULL, SW_SHOW );
 #else
 #   ifdef __APPLE__
         snprintf(command, sizeof(command), "open '%s' &", url);
@@ -1674,7 +1690,7 @@ void OpenURL( const char *url ){
         snprintf(command, sizeof(command), "xdg-open '%s' &", url);
 #   endif
     if (system(command) != 0) {
-         gtk_MessageBox( g_pParentWnd->m_pWidget, _( "Failed to launch web browser!" ) );
+         gtk_MessageBox( parent, _( "Failed to launch web browser!" ) );
     }
 #endif
 }
