@@ -389,8 +389,7 @@ void CreateViewWindow(){
 	gtk_widget_show( hbox );
 
 	label = gtk_label_new( _( "Elevation" ) );
-	g_object_set( label, "xalign", 1.0, NULL );
-	gtk_misc_set_alignment( GTK_MISC( label ), 1, 0.5 );
+	gtk_misc_set_alignment( GTK_MISC( label ), 0.0, 0.5 );
 	gtk_box_pack_start( GTK_BOX( hbox ), label, FALSE, TRUE, 0 );
 	gtk_widget_show( label );
 
@@ -413,7 +412,7 @@ void CreateViewWindow(){
 	gtk_widget_show( spin );
 
 	label = gtk_label_new( _( "Azimuth" ) );
-	gtk_misc_set_alignment( GTK_MISC( label ), 1, 0.5 );
+	gtk_misc_set_alignment( GTK_MISC( label ), 0.0, 0.5 );
 	gtk_box_pack_end( GTK_BOX( hbox ), label, FALSE, TRUE, 0 );
 	gtk_widget_show( label );
 	g_signal_connect( G_OBJECT( spin ), "focus-out-event", G_CALLBACK( doublevariable_spinfocusout ), &azimuth );

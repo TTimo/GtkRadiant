@@ -567,7 +567,7 @@ GtkWidget* create_SurfaceInspector( void ){
 
 	label = gtk_label_new( _( "Texture: " ) );
 	gtk_box_pack_start( GTK_BOX( hbox1 ), label, FALSE, FALSE, 0 );
-	gtk_misc_set_alignment( GTK_MISC( label ), 1, 0.5 );
+	gtk_misc_set_alignment( GTK_MISC( label ), 0.0, 0.5 );
 	gtk_widget_show( label );
 
 	texture_combo = gtk_combo_new();
@@ -596,43 +596,49 @@ GtkWidget* create_SurfaceInspector( void ){
 	gtk_table_attach( GTK_TABLE( table1 ), label, 2, 3, 0, 1,
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
+	gtk_misc_set_alignment( GTK_MISC( label ), 0.0, 0.5 );
 	gtk_widget_show( label );
 
 	label = gtk_label_new( _( "Value" ) );
 	gtk_table_attach( GTK_TABLE( table1 ), label, 1, 2, 0, 1,
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
-	gtk_misc_set_alignment( GTK_MISC( label ), 0.5, 1 );
+	gtk_misc_set_alignment( GTK_MISC( label ), 0.0, 0.5 );
 	gtk_widget_show( label );
 
 	label = gtk_label_new( _( "Horizontal shift: " ) );
 	gtk_table_attach( GTK_TABLE( table1 ), label, 0, 1, 1, 2,
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( GTK_FILL ), 0, 0 );
+	gtk_misc_set_alignment( GTK_MISC( label ), 0.0, 0.5 );
 	gtk_widget_show( label );
 
 	label = gtk_label_new( _( "Vertical shift: " ) );
 	gtk_table_attach( GTK_TABLE( table1 ), label, 0, 1, 2, 3,
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( GTK_FILL ), 0, 0 );
+	gtk_misc_set_alignment( GTK_MISC( label ), 0.0, 0.5 );
 	gtk_widget_show( label );
 
 	label = gtk_label_new( _( "Horizontal scale: " ) );
 	gtk_table_attach( GTK_TABLE( table1 ), label, 0, 1, 3, 4,
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( GTK_FILL ), 0, 0 );
+	gtk_misc_set_alignment( GTK_MISC( label ), 0.0, 0.5 );
 	gtk_widget_show( label );
 
 	label = gtk_label_new( _( "Vertical scale: " ) );
 	gtk_table_attach( GTK_TABLE( table1 ), label, 0, 1, 4, 5,
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( GTK_FILL ), 0, 0 );
+	gtk_misc_set_alignment( GTK_MISC( label ), 0.0, 0.5 );
 	gtk_widget_show( label );
 
 	label = gtk_label_new( _( "Rotate: " ) );
 	gtk_table_attach( GTK_TABLE( table1 ), label, 0, 1, 5, 6,
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( GTK_FILL ), 0, 0 );
+	gtk_misc_set_alignment( GTK_MISC( label ), 0.0, 0.5 );
 	gtk_widget_show( label );
 
 	// Value Spins
@@ -769,18 +775,21 @@ GtkWidget* create_SurfaceInspector( void ){
 	gtk_table_attach( GTK_TABLE( table2 ), label, 3, 4, 0, 1,
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
+	gtk_misc_set_alignment( GTK_MISC( label ), 0.0, 0.5 );
 	gtk_widget_show( label );
 
 	label = gtk_label_new( _( "Width" ) );
 	gtk_table_attach( GTK_TABLE( table2 ), label, 2, 3, 0, 1,
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
+	gtk_misc_set_alignment( GTK_MISC( label ), 0.0, 0.5 );
 	gtk_widget_show( label );
 
 	label = gtk_label_new( _( "Brush" ) );
 	gtk_table_attach( GTK_TABLE( table2 ), label, 0, 2, 0, 1,
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
+	gtk_misc_set_alignment( GTK_MISC( label ), 0.0, 0.5 );
 	gtk_widget_show( label );
 
 	adjustment = GTK_ADJUSTMENT( gtk_adjustment_new( 1, 1, 32, 1, 10, 0 ) );

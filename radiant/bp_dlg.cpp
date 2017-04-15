@@ -71,6 +71,7 @@ int BP_MessageBox( int status ){
 							  "in the same maps for a smooth transition." ) );
 	}
 	gtk_box_pack_start( GTK_BOX( vbox ), w, FALSE, FALSE, 2 );
+	gtk_misc_set_alignment( GTK_MISC( w ), 0.0, 0.5 );
 	gtk_label_set_justify( GTK_LABEL( w ), GTK_JUSTIFY_LEFT );
 	gtk_widget_show( w );
 

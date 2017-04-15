@@ -1071,6 +1071,7 @@ GtkWidget* CGameDialog::GetGlobalFrame(){
 
 	text = gtk_label_new( _( "(use preferences to undo this)" ) );
 	gtk_box_pack_start( GTK_BOX( vbox ), text, FALSE, FALSE, 0 );
+	gtk_misc_set_alignment( GTK_MISC( text ), 0.0, 0.5 );
 	gtk_widget_show( text );
 
 #ifdef _WIN32
@@ -1836,8 +1837,8 @@ void PrefsDlg::BuildDialog(){
 
 	// label
 	label = gtk_label_new( _( "Movement Velocity" ) );
-	gtk_label_set_justify( GTK_LABEL( label ), GTK_JUSTIFY_LEFT );
 	gtk_box_pack_start( GTK_BOX( hbox2 ), label, FALSE, FALSE, 0 );
+	gtk_misc_set_alignment( GTK_MISC( label ), 0.0, 0.5 );
 	gtk_widget_show( label );
 
 	// adjustment
@@ -1859,8 +1860,8 @@ void PrefsDlg::BuildDialog(){
 
 	// label
 	label = gtk_label_new( _( "Rotational Velocity" ) );
-	gtk_label_set_justify( GTK_LABEL( label ), GTK_JUSTIFY_LEFT );
 	gtk_box_pack_start( GTK_BOX( hbox2 ), label, FALSE, FALSE, 0 );
+	gtk_misc_set_alignment( GTK_MISC( label ), 0.0, 0.5 );
 	gtk_widget_show( label );
 
 	// adjustment
@@ -1882,11 +1883,13 @@ void PrefsDlg::BuildDialog(){
 	// label
 	label = gtk_label_new( _( "slow" ) );
 	gtk_box_pack_start( GTK_BOX( hbox2 ), label, FALSE, FALSE, 0 );
+	gtk_misc_set_alignment( GTK_MISC( label ), 0.0, 0.5 );
 	gtk_widget_show( label );
 
 	// label
 	label = gtk_label_new( _( "fast" ) );
 	gtk_box_pack_end( GTK_BOX( hbox2 ), label, FALSE, FALSE, 0 );
+	gtk_misc_set_alignment( GTK_MISC( label ), 1.0, 0.5 );
 	gtk_widget_show( label );
 
 	// Allow drag to select multiple faces/brushes
@@ -1898,10 +1901,10 @@ void PrefsDlg::BuildDialog(){
 	gtk_widget_show( table );
 
 	label = gtk_label_new( _( "Use paint-select in camera view:" ) );
-	gtk_label_set_justify( GTK_LABEL( label ), GTK_JUSTIFY_LEFT );
 	gtk_table_attach( GTK_TABLE( table ), label, 0, 1, 0, 1,
 					  (GtkAttachOptions) ( 0 ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
+	gtk_misc_set_alignment( GTK_MISC( label ), 0.0, 0.5 );
 	gtk_widget_show( label );
 
 	combo_list = NULL;
@@ -1921,35 +1924,30 @@ void PrefsDlg::BuildDialog(){
 	// Freelook in Camera view
 	check = gtk_check_button_new_with_label( _( "Freelook in Camera view" ) );
 	gtk_box_pack_start( GTK_BOX( vbox ), check, FALSE, FALSE, 0 );
-	gtk_label_set_justify( GTK_LABEL( GTK_BIN( check )->child ), GTK_JUSTIFY_LEFT );
 	gtk_widget_show( check );
 	AddDialogData( check, &m_bCamFreeLook, DLG_CHECK_BOOL );
 
 	// Freelook in Camera view w/ forward & back strafing instead of up and down looking
 	check = gtk_check_button_new_with_label( _( "Freelook strafes Forward and Back" ) );
 	gtk_box_pack_start( GTK_BOX( vbox ), check, FALSE, FALSE, 0 );
-	gtk_label_set_justify( GTK_LABEL( GTK_BIN( check )->child ), GTK_JUSTIFY_LEFT );
 	gtk_widget_show( check );
 	AddDialogData( check, &m_bCamFreeLookStrafe, DLG_CHECK_BOOL );
 
 	// Invert mouse in freelook
 	check = gtk_check_button_new_with_label( _( "Invert mouse in freelook" ) );
 	gtk_box_pack_start( GTK_BOX( vbox ), check, FALSE, FALSE, 0 );
-	gtk_label_set_justify( GTK_LABEL( GTK_BIN( check )->child ), GTK_JUSTIFY_LEFT );
 	gtk_widget_show( check );
 	AddDialogData( check, &m_bCamInverseMouse, DLG_CHECK_BOOL );
 
 	// Discrete movement
 	check = gtk_check_button_new_with_label( _( "Discrete movement" ) );
 	gtk_box_pack_start( GTK_BOX( vbox ), check, FALSE, FALSE, 0 );
-	gtk_label_set_justify( GTK_LABEL( GTK_BIN( check )->child ), GTK_JUSTIFY_LEFT );
 	gtk_widget_show( check );
 	AddDialogData( check, &m_bCamDiscrete, DLG_CHECK_BOOL );
 
 	// Update XY views on camera move
 	check = gtk_check_button_new_with_label( _( "Update XY views on camera move" ) );
 	gtk_box_pack_start( GTK_BOX( vbox ), check, FALSE, FALSE, 0 );
-	gtk_label_set_justify( GTK_LABEL( GTK_BIN( check )->child ), GTK_JUSTIFY_LEFT );
 	gtk_widget_show( check );
 	AddDialogData( check, &m_bCamXYUpdate, DLG_CHECK_BOOL );
 
@@ -1971,8 +1969,7 @@ void PrefsDlg::BuildDialog(){
 	// label
 	label = gtk_label_new( _( "Texture quality" ) );
 	gtk_box_pack_start( GTK_BOX( vbox ), label, FALSE, FALSE, 0 );
-	gtk_misc_set_alignment( GTK_MISC( label ), 0, 0.5 );
-	gtk_label_set_justify( GTK_LABEL( label ), GTK_JUSTIFY_LEFT );
+	gtk_misc_set_alignment( GTK_MISC( label ), 0.0, 0.5 );
 	gtk_widget_show( label );
 
 	// adjustment
@@ -1992,10 +1989,12 @@ void PrefsDlg::BuildDialog(){
 
 	label = gtk_label_new( _( "low" ) );
 	gtk_box_pack_start( GTK_BOX( hbox2 ), label, FALSE, FALSE, 0 );
+	gtk_misc_set_alignment( GTK_MISC( label ), 0.0, 0.5 );
 	gtk_widget_show( label );
 
 	label = gtk_label_new( _( "high" ) );
 	gtk_box_pack_end( GTK_BOX( hbox2 ), label, FALSE, FALSE, 0 );
+	gtk_misc_set_alignment( GTK_MISC( label ), 1.0, 0.5 );
 	gtk_widget_show( label );
 
 	// texture subsets
@@ -2026,12 +2025,10 @@ void PrefsDlg::BuildDialog(){
 	gtk_widget_show( table );
 
 	label = gtk_label_new( _( "Texture Compression (if available):" ) );
-	g_object_set( label, "xalign", 0.0, NULL );
-	gtk_label_set_justify( GTK_LABEL( label ), GTK_JUSTIFY_LEFT );
 	gtk_table_attach( GTK_TABLE( table ), label, 0, 1, 0, 1,
 					  (GtkAttachOptions) ( 0 ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
-	gtk_misc_set_alignment( GTK_MISC( label ), 0, 0.5 );
+	gtk_misc_set_alignment( GTK_MISC( label ), 0.0, 0.5 );
 	gtk_widget_show( label );
 
 	// Texture compression choice label
@@ -2072,12 +2069,10 @@ void PrefsDlg::BuildDialog(){
 	// Startup shaders
 	// label
 	label = gtk_label_new( _( "Startup Shaders:" ) );
-	g_object_set( label, "xalign", 0.0, NULL );
-	gtk_label_set_justify( GTK_LABEL( label ), GTK_JUSTIFY_LEFT );
 	gtk_table_attach( GTK_TABLE( table ), label, 0, 1, 0, 1,
 					  (GtkAttachOptions) ( 0 ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
-	gtk_misc_set_alignment( GTK_MISC( label ), 0, 0.5 );
+	gtk_misc_set_alignment( GTK_MISC( label ), 0.0, 0.5 );
 	gtk_widget_show( label );
 
 	// combo list
@@ -2295,6 +2290,7 @@ void PrefsDlg::BuildDialog(){
 
 	// label
 	label = gtk_label_new( _( "Wheel Mouse inc:" ) );
+	gtk_misc_set_alignment( GTK_MISC( label ), 0.0, 0.5 );
 	gtk_box_pack_start( GTK_BOX( hbox2 ), label, FALSE, FALSE, 0 );
 	gtk_widget_show( label );
 
@@ -2368,6 +2364,7 @@ void PrefsDlg::BuildDialog(){
 	gtk_table_attach( GTK_TABLE( table ), label, 0, 1, 0, 1,
 					  (GtkAttachOptions) ( 0 ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
+	gtk_misc_set_alignment( GTK_MISC( label ), 0.0, 0.5 );
 	gtk_widget_show( label );
 
 	// entry
@@ -2382,10 +2379,10 @@ void PrefsDlg::BuildDialog(){
 	// Undo levels
 	// label
 	label = gtk_label_new( _( "Undo Levels:" ) );
-	g_object_set( label, "xalign", 0.0, NULL );
 	gtk_table_attach( GTK_TABLE( table ), label, 0, 1, 1, 2,
 					  (GtkAttachOptions) ( 0 ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
+	gtk_misc_set_alignment( GTK_MISC( label ), 0.0, 0.5 );
 	gtk_widget_show( label );
 
 	// spinner (allows undo levels to be set to zero)
@@ -2401,10 +2398,10 @@ void PrefsDlg::BuildDialog(){
 	// Patch subdivisions
 	// label
 	label = gtk_label_new( _( "Patch subdivisions:" ) );
-	g_object_set( label, "xalign", 0.0, NULL );
 	gtk_table_attach( GTK_TABLE( table ), label, 0, 1, 2, 3,
 					  (GtkAttachOptions) ( 0 ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
+	gtk_misc_set_alignment( GTK_MISC( label ), 0.0, 0.5 );
 	gtk_widget_show( label );
 
 	// entry (spinner perhaps? [2-16])
@@ -2471,6 +2468,7 @@ void PrefsDlg::BuildDialog(){
 
 	// label
 	label = gtk_label_new( _( "minutes" ) );
+	gtk_misc_set_alignment( GTK_MISC( label ), 0.0, 0.5 );
 	gtk_box_pack_start( GTK_BOX( hbox2 ), label, FALSE, FALSE, 0 );
 	gtk_widget_show( label );
 
@@ -2503,11 +2501,10 @@ void PrefsDlg::BuildDialog(){
 
 	// label
 	label = gtk_label_new( _( "Prefab path:" ) );
-	g_object_set( label, "xalign", 0.0, NULL );
 	gtk_table_attach( GTK_TABLE( table ), label, 0, 1, 0, 1,
 					  (GtkAttachOptions) ( 0 ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
-	gtk_misc_set_alignment( GTK_MISC( label ), 1, 0.5 );
+	gtk_misc_set_alignment( GTK_MISC( label ), 0.0, 0.5 );
 	gtk_widget_show( label );
 
 	// path entry
@@ -2531,11 +2528,10 @@ void PrefsDlg::BuildDialog(){
 	// User ini path
 	// label
 	label = gtk_label_new( _( "User INI path:" ) );
-	g_object_set( label, "xalign", 0.0, NULL );
 	gtk_table_attach( GTK_TABLE( table ), label, 0, 1, 1, 2,
 					  (GtkAttachOptions) ( 0 ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
-	gtk_misc_set_alignment( GTK_MISC( label ), 1, 0.5 );
+	gtk_misc_set_alignment( GTK_MISC( label ), 0.0, 0.5 );
 	gtk_widget_show( label );
 
 	// user ini path entry
@@ -2580,11 +2576,10 @@ void PrefsDlg::BuildDialog(){
 
 	// label
 	label = gtk_label_new( _( "Default texture scale:" ) );
-	g_object_set( label, "xalign", 0.0, NULL );
-	gtk_label_set_justify( GTK_LABEL( label ), GTK_JUSTIFY_LEFT );
 	gtk_table_attach( GTK_TABLE( table ), label, 0, 1, 0, 1,
 					  (GtkAttachOptions) ( 0 ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
+	gtk_misc_set_alignment( GTK_MISC( label ), 0.0, 0.5 );
 	gtk_widget_show( label );
 
 	// scale entry
@@ -2633,11 +2628,10 @@ void PrefsDlg::BuildDialog(){
 	gtk_widget_show( table );
 
 	label = gtk_label_new( _( "Light radiuses:" ) );
-	g_object_set( label, "xalign", 0.0, NULL );
-	gtk_label_set_justify( GTK_LABEL( label ), GTK_JUSTIFY_LEFT );
 	gtk_table_attach( GTK_TABLE( table ), label, 0, 1, 0, 1,
 					  (GtkAttachOptions) ( 0 ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
+	gtk_misc_set_alignment( GTK_MISC( label ), 0.0, 0.5 );
 	gtk_widget_show( label );
 
 	combo_list = NULL;
@@ -2678,11 +2672,10 @@ void PrefsDlg::BuildDialog(){
 
 	// label
 	label = gtk_label_new( _( "Custom Editor Command" ) );
-	g_object_set( label, "xalign", 0.0, NULL );
 	gtk_table_attach( GTK_TABLE( table ), label, 0, 1, 0, 1,
 					  (GtkAttachOptions) ( 0 ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
-	gtk_misc_set_alignment( GTK_MISC( label ), 1, 0.5 );
+	gtk_misc_set_alignment( GTK_MISC( label ), 0.0, 0.5 );
 	g_object_set_data( G_OBJECT( dialog ), "label_customeditor", label );
 	gtk_widget_set_sensitive( label, g_PrefsDlg.m_bUseCustomEditor );
 	gtk_widget_show( label );

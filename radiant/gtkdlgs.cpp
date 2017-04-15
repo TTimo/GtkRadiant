@@ -144,14 +144,14 @@ static void DoProjectAddEdit( bool edit, GtkWidget *parent ){
 	gtk_table_attach( GTK_TABLE( table ), label, 0, 1, 0, 1,
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
-	gtk_misc_set_alignment( GTK_MISC( label ), 1, 0.5 );
+	gtk_misc_set_alignment( GTK_MISC( label ), 0.0, 0.5 );
 	gtk_widget_show( label );
 
 	label = gtk_label_new( _( "Command" ) );
 	gtk_table_attach( GTK_TABLE( table ), label, 0, 1, 1, 2,
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
-	gtk_misc_set_alignment( GTK_MISC( label ), 1, 0.5 );
+	gtk_misc_set_alignment( GTK_MISC( label ), 0.0, 0.5 );
 	gtk_widget_show( label );
 
 	text = gtk_entry_new();
@@ -658,7 +658,7 @@ void DoProjectSettings(){
 		gtk_table_attach( GTK_TABLE( table2 ), label, 0, 1, 8, 9,
 						  (GtkAttachOptions) ( GTK_FILL ),
 						  (GtkAttachOptions) ( 0 ), 0, 0 );
-		gtk_misc_set_alignment( GTK_MISC( label ), 1, 0.5 );
+		gtk_misc_set_alignment( GTK_MISC( label ), 1.0, 0.5 );
 
 		gamemode = ValueForKey( g_qeglobals.d_project_entity, "gamemode" );
 		isBasemode = qtrue;
@@ -699,7 +699,7 @@ void DoProjectSettings(){
 	gtk_table_attach( GTK_TABLE( table2 ), label, 0, 1, 0, 1,
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
-	gtk_misc_set_alignment( GTK_MISC( label ), 1, 0.5 );
+	gtk_misc_set_alignment( GTK_MISC( label ), 0.0, 0.5 );
 	gtk_widget_show( label );
 
 
@@ -707,14 +707,14 @@ void DoProjectSettings(){
 	gtk_table_attach( GTK_TABLE( table2 ), label, 0, 1, 6, 7,
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
-	gtk_misc_set_alignment( GTK_MISC( label ), 1, 0.5 );
+	gtk_misc_set_alignment( GTK_MISC( label ), 0.0, 0.5 );
 	gtk_widget_show( label );
 
 	label = gtk_label_new( _( "fs_game" ) );
 	gtk_table_attach( GTK_TABLE( table2 ), label, 0, 1, 7, 8,
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
-	gtk_misc_set_alignment( GTK_MISC( label ), 1, 0.5 );
+	gtk_misc_set_alignment( GTK_MISC( label ), 0.0, 0.5 );
 	gtk_widget_show( label );
 
 	// Initialize fields
@@ -881,49 +881,49 @@ void DoMapInfo(){
 	gtk_table_attach( GTK_TABLE( table ), brushes_label, 1, 2, 0, 1,
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
-	g_object_set( brushes_label, "xalign", 1.0, NULL );
+	gtk_misc_set_alignment( GTK_MISC( brushes_label ), 1.0, 0.5 );
 	gtk_widget_show( brushes_label );
 
 	entities_label = gtk_label_new( "" );
 	gtk_table_attach( GTK_TABLE( table ), entities_label, 1, 2, 1, 2,
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
-	g_object_set( entities_label, "xalign", 1.0, NULL );
+	gtk_misc_set_alignment( GTK_MISC( entities_label ), 1.0, 0.5 );
 	gtk_widget_show( entities_label );
 
 	net_label = gtk_label_new( "" );
 	gtk_table_attach( GTK_TABLE( table ), net_label, 1, 2, 2, 3,
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
-	g_object_set( net_label, "xalign", 1.0, NULL );
+	gtk_misc_set_alignment( GTK_MISC( net_label ), 1.0, 0.5 );
 	gtk_widget_show( net_label );
 
 	label = gtk_label_new( _( "Total Brushes" ) );
 	gtk_table_attach( GTK_TABLE( table ), label, 0, 1, 0, 1,
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
-	gtk_misc_set_alignment( GTK_MISC( label ), 0, 0.5 );
+	gtk_misc_set_alignment( GTK_MISC( label ), 0.0, 0.5 );
 	gtk_widget_show( label );
 
 	label = gtk_label_new( _( "Total Entities" ) );
 	gtk_table_attach( GTK_TABLE( table ), label, 0, 1, 1, 2,
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
-	gtk_misc_set_alignment( GTK_MISC( label ), 0, 0.5 );
+	gtk_misc_set_alignment( GTK_MISC( label ), 0.0, 0.5 );
 	gtk_widget_show( label );
 
 	label = gtk_label_new( _( "Net brush count\n(non entity)" ) );
 	gtk_table_attach( GTK_TABLE( table ), label, 0, 1, 2, 3,
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
-	gtk_misc_set_alignment( GTK_MISC( label ), 0, 0.5 );
+	gtk_misc_set_alignment( GTK_MISC( label ), 0.0, 0.5 );
 	gtk_widget_show( label );
 
 
 
 	label = gtk_label_new( _( "Entity breakdown" ) );
 	gtk_box_pack_start( GTK_BOX( vbox ), label, FALSE, TRUE, 0 );
-	gtk_misc_set_alignment( GTK_MISC( label ), 0, 0.5 );
+	gtk_misc_set_alignment( GTK_MISC( label ), 0.0, 0.5 );
 	gtk_widget_show( label );
 
 	scr = gtk_scrolled_window_new( (GtkAdjustment*)NULL, (GtkAdjustment*)NULL );
@@ -1333,12 +1333,14 @@ void DoRotateDlg(){
 	gtk_table_attach( GTK_TABLE( table ), label, 0, 1, 0, 1,
 					  (GtkAttachOptions) ( 0 ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
+	gtk_misc_set_alignment( GTK_MISC( label ), 0.0, 0.5 );
 	gtk_widget_show( label );
 
 	label = gtk_label_new( _( "Y" ) );
 	gtk_table_attach( GTK_TABLE( table ), label, 0, 1, 1, 2,
 					  (GtkAttachOptions) ( 0 ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
+	gtk_misc_set_alignment( GTK_MISC( label ), 0.0, 0.5 );
 	gtk_widget_show( label );
 
 	label = gtk_label_new( _( "Z" ) );
@@ -1346,6 +1348,7 @@ void DoRotateDlg(){
 	gtk_table_attach( GTK_TABLE( table ), label, 0, 1, 2, 3,
 					  (GtkAttachOptions) ( 0 ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
+	gtk_misc_set_alignment( GTK_MISC( label ), 0.0, 0.5 );
 	gtk_widget_show( label );
 
 	adj = GTK_ADJUSTMENT( gtk_adjustment_new( 0, -359, 359, 1, 10, 0 ) );
@@ -1415,12 +1418,12 @@ void DoGamma(){
 	gtk_widget_show( vbox );
 
 	label = gtk_label_new( _( "0.0 is brightest\n1.0 is darkest" ) );
-	gtk_misc_set_alignment( GTK_MISC( label ), 0, 0.5 );
+	gtk_misc_set_alignment( GTK_MISC( label ), 0.0, 0.5 );
 	gtk_box_pack_start( GTK_BOX( vbox ), label, TRUE, TRUE, 0 );
 	gtk_widget_show( label );
 
 	label = gtk_label_new( _( "You must restart for the\nsettings to take effect" ) );
-	gtk_misc_set_alignment( GTK_MISC( label ), 0, 0.5 );
+	gtk_misc_set_alignment( GTK_MISC( label ), 0.0, 0.5 );
 	gtk_box_pack_start( GTK_BOX( vbox ), label, TRUE, TRUE, 0 );
 	gtk_widget_show( label );
 
@@ -1634,12 +1637,14 @@ void DoFind(){
 	gtk_widget_show( table );
 
 	label = gtk_label_new( _( "Entity number" ) );
+	gtk_misc_set_alignment( GTK_MISC( label ), 0.0, 0.5 );
 	gtk_table_attach( GTK_TABLE( table ), label, 0, 1, 0, 1,
 					  (GtkAttachOptions) ( 0 ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
 	gtk_widget_show( label );
 
 	label = gtk_label_new( _( "Brush number" ) );
+	gtk_misc_set_alignment( GTK_MISC( label ), 0.0, 0.5 );
 	gtk_table_attach( GTK_TABLE( table ), label, 0, 1, 1, 2,
 					  (GtkAttachOptions) ( 0 ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
@@ -1702,6 +1707,7 @@ void DoSides( bool bCone, bool bSphere, bool bTorus ){
 
 	label = gtk_label_new( _( "Sides:" ) );
 	gtk_box_pack_start( GTK_BOX( hbox ), label, FALSE, FALSE, 0 );
+	gtk_misc_set_alignment( GTK_MISC( label ), 0.0, 0.5 );
 	gtk_widget_show( label );
 
 	adj = GTK_ADJUSTMENT( gtk_adjustment_new( 3, 3, 100, 1, 10, 0 ) );
@@ -1765,14 +1771,14 @@ void DoNewPatchDlg(){
 	gtk_table_attach( GTK_TABLE( table ), label, 0, 1, 0, 1,
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
-	gtk_misc_set_alignment( GTK_MISC( label ), 0, 0.5 );
+	gtk_misc_set_alignment( GTK_MISC( label ), 0.0, 0.5 );
 	gtk_widget_show( label );
 
 	label = gtk_label_new( _( "Height:" ) );
 	gtk_table_attach( GTK_TABLE( table ), label, 0, 1, 1, 2,
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
-	gtk_misc_set_alignment( GTK_MISC( label ), 0, 0.5 );
+	gtk_misc_set_alignment( GTK_MISC( label ), 0.0, 0.5 );
 	gtk_widget_show( label );
 
 	combo_list = (GList*)NULL;
@@ -1794,7 +1800,8 @@ void DoNewPatchDlg(){
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
 	gtk_widget_show( combo );
-//	g_object_set( combo, "xalign", 1.0, NULL );
+
+	//right align the combo elements
 	cells = gtk_cell_layout_get_cells( GTK_CELL_LAYOUT( combo ) );
 	for( lst = cells; lst != NULL; lst = g_list_next( lst ) )
 	{
@@ -1812,7 +1819,7 @@ void DoNewPatchDlg(){
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
 	gtk_widget_show( combo );
-//	g_object_set( combo, "xalign", 1.0, NULL );
+
 	cells = gtk_cell_layout_get_cells( GTK_CELL_LAYOUT( combo ) );
 	for( lst = cells; lst != NULL; lst = g_list_next( lst ) )
 	{
@@ -1909,21 +1916,21 @@ void DoScaleDlg(){
 	gtk_table_attach( GTK_TABLE( table ), label, 0, 1, 0, 1,
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
-	gtk_misc_set_alignment( GTK_MISC( label ), 0, 0.5 );
+	gtk_misc_set_alignment( GTK_MISC( label ), 0.0, 0.5 );
 	gtk_widget_show( label );
 
 	label = gtk_label_new( _( "Y:" ) );
 	gtk_table_attach( GTK_TABLE( table ), label, 0, 1, 1, 2,
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
-	gtk_misc_set_alignment( GTK_MISC( label ), 0, 0.5 );
+	gtk_misc_set_alignment( GTK_MISC( label ), 0.0, 0.5 );
 	gtk_widget_show( label );
 
 	label = gtk_label_new( _( "Z:" ) );
 	gtk_table_attach( GTK_TABLE( table ), label, 0, 1, 2, 3,
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
-	gtk_misc_set_alignment( GTK_MISC( label ), 0, 0.5 );
+	gtk_misc_set_alignment( GTK_MISC( label ), 0.0, 0.5 );
 	gtk_widget_show( label );
 
 	adj = GTK_ADJUSTMENT( gtk_adjustment_new( 1.0, 0, 100, 0.1, 1, 0 ) );
@@ -2000,6 +2007,7 @@ void DoThickenDlg(){
 							  "that contains the original patch along with the\n"
 							  "'thick' patch and an optimal set of seam patches." ) );
 	gtk_box_pack_start( GTK_BOX( hbox ), label, FALSE, FALSE, 0 );
+	gtk_misc_set_alignment( GTK_MISC( label ), 0.0, 0.5 );
 	gtk_widget_show( label );
 
 	hbox = gtk_hbox_new( FALSE, 5 );
@@ -2008,6 +2016,7 @@ void DoThickenDlg(){
 
 	label = gtk_label_new( _( "Amount:" ) );
 	gtk_box_pack_start( GTK_BOX( hbox ), label, FALSE, FALSE, 0 );
+	gtk_misc_set_alignment( GTK_MISC( label ), 0.0, 0.5 );
 	gtk_widget_show( label );
 
 	adj = GTK_ADJUSTMENT( gtk_adjustment_new( 1, 1, 100, 1, 10, 0 ) );
@@ -2015,6 +2024,7 @@ void DoThickenDlg(){
 	gtk_box_pack_start( GTK_BOX( hbox ), amount, FALSE, FALSE, 0 );
 	gtk_spin_button_set_wrap( GTK_SPIN_BUTTON( spin ), FALSE );
 	gtk_spin_button_set_numeric( GTK_SPIN_BUTTON( spin ), TRUE );
+
 	gtk_entry_set_alignment( GTK_ENTRY( spin ), 1.0 ); //right
 	gtk_widget_show( spin );
 
@@ -2123,6 +2133,7 @@ void DoAbout(){
 
 	gtk_box_pack_start( GTK_BOX( info_hbox ), info_label, FALSE, FALSE, 0 );
 	gtk_label_set_justify( GTK_LABEL( info_label ), GTK_JUSTIFY_LEFT );
+	gtk_misc_set_alignment( GTK_MISC( info_label ), 0.0, 0.5 );
 	gtk_label_set_selectable( GTK_LABEL( info_label ), TRUE );
 	gtk_widget_show( info_label );
 
@@ -2142,28 +2153,28 @@ void DoAbout(){
 	gtk_table_attach( GTK_TABLE( gl_prop_table ), vendor_label, 0, 1, 0, 1,
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
-	gtk_misc_set_alignment( GTK_MISC( vendor_label ), 0, 0.5 );
+	gtk_misc_set_alignment( GTK_MISC( vendor_label ), 0.0, 0.5 );
 	gtk_widget_show( vendor_label );
 
 	GtkWidget *version_label = gtk_label_new( _( "Version:" ) );
 	gtk_table_attach( GTK_TABLE( gl_prop_table ), version_label, 0, 1, 1, 2,
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
-	gtk_misc_set_alignment( GTK_MISC( version_label ), 0, 0.5 );
+	gtk_misc_set_alignment( GTK_MISC( version_label ), 0.0, 0.5 );
 	gtk_widget_show( version_label );
 
 	GtkWidget *renderer_label = gtk_label_new( _( "Renderer:" ) );
 	gtk_table_attach( GTK_TABLE( gl_prop_table ), renderer_label, 0, 1, 2, 3,
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
-	gtk_misc_set_alignment( GTK_MISC( renderer_label ), 0, 0.5 );
+	gtk_misc_set_alignment( GTK_MISC( renderer_label ), 0.0, 0.5 );
 	gtk_widget_show( renderer_label );
 
 	GtkWidget *gl_vendor_label = gtk_label_new( (char*)qglGetString( GL_VENDOR ) );
 	gtk_table_attach( GTK_TABLE( gl_prop_table ), gl_vendor_label, 1, 2, 0, 1,
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
-	gtk_misc_set_alignment( GTK_MISC( gl_vendor_label ), 0, 0.5 );
+	gtk_misc_set_alignment( GTK_MISC( gl_vendor_label ), 0.0, 0.5 );
 	gtk_label_set_selectable( GTK_LABEL( gl_vendor_label ), TRUE );
 	gtk_widget_show( gl_vendor_label );
 
@@ -2171,7 +2182,7 @@ void DoAbout(){
 	gtk_table_attach( GTK_TABLE( gl_prop_table ), gl_version_label, 1, 2, 1, 2,
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
-	gtk_misc_set_alignment( GTK_MISC( gl_version_label ), 0, 0.5 );
+	gtk_misc_set_alignment( GTK_MISC( gl_version_label ), 0.0, 0.5 );
 	gtk_label_set_selectable( GTK_LABEL( gl_version_label ), TRUE );
 	gtk_widget_show( gl_version_label );
 
@@ -2179,7 +2190,7 @@ void DoAbout(){
 	gtk_table_attach( GTK_TABLE( gl_prop_table ), gl_renderer_label, 1, 2, 2, 3,
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
-	gtk_misc_set_alignment( GTK_MISC( gl_renderer_label ), 0, 0.5 );
+	gtk_misc_set_alignment( GTK_MISC( gl_renderer_label ), 0.0, 0.5 );
 	gtk_label_set_selectable( GTK_LABEL( gl_renderer_label ), TRUE );
 	gtk_widget_show( gl_renderer_label );
 
@@ -2421,7 +2432,6 @@ void DoTextureListDlg(){
 			gtk_tree_view_append_column( GTK_TREE_VIEW( view ), column );
 		}
 
-		gtk_widget_show( view );
 		gtk_container_add( GTK_CONTAINER( scr ), view );
 
 		{
@@ -2441,6 +2451,7 @@ void DoTextureListDlg(){
 		}
 
 		g_object_unref( G_OBJECT( store ) );
+		gtk_widget_show( view );
 
 		texture_list = view;
 		g_object_set_data( G_OBJECT( dialog ), "view", view );
@@ -2612,7 +2623,7 @@ void DoScriptsDlg(){
 							  "that Radiant will crash. Save your work before attempting to\n"
 							  "make use of any scripting features." ) );
 	gtk_box_pack_start( GTK_BOX( vbox ), label, FALSE, FALSE, 0 );
-	gtk_misc_set_alignment( GTK_MISC( label ), 0, 0.5 );
+	gtk_misc_set_alignment( GTK_MISC( label ), 0.0, 0.5 );
 	gtk_label_set_justify( GTK_LABEL( label ), GTK_JUSTIFY_LEFT );
 	gtk_widget_show( label );
 
@@ -2761,7 +2772,7 @@ int DoBSInputDlg( const char *fields[5], float values[5] ){
 
 		label = gtk_label_new( fields[i] );
 		gtk_box_pack_start( GTK_BOX( vbox ), label, FALSE, FALSE, 0 );
-		gtk_misc_set_alignment( GTK_MISC( label ), 1, 0.5 );
+		gtk_misc_set_alignment( GTK_MISC( label ), 1.0, 0.5 );
 		gtk_label_set_justify( GTK_LABEL( label ), GTK_JUSTIFY_LEFT );
 		gtk_widget_show( label );
 
@@ -2832,7 +2843,7 @@ int DoTextureLayout( float *fx, float *fy ){
 							  "will \"fit\" the texture. 2x2 will repeat\n"
 							  "it twice, etc." ) );
 	gtk_box_pack_start( GTK_BOX( vbox ), label, TRUE, TRUE, 0 );
-	gtk_misc_set_alignment( GTK_MISC( label ), 0, 0.5 );
+	gtk_misc_set_alignment( GTK_MISC( label ), 0.0, 0.5 );
 	gtk_label_set_justify( GTK_LABEL( label ), GTK_JUSTIFY_LEFT );
 	gtk_widget_show( label );
 
@@ -2846,14 +2857,14 @@ int DoTextureLayout( float *fx, float *fy ){
 	gtk_table_attach( GTK_TABLE( table ), label, 0, 1, 0, 1,
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
-	gtk_misc_set_alignment( GTK_MISC( label ), 0, 0.5 );
+	gtk_misc_set_alignment( GTK_MISC( label ), 0.0, 0.5 );
 	gtk_widget_show( label );
 
 	label = gtk_label_new( _( "Texture y:" ) );
 	gtk_table_attach( GTK_TABLE( table ), label, 0, 1, 1, 2,
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
-	gtk_misc_set_alignment( GTK_MISC( label ), 0, 0.5 );
+	gtk_misc_set_alignment( GTK_MISC( label ), 0.0, 0.5 );
 	gtk_widget_show( label );
 
 	x = gtk_entry_new();
@@ -2995,7 +3006,7 @@ char* DoNewProjectDlg(){
 	label = gtk_label_new( _( "This will create a new directory beneath your\n"
 							  "game path based on the project name you give." ) );
 	gtk_box_pack_start( GTK_BOX( vbox ), label, TRUE, TRUE, 0 );
-	gtk_misc_set_alignment( GTK_MISC( label ), 0, 0.5 );
+	gtk_misc_set_alignment( GTK_MISC( label ), 0.0, 0.5 );
 	gtk_label_set_justify( GTK_LABEL( label ), GTK_JUSTIFY_LEFT );
 	gtk_widget_show( label );
 
@@ -3003,7 +3014,7 @@ char* DoNewProjectDlg(){
 
 	gtk_box_pack_start( GTK_BOX( vbox ), label, TRUE, TRUE, 0 );
 	gtk_label_set_justify( GTK_LABEL( label ), GTK_JUSTIFY_LEFT );
-	gtk_misc_set_alignment( GTK_MISC( label ), 0, 0.5 );
+	gtk_misc_set_alignment( GTK_MISC( label ), 0.0, 0.5 );
 	gtk_widget_show( label );
 
 	entry = gtk_entry_new();
@@ -3375,7 +3386,7 @@ int DoLightIntensityDlg( int *intensity ){
 
 	label = gtk_label_new( _( "ESC for default, ENTER to validate" ) );
 	gtk_box_pack_start( GTK_BOX( vbox ), label, FALSE, FALSE, 0 );
-	gtk_misc_set_alignment( GTK_MISC( label ), 0, 0.5 );
+	gtk_misc_set_alignment( GTK_MISC( label ), 0.0, 0.5 );
 	gtk_widget_show( label );
 
 	hbox = gtk_hbox_new( TRUE, 5 );

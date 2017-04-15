@@ -671,7 +671,7 @@ GtkWidget* create_SurfaceInspector( void ){
 
 	label = gtk_label_new( _( "Texture: " ) );
 	gtk_box_pack_start( GTK_BOX( hbox1 ), label, FALSE, FALSE, 0 );
-	gtk_misc_set_alignment( GTK_MISC( label ), 1, 0.5 );
+	gtk_misc_set_alignment( GTK_MISC( label ), 0.0, 0.5 );
 	gtk_widget_show( label );
 
 	texture_combo = gtk_combo_new();
@@ -804,6 +804,7 @@ GtkWidget* create_SurfaceInspector( void ){
 	gtk_widget_show( hseparator );
 
 	label = gtk_label_new( _( "Step" ) );
+	gtk_misc_set_alignment( GTK_MISC( label ), 0.0, 0.5 );
 	gtk_table_attach( GTK_TABLE( table1 ), label, 3, 4, 0, 1,
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
@@ -823,7 +824,7 @@ GtkWidget* create_SurfaceInspector( void ){
 	gtk_table_attach( GTK_TABLE( table1 ), label, 1, 2, 0, 1,
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
-	gtk_misc_set_alignment( GTK_MISC( label ), 0.5, 1 );
+	gtk_misc_set_alignment( GTK_MISC( label ), 0.0, 0.5 );
 	gtk_widget_show( label );
 
 	hseparator = gtk_hseparator_new();
@@ -864,8 +865,7 @@ GtkWidget* create_SurfaceInspector( void ){
 
 	label = gtk_label_new( _( "Vertical Shift: " ) );
 	gtk_container_add( GTK_CONTAINER( eventbox ), label );
-	gtk_label_set_justify( GTK_LABEL( label ), GTK_JUSTIFY_LEFT );
-	gtk_misc_set_alignment( GTK_MISC( label ), 1, 0.5 );
+	gtk_misc_set_alignment( GTK_MISC( label ), 0.0, 0.5 );
 	gtk_widget_show( label );
 
 	eventbox = gtk_event_box_new();
@@ -876,8 +876,7 @@ GtkWidget* create_SurfaceInspector( void ){
 
 	label = gtk_label_new( _( "Horizontal Scale: " ) );
 	gtk_container_add( GTK_CONTAINER( eventbox ), label );
-	gtk_label_set_justify( GTK_LABEL( label ), GTK_JUSTIFY_LEFT );
-	gtk_misc_set_alignment( GTK_MISC( label ), 1, 0.5 );
+	gtk_misc_set_alignment( GTK_MISC( label ), 0.0, 0.5 );
 	gtk_widget_show( label );
 
 	eventbox = gtk_event_box_new();
@@ -888,8 +887,7 @@ GtkWidget* create_SurfaceInspector( void ){
 
 	label = gtk_label_new( _( "Vertical Scale: " ) );
 	gtk_container_add( GTK_CONTAINER( eventbox ), label );
-	gtk_label_set_justify( GTK_LABEL( label ), GTK_JUSTIFY_LEFT );
-	gtk_misc_set_alignment( GTK_MISC( label ), 1, 0.5 );
+	gtk_misc_set_alignment( GTK_MISC( label ), 0.0, 0.5 );
 	gtk_widget_show( label );
 
 	eventbox = gtk_event_box_new();
@@ -900,8 +898,7 @@ GtkWidget* create_SurfaceInspector( void ){
 
 	label = gtk_label_new( _( "Rotate: " ) );
 	gtk_container_add( GTK_CONTAINER( eventbox ), label );
-	gtk_label_set_justify( GTK_LABEL( label ), GTK_JUSTIFY_LEFT );
-	gtk_misc_set_alignment( GTK_MISC( label ), 1, 0.5 );
+	gtk_misc_set_alignment( GTK_MISC( label ), 0.0, 0.5 );
 	gtk_widget_show( label );
 
 	eventbox = gtk_event_box_new();
@@ -912,8 +909,7 @@ GtkWidget* create_SurfaceInspector( void ){
 
 	label = gtk_label_new( _( "Horizontal Shift: " ) );
 	gtk_container_add( GTK_CONTAINER( eventbox ), label );
-	gtk_label_set_justify( GTK_LABEL( label ), GTK_JUSTIFY_LEFT );
-	gtk_misc_set_alignment( GTK_MISC( label ), 1, 0.5 );
+	gtk_misc_set_alignment( GTK_MISC( label ), 0.0, 0.5 );
 	gtk_widget_show( label );
 
 	hseparator = gtk_hseparator_new();
@@ -1086,16 +1082,14 @@ GtkWidget* create_SurfaceInspector( void ){
 	gtk_table_attach( GTK_TABLE( table5 ), label, 2, 3, 0, 1,
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
 					  (GtkAttachOptions) ( GTK_FILL ), 0, 0 );
-	gtk_label_set_justify( GTK_LABEL( label ), GTK_JUSTIFY_LEFT );
-	gtk_misc_set_alignment( GTK_MISC( label ), 0.5, 1 );
+	gtk_misc_set_alignment( GTK_MISC( label ), 0.0, 0.5 );
 	gtk_widget_show( label );
 
 	label = gtk_label_new( _( "Width" ) );
 	gtk_table_attach( GTK_TABLE( table5 ), label, 1, 2, 0, 1,
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
 					  (GtkAttachOptions) ( GTK_FILL ), 0, 0 );
-	gtk_label_set_justify( GTK_LABEL( label ), GTK_JUSTIFY_LEFT );
-	gtk_misc_set_alignment( GTK_MISC( label ), 0.5, 1 );
+	gtk_misc_set_alignment( GTK_MISC( label ), 0.0, 0.5 );
 	gtk_widget_show( label );
 
 	fit_width_spinbutton_adj = GTK_ADJUSTMENT( gtk_adjustment_new( 1, 1, 32, 1, 10, 0 ) );

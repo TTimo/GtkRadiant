@@ -528,6 +528,7 @@ void SurfaceDlg::BuildDialog() {
 
 	label = gtk_label_new( _( "Texture" ) );
 	gtk_box_pack_start( GTK_BOX( hbox2 ), label, FALSE, TRUE, 0 );
+	gtk_misc_set_alignment( GTK_MISC( label ), 0.0, 0.5 );
 	gtk_widget_show( label );
 
 	entry = gtk_entry_new();
@@ -544,7 +545,7 @@ void SurfaceDlg::BuildDialog() {
 	gtk_widget_show( table );
 
 	label = gtk_label_new( _( "Horizontal shift" ) );
-	gtk_misc_set_alignment( GTK_MISC( label ), 0, 0 );
+	gtk_misc_set_alignment( GTK_MISC( label ), 0.0, 0.5 );
 	gtk_table_attach( GTK_TABLE( table ), label, 0, 1, 0, 1,
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
@@ -561,7 +562,7 @@ void SurfaceDlg::BuildDialog() {
 	gtk_widget_show( spin );
 
 	label = gtk_label_new( _( "Step" ) );
-	gtk_misc_set_alignment( GTK_MISC( label ), 0, 0 );
+	gtk_misc_set_alignment( GTK_MISC( label ), 0.0, 0.5 );
 	gtk_table_attach( GTK_TABLE( table ), label, 2, 3, 0, 1,
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
@@ -577,7 +578,7 @@ void SurfaceDlg::BuildDialog() {
 	gtk_widget_show( entry );
 
 	label = gtk_label_new( _( "Vertical shift" ) );
-	gtk_misc_set_alignment( GTK_MISC( label ), 0, 0 );
+	gtk_misc_set_alignment( GTK_MISC( label ), 0.0, 0.5 );
 	gtk_table_attach( GTK_TABLE( table ), label, 0, 1, 1, 2,
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
@@ -594,7 +595,7 @@ void SurfaceDlg::BuildDialog() {
 	gtk_widget_show( spin );
 
 	label = gtk_label_new( _( "Step" ) );
-	gtk_misc_set_alignment( GTK_MISC( label ), 0, 0 );
+	gtk_misc_set_alignment( GTK_MISC( label ), 0.0, 0.5 );
 	gtk_table_attach( GTK_TABLE( table ), label, 2, 3, 1, 2,
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
@@ -610,7 +611,7 @@ void SurfaceDlg::BuildDialog() {
 	gtk_widget_show( entry );
 
 	label = gtk_label_new( _( "Horizontal stretch" ) );
-	gtk_misc_set_alignment( GTK_MISC( label ), 0, 0 );
+	gtk_misc_set_alignment( GTK_MISC( label ), 0.0, 0.5 );
 	gtk_table_attach( GTK_TABLE( table ), label, 0, 1, 2, 3,
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
@@ -627,7 +628,7 @@ void SurfaceDlg::BuildDialog() {
 	gtk_widget_show( spin );
 
 	label = gtk_label_new( _( "Step" ) );
-	gtk_misc_set_alignment( GTK_MISC( label ), 0, 0 );
+	gtk_misc_set_alignment( GTK_MISC( label ), 0.0, 0.5 );
 	gtk_table_attach( GTK_TABLE( table ), label, 2, 3, 2, 3,
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 2, 3 );
@@ -643,7 +644,7 @@ void SurfaceDlg::BuildDialog() {
 	gtk_widget_show( entry );
 
 	label = gtk_label_new( _( "Vertical stretch" ) );
-	gtk_misc_set_alignment( GTK_MISC( label ), 0, 0 );
+	gtk_misc_set_alignment( GTK_MISC( label ), 0.0, 0.5 );
 	gtk_table_attach( GTK_TABLE( table ), label, 0, 1, 3, 4,
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
@@ -660,7 +661,7 @@ void SurfaceDlg::BuildDialog() {
 	gtk_widget_show( spin );
 
 	label = gtk_label_new( _( "Step" ) );
-	gtk_misc_set_alignment( GTK_MISC( label ), 0, 0 );
+	gtk_misc_set_alignment( GTK_MISC( label ), 0.0, 0.5 );
 	gtk_table_attach( GTK_TABLE( table ), label, 2, 3, 3, 4,
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
@@ -676,7 +677,7 @@ void SurfaceDlg::BuildDialog() {
 	gtk_widget_show( entry );
 
 	label = gtk_label_new( _( "Rotate" ) );
-	gtk_misc_set_alignment( GTK_MISC( label ), 0, 0 );
+	gtk_misc_set_alignment( GTK_MISC( label ), 0.0, 0.5 );
 	gtk_table_attach( GTK_TABLE( table ), label, 0, 1, 4, 5,
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
@@ -694,7 +695,7 @@ void SurfaceDlg::BuildDialog() {
 	gtk_widget_show( spin );
 
 	label = gtk_label_new( _( "Step" ) );
-	gtk_misc_set_alignment( GTK_MISC( label ), 0, 0 );
+	gtk_misc_set_alignment( GTK_MISC( label ), 0.0, 0.5 );
 	gtk_table_attach( GTK_TABLE( table ), label, 2, 3, 4, 5,
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
@@ -733,24 +734,28 @@ void SurfaceDlg::BuildDialog() {
 	gtk_table_attach( GTK_TABLE( table ), label, 0, 1, 0, 1,
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
+	gtk_misc_set_alignment( GTK_MISC( label ), 0.0, 0.5 );
 	gtk_widget_show( label );
 
 	label = gtk_label_new( _( "Patch" ) );
 	gtk_table_attach( GTK_TABLE( table ), label, 0, 1, 2, 3,
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
+	gtk_misc_set_alignment( GTK_MISC( label ), 0.0, 0.5 );
 	gtk_widget_show( label );
 
 	label = gtk_label_new( _( "Width" ) );
 	gtk_table_attach( GTK_TABLE( table ), label, 2, 3, 0, 1,
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
+	gtk_misc_set_alignment( GTK_MISC( label ), 0.0, 0.5 );
 	gtk_widget_show( label );
 
 	label = gtk_label_new( _( "Height" ) );
 	gtk_table_attach( GTK_TABLE( table ), label, 3, 4, 0, 1,
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
+	gtk_misc_set_alignment( GTK_MISC( label ), 0.0, 0.5 );
 	gtk_widget_show( label );
 
 	axial_button = button = gtk_button_new_with_label( _( "Axial" ) );

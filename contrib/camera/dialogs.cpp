@@ -443,6 +443,7 @@ static gint ci_add_target( GtkWidget *widget, gpointer data ){
 
 	w = gtk_label_new( _( "Name:" ) );
 	gtk_box_pack_start( GTK_BOX( hbox ), w, FALSE, FALSE, 0 );
+	gtk_misc_set_alignment( GTK_MISC( w ), 0.0, 0.5 );
 	gtk_widget_show( w );
 
 	name = gtk_entry_new();
@@ -919,6 +920,7 @@ GtkWidget *CreateCameraInspectorDialog( void ){
 
 	w = gtk_label_new( _( "File:" ) );
 	gtk_box_pack_start( GTK_BOX( hbox ), w, FALSE, FALSE, 0 );
+	gtk_misc_set_alignment( GTK_MISC( w ), 0.0, 0.5 );
 	gtk_widget_show( w );
 
 	g_pCamListCombo = gtk_combo_new();
@@ -933,6 +935,7 @@ GtkWidget *CreateCameraInspectorDialog( void ){
 
 	w = gtk_label_new( _( "Name:" ) );
 	gtk_box_pack_start( GTK_BOX( hbox ), w, FALSE, FALSE, 0 );
+	gtk_misc_set_alignment( GTK_MISC( w ), 0.0, 0.5 );
 	gtk_widget_show( w );
 
 	g_pCamName = gtk_entry_new();
@@ -941,6 +944,7 @@ GtkWidget *CreateCameraInspectorDialog( void ){
 
 	w = gtk_label_new( _( "Type:" ) );
 	gtk_box_pack_start( GTK_BOX( hbox ), w, FALSE, FALSE, 0 );
+	gtk_misc_set_alignment( GTK_MISC( w ), 0.0, 0.5 );
 	gtk_widget_show( w );
 
 	w = gtk_label_new( "" );
@@ -974,6 +978,7 @@ GtkWidget *CreateCameraInspectorDialog( void ){
 
 	w = gtk_label_new( _( "Edit:" ) );
 	gtk_box_pack_start( GTK_BOX( hbox ), w, FALSE, FALSE, 0 );
+	gtk_misc_set_alignment( GTK_MISC( w ), 0.0, 0.5 );
 	gtk_widget_show( w );
 
 	g_pPathListCombo = gtk_combo_new();
@@ -1013,6 +1018,7 @@ GtkWidget *CreateCameraInspectorDialog( void ){
 
 	w = gtk_label_new( _( "Type:" ) );
 	gtk_box_pack_start( GTK_BOX( hbox ), w, FALSE, FALSE, 0 );
+	gtk_misc_set_alignment( GTK_MISC( w ), 0.0, 0.5 );
 	gtk_widget_show( w );
 
 	w = gtk_label_new( "" );
@@ -1068,6 +1074,7 @@ GtkWidget *CreateCameraInspectorDialog( void ){
 
 	w = gtk_label_new( _( "Length (seconds):" ) );
 	gtk_box_pack_start( GTK_BOX( hbox ), w, FALSE, FALSE, 0 );
+	gtk_misc_set_alignment( GTK_MISC( w ), 0.0, 0.5 );
 	gtk_widget_show( w );
 
 	g_pSecondsEntry = gtk_entry_new();
@@ -1083,6 +1090,7 @@ GtkWidget *CreateCameraInspectorDialog( void ){
 
 	w = gtk_label_new( _( "Current Time:" ) );
 	gtk_box_pack_start( GTK_BOX( hbox ), w, FALSE, FALSE, 0 );
+	gtk_misc_set_alignment( GTK_MISC( w ), 0.0, 0.5 );
 	gtk_widget_show( w );
 
 	w = gtk_label_new( _( "0.00" ) );
@@ -1130,6 +1138,7 @@ GtkWidget *CreateCameraInspectorDialog( void ){
 
 	w = gtk_label_new( _( "Events:" ) );
 	gtk_box_pack_start( GTK_BOX( hbox ), w, FALSE, FALSE, 0 );
+	gtk_misc_set_alignment( GTK_MISC( w ), 0.0, 0.5 );
 	gtk_widget_show( w );
 
 	// -------------------------- //

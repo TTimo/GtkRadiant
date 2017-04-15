@@ -922,6 +922,7 @@ int WINAPI gtk_MessageBoxNew( void *parent, const char *message,
 	// add message
 	GtkWidget *dlg_msg = gtk_label_new( message );
 	gtk_box_pack_start( GTK_BOX( icon_text_hbox ), dlg_msg, FALSE, FALSE, MSGBOX_PAD_MINOR );
+	gtk_misc_set_alignment( GTK_MISC( dlg_msg ), 0.0, 0.5 );
 	gtk_label_set_justify( GTK_LABEL( dlg_msg ), GTK_JUSTIFY_LEFT );
 	gtk_label_set_selectable( GTK_LABEL( dlg_msg ), TRUE );
 	gtk_widget_show( dlg_msg );
@@ -1045,6 +1046,7 @@ int WINAPI gtk_MessageBox( void *parent, const char* lpText, const char* lpCapti
 
 	w = gtk_label_new( lpText );
 	gtk_box_pack_start( GTK_BOX( vbox ), w, FALSE, FALSE, 2 );
+	gtk_misc_set_alignment( GTK_MISC( w ), 0.0, 0.5 );
 	gtk_label_set_justify( GTK_LABEL( w ), GTK_JUSTIFY_LEFT );
 	gtk_label_set_selectable( GTK_LABEL( w ), TRUE );
 	gtk_widget_show( w );
