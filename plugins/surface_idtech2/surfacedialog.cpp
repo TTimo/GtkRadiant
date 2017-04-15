@@ -80,6 +80,8 @@ bool g_bListenChanged = TRUE;
 // turn on/off listening of the update messages
 bool g_bListenUpdate = TRUE;
 
+extern void *g_pMainWidget;
+
 GtkWidget* create_SurfaceInspector( void );
 GtkWidget *SurfaceInspector = NULL;
 
@@ -551,6 +553,7 @@ GtkWidget* create_SurfaceInspector( void ){
 	GtkWidget *hbox1;
 
 	SurfaceInspector = gtk_window_new( GTK_WINDOW_TOPLEVEL );
+	gtk_window_set_transient_for( GTK_WINDOW( SurfaceInspector ), GTK_WINDOW( g_pMainWidget ) );
 	gtk_container_set_border_width( GTK_CONTAINER( SurfaceInspector ), 4 );
 	gtk_window_set_title( GTK_WINDOW( SurfaceInspector ), _( "Surface Inspector" ) );
 
