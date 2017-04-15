@@ -34,6 +34,9 @@
 
 #include "synapse.h"
 
+void *g_pMainWidget;
+const char* QERPlug_Init( void* hApp, void *pWidget );
+
 _QERFuncTable_1 g_FuncTable;
 _QERUndoTable g_UndoTable;
 _QERAppSurfaceTable g_AppSurfaceTable;
@@ -106,4 +109,11 @@ bool CSynapseClient_SurfDLG::RequestAPI( APIDescriptor_t *pAPI ) {
 
 const char *CSynapseClient_SurfDLG::GetInfo(){
 	return "Surface Dialog (idTech2) module built " __DATE__ " " RADIANT_VERSION;
+}
+
+const char* QERPlug_Init( void* hApp, void *pWidget ){
+
+	g_pMainWidget = pWidget;
+
+	return "idTech2 Surface Dialog for Radiant";
 }
