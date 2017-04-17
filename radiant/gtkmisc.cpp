@@ -739,7 +739,7 @@ GtkWidget* create_sub_menu_with_mnemonic( GtkWidget *bar, const gchar *mnemonic 
 
 extern void AddMenuItem( GtkWidget* menu, unsigned int id );
 
-GtkWidget* create_menu_item_with_mnemonic( GtkWidget *menu, const gchar *mnemonic, GtkSignalFunc func, int id ){
+GtkWidget* create_menu_item_with_mnemonic( GtkWidget *menu, const gchar *mnemonic, GCallback func, int id ){
 	GtkWidget *item;
 
 	item = gtk_menu_item_new_with_mnemonic( mnemonic );
@@ -1496,7 +1496,8 @@ const char* file_dialog( void *parent, gboolean open, const char* title, const c
 	if ( gtk_dialog_run( GTK_DIALOG( file_sel ) ) == GTK_RESPONSE_ACCEPT ) {
 		gchar * filename = gtk_file_chooser_get_filename( GTK_FILE_CHOOSER( file_sel ) );
 		if ( filename != NULL ) {
-			Q_strncpyz( szFile, filename, sizeof( szFile ) );
+			strncpy( szFile, filename, sizeof( szFile ) );
+			szFile[sizeof( szFile ) - 1] = 0;
 			g_free( filename );
 		} else {
 			szFile[0] = '\0';
@@ -1696,11 +1697,17 @@ void CheckMenuSplitting( GtkWidget *&menu ){
 		// move the last 2 items to a submenu (3 because of win32)
 		for ( int i = 0; i < 3; i++ )
 		{
-			item = GTK_WIDGET( g_list_last( gtk_container_get_children( GTK_CONTAINER( menu ) ) )->data );
+			GList *children = gtk_container_get_children( GTK_CONTAINER( menu ) ) ;
+			if( !children ) {
+				continue;
+			}
+			item = GTK_WIDGET( g_list_last( children )->data );
 			g_object_ref( item );
 			gtk_container_remove( GTK_CONTAINER( menu ), item );
 			gtk_menu_shell_append( GTK_MENU_SHELL( menu2 ), item );
 			g_object_unref( item );
+
+			g_list_free( children );
 		}
 
 		item = gtk_menu_item_new_with_label( "--------" );

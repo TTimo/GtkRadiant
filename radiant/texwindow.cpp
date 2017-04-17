@@ -547,7 +547,7 @@ void ClearGSList( GSList* lst ){
 
 void FillTextureMenu( GSList** pArray ){
 	GtkWidget *menu, *sep, *item; // point to the Textures GtkMenu and to the last separator
-	GList *lst;
+	GList *children, *seplst, *lst;
 	GSList *texdirs = NULL;
 	GSList *texdirs_tmp = NULL;
 	GSList *p;
@@ -556,13 +556,16 @@ void FillTextureMenu( GSList** pArray ){
 	// delete everything
 	menu = GTK_WIDGET( g_object_get_data( G_OBJECT( g_qeglobals_gui.d_main_window ), "menu_textures" ) );
 	sep = GTK_WIDGET( g_object_get_data( G_OBJECT( g_qeglobals_gui.d_main_window ), "menu_textures_separator" ) );
-	lst = g_list_find( gtk_container_children( GTK_CONTAINER( menu ) ), sep );
-	while ( lst->next )
-	{
-		// these delete functions are recursive, it's gonna free all submenus
-		gtk_widget_destroy( GTK_WIDGET( lst->next->data ) );
-		// lst is no longer relevant, need to get it again
-		lst = g_list_find( gtk_container_children( GTK_CONTAINER( menu ) ), sep );
+	children = gtk_container_get_children( GTK_CONTAINER( menu ) );
+	if( children ) {
+		seplst = g_list_find( children, sep );
+		if( seplst ) {
+			for ( lst = g_list_next( seplst ); lst != NULL; lst = g_list_next( lst ) )
+			{
+				gtk_widget_destroy( GTK_WIDGET( lst->data ) );
+			}
+		}
+		g_list_free( children );
 	}
 
 	texture_nummenus = 0;

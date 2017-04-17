@@ -96,7 +96,6 @@ public:
   GtkWidget* m_pNotebook;
   GtkWidget* m_pWidget;
   GtkWidget* m_pTree;
-  GtkCTreeNode* m_hWorld;   //leo: not used keeping because of the win32 version
 };
 
 extern GroupDlg *g_pGroupDlg;
