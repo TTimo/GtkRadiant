@@ -206,28 +206,28 @@ void FindTextureDialog::BuildDialog(){
 	gtk_box_pack_start( GTK_BOX( vbox ), button, FALSE, FALSE, 0 );
 	g_signal_connect( G_OBJECT( button ), "clicked",
 						G_CALLBACK( OnFind ), NULL );
-	gtk_widget_set_usize( button, 60, -2 );
+	gtk_widget_set_size_request( button, 60, -1 );
 	gtk_widget_show( button );
 
 	button = gtk_button_new_with_label( _( "OK" ) );
 	gtk_box_pack_start( GTK_BOX( vbox ), button, FALSE, FALSE, 0 );
 	g_signal_connect( G_OBJECT( button ), "clicked",
 						G_CALLBACK( OnOK ), NULL );
-	gtk_widget_set_usize( button, 60, -2 );
+	gtk_widget_set_size_request( button, 60, -1 );
 	gtk_widget_show( button );
 
 	button = gtk_button_new_with_label( _( "Apply" ) );
 	gtk_box_pack_start( GTK_BOX( vbox ), button, FALSE, FALSE, 0 );
 	g_signal_connect( G_OBJECT( button ), "clicked",
 						G_CALLBACK( OnApply ), NULL );
-	gtk_widget_set_usize( button, 60, -2 );
+	gtk_widget_set_size_request( button, 60, -1 );
+	gtk_widget_show( button );
 
 	button = gtk_button_new_with_label( _( "Close" ) );
 	gtk_box_pack_start( GTK_BOX( vbox ), button, FALSE, FALSE, 0 );
 	g_signal_connect( G_OBJECT( button ), "clicked",
 						G_CALLBACK( OnClose ), NULL );
-	gtk_widget_set_usize( button, 60, -2 );
-
+	gtk_widget_set_size_request( button, 60, -1 );
 	gtk_widget_show( dlg );
 }
 

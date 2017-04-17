@@ -307,10 +307,12 @@ bool UpdateSel( int iIndex, eclass_t *pec ){
 	// NOTE: these boxes might not even be on display
 	for ( i = 0; i < last_count; i++ )
 	{
-		GtkWidget* widget = EntWidgets[EntCheck1 + i];
-		gtk_label_set_text( GTK_LABEL( GTK_BIN( widget )->child ), " " );
-		gtk_widget_hide( widget );
+		GtkWidget *widget = EntWidgets[EntCheck1 + i];
+
+		gtk_button_set_label( GTK_BUTTON( widget ), " " );
+
 		g_object_ref( widget );
+		gtk_widget_hide( widget );
 		gtk_container_remove( GTK_CONTAINER( LayoutTable ), widget );
 	}
 	last_count = spawnflag_count;
@@ -330,7 +332,7 @@ bool UpdateSel( int iIndex, eclass_t *pec ){
 						  (GtkAttachOptions) ( GTK_FILL ), 0, 0 );
 		g_object_unref( widget );
 
-		gtk_label_set_text( GTK_LABEL( GTK_BIN( widget )->child ), str.GetBuffer() );
+		gtk_button_set_label( GTK_BUTTON( widget ), str.GetBuffer() );
 	}
 
 	SetSpawnFlags();
@@ -1206,7 +1208,6 @@ static gint OnDialogKey( GtkWidget* widget, GdkEventKey* event, gpointer data ) 
 
 GroupDlg::GroupDlg (){
 	m_pWidget = NULL;
-	m_hWorld = NULL;
 }
 
 #ifdef _WIN32
