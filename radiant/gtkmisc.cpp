@@ -1496,7 +1496,8 @@ const char* file_dialog( void *parent, gboolean open, const char* title, const c
 	if ( gtk_dialog_run( GTK_DIALOG( file_sel ) ) == GTK_RESPONSE_ACCEPT ) {
 		gchar * filename = gtk_file_chooser_get_filename( GTK_FILE_CHOOSER( file_sel ) );
 		if ( filename != NULL ) {
-			Q_strncpyz( szFile, filename, sizeof( szFile ) );
+			strncpy( szFile, filename, sizeof( szFile ) );
+			szFile[sizeof( szFile ) - 1] = 0;
 			g_free( filename );
 		} else {
 			szFile[0] = '\0';

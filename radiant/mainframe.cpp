@@ -4108,12 +4108,10 @@ inline GtkToolbarChildType gtktoolbarchildtype_for_toolbarbuttontype( IToolbarBu
 }
 
 void toolbar_insert( GtkWidget *toolbar, const char* image, const char* text, const char* tooltip, IToolbarButton::EType type, GCallback callback, gpointer data ){
-	GtkWidget *w, *pixmap;
-	GdkPixmap *gdkpixmap;
-	GdkBitmap *mask;
+	GtkWidget *pixmap;
 
 	pixmap = new_plugin_image_icon( image );
-	w = gtk_toolbar_append_element( GTK_TOOLBAR( toolbar ), gtktoolbarchildtype_for_toolbarbuttontype( type ), NULL, text, tooltip, "", GTK_WIDGET( pixmap ), callback, data );
+	gtk_toolbar_append_element( GTK_TOOLBAR( toolbar ), gtktoolbarchildtype_for_toolbarbuttontype( type ), NULL, text, tooltip, "", GTK_WIDGET( pixmap ), callback, data );
 }
 
 void SignalToolbarButton( GtkWidget *widget, gpointer data ){
