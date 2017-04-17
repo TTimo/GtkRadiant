@@ -307,9 +307,16 @@ static void motion( GtkWidget *widget, GdkEventMotion *event, gpointer data ){
 	g_GLTable.m_pfn_qglClear( GL_COLOR_BUFFER_BIT );
 
 	if ( PtInRect( &rcGrid,pt ) ) {
-		GdkCursor *cursor = gdk_cursor_new( GDK_CROSS );
-		gdk_window_set_cursor( gtk_widget_get_window( g_pWndPreview ), cursor );
-		gdk_cursor_unref( cursor );
+		GdkWindow *window;
+		GdkDisplay *display;
+		GdkCursor *cursor;
+
+		window = gtk_widget_get_window( g_pWndPreview );
+		display = gdk_window_get_display( window );
+		cursor = gdk_cursor_new_for_display( display, GDK_CROSS );
+
+		gdk_window_set_cursor( window, cursor );
+		g_object_unref( cursor );
 
 		char Text[32];
 		int x, y;

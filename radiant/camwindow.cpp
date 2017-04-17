@@ -490,26 +490,15 @@ void CamWnd::ToggleFreeMove(){
 	}
 
 	if ( m_bFreeMove ) {
+		GdkDisplay *display;
+		GdkCursor *cursor;
 
 		SetFocus();
 		SetCapture();
 
-		{
-			GdkPixmap *pixmap;
-			GdkBitmap *mask;
-			char buffer [( 32 * 32 ) / 8];
-			memset( buffer, 0, ( 32 * 32 ) / 8 );
-			GdkColor white = {0, 0xffff, 0xffff, 0xffff};
-			GdkColor black = {0, 0x0000, 0x0000, 0x0000};
-			pixmap = gdk_bitmap_create_from_data( NULL, buffer, 32, 32 );
-			mask   = gdk_bitmap_create_from_data( NULL, buffer, 32, 32 );
-			GdkCursor *cursor = gdk_cursor_new_from_pixmap( pixmap, mask, &white, &black, 1, 1 );
-
-			gdk_window_set_cursor( window, cursor );
-			gdk_cursor_unref( cursor );
-			gdk_drawable_unref( pixmap );
-			gdk_drawable_unref( mask );
-		}
+		display = gdk_window_get_display( window );
+		cursor = gdk_cursor_new_for_display( display, GDK_BLANK_CURSOR );
+		gdk_window_set_cursor( window, cursor );
 
 		// RR2DO2: FIXME why does this only work the 2nd and
 		// further times the event is called? (floating windows
@@ -529,16 +518,22 @@ void CamWnd::ToggleFreeMove(){
 
 			gdk_pointer_grab( gtk_widget_get_window( widget ), TRUE, mask, gtk_widget_get_window( widget ), NULL, GDK_CURRENT_TIME );
 		}
+		g_object_unref( cursor );
 	}
 	else
 	{
+		GdkDisplay *display;
+		GdkCursor *cursor;
+
 		gdk_pointer_ungrab( GDK_CURRENT_TIME );
 
 		g_signal_handler_disconnect( G_OBJECT( widget ), m_FocusOutHandler_id );
 
-		GdkCursor *cursor = gdk_cursor_new( GDK_LEFT_PTR );
+		display = gdk_window_get_display( window );
+		cursor = gdk_cursor_new_for_display( display, GDK_LEFT_PTR );
+
 		gdk_window_set_cursor( window, cursor );
-		gdk_cursor_unref( cursor );
+		g_object_unref( cursor );
 
 		ReleaseCapture();
 	}
