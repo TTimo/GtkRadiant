@@ -374,6 +374,12 @@ game_t gameList[] = {
 	{ "sof2.game", sSOF2ComboItem, "base", qtrue, qfalse },
 	{ "sof2.game", sSOF2ModComboItem, "", qfalse, qtrue },
 
+	{ "q2.game", "Quake II", "baseq2", qtrue, qfalse },
+	{ "q2.game", "Capture The Flag", "ctf", qfalse, qfalse },
+	{ "q2.game", "Quake II Mission Pack: The Reckoning", "xatrix", qfalse, qfalse },
+	{ "q2.game", "Quake II Mission Pack: Ground Zero", "rogue", qfalse, qfalse },
+	{ "q2.game", "Custom Quake II modification", "", qfalse, qtrue },
+
 };
 
 GList *newMappingModesListForGameFile( Str & mGameFile ){
