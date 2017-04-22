@@ -527,8 +527,15 @@ void LoadTexdefPref( texdef_t* pTexdef, const char* pName );
 
 PrefsDlg ();
 virtual ~PrefsDlg (){
-	g_string_free( m_rc_path, true );
-	g_string_free( m_inipath, true );
+	if ( m_global_rc_path ) {
+		g_string_free( m_global_rc_path, true );
+	}
+	if ( m_rc_path ) {
+		g_string_free( m_rc_path, true );
+	}
+	if ( m_inipath ) {
+		g_string_free( m_inipath, true );
+	}
 }
 
 /*!
