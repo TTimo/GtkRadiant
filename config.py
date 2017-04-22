@@ -261,7 +261,7 @@ class Config:
             svnurl = 'svn://svn.icculus.org/gtkradiant-gamepacks/%s/trunk' % pak
             self.CheckoutOrUpdate( svnurl, os.path.join( path, 'installs', pak ) )
         
-    def CopyTree( self, src, dst):
+    def CopyTree( self, src, dst ):
         for root, dirs, files in os.walk( src ):
             target_dir = os.path.join( dst, root[root.find( '/' )+1:] )
             print ( target_dir )
@@ -365,6 +365,11 @@ class Config:
                 '%s/bin/zlib1.dll' % GTK64_PREFIX,
                 ]:
                 shutil.copy( os.path.join( srcdir, x64_dll ), 'install/x64' )
+
+            # copy extra bobtoolz content
+            if ( os.path.exists( 'install/modules/bt' ) ):
+                shutil.rmtree( 'install/modules/bt' )
+            shutil.copytree( 'contrib/bobtoolz/bt', 'install/modules/bt' )
 
             self.CloneBSPC()
 
