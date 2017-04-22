@@ -2074,22 +2074,6 @@ void DoThickenDlg(){
 
 static const int ABT_WIDGET_PADDING = 8;
 
-//! @note kaz 04/01/2012 - not in use
-void about_button_changelog( GtkWidget *widget, gpointer data ){
-	Str log;
-	log = g_strAppPath;
-	log += "changelog.txt";
-	OpenURL( widget, log.GetBuffer() );
-}
-
-//! @note kaz 04/01/2012 - not in use
-void about_button_credits( GtkWidget *widget, gpointer data ){
-	Str cred;
-	cred = g_strAppPath;
-	cred += "credits.html";
-	OpenURL( widget, cred.GetBuffer() );
-}
-
 void DoAbout(){
 	GtkWidget *dialog, *content_area, *button;
 	GtkDialogFlags flags = GTK_DIALOG_DESTROY_WITH_PARENT;
@@ -2224,20 +2208,6 @@ void DoAbout(){
 	gtk_text_view_set_wrap_mode( GTK_TEXT_VIEW( gl_ext_textview ), GTK_WRAP_WORD );;
 	gtk_widget_show( gl_ext_textview );
 
-
-	/*
-	button = gtk_button_new_with_label( _( "Credits" ) );
-	gtk_widget_show( button );
-	gtk_box_pack_end( GTK_BOX( button_hbox ), button, FALSE, FALSE, 0 );
-	g_signal_connect( G_OBJECT( button ), "clicked",
-						G_CALLBACK( about_button_credits ), NULL );
-
-	button = gtk_button_new_with_label( _( "Changelog" ) );
-	gtk_widget_show( button );
-	gtk_box_pack_end( GTK_BOX( button_hbox ), button, FALSE, FALSE, 0 );
-	g_signal_connect( G_OBJECT( button ), "clicked",
-						G_CALLBACK( about_button_changelog ), NULL );
-	*/
 
 	gtk_dialog_run( GTK_DIALOG( dialog ) );
 
