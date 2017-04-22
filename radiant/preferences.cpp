@@ -1577,17 +1577,17 @@ void PrefsDlg::BuildDialog(){
 	gtk_box_pack_end( GTK_BOX( mainvbox ), hbox, FALSE, TRUE, 0 );
 	gtk_widget_show( hbox );
 
-	button = gtk_button_new_with_label( _( "OK" ) );
-	gtk_box_pack_end( GTK_BOX( hbox ), button, FALSE, FALSE, 0 );
-	gtk_widget_set_size_request( button, 60, -1 );
-	gtk_widget_show( button );
-	AddModalButton( button, IDOK );
-
 	button = gtk_button_new_with_label( _( "Cancel" ) );
 	gtk_box_pack_end( GTK_BOX( hbox ), button, FALSE, FALSE, 0 );
 	gtk_widget_set_size_request( button, 60, -1 );
 	gtk_widget_show( button );
 	AddModalButton( button, IDCANCEL );
+
+	button = gtk_button_new_with_label( _( "OK" ) );
+	gtk_box_pack_end( GTK_BOX( hbox ), button, FALSE, FALSE, 0 );
+	gtk_widget_set_size_request( button, 60, -1 );
+	gtk_widget_show( button );
+	AddModalButton( button, IDOK );
 
 	button = gtk_button_new_with_label( _( "Clean" ) );
 	g_signal_connect( G_OBJECT( button ), "clicked", G_CALLBACK( OnButtonClean ), this );
