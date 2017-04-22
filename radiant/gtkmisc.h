@@ -95,7 +95,7 @@ bool WINAPI color_dialog( void *parent, float *color, const char* title = "Choos
 void dialog_button_callback( GtkWidget *widget, gpointer data );
 gint dialog_delete_callback( GtkWidget *widget, GdkEvent* event, gpointer data );
 
-void OpenURL( const char *url );
+void OpenURL( GtkWidget *parent, const char *url );
 
 void CheckMenuSplitting( GtkWidget *&menu );
 
