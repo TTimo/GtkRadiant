@@ -155,6 +155,8 @@ static const char *PLUGIN_ABOUT = "Sprite Model loading module v0.2 for GTKRadia
 
 const char *supportedmodelformats[] = {"spr","bmp","tga","jpg","hlw",NULL}; // NULL is list delimiter
 
+void *g_pMainWidget = NULL;
+
 static void add_model_apis( CSynapseClient& client ){
 	const char **ext;
 	for ( ext = supportedmodelformats; *ext != NULL; ext++ )
@@ -183,6 +185,7 @@ void init_filetypes(){
 }
 
 extern "C" const char* QERPlug_Init( void *hApp, void* pMainWidget ){
+	g_pMainWidget = pMainWidget;
 	init_filetypes(); // see todo list above.
 	return (char *) PLUGIN_NAME;
 }
@@ -198,7 +201,7 @@ extern "C" const char* QERPlug_GetCommandList(){
 extern "C" void QERPlug_Dispatch( const char *p, vec3_t vMin, vec3_t vMax, bool bSingleBrush ){
 	// NOTE: this never happens in a module
 	if ( !strcmp( p, "About..." ) ) {
-		g_FuncTable.m_pfnMessageBox( NULL, PLUGIN_ABOUT, "About", MB_OK, NULL );
+		g_FuncTable.m_pfnMessageBox( g_pMainWidget, PLUGIN_ABOUT, "About", MB_OK, NULL );
 	}
 }
 
