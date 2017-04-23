@@ -8,7 +8,7 @@
 /tools/urt/tools/quake3/q3map2/Debug
 /tools/urt/tools/quake3/q3map2/Release
 /.sconsign.dblite
-/.vs/radiant/v14/.suo
+/.vs/*
 /radiant.opensdf
 /radiant.sdf
 /radiant.suo
@@ -17,6 +17,8 @@
 /radiant.VC.db
 /site.sconf
 
+*.log
+*.pdb
 *.obj
 *.pyc
 *.so
