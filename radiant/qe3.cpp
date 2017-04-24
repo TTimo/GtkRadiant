@@ -1599,8 +1599,9 @@ void FillBSPMenu(){
 		// first token is menu name
 		children = gtk_container_get_children( GTK_CONTAINER( menu ) );
 		if( children ) {
-			if( g_list_first( children ) )
+			if( g_list_first( children ) ) {
 				gtk_label_set_text( GTK_LABEL( g_list_first( children )->data ), token );
+			}
 			g_list_free( children );
 		}
 		token = strtok( NULL, ",;" );

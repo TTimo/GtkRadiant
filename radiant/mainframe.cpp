@@ -4045,7 +4045,7 @@ void MainFrame::CleanPlugInMenu(){
 		seplst = g_list_find( children, sep );
 		if( seplst ) {
 			for ( lst = g_list_next( seplst ); lst != NULL; lst = g_list_next( lst ) )
-	{
+			{
 				gtk_container_remove( GTK_CONTAINER( menu ), GTK_WIDGET( lst->data ) );
 			}
 		}
