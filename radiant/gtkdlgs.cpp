@@ -414,21 +414,34 @@ void OnSelchangeComboWhatgame( GtkWidget *widget, gpointer data ){
 	GtkWidget *fs_game_entry;
 	GtkWidget* game_select;
 	size_t x;
-	const gchar *name;
+#if GTK_CHECK_VERSION( 3, 0, 0 )
+	const gchar *fs_game;
+#else
+	gchar *name;
+#endif
 
 	game_select = GTK_WIDGET( g_object_get_data( G_OBJECT( data ), "game_select" ) );
-	name = gtk_entry_get_text( GTK_ENTRY( GTK_COMBO( game_select )->entry ) );
-
+#if GTK_CHECK_VERSION( 3, 0, 0 )
+	fs_game = gtk_combo_box_get_active_id( GTK_COMBO_BOX( GTK_COMBO_BOX_TEXT( game_select ) ) );
+ 	if( !fs_game ) {
+		return;
+	}
+#else
+	name = gtk_combo_box_text_get_active_text( GTK_COMBO_BOX_TEXT( game_select ) );
 	if( !name ) {
 		return;
 	}
+#endif
 	fs_game_entry = GTK_WIDGET( g_object_get_data( G_OBJECT( data ), "fs_game_entry" ) );
 
 	for( x = 0; x < G_N_ELEMENTS( gameList ); x++ )
 	{
 		if( strcmp( g_pGameDescription->mGameFile.GetBuffer(), gameList[x].gameFile ) == 0 
+#if GTK_CHECK_VERSION( 3, 0, 0 )
+			&& strcmp( fs_game, gameList[x].fs_game ) == 0 ) {
+#else
 			&& strcmp( name, gameList[x].name ) == 0 ) {
-
+#endif
 			if( gameList[x].custom ) {
 				gtk_entry_set_text( GTK_ENTRY( fs_game_entry ), gameList[x].fs_game );
 				gtk_widget_set_sensitive( GTK_WIDGET( fs_game_entry ), true );
@@ -440,6 +453,11 @@ void OnSelchangeComboWhatgame( GtkWidget *widget, gpointer data ){
 			break;
 		}
 	}
+#if GTK_CHECK_VERSION( 3, 0, 0 )
+	//combo active id is an interned string
+#else
+	g_free( name );
+#endif
 
 }
 
@@ -568,25 +586,26 @@ void DoProjectSettings(){
 	gtk_widget_show( table2 );
 
 	mod_list = newModListForGameFile( g_pGameDescription->mGameFile );
-	game_select = gtk_combo_new();
+	game_select = gtk_combo_box_text_new();
 	for( lst = mod_list; lst != NULL; lst = g_list_next( lst ) )
 	{
 		const game_t *game_x = (const game_t *)lst->data;
 		if( strcmp( g_pGameDescription->mGameFile.GetBuffer(), game_x->gameFile ) == 0 ) {
-			combo_list = g_list_append( combo_list, (void *)game_x->name );
+#if GTK_CHECK_VERSION( 3, 0, 0 )
+			gtk_combo_box_text_append( GTK_COMBO_BOX_TEXT( game_select ), game_x->fs_game, game_x->name );
+#else
+			gtk_combo_box_text_append_text( GTK_COMBO_BOX_TEXT( game_select ), game_x->name );
+			combo_list = g_list_append( combo_list, (void*)game_x->name );
+#endif
 		}
 	}
-	gtk_combo_set_popdown_strings( GTK_COMBO( game_select ), combo_list );
-	g_list_free( combo_list );
-
 	gtk_table_attach( GTK_TABLE( table2 ), game_select, 1, 2, 6, 7,
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
 	gtk_widget_show( game_select );
-	g_signal_connect( G_OBJECT( GTK_COMBO( game_select )->entry ), "changed",
+	g_signal_connect( G_OBJECT( GTK_COMBO_BOX( game_select ) ), "changed",
 						G_CALLBACK( OnSelchangeComboWhatgame ), dialog );
 	g_object_set_data( G_OBJECT( dialog ), "game_select", game_select );
-	gtk_entry_set_editable( GTK_ENTRY( GTK_COMBO( game_select )->entry ), FALSE );
 
 	fs_game_entry = entry = gtk_entry_new();
 	gtk_widget_set_sensitive( GTK_WIDGET( fs_game_entry ), false );
@@ -603,7 +622,11 @@ void DoProjectSettings(){
 		{
 			const game_t *game_x = (const game_t *)lst->data;
 			if( strcmp( g_pGameDescription->mGameFile.GetBuffer(), game_x->gameFile ) == 0 && strcmp( game_x->fs_game, fs_game ) == 0 ) {
-				gtk_entry_set_text( GTK_ENTRY( GTK_COMBO( game_select )->entry ), game_x->name );
+#if GTK_CHECK_VERSION( 3, 0, 0 )
+				gtk_combo_box_set_active_id( GTK_COMBO_BOX( game_select ), fs_game );
+#else
+				gtk_combo_box_set_active( GTK_COMBO_BOX( game_select ), g_list_index( combo_list, game_x->name ) );
+#endif
 				isBasegame = qfalse;
 				break;
 			}
@@ -613,7 +636,11 @@ void DoProjectSettings(){
 			{
 				const game_t *game_x = (const game_t *)lst->data;
 				if( strcmp( g_pGameDescription->mGameFile.GetBuffer(), game_x->gameFile ) == 0 && game_x->custom ) {
-					gtk_entry_set_text( GTK_ENTRY( GTK_COMBO( game_select )->entry ), game_x->name );
+#if GTK_CHECK_VERSION( 3, 0, 0 )
+					gtk_combo_box_set_active_id( GTK_COMBO_BOX( game_select ), game_x->fs_game );
+#else
+					gtk_combo_box_set_active( GTK_COMBO_BOX( game_select ), g_list_index( combo_list, game_x->name ) );
+#endif
 					gtk_widget_set_sensitive( GTK_WIDGET( fs_game_entry ), true );
 					isBasegame = qfalse;
 					break;
@@ -626,13 +653,18 @@ void DoProjectSettings(){
 		{
 			const game_t *game_x = (const game_t *)lst->data;
 			if( strcmp( g_pGameDescription->mGameFile.GetBuffer(), game_x->gameFile ) == 0 && game_x->base ) {
-				gtk_entry_set_text( GTK_ENTRY( GTK_COMBO( game_select )->entry ), game_x->name );
+#if GTK_CHECK_VERSION( 3, 0, 0 )
+				gtk_combo_box_set_active_id( GTK_COMBO_BOX( game_select ), game_x->fs_game );
+#else
+				gtk_combo_box_set_active( GTK_COMBO_BOX( game_select ), g_list_index( combo_list, game_x->name ) );
+#endif
 				fs_game = game_x->fs_game;
 				break;
 			}
 		}
 	}
 	gtk_entry_set_text( GTK_ENTRY( fs_game_entry ), fs_game );
+	g_list_free( combo_list );
 
 	gamemode_list = newMappingModesListForGameFile( g_pGameDescription->mGameFile );
 	if( gamemode_list ) {
@@ -641,30 +673,32 @@ void DoProjectSettings(){
 
 		combo_list = NULL;
 
+
+		gamemode_combo = gtk_combo_box_text_new();
+		gtk_table_attach( GTK_TABLE( table2 ), gamemode_combo, 1, 2, 8, 9,
+						  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
+						  (GtkAttachOptions) ( 0 ), 0, 0 );
+		gtk_widget_show( gamemode_combo );
+
 		for( lst = gamemode_list; lst != NULL; lst = g_list_next( lst ) )
 		{
 			const gamemode_t *gamemode_x = (const gamemode_t *)lst->data;
 			if( strcmp( g_pGameDescription->mGameFile.GetBuffer(), gamemode_x->gameFile ) == 0 ) {
-				combo_list = g_list_append( combo_list, (void *)gamemode_x->name );
+#if GTK_CHECK_VERSION( 3, 0, 0 )
+				gtk_combo_box_text_append( GTK_COMBO_BOX_TEXT( gamemode_combo ), gamemode_x->mode, gamemode_x->name );
+#else
+				gtk_combo_box_text_append_text( GTK_COMBO_BOX_TEXT( gamemode_combo ), gamemode_x->name );
+				combo_list = g_list_append( combo_list, (void*)gamemode_x->name );
+#endif
 			}
 		}
 
-		gamemode_combo = gtk_combo_new();
-		gtk_combo_set_popdown_strings( GTK_COMBO( gamemode_combo ), combo_list );
-		gtk_widget_show( gamemode_combo );
-		gtk_table_attach( GTK_TABLE( table2 ), gamemode_combo, 1, 2, 8, 9,
-						  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
-						  (GtkAttachOptions) ( 0 ), 0, 0 );
-
-		g_list_free( combo_list );
-		combo_list = NULL;
-
 		label = gtk_label_new( _( "Mapping mode" ) );
-		gtk_widget_show( label );
 		gtk_table_attach( GTK_TABLE( table2 ), label, 0, 1, 8, 9,
 						  (GtkAttachOptions) ( GTK_FILL ),
 						  (GtkAttachOptions) ( 0 ), 0, 0 );
 		gtk_misc_set_alignment( GTK_MISC( label ), 1.0, 0.5 );
+		gtk_widget_show( label );
 
 		gamemode = ValueForKey( g_qeglobals.d_project_entity, "gamemode" );
 		isBasemode = qtrue;
@@ -672,7 +706,11 @@ void DoProjectSettings(){
 		{
 			const gamemode_t *gamemode_x = (const gamemode_t *)lst->data;
 			if( strcmp( g_pGameDescription->mGameFile.GetBuffer(), gamemode_x->gameFile ) == 0 && strcmp( gamemode_x->mode, gamemode ) == 0 ) {
-				gtk_entry_set_text( GTK_ENTRY( GTK_COMBO( gamemode_combo )->entry ), gamemode_x->name );		
+#if GTK_CHECK_VERSION( 3, 0, 0 )
+				gtk_combo_box_set_active_id( GTK_COMBO_BOX( gamemode_combo ), gamemode_x->mode );
+#else
+				gtk_combo_box_set_active( GTK_COMBO_BOX( gamemode_combo ), g_list_index( combo_list, gamemode_x->name ) );
+#endif
 				isBasemode = qfalse;
 				break;
 			}
@@ -682,11 +720,16 @@ void DoProjectSettings(){
 			{
 				const gamemode_t *gamemode_x = (const gamemode_t *)lst->data;
 				if( strcmp( g_pGameDescription->mGameFile.GetBuffer(), gamemode_x->gameFile ) == 0 && gamemode_x->base ) {
-					gtk_entry_set_text( GTK_ENTRY( GTK_COMBO( gamemode_combo )->entry ), gamemode_x->name );		
+#if GTK_CHECK_VERSION( 3, 0, 0 )
+					gtk_combo_box_set_active_id( GTK_COMBO_BOX( gamemode_combo ), gamemode_x->mode );
+#else
+					gtk_combo_box_set_active( GTK_COMBO_BOX( gamemode_combo ), g_list_index( combo_list, gamemode_x->name ) );
+#endif
 					break;
 				}
 			}
 		}
+		g_list_free( combo_list );
 	}
 
 	/*
@@ -737,7 +780,12 @@ void DoProjectSettings(){
 		char buf[1024];
 		const char *r;
 		char *w;
-		const char *custom_fs_game, *selected_game, *new_fs_game;
+		const char *custom_fs_game, *new_fs_game;
+#if GTK_CHECK_VERSION( 3, 0, 0 )
+		const gchar *selected_game;
+#else
+		gchar *selected_game;
+#endif
 
 		// convert path to unix format
 		for ( r = gtk_entry_get_text( GTK_ENTRY( base ) ), w = buf; *r != '\0'; r++, w++ )
@@ -750,7 +798,11 @@ void DoProjectSettings(){
 		*w = '\0';
 		SetKeyValue( g_qeglobals.d_project_entity, "basepath", buf );
 
-		selected_game = gtk_entry_get_text( GTK_ENTRY( GTK_COMBO( game_select )->entry ) );
+#if GTK_CHECK_VERSION( 3, 0, 0 )
+		selected_game = gtk_combo_box_get_active_id( GTK_COMBO_BOX( game_select ) );
+#else
+		selected_game = gtk_combo_box_text_get_active_text( GTK_COMBO_BOX_TEXT( game_select ) );
+#endif
 		custom_fs_game = gtk_entry_get_text( GTK_ENTRY( fs_game_entry ) );
 
 		isBasegame = qfalse;
@@ -762,7 +814,11 @@ void DoProjectSettings(){
 			for( lst = mod_list; lst != NULL; lst = g_list_next( lst ) )
 			{
 				const game_t *game_x = (const game_t *)lst->data;
+#if GTK_CHECK_VERSION( 3, 0, 0 )
+				if( strcmp( g_pGameDescription->mGameFile.GetBuffer(), game_x->gameFile ) == 0 && strcmp( game_x->fs_game, selected_game ) == 0 ) {
+#else
 				if( strcmp( g_pGameDescription->mGameFile.GetBuffer(), game_x->gameFile ) == 0 && strcmp( game_x->name, selected_game ) == 0 ) {
+#endif
 					if( game_x->base ) {
 						isBasegame = qtrue;
 					} else if( game_x->custom ) {
@@ -790,7 +846,7 @@ void DoProjectSettings(){
 			const char *selected_mode;
 			const char *new_mode;
 			
-			selected_mode = gtk_entry_get_text( GTK_ENTRY( GTK_COMBO( gamemode_combo )->entry ) );
+			selected_mode = gtk_combo_box_text_get_active_text( GTK_COMBO_BOX_TEXT( gamemode_combo ) );
 			new_mode = NULL;
 
 			if( !selected_mode ) {
@@ -838,6 +894,13 @@ void DoProjectSettings(){
 		SetKeyValue( g_qeglobals.d_project_entity, "brush_primit", ( g_qeglobals.m_bBrushPrimitMode ? "1" : "0" ) );
 
 		QE_SaveProject( g_PrefsDlg.m_strLastProject.GetBuffer() );
+
+#if GTK_CHECK_VERSION( 3, 0, 0 )
+		//combo active id is an interned string
+#else
+		g_free( selected_game );
+#endif
+
 	}
 
 	g_list_free( mod_list );
@@ -1066,6 +1129,41 @@ static void entitylist_select( GtkWidget *widget, gpointer data ){
 	}
 }
 
+static void add_entity_selection( entity_t *pEntity ) {
+	if( pEntity ) {
+		for ( epair_t* pEpair = pEntity->epairs; pEpair; pEpair = pEpair->next )
+		{
+			Select_Brush( pEntity->brushes.onext );
+		}
+	}
+}
+static void entitylist_selected_foreach( GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, gpointer data ) {
+	entity_t* pEntity;
+	gtk_tree_model_get( model, iter, 1, &pEntity, -1 );
+	add_entity_selection( pEntity );
+	
+	//if parent (classname) node is selected then all child nodes are included
+	if( !pEntity ) {
+		GtkTreeIter child;
+		unsigned int i = 0;
+		while( gtk_tree_model_iter_nth_child( model, &child, iter, i++ ) ) {
+			gtk_tree_model_get( model, &child, 1, &pEntity, -1 );
+			add_entity_selection( pEntity );
+		}
+	}
+}
+static void entitylist_multiselect( GtkWidget *widget, gpointer data ) {
+	GtkTreeView *view = GTK_TREE_VIEW( g_object_get_data( G_OBJECT( data ), "entities" ) );
+
+	GtkTreeSelection *selection = gtk_tree_view_get_selection( view );
+
+	Select_Deselect();
+
+	gtk_tree_selection_selected_foreach( selection, entitylist_selected_foreach, NULL );
+
+	Sys_UpdateWindows( W_ALL );
+}
+
 static gint entitylist_click( GtkWidget *widget, GdkEventButton *event, gpointer data ){
 	if ( event->type == GDK_2BUTTON_PRESS ) {
 		entitylist_select( NULL, data );
@@ -1074,26 +1172,62 @@ static gint entitylist_click( GtkWidget *widget, GdkEventButton *event, gpointer
 	return FALSE;
 }
 
+
 static void entitylist_selection_changed( GtkTreeSelection* selection, gpointer data ){
+	GtkTreeModel *model;
+	GtkTreeIter selected;
+	GtkTreeIter child;
+	entity_t *pEntity = NULL;
+	entity_t *firstEntity = NULL;
 	GtkListStore* store = GTK_LIST_STORE( g_object_get_data( G_OBJECT( data ), "keyvalues" ) );
+	GtkWidget *notebook = (GtkWidget*)g_object_get_data( G_OBJECT( data ), "notebook" );
+	GtkWidget *keyvalue_page = (GtkWidget*)g_object_get_data( G_OBJECT( data ), "keyvalue_page" );
+	GtkWidget *desc_page = (GtkWidget*)g_object_get_data( G_OBJECT( data ), "description_page" );
+	GtkWidget *textview = (GtkWidget*)g_object_get_data( G_OBJECT( data ), "description_textview" );
+
 
 	gtk_list_store_clear( store );
 
-	GtkTreeModel* model;
-	GtkTreeIter selected;
-	if ( gtk_tree_selection_get_selected( selection, &model, &selected ) ) {
-		entity_t* pEntity;
-		gtk_tree_model_get( model, &selected, 1, &pEntity, -1 );
-
-		if ( pEntity ) {
-			for ( epair_t* pEpair = pEntity->epairs; pEpair; pEpair = pEpair->next )
-			{
-				GtkTreeIter appended;
-				gtk_list_store_append( store, &appended );
-				gtk_list_store_set( store, &appended, 0, pEpair->key, 1, pEpair->value, -1 );
+	if ( gtk_tree_selection_get_mode( selection ) == GTK_SELECTION_MULTIPLE ) {
+		GList *rows, *last;
+		rows = gtk_tree_selection_get_selected_rows( selection, &model );
+		//only the keys/values of the last selected node with entity
+		last = g_list_last( rows );
+		if ( last ) {
+			if ( gtk_tree_model_get_iter( model, &selected, (GtkTreePath *)last->data ) == TRUE ) {
+				gtk_tree_model_get( model, &selected, 1, &pEntity, -1 );
+				if ( !pEntity ) {
+					if( gtk_tree_model_iter_nth_child( model, &child, &selected, 0 ) ) {
+						gtk_tree_model_get( model, &child, 1, &firstEntity, -1 );
+					}
+				}
 			}
 		}
+		g_list_free_full( rows, (GDestroyNotify)gtk_tree_path_free );
+		
+	} else if ( gtk_tree_selection_get_selected( selection, &model, &selected ) ) {
+		entity_t* pEntity;
+		gtk_tree_model_get( model, &selected, 1, &pEntity, -1 );
 	}
+	if ( pEntity ) {
+		for ( epair_t* pEpair = pEntity->epairs; pEpair; pEpair = pEpair->next )
+		{
+			GtkTreeIter appended;
+			gtk_list_store_append( store, &appended );
+			gtk_list_store_set( store, &appended, 0, pEpair->key, 1, pEpair->value, -1 );
+		}
+
+		gtk_notebook_set_current_page( GTK_NOTEBOOK( notebook ), gtk_notebook_page_num( GTK_NOTEBOOK( notebook ), keyvalue_page ) );
+	} else {
+		GtkTextBuffer *buffer = gtk_text_view_get_buffer( GTK_TEXT_VIEW( textview ) );
+		if( firstEntity && firstEntity->eclass && firstEntity->eclass->comments ) {
+			gtk_text_buffer_set_text( buffer, firstEntity->eclass->comments, -1 );
+		} else {
+			gtk_text_buffer_set_text( buffer, _( "No description available." ), -1 );
+		}
+		gtk_notebook_set_current_page( GTK_NOTEBOOK( notebook ), gtk_notebook_page_num( GTK_NOTEBOOK( notebook ), desc_page ) );
+	}
+
 }
 
 static void EnitityList_response( GtkDialog *dialog, gint response_id, gpointer user_data )
@@ -1107,6 +1241,8 @@ static void EnitityList_response( GtkDialog *dialog, gint response_id, gpointer 
 void DoEntityList(){
 	static GtkWidget *dialog;
 	GtkWidget *vbox, *hbox, *hbox2, *button, *scr, *content_area;
+	GtkWidget *notebook, *label, *textview, *keyvalue_scr, *desc_scr;
+	gint keyvalue_index;
 	GtkDialogFlags flags = GTK_DIALOG_DESTROY_WITH_PARENT;
 
 	if ( EntityList_dialog != NULL ) {
@@ -1148,6 +1284,7 @@ void DoEntityList(){
 
 		{
 			GtkTreeSelection* selection = gtk_tree_view_get_selection( GTK_TREE_VIEW( view ) );
+			gtk_tree_selection_set_mode( selection, GTK_SELECTION_MULTIPLE );
 			g_signal_connect( G_OBJECT( selection ), "changed", G_CALLBACK( entitylist_selection_changed ), dialog );
 		}
 
@@ -1216,8 +1353,17 @@ void DoEntityList(){
 	gtk_box_pack_start( GTK_BOX( hbox ), vbox, TRUE, TRUE, 0 );
 	gtk_widget_show( vbox );
 
-	scr = gtk_scrolled_window_new( (GtkAdjustment*)NULL, (GtkAdjustment*)NULL );
-	gtk_box_pack_start( GTK_BOX( vbox ), scr, TRUE, TRUE, 0 );
+	notebook = gtk_notebook_new();
+	// hide the notebook tabs since its not supposed to look like a notebook
+	gtk_notebook_set_show_tabs( GTK_NOTEBOOK( notebook ), FALSE );
+	gtk_box_pack_start( GTK_BOX( vbox ), notebook, TRUE, TRUE, 0 );
+	gtk_widget_show( notebook );
+
+	label = gtk_label_new( _( "Keys/Values" ) );
+	gtk_widget_show( label );
+
+	keyvalue_scr = scr = gtk_scrolled_window_new( NULL, NULL );
+	keyvalue_index = gtk_notebook_append_page( GTK_NOTEBOOK( notebook ), scr, label );
 	gtk_scrolled_window_set_policy( GTK_SCROLLED_WINDOW( scr ), GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC );
 	gtk_scrolled_window_set_shadow_type( GTK_SCROLLED_WINDOW( scr ), GTK_SHADOW_IN );
 	gtk_widget_show( scr );
@@ -1247,6 +1393,29 @@ void DoEntityList(){
 		g_object_unref( G_OBJECT( store ) );
 	}
 
+	label = gtk_label_new( _( "Description" ) );
+	gtk_widget_show( label );
+
+	desc_scr = scr = gtk_scrolled_window_new( NULL, NULL );
+	gtk_scrolled_window_set_policy( GTK_SCROLLED_WINDOW( scr ), GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC );
+	gtk_scrolled_window_set_shadow_type( GTK_SCROLLED_WINDOW( scr ), GTK_SHADOW_IN );
+	gtk_notebook_append_page( GTK_NOTEBOOK( notebook ), scr, label );
+	gtk_widget_show( scr );
+
+	textview = gtk_text_view_new();
+	gtk_text_view_set_wrap_mode( GTK_TEXT_VIEW( textview ), GTK_WRAP_WORD );
+	gtk_text_view_set_editable( GTK_TEXT_VIEW( textview ), FALSE );
+	gtk_container_add( GTK_CONTAINER( scr ), textview );
+	gtk_widget_show( textview );
+
+	gtk_notebook_set_current_page( GTK_NOTEBOOK( notebook ), keyvalue_index );
+
+	g_object_set_data( G_OBJECT( dialog ), "notebook", notebook );
+	g_object_set_data( G_OBJECT( dialog ), "keyvalue_page", keyvalue_scr );
+	g_object_set_data( G_OBJECT( dialog ), "description_page", desc_scr );
+	g_object_set_data( G_OBJECT( dialog ), "description_textview", textview );
+
+
 	hbox2 = gtk_hbox_new( FALSE, 5 );
 	gtk_box_pack_start( GTK_BOX( vbox ), hbox2, FALSE, FALSE, 0 );
 	gtk_widget_show( hbox2 );
@@ -1254,7 +1423,7 @@ void DoEntityList(){
 	button = gtk_button_new_with_label( _( "Select" ) );
 	gtk_box_pack_start( GTK_BOX( hbox2 ), button, FALSE, FALSE, 0 );
 	g_signal_connect( G_OBJECT( button ), "clicked",
-						G_CALLBACK( entitylist_select ), dialog );
+						G_CALLBACK( entitylist_multiselect ), dialog );
 	gtk_widget_set_size_request( button, 60, -1 );
 	gtk_widget_show( button );
 
@@ -1838,11 +2007,14 @@ void DoNewPatchDlg(){
 	response_id = gtk_dialog_run( GTK_DIALOG( dialog ) );
 
 	if( response_id == GTK_RESPONSE_OK ) {
-		const char* w = gtk_combo_box_text_get_active_text( GTK_COMBO_BOX_TEXT( width_combo ) );
-		const char* h = gtk_combo_box_text_get_active_text( GTK_COMBO_BOX_TEXT( height_combo ) );
+		char* w = gtk_combo_box_text_get_active_text( GTK_COMBO_BOX_TEXT( width_combo ) );
+		char* h = gtk_combo_box_text_get_active_text( GTK_COMBO_BOX_TEXT( height_combo ) );
 
 		Patch_GenericMesh( atoi( w ), atoi( h ), g_pParentWnd->ActiveXY()->GetViewType() );
 		Sys_UpdateWindows( W_ALL );
+
+		g_free( w );
+		g_free( h );
 	}
 
 	gtk_widget_destroy( dialog );
