@@ -875,7 +875,7 @@ void OnViewNearest( unsigned int nID );
 void OnTextureWad( unsigned int nID );
 void OnBspCommand( unsigned int nID );
 void OnGrid( unsigned int nID );
-void OnPlugIn( unsigned int nID, char *str );
+void OnPlugIn( unsigned int nID, const char *str );
 void OnFaceFit();
 void SetTextureScale( int id );
 void OnDontselectmodel();
