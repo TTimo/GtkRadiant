@@ -1010,7 +1010,7 @@ rectangle_t rectangle_from_area_xy(){
 
 void update_xor_rectangle_xy( XORRectangle& xor_rectangle ){
 	rectangle_t rectangle;
-	if ( ( g_qeglobals.d_select_mode == sel_area ) ) {
+	if ( g_qeglobals.d_select_mode == sel_area ) {
 		rectangle = rectangle_from_area_xy();
 	}
 	xor_rectangle.set( rectangle );
