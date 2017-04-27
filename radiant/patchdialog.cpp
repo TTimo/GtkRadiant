@@ -361,7 +361,7 @@ void PatchDialog::BuildDialog(){
 	cells = gtk_cell_layout_get_cells( GTK_CELL_LAYOUT( combo ) );
 	for( lst = cells; lst != NULL; lst = g_list_next( lst ) )
 	{
-		g_object_set( lst->data, "xalign", 1.0, NULL );
+		g_object_set( G_OBJECT( lst->data ), "xalign", 1.0, (char*)NULL );
 	}
 	g_list_free( cells );
 
@@ -377,7 +377,7 @@ void PatchDialog::BuildDialog(){
 	cells = gtk_cell_layout_get_cells( GTK_CELL_LAYOUT( combo ) );
 	for( lst = cells; lst != NULL; lst = g_list_next( lst ) )
 	{
-		g_object_set( lst->data, "xalign", 1.0, NULL );
+		g_object_set( G_OBJECT( lst->data ), "xalign", 1.0, (char*)NULL );
 	}
 	g_list_free( cells );
 
