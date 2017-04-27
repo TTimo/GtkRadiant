@@ -256,6 +256,7 @@ static void PopulateTextureComboList(){
 	texdef_to_face_t* temp_texdef_face_list;
 	char blank[1];
 	GList *items = NULL;
+	GList *lst;
 	int num_of_list_items = 0;
 
 	blank[0] = 0;
@@ -293,7 +294,10 @@ static void PopulateTextureComboList(){
 		strcpy( old_texture_entry, blank );
 	}
 
-	gtk_combo_set_popdown_strings( GTK_COMBO( texture_combo ), items );
+	for( lst = items; lst != NULL; lst = g_list_next( lst ) )
+	{
+		gtk_combo_box_text_append_text( GTK_COMBO_BOX_TEXT( texture_combo ), (const char *)lst->data );
+	}
 	g_list_free( items );
 
 }
@@ -328,7 +332,7 @@ static gint delete_event_callback( GtkWidget *widget, GdkEvent* event, gpointer 
 }
 
 static gint surface_inspector_key_press_event( GtkWidget *widget, GdkEventKey* event, gpointer data ) {
-	if ( event->keyval == GDK_Escape ) {
+	if ( event->keyval == GDK_KEY_Escape ) {
 		HideDlg();
 		return TRUE;
 	}
@@ -573,14 +577,11 @@ GtkWidget* create_SurfaceInspector( void ){
 	gtk_misc_set_alignment( GTK_MISC( label ), 0.0, 0.5 );
 	gtk_widget_show( label );
 
-	texture_combo = gtk_combo_new();
-	g_object_set_data( G_OBJECT( GTK_COMBO( texture_combo )->popwin ),
-					   "KeepMeAround", texture_combo );
-	gtk_combo_disable_activate( (GtkCombo*) texture_combo );
+	texture_combo = gtk_combo_box_text_new_with_entry();
 	gtk_box_pack_start( GTK_BOX( hbox1 ), texture_combo, TRUE, TRUE, 0 );
 	gtk_widget_show( texture_combo );
 
-	texture_combo_entry = GTK_COMBO( texture_combo )->entry;
+	texture_combo_entry = gtk_bin_get_child( GTK_BIN( texture_combo ) );
 	gtk_entry_set_max_length( GTK_ENTRY( texture_combo_entry ), 1024 );
 	gtk_widget_show( texture_combo_entry );
 

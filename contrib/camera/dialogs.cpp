@@ -41,6 +41,10 @@ static GtkWidget *g_pTrackCamera = NULL;
 static GtkWidget *g_pCamName = NULL;
 static char *g_cNull = '\0';
 
+#define EVENT_TEXT_COLUMN (0)
+#define EVENT_INDEX_COLUMN (1)
+
+
 static gint ci_editmode_edit( GtkWidget *widget, gpointer data ){
 	g_iEditMode = 0;
 
@@ -233,11 +237,13 @@ static GtkWidget *g_pPathListCombo = NULL;
 static GtkLabel *g_pPathType = NULL;
 
 static void RefreshPathListCombo( void ){
+	GList *combo_list = (GList*)NULL;
+	GList *lst;
+	GtkListStore *store;
+
 	if ( !g_pPathListCombo ) {
 		return;
 	}
-
-	GList *combo_list = (GList*)NULL;
 
 	if ( GetCurrentCam() ) {
 		combo_list = g_list_append( combo_list, (void *)GetCurrentCam()->GetCam()->getPositionObj()->getName() );
@@ -245,17 +251,23 @@ static void RefreshPathListCombo( void ){
 			combo_list = g_list_append( combo_list, (void *)GetCurrentCam()->GetCam()->getActiveTarget( i )->getName() );
 		}
 	}
-	else {
-		// add one empty string make gtk be quiet
-		combo_list = g_list_append( combo_list, (gpointer)g_cNull );
+#if GTK_CHECK_VERSION( 3, 0, 0 )
+	gtk_combo_box_text_remove_all( GTK_COMBO_BOX_TEXT( g_pPathListCombo ) );
+#else
+	store = GTK_LIST_STORE( gtk_combo_box_get_model( GTK_COMBO_BOX( g_pPathListCombo ) ) );
+	gtk_list_store_clear( store );
+#endif
+	for( lst = combo_list; lst != NULL; lst = g_list_next( lst ) )
+	{
+		gtk_combo_box_text_append_text( GTK_COMBO_BOX_TEXT( g_pPathListCombo ), (const gchar *)lst->data );
 	}
-
-	gtk_combo_set_popdown_strings( GTK_COMBO( g_pPathListCombo ), combo_list );
 	g_list_free( combo_list );
+
+	gtk_combo_box_set_active( GTK_COMBO_BOX( g_pPathListCombo ), 0 );
 }
 
 static gint ci_pathlist_changed( GtkWidget *widget, gpointer data ){
-	const char *str = gtk_entry_get_text( GTK_ENTRY( widget ) );
+	char *str = gtk_combo_box_text_get_active_text( GTK_COMBO_BOX_TEXT( widget ) );
 
 	if ( !str || !GetCurrentCam() ) {
 		return TRUE;
@@ -288,18 +300,24 @@ static gint ci_pathlist_changed( GtkWidget *widget, gpointer data ){
 		DoStartEdit( GetCurrentCam() );
 	}
 
+	g_free( str );
+
 	return TRUE;
 }
 
 static void RefreshEventList( void ){
 	int i;
 	char buf[128];
+	GtkListStore *store;
+
+	store = GTK_LIST_STORE( GTK_TREE_MODEL( gtk_tree_view_get_model( GTK_TREE_VIEW( g_pEventsList ) ) ) );
 
 	// Clear events list
-	gtk_clist_freeze( GTK_CLIST( g_pEventsList ) );
-	gtk_clist_clear( GTK_CLIST( g_pEventsList ) );
+	gtk_list_store_clear( store );
 
 	if ( GetCurrentCam() ) {
+		GtkTreeIter iter;
+
 		// Fill events list
 		for ( i = 0; i < GetCurrentCam()->GetCam()->numEvents(); i++ ) {
 			char rowbuf[3][128], *row[3];
@@ -307,7 +325,9 @@ static void RefreshEventList( void ){
 			sprintf( rowbuf[0], "%li", GetCurrentCam()->GetCam()->getEvent( i )->getTime() );                 row[0] = rowbuf[0];
 			strncpy( rowbuf[1], GetCurrentCam()->GetCam()->getEvent( i )->typeStr(), sizeof( rowbuf[0] ) );     row[1] = rowbuf[1];
 			strncpy( rowbuf[2], GetCurrentCam()->GetCam()->getEvent( i )->getParam(), sizeof( rowbuf[1] ) );    row[2] = rowbuf[2];
-			gtk_clist_append( GTK_CLIST( g_pEventsList ), row );
+
+			gtk_list_store_append( store, &iter );
+			gtk_list_store_set( store, &iter, EVENT_TEXT_COLUMN, row, EVENT_INDEX_COLUMN, i, -1 );
 		}
 
 		// Total duration might have changed
@@ -319,7 +339,6 @@ static void RefreshEventList( void ){
 		gtk_adjustment_set_upper( g_pTimeLine, ( GetCurrentCam()->GetCam()->getTotalTime() * 1000 ) );
 	}
 
-	gtk_clist_thaw( GTK_CLIST( g_pEventsList ) );
 }
 
 static gint ci_rename( GtkWidget *widget, gpointer data ){
@@ -507,7 +526,7 @@ static gint ci_add_target( GtkWidget *widget, gpointer data ){
 
 			if ( str && str[0] ) {
 				int type;
-				GList *li;
+				GList *li, *children;
 
 				if ( gtk_toggle_button_get_active( (GtkToggleButton*)fixed ) ) {
 					type = 0;
@@ -525,9 +544,15 @@ static gint ci_add_target( GtkWidget *widget, gpointer data ){
 				// Rebuild the listbox
 				RefreshPathListCombo();
 
+				children = gtk_container_get_children( GTK_CONTAINER( g_pPathListCombo ) );
 				// Select the last item in the listbox
-				li = g_list_last( GTK_LIST( GTK_COMBO( g_pPathListCombo )->list )->children );
-				gtk_list_select_child( GTK_LIST( GTK_COMBO( g_pPathListCombo )->list ), GTK_WIDGET( li->data ) );
+				li = g_list_last( children );
+				if ( li ) {
+					gtk_combo_box_set_active( GTK_COMBO_BOX( g_pPathListCombo ), g_list_index( children, GTK_WIDGET( li->data ) ) );
+				}
+				if ( children ) {
+					g_list_free( children );
+				}
 
 				// If this was the first one, refresh the event list
 				if ( GetCurrentCam()->GetCam()->numTargets() == 1 ) {
@@ -558,6 +583,7 @@ void RefreshCamListCombo( void ){
 	}
 
 	GList *combo_list = (GList*)NULL;
+	GList *lst;
 	CCamera *combo_cam = firstCam;
 	if ( combo_cam ) {
 		while ( combo_cam ) {
@@ -574,27 +600,31 @@ void RefreshCamListCombo( void ){
 			combo_cam = combo_cam->GetNext();
 		}
 	}
-	else {
-		// add one empty string make gtk be quiet
-		combo_list = g_list_append( combo_list, (gpointer)g_cNull );
+	for( lst = combo_list; lst != NULL; lst = g_list_next( lst ) )
+	{
+		gtk_combo_box_text_append_text( GTK_COMBO_BOX_TEXT( g_pCamListCombo ), (const gchar *)lst->data );
 	}
-	gtk_combo_set_popdown_strings( GTK_COMBO( g_pCamListCombo ), combo_list );
 	g_list_free( combo_list );
 
 	// select our current entry in the list
 	if ( GetCurrentCam() ) {
+		GList *li, *children;
+
 		// stop editing on the current cam
 		//GetCurrentCam()->GetCam()->stopEdit();	// FIXME: this crashed on creating new cameras, why is it here?
 
-		GList *li = GTK_LIST( GTK_COMBO( g_pCamListCombo )->list )->children;
+		li = children = gtk_container_get_children( GTK_CONTAINER( g_pCamListCombo ) );
 		combo_cam = firstCam;
 		while ( li && combo_cam ) {
 			if ( combo_cam == GetCurrentCam() ) {
-				gtk_list_select_child( GTK_LIST( GTK_COMBO( g_pCamListCombo )->list ), GTK_WIDGET( li->data ) );
+				gtk_combo_box_set_active( GTK_COMBO_BOX( g_pCamListCombo ), g_list_index( li, GTK_WIDGET( li->data ) ) );
 				break;
 			}
 			li = li->next;
 			combo_cam = combo_cam->GetNext();
+		}
+		if ( children ) {
+			g_list_free( children );
 		}
 	}
 
@@ -602,7 +632,7 @@ void RefreshCamListCombo( void ){
 }
 
 static gint ci_camlist_changed( GtkWidget *widget, gpointer data ){
-	const char *str = gtk_entry_get_text( GTK_ENTRY( widget ) );
+	char *str = gtk_combo_box_text_get_active_text( GTK_COMBO_BOX_TEXT( widget ) );
 
 	CCamera *combo_cam = firstCam;
 	while ( str && combo_cam ) {
@@ -674,6 +704,8 @@ static gint ci_camlist_changed( GtkWidget *widget, gpointer data ){
 	if ( g_pCameraInspectorWnd && gtk_widget_get_visible( g_pCameraInspectorWnd ) ) {
 		DoStartEdit( GetCurrentCam() );
 	}
+
+	g_free( str );
 
 	return TRUE;
 }
@@ -847,13 +879,23 @@ static gint ci_add( GtkWidget *widget, gpointer data ){
 }
 
 static gint ci_del( GtkWidget *widget, gpointer data ){
+	GtkTreeIter iter;
+	GtkTreeModel *model;
+	guint *index;
+	GtkTreeSelection *select;
+
 	// TODO: add support to splines lib
-	if ( GetCurrentCam() && GTK_CLIST( g_pEventsList )->focus_row >= 0 ) {
-		GetCurrentCam()->GetCam()->removeEvent( GTK_CLIST( g_pEventsList )->focus_row );
+	select = gtk_tree_view_get_selection( GTK_TREE_VIEW( g_pEventsList ) );
+	if( gtk_tree_selection_get_selected( select, &model, &iter ) )
+	{
+		gtk_tree_model_get( model, &iter, EVENT_INDEX_COLUMN, &index, -1 );
+
+		GetCurrentCam()->GetCam()->removeEvent( *index );
 		// Refresh event list
 		RefreshEventList();
-	}
 
+		g_free( index );
+	}
 	return TRUE;
 }
 
@@ -883,6 +925,9 @@ static gint ci_timeline_changed( GtkAdjustment *adjustment ){
 GtkWidget *CreateCameraInspectorDialog( void ){
 	GtkWidget *dialog, *w, *vbox, *hbox, *table, *frame;
 	GtkWidget *content_area;
+	GtkListStore *store;
+	GtkCellRenderer *renderer;
+	GtkTreeViewColumn *column;
 	GtkDialogFlags flags = GTK_DIALOG_DESTROY_WITH_PARENT;
 
 	dialog = gtk_dialog_new_with_buttons( _( "Camera Inspector" ), NULL, flags, NULL );
@@ -923,9 +968,10 @@ GtkWidget *CreateCameraInspectorDialog( void ){
 	gtk_misc_set_alignment( GTK_MISC( w ), 0.0, 0.5 );
 	gtk_widget_show( w );
 
-	g_pCamListCombo = gtk_combo_new();
+	g_pCamListCombo = gtk_combo_box_text_new();
 	gtk_box_pack_start( GTK_BOX( hbox ), g_pCamListCombo, TRUE, TRUE, 0 );
 	gtk_widget_show( g_pCamListCombo );
+	g_signal_connect( G_OBJECT( GTK_COMBO_BOX( g_pCamListCombo ) ), "changed", G_CALLBACK( ci_camlist_changed ), NULL );
 
 	// -------------------------- //
 
@@ -954,8 +1000,6 @@ GtkWidget *CreateCameraInspectorDialog( void ){
 
 	RefreshCamListCombo();
 
-	gtk_entry_set_editable( GTK_ENTRY( GTK_COMBO( g_pCamListCombo )->entry ), FALSE );
-	g_signal_connect( G_OBJECT( GTK_COMBO( g_pCamListCombo )->entry ), "changed", G_CALLBACK( ci_camlist_changed ), NULL );
 
 	// -------------------------- //
 
@@ -981,14 +1025,13 @@ GtkWidget *CreateCameraInspectorDialog( void ){
 	gtk_misc_set_alignment( GTK_MISC( w ), 0.0, 0.5 );
 	gtk_widget_show( w );
 
-	g_pPathListCombo = gtk_combo_new();
+	g_pPathListCombo = gtk_combo_box_text_new();
 	gtk_box_pack_start( GTK_BOX( hbox ), g_pPathListCombo, TRUE, TRUE, 0 );
 	gtk_widget_show( g_pPathListCombo );
+	g_signal_connect( G_OBJECT( GTK_COMBO_BOX( g_pPathListCombo ) ), "changed", G_CALLBACK( ci_pathlist_changed ), NULL );
 
 	RefreshPathListCombo();
 
-	gtk_entry_set_editable( GTK_ENTRY( GTK_COMBO( g_pPathListCombo )->entry ), FALSE );
-	g_signal_connect( G_OBJECT( GTK_COMBO( g_pPathListCombo )->entry ), "changed", G_CALLBACK( ci_pathlist_changed ), NULL );
 
 	// -------------------------- //
 
@@ -1152,14 +1195,22 @@ GtkWidget *CreateCameraInspectorDialog( void ){
 	gtk_box_pack_start( GTK_BOX( hbox ), w, TRUE, TRUE, 0 );
 	gtk_widget_show( w );
 
-	g_pEventsList = gtk_clist_new( 3 );
+
+	store = gtk_list_store_new( 2, G_TYPE_STRING, G_TYPE_UINT ); //2 data columns
+
+	g_pEventsList = gtk_tree_view_new_with_model( GTK_TREE_MODEL( store ) );
+	g_object_unref( G_OBJECT( store ) );
+
+	renderer = gtk_cell_renderer_text_new();
+	//1 view column with the events
+	column = gtk_tree_view_column_new_with_attributes( "events", renderer, "text", EVENT_TEXT_COLUMN, NULL );
+	gtk_tree_view_append_column( GTK_TREE_VIEW( g_pEventsList ), column );
+
+	gtk_tree_view_set_headers_visible( GTK_TREE_VIEW( g_pEventsList ), FALSE );
+
 	gtk_container_add( GTK_CONTAINER( w ), g_pEventsList );
 	//g_signal_connect( G_OBJECT(g_pEventsList), "select_row", G_CALLBACK (proplist_select_row), NULL);
-	gtk_clist_set_selection_mode( GTK_CLIST( g_pEventsList ), GTK_SELECTION_BROWSE );
-	gtk_clist_column_titles_hide( GTK_CLIST( g_pEventsList ) );
-	gtk_clist_set_column_auto_resize( GTK_CLIST( g_pEventsList ), 0, TRUE );
-	gtk_clist_set_column_auto_resize( GTK_CLIST( g_pEventsList ), 1, TRUE );
-	gtk_clist_set_column_auto_resize( GTK_CLIST( g_pEventsList ), 2, TRUE );
+	gtk_tree_selection_set_mode( gtk_tree_view_get_selection( GTK_TREE_VIEW( g_pEventsList ) ), GTK_SELECTION_BROWSE );
 	gtk_widget_show( g_pEventsList );
 
 	vbox = gtk_vbox_new( FALSE, 5 );

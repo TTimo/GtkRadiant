@@ -291,6 +291,7 @@ void PatchDialog::BuildDialog(){
 	GtkWidget *dlg, *vbox, *vbox2, *hbox, *hbox2, *frame, *table, *label;
 	GtkWidget *button, *entry, *spin, *combo, *row_label, *col_label;
 	GtkAdjustment *adj;
+	GList *lst, *cells;
 	GtkSizeGroup *size_group;
 	GtkWidget *cap_button, *set_button, *nat_button, *fit_button;
 
@@ -348,31 +349,37 @@ void PatchDialog::BuildDialog(){
 	gtk_size_group_add_widget( size_group, col_label );
 	g_object_unref( size_group );
 
-	combo = gtk_combo_new();
+	combo = gtk_combo_box_text_new();
 	gtk_table_attach( GTK_TABLE( table ), combo, 0, 1, 1, 2,
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
-	gtk_widget_set_usize( combo, 60, -1 );
-	gtk_entry_set_editable( GTK_ENTRY( GTK_COMBO( combo )->entry ), FALSE );
-	gtk_entry_set_alignment( GTK_ENTRY( GTK_COMBO( combo )->entry ), 1.0 ); //right
 	gtk_widget_show( combo );
-	g_signal_connect( G_OBJECT( GTK_COMBO( combo )->entry ), "changed",
+	g_signal_connect( G_OBJECT( GTK_COMBO_BOX( combo ) ), "changed",
 						G_CALLBACK( OnSelchangeComboColRow ), this );
-	AddDialogData( combo, &m_nRow, DLG_COMBO_INT );
+	AddDialogData( combo, &m_nRow, DLG_COMBO_BOX_INT );
 	m_pRowCombo = combo;
+	cells = gtk_cell_layout_get_cells( GTK_CELL_LAYOUT( combo ) );
+	for( lst = cells; lst != NULL; lst = g_list_next( lst ) )
+	{
+		g_object_set( lst->data, "xalign", 1.0, NULL );
+	}
+	g_list_free( cells );
 
-	combo = gtk_combo_new();
+	combo = gtk_combo_box_text_new();
 	gtk_table_attach( GTK_TABLE( table ), combo, 1, 2, 1, 2,
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
-	gtk_widget_set_usize( combo, 60, -1 );
-	gtk_entry_set_editable( GTK_ENTRY( GTK_COMBO( combo )->entry ), FALSE );
-	gtk_entry_set_alignment( GTK_ENTRY( GTK_COMBO( combo )->entry ), 1.0 ); //right
 	gtk_widget_show( combo );
-	g_signal_connect( G_OBJECT( GTK_COMBO( combo )->entry ), "changed",
+	g_signal_connect( G_OBJECT( GTK_COMBO_BOX( combo ) ), "changed",
 						G_CALLBACK( OnSelchangeComboColRow ), this );
-	AddDialogData( combo, &m_nCol, DLG_COMBO_INT );
+	AddDialogData( combo, &m_nCol, DLG_COMBO_BOX_INT );
 	m_pColCombo = combo;
+	cells = gtk_cell_layout_get_cells( GTK_CELL_LAYOUT( combo ) );
+	for( lst = cells; lst != NULL; lst = g_list_next( lst ) )
+	{
+		g_object_set( lst->data, "xalign", 1.0, NULL );
+	}
+	g_list_free( cells );
 
 	table = gtk_table_new( 5, 2, FALSE );
 	gtk_box_pack_start( GTK_BOX( vbox2 ), table, TRUE, TRUE, 0 );
@@ -713,7 +720,7 @@ void PatchDialog::UpdateData( bool retrieve ){
 void PatchDialog::GetPatchInfo(){
 	m_Patch = SinglePatchSelected();
 	if ( m_Patch != NULL ) {
-		GList *combo_list = NULL;
+		gchar buffer[11];
 		int i;
 
 		m_strName = m_Patch->pShader->getName();
@@ -722,32 +729,24 @@ void PatchDialog::GetPatchInfo(){
 		m_bListenChanged = false;
 
 		for ( i = 0; i < m_Patch->height; i++ )
-			combo_list = g_list_append( combo_list, g_strdup_printf( "%i", i ) );  // NOTE: leaving the g_strdup cause we free with g_free later on
-		gtk_combo_set_popdown_strings( GTK_COMBO( m_pRowCombo ), combo_list );
-		gtk_entry_set_text( GTK_ENTRY( GTK_COMBO( m_pRowCombo )->entry ), "0" );
-
-		while ( combo_list )
 		{
-			g_free( combo_list->data );
-			combo_list = g_list_remove( combo_list, combo_list->data );
+			g_snprintf( buffer, sizeof( buffer ), "%i", i );
+			gtk_combo_box_text_append_text( GTK_COMBO_BOX_TEXT( m_pRowCombo ), buffer );
 		}
+		gtk_combo_box_set_active( GTK_COMBO_BOX( GTK_COMBO_BOX_TEXT( m_pRowCombo ) ), 0 );
 
 		for ( i = 0; i < m_Patch->width; i++ )
-			combo_list = g_list_append( combo_list, g_strdup_printf( "%i", i ) );
-		gtk_combo_set_popdown_strings( GTK_COMBO( m_pColCombo ), combo_list );
-		gtk_entry_set_text( GTK_ENTRY( GTK_COMBO( m_pColCombo )->entry ), "0" );
-
-		while ( combo_list )
 		{
-			g_free( combo_list->data );
-			combo_list = g_list_remove( combo_list, combo_list->data );
+			g_snprintf( buffer, sizeof( buffer ), "%i", i );
+			gtk_combo_box_text_append_text( GTK_COMBO_BOX_TEXT( m_pColCombo ), buffer );
 		}
+		gtk_combo_box_set_active( GTK_COMBO_BOX( GTK_COMBO_BOX_TEXT( m_pColCombo ) ), 0 );
 
 		m_bListenChanged = true;
 
 	}
 	else{
-		Sys_FPrintf( SYS_WRN, "WARNING: no patch\n" );
+		Sys_FPrintf( SYS_WRN, "WARNING: No patch selected.\n" );
 	}
 	// fill in our internal structs
 	m_nRow = 0; m_nCol = 0;

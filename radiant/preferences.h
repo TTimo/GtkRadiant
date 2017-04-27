@@ -286,7 +286,7 @@ class CGameDialog : public Dialog
 GtkWidget *mFrame;   ///< this is built on-demand first time it's used
 GtkWidget *mTopBox;   ///< top level box used to store the dialog frame, must unhook after modal use
 
-GtkComboBox   *mGameCombo;      // combo box holds the selection of available game
+GtkComboBoxText   *mGameCombo;      // combo box holds the selection of available game
 
 /*!
    global prefs storage

@@ -98,13 +98,15 @@ static gint dialog_delete_callback( GtkWidget *widget, GdkEvent* event, gpointer
 }
 
 static void dialog_button_callback_settex( GtkWidget *widget, gpointer data ){
+	gchar *text;
 	TwinWidget* tw = (TwinWidget*)data;
 
 	GtkEntry* entry = GTK_ENTRY( tw->one );
-	GtkCombo* combo = GTK_COMBO( tw->two );
+	GtkComboBoxText* combo = GTK_COMBO_BOX_TEXT( tw->two );
 
-	const gchar* tex = gtk_entry_get_text( GTK_ENTRY( combo->entry ) );
-	gtk_entry_set_text( entry, tex );
+	text = gtk_combo_box_text_get_active_text( combo );
+	gtk_entry_set_text( entry, text );
+	g_free( text );
 }
 
 /*--------------------------------
@@ -423,17 +425,17 @@ int DoPolygonBox( PolygonRS* rs ){
 
 	// ---- hbox2 ----
 
+	sides_label = w = gtk_label_new( _( "Number Of Sides" ) );
+	gtk_box_pack_start( GTK_BOX( hbox2 ), w, FALSE, FALSE, 2 );
+	gtk_misc_set_alignment( GTK_MISC( w ), 0.0, 0.5 );
+	gtk_widget_show( w );
+
 	text1 = gtk_entry_new();
 	gtk_entry_set_alignment( GTK_ENTRY( text1 ), 1.0 ); //right
 	gtk_entry_set_max_length( GTK_ENTRY( text1 ), 256 );
 	gtk_entry_set_text( GTK_ENTRY( text1 ), "3" );
 	gtk_box_pack_start( GTK_BOX( hbox2 ), text1, FALSE, FALSE, 2 );
 	gtk_widget_show( text1 );
-
-	sides_label = w = gtk_label_new( _( "Number Of Sides" ) );
-	gtk_box_pack_start( GTK_BOX( hbox2 ), w, FALSE, FALSE, 2 );
-	gtk_misc_set_alignment( GTK_MISC( w ), 0.0, 0.5 );
-	gtk_widget_show( w );
 
 	// ---- /hbox2 ----
 
@@ -443,17 +445,17 @@ int DoPolygonBox( PolygonRS* rs ){
 
 	// ---- hbox2 ----
 
+	width_label = w = gtk_label_new( _( "Border Width" ) );
+	gtk_box_pack_start( GTK_BOX( hbox2 ), w, FALSE, FALSE, 2 );
+	gtk_misc_set_alignment( GTK_MISC( w ), 0.0, 0.5 );
+	gtk_widget_show( w );
+
 	text2 = gtk_entry_new();
 	gtk_entry_set_alignment( GTK_ENTRY( text2 ), 1.0 ); //right
 	gtk_entry_set_max_length( GTK_ENTRY( text2 ), 256 );
 	gtk_entry_set_text( GTK_ENTRY( text2 ), "8" );
 	gtk_box_pack_start( GTK_BOX( hbox2 ), text2, FALSE, FALSE, 2 );
 	gtk_widget_show( text2 );
-
-	width_label = w = gtk_label_new( _( "Border Width" ) );
-	gtk_box_pack_start( GTK_BOX( hbox2 ), w, FALSE, FALSE, 2 );
-	gtk_misc_set_alignment( GTK_MISC( w ), 0.0, 0.5 );
-	gtk_widget_show( w );
 
 	// ---- /hbox2 ----
 
@@ -799,6 +801,7 @@ int DoDoorsBox( DoorRS* rs ){
 	GtkWidget   *buttonSetMain, *buttonSetTrim;
 	GtkWidget   *radioNS, *radioEW;
 	GSList      *radioOrientation;
+	GList		*lst;
 	TwinWidget tw1, tw2;
 	int ret, loop;
 
@@ -901,10 +904,12 @@ int DoDoorsBox( DoorRS* rs ){
 
 	// djbob: lists added
 
-	comboMain = gtk_combo_new();
+	comboMain = gtk_combo_box_text_new();
 	gtk_box_pack_start( GTK_BOX( hbox ), comboMain, FALSE, FALSE, 0 );
-	gtk_combo_set_popdown_strings( GTK_COMBO( comboMain ), listMainTextures );
-	gtk_combo_set_use_arrows( GTK_COMBO( comboMain ), 1 );
+	for ( lst = listMainTextures; lst != NULL; lst = g_list_next( lst ) )
+	{
+		gtk_combo_box_text_append_text( GTK_COMBO_BOX_TEXT( comboMain ), (const char *)lst->data );
+	}
 	gtk_widget_show( comboMain );
 
 	tw1.one = textFrontBackTex;
@@ -921,10 +926,12 @@ int DoDoorsBox( DoorRS* rs ){
 	gtk_box_pack_start( GTK_BOX( vbox ), hbox, FALSE, FALSE, 0 );
 	gtk_widget_show( hbox );
 
-	comboTrim = gtk_combo_new();
+	comboTrim = gtk_combo_box_text_new();
 	gtk_box_pack_start( GTK_BOX( hbox ), comboTrim, FALSE, FALSE, 0 );
-	gtk_combo_set_popdown_strings( GTK_COMBO( comboTrim ), listTrimTextures );
-	gtk_combo_set_use_arrows( GTK_COMBO( comboMain ), 1 );
+	for ( lst = listTrimTextures; lst != NULL; lst = g_list_next( lst ) )
+	{
+		gtk_combo_box_text_append_text( GTK_COMBO_BOX_TEXT( comboTrim ), (const char *)lst->data );
+	}
 	gtk_widget_show( comboTrim );
 
 	tw2.one = textTrimTex;
@@ -1292,7 +1299,12 @@ int DoResetTextureBox( ResetTextureRS* rs ){
 
 	// ---- hbox ----
 
-	texSelected = _( "Currently Selected Face:   " );
+	w = gtk_label_new( _( "Currently Selected Face:   " ) );
+	gtk_box_pack_start( GTK_BOX( hbox ), w, FALSE, FALSE, 2 );
+	gtk_misc_set_alignment( GTK_MISC( w ), 0.0, 0.5 );
+	gtk_widget_show( w );
+
+	texSelected = "";
 	if ( g_SelectedFaceTable.m_pfnGetSelectedFaceCount() == 1 ) {
 		texSelected += GetCurrentTexture();
 	}
