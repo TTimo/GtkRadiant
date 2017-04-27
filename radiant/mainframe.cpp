@@ -416,8 +416,8 @@ gint HandleCommand( GtkWidget *widget, gpointer data ){
 		g_pParentWnd->OnGrid( id );
 	}
 	else if ( id >= ID_PLUGIN_START && id <= ID_PLUGIN_END ) {
-		char *str;
-		gtk_label_get( GTK_LABEL( GTK_BIN( widget )->child ), &str );
+		const char *str;
+		str = gtk_menu_item_get_label( GTK_MENU_ITEM( widget ) );
 		g_pParentWnd->OnPlugIn( id, str );
 	}
 	else if ( id >= ID_ENTITY_START && id <= ID_ENTITY_END ) {
@@ -951,7 +951,7 @@ void MainFrame::create_game_help_menu( GtkWidget *menu, GtkAccelGroup *accel ){
 }
 
 void MainFrame::create_main_menu( GtkWidget *window, GtkWidget *vbox ){
-	GtkWidget *handle_box, *menu_bar, *menu, *menu_in_menu, *menu_3, *item;
+	GtkWidget *menu_bar, *menu, *menu_in_menu, *menu_3, *item;
 	GtkAccelGroup *accel;
 
 	g_bIgnoreCommands++;
@@ -959,12 +959,8 @@ void MainFrame::create_main_menu( GtkWidget *window, GtkWidget *vbox ){
 	global_accel = accel;
 	gtk_window_add_accel_group( GTK_WINDOW( window ), accel );
 
-	handle_box = gtk_handle_box_new();
-	gtk_box_pack_start( GTK_BOX( vbox ), handle_box, FALSE, FALSE, 0 );
-	gtk_widget_show( handle_box );
-
 	menu_bar = gtk_menu_bar_new();
-	gtk_container_add( GTK_CONTAINER( handle_box ), menu_bar );
+	gtk_box_pack_start( GTK_BOX( vbox ), menu_bar, FALSE, FALSE, 0 );
 	gtk_widget_show( menu_bar );
 
 	// File menu
@@ -1962,22 +1958,17 @@ void MainFrame::create_main_toolbar( GtkWidget *window, GtkWidget *vbox ){
 }
 
 void MainFrame::create_plugin_toolbar( GtkWidget *window, GtkWidget *vbox ){
-	GtkWidget *handle_box, *toolbar;
-
-	handle_box = gtk_handle_box_new();
-	gtk_box_pack_start( GTK_BOX( vbox ), handle_box, FALSE, FALSE, 0 );
-	if ( g_PrefsDlg.m_bPluginToolbar ) {
-		gtk_widget_show( handle_box );
-	}
-	g_object_set_data( G_OBJECT( window ), "tb_handle_box", handle_box );
+	GtkWidget *toolbar;
 
 	toolbar = gtk_toolbar_new();
 	gtk_orientable_set_orientation( GTK_ORIENTABLE( toolbar ), GTK_ORIENTATION_HORIZONTAL );
 	gtk_toolbar_set_style( GTK_TOOLBAR( toolbar ), GTK_TOOLBAR_ICONS );
 	//  gtk_toolbar_set_style (GTK_TOOLBAR (toolbar), user_rc.toolbar_style);
-	gtk_container_add( GTK_CONTAINER( handle_box ), toolbar );
+	gtk_box_pack_start( GTK_BOX( vbox ), toolbar, FALSE, FALSE, 0 );
 	g_object_set_data( G_OBJECT( window ), "toolbar_plugin", toolbar );
-	gtk_widget_show( toolbar );
+	if ( g_PrefsDlg.m_bPluginToolbar ) {
+		gtk_widget_show( toolbar );
+	}
 }
 
 void MainFrame::create_main_statusbar( GtkWidget *window, GtkWidget *vbox ){
@@ -3732,9 +3723,23 @@ void MainFrame::CreateQEChildren(){
 
 void MainFrame::OnTimer(){
 	GdkModifierType mask;
+#if GTK_CHECK_VERSION( 3, 0, 0 )
+	GdkDeviceManager *device_manager;
+	GdkDevice *pointer;
+	GdkWindow *window;
 
-	gdk_window_get_pointer( NULL, NULL, NULL, &mask );
+	window = gtk_widget_get_window( m_pWidget );
+	device_manager = gdk_display_get_device_manager( gdk_window_get_display( window ) );
+	pointer = gdk_device_manager_get_client_pointer( device_manager );
+	gdk_window_get_device_position( window, pointer, NULL, NULL, &mask );
+#else
+	GdkWindow *window;
+	GdkDisplay *display;
 
+	window = gtk_widget_get_window( m_pWidget );
+	display = gdk_window_get_display( window );
+	gdk_display_get_pointer( display, NULL, NULL, NULL, &mask );
+#endif
 	if ( ( mask & ( GDK_BUTTON1_MASK | GDK_BUTTON2_MASK | GDK_BUTTON3_MASK ) ) == 0 ) {
 		QE_CountBrushesAndUpdateStatusBar();
 		QE_CheckAutoSave();
@@ -4087,7 +4092,7 @@ void MainFrame::AddPlugInMenuItem( IPlugIn* pPlugIn ){
 	}
 }
 
-void MainFrame::OnPlugIn( unsigned int nID, char* str ){
+void MainFrame::OnPlugIn( unsigned int nID, const char* str ){
 	m_PlugInMgr.Dispatch( nID, str );
 }
 
@@ -6602,7 +6607,7 @@ void MainFrame::OnPopupSelection(){
 		g_signal_connect( G_OBJECT( item ), "activate", G_CALLBACK( HandleCommand ),
 							GINT_TO_POINTER( ids[i] ) );
 		gtk_widget_show( item );
-		gtk_menu_append( GTK_MENU( menu ), item );
+		gtk_menu_shell_append( GTK_MENU_SHELL( menu ), item );
 	}
 
 	gtk_menu_popup( GTK_MENU( menu ), NULL, NULL, NULL, NULL, 1, GDK_CURRENT_TIME );
