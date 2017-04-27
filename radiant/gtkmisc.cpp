@@ -1465,7 +1465,7 @@ const char* file_dialog( void *parent, gboolean open, const char* title, const c
 	*w = '\0';
 
 	action = open ? GTK_FILE_CHOOSER_ACTION_OPEN : GTK_FILE_CHOOSER_ACTION_SAVE;
-	file_sel = gtk_file_chooser_dialog_new( title, GTK_WINDOW( parent ), action, NULL, NULL );
+	file_sel = gtk_file_chooser_dialog_new( title, GTK_WINDOW( parent ), action, NULL, (char*)NULL );
 	gtk_dialog_add_button( GTK_DIALOG( file_sel ), open ? _( "Open" ) : _("Save" ), GTK_RESPONSE_ACCEPT );
 	gtk_dialog_add_button( GTK_DIALOG( file_sel ), _( "Cancel" ), GTK_RESPONSE_CANCEL );
 
@@ -1588,7 +1588,7 @@ char* WINAPI dir_dialog( void *parent, const char* title, const char* path ){
 	gint response_id;
 	GtkFileChooserAction action = GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER;
 
-	file_sel = gtk_file_chooser_dialog_new( title, GTK_WINDOW( parent ), action, NULL, NULL );
+	file_sel = gtk_file_chooser_dialog_new( title, GTK_WINDOW( parent ), action, NULL, (char*)NULL );
 	gtk_dialog_add_button( GTK_DIALOG( file_sel ), _( "OK" ), GTK_RESPONSE_ACCEPT );
 	gtk_dialog_add_button( GTK_DIALOG( file_sel ), _( "Cancel" ), GTK_RESPONSE_CANCEL );
 
