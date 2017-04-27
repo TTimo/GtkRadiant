@@ -2099,12 +2099,12 @@ void DoAbout(){
 	CString s = g_strBitmapsPath;
 	s += "logo.png"; 
 	GtkWidget *logo_image = gtk_image_new_from_file( s.GetBuffer() );
-	gtk_box_pack_start( GTK_BOX( outer_vbox ), logo_image, FALSE, FALSE, 0 );
+	gtk_box_pack_start( GTK_BOX( outer_vbox ), logo_image, FALSE, TRUE, 0 );
 	gtk_widget_show( logo_image );
 
 	// all other widgets layout
 	GtkWidget *inner_vbox = gtk_vbox_new( FALSE, ABT_WIDGET_PADDING );
-	gtk_box_pack_start( GTK_BOX( outer_vbox ), inner_vbox, FALSE, FALSE, 0 );
+	gtk_box_pack_start( GTK_BOX( outer_vbox ), inner_vbox, TRUE, TRUE, 0 );
 	gtk_container_set_border_width( GTK_CONTAINER( inner_vbox ), ABT_WIDGET_PADDING );
 	gtk_widget_show( inner_vbox );
 
@@ -2129,7 +2129,7 @@ void DoAbout(){
 
 	// OpenGL properties 
 	GtkWidget *gl_prop_frame = gtk_frame_new( _( "OpenGL Properties" ) );
-	gtk_box_pack_start( GTK_BOX( inner_vbox ), gl_prop_frame, FALSE, FALSE, 0 );
+	gtk_box_pack_start( GTK_BOX( inner_vbox ), gl_prop_frame, FALSE, TRUE, 0 );
 	gtk_widget_show( gl_prop_frame );
 
 	GtkWidget *gl_prop_table = gtk_table_new( 3, 2, FALSE );
@@ -2205,7 +2205,7 @@ void DoAbout(){
 	gtk_container_add( GTK_CONTAINER( gl_ext_scroll ), gl_ext_textview );
 	GtkTextBuffer* buffer = gtk_text_view_get_buffer( GTK_TEXT_VIEW( gl_ext_textview ) );
 	gtk_text_buffer_set_text( buffer, (char *)qglGetString( GL_EXTENSIONS ), -1 );
-	gtk_text_view_set_wrap_mode( GTK_TEXT_VIEW( gl_ext_textview ), GTK_WRAP_WORD );;
+	gtk_text_view_set_wrap_mode( GTK_TEXT_VIEW( gl_ext_textview ), GTK_WRAP_WORD );
 	gtk_widget_show( gl_ext_textview );
 
 
