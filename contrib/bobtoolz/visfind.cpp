@@ -207,7 +207,7 @@ list<DWinding*> *CreateTrace( dleaf_t *leaf, int c, vis_header *header, byte *vi
 		}
 	}
 
-	delete repeatlist;
+	delete[] repeatlist;
 
 	return pointlist;
 }
