@@ -780,7 +780,12 @@ void DoProjectSettings(){
 		char buf[1024];
 		const char *r;
 		char *w;
-		const char *custom_fs_game, *selected_game, *new_fs_game;
+		const char *custom_fs_game, *new_fs_game;
+#if GTK_CHECK_VERSION( 3, 0, 0 )
+		const char *selected_game;
+#else
+		char *selected_game;
+#endif
 
 		// convert path to unix format
 		for ( r = gtk_entry_get_text( GTK_ENTRY( base ) ), w = buf; *r != '\0'; r++, w++ )
