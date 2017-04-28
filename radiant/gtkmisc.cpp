@@ -888,25 +888,25 @@ int WINAPI gtk_MessageBoxNew( void *parent, const char *message,
 	//! @note kaz 05/09/2012 only support commonly used icons, fill out others as needed
 	switch( flags & MB_ICONMASK ) {
 	case MB_ICONHAND: {
-		dlg_icon = gtk_image_new_from_stock( GTK_STOCK_DIALOG_ERROR, GTK_ICON_SIZE_DIALOG );
+		dlg_icon = gtk_image_new_from_icon_name( "dialog-error", GTK_ICON_SIZE_DIALOG );
 		break;
 	}
 	case MB_ICONQUESTION: {
-		dlg_icon = gtk_image_new_from_stock( GTK_STOCK_DIALOG_QUESTION, GTK_ICON_SIZE_DIALOG );
+		dlg_icon = gtk_image_new_from_icon_name( "dialog-question", GTK_ICON_SIZE_DIALOG );
 		break;
 	}
 	case MB_ICONEXCLAMATION: {
-		dlg_icon = gtk_image_new_from_stock( GTK_STOCK_DIALOG_WARNING, GTK_ICON_SIZE_DIALOG );
+		dlg_icon = gtk_image_new_from_icon_name( "dialog-warning", GTK_ICON_SIZE_DIALOG );
 		break;
 	}
 	case MB_ICONINFORMATION:
 	default: {
-		dlg_icon = gtk_image_new_from_stock( GTK_STOCK_DIALOG_INFO, GTK_ICON_SIZE_DIALOG );
+		dlg_icon = gtk_image_new_from_icon_name( "dialog-information", GTK_ICON_SIZE_DIALOG );
 		break;
 	}
 #if(WINVER >= 0x0400)
 	case MB_USERICON: {
-		//dlg_icon = gtk_image_new_from_stock( ?????, GTK_ICON_SIZE_DIALOG );
+		//dlg_icon = gtk_image_new_from_icon_name( ?????, GTK_ICON_SIZE_DIALOG );
 		break;
 	}
 #endif
