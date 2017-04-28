@@ -2302,12 +2302,12 @@ void PrefsDlg::BuildDialog(){
 	gtk_box_pack_start( GTK_BOX( hbox2 ), label, FALSE, FALSE, 0 );
 	gtk_widget_show( label );
 
-	// entry
-	entry = gtk_entry_new();
-	gtk_entry_set_alignment( GTK_ENTRY( entry ), 1.0 ); //right
-	gtk_box_pack_start( GTK_BOX( hbox2 ), entry, FALSE, FALSE, 0 );
-	gtk_widget_show( entry );
-	AddDialogData( entry, &m_nWheelInc, DLG_ENTRY_INT );
+	spin = gtk_spin_button_new( GTK_ADJUSTMENT( gtk_adjustment_new( 64, 0, 65535, 1, 10, 0 ) ), 1, 0 );
+	gtk_spin_button_set_numeric( GTK_SPIN_BUTTON( spin ), TRUE );
+	gtk_entry_set_alignment( GTK_ENTRY( spin ), 1.0 ); //right
+	gtk_box_pack_start( GTK_BOX( hbox2 ), spin, FALSE, FALSE, 0 );
+	gtk_widget_show( spin );
+	AddDialogData( spin, &m_nWheelInc, DLG_SPIN_INT );
 
 	// Add the page to the notebook
 	gtk_notebook_append_page( GTK_NOTEBOOK( notebook ), pageframe, preflabel );
@@ -2375,20 +2375,20 @@ void PrefsDlg::BuildDialog(){
 	gtk_misc_set_alignment( GTK_MISC( label ), 0.0, 0.5 );
 	gtk_widget_show( label );
 
-	// entry
-	entry = gtk_entry_new();
-	gtk_entry_set_alignment( GTK_ENTRY( entry ), 1.0 ); //right
-	gtk_table_attach( GTK_TABLE( table ), entry, 1, 2, 0, 1,
+	spin = gtk_spin_button_new( GTK_ADJUSTMENT( gtk_adjustment_new( 45, 0, 65535, 1, 10, 0 ) ), 1, 0 );
+	gtk_spin_button_set_numeric( GTK_SPIN_BUTTON( spin ), TRUE );
+	gtk_entry_set_alignment( GTK_ENTRY( spin ), 1.0 ); //right
+	gtk_table_attach( GTK_TABLE( table ), spin, 1, 2, 0, 1,
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
-	gtk_widget_show( entry );
-	AddDialogData( entry, &m_nRotation, DLG_ENTRY_INT );
+	gtk_widget_show( spin );
+	AddDialogData( spin, &m_nRotation, DLG_SPIN_INT );
 
 	// Undo levels
 	// label
 	label = gtk_label_new( _( "Undo Levels:" ) );
 	gtk_table_attach( GTK_TABLE( table ), label, 0, 1, 1, 2,
-					  (GtkAttachOptions) ( 0 ),
+					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
 	gtk_misc_set_alignment( GTK_MISC( label ), 0.0, 0.5 );
 	gtk_widget_show( label );
@@ -2412,14 +2412,15 @@ void PrefsDlg::BuildDialog(){
 	gtk_misc_set_alignment( GTK_MISC( label ), 0.0, 0.5 );
 	gtk_widget_show( label );
 
-	// entry (spinner perhaps? [2-16])
-	entry = gtk_entry_new();
-	gtk_entry_set_alignment( GTK_ENTRY( entry ), 1.0 ); //right
-	gtk_table_attach( GTK_TABLE( table ), entry, 1, 2, 2, 3,
+	// (spinner perhaps? [2-16])
+	spin = gtk_spin_button_new( GTK_ADJUSTMENT( gtk_adjustment_new( 4, 0, 65535, 1, 10, 0 ) ), 1, 0 );
+	gtk_spin_button_set_numeric( GTK_SPIN_BUTTON( spin ), TRUE );
+	gtk_entry_set_alignment( GTK_ENTRY( spin ), 1.0 ); //right
+	gtk_table_attach( GTK_TABLE( table ), spin, 1, 2, 2, 3,
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
-	gtk_widget_show( entry );
-	AddDialogData( entry, &m_nSubdivisions, DLG_ENTRY_INT );
+	gtk_widget_show( spin );
+	AddDialogData( spin, &m_nSubdivisions, DLG_SPIN_INT );
 
 	// Add the page to the notebook
 	gtk_notebook_append_page( GTK_NOTEBOOK( notebook ), pageframe, preflabel );
@@ -2510,7 +2511,7 @@ void PrefsDlg::BuildDialog(){
 	// label
 	label = gtk_label_new( _( "Prefab path:" ) );
 	gtk_table_attach( GTK_TABLE( table ), label, 0, 1, 0, 1,
-					  (GtkAttachOptions) ( 0 ),
+					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
 	gtk_misc_set_alignment( GTK_MISC( label ), 0.0, 0.5 );
 	gtk_widget_show( label );
@@ -2590,15 +2591,14 @@ void PrefsDlg::BuildDialog(){
 	gtk_misc_set_alignment( GTK_MISC( label ), 0.0, 0.5 );
 	gtk_widget_show( label );
 
-	// scale entry
-	entry = gtk_entry_new();
-	gtk_entry_set_alignment( GTK_ENTRY( entry ), 1.0 ); //right
-	gtk_table_attach( GTK_TABLE( table ), entry, 1, 2, 0, 1,
+	spin = gtk_spin_button_new( GTK_ADJUSTMENT( gtk_adjustment_new( 0.5, 0, 65535, 0.1, 1, 0 ) ), 1, 1 );
+	gtk_spin_button_set_numeric( GTK_SPIN_BUTTON( spin ), TRUE );
+	gtk_entry_set_alignment( GTK_ENTRY( spin ), 1.0 ); //right
+	gtk_table_attach( GTK_TABLE( table ), spin, 1, 2, 0, 1,
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
-	gtk_widget_show( entry );
-	AddDialogData( entry, &m_fDefTextureScale, DLG_ENTRY_FLOAT );
-
+	gtk_widget_show( spin );
+	AddDialogData( spin, &m_fDefTextureScale, DLG_SPIN_FLOAT );
 
 	// caulk new brushes
 	check = gtk_check_button_new_with_label( _( "Always use caulk for new brushes" ) );
