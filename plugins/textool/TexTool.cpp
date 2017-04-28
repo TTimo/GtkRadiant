@@ -264,15 +264,15 @@ void FitView( IWindow* hwndDlg, int TexSize[2] ){
 	float TSize = (float)fabs( g_2DView.m_Maxs[1] - g_2DView.m_Mins[1] );
 	float XSize = TexSize[0] * SSize;
 	float YSize = TexSize[1] * TSize;
-	float RatioX = XSize / (float)abs( g_2DView.m_rect.left - g_2DView.m_rect.right );
-	float RatioY = YSize / (float)abs( g_2DView.m_rect.top - g_2DView.m_rect.bottom );
+	float RatioX = XSize / (float)fabs( g_2DView.m_rect.left - g_2DView.m_rect.right );
+	float RatioY = YSize / (float)fabs( g_2DView.m_rect.top - g_2DView.m_rect.bottom );
 	if ( RatioX > RatioY ) {
-		YSize = (float)abs( g_2DView.m_rect.top - g_2DView.m_rect.bottom ) * RatioX;
+		YSize = (float)fabs( g_2DView.m_rect.top - g_2DView.m_rect.bottom ) * RatioX;
 		TSize = YSize / (float)TexSize[1];
 	}
 	else
 	{
-		XSize = (float)abs( g_2DView.m_rect.left - g_2DView.m_rect.right ) * RatioY;
+		XSize = (float)fabs( g_2DView.m_rect.left - g_2DView.m_rect.right ) * RatioY;
 		SSize = XSize / (float)TexSize[0];
 	}
 	g_2DView.m_Mins[0] = g_2DView.m_Center[0] - 0.5f * SSize;
