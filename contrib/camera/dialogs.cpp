@@ -39,7 +39,6 @@ static GtkLabel *g_pTotalTime = NULL;
 static GtkAdjustment *g_pTimeLine = NULL;
 static GtkWidget *g_pTrackCamera = NULL;
 static GtkWidget *g_pCamName = NULL;
-static char *g_cNull = '\0';
 
 #define EVENT_TEXT_COLUMN (0)
 #define EVENT_INDEX_COLUMN (1)
