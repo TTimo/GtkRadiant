@@ -660,15 +660,16 @@ GtkWidget* new_image_icon( const char* filename ) {
 	str += filename;
 
 	pixbuf = gdk_pixbuf_new_from_file( str.GetBuffer(), &gerror );
-	if( pixbuf == NULL ) {
+	if( pixbuf != NULL ) {
+		icon = gtk_image_new_from_pixbuf( pixbuf );
+		g_object_unref( pixbuf );
+	} else {
 		Sys_FPrintf( SYS_ERR, "ERROR: Failed to load bitmap: %s, %s\n", str.GetBuffer(), gerror->message );
 		g_error_free( gerror );
+		icon = gtk_image_new_from_file( filename );
 	}
-	icon = gtk_image_new_from_pixbuf( pixbuf );
 	gtk_widget_show( icon );
-	if( pixbuf ) {
-		g_object_unref( pixbuf );
-	}
+
 	return icon;
 }
 
