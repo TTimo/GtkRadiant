@@ -259,8 +259,11 @@ void MRU_AddFile( const char *str );
 void MRU_Activate( int index );
 
 
-void FillTextureMenu( GSList** pArray = NULL );
 void FillBSPMenu( void );
+void ClearGSList( GSList *lst );
+void FillTextureList( GSList** pArray );
+void FillTextureMenu( GSList *texdirs );
+void FillTextureDirListWidget( GSList *texdirs );
 
 // profile functions - kind of utility lib
 // they are kind of dumb, they expect to get the path to the .ini file or to the prefs directory when called

@@ -545,35 +545,15 @@ void ClearGSList( GSList* lst ){
 	}
 }
 
-void FillTextureMenu( GSList** pArray ){
-	GtkWidget *menu, *sep, *item; // point to the Textures GtkMenu and to the last separator
-	GList *children, *seplst, *lst;
-	GSList *texdirs = NULL;
-	GSList *texdirs_tmp = NULL;
+void FillTextureList( GSList** pArray )
+{
 	GSList *p;
 	char dirRoot[NAME_MAX];
+	int texture_num;
+	GSList *texdirs = NULL;
+	GSList *texdirs_tmp = NULL;
 
-	// delete everything
-	menu = GTK_WIDGET( g_object_get_data( G_OBJECT( g_qeglobals_gui.d_main_window ), "menu_textures" ) );
-	sep = GTK_WIDGET( g_object_get_data( G_OBJECT( g_qeglobals_gui.d_main_window ), "menu_textures_separator" ) );
-	children = gtk_container_get_children( GTK_CONTAINER( menu ) );
-	if( children ) {
-		seplst = g_list_find( children, sep );
-		if( seplst ) {
-			for ( lst = g_list_next( seplst ); lst != NULL; lst = g_list_next( lst ) )
-			{
-				gtk_widget_destroy( GTK_WIDGET( lst->data ) );
-			}
-		}
-		g_list_free( children );
-	}
-
-	texture_nummenus = 0;
-
-	// add everything
-	if ( !g_qeglobals.d_project_entity ) {
-		return;
-	}
+	texture_num = 0;
 
 	// scan texture dirs and pak files only if not restricting to shaderlist
 	if ( !g_PrefsDlg.m_bTexturesShaderlistOnly ) {
@@ -583,7 +563,7 @@ void FillTextureMenu( GSList** pArray ){
 			// Hydra: erm, this didn't used to do anything except leak memory...
 			// For Halflife support this is required to work however.
 			// g_slist_append(texdirs, p->data);
-			texdirs = g_slist_append( texdirs, strdup( (char *)p->data ) );
+			texdirs = g_slist_append( texdirs, g_strdup( (char *)p->data ) );
 		}
 		vfsClearFileDirList( &texdirs_tmp );
 	}
@@ -595,11 +575,19 @@ void FillTextureMenu( GSList** pArray ){
 	while ( l_shaderfiles != NULL )
 	{
 		char shaderfile[PATH_MAX];
+		char *colon;
 		gboolean found = FALSE;
 
 		ExtractFileName( (char*)l_shaderfiles->data, shaderfile );
 		StripExtension( shaderfile );
 		strlwr( shaderfile );
+
+		//support for shaderlist.txt tags, forward
+		colon = strstr( (char*)l_shaderfiles->data, ":" );
+		if( colon )
+		{
+			strncat( shaderfile, colon, sizeof( shaderfile ) );
+		}
 
 		for ( GSList *tmp = texdirs; tmp; tmp = g_slist_next( tmp ) )
 			if ( !strcasecmp( (char*)tmp->data, shaderfile ) ) {
@@ -608,15 +596,78 @@ void FillTextureMenu( GSList** pArray ){
 			}
 
 		if ( !found ) {
-			texdirs = g_slist_prepend( texdirs, strdup( shaderfile ) );
+			texdirs = g_slist_prepend( texdirs, g_strdup( shaderfile ) );
 		}
 
-		free( l_shaderfiles->data );
+		g_free( l_shaderfiles->data );
 		l_shaderfiles = g_slist_remove( l_shaderfiles, l_shaderfiles->data );
 	}
 
 	// sort the list
 	texdirs = g_slist_sort( texdirs, (GCompareFunc)strcmp );
+
+	GSList *temp = texdirs;
+	while ( temp )
+	{
+		char* ptr = strchr( (char*)temp->data, '_' );
+
+		// do we shrink the menus?
+		if ( ptr != NULL ) {
+			// extract the root
+			strcpy( dirRoot, (char*)temp->data );
+			dirRoot[ptr - (char*)temp->data + 1] = 0;
+
+			// we shrink only if we have at least two things to shrink :-)
+			if ( temp->next && ( strstr( (char*)temp->next->data, dirRoot ) == (char*)temp->next->data ) ) {
+				do
+				{
+					if ( pArray ) {
+						*pArray = g_slist_append( *pArray, g_strdup( (char*)temp->data ) );
+					}
+					if ( ++texture_num == MAX_TEXTUREDIRS ) {
+						Sys_FPrintf( SYS_WRN, "WARNING: max texture directories count has been reached!\n" );
+						ClearGSList( texdirs );
+						return;
+					}
+					temp = temp->next;
+				}
+				while ( temp && ( strstr( (char*)temp->data, dirRoot ) == temp->data ) );
+
+				ptr = strchr( dirRoot, '_' );
+				*ptr = 0;
+				continue;
+			}
+		}
+		if ( pArray ) {
+			*pArray = g_slist_append( *pArray, g_strdup( (char*)temp->data ) );
+		}
+		if ( ++texture_num == MAX_TEXTUREDIRS ) {
+			Sys_FPrintf( SYS_WRN, "WARNING: max texture directories count has been reached!\n" );
+			ClearGSList( texdirs );
+			return;
+		}
+
+		temp = temp->next;
+	}
+	ClearGSList( texdirs );
+}
+
+void FillTextureMenu( GSList *texdirs )
+{
+	GtkWidget *menu, *item;
+	GList *children, *lst;
+	char dirRoot[NAME_MAX];
+
+	// delete everything
+	menu = GTK_WIDGET( g_object_get_data( G_OBJECT( g_qeglobals_gui.d_main_window ), "menu_texture_dirs" ) );
+	children = gtk_container_get_children( GTK_CONTAINER( menu ) );
+	if( children ) {
+		for ( lst = g_list_first( children ); lst != NULL; lst = g_list_next( lst ) )
+		{
+			gtk_widget_destroy( GTK_WIDGET( lst->data ) );
+		}
+		g_list_free( children );
+	}
 
 	GSList *temp = texdirs;
 	while ( temp )
@@ -645,9 +696,7 @@ void FillTextureMenu( GSList** pArray ){
 
 					strcpy( texture_menunames[texture_nummenus], (char*)temp->data );
 					strcat( texture_menunames[texture_nummenus], "/" );
-					if ( pArray ) {
-						*pArray = g_slist_append( *pArray, strdup( (char*)temp->data ) );
-					}
+
 					if ( ++texture_nummenus == MAX_TEXTUREDIRS ) {
 						Sys_FPrintf( SYS_WRN, "WARNING: max texture directories count has been reached!\n" );
 						// push submenu and get out
@@ -682,9 +731,7 @@ void FillTextureMenu( GSList** pArray ){
 
 		strcpy( texture_menunames[texture_nummenus], (char*)temp->data );
 		strcat( texture_menunames[texture_nummenus], "/" );
-		if ( pArray ) {
-			*pArray = g_slist_append( *pArray, strdup( (char*)temp->data ) );
-		}
+
 		if ( ++texture_nummenus == MAX_TEXTUREDIRS ) {
 			Sys_FPrintf( SYS_WRN, "WARNING: max texture directories count has been reached!\n" );
 			ClearGSList( texdirs );
@@ -693,7 +740,36 @@ void FillTextureMenu( GSList** pArray ){
 
 		temp = temp->next;
 	}
-	ClearGSList( texdirs );
+}
+
+void FillTextureDirListWidget( GSList *texdirs )
+{
+	GtkWidget* treeview;
+	GtkTreeModel* model;
+	GtkListStore* store;
+	GtkTreeIter iter;
+	GSList *dir;
+
+	treeview = GTK_WIDGET( g_object_get_data( G_OBJECT( g_qeglobals_gui.d_main_window ), "dirlist_treeview" ) );
+	if( treeview == NULL ) {
+		return;
+	}
+	model = gtk_tree_view_get_model( GTK_TREE_VIEW( treeview ) );
+	store = GTK_LIST_STORE( model );
+
+	gtk_list_store_clear( store );
+
+	for( dir = texdirs; dir != NULL; dir = g_slist_next( dir ) )
+	{
+		gtk_list_store_append( store, &iter );
+		gtk_list_store_set( store, &iter, 0, (gchar*)dir->data, -1 );
+	}
+}
+
+void Texture_ShowDirectory_by_path( const char* pPath )
+{
+	snprintf( texture_directory, sizeof( texture_directory ), "%s%s", pPath, "/" );
+	Texture_ShowDirectory();
 }
 
 /*

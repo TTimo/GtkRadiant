@@ -489,7 +489,7 @@ void create_main_toolbar( GtkWidget *window, GtkWidget *vbox );
 void create_plugin_toolbar( GtkWidget *window, GtkWidget *vbox );
 void create_main_statusbar( GtkWidget *window, GtkWidget *vbox );
 GtkWidget *m_pStatusLabel[6];
-GtkWidget *m_pSplits[4];
+GtkWidget *m_pSplits[5];
 XYWnd* m_pXYWnd;
 XYWnd* m_pYZWnd;
 XYWnd* m_pXZWnd;

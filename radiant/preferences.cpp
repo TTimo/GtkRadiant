@@ -119,6 +119,7 @@
 #define SHADERTEST_KEY          "ShaderTest"
 #define GLLIGHTING_KEY          "UseGLLighting"
 #define LOADSHADERS_KEY         "LoadShaders"
+#define SHOWTEXDIRLIST_KEY		"ShowTextureDirectoryList"
 #define NOSTIPPLE_KEY           "NoStipple"
 #define UNDOLEVELS_KEY          "UndoLevels"
 #define VERTEXMODE_KEY          "VertexSplit"
@@ -185,6 +186,7 @@
 #define CAMHEIGHT_KEY     "CamHeight"
 #define ZFLOATWIDTH_KEY   "ZWidthFloating"
 #define STATE_KEY         "State"
+#define TEXDIRLISTWIDTH_KEY         "TextureDirectoryListWidth"
 
 // menu stuff
 #define COUNT_KEY         "Count"
@@ -1668,6 +1670,11 @@ void PrefsDlg::BuildDialog(){
 					gtk_tree_store_append( store, &tab, &group );
 					gtk_tree_store_set( store, &tab, 0, _( "Texture Settings" ), 1, (gpointer)PTAB_TEXTURE, -1 );
 				}
+				{
+					GtkTreeIter tab;
+					gtk_tree_store_append( store, &tab, &group );
+					gtk_tree_store_set( store, &tab, 0, _( "Texture Directory List" ), 1, (gpointer)PTAB_TEXTURE_DIR, -1 );
+				}
 			}
 
 			{
@@ -2105,6 +2112,23 @@ void PrefsDlg::BuildDialog(){
 		gtk_combo_box_text_append_text( GTK_COMBO_BOX_TEXT( combo ), (const char *)lst->data );
 	}
 	g_list_free( combo_list );
+
+	/******** Texture dir list group *********/
+	preflabel = gtk_label_new( _( "Texture directory list" ) );
+	gtk_widget_show( preflabel );
+	pageframe = gtk_frame_new( _( "Texture directory list" ) );
+	gtk_container_set_border_width( GTK_CONTAINER( pageframe ), 5 );
+	gtk_widget_show( pageframe );
+	vbox = gtk_vbox_new( FALSE, 5 );
+	gtk_container_set_border_width( GTK_CONTAINER( vbox ), 5 );
+	gtk_container_add( GTK_CONTAINER( pageframe ), vbox );
+	gtk_widget_show( vbox );
+
+	check = gtk_check_button_new_with_label( _( "Show Texture Directory List" ) );
+	gtk_box_pack_start( GTK_BOX( vbox ), check, FALSE, FALSE, 0 );
+	gtk_widget_show( check );
+	AddDialogData( check, &m_bShowTexDirList, DLG_CHECK_BOOL );
+
 
 	// Add the page to the notebook
 	gtk_notebook_append_page( GTK_NOTEBOOK( notebook ), pageframe, preflabel );
@@ -3024,6 +3048,8 @@ void PrefsDlg::LoadPrefs(){
 	mLocalPrefs.GetPref( LOADSHADERS_KEY,        &m_nLatchedShader,                     0 );
 	m_nShader = m_nLatchedShader;
 
+	mLocalPrefs.GetPref( SHOWTEXDIRLIST_KEY,     &m_bShowTexDirList,             TRUE );
+
 	mLocalPrefs.GetPref( NOCLAMP_KEY,            &m_bNoClamp,                    FALSE );
 	mLocalPrefs.GetPref( SNAP_KEY,               &m_bSnap,                       TRUE );
 	mLocalPrefs.GetPref( USERINI_KEY,            &m_strUserPath,                 "" );
@@ -3106,6 +3132,7 @@ void PrefsDlg::LoadPrefs(){
 #ifdef _WIN32
 	mLocalPrefs.GetPref( STATE_KEY,              &mWindowInfo.nState,            SW_SHOW );
 #endif
+	mLocalPrefs.GetPref( TEXDIRLISTWIDTH_KEY,        &mWindowInfo.nTextureDirectoryListWidth,      50 );
 
 	// menu stuff
 	mLocalPrefs.GetPref( COUNT_KEY,              &m_nMRUCount,                   0 );
@@ -3489,9 +3516,9 @@ void CGameInstall::BuildDialog() {
 	g_signal_connect( G_OBJECT( button ), "clicked", G_CALLBACK( OnBtnBrowseEngine ), this );
 	gtk_box_pack_start( GTK_BOX( hbox ), button, FALSE, FALSE, 0 );
 
-        m_executablesVBox = gtk_vbox_new( TRUE, 0 );
-        gtk_box_pack_start( GTK_BOX( vbox2 ), m_executablesVBox, FALSE, FALSE, 0 );
-        gtk_widget_show( m_executablesVBox );
+	m_executablesVBox = gtk_vbox_new( TRUE, 0 );
+	gtk_box_pack_start( GTK_BOX( vbox2 ), m_executablesVBox, FALSE, FALSE, 0 );
+	gtk_widget_show( m_executablesVBox );
 
 	text = gtk_label_new( _( "Engine binaries directory:" ) );
 	gtk_widget_show( text );

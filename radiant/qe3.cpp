@@ -902,7 +902,10 @@ void QE_Init( void ){
 	FillClassList();    // list in entity window
 	Map_Init();
 
-	FillTextureMenu();
+	GSList *texdirs = NULL;
+	FillTextureList( &texdirs );
+	FillTextureMenu( texdirs );
+	ClearGSList( texdirs );
 	FillBSPMenu();
 
 	/*

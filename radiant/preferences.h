@@ -470,6 +470,8 @@ typedef struct {
 	int nCamHeight;
 	int nZFloatWidth;
 	int nState;
+	int nTextureDirectoryListWidth;
+
 } windowPosInfo_t;
 
 class PrefsDlg : public Dialog
@@ -506,7 +508,7 @@ enum {SHADER_NONE = 0, SHADER_COMMON, SHADER_ALL};
 
 // Gef: updated preferences dialog
 /*! Preference notebook page numbers */
-enum {PTAB_FRONT = 0, PTAB_GAME_SETTINGS, PTAB_2D, PTAB_CAMERA, PTAB_TEXTURE, PTAB_LAYOUT, PTAB_MOUSE,
+enum {PTAB_FRONT = 0, PTAB_GAME_SETTINGS, PTAB_2D, PTAB_CAMERA, PTAB_TEXTURE, PTAB_TEXTURE_DIR, PTAB_LAYOUT, PTAB_MOUSE,
 	  PTAB_EDITING, PTAB_STARTUP, PTAB_PATHS, PTAB_BRUSH, PTAB_MISC, PTAB_BSPMONITOR} pref_tabs;
 
 GtkWidget *notebook;
@@ -726,6 +728,8 @@ int m_nLatchedTextureQuality;
 // RIANT
 // texture compression format
 int m_nTextureCompressionFormat;
+
+bool m_bShowTexDirList;
 
 int m_nLightRadiuses;
 

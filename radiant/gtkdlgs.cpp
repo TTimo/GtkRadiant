@@ -2478,18 +2478,15 @@ void DoTextureListDlg(){
 
 		{
 			// Initialize dialog
-			GSList *textures = (GSList*)NULL;
-			FillTextureMenu( &textures );
-			while ( textures != NULL )
+			GSList *texdirs = NULL, *dir;
+			FillTextureList( &texdirs );
+			for( dir = texdirs; dir != NULL; dir = g_slist_next( dir ) )
 			{
-				{
-					GtkTreeIter iter;
-					gtk_list_store_append( store, &iter );
-					gtk_list_store_set( store, &iter, 0, (gchar*)textures->data, -1 );
-				}
-				free( textures->data );
-				textures = g_slist_remove( textures, textures->data );
+				GtkTreeIter iter;
+				gtk_list_store_append( store, &iter );
+				gtk_list_store_set( store, &iter, 0, (gchar*)dir->data, -1 );
 			}
+			ClearGSList( texdirs );
 		}
 
 		g_object_unref( G_OBJECT( store ) );

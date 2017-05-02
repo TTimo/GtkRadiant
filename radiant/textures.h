@@ -26,6 +26,7 @@
 void Texture_Init();
 void    Texture_ShowDirectory( int menunum );
 void Texture_ShowDirectory();
+void Texture_ShowDirectory_by_path( const char* pPath );
 void    Texture_ShowAll();
 void WINAPI Texture_ShowInuse();
 extern char texture_directory[];
