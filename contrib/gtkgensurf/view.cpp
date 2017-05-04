@@ -21,6 +21,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "gensurf.h"
+#include "gtkcompat.h"
 
 #undef ISOMETRIC
 
@@ -101,7 +102,7 @@ void ShowPreview(){
 }
 
 static void draw_preview(){
-	int width = g_pPreviewWidget->allocation.width, height = g_pPreviewWidget->allocation.height;
+	int width = gtk_widget_get_allocated_width( g_pPreviewWidget ), height = gtk_widget_get_allocated_height( g_pPreviewWidget );
 
 	g_GLTable.m_pfn_qglClearColor( 0, 0, 0, 1 );
 	g_GLTable.m_pfn_qglViewport( 0, 0, width, height );
@@ -181,7 +182,7 @@ static gint expose( GtkWidget *widget, GdkEventExpose *event, gpointer data ){
 }
 
 static void button_press( GtkWidget *widget, GdkEventButton *event, gpointer data ){
-	POINT pt = { (long)event->x, widget->allocation.height - (long)event->y };
+	POINT pt = { (long)event->x, gtk_widget_get_allocated_height( widget ) - (long)event->y };
 	bool Selected;
 	double x,y;
 	int i, j, k, ks;
@@ -290,7 +291,7 @@ static void button_press( GtkWidget *widget, GdkEventButton *event, gpointer dat
 }
 
 static void motion( GtkWidget *widget, GdkEventMotion *event, gpointer data ){
-	POINT pt = { (long)event->x, widget->allocation.height - (long)event->y };
+	POINT pt = { (long)event->x, gtk_widget_get_allocated_height( widget ) - (long)event->y };
 
 	if ( !VertexMode ) {
 		return;

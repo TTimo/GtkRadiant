@@ -26,6 +26,7 @@
 //
 
 #include "stdafx.h"
+#include "gtkcompat.h"
 
 CPtrArray l_Listeners[RADIANT_MSGCOUNT];
 CPtrArray l_WindowListeners;
@@ -230,7 +231,7 @@ void DispatchRadiantMsg( int Msg ){
 }
 
 void CXYWndWrapper::SnapToGrid( int x1, int y1, vec3_t pt ){
-	int height = g_pParentWnd->ActiveXY()->GetWidget()->allocation.height;
+	int height = gtk_widget_get_allocated_height( g_pParentWnd->ActiveXY()->GetWidget() );
 	g_pParentWnd->ActiveXY()->SnapToPoint( x1, height - 1 - y1, pt );
 }
 
