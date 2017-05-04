@@ -826,7 +826,7 @@ void Group_AddToProperGroup( brush_t *b ){
 	    Group_AddToItem(b, g->itemOwner);
 	   #ifdef _DEBUG
 	   else
-	    Sys_Printf("WARNING: unexpected Group_ForName not found in Group_AddToProperGroup\n");
+	    Sys_FPrintf(SYS_WRN, "WARNING: unexpected Group_ForName not found in Group_AddToProperGroup\n");
 	   #endif
 	   }
 	   else

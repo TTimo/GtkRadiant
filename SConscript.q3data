@@ -11,7 +11,7 @@ env = Environment( ENV = os.environ )
 settings.SetupEnvironment( env, config['name'] )
 env.Prepend( CPPPATH = [ '#tools/quake3/common' ] )
 env.Append( LIBS = [ 'm', 'pthread' ] )
-proj = utils.vcproj( os.path.join( GetLaunchDir(), 'tools/quake3/q3data/q3data.vcproj' ) )
+proj = utils.vcxproj( os.path.join( GetLaunchDir(), 'tools/quake3/q3data/q3data.vcxproj' ) )
 objects = lib_objects
 objects += [ os.path.join( 'tools/quake3/q3data', i ) for i in proj.getSourceFiles() ]
 q3data = env.Program( 'q3data', objects )

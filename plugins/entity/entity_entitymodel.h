@@ -27,131 +27,131 @@
 /*! simulates misc_model entity behaviours for rendering/selection/editing */
 class CEntityMiscModel : public IRender, public ISelect, public IEdit
 {
-public:
-CEntityMiscModel ( entity_t *e );
-virtual ~CEntityMiscModel ();
+	public:
+	CEntityMiscModel( entity_t *e );
+	virtual ~CEntityMiscModel ();
 
-void IncRef() { refCount++; }
-void DecRef() {
-	if ( --refCount == 0 ) {
-		delete this;
+	void IncRef() { refCount++; }
+	void DecRef() {
+		if ( --refCount == 0 ) {
+			delete this;
+		}
 	}
-}
 
-// IRender
-void Draw( int state, int rflags ) const;
-const bool IsModelNotNull() const { return m_model && m_model->pRender; }
-const aabb_t *GetAABB() const { return &m_BBox; }
+	// IRender
+	void Draw( int state, int rflags ) const;
+	const bool IsModelNotNull() const { return m_model && m_model->pRender; }
+	const aabb_t *GetAABB() const { return &m_BBox; }
 
-// ISelect
-bool TestRay( const ray_t *ray, vec_t *dist ) const;
-//bool TestBox(const aabb_t aabb) const;
+	// ISelect
+	bool TestRay( const ray_t *ray, vec_t *dist ) const;
+	//bool TestBox(const aabb_t aabb) const;
 
-// ITransform
-void Translate( const vec3_t translation );
-void Rotate( const vec3_t pivot, const vec3_t rotation );
-const vec_t *GetTranslation() const { return m_translate; }
-const vec_t *GetRotation() const { return m_euler; }
-void OnKeyValueChanged( entity_t *e, const char *key, const char* value );
+	// ITransform
+	void Translate( const vec3_t translation );
+	void Rotate( const vec3_t pivot, const vec3_t rotation );
+	const vec_t *GetTranslation() const { return m_translate; }
+	const vec_t *GetRotation() const { return m_euler; }
+	void OnKeyValueChanged( entity_t *e, const char *key, const char* value );
 
-void SetName( const char *name );
-private:
-void BuildCacheRequestString( const char *name );
-/*! updates the AABB and transformation matrix */
-void UpdateCachedData();
-entity_interfaces_t *m_model;
+	void SetName( const char *name );
+	private:
+	void BuildCacheRequestString( const char *name );
+	/*! updates the AABB and transformation matrix */
+	void UpdateCachedData();
+	entity_interfaces_t *m_model;
 
-entity_t *m_entity;
+	entity_t *m_entity;
 
-int refCount;
-string_t m_version;
+	int refCount;
+	string_t m_version;
 
-Str m_cachereq;
+	Str m_cachereq;
 
-/*! AABB in local space */
-aabb_t m_BBox;
+	/*! AABB in local space */
+	aabb_t m_BBox;
 
-/*! worldspace-to-localspace translation */
-vec3_t m_translate;
+	/*! worldspace-to-localspace translation */
+	vec3_t m_translate;
 
-/*! worldspace-to-localspace euler rotation angles */
-vec3_t m_euler;
+	/*! worldspace-to-localspace euler rotation angles */
+	vec3_t m_euler;
 
-/*! worldspace-to-localspace scale */
-vec3_t m_scale;
+	/*! worldspace-to-localspace scale */
+	vec3_t m_scale;
 
-/*! localspace origin, effectively rotation & scale pivot point */
-vec3_t m_pivot;
+	/*! localspace origin, effectively rotation & scale pivot point */
+	vec3_t m_pivot;
 
-/*! worldspace-to-localspace transform, generated from translate/euler/scale/pivot */
-m4x4_t m_transform;
+	/*! worldspace-to-localspace transform, generated from translate/euler/scale/pivot */
+	m4x4_t m_transform;
 
-/*! localspace-to-worldspace transform */
-m4x4_t m_inverse_transform;
+	/*! localspace-to-worldspace transform */
+	m4x4_t m_inverse_transform;
 };
 
 /*! simulates eclass-model entity behaviours for rendering/selection/editing */
 class CEntityEclassModel : public IRender, public ISelect, public IEdit
 {
-public:
-CEntityEclassModel ();
-virtual ~CEntityEclassModel ();
+	public:
+	CEntityEclassModel();
+	virtual ~CEntityEclassModel();
 
-void IncRef() { refCount++; }
-void DecRef() {
-	if ( --refCount == 0 ) {
-		delete this;
+	void IncRef() { refCount++; }
+	void DecRef() {
+		if ( --refCount == 0 ) {
+			delete this;
+		}
 	}
-}
 
-// IRender
-void Draw( int state, int rflags ) const;
-const bool IsModelNotNull() const { return m_model && m_model->pRender; }
-const aabb_t *GetAABB() const { return &m_BBox; }
+	// IRender
+	void Draw( int state, int rflags ) const;
+	const bool IsModelNotNull() const { return m_model && m_model->pRender; }
+	const aabb_t *GetAABB() const { return &m_BBox; }
 
-// ISelect
-bool TestRay( const ray_t *ray, vec_t *dist ) const;
-//bool TestBox(const aabb_t aabb) const;
+	// ISelect
+	bool TestRay( const ray_t *ray, vec_t *dist ) const;
+	//bool TestBox(const aabb_t aabb) const;
 
-// ITransform
-void Translate( const vec3_t translation );
-void Rotate( const vec3_t pivot, const vec3_t rotation );
-const vec_t *GetTranslation() const { return m_translate; }
-const vec_t *GetRotation() const { return m_euler; }
-void OnKeyValueChanged( entity_t *e, const char *key, const char* value );
+	// ITransform
+	void Translate( const vec3_t translation );
+	void Rotate( const vec3_t pivot, const vec3_t rotation );
+	const vec_t *GetTranslation() const { return m_translate; }
+	const vec_t *GetRotation() const { return m_euler; }
+	void OnKeyValueChanged( entity_t *e, const char *key, const char* value );
 
-void SetName( const char *name );
-void SetEclass( const eclass_t* eclass );
-private:
-/*! updates the AABB and transformation matrix */
-void UpdateCachedData();
-entity_interfaces_t *m_model;
+	void SetName( const char *name );
+	void SetEclass( const eclass_t* eclass );
+	private:
+	/*! updates the AABB and transformation matrix */
+	void UpdateCachedData();
+	entity_interfaces_t *m_model;
 
-int refCount;
-string_t m_name;
-string_t m_version;
-const eclass_t *m_eclass;
+	int refCount;
+	string_t m_name;
+	string_t m_version;
+	const eclass_t *m_eclass;
 
-/*! AABB in local space */
-aabb_t m_BBox;
+	/*! AABB in local space */
+	aabb_t m_BBox;
 
-/*! worldspace-to-localspace translation */
-vec3_t m_translate;
+	/*! worldspace-to-localspace translation */
+	vec3_t m_translate;
 
-/*! worldspace-to-localspace euler rotation angles */
-vec3_t m_euler;
+	/*! worldspace-to-localspace euler rotation angles */
+	vec3_t m_euler;
 
-/*! worldspace-to-localspace scale */
-vec3_t m_scale;
+	/*! worldspace-to-localspace scale */
+	vec3_t m_scale;
 
-/*! localspace origin, effectively rotation & scale pivot point */
-vec3_t m_pivot;
+	/*! localspace origin, effectively rotation & scale pivot point */
+	vec3_t m_pivot;
 
-/*! worldspace-to-localspace transform, generated from translate/euler/scale/pivot */
-m4x4_t m_transform;
+	/*! worldspace-to-localspace transform, generated from translate/euler/scale/pivot */
+	m4x4_t m_transform;
 
-/*! localspace-to-worldspace transform */
-m4x4_t m_inverse_transform;
+	/*! localspace-to-worldspace transform */
+	m4x4_t m_inverse_transform;
 };
 
 void pivot_draw( const vec3_t pivot );

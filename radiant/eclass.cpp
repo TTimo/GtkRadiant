@@ -382,8 +382,8 @@ void Eclass_Init(){
 					if ( !strcmp( ValueForKey( g_qeglobals.d_project_entity, "gamemode" ), "sp" ) ) {
 						// SP mapping, ignore mp_*.def
 						char *name = (char *)pFile->data;
-						if ( name[0] == 'm' && name[1] == 'p' && name[2] == '_' 
-							|| name[0] == 'h' && name[1] == 'm' && name[2] == '_' ) {
+						if ( ( name[0] == 'm' && name[1] == 'p' && name[2] == '_' )
+							|| ( name[0] == 'h' && name[1] == 'm' && name[2] == '_' ) ) {
 							Sys_Printf( "Single Player mapping mode. Ignoring '%s'\n", name );
 							pFile = pFile->next;
 							continue;
@@ -445,7 +445,7 @@ eclass_t *Eclass_ForName( const char *name, qboolean has_brushes ){
 #ifdef _DEBUG
 	// grouping stuff, not an eclass
 	if ( strcmp( name, "group_info" ) == 0 ) {
-		Sys_Printf( "WARNING: unexpected group_info entity in Eclass_ForName\n" );
+		Sys_FPrintf( SYS_WRN, "WARNING: unexpected group_info entity in Eclass_ForName\n" );
 	}
 #endif
 

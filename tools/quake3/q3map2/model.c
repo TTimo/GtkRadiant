@@ -58,11 +58,11 @@ void PicoPrintFunc( int level, const char *str ){
 		break;
 
 	case PICO_WARNING:
-		Sys_Printf( "WARNING: %s\n", str );
+		Sys_FPrintf( SYS_WRN, "WARNING: %s\n", str );
 		break;
 
 	case PICO_ERROR:
-		Sys_Printf( "ERROR: %s\n", str );
+		Sys_FPrintf( SYS_ERR, "ERROR: %s\n", str );
 		break;
 
 	case PICO_FATAL:
@@ -427,7 +427,7 @@ void InsertModel( char *name, int frame, m4x4_t transform, remap_t *remap, shade
 			{
 				/* overflow hack */
 				if ( ( nummapplanes + 64 ) >= ( MAX_MAP_PLANES >> 1 ) ) {
-					Sys_Printf( "WARNING: MAX_MAP_PLANES (%d) hit generating clip brushes for model %s.\n",
+					Sys_FPrintf( SYS_WRN, "WARNING: MAX_MAP_PLANES (%d) hit generating clip brushes for model %s.\n",
 								MAX_MAP_PLANES, name );
 					break;
 				}
@@ -609,7 +609,7 @@ void AddTriangleModels( entity_t *e ){
 		/* get model name */
 		model = ValueForKey( e2, "model" );
 		if ( model[ 0 ] == '\0' ) {
-			Sys_Printf( "WARNING: misc_model at %i %i %i without a model key\n",
+			Sys_FPrintf( SYS_WRN, "WARNING: misc_model at %i %i %i without a model key\n",
 						(int) origin[ 0 ], (int) origin[ 1 ], (int) origin[ 2 ] );
 			continue;
 		}
@@ -680,7 +680,7 @@ void AddTriangleModels( entity_t *e ){
 				/* split the string */
 				split = strchr( remap->from, ';' );
 				if ( split == NULL ) {
-					Sys_Printf( "WARNING: Shader _remap key found in misc_model without a ; character\n" );
+					Sys_FPrintf( SYS_WRN, "WARNING: Shader _remap key found in misc_model without a ; character\n" );
 					free( remap );
 					remap = remap2;
 					continue;

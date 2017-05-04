@@ -26,7 +26,6 @@
 #include "filters.h"
 
 extern MainFrame* g_pParentWnd;
-extern void MemFile_fprintf( MemStream* pMemFile, const char* pText, ... );
 
 // globals
 
@@ -130,7 +129,6 @@ float lightaxis[3] = {0.6f, 0.8f, 1.0f};
    improve recognition
    ================
  */
-extern float ShadeForNormal( vec3_t normal );
 
 float SetShadeForPlane( plane_t *p ){
 	//return ShadeForNormal(p->normal);
@@ -341,7 +339,7 @@ void Face_TextureVectors( face_t *f, float STfromXYZ[2][4] ){
 #ifdef _DEBUG
 	// this code is not supposed to be used while in BP mode, warning here can help spot the problem
 	if ( g_qeglobals.m_bBrushPrimitMode && !g_qeglobals.bNeedConvert ) {
-		Sys_Printf( "Warning : illegal call of Face_TextureVectors in brush primitive mode\n" );
+		Sys_FPrintf( SYS_WRN, "Warning : illegal call of Face_TextureVectors in brush primitive mode\n" );
 	}
 #endif
 
@@ -867,7 +865,7 @@ void Brush_Build( brush_t *b, bool bSnap, bool bMarkMap, bool bConvert, bool bFi
 
 #ifdef _DEBUG
 	if ( !g_qeglobals.m_bBrushPrimitMode && bConvert ) {
-		Sys_Printf( "Warning : conversion from brush primitive to old brush format not implemented\n" );
+		Sys_FPrintf( SYS_WRN, "Warning : conversion from brush primitive to old brush format not implemented\n" );
 	}
 #endif
 
@@ -1539,7 +1537,7 @@ const char* Brush_GetKeyValue( brush_t *b, const char *pKey ){
 void CheckName( face_t *fa, char *pname ){
 	if ( !strlen( fa->texdef.GetName() ) ) {
 #ifdef _DEBUG
-		Sys_Printf( "WARNING: unexpected texdef.name is empty in Brush.cpp CheckName\n" );
+		Sys_FPrintf( SYS_WRN, "WARNING: unexpected texdef.name is empty in Brush.cpp CheckName\n" );
 #endif
 		fa->texdef.SetName( SHADER_NOT_FOUND );
 		strcpy( pname, SHADER_NOT_FOUND );
@@ -1592,7 +1590,7 @@ brush_t *Brush_Create( vec3_t mins, vec3_t maxs, texdef_t *texdef ){
 	if ( g_qeglobals.m_bBrushPrimitMode ) {
 		// check texdef is empty .. if there are cases it's not we need to write some conversion code
 		if ( texdef->shift[0] != 0 || texdef->shift[1] != 0 || texdef->scale[0] != 0 || texdef->scale[1] != 0 || texdef->rotate != 0 ) {
-			Sys_Printf( "Warning : non-zero texdef detected in Brush_Create .. need brush primitive conversion\n" );
+			Sys_FPrintf( SYS_WRN, "Warning : non-zero texdef detected in Brush_Create .. need brush primitive conversion\n" );
 		}
 	}
 #endif
@@ -2292,7 +2290,7 @@ face_t *Brush_Ray( vec3_t origin, vec3_t dir, brush_t *b, float *dist, int nFlag
 	// see Brush_Draw
 
 	// do some last minute filtering
-	if ( firstface && nFlags & SF_CAMERA ) {
+	if ( firstface && ( nFlags & SF_CAMERA ) ) {
 		if ( g_qeglobals.d_savedinfo.exclude & EXCLUDE_CAULK ) {
 			if ( strstr( firstface->texdef.GetName(), "caulk" ) ) {
 				*dist = 0;
@@ -3061,7 +3059,7 @@ void Brush_FaceDraw( face_t *face, int nGLState ){
 	if ( w == NULL ) {
 		return;
 	}
-	if ( nGLState & DRAW_GL_LIGHTING && g_PrefsDlg.m_bGLLighting ) {
+	if ( ( nGLState & DRAW_GL_LIGHTING ) && g_PrefsDlg.m_bGLLighting ) {
 		qglNormal3fv( face->plane.normal );
 	}
 	/*
@@ -3138,7 +3136,7 @@ void Brush_Draw( brush_t *b ){
 		if ( bTrans && !( nGLState & DRAW_GL_BLEND ) ) {
 			continue;
 		}
-		if ( !bTrans && nGLState & DRAW_GL_BLEND ) {
+		if ( !bTrans && ( nGLState & DRAW_GL_BLEND ) ) {
 			continue;
 		}
 
@@ -3164,17 +3162,17 @@ void Brush_Draw( brush_t *b ){
 			}
 		}
 
-		if ( nGLState & DRAW_GL_TEXTURE_2D && face->d_texture->name[0] == '(' ) {
+		if ( ( nGLState & DRAW_GL_TEXTURE_2D ) && face->d_texture->name[0] == '(' ) {
 			prev = NULL;
 			qglDisable( GL_TEXTURE_2D );
 		}
-		else if ( nGLState & DRAW_GL_TEXTURE_2D && ( nDrawMode == cd_texture || nDrawMode == cd_light ) && face->d_texture != prev ) {
+		else if ( ( nGLState & DRAW_GL_TEXTURE_2D ) && ( nDrawMode == cd_texture || nDrawMode == cd_light ) && face->d_texture != prev ) {
 			// set the texture for this face
 			prev = face->d_texture;
 			qglBindTexture( GL_TEXTURE_2D, face->d_texture->texture_number );
 		}
 
-		if ( nGLState & DRAW_GL_LIGHTING && !g_PrefsDlg.m_bGLLighting ) {
+		if ( ( nGLState & DRAW_GL_LIGHTING ) && !g_PrefsDlg.m_bGLLighting ) {
 			if ( !b->owner->eclass->fixedsize ) {
 				material[3] = transVal;
 			}

@@ -77,5 +77,8 @@
     <ClCompile Include="lwo\vmap.c">
       <Filter>src\lwo</Filter>
     </ClCompile>
+    <ClCompile Include="pm_terrain.c">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

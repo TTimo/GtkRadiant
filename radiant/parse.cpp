@@ -57,14 +57,14 @@ skipspace:
 	{
 		if ( !*script_p ) {
 			if ( !crossline ) {
-				Sys_Printf( "Warning: Line %i is incomplete [01]\n",scriptline );
+				Sys_FPrintf( SYS_WRN, "Warning: Line %i is incomplete [01]\n",scriptline );
 			}
 			return false;
 		}
 
 		if ( *script_p++ == '\n' ) {
 			if ( !crossline ) {
-				Sys_Printf( "Warning: Line %i is incomplete [02]\n",scriptline );
+				Sys_FPrintf( SYS_WRN, "Warning: Line %i is incomplete [02]\n",scriptline );
 			}
 			scriptline++;
 		}
@@ -72,12 +72,12 @@ skipspace:
 
 	if ( script_p[0] == '/' && script_p[1] == '/' ) { // comment field
 		if ( !crossline ) {
-			Sys_Printf( "Warning: Line %i is incomplete [03]\n",scriptline );
+			Sys_FPrintf( SYS_WRN, "Warning: Line %i is incomplete [03]\n",scriptline );
 		}
 		while ( *script_p++ != '\n' )
 			if ( !*script_p ) {
 				if ( !crossline ) {
-					Sys_Printf( "Warning: Line %i is incomplete [04]\n",scriptline );
+					Sys_FPrintf( SYS_WRN, "Warning: Line %i is incomplete [04]\n",scriptline );
 				}
 				return false;
 			}

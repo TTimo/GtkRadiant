@@ -35,7 +35,7 @@ void LoadSpriteModel( entity_interfaces_t *interfaces, const char *name ){
 	pShader = QERApp_Shader_ForName( name );
 
 	if ( !pShader ) {
-		Sys_Printf( "ERROR: can't find shader (or image) for: %s\n", name );
+		Sys_FPrintf( SYS_ERR, "ERROR: can't find shader (or image) for: %s\n", name );
 		return;
 	}
 

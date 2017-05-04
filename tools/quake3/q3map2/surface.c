@@ -568,7 +568,7 @@ void ClassifySurfaces( int numSurfs, mapDrawSurface_t *ds ){
 				if ( fabs( dist ) > PLANAR_EPSILON ) {
 					//%	if( ds->planeNum >= 0 )
 					//%	{
-					//%		Sys_Printf( "WARNING: Planar surface marked unplanar (%f > %f)\n", fabs( dist ), PLANAR_EPSILON );
+					//%		Sys_FPrintf( SYS_WRN, "WARNING: Planar surface marked unplanar (%f > %f)\n", fabs( dist ), PLANAR_EPSILON );
 					//%		ds->verts[ i ].color[ 0 ][ 0 ] = ds->verts[ i ].color[ 0 ][ 2 ] = 0;
 					//%	}
 					ds->planar = qfalse;
@@ -589,7 +589,7 @@ void ClassifySurfaces( int numSurfs, mapDrawSurface_t *ds ){
 			ds->planeNum = -1;
 			VectorClear( ds->lightmapVecs[ 2 ] );
 			//% if( ds->type == SURF_META || ds->type == SURF_FACE )
-			//%		Sys_Printf( "WARNING: Non-planar face (%d): %s\n", ds->planeNum, ds->shaderInfo->shader );
+			//%		Sys_FPrintf( SYS_WRN, "WARNING: Non-planar face (%d): %s\n", ds->planeNum, ds->shaderInfo->shader );
 		}
 
 		/* -----------------------------------------------------------------
@@ -1148,7 +1148,7 @@ mapDrawSurface_t *DrawSurfaceForMesh( entity_t *e, parseMesh_t *p, mesh_t *mesh 
 
 	/* spew forth errors */
 	if ( VectorLength( plane ) < 0.001f ) {
-		Sys_Printf( "BOGUS " );
+		Sys_Printf( "DrawSurfaceForMesh: bogus plane\n" );
 	}
 
 	/* test each vert */
@@ -2450,7 +2450,7 @@ void EmitDrawIndexes( mapDrawSurface_t *ds, bspDrawSurface_t *out ){
 			/* validate the index */
 			if ( ds->type != SURFACE_PATCH ) {
 				if ( bspDrawIndexes[ numBSPDrawIndexes ] < 0 || bspDrawIndexes[ numBSPDrawIndexes ] >= ds->numVerts ) {
-					Sys_Printf( "WARNING: %d %s has invalid index %d (%d)\n",
+					Sys_FPrintf( SYS_WRN, "WARNING: %d %s has invalid index %d (%d)\n",
 								numBSPDrawSurfaces,
 								ds->shaderInfo->shader,
 								bspDrawIndexes[ numBSPDrawIndexes ],
@@ -3671,7 +3671,7 @@ void FilterDrawsurfsIntoTree( entity_t *e, tree_t *tree ){
 				bspDrawSurface_t    *out;
 				out = &bspDrawSurfaces[ numBSPDrawSurfaces - 1 ];
 				if ( out->numVerts == 3 && out->numIndexes > 3 ) {
-					Sys_Printf( "\nWARNING: Potentially bad %s surface (%d: %d, %d)\n     %s\n",
+					Sys_FPrintf( SYS_WRN, "WARNING: Potentially bad %s surface (%d: %d, %d)\n     %s\n",
 								surfaceTypes[ ds->type ],
 								numBSPDrawSurfaces - 1, out->numVerts, out->numIndexes, si->shader );
 				}

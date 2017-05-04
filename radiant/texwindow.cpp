@@ -50,7 +50,6 @@
 #include "texmanip.h"
 
 #define TYP_MIPTEX  68
-static unsigned tex_palette[256];
 
 #define FONT_HEIGHT 10
 
@@ -180,14 +179,6 @@ void Texture_InitPalette( byte *pal ){
 		g = gammatable[pal[1]];
 		b = gammatable[pal[2]];
 		pal += 3;
-
-		//v = (r<<24) + (g<<16) + (b<<8) + 255;
-		//v = BigLong (v);
-
-		//tex_palette[i] = v;
-		tex_palette[i * 3 + 0] = r;
-		tex_palette[i * 3 + 1] = g;
-		tex_palette[i * 3 + 2] = b;
 	}
 }
 
@@ -780,7 +771,11 @@ void Texture_ShowDirectory(){
 				g_str_has_suffix( name, "_h" ) ||
 				g_str_has_suffix( name, "_local" ) ||
 				g_str_has_suffix( name, "_nm" ) ||
-				g_str_has_suffix( name, "_s" )) {
+				g_str_has_suffix( name, "_s" ) ||
+				g_str_has_suffix( name, "_bump" ) ||
+				g_str_has_suffix( name, "_gloss" ) ||
+				g_str_has_suffix( name, "_luma" ) ||
+				g_str_has_suffix( name, "_norm" ) ) {
 			continue;
 		}
 
@@ -1086,7 +1081,7 @@ IShader* Texture_NextPos( int *x, int *y ){
 		nCurrentShader++;
 		pCurrentShader = QERApp_ActiveShader_ForIndex( nCurrentShader );
 		if ( pCurrentShader == NULL ) {
-			Sys_Printf( "ERROR: unexpected pCurrentShader == NULL in Texture_NextPos\n" );
+			Sys_FPrintf( SYS_ERR, "ERROR: unexpected pCurrentShader == NULL in Texture_NextPos\n" );
 			return NULL;
 		}
 		current_texture = pCurrentShader->getTexture();
@@ -1285,7 +1280,7 @@ void SelectTexture( int mx, int my, bool bShift, bool bFitScale ){
 			 && my < y && y - my < nHeight + FONT_HEIGHT ) {
 			if ( bShift ) {
 				if ( pCurrentShader->IsDefault() ) {
-					Sys_Printf( "ERROR: %s is not a shader, it's a texture.\n", pCurrentShader->getName() );
+					Sys_FPrintf( SYS_ERR, "ERROR: %s is not a shader, it's a texture.\n", pCurrentShader->getName() );
 				}
 				else{
 					ViewShader( pCurrentShader->getShaderFileName(), pCurrentShader->getName() );
@@ -1321,7 +1316,7 @@ void SelectTexture( int mx, int my, bool bShift, bool bFitScale ){
 #ifdef _DEBUG
 				// this one is never supposed to be set as current one
 				if ( pAuxShader->IsColor() ) {
-					Sys_Printf( "ERROR: unexpected pCurrentShader->IsColor() in SelectTexture\n" );
+					Sys_FPrintf( SYS_ERR, "ERROR: unexpected pCurrentShader->IsColor() in SelectTexture\n" );
 				}
 #endif
 				// NOTE: IsColor is false, IsDefault the only remaining property
@@ -1701,7 +1696,7 @@ void TexWnd::OnSize( int cx, int cy ){
 void TexWnd::OnExpose() {
 	int nOld = g_qeglobals.d_texturewin.m_nTotalHeight;
 	if ( !MakeCurrent() ) {
-		Sys_Printf( "ERROR: glXMakeCurrent failed..\n " );
+		Sys_FPrintf( SYS_ERR, "ERROR: glXMakeCurrent failed..\n " );
 		Sys_Printf( "Please restart Radiant if the Texture view is not working\n" );
 	}
 	else

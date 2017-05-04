@@ -72,7 +72,7 @@ class Config:
             build_dir = os.path.join( 'build', config_name, 'radiant' )
             VariantDir( build_dir, '.', duplicate = 0 )
             lib_objects = []
-            for project in [ 'libs/synapse/synapse.vcproj', 'libs/cmdlib/cmdlib.vcproj', 'libs/mathlib/mathlib.vcproj', 'libs/l_net/l_net.vcproj' ]:
+            for project in [ 'libs/synapse/synapse.vcxproj', 'libs/cmdlib/cmdlib.vcxproj', 'libs/mathlib/mathlib.vcxproj', 'libs/l_net/l_net.vcxproj' ]:
                 Export( 'project' )
                 lib_objects += SConscript( os.path.join( build_dir, 'SConscript.lib' ) )
             Export( 'lib_objects' )
@@ -81,7 +81,7 @@ class Config:
 
             # PIC versions of the libs for the modules
             shlib_objects_extra = {}
-            for project in [ 'libs/synapse/synapse.vcproj', 'libs/mathlib/mathlib.vcproj', 'libs/picomodel/picomodel.vcproj', 'libs/cmdlib/cmdlib.vcproj', 'libs/splines/splines.vcproj' ]:
+            for project in [ 'libs/synapse/synapse.vcxproj', 'libs/mathlib/mathlib.vcxproj', 'libs/picomodel/picomodel.vcxproj', 'libs/cmdlib/cmdlib.vcxproj', 'libs/splines/splines.vcxproj' ]:
                 ( libpath, libname ) = os.path.split( project )
                 libname = os.path.splitext( libname )[0]
                 config['shared'] = True
@@ -90,31 +90,31 @@ class Config:
                 VariantDir( build_dir, '.', duplicate = 0 )
                 shlib_objects_extra[libname] = SConscript( os.path.join( build_dir, 'SConscript.lib' ) )
 
-            for project in [ 'plugins/vfsqlpk3/vfsqlpk3.vcproj',
-                     'plugins/vfspk3/vfspk3.vcproj',
-                     'plugins/vfspak/vfspak.vcproj',
-                     'plugins/vfswad/vfswad.vcproj',
-                     'plugins/eclassfgd/fgd.vcproj',
-                     'plugins/entity/entity.vcproj',
-                     'plugins/image/image.vcproj',
-                     'plugins/model/model.vcproj',
-                     'plugins/imagepng/imagepng.vcproj',
-                     'plugins/imagewal/imagewal.vcproj',
-                     'plugins/imagehl/imagehl.vcproj',
-                     'plugins/imagem8/imagem8.vcproj',
-                     'plugins/spritemodel/spritemodel.vcproj',
-                     'plugins/textool/textool.vcproj',
-                     'plugins/map/map.vcproj',
-                     'plugins/mapxml/mapxml.vcproj',
-                     'plugins/shaders/shaders.vcproj',
-                     'plugins/surface/surface.vcproj',
-                     'plugins/surface_idtech2/surface_idtech2.vcproj',
-                     'contrib/camera/camera.vcproj',
-                     'contrib/prtview/prtview.vcproj',
-                     'contrib/hydratoolz/hydratoolz.vcproj',
-                     'contrib/bobtoolz/bobtoolz.vcproj',
-                     'contrib/gtkgensurf/gtkgensurf.vcproj',
-                     'contrib/bkgrnd2d/bkgrnd2d.vcproj'
+            for project in [ 'plugins/vfsqlpk3/vfsqlpk3.vcxproj',
+                     'plugins/vfspk3/vfspk3.vcxproj',
+                     'plugins/vfspak/vfspak.vcxproj',
+                     'plugins/vfswad/vfswad.vcxproj',
+                     'plugins/eclassfgd/fgd.vcxproj',
+                     'plugins/entity/entity.vcxproj',
+                     'plugins/image/image.vcxproj',
+                     'plugins/model/model.vcxproj',
+                     'plugins/imagepng/imagepng.vcxproj',
+                     'plugins/imagewal/imagewal.vcxproj',
+                     'plugins/imagehl/imagehl.vcxproj',
+                     'plugins/imagem8/imagem8.vcxproj',
+                     'plugins/spritemodel/spritemodel.vcxproj',
+                     'plugins/textool/textool.vcxproj',
+                     'plugins/map/map.vcxproj',
+                     'plugins/mapxml/mapxml.vcxproj',
+                     'plugins/shaders/shaders.vcxproj',
+                     'plugins/surface/surface.vcxproj',
+                     'plugins/surface_idtech2/surface_idtech2.vcxproj',
+                     'contrib/camera/camera.vcxproj',
+                     'contrib/prtview/prtview.vcxproj',
+                     'contrib/hydratoolz/hydratoolz.vcxproj',
+                     'contrib/bobtoolz/bobtoolz.vcxproj',
+                     'contrib/gtkgensurf/gtkgensurf.vcxproj',
+                     'contrib/bkgrnd2d/bkgrnd2d.vcxproj'
                  ]:
                 ( libpath, libname ) = os.path.split( project )
                 libname = os.path.splitext( libname )[0]
@@ -158,7 +158,7 @@ class Config:
             build_dir = os.path.join( 'build', config_name, compiler_name )
             VariantDir( build_dir, '.', duplicate = 0 )
             lib_objects = []
-            for project in [ 'tools/quake3/common/quake3-common.vcproj', 'libs/mathlib/mathlib.vcproj', 'libs/l_net/l_net.vcproj', 'libs/ddslib/ddslib.vcproj', 'libs/picomodel/picomodel.vcproj', 'libs/md5lib/md5lib.vcproj' ]:
+            for project in [ 'tools/quake3/common/quake3-common.vcxproj', 'libs/mathlib/mathlib.vcxproj', 'libs/l_net/l_net.vcxproj', 'libs/ddslib/ddslib.vcxproj', 'libs/picomodel/picomodel.vcxproj', 'libs/md5lib/md5lib.vcxproj' ]:
                 Export( 'project' )
                 lib_objects += SConscript( os.path.join( build_dir, 'SConscript.lib' ) )
             Export( 'lib_objects' )
@@ -176,7 +176,7 @@ class Config:
             build_dir = os.path.join( 'build', config_name, 'q3data' )
             VariantDir( build_dir, '.', duplicate = 0 )
             lib_objects = []
-            for project in [ 'libs/mathlib/mathlib.vcproj', 'libs/l_net/l_net.vcproj', 'libs/ddslib/ddslib.vcproj' ]:
+            for project in [ 'libs/mathlib/mathlib.vcxproj', 'libs/l_net/l_net.vcxproj', 'libs/ddslib/ddslib.vcxproj' ]:
                     Export( 'project' )
                     lib_objects += SConscript( os.path.join( build_dir, 'SConscript.lib' ) )
             Export( 'lib_objects' )

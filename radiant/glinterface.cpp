@@ -49,7 +49,7 @@ void WINAPI QERApp_UnHookGL2DWindow( IGL2DWindow* pGLW ){
 		}
 	}
 #ifdef _DEBUG
-	Sys_Printf( "ERROR: IGL2DWindow* not found in QERApp_UnHookGL2DWindow\n" );
+	Sys_FPrintf( SYS_ERR, "ERROR: IGL2DWindow* not found in QERApp_UnHookGL2DWindow\n" );
 #endif
 }
 
@@ -73,7 +73,7 @@ void WINAPI QERApp_UnHookGL3DWindow( IGL3DWindow* pGLW ){
 		}
 	}
 #ifdef _DEBUG
-	Sys_Printf( "ERROR: IGL3DWindow* not found in QERApp_UnHookGL3DWindow\n" );
+	Sys_FPrintf( SYS_ERR, "ERROR: IGL3DWindow* not found in QERApp_UnHookGL3DWindow\n" );
 #endif
 }
 

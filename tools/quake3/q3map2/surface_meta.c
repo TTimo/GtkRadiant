@@ -1358,7 +1358,7 @@ static int AddMetaTriangleToSurface( mapDrawSurface_t *ds, metaTriangle_t *tri, 
 			 ( bi == ds->indexes[ i ] && ci == ds->indexes[ i + 2 ] && ai == ds->indexes[ i + 1 ] ) ||
 			 ( ci == ds->indexes[ i ] && ai == ds->indexes[ i + 2 ] && bi == ds->indexes[ i + 1 ] ) ) {
 			/* warn about it */
-			Sys_Printf( "WARNING: Flipped triangle: (%6.0f %6.0f %6.0f) (%6.0f %6.0f %6.0f) (%6.0f %6.0f %6.0f)\n",
+			Sys_FPrintf( SYS_WRN, "WARNING: Flipped triangle: (%6.0f %6.0f %6.0f) (%6.0f %6.0f %6.0f) (%6.0f %6.0f %6.0f)\n",
 						ds->verts[ ai ].xyz[ 0 ], ds->verts[ ai ].xyz[ 1 ], ds->verts[ ai ].xyz[ 2 ],
 						ds->verts[ bi ].xyz[ 0 ], ds->verts[ bi ].xyz[ 1 ], ds->verts[ bi ].xyz[ 2 ],
 						ds->verts[ ci ].xyz[ 0 ], ds->verts[ ci ].xyz[ 1 ], ds->verts[ ci ].xyz[ 2 ] );
@@ -1467,8 +1467,8 @@ static void MetaTrianglesToSurface( int numPossibles, metaTriangle_t *possibles,
 		ClearBounds( ds->mins, ds->maxs );
 
 		/* clear verts/indexes */
-		memset( verts, 0, sizeof( verts ) );
-		memset( indexes, 0, sizeof( indexes ) );
+		memset( verts, 0, sizeof( *verts ) * maxSurfaceVerts );
+		memset( indexes, 0, sizeof( *indexes ) * maxSurfaceIndexes );
 
 		/* add the first triangle */
 		if ( AddMetaTriangleToSurface( ds, seed, qfalse ) ) {

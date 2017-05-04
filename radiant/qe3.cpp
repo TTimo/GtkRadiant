@@ -108,7 +108,7 @@ void WINAPI QE_CheckOpenGLForErrors( void ){
 		}
 		else
 		{
-			Sys_Printf( "Warning: OpenGL Error %s\n", qgluErrorString( (GLenum)i ) );
+			Sys_FPrintf( SYS_WRN, "WARNING: OpenGL Error %s\n", qgluErrorString( (GLenum)i ) );
 		}
 	}
 }
@@ -802,13 +802,13 @@ qboolean QE_SingleBrush( bool bQuiet ){
 	if ( ( selected_brushes.next == &selected_brushes )
 		 || ( selected_brushes.next->next != &selected_brushes ) ) {
 		if ( !bQuiet ) {
-			Sys_Printf( "Error: you must have a single brush selected\n" );
+			Sys_FPrintf( SYS_ERR, "ERROR: you must have a single brush selected\n" );
 		}
 		return false;
 	}
 	if ( selected_brushes.next->owner->eclass->fixedsize ) {
 		if ( !bQuiet ) {
-			Sys_Printf( "Error: you cannot manipulate fixed size entities\n" );
+			Sys_FPrintf( SYS_ERR, "ERROR: you cannot manipulate fixed size entities\n" );
 		}
 		return false;
 	}
