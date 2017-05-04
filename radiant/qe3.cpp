@@ -480,12 +480,16 @@ static void ReplaceTemplates( char* w, const char* r ){
 				// see https://github.com/TTimo/GtkRadiant/issues/116
 #ifdef _WIN32
 				if ( g_PrefsDlg.m_bx64q3map2 ) {
-				  p = "x64/q3map2";
+				  p = "x64/q3map2.exe";
 				} else
-#endif
+				{
+				  p = "q3map2.exe";
+				}
+#else
 				{
 				  p = "q3map2";
 				}
+#endif
 			}
 			else
 			{
