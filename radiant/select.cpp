@@ -485,8 +485,8 @@ void Select_Deselect( bool bDeselectFaces ){
    ============
  */
 /*! Moves the currently selected brush/patch
-	\param delta How far to move the selection (x,y,z)
-	\param bSnap If the move should snap to grid points
+    \param delta How far to move the selection (x,y,z)
+    \param bSnap If the move should snap to grid points
  */
 void Select_Move( vec3_t delta, bool bSnap ){
 	brush_t *b;
@@ -510,8 +510,8 @@ void Select_Move( vec3_t delta, bool bSnap ){
    =================
  */
 /*! Moves the currently selected brush/patch vertices
-	\param delta How far to move the vertices (x,y,z)
-	\param bSnap If the move should snap to grid points
+    \param delta How far to move the vertices (x,y,z)
+    \param bSnap If the move should snap to grid points
  */
 void Select_NudgePoint( vec3_t delta, qboolean bSnap ){
 	if ( g_qeglobals.d_select_mode == sel_vertex ) {
@@ -562,11 +562,11 @@ void Select_Clone( void ){
    Select_SetTexture
    Timo : bFitScale to compute scale on the plane and counteract plane / axial plane snapping
    Timo :	brush primitive texturing
-		the brushprimit_texdef given must be understood as a qtexture_t width=2 height=2 ( HiRes )
+        the brushprimit_texdef given must be understood as a qtexture_t width=2 height=2 ( HiRes )
    Timo :  texture plugin, added an IPluginTexdef* parameter
-		must be casted to an IPluginTexdef!
-		if not NULL, get ->Copy() of it into each face or brush ( and remember to hook )
-		if NULL, means we have no information, ask for a default
+        must be casted to an IPluginTexdef!
+        if not NULL, get ->Copy() of it into each face or brush ( and remember to hook )
+        if NULL, means we have no information, ask for a default
    TTimo - shader code cleanup
    added IShader* parameter
    ============
@@ -608,11 +608,11 @@ void WINAPI Select_SetTexture2( IShader* pShader, texdef_t *texdef, brushprimit_
    Select_SetTexture
    Timo : bFitScale to compute scale on the plane and counteract plane / axial plane snapping
    Timo :	brush primitive texturing
-		the brushprimit_texdef given must be understood as a qtexture_t width=2 height=2 ( HiRes )
+        the brushprimit_texdef given must be understood as a qtexture_t width=2 height=2 ( HiRes )
    Timo :  texture plugin, added an IPluginTexdef* parameter
-		must be casted to an IPluginTexdef!
-		if not NULL, get ->Copy() of it into each face or brush ( and remember to hook )
-		if NULL, means we have no information, ask for a default
+        must be casted to an IPluginTexdef!
+        if not NULL, get ->Copy() of it into each face or brush ( and remember to hook )
+        if NULL, means we have no information, ask for a default
    ============
  */
 void WINAPI Select_SetTexture( texdef_t *texdef, brushprimit_texdef_t *brushprimit_texdef, bool bFitScale, void* pPlugTexdef ){
@@ -1110,8 +1110,8 @@ void Select_RotateAxis( int axis, float deg, bool bPaint, bool bMouse ){
 	   vec3_t rotation;
 	   VectorSet(rotation, 0, 0, 360 - deg);
 	   for(brush_t *b = selected_brushes.next; b != &selected_brushes; b = b->next)
-		if(b->owner->model.pEdit)
-		  b->owner->model.pEdit->Rotate(select_origin, rotation);
+	    if(b->owner->model.pEdit)
+	      b->owner->model.pEdit->Rotate(select_origin, rotation);
 	   }
 	 */
 

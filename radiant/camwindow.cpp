@@ -961,8 +961,8 @@ void CamWnd::Cam_DrawBrush( brush_t *b, int mode ){
 				aabb_draw( b->owner->model.pRender->GetAABB(), DRAW_GL_WIRE );
 			}
 /*
-			if(!(nModelMode & ENTITY_BOXED) && b->owner->eclass->nShowFlags & ECLASS_MISCMODEL)
-				DrawModelOrigin(b);
+      if(!(nModelMode & ENTITY_BOXED) && b->owner->eclass->nShowFlags & ECLASS_MISCMODEL)
+              DrawModelOrigin(b);
  */
 		}
 	}
