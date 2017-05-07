@@ -66,6 +66,7 @@ void Reload( void );
 void Draw( int state, vector<IShader*> shaders, int rflags ) const;
 //IRender
 virtual void Draw( int state, int rflags ) const;
+virtual const bool IsModelNotNull() const { return true; }
 virtual const aabb_t *GetAABB() const { return &m_BBox; }
 
 //ISelect
