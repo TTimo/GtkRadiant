@@ -40,6 +40,7 @@ class CEntityMiscModel : public IRender, public ISelect, public IEdit
 
 	// IRender
 	void Draw( int state, int rflags ) const;
+	const bool IsModelNotNull() const { return m_model && m_model->pRender; }
 	const aabb_t *GetAABB() const { return &m_BBox; }
 
 	// ISelect
@@ -105,6 +106,7 @@ class CEntityEclassModel : public IRender, public ISelect, public IEdit
 
 	// IRender
 	void Draw( int state, int rflags ) const;
+	const bool IsModelNotNull() const { return m_model && m_model->pRender; }
 	const aabb_t *GetAABB() const { return &m_BBox; }
 
 	// ISelect
