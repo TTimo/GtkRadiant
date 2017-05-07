@@ -35,8 +35,6 @@
 #include "groupdialog.h"
 
 GtkWidget*  EntWidgets[EntLast];
-GtkListStore* g_entlist_store;
-GtkListStore* g_entprops_store;
 int inspector_mode;                     // W_TEXTURE, W_ENTITY, or W_CONSOLE
 qboolean multiple_entities;
 qboolean disable_spawn_get = false;
@@ -90,7 +88,10 @@ static void entity_check( GtkWidget *widget, gpointer data );
  */
 
 void FillClassList(){
-	GtkListStore* store = g_entlist_store;
+	GtkListStore *store;
+	GtkTreeModel * model;
+	model = GTK_TREE_MODEL( gtk_tree_view_get_model( GTK_TREE_VIEW( EntWidgets[EntList] ) ) );
+	store = GTK_LIST_STORE( model );
 
 	gtk_list_store_clear( store );
 
@@ -109,7 +110,10 @@ void FillClassList(){
 //
 
 void SetKeyValuePairs( bool bClearMD3 ){
-	GtkListStore* store = g_entprops_store;
+	GtkListStore *store;
+	GtkTreeModel * model;
+	model = GTK_TREE_MODEL( gtk_tree_view_get_model( GTK_TREE_VIEW( EntWidgets[EntProps] ) ) );
+	store = GTK_LIST_STORE( model );
 
 	gtk_list_store_clear( store );
 
@@ -347,7 +351,7 @@ bool UpdateEntitySel( eclass_t *pec ){
 	Sys_FPrintf( SYS_WRN, "UpdateEntitySel\n" );
 #endif
 
-	GtkTreeModel* model = GTK_TREE_MODEL( g_entlist_store );
+	GtkTreeModel* model = GTK_TREE_MODEL( gtk_tree_view_get_model( GTK_TREE_VIEW( EntWidgets[EntList] ) ) );
 	GtkTreeIter iter;
 	unsigned int i = 0;
 	for ( gboolean good = gtk_tree_model_get_iter_first( model, &iter ); good != FALSE; good = gtk_tree_model_iter_next( model, &iter ) )
@@ -1059,12 +1063,21 @@ static gint eclasslist_keypress( GtkWidget* widget, GdkEventKey* event, gpointer
 	return FALSE;
 }
 
-
 static void proplist_selection_changed( GtkTreeSelection* selection, gpointer data ){
 	// find out what type of entity we are trying to create
 	GtkTreeModel* model;
 	GtkTreeIter iter;
-	if ( gtk_tree_selection_get_selected( selection, &model, &iter ) == FALSE ) {
+	GtkWidget *dialog, *del_button;
+	gboolean selected;
+
+	dialog = GTK_WIDGET( data );
+	del_button = GTK_WIDGET( g_object_get_data( G_OBJECT( dialog ), "del_button" ) );
+
+	selected = gtk_tree_selection_get_selected( selection, &model, &iter );
+
+	gtk_widget_set_sensitive( del_button, selected );
+
+	if ( selected == FALSE ) {
 		return;
 	}
 
@@ -1077,6 +1090,10 @@ static void proplist_selection_changed( GtkTreeSelection* selection, gpointer da
 
 	g_free( key );
 	g_free( val );
+}
+static void proplist_view_realize( GtkWidget *widget, gpointer data )
+{
+	proplist_selection_changed( gtk_tree_view_get_selection( GTK_TREE_VIEW( widget ) ), data );
 }
 
 static void entity_check( GtkWidget *widget, gpointer data ){
@@ -1215,30 +1232,34 @@ extern void PositionWindowOnPrimaryScreen( window_position_t& position );
 #endif
 
 void GroupDlg::Create(){
+	GtkWidget *dialog, *content_area;
+	GtkDialogFlags flags = GTK_DIALOG_DESTROY_WITH_PARENT;
+
 	if ( m_pWidget != NULL ) {
 		return;
 	}
 
-	GtkWidget* dlg = gtk_window_new( GTK_WINDOW_TOPLEVEL );
+	dialog = gtk_dialog_new_with_buttons( _( "Entities/Entity View" ), NULL, flags, NULL );
+
+	content_area = gtk_dialog_get_content_area( GTK_DIALOG( dialog ) );
 
 #ifdef _WIN32
 	if ( g_PrefsDlg.m_bStartOnPrimMon ) {
 		PositionWindowOnPrimaryScreen( g_PrefsDlg.mWindowInfo.posEntityWnd );
 	}
 #endif
-	load_window_pos( dlg, g_PrefsDlg.mWindowInfo.posEntityWnd );
+	load_window_pos( dialog, g_PrefsDlg.mWindowInfo.posEntityWnd );
 
-	gtk_window_set_title( GTK_WINDOW( dlg ), _( "Entities" ) );
-	g_signal_connect( G_OBJECT( dlg ), "delete-event", G_CALLBACK( OnDeleteHide ), NULL );
+	g_signal_connect( G_OBJECT( dialog ), "delete-event", G_CALLBACK( OnDeleteHide ), NULL );
 	// catch 'Esc'
-	g_signal_connect( G_OBJECT( dlg ), "key-press-event", G_CALLBACK( OnDialogKey ), NULL );
+	g_signal_connect( G_OBJECT( dialog ), "key-press-event", G_CALLBACK( OnDialogKey ), NULL );
 
-	gtk_window_set_transient_for( GTK_WINDOW( dlg ), GTK_WINDOW( g_pParentWnd->m_pWidget ) );
-	g_qeglobals_gui.d_entity = dlg;
+	gtk_window_set_transient_for( GTK_WINDOW( dialog ), GTK_WINDOW( g_pParentWnd->m_pWidget ) );
+	g_qeglobals_gui.d_entity = dialog;
 
 	{
 		GtkWidget* notebook = gtk_notebook_new();
-		gtk_container_add( GTK_CONTAINER( dlg ), notebook );
+		gtk_container_add( GTK_CONTAINER( content_area ), notebook );
 		gtk_notebook_set_tab_pos( GTK_NOTEBOOK( notebook ), GTK_POS_BOTTOM );
 		gtk_widget_show( notebook );
 		m_pNotebook = notebook;
@@ -1261,20 +1282,20 @@ void GroupDlg::Create(){
 
 				{
 					GtkWidget* split2 = gtk_vpaned_new();
-					gtk_paned_add1( GTK_PANED( split1 ), split2 );
+					gtk_paned_pack1( GTK_PANED( split1 ), split2, TRUE, FALSE );
 					gtk_widget_show( split2 );
 
-					g_object_set_data( G_OBJECT( dlg ), "split1", split1 );
-					g_object_set_data( G_OBJECT( dlg ), "split2", split2 );
+					g_object_set_data( G_OBJECT( dialog ), "split1", split1 );
+					g_object_set_data( G_OBJECT( dialog ), "split2", split2 );
 
 					{
 						GtkWidget* vbox2 = gtk_vbox_new( FALSE, 2 );
-						gtk_paned_pack2( GTK_PANED( split1 ), vbox2, FALSE, FALSE );
+						gtk_paned_pack2( GTK_PANED( split1 ), vbox2, TRUE, FALSE );
 						gtk_widget_show( vbox2 );
 
 						{
 							GtkWidget* scr = gtk_scrolled_window_new( NULL, NULL );
-							gtk_paned_add1( GTK_PANED( split2 ), scr );
+							gtk_paned_pack1( GTK_PANED( split2 ), scr, TRUE, FALSE );
 							gtk_scrolled_window_set_policy( GTK_SCROLLED_WINDOW( scr ), GTK_POLICY_NEVER, GTK_POLICY_ALWAYS );
 							gtk_scrolled_window_set_shadow_type( GTK_SCROLLED_WINDOW( scr ), GTK_SHADOW_IN );
 							gtk_widget_show( scr );
@@ -1295,22 +1316,21 @@ void GroupDlg::Create(){
 
 								{
 									GtkTreeSelection* selection = gtk_tree_view_get_selection( GTK_TREE_VIEW( view ) );
-									g_signal_connect( G_OBJECT( selection ), "changed", G_CALLBACK( eclasslist_selection_changed ), dlg );
+									g_signal_connect( G_OBJECT( selection ), "changed", G_CALLBACK( eclasslist_selection_changed ), dialog );
 								}
-
-								gtk_widget_show( view );
 
 								gtk_container_add( GTK_CONTAINER( scr ), view );
 
+								gtk_widget_show( view );
+
 								g_object_unref( G_OBJECT( store ) );
 								EntWidgets[EntList] = view;
-								g_entlist_store = store;
 							}
 						}
 
 						{
 							GtkWidget* scr = gtk_scrolled_window_new( NULL, NULL );
-							gtk_paned_add2( GTK_PANED( split2 ), scr );
+							gtk_paned_pack2( GTK_PANED( split2 ), scr, TRUE, FALSE );
 							gtk_scrolled_window_set_policy( GTK_SCROLLED_WINDOW( scr ), GTK_POLICY_NEVER, GTK_POLICY_ALWAYS );
 							gtk_scrolled_window_set_shadow_type( GTK_SCROLLED_WINDOW( scr ), GTK_SHADOW_IN );
 							gtk_widget_show( scr );
@@ -1369,9 +1389,9 @@ void GroupDlg::Create(){
 
 								{
 									GtkTreeSelection* selection = gtk_tree_view_get_selection( GTK_TREE_VIEW( view ) );
-									g_signal_connect( G_OBJECT( selection ), "changed", G_CALLBACK( proplist_selection_changed ), dlg );
+									g_signal_connect( G_OBJECT( selection ), "changed", G_CALLBACK( proplist_selection_changed ), dialog );
+									g_signal_connect( G_OBJECT( view ), "realize", G_CALLBACK( proplist_view_realize ), dialog );
 								}
-
 
 								gtk_container_add( GTK_CONTAINER( scr ), view );
 
@@ -1379,7 +1399,6 @@ void GroupDlg::Create(){
 								g_object_unref( G_OBJECT( store ) );
 
 								EntWidgets[EntProps] = view;
-								g_entprops_store = store;
 							}
 						}
 					}
@@ -1539,9 +1558,9 @@ void GroupDlg::Create(){
 
 					{
 						GtkWidget* button = gtk_button_new_with_label( _( "Reset" ) );
+						gtk_box_pack_start( GTK_BOX( vbox2 ), button, FALSE, FALSE, 0 );
 						gtk_widget_show( button );
 						g_signal_connect( G_OBJECT( button ), "clicked", G_CALLBACK( ResetEntity ), NULL );
-						gtk_box_pack_start( GTK_BOX( vbox2 ), button, FALSE, FALSE, 0 );
 					}
 
 					{
@@ -1570,6 +1589,7 @@ void GroupDlg::Create(){
 						gtk_box_pack_start( GTK_BOX( vbox2 ), button, FALSE, FALSE, 0 );
 						gtk_widget_show( button );
 						g_signal_connect( G_OBJECT( button ), "clicked", G_CALLBACK( DelProp ), NULL );
+						g_object_set_data( G_OBJECT( dialog ), "del_button", button );
 					}
 
 					{
@@ -1630,7 +1650,7 @@ void GroupDlg::Create(){
 		}
 
 		inspector_mode = W_ENTITY;
-		m_pWidget = dlg;
-		g_signal_connect( G_OBJECT( notebook ), "switch-page", G_CALLBACK( switch_page ), dlg );
+		m_pWidget = dialog;
+		g_signal_connect( G_OBJECT( notebook ), "switch-page", G_CALLBACK( switch_page ), dialog );
 	}
 }
