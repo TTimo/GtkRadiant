@@ -36,7 +36,7 @@ CListener         *Listener = NULL;
 static const char *PLUGIN_NAME = "Camera";
 
 // commands in the menu
-static const char *PLUGIN_COMMANDS = "About...,-,Load Camera...,-,Preview Camera,-,Camera Inspector...,-,New Spline Camera,New Interpolated Camera,New Fixed Camera";
+static const char *PLUGIN_COMMANDS = "About...,-,Load Camera...,-,Preview Camera,-,Camera Inspector...,-,New Spline Camera...,New Interpolated Camera...,New Fixed Camera...";
 
 // globals
 GtkWidget *g_pRadiantWnd = NULL;
