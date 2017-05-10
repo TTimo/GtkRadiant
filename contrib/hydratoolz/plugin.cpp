@@ -334,7 +334,7 @@ void UpdateWadKeyPair( void ){
 const char *PLUGIN_NAME = "HydraToolz";
 
 // commands in the menu
-const char *PLUGIN_COMMANDS = "About...;Create/Update WAD keypair";
+const char *PLUGIN_COMMANDS = "About...;-;Create/Update WAD keypair";
 
 const char *PLUGIN_ABOUT = "HydraToolz v1.0 for GTKRadiant\n\n"
 						   "By Hydra!";

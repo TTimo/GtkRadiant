@@ -152,7 +152,7 @@ void init_filetypes(){
 // plugin implementation
 
 static const char *PLUGIN_NAME = "Model loading module";
-static const char *PLUGIN_COMMANDS = "About;-;Flush & Reload Models;Flush & Reload Selected";
+static const char *PLUGIN_COMMANDS = "About...;-;Flush & Reload Models;Flush & Reload Selected";
 static const char *PLUGIN_ABOUT = "Model Module v1.0 for GtkRadiant\nby Arnout van Meer (rr2do2@splashdamage.com)\n\nBased on the MD3Model Module by SPoG\nPicoModel Library Copyright (c) 2002, Randy Reddig & seaw0lf\n\nSupported models:\n";
 
 void *g_pMainWidget = NULL;

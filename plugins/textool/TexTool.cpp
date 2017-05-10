@@ -37,7 +37,7 @@ _QERFuncTable_1 g_FuncTable;
 const char *PLUGIN_NAME = "Q3 Texture Tools";
 
 // commands in the menu
-const char *PLUGIN_COMMANDS = "About...;Go...";
+const char *PLUGIN_COMMANDS = "About...;-;Go...";
 
 // cast to GtkWidget*
 void *g_pMainWnd;

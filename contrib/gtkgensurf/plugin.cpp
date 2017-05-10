@@ -40,8 +40,8 @@ const char* QERPlug_GetName(){
 }
 
 const char* QERPlug_GetCommandList(){
-	return "Wall facing 270...;Wall facing 180...;Wall facing 90...;Wall facing 0...;"
-		   "Ceiling...;Ground surface...;-;About...";
+	return "About...;-;Wall facing 270...;Wall facing 180...;Wall facing 90...;Wall facing 0...;"
+		   "Ceiling...;Ground surface...";
 }
 
 // vMin/vMax provide the bounds of the selection, they are zero if there is no selection
