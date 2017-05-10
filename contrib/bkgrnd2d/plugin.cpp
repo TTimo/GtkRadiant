@@ -55,7 +55,7 @@
 
 #define CMD_SEP "-"
 #define CMD_CONFIG "Configure..."
-#define CMD_ABOUT "About..."
+#define CMD_ABOUT "About"
 // =============================================================================
 // Globals
 

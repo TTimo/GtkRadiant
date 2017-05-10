@@ -25,7 +25,7 @@
 #include <stdlib.h>
 
 #define Q3R_CMD_SPLITTER "-"
-#define Q3R_CMD_ABOUT "About Portal Viewer..."
+#define Q3R_CMD_ABOUT "About"
 #define Q3R_CMD_LOAD "Load .prt file"
 #define Q3R_CMD_RELEASE "Unload .prt file"
 #define Q3R_CMD_SHOW_3D "Toggle portals (3D)"
