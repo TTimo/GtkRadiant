@@ -1821,7 +1821,7 @@ void MainFrame::create_main_toolbar( GtkWidget *window, GtkWidget *vbox ){
 								 G_CALLBACK( HandleCommand ), GINT_TO_POINTER( ID_SELECTION_MAKEHOLLOW ) );
 	g_object_set_data( G_OBJECT( window ), "tb_selection_makehollow", w );
 	w = toolbar_append_item( GTK_TOOLBAR( toolbar ), "", _( "Hollow Touch" ), "",
-								 new_image_icon("selection_makehollow.png"),
+								 new_image_icon("selection_makehollowtouch.png"),
 								 G_CALLBACK( HandleCommand ), GINT_TO_POINTER( ID_SELECTION_MAKEHOLLOW_TOUCH ) );
 	g_object_set_data( G_OBJECT( window ), "tb_selection_makehollow_touch", w );
 
