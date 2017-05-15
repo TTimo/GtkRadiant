@@ -1240,7 +1240,7 @@ static void EnitityList_response( GtkDialog *dialog, gint response_id, gpointer 
 }
 void DoEntityList(){
 	static GtkWidget *dialog;
-	GtkWidget *vbox, *hbox, *hbox2, *button, *scr, *content_area;
+	GtkWidget *vbox, *hbox, *hbox2, *button, *scr, *content_area, *paned;
 	GtkWidget *notebook, *label, *textview, *keyvalue_scr, *desc_scr;
 	gint keyvalue_index;
 	GtkDialogFlags flags = GTK_DIALOG_DESTROY_WITH_PARENT;
@@ -1258,13 +1258,12 @@ void DoEntityList(){
 
 	content_area = gtk_dialog_get_content_area( GTK_DIALOG( dialog ) );
 
-	hbox = gtk_hbox_new( TRUE, 5 );
-	gtk_container_add( GTK_CONTAINER( content_area ), hbox );
-	gtk_container_set_border_width( GTK_CONTAINER( hbox ), 5 );
-	gtk_widget_show( hbox );
+	paned = gtk_hpaned_new();
+	gtk_box_pack_start( GTK_BOX( content_area ), paned, TRUE, TRUE, 0 );
+	gtk_widget_show( paned );
 
 	scr = gtk_scrolled_window_new( (GtkAdjustment*)NULL, (GtkAdjustment*)NULL );
-	gtk_box_pack_start( GTK_BOX( hbox ), scr, TRUE, TRUE, 0 );
+	gtk_paned_pack1( GTK_PANED( paned ), scr, FALSE, TRUE );
 	gtk_scrolled_window_set_policy( GTK_SCROLLED_WINDOW( scr ), GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC );
 	gtk_scrolled_window_set_shadow_type( GTK_SCROLLED_WINDOW( scr ), GTK_SHADOW_IN );
 	gtk_widget_show( scr );
@@ -1350,7 +1349,7 @@ void DoEntityList(){
 	}
 
 	vbox = gtk_vbox_new( FALSE, 5 );
-	gtk_box_pack_start( GTK_BOX( hbox ), vbox, TRUE, TRUE, 0 );
+	gtk_paned_pack2( GTK_PANED( paned ), vbox, FALSE, TRUE );
 	gtk_widget_show( vbox );
 
 	notebook = gtk_notebook_new();
