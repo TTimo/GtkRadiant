@@ -420,7 +420,8 @@ void DoConfigDialog( GtkWidget *parent ){
 	gtk_widget_show( cliplabel );
 	g_signal_connect( adj, "value-changed", G_CALLBACK( OnScrollClip ), cliplabel );
 
-	hbox = gtk_hbox_new( TRUE, 5 );
+	hbox = gtk_hbox_new( FALSE, 5 );
+	gtk_box_set_homogeneous( GTK_BOX( hbox ), TRUE );
 	gtk_widget_show( hbox );
 	gtk_box_pack_start( GTK_BOX( vbox2 ), hbox, TRUE, FALSE, 0 );
 

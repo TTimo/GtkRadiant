@@ -1586,7 +1586,8 @@ void DoGamma(){
 
 	content_area = gtk_dialog_get_content_area( GTK_DIALOG( dialog ) );
 
-	vbox = gtk_vbox_new( TRUE, 5 );
+	vbox = gtk_vbox_new( FALSE, 5 );
+	gtk_box_set_homogeneous( GTK_BOX( vbox ), TRUE );
 	gtk_container_add( GTK_CONTAINER( content_area ), vbox );
 	gtk_container_set_border_width( GTK_CONTAINER( vbox ), 5 );
 	gtk_widget_show( vbox );
@@ -3536,7 +3537,8 @@ int DoLightIntensityDlg( int *intensity ){
 	gtk_misc_set_alignment( GTK_MISC( label ), 0.0, 0.5 );
 	gtk_widget_show( label );
 
-	hbox = gtk_hbox_new( TRUE, 5 );
+	hbox = gtk_hbox_new( FALSE, 5 );
+	gtk_box_set_homogeneous( GTK_BOX( hbox ), TRUE );
 	gtk_box_pack_start( GTK_BOX( vbox ), hbox, TRUE, TRUE, 0 );
 	gtk_container_set_border_width( GTK_CONTAINER( hbox ), 5 );
 	gtk_widget_show( hbox );

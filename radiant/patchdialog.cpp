@@ -659,7 +659,8 @@ void PatchDialog::BuildDialog(){
 	gtk_entry_set_alignment( GTK_ENTRY( spin ), 1.0 ); //right
 	gtk_widget_show( spin );
 
-	hbox2 = gtk_hbox_new( TRUE, 5 );
+	hbox2 = gtk_hbox_new( FALSE, 5 );
+	gtk_box_set_homogeneous( GTK_BOX( hbox2 ), TRUE );
 	gtk_box_pack_start( GTK_BOX( vbox2 ), hbox2, TRUE, FALSE, 0 );
 	gtk_widget_show( hbox2 );
 
