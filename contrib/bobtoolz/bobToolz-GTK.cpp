@@ -39,7 +39,7 @@ _QEREntityTable g_EntityTable;
 const char* PLUGIN_NAME = "bobToolz";
 
 // commands in the menu
-static const char* PLUGIN_COMMANDS = "About...,-,Reset Textures...,PitOMatic,-,Vis Viewer,Brush Cleanup,Polygon Builder,Caulk Selection,-,Tree Planter,Drop Entity,Plot Splines,-,Merge Patches,Split patches,Turn edge";
+static const char* PLUGIN_COMMANDS = "About,-,Reset Textures...,PitOMatic,-,Vis Viewer,Brush Cleanup,Polygon Builder,Caulk Selection,-,Tree Planter,Drop Entity,Plot Splines,-,Merge Patches,Split patches,Turn edge";
 
 // globals
 GtkWidget *g_pRadiantWnd = NULL;
@@ -103,7 +103,7 @@ extern "C" void QERPlug_Dispatch( const char *p, vec3_t vMin, vec3_t vMax, bool 
 	else if ( !stricmp( p, "vis viewer" ) ) {
 		DoVisAnalyse();
 	}
-	else if ( !stricmp( p, "about..." ) ) {
+	else if ( !stricmp( p, "About" ) ) {
 		DoMessageBox( PLUGIN_ABOUT, "About", MB_OK );
 	}
 }

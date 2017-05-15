@@ -148,7 +148,7 @@ _QERShadersTable g_ShadersTable;
 
 static const char *PLUGIN_NAME = "Sprite Model loading module";
 
-static const char *PLUGIN_COMMANDS = "About...";
+static const char *PLUGIN_COMMANDS = "About";
 
 static const char *PLUGIN_ABOUT = "Sprite Model loading module v0.2 for GTKRadiant\n\n"
 								  "By Hydra!";
@@ -200,7 +200,7 @@ extern "C" const char* QERPlug_GetCommandList(){
 
 extern "C" void QERPlug_Dispatch( const char *p, vec3_t vMin, vec3_t vMax, bool bSingleBrush ){
 	// NOTE: this never happens in a module
-	if ( !strcmp( p, "About..." ) ) {
+	if ( !strcmp( p, "About" ) ) {
 		g_FuncTable.m_pfnMessageBox( g_pMainWidget, PLUGIN_ABOUT, "About", MB_OK, NULL );
 	}
 }
