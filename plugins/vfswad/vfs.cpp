@@ -47,7 +47,9 @@
 #if defined ( __linux__ ) || defined ( __APPLE__ )
   #include <dirent.h>
   #include <unistd.h>
-#else
+#endif
+
+#ifdef _MSC_VER
   #include <wtypes.h>
   #include <io.h>
   #define R_OK 04
@@ -111,7 +113,7 @@ static void vfsFixDOSName( char *src ){
 //FIXME: STUPID short filenames.. get RID of it asap
 // copied verbatim from qe3.cpp
 int vfsBuildShortPathName( const char* pPath, char* pBuffer, int nBufferLen ){
-#ifdef _WIN32
+#ifdef _MSC_VER
 	char *pFile = NULL;
 	int nResult = GetFullPathName( pPath, nBufferLen, pBuffer, &pFile );
 	nResult = GetShortPathName( pPath, pBuffer, nBufferLen );

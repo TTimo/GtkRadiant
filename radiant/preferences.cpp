@@ -823,7 +823,7 @@ CGameDescription::CGameDescription( xmlDocPtr pDoc, const Str &GameFile ){
 		prop = (char*)xmlGetProp( pNode, (const xmlChar *)ENGINEPATH_ATTRIBUTE );
 		if ( prop != NULL ) {
 			char full[PATH_MAX];
-		#ifdef _WIN32
+		#ifdef _MSC_VER
 			_fullpath( full, prop, PATH_MAX );
 		#else
 			strncpy( full, prop, PATH_MAX );

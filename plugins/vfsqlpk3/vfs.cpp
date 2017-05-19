@@ -47,7 +47,9 @@
 #if defined ( __linux__ ) || defined ( __APPLE__ )
   #include <dirent.h>
   #include <unistd.h>
-#else
+#endif
+
+#ifdef _MSC_VER
   #include <wtypes.h>
   #include <io.h>
   #define R_OK 04

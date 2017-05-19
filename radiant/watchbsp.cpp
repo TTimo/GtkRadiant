@@ -418,10 +418,9 @@ void CWatchBSP::DoEBeginStep() {
 
 void CWatchBSP::RoutineProcessing(){
 	// used for select()
-#ifdef _WIN32
+#ifdef _MSC_VER
 	TIMEVAL tout = { 0, 0 };
-#endif
-#if defined ( __linux__ ) || defined ( __APPLE__ )
+#else
 	timeval tout;
 	tout.tv_sec = 0;
 	tout.tv_usec = 0;
