@@ -3095,26 +3095,7 @@ static void Sys_Restore( GtkWidget *w ){
 		return;
 	}
 
-#if defined ( __linux__ ) || defined ( __APPLE__ )
-	Sys_FPrintf( SYS_WRN, "FIXME: Sys_Restore\n" );
-  #if 0
-	XWindowAttributes xattr;
-	GdkWindowPrivate *Private;
-
-	Private = (GdkWindowPrivate*)gtk_widget_get_window( w );
-
-	xattr.map_state = IsUnmapped;
-	XGetWindowAttributes( Private->xdisplay, Private->xwindow, &xattr );
-
-	if ( xattr.map_state == IsUnmapped ) {
-		XMapRaised( Private->xdisplay, Private->xwindow );
-	}
-  #endif
-#endif
-
-#ifdef _WIN32
-	ShowWindow( (HWND)GDK_WINDOW_HWND( gtk_widget_get_window( w ) ), SW_RESTORE );
-#endif
+	gtk_window_deiconify( GTK_WINDOW( w ) );
 }
 
 #ifdef _DEBUG
