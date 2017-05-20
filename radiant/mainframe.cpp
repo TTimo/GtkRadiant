@@ -27,9 +27,6 @@
 
 #include "stdafx.h"
 #ifdef _WIN32
-extern "C" {
-#include <gdk/gdkwin32.h>
-}
 #endif
 #include <gtk/gtk.h>
 #include <glib/gi18n.h>
