@@ -238,11 +238,6 @@ picoModel_t *PicoLoadModel( char *fileName, int frameNum ){
 		}
 	}
 
-	/* free memory used by file buffer */
-	if ( buffer ) {
-		_pico_free_file( buffer );
-	}
-
 	return model;
 }
 
