@@ -31,10 +31,6 @@
 #include <assert.h>
 #include <GL/gl.h>
 
-#ifdef _WIN32
-#include <gdk/gdkwin32.h>
-#endif
-
 // =============================================================================
 // variables
 

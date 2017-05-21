@@ -32,12 +32,7 @@
    - Make sure the interface is not dependent on gtk.
  */
 
-#ifdef _WIN32
-//#include <gdk/win32/gdkwin32.h>
-#include <gdk/gdkwin32.h>
-#endif
 #if defined ( __linux__ ) || defined ( __APPLE__ )
-#include <gdk/gdkx.h>
 #include <dirent.h>
 #endif
 #include <gtk/gtk.h>
