@@ -1287,7 +1287,8 @@ int DoResetTextureBox( ResetTextureRS* rs ){
 
 	content_area = gtk_dialog_get_content_area( GTK_DIALOG( dialog ) );
 
-	vbox = gtk_vbox_new( TRUE, 5 );
+	vbox = gtk_vbox_new( FALSE, 5 );
+	gtk_box_set_homogeneous( GTK_BOX( vbox ), TRUE );
 	gtk_container_add( GTK_CONTAINER( content_area ), vbox );
 	gtk_widget_show( vbox );
 

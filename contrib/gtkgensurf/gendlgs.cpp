@@ -1392,7 +1392,8 @@ GtkWidget* create_main_dialog(){
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ), 0, 0 );
 	gtk_widget_show( frame );
 
-	vbox = gtk_vbox_new( TRUE, 5 );
+	vbox = gtk_vbox_new( FALSE, 5 );
+	gtk_box_set_homogeneous( GTK_BOX( vbox ), TRUE );
 	gtk_container_add( GTK_CONTAINER( frame ), vbox );
 	gtk_container_set_border_width( GTK_CONTAINER( vbox ), 5 );
 	gtk_widget_show( vbox );
@@ -1413,7 +1414,8 @@ GtkWidget* create_main_dialog(){
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ), 0, 0 );
 	gtk_widget_show( frame );
 
-	vbox = gtk_vbox_new( TRUE, 5 );
+	vbox = gtk_vbox_new( FALSE, 5 );
+	gtk_box_set_homogeneous( GTK_BOX( vbox ), TRUE );
 	gtk_container_add( GTK_CONTAINER( frame ), vbox );
 	gtk_container_set_border_width( GTK_CONTAINER( vbox ), 5 );
 	gtk_widget_show( vbox );
@@ -1434,7 +1436,8 @@ GtkWidget* create_main_dialog(){
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ), 0, 0 );
 	gtk_widget_show( frame );
 
-	vbox = gtk_vbox_new( TRUE, 5 );
+	vbox = gtk_vbox_new( FALSE, 5 );
+	gtk_box_set_homogeneous( GTK_BOX( vbox ), TRUE );
 	gtk_container_add( GTK_CONTAINER( frame ), vbox );
 	gtk_container_set_border_width( GTK_CONTAINER( vbox ), 5 );
 	gtk_widget_show( vbox );
@@ -1837,7 +1840,8 @@ GtkWidget* create_main_dialog(){
 	g_object_set_data( G_OBJECT( dlg ), "bmp_file", entry );
 	g_signal_connect( G_OBJECT( entry ), "focus-out-event", G_CALLBACK( bitmap_file_entryfocusout ), NULL );
 
-	hbox2 = gtk_hbox_new( TRUE, 5 );
+	hbox2 = gtk_hbox_new( FALSE, 5 );
+	gtk_box_set_homogeneous( GTK_BOX( hbox2 ), TRUE );
 	gtk_table_attach( GTK_TABLE( table ), hbox2, 1, 2, 1, 2,
 					  (GtkAttachOptions) ( 0 ),
 					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ), 0, 0 );
