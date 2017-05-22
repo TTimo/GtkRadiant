@@ -1402,8 +1402,9 @@ void MainFrame::create_main_menu( GtkWidget *window, GtkWidget *vbox ){
 												 G_CALLBACK( HandleCommand ), ID_TEXTURES_SHADERLISTONLY, FALSE );
 	g_object_set_data( G_OBJECT( window ), "menu_textures_shaderlistonly", item );
 	item = menu_separator( menu );
-	g_object_set_data( G_OBJECT( window ), "menu_textures_separator", item );
-	g_object_set_data( G_OBJECT( window ), "menu_textures", menu );
+
+	menu_in_menu = create_menu_in_menu_with_mnemonic( menu, _( "Texture Directories" ) );
+	g_object_set_data( G_OBJECT( window ), "menu_texture_dirs", menu_in_menu );
 
 	// Misc menu
 	menu = create_sub_menu_with_mnemonic( menu_bar, _( "_Misc" ) );
@@ -2390,6 +2391,87 @@ GtkWidget* create_framed_widget( GtkWidget* widget ){
 	return frame;
 }
 
+static void textdirlist_activate( GtkTreeView *tree_view )
+{
+	GtkTreeSelection* selection;
+
+	GtkTreeModel* model;
+	GtkTreeIter iter;
+
+	selection = gtk_tree_view_get_selection( GTK_TREE_VIEW( tree_view ) );
+
+	if ( gtk_tree_selection_get_selected( selection, &model, &iter ) ) {
+		GtkTreePath* path = gtk_tree_model_get_path( model, &iter );
+		if ( gtk_tree_path_get_depth( path ) == 1 ) {
+			char* p;
+			gtk_tree_model_get( model, &iter, 0, &p, -1 );
+			
+			Texture_ShowDirectory_by_path( p );
+			g_free( p );
+		}
+		gtk_tree_path_free( path );
+	}
+}
+
+static void textdirlist_row_activated( GtkTreeView *tree_view, GtkTreePath *path, GtkTreeViewColumn *column, gpointer user_data )
+{
+	textdirlist_activate( tree_view );
+}
+static void textdirlist_cursor_changed( GtkTreeView *tree_view, gpointer user_data )
+{
+	textdirlist_activate( tree_view );
+}
+
+GtkWidget* create_texdirlist_widget()
+{
+	GtkWidget *scr;
+	GtkWidget* view;
+
+	scr = gtk_scrolled_window_new( (GtkAdjustment*)NULL, (GtkAdjustment*)NULL );
+
+	gtk_scrolled_window_set_policy( GTK_SCROLLED_WINDOW( scr ), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC );
+	gtk_scrolled_window_set_shadow_type( GTK_SCROLLED_WINDOW( scr ), GTK_SHADOW_IN );
+
+	{
+		GtkListStore* store = gtk_list_store_new( 1, G_TYPE_STRING );
+
+		view = gtk_tree_view_new_with_model( GTK_TREE_MODEL( store ) );
+		gtk_tree_view_set_headers_visible( GTK_TREE_VIEW( view ), FALSE );
+
+		{
+			GtkCellRenderer* renderer = gtk_cell_renderer_text_new();
+			GtkTreeViewColumn* column = gtk_tree_view_column_new_with_attributes( "Textures", renderer, "text", 0, (char *) NULL );
+			gtk_tree_view_append_column( GTK_TREE_VIEW( view ), column );
+		}
+
+		gtk_container_add( GTK_CONTAINER( scr ), view );
+
+		g_object_set_data( G_OBJECT( g_qeglobals_gui.d_main_window ), "dirlist_treeview" , view );
+
+		GSList *texdirs = NULL;
+		FillTextureList( &texdirs );
+		FillTextureDirListWidget( texdirs );
+		ClearGSList( texdirs );
+
+		g_object_unref( G_OBJECT( store ) );
+
+		gtk_tree_selection_set_mode( gtk_tree_view_get_selection( GTK_TREE_VIEW( view ) ), GTK_SELECTION_SINGLE );
+#if GTK_CHECK_VERSION( 3,12,0 )
+		gtk_tree_view_set_activate_on_single_click( GTK_TREE_VIEW( view ), TRUE );
+#else
+		g_signal_connect( view, "cursor-changed", G_CALLBACK( textdirlist_cursor_changed ), view );
+#endif
+		g_signal_connect( view, "row-activated", G_CALLBACK( textdirlist_row_activated ), view );
+
+		gtk_widget_show( view );
+
+	}
+
+	gtk_widget_show( scr );
+
+	return scr;
+}
+
 gboolean entry_focus_in( GtkWidget *widget, GdkEventFocus *event, gpointer user_data ){
 	gtk_window_remove_accel_group( GTK_WINDOW( g_pParentWnd->m_pWidget ), global_accel );
 	return FALSE;
@@ -2657,7 +2739,26 @@ void MainFrame::Create(){
 						m_pTexWnd = new TexWnd();
 						{
 							GtkWidget* frame = create_framed_texwnd( m_pTexWnd );
-							gtk_paned_add2( GTK_PANED( vsplit2 ), frame );
+							if( g_PrefsDlg.m_bShowTexDirList ) {
+
+								GtkWidget* texDirList = create_texdirlist_widget();
+
+								GtkWidget* texSplit = gtk_hpaned_new();
+								m_pSplits[4] = texSplit;
+
+								gtk_paned_pack2( GTK_PANED( vsplit2 ), texSplit, TRUE, FALSE );
+								gtk_paned_add1( GTK_PANED( texSplit ), texDirList );
+								gtk_paned_add2( GTK_PANED( texSplit ), frame );
+
+								if( g_PrefsDlg.mWindowInfo.nTextureDirectoryListWidth >= 0 ) {
+									gtk_paned_set_position( GTK_PANED( texSplit ), g_PrefsDlg.mWindowInfo.nTextureDirectoryListWidth );
+								}
+
+								gtk_widget_show( texSplit );
+							} else
+							{
+								gtk_paned_pack2( GTK_PANED( vsplit2 ), frame, TRUE, TRUE );
+							}
 						}
 
 						// console
@@ -2847,9 +2948,28 @@ void MainFrame::Create(){
 			GtkWidget* frame = create_framed_texwnd( m_pTexWnd );
 			m_pTexWnd->m_pParent = g_pGroupDlg->m_pWidget;
 
+			GtkWidget* w = gtk_label_new( _( "Textures" ) );
+			gtk_widget_show( w );
+
+			if( g_PrefsDlg.m_bShowTexDirList )
 			{
-				GtkWidget* w = gtk_label_new( _( "Textures" ) );
-				gtk_widget_show( w );
+				GtkWidget* texDirList = create_texdirlist_widget();
+
+				GtkWidget* texSplit = gtk_hpaned_new();
+				m_pSplits[4] = texSplit;
+
+				gtk_paned_add1( GTK_PANED( texSplit ), texDirList );
+				gtk_paned_add2( GTK_PANED( texSplit ), frame );
+
+				if( g_PrefsDlg.mWindowInfo.nTextureDirectoryListWidth >= 0 ) {
+					gtk_paned_set_position( GTK_PANED( texSplit ), g_PrefsDlg.mWindowInfo.nTextureDirectoryListWidth );
+				}
+
+				gtk_widget_show( texSplit );
+
+				gtk_notebook_insert_page( GTK_NOTEBOOK( g_pGroupDlg->m_pNotebook ), texSplit, w, 1 );
+			} else
+			{
 				gtk_notebook_insert_page( GTK_NOTEBOOK( g_pGroupDlg->m_pNotebook ), frame, w, 1 );
 			}
 		}
@@ -2910,9 +3030,28 @@ void MainFrame::Create(){
 			m_pTexWnd = new TexWnd();
 			GtkWidget* frame = create_framed_texwnd( m_pTexWnd );
 
+			GtkWidget* w = gtk_label_new( _( "Textures" ) );
+			gtk_widget_show( w );
+
+			if( g_PrefsDlg.m_bShowTexDirList )
 			{
-				GtkWidget* w = gtk_label_new( _( "Textures" ) );
-				gtk_widget_show( w );
+				GtkWidget* texDirList = create_texdirlist_widget();
+
+				GtkWidget* texSplit = gtk_hpaned_new();
+				m_pSplits[4] = texSplit;
+
+				gtk_paned_add1( GTK_PANED( texSplit ), texDirList );
+				gtk_paned_add2( GTK_PANED( texSplit ), frame );
+
+				if( g_PrefsDlg.mWindowInfo.nTextureDirectoryListWidth >= 0 ) {
+					gtk_paned_set_position( GTK_PANED( texSplit ), g_PrefsDlg.mWindowInfo.nTextureDirectoryListWidth );
+				}
+
+				gtk_widget_show( texSplit );
+
+				gtk_notebook_insert_page( GTK_NOTEBOOK( g_pGroupDlg->m_pNotebook ), texSplit, w, 1 );
+			} else
+			{
 				gtk_notebook_insert_page( GTK_NOTEBOOK( g_pGroupDlg->m_pNotebook ), frame, w, 1 );
 			}
 		}
@@ -3285,6 +3424,9 @@ void MainFrame::OnDelete(){
 	}
 	else{
 		g_PrefsDlg.mWindowInfo.nZFloatWidth = gtk_paned_get_position( GTK_PANED( m_pSplits[0] ) );
+	}
+	if( g_PrefsDlg.m_bShowTexDirList ) {
+		g_PrefsDlg.mWindowInfo.nTextureDirectoryListWidth = gtk_paned_get_position( GTK_PANED( m_pSplits[4] ) );
 	}
 
 	if ( CurrentStyle() == eFloating ) {
@@ -4627,6 +4769,7 @@ void MainFrame::OnPrefs() {
     bool    bPluginToolbar      = g_PrefsDlg.m_bPluginToolbar;
     bool    bDetachableMenus    = g_PrefsDlg.m_bDetachableMenus;
     bool    bFloatingZ          = g_PrefsDlg.m_bFloatingZ;
+	bool    bShowTexDirList     = g_PrefsDlg.m_bShowTexDirList;
 
     g_PrefsDlg.LoadPrefs();
 
@@ -4638,7 +4781,8 @@ void MainFrame::OnPrefs() {
            (g_PrefsDlg.m_bLatchedPluginToolbar      != bPluginToolbar   ) ||
            (g_PrefsDlg.m_nLatchedShader             != nShader          ) ||
            (g_PrefsDlg.m_nLatchedTextureQuality     != nTextureQuality  ) || 
-           (g_PrefsDlg.m_bLatchedFloatingZ          != bFloatingZ)) {
+           (g_PrefsDlg.m_bLatchedFloatingZ          != bFloatingZ       ) ||
+		   (g_PrefsDlg.m_bShowTexDirList            != bShowTexDirList)) {
             gtk_MessageBoxNew(m_pWidget, _( "You must restart Radiant for the "
                               "changes to take effect." ), _( "Restart Radiant" ), 
                               MB_OK | MB_ICONINFORMATION);
@@ -5788,6 +5932,12 @@ void MainFrame::OnTexturesReloadshaders(){
 	Texture_SetTexture( &g_qeglobals.d_texturewin.texdef, &g_qeglobals.d_texturewin.brushprimit_texdef, false, NULL, false );
 	Sys_UpdateWindows( W_ALL );
 	Sys_EndWait();
+
+	GSList *texdirs = NULL;
+	FillTextureList( &texdirs );
+	FillTextureMenu( texdirs );
+	FillTextureDirListWidget( texdirs );
+	ClearGSList( texdirs );
 }
 
 void MainFrame::OnTexturesShadersShow(){
@@ -5879,7 +6029,12 @@ void MainFrame::OnTexturesShaderlistonly(){
 	g_bIgnoreCommands++;
 	gtk_check_menu_item_set_active( GTK_CHECK_MENU_ITEM( item ), g_PrefsDlg.m_bTexturesShaderlistOnly ? TRUE : FALSE );
 	g_bIgnoreCommands--;
-	FillTextureMenu();
+
+	GSList *texdirs = NULL;
+	FillTextureList( &texdirs );
+	FillTextureMenu( texdirs );
+	FillTextureDirListWidget( texdirs );
+	ClearGSList( texdirs );
 }
 
 void MainFrame::OnTextureWad( unsigned int nID ){
