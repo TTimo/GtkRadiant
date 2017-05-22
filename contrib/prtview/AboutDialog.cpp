@@ -41,7 +41,7 @@ void DoAboutDlg( GtkWidget *parent ){
 	content_area = gtk_dialog_get_content_area( GTK_DIALOG( dialog ) );
 	gtk_window_set_transient_for( GTK_WINDOW( dialog ), GTK_WINDOW( parent) );
 
-	vbox = gtk_vbox_new( TRUE, 5 );
+	vbox = gtk_vbox_new( FALSE, 5 );
 	gtk_container_add( GTK_CONTAINER( content_area ), vbox );
 	gtk_container_set_border_width( GTK_CONTAINER( vbox ), 5 );
 	gtk_widget_show( vbox );

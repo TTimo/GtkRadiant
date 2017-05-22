@@ -27,9 +27,6 @@
 
 #include "stdafx.h"
 #ifdef _WIN32
-extern "C" {
-#include <gdk/gdkwin32.h>
-}
 #endif
 #include <gtk/gtk.h>
 #include <glib/gi18n.h>
@@ -1542,7 +1539,7 @@ void MainFrame::create_main_menu( GtkWidget *window, GtkWidget *vbox ){
 		item = create_menu_item_with_mnemonic( menu, _( "Simple Patch Mesh..." ),
 											   G_CALLBACK( HandleCommand ), ID_CURVE_SIMPLEPATCHMESH );
 		g_object_set_data( G_OBJECT( window ), "menu_simplepatchmesh", item );
-		create_menu_item_with_mnemonic( menu, _( "Patch Inspector" ), G_CALLBACK( HandleCommand ), ID_PATCH_INSPECTOR );
+		create_menu_item_with_mnemonic( menu, _( "Patch Inspector..." ), G_CALLBACK( HandleCommand ), ID_PATCH_INSPECTOR );
 		menu_separator( menu );
 		menu_in_menu = create_menu_in_menu_with_mnemonic( menu, _( "Insert" ) );
 		create_menu_item_with_mnemonic( menu_in_menu, _( "Insert (2) Columns" ),
@@ -1822,7 +1819,7 @@ void MainFrame::create_main_toolbar( GtkWidget *window, GtkWidget *vbox ){
 								 G_CALLBACK( HandleCommand ), GINT_TO_POINTER( ID_SELECTION_MAKEHOLLOW ) );
 	g_object_set_data( G_OBJECT( window ), "tb_selection_makehollow", w );
 	w = toolbar_append_item( GTK_TOOLBAR( toolbar ), "", _( "Hollow Touch" ), "",
-								 new_image_icon("selection_makehollow.png"),
+								 new_image_icon("selection_makehollowtouch.png"),
 								 G_CALLBACK( HandleCommand ), GINT_TO_POINTER( ID_SELECTION_MAKEHOLLOW_TOUCH ) );
 	g_object_set_data( G_OBJECT( window ), "tb_selection_makehollow_touch", w );
 
@@ -3234,26 +3231,7 @@ static void Sys_Restore( GtkWidget *w ){
 		return;
 	}
 
-#if defined ( __linux__ ) || defined ( __APPLE__ )
-	Sys_FPrintf( SYS_WRN, "FIXME: Sys_Restore\n" );
-  #if 0
-	XWindowAttributes xattr;
-	GdkWindowPrivate *Private;
-
-	Private = (GdkWindowPrivate*)gtk_widget_get_window( w );
-
-	xattr.map_state = IsUnmapped;
-	XGetWindowAttributes( Private->xdisplay, Private->xwindow, &xattr );
-
-	if ( xattr.map_state == IsUnmapped ) {
-		XMapRaised( Private->xdisplay, Private->xwindow );
-	}
-  #endif
-#endif
-
-#ifdef _WIN32
-	ShowWindow( (HWND)GDK_WINDOW_HWND( gtk_widget_get_window( w ) ), SW_RESTORE );
-#endif
+	gtk_window_deiconify( GTK_WINDOW( w ) );
 }
 
 #ifdef _DEBUG

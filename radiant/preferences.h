@@ -275,7 +275,6 @@ protected:
   // maps from m_nComboSelect to the games
   int m_availGames[GAME_COUNT];
 
-  GtkWidget * m_executablesVBox;
 };
 
 /*!

@@ -342,7 +342,8 @@ void InitBackgroundDialog(){
 	pPage = new CBackgroundDialogPage( YZ );
 	pPage->Append( pNotebook );
 
-	vbox = gtk_hbox_new( TRUE, 5 );
+	vbox = gtk_hbox_new( FALSE, 5 );
+	gtk_box_set_homogeneous( GTK_BOX( vbox ), TRUE );
 	gtk_container_add( GTK_CONTAINER( content_area ), vbox );
 	gtk_widget_show( vbox );
 

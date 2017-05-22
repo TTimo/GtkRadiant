@@ -3403,37 +3403,49 @@ void CGameInstall::OnGameSelectChanged( GtkWidget *widget, gpointer data ) {
 	g_free( str );
 	i->UpdateData( FALSE );
 
+	GtkWidget *label = GTK_WIDGET( g_object_get_data( G_OBJECT( i->m_pWidget ), "executable_label" ) );
+	GtkWidget *entry = GTK_WIDGET( g_object_get_data( G_OBJECT( i->m_pWidget ), "executable_entry" ) );
+	GtkWidget *button = GTK_WIDGET( g_object_get_data( G_OBJECT( i->m_pWidget ), "executable_button" ) );
+
 	int game_id = i->m_availGames[ i->m_nComboSelect ];
 	if ( game_id == GAME_Q2 || game_id == GAME_QUETOO ) {
-		gtk_widget_show( i->m_executablesVBox );
+		gtk_widget_show( label );
+		gtk_widget_show( entry );
+		gtk_widget_show( button );
 	} else {
-		gtk_widget_hide( i->m_executablesVBox );
+		gtk_widget_hide( label );
+		gtk_widget_hide( entry );
+		gtk_widget_hide( button );
 	}
 }
 
 void CGameInstall::BuildDialog() {
-	GtkWidget *dlg, *vbox1, *frame, *vbox2, *button, *text, *game_select_combo, *entry, *hbox;
+	GtkWidget *dlg, *vbox1, *frame, *table, *button, *text, *game_select_combo, *entry, *hbox;
 
 	dlg = m_pWidget;
 	gtk_window_set_title( GTK_WINDOW( dlg ), _( "Configure games" ) );
 
 	vbox1 = gtk_vbox_new( FALSE, 5 );
 	gtk_container_set_border_width( GTK_CONTAINER( vbox1 ), 5 );
-	gtk_widget_show( vbox1 );
 	gtk_container_add( GTK_CONTAINER( dlg ), vbox1 );
+	gtk_widget_show( vbox1 );
 
 	frame = gtk_frame_new( _( "Configure a game" ) );
+	gtk_box_pack_start( GTK_BOX( vbox1 ), frame, TRUE, TRUE, 0 );
 	gtk_widget_show( frame );
-	gtk_container_add( GTK_CONTAINER( vbox1 ), frame );
 
-	vbox2 = gtk_vbox_new( FALSE, 5);
-	gtk_container_set_border_width( GTK_CONTAINER( vbox2 ), 5 );
-	gtk_widget_show( vbox2 );
-	gtk_container_add( GTK_CONTAINER( frame ), vbox2 );
+	table = gtk_table_new( 5, 2, FALSE );
+	gtk_table_set_row_spacings( GTK_TABLE( table ), 5 );
+	gtk_table_set_col_spacings( GTK_TABLE( table ), 5 );
+	gtk_container_set_border_width( GTK_CONTAINER( table ), 5 );
+	gtk_container_add( GTK_CONTAINER( frame ), table );
+	gtk_widget_show( table );
 
 	game_select_combo = gtk_combo_box_text_new();
+	gtk_table_attach( GTK_TABLE( table ), game_select_combo, 1, 2, 0, 1,
+					  (GtkAttachOptions) ( GTK_FILL ),
+					  (GtkAttachOptions) ( 0 ), 0, 0 );
 	gtk_widget_show( game_select_combo );
-	gtk_box_pack_start( GTK_BOX( vbox2 ), game_select_combo, FALSE, FALSE, 0 );
 
 	int iGame = 0;
 	while ( m_availGames[ iGame ] != GAME_NONE ) {
@@ -3490,67 +3502,83 @@ void CGameInstall::BuildDialog() {
 	g_signal_connect( G_OBJECT( game_select_combo ), "changed", G_CALLBACK( OnGameSelectChanged ), this );
 
 	text = gtk_label_new( _( "Name:" ) );
+	gtk_misc_set_alignment( GTK_MISC( text ), 0.0, 0.5 );
+	gtk_table_attach( GTK_TABLE( table ), text, 0, 1, 1, 2,
+					  (GtkAttachOptions) ( GTK_FILL ),
+					  (GtkAttachOptions) ( 0 ), 0, 0 );
 	gtk_widget_show( text );
-	gtk_box_pack_start( GTK_BOX( vbox2 ), text, FALSE, FALSE, 0 );
 
 	entry = gtk_entry_new();
+	gtk_table_attach( GTK_TABLE( table ), entry, 1, 2, 1, 2,
+					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
+					  (GtkAttachOptions) ( 0 ), 0, 0 );
 	gtk_widget_show( entry );
-	gtk_box_pack_start( GTK_BOX( vbox2 ), entry, FALSE, FALSE, 0 );
 	AddDialogData( entry, &m_strName, DLG_ENTRY_TEXT );
 
 	text = gtk_label_new( _( "Game directory:" ) );
+	gtk_misc_set_alignment( GTK_MISC( text ), 0.0, 0.5 );
+	gtk_table_attach( GTK_TABLE( table ), text, 0, 1, 2, 3,
+					  (GtkAttachOptions) ( GTK_FILL ),
+					  (GtkAttachOptions) ( 0 ), 0, 0 );
 	gtk_widget_show( text );
-	gtk_box_pack_start( GTK_BOX( vbox2 ), text, FALSE, FALSE, 0 );
 
 	hbox = gtk_hbox_new( FALSE, 5 );
+	gtk_table_attach( GTK_TABLE( table ), hbox, 1, 2, 2, 3,
+					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
+					  (GtkAttachOptions) ( 0 ), 0, 0 );
 	gtk_widget_show( hbox );
-	gtk_box_pack_start( GTK_BOX( vbox2 ), hbox, FALSE, FALSE, 0 );
 
 	entry = gtk_entry_new();
-	gtk_widget_show( entry );
 	gtk_box_pack_start( GTK_BOX( hbox ), entry, TRUE, TRUE, 0 );
+	gtk_widget_show( entry );
 	AddDialogData( entry, &m_strEngine, DLG_ENTRY_TEXT );
 
 	button = gtk_button_new_with_label( _( "..." ) );
-	gtk_widget_show( button );
 	g_signal_connect( G_OBJECT( button ), "clicked", G_CALLBACK( OnBtnBrowseEngine ), this );
 	gtk_box_pack_start( GTK_BOX( hbox ), button, FALSE, FALSE, 0 );
-
-	m_executablesVBox = gtk_vbox_new( TRUE, 0 );
-	gtk_box_pack_start( GTK_BOX( vbox2 ), m_executablesVBox, FALSE, FALSE, 0 );
-	gtk_widget_show( m_executablesVBox );
+	gtk_widget_show( button );
 
 	text = gtk_label_new( _( "Engine binaries directory:" ) );
+	gtk_misc_set_alignment( GTK_MISC( text ), 0.0, 0.5 );
+	gtk_table_attach( GTK_TABLE( table ), text, 0, 1, 3, 4,
+					  (GtkAttachOptions) ( GTK_FILL ),
+					  (GtkAttachOptions) ( 0 ), 0, 0 );
 	gtk_widget_show( text );
-	gtk_box_pack_start( GTK_BOX( m_executablesVBox ), text, FALSE, FALSE, 0 );
+	g_object_set_data( G_OBJECT( dlg ), "executable_label", text );
 
 	hbox = gtk_hbox_new( FALSE, 5 );
+	gtk_table_attach( GTK_TABLE( table ), hbox, 1, 2, 3, 4,
+					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
+					  (GtkAttachOptions) ( 0 ), 0, 0 );
 	gtk_widget_show( hbox );
-	gtk_box_pack_start( GTK_BOX( m_executablesVBox ), hbox, FALSE, FALSE, 0 );
 
 	entry = gtk_entry_new();
-	gtk_widget_show( entry );
 	gtk_box_pack_start( GTK_BOX( hbox ), entry, TRUE, TRUE, 0 );
+	gtk_widget_show( entry );
 	AddDialogData( entry, &m_strExecutables, DLG_ENTRY_TEXT );
+	g_object_set_data( G_OBJECT( dlg ), "executable_entry", entry );
 
 	button = gtk_button_new_with_label( _( "..." ) );
-	gtk_widget_show( button );
 	g_signal_connect( G_OBJECT( button ), "clicked", G_CALLBACK( OnBtnBrowseExecutables ), this );
 	gtk_box_pack_start( GTK_BOX( hbox ), button, FALSE, FALSE, 0 );
+	gtk_widget_show( button );
+	g_object_set_data( G_OBJECT( dlg ), "executable_button", button );
+
+	hbox = gtk_hbox_new( FALSE, 0 );
+	gtk_box_pack_start( GTK_BOX( vbox1 ), hbox, FALSE, FALSE, 0 );
+	gtk_widget_show( hbox );
 
 	button = gtk_button_new_with_label( _( "OK" ) );
+	gtk_box_pack_start( GTK_BOX( hbox ), button, TRUE, TRUE, 0 );
 	gtk_widget_show( button );
-	gtk_box_pack_start( GTK_BOX( vbox1 ), button, TRUE, TRUE, 0 );
 	AddModalButton( button, IDOK );
 
 	button = gtk_button_new_with_label( _( "Cancel" ) );
+	gtk_box_pack_start( GTK_BOX( hbox ), button, TRUE, TRUE, 0 );
 	gtk_widget_show( button );
-	gtk_box_pack_start( GTK_BOX( vbox1 ), button, TRUE, TRUE, 0 );
 	AddModalButton( button, IDCANCEL );
 
-	gtk_widget_set_size_request( dlg, 320, -1 );
-
-        // triggers the callback - sets the game name, shows/hide extra settings depending on project
+	// triggers the callback - sets the game name, shows/hide extra settings depending on project
 	gtk_combo_box_set_active( GTK_COMBO_BOX( game_select_combo ), 0 );
 }
 

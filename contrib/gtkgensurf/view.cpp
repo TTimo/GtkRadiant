@@ -394,7 +394,8 @@ void CreateViewWindow(){
 	gtk_widget_show( vbox );
 
 #ifndef ISOMETRIC
-	hbox = gtk_hbox_new( TRUE, 5 );
+	hbox = gtk_hbox_new( FALSE, 5 );
+	gtk_box_set_homogeneous( GTK_BOX( hbox ), TRUE );
 	gtk_box_pack_start( GTK_BOX( vbox ), hbox, FALSE, TRUE, 0 );
 	gtk_container_set_border_width( GTK_CONTAINER( hbox ), 3 );
 	gtk_widget_show( hbox );

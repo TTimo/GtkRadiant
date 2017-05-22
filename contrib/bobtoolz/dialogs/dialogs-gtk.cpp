@@ -33,13 +33,13 @@ typedef struct {
 	GtkWidget *editTexOld, *editTexNew;
 
 	GtkWidget *cbScaleHor, *cbScaleVert;
-	GtkWidget *editScaleHor, *editScaleVert;
+	GtkWidget *spinScaleHor, *spinScaleVert;
 
 	GtkWidget *cbShiftHor, *cbShiftVert;
-	GtkWidget *editShiftHor, *editShiftVert;
+	GtkWidget *spinShiftHor, *spinShiftVert;
 
 	GtkWidget *cbRotation;
-	GtkWidget *editRotation;
+	GtkWidget *spinRotation;
 }dlg_texReset_t;
 
 dlg_texReset_t dlgTexReset;
@@ -60,19 +60,19 @@ void Update_TextureReseter(){
 	gtk_editable_set_editable( GTK_EDITABLE( dlgTexReset.editTexOld ), check );
 
 	check = gtk_toggle_button_get_active( GTK_TOGGLE_BUTTON( dlgTexReset.cbScaleHor ) );
-	gtk_editable_set_editable( GTK_EDITABLE( dlgTexReset.editScaleHor ), check );
+	gtk_editable_set_editable( GTK_EDITABLE( dlgTexReset.spinScaleHor ), check );
 
 	check = gtk_toggle_button_get_active( GTK_TOGGLE_BUTTON( dlgTexReset.cbScaleVert ) );
-	gtk_editable_set_editable( GTK_EDITABLE( dlgTexReset.editScaleVert ), check );
+	gtk_editable_set_editable( GTK_EDITABLE( dlgTexReset.spinScaleVert ), check );
 
 	check = gtk_toggle_button_get_active( GTK_TOGGLE_BUTTON( dlgTexReset.cbShiftHor ) );
-	gtk_editable_set_editable( GTK_EDITABLE( dlgTexReset.editShiftHor ), check );
+	gtk_editable_set_editable( GTK_EDITABLE( dlgTexReset.spinShiftHor ), check );
 
 	check = gtk_toggle_button_get_active( GTK_TOGGLE_BUTTON( dlgTexReset.cbShiftVert ) );
-	gtk_editable_set_editable( GTK_EDITABLE( dlgTexReset.editShiftVert ), check );
+	gtk_editable_set_editable( GTK_EDITABLE( dlgTexReset.spinShiftVert ), check );
 
 	check = gtk_toggle_button_get_active( GTK_TOGGLE_BUTTON( dlgTexReset.cbRotation ) );
-	gtk_editable_set_editable( GTK_EDITABLE( dlgTexReset.editRotation ), check );
+	gtk_editable_set_editable( GTK_EDITABLE( dlgTexReset.spinRotation ), check );
 }
 
 static void dialog_button_callback( GtkWidget *widget, gpointer data ){
@@ -1287,7 +1287,8 @@ int DoResetTextureBox( ResetTextureRS* rs ){
 
 	content_area = gtk_dialog_get_content_area( GTK_DIALOG( dialog ) );
 
-	vbox = gtk_vbox_new( TRUE, 5 );
+	vbox = gtk_vbox_new( FALSE, 5 );
+	gtk_box_set_homogeneous( GTK_BOX( vbox ), TRUE );
 	gtk_container_add( GTK_CONTAINER( content_area ), vbox );
 	gtk_widget_show( vbox );
 
@@ -1320,7 +1321,7 @@ int DoResetTextureBox( ResetTextureRS* rs ){
 	gtk_box_pack_start( GTK_BOX( vbox ), frame, FALSE, TRUE, 0 );
 	gtk_widget_show( frame );
 
-	table = gtk_table_new( 2, 3, TRUE );
+	table = gtk_table_new( 2, 3, FALSE );
 
 	gtk_container_add( GTK_CONTAINER( frame ), table );
 	gtk_table_set_row_spacings( GTK_TABLE( table ), 5 );
@@ -1348,7 +1349,7 @@ int DoResetTextureBox( ResetTextureRS* rs ){
 	gtk_entry_set_max_length( GTK_ENTRY( dlgTexReset.editTexOld ), 256 );
 	gtk_entry_set_text( GTK_ENTRY( dlgTexReset.editTexOld ), rs->textureName );
 	gtk_table_attach( GTK_TABLE( table ), dlgTexReset.editTexOld, 2, 3, 0, 1,
-					  (GtkAttachOptions) ( GTK_FILL ),
+					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
 	gtk_widget_show( dlgTexReset.editTexOld );
 
@@ -1363,7 +1364,7 @@ int DoResetTextureBox( ResetTextureRS* rs ){
 	gtk_entry_set_max_length( GTK_ENTRY( dlgTexReset.editTexNew ), 256 );
 	gtk_entry_set_text( GTK_ENTRY( dlgTexReset.editTexNew ), rs->textureName );
 	gtk_table_attach( GTK_TABLE( table ), dlgTexReset.editTexNew, 2, 3, 1, 2,
-					  (GtkAttachOptions) ( GTK_FILL ),
+					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
 	gtk_widget_show( dlgTexReset.editTexNew );
 
@@ -1373,7 +1374,7 @@ int DoResetTextureBox( ResetTextureRS* rs ){
 	gtk_box_pack_start( GTK_BOX( vbox ), frame, FALSE, TRUE, 0 );
 	gtk_widget_show( frame );
 
-	table = gtk_table_new( 2, 3, TRUE );
+	table = gtk_table_new( 2, 3, FALSE );
 
 	gtk_container_add( GTK_CONTAINER( frame ), table );
 	gtk_table_set_row_spacings( GTK_TABLE( table ), 5 );
@@ -1397,13 +1398,14 @@ int DoResetTextureBox( ResetTextureRS* rs ){
 	gtk_misc_set_alignment( GTK_MISC( w ), 0.0, 0.5 );
 	gtk_widget_show( w );
 
-	dlgTexReset.editScaleHor = gtk_entry_new();
-	gtk_entry_set_max_length( GTK_ENTRY( dlgTexReset.editScaleHor ), 256 );
-	gtk_entry_set_text( GTK_ENTRY( dlgTexReset.editScaleHor ), "0.5" );
-	gtk_table_attach( GTK_TABLE( table ), dlgTexReset.editScaleHor, 2, 3, 0, 1,
+
+	dlgTexReset.spinScaleHor = gtk_spin_button_new( GTK_ADJUSTMENT( gtk_adjustment_new( 0.5, 0, 65535, 0.1, 1, 0 ) ), 0.1, 1 );
+	gtk_spin_button_set_numeric( GTK_SPIN_BUTTON( dlgTexReset.spinScaleHor ), TRUE );
+	gtk_entry_set_alignment( GTK_ENTRY( dlgTexReset.spinScaleHor ), 1.0 ); //right align numbers
+	gtk_table_attach( GTK_TABLE( table ), dlgTexReset.spinScaleHor, 2, 3, 0, 1,
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
-	gtk_widget_show( dlgTexReset.editScaleHor );
+	gtk_widget_show( dlgTexReset.spinScaleHor );
 
 
 	dlgTexReset.cbScaleVert = gtk_check_button_new_with_label( _( "Enabled" ) );
@@ -1420,13 +1422,13 @@ int DoResetTextureBox( ResetTextureRS* rs ){
 	gtk_misc_set_alignment( GTK_MISC( w ), 0.0, 0.5 );
 	gtk_widget_show( w );
 
-	dlgTexReset.editScaleVert = gtk_entry_new();
-	gtk_entry_set_max_length( GTK_ENTRY( dlgTexReset.editScaleVert ), 256 );
-	gtk_entry_set_text( GTK_ENTRY( dlgTexReset.editScaleVert ), "0.5" );
-	gtk_table_attach( GTK_TABLE( table ), dlgTexReset.editScaleVert, 2, 3, 1, 2,
+	dlgTexReset.spinScaleVert = gtk_spin_button_new( GTK_ADJUSTMENT( gtk_adjustment_new( 0.5, 0, 65535, 0.1, 1, 0 ) ), 0.1, 1 );
+	gtk_spin_button_set_numeric( GTK_SPIN_BUTTON( dlgTexReset.spinScaleVert ), TRUE );
+	gtk_entry_set_alignment( GTK_ENTRY( dlgTexReset.spinScaleVert ), 1.0 ); //right align numbers
+	gtk_table_attach( GTK_TABLE( table ), dlgTexReset.spinScaleVert, 2, 3, 1, 2,
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
-	gtk_widget_show( dlgTexReset.editScaleVert );
+	gtk_widget_show( dlgTexReset.spinScaleVert );
 
 	// ---- /frame ----
 
@@ -1434,7 +1436,7 @@ int DoResetTextureBox( ResetTextureRS* rs ){
 	gtk_box_pack_start( GTK_BOX( vbox ), frame, FALSE, TRUE, 0 );
 	gtk_widget_show( frame );
 
-	table = gtk_table_new( 2, 3, TRUE );
+	table = gtk_table_new( 2, 3, FALSE );
 
 	gtk_container_add( GTK_CONTAINER( frame ), table );
 	gtk_table_set_row_spacings( GTK_TABLE( table ), 5 );
@@ -1458,13 +1460,13 @@ int DoResetTextureBox( ResetTextureRS* rs ){
 	gtk_misc_set_alignment( GTK_MISC( w ), 0.0, 0.5 );
 	gtk_widget_show( w );
 
-	dlgTexReset.editShiftHor = gtk_entry_new();
-	gtk_entry_set_max_length( GTK_ENTRY( dlgTexReset.editShiftHor ), 256 );
-	gtk_entry_set_text( GTK_ENTRY( dlgTexReset.editShiftHor ), "0" );
-	gtk_table_attach( GTK_TABLE( table ), dlgTexReset.editShiftHor, 2, 3, 0, 1,
+	dlgTexReset.spinShiftHor = gtk_spin_button_new( GTK_ADJUSTMENT( gtk_adjustment_new( 0, 0, 65535, 0.1, 1, 0 ) ), 0.1, 1 );
+	gtk_spin_button_set_numeric( GTK_SPIN_BUTTON( dlgTexReset.spinShiftHor ), TRUE );
+	gtk_entry_set_alignment( GTK_ENTRY( dlgTexReset.spinShiftHor ), 1.0 ); //right align numbers
+	gtk_table_attach( GTK_TABLE( table ), dlgTexReset.spinShiftHor, 2, 3, 0, 1,
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
-	gtk_widget_show( dlgTexReset.editShiftHor );
+	gtk_widget_show( dlgTexReset.spinShiftHor );
 
 
 	dlgTexReset.cbShiftVert = gtk_check_button_new_with_label( _( "Enabled" ) );
@@ -1481,13 +1483,13 @@ int DoResetTextureBox( ResetTextureRS* rs ){
 	gtk_misc_set_alignment( GTK_MISC( w ), 0.0, 0.5 );
 	gtk_widget_show( w );
 
-	dlgTexReset.editShiftVert = gtk_entry_new();
-	gtk_entry_set_max_length( GTK_ENTRY( dlgTexReset.editShiftVert ), 256 );
-	gtk_entry_set_text( GTK_ENTRY( dlgTexReset.editShiftVert ), "0" );
-	gtk_table_attach( GTK_TABLE( table ), dlgTexReset.editShiftVert, 2, 3, 1, 2,
+	dlgTexReset.spinShiftVert = gtk_spin_button_new( GTK_ADJUSTMENT( gtk_adjustment_new( 0, 0, 65535, 0.1, 1, 0 ) ), 0.1, 1 );
+	gtk_spin_button_set_numeric( GTK_SPIN_BUTTON( dlgTexReset.spinShiftVert ), TRUE );
+	gtk_entry_set_alignment( GTK_ENTRY( dlgTexReset.spinShiftVert ), 1.0 ); //right align numbers
+	gtk_table_attach( GTK_TABLE( table ), dlgTexReset.spinShiftVert, 2, 3, 1, 2,
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
-	gtk_widget_show( dlgTexReset.editShiftVert );
+	gtk_widget_show( dlgTexReset.spinShiftVert );
 
 	// ---- /frame ----
 
@@ -1495,7 +1497,7 @@ int DoResetTextureBox( ResetTextureRS* rs ){
 	gtk_box_pack_start( GTK_BOX( vbox ), frame, FALSE, TRUE, 0 );
 	gtk_widget_show( frame );
 
-	table = gtk_table_new( 1, 3, TRUE );
+	table = gtk_table_new( 1, 3, FALSE );
 	gtk_container_add( GTK_CONTAINER( frame ), table );
 	gtk_table_set_row_spacings( GTK_TABLE( table ), 5 );
 	gtk_table_set_col_spacings( GTK_TABLE( table ), 5 );
@@ -1517,13 +1519,13 @@ int DoResetTextureBox( ResetTextureRS* rs ){
 	gtk_misc_set_alignment( GTK_MISC( w ), 0.0, 0.5 );
 	gtk_widget_show( w );
 
-	dlgTexReset.editRotation = gtk_entry_new();
-	gtk_entry_set_max_length( GTK_ENTRY( dlgTexReset.editRotation ), 256 );
-	gtk_entry_set_text( GTK_ENTRY( dlgTexReset.editRotation ), "0" );
-	gtk_table_attach( GTK_TABLE( table ), dlgTexReset.editRotation, 2, 3, 0, 1,
+	dlgTexReset.spinRotation = gtk_spin_button_new( GTK_ADJUSTMENT( gtk_adjustment_new( 0, -360, 360, 1, 90, 0 ) ), 1, 1 );
+	gtk_spin_button_set_numeric( GTK_SPIN_BUTTON( dlgTexReset.spinRotation ), TRUE );
+	gtk_entry_set_alignment( GTK_ENTRY( dlgTexReset.spinRotation ), 1.0 ); //right align numbers
+	gtk_table_attach( GTK_TABLE( table ), dlgTexReset.spinRotation, 2, 3, 0, 1,
 					  (GtkAttachOptions) ( GTK_FILL ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
-	gtk_widget_show( dlgTexReset.editRotation );
+	gtk_widget_show( dlgTexReset.spinRotation );
 
 	// ---- /frame ----
 
@@ -1553,37 +1555,27 @@ int DoResetTextureBox( ResetTextureRS* rs ){
 		if ( response_id != GTK_RESPONSE_CANCEL ) {
 			rs->bResetRotation = gtk_toggle_button_get_active( GTK_TOGGLE_BUTTON( dlgTexReset.cbRotation ) );
 			if ( rs->bResetRotation ) {
-				if ( !ValidateTextInt( gtk_entry_get_text( GTK_ENTRY( dlgTexReset.editRotation ) ), _( "Rotation" ), &rs->rotation ) ) {
-					dialogError = TRUE;
-				}
+				rs->rotation = gtk_spin_button_get_value( GTK_SPIN_BUTTON( dlgTexReset.spinRotation ) );
 			}
 
 			rs->bResetScale[0] = gtk_toggle_button_get_active( GTK_TOGGLE_BUTTON( dlgTexReset.cbScaleHor ) );
 			if ( rs->bResetScale[0] ) {
-				if ( !ValidateTextFloat( gtk_entry_get_text( GTK_ENTRY( dlgTexReset.editScaleHor ) ), _( "Horizontal Scale" ), &rs->fScale[0] ) ) {
-					dialogError = TRUE;
-				}
+				rs->fScale[0] = gtk_spin_button_get_value( GTK_SPIN_BUTTON( dlgTexReset.spinScaleHor ) );
 			}
 
 			rs->bResetScale[1] = gtk_toggle_button_get_active( GTK_TOGGLE_BUTTON( dlgTexReset.cbScaleVert ) );
 			if ( rs->bResetScale[1] ) {
-				if ( !ValidateTextFloat( gtk_entry_get_text( GTK_ENTRY( dlgTexReset.editScaleVert ) ), _( "Vertical Scale" ), &rs->fScale[1] ) ) {
-					dialogError = TRUE;
-				}
+				rs->fScale[1] = gtk_spin_button_get_value( GTK_SPIN_BUTTON( dlgTexReset.spinScaleVert ) );
 			}
 
 			rs->bResetShift[0] = gtk_toggle_button_get_active( GTK_TOGGLE_BUTTON( dlgTexReset.cbShiftHor ) );
 			if ( rs->bResetShift[0] ) {
-				if ( !ValidateTextFloat( gtk_entry_get_text( GTK_ENTRY( dlgTexReset.editShiftHor ) ), _( "Horizontal Shift" ), &rs->fShift[0] ) ) {
-					dialogError = TRUE;
-				}
+				rs->fShift[0] = gtk_spin_button_get_value( GTK_SPIN_BUTTON( dlgTexReset.spinShiftHor ) );
 			}
 
 			rs->bResetShift[1] = gtk_toggle_button_get_active( GTK_TOGGLE_BUTTON( dlgTexReset.cbShiftVert ) );
 			if ( rs->bResetShift[1] ) {
-				if ( !ValidateTextFloat( gtk_entry_get_text( GTK_ENTRY( dlgTexReset.editShiftVert ) ), _( "Vertical Shift" ), &rs->fShift[1] ) ) {
-					dialogError = TRUE;
-				}
+				rs->fShift[1] = gtk_spin_button_get_value( GTK_SPIN_BUTTON( dlgTexReset.spinShiftVert ) );
 			}
 
 			rs->bResetTextureName = gtk_toggle_button_get_active( GTK_TOGGLE_BUTTON( dlgTexReset.cbTexChange ) );

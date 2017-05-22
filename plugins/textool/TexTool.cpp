@@ -37,7 +37,7 @@ _QERFuncTable_1 g_FuncTable;
 const char *PLUGIN_NAME = "Q3 Texture Tools";
 
 // commands in the menu
-const char *PLUGIN_COMMANDS = "About...;Go...";
+const char *PLUGIN_COMMANDS = "About;-;Go...";
 
 // cast to GtkWidget*
 void *g_pMainWnd;
@@ -775,8 +775,8 @@ extern "C" void QERPlug_Dispatch( const char* p, vec3_t vMin, vec3_t vMax, bool 
 	}
   #endif
 
-	if ( !strcmp( p, "About..." ) ) {
-		DoMessageBox( PLUGIN_ABOUT, "About ...", MB_OK );
+	if ( !strcmp( p, "About" ) ) {
+		DoMessageBox( PLUGIN_ABOUT, "About", MB_OK );
 	}
 	else if ( !strcmp( p, "Go..." ) ) {
 		if ( !g_pToolWnd ) {

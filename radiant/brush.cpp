@@ -2222,7 +2222,8 @@ face_t *Brush_Ray( vec3_t origin, vec3_t dir, brush_t *b, float *dist, int nFlag
 	if ( b->owner->eclass->fixedsize
 		 && b->owner->model.pSelect
 		 && !( !IsBrushSelected( b ) && ( g_PrefsDlg.m_nEntityShowState & ENTITY_SELECTED_ONLY ) )
-		 && g_PrefsDlg.m_nEntityShowState != ENTITY_BOX ) {
+		 && g_PrefsDlg.m_nEntityShowState != ENTITY_BOX
+		 && b->owner->model.pRender->IsModelNotNull() ) {
 		ray_t ray_local;
 		vec_t dist_local = FLT_MAX;
 		ray_construct_for_vec3( &ray_local, origin, dir );
@@ -2259,8 +2260,7 @@ face_t *Brush_Ray( vec3_t origin, vec3_t dir, brush_t *b, float *dist, int nFlag
 			for ( i = 0 ; i < 3 ; i++ )
 				p1[i] = p1[i] + frac * ( p2[i] - p1[i] );
 		}
-		else
-		{
+		else {
 			for ( i = 0 ; i < 3 ; i++ )
 				p2[i] = p1[i] + frac * ( p2[i] - p1[i] );
 		}
@@ -2640,8 +2640,9 @@ void Brush_SelectFaceForDragging( brush_t *b, face_t *f, qboolean shear ){
 		// leave it alone
 		//
 		if ( i != w->numpoints ) {
-			if ( i == 0 ) { // see if the first clockwise point was the
-				           // last point on the winding
+			// see if the first clockwise point was the
+			// last point on the winding
+			if ( i == 0 ) {
 				d = DotProduct( w->points[w->numpoints - 1]
 								, f->plane.normal ) - f->plane.dist;
 				if ( d > -ON_EPSILON && d < ON_EPSILON ) {

@@ -77,6 +77,7 @@ virtual ~IRender() { }
 virtual void IncRef() = 0;   // increments the reference counter for this object
 virtual void DecRef() = 0;   // decrements the reference counter for this object, deletes the object if reference count is zero
 virtual void Draw( int state, int rflags ) const = 0; // render the object - state = the opengl state
+virtual const bool IsModelNotNull() const = 0;
 virtual const aabb_t *GetAABB() const = 0;
 };
 

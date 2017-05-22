@@ -141,6 +141,9 @@ virtual void DecRef(){
 virtual void Draw( int state, int rflags ) const {
 	m_model->Draw( state, m_shaders, rflags );
 }
+virtual const bool IsModelNotNull() const {
+	return m_model != NULL;
+}
 virtual const aabb_t *GetAABB() const {
 	return m_model->GetAABB();
 }
@@ -299,6 +302,9 @@ virtual void DecRef(){
 }
 virtual void Draw( int state, int rflags ) const {
 	m_model->Draw( state, rflags );
+}
+virtual const bool IsModelNotNull() const {
+	return m_model != NULL;
 }
 virtual const aabb_t *GetAABB() const {
 	return m_model->GetAABB();
