@@ -119,7 +119,6 @@ void Dialog::AddModalButton( GtkWidget *widget, int ret ) {
 void Dialog::UpdateData( bool retrieve ){
 	DLG_DATA *data;
 	GSList *lst;
-	char buf[32];
 
 	if ( retrieve ) {
 		for ( lst = m_pDataList; lst != NULL; lst = g_slist_next( lst ) )
@@ -151,12 +150,6 @@ void Dialog::UpdateData( bool retrieve ){
 				txt = gtk_entry_get_text( GTK_ENTRY( data->object ) );
 				*str = txt;
 			} break;
-			case DLG_ENTRY_FLOAT:
-				*(float*)data->buffer = atof( gtk_entry_get_text( GTK_ENTRY( data->object ) ) );
-				break;
-			case DLG_ENTRY_INT:
-				*(int*)data->buffer = atoi( gtk_entry_get_text( GTK_ENTRY( data->object ) ) );
-				break;
 			case DLG_SPIN_FLOAT:
 				*(float*)data->buffer = gtk_spin_button_get_value( GTK_SPIN_BUTTON( data->object ) );
 				break;
@@ -198,14 +191,6 @@ void Dialog::UpdateData( bool retrieve ){
 				const char *txt = str->GetBuffer();
 				gtk_entry_set_text( GTK_ENTRY( data->object ), txt );
 			} break;
-			case DLG_ENTRY_FLOAT:
-				sprintf( buf, "%g", ( *(float*)data->buffer ) );
-				gtk_entry_set_text( GTK_ENTRY( data->object ), buf );
-				break;
-			case DLG_ENTRY_INT:
-				sprintf( buf, "%d", ( *(int*)data->buffer ) );
-				gtk_entry_set_text( GTK_ENTRY( data->object ), buf );
-				break;
 			case DLG_SPIN_FLOAT:
 				gtk_spin_button_set_value( GTK_SPIN_BUTTON( data->object ), ( *(float*)data->buffer ) );
 				break;
