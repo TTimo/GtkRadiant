@@ -26,8 +26,6 @@
 //
 
 #include "stdafx.h"
-#ifdef _WIN32
-#endif
 #include <gtk/gtk.h>
 #include <glib/gi18n.h>
 #include <gdk/gdkkeysyms.h>
@@ -3496,7 +3494,7 @@ void MainFrame::LoadCommandMap(){
 				// based on length
 				nLen = strBuff.GetLength();
 				if ( nLen == 1 ) { // most often case.. deal with first
-					g_Commands[i].m_nKey = __toascii( strBuff.GetAt( 0 ) );
+					g_Commands[i].m_nKey = toascii( strBuff.GetAt( 0 ) );
 					iCount++;
 				}
 				else // special key
