@@ -535,7 +535,7 @@ void ClearGSList( GSList* lst ){
 	GSList *p = lst;
 	while ( p )
 	{
-		free( p->data );
+		g_free( p->data );
 		p = g_slist_remove( p, p->data );
 	}
 }
@@ -594,7 +594,7 @@ void FillTextureList( GSList** pArray )
 			texdirs = g_slist_prepend( texdirs, g_strdup( shaderfile ) );
 		}
 
-		g_free( l_shaderfiles->data );
+		free( l_shaderfiles->data );
 		l_shaderfiles = g_slist_remove( l_shaderfiles, l_shaderfiles->data );
 	}
 
