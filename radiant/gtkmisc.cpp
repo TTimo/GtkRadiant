@@ -1330,17 +1330,6 @@ const char* file_dialog( void *parent, gboolean open, const char* title, const c
 	CFileType typelist;
 	if ( pattern != NULL ) {
 		GetFileTypeRegistry()->getTypeList( pattern, &typelist );
-
-		// kaz - viewing all file types at once is really convenient for model selection
-		if ( !strcmp( "Open Model", title ) ) {
-			CString allTypesFilter;
-			for( int i = 0; i < typelist.GetNumTypes(); i++ ) {
-				allTypesFilter += typelist.GetTypeForIndex(i).pattern;
-				if ( i < typelist.GetNumTypes() - 1 )
-					allTypesFilter += ";";
-			}
-			typelist.addType(filetype_t("All supported types", allTypesFilter.GetBuffer()));
-		}
 	}
 
 #ifdef _WIN32
@@ -1360,12 +1349,6 @@ const char* file_dialog( void *parent, gboolean open, const char* title, const c
 		                      // "select the first filter as default".
 		if ( pattern ) {
 			ofn.lpstrFilter = typelist.m_strWin32Filters;
-			
-			// kaz - the "all supported types" will be at bottom of list
-			// ...idiomatically uncouth but not worth fixing
-			if ( !strcmp( "Open Model", title ) ) {
-				ofn.nFilterIndex = typelist.GetNumTypes();
-			}
 		}
 		else
 		{
