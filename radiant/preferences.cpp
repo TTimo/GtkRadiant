@@ -1753,14 +1753,17 @@ void PrefsDlg::BuildDialog(){
 	gtk_widget_set_size_request( GTK_WIDGET( vbox ), 350, -1 );
 	gtk_widget_show( vbox );
 
-	gtk_notebook_append_page( GTK_NOTEBOOK( notebook ), pageframe, preflabel );
+	gint page_index;
+	page_index = gtk_notebook_append_page( GTK_NOTEBOOK( notebook ), pageframe, preflabel );
+	assert( page_index == PTAB_FRONT );
 
 	/******** global preferences group ****************************/
 	preflabel = gtk_label_new( _( "Globals" ) );
 	gtk_widget_show( preflabel );
 
 	pageframe = mGamesDialog.GetGlobalFrame();
-	gtk_notebook_append_page( GTK_NOTEBOOK( notebook ), pageframe, preflabel );
+	page_index = gtk_notebook_append_page( GTK_NOTEBOOK( notebook ), pageframe, preflabel );
+	assert( page_index == PTAB_GAME_SETTINGS );
 
 	/******** 2D prefs group (xy views/rendering options) *********/
 	preflabel = gtk_label_new( _( "2D Display" ) );
@@ -1821,7 +1824,8 @@ void PrefsDlg::BuildDialog(){
 #endif
 
 	// Add the page to the notebook
-	gtk_notebook_append_page( GTK_NOTEBOOK( notebook ), pageframe, preflabel );
+	page_index = gtk_notebook_append_page( GTK_NOTEBOOK( notebook ), pageframe, preflabel );
+	assert( page_index == PTAB_2D );
 
 	/******** 3D Camera view group *********/
 	preflabel = gtk_label_new( _( "3D View" ) );
@@ -1960,7 +1964,8 @@ void PrefsDlg::BuildDialog(){
 	AddDialogData( check, &m_bCamXYUpdate, DLG_CHECK_BOOL );
 
 	// Add the page to the notebook
-	gtk_notebook_append_page( GTK_NOTEBOOK( notebook ), pageframe, preflabel );
+	page_index = gtk_notebook_append_page( GTK_NOTEBOOK( notebook ), pageframe, preflabel );
+	assert( page_index == PTAB_CAMERA );
 
 	/******** Texture group *********/
 	preflabel = gtk_label_new( _( "Textures" ) );
@@ -2113,6 +2118,10 @@ void PrefsDlg::BuildDialog(){
 	}
 	g_list_free( combo_list );
 
+	// Add the page to the notebook
+	page_index = gtk_notebook_append_page( GTK_NOTEBOOK( notebook ), pageframe, preflabel );
+	assert( page_index == PTAB_TEXTURE );
+
 	/******** Texture dir list group *********/
 	preflabel = gtk_label_new( _( "Texture directory list" ) );
 	gtk_widget_show( preflabel );
@@ -2129,9 +2138,9 @@ void PrefsDlg::BuildDialog(){
 	gtk_widget_show( check );
 	AddDialogData( check, &m_bShowTexDirList, DLG_CHECK_BOOL );
 
-
 	// Add the page to the notebook
-	gtk_notebook_append_page( GTK_NOTEBOOK( notebook ), pageframe, preflabel );
+	page_index = gtk_notebook_append_page( GTK_NOTEBOOK( notebook ), pageframe, preflabel );
+	assert( page_index == PTAB_TEXTURE_DIR );
 
 	/******** Layout group *********/
 	preflabel = gtk_label_new( _( "Layout" ) );
@@ -2260,7 +2269,8 @@ void PrefsDlg::BuildDialog(){
 #endif
 
 	// Add the page to the notebook
-	gtk_notebook_append_page( GTK_NOTEBOOK( notebook ), pageframe, preflabel );
+	page_index = gtk_notebook_append_page( GTK_NOTEBOOK( notebook ), pageframe, preflabel );
+	assert( page_index == PTAB_LAYOUT );
 
 	/******** Mouse group *********/
 	preflabel = gtk_label_new( _( "Mouse" ) );
@@ -2334,7 +2344,8 @@ void PrefsDlg::BuildDialog(){
 	AddDialogData( spin, &m_nWheelInc, DLG_SPIN_INT );
 
 	// Add the page to the notebook
-	gtk_notebook_append_page( GTK_NOTEBOOK( notebook ), pageframe, preflabel );
+	page_index = gtk_notebook_append_page( GTK_NOTEBOOK( notebook ), pageframe, preflabel );
+	assert( page_index == PTAB_MOUSE );
 
 	/******** Editing group *********/
 	preflabel = gtk_label_new( _( "Editing" ) );
@@ -2447,7 +2458,8 @@ void PrefsDlg::BuildDialog(){
 	AddDialogData( spin, &m_nSubdivisions, DLG_SPIN_INT );
 
 	// Add the page to the notebook
-	gtk_notebook_append_page( GTK_NOTEBOOK( notebook ), pageframe, preflabel );
+	page_index = gtk_notebook_append_page( GTK_NOTEBOOK( notebook ), pageframe, preflabel );
+	assert( page_index == PTAB_EDITING );
 
 	/******** Save/Load group *********/
 	preflabel = gtk_label_new( _( "Startup/Auto save" ) );
@@ -2511,7 +2523,8 @@ void PrefsDlg::BuildDialog(){
 	AddDialogData( check, &m_bSaveBeep, DLG_CHECK_BOOL );
 
 	// Add the page to the notebook
-	gtk_notebook_append_page( GTK_NOTEBOOK( notebook ), pageframe, preflabel );
+	page_index = gtk_notebook_append_page( GTK_NOTEBOOK( notebook ), pageframe, preflabel );
+	assert( page_index == PTAB_STARTUP );
 
 	/******** Paths group *********/
 	preflabel = gtk_label_new( _( "Paths" ) );
@@ -2584,7 +2597,8 @@ void PrefsDlg::BuildDialog(){
 	gtk_widget_show( button );
 
 	// Add the page to the notebook
-	gtk_notebook_append_page( GTK_NOTEBOOK( notebook ), pageframe, preflabel );
+	page_index = gtk_notebook_append_page( GTK_NOTEBOOK( notebook ), pageframe, preflabel );
+	assert( page_index == PTAB_PATHS );
 
 	/******** Brush group ********/
 	preflabel = gtk_label_new( _( "Brush" ) );
@@ -2632,7 +2646,8 @@ void PrefsDlg::BuildDialog(){
 	AddDialogData( check, &m_bCaulkNewBrushes, DLG_CHECK_BOOL );
 	
 	// Add the page to the notebook
-	gtk_notebook_append_page( GTK_NOTEBOOK( notebook ), pageframe, preflabel );
+	page_index = gtk_notebook_append_page( GTK_NOTEBOOK( notebook ), pageframe, preflabel );
+	assert( page_index == PTAB_BRUSH );
 
 	/******** Misc group *********/
 	preflabel = gtk_label_new( _( "Misc" ) );
@@ -2660,6 +2675,7 @@ void PrefsDlg::BuildDialog(){
 	gtk_widget_show( table );
 
 	label = gtk_label_new( _( "Light radiuses:" ) );
+
 	gtk_table_attach( GTK_TABLE( table ), label, 0, 1, 0, 1,
 					  (GtkAttachOptions) ( 0 ),
 					  (GtkAttachOptions) ( 0 ), 0, 0 );
@@ -2737,7 +2753,8 @@ void PrefsDlg::BuildDialog(){
 #endif
 
 	// Add the page to the notebook
-	gtk_notebook_append_page( GTK_NOTEBOOK( notebook ), pageframe, preflabel );
+	page_index = gtk_notebook_append_page( GTK_NOTEBOOK( notebook ), pageframe, preflabel );
+	assert( page_index == PTAB_MISC );
 
 	/******** BSP Monitoring group *********/
 	// this is never displayed if the plugin isn't available
@@ -2799,7 +2816,8 @@ void PrefsDlg::BuildDialog(){
 #endif
 
 	// Add the page to the notebook
-	gtk_notebook_append_page( GTK_NOTEBOOK( notebook ), pageframe, preflabel );
+	page_index = gtk_notebook_append_page( GTK_NOTEBOOK( notebook ), pageframe, preflabel );
+	assert( page_index == PTAB_BSPMONITOR );
 
 	gtk_notebook_set_current_page( GTK_NOTEBOOK( notebook ), PTAB_FRONT );
 }
