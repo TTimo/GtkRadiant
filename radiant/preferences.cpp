@@ -154,14 +154,6 @@
 #define Q3MAP2TEX_KEY "Q3Map2Tex"
 #define X64Q3MAP2_KEY "x64Q3Map2"
 
-#ifdef ATIHACK_812
-#define ATIHACK_KEY "ATIHack"
-#endif
-
-#ifdef NVIDIA_AERO_HACK
-#define NVAEROHACK_KEY "NvidiaAeroHack"
-#endif
-
 // window stuff
 #define ENTITYSPLIT1_KEY  "EntitySplit1"
 #define ENTITYSPLIT2_KEY  "EntitySplit2"
@@ -656,7 +648,6 @@ PrefsDlg::PrefsDlg (){
 	m_nSubdivisions = 4;
 	// not prefs
 	m_bFloatingZ = FALSE;
-	m_bGlPtWorkaround = FALSE;  // Gef: Kyro/GL_POINTS workaround 25-aug-2001
 #ifdef _WIN32
 	m_bNativeGUI = FALSE;
 	m_bStartOnPrimMon = FALSE;
@@ -673,13 +664,6 @@ PrefsDlg::PrefsDlg (){
 	m_bQ3Map2Texturing = TRUE;
 #ifdef _WIN32
 	m_bx64q3map2 = TRUE;
-#endif
-#ifdef ATIHACK_812
-	m_bGlATIHack = FALSE;
-#endif
-#ifdef NVIDIA_AERO_HACK
-	m_bGlNvidiaAeroHack = TRUE;
-	m_bGlNvidiaAeroHackPrevState = -1; // -1 is uninitialized, 0 is FALSE, 1 is TRUE
 #endif
 }
 
@@ -1801,28 +1785,6 @@ void PrefsDlg::BuildDialog(){
 	gtk_widget_show( check );
 	AddDialogData( check, &m_bSizePaint, DLG_CHECK_BOOL );
 
-	// Alternate vertex/edge handles
-	// Gef: Kyro GL_POINT work around 25-aug-2001
-	check = gtk_check_button_new_with_label( _( "Alternate vertex/edge handles" ) );
-	gtk_box_pack_start( GTK_BOX( vbox ), check, FALSE, FALSE, 0 );
-	gtk_widget_show( check );
-	AddDialogData( check, &m_bGlPtWorkaround, DLG_CHECK_BOOL );
-
-#ifdef ATIHACK_812
-	// ATI bugs
-	check = gtk_check_button_new_with_label( _( "ATI and Intel cards w/ buggy drivers (disappearing polygons)" ) );
-	gtk_box_pack_start( GTK_BOX( vbox ), check, FALSE, FALSE, 0 );
-	gtk_widget_show( check );
-	AddDialogData( check, &m_bGlATIHack, DLG_CHECK_BOOL );
-#endif
-
-#ifdef NVIDIA_AERO_HACK
-	check = gtk_check_button_new_with_label( _( "NVIDIA/Aero bug - disable Windows composition" ) );
-	gtk_box_pack_start( GTK_BOX( vbox ), check, FALSE, FALSE, 0 );
-	gtk_widget_show( check );
-	AddDialogData( check, &m_bGlNvidiaAeroHack, DLG_CHECK_BOOL );
-#endif
-
 	// Add the page to the notebook
 	page_index = gtk_notebook_append_page( GTK_NOTEBOOK( notebook ), pageframe, preflabel );
 	assert( page_index == PTAB_2D );
@@ -2903,69 +2865,6 @@ void PrefsDlg::UpdateTextureCompression(){
 	}
 }
 
-#ifdef ATIHACK_812
-void PrefsDlg::UpdateATIHack() {
-	// if OpenGL is not ready yet, don't do anything
-	if ( !g_qeglobals.m_bOpenGLReady ) {
-		Sys_Printf( "OpenGL not ready - postpone ATI bug workaround setup\n" );
-		return;
-	}
-
-	if ( m_bGlATIHack ) {
-		qglCullFace = &qglCullFace_ATIHack;
-		qglDisable = &qglDisable_ATIHack;
-		qglEnable = &qglEnable_ATIHack;
-		qglPolygonMode = &qglPolygonMode_ATIHack;
-		Sys_Printf( "ATI bug workaround enabled\n" );
-	}
-	else {
-		qglCullFace = qglCullFace_real;
-		qglDisable = qglDisable_real;
-		qglEnable = qglEnable_real;
-		qglPolygonMode = qglPolygonMode_real;
-		Sys_Printf( "ATI bug workaround disabled\n" );
-	}
-}
-#endif
-
-#ifdef NVIDIA_AERO_HACK
-void PrefsDlg::UpdateNvidiaAeroHack() {
-	if ( m_bGlNvidiaAeroHack && m_bGlNvidiaAeroHackPrevState == 1 ) {
-		return;
-	}
-	if ( ( !m_bGlNvidiaAeroHack ) && m_bGlNvidiaAeroHackPrevState == 0 ) {
-		return;
-	}
-	if ( ( !m_bGlNvidiaAeroHack ) && m_bGlNvidiaAeroHackPrevState < 0 ) {
-		// The hack state is uninitialized, meaning that this is the first call
-		// to this function.  I prefer not to explicitly enable composition because
-		// the user may have set the application to disable it, and I don't want to
-		// override that.  Leave the state of composition as-is if the hack checkbox
-		// isn't checked.
-		m_bGlNvidiaAeroHackPrevState = 0;
-		return;
-	}
-	HMODULE lib = LoadLibrary( "dwmapi.dll" );
-	if ( lib ) {
-		void ( WINAPI *qDwmEnableComposition )( bool bEnable ) =
-			( void (WINAPI *) ( bool bEnable ) )GetProcAddress( lib, "DwmEnableComposition" );
-		if ( qDwmEnableComposition ) {
-			if ( m_bGlNvidiaAeroHack ) {
-				Sys_Printf( "Disabling Windows composition\n" );
-				qDwmEnableComposition( 0 );
-				m_bGlNvidiaAeroHackPrevState = 1;
-			}
-			else {
-				Sys_Printf( "Enabling Windows composition\n" );
-				qDwmEnableComposition( 1 );
-				m_bGlNvidiaAeroHackPrevState = 0;
-			}
-		}
-		FreeLibrary( lib );
-	}
-}
-#endif
-
 // TTimo: m_strEnginePath has a special status, if not found in registry we need to
 // initiliaze it for sure. It is not totally failsafe but we can use the same
 // code than in q3map, expecting to find some "quake" above us. If not, we prompt
@@ -3116,9 +3015,6 @@ void PrefsDlg::LoadPrefs(){
 	mLocalPrefs.GetPref( WHEELINC_KEY,           &m_nWheelInc,                   64 );
 	mLocalPrefs.GetPref( PATCHBBOXSEL_KEY,       &m_bPatchBBoxSelect,            FALSE );
 
-	// Gef: Kyro GL_POINT workaround
-	mLocalPrefs.GetPref( GLPOINTWORKAROUND_KEY,  &m_bGlPtWorkaround,             FALSE );
-
 	// window positioning
 	mLocalPrefs.GetPref( ENTITYSPLIT1_KEY,       &mWindowInfo.nEntitySplit1,     -1 );
 	mLocalPrefs.GetPref( ENTITYSPLIT2_KEY,       &mWindowInfo.nEntitySplit2,     -1 );
@@ -3237,25 +3133,9 @@ void PrefsDlg::LoadPrefs(){
 	mLocalPrefs.GetPref( X64Q3MAP2_KEY, &m_bx64q3map2, TRUE );
 #endif
 
-#ifdef ATIHACK_812
-	mLocalPrefs.GetPref( ATIHACK_KEY, &m_bGlATIHack, FALSE );
-#endif
-
-#ifdef NVIDIA_AERO_HACK
-	mLocalPrefs.GetPref( NVAEROHACK_KEY, &m_bGlNvidiaAeroHack, TRUE );
-#endif
-
 	Undo_SetMaxSize( m_nUndoLevels ); // set it internally as well / FIXME: why not just have one global value?
 
 	UpdateTextureCompression();
-
-#ifdef ATIHACK_812
-	UpdateATIHack();
-#endif
-
-#ifdef NVIDIA_AERO_HACK
-	UpdateNvidiaAeroHack();
-#endif
 
 	if ( mLocalPrefs.mbEmpty ) {
 		mLocalPrefs.mbEmpty = false;
@@ -3300,12 +3180,6 @@ void PrefsDlg::PostModal( int code ){
 		SavePrefs();
 		// make sure the logfile is ok
 		Sys_LogFile();
-#ifdef ATIHACK_812
-		UpdateATIHack();
-#endif
-#ifdef NVIDIA_AERO_HACK
-		UpdateNvidiaAeroHack();
-#endif
 		if ( g_pParentWnd ) {
 			g_pParentWnd->SetGridStatus();
 		}

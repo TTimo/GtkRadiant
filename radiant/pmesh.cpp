@@ -34,7 +34,6 @@
 // externs
 extern void MemFile_fprintf( MemStream* pMemFile, const char* pText, ... );
 extern face_t *Face_Alloc( void );
-extern void DrawAlternatePoint( vec3_t v, float scale );
 
 void _Write3DMatrix( FILE *f, int y, int x, int z, float *m );
 void _Write3DMatrix( MemStream *f, int y, int x, int z, float *m );
@@ -3377,157 +3376,69 @@ void DrawPatchControls( patchMesh_t *pm ){
 		qglPointSize( 6 );
 		if ( g_bPatchAxisOnRow ) {
 			qglColor3f( 1, 0, 1 );
-			if ( !g_PrefsDlg.m_bGlPtWorkaround ) {
-				qglBegin( GL_POINTS );
-				for ( i = 0; i < pm->width; i++ )
-				{
-					qglVertex3fv( pm->ctrl[i][g_nPatchAxisIndex].xyz );
-				}
-				qglEnd();
-			}
-			else
+			qglBegin( GL_POINTS );
+			for ( i = 0; i < pm->width; i++ )
 			{
-				qglLineWidth( 2.0 );
-				qglBegin( GL_LINES );
-				for ( i = 0; i < pm->width; i++ )
-				{
-					DrawAlternatePoint( pm->ctrl[i][g_nPatchAxisIndex].xyz, 0 );
-				}
-				qglEnd();
-				qglLineWidth( 1.0 );
+				qglVertex3fv( pm->ctrl[i][g_nPatchAxisIndex].xyz );
 			}
+			qglEnd();
 
 			if ( g_nPatchBendState == BEND_SELECT_EDGE || g_nPatchBendState == BEND_BENDIT || g_nPatchBendState == BEND_SELECT_ORIGIN ) {
-				if ( !g_PrefsDlg.m_bGlPtWorkaround ) {
-					qglColor3f( 0, 0, 1 );
-					qglBegin( GL_POINTS );
-					if ( g_nPatchBendState == BEND_SELECT_ORIGIN ) {
-						qglVertex3fv( g_vBendOrigin );
-					}
-					else
+				qglColor3f( 0, 0, 1 );
+				qglBegin( GL_POINTS );
+				if ( g_nPatchBendState == BEND_SELECT_ORIGIN ) {
+					qglVertex3fv( g_vBendOrigin );
+				}
+				else
+				{
+					for ( i = 0; i < pm->width; i++ )
 					{
-						for ( i = 0; i < pm->width; i++ )
+						if ( g_bPatchLowerEdge ) {
+							for ( j = 0; j < g_nPatchAxisIndex; j++ )
+								qglVertex3fv( pm->ctrl[i][j].xyz );
+						}
+						else
 						{
-							if ( g_bPatchLowerEdge ) {
-								for ( j = 0; j < g_nPatchAxisIndex; j++ )
-									qglVertex3fv( pm->ctrl[i][j].xyz );
-							}
-							else
-							{
-								for ( j = pm->height - 1; j > g_nPatchAxisIndex; j-- )
-									qglVertex3fv( pm->ctrl[i][j].xyz );
-							}
+							for ( j = pm->height - 1; j > g_nPatchAxisIndex; j-- )
+								qglVertex3fv( pm->ctrl[i][j].xyz );
 						}
 					}
-					qglEnd();
 				}
-				else {
-					qglColor3f( 0, 0, 1 );
-					qglLineWidth( 2.0 );
-					qglBegin( GL_LINES );
-					if ( g_nPatchBendState == BEND_SELECT_ORIGIN ) {
-						DrawAlternatePoint( g_vBendOrigin, 0 );
-					}
-					else
-					{
-						for ( i = 0; i < pm->width; i++ )
-						{
-							if ( g_bPatchLowerEdge ) {
-								for ( j = 0; j < g_nPatchAxisIndex; j++ )
-								{
-									DrawAlternatePoint( pm->ctrl[i][j].xyz, 0 );
-								}
-							}
-							else
-							{
-								for ( j = pm->height - 1; j > g_nPatchAxisIndex; j-- )
-								{
-									DrawAlternatePoint( pm->ctrl[i][j].xyz, 0 );
-								}
-							}
-						}
-					}
-					qglEnd();
-					qglLineWidth( 1.0 );
-				}
+				qglEnd();
 			}
 		}
 		else
 		{
-			if ( !g_PrefsDlg.m_bGlPtWorkaround ) {
-				qglColor3f( 1, 0, 1 );
+			qglColor3f( 1, 0, 1 );
+			qglBegin( GL_POINTS );
+			for ( i = 0; i < pm->height; i++ )
+			{
+				qglVertex3fv( pm->ctrl[g_nPatchAxisIndex][i].xyz );
+			}
+			qglEnd();
+
+			if ( g_nPatchBendState == BEND_SELECT_EDGE || g_nPatchBendState == BEND_BENDIT || g_nPatchBendState == BEND_SELECT_ORIGIN ) {
+				qglColor3f( 0, 0, 1 );
 				qglBegin( GL_POINTS );
 				for ( i = 0; i < pm->height; i++ )
 				{
-					qglVertex3fv( pm->ctrl[g_nPatchAxisIndex][i].xyz );
-				}
-				qglEnd();
-			}
-			else {
-				qglColor3f( 1, 0, 1 );
-				qglLineWidth( 2.0 );
-				qglBegin( GL_LINES );
-				for ( i = 0; i < pm->height; i++ )
-				{
-					DrawAlternatePoint( pm->ctrl[g_nPatchAxisIndex][i].xyz, 0 );
-				}
-				qglEnd();
-				qglLineWidth( 1.0 );
-			}
-
-			if ( g_nPatchBendState == BEND_SELECT_EDGE || g_nPatchBendState == BEND_BENDIT || g_nPatchBendState == BEND_SELECT_ORIGIN ) {
-				if ( !g_PrefsDlg.m_bGlPtWorkaround ) {
-					qglColor3f( 0, 0, 1 );
-					qglBegin( GL_POINTS );
-					for ( i = 0; i < pm->height; i++ )
+					if ( g_nPatchBendState == BEND_SELECT_ORIGIN ) {
+						qglVertex3fv( pm->ctrl[g_nBendOriginIndex][i].xyz );
+					}
+					else
 					{
-						if ( g_nPatchBendState == BEND_SELECT_ORIGIN ) {
-							qglVertex3fv( pm->ctrl[g_nBendOriginIndex][i].xyz );
+						if ( g_bPatchLowerEdge ) {
+							for ( j = 0; j < g_nPatchAxisIndex; j++ )
+								qglVertex3fv( pm->ctrl[j][i].xyz );
 						}
 						else
 						{
-							if ( g_bPatchLowerEdge ) {
-								for ( j = 0; j < g_nPatchAxisIndex; j++ )
-									qglVertex3fv( pm->ctrl[j][i].xyz );
-							}
-							else
-							{
-								for ( j = pm->width - 1; j > g_nPatchAxisIndex; j-- )
-									qglVertex3fv( pm->ctrl[j][i].xyz );
-							}
+							for ( j = pm->width - 1; j > g_nPatchAxisIndex; j-- )
+								qglVertex3fv( pm->ctrl[j][i].xyz );
 						}
 					}
-					qglEnd();
 				}
-				else {
-					qglColor3f( 0, 0, 1 );
-					qglLineWidth( 2.0 );
-					qglBegin( GL_LINES );
-					for ( i = 0; i < pm->height; i++ )
-					{
-						if ( g_nPatchBendState == BEND_SELECT_ORIGIN ) {
-							DrawAlternatePoint( pm->ctrl[g_nBendOriginIndex][i].xyz, 0 );
-						}
-						else
-						{
-							if ( g_bPatchLowerEdge ) {
-								for ( j = 0; j < g_nPatchAxisIndex; j++ )
-								{
-									DrawAlternatePoint( pm->ctrl[j][i].xyz, 0 );
-								}
-							}
-							else
-							{
-								for ( j = pm->width - 1; j > g_nPatchAxisIndex; j-- )
-								{
-									DrawAlternatePoint( pm->ctrl[j][i].xyz, 0 );
-								}
-							}
-						}
-					}
-					qglEnd();
-					qglLineWidth( 1.0 );
-				}
+				qglEnd();
 			}
 		}
 	}
@@ -3558,91 +3469,18 @@ void DrawPatchControls( patchMesh_t *pm ){
 		//  qglEnable (GL_LINE_STIPPLE);
 
 		// draw selection handles
-		if ( !g_PrefsDlg.m_bGlPtWorkaround ) {
-			qglPointSize( 6 );
-			qglBegin( GL_POINTS );
-			for ( i = 0 ; i < pm->width ; i++ )
-			{
-				for ( j = 0 ; j < pm->height ; j++ )
-				{
-					if ( PointInMoveList( pm->ctrl[i][j].xyz ) != -1 ) {
-						bSelectedPoints[i][j] = true;
-					}
-					else
-					{
-						bSelectedPoints[i][j] = false;
-						if ( i & 0x01 || j & 0x01 ) {
-							qglColor3f( 1, 0, 1 );
-						}
-						else{
-							qglColor3f( 0, 1, 0 );
-						}
-
-						qglVertex3fv( pm->ctrl[i][j].xyz );
-					}
-				}
-			}
-			qglColor3f( 0, 0, 1 );
-			for ( i = 0 ; i < pm->width ; i++ )
-			{
-				for ( j = 0 ; j < pm->height ; j++ )
-				{
-					if ( bSelectedPoints[i][j] ) {
-						qglVertex3fv( pm->ctrl[i][j].xyz );
-					}
-				}
-			}
-			qglEnd();
-		}
-		else
+		qglPointSize( 6 );
+		qglBegin( GL_POINTS );
+		for ( i = 0 ; i < pm->width ; i++ )
 		{
-			qglLineWidth( 2.0 );
-			qglBegin( GL_LINES );
-			for ( i = 0; i < pm->width; i++ )
+			for ( j = 0 ; j < pm->height ; j++ )
 			{
-				for ( j = 0; j < pm->height; j++ )
-				{
-					if ( PointInMoveList( pm->ctrl[i][j].xyz ) != -1 ) {
-						bSelectedPoints[i][j] = true;
-					}
-					else
-					{
-						bSelectedPoints[i][j] = false;
-						if ( i & 0x01 || j & 0x01 ) {
-							qglColor3f( 1, 0, 1 );
-						}
-						else{
-							qglColor3f( 0, 1, 0 );
-						}
-
-						// draw verts
-						DrawAlternatePoint( pm->ctrl[i][j].xyz, 0 );
-					}
+				if ( PointInMoveList( pm->ctrl[i][j].xyz ) != -1 ) {
+					bSelectedPoints[i][j] = true;
 				}
-			}
-			qglColor3f( 0, 0, 1 );
-			for ( i = 0; i < pm->width; i++ )
-			{
-				for ( j = 0; j < pm->height; j++ )
+				else
 				{
-					if ( bSelectedPoints[i][j] ) {
-						// draw verts
-						DrawAlternatePoint( pm->ctrl[i][j].xyz, 0 );
-					}
-				}
-			}
-			qglEnd();
-			qglLineWidth( 1.0 );
-		}
-	}
-	if ( bOverlay ) {
-		if ( !g_PrefsDlg.m_bGlPtWorkaround ) {
-			qglPointSize( 6 );
-			qglBegin( GL_POINTS );
-			for ( i = 0 ; i < pm->width ; i++ )
-			{
-				for ( j = 0 ; j < pm->height ; j++ )
-				{
+					bSelectedPoints[i][j] = false;
 					if ( i & 0x01 || j & 0x01 ) {
 						qglColor3f( 1, 0, 1 );
 					}
@@ -3652,31 +3490,37 @@ void DrawPatchControls( patchMesh_t *pm ){
 					qglVertex3fv( pm->ctrl[i][j].xyz );
 				}
 			}
-			qglEnd();
 		}
-		else
+		qglColor3f( 0, 0, 1 );
+		for ( i = 0 ; i < pm->width ; i++ )
 		{
-			qglLineWidth( 2.0 );
-			qglBegin( GL_LINES );
-			for ( i = 0 ; i < pm->width ; i++ )
+			for ( j = 0 ; j < pm->height ; j++ )
 			{
-				for ( j = 0 ; j < pm->height ; j++ )
-				{
-					if ( i & 0x01 || j & 0x01 ) {
-						qglColor3f( 1, 0, 1 );
-					}
-					else{
-						qglColor3f( 0, 1, 0 );
-					}
-					// draw verts
-					DrawAlternatePoint( pm->ctrl[i][j].xyz, 0 );
+				if ( bSelectedPoints[i][j] ) {
+					qglVertex3fv( pm->ctrl[i][j].xyz );
 				}
 			}
-			qglEnd();
-			qglLineWidth( 1.0 );
 		}
+		qglEnd();
 	}
-	//qglPopAttrib();
+	if ( bOverlay ) {
+		qglPointSize( 6 );
+		qglBegin( GL_POINTS );
+		for ( i = 0 ; i < pm->width ; i++ )
+		{
+			for ( j = 0 ; j < pm->height ; j++ )
+			{
+				if ( i & 0x01 || j & 0x01 ) {
+					qglColor3f( 1, 0, 1 );
+				}
+				else{
+					qglColor3f( 0, 1, 0 );
+				}
+				qglVertex3fv( pm->ctrl[i][j].xyz );
+			}
+		}
+		qglEnd();
+	}
 }
 
 /*

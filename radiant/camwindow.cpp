@@ -32,8 +32,6 @@
 extern void DrawPathLines();
 extern void Select_ShiftTexture( int x, int y );
 extern void Select_RotateTexture( int amt );
-extern void DrawAlternatePoint( vec3_t v, float scale );
-//extern void Select_ScaleTexture(int x, int y);
 
 extern int g_nPatchClickedView;
 
@@ -98,10 +96,6 @@ void CamWnd::OnCreate(){
 	g_qeglobals.m_bOpenGLReady = true;
 
 	g_PrefsDlg.UpdateTextureCompression();
-
-#ifdef ATIHACK_812
-	g_PrefsDlg.UpdateATIHack();
-#endif
 
 	g_qeglobals_gui.d_camera = m_pWidget;
 }
@@ -1473,83 +1467,39 @@ void CamWnd::Cam_Draw(){
 
 	// edge / vertex flags
 	if ( g_qeglobals.d_select_mode == sel_vertex ) {
-		// GL_POINTS on Kyro Workaround
-		if ( !g_PrefsDlg.m_bGlPtWorkaround ) {
-			// brush verts
-			qglPointSize( 4 );
-			qglColor3f( 0,1,0 );
+		// brush verts
+		qglPointSize( 4 );
+		qglColor3f( 0,1,0 );
+		qglBegin( GL_POINTS );
+		for ( i = 0 ; i < g_qeglobals.d_numpoints ; i++ )
+			qglVertex3fv( g_qeglobals.d_points[i] );
+		qglEnd();
+
+		if ( g_qeglobals.d_num_move_points ) {
+			// selected brush verts
+			qglPointSize( 5 );
+			qglColor3f( 0,0,1 );
 			qglBegin( GL_POINTS );
-			for ( i = 0 ; i < g_qeglobals.d_numpoints ; i++ )
-				qglVertex3fv( g_qeglobals.d_points[i] );
+			for ( i = 0; i < g_qeglobals.d_num_move_points; i++ )
+				qglVertex3fv( g_qeglobals.d_move_points[i] );
 			qglEnd();
-
-			if ( g_qeglobals.d_num_move_points ) {
-				// selected brush verts
-				qglPointSize( 5 );
-				qglColor3f( 0,0,1 );
-				qglBegin( GL_POINTS );
-				for ( i = 0; i < g_qeglobals.d_num_move_points; i++ )
-					qglVertex3fv( g_qeglobals.d_move_points[i] );
-				qglEnd();
-			}
-
-			qglPointSize( 1 );
 		}
-		else
-		{
-			// brush verts
-			qglColor3f( 0,1,0 );
-			qglLineWidth( 2.0 );
-			qglBegin( GL_LINES );
-			for ( i = 0; i < g_qeglobals.d_numpoints; i++ )
-				DrawAlternatePoint( g_qeglobals.d_points[i], 1.5 );
-			qglEnd();
 
-			if ( g_qeglobals.d_num_move_points ) {
-				// selected brush verts
-				qglColor3f( 0,0,1 );
-				qglLineWidth( 3.0 );
-				qglBegin( GL_LINES );
-				for ( i = 0; i < g_qeglobals.d_num_move_points; i++ )
-					qglVertex3fv( g_qeglobals.d_move_points[i] );
-				qglEnd();
-			}
-			qglLineWidth( 1.0 );
-		}
+		qglPointSize( 1 );
 	}
 	else if ( g_qeglobals.d_select_mode == sel_edge ) {
 		float   *v1, *v2;
-		// GL_POINTS on Kyro Workaround
-		if ( !g_PrefsDlg.m_bGlPtWorkaround ) {
-			qglPointSize( 4 );
-			qglColor3f( 0,0,1 );
-			qglBegin( GL_POINTS );
-			for ( i = 0 ; i < g_qeglobals.d_numedges ; i++ )
-			{
-				v1 = g_qeglobals.d_points[g_qeglobals.d_edges[i].p1];
-				v2 = g_qeglobals.d_points[g_qeglobals.d_edges[i].p2];
-				qglVertex3f( ( v1[0] + v2[0] ) * 0.5,( v1[1] + v2[1] ) * 0.5,( v1[2] + v2[2] ) * 0.5 );
-			}
-			qglEnd();
-			qglPointSize( 1 );
+		qglPointSize( 4 );
+		qglColor3f( 0,0,1 );
+		qglBegin( GL_POINTS );
+		for ( i = 0 ; i < g_qeglobals.d_numedges ; i++ )
+		{
+			v1 = g_qeglobals.d_points[g_qeglobals.d_edges[i].p1];
+			v2 = g_qeglobals.d_points[g_qeglobals.d_edges[i].p2];
+			qglVertex3f( ( v1[0] + v2[0] ) * 0.5,( v1[1] + v2[1] ) * 0.5,( v1[2] + v2[2] ) * 0.5 );
 		}
-		else {
-			qglColor3f( 0,0,1 );
-			qglLineWidth( 2.0 );
-			qglBegin( GL_LINES );
-			for ( i = 0; i < g_qeglobals.d_numedges; i++ )
-			{
-				v1 = g_qeglobals.d_points[g_qeglobals.d_edges[i].p1];
-				v2 = g_qeglobals.d_points[g_qeglobals.d_edges[i].p2];
-				vec3_t v3;
-				v3[0] = ( v1[0] + v2[0] ) * 0.5;
-				v3[1] = ( v1[1] + v2[1] ) * 0.5;
-				v3[2] = ( v1[2] + v2[2] ) * 0.5;
-				DrawAlternatePoint( v3, 1.5 );
-			}
-			qglEnd();
-			qglLineWidth( 1.0 );
-		}
+		qglEnd();
+		qglPointSize( 1 );
 	}
 
 	//

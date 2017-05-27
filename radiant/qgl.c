@@ -505,13 +505,6 @@ void ( APIENTRY * qgluLookAt )(
 	GLdouble upz );
 const GLubyte* ( APIENTRY * qgluErrorString )(GLenum errCode );
 
-#ifdef ATIHACK_812
-void ( APIENTRY * qglCullFace_real )( GLenum mode );
-void ( APIENTRY * qglDisable_real )( GLenum cap );
-void ( APIENTRY * qglEnable_real )( GLenum cap );
-void ( APIENTRY * qglPolygonMode_real )( GLenum face, GLenum mode );
-#endif
-
 /*
 ** QGL_Shutdown
 **
@@ -960,13 +953,6 @@ void QGL_Shutdown(){
 	qgluPerspective = NULL;
 	qgluErrorString = NULL;
 	qgluLookAt = NULL;
-
-#ifdef ATIHACK_812
-	qglCullFace_real              = NULL;
-	qglDisable_real               = NULL;
-	qglEnable_real                = NULL;
-	qglPolygonMode_real           = NULL;
-#endif
 }
 
 /*
@@ -1084,91 +1070,6 @@ const GLubyte* WINAPI gluErrorString( GLenum errCode ){
 	return (GLubyte *) "Unknown error";
 }
 
-#ifdef ATIHACK_812
-int ATIhack_culling;
-GLenum ATIhack_cullmode;
-GLenum ATIhack_backmode;
-GLenum ATIhack_frontmode;
-
-static void ATIhack_update( void ){
-	if ( !ATIhack_culling || ( GL_FRONT_AND_BACK == ATIhack_cullmode ) ) {
-		qglPolygonMode_real( GL_FRONT, ATIhack_frontmode );
-		qglPolygonMode_real( GL_BACK, ATIhack_backmode );
-	}
-	else{
-		switch ( ATIhack_cullmode )
-		{
-		case GL_FRONT:
-			qglPolygonMode_real( GL_FRONT_AND_BACK, ATIhack_backmode );
-			break;
-		case GL_BACK:
-			qglPolygonMode_real( GL_FRONT_AND_BACK, ATIhack_frontmode );
-		default:
-			break;
-		}
-	}
-}
-
-void APIENTRY qglEnable_ATIHack( GLenum cap ){
-	qglEnable_real( cap );
-	if ( GL_CULL_FACE != cap ) {
-		return;
-	}
-	if ( ATIhack_culling ) {
-		return;
-	}
-	ATIhack_culling = 1;
-	ATIhack_update();
-}
-
-void APIENTRY qglDisable_ATIHack( GLenum cap ){
-	qglDisable_real( cap );
-	if ( GL_CULL_FACE != cap ) {
-		return;
-	}
-	if ( !ATIhack_culling ) {
-		return;
-	}
-	ATIhack_culling = 0;
-	ATIhack_update();
-}
-
-void APIENTRY qglCullFace_ATIHack( GLenum mode ){
-	if ( ATIhack_cullmode == mode ) {
-		return;
-	}
-	qglCullFace_real( mode );
-	ATIhack_cullmode = mode;
-	ATIhack_update();
-}
-
-void APIENTRY qglPolygonMode_ATIHack( GLenum face, GLenum mode ){
-	switch ( face )
-	{
-	case GL_FRONT:
-		if ( ATIhack_frontmode == mode ) {
-			return;
-		}
-		ATIhack_frontmode = mode;
-		break;
-	case GL_BACK:
-		if ( ATIhack_backmode == mode ) {
-			return;
-		}
-		ATIhack_backmode = mode;
-		break;
-	case GL_FRONT_AND_BACK:
-		if ( ( ATIhack_frontmode == mode ) && ( ATIhack_backmode == mode ) ) {
-			return;
-		}
-		ATIhack_frontmode = ATIhack_backmode = mode;
-	default:
-		break;
-	}
-	ATIhack_update();
-}
-#endif
-
 int QGL_Init( const char *dllname, const char* gluname ){
 #ifdef _WIN32
 	g_hGLDLL = LoadLibrary( dllname );
@@ -1255,23 +1156,13 @@ int QGL_Init( const char *dllname, const char* gluname ){
 	qglCopyTexImage2D            = safe_dlsym( g_hGLDLL, "glCopyTexImage2D" );
 	qglCopyTexSubImage1D         = safe_dlsym( g_hGLDLL, "glCopyTexSubImage1D" );
 	qglCopyTexSubImage2D         = safe_dlsym( g_hGLDLL, "glCopyTexSubImage2D" );
-#ifdef ATIHACK_812
-	qglCullFace_real              = safe_dlsym( g_hGLDLL, "glCullFace" );
-	qglCullFace                  = qglCullFace_real;
-#else
 	qglCullFace                  = safe_dlsym( g_hGLDLL, "glCullFace" );
-#endif
 	qglDeleteLists               = safe_dlsym( g_hGLDLL, "glDeleteLists" );
 	qglDeleteTextures            = safe_dlsym( g_hGLDLL, "glDeleteTextures" );
 	qglDepthFunc                 = safe_dlsym( g_hGLDLL, "glDepthFunc" );
 	qglDepthMask                 = safe_dlsym( g_hGLDLL, "glDepthMask" );
 	qglDepthRange                = safe_dlsym( g_hGLDLL, "glDepthRange" );
-#ifdef ATIHACK_812
-	qglDisable_real               = safe_dlsym( g_hGLDLL, "glDisable" );
-	qglDisable                   = qglDisable_real;
-#else
 	qglDisable                   = safe_dlsym( g_hGLDLL, "glDisable" );
-#endif
 	qglDisableClientState        = safe_dlsym( g_hGLDLL, "glDisableClientState" );
 	qglDrawArrays                = safe_dlsym( g_hGLDLL, "glDrawArrays" );
 	qglDrawBuffer                = safe_dlsym( g_hGLDLL, "glDrawBuffer" );
@@ -1280,12 +1171,7 @@ int QGL_Init( const char *dllname, const char* gluname ){
 	qglEdgeFlag                  = safe_dlsym( g_hGLDLL, "glEdgeFlag" );
 	qglEdgeFlagPointer           = safe_dlsym( g_hGLDLL, "glEdgeFlagPointer" );
 	qglEdgeFlagv                 = safe_dlsym( g_hGLDLL, "glEdgeFlagv" );
-#ifdef ATIHACK_812
-	qglEnable_real                = safe_dlsym( g_hGLDLL, "glEnable" );
-	qglEnable                    = qglEnable_real;
-#else
 	qglEnable                    = safe_dlsym( g_hGLDLL, "glEnable" );
-#endif
 	qglEnableClientState         = safe_dlsym( g_hGLDLL, "glEnableClientState" );
 	qglEnd                       = safe_dlsym( g_hGLDLL, "glEnd" );
 	qglEndList                   = safe_dlsym( g_hGLDLL, "glEndList" );
@@ -1413,12 +1299,7 @@ int QGL_Init( const char *dllname, const char* gluname ){
 	qglPixelTransferi            = safe_dlsym( g_hGLDLL, "glPixelTransferi" );
 	qglPixelZoom                 = safe_dlsym( g_hGLDLL, "glPixelZoom" );
 	qglPointSize                 = safe_dlsym( g_hGLDLL, "glPointSize" );
-#ifdef ATIHACK_812
-	qglPolygonMode_real           = safe_dlsym( g_hGLDLL, "glPolygonMode" );
-	qglPolygonMode               = qglPolygonMode_real;
-#else
 	qglPolygonMode               = safe_dlsym( g_hGLDLL, "glPolygonMode" );
-#endif
 	qglPolygonOffset             = safe_dlsym( g_hGLDLL, "glPolygonOffset" );
 	qglPolygonStipple            = safe_dlsym( g_hGLDLL, "glPolygonStipple" );
 	qglPopAttrib                 = safe_dlsym( g_hGLDLL, "glPopAttrib" );
@@ -1650,13 +1531,6 @@ int QGL_Init( const char *dllname, const char* gluname ){
 	qglMTexCoord2fSGIS = 0;
 
 	Sys_Printf( "Done.\n" );
-
-#ifdef ATIHACK_812
-	ATIhack_culling = 0;
-	ATIhack_cullmode = GL_BACK;
-	ATIhack_backmode = GL_FILL;
-	ATIhack_frontmode = GL_FILL;
-#endif
 
 	if ( init_error == 1 ) {
 		return 0;

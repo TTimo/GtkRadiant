@@ -2788,23 +2788,6 @@ void XYWnd::PaintSizeInfo( int nDim1, int nDim2, vec3_t vMinBounds, vec3_t vMaxB
    XY_Draw
    ==============
  */
-#define ALT_POINT_SIZE 4
-// Alternative to GL_POINTS (for; vertex handles, patch handles, clip points, path points)
-void DrawAlternatePoint( vec3_t v, float scale ){
-	if ( scale == 0 ) {
-		scale = g_pParentWnd->GetXYWnd()->Scale();
-		//scale = g_qeglobals.d_xyOld.scale;
-	}
-
-	// ugly gl_line cross
-	qglVertex3f( v[0] + ( ALT_POINT_SIZE / scale ), v[1], v[2] );
-	qglVertex3f( v[0] - ( ALT_POINT_SIZE / scale ), v[1], v[2] );
-	qglVertex3f( v[0], v[1] + ( ALT_POINT_SIZE / scale ), v[2] );
-	qglVertex3f( v[0], v[1] - ( ALT_POINT_SIZE / scale ), v[2] );
-	qglVertex3f( v[0], v[1], v[2] + ( ALT_POINT_SIZE / scale ) );
-	qglVertex3f( v[0], v[1], v[2] - ( ALT_POINT_SIZE / scale ) );
-}
-
 
 long g_lCount = 0;
 long g_lTotal = 0;
@@ -3061,80 +3044,38 @@ void XYWnd::XY_Draw(){
 
 	// edge / vertex flags
 	if ( g_qeglobals.d_select_mode == sel_vertex ) {
-		if ( !g_PrefsDlg.m_bGlPtWorkaround ) {
-			// brush verts
-			qglPointSize( 4 );
-			qglColor3f( 0,1,0 );
+		// brush verts
+		qglPointSize( 4 );
+		qglColor3f( 0,1,0 );
+		qglBegin( GL_POINTS );
+		for ( i = 0 ; i < g_qeglobals.d_numpoints ; i++ )
+			qglVertex3fv( g_qeglobals.d_points[i] );
+		qglEnd();
+
+		if ( g_qeglobals.d_num_move_points ) {
+			// selected brush verts
+			qglPointSize( 5 );
+			qglColor3f( 0,0,1 );
 			qglBegin( GL_POINTS );
-			for ( i = 0 ; i < g_qeglobals.d_numpoints ; i++ )
-				qglVertex3fv( g_qeglobals.d_points[i] );
+			for ( i = 0; i < g_qeglobals.d_num_move_points; i++ )
+				qglVertex3fv( g_qeglobals.d_move_points[i] );
 			qglEnd();
-
-			if ( g_qeglobals.d_num_move_points ) {
-				// selected brush verts
-				qglPointSize( 5 );
-				qglColor3f( 0,0,1 );
-				qglBegin( GL_POINTS );
-				for ( i = 0; i < g_qeglobals.d_num_move_points; i++ )
-					qglVertex3fv( g_qeglobals.d_move_points[i] );
-				qglEnd();
-			}
-			qglPointSize( 1 );
 		}
-		else
-		{
-			// brush verts
-			qglColor3f( 0,1,0 );
-			qglLineWidth( 2.0 );
-			qglBegin( GL_LINES );
-			for ( i = 0; i < g_qeglobals.d_numpoints; i++ )
-				DrawAlternatePoint( g_qeglobals.d_points[i], m_fScale );
-			qglEnd();
-
-			if ( g_qeglobals.d_num_move_points ) {
-				// selected brush verts
-				qglColor3f( 0,0,1 );
-				qglLineWidth( 3.0 );
-				qglBegin( GL_LINES );
-				for ( i = 0; i < g_qeglobals.d_num_move_points; i++ )
-					qglVertex3fv( g_qeglobals.d_move_points[i] );
-				qglEnd();
-			}
-			qglLineWidth( 1.0 );
-		}
+		qglPointSize( 1 );
 	}
 	else if ( g_qeglobals.d_select_mode == sel_edge ) {
 		float   *v1, *v2;
-		if ( !g_PrefsDlg.m_bGlPtWorkaround ) {
-			qglPointSize( 4 );
-			qglColor3f( 0,0,1 );
-			qglBegin( GL_POINTS );
-			for ( i = 0 ; i < g_qeglobals.d_numedges ; i++ )
-			{
-				v1 = g_qeglobals.d_points[g_qeglobals.d_edges[i].p1];
-				v2 = g_qeglobals.d_points[g_qeglobals.d_edges[i].p2];
-				qglVertex3f( ( v1[0] + v2[0] ) * 0.5,( v1[1] + v2[1] ) * 0.5,( v1[2] + v2[2] ) * 0.5 );
-			}
-			qglEnd();
-			qglPointSize( 1 );
+		qglPointSize( 4 );
+		qglColor3f( 0,0,1 );
+		qglBegin( GL_POINTS );
+		for ( i = 0 ; i < g_qeglobals.d_numedges ; i++ )
+		{
+			v1 = g_qeglobals.d_points[g_qeglobals.d_edges[i].p1];
+			v2 = g_qeglobals.d_points[g_qeglobals.d_edges[i].p2];
+			qglVertex3f( ( v1[0] + v2[0] ) * 0.5,( v1[1] + v2[1] ) * 0.5,( v1[2] + v2[2] ) * 0.5 );
 		}
-		else {
-			qglColor3f( 0,0,1 );
-			qglLineWidth( 2.0 );
-			qglBegin( GL_LINES );
-			for ( i = 0; i < g_qeglobals.d_numedges; i++ )
-			{
-				v1 = g_qeglobals.d_points[g_qeglobals.d_edges[i].p1];
-				v2 = g_qeglobals.d_points[g_qeglobals.d_edges[i].p2];
-				vec3_t v3;
-				v3[0] = ( v1[0] + v2[0] ) * 0.5;
-				v3[1] = ( v1[1] + v2[1] ) * 0.5;
-				v3[2] = ( v1[2] + v2[2] ) * 0.5;
-				DrawAlternatePoint( v3, m_fScale );
-			}
-			qglEnd();
-			qglLineWidth( 1.0 );
-		}
+		qglEnd();
+		qglPointSize( 1 );
 	}
 
 	if ( !( m_nViewType == XY ) ) {
@@ -3417,23 +3358,12 @@ void ClipPoint::Draw( float fScale, int num ){
 
 void ClipPoint::Draw( float fScale, const char *label ){
 	// draw point
-	if ( !g_PrefsDlg.m_bGlPtWorkaround ) {
-		qglPointSize( 4 );
-		qglColor3fv( g_qeglobals.d_savedinfo.colors[COLOR_CLIPPER] );
-		qglBegin( GL_POINTS );
-		qglVertex3fv( m_ptClip );
-		qglEnd();
-		qglPointSize( 1 );
-	}
-	else
-	{
-		qglColor3fv( g_qeglobals.d_savedinfo.colors[COLOR_CLIPPER] );
-		qglLineWidth( 2.0 );
-		qglBegin( GL_LINES );
-		DrawAlternatePoint( m_ptClip, fScale );
-		qglEnd();
-		qglLineWidth( 1.0 );
-	}
+	qglPointSize( 4 );
+	qglColor3fv( g_qeglobals.d_savedinfo.colors[COLOR_CLIPPER] );
+	qglBegin( GL_POINTS );
+	qglVertex3fv( m_ptClip );
+	qglEnd();
+	qglPointSize( 1 );
 
 	// draw label
 	qglRasterPos3f( m_ptClip[0] + 2, m_ptClip[1] + 2, m_ptClip[2] + 2 );
