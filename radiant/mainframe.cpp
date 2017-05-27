@@ -2793,11 +2793,8 @@ void MainFrame::Create(){
 		else
 		{
 			gtk_paned_set_position( GTK_PANED( m_pSplits[2] ), g_PrefsDlg.mWindowInfo.nCamWidth );
-			while ( gtk_events_pending() ) gtk_main_iteration();
 			gtk_paned_set_position( GTK_PANED( m_pSplits[3] ), g_PrefsDlg.mWindowInfo.nXYWidth );
 		}
-
-		while ( gtk_events_pending() ) gtk_main_iteration();
 
 		gtk_paned_set_position( GTK_PANED( m_pSplits[1] ), g_PrefsDlg.mWindowInfo.nCamHeight );
 	}
