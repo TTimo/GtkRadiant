@@ -155,7 +155,9 @@ static void DoProjectAddEdit( bool edit, GtkWidget *parent ){
 	gtk_widget_show( label );
 
 	text = gtk_entry_new();
-	g_object_set_data( G_OBJECT( dialog ), "text", text );
+	gtk_table_attach( GTK_TABLE( table ), text, 1, 2, 0, 1,
+					  (GtkAttachOptions) ( GTK_EXPAND | GTK_FILL ),
+					  (GtkAttachOptions) ( 0 ), 0, 0 );
 	gtk_widget_show( text );
 	g_object_set_data( G_OBJECT( dialog ), "text", text );
 
