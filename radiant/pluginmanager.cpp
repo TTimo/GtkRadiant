@@ -91,8 +91,27 @@ virtual void addType( const char* key, filetype_t type ){
 }
 virtual void getTypeList( const char* key, IFileTypeList* typelist ){
 	filetype_list_t& list_ref = m_typelists[key];
-	for ( unsigned int i = 0; i < list_ref.size(); ++i )
+
+	if (key == "model") {
+		// Get the list of all supported types (adapted from kaz)
+		CString allTypesFilter;
+		for (unsigned int i = 0; i < list_ref.size(); ++i) {
+			allTypesFilter += list_ref[i].getType().pattern;
+			if (i < list_ref.size() - 1) {
+				allTypesFilter += ";";
+			}
+		}
+
+		// Add the item on top
+		// TODO: Make is translatable
+		typelist->addType(filetype_t("All supported types", allTypesFilter.GetBuffer()));
+	}
+
+	// Then add the supported types one by one
+	// TODO: Sort them alphabetically (have them sorted in m_typelists[key])
+	for ( unsigned int i = 0; i < list_ref.size(); ++i ) {
 		typelist->addType( list_ref[i].getType() );
+	}
 }
 private:
 struct filetype_copy_t
