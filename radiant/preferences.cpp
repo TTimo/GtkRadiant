@@ -1654,11 +1654,6 @@ void PrefsDlg::BuildDialog(){
 					gtk_tree_store_append( store, &tab, &group );
 					gtk_tree_store_set( store, &tab, 0, _( "Texture Settings" ), 1, (gpointer)PTAB_TEXTURE, -1 );
 				}
-				{
-					GtkTreeIter tab;
-					gtk_tree_store_append( store, &tab, &group );
-					gtk_tree_store_set( store, &tab, 0, _( "Texture Directory List" ), 1, (gpointer)PTAB_TEXTURE_DIR, -1 );
-				}
 			}
 
 			{
@@ -2080,21 +2075,6 @@ void PrefsDlg::BuildDialog(){
 	}
 	g_list_free( combo_list );
 
-	// Add the page to the notebook
-	page_index = gtk_notebook_append_page( GTK_NOTEBOOK( notebook ), pageframe, preflabel );
-	assert( page_index == PTAB_TEXTURE );
-
-	/******** Texture dir list group *********/
-	preflabel = gtk_label_new( _( "Texture directory list" ) );
-	gtk_widget_show( preflabel );
-	pageframe = gtk_frame_new( _( "Texture directory list" ) );
-	gtk_container_set_border_width( GTK_CONTAINER( pageframe ), 5 );
-	gtk_widget_show( pageframe );
-	vbox = gtk_vbox_new( FALSE, 5 );
-	gtk_container_set_border_width( GTK_CONTAINER( vbox ), 5 );
-	gtk_container_add( GTK_CONTAINER( pageframe ), vbox );
-	gtk_widget_show( vbox );
-
 	check = gtk_check_button_new_with_label( _( "Show Texture Directory List" ) );
 	gtk_box_pack_start( GTK_BOX( vbox ), check, FALSE, FALSE, 0 );
 	gtk_widget_show( check );
@@ -2102,7 +2082,7 @@ void PrefsDlg::BuildDialog(){
 
 	// Add the page to the notebook
 	page_index = gtk_notebook_append_page( GTK_NOTEBOOK( notebook ), pageframe, preflabel );
-	assert( page_index == PTAB_TEXTURE_DIR );
+	assert( page_index == PTAB_TEXTURE );
 
 	/******** Layout group *********/
 	preflabel = gtk_label_new( _( "Layout" ) );
