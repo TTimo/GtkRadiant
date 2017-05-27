@@ -861,7 +861,7 @@ int mainRadiant( int argc, char* argv[] ) {
 	}
 
 #if defined ( __linux__ ) || defined ( __APPLE__ )
-	if ( ( qglXQueryExtension == NULL ) || ( qglXQueryExtension( GDK_DISPLAY(),NULL,NULL ) != True ) ) {
+	if ( ( qglXQueryExtension == NULL ) || ( qglXQueryExtension( gdk_x11_get_default_xdisplay(), NULL, NULL ) != True ) ) {
 		Sys_FPrintf( SYS_ERR, "glXQueryExtension failed\n" );
 		_exit( 1 );
 		return 1;
