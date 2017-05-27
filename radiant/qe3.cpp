@@ -1212,25 +1212,25 @@ bool Sys_AltDown(){
 	char keys[32];
 	int x;
 
-	XQueryKeymap( GDK_DISPLAY(), keys );
+	XQueryKeymap( gdk_x11_get_default_xdisplay(), keys );
 
-	x = XKeysymToKeycode( GDK_DISPLAY(), XK_Alt_L );
+	x = XKeysymToKeycode( gdk_x11_get_default_xdisplay(), XK_Alt_L );
 	if ( keys[x / 8] & ( 1 << ( x % 8 ) ) ) {
 		return true;
 	}
 
-	x = XKeysymToKeycode( GDK_DISPLAY(), XK_Alt_R );
+	x = XKeysymToKeycode( gdk_x11_get_default_xdisplay(), XK_Alt_R );
 	if ( keys[x / 8] & ( 1 << ( x % 8 ) ) ) {
 		return true;
 	}
 
 	// For Apple, let users use their Command keys since Alt + X11 is hosed
-	x = XKeysymToKeycode( GDK_DISPLAY(), XK_Meta_L );
+	x = XKeysymToKeycode( gdk_x11_get_default_xdisplay(), XK_Meta_L );
 	if ( keys[x / 8] & ( 1 << ( x % 8 ) ) ) {
 		return true;
 	}
 
-	x = XKeysymToKeycode( GDK_DISPLAY(), XK_Meta_R );
+	x = XKeysymToKeycode( gdk_x11_get_default_xdisplay(), XK_Meta_R );
 	if ( keys[x / 8] & ( 1 << ( x % 8 ) ) ) {
 		return true;
 	}
@@ -1248,14 +1248,14 @@ bool Sys_ShiftDown(){
 	char keys[32];
 	int x;
 
-	XQueryKeymap( GDK_DISPLAY(), keys );
+	XQueryKeymap( gdk_x11_get_default_xdisplay(), keys );
 
-	x = XKeysymToKeycode( GDK_DISPLAY(), XK_Shift_L );
+	x = XKeysymToKeycode( gdk_x11_get_default_xdisplay(), XK_Shift_L );
 	if ( keys[x / 8] & ( 1 << ( x % 8 ) ) ) {
 		return true;
 	}
 
-	x = XKeysymToKeycode( GDK_DISPLAY(), XK_Shift_R );
+	x = XKeysymToKeycode( gdk_x11_get_default_xdisplay(), XK_Shift_R );
 	if ( keys[x / 8] & ( 1 << ( x % 8 ) ) ) {
 		return true;
 	}
