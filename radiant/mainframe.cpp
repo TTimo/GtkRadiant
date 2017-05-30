@@ -4245,27 +4245,37 @@ void MainFrame::OnPlugIn( unsigned int nID, const char* str ){
 	m_PlugInMgr.Dispatch( nID, str );
 }
 
-inline GtkToolbarChildType gtktoolbarchildtype_for_toolbarbuttontype( IToolbarButton::EType type ){
+void toolbar_insert( GtkWidget *toolbar, const char* image, const char* text, const char* tooltip, IToolbarButton::EType type, GCallback callback, gpointer data ){
+	GtkToolItem *item;
+	
 	switch ( type )
 	{
 	case IToolbarButton::eSpace:
-		return GTK_TOOLBAR_CHILD_SPACE;
+		item = gtk_separator_tool_item_new();
+		break;
 	case IToolbarButton::eButton:
-		return GTK_TOOLBAR_CHILD_BUTTON;
+		item = gtk_tool_button_new( new_plugin_image_icon( image ), text );
+		break;
 	case IToolbarButton::eToggleButton:
-		return GTK_TOOLBAR_CHILD_TOGGLEBUTTON;
+		item = gtk_toggle_tool_button_new();
+		gtk_tool_button_set_icon_widget( GTK_TOOL_BUTTON( item ), new_plugin_image_icon( image ) );
+		gtk_tool_button_set_label( GTK_TOOL_BUTTON( item ), text );
+		break;
 	case IToolbarButton::eRadioButton:
-		return GTK_TOOLBAR_CHILD_RADIOBUTTON;
+		item = gtk_radio_tool_button_new( NULL );
+		gtk_tool_button_set_icon_widget( GTK_TOOL_BUTTON( item ), new_plugin_image_icon( image ) );
+		break;
+	default:
+		Error( "invalid toolbar button type" );
+		break;
 	}
-	Error( "invalid toolbar button type" );
-	return (GtkToolbarChildType)0;
-}
+	
+	gtk_widget_set_tooltip_text( GTK_WIDGET( item ), tooltip );
+	g_signal_connect( item, "clicked", callback, data );
 
-void toolbar_insert( GtkWidget *toolbar, const char* image, const char* text, const char* tooltip, IToolbarButton::EType type, GCallback callback, gpointer data ){
-	GtkWidget *pixmap;
+	gtk_toolbar_insert( GTK_TOOLBAR( toolbar ), item, -1 );
+	gtk_widget_show( GTK_WIDGET( item ) );
 
-	pixmap = new_plugin_image_icon( image );
-	gtk_toolbar_append_element( GTK_TOOLBAR( toolbar ), gtktoolbarchildtype_for_toolbarbuttontype( type ), NULL, text, tooltip, "", GTK_WIDGET( pixmap ), callback, data );
 }
 
 void SignalToolbarButton( GtkWidget *widget, gpointer data ){
