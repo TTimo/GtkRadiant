@@ -80,12 +80,38 @@ void ZWnd::OnRButtonUp( guint32 nFlags, int pointx, int pointy ){
 }
 
 void ZWnd::OnMouseMove( guint32 nFlags, int pointx, int pointy ){
-	float fz = z.origin[2] + ( ( m_pWidget->allocation.height - 1 - pointy ) - ( z.height / 2 ) ) / z.scale;
+	pointy = m_pWidget->allocation.height - 1 - pointy;
+	float fz = z.origin[2] + ( pointy - ( z.height / 2 ) ) / z.scale;
 	fz = floor( fz / g_qeglobals.d_gridsize + 0.5 ) * g_qeglobals.d_gridsize;
 	CString strStatus;
 	strStatus.Format( "Z:: %.1f", fz );
 	g_pParentWnd->SetStatusText( 1, strStatus );
-	Z_MouseMoved( pointx, m_pWidget->allocation.height - 1 - pointy, nFlags );
+	Z_MouseMoved( pointx, pointy, nFlags );
+
+	// very handy for understanding
+	//float mouse_pos_in_3d = z.origin[2] + ( pointy - ( z.height / 2 ) ) / z.scale;
+	//Sys_Printf("Z_MouseMoved x=%d y=%d mouse_pos_in_3d=%f (z.origin[2]=%f + ( y=%d - ( z.height=%d / 2 ) / z.scale=%f)\n", pointx, pointy, mouse_pos_in_3d, z.origin[2], pointy, z.height, z.scale);
+}
+
+void ZWnd::OnMouseWheel(bool bUp, int pointx, int pointy) {
+
+	float old_z = z.origin[2] + ( pointy - ( z.height / 2 ) ) / z.scale;
+
+	if (bUp)
+		z.scale *= 2;
+	else
+		z.scale /= 2;
+
+	float new_z = z.origin[2] + ( pointy - ( z.height / 2 ) ) / z.scale;
+
+	float delta = new_z - old_z;
+	//Sys_Printf("Delta: %f\n", delta);
+	// Zoom into the mouse position
+	z.origin[2] += delta;
+
+
+	//Sys_Printf("ZWnd::OnMouseWheel> bUp=%d pointx=%d pointy=%d z.scale=%f\n", bUp, pointx, pointy, z.scale);
+	Sys_UpdateWindows(W_Z);
 }
 
 void ZWnd::OnExpose(){
