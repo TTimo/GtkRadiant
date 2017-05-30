@@ -47,7 +47,9 @@
 	#include <dirent.h>
 	#include <unistd.h>
 	#define WINAPI
-#else
+#endif
+
+#ifdef _MSC_VER
 	#include <wtypes.h>
 	#include <io.h>
 	#define R_OK 04

@@ -29,10 +29,10 @@
 extern GtkWidget *g_pEditModeAddRadioButton;
 
 char* Q_realpath( const char *path, char *resolved_path, size_t size ){
-#if defined  ( __linux__ ) || defined ( __APPLE__ )
-	return realpath( path, resolved_path );
-#else
+#if defined ( _MSC_VER )
 	return _fullpath( resolved_path, path, size );
+#else
+	return realpath( path, resolved_path );
 #endif
 }
 
