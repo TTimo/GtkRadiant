@@ -172,7 +172,6 @@ static gint timer( gpointer data ){
 	return TRUE;
 }
 
-#if GTK_CHECK_VERSION( 1,3,0 )
 static gint scroll_event( GtkWidget *widget,
 						  GdkEventScroll *event,
 						  gpointer data ){
@@ -180,7 +179,6 @@ static gint scroll_event( GtkWidget *widget,
 	wnd->OnMouseWheel( ( event->direction == GDK_SCROLL_UP ) ? true : false, (int)event->x, (int)event->y );
 	return TRUE;
 }
-#endif
 
 // =============================================================================
 // GLWindow class
@@ -205,13 +203,8 @@ GLWindow::GLWindow( bool zbuffer ) {
 		g_qeglobals_gui.d_glBase = m_pWidget;
 	}
 
-#if GTK_CHECK_VERSION( 1,3,0 )
 	gtk_widget_set_events( m_pWidget, GDK_DESTROY | GDK_EXPOSURE_MASK |
 						   GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK | GDK_POINTER_MOTION_MASK | GDK_SCROLL_MASK );
-#else
-	gtk_widget_set_events( m_pWidget, GDK_DESTROY | GDK_EXPOSURE_MASK |
-						   GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK | GDK_POINTER_MOTION_MASK );
-#endif
 
 	// Connect signal handlers
 	g_signal_connect( G_OBJECT( m_pWidget ), "realize", G_CALLBACK( realize ), this );
@@ -220,9 +213,7 @@ GLWindow::GLWindow( bool zbuffer ) {
 	g_signal_connect( G_OBJECT( m_pWidget ), "button-press-event", G_CALLBACK( button_press ), this );
 	g_signal_connect( G_OBJECT( m_pWidget ), "button-release-event",G_CALLBACK( button_release ), this );
 	g_signal_connect( G_OBJECT( m_pWidget ), "size-allocate", G_CALLBACK( resize ), this );
-#if GTK_CHECK_VERSION( 1,3,0 )
 	g_signal_connect( G_OBJECT( m_pWidget ), "scroll-event", G_CALLBACK( scroll_event ), this );
-#endif
 }
 
 GLWindow::~GLWindow (){
