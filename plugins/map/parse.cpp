@@ -212,8 +212,18 @@ void Patch_Parse( patchMesh_t *pPatch ){
 	// parse matrix dimensions
 	GetToken( false );
 	pPatch->width = atoi( token );
+	if ( pPatch->width > MAX_PATCH_WIDTH ) {
+		Syn_Printf( "ERROR: patch has too many planes, patch width > MAX_PATCH_WIDTH (%i > %i)\n", pPatch->width, MAX_PATCH_WIDTH );
+		pPatch->width = MAX_PATCH_WIDTH;
+		abortcode = MAP_ABORTED;
+	}
 	GetToken( false );
 	pPatch->height = atoi( token );
+	if ( pPatch->height > MAX_PATCH_HEIGHT ) {
+		Syn_Printf( "ERROR: patch has too many plane points, patch height > MAX_PATCH_HEIGHT (%i > %i)\n", pPatch->height, MAX_PATCH_HEIGHT );
+		pPatch->height = MAX_PATCH_HEIGHT;
+		abortcode = MAP_ABORTED;
+	}
 
 	// ignore contents/flags/value
 	GetToken( false );
