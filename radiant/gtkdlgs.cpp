@@ -845,10 +845,14 @@ void DoProjectSettings(){
 		}
 
 		if( gamemode_list ) {
-			const char *selected_mode;
 			const char *new_mode;
-			
+#if GTK_CHECK_VERSION( 3, 0, 0 )
+			const char *selected_mode;
+			selected_mode = gtk_combo_box_get_active_id( GTK_COMBO_BOX( gamemode_combo ) );
+#else
+			char *selected_mode;
 			selected_mode = gtk_combo_box_text_get_active_text( GTK_COMBO_BOX_TEXT( gamemode_combo ) );
+#endif
 			new_mode = NULL;
 
 			if( !selected_mode ) {
@@ -857,8 +861,12 @@ void DoProjectSettings(){
 				for( lst = gamemode_list; lst != NULL; lst = g_list_next( lst ) )
 				{
 					const gamemode_t *gamemode_x = (const gamemode_t *)lst->data;
+#if GTK_CHECK_VERSION( 3, 0, 0 )
 					if( strcmp( g_pGameDescription->mGameFile.GetBuffer(), gamemode_x->gameFile ) == 0 && strcmp( gamemode_x->mode, selected_mode ) == 0 ) {
-						new_mode = selected_mode;
+#else
+					if( strcmp( g_pGameDescription->mGameFile.GetBuffer(), gamemode_x->gameFile ) == 0 && strcmp( gamemode_x->name, selected_mode ) == 0 ) {
+#endif
+						new_mode = gamemode_x->mode;
 						break;
 					}
 				}
