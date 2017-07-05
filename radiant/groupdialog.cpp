@@ -1085,6 +1085,10 @@ static void proplist_selection_changed( GtkTreeSelection* selection, gpointer da
 	char* val;
 	gtk_tree_model_get( model, &iter, 0, &key, 1, &val, -1 );
 
+	if ( stricmp( key, "classname" ) == 0 ) {
+		gtk_widget_set_sensitive( del_button, FALSE );
+	}
+
 	gtk_entry_set_text( GTK_ENTRY( EntWidgets[EntKeyField] ), key );
 	gtk_entry_set_text( GTK_ENTRY( EntWidgets[EntValueField] ), val );
 
