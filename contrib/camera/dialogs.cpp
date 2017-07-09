@@ -1202,7 +1202,7 @@ GtkWidget *CreateCameraInspectorDialog( void ){
 
 	renderer = gtk_cell_renderer_text_new();
 	//1 view column with the events
-	column = gtk_tree_view_column_new_with_attributes( "events", renderer, "text", EVENT_TEXT_COLUMN, NULL );
+	column = gtk_tree_view_column_new_with_attributes( "events", renderer, "text", EVENT_TEXT_COLUMN, (char*)NULL );
 	gtk_tree_view_append_column( GTK_TREE_VIEW( g_pEventsList ), column );
 
 	gtk_tree_view_set_headers_visible( GTK_TREE_VIEW( g_pEventsList ), FALSE );

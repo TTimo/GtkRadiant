@@ -37,7 +37,7 @@ static void change_clicked( GtkWidget *widget, gpointer data ){
 	GtkFileChooserAction action = GTK_FILE_CHOOSER_ACTION_OPEN;
 
 	parent = GTK_WIDGET( data );
-	file_sel = gtk_file_chooser_dialog_new( _( "Locate portal (.prt) file" ), NULL, action, NULL, NULL );
+	file_sel = gtk_file_chooser_dialog_new( _( "Locate portal (.prt) file" ), NULL, action, NULL, (char*)NULL );
 	gtk_window_set_transient_for( GTK_WINDOW( file_sel ), GTK_WINDOW( parent ) );
 	gtk_dialog_add_button( GTK_DIALOG( file_sel ), _( "_Open" ), GTK_RESPONSE_ACCEPT );
 	gtk_dialog_add_button( GTK_DIALOG( file_sel ), _( "_Cancel" ), GTK_RESPONSE_CANCEL );
