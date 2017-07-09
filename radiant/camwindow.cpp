@@ -127,7 +127,7 @@ rectangle_t rectangle_from_area_cam(){
 
 void update_xor_rectangle( XORRectangle& xor_rectangle ){
 	rectangle_t rectangle;
-	if ( ( g_qeglobals.d_select_mode == sel_area ) ) {
+	if ( g_qeglobals.d_select_mode == sel_area ) {
 		rectangle = rectangle_from_area_cam();
 	}
 	xor_rectangle.set( rectangle );
