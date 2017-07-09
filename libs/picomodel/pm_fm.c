@@ -425,7 +425,7 @@ static picoModel_t *_fm_load( PM_PARAMS_LOAD ){
 #endif
 				continue;
 			}
-			else if ( ( p_index_LUT[triangle->index_xyz[j]].next == NULL ) ) { // Not equal to Main entry, and no LL entry
+			else if ( p_index_LUT[triangle->index_xyz[j]].next == NULL ) { // Not equal to Main entry, and no LL entry
 				// Add first entry of LL from Main
 				p_index_LUT2 = (index_LUT_t *)_pico_alloc( sizeof( index_LUT_t ) );
 				if ( p_index_LUT2 == NULL ) {
