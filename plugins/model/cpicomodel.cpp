@@ -195,7 +195,7 @@ int CPicoModel::GetNumSurfaces( void ){
 }
 
 char *CPicoModel::GetShaderNameForSurface( const unsigned int surf ){
-	if ( !m_pModel || surf < 0 || surf >= m_children->len ) {
+	if ( !m_pModel || surf >= m_children->len ) {
 		return 0;
 	}
 
