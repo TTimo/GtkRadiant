@@ -581,7 +581,7 @@ void FillTextureList( GSList** pArray )
 		colon = strstr( (char*)l_shaderfiles->data, ":" );
 		if( colon )
 		{
-			strncat( shaderfile, colon, sizeof( shaderfile ) );
+			strncat( shaderfile, colon, sizeof( shaderfile ) - strlen( shaderfile ) - 1 );
 		}
 
 		for ( GSList *tmp = texdirs; tmp; tmp = g_slist_next( tmp ) )
