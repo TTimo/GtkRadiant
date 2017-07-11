@@ -973,6 +973,11 @@ int LightContributionToSample( trace_t *trace ){
 
 		/* return to sender */
 		return 1;
+	} 
+
+	/* unknown light type */
+	else {
+		return -1;
 	}
 
 	/* ydnar: changed to a variable number */
