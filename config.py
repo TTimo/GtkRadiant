@@ -268,7 +268,7 @@ class Config:
             else:
                 svnurl = 'svn://svn.icculus.org/gtkradiant-gamepacks/%s/trunk' % pak
             self.CheckoutOrUpdate( svnurl, pak_path )
-        
+
     def CopyTree( self, src, dst):
         for root, dirs, files in os.walk( src ):
             target_dir = os.path.join( dst, root[root.find( '/' )+1:] )
