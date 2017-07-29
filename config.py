@@ -264,7 +264,7 @@ class Config:
         for pak in self.setup_packs:
             pak_path = os.path.join( path, 'installs', pak )
             if pak == 'UnvanquishedPack':
-                svnurl = 'https://github.com/Unvanquished/mapeditor-support/trunk/gtkradiant/'
+                svnurl = 'https://github.com/Unvanquished/unvanquished-mapeditor-support.git/trunk/build/gtkradiant/'
             else:
                 svnurl = 'svn://svn.icculus.org/gtkradiant-gamepacks/%s/trunk' % pak
             self.CheckoutOrUpdate( svnurl, pak_path )
