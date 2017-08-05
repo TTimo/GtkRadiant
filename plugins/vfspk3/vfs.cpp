@@ -368,6 +368,8 @@ static int vfsPakSort( const void *a, const void *b ){
  */
 void vfsInitDirectory( const char *path ){
 	char filename[PATH_MAX];
+	const char* pak_ext = ".pk3";
+	const char* pakdir_suf = "dir";
 	GDir *dir;
 	GSList *dirlist = NULL;
 	int iGameMode; // 0: no filtering 1: SP 2: MP
@@ -413,7 +415,22 @@ void vfsInitDirectory( const char *path ){
 				}
 
 				char *ext = (char*)strrchr( name, '.' );
-				if ( ( ext == NULL ) || ( strcasecmp( ext, ".pk3" ) != 0 ) ) {
+				if ( ext == NULL ) {
+					continue;
+				}
+
+				gboolean is_pak = FALSE;
+
+				const char* cur_ext = pak_ext;
+				if ( strcasecmp( ext, cur_ext ) == 0 ) {
+					is_pak = TRUE;
+				}
+				cur_ext = g_strconcat(cur_ext, pakdir_suf, NULL);
+				if ( strcasecmp( ext, cur_ext ) == 0 ) {
+					is_pak = TRUE;
+				}
+
+				if ( !is_pak ) {
 					continue;
 				}
 
@@ -473,7 +490,11 @@ void vfsInitDirectory( const char *path ){
 				}
 
 				sprintf( filename, "%s/%s", path, name );
-				vfsInitPakFile( filename );
+				if ( g_str_has_suffix( name, "dir" ) ) {
+					vfsInitDirectory( filename );
+				} else {
+					vfsInitPakFile( filename );
+				}
 
 				g_free( name );
 				dirlist = g_slist_remove( cur, name );
