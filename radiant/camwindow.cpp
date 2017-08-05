@@ -97,6 +97,10 @@ void CamWnd::OnCreate(){
 
 	g_PrefsDlg.UpdateTextureCompression();
 
+#ifdef ATIHACK_812
+	g_PrefsDlg.UpdateATIHack();
+#endif
+
 	g_qeglobals_gui.d_camera = m_pWidget;
 }
 
@@ -1467,26 +1471,26 @@ void CamWnd::Cam_Draw(){
 
 	// edge / vertex flags
 	if ( g_qeglobals.d_select_mode == sel_vertex ) {
-		// brush verts
-		qglPointSize( 4 );
-		qglColor3f( 0,1,0 );
-		qglBegin( GL_POINTS );
-		for ( i = 0 ; i < g_qeglobals.d_numpoints ; i++ )
-			qglVertex3fv( g_qeglobals.d_points[i] );
-		qglEnd();
-
-		if ( g_qeglobals.d_num_move_points ) {
-			// selected brush verts
-			qglPointSize( 5 );
-			qglColor3f( 0,0,1 );
+			// brush verts
+			qglPointSize( 4 );
+			qglColor3f( 0,1,0 );
 			qglBegin( GL_POINTS );
-			for ( i = 0; i < g_qeglobals.d_num_move_points; i++ )
-				qglVertex3fv( g_qeglobals.d_move_points[i] );
+			for ( i = 0 ; i < g_qeglobals.d_numpoints ; i++ )
+				qglVertex3fv( g_qeglobals.d_points[i] );
 			qglEnd();
-		}
 
-		qglPointSize( 1 );
-	}
+			if ( g_qeglobals.d_num_move_points ) {
+				// selected brush verts
+				qglPointSize( 5 );
+				qglColor3f( 0,0,1 );
+				qglBegin( GL_POINTS );
+				for ( i = 0; i < g_qeglobals.d_num_move_points; i++ )
+					qglVertex3fv( g_qeglobals.d_move_points[i] );
+				qglEnd();
+			}
+
+			qglPointSize( 1 );
+		}
 	else if ( g_qeglobals.d_select_mode == sel_edge ) {
 		float   *v1, *v2;
 		qglPointSize( 4 );

@@ -157,6 +157,10 @@
 #define Q3MAP2TEX_KEY "Q3Map2Tex"
 #define X64Q3MAP2_KEY "x64Q3Map2"
 
+#ifdef ATIHACK_812
+#define ATIHACK_KEY "ATIHack"
+#endif
+
 // window stuff
 #define ENTITYSPLIT1_KEY  "EntitySplit1"
 #define ENTITYSPLIT2_KEY  "EntitySplit2"
@@ -670,6 +674,9 @@ PrefsDlg::PrefsDlg (){
 	m_bQ3Map2Texturing = TRUE;
 #ifdef _WIN32
 	m_bx64q3map2 = TRUE;
+#endif
+#ifdef ATIHACK_812
+	m_bGlATIHack = FALSE;
 #endif
 }
 
@@ -1787,6 +1794,14 @@ void PrefsDlg::BuildDialog(){
 	gtk_widget_show( check );
 	AddDialogData( check, &m_bSizePaint, DLG_CHECK_BOOL );
 
+#ifdef ATIHACK_812
+	// ATI bugs
+	check = gtk_check_button_new_with_label( _( "ATI and Intel cards w/ buggy drivers (disappearing polygons)" ) );
+	gtk_box_pack_start( GTK_BOX( vbox ), check, FALSE, FALSE, 0 );
+	gtk_widget_show( check );
+	AddDialogData( check, &m_bGlATIHack, DLG_CHECK_BOOL );
+#endif
+
 	// Add the page to the notebook
 	page_index = gtk_notebook_append_page( GTK_NOTEBOOK( notebook ), pageframe, preflabel );
 	assert( page_index == PTAB_2D );
@@ -2893,6 +2908,31 @@ void PrefsDlg::UpdateTextureCompression(){
 	}
 }
 
+#ifdef ATIHACK_812
+void PrefsDlg::UpdateATIHack() {
+	// if OpenGL is not ready yet, don't do anything
+	if ( !g_qeglobals.m_bOpenGLReady ) {
+		Sys_Printf( "OpenGL not ready - postpone ATI bug workaround setup\n" );
+		return;
+	}
+
+	if ( m_bGlATIHack ) {
+		qglCullFace = &qglCullFace_ATIHack;
+		qglDisable = &qglDisable_ATIHack;
+		qglEnable = &qglEnable_ATIHack;
+		qglPolygonMode = &qglPolygonMode_ATIHack;
+		Sys_Printf( "ATI bug workaround enabled\n" );
+	}
+	else {
+		qglCullFace = qglCullFace_real;
+		qglDisable = qglDisable_real;
+		qglEnable = qglEnable_real;
+		qglPolygonMode = qglPolygonMode_real;
+		Sys_Printf( "ATI bug workaround disabled\n" );
+	}
+}
+#endif
+
 // TTimo: m_strEnginePath has a special status, if not found in registry we need to
 // initiliaze it for sure. It is not totally failsafe but we can use the same
 // code than in q3map, expecting to find some "quake" above us. If not, we prompt
@@ -3161,9 +3201,17 @@ void PrefsDlg::LoadPrefs(){
 	mLocalPrefs.GetPref( X64Q3MAP2_KEY, &m_bx64q3map2, TRUE );
 #endif
 
+#ifdef ATIHACK_812
+	mLocalPrefs.GetPref( ATIHACK_KEY, &m_bGlATIHack, FALSE );
+#endif
+
 	Undo_SetMaxSize( m_nUndoLevels ); // set it internally as well / FIXME: why not just have one global value?
 
 	UpdateTextureCompression();
+
+#ifdef ATIHACK_812
+	UpdateATIHack();
+#endif
 
 	if ( mLocalPrefs.mbEmpty ) {
 		mLocalPrefs.mbEmpty = false;
@@ -3208,6 +3256,9 @@ void PrefsDlg::PostModal( int code ){
 		SavePrefs();
 		// make sure the logfile is ok
 		Sys_LogFile();
+#ifdef ATIHACK_812
+		UpdateATIHack();
+#endif
 		if ( g_pParentWnd ) {
 			g_pParentWnd->SetGridStatus();
 		}
