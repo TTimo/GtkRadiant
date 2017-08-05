@@ -1129,6 +1129,44 @@ void Texture_ShowStartupShaders(){
    ============================================================================
  */
 
+void Texture_GetSize( qtexture_t *tex, int & nWidth, int & nHeight ){
+	if( !tex ) 
+		return;
+
+	if( g_PrefsDlg.m_bFixedTextureSize && g_PrefsDlg.m_nFixedTextureSizeWidth > 0 && g_PrefsDlg.m_nFixedTextureSizeHeight > 0 )
+	{
+		nWidth = g_PrefsDlg.m_nFixedTextureSizeWidth;
+		nHeight = g_PrefsDlg.m_nFixedTextureSizeHeight;
+		float ratioWidth = nHeight / nWidth;
+		float ratioHeight = nWidth / nHeight;
+		if( tex->width * ratioWidth > tex->height * ratioHeight )
+		{
+			nHeight *= tex->height * 1.0f / tex->width * ratioWidth;
+		} else 
+		if( tex->height * ratioHeight > tex->width * ratioWidth )
+		{
+			nWidth *= tex->width * 1.0f / tex->height * ratioHeight;
+		}
+	} else {
+		nWidth = (int)( tex->width * ( (float)g_PrefsDlg.m_nTextureScale / 100 ) );
+		nHeight = (int)( tex->height * ( (float)g_PrefsDlg.m_nTextureScale / 100 ) );
+	}
+}
+
+void Texture_GetPosSize( qtexture_t *tex, int & nWidth, int & nHeight ){
+	if( !tex ) 
+		return;
+
+	if( g_PrefsDlg.m_bFixedTextureSize && g_PrefsDlg.m_nFixedTextureSizeWidth > 0 && g_PrefsDlg.m_nFixedTextureSizeHeight > 0 )
+	{
+		nWidth = g_PrefsDlg.m_nFixedTextureSizeWidth;
+		nHeight = g_PrefsDlg.m_nFixedTextureSizeHeight;
+	} else {
+		nWidth = (int)( tex->width * ( (float)g_PrefsDlg.m_nTextureScale / 100 ) );
+		nHeight = (int)( tex->height * ( (float)g_PrefsDlg.m_nTextureScale / 100 ) );
+	}
+}
+
 void Texture_StartPos( void ){
 	//++timo TODO: check use of current_texture and current_row?
 	current_x = 8;
@@ -1195,8 +1233,9 @@ IShader* Texture_NextPos( int *x, int *y ){
 		continue;
 	}
 
-	int nWidth = (int)( q->width * ( (float)g_PrefsDlg.m_nTextureScale / 100 ) );
-	int nHeight = (int)( q->height * ( (float)g_PrefsDlg.m_nTextureScale / 100 ) );
+	int nWidth;
+	int nHeight;
+	Texture_GetPosSize( q, nWidth, nHeight );
 	if ( current_x + nWidth > g_qeglobals.d_texturewin.width - 8 && current_row ) { // go to the next row unless the texture is the first on the row
 		current_x = 8;
 		current_y -= current_row + FONT_HEIGHT + 4;
@@ -1263,7 +1302,7 @@ void WINAPI Texture_SetTexture( texdef_t *texdef, brushprimit_texdef_t *brushpri
 
 	g_dlgFind.updateTextures( texdef->GetName() );
 	if ( !g_dlgFind.isOpen() && bSetSelection ) {
-		Select_SetTexture( texdef,brushprimit_texdef,bFitScale );
+		Select_SetTexture( texdef,brushprimit_texdef, bFitScale );
 	}
 
 	//plugins: send a message telling that the selected texture may have changed
@@ -1348,8 +1387,9 @@ void SelectTexture( int mx, int my, bool bShift, bool bFitScale ){
 		if ( !q ) {
 			break;
 		}
-		int nWidth = (int)( q->width * ( (float)g_PrefsDlg.m_nTextureScale / 100 ) );
-		int nHeight = (int)( q->height * ( (float)g_PrefsDlg.m_nTextureScale / 100 ) );
+		int nWidth;
+		int nHeight;
+		Texture_GetPosSize( q, nWidth, nHeight );
 		if ( mx > x && mx - x < nWidth
 			 && my < y && y - my < nHeight + FONT_HEIGHT ) {
 			if ( bShift ) {
@@ -1519,8 +1559,7 @@ void Texture_Draw( int width, int height ){
 			break;
 		}
 
-		nWidth = (int)( q->width * ( (float)g_PrefsDlg.m_nTextureScale / 100 ) );
-		nHeight = (int)( q->height * ( (float)g_PrefsDlg.m_nTextureScale / 100 ) );
+		Texture_GetSize( q, nWidth, nHeight );
 
 		if ( y != last_y ) {
 			last_y = y;
