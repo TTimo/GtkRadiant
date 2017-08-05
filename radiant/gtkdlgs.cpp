@@ -1174,6 +1174,33 @@ static void entitylist_multiselect( GtkWidget *widget, gpointer data ) {
 	Sys_UpdateWindows( W_ALL );
 }
 
+static void entity_focus_2d( entity_t *pEntity ) {
+	if ( pEntity ) {
+		for ( epair_t* pEpair = pEntity->epairs; pEpair; pEpair = pEpair->next )
+		{
+			brush_t *b;
+
+			b = pEntity->brushes.onext;
+			if ( b ) {
+				int i;
+				for ( i = 0; i < 3; i++ )
+				{
+					if ( g_pParentWnd->GetXYWnd() ) {
+						g_pParentWnd->GetXYWnd()->GetOrigin()[i] = ( b->mins[i] + b->maxs[i] ) / 2;
+					}
+					if ( g_pParentWnd->GetXZWnd() ) {
+						g_pParentWnd->GetXZWnd()->GetOrigin()[i] = ( b->mins[i] + b->maxs[i] ) / 2;
+					}
+					if ( g_pParentWnd->GetYZWnd() ) {
+						g_pParentWnd->GetYZWnd()->GetOrigin()[i] = ( b->mins[i] + b->maxs[i] ) / 2;
+					}
+				}
+			}
+			Sys_UpdateWindows( W_ALL );
+		}
+	}
+}
+
 static void entitylist_focus( GtkWidget *widget, gpointer data ){
 	GtkTreeView* view = GTK_TREE_VIEW( g_object_get_data( G_OBJECT( data ), "entities" ) );
 
@@ -1181,43 +1208,32 @@ static void entitylist_focus( GtkWidget *widget, gpointer data ){
 
 	GtkTreeModel* model;
 	GtkTreeIter selected;
-	if ( gtk_tree_selection_get_selected( selection, &model, &selected ) ) {
-		entity_t* pEntity;
-		gtk_tree_model_get( model, &selected, 1, &pEntity, -1 );
+	entity_t* pEntity;
 
-		if ( pEntity ) {
-			for ( epair_t* pEpair = pEntity->epairs; pEpair; pEpair = pEpair->next )
-			{
-				brush_t *b;
-
-				b = pEntity->brushes.onext;
-				if( b )
-				{
-					int i;
-					for ( i = 0; i < 3; i++ )
-					{
-						if ( g_pParentWnd->GetXYWnd() ) {
-							g_pParentWnd->GetXYWnd()->GetOrigin()[i] = ( b->mins[i] + b->maxs[i] ) / 2;
-						}
-
-						if ( g_pParentWnd->GetXZWnd() ) {
-							g_pParentWnd->GetXZWnd()->GetOrigin()[i] = ( b->mins[i] + b->maxs[i] ) / 2;
-						}
-
-						if ( g_pParentWnd->GetYZWnd() ) {
-							g_pParentWnd->GetYZWnd()->GetOrigin()[i] = ( b->mins[i] + b->maxs[i] ) / 2;
-						}
-					}
-				}
-				Sys_UpdateWindows( W_ALL );
+	if ( gtk_tree_selection_get_mode( selection ) == GTK_SELECTION_MULTIPLE ) {
+		GList *rows, *first;
+		rows = gtk_tree_selection_get_selected_rows( selection, &model );
+		//only the keys/values of the last selected node with entity
+		first = g_list_first( rows );
+		if ( first ) {
+			if ( gtk_tree_model_get_iter( model, &selected, (GtkTreePath *)first->data ) == TRUE ) {
+				gtk_tree_model_get( model, &selected, 1, &pEntity, -1 );
+				entity_focus_2d( pEntity );
 			}
 		}
+		g_list_free_full( rows, (GDestroyNotify)gtk_tree_path_free );
+
+	} else if ( gtk_tree_selection_get_selected( selection, &model, &selected ) ) {
+
+		gtk_tree_model_get( model, &selected, 1, &pEntity, -1 );
+
+		entity_focus_2d( pEntity );
 	}
 }
 
 static gint entitylist_click( GtkWidget *widget, GdkEventButton *event, gpointer data ){
 	if ( event->type == GDK_2BUTTON_PRESS ) {
-		entitylist_select( NULL, data );
+		entitylist_multiselect( NULL, data );
 		return TRUE;
 	}
 	return FALSE;
