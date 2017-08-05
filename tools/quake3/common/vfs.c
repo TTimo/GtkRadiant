@@ -145,7 +145,7 @@ static void vfsInitPakFile( const char *filename ){
 		g_pakFiles = g_slist_append( g_pakFiles, file );
 
 		vfsFixDOSName( filename_inzip );
-		g_strdown( filename_inzip );
+		g_ascii_strdown( filename_inzip, -1 );//-1 null terminated string
 
 		file->name = strdup( filename_inzip );
 		file->size = file_info.uncompressed_size;
@@ -236,7 +236,7 @@ int vfsGetFileCount( const char *filename ){
 
 	strcpy( fixed, filename );
 	vfsFixDOSName( fixed );
-	g_strdown( fixed );
+	g_ascii_strdown( fixed, -1 );
 
 	for ( lst = g_pakFiles; lst != NULL; lst = g_slist_next( lst ) )
 	{
@@ -296,7 +296,7 @@ int vfsLoadFile( const char *filename, void **bufferptr, int index ){
 	*bufferptr = NULL;
 	strcpy( fixed, filename );
 	vfsFixDOSName( fixed );
-	g_strdown( fixed );
+	g_ascii_strdown( fixed, -1 );
 
 	for ( i = 0; i < g_numDirs; i++ )
 	{
