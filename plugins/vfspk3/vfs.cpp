@@ -83,6 +83,9 @@ static char g_strDirs[VFS_MAXDIRS][PATH_MAX];
 static int g_numDirs;
 static bool g_bUsePak = true;
 
+// suported pak extension list
+const char* pak_ext_list[4] = { ".pk3", ".pk4", ".dpk", NULL };
+
 // =============================================================================
 // Static functions
 
@@ -368,7 +371,6 @@ static int vfsPakSort( const void *a, const void *b ){
  */
 void vfsInitDirectory( const char *path ){
 	char filename[PATH_MAX];
-	const char* pak_ext = ".pk3";
 	const char* pakdir_suf = "dir";
 	GDir *dir;
 	GSList *dirlist = NULL;
@@ -421,13 +423,15 @@ void vfsInitDirectory( const char *path ){
 
 				gboolean is_pak = FALSE;
 
-				const char* cur_ext = pak_ext;
-				if ( strcasecmp( ext, cur_ext ) == 0 ) {
-					is_pak = TRUE;
-				}
-				cur_ext = g_strconcat(cur_ext, pakdir_suf, NULL);
-				if ( strcasecmp( ext, cur_ext ) == 0 ) {
-					is_pak = TRUE;
+				for ( int i = 0; pak_ext_list[i] != NULL ; i++ ) {
+					const char* cur_ext = pak_ext_list[i];
+					if ( strcasecmp( ext, cur_ext ) == 0 ) {
+						is_pak = TRUE;
+					}
+					cur_ext = g_strconcat(cur_ext, pakdir_suf, NULL);
+					if ( strcasecmp( ext, cur_ext ) == 0 ) {
+						is_pak = TRUE;
+					}
 				}
 
 				if ( !is_pak ) {

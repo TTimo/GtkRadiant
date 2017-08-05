@@ -65,4 +65,7 @@ char* vfsExtractRelativePath( const char *in );
 // see ifilesystem.h for more notes
 char* vfsGetFullPath( const char*, int index = 0, int flag = 0 );
 
+// suported pak extension list
+extern const char* pak_ext_list[];
+
 #endif // _VFS_H_
