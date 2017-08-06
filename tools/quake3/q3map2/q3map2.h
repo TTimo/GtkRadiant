@@ -1886,7 +1886,7 @@ Q_EXTERN game_t games[]
 	,
 								#include "game_tremulous.h" /*LinuxManMikeC: must be after game_quake3.h, depends on #define's set in it */
 	,
-								#include "game_unvanquished.h" /*LinuxManMikeC: must be after game_quake3.h, depends on #define's set in it */
+								#include "game_unvanquished.h" /* must be after game_quake3.h as they share defines! */
 	,
 								#include "game_tenebrae.h"
 	,
