@@ -559,7 +559,6 @@ static void CopyTrianglesToBaseTriangles( triangle_t *ptri, int numtri, baseTria
 //	float		s_scale, t_scale;
 //	float		scale;
 //	vec3_t		mins, maxs;
-	float       *pbasevert;
 
 /*
     //
@@ -618,8 +617,6 @@ static void CopyTrianglesToBaseTriangles( triangle_t *ptri, int numtri, baseTria
 
 		for ( j = 0 ; j < 3 ; j++ )
 		{
-			pbasevert = ptri->verts[j];
-
 			VectorCopy( ptri->verts[j], bTri->v[j].xyz );
 			VectorCopy( ptri->normals[j], bTri->v[j].normal );
 
@@ -1905,8 +1902,9 @@ static void ConvertASE( const char *filename, int type, qboolean grabAnims ){
 			}
 		}
 
-		if ( !tagWeapon ) {
-			Error( "Missing tag_weapon!" );
+		if ( !tagHead ) {
+			// todo: was never being checked; should we error now that it is?
+			// Error( "Missing tag_head!" );
 		}
 		if ( !tagTorso ) {
 			Error( "Missing tag_torso!" );

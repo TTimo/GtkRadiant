@@ -294,10 +294,7 @@ void SwapBSPFile( void ) {
    =============
  */
 int GetLumpElements( dheader_t  *header, int lump, int size ) {
-	int length, ofs;
-
-	length = header->lumps[lump].filelen;
-	ofs = header->lumps[lump].fileofs;
+	int length = header->lumps[lump].filelen;
 
 	if ( length % size ) {
 		Error( "LoadBSPFile: odd lump size" );
