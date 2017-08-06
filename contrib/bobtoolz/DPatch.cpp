@@ -335,7 +335,7 @@ void DPatch::Transpose(){
 	Invert();
 }
 
-list<DPatch> DPatch::Split( bool rows, bool cols ){
+std::list<DPatch> DPatch::Split( bool rows, bool cols ){
 	list<DPatch> patchList;
 	int i;
 	int x, y;

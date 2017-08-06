@@ -151,6 +151,6 @@ extern _QEREntityTable g_EntityTable;
 
 #define MAX_ROUND_ERROR 0.05
 
-#include "gtkr_list.h"
+#include <list>
 
 #endif

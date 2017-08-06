@@ -148,7 +148,7 @@ void CPicoModel::Reload( void ){
 	}
 }
 
-void CPicoModel::Draw( int state, vector<IShader*> shaders, int rflags ) const {
+void CPicoModel::Draw( int state, std::vector<IShader*> shaders, int rflags ) const {
 	if ( m_pModel ) {
 		for ( unsigned int i = 0; i < m_children->len; i++ )
 			( (CPicoSurface*)m_children->pdata[i] )->Draw( state, shaders[i], rflags );
