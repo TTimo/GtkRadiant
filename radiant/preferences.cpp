@@ -3033,6 +3033,11 @@ void PrefsDlg::LoadPrefs(){
 	mLocalPrefs.GetPref( LOADSHADERS_KEY,        &m_nLatchedShader,                     0 );
 	m_nShader = m_nLatchedShader;
 
+	
+	mLocalPrefs.GetPref( FIXEDTEXSIZE_KEY,       &m_bFixedTextureSize,          FALSE );
+	mLocalPrefs.GetPref( FIXEDTEXSIZEWIDTH_KEY,  &m_nFixedTextureSizeWidth,     64 );
+	mLocalPrefs.GetPref( FIXEDTEXSIZEHEIGHT_KEY, &m_nFixedTextureSizeHeight,    64 );
+
 	mLocalPrefs.GetPref( SHOWTEXDIRLIST_KEY,     &m_bShowTexDirList,             TRUE );
 
 	mLocalPrefs.GetPref( NOCLAMP_KEY,            &m_bNoClamp,                    FALSE );
