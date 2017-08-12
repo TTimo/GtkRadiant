@@ -296,6 +296,15 @@ static void PopulateTextureComboList(){
 
 	blank[0] = 0;
 
+	//clear combo box
+#if GTK_CHECK_VERSION( 3, 0, 0 )
+	gtk_combo_box_text_remove_all( GTK_COMBO_BOX_TEXT( texture_combo ) );
+#else
+	GtkListStore *store;
+	store = GTK_LIST_STORE( gtk_combo_box_get_model( GTK_COMBO_BOX( texture_combo ) ) );
+	gtk_list_store_clear( store );
+#endif
+
 	if ( texdef_face_list_empty() ) {
 		items = g_list_append( items, (gpointer) blank );
 		// For Texture Entry, activate only on entry change
