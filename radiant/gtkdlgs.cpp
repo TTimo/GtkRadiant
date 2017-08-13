@@ -3627,6 +3627,7 @@ int DoLightIntensityDlg( int *intensity ){
 	response_id = gtk_dialog_run( GTK_DIALOG( dialog ) );
 
 	if( response_id == GTK_RESPONSE_OK ) {
+		gtk_spin_button_update( GTK_SPIN_BUTTON( spinbutton ) );
 		*intensity = gtk_spin_button_get_value_as_int( GTK_SPIN_BUTTON( spinbutton ) );
 		ret = IDOK;
 	} else {
