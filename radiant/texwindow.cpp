@@ -904,6 +904,30 @@ void Texture_ShowDirectory( int menunum ){
 	Texture_ShowDirectory();
 }
 
+void Texture_GetSize( qtexture_t *tex, int & nWidth, int & nHeight ){
+	if( !tex ) 
+		return;
+
+	if( g_PrefsDlg.m_bFixedTextureSize && g_PrefsDlg.m_nFixedTextureSizeWidth > 0 && g_PrefsDlg.m_nFixedTextureSizeHeight > 0 )
+	{
+		nWidth = g_PrefsDlg.m_nFixedTextureSizeWidth;
+		nHeight = g_PrefsDlg.m_nFixedTextureSizeHeight;
+		float ratioWidth = nHeight / nWidth;
+		float ratioHeight = nWidth / nHeight;
+		if( tex->width * ratioWidth > tex->height * ratioHeight )
+		{
+			nHeight *= tex->height * 1.0f / tex->width * ratioWidth;
+		} else 
+		if( tex->height * ratioHeight > tex->width * ratioWidth )
+		{
+			nWidth *= tex->width * 1.0f / tex->height * ratioHeight;
+		}
+	} else {
+		nWidth = (int)( tex->width * ( (float)g_PrefsDlg.m_nTextureScale / 100 ) );
+		nHeight = (int)( tex->height * ( (float)g_PrefsDlg.m_nTextureScale / 100 ) );
+	}
+}
+
 // scroll origin so the current texture is completely on screen
 // if current texture is not displayed, nothing is changed
 void Texture_ResetPosition(){
@@ -929,7 +953,9 @@ void Texture_ResetPosition(){
 			break;
 		}
 
-		int nHeight = (int)( q->height * ( (float)g_PrefsDlg.m_nTextureScale / 100 ) );
+		int nHeight;
+		int nWidth;
+		Texture_GetSize( q, nWidth, nHeight );
 		// we have found when texdef->name and the shader name match
 		// NOTE: as everywhere else for our comparisons, we are not case sensitive
 		if ( !strcmpi( g_qeglobals.d_texturewin.texdef.GetName(), pCurrentShader->getName() ) ) {
@@ -1128,30 +1154,6 @@ void Texture_ShowStartupShaders(){
    otherwise we may need to rely on a list instead of an array storage
    ============================================================================
  */
-
-void Texture_GetSize( qtexture_t *tex, int & nWidth, int & nHeight ){
-	if( !tex ) 
-		return;
-
-	if( g_PrefsDlg.m_bFixedTextureSize && g_PrefsDlg.m_nFixedTextureSizeWidth > 0 && g_PrefsDlg.m_nFixedTextureSizeHeight > 0 )
-	{
-		nWidth = g_PrefsDlg.m_nFixedTextureSizeWidth;
-		nHeight = g_PrefsDlg.m_nFixedTextureSizeHeight;
-		float ratioWidth = nHeight / nWidth;
-		float ratioHeight = nWidth / nHeight;
-		if( tex->width * ratioWidth > tex->height * ratioHeight )
-		{
-			nHeight *= tex->height * 1.0f / tex->width * ratioWidth;
-		} else 
-		if( tex->height * ratioHeight > tex->width * ratioWidth )
-		{
-			nWidth *= tex->width * 1.0f / tex->height * ratioHeight;
-		}
-	} else {
-		nWidth = (int)( tex->width * ( (float)g_PrefsDlg.m_nTextureScale / 100 ) );
-		nHeight = (int)( tex->height * ( (float)g_PrefsDlg.m_nTextureScale / 100 ) );
-	}
-}
 
 void Texture_GetPosSize( qtexture_t *tex, int & nWidth, int & nHeight ){
 	if( !tex ) 
