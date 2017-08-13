@@ -2113,7 +2113,7 @@ void PrefsDlg::BuildDialog(){
 
 	spin = gtk_spin_button_new( GTK_ADJUSTMENT( gtk_adjustment_new( 1, 1, 1024, 1, 10, 0 ) ), 1, 0 );
 	gtk_spin_button_set_numeric( GTK_SPIN_BUTTON( spin ), TRUE );
-	g_object_set( spin, "xalign", 1.0, NULL );
+	g_object_set( spin, "xalign", 1.0, (char*)NULL );
 	gtk_box_pack_start( GTK_BOX( hbox2 ), spin, FALSE, FALSE, 0 );
 	gtk_widget_show( spin );
 	AddDialogData( spin, &m_nFixedTextureSizeWidth, DLG_SPIN_INT );
@@ -2129,7 +2129,7 @@ void PrefsDlg::BuildDialog(){
 
 	spin = gtk_spin_button_new( GTK_ADJUSTMENT( gtk_adjustment_new( 1, 1, 1024, 1, 10, 0 ) ), 1, 0 );
 	gtk_spin_button_set_numeric( GTK_SPIN_BUTTON( spin ), TRUE );
-	g_object_set( spin, "xalign", 1.0, NULL );
+	g_object_set( spin, "xalign", 1.0, (char*)NULL );
 	gtk_box_pack_start( GTK_BOX( hbox2 ), spin, FALSE, FALSE, 0 );
 	gtk_widget_show( spin );
 	AddDialogData( spin, &m_nFixedTextureSizeHeight, DLG_SPIN_INT );
