@@ -596,11 +596,11 @@ static float BTCCompressBlock( float inBlock[4][4][3], unsigned long out[2] ){
 	int i;
 	int btcQuantizedBlock[4][4];    // values should be [0..3]
 	unsigned long encodedEndPoints, encodedBitmap;
-	unsigned int endPoints[2][2];       // endPoints[0] = color start, endPoints[1] = color end
+	unsigned long endPoints[2][2];       // endPoints[0] = color start, endPoints[1] = color end
 	int blockY, blockX;
 	float error = 0;
 	float bestError = 10000000000;
-	unsigned int bestEndPoints[2][2];
+	unsigned long bestEndPoints[2][2];
 
 #if 0
 	//
