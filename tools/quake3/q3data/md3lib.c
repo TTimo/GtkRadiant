@@ -82,6 +82,11 @@ void MD3_ComputeTagFromTri( md3Tag_t *pTag, const float pTri[3][3] ){
 		hypotSide = 2;
 		origin = 1;
 	}
+	else
+	{
+		Error( "invalid tag triangle, must be a right triangle with unequal length sides" );
+		return;
+	}
 	len[hypotSide] = -1;
 
 	if ( len[0] > len[1] && len[0] > len[2] ) {
