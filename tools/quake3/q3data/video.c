@@ -1107,7 +1107,7 @@ void Cmd_Video( void ){
 
 	printf( "\n" );
 
-	printf( "Total size: %i\n", ftell( output ) );
+	printf( "Total size: %ld\n", ftell( output ) );
 	printf( "Average error: %f\n", sumError / ( frame - startframe ) );
 	printf( "Max error: %f\n", maxError );
 
