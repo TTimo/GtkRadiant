@@ -27,6 +27,7 @@
 //
 
 #include "StdAfx.h"
+#include <cmath>
 
 
 
@@ -260,19 +261,19 @@ void FitView( IWindow* hwndDlg, int TexSize[2] ){
 	}
 	// we want a texture with the same X / Y ratio
 	// compute XY space / window size ratio
-	float SSize = (float)fabs( g_2DView.m_Maxs[0] - g_2DView.m_Mins[0] );
-	float TSize = (float)fabs( g_2DView.m_Maxs[1] - g_2DView.m_Mins[1] );
+	float SSize = std::fabs( g_2DView.m_Maxs[0] - g_2DView.m_Mins[0] );
+	float TSize = std::fabs( g_2DView.m_Maxs[1] - g_2DView.m_Mins[1] );
 	float XSize = TexSize[0] * SSize;
 	float YSize = TexSize[1] * TSize;
-	float RatioX = XSize / (float)fabs( g_2DView.m_rect.left - g_2DView.m_rect.right );
-	float RatioY = YSize / (float)fabs( g_2DView.m_rect.top - g_2DView.m_rect.bottom );
+	float RatioX = XSize / std::fabs( g_2DView.m_rect.left - g_2DView.m_rect.right );
+	float RatioY = YSize / std::fabs( g_2DView.m_rect.top - g_2DView.m_rect.bottom );
 	if ( RatioX > RatioY ) {
-		YSize = (float)fabs( g_2DView.m_rect.top - g_2DView.m_rect.bottom ) * RatioX;
+		YSize = std::fabs( g_2DView.m_rect.top - g_2DView.m_rect.bottom ) * RatioX;
 		TSize = YSize / (float)TexSize[1];
 	}
 	else
 	{
-		XSize = (float)fabs( g_2DView.m_rect.left - g_2DView.m_rect.right ) * RatioY;
+		XSize = std::fabs( g_2DView.m_rect.left - g_2DView.m_rect.right ) * RatioY;
 		SSize = XSize / (float)TexSize[0];
 	}
 	g_2DView.m_Mins[0] = g_2DView.m_Center[0] - 0.5f * SSize;
