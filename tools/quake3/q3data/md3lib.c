@@ -173,7 +173,7 @@ void MD3_Dump( const char *filename ){
 	printf( "  num tags:       %d\n", header.numTags );
 	printf( "  num surfaces:   %d\n", header.numSurfaces );
 	printf( "  num skins:      %d\n", header.numSkins );
-	printf( "  file size:      %d\n", fileSize );
+	printf( "  file size:      %ld\n", fileSize );
 
 	printf( "--- TAGS ---\n" );
 	pTag = ( md3Tag_t * ) ( ( ( char * ) buffer ) + header.ofsTags );
