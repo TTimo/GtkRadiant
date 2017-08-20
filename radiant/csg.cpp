@@ -67,7 +67,7 @@ void CSG_MakeHollowMode( int mode ){
 				} else {
 					VectorSubtract( split.planepts[i], move, split.planepts[i] );
 				}
-			Brush_SplitBrushByFace( b, &split, &front, &back );
+			Brush_SplitBrushByFace( b, &split, &front, &back, g_PrefsDlg.m_bMakeHollowCaulk );
 			if ( back ) {
 				Brush_Free( back );
 			}
@@ -546,7 +546,7 @@ void CSG_Subtract( void ){
 					break;
 				}
 			if ( i != 3 ) {
-				continue;   // definately don't touch
+				continue;   // definitely don't touch
 			}
 			fragments = Brush_Subtract( s, b );
 			// if the brushes did not really intersect
@@ -586,7 +586,7 @@ void CSG_Subtract( void ){
 					break;
 				}
 			if ( i != 3 ) {
-				continue;   // definately don't touch
+				continue;   // definitely don't touch
 
 			}
 			fragments = Brush_Subtract( s, b );
@@ -623,12 +623,6 @@ void CSG_Subtract( void ){
 		Undo_EndBrush( frag );
 	}
 
-	/*if (numfragments == 0)
-	   {
-	    Sys_Printf("Selected brush%s did not intersect with any other brushes.\n",
-	                (selected_brushes.next->next == &selected_brushes) ? "":"es");
-	    return;
-	   }*/
 	Sys_Printf( "done. (created %d fragment%s out of %d brush%s)\n", numfragments, ( numfragments == 1 ) ? "" : "s",
 				numbrushes, ( numbrushes == 1 ) ? "" : "es" );
 	Sys_UpdateWindows( W_ALL );

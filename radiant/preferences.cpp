@@ -139,6 +139,7 @@
 #define DEFAULTTEXURESCALE_KEY  "DefaultTextureScale"
 #define CAULKNEWBRUSHES_KEY     "CaulkNewBrushes"
 #define CLIPCAULK_KEY           "ClipCaulk"
+#define HOLLOWCAULK_KEY         "HollowCaulk"
 #define PATCHSHOWBOUNDS_KEY     "PatchShowBounds"
 #define NATIVEGUI_KEY           "NativeGUI"
 #define STARTONPRIMMON_KEY      "StartOnPrimMon"
@@ -2381,6 +2382,12 @@ void PrefsDlg::BuildDialog(){
 	gtk_widget_show( check );
 	AddDialogData( check, &m_bClipCaulk, DLG_CHECK_BOOL );
 
+	// Make Hollow uses caulk
+	check = gtk_check_button_new_with_label( _( "Make Hollow uses caulk" ) );
+	gtk_box_pack_start( GTK_BOX( vbox ), check, FALSE, FALSE, 0 );
+	gtk_widget_show( check );
+	AddDialogData( check, &m_bMakeHollowCaulk, DLG_CHECK_BOOL );
+
 	// Don't clamp plane points
 	check = gtk_check_button_new_with_label( _( "Don't clamp plane points" ) );
 	gtk_box_pack_start( GTK_BOX( vbox ), check, FALSE, FALSE, 0 );
@@ -3083,6 +3090,7 @@ void PrefsDlg::LoadPrefs(){
 	mLocalPrefs.GetPref( CAULKNEWBRUSHES_KEY, &m_bCaulkNewBrushes,               TRUE );
 	mLocalPrefs.GetPref( SUBDIVISIONS_KEY,       &m_nSubdivisions,               SUBDIVISIONS_DEF );
 	mLocalPrefs.GetPref( CLIPCAULK_KEY,          &m_bClipCaulk,                  FALSE );
+	mLocalPrefs.GetPref( HOLLOWCAULK_KEY,        &m_bMakeHollowCaulk,            TRUE );
 	mLocalPrefs.GetPref( SNAPTTOGRID_KEY,        &m_bSnapTToGrid,                FALSE );
 	mLocalPrefs.GetPref( TARGETFIX_KEY,          &m_bDoTargetFix,                TRUE );
 	mLocalPrefs.GetPref( WHEELINC_KEY,           &m_nWheelInc,                   64 );
