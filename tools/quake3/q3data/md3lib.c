@@ -154,8 +154,8 @@ void MD3_Dump( const char *filename ){
 		Error( "Unable to open '%s'\n", filename );
 	}
 
-	fileSize = filelength( fileno( fp ) );
-	_buffer = malloc( filelength( fileno( fp ) ) );
+	fileSize = Q_filelength( fp );
+	_buffer = malloc( fileSize );
 	fread( _buffer, fileSize, 1, fp );
 	fclose( fp );
 
