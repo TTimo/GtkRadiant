@@ -2089,7 +2089,7 @@ void XYWnd::ProduceSplitLists(){
 			memset( &face,0,sizeof( face_t ) );
 			PlanePointsFromClipPoints( face.planepts, pBrush );
 
-			// decide wether caulking should be applied on the splits
+			// decide whether caulking should be applied on the splits
 			// FIXME: hack
 			// this should take the first brush face, check shader for NODRAW, if it isn't nodraw then find the appropriate
 			// common/ shader to use, out of solid+nodraw, nonsolid+nodraw, water+nodraw, lava+nodraw, nonsolid+nodraw+trans, water+nodraw+trans, lava+nodraw+trans.. and fog.. etc
