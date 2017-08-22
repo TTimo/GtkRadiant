@@ -89,6 +89,7 @@ polyset_t *Polyset_LoadSets( const char *file, int *numpolysets, int maxTrisPerS
 	}
 	else{
 		Error( "TRI files no longer supported" );
+		return NULL;
 	}
 //		TRI_LoadPolysets( file, &psets, numpolysets );
 

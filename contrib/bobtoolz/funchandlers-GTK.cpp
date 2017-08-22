@@ -169,9 +169,9 @@ void DoPolygons( vec3_t vMin, vec3_t vMax ){
 
 void DoFixBrushes(){
 	DMap world;
-	world.LoadAll();
+	world.LoadAll( true );
 
-	int count = world.FixBrushes( TRUE );
+	int count = world.FixBrushes( true );
 
 	Sys_Printf( "%i invalid/duplicate planes removed\n", count );
 }

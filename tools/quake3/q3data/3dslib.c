@@ -47,7 +47,7 @@ static int ReadString( FILE *fp, char *buffer ){
 	return bytesRead;
 }
 
-static int ReadChunkAndLength( FILE *fp, short *chunk, long *len ){
+static int ReadChunkAndLength( FILE *fp, unsigned short *chunk, long *len ){
 	if ( fread( chunk, sizeof( short ), 1, fp ) != 1 ) {
 		return 0;
 	}

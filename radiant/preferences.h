@@ -685,6 +685,7 @@ bool m_bRunQuake;
 bool m_bDoSleep;
 
 bool m_bClipCaulk;
+bool m_bMakeHollowCaulk;
 
 // make the texture increments match the grid changes
 bool m_bSnapTToGrid;

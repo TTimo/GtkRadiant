@@ -82,6 +82,11 @@ void MD3_ComputeTagFromTri( md3Tag_t *pTag, const float pTri[3][3] ){
 		hypotSide = 2;
 		origin = 1;
 	}
+	else
+	{
+		Error( "invalid tag triangle, must be a right triangle with unequal length sides" );
+		return;
+	}
 	len[hypotSide] = -1;
 
 	if ( len[0] > len[1] && len[0] > len[2] ) {
@@ -149,8 +154,8 @@ void MD3_Dump( const char *filename ){
 		Error( "Unable to open '%s'\n", filename );
 	}
 
-	fileSize = filelength( fileno( fp ) );
-	_buffer = malloc( filelength( fileno( fp ) ) );
+	fileSize = Q_filelength( fp );
+	_buffer = malloc( fileSize );
 	fread( _buffer, fileSize, 1, fp );
 	fclose( fp );
 
@@ -168,7 +173,7 @@ void MD3_Dump( const char *filename ){
 	printf( "  num tags:       %d\n", header.numTags );
 	printf( "  num surfaces:   %d\n", header.numSurfaces );
 	printf( "  num skins:      %d\n", header.numSkins );
-	printf( "  file size:      %d\n", fileSize );
+	printf( "  file size:      %ld\n", fileSize );
 
 	printf( "--- TAGS ---\n" );
 	pTag = ( md3Tag_t * ) ( ( ( char * ) buffer ) + header.ofsTags );

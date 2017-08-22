@@ -67,7 +67,7 @@ void CSG_MakeHollowMode( int mode ){
 				} else {
 					VectorSubtract( split.planepts[i], move, split.planepts[i] );
 				}
-			Brush_SplitBrushByFace( b, &split, &front, &back );
+			Brush_SplitBrushByFace( b, &split, &front, &back, g_PrefsDlg.m_bMakeHollowCaulk );
 			if ( back ) {
 				Brush_Free( back );
 			}
@@ -468,7 +468,7 @@ brush_t *Brush_MergeList( brush_t *brushlist, int onlyshape ){
    The originals are undisturbed.
    =============
  */
-brush_t *Brush_Subtract( brush_t *a, brush_t *b ){
+brush_t *Brush_Subtract( brush_t *a, brush_t *b, bool caulk = false ){
 	// a - b = out (list)
 	brush_t *front, *back;
 	brush_t *in, *out, *next;
@@ -478,7 +478,7 @@ brush_t *Brush_Subtract( brush_t *a, brush_t *b ){
 	out = NULL;
 	for ( f = b->brush_faces; f && in; f = f->next )
 	{
-		Brush_SplitBrushByFace( in, f, &front, &back );
+		Brush_SplitBrushByFace( in, f, &front, &back, caulk );
 		if ( in != a ) {
 			Brush_Free( in );
 		}
@@ -514,12 +514,26 @@ void CSG_Subtract( void ){
 	brush_t     *b, *s, *fragments, *nextfragment, *frag, *next, *snext;
 	brush_t fragmentlist;
 	int i, numfragments, numbrushes;
+	bool caulk = true;
 
 	Sys_Printf( "Subtracting...\n" );
 
 	if ( selected_brushes.next == &selected_brushes ) {
 		Sys_Printf( "No brushes selected.\n" );
 		return;
+	}
+
+	// If the brushes are all caulk, then force caulk into all the new splits
+	for ( b = selected_brushes.next; b != &selected_brushes; b = b->next ) {
+		for ( auto f = b->brush_faces; f; f = f->next ) {
+			if ( strcmp( f->pShader->getName(), g_pGameDescription->mCaulkShader.GetBuffer() ) ) {
+				caulk = false;
+				break;
+			}
+		}
+	}
+	if ( caulk ) {
+		Sys_Printf( "Subtracting with caulk, will apply caulk to the new splits.\n" );
 	}
 
 	fragmentlist.next = &fragmentlist;
@@ -546,9 +560,9 @@ void CSG_Subtract( void ){
 					break;
 				}
 			if ( i != 3 ) {
-				continue;   // definately don't touch
+				continue;   // definitely don't touch
 			}
-			fragments = Brush_Subtract( s, b );
+			fragments = Brush_Subtract( s, b, caulk );
 			// if the brushes did not really intersect
 			if ( fragments == s ) {
 				continue;
@@ -586,10 +600,10 @@ void CSG_Subtract( void ){
 					break;
 				}
 			if ( i != 3 ) {
-				continue;   // definately don't touch
+				continue;   // definitely don't touch
 
 			}
-			fragments = Brush_Subtract( s, b );
+			fragments = Brush_Subtract( s, b, caulk );
 			// if the brushes did not really intersect
 			if ( fragments == s ) {
 				continue;
@@ -623,12 +637,6 @@ void CSG_Subtract( void ){
 		Undo_EndBrush( frag );
 	}
 
-	/*if (numfragments == 0)
-	   {
-	    Sys_Printf("Selected brush%s did not intersect with any other brushes.\n",
-	                (selected_brushes.next->next == &selected_brushes) ? "":"es");
-	    return;
-	   }*/
 	Sys_Printf( "done. (created %d fragment%s out of %d brush%s)\n", numfragments, ( numfragments == 1 ) ? "" : "s",
 				numbrushes, ( numbrushes == 1 ) ? "" : "es" );
 	Sys_UpdateWindows( W_ALL );
