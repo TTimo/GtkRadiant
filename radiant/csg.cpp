@@ -525,7 +525,7 @@ void CSG_Subtract( void ){
 
 	// If the brushes are all caulk, then force caulk into all the new splits
 	for ( b = selected_brushes.next; b != &selected_brushes; b = b->next ) {
-		for ( auto f = b->brush_faces; f; f = f->next ) {
+		for ( face_t *f = b->brush_faces; f; f = f->next ) {
 			if ( strcmp( f->pShader->getName(), g_pGameDescription->mCaulkShader.GetBuffer() ) ) {
 				caulk = false;
 				break;
