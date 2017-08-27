@@ -2757,6 +2757,7 @@ void MainFrame::Create(){
 								gtk_widget_show( texSplit );
 							} else
 							{
+								m_pSplits[4] = NULL;
 								gtk_paned_pack2( GTK_PANED( vsplit2 ), frame, TRUE, TRUE );
 							}
 						}
@@ -2967,6 +2968,7 @@ void MainFrame::Create(){
 				gtk_notebook_insert_page( GTK_NOTEBOOK( g_pGroupDlg->m_pNotebook ), texSplit, w, 1 );
 			} else
 			{
+				m_pSplits[4] = NULL;
 				gtk_notebook_insert_page( GTK_NOTEBOOK( g_pGroupDlg->m_pNotebook ), frame, w, 1 );
 			}
 		}
@@ -3049,6 +3051,7 @@ void MainFrame::Create(){
 				gtk_notebook_insert_page( GTK_NOTEBOOK( g_pGroupDlg->m_pNotebook ), texSplit, w, 1 );
 			} else
 			{
+				m_pSplits[4] = NULL;
 				gtk_notebook_insert_page( GTK_NOTEBOOK( g_pGroupDlg->m_pNotebook ), frame, w, 1 );
 			}
 		}
@@ -3422,7 +3425,7 @@ void MainFrame::OnDelete(){
 	else{
 		g_PrefsDlg.mWindowInfo.nZFloatWidth = gtk_paned_get_position( GTK_PANED( m_pSplits[0] ) );
 	}
-	if( g_PrefsDlg.m_bShowTexDirList ) {
+	if( g_PrefsDlg.m_bShowTexDirList && m_pSplits[4] ) {
 		g_PrefsDlg.mWindowInfo.nTextureDirectoryListWidth = gtk_paned_get_position( GTK_PANED( m_pSplits[4] ) );
 	}
 
