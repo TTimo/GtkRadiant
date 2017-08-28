@@ -823,6 +823,10 @@ void QE_InitVFS( void ){
 	// *nix systems have a dual filesystem in ~/.q3a, which is searched first .. so we need to add that too
 	Str directory,prefabs;
 
+	Str basePakPath = g_strAppPath.GetBuffer();
+	basePakPath += "base";
+	vfsInitDirectory( basePakPath.GetBuffer() );
+
 	// TTimo: let's leave this to HL mode for now
 	if ( g_pGameDescription->mGameFile == "hl.game" ) {
 		// Hydra: we search the "gametools" path first so that we can provide editor
