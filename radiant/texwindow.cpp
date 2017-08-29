@@ -591,7 +591,10 @@ void FillTextureList( GSList** pArray )
 			}
 
 		if ( !found ) {
-			texdirs = g_slist_prepend( texdirs, g_strdup( shaderfile ) );
+			if( QERApp_IsDirContainingShaders( shaderfile ) )
+			{
+				texdirs = g_slist_prepend( texdirs, g_strdup( shaderfile ) );
+			}
 		}
 
 		free( l_shaderfiles->data );
@@ -784,6 +787,7 @@ void Texture_ShowDirectory_by_path( const char* pPath )
    ( the GL textures are not flushed though)
    ==============
  */
+
 void Texture_ShowDirectory(){
 	char name[1024];
 	char dirstring[1024];

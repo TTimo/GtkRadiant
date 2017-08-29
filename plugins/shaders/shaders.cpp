@@ -410,6 +410,16 @@ int WINAPI QERApp_LoadShadersFromDir( const char *path ){
 	for ( int i = 0; i < nSize; i++ )
 	{
 		CShader *pShader = reinterpret_cast < CShader * >( g_Shaders[i] );
+
+		// does not uselessly load shader with path not starting with "textures/"
+		// they will not be displayed by texture browser, because they can't be
+		// applied to a surface
+		if ( !g_str_has_prefix( pShader->getName(), "textures/" ) ) {
+			continue;
+		}
+
+		// this is basically doing:
+		// if path in ["scripts/eerie.shader", "textures/eerie/blackness"]
 		if ( strstr( pShader->getShaderFileName(), path ) || strstr( pShader->getName(), path ) ) {
 			count++;
 			// request the shader, this will load the texture if needed and set "inuse"
@@ -428,6 +438,25 @@ int WINAPI QERApp_LoadShadersFromDir( const char *path ){
 		}
 	}
 	return count;
+}
+
+bool WINAPI QERApp_IsDirContainingShaders( const char *path ){
+	int nSize = g_Shaders.GetSize();
+	// exclude shaders that are not starting with "textures/"
+	// they will not be displayed and are not applicable to surfaces
+	// exclude shaders from other paths,
+	// they are not the ones we are looking for
+	gchar* prefix = g_strconcat("textures/", path, NULL);
+	for ( int i = 0; i < nSize; i++ )
+	{
+		CShader *pShader = reinterpret_cast < CShader * >( g_Shaders[i] );
+		if ( g_str_has_prefix( pShader->getName(), prefix ) ) {
+			g_free(prefix);
+			return true;
+		}
+	}
+	g_free(prefix);
+	return false;
 }
 
 bool CShader::Parse(){
@@ -924,6 +953,7 @@ bool CSynapseClientShaders::RequestAPI( APIDescriptor_t *pAPI ){
 		pTable->m_pfnFreeShaders = QERApp_FreeShaders;
 		pTable->m_pfnReloadShaders = QERApp_ReloadShaders;
 		pTable->m_pfnLoadShadersFromDir = QERApp_LoadShadersFromDir;
+		pTable->m_pfnIsDirContainingShaders = QERApp_IsDirContainingShaders;
 		pTable->m_pfnReloadShaderFile = QERApp_ReloadShaderFile;
 		pTable->m_pfnLoadShaderFile = QERApp_LoadShaderFile;
 		pTable->m_pfnHasShader = QERApp_HasShader;
