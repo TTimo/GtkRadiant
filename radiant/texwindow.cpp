@@ -525,10 +525,48 @@ void BuildShaderList(){
 	}
 }
 
+bool IsValidTextureName(char* name){
+	CString strTemp;
+
+	StripExtension( name );
+	strTemp = name;
+	strTemp.MakeLower();
+
+	// avoid effect textures for Q3 texture sets
+	if ( strTemp.Find( ".specular" ) >= 0 ||
+		strTemp.Find( ".glow" ) >= 0 ||
+		strTemp.Find( ".bump" ) >= 0 ||
+		strTemp.Find( ".diffuse" ) >= 0 ||
+		strTemp.Find( ".blend" ) >= 0 ||
+		strTemp.Find( ".alpha" ) >= 0 ) {
+		return false;
+	}
+
+	// avoid glow, heightmap, normalmap and specular maps for Q4 texture sets
+	if ( g_str_has_suffix( name, "_g" ) ||
+			g_str_has_suffix( name, "_h" ) ||
+			g_str_has_suffix( name, "_local" ) ||
+			g_str_has_suffix( name, "_nm" ) ||
+			g_str_has_suffix( name, "_s" ) ||
+			g_str_has_suffix( name, "_bump" ) ||
+			g_str_has_suffix( name, "_gloss" ) ||
+			g_str_has_suffix( name, "_luma" ) ||
+			g_str_has_suffix( name, "_norm" ) ) {
+		return false;
+	}
+
+	// avoid ever loading a texture name with spaces
+	if ( strTemp.Find( " " ) >= 0 ) {
+		Sys_FPrintf( SYS_WRN, "WARNING: Skipping texture name with spaces [%s]\n", strTemp.GetBuffer() );
+		return false;
+	}
+
+	return true;
+}
+
 void Texture_ListDirectory(){
 	char name[1024];
 	char dirstring[1024];
-	CString strTemp;
 	int shaders_count = 0;
 	int textures_count = 0;
 	GSList *files = NULL, *temp;
@@ -558,36 +596,7 @@ void Texture_ListDirectory(){
 	{
 		sprintf( name, "%s%s", texture_directory, (char*)temp->data );
 
-		StripExtension( name );
-		strTemp = name;
-		strTemp.MakeLower();
-
-		// avoid effect textures for Q3 texture sets
-		if ( strTemp.Find( ".specular" ) >= 0 ||
-			 strTemp.Find( ".glow" ) >= 0 ||
-			 strTemp.Find( ".bump" ) >= 0 ||
-			 strTemp.Find( ".diffuse" ) >= 0 ||
-			 strTemp.Find( ".blend" ) >= 0 ||
-			 strTemp.Find( ".alpha" ) >= 0 ) {
-			continue;
-		}
-
-		// avoid glow, heightmap, normalmap and specular maps for Q4 texture sets
-		if ( g_str_has_suffix( name, "_g" ) ||
-				g_str_has_suffix( name, "_h" ) ||
-				g_str_has_suffix( name, "_local" ) ||
-				g_str_has_suffix( name, "_nm" ) ||
-				g_str_has_suffix( name, "_s" ) ||
-				g_str_has_suffix( name, "_bump" ) ||
-				g_str_has_suffix( name, "_gloss" ) ||
-				g_str_has_suffix( name, "_luma" ) ||
-				g_str_has_suffix( name, "_norm" ) ) {
-			continue;
-		}
-
-		// avoid ever loading a texture name with spaces
-		if ( strTemp.Find( " " ) >= 0 ) {
-			Sys_FPrintf( SYS_WRN, "WARNING: Skipping texture name with spaces [%s]\n", strTemp.GetBuffer() );
+		if ( !IsValidTextureName( name ) ) {
 			continue;
 		}
 
