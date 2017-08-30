@@ -794,7 +794,7 @@ CGameDescription::CGameDescription( xmlDocPtr pDoc, const Str &GameFile ){
 	if ( prop == NULL ) {
 #ifdef _WIN32
 		mEngine = "quake3.exe";
-#elif __linux__
+#elif defined( __linux__ ) || defined( __FreeBSD__ )
 		mEngine = "quake3";
 #elif __APPLE__
 		mEngine = "Quake3.app";
@@ -808,7 +808,7 @@ CGameDescription::CGameDescription( xmlDocPtr pDoc, const Str &GameFile ){
 	if ( prop == NULL ) {
 #ifdef _WIN32
 		mMultiplayerEngine = "quake3.exe";
-#elif __linux__
+#elif defined( __linux__ ) || defined( __FreeBSD__ )
 		mMultiplayerEngine = "quake3";
 #elif __APPLE__
 		mMultiplayerEngine = "Quake3.app";
@@ -3775,7 +3775,7 @@ void CGameInstall::Run() {
 	case GAME_ET: {
 #ifdef _WIN32
 		fprintf( fg, "  " ENGINE_ATTRIBUTE "=\"ET.exe\"\n");
-#elif __linux__
+#elif defined( __linux__ ) || defined( __FreeBSD__ )
 		fprintf( fg, "  " ENGINE_ATTRIBUTE "=\"et\"\n" );
 #endif
 		fprintf( fg, "  prefix=\".etwolf\"\n" );
