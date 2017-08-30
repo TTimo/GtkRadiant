@@ -29,7 +29,7 @@
 #include <glib.h>
 #include <glib/gi18n.h>
 #include <assert.h>
-#if defined ( __linux__ ) || defined ( __APPLE__ )
+#if defined( __linux__ ) || defined( __FreeBSD__ ) || defined( __APPLE__ )
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <fcntl.h>
@@ -1321,7 +1321,7 @@ void CGameDialog::Init(){
 
 	// Add the per-user game path on all platforms
 	if ( m_pCurrentGameDescription->mUserPathPrefix.GetLength() ) {
-#if defined ( __linux__ ) || defined ( __APPLE__ )
+#if defined( __linux__ ) || defined( __FreeBSD__ ) || defined( __APPLE__ )
 		g_qeglobals.m_strHomeGame = g_get_home_dir();
 		g_qeglobals.m_strHomeGame += "/";
 		g_qeglobals.m_strHomeGame += m_pCurrentGameDescription->mUserPathPrefix.GetBuffer();
@@ -3722,7 +3722,7 @@ void CGameInstall::Run() {
 		break;
 	}
 	case GAME_QUETOO: {
-#if defined( __APPLE__ ) || defined( __linux__ )
+#if defined( __linux__ ) || defined( __FreeBSD__ ) || defined( __APPLE__ )
 		fprintf( fg, "  " ENGINE_ATTRIBUTE "=\"quetoo\"\n" );
 		fprintf( fg, "  " PREFIX_ATTRIBUTE "=\".quetoo\"\n" );
 #elif _WIN32

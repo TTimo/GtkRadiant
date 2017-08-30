@@ -28,7 +28,7 @@
 #ifdef USEPLUGINENTITIES
 
 #include "stdafx.h"
-#if defined ( __linux__ ) || defined ( __APPLE__ )
+#if defined( __linux__ ) || defined( __FreeBSD__ ) || defined( __APPLE__ )
 #include <dirent.h>
 #endif
 //#include "qe3.h"
