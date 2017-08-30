@@ -564,6 +564,33 @@ bool IsValidTextureName(char* name){
 	return true;
 }
 
+bool IsDirContainingTextures(const char* path){
+	char name[1024];
+	char dirstring[1024];
+	GSList *files = NULL, *temp;
+
+	sprintf( dirstring, "textures/%s", path );
+	g_ImageManager.BeginExtensionsScan();
+	const char* ext;
+	while ( ( ext = g_ImageManager.GetNextExtension() ) != NULL )
+	{
+		files = g_slist_concat( files, vfsGetFileList( dirstring, ext ) );
+	}
+
+	for ( temp = files; temp; temp = temp->next )
+	{
+		sprintf( name, "%s", (char*)temp->data );
+
+		if ( IsValidTextureName( name ) ) {
+			vfsClearFileDirList( &files );
+			return true;
+		}
+	}
+
+	vfsClearFileDirList( &files );
+	return false;
+}
+
 void Texture_ListDirectory(){
 	char name[1024];
 	char dirstring[1024];
@@ -649,7 +676,10 @@ void FillTextureList( GSList** pArray )
 			// Hydra: erm, this didn't used to do anything except leak memory...
 			// For Halflife support this is required to work however.
 			// g_slist_append(texdirs, p->data);
-			texdirs = g_slist_append( texdirs, g_strdup( (char *)p->data ) );
+			if ( IsDirContainingTextures( (char*)p->data ) )
+			{
+				texdirs = g_slist_append( texdirs, g_strdup( (char *)p->data ) );
+			}
 		}
 		vfsClearFileDirList( &texdirs_tmp );
 	}
