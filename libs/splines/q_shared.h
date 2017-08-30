@@ -158,6 +158,8 @@ void osxFreeMemory( void *pointer );
 
 #ifdef __MACOS__
 
+// the mac compiler can't handle >32k of locals, so we
+// just waste space and make big arrays static...
 #define MAC_STATIC static
 
 #define CPUSTRING   "MacOS-PPC"
@@ -186,8 +188,6 @@ void Sys_PumpEvents( void );
 
 //======================= LINUX DEFINES =================================
 
-// the mac compiler can't handle >32k of locals, so we
-// just waste space and make big arrays static...
 #ifdef __linux__
 
 #define MAC_STATIC
