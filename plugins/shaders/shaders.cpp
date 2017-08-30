@@ -404,9 +404,20 @@ void WINAPI QERApp_ReloadShaders(){
 
 int WINAPI QERApp_LoadShadersFromDir( const char *path ){
 	int count = 0;
+
+	// some code adds a trailing slash
+	gchar* keyword = g_strdup(path);
+	if ( g_str_has_suffix( keyword, "/" ) ) {
+		keyword[ strlen(keyword) -1 ] = '\0';
+	}
+
+	gchar* around = g_strconcat("/", keyword, ".", NULL);
+	gchar* prefix = g_strconcat("textures/", keyword, "/", NULL);
+
 	// scan g_Shaders, and call QERApp_Shader_ForName for each in the given path
 	// this will load the texture if needed and will set it in use..
 	int nSize = g_Shaders.GetSize();
+
 	for ( int i = 0; i < nSize; i++ )
 	{
 		CShader *pShader = reinterpret_cast < CShader * >( g_Shaders[i] );
@@ -418,9 +429,7 @@ int WINAPI QERApp_LoadShadersFromDir( const char *path ){
 			continue;
 		}
 
-		// this is basically doing:
-		// if path in ["scripts/eerie.shader", "textures/eerie/blackness"]
-		if ( strstr( pShader->getShaderFileName(), path ) || strstr( pShader->getName(), path ) ) {
+		if ( strstr( pShader->getShaderFileName(), around ) != NULL || g_str_has_prefix( pShader->getName(), prefix ) ) {
 			count++;
 			// request the shader, this will load the texture if needed and set "inuse"
 			//++timo FIXME: should we put an Activate member on CShader?
@@ -437,6 +446,11 @@ int WINAPI QERApp_LoadShadersFromDir( const char *path ){
 #endif
 		}
 	}
+
+	g_free(keyword);
+	g_free(around);
+	g_free(prefix);
+
 	return count;
 }
 
@@ -446,7 +460,7 @@ bool WINAPI QERApp_IsDirContainingShaders( const char *path ){
 	// they will not be displayed and are not applicable to surfaces
 	// exclude shaders from other paths,
 	// they are not the ones we are looking for
-	gchar* prefix = g_strconcat("textures/", path, NULL);
+	gchar* prefix = g_strconcat("textures/", path, "/", NULL);
 	for ( int i = 0; i < nSize; i++ )
 	{
 		CShader *pShader = reinterpret_cast < CShader * >( g_Shaders[i] );
