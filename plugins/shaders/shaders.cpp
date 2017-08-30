@@ -431,18 +431,18 @@ int WINAPI QERApp_LoadShadersFromDir( const char *path ){
 
 		if ( strstr( pShader->getShaderFileName(), around ) != NULL || g_str_has_prefix( pShader->getName(), prefix ) ) {
 			count++;
+#ifdef _DEBUG
 			// request the shader, this will load the texture if needed and set "inuse"
 			//++timo FIXME: should we put an Activate member on CShader?
 			// this QERApp_Shader_ForName call is a kind of hack
 			IShader *pFoo = QERApp_Shader_ForName( pShader->getName() );
-#ifdef _DEBUG
 			// check we activated the right shader
 			// NOTE: if there was something else loaded, the size of g_Shaders may have changed and strange behaviours are to be expected
 			if ( pFoo != pShader ) {
 				Sys_FPrintf( SYS_WRN, "WARNING: unexpected pFoo != pShader in QERApp_LoadShadersFromDir\n" );
 			}
 #else
-			pFoo = NULL; // leo: shut up the compiler
+			QERApp_Shader_ForName( pShader->getName() );
 #endif
 		}
 	}
