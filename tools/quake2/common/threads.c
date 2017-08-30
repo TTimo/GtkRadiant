@@ -571,7 +571,7 @@ void RunThreadsOn( int workcnt, qboolean showpacifier, void ( *func )( int ) ){
 		Sys_Printf( " (%i)\n", end - start );
 	}
 }
-#endif // ifdef __linux__
+#endif // if defined( __linux__ ) || defined( __FreeBSD__ ) || defined( __APPLE__ )
 
 
 /*
