@@ -542,8 +542,8 @@ bool IsValidTextureName(char* name){
 		return false;
 	}
 
-	// avoid glow, heightmap, normalmap and specular maps for Q4 texture sets
 	if ( g_str_has_suffix( name, "_g" ) ||
+			// avoid glow, heightmap, normalmap and specular maps for Q4 texture sets
 			g_str_has_suffix( name, "_h" ) ||
 			g_str_has_suffix( name, "_local" ) ||
 			g_str_has_suffix( name, "_nm" ) ||
@@ -551,7 +551,12 @@ bool IsValidTextureName(char* name){
 			g_str_has_suffix( name, "_bump" ) ||
 			g_str_has_suffix( name, "_gloss" ) ||
 			g_str_has_suffix( name, "_luma" ) ||
-			g_str_has_suffix( name, "_norm" ) ) {
+			g_str_has_suffix( name, "_norm" ) ||
+			// more well-known suffixes
+			g_str_has_suffix( name, "_p" ) || // preview (used by qer_editorimage)
+			g_str_has_suffix( name, "_g" ) || // gloss
+			g_str_has_suffix( name, "_n" )    // normal
+			) {
 		return false;
 	}
 
