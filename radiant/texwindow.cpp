@@ -711,10 +711,12 @@ void FillTextureList( GSList** pArray )
 		}
 
 		for ( GSList *tmp = texdirs; tmp; tmp = g_slist_next( tmp ) )
+		{
 			if ( !strcasecmp( (char*)tmp->data, shaderfile ) ) {
 				found = TRUE;
 				break;
 			}
+		}
 
 		if ( !found ) {
 			if( QERApp_IsDirContainingShaders( shaderfile ) )
