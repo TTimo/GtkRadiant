@@ -204,6 +204,22 @@ void Sys_PumpEvents( void );
 
 #endif
 
+//======================= FreeBSD DEFINES =================================
+
+#ifdef __FreeBSD__
+
+#define MAC_STATIC
+
+#ifdef __i386__
+#define CPUSTRING   "FreeBSD-i386"
+#else
+#define CPUSTRING   "FreeBSD-other"
+#endif
+
+#define PATH_SEP '/'
+
+#endif
+
 //=============================================================
 
 typedef enum {qfalse, qtrue}    qboolean;
