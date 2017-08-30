@@ -152,11 +152,9 @@ void osxFreeMemory( void *pointer );
 }
 #endif
 
-#endif
-
 //======================= MAC DEFINES =================================
 
-#ifdef __MACOS__
+#elif defined( __MACOS__ )
 
 // the mac compiler can't handle >32k of locals, so we
 // just waste space and make big arrays static...
@@ -184,11 +182,10 @@ void Sys_PumpEvents( void );
 #define QDECL   __cdecl
 
 #define _alloca alloca
-#endif
 
 //======================= LINUX DEFINES =================================
 
-#ifdef __linux__
+#elif defined( __linux__ )
 
 #define MAC_STATIC
 
@@ -202,11 +199,9 @@ void Sys_PumpEvents( void );
 
 #define PATH_SEP '/'
 
-#endif
-
 //======================= FreeBSD DEFINES =================================
 
-#ifdef __FreeBSD__
+#elif defined( __FreeBSD__ )
 
 #define MAC_STATIC
 
@@ -218,9 +213,11 @@ void Sys_PumpEvents( void );
 
 #define PATH_SEP '/'
 
-#endif
-
 //=============================================================
+
+#else
+	#error unknown architecture
+#endif
 
 typedef enum {qfalse, qtrue}    qboolean;
 
