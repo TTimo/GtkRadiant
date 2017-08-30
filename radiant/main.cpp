@@ -473,7 +473,7 @@ int mainRadiant( int argc, char* argv[] ) {
 	if ( libgl == NULL ) {
 		#if defined ( _WIN32 )
 			libgl = "opengl32.dll";
-		#elif defined ( __linux__ )
+		#elif defined ( __linux__ ) || defined ( __FreeBSD__ )
 			libgl = "libGL.so.1";
 		#elif defined ( __APPLE__ )
 			libgl = "/opt/local/lib/libGL.dylib";
