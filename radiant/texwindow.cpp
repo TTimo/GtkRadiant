@@ -681,7 +681,7 @@ void FillTextureList( GSList** pArray )
 			// Hydra: erm, this didn't used to do anything except leak memory...
 			// For Halflife support this is required to work however.
 			// g_slist_append(texdirs, p->data);
-			if ( IsDirContainingTextures( (char*)p->data ) )
+			if ( !g_PrefsDlg.m_bHideEmptyDirs || IsDirContainingTextures( (char*)p->data ) )
 			{
 				texdirs = g_slist_append( texdirs, g_strdup( (char *)p->data ) );
 			}
@@ -719,7 +719,7 @@ void FillTextureList( GSList** pArray )
 		}
 
 		if ( !found ) {
-			if( QERApp_IsDirContainingShaders( shaderfile ) )
+			if( !g_PrefsDlg.m_bHideEmptyDirs || QERApp_IsDirContainingShaders( shaderfile ) )
 			{
 				texdirs = g_slist_prepend( texdirs, g_strdup( shaderfile ) );
 			}

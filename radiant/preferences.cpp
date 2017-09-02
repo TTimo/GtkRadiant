@@ -119,6 +119,7 @@
 #define TEXTURESUBSET_KEY         "UseTextureSubsetLoading"
 #define TEXTUREQUALITY_KEY      "TextureQuality"
 #define SHOWSHADERS_KEY           "ShowShaders"
+#define HIDEEMPTYDIRS_KEY       "HideEmptyDirs"
 #define SHADERTEST_KEY          "ShaderTest"
 #define GLLIGHTING_KEY          "UseGLLighting"
 #define LOADSHADERS_KEY         "LoadShaders"
@@ -644,6 +645,7 @@ PrefsDlg::PrefsDlg (){
 	m_bSelectWholeEntities = TRUE;
 	m_nTextureQuality = 3;
 	m_bShowShaders = TRUE;
+	m_bHideEmptyDirs = FALSE;
 	m_bGLLighting = FALSE;
 	m_nShader = 0;
 	m_nUndoLevels = 30;
@@ -3076,6 +3078,7 @@ void PrefsDlg::LoadPrefs(){
 	mLocalPrefs.GetPref( SWITCHCLIP_KEY,         &m_bSwitchClip,                 TRUE );
 	mLocalPrefs.GetPref( SELWHOLEENTS_KEY,       &m_bSelectWholeEntities,        TRUE );
 	mLocalPrefs.GetPref( SHOWSHADERS_KEY,        &m_bShowShaders,                TRUE );
+	mLocalPrefs.GetPref( HIDEEMPTYDIRS_KEY,      &m_bHideEmptyDirs,              FALSE );
 	mLocalPrefs.GetPref( GLLIGHTING_KEY,         &m_bGLLighting,                 FALSE );
 	mLocalPrefs.GetPref( NOSTIPPLE_KEY,          &m_bNoStipple,                  FALSE );
 	mLocalPrefs.GetPref( UNDOLEVELS_KEY,         &m_nUndoLevels,                 30 );
