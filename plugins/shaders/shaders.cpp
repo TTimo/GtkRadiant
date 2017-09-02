@@ -429,6 +429,10 @@ int WINAPI QERApp_LoadShadersFromDir( const char *path ){
 			continue;
 		}
 
+		// - proceed if shader script base name is <path>
+		// for example: "scripts/eerie.shader" with "eerie" path
+		// - proceed if shader script base name is <path> and shader path starts with "textures/<path>"
+		// for example: "scripts/eerie.shader" providing "textures/eerie/blackness" with "eerie" path
 		if ( strstr( pShader->getShaderFileName(), around ) != NULL || g_str_has_prefix( pShader->getName(), prefix ) ) {
 			count++;
 #ifdef _DEBUG
@@ -467,6 +471,11 @@ bool WINAPI QERApp_IsDirContainingShaders( const char *path ){
 	for ( int i = 0; i < nSize; i++ )
 	{
 		CShader *pShader = reinterpret_cast < CShader * >( g_Shaders[i] );
+
+		// - returns true if shader script basename is <path> and shader path starts with "textures/"
+		// for example: "scripts/rockyvalley.shader" with "rockyvalley" path providing "textures/amethyst7/rockyvalley/rockyvalley_skybox/"
+		// - returns true if shader <path> startswith "textures/<path>"
+		// for example: "scripts/eerie.shader" with "eerie" path providing "textures/eerie/blackness"
 		if ( ( strstr( pShader->getShaderFileName(), around ) != NULL && g_str_has_prefix( pShader->getName(), "textures/" ) ) || g_str_has_prefix( pShader->getName(), prefix ) ) {
 			g_free(around);
 			g_free(prefix);
