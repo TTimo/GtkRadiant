@@ -460,15 +460,21 @@ bool WINAPI QERApp_IsDirContainingShaders( const char *path ){
 	// they will not be displayed and are not applicable to surfaces
 	// exclude shaders from other paths,
 	// they are not the ones we are looking for
+
+	gchar* around = g_strconcat("/", path, ".", NULL);
 	gchar* prefix = g_strconcat("textures/", path, "/", NULL);
+
 	for ( int i = 0; i < nSize; i++ )
 	{
 		CShader *pShader = reinterpret_cast < CShader * >( g_Shaders[i] );
-		if ( g_str_has_prefix( pShader->getName(), prefix ) ) {
+		if ( ( strstr( pShader->getShaderFileName(), around ) != NULL && g_str_has_prefix( pShader->getName(), "textures/" ) ) || g_str_has_prefix( pShader->getName(), prefix ) ) {
+			g_free(around);
 			g_free(prefix);
 			return true;
 		}
 	}
+
+	g_free(around);
 	g_free(prefix);
 	return false;
 }
