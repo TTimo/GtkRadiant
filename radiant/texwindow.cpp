@@ -685,6 +685,10 @@ void FillTextureList( GSList** pArray )
 			{
 				texdirs = g_slist_append( texdirs, g_strdup( (char *)p->data ) );
 			}
+			else
+			{
+				Sys_Printf( "Hiding empty texture dir: %s\n", g_strdup( (char *)p->data ) );
+			}
 		}
 		vfsClearFileDirList( &texdirs_tmp );
 	}
@@ -722,6 +726,10 @@ void FillTextureList( GSList** pArray )
 			if( !g_PrefsDlg.m_bHideEmptyDirs || QERApp_IsDirContainingShaders( shaderfile ) )
 			{
 				texdirs = g_slist_prepend( texdirs, g_strdup( shaderfile ) );
+			}
+			else
+			{
+				Sys_Printf( "Hiding empty shader dir: %s\n", g_strdup ( shaderfile ) );
 			}
 		}
 
