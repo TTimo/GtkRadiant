@@ -469,7 +469,7 @@ void DumpUnreferencedShaders(){
    ==================
  */
 void BuildShaderList(){
-	int count;
+	int count, i;
 	char filename[1024];
 	char *pBuff;
 	char dirstring[NAME_MAX];
@@ -486,41 +486,45 @@ void BuildShaderList(){
 			Sys_FPrintf( SYS_ERR, "Couldn't find '%s'\n", g_pGameDescription->mShaderlist.GetBuffer() );
 			return;
 		}
-		// NOTE TTimo we use vfsGetFullPath solely to get the full path of the shader list we are gonna load
-		//   but we actually send the relative path to vfsLoadFile
-		//   so let's hope there is no disparity between the two functions
-		if ( !vfsGetFullPath( filename, 0, 0 ) ) {
-			Sys_FPrintf( SYS_ERR, "Couldn't find full path for '%s'\n", g_pGameDescription->mShaderlist.GetBuffer() );
-			return;
-		}
-		Sys_Printf( "Parsing shader files from %s\n", vfsGetFullPath( filename, 0, 0 ) );
-		nLen = vfsLoadFile( filename, reinterpret_cast<void**>( &pBuff ), 0 );
-		if ( nLen > 0 ) {
-			StartTokenParsing( pBuff );
-			nLen = 0;
-			while ( GetToken( true ) )
-			{
-				GSList *tmp;
-				bool found = false;
 
-				// each token should be a shader filename
-				sprintf( dirstring, "%s.shader", token );
-
-				for ( tmp = l_shaderfiles; tmp != NULL; tmp = tmp->next )
+		for ( i = 0; i < count; i++ )
+		{
+			// NOTE TTimo we use vfsGetFullPath solely to get the full path of the shader list we are gonna load
+			//   but we actually send the relative path to vfsLoadFile
+			//   so let's hope there is no disparity between the two functions
+			if ( !vfsGetFullPath( filename, i, 0 ) ) {
+				Sys_FPrintf( SYS_ERR, "Couldn't find full path for '%s'\n", g_pGameDescription->mShaderlist.GetBuffer() );
+				return;
+			}
+			Sys_Printf( "Parsing shader files from %s\n", vfsGetFullPath( filename, i, 0 ) );
+			nLen = vfsLoadFile( filename, reinterpret_cast<void**>( &pBuff ), i );
+			if ( nLen > 0 ) {
+				StartTokenParsing( pBuff );
+				nLen = 0;
+				while ( GetToken( true ) )
 				{
-					if ( !strcmp( dirstring, (char*)tmp->data ) ) {
-						found = true;
-						Sys_FPrintf( SYS_WRN, "duplicate entry \"%s\" in shaderlist.txt\n", (char*)tmp->data );
-						break;
+					GSList *tmp;
+					bool found = false;
+
+					// each token should be a shader filename
+					sprintf( dirstring, "%s.shader", token );
+
+					for ( tmp = l_shaderfiles; tmp != NULL; tmp = tmp->next )
+					{
+						if ( !strcmp( dirstring, (char*)tmp->data ) ) {
+							found = true;
+							Sys_FPrintf( SYS_WRN, "duplicate entry \"%s\" in shaderlist.txt\n", (char*)tmp->data );
+							break;
+						}
+					}
+
+					if ( !found ) {
+						l_shaderfiles = g_slist_append( l_shaderfiles, strdup( dirstring ) );
+						nLen++;
 					}
 				}
-
-				if ( !found ) {
-					l_shaderfiles = g_slist_append( l_shaderfiles, strdup( dirstring ) );
-					nLen++;
-				}
+				g_free( pBuff );
 			}
-			g_free( pBuff );
 		}
 	}
 }
@@ -1088,7 +1092,7 @@ void Texture_ShowStartupShaders(){
 	}
 
 	if ( g_PrefsDlg.m_nShader == PrefsDlg::SHADER_ALL ) {
-		int count;
+		int count, i;
 		char filename[1024];
 		char   *pBuff;
 		char dirstring[NAME_MAX];
@@ -1107,36 +1111,39 @@ void Texture_ShowStartupShaders(){
 			return;
 		}
 
-		Sys_Printf( "Parsing shader files from %s\n", vfsGetFullPath( filename, 0, 0 ) );
-		nLen = vfsLoadFile( filename, reinterpret_cast<void**>( &pBuff ), 0 );
-		if ( nLen > 0 ) {
-			StartTokenParsing( pBuff );
-			nLen = 0;
-			while ( GetToken( true ) )
-			{
-				GSList *tmp;
-				bool found = false;
-
-				// each token should be a shader filename
-				sprintf( dirstring, "%s.shader", token );
-
-				for ( tmp = shaderfiles; tmp != NULL; tmp = tmp->next )
+		for ( i = 0; i < count; i++ )
+		{
+			Sys_Printf( "Parsing shader files from %s\n", vfsGetFullPath( filename, i, 0 ) );
+			nLen = vfsLoadFile( filename, reinterpret_cast<void**>( &pBuff ), i );
+			if ( nLen > 0 ) {
+				StartTokenParsing( pBuff );
+				nLen = 0;
+				while ( GetToken( true ) )
 				{
-					if ( !strcmp( dirstring, (char*)tmp->data ) ) {
-						found = true;
-						Sys_FPrintf( SYS_WRN, "duplicate entry \"%s\" in shaderlist.txt\n", (char*)tmp->data );
-						break;
+					GSList *tmp;
+					bool found = false;
+
+					// each token should be a shader filename
+					sprintf( dirstring, "%s.shader", token );
+
+					for ( tmp = shaderfiles; tmp != NULL; tmp = tmp->next )
+					{
+						if ( !strcmp( dirstring, (char*)tmp->data ) ) {
+							found = true;
+							Sys_FPrintf( SYS_WRN, "duplicate entry \"%s\" in shaderlist.txt\n", (char*)tmp->data );
+							break;
+						}
+					}
+
+					if ( !found ) {
+						shaderfiles = g_slist_append( l_shaderfiles, strdup( dirstring ) );
+						strcpy( texture_directory, dirstring );
+						Texture_ShowDirectory();
+						nLen++;
 					}
 				}
-
-				if ( !found ) {
-					shaderfiles = g_slist_append( l_shaderfiles, strdup( dirstring ) );
-					strcpy( texture_directory, dirstring );
-					Texture_ShowDirectory();
-					nLen++;
-				}
+				g_free( pBuff );
 			}
-			g_free( pBuff );
 		}
 	}
 }
