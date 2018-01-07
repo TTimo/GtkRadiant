@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<config>
+    <source_groups>
+        <source_group_1cb44846-c0b6-485d-a9c1-7acf2cd32743>
+            <build_file_path>
+                <compilation_db_path>GtkRadiant-build-commands.json</compilation_db_path>
+            </build_file_path>
+            <name>C/C++ from Compilation Database</name>
+            <should_apply_anonymous_typedef_transformation>1</should_apply_anonymous_typedef_transformation>
+            <source_paths>
+                <source_path>build/release/q3data/libs</source_path>
+                <source_path>build/release/q3map2/libs</source_path>
+                <source_path>build/release/q3map2_urt/libs</source_path>
+                <source_path>build/release/radiant/libs</source_path>
+                <source_path>build/release/shobjs/libs</source_path>
+                <source_path>contrib/bkgrnd2d</source_path>
+                <source_path>contrib/bobtoolz</source_path>
+                <source_path>contrib/camera</source_path>
+                <source_path>contrib/gtkgensurf</source_path>
+                <source_path>contrib/hydratoolz</source_path>
+                <source_path>contrib/prtview</source_path>
+                <source_path>include</source_path>
+                <source_path>libs</source_path>
+                <source_path>plugins/eclassfgd</source_path>
+                <source_path>plugins/entity</source_path>
+                <source_path>plugins/image</source_path>
+                <source_path>plugins/imagehl</source_path>
+                <source_path>plugins/imagem8</source_path>
+                <source_path>plugins/imagepng</source_path>
+                <source_path>plugins/imagewal</source_path>
+                <source_path>plugins/map</source_path>
+                <source_path>plugins/mapxml</source_path>
+                <source_path>plugins/model</source_path>
+                <source_path>plugins/shaders</source_path>
+                <source_path>plugins/spritemodel</source_path>
+                <source_path>plugins/surface</source_path>
+                <source_path>plugins/surface_idtech2</source_path>
+                <source_path>plugins/textool</source_path>
+                <source_path>plugins/vfspak</source_path>
+                <source_path>plugins/vfspk3</source_path>
+                <source_path>plugins/vfsqlpk3</source_path>
+                <source_path>plugins/vfswad</source_path>
+                <source_path>radiant</source_path>
+                <source_path>tools/quake3/common</source_path>
+                <source_path>tools/quake3/q3data</source_path>
+                <source_path>tools/quake3/q3map2</source_path>
+                <source_path>tools/urt/tools/quake3/q3map2</source_path>
+            </source_paths>
+            <type>C/C++ from Compilation Database</type>
+        </source_group_1cb44846-c0b6-485d-a9c1-7acf2cd32743>
+    </source_groups>
+    <version>4</version>
+</config>
