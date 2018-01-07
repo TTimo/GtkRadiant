@@ -23,7 +23,7 @@
 #include <stdarg.h>
 #include <stdlib.h>
 #include <string.h>
-#if defined ( __linux__ ) || defined ( __APPLE__ )
+#if defined( __linux__ ) || defined( __FreeBSD__ ) || defined( __APPLE__ )
 #include <dirent.h>
 #endif
 #ifdef _WIN32
@@ -71,7 +71,7 @@ struct PK3FileInfo
 
 #ifdef LOG_PAKFAIL
 
-#if defined ( __linux__ ) || defined ( __APPLE__ )
+#if defined( __linux__ ) || defined( __FreeBSD__ ) || defined( __APPLE__ )
 #include <unistd.h>
 #include <pwd.h>
 #endif
@@ -82,7 +82,7 @@ class LogFile
 public:
 FILE *m_pFile;
 LogFile( const char* pName ){
-#if defined ( __linux__ ) || defined ( __APPLE__ )
+#if defined( __linux__ ) || defined( __FreeBSD__ ) || defined( __APPLE__ )
 	// leo: use ~/.q3a/radiant/paklog instead of /tmp/paklog.txt
 	char *home = NULL;
 
@@ -869,7 +869,7 @@ void WINAPI InitPakFile( const char * pBasePath, const char *pName ){
 
 	if ( pName == NULL ) {
 		//++timo FIXME: use some kind of compatibility lib here!
-#if defined ( __linux__ ) || defined ( __APPLE__ )
+#if defined( __linux__ ) || defined( __FreeBSD__ ) || defined( __APPLE__ )
 		char cWork[WORK_LEN];
 		struct dirent *dirlist;
 		DIR *dir;

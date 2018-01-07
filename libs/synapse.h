@@ -48,7 +48,7 @@
   #include <sys/types.h>
 #endif
 
-#if defined ( __linux__ ) || defined ( __APPLE__ )
+#if defined( __linux__ ) || defined( __FreeBSD__ ) || defined( __APPLE__ )
   #include <dlfcn.h>
   #include <dirent.h>
 #endif
@@ -59,7 +59,7 @@
 
 #if defined( _WIN32 )
   #define SYNAPSE_DLL_EXPORT WINAPI
-#elif defined( __linux__ ) || defined( __APPLE__ )  /* ydnar */
+#elif defined( __linux__ ) || defined( __FreeBSD__ ) || defined( __APPLE__ )  /* ydnar */
   #define SYNAPSE_DLL_EXPORT
 #else
   #error unknown architecture
@@ -459,7 +459,7 @@ public:
 /*!
    \todo cleanup, make that private with accessors
  */
-#if defined( __linux__ ) || defined( __APPLE__ )
+#if defined( __linux__ ) || defined( __FreeBSD__ ) || defined( __APPLE__ )
 void *mpDLL;   ///< handle to the shared object (invalid if SYN_BUILTIN)
 #elif defined( _WIN32 )
 HMODULE mpDLL;   ///< handle to the shared object (invalid if SYN_BUILTIN)

@@ -29,7 +29,7 @@
 #include <glib.h>
 #include <glib/gi18n.h>
 #include <assert.h>
-#if defined ( __linux__ ) || defined ( __APPLE__ )
+#if defined( __linux__ ) || defined( __FreeBSD__ ) || defined( __APPLE__ )
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <fcntl.h>
@@ -794,7 +794,7 @@ CGameDescription::CGameDescription( xmlDocPtr pDoc, const Str &GameFile ){
 	if ( prop == NULL ) {
 #ifdef _WIN32
 		mEngine = "quake3.exe";
-#elif __linux__
+#elif defined( __linux__ ) || defined( __FreeBSD__ )
 		mEngine = "quake3";
 #elif __APPLE__
 		mEngine = "Quake3.app";
@@ -808,7 +808,7 @@ CGameDescription::CGameDescription( xmlDocPtr pDoc, const Str &GameFile ){
 	if ( prop == NULL ) {
 #ifdef _WIN32
 		mMultiplayerEngine = "quake3.exe";
-#elif __linux__
+#elif defined( __linux__ ) || defined( __FreeBSD__ )
 		mMultiplayerEngine = "quake3";
 #elif __APPLE__
 		mMultiplayerEngine = "Quake3.app";
@@ -1321,7 +1321,7 @@ void CGameDialog::Init(){
 
 	// Add the per-user game path on all platforms
 	if ( m_pCurrentGameDescription->mUserPathPrefix.GetLength() ) {
-#if defined ( __linux__ ) || defined ( __APPLE__ )
+#if defined( __linux__ ) || defined( __FreeBSD__ ) || defined( __APPLE__ )
 		g_qeglobals.m_strHomeGame = g_get_home_dir();
 		g_qeglobals.m_strHomeGame += "/";
 		g_qeglobals.m_strHomeGame += m_pCurrentGameDescription->mUserPathPrefix.GetBuffer();
@@ -3722,7 +3722,7 @@ void CGameInstall::Run() {
 		break;
 	}
 	case GAME_QUETOO: {
-#if defined( __APPLE__ ) || defined( __linux__ )
+#if defined( __linux__ ) || defined( __FreeBSD__ ) || defined( __APPLE__ )
 		fprintf( fg, "  " ENGINE_ATTRIBUTE "=\"quetoo\"\n" );
 		fprintf( fg, "  " PREFIX_ATTRIBUTE "=\".quetoo\"\n" );
 #elif _WIN32
@@ -3775,7 +3775,7 @@ void CGameInstall::Run() {
 	case GAME_ET: {
 #ifdef _WIN32
 		fprintf( fg, "  " ENGINE_ATTRIBUTE "=\"ET.exe\"\n");
-#elif __linux__
+#elif defined( __linux__ ) || defined( __FreeBSD__ )
 		fprintf( fg, "  " ENGINE_ATTRIBUTE "=\"et\"\n" );
 #endif
 		fprintf( fg, "  prefix=\".etwolf\"\n" );

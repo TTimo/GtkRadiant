@@ -29,7 +29,7 @@
 #ifndef __IGL_H__
 #define __IGL_H__
 
-#if defined ( __linux__ ) || defined ( __APPLE__ )
+#if defined( __linux__ ) || defined( __FreeBSD__ ) || defined( __APPLE__ )
 #include <GL/glx.h>
 #endif
 

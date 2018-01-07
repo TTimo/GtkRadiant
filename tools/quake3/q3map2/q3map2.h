@@ -57,7 +57,7 @@ extern int unz_GAME_QL;
    ------------------------------------------------------------------------------- */
 
 /* platform-specific */
-#if defined( __linux__ ) || defined( __APPLE__ )
+#if defined( __linux__ ) || defined( __FreeBSD__ ) || defined( __APPLE__ )
 	#define Q_UNIX
 #endif
 

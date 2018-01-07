@@ -73,7 +73,7 @@ void InitInstance(){
 	strcat( INIfn, fn_dir );
 	strcat( INIfn, fn_name );
 	strcat( INIfn, ".ini" );
-#else // if def __linux__
+#else // if defined( __linux__ ) || defined( __FreeBSD__ ) || defined( __APPLE__ )
 	strcpy( INIfn, g_get_home_dir() );
 	strcat( INIfn, "/.radiant/" );
 	strcat( INIfn, RADIANT_VERSION );
@@ -166,7 +166,7 @@ _QERQglTable g_QglTable;
 
 #define CONFIG_SECTION "Configuration"
 
-#if defined( __linux__ ) || defined( __APPLE__ )
+#if defined( __linux__ ) || defined( __FreeBSD__ ) || defined( __APPLE__ )
 
 static bool read_var( const char *filename, const char *section, const char *key, char *value ){
 	char line[1024], *ptr;
@@ -316,7 +316,7 @@ static bool save_var( const char *filename, const char *section, const char *key
 #endif
 
 int INIGetInt( const char *key, int def ){
-#if defined( __linux__ ) || defined( __APPLE__ )
+#if defined( __linux__ ) || defined( __FreeBSD__ ) || defined( __APPLE__ )
 	char value[1024];
 
 	if ( read_var( INIfn, CONFIG_SECTION, key, value ) ) {
@@ -339,7 +339,7 @@ void INISetInt( const char *key, int val, const char *comment /* = NULL */ ){
 	else{
 		sprintf( s, "%d", val );
 	}
-#if defined( __linux__ ) || defined( __APPLE__ )
+#if defined( __linux__ ) || defined( __FreeBSD__ ) || defined( __APPLE__ )
 	save_var( INIfn, CONFIG_SECTION, key, s );
 #else
 	WritePrivateProfileString( CONFIG_SECTION, key, s, INIfn );

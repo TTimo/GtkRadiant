@@ -30,7 +30,7 @@
 
 #include <GL/gl.h>
 
-#if defined ( __linux__ ) || defined ( __APPLE__ )
+#if defined( __linux__ ) || defined( __FreeBSD__ ) || defined( __APPLE__ )
 #include <GL/glx.h>
 #endif
 
@@ -521,7 +521,7 @@ extern BOOL ( WINAPI * qwglSetDeviceGammaRampEXT )( const unsigned char *pRed, c
 
 #endif
 
-#if defined ( __linux__ ) || defined ( __APPLE__ )
+#if defined( __linux__ ) || defined( __FreeBSD__ ) || defined( __APPLE__ )
 extern XVisualInfo* ( *qglXChooseVisual )( Display * dpy, int screen, int *attribList );
 extern GLXContext ( *qglXCreateContext )( Display *dpy, XVisualInfo *vis, GLXContext shareList, Bool direct );
 extern void ( *qglXDestroyContext )( Display *dpy, GLXContext ctx );

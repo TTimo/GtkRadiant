@@ -20,8 +20,12 @@ class Config:
         self.config_selected = [ 'release' ]
         # those are global to each config
         self.platform = platform.system()
-        self.cc = 'gcc'
-        self.cxx = 'g++'
+        if ( self.platform == 'FreeBSD' ):
+            self.cc = 'cc'
+            self.cxx = 'c++'
+        else:
+            self.cc = 'gcc'
+            self.cxx = 'g++'
         self.install_directory = 'install'
 
         # platforms for which to assemble a setup

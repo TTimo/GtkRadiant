@@ -50,6 +50,9 @@ def CheckUnresolved( source, target, env ):
 	# TODO: implement this for OSX
 	if ( platform.system() == 'Darwin' ):
 		return None
+        # TODO: implement this for FreeBSD
+        if ( platform.system() == 'FreeBSD' ):
+                return None
 	print 'CheckUnresolved %s' % target[0].abspath
 	if ( not os.path.isfile( target[0].abspath ) ):
 		print 'CheckUnresolved: %s does not exist' % target[0]
