@@ -113,11 +113,10 @@
 
 #define PATH_SEP '\\'
 
-#endif
 
 //======================= MAC OS X SERVER DEFINES =====================
 
-#if defined( __MACH__ ) && defined( __APPLE__ )
+#elif defined( __MACH__ ) && defined( __APPLE__ )
 
 #define MAC_STATIC
 
@@ -166,9 +165,8 @@ void osxFreeMemory( void *pointer );
 
 void Sys_PumpEvents( void );
 
-#endif
 
-#ifdef __MRC__
+#elif defined( __MRC__ )
 
 #define MAC_STATIC
 
