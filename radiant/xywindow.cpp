@@ -276,6 +276,9 @@ void DrawPathLines( void ){
 	if ( g_qeglobals.d_savedinfo.exclude & EXCLUDE_PATHS ) {
 		return;
 	}
+	if (g_qeglobals.d_savedinfo.exclude & EXCLUDE_ENT) {
+		return;
+	}
 
 	num_entities = 0;
 	for ( te = entities.next ; te != &entities && num_entities != MAX_MAP_ENTITIES ; te = te->next )
