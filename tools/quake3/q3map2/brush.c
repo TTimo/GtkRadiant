@@ -128,7 +128,7 @@ void FreeBrush( brush_t *b ){
 		}
 
 	/* ydnar: overwrite it */
-	memset( b, 0xFE, (size_t)&( ( (brush_t*) 0 )->sides[ b->numsides ] ) );
+	memset( b, 0xFE, offsetof( brush_t, sides ) + sizeof( *b->sides ) * b->numsides );
 	*( (unsigned int*) b ) = 0xFEFEFEFE;
 
 	/* free it */
@@ -171,7 +171,7 @@ brush_t *CopyBrush( brush_t *brush ){
 
 
 	/* copy brush */
-	size = (size_t)&( ( (brush_t*) 0 )->sides[ brush->numsides ] );
+	size = offsetof( brush_t, sides ) + sizeof( *brush->sides ) * brush->numsides;
 	newBrush = AllocBrush( brush->numsides );
 	memcpy( newBrush, brush, size );
 
