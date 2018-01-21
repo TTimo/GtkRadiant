@@ -31,7 +31,7 @@
 #ifndef _VFS_H_
 #define _VFS_H_
 
-#define VFS_MAXDIRS 8
+#define VFS_MAXDIRS 64
 
 void vfsInitDirectory( const char *path );
 void vfsShutdown();
@@ -64,5 +64,8 @@ char* vfsExtractRelativePath( const char *in );
 // returns the first file in the list or NULL if not found
 // see ifilesystem.h for more notes
 char* vfsGetFullPath( const char*, int index = 0, int flag = 0 );
+
+// suported pak extension list
+extern const char* pak_ext_list[];
 
 #endif // _VFS_H_

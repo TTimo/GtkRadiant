@@ -67,7 +67,11 @@ extern "C" CSynapseClient * SYNAPSE_DLL_EXPORT Synapse_EnumerateInterfaces( cons
 	g_pSynapseServer->IncRef();
 	Set_Syn_Printf( g_pSynapseServer->Get_Syn_Printf() );
 
-	g_SynapseClient.AddAPI( VFS_MAJOR, "pk3", sizeof( _QERFileSystemTable ) );
+	for ( int i = 0; pak_ext_list[i] != NULL ; i++ ) {
+		// ".pk3" -> "pk3"
+		g_SynapseClient.AddAPI( VFS_MAJOR, pak_ext_list[i] + sizeof('.'), sizeof( _QERFileSystemTable ) );
+	}
+
 	g_SynapseClient.AddAPI( RADIANT_MAJOR, NULL, sizeof( _QERFuncTable_1 ), SYN_REQUIRE, &g_FuncTable );
 
 	return &g_SynapseClient;
