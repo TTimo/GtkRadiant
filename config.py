@@ -31,7 +31,7 @@ class Config:
         # platforms for which to assemble a setup
         self.setup_platforms = [ 'local', 'x86', 'x64', 'win32' ]
         # paks to assemble in the setup
-        self.setup_packs = [ 'Q3Pack', 'UrTPack', 'ETPack', 'QLPack', 'Q2Pack', 'QuetooPack', 'JAPack', 'STVEFPack', 'WolfPack' ]
+        self.setup_packs = [ 'Q3Pack', 'UrTPack', 'ETPack', 'QLPack', 'Q2Pack', 'QuetooPack', 'JAPack', 'STVEFPack', 'WolfPack', 'UnvanquishedPack' ]
 
     def __repr__( self ):
         return 'config: target=%s config=%s' % ( self.target_selected, self.config_selected )
@@ -262,10 +262,14 @@ class Config:
 
     def FetchGamePaks( self, path ):
         for pak in self.setup_packs:
-            svnurl = 'svn://svn.icculus.org/gtkradiant-gamepacks/%s/trunk' % pak
-            self.CheckoutOrUpdate( svnurl, os.path.join( path, 'installs', pak ) )
-        
-    def CopyTree( self, src, dst ):
+            pak_path = os.path.join( path, 'installs', pak )
+            if pak == 'UnvanquishedPack':
+                svnurl = 'https://github.com/Unvanquished/unvanquished-mapeditor-support.git/trunk/build/gtkradiant/'
+            else:
+                svnurl = 'svn://svn.icculus.org/gtkradiant-gamepacks/%s/trunk' % pak
+            self.CheckoutOrUpdate( svnurl, pak_path )
+
+    def CopyTree( self, src, dst):
         for root, dirs, files in os.walk( src ):
             target_dir = os.path.join( dst, root[root.find( '/' )+1:] )
             print ( target_dir )
