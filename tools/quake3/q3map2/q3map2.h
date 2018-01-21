@@ -91,6 +91,7 @@ extern int unz_GAME_QL;
 #include "vfs.h"
 #include "png.h"
 
+#include <stddef.h>
 #include <stdlib.h>
 
 #define MIN(a, b) ((a) < (b) ? (a) : (b))
