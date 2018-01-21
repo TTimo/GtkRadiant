@@ -1,6 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Express 2012 for Windows Desktop
+# Visual Studio 15
+VisualStudioVersion = 15.0.27130.2024
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "radiant", "radiant\radiant.vcxproj", "{65D02375-63EE-4A8A-9F8E-504B1D5A1D02}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "q3map2", "tools\quake3\q3map2\q3map2.vcxproj", "{CD40B764-1D47-4FAE-8C6A-EF036E478D65}"
@@ -70,8 +72,6 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "gtkgensurf", "contrib\gtkgensurf\gtkgensurf.vcxproj", "{E37A9846-84FC-48F8-9880-954C5D9F8ED0}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "bkgrnd2d", "contrib\bkgrnd2d\bkgrnd2d.vcxproj", "{D43C13B9-35AC-4EC1-8A90-DF6D7132B9BD}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "vfsqlpk3", "plugins\vfsqlpk3\vfsqlpk3.vcxproj", "{9FD68F2C-B26A-461D-96E0-55AFC48AC9E0}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "q3map2_urt", "tools\urt\tools\quake3\q3map2\q3map2_urt.vcxproj", "{7AF7537E-94C3-4680-8F5E-C1CE30DC2041}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -310,20 +310,6 @@ Global
 		{F400371F-455F-4B6C-9F13-A2E57110E725}.Release|Win32.Build.0 = Release|Win32
 		{F400371F-455F-4B6C-9F13-A2E57110E725}.Release|x64.ActiveCfg = Release|x64
 		{F400371F-455F-4B6C-9F13-A2E57110E725}.Release|x64.Build.0 = Release|x64
-		{32AB82AA-C781-4E5E-83A0-A164D371306F}.Debug|Win32.ActiveCfg = Debug|Win32
-		{32AB82AA-C781-4E5E-83A0-A164D371306F}.Debug|Win32.Build.0 = Debug|Win32
-		{32AB82AA-C781-4E5E-83A0-A164D371306F}.Debug|x64.ActiveCfg = Debug|x64
-		{32AB82AA-C781-4E5E-83A0-A164D371306F}.Release|Win32.ActiveCfg = Release|Win32
-		{32AB82AA-C781-4E5E-83A0-A164D371306F}.Release|Win32.Build.0 = Release|Win32
-		{32AB82AA-C781-4E5E-83A0-A164D371306F}.Release|x64.ActiveCfg = Release|x64
-		{32AB82AA-C781-4E5E-83A0-A164D371306F}.Release|x64.Build.0 = Release|x64
-		{12932084-E212-45AB-B3BE-A2A5AEEBA581}.Debug|Win32.ActiveCfg = Debug|Win32
-		{12932084-E212-45AB-B3BE-A2A5AEEBA581}.Debug|Win32.Build.0 = Debug|Win32
-		{12932084-E212-45AB-B3BE-A2A5AEEBA581}.Debug|x64.ActiveCfg = Debug|x64
-		{12932084-E212-45AB-B3BE-A2A5AEEBA581}.Release|Win32.ActiveCfg = Release|Win32
-		{12932084-E212-45AB-B3BE-A2A5AEEBA581}.Release|Win32.Build.0 = Release|Win32
-		{12932084-E212-45AB-B3BE-A2A5AEEBA581}.Release|x64.ActiveCfg = Release|x64
-		{12932084-E212-45AB-B3BE-A2A5AEEBA581}.Release|x64.Build.0 = Release|x64
 		{AB6534A8-ED1B-46DC-84EA-8AA080C12F6A}.Debug|Win32.ActiveCfg = Debug|Win32
 		{AB6534A8-ED1B-46DC-84EA-8AA080C12F6A}.Debug|Win32.Build.0 = Debug|Win32
 		{AB6534A8-ED1B-46DC-84EA-8AA080C12F6A}.Debug|x64.ActiveCfg = Debug|x64
@@ -359,13 +345,6 @@ Global
 		{D43C13B9-35AC-4EC1-8A90-DF6D7132B9BD}.Release|Win32.Build.0 = Release|Win32
 		{D43C13B9-35AC-4EC1-8A90-DF6D7132B9BD}.Release|x64.ActiveCfg = Release|x64
 		{D43C13B9-35AC-4EC1-8A90-DF6D7132B9BD}.Release|x64.Build.0 = Release|x64
-		{9FD68F2C-B26A-461D-96E0-55AFC48AC9E0}.Debug|Win32.ActiveCfg = Debug|Win32
-		{9FD68F2C-B26A-461D-96E0-55AFC48AC9E0}.Debug|Win32.Build.0 = Debug|Win32
-		{9FD68F2C-B26A-461D-96E0-55AFC48AC9E0}.Debug|x64.ActiveCfg = Debug|x64
-		{9FD68F2C-B26A-461D-96E0-55AFC48AC9E0}.Release|Win32.ActiveCfg = Release|Win32
-		{9FD68F2C-B26A-461D-96E0-55AFC48AC9E0}.Release|Win32.Build.0 = Release|Win32
-		{9FD68F2C-B26A-461D-96E0-55AFC48AC9E0}.Release|x64.ActiveCfg = Release|x64
-		{9FD68F2C-B26A-461D-96E0-55AFC48AC9E0}.Release|x64.Build.0 = Release|x64
 		{7AF7537E-94C3-4680-8F5E-C1CE30DC2041}.Debug|Win32.ActiveCfg = Debug|Win32
 		{7AF7537E-94C3-4680-8F5E-C1CE30DC2041}.Debug|Win32.Build.0 = Debug|Win32
 		{7AF7537E-94C3-4680-8F5E-C1CE30DC2041}.Debug|x64.ActiveCfg = Debug|x64
@@ -383,5 +362,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {BD3600F1-31BB-4F13-A714-2DB0A08AB80B}
 	EndGlobalSection
 EndGlobal
