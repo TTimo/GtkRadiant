@@ -30,8 +30,6 @@
 #pragma warning(disable : 4051)     // ALPHA
 #pragma warning(disable : 4800)
 
-#define _CRT_SECURE_NO_WARNINGS
-
 #endif
 
 // for interfaces, we require main plugin header included
