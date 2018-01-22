@@ -85,6 +85,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "q3map2_urt", "tools\urt\too
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "q3data", "tools\quake3\q3data\q3data.vcxproj", "{8DFCF3C0-5EC6-4E28-9D38-23FBE5F214FB}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "bspc", "bspc\bspc.vcxproj", "{4E4EBC16-F345-4667-84E1-86633BAFDAE6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -359,6 +361,12 @@ Global
 		{8DFCF3C0-5EC6-4E28-9D38-23FBE5F214FB}.Release|Win32.Build.0 = Release|Win32
 		{8DFCF3C0-5EC6-4E28-9D38-23FBE5F214FB}.Release|x64.ActiveCfg = Release|x64
 		{8DFCF3C0-5EC6-4E28-9D38-23FBE5F214FB}.Release|x64.Build.0 = Release|x64
+		{4E4EBC16-F345-4667-84E1-86633BAFDAE6}.Debug|Win32.ActiveCfg = Debug|Win32
+		{4E4EBC16-F345-4667-84E1-86633BAFDAE6}.Debug|Win32.Build.0 = Debug|Win32
+		{4E4EBC16-F345-4667-84E1-86633BAFDAE6}.Debug|x64.ActiveCfg = Debug|Win32
+		{4E4EBC16-F345-4667-84E1-86633BAFDAE6}.Release|Win32.ActiveCfg = Release|Win32
+		{4E4EBC16-F345-4667-84E1-86633BAFDAE6}.Release|Win32.Build.0 = Release|Win32
+		{4E4EBC16-F345-4667-84E1-86633BAFDAE6}.Release|x64.ActiveCfg = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
