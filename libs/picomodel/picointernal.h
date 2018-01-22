@@ -50,6 +50,7 @@ extern "C"
 #include <stdarg.h>
 #include <string.h>
 #include <ctype.h>
+#include <limits.h>
 #include <math.h>
 
 #include "picomodel.h"
