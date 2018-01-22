@@ -68,7 +68,7 @@ winding_t   *AllocWinding( int points ){
 			c_peak_windings = c_active_windings;
 		}
 	}
-	s = sizeof( vec_t ) * 3 * points + sizeof( int );
+	s = sizeof( *w ) + points * sizeof( *w->p );
 	w = safe_malloc( s );
 	memset( w, 0, s );
 	return w;
@@ -96,7 +96,7 @@ winding_accu_t *AllocWindingAccu( int points ){
 			c_peak_windings = c_active_windings;
 		}
 	}
-	s = sizeof(*w) + (points > 4 ? sizeof(vec3_accu_t) * (points - 4) : 0);
+	s = sizeof( *w ) + points * sizeof( *w->p );
 	w = safe_malloc( s );
 	memset( w, 0, s );
 	return w;

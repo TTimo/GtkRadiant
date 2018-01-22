@@ -23,7 +23,7 @@
 typedef struct
 {
 	int numpoints;
-	vec3_t p[4];        // variable sized
+	vec3_t p[];
 } winding_t;
 
 #define MAX_POINTS_ON_WINDING   64
@@ -65,7 +65,7 @@ void pw( winding_t *w );
 typedef struct
 {
 	int numpoints;
-	vec3_accu_t p[4]; // variable sized
+	vec3_accu_t p[];
 } winding_accu_t;
 
 winding_accu_t  *BaseWindingForPlaneAccu( vec3_t normal, vec_t dist );

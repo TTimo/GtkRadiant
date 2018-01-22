@@ -93,7 +93,7 @@ brush_t *AllocBrush( int numSides ){
 	brush_t     *bb;
 	size_t c;
 
-	c = sizeof(*bb) + (numSides > 6 ? sizeof(side_t)*(numSides - 6) : 0);
+	c = sizeof( *bb ) + sizeof( *bb->sides ) * numSides;
 	bb = safe_malloc( c );
 	memset( bb, 0, c );
 	if ( numthreads == 1 ) {
@@ -1023,7 +1023,7 @@ void SplitBrush( brush_t *brush, int planenum, brush_t **front, brush_t **back )
 	for ( i = 0 ; i < 2 ; i++ )
 	{
 		b[i] = AllocBrush( brush->numsides + 1 );
-		memcpy( b[i], brush, sizeof( brush_t ) - sizeof( brush->sides ) );
+		memcpy( b[i], brush, sizeof( brush_t ) );
 		b[i]->numsides = 0;
 		b[i]->next = NULL;
 		b[i]->original = brush->original;
