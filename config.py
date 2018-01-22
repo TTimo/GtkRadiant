@@ -31,7 +31,19 @@ class Config:
         # platforms for which to assemble a setup
         self.setup_platforms = [ 'local', 'x86', 'x64', 'win32' ]
         # paks to assemble in the setup
-        self.setup_packs = [ 'Q3Pack', 'UrTPack', 'ETPack', 'QLPack', 'Q2Pack', 'QuetooPack', 'JAPack', 'STVEFPack', 'WolfPack', 'UnvanquishedPack', 'Q1Pack' ]
+        self.setup_packs = [
+                        'Q3Pack',
+                        'UrTPack',
+                        'ETPack',
+                        'QLPack',
+                        'Q2Pack',
+                        'QuetooPack',
+                        'JAPack',
+                        'STVEFPack',
+                        'WolfPack',
+                        'UnvanquishedPack',
+                        'Q1Pack',
+        ]
 
     def __repr__( self ):
         return 'config: target=%s config=%s' % ( self.target_selected, self.config_selected )
@@ -94,7 +106,7 @@ class Config:
                 VariantDir( build_dir, '.', duplicate = 0 )
                 shlib_objects_extra[libname] = SConscript( os.path.join( build_dir, 'SConscript.lib' ) )
 
-            for project in [ 'plugins/vfsqlpk3/vfsqlpk3.vcxproj',
+            for project in [
                      'plugins/vfspk3/vfspk3.vcxproj',
                      'plugins/vfspak/vfspak.vcxproj',
                      'plugins/vfswad/vfswad.vcxproj',
@@ -118,7 +130,7 @@ class Config:
                      'contrib/hydratoolz/hydratoolz.vcxproj',
                      'contrib/bobtoolz/bobtoolz.vcxproj',
                      'contrib/gtkgensurf/gtkgensurf.vcxproj',
-                     'contrib/bkgrnd2d/bkgrnd2d.vcxproj'
+                     'contrib/bkgrnd2d/bkgrnd2d.vcxproj',
                  ]:
                 ( libpath, libname ) = os.path.split( project )
                 libname = os.path.splitext( libname )[0]
