@@ -66,8 +66,6 @@
    #define SYS_WRN 2 // warnings
    #define SYS_ERR 3 // error
  */
-// the dec offsetof macro doesnt work very well...
-#define myoffsetof( type,identifier ) ( (size_t)& ( (type *)0 )->identifier )
 
 #define SAFE_MALLOC
 #ifdef SAFE_MALLOC

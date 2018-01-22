@@ -65,7 +65,7 @@ fixedWinding_t *NewFixedWinding( int points ){
 		Error( "NewWinding: %i points", points );
 	}
 
-	size = offsetof( fixedWinding_t, points ) + sizeof( *w->points ) * points;
+	size = sizeof( *w ) + sizeof( *w->points ) * points;
 	w = safe_malloc( size );
 	memset( w, 0, size );
 

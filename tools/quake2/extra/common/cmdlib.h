@@ -48,10 +48,6 @@ typedef enum {false, true} qboolean;
 typedef unsigned char byte;
 #endif
 
-// the dec offsetof macro doesnt work very well...
-#define myoffsetof(type,identifier) ((size_t)&((type *)0)->identifier)
-
-
 // set these before calling CheckParm
 extern int myargc;
 extern char **myargv;

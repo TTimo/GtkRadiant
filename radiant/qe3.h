@@ -131,9 +131,6 @@ extern vec_t g_MaxBrushSize;
 #include "undo.h"
 #include "glwidget.h"
 
-// the dec offsetof macro doesn't work very well...
-#define myoffsetof( type,identifier ) ( (size_t)&( (type *)0 )->identifier )
-
 // set these before calling CheckParm
 extern int myargc;
 extern char **myargv;
