@@ -3211,7 +3211,12 @@ void PrefsDlg::LoadPrefs(){
 
 	mLocalPrefs.GetPref( Q3MAP2TEX_KEY, &m_bQ3Map2Texturing, TRUE );
 #ifdef _WIN32
-	mLocalPrefs.GetPref( X64Q3MAP2_KEY, &m_bx64q3map2, TRUE );
+	if ( sizeof(void*) == 4 ) { //32bit test
+		mLocalPrefs.GetPref( X64Q3MAP2_KEY, &m_bx64q3map2, FALSE );
+	}
+	else {
+		mLocalPrefs.GetPref( X64Q3MAP2_KEY, &m_bx64q3map2, TRUE );
+	}
 #endif
 
 #ifdef ATIHACK_812
