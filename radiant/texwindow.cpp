@@ -529,6 +529,129 @@ void BuildShaderList(){
 	}
 }
 
+bool IsValidTextureName(char* name){
+	CString strTemp;
+
+	StripExtension( name );
+	strTemp = name;
+	strTemp.MakeLower();
+
+	// avoid effect textures for Q3 texture sets
+	if ( strTemp.Find( ".specular" ) >= 0 ||
+		strTemp.Find( ".glow" ) >= 0 ||
+		strTemp.Find( ".bump" ) >= 0 ||
+		strTemp.Find( ".diffuse" ) >= 0 ||
+		strTemp.Find( ".blend" ) >= 0 ||
+		strTemp.Find( ".alpha" ) >= 0 ) {
+		return false;
+	}
+
+	if ( g_str_has_suffix( name, "_g" ) ||
+			// avoid glow, heightmap, normalmap and specular maps for Q4 texture sets
+			g_str_has_suffix( name, "_h" ) ||
+			g_str_has_suffix( name, "_local" ) ||
+			g_str_has_suffix( name, "_nm" ) ||
+			g_str_has_suffix( name, "_s" ) ||
+			g_str_has_suffix( name, "_bump" ) ||
+			g_str_has_suffix( name, "_gloss" ) ||
+			g_str_has_suffix( name, "_luma" ) ||
+			g_str_has_suffix( name, "_norm" ) ||
+			// more well-known suffixes
+			g_str_has_suffix( name, "_p" ) || // preview (used by qer_editorimage)
+			g_str_has_suffix( name, "_g" ) || // gloss
+			g_str_has_suffix( name, "_n" )    // normal
+			) {
+		return false;
+	}
+
+	// avoid ever loading a texture name with spaces
+	if ( strTemp.Find( " " ) >= 0 ) {
+		Sys_FPrintf( SYS_WRN, "WARNING: Skipping texture name with spaces [%s]\n", strTemp.GetBuffer() );
+		return false;
+	}
+
+	return true;
+}
+
+bool IsDirContainingTextures(const char* path){
+	char name[1024];
+	char dirstring[1024];
+	GSList *files = NULL, *temp;
+
+	sprintf( dirstring, "textures/%s", path );
+	g_ImageManager.BeginExtensionsScan();
+	const char* ext;
+	while ( ( ext = g_ImageManager.GetNextExtension() ) != NULL )
+	{
+		files = g_slist_concat( files, vfsGetFileList( dirstring, ext ) );
+	}
+
+	for ( temp = files; temp; temp = temp->next )
+	{
+		sprintf( name, "%s", (char*)temp->data );
+
+		if ( IsValidTextureName( name ) ) {
+			vfsClearFileDirList( &files );
+			return true;
+		}
+	}
+
+	vfsClearFileDirList( &files );
+	return false;
+}
+
+void Texture_ListDirectory(){
+	char name[1024];
+	char dirstring[1024];
+	int shaders_count = 0;
+	int textures_count = 0;
+	GSList *files = NULL, *temp;
+
+	// load texture_directory.shader
+	// NOTE: because of above call to Texture_ClearInuse, g_ActiveShaders will have the newly loaded shaders only
+	// we'll use that later to check if textures have a shader associated or not
+	// NOTE: all shaders loaded through QERApp_LoadShadersFromDir will get their InUse flag to True, we'll need a call to Texture_ShowInUse for later cleanup/adjustment
+	// NOTE: QERApp_LoadShadersFromDir has two criterions for loading a shader:
+	//   the shaderfile is texture_directory (like "museum" will load everything in museum.shader)
+	//   the shader name contains texture_directory (like "base_floor" will load museum.shader::base_floor/concfloor_rain)
+	shaders_count = QERApp_LoadShadersFromDir( texture_directory );
+	// load remaining texture files
+	// if a texture is already in use to represent a shader, ignore it
+
+	// need this function "GSList *lst SynapseServer::GetMinorList(char *major_name);"
+
+	sprintf( dirstring, "textures/%s", texture_directory );
+	g_ImageManager.BeginExtensionsScan();
+	const char* ext;
+	while ( ( ext = g_ImageManager.GetNextExtension() ) != NULL )
+	{
+		files = g_slist_concat( files, vfsGetFileList( dirstring, ext ) );
+	}
+
+	for ( temp = files; temp; temp = temp->next )
+	{
+		sprintf( name, "%s%s", texture_directory, (char*)temp->data );
+
+		if ( !IsValidTextureName( name ) ) {
+			continue;
+		}
+
+		// build a texture name that fits the conventions for qtexture_t::name
+		char stdName[1024];
+		sprintf( stdName, "textures/%s", name );
+		// check if this texture doesn't have a shader
+		if ( !QERApp_ActiveShader_ForTextureName( stdName ) ) {
+			QERApp_CreateShader_ForTextureName( stdName );
+			textures_count++;
+		}
+	}
+
+	Sys_Printf( "Loaded %d shaders and created default shader for %d orphan textures.\n",
+				shaders_count, textures_count );
+
+	vfsClearFileDirList( &files );
+}
+
 /*
    ==================
    FillTextureMenu
@@ -562,7 +685,14 @@ void FillTextureList( GSList** pArray )
 			// Hydra: erm, this didn't used to do anything except leak memory...
 			// For Halflife support this is required to work however.
 			// g_slist_append(texdirs, p->data);
-			texdirs = g_slist_append( texdirs, g_strdup( (char *)p->data ) );
+			if ( !g_PrefsDlg.m_bHideEmptyDirs || IsDirContainingTextures( (char*)p->data ) )
+			{
+				texdirs = g_slist_append( texdirs, g_strdup( (char *)p->data ) );
+			}
+			else
+			{
+				Sys_Printf( "Hiding empty texture dir: %s\n", g_strdup( (char *)p->data ) );
+			}
 		}
 		vfsClearFileDirList( &texdirs_tmp );
 	}
@@ -589,13 +719,22 @@ void FillTextureList( GSList** pArray )
 		}
 
 		for ( GSList *tmp = texdirs; tmp; tmp = g_slist_next( tmp ) )
+		{
 			if ( !strcasecmp( (char*)tmp->data, shaderfile ) ) {
 				found = TRUE;
 				break;
 			}
+		}
 
 		if ( !found ) {
-			texdirs = g_slist_prepend( texdirs, g_strdup( shaderfile ) );
+			if( !g_PrefsDlg.m_bHideEmptyDirs || QERApp_IsDirContainingShaders( shaderfile ) )
+			{
+				texdirs = g_slist_prepend( texdirs, g_strdup( shaderfile ) );
+			}
+			else
+			{
+				Sys_Printf( "Hiding empty shader dir: %s\n", g_strdup ( shaderfile ) );
+			}
 		}
 
 		free( l_shaderfiles->data );
@@ -788,13 +927,9 @@ void Texture_ShowDirectory_by_path( const char* pPath )
    ( the GL textures are not flushed though)
    ==============
  */
+
 void Texture_ShowDirectory(){
 	char name[1024];
-	char dirstring[1024];
-	CString strTemp;
-	int shaders_count = 0;
-	int textures_count = 0;
-	GSList *files = NULL, *temp;
 
 	g_bScreenUpdates = false;
 
@@ -805,78 +940,8 @@ void Texture_ShowDirectory(){
 	// NOTE: shaders that are not in use but have been loaded previously are still in memory. But they don't get displayed.
 
 	g_qeglobals.d_texturewin.originy = 0;
-	// load texture_directory.shader
-	// NOTE: because of above call to Texture_ClearInuse, g_ActiveShaders will have the newly loaded shaders only
-	// we'll use that later to check if textures have a shader associated or not
-	// NOTE: all shaders loaded through QERApp_LoadShadersFromDir will get their InUse flag to True, we'll need a call to Texture_ShowInUse for later cleanup/adjustment
-	// NOTE: QERApp_LoadShadersFromDir has two criterions for loading a shader:
-	//   the shaderfile is texture_directory (like "museum" will load everything in museum.shader)
-	//   the shader name contains texture_directory (like "base_floor" will load museum.shader::base_floor/concfloor_rain)
-	shaders_count = QERApp_LoadShadersFromDir( texture_directory );
-	// load remaining texture files
-	// if a texture is already in use to represent a shader, ignore it
 
-	// need this function "GSList *lst SynapseServer::GetMinorList(char *major_name);"
-
-	sprintf( dirstring, "textures/%s", texture_directory );
-	g_ImageManager.BeginExtensionsScan();
-	const char* ext;
-	while ( ( ext = g_ImageManager.GetNextExtension() ) != NULL )
-	{
-		files = g_slist_concat( files, vfsGetFileList( dirstring, ext ) );
-	}
-
-	for ( temp = files; temp; temp = temp->next )
-	{
-		sprintf( name, "%s%s", texture_directory, (char*)temp->data );
-
-		StripExtension( name );
-		strTemp = name;
-		strTemp.MakeLower();
-
-		// avoid effect textures for Q3 texture sets
-		if ( strTemp.Find( ".specular" ) >= 0 ||
-			 strTemp.Find( ".glow" ) >= 0 ||
-			 strTemp.Find( ".bump" ) >= 0 ||
-			 strTemp.Find( ".diffuse" ) >= 0 ||
-			 strTemp.Find( ".blend" ) >= 0 ||
-			 strTemp.Find( ".alpha" ) >= 0 ) {
-			continue;
-		}
-
-		// avoid glow, heightmap, normalmap and specular maps for Q4 texture sets
-		if ( g_str_has_suffix( name, "_g" ) ||
-				g_str_has_suffix( name, "_h" ) ||
-				g_str_has_suffix( name, "_local" ) ||
-				g_str_has_suffix( name, "_nm" ) ||
-				g_str_has_suffix( name, "_s" ) ||
-				g_str_has_suffix( name, "_bump" ) ||
-				g_str_has_suffix( name, "_gloss" ) ||
-				g_str_has_suffix( name, "_luma" ) ||
-				g_str_has_suffix( name, "_norm" ) ) {
-			continue;
-		}
-
-		// avoid ever loading a texture name with spaces
-		if ( strTemp.Find( " " ) >= 0 ) {
-			Sys_FPrintf( SYS_WRN, "WARNING: Skipping texture name with spaces [%s]\n", strTemp.GetBuffer() );
-			continue;
-		}
-
-		// build a texture name that fits the conventions for qtexture_t::name
-		char stdName[1024];
-		sprintf( stdName, "textures/%s", name );
-		// check if this texture doesn't have a shader
-		if ( !QERApp_ActiveShader_ForTextureName( stdName ) ) {
-			QERApp_CreateShader_ForTextureName( stdName );
-			textures_count++;
-		}
-	}
-
-	Sys_Printf( "Loaded %d shaders and created default shader for %d orphan textures.\n",
-				shaders_count, textures_count );
-
-	vfsClearFileDirList( &files );
+	Texture_ListDirectory();
 
 	// sort for displaying
 	QERApp_SortActiveShaders();
