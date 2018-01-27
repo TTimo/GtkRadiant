@@ -287,13 +287,13 @@ static void j_putRGBAScanline( unsigned char* jpegline, int widthPix, unsigned c
 
 	for ( count = 0; count < widthPix; count++ )
 	{
-		unsigned char iRed, iBlu, iGrn, iAlp;
+		unsigned char iRed, iBlu, iGrn /* , iAlp */;
 		unsigned char *oRed, *oBlu, *oGrn, *oAlp;
 
 		iRed = *( jpegline + count * 4 + 0 );
 		iGrn = *( jpegline + count * 4 + 1 );
 		iBlu = *( jpegline + count * 4 + 2 );
-		iAlp = *( jpegline + count * 4 + 3 );
+		/* iAlp = *( jpegline + count * 4 + 3 ); */
 
 		oRed = outBuf + offset + count * 4 + 0;
 		oGrn = outBuf + offset + count * 4 + 1;

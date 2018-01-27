@@ -821,7 +821,6 @@ entity_t *FindTargetEntity( const char *target ){
 void GetEntityShadowFlags( const entity_t *ent, const entity_t *ent2, int *castShadows, int *recvShadows ){
 	const char  *value;
 
-
 	/* get cast shadows */
 	if ( castShadows != NULL ) {
 		value = ValueForKey( ent, "_castShadows" );

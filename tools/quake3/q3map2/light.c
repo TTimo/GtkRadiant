@@ -794,7 +794,6 @@ int LightContributionToSample( trace_t *trace ){
 		float d;
 		vec3_t pushedOrigin;
 
-
 		/* project sample point into light plane */
 		d = DotProduct( trace->origin, light->normal ) - light->dist;
 		if ( d < 3.0f ) {
@@ -918,7 +917,6 @@ int LightContributionToSample( trace_t *trace ){
 		if ( light->type == EMIT_SPOT ) {
 			float distByNormal, radiusAtDist, sampleRadius;
 			vec3_t pointAtDist, distToSample;
-
 
 			/* do cone calculation */
 			distByNormal = -DotProduct( trace->displacement, light->normal );
@@ -1316,7 +1314,6 @@ void TraceGrid( int num ){
 	contribution_t contributions[ MAX_CONTRIBUTIONS ];
 	trace_t trace;
 
-
 	/* get grid points */
 	gp = &rawGridPoints[ num ];
 	bgp = &bspGridPoints[ num ];
@@ -1507,6 +1504,7 @@ void TraceGrid( int num ){
 			if ( color[ j ] < minGridLight[ j ] ) {
 				color[ j ] = minGridLight[ j ];
 			}
+
 		ColorToBytes( color, bgp->ambient[ i ], 1.0f );
 		ColorToBytes( gp->directed[ i ], bgp->directed[ i ], 1.0f );
 	}
@@ -1724,10 +1722,6 @@ void LightWorld( void ){
 	/* dirty them up */
 	if ( dirty ) {
 		Sys_Printf( "--- DirtyRawLightmap ---\n" );
-
-
-
-
 		RunThreadsOnIndividual( numRawLightmaps, qtrue, DirtyRawLightmap );
 	}
 
@@ -1953,12 +1947,6 @@ int LightMain( int argc, char **argv ){
 			dark = qtrue;
 			Sys_Printf( "Dark lightmap seams enabled\n" );
 		}
-
-
-
-
-
-
 
 		else if ( !strcmp( argv[ i ], "-shadeangle" ) ) {
 			shadeAngleDegrees = atof( argv[ i + 1 ] );

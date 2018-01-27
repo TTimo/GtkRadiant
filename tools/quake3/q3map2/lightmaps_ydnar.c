@@ -38,7 +38,6 @@
 
 
 
-
 /* -------------------------------------------------------------------------------
 
    this file contains code that doe lightmap allocation and projection that

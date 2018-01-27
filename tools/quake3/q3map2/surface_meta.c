@@ -316,7 +316,6 @@ void TriangulatePatchSurface( mapDrawSurface_t *ds ){
 	mapDrawSurface_t    *dsNew;
 	mesh_t src, *subdivided, *mesh;
 
-
 	/* try to early out */
 	if ( ds->numVerts == 0 || ds->type != SURFACE_PATCH || patchMeta == qfalse ) {
 		return;
@@ -854,7 +853,6 @@ void FixMetaTJunctions( void ){
 				VectorSet( metaVerts[ tri->indexes[ k ] ].color[ 0 ], 255, 204, 0 );
 				VectorSet( metaVerts[ tri->indexes[ ( k + 1 ) % 3 ] ].color[ 0 ], 255, 204, 0 );
 
-
 				/* the edge opposite the zero-weighted vertex was hit, so use that as an amount */
 				a = &metaVerts[ tri->indexes[ k % 3 ] ];
 				b = &metaVerts[ tri->indexes[ ( k + 1 ) % 3 ] ];
@@ -945,7 +943,6 @@ void SmoothMetaTriangles( void ){
 	int indexes[ MAX_SAMPLES ];
 	vec3_t votes[ MAX_SAMPLES ];
 
-
 	/* note it */
 	Sys_FPrintf( SYS_VRB, "--- SmoothMetaTriangles ---\n" );
 
@@ -973,6 +970,7 @@ void SmoothMetaTriangles( void ){
 		else{
 			shadeAngle = defaultShadeAngle;
 		}
+
 		if ( shadeAngle > maxShadeAngle ) {
 			maxShadeAngle = shadeAngle;
 		}

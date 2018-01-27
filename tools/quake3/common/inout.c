@@ -242,7 +242,7 @@ void Broadcast_Setup( const char *dest ){
 	char sMsg[1024];
 
 	Net_Setup();
-	Net_StringToAddress( (char *)dest, &address );
+	Net_StringToAddress( dest, &address );
 	brdcst_socket = Net_Connect( &address, 0 );
 	if ( brdcst_socket ) {
 		// send in a header

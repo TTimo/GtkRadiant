@@ -257,7 +257,6 @@ static void RadSample( int lightmapNum, bspDrawSurface_t *ds, rawLightmap_t *lm,
 	float st[ 2 ], lightmap[ 2 ], *radLuxel;
 	radVert_t   *rv[ 3 ];
 
-
 	/* initial setup */
 	ClearBounds( mins, maxs );
 	VectorClear( average );
@@ -544,6 +543,9 @@ static void RadSubdivideDiffuseLight( int lightmapNum, bspDrawSurface_t *ds, raw
 
 	/* bouncing light? */
 	if ( !bouncing ) {
+		/* This is weird. This actually handles surfacelight and not
+ 		 * bounces. */
+
 		/* handle first-pass lights in normal q3a style */
 		value = si->value;
 		light->photons = value * area * areaScale;

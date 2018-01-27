@@ -297,7 +297,9 @@ void Q_getwd( char *out ){
 	strcat( out, "\\" );
 #else
 	// Gef: Changed from getwd() to getcwd() to avoid potential buffer overflow
-	if( !getcwd ( out, 256 ) ) *out = 0;
+	if ( !getcwd( out, 256 ) ) {
+		*out = 0;
+	}
 	strcat( out, "/" );
 #endif
 	while ( out[i] != 0 )

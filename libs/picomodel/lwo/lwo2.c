@@ -321,7 +321,7 @@ Fail:
 }
 
 int lwValidateObject( const char *filename, picoMemStream_t *fp, unsigned int *failID, int *failpos ){
-	unsigned int id, formsize, type;
+	unsigned int id, type;
 
 	/* open the file */
 
@@ -333,7 +333,7 @@ int lwValidateObject( const char *filename, picoMemStream_t *fp, unsigned int *f
 
 	set_flen( 0 );
 	id       = getU4( fp );
-	formsize = getU4( fp );
+	/* formsize = */ getU4( fp );
 	type     = getU4( fp );
 	if ( 12 != get_flen() ) {
 		return PICO_PMV_ERROR_SIZE;

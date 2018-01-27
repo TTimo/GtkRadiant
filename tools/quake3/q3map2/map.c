@@ -44,7 +44,7 @@
 #define USE_HASHING
 #define PLANE_HASHES    8192
 
-plane_t                 *planehash[ PLANE_HASHES ];
+plane_t *planehash[ PLANE_HASHES ];
 
 int c_boxbevels;
 int c_edgebevels;
@@ -306,6 +306,7 @@ void SnapPlaneImproved( vec3_t normal, vec_t *dist, int numPoints, const vec3_t 
 		}
 	}
 }
+
 
 
 /*
@@ -1277,7 +1278,6 @@ void AdjustBrushesForOrigin( entity_t *ent ){
 	vec_t newdist;
 	brush_t     *b;
 	parseMesh_t *p;
-
 
 	/* walk brush list */
 	for ( b = ent->brushes; b != NULL; b = b->next )

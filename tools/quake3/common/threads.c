@@ -424,6 +424,7 @@ void ThreadSetDefault( void ){
 		/* default to one thread, only multi-thread when specifically told to */
 		numthreads = 1;
 	}
+
 	if ( numthreads > 1 ) {
 		Sys_Printf( "threads: %d\n", numthreads );
 	}

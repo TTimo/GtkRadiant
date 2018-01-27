@@ -43,7 +43,7 @@
 
    LEAK FILE GENERATION
 
-   Save out name.line for qe3 to read
+   Save out name.lin for qe3 to read
    ==============================================================================
  */
 

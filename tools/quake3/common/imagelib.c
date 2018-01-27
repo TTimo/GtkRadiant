@@ -683,7 +683,6 @@ void WritePCXfile( const char *filename, byte *data,
 void LoadBMP( const char *filename, byte **pic, byte **palette, int *width, int *height ){
 	byte  *out;
 	int i;
-	int bfSize;
 	int bfOffBits;
 	int structSize;
 	int bcWidth;
@@ -705,7 +704,7 @@ void LoadBMP( const char *filename, byte **pic, byte **palette, int *width, int 
 		Error( "%s is not a bmp file", filename );
 	}
 
-	bfSize = bufLittleLong( in, len, &pos );
+	/* bfSize = */ bufLittleLong( in, len, &pos );
 	bufLittleShort( in, len, &pos );
 	bufLittleShort( in, len, &pos );
 	bfOffBits = bufLittleLong( in, len, &pos );
@@ -756,7 +755,6 @@ void LoadBMP( const char *filename, byte **pic, byte **palette, int *width, int 
 	}
 	else {
 		Error( "%s had strange struct size", filename );
-		return;
 	}
 
 	if ( bcPlanes != 1 ) {

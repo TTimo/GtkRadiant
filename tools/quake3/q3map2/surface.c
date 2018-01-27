@@ -2538,7 +2538,6 @@ void EmitPatchSurface( mapDrawSurface_t *ds ){
 	if ( ds->backSide || ds->shaderInfo->invert ) {
 		bspDrawVert_t   *dv1, *dv2, temp;
 
-
 		/* walk the verts, flip the normal */
 		for ( i = 0; i < ds->numVerts; i++ )
 			VectorScale( ds->verts[ i ].normal, -1.0f, ds->verts[ i ].normal );
@@ -2754,7 +2753,6 @@ static void OptimizeTriangleSurface( mapDrawSurface_t *ds ){
 static void EmitTriangleSurface( mapDrawSurface_t *ds ){
 	int i, temp;
 	bspDrawSurface_t        *out;
-
 
 	/* invert the surface if necessary */
 	if ( ds->backSide || ds->shaderInfo->invert ) {

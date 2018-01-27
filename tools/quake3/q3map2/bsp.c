@@ -270,7 +270,6 @@ void ProcessWorldModel( void ){
 	char level[ 2 ], shader[ 1024 ];
 	const char  *value;
 
-
 	/* sets integer blockSize from worldspawn "_blocksize" key if it exists */
 	value = ValueForKey( &entities[ 0 ], "_blocksize" );
 	if ( value[ 0 ] == '\0' ) {

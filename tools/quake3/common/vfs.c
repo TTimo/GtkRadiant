@@ -146,7 +146,8 @@ static void vfsInitPakFile( const char *filename ){
 		g_pakFiles = g_slist_append( g_pakFiles, file );
 
 		vfsFixDOSName( filename_inzip );
-		filename_lower = g_ascii_strdown( filename_inzip, -1 );//-1 null terminated string
+		//-1 null terminated string
+		filename_lower = g_ascii_strdown( filename_inzip, -1 );
 
 		file->name = strdup( filename_lower );
 		file->size = file_info.uncompressed_size;
@@ -197,7 +198,6 @@ void vfsInitDirectory( const char *path ){
 				dirlist = g_strdup( name );
 
 				{
-
 					char *ext = strrchr( dirlist, '.' );
 
 					if ( ext != NULL && ( !Q_stricmp( ext, ".pk3dir" ) || !Q_stricmp( ext, ".dpkdir" ) ) ) {
@@ -289,7 +289,7 @@ int vfsLoadFile( const char *filename, void **bufferptr, int index ){
 
 		f = fopen( filename, "rb" );
 		if ( f == NULL ) {
-			fclose(f);
+			fclose( f );
 			return -1;
 		}
 
@@ -299,7 +299,7 @@ int vfsLoadFile( const char *filename, void **bufferptr, int index ){
 
 		*bufferptr = safe_malloc( len + 1 );
 		if ( *bufferptr == NULL ) {
-			fclose(f);
+			fclose( f );
 			return -1;
 		}
 

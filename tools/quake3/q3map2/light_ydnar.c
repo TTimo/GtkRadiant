@@ -2274,8 +2274,6 @@ void IlluminateRawLightmap( int rawLightmapNum ){
 				{
 					/* get cluster */
 					cluster = SUPER_CLUSTER( x, y );
-					//%	if( *cluster < 0 )
-					//%		continue;
 
 					/* get particulars */
 					luxel = SUPER_LUXEL( lightmapNum, x, y );
@@ -2323,6 +2321,7 @@ void IlluminateRawLightmap( int rawLightmapNum ){
 					 ( lm->splotchFix && ( luxel[ 0 ] <= ambientColor[ 0 ] || luxel[ 1 ] <= ambientColor[ 1 ] || luxel[ 2 ] <= ambientColor[ 2 ] ) ) ) {
 					filterColor = qtrue;
 				}
+
 				if ( deluxemap && lightmapNum == 0 && ( *cluster < 0 || filter ) ) {
 					filterDir = qtrue;
 				}
