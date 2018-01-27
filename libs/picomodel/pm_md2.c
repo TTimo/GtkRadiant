@@ -299,21 +299,18 @@ float md2_normals[ MD2_NUMVERTEXNORMALS ][ 3 ] =
 // _md2_canload()
 
 static int _md2_canload( PM_PARAMS_CANLOAD ){
-	md2_t   *md2;
-
-	/* to keep the compiler happy */
-	*fileName = *fileName;
+	const md2_t *md2;
 
 	/* sanity check */
-	if ( bufSize < ( sizeof( *md2 ) * 2 ) ) {
+	if ( (size_t) bufSize < ( sizeof( *md2 ) * 2 ) ) {
 		return PICO_PMV_ERROR_SIZE;
 	}
 
 	/* set as md2 */
-	md2 = (md2_t*) buffer;
+	md2 = (const md2_t*) buffer;
 
 	/* check md2 magic */
-	if ( *( (int*) md2->magic ) != *( (int*) MD2_MAGIC ) ) {
+	if ( *( (const int*) md2->magic ) != *( (const int*) MD2_MAGIC ) ) {
 		return PICO_PMV_ERROR_IDENT;
 	}
 
@@ -346,7 +343,7 @@ static picoModel_t *_md2_load( PM_PARAMS_LOAD ){
 	md2Triangle_t   *triangle;
 	md2XyzNormal_t  *vertex;
 
-	picoByte_t      *bb;
+	picoByte_t      *bb, *bb0;
 	picoModel_t     *picoModel;
 	picoSurface_t   *picoSurface;
 	picoShader_t    *picoShader;
@@ -359,13 +356,15 @@ static picoModel_t *_md2_load( PM_PARAMS_LOAD ){
 	_pico_printf( PICO_NORMAL, "Loading \"%s\"", fileName );
 
 	/* set as md2 */
-	bb = (picoByte_t*) buffer;
-	md2 = (md2_t*) buffer;
+	bb0 = bb = (picoByte_t*) _pico_alloc( bufSize );
+	memcpy( bb, buffer, bufSize );
+	md2 = (md2_t*) bb;
 
 	/* check ident and version */
-	if ( *( (int*) md2->magic ) != *( (int*) MD2_MAGIC ) || _pico_little_long( md2->version ) != MD2_VERSION ) {
+	if( *((const int*) md2->magic) != *((const int*) MD2_MAGIC) || _pico_little_long( md2->version ) != MD2_VERSION ) {
 		/* not an md2 file (todo: set error) */
 		_pico_printf( PICO_ERROR, "%s is not an MD2 File!", fileName );
+		_pico_free(bb0);
 		return NULL;
 	}
 
@@ -393,11 +392,13 @@ static picoModel_t *_md2_load( PM_PARAMS_LOAD ){
 	// do frame check
 	if ( md2->numFrames < 1 ) {
 		_pico_printf( PICO_ERROR, "%s has 0 frames!", fileName );
+		_pico_free(bb0);
 		return NULL;
 	}
 
 	if ( frameNum < 0 || frameNum >= md2->numFrames ) {
 		_pico_printf( PICO_ERROR, "Invalid or out-of-range MD2 frame specified" );
+		_pico_free(bb0);
 		return NULL;
 	}
 
@@ -431,7 +432,7 @@ static picoModel_t *_md2_load( PM_PARAMS_LOAD ){
 	}
 
 	// set Skin Name
-	strncpy( skinname, (char *) ( bb + md2->ofsSkins ), MD2_MAX_SKINNAME );
+	strncpy( skinname, (const char *) ( bb + md2->ofsSkins ), MD2_MAX_SKINNAME );
 
 	// Print out md2 values
 	_pico_printf( PICO_VERBOSE,"Skins: %d  Verts: %d  STs: %d  Triangles: %d  Frames: %d\nSkin Name \"%s\"\n", md2->numSkins, md2->numXYZ, md2->numST, md2->numTris, md2->numFrames, skinname );
@@ -462,6 +463,7 @@ static picoModel_t *_md2_load( PM_PARAMS_LOAD ){
 	picoModel = PicoNewModel();
 	if ( picoModel == NULL ) {
 		_pico_printf( PICO_ERROR, "Unable to allocate a new model" );
+		_pico_free(bb0);
 		return NULL;
 	}
 
@@ -476,6 +478,7 @@ static picoModel_t *_md2_load( PM_PARAMS_LOAD ){
 	if ( picoSurface == NULL ) {
 		_pico_printf( PICO_ERROR, "Unable to allocate a new model surface" );
 		PicoFreeModel( picoModel );
+		_pico_free(bb0);
 		return NULL;
 	}
 
@@ -486,6 +489,7 @@ static picoModel_t *_md2_load( PM_PARAMS_LOAD ){
 	if ( picoShader == NULL ) {
 		_pico_printf( PICO_ERROR, "Unable to allocate a new model shader" );
 		PicoFreeModel( picoModel );
+		_pico_free(bb0);
 		return NULL;
 	}
 
@@ -663,6 +667,7 @@ static picoModel_t *_md2_load( PM_PARAMS_LOAD ){
 	_pico_free( p_index_LUT_DUPS );
 
 	/* return the new pico model */
+	_pico_free(bb0);
 	return picoModel;
 
 }

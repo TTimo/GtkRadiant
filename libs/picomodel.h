@@ -173,16 +173,16 @@ enum
 
 /* convenience (makes it easy to add new params to the callbacks) */
 #define PM_PARAMS_CANLOAD \
-	char *fileName, const void *buffer, int bufSize
+	const char *fileName, const void *buffer, int bufSize
 
 #define PM_PARAMS_LOAD \
-	char *fileName, int frameNum, const void *buffer, int bufSize
+	const char *fileName, int frameNum, const void *buffer, int bufSize
 
 #define PM_PARAMS_CANSAVE \
 	void
 
 #define PM_PARAMS_SAVE \
-	char *fileName, picoModel_t * model
+	const char *fileName, picoModel_t * model
 
 /* pico file format module structure */
 struct picoModule_s
@@ -209,13 +209,13 @@ int                         PicoError( void );
 
 void                        PicoSetMallocFunc( void *( *func )( size_t ) );
 void                        PicoSetFreeFunc( void ( *func )( void* ) );
-void                        PicoSetLoadFileFunc( void ( *func )( char*, unsigned char**, int* ) );
+void                        PicoSetLoadFileFunc( void ( *func )( const char*, unsigned char**, int* ) );
 void                        PicoSetFreeFileFunc( void ( *func )( void* ) );
 void                        PicoSetPrintFunc( void ( *func )( int, const char* ) );
 
 const picoModule_t          **PicoModuleList( int *numModules );
 
-picoModel_t                 *PicoLoadModel( char *name, int frameNum );
+picoModel_t                 *PicoLoadModel( const char *name, int frameNum );
 
 typedef size_t(*PicoInputStreamReadFunc)(void* inputStream, unsigned char* buffer, size_t length);
 picoModel_t* PicoModuleLoadModelStream(const picoModule_t* module, void* inputStream, PicoInputStreamReadFunc inputStreamRead, size_t streamLength, int frameNum);
@@ -241,8 +241,8 @@ int                         PicoAdjustSurface( picoSurface_t *surface, int numVe
 
 
 /* setter functions */
-void                        PicoSetModelName( picoModel_t *model, char *name );
-void                        PicoSetModelFileName( picoModel_t *model, char *fileName );
+void                        PicoSetModelName( picoModel_t *model, const char *name );
+void                        PicoSetModelFileName( picoModel_t *model, const char *fileName );
 void                        PicoSetModelFrameNum( picoModel_t *model, int frameNum );
 void                        PicoSetModelNumFrames( picoModel_t *model, int numFrames );
 void                        PicoSetModelData( picoModel_t *model, void *data );

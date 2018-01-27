@@ -55,7 +55,8 @@ typedef struct edgeLine_s {
 	vec3_t origin;
 	vec3_t dir;
 
-	edgePoint_t chain;      // unused element of doubly linked list
+	// unused element of doubly linked list
+	edgePoint_t chain;
 } edgeLine_t;
 
 typedef struct {
@@ -66,7 +67,6 @@ typedef struct {
 #define MAX_ORIGINAL_EDGES  0x20000
 originalEdge_t originalEdges[MAX_ORIGINAL_EDGES];
 int numOriginalEdges;
-
 
 #define MAX_EDGE_LINES      0x10000
 edgeLine_t edgeLines[MAX_EDGE_LINES];
@@ -381,7 +381,7 @@ void FixSurfaceJunctions( mapDrawSurface_t *ds ) {
 			p = e->chain.prev;
 		}
 
-		for (  ; p != &e->chain ; ) {
+		for ( ; p != &e->chain ; ) {
 			if ( start < end ) {
 				if ( p->intercept > end - ON_EPSILON ) {
 					break;
@@ -610,8 +610,8 @@ qboolean FixBrokenSurface( mapDrawSurface_t *ds ){
 int EdgeCompare( const void *elem1, const void *elem2 ) {
 	float d1, d2;
 
-	d1 = ( (originalEdge_t *)elem1 )->length;
-	d2 = ( (originalEdge_t *)elem2 )->length;
+	d1 = ( (const originalEdge_t *)elem1 )->length;
+	d2 = ( (const originalEdge_t *)elem2 )->length;
 
 	if ( d1 < d2 ) {
 		return -1;
@@ -635,7 +635,6 @@ void FixTJunctions( entity_t *ent ){
 	shaderInfo_t        *si;
 	int axialEdgeLines;
 	originalEdge_t      *e;
-
 
 	/* meta mode has its own t-junction code (currently not as good as this code) */
 	//%	if( meta )

@@ -424,6 +424,7 @@ void ThreadSetDefault( void ){
 		/* default to one thread, only multi-thread when specifically told to */
 		numthreads = 1;
 	}
+
 	if ( numthreads > 1 ) {
 		Sys_Printf( "threads: %d\n", numthreads );
 	}
@@ -551,7 +552,7 @@ void RunThreadsOn( int workcnt, qboolean showpacifier, void ( *func )( int ) ){
 		for ( i = 0 ; i < numthreads ; i++ )
 		{
 			/* Default pthread attributes: joinable & non-realtime scheduling */
-			if ( pthread_create( &work_threads[i], NULL, (void*)func, (void*)i ) != 0 ) {
+			if ( pthread_create( &work_threads[i], NULL, (void*)func, (void*)(size_t)i ) != 0 ) {
 				Error( "pthread_create failed" );
 			}
 		}

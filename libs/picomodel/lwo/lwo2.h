@@ -539,8 +539,8 @@ typedef struct st_lwObject {
 
 void lwFreeLayer( lwLayer *layer );
 void lwFreeObject( lwObject *object );
-lwObject *lwGetObject( char *filename, picoMemStream_t *fp, unsigned int *failID, int *failpos );
-int lwValidateObject( char *filename, picoMemStream_t *fp, unsigned int *failID, int *failpos );
+lwObject *lwGetObject( const char *filename, picoMemStream_t *fp, unsigned int *failID, int *failpos );
+int lwValidateObject( const char *filename, picoMemStream_t *fp, unsigned int *failID, int *failpos );
 
 /* pntspols.c */
 
@@ -600,8 +600,8 @@ lwSurface *lwDefaultSurface( void );
 
 lwSurface *lwGetSurface5( picoMemStream_t *fp, int cksize, lwObject *obj );
 int lwGetPolygons5( picoMemStream_t *fp, int cksize, lwPolygonList *plist, int ptoffset );
-lwObject *lwGetObject5( char *filename, picoMemStream_t *fp, unsigned int *failID, int *failpos );
-int lwValidateObject5( char *filename, picoMemStream_t *fp, unsigned int *failID, int *failpos );
+lwObject *lwGetObject5( const char *filename, picoMemStream_t *fp, unsigned int *failID, int *failpos );
+int lwValidateObject5( const char *filename, picoMemStream_t *fp, unsigned int *failID, int *failpos );
 
 /* list.c */
 

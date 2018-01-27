@@ -345,7 +345,7 @@ void LoadSurfaceExtraFile( const char *path ){
 	}
 
 	/* parse the file */
-	ParseFromMemory( buffer, size );
+	ParseFromMemory( (char*) buffer, size );
 
 	/* tokenize it */
 	while ( 1 )

@@ -532,6 +532,7 @@ void LoadPCX( const char *filename, byte **pic, byte **palette, int *width, int 
 	for ( y = 0; y <= pcx->ymax; y++, pix += pcx->xmax + 1 )
 	{
 		/* do a scanline */
+		runLength = 0;
 		for ( x = 0; x <= pcx->xmax; )
 		{
 			/* RR2DO2 */
@@ -682,7 +683,6 @@ void WritePCXfile( const char *filename, byte *data,
 void LoadBMP( const char *filename, byte **pic, byte **palette, int *width, int *height ){
 	byte  *out;
 	int i;
-	int bfSize;
 	int bfOffBits;
 	int structSize;
 	int bcWidth;
@@ -704,7 +704,7 @@ void LoadBMP( const char *filename, byte **pic, byte **palette, int *width, int 
 		Error( "%s is not a bmp file", filename );
 	}
 
-	bfSize = bufLittleLong( in, len, &pos );
+	/* bfSize = */ bufLittleLong( in, len, &pos );
 	bufLittleShort( in, len, &pos );
 	bufLittleShort( in, len, &pos );
 	bfOffBits = bufLittleLong( in, len, &pos );
@@ -755,7 +755,6 @@ void LoadBMP( const char *filename, byte **pic, byte **palette, int *width, int 
 	}
 	else {
 		Error( "%s had strange struct size", filename );
-		return;
 	}
 
 	if ( bcPlanes != 1 ) {
@@ -1123,7 +1122,7 @@ void LoadTGA( const char *name, byte **pixels, int *width, int *height ){
 	//
 	// load the file
 	//
-	nLen = vfsLoadFile( ( char * ) name, (void **)&buffer, 0 );
+	nLen = vfsLoadFile( name, (void **)&buffer, 0 );
 	if ( nLen == -1 ) {
 		Error( "Couldn't read %s", name );
 	}

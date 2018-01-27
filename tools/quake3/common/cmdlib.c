@@ -188,7 +188,7 @@ void SetQdirFromPath( const char *path ){
 			}
 			strncpy( qdir, path, c + len + count - path );
 			Sys_Printf( "qdir: %s\n", qdir );
-			for ( i = 0; i < strlen( qdir ); i++ )
+			for ( i = 0; i < (int) strlen( qdir ); i++ )
 			{
 				if ( qdir[i] == '\\' ) {
 					qdir[i] = '/';
@@ -201,7 +201,7 @@ void SetQdirFromPath( const char *path ){
 				if ( *c == '/' || *c == '\\' ) {
 					strncpy( gamedir, path, c + 1 - path );
 
-					for ( i = 0; i < strlen( gamedir ); i++ )
+					for ( i = 0; i < (int) strlen( gamedir ); i++ )
 					{
 						if ( gamedir[i] == '\\' ) {
 							gamedir[i] = '/';
@@ -297,7 +297,9 @@ void Q_getwd( char *out ){
 	strcat( out, "\\" );
 #else
 	// Gef: Changed from getwd() to getcwd() to avoid potential buffer overflow
-	getcwd( out, 256 );
+	if ( !getcwd( out, 256 ) ) {
+		*out = 0;
+	}
 	strcat( out, "/" );
 #endif
 	while ( out[i] != 0 )

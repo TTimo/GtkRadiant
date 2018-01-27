@@ -102,6 +102,7 @@ void WritePortalFile_r( node_t *node ){
 			// plane the same way vis will, and flip the side orders if needed
 			// FIXME: is this still relevent?
 			WindingPlane( w, normal, &dist );
+
 			if ( DotProduct( p->plane.normal, normal ) < 0.99 ) { // backwards...
 				fprintf( pf,"%i %i %i ",w->numpoints, p->nodes[1]->cluster, p->nodes[0]->cluster );
 			}

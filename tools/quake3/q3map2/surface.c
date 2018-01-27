@@ -297,7 +297,7 @@ void ClearSurface( mapDrawSurface_t *ds ){
 
 void TidyEntitySurfaces( entity_t *e ){
 	int i, j, deleted;
-	mapDrawSurface_t    *out, *in;
+	mapDrawSurface_t    *out, *in = NULL;
 
 
 	/* note it */
@@ -1228,7 +1228,7 @@ mapDrawSurface_t *DrawSurfaceForMesh( entity_t *e, parseMesh_t *p, mesh_t *mesh 
    creates a flare draw surface
  */
 
-mapDrawSurface_t *DrawSurfaceForFlare( int entNum, vec3_t origin, vec3_t normal, vec3_t color, char *flareShader, int lightStyle ){
+mapDrawSurface_t *DrawSurfaceForFlare( int entNum, vec3_t origin, vec3_t normal, vec3_t color, const char *flareShader, int lightStyle ){
 	mapDrawSurface_t    *ds;
 
 
@@ -2538,7 +2538,6 @@ void EmitPatchSurface( mapDrawSurface_t *ds ){
 	if ( ds->backSide || ds->shaderInfo->invert ) {
 		bspDrawVert_t   *dv1, *dv2, temp;
 
-
 		/* walk the verts, flip the normal */
 		for ( i = 0; i < ds->numVerts; i++ )
 			VectorScale( ds->verts[ i ].normal, -1.0f, ds->verts[ i ].normal );
@@ -2754,7 +2753,6 @@ static void OptimizeTriangleSurface( mapDrawSurface_t *ds ){
 static void EmitTriangleSurface( mapDrawSurface_t *ds ){
 	int i, temp;
 	bspDrawSurface_t        *out;
-
 
 	/* invert the surface if necessary */
 	if ( ds->backSide || ds->shaderInfo->invert ) {

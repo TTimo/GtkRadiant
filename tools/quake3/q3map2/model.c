@@ -78,8 +78,8 @@ void PicoPrintFunc( int level, const char *str ){
    callback for picomodel.lib
  */
 
-void PicoLoadFileFunc( char *name, byte **buffer, int *bufSize ){
-	*bufSize = vfsLoadFile( (const char*) name, (void**) buffer, 0 );
+void PicoLoadFileFunc( const char *name, byte **buffer, int *bufSize ){
+	*bufSize = vfsLoadFile( name, (void**) buffer, 0 );
 }
 
 
@@ -161,7 +161,7 @@ picoModel_t *LoadModel( char *name, int frame ){
 	}
 
 	/* attempt to parse model */
-	*pm = PicoLoadModel( (char*) name, frame );
+	*pm = PicoLoadModel( name, frame );
 
 	/* if loading failed, make a bogus model to silence the rest of the warnings */
 	if ( *pm == NULL ) {

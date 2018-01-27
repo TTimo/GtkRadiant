@@ -43,7 +43,7 @@ static int compare_keys( lwKey *k1, lwKey *k2 ){
 
 lwEnvelope *lwGetEnvelope( picoMemStream_t *fp, int cksize ){
 	lwEnvelope *env;
-	lwKey *key;
+	lwKey *key = NULL;
 	lwPlugin *plug;
 	unsigned int id;
 	unsigned short sz;

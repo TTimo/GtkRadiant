@@ -306,12 +306,11 @@ skipspace:
    ==============
  */
 qboolean TokenAvailable( void ) {
-	int oldLine, oldScriptLine;
+	int oldLine;
 	qboolean r;
 
 	/* save */
 	oldLine = scriptline;
-	oldScriptLine = script->line;
 
 	/* test */
 	r = GetToken( qtrue );

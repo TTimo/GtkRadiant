@@ -76,12 +76,12 @@ void lwFreeObject( lwObject *object ){
    If you don't need this information, failID and failpos can be NULL.
    ====================================================================== */
 
-lwObject *lwGetObject( char *filename, picoMemStream_t *fp, unsigned int *failID, int *failpos ){
+lwObject *lwGetObject( const char *filename, picoMemStream_t *fp, unsigned int *failID, int *failpos ){
 	lwObject *object;
 	lwLayer *layer;
 	lwNode *node;
-	unsigned int id, formsize, type, cksize;
-	int i, rlen;
+	unsigned int id, formsize, type;
+	int i, rlen, cksize;
 
 	/* open the file */
 
@@ -266,7 +266,7 @@ lwObject *lwGetObject( char *filename, picoMemStream_t *fp, unsigned int *failID
 
 		/* end of the file? */
 
-		if ( formsize <= _pico_memstream_tell( fp ) - 8 ) {
+		if ( formsize <= (unsigned int) ( _pico_memstream_tell( fp ) - 8 ) ) {
 			break;
 		}
 
@@ -320,8 +320,8 @@ Fail:
 	return NULL;
 }
 
-int lwValidateObject( char *filename, picoMemStream_t *fp, unsigned int *failID, int *failpos ){
-	unsigned int id, formsize, type;
+int lwValidateObject( const char *filename, picoMemStream_t *fp, unsigned int *failID, int *failpos ){
+	unsigned int id, type;
 
 	/* open the file */
 
@@ -333,7 +333,7 @@ int lwValidateObject( char *filename, picoMemStream_t *fp, unsigned int *failID,
 
 	set_flen( 0 );
 	id       = getU4( fp );
-	formsize = getU4( fp );
+	/* formsize = */ getU4( fp );
 	type     = getU4( fp );
 	if ( 12 != get_flen() ) {
 		return PICO_PMV_ERROR_SIZE;

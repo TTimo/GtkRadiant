@@ -277,6 +277,8 @@ void SnapWeldVector( vec3_t a, vec3_t b, vec3_t out ){
 	}
 }
 
+
+
 /*
    ==================
    SnapWeldVectorAccu

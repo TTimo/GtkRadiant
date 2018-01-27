@@ -1063,13 +1063,18 @@ void MapRawLightmap( int rawLightmapNum ){
 						continue;
 					}
 
-					/* get drawverts and map first triangle */
-					MapTriangle( lm, info, dv, mapNonAxial );
+					for ( mapNonAxial = 0; mapNonAxial < 2; mapNonAxial++ )
+					{
+						/* get drawverts and map first triangle */
+						dv[ 1 ] = &verts[ pw[ r + 1 ] ];
+						dv[ 2 ] = &verts[ pw[ r + 2 ] ];
+						MapTriangle( lm, info, dv, mapNonAxial );
 
-					/* get drawverts and map second triangle */
-					dv[ 1 ] = &verts[ pw[ r + 2 ] ];
-					dv[ 2 ] = &verts[ pw[ r + 3 ] ];
-					MapTriangle( lm, info, dv, mapNonAxial );
+						/* get drawverts and map second triangle */
+						dv[ 1 ] = &verts[ pw[ r + 2 ] ];
+						dv[ 2 ] = &verts[ pw[ r + 3 ] ];
+						MapTriangle( lm, info, dv, mapNonAxial );
+					}
 				}
 			}
 
@@ -1765,8 +1770,9 @@ static void SubsampleRawLuxel_r( rawLightmap_t *lm, trace_t *trace, vec3_t sampl
 #define LIGHT_LUXEL( x, y )     ( lightLuxels + ( ( ( ( y ) * lm->sw ) + ( x ) ) * SUPER_LUXEL_SIZE ) )
 
 void IlluminateRawLightmap( int rawLightmapNum ){
-	int i, t, x, y, sx, sy, size, llSize, luxelFilterRadius, lightmapNum;
+	int i, t, x, y, sx, sy, size, luxelFilterRadius, lightmapNum;
 	int                 *cluster, *cluster2, mapped, lighted, totalLighted;
+	size_t llSize;
 	rawLightmap_t       *lm;
 	surfaceInfo_t       *info;
 	qboolean filterColor, filterDir;
@@ -2268,8 +2274,6 @@ void IlluminateRawLightmap( int rawLightmapNum ){
 				{
 					/* get cluster */
 					cluster = SUPER_CLUSTER( x, y );
-					//%	if( *cluster < 0 )
-					//%		continue;
 
 					/* get particulars */
 					luxel = SUPER_LUXEL( lightmapNum, x, y );
@@ -2317,6 +2321,7 @@ void IlluminateRawLightmap( int rawLightmapNum ){
 					 ( lm->splotchFix && ( luxel[ 0 ] <= ambientColor[ 0 ] || luxel[ 1 ] <= ambientColor[ 1 ] || luxel[ 2 ] <= ambientColor[ 2 ] ) ) ) {
 					filterColor = qtrue;
 				}
+
 				if ( deluxemap && lightmapNum == 0 && ( *cluster < 0 || filter ) ) {
 					filterDir = qtrue;
 				}

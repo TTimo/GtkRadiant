@@ -381,11 +381,9 @@ byte AveragePixels( int count ){
 	int pix;
 	int bestcolor;
 	byte    *pal;
-	int fullbright;
 
 	vis = 0;
 	r = g = b = 0;
-	fullbright = 0;
 	for ( i = 0 ; i < count ; i++ )
 	{
 		pix = pixdata[i];

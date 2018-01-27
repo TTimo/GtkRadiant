@@ -163,21 +163,18 @@ T3dsChunk;
  *  validates an autodesk 3ds model file.
  */
 static int _3ds_canload( PM_PARAMS_CANLOAD ){
-	T3dsChunk *chunk;
-
-	/* to keep the compiler happy */
-	*fileName = *fileName;
+	const T3dsChunk *chunk;
 
 	/* sanity check */
-	if ( bufSize < sizeof( T3dsChunk ) ) {
+	if ( bufSize < (int) sizeof( T3dsChunk ) ) {
 		return PICO_PMV_ERROR_SIZE;
 	}
 
 	/* get pointer to 3ds header chunk */
-	chunk = (T3dsChunk *)buffer;
+	chunk = (const T3dsChunk *)buffer;
 
 	/* check data length */
-	if ( bufSize < _pico_little_long( chunk->len ) ) {
+	if ( bufSize < (int) _pico_little_long( chunk->len ) ) {
 		return PICO_PMV_ERROR_SIZE;
 	}
 
@@ -741,7 +738,8 @@ static picoModel_t *_3ds_load( PM_PARAMS_LOAD ){
 
 	/* initialize persistant vars (formerly static) */
 	pers.model    =  model;
-	pers.bufptr   = (picoByte_t *)buffer;
+	pers.bufptr   = (picoByte_t *)_pico_alloc( bufSize );
+	memcpy( pers.bufptr, buffer, bufSize );
 	pers.basename = (char *)basename;
 	pers.maxofs   =  bufSize;
 	pers.cofs     =  0L;

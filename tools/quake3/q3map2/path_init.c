@@ -98,10 +98,11 @@ void LokiInitPaths( char *argv0 ){
 	/* this is kinda crap, but hey */
 	strcpy( installPath, "../" );
 	#else
+
 	char temp[ MAX_OS_PATH ];
-	char        *home;
-	char        *path;
-	char        *last;
+	char *home;
+	char *path;
+	char *last;
 	qboolean found;
 
 

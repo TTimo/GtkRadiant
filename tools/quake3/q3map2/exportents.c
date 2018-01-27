@@ -64,8 +64,8 @@ void ExportEntities( void ){
 		
         /* sanity check */
         if ( bspEntDataSize == 0 ) {
-			Sys_FPrintf( SYS_WRN, "WARNING: No BSP entity data. aborting...\n" );
-			return;
+                Sys_FPrintf( SYS_WRN, "WARNING: No BSP entity data. aborting...\n" );
+                return;
         }
 		
         /* write it */

@@ -806,7 +806,6 @@ shaderInfo_t *ShaderInfoForShader( const char *shaderName ){
 	shaderInfo_t    *si;
 	char shader[ MAX_QPATH ];
 
-
 	/* dummy check */
 	if ( shaderName == NULL || shaderName[ 0 ] == '\0' ) {
 		Sys_FPrintf( SYS_WRN, "WARNING: Null or empty shader name\n" );
@@ -1331,7 +1330,6 @@ static void ParseShaderFile( const char *filename ){
 				/* ydnar: q3map_surfacemodel <path to model> <density> <min scale> <max scale> <min angle> <max angle> <oriented (0 or 1)> */
 				else if ( !Q_stricmp( token, "q3map_surfacemodel" ) ) {
 					surfaceModel_t  *model;
-
 
 					/* allocate new model and attach it */
 					model = safe_malloc( sizeof( *model ) );

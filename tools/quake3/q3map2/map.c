@@ -44,7 +44,7 @@
 #define USE_HASHING
 #define PLANE_HASHES    8192
 
-plane_t                 *planehash[ PLANE_HASHES ];
+plane_t *planehash[ PLANE_HASHES ];
 
 int c_boxbevels;
 int c_edgebevels;
@@ -306,6 +306,7 @@ void SnapPlaneImproved( vec3_t normal, vec_t *dist, int numPoints, const vec3_t 
 		}
 	}
 }
+
 
 
 /*
@@ -956,7 +957,7 @@ static void ParseRawBrush( qboolean onlyLights ){
 	int planenum;
 	shaderInfo_t    *si;
 	vec_t shift[ 2 ];
-	vec_t rotate;
+	vec_t rotate = 0;
 	vec_t scale[ 2 ];
 	char name[ MAX_QPATH ];
 	char shader[ MAX_QPATH ];
@@ -1277,7 +1278,6 @@ void AdjustBrushesForOrigin( entity_t *ent ){
 	vec_t newdist;
 	brush_t     *b;
 	parseMesh_t *p;
-
 
 	/* walk brush list */
 	for ( b = ent->brushes; b != NULL; b = b->next )
@@ -1770,7 +1770,7 @@ static qboolean ParseMapEntity( qboolean onlyLights ){
 void LoadMapFile( char *filename, qboolean onlyLights ){
 	FILE        *file;
 	brush_t     *b;
-	int oldNumEntities, numMapBrushes;
+	int oldNumEntities = 0, numMapBrushes;
 
 
 	/* note it */

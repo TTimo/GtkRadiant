@@ -99,10 +99,10 @@ void prl( leaf_t *l ){
    =============
  */
 int PComp( const void *a, const void *b ){
-	if ( ( *(vportal_t **)a )->nummightsee == ( *(vportal_t **)b )->nummightsee ) {
+	if ( ( *(const vportal_t **)a )->nummightsee == ( *(const vportal_t **)b )->nummightsee ) {
 		return 0;
 	}
-	if ( ( *(vportal_t **)a )->nummightsee < ( *(vportal_t **)b )->nummightsee ) {
+	if ( ( *(const vportal_t **)a )->nummightsee < ( *(const vportal_t **)b )->nummightsee ) {
 		return -1;
 	}
 	return 1;
@@ -929,8 +929,8 @@ void LoadPortals( char *name ){
 		if ( numpoints > MAX_POINTS_ON_WINDING ) {
 			Error( "LoadPortals: portal %i has too many points", i );
 		}
-		if ( (unsigned)leafnums[0] > portalclusters
-			 || (unsigned)leafnums[1] > portalclusters ) {
+		if ( leafnums[0] > portalclusters
+			 || leafnums[1] > portalclusters ) {
 			Error( "LoadPortals: reading portal %i", i );
 		}
 		if ( fscanf( f, "%i ", &hint ) != 1 ) {
@@ -954,7 +954,10 @@ void LoadPortals( char *name ){
 			for ( k = 0 ; k < 3 ; k++ )
 				w->points[j][k] = v[k];
 		}
-		fscanf( f, "\n" );
+		if ( fscanf( f, "\n" ) != 0)
+		{
+			// silence gcc warning
+		}
 
 		// calc plane
 		PlaneFromWinding( w, &plane );
@@ -1029,7 +1032,10 @@ void LoadPortals( char *name ){
 			for ( k = 0 ; k < 3 ; k++ )
 				w->points[j][k] = v[k];
 		}
-		fscanf( f, "\n" );
+		if ( fscanf( f, "\n" ) != 0)
+		{
+			// silence gcc warning
+		}
 
 		// calc plane
 		PlaneFromWinding( w, &plane );
