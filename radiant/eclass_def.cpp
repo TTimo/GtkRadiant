@@ -236,6 +236,14 @@ eclass_t *Eclass_InitFromText( char *text ){
 		e->nFrame = atoi( pFrame );
 		delete pFrame; //Hydra - Fixed memory leak!
 	}
+	char *pAngle = NULL;
+	setSpecialLoad( e, "eangle=", pAngle );
+	if ( pAngle != NULL ) {
+		if ( strcmpi( pAngle, "true" ) == 0 || atoi( pAngle ) == 1 ) {
+			e->nShowFlags |= ECLASS_ANGLE;
+		}
+		delete pAngle;
+	}
 
 	if ( !e->skinpath ) {
 		setSpecialLoad( e, "texture=", e->skinpath );
