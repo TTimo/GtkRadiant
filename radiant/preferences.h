@@ -639,6 +639,7 @@ bool m_bTextureScrollbar;
 bool m_bDisplayLists;
 bool m_bAntialiasedPointsAndLines;    // Fishman - Add antialiazed points and lines support. 09/03/00
 bool m_bShowShaders;
+bool m_bHideEmptyDirs;
 int m_nShader;
 bool m_bNoStipple;
 int m_nUndoLevels;

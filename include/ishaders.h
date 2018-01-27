@@ -111,6 +111,9 @@ typedef void ( WINAPI * PFN_RELOADSHADERS )();
 // load all shaders in a given directory
 // this will scan the list of in-memory shaders, and load the related qtexture_t if needed
 typedef int ( WINAPI * PFN_LOADSHADERSFROMDIR )( const char* path );
+// count all shaders in a given directory
+// this will scan the list of in-memory shaders
+typedef bool ( WINAPI * PFN_ISDIRCONTAININGSHADER )( const char* path );
 // load a shader file (ie a set of shaders)
 // after LoadShaderFile shaders will be in memory, next step is to load the qtexture_t Radiant uses to represent them
 // if a shader with the same name exists, new one will not be loaded - don't use this to refresh the shaders!
@@ -178,6 +181,7 @@ struct _QERShadersTable
 	PFN_FREESHADERS m_pfnFreeShaders;
 	PFN_RELOADSHADERS m_pfnReloadShaders;
 	PFN_LOADSHADERSFROMDIR m_pfnLoadShadersFromDir;
+	PFN_ISDIRCONTAININGSHADER m_pfnIsDirContainingShaders;
 	PFN_LOADSHADERFILE m_pfnLoadShaderFile;
 	PFN_RELOADSHADERFILE m_pfnReloadShaderFile;
 	PFN_HASSHADER m_pfnHasShader;
@@ -219,7 +223,7 @@ struct _QERShadersTable
 #define QERApp_ColorShader_ForName __SHADERSTABLENAME.m_pfnColorShader_ForName
 #define QERApp_Shader_ForName_NoLoad __SHADERSTABLENAME.m_pfnShader_ForName_NoLoad
 #define QERApp_LoadShadersFromDir __SHADERSTABLENAME.m_pfnLoadShadersFromDir
-#define QERApp_LoadShadersFromDir __SHADERSTABLENAME.m_pfnLoadShadersFromDir
+#define QERApp_IsDirContainingShaders __SHADERSTABLENAME.m_pfnIsDirContainingShaders
 #define QERApp_CreateShader_ForTextureName __SHADERSTABLENAME.m_pfnCreateShader_ForTextureName
 #define QERApp_GetActiveShaderCount __SHADERSTABLENAME.m_pfnGetActiveShaderCount
 #define QERApp_ActiveShaders_SetDisplayed __SHADERSTABLENAME.m_pfnActiveShaders_SetDisplayed

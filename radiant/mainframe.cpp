@@ -552,6 +552,7 @@ gint HandleCommand( GtkWidget *widget, gpointer data ){
 		  case ID_TEXTURES_LOAD: g_pParentWnd->OnTexturesLoad(); break;
 		  case ID_TEXTURES_RELOADSHADERS: g_pParentWnd->OnTexturesReloadshaders(); break;
 		  case ID_TEXTURES_SHADERS_SHOW: g_pParentWnd->OnTexturesShadersShow(); break;
+		  case ID_TEXTURES_EMPTYDIRS_HIDE: g_pParentWnd->OnTexturesEmptyDirsHide(); break;
 		  case ID_TEXTURES_TEXTUREWINDOWSCALE_200:
 		  case ID_TEXTURES_TEXTUREWINDOWSCALE_100:
 		  case ID_TEXTURES_TEXTUREWINDOWSCALE_50:
@@ -1402,6 +1403,9 @@ void MainFrame::create_main_menu( GtkWidget *window, GtkWidget *vbox ){
 	item = create_check_menu_item_with_mnemonic( menu, _( "shaderlist.txt only" ),
 												 G_CALLBACK( HandleCommand ), ID_TEXTURES_SHADERLISTONLY, FALSE );
 	g_object_set_data( G_OBJECT( window ), "menu_textures_shaderlistonly", item );
+	item = create_check_menu_item_with_mnemonic( menu, _( "Hide empty directories" ),
+												 G_CALLBACK( HandleCommand ), ID_TEXTURES_EMPTYDIRS_HIDE, FALSE );
+	g_object_set_data( G_OBJECT( window ), "menu_textures_emptydirs_hide", item );
 	item = menu_separator( menu );
 
 	menu_in_menu = create_menu_in_menu_with_mnemonic( menu, _( "Texture Directories" ) );
@@ -3108,6 +3112,8 @@ void MainFrame::Create(){
 	g_bIgnoreCommands++;
 	item = GTK_WIDGET( g_object_get_data( G_OBJECT( m_pWidget ), "menu_textures_shaders_show" ) );
 	gtk_check_menu_item_set_active( GTK_CHECK_MENU_ITEM( item ), g_PrefsDlg.m_bShowShaders ? TRUE : FALSE );
+	item = GTK_WIDGET( g_object_get_data( G_OBJECT( m_pWidget ), "menu_textures_emptydirs_hide" ) );
+	gtk_check_menu_item_set_active( GTK_CHECK_MENU_ITEM( item ), g_PrefsDlg.m_bHideEmptyDirs ? TRUE : FALSE );
 	item = GTK_WIDGET( g_object_get_data( G_OBJECT( m_pWidget ), "menu_textures_shaderlistonly" ) );
 	gtk_check_menu_item_set_active( GTK_CHECK_MENU_ITEM( item ), g_PrefsDlg.m_bTexturesShaderlistOnly ? TRUE : FALSE );
 	g_bIgnoreCommands--;
@@ -5943,6 +5949,20 @@ void MainFrame::OnTexturesReloadshaders(){
 	Texture_SetTexture( &g_qeglobals.d_texturewin.texdef, &g_qeglobals.d_texturewin.brushprimit_texdef, false, NULL, false );
 	Sys_UpdateWindows( W_ALL );
 	Sys_EndWait();
+
+	GSList *texdirs = NULL;
+	FillTextureList( &texdirs );
+	FillTextureMenu( texdirs );
+	FillTextureDirListWidget( texdirs );
+	ClearGSList( texdirs );
+}
+
+void MainFrame::OnTexturesEmptyDirsHide(){
+	g_PrefsDlg.m_bHideEmptyDirs ^= 1;
+	GtkWidget *item = GTK_WIDGET( g_object_get_data( G_OBJECT( m_pWidget ), "menu_textures_emptydirs_hide" ) );
+	g_bIgnoreCommands++;
+	gtk_check_menu_item_set_active( GTK_CHECK_MENU_ITEM( item ), g_PrefsDlg.m_bHideEmptyDirs ? TRUE : FALSE );
+	g_bIgnoreCommands--;
 
 	GSList *texdirs = NULL;
 	FillTextureList( &texdirs );
