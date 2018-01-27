@@ -467,10 +467,10 @@ void CRadiantPluginManager::PopulateMenu(){
 }
 
 void CSynapseClientRadiant::ImportMap( IDataStream *in, CPtrArray *ents, const char *type ){
-	if ( strcmp( type,"map" ) == 0 ) {
+	if ( strcasecmp( type, "map" ) == 0 ) {
 		g_MapTable.m_pfnMap_Read( in, ents );
 	}
-	else if ( strcmp( type,"xmap" ) == 0 ) {
+	else if (strcasecmp( type,"xmap" ) == 0 ) {
 		g_MapTable2.m_pfnMap_Read( in, ents );
 	}
 	else{
@@ -479,10 +479,10 @@ void CSynapseClientRadiant::ImportMap( IDataStream *in, CPtrArray *ents, const c
 }
 
 void CSynapseClientRadiant::ExportMap( CPtrArray *ents, IDataStream *out, const char *type ){
-	if ( strcmp( type,"map" ) == 0 ) {
+	if (strcasecmp( type,"map" ) == 0 ) {
 		g_MapTable.m_pfnMap_Write( ents, out );
 	}
-	else if ( strcmp( type,"xmap" ) == 0 ) {
+	else if (strcasecmp( type,"xmap" ) == 0 ) {
 		g_MapTable2.m_pfnMap_Write( ents, out );
 	}
 	else{
