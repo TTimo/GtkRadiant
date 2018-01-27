@@ -451,12 +451,6 @@ void InitPaths( int *argc, char **argv ){
 		{
 			/* create a full path and initialize it */
 			sprintf( temp, "%s/%s/", basePaths[ i ], gamePaths[ j ] );
-			//quick n dirty patch to enable vfs for quakelive
-			if (strcmp(game->arg, "quakelive") == 0 ) {
-				unz_GAME_QL = 1;
-			} else {
-				unz_GAME_QL = 0;
-			}
 			vfsInitDirectory( temp );
 		}
 	}
