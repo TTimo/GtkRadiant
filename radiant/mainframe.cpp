@@ -902,7 +902,8 @@ void MainFrame::process_xlink( Str &FileName, const char *menu_name, const char 
 				if ( !strcmp( (const char*)pNode->name, "item" ) ) {
 					// process the URL
 					Str *url;
-					if ( strstr( (char *)xmlGetProp( pNode, (xmlChar *)"url" ), "http://" ) ) {
+					if ( strstr( (char *)xmlGetProp( pNode, (xmlChar *)"url" ), "http://" )
+						|| strstr( (char *)xmlGetProp( pNode, (xmlChar *)"url" ), "https://" ) ) {
 						// complete URL
 						url = new Str;
 						*url = (char *)xmlGetProp( pNode, (xmlChar *)"url" );
