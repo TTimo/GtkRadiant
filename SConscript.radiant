@@ -18,6 +18,9 @@ proj = utils.vcxproj( os.path.join( GetLaunchDir(), 'radiant/radiant.vcxproj' ) 
 
 radiant = env.Program( 'radiant.bin', lib_objects + [ os.path.join( 'radiant', i ) for i in proj.getSourceFiles() ] )
 
+AddOption('--no-packs',
+	dest='no_packs',
+	action='store_true',
+	help="don't fetch game packs")
+
 Return( 'radiant' )
-
-

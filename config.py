@@ -298,7 +298,8 @@ class Config:
             pass
         else:
             # special case, fetch external paks under the local install directory
-            if not Environment().GetOption('clean'):
+            env = Environment()
+            if not env.GetOption('clean') and not env.GetOption('no_packs'):
                 self.FetchGamePaks( self.install_directory )
         # NOTE: unrelated to self.setup_platforms - grab support files and binaries and install them
         if ( self.platform == 'Windows' ):

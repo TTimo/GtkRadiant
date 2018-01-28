@@ -17,7 +17,7 @@ else:
 	Help(
 """
 ======================================================================
-ZeroRadiant build system quick help
+GtkRadiant build system quick help
 
 You need scons v0.97.0d20070918.r2446 or newer
 
@@ -25,6 +25,10 @@ Default build (release), just run scons at the toplevel
 
 debug build:
 $ scons config=debug
+
+build using 8 parallel build jobs
+but do not download any game packs
+$ scons -j8 --no-packs
 ======================================================================
 """ )
 	Return()
