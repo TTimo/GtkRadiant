@@ -318,22 +318,10 @@ void BuildFaceTree_r( node_t *node, face_t *list ){
 		}
 	}
 
-#if 0
-	if((node->compileFlags & C_DETAIL) && isstruct)
-		Sys_FPrintf(SYS_ERR, "I am detail, my child is structural, this is a wtf1\n", node->has_structural_children);
-#endif
-
 	for ( i = 0 ; i < 2 ; i++ ) {
 		BuildFaceTree_r( node->children[i], childLists[i] );
 		node->has_structural_children |= node->children[i]->has_structural_children;
 	}
-
-#if 0
-	if((node->compileFlags & C_DETAIL) && !(node->children[0]->compileFlags & C_DETAIL) && node->children[0]->planenum != PLANENUM_LEAF)
-		Sys_FPrintf(SYS_ERR, "I am detail, my child is structural\n", node->has_structural_children);
-	if((node->compileFlags & C_DETAIL) && isstruct)
-		Sys_FPrintf(SYS_ERR, "I am detail, my child is structural, this is a wtf2\n", node->has_structural_children);
-#endif
 }
 
 

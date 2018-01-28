@@ -802,9 +802,10 @@ static void LoadShaderImages( shaderInfo_t *si ){
  */
 
 shaderInfo_t *ShaderInfoForShaderNull( const char *shaderName ){
-	if(!strcmp(shaderName, "noshader"))
+	if ( !strcmp( shaderName, "noshader" ) ) {
 		return NULL;
-	return ShaderInfoForShader(shaderName);
+	}
+	return ShaderInfoForShader( shaderName );
 }
 
 shaderInfo_t *ShaderInfoForShader( const char *shaderName ){
@@ -1464,7 +1465,7 @@ static void ParseShaderFile( const char *filename ){
 					si->lightmapSampleSize = atoi( token );
 				}
 
-				/* q3map_lightmapSampleSffset <value> */
+				/* q3map_lightmapSampleOffset <value> */
 				else if ( !Q_stricmp( token, "q3map_lightmapSampleOffset" ) ) {
 					GetTokenAppend( shaderText, qfalse );
 					si->lightmapSampleOffset = atof( token );

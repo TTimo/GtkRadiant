@@ -841,12 +841,12 @@ int BSPMain( int argc, char **argv ){
 			Sys_Printf( "Debug portal surfaces enabled\n" );
 			debugPortals = qtrue;
 		}
-		else if( !strcmp( argv[ i ], "-altsplit" ) )
+		else if ( !strcmp( argv[ i ], "-altsplit" ) )
 		{
 			Sys_Printf( "Alternate BSP splitting (by 27) enabled\n" );
 			bspAlternateSplitWeights = qtrue;
 		}
-		else if( !strcmp( argv[ i ], "-deep" ) )
+		else if ( !strcmp( argv[ i ], "-deep" ) )
 		{
 			Sys_Printf( "Deep BSP tree generation enabled\n" );
 			deepBSP = qtrue;

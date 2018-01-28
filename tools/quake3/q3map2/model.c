@@ -389,8 +389,7 @@ void InsertModel( char *name, int frame, m4x4_t transform, remap_t *remap, shade
 			{
 				dv->lightmap[ j ][ 0 ] = 0.0f;
 				dv->lightmap[ j ][ 1 ] = 0.0f;
-				if(spawnFlags & 32) // spawnflag 32: model color -> alpha hack
-				{
+				if ( spawnFlags & 32 ) { // spawnflag 32: model color -> alpha hack
 					dv->color[ j ][ 0 ] = 255.0f;
 					dv->color[ j ][ 1 ] = 255.0f;
 					dv->color[ j ][ 2 ] = 255.0f;

@@ -1596,8 +1596,9 @@ void DirtyRawLightmap( int rawLightmapNum ){
 
 static qboolean SubmapRawLuxel( rawLightmap_t *lm, int x, int y, float bx, float by, int *sampleCluster, vec3_t sampleOrigin, vec3_t sampleNormal ){
 	int i, *cluster, *cluster2;
-	float       *origin, *origin2, *normal;
-	vec3_t originVecs[ 2 ];
+	float       *origin, *origin2, *normal; //%	, *normal2;
+	vec3_t originVecs[ 2 ];                 //%	, normalVecs[ 2 ];
+
 
 	/* calulate x vector */
 	if ( ( x < ( lm->sw - 1 ) && bx >= 0.0f ) || ( x == 0 && bx <= 0.0f ) ) {
@@ -1612,7 +1613,7 @@ static qboolean SubmapRawLuxel( rawLightmap_t *lm, int x, int y, float bx, float
 		cluster2 = SUPER_CLUSTER( x, y );
 		origin2 = SUPER_ORIGIN( x, y );
 	}
-	else{
+	else {
 		Sys_FPrintf( SYS_WRN, "WARNING: Spurious lightmap S vector\n" );
 		VectorClear( originVecs[0] );
 		origin = originVecs[0];
@@ -1634,7 +1635,7 @@ static qboolean SubmapRawLuxel( rawLightmap_t *lm, int x, int y, float bx, float
 		cluster2 = SUPER_CLUSTER( x, y );
 		origin2 = SUPER_ORIGIN( x, y );
 	}
-	else{
+	else {
 		Sys_FPrintf( SYS_WRN, "WARNING: Spurious lightmap T vector\n" );
 		VectorClear( originVecs[1] );
 		origin = originVecs[1];
@@ -2783,8 +2784,7 @@ void SetupBrushesFlags( unsigned int mask_any, unsigned int test_any, unsigned i
 	bspBrushSide_t  *side;
 	bspShader_t     *shader;
 	shaderInfo_t    *si;
-	
-	
+
 	/* note it */
 	Sys_FPrintf( SYS_VRB, "--- SetupBrushes ---\n" );
 
@@ -2807,7 +2807,7 @@ void SetupBrushesFlags( unsigned int mask_any, unsigned int test_any, unsigned i
 		/* check all sides */
 		inside = qtrue;
 		compileFlags = 0;
-		allCompileFlags = ~(0u);
+		allCompileFlags = ~( 0u );
 		for ( j = 0; j < brush->numSides && inside; j++ )
 		{
 			/* do bsp shader calculations */
@@ -2822,12 +2822,12 @@ void SetupBrushesFlags( unsigned int mask_any, unsigned int test_any, unsigned i
 
 			/* or together compile flags */
 			compileFlags |= si->compileFlags;
+			allCompileFlags &= si->compileFlags;
 		}
 
 		/* determine if this brush is opaque to light */
-		if( (compileFlags & mask_any) == test_any && (allCompileFlags & mask_all) == test_all )
-		{
-			opaqueBrushes[ b >> 3 ] |= (1 << (b & 7));
+		if ( ( compileFlags & mask_any ) == test_any && ( allCompileFlags & mask_all ) == test_all ) {
+			opaqueBrushes[ b >> 3 ] |= ( 1 << ( b & 7 ) );
 			numOpaqueBrushes++;
 			maxOpaqueBrush = i;
 		}
@@ -2836,9 +2836,8 @@ void SetupBrushesFlags( unsigned int mask_any, unsigned int test_any, unsigned i
 	/* emit some statistics */
 	Sys_FPrintf( SYS_VRB, "%9d opaque brushes\n", numOpaqueBrushes );
 }
-void SetupBrushes( void )
-{
-	SetupBrushesFlags(C_TRANSLUCENT, 0, 0, 0);
+void SetupBrushes( void ){
+	SetupBrushesFlags( C_TRANSLUCENT, 0, 0, 0 );
 }
 
 

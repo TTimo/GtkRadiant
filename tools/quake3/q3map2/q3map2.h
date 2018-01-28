@@ -573,11 +573,11 @@ typedef struct game_s
 	int lightmapSize;                                   /* bsp lightmap width/height */
 	float lightmapGamma;                                /* default lightmap gamma */
 	float lightmapCompensate;                           /* default lightmap compensate value */
-	int                 miniMapSize;                    /* minimap size */
-	float               miniMapSharpen;                 /* minimap sharpening coefficient */
-	float               miniMapBorder;                  /* minimap border amount */
-	qboolean            miniMapKeepAspect;              /* minimap keep aspect ratio by letterboxing */
-	miniMapMode_t       miniMapMode;                    /* minimap mode */
+	int miniMapSize;                                    /* minimap size */
+	float miniMapSharpen;                               /* minimap sharpening coefficient */
+	float miniMapBorder;                                /* minimap border amount */
+	qboolean miniMapKeepAspect;                         /* minimap keep aspect ratio by letterboxing */
+	miniMapMode_t miniMapMode;                          /* minimap mode */
 	char                *miniMapNameFormat;             /* minimap name format */
 	char                *bspIdent;                      /* 4-letter bsp file prefix */
 	int bspVersion;                                     /* bsp version to use */
@@ -1131,7 +1131,7 @@ typedef struct node_s
 
 	struct portal_s     *portals;       /* also on nodes during construction */
 
-	qboolean            has_structural_children;
+	qboolean has_structural_children;
 }
 node_t;
 
@@ -1766,7 +1766,7 @@ void                        DirtyRawLightmap( int num );
 void                        IlluminateRawLightmap( int num );
 void                        IlluminateVertexes( int num );
 
-void						SetupBrushesFlags( int mask_any, int test_any, int mask_all, int test_all );
+void                        SetupBrushesFlags( unsigned int mask_any, unsigned int test_any, unsigned int mask_all, unsigned int test_all );
 void                        SetupBrushes( void );
 void                        SetupClusters( void );
 qboolean                    ClusterVisible( int a, int b );
@@ -1822,7 +1822,7 @@ void                        EmitVertexRemapShader( char *from, char *to );
 
 void                        LoadShaderInfo( void );
 shaderInfo_t                *ShaderInfoForShader( const char *shader );
-shaderInfo_t				*ShaderInfoForShaderNull( const char *shader );
+shaderInfo_t                *ShaderInfoForShaderNull( const char *shader );
 
 
 /* bspfile_abstract.c */
@@ -1897,7 +1897,7 @@ Q_EXTERN game_t games[]
 	,
 								#include "game_tremulous.h" /*LinuxManMikeC: must be after game_quake3.h, depends on #define's set in it */
 	,
-								#include "game_unvanquished.h" /* must be after game_quake3.h as they share defines! */
+								#include "game_unvanquished.h" /* must be after game_tremulous.h as they share defines! */
 	,
 								#include "game_tenebrae.h"
 	,
@@ -1919,7 +1919,7 @@ Q_EXTERN game_t games[]
 	,
 								#include "game_reaction.h" /* must be after game_quake3.h */
 	,
-	#include "game__null.h" /* null game (must be last item) */
+								#include "game__null.h" /* null game (must be last item) */
 	};
 #endif
 Q_EXTERN game_t             *game Q_ASSIGN( &games[ 0 ] );
@@ -1967,8 +1967,8 @@ Q_EXTERN qboolean nofog Q_ASSIGN( qfalse );
 Q_EXTERN qboolean noHint Q_ASSIGN( qfalse );                        /* ydnar */
 Q_EXTERN qboolean renameModelShaders Q_ASSIGN( qfalse );            /* ydnar */
 Q_EXTERN qboolean skyFixHack Q_ASSIGN( qfalse );                    /* ydnar */
-Q_EXTERN qboolean			bspAlternateSplitWeights Q_ASSIGN( qfalse );			/* 27 */
-Q_EXTERN qboolean			deepBSP Q_ASSIGN( qfalse );			/* div0 */
+Q_EXTERN qboolean bspAlternateSplitWeights Q_ASSIGN( qfalse );      /* 27 */
+Q_EXTERN qboolean deepBSP Q_ASSIGN( qfalse );                       /* div0 */
 
 Q_EXTERN int patchSubdivisions Q_ASSIGN( 8 );                       /* ydnar: -patchmeta subdivisions */
 
@@ -2098,17 +2098,16 @@ Q_EXTERN m4x4_t skyboxTransform;
    ------------------------------------------------------------------------------- */
 
 /* commandline arguments */
-Q_EXTERN qboolean fastvis;
-Q_EXTERN qboolean noPassageVis;
-Q_EXTERN qboolean passageVisOnly;
-Q_EXTERN qboolean mergevis;
-Q_EXTERN qboolean mergevisportals;
-Q_EXTERN qboolean nosort;
-Q_EXTERN qboolean saveprt;
-Q_EXTERN qboolean hint;             /* ydnar */
-Q_EXTERN char inbase[ MAX_QPATH ];
-Q_EXTERN char inbase[ MAX_QPATH ];
-Q_EXTERN char globalCelShader[ MAX_QPATH ];
+Q_EXTERN qboolean			fastvis;
+Q_EXTERN qboolean			noPassageVis;
+Q_EXTERN qboolean			passageVisOnly;
+Q_EXTERN qboolean			mergevis;
+Q_EXTERN qboolean			mergevisportals;
+Q_EXTERN qboolean			nosort;
+Q_EXTERN qboolean			saveprt;
+Q_EXTERN qboolean			hint;	/* ydnar */
+Q_EXTERN char				inbase[ MAX_QPATH ];
+Q_EXTERN char				globalCelShader[ MAX_QPATH ];
 
 /* other bits */
 Q_EXTERN int totalvis;
@@ -2394,7 +2393,7 @@ Q_EXTERN int numBSPBrushSides Q_ASSIGN( 0 );
 Q_EXTERN bspBrushSide_t bspBrushSides[ MAX_MAP_BRUSHSIDES ];
 
 Q_EXTERN int numBSPLightBytes Q_ASSIGN( 0 );
-Q_EXTERN byte               *bspLightBytes Q_ASSIGN( NULL );
+Q_EXTERN byte *bspLightBytes Q_ASSIGN( NULL );
 
 //%	Q_EXTERN int				numBSPGridPoints Q_ASSIGN( 0 );
 //%	Q_EXTERN byte				*bspGridPoints Q_ASSIGN( NULL );
@@ -2406,7 +2405,7 @@ Q_EXTERN int numBSPVisBytes Q_ASSIGN( 0 );
 Q_EXTERN byte bspVisBytes[ MAX_MAP_VISIBILITY ];
 
 Q_EXTERN int numBSPDrawVerts Q_ASSIGN( 0 );
-Q_EXTERN bspDrawVert_t      *bspDrawVerts Q_ASSIGN( NULL );
+Q_EXTERN bspDrawVert_t *bspDrawVerts Q_ASSIGN( NULL );
 
 Q_EXTERN int numBSPDrawIndexes Q_ASSIGN( 0 );
 Q_EXTERN int bspDrawIndexes[ MAX_MAP_DRAW_INDEXES ];

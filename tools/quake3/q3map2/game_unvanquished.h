@@ -41,6 +41,7 @@ several games based on the Quake III Arena engine, in the form of "Q3Map2."
 content and surface flags - also uses defines from game_quake3.h
 
 ------------------------------------------------------------------------------- */
+
 #define UNV_CONT_NOALIENBUILD         0x1000
 #define UNV_CONT_NOHUMANBUILD         0x2000
 #define UNV_CONT_NOBUILD              0x4000
@@ -90,12 +91,10 @@ game_t struct
 		/* default */
 		{ "default",            Q_CONT_SOLID,           -1,                         0,                              -1,                         C_SOLID,                        -1 },
 
-
 		/* ydnar */
 		{ "lightgrid",          0,                      0,                          0,                              0,                          C_LIGHTGRID,                    0 },
 		{ "antiportal",         0,                      0,                          0,                              0,                          C_ANTIPORTAL,                   0 },
 		{ "skip",               0,                      0,                          0,                              0,                          C_SKIP,                         0 },
-
 
 		/* compiler */
 		{ "origin",             Q_CONT_ORIGIN,          Q_CONT_SOLID,               0,                              0,                          C_ORIGIN | C_TRANSLUCENT,       C_SOLID },
@@ -110,7 +109,6 @@ game_t struct
 		{ "lightfilter",        0,                      0,                          Q_SURF_LIGHTFILTER,             0,                          C_LIGHTFILTER | C_TRANSLUCENT,  0 },
 		{ "nolightmap",         0,                      0,                          Q_SURF_VERTEXLIT,               0,                          C_VERTEXLIT,                    0 },
 		{ "pointlight",         0,                      0,                          Q_SURF_VERTEXLIT,               0,                          C_VERTEXLIT,                    0 },
-
 
 		/* game */
 		{ "nonsolid",           0,                      Q_CONT_SOLID,               Q_SURF_NONSOLID,                0,                          0,                              C_SOLID },
@@ -144,7 +142,6 @@ game_t struct
 		{ "nodlight",           0,                      0,                          Q_SURF_NODLIGHT,                0,                          0,                              0 },
 		{ "dust",               0,                      0,                          Q_SURF_DUST,                    0,                          0,                              0 },
 
-
 		/* unvanquished */
 		{"noalienbuild",        UNV_CONT_NOALIENBUILD,  0,                         0,                               0,                          0,                              0 },
 		{"nohumanbuild",        UNV_CONT_NOHUMANBUILD,  0,                         0,                               0,                          0,                              0 },
@@ -154,13 +151,10 @@ game_t struct
 		{"nohumanbuildsurface", 0,                      0,                         UNV_SURF_NOHUMANBUILDSURFACE,    0,                          0,                              0 },
 		{"nobuildsurface",      0,                      0,                         UNV_SURF_NOBUILDSURFACE,         0,                          0,                              0 },
 
-
 		/* null */
 		{ NULL,	                0,                      0,                         0,                               0,                          0,                              0 }
 	}
 }
-
-
 
 /* end marker */
 #endif
