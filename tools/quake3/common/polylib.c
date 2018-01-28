@@ -468,7 +468,7 @@ winding_t   *CopyWinding( winding_t *w ){
 	}
 
 	c = AllocWinding( w->numpoints );
-	size = (size_t)sizeof( *w ) + sizeof( *w->p ) * w->numpoints;
+	size = sizeof( *w ) + sizeof( *w->p ) * w->numpoints;
 	memcpy( c, w, size );
 	return c;
 }
