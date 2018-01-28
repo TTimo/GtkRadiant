@@ -64,6 +64,12 @@
 	0,              /* lightmap width/height */
 	0,              /* lightmap gamma */
 	0,              /* lightmap compensate */
+	0,              /* minimap size */
+	0,              /* minimap sharpener */
+	0,              /* minimap border */
+	qfalse,         /* minimap keep aspect */
+	MINIMAP_MODE_GRAY,  /* minimap mode */
+	NULL,           /* minimap name format */
 	NULL,           /* bsp file prefix */
 	0,              /* bsp file version */
 	qfalse,         /* cod-style lump len/ofs order */
