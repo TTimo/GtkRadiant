@@ -382,6 +382,9 @@ game_t gameList[] = {
 	{ "q2.game", "Quake II Mission Pack: Ground Zero", "rogue", qfalse, qfalse },
 	{ "q2.game", "Custom Quake II modification", "", qfalse, qtrue },
 
+	{ "unvanquished.game", "Unvanquished", "pkg", qtrue, qfalse },
+	{ "unvanquished.game", "Unvanquished from source", "src", qfalse, qfalse },
+
 };
 
 GList *newMappingModesListForGameFile( Str & mGameFile ){
