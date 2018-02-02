@@ -88,7 +88,7 @@ void PicoPrintFunc( int level, const char *str ){
 }
 
 void PicoLoadFileFunc( const char *name, byte **buffer, int *bufSize ){
-	*bufSize = vfsLoadFile( (const char*) name, (void**) buffer, 0 );
+	*bufSize = vfsLoadFile( name, (void**) buffer, 0 );
 }
 
 void PicoFreeFileFunc( void* file ){
