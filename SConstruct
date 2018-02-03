@@ -33,6 +33,11 @@ $ scons -j8 --no-packs
 """ )
 	Return()
 
+AddOption('--no-packs',
+	dest='no_packs',
+	action='store_true',
+	help="don't fetch game packs")
+
 active_configs = []
 
 # load up configurations from the save file
