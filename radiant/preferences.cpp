@@ -3002,7 +3002,7 @@ void PrefsDlg::LoadPrefs(){
 	mLocalPrefs.GetPref( CAMINVERSEMOUSE_KEY,    &m_bCamInverseMouse,    FALSE );
 	mLocalPrefs.GetPref( CAMDISCRETE_KEY,        &m_bCamDiscrete,        TRUE );
 	mLocalPrefs.GetPref( LIGHTDRAW_KEY,          &m_bNewLightDraw,       TRUE );
-	mLocalPrefs.GetPref( CUBICCLIP_KEY,          &m_bCubicClipping,      TRUE );
+	mLocalPrefs.GetPref( CUBICCLIP_KEY,          &m_bCubicClipping,      FALSE );
 	mLocalPrefs.GetPref( CUBICSCALE_KEY,         &m_nCubicScale,         13 );
 	mLocalPrefs.GetPref( ALTEDGE_KEY,            &m_bALTEdge,            FALSE );
 	mLocalPrefs.GetPref( FACECOLORS_KEY,         &m_bFaceColors,         FALSE );
