@@ -313,7 +313,7 @@ class Config:
                 ]:
                 if ( not os.path.exists( lib_archive ) ):
                     print( 'downloading %s' % lib_archive )
-                    archive_web_request = urllib2.urlopen( 'http://gtkradiant.s3-website-us-east-1.amazonaws.com/%s' % lib_archive )
+                    archive_web_request = urllib2.urlopen( 'http://s3.amazonaws.com/GtkRadiant/%s' % lib_archive )
                     archive_File = open( lib_archive, 'wb' )
                     while True:
                         data = archive_web_request.read( 1048576 ) # read 1mb at a time
