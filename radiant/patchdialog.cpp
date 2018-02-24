@@ -723,11 +723,19 @@ void PatchDialog::GetPatchInfo(){
 	if ( m_Patch != NULL ) {
 		gchar buffer[11];
 		int i;
+		GtkListStore *store;
 
 		m_strName = m_Patch->pShader->getName();
 
 		// fill in the numbers for Row / Col selection
 		m_bListenChanged = false;
+
+#if GTK_CHECK_VERSION( 3, 0, 0 )
+		gtk_combo_box_text_remove_all( GTK_COMBO_BOX_TEXT( m_pRowCombo ) );
+#else
+		store = GTK_LIST_STORE( gtk_combo_box_get_model( GTK_COMBO_BOX( m_pRowCombo ) ) );
+		gtk_list_store_clear( store );
+#endif
 
 		for ( i = 0; i < m_Patch->height; i++ )
 		{
