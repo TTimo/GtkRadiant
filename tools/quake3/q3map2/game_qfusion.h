@@ -113,6 +113,12 @@
 	512,                /* lightmap width/height */
 	1.0f,               /* lightmap gamma */
 	1.0f,               /* lightmap compensate */
+	256,                /* minimap size */
+	1.0f,               /* minimap sharpener */
+	0.0f,               /* minimap border */
+	qtrue,              /* minimap keep aspect */
+	MINIMAP_MODE_WHITE, /* minimap mode */
+	"../minimaps/%s.tga", /* minimap name format */
 	"FBSP",             /* bsp file prefix */
 	1,                  /* bsp file version */
 	qfalse,             /* cod-style lump len/ofs order */

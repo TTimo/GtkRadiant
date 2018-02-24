@@ -865,6 +865,14 @@ static int CompareSurfaceInfo( const void *a, const void *b ){
 		return -1;
 	}
 
+	/* 27: then shader! */
+	if ( aInfo->si < bInfo->si ) {
+		return 1;
+	}
+	else if ( aInfo->si > bInfo->si ) {
+		return -1;
+	}
+
 	/* then lightmap sample size */
 	if ( aInfo->sampleSize < bInfo->sampleSize ) {
 		return 1;

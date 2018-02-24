@@ -167,6 +167,7 @@
     <ClCompile Include="image.c" />
     <ClCompile Include="main.c" />
     <ClCompile Include="mesh.c" />
+    <ClCompile Include="minimap.c" />
     <ClCompile Include="model.c" />
     <ClCompile Include="path_init.c" />
     <ClCompile Include="shaders.c" />

@@ -1094,7 +1094,7 @@ static void PopulateWithPicoModel( int castShadows, picoModel_t *model, m4x4_t t
 		if ( shader == NULL ) {
 			continue;
 		}
-		ti.si = ShaderInfoForShader( PicoGetShaderName( shader ) );
+		ti.si = ShaderInfoForShaderNull( PicoGetShaderName( shader ) );
 		if ( ti.si == NULL ) {
 			continue;
 		}

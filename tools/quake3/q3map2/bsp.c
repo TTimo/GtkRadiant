@@ -44,7 +44,6 @@
 
    ------------------------------------------------------------------------------- */
 
-
 /*
    ProcessAdvertisements()
    copies advertisement info into the BSP structures
@@ -842,11 +841,21 @@ int BSPMain( int argc, char **argv ){
 			Sys_Printf( "Debug portal surfaces enabled\n" );
 			debugPortals = qtrue;
 		}
-		else if ( !strcmp( argv[ i ], "-bsp" ) ) {
-			Sys_Printf( "-bsp argument unnecessary\n" );
+		else if ( !strcmp( argv[ i ], "-altsplit" ) )
+		{
+			Sys_Printf( "Alternate BSP splitting (by 27) enabled\n" );
+			bspAlternateSplitWeights = qtrue;
 		}
-		else{
-			Sys_FPrintf( SYS_WRN, "WARNING: Unknown option \"%s\"\n", argv[ i ] );
+		else if ( !strcmp( argv[ i ], "-deep" ) )
+		{
+			Sys_Printf( "Deep BSP tree generation enabled\n" );
+			deepBSP = qtrue;
+		}
+		else if( !strcmp( argv[ i ], "-bsp" ) )
+			Sys_Printf( "-bsp argument unnecessary\n" );
+		else
+		{
+			Sys_Printf( "WARNING: Unknown option \"%s\"\n", argv[ i ] );
 		}
 	}
 

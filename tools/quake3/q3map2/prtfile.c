@@ -64,6 +64,40 @@ void WriteFloat( FILE *f, vec_t v ){
 	}
 }
 
+void CountVisportals_r( node_t *node ){
+	int s;
+	portal_t    *p;
+	winding_t   *w;
+	vec3_t		normal;
+	vec_t		dist;
+
+	// decision node
+	if ( node->planenum != PLANENUM_LEAF ) {
+		CountVisportals_r( node->children[0] );
+		CountVisportals_r( node->children[1] );
+		return;
+	}
+
+	if ( node->opaque ) {
+		return;
+	}
+
+	for ( p = node->portals ; p ; p = p->next[s] )
+	{
+		w = p->winding;
+		s = ( p->nodes[1] == node );
+		if ( w && p->nodes[0] == node ) {
+			if ( !PortalPassable( p ) ) {
+				continue;
+			}
+			if ( p->nodes[0]->cluster == p->nodes[1]->cluster ) {
+				continue;
+			}
+			++num_visportals;
+		}
+	}
+}
+
 /*
    =================
    WritePortalFile_r
@@ -95,6 +129,10 @@ void WritePortalFile_r( node_t *node ){
 			if ( !PortalPassable( p ) ) {
 				continue;
 			}
+			if ( p->nodes[0]->cluster == p->nodes[1]->cluster ) {
+				continue;
+			}
+			--num_visportals;
 			// write out to the file
 
 			// sometimes planes get turned around when they are very near
@@ -111,7 +149,7 @@ void WritePortalFile_r( node_t *node ){
 			}
 
 			/* ydnar: added this change to make antiportals work */
-			if ( p->compileFlags & C_HINT ) {
+			if( p->compileFlags & C_HINT ) {
 				fprintf( pf, "1 " );
 			}
 			else{
@@ -131,6 +169,40 @@ void WritePortalFile_r( node_t *node ){
 		}
 	}
 
+}
+
+void CountSolidFaces_r( node_t *node ){
+	int s;
+	portal_t    *p;
+	winding_t   *w;
+
+	// decision node
+	if ( node->planenum != PLANENUM_LEAF ) {
+		CountSolidFaces_r( node->children[0] );
+		CountSolidFaces_r( node->children[1] );
+		return;
+	}
+
+	if ( node->opaque ) {
+		return;
+	}
+
+	for ( p = node->portals ; p ; p = p->next[s] )
+	{
+		w = p->winding;
+		s = ( p->nodes[1] == node );
+		if ( w ) {
+			if ( PortalPassable( p ) ) {
+				continue;
+			}
+			if ( p->nodes[0]->cluster == p->nodes[1]->cluster ) {
+				continue;
+			}
+			// write out to the file
+
+			++num_solidfaces;
+		}
+	}
 }
 
 /*
@@ -162,6 +234,9 @@ void WriteFaceFile_r( node_t *node ){
 			if ( PortalPassable( p ) ) {
 				continue;
 			}
+			if(p->nodes[0]->cluster == p->nodes[1]->cluster)
+				continue;
+			--num_visportals;
 			// write out to the file
 
 			if ( p->nodes[0] == node ) {
@@ -198,14 +273,26 @@ void WriteFaceFile_r( node_t *node ){
    NumberLeafs_r
    ================
  */
-void NumberLeafs_r( node_t *node ){
+void NumberLeafs_r( node_t *node, int c ){
+#if 0
 	portal_t    *p;
-
+#endif
 	if ( node->planenum != PLANENUM_LEAF ) {
 		// decision node
 		node->cluster = -99;
-		NumberLeafs_r( node->children[0] );
-		NumberLeafs_r( node->children[1] );
+
+		if ( node->has_structural_children ) {
+			NumberLeafs_r( node->children[0], c );
+			NumberLeafs_r( node->children[1], c );
+		}
+		else
+		{
+			if ( c < 0 ) {
+				c = num_visclusters++;
+			}
+			NumberLeafs_r( node->children[0], c );
+			NumberLeafs_r( node->children[1], c );
+		}
 		return;
 	}
 
@@ -217,9 +304,13 @@ void NumberLeafs_r( node_t *node ){
 		return;
 	}
 
-	node->cluster = num_visclusters;
-	num_visclusters++;
+	if ( c < 0 ) {
+		c = num_visclusters++;
+	}
 
+	node->cluster = c;
+
+#if 0
 	// count the portals
 	for ( p = node->portals ; p ; )
 	{
@@ -240,6 +331,7 @@ void NumberLeafs_r( node_t *node ){
 			p = p->next[1];
 		}
 	}
+#endif
 }
 
 
@@ -256,7 +348,9 @@ void NumberClusters( tree_t *tree ) {
 	Sys_FPrintf( SYS_VRB,"--- NumberClusters ---\n" );
 
 	// set the cluster field in every leaf and count the total number of portals
-	NumberLeafs_r( tree->headnode );
+	NumberLeafs_r( tree->headnode, -1 );
+	CountVisportals_r( tree->headnode );
+	CountSolidFaces_r( tree->headnode );
 
 	Sys_FPrintf( SYS_VRB, "%9d visclusters\n", num_visclusters );
 	Sys_FPrintf( SYS_VRB, "%9d visportals\n", num_visportals );

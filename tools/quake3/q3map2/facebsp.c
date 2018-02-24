@@ -88,8 +88,8 @@ static void SelectSplitPlaneNum( node_t *node, face_t *list, int *splitPlaneNum,
 	vec3_t normal;
 	float dist;
 	int planenum;
-
-
+	float sizeBias;
+	
 	/* ydnar: set some defaults */
 	*splitPlaneNum = -1; /* leaf */
 	*compileFlags = 0;
@@ -117,14 +117,14 @@ static void SelectSplitPlaneNum( node_t *node, face_t *list, int *splitPlaneNum,
 	bestValue = -99999;
 	bestSplit = list;
 
-	for ( split = list; split; split = split->next )
-		split->checked = qfalse;
+	// div0: this check causes detail/structural mixes
+	//for( split = list; split; split = split->next )
+	//	split->checked = qfalse;
 
 	for ( split = list; split; split = split->next )
 	{
-		if ( split->checked ) {
-			continue;
-		}
+		//if ( split->checked )
+		//	continue;
 
 		plane = &mapplanes[ split->planenum ];
 		splits = 0;
@@ -134,7 +134,7 @@ static void SelectSplitPlaneNum( node_t *node, face_t *list, int *splitPlaneNum,
 		for ( check = list ; check ; check = check->next ) {
 			if ( check->planenum == split->planenum ) {
 				facing++;
-				check->checked = qtrue; // won't need to test this plane again
+				//check->checked = qtrue;	// won't need to test this plane again
 				continue;
 			}
 			side = WindingOnPlaneSide( check->w, plane->normal, plane->dist );
@@ -148,11 +148,30 @@ static void SelectSplitPlaneNum( node_t *node, face_t *list, int *splitPlaneNum,
 				back++;
 			}
 		}
-		value =  5 * facing - 5 * splits; // - abs(front-back);
-		if ( plane->type < 3 ) {
-			value += 5;       // axial is better
+
+		if(bspAlternateSplitWeights)
+		{
+			// from 27
+
+			//Bigger is better
+			sizeBias=WindingArea(split->w);
+
+			//Base score = 20000 perfectly balanced
+			value = 20000-(abs(front-back));
+			value -= plane->counter;// If we've already used this plane sometime in the past try not to use it again
+			value -= facing ;       // if we're going to have alot of other surfs use this plane, we want to get it in quickly.
+			value -= splits*5;        //more splits = bad
+			value +=  sizeBias*10; //We want a huge score bias based on plane size
 		}
-		value += split->priority;       // prioritize hints higher
+		else
+		{
+			value =  5*facing - 5*splits; // - abs(front-back);
+			if ( plane->type < 3 ) {
+				value+=5;		// axial is better
+			}
+		}
+
+		value += split->priority;		// prioritize hints higher
 
 		if ( value > bestValue ) {
 			bestValue = value;
@@ -168,6 +187,8 @@ static void SelectSplitPlaneNum( node_t *node, face_t *list, int *splitPlaneNum,
 	/* set best split data */
 	*splitPlaneNum = bestSplit->planenum;
 	*compileFlags = bestSplit->compileFlags;
+
+	if (*splitPlaneNum>-1) mapplanes[ *splitPlaneNum ].counter++;
 }
 
 
@@ -215,6 +236,7 @@ void BuildFaceTree_r( node_t *node, face_t *list ){
 	/* if we don't have any more faces, this is a node */
 	if ( splitPlaneNum == -1 ) {
 		node->planenum = PLANENUM_LEAF;
+		node->has_structural_children = qfalse;
 		c_faceLeafs++;
 		return;
 	}
@@ -222,9 +244,12 @@ void BuildFaceTree_r( node_t *node, face_t *list ){
 	/* partition the list */
 	node->planenum = splitPlaneNum;
 	node->compileFlags = compileFlags;
+	node->has_structural_children = !(compileFlags & C_DETAIL) && !node->opaque;
 	plane = &mapplanes[ splitPlaneNum ];
 	childLists[0] = NULL;
 	childLists[1] = NULL;
+
+	qboolean isstruct = 0;
 	for ( split = list; split; split = next )
 	{
 		/* set next */
@@ -235,6 +260,9 @@ void BuildFaceTree_r( node_t *node, face_t *list ){
 			FreeBspFace( split );
 			continue;
 		}
+
+		if(!(split->compileFlags & C_DETAIL))
+			isstruct = 1;
 
 		/* determine which side the face falls on */
 		side = WindingOnPlaneSide( split->w, plane->normal, plane->dist );
@@ -292,6 +320,7 @@ void BuildFaceTree_r( node_t *node, face_t *list ){
 
 	for ( i = 0 ; i < 2 ; i++ ) {
 		BuildFaceTree_r( node->children[i], childLists[i] );
+		node->has_structural_children |= node->children[i]->has_structural_children;
 	}
 }
 
@@ -324,6 +353,11 @@ tree_t *FaceBSP( face_t *list ) {
 	}
 	Sys_FPrintf( SYS_VRB, "%9d faces\n", count );
 
+	for ( i = 0; i < nummapplanes; i++ )
+	{
+		mapplanes[ i ].counter = 0;
+	}
+
 	tree->headnode = AllocNode();
 	VectorCopy( tree->mins, tree->headnode->mins );
 	VectorCopy( tree->maxs, tree->headnode->maxs );
@@ -354,7 +388,7 @@ face_t *MakeStructuralBSPFaceList( brush_t *list ){
 	flist = NULL;
 	for ( b = list; b != NULL; b = b->next )
 	{
-		if ( b->detail ) {
+		if ( !deepBSP && b->detail ) {
 			continue;
 		}
 
@@ -377,6 +411,9 @@ face_t *MakeStructuralBSPFaceList( brush_t *list ){
 			f->w = CopyWinding( w );
 			f->planenum = s->planenum & ~1;
 			f->compileFlags = s->compileFlags;  /* ydnar */
+			if ( b->detail ) {
+				f->compileFlags |= C_DETAIL;
+			}
 
 			/* ydnar: set priority */
 			f->priority = 0;
@@ -388,6 +425,9 @@ face_t *MakeStructuralBSPFaceList( brush_t *list ){
 			}
 			if ( f->compileFlags & C_AREAPORTAL ) {
 				f->priority += AREAPORTAL_PRIORITY;
+			}
+			if ( f->compileFlags & C_DETAIL ) {
+				f->priority += DETAIL_PRIORITY;
 			}
 
 			/* get next face */
@@ -417,7 +457,7 @@ face_t *MakeVisibleBSPFaceList( brush_t *list ){
 	flist = NULL;
 	for ( b = list; b != NULL; b = b->next )
 	{
-		if ( b->detail ) {
+		if ( !deepBSP && b->detail ) {
 			continue;
 		}
 
@@ -440,6 +480,9 @@ face_t *MakeVisibleBSPFaceList( brush_t *list ){
 			f->w = CopyWinding( w );
 			f->planenum = s->planenum & ~1;
 			f->compileFlags = s->compileFlags;  /* ydnar */
+			if ( b->detail ) {
+				f->compileFlags |= C_DETAIL;
+			}
 
 			/* ydnar: set priority */
 			f->priority = 0;
@@ -451,6 +494,9 @@ face_t *MakeVisibleBSPFaceList( brush_t *list ){
 			}
 			if ( f->compileFlags & C_AREAPORTAL ) {
 				f->priority += AREAPORTAL_PRIORITY;
+			}
+			if ( f->compileFlags & C_DETAIL ) {
+				f->priority += DETAIL_PRIORITY;
 			}
 
 			/* get next face */

@@ -1169,6 +1169,26 @@ void WriteTGA( const char *filename, byte *data, int width, int height ) {
 	free( buffer );
 }
 
+void WriteTGAGray( const char *filename, byte *data, int width, int height ) {
+	byte buffer[18];
+	int i;
+	int c;
+	FILE *f;
+
+	memset( buffer, 0, 18 );
+	buffer[2] = 3;      // uncompressed type
+	buffer[12] = width & 255;
+	buffer[13] = width >> 8;
+	buffer[14] = height & 255;
+	buffer[15] = height >> 8;
+	buffer[16] = 8; // pixel size
+
+	f = fopen( filename, "wb" );
+	fwrite( buffer, 1, 18, f );
+	fwrite( data, 1, width * height, f );
+	fclose( f );
+}
+
 /*
    ============================================================================
 

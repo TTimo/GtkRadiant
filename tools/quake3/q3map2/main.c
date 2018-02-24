@@ -248,6 +248,11 @@ int main( int argc, char **argv ){
 		r = ConvertBSPMain( argc - 1, argv + 1 );
 	}
 
+	/* div0: minimap */
+	else if ( !strcmp( argv[ 1 ], "-minimap" ) ) {
+		r = MiniMapBSPMain( argc - 1, argv + 1 );
+	}
+
 	/* ydnar: otherwise create a bsp */
 	else{
 		r = BSPMain( argc, argv );
