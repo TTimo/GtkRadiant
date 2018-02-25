@@ -3616,7 +3616,7 @@ int DoLightIntensityDlg( int *intensity ){
 	gtk_container_set_border_width( GTK_CONTAINER( hbox ), 5 );
 	gtk_widget_show( hbox );
 
-	adj = GTK_ADJUSTMENT( gtk_adjustment_new( *intensity, 0, G_MAXINT, 1, 10, 0 ) );
+	adj = GTK_ADJUSTMENT( gtk_adjustment_new( *intensity, G_MININT, G_MAXINT, 1, 10, 0 ) );
 	spinbutton = gtk_spin_button_new( GTK_ADJUSTMENT( adj ), 1, 0 );
 	gtk_box_pack_start( GTK_BOX( hbox ), spinbutton, TRUE, TRUE, 0 );
 	gtk_spin_button_set_wrap( GTK_SPIN_BUTTON( spinbutton ), FALSE );
