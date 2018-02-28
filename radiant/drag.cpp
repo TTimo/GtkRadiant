@@ -470,7 +470,7 @@ void Drag_Begin( int x, int y, int buttons,
 		if ( t.brush ) {
 			if ( t.brush->brush_faces->texdef.GetName()[0] == '(' ) {
 				if ( t.brush->owner->eclass->nShowFlags & ECLASS_LIGHT ) {
-					CString strBuff;
+					Str strBuff;
 					qtexture_t* pTex = g_qeglobals.d_texturewin.pShader->getTexture();
 					if ( pTex ) {
 						vec3_t vColor;
