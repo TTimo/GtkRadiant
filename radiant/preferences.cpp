@@ -2099,7 +2099,7 @@ void PrefsDlg::BuildDialog(){
 		gtk_combo_box_text_append_text( GTK_COMBO_BOX_TEXT( combo ), (const char *)lst->data );
 	}
 	g_list_free( combo_list );
-	
+
 	check = gtk_check_button_new_with_label( _( "Use Fixed Texture Size" ) );
 	gtk_box_pack_start( GTK_BOX( vbox ), check, FALSE, FALSE, 0 );
 	gtk_widget_show( check );
@@ -2109,7 +2109,7 @@ void PrefsDlg::BuildDialog(){
 	gtk_box_pack_start( GTK_BOX( vbox ), hbox2, FALSE, FALSE, 0 );
 	gtk_widget_show( hbox2 );
 
-	ftw_label = label = gtk_label_new( _( "Fixed Texture Wdith" ) );
+	ftw_label = label = gtk_label_new( _( "Fixed Texture Width" ) );
 	gtk_box_pack_start( GTK_BOX( hbox2 ), label, FALSE, FALSE, 0 );
 	gtk_misc_set_alignment( GTK_MISC( label ), 0.0, 0.0 );
 	gtk_widget_show( label );
@@ -2658,7 +2658,7 @@ void PrefsDlg::BuildDialog(){
 	gtk_widget_show( check );
 	g_object_set_data( G_OBJECT( dialog ), "check_caulkbrush", check );
 	AddDialogData( check, &m_bCaulkNewBrushes, DLG_CHECK_BOOL );
-	
+
 	// Add the page to the notebook
 	page_index = gtk_notebook_append_page( GTK_NOTEBOOK( notebook ), pageframe, preflabel );
 	assert( page_index == PTAB_BRUSH );
@@ -3042,7 +3042,7 @@ void PrefsDlg::LoadPrefs(){
 	mLocalPrefs.GetPref( LOADSHADERS_KEY,        &m_nLatchedShader,                     0 );
 	m_nShader = m_nLatchedShader;
 
-	
+
 	mLocalPrefs.GetPref( FIXEDTEXSIZE_KEY,       &m_bFixedTextureSize,          FALSE );
 	mLocalPrefs.GetPref( FIXEDTEXSIZEWIDTH_KEY,  &m_nFixedTextureSizeWidth,     64 );
 	mLocalPrefs.GetPref( FIXEDTEXSIZEHEIGHT_KEY, &m_nFixedTextureSizeHeight,    64 );
