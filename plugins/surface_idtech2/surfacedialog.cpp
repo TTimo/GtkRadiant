@@ -300,6 +300,10 @@ static void PopulateTextureComboList(){
 	}
 	g_list_free( items );
 
+	// If the texture name is not conflicting for the faces list, select the newly added item
+	if ( !is_TextureName_conflicting ) {
+		gtk_combo_box_set_active( GTK_COMBO_BOX( texture_combo ), 0);
+	}
 }
 
 static void GetTexdefInfo_from_Radiant(){
