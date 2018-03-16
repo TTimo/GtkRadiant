@@ -1122,7 +1122,7 @@ static void on_hscale_step_spinbutton_value_changed( GtkSpinButton *spinbutton, 
 	l_pIncrement = Get_SI_Inc();
 
 #ifdef DBG_SI
-	Sys_Printf( "OnIncrementChanged HShift\n" );
+	Sys_Printf( "OnIncrementChanged HScale\n" );
 #endif
 
 	val = gtk_spin_button_get_value( GTK_SPIN_BUTTON( hscale_step_spinbutton ) ) ;
@@ -1142,7 +1142,7 @@ static void on_vscale_step_spinbutton_value_changed( GtkSpinButton *spinbutton, 
 	l_pIncrement = Get_SI_Inc();
 
 #ifdef DBG_SI
-	Sys_Printf( "OnIncrementChanged HShift\n" );
+	Sys_Printf( "OnIncrementChanged VScale\n" );
 #endif
 
 	val = gtk_spin_button_get_value( GTK_SPIN_BUTTON( vscale_step_spinbutton ) ) ;
@@ -1162,7 +1162,7 @@ static void on_rotate_step_spinbutton_value_changed( GtkSpinButton *spinbutton, 
 	l_pIncrement = Get_SI_Inc();
 
 #ifdef DBG_SI
-	Sys_Printf( "OnIncrementChanged HShift\n" );
+	Sys_Printf( "OnIncrementChanged Rotate\n" );
 #endif
 
 	val = gtk_spin_button_get_value( GTK_SPIN_BUTTON( rotate_step_spinbutton ) ) ;
