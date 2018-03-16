@@ -478,6 +478,9 @@ void BuildDialog(){
  */
 
 void SetTexMods(){
+	texdef_t *pt;
+	GtkSpinButton *spin;
+	GtkAdjustment *adjust;
 
 	texturewin = Texturewin();
 	l_pIncrement = Get_SI_Inc();
@@ -490,23 +493,48 @@ void SetTexMods(){
 		return;
 	}
 
+	pt = &texturewin->texdef;
+
 	g_bListenChanged = FALSE;
 
 	if ( strncmp( texturewin->texdef.GetName(), "textures/", 9 ) != 0 ) {
 		texdef_SI_values.SetName( SHADER_NOT_FOUND );
 	}
 
-	gtk_spin_button_set_increments( GTK_SPIN_BUTTON( hshift_value_spinbutton ), l_pIncrement->shift[0], l_pIncrement->shift[0] );
-	gtk_spin_button_set_increments( GTK_SPIN_BUTTON( vshift_value_spinbutton ), l_pIncrement->shift[1], l_pIncrement->shift[1] );
-	gtk_spin_button_set_increments( GTK_SPIN_BUTTON( hscale_value_spinbutton ), l_pIncrement->scale[0], l_pIncrement->scale[0] );
-	gtk_spin_button_set_increments( GTK_SPIN_BUTTON( vscale_value_spinbutton ), l_pIncrement->scale[1], l_pIncrement->scale[1] );
-	gtk_spin_button_set_increments( GTK_SPIN_BUTTON( rotate_value_spinbutton ), l_pIncrement->rotate, l_pIncrement->rotate );
+	spin = GTK_SPIN_BUTTON( hshift_value_spinbutton );
+	adjust = gtk_spin_button_get_adjustment( GTK_SPIN_BUTTON( spin ) );
+	gtk_adjustment_set_step_increment( adjust, l_pIncrement->shift[0] );
+	spin = GTK_SPIN_BUTTON( hshift_step_spinbutton );
+	gtk_spin_button_set_value( spin, l_pIncrement->shift[0] );
+	gtk_spin_button_set_increments( spin, l_pIncrement->shift[0], l_pIncrement->shift[0] );
 
-	gtk_spin_button_set_value( GTK_SPIN_BUTTON( hshift_step_spinbutton ), l_pIncrement->shift[0] );
-	gtk_spin_button_set_value( GTK_SPIN_BUTTON( vshift_step_spinbutton ), l_pIncrement->shift[1] );
-	gtk_spin_button_set_value( GTK_SPIN_BUTTON( hscale_step_spinbutton ), l_pIncrement->scale[0] );
-	gtk_spin_button_set_value( GTK_SPIN_BUTTON( vscale_step_spinbutton ), l_pIncrement->scale[1] );
-	gtk_spin_button_set_value( GTK_SPIN_BUTTON( rotate_step_spinbutton ), l_pIncrement->rotate );
+	spin = GTK_SPIN_BUTTON( vshift_value_spinbutton );
+	adjust = gtk_spin_button_get_adjustment( GTK_SPIN_BUTTON( spin ) );
+	gtk_adjustment_set_step_increment( adjust, l_pIncrement->shift[1] );
+	spin = GTK_SPIN_BUTTON( vshift_step_spinbutton );
+	gtk_spin_button_set_value( spin, l_pIncrement->shift[1] );
+	gtk_spin_button_set_increments( spin, l_pIncrement->shift[1], l_pIncrement->shift[1] );
+
+	spin = GTK_SPIN_BUTTON( hscale_value_spinbutton );
+	adjust = gtk_spin_button_get_adjustment( GTK_SPIN_BUTTON( spin ) );
+	gtk_adjustment_set_step_increment( adjust, l_pIncrement->scale[0] );
+	spin = GTK_SPIN_BUTTON( hscale_step_spinbutton );
+	gtk_spin_button_set_value( spin, l_pIncrement->scale[0] );
+	gtk_spin_button_set_increments( spin, l_pIncrement->scale[0], l_pIncrement->scale[0] );
+
+	spin = GTK_SPIN_BUTTON( vscale_value_spinbutton );
+	adjust = gtk_spin_button_get_adjustment( GTK_SPIN_BUTTON( spin ) );
+	gtk_adjustment_set_step_increment( adjust, l_pIncrement->scale[1] );
+	spin = GTK_SPIN_BUTTON( vscale_step_spinbutton );
+	gtk_spin_button_set_value( spin, l_pIncrement->scale[1] );
+	gtk_spin_button_set_increments( spin, l_pIncrement->scale[1], l_pIncrement->scale[1] );
+
+	spin = GTK_SPIN_BUTTON( rotate_value_spinbutton );
+	adjust = gtk_spin_button_get_adjustment( GTK_SPIN_BUTTON( spin ) );
+	gtk_adjustment_set_step_increment( adjust, l_pIncrement->rotate );
+	spin = GTK_SPIN_BUTTON( rotate_step_spinbutton );
+	gtk_spin_button_set_value( spin, l_pIncrement->rotate );
+	gtk_spin_button_set_increments( spin, l_pIncrement->rotate, l_pIncrement->rotate );
 
 	g_bListenChanged = TRUE;
 }
