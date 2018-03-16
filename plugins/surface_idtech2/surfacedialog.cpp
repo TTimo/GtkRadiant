@@ -455,12 +455,12 @@ void HideDlg(){
 // set default values for increments (shift scale and rot)
 // this is called by the prefs code if can't find the values
 void InitDefaultIncrement( texdef_t *tex ){
-	tex->SetName( "foo" );
+	tex->SetName( "" );
 	tex->shift[0] = 8;
 	tex->shift[1] = 8;
-	tex->scale[0] = 0.25;
-	tex->scale[1] = 0.25;
-	tex->rotate = 10;
+	tex->scale[0] = 0.125;
+	tex->scale[1] = 0.125;
+	tex->rotate = 5;
 }
 
 void BuildDialog(){
