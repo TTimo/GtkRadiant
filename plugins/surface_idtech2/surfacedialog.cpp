@@ -499,7 +499,7 @@ void SetTexMods(){
 	gtk_spin_button_set_increments( GTK_SPIN_BUTTON( hshift_value_spinbutton ), l_pIncrement->shift[0], l_pIncrement->shift[0] );
 	gtk_spin_button_set_increments( GTK_SPIN_BUTTON( vshift_value_spinbutton ), l_pIncrement->shift[1], l_pIncrement->shift[1] );
 	gtk_spin_button_set_increments( GTK_SPIN_BUTTON( hscale_value_spinbutton ), l_pIncrement->scale[0], l_pIncrement->scale[0] );
-	gtk_spin_button_set_increments( GTK_SPIN_BUTTON( vscale_value_spinbutton ), l_pIncrement->scale[1], l_pIncrement->scale[0] );
+	gtk_spin_button_set_increments( GTK_SPIN_BUTTON( vscale_value_spinbutton ), l_pIncrement->scale[1], l_pIncrement->scale[1] );
 	gtk_spin_button_set_increments( GTK_SPIN_BUTTON( rotate_value_spinbutton ), l_pIncrement->rotate, l_pIncrement->rotate );
 
 	gtk_spin_button_set_value( GTK_SPIN_BUTTON( hshift_step_spinbutton ), l_pIncrement->shift[0] );
