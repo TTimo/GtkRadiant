@@ -357,10 +357,10 @@ void DoSnapTToGrid( float hscale, float vscale ){
 	l_pIncrement = Get_SI_Inc();
 
 	if ( hscale == 0.0f ) {
-		hscale = 0.25f;
+		hscale = l_pIncrement->scale[0];
 	}
 	if ( vscale == 0.0f ) {
-		vscale = 0.25f;
+		vscale = l_pIncrement->scale[1];
 	}
 #ifdef _DEBUG
 	Sys_Printf( "DoSnapToGrid: grid %g hscale %g vscale %g\n", GridSize(), hscale, vscale );
