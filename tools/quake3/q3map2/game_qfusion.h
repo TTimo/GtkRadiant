@@ -112,6 +112,7 @@
 	qfalse,             /* wolf lighting model? */
 	512,                /* lightmap width/height */
 	1.0f,               /* lightmap gamma */
+	0.0f,               /* lightmap exposure */
 	1.0f,               /* lightmap compensate */
 	256,                /* minimap size */
 	1.0f,               /* minimap sharpener */

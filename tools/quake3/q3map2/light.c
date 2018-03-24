@@ -978,7 +978,7 @@ int LightContributionToSample( trace_t *trace ){
 
 		/* return to sender */
 		return 1;
-	} 
+	}
 	else {
 		Error( "Light of undefined type!" );
 	}
@@ -1442,6 +1442,54 @@ void TraceGrid( int num ){
 		}
 	}
 
+	/////// Floodlighting for point //////////////////
+	//do our floodlight ambient occlusion loop, and add a single contribution based on the brightest dir
+	if ( floodlighty ) {
+		int q;
+		float addSize,f;
+		vec3_t col,dir;
+		col[0] = col[1] = col[2] = floodlightIntensity;
+		dir[0] = dir[1] = 0;
+		dir[2] = 1;
+
+		trace.testOcclusion = qtrue;
+		trace.forceSunlight = qfalse;
+		trace.inhibitRadius = DEFAULT_INHIBIT_RADIUS;
+		trace.testAll = qtrue;
+
+		for ( q = 0; q < 2; q++ )
+		{
+			if ( q == 0 ) { //upper hemisphere
+				trace.normal[0] = 0;
+				trace.normal[1] = 0;
+				trace.normal[2] = 1;
+			}
+			else //lower hemisphere
+			{
+				trace.normal[0] = 0;
+				trace.normal[1] = 0;
+				trace.normal[2] = -1;
+			}
+
+			f = FloodLightForSample( &trace );
+
+			contributions[ numCon ].color[0] = col[0] * f;
+			contributions[ numCon ].color[1] = col[1] * f;
+			contributions[ numCon ].color[2] = col[2] * f;
+
+			contributions[ numCon ].dir[0] = dir[0];
+			contributions[ numCon ].dir[1] = dir[1];
+			contributions[ numCon ].dir[2] = dir[2];
+
+			contributions[ numCon ].style = 0;
+			numCon++;
+			/* push average direction around */
+			addSize = VectorLength( col );
+			VectorMA( gp->dir, addSize, dir, gp->dir );
+		}
+	}
+	/////////////////////
+
 	/* normalize to get primary light direction */
 	VectorNormalize( gp->dir, gp->dir );
 
@@ -1725,6 +1773,11 @@ void LightWorld( void ){
 		RunThreadsOnIndividual( numRawLightmaps, qtrue, DirtyRawLightmap );
 	}
 
+	/* floodlight them up */
+	if ( floodlighty ) {
+		Sys_Printf( "--- FloodlightRawLightmap ---\n" );
+		RunThreadsOnIndividual( numRawLightmaps, qtrue, FloodLightRawLightmap );
+	}
 
 	/* ydnar: set up light envelopes */
 	SetupEnvelopes( qfalse, fast );
@@ -1767,6 +1820,7 @@ void LightWorld( void ){
 		/* flag bouncing */
 		bouncing = qtrue;
 		VectorClear( ambientColor );
+		floodlighty = qfalse;
 
 		/* generate diffuse lights */
 		RadFreeLights();
@@ -1891,6 +1945,13 @@ int LightMain( int argc, char **argv ){
 			f = atof( argv[ i + 1 ] );
 			lightmapGamma = f;
 			Sys_Printf( "Lighting gamma set to %f\n", lightmapGamma );
+			i++;
+		}
+
+		else if ( !strcmp( argv[ i ], "-exposure" ) ) {
+			f = atof( argv[ i + 1 ] );
+			lightmapExposure = f;
+			Sys_Printf( "Lighting exposure set to %f\n", lightmapExposure );
 			i++;
 		}
 
@@ -2204,6 +2265,18 @@ int LightMain( int argc, char **argv ){
 			cpmaHack = qtrue;
 			Sys_Printf( "Enabling Challenge Pro Mode Asstacular Vertex Lighting Mode (tm)\n" );
 		}
+		else if ( !strcmp( argv[ i ], "-floodlight" ) ) {
+			floodlighty = qtrue;
+			Sys_Printf( "FloodLighting enabled\n" );
+		}
+		else if ( !strcmp( argv[ i ], "-debugnormals" ) ) {
+			debugnormals = qtrue;
+			Sys_Printf( "DebugNormals enabled\n" );
+		}
+		else if ( !strcmp( argv[ i ], "-lowquality" ) ) {
+			floodlight_lowquality = qtrue;
+			Sys_Printf( "Low Quality FloodLighting enabled\n" );
+		}
 
 		/* r7: dirtmapping */
 		else if ( !strcmp( argv[ i ], "-dirty" ) ) {
@@ -2294,6 +2367,7 @@ int LightMain( int argc, char **argv ){
 	/* ydnar: set up optimization */
 	SetupBrushes();
 	SetupDirt();
+	SetupFloodLight();
 	SetupSurfaceLightmaps();
 
 	/* initialize the surface facet tracing */

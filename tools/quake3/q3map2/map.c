@@ -239,7 +239,7 @@ qboolean SnapNormal( vec3_t normal ){
    snaps a plane to normal/distance epsilons
  */
 
-void SnapPlane( vec3_t normal, vec_t *dist ){
+void SnapPlane( vec3_t normal, vec_t *dist, vec3_t center ){
 // SnapPlane disabled by LordHavoc because it often messes up collision
 // brushes made from triangles of embedded models, and it has little effect
 // on anything else (axial planes are usually derived from snapped points)
@@ -315,7 +315,7 @@ void SnapPlaneImproved( vec3_t normal, vec_t *dist, int numPoints, const vec3_t 
    must be within an epsilon distance of the plane
  */
 
-int FindFloatPlane( vec3_t normal, vec_t dist, int numPoints, vec3_t *points )
+int FindFloatPlane( vec3_t normal, vec_t dist, int numPoints, vec3_t *points ) // NOTE: this has a side effect on the normal. Good or bad?
 
 #ifdef USE_HASHING
 
@@ -323,7 +323,6 @@ int FindFloatPlane( vec3_t normal, vec_t dist, int numPoints, vec3_t *points )
 	int i, j, hash, h;
 	plane_t *p;
 	vec_t d;
-
 
 #if Q3MAP2_EXPERIMENTAL_SNAP_PLANE_FIX
 	SnapPlaneImproved( normal, &dist, numPoints, (const vec3_t *) points );

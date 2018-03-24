@@ -225,6 +225,8 @@ void InsertModel( char *name, int frame, m4x4_t transform, remap_t *remap, shade
 	byte                *color;
 	picoIndex_t         *indexes;
 	remap_t             *rm, *glob;
+	double normalEpsilon_save;
+	double distanceEpsilon_save;
 
 
 	/* get model */
@@ -415,9 +417,8 @@ void InsertModel( char *name, int frame, m4x4_t transform, remap_t *remap, shade
 
 		/* ydnar: giant hack land: generate clipping brushes for model triangles */
 		if ( si->clipModel || ( spawnFlags & 2 ) ) { /* 2nd bit */
-			vec3_t points[ 3 ], backs[ 3 ];
+			vec3_t points[ 4 ], backs[ 3 ];
 			vec4_t plane, reverse, pa, pb, pc;
-			vec3_t nadir;
 
 
 			/* temp hack */
@@ -458,8 +459,8 @@ void InsertModel( char *name, int frame, m4x4_t transform, remap_t *remap, shade
 					/* note: this doesn't work as well as simply using the plane of the triangle, below */
 					for ( k = 0; k < 3; k++ )
 					{
-						if ( fabs( dv->normal[ k ] ) > fabs( dv->normal[ ( k + 1 ) % 3 ] ) &&
-							 fabs( dv->normal[ k ] ) > fabs( dv->normal[ ( k + 2 ) % 3 ] ) ) {
+						if ( fabs( dv->normal[ k ] ) >= fabs( dv->normal[ ( k + 1 ) % 3 ] ) &&
+							 fabs( dv->normal[ k ] ) >= fabs( dv->normal[ ( k + 2 ) % 3 ] ) ) {
 							backs[ j ][ k ] += dv->normal[ k ] < 0.0f ? 64.0f : -64.0f;
 							break;
 						}
@@ -467,85 +468,136 @@ void InsertModel( char *name, int frame, m4x4_t transform, remap_t *remap, shade
 #endif
 				}
 
+				VectorCopy( points[0], points[3] ); // for cyclic usage
+
 				/* make plane for triangle */
+				// div0: add some extra spawnflags:
+				//   0: snap normals to axial planes for extrusion
+				//   8: extrude with the original normals
+				//  16: extrude only with up/down normals (ideal for terrain)
+				//  24: extrude by distance zero (may need engine changes)
 				if ( PlaneFromPoints( plane, points[ 0 ], points[ 1 ], points[ 2 ] ) ) {
+					vec3_t bestNormal;
+					float backPlaneDistance = 2;
+
+					if ( spawnFlags & 8 ) { // use a DOWN normal
+						if ( spawnFlags & 16 ) {
+							// 24: normal as is, and zero width (broken)
+							VectorCopy( plane, bestNormal );
+						}
+						else
+						{
+							// 8: normal as is
+							VectorCopy( plane, bestNormal );
+						}
+					}
+					else
+					{
+						if ( spawnFlags & 16 ) {
+							// 16: UP/DOWN normal
+							VectorSet( bestNormal, 0, 0, ( plane[2] >= 0 ? 1 : -1 ) );
+						}
+						else
+						{
+							// 0: axial normal
+							if ( fabs( plane[0] ) > fabs( plane[1] ) ) { // x>y
+								if ( fabs( plane[1] ) > fabs( plane[2] ) ) { // x>y, y>z
+									VectorSet( bestNormal, ( plane[0] >= 0 ? 1 : -1 ), 0, 0 );
+								}
+								else // x>y, z>=y
+								if ( fabs( plane[0] ) > fabs( plane[2] ) ) { // x>z, z>=y
+									VectorSet( bestNormal, ( plane[0] >= 0 ? 1 : -1 ), 0, 0 );
+								}
+								else{    // z>=x, x>y
+									VectorSet( bestNormal, 0, 0, ( plane[2] >= 0 ? 1 : -1 ) );
+								}
+							}
+							else // y>=x
+							if ( fabs( plane[1] ) > fabs( plane[2] ) ) { // y>z, y>=x
+								VectorSet( bestNormal, 0, ( plane[1] >= 0 ? 1 : -1 ), 0 );
+							}
+							else{    // z>=y, y>=x
+								VectorSet( bestNormal, 0, 0, ( plane[2] >= 0 ? 1 : -1 ) );
+							}
+						}
+					}
+
+					/* build a brush */
+					buildBrush = AllocBrush( 48 );
+					buildBrush->entityNum = mapEntityNum;
+					buildBrush->original = buildBrush;
+					buildBrush->contentShader = si;
+					buildBrush->compileFlags = si->compileFlags;
+					buildBrush->contentFlags = si->contentFlags;
+					normalEpsilon_save = normalEpsilon;
+					distanceEpsilon_save = distanceEpsilon;
+					if ( si->compileFlags & C_STRUCTURAL ) { // allow forced structural brushes here
+						buildBrush->detail = qfalse;
+
+						// only allow EXACT matches when snapping for these (this is mostly for caulk brushes inside a model)
+						if ( normalEpsilon > 0 ) {
+							normalEpsilon = 0;
+						}
+						if ( distanceEpsilon > 0 ) {
+							distanceEpsilon = 0;
+						}
+					}
+					else{
+						buildBrush->detail = qtrue;
+					}
+
 					/* regenerate back points */
 					for ( j = 0; j < 3; j++ )
 					{
 						/* get vertex */
 						dv = &ds->verts[ ds->indexes[ i + j ] ];
 
-						/* copy xyz */
-						VectorCopy( dv->xyz, backs[ j ] );
-
-						/* find nearest axial to plane normal and push back points opposite */
-						for ( k = 0; k < 3; k++ )
-						{
-#if Q3MAP2_EXPERIMENTAL_MODEL_CLIPPING_FIX
-							if ( fabs( plane[ k ] ) >= fabs( plane[ ( k + 1 ) % 3 ] ) &&
-								 fabs( plane[ k ] ) >= fabs( plane[ ( k + 2 ) % 3 ] ) )
-#else
-							// This code is broken for 45 degree angles where there
-							// is no clear winner.
-							if ( fabs( plane[ k ] ) > fabs( plane[ ( k + 1 ) % 3 ] ) &&
-								 fabs( plane[ k ] ) > fabs( plane[ ( k + 2 ) % 3 ] ) )
-#endif
-							{
-								backs[ j ][ k ] += plane[ k ] < 0.0f ? 64.0f : -64.0f;
-								break;
-							}
-						}
+						// shift by some units
+						VectorMA( dv->xyz, -64.0f, bestNormal, backs[j] ); // 64 prevents roundoff errors a bit
 					}
 
 					/* make back plane */
 					VectorScale( plane, -1.0f, reverse );
-					reverse[ 3 ] = -( plane[ 3 ] - 1 );
-
-					/* make back pyramid point */
-					VectorCopy( points[ 0 ], nadir );
-					VectorAdd( nadir, points[ 1 ], nadir );
-					VectorAdd( nadir, points[ 2 ], nadir );
-					VectorScale( nadir, 0.3333333333333f, nadir );
-					VectorMA( nadir, -2.0f, plane, nadir );
-
-					/* make 3 more planes */
-					//%	if( PlaneFromPoints( pa, points[ 2 ], points[ 1 ], nadir ) &&
-					//%		PlaneFromPoints( pb, points[ 1 ], points[ 0 ], nadir ) &&
-					//%		PlaneFromPoints( pc, points[ 0 ], points[ 2 ], nadir ) )
+					reverse[ 3 ] = -plane[ 3 ];
+					if ( ( spawnFlags & 24 ) != 24 ) {
+						reverse[3] += DotProduct( bestNormal, plane ) * backPlaneDistance;
+					}
+					// that's at least sqrt(1/3) backPlaneDistance, unless in DOWN mode; in DOWN mode, we are screwed anyway if we encounter a plane that's perpendicular to the xy plane)
 					if ( PlaneFromPoints( pa, points[ 2 ], points[ 1 ], backs[ 1 ] ) &&
 						 PlaneFromPoints( pb, points[ 1 ], points[ 0 ], backs[ 0 ] ) &&
 						 PlaneFromPoints( pc, points[ 0 ], points[ 2 ], backs[ 2 ] ) ) {
-						/* build a brush */
-						buildBrush = AllocBrush( 48 );
-
-						buildBrush->entityNum = mapEntityNum;
-						buildBrush->original = buildBrush;
-						buildBrush->contentShader = si;
-						buildBrush->compileFlags = si->compileFlags;
-						buildBrush->contentFlags = si->contentFlags;
-						buildBrush->detail = qtrue;
 
 						/* set up brush sides */
 						buildBrush->numsides = 5;
 						for ( j = 0; j < buildBrush->numsides; j++ )
 							buildBrush->sides[ j ].shaderInfo = si;
-						buildBrush->sides[ 0 ].planenum = FindFloatPlane( plane, plane[ 3 ], 3, points );
-						buildBrush->sides[ 1 ].planenum = FindFloatPlane( pa, pa[ 3 ], 1, &points[ 2 ] );
-						buildBrush->sides[ 2 ].planenum = FindFloatPlane( pb, pb[ 3 ], 1, &points[ 1 ] );
-						buildBrush->sides[ 3 ].planenum = FindFloatPlane( pc, pc[ 3 ], 1, &points[ 0 ] );
-						buildBrush->sides[ 4 ].planenum = FindFloatPlane( reverse, reverse[ 3 ], 3, points );
 
-						/* add to entity */
-						if ( CreateBrushWindings( buildBrush ) ) {
-							AddBrushBevels();
-							//%	EmitBrushes( buildBrush, NULL, NULL );
-							buildBrush->next = entities[ mapEntityNum ].brushes;
-							entities[ mapEntityNum ].brushes = buildBrush;
-							entities[ mapEntityNum ].numBrushes++;
-						}
-						else{
-							free( buildBrush );
-						}
+						buildBrush->sides[ 0 ].planenum = FindFloatPlane( plane, plane[ 3 ], 3, points );
+						buildBrush->sides[ 0 ].planenum = FindFloatPlane( plane, plane[ 3 ], 3, points );
+						buildBrush->sides[ 1 ].planenum = FindFloatPlane( pa, pa[ 3 ], 2, &points[ 1 ] ); // pa contains points[1] and points[2]
+						buildBrush->sides[ 2 ].planenum = FindFloatPlane( pb, pb[ 3 ], 2, &points[ 0 ] ); // pb contains points[0] and points[1]
+						buildBrush->sides[ 3 ].planenum = FindFloatPlane( pc, pc[ 3 ], 2, &points[ 2 ] ); // pc contains points[2] and points[0] (copied to points[3]
+						buildBrush->sides[ 4 ].planenum = FindFloatPlane( reverse, reverse[ 3 ], 3, backs );
+					}
+					else
+					{
+						free( buildBrush );
+						continue;
+					}
+
+					normalEpsilon = normalEpsilon_save;
+					distanceEpsilon = distanceEpsilon_save;
+
+					/* add to entity */
+					if ( CreateBrushWindings( buildBrush ) ) {
+						AddBrushBevels();
+						//%	EmitBrushes( buildBrush, NULL, NULL );
+						buildBrush->next = entities[ mapEntityNum ].brushes;
+						entities[ mapEntityNum ].brushes = buildBrush;
+						entities[ mapEntityNum ].numBrushes++;
+					}
+					else{
+						free( buildBrush );
 					}
 				}
 			}
