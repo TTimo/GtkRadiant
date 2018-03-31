@@ -5687,7 +5687,7 @@ void MainFrame::OnToggleDetail(){
 		Sys_Printf( "Structural Brush mode activated\n" );
 
 		gtk_toggle_tool_button_set_active( GTK_TOGGLE_TOOL_BUTTON( w ), FALSE );
-		gtk_button_set_image( GTK_BUTTON( w ),new_image_icon( "toggle_struct.png" ) );
+		gtk_tool_button_set_icon_widget( GTK_TOOL_BUTTON( w ), new_image_icon( "toggle_struct.png" ) );
 		
 	}
 	else
@@ -5696,7 +5696,7 @@ void MainFrame::OnToggleDetail(){
 		Sys_Printf( "Detail Brush mode activated\n" );
 
 		gtk_toggle_tool_button_set_active( GTK_TOGGLE_TOOL_BUTTON( w ), TRUE );
-		gtk_button_set_image( GTK_BUTTON( w ), new_image_icon( "toggle_detail.png" ) );
+		gtk_tool_button_set_icon_widget( GTK_TOOL_BUTTON( w ), new_image_icon( "toggle_detail.png" ) );
 
 	}
 
