@@ -1053,11 +1053,11 @@ static picoModel_t *_ase_load( PM_PARAMS_LOAD ){
 							break;
 						}
 
-						/* parse diffuse map bitmap */
-						if ( !_pico_stricmp( p->token,"*bitmap" ) ) {
+						/* parse diffuse map_name */
+						if ( !_pico_stricmp( p->token,"*map_name" ) ) {
 							char* name = _pico_parse( p,0 );
 							if ( name == NULL ) {
-								_ase_error_return( "Missing material map bitmap name" );
+								_ase_error_return( "Missing material map name" );
 							}
 							mapname = _pico_alloc( strlen( name ) + 1 );
 							strcpy( mapname, name );
