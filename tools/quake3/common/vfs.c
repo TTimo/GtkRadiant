@@ -271,8 +271,8 @@ void vfsInitDirectory( const char *path ){
 					vfsInitPakFile(filename);
 				}
 
-				g_free(name);
 				dirlist = g_slist_remove(cur, name);
+				g_free(name);
 			}
 			g_dir_close( dir );
 		}
