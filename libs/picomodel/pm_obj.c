@@ -652,8 +652,9 @@ static picoModel_t *_obj_load( PM_PARAMS_LOAD ){
 				_obj_error_return( "Error allocating surface" );
 			}
 
-			/* reset face index for surface */
+			/* reset face index and vertex index for surface */
 			curFace = 0;
+			curVertex = 0;
 
 			/* set ptr to current surface */
 			curSurface = newSurface;
