@@ -182,7 +182,7 @@ void Map_Snapshot(){
 		CString strNewPath;
 		strNewPath = strOrgPath;
 		strNewPath += strOrgFile;
-		
+
 		// QB - snapshots now follow the format: <mapname>.<snapnum>.<ext>
 		//      **NOTE** atm snapshots must end with a .map (or .xmap) ext (this is why they were broken)
 		CString strOldEXT = "map"; //default to .map
@@ -190,7 +190,7 @@ void Map_Snapshot(){
 		if ( type != NULL ) { strOldEXT = ++type; }; // get the ext for later.
 		StripExtension(strNewPath); // then strip it from the new path
 		//
-		
+
 		CString strFile;
 		while ( bGo )
 		{
@@ -1499,9 +1499,9 @@ qboolean ConfirmModified() {
 	if( !modified )
 		return TRUE;
 
-	int saveChoice = gtk_MessageBoxNew( g_pParentWnd->m_pWidget, 
+	int saveChoice = gtk_MessageBoxNew( g_pParentWnd->m_pWidget,
 						"The current map has changed since it was last saved.\n"
-						"Would you like to save before continuing?", "Radiant", 
+						"Would you like to save before continuing?", "Radiant",
 						MB_YESNOCANCEL | MB_ICONQUESTION );
 
 	switch( saveChoice ) {
@@ -1778,12 +1778,10 @@ extern "C" void Sys_FPrintf_VA( int level, const char *text, va_list args ) {
 
 			const GdkColor yellow = { 0, 0xb0ff, 0xb0ff, 0x0000 };
 			const GdkColor red = { 0, 0xffff, 0x0000, 0x0000 };
-			const GdkColor black = { 0, 0x0000, 0x0000, 0x0000 };
 
 			static GtkTextTag* error_tag = gtk_text_buffer_create_tag( buffer, "red_foreground", "foreground-gdk", &red, NULL );
 			static GtkTextTag* warning_tag = gtk_text_buffer_create_tag( buffer, "yellow_foreground", "foreground-gdk", &yellow, NULL );
-			static GtkTextTag* standard_tag = gtk_text_buffer_create_tag( buffer, "black_foreground", "foreground-gdk", &black, NULL );
-			GtkTextTag* tag;
+			GtkTextTag* tag = NULL;
 			switch ( level )
 			{
 			case SYS_WRN:
@@ -1795,7 +1793,6 @@ extern "C" void Sys_FPrintf_VA( int level, const char *text, va_list args ) {
 			case SYS_STD:
 			case SYS_VRB:
 			default:
-				tag = standard_tag;
 				break;
 			}
 			gtk_text_buffer_insert_with_tags( buffer, &iter, buf, length, tag, (char *) NULL );
