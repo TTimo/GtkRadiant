@@ -27,6 +27,18 @@ How to build
 You can find more complete instructions to build on Windows [there](https://icculus.org/gtkradiant/documentation/windows_compile_guide/) and to build on Mac OS [there](apple/README.md).
 
 ```sh
+# install build dependancies
+# Ubuntu 18.04
+apt install git scons python-urllib3 libxml2 libxml2-dev libgtk2.0 libgtk2.0-dev libgtkgl2.0-1 libgtkgl2.0-dev libglu1-mesa libglu1-mesa-dev libgtkglext1 libgtkglext1-dev subversion libjpeg8 libjpeg8-dev
+
+# Ubuntu 20.04
+apt install git scons libxml2 libxml2-dev libgtkgl2.0-1 libgtkgl2.0-dev libglu1-mesa libglu1-mesa-dev libgtkglext1 libgtkglext1-dev subversion libjpeg8 libjpeg8-dev
+
+# ArchLinux
+pacman -S git scons python-urllib3 libxml2 gtk2 freeglut gtkglext subversion libjpeg-turbo
+```
+
+```sh
 # get the source
 git clone "https://github.com/TTimo/GtkRadiant.git"
 
