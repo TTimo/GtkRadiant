@@ -9,7 +9,6 @@ Import( [ 'utils', 'config', 'settings', 'project' ] )
 
 ( libpath, libname ) = os.path.split( project )
 libname = os.path.splitext( libname )[0]
-
 env = Environment( ENV = os.environ )
 settings.SetupEnvironment( env, config['name'] )
 proj = utils.vcxproj( os.path.join( GetLaunchDir(), project ) )
@@ -29,6 +28,5 @@ except:
 
 objects = []
 for i in files + add_sources:
-	objects.append( emit_func( os.path.join( libpath, i ) ) )
-
+	objects.append( emit_func( source=os.path.join( libpath, i ) ) )
 Return( 'objects' )
