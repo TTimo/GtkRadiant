@@ -1,5 +1,5 @@
-import sys, os, traceback, platform, re, commands, platform, subprocess
-import urllib2, zipfile, shutil, pprint
+import sys, os, traceback, platform, re, subprocess, platform
+import urllib3, zipfile, shutil, pprint
 
 if __name__ != '__main__':
     from SCons.Script import *
@@ -218,13 +218,14 @@ class Config:
     def SetupEnvironment( self, env, config, useGtk = False, useGtkGL = False, useJPEG = False, useZ = False, usePNG = False ):
         env['CC'] = self.cc
         env['CXX'] = self.cxx
-        ( ret, xml2 ) = commands.getstatusoutput( 'xml2-config --cflags' )
-        if ( ret != 0 ):
-            print 'xml2-config failed'
+        try:
+            xml2 = subprocess.check_output( ['xml2-config', '--cflags'] ).decode( 'utf-8' )
+        except subprocess.CalledProcessError as cpe:
+            print( 'xml2-config failed with error code {} and output:{}'.format( cpe.returncode, cpe.output ) )
             assert( False )
-        xml2libs = commands.getoutput( 'xml2-config --libs' )
         env.ParseConfig( 'xml2-config --libs' )
-        baseflags = [ '-pipe', '-Wall', '-fmessage-length=0', '-fvisibility=hidden', xml2.split( ' ' ) ]
+        #Need to strip on xml2-config output. It has a stray \n and that completely screws up scons calling g++
+        baseflags = [ '-pipe', '-Wall', '-fmessage-length=0', '-fvisibility=hidden', xml2.strip().split( ' ' ) ]
 
         if ( useGtk ):
             env.ParseConfig( 'pkg-config gtk+-2.0 --cflags --libs' )
@@ -409,24 +410,28 @@ class Config:
         print( 'Lookup and bundle the PNG and JPEG libraries' )
         # radiant.bin doesn't link to jpeg lib directly, grab that from a module
         # Python 2.7 only!
-        #module_ldd = subprocess.check_output( 'ldd -r install/modules/image.so', shell = True )
-        p = subprocess.Popen( 'ldd -r install/modules/image.so', shell = True, stdout = subprocess.PIPE )
-        module_ldd = p.communicate()[0]
-#                print( module_ldd )
+        try:
+            module_ldd = subprocess.check_output( ['ldd', '-r', 'install/modules/image.so'] ).decode( 'utf-8' )
+        except subprocess.CalledProcessError as cpe:
+            print( 'ldd failed with error code {} and output:{}'.format(cpe.returncode, cpe.output ))
+            assert( False )
 
         def find_library( output, libname ):
-            print output
-            print libname
-            match = filter( lambda l : l.find( libname ) != -1, output.split( '\n' ) )[0]
-            return re.split( '.*=> (.*) .*', match )[1]
+            for line in output.split( '\n' ):
+                if libname in line:
+                    return re.split( '.*=> (.*) .*', line)[1]
+            return ""
 
         jpeg_path = find_library( module_ldd, 'libjpeg' )
         print( 'JPEG library: %s' % repr( jpeg_path ) )
 
-        p = subprocess.Popen( 'ldd -r install/modules/imagepng.so', shell = True, stdout = subprocess.PIPE )
-        module_ldd = p.communicate()[0]
-        
+        try:
+            module_ldd = subprocess.check_output( ['ldd', '-r', 'install/modules/imagepng.so'] ).decode( 'utf-8' )
+        except subprocess.CalledProcessError as cpe:
+            print( 'ldd failed with error code {} and output:{}'.format(cpe.returncode, cpe.output ))
+            assert( False )
         png_path = find_library( module_ldd, 'libpng' )
+
         print( 'PNG  library: %s' % repr( png_path ) )
 
         shutil.copy( jpeg_path, 'install' )
@@ -460,16 +465,16 @@ class ConfigParser:
         statement_re = re.compile( '(.*)=(.*)' )
         value_list_re = re.compile( '([^,]*),?' )
         if ( not statement_re.match( s ) ):
-            print 'syntax error (statement match): %s' % repr( s )
+            print( 'syntax error (statement match): %s' % repr( s ) )
             return
         statement_split = statement_re.split( s )
         if ( len( statement_split ) != 4 ):
-            print 'syntax error (statement split): %s' % repr( s )
+            print( 'syntax error (statement split): %s' % repr( s ) )
             return
         ( foo, name, value, bar ) = statement_split
         value_split = value_list_re.split( value )
         if ( len( value_split ) < 2 or len( value_split ) % 2 != 1 ):
-            print 'syntax error (value split): %s' % ( repr( value_split ) )
+            print( 'syntax error (value split): %s' % ( repr( value_split ) ) )
             return
         try:
             value_array = []
@@ -479,8 +484,8 @@ class ConfigParser:
                 value_array.append( value_split.pop() )
                 value_split.pop()
         except:
-            print traceback.print_exception( sys.exc_type, sys.exc_value, sys.exc_traceback )
-            print 'syntax error (value to array): %s' % ( repr( value_split ) )
+            print( traceback.print_exception( sys.exc_type, sys.exc_value, sys.exc_traceback ) )
+            print( 'syntax error (value to array): %s' % ( repr( value_split ) ) )
             return
 
         return ( name, value_array )
@@ -504,13 +509,13 @@ class ConfigParser:
 
             ret = self._parseStatement( s )
             if ( ret is None ):
-                print 'stop statement parse at %s' % repr( s )
+                print( 'stop statement parse at %s' % repr( s ) )
                 break
             ( name, value_array ) = ret
             try:
                 processor = self.operators[name]
             except:
-                print 'unknown operator %s - stop statement parse at %s' % ( repr( name ), repr( s ) )
+                print( 'unknown operator %s - stop statement parse at %s' % ( repr( name ), repr( s ) ) )
                 break
             processor( value_array )
 
@@ -518,7 +523,7 @@ class ConfigParser:
             self.configs.append( self.current_config )
         # make sure there is at least one config
         if ( len( self.configs ) == 0 ):
-            print 'pushing a default config'
+            print( 'pushing a default config' )
             self.configs.append( Config() )
         return self.configs
 
@@ -533,17 +538,17 @@ class TestConfigParse( unittest.TestCase ):
         # test basic config parsing
         # needs to cleanly stop at the first config statement that is not recognized
         configs = self.parser.parseStatements( None, [ 'game=missionpack', 'config=qvm', 'foobar' ] )
-        print repr( configs )
+        print( repr( configs ) )
 
     def testMultiParse( self ):
         # multiple configs seperated by commas
         configs = self.parser.parseStatements( None, [ 'target=server,game,cgame' ] )
-        print repr( configs )
+        print( repr( configs ) )
 
     def testOp( self ):
         # test the operator for multiple configs
         configs = self.parser.parseStatements( None, [ 'target=core', 'config=release', 'op=push', 'target=game,cgame,ui', 'config=debug' ] )
-        print repr( configs )
+        print( repr( configs ) )
 
 if __name__ == '__main__':
     unittest.main()

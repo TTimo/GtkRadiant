@@ -945,10 +945,8 @@ typedef enum
 }
 surfaceType_t;
 
+#ifdef MAIN_C
 char            *surfaceTypes[ NUM_SURFACE_TYPES ]
-#ifndef MAIN_C
-;
-#else
 	=
 	{
 	"SURFACE_BAD",
@@ -963,6 +961,8 @@ char            *surfaceTypes[ NUM_SURFACE_TYPES ]
 	"SURFACE_DECAL",
 	"SURFACE_SHADER"
 	};
+#else
+extern char *surfaceTypes[ NUM_SURFACE_TYPES ];
 #endif
 
 
