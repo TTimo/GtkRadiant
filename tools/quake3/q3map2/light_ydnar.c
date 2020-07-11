@@ -4109,9 +4109,6 @@ float FloodLightForSample( trace_t *trace ){
 		/* set endpoint */
 		VectorMA( trace->origin, dd, direction, trace->end );
 
-		if( lm->styles[lightmapNum] != LS_NORMAL && lm->styles[lightmapNum] != LS_NONE ) // isStyleLight
-			continue;
-
 		//VectorMA( trace->origin, 1, direction, trace->origin );
 
 		SetupTrace( trace );
