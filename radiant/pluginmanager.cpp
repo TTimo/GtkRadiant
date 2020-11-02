@@ -92,7 +92,7 @@ virtual void addType( const char* key, filetype_t type ){
 virtual void getTypeList( const char* key, IFileTypeList* typelist ){
 	filetype_list_t& list_ref = m_typelists[key];
 
-	if (key == "model") {
+	if ( g_strcmp0( key, "model" ) == 0 ) {
 		// Get the list of all supported types (adapted from kaz)
 		CString allTypesFilter;
 		for (unsigned int i = 0; i < list_ref.size(); ++i) {
