@@ -210,7 +210,7 @@ static picoModel_t *_fm_load( PM_PARAMS_LOAD ){
 	fm_xyz_st_t     *triangle;
 	fm_frame_t      *frame;
 
-	picoByte_t      *bb, bb0;
+	picoByte_t      *bb, *bb0;
 	picoModel_t *picoModel;
 	picoSurface_t   *picoSurface;
 	picoShader_t    *picoShader;
