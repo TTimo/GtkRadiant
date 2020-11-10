@@ -89,8 +89,8 @@ bfilter_t *FilterAddImpl( bfilter_t *pFilter, int type, int bmask, const char *s
 }
 
 // type 1 = texture filter (name)
-// type 3 = entity filter (name)
 // type 2 = QER_* shader flags
+// type 3 = entity filter (name)
 // type 4 = entity classes
 // type 5 = surface flags (q2)
 // type 6 = content flags (q2)
