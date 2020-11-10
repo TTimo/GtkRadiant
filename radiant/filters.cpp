@@ -71,6 +71,11 @@ bfilter_t *FilterAddImpl( bfilter_t *pFilter, int type, int bmask, const char *s
 	if ( type == 2 || type == 4 || type == 5 || type == 6 || type == 7 ) {
 		pNew->mask = bmask;
 	}
+	if ( type == 8 ) {
+		pNew->string = str;
+		pNew->mask = bmask;
+	}
+	pNew->exclude = exclude;
 	if ( g_qeglobals.d_savedinfo.exclude & exclude ) {
 		pNew->active = true;
 	}
@@ -95,6 +100,7 @@ bfilter_t *FilterAddImpl( bfilter_t *pFilter, int type, int bmask, const char *s
 // type 5 = surface flags (q2)
 // type 6 = content flags (q2)
 // type 7 = content flags - no match (q2)
+// type 8 = idTech2 materials (q2 and quetoo)
 bfilter_t *FilterAdd( bfilter_t *pFilter, int type, int bmask, const char *str, int exclude ){
 	return FilterAddImpl( pFilter, type, bmask, str, exclude, false );
 }
@@ -131,20 +137,38 @@ bfilter_t *FilterListDelete( bfilter_t *pFilter ){
 
 
 bfilter_t *FilterAddBase( bfilter_t *pFilter ){
-	pFilter = FilterAddImpl( pFilter,1,0,"clip",EXCLUDE_CLIP,true );
-	pFilter = FilterAddImpl( pFilter,1,0,"caulk",EXCLUDE_CAULK,true );
-	pFilter = FilterAddImpl( pFilter,1,0,"liquids",EXCLUDE_LIQUIDS,true );
-	pFilter = FilterAddImpl( pFilter,1,0,"hint",EXCLUDE_HINTSSKIPS,true );
-	pFilter = FilterAddImpl( pFilter,1,0,"clusterportal",EXCLUDE_CLUSTERPORTALS,true );
-	pFilter = FilterAddImpl( pFilter,1,0,"areaportal",EXCLUDE_AREAPORTALS,true );
-	pFilter = FilterAddImpl( pFilter,2,QER_TRANS,NULL,EXCLUDE_TRANSLUCENT,true );
-	pFilter = FilterAddImpl( pFilter,3,0,"trigger",EXCLUDE_TRIGGERS,true );
-	pFilter = FilterAddImpl( pFilter,4,ECLASS_MISCMODEL,NULL,EXCLUDE_MODELS,true );
-	pFilter = FilterAddImpl( pFilter,4,ECLASS_LIGHT,NULL,EXCLUDE_LIGHTS,true );
-	pFilter = FilterAddImpl( pFilter,4,ECLASS_PATH,NULL,EXCLUDE_PATHS,true );
-	pFilter = FilterAddImpl( pFilter,1,0,"lightgrid",EXCLUDE_LIGHTGRID,true );
-	pFilter = FilterAddImpl( pFilter,1,0,"botclip",EXCLUDE_BOTCLIP,true );
-	pFilter = FilterAddImpl( pFilter,1,0,"clipmonster",EXCLUDE_BOTCLIP,true );
+
+	if ( g_pGameDescription->idTech2 ) {
+
+		pFilter = FilterAddImpl( pFilter,1,0,"clip",EXCLUDE_CLIP,true );
+		pFilter = FilterAddImpl( pFilter,1,0,"caulk",EXCLUDE_CAULK,true );
+		pFilter = FilterAddImpl( pFilter,8,0,NULL,EXCLUDE_LIQUIDS,true );
+		pFilter = FilterAddImpl( pFilter,8,0,NULL,EXCLUDE_HINTSSKIPS,true );
+		pFilter = FilterAddImpl( pFilter,8,0,NULL,EXCLUDE_TRANSLUCENT,true );
+		pFilter = FilterAddImpl( pFilter,8,0,NULL,EXCLUDE_SKY,true );
+		pFilter = FilterAddImpl( pFilter,3,0,"trigger",EXCLUDE_TRIGGERS,true );
+		pFilter = FilterAddImpl( pFilter,4,ECLASS_LIGHT,NULL,EXCLUDE_LIGHTS,true );
+		pFilter = FilterAddImpl( pFilter,4,ECLASS_PATH,NULL,EXCLUDE_PATHS,true );
+
+	} else {
+
+		pFilter = FilterAddImpl( pFilter,1,0,"clip",EXCLUDE_CLIP,true );
+		pFilter = FilterAddImpl( pFilter,1,0,"caulk",EXCLUDE_CAULK,true );
+		pFilter = FilterAddImpl( pFilter,1,0,"liquids",EXCLUDE_LIQUIDS,true );
+		pFilter = FilterAddImpl( pFilter,1,0,"hint",EXCLUDE_HINTSSKIPS,true );
+		pFilter = FilterAddImpl( pFilter,1,0,"sky",EXCLUDE_SKY,true );
+		pFilter = FilterAddImpl( pFilter,1,0,"clusterportal",EXCLUDE_CLUSTERPORTALS,true );
+		pFilter = FilterAddImpl( pFilter,1,0,"areaportal",EXCLUDE_AREAPORTALS,true );
+		pFilter = FilterAddImpl( pFilter,2,QER_TRANS,NULL,EXCLUDE_TRANSLUCENT,true );
+		pFilter = FilterAddImpl( pFilter,3,0,"trigger",EXCLUDE_TRIGGERS,true );
+		pFilter = FilterAddImpl( pFilter,4,ECLASS_MISCMODEL,NULL,EXCLUDE_MODELS,true );
+		pFilter = FilterAddImpl( pFilter,4,ECLASS_LIGHT,NULL,EXCLUDE_LIGHTS,true );
+		pFilter = FilterAddImpl( pFilter,4,ECLASS_PATH,NULL,EXCLUDE_PATHS,true );
+		pFilter = FilterAddImpl( pFilter,1,0,"lightgrid",EXCLUDE_LIGHTGRID,true );
+		pFilter = FilterAddImpl( pFilter,1,0,"botclip",EXCLUDE_BOTCLIP,true );
+		pFilter = FilterAddImpl( pFilter,1,0,"clipmonster",EXCLUDE_BOTCLIP,true );
+	}
+
 	return pFilter;
 }
 
@@ -228,7 +252,7 @@ bool FilterBrush( brush_t *pb ){
 				}
 				// exclude by attribute 1 brush->face->pShader->getName()
 				if ( filters->attribute == 1 ) {
-					if ( strstr( f->pShader->getName(),filters->string ) ) {
+					if ( strstr( f->pShader->getName(), filters->string ) ) {
 						filterbrush = true;
 						break;
 					}
@@ -257,6 +281,51 @@ bool FilterBrush( brush_t *pb ){
 					if ( f->texdef.contents && !( f->texdef.contents & filters->mask ) ) {
 						filterbrush = true;
 						break;
+					}
+				}
+				// idTech2 material filters
+				else if ( filters->attribute == 8 ) {
+					switch ( filters->exclude ) {
+						case EXCLUDE_LIQUIDS:
+							if ( f->texdef.contents & (CONTENTS_WATER | CONTENTS_LAVA | CONTENTS_SLIME ) ) {
+								filterbrush = true;
+							}
+							if ( strstr( f->pShader->getName(), "water" ) ||
+								 strstr( f->pShader->getName(), "lava" )  ||
+								 strstr( f->pShader->getName(), "slime" ) ) {
+								filterbrush = true;
+							}
+							break;
+						case EXCLUDE_HINTSSKIPS:
+							if ( f->texdef.flags & (SURF_HINT | SURF_SKIP) ) {
+								filterbrush = true;
+							}
+							if ( strstr( f->pShader->getName(), "hint" ) ||
+								 strstr( f->pShader->getName(), "skip" ) ) {
+								filterbrush = true;
+							}
+							break;
+						case EXCLUDE_TRANSLUCENT:
+							if ( f->texdef.contents & CONTENTS_WINDOW ) {
+								filterbrush = true;
+							}
+							if ( f->texdef.flags & (SURF_TRANS33 | SURF_TRANS66 | SURF_ALPHA_TEST) ) {
+								filterbrush = true;
+							}
+							if ( strstr( f->pShader->getName(), "glass" ) ||
+								 strstr( f->pShader->getName(), "window" ) ) {
+								filterbrush = true;
+							}
+							break;
+						case EXCLUDE_SKY:
+							if ( f->texdef.flags & SURF_SKY ) {
+								filterbrush = true;
+							}
+							if ( strstr( f->pShader->getName(), "sky" ) ) {
+								filterbrush = true;
+							}
+							break;
+
 					}
 				}
 			}

@@ -287,6 +287,7 @@ SCommandInfo g_Commands[] =
 	{"FilterDetails", GDK_KEY_D, RAD_CONTROL, ID_FILTER_DETAILS, "menu_filter_details"},
 	{"FilterStructural", GDK_KEY_D, RAD_CONTROL | RAD_SHIFT, ID_FILTER_STRUCTURAL, "menu_filter_structural"},
 	{"FilterHintsSkips", GDK_KEY_H, RAD_CONTROL, ID_FILTER_HINTSSKIPS, "menu_filter_hintsskips"},
+	{"FilterHintsSky", GDK_KEY_S, RAD_ALT, ID_FILTER_SKY, "menu_filter_sky"},
 	{"FilterModels", GDK_KEY_M, RAD_SHIFT, ID_FILTER_MODELS, "menu_filter_models"},
 	{"FilterTriggers", GDK_KEY_T, RAD_CONTROL | RAD_SHIFT, ID_FILTER_TRIGGERS, "menu_filter_triggers"},
 	{"LoadPointfile", GDK_KEY_L, RAD_SHIFT, ID_FILE_POINTFILE, "menu_load_pointfile"},
@@ -647,6 +648,7 @@ gint HandleCommand( GtkWidget *widget, gpointer data ){
 		  case ID_FILTER_DETAILS: g_pParentWnd->OnFilterDetails(); break;
 		  case ID_FILTER_ENTITIES: g_pParentWnd->OnFilterEntities(); break;
 		  case ID_FILTER_HINTSSKIPS: g_pParentWnd->OnFilterHintsskips(); break;
+		  case ID_FILTER_SKY: g_pParentWnd->OnFilterSky(); break;
 		  case ID_FILTER_LIGHTS: g_pParentWnd->OnFilterLights(); break;
 		  case ID_FILTER_LIQUIDS: g_pParentWnd->OnFilterLiquids(); break;
 		  case ID_FILTER_MODELS: g_pParentWnd->OnFilterModels(); break;
@@ -1119,25 +1121,36 @@ void MainFrame::create_main_menu( GtkWidget *window, GtkWidget *vbox ){
 	g_object_set_data( G_OBJECT( window ), "menu_view_showworkzone", item );
 
 	menu_in_menu = create_menu_in_menu_with_mnemonic( menu, _( "Filter" ) );
+
 	create_check_menu_item_with_mnemonic( menu_in_menu, _( "World" ), G_CALLBACK( HandleCommand ), ID_FILTER_WORLD, FALSE );
 	create_check_menu_item_with_mnemonic( menu_in_menu, _( "Entities" ), G_CALLBACK( HandleCommand ), ID_FILTER_ENTITIES, FALSE );
-	create_check_menu_item_with_mnemonic( menu_in_menu, _( "Areaportals" ), G_CALLBACK( HandleCommand ), ID_FILTER_AREAPORTALS, FALSE );
-	create_check_menu_item_with_mnemonic( menu_in_menu, _( "Translucent" ), G_CALLBACK( HandleCommand ), ID_FILTER_TRANSLUCENT, FALSE );
+	if ( g_pGameDescription->idTech2 ) {
+		create_check_menu_item_with_mnemonic( menu_in_menu, _( "Windows" ), G_CALLBACK( HandleCommand ), ID_FILTER_TRANSLUCENT, FALSE );
+	} else {
+		create_check_menu_item_with_mnemonic( menu_in_menu, _( "Translucent" ), G_CALLBACK( HandleCommand ), ID_FILTER_TRANSLUCENT, FALSE );
+	}
 	create_check_menu_item_with_mnemonic( menu_in_menu, _( "Liquids" ), G_CALLBACK( HandleCommand ), ID_FILTER_LIQUIDS, FALSE );
+	create_check_menu_item_with_mnemonic( menu_in_menu, _( "Sky" ), G_CALLBACK( HandleCommand ), ID_FILTER_SKY, FALSE );
 	create_check_menu_item_with_mnemonic( menu_in_menu, _( "Caulk" ), G_CALLBACK( HandleCommand ), ID_FILTER_CAULK, FALSE );
 	create_check_menu_item_with_mnemonic( menu_in_menu, _( "Clips" ), G_CALLBACK( HandleCommand ), ID_FILTER_CLIPS, FALSE );
-	create_check_menu_item_with_mnemonic( menu_in_menu, _( "Paths" ), G_CALLBACK( HandleCommand ), ID_FILTER_PATHS, FALSE );
-	create_check_menu_item_with_mnemonic( menu_in_menu, _( "Clusterportals" ), G_CALLBACK( HandleCommand ), ID_FILTER_CLUSTERPORTALS, FALSE );
+	create_check_menu_item_with_mnemonic( menu_in_menu, _( "Bot clips" ), G_CALLBACK( HandleCommand ), ID_FILTER_BOTCLIPS, FALSE );
 	create_check_menu_item_with_mnemonic( menu_in_menu, _( "Lights" ), G_CALLBACK( HandleCommand ), ID_FILTER_LIGHTS, FALSE );
 	create_check_menu_item_with_mnemonic( menu_in_menu, _( "Structural" ), G_CALLBACK( HandleCommand ), ID_FILTER_STRUCTURAL, FALSE );
-	item = create_check_menu_item_with_mnemonic( menu_in_menu, _( "Lightgrid" ), G_CALLBACK( HandleCommand ), ID_FILTER_LIGHTGRID, FALSE );
-	g_object_set_data( G_OBJECT( window ), "menu_filter_lightgrid", item );
-	create_check_menu_item_with_mnemonic( menu_in_menu, _( "Patches" ), G_CALLBACK( HandleCommand ), ID_FILTER_PATCHES, FALSE );
 	create_check_menu_item_with_mnemonic( menu_in_menu, _( "Details" ), G_CALLBACK( HandleCommand ), ID_FILTER_DETAILS, FALSE );
 	create_check_menu_item_with_mnemonic( menu_in_menu, _( "Hints" ), G_CALLBACK( HandleCommand ), ID_FILTER_HINTSSKIPS, FALSE );
 	create_check_menu_item_with_mnemonic( menu_in_menu, _( "Models" ), G_CALLBACK( HandleCommand ), ID_FILTER_MODELS, FALSE );
+	create_check_menu_item_with_mnemonic( menu_in_menu, _( "Areaportals" ), G_CALLBACK( HandleCommand ), ID_FILTER_AREAPORTALS, FALSE );
+	if ( !g_pGameDescription->idTech2) {
+		create_check_menu_item_with_mnemonic( menu_in_menu, _( "Clusterportals" ), G_CALLBACK( HandleCommand ), ID_FILTER_CLUSTERPORTALS, FALSE );
+	}
 	create_check_menu_item_with_mnemonic( menu_in_menu, _( "Triggers" ), G_CALLBACK( HandleCommand ), ID_FILTER_TRIGGERS, FALSE );
-	create_check_menu_item_with_mnemonic( menu_in_menu, _( "Botclips" ), G_CALLBACK( HandleCommand ), ID_FILTER_BOTCLIPS, FALSE );
+	create_check_menu_item_with_mnemonic( menu_in_menu, _( "Paths" ), G_CALLBACK( HandleCommand ), ID_FILTER_PATHS, FALSE );
+
+	if ( !g_pGameDescription->idTech2) {
+		item = create_check_menu_item_with_mnemonic( menu_in_menu, _( "Lightgrid" ), G_CALLBACK( HandleCommand ), ID_FILTER_LIGHTGRID, FALSE );
+		g_object_set_data( G_OBJECT( window ), "menu_filter_lightgrid", item );
+		create_check_menu_item_with_mnemonic( menu_in_menu, _( "Patches" ), G_CALLBACK( HandleCommand ), ID_FILTER_PATCHES, FALSE );
+	}
 
 	menu_separator( menu );
 	menu_in_menu = create_menu_in_menu_with_mnemonic( menu, _( "Hide/Show" ) );
@@ -3999,6 +4012,9 @@ void MainFrame::SetButtonMenuStates(){
 	item = GTK_WIDGET( g_object_get_data( G_OBJECT( m_pWidget ), "menu_filter_hintsskips" ) );
 	gtk_check_menu_item_set_active( GTK_CHECK_MENU_ITEM( item ),
 									( g_qeglobals.d_savedinfo.exclude & EXCLUDE_HINTSSKIPS ) != 0 );
+	item = GTK_WIDGET( g_object_get_data( G_OBJECT( m_pWidget ), "menu_filter_sky" ) );
+		gtk_check_menu_item_set_active( GTK_CHECK_MENU_ITEM( item ),
+									( g_qeglobals.d_savedinfo.exclude & EXCLUDE_SKY ) != 0 );
 	item = GTK_WIDGET( g_object_get_data( G_OBJECT( m_pWidget ), "menu_filter_models" ) );
 	gtk_check_menu_item_set_active( GTK_CHECK_MENU_ITEM( item ),
 									( g_qeglobals.d_savedinfo.exclude & EXCLUDE_MODELS ) != 0 );
@@ -7798,6 +7814,20 @@ void MainFrame::OnFilterWorld(){
 	GtkWidget *item = GTK_WIDGET( g_object_get_data( G_OBJECT( m_pWidget ), "menu_filter_world" ) );
 	g_bIgnoreCommands++;
 	if ( ( g_qeglobals.d_savedinfo.exclude ^= EXCLUDE_WORLD ) & EXCLUDE_WORLD ) {
+		gtk_check_menu_item_set_active( GTK_CHECK_MENU_ITEM( item ), TRUE );
+	}
+	else{
+		gtk_check_menu_item_set_active( GTK_CHECK_MENU_ITEM( item ), FALSE );
+	}
+	g_bIgnoreCommands--;
+	PerformFiltering();
+	Sys_UpdateWindows( W_XY | W_CAMERA );
+}
+
+void MainFrame::OnFilterSky(){
+	GtkWidget *item = GTK_WIDGET( g_object_get_data( G_OBJECT( m_pWidget ), "menu_filter_sky" ) );
+	g_bIgnoreCommands++;
+	if ( ( g_qeglobals.d_savedinfo.exclude ^= EXCLUDE_SKY ) & EXCLUDE_SKY ) {
 		gtk_check_menu_item_set_active( GTK_CHECK_MENU_ITEM( item ), TRUE );
 	}
 	else{

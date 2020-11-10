@@ -725,7 +725,9 @@ struct bfilter_t //c++ style
 	                        // 5=brush->face->texdef.flags (q2)
 	                        // 6=brush->face->texdef.contents (q2)
 	                        // 7=!brush->face->texdef.contents (q2)
+	                        // 8 idTech2 materials (q2 and quetoo)
 	int mask;
+	int exclude;
 	const char  *string;
 	bool active;
 };

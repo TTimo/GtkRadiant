@@ -83,7 +83,8 @@
 #define EXCLUDE_TERRAIN         0x00008000
 #define EXCLUDE_LIGHTGRID       0x00010000
 #define EXCLUDE_STRUCTURAL      0x00020000
-#define EXCLUDE_BOTCLIP           0x00040000
+#define EXCLUDE_BOTCLIP         0x00040000
+#define EXCLUDE_SKY             0x00080000
 
 #define INCLUDE_EASY            0x00000001
 #define INCLUDE_NORMAL          0x00000002
