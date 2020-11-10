@@ -201,7 +201,7 @@ bool FilterBrush( brush_t *pb ){
 
 
 	if ( g_qeglobals.d_savedinfo.exclude & EXCLUDE_DETAILS ) {
-		if ( !pb->patchBrush && pb->brush_faces->texdef.contents & CONTENTS_DETAIL ) {
+		if ( !pb->patchBrush && ( pb->brush_faces->texdef.contents & CONTENTS_DETAIL ) ) {
 			return TRUE;
 		}
 	}
@@ -239,16 +239,16 @@ bool FilterBrush( brush_t *pb ){
 						filterbrush = true;
 						break;
 					}
-					// quake2 - 5 == surface flags, 6 == content flags
 				}
+				// quake2 - 5 == surface flags, 6 == content flags, 7 == !content flags
 				else if ( filters->attribute == 5 ) {
-					if ( f->texdef.flags && f->texdef.flags & filters->mask ) {
+					if ( f->texdef.flags && ( f->texdef.flags & filters->mask ) ) {
 						filterbrush = true;
 						break;
 					}
 				}
 				else if ( filters->attribute == 6 ) {
-					if ( f->texdef.contents && f->texdef.contents & filters->mask ) {
+					if ( f->texdef.contents && ( f->texdef.contents & filters->mask ) ) {
 						filterbrush = true;
 						break;
 					}

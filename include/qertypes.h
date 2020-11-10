@@ -724,6 +724,7 @@ struct bfilter_t //c++ style
 	                        // 4=brush->owner->eclass->nShowFlags
 	                        // 5=brush->face->texdef.flags (q2)
 	                        // 6=brush->face->texdef.contents (q2)
+	                        // 7=!brush->face->texdef.contents (q2)
 	int mask;
 	const char  *string;
 	bool active;
@@ -735,7 +736,7 @@ struct bfilter_t //c++ style
 typedef struct
 {
 	int iTexMenu;           // nearest, linear, etc
-	float fGamma;         // gamma for textures
+	float fGamma;           // gamma for textures
 	vec3_t colors[COLOR_LAST];
 	int exclude;
 	int include;
