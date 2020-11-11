@@ -45,7 +45,7 @@ CCamera   *firstCam = NULL;       // double linked list
 CCamera   *firstFreeCam = NULL;   // single linked list
 CCamera   *currentCam = NULL;     // single item
 bool g_bEditOn = false;
-int g_iEditMode = 0;                    // 0: editting points 1: adding points
+int g_iEditMode = 0;                    // 0: editing points 1: adding points
 int g_iActiveTarget = -1;
 int g_iPreviewRunning = 0;              // 0: no preview 1: start preview 2: preview in progress
 

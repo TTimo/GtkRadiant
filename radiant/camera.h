@@ -54,6 +54,10 @@ typedef enum
 #define MOVE_ROTLEFT      0x008
 #define MOVE_STRAFERIGHT  0x010
 #define MOVE_STRAFELEFT   0x020
+#define MOVE_UP           0x040
+#define MOVE_DOWN         0x080
+#define MOVE_ROTUP        0x100
+#define MOVE_ROTDOWN      0x200
 
 typedef struct
 {

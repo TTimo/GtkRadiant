@@ -378,6 +378,10 @@ void HandleKeyUp( GtkWidget *widget, gpointer data ){
 	case ID_CAMERA_RIGHT: g_pParentWnd->OnCameraRight( FALSE ); break;
 	case ID_CAMERA_STRAFELEFT: g_pParentWnd->OnCameraStrafeleft( FALSE ); break;
 	case ID_CAMERA_STRAFERIGHT: g_pParentWnd->OnCameraStraferight( FALSE ); break;
+	case ID_CAMERA_UP: g_pParentWnd->OnCameraUp( FALSE ); break;
+	case ID_CAMERA_DOWN: g_pParentWnd->OnCameraDown( FALSE ); break;
+	case ID_CAMERA_ANGLEUP: g_pParentWnd->OnCameraAngleup( FALSE ); break;
+	case ID_CAMERA_ANGLEDOWN: g_pParentWnd->OnCameraAngledown( FALSE ); break;
 	}
 }
 
@@ -695,10 +699,10 @@ gint HandleCommand( GtkWidget *widget, gpointer data ){
 		  case ID_CAMERA_BACK: g_pParentWnd->OnCameraBack( TRUE ); break;
 		  case ID_CAMERA_LEFT: g_pParentWnd->OnCameraLeft( TRUE ); break;
 		  case ID_CAMERA_RIGHT: g_pParentWnd->OnCameraRight( TRUE ); break;
-		  case ID_CAMERA_UP: g_pParentWnd->OnCameraUp(); break;
-		  case ID_CAMERA_DOWN: g_pParentWnd->OnCameraDown(); break;
-		  case ID_CAMERA_ANGLEUP: g_pParentWnd->OnCameraAngleup(); break;
-		  case ID_CAMERA_ANGLEDOWN: g_pParentWnd->OnCameraAngledown(); break;
+		  case ID_CAMERA_UP: g_pParentWnd->OnCameraUp( TRUE ); break;
+		  case ID_CAMERA_DOWN: g_pParentWnd->OnCameraDown( TRUE ); break;
+		  case ID_CAMERA_ANGLEUP: g_pParentWnd->OnCameraAngleup( TRUE ); break;
+		  case ID_CAMERA_ANGLEDOWN: g_pParentWnd->OnCameraAngledown( TRUE ); break;
 		  case ID_CAMERA_STRAFELEFT: g_pParentWnd->OnCameraStrafeleft( TRUE ); break;
 		  case ID_CAMERA_STRAFERIGHT: g_pParentWnd->OnCameraStraferight( TRUE ); break;
 		  case ID_GRID_TOGGLE: g_pParentWnd->OnGridToggle(); break;
@@ -832,9 +836,9 @@ static gint mainframe_keypress( GtkWidget* widget, GdkEventKey* event, gpointer 
 static gint mainframe_keyrelease( GtkWidget* widget, GdkEventKey* event, gpointer data ){
 	unsigned int code = gdk_keyval_to_upper( event->keyval );
 
-	if ( gtk_accelerator_valid( event->keyval, (GdkModifierType)0 ) ) {
-		return TRUE;
-	}
+//	if ( gtk_accelerator_valid( event->keyval, (GdkModifierType)0 ) ) {
+//		return TRUE;
+//	}
 
 	for ( int i = 0; i < g_nCommandCount; i++ )
 	{
@@ -849,6 +853,10 @@ static gint mainframe_keyrelease( GtkWidget* widget, GdkEventKey* event, gpointe
 				case ID_CAMERA_RIGHT:
 				case ID_CAMERA_STRAFELEFT:
 				case ID_CAMERA_STRAFERIGHT:
+				case ID_CAMERA_UP:
+				case ID_CAMERA_DOWN:
+				case ID_CAMERA_ANGLEUP:
+				case ID_CAMERA_ANGLEDOWN:
 				{
 					HandleKeyUp( NULL, GINT_TO_POINTER( g_Commands[i].m_nCommand ) );
 					g_signal_stop_emission_by_name( G_OBJECT( widget ), "key-release-event" );
@@ -7253,32 +7261,80 @@ void MainFrame::OnCameraRight( bool keydown ){
 	}
 }
 
-void MainFrame::OnCameraUp(){
-	m_pCamWnd->Camera()->origin[2] += SPEED_MOVE;
-	int nUpdate = ( g_PrefsDlg.m_bCamXYUpdate ) ? ( W_CAMERA | W_XY | W_Z ) : ( W_CAMERA );
-	Sys_UpdateWindows( nUpdate );
-}
-
-void MainFrame::OnCameraDown(){
-	m_pCamWnd->Camera()->origin[2] -= SPEED_MOVE;
-	int nUpdate = ( g_PrefsDlg.m_bCamXYUpdate ) ? ( W_CAMERA | W_XY | W_Z ) : ( W_CAMERA );
-	Sys_UpdateWindows( nUpdate );
-}
-
-void MainFrame::OnCameraAngleup(){
-	m_pCamWnd->Camera()->angles[0] += SPEED_TURN;
-	if ( m_pCamWnd->Camera()->angles[0] > 85 ) {
-		m_pCamWnd->Camera()->angles[0] = 85;
+void MainFrame::OnCameraUp( bool keydown ){
+	if ( g_PrefsDlg.m_bCamDiscrete ) {
+		if ( keydown ) {
+			m_pCamWnd->Camera()->origin[2] += SPEED_MOVE;
+			int nUpdate = ( g_PrefsDlg.m_bCamXYUpdate ) ? ( W_CAMERA | W_XY ) : ( W_CAMERA );
+			Sys_UpdateWindows( nUpdate );
+		}
 	}
-	Sys_UpdateWindows( W_CAMERA | W_XY_OVERLAY );
+	else {
+		if ( keydown ) {
+			m_pCamWnd->Camera()->movementflags |= MOVE_UP;
+		}
+		else{
+			m_pCamWnd->Camera()->movementflags &= ~MOVE_UP;
+		}
+	}
 }
 
-void MainFrame::OnCameraAngledown(){
-	m_pCamWnd->Camera()->angles[0] -= SPEED_TURN;
-	if ( m_pCamWnd->Camera()->angles[0] < -85 ) {
-		m_pCamWnd->Camera()->angles[0] = -85;
+void MainFrame::OnCameraDown( bool keydown ){
+	if ( g_PrefsDlg.m_bCamDiscrete ) {
+		if ( keydown ) {
+			m_pCamWnd->Camera()->origin[2] -= SPEED_MOVE;
+			int nUpdate = ( g_PrefsDlg.m_bCamXYUpdate ) ? ( W_CAMERA | W_XY ) : ( W_CAMERA );
+			Sys_UpdateWindows( nUpdate );
+		}
 	}
-	Sys_UpdateWindows( W_CAMERA | W_XY_OVERLAY );
+	else {
+		if ( keydown ) {
+			m_pCamWnd->Camera()->movementflags |= MOVE_DOWN;
+		}
+		else{
+			m_pCamWnd->Camera()->movementflags &= ~MOVE_DOWN;
+		}
+	}
+}
+
+void MainFrame::OnCameraAngleup( bool keydown ){
+	if ( g_PrefsDlg.m_bCamDiscrete ) {
+		if ( keydown ) {
+			m_pCamWnd->Camera()->angles[PITCH] += SPEED_TURN;
+			if ( m_pCamWnd->Camera()->angles[PITCH] > 85 ) {
+				m_pCamWnd->Camera()->angles[PITCH] = 85;
+			}
+			Sys_UpdateWindows( W_CAMERA | W_XY_OVERLAY );
+		}
+	}
+	else {
+		if ( keydown ) {
+			m_pCamWnd->Camera()->movementflags |= MOVE_ROTUP;
+		}
+		else{
+			m_pCamWnd->Camera()->movementflags &= ~MOVE_ROTUP;
+		}
+	}
+}
+
+void MainFrame::OnCameraAngledown( bool keydown ){
+	if ( g_PrefsDlg.m_bCamDiscrete ) {
+		if ( keydown ) {
+			m_pCamWnd->Camera()->angles[PITCH] -= SPEED_TURN;
+			if ( m_pCamWnd->Camera()->angles[PITCH] < -85 ) {
+				m_pCamWnd->Camera()->angles[PITCH] = -85;
+			}
+			Sys_UpdateWindows( W_CAMERA | W_XY_OVERLAY );
+		}
+	}
+	else {
+		if ( keydown ) {
+			m_pCamWnd->Camera()->movementflags |= MOVE_ROTDOWN;
+		}
+		else{
+			m_pCamWnd->Camera()->movementflags &= ~MOVE_ROTDOWN;
+		}
+	}
 }
 
 void MainFrame::OnCameraStrafeleft( bool keydown ){
