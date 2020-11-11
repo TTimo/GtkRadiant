@@ -1124,11 +1124,7 @@ void MainFrame::create_main_menu( GtkWidget *window, GtkWidget *vbox ){
 
 	create_check_menu_item_with_mnemonic( menu_in_menu, _( "World" ), G_CALLBACK( HandleCommand ), ID_FILTER_WORLD, FALSE );
 	create_check_menu_item_with_mnemonic( menu_in_menu, _( "Entities" ), G_CALLBACK( HandleCommand ), ID_FILTER_ENTITIES, FALSE );
-	if ( g_pGameDescription->idTech2 ) {
-		create_check_menu_item_with_mnemonic( menu_in_menu, _( "Windows" ), G_CALLBACK( HandleCommand ), ID_FILTER_TRANSLUCENT, FALSE );
-	} else {
-		create_check_menu_item_with_mnemonic( menu_in_menu, _( "Translucent" ), G_CALLBACK( HandleCommand ), ID_FILTER_TRANSLUCENT, FALSE );
-	}
+	create_check_menu_item_with_mnemonic( menu_in_menu, _( "Translucent" ), G_CALLBACK( HandleCommand ), ID_FILTER_TRANSLUCENT, FALSE );
 	create_check_menu_item_with_mnemonic( menu_in_menu, _( "Liquids" ), G_CALLBACK( HandleCommand ), ID_FILTER_LIQUIDS, FALSE );
 	create_check_menu_item_with_mnemonic( menu_in_menu, _( "Sky" ), G_CALLBACK( HandleCommand ), ID_FILTER_SKY, FALSE );
 	create_check_menu_item_with_mnemonic( menu_in_menu, _( "Caulk" ), G_CALLBACK( HandleCommand ), ID_FILTER_CAULK, FALSE );
@@ -1140,17 +1136,12 @@ void MainFrame::create_main_menu( GtkWidget *window, GtkWidget *vbox ){
 	create_check_menu_item_with_mnemonic( menu_in_menu, _( "Hints" ), G_CALLBACK( HandleCommand ), ID_FILTER_HINTSSKIPS, FALSE );
 	create_check_menu_item_with_mnemonic( menu_in_menu, _( "Models" ), G_CALLBACK( HandleCommand ), ID_FILTER_MODELS, FALSE );
 	create_check_menu_item_with_mnemonic( menu_in_menu, _( "Areaportals" ), G_CALLBACK( HandleCommand ), ID_FILTER_AREAPORTALS, FALSE );
-	if ( !g_pGameDescription->idTech2) {
-		create_check_menu_item_with_mnemonic( menu_in_menu, _( "Clusterportals" ), G_CALLBACK( HandleCommand ), ID_FILTER_CLUSTERPORTALS, FALSE );
-	}
+	create_check_menu_item_with_mnemonic( menu_in_menu, _( "Clusterportals" ), G_CALLBACK( HandleCommand ), ID_FILTER_CLUSTERPORTALS, FALSE );
 	create_check_menu_item_with_mnemonic( menu_in_menu, _( "Triggers" ), G_CALLBACK( HandleCommand ), ID_FILTER_TRIGGERS, FALSE );
 	create_check_menu_item_with_mnemonic( menu_in_menu, _( "Paths" ), G_CALLBACK( HandleCommand ), ID_FILTER_PATHS, FALSE );
-
-	if ( !g_pGameDescription->idTech2) {
-		item = create_check_menu_item_with_mnemonic( menu_in_menu, _( "Lightgrid" ), G_CALLBACK( HandleCommand ), ID_FILTER_LIGHTGRID, FALSE );
-		g_object_set_data( G_OBJECT( window ), "menu_filter_lightgrid", item );
-		create_check_menu_item_with_mnemonic( menu_in_menu, _( "Patches" ), G_CALLBACK( HandleCommand ), ID_FILTER_PATCHES, FALSE );
-	}
+	item = create_check_menu_item_with_mnemonic( menu_in_menu, _( "Lightgrid" ), G_CALLBACK( HandleCommand ), ID_FILTER_LIGHTGRID, FALSE );
+	g_object_set_data( G_OBJECT( window ), "menu_filter_lightgrid", item );
+	create_check_menu_item_with_mnemonic( menu_in_menu, _( "Patches" ), G_CALLBACK( HandleCommand ), ID_FILTER_PATCHES, FALSE );
 
 	menu_separator( menu );
 	menu_in_menu = create_menu_in_menu_with_mnemonic( menu, _( "Hide/Show" ) );
