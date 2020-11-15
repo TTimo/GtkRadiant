@@ -476,10 +476,10 @@ void CamWnd::Cam_KeyControl( float dtime ) {
 		VectorMA( velocity, dtime * g_PrefsDlg.m_nMoveSpeed, m_Camera.right, velocity );
 	}
 	if ( m_Camera.movementflags & MOVE_UP ) {
-		VectorMA( velocity, dtime * g_PrefsDlg.m_nMoveSpeed, m_Camera.vup, velocity);
+		VectorMA( velocity, dtime * g_PrefsDlg.m_nMoveSpeed, (vec3_t) { 0, 0, 1 }, velocity);
 	}
 	if ( m_Camera.movementflags & MOVE_DOWN ) {
-		VectorMA( velocity, -dtime * g_PrefsDlg.m_nMoveSpeed, m_Camera.vup, velocity);
+		VectorMA( velocity, -dtime * g_PrefsDlg.m_nMoveSpeed, (vec3_t) { 0, 0, 1 }, velocity);
 	}
 
 	// Now move the origin by the scaled velocity
