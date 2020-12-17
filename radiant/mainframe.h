@@ -403,6 +403,7 @@ struct SKeyInfo
 #define ID_FILTER_STRUCTURAL            40226
 #define ID_FILTER_BOTCLIPS              40227
 #define ID_FILTER_SKY                   40228
+#define ID_FILTER_MIST                  40229
 
 #define ID_CURVE_REDISPERSE_INTERMEDIATE_COLS   40230
 #define ID_CURVE_REDISPERSE_INTERMEDIATE_ROWS   40231
@@ -894,6 +895,7 @@ void OnFilterEntities();
 void OnFilterHintsskips();
 void OnFilterLights();
 void OnFilterLiquids();
+void OnFilterMist();
 void OnFilterModels();
 void OnFilterPatches();
 void OnFilterTranslucent();

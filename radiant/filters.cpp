@@ -143,6 +143,7 @@ bfilter_t *FilterAddBase( bfilter_t *pFilter ){
 		pFilter = FilterAddImpl( pFilter,1,0,"clip",EXCLUDE_CLIP,true );
 		pFilter = FilterAddImpl( pFilter,1,0,"caulk",EXCLUDE_CAULK,true );
 		pFilter = FilterAddImpl( pFilter,8,0,NULL,EXCLUDE_LIQUIDS,true );
+		pFilter = FilterAddImpl( pFilter,8,0,NULL,EXCLUDE_MIST,true );
 		pFilter = FilterAddImpl( pFilter,8,0,NULL,EXCLUDE_HINTSSKIPS,true );
 		pFilter = FilterAddImpl( pFilter,8,0,NULL,EXCLUDE_TRANSLUCENT,true );
 		pFilter = FilterAddImpl( pFilter,8,0,NULL,EXCLUDE_SKY,true );
@@ -236,7 +237,9 @@ bool FilterBrush( brush_t *pb ){
 	}
 
 	// if brush belongs to world entity or a brushmodel entity and is not a patch
-	if ( ( strcmp( pb->owner->eclass->name, "worldspawn" ) == 0
+	if ( ( !strcmp( pb->owner->eclass->name, "worldspawn" )
+		   || !strcmp( pb->owner->eclass->name, "misc_fog")
+		   || !strcmp( pb->owner->eclass->name, "misc_dust")
 		   || !strncmp( pb->owner->eclass->name, "func", 4 )
 		   || !strncmp( pb->owner->eclass->name, "trigger", 7 ) ) && !pb->patchBrush ) {
 		bool filterbrush = false;
@@ -309,8 +312,13 @@ bool FilterBrush( brush_t *pb ){
 							if ( f->texdef.contents & CONTENTS_WINDOW ) {
 								filterbrush = true;
 							}
-							if ( f->texdef.flags & (SURF_TRANS33 | SURF_TRANS66 | SURF_ALPHA_TEST) ) {
+							if ( f->texdef.flags & (SURF_TRANS33 | SURF_TRANS66) ) {
 								filterbrush = true;
+							}
+							if ( g_pGameDescription->mGameFile == "quetoo.game" ) {
+								if (f->texdef.flags & ( SURF_TRANS100 | SURF_ALPHA_TEST )) {
+									filterbrush = true;
+								}
 							}
 							if ( strstr( f->pShader->getName(), "glass" ) ||
 								 strstr( f->pShader->getName(), "window" ) ) {
@@ -322,6 +330,17 @@ bool FilterBrush( brush_t *pb ){
 								filterbrush = true;
 							}
 							if ( strstr( f->pShader->getName(), "sky" ) ) {
+								filterbrush = true;
+							}
+							break;
+						case EXCLUDE_MIST:
+							if ( f->texdef.contents & CONTENTS_MIST ) {
+								filterbrush = true;
+							}
+							if ( strstr( f->pShader->getName(), "common/fog" ) ) {
+								filterbrush = true;
+							}
+							if ( strstr( f->pShader->getName(), "common/dust" ) ) {
 								filterbrush = true;
 							}
 							break;

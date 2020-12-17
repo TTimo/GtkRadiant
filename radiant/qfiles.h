@@ -408,20 +408,19 @@ typedef struct texinfo_s
 
 
 #define SURF_LIGHT      0x1     // value will hold the light strength
-
 #define SURF_SLICK      0x2     // effects game physics
-
 #define SURF_SKY        0x4     // don't draw, but add to skybox
 #define SURF_WARP       0x8     // turbulent water warp
 #define SURF_TRANS33    0x10
 #define SURF_TRANS66    0x20
 #define SURF_FLOWING    0x40    // scroll towards angle
+#define SURF_TRANS100   0x40    // quetoo provides texture alpha via overriding SURF_FLOWING
 #define SURF_NODRAW     0x80    // don't bother referencing the texture
 #define SURF_HINT       0x100
 #define SURF_SKIP       0x200
 #define SURF_ALPHA_TEST 0x400
 
-#define SURF_PATCH        0x20000000
+#define SURF_PATCH          0x20000000
 #define SURF_CURVE_FAKE     0x40000000
 #define SURF_CURVE          0x80000000
 #define SURF_KEEP       ( SURF_CURVE | SURF_CURVE_FAKE | SURF_PATCH )
