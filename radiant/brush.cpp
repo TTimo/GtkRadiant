@@ -3094,6 +3094,9 @@ void Brush_FaceDraw( face_t *face, int nGLState ){
 #define Q2_SURF_TRANS33   0x00000010
 #define Q2_SURF_TRANS66   0x00000020
 
+#define QUETOO_SURF_TRANS100     0x00000040
+#define QUETOO_SURF_ALPHA_TEST   0x00000400
+
 void Brush_Draw( brush_t *b ){
 	face_t          *face;
 	int order;
@@ -3131,6 +3134,16 @@ void Brush_Draw( brush_t *b ){
 			else if ( face->texdef.flags & Q2_SURF_TRANS66 ) {
 				bTrans = true;
 				transVal = 0.66f;
+			}
+			else if ( g_pGameDescription->mGameFile == "quetoo.game" ) {
+				if ( face->texdef.flags & QUETOO_SURF_TRANS100 ) {
+					bTrans = true;
+					transVal = 1.f;
+				}
+				else if ( face->texdef.flags & QUETOO_SURF_ALPHA_TEST ) {
+					bTrans = true;
+					transVal = 1.f;
+				}
 			}
 		}
 
