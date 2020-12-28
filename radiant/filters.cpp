@@ -146,6 +146,7 @@ bfilter_t *FilterAddBase( bfilter_t *pFilter ){
 		pFilter = FilterAddImpl( pFilter,8,0,NULL,EXCLUDE_MIST,true );
 		pFilter = FilterAddImpl( pFilter,8,0,NULL,EXCLUDE_HINTSSKIPS,true );
 		pFilter = FilterAddImpl( pFilter,8,0,NULL,EXCLUDE_TRANSLUCENT,true );
+		pFilter = FilterAddImpl( pFilter,8,0,NULL,EXCLUDE_AREAPORTALS,true );
 		pFilter = FilterAddImpl( pFilter,8,0,NULL,EXCLUDE_SKY,true );
 		pFilter = FilterAddImpl( pFilter,3,0,"trigger",EXCLUDE_TRIGGERS,true );
 		pFilter = FilterAddImpl( pFilter,4,ECLASS_LIGHT,NULL,EXCLUDE_LIGHTS,true );
@@ -305,6 +306,14 @@ bool FilterBrush( brush_t *pb ){
 							}
 							if ( strstr( f->pShader->getName(), "hint" ) ||
 								 strstr( f->pShader->getName(), "skip" ) ) {
+								filterbrush = true;
+							}
+							break;
+						case EXCLUDE_AREAPORTALS:
+							if ( f->texdef.contents & CONTENTS_AREAPORTAL ) {
+								filterbrush = true;
+							}
+							if (strstr( f->pShader->getName(), "common/occlude" ) ) {
 								filterbrush = true;
 							}
 							break;
