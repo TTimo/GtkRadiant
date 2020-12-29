@@ -272,11 +272,12 @@ SCommandInfo g_Commands[] =
 	{"FilterTranslucent", GDK_KEY_4, RAD_ALT, ID_FILTER_TRANSLUCENT, "menu_filter_translucent"},
 	{"FilterLiquids", '5', RAD_ALT, ID_FILTER_LIQUIDS, "menu_filter_liquids"},
 	{"FilterLiquids", GDK_KEY_5, RAD_ALT, ID_FILTER_LIQUIDS, "menu_filter_liquids"},
+	{"FilterMist", GDK_KEY_M, RAD_ALT, ID_FILTER_MIST, "menu_filter_mist"},
 	{"FilterCaulk", '6', RAD_ALT, ID_FILTER_CAULK, "menu_filter_caulk"},
 	{"FilterCaulk", GDK_KEY_6, RAD_ALT, ID_FILTER_CAULK, "menu_filter_caulk"},
 	{"FilterClips", '7', RAD_ALT, ID_FILTER_CLIPS, "menu_filter_clips"},
 	{"FilterClips", GDK_KEY_7, RAD_ALT, ID_FILTER_CLIPS, "menu_filter_clips"},
-	{"FilterBotClips", GDK_KEY_M, RAD_ALT, ID_FILTER_BOTCLIPS, "menu_filter_botclips"},
+	{"FilterBotClips", GDK_KEY_B, RAD_ALT, ID_FILTER_BOTCLIPS, "menu_filter_botclips"},
 	{"FilterPaths", '8', RAD_ALT, ID_FILTER_PATHS, "menu_filter_paths"},
 	{"FilterPaths", GDK_KEY_8, RAD_ALT, ID_FILTER_PATHS, "menu_filter_paths"},
 	{"FilterClusterportals", '9', RAD_ALT, ID_FILTER_CLUSTERPORTALS, "menu_filter_clusterportals"},
@@ -287,6 +288,7 @@ SCommandInfo g_Commands[] =
 	{"FilterDetails", GDK_KEY_D, RAD_CONTROL, ID_FILTER_DETAILS, "menu_filter_details"},
 	{"FilterStructural", GDK_KEY_D, RAD_CONTROL | RAD_SHIFT, ID_FILTER_STRUCTURAL, "menu_filter_structural"},
 	{"FilterHintsSkips", GDK_KEY_H, RAD_CONTROL, ID_FILTER_HINTSSKIPS, "menu_filter_hintsskips"},
+	{"FilterSky", GDK_KEY_S, RAD_ALT, ID_FILTER_SKY, "menu_filter_sky"},
 	{"FilterModels", GDK_KEY_M, RAD_SHIFT, ID_FILTER_MODELS, "menu_filter_models"},
 	{"FilterTriggers", GDK_KEY_T, RAD_CONTROL | RAD_SHIFT, ID_FILTER_TRIGGERS, "menu_filter_triggers"},
 	{"LoadPointfile", GDK_KEY_L, RAD_SHIFT, ID_FILE_POINTFILE, "menu_load_pointfile"},
@@ -377,6 +379,10 @@ void HandleKeyUp( GtkWidget *widget, gpointer data ){
 	case ID_CAMERA_RIGHT: g_pParentWnd->OnCameraRight( FALSE ); break;
 	case ID_CAMERA_STRAFELEFT: g_pParentWnd->OnCameraStrafeleft( FALSE ); break;
 	case ID_CAMERA_STRAFERIGHT: g_pParentWnd->OnCameraStraferight( FALSE ); break;
+	case ID_CAMERA_UP: g_pParentWnd->OnCameraUp( FALSE ); break;
+	case ID_CAMERA_DOWN: g_pParentWnd->OnCameraDown( FALSE ); break;
+	case ID_CAMERA_ANGLEUP: g_pParentWnd->OnCameraAngleup( FALSE ); break;
+	case ID_CAMERA_ANGLEDOWN: g_pParentWnd->OnCameraAngledown( FALSE ); break;
 	}
 }
 
@@ -647,8 +653,10 @@ gint HandleCommand( GtkWidget *widget, gpointer data ){
 		  case ID_FILTER_DETAILS: g_pParentWnd->OnFilterDetails(); break;
 		  case ID_FILTER_ENTITIES: g_pParentWnd->OnFilterEntities(); break;
 		  case ID_FILTER_HINTSSKIPS: g_pParentWnd->OnFilterHintsskips(); break;
+		  case ID_FILTER_SKY: g_pParentWnd->OnFilterSky(); break;
 		  case ID_FILTER_LIGHTS: g_pParentWnd->OnFilterLights(); break;
 		  case ID_FILTER_LIQUIDS: g_pParentWnd->OnFilterLiquids(); break;
+		  case ID_FILTER_MIST: g_pParentWnd->OnFilterMist(); break;
 		  case ID_FILTER_MODELS: g_pParentWnd->OnFilterModels(); break;
 		  case ID_FILTER_PATCHES: g_pParentWnd->OnFilterPatches(); break;
 		  case ID_FILTER_TRANSLUCENT: g_pParentWnd->OnFilterTranslucent(); break;
@@ -693,10 +701,10 @@ gint HandleCommand( GtkWidget *widget, gpointer data ){
 		  case ID_CAMERA_BACK: g_pParentWnd->OnCameraBack( TRUE ); break;
 		  case ID_CAMERA_LEFT: g_pParentWnd->OnCameraLeft( TRUE ); break;
 		  case ID_CAMERA_RIGHT: g_pParentWnd->OnCameraRight( TRUE ); break;
-		  case ID_CAMERA_UP: g_pParentWnd->OnCameraUp(); break;
-		  case ID_CAMERA_DOWN: g_pParentWnd->OnCameraDown(); break;
-		  case ID_CAMERA_ANGLEUP: g_pParentWnd->OnCameraAngleup(); break;
-		  case ID_CAMERA_ANGLEDOWN: g_pParentWnd->OnCameraAngledown(); break;
+		  case ID_CAMERA_UP: g_pParentWnd->OnCameraUp( TRUE ); break;
+		  case ID_CAMERA_DOWN: g_pParentWnd->OnCameraDown( TRUE ); break;
+		  case ID_CAMERA_ANGLEUP: g_pParentWnd->OnCameraAngleup( TRUE ); break;
+		  case ID_CAMERA_ANGLEDOWN: g_pParentWnd->OnCameraAngledown( TRUE ); break;
 		  case ID_CAMERA_STRAFELEFT: g_pParentWnd->OnCameraStrafeleft( TRUE ); break;
 		  case ID_CAMERA_STRAFERIGHT: g_pParentWnd->OnCameraStraferight( TRUE ); break;
 		  case ID_GRID_TOGGLE: g_pParentWnd->OnGridToggle(); break;
@@ -830,9 +838,9 @@ static gint mainframe_keypress( GtkWidget* widget, GdkEventKey* event, gpointer 
 static gint mainframe_keyrelease( GtkWidget* widget, GdkEventKey* event, gpointer data ){
 	unsigned int code = gdk_keyval_to_upper( event->keyval );
 
-	if ( gtk_accelerator_valid( event->keyval, (GdkModifierType)0 ) ) {
-		return TRUE;
-	}
+//	if ( gtk_accelerator_valid( event->keyval, (GdkModifierType)0 ) ) {
+//		return TRUE;
+//	}
 
 	for ( int i = 0; i < g_nCommandCount; i++ )
 	{
@@ -847,6 +855,10 @@ static gint mainframe_keyrelease( GtkWidget* widget, GdkEventKey* event, gpointe
 				case ID_CAMERA_RIGHT:
 				case ID_CAMERA_STRAFELEFT:
 				case ID_CAMERA_STRAFERIGHT:
+				case ID_CAMERA_UP:
+				case ID_CAMERA_DOWN:
+				case ID_CAMERA_ANGLEUP:
+				case ID_CAMERA_ANGLEDOWN:
 				{
 					HandleKeyUp( NULL, GINT_TO_POINTER( g_Commands[i].m_nCommand ) );
 					g_signal_stop_emission_by_name( G_OBJECT( widget ), "key-release-event" );
@@ -1119,25 +1131,28 @@ void MainFrame::create_main_menu( GtkWidget *window, GtkWidget *vbox ){
 	g_object_set_data( G_OBJECT( window ), "menu_view_showworkzone", item );
 
 	menu_in_menu = create_menu_in_menu_with_mnemonic( menu, _( "Filter" ) );
+
 	create_check_menu_item_with_mnemonic( menu_in_menu, _( "World" ), G_CALLBACK( HandleCommand ), ID_FILTER_WORLD, FALSE );
 	create_check_menu_item_with_mnemonic( menu_in_menu, _( "Entities" ), G_CALLBACK( HandleCommand ), ID_FILTER_ENTITIES, FALSE );
-	create_check_menu_item_with_mnemonic( menu_in_menu, _( "Areaportals" ), G_CALLBACK( HandleCommand ), ID_FILTER_AREAPORTALS, FALSE );
 	create_check_menu_item_with_mnemonic( menu_in_menu, _( "Translucent" ), G_CALLBACK( HandleCommand ), ID_FILTER_TRANSLUCENT, FALSE );
 	create_check_menu_item_with_mnemonic( menu_in_menu, _( "Liquids" ), G_CALLBACK( HandleCommand ), ID_FILTER_LIQUIDS, FALSE );
+	create_check_menu_item_with_mnemonic( menu_in_menu, _( "Mist" ), G_CALLBACK( HandleCommand ), ID_FILTER_MIST, FALSE );
+	create_check_menu_item_with_mnemonic( menu_in_menu, _( "Sky" ), G_CALLBACK( HandleCommand ), ID_FILTER_SKY, FALSE );
 	create_check_menu_item_with_mnemonic( menu_in_menu, _( "Caulk" ), G_CALLBACK( HandleCommand ), ID_FILTER_CAULK, FALSE );
 	create_check_menu_item_with_mnemonic( menu_in_menu, _( "Clips" ), G_CALLBACK( HandleCommand ), ID_FILTER_CLIPS, FALSE );
-	create_check_menu_item_with_mnemonic( menu_in_menu, _( "Paths" ), G_CALLBACK( HandleCommand ), ID_FILTER_PATHS, FALSE );
-	create_check_menu_item_with_mnemonic( menu_in_menu, _( "Clusterportals" ), G_CALLBACK( HandleCommand ), ID_FILTER_CLUSTERPORTALS, FALSE );
+	create_check_menu_item_with_mnemonic( menu_in_menu, _( "Bot clips" ), G_CALLBACK( HandleCommand ), ID_FILTER_BOTCLIPS, FALSE );
 	create_check_menu_item_with_mnemonic( menu_in_menu, _( "Lights" ), G_CALLBACK( HandleCommand ), ID_FILTER_LIGHTS, FALSE );
 	create_check_menu_item_with_mnemonic( menu_in_menu, _( "Structural" ), G_CALLBACK( HandleCommand ), ID_FILTER_STRUCTURAL, FALSE );
-	item = create_check_menu_item_with_mnemonic( menu_in_menu, _( "Lightgrid" ), G_CALLBACK( HandleCommand ), ID_FILTER_LIGHTGRID, FALSE );
-	g_object_set_data( G_OBJECT( window ), "menu_filter_lightgrid", item );
-	create_check_menu_item_with_mnemonic( menu_in_menu, _( "Patches" ), G_CALLBACK( HandleCommand ), ID_FILTER_PATCHES, FALSE );
 	create_check_menu_item_with_mnemonic( menu_in_menu, _( "Details" ), G_CALLBACK( HandleCommand ), ID_FILTER_DETAILS, FALSE );
 	create_check_menu_item_with_mnemonic( menu_in_menu, _( "Hints" ), G_CALLBACK( HandleCommand ), ID_FILTER_HINTSSKIPS, FALSE );
 	create_check_menu_item_with_mnemonic( menu_in_menu, _( "Models" ), G_CALLBACK( HandleCommand ), ID_FILTER_MODELS, FALSE );
+	create_check_menu_item_with_mnemonic( menu_in_menu, _( "Areaportals" ), G_CALLBACK( HandleCommand ), ID_FILTER_AREAPORTALS, FALSE );
+	create_check_menu_item_with_mnemonic( menu_in_menu, _( "Clusterportals" ), G_CALLBACK( HandleCommand ), ID_FILTER_CLUSTERPORTALS, FALSE );
 	create_check_menu_item_with_mnemonic( menu_in_menu, _( "Triggers" ), G_CALLBACK( HandleCommand ), ID_FILTER_TRIGGERS, FALSE );
-	create_check_menu_item_with_mnemonic( menu_in_menu, _( "Botclips" ), G_CALLBACK( HandleCommand ), ID_FILTER_BOTCLIPS, FALSE );
+	create_check_menu_item_with_mnemonic( menu_in_menu, _( "Paths" ), G_CALLBACK( HandleCommand ), ID_FILTER_PATHS, FALSE );
+	item = create_check_menu_item_with_mnemonic( menu_in_menu, _( "Lightgrid" ), G_CALLBACK( HandleCommand ), ID_FILTER_LIGHTGRID, FALSE );
+	g_object_set_data( G_OBJECT( window ), "menu_filter_lightgrid", item );
+	create_check_menu_item_with_mnemonic( menu_in_menu, _( "Patches" ), G_CALLBACK( HandleCommand ), ID_FILTER_PATCHES, FALSE );
 
 	menu_separator( menu );
 	menu_in_menu = create_menu_in_menu_with_mnemonic( menu, _( "Hide/Show" ) );
@@ -3966,6 +3981,9 @@ void MainFrame::SetButtonMenuStates(){
 	item = GTK_WIDGET( g_object_get_data( G_OBJECT( m_pWidget ), "menu_filter_liquids" ) );
 	gtk_check_menu_item_set_active( GTK_CHECK_MENU_ITEM( item ),
 									( g_qeglobals.d_savedinfo.exclude & EXCLUDE_LIQUIDS ) != 0 );
+	item = GTK_WIDGET( g_object_get_data( G_OBJECT( m_pWidget ), "menu_filter_mist" ) );
+		gtk_check_menu_item_set_active( GTK_CHECK_MENU_ITEM( item ),
+										( g_qeglobals.d_savedinfo.exclude & EXCLUDE_MIST ) != 0 );
 	item = GTK_WIDGET( g_object_get_data( G_OBJECT( m_pWidget ), "menu_filter_caulk" ) );
 	gtk_check_menu_item_set_active( GTK_CHECK_MENU_ITEM( item ),
 									( g_qeglobals.d_savedinfo.exclude & EXCLUDE_CAULK ) != 0 );
@@ -3999,12 +4017,16 @@ void MainFrame::SetButtonMenuStates(){
 	item = GTK_WIDGET( g_object_get_data( G_OBJECT( m_pWidget ), "menu_filter_hintsskips" ) );
 	gtk_check_menu_item_set_active( GTK_CHECK_MENU_ITEM( item ),
 									( g_qeglobals.d_savedinfo.exclude & EXCLUDE_HINTSSKIPS ) != 0 );
+	item = GTK_WIDGET( g_object_get_data( G_OBJECT( m_pWidget ), "menu_filter_sky" ) );
+		gtk_check_menu_item_set_active( GTK_CHECK_MENU_ITEM( item ),
+									( g_qeglobals.d_savedinfo.exclude & EXCLUDE_SKY ) != 0 );
 	item = GTK_WIDGET( g_object_get_data( G_OBJECT( m_pWidget ), "menu_filter_models" ) );
 	gtk_check_menu_item_set_active( GTK_CHECK_MENU_ITEM( item ),
 									( g_qeglobals.d_savedinfo.exclude & EXCLUDE_MODELS ) != 0 );
 	item = GTK_WIDGET( g_object_get_data( G_OBJECT( m_pWidget ), "menu_filter_triggers" ) );
 	gtk_check_menu_item_set_active( GTK_CHECK_MENU_ITEM( item ),
 									( g_qeglobals.d_savedinfo.exclude & EXCLUDE_TRIGGERS ) != 0 );
+
 	item  = GTK_WIDGET( g_object_get_data( G_OBJECT( m_pWidget ), "menu_toggle_lock" ) );
 	gtk_check_menu_item_set_active( GTK_CHECK_MENU_ITEM( item ), ( g_PrefsDlg.m_bTextureLock ) ? TRUE : FALSE );
 	item  = GTK_WIDGET( g_object_get_data( G_OBJECT( m_pWidget ), "menu_toggle_rotatelock" ) );
@@ -7246,32 +7268,80 @@ void MainFrame::OnCameraRight( bool keydown ){
 	}
 }
 
-void MainFrame::OnCameraUp(){
-	m_pCamWnd->Camera()->origin[2] += SPEED_MOVE;
-	int nUpdate = ( g_PrefsDlg.m_bCamXYUpdate ) ? ( W_CAMERA | W_XY | W_Z ) : ( W_CAMERA );
-	Sys_UpdateWindows( nUpdate );
-}
-
-void MainFrame::OnCameraDown(){
-	m_pCamWnd->Camera()->origin[2] -= SPEED_MOVE;
-	int nUpdate = ( g_PrefsDlg.m_bCamXYUpdate ) ? ( W_CAMERA | W_XY | W_Z ) : ( W_CAMERA );
-	Sys_UpdateWindows( nUpdate );
-}
-
-void MainFrame::OnCameraAngleup(){
-	m_pCamWnd->Camera()->angles[0] += SPEED_TURN;
-	if ( m_pCamWnd->Camera()->angles[0] > 85 ) {
-		m_pCamWnd->Camera()->angles[0] = 85;
+void MainFrame::OnCameraUp( bool keydown ){
+	if ( g_PrefsDlg.m_bCamDiscrete ) {
+		if ( keydown ) {
+			m_pCamWnd->Camera()->origin[2] += SPEED_MOVE;
+			int nUpdate = ( g_PrefsDlg.m_bCamXYUpdate ) ? ( W_CAMERA | W_XY ) : ( W_CAMERA );
+			Sys_UpdateWindows( nUpdate );
+		}
 	}
-	Sys_UpdateWindows( W_CAMERA | W_XY_OVERLAY );
+	else {
+		if ( keydown ) {
+			m_pCamWnd->Camera()->movementflags |= MOVE_UP;
+		}
+		else{
+			m_pCamWnd->Camera()->movementflags &= ~MOVE_UP;
+		}
+	}
 }
 
-void MainFrame::OnCameraAngledown(){
-	m_pCamWnd->Camera()->angles[0] -= SPEED_TURN;
-	if ( m_pCamWnd->Camera()->angles[0] < -85 ) {
-		m_pCamWnd->Camera()->angles[0] = -85;
+void MainFrame::OnCameraDown( bool keydown ){
+	if ( g_PrefsDlg.m_bCamDiscrete ) {
+		if ( keydown ) {
+			m_pCamWnd->Camera()->origin[2] -= SPEED_MOVE;
+			int nUpdate = ( g_PrefsDlg.m_bCamXYUpdate ) ? ( W_CAMERA | W_XY ) : ( W_CAMERA );
+			Sys_UpdateWindows( nUpdate );
+		}
 	}
-	Sys_UpdateWindows( W_CAMERA | W_XY_OVERLAY );
+	else {
+		if ( keydown ) {
+			m_pCamWnd->Camera()->movementflags |= MOVE_DOWN;
+		}
+		else{
+			m_pCamWnd->Camera()->movementflags &= ~MOVE_DOWN;
+		}
+	}
+}
+
+void MainFrame::OnCameraAngleup( bool keydown ){
+	if ( g_PrefsDlg.m_bCamDiscrete ) {
+		if ( keydown ) {
+			m_pCamWnd->Camera()->angles[PITCH] += SPEED_TURN;
+			if ( m_pCamWnd->Camera()->angles[PITCH] > 85 ) {
+				m_pCamWnd->Camera()->angles[PITCH] = 85;
+			}
+			Sys_UpdateWindows( W_CAMERA | W_XY_OVERLAY );
+		}
+	}
+	else {
+		if ( keydown ) {
+			m_pCamWnd->Camera()->movementflags |= MOVE_ROTUP;
+		}
+		else{
+			m_pCamWnd->Camera()->movementflags &= ~MOVE_ROTUP;
+		}
+	}
+}
+
+void MainFrame::OnCameraAngledown( bool keydown ){
+	if ( g_PrefsDlg.m_bCamDiscrete ) {
+		if ( keydown ) {
+			m_pCamWnd->Camera()->angles[PITCH] -= SPEED_TURN;
+			if ( m_pCamWnd->Camera()->angles[PITCH] < -85 ) {
+				m_pCamWnd->Camera()->angles[PITCH] = -85;
+			}
+			Sys_UpdateWindows( W_CAMERA | W_XY_OVERLAY );
+		}
+	}
+	else {
+		if ( keydown ) {
+			m_pCamWnd->Camera()->movementflags |= MOVE_ROTDOWN;
+		}
+		else{
+			m_pCamWnd->Camera()->movementflags &= ~MOVE_ROTDOWN;
+		}
+	}
 }
 
 void MainFrame::OnCameraStrafeleft( bool keydown ){
@@ -7696,6 +7766,20 @@ void MainFrame::OnFilterLiquids(){
 	Sys_UpdateWindows( W_XY | W_CAMERA );
 }
 
+void MainFrame::OnFilterMist(){
+	GtkWidget *item = GTK_WIDGET( g_object_get_data( G_OBJECT( m_pWidget ), "menu_filter_mist" ) );
+	g_bIgnoreCommands++;
+	if ( ( g_qeglobals.d_savedinfo.exclude ^= EXCLUDE_MIST ) & EXCLUDE_MIST ) {
+		gtk_check_menu_item_set_active( GTK_CHECK_MENU_ITEM( item ), TRUE );
+	}
+	else{
+		gtk_check_menu_item_set_active( GTK_CHECK_MENU_ITEM( item ), FALSE );
+	}
+	g_bIgnoreCommands--;
+	PerformFiltering();
+	Sys_UpdateWindows( W_XY | W_CAMERA );
+}
+
 void MainFrame::OnFilterModels(){
 	GtkWidget *item = GTK_WIDGET( g_object_get_data( G_OBJECT( m_pWidget ), "menu_filter_models" ) );
 	g_bIgnoreCommands++;
@@ -7798,6 +7882,20 @@ void MainFrame::OnFilterWorld(){
 	GtkWidget *item = GTK_WIDGET( g_object_get_data( G_OBJECT( m_pWidget ), "menu_filter_world" ) );
 	g_bIgnoreCommands++;
 	if ( ( g_qeglobals.d_savedinfo.exclude ^= EXCLUDE_WORLD ) & EXCLUDE_WORLD ) {
+		gtk_check_menu_item_set_active( GTK_CHECK_MENU_ITEM( item ), TRUE );
+	}
+	else{
+		gtk_check_menu_item_set_active( GTK_CHECK_MENU_ITEM( item ), FALSE );
+	}
+	g_bIgnoreCommands--;
+	PerformFiltering();
+	Sys_UpdateWindows( W_XY | W_CAMERA );
+}
+
+void MainFrame::OnFilterSky(){
+	GtkWidget *item = GTK_WIDGET( g_object_get_data( G_OBJECT( m_pWidget ), "menu_filter_sky" ) );
+	g_bIgnoreCommands++;
+	if ( ( g_qeglobals.d_savedinfo.exclude ^= EXCLUDE_SKY ) & EXCLUDE_SKY ) {
 		gtk_check_menu_item_set_active( GTK_CHECK_MENU_ITEM( item ), TRUE );
 	}
 	else{

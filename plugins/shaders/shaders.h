@@ -45,7 +45,7 @@ class CShader : public IShader
 {
 int refCount;
 qtexture_t *m_pTexture;
-// name is shader / texture name (if not a real shader) reletive to "textures/" directory
+// name is shader / texture name (if not a real shader) relative to "textures/" directory
 char m_Name[QER_MAX_NAMELEN];
 char m_ShaderFileName[QER_MAX_NAMELEN];
 int m_nFlags;

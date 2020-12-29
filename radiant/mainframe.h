@@ -401,7 +401,9 @@ struct SKeyInfo
 #define ID_FILTER_CLUSTERPORTALS        40224
 #define ID_FILTER_LIGHTGRID             40225
 #define ID_FILTER_STRUCTURAL            40226
-#define ID_FILTER_BOTCLIPS                          40227
+#define ID_FILTER_BOTCLIPS              40227
+#define ID_FILTER_SKY                   40228
+#define ID_FILTER_MIST                  40229
 
 #define ID_CURVE_REDISPERSE_INTERMEDIATE_COLS   40230
 #define ID_CURVE_REDISPERSE_INTERMEDIATE_ROWS   40231
@@ -702,16 +704,16 @@ void OnHelpLinks();
 void OnHelpBugreport();
 void OnViewClipper();
 void OnToggleDetail();
-void OnCameraAngledown();
-void OnCameraAngleup();
+void OnCameraAngledown( bool keydown );
+void OnCameraAngleup( bool keydown );
 void OnCameraBack( bool keydown );
-void OnCameraDown();
+void OnCameraDown( bool keydown );
 void OnCameraForward( bool keydown );
 void OnCameraLeft( bool keydown );
 void OnCameraRight( bool keydown );
 void OnCameraStrafeleft( bool keydown );
 void OnCameraStraferight( bool keydown );
-void OnCameraUp();
+void OnCameraUp( bool keydown );
 void OnGridToggle();
 void OnPrefs();
 void OnTogglecamera();
@@ -893,11 +895,13 @@ void OnFilterEntities();
 void OnFilterHintsskips();
 void OnFilterLights();
 void OnFilterLiquids();
+void OnFilterMist();
 void OnFilterModels();
 void OnFilterPatches();
 void OnFilterTranslucent();
 void OnFilterTriggers();
 void OnFilterWorld();
+void OnFilterSky();
 void OnFilterPaths();
 void OnFilterClusterportals();
 void OnFilterLightgrid();
