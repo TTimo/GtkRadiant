@@ -433,6 +433,8 @@ void CamWnd::Cam_KeyControl( float dtime ) {
 	static vec3_t avelocity;
 	static vec3_t velocity;
 
+	const vec3_t up = { 0, 0, 1 };
+
 	// Update angles
 	if ( m_Camera.movementflags & MOVE_ROTLEFT ) {
 		avelocity[YAW] += dtime * g_PrefsDlg.m_nAngleSpeed;
@@ -476,14 +478,14 @@ void CamWnd::Cam_KeyControl( float dtime ) {
 		VectorMA( velocity, dtime * g_PrefsDlg.m_nMoveSpeed, m_Camera.right, velocity );
 	}
 	if ( m_Camera.movementflags & MOVE_UP ) {
-		VectorMA( velocity, dtime * g_PrefsDlg.m_nMoveSpeed, (vec3_t) { 0, 0, 1 }, velocity);
+		VectorMA( velocity, dtime * g_PrefsDlg.m_nMoveSpeed, up, velocity );
 	}
 	if ( m_Camera.movementflags & MOVE_DOWN ) {
-		VectorMA( velocity, -dtime * g_PrefsDlg.m_nMoveSpeed, (vec3_t) { 0, 0, 1 }, velocity);
+		VectorMA( velocity, -dtime * g_PrefsDlg.m_nMoveSpeed, up, velocity );
 	}
 
 	// Now move the origin by the scaled velocity
-	VectorMA( m_Camera.origin, dtime, velocity, m_Camera.origin);
+	VectorMA( m_Camera.origin, dtime, velocity, m_Camera.origin );
 
 	// And then add some friction to slow us down
 	VectorScale( velocity, 1.f - dtime, velocity );

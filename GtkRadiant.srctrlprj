@@ -38,7 +38,6 @@
                 <source_path>plugins/textool</source_path>
                 <source_path>plugins/vfspak</source_path>
                 <source_path>plugins/vfspk3</source_path>
-                <source_path>plugins/vfsqlpk3</source_path>
                 <source_path>plugins/vfswad</source_path>
                 <source_path>radiant</source_path>
                 <source_path>tools/quake3/common</source_path>

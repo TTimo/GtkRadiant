@@ -263,6 +263,8 @@ class Config:
             
         # On Mac, we pad headers so that we may rewrite them for packaging
         if ( self.platform == 'Darwin' ) :
+            env.Append( CFLAGS = [ '-mmacosx-version-min=10.9' ] )
+            env.Append( CXXFLAGS = [ '-mmacosx-version-min=10.9' ] )
             env.Append( LINKFLAGS = [ '-headerpad_max_install_names' ] )
 
     def CheckoutOrUpdate( self, svnurl, path ):
