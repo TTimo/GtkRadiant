@@ -1,7 +1,15 @@
 
 
-import sys, os, traceback, platform, re, subprocess, platform
-import urllib3, zipfile, shutil, pprint
+import sys
+import os
+import traceback
+import platform
+import re
+import subprocess
+import platform
+import urllib
+import zipfile
+import shutil
 
 if __name__ != '__main__':
     from SCons.Script import *
