@@ -1,4 +1,4 @@
-
+#!/usr/bin/env python3
 
 import sys
 import os
@@ -7,7 +7,7 @@ import platform
 import re
 import subprocess
 import platform
-import urllib
+import urllib.request
 import zipfile
 import shutil
 
