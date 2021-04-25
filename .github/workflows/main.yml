@@ -25,5 +25,9 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
 
-      - name: Check Python
-        run: python -V
+      - name: Install scons
+        run: pip install scons
+
+      - name: Setup GtkRadiant
+        run: scons.bat target=setup
+
