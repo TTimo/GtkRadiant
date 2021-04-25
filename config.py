@@ -1,4 +1,4 @@
-from __future__ import print_function
+
 
 import sys, os, traceback, platform, re, subprocess, platform
 import urllib3, zipfile, shutil, pprint
@@ -318,7 +318,7 @@ class Config:
                 ]:
                 if ( not os.path.exists( lib_archive ) ):
                     print( 'downloading %s' % lib_archive )
-                    archive_web_request = urllib2.urlopen( 'http://s3.amazonaws.com/GtkRadiant/%s' % lib_archive )
+                    archive_web_request = urllib.request.urlopen( 'http://s3.amazonaws.com/GtkRadiant/%s' % lib_archive )
                     archive_File = open( lib_archive, 'wb' )
                     while True:
                         data = archive_web_request.read( 1048576 ) # read 1mb at a time
@@ -488,7 +488,7 @@ class ConfigParser:
                 value_array.append( value_split.pop() )
                 value_split.pop()
         except:
-            print( traceback.print_exception( sys.exc_type, sys.exc_value, sys.exc_traceback ) )
+            print( traceback.print_exception( sys.exc_info()[0], sys.exc_info()[1], sys.exc_info()[2] ) )
             print( 'syntax error (value to array): %s' % ( repr( value_split ) ) )
             return
 

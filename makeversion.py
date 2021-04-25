@@ -51,7 +51,7 @@ def radiant_makeversion(append_about):
   f.close()
   # aboutmsg
   aboutfile = 'include/aboutmsg.default'
-  if ( os.environ.has_key('RADIANT_ABOUTMSG') ):
+  if ( 'RADIANT_ABOUTMSG' in os.environ ):
     aboutfile = os.environ['RADIANT_ABOUTMSG']
   sys.stdout.write("about message is in %s\n" % aboutfile)
   f = open(aboutfile, 'r')

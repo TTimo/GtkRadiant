@@ -1,4 +1,4 @@
-from __future__ import print_function
+
 
 import os, time, zipfile, functools, pprint, subprocess
 
@@ -19,13 +19,11 @@ if ( __name__ == '__main__' ):
     for root, dirs, files in os.walk( prefix_path, topdown = True ):
         if ( root.find( '.svn' ) >= 0 ):
             continue
-        files = filter(
-            lambda n : not (
+        files = [n for n in files if not (
                 n.endswith( '.lib' )
                 or n.endswith( '.pdb' )
-                or n.endswith( '.exp' ) ),
-            files )
-        map( functools.partial( write_file, z, prefix_path, folder_name, root ), files )
+                or n.endswith( '.exp' ) )]
+        list(map( functools.partial( write_file, z, prefix_path, folder_name, root ), files ))
     z.close()
 
     # could be nicer to import s3cmd

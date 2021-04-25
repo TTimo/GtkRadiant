@@ -3,7 +3,7 @@
 # TTimo <ttimo@ttimo.net>
 # http://scons.org/
 
-from __future__ import print_function
+
 
 import os, subprocess, platform, xml.sax, re, string, platform
 
@@ -106,7 +106,7 @@ def Enum(*names):
          assert self.EnumType is other.EnumType, "Only values from the same enum are comparable"
          return cmp(self.__value, other.__value)
       def __invert__(self):      return constants[maximum - self.__value]
-      def __nonzero__(self):     return bool(self.__value)
+      def __bool__(self):     return bool(self.__value)
       def __repr__(self):        return str(names[self.__value])
 
    maximum = len(names) - 1
