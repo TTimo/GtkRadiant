@@ -26,6 +26,9 @@ jobs:
       - name: Install scons
         run: pip install scons
 
+      - name: Locate scons.bat
+        run: Get-Command python
+
       - name: Setup GtkRadiant
         run: python -m scons target=setup
 
