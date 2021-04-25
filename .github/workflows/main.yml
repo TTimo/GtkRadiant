@@ -32,8 +32,11 @@ jobs:
       - name: Setup GtkRadiant
         run: scons target=setup
 
+      - name: Add msbuild to PATH
+        uses: microsoft/setup-msbuild@v1.0.2
+
       - name: Build GtkRadiant
-        run: & "${Env:ProgramFiles(X86)}\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\MSBuild.exe" /p:Configuration=Release /p:Platform=Win32 /target:radiant
+        run: msbuild /p:Configuration=Release /p:Platform=Win32 /target:radiant
 
       - name: Build q3map2 x64
-        run: & "${Env:ProgramFiles(X86)}\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\MSBuild.exe" /p:Configuration=Release /p:Platform=x64 /target:q3map2
+        run: msbuild /p:Configuration=Release /p:Platform=x64 /target:q3map2
