@@ -26,5 +26,8 @@ jobs:
       - name: Install scons
         run: pip install scons
 
+      - name: Install svn
+        run: choco install svn
+
       - name: Setup GtkRadiant
         run: scons target=setup
