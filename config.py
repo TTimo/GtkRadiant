@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 import sys, os, traceback, platform, re, subprocess, platform
 import urllib3, zipfile, shutil, pprint
 
@@ -287,7 +289,7 @@ class Config:
     def CopyTree( self, src, dst):
         for root, dirs, files in os.walk( src ):
             target_dir = os.path.join( dst, root[root.find( '/' )+1:] )
-            print ( target_dir )
+            print( target_dir )
             if ( not os.path.exists( target_dir ) ):
                 os.mkdir( target_dir )
 

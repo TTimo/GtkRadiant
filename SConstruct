@@ -3,6 +3,8 @@
 # TTimo <ttimo@ttimo.net>
 # http://scons.org/
 
+from __future__ import print_function
+
 import sys, os, platform, pickle
 
 import utils, config

@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 import os, time, zipfile, functools, pprint, subprocess
 
 if ( __name__ == '__main__' ):

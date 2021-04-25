@@ -1,11 +1,13 @@
 #!/usr/bin/env python
 
+from __future__ import print_function
+
 import os.path, sys, shutil
 
 def install_file( path, src_path, f ):
 	src = os.path.join( src_path, f )
 	dst = os.path.join( path, f )
-	print '%s -> %s' % ( src, dst )
+	print('%s -> %s' % ( src, dst ))
 	shutil.copyfile( src, dst )
 
 def install( path, src_path ):
@@ -42,7 +44,7 @@ def install( path, src_path ):
 
 if __name__ == '__main__':
 	if ( len( sys.argv ) <= 2 or not os.path.exists( sys.argv[1] ) or not os.path.exists( sys.argv[2] ) ):
-		print 'usage: install [target directory] [source directory]'
+		print('usage: install [target directory] [source directory]')
 		sys.exit(1)		
-	print 'Install %s into %s' % ( sys.argv[2], sys.argv[1] )
+	print('Install %s into %s' % ( sys.argv[2], sys.argv[1] ))
 	install( sys.argv[1], sys.argv[2] )

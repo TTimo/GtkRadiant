@@ -3,6 +3,8 @@
 # TTimo <ttimo@ttimo.net>
 # http://scons.org/
 
+from __future__ import print_function
+
 import os, subprocess, platform, xml.sax, re, string, platform
 
 class vcxproj( xml.sax.handler.ContentHandler ):
@@ -116,20 +118,3 @@ def Enum(*names):
    constants = tuple(constants)
    EnumType = EnumClass()
    return EnumType
-
-#if __name__ == '__main__':
-#   print '\n*** Enum Demo ***'
-#   print '--- Days of week ---'
-#   Days = Enum('Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su')
-#   print Days
-#   print Days.Mo
-#   print Days.Fr
-#   print Days.Mo < Days.Fr
-#   print list(Days)
-#   for each in Days:
-#      print 'Day:', each
-#   print '--- Yes/No ---'
-#   Confirmation = Enum('No', 'Yes')
-#   answer = Confirmation.No
-#   print 'Your answer is not', ~answer
-
