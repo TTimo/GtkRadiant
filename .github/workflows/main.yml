@@ -40,3 +40,11 @@ jobs:
 
       - name: Build q3map2 x64
         run: msbuild /p:Configuration=Release /p:Platform=x64 /target:q3map2
+
+      - name: Create archive
+        run: zip -r GtkRadiant.zip install
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: Upload
+          path: GtkRadiant.zip
