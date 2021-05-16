@@ -36,7 +36,7 @@ jobs:
         uses: microsoft/setup-msbuild@v1.0.2
 
       - name: Build GtkRadiant
-        run: msbuild /p:Configuration=Release /p:Platform=Win32 /target:radiant
+        run: msbuild radiant.sln /p:Configuration=Release /p:Platform=Win32
 
       - name: Build q3map2 x64
         run: msbuild /p:Configuration=Release /p:Platform=x64 /target:q3map2
