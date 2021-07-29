@@ -32,6 +32,9 @@
     <ClCompile Include="pm_lwo.c">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="pm_iqm.c">
+      <Filter>src</Filter>
+    </ClCompile>
     <ClCompile Include="pm_md2.c">
       <Filter>src</Filter>
     </ClCompile>

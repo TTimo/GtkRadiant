@@ -137,6 +137,7 @@
     <ClCompile Include="pm_mdc.c" />
     <ClCompile Include="pm_ms3d.c" />
     <ClCompile Include="pm_obj.c" />
+    <ClCompile Include="pm_iqm.c" />
     <ClCompile Include="lwo\clip.c" />
     <ClCompile Include="lwo\envelope.c" />
     <ClCompile Include="lwo\list.c" />
