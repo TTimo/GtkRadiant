@@ -34,7 +34,6 @@
 
 /* dependencies */
 #include "picointernal.h"
-#include "bytebool.h"
 
 extern const picoModule_t picoModuleIQM;
 
