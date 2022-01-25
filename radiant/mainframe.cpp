@@ -273,6 +273,7 @@ SCommandInfo g_Commands[] =
 	{"FilterLiquids", '5', RAD_ALT, ID_FILTER_LIQUIDS, "menu_filter_liquids"},
 	{"FilterLiquids", GDK_KEY_5, RAD_ALT, ID_FILTER_LIQUIDS, "menu_filter_liquids"},
 	{"FilterMist", GDK_KEY_M, RAD_ALT, ID_FILTER_MIST, "menu_filter_mist"},
+	{"FilterAtmospheric", GDK_KEY_A, RAD_ALT, ID_FILTER_ATMOSPHERIC, "menu_filter_atmospheric"},
 	{"FilterCaulk", '6', RAD_ALT, ID_FILTER_CAULK, "menu_filter_caulk"},
 	{"FilterCaulk", GDK_KEY_6, RAD_ALT, ID_FILTER_CAULK, "menu_filter_caulk"},
 	{"FilterClips", '7', RAD_ALT, ID_FILTER_CLIPS, "menu_filter_clips"},
@@ -657,6 +658,7 @@ gint HandleCommand( GtkWidget *widget, gpointer data ){
 		  case ID_FILTER_LIGHTS: g_pParentWnd->OnFilterLights(); break;
 		  case ID_FILTER_LIQUIDS: g_pParentWnd->OnFilterLiquids(); break;
 		  case ID_FILTER_MIST: g_pParentWnd->OnFilterMist(); break;
+		  case ID_FILTER_ATMOSPHERIC: g_pParentWnd->OnFilterAtmospheric(); break;
 		  case ID_FILTER_MODELS: g_pParentWnd->OnFilterModels(); break;
 		  case ID_FILTER_PATCHES: g_pParentWnd->OnFilterPatches(); break;
 		  case ID_FILTER_TRANSLUCENT: g_pParentWnd->OnFilterTranslucent(); break;
@@ -1137,6 +1139,7 @@ void MainFrame::create_main_menu( GtkWidget *window, GtkWidget *vbox ){
 	create_check_menu_item_with_mnemonic( menu_in_menu, _( "Translucent" ), G_CALLBACK( HandleCommand ), ID_FILTER_TRANSLUCENT, FALSE );
 	create_check_menu_item_with_mnemonic( menu_in_menu, _( "Liquids" ), G_CALLBACK( HandleCommand ), ID_FILTER_LIQUIDS, FALSE );
 	create_check_menu_item_with_mnemonic( menu_in_menu, _( "Mist" ), G_CALLBACK( HandleCommand ), ID_FILTER_MIST, FALSE );
+	create_check_menu_item_with_mnemonic( menu_in_menu, _( "Atmospheric" ), G_CALLBACK( HandleCommand ), ID_FILTER_ATMOSPHERIC, FALSE );
 	create_check_menu_item_with_mnemonic( menu_in_menu, _( "Sky" ), G_CALLBACK( HandleCommand ), ID_FILTER_SKY, FALSE );
 	create_check_menu_item_with_mnemonic( menu_in_menu, _( "Caulk" ), G_CALLBACK( HandleCommand ), ID_FILTER_CAULK, FALSE );
 	create_check_menu_item_with_mnemonic( menu_in_menu, _( "Clips" ), G_CALLBACK( HandleCommand ), ID_FILTER_CLIPS, FALSE );
@@ -3984,6 +3987,9 @@ void MainFrame::SetButtonMenuStates(){
 	item = GTK_WIDGET( g_object_get_data( G_OBJECT( m_pWidget ), "menu_filter_mist" ) );
 		gtk_check_menu_item_set_active( GTK_CHECK_MENU_ITEM( item ),
 										( g_qeglobals.d_savedinfo.exclude & EXCLUDE_MIST ) != 0 );
+	item = GTK_WIDGET( g_object_get_data( G_OBJECT( m_pWidget ), "menu_filter_atmospheric" ) );
+	gtk_check_menu_item_set_active( GTK_CHECK_MENU_ITEM( item ),
+										( g_qeglobals.d_savedinfo.exclude & EXCLUDE_ATMOSPHERIC ) != 0 );
 	item = GTK_WIDGET( g_object_get_data( G_OBJECT( m_pWidget ), "menu_filter_caulk" ) );
 	gtk_check_menu_item_set_active( GTK_CHECK_MENU_ITEM( item ),
 									( g_qeglobals.d_savedinfo.exclude & EXCLUDE_CAULK ) != 0 );
@@ -7770,6 +7776,20 @@ void MainFrame::OnFilterMist(){
 	GtkWidget *item = GTK_WIDGET( g_object_get_data( G_OBJECT( m_pWidget ), "menu_filter_mist" ) );
 	g_bIgnoreCommands++;
 	if ( ( g_qeglobals.d_savedinfo.exclude ^= EXCLUDE_MIST ) & EXCLUDE_MIST ) {
+		gtk_check_menu_item_set_active( GTK_CHECK_MENU_ITEM( item ), TRUE );
+	}
+	else{
+		gtk_check_menu_item_set_active( GTK_CHECK_MENU_ITEM( item ), FALSE );
+	}
+	g_bIgnoreCommands--;
+	PerformFiltering();
+	Sys_UpdateWindows( W_XY | W_CAMERA );
+}
+
+void MainFrame::OnFilterAtmospheric(){
+	GtkWidget *item = GTK_WIDGET( g_object_get_data( G_OBJECT( m_pWidget ), "menu_filter_atmosperic" ) );
+	g_bIgnoreCommands++;
+	if ( ( g_qeglobals.d_savedinfo.exclude ^= EXCLUDE_ATMOSPHERIC ) & EXCLUDE_ATMOSPHERIC ) {
 		gtk_check_menu_item_set_active( GTK_CHECK_MENU_ITEM( item ), TRUE );
 	}
 	else{

@@ -413,6 +413,8 @@ struct SKeyInfo
 #define ID_COLORS_MAJOR_ALT             40231
 
 #define ID_SELECT_FUNC_GROUP            40233
+#define ID_FILTER_ATMOSPHERIC           40234
+
 
 // those must have their own ID chunk ID_GRID_025 <= ID_GRID <= ID_GRID_256
 #define ID_GRID_025                     40300
@@ -896,6 +898,7 @@ void OnFilterHintsskips();
 void OnFilterLights();
 void OnFilterLiquids();
 void OnFilterMist();
+void OnFilterAtmospheric();
 void OnFilterModels();
 void OnFilterPatches();
 void OnFilterTranslucent();
