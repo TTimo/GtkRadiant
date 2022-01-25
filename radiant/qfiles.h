@@ -362,6 +362,7 @@ typedef struct
 #define CONTENTS_MIST           64
 #define LAST_VISIBLE_CONTENTS   64
 
+#define CONTENTS_ATMOSPHERIC    0x80
 #define CONTENTS_AREAPORTAL     0x8000
 
 // remaining contents are non-visible, and don't eat brushes

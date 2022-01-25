@@ -144,6 +144,7 @@ bfilter_t *FilterAddBase( bfilter_t *pFilter ){
 		pFilter = FilterAddImpl( pFilter,1,0,"caulk",EXCLUDE_CAULK,true );
 		pFilter = FilterAddImpl( pFilter,8,0,NULL,EXCLUDE_LIQUIDS,true );
 		pFilter = FilterAddImpl( pFilter,8,0,NULL,EXCLUDE_MIST,true );
+		pFilter = FilterAddImpl( pFilter,8,0,NULL,EXCLUDE_ATMOSPHERIC,true );
 		pFilter = FilterAddImpl( pFilter,8,0,NULL,EXCLUDE_HINTSSKIPS,true );
 		pFilter = FilterAddImpl( pFilter,8,0,NULL,EXCLUDE_TRANSLUCENT,true );
 		pFilter = FilterAddImpl( pFilter,8,0,NULL,EXCLUDE_AREAPORTALS,true );
@@ -344,6 +345,11 @@ bool FilterBrush( brush_t *pb ){
 							break;
 						case EXCLUDE_MIST:
 							if ( f->texdef.contents & CONTENTS_MIST ) {
+								filterbrush = true;
+							}
+							break;
+						case EXCLUDE_ATMOSPHERIC:
+							if ( f->texdef.contents & CONTENTS_ATMOSPHERIC ) {
 								filterbrush = true;
 							}
 							if ( strstr( f->pShader->getName(), "common/fog" ) ) {

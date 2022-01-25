@@ -86,6 +86,7 @@
 #define EXCLUDE_BOTCLIP         0x00040000
 #define EXCLUDE_SKY             0x00080000
 #define EXCLUDE_MIST            0x00100000
+#define EXCLUDE_ATMOSPHERIC     0x00200000
 
 #define INCLUDE_EASY            0x00000001
 #define INCLUDE_NORMAL          0x00000002
