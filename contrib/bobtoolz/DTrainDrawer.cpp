@@ -46,7 +46,7 @@ DTrainDrawer::~DTrainDrawer( void ) {
 }
 
 void DTrainDrawer::ClearSplines() {
-	for ( list<splinePoint_t *>::const_iterator deadSpline = m_splineList.begin(); deadSpline != m_splineList.end(); deadSpline++ ) {
+	for ( std::list<splinePoint_t *>::const_iterator deadSpline = m_splineList.begin(); deadSpline != m_splineList.end(); deadSpline++ ) {
 		( *deadSpline )->m_pointList.clear();
 		( *deadSpline )->m_vertexList.clear();
 		delete ( *deadSpline );
@@ -56,7 +56,7 @@ void DTrainDrawer::ClearSplines() {
 }
 
 void DTrainDrawer::ClearPoints() {
-	for ( list<controlPoint_t *>::const_iterator deadPoint = m_pointList.begin(); deadPoint != m_pointList.end(); deadPoint++ ) {
+	for ( std::list<controlPoint_t *>::const_iterator deadPoint = m_pointList.begin(); deadPoint != m_pointList.end(); deadPoint++ ) {
 		delete *deadPoint;
 	}
 
@@ -122,11 +122,11 @@ void DTrainDrawer::Draw3D() {
 
 	g_QglTable.m_pfn_qglDepthFunc( GL_ALWAYS );
 
-	for ( list<splinePoint_t* >::const_iterator sp = m_splineList.begin(); sp != m_splineList.end(); sp++ ) {
+	for ( std::list<splinePoint_t* >::const_iterator sp = m_splineList.begin(); sp != m_splineList.end(); sp++ ) {
 		splinePoint_t* pSP = ( *sp );
 
 		g_QglTable.m_pfn_qglBegin( GL_LINE_STRIP );
-		for ( list<DPoint >::const_iterator v = pSP->m_vertexList.begin(); v != pSP->m_vertexList.end(); v++ ) {
+		for ( std::list<DPoint >::const_iterator v = pSP->m_vertexList.begin(); v != pSP->m_vertexList.end(); v++ ) {
 			g_QglTable.m_pfn_qglVertex3fv( ( *v )._pnt );
 		}
 		g_QglTable.m_pfn_qglEnd();
@@ -174,11 +174,11 @@ void DTrainDrawer::Draw2D( VIEWTYPE vt ) {
 
 	g_QglTable.m_pfn_qglColor4f( 1.f, 0.f, 0.f, 1.f );
 
-	for ( list<splinePoint_t* >::const_iterator sp = m_splineList.begin(); sp != m_splineList.end(); sp++ ) {
+	for ( std::list<splinePoint_t* >::const_iterator sp = m_splineList.begin(); sp != m_splineList.end(); sp++ ) {
 		splinePoint_t* pSP = ( *sp );
 
 		g_QglTable.m_pfn_qglBegin( GL_LINE_STRIP );
-		for ( list<DPoint >::const_iterator v = pSP->m_vertexList.begin(); v != pSP->m_vertexList.end(); v++ ) {
+		for ( std::list<DPoint >::const_iterator v = pSP->m_vertexList.begin(); v != pSP->m_vertexList.end(); v++ ) {
 			g_QglTable.m_pfn_qglVertex3fv( ( *v )._pnt );
 		}
 		g_QglTable.m_pfn_qglEnd();
@@ -258,7 +258,7 @@ void DTrainDrawer::BuildPaths() {
 		}
 	}
 
-	list<splinePoint_t* >::const_iterator sp;
+	std::list<splinePoint_t* >::const_iterator sp;
 	for ( sp = m_splineList.begin(); sp != m_splineList.end(); sp++ ) {
 		splinePoint_t* pSP = ( *sp );
 
@@ -273,7 +273,7 @@ void DTrainDrawer::BuildPaths() {
 		pSP->pTarget = pTarget;
 
 
-		for ( list<controlPoint_t >::iterator cp = pSP->m_pointList.begin(); cp != pSP->m_pointList.end(); cp++ ) {
+		for ( std::list<controlPoint_t >::iterator cp = pSP->m_pointList.begin(); cp != pSP->m_pointList.end(); cp++ ) {
 			controlPoint_t* pControl = FindControlPoint( ( *cp ).strName );
 			if ( !pControl ) {
 				Sys_Printf( "couldn't find control %s", ( *cp ).strName );
@@ -301,7 +301,7 @@ void DTrainDrawer::BuildPaths() {
 		VectorCopy( pSP->point.vOrigin, v[0] );
 
 		int i = 1;
-		for ( list<controlPoint_t>::reverse_iterator cp = pSP->m_pointList.rbegin(); cp != pSP->m_pointList.rend(); cp++ ) {
+		for ( std::list<controlPoint_t>::reverse_iterator cp = pSP->m_pointList.rbegin(); cp != pSP->m_pointList.rend(); cp++ ) {
 			VectorCopy( ( *cp ).vOrigin, v[i] );
 			i++;
 		}
@@ -342,13 +342,13 @@ splinePoint_t* DTrainDrawer::AddSplinePoint( const char* name, const char* targe
 }
 
 controlPoint_t* DTrainDrawer::FindControlPoint( const char* name ){
-	for ( list<controlPoint_t*>::const_iterator cp = m_pointList.begin(); cp != m_pointList.end(); cp++ ) {
+	for ( std::list<controlPoint_t*>::const_iterator cp = m_pointList.begin(); cp != m_pointList.end(); cp++ ) {
 		if ( !strcmp( name, ( *cp )->strName ) ) {
 			return ( *cp );
 		}
 	}
 
-	for ( list<splinePoint_t*>::const_iterator sp = m_splineList.begin(); sp != m_splineList.end(); sp++ ) {
+	for ( std::list<splinePoint_t*>::const_iterator sp = m_splineList.begin(); sp != m_splineList.end(); sp++ ) {
 		if ( !strcmp( name, ( *sp )->point.strName ) ) {
 			return &( ( *sp )->point );
 		}

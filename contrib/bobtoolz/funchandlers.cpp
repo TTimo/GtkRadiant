@@ -39,8 +39,8 @@
 #include "DShape.h"
 
 // for autocaulk
-list<Str> exclusionList;        // whole brush exclusion
-list<Str> exclusionList_Face;   // single face exclusion
+std::list<Str> exclusionList;        // whole brush exclusion
+std::list<Str> exclusionList_Face;   // single face exclusion
 
 BOOL el1Loaded;
 BOOL el2Loaded;

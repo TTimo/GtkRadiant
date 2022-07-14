@@ -16,4 +16,4 @@
    License along with this library; if not, write to the Free Software
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-list<DWinding*> *BuildTrace( char* filename, vec3_t v_origin );
+std::list<DWinding*> *BuildTrace( char* filename, vec3_t v_origin );

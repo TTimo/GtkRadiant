@@ -946,7 +946,7 @@ void MainFrame::process_xlink( Str &FileName, const char *menu_name, const char 
 
 void MainFrame::create_game_help_menu( GtkWidget *menu, GtkAccelGroup *accel ){
 	Str FileName;
-	list<CGameDescription *>::iterator iGame;
+	std::list<CGameDescription *>::iterator iGame;
 
 	// start in the global dir
 	FileName = g_strAppPath;

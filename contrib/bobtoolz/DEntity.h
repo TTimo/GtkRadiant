@@ -59,8 +59,8 @@ void SetClassname( const char* classname );
 int GetIDMax();
 
 void BuildInRadiant( bool allowDestruction );
-void ResetChecks( list<Str>* exclusionList );
-void RemoveNonCheckBrushes( list<Str>* exclusionList, bool useDetail );
+void ResetChecks( std::list<Str>* exclusionList );
+void RemoveNonCheckBrushes( std::list<Str>* exclusionList, bool useDetail );
 
 DPlane* AddFaceToBrush( vec3_t va, vec3_t vb, vec3_t vc, _QERFaceData* faceData, int ID );      // slow, try not to use much
 int GetBrushCount( void );
@@ -89,10 +89,10 @@ DPatch* NewPatch();
 //	---------------------------------------------
 
 //	vars
-list<DEPair*> epairList;
-list<DBrush*> brushList;
+std::list<DEPair*> epairList;
+std::list<DBrush*> brushList;
 // new patches, wahey!!!
-list<DPatch*> patchList;
+std::list<DPatch*> patchList;
 Str m_Classname;
 //	---------------------------------------------
 

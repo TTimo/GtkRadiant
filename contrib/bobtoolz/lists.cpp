@@ -26,7 +26,7 @@
 #include "lists.h"
 #include "misc.h"
 
-bool LoadExclusionList( char* filename, list<Str>* exclusionList ){
+bool LoadExclusionList( char* filename, std::list<Str>* exclusionList ){
 	FILE* eFile = fopen( filename, "r" );
 	if ( eFile ) {
 		char buffer[256];

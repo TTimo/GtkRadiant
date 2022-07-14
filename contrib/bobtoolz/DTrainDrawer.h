@@ -43,8 +43,8 @@ typedef struct {
 	char strControl[64];
 	char strTarget[64];
 
-	list<controlPoint_t> m_pointList;
-	list<DPoint> m_vertexList;
+	std::list<controlPoint_t> m_pointList;
+	std::list<DPoint> m_vertexList;
 
 	controlPoint_t* pTarget;
 } splinePoint_t;
@@ -54,8 +54,8 @@ class DTrainDrawer :
 	public IGL3DWindow
 {
 private:
-list<splinePoint_t*> m_splineList;
-list<controlPoint_t*> m_pointList;
+std::list<splinePoint_t*> m_splineList;
+std::list<controlPoint_t*> m_pointList;
 int refCount;
 
 bool m_bHooked;

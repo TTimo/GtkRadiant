@@ -74,7 +74,7 @@ DEntity::~DEntity(){
 //////////////////////////////////////////////////////////////////////
 
 void DEntity::ClearBrushes(){
-	for ( list<DBrush *>::const_iterator deadBrush = brushList.begin(); deadBrush != brushList.end(); deadBrush++ )
+	for ( std::list<DBrush *>::const_iterator deadBrush = brushList.begin(); deadBrush != brushList.end(); deadBrush++ )
 	{
 		delete *deadBrush;
 	}
@@ -82,7 +82,7 @@ void DEntity::ClearBrushes(){
 }
 
 void DEntity::ClearPatches(){
-	for ( list<DPatch *>::const_iterator deadPatch = patchList.begin(); deadPatch != patchList.end(); deadPatch++ )
+	for ( std::list<DPatch *>::const_iterator deadPatch = patchList.begin(); deadPatch != patchList.end(); deadPatch++ )
 	{
 		delete *deadPatch;
 	}
@@ -183,7 +183,7 @@ DPlane* DEntity::AddFaceToBrush( vec3_t va, vec3_t vb, vec3_t vc, _QERFaceData* 
 DBrush* DEntity::GetBrushForID( int ID ){
 	DBrush* buildBrush = NULL;
 
-	for ( list<DBrush *>::const_iterator chkBrush = brushList.begin(); chkBrush != brushList.end(); chkBrush++ )
+	for ( std::list<DBrush *>::const_iterator chkBrush = brushList.begin(); chkBrush != brushList.end(); chkBrush++ )
 	{
 		if ( ( *chkBrush )->m_nBrushID == ID ) {
 			buildBrush = ( *chkBrush );
@@ -245,9 +245,9 @@ bool* DEntity::BuildIntersectList(){
 	bool* pbIntList = new bool[max];
 	memset( pbIntList, 0, sizeof( bool ) * ( max ) );
 
-	for ( list<DBrush *>::const_iterator pB1 = brushList.begin(); pB1 != brushList.end(); pB1++ )
+	for ( std::list<DBrush *>::const_iterator pB1 = brushList.begin(); pB1 != brushList.end(); pB1++ )
 	{
-		list<DBrush *>::const_iterator pB2 = pB1;
+		std::list<DBrush *>::const_iterator pB2 = pB1;
 		for ( pB2++; pB2 != brushList.end(); pB2++ )
 		{
 			if ( ( *pB1 )->IntersectsWith( ( *pB2 ) ) ) {
@@ -269,9 +269,9 @@ bool* DEntity::BuildDuplicateList(){
 	bool* pbDupList = new bool[max];
 	memset( pbDupList, 0, sizeof( bool ) * ( max ) );
 
-	for ( list<DBrush *>::const_iterator pB1 = brushList.begin(); pB1 != brushList.end(); pB1++ )
+	for ( std::list<DBrush *>::const_iterator pB1 = brushList.begin(); pB1 != brushList.end(); pB1++ )
 	{
-		list<DBrush *>::const_iterator pB2 = pB1;
+		std::list<DBrush *>::const_iterator pB2 = pB1;
 		for ( pB2++; pB2 != brushList.end(); pB2++ )
 		{
 			if ( **pB1 == *pB2 ) {
@@ -293,7 +293,7 @@ void DEntity::SelectBrushes( bool *selectList ){
 
 	g_FuncTable.m_pfnAllocateActiveBrushHandles();
 
-	for ( list<DBrush *>::const_iterator pBrush = brushList.begin(); pBrush != brushList.end(); pBrush++ )
+	for ( std::list<DBrush *>::const_iterator pBrush = brushList.begin(); pBrush != brushList.end(); pBrush++ )
 	{
 		if ( selectList[( *pBrush )->m_nBrushID] ) {
 			g_FuncTable.m_pfnSelectBrush( ( *pBrush )->QER_brush );
@@ -360,8 +360,8 @@ bool DEntity::LoadFromEntity( entity_t* ent, bool bLoadPatches ) {
 	return TRUE;
 }
 
-void DEntity::RemoveNonCheckBrushes( list<Str>* exclusionList, bool useDetail ){
-	list<DBrush *>::iterator chkBrush = brushList.begin();
+void DEntity::RemoveNonCheckBrushes( std::list<Str>* exclusionList, bool useDetail ){
+	std::list<DBrush *>::iterator chkBrush = brushList.begin();
 
 	while ( chkBrush != brushList.end() )
 	{
@@ -373,7 +373,7 @@ void DEntity::RemoveNonCheckBrushes( list<Str>* exclusionList, bool useDetail ){
 			}
 		}
 
-		list<Str>::iterator eTexture;
+		std::list<Str>::iterator eTexture;
 
 		for ( eTexture = exclusionList->begin(); eTexture != exclusionList->end(); eTexture++ )
 		{
@@ -390,8 +390,8 @@ void DEntity::RemoveNonCheckBrushes( list<Str>* exclusionList, bool useDetail ){
 	}
 }
 
-void DEntity::ResetChecks( list<Str>* exclusionList ){
-	for ( list<DBrush *>::const_iterator resetBrush = brushList.begin(); resetBrush != brushList.end(); resetBrush++ )
+void DEntity::ResetChecks( std::list<Str>* exclusionList ){
+	for ( std::list<DBrush *>::const_iterator resetBrush = brushList.begin(); resetBrush != brushList.end(); resetBrush++ )
 	{
 		( *resetBrush )->ResetChecks( exclusionList );
 	}
@@ -402,7 +402,7 @@ int DEntity::FixBrushes( bool rebuild ){
 
 	int cnt = 0;
 
-	for ( list<DBrush *>::const_iterator fixBrush = brushList.begin(); fixBrush != brushList.end(); fixBrush++ )
+	for ( std::list<DBrush *>::const_iterator fixBrush = brushList.begin(); fixBrush != brushList.end(); fixBrush++ )
 	{
 		int count = ( *fixBrush )->RemoveRedundantPlanes();
 		if ( count ) {
@@ -430,7 +430,7 @@ void DEntity::BuildInRadiant( bool allowDestruction ){
 
 		epair_t* pEp = pEpS;
 
-		for ( list<DEPair* >::const_iterator buildEPair = epairList.begin(); buildEPair != epairList.end(); buildEPair++ )
+		for ( std::list<DEPair* >::const_iterator buildEPair = epairList.begin(); buildEPair != epairList.end(); buildEPair++ )
 		{
 			pEp = GetNextChainItem( pEp, ( *buildEPair )->key, ( *buildEPair )->value );
 		}
@@ -439,20 +439,20 @@ void DEntity::BuildInRadiant( bool allowDestruction ){
 
 		g_FuncTable.m_pfnCommitEntityHandleToMap( pE );
 
-		for ( list<DBrush *>::const_iterator buildBrush = brushList.begin(); buildBrush != brushList.end(); buildBrush++ )
+		for ( std::list<DBrush *>::const_iterator buildBrush = brushList.begin(); buildBrush != brushList.end(); buildBrush++ )
 			( *buildBrush )->BuildInRadiant( allowDestruction, NULL, pE );
 
-		for ( list<DPatch *>::const_iterator buildPatch = patchList.begin(); buildPatch != patchList.end(); buildPatch++ )
+		for ( std::list<DPatch *>::const_iterator buildPatch = patchList.begin(); buildPatch != patchList.end(); buildPatch++ )
 			( *buildPatch )->BuildInRadiant( pE );
 
 		QER_Entity = pE;
 	}
 	else
 	{
-		for ( list<DBrush *>::const_iterator buildBrush = brushList.begin(); buildBrush != brushList.end(); buildBrush++ )
+		for ( std::list<DBrush *>::const_iterator buildBrush = brushList.begin(); buildBrush != brushList.end(); buildBrush++ )
 			( *buildBrush )->BuildInRadiant( allowDestruction, NULL );
 
-		for ( list<DPatch *>::const_iterator buildPatch = patchList.begin(); buildPatch != patchList.end(); buildPatch++ )
+		for ( std::list<DPatch *>::const_iterator buildPatch = patchList.begin(); buildPatch != patchList.end(); buildPatch++ )
 			( *buildPatch )->BuildInRadiant();
 	}
 }
@@ -461,7 +461,7 @@ void DEntity::BuildInRadiant( bool allowDestruction ){
 
 int DEntity::GetIDMax( void ) {
 	int max = -1;
-	for ( list<DBrush *>::const_iterator cntBrush = brushList.begin(); cntBrush != brushList.end(); cntBrush++ ) {
+	for ( std::list<DBrush *>::const_iterator cntBrush = brushList.begin(); cntBrush != brushList.end(); cntBrush++ ) {
 		if ( ( *cntBrush )->m_nBrushID > max ) {
 			max = ( *cntBrush )->m_nBrushID;
 		}
@@ -478,12 +478,12 @@ void DEntity::SaveToFile( FILE *pFile ){
 
 	fprintf( pFile, "\"classname\" \"%s\"\n", (const char *)m_Classname );
 
-	for ( list<DEPair *>::const_iterator ep = epairList.begin(); ep != epairList.end(); ep++ )
+	for ( std::list<DEPair *>::const_iterator ep = epairList.begin(); ep != epairList.end(); ep++ )
 	{
 		fprintf( pFile, "\"%s\" \"%s\"\n", (const char *)( *ep )->key, (const char *)( *ep )->value );
 	}
 
-	for ( list<DBrush *>::const_iterator bp = brushList.begin(); bp != brushList.end(); bp++ )
+	for ( std::list<DBrush *>::const_iterator bp = brushList.begin(); bp != brushList.end(); bp++ )
 	{
 		( *bp )->SaveToFile( pFile );
 	}
@@ -492,7 +492,7 @@ void DEntity::SaveToFile( FILE *pFile ){
 }
 
 void DEntity::ClearEPairs(){
-	for ( list<DEPair *>::const_iterator deadEPair = epairList.begin(); deadEPair != epairList.end(); deadEPair++ )
+	for ( std::list<DEPair *>::const_iterator deadEPair = epairList.begin(); deadEPair != epairList.end(); deadEPair++ )
 	{
 		delete ( *deadEPair );
 	}
@@ -535,7 +535,7 @@ bool DEntity::ResetTextures( const char* textureName, float fScale[2],     float
 
 	bool reset = FALSE;
 
-	for ( list<DBrush *>::const_iterator resetBrush = brushList.begin(); resetBrush != brushList.end(); resetBrush++ )
+	for ( std::list<DBrush *>::const_iterator resetBrush = brushList.begin(); resetBrush != brushList.end(); resetBrush++ )
 	{
 		bool tmp = ( *resetBrush )->ResetTextures( textureName,        fScale,       fShift,       rotation, newTextureName,
 												   bResetTextureName,  bResetScale,  bResetShift,  bResetRotation );
@@ -555,7 +555,7 @@ bool DEntity::ResetTextures( const char* textureName, float fScale[2],     float
 	}
 
 	if ( bResetTextureName ) {
-		for ( list<DPatch *>::const_iterator resetPatch = patchList.begin(); resetPatch != patchList.end(); resetPatch++ )
+		for ( std::list<DPatch *>::const_iterator resetPatch = patchList.begin(); resetPatch != patchList.end(); resetPatch++ )
 		{
 			bool tmp = ( *resetPatch )->ResetTextures( textureName, newTextureName );
 
@@ -577,7 +577,7 @@ bool DEntity::ResetTextures( const char* textureName, float fScale[2],     float
 }
 
 DEPair* DEntity::FindEPairByKey( const char* keyname ){
-	for ( list<DEPair *>::const_iterator ep = epairList.begin(); ep != epairList.end(); ep++ )
+	for ( std::list<DEPair *>::const_iterator ep = epairList.begin(); ep != epairList.end(); ep++ )
 	{
 		char* c = ( *ep )->key;
 		if ( !strcmp( c, keyname ) ) {
@@ -638,7 +638,7 @@ int DEntity::GetBrushCount( void ) {
 }
 
 DBrush* DEntity::FindBrushByPointer( brush_t* brush ) {
-	for ( list<DBrush *>::const_iterator listBrush = brushList.begin(); listBrush != brushList.end(); listBrush++ ) {
+	for ( std::list<DBrush *>::const_iterator listBrush = brushList.begin(); listBrush != brushList.end(); listBrush++ ) {
 		DBrush* pBrush = ( *listBrush );
 		if ( pBrush->QER_brush == brush ) {
 			return pBrush;

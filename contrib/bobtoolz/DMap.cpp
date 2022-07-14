@@ -55,7 +55,7 @@ DEntity* DMap::AddEntity( const char *classname, int ID ){
 void DMap::ClearEntities(){
 	m_nNextEntity = 1;
 
-	for ( list<DEntity *>::const_iterator deadEntity = entityList.begin(); deadEntity != entityList.end(); deadEntity++ )
+	for ( std::list<DEntity *>::const_iterator deadEntity = entityList.begin(); deadEntity != entityList.end(); deadEntity++ )
 		delete *deadEntity;
 
 	entityList.clear();
@@ -64,7 +64,7 @@ void DMap::ClearEntities(){
 DEntity* DMap::GetEntityForID( int ID ){
 	DEntity* findEntity = NULL;
 
-	for ( list<DEntity *>::const_iterator chkEntity = entityList.begin(); chkEntity != entityList.end(); chkEntity++ )
+	for ( std::list<DEntity *>::const_iterator chkEntity = entityList.begin(); chkEntity != entityList.end(); chkEntity++ )
 	{
 		if ( ( *chkEntity )->m_nID == ID ) {
 			findEntity = ( *chkEntity );
@@ -85,7 +85,7 @@ DEntity* DMap::GetWorldSpawn(){
 }
 
 void DMap::BuildInRadiant( bool bAllowDestruction ){
-	for ( list<DEntity *>::const_iterator buildEntity = entityList.begin(); buildEntity != entityList.end(); buildEntity++ )
+	for ( std::list<DEntity *>::const_iterator buildEntity = entityList.begin(); buildEntity != entityList.end(); buildEntity++ )
 		( *buildEntity )->BuildInRadiant( bAllowDestruction );
 }
 
@@ -116,7 +116,7 @@ void DMap::LoadAll( bool bLoadPatches ){
 
 int DMap::FixBrushes( bool rebuild ){
 	int count = 0;
-	for ( list<DEntity *>::const_iterator fixEntity = entityList.begin(); fixEntity != entityList.end(); fixEntity++ )
+	for ( std::list<DEntity *>::const_iterator fixEntity = entityList.begin(); fixEntity != entityList.end(); fixEntity++ )
 	{
 		int cnt;
 
@@ -140,7 +140,7 @@ int DMap::FixBrushes( bool rebuild ){
 
 void DMap::ResetTextures( const char* textureName, float fScale[2],      float fShift[2],      int rotation, const char* newTextureName,
 						  int bResetTextureName,  int bResetScale[2],  int bResetShift[2],  int bResetRotation ){
-	for ( list<DEntity *>::const_iterator texEntity = entityList.begin(); texEntity != entityList.end(); texEntity++ )
+	for ( std::list<DEntity *>::const_iterator texEntity = entityList.begin(); texEntity != entityList.end(); texEntity++ )
 	{
 		if ( !stricmp( "worldspawn", ( *texEntity )->m_Classname ) ) {
 			( *texEntity )->ResetTextures( textureName,        fScale,       fShift,       rotation, newTextureName,

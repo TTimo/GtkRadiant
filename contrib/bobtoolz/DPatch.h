@@ -39,7 +39,7 @@ typedef struct
 class DPatch
 {
 public:
-list<DPatch> Split( bool rows, bool cols );
+std::list<DPatch> Split( bool rows, bool cols );
 void Transpose();
 void Invert();
 DPatch* MergePatches( patch_merge_t merge_info, DPatch* p1, DPatch* p2 );

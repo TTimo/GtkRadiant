@@ -40,7 +40,7 @@
 
 #include "gtkr_vector.h"
 
-vector<texdef_to_face_t> g_texdef_face_vector;
+std::vector<texdef_to_face_t> g_texdef_face_vector;
 
 inline texdef_to_face_t* get_texdef_face_list(){
 	return &( *g_texdef_face_vector.begin() );

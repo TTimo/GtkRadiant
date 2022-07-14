@@ -40,11 +40,11 @@ DVisDrawer();
 virtual ~DVisDrawer();
 
 protected:
-list<DWinding*>* m_list;
+std::list<DWinding*>* m_list;
 int refCount;
 public:
 void ClearPoints();
-void SetList( list<DWinding*>* pointList );
+void SetList( std::list<DWinding*>* pointList );
 void UnRegister();
 void Register();
 void Draw3D();
