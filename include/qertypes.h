@@ -344,8 +344,8 @@ typedef struct {
 #define MIN_PATCH_WIDTH     3
 #define MIN_PATCH_HEIGHT    3
 
-#define MAX_PATCH_WIDTH     16
-#define MAX_PATCH_HEIGHT    16
+#define MAX_PATCH_WIDTH     32
+#define MAX_PATCH_HEIGHT    32
 
 // patch type info
 // type in lower 16 bits, flags in upper
