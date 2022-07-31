@@ -36,7 +36,7 @@ virtual void UpdateShaders( void ) = 0;
 class CModelManager;  // forward declaration
 
 //typedef std::pair<Str, int> PicoModelKey;
-typedef pair<Str, int> PicoModelKey;
+typedef std::pair<Str, int> PicoModelKey;
 
 class CPicoModel : public IRender, public ISelect
 {
@@ -63,7 +63,7 @@ void RemoveParent( CPicoParent *parent );
 
 void Reload( void );
 
-void Draw( int state, vector<IShader*> shaders, int rflags ) const;
+void Draw( int state, std::vector<IShader*> shaders, int rflags ) const;
 //IRender
 virtual void Draw( int state, int rflags ) const;
 virtual const bool IsModelNotNull() const { return true; }

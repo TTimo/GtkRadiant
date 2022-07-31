@@ -45,7 +45,7 @@ void ClearEntities();
 DEntity* GetEntityForID( int ID );
 DEntity* AddEntity( const char* classname = "worldspawn", int ID = -1 );
 
-list<DEntity*> entityList;
+std::list<DEntity*> entityList;
 
 DMap();
 virtual ~DMap();

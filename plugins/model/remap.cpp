@@ -75,7 +75,7 @@ typedef CPicoModel value_type;
 public:
 typedef PicoModelKey key_type;
 typedef cache_element<key_type, value_type> elem_type;
-typedef map<key_type, elem_type> cache_type;
+typedef std::map<key_type, elem_type> cache_type;
 
 value_type* capture( const key_type& key ){
 	return m_cache[key].capture( key );
@@ -268,9 +268,9 @@ Str m_name;
 int m_frame;
 CPicoModel* m_model;
 
-typedef vector<remap_t *> remaps_t;
+typedef std::vector<remap_t *> remaps_t;
 remaps_t m_remaps;
-typedef vector<IShader*> shaders_t;
+typedef std::vector<IShader*> shaders_t;
 shaders_t m_shaders;
 };
 

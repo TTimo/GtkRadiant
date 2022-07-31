@@ -63,7 +63,7 @@ void BuildBounds();
 void BuildFromWinding( DWinding* w );
 brush_t* BuildInRadiant( bool allowDestruction, int* changeCnt, entity_t* entity = NULL );
 
-void ResetChecks( list<Str>* exclusionList );
+void ResetChecks( std::list<Str>* exclusionList );
 
 void ClearFaces();
 void ClearPoints();
@@ -89,8 +89,8 @@ bool operator==( DBrush* other );
 
 //	members
 brush_t* QER_brush;
-list<DPlane*> faceList;
-list<DPoint*> pointList;
+std::list<DPlane*> faceList;
+std::list<DPoint*> pointList;
 int m_nBrushID;
 vec3_t bbox_min, bbox_max;
 bool bBoundsBuilt;

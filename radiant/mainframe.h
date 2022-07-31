@@ -474,7 +474,7 @@ protected:
 /*!
    the urls to fire up in the game packs help menus
  */
-vector<Str *> mHelpURLs;
+std::vector<Str *> mHelpURLs;
 
 /*!
    scan the .game files for game install packs

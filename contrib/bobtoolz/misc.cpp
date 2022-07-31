@@ -265,7 +265,7 @@ void StartBSP(){
 	Q_Exec( command, TRUE );
 }
 
-void BuildMiniPrt( list<Str>* exclusionList ){
+void BuildMiniPrt( std::list<Str>* exclusionList ){
 	// yes, we could just use -fulldetail option, but, as SPOG said
 	// it'd be faster without all the hint, donotenter etc textures and
 	// doors, etc

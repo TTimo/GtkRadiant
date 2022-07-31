@@ -247,7 +247,7 @@ CXMLPropertyBag::CXMLPropertyBag() {
 // generic preference functions
 
 void CXMLPropertyBag::PushAssignment( const char *name, PrefTypes_t type, void *pV ){
-	list<CPrefAssignment>::iterator iAssign;
+	std::list<CPrefAssignment>::iterator iAssign;
 	for ( iAssign = mPrefAssignments.begin(); iAssign != mPrefAssignments.end(); iAssign++ )
 	{
 		if ( ( *iAssign ).mName == name ) {
@@ -399,7 +399,7 @@ void CXMLPropertyBag::GetPref( const char *name, window_position_t* pV, window_p
 
 void CXMLPropertyBag::UpdatePrefTree(){
 	// read the assignments and update the tree
-	list<CPrefAssignment>::iterator iPref;
+	std::list<CPrefAssignment>::iterator iPref;
 	for ( iPref = mPrefAssignments.begin(); iPref != mPrefAssignments.end(); iPref++ )
 	{
 		CPrefAssignment *pPref = &( *iPref );
@@ -1097,7 +1097,7 @@ GtkWidget* CGameDialog::GetGlobalFrame(){
 void CGameDialog::UpdateData( bool retrieve ) {
 	if ( !retrieve ) {
 		// use m_sGameFile to set m_nComboSelect
-		list<CGameDescription *>::iterator iGame;
+		std::list<CGameDescription *>::iterator iGame;
 		int i = 0;
 		for ( iGame = mGames.begin(); iGame != mGames.end(); iGame++ )
 		{
@@ -1114,7 +1114,7 @@ void CGameDialog::UpdateData( bool retrieve ) {
 	Dialog::UpdateData( retrieve );
 	if ( retrieve ) {
 		// use m_nComboSelect to set m_sGameFile
-		list<CGameDescription *>::iterator iGame = mGames.begin();
+		std::list<CGameDescription *>::iterator iGame = mGames.begin();
 		int i;
 		for ( i = 0; i < m_nComboSelect; i++ )
 		{
@@ -1168,7 +1168,7 @@ void CGameDialog::BuildDialog() {
 
 void CGameDialog::UpdateGameCombo() {
 	// fill in with the game descriptions
-	list<CGameDescription *>::iterator iGame;
+	std::list<CGameDescription *>::iterator iGame;
 	GtkListStore *store;
 
 	if ( mGameCombo == NULL ) {
@@ -1199,7 +1199,7 @@ void CGameDialog::ScanForGames(){
 
 	if ( !mGames.empty() ) {
 		Sys_Printf( "Clearing game list\n" );
-		list<CGameDescription*>::iterator iGame;
+		std::list<CGameDescription*>::iterator iGame;
 		for ( iGame = mGames.begin(); iGame != mGames.end(); iGame++ ) {
 			delete ( *iGame );
 		}
@@ -1259,7 +1259,7 @@ void CGameDialog::ScanForGames(){
 }
 
 CGameDescription* CGameDialog::GameDescriptionForComboItem(){
-	list<CGameDescription *>::iterator iGame;
+	std::list<CGameDescription *>::iterator iGame;
 	int i = 0;
 	for ( iGame = mGames.begin(); iGame != mGames.end(); iGame++,i++ ) {
 		if ( i == m_nComboSelect ) {
@@ -1299,7 +1299,7 @@ void CGameDialog::Init(){
 	LoadPrefs();
 	if ( m_bAutoLoadGame ) {
 		// search by .game name
-		list<CGameDescription *>::iterator iGame;
+		std::list<CGameDescription *>::iterator iGame;
 		for ( iGame = mGames.begin(); iGame != mGames.end(); iGame++ )
 		{
 			if ( ( *iGame )->mGameFile == m_sGameFile ) {
@@ -1347,7 +1347,7 @@ CGameDialog::~CGameDialog(){
 		g_object_unref( GTK_WIDGET( mFrame ) );
 	}
 	// free all the game descriptions
-	list<CGameDescription *>::iterator iGame;
+	std::list<CGameDescription *>::iterator iGame;
 	for ( iGame = mGames.begin(); iGame != mGames.end(); iGame++ )
 	{
 		delete ( *iGame );
@@ -1358,7 +1358,7 @@ CGameDialog::~CGameDialog(){
 void CGameDialog::AddPacksURL( Str &URL ){
 	// add the URLs for the list of game packs installed
 	// FIXME: this is kinda hardcoded for now..
-	list<CGameDescription *>::iterator iGame;
+	std::list<CGameDescription *>::iterator iGame;
 	for ( iGame = mGames.begin(); iGame != mGames.end(); iGame++ )
 	{
 		if ( ( *iGame )->mGameFile == "q3.game" ) {

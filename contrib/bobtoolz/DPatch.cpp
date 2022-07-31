@@ -335,8 +335,8 @@ void DPatch::Transpose(){
 	Invert();
 }
 
-list<DPatch> DPatch::Split( bool rows, bool cols ){
-	list<DPatch> patchList;
+std::list<DPatch> DPatch::Split( bool rows, bool cols ){
+	std::list<DPatch> patchList;
 	int i;
 	int x, y;
 
@@ -360,13 +360,13 @@ list<DPatch> DPatch::Split( bool rows, bool cols ){
 		}
 
 		if ( cols && width >= 5 ) {
-			list<DPatch> patchList2;
+			std::list<DPatch> patchList2;
 
-			for ( list<DPatch>::iterator patches = patchList.begin(); patches != patchList.end(); patches++ )
+			for ( std::list<DPatch>::iterator patches = patchList.begin(); patches != patchList.end(); patches++ )
 			{
-				list<DPatch> patchList3 = ( *patches ).Split( false, true );
+				std::list<DPatch> patchList3 = ( *patches ).Split( false, true );
 
-				for ( list<DPatch>::iterator patches2 = patchList3.begin(); patches2 != patchList3.end(); patches2++ )
+				for ( std::list<DPatch>::iterator patches2 = patchList3.begin(); patches2 != patchList3.end(); patches2++ )
 					patchList2.push_front( *patches2 );
 			}
 

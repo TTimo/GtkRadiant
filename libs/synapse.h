@@ -197,7 +197,7 @@ class CSynapseAPIManager : public IRefCounted
 EAPIManagerType mType;
 
 // the list of APIs we have obtained (SYN_REQUIRE_ANY)
-vector< APIDescriptor_t * > mAPIs;
+std::vector< APIDescriptor_t * > mAPIs;
 /*!
    pattern for matching the major version
    NOTE: only supported for now: exact match
@@ -289,15 +289,15 @@ bool mbActive;
 /*!
    we store APIDescriptor_t*, the module fills that in at startup
  */
-vector<APIDescriptor_t *> mAPIDescriptors;
+std::vector<APIDescriptor_t *> mAPIDescriptors;
 
 /*!
    managers for multiple APIs management
    mManagersMatch are managers with loose matching / undefined number of APIs
    mManagersList are managers with a fixed list of required interfaces
  */
-vector<CSynapseAPIManager *> mManagersMatch;
-vector<CSynapseAPIManager *> mManagersList;
+std::vector<CSynapseAPIManager *> mManagersMatch;
+std::vector<CSynapseAPIManager *> mManagersList;
 
 protected:
 friend class CSynapseServer;
@@ -492,13 +492,13 @@ virtual ~CSynapseClientSlot() { }
  */
 class CSynapseServer : public IRefCounted
 {
-list<char *> mSearchPaths;
-list<CSynapseClientSlot> mClients;
+std::list<char *> mSearchPaths;
+std::list<CSynapseClientSlot> mClients;
 
 /*!
    used for resolve operations
  */
-list<APIDescriptor_t*> mStack;
+std::list<APIDescriptor_t*> mStack;
 /*!
    set this when mStack is modified with new stuff to resolve
    NOTE: if this hack becomes too tricky to use we could just encapsulate mStack
@@ -552,7 +552,7 @@ void TryPushStack( APIDescriptor_t * );
    \param iSlot is an mClients iterator, invalid when the function returns as the item will have been removed from the list
    \return the iterator after erase call so that the caller iteration can continue
  */
-list<CSynapseClientSlot>::iterator ShutdownClient( list<CSynapseClientSlot>::iterator iSlot );
+std::list<CSynapseClientSlot>::iterator ShutdownClient( std::list<CSynapseClientSlot>::iterator iSlot );
 
 /*!
    \brief actual implementation of the Resolve function

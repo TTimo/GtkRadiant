@@ -142,7 +142,7 @@ bool ownsCommandID( int n );
 
 class CRadiantPluginManager : public CSynapseAPIManager
 {
-list<CPluginSlot *> mSlots;
+std::list<CPluginSlot *> mSlots;
 public:
 CRadiantPluginManager() {}
 virtual ~CRadiantPluginManager();
@@ -182,9 +182,9 @@ void InitForFillAPITable( APIDescriptor_t *pAPI );
 
 class CRadiantImageManager : public CSynapseAPIManager
 {
-list<CImageTableSlot *> mSlots;
+std::list<CImageTableSlot *> mSlots;
 
-list<CImageTableSlot *>::iterator mExtScanSlot;
+std::list<CImageTableSlot *>::iterator mExtScanSlot;
 public:
 CRadiantImageManager() {}
 virtual ~CRadiantImageManager();

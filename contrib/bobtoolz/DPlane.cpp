@@ -96,11 +96,11 @@ bool DPlane::PlaneIntersection( DPlane *pl1, DPlane *pl2, vec3_t out ){
 	return TRUE;
 }
 
-bool DPlane::IsRedundant( list<DPoint*>& pointList ){
+bool DPlane::IsRedundant( std::list<DPoint*>& pointList ){
 	int cnt = 0;
 
 	//list<DPoint *>::const_iterator point=pointList.begin();
-	for ( list<DPoint *>::const_iterator point = pointList.begin(); point != pointList.end(); point++ )
+	for ( std::list<DPoint *>::const_iterator point = pointList.begin(); point != pointList.end(); point++ )
 	{
 		if ( fabs( DistanceToPoint( ( *point )->_pnt ) ) < MAX_ROUND_ERROR ) {
 			cnt++;

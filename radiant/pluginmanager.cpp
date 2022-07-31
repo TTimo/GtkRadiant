@@ -126,8 +126,8 @@ private:
 	string_t m_name;
 	string_t m_pattern;
 };
-typedef vector<filetype_copy_t> filetype_list_t;
-map<string_t, filetype_list_t> m_typelists;
+typedef std::vector<filetype_copy_t> filetype_list_t;
+std::map<string_t, filetype_list_t> m_typelists;
 };
 
 static RadiantFileTypeRegistry g_patterns;
@@ -160,7 +160,7 @@ void InitFileTypes(){
 
 class CRadiantModelModuleManager : public CSynapseAPIManager
 {
-typedef list<APIDescriptor_t*> APIDescriptorList;
+typedef std::list<APIDescriptor_t*> APIDescriptorList;
 
 APIDescriptorList mAPIs;
 public:
@@ -317,7 +317,7 @@ IModelCache* GetModelCache(){
 // toolbar manager
 class CRadiantToolbarModuleManager : public CSynapseAPIManager
 {
-typedef list<APIDescriptor_t*> APIDescriptorList;
+typedef std::list<APIDescriptor_t*> APIDescriptorList;
 
 APIDescriptorList mAPIs;
 public:
@@ -370,7 +370,7 @@ CRadiantToolbarModuleManager g_ToolbarModuleManager;
 /* image manager ---------------------------------------- */
 
 CRadiantImageManager::~CRadiantImageManager(){
-	list<CImageTableSlot *>::iterator iSlot;
+	std::list<CImageTableSlot *>::iterator iSlot;
 	for ( iSlot = mSlots.begin(); iSlot != mSlots.end(); iSlot++ )
 	{
 		delete *iSlot;
@@ -412,7 +412,7 @@ void CRadiantImageManager::LoadImage( const char *name, byte **pic, int *width, 
 	if ( ext == NULL ) {
 		// if no extension is provided, start walking through the list
 		Str fullname;
-		list<CImageTableSlot *>::iterator iSlot;
+		std::list<CImageTableSlot *>::iterator iSlot;
 		for ( iSlot = mSlots.begin(); iSlot != mSlots.end(); iSlot++ )
 		{
 			APIDescriptor_t *pAPI = ( *iSlot )->GetDescriptor();
@@ -426,7 +426,7 @@ void CRadiantImageManager::LoadImage( const char *name, byte **pic, int *width, 
 	}
 
 	// start walking the interfaces
-	list<CImageTableSlot *>::iterator iSlot;
+	std::list<CImageTableSlot *>::iterator iSlot;
 	for ( iSlot = mSlots.begin(); iSlot != mSlots.end(); iSlot++ )
 	{
 		APIDescriptor_t *pAPI = ( *iSlot )->GetDescriptor();
@@ -459,7 +459,7 @@ APIDescriptor_t* CRadiantPluginManager::BuildRequireAPI( APIDescriptor_t *pAPI )
 }
 
 void CRadiantPluginManager::PopulateMenu(){
-	list<CPluginSlot *>::iterator iPlug;
+	std::list<CPluginSlot *>::iterator iPlug;
 	for ( iPlug = mSlots.begin(); iPlug != mSlots.end(); iPlug++ )
 	{
 		g_pParentWnd->AddPlugInMenuItem( *iPlug );
@@ -577,7 +577,7 @@ void CPluginSlot::Dispatch( const char *p ){
 }
 
 CRadiantPluginManager::~CRadiantPluginManager(){
-	list<CPluginSlot *>::iterator iSlot;
+	std::list<CPluginSlot *>::iterator iSlot;
 	for ( iSlot = mSlots.begin(); iSlot != mSlots.end(); iSlot++ )
 	{
 		delete *iSlot;
@@ -586,7 +586,7 @@ CRadiantPluginManager::~CRadiantPluginManager(){
 }
 
 bool CRadiantPluginManager::Dispatch( int n, const char* p ){
-	list<CPluginSlot *>::iterator iPlug;
+	std::list<CPluginSlot *>::iterator iPlug;
 	for ( iPlug = mSlots.begin(); iPlug != mSlots.end(); iPlug++ )
 	{
 		CPluginSlot *pPlug = *iPlug;

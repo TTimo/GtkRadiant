@@ -84,7 +84,7 @@ void DVisDrawer::Draw2D( VIEWTYPE vt ){
 	g_QglTable.m_pfn_qglDepthFunc( GL_ALWAYS );
 
 	//bleh
-	list<DWinding *>::const_iterator l = m_list->begin();
+	std::list<DWinding *>::const_iterator l = m_list->begin();
 
 	for (; l != m_list->end(); l++ )
 	{
@@ -129,7 +129,7 @@ void DVisDrawer::Draw3D(){
 	g_QglTable.m_pfn_qglDepthFunc( GL_ALWAYS );
 
 	//bleh
-	list<DWinding *>::const_iterator l = m_list->begin();
+	std::list<DWinding *>::const_iterator l = m_list->begin();
 
 	for (; l != m_list->end(); l++ )
 	{
@@ -159,7 +159,7 @@ void DVisDrawer::UnRegister(){
 	m_bHooked = FALSE;
 }
 
-void DVisDrawer::SetList( list<DWinding*> *pointList ){
+void DVisDrawer::SetList( std::list<DWinding*> *pointList ){
 	if ( m_list ) {
 		ClearPoints();
 	}
@@ -168,7 +168,7 @@ void DVisDrawer::SetList( list<DWinding*> *pointList ){
 }
 
 void DVisDrawer::ClearPoints(){
-	list<DWinding *>::const_iterator deadPoint = m_list->begin();
+	std::list<DWinding *>::const_iterator deadPoint = m_list->begin();
 	for (; deadPoint != m_list->end(); deadPoint++ )
 		delete *deadPoint;
 	m_list->clear();

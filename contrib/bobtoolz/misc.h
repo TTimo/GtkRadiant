@@ -28,7 +28,7 @@ void FillDefaultTexture( _QERFaceData* faceData, vec3_t va, vec3_t vb, vec3_t vc
 
 void Sys_ERROR( const char* text, ... );
 
-void BuildMiniPrt( list<Str>* exclusionList );
+void BuildMiniPrt( std::list<Str>* exclusionList );
 
 void MoveBlock( int dir, vec3_t min, vec3_t max, float dist );
 void SetInitialStairPos( int dir, vec3_t min, vec3_t max, float width );

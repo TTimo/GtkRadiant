@@ -36,8 +36,8 @@
 #include "visfind.h"
 
 // for autocaulk
-list<Str> exclusionList;        // whole brush exclusion
-list<Str> exclusionList_Face;   // single face exclusion
+std::list<Str> exclusionList;        // whole brush exclusion
+std::list<Str> exclusionList_Face;   // single face exclusion
 
 bool el1Loaded =        FALSE;
 bool el2Loaded =        FALSE;
@@ -507,8 +507,8 @@ void DoSplitPatch() {
 
 	patch.LoadFromBrush_t( brush );
 
-	list<DPatch> patchList = patch.Split( true, true );
-	for ( list<DPatch>::iterator patches = patchList.begin(); patches != patchList.end(); patches++ ) {
+	std::list<DPatch> patchList = patch.Split( true, true );
+	for ( std::list<DPatch>::iterator patches = patchList.begin(); patches != patchList.end(); patches++ ) {
 		( *patches ).BuildInRadiant();
 	}
 
@@ -559,7 +559,7 @@ void DoVisAnalyse(){
 	char* ext = strrchr( filename, '.' ) + 1;
 	strcpy( ext, "bsp" ); // rename the extension
 
-	list<DWinding*> *pointList = BuildTrace( filename, origin );
+	std::list<DWinding*> *pointList = BuildTrace( filename, origin );
 
 	if ( !g_VisView ) {
 		g_VisView = new DVisDrawer;

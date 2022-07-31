@@ -29,8 +29,8 @@
 #include "funchandlers.h"
 
 // for ctf texture changer
-list<Str> clrList_Blue;
-list<Str> clrList_Red;
+std::list<Str> clrList_Blue;
+std::list<Str> clrList_Red;
 
 BOOL clrLst1Loaded = FALSE;
 BOOL clrLst2Loaded = FALSE;
@@ -72,8 +72,8 @@ void DoCTFColourChanger(){
 
 	int cnt = Min( clrList_Blue.size(), clrList_Red.size() );
 
-	list<Str>::const_iterator Texture_change;
-	list<Str>::const_iterator Texture_new;
+	std::list<Str>::const_iterator Texture_change;
+	std::list<Str>::const_iterator Texture_new;
 
 	float fDummy[2];
 

@@ -79,7 +79,7 @@ xmlNodePtr mpDocNode;
 /*!
    prefs assignments (what pref name, what type, what variable)
  */
-list<CPrefAssignment> mPrefAssignments;
+std::list<CPrefAssignment> mPrefAssignments;
 
 /*!
    name of file to load/save as
@@ -348,7 +348,7 @@ CGameDescription *m_pCurrentGameDescription;
 /*!
    the list of game descriptions we scanned from the game/ dir
  */
-list<CGameDescription *> mGames;
+std::list<CGameDescription *> mGames;
 
 CGameDialog() {
 	mFrame = NULL;
@@ -499,7 +499,7 @@ CGameDialog mGamesDialog;
 protected:
 // warning about old project files
 bool m_bWarn;
-list<CGameDescription *> mGames;
+std::list<CGameDescription *> mGames;
 
 public:
 // last light intensity used in the CLightPrompt dialog, stored in registry

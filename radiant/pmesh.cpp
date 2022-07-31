@@ -2900,7 +2900,7 @@ void Patch_TransformLODTexture( patchMesh_t *p, float fx, float fy, transformtyp
 			BTree_TransformTexture( p->colLOD[( ( ( row - 1 ) / 2 ) * p->width ) + col], fx, fy, xform );
 }
 
-void Patch_AddBTreeToDrawListInOrder( list<drawVert_t> *drawList, BTNode_t *pBT ){
+void Patch_AddBTreeToDrawListInOrder( std::list<drawVert_t> *drawList, BTNode_t *pBT ){
 	if ( pBT != NULL ) { //traverse InOrder
 		Patch_AddBTreeToDrawListInOrder( drawList, pBT->left );
 		if ( pBT->left != NULL && pBT->right != NULL ) {
@@ -2910,7 +2910,7 @@ void Patch_AddBTreeToDrawListInOrder( list<drawVert_t> *drawList, BTNode_t *pBT 
 	}
 }
 
-void Patch_InterpolateListFromRowBT( list<drawVert_t> *drawList, BTNode_t *rowBT, BTNode_t *rowBTLeft, drawVert_t *vCurve[], float u, float n, float v ){
+void Patch_InterpolateListFromRowBT( std::list<drawVert_t> *drawList, BTNode_t *rowBT, BTNode_t *rowBTLeft, drawVert_t *vCurve[], float u, float n, float v ){
 	if ( rowBT != NULL ) {
 		Patch_InterpolateListFromRowBT( drawList, rowBT->left, rowBTLeft->left, vCurve, u - n, n * 0.5f, v );
 		if ( rowBT->left != NULL && rowBT->right != NULL ) {
@@ -2934,7 +2934,7 @@ void Patch_InterpolateListFromRowBT( list<drawVert_t> *drawList, BTNode_t *rowBT
 	}
 }
 
-void Patch_TraverseColBTInOrder( list<list<drawVert_t>*>::iterator& iter, BTNode_t *colBTLeft, BTNode_t *colBT, BTNode_t *colBTRight, BTNode_t *rowBT, BTNode_t *rowBTLeft, float v, float n ){
+void Patch_TraverseColBTInOrder( std::list<std::list<drawVert_t>*>::iterator& iter, BTNode_t *colBTLeft, BTNode_t *colBT, BTNode_t *colBTRight, BTNode_t *rowBT, BTNode_t *rowBTLeft, float v, float n ){
 	if ( colBT != NULL ) {
 		//traverse subtree In Order
 		Patch_TraverseColBTInOrder( iter, colBTLeft->left, colBT->left, colBTRight->left, rowBT, rowBTLeft, v - n, n * 0.5f );
@@ -2953,12 +2953,12 @@ void Patch_TraverseColBTInOrder( list<list<drawVert_t>*>::iterator& iter, BTNode
 }
 
 
-void Patch_StartDrawLists( list<list<drawVert_t>*> *drawLists, BTNode_t *colBT ){
+void Patch_StartDrawLists( std::list<std::list<drawVert_t>*> *drawLists, BTNode_t *colBT ){
 	if ( colBT != NULL ) {
 		//traverse subtree In Order
 		Patch_StartDrawLists( drawLists, colBT->left );
 		if ( colBT->left != NULL && colBT->right != NULL ) {
-			list<drawVert_t> *newList = new list<drawVert_t>;
+			std::list<drawVert_t> *newList = new std::list<drawVert_t>;
 			drawLists->push_back( newList ); // add empty list to back
 			drawLists->back()->push_back( colBT->vMid );
 		}
@@ -2966,8 +2966,8 @@ void Patch_StartDrawLists( list<list<drawVert_t>*> *drawLists, BTNode_t *colBT )
 	}
 }
 
-typedef list<drawVert_t> drawList_t;
-typedef list<list<drawVert_t>*> drawLists_t;
+typedef std::list<drawVert_t> drawList_t;
+typedef std::list<std::list<drawVert_t>*> drawLists_t;
 
 void Patch_CreateDrawLists( patchMesh_t *patch ){
 	int col, row, colpos, rowpos;

@@ -29,12 +29,7 @@
 #define Q_NO_STLPORT
 #endif
 
-#ifdef Q_NO_STLPORT
-
-// not using STLPort (gcc 3.x build)
-using namespace std;
-
-#else
+#ifndef Q_NO_STLPORT
 
 #ifndef _STLPORT_VERSION
 #error "Can't find _STLPORT_VERSION, check you are compiling against STLPort"
