@@ -7,9 +7,9 @@ import platform
 import re
 import subprocess
 import platform
-import urllib3.request
 import zipfile
 import shutil
+import urllib.request
 
 if __name__ != '__main__':
     from SCons.Script import *
