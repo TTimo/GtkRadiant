@@ -76,7 +76,7 @@ void    Face_SetShader( face_t *face, IShader *shader );
 void    Face_MakePlane( face_t *f );
 void        Face_Draw( face_t *face );
 void Face_TextureVectors( face_t * f, float STfromXYZ[2][4] );
-void        SetFaceTexdef( face_t *f, texdef_t *texdef, brushprimit_texdef_t *brushprimit_texdef, bool bFitScale = false, IPluginTexdef* pPlugTexdef = NULL );
+void        SetFaceTexdef( face_t *f, texdef_t *texdef, brushprimit_texdef_t *brushprimit_texdef, bool bFitScale = false, IPluginTexdef* pPlugTexdef = NULL, bool bKeepSurf = true, bool bKeepContents = true );
 
 void Face_FitTexture( face_t * face, int nHeight, int nWidth );
 void Brush_FitTexture( brush_t *b, int nHeight, int nWidth );

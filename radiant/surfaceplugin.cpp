@@ -195,11 +195,10 @@ void SI_SetTexdef_FaceList( texdef_to_face_t* texdef_face_list, bool b_SetUndoPo
 			if ( selected_brushes.next != &selected_brushes ) {
 				Undo_AddBrushList( &selected_brushes );
 			}
-			else{
+			else {
 				Undo_AddBrush( texdef_face_list->brush );
 			}
-
-                }
+        }
 	}
 
 	for ( texdef_to_face = texdef_face_list; texdef_to_face; texdef_to_face = texdef_to_face->next )
@@ -207,7 +206,7 @@ void SI_SetTexdef_FaceList( texdef_to_face_t* texdef_face_list, bool b_SetUndoPo
 		{
 			brushprimit_texdef_t brushprimit_texdef;
 			FakeTexCoordsToTexMat( texdef_to_face->texdef.shift, texdef_to_face->texdef.rotate, texdef_to_face->texdef.scale, brushprimit_texdef.coords );
-			SetFaceTexdef( texdef_to_face->face, &texdef_to_face->texdef, &brushprimit_texdef, bFit_to_Scale );
+			SetFaceTexdef( texdef_to_face->face, &texdef_to_face->texdef, &brushprimit_texdef, bFit_to_Scale, NULL, true, false );
 		}
 		Brush_Build( texdef_to_face->brush );
 		if ( bFit_to_Scale ) {

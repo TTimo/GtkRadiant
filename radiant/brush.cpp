@@ -2381,7 +2381,7 @@ void    Brush_RemoveFromList( brush_t *b ){
         if NULL, ask for a default
    ===============
  */
-void SetFaceTexdef( face_t *f, texdef_t *texdef, brushprimit_texdef_t *brushprimit_texdef, bool bFitScale, IPluginTexdef* pPlugTexdef ) {
+void SetFaceTexdef( face_t *f, texdef_t *texdef, brushprimit_texdef_t *brushprimit_texdef, bool bFitScale, IPluginTexdef* pPlugTexdef, bool bKeepSurf, bool bKeepContents ) {
 	int oldFlags;
 	int oldContents;
 
@@ -2423,8 +2423,10 @@ void SetFaceTexdef( face_t *f, texdef_t *texdef, brushprimit_texdef_t *brushprim
 			f->texdef = *texdef;
 		}
 	}
-	f->texdef.flags = ( f->texdef.flags & ~SURF_KEEP ) | ( oldFlags & SURF_KEEP );
-	f->texdef.contents = ( f->texdef.contents & ~CONTENTS_KEEP ) | ( oldContents & CONTENTS_KEEP );
+	if ( bKeepSurf )
+		f->texdef.flags = (f->texdef.flags & ~SURF_KEEP) | (oldFlags & SURF_KEEP);
+	if ( bKeepContents )
+		f->texdef.contents = (f->texdef.contents & ~CONTENTS_KEEP) | (oldContents & CONTENTS_KEEP);
 }
 
 void Brush_SetTexture( brush_t *b, texdef_t *texdef, brushprimit_texdef_t *brushprimit_texdef, bool bFitScale, IPluginTexdef* pTexdef ){
