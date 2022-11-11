@@ -187,8 +187,8 @@ void SI_SetTexdef_FaceList( texdef_to_face_t* texdef_face_list, bool b_SetUndoPo
 		else if ( ( selected_brushes.next != &selected_brushes ) || ( g_ptrSelectedFaces.GetSize() == 1 ) ) {
 			// Give something to undo to
 			for ( texdef_to_face = texdef_face_list; texdef_to_face; texdef_to_face = texdef_to_face->next ) {
-			  SetFaceTexdef( texdef_to_face->face, &texdef_to_face->orig_texdef, &texdef_to_face->orig_bp_texdef, bFit_to_Scale );
-                        }
+				SetFaceTexdef( texdef_to_face->face, &texdef_to_face->orig_texdef, &texdef_to_face->orig_bp_texdef, bFit_to_Scale );
+            }
 
 			Undo_Start( "set facelist texdefs" );
 

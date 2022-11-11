@@ -2379,74 +2379,6 @@ void    Brush_RemoveFromList( brush_t *b ){
    TTimo: surface plugin, added an IPluginTexdef* parameter
         if not NULL, get ->Copy() of it into the face ( and remember to hook )
         if NULL, ask for a default
-
-   TTimo - shader code cleanup
-   added IShader* parameter
-   ===============
- */
-void SetFaceTexdef2( brush_t *b, face_t *f, IShader *pShader, texdef_t *texdef, brushprimit_texdef_t *brushprimit_texdef, bool bFitScale, IPluginTexdef* pPlugTexdef ) {
-	int oldFlags;
-	int oldContents;
-	face_t  *tf;
-
-	oldFlags = f->texdef.flags;
-	oldContents = f->texdef.contents;
-	if ( g_qeglobals.m_bBrushPrimitMode ) {
-		f->texdef = *texdef;
-		ConvertTexMatWithQTexture( brushprimit_texdef, NULL, &f->brushprimit_texdef, QERApp_Shader_ForName( f->texdef.GetName() )->getTexture() );
-	}
-	else
-	if ( bFitScale ) {
-		f->texdef = *texdef;
-		// fit the scaling of the texture on the actual plane
-		vec3_t p1,p2,p3;     // absolute coordinates
-		// compute absolute coordinates
-		ComputeAbsolute( f,p1,p2,p3 );
-		// compute the scale
-		vec3_t vx,vy;
-		VectorSubtract( p2,p1,vx );
-		VectorNormalize( vx, vx );
-		VectorSubtract( p3,p1,vy );
-		VectorNormalize( vy, vy );
-		// assign scale
-		VectorScale( vx,texdef->scale[0],vx );
-		VectorScale( vy,texdef->scale[1],vy );
-		VectorAdd( p1,vx,p2 );
-		VectorAdd( p1,vy,p3 );
-		// compute back shift scale rot
-		AbsoluteToLocal( f->plane,f,p1,p2,p3 );
-	}
-	else{
-		f->texdef = *texdef;
-	}
-	f->texdef.flags = ( f->texdef.flags & ~SURF_KEEP ) | ( oldFlags & SURF_KEEP );
-	f->texdef.contents = ( f->texdef.contents & ~CONTENTS_KEEP ) | ( oldContents & CONTENTS_KEEP );
-
-	// if this is a curve face, set all other curve faces to the same texdef
-	if ( f->texdef.flags & SURF_CURVE ) {
-		for ( tf = b->brush_faces ; tf ; tf = tf->next )
-		{
-			if ( tf->texdef.flags & SURF_CURVE ) {
-				tf->texdef = f->texdef;
-			}
-		}
-	}
-}
-
-/*
-   ===============
-   SetFaceTexdef
-
-   Doesn't set the curve flags
-
-   NOTE : ( TTimo )
-    never trust f->d_texture here, f->texdef and f->d_texture are out of sync when called by Brush_SetTexture
-    use Texture_ForName() to find the right shader
-    FIXME : send the right shader ( qtexture_t * ) in the parameters ?
-
-   TTimo: surface plugin, added an IPluginTexdef* parameter
-        if not NULL, get ->Copy() of it into the face ( and remember to hook )
-        if NULL, ask for a default
    ===============
  */
 void SetFaceTexdef( face_t *f, texdef_t *texdef, brushprimit_texdef_t *brushprimit_texdef, bool bFitScale, IPluginTexdef* pPlugTexdef ) {
@@ -2494,18 +2426,6 @@ void SetFaceTexdef( face_t *f, texdef_t *texdef, brushprimit_texdef_t *brushprim
 	f->texdef.flags = ( f->texdef.flags & ~SURF_KEEP ) | ( oldFlags & SURF_KEEP );
 	f->texdef.contents = ( f->texdef.contents & ~CONTENTS_KEEP ) | ( oldContents & CONTENTS_KEEP );
 }
-
-#ifdef _DEBUG
-void Brush_SetTexture2( brush_t *b, IShader *pShader, texdef_t *texdef, brushprimit_texdef_t *brushprimit_texdef, bool bFitScale, IPluginTexdef* pTexdef ){
-	for ( face_t* f = b->brush_faces ; f ; f = f->next )
-		SetFaceTexdef2( b, f, pShader, texdef, brushprimit_texdef, bFitScale, pTexdef );
-	Brush_Build( b );
-	if ( b->patchBrush ) {
-		Patch_SetTexture( b->pPatch, texdef, pTexdef );
-		b->bFiltered = FilterBrush( b );
-	}
-}
-#endif
 
 void Brush_SetTexture( brush_t *b, texdef_t *texdef, brushprimit_texdef_t *brushprimit_texdef, bool bFitScale, IPluginTexdef* pTexdef ){
 	for ( face_t* f = b->brush_faces ; f ; f = f->next )

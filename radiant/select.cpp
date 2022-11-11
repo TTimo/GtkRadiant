@@ -555,54 +555,6 @@ void Select_Clone( void ){
 	Sys_UpdateWindows( W_ALL );
 }
 
-//++timo clean
-#if 0
-/*
-   ============
-   Select_SetTexture
-   Timo : bFitScale to compute scale on the plane and counteract plane / axial plane snapping
-   Timo :	brush primitive texturing
-        the brushprimit_texdef given must be understood as a qtexture_t width=2 height=2 ( HiRes )
-   Timo :  texture plugin, added an IPluginTexdef* parameter
-        must be casted to an IPluginTexdef!
-        if not NULL, get ->Copy() of it into each face or brush ( and remember to hook )
-        if NULL, means we have no information, ask for a default
-   TTimo - shader code cleanup
-   added IShader* parameter
-   ============
- */
-void WINAPI Select_SetTexture2( IShader* pShader, texdef_t *texdef, brushprimit_texdef_t *brushprimit_texdef, bool bFitScale, void* pPlugTexdef ){
-	brush_t *b;
-	int nCount = g_ptrSelectedFaces.GetSize();
-	if ( nCount > 0 ) {
-		Undo_Start( "set face textures" );
-		ASSERT( g_ptrSelectedFaces.GetSize() == g_ptrSelectedFaceBrushes.GetSize() );
-		for ( int i = 0; i < nCount; i++ )
-		{
-			face_t *selFace = reinterpret_cast<face_t*>( g_ptrSelectedFaces.GetAt( i ) );
-			brush_t *selBrush = reinterpret_cast<brush_t*>( g_ptrSelectedFaceBrushes.GetAt( i ) );
-			Undo_AddBrush( selBrush );
-			//++timo TODO: propagate the IShader* ..
-			SetFaceTexdef( selFace, texdef, brushprimit_texdef, bFitScale, static_cast<IPluginTexdef *>( pPlugTexdef ) );
-			Brush_Build( selBrush, bFitScale );
-			Undo_EndBrush( selBrush );
-		}
-		Undo_End();
-	}
-	else if ( selected_brushes.next != &selected_brushes ) {
-		Undo_Start( "set brush textures" );
-		for ( b = selected_brushes.next ; b != &selected_brushes ; b = b->next )
-			if ( !b->owner->eclass->fixedsize ) {
-				Undo_AddBrush( b );
-				Brush_SetTexture2( b, pShader, texdef, brushprimit_texdef, bFitScale, static_cast<IPluginTexdef *>( pPlugTexdef ) );
-				Undo_EndBrush( b );
-			}
-		Undo_End();
-	}
-	Sys_UpdateWindows( W_ALL );
-}
-#endif
-
 /*
    ============
    Select_SetTexture
