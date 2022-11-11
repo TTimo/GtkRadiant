@@ -595,7 +595,6 @@ gint HandleCommand( GtkWidget *widget, gpointer data ){
 		  case ID_MISC_PREVIOUSLEAKSPOT: g_pParentWnd->OnMiscPreviousleakspot(); break;
 		  case ID_MISC_PRINTXY: g_pParentWnd->OnMiscPrintxy(); break;
 		  case ID_MISC_SELECTENTITYCOLOR: g_pParentWnd->OnMiscSelectentitycolor(); break;
-		  case ID_CONVERTCURVES: g_pParentWnd->OnConvertcurves(); break;
 		  case ID_REGION_OFF: g_pParentWnd->OnRegionOff(); break;
 		  case ID_REGION_SETXY: g_pParentWnd->OnRegionSetxy(); break;
 		  case ID_REGION_SETTALLBRUSH: g_pParentWnd->OnRegionSettallbrush(); break;
@@ -6420,25 +6419,6 @@ void MainFrame::OnMiscSelectentitycolor(){
 		}
 		Sys_UpdateWindows( W_ALL );
 	}
-}
-
-void MainFrame::OnConvertcurves(){
-#if 0
-	Select_Deselect();
-	for ( brush_t* pb = active_brushes.next ; pb != &active_brushes ; pb = pb->next )
-	{
-		if ( pb->curveBrush ) {
-			for ( face_t* f = pb->brush_faces ; f ; f = f->next )
-			{
-				if ( f->texdef.contents & CONTENTS_LADDER ) {
-					f->texdef.contents &= ~CONTENTS_LADDER;
-					f->texdef.contents |= CONTENTS_NEGATIVE_CURVE;
-				}
-			}
-		}
-	}
-	Map_BuildBrushData();
-#endif
 }
 
 void MainFrame::OnRegionOff(){

@@ -380,13 +380,12 @@ typedef struct
 #define CONTENTS_ORIGIN             0x1000000     // removed before bsping an entity
 
 #define CONTENTS_MONSTER            0x2000000     // should never be on a brush, only in game
-#define CONTENTS_DEADMONSTER      0x4000000   // corpse
+#define CONTENTS_DEADMONSTER        0x4000000     // corpse
 #define CONTENTS_DETAIL             0x8000000     // brushes to be added after vis leafs
-#define CONTENTS_TRANSLUCENT      0x10000000    // auto set if any surface has trans
-#define CONTENTS_LADDER         0x20000000  // ladder
-#define CONTENTS_NEGATIVE_CURVE 0x40000000  // reverse inside / outside
+#define CONTENTS_TRANSLUCENT        0x10000000    // auto set if any surface has trans
+#define CONTENTS_LADDER             0x20000000    // ladder
 
-#define CONTENTS_KEEP   ( CONTENTS_DETAIL | CONTENTS_NEGATIVE_CURVE )
+#define CONTENTS_KEEP   CONTENTS_DETAIL
 
 
 typedef struct

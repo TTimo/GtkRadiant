@@ -149,7 +149,6 @@ struct SKeyInfo
 #define ID_SELECTION_SELECT_NUDGEDOWN   32919
 #define ID_TEXTURES_LOADLIST            32920
 #define ID_DONTSELECTCURVE              32923
-#define ID_CONVERTCURVES                32924
 #define ID_PATCH_SHOWBOUNDINGBOX        32926
 #define ID_CURVE_SIMPLEPATCHMESH        32927
 #define ID_PATCH_WIREFRAME              32928
@@ -800,7 +799,6 @@ void OnSelectionSelectNudgeright();
 void OnSelectionSelectNudgeup();
 void OnTexturesLoadlist();
 void OnDontselectcurve();
-void OnConvertcurves();
 void OnCurveSimplepatchmesh();
 void OnPatchToggleBox();
 void OnPatchWireframe();
