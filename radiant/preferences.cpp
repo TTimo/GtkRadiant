@@ -3391,7 +3391,7 @@ void CGameInstall::OnGameSelectChanged( GtkWidget *widget, gpointer data ) {
 	GtkWidget *button = GTK_WIDGET( g_object_get_data( G_OBJECT( i->m_pWidget ), "executable_button" ) );
 
 	int game_id = i->m_availGames[ i->m_nComboSelect ];
-	if ( game_id == GAME_Q2 || game_id == GAME_QUETOO ) {
+	if ( game_id == GAME_Q2 || game_id == GAME_QUETOO || game_id == GAME_Q2_REMASTER ) {
 		gtk_widget_show( label );
 		gtk_widget_show( entry );
 		gtk_widget_show( button );
@@ -3438,6 +3438,9 @@ void CGameInstall::BuildDialog() {
 			break;
 		case GAME_Q2:
 			gtk_combo_box_text_append_text( GTK_COMBO_BOX_TEXT( game_select_combo ), _( "Quake II" ) );
+			break;
+		case GAME_Q2_REMASTER:
+			gtk_combo_box_text_append_text( GTK_COMBO_BOX_TEXT( game_select_combo ), _( "Quake II Remaster" ) );
 			break;
 		case GAME_Q3:
 			gtk_combo_box_text_append_text( GTK_COMBO_BOX_TEXT( game_select_combo ), _( "Quake III Arena and mods" ) );
@@ -3594,6 +3597,10 @@ void CGameInstall::Run() {
 		gamePack = Q2_PACK;
 		gameFilePath += Q2_GAME;
 		break;
+	case GAME_Q2_REMASTER:
+		gamePack = Q2_REMASTER_PACK;
+		gameFilePath += Q2_REMASTER_GAME;
+		break;
 	case GAME_Q3:
 		gamePack = Q3_PACK;
 		gameFilePath += Q3_GAME;
@@ -3693,7 +3700,9 @@ void CGameInstall::Run() {
 
 		break;
 	}
-	case GAME_Q2: {
+	case GAME_Q2:
+	case GAME_Q2_REMASTER:
+	{
 		fprintf( fg, "  idtech2=\"true\"\n" );
 		fprintf( fg, "  prefix=\".quake2\"\n" );
 		fprintf( fg, "  basegame=\"baseq2\"\n" );
@@ -3890,6 +3899,9 @@ void CGameInstall::ScanGames() {
 		}
 		if ( stricmp( dirname, Q2_PACK ) == 0 ) {
 			m_availGames[ iGame++ ] = GAME_Q2;
+		}
+		if ( stricmp( dirname, Q2_REMASTER_PACK ) == 0 ) {
+			m_availGames[ iGame++ ] = GAME_Q2_REMASTER;
 		}
 		if ( stricmp( dirname, TREMULOUS_PACK ) == 0 ) {
 			m_availGames[ iGame++ ] = GAME_TREMULOUS;
