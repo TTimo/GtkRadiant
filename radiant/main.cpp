@@ -1187,15 +1187,12 @@ static gboolean RunBsp_CaptureOutput(void *data) {
 void RunBsp( char *command ){
 	GPtrArray *sys;
 	char batpath[BIG_PATH_MAX];
-	char temppath[BIG_PATH_MAX];
 	char name[BIG_PATH_MAX];
 	char cWork[BIG_PATH_MAX];
 	FILE  *hFile;
 	unsigned int i;
 
 	SetInspectorMode( W_CONSOLE );
-
-	strcpy( temppath, g_strTempPath.GetBuffer() );
 
 	SaveWithRegion( name );
 
@@ -1228,24 +1225,13 @@ void RunBsp( char *command ){
 		for ( i = 0; i < sys->len; i++ )
 		{
 			strSys += (char *)g_ptr_array_index( sys, i );
-#ifdef _WIN32  // write temp\junk.txt in win32... NOTE: stops output to shell prompt window
-			if ( i == 0 ) {
-				strSys += " >";
-			}
-			else{
-				strSys += " >>";
-			}
-			strSys += "\"";
-			strSys += temppath;
-			strSys += "junk.txt\"";
-#endif
 			strSys += "\n";
 		};
 
 #if defined( __linux__ ) || defined( __FreeBSD__ ) || defined( __APPLE__ )
 
 		// write qe3bsp.sh
-		sprintf( batpath, "%sqe3bsp.sh", temppath );
+		sprintf( batpath, "%sqe3bsp.sh", g_strTempPath.GetBuffer() );
 		Sys_Printf( "Writing the compile script to '%s'\n", batpath );
 		hFile = fopen( batpath, "w" );
 		if ( !hFile ) {
@@ -1258,9 +1244,8 @@ void RunBsp( char *command ){
 #endif
 
 #ifdef _WIN32
-		sprintf( batpath, "%sqe3bsp.bat", temppath );
+		sprintf( batpath, "%sqe3bsp.bat", g_strTempPath.GetBuffer() );
 		Sys_Printf( "Writing the compile script to '%s'\n", batpath );
-		Sys_Printf( "The build output will be saved in '%sjunk.txt'\n", temppath );
 		hFile = fopen( batpath, "w" );
 		if ( !hFile ) {
 			Error( "Can't write to %s", batpath );
@@ -1312,7 +1297,7 @@ void RunBsp( char *command ){
 	}
         // free the strings and the array
         for ( i = 0; i < sys->len; i++ ) {
-          delete[] (char *)g_ptr_array_index( sys, i );
+			delete[](char*)g_ptr_array_index( sys, i );
         }
         g_ptr_array_free( sys, TRUE );
         sys = NULL;
