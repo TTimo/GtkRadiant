@@ -1292,7 +1292,7 @@ void RunBsp( char *command ){
 		Sys_Printf( "Running bsp command...\n" );
 		Sys_Printf( "\n%s\n", strSys.GetBuffer() );
 
-		WinExec( batpath, SW_SHOWNORMAL );
+		Q_Exec( batpath, NULL, g_strTempPath.GetBuffer(), true );
 #endif
 	}
         // free the strings and the array
