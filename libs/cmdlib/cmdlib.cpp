@@ -115,6 +115,7 @@ bool Q_Exec( const char *cmd, char *cmdline, const char *execdir, bool bCreateCo
 			 &startupinfo,
 			 &ProcessInformation
 			 ) ) {
+		// NOTE: the docs suggest we should be closing the handles in PROCESS_INFORMATION here
 		return true;
 	}
 	return false;

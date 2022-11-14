@@ -1221,12 +1221,26 @@ void RunBsp( char *command ){
 		g_pParentWnd->GetWatchBSP()->DoMonitoringLoop( sys, bspname );
 	} else {
 		// write all the steps in a single BAT / .sh file and run it, don't bother monitoring it
-		CString strSys;
+		CString strSys = "echo off\n";
 		for ( i = 0; i < sys->len; i++ )
 		{
 			strSys += (char *)g_ptr_array_index( sys, i );
-			strSys += "\n";
-		};
+			strSys += "\nIF %ERRORLEVEL% NEQ 0 goto error\n";
+		}
+		strSys += "\
+goto end\n\
+\n\
+:error\n\
+ECHO.\n\
+ECHO.\n\
+ECHO =======================================\n\
+ECHO =========== BSP STEP FAILED ===========\n\
+ECHO =======================================\n\
+ECHO.\n\
+\n\
+:end\n\
+pause\n\
+";
 
 #if defined( __linux__ ) || defined( __FreeBSD__ ) || defined( __APPLE__ )
 
