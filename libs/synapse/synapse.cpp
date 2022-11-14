@@ -403,13 +403,12 @@ void CSynapseServer::PushRequired( CSynapseClient *pClient ){
 		std::list<CSynapseClientSlot>::iterator iClientSlot;
 		for ( iClientSlot = mClients.begin(); iClientSlot != mClients.end(); iClientSlot++ )
 		{
-			CSynapseClient *pScanClient = ( *iClientSlot ).
-										  mpClient;
+			CSynapseClient *pScanClient = ( *iClientSlot ).mpClient;
 			int j,jmax = pScanClient->GetAPICount();
 			for ( j = 0; j < jmax; j++ )
 			{
 				APIDescriptor_t *pAPI = pScanClient->GetAPIDescriptor( j );
-				if ( pAPI->mType == SYN_PROVIDE ) {
+				if ( pAPI != NULL && pAPI->mType == SYN_PROVIDE ) {
 					if ( pManager->MatchAPI( pAPI->major_name, pAPI->minor_name ) ) {
 						/*! we are going to want to load this one
 						 * NOTE TTimo: what if this can not be resolved in the end?
