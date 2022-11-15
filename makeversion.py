@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # version and about message management
 # NOTE: this module is meant to be used on all platforms, it is not SCons centric
 
@@ -23,7 +24,7 @@ def get_version():
   # version
   f = open('include/version.default', 'r')
   buffer = f.read()
-  line = string.split(buffer, '\n')[0]
+  line = buffer.split('\n')[0]
   f.close()
   sys.stdout.write("version: %s\n" % line)
   exp = re.compile('^1\\.([^\\.]*)\\.([0-9]*)')
@@ -56,7 +57,7 @@ def radiant_makeversion(append_about):
   sys.stdout.write("about message is in %s\n" % aboutfile)
   f = open(aboutfile, 'r')
   buffer = f.read()
-  line = string.split(buffer, '\n')[0]
+  line = buffer.split('\n')[0]
   f.close()
   # optional additional message
   if ( not append_about is None ):
