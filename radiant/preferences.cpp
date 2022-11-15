@@ -3056,17 +3056,19 @@ void PrefsDlg::LoadPrefs(){
 	// this will probably need to be 75 or 100 for Q1.
 	mLocalPrefs.GetPref( TEXTURESCALE_KEY,       &m_nTextureScale,               50 );
 
-	if ( ( g_pGameDescription->mGameFile == "hl.game" ) ) {
+	bool bWatchBSPDefault = TRUE;
+	bool bTextureWindowDefault = FALSE;
+	if ( g_pGameDescription->mGameFile == "hl.game" ) {
 		// No BSP monitoring in the default compiler tools for Half-life (yet)
-		mLocalPrefs.GetPref( WATCHBSP_KEY,           &m_bWatchBSP,                   FALSE );
-
+		bWatchBSPDefault = FALSE;
 		// Texture subset on by default (HL specific really, because of halflife.wad's size)
-		mLocalPrefs.GetPref( TEXTURE_KEY,            &m_bTextureWindow,              TRUE );
-	} else {
-		mLocalPrefs.GetPref( WATCHBSP_KEY,           &m_bWatchBSP,                   TRUE );
-		mLocalPrefs.GetPref( TEXTURE_KEY,            &m_bTextureWindow,              FALSE );
+		bTextureWindowDefault = TRUE;
+	} else if ( g_pGameDescription->mGameFile == Q2_REMASTER_GAME ) {
+		// ericw-tools do not support BSP monitoring
+		bWatchBSPDefault = FALSE;
 	}
-
+	mLocalPrefs.GetPref( WATCHBSP_KEY,           &m_bWatchBSP,                   bWatchBSPDefault );
+	mLocalPrefs.GetPref( TEXTURE_KEY,            &m_bTextureWindow,              bTextureWindowDefault );
 
 	mLocalPrefs.GetPref( TEXTURESCROLLBAR_KEY,   &m_bTextureScrollbar,           TRUE );
 	mLocalPrefs.GetPref( DISPLAYLISTS_KEY,       &m_bDisplayLists,               TRUE );
