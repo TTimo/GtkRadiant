@@ -1225,6 +1225,7 @@ void RunBsp( char *command ){
 		for ( i = 0; i < sys->len; i++ )
 		{
 			strSys += (char *)g_ptr_array_index( sys, i );
+			Sys_Printf( "\n%s\n", (char *)g_ptr_array_index( sys, i ) );
 			strSys += "\nIF %ERRORLEVEL% NEQ 0 goto error\n";
 		}
 		strSys += "\
@@ -1304,15 +1305,14 @@ pause\n\
 
 #ifdef _WIN32
 		Sys_Printf( "Running bsp command...\n" );
-		Sys_Printf( "\n%s\n", strSys.GetBuffer() );
 
 		Q_Exec( batpath, NULL, g_strTempPath.GetBuffer(), true );
 #endif
 	}
-        // free the strings and the array
-        for ( i = 0; i < sys->len; i++ ) {
-			delete[](char*)g_ptr_array_index( sys, i );
-        }
-        g_ptr_array_free( sys, TRUE );
-        sys = NULL;
+  // free the strings and the array
+  for ( i = 0; i < sys->len; i++ ) {
+		delete[](char*)g_ptr_array_index( sys, i );
+  }
+  g_ptr_array_free( sys, TRUE );
+  sys = NULL;
 }
