@@ -9,7 +9,6 @@ import subprocess
 import platform
 import zipfile
 import shutil
-import urllib.request
 
 if __name__ != '__main__':
     from SCons.Script import *
@@ -326,6 +325,7 @@ class Config:
                 ]:
                 if ( not os.path.exists( lib_archive ) ):
                     print( 'downloading %s' % lib_archive )
+                    import urllib.request
                     archive_web_request = urllib.request.urlopen( 'http://s3.amazonaws.com/GtkRadiant/%s' % lib_archive )
                     archive_File = open( lib_archive, 'wb' )
                     while True:
