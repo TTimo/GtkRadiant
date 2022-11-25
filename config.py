@@ -229,11 +229,11 @@ class Config:
         env['CC'] = self.cc
         env['CXX'] = self.cxx
         try:
-            xml2 = subprocess.check_output( ['xml2-config', '--cflags'] ).decode( 'utf-8' )
+            xml2 = subprocess.check_output( ['pkg-config', '--cflags', 'libxml-2.0'] ).decode( 'utf-8' )
         except subprocess.CalledProcessError as cpe:
-            print( 'xml2-config failed with error code {} and output:{}'.format( cpe.returncode, cpe.output ) )
+            print( 'pkg-config could not find libxml-2.0: failed with error code {} and output:{}'.format( cpe.returncode, cpe.output ) )
             assert( False )
-        env.ParseConfig( 'xml2-config --libs' )
+        env.ParseConfig( 'pkg-config --libs libxml-2.0' )
         #Need to strip on xml2-config output. It has a stray \n and that completely screws up scons calling g++
         baseflags = [ '-pipe', '-Wall', '-fmessage-length=0', '-fvisibility=hidden', xml2.strip().split( ' ' ) ]
 
