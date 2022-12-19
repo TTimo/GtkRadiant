@@ -131,7 +131,9 @@ void Z_MouseMoved( int x, int y, int buttons ){
 	if ( buttons == MK_RBUTTON ) {
 		Sys_GetCursorPos( &x, &y );
 		if ( y != cursory ) {
-			z.origin[2] += y - cursory;
+			//Sys_Printf("Z_MouseMoved buttons==MK_RBUTTON x=%d y=%d z.height=%d delta_y=%d z.scale=%f\n", x, y, z.height, y - cursory, z.scale);
+			float delta_y = y - cursory;
+			z.origin[2] += delta_y / z.scale;
 			Sys_SetCursorPos( cursorx, cursory );
 			Sys_UpdateWindows( W_Z );
 		}
@@ -139,11 +141,12 @@ void Z_MouseMoved( int x, int y, int buttons ){
 	}
 	// control mbutton = move camera
 	int nMouseButton = g_PrefsDlg.m_nMouseButtons == 2 ? MK_RBUTTON : MK_MBUTTON;
+	float mouse_pos_in_3d = z.origin[2] + ( y - ( z.height / 2 ) ) / z.scale;
+	//Sys_Printf("Z_MouseMoved x=%d y=%d mouse_pos_in_3d=%f (z.origin[2]=%f + ( y=%d - ( z.height=%d / 2 ) / z.scale=%f)\n", x, y, mouse_pos_in_3d, z.origin[2], y, z.height, z.scale);
 	if ( ( buttons == ( MK_CONTROL | nMouseButton ) ) || ( buttons == ( MK_CONTROL | MK_LBUTTON ) ) ) {
-		g_pParentWnd->GetCamWnd()->Camera()->origin[2] = ( y - ( z.height / 2 ) ) / z.scale;
+		g_pParentWnd->GetCamWnd()->Camera()->origin[2] = mouse_pos_in_3d;
 		Sys_UpdateWindows( W_CAMERA | W_XY_OVERLAY | W_Z );
 	}
-
 }
 
 
@@ -182,55 +185,51 @@ void Z_DrawGrid( void ){
 	ze = 64 * ceil( ze / 64 );
 
 	// draw major blocks
-
+	int mayor_step_size;
 	qglColor3fv( g_qeglobals.d_savedinfo.colors[COLOR_GRIDMAJOR] );
 
 	if ( g_qeglobals.d_showgrid ) {
-		if ( g_qeglobals.d_gridsize < 128 ) {
-			qglBegin( GL_LINES );
+		qglBegin( GL_LINES );
 
-			qglVertex2f( 0, zb );
-			qglVertex2f( 0, ze );
+		qglVertex2f( 0, zb );
+		qglVertex2f( 0, ze );
 
-			for ( zz = zb ; zz < ze ; zz += 64 )
-			{
-				qglVertex2f( -w, zz );
-				qglVertex2f( w, zz );
-			}
+		float step = 64;
+		step /= z.scale;
+		if (step < 8.0)
+			step = 8.0;
+		mayor_step_size = (int)step;
 
-			qglEnd();
+		zb = z.origin[2] - h;
+		if ( zb < region_mins[2] ) {
+			zb = region_mins[2];
 		}
-		else
+		zb = step * floor( zb / step );
+
+		for ( zz = zb ; zz < ze ; zz += step )
 		{
-			qglBegin( GL_LINES );
-
-			qglVertex2f( 0, zb );
-			qglVertex2f( 0, ze );
-
-			for ( zz = zb ; zz < ze ; zz += 64 )
-			{
-				// d_gridsize >= 128 .. it's an int for sure
-				if ( ( (int)zz & ( (int)g_qeglobals.d_gridsize - 1 ) ) != 0 ) {
-					continue;
-				}
-
-				qglVertex2f( -w, zz );
-				qglVertex2f( w, zz );
-			}
-
-			qglEnd();
+			qglVertex2f( -w, zz );
+			qglVertex2f( w, zz );
 		}
+
+		qglEnd();
 	}
 
 	// draw minor blocks
-	if ( g_qeglobals.d_showgrid && g_qeglobals.d_gridsize * z.scale >= 4 &&
+	if ( 1 )
+	if ( g_qeglobals.d_showgrid && g_qeglobals.d_gridsize &&
 		 g_qeglobals.d_savedinfo.colors[COLOR_GRIDMINOR] != g_qeglobals.d_savedinfo.colors[COLOR_GRIDBACK] ) {
 		qglColor3fv( g_qeglobals.d_savedinfo.colors[COLOR_GRIDMINOR] );
 
 		qglBegin( GL_LINES );
-		for ( zz = zb ; zz < ze ; zz += g_qeglobals.d_gridsize )
+		float step = mayor_step_size / 8;
+		if (step < 1.0)
+			step = 1.0;
+
+		for ( zz = zb ; zz < ze ; zz += step )
+		//for ( zz = zb ; zz < ze ; zz += g_qeglobals.d_gridsize )
 		{
-			if ( !( (int)zz & 63 ) ) {
+			if ( !( (int)zz & (mayor_step_size-1) ) ) {
 				continue;
 			}
 			qglVertex2f( -w, zz );
@@ -244,13 +243,17 @@ void Z_DrawGrid( void ){
 	if ( g_qeglobals.d_savedinfo.show_coordinates ) {
 		qglColor3fv( g_qeglobals.d_savedinfo.colors[COLOR_GRIDTEXT] );
 
-		int step = (int)( g_qeglobals.d_gridsize > 64 ? g_qeglobals.d_gridsize : 64 );
+		float step = 64;
+		step /= z.scale;
+		if (step < 1.0)
+			step = 1.0;
 		zb = z.origin[2] - h;
 		if ( zb < region_mins[2] ) {
 			zb = region_mins[2];
 		}
 		zb = step * floor( zb / step );
 
+		//Sys_Printf("Z_DrawGrid: zb=%f ze=%f step=%f g_qeglobals.d_gridsize=%f\n", zb, ze, step, g_qeglobals.d_gridsize);
 		for ( zz = zb ; zz < ze ; zz += step )
 		{
 			qglRasterPos2f( -w + ( 1 / z.scale ), zz );
@@ -299,7 +302,8 @@ void Z_Draw( void ){
 	qtexture_t  *q;
 	float top, bottom;
 	vec3_t org_top, org_bottom, dir_up, dir_down;
-	int xCam = z.width / 3;
+	float xCam = z.width / 3;
+	xCam /= z.scale; // x-value scales down so horizontally everything fits in z-window
 
 	if ( !active_brushes.next ) {
 		return; // not valid yet
