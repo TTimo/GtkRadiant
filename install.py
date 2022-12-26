@@ -43,6 +43,6 @@ def install( path, src_path ):
 if __name__ == '__main__':
 	if ( len( sys.argv ) <= 2 or not os.path.exists( sys.argv[1] ) or not os.path.exists( sys.argv[2] ) ):
 		print('usage: install [target directory] [source directory]')
-		sys.exit(1)		
+		sys.exit(1)
 	print('Install %s into %s' % ( sys.argv[2], sys.argv[1] ))
 	install( sys.argv[1], sys.argv[2] )

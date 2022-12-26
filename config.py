@@ -493,7 +493,9 @@ class ConfigParser:
             value_split.reverse()
             value_split.pop()
             while ( len( value_split ) != 0 ):
-                value_array.append( value_split.pop() )
+                v = value_split.pop()
+                if ( len(v) > 0 ):
+                    value_array.append( v )
                 value_split.pop()
         except:
             print( traceback.print_exception( sys.exc_info()[0], sys.exc_info()[1], sys.exc_info()[2] ) )
