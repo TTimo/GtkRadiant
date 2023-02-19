@@ -120,39 +120,10 @@ static void create_splash() {
 
 #if defined( __linux__ ) || defined( __FreeBSD__ ) || defined( __APPLE__ )
 
-/* A short game name, could be used as argv[0] */
-static char game_name[100] = "";
-
 /* The directory where the data files can be found (run directory) */
 static char datapath[PATH_MAX];
 
-char *loki_gethomedir( void ){
-	char *home = NULL;
-
-	home = getenv( "HOME" );
-	if ( home == NULL ) {
-		uid_t id = getuid();
-		struct passwd *pwd;
-
-		setpwent();
-		while ( ( pwd = getpwent() ) != NULL )
-		{
-			if ( pwd->pw_uid == id ) {
-				home = pwd->pw_dir;
-				break;
-			}
-		}
-		endpwent();
-	}
-	return home;
-}
-
-/* Must be called BEFORE loki_initialize */
-void loki_setgamename( const char *n ){
-	strncpy( game_name, n, sizeof( game_name ) );
-}
-
-  #ifdef __linux__
+#ifdef __linux__
 /* Code to determine the mount point of a CD-ROM */
 int loki_getmountpoint( const char *device, char *mntpt, int max_size ){
 	char devpath[PATH_MAX], mntdevpath[PATH_MAX];
@@ -209,86 +180,32 @@ int loki_getmountpoint( const char *device, char *mntpt, int max_size ){
 	}
 	return( mounted );
 }
-  #endif
+#endif
 
 /*
     This function gets the directory containing the running program.
     argv0 - the 0'th argument to the program
  */
-// FIXME TTimo
-// I don't understand this function. It looks like something cut from another piece of software
-// we somehow get the g_strAppPath from it, but it's done through a weird scan across $PATH env. var.
-// even worse, it doesn't behave the same in all cases .. works well when ran through gdb and borks when ran from a shell
-void loki_initpaths( char *argv0 ){
-	char temppath[PATH_MAX]; //, env[100];
-	char *home; //, *ptr, *data_env;
+char* loki_init_datapath( char *argv0 ){
+	char temppath[PATH_MAX];
+	char *home;
 
-	home = loki_gethomedir();
+	home = g_get_home_dir();
 	if ( home == NULL ) {
 		home = const_cast<char*>(".");
 	}
 
-	if ( *game_name == 0 ) { /* Game name defaults to argv[0] */
-		loki_setgamename( argv0 );
-	}
-
-	strcpy( temppath, argv0 ); /* If this overflows, it's your own fault :) */
-	if ( !strrchr( temppath, '/' ) ) {
-		char *path;
-		char *last;
-		int found;
-
-		found = 0;
-		path = getenv( "PATH" );
-		do
-		{
-			/* Initialize our filename variable */
-			temppath[0] = '\0';
-
-			/* Get next entry from path variable */
-			last = strchr( path, ':' );
-			if ( !last ) {
-				last = path + strlen( path );
-			}
-
-			/* Perform tilde expansion */
-			if ( *path == '~' ) {
-				strcpy( temppath, home );
-				++path;
-			}
-
-			/* Fill in the rest of the filename */
-			if ( last > ( path + 1 ) ) {
-				strncat( temppath, path, ( last - path ) );
-				strcat( temppath, "/" );
-			}
-			strcat( temppath, "./" );
-			strcat( temppath, argv0 );
-
-			/* See if it exists, and update path */
-			if ( access( temppath, X_OK ) == 0 ) {
-				++found;
-			}
-			path = last + 1;
-
-		} while ( *last && !found );
-
-	}
-	else
-	{
-		/* Increment argv0 to the basename */
-		argv0 = strrchr( argv0, '/' ) + 1;
-	}
+	strcpy( temppath, argv0 );
 
 	/* Now canonicalize it to a full pathname for the data path */
 	if ( realpath( temppath, datapath ) ) {
-		/* There should always be '/' in the path */
-		*( strrchr( datapath, '/' ) ) = '\0';
+		/* There should always be '/' in the path, cut after so we end our directories with a slash */
+		*( strrchr( datapath, '/' ) + 1 ) = '\0';
 	}
 }
 
-char *loki_getdatapath( void ){
-	return( datapath );
+char *loki_get_datapath( void ){
+	return datapath;
 }
 
 #endif
@@ -581,27 +498,20 @@ int mainRadiant( int argc, char* argv[] ) {
 #endif
 
 #if defined( __linux__ ) || defined( __FreeBSD__ ) || defined( __APPLE__ )
-	Str home;
-	home = g_get_home_dir();
-	AddSlash( home );
-	home += ".radiant/";
-	Q_mkdir( home.GetBuffer(), 0775 );
-	home += RADIANT_VERSION;
-	Q_mkdir( home.GetBuffer(), 0775 );
-	g_strTempPath = home.GetBuffer();
+	const char *xdg_state_home = getenv( "XDG_STATE_HOME" );
+	if ( xdg_state_home != nullptr ) {
+		g_strTempPath = xdg_state_home;
+	} else {
+		g_strTempPath = g_get_home_dir();
+	}
+	g_strTempPath += "/.radiant/";
+	Q_mkdir( g_strTempPath.GetBuffer(), 0775 );
+	g_strTempPath += RADIANT_VERSION;
+	Q_mkdir( g_strTempPath.GetBuffer(), 0775 );
 	AddSlash( g_strTempPath );
 
-	loki_initpaths( argv[0] );
-
-	// NOTE: we build g_strAppPath with a '/' (or '\' on WIN32)
-	// it's a general convention in Radiant to have the slash at the end of directories
-	char real[PATH_MAX];
-	realpath( loki_getdatapath(), real );
-	if ( real[strlen( real ) - 1] != '/' ) {
-		strcat( real, "/" );
-	}
-
-	g_strAppPath = real;
+	loki_init_datapath( argv[0] );
+	g_strAppPath = loki_get_datapath();
 
 	// radiant is installed in the parent dir of "tools/"
 	// NOTE: this is not very easy for debugging

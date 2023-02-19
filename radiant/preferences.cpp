@@ -1271,8 +1271,6 @@ CGameDescription* CGameDialog::GameDescriptionForComboItem(){
 
 void CGameDialog::InitGlobalPrefPath(){
 	GString *global_rc_path;
-	// configure m_global_rc_path
-	// this is the g_strTempPath, and it has already been mkdir'ed
 	global_rc_path = g_string_new( g_strTempPath.GetBuffer() );
 	g_PrefsDlg.m_global_rc_path = global_rc_path;
 }

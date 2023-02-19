@@ -1922,10 +1922,6 @@ XVisualInfo* QEX_ChooseVisual( bool zbuffer ){
 
 #endif
 
-/*!
-   \todo FIXME TTimo broken most likely
-   actually .. that's not enough, you have to go down for the game pack specific?
- */
 const char* WINAPI QERApp_ProfileGetDirectory(){
 	return g_strTempPath;
 }
