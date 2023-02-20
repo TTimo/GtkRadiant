@@ -4,13 +4,23 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "debug",
+            "label": "build debug",
             "type": "shell",
             "command": "scons config=debug --no-packs --jobs=12",
             "problemMatcher": [],
             "group": {
-                "kind": "build",
-                "isDefault": true
+                "kind": "build"
+            }
+        },
+        {
+            "label": "build flatpak",
+            "type": "shell",
+            "command": "flatpak-builder --user --install --disable-updates --force-clean --ccache gtkradiant io.github.TTimo.GtkRadiant.json",
+            "options": {
+                "cwd": "${workspaceFolder}/../io.github.TTimo.GtkRadiant"
+            },
+            "group": {
+                "kind": "build"
             }
         }
     ]
