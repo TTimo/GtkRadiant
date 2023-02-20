@@ -761,6 +761,7 @@ class ClipPoint;
 
 extern MainFrame* g_pParentWnd;
 extern CString g_strAppPath;
+extern CString g_strGamesPath;
 extern CString g_strDTDPath;
 extern CString g_pidFile;
 extern CString g_pidGameFile;

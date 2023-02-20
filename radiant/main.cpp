@@ -466,6 +466,8 @@ int mainRadiant( int argc, char* argv[] ) {
 	QE_ConvertDOSToUnixName( pBuffer, pBuffer );
 	g_strAppPath.ReleaseBuffer();
 
+	g_strGamePath = g_strAppPath;
+
 	g_strBitmapsPath = g_strAppPath;
 	g_strBitmapsPath += "bitmaps/";
 
@@ -512,6 +514,16 @@ int mainRadiant( int argc, char* argv[] ) {
 
 	loki_init_datapath( argv[0] );
 	g_strAppPath = loki_get_datapath();
+
+	const char *xdg_data_home = getenv( "XDG_DATA_HOME" );
+	if ( xdg_data_home != nullptr ) {
+		g_strGamesPath = xdg_data_home;
+		g_strGamesPath += "/";
+	} else {
+		g_strGamesPath = g_strAppPath;
+	}
+	g_strGamesPath += "games/";
+	Q_mkdir( g_strGamesPath.GetBuffer(), 0775 );
 
 	// radiant is installed in the parent dir of "tools/"
 	// NOTE: this is not very easy for debugging

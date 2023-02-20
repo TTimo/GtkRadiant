@@ -45,7 +45,8 @@
 #endif
 
 // globals
-CString g_strAppPath;                   ///< holds the full path of the executable - readonly! (in flatpak at least)
+CString g_strAppPath;                   ///< holds the full path of the executable - readonly in flatpak
+CString g_strGamesPath;                 ///< installed/configured games 'work area'
 CString g_strDTDPath;                   ///< path to the DTD files
 CString g_pidFile;                      ///< the global .pid file (only for global part of the startup)
 CString g_pidGameFile;                  ///< the game-specific .pid file
