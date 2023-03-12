@@ -5,6 +5,12 @@
 		},
 		{
 			"path": "../io.github.TTimo.GtkRadiant"
+		},
+		{
+			"path": "../gtkglext"
+		},
+		{
+			"path": "../pangox-compat-0.0.2"
 		}
 	],
 	"settings": {}
