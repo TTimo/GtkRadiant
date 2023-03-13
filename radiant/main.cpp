@@ -466,7 +466,7 @@ int mainRadiant( int argc, char* argv[] ) {
 	QE_ConvertDOSToUnixName( pBuffer, pBuffer );
 	g_strAppPath.ReleaseBuffer();
 
-	g_strGamePath = g_strAppPath;
+	g_strGamesPath = g_strAppPath;
 
 	g_strBitmapsPath = g_strAppPath;
 	g_strBitmapsPath += "bitmaps/";
