@@ -11,7 +11,7 @@ Import( [ 'utils', 'config', 'settings', 'lib_objects' ] )
 env = Environment( ENV = os.environ )
 settings.SetupEnvironment( env, config[ 'name' ], useGtk = True, useGtkGL = True )
 
-if ( platform.system() != 'FreeBSD' ):
+if ( platform.system() not in ['FreeBSD', 'OpenBSD', 'NetBSD'] ):
 	env.Append( LIBS = [ 'dl' ] )
 
 proj = utils.vcxproj( os.path.join( GetLaunchDir(), 'radiant/radiant.vcxproj' ) )

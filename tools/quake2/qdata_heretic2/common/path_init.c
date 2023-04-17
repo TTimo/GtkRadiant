@@ -29,7 +29,7 @@
 /* marker */
 #define PATH_INIT_C
 
-#if defined( __linux__ ) || defined( __FreeBSD__ ) || defined( __APPLE__ )
+#if defined( __linux__ ) || defined( __BSD__ ) || defined( __APPLE__ )
 	#define Q_UNIX
 #endif
 

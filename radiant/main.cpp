@@ -19,7 +19,7 @@
    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#if defined( __linux__ ) || defined( __FreeBSD__ ) || defined( __APPLE__ )
+#if defined( __linux__ ) || defined( __BSD__ ) || defined( __APPLE__ )
   #include <gdk/gdkx.h>
   #include <pwd.h>
   #include <unistd.h>
@@ -118,7 +118,7 @@ static void create_splash() {
 // =============================================================================
 // Loki stuff
 
-#if defined( __linux__ ) || defined( __FreeBSD__ ) || defined( __APPLE__ )
+#if defined( __linux__ ) || defined( __BSD__ ) || defined( __APPLE__ )
 
 /* The directory where the data files can be found (run directory) */
 static char datapath[PATH_MAX];
@@ -384,18 +384,22 @@ int mainRadiant( int argc, char* argv[] ) {
 	// Use the same environment variable for resolving libGL as libgtkglext does.
 	libgl = getenv("GDK_GL_LIBGL_PATH");
 	if ( libgl == NULL ) {
-		#if defined ( _WIN32 )
-			libgl = "opengl32.dll";
-		#elif defined ( __linux__ ) || defined ( __FreeBSD__ )
-			libgl = "libGL.so.1";
-		#elif defined ( __APPLE__ )
-			libgl = "/opt/local/lib/libGL.dylib";
-		#else
-			#error unknown architecture
-		#endif
+				#if defined ( _WIN32 )
+						libgl = "opengl32.dll";
+				#elif defined ( __linux__ ) || defined ( __FreeBSD__ )
+						libgl = "libGL.so.1";
+				#elif defined ( __OpenBSD__ )
+						libgl = "libGL.so.18.0";
+				#elif defined( __NetBSD__ )
+						libgl = "libGL.so.3.0";
+				#elif defined ( __APPLE__ )
+						libgl = "/opt/local/lib/libGL.dylib";
+				#else
+						#error unknown architecture
+				#endif
 	}
 
-#if defined( __linux__ ) || defined( __FreeBSD__ ) || defined( __APPLE__ )
+#if defined( __linux__ ) || defined( __BSD__ ) || defined( __APPLE__ )
 	// Give away unnecessary root privileges.
 	// Important: must be done before calling gtk_init().
 	char *loginname;
@@ -495,7 +499,7 @@ int mainRadiant( int argc, char* argv[] ) {
 
 #endif
 
-#if defined( __linux__ ) || defined( __FreeBSD__ ) || defined( __APPLE__ )
+#if defined( __linux__ ) || defined( __BSD__ ) || defined( __APPLE__ )
 	const char *xdg_state_home = getenv( "XDG_STATE_HOME" );
 	if ( xdg_state_home != nullptr ) {
 		g_strTempPath = xdg_state_home;
@@ -780,7 +784,7 @@ int mainRadiant( int argc, char* argv[] ) {
 		return 1;
 	}
 
-#if defined( __linux__ ) || defined( __FreeBSD__ ) || defined( __APPLE__ )
+#if defined( __linux__ ) || defined( __BSD__ ) || defined( __APPLE__ )
 	if ( ( qglXQueryExtension == NULL ) || ( qglXQueryExtension( gdk_x11_get_default_xdisplay(), NULL, NULL ) != True ) ) {
 		Sys_FPrintf( SYS_ERR, "glXQueryExtension failed\n" );
 		_exit( 1 );
@@ -1048,7 +1052,7 @@ void SaveWithRegion( char *name ){
 	Map_SaveFile( name, region_active );
 }
 
-#if defined( __linux__ ) || defined( __FreeBSD__ ) || defined( __APPLE__ )
+#if defined( __linux__ ) || defined( __BSD__ ) || defined( __APPLE__ )
 typedef struct {
 	pid_t pid;
 	int status;
@@ -1161,7 +1165,7 @@ ECHO.\n\
 pause\n\
 ";
 
-#if defined( __linux__ ) || defined( __FreeBSD__ ) || defined( __APPLE__ )
+#if defined( __linux__ ) || defined( __BSD__ ) || defined( __APPLE__ )
 
 		// write qe3bsp.sh
 		sprintf( batpath, "%sqe3bsp.sh", g_strTempPath.GetBuffer() );
@@ -1189,7 +1193,7 @@ pause\n\
 
 		Pointfile_Delete();
 
-#if defined( __linux__ ) || defined( __FreeBSD__ ) || defined( __APPLE__ )
+#if defined( __linux__ ) || defined( __BSD__ ) || defined( __APPLE__ )
 		bsp_child_process_t *process = ( bsp_child_process_t *) malloc( sizeof( bsp_child_process_t ) );
 		memset( process, 0, sizeof( *process ) );
 

@@ -38,7 +38,7 @@
 #include "qsysprintf.h"
 #include "qe3.h"
 
-#if defined( __linux__ ) || defined( __FreeBSD__ ) || defined( __APPLE__ )
+#if defined( __linux__ ) || defined( __BSD__ ) || defined( __APPLE__ )
 
 #include <stdio.h>
 #include <unistd.h>
@@ -64,20 +64,20 @@ bool radCopyFile( const char *lpExistingFileName, const char *lpNewFileName, boo
 
 	src = fopen( realsrc, "rb" );
 	if ( !src ) {
-      if ( fatal_on_error ) {
-        Error( "Failed to open source for copy: %s\n", realsrc );
-      }
-      Sys_Printf( "Failed to open source for copy: %s\n", realsrc );      
-      return false;
+			if ( fatal_on_error ) {
+				Error( "Failed to open source for copy: %s\n", realsrc );
+			}
+			Sys_Printf( "Failed to open source for copy: %s\n", realsrc );
+			return false;
 	}
 	dst = fopen( realdest, "wb" );
 	if ( !dst ) {
-      if ( fatal_on_error ) {
-        Error( "Failed to open destination for copy: %s\n", realdest );
-      }
-      Sys_Printf( "Failed to open destination for copy: %s\n", realdest );
-      fclose( src );
-      return false;
+			if ( fatal_on_error ) {
+				Error( "Failed to open destination for copy: %s\n", realdest );
+			}
+			Sys_Printf( "Failed to open destination for copy: %s\n", realdest );
+			fclose( src );
+			return false;
 	}
 
 	fseek( src, 0, SEEK_END );
@@ -93,11 +93,11 @@ bool radCopyFile( const char *lpExistingFileName, const char *lpNewFileName, boo
 		}
 	}
 	if ( !ret ) {
-      if ( fatal_on_error ) {
-        Error( "short read or short write while copying %s to %s\n", realsrc, realdest );
-      }
-      Sys_Printf( "short read or short write while copying %s to %s\n", realsrc, realdest );
-    }
+			if ( fatal_on_error ) {
+				Error( "short read or short write while copying %s to %s\n", realsrc, realdest );
+			}
+			Sys_Printf( "short read or short write while copying %s to %s\n", realsrc, realdest );
+		}
 
 	g_free( buf );
 	fclose( src );

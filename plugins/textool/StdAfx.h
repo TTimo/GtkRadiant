@@ -29,7 +29,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#if defined( __linux__ ) || defined( __FreeBSD__ ) || defined( __APPLE__ )
+#if defined( __linux__ ) || defined( __BSD__ ) || defined( __APPLE__ )
 
 // Necessary for proper boolean type declaration
 #include "qertypes.h"
@@ -79,7 +79,7 @@ typedef struct tagRECT
 	long bottom;
 } RECT, *PRECT, *LPRECT;
 
-#endif // defined( __linux__ ) || defined( __FreeBSD__ ) || defined( __APPLE__ )
+#endif // defined( __linux__ ) || defined( __BSD__ ) || defined( __APPLE__ )
 
 // plugin
 // FIXME TTimo: drop this

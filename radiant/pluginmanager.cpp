@@ -24,7 +24,7 @@
 //////////////////////////////////////////////////////////////////////
 
 #include "stdafx.h"
-#if defined( __linux__ ) || defined( __FreeBSD__ ) || defined( __APPLE__ )
+#if defined( __linux__ ) || defined( __BSD__ ) || defined( __APPLE__ )
   #include <dirent.h>
   #include <sys/time.h>
 #endif
@@ -1898,7 +1898,7 @@ void CPlugInManager::CommitPatchHandleToEntity( int index, patchMesh_t *pMesh, c
 
 #if 0
 
-#if defined( __linux__ ) || defined( __FreeBSD__ ) || defined( __APPLE__ )
+#if defined( __linux__ ) || defined( __BSD__ ) || defined( __APPLE__ )
   #include <gdk/gdkx.h>
 
 XVisualInfo* QEX_ChooseVisual( bool zbuffer ){

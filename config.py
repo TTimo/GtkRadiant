@@ -29,7 +29,7 @@ class Config:
         self.config_selected = [ 'release' ]
         # those are global to each config
         self.platform = platform.system()
-        if ( self.platform == 'FreeBSD' ):
+        if ( self.platform in ['FreeBSD', 'OpenBSD', 'NetBSD'] ):
             self.cc = 'cc'
             self.cxx = 'c++'
         else:
@@ -236,7 +236,13 @@ class Config:
         env.ParseConfig( 'pkg-config --libs libxml-2.0' )
         #Need to strip on xml2-config output. It has a stray \n and that completely screws up scons calling g++
         baseflags = [ '-pipe', '-Wall', '-fmessage-length=0', '-fvisibility=hidden', xml2.strip().split( ' ' ) ]
+        if ( platform.system() == "OpenBSD" ):
+            baseflags = [ '-I/usr/X11R6/include', '-I/usr/local/include', '-pipe', '-Wall', '-fmessage-length=0', '-fvisibility=hidden', xml2.strip().split( ' ' ) ]
+        if ( platform.system() == "NetBSD" ) :
+            baseflags = [ '-I/usr/X11R7/include', '-I/usr/include', '-pipe', '-Wall', '-fmessage-length=0', '-fvisibility=hidden', xml2.strip().split( ' ' ) ]
 
+        if ( platform.system() in ['OpenBSD', 'FreeBSD', 'NetBSD'] ) :
+            baseflags += ['-D__BSD__']
         if ( useGtk ):
             env.ParseConfig( 'pkg-config gtk+-2.0 --cflags --libs' )
             env.ParseConfig( 'pkg-config x11 --cflags --libs' )
@@ -251,6 +257,8 @@ class Config:
             env.Append( LIBS = 'jpeg' )
         if ( usePNG ):
             pnglibs = 'png'
+            if ( self.platform == 'NetBSD'):
+                pnglibs = 'png16'
             env.Append( LIBS = pnglibs.split( ' ' ) )
             env.ParseConfig( 'pkg-config zlib --cflags --libs' )
             if ( useZ ):

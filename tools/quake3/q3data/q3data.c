@@ -40,7 +40,7 @@ qboolean g_skipmodel;           // set true when a cd is not g_only
 // bogus externs for some TA hacks (common/ using them against q3map)
 char *moddir = NULL;
 
-#if defined( __linux__ ) || defined( __FreeBSD__ ) || defined( __APPLE__ )
+#if defined( __linux__ ) || defined( __BSD__ ) || defined( __APPLE__ )
 #define strlwr strlower
 #endif
 

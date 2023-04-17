@@ -415,7 +415,7 @@ void RunThreadsOn( int workcnt, qboolean showpacifier, void ( *func )( int ) ){
    =======================================================================
  */
 
-#if defined( __linux__ ) || defined( __FreeBSD__ ) || defined( __APPLE__ )
+#if defined( __linux__ ) || defined( __BSD__ ) || defined( __APPLE__ )
 #define USED
 
 // Setting default Threads to 1
@@ -571,7 +571,7 @@ void RunThreadsOn( int workcnt, qboolean showpacifier, void ( *func )( int ) ){
 		Sys_Printf( " (%i)\n", end - start );
 	}
 }
-#endif // if defined( __linux__ ) || defined( __FreeBSD__ ) || defined( __APPLE__ )
+#endif // if defined( __linux__ ) || defined( __BSD__ ) || defined( __APPLE__ )
 
 
 /*

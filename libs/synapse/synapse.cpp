@@ -26,7 +26,7 @@
 #include <glib/gstdio.h>
 
 #include "synapse.h"
-#if defined( __linux__ ) || defined( __FreeBSD__ ) || defined( __APPLE__ )
+#if defined( __linux__ ) || defined( __BSD__ ) || defined( __APPLE__ )
   #include <dirent.h>
 #endif
 
@@ -145,7 +145,7 @@ bool CSynapseServer::Initialize( const char* conf_file, PFN_SYN_PRINTF_VA pf ){
 				// too small to be isolated in win32/ and linux/ directories..
 #if defined( _WIN32 )
 				const char* ext_so = ".dll";
-#elif defined( __linux__ ) || defined( __FreeBSD__ ) || defined( __APPLE__ )
+#elif defined( __linux__ ) || defined( __BSD__ ) || defined( __APPLE__ )
 				const char* ext_so = ".so";
 #endif
 				const char* ext = strrchr( name, '.' );
@@ -221,7 +221,7 @@ void CSynapseClientSlot::ReleaseSO(){
 	mpDLL = NULL;
 }
 
-#elif defined( __linux__ ) || defined( __FreeBSD__ ) || defined( __APPLE__ )
+#elif defined( __linux__ ) || defined( __BSD__ ) || defined( __APPLE__ )
 void CSynapseServer::EnumerateInterfaces( Str &soname ){
 	CSynapseClientSlot slot;
 	slot.mpDLL = dlopen( soname.GetBuffer(), RTLD_NOW );

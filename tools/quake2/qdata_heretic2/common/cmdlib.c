@@ -32,7 +32,7 @@
 #include <windows.h>
 #endif
 
-#if defined( __linux__ ) || defined( __FreeBSD__ ) || defined( __APPLE__ )
+#if defined( __linux__ ) || defined( __BSD__ ) || defined( __APPLE__ )
 #include <unistd.h>
 #endif
 
@@ -84,7 +84,7 @@ void *SafeMalloc( size_t n, char *desc ){
 	return p;
 }
 
-#if defined( __linux__ ) || defined( __FreeBSD__ ) || defined( __APPLE__ )
+#if defined( __linux__ ) || defined( __BSD__ ) || defined( __APPLE__ )
 void strlwr( char *conv_str ){
 	int i;
 
@@ -1192,7 +1192,7 @@ void Sys_Sleep( int n ){
 #ifdef WIN32
 	Sleep( n );
 #endif
-#if defined( __linux__ ) || defined( __FreeBSD__ ) || defined( __APPLE__ )
+#if defined( __linux__ ) || defined( __BSD__ ) || defined( __APPLE__ )
 	usleep( n * 1000 );
 #endif
 }

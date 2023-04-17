@@ -35,7 +35,7 @@
 
 #include "time.h"
 
-#if defined( __linux__ ) || defined( __FreeBSD__ ) || defined( __APPLE__ )
+#if defined( __linux__ ) || defined( __BSD__ ) || defined( __APPLE__ )
 
 // Necessary for proper boolean type declaration
 #include "qertypes.h"
@@ -116,7 +116,7 @@ typedef struct tagRECT
 
 typedef uint UINT;
 
-#endif // defined( __linux__ ) || defined( __FreeBSD__ ) || defined( __APPLE__ )
+#endif // defined( __linux__ ) || defined( __BSD__ ) || defined( __APPLE__ )
 
 #include "synapse.h"
 #include "iplugin.h"

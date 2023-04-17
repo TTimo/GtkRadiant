@@ -53,7 +53,7 @@ def CheckUnresolved( source, target, env ):
 	if ( platform.system() == 'Darwin' ):
 		return None
 	# TODO: implement this for FreeBSD
-	if ( platform.system() == 'FreeBSD' ):
+	if ( platform.system() in ['FreeBSD', 'OpenBSD', 'NetBSD'] ):
 		return None
 	print( 'CheckUnresolved %s' % target[0].abspath )
 	if ( not os.path.isfile( target[0].abspath ) ):
