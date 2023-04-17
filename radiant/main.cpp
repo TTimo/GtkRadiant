@@ -188,7 +188,7 @@ int loki_getmountpoint( const char *device, char *mntpt, int max_size ){
     argv0 - the 0'th argument to the program
  */
 void loki_init_datapath( char *argv0 ){
-	char temppath[PATH_MAX];
+    char temppath[PATH_MAX];
 	char *home;
 
     home = const_cast<char*>(g_get_home_dir());
@@ -389,9 +389,9 @@ int mainRadiant( int argc, char* argv[] ) {
 	// Use the same environment variable for resolving libGL as libgtkglext does.
 	libgl = getenv("GDK_GL_LIBGL_PATH");
 	if ( libgl == NULL ) {
-		#if defined ( _WIN32 )
+        #if defined ( _WIN32 )
 			libgl = "opengl32.dll";
-		#elif defined ( __linux__ ) || defined ( __FreeBSD__ )
+        #elif defined ( __linux__ ) || defined ( __FreeBSD__ )
 			libgl = "libGL.so.1";
         #elif defined ( __OpenBSD__ )
             libgl = "libGL.so.18.0";
