@@ -40,7 +40,7 @@
 #include <ctype.h>
 #include <stdarg.h>
 
-#ifdef __APPLE__
+#if defined(__APPLE__) || defined(__unix__)
   #ifdef NULL
 	#undef NULL
 	#define NULL 0
@@ -75,7 +75,7 @@ inline char* Q_StrDup( const char* pStr ) {
 	return strcpy( new char[strlen( pStr ) + 1], pStr );
 }
 
-#if defined( __linux__ ) || defined( __FreeBSD__ ) || defined( __APPLE__ )
+#if defined( __linux__ ) || defined( __unix__ ) || defined( __APPLE__ )
 #define strcmpi strcasecmp
 #define stricmp strcasecmp
 #define strnicmp strncasecmp

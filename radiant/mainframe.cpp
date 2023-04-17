@@ -31,7 +31,7 @@
 #include <gdk/gdkkeysyms.h>
 #include <gdk/gdkprivate.h>
 #include <sys/stat.h>
-#if defined( __linux__ ) || defined( __FreeBSD__ ) || defined( __APPLE__ )
+#if defined( __linux__ ) || defined( __unix__ ) || defined( __APPLE__ )
   #include <unistd.h>
 #endif
 #include "gtkmisc.h"
@@ -2184,7 +2184,7 @@ void Clipboard_PasteMap(){
    Platform-independent GTK clipboard support.
    \todo Using GDK_SELECTION_CLIPBOARD fails on win32, so we use the win32 API directly for now.
  */
-#if defined( __linux__ ) || defined( __FreeBSD__ ) || defined( __APPLE__ )
+#if defined( __linux__ ) || defined( __unix__ ) || defined( __APPLE__ )
 
 enum
 {
@@ -3611,7 +3611,7 @@ void MainFrame::LoadCommandMap(){
 	int j;
 
 
-#if defined( __linux__ ) || defined( __FreeBSD__ ) || defined( __APPLE__ )
+#if defined( __linux__ ) || defined( __unix__ ) || defined( __APPLE__ )
 	strINI = g_PrefsDlg.m_rc_path->str;
 #elif defined( WIN32 )
 	strINI = g_strGameToolsPath;

@@ -199,7 +199,7 @@ void Sys_PumpEvents( void );
 
 //======================= FreeBSD DEFINES =================================
 
-#elif defined( __FreeBSD__ )
+#elif defined( __unix__ )
 
 #define MAC_STATIC
 

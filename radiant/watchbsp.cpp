@@ -41,7 +41,7 @@
 #include <winsock2.h>
 #endif
 
-#if defined( __linux__ ) || defined( __FreeBSD__ ) || defined( __APPLE__ )
+#if defined( __linux__ ) || defined( __unix__ ) || defined( __APPLE__ )
 #include <sys/time.h>
 #define SOCKET_ERROR -1
 #endif
@@ -421,7 +421,7 @@ void CWatchBSP::RoutineProcessing(){
 #ifdef _WIN32
 	TIMEVAL tout = { 0, 0 };
 #endif
-#if defined( __linux__ ) || defined( __FreeBSD__ ) || defined( __APPLE__ )
+#if defined( __linux__ ) || defined( __unix__ ) || defined( __APPLE__ )
 	timeval tout;
 	tout.tv_sec = 0;
 	tout.tv_usec = 0;

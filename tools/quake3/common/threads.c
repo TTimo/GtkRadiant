@@ -416,7 +416,7 @@ void RunThreadsOn( int workcnt, qboolean showpacifier, void ( *func )( int ) ){
    =======================================================================
  */
 
-#if defined( __linux__ ) || defined( __FreeBSD__ )
+#if defined( __linux__ ) || defined( __unix__ )
 #define USED
 
 int numthreads = 4;
@@ -546,7 +546,11 @@ void RunThreadsOn( int workcnt, qboolean showpacifier, void ( *func )( int ) ){
 #if __GLIBC_MINOR__ == 1
 		if ( pthread_mutexattr_settype( &mattrib, PTHREAD_MUTEX_FAST_NP ) != 0 )
 #else
-		if ( pthread_mutexattr_settype( &mattrib, PTHREAD_MUTEX_ADAPTIVE_NP ) != 0 )
+#if defined(__OpenBSD__)
+    if ( pthread_mutexattr_settype( &mattrib, PTHREAD_MUTEX_STRICT_NP) != 0 )
+#else
+    if ( pthread_mutexattr_settype( &mattrib, PTHREAD_MUTEX_ADAPTIVE_NP ) != 0 )
+#endif
 #endif
 		{ Error( "pthread_mutexattr_settype failed" ); }
 		recursive_mutex_init( mattrib );
@@ -573,7 +577,7 @@ void RunThreadsOn( int workcnt, qboolean showpacifier, void ( *func )( int ) ){
 		Sys_Printf( " (%i)\n", end - start );
 	}
 }
-#endif // if defined( __linux__ ) || defined( __FreeBSD__ )
+#endif // if defined( __linux__ ) || defined( __unix__ )
 
 
 /*

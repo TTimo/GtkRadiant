@@ -38,7 +38,7 @@
 #include "qsysprintf.h"
 #include "qe3.h"
 
-#if defined( __linux__ ) || defined( __FreeBSD__ ) || defined( __APPLE__ )
+#if defined( __linux__ ) || defined( __unix__ ) || defined( __APPLE__ )
 
 #include <stdio.h>
 #include <unistd.h>
@@ -63,10 +63,14 @@ bool radCopyFile( const char *lpExistingFileName, const char *lpNewFileName, boo
       if ( fatal_on_error ) {
         Error( "Failed to open source for copy: %s\n", realsrc );
       }
-      Sys_Printf( "Failed to open source for copy: %s\n", realsrc );      
+      Sys_Printf( "Failed to open source for copy: %s\n", realsrc );
       return false;
 	}
+#ifdef __OpenBSD__
+	dst = fopen( lpNewFileName, "wb" );
+#else
 	dst = fopen( realdest, "wb" );
+#endif
 	if ( !dst ) {
       if ( fatal_on_error ) {
         Error( "Failed to open destination for copy: %s\n", realdest );

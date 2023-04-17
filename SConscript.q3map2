@@ -4,13 +4,17 @@
 # http://scons.org/
 
 import os
+import platform
 
 Import( [ 'utils', 'config', 'settings', 'lib_objects' ] )
 
 env = Environment( ENV = os.environ )
 settings.SetupEnvironment( env, config['name'] )
 env.Prepend( CPPPATH = [ '#tools/quake3/common' ] )
-env.Append( LIBS = [ 'm', 'pthread', 'png', 'jpeg' ] )
+if platform.system() == "NetBSD":
+	env.Append( LIBS = [ 'm', 'pthread', 'jpeg', 'png16' ] )
+else:
+	env.Append( LIBS = [ 'm', 'pthread', 'jpeg', 'png' ] )
 proj = utils.vcxproj( os.path.join( GetLaunchDir(), 'tools/quake3/q3map2/q3map2.vcxproj' ) )
 objects = lib_objects
 objects += [ os.path.join( 'tools/quake3/q3map2', i ) for i in proj.getSourceFiles() ]

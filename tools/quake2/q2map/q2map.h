@@ -21,7 +21,7 @@
 // q2map.h
 
 /* platform-specific */
-#if defined( __linux__ ) || defined( __FreeBSD__ ) || defined( __APPLE__ )
+#if defined( __linux__ ) || defined( __unix__ ) || defined( __APPLE__ )
 	#define Q_UNIX
 #endif
 

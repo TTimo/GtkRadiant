@@ -21,7 +21,7 @@
 
 #include "stdafx.h"
 #include <sys/stat.h>
-#if defined( __linux__ ) || defined( __FreeBSD__ ) || defined( __APPLE__ )
+#if defined( __linux__ ) || defined( __unix__ ) || defined( __APPLE__ )
 #include <dirent.h>
 #endif
 #include "assert.h"

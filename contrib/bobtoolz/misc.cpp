@@ -195,7 +195,7 @@ extern const char* PLUGIN_NAME;
     return buffer;
    }*/
 
-#if defined( __linux__ ) || defined( __FreeBSD__ ) || defined( __APPLE__ )
+#if defined( __linux__ ) || defined( __unix__ ) || defined( __APPLE__ )
 // the bCreateConsole parameter is ignored on linux ..
 bool Q_Exec( const char *pCmd, bool bCreateConsole ){
 	switch ( fork() )
