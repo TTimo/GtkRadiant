@@ -189,19 +189,19 @@ int loki_getmountpoint( const char *device, char *mntpt, int max_size ){
  */
 void loki_init_datapath( char *argv0 ){
     char temppath[PATH_MAX];
-	char *home;
+    char *home;
 
     home = const_cast<char*>(g_get_home_dir());
-	if ( home == NULL ) {
-		home = const_cast<char*>(".");
-	}
+    if ( home == NULL ) {
+        home = const_cast<char*>(".");
+    }
 
-	strcpy( temppath, argv0 );
-	//  Now canonicalize it to a full pathname for the data path
-	if ( realpath( temppath, datapath ) ) {
-		// There should always be '/' in the path, cut after so we end our directories with a slash 
-		*( strrchr( datapath, '/' ) + 1 ) = '\0';
-	}
+    strcpy( temppath, argv0 );
+    //  Now canonicalize it to a full pathname for the data path
+    if ( realpath( temppath, datapath ) ) {
+        // There should always be '/' in the path, cut after so we end our directories with a slash 
+        *( strrchr( datapath, '/' ) + 1 ) = '\0';
+    }
 
 }
 
@@ -390,18 +390,18 @@ int mainRadiant( int argc, char* argv[] ) {
 	libgl = getenv("GDK_GL_LIBGL_PATH");
 	if ( libgl == NULL ) {
         #if defined ( _WIN32 )
-			libgl = "opengl32.dll";
+            libgl = "opengl32.dll";
         #elif defined ( __linux__ ) || defined ( __FreeBSD__ )
-			libgl = "libGL.so.1";
+            libgl = "libGL.so.1";
         #elif defined ( __OpenBSD__ )
             libgl = "libGL.so.18.0";
         #elif defined( __NetBSD__ )
-			libgl = "libGL.so.3.0";
-		#elif defined ( __APPLE__ )
-			libgl = "/opt/local/lib/libGL.dylib";
-		#else
-			#error unknown architecture
-		#endif
+            libgl = "libGL.so.3.0";
+        #elif defined ( __APPLE__ )
+            libgl = "/opt/local/lib/libGL.dylib";
+        #else
+            #error unknown architecture
+        #endif
 	}
 
 #if defined( __linux__ ) || defined( __unix__ ) || defined( __APPLE__ )
