@@ -122,6 +122,7 @@ static void create_splash() {
 
 /* The directory where the data files can be found (run directory) */
 static char datapath[PATH_MAX];
+static char game_name[100] = "";
 
 #ifdef __linux__
 /* Code to determine the mount point of a CD-ROM */
@@ -186,22 +187,22 @@ int loki_getmountpoint( const char *device, char *mntpt, int max_size ){
     This function gets the directory containing the running program.
     argv0 - the 0'th argument to the program
  */
-char* loki_init_datapath( char *argv0 ){
+void loki_init_datapath( char *argv0 ){
 	char temppath[PATH_MAX];
 	char *home;
 
-	home = (char*) g_get_home_dir();
+    home = const_cast<char*>(g_get_home_dir());
 	if ( home == NULL ) {
 		home = const_cast<char*>(".");
 	}
 
 	strcpy( temppath, argv0 );
-
-	/* Now canonicalize it to a full pathname for the data path */
+	//  Now canonicalize it to a full pathname for the data path
 	if ( realpath( temppath, datapath ) ) {
-		/* There should always be '/' in the path, cut after so we end our directories with a slash */
+		// There should always be '/' in the path, cut after so we end our directories with a slash 
 		*( strrchr( datapath, '/' ) + 1 ) = '\0';
 	}
+
 }
 
 char *loki_get_datapath( void ){
