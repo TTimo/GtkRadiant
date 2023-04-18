@@ -122,7 +122,6 @@ static void create_splash() {
 
 /* The directory where the data files can be found (run directory) */
 static char datapath[PATH_MAX];
-static char game_name[100] = "";
 
 #ifdef __linux__
 /* Code to determine the mount point of a CD-ROM */
@@ -197,9 +196,9 @@ void loki_init_datapath( char *argv0 ){
     }
 
     strcpy( temppath, argv0 );
-    //  Now canonicalize it to a full pathname for the data path
+    /* Now canonicalize it to a full pathname for the data path */
     if ( realpath( temppath, datapath ) ) {
-        // There should always be '/' in the path, cut after so we end our directories with a slash 
+        /* There should always be '/' in the path, cut after so we end our directories with a slash */
         *( strrchr( datapath, '/' ) + 1 ) = '\0';
     }
 
