@@ -239,6 +239,9 @@ class Config:
             baseflags = [ '-I/usr/X11R6/include', '-I/usr/local/include', '-pipe', '-Wall', '-fmessage-length=0', '-fvisibility=hidden', xml2.strip().split( ' ' ) ]
         if ( platform.system() == "NetBSD" ) :
             baseflags = [ '-I/usr/X11R7/include', '-I/usr/include', '-pipe', '-Wall', '-fmessage-length=0', '-fvisibility=hidden', xml2.strip().split( ' ' ) ]
+
+        if ( platform.system() in ['OpenBSD', 'FreeBSD', 'NetBSD'] ) :
+            baseflags += ['-D__BSD__']
         if ( useGtk ):
             env.ParseConfig( 'pkg-config gtk+-2.0 --cflags --libs' )
             env.ParseConfig( 'pkg-config x11 --cflags --libs' )

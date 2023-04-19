@@ -28,7 +28,7 @@
 #ifdef _WIN32
   #include <windows.h>
 #endif
-#if defined( __linux__ ) || defined( __unix__ ) || defined( __APPLE__ )
+#if defined( __linux__ ) || defined( __BSD__ ) || defined( __APPLE__ )
   #include <unistd.h>
 #endif
 
@@ -36,7 +36,7 @@
 // NOTE: we don't use this crap .. with the total mess of mixing win32/unix paths we need to recognize both '/' and '\\'
 #define PATHSEPERATOR   '/'
 
-#if defined( __linux__ ) || defined( __unix__ ) || defined( __APPLE__ )
+#if defined( __linux__ ) || defined( __BSD__ ) || defined( __APPLE__ )
 bool Q_Exec( const char *cmd, char *cmdline, const char *execdir, bool bCreateConsole ){
 	char fullcmd[2048];
 	char *pCmd;

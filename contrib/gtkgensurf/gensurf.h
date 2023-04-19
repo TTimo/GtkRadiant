@@ -35,7 +35,7 @@
 #define PLUGIN
 #define Q3RADIANT
 
-#if defined( __linux__ ) || defined( __unix__ ) || defined( __APPLE__ )
+#if defined( __linux__ ) || defined( __BSD__ ) || defined( __APPLE__ )
 template <class T>
 inline T min( T x, T y ) { return ( x < y ) ? x : y; }
 template <class T>

@@ -24,7 +24,7 @@
 #include <gtk/gtk.h>
 #include <stdint.h>
 
-#if defined( __linux__ ) || defined( __unix__ ) || defined( __APPLE__ )
+#if defined( __linux__ ) || defined( __BSD__ ) || defined( __APPLE__ )
 #include <GL/glx.h>
 
 // Necessary for proper boolean type declaration
@@ -46,7 +46,7 @@ typedef int BOOL;
 #define IDOK                1
 #define IDCANCEL            2
 
-#endif // defined( __linux__ ) || defined( __unix__ ) || defined( __APPLE__ )
+#endif // defined( __linux__ ) || defined( __BSD__ ) || defined( __APPLE__ )
 
 #include "synapse.h"
 

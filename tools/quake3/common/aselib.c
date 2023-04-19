@@ -113,7 +113,7 @@ static char gl_filename[1024];
 static void ASE_Process( void );
 static void ASE_FreeGeomObject( int ndx );
 
-#if defined( __linux__ ) || defined( __unix__ ) || defined( __APPLE__ )
+#if defined( __linux__ ) || defined( __BSD__ ) || defined( __APPLE__ )
 
 static char* strlwr( char* string ){
 	char *cp;

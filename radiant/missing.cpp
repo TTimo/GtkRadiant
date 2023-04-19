@@ -38,7 +38,7 @@
 #include "qsysprintf.h"
 #include "qe3.h"
 
-#if defined( __linux__ ) || defined( __unix__ ) || defined( __APPLE__ )
+#if defined( __linux__ ) || defined( __BSD__ ) || defined( __APPLE__ )
 
 #include <stdio.h>
 #include <unistd.h>

@@ -38,7 +38,7 @@
 
 //#define NOISY 1
 
-#if defined( __linux__ ) || defined( __unix__ ) || defined( __APPLE__ )
+#if defined( __linux__ ) || defined( __BSD__ ) || defined( __APPLE__ )
 #define strlwr strlower
 #endif
 

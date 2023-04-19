@@ -414,7 +414,7 @@ void RunThreadsOn( int workcnt, qboolean showpacifier, void ( *func )( int ) ){
    =======================================================================
  */
 
-#if defined( __linux__ ) || defined( __unix__ )
+#if defined( __linux__ ) || defined( __BSD__ )
 #define USED
 
 int numthreads = 4;
@@ -569,7 +569,7 @@ void RunThreadsOn( int workcnt, qboolean showpacifier, void ( *func )( int ) ){
 		Sys_Printf( " (%i)\n", end - start );
 	}
 }
-#endif // if defined( __linux__ ) || defined( __unix__ )
+#endif // if defined( __linux__ ) || defined( __BSD__ )
 
 
 /*
