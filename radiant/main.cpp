@@ -213,6 +213,7 @@ void error_redirect( const gchar *domain, GLogLevelFlags log_level, const gchar 
 	gboolean in_recursion;
 	gboolean is_fatal;
 	char buf[256];
+	memset( buf, 0, sizeof(buf) );
 
 	in_recursion = ( log_level & G_LOG_FLAG_RECURSION ) != 0;
 	is_fatal = ( log_level & G_LOG_FLAG_FATAL ) != 0;
@@ -223,61 +224,61 @@ void error_redirect( const gchar *domain, GLogLevelFlags log_level, const gchar 
 	}
 
 	if ( domain ) {
-		strcpy( buf, domain );
+		strncpy( buf, domain, sizeof(buf)-1 );
 	}
-	else{
-		strcpy( buf, "**" );
+	else {
+		strncpy( buf, "**", sizeof(buf)-1 );
 	}
-	strcat( buf, "-" );
+	strncat( buf, "-", sizeof(buf)-strlen(buf)-1 );
 
 	switch ( log_level )
 	{
 	case G_LOG_LEVEL_ERROR:
 		if ( in_recursion ) {
-			strcat( buf, "ERROR (recursed) **: " );
+			strncat( buf, "ERROR (recursed) **: ", sizeof(buf)-strlen(buf)-1 );
 		}
 		else{
-			strcat( buf, "ERROR **: " );
+			strncat( buf, "ERROR **: ", sizeof(buf)-strlen(buf)-1 );
 		}
 		break;
 	case G_LOG_LEVEL_CRITICAL:
 		if ( in_recursion ) {
-			strcat( buf, "CRITICAL (recursed) **: " );
+			strncat( buf, "CRITICAL (recursed) **: ", sizeof(buf)-strlen(buf)-1 );
 		}
 		else{
-			strcat( buf, "CRITICAL **: " );
+			strncat( buf, "CRITICAL **: ", sizeof(buf)-strlen(buf)-1 );
 		}
 		break;
 	case G_LOG_LEVEL_WARNING:
 		if ( in_recursion ) {
-			strcat( buf, "WARNING (recursed) **: " );
+			strncat( buf, "WARNING (recursed) **: ", sizeof(buf)-strlen(buf)-1 );
 		}
 		else{
-			strcat( buf, "WARNING **: " );
+			strncat( buf, "WARNING **: ", sizeof(buf)-strlen(buf)-1 );
 		}
 		break;
 	case G_LOG_LEVEL_MESSAGE:
 		if ( in_recursion ) {
-			strcat( buf, "Message (recursed): " );
+			strncat( buf, "Message (recursed): ", sizeof(buf)-strlen(buf)-1 );
 		}
 		else{
-			strcat( buf, "Message: " );
+			strncat( buf, "Message: ", sizeof(buf)-strlen(buf)-1 );
 		}
 		break;
 	case G_LOG_LEVEL_INFO:
 		if ( in_recursion ) {
-			strcat( buf, "INFO (recursed): " );
+			strncat( buf, "INFO (recursed): ", sizeof(buf)-strlen(buf)-1 );
 		}
 		else{
-			strcat( buf, "INFO: " );
+			strncat( buf, "INFO: ", sizeof(buf)-strlen(buf)-1 );
 		}
 		break;
 	case G_LOG_LEVEL_DEBUG:
 		if ( in_recursion ) {
-			strcat( buf, "DEBUG (recursed): " );
+			strncat( buf, "DEBUG (recursed): ", sizeof(buf)-strlen(buf)-1 );
 		}
 		else{
-			strcat( buf, "DEBUG: " );
+			strncat( buf, "DEBUG: ", sizeof(buf)-strlen(buf)-1 );
 		}
 		break;
 	default:
@@ -285,10 +286,10 @@ void error_redirect( const gchar *domain, GLogLevelFlags log_level, const gchar 
 		 * try to make the best out of it.
 		 */
 		if ( in_recursion ) {
-			strcat( buf, "LOG (recursed:" );
+			strncat( buf, "LOG (recursed:", sizeof(buf)-strlen(buf)-1 );
 		}
 		else{
-			strcat( buf, "LOG (" );
+			strncat( buf, "LOG (", sizeof(buf)-strlen(buf)-1 );
 		}
 		if ( log_level ) {
 			gchar string[] = "0x00): ";
@@ -303,23 +304,22 @@ void error_redirect( const gchar *domain, GLogLevelFlags log_level, const gchar 
 				*p += 'A' - '9' - 1;
 			}
 
-			strcat( buf, string );
+			strncat( buf, string, sizeof(buf)-strlen(buf)-1 );
 		}
 		else{
-			strcat( buf, "): " );
+			strncat( buf, "): ", sizeof(buf)-strlen(buf)-1 );
 		}
 	}
 
-	strcat( buf, message );
+	strncat( buf, message, sizeof(buf)-strlen(buf)-1 );
 	if ( is_fatal ) {
-		strcat( buf, "\naborting...\n" );
-	}
-	else{
-		strcat( buf, "\n" );
+		strncat( buf, "\naborting...\n", sizeof(buf)-strlen(buf)-1 );
+	} else {
+		strncat( buf, "\n", sizeof(buf)-strlen(buf)-1 );
 	}
 
-	printf( "%s\n", buf );
-	Sys_FPrintf( SYS_WRN, buf );
+	printf( "%s", buf );
+	Sys_FPrintf( SYS_WRN, "%s", buf );
 	// TTimo NOTE: in some cases it may be handy to log only to the file
 //  Sys_FPrintf (SYS_NOCON, buf);
 }
