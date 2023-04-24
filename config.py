@@ -272,8 +272,8 @@ class Config:
             env.Append( CXXFLAGS = [ '-g' ] )
             env.Append( CPPDEFINES = [ '_DEBUG' ] )
         else:
-            env.Append( CFLAGS = [ '-O2', '-fno-strict-aliasing' ] )
-            env.Append( CXXFLAGS = [ '-O2', '-fno-strict-aliasing' ] )
+            env.Append( CFLAGS = [ '-O2', '-g', '-fno-strict-aliasing' ] )
+            env.Append( CXXFLAGS = [ '-O2', '-g', '-fno-strict-aliasing' ] )
 
             # this lets us catch libjpg and libpng libraries that we put in the same directory as radiant.bin
             env.Append( LINKFLAGS = '-Wl,-rpath,.' )

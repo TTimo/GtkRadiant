@@ -4,9 +4,18 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "build debug",
+            "label": "build local debug",
             "type": "shell",
             "command": "scons config=debug --no-packs --jobs=12",
+            "problemMatcher": [],
+            "group": {
+                "kind": "build"
+            }
+        },
+        {
+            "label": "build local release",
+            "type": "shell",
+            "command": "scons config=release --no-packs --jobs=12",
             "problemMatcher": [],
             "group": {
                 "kind": "build"

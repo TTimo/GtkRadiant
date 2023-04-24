@@ -54,9 +54,13 @@ bool radCopyFile( const char *lpExistingFileName, const char *lpNewFileName, boo
 	int l;
 	bool ret = false;
 	char realsrc[PATH_MAX], realdest[PATH_MAX];
+	memset( realsrc, 0, sizeof(realsrc) );
+	memset( realdest, 0, sizeof(realdest) );
 
-	realpath( lpExistingFileName, realsrc );
-	realpath( lpNewFileName, realdest );
+	if ( realpath( lpExistingFileName, realsrc ) == nullptr )
+		strncpy( realsrc, lpExistingFileName, sizeof(realsrc) - 1 );
+	if ( realpath( lpNewFileName, realdest ) == nullptr )
+		strncpy( realdest, lpNewFileName, sizeof(realdest) - 1 );
 
 	src = fopen( realsrc, "rb" );
 	if ( !src ) {
