@@ -186,13 +186,13 @@ int loki_getmountpoint( const char *device, char *mntpt, int max_size ){
     This function gets the directory containing the running program.
     argv0 - the 0'th argument to the program
  */
-char* loki_init_datapath( char *argv0 ){
+void loki_init_datapath( char *argv0 ){
 	char temppath[PATH_MAX];
-	char *home;
+	const char *home;
 
 	home = g_get_home_dir();
 	if ( home == NULL ) {
-		home = const_cast<char*>(".");
+		home = ".";
 	}
 
 	strcpy( temppath, argv0 );
@@ -202,10 +202,6 @@ char* loki_init_datapath( char *argv0 ){
 		/* There should always be '/' in the path, cut after so we end our directories with a slash */
 		*( strrchr( datapath, '/' ) + 1 ) = '\0';
 	}
-}
-
-char *loki_get_datapath( void ){
-	return datapath;
 }
 
 #endif
@@ -513,7 +509,7 @@ int mainRadiant( int argc, char* argv[] ) {
 	AddSlash( g_strTempPath );
 
 	loki_init_datapath( argv[0] );
-	g_strAppPath = loki_get_datapath();
+	g_strAppPath = datapath;
 
 	const char *xdg_data_home = getenv( "XDG_DATA_HOME" );
 	if ( xdg_data_home != nullptr ) {
