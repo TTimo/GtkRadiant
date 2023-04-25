@@ -70,11 +70,8 @@ bool radCopyFile( const char *lpExistingFileName, const char *lpNewFileName, boo
       Sys_Printf( "Failed to open source for copy: %s\n", realsrc );
       return false;
 	}
-#ifdef __OpenBSD__
-	dst = fopen( lpNewFileName, "wb" );
-#else
+
 	dst = fopen( realdest, "wb" );
-#endif
 	if ( !dst ) {
       if ( fatal_on_error ) {
         Error( "Failed to open destination for copy: %s\n", realdest );
