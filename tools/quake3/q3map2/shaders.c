@@ -1017,7 +1017,6 @@ static void ParseShaderFile( const char *filename ){
 							 !Q_stricmp( token, "clampMap" ) ||
 							 !Q_stricmp( token, "animMap" ) ||
 							 !Q_stricmp( token, "clampAnimMap" ) ||
-							 !Q_stricmp( token, "clampMap" ) ||
 							 !Q_stricmp( token, "mapComp" ) ||
 							 !Q_stricmp( token, "mapNoComp" ) ) {
 							/* skip one token for animated stages */
