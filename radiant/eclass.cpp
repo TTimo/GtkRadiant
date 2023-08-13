@@ -449,10 +449,6 @@ eclass_t *Eclass_ForName( const char *name, qboolean has_brushes ){
 	}
 #endif
 
-	if ( !name ) {
-		return eclass_bad;
-	}
-
 	for ( e = eclass ; e ; e = e->next )
 		if ( !strcmp( name, e->name ) ) {
 			return e;
