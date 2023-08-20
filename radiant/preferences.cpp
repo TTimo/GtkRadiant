@@ -3442,7 +3442,7 @@ void CGameInstall::BuildDialog() {
 			gtk_combo_box_text_append_text( GTK_COMBO_BOX_TEXT( game_select_combo ), _( "Quake II" ) );
 			break;
 		case GAME_Q2_REMASTER:
-			gtk_combo_box_text_append_text( GTK_COMBO_BOX_TEXT( game_select_combo ), _( "Quake II Remaster" ) );
+			gtk_combo_box_text_append_text( GTK_COMBO_BOX_TEXT( game_select_combo ), _( "Quake II: Remastered" ) );
 			break;
 		case GAME_Q3:
 			gtk_combo_box_text_append_text( GTK_COMBO_BOX_TEXT( game_select_combo ), _( "Quake III Arena and mods" ) );
@@ -3703,6 +3703,15 @@ void CGameInstall::Run() {
 		break;
 	}
 	case GAME_Q2:
+	{
+		fprintf( fg, "  idtech2=\"true\"\n" );
+		fprintf( fg, "  prefix=\".quake2\"\n" );
+		fprintf( fg, "  basegame=\"baseq2\"\n" );
+		fprintf( fg, "  no_patch=\"true\"\n" );
+		fprintf( fg, "  default_scale=\"1.0\"\n" );
+
+		break;
+	}
 	case GAME_Q2_REMASTER:
 	{
 		fprintf( fg, "  idtech2=\"true\"\n" );
@@ -3710,6 +3719,8 @@ void CGameInstall::Run() {
 		fprintf( fg, "  basegame=\"baseq2\"\n" );
 		fprintf( fg, "  no_patch=\"true\"\n" );
 		fprintf( fg, "  default_scale=\"1.0\"\n" );
+		fprintf( fg, "  engine_win32=\"quake2ex_steam.exe\"\n" );
+		fprintf( fg, "  mp_engine_win32=\"quake2ex_steam.exe\"\n" );
 
 		break;
 	}
