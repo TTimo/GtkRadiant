@@ -1476,13 +1476,16 @@ void PrefsDlg::Init(){
 
 	// game sub-dir
 	g_string_append( m_rc_path, g_pGameDescription->mGameFile.GetBuffer() );
-	g_string_append( m_rc_path, "/" );
+	g_string_append( m_rc_path, ".prefs/" );
 	Q_mkdir( m_rc_path->str, 0775 );
+
+	if ( CheckFile( m_rc_path->str ) != PATH_DIRECTORY ) {
+		Error( "%s is not a directory", m_rc_path->str );
+	}
 
 	// then the ini file
 	m_inipath = g_string_new( m_rc_path->str );
 	g_string_append( m_inipath, PREFS_LOCAL_FILENAME );
-
 }
 
 void PrefsDlg::UpdateData( bool retrieve ){
