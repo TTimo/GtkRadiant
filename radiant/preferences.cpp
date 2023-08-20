@@ -1108,7 +1108,7 @@ void CGameDialog::UpdateData( bool retrieve ) {
 			i++;
 		}
 #ifdef _WIN32
-		UpdateNetrun( false );
+		UpdateNetrun( retrieve );
 #endif
 	}
 	Dialog::UpdateData( retrieve );
@@ -1122,7 +1122,7 @@ void CGameDialog::UpdateData( bool retrieve ) {
 		}
 		m_sGameFile = ( *iGame )->mGameFile;
 #ifdef _WIN32
-		UpdateNetrun( true );
+		UpdateNetrun( retrieve );
 #endif
 	}
 }
@@ -1391,7 +1391,8 @@ bool CGameDialog::m_bNetRun;
 void CGameDialog::UpdateNetrun( bool retrieve ){
 	FILE *f_netrun;
 	CString strNetrun;
-	strNetrun = g_strAppPath; strNetrun += NETRUN_FILENAME;
+	strNetrun = g_strAppPath;
+	strNetrun += NETRUN_FILENAME;
 	if ( !retrieve ) {
 		// now check if we are running from a network installation
 		// use a dummy file as the flag
@@ -1420,16 +1421,14 @@ void CGameDialog::UpdateNetrun( bool retrieve ){
 		}
 		else
 		{
-			if ( remove( strNetrun.GetBuffer() ) == -1 ) {
-				if ( errno != ENOENT ) {
-					Sys_FPrintf( SYS_ERR, "Failed to remove netrun file '%s'\n", strNetrun.GetBuffer() );
-				}
-				m_bNetRun = true;
-			}
-			else
+			if ( CheckFile( strNetrun.GetBuffer() ) == PATH_FAIL || remove( strNetrun.GetBuffer() ) == 0 )
 			{
 				Sys_Printf( "Netrun mode is disabled\n" );
+        return;
 			}
+			// prefer keeping it on rather than going out of sync
+			Sys_FPrintf( SYS_ERR, "Problem deleting netrun file '%s', leaving netrun mode on\n", strNetrun.GetBuffer() );
+			m_bNetRun = true;
 		}
 	}
 }
