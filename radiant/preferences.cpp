@@ -1108,7 +1108,7 @@ void CGameDialog::UpdateData( bool retrieve ) {
 			i++;
 		}
 #ifdef _WIN32
-		UpdateNetrun( false );
+		UpdateNetrun( retrieve );
 #endif
 	}
 	Dialog::UpdateData( retrieve );
@@ -1122,7 +1122,7 @@ void CGameDialog::UpdateData( bool retrieve ) {
 		}
 		m_sGameFile = ( *iGame )->mGameFile;
 #ifdef _WIN32
-		UpdateNetrun( true );
+		UpdateNetrun( retrieve );
 #endif
 	}
 }
@@ -1391,7 +1391,8 @@ bool CGameDialog::m_bNetRun;
 void CGameDialog::UpdateNetrun( bool retrieve ){
 	FILE *f_netrun;
 	CString strNetrun;
-	strNetrun = g_strAppPath; strNetrun += NETRUN_FILENAME;
+	strNetrun = g_strAppPath;
+	strNetrun += NETRUN_FILENAME;
 	if ( !retrieve ) {
 		// now check if we are running from a network installation
 		// use a dummy file as the flag
@@ -1420,16 +1421,14 @@ void CGameDialog::UpdateNetrun( bool retrieve ){
 		}
 		else
 		{
-			if ( remove( strNetrun.GetBuffer() ) == -1 ) {
-				if ( errno != ENOENT ) {
-					Sys_FPrintf( SYS_ERR, "Failed to remove netrun file '%s'\n", strNetrun.GetBuffer() );
-				}
-				m_bNetRun = true;
-			}
-			else
+			if ( CheckFile( strNetrun.GetBuffer() ) == PATH_FAIL || remove( strNetrun.GetBuffer() ) == 0 )
 			{
 				Sys_Printf( "Netrun mode is disabled\n" );
+        return;
 			}
+			// prefer keeping it on rather than going out of sync
+			Sys_FPrintf( SYS_ERR, "Problem deleting netrun file '%s', leaving netrun mode on\n", strNetrun.GetBuffer() );
+			m_bNetRun = true;
 		}
 	}
 }
@@ -1477,13 +1476,16 @@ void PrefsDlg::Init(){
 
 	// game sub-dir
 	g_string_append( m_rc_path, g_pGameDescription->mGameFile.GetBuffer() );
-	g_string_append( m_rc_path, "/" );
+	g_string_append( m_rc_path, ".prefs/" );
 	Q_mkdir( m_rc_path->str, 0775 );
+
+	if ( CheckFile( m_rc_path->str ) != PATH_DIRECTORY ) {
+		Error( "%s is not a directory", m_rc_path->str );
+	}
 
 	// then the ini file
 	m_inipath = g_string_new( m_rc_path->str );
 	g_string_append( m_inipath, PREFS_LOCAL_FILENAME );
-
 }
 
 void PrefsDlg::UpdateData( bool retrieve ){
@@ -3056,17 +3058,19 @@ void PrefsDlg::LoadPrefs(){
 	// this will probably need to be 75 or 100 for Q1.
 	mLocalPrefs.GetPref( TEXTURESCALE_KEY,       &m_nTextureScale,               50 );
 
-	if ( ( g_pGameDescription->mGameFile == "hl.game" ) ) {
+	bool bWatchBSPDefault = TRUE;
+	bool bTextureWindowDefault = FALSE;
+	if ( g_pGameDescription->mGameFile == "hl.game" ) {
 		// No BSP monitoring in the default compiler tools for Half-life (yet)
-		mLocalPrefs.GetPref( WATCHBSP_KEY,           &m_bWatchBSP,                   FALSE );
-
+		bWatchBSPDefault = FALSE;
 		// Texture subset on by default (HL specific really, because of halflife.wad's size)
-		mLocalPrefs.GetPref( TEXTURE_KEY,            &m_bTextureWindow,              TRUE );
-	} else {
-		mLocalPrefs.GetPref( WATCHBSP_KEY,           &m_bWatchBSP,                   TRUE );
-		mLocalPrefs.GetPref( TEXTURE_KEY,            &m_bTextureWindow,              FALSE );
+		bTextureWindowDefault = TRUE;
+	} else if ( g_pGameDescription->mGameFile == Q2_REMASTER_GAME ) {
+		// ericw-tools do not support BSP monitoring
+		bWatchBSPDefault = FALSE;
 	}
-
+	mLocalPrefs.GetPref( WATCHBSP_KEY,           &m_bWatchBSP,                   bWatchBSPDefault );
+	mLocalPrefs.GetPref( TEXTURE_KEY,            &m_bTextureWindow,              bTextureWindowDefault );
 
 	mLocalPrefs.GetPref( TEXTURESCROLLBAR_KEY,   &m_bTextureScrollbar,           TRUE );
 	mLocalPrefs.GetPref( DISPLAYLISTS_KEY,       &m_bDisplayLists,               TRUE );
@@ -3391,7 +3395,7 @@ void CGameInstall::OnGameSelectChanged( GtkWidget *widget, gpointer data ) {
 	GtkWidget *button = GTK_WIDGET( g_object_get_data( G_OBJECT( i->m_pWidget ), "executable_button" ) );
 
 	int game_id = i->m_availGames[ i->m_nComboSelect ];
-	if ( game_id == GAME_Q2 || game_id == GAME_QUETOO ) {
+	if ( game_id == GAME_Q2 || game_id == GAME_QUETOO || game_id == GAME_Q2_REMASTER ) {
 		gtk_widget_show( label );
 		gtk_widget_show( entry );
 		gtk_widget_show( button );
@@ -3438,6 +3442,9 @@ void CGameInstall::BuildDialog() {
 			break;
 		case GAME_Q2:
 			gtk_combo_box_text_append_text( GTK_COMBO_BOX_TEXT( game_select_combo ), _( "Quake II" ) );
+			break;
+		case GAME_Q2_REMASTER:
+			gtk_combo_box_text_append_text( GTK_COMBO_BOX_TEXT( game_select_combo ), _( "Quake II: Remastered" ) );
 			break;
 		case GAME_Q3:
 			gtk_combo_box_text_append_text( GTK_COMBO_BOX_TEXT( game_select_combo ), _( "Quake III Arena and mods" ) );
@@ -3594,6 +3601,10 @@ void CGameInstall::Run() {
 		gamePack = Q2_PACK;
 		gameFilePath += Q2_GAME;
 		break;
+	case GAME_Q2_REMASTER:
+		gamePack = Q2_REMASTER_PACK;
+		gameFilePath += Q2_REMASTER_GAME;
+		break;
 	case GAME_Q3:
 		gamePack = Q3_PACK;
 		gameFilePath += Q3_GAME;
@@ -3693,12 +3704,25 @@ void CGameInstall::Run() {
 
 		break;
 	}
-	case GAME_Q2: {
+	case GAME_Q2:
+	{
 		fprintf( fg, "  idtech2=\"true\"\n" );
 		fprintf( fg, "  prefix=\".quake2\"\n" );
 		fprintf( fg, "  basegame=\"baseq2\"\n" );
 		fprintf( fg, "  no_patch=\"true\"\n" );
 		fprintf( fg, "  default_scale=\"1.0\"\n" );
+
+		break;
+	}
+	case GAME_Q2_REMASTER:
+	{
+		fprintf( fg, "  idtech2=\"true\"\n" );
+		fprintf( fg, "  prefix=\".quake2\"\n" );
+		fprintf( fg, "  basegame=\"baseq2\"\n" );
+		fprintf( fg, "  no_patch=\"true\"\n" );
+		fprintf( fg, "  default_scale=\"1.0\"\n" );
+		fprintf( fg, "  engine_win32=\"quake2ex_steam.exe\"\n" );
+		fprintf( fg, "  mp_engine_win32=\"quake2ex_steam.exe\"\n" );
 
 		break;
 	}
@@ -3890,6 +3914,9 @@ void CGameInstall::ScanGames() {
 		}
 		if ( stricmp( dirname, Q2_PACK ) == 0 ) {
 			m_availGames[ iGame++ ] = GAME_Q2;
+		}
+		if ( stricmp( dirname, Q2_REMASTER_PACK ) == 0 ) {
+			m_availGames[ iGame++ ] = GAME_Q2_REMASTER;
 		}
 		if ( stricmp( dirname, TREMULOUS_PACK ) == 0 ) {
 			m_availGames[ iGame++ ] = GAME_TREMULOUS;

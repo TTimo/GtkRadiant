@@ -127,7 +127,11 @@ void WINAPI Pointfile_Check( void ){
 
 	strcpy( name, currentmap );
 	StripExtension( name );
-	strcat( name, ".lin" );
+	if ( g_pGameDescription->mGameFile == Q2_REMASTER_GAME ) {
+		strcat(name, ".pts");
+	} else {
+		strcat(name, ".lin");
+	}
 
 	size = vfsLoadFullPathFile( name, (void**)&data );
 	if ( size <= 0 ) {

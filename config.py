@@ -52,6 +52,7 @@ class Config:
                         'WolfPack',
                         'UnvanquishedPack',
                         'Q1Pack',
+                        'Q2RePack',
         ]
 
     def __repr__( self ):
@@ -292,9 +293,22 @@ class Config:
         print( repr( cmd ) )
         subprocess.check_call( cmd )
 
+    def GitCloneOrUpdate( self, git_url, path ):
+        if os.path.exists( path ):
+            cmd = [ 'git', 'pull' ]
+            print( repr( cmd ) )
+            subprocess.check_call( cmd, cwd = path )
+        else:
+            cmd = [ 'git', 'clone', git_url, path ]
+            print( repr( cmd ) )
+            subprocess.check_call( cmd )
+
     def FetchGamePaks( self, path ):
         for pak in self.setup_packs:
             pak_path = os.path.join( path, 'installs', pak )
+            if pak == 'Q2RePack':
+                self.GitCloneOrUpdate( 'https://github.com/TTimo/Q2RePack.git', pak_path )
+                continue
             if pak == 'UnvanquishedPack':
                 svnurl = 'https://github.com/Unvanquished/unvanquished-mapeditor-support.git/trunk/build/gtkradiant/'
             else:

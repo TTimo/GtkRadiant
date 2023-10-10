@@ -385,6 +385,7 @@ game_t gameList[] = {
 	{ "unvanquished.game", "Unvanquished", "pkg", qtrue, qfalse },
 	{ "unvanquished.game", "Unvanquished from source", "src", qfalse, qfalse },
 
+	{ "q2re.game", "Quake II: Remastered", "baseq2", qtrue, qfalse },
 };
 
 GList *newMappingModesListForGameFile( Str & mGameFile ){
@@ -1310,7 +1311,7 @@ static void EnitityList_response( GtkDialog *dialog, gint response_id, gpointer 
 }
 void DoEntityList(){
 	static GtkWidget *dialog;
-	GtkWidget *vbox, *hbox, *hbox2, *button, *scr, *content_area, *paned;
+	GtkWidget *vbox, *hbox2, *button, *scr, *content_area, *paned;
 	GtkWidget *notebook, *label, *textview, *keyvalue_scr, *desc_scr;
 	gint keyvalue_index;
 	GtkDialogFlags flags = GTK_DIALOG_DESTROY_WITH_PARENT;
