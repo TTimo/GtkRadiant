@@ -257,7 +257,7 @@ class Config:
                 env.ParseConfig( 'pkg-config zlib --cflags --libs' )
 
         env.Append( CCFLAGS = baseflags )
-        env.Append( CXXFLAGS = baseflags + [ '-fpermissive', '-fvisibility-inlines-hidden' ] )
+        env.Append( CXXFLAGS = baseflags + [ '-fpermissive', '-fvisibility-inlines-hidden', '-std=c++11' ] )
         env.Append( CPPPATH = [ 'include', 'libs' ] )
         env.Append( CPPDEFINES = [ 'Q_NO_STLPORT' ] )
         if ( config == 'debug' ):
