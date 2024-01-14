@@ -227,7 +227,7 @@ void Dump();
 #define WARSOW_PACK "WarsowPack"
 #define NEXUIZ_PACK "NexuizPack"
 #define Q2_PACK "Q2Pack"
-#define Q2_REMASTER_PACK "Q2REPack"
+#define Q2_REMASTER_PACK "Q2RePack"
 #define TREMULOUS_PACK "TremulousPack"
 #define JA_PACK "JAPack"
 #define REACTION_PACK "ReactionPack"
