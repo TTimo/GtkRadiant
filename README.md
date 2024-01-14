@@ -19,7 +19,7 @@ Useful links
 Supported games
 ---------------
 
-GtkRadiant provides level editing support for [Quake](https://en.wikipedia.org/wiki/Quake_(video_game)), [Quake2](https://en.wikipedia.org/wiki/Quake_II), [Quake III Arena](https://ioquake3.org), [QuakeLive](https://www.quakelive.com), [Quetoo](http://quetoo.org), [Return to Castle Wolfenstein](https://en.wikipedia.org/wiki/Return_to_Castle_Wolfenstein), [Star Trek Voyager: Elite Force](https://en.wikipedia.org/wiki/Star_Trek:_Voyager_–_Elite_Force), [Star Wars Jedi Knight: Jedi Academy](https://en.wikipedia.org/wiki/Star_Wars_Jedi_Knight:_Jedi_Academy), [Unvanquished](https://www.unvanquished.net), [Urban Terror](http://urbanterror.info), [Wolfenstein: Enemy Territory](http://www.splashdamage.com/content/wolfenstein-enemy-territory-barracks).
+GtkRadiant provides level editing support for [Quake](https://en.wikipedia.org/wiki/Quake_(video_game)), [Quake2](https://en.wikipedia.org/wiki/Quake_II), [Quake2 Re-Release](https://en.wikipedia.org/wiki/Quake_II#Enhanced_version_and_Call_of_the_Machine), [Quake III Arena](https://ioquake3.org), [QuakeLive](https://www.quakelive.com), [Quetoo](http://quetoo.org), [Return to Castle Wolfenstein](https://en.wikipedia.org/wiki/Return_to_Castle_Wolfenstein), [Star Trek Voyager: Elite Force](https://en.wikipedia.org/wiki/Star_Trek:_Voyager_–_Elite_Force), [Star Wars Jedi Knight: Jedi Academy](https://en.wikipedia.org/wiki/Star_Wars_Jedi_Knight:_Jedi_Academy), [Unvanquished](https://www.unvanquished.net), [Urban Terror](http://urbanterror.info), [Wolfenstein: Enemy Territory](http://www.splashdamage.com/content/wolfenstein-enemy-territory-barracks).
 
 How to build
 ------------
@@ -35,7 +35,7 @@ apt install git scons python-urllib3 libxml2 libxml2-dev libgtk2.0 libgtk2.0-dev
 apt install git scons libxml2 libxml2-dev libgtkgl2.0-1 libgtkgl2.0-dev libglu1-mesa libglu1-mesa-dev libgtkglext1 libgtkglext1-dev subversion libjpeg8 libjpeg8-dev
 
 # ArchLinux
-pacman -S git scons python-urllib3 libxml2 gtk2 freeglut gtkglext subversion libjpeg-turbo
+pacman -S git scons libxml2 gtk2 freeglut gtkglext subversion libjpeg-turbo
 ```
 
 ```sh
