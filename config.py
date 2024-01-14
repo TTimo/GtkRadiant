@@ -302,7 +302,11 @@ class Config:
                 self.GitCloneOrUpdate( 'https://github.com/TTimo/Q2RePack.git', pak_path )
                 continue
             if pak == 'UnvanquishedPack':
-                svnurl = 'https://github.com/Unvanquished/unvanquished-mapeditor-support.git/trunk/build/gtkradiant/'
+                # bit of a hack, github removed svn endpoints, and we have no support for doing sparse checkouts
+                # so let's just get the whole thing and do a copytree (this needs to work on Windows as well, so staying away from symlinks)
+                self.GitCloneOrUpdate( 'https://github.com/Unvanquished/unvanquished-mapeditor-support.git', 'temp/Unvanquished' )
+                shutil.copytree( 'temp/Unvanquished/build/gtkradiant', pak_path, dirs_exist_ok=True )
+                continue
             else:
                 svnurl = 'svn://svn.icculus.org/gtkradiant-gamepacks/%s/trunk' % pak
             self.CheckoutOrUpdate( svnurl, pak_path )
