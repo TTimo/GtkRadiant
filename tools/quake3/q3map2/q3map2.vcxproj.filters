@@ -140,6 +140,9 @@
     <ClCompile Include="convert_map.c">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="minimap.c">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="q3map2.ico">
