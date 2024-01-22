@@ -73,6 +73,13 @@ flatpak-builder --force-clean --user --install gtkradiant io.github.TTimo.GtkRad
 
 You can also checkout the GtkRadiant tree locally and [modify the manifest to point to it](https://gist.github.com/TTimo/fd683b368048dc8802e9aaf353ef68ec).
 
+Here is what you can do for debugging:
+
+```sh
+flatpak run --command=sh --devel io.github.TTimo.GtkRadiant
+gdb /app/gtkradiant/radiant.bin
+```
+
 Getting in touch
 ----------------
 
