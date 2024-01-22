@@ -24,16 +24,13 @@ GtkRadiant provides level editing support for [Quake](https://en.wikipedia.org/w
 How to build
 ------------
 
-You can find more complete instructions to build on Windows [there](https://icculus.org/gtkradiant/documentation/windows_compile_guide/) and to build on Mac OS [there](apple/README.md).
+You can find more complete instructions to build on Windows [here](https://icculus.org/gtkradiant/documentation/windows_compile_guide/) and to build on Mac OS [here](apple/README.md).
+
+The Linux version is developed and distributed via Flatpak. See [GtkRadiant on Flathub](https://flathub.org/apps/io.github.TTimo.GtkRadiant).
+
+Building locally on Arch is the only setup that's likely to work as it's my daily driver. Ubuntu, Fedora etc. you are on your own. See the Flatpak SDK section below.
 
 ```sh
-# install build dependancies
-# Ubuntu 18.04
-apt install git scons python-urllib3 libxml2 libxml2-dev libgtk2.0 libgtk2.0-dev libgtkgl2.0-1 libgtkgl2.0-dev libglu1-mesa libglu1-mesa-dev libgtkglext1 libgtkglext1-dev subversion libjpeg8 libjpeg8-dev
-
-# Ubuntu 20.04
-apt install git scons libxml2 libxml2-dev libgtkgl2.0-1 libgtkgl2.0-dev libglu1-mesa libglu1-mesa-dev libgtkglext1 libgtkglext1-dev subversion libjpeg8 libjpeg8-dev
-
 # ArchLinux
 pacman -S git scons libxml2 gtk2 freeglut gtkglext subversion libjpeg-turbo
 ```
@@ -61,6 +58,20 @@ scons target="q3map2,q3data"
 
 Level editor binary (`radiant`) and tools (like `q3map2`) will be found in `install/` directory. 
 The build process automatically fetches gamepacks.
+
+Building on Linux with the Flatpak SDK
+--------------------------------------
+
+```sh
+# get the flatpak manifest
+git clone "https://github.com/flathub/io.github.TTimo.GtkRadiant.git"
+
+# use flatpak-builder
+cd io.github.TTimo.GtkRadiant
+flatpak-builder --force-clean --user --install gtkradiant io.github.TTimo.GtkRadiant.json
+```
+
+You can also checkout the GtkRadiant tree locally and [modify the manifest to point to it](https://gist.github.com/TTimo/fd683b368048dc8802e9aaf353ef68ec).
 
 Getting in touch
 ----------------
