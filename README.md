@@ -30,9 +30,14 @@ The Linux version is developed and distributed via Flatpak. See [GtkRadiant on F
 
 Building locally on Arch is the only setup that's likely to work as it's my daily driver. Ubuntu, Fedora etc. you are on your own. See the Flatpak SDK section below.
 
+The editor uses GTK3. Its OpenGL views render through an offscreen context: CGL on macOS, EGL on Linux and the BSDs. The GTK3 port has been built and run on macOS only; the Linux packages below and the Flatpak build are untested with it, and the Windows projects (`radiant.sln`) still target GTK2 and don't build.
+
 ```sh
 # ArchLinux
-pacman -S git scons libxml2 gtk2 freeglut gtkglext subversion libjpeg-turbo
+pacman -S git scons libxml2 gtk3 glu libglvnd libjpeg-turbo libpng subversion
+
+# macOS (Homebrew)
+brew install gtk+3 scons
 ```
 
 ```sh

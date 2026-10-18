@@ -31,7 +31,14 @@
 #include <wtypes.h>
 #endif
 
+#if defined( __APPLE__ )
+#include <OpenGL/gl.h>
+#ifndef APIENTRY
+#define APIENTRY
+#endif
+#else
 #include <GL/gl.h>
+#endif
 
 #include "str.h"
 

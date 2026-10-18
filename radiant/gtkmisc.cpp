@@ -70,8 +70,8 @@ void save_window_pos( GtkWidget *wnd, window_position_t& pos ){
 
 	get_window_pos( wnd, &pos.x, &pos.y );
 
-	pos.w = wnd->allocation.width;
-	pos.h = wnd->allocation.height;
+	pos.w = gtk_widget_get_allocated_width( wnd );
+	pos.h = gtk_widget_get_allocated_height( wnd );
 
 #ifdef DBG_WINDOWPOS
 	//Sys_Printf("save_window_pos 'Window %s'\n",buf);
@@ -94,9 +94,9 @@ void win32_get_window_pos( GtkWidget *widget, gint *x, gint *y ){
 		*x = point.x;
 		*y = point.y;
 
-		*x = max( *x,-widget->allocation.width + 10 );
+		*x = max( *x,-gtk_widget_get_allocated_width( widget ) + 10 );
 		*x = min( *x,primaryMonitorRect.width - 10 );
-		*y = max( *y,-widget->allocation.height + 10 );
+		*y = max( *y,-gtk_widget_get_allocated_height( widget ) + 10 );
 		*y = min( *y,primaryMonitorRect.height - 10 );
 	}
 	else {
@@ -1596,49 +1596,26 @@ char* WINAPI dir_dialog( void *parent, const char* title, const char* path ){
 
 bool WINAPI color_dialog( void *parent, float *color, const char* title ){
 	GtkWidget* dlg;
-	double clr[3];
-	int loop = 1, ret = IDCANCEL;
+	GdkRGBA rgba;
+	int ret;
 
-	clr[0] = color[0];
-	clr[1] = color[1];
-	clr[2] = color[2];
+	rgba.red = color[0];
+	rgba.green = color[1];
+	rgba.blue = color[2];
+	rgba.alpha = 1.0;
 
-	dlg = gtk_color_selection_dialog_new( title );
-	gtk_color_selection_set_color( GTK_COLOR_SELECTION( GTK_COLOR_SELECTION_DIALOG( dlg )->colorsel ), clr );
-	g_signal_connect( G_OBJECT( dlg ), "delete-event",
-						G_CALLBACK( dialog_delete_callback ), NULL );
-	g_signal_connect( G_OBJECT( dlg ), "destroy",
-						G_CALLBACK( gtk_widget_destroy ), NULL );
-	g_signal_connect( G_OBJECT( GTK_COLOR_SELECTION_DIALOG( dlg )->ok_button ), "clicked",
-						G_CALLBACK( dialog_button_callback ), GINT_TO_POINTER( IDOK ) );
-	g_signal_connect( G_OBJECT( GTK_COLOR_SELECTION_DIALOG( dlg )->cancel_button ), "clicked",
-						G_CALLBACK( dialog_button_callback ), GINT_TO_POINTER( IDCANCEL ) );
-	g_object_set_data( G_OBJECT( dlg ), "loop", &loop );
-	g_object_set_data( G_OBJECT( dlg ), "ret", &ret );
+	dlg = gtk_color_chooser_dialog_new( title, parent != NULL ? GTK_WINDOW( parent ) : NULL );
+	gtk_color_chooser_set_use_alpha( GTK_COLOR_CHOOSER( dlg ), FALSE );
+	gtk_color_chooser_set_rgba( GTK_COLOR_CHOOSER( dlg ), &rgba );
 
-	if ( parent != NULL ) {
-		gtk_window_set_transient_for( GTK_WINDOW( dlg ), GTK_WINDOW( parent ) );
-	}
-
-	gtk_widget_show( dlg );
-	gtk_grab_add( dlg );
-
-	while ( loop )
-		gtk_main_iteration();
-
-	GdkColor gdkcolor;
-	gtk_color_selection_get_current_color( GTK_COLOR_SELECTION( GTK_COLOR_SELECTION_DIALOG( dlg )->colorsel ), &gdkcolor );
-	clr[0] = gdkcolor.red / 65535.0;
-	clr[1] = gdkcolor.green / 65535.0;
-	clr[2] = gdkcolor.blue / 65535.0;
-
-	gtk_grab_remove( dlg );
+	ret = gtk_dialog_run( GTK_DIALOG( dlg ) );
+	gtk_color_chooser_get_rgba( GTK_COLOR_CHOOSER( dlg ), &rgba );
 	gtk_widget_destroy( dlg );
 
-	if ( ret == IDOK ) {
-		color[0] = (float)clr[0];
-		color[1] = (float)clr[1];
-		color[2] = (float)clr[2];
+	if ( ret == GTK_RESPONSE_OK ) {
+		color[0] = (float)rgba.red;
+		color[1] = (float)rgba.green;
+		color[2] = (float)rgba.blue;
 
 		return true;
 	}

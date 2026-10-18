@@ -414,7 +414,7 @@ void UpdatePreview( bool DataChange ){
 			GenerateXYZ();
 		}
 
-		gtk_widget_draw( g_pPreviewWidget, NULL );
+		gtk_widget_queue_draw( g_pPreviewWidget );
 	}
 }
 

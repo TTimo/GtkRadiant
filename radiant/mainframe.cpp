@@ -29,7 +29,6 @@
 #include <gtk/gtk.h>
 #include <glib/gi18n.h>
 #include <gdk/gdkkeysyms.h>
-#include <gdk/gdkprivate.h>
 #include <sys/stat.h>
 #if defined( __linux__ ) || defined( __BSD__ ) || defined( __APPLE__ )
   #include <unistd.h>
@@ -3086,12 +3085,16 @@ void MainFrame::Create(){
 			gtk_main_iteration();
 
 		{
-			int x = GTK_PANED( m_pSplits[0] )->max_position / 2 - gutter;
+			int max_position;
+			g_object_get( G_OBJECT( m_pSplits[0] ), "max-position", &max_position, NULL );
+			int x = max_position / 2 - gutter;
 			gtk_paned_set_position( GTK_PANED( m_pSplits[0] ), x );
 		}
 
 		{
-			int y = GTK_PANED( m_pSplits[1] )->max_position / 2 - gutter;
+			int max_position;
+			g_object_get( G_OBJECT( m_pSplits[1] ), "max-position", &max_position, NULL );
+			int y = max_position / 2 - gutter;
 			gtk_paned_set_position( GTK_PANED( m_pSplits[1] ), y );
 			gtk_paned_set_position( GTK_PANED( m_pSplits[2] ), y );
 		}
@@ -3756,73 +3759,9 @@ void MainFrame::ShowMenuItemKeyBindings( GtkWidget* window ){
 		}
 		else
 		{
-			GtkAccelLabel *accel_label = GTK_ACCEL_LABEL( GTK_BIN( item )->child );
-			GString *gstring;
-			gboolean had_mod;
-
-			g_free( accel_label->accel_string );
-			accel_label->accel_string = NULL;
-
-			gstring = g_string_new( accel_label->accel_string );
-			g_string_append( gstring, "   " );
-
-			had_mod = FALSE;
-			if ( mods & GDK_SHIFT_MASK ) {
-				g_string_append( gstring, "Shft" );
-				had_mod = TRUE;
-			}
-			if ( mods & GDK_CONTROL_MASK ) {
-				if ( had_mod ) {
-					g_string_append( gstring, "+" );
-				}
-				g_string_append( gstring, "Ctl" );
-				had_mod = TRUE;
-			}
-			if ( mods & GDK_MOD1_MASK ) {
-				if ( had_mod ) {
-					g_string_append( gstring, "+" );
-				}
-				g_string_append( gstring, "Alt" );
-				had_mod = TRUE;
-			}
-
-			if ( had_mod ) {
-				g_string_append( gstring, "+" );
-			}
-			if ( g_Commands[i].m_nKey < 0x80 || ( g_Commands[i].m_nKey > 0x80 && g_Commands[i].m_nKey <= 0xff ) ) {
-				switch ( g_Commands[i].m_nKey )
-				{
-				case ' ':
-					g_string_append( gstring, "Space" );
-					break;
-				case '\\':
-					g_string_append( gstring, "Backslash" );
-					break;
-				default:
-					g_string_append_c( gstring, toupper( g_Commands[i].m_nKey ) );
-					break;
-				}
-			}
-			else
-			{
-				gchar *tmp;
-
-				tmp = gtk_accelerator_name( g_Commands[i].m_nKey, (GdkModifierType)0 );
-				if ( tmp[0] != 0 && tmp[1] == 0 ) {
-					tmp[0] = toupper( tmp[0] );
-				}
-				g_string_append( gstring, tmp );
-				g_free( tmp );
-			}
-
-			g_free( accel_label->accel_string );
-			accel_label->accel_string = gstring->str;
-			g_string_free( gstring, FALSE );
-
-			if ( !accel_label->accel_string ) {
-				accel_label->accel_string = g_strdup( "" );
-			}
-
+			// show the shortcut in the menu anyway, radiant's own key handler runs the command
+			GtkAccelLabel *accel_label = GTK_ACCEL_LABEL( gtk_bin_get_child( GTK_BIN( item ) ) );
+			gtk_accel_label_set_accel( accel_label, g_Commands[i].m_nKey, (GdkModifierType)mods );
 			gtk_widget_queue_resize( GTK_WIDGET( accel_label ) );
 		}
 	}

@@ -68,7 +68,7 @@ int P3DLoad( const char *filename ){
 
 	memset( &p3d, 0, sizeof( p3d ) );
 
-	p3d.len = filelength( fileno( fp ) );
+	p3d.len = filelength( fp );
 
 	p3d.curpos = p3d.buffer = malloc( p3d.len );
 

@@ -101,7 +101,7 @@ void ShowPreview(){
 }
 
 static void draw_preview(){
-	int width = g_pPreviewWidget->allocation.width, height = g_pPreviewWidget->allocation.height;
+	int width = gtk_widget_get_allocated_width( g_pPreviewWidget ), height = gtk_widget_get_allocated_height( g_pPreviewWidget );
 
 	g_GLTable.m_pfn_qglClearColor( 0, 0, 0, 1 );
 	g_GLTable.m_pfn_qglViewport( 0, 0, width, height );
@@ -162,11 +162,7 @@ static void draw_preview(){
 	}
 }
 
-static gint expose( GtkWidget *widget, GdkEventExpose *event, gpointer data ){
-	if ( event->count > 0 ) {
-		return TRUE;
-	}
-
+static gboolean draw( GtkWidget *widget, cairo_t *cr, gpointer data ){
 	if ( !g_UIGtkTable.m_pfn_glwidget_make_current( g_pPreviewWidget ) ) {
 		g_FuncTable.m_pfnSysPrintf( "GtkGenSurf: glMakeCurrent failed\n" );
 		return TRUE;
@@ -181,7 +177,7 @@ static gint expose( GtkWidget *widget, GdkEventExpose *event, gpointer data ){
 }
 
 static void button_press( GtkWidget *widget, GdkEventButton *event, gpointer data ){
-	POINT pt = { (long)event->x, widget->allocation.height - (long)event->y };
+	POINT pt = { (long)event->x, gtk_widget_get_allocated_height( widget ) - (long)event->y };
 	bool Selected;
 	double x,y;
 	int i, j, k, ks;
@@ -290,7 +286,7 @@ static void button_press( GtkWidget *widget, GdkEventButton *event, gpointer dat
 }
 
 static void motion( GtkWidget *widget, GdkEventMotion *event, gpointer data ){
-	POINT pt = { (long)event->x, widget->allocation.height - (long)event->y };
+	POINT pt = { (long)event->x, gtk_widget_get_allocated_height( widget ) - (long)event->y };
 
 	if ( !VertexMode ) {
 		return;
@@ -439,7 +435,7 @@ void CreateViewWindow(){
 	g_pPreviewWidget = g_UIGtkTable.m_pfn_glwidget_new( FALSE, NULL );
 
 	gtk_widget_set_events( g_pPreviewWidget, GDK_EXPOSURE_MASK | GDK_BUTTON_PRESS_MASK | GDK_POINTER_MOTION_MASK );
-	g_signal_connect( G_OBJECT( g_pPreviewWidget ), "expose-event", G_CALLBACK( expose ), NULL );
+	g_signal_connect( G_OBJECT( g_pPreviewWidget ), "draw", G_CALLBACK( draw ), NULL );
 	g_signal_connect( G_OBJECT( g_pPreviewWidget ), "motion-notify-event", G_CALLBACK( motion ), NULL );
 	g_signal_connect( G_OBJECT( g_pPreviewWidget ), "button-press-event",
 						G_CALLBACK( button_press ), NULL );

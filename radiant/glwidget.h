@@ -36,6 +36,8 @@ void WINAPI gtk_glwidget_swap_buffers( GtkWidget *widget );
 gboolean WINAPI gtk_glwidget_make_current( GtkWidget *widget );
 void WINAPI gtk_glwidget_destroy_context( GtkWidget *widget );
 void WINAPI gtk_glwidget_create_context( GtkWidget *widget );
+void       gtk_glwidget_set_xor_rectangle( GtkWidget *widget, int x, int y, int w, int h );
+void       gtk_glwidget_scale_gl_functions();
 void       gtk_glwidget_create_font();
 int        gtk_glwidget_font_ascent();
 int        gtk_glwidget_font_descent();

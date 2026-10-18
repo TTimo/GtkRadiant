@@ -6,15 +6,10 @@ This directory provides packaging steps for GtkRadiant for OSX. This document de
 Dependencies & Compilation
 --------------------------
 
-Directions for OSX Mavericks 10.9 - your mileage may vary:
-
-- Install [MacPorts](http://macports.org).
-- Install [XQuartz](http://xquartz.macosforge.org/)
-
-- Install dependencies with MacPorts:
+GtkRadiant uses the native (Quartz) GTK3 from [Homebrew](https://brew.sh), so XQuartz and MacPorts are not needed:
 
 ```
-sudo port install dylibbundler pkgconfig gtkglext scons
+brew install gtk+3 scons
 ```
 
 - Get the GtkRadiant code and compile:
@@ -25,6 +20,8 @@ cd GtkRadiant/
 scons
 ```
 
+`svn` is needed to fetch the game packs; add `--no-packs` to build without them.
+
 - Run the build:
 
 (from the GtkRadiant/ directory)
@@ -32,17 +29,24 @@ scons
 ./install/radiant.bin
 ```
 
-XQuartz note: on my configuration XQuartz doesn't automatically start for some reason. I have to open another terminal, and run the following command: `/Applications/Utilities/XQuartz.app/Contents/MacOS/X11.bin`, then start radiant. 
-    
+The OpenGL views use a legacy (2.1) profile CGL context, the only macOS profile with the fixed-function pipeline that Radiant draws with.
+
 Building GtkRadiant.app
 -----------------------
 
-The `Makefile` in the 'apple/' directory will produce a distributable .app bundle for GtkRadiant using `dylibbundler`:
+The `Makefile` in the 'apple/' directory builds `target/GtkRadiant.app` from `../install`, bundling the Homebrew GTK3 runtime (libraries, the SVG pixbuf loader, the Adwaita icons and the GTK GSettings schemas) with `dylibbundler`:
 
 ```
+brew install dylibbundler
 make
 make image
 ```
+
+`make image` wraps the app in `target/GtkRadiant-<version>.dmg`.
+
+- The app doesn't need Homebrew to run, but it needs the macOS release the Homebrew bottles were built for or newer; `make` writes that into `LSMinimumSystemVersion`.
+- `.game` files are left out because they hold absolute paths from the build machine. On first launch, choose "Configure editor for another game" and point it at your Quake 3 folder.
+- The app is only ad-hoc signed. Gatekeeper will refuse to open it on another Mac until it is signed and notarized with a Developer ID.
 
 Getting help
 ------------

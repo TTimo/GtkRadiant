@@ -25,7 +25,9 @@
 #include <stdint.h>
 
 #if defined( __linux__ ) || defined( __BSD__ ) || defined( __APPLE__ )
+#if !defined( __APPLE__ )
 #include <GL/glx.h>
+#endif
 
 // Necessary for proper boolean type declaration
 #include "qertypes.h"

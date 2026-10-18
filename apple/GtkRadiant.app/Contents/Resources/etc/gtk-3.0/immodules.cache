@@ -1,0 +1,1 @@
+# GtkRadiant.app ships no input method modules; this keeps GTK from loading a system cache

@@ -40,7 +40,7 @@
 #include <ctype.h>
 #include <stdarg.h>
 
-#if defined(__APPLE__) || defined(__BSD__)
+#if defined( __BSD__ )
   #ifdef NULL
 	#undef NULL
 	#define NULL 0

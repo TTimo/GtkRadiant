@@ -44,7 +44,7 @@ active_configs = []
 
 # load up configurations from the save file
 if ( os.path.exists( conf_filename ) ):
-	f = open( conf_filename )
+	f = open( conf_filename, 'rb' )
 	print( 'reading saved configuration from site.conf' )
 	try:
 		while ( True ):

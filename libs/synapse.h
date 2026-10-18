@@ -59,8 +59,11 @@
 
 #if defined( _WIN32 )
   #define SYNAPSE_DLL_EXPORT WINAPI
+  #define SYNAPSE_DLL_CALL WINAPI
 #elif defined( __linux__ ) || defined( __BSD__ ) || defined( __APPLE__ )  /* ydnar */
-  #define SYNAPSE_DLL_EXPORT
+  // modules are built with -fvisibility=hidden, the entry point has to stay visible to dlsym
+  #define SYNAPSE_DLL_EXPORT __attribute__( ( visibility( "default" ) ) )
+  #define SYNAPSE_DLL_CALL
 #else
   #error unknown architecture
 #endif
@@ -421,7 +424,7 @@ APIDescriptor_t * FindProvidesMajor( const char * major ) const;
 #define NAME_SYNAPSE_ENUMERATEINTERFACES "Synapse_EnumerateInterfaces"
 
 class CSynapseServer; // forward declare
-typedef CSynapseClient* ( SYNAPSE_DLL_EXPORT * PFN_SYNAPSE_ENUMERATEINTERFACES )( const char *version, CSynapseServer *server );
+typedef CSynapseClient* ( SYNAPSE_DLL_CALL * PFN_SYNAPSE_ENUMERATEINTERFACES )( const char *version, CSynapseServer *server );
 
 /*!
    a derived version of CSynapseClient that can be used to provide builtin module without having to go through DLLs

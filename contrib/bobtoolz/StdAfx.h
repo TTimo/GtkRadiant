@@ -40,7 +40,9 @@
 // Necessary for proper boolean type declaration
 #include "qertypes.h"
 
+#if !defined( __APPLE__ )
 #include <GL/glx.h>
+#endif
 
 typedef void* HMODULE;
 typedef void* LPVOID;

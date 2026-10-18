@@ -47,14 +47,8 @@ static void realize( GtkWidget *widget, gpointer data ){
 	wnd->OnCreate();
 }
 
-static gint expose( GtkWidget *widget, GdkEventExpose *event, gpointer data ){
+static gboolean draw( GtkWidget *widget, cairo_t *cr, gpointer data ){
 	GLWindow *wnd = (GLWindow*)data;
-
-#ifndef _WIN32
-	if ( event->count > 0 ) {
-		return TRUE;
-	}
-#endif
 
 	if ( !g_pParentWnd->IsSleeping() ) {
 		wnd->OnExpose();
@@ -208,7 +202,7 @@ GLWindow::GLWindow( bool zbuffer ) {
 
 	// Connect signal handlers
 	g_signal_connect( G_OBJECT( m_pWidget ), "realize", G_CALLBACK( realize ), this );
-	g_signal_connect( G_OBJECT( m_pWidget ), "expose-event", G_CALLBACK( expose ), this );
+	g_signal_connect( G_OBJECT( m_pWidget ), "draw", G_CALLBACK( draw ), this );
 	g_signal_connect( G_OBJECT( m_pWidget ), "motion-notify-event", G_CALLBACK( motion ), this );
 	g_signal_connect( G_OBJECT( m_pWidget ), "button-press-event", G_CALLBACK( button_press ), this );
 	g_signal_connect( G_OBJECT( m_pWidget ), "button-release-event",G_CALLBACK( button_release ), this );

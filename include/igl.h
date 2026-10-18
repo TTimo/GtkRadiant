@@ -29,7 +29,7 @@
 #ifndef __IGL_H__
 #define __IGL_H__
 
-#if defined( __linux__ ) || defined( __FreeBSD__ ) || defined( __APPLE__ )
+#if defined( __linux__ ) || defined( __BSD__ )
 #include <GL/glx.h>
 #endif
 
@@ -60,7 +60,14 @@ virtual void Draw3D() = 0;
 
 #define QGL_MAJOR "qgl"
 
+#if defined( __APPLE__ )
+#include <OpenGL/gl.h>
+#ifndef APIENTRY
+#define APIENTRY
+#endif
+#else
 #include <GL/gl.h>
+#endif
 
 typedef void ( APIENTRY * PFN_QGLALPHAFUNC )( GLenum func, GLclampf ref );
 typedef void ( APIENTRY * PFN_QGLBEGIN )( GLenum );

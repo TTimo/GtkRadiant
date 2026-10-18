@@ -643,7 +643,7 @@ static void ReadDlgValues( int tab ){
 // =============================================================================
 // main dialog callbacks
 
-static void switch_page( GtkNotebook *notebook, GtkNotebookPage *page, guint page_num, gpointer data ){
+static void switch_page( GtkNotebook *notebook, GtkWidget *page, guint page_num, gpointer data ){
 	if ( current_tab != page_num ) {
 		if ( page_num == FIXPOINTS_TAB ) {
 			OldPreview = Preview;

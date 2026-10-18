@@ -33,67 +33,30 @@
 /////////////////////////////////////////////////////////////////////////////
 // CConfigDialog dialog
 
-static void dialog_button_callback( GtkWidget *widget, gpointer data ){
-	GtkWidget *parent;
-	int *loop, *ret;
-
-	parent = gtk_widget_get_toplevel( widget );
-	loop = (int*)g_object_get_data( G_OBJECT( parent ), "loop" );
-	ret = (int*)g_object_get_data( G_OBJECT( parent ), "ret" );
-
-	*loop = 0;
-	*ret = (int)((intptr_t)data);
-}
-
-static gint dialog_delete_callback( GtkWidget *widget, GdkEvent* event, gpointer data ){
-	int *loop;
-
-	gtk_widget_hide( widget );
-	loop = (int*)g_object_get_data( G_OBJECT( widget ), "loop" );
-	*loop = 0;
-
-	return TRUE;
-}
-
 // =============================================================================
 // Color selection dialog
 
 static int DoColor( COLORREF *c ){
 	GtkWidget* dlg;
-	double clr[3];
-	int loop = 1, ret = IDCANCEL;
+	GdkRGBA rgba;
+	int ret = IDCANCEL;
 
-	clr[0] = ( (double)GetRValue( *c ) ) / 255.0;
-	clr[1] = ( (double)GetGValue( *c ) ) / 255.0;
-	clr[2] = ( (double)GetBValue( *c ) ) / 255.0;
+	rgba.red = ( (double)GetRValue( *c ) ) / 255.0;
+	rgba.green = ( (double)GetGValue( *c ) ) / 255.0;
+	rgba.blue = ( (double)GetBValue( *c ) ) / 255.0;
+	rgba.alpha = 1.0;
 
-	dlg = gtk_color_selection_dialog_new( _( "Choose Color" ) );
-	gtk_color_selection_set_color( GTK_COLOR_SELECTION( GTK_COLOR_SELECTION_DIALOG( dlg )->colorsel ), clr );
-	g_signal_connect( G_OBJECT( dlg ), "delete-event",
-						G_CALLBACK( dialog_delete_callback ), NULL );
-	g_signal_connect( G_OBJECT( dlg ), "destroy",
-						G_CALLBACK( gtk_widget_destroy ), NULL );
-	g_signal_connect( G_OBJECT( GTK_COLOR_SELECTION_DIALOG( dlg )->ok_button ), "clicked",
-						G_CALLBACK( dialog_button_callback ), GINT_TO_POINTER( IDOK ) );
-	g_signal_connect( G_OBJECT( GTK_COLOR_SELECTION_DIALOG( dlg )->cancel_button ), "clicked",
-						G_CALLBACK( dialog_button_callback ), GINT_TO_POINTER( IDCANCEL ) );
-	g_object_set_data( G_OBJECT( dlg ), "loop", &loop );
-	g_object_set_data( G_OBJECT( dlg ), "ret", &ret );
+	dlg = gtk_color_chooser_dialog_new( _( "Choose Color" ), NULL );
+	gtk_color_chooser_set_use_alpha( GTK_COLOR_CHOOSER( dlg ), FALSE );
+	gtk_color_chooser_set_rgba( GTK_COLOR_CHOOSER( dlg ), &rgba );
 
-	gtk_widget_show( dlg );
-	gtk_grab_add( dlg );
-
-	while ( loop )
-		gtk_main_iteration();
-
-	gtk_color_selection_get_color( GTK_COLOR_SELECTION( GTK_COLOR_SELECTION_DIALOG( dlg )->colorsel ), clr );
-
-	gtk_grab_remove( dlg );
-	gtk_widget_destroy( dlg );
-
-	if ( ret == IDOK ) {
-		*c = RGB( clr[0] * 255, clr[1] * 255, clr[2] * 255 );
+	if ( gtk_dialog_run( GTK_DIALOG( dlg ) ) == GTK_RESPONSE_OK ) {
+		gtk_color_chooser_get_rgba( GTK_COLOR_CHOOSER( dlg ), &rgba );
+		*c = RGB( rgba.red * 255, rgba.green * 255, rgba.blue * 255 );
+		ret = IDOK;
 	}
+
+	gtk_widget_destroy( dlg );
 
 	return ret;
 }

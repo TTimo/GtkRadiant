@@ -32,9 +32,6 @@
 #include <glib/gi18n.h>
 #if defined( __linux__ ) || defined( __BSD__ ) || defined( __APPLE__ )
 #include <unistd.h>
-#include <X11/keysym.h>
-#include <gdk/gdkx.h>
-#include <gdk/gdkprivate.h>
 #endif
 // for the logging part
 #include <fcntl.h>
@@ -1213,33 +1210,16 @@ bool Sys_AltDown(){
 #endif
 
 #if defined( __linux__ ) || defined( __BSD__ ) || defined( __APPLE__ )
-	char keys[32];
-	int x;
+	GdkKeymap *keymap = gdk_keymap_get_for_display( gdk_display_get_default() );
+	GdkModifierType state = (GdkModifierType)gdk_keymap_get_modifier_state( keymap );
+	gdk_keymap_add_virtual_modifiers( keymap, &state );
 
-	XQueryKeymap( gdk_x11_get_default_xdisplay(), keys );
-
-	x = XKeysymToKeycode( gdk_x11_get_default_xdisplay(), XK_Alt_L );
-	if ( keys[x / 8] & ( 1 << ( x % 8 ) ) ) {
-		return true;
-	}
-
-	x = XKeysymToKeycode( gdk_x11_get_default_xdisplay(), XK_Alt_R );
-	if ( keys[x / 8] & ( 1 << ( x % 8 ) ) ) {
-		return true;
-	}
-
-	// For Apple, let users use their Command keys since Alt + X11 is hosed
-	x = XKeysymToKeycode( gdk_x11_get_default_xdisplay(), XK_Meta_L );
-	if ( keys[x / 8] & ( 1 << ( x % 8 ) ) ) {
-		return true;
-	}
-
-	x = XKeysymToKeycode( gdk_x11_get_default_xdisplay(), XK_Meta_R );
-	if ( keys[x / 8] & ( 1 << ( x % 8 ) ) ) {
-		return true;
-	}
-
-	return false;
+#if defined( __APPLE__ )
+	// let users use their Command keys as well, GDK reports Command as MOD2
+	return ( state & ( GDK_MOD1_MASK | GDK_MOD2_MASK | GDK_META_MASK ) ) != 0;
+#else
+	return ( state & ( GDK_MOD1_MASK | GDK_META_MASK ) ) != 0;
+#endif
 #endif
 }
 
@@ -1249,22 +1229,8 @@ bool Sys_ShiftDown(){
 #endif
 
 #if defined( __linux__ ) || defined( __BSD__ ) || defined( __APPLE__ )
-	char keys[32];
-	int x;
-
-	XQueryKeymap( gdk_x11_get_default_xdisplay(), keys );
-
-	x = XKeysymToKeycode( gdk_x11_get_default_xdisplay(), XK_Shift_L );
-	if ( keys[x / 8] & ( 1 << ( x % 8 ) ) ) {
-		return true;
-	}
-
-	x = XKeysymToKeycode( gdk_x11_get_default_xdisplay(), XK_Shift_R );
-	if ( keys[x / 8] & ( 1 << ( x % 8 ) ) ) {
-		return true;
-	}
-
-	return false;
+	GdkKeymap *keymap = gdk_keymap_get_for_display( gdk_display_get_default() );
+	return ( gdk_keymap_get_modifier_state( keymap ) & GDK_SHIFT_MASK ) != 0;
 #endif
 }
 

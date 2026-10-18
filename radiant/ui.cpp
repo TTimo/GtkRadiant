@@ -60,11 +60,7 @@ static void motion( GtkWidget *widget, GdkEventMotion *event, gpointer data ){
 	pListen->OnMouseMove( event->state, event->x, event->y );
 }
 
-static gint expose( GtkWidget *widget, GdkEventExpose *event, gpointer data ){
-	if ( event->count > 0 ) {
-		return TRUE;
-	}
-
+static gboolean draw( GtkWidget *widget, cairo_t *cr, gpointer data ){
 	CGtkWindow *pWindow = static_cast<CGtkWindow *>( data );
 	pWindow->DoExpose();
 
@@ -133,7 +129,7 @@ bool CGtkWindow::Show(){
 						   GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK | GDK_POINTER_MOTION_MASK );
 
 	// Connect signal handlers
-	g_signal_connect( G_OBJECT( m_pGLWidget ), "expose-event", G_CALLBACK( expose ), this );
+	g_signal_connect( G_OBJECT( m_pGLWidget ), "draw", G_CALLBACK( draw ), this );
 	g_signal_connect( G_OBJECT( m_pGLWidget ), "motion-notify-event",
 						G_CALLBACK( motion ), m_pListen );
 	g_signal_connect( G_OBJECT( m_pGLWidget ), "button-press-event",
@@ -230,7 +226,7 @@ void DispatchRadiantMsg( int Msg ){
 }
 
 void CXYWndWrapper::SnapToGrid( int x1, int y1, vec3_t pt ){
-	int height = g_pParentWnd->ActiveXY()->GetWidget()->allocation.height;
+	int height = gtk_widget_get_allocated_height( g_pParentWnd->ActiveXY()->GetWidget() );
 	g_pParentWnd->ActiveXY()->SnapToPoint( x1, height - 1 - y1, pt );
 }
 

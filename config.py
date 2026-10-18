@@ -235,37 +235,42 @@ class Config:
             assert( False )
         env.ParseConfig( 'pkg-config --libs libxml-2.0' )
         #Need to strip on xml2-config output. It has a stray \n and that completely screws up scons calling g++
-        baseflags = [ '-pipe', '-Wall', '-fmessage-length=0', '-fvisibility=hidden', xml2.strip().split( ' ' ) ]
+        baseflags = [ '-pipe', '-Wall', '-fmessage-length=0', '-fvisibility=hidden' ] + xml2.split()
         if ( platform.system() == "OpenBSD" ):
-            baseflags = [ '-I/usr/X11R6/include', '-I/usr/local/include', '-pipe', '-Wall', '-fmessage-length=0', '-fvisibility=hidden', xml2.strip().split( ' ' ) ]
+            baseflags = [ '-I/usr/X11R6/include', '-I/usr/local/include' ] + baseflags
         if ( platform.system() == "NetBSD" ) :
-            baseflags = [ '-I/usr/X11R7/include', '-I/usr/include', '-pipe', '-Wall', '-fmessage-length=0', '-fvisibility=hidden', xml2.strip().split( ' ' ) ]
+            baseflags = [ '-I/usr/X11R7/include', '-I/usr/include' ] + baseflags
+        if ( self.platform == 'Darwin' ):
+            env.Append( CPPDEFINES = [ 'GL_SILENCE_DEPRECATION' ] )
 
         if ( platform.system() in ['OpenBSD', 'FreeBSD', 'NetBSD'] ) :
             baseflags += ['-D__BSD__']
         if ( useGtk ):
-            env.ParseConfig( 'pkg-config gtk+-2.0 --cflags --libs' )
-            env.ParseConfig( 'pkg-config x11 --cflags --libs' )
+            env.ParseConfig( 'pkg-config gtk+-3.0 --cflags --libs' )
         else:
             # always setup at least glib
             env.ParseConfig( 'pkg-config glib-2.0 --cflags --libs' )
 
         if ( useGtkGL ):
-            env.ParseConfig( 'pkg-config glu --cflags --libs' )
-            env.ParseConfig( 'pkg-config gtkglext-1.0 --cflags --libs' )
+            env.ParseConfig( 'pkg-config pangoft2 --cflags --libs' )
+            if ( self.platform == 'Darwin' ):
+                env.Append( FRAMEWORKS = [ 'OpenGL' ] )
+            else:
+                env.ParseConfig( 'pkg-config gl glu egl --cflags --libs' )
         if ( useJPEG ):
-            env.Append( LIBS = 'jpeg' )
+            env.ParseConfig( 'pkg-config libjpeg --cflags --libs' )
         if ( usePNG ):
-            pnglibs = 'png'
-            if ( self.platform == 'NetBSD'):
-                pnglibs = 'png16'
-            env.Append( LIBS = pnglibs.split( ' ' ) )
+            env.ParseConfig( 'pkg-config libpng --cflags --libs' )
             env.ParseConfig( 'pkg-config zlib --cflags --libs' )
             if ( useZ ):
                 env.ParseConfig( 'pkg-config zlib --cflags --libs' )
 
         env.Append( CCFLAGS = baseflags )
-        env.Append( CXXFLAGS = baseflags + [ '-fpermissive', '-fvisibility-inlines-hidden' ] )
+        # GTK3 deprecates GtkTable, GtkHBox/GtkVBox, GtkColorSelection, etc. that radiant still uses
+        env.Append( CCFLAGS = [ '-Wno-deprecated-declarations' ] )
+        env.Append( CXXFLAGS = [ '-fvisibility-inlines-hidden' ] )
+        if ( not 'clang' in self.cxx and self.platform != 'Darwin' ):
+            env.Append( CXXFLAGS = [ '-fpermissive' ] )
         env.Append( CPPPATH = [ 'include', 'libs' ] )
         env.Append( CPPDEFINES = [ 'Q_NO_STLPORT' ] )
         if ( config == 'debug' ):
@@ -278,11 +283,9 @@ class Config:
 
             # this lets us catch libjpg and libpng libraries that we put in the same directory as radiant.bin
             env.Append( LINKFLAGS = '-Wl,-rpath,.' )
-            
+
         # On Mac, we pad headers so that we may rewrite them for packaging
         if ( self.platform == 'Darwin' ) :
-            env.Append( CFLAGS = [ '-mmacosx-version-min=10.9' ] )
-            env.Append( CXXFLAGS = [ '-mmacosx-version-min=10.9' ] )
             env.Append( LINKFLAGS = [ '-headerpad_max_install_names' ] )
 
     def CheckoutOrUpdate( self, svnurl, path ):
@@ -536,6 +539,9 @@ class ConfigParser:
         if ( self.configs is None ):
             self.configs = []
         for s in statements:
+            # scons options such as -j8 or --no-packs can be mixed with the config statements
+            if ( s.startswith( '-' ) ):
+                continue
 
             if ( self.current_config is None ):
                 # use a provided config, or create a default one

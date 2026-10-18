@@ -1588,7 +1588,7 @@ tree_t                      *FaceBSP( face_t *list );
 
 /* model.c */
 void                        PicoPrintFunc( int level, const char *str );
-void                        PicoLoadFileFunc( char *name, byte **buffer, int *bufSize );
+void                        PicoLoadFileFunc( const char *name, byte **buffer, int *bufSize );
 picoModel_t                 *FindModel( char *name, int frame );
 picoModel_t                 *LoadModel( char *name, int frame );
 void                        InsertModel( char *name, int frame, m4x4_t transform, remap_t *remap, shaderInfo_t *celShader, int eNum, int castShadows, int recvShadows, int spawnFlags, float lightmapScale );
@@ -1744,6 +1744,7 @@ int                         ImportLightmapsMain( int argc, char **argv );
 void                        SetupSurfaceLightmaps( void );
 void                        StitchSurfaceLightmaps( void );
 void                        StoreSurfaceLightmaps( void );
+void                        ClearLightMap( rawLightmap_t *lm );
 
 
 /* exportents.c */

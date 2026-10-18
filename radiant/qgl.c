@@ -90,6 +90,9 @@ BOOL ( WINAPI * qwglSwapIntervalEXT )( int interval );
 
 #if defined( __linux__ ) || defined( __BSD__ ) || defined( __APPLE__ )
 void* g_hGLDLL;
+#endif
+
+#if defined( __linux__ ) || defined( __BSD__ )
 
 XVisualInfo* ( *qglXChooseVisual )( Display * dpy, int screen, int *attribList );
 GLXContext ( *qglXCreateContext )( Display *dpy, XVisualInfo *vis, GLXContext shareList, Bool direct );
@@ -936,7 +939,7 @@ void QGL_Shutdown(){
 	qwglSetDeviceGammaRampEXT    = NULL;
 #endif
 
-#if defined( __linux__ ) || defined( __BSD__ ) || defined( __APPLE__ )
+#if defined( __linux__ ) || defined( __BSD__ )
 	qglXChooseVisual             = NULL;
 	qglXCreateContext            = NULL;
 	qglXDestroyContext           = NULL;
@@ -1623,7 +1626,7 @@ int QGL_Init( const char *dllname, const char* gluname ){
 	qglMTexCoord2fSGIS = 0;
 #endif
 
-#if defined( __linux__ ) || defined( __BSD__ ) || defined( __APPLE__ )
+#if defined( __linux__ ) || defined( __BSD__ )
 	qglXChooseVisual             = safe_dlsym( g_hGLDLL, "glXChooseVisual" );
 	qglXCreateContext            = safe_dlsym( g_hGLDLL, "glXCreateContext" );
 	qglXDestroyContext           = safe_dlsym( g_hGLDLL, "glXDestroyContext" );
@@ -1704,7 +1707,10 @@ int GL_ExtensionSupported( const char *extension ){
 }
 
 void* Sys_GLGetExtension( const char *symbol ){
-#if defined( __linux__ ) || defined( __BSD__ ) || defined( __APPLE__ )
+#if defined( __APPLE__ )
+	// the OpenGL framework exports every extension entry point
+	return dlsym( g_hGLDLL, symbol );
+#elif defined( __linux__ ) || defined( __BSD__ )
 	if ( qglXGetProcAddressARB == NULL ) {
 		return NULL;
 	}

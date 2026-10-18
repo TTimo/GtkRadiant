@@ -29,7 +29,11 @@
 #include <gtk/gtk.h>
 #include <glib/gi18n.h>
 #include <assert.h>
+#if defined( __APPLE__ )
+#include <OpenGL/gl.h>
+#else
 #include <GL/gl.h>
+#endif
 
 // =============================================================================
 // variables
@@ -119,8 +123,10 @@ extern int g_nPatchClickedView;
 
 
 void WXY_Print(){
-	const long width = g_pParentWnd->ActiveXY()->Width();
-	const long height = g_pParentWnd->ActiveXY()->Height();
+	// the view renders at device resolution
+	const long scale = gtk_widget_get_scale_factor( g_pParentWnd->ActiveXY()->GetWidget() );
+	const long width = g_pParentWnd->ActiveXY()->Width() * scale;
+	const long height = g_pParentWnd->ActiveXY()->Height() * scale;
 	unsigned char* img;
 	const char* filename;
 
@@ -457,7 +463,7 @@ void CreateEntityFromName( const char* name, const vec3_t origin ){
 }
 
 void CreateRightClickEntity( XYWnd* pWnd, int x, int y, const char* pName ){
-	int height = pWnd->GetWidget()->allocation.height;
+	int height = gtk_widget_get_allocated_height( pWnd->GetWidget() );
 	vec3_t point;
 	pWnd->SnapToPoint( x, height - 1 - y, point );
 
@@ -1881,19 +1887,19 @@ void XYWnd::XY_MouseMoved( int x, int y, int buttons ){
 void XYWnd::OriginalButtonDown( guint32 nFlags, int pointx, int pointy ){
 	SetFocus();
 	SetCapture();
-	XY_MouseDown( pointx, m_pWidget->allocation.height - 1 - pointy, nFlags );
+	XY_MouseDown( pointx, gtk_widget_get_allocated_height( m_pWidget ) - 1 - pointy, nFlags );
 	m_nScrollFlags = nFlags;
 }
 
 void XYWnd::OriginalButtonUp( guint32 nFlags, int pointx, int pointy ){
-	XY_MouseUp( pointx, m_pWidget->allocation.height - 1 - pointy, nFlags );
+	XY_MouseUp( pointx, gtk_widget_get_allocated_height( m_pWidget ) - 1 - pointy, nFlags );
 	ReleaseCapture();
 }
 
 void XYWnd::DropClipPoint( guint32 nFlags, int pointx, int pointy ){
 	if ( g_pMovingClip ) {
 		SetCapture();
-		SnapToPoint( pointx, m_pWidget->allocation.height - 1 - pointy, *g_pMovingClip );
+		SnapToPoint( pointx, gtk_widget_get_allocated_height( m_pWidget ) - 1 - pointy, *g_pMovingClip );
 	}
 	else
 	{
@@ -1926,7 +1932,7 @@ void XYWnd::DropClipPoint( guint32 nFlags, int pointx, int pointy ){
 			g_Clip1.m_ptScreenX = pointx;
 			g_Clip1.m_ptScreenY = pointy;
 		}
-		SnapToPoint( pointx, m_pWidget->allocation.height - 1 - pointy, *pPt );
+		SnapToPoint( pointx, gtk_widget_get_allocated_height( m_pWidget ) - 1 - pointy, *pPt );
 		// third coordinates for clip point: use d_work_max
 		// Arnout: changed to use center of selection for clipping, saves level designers moving points all over the map
 		// g_pParentWnd->ActiveXY()->GetViewType()
@@ -1944,14 +1950,14 @@ void XYWnd::DropClipPoint( guint32 nFlags, int pointx, int pointy ){
 void XYWnd::DropPathPoint( guint32 nFlags, int pointx, int pointy ){
 	if ( g_pMovingPath ) {
 		SetCapture();
-		SnapToPoint( pointx, m_pWidget->allocation.height - 1 - pointy, *g_pMovingPath );
+		SnapToPoint( pointx, gtk_widget_get_allocated_height( m_pWidget ) - 1 - pointy, *g_pMovingPath );
 	}
 	else
 	{
 		g_PathPoints[g_nPathCount].Set( true );
 		g_PathPoints[g_nPathCount].m_ptScreenX = pointx;
 		g_PathPoints[g_nPathCount].m_ptScreenY = pointy;
-		SnapToPoint( pointx, m_pWidget->allocation.height - 1 - pointy, g_PathPoints[g_nPathCount] );
+		SnapToPoint( pointx, gtk_widget_get_allocated_height( m_pWidget ) - 1 - pointy, g_PathPoints[g_nPathCount] );
 		// third coordinates for dropped point: use d_work_max
 		// g_pParentWnd->ActiveXY()->GetViewType()
 		// cf VIEWTYPE definition: enum VIEWTYPE {YZ, XZ, XY};
@@ -3283,7 +3289,6 @@ void XYWnd::OnExpose(){
 			qglPopMatrix();
 		}
 
-		m_XORRectangle.set( rectangle_t() );
 		SwapBuffers();
 	}
 }

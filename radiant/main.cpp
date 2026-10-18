@@ -20,7 +20,6 @@
  */
 
 #if defined( __linux__ ) || defined( __BSD__ ) || defined( __APPLE__ )
-  #include <gdk/gdkx.h>
   #include <pwd.h>
   #include <unistd.h>
   #ifdef __linux__
@@ -35,7 +34,6 @@
 #endif
 
 #include <gtk/gtk.h>
-#include <gtk/gtkgl.h>
 #include <glib/gi18n.h>
 #include "stdafx.h"
 #include <assert.h>
@@ -381,7 +379,7 @@ int mainRadiant( int argc, char* argv[] ) {
 	 */
 	putenv( (char *)"LC_NUMERIC=C" );
 
-	// Use the same environment variable for resolving libGL as libgtkglext does.
+	// Same environment variable libgtkglext used for resolving libGL.
 	libgl = getenv("GDK_GL_LIBGL_PATH");
 	if ( libgl == NULL ) {
 				#if defined ( _WIN32 )
@@ -393,7 +391,7 @@ int mainRadiant( int argc, char* argv[] ) {
 				#elif defined( __NetBSD__ )
 						libgl = "libGL.so.3.0";
 				#elif defined ( __APPLE__ )
-						libgl = "/opt/local/lib/libGL.dylib";
+						libgl = "/System/Library/Frameworks/OpenGL.framework/OpenGL";
 				#else
 						#error unknown architecture
 				#endif
@@ -417,8 +415,6 @@ int mainRadiant( int argc, char* argv[] ) {
 //  gtk_disable_setlocale();
 
 	gtk_init( &argc, &argv );
-	gtk_gl_init( &argc, &argv );
-	gdk_gl_init( &argc, &argv );
 
 	// TODO: Find a better place to call this.
 	gtk_glwidget_create_font();
@@ -783,14 +779,7 @@ int mainRadiant( int argc, char* argv[] ) {
 		_exit( 1 );
 		return 1;
 	}
-
-#if defined( __linux__ ) || defined( __BSD__ ) || defined( __APPLE__ )
-	if ( ( qglXQueryExtension == NULL ) || ( qglXQueryExtension( gdk_x11_get_default_xdisplay(), NULL, NULL ) != True ) ) {
-		Sys_FPrintf( SYS_ERR, "glXQueryExtension failed\n" );
-		_exit( 1 );
-		return 1;
-	}
-#endif
+	gtk_glwidget_scale_gl_functions();
 
 	// redirect Gtk warnings to the console
 	g_log_set_handler( "Gdk", (GLogLevelFlags)( G_LOG_LEVEL_ERROR | G_LOG_LEVEL_CRITICAL | G_LOG_LEVEL_WARNING |
