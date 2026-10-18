@@ -168,6 +168,9 @@ class Config:
                 module = SConscript( os.path.join( build_dir, 'SConscript.module' ) )
                 Default( InstallAs( os.path.join( self.install_directory, 'modules/%s.so' % libname ), module ) )
 
+        # bobtoolz reads its exclusion lists and templates from modules/bt
+        Default( Install( os.path.join( self.install_directory, 'modules/bt' ), Glob( 'contrib/bobtoolz/bt/*.txt' ) ) )
+
     def emit_q3map2( self, urt = False ):
         if ( urt ):
             compiler_name = 'q3map2_urt'
