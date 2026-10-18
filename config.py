@@ -261,9 +261,8 @@ class Config:
             env.ParseConfig( 'pkg-config libjpeg --cflags --libs' )
         if ( usePNG ):
             env.ParseConfig( 'pkg-config libpng --cflags --libs' )
+        if ( usePNG or useZ ):
             env.ParseConfig( 'pkg-config zlib --cflags --libs' )
-            if ( useZ ):
-                env.ParseConfig( 'pkg-config zlib --cflags --libs' )
 
         env.Append( CCFLAGS = baseflags )
         # GTK3 deprecates GtkTable, GtkHBox/GtkVBox, GtkColorSelection, etc. that radiant still uses

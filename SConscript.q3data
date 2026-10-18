@@ -8,7 +8,8 @@ import os
 Import( [ 'utils', 'config', 'settings', 'lib_objects' ] )
 
 env = Environment( ENV = os.environ )
-settings.SetupEnvironment( env, config['name'] )
+# unzip.c needs zlib
+settings.SetupEnvironment( env, config['name'], useZ = True )
 env.Prepend( CPPPATH = [ '#tools/quake3/common' ] )
 env.Append( LIBS = [ 'm', 'pthread' ] )
 proj = utils.vcxproj( os.path.join( GetLaunchDir(), 'tools/quake3/q3data/q3data.vcxproj' ) )
