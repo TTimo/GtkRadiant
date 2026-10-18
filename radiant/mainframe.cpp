@@ -2580,6 +2580,69 @@ static ZWnd *create_floating_zwnd( MainFrame *mainframe ){
 
 static const int gutter = 12;
 
+/*
+   On the first run nothing has been saved, and the fixed defaults (a 450 pixel tall main window,
+   200x200 floating views, 300 pixel panes) are far too small for current screens. Size the
+   windows and panes from the work area of the primary monitor instead.
+ */
+static void FirstRunWindowLayout( MainFrame::EViewStyle style ){
+	windowPosInfo_t& info = g_PrefsDlg.mWindowInfo;
+	if ( info.position.w > 0 ) {
+		return; // the layout was saved before
+	}
+
+	GdkDisplay *display = gdk_display_get_default();
+	GdkMonitor *monitor = gdk_display_get_primary_monitor( display );
+	if ( monitor == NULL ) {
+		monitor = gdk_display_get_monitor( display, 0 );
+	}
+	if ( monitor == NULL ) {
+		return;
+	}
+	GdkRectangle area;
+	gdk_monitor_get_workarea( monitor, &area );
+
+	if ( style != MainFrame::eFloating ) {
+		info.position.w = area.width * 4 / 5;
+		info.position.h = area.height * 4 / 5;
+		info.position.x = area.x + ( area.width - info.position.w ) / 2;
+		info.position.y = area.y + ( area.height - info.position.h ) / 2;
+
+		// views above the console, the 2D view and the camera about half the width each
+		info.nXYHeight = info.position.h * 3 / 4;
+		info.nXYWidth = info.position.w * 9 / 20;
+		info.nCamWidth = info.position.w * 9 / 20;
+		info.nCamHeight = info.nXYHeight * 11 / 20;
+		return;
+	}
+
+	// floating: the main window (menus, toolbars, console) across the top, the views in a row below
+	const int border = 10;
+	const int title = 30;
+	const int z_width = 100;
+	info.position.x = area.x + border;
+	info.position.y = area.y;
+	info.position.w = area.width - 2 * border;
+
+	const int views_y = info.position.y + info.position.h + title + border;
+	const int view_h = MAX( 300, area.y + area.height - views_y - border );
+	const int view_w = MAX( 300, ( area.width - z_width - 4 * border ) / 2 );
+
+	window_position_t xy = { area.x + border, views_y, view_w, view_h };
+	window_position_t cam = { xy.x + view_w + border, views_y, view_w, view_h };
+	window_position_t z = { cam.x + view_w + border, views_y, z_width, view_h };
+	info.posXYWnd = xy;
+	info.posCamWnd = cam;
+	info.posZWnd = z;
+	// the side views start hidden; when shown, offset them so they don't hide the XY view exactly
+	info.posXZWnd = xy;
+	info.posXZWnd.x += 2 * title;
+	info.posXZWnd.y += title;
+	info.posYZWnd = xy;
+	info.posYZWnd.x += 4 * title;
+	info.posYZWnd.y += 2 * title;
+}
+
 void MainFrame::Create(){
 	GtkWidget* window = gtk_window_new( GTK_WINDOW_TOPLEVEL );
 	m_pWidget = window;
@@ -2600,6 +2663,8 @@ void MainFrame::Create(){
 						G_CALLBACK( mainframe_state ), this );
 
 	g_qeglobals_gui.d_main_window = window;
+
+	FirstRunWindowLayout( g_PrefsDlg.m_nView );
 
 #ifdef _WIN32
 	// calculate gdk offset
