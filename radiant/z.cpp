@@ -224,7 +224,7 @@ void Z_DrawGrid( void ){
 
 	// draw minor blocks
 	if ( g_qeglobals.d_showgrid && g_qeglobals.d_gridsize * z.scale >= 4 &&
-		 g_qeglobals.d_savedinfo.colors[COLOR_GRIDMINOR] != g_qeglobals.d_savedinfo.colors[COLOR_GRIDBACK] ) {
+		 !VectorCompare( g_qeglobals.d_savedinfo.colors[COLOR_GRIDMINOR], g_qeglobals.d_savedinfo.colors[COLOR_GRIDBACK] ) ) {
 		qglColor3fv( g_qeglobals.d_savedinfo.colors[COLOR_GRIDMINOR] );
 
 		qglBegin( GL_LINES );
